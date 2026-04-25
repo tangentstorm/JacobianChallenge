@@ -23,6 +23,9 @@ homomorphism is surjective. -/
 lemma map_surjective {f : V →+ W} (hf_surj : Function.Surjective f)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) :
     Function.Surjective (map Λ Γ f hf) := by
-  sorry
+  intro q
+  obtain ⟨w, hw⟩ := mk_surjective W Γ q
+  obtain ⟨v, hv⟩ := hf_surj w
+  exact ⟨mk V Λ v, by rw [map_mk, hv, hw]⟩
 
 end JacobianChallenge.ComplexTorus
