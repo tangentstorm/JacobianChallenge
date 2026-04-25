@@ -1,5 +1,6 @@
 import Mathlib.Topology.Algebra.Group.Quotient
 import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.Basic
 
 /-!
 # Quotient map induced by a continuous linear map
@@ -28,7 +29,7 @@ def mapClm (f : V →L[ℂ] W)
 /-- The quotient map induced by a continuous linear map is continuous. -/
 lemma mapClm_continuous (f : V →L[ℂ] W)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) :
-    Continuous (mapClm f hf) := by
-  sorry
+    Continuous (mapClm f hf) :=
+  map_continuous f.continuous hf
 
 end JacobianChallenge.ComplexTorus

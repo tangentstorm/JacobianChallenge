@@ -17,13 +17,13 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 /-- The quotient projection commutes with integer scalar multiplication. -/
 @[simp] lemma mk_zsmul (n : ℤ) (v : V) :
-    mk V Λ (n • v) = n • mk V Λ v := by
-  sorry
+    mk V Λ (n • v) = n • mk V Λ v :=
+  map_zsmul (QuotientAddGroup.mk' Λ.subgroup) n v
 
 /-- The quotient projection commutes with natural-number scalar
 multiplication. -/
 @[simp] lemma mk_nsmul (n : ℕ) (v : V) :
-    mk V Λ (n • v) = n • mk V Λ v := by
-  sorry
+    mk V Λ (n • v) = n • mk V Λ v :=
+  map_nsmul (QuotientAddGroup.mk' Λ.subgroup) n v
 
 end JacobianChallenge.ComplexTorus

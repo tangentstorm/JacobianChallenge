@@ -16,11 +16,10 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
   (Λ : FullComplexLattice V)
 
 /-- The quotient projection commutes with negation. -/
-@[simp] lemma mk_neg (v : V) : mk V Λ (-v) = -mk V Λ v := by
-  sorry
+@[simp] lemma mk_neg (v : V) : mk V Λ (-v) = -mk V Λ v := rfl
 
 /-- Negation on the complex-torus quotient is continuous. -/
-lemma continuous_neg : Continuous (Neg.neg : quotient V Λ → quotient V Λ) := by
-  sorry
+lemma continuous_neg : Continuous (Neg.neg : quotient V Λ → quotient V Λ) :=
+  ContinuousNeg.continuous_neg
 
 end JacobianChallenge.ComplexTorus

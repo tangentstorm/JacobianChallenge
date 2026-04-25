@@ -12,28 +12,32 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 01:33 EDT)
+## Live Status (2026-04-25 01:47 EDT)
 
-- Active jobs (ours): 5/5
-  | ID         | Target file                               | Lemma(s)                            | Status      |
-  | ---------- | ----------------------------------------- | ----------------------------------- | ----------- |
-  | 20ebfd1c   | `Jacobian/ComplexTorus/MapInjective.lean` | `map_injective_of_preimage_subset`  | IN_PROGRESS |
-  | 518be471   | `Jacobian/ComplexTorus/Neg.lean`          | `mk_neg` / `continuous_neg`         | QUEUED      |
-  | 650e16fe   | `Jacobian/ComplexTorus/Add.lean`          | `mk_add` / `continuous_add`         | QUEUED      |
-  | fb51396b   | `Jacobian/ComplexTorus/Smul.lean`         | `mk_zsmul` / `mk_nsmul`             | QUEUED      |
-  | 7250ad71   | `Jacobian/ComplexTorus/OfClm.lean`        | `mapClm_continuous`                 | QUEUED      |
-- Integrated this tick:
-  - `07e77aac` — `t2Space_quotient_of_isClosed` (`IsClosedSubgroup.lean`).
-    Aristotle's proof was correct but the hypothesis was unused because
-    `FullComplexLattice` already carries `quotient_t2` as an instance.
-    Renamed to `_h` and added a note for the future field-removal refactor.
+- Active jobs (ours): 5/5 (all queued, just submitted)
+  | ID         | Target file                                | Lemma(s)                                    |
+  | ---------- | ------------------------------------------ | ------------------------------------------- |
+  | 5a37a9c3   | `Jacobian/ComplexTorus/Connected.lean`     | `connectedSpace_quotient`                   |
+  | 83af50d3   | `Jacobian/ComplexTorus/Nhds.lean`          | `nhds_mk_eq`                                |
+  | f2a1782c   | `Jacobian/ComplexTorus/Dense.lean`         | `dense_mk_image_iff` / `dense_preimage_mk_iff` |
+  | 88c7c85c   | `Jacobian/ComplexTorus/FirstCountable.lean`| First/second-countable instances            |
+  | 5573ebd7   | `Jacobian/ComplexTorus/PathConnected.lean` | `pathConnectedSpace_quotient`               |
+- Integrated this tick (5):
+  - `20ebfd1c` — `map_injective_of_preimage_subset` (Aristotle's proof
+    used `simp +decide`; replaced with a clean tactic proof using
+    `mk_eq_iff` + `f.map_add` + `f.map_neg`).
+  - `518be471` — `mk_neg = rfl`; `continuous_neg = ContinuousNeg.continuous_neg`.
+  - `650e16fe` — `mk_add = rfl`; `continuous_add = _root_.continuous_add`.
+  - `fb51396b` — `mk_zsmul`/`mk_nsmul` via `map_zsmul`/`map_nsmul` of `mk'`.
+  - `7250ad71` — `mapClm_continuous = map_continuous f.continuous hf`.
 - Done previously: `c97ef7ec`, `6e60ff64`, `4d2fa17c`, `21a882aa`,
-  `e2c130cc`; algebraic `mk` / `map` / `map_id` / `map_comp` in
-  `StatementBank.lean`; `mk_continuous`, `mk_isOpenQuotientMap`,
-  `mk_isOpenMap` directly in `Basic.lean`.
+  `e2c130cc`, `07e77aac`; algebraic `mk` / `map` / `map_id` / `map_comp`
+  in `StatementBank.lean`; `mk_continuous`, `mk_isOpenQuotientMap`,
+  `mk_isOpenMap` in `Basic.lean`.
 - Next planned submissions: compactness from cocompact lattice;
-  lattice-image preservation under continuous maps; bridge to
-  `ZLattice` predicate.
+  lattice-image preservation under continuous maps; bridge to a real
+  `ZLattice` / `IsZLattice` predicate; topological-group instance
+  bundling on the quotient.
 
 ## General Job Template
 
