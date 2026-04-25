@@ -1,6 +1,6 @@
 import Mathlib.Topology.Algebra.Group.Quotient
 import Mathlib.Topology.Connected.PathConnected
-import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.Defs
 
 /-!
 # Path-connectedness of the complex-torus quotient

@@ -27,19 +27,30 @@ import Jacobian.ComplexTorus.MapClmSurjective
 import Jacobian.ComplexTorus.MkHomKer
 import Jacobian.ComplexTorus.MapZero
 import Jacobian.ComplexTorus.GenericQuotient
-import Jacobian.ComplexTorus.ZLatticeRecon
-import Jacobian.ComplexTorus.ManifoldRecon
 import Jacobian.ComplexTorus.ZLatticeFundDom
 import Jacobian.ComplexTorus.IsolationAtZero
 import Jacobian.ComplexTorus.MkInjOnSmallBall
-import Jacobian.ComplexTorus.DiscretenessRecon
 import Jacobian.ComplexTorus.ChartBall
 import Jacobian.ComplexTorus.LocalSection
+import Jacobian.ComplexTorus.LocalSectionRightInv
+import Jacobian.ComplexTorus.LocalSectionContinuous
 
 /-!
 # Complex torus infrastructure
 
-Top-level module that re-exports the bounded Queue B target files. Other
-modules can import `Jacobian.ComplexTorus` instead of pulling each sibling
-in by hand.
+Top-level module that re-exports the production Queue B target files.
+Other modules can import `Jacobian.ComplexTorus` instead of pulling each
+sibling in by hand.
+
+**Excluded on purpose:**
+- `ZLatticeRecon` — name-discovery scratch with the `fullComplexLatticeOfZLattice`
+  bridge; will be promoted into a clean module once the chart layer is in.
+- `ManifoldRecon` — narrative reconnaissance with `sorry` placeholders; not
+  intended as public API.
+- `DiscretenessRecon` — comment-only Q&A document for the `FullComplexLattice`
+  refactor; not API.
+
+These three files still build (they are valid Lean modules) and remain on
+disk for now, but they are not re-exported. They will be removed or migrated
+out of `Jacobian/ComplexTorus/` when the manifold layer is complete.
 -/

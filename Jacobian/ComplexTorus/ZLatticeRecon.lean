@@ -1,5 +1,5 @@
 import Mathlib.Algebra.Module.ZLattice.Basic
-import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.Defs
 import Jacobian.ComplexTorus.ZLatticeFundDom
 
 /-!
