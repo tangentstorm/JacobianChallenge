@@ -36,6 +36,7 @@ import Jacobian.ComplexTorus.LocalSectionRightInv
 import Jacobian.ComplexTorus.LocalSectionContinuous
 import Jacobian.ComplexTorus.Chart
 import Jacobian.ComplexTorus.ChartedSpace
+import Jacobian.ComplexTorus.TransitionSubMem
 
 /-!
 # Complex torus infrastructure
