@@ -19,6 +19,10 @@ The challenge asks for:
 The important constraint is that the definitions should be mathematically real,
 not an abstract axiom layer that merely makes the file compile.
 
+This repository tracks v0.3 of the challenge: the surface assumptions no longer
+include separate `[Nonempty X]` hypotheses, since `[ConnectedSpace X]` already
+provides nonemptiness in the intended Mathlib setting.
+
 ## Recommended Construction
 
 Use the analytic period-lattice construction:
@@ -39,9 +43,16 @@ This is the most natural route for the requested API:
 - pushforward is induced by homology pushforward or trace;
 - `pushforward_pullback` follows from the trace/pullback degree identity.
 
+This recommendation should still be validated against the pinned Mathlib
+commit before committing months of work to it. If quotient manifolds,
+differential forms, or integration infrastructure are much stronger or weaker
+than expected, the construction choice may need to be revisited.
+
 ## Phase 0: Project Hygiene
 
-1. Keep `Jacobian/Challenge.lean` as the public target file.
+1. Keep `Jacobian/Challenge.lean` as the public target file. Treat it as the
+   specification, not as a place to weaken statements while infrastructure is
+   being developed.
 2. Keep `Jacobian.lean` as the root export module.
 3. Pin Lean and Mathlib through `lean-toolchain`, `lakefile.toml`, and
    `lake-manifest.json`.
@@ -55,6 +66,31 @@ Jacobian/Periods.lean
 Jacobian/AbelJacobi.lean
 Jacobian/Degree.lean
 ```
+
+## Phase 0.5: Inventory the Pinned Mathlib Commit
+
+Before committing to any construction, audit the pinned Mathlib commit for the
+specific infrastructure that the period-lattice route needs.
+
+Concrete yes/no checks:
+
+- quotient manifolds by discrete group actions;
+- charted-space and manifold instances for quotients;
+- topological group quotients by additive subgroups;
+- finite-dimensional real and complex lattices;
+- smooth differential forms on manifolds;
+- holomorphic differential forms on complex manifolds;
+- exterior derivative and closedness of holomorphic 1-forms;
+- integration of 1-forms along paths;
+- integration over chains or homology classes;
+- singular homology or a usable cycle theory;
+- local power-series or normal-form theory for holomorphic maps between
+  one-dimensional complex manifolds;
+- local multiplicity, ramification, and finite-fiber results.
+
+This phase should produce an inventory file with exact Mathlib names, missing
+lemmas, and candidate files to extend. The period-lattice construction remains
+the default, but the inventory determines the order of attack.
 
 ## Phase 1: Complex Tori
 
@@ -86,8 +122,13 @@ Needed API:
 - finite dimensionality for compact Riemann surfaces;
 - definition of genus as the dimension of this space.
 
-The theorem `genus_eq_zero_iff_homeo` is deep with this definition. It likely
-depends on classification/uniformization or serious Riemann surface theory.
+Finite-dimensionality is not a small linear-algebra lemma after the definitions
+are in place. It likely needs serious compact Riemann surface theory, for
+example Riemann-Roch, Hodge/de Rham machinery, or an equivalent analytic route.
+
+The theorem `genus_eq_zero_iff_homeo` is especially deep with this definition.
+It likely depends on uniformization or the classification of genus-zero compact
+Riemann surfaces, not just local complex analysis.
 
 ## Phase 3: Integration and Periods
 
@@ -109,6 +150,11 @@ H1(X, Z) -> H0(X, Omega1)^dual
 
 This is probably the central technical bottleneck.
 
+The full-lattice statement is not a minor final check. It is essentially the
+nondegeneracy of the period pairing, normally proved using Riemann bilinear
+relations or equivalent Hodge-theoretic input. This may be one of the largest
+single mathematical results needed before the Jacobian can be made compact.
+
 ## Phase 4: Define the Jacobian
 
 Once phases 1-3 exist:
@@ -124,6 +170,13 @@ Then prove:
 - complex charted-space and manifold instances;
 - Lie additive group instance;
 - dimension equals `genus X`.
+
+There is a universe issue to handle explicitly. The challenge asks for
+`Jacobian (X : Type u) : Type u`, while a concrete period quotient may naturally
+land in a small universe, for example as a quotient of a finite-dimensional
+space such as `Fin (genus X) -> C`. The implementation needs a deliberate bridge
+such as `ULift` or a universe-polymorphic construction, not an accidental
+universe mismatch.
 
 ## Phase 5: Abel-Jacobi Map
 
@@ -142,9 +195,27 @@ Then prove:
 - injectivity when `0 < genus X`.
 
 The injectivity theorem is not a small local calculation. It is a substantial
-classical theorem about Abel-Jacobi maps.
+classical theorem about Abel-Jacobi maps. For genus at least one, it is one of
+the facts that prevents degenerate fake Jacobian definitions from satisfying
+the challenge API.
 
-## Phase 6: Degree of Holomorphic Maps
+## Phase 5.5: Abel-Jacobi Injectivity and Point Separation
+
+Treat `ofCurve_inj` as its own theorem-level project.
+
+Likely prerequisites:
+
+- enough holomorphic 1-forms or meromorphic functions to separate points;
+- Riemann-Roch or an equivalent compact Riemann surface theorem;
+- compatibility between the separation theorem and the Abel-Jacobi integral
+  definition;
+- special handling of genus one versus genus at least two if the proof naturally
+  splits.
+
+This theorem is one of the challenge's anti-hack checks. A fake zero Jacobian or
+constant Abel-Jacobi map cannot satisfy it when `0 < genus X`.
+
+## Phase 6: Trace, Pushforward, and Degree
 
 Define the degree of a holomorphic map of compact Riemann surfaces.
 
@@ -163,14 +234,26 @@ Needed API:
 - branched covering behavior;
 - functoriality of degree under composition.
 
-## Phase 7: Pushforward and Pullback
-
 For `f : X -> Y` holomorphic:
 
 - pullback of forms gives `H0(Y, Omega1) -> H0(X, Omega1)`;
 - dualizing gives a linear map in the opposite direction;
 - compatibility with period lattices gives `Jacobian Y -> Jacobian X`;
-- pushforward comes from homology pushforward or the trace map on forms.
+- pushforward should be defined using the trace map on forms, or from an
+  equivalent construction proved compatible with trace.
+
+The trace-of-forms route is preferred because it makes the final identity
+structural:
+
+```text
+trace_f (pullback_f omega) = degree(f) * omega
+```
+
+This also constrains the degree definition. It may be cleaner to first define
+the trace map and the scalar appearing in `trace_f (pullback_f omega)`, then
+prove that this scalar agrees with the geometric branched-cover degree.
+
+## Phase 7: Pushforward and Pullback API
 
 Then prove:
 
@@ -181,13 +264,31 @@ Then prove:
 - holomorphicity of both maps;
 - `pushforward_pullback`.
 
-The final identity should be proved from the trace-pullback theorem:
+The final identity is a serious classical compatibility theorem, not a formal
+consequence of the map definitions alone. It should be proved from the
+trace-pullback theorem:
 
 ```text
 trace_f (pullback_f omega) = degree(f) * omega
 ```
 
 or the equivalent statement on homology/period pairings.
+
+## Phase 7.5: Genus-Zero Classification
+
+Treat `genus_eq_zero_iff_homeo` as its own theorem-level project.
+
+With `genus X := finrank C H0(X, Omega1)`, this theorem is essentially a
+classification statement for compact genus-zero Riemann surfaces. Plausible
+routes include:
+
+- uniformization;
+- Riemann-Roch plus the construction of a degree-one meromorphic function;
+- classification of compact connected oriented surfaces plus compatibility
+  between topological and analytic genus.
+
+This is another anti-hack theorem: it prevents defining `genus` to be constantly
+zero or otherwise disconnected from the topology of the surface.
 
 ## Phase 8: Mathlib Integration Strategy
 
@@ -205,6 +306,43 @@ layers:
 
 Each layer should have independent examples and tests before being used in the
 challenge file.
+
+## Anti-Hack Audit
+
+The challenge deliberately includes API that rules out easy fake definitions.
+The implementation should keep an explicit audit trail showing where the chosen
+construction satisfies these checks:
+
+- `genus_eq_zero_iff_homeo` ties `genus` to the topology of the surface, so
+  `genus X := 0` cannot work.
+- `ofCurve_inj` forces the Abel-Jacobi map to be nonconstant and injective for
+  positive genus, so `Jacobian X := PUnit` cannot work.
+- compact complex Lie group instances force `Jacobian X` to have the expected
+  torus-like analytic structure.
+- `pushforward_pullback` forces pushforward, pullback, and degree to interact
+  through the classical trace/pullback relation, not arbitrary homomorphisms.
+
+This audit is not just rhetoric. Each item should point to the corresponding
+construction theorem once the project has real files.
+
+## Rough Size
+
+The phases are not comparable in size.
+
+- Project setup and inventory: days.
+- Complex tori: weeks for an expert if quotient-manifold infrastructure is
+  close; longer if quotient manifolds must be built first.
+- Holomorphic forms and finite-dimensionality: months, depending on existing
+  differential-form and compactness theory.
+- Integration, periods, and full-lattice theorem: likely the largest part;
+  potentially multi-person-months or more.
+- Abel-Jacobi injectivity and genus-zero classification: each a serious compact
+  Riemann surface theorem, likely months unless strong prerequisites already
+  exist.
+- Trace, degree, and push-pull compatibility: months, because they require
+  local holomorphic map theory and global compatibility.
+
+The expected output is many reusable Mathlib layers, not a short local patch.
 
 ## Main Risks
 
@@ -225,3 +363,13 @@ Instead, build a standalone file proving that a finite-dimensional complex
 vector space modulo a full lattice is a compact complex Lie additive group, with
 maps induced by lattice-preserving continuous linear maps. That result is
 reusable, reviewable, and directly needed for the eventual Jacobian definition.
+
+The bridge back to the challenge is:
+
+```text
+period pairing gives periodLattice X in H0(X, Omega1)^dual
+complex torus infrastructure gives Jacobian X
+complex torus instances discharge the group/topology/compact/manifold/Lie API
+period integration gives ofCurve
+trace and pullback compatibility give pushforward, pullback, and degree
+```
