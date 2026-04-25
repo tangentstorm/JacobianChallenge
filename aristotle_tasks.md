@@ -12,9 +12,10 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 07:02 EDT)
+## Live Status (2026-04-25 07:17 EDT)
 
-(All 5 jobs still QUEUED at 5+ hours. Queue still frozen.)
+Queue is moving! 5a37a9c3 (Connected) IN_PROGRESS 4%, 83af50d3 (Nhds)
+IN_PROGRESS 1%; f2a1782c, 88c7c85c, 5573ebd7 still QUEUED.
 
 - Active jobs (ours): 5/5 (all queued, just submitted)
   | ID         | Target file                                | Lemma(s)                                    |
