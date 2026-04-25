@@ -38,6 +38,9 @@ lemma exists_chart_ball (Λ : FullComplexLattice V) (v : V) :
     ∃ r > 0,
       Set.InjOn (mk V Λ) (Metric.ball v r) ∧
       IsOpen (mk V Λ '' Metric.ball v r) := by
-  sorry
+  obtain ⟨δ, δpos, hiso⟩ := exists_pos_le_norm_of_discreteTopology Λ.subgroup
+  refine ⟨δ / 4, by linarith, ?_, ?_⟩
+  · exact mk_injOn_ball_of_isolation Λ.subgroup (by linarith) hiso v
+  · exact mk_image_isOpen Λ Metric.isOpen_ball
 
 end JacobianChallenge.ComplexTorus
