@@ -3,6 +3,7 @@ import Jacobian.ComplexTorus.Mk
 import Jacobian.ComplexTorus.MapMk
 import Jacobian.ComplexTorus.Surjective
 import Jacobian.ComplexTorus.NhdsZero
+import Jacobian.ComplexTorus.IsClosedSubgroup
 
 /-!
 # Complex torus infrastructure

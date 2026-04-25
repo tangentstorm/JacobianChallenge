@@ -12,21 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 00:58 EDT)
+## Live Status (2026-04-25 01:05 EDT)
 
-- Active jobs (ours): 5/5 — all queued.
-  | ID         | Target file                              | Sorry / Lemma                      |
-  | ---------- | ---------------------------------------- | ---------------------------------- |
-  | c97ef7ec   | `Jacobian/ComplexTorus/Basic.lean`       | `map_continuous`                   |
-  | 6e60ff64   | `Jacobian/ComplexTorus/Mk.lean`          | `mk_zero` / `mk_eq_iff` / `mk_eq_zero_iff` |
-  | 4d2fa17c   | `Jacobian/ComplexTorus/MapMk.lean`       | `map_zero` / `map_mk_add`          |
-  | 21a882aa   | `Jacobian/ComplexTorus/Surjective.lean`  | `map_surjective`                   |
-  | e2c130cc   | `Jacobian/ComplexTorus/NhdsZero.lean`    | `nhds_zero_eq`                     |
+- Active jobs (ours): 5/5
+  | ID         | Target file                                  | Lemma(s)                                   | Status      |
+  | ---------- | -------------------------------------------- | ------------------------------------------ | ----------- |
+  | 6e60ff64   | `Jacobian/ComplexTorus/Mk.lean`              | `mk_zero` / `mk_eq_iff` / `mk_eq_zero_iff` | IN_PROGRESS |
+  | 4d2fa17c   | `Jacobian/ComplexTorus/MapMk.lean`           | `map_zero` / `map_mk_add`                  | QUEUED      |
+  | 21a882aa   | `Jacobian/ComplexTorus/Surjective.lean`      | `map_surjective`                           | QUEUED      |
+  | e2c130cc   | `Jacobian/ComplexTorus/NhdsZero.lean`        | `nhds_zero_eq`                             | QUEUED      |
+  | 07e77aac   | `Jacobian/ComplexTorus/IsClosedSubgroup.lean`| `t2Space_quotient_of_isClosed`             | QUEUED      |
+- Integrated this tick:
+  - `c97ef7ec` — `map_continuous` in `Basic.lean` (term-mode proof via
+    `IsOpenQuotientMap.isQuotientMap.continuous_iff`).
 - Done previously: algebraic `mk` / `map` / `map_id` / `map_comp` in
   `StatementBank.lean`; `mk_continuous`, `mk_isOpenQuotientMap`,
   `mk_isOpenMap` directly in `Basic.lean`.
-- Next planned submissions (after retrieval): bounded continuity / lattice
-  bookkeeping packets in additional sibling files.
+- Next planned submission: continue carving bounded packets from
+  Queue B (closed-subgroup → compactness once T2 lands; lattice-image
+  preserved under continuous maps; etc.).
 
 ## General Job Template
 
