@@ -12,33 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 21:30 EDT)
+## Live Status (2026-04-25 19:08 EDT)
 
-- Active jobs (ours): 0/5. Aristotle queue has been wedged server-wide
-  for hours; the two in-flight jobs (58789fac LocalSectionRightInv,
-  f1d1e010 LocalSectionContinuous) were proven locally and the stuck
-  Aristotle copies cancelled.
-- **Quotient manifold layer: complete (sorry-free).** Today's local
-  work, after the cancellations, drove all the way to
-  `IsManifold (modelWithCornersSelf ℂ V) ω (V ⧸ Λ.subgroup)`:
-  - `LocalSectionRightInv` — `localSection (mk x) = x` on the ball
-    (5-line proof using `MkInjOnSmallBall`).
-  - `LocalSectionContinuous` — continuity of `localSection ∘ mk`
-    on the chart image (12 lines via `continuousOn_open_iff`).
-  - `Chart` — the `OpenPartialHomeomorph` for a small ball.
-  - `ChartedSpace` — `chartAtPoint Λ q` using `Function.surjInv` +
-    `Classical.choose` on `exists_pos_le_norm_of_discreteTopology`,
-    yielding a `ChartedSpace V (V ⧸ Λ.subgroup)` instance.
-  - `TransitionSubMem`, `TransitionSubContinuous`,
-    `TransitionLocallyTranslate`, `TransitionContDiffOn` — chained
-    sub-lemmas showing the chart transition is locally a translation
-    by a fixed lattice element, hence `ContDiffOn ℂ ω` on the overlap.
-  - `IsManifold` — `complexTorusHasGroupoid` discharged via
-    `mem_groupoid_of_pregroupoid` + the `modelWithCornersSelf` simp set
-    + two applications of `contDiffOn_localSection_mk` (one per
-    direction). `complexTorusIsManifold` is then a one-line `where`.
-- All new files are sorry-free; the umbrella
+- Active jobs (ours): 0/5. Aristotle queue still wedged server-wide
+  (5 unrelated jobs QUEUED 5h+, no progress). No new submissions
+  this tick — piling onto a wedge is wasteful, and there's plenty
+  of safe local work.
+- **Quotient manifold layer: complete (sorry-free).** The previous
+  tick drove all the way to `IsManifold (modelWithCornersSelf ℂ V) ω
+  (V ⧸ Λ.subgroup)` via `LocalSectionRightInv`,
+  `LocalSectionContinuous`, `Chart`, `ChartedSpace`, the four
+  `Transition*` sub-lemmas, and `IsManifold` itself. The umbrella
   `Jacobian/ComplexTorus.lean` re-exports `IsManifold`.
+- **This tick — local progress:** added
+  `Jacobian/ComplexTorus/Witness.lean`. It discharges the
+  StatementBank Queue B placeholder targets
+  `quotientChartedSpaceStatement` and `quotientIsManifoldStatement`
+  by exhibiting the concrete `complexTorusChartedSpace` instance.
+  Two one-line witnesses; build green. The Witness module imports
+  the relevant submodules directly (not the umbrella) to avoid
+  pulling itself in via the umbrella's re-export chain.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
