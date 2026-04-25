@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 10:09 EDT
+Last tick: 2026-04-25 10:12 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -40,10 +40,13 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 0/5
-Completed this tick: 2 (01dfbc1f, 65e8da6e)
-Integrated this tick: 01dfbc1f (mkHom_ker via Mathlib),
-                      65e8da6e (zero_preserves_lattices + mapClm_zero)
+Completed this tick: none
+Integrated this tick: none
 Failed/split this tick: none
+Local progress: refactored FullComplexLattice — dropped `quotient_t2`
+                field; T2 now derived from `isClosed` via the
+                structure-level instance + load-bearing
+                `t2Space_quotient_of_isClosed_subgroup`
 ```
 
 ```text

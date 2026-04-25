@@ -124,9 +124,9 @@ Stable in `Jacobian/ComplexTorus/`:
 - `Surjective.lean`       — `map_surjective`
 - `MapInjective.lean`     — `map_injective_of_preimage_subset`
 - `NhdsZero.lean`         — `nhds_zero_eq`
-- `IsClosedSubgroup.lean` — `t2Space_quotient_of_isClosed` (currently
-  degenerate; the `FullComplexLattice` field needs to be dropped to make
-  this lemma load-bearing)
+- `IsClosedSubgroup.lean` — `t2Space_quotient_of_isClosed` (now
+  load-bearing: the `FullComplexLattice.quotient_t2` field has been
+  dropped and the structure-level instance derives T2 from `isClosed`)
 - `Neg.lean`              — `mk_neg`, `continuous_neg`
 - `Add.lean`              — `mk_add`, `continuous_add`
 - `Smul.lean`             — `mk_zsmul`, `mk_nsmul`

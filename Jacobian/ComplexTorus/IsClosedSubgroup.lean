@@ -6,31 +6,36 @@ import Jacobian.WorkPackets.StatementBank
 
 This file is a Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
 
-The single bounded packet: when `Λ.subgroup` is a closed subgroup of a
-topological additive group `V`, the quotient `V ⧸ Λ.subgroup` is `T2`
-without needing to read this off the `FullComplexLattice` field. This
-lets us re-derive `Λ.quotient_t2` from `Λ.isClosed` alone.
-
-The intent is to eventually replace the `quotient_t2` field of
-`FullComplexLattice` with this derived instance, but for now we only need
-a stand-alone lemma.
+When `Λ.subgroup` is a closed subgroup of a topological additive group
+`V`, the quotient `V ⧸ Λ.subgroup` is `T2`. After the
+`FullComplexLattice` refactor that dropped the `quotient_t2` field,
+this is the load-bearing derivation: the structure-level
+`quotient_t2Space` instance in `StatementBank.lean` is exactly the
+proof below packaged with `Λ.isClosed` plugged in.
 -/
 
 namespace JacobianChallenge.ComplexTorus
 
+/-- An abstract closed-subgroup version: if `N : AddSubgroup V` is closed,
+the quotient `V ⧸ N` is `T2`. This is the genuinely load-bearing fact
+behind the structure-level `quotient_t2Space` instance in
+`StatementBank.lean` — that instance just plugs in `Λ.isClosed` and
+invokes Mathlib's `QuotientGroup.instT1Space`. -/
+lemma t2Space_quotient_of_isClosed_subgroup
+    {V : Type*} [NormedAddCommGroup V] {N : AddSubgroup V}
+    (h : IsClosed (N : Set V)) :
+    T2Space (V ⧸ N) := by
+  haveI : IsClosed (N : Set V) := h
+  exact inferInstance
+
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
   (Λ : FullComplexLattice V)
 
-/-- A closed lattice gives a `T2` quotient.
-
-NOTE: this lemma is currently *degenerate* — `FullComplexLattice` already
-carries a `quotient_t2 : T2Space (V ⧸ subgroup)` field that is registered
-as an instance, so `inferInstance` succeeds without using the `_h`
-hypothesis. The lemma will become non-trivial once we drop that field
-from `FullComplexLattice` and derive it from `isClosed` instead. -/
+/-- The complex-torus quotient is `T2`. Wrapper around
+`t2Space_quotient_of_isClosed_subgroup` plugging in `Λ.isClosed`. -/
 lemma t2Space_quotient_of_isClosed
-    (_h : IsClosed (Λ.subgroup : Set V)) :
-    T2Space (quotient V Λ) := by
-  exact inferInstance
+    (h : IsClosed (Λ.subgroup : Set V)) :
+    T2Space (quotient V Λ) :=
+  t2Space_quotient_of_isClosed_subgroup h
 
 end JacobianChallenge.ComplexTorus
