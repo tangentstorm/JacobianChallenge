@@ -21,14 +21,14 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 08:40 EDT
+Last tick: 2026-04-25 08:47 EDT
 
 ```text
 Layer                     Bar                    %    Note
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
-Complex torus quotient    █████████████████░░░   85%  16 packets done incl. cocompact→compact
+Complex torus quotient    ██████████████████░░   90%  20 packets done; topology layer closed
 Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -39,13 +39,10 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 4/5
-  02468cd4  mk_image_isCompact/Open       MkImage.lean        IN_PROGRESS 2%
-  98392eb4  mk_preimage_isOpen/Closed     MkPreimage.lean     IN_PROGRESS 1%
-  0faaf3e5  mkHom (bundled →+)            MkBundled.lean      IN_PROGRESS 1%
-  2649200e  range_mk = univ               MkRange.lean        QUEUED
-Completed this tick: none
-Integrated this tick: none — packets just spinning up
+Active jobs (ours): 0/5
+Completed this tick: 4 (02468cd4, 98392eb4, 0faaf3e5, 2649200e)
+Integrated this tick: all 4 — MkImage/MkPreimage/MkBundled/MkRange
+                      all clean term-mode one-liners
 Failed/split this tick: none
 ```
 
@@ -61,8 +58,10 @@ ComplexTorus    pass*   lake build Jacobian.ComplexTorus
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Integrate the 5 in-flight Queue B siblings as they return.
-2. Once the topological-quotient layer is closed, plan the
-   compactness-from-cocompact-lattice packet.
-3. Hold off on the quotient manifold layer until then.
+1. Topological-quotient layer is essentially closed. Refactor
+   `FullComplexLattice` to drop `quotient_t2`/`quotient_compact`
+   fields in favor of derived instances.
+2. Sketch the manifold layer: charted-space structure on V ⧸ Λ.
+3. Bridge to `ZLattice.IsZLattice` if Mathlib's predicate is
+   compatible.
 ```
