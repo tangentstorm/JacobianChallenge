@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 12:09 EDT
+Last tick: 2026-04-25 12:18 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,16 +39,17 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 3/5
-  8d77f7d8  IsolationAtZero.lean       proof  IN_PROGRESS  1%
-  1841ae34  MkInjOnSmallBall.lean      proof  IN_PROGRESS  1%
-  c5beb23a  DiscretenessRecon.lean     recon  IN_PROGRESS  1%
-Completed this tick: none.
-Integrated this tick: none.
+Active jobs (ours): 1/5
+  8d77f7d8  IsolationAtZero.lean       proof  IN_PROGRESS  5%
+Completed this tick: 1841ae34, c5beb23a
+Integrated this tick: 1841ae34 (MkInjOnSmallBall) — clean proof:
+                      contrapose! + dist_triangle_right + linarith;
+                      dropped unused hr_pos hypothesis.
+                      c5beb23a (DiscretenessRecon) — substantive
+                      recon answers, recommends option (a)
+                      `isDiscrete : DiscreteTopology Λ.subgroup`
+                      as the new FullComplexLattice field.
 Failed/split this tick: none.
-All 3 just started this tick (QUEUED → IN_PROGRESS).
-Holding queue at 3/5 deliberately; 4th and 5th slots gated on
-the upcoming FullComplexLattice discreteness refactor.
 ```
 
 ```text
@@ -63,11 +64,15 @@ ZLatticeRecon    pass    lake build Jacobian.ComplexTorus.ZLatticeRecon (no sorr
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Decide the FullComplexLattice discreteness packaging
-   (likely add a `DiscreteTopology subgroup` field; closed
-   cocompact alone is insufficient — `ℝ × ℤ ⊂ ℝ²`).
-2. Submit IsolationAtZero + MkInjOnSmallBall + DiscretenessRecon
-   packets to feed manifold-layer chart construction.
-3. After (1) lands, carve the first chart packet (small-ball
-   open embedding) per ManifoldRecon outline.
+1. Wait for 8d77f7d8 (IsolationAtZero) to land; its proof
+   chain is the natural source of the isolation constant for
+   chart construction.
+2. Claude-owned FullComplexLattice refactor: add
+   `isDiscrete : DiscreteTopology subgroup` field per
+   c5beb23a's recommended option (a). Wire in
+   ZLatticeRecon's `discreteTopology_toAddSubgroup` bridge.
+3. After (2): carve first chart packet (small-ball open
+   embedding) — IsolationAtZero gives the radius,
+   MkInjOnSmallBall gives the injectivity, isDiscrete +
+   isOpenMap_coe give the open embedding.
 ```

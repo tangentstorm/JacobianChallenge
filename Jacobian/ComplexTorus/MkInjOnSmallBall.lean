@@ -23,13 +23,19 @@ variable {V : Type*} [SeminormedAddCommGroup V]
 
 /-- If every nonzero element of an additive subgroup `S ≤ V` has norm
 at least `δ`, then `QuotientAddGroup.mk : V → V ⧸ S` is injective on
-any open ball of radius strictly less than `δ / 2`. -/
+any open ball of radius strictly less than `δ / 2`. (The case `r ≤ 0`
+is vacuous: `Metric.ball v r = ∅`.) -/
 lemma mk_injOn_ball_of_isolation
-    (S : AddSubgroup V) {δ r : ℝ}
-    (hr_pos : 0 < r) (hr_lt : r < δ / 2)
+    (S : AddSubgroup V) {δ r : ℝ} (hr_lt : r < δ / 2)
     (hiso : ∀ g ∈ S, g ≠ 0 → δ ≤ ‖g‖)
     (v : V) :
     Set.InjOn (QuotientAddGroup.mk : V → V ⧸ S) (Metric.ball v r) := by
-  sorry
+  intro x hx y hy hxy
+  have hxy_in_S : x - y ∈ S := QuotientAddGroup.eq_iff_sub_mem.mp hxy
+  contrapose! hiso
+  refine ⟨x - y, hxy_in_S, sub_ne_zero.mpr hiso, ?_⟩
+  rw [← dist_eq_norm]
+  exact lt_of_le_of_lt (dist_triangle_right _ _ _)
+    (by linarith [Metric.mem_ball.mp hx, Metric.mem_ball.mp hy])
 
 end JacobianChallenge.ComplexTorus

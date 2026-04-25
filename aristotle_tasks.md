@@ -12,24 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 12:09 EDT)
+## Live Status (2026-04-25 12:18 EDT)
 
-- Active jobs (ours): 3/5
+- Active jobs (ours): 1/5
   | ID         | Target file                                       | Kind  | Status      |
   | ---------- | ------------------------------------------------- | ----- | ----------- |
   | 8d77f7d8   | `Jacobian/ComplexTorus/IsolationAtZero.lean`      | proof | IN_PROGRESS |
-  | 1841ae34   | `Jacobian/ComplexTorus/MkInjOnSmallBall.lean`     | proof | IN_PROGRESS |
-  | c5beb23a   | `Jacobian/ComplexTorus/DiscretenessRecon.lean`    | recon | IN_PROGRESS |
-- Retrieved this tick: none.
-- Integrated this tick: none.
-- Submitted this tick: none.
-- All 3 packets transitioned QUEUED → IN_PROGRESS this tick (each
-  at 1% per the server's progress meter). Aristotle is now actually
-  working on them; expect first returns within the next 30–60 min.
-- 4th and 5th slots intentionally held for chart-layer packets that
-  need the FullComplexLattice discreteness field in place first.
-  The discreteness refactor is a deliberate Claude-owned step
-  awaiting `c5beb23a`'s recon answers.
+- Retrieved this tick: 1841ae34, c5beb23a (both COMPLETE).
+- Integrated this tick: both, cleanly.
+  - `1841ae34` MkInjOnSmallBall — `contrapose!` + `dist_triangle_right`
+    + `linarith` proof using `QuotientAddGroup.eq_iff_sub_mem`. Dropped
+    the unused `hr_pos` hypothesis from the lemma signature (the
+    `r ≤ 0` case is vacuous since `Metric.ball v r = ∅`).
+  - `c5beb23a` DiscretenessRecon — substantive comment-only response
+    to all 5 questions. Key recommendation: option (a)
+    `isDiscrete : DiscreteTopology Λ.subgroup` as the new
+    `FullComplexLattice` field. The supply path from `IsZLattice ℝ L`
+    reuses ZLatticeRecon's existing `discreteTopology_toAddSubgroup`
+    bridge — already in the codebase.
+- Submitted this tick: none. Holding at 1/5 while the discreteness
+  refactor is planned (next tick's substantive Claude-owned work).
+- Standing trap (resolved direction): closed cocompact ⇏ discrete in
+  finite-dim normed real spaces. The recon confirms Mathlib has no
+  reverse equivalence; the FullComplexLattice refactor will add
+  discreteness as an explicit field.
 
 ## General Job Template
 
