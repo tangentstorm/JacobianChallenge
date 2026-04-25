@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 09:32 EDT
+Last tick: 2026-04-25 09:37 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,10 +39,10 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5
-Completed this tick: 77be5e1a (MkInjective.lean)
-Integrated this tick: 77be5e1a — `mk_injective_iff_subgroup_eq_bot`
-                      via two-direction QuotientAddGroup.eq tactic chain
+Active jobs (ours): 1/5
+  f7004700  mapClm_injective_of_preimage_… MapClmInjective.lean QUEUED
+Completed this tick: none
+Integrated this tick: none — submitted one new bounded packet
 Failed/split this tick: none
 ```
 
