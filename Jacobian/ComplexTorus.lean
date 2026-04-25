@@ -26,6 +26,9 @@ import Jacobian.ComplexTorus.MapClmInjective
 import Jacobian.ComplexTorus.MapClmSurjective
 import Jacobian.ComplexTorus.MkHomKer
 import Jacobian.ComplexTorus.MapZero
+import Jacobian.ComplexTorus.GenericQuotient
+import Jacobian.ComplexTorus.ZLatticeRecon
+import Jacobian.ComplexTorus.ManifoldRecon
 
 /-!
 # Complex torus infrastructure

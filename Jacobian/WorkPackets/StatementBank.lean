@@ -114,15 +114,26 @@ variable (V W U : Type*) [NormedAddCommGroup V] [NormedAddCommGroup W] [NormedAd
 /--
 A full complex lattice in a finite-dimensional complex vector space.
 
-The fields are intentionally minimal placeholders. A real implementation should
-replace these fields by established Mathlib predicates where possible.
+The structure carries the analytic content needed for the quotient
+`V ⧸ subgroup` to be a complex torus:
+- `isClosed` gives Hausdorff/T2 on the quotient (via Mathlib's
+  closed-subgroup → T1 instance plus the topological-group upgrade);
+- `fundamentalDomain` together with `fundamentalDomain_isCompact` and
+  `fundamentalDomain_covers` gives compactness on the quotient
+  (cocompact lattice ⇒ compact quotient).
+
+A more polished implementation could replace these fields with
+established Mathlib predicates such as `ZLattice.IsZLattice`; this
+shape exposes the dependency surface concretely.
 -/
 structure FullComplexLattice where
   subgroup : AddSubgroup V
   isClosed : IsClosed (subgroup : Set V)
-  quotient_compact : CompactSpace (V ⧸ subgroup)
-
-attribute [instance] FullComplexLattice.quotient_compact
+  /-- A subset of `V` whose `subgroup`-translates cover `V`. -/
+  fundamentalDomain : Set V
+  fundamentalDomain_isCompact : IsCompact fundamentalDomain
+  fundamentalDomain_covers :
+    ∀ v : V, ∃ g ∈ subgroup, v - g ∈ fundamentalDomain
 
 /-- The complex torus associated to a full lattice. -/
 abbrev quotient (Λ : FullComplexLattice V) : Type _ := V ⧸ Λ.subgroup
@@ -139,8 +150,25 @@ instance quotient_t2Space (Λ : FullComplexLattice V) : T2Space (quotient V Λ) 
   haveI : IsClosed (Λ.subgroup : Set V) := Λ.isClosed
   exact inferInstance
 
-instance quotient_compactSpace (Λ : FullComplexLattice V) : CompactSpace (quotient V Λ) :=
-  Λ.quotient_compact
+/-- The quotient is `CompactSpace`: derived inline from the cocompact
+fundamental-domain witness. The image of `fundamentalDomain` under the
+projection is the whole quotient, and the image of a compact set under
+the continuous projection is compact. -/
+instance quotient_compactSpace (Λ : FullComplexLattice V) :
+    CompactSpace (quotient V Λ) := by
+  rw [← isCompact_univ_iff]
+  have hsurj : (QuotientAddGroup.mk : V → V ⧸ Λ.subgroup) ''
+      Λ.fundamentalDomain = Set.univ := by
+    ext q
+    simp only [Set.mem_image, Set.mem_univ, iff_true]
+    obtain ⟨v, hv⟩ := QuotientAddGroup.mk_surjective q
+    obtain ⟨g, hg, hvg⟩ := Λ.fundamentalDomain_covers v
+    refine ⟨v - g, hvg, ?_⟩
+    rw [show (QuotientAddGroup.mk (v - g) : V ⧸ Λ.subgroup)
+          = QuotientAddGroup.mk v from
+        QuotientAddGroup.eq.mpr (by simp [hg]), hv]
+  rw [← hsurj]
+  exact Λ.fundamentalDomain_isCompact.image QuotientAddGroup.continuous_mk
 
 /-- The quotient projection from a vector space to its torus. -/
 def mk (Λ : FullComplexLattice V) : V → quotient V Λ :=
@@ -266,7 +294,11 @@ noncomputable def periodFullComplexLattice :
     ComplexTorus.FullComplexLattice (HolomorphicOneFormDual X) where
   subgroup := periodSubgroup X
   isClosed := periodSubgroup_isClosed X
-  quotient_compact := by
+  fundamentalDomain := by
+    sorry
+  fundamentalDomain_isCompact := by
+    sorry
+  fundamentalDomain_covers := by
     sorry
 
 /-- Work-packet target: period functionals are invariant under homologous cycles. -/

@@ -12,16 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 10:37 EDT)
+## Live Status (2026-04-25 10:42 EDT)
 
-- Active jobs (ours): 0/5
+- Active jobs (ours): 3/5
+  | ID         | Target file                                   | Lemma / kind                       |
+  | ---------- | --------------------------------------------- | ---------------------------------- |
+  | 78a3b9f9   | `Jacobian/ComplexTorus/GenericQuotient.lean`  | 4 generic `AddSubgroup` quotient lemmas |
+  | a68d37f4   | `Jacobian/ComplexTorus/ZLatticeRecon.lean`    | RECON: bridge to `ZLattice.IsZLattice` |
+  | bbdcb3f4   | `Jacobian/ComplexTorus/ManifoldRecon.lean`    | RECON: charted-space / manifold name discovery |
 - Integrated this tick: none.
-- Local progress this tick: none (clean tree, queue empty).
-- Pending Claude-owned next steps:
-  1. Drop `FullComplexLattice.quotient_compact` in favor of a
-     cocompactness witness (compact fundamental domain + cover
-     hypothesis), then derive CompactSpace via `compactSpace_quotient_of_cover`.
-  2. Begin sketching the manifold layer (charted-space structure).
+- Local progress this tick: dropped `FullComplexLattice.quotient_compact`
+  field. Structure now exposes a cocompactness witness via three new
+  fields (`fundamentalDomain`, `fundamentalDomain_isCompact`,
+  `fundamentalDomain_covers`); the `quotient_compactSpace` instance is
+  derived inline in `StatementBank.lean` from those fields. Whole tower
+  builds (8056 jobs).
+- Queue intentionally shifted from "wrapper lemma proving" to
+  "interface-support + reconnaissance" packets — see the three above.
 
 - Active jobs (ours): 3/5
   | ID         | Target file                                  | Lemma(s)                          |
