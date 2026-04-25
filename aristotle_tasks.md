@@ -12,13 +12,11 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 10:35 EDT)
+## Live Status (2026-04-25 10:37 EDT)
 
 - Active jobs (ours): 0/5
 - Integrated this tick: none.
-- Local progress this tick: none (working tree was clean entering the
-  tick; FullComplexLattice quotient_t2 refactor landed in the previous
-  tick's commit f9ddce0).
+- Local progress this tick: none (clean tree, queue empty).
 - Pending Claude-owned next steps:
   1. Drop `FullComplexLattice.quotient_compact` in favor of a
      cocompactness witness (compact fundamental domain + cover
