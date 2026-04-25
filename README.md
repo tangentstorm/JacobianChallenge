@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 16:58 EDT
+Last tick: 2026-04-25 17:05 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -29,7 +29,7 @@ Layer                     Bar                    %    Note
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
 Complex torus quotient    ████████████████████  100%  ZLattice bridge sorry-free
-Quotient manifold layer   █████░░░░░░░░░░░░░░░   25%  chart-prep primitives complete
+Quotient manifold layer   ███████░░░░░░░░░░░░░   35%  chart-at-a-point assembled
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -40,18 +40,15 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 0/5
-Cancelled this tick: 58789fac (LocalSectionRightInv),
-                     f1d1e010 (LocalSectionContinuous) — Aristotle
-                     queue server-wide stuck for ~3h; per user
-                     directive, proved both locally and cancelled.
-Integrated this tick: localSection_mk (5 lines) and
-                      continuousOn_localSection (12 lines, via
-                      `continuousOn_open_iff` + a Set.ext on
-                      `mk '' (ball v r ∩ U)`). Both build green.
+Cancelled this tick: 58789fac, f1d1e010 (proved locally instead).
+Integrated this tick: localSection_mk, continuousOn_localSection
+                      (both proved locally; ~17 lines combined),
+                      and `chartAtBall` — the
+                      `OpenPartialHomeomorph (V ⧸ Λ.subgroup) V`
+                      assembly using all primitives.
 Failed/split this tick: none.
-Quotient manifold layer: now 25%. All four chart-prep
-primitives (existence, section, left-inverse, continuity) are
-sorry-free. Next: assemble the OpenPartialHomeomorph.
+Quotient manifold layer: now 35%. The chart at a small ball is
+in. Next: ChartedSpace instance (atlas of charts).
 ```
 
 ```text
