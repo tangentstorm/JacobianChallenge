@@ -12,23 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 19:33 EDT)
+## Live Status (2026-04-25 19:55 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 5h+). No new submissions.
-- **Quotient manifold layer: complete (sorry-free).** Earlier ticks
-  drove to `IsManifold (modelWithCornersSelf ℂ V) ω (V ⧸ Λ.subgroup)`.
-- **LieAddGroup smoothness work in progress.** Two foundational
-  pieces now in place:
-  - `Jacobian/ComplexTorus/MkLocallyTranslate.lean` (previous tick) —
-    `y ↦ localSection Λ w r (mk y)` is locally a translation by a
-    fixed lattice element on the saturated chart preimage.
-  - `Jacobian/ComplexTorus/ContDiffAtLocalSectionMk.lean` (this tick)
-    — promotes the existing on-set `contDiffOn_localSection_mk` to
-    a pointwise `ContDiffAt ℂ ω` claim at every `x` in the saturated
-    preimage, by specializing `v₁ := x` so the intersection becomes
-    a neighborhood of `x`. This is the chart-coordinate analytic
-    content needed for `ContMDiff (mk V Λ)`. Both files build green.
+- **Quotient manifold layer: complete (sorry-free)** including the
+  `IsManifold (modelWithCornersSelf ℂ V) ω (V ⧸ Λ.subgroup)` instance.
+- **LieAddGroup smoothness — first of three theorems landed:**
+  - `Jacobian/ComplexTorus/MkSmoothOnChartTarget.lean` (this tick) —
+    one-line wrapper of Mathlib's `contMDiffOn_chart_symm` giving
+    smoothness of `mk` (= `chart.symm`) on each chart target ball.
+  - `Jacobian/ComplexTorus/MkSmooth.lean` (this tick) — full
+    theorem `ContMDiff (mk V Λ)`. At any `x : V`, get the
+    chart-target representative `x'` (with `mk x' = mk x`), apply
+    `MkSmoothOnChartTarget` for `ContMDiffAt mk x'`, compose with
+    smooth translation `y ↦ y + (x' - x)`, and use `mk`'s
+    translation-invariance to convert back to `ContMDiffAt mk x`.
+    ~50 lines, no automation.
+  - Earlier this session:
+    `Jacobian/ComplexTorus/MkLocallyTranslate.lean` (v₁-free
+    locally-translation lemma) and
+    `Jacobian/ComplexTorus/ContDiffAtLocalSectionMk.lean` (pointwise
+    `ContDiffAt` of `localSection ∘ mk`). These remain useful for
+    the `+`-smoothness and `-`-smoothness work next.
+- Two of three LieAddGroup-layer theorems remain (`+`, `-`).
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
