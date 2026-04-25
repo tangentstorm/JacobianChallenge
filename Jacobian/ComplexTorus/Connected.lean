@@ -17,7 +17,7 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
   (Λ : FullComplexLattice V)
 
 /-- The complex-torus quotient is connected. -/
-instance connectedSpace_quotient : ConnectedSpace (quotient V Λ) := by
-  sorry
+instance connectedSpace_quotient : ConnectedSpace (quotient V Λ) :=
+  (mk_surjective V Λ).connectedSpace QuotientAddGroup.continuous_mk
 
 end JacobianChallenge.ComplexTorus

@@ -21,12 +21,12 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 /-- A subset of `V` projects to a dense subset of the torus iff it is
 dense modulo the lattice. -/
 lemma dense_mk_image_iff (s : Set V) :
-    Dense (mk V Λ '' s) ↔ Dense (s + (Λ.subgroup : Set V)) := by
-  sorry
+    Dense (mk V Λ '' s) ↔ Dense (s + (Λ.subgroup : Set V)) :=
+  QuotientAddGroup.dense_image_mk
 
 /-- Equivalently: the preimage of a dense set in the torus is dense. -/
 lemma dense_preimage_mk_iff (s : Set (quotient V Λ)) :
-    Dense (mk V Λ ⁻¹' s) ↔ Dense s := by
-  sorry
+    Dense (mk V Λ ⁻¹' s) ↔ Dense s :=
+  QuotientAddGroup.dense_preimage_mk
 
 end JacobianChallenge.ComplexTorus
