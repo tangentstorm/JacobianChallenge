@@ -29,6 +29,17 @@ The timer will call you again.
    Treat `plan.md` as the roadmap and `aristotle_tasks.md` as the live
    delegation ledger. Keep both aligned with the actual state of the project.
 
+   Also run `git status --short` before making changes. Classify every dirty
+   file as one of:
+   - Aristotle result being reviewed/integrated;
+   - Claude-owned local design/infrastructure edit;
+   - progress/log/report update;
+   - unrelated pre-existing change that must be left alone.
+
+   Do not continue as if the tree is clean when it is not. If a dirty Lean file
+   is not part of the current tick's intended work, leave it untouched and
+   mention it in the final report.
+
 2. Check Aristotle status once using the `aristotle-skills` MCP server.
    - Do not continuously poll.
    - The Aristotle account is shared across projects; `aristotle list` may
@@ -63,6 +74,9 @@ The timer will call you again.
    - Improve task prompts.
    - Update task logs.
 
+   Local progress must respect the ownership boundaries below. Do not turn the
+   working directory into a broad scratch implementation of the challenge.
+
 5. Run the narrowest relevant Lake build after any code integration or local
    Lean edit. Prefer targeted builds over whole-project builds.
 
@@ -88,6 +102,9 @@ The timer will call you again.
 ## Hard Constraints
 
 - Do not edit or weaken `Jacobian/Challenge.lean` unless explicitly instructed.
+- Treat direct edits to real source files as deliberate Claude-owned
+  infrastructure work, not as incidental timer-tick bookkeeping. Keep such
+  edits small, reviewed, and explicitly reported.
 - Work bottom-up according to:
   - `plan.md`
   - `Jacobian/WorkPackets/Inventory.md`
@@ -109,11 +126,41 @@ The timer will call you again.
 - If a statement is too hard, split it. Do not paper over it with axioms in
   production files.
 - Keep `aristotle_tasks.md` updated as the human-readable source of truth for
-  active, completed, failed, split, and planned Aristotle jobs.
+  active, completed, failed, split, and planned Aristotle jobs. Its `## Live
+  Status` section must be replaced each tick, not appended to. Historical job
+  detail belongs in `aristotle_jobs.jsonl`.
 - Keep `aristotle_tasks.md` current in GitHub too: whenever a commit records
   Aristotle integration or task-status changes, push it.
 - Every Aristotle integration commit must include a refreshed `README.md`
   progress report using the shaded progress-bar format below.
+
+## Source Ownership Boundaries
+
+Keep these boundaries sharp:
+
+- `Jacobian/Challenge.lean` is the public frozen target. Do not edit it unless
+  the human explicitly asks.
+- `Jacobian/WorkPackets/StatementBank.lean` is a statement bank and task source.
+  It may contain placeholders and dependency-shape declarations, but it should
+  not become the main implementation substrate. When a statement graduates into
+  reusable infrastructure, put the implementation in a real module such as
+  `Jacobian/ComplexTorus/*.lean`, then update the statement bank only as a
+  mirror/index if needed.
+- `Jacobian/ComplexTorus/*.lean` and later layer directories are production
+  infrastructure modules. Editing them directly is allowed only for small,
+  intentional Claude-owned changes or reviewed Aristotle integrations.
+- `aristotle-staging/` is for retrieved Aristotle artifacts. Do not copy broad
+  trees from staging into the project. Inspect the targeted patch, then port
+  only the intended file-scoped change.
+- `README.md`, `plan.md`, `aristotle_tasks.md`, and `aristotle_jobs.jsonl` are
+  management/reporting files. Keep them synchronized with the code, but do not
+  use progress-report edits to hide design changes in source files.
+
+When making a global design refactor, such as changing the fields of
+`FullComplexLattice`, do it as a separate Claude-owned step with a clear
+rationale, targeted build, and explicit report. Do not blur it into "integrated
+Aristotle results" unless Aristotle actually returned that exact change and it
+has been reviewed.
 
 ## Aristotle Job Shape
 
@@ -127,6 +174,12 @@ Every Aristotle job must include:
 - expected build command;
 - instruction to replace complex automation with simple direct tactics;
 - fallback behavior if blocked.
+
+Aristotle jobs should target real modules or newly prepared narrow target
+files. They should not be asked to mutate `StatementBank.lean` except for a
+specific statement-bank maintenance task. If a theorem currently lives only in
+the statement bank, first copy or promote the precise declaration into a narrow
+module with a clear allowed write scope, then submit that module.
 
 Example:
 
