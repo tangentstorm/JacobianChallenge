@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 10:03 EDT
+Last tick: 2026-04-25 10:06 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,12 +39,11 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 3/5
-  cb03cf32  mapClm_surjective             MapClmSurjective.lean QUEUED
-  01dfbc1f  mkHom_ker                     MkHomKer.lean         QUEUED
-  65e8da6e  mapClm_zero (zero CLM)        MapZero.lean          QUEUED
-Completed this tick: none
-Integrated this tick: none — refilled with 3 new bounded packets
+Active jobs (ours): 2/5
+  01dfbc1f  mkHom_ker                     MkHomKer.lean         IN_PROGRESS 4%
+  65e8da6e  mapClm_zero (zero CLM)        MapZero.lean          IN_PROGRESS 7%
+Completed this tick: cb03cf32 (MapClmSurjective.lean)
+Integrated this tick: cb03cf32 — wrapper around map_surjective
 Failed/split this tick: none
 ```
 

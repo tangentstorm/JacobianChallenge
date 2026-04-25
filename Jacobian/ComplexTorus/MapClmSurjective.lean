@@ -1,6 +1,7 @@
 import Mathlib.Topology.Algebra.Group.Quotient
 import Jacobian.WorkPackets.StatementBank
 import Jacobian.ComplexTorus.OfClm
+import Jacobian.ComplexTorus.Surjective
 
 /-!
 # Surjectivity of the continuous-linear quotient map
@@ -22,6 +23,7 @@ surjective quotient map. -/
 lemma mapClm_surjective {f : V →L[ℂ] W} (hf_surj : Function.Surjective f)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) :
     Function.Surjective (mapClm f hf) := by
-  sorry
+  show Function.Surjective (map Λ Γ f.toAddMonoidHom hf)
+  exact map_surjective hf_surj hf
 
 end JacobianChallenge.ComplexTorus
