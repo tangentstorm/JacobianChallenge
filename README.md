@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 12:18 EDT
+Last tick: 2026-04-25 12:28 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,16 +39,13 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5
-  8d77f7d8  IsolationAtZero.lean       proof  IN_PROGRESS  5%
-Completed this tick: 1841ae34, c5beb23a
-Integrated this tick: 1841ae34 (MkInjOnSmallBall) — clean proof:
-                      contrapose! + dist_triangle_right + linarith;
-                      dropped unused hr_pos hypothesis.
-                      c5beb23a (DiscretenessRecon) — substantive
-                      recon answers, recommends option (a)
-                      `isDiscrete : DiscreteTopology Λ.subgroup`
-                      as the new FullComplexLattice field.
+Active jobs (ours): 0/5
+Completed this tick: 8d77f7d8 (IsolationAtZero)
+Integrated this tick: 8d77f7d8 — clean proof using
+                      `isOpen_inter_eq_singleton_of_mem_discrete` +
+                      `SetLike.isDiscrete_iff_discreteTopology`. All
+                      three primitives needed for chart layer
+                      (isolation, injectivity, recon) are now in.
 Failed/split this tick: none.
 ```
 

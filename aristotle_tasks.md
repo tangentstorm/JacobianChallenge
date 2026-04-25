@@ -12,30 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 12:18 EDT)
+## Live Status (2026-04-25 12:28 EDT)
 
-- Active jobs (ours): 1/5
-  | ID         | Target file                                       | Kind  | Status      |
-  | ---------- | ------------------------------------------------- | ----- | ----------- |
-  | 8d77f7d8   | `Jacobian/ComplexTorus/IsolationAtZero.lean`      | proof | IN_PROGRESS |
-- Retrieved this tick: 1841ae34, c5beb23a (both COMPLETE).
-- Integrated this tick: both, cleanly.
-  - `1841ae34` MkInjOnSmallBall — `contrapose!` + `dist_triangle_right`
-    + `linarith` proof using `QuotientAddGroup.eq_iff_sub_mem`. Dropped
-    the unused `hr_pos` hypothesis from the lemma signature (the
-    `r ≤ 0` case is vacuous since `Metric.ball v r = ∅`).
-  - `c5beb23a` DiscretenessRecon — substantive comment-only response
-    to all 5 questions. Key recommendation: option (a)
-    `isDiscrete : DiscreteTopology Λ.subgroup` as the new
-    `FullComplexLattice` field. The supply path from `IsZLattice ℝ L`
-    reuses ZLatticeRecon's existing `discreteTopology_toAddSubgroup`
-    bridge — already in the codebase.
-- Submitted this tick: none. Holding at 1/5 while the discreteness
-  refactor is planned (next tick's substantive Claude-owned work).
-- Standing trap (resolved direction): closed cocompact ⇏ discrete in
-  finite-dim normed real spaces. The recon confirms Mathlib has no
-  reverse equivalence; the FullComplexLattice refactor will add
-  discreteness as an explicit field.
+- Active jobs (ours): 0/5
+- Retrieved this tick: 8d77f7d8 (IsolationAtZero) — COMPLETE.
+- Integrated this tick: 8d77f7d8 — clean proof using
+  `isOpen_inter_eq_singleton_of_mem_discrete` (Mathlib's bridge from
+  discrete topology on a SetLike to "open punctures around any
+  member") plus `SetLike.isDiscrete_iff_discreteTopology` to convert
+  the input class instance, plus `Metric.isOpen_iff` to extract the
+  isolation radius. Build green, no warnings.
+- Submitted this tick: none yet (next step is the Claude-owned
+  FullComplexLattice discreteness refactor).
+- All three primitives needed for chart-layer construction are now
+  in:
+  - `IsolationAtZero.exists_pos_le_norm_of_discreteTopology` — supplies
+    the isolation radius δ from a discrete subgroup.
+  - `MkInjOnSmallBall.mk_injOn_ball_of_isolation` — uses δ to give
+    injectivity of `mk` on `Metric.ball v r` for `r < δ / 2`.
+  - `DiscretenessRecon` — recon recommendation: add
+    `isDiscrete : DiscreteTopology Λ.subgroup` field to
+    `FullComplexLattice` (option (a) per the recon).
+- Planned next: Claude-owned `FullComplexLattice` refactor (separate
+  commit) to add `isDiscrete`, then once that lands, carve the first
+  chart packet (small-ball open embedding).
 
 ## General Job Template
 
