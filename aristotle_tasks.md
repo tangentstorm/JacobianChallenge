@@ -12,16 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25)
+## Live Status (2026-04-25 00:39 EDT)
 
 - Active jobs (ours): 0/5
-- Completed/integrated this tick: discharged `mk_surjective`, `map`, `map_mk`,
-  `map_id`, `map_comp` in `Jacobian/WorkPackets/StatementBank.lean` directly
-  from Mathlib's `QuotientAddGroup` API (no Aristotle round-trip).
+- Completed/integrated this tick:
+  - Discharged `mk_surjective`, `map`, `map_mk`, `map_id`, `map_comp` in
+    `Jacobian/WorkPackets/StatementBank.lean` directly from
+    `QuotientAddGroup` (no Aristotle round-trip).
+  - Carved `Jacobian/ComplexTorus/Basic.lean` with `mk_continuous`,
+    `mk_isOpenQuotientMap`, `mk_isOpenMap` discharged, and `map_continuous`
+    left as a `sorry` for the next Aristotle packet.
 - Next planned submissions (Queue B):
-  - Carve `Jacobian/ComplexTorus/Basic.lean` from the statement bank.
-  - Submit lattice-preservation lemmas and `map` continuity once the new file
-    exists in tree.
+  - `map_continuous` on `Jacobian/ComplexTorus/Basic.lean`.
+  - Add `mapL_*` lemmas (continuous-linear-map version of `map`) once the
+    base file is stable.
 
 ## General Job Template
 
