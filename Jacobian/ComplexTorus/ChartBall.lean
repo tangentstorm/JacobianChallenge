@@ -1,4 +1,4 @@
-import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.Defs
 import Jacobian.ComplexTorus.IsolationAtZero
 import Jacobian.ComplexTorus.MkInjOnSmallBall
 import Jacobian.ComplexTorus.MkImage

@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 13:25 EDT
+Last tick: 2026-04-25 14:19 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,17 +39,25 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5
-  cdbfd6d5  LocalSection.lean          proof  QUEUED
-Completed earlier this tick: 21cc9828 (ChartBall)
-Integrated earlier this tick: 21cc9828 — Aristotle followed the
-                              recipe exactly: 4-line proof.
-                              `exists_chart_ball` is sorry-free.
-Submitted this tick: cdbfd6d5 — defines `localSection` as
-                     `Function.invFunOn (mk V Λ) (Metric.ball v r)`
-                     and proves the two standard properties via
-                     direct citations of the Mathlib API.
+Active jobs (ours): 2/5
+  58789fac  LocalSectionRightInv.lean   proof  in flight
+  f1d1e010  LocalSectionContinuous.lean proof  in flight
+Completed earlier today: 21cc9828 (ChartBall), cdbfd6d5 (LocalSection)
+Integrated earlier today: ChartBall + LocalSection (right-inverse +
+                          range lemmas). Both sorry-free.
+Submitted earlier this tick: 58789fac (right-inverse on the ball
+                             using InjOn) + f1d1e010 (continuity of
+                             the local section).
 Failed/split this tick: none.
+Claude-owned this tick: applied the structural feedback in
+                        feedback/ComplexTorus.md — removed recon
+                        files from the public umbrella, fixed the
+                        ManifoldRecon outline (no longer claims
+                        closed+finite-dim ⇒ discrete), tightened
+                        SecondCountableTopology, collapsed the
+                        compactness duplication, and migrated the
+                        complex-torus core out of StatementBank
+                        into Jacobian/ComplexTorus/Defs.lean.
 ```
 
 ```text

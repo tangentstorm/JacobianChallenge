@@ -1,5 +1,5 @@
 import Mathlib.Topology.Algebra.Group.Quotient
-import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.Defs
 
 /-!
 # Range and full-image lemmas for the quotient projection

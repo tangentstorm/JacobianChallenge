@@ -12,27 +12,46 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 13:25 EDT)
+## Live Status (2026-04-25 14:19 EDT)
 
-- Active jobs (ours): 1/5
-  | ID         | Target file                                     | Kind  | Status |
-  | ---------- | ----------------------------------------------- | ----- | ------ |
-  | cdbfd6d5   | `Jacobian/ComplexTorus/LocalSection.lean`       | proof | QUEUED |
-- Retrieved earlier this tick: 21cc9828 (ChartBall) — COMPLETE,
-  integrated, sorry-free (commit `d38260e`).
-- Submitted this tick: cdbfd6d5 — defines `localSection` as
-  `Function.invFunOn (mk V Λ) (Metric.ball v r)` and asks for two
-  standard right-inverse/range lemmas via direct citation of
-  `Function.invFunOn_eq` + `Function.invFunOn_mem`. Pure plumbing.
-- Holding at 1/5 deliberately — the next chart-layer step
-  (OpenPartialHomeomorph assembly) directly consumes
-  `localSection`'s API, so there's no good independent
-  parallel packet right now.
-- Planned next: after `LocalSection` lands, carve the
-  OpenPartialHomeomorph construction packet — assemble
-  source/target/toFun/invFun + the four continuity/openness obligations
-  using `localSection` + `exists_chart_ball` + the existing
-  open-map/continuity lemmas in `MkImage` and `Basic`.
+- Active jobs (ours): 2/5
+  | ID         | Target file                                          | Kind  | Status      |
+  | ---------- | ---------------------------------------------------- | ----- | ----------- |
+  | 58789fac   | `Jacobian/ComplexTorus/LocalSectionRightInv.lean`    | proof | in flight   |
+  | f1d1e010   | `Jacobian/ComplexTorus/LocalSectionContinuous.lean`  | proof | in flight   |
+- Retrieved + integrated earlier today: ChartBall (21cc9828) and
+  LocalSection (cdbfd6d5). Both clean, sorry-free.
+- Submitted earlier this tick: 58789fac (left-inverse `localSection (mk x) = x`
+  on the ball, uses `MkInjOnSmallBall.mk_injOn_ball_of_isolation`) and
+  f1d1e010 (continuity of the local section on the chart image — the
+  substantive piece needed for the `OpenPartialHomeomorph` assembly).
+- Major Claude-owned activity this tick (separate concern, not
+  Aristotle): applied the structural feedback in
+  `feedback/ComplexTorus.md`. Specifically:
+  - Removed `ZLatticeRecon`, `ManifoldRecon`, `DiscretenessRecon` from
+    the public umbrella `Jacobian/ComplexTorus.lean` (recon files
+    still build standalone but aren't re-exported as API).
+  - Fixed `ManifoldRecon.lean`'s construction outline: the false
+    "show `Λ.subgroup` is discrete from `Λ.isClosed` + finite-dim"
+    claim is gone; the outline now starts from `Λ.isDiscrete` and
+    cites the existing primitives.
+  - Tightened `secondCountableTopology_quotient` to require
+    `[SecondCountableTopology V]` rather than relying on `inferInstance`
+    finding something dubious.
+  - Collapsed the compactness duplication: the proof of
+    `compactSpace_quotient_of_cover` now lives in `Defs.lean` and the
+    `quotient_compactSpace` instance specializes it.
+  - Migrated the complex-torus core out of
+    `Jacobian/WorkPackets/StatementBank.lean` into a new
+    `Jacobian/ComplexTorus/Defs.lean`. All 35 sibling files now
+    import `Defs.lean` directly. `StatementBank.lean` keeps only the
+    not-yet-implemented placeholder targets and the higher-layer
+    queues, and imports `Defs.lean` for what it needs.
+- Deferred (per the user's explicit guidance and the
+  reviewer-acknowledged staging-phase tradeoff): file granularity
+  consolidation, naming-convention alignment, and the
+  `FullComplexLattice → Submodule + IsZLattice` design change. These
+  belong to the eventual Mathlib-prep cleanup, not this phase.
 
 ## General Job Template
 

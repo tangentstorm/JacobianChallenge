@@ -1,4 +1,5 @@
 import Jacobian.Challenge
+import Jacobian.ComplexTorus.Defs
 
 /-!
 # Statement bank for the Jacobian challenge
@@ -10,6 +11,12 @@ The declarations here are deliberately organized by infrastructure layer. Many
 definitions are placeholders for missing Mathlib concepts, but the theorem
 shapes are meant to expose the dependencies needed by the final API in
 `Jacobian/Challenge.lean`.
+
+**Dependency direction:** completed lower-layer work has graduated out of
+this file. The complex-torus core (`FullComplexLattice`, `quotient`, `mk`,
+`map`, the basic instances, and `compactSpace_quotient_of_cover`) lives in
+`Jacobian/ComplexTorus/Defs.lean` and is imported here. This file should
+*own* only not-yet-implemented work-packet target statements.
 -/
 
 open scoped ContDiff
@@ -104,117 +111,18 @@ lemma inventory_complete_pinned :
 
 end Inventory
 
-/-! ## Queue B: complex torus infrastructure -/
+/-! ## Queue B: complex torus infrastructure
+
+The completed lower-layer declarations (`FullComplexLattice`,
+`quotient`, `mk`, `map`, the topological/algebraic instances, and
+`compactSpace_quotient_of_cover`) live in
+`Jacobian/ComplexTorus/Defs.lean`. This namespace section keeps only
+the not-yet-implemented placeholder target statements for the
+upcoming chart/manifold/Lie-group layer. -/
 
 namespace ComplexTorus
 
-variable (V W U : Type*) [NormedAddCommGroup V] [NormedAddCommGroup W] [NormedAddCommGroup U]
-  [NormedSpace ℂ V] [NormedSpace ℂ W] [NormedSpace ℂ U]
-
-/--
-A full complex lattice in a finite-dimensional complex vector space.
-
-The structure carries the analytic content needed for the quotient
-`V ⧸ subgroup` to be a complex torus:
-- `isClosed` gives Hausdorff/T2 on the quotient (via Mathlib's
-  closed-subgroup → T1 instance plus the topological-group upgrade);
-- `fundamentalDomain` together with `fundamentalDomain_isCompact` and
-  `fundamentalDomain_covers` gives compactness on the quotient
-  (cocompact lattice ⇒ compact quotient);
-- `isDiscrete` is needed for the manifold-layer chart construction:
-  closed cocompact additive subgroups of finite-dim normed real spaces
-  are *not* discrete in general (counterexample `ℝ × ℤ ⊂ ℝ²`), so
-  discreteness has to be witnessed explicitly. Together with
-  `IsolationAtZero.exists_pos_le_norm_of_discreteTopology` and
-  `MkInjOnSmallBall.mk_injOn_ball_of_isolation` it gives the
-  small-ball injectivity property needed for chart construction.
-
-A more polished implementation could replace these fields with
-established Mathlib predicates such as `ZLattice.IsZLattice`; this
-shape exposes the dependency surface concretely.
--/
-structure FullComplexLattice where
-  subgroup : AddSubgroup V
-  isClosed : IsClosed (subgroup : Set V)
-  /-- The subgroup is discrete in the subspace topology — independent
-  of `isClosed`/cocompactness in general. -/
-  isDiscrete : DiscreteTopology subgroup
-  /-- A subset of `V` whose `subgroup`-translates cover `V`. -/
-  fundamentalDomain : Set V
-  fundamentalDomain_isCompact : IsCompact fundamentalDomain
-  fundamentalDomain_covers :
-    ∀ v : V, ∃ g ∈ subgroup, v - g ∈ fundamentalDomain
-
-attribute [instance] FullComplexLattice.isDiscrete
-
-/-- The complex torus associated to a full lattice. -/
-abbrev quotient (Λ : FullComplexLattice V) : Type _ := V ⧸ Λ.subgroup
-
-instance quotient_addCommGroup (Λ : FullComplexLattice V) : AddCommGroup (quotient V Λ) :=
-  inferInstanceAs (AddCommGroup (V ⧸ Λ.subgroup))
-
-instance quotient_topologicalSpace (Λ : FullComplexLattice V) : TopologicalSpace (quotient V Λ) :=
-  inferInstanceAs (TopologicalSpace (V ⧸ Λ.subgroup))
-
-/-- The quotient is `T2`: derived from `isClosed` via Mathlib's
-    `QuotientGroup.instT1Space` plus the topological-group machinery. -/
-instance quotient_t2Space (Λ : FullComplexLattice V) : T2Space (quotient V Λ) := by
-  haveI : IsClosed (Λ.subgroup : Set V) := Λ.isClosed
-  exact inferInstance
-
-/-- The quotient is `CompactSpace`: derived inline from the cocompact
-fundamental-domain witness. The image of `fundamentalDomain` under the
-projection is the whole quotient, and the image of a compact set under
-the continuous projection is compact. -/
-instance quotient_compactSpace (Λ : FullComplexLattice V) :
-    CompactSpace (quotient V Λ) := by
-  rw [← isCompact_univ_iff]
-  have hsurj : (QuotientAddGroup.mk : V → V ⧸ Λ.subgroup) ''
-      Λ.fundamentalDomain = Set.univ := by
-    ext q
-    simp only [Set.mem_image, Set.mem_univ, iff_true]
-    obtain ⟨v, hv⟩ := QuotientAddGroup.mk_surjective q
-    obtain ⟨g, hg, hvg⟩ := Λ.fundamentalDomain_covers v
-    refine ⟨v - g, hvg, ?_⟩
-    rw [show (QuotientAddGroup.mk (v - g) : V ⧸ Λ.subgroup)
-          = QuotientAddGroup.mk v from
-        QuotientAddGroup.eq.mpr (by simp [hg]), hv]
-  rw [← hsurj]
-  exact Λ.fundamentalDomain_isCompact.image QuotientAddGroup.continuous_mk
-
-/-- The quotient projection from a vector space to its torus. -/
-def mk (Λ : FullComplexLattice V) : V → quotient V Λ :=
-  QuotientAddGroup.mk
-
-lemma mk_surjective (Λ : FullComplexLattice V) : Function.Surjective (mk V Λ) :=
-  QuotientAddGroup.mk_surjective
-
-variable {V W U}
-
-/-- A continuous additive map preserving lattices descends to a map of complex tori. -/
-def map (Λ : FullComplexLattice V) (Γ : FullComplexLattice W) (f : V →+ W)
-    (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) :
-    quotient V Λ →+ quotient W Γ :=
-  QuotientAddGroup.map Λ.subgroup Γ.subgroup f hf
-
-lemma map_mk (Λ : FullComplexLattice V) (Γ : FullComplexLattice W) (f : V →+ W)
-    (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) (v : V) :
-    map Λ Γ f hf (mk V Λ v) = mk W Γ (f v) :=
-  rfl
-
-lemma map_id (Λ : FullComplexLattice V) :
-    map Λ Λ (AddMonoidHom.id V) (by intro v hv; exact hv) = AddMonoidHom.id (quotient V Λ) :=
-  QuotientAddGroup.map_id Λ.subgroup
-
-lemma map_comp (Λ : FullComplexLattice V) (Γ : FullComplexLattice W)
-    (Η : FullComplexLattice U) (f : V →+ W) (g : W →+ U)
-    (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup)
-    (hg : ∀ w ∈ Γ.subgroup, g w ∈ Η.subgroup) :
-    map Λ Η (g.comp f) (by
-      intro v hv
-      exact hg (f v) (hf v hv)) =
-      (map Γ Η g hg).comp (map Λ Γ f hf) :=
-  (QuotientAddGroup.map_comp_map (I := U) Λ.subgroup Γ.subgroup Η.subgroup f g hf hg).symm
+variable (V : Type*) [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 /-- Work-packet target: give the torus quotient a complex charted-space structure. -/
 def quotientChartedSpaceStatement (Λ : FullComplexLattice V) : Prop :=

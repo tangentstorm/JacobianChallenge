@@ -1,6 +1,6 @@
 import Mathlib.Topology.Algebra.Group.Quotient
 import Mathlib.Topology.Defs.Induced
-import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.Defs
 
 /-!
 # Topological API for full complex lattice quotients

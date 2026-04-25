@@ -1,6 +1,6 @@
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Geometry.Manifold.Algebra.LieGroup
-import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.Defs
 
 open scoped ContDiff
 
@@ -153,24 +153,33 @@ def quotientChartedSpace : ChartedSpace V (quotient V Λ) := by
   -- 6. No existing `ChartedSpace`-on-quotient construction exists in Mathlib.
   --
   -- CONSTRUCTION OUTLINE (to be implemented in a proof packet):
-  --   a) Show `Λ.subgroup` is discrete (from `Λ.isClosed` + `FiniteDimensional`).
-  --   b) Pick `r > 0` such that `Metric.ball 0 r ∩ Λ.subgroup = {0}`.
+  --   a) Take discreteness as `Λ.isDiscrete` — the explicit
+  --      `DiscreteTopology Λ.subgroup` field of `FullComplexLattice`.
+  --      Do NOT try to derive discreteness from `isClosed` and
+  --      finite-dimensionality alone: closed cocompact subgroups of
+  --      finite-dim normed real spaces are not generally discrete
+  --      (counterexample `ℝ × ℤ ⊂ ℝ²`). See `DiscretenessRecon.lean`.
+  --   b) Pick `r > 0` such that `Metric.ball 0 r ∩ Λ.subgroup = {0}`,
+  --      i.e. an isolation radius. This is supplied by
+  --      `IsolationAtZero.exists_pos_le_norm_of_discreteTopology`.
   --   c) For each `v : V`, define `chart_v` as the `OpenPartialHomeomorph`
-  --      whose source is `mk '' Metric.ball v (r/2)` (open by
-  --      `QuotientAddGroup.isOpenMap_coe`), target is `Metric.ball v (r/2)`,
-  --      forward map is the local section (inverse of `mk` on this ball),
+  --      whose source is `mk '' Metric.ball v (r/4)` (open by
+  --      `MkImage.mk_image_isOpen`), target is `Metric.ball v (r/4)`,
+  --      forward map is the local section
+  --      (`LocalSection.localSection`, the inverse of `mk` on this ball),
   --      and inverse map is `mk`.
-  --   d) Injectivity of `mk` on `Metric.ball v (r/2)` follows from (b).
+  --   d) Injectivity of `mk` on `Metric.ball v (r/4)` follows from
+  --      `MkInjOnSmallBall.mk_injOn_ball_of_isolation` together with the
+  --      isolation radius from (b).
   --   e) `chartAt q` picks any lift `v` of `q` and uses `chart_v`.
   --   f) The atlas is the collection of all such `chart_v`.
   --
-  -- MISSING FROM MATHLIB (must be built):
-  --   - Discreteness of a closed additive subgroup in a finite-dimensional
-  --     normed space (need `Λ.isClosed → DiscreteTopology Λ.subgroup`).
-  --     Possible route: `AddSubgroup.discreteTopology_of_isCompact_closure`
-  --     or direct from `ZLattice.comap_discreteTopology`.
-  --   - Injectivity of `mk` on small balls (elementary, but not in Mathlib).
-  --   - Construction of the local section as a continuous inverse.
+  -- STATUS: parts (a)/(b)/(d) are implemented. The `ChartBall.lean`
+  -- packet bundles the chart-prep prerequisites (existence of a small ball
+  -- with `mk` InjOn and image open). The `LocalSection*.lean` siblings
+  -- supply the section, its right-inverse, and (in flight) its continuity.
+  -- What remains: assembling the `OpenPartialHomeomorph` itself and the
+  -- `ChartedSpace` instance. No further Mathlib gaps known.
 
 /-- The complex-torus quotient is an analytic manifold modeled on `V`.
 

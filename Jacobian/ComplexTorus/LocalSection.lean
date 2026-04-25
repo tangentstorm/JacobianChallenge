@@ -1,4 +1,4 @@
-import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.Defs
 import Jacobian.ComplexTorus.ChartBall
 import Mathlib.Logic.Function.Basic
 
@@ -35,13 +35,13 @@ noncomputable def localSection (Λ : FullComplexLattice V) (v : V) (r : ℝ) :
 /-- The local section is a right-inverse of `mk` on `mk '' Metric.ball v r`. -/
 lemma mk_localSection (Λ : FullComplexLattice V) (v : V) (r : ℝ)
     {q : quotient V Λ} (hq : q ∈ mk V Λ '' Metric.ball v r) :
-    mk V Λ (localSection Λ v r q) = q := by
-  sorry
+    mk V Λ (localSection Λ v r q) = q :=
+  Function.invFunOn_eq hq
 
 /-- The local section maps `mk '' Metric.ball v r` into `Metric.ball v r`. -/
 lemma localSection_mem (Λ : FullComplexLattice V) (v : V) (r : ℝ)
     {q : quotient V Λ} (hq : q ∈ mk V Λ '' Metric.ball v r) :
-    localSection Λ v r q ∈ Metric.ball v r := by
-  sorry
+    localSection Λ v r q ∈ Metric.ball v r :=
+  Function.invFunOn_mem hq
 
 end JacobianChallenge.ComplexTorus

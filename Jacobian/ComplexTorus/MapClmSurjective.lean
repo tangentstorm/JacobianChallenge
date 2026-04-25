@@ -1,5 +1,5 @@
 import Mathlib.Topology.Algebra.Group.Quotient
-import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.Defs
 import Jacobian.ComplexTorus.OfClm
 import Jacobian.ComplexTorus.Surjective
 
