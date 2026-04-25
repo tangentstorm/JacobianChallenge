@@ -1,5 +1,6 @@
 import Mathlib.Algebra.Module.ZLattice.Basic
 import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.ZLatticeFundDom
 
 /-!
 # Reconnaissance: bridging `FullComplexLattice` and `ZLattice.IsZLattice`
@@ -98,13 +99,9 @@ noncomputable def fullComplexLatticeOfZLattice
     haveI := ZLattice.module_finite ℝ L
     exact (ZSpan.fundamentalDomain_isBounded _).isCompact_closure
   fundamentalDomain_covers := by
-    -- Pending the packaging helper
-    --   `ZLattice.exists_sub_mem_closure_fundamentalDomain`
-    -- documented in the file-level summary above. Sketch:
-    --   `ZSpan.exist_unique_vadd_mem_fundamentalDomain` gives the
-    --   covering property in `vadd` form; rewrite as subtraction,
-    --   transport membership via `Module.Basis.ofZLatticeBasis_span`,
-    --   weaken `∈ fundamentalDomain` to `∈ closure fundamentalDomain`.
-    sorry
+    haveI : FiniteDimensional ℝ V := Module.Finite.trans (R := ℝ) (A := ℂ) (M := V)
+    haveI : ProperSpace V := FiniteDimensional.proper_real V
+    intro v
+    exact exists_sub_mem_closure_fundamentalDomain L v
 
 end JacobianChallenge.ComplexTorus

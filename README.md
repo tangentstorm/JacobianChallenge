@@ -21,15 +21,15 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 11:41 EDT
+Last tick: 2026-04-25 11:45 EDT
 
 ```text
 Layer                     Bar                    %    Note
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
-Complex torus quotient    ███████████████████░   95%  topology/lattice layer closed
-Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Complex torus quotient    ████████████████████  100%  ZLattice bridge sorry-free
+Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending discreteness packaging
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -39,32 +39,37 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5
-  5c13793d  exists_sub_mem_closure_fund…  ZLatticeFundDom.lean   IN_PROGRESS
-Completed this tick: none
-Integrated this tick: none
+Active jobs (ours): 0/5
+Completed this tick: 5c13793d (ZLatticeFundDom)
+Integrated this tick: 5c13793d — packaging helper landed cleanly
+                      and immediately wired into ZLatticeRecon to
+                      drop the 5th-field sorry. The
+                      ZLattice→FullComplexLattice bridge is now
+                      sorry-free.
 Failed/split this tick: none
-Holding queue at 1/5 deliberately while the load-bearing
-packaging helper lands; speculative packets ahead of it
-risk wasted work or scope conflicts.
+Queue refill planned this tick (separate commit): isolation-at-zero
++ small-ball injectivity + discreteness reconnaissance (the user
+flagged that closed cocompact ⇏ discrete in general, so the
+manifold layer needs a careful packaging step before chart packets).
 ```
 
 ```text
 Current build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Challenge       pass    lake build Jacobian.Challenge
-Statement bank  pass    lake build Jacobian.WorkPackets.StatementBank
-ComplexTorus    pass*   lake build Jacobian.ComplexTorus
-                        (* expected sorry warnings; one per packet)
+Challenge        pass    lake build Jacobian.Challenge
+Statement bank   pass    lake build Jacobian.WorkPackets.StatementBank
+ZLatticeFundDom  pass    lake build Jacobian.ComplexTorus.ZLatticeFundDom
+ZLatticeRecon    pass    lake build Jacobian.ComplexTorus.ZLatticeRecon (no sorry)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Topological-quotient layer is essentially closed. Refactor
-   `FullComplexLattice` to drop `quotient_t2`/`quotient_compact`
-   fields in favor of derived instances.
-2. Sketch the manifold layer: charted-space structure on V ⧸ Λ.
-3. Bridge to `ZLattice.IsZLattice` if Mathlib's predicate is
-   compatible.
+1. Decide the FullComplexLattice discreteness packaging
+   (likely add a `DiscreteTopology subgroup` field; closed
+   cocompact alone is insufficient — `ℝ × ℤ ⊂ ℝ²`).
+2. Submit IsolationAtZero + MkInjOnSmallBall + DiscretenessRecon
+   packets to feed manifold-layer chart construction.
+3. After (1) lands, carve the first chart packet (small-ball
+   open embedding) per ManifoldRecon outline.
 ```

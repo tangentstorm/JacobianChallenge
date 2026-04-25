@@ -38,6 +38,19 @@ lemma exists_sub_mem_closure_fundamentalDomain
       v - g ∈
         closure (ZSpan.fundamentalDomain
           ((Free.chooseBasis ℤ L).ofZLatticeBasis ℝ L)) := by
-  sorry
+  set bR := (Free.chooseBasis ℤ L).ofZLatticeBasis ℝ L
+  obtain ⟨w, hw, _⟩ := ZSpan.exist_unique_vadd_mem_fundamentalDomain bR v
+  refine ⟨-(w : E), ?_, ?_⟩
+  · have hmem : (w : E) ∈ (L : Set E) := by
+      have h := w.2
+      change (w : E) ∈ (span ℤ (Set.range bR) : Set E) at h
+      rwa [show (span ℤ (Set.range bR) : Set E) = (L : Set E) from
+        congr_arg _ (Basis.ofZLatticeBasis_span ℝ L (Free.chooseBasis ℤ L))] at h
+    exact L.toAddSubgroup.neg_mem hmem
+  · apply subset_closure
+    show v - -(w : E) ∈ ZSpan.fundamentalDomain bR
+    have : v - -(w : E) = (w : E) + v := by abel
+    rw [this, show (w : E) + v = w +ᵥ v from rfl]
+    exact hw
 
 end JacobianChallenge.ComplexTorus

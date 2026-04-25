@@ -12,27 +12,32 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 11:41 EDT)
+## Live Status (2026-04-25 11:45 EDT)
 
-- Active jobs (ours): 1/5
-  | ID         | Target file                                  | Status      |
-  | ---------- | -------------------------------------------- | ----------- |
-  | 5c13793d   | `Jacobian/ComplexTorus/ZLatticeFundDom.lean` | IN_PROGRESS |
-- Retrieved this tick: none (5c13793d still in flight at ~6%).
-- Integrated this tick: none.
-- Submitted this tick: none. Holding the queue at 1/5 deliberately —
-  the in-flight piece is the load-bearing packaging helper that turns
-  `fullComplexLatticeOfZLattice` sorry-free; speculative packets ahead
-  of that landing risk wasted work or scope conflicts. Manifold-layer
-  packets remain blocked until isolation-at-zero is properly packaged
-  (closed cocompact ⇏ discrete in general; counterexample
-  `ℝ × ℤ ⊂ ℝ²`).
-- Notes carried forward from 11:30:
-  - Topological/algebraic quotient layer ~95% complete.
-  - `FullComplexLattice` refactor (drop `quotient_t2` and
-    `quotient_compact`; derive both from honest data) committed.
-  - Aristotle's `bbdcb3f4` (manifold recon) and `a68d37f4` (ZLattice
-    recon) results integrated; verdicts in `plan.md` Phase 1.5/1.5b.
+- Active jobs (ours): 0/5
+- Retrieved this tick: 5c13793d (ZLatticeFundDom) — COMPLETE.
+- Integrated this tick: 5c13793d — packaging helper
+  `exists_sub_mem_closure_fundamentalDomain` landed cleanly with a
+  proof that uses `ZSpan.exist_unique_vadd_mem_fundamentalDomain` +
+  `Basis.ofZLatticeBasis_span` + `subset_closure` + `abel`. Wired
+  immediately into `ZLatticeRecon.fullComplexLatticeOfZLattice` to
+  drop the 5th-field sorry. The ZLattice→FullComplexLattice bridge
+  is now sorry-free. Build green.
+- Submitted this tick: none yet (queue refill is a separate commit).
+- Standing trap (do NOT submit a packet for it): closed cocompact
+  AddSubgroup of a finite-dim normed space is **NOT** generally
+  discrete (`ℝ × ℤ ⊂ ℝ²`). The manifold layer needs a deliberate
+  discreteness packaging step before chart-construction packets.
+  Probable Claude-owned move next: add a `DiscreteTopology subgroup`
+  field to `FullComplexLattice`. The bridge already provides this
+  through `IsZLattice ℝ L`, so the field is "for free" on the
+  existing source of lattices.
+- Planned refill (this tick or next):
+  | Target file                                       | Kind        |
+  | ------------------------------------------------- | ----------- |
+  | `Jacobian/ComplexTorus/IsolationAtZero.lean`      | proof       |
+  | `Jacobian/ComplexTorus/MkInjOnSmallBall.lean`     | proof       |
+  | `Jacobian/ComplexTorus/DiscretenessRecon.lean`    | recon       |
 
 ## General Job Template
 
