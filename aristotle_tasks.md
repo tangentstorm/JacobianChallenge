@@ -12,30 +12,32 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 12:30 EDT)
+## Live Status (2026-04-25 13:05 EDT)
 
-- Active jobs (ours): 0/5
-- Retrieved earlier this tick: 8d77f7d8 (IsolationAtZero) — COMPLETE.
-- Integrated earlier this tick: 8d77f7d8 — clean proof; build green.
-- Claude-owned this tick (separate commit): added
-  `isDiscrete : DiscreteTopology subgroup` field to
-  `FullComplexLattice` per option (a) of the c5beb23a recon. Wired
-  into `ZLatticeRecon.fullComplexLatticeOfZLattice` via the existing
-  `discreteTopology_toAddSubgroup` bridge — one-line supply. The
-  `Periods.periodFullComplexLattice` placeholder gets a new `sorry`
-  for `isDiscrete`, consistent with its other `sorry` fields.
-  Whole umbrella `lake build Jacobian.ComplexTorus` builds clean
-  (8063 jobs, only pre-existing unused-section-variable warnings).
-- Submitted this tick: none. Holding at 0/5 deliberately to let the
-  refactor settle before submitting the first chart packet (which
-  will directly consume `Λ.isDiscrete`).
-- Planned next packet: small-ball open embedding for chart
-  construction. All three primitives now exist:
-  - `IsolationAtZero.exists_pos_le_norm_of_discreteTopology`
-  - `MkInjOnSmallBall.mk_injOn_ball_of_isolation`
-  - `FullComplexLattice.isDiscrete` (the new field)
-  Plus `QuotientAddGroup.isOpenMap_coe` + `.continuous_mk` from
-  Mathlib give the open-map and continuity legs.
+- Active jobs (ours): 1/5
+  | ID         | Target file                                  | Kind  | Status |
+  | ---------- | -------------------------------------------- | ----- | ------ |
+  | 21cc9828   | `Jacobian/ComplexTorus/ChartBall.lean`       | proof | QUEUED |
+- Retrieved this tick: none.
+- Integrated this tick: none.
+- Submitted this tick: 21cc9828 — first chart-layer packet.
+  - Statement: `exists_chart_ball Λ v` — for any
+    `FullComplexLattice Λ` over a complex normed space and any base
+    point `v`, there is `r > 0` with `mk` InjOn `Metric.ball v r`
+    and `mk '' Metric.ball v r` open in the quotient.
+  - Proof recipe is pure plumbing of four existing primitives:
+    - `IsolationAtZero.exists_pos_le_norm_of_discreteTopology` for δ
+    - Pick `r := δ / 4`
+    - `MkInjOnSmallBall.mk_injOn_ball_of_isolation` for InjOn
+    - `MkImage.mk_image_isOpen` for the image-is-open leg
+  - The new `Λ.isDiscrete` field (instance) supplies the
+    `DiscreteTopology` premise to step 1 by class resolution.
+- Holding at 1/5 deliberately. The OpenPartialHomeomorph
+  construction packet is queued mentally for after this lands —
+  building the partial homeomorph from `exists_chart_ball`'s
+  output is a substantive next step worth doing one at a time.
+- Quotient manifold layer bumped from 0% → 10%: primitives and
+  the discreteness field are in; chart-prep packet is in flight.
 
 ## General Job Template
 
