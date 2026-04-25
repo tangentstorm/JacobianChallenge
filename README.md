@@ -21,43 +21,49 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 00:39 EDT
+Last tick: 2026-04-25 00:50 EDT
 
 ```text
-Overall Jacobian infrastructure progress
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Project scaffolding       ████████████████████  100%  Lake project, root modules, work-packet files
-Mathlib inventory         ████████████████████  100%  pinned v4.28.0 audit recorded
-Complex torus quotient    █████░░░░░░░░░░░░░░░   25%  algebraic mk/map/map_id/map_comp done; ComplexTorus/Basic.lean carved with mk continuity/open-map lemmas
-Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  absent in Mathlib; future charted-space work
-Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  manifold form type absent
-Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  largest missing infrastructure
-Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  waits on periods
-Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░░░    0%  local analytic theory partly present
+Layer                     Bar                    %    Note
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Project scaffolding       ████████████████████  100%  done
+Mathlib inventory         ████████████████████  100%  v4.28.0 audit
+Complex torus quotient    █████░░░░░░░░░░░░░░░   25%  Basic + 4 packets
+Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░░░    0%  pending
 ```
 
 ```text
 Aristotle status
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5  (queue listed 10 unrelated FourColor jobs — none ours)
-Completed this tick: none owned by this project
-Integrated this tick: local discharges of mk_surjective/map/map_mk/map_id/map_comp in StatementBank
-                     plus new file Jacobian/ComplexTorus/Basic.lean (mk_continuous, mk_isOpenQuotientMap, mk_isOpenMap)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Active jobs (ours): 5/5
+  c97ef7ec  map_continuous           Basic.lean
+  6e60ff64  mk_zero/eq_iff/eq_zero   Mk.lean
+  4d2fa17c  map_zero/map_mk_add      MapMk.lean
+  21a882aa  map_surjective           Surjective.lean
+  e2c130cc  nhds_zero_eq             NhdsZero.lean
+Completed this tick: none
+Integrated this tick: none (all 5 still queued)
 Failed/split this tick: none
 ```
 
 ```text
 Current build status
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Challenge target          pass     lake build Jacobian.Challenge
-Statement bank            pass     lake build Jacobian.WorkPackets.StatementBank
-Current target            pass*    lake build Jacobian.ComplexTorus.Basic   (*one sorry: map_continuous)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Challenge       pass    lake build Jacobian.Challenge
+Statement bank  pass    lake build Jacobian.WorkPackets.StatementBank
+ComplexTorus.*  pass*   lake build Jacobian.ComplexTorus.{Basic,Mk,...}
+                        (* expected sorry warnings; one per packet)
 ```
 
 ```text
 Next tick priorities
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Submit a bounded Aristotle job for map_continuous in Jacobian/ComplexTorus/Basic.lean.
-2. Add 2–3 more bounded packets to the same file so we can run several Aristotle jobs in parallel.
-3. Keep the quotient manifold layer out of scope until the quotient-group/lattice topological API is settled.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Retrieve the 5 in-flight jobs; integrate clean patches.
+2. Refill the queue with the next bounded Queue B packets.
+3. Hold off on the quotient manifold layer until the easy
+   quotient-group/lattice API in Basic.lean is closed.
 ```
