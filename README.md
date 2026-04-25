@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 18:25 EDT
+Last tick: 2026-04-25 19:00 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -29,7 +29,7 @@ Layer                     Bar                    %    Note
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
 Complex torus quotient    ████████████████████  100%  ZLattice bridge sorry-free
-Quotient manifold layer   ██████████░░░░░░░░░░   50%  ChartedSpace instance
+Quotient manifold layer   ██████████████░░░░░░   70%  chart-transition smoothness done
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -40,16 +40,16 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 0/5
-Cancelled earlier this tick: 58789fac, f1d1e010 (proved locally).
-Integrated this tick: localSection_mk, continuousOn_localSection,
-                      `chartAtBall`, and the
-                      `ChartedSpace V (V ⧸ Λ.subgroup)` instance
-                      with `chartAtPoint` choosing reps via
-                      `Function.surjInv`.
-Failed/split this tick: none.
-Quotient manifold layer: now 50%. The complex torus is now a
-ChartedSpace modeled on V. Next: `IsManifold` (charts' transitions
-are translations, hence ω-smooth) and `LieAddGroup`.
+Recent commits this session: localSection_mk, continuousOn_localSection,
+                             chartAtBall, ChartedSpace instance, lint
+                             cleanup (Basic.lean + Defs.lean),
+                             TransitionSubMem, TransitionSubContinuous,
+                             TransitionLocallyTranslate,
+                             TransitionContDiffOn, IsManifold scaffold.
+Quotient manifold layer: ~70%. ChartedSpace done; the chart-transition
+                         analytic content (ContDiffOn ω on overlaps) is
+                         done. IsManifold staging file with one targeted
+                         `sorry` for the HasGroupoid wiring.
 ```
 
 ```text
