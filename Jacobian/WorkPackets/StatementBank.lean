@@ -120,10 +120,8 @@ replace these fields by established Mathlib predicates where possible.
 structure FullComplexLattice where
   subgroup : AddSubgroup V
   isClosed : IsClosed (subgroup : Set V)
-  quotient_t2 : T2Space (V ⧸ subgroup)
   quotient_compact : CompactSpace (V ⧸ subgroup)
 
-attribute [instance] FullComplexLattice.quotient_t2
 attribute [instance] FullComplexLattice.quotient_compact
 
 /-- The complex torus associated to a full lattice. -/
@@ -135,8 +133,11 @@ instance quotient_addCommGroup (Λ : FullComplexLattice V) : AddCommGroup (quoti
 instance quotient_topologicalSpace (Λ : FullComplexLattice V) : TopologicalSpace (quotient V Λ) :=
   inferInstanceAs (TopologicalSpace (V ⧸ Λ.subgroup))
 
-instance quotient_t2Space (Λ : FullComplexLattice V) : T2Space (quotient V Λ) :=
-  Λ.quotient_t2
+/-- The quotient is `T2`: derived from `isClosed` via Mathlib's
+    `QuotientGroup.instT1Space` plus the topological-group machinery. -/
+instance quotient_t2Space (Λ : FullComplexLattice V) : T2Space (quotient V Λ) := by
+  haveI : IsClosed (Λ.subgroup : Set V) := Λ.isClosed
+  exact inferInstance
 
 instance quotient_compactSpace (Λ : FullComplexLattice V) : CompactSpace (quotient V Λ) :=
   Λ.quotient_compact
@@ -265,8 +266,6 @@ noncomputable def periodFullComplexLattice :
     ComplexTorus.FullComplexLattice (HolomorphicOneFormDual X) where
   subgroup := periodSubgroup X
   isClosed := periodSubgroup_isClosed X
-  quotient_t2 := by
-    sorry
   quotient_compact := by
     sorry
 
