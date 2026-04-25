@@ -120,7 +120,14 @@ The structure carries the analytic content needed for the quotient
   closed-subgroup → T1 instance plus the topological-group upgrade);
 - `fundamentalDomain` together with `fundamentalDomain_isCompact` and
   `fundamentalDomain_covers` gives compactness on the quotient
-  (cocompact lattice ⇒ compact quotient).
+  (cocompact lattice ⇒ compact quotient);
+- `isDiscrete` is needed for the manifold-layer chart construction:
+  closed cocompact additive subgroups of finite-dim normed real spaces
+  are *not* discrete in general (counterexample `ℝ × ℤ ⊂ ℝ²`), so
+  discreteness has to be witnessed explicitly. Together with
+  `IsolationAtZero.exists_pos_le_norm_of_discreteTopology` and
+  `MkInjOnSmallBall.mk_injOn_ball_of_isolation` it gives the
+  small-ball injectivity property needed for chart construction.
 
 A more polished implementation could replace these fields with
 established Mathlib predicates such as `ZLattice.IsZLattice`; this
@@ -129,11 +136,16 @@ shape exposes the dependency surface concretely.
 structure FullComplexLattice where
   subgroup : AddSubgroup V
   isClosed : IsClosed (subgroup : Set V)
+  /-- The subgroup is discrete in the subspace topology — independent
+  of `isClosed`/cocompactness in general. -/
+  isDiscrete : DiscreteTopology subgroup
   /-- A subset of `V` whose `subgroup`-translates cover `V`. -/
   fundamentalDomain : Set V
   fundamentalDomain_isCompact : IsCompact fundamentalDomain
   fundamentalDomain_covers :
     ∀ v : V, ∃ g ∈ subgroup, v - g ∈ fundamentalDomain
+
+attribute [instance] FullComplexLattice.isDiscrete
 
 /-- The complex torus associated to a full lattice. -/
 abbrev quotient (Λ : FullComplexLattice V) : Type _ := V ⧸ Λ.subgroup
@@ -294,6 +306,8 @@ noncomputable def periodFullComplexLattice :
     ComplexTorus.FullComplexLattice (HolomorphicOneFormDual X) where
   subgroup := periodSubgroup X
   isClosed := periodSubgroup_isClosed X
+  isDiscrete := by
+    sorry
   fundamentalDomain := by
     sorry
   fundamentalDomain_isCompact := by
