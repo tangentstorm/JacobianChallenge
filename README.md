@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 19:25 EDT
+Last tick: 2026-04-25 19:33 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,25 +39,28 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5. Aristotle queue still wedged server-wide
-                    (same 5 unrelated jobs QUEUED 5h+).
+Active jobs (ours): 0/5. Aristotle queue still wedged (same 5
+                    unrelated jobs QUEUED 5h+).
 Integrated this tick: nothing from Aristotle.
 Local progress this tick: added
-                          `Jacobian/ComplexTorus/MkLocallyTranslate.lean`,
-                          a v₁-free generalization of
-                          `localSection_mk_locally_translate`.
-                          States: `y ↦ localSection Λ w r (mk y)`
-                          agrees with `y ↦ y + g` (for a fixed
-                          lattice `g`) on a neighborhood of every
-                          `x ∈ mk ⁻¹' (mk '' Metric.ball w r)`. This
-                          is the building block needed for the next
-                          three substantive lemmas: smoothness of
-                          `mk`, smoothness of `+`, and smoothness
-                          of `-`. Build green.
-Quotient manifold layer: 100%. LieAddGroup smoothness work begun —
-                         the local-translation building block for
-                         all three smoothness proofs (mk, +, -) is
-                         now in place.
+                          `Jacobian/ComplexTorus/ContDiffAtLocalSectionMk.lean`.
+                          Promotes the existing on-set
+                          `contDiffOn_localSection_mk` to a pointwise
+                          `ContDiffAt ℂ ω` claim at every `x ∈
+                          mk ⁻¹' (mk '' Metric.ball w r)`. The trick
+                          is to specialize `v₁ := x` so the
+                          intersection `Metric.ball x r ∩ <saturation>`
+                          becomes a neighborhood of `x` (both factors
+                          open and contain `x`); then
+                          `ContDiffOn.contDiffAt` finishes the job.
+                          ~12 lines, no automation. Build green.
+Quotient manifold layer: 100%. LieAddGroup smoothness work in
+                         progress — `mk_locally_translate` (last
+                         tick) and `contDiffAt_localSection_mk`
+                         (this tick) are now both in place. Next
+                         step: assemble `ContMDiff (mk V Λ)` via
+                         `contMDiffAt_iff_target_of_mem_source` plus
+                         the `ContDiffAt` lemma.
 ```
 
 ```text
@@ -69,20 +72,21 @@ ComplexTorus     pass    lake build Jacobian.ComplexTorus (with IsManifold)
 IsManifold       pass    lake build Jacobian.ComplexTorus.IsManifold (no sorry)
 Witness          pass    lake build Jacobian.ComplexTorus.Witness (no sorry)
 MkLocallyTranslate pass  lake build Jacobian.ComplexTorus.MkLocallyTranslate (no sorry)
+ContDiffAtLocalSectionMk pass lake build Jacobian.ComplexTorus.ContDiffAtLocalSectionMk (no sorry)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. `Jacobian/ComplexTorus/MkSmooth.lean`: prove `ContMDiff` of
-   `mk : V → V ⧸ Λ.subgroup` using the new `mk_locally_translate`
-   building block. The chart-coord version of `mk` is
-   `localSection_w ∘ mk`, which equals a translation locally; that
-   gives `ContDiffWithinAt` pointwise, hence `ContMDiff`.
-2. With `mk` smoothness in hand, attack `+` smoothness (likely via
-   `mk` lifting: `mk(x+y) = mk(x) + mk(y)` reduces quotient `+`
-   smoothness to `mk ∘ + : V × V → V/Λ` smoothness, which factors
-   as smooth `+` on `V` followed by smooth `mk`).
-3. Same pattern for `-` smoothness, then assemble the
-   `LieAddGroup` instance.
+1. `Jacobian/ComplexTorus/MkSmooth.lean`: assemble `ContMDiff (mk V Λ)`
+   from `contDiffAt_localSection_mk`. Plumbing: pointwise
+   `ContMDiffAt`, then `contMDiffAt_iff_target_of_mem_source` with
+   `y := mk x` (the chart at `mk x` contains `mk x` by
+   `mem_chartAtPoint_source`), then `contMDiffAt_iff_contDiffAt` on
+   the source side, then unfold `extChartAt` to expose the
+   `localSection_w ∘ mk` shape, then apply `contDiffAt_localSection_mk`.
+2. With `mk` smoothness, attack `+` smoothness via the lifting
+   `+ ∘ mk² = mk ∘ +`: smooth `+` on `V` followed by smooth `mk`.
+3. Same pattern for `-` smoothness; assemble the `LieAddGroup`
+   instance.
 ```
