@@ -19,13 +19,13 @@ variable {V W : Type*} [NormedAddCommGroup V] [NormedAddCommGroup W]
 /-- The induced quotient map commutes with negation. -/
 @[simp] lemma map_neg (f : V →+ W)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) (q : quotient V Λ) :
-    map Λ Γ f hf (-q) = -(map Λ Γ f hf q) := by
-  sorry
+    map Λ Γ f hf (-q) = -(map Λ Γ f hf q) :=
+  (map Λ Γ f hf).map_neg q
 
 /-- The induced quotient map commutes with subtraction. -/
 @[simp] lemma map_sub (f : V →+ W)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) (q p : quotient V Λ) :
-    map Λ Γ f hf (q - p) = map Λ Γ f hf q - map Λ Γ f hf p := by
-  sorry
+    map Λ Γ f hf (q - p) = map Λ Γ f hf q - map Λ Γ f hf p :=
+  (map Λ Γ f hf).map_sub q p
 
 end JacobianChallenge.ComplexTorus
