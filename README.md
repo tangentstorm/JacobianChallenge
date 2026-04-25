@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 11:24 EDT
+Last tick: 2026-04-25 11:30 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -40,12 +40,14 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 1/5
-  a68d37f4  ZLattice reconnaissance         ZLatticeRecon.lean      IN_PROGRESS 21%
-Completed this tick: bbdcb3f4 (ManifoldRecon.lean)
-Integrated this tick: bbdcb3f4 — substantive recon survey of the
-                      manifold-layer Mathlib API; findings folded into
-                      plan.md Phase 1.5 block
-Failed/split this tick: none
+  5c13793d  exists_sub_mem_closure_fund…  ZLatticeFundDom.lean    QUEUED
+Completed this tick: a68d37f4 (ZLatticeRecon, COMPLETE_WITH_ERRORS)
+Integrated this tick: a68d37f4 partial — 4/5 fields proved cleanly;
+                      ZLattice→FullComplexLattice bridge confirmed
+                      feasible. Submitted 5c13793d for the remaining
+                      packaging helper.
+Failed/split this tick: a68d37f4 5th field (grind failure on
+                       fundamental_covers) — split into 5c13793d
 ```
 
 ```text

@@ -176,7 +176,40 @@ Missing pieces flagged by Aristotle (need to be built):
 Once those small lemmas exist, the construction outline can be turned
 into a real proof packet.
 
-In flight: `a68d37f4` (ZLatticeRecon).
+### Phase 1.5b — ZLattice bridge feasibility (recon results, 2026-04-25)
+
+Aristotle's `ZLatticeRecon.lean` packet (`a68d37f4`, returned
+COMPLETE_WITH_ERRORS) found that bridging `IsZLattice ℝ L` to
+`FullComplexLattice V` is **feasible**:
+
+- `IsZLattice K L` is parametric in `K`. Our `NormedSpace ℂ V` upgrades
+  to `NormedSpace ℝ V` via the scalar tower, and `IsZLattice ℝ L` works
+  on the resulting space.
+- `FiniteDimensional ℝ V` follows from `FiniteDimensional ℂ V` via
+  `Module.Finite.trans`, and `ProperSpace V` from
+  `FiniteDimensional.proper_real`.
+
+Of the five `FullComplexLattice` fields:
+
+| Field | Status |
+|-------|--------|
+| `subgroup` | trivial (`L.toAddSubgroup`) |
+| `isClosed` | proved (via a small `discreteTopology_toAddSubgroup` bridge) |
+| `fundamentalDomain` | proved (`closure (ZSpan.fundamentalDomain bR)`) |
+| `fundamentalDomain_isCompact` | proved (`fundamentalDomain_isBounded.isCompact_closure`) |
+| `fundamentalDomain_covers` | sketched, sorry pending packaging helper |
+
+The remaining gap is a small bounded packaging lemma
+`ZLattice.exists_sub_mem_closure_fundamentalDomain`: convert
+`ZSpan.exist_unique_vadd_mem_fundamentalDomain` from `vadd` form to
+subtraction form, transport membership via
+`Module.Basis.ofZLatticeBasis_span`, and weaken `∈ fundamentalDomain`
+to `∈ closure fundamentalDomain`. Aristotle's first attempt used
+`grind` and failed; replaced with a clean `sorry` carrying the proof
+sketch.
+
+This is the natural next bounded packet at this layer: prove that
+single helper, then `fullComplexLatticeOfZLattice` is sorry-free.
 
 ## Phase 2: Compact Riemann Surfaces and Holomorphic Forms
 
