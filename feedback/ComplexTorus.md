@@ -103,9 +103,33 @@ At minimum, the public torus API should be parameterized over the existing
 Mathlib lattice notion and only expose `FullComplexLattice` as a project-local
 adapter, not as the central mathlib concept.
 
+### 5. `StatementBank` is still acting as an implementation dependency
+
+`StatementBank.lean:4-12` says it is not part of the challenge target and is a
+bank of statements intended to be split into Aristotle-sized work packets.
+That means the dependency direction should be:
+
+- unfinished queue statements live in `StatementBank`;
+- completed work moves into the relevant implementation directory;
+- `StatementBank` may import completed files to state later work items;
+- stable implementation files should not import `StatementBank`.
+
+The current `ComplexTorus` files still import `Jacobian.WorkPackets.StatementBank`
+for core declarations such as `FullComplexLattice`, `quotient`, `mk`, and
+`map`. That is backwards if the lower complex-torus layer is considered done.
+Those core declarations should graduate into something like
+`Jacobian/ComplexTorus/Defs.lean` or `Jacobian/ComplexTorus/Basic.lean`, and the
+work-packet bank should either remove the completed declarations or reduce them
+to comments / remaining target statements.
+
+Concretely, `StatementBank.lean:136-203` still owns the central complex-torus
+definition and quotient map API. If Phase 1 lower-layer work is done, that
+block should move under `Jacobian/ComplexTorus/`. The bank should keep only the
+not-yet-done targets, e.g. charted-space/manifold/Lie-group statements.
+
 ## API And Generality Issues
 
-### 5. Many lemmas are specialized to complex normed spaces without using that
+### 6. Many lemmas are specialized to complex normed spaces without using that
 structure
 
 Examples:
@@ -125,7 +149,7 @@ complex-torus wrappers can exist downstream, but the contribution-worthy
 lemmas should live closer to `QuotientAddGroup` and use `AddSubgroup G` rather
 than `FullComplexLattice V`.
 
-### 6. Wrapper lemmas duplicate existing Mathlib names
+### 7. Wrapper lemmas duplicate existing Mathlib names
 
 Several declarations are just local aliases for existing facts:
 
@@ -140,23 +164,20 @@ good mathlib contribution strategy. For mathlib, either use the existing names
 directly or contribute genuinely missing generic lemmas with names that fit the
 existing namespace.
 
-### 7. File granularity is too fine for mathlib
-
-The one-lemma-per-file layout is convenient for work packets, but it creates a
-large import surface and makes the module harder to browse. For mathlib, I
-would consolidate:
-
-- `Mk`, `MkBundled`, `MkHomKer`, `MkImage`, `MkPreimage`, `MkRange`,
-  `Nhds`, and `NhdsZero` into a quotient projection API file.
-- `MapMk`, `MapNegSub`, `MapInjective`, `Surjective`, `OfClm`,
-  `MapClmInjective`, `MapClmSurjective`, and `MapZero` into a quotient map API
-  file.
-- `IsolationAtZero`, `MkInjOnSmallBall`, `ChartBall`, and `LocalSection` into
-  a future local-chart preparation file.
-
 ## Mathematical And Design Notes
 
-### 8. The local section API is too weak for charts
+### 8. Small files are fine during the work-queue phase
+
+The current one-lemma-or-small-cluster-per-file layout is consistent with
+`plan.md`'s Aristotle workflow: many small jobs with disjoint write scopes are
+easier to submit, review, and integrate. I would keep that structure while the
+work is still being formalized.
+
+The eventual mathlib cleanup can be a final packaging step. The more urgent
+issue is not file granularity; it is making sure completed files no longer
+depend on `StatementBank`.
+
+### 9. The local section API is too weak for charts
 
 `LocalSection.lean:31-45` defines a global function
 `localSection : quotient V Λ → V` by `Function.invFunOn`. The two lemmas prove
@@ -176,18 +197,20 @@ arbitrary values outside the image. That makes later chart proofs noisier and
 less canonical. Consider building a `PartialEquiv` or
 `OpenPartialHomeomorph` directly from the small-ball injectivity package.
 
-### 9. Compactness is proved twice
+### 10. Compactness is proved twice
 
-`StatementBank.lean:169-183` contains an inline compactness instance using the
-fundamental domain, and `Compact.lean:24-37` proves the reusable lemma
-`compactSpace_quotient_of_cover`.
+The plan says compactness has been moved toward `Compact.lean`, but this is
+exactly the kind of declaration that should not remain duplicated in
+`StatementBank`. `Compact.lean:24-37` proves the reusable lemma
+`compactSpace_quotient_of_cover`; any instance should call that lemma from the
+implementation side, not keep a separate proof in the bank.
 
 The duplicated proof logic should be collapsed. The instance should call the
 lemma, or the lemma should be the only exported statement and instances should
 be introduced only when they are not likely to cause typeclass search
 surprises.
 
-### 10. Global instances deserve scrutiny
+### 11. Global instances deserve scrutiny
 
 The code declares quotient instances for compactness, connectedness,
 path-connectedness, first-countability, second-countability, and T2. Some of
@@ -197,11 +220,11 @@ these are harmless, but global instances in mathlib need a higher bar:
 - Will the instance create diamonds with existing quotient instances?
 - Is it better as a lemma than as an instance?
 
-`quotient_compactSpace` in `StatementBank.lean:169-183` is especially worth
-thinking about. Compactness depends on the selected lattice data and
-fundamental domain witness, not just on a generic quotient construction.
+`CompactSpace (quotient V Λ)` is especially worth thinking about. Compactness
+depends on the selected lattice data and fundamental-domain witness, not just
+on a generic quotient construction.
 
-### 11. Naming should follow existing namespace conventions
+### 12. Naming should follow existing namespace conventions
 
 Names like `mk_continuous`, `mk_image_isOpen`, and
 `compactSpace_quotient_of_cover` are understandable locally, but mathlib tends
@@ -215,7 +238,7 @@ Before a mathlib PR, choose whether the target namespace is
 `QuotientAddGroup`, `AddSubgroup`, `Submodule`, `ZLattice`, or a new
 `ComplexTorus` namespace, and name the lemmas accordingly.
 
-### 12. Several proofs rely on brittle definitional equalities
+### 13. Several proofs rely on brittle definitional equalities
 
 Many proofs are intentionally short and use `rfl` or direct rewriting through
 the project-local abbreviations. That is fine for staging, but mathlib code is
@@ -243,16 +266,18 @@ abbreviations change.
 
 ## Suggested Submission Path
 
-1. Move `ManifoldRecon`, `DiscretenessRecon`, and other reconnaissance content
+1. Move completed complex-torus declarations out of `StatementBank` and into
+   `Jacobian/ComplexTorus/`, then make `StatementBank` depend on the completed
+   API rather than the other way around.
+2. Move `ManifoldRecon`, `DiscretenessRecon`, and other reconnaissance content
    out of the re-exported Lean API.
-2. Generalize the quotient lemmas away from `FullComplexLattice` where the
+3. Generalize the quotient lemmas away from `FullComplexLattice` where the
    complex/normed assumptions are unused.
-3. Decide whether the real mathlib object is a new `ComplexTorus` definition
+4. Decide whether the real mathlib object is a new `ComplexTorus` definition
    or a theorem family about quotients by `ZLattice`s.
-4. Fix the second-countability assumptions.
-5. Replace the local-section global function with a partial equivalence or
+5. Fix the second-countability assumptions.
+6. Replace the local-section global function with a partial equivalence or
    open partial homeomorphism construction.
-6. Only then attempt the charted-space/manifold layer; it should consume the
+7. Only then attempt the charted-space/manifold layer; it should consume the
    explicit discreteness field or `ZLattice` discreteness, not try to derive
    discreteness from closedness.
-
