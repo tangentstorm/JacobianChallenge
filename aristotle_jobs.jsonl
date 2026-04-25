@@ -1,0 +1,1 @@
+{"_comment": "Project-local Aristotle job log. Each subsequent line is a JSON object: {id, status, queue, target_file, prompt_summary, submitted, integrated, notes}. Update with TaskUpdate-style entries when submitting/retrieving Aristotle jobs. Use this to distinguish JacobianChallenge jobs from other projects sharing the same Aristotle account."}

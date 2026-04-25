@@ -7,6 +7,22 @@ Claude should treat each queue below as a source of small Aristotle jobs. Before
 submitting, Claude should copy the relevant declarations into a narrower target
 file and ask Aristotle to work only on that file.
 
+The Aristotle account is shared with other projects; job IDs from
+`aristotle list` may belong to FourColor or other unrelated work. Record every
+JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
+identify our jobs without inspecting tarballs.
+
+## Live Status (2026-04-25)
+
+- Active jobs (ours): 0/5
+- Completed/integrated this tick: discharged `mk_surjective`, `map`, `map_mk`,
+  `map_id`, `map_comp` in `Jacobian/WorkPackets/StatementBank.lean` directly
+  from Mathlib's `QuotientAddGroup` API (no Aristotle round-trip).
+- Next planned submissions (Queue B):
+  - Carve `Jacobian/ComplexTorus/Basic.lean` from the statement bank.
+  - Submit lattice-preservation lemmas and `map` continuity once the new file
+    exists in tree.
+
 ## General Job Template
 
 ```text

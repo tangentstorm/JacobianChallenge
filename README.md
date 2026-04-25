@@ -21,13 +21,13 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 initial setup ET
+Last tick: 2026-04-25 timer ET
 
 Overall Jacobian infrastructure progress
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Project scaffolding       ████████████████████  100%  Lake project, root modules, work-packet files
 Mathlib inventory         ████████████████████  100%  pinned v4.28.0 audit recorded
-Complex torus quotient    ██░░░░░░░░░░░░░░░░░░   10%  statements drafted; quotient/lattice packets next
+Complex torus quotient    ████░░░░░░░░░░░░░░░░   20%  quotient-group `mk`/`map`/`map_id`/`map_comp` discharged via `QuotientAddGroup`
 Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  absent in Mathlib; future charted-space work
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  manifold form type absent
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  largest missing infrastructure
@@ -36,19 +36,19 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs: 0/5
-Completed this tick: none
-Integrated this tick: none
+Active jobs: 0/5  (queue listed 10 unrelated FourColor jobs — none ours)
+Completed this tick: none owned by this project
+Integrated this tick: local discharges of `mk_surjective`, `map`, `map_mk`, `map_id`, `map_comp` in StatementBank
 Failed/split this tick: none
 
 Current build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Challenge target          pass  `lake build Jacobian.Challenge`
-Statement bank            pass  `lake build Jacobian.WorkPackets.StatementBank`
+Challenge target          pass     `lake build Jacobian.Challenge`
+Statement bank            pass     `lake build Jacobian.WorkPackets.StatementBank`
 Current target            not run  no active implementation target yet
 
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Create the first narrow `Jacobian/ComplexTorus` target file.
-2. Submit quotient-map and lattice-preservation tasks to Aristotle.
-3. Keep the quotient manifold layer out of scope until quotient/lattice API is stable.
+1. Carve `Jacobian/ComplexTorus/Basic.lean` out of the statement bank as the first narrow target file.
+2. Submit Aristotle jobs against that file (lattice-preservation lemmas, `map` continuity, `mk` open map) and record IDs in `aristotle_jobs.jsonl`.
+3. Keep the quotient manifold layer out of scope until quotient-group/lattice API is stable.
