@@ -33,6 +33,7 @@ import Jacobian.ComplexTorus.ZLatticeFundDom
 import Jacobian.ComplexTorus.IsolationAtZero
 import Jacobian.ComplexTorus.MkInjOnSmallBall
 import Jacobian.ComplexTorus.DiscretenessRecon
+import Jacobian.ComplexTorus.ChartBall
 
 /-!
 # Complex torus infrastructure

@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 12:30 EDT
+Last tick: 2026-04-25 13:05 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -29,7 +29,7 @@ Layer                     Bar                    %    Note
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
 Complex torus quotient    ████████████████████  100%  ZLattice bridge sorry-free
-Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending discreteness packaging
+Quotient manifold layer   ██░░░░░░░░░░░░░░░░░░   10%  primitives + isDiscrete in
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -39,20 +39,19 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5
-Completed earlier this tick: 8d77f7d8 (IsolationAtZero)
-Integrated earlier this tick: 8d77f7d8 — clean proof using
-                              `isOpen_inter_eq_singleton_of_mem_discrete`.
-Claude-owned this tick (separate commit): added
-                              `isDiscrete : DiscreteTopology subgroup`
-                              field to `FullComplexLattice` per the
-                              c5beb23a recon recommendation. Wired
-                              into the ZLattice bridge via the
-                              existing `discreteTopology_toAddSubgroup`
-                              helper. Periods placeholder gets a
-                              new `sorry` (consistent with the rest
-                              of that placeholder).
+Active jobs (ours): 1/5
+  21cc9828  ChartBall.lean             proof  QUEUED
+Completed this tick: none.
+Integrated this tick: none.
 Failed/split this tick: none.
+Submitted this tick: 21cc9828 — first chart-layer packet.
+                     Combines IsolationAtZero + MkInjOnSmallBall +
+                     MkImage + Λ.isDiscrete to prove
+                     `exists_chart_ball Λ v`: every base point
+                     admits a small ball with `mk` InjOn and
+                     image open. Pure plumbing of existing
+                     primitives; recipe spelled out in the
+                     submission prompt.
 ```
 
 ```text
