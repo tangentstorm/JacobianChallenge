@@ -12,28 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 01:17 EDT)
+## Live Status (2026-04-25 01:33 EDT)
 
 - Active jobs (ours): 5/5
-  | ID         | Target file                                   | Lemma(s)                                   | Status      |
-  | ---------- | --------------------------------------------- | ------------------------------------------ | ----------- |
-  | 07e77aac   | `Jacobian/ComplexTorus/IsClosedSubgroup.lean` | `t2Space_quotient_of_isClosed`             | IN_PROGRESS |
-  | 20ebfd1c   | `Jacobian/ComplexTorus/MapInjective.lean`     | `map_injective_of_preimage_subset`         | QUEUED      |
-  | 518be471   | `Jacobian/ComplexTorus/Neg.lean`              | `mk_neg` / `continuous_neg`                | QUEUED      |
-  | 650e16fe   | `Jacobian/ComplexTorus/Add.lean`              | `mk_add` / `continuous_add`                | QUEUED      |
-  | fb51396b   | `Jacobian/ComplexTorus/Smul.lean`             | `mk_zsmul` / `mk_nsmul`                    | QUEUED      |
+  | ID         | Target file                               | Lemma(s)                            | Status      |
+  | ---------- | ----------------------------------------- | ----------------------------------- | ----------- |
+  | 20ebfd1c   | `Jacobian/ComplexTorus/MapInjective.lean` | `map_injective_of_preimage_subset`  | IN_PROGRESS |
+  | 518be471   | `Jacobian/ComplexTorus/Neg.lean`          | `mk_neg` / `continuous_neg`         | QUEUED      |
+  | 650e16fe   | `Jacobian/ComplexTorus/Add.lean`          | `mk_add` / `continuous_add`         | QUEUED      |
+  | fb51396b   | `Jacobian/ComplexTorus/Smul.lean`         | `mk_zsmul` / `mk_nsmul`             | QUEUED      |
+  | 7250ad71   | `Jacobian/ComplexTorus/OfClm.lean`        | `mapClm_continuous`                 | QUEUED      |
 - Integrated this tick:
-  - `6e60ff64` — `mk_zero`, `mk_eq_iff`, `mk_eq_zero_iff` (`Mk.lean`).
-  - `4d2fa17c` — `map_zero`, `map_mk_add` (`MapMk.lean`).
-  - `21a882aa` — `map_surjective` (`Surjective.lean`).
-  - `e2c130cc` — `nhds_zero_eq` (`NhdsZero.lean`).
-- Done previously: `c97ef7ec` (`map_continuous` in `Basic.lean`);
-  algebraic `mk` / `map` / `map_id` / `map_comp` in `StatementBank.lean`;
-  `mk_continuous`, `mk_isOpenQuotientMap`, `mk_isOpenMap` directly in
-  `Basic.lean`.
-- Next planned submissions (after retrieval): the closed-subgroup →
-  compactness path once T2 lands; lattice-image preservation under
-  continuous maps; the bridge to a real `ZLattice` predicate.
+  - `07e77aac` — `t2Space_quotient_of_isClosed` (`IsClosedSubgroup.lean`).
+    Aristotle's proof was correct but the hypothesis was unused because
+    `FullComplexLattice` already carries `quotient_t2` as an instance.
+    Renamed to `_h` and added a note for the future field-removal refactor.
+- Done previously: `c97ef7ec`, `6e60ff64`, `4d2fa17c`, `21a882aa`,
+  `e2c130cc`; algebraic `mk` / `map` / `map_id` / `map_comp` in
+  `StatementBank.lean`; `mk_continuous`, `mk_isOpenQuotientMap`,
+  `mk_isOpenMap` directly in `Basic.lean`.
+- Next planned submissions: compactness from cocompact lattice;
+  lattice-image preservation under continuous maps; bridge to
+  `ZLattice` predicate.
 
 ## General Job Template
 

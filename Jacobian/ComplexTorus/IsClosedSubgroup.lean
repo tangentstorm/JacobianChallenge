@@ -21,10 +21,16 @@ namespace JacobianChallenge.ComplexTorus
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
   (Λ : FullComplexLattice V)
 
-/-- A closed lattice gives a `T2` quotient. -/
+/-- A closed lattice gives a `T2` quotient.
+
+NOTE: this lemma is currently *degenerate* — `FullComplexLattice` already
+carries a `quotient_t2 : T2Space (V ⧸ subgroup)` field that is registered
+as an instance, so `inferInstance` succeeds without using the `_h`
+hypothesis. The lemma will become non-trivial once we drop that field
+from `FullComplexLattice` and derive it from `isClosed` instead. -/
 lemma t2Space_quotient_of_isClosed
-    (h : IsClosed (Λ.subgroup : Set V)) :
+    (_h : IsClosed (Λ.subgroup : Set V)) :
     T2Space (quotient V Λ) := by
-  sorry
+  exact inferInstance
 
 end JacobianChallenge.ComplexTorus
