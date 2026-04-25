@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 07:44 EDT
+Last tick: 2026-04-25 07:47 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -40,7 +40,7 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 1/5
-  3679ff5a  compactSpace_quotient_of_…   Compact.lean         QUEUED (new)
+  3679ff5a  compactSpace_quotient_of_…   Compact.lean         IN_PROGRESS 2%
 Completed this tick: 5 (5a37a9c3, 83af50d3, f2a1782c, 88c7c85c, 5573ebd7)
 Integrated this tick: all 5 — Connected/Nhds/Dense/FirstCountable/
                       PathConnected. Rejected Aristotle's
