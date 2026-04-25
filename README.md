@@ -21,14 +21,14 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 00:58 EDT
+Last tick: 2026-04-25 01:05 EDT
 
 ```text
 Layer                     Bar                    %    Note
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
-Complex torus quotient    █████░░░░░░░░░░░░░░░   25%  Basic + 4 packets
+Complex torus quotient    ██████░░░░░░░░░░░░░░   30%  Basic done; 5 packets
 Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -40,15 +40,14 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5
-  c97ef7ec  map_continuous           Basic.lean      IN_PROGRESS 4%
-  6e60ff64  mk_zero/eq_iff/eq_zero   Mk.lean         QUEUED
-  4d2fa17c  map_zero/map_mk_add      MapMk.lean      QUEUED
-  21a882aa  map_surjective           Surjective.lean QUEUED
-  e2c130cc  nhds_zero_eq             NhdsZero.lean   QUEUED
-Completed this tick: none
-Integrated this tick: none (all 5 still in flight)
+  6e60ff64  mk_zero/eq_iff/eq_zero        Mk.lean              IN_PROGRESS
+  4d2fa17c  map_zero/map_mk_add           MapMk.lean           QUEUED
+  21a882aa  map_surjective                Surjective.lean      QUEUED
+  e2c130cc  nhds_zero_eq                  NhdsZero.lean        QUEUED
+  07e77aac  t2Space_quotient_of_isClosed  IsClosedSubgroup.lean QUEUED
+Completed this tick: c97ef7ec  (map_continuous in Basic.lean)
+Integrated this tick: c97ef7ec  (term-mode proof, kept docstring)
 Failed/split this tick: none
-Local progress: added Jacobian/ComplexTorus.lean root module
 ```
 
 ```text
@@ -63,8 +62,8 @@ ComplexTorus    pass*   lake build Jacobian.ComplexTorus
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Retrieve the 5 in-flight jobs; integrate clean patches.
-2. Refill the queue with the next bounded Queue B packets.
-3. Hold off on the quotient manifold layer until the easy
-   quotient-group/lattice API in Basic.lean is closed.
+1. Integrate any returning packets among the 5 still in flight.
+2. Refill toward 5/5 with another bounded Queue B sibling.
+3. Hold off on the quotient manifold layer until the
+   quotient-group/lattice topological API is closed.
 ```

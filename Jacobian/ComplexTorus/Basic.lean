@@ -1,4 +1,5 @@
 import Mathlib.Topology.Algebra.Group.Quotient
+import Mathlib.Topology.Defs.Induced
 import Jacobian.WorkPackets.StatementBank
 
 /-!
@@ -42,7 +43,8 @@ variable {Λ Γ}
 group homomorphism is continuous and lattice-preserving. -/
 lemma map_continuous {f : V →+ W} (hf_cont : Continuous f)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) :
-    Continuous (map Λ Γ f hf) := by
-  sorry
+    Continuous (map Λ Γ f hf) :=
+  (mk_isOpenQuotientMap Λ).isQuotientMap.continuous_iff.mpr
+    ((mk_continuous Γ).comp hf_cont)
 
 end JacobianChallenge.ComplexTorus
