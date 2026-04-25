@@ -61,17 +61,89 @@ this docstring/comment block.
 
 namespace JacobianChallenge.ComplexTorus
 
--- TODO Q1: cleanest discreteness predicate for `AddSubgroup V`?
+-- Q1: cleanest discreteness predicate for `AddSubgroup V`?
+--
+-- `DiscreteTopology S` (where `S : AddSubgroup V` is viewed as a subtype with the
+-- induced topology) is the cleanest and most canonical predicate in Mathlib v4.28.0.
+-- It means the subspace topology on the carrier of `S` is the discrete topology.
+-- This is the predicate used throughout `Mathlib/Topology/Algebra/` — for instance,
+-- `AddSubgroup.isClosed_of_discrete` (in `Mathlib/Topology/Algebra/IsUniformGroup/Basic.lean`)
+-- has the signature `[DiscreteTopology ↥H] : IsClosed ↑H`, confirming that
+-- `DiscreteTopology` on the subtype is the standard Mathlib spelling. There is no
+-- dedicated `IsDiscreteAddSubgroup` predicate; `DiscreteTopology ↥S` is the one to use.
 
--- TODO Q2: discrete + cocompact + closed in finite-dim normed real
--- space ↔ full-rank ZLattice — name and statement?
+-- Q2: discrete + cocompact + closed in finite-dim normed real space ↔ full-rank
+-- ZLattice — name and statement?
+--
+-- No such biconditional equivalence exists in Mathlib v4.28.0. The closest forward
+-- direction is `IsZLattice ℝ L` (in `Mathlib/Algebra/Module/ZLattice/Basic.lean`),
+-- which is a *class* on `L : Submodule ℤ E` with `[DiscreteTopology ↥L]` as a
+-- parameter and a single field `span_top : Submodule.span K ↑L = ⊤`. Given an
+-- `IsZLattice ℝ L` instance one can derive closedness (via `AddSubgroup.isClosed_of_discrete`)
+-- and cocompactness (via `ZLattice.isAddFundamentalDomain` producing a fundamental domain
+-- with `ZSpan.fundamentalDomain_isBounded`, declared in the same file). However, the
+-- *reverse* direction — "discrete + cocompact + closed ⇒ isomorphic to a ZLattice" —
+-- is not formalized. None found in Mathlib v4.28.0; closest match is `IsZLattice` itself
+-- with caveat that it only captures the forward implication.
 
--- TODO Q3: does `IsZLattice ℝ L` give `DiscreteTopology L.toAddSubgroup`?
+-- Q3: does `IsZLattice ℝ L` give `DiscreteTopology L.toAddSubgroup`?
+--
+-- Not directly via a single named lemma. `IsZLattice ℝ L` *requires*
+-- `[DiscreteTopology ↥L]` as a class parameter (where `↥L` is the `Submodule ℤ E`
+-- coerced to a type). This gives `DiscreteTopology` on the *submodule* carrier, not
+-- on `L.toAddSubgroup`. The two types `↥L` and `↥L.toAddSubgroup` have definitionally
+-- equal carrier sets but are distinct Lean types, so a small bridge is needed. The
+-- project's own `ZLatticeRecon.lean` file provides this bridge as
+-- `discreteTopology_toAddSubgroup` using `DiscreteTopology.of_continuous_injective`
+-- (from `Mathlib/Topology/Constructions.lean`). No pre-existing Mathlib lemma of the
+-- form `Submodule.discreteTopology_toAddSubgroup` was found. In summary: discreteness
+-- is an *assumption* of `IsZLattice`, not an *entailment*, and the transfer to
+-- `AddSubgroup` requires a one-line bridge that is not yet in Mathlib.
 
--- TODO Q4: 2-3 candidate fields for `FullComplexLattice`, with
--- one-line pro/con each.
+-- Q4: 2-3 candidate fields for `FullComplexLattice`, with one-line pro/con each.
+--
+-- (a) `isDiscrete : DiscreteTopology Λ.subgroup`
+--     Pro: minimal, self-contained, no dependency on `Submodule`/`IsZLattice` machinery;
+--          directly usable by chart construction code that needs an isolation radius.
+--     Con: makes `FullComplexLattice` carry one more field that is redundant when the
+--          lattice originates from `IsZLattice`; slightly lower-level than ideal.
+--
+-- (b) Replace `subgroup : AddSubgroup V` with `submodule : Submodule ℤ V` plus
+--     `[DiscreteTopology submodule]` and `[IsZLattice ℝ submodule]`.
+--     Pro: maximally integrated with Mathlib's ZLattice API; discreteness, closedness,
+--          and fundamental-domain existence all follow from existing lemmas.
+--     Con: invasive refactor — every downstream reference to `Λ.subgroup` must change
+--          to `Λ.submodule.toAddSubgroup`; also forces `NormedSpace ℝ V` and
+--          `FiniteDimensional ℝ V` into scope, coupling the structure to real scalars.
+--
+-- (c) `isolationRadius : ℝ` with `isolationRadius_pos : 0 < isolationRadius` and
+--     `isolated : ∀ x ∈ Λ.subgroup, x ≠ 0 → isolationRadius ≤ ‖x‖`.
+--     Pro: gives an explicit numerical witness that chart construction can use directly
+--          (ball of radius `isolationRadius / 2` injects under `mk`); implies
+--          `DiscreteTopology` via `DiscreteTopology.of_forall_le_norm'`
+--          (in `Mathlib/Analysis/Normed/Group/Basic.lean`).
+--     Con: slightly more data than needed (the exact radius is not canonical); must be
+--          extracted from `IsZLattice` via a compactness argument on the unit ball.
+--
+-- Recommendation: option (a) is the best balance of simplicity and compatibility. It
+-- is easy to supply from `IsZLattice` (via the bridge in `ZLatticeRecon.lean`), does
+-- not force a structural refactor, and is directly consumable by chart-layer code.
 
--- TODO Q5 (optional): sketch the supply path in
--- `fullComplexLatticeOfZLattice`.
+-- Q5 (optional): sketch the supply path in `fullComplexLatticeOfZLattice`.
+--
+-- `fullComplexLatticeOfZLattice` (in `ZLatticeRecon.lean`) already demonstrates this.
+-- Pseudocode for supplying option (a)'s `isDiscrete` field:
+--
+--   isDiscrete := by
+--     -- We have `[DiscreteTopology ↥L]` from the `IsZLattice` class parameter.
+--     -- Transfer to `L.toAddSubgroup` via `DiscreteTopology.of_continuous_injective`:
+--     --   the map `↥L.toAddSubgroup → ↥L` sending `⟨x, hx⟩ ↦ ⟨x, hx⟩` is
+--     --   continuous (both carry the subspace topology from `V`) and injective.
+--     exact discreteTopology_toAddSubgroup L
+--
+-- This is exactly what `ZLatticeRecon.lean` does for the `isClosed` field (which
+-- first obtains `DiscreteTopology L.toAddSubgroup` and then applies
+-- `AddSubgroup.isClosed_of_discrete`). With option (a), the same
+-- `discreteTopology_toAddSubgroup` bridge lemma is reused directly as the field value.
 
 end JacobianChallenge.ComplexTorus
