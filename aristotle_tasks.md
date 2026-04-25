@@ -12,41 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 19:00 EDT)
+## Live Status (2026-04-25 21:30 EDT)
 
-- Active jobs (ours): 2/5
-  | ID         | Target file                                          | Kind  | Status      |
-  | ---------- | ---------------------------------------------------- | ----- | ----------- |
-  | 58789fac   | `Jacobian/ComplexTorus/LocalSectionRightInv.lean`    | proof | in flight   |
-  | f1d1e010   | `Jacobian/ComplexTorus/LocalSectionContinuous.lean`  | proof | in flight   |
-- Retrieved + integrated earlier today: ChartBall (21cc9828) and
-  LocalSection (cdbfd6d5). Both clean, sorry-free.
-- Submitted earlier this tick: 58789fac (left-inverse `localSection (mk x) = x`
-  on the ball, uses `MkInjOnSmallBall.mk_injOn_ball_of_isolation`) and
-  f1d1e010 (continuity of the local section on the chart image — the
-  substantive piece needed for the `OpenPartialHomeomorph` assembly).
-- Major Claude-owned activity this tick (separate concern, not
-  Aristotle): applied the structural feedback in
-  `feedback/ComplexTorus.md`. Specifically:
-  - Removed `ZLatticeRecon`, `ManifoldRecon`, `DiscretenessRecon` from
-    the public umbrella `Jacobian/ComplexTorus.lean` (recon files
-    still build standalone but aren't re-exported as API).
-  - Fixed `ManifoldRecon.lean`'s construction outline: the false
-    "show `Λ.subgroup` is discrete from `Λ.isClosed` + finite-dim"
-    claim is gone; the outline now starts from `Λ.isDiscrete` and
-    cites the existing primitives.
-  - Tightened `secondCountableTopology_quotient` to require
-    `[SecondCountableTopology V]` rather than relying on `inferInstance`
-    finding something dubious.
-  - Collapsed the compactness duplication: the proof of
-    `compactSpace_quotient_of_cover` now lives in `Defs.lean` and the
-    `quotient_compactSpace` instance specializes it.
-  - Migrated the complex-torus core out of
-    `Jacobian/WorkPackets/StatementBank.lean` into a new
-    `Jacobian/ComplexTorus/Defs.lean`. All 35 sibling files now
-    import `Defs.lean` directly. `StatementBank.lean` keeps only the
-    not-yet-implemented placeholder targets and the higher-layer
-    queues, and imports `Defs.lean` for what it needs.
+- Active jobs (ours): 0/5. Aristotle queue has been wedged server-wide
+  for hours; the two in-flight jobs (58789fac LocalSectionRightInv,
+  f1d1e010 LocalSectionContinuous) were proven locally and the stuck
+  Aristotle copies cancelled.
+- **Quotient manifold layer: complete (sorry-free).** Today's local
+  work, after the cancellations, drove all the way to
+  `IsManifold (modelWithCornersSelf ℂ V) ω (V ⧸ Λ.subgroup)`:
+  - `LocalSectionRightInv` — `localSection (mk x) = x` on the ball
+    (5-line proof using `MkInjOnSmallBall`).
+  - `LocalSectionContinuous` — continuity of `localSection ∘ mk`
+    on the chart image (12 lines via `continuousOn_open_iff`).
+  - `Chart` — the `OpenPartialHomeomorph` for a small ball.
+  - `ChartedSpace` — `chartAtPoint Λ q` using `Function.surjInv` +
+    `Classical.choose` on `exists_pos_le_norm_of_discreteTopology`,
+    yielding a `ChartedSpace V (V ⧸ Λ.subgroup)` instance.
+  - `TransitionSubMem`, `TransitionSubContinuous`,
+    `TransitionLocallyTranslate`, `TransitionContDiffOn` — chained
+    sub-lemmas showing the chart transition is locally a translation
+    by a fixed lattice element, hence `ContDiffOn ℂ ω` on the overlap.
+  - `IsManifold` — `complexTorusHasGroupoid` discharged via
+    `mem_groupoid_of_pregroupoid` + the `modelWithCornersSelf` simp set
+    + two applications of `contDiffOn_localSection_mk` (one per
+    direction). `complexTorusIsManifold` is then a one-line `where`.
+- All new files are sorry-free; the umbrella
+  `Jacobian/ComplexTorus.lean` re-exports `IsManifold`.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the

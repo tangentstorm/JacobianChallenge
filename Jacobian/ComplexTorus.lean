@@ -40,6 +40,7 @@ import Jacobian.ComplexTorus.TransitionSubMem
 import Jacobian.ComplexTorus.TransitionSubContinuous
 import Jacobian.ComplexTorus.TransitionLocallyTranslate
 import Jacobian.ComplexTorus.TransitionContDiffOn
+import Jacobian.ComplexTorus.IsManifold
 
 /-!
 # Complex torus infrastructure
