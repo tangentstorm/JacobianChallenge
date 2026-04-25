@@ -12,20 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 13:19 EDT)
+## Live Status (2026-04-25 13:25 EDT)
 
-- Active jobs (ours): 0/5
-- Retrieved this tick: 21cc9828 (ChartBall) — COMPLETE.
-- Integrated this tick: 21cc9828 — Aristotle followed the spelled-out
-  recipe exactly. The 4-line proof uses
-  `exists_pos_le_norm_of_discreteTopology Λ.subgroup` to extract δ,
-  picks `r := δ / 4`, then chains `mk_injOn_ball_of_isolation` and
-  `mk_image_isOpen`. Build green, no sorries.
-- Submitted this tick: none yet (queue refill is the next step).
-- Quotient manifold layer bumped 10% → 15%: chart-prep lemma is in.
-- Planned next packet: a local-section function for the small ball,
-  using `Function.invFunOn`. With it plus `exists_chart_ball`, the
-  `OpenPartialHomeomorph` construction becomes mechanical.
+- Active jobs (ours): 1/5
+  | ID         | Target file                                     | Kind  | Status |
+  | ---------- | ----------------------------------------------- | ----- | ------ |
+  | cdbfd6d5   | `Jacobian/ComplexTorus/LocalSection.lean`       | proof | QUEUED |
+- Retrieved earlier this tick: 21cc9828 (ChartBall) — COMPLETE,
+  integrated, sorry-free (commit `d38260e`).
+- Submitted this tick: cdbfd6d5 — defines `localSection` as
+  `Function.invFunOn (mk V Λ) (Metric.ball v r)` and asks for two
+  standard right-inverse/range lemmas via direct citation of
+  `Function.invFunOn_eq` + `Function.invFunOn_mem`. Pure plumbing.
+- Holding at 1/5 deliberately — the next chart-layer step
+  (OpenPartialHomeomorph assembly) directly consumes
+  `localSection`'s API, so there's no good independent
+  parallel packet right now.
+- Planned next: after `LocalSection` lands, carve the
+  OpenPartialHomeomorph construction packet — assemble
+  source/target/toFun/invFun + the four continuity/openness obligations
+  using `localSection` + `exists_chart_ball` + the existing
+  open-map/continuity lemmas in `MkImage` and `Basic`.
 
 ## General Job Template
 

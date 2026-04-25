@@ -1,0 +1,47 @@
+import Jacobian.WorkPackets.StatementBank
+import Jacobian.ComplexTorus.ChartBall
+import Mathlib.Logic.Function.Basic
+
+/-!
+# Local section of `mk` on a chart ball
+
+Queue B sibling. The next chart-layer building block: a section of
+the quotient projection `mk : V → V ⧸ Λ.subgroup` defined on
+`mk '' Metric.ball v r`, taking values in `Metric.ball v r`.
+
+The section is defined as `Function.invFunOn (mk V Λ) (Metric.ball v r)`
+and inherits the standard `Function.invFunOn` API: it is a right
+inverse of `mk` on the image, and its values lie in the source set
+when the input is in the image.
+
+This is the function that will become the `toFun` field of the
+`OpenPartialHomeomorph` chart in the next packet.
+
+Status: statement scaffold; `sorry`-style stubs to be replaced by
+Aristotle (the proofs are direct citations of `Function.invFunOn` API).
+-/
+
+namespace JacobianChallenge.ComplexTorus
+
+variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+
+/-- A local section of `mk` on the small ball `Metric.ball v r`. By
+definition it is the canonical `Function.invFunOn` and inherits all
+the section/range properties from that API. -/
+noncomputable def localSection (Λ : FullComplexLattice V) (v : V) (r : ℝ) :
+    quotient V Λ → V :=
+  Function.invFunOn (mk V Λ) (Metric.ball v r)
+
+/-- The local section is a right-inverse of `mk` on `mk '' Metric.ball v r`. -/
+lemma mk_localSection (Λ : FullComplexLattice V) (v : V) (r : ℝ)
+    {q : quotient V Λ} (hq : q ∈ mk V Λ '' Metric.ball v r) :
+    mk V Λ (localSection Λ v r q) = q := by
+  sorry
+
+/-- The local section maps `mk '' Metric.ball v r` into `Metric.ball v r`. -/
+lemma localSection_mem (Λ : FullComplexLattice V) (v : V) (r : ℝ)
+    {q : quotient V Λ} (hq : q ∈ mk V Λ '' Metric.ball v r) :
+    localSection Λ v r q ∈ Metric.ball v r := by
+  sorry
+
+end JacobianChallenge.ComplexTorus

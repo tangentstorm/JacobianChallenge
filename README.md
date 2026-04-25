@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 13:19 EDT
+Last tick: 2026-04-25 13:25 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,13 +39,16 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5
-Completed this tick: 21cc9828 (ChartBall)
-Integrated this tick: 21cc9828 — Aristotle followed the recipe
-                      exactly: 4-line proof using
-                      exists_pos_le_norm_of_discreteTopology +
-                      mk_injOn_ball_of_isolation + mk_image_isOpen.
-                      `exists_chart_ball` is sorry-free.
+Active jobs (ours): 1/5
+  cdbfd6d5  LocalSection.lean          proof  QUEUED
+Completed earlier this tick: 21cc9828 (ChartBall)
+Integrated earlier this tick: 21cc9828 — Aristotle followed the
+                              recipe exactly: 4-line proof.
+                              `exists_chart_ball` is sorry-free.
+Submitted this tick: cdbfd6d5 — defines `localSection` as
+                     `Function.invFunOn (mk V Λ) (Metric.ball v r)`
+                     and proves the two standard properties via
+                     direct citations of the Mathlib API.
 Failed/split this tick: none.
 ```
 
