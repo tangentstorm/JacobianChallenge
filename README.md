@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 12:28 EDT
+Last tick: 2026-04-25 12:30 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -40,12 +40,18 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 0/5
-Completed this tick: 8d77f7d8 (IsolationAtZero)
-Integrated this tick: 8d77f7d8 — clean proof using
-                      `isOpen_inter_eq_singleton_of_mem_discrete` +
-                      `SetLike.isDiscrete_iff_discreteTopology`. All
-                      three primitives needed for chart layer
-                      (isolation, injectivity, recon) are now in.
+Completed earlier this tick: 8d77f7d8 (IsolationAtZero)
+Integrated earlier this tick: 8d77f7d8 — clean proof using
+                              `isOpen_inter_eq_singleton_of_mem_discrete`.
+Claude-owned this tick (separate commit): added
+                              `isDiscrete : DiscreteTopology subgroup`
+                              field to `FullComplexLattice` per the
+                              c5beb23a recon recommendation. Wired
+                              into the ZLattice bridge via the
+                              existing `discreteTopology_toAddSubgroup`
+                              helper. Periods placeholder gets a
+                              new `sorry` (consistent with the rest
+                              of that placeholder).
 Failed/split this tick: none.
 ```
 
@@ -54,22 +60,21 @@ Current build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Challenge        pass    lake build Jacobian.Challenge
 Statement bank   pass    lake build Jacobian.WorkPackets.StatementBank
-ZLatticeFundDom  pass    lake build Jacobian.ComplexTorus.ZLatticeFundDom
+ComplexTorus     pass    lake build Jacobian.ComplexTorus (after refactor)
 ZLatticeRecon    pass    lake build Jacobian.ComplexTorus.ZLatticeRecon (no sorry)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Wait for 8d77f7d8 (IsolationAtZero) to land; its proof
-   chain is the natural source of the isolation constant for
-   chart construction.
-2. Claude-owned FullComplexLattice refactor: add
-   `isDiscrete : DiscreteTopology subgroup` field per
-   c5beb23a's recommended option (a). Wire in
-   ZLatticeRecon's `discreteTopology_toAddSubgroup` bridge.
-3. After (2): carve first chart packet (small-ball open
-   embedding) — IsolationAtZero gives the radius,
-   MkInjOnSmallBall gives the injectivity, isDiscrete +
-   isOpenMap_coe give the open embedding.
+1. Carve first chart packet for Aristotle: small-ball
+   open embedding `mk ∘ Subtype.val : Metric.ball v r → V ⧸ Λ.subgroup`
+   for `r < δ / 2`. Combines IsolationAtZero (radius) +
+   MkInjOnSmallBall (injectivity) + `QuotientAddGroup.isOpenMap_coe`
+   + `QuotientAddGroup.continuous_mk`.
+2. After the open embedding: assemble the
+   `OpenPartialHomeomorph` instance (ChartedSpace atlas
+   building block).
+3. Stretch goal: chart-transition smoothness (transitions
+   are translations by lattice elements, all linear → ω-smooth).
 ```

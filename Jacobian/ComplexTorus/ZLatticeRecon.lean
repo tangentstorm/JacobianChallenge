@@ -85,6 +85,7 @@ noncomputable def fullComplexLatticeOfZLattice
   isClosed := by
     haveI := discreteTopology_toAddSubgroup L
     exact AddSubgroup.isClosed_of_discrete
+  isDiscrete := discreteTopology_toAddSubgroup L
   fundamentalDomain := by
     haveI : FiniteDimensional ℝ V := Module.Finite.trans (R := ℝ) (A := ℂ) (M := V)
     haveI : ProperSpace V := FiniteDimensional.proper_real V
