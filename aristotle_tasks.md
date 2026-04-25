@@ -12,16 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 11:06 EDT)
+## Live Status (2026-04-25 11:12 EDT)
 
-- Active jobs (ours): 3/5
-  | ID         | Target file                                   | Status      |
-  | ---------- | --------------------------------------------- | ----------- |
-  | 78a3b9f9   | `Jacobian/ComplexTorus/GenericQuotient.lean`  | IN_PROGRESS 1% |
-  | a68d37f4   | `Jacobian/ComplexTorus/ZLatticeRecon.lean`    | IN_PROGRESS 1% |
-  | bbdcb3f4   | `Jacobian/ComplexTorus/ManifoldRecon.lean`    | QUEUED      |
-- Integrated this tick: none.
-- Local progress this tick: none — awaiting recon results.
+- Active jobs (ours): 2/5
+  | ID         | Target file                                   | Status         |
+  | ---------- | --------------------------------------------- | -------------- |
+  | a68d37f4   | `Jacobian/ComplexTorus/ZLatticeRecon.lean`    | IN_PROGRESS 12% |
+  | bbdcb3f4   | `Jacobian/ComplexTorus/ManifoldRecon.lean`    | IN_PROGRESS 3% |
+- Integrated this tick:
+  - `78a3b9f9` — 4 generic `AddSubgroup`-quotient one-liners
+    (`continuous_mk'`, `mk_surjective'`, `isOpenQuotientMap_mk'`,
+    `mk_eq_iff'`) plus `omit` annotations to silence unused-typeclass
+    lints. (GenericQuotient.lean)
+- The two outstanding packets are the substantive recon ones —
+  ZLattice bridge and manifold-layer name discovery. They'll take
+  longer than the wrapper packets did.
 
 - Active jobs (ours): 3/5
   | ID         | Target file                                  | Lemma(s)                          |
