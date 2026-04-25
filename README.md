@@ -21,14 +21,14 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 01:17 EDT
+Last tick: 2026-04-25 01:33 EDT
 
 ```text
 Layer                     Bar                    %    Note
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
-Complex torus quotient    █████████░░░░░░░░░░░   45%  Basic + 4 packets done; 5 in flight
+Complex torus quotient    ██████████░░░░░░░░░░   50%  Basic + 5 packets done; 5 in flight
 Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -40,14 +40,14 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5
-  07e77aac  t2Space_quotient_of_isClosed  IsClosedSubgroup.lean IN_PROGRESS
-  20ebfd1c  map_injective_of_preimage_…   MapInjective.lean     QUEUED
-  518be471  mk_neg / continuous_neg       Neg.lean              QUEUED
-  650e16fe  mk_add / continuous_add       Add.lean              QUEUED
-  fb51396b  mk_zsmul / mk_nsmul           Smul.lean             QUEUED
-Completed this tick: 6e60ff64, 4d2fa17c, 21a882aa, e2c130cc
-Integrated this tick: 6e60ff64 (Mk), 4d2fa17c (MapMk),
-                      21a882aa (Surjective), e2c130cc (NhdsZero)
+  20ebfd1c  map_injective_of_preimage_…   MapInjective.lean   IN_PROGRESS
+  518be471  mk_neg / continuous_neg       Neg.lean            QUEUED
+  650e16fe  mk_add / continuous_add       Add.lean            QUEUED
+  fb51396b  mk_zsmul / mk_nsmul           Smul.lean           QUEUED
+  7250ad71  mapClm_continuous             OfClm.lean          QUEUED (new)
+Completed this tick: 07e77aac (IsClosedSubgroup)
+Integrated this tick: 07e77aac (T2 from closed subgroup; hypothesis
+                      currently unused — see file note)
 Failed/split this tick: none
 ```
 
