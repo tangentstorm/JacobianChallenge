@@ -12,15 +12,16 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 09:37 EDT)
+## Live Status (2026-04-25 09:51 EDT)
 
-- Active jobs (ours): 1/5
-  | ID         | Target file                                  | Lemma                              |
-  | ---------- | -------------------------------------------- | ---------------------------------- |
-  | f7004700   | `Jacobian/ComplexTorus/MapClmInjective.lean` | `mapClm_injective_of_preimage_subset` |
-- Integrated this tick: none.
-- Submitted f7004700 as a continuous-linear-map wrapper around the
-  already-integrated algebraic `map_injective_of_preimage_subset`.
+- Active jobs (ours): 0/5
+- Integrated this tick:
+  - `f7004700` — `mapClm_injective_of_preimage_subset` (MapClmInjective.lean)
+    via a one-line wrapper around `map_injective_of_preimage_subset`.
+- All currently-bounded packets in the topological-quotient layer of
+  Phase 1 are integrated. The complex-torus phase is essentially
+  closed (~95%); next steps are Claude-owned (charted-space layer or
+  FullComplexLattice refactor).
 
 - Active jobs (ours): 4/5 (queue refilled)
   | ID         | Target file                              | Lemma(s)                            |
