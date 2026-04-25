@@ -344,6 +344,104 @@ The phases are not comparable in size.
 
 The expected output is many reusable Mathlib layers, not a short local patch.
 
+## Delegation Strategy for Aristotle
+
+This plan is a roadmap, not yet a good unit of work for a cloud formalizer.
+Claude should manage the project and use Aristotle for small, file-scoped Lean
+tasks after definitions and theorem statements have been chosen.
+
+Claude-owned responsibilities:
+
+- inventory the pinned Mathlib commit;
+- decide which construction route to pursue;
+- create the module skeleton;
+- state intermediate definitions and lemmas;
+- keep theorem names and public APIs stable;
+- split work into bounded Aristotle jobs;
+- review returned patches before integration;
+- repair imports and resolve conflicts between jobs;
+- maintain a local log of Aristotle prompts, job ids, target files, and status.
+
+Aristotle-owned responsibilities:
+
+- prove named lemmas in one target file;
+- fill a tightly scoped theorem family;
+- formalize a bounded construction from already-stated definitions;
+- improve or simplify proofs without changing public statements;
+- report blockers when a statement needs a missing prerequisite.
+
+Do not ask Aristotle to "solve the Jacobian challenge" or choose the global
+definition of the Jacobian. Ask it to complete precise local proof tasks.
+
+Suggested job queues:
+
+```text
+Queue A: Mathlib inventory and name discovery
+Queue B: complex torus infrastructure
+Queue C: differential forms and holomorphic forms
+Queue D: path integration, chains, and periods
+Queue E: Jacobian definition and basic instances
+Queue F: Abel-Jacobi map and path-independence
+Queue G: trace, degree, pushforward, and pullback
+Queue H: anti-hack theorems
+```
+
+Each Aristotle job should specify:
+
+- working directory;
+- target file path;
+- exact theorem or definition names;
+- allowed write scope;
+- files that must not change;
+- whether imports may be adjusted;
+- expected build command;
+- proof style constraints;
+- fallback behavior if the statement is too strong.
+
+Example job shape:
+
+```text
+Working directory: C:\ver\JacobianChallenge
+Target file: Jacobian/ComplexTorus/Basic.lean
+Allowed writes: only Jacobian/ComplexTorus/Basic.lean
+Task: prove the listed quotient-additive-group lemmas for a lattice quotient.
+Do not change public theorem statements.
+Do not edit Jacobian/Challenge.lean.
+Expected verification: lake build Jacobian.ComplexTorus.Basic
+If blocked, add a short comment listing the missing prerequisite theorem names.
+```
+
+Claude should prefer many small jobs with disjoint write scopes over one large
+job. If Aristotle fails on a theorem, Claude should split the theorem into
+smaller helper lemmas, add those statements locally, and resubmit only the
+smallest blocked part.
+
+Good Aristotle tasks:
+
+- "Fill the proofs of these three quotient-map continuity lemmas."
+- "Prove this map descends to the quotient under the stated lattice-preserving
+  hypothesis."
+- "Show these two definitions of the induced homomorphism are extensionally
+  equal."
+- "Prove the local finite-dimensional linear algebra lemmas used by
+  `ComplexTorus.Basic`."
+
+Bad Aristotle tasks:
+
+- "Build the Jacobian of a Riemann surface."
+- "Formalize Riemann surface theory."
+- "Fix all sorries in this project."
+- "Choose the best definition of pushforward."
+
+The practical workflow should be:
+
+1. Claude writes or reviews the target theorem statements.
+2. Claude submits one Aristotle job per file or theorem cluster.
+3. Claude records the prompt and job id in a local task log.
+4. Claude retrieves the result and reviews the patch.
+5. Claude either integrates it, splits the task smaller, or marks the missing
+   prerequisite as a new infrastructure item.
+
 ## Main Risks
 
 - The quotient manifold theory for lattices may not be complete enough in
