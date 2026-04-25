@@ -38,6 +38,45 @@ identify our jobs without inspecting tarballs.
   `FullComplexLattice → Submodule + IsZLattice` design change. These
   belong to the eventual Mathlib-prep cleanup, not this phase.
 
+## Planned packets (queued for Aristotle when queue unblocks)
+
+The chart layer is complete; the next layer is `LieAddGroup` smoothness
+of `+` and `-` on `quotient V Λ`. Decomposition into Aristotle-sized
+packets below. Each packet targets one new file; allowed writes are
+that file only; forbidden files always include `Jacobian/Challenge.lean`.
+
+1. **`Jacobian/ComplexTorus/AddSmoothLocal.lean`** — `ContMDiffAt`
+   of `(q1, q2) ↦ q1 + q2` at a single point. Strategy: at point
+   `(q1, q2)` lift to representatives `v1, v2` via `Function.surjInv`,
+   use the chart machinery (the same δ from
+   `exists_pos_le_norm_of_discreteTopology` works for both factors),
+   and observe that on a small ball the chart-coordinate addition is
+   exactly the linear sum on `V × V → V`, then mk back. Re-uses
+   `localSection_mk_locally_translate`-style reasoning; no new heavy
+   API.
+
+2. **`Jacobian/ComplexTorus/AddSmooth.lean`** — promote (1) to
+   `ContMDiff (modelWithCornersSelf ℂ V).prod (modelWithCornersSelf ℂ V)
+   (modelWithCornersSelf ℂ V) ⊤ (fun p => p.1 + p.2)` and from there
+   to a `ContMDiffAdd` instance.
+
+3. **`Jacobian/ComplexTorus/NegSmoothLocal.lean`** — `ContMDiffAt` of
+   `q ↦ -q`. Same lift+chart pattern; in chart coordinates negation
+   is `x ↦ -x` on `V`, which is `ContDiff ℂ ω`.
+
+4. **`Jacobian/ComplexTorus/NegSmooth.lean`** — promote (3) to
+   `ContMDiff` everywhere.
+
+5. **`Jacobian/ComplexTorus/LieAddGroup.lean`** — combine the
+   `ContMDiffAdd` instance from (2) and the `contMDiff_neg` from (4)
+   into a `LieAddGroup (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
+   (quotient V Λ)` instance. One- or two-line `where`-clause once the
+   pieces are in place.
+
+When the queue unblocks, submit (1) and (3) in parallel (disjoint
+write scopes), then (2) and (4), then (5). All five fit the
+"prefer simple tactics" guideline.
+
 ## General Job Template
 
 ```text

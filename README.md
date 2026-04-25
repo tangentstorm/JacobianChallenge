@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 19:08 EDT
+Last tick: 2026-04-25 19:17 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -40,22 +40,23 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 0/5. Aristotle queue still wedged server-wide
-                    (5 unrelated jobs QUEUED 5h+ with no progress).
-                    No new submissions this tick — piling onto a
-                    wedge is wasteful, and there's plenty of safe
-                    local work.
-Integrated this tick: nothing from Aristotle (queue stuck).
-Local progress this tick: added `ComplexTorus/Witness.lean`
-                          discharging `quotientChartedSpaceStatement`
-                          and `quotientIsManifoldStatement` from
-                          the StatementBank using the concrete
-                          `complexTorusChartedSpace` instance. Both
-                          witnesses are one-liners; the file builds
-                          green.
+                    (same 5 unrelated jobs QUEUED 5h+, identical to
+                    last tick). No new submissions — piling onto a
+                    wedge is wasteful.
+Integrated this tick: nothing from Aristotle.
+Local progress this tick: extended `ComplexTorus/Witness.lean` to
+                          also discharge `quotientLieAddGroupStatement`
+                          (the third Queue B placeholder in
+                          StatementBank). Drafted the LieAddGroup
+                          smoothness packet decomposition (5 narrow
+                          target files) into `aristotle_tasks.md`'s
+                          new "Planned packets" section so the work
+                          is ready to submit when the queue unblocks.
 Quotient manifold layer: 100%. ChartedSpace + IsManifold both done,
-                         no sorries. StatementBank Queue B placeholder
-                         targets that the chart layer was supposed
-                         to discharge are now witnessed.
+                         no sorries. All three Queue B
+                         chart/manifold StatementBank placeholders
+                         (chart, manifold, lie-add-group) now
+                         witnessed by the concrete instance.
 ```
 
 ```text
@@ -71,13 +72,14 @@ Witness          pass    lake build Jacobian.ComplexTorus.Witness (no sorry)
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Lie-add-group structure on the quotient (smooth `+` and `-`).
-   Both descend from the linear ambient operations through the
-   chart machinery. Needed for `Jacobian X` to satisfy the public
-   `LieAddGroup` requirement.
-2. Begin Queue C: `HolomorphicOneForm`. First packet: define
-   the type and prove the `AddCommGroup` / `Module ℂ` structure
-   using existing differential-form API.
-3. Stretch goal: state finite-dimensionality of holomorphic
-   1-forms as a named theorem, even if the proof is deferred.
+1. Submit (or hand-prove if Aristotle stays wedged) packet 1 of
+   the LieAddGroup decomposition: `AddSmoothLocal.lean` —
+   `ContMDiffAt` of `(q1, q2) ↦ q1 + q2` at a single point. Pattern
+   mirrors the chart-transition smoothness work (lift via surjInv,
+   apply chart machinery, observe coordinate version is linear).
+2. Same for `NegSmoothLocal.lean` — `ContMDiffAt` of `q ↦ -q`.
+   Disjoint write scope from packet 1; the two can run in parallel.
+3. Then promote both to `ContMDiff` everywhere, package into the
+   `LieAddGroup (modelWithCornersSelf ℂ V) ⊤ (quotient V Λ)`
+   instance. Full decomposition in `aristotle_tasks.md`.
 ```
