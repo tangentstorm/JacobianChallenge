@@ -21,14 +21,14 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 09:18 EDT
+Last tick: 2026-04-25 09:32 EDT
 
 ```text
 Layer                     Bar                    %    Note
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
-Complex torus quotient    ██████████████████░░   90%  20 packets done; topology layer closed
+Complex torus quotient    ███████████████████░   95%  topology/lattice layer closed
 Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -39,10 +39,10 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5
-  77be5e1a  mk_injective_iff_subgroup_…   MkInjective.lean    IN_PROGRESS 8%
-Completed this tick: 04358fe4 (MapNegSub.lean)
-Integrated this tick: 04358fe4 — map_neg, map_sub via (map _ _ _ _).map_neg/sub
+Active jobs (ours): 0/5
+Completed this tick: 77be5e1a (MkInjective.lean)
+Integrated this tick: 77be5e1a — `mk_injective_iff_subgroup_eq_bot`
+                      via two-direction QuotientAddGroup.eq tactic chain
 Failed/split this tick: none
 ```
 
