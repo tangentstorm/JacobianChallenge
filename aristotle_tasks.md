@@ -12,38 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 11:46 EDT)
+## Live Status (2026-04-25 12:04 EDT)
 
 - Active jobs (ours): 3/5
-  | ID         | Target file                                       | Kind  | Status  |
-  | ---------- | ------------------------------------------------- | ----- | ------- |
-  | 8d77f7d8   | `Jacobian/ComplexTorus/IsolationAtZero.lean`      | proof | QUEUED  |
-  | 1841ae34   | `Jacobian/ComplexTorus/MkInjOnSmallBall.lean`     | proof | QUEUED  |
-  | c5beb23a   | `Jacobian/ComplexTorus/DiscretenessRecon.lean`    | recon | QUEUED  |
-- Retrieved/integrated earlier this tick (separate commit `eb31864`):
-  5c13793d ZLatticeFundDom — packaging helper landed clean and was
-  wired into `fullComplexLatticeOfZLattice` to drop its remaining
-  sorry. The ZLattice→FullComplexLattice bridge is now sorry-free.
-- Three new disjoint-write-scope packets just submitted (queue
-  refilled to 3/5):
-  - `8d77f7d8` proves a generic isolation-at-zero lemma for any
-    `DiscreteTopology`-equipped `AddSubgroup` of a seminormed group.
-    Hypothesis-form, source-agnostic.
-  - `1841ae34` proves `mk` is injective on small balls under an
-    explicit isolation hypothesis. Independent of how the lattice
-    is sourced; takes `δ` as data.
-  - `c5beb23a` is a reconnaissance packet for the standing trap:
-    closed cocompact ⇏ discrete in finite-dim normed real spaces
-    (counterexample `ℝ × ℤ ⊂ ℝ²`). Aristotle answers five
-    structured questions about the cleanest discreteness predicate
-    and how `IsZLattice` already supplies it. Output is comments
-    only; no proofs, no new declarations.
-- Holding 3/5 (not 5/5) deliberately: the next two slots want to be
-  the chart-layer packets (small-ball open embedding, chartAt atlas),
-  but those need the FullComplexLattice discreteness field to be
-  in place first. The discreteness refactor is a deliberate
-  Claude-owned step planned for next tick, informed by `c5beb23a`'s
-  recon results.
+  | ID         | Target file                                       | Kind  | Status |
+  | ---------- | ------------------------------------------------- | ----- | ------ |
+  | 8d77f7d8   | `Jacobian/ComplexTorus/IsolationAtZero.lean`      | proof | QUEUED |
+  | 1841ae34   | `Jacobian/ComplexTorus/MkInjOnSmallBall.lean`     | proof | QUEUED |
+  | c5beb23a   | `Jacobian/ComplexTorus/DiscretenessRecon.lean`    | recon | QUEUED |
+- Retrieved this tick: none.
+- Integrated this tick: none. (5c13793d was integrated earlier in
+  commit `eb31864`; the ZLattice→FullComplexLattice bridge is
+  sorry-free.)
+- Submitted this tick: none. (The 3 active packets above were
+  submitted in commit `20ab627`.)
+- Aristotle server appears busy on other tenants' jobs at the moment
+  — all 3 of our packets still QUEUED 18 min after submission.
+- 4th and 5th slots intentionally held for chart-layer packets that
+  need the FullComplexLattice discreteness field in place first.
+  The discreteness refactor is a deliberate Claude-owned step
+  awaiting `c5beb23a`'s recon answers.
 
 ## General Job Template
 
