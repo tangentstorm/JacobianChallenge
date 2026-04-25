@@ -21,14 +21,14 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 01:33 EDT
+Last tick: 2026-04-25 01:47 EDT
 
 ```text
 Layer                     Bar                    %    Note
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
-Complex torus quotient    ██████████░░░░░░░░░░   50%  Basic + 5 packets done; 5 in flight
+Complex torus quotient    █████████████░░░░░░░   65%  10 packets done; 5 new in flight
 Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -40,14 +40,15 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5
-  20ebfd1c  map_injective_of_preimage_…   MapInjective.lean   IN_PROGRESS
-  518be471  mk_neg / continuous_neg       Neg.lean            QUEUED
-  650e16fe  mk_add / continuous_add       Add.lean            QUEUED
-  fb51396b  mk_zsmul / mk_nsmul           Smul.lean           QUEUED
-  7250ad71  mapClm_continuous             OfClm.lean          QUEUED (new)
-Completed this tick: 07e77aac (IsClosedSubgroup)
-Integrated this tick: 07e77aac (T2 from closed subgroup; hypothesis
-                      currently unused — see file note)
+  5a37a9c3  connectedSpace_quotient       Connected.lean      QUEUED
+  83af50d3  nhds_mk_eq                    Nhds.lean           QUEUED
+  f2a1782c  dense_*                       Dense.lean          QUEUED
+  88c7c85c  first/secondCountableTopology FirstCountable.lean QUEUED
+  5573ebd7  pathConnectedSpace_quotient   PathConnected.lean  QUEUED
+Completed this tick: 5 (20ebfd1c, 518be471, 650e16fe, fb51396b, 7250ad71)
+Integrated this tick: all 5 (MapInjective replaced Aristotle's
+                      simp +decide proof with a clean tactic chain;
+                      others were 1-2 line direct proofs)
 Failed/split this tick: none
 ```
 

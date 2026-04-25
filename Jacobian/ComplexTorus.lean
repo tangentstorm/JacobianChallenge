@@ -9,6 +9,11 @@ import Jacobian.ComplexTorus.Neg
 import Jacobian.ComplexTorus.Add
 import Jacobian.ComplexTorus.Smul
 import Jacobian.ComplexTorus.OfClm
+import Jacobian.ComplexTorus.Connected
+import Jacobian.ComplexTorus.Nhds
+import Jacobian.ComplexTorus.Dense
+import Jacobian.ComplexTorus.FirstCountable
+import Jacobian.ComplexTorus.PathConnected
 
 /-!
 # Complex torus infrastructure
