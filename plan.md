@@ -110,6 +110,45 @@ Needed API:
 This phase supports the group, topology, compactness, manifold, and Lie group
 instances for `Jacobian X`.
 
+### Phase 1 — Sub-status (2026-04-25)
+
+The lower (group + topology) layer of Phase 1 is mostly done; the higher
+(manifold + Lie group) layer is intentionally untouched pending closure of
+the lower layer.
+
+Stable in `Jacobian/ComplexTorus/`:
+
+- `Basic.lean`            — `mk_continuous`, `mk_isOpenQuotientMap`, `mk_isOpenMap`, `map_continuous`
+- `Mk.lean`               — `mk_zero`, `mk_eq_iff`, `mk_eq_zero_iff`
+- `MapMk.lean`            — `map_zero`, `map_mk_add`
+- `Surjective.lean`       — `map_surjective`
+- `MapInjective.lean`     — `map_injective_of_preimage_subset`
+- `NhdsZero.lean`         — `nhds_zero_eq`
+- `IsClosedSubgroup.lean` — `t2Space_quotient_of_isClosed` (currently
+  degenerate; the `FullComplexLattice` field needs to be dropped to make
+  this lemma load-bearing)
+- `Neg.lean`              — `mk_neg`, `continuous_neg`
+- `Add.lean`              — `mk_add`, `continuous_add`
+- `Smul.lean`             — `mk_zsmul`, `mk_nsmul`
+- `OfClm.lean`            — `mapClm`, `mapClm_continuous`
+
+In flight (Aristotle, Queue B):
+
+- `Connected.lean`, `Nhds.lean`, `Dense.lean`, `FirstCountable.lean`,
+  `PathConnected.lean`.
+
+Once the in-flight batch lands, the next sub-phase is the lattice predicate
+and compactness:
+
+- replace `FullComplexLattice.quotient_compact` and `quotient_t2` with
+  derived instances (so the structure is just `subgroup` + `isClosed` +
+  cocompactness in some form);
+- bridge to `ZLattice.IsZLattice` from
+  `Mathlib/Algebra/Module/ZLattice/Basic.lean` if compatible;
+- prove `CompactSpace (V ⧸ Λ.subgroup)` from cocompactness.
+
+Only then start the manifold layer.
+
 ## Phase 2: Compact Riemann Surfaces and Holomorphic Forms
 
 Define the vector space of holomorphic 1-forms on a compact Riemann surface.
