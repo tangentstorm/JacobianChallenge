@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 08:11 EDT
+Last tick: 2026-04-25 08:17 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,12 +39,10 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5
-  e9ff30bc  continuous_iff_continuous_… ContIff.lean         IN_PROGRESS 1%
-Completed this tick: 3679ff5a (Compact.lean)
-Integrated this tick: 3679ff5a — cocompact→compact via mk_image=univ
-                      + IsCompact.image. Topological-quotient layer
-                      essentially closed.
+Active jobs (ours): 0/5  (between batches; queue management deciding next)
+Completed this tick: e9ff30bc (ContIff.lean)
+Integrated this tick: e9ff30bc — quotient universal property via
+                      IsQuotientMap.continuous_iff. One-liner.
 Failed/split this tick: none
 ```
 
