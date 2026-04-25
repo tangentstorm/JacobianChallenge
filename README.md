@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 13:05 EDT
+Last tick: 2026-04-25 13:19 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -29,7 +29,7 @@ Layer                     Bar                    %    Note
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
 Complex torus quotient    ████████████████████  100%  ZLattice bridge sorry-free
-Quotient manifold layer   ██░░░░░░░░░░░░░░░░░░   10%  primitives + isDiscrete in
+Quotient manifold layer   ███░░░░░░░░░░░░░░░░░   15%  exists_chart_ball proven
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -39,19 +39,14 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5
-  21cc9828  ChartBall.lean             proof  QUEUED
-Completed this tick: none.
-Integrated this tick: none.
+Active jobs (ours): 0/5
+Completed this tick: 21cc9828 (ChartBall)
+Integrated this tick: 21cc9828 — Aristotle followed the recipe
+                      exactly: 4-line proof using
+                      exists_pos_le_norm_of_discreteTopology +
+                      mk_injOn_ball_of_isolation + mk_image_isOpen.
+                      `exists_chart_ball` is sorry-free.
 Failed/split this tick: none.
-Submitted this tick: 21cc9828 — first chart-layer packet.
-                     Combines IsolationAtZero + MkInjOnSmallBall +
-                     MkImage + Λ.isDiscrete to prove
-                     `exists_chart_ball Λ v`: every base point
-                     admits a small ball with `mk` InjOn and
-                     image open. Pure plumbing of existing
-                     primitives; recipe spelled out in the
-                     submission prompt.
 ```
 
 ```text

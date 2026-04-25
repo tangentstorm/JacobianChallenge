@@ -12,32 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 13:05 EDT)
+## Live Status (2026-04-25 13:19 EDT)
 
-- Active jobs (ours): 1/5
-  | ID         | Target file                                  | Kind  | Status |
-  | ---------- | -------------------------------------------- | ----- | ------ |
-  | 21cc9828   | `Jacobian/ComplexTorus/ChartBall.lean`       | proof | QUEUED |
-- Retrieved this tick: none.
-- Integrated this tick: none.
-- Submitted this tick: 21cc9828 — first chart-layer packet.
-  - Statement: `exists_chart_ball Λ v` — for any
-    `FullComplexLattice Λ` over a complex normed space and any base
-    point `v`, there is `r > 0` with `mk` InjOn `Metric.ball v r`
-    and `mk '' Metric.ball v r` open in the quotient.
-  - Proof recipe is pure plumbing of four existing primitives:
-    - `IsolationAtZero.exists_pos_le_norm_of_discreteTopology` for δ
-    - Pick `r := δ / 4`
-    - `MkInjOnSmallBall.mk_injOn_ball_of_isolation` for InjOn
-    - `MkImage.mk_image_isOpen` for the image-is-open leg
-  - The new `Λ.isDiscrete` field (instance) supplies the
-    `DiscreteTopology` premise to step 1 by class resolution.
-- Holding at 1/5 deliberately. The OpenPartialHomeomorph
-  construction packet is queued mentally for after this lands —
-  building the partial homeomorph from `exists_chart_ball`'s
-  output is a substantive next step worth doing one at a time.
-- Quotient manifold layer bumped from 0% → 10%: primitives and
-  the discreteness field are in; chart-prep packet is in flight.
+- Active jobs (ours): 0/5
+- Retrieved this tick: 21cc9828 (ChartBall) — COMPLETE.
+- Integrated this tick: 21cc9828 — Aristotle followed the spelled-out
+  recipe exactly. The 4-line proof uses
+  `exists_pos_le_norm_of_discreteTopology Λ.subgroup` to extract δ,
+  picks `r := δ / 4`, then chains `mk_injOn_ball_of_isolation` and
+  `mk_image_isOpen`. Build green, no sorries.
+- Submitted this tick: none yet (queue refill is the next step).
+- Quotient manifold layer bumped 10% → 15%: chart-prep lemma is in.
+- Planned next packet: a local-section function for the small ball,
+  using `Function.invFunOn`. With it plus `exists_chart_ball`, the
+  `OpenPartialHomeomorph` construction becomes mechanical.
 
 ## General Job Template
 
