@@ -32,4 +32,30 @@ lemma mapClm_continuous (f : V →L[ℂ] W)
     Continuous (mapClm f hf) :=
   map_continuous f.continuous hf
 
+/-! ### Functoriality of `mapClm`
+
+`mapClm` is a functor from continuous linear lattice-preserving maps to
+continuous additive homomorphisms of complex tori, so it commutes with
+identity and composition. The proofs are spelled-out wrappers around the
+algebraic `map_id` / `map_comp` from the statement bank.
+-/
+
+/-- `mapClm` of the identity is the identity. -/
+lemma mapClm_id :
+    mapClm (ContinuousLinearMap.id ℂ V)
+        (Λ := Λ) (Γ := Λ) (fun _ hv => hv) =
+      AddMonoidHom.id (quotient V Λ) :=
+  map_id Λ
+
+/-- `mapClm` distributes over composition of continuous linear maps. -/
+lemma mapClm_comp {U : Type*} [NormedAddCommGroup U] [NormedSpace ℂ U]
+    {Η : FullComplexLattice U}
+    (f : V →L[ℂ] W) (g : W →L[ℂ] U)
+    (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup)
+    (hg : ∀ w ∈ Γ.subgroup, g w ∈ Η.subgroup) :
+    mapClm (g.comp f)
+        (Λ := Λ) (Γ := Η) (fun v hv => hg (f v) (hf v hv)) =
+      (mapClm g hg).comp (mapClm f hf) :=
+  map_comp Λ Γ Η f.toAddMonoidHom g.toAddMonoidHom hf hg
+
 end JacobianChallenge.ComplexTorus
