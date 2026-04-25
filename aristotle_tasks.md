@@ -12,25 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 01:05 EDT)
+## Live Status (2026-04-25 01:17 EDT)
 
 - Active jobs (ours): 5/5
-  | ID         | Target file                                  | Lemma(s)                                   | Status      |
-  | ---------- | -------------------------------------------- | ------------------------------------------ | ----------- |
-  | 6e60ff64   | `Jacobian/ComplexTorus/Mk.lean`              | `mk_zero` / `mk_eq_iff` / `mk_eq_zero_iff` | IN_PROGRESS |
-  | 4d2fa17c   | `Jacobian/ComplexTorus/MapMk.lean`           | `map_zero` / `map_mk_add`                  | QUEUED      |
-  | 21a882aa   | `Jacobian/ComplexTorus/Surjective.lean`      | `map_surjective`                           | QUEUED      |
-  | e2c130cc   | `Jacobian/ComplexTorus/NhdsZero.lean`        | `nhds_zero_eq`                             | QUEUED      |
-  | 07e77aac   | `Jacobian/ComplexTorus/IsClosedSubgroup.lean`| `t2Space_quotient_of_isClosed`             | QUEUED      |
+  | ID         | Target file                                   | Lemma(s)                                   | Status      |
+  | ---------- | --------------------------------------------- | ------------------------------------------ | ----------- |
+  | 07e77aac   | `Jacobian/ComplexTorus/IsClosedSubgroup.lean` | `t2Space_quotient_of_isClosed`             | IN_PROGRESS |
+  | 20ebfd1c   | `Jacobian/ComplexTorus/MapInjective.lean`     | `map_injective_of_preimage_subset`         | QUEUED      |
+  | 518be471   | `Jacobian/ComplexTorus/Neg.lean`              | `mk_neg` / `continuous_neg`                | QUEUED      |
+  | 650e16fe   | `Jacobian/ComplexTorus/Add.lean`              | `mk_add` / `continuous_add`                | QUEUED      |
+  | fb51396b   | `Jacobian/ComplexTorus/Smul.lean`             | `mk_zsmul` / `mk_nsmul`                    | QUEUED      |
 - Integrated this tick:
-  - `c97ef7ec` — `map_continuous` in `Basic.lean` (term-mode proof via
-    `IsOpenQuotientMap.isQuotientMap.continuous_iff`).
-- Done previously: algebraic `mk` / `map` / `map_id` / `map_comp` in
-  `StatementBank.lean`; `mk_continuous`, `mk_isOpenQuotientMap`,
-  `mk_isOpenMap` directly in `Basic.lean`.
-- Next planned submission: continue carving bounded packets from
-  Queue B (closed-subgroup → compactness once T2 lands; lattice-image
-  preserved under continuous maps; etc.).
+  - `6e60ff64` — `mk_zero`, `mk_eq_iff`, `mk_eq_zero_iff` (`Mk.lean`).
+  - `4d2fa17c` — `map_zero`, `map_mk_add` (`MapMk.lean`).
+  - `21a882aa` — `map_surjective` (`Surjective.lean`).
+  - `e2c130cc` — `nhds_zero_eq` (`NhdsZero.lean`).
+- Done previously: `c97ef7ec` (`map_continuous` in `Basic.lean`);
+  algebraic `mk` / `map` / `map_id` / `map_comp` in `StatementBank.lean`;
+  `mk_continuous`, `mk_isOpenQuotientMap`, `mk_isOpenMap` directly in
+  `Basic.lean`.
+- Next planned submissions (after retrieval): the closed-subgroup →
+  compactness path once T2 lands; lattice-image preservation under
+  continuous maps; the bridge to a real `ZLattice` predicate.
 
 ## General Job Template
 

@@ -22,6 +22,7 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 neighborhoods of `0` in `V`. -/
 lemma nhds_zero_eq :
     𝓝 (0 : quotient V Λ) = Filter.map (mk V Λ) (𝓝 (0 : V)) := by
-  sorry
+  rw [show (0 : quotient V Λ) = mk V Λ 0 from rfl]
+  exact QuotientAddGroup.nhds_eq Λ.subgroup 0
 
 end JacobianChallenge.ComplexTorus

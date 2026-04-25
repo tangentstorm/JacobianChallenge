@@ -21,14 +21,14 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 01:05 EDT
+Last tick: 2026-04-25 01:17 EDT
 
 ```text
 Layer                     Bar                    %    Note
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
-Complex torus quotient    ██████░░░░░░░░░░░░░░   30%  Basic done; 5 packets
+Complex torus quotient    █████████░░░░░░░░░░░   45%  Basic + 4 packets done; 5 in flight
 Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -40,13 +40,14 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5
-  6e60ff64  mk_zero/eq_iff/eq_zero        Mk.lean              IN_PROGRESS
-  4d2fa17c  map_zero/map_mk_add           MapMk.lean           QUEUED
-  21a882aa  map_surjective                Surjective.lean      QUEUED
-  e2c130cc  nhds_zero_eq                  NhdsZero.lean        QUEUED
-  07e77aac  t2Space_quotient_of_isClosed  IsClosedSubgroup.lean QUEUED
-Completed this tick: c97ef7ec  (map_continuous in Basic.lean)
-Integrated this tick: c97ef7ec  (term-mode proof, kept docstring)
+  07e77aac  t2Space_quotient_of_isClosed  IsClosedSubgroup.lean IN_PROGRESS
+  20ebfd1c  map_injective_of_preimage_…   MapInjective.lean     QUEUED
+  518be471  mk_neg / continuous_neg       Neg.lean              QUEUED
+  650e16fe  mk_add / continuous_add       Add.lean              QUEUED
+  fb51396b  mk_zsmul / mk_nsmul           Smul.lean             QUEUED
+Completed this tick: 6e60ff64, 4d2fa17c, 21a882aa, e2c130cc
+Integrated this tick: 6e60ff64 (Mk), 4d2fa17c (MapMk),
+                      21a882aa (Surjective), e2c130cc (NhdsZero)
 Failed/split this tick: none
 ```
 
@@ -62,8 +63,8 @@ ComplexTorus    pass*   lake build Jacobian.ComplexTorus
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Integrate any returning packets among the 5 still in flight.
-2. Refill toward 5/5 with another bounded Queue B sibling.
-3. Hold off on the quotient manifold layer until the
-   quotient-group/lattice topological API is closed.
+1. Integrate the 5 in-flight Queue B siblings as they return.
+2. Once the topological-quotient layer is closed, plan the
+   compactness-from-cocompact-lattice packet.
+3. Hold off on the quotient manifold layer until then.
 ```

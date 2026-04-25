@@ -4,6 +4,10 @@ import Jacobian.ComplexTorus.MapMk
 import Jacobian.ComplexTorus.Surjective
 import Jacobian.ComplexTorus.NhdsZero
 import Jacobian.ComplexTorus.IsClosedSubgroup
+import Jacobian.ComplexTorus.MapInjective
+import Jacobian.ComplexTorus.Neg
+import Jacobian.ComplexTorus.Add
+import Jacobian.ComplexTorus.Smul
 
 /-!
 # Complex torus infrastructure
