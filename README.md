@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 17:05 EDT
+Last tick: 2026-04-25 17:10 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -29,7 +29,7 @@ Layer                     Bar                    %    Note
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
 Complex torus quotient    ████████████████████  100%  ZLattice bridge sorry-free
-Quotient manifold layer   ███████░░░░░░░░░░░░░   35%  chart-at-a-point assembled
+Quotient manifold layer   ██████████░░░░░░░░░░   50%  ChartedSpace instance
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -40,15 +40,16 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 0/5
-Cancelled this tick: 58789fac, f1d1e010 (proved locally instead).
-Integrated this tick: localSection_mk, continuousOn_localSection
-                      (both proved locally; ~17 lines combined),
-                      and `chartAtBall` — the
-                      `OpenPartialHomeomorph (V ⧸ Λ.subgroup) V`
-                      assembly using all primitives.
+Cancelled earlier this tick: 58789fac, f1d1e010 (proved locally).
+Integrated this tick: localSection_mk, continuousOn_localSection,
+                      `chartAtBall`, and the
+                      `ChartedSpace V (V ⧸ Λ.subgroup)` instance
+                      with `chartAtPoint` choosing reps via
+                      `Function.surjInv`.
 Failed/split this tick: none.
-Quotient manifold layer: now 35%. The chart at a small ball is
-in. Next: ChartedSpace instance (atlas of charts).
+Quotient manifold layer: now 50%. The complex torus is now a
+ChartedSpace modeled on V. Next: `IsManifold` (charts' transitions
+are translations, hence ω-smooth) and `LieAddGroup`.
 ```
 
 ```text
