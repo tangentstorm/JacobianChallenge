@@ -12,7 +12,15 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 10:06 EDT)
+## Live Status (2026-04-25 10:09 EDT)
+
+- Active jobs (ours): 0/5
+- Integrated this tick (2):
+  - `01dfbc1f` — `mkHom_ker = Λ.subgroup` via
+    `unfold mkHom; QuotientAddGroup.ker_mk' Λ.subgroup` (MkHomKer.lean).
+  - `65e8da6e` — `zero_preserves_lattices` (1-line `simp` using
+    `Γ.subgroup.zero_mem`) and `mapClm_zero` (1-line `ext q; simp [mapClm, map]`)
+    (MapZero.lean).
 
 - Active jobs (ours): 3/5
   | ID         | Target file                                  | Lemma(s)                          |
