@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 19:17 EDT
+Last tick: 2026-04-25 19:25 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -40,23 +40,24 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 0/5. Aristotle queue still wedged server-wide
-                    (same 5 unrelated jobs QUEUED 5h+, identical to
-                    last tick). No new submissions — piling onto a
-                    wedge is wasteful.
+                    (same 5 unrelated jobs QUEUED 5h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: extended `ComplexTorus/Witness.lean` to
-                          also discharge `quotientLieAddGroupStatement`
-                          (the third Queue B placeholder in
-                          StatementBank). Drafted the LieAddGroup
-                          smoothness packet decomposition (5 narrow
-                          target files) into `aristotle_tasks.md`'s
-                          new "Planned packets" section so the work
-                          is ready to submit when the queue unblocks.
-Quotient manifold layer: 100%. ChartedSpace + IsManifold both done,
-                         no sorries. All three Queue B
-                         chart/manifold StatementBank placeholders
-                         (chart, manifold, lie-add-group) now
-                         witnessed by the concrete instance.
+Local progress this tick: added
+                          `Jacobian/ComplexTorus/MkLocallyTranslate.lean`,
+                          a v₁-free generalization of
+                          `localSection_mk_locally_translate`.
+                          States: `y ↦ localSection Λ w r (mk y)`
+                          agrees with `y ↦ y + g` (for a fixed
+                          lattice `g`) on a neighborhood of every
+                          `x ∈ mk ⁻¹' (mk '' Metric.ball w r)`. This
+                          is the building block needed for the next
+                          three substantive lemmas: smoothness of
+                          `mk`, smoothness of `+`, and smoothness
+                          of `-`. Build green.
+Quotient manifold layer: 100%. LieAddGroup smoothness work begun —
+                         the local-translation building block for
+                         all three smoothness proofs (mk, +, -) is
+                         now in place.
 ```
 
 ```text
@@ -67,19 +68,21 @@ Statement bank   pass    lake build Jacobian.WorkPackets.StatementBank
 ComplexTorus     pass    lake build Jacobian.ComplexTorus (with IsManifold)
 IsManifold       pass    lake build Jacobian.ComplexTorus.IsManifold (no sorry)
 Witness          pass    lake build Jacobian.ComplexTorus.Witness (no sorry)
+MkLocallyTranslate pass  lake build Jacobian.ComplexTorus.MkLocallyTranslate (no sorry)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Submit (or hand-prove if Aristotle stays wedged) packet 1 of
-   the LieAddGroup decomposition: `AddSmoothLocal.lean` —
-   `ContMDiffAt` of `(q1, q2) ↦ q1 + q2` at a single point. Pattern
-   mirrors the chart-transition smoothness work (lift via surjInv,
-   apply chart machinery, observe coordinate version is linear).
-2. Same for `NegSmoothLocal.lean` — `ContMDiffAt` of `q ↦ -q`.
-   Disjoint write scope from packet 1; the two can run in parallel.
-3. Then promote both to `ContMDiff` everywhere, package into the
-   `LieAddGroup (modelWithCornersSelf ℂ V) ⊤ (quotient V Λ)`
-   instance. Full decomposition in `aristotle_tasks.md`.
+1. `Jacobian/ComplexTorus/MkSmooth.lean`: prove `ContMDiff` of
+   `mk : V → V ⧸ Λ.subgroup` using the new `mk_locally_translate`
+   building block. The chart-coord version of `mk` is
+   `localSection_w ∘ mk`, which equals a translation locally; that
+   gives `ContDiffWithinAt` pointwise, hence `ContMDiff`.
+2. With `mk` smoothness in hand, attack `+` smoothness (likely via
+   `mk` lifting: `mk(x+y) = mk(x) + mk(y)` reduces quotient `+`
+   smoothness to `mk ∘ + : V × V → V/Λ` smoothness, which factors
+   as smooth `+` on `V` followed by smooth `mk`).
+3. Same pattern for `-` smoothness, then assemble the
+   `LieAddGroup` instance.
 ```

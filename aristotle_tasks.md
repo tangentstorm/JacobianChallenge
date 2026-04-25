@@ -12,26 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 19:08 EDT)
+## Live Status (2026-04-25 19:25 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged server-wide
-  (5 unrelated jobs QUEUED 5h+, no progress). No new submissions
-  this tick — piling onto a wedge is wasteful, and there's plenty
-  of safe local work.
-- **Quotient manifold layer: complete (sorry-free).** The previous
-  tick drove all the way to `IsManifold (modelWithCornersSelf ℂ V) ω
-  (V ⧸ Λ.subgroup)` via `LocalSectionRightInv`,
-  `LocalSectionContinuous`, `Chart`, `ChartedSpace`, the four
-  `Transition*` sub-lemmas, and `IsManifold` itself. The umbrella
-  `Jacobian/ComplexTorus.lean` re-exports `IsManifold`.
+  (5 unrelated jobs QUEUED 5h+, no progress). No new submissions —
+  piling onto a wedge is wasteful.
+- **Quotient manifold layer: complete (sorry-free).** Earlier ticks
+  drove all the way to `IsManifold (modelWithCornersSelf ℂ V) ω
+  (V ⧸ Λ.subgroup)` via the `LocalSection*`, `Chart*`, and four
+  `Transition*` sub-lemmas. Witness file discharges the three
+  StatementBank Queue B placeholders.
 - **This tick — local progress:** added
-  `Jacobian/ComplexTorus/Witness.lean`. It discharges the
-  StatementBank Queue B placeholder targets
-  `quotientChartedSpaceStatement` and `quotientIsManifoldStatement`
-  by exhibiting the concrete `complexTorusChartedSpace` instance.
-  Two one-line witnesses; build green. The Witness module imports
-  the relevant submodules directly (not the umbrella) to avoid
-  pulling itself in via the umbrella's re-export chain.
+  `Jacobian/ComplexTorus/MkLocallyTranslate.lean`, a v₁-free
+  generalization of the chart-transition's locally-translation
+  property. States: `y ↦ localSection Λ w r (mk y)` agrees with
+  `y ↦ y + g` for a fixed lattice `g` on a neighborhood of every
+  `x ∈ mk ⁻¹' (mk '' Metric.ball w r)`. This is the shared building
+  block for the next three substantive lemmas: smoothness of `mk`,
+  smoothness of `+`, and smoothness of `-` on the quotient. Wired
+  into the umbrella; build green.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
