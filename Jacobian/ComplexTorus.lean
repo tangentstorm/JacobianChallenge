@@ -34,6 +34,7 @@ import Jacobian.ComplexTorus.IsolationAtZero
 import Jacobian.ComplexTorus.MkInjOnSmallBall
 import Jacobian.ComplexTorus.DiscretenessRecon
 import Jacobian.ComplexTorus.ChartBall
+import Jacobian.ComplexTorus.LocalSection
 
 /-!
 # Complex torus infrastructure
