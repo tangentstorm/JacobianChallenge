@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 21:30 EDT
+Last tick: 2026-04-25 19:08 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,20 +39,23 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5. Aristotle has been wedged server-wide; the
-                    two in-flight jobs (LocalSectionRightInv,
-                    LocalSectionContinuous) were proven locally and
-                    the Aristotle copies cancelled.
-Recent commits this session: localSection_mk, continuousOn_localSection,
-                             chartAtBall, ChartedSpace instance, lint
-                             cleanup (Basic.lean + Defs.lean),
-                             TransitionSubMem, TransitionSubContinuous,
-                             TransitionLocallyTranslate,
-                             TransitionContDiffOn, IsManifold (sorry-free).
+Active jobs (ours): 0/5. Aristotle queue still wedged server-wide
+                    (5 unrelated jobs QUEUED 5h+ with no progress).
+                    No new submissions this tick — piling onto a
+                    wedge is wasteful, and there's plenty of safe
+                    local work.
+Integrated this tick: nothing from Aristotle (queue stuck).
+Local progress this tick: added `ComplexTorus/Witness.lean`
+                          discharging `quotientChartedSpaceStatement`
+                          and `quotientIsManifoldStatement` from
+                          the StatementBank using the concrete
+                          `complexTorusChartedSpace` instance. Both
+                          witnesses are one-liners; the file builds
+                          green.
 Quotient manifold layer: 100%. ChartedSpace + IsManifold both done,
-                         no sorries. The HasGroupoid obligation
-                         discharges via `mem_groupoid_of_pregroupoid`
-                         + two `contDiffOn_localSection_mk` calls.
+                         no sorries. StatementBank Queue B placeholder
+                         targets that the chart layer was supposed
+                         to discharge are now witnessed.
 ```
 
 ```text
@@ -62,6 +65,7 @@ Challenge        pass    lake build Jacobian.Challenge
 Statement bank   pass    lake build Jacobian.WorkPackets.StatementBank
 ComplexTorus     pass    lake build Jacobian.ComplexTorus (with IsManifold)
 IsManifold       pass    lake build Jacobian.ComplexTorus.IsManifold (no sorry)
+Witness          pass    lake build Jacobian.ComplexTorus.Witness (no sorry)
 ```
 
 ```text
