@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 12:04 EDT
+Last tick: 2026-04-25 12:09 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -40,13 +40,13 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 3/5
-  8d77f7d8  IsolationAtZero.lean       proof  QUEUED
-  1841ae34  MkInjOnSmallBall.lean      proof  QUEUED
-  c5beb23a  DiscretenessRecon.lean     recon  QUEUED
-Completed this tick: none (all 3 still QUEUED — Aristotle
-                     server busy on other tenants' jobs).
+  8d77f7d8  IsolationAtZero.lean       proof  IN_PROGRESS  1%
+  1841ae34  MkInjOnSmallBall.lean      proof  IN_PROGRESS  1%
+  c5beb23a  DiscretenessRecon.lean     recon  IN_PROGRESS  1%
+Completed this tick: none.
 Integrated this tick: none.
 Failed/split this tick: none.
+All 3 just started this tick (QUEUED → IN_PROGRESS).
 Holding queue at 3/5 deliberately; 4th and 5th slots gated on
 the upcoming FullComplexLattice discreteness refactor.
 ```

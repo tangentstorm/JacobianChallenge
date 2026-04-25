@@ -12,22 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 12:04 EDT)
+## Live Status (2026-04-25 12:09 EDT)
 
 - Active jobs (ours): 3/5
-  | ID         | Target file                                       | Kind  | Status |
-  | ---------- | ------------------------------------------------- | ----- | ------ |
-  | 8d77f7d8   | `Jacobian/ComplexTorus/IsolationAtZero.lean`      | proof | QUEUED |
-  | 1841ae34   | `Jacobian/ComplexTorus/MkInjOnSmallBall.lean`     | proof | QUEUED |
-  | c5beb23a   | `Jacobian/ComplexTorus/DiscretenessRecon.lean`    | recon | QUEUED |
+  | ID         | Target file                                       | Kind  | Status      |
+  | ---------- | ------------------------------------------------- | ----- | ----------- |
+  | 8d77f7d8   | `Jacobian/ComplexTorus/IsolationAtZero.lean`      | proof | IN_PROGRESS |
+  | 1841ae34   | `Jacobian/ComplexTorus/MkInjOnSmallBall.lean`     | proof | IN_PROGRESS |
+  | c5beb23a   | `Jacobian/ComplexTorus/DiscretenessRecon.lean`    | recon | IN_PROGRESS |
 - Retrieved this tick: none.
-- Integrated this tick: none. (5c13793d was integrated earlier in
-  commit `eb31864`; the ZLattice→FullComplexLattice bridge is
-  sorry-free.)
-- Submitted this tick: none. (The 3 active packets above were
-  submitted in commit `20ab627`.)
-- Aristotle server appears busy on other tenants' jobs at the moment
-  — all 3 of our packets still QUEUED 18 min after submission.
+- Integrated this tick: none.
+- Submitted this tick: none.
+- All 3 packets transitioned QUEUED → IN_PROGRESS this tick (each
+  at 1% per the server's progress meter). Aristotle is now actually
+  working on them; expect first returns within the next 30–60 min.
 - 4th and 5th slots intentionally held for chart-layer packets that
   need the FullComplexLattice discreteness field in place first.
   The discreteness refactor is a deliberate Claude-owned step
