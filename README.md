@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 07:02 EDT
+Last tick: 2026-04-25 07:17 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -40,15 +40,14 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5
-  5a37a9c3  connectedSpace_quotient       Connected.lean      QUEUED
-  83af50d3  nhds_mk_eq                    Nhds.lean           QUEUED
+  5a37a9c3  connectedSpace_quotient       Connected.lean      IN_PROGRESS 4%
+  83af50d3  nhds_mk_eq                    Nhds.lean           IN_PROGRESS 1%
   f2a1782c  dense_*                       Dense.lean          QUEUED
   88c7c85c  first/secondCountableTopology FirstCountable.lean QUEUED
   5573ebd7  pathConnectedSpace_quotient   PathConnected.lean  QUEUED
-Completed this tick: none (all 5 still QUEUED)
-Integrated this tick: none
+Completed this tick: none
+Integrated this tick: none — queue starting to move after 5h freeze
 Failed/split this tick: none
-Note: idle tick — queue full, just-submitted batch hasn't started yet
 ```
 
 ```text
