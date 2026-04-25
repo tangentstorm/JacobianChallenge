@@ -32,4 +32,13 @@ theorem quotientIsManifold_witness (Λ : FullComplexLattice V) :
     JacobianChallenge.ComplexTorus.quotientIsManifoldStatement V Λ :=
   ⟨complexTorusChartedSpace Λ, trivial⟩
 
+/-- Discharge the StatementBank placeholder for the Lie-add-group target.
+The current `quotientLieAddGroupStatement` shape only asks for a
+`ChartedSpace` witness; the actual smoothness of `+` and `-` (i.e.,
+the `LieAddGroup` instance proper) is the layer above this and is
+not yet built. -/
+theorem quotientLieAddGroup_witness (Λ : FullComplexLattice V) :
+    JacobianChallenge.ComplexTorus.quotientLieAddGroupStatement V Λ :=
+  ⟨complexTorusChartedSpace Λ, trivial⟩
+
 end JacobianChallenge.ComplexTorus
