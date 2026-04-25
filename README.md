@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 10:37 EDT
+Last tick: 2026-04-25 10:42 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,13 +39,17 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5
+Active jobs (ours): 3/5
+  78a3b9f9  generic AddSubgroup quotient    GenericQuotient.lean    QUEUED
+  a68d37f4  ZLattice reconnaissance         ZLatticeRecon.lean      QUEUED
+  bbdcb3f4  manifold-layer name discovery   ManifoldRecon.lean      QUEUED
 Completed this tick: none
 Integrated this tick: none
 Failed/split this tick: none
-Local progress: none — working tree clean; awaiting Claude-owned
-                next-layer work (drop quotient_compact field; sketch
-                manifold layer)
+Local progress: dropped FullComplexLattice.quotient_compact field;
+                added fundamentalDomain + isCompact + covers fields;
+                CompactSpace now derived inline in StatementBank.
+                Whole tower (8056 jobs) builds.
 ```
 
 ```text

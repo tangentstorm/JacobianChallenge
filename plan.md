@@ -127,6 +127,11 @@ Stable in `Jacobian/ComplexTorus/`:
 - `IsClosedSubgroup.lean` — `t2Space_quotient_of_isClosed` (now
   load-bearing: the `FullComplexLattice.quotient_t2` field has been
   dropped and the structure-level instance derives T2 from `isClosed`)
+- `Compact.lean` — `compactSpace_quotient_of_cover` (the
+  `FullComplexLattice.quotient_compact` field has now also been
+  dropped; `quotient_compactSpace` is derived inline in StatementBank
+  from the new `fundamentalDomain` + `fundamentalDomain_isCompact` +
+  `fundamentalDomain_covers` fields)
 - `Neg.lean`              — `mk_neg`, `continuous_neg`
 - `Add.lean`              — `mk_add`, `continuous_add`
 - `Smul.lean`             — `mk_zsmul`, `mk_nsmul`
