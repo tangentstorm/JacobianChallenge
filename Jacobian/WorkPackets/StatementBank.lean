@@ -145,24 +145,25 @@ instance quotient_compactSpace (Λ : FullComplexLattice V) : CompactSpace (quoti
 def mk (Λ : FullComplexLattice V) : V → quotient V Λ :=
   QuotientAddGroup.mk
 
-lemma mk_surjective (Λ : FullComplexLattice V) : Function.Surjective (mk V Λ) := by
-  sorry
+lemma mk_surjective (Λ : FullComplexLattice V) : Function.Surjective (mk V Λ) :=
+  QuotientAddGroup.mk_surjective
 
 variable {V W U}
 
 /-- A continuous additive map preserving lattices descends to a map of complex tori. -/
-opaque map (Λ : FullComplexLattice V) (Γ : FullComplexLattice W) (f : V →+ W)
+def map (Λ : FullComplexLattice V) (Γ : FullComplexLattice W) (f : V →+ W)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) :
-    quotient V Λ →+ quotient W Γ
+    quotient V Λ →+ quotient W Γ :=
+  QuotientAddGroup.map Λ.subgroup Γ.subgroup f hf
 
 lemma map_mk (Λ : FullComplexLattice V) (Γ : FullComplexLattice W) (f : V →+ W)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) (v : V) :
-    map Λ Γ f hf (mk V Λ v) = mk W Γ (f v) := by
-  sorry
+    map Λ Γ f hf (mk V Λ v) = mk W Γ (f v) :=
+  rfl
 
 lemma map_id (Λ : FullComplexLattice V) :
-    map Λ Λ (AddMonoidHom.id V) (by intro v hv; exact hv) = AddMonoidHom.id (quotient V Λ) := by
-  sorry
+    map Λ Λ (AddMonoidHom.id V) (by intro v hv; exact hv) = AddMonoidHom.id (quotient V Λ) :=
+  QuotientAddGroup.map_id Λ.subgroup
 
 lemma map_comp (Λ : FullComplexLattice V) (Γ : FullComplexLattice W)
     (Η : FullComplexLattice U) (f : V →+ W) (g : W →+ U)
@@ -171,8 +172,8 @@ lemma map_comp (Λ : FullComplexLattice V) (Γ : FullComplexLattice W)
     map Λ Η (g.comp f) (by
       intro v hv
       exact hg (f v) (hf v hv)) =
-      (map Γ Η g hg).comp (map Λ Γ f hf) := by
-  sorry
+      (map Γ Η g hg).comp (map Λ Γ f hf) :=
+  (QuotientAddGroup.map_comp_map (I := U) Λ.subgroup Γ.subgroup Η.subgroup f g hf hg).symm
 
 /-- Work-packet target: give the torus quotient a complex charted-space structure. -/
 def quotientChartedSpaceStatement (Λ : FullComplexLattice V) : Prop :=
