@@ -12,22 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 08:17 EDT)
+## Live Status (2026-04-25 08:33 EDT)
 
-- Active jobs (ours): 0/5 — between batches.
-- Integrated this tick:
-  - `e9ff30bc` — `continuous_iff_continuous_comp_mk` (ContIff.lean).
-    One-liner: `(QuotientAddGroup.isQuotientMap_mk Λ.subgroup).continuous_iff`.
-- The "easy" topological-quotient API is now genuinely closed. The
-  remaining lower-layer work that would let Aristotle help further is:
-  - **Refactor `FullComplexLattice`** to drop `quotient_t2` and
-    `quotient_compact` fields in favor of derived instances. This is
-    Claude-owned (multi-file refactor, not a bounded packet).
-  - **Bridge to `ZLattice.IsZLattice`** for full lattices in finite-dim
-    spaces. Speculative until Mathlib's predicate is checked.
-- Next planned tick: do the FullComplexLattice refactor locally so the
-  `t2Space_quotient_of_isClosed` and `compactSpace_quotient_of_cover`
-  lemmas become load-bearing instead of decorative.
+- Active jobs (ours): 4/5 (queue refilled)
+  | ID         | Target file                              | Lemma(s)                            |
+  | ---------- | ---------------------------------------- | ----------------------------------- |
+  | 02468cd4   | `Jacobian/ComplexTorus/MkImage.lean`     | `mk_image_isCompact/Open`           |
+  | 98392eb4   | `Jacobian/ComplexTorus/MkPreimage.lean`  | `mk_preimage_isOpen/Closed`         |
+  | 0faaf3e5   | `Jacobian/ComplexTorus/MkBundled.lean`   | `mkHom`, `mkHom_apply`              |
+  | 2649200e   | `Jacobian/ComplexTorus/MkRange.lean`     | `range_mk`, `mk_image_univ`         |
+- Integrated this tick: none (no completions to integrate).
+- These are API-rounding packets — small, direct one-liners — to keep
+  Aristotle busy while planning the next substantive layer (manifold
+  structure, ZLattice bridge).
 
 - Active jobs (ours): 5/5 (all queued, just submitted)
   | ID         | Target file                                | Lemma(s)                                    |

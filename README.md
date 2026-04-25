@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 08:17 EDT
+Last tick: 2026-04-25 08:33 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,10 +39,13 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5  (between batches; queue management deciding next)
-Completed this tick: e9ff30bc (ContIff.lean)
-Integrated this tick: e9ff30bc — quotient universal property via
-                      IsQuotientMap.continuous_iff. One-liner.
+Active jobs (ours): 4/5
+  02468cd4  mk_image_isCompact/Open       MkImage.lean        QUEUED
+  98392eb4  mk_preimage_isOpen/Closed     MkPreimage.lean     QUEUED
+  0faaf3e5  mkHom (bundled →+)            MkBundled.lean      QUEUED
+  2649200e  range_mk = univ               MkRange.lean        QUEUED
+Completed this tick: none
+Integrated this tick: none — refilled with API-rounding packets
 Failed/split this tick: none
 ```
 

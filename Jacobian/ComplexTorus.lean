@@ -16,6 +16,10 @@ import Jacobian.ComplexTorus.FirstCountable
 import Jacobian.ComplexTorus.PathConnected
 import Jacobian.ComplexTorus.Compact
 import Jacobian.ComplexTorus.ContIff
+import Jacobian.ComplexTorus.MkImage
+import Jacobian.ComplexTorus.MkPreimage
+import Jacobian.ComplexTorus.MkBundled
+import Jacobian.ComplexTorus.MkRange
 
 /-!
 # Complex torus infrastructure
