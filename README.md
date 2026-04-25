@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 11:12 EDT
+Last tick: 2026-04-25 11:24 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,12 +39,12 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 2/5
-  a68d37f4  ZLattice reconnaissance         ZLatticeRecon.lean      IN_PROGRESS 12%
-  bbdcb3f4  manifold-layer name discovery   ManifoldRecon.lean      IN_PROGRESS 3%
-Completed this tick: 78a3b9f9 (GenericQuotient.lean)
-Integrated this tick: 78a3b9f9 — 4 generic AddSubgroup quotient
-                      one-liners (Mathlib citations + omit annotations)
+Active jobs (ours): 1/5
+  a68d37f4  ZLattice reconnaissance         ZLatticeRecon.lean      IN_PROGRESS 21%
+Completed this tick: bbdcb3f4 (ManifoldRecon.lean)
+Integrated this tick: bbdcb3f4 — substantive recon survey of the
+                      manifold-layer Mathlib API; findings folded into
+                      plan.md Phase 1.5 block
 Failed/split this tick: none
 ```
 
