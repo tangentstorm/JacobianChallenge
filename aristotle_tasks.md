@@ -12,15 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 09:18 EDT)
+## Live Status (2026-04-25 09:32 EDT)
 
-- Active jobs (ours): 1/5
-  | ID         | Target file                              | Lemma                               |
-  | ---------- | ---------------------------------------- | ----------------------------------- |
-  | 77be5e1a   | `Jacobian/ComplexTorus/MkInjective.lean` | `mk_injective_iff_subgroup_eq_bot`  |
+- Active jobs (ours): 0/5
 - Integrated this tick:
-  - `04358fe4` — `map_neg`, `map_sub` (MapNegSub.lean) via
-    `(map Λ Γ f hf).map_neg q` / `.map_sub q p`.
+  - `77be5e1a` — `mk_injective_iff_subgroup_eq_bot` (MkInjective.lean)
+    via a two-direction tactic chain: forward uses `ext` +
+    `AddSubgroup.mem_bot` + `QuotientAddGroup.eq.mpr` and the injectivity
+    hypothesis; backward uses `QuotientAddGroup.eq.mp` + `mem_bot` +
+    `neg_add_eq_zero`.
+- All bounded packets in the topological-quotient layer of Phase 1 are
+  now integrated. The complex-torus phase is essentially closed
+  (~95%). Next substantive step is Claude-owned: either start the
+  charted-space/manifold layer (Phase 1 part 2) or refactor
+  `FullComplexLattice` to drop redundant fields.
 
 - Active jobs (ours): 4/5 (queue refilled)
   | ID         | Target file                              | Lemma(s)                            |
