@@ -20,7 +20,7 @@ variable {V W : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 /-- A function from the complex torus is continuous iff its precomposition
 with `mk` is continuous. -/
 lemma continuous_iff_continuous_comp_mk (f : quotient V Λ → W) :
-    Continuous f ↔ Continuous (f ∘ mk V Λ) := by
-  sorry
+    Continuous f ↔ Continuous (f ∘ mk V Λ) :=
+  (QuotientAddGroup.isQuotientMap_mk Λ.subgroup).continuous_iff
 
 end JacobianChallenge.ComplexTorus

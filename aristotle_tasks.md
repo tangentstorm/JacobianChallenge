@@ -12,21 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 08:11 EDT)
+## Live Status (2026-04-25 08:17 EDT)
 
-- Active jobs (ours): 1/5
-  | ID         | Target file                              | Lemma                                    |
-  | ---------- | ---------------------------------------- | ---------------------------------------- |
-  | e9ff30bc   | `Jacobian/ComplexTorus/ContIff.lean`     | `continuous_iff_continuous_comp_mk`      |
+- Active jobs (ours): 0/5 — between batches.
 - Integrated this tick:
-  - `3679ff5a` — `compactSpace_quotient_of_cover` (Compact.lean).
-    Tactic chain: `isCompact_univ_iff`, show `mk '' K = univ`,
-    `IsCompact.image` of `hK` along `QuotientAddGroup.continuous_mk`.
-- Topological-quotient layer is now essentially closed (~85% of the
-  complex-torus phase). Carved a new universal-property packet
-  (`ContIff.lean`) to keep one job in flight while planning the next
-  refactor (drop `quotient_t2`/`quotient_compact` fields from
-  `FullComplexLattice` in favor of derived instances).
+  - `e9ff30bc` — `continuous_iff_continuous_comp_mk` (ContIff.lean).
+    One-liner: `(QuotientAddGroup.isQuotientMap_mk Λ.subgroup).continuous_iff`.
+- The "easy" topological-quotient API is now genuinely closed. The
+  remaining lower-layer work that would let Aristotle help further is:
+  - **Refactor `FullComplexLattice`** to drop `quotient_t2` and
+    `quotient_compact` fields in favor of derived instances. This is
+    Claude-owned (multi-file refactor, not a bounded packet).
+  - **Bridge to `ZLattice.IsZLattice`** for full lattices in finite-dim
+    spaces. Speculative until Mathlib's predicate is checked.
+- Next planned tick: do the FullComplexLattice refactor locally so the
+  `t2Space_quotient_of_isClosed` and `compactSpace_quotient_of_cover`
+  lemmas become load-bearing instead of decorative.
 
 - Active jobs (ours): 5/5 (all queued, just submitted)
   | ID         | Target file                                | Lemma(s)                                    |
