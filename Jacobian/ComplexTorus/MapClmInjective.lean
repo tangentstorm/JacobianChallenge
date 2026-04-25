@@ -1,6 +1,7 @@
 import Mathlib.Topology.Algebra.Group.Quotient
 import Jacobian.WorkPackets.StatementBank
 import Jacobian.ComplexTorus.OfClm
+import Jacobian.ComplexTorus.MapInjective
 
 /-!
 # Injectivity criterion for the continuous-linear quotient map
@@ -22,7 +23,7 @@ quotient map is injective. -/
 lemma mapClm_injective_of_preimage_subset (f : V →L[ℂ] W)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup)
     (hker : ∀ v : V, f v ∈ Γ.subgroup → v ∈ Λ.subgroup) :
-    Function.Injective (mapClm f hf) := by
-  sorry
+    Function.Injective (mapClm f hf) :=
+  map_injective_of_preimage_subset hf hker
 
 end JacobianChallenge.ComplexTorus
