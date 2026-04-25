@@ -12,10 +12,11 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 02:17 EDT)
+## Live Status (2026-04-25 02:32 EDT)
 
-(Idle tick: all 5 jobs still QUEUED 9-11 minutes after submission.
-Aristotle's queue must be backed up. No local action this tick.)
+(Idle tick: all 5 jobs still QUEUED at 25 min after submission. The
+upstream Aristotle queue appears heavily backlogged — no progress at
+all in any of our jobs. No local action this tick.)
 
 - Active jobs (ours): 5/5 (all queued, just submitted)
   | ID         | Target file                                | Lemma(s)                                    |
