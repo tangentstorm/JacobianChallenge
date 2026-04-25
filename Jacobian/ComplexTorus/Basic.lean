@@ -1,5 +1,4 @@
 import Mathlib.Topology.Algebra.Group.Quotient
-import Mathlib.Topology.Defs.Induced
 import Jacobian.WorkPackets.StatementBank
 
 /-!

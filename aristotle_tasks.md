@@ -12,20 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 00:39 EDT)
+## Live Status (2026-04-25 00:50 EDT)
 
-- Active jobs (ours): 0/5
-- Completed/integrated this tick:
-  - Discharged `mk_surjective`, `map`, `map_mk`, `map_id`, `map_comp` in
-    `Jacobian/WorkPackets/StatementBank.lean` directly from
-    `QuotientAddGroup` (no Aristotle round-trip).
-  - Carved `Jacobian/ComplexTorus/Basic.lean` with `mk_continuous`,
-    `mk_isOpenQuotientMap`, `mk_isOpenMap` discharged, and `map_continuous`
-    left as a `sorry` for the next Aristotle packet.
-- Next planned submissions (Queue B):
-  - `map_continuous` on `Jacobian/ComplexTorus/Basic.lean`.
-  - Add `mapL_*` lemmas (continuous-linear-map version of `map`) once the
-    base file is stable.
+- Active jobs (ours): 5/5 — all queued.
+  | ID         | Target file                              | Sorry / Lemma                      |
+  | ---------- | ---------------------------------------- | ---------------------------------- |
+  | c97ef7ec   | `Jacobian/ComplexTorus/Basic.lean`       | `map_continuous`                   |
+  | 6e60ff64   | `Jacobian/ComplexTorus/Mk.lean`          | `mk_zero` / `mk_eq_iff` / `mk_eq_zero_iff` |
+  | 4d2fa17c   | `Jacobian/ComplexTorus/MapMk.lean`       | `map_zero` / `map_mk_add`          |
+  | 21a882aa   | `Jacobian/ComplexTorus/Surjective.lean`  | `map_surjective`                   |
+  | e2c130cc   | `Jacobian/ComplexTorus/NhdsZero.lean`    | `nhds_zero_eq`                     |
+- Done previously: algebraic `mk` / `map` / `map_id` / `map_comp` in
+  `StatementBank.lean`; `mk_continuous`, `mk_isOpenQuotientMap`,
+  `mk_isOpenMap` directly in `Basic.lean`.
+- Next planned submissions (after retrieval): bounded continuity / lattice
+  bookkeeping packets in additional sibling files.
 
 ## General Job Template
 
