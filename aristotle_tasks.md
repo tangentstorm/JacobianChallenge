@@ -12,25 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 11:24 EDT)
+## Live Status (2026-04-25 11:30 EDT)
 
 - Active jobs (ours): 1/5
-  | ID         | Target file                                   | Status         |
-  | ---------- | --------------------------------------------- | -------------- |
-  | a68d37f4   | `Jacobian/ComplexTorus/ZLatticeRecon.lean`    | IN_PROGRESS 21% |
-- Integrated this tick:
-  - `bbdcb3f4` — Manifold-layer reconnaissance. Aristotle returned a
-    7-section top-of-file Mathlib-API survey plus detailed per-sorry
-    construction outlines. Headlines: no quotient-manifold machinery
-    exists in Mathlib; hand-roll required; specific building blocks
-    (ChartedSpace.mk + OpenPartialHomeomorph.mk + isOpenMap_coe +
-    chartedSpaceSelf) named with their Mathlib paths. Findings folded
-    into a new `Phase 1.5 — manifold layer` block in `plan.md`.
-- Aristotle's missing-pieces shortlist for the chart construction:
-  discreteness of closed AddSubgroup in finite-dim normed space,
-  injectivity of `mk` on small balls, continuous local section over a
-  small ball. These are the natural next bounded packets after
-  ZLatticeRecon returns.
+  | ID         | Target file                                  | Status |
+  | ---------- | -------------------------------------------- | ------ |
+  | 5c13793d   | `Jacobian/ComplexTorus/ZLatticeFundDom.lean` | QUEUED |
+- Integrated this tick (partial):
+  - `a68d37f4` — ZLattice bridge reconnaissance, returned
+    COMPLETE_WITH_ERRORS. 4 of the 5 `FullComplexLattice` fields
+    proved cleanly via the `ZSpan` API (subgroup, isClosed via a
+    `discreteTopology_toAddSubgroup` bridge helper, fundamentalDomain,
+    fundamentalDomain_isCompact). The 5th (covers) failed with `grind`
+    and was reduced to a clean `sorry` with a documented sketch.
+    Verdict (bridge is feasible) folded into `plan.md` Phase 1.5b.
+- Submitted `5c13793d` to discharge the one remaining piece — a
+  packaging helper `exists_sub_mem_closure_fundamentalDomain` that
+  converts `ZSpan.exist_unique_vadd_mem_fundamentalDomain` to the form
+  `FullComplexLattice` expects. If that lands cleanly,
+  `fullComplexLatticeOfZLattice` becomes sorry-free.
+- Note: did NOT carve a manifold-layer chart construction packet yet.
+  The recon outline names several "missing from Mathlib" small lemmas
+  (`Λ.isClosed → DiscreteTopology Λ.subgroup` is **NOT** generally
+  true — closed cocompact subgroups can be non-discrete; e.g.
+  `ℝ × ℤ ⊂ ℝ²`). Need to think about how to package isolation-at-zero
+  before queueing those packets.
 
 - Active jobs (ours): 3/5
   | ID         | Target file                                  | Lemma(s)                          |

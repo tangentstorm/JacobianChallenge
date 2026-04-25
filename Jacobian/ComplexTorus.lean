@@ -29,6 +29,7 @@ import Jacobian.ComplexTorus.MapZero
 import Jacobian.ComplexTorus.GenericQuotient
 import Jacobian.ComplexTorus.ZLatticeRecon
 import Jacobian.ComplexTorus.ManifoldRecon
+import Jacobian.ComplexTorus.ZLatticeFundDom
 
 /-!
 # Complex torus infrastructure
