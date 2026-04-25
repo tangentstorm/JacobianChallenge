@@ -20,6 +20,8 @@ import Jacobian.ComplexTorus.MkImage
 import Jacobian.ComplexTorus.MkPreimage
 import Jacobian.ComplexTorus.MkBundled
 import Jacobian.ComplexTorus.MkRange
+import Jacobian.ComplexTorus.MapNegSub
+import Jacobian.ComplexTorus.MkInjective
 
 /-!
 # Complex torus infrastructure
