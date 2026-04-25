@@ -31,6 +31,12 @@ lemma localSection_mk
     (hiso : ∀ g ∈ Λ.subgroup, g ≠ 0 → δ ≤ ‖g‖)
     {x : V} (hx : x ∈ Metric.ball v r) :
     localSection Λ v r (mk V Λ x) = x := by
-  sorry
+  have hmem : mk V Λ x ∈ mk V Λ '' Metric.ball v r :=
+    Set.mem_image_of_mem (mk V Λ) hx
+  have hsec : localSection Λ v r (mk V Λ x) ∈ Metric.ball v r :=
+    localSection_mem Λ v r hmem
+  have heq : mk V Λ (localSection Λ v r (mk V Λ x)) = mk V Λ x :=
+    mk_localSection Λ v r hmem
+  exact mk_injOn_ball_of_isolation Λ.subgroup hr_lt hiso v hsec hx heq
 
 end JacobianChallenge.ComplexTorus
