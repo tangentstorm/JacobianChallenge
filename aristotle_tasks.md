@@ -12,79 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 11:30 EDT)
+## Live Status (2026-04-25 11:41 EDT)
 
 - Active jobs (ours): 1/5
-  | ID         | Target file                                  | Status |
-  | ---------- | -------------------------------------------- | ------ |
-  | 5c13793d   | `Jacobian/ComplexTorus/ZLatticeFundDom.lean` | QUEUED |
-- Integrated this tick (partial):
-  - `a68d37f4` — ZLattice bridge reconnaissance, returned
-    COMPLETE_WITH_ERRORS. 4 of the 5 `FullComplexLattice` fields
-    proved cleanly via the `ZSpan` API (subgroup, isClosed via a
-    `discreteTopology_toAddSubgroup` bridge helper, fundamentalDomain,
-    fundamentalDomain_isCompact). The 5th (covers) failed with `grind`
-    and was reduced to a clean `sorry` with a documented sketch.
-    Verdict (bridge is feasible) folded into `plan.md` Phase 1.5b.
-- Submitted `5c13793d` to discharge the one remaining piece — a
-  packaging helper `exists_sub_mem_closure_fundamentalDomain` that
-  converts `ZSpan.exist_unique_vadd_mem_fundamentalDomain` to the form
-  `FullComplexLattice` expects. If that lands cleanly,
-  `fullComplexLatticeOfZLattice` becomes sorry-free.
-- Note: did NOT carve a manifold-layer chart construction packet yet.
-  The recon outline names several "missing from Mathlib" small lemmas
-  (`Λ.isClosed → DiscreteTopology Λ.subgroup` is **NOT** generally
-  true — closed cocompact subgroups can be non-discrete; e.g.
-  `ℝ × ℤ ⊂ ℝ²`). Need to think about how to package isolation-at-zero
-  before queueing those packets.
-
-- Active jobs (ours): 3/5
-  | ID         | Target file                                  | Lemma(s)                          |
-  | ---------- | -------------------------------------------- | --------------------------------- |
-  | cb03cf32   | `Jacobian/ComplexTorus/MapClmSurjective.lean`| `mapClm_surjective`               |
-  | 01dfbc1f   | `Jacobian/ComplexTorus/MkHomKer.lean`        | `mkHom_ker = Λ.subgroup`          |
-  | 65e8da6e   | `Jacobian/ComplexTorus/MapZero.lean`         | `zero_preserves_lattices`, `mapClm_zero` |
+  | ID         | Target file                                  | Status      |
+  | ---------- | -------------------------------------------- | ----------- |
+  | 5c13793d   | `Jacobian/ComplexTorus/ZLatticeFundDom.lean` | IN_PROGRESS |
+- Retrieved this tick: none (5c13793d still in flight at ~6%).
 - Integrated this tick: none.
-- These three are small follow-up packets (continuous-linear-map
-  surjectivity wrapper, kernel of the bundled projection, and the
-  zero-CLM corner case).
-
-- Active jobs (ours): 4/5 (queue refilled)
-  | ID         | Target file                              | Lemma(s)                            |
-  | ---------- | ---------------------------------------- | ----------------------------------- |
-  | 02468cd4   | `Jacobian/ComplexTorus/MkImage.lean`     | `mk_image_isCompact/Open`           |
-  | 98392eb4   | `Jacobian/ComplexTorus/MkPreimage.lean`  | `mk_preimage_isOpen/Closed`         |
-  | 0faaf3e5   | `Jacobian/ComplexTorus/MkBundled.lean`   | `mkHom`, `mkHom_apply`              |
-  | 2649200e   | `Jacobian/ComplexTorus/MkRange.lean`     | `range_mk`, `mk_image_univ`         |
-- Integrated this tick: none (no completions to integrate).
-- These are API-rounding packets — small, direct one-liners — to keep
-  Aristotle busy while planning the next substantive layer (manifold
-  structure, ZLattice bridge).
-
-- Active jobs (ours): 5/5 (all queued, just submitted)
-  | ID         | Target file                                | Lemma(s)                                    |
-  | ---------- | ------------------------------------------ | ------------------------------------------- |
-  | 5a37a9c3   | `Jacobian/ComplexTorus/Connected.lean`     | `connectedSpace_quotient`                   |
-  | 83af50d3   | `Jacobian/ComplexTorus/Nhds.lean`          | `nhds_mk_eq`                                |
-  | f2a1782c   | `Jacobian/ComplexTorus/Dense.lean`         | `dense_mk_image_iff` / `dense_preimage_mk_iff` |
-  | 88c7c85c   | `Jacobian/ComplexTorus/FirstCountable.lean`| First/second-countable instances            |
-  | 5573ebd7   | `Jacobian/ComplexTorus/PathConnected.lean` | `pathConnectedSpace_quotient`               |
-- Integrated this tick (5):
-  - `20ebfd1c` — `map_injective_of_preimage_subset` (Aristotle's proof
-    used `simp +decide`; replaced with a clean tactic proof using
-    `mk_eq_iff` + `f.map_add` + `f.map_neg`).
-  - `518be471` — `mk_neg = rfl`; `continuous_neg = ContinuousNeg.continuous_neg`.
-  - `650e16fe` — `mk_add = rfl`; `continuous_add = _root_.continuous_add`.
-  - `fb51396b` — `mk_zsmul`/`mk_nsmul` via `map_zsmul`/`map_nsmul` of `mk'`.
-  - `7250ad71` — `mapClm_continuous = map_continuous f.continuous hf`.
-- Done previously: `c97ef7ec`, `6e60ff64`, `4d2fa17c`, `21a882aa`,
-  `e2c130cc`, `07e77aac`; algebraic `mk` / `map` / `map_id` / `map_comp`
-  in `StatementBank.lean`; `mk_continuous`, `mk_isOpenQuotientMap`,
-  `mk_isOpenMap` in `Basic.lean`.
-- Next planned submissions: compactness from cocompact lattice;
-  lattice-image preservation under continuous maps; bridge to a real
-  `ZLattice` / `IsZLattice` predicate; topological-group instance
-  bundling on the quotient.
+- Submitted this tick: none. Holding the queue at 1/5 deliberately —
+  the in-flight piece is the load-bearing packaging helper that turns
+  `fullComplexLatticeOfZLattice` sorry-free; speculative packets ahead
+  of that landing risk wasted work or scope conflicts. Manifold-layer
+  packets remain blocked until isolation-at-zero is properly packaged
+  (closed cocompact ⇏ discrete in general; counterexample
+  `ℝ × ℤ ⊂ ℝ²`).
+- Notes carried forward from 11:30:
+  - Topological/algebraic quotient layer ~95% complete.
+  - `FullComplexLattice` refactor (drop `quotient_t2` and
+    `quotient_compact`; derive both from honest data) committed.
+  - Aristotle's `bbdcb3f4` (manifold recon) and `a68d37f4` (ZLattice
+    recon) results integrated; verdicts in `plan.md` Phase 1.5/1.5b.
 
 ## General Job Template
 
