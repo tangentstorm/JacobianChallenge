@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 11:45 EDT
+Last tick: 2026-04-25 11:46 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -39,18 +39,19 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5
-Completed this tick: 5c13793d (ZLatticeFundDom)
-Integrated this tick: 5c13793d — packaging helper landed cleanly
-                      and immediately wired into ZLatticeRecon to
-                      drop the 5th-field sorry. The
-                      ZLattice→FullComplexLattice bridge is now
-                      sorry-free.
-Failed/split this tick: none
-Queue refill planned this tick (separate commit): isolation-at-zero
-+ small-ball injectivity + discreteness reconnaissance (the user
-flagged that closed cocompact ⇏ discrete in general, so the
-manifold layer needs a careful packaging step before chart packets).
+Active jobs (ours): 3/5
+  8d77f7d8  IsolationAtZero.lean       proof  QUEUED
+  1841ae34  MkInjOnSmallBall.lean      proof  QUEUED
+  c5beb23a  DiscretenessRecon.lean     recon  QUEUED
+Completed earlier this tick: 5c13793d (ZLatticeFundDom)
+Integrated earlier this tick: 5c13793d — wired into
+                              fullComplexLatticeOfZLattice;
+                              the bridge is now sorry-free.
+Submitted this tick: 8d77f7d8, 1841ae34, c5beb23a (3 new
+                     disjoint-scope packets feeding the manifold
+                     layer; the 4th and 5th slots are deliberately
+                     held for after the FullComplexLattice
+                     discreteness refactor).
 ```
 
 ```text
