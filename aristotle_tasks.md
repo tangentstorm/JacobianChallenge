@@ -12,10 +12,11 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 02:09 EDT)
+## Live Status (2026-04-25 02:10 EDT)
 
 (Idle tick: all 5 just-submitted jobs are still QUEUED. No integrations
-this tick.)
+this tick. Plan.md updated with a Phase 1 sub-status block reflecting
+the actual state of the topological-quotient layer.)
 
 - Active jobs (ours): 5/5 (all queued, just submitted)
   | ID         | Target file                                | Lemma(s)                                    |
