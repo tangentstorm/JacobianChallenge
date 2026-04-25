@@ -12,18 +12,18 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 10:12 EDT)
+## Live Status (2026-04-25 10:35 EDT)
 
 - Active jobs (ours): 0/5
 - Integrated this tick: none.
-- Local progress: refactored `FullComplexLattice` to drop the
-  `quotient_t2` field. T2 is now derived from `isClosed` via
-  Mathlib's `QuotientGroup.instT1Space` plus the topological-group
-  upgrade. `IsClosedSubgroup.lean` now contains the genuinely
-  load-bearing `t2Space_quotient_of_isClosed_subgroup` (abstract
-  closed-subgroup → T2 quotient) plus a wrapper for our concrete
-  `FullComplexLattice` setting. `quotient_compact` remains a field
-  pending the cocompactness/fundamental-domain refactor.
+- Local progress this tick: none (working tree was clean entering the
+  tick; FullComplexLattice quotient_t2 refactor landed in the previous
+  tick's commit f9ddce0).
+- Pending Claude-owned next steps:
+  1. Drop `FullComplexLattice.quotient_compact` in favor of a
+     cocompactness witness (compact fundamental domain + cover
+     hypothesis), then derive CompactSpace via `compactSpace_quotient_of_cover`.
+  2. Begin sketching the manifold layer (charted-space structure).
 
 - Active jobs (ours): 3/5
   | ID         | Target file                                  | Lemma(s)                          |
