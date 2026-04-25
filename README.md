@@ -21,14 +21,14 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 07:47 EDT
+Last tick: 2026-04-25 08:02 EDT
 
 ```text
 Layer                     Bar                    %    Note
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
-Complex torus quotient    ████████████████░░░░   80%  15 packets done; cocompact→compact next
+Complex torus quotient    █████████████████░░░   85%  16 packets done incl. cocompact→compact
 Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -40,11 +40,11 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 1/5
-  3679ff5a  compactSpace_quotient_of_…   Compact.lean         IN_PROGRESS 2%
-Completed this tick: 5 (5a37a9c3, 83af50d3, f2a1782c, 88c7c85c, 5573ebd7)
-Integrated this tick: all 5 — Connected/Nhds/Dense/FirstCountable/
-                      PathConnected. Rejected Aristotle's
-                      `import Mathlib` swap in FirstCountable.
+  e9ff30bc  continuous_iff_continuous_… ContIff.lean         QUEUED (new)
+Completed this tick: 3679ff5a (Compact.lean)
+Integrated this tick: 3679ff5a — cocompact→compact via mk_image=univ
+                      + IsCompact.image. Topological-quotient layer
+                      essentially closed.
 Failed/split this tick: none
 ```
 

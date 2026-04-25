@@ -15,6 +15,7 @@ import Jacobian.ComplexTorus.Dense
 import Jacobian.ComplexTorus.FirstCountable
 import Jacobian.ComplexTorus.PathConnected
 import Jacobian.ComplexTorus.Compact
+import Jacobian.ComplexTorus.ContIff
 
 /-!
 # Complex torus infrastructure
