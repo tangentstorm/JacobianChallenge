@@ -21,11 +21,13 @@ variable {V W : Type*} [NormedAddCommGroup V] [NormedAddCommGroup W]
 lattices (it sends everything to 0, which is in any subgroup). -/
 lemma zero_preserves_lattices :
     ∀ v ∈ Λ.subgroup, (0 : V →L[ℂ] W) v ∈ Γ.subgroup := by
-  sorry
+  intro v _
+  simp [Γ.subgroup.zero_mem]
 
 /-- The zero continuous-linear map descends to the zero quotient map. -/
 @[simp] lemma mapClm_zero :
     mapClm (0 : V →L[ℂ] W) (zero_preserves_lattices (Λ := Λ) (Γ := Γ)) = 0 := by
-  sorry
+  ext q
+  simp [mapClm, map]
 
 end JacobianChallenge.ComplexTorus

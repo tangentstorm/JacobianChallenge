@@ -17,6 +17,7 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 /-- The kernel of the bundled quotient projection equals the lattice. -/
 @[simp] lemma mkHom_ker : (mkHom Λ).ker = Λ.subgroup := by
-  sorry
+  unfold mkHom
+  exact QuotientAddGroup.ker_mk' Λ.subgroup
 
 end JacobianChallenge.ComplexTorus
