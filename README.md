@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 00:50 EDT
+Last tick: 2026-04-25 00:58 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -40,14 +40,15 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5
-  c97ef7ec  map_continuous           Basic.lean
-  6e60ff64  mk_zero/eq_iff/eq_zero   Mk.lean
-  4d2fa17c  map_zero/map_mk_add      MapMk.lean
-  21a882aa  map_surjective           Surjective.lean
-  e2c130cc  nhds_zero_eq             NhdsZero.lean
+  c97ef7ec  map_continuous           Basic.lean      IN_PROGRESS 4%
+  6e60ff64  mk_zero/eq_iff/eq_zero   Mk.lean         QUEUED
+  4d2fa17c  map_zero/map_mk_add      MapMk.lean      QUEUED
+  21a882aa  map_surjective           Surjective.lean QUEUED
+  e2c130cc  nhds_zero_eq             NhdsZero.lean   QUEUED
 Completed this tick: none
-Integrated this tick: none (all 5 still queued)
+Integrated this tick: none (all 5 still in flight)
 Failed/split this tick: none
+Local progress: added Jacobian/ComplexTorus.lean root module
 ```
 
 ```text
@@ -55,7 +56,7 @@ Current build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Challenge       pass    lake build Jacobian.Challenge
 Statement bank  pass    lake build Jacobian.WorkPackets.StatementBank
-ComplexTorus.*  pass*   lake build Jacobian.ComplexTorus.{Basic,Mk,...}
+ComplexTorus    pass*   lake build Jacobian.ComplexTorus
                         (* expected sorry warnings; one per packet)
 ```
 
