@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 08:33 EDT
+Last tick: 2026-04-25 08:40 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -40,12 +40,12 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 4/5
-  02468cd4  mk_image_isCompact/Open       MkImage.lean        QUEUED
-  98392eb4  mk_preimage_isOpen/Closed     MkPreimage.lean     QUEUED
-  0faaf3e5  mkHom (bundled →+)            MkBundled.lean      QUEUED
+  02468cd4  mk_image_isCompact/Open       MkImage.lean        IN_PROGRESS 2%
+  98392eb4  mk_preimage_isOpen/Closed     MkPreimage.lean     IN_PROGRESS 1%
+  0faaf3e5  mkHom (bundled →+)            MkBundled.lean      IN_PROGRESS 1%
   2649200e  range_mk = univ               MkRange.lean        QUEUED
 Completed this tick: none
-Integrated this tick: none — refilled with API-rounding packets
+Integrated this tick: none — packets just spinning up
 Failed/split this tick: none
 ```
 
