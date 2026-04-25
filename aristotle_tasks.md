@@ -12,7 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 08:40 EDT)
+## Live Status (2026-04-25 08:47 EDT)
+
+- Active jobs (ours): 0/5
+- Integrated this tick (4):
+  - `02468cd4` — `mk_image_isCompact`, `mk_image_isOpen` (MkImage.lean).
+  - `98392eb4` — `mk_preimage_isOpen`, `mk_preimage_isClosed` (MkPreimage.lean).
+  - `0faaf3e5` — `mkHom`, `mkHom_apply` (MkBundled.lean).
+  - `2649200e` — `range_mk`, `mk_image_univ` (MkRange.lean).
+  All four were clean term-mode one-liners.
+- Topological/quotient/lattice API for the complex-torus phase is now
+  essentially closed (~90%). Next planned work is Claude-owned:
+  refactor `FullComplexLattice` to drop the redundant `quotient_t2`/
+  `quotient_compact` fields, then sketch the manifold layer.
 
 - Active jobs (ours): 4/5 (queue refilled)
   | ID         | Target file                              | Lemma(s)                            |

@@ -17,11 +17,11 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
   (Λ : FullComplexLattice V)
 
 /-- The quotient projection as an additive group homomorphism. -/
-def mkHom : V →+ quotient V Λ := by
-  sorry
+def mkHom : V →+ quotient V Λ :=
+  QuotientAddGroup.mk' Λ.subgroup
 
 /-- `mkHom` agrees with `mk` on representatives. -/
-@[simp] lemma mkHom_apply (v : V) : mkHom Λ v = mk V Λ v := by
-  sorry
+@[simp] lemma mkHom_apply (v : V) : mkHom Λ v = mk V Λ v :=
+  rfl
 
 end JacobianChallenge.ComplexTorus
