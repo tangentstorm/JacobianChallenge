@@ -12,12 +12,11 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 02:47 EDT)
+## Live Status (2026-04-25 03:02 EDT)
 
-(All 5 jobs still QUEUED at 40 min. Upstream queue still stuck. Local
-progress this tick: added `mapClm_id` and `mapClm_comp` functoriality
-lemmas to `Jacobian/ComplexTorus/OfClm.lean` — both reduce directly to
-the existing `map_id`/`map_comp` from the statement bank.)
+(All 5 jobs still QUEUED at 55 min. Upstream Aristotle queue is
+genuinely stuck — no jobs anywhere in the visible list have moved in
+an hour. No local action this tick.)
 
 - Active jobs (ours): 5/5 (all queued, just submitted)
   | ID         | Target file                                | Lemma(s)                                    |
