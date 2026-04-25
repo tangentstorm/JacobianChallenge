@@ -12,24 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 07:47 EDT)
+## Live Status (2026-04-25 08:02 EDT)
 
 - Active jobs (ours): 1/5
   | ID         | Target file                              | Lemma                                    |
   | ---------- | ---------------------------------------- | ---------------------------------------- |
-  | 3679ff5a   | `Jacobian/ComplexTorus/Compact.lean`     | `compactSpace_quotient_of_cover`         |
-- Integrated this tick (5):
-  - `5a37a9c3` — `connectedSpace_quotient` (Connected.lean).
-  - `83af50d3` — `nhds_mk_eq` (Nhds.lean).
-  - `f2a1782c` — `dense_mk_image_iff`, `dense_preimage_mk_iff` (Dense.lean).
-  - `88c7c85c` — `firstCountableTopology_quotient`,
-    `secondCountableTopology_quotient` (FirstCountable.lean).
-    Aristotle's patch swapped the targeted import for `import Mathlib`;
-    rejected and kept the original.
-  - `5573ebd7` — `pathConnectedSpace_quotient` (PathConnected.lean).
-- Topological-quotient layer is now essentially closed (~80% of the
-  complex-torus phase). The next genuine target is compactness from
-  cocompactness, which is what 3679ff5a addresses.
+  | e9ff30bc   | `Jacobian/ComplexTorus/ContIff.lean`     | `continuous_iff_continuous_comp_mk`      |
+- Integrated this tick:
+  - `3679ff5a` — `compactSpace_quotient_of_cover` (Compact.lean).
+    Tactic chain: `isCompact_univ_iff`, show `mk '' K = univ`,
+    `IsCompact.image` of `hK` along `QuotientAddGroup.continuous_mk`.
+- Topological-quotient layer is now essentially closed (~85% of the
+  complex-torus phase). Carved a new universal-property packet
+  (`ContIff.lean`) to keep one job in flight while planning the next
+  refactor (drop `quotient_t2`/`quotient_compact` fields from
+  `FullComplexLattice` in favor of derived instances).
 
 - Active jobs (ours): 5/5 (all queued, just submitted)
   | ID         | Target file                                | Lemma(s)                                    |
