@@ -30,6 +30,9 @@ import Jacobian.ComplexTorus.GenericQuotient
 import Jacobian.ComplexTorus.ZLatticeRecon
 import Jacobian.ComplexTorus.ManifoldRecon
 import Jacobian.ComplexTorus.ZLatticeFundDom
+import Jacobian.ComplexTorus.IsolationAtZero
+import Jacobian.ComplexTorus.MkInjOnSmallBall
+import Jacobian.ComplexTorus.DiscretenessRecon
 
 /-!
 # Complex torus infrastructure
