@@ -36,6 +36,14 @@ noncomputable instance complexTorusHasGroupoid (Λ : FullComplexLattice V) :
   refine ⟨?_⟩
   rintro e e' ⟨q1, rfl⟩ ⟨q2, rfl⟩
   -- Goal: chartAtPoint Λ q1 .symm.trans (chartAtPoint Λ q2) ∈ contDiffGroupoid ω I
+  -- The substantive ContDiffOn content is in
+  -- `contDiffOn_localSection_mk`. What remains is the Mathlib-API
+  -- wiring: identify the right membership lemma for
+  -- `contDiffGroupoid n (modelWithCornersSelf 𝕜 V)` and unfold
+  -- `chartAtPoint q1`/`chartAtPoint q2` to expose the (v, δ, …)
+  -- isolation data so the lemma can be applied. Pending Mathlib
+  -- name discovery (`mem_groupoid_of_pregroupoid` /
+  -- `mem_contDiffGroupoid_iff` / similar).
   sorry
 
 /-- The complex torus is an analytic manifold modeled on the ambient
