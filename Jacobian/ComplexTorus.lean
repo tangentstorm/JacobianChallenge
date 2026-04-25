@@ -14,6 +14,7 @@ import Jacobian.ComplexTorus.Nhds
 import Jacobian.ComplexTorus.Dense
 import Jacobian.ComplexTorus.FirstCountable
 import Jacobian.ComplexTorus.PathConnected
+import Jacobian.ComplexTorus.Compact
 
 /-!
 # Complex torus infrastructure

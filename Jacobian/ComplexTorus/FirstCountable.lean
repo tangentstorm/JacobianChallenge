@@ -18,12 +18,12 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 /-- The complex-torus quotient is first countable. -/
 instance firstCountableTopology_quotient :
-    FirstCountableTopology (quotient V Λ) := by
-  sorry
+    FirstCountableTopology (quotient V Λ) :=
+  inferInstance
 
 /-- The complex-torus quotient is second countable. -/
 instance secondCountableTopology_quotient :
-    SecondCountableTopology (quotient V Λ) := by
-  sorry
+    SecondCountableTopology (quotient V Λ) :=
+  inferInstance
 
 end JacobianChallenge.ComplexTorus

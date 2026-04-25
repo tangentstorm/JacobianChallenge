@@ -19,7 +19,6 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 /-- The complex-torus quotient is path connected. -/
 instance pathConnectedSpace_quotient :
-    PathConnectedSpace (quotient V Λ) := by
-  sorry
+    PathConnectedSpace (quotient V Λ) := Quotient.instPathConnectedSpace
 
 end JacobianChallenge.ComplexTorus

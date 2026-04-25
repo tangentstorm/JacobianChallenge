@@ -20,7 +20,7 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 /-- Neighborhoods of any point in the complex-torus quotient are pushed
 forward from neighborhoods of a representative in `V`. -/
 lemma nhds_mk_eq (v : V) :
-    𝓝 (mk V Λ v) = Filter.map (mk V Λ) (𝓝 v) := by
-  sorry
+    𝓝 (mk V Λ v) = Filter.map (mk V Λ) (𝓝 v) :=
+  QuotientAddGroup.nhds_eq Λ.subgroup v
 
 end JacobianChallenge.ComplexTorus
