@@ -12,21 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 11:12 EDT)
+## Live Status (2026-04-25 11:24 EDT)
 
-- Active jobs (ours): 2/5
+- Active jobs (ours): 1/5
   | ID         | Target file                                   | Status         |
   | ---------- | --------------------------------------------- | -------------- |
-  | a68d37f4   | `Jacobian/ComplexTorus/ZLatticeRecon.lean`    | IN_PROGRESS 12% |
-  | bbdcb3f4   | `Jacobian/ComplexTorus/ManifoldRecon.lean`    | IN_PROGRESS 3% |
+  | a68d37f4   | `Jacobian/ComplexTorus/ZLatticeRecon.lean`    | IN_PROGRESS 21% |
 - Integrated this tick:
-  - `78a3b9f9` — 4 generic `AddSubgroup`-quotient one-liners
-    (`continuous_mk'`, `mk_surjective'`, `isOpenQuotientMap_mk'`,
-    `mk_eq_iff'`) plus `omit` annotations to silence unused-typeclass
-    lints. (GenericQuotient.lean)
-- The two outstanding packets are the substantive recon ones —
-  ZLattice bridge and manifold-layer name discovery. They'll take
-  longer than the wrapper packets did.
+  - `bbdcb3f4` — Manifold-layer reconnaissance. Aristotle returned a
+    7-section top-of-file Mathlib-API survey plus detailed per-sorry
+    construction outlines. Headlines: no quotient-manifold machinery
+    exists in Mathlib; hand-roll required; specific building blocks
+    (ChartedSpace.mk + OpenPartialHomeomorph.mk + isOpenMap_coe +
+    chartedSpaceSelf) named with their Mathlib paths. Findings folded
+    into a new `Phase 1.5 — manifold layer` block in `plan.md`.
+- Aristotle's missing-pieces shortlist for the chart construction:
+  discreteness of closed AddSubgroup in finite-dim normed space,
+  injectivity of `mk` on small balls, continuous local section over a
+  small ball. These are the natural next bounded packets after
+  ZLatticeRecon returns.
 
 - Active jobs (ours): 3/5
   | ID         | Target file                                  | Lemma(s)                          |

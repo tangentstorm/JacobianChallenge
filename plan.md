@@ -137,22 +137,46 @@ Stable in `Jacobian/ComplexTorus/`:
 - `Smul.lean`             — `mk_zsmul`, `mk_nsmul`
 - `OfClm.lean`            — `mapClm`, `mapClm_continuous`
 
-In flight (Aristotle, Queue B):
+### Phase 1.5 — manifold layer (recon results, 2026-04-25)
 
-- `Connected.lean`, `Nhds.lean`, `Dense.lean`, `FirstCountable.lean`,
-  `PathConnected.lean`.
+Aristotle's `ManifoldRecon.lean` packet (`bbdcb3f4`) returned a concrete
+survey of the Mathlib API surface. Headline findings:
 
-Once the in-flight batch lands, the next sub-phase is the lattice predicate
-and compactness:
+1. **Quotient-manifold machinery does NOT exist in Mathlib.** No
+   "discrete properly-discontinuous group action → manifold quotient"
+   result anywhere under `Mathlib/Geometry/Manifold/`. Hand-rolled
+   construction required.
+2. `ProperlyDiscontinuousVAdd` exists but is not wired to manifolds.
+3. Building blocks for a hand-rolled `ChartedSpace`: `ChartedSpace.mk`,
+   `OpenPartialHomeomorph.mk`, `QuotientAddGroup.isOpenMap_coe`,
+   `QuotientAddGroup.continuous_mk`, `QuotientAddGroup.mk_surjective`,
+   `chartedSpaceSelf`. These are the pieces we need to assemble.
+4. `LieAddGroup` infrastructure (`instNormedSpaceLieAddGroup`) is
+   present for `V` but no quotient version exists.
+5. Standard chart-transport plan: pick `r > 0` with
+   `Metric.ball 0 r ∩ Λ.subgroup = {0}`; for each `v : V`, build
+   `chart_v` whose target is `Metric.ball v (r/2)` and source is
+   `mk '' Metric.ball v (r/2)`. Open by `isOpenMap_coe`, injective on
+   small enough balls thanks to discreteness of `Λ.subgroup`.
+6. `IsManifold` will follow from `HasGroupoid` + the fact that chart
+   transitions are translations (smooth in `V`).
+7. `ZLattice` infrastructure provides
+   `ZLattice.isAddFundamentalDomain` and `comap_discreteTopology`,
+   useful if/when `FullComplexLattice` is refactored to a `ZLattice`
+   variant.
 
-- replace `FullComplexLattice.quotient_compact` and `quotient_t2` with
-  derived instances (so the structure is just `subgroup` + `isClosed` +
-  cocompactness in some form);
-- bridge to `ZLattice.IsZLattice` from
-  `Mathlib/Algebra/Module/ZLattice/Basic.lean` if compatible;
-- prove `CompactSpace (V ⧸ Λ.subgroup)` from cocompactness.
+The full recon notes live in `Jacobian/ComplexTorus/ManifoldRecon.lean`.
 
-Only then start the manifold layer.
+Missing pieces flagged by Aristotle (need to be built):
+- discreteness of a closed additive subgroup in a finite-dimensional
+  normed space (`Λ.isClosed → DiscreteTopology Λ.subgroup`);
+- injectivity of `mk` on small balls;
+- continuous local section of `mk` over a small ball.
+
+Once those small lemmas exist, the construction outline can be turned
+into a real proof packet.
+
+In flight: `a68d37f4` (ZLatticeRecon).
 
 ## Phase 2: Compact Riemann Surfaces and Holomorphic Forms
 
