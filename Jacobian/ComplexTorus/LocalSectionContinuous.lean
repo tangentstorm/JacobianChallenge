@@ -1,5 +1,6 @@
 import Jacobian.ComplexTorus.Defs
 import Jacobian.ComplexTorus.LocalSection
+import Jacobian.ComplexTorus.LocalSectionRightInv
 import Jacobian.ComplexTorus.MkInjOnSmallBall
 import Jacobian.ComplexTorus.MkImage
 
@@ -45,6 +46,22 @@ lemma continuousOn_localSection
     (hr_lt : r < δ / 2)
     (hiso : ∀ g ∈ Λ.subgroup, g ≠ 0 → δ ≤ ‖g‖) :
     ContinuousOn (localSection Λ v r) (mk V Λ '' Metric.ball v r) := by
-  sorry
+  have hsrc : IsOpen (mk V Λ '' Metric.ball v r) :=
+    mk_image_isOpen Λ Metric.isOpen_ball
+  rw [continuousOn_open_iff hsrc]
+  intro U hU
+  have heq : mk V Λ '' Metric.ball v r ∩ localSection Λ v r ⁻¹' U
+             = mk V Λ '' (Metric.ball v r ∩ U) := by
+    ext q
+    constructor
+    · rintro ⟨⟨y, hy_ball, rfl⟩, hq_U⟩
+      refine ⟨y, ⟨hy_ball, ?_⟩, rfl⟩
+      rwa [Set.mem_preimage, localSection_mk Λ v hr_lt hiso hy_ball] at hq_U
+    · rintro ⟨y, ⟨hy_ball, hy_U⟩, rfl⟩
+      refine ⟨⟨y, hy_ball, rfl⟩, ?_⟩
+      rw [Set.mem_preimage, localSection_mk Λ v hr_lt hiso hy_ball]
+      exact hy_U
+  rw [heq]
+  exact mk_image_isOpen Λ (Metric.isOpen_ball.inter hU)
 
 end JacobianChallenge.ComplexTorus
