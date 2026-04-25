@@ -12,19 +12,15 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 09:08 EDT)
+## Live Status (2026-04-25 09:18 EDT)
 
-- Active jobs (ours): 2/5
-  | ID         | Target file                              | Lemma(s)                            |
+- Active jobs (ours): 1/5
+  | ID         | Target file                              | Lemma                               |
   | ---------- | ---------------------------------------- | ----------------------------------- |
-  | 04358fe4   | `Jacobian/ComplexTorus/MapNegSub.lean`   | `map_neg`, `map_sub`                |
   | 77be5e1a   | `Jacobian/ComplexTorus/MkInjective.lean` | `mk_injective_iff_subgroup_eq_bot`  |
-- Integrated this tick: none.
-- These two are small bounded follow-up packets (AddMonoidHom-derived
-  simp lemmas + a corner-case characterisation of when `mk` is
-  injective). The next substantive step is Claude-owned: either drop
-  the `quotient_t2`/`quotient_compact` fields in `FullComplexLattice`
-  or sketch the manifold layer (charted-space structure on V ⧸ Λ).
+- Integrated this tick:
+  - `04358fe4` — `map_neg`, `map_sub` (MapNegSub.lean) via
+    `(map Λ Γ f hf).map_neg q` / `.map_sub q p`.
 
 - Active jobs (ours): 4/5 (queue refilled)
   | ID         | Target file                              | Lemma(s)                            |
