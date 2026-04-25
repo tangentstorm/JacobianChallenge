@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 16:55 EDT
+Last tick: 2026-04-25 16:58 EDT
 
 ```text
 Layer                     Bar                    %    Note
@@ -29,7 +29,7 @@ Layer                     Bar                    %    Note
 Project scaffolding       ████████████████████  100%  done
 Mathlib inventory         ████████████████████  100%  v4.28.0 audit
 Complex torus quotient    ████████████████████  100%  ZLattice bridge sorry-free
-Quotient manifold layer   ███░░░░░░░░░░░░░░░░░   15%  exists_chart_ball proven
+Quotient manifold layer   █████░░░░░░░░░░░░░░░   25%  chart-prep primitives complete
 Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -39,17 +39,19 @@ Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5
-  f1d1e010  LocalSectionContinuous.lean proof  QUEUED (~3h)
-Cancelled this tick: 58789fac (LocalSectionRightInv) — proved
-                     locally instead. Aristotle queue server-wide
-                     stuck for ~3h; user directive was to do small
-                     bits of easy work locally rather than wait.
-Integrated this tick: localSection_mk (5-line proof using
-                      Set.mem_image_of_mem + localSection_mem +
-                      mk_localSection + mk_injOn_ball_of_isolation).
-                      Build green.
+Active jobs (ours): 0/5
+Cancelled this tick: 58789fac (LocalSectionRightInv),
+                     f1d1e010 (LocalSectionContinuous) — Aristotle
+                     queue server-wide stuck for ~3h; per user
+                     directive, proved both locally and cancelled.
+Integrated this tick: localSection_mk (5 lines) and
+                      continuousOn_localSection (12 lines, via
+                      `continuousOn_open_iff` + a Set.ext on
+                      `mk '' (ball v r ∩ U)`). Both build green.
 Failed/split this tick: none.
+Quotient manifold layer: now 25%. All four chart-prep
+primitives (existence, section, left-inverse, continuity) are
+sorry-free. Next: assemble the OpenPartialHomeomorph.
 ```
 
 ```text
