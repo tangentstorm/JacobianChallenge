@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 21:58 EDT
+Last tick: 2026-04-25 22:01 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -44,27 +44,26 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 8h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: attempted to start the multi-chart path
-                          partition lemma (`PathPartition.lean`)
-                          but the proof grew sorry placeholders;
-                          backed out per the
-                          "no axioms/sorries in production files"
-                          rule. Substituted a clean smaller
-                          contribution: added
-                          `pathIntegralInChart_zero` (`@[simp]`)
-                          to `PathIntegralChart.lean`, completing
-                          the basic API for the chart-local
-                          integral (refl/symm/zero). Proof: unfold
-                          `chartedForm` at zero via
-                          `ContMDiffSection.coe_zero`, then
-                          `curveIntegral_zero` finishes.
+Local progress this tick: added
+                          `Jacobian/Periods/ChartBallAtPoint.lean`
+                          (no sorries) — a per-point variant of
+                          `exists_lebesgue_radius_chart`. For
+                          `γ : C(K, X)` and any `t : K`, gives a
+                          radius `r > 0` such that
+                          `ball t r ⊆ γ ⁻¹' (chartAt E (γ t)).source`.
+                          ~6-line proof: chart source open ⇒
+                          preimage open ⇒ contains a ball around
+                          `t` (`Metric.isOpen_iff`). Useful as a
+                          building block for the multi-chart
+                          partition (the uniform Lebesgue radius
+                          packages this across all points; the
+                          pointwise version is sometimes simpler).
 Complex torus layer: complete. Queue D primitives: chart-local
                      path integral with refl/symm/zero API,
                      IntegralOneCycle, period pairing (opaque),
-                     period subgroup, Lebesgue radius. The
-                     multi-chart partition is the next bottleneck
-                     — non-trivial and merits a careful tick of
-                     its own.
+                     period subgroup, Lebesgue radius (uniform),
+                     and pointwise chart-ball. Multi-chart partition
+                     is still the next bottleneck.
 ```
 
 ```text
@@ -90,6 +89,7 @@ Periods.PathLift   pass    lake build Jacobian.Periods.PathLift (no sorry)
 Periods.IntegralOneCycle pass lake build Jacobian.Periods.IntegralOneCycle (no sorry)
 Periods.PeriodFunctional pass lake build Jacobian.Periods.PeriodFunctional (opaque pairing)
 Periods.LebesgueChartRadius pass lake build Jacobian.Periods.LebesgueChartRadius (no sorry)
+Periods.ChartBallAtPoint pass lake build Jacobian.Periods.ChartBallAtPoint (no sorry)
 ```
 
 ```text
