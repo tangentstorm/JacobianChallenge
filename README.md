@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 01:16 EDT
+Last tick: 2026-04-26 01:25 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,18 +46,15 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 5/5.
-Integrated this tick: 🎉 `835344a7` — Periods/ChartedFormPullbackSmul
-                      (chartedFormPullback_smul, convert-style).
-                      🎉 `e32728ec` — TraceDegree/PullbackFunSmul
-                      (pullbackFormsFun_smul, verbose template).
-                      Linearity API for both layers (zero/neg/add/smul)
-                      now complete.
-Submitted this tick:  `2a998690` — TraceDegree/PullbackFormsLinearMap
-                      (bundle pullbackFormsFun as ℂ-LinearMap).
-                      `dff6cfb4` — Periods/ChartedFormPullbackLinearMap
-                      (bundle chartedFormPullback as ℂ-LinearMap).
-Still in flight:      `fe592ee1` (long-running), `b20e4f00`, `9c8842f9`.
+Active jobs (ours): 5/5. All five QUEUED on the shared backlog.
+Integrated this tick: none (nothing to retrieve — all queued).
+Submitted this tick:  none (full pipeline; saving slots).
+Local progress: added Periods/PathIntegralViaCoverRecon.lean —
+                design document for the multi-chart path integral.
+                Inventories available inputs, identifies the missing
+                Path.subpath primitive, sketches construction, lays
+                out 5 follow-up packets. Recon convention; not
+                re-exported. Lake build green.
 Failed/split this tick: none.
 ```
 

@@ -12,33 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 01:16 EDT)
+## Live Status (2026-04-26 01:25 EDT)
 
-- Active jobs (ours): 5/5.
-- 🎉 **Integrated this tick:**
-  - `835344a7` — `Jacobian/Periods/ChartedFormPullbackSmul.lean`.
-    `chartedFormPullback_smul` via the concise `convert
-    ContinuousLinearMap.smul_comp + infer_instance` pattern.
-  - `e32728ec` — `Jacobian/TraceDegree/PullbackFunSmul.lean`.
-    `pullbackFormsFun_smul` via the verbose `funext + coe_smul +
-    smul_comp` template.
-  Both wired into the respective umbrellas; lake build green.
-- **Submitted this tick** (bundling the now-complete linearity API
-  into LinearMap wrappers):
-  - `2a998690` — `Jacobian/TraceDegree/PullbackFormsLinearMap.lean`.
-    Bundle `pullbackFormsFun` as a ℂ-LinearMap at the function level
-    (smoothness-aware version is a follow-up).
-  - `dff6cfb4` — `Jacobian/Periods/ChartedFormPullbackLinearMap.lean`.
-    Bundle `chartedFormPullback c` as a ℂ-LinearMap.
-- **Still in flight from prior ticks:**
+- Active jobs (ours): 5/5. **All five are QUEUED**, waiting on the
+  shared Aristotle backlog. Worker slots appear to be occupied by
+  FourColor jobs.
+- **Integrated this tick:** none (nothing to retrieve — all queued).
+- **Local progress this tick (Claude-owned):**
+  added `Jacobian/Periods/PathIntegralViaCoverRecon.lean` — design
+  document for the multi-chart `pathIntegralViaCover` definition.
+  Inventories the available inputs (`exists_uniform_chart_partition`,
+  `pathIntegralViaChartCorrect`), identifies the missing primitive
+  (`Path.subpath` via affine reparam of `unitInterval`), sketches the
+  construction, and lays out 5 follow-up Aristotle-sized packets
+  (A: `PathSubpath`, B: `PathIntegralViaCover` [Claude-owned],
+  C: `_refl`, D: linearity, E: chart-transition well-definedness).
+  Recon convention; not re-exported. Lake build green.
+- **Still in flight (unchanged from last tick):**
   - `fe592ee1` — `PathIntegralChartCorrectLinear` (neg/add for
-    `pathIntegralInChartCorrect`, inline). Submitted at 00:43 EDT;
-    long-running. CLI retrieval crashes on a progress-display
-    UnicodeEncodeError, which the CLI only invokes when the job is
-    incomplete — read it as "still running."
+    `pathIntegralInChartCorrect`, inline). Long-running; off the
+    visible page.
   - `b20e4f00` — `PullbackFunId` (pullback along identity).
   - `9c8842f9` — `PathIntegralChartCorrectSmul` (scalar linearity
     for `pathIntegralInChartCorrect`, inline).
+  - `2a998690` — `PullbackFormsLinearMap` (function-level
+    LinearMap bundle for `pullbackFormsFun`).
+  - `dff6cfb4` — `ChartedFormPullbackLinearMap` (LinearMap bundle
+    for `chartedFormPullback`).
 - **Last tick:** `e7aa502d` integrated —
   `PathIntegralChartCorrectSimp` (`_refl` and `_symm` for the
   corrected chart-local integral).
