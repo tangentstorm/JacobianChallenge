@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 16:56 EDT
+Last tick: 2026-04-26 16:59 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,14 +49,15 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW TraceDegree/PullbackFunCompApply:
-                      `pullbackFormsFun_comp_apply_apply` — fully
-                      unrolled chain-rule formula
-                      `(g ∘ f)^*η _x v = η_{g(f x)} (mfderiv g (f x)
-                      (mfderiv f x v))`. Apply form of last tick's
-                      `_comp_apply`. 2-line proof: `rw` + `rfl`.
-                      Wired into TraceDegree umbrella; build green
-                      (2430 jobs).
+                      NEW TraceDegree/PullbackFormsLinearMapComp:
+                      `pullbackFormsLinearMap_comp_apply_at` and
+                      `_comp_apply_vec` — bundled-LinearMap-level
+                      pointwise chain rule. Lifts the last two
+                      ticks' `_comp_apply` and `_comp_apply_apply`
+                      from function-level to bundled. Each is a
+                      1-2 line proof bridging via
+                      `pullbackFormsLinearMap_apply_at`. Wired into
+                      TraceDegree umbrella; build green (2431 jobs).
 Failed/split this tick: none.
 ```
 
@@ -163,6 +164,7 @@ Periods.PathIntegralChartCorrectTrans pass lake build Jacobian.Periods.PathInteg
 Periods.PathIntegralChartTrans pass lake build Jacobian.Periods.PathIntegralChartTrans (no sorry)
 TraceDegree.PullbackFunComp pass lake build Jacobian.TraceDegree.PullbackFunComp (no sorry)
 TraceDegree.PullbackFunCompApply pass lake build Jacobian.TraceDegree.PullbackFunCompApply (no sorry)
+TraceDegree.PullbackFormsLinearMapComp pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapComp (no sorry)
 ```
 
 ```text

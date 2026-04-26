@@ -12,25 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 16:56 EDT)
+## Live Status (2026-04-26 16:59 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
   (~13h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/TraceDegree/PullbackFunCompApply.lean`:
-    `pullbackFormsFun_comp_apply_apply` — fully unrolled
-    chain-rule formula evaluating on a tangent vector `v`:
-    `(g ∘ f)^*η _x v = η_{g(f x)} (mfderiv g (f x) (mfderiv f x v))`.
-    2-line proof: `rw [pullbackFormsFun_comp_apply ...]; rfl`.
-    Wired into TraceDegree umbrella; build green (2430 jobs).
-- The chain-rule composition family now has both the linear-map
-  form (`_comp_apply`, last tick) and the apply-on-vector form
-  (this tick).
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapComp.lean`:
+    `pullbackFormsLinearMap_comp_apply_at` and
+    `pullbackFormsLinearMap_comp_apply_vec` — bundled-LinearMap-level
+    pointwise chain rule. Lift the prior two ticks'
+    function-level `_comp_apply` and `_comp_apply_apply` to the
+    bundled form via `pullbackFormsLinearMap_apply_at`.
+    Each is a 1-2 line proof. Wired into TraceDegree umbrella;
+    build green (2431 jobs).
+- Chain-rule composition family now exists at both function
+  level and bundled-LinearMap level, in both form (linear-map
+  return) and apply-on-vector (scalar return).
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 16:53 EDT)
+## Stale Live Status (2026-04-26 16:56 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
