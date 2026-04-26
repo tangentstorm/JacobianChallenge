@@ -1,4 +1,5 @@
 import Jacobian.Periods.ChartBallAtPoint
+import Jacobian.Periods.DivFinIcc
 import Jacobian.Periods.ChartedForm
 import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackSimp

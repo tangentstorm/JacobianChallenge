@@ -12,26 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 01:30 EDT)
+## Live Status (2026-04-26 01:40 EDT)
 
 - Active jobs (ours): 5/5. **Still all QUEUED** — the shared Aristotle
-  backlog hasn't drained yet. Two have been queued >20 min.
+  backlog has not drained: `b20e4f00` queued >32 min,
+  `9c8842f9` >25 min.
 - **Integrated this tick:** none.
 - **Local progress this tick (Claude-owned):**
-  - Discovered (via codebase search) that Mathlib v4.28.0 already
-    provides `Path.subpath` in `Mathlib.Topology.Subpath` —
-    construction `γ.subpath t₀ t₁ : Path (γ t₀) (γ t₁)` via
-    `subpathAux`'s convex combination, with full API
-    (`subpath_zero_one`, `subpath_self`, `range_subpath`,
-    `symm_subpath`, `Path.Homotopy.concatSubpath`).
-  - Updated `Jacobian/Periods/PathIntegralViaCoverRecon.lean`:
-    deleted Packet A (`PathSubpath`) as superseded by Mathlib;
-    added a complete construction sketch using
-    `pathIntegralViaCoverWith` (given partition) + a thin wrapper
-    using `Classical.choose`. Identified the only remaining
-    nontrivial proof obligation (range subset via
-    `Path.range_subpath` + `uIcc_of_le`).
-  - Lake build green.
+  added `Jacobian/Periods/DivFinIcc.lean` — boundary point `i/n`
+  in `unitInterval` for `i ≤ n`, the helper used to express the
+  segment endpoints of `pathIntegralViaCover`. Includes
+  `divFinIcc_val` (val = `i/n` by `rfl`), `divFinIcc_zero`
+  (`0/n = 0`), `divFinIcc_self` (`n/n = 1`), and `divFinIcc_le_succ`
+  (monotone). All proofs direct (no automation beyond `simp`,
+  `field_simp`, `linarith`). Wired into Periods umbrella; lake
+  build green.
 - **Still in flight (unchanged from last tick):**
   - `fe592ee1` — `PathIntegralChartCorrectLinear` (neg/add for
     `pathIntegralInChartCorrect`, inline). Long-running; off the
