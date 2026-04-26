@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 05:51 EDT
+Last tick: 2026-04-26 05:56 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,12 +50,13 @@ Active jobs (ours): 3/5 (backend stalled ~57 min, no movement
                       since 04:09 EDT).
 Integrated this tick: none — backend frozen.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/PathIntegralViaCoverWithAdd.lean (new):
-                      `pathIntegralViaCoverWith_add_of_curveIntegrable`
-                      — lift conditional `_add` to multi-chart sum
-                      level via `Finset.sum_add_distrib`. Final
-                      integration layer; conditional API now spans
-                      every layer up to `pathIntegralViaCoverWith`.
+                      Periods/PathIntegralViaCoverRecon.lean: document
+                      Pick-level conditional `_add` obstruction
+                      (Classical.choose data + Lean's dotted-identifier
+                      parsing makes the hypothesis statement awkward).
+                      The conditional `_add` ladder remains at
+                      InChartCorrect/ViaChartCorrect/ViaCoverWith;
+                      Pick-level `_add` deferred until unconditional.
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear

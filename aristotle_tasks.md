@@ -12,20 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 05:51 EDT)
+## Live Status (2026-04-26 05:56 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~1 hr+ — backend
   stalled since ~04:09 EDT, no jobs moving on any project.
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
-  - `Jacobian/Periods/PathIntegralViaCoverWithAdd.lean` (new):
-    +`pathIntegralViaCoverWith_add_of_curveIntegrable` — lift
-    conditional `_add` from `pathIntegralViaChartCorrect` to the
-    multi-chart sum level via `Finset.sum_add_distrib`. Per-segment
-    `CurveIntegrable` hypotheses; once Packet F discharges them,
-    the multi-chart `_add` becomes unconditional. Wired into
-    `Jacobian.Periods` umbrella. The conditional `_add` API now
-    spans every integration layer (`InChartCorrect`,
-    `ViaChartCorrect`, `ViaCoverWith`).
+  - `Jacobian/Periods/PathIntegralViaCoverRecon.lean`: document a
+    new Pick-level obstruction. The conditional
+    `pathIntegralViaCover_add_of_curveIntegrable` at the
+    `Classical.choose`-picked level requires referring to the chosen
+    partition data via long `.choose_spec.choose_spec.choose` chains,
+    which Lean's dotted-identifier parser rejects. Tried writing it
+    this tick; abandoned the attempt and recorded the design
+    consequence: the conditional `_add` ladder ends at the
+    parameterised `pathIntegralViaCoverWith` level. Pick-level
+    `_add` will be skipped and landed only as an unconditional
+    statement once Packet F removes the integrability hypothesis.
 - **Submitted this tick:** none (backlog still blocking).
 - Continuing local Claude-owned progress while Aristotle queue
   remains frozen.

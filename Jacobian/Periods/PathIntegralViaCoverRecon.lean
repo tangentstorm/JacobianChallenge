@@ -220,6 +220,19 @@ F. **`Jacobian/Periods/ChartedFormPullbackCurveIntegrable.lean`** —
    `_add` (and the multi-chart well-definedness via
    `curveIntegral_add` over partition pieces).
 
+   **Pick-level obstruction (2026-04-26):** The conditional
+   `pathIntegralViaCover_add_of_curveIntegrable` at the
+   `Classical.choose`-picked level is awkward to state because the
+   per-segment `CurveIntegrable` hypotheses require referring to the
+   chosen partition (`...choose`/`...choose_spec`/etc.). Lean's
+   dotted-identifier parsing rejects long chains like
+   `(...).choose_spec.choose_spec.choose` ("the name
+   `choose_spec.choose` must be atomic"). Once Packet F lands and
+   integrability is unconditional, the cleanest path is to skip the
+   conditional Pick-level `_add` entirely and land an unconditional
+   one. Until then, the conditional `_add` ladder ends at
+   `pathIntegralViaCoverWith` (parameterised level).
+
    **Correction (2026-04-26):** Mathlib v4.28.0 has only
    `ContinuousOn.curveIntegrable_of_contDiffOn` (requiring
    `ContDiffOn ℝ 1 γ.extend I`). There is no
