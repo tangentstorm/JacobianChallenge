@@ -12,20 +12,18 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 05:33 EDT)
+## Live Status (2026-04-26 05:38 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~1 hr+ — backend
   stalled since ~04:09 EDT, no jobs moving on any project.
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
-  - `Jacobian/Periods/PathIntegralViaCoverRecon.lean`: Packet F
-    design correction. Verified Mathlib v4.28.0 has only
-    `ContinuousOn.curveIntegrable_of_contDiffOn` (no continuous-only
-    variant). Packet F as previously stated ("for any path") cannot
-    work — paths must be at least `C¹`. Two options documented:
-    (1) add `ContDiffOn ℝ 1 γ.extend I` hypothesis to
-    `pathIntegralInChartCorrect` and propagate downstream; (2)
-    restrict `Path` to a smooth-path subtype. Concrete Packet F
-    statement now spelled out for delegation.
+  - `Jacobian/Periods/ChartedFormPullbackCurveIntegrable.lean` (new):
+    Packet F target file. Proves the zero-form foothold
+    `chartedFormPullback_zero_curveIntegrable` via
+    `CurveIntegrable.zero` — the general-form case (the substantive
+    Packet F target needing `ContDiffOn ℝ 1 γ.extend I`) is the
+    remaining work; the file is now wired into the `Jacobian.Periods`
+    umbrella so the future Aristotle integration drops in cleanly.
 - **Submitted this tick:** none (backlog still blocking).
 - Continuing local Claude-owned progress while Aristotle queue
   remains frozen.
