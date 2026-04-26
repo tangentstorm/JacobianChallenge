@@ -12,20 +12,14 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 06:13 EDT)
+## Live Status (2026-04-26 06:16 EDT)
 
-- Active jobs (ours): 3/5. All three now showing QUEUED 2h+ —
-  backend stalled since ~04:09 EDT, no jobs moving on any project.
-- **Integrated this tick:** none. No new local lemma either —
-  the conditional `_add` and `_sub` ladders both span 3
-  integration layers (`InChartCorrect` / `ViaChartCorrect` /
-  `ViaCoverWith`), a natural stopping point. Further conditional
-  lifts (Pick layer; or repeating for `_neg`/`_smul`) hit
-  diminishing returns: Pick layer is parser-blocked, and
-  `_neg`/`_smul` are already unconditional.
+- Active jobs (ours): 3/5. All three QUEUED 2h+ — backend stalled
+  since ~04:09 EDT, no jobs moving on any project.
+- **Integrated this tick:** none.
 - **Submitted this tick:** none (backlog still blocking).
-- Bookkeeping tick: refresh status, commit, push. Waiting on
-  backend recovery for the next substantive step.
+- Bookkeeping tick. Conditional `_add`/`_sub` ladders both
+  complete. Waiting on backend recovery before extending further.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-26 05:17 EDT)
