@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 01:51 EDT
+Last tick: 2026-04-26 01:55 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,15 +46,13 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 5/5. Three running (1%), two queued.
+Active jobs (ours): 5/5. ALL IN_PROGRESS now (1-4%).
 Integrated this tick: none.
 Submitted this tick:  none (full pipeline).
-Local progress: added Periods/PathIntegralViaCover.lean —
-                pathIntegralViaCoverWith ω γ n hn pickChart hcov
-                (multi-chart path integral with explicit partition).
-                Sums pathIntegralViaChartCorrect over Fin n via
-                Path.subpath; range-subset proof uses
-                Set.uIcc_of_le + divFinIcc_le_succ. Lake build green.
+Local progress: added Periods/PathIntegralViaCoverZero.lean —
+                pathIntegralViaCoverWith_zero by Finset.sum_eq_zero +
+                chart-local pathIntegralViaChartCorrect_zero. Lake
+                build green.
 Failed/split this tick: none.
 ```
 
@@ -105,6 +103,7 @@ TraceDegree.PullbackFunSmul pass lake build Jacobian.TraceDegree.PullbackFunSmul
 Periods.DivFinIcc  pass    lake build Jacobian.Periods.DivFinIcc (no sorry)
 Periods.PathIntegralChartCorrectLinear pass lake build Jacobian.Periods.PathIntegralChartCorrectLinear (no sorry; _neg only)
 Periods.PathIntegralViaCover pass lake build Jacobian.Periods.PathIntegralViaCover (no sorry)
+Periods.PathIntegralViaCoverZero pass lake build Jacobian.Periods.PathIntegralViaCoverZero (no sorry)
 ```
 
 ```text
