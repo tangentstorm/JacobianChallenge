@@ -13,4 +13,14 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) (e : E) :
     chartedFormPullbackLinearMap c ω e = chartedFormPullback c ω e := rfl
 
+/-- Applying the bundled chart-pullback at a chart point and then at
+a tangent vector gives the explicit chain-rule formula. -/
+@[simp] theorem chartedFormPullbackLinearMap_apply_vec
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
+    (e : E) (v : E) :
+    chartedFormPullbackLinearMap c ω e v =
+      ω.toFun (c.symm e)
+        (mfderiv (modelWithCornersSelf ℂ E)
+                 (modelWithCornersSelf ℂ E) c.symm e v) := rfl
+
 end JacobianChallenge.Periods
