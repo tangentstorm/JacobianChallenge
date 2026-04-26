@@ -12,7 +12,32 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 11:53 EDT)
+## Live Status (2026-04-26 11:58 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/Periods/PathPartitionSymm.lean` — new file with
+    `path_symm_subpath_divFinIcc`:
+    ```
+    γ.symm.subpath (i/n) ((i+1)/n)
+      = (γ.subpath (σ ((i+1)/n)) (σ (i/n))).symm
+    ```
+    First attempt expanded σ via `divFinIcc_symm` inside the type
+    and hit a type mismatch (Path endpoints involve `γ.symm s` vs
+    `γ ((n-i)/n)`, which are equal propositionally via
+    `divFinIcc_symm` but not definitionally). Fixed by keeping σ
+    in the statement so endpoints unify via `γ.symm s = γ (σ s)`
+    (which IS rfl). Proof reduces to a 2-line rw chain.
+  - Wired into `Jacobian/Periods.lean` umbrella; build green
+    (`lake build Jacobian.Periods.PathPartitionSymm` →
+    1582 jobs, 31s).
+- This is the third helper toward `pathIntegralViaCoverWith_symm`,
+  combining the previous `divFinIcc_symm` and `path_symm_subpath_eq`
+  into one usable segment-level identity.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 11:53 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
