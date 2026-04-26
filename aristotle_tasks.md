@@ -12,23 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 03:13 EDT)
+## Live Status (2026-04-26 03:22 EDT)
 
-- Active jobs (ours): 4/5 (one finished with errors, fixed locally).
-- 🎉 **Integrated this tick:** `ea9c5d7a` —
-  `Periods/PathIntegralViaCoverWithRefl.lean`. Aristotle returned
-  `COMPLETE_WITH_ERRORS` — its `convert curveIntegral_refl ... using 1`
-  left an open type-mismatch goal. Replaced with the prompt's intended
-  strategy: use `chartLift_refl_subpath` (the bridge that landed last
-  tick as `5d2035c3`) to rewrite the chartLift to `Path.refl (c a)`,
-  then close with `pathIntegralInChartCorrect_refl`. Local fix is
-  4 tactic lines. Periods umbrella green.
+- Active jobs (ours): 5/5.
+- 🎉 **Integrated this tick (3 of 5):**
+  - `5a37f398` — `Periods/PathIntegralViaCoverWithApply.lean`. `rfl`
+    sum-unfolding lemma.
+  - `8a559c20` — `TraceDegree/PullbackFunConst.lean`. Pullback along
+    constant map is zero (via `mfderiv_const` + `comp_zero`).
+  - `741d15c3` — `Periods/ChartedFormSmul.lean`. Provisional
+    `chartedForm` scalar linearity, completing its zero/neg/add/smul
+    API.
 - **Still in flight:**
-  - `b5511a61` — `TraceDegree/PullbackFunApply.lean` (off-page; CLI
-    crashes on progress display, indicating still running).
-  - `5a37f398` — `Periods/PathIntegralViaCoverWithApply.lean` (queued).
-  - `8a559c20` — `TraceDegree/PullbackFunConst.lean` (running 1%).
-  - `741d15c3` — `Periods/ChartedFormSmul.lean` (running 1%).
+  - `b5511a61` — `TraceDegree/PullbackFunApply.lean` (off-page,
+    long-running; CLI crashes on progress display).
+  - `0e15a5af` — `Periods/PathIntegralViaCoverPickRefl.lean` (running).
+- **Submitted this tick (3 refills):**
+  - `eca997ee` — `TraceDegree/PullbackFormsLinearMapConst.lean`.
+    Bundled pullback along constant map.
+  - `c183f1fa` — `Periods/PathIntegralViaCoverPickApply.lean`.
+    Definitional unfolding of `pathIntegralViaCover` to
+    `pathIntegralViaCoverWith` on the picked partition.
+  - `ba34d88d` — `Periods/PathLiftSimpFromX.lean`. `chartLift_refl`
+    (un-subpathed special case of `chartLift_refl_subpath`).
 
 ## Layer status
 
