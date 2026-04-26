@@ -12,21 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 03:30 EDT)
+## Live Status (2026-04-26 03:40 EDT)
 
-- Active jobs (ours): 3/5.
-- 🎉 **Integrated this tick:**
-  - `0e15a5af` — `Periods/PathIntegralViaCoverPickRefl.lean`.
-    Two-line `unfold + exact pathIntegralViaCoverWith_refl`.
-  - `b5511a61` (`TraceDegree/PullbackFunApply.lean`) —
-    `cancelled_after_local_proof` after running ~47 minutes for what
-    was supposed to be a one-line `rfl` packet. Never appeared on
-    the visible page of `aristotle list`. Cancelled and proved
-    locally (`:= rfl`).
-- **Still in flight:**
-  - `eca997ee` — `TraceDegree/PullbackFormsLinearMapConst.lean` (queued).
-  - `c183f1fa` — `Periods/PathIntegralViaCoverPickApply.lean` (queued).
-  - `ba34d88d` — `Periods/PathLiftSimpFromX.lean` (queued).
+- Active jobs (ours): 5/5.
+- 🎉 **Integrated this tick (3 of 5):**
+  - `eca997ee` — `TraceDegree/PullbackFormsLinearMapConst.lean`.
+    One-line term proof: `pullbackFormsFun_const y η`.
+  - `c183f1fa` — `Periods/PathIntegralViaCoverPickApply.lean`. `rfl`
+    unfolding the let-chain.
+  - `ba34d88d` — `Periods/PathLiftSimpFromX.lean`. `chartLift_refl`
+    via `apply Path.ext + funext + rfl` (Aristotle handled the
+    over-elaborated prompt correctly).
+  Both umbrellas updated; lake build green.
+- **Still in flight (last tick's two refills):**
+  - `d9cda755` — `TraceDegree/PullbackFunIdApply.lean` (queued).
+  - `cbbe4d1b` — `Periods/ChartedFormPullbackLinearMapApply.lean` (queued).
 
 ## Layer status
 
