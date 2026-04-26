@@ -12,7 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 11:45 EDT)
+## Live Status (2026-04-26 11:49 EDT)
+
+- Active jobs (ours): 0/5 (queue empty; 3 cancelled today during
+  the ~7.5h backend freeze).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/Periods/DivFinIcc.lean`: added `divFinIcc_symm`
+    (`σ (divFinIcc n hn i hi) = divFinIcc n hn (n - i) ...`),
+    the partition-point reflection identity. Proof in 4 lines:
+    `apply Subtype.ext; show 1 - (i:ℝ)/n = ((n-i:ℕ):ℝ)/n;
+    rw [Nat.cast_sub hi, sub_div, div_self _]`. This is a
+    prerequisite helper for `pathIntegralViaCoverWith_symm`
+    (the partition reflects under `γ.symm`, so segment `i` of
+    `γ.symm` lives at `[σ((i+1)/n), σ(i/n)] = [(n-i-1)/n, (n-i)/n]`).
+  - Build green (`lake build Jacobian.Periods.DivFinIcc` →
+    1361 jobs, 32s).
+- **Submitted this tick:** none.
+- Continuing to set up substantive Claude-owned proof work
+  toward `pathIntegralViaCoverWith_symm` while backend frozen.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 11:45 EDT)
 
 - Active jobs (ours): 0/5 (queue empty; 3 cancelled today during
   the ~7.5h backend freeze).
