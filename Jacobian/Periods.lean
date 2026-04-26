@@ -6,6 +6,7 @@ import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.LebesgueChartRadius
 import Jacobian.Periods.PathIntegralChart
 import Jacobian.Periods.PathIntegralChartCorrect
+import Jacobian.Periods.PathIntegralChartCorrectSimp
 import Jacobian.Periods.PathLift
 import Jacobian.Periods.PathLiftSimp
 import Jacobian.Periods.PathPartition
