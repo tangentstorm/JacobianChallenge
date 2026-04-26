@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 22:13 EDT
+Last tick: 2026-04-25 22:17 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -35,7 +35,7 @@ LieAddGroup smoothness           ███████████████�
 Holomorphic forms                ██████░░░░░░░░░░░░░░   30%  type + module + analyticGenus
 Path integration/periods         ██████░░░░░░░░░░░░░░   30%  +Lebesgue radius for chart cover
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient defined
-Abel-Jacobi API                  ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon landed
 Trace/degree/push-pull           ░░░░░░░░░░░░░░░░░░░░    0%  pending
 ```
 
@@ -45,29 +45,25 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 8h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: consolidated three queues with umbrella
-                          modules (matching the existing
-                          `Jacobian/ComplexTorus.lean` pattern):
-                          - `Jacobian/HolomorphicForms.lean`
-                            re-exports `CotangentBundle`, `Defs`,
-                            `FiniteDimensional`. Excludes `Recon`.
-                          - `Jacobian/Periods.lean` re-exports the
-                            seven production files
-                            (`ChartBallAtPoint`, `ChartedForm`,
-                            `IntegralOneCycle`,
-                            `LebesgueChartRadius`,
-                            `PathIntegralChart`, `PathLift`,
-                            `PeriodFunctional`). Excludes `Recon`.
-                          - `Jacobian/AnalyticJacobian.lean`
-                            re-exports `Defs`.
-                          All three umbrellas build clean. Callers
-                          can now import the whole layer in one
-                          line.
-Complex torus layer: complete. Queue D primitives in place with
-                     refl/symm/zero API; umbrella now usable.
-                     Queue E: abstract Jacobian group defined.
-                     Three umbrellas live alongside the existing
-                     `Jacobian.ComplexTorus`.
+Local progress this tick: opened Queue F with
+                          `Jacobian/AbelJacobi/Recon.lean`, a
+                          name-discovery and design document for
+                          the Abel-Jacobi map. Inventories the gaps
+                          (multi-chart integration, path-existence
+                          on compact manifolds, smoothness of the
+                          Jacobian's manifold structure, Abel's
+                          theorem for injectivity), identifies what
+                          can move forward independently
+                          (`analyticOfCurveAlongPath`,
+                          `analyticOfCurve_self`), lays out 4
+                          Aristotle-sized packets, and flags
+                          `ofCurve_inj` as the deepest anti-hack
+                          theorem. Recon convention: no production
+                          declarations beyond a stub; not
+                          re-exported.
+Complex torus layer: complete. Queue D primitives in place; Queue
+                     E foundation defined; Queue F now in design
+                     phase.
 ```
 
 ```text
@@ -98,6 +94,7 @@ AnalyticJacobian.Defs pass lake build Jacobian.AnalyticJacobian.Defs (no sorry)
 HolomorphicForms (umbrella) pass lake build Jacobian.HolomorphicForms
 Periods (umbrella)  pass    lake build Jacobian.Periods (1 opaque)
 AnalyticJacobian (umbrella) pass lake build Jacobian.AnalyticJacobian
+AbelJacobi.Recon    pass    lake build Jacobian.AbelJacobi.Recon (recon)
 ```
 
 ```text
