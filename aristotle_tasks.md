@@ -12,7 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 11:42 EDT)
+## Live Status (2026-04-26 11:45 EDT)
+
+- Active jobs (ours): 0/5 (queue empty; 3 cancelled today during
+  the ~7.5h backend freeze).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - Refactored `pathIntegralInChartCorrect_neg` (in
+    `PathIntegralChartCorrectLinear.lean`) from a 22-line proof
+    to a 7-line proof: replaced inline `funext +
+    ContinuousLinearMap.neg_comp` chain with `rw
+    [chartedFormPullback_neg, curveIntegral_neg]` using the modern
+    simp lemma I added at 10:39.
+  - Same refactor for `pathIntegralInChartCorrect_smul` in
+    `PathIntegralChartCorrectSmul.lean` (from 20 lines to 7).
+  - Net change: -29 lines of dead boilerplate; same theorem
+    signatures and statements. Build green
+    (`lake build Periods.PathIntegralChartCorrectLinear
+    Periods.PathIntegralChartCorrectSmul` → 2673 jobs, 61s).
+- **Submitted this tick:** none.
+- Queue is empty. Next: pick up substantive Claude-owned work
+  (e.g. `pathIntegralViaCoverWith_symm`, well-definedness of
+  `pathIntegralViaCover`, or decomposed TorusExample retry).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 11:42 EDT)
 
 - Active jobs (ours): 0/5. **In-flight queue fully drained
   locally** during the ~7.5h backend freeze (3 cancelled jobs
