@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 20:14 EDT
+Last tick: 2026-04-25 20:30 EDT
 
 ```text
 Layer                          Bar                    %    Note
@@ -32,7 +32,7 @@ Complex torus quotient         ████████████████�
 Quotient charted-space/manifold ████████████████████ 100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness     ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness         ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms              ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Holomorphic forms              █░░░░░░░░░░░░░░░░░░░    5%  Queue C recon landed
 Path integration/periods       ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Abel-Jacobi API                ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Trace/degree/push-pull         ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -44,29 +44,27 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 6h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: 🎉🎉 **LieAddGroup instance lands**.
-                          Three new files (all sorry-free):
-                          - `NegSmooth.lean`: `ContMDiff` of
-                            `q ↦ -q` via the chart-source
-                            decomposition `Neg.neg = mk ∘ Neg.neg ∘
-                            chart` (each step smooth) plus `mk_neg`
-                            congr.
-                          - `AddSmooth.lean`: `ContMDiff` of
-                            `(q1, q2) ↦ q1 + q2` via the
-                            same pattern with the product chart:
-                            `Add = mk ∘ + ∘ (chart1 × chart2)` plus
-                            `mk_add` congr.
-                          - `LieAddGroup.lean`: assembles the
-                            `ContMDiffAdd` and `LieAddGroup`
-                            instances. Two-line `where`-clauses
-                            providing `contMDiff_add` and
-                            `contMDiff_neg`.
-Lie group layer: complete. The complex torus is now a fully
-                 analytic Lie additive group:
-                 `LieAddGroup (modelWithCornersSelf ℂ V) ω
-                 (V ⧸ Λ.subgroup)`. All three anti-hack
-                 "torus-like analytic structure" instances on
-                 `Jacobian X` are now backed by real infrastructure.
+Local progress this tick: Queue C kickoff. Added
+                          `Jacobian/HolomorphicForms/Recon.lean`,
+                          a name-discovery and design document for
+                          the `HolomorphicOneForm X` definition.
+                          Surveys Mathlib's TangentBundle / mfderiv /
+                          ContMDiffSection (PRESENT) vs
+                          CotangentBundle / MDifferentialForm /
+                          HolomorphicOneForm (ABSENT). Recommends
+                          starting with a self-contained
+                          chart-coherence definition (Approach B in
+                          the file) and lays out the first
+                          Aristotle-sized packets: define
+                          `HolomorphicOneForm`, prove `AddCommGroup`,
+                          prove `Module ℂ`, update the StatementBank
+                          placeholder, state
+                          `FiniteDimensionalHolomorphicOneForms` as a
+                          class. Build green; not re-exported as
+                          public API (recon convention).
+Complex torus layer: complete (charted-space, manifold, projection
+                     smoothness, full `LieAddGroup` instance).
+                     Queue C is the next infrastructure block.
 ```
 
 ```text
@@ -81,22 +79,21 @@ MkSmooth           pass    lake build Jacobian.ComplexTorus.MkSmooth (no sorry)
 AddSmooth          pass    lake build Jacobian.ComplexTorus.AddSmooth (no sorry)
 NegSmooth          pass    lake build Jacobian.ComplexTorus.NegSmooth (no sorry)
 LieAddGroup        pass    lake build Jacobian.ComplexTorus.LieAddGroup (no sorry)
+HolomorphicForms.Recon pass lake build Jacobian.HolomorphicForms.Recon (recon, no sorry)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Begin Queue C — `HolomorphicOneForm`. The complex-torus layer
-   (charted-space, manifold, projection smoothness, LieAddGroup) is
-   complete; the next infrastructure block is holomorphic
-   1-forms on a manifold. First packet: define `HolomorphicOneForm
-   X` for an analytic complex manifold `X` (using existing
-   differential-form API) and prove its `AddCommGroup` /
-   `Module ℂ` structure.
-2. State `FiniteDimensionalHolomorphicOneForms` as a named theorem
-   even if the proof is deferred (it is the single largest missing
-   ingredient for the genus identity).
-3. Begin path-integration / period scaffolding so the analytic
-   `Jacobian X = H⁰(X, Ω¹)* / H₁(X, ℤ)` definition is reachable
-   once Queue C has finite-dimensionality.
+1. Promote the Queue C recon plan into code. New file
+   `Jacobian/HolomorphicForms/Defs.lean` containing the
+   chart-coherence definition of `HolomorphicOneForm X` per
+   Recon.lean Approach B.
+2. `Jacobian/HolomorphicForms/AddCommGroup.lean` and
+   `.../Module.lean`: derive `AddCommGroup` and `Module ℂ` from
+   pointwise operations.
+3. Update the `StatementBank.HolomorphicOneForm` placeholder
+   (currently `:= ℂ`) to use the real type, then state
+   `FiniteDimensionalHolomorphicOneForms` as a class with the
+   proof deferred.
 ```

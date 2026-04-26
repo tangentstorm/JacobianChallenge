@@ -12,34 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 20:14 EDT)
+## Live Status (2026-04-25 20:30 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 6h+). No new submissions.
-- **Quotient charted-space + IsManifold + LieAddGroup all complete
-  (sorry-free).** This tick landed the remaining two smoothness
-  theorems plus the `LieAddGroup` instance:
-  - `NegSmooth.lean` — `ContMDiff (· : V/Λ → V/Λ).neg` via the
-    chart-source decomposition `Neg.neg = mk ∘ Neg.neg ∘ chart` plus
-    `mk_neg` congr.
-  - `AddSmooth.lean` — `ContMDiff` of `+ : V/Λ × V/Λ → V/Λ` using
-    the product-chart version of the same pattern (`Add = mk ∘ + ∘
-    (chart1 × chart2)` plus `mk_add` congr).
-  - `LieAddGroup.lean` — assembles `ContMDiffAdd` and `LieAddGroup`
-    instances from those two theorems plus `complexTorusIsManifold`.
-- **Code-review feedback addressed (`feedback/QuotientManifoldLayer.md`):**
-  - Strengthened `quotientIsManifoldStatement` and
-    `quotientLieAddGroupStatement` in `StatementBank.lean` to require
-    the actual `IsManifold` and `LieAddGroup` predicates, not just a
-    `ChartedSpace` placeholder.
-  - Updated `Witness.lean` accordingly: each witness now bundles the
-    real instances (`complexTorusIsManifold`, `lieAddGroup_quotient`).
-  - Removed the completed
-    "ChartedSpace / IsManifold / LieAddGroup instance on V ⧸ Λ"
-    entry from `Inventory.missingItems`.
-  - Refreshed README progress accounting (split into
-    "charted-space/manifold", "projection (mk) smoothness", and
-    "LieAddGroup smoothness"), and refreshed the build-status table.
+- **Complex torus layer: complete (sorry-free)** — charted-space,
+  manifold, projection smoothness, and full `LieAddGroup` instance
+  all landed in earlier ticks today.
+- **This tick — Queue C kickoff:** added
+  `Jacobian/HolomorphicForms/Recon.lean`, a name-discovery and
+  design document for the `HolomorphicOneForm X` definition.
+  Survey: Mathlib has `TangentBundle` / `mfderiv` /
+  `ContMDiffSection` but lacks `CotangentBundle`,
+  `MDifferentialForm`, and `HolomorphicOneForm`. Recommends a
+  self-contained chart-coherence definition (Approach B). Lays out
+  the first Aristotle-sized packets:
+  1. Define `HolomorphicOneForm X` per Approach B.
+  2. Prove `AddCommGroup (HolomorphicOneForm X)`.
+  3. Prove `Module ℂ (HolomorphicOneForm X)`.
+  4. Update StatementBank placeholder.
+  5. State `FiniteDimensionalHolomorphicOneForms` as a class.
+- The recon file is **not** re-exported by any umbrella (recon
+  convention).
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
