@@ -38,4 +38,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
       pullbackFormsLinearMap f η + pullbackFormsLinearMap f ζ := by
   exact LinearMap.map_add (pullbackFormsLinearMap f) η ζ
 
+/-- `pullbackFormsLinearMap` distributes over subtraction. -/
+@[simp] theorem pullbackFormsLinearMap_sub
+    (f : X → Y) (η ζ : HolomorphicOneForm E Y) :
+    pullbackFormsLinearMap f (η - ζ) =
+      pullbackFormsLinearMap f η - pullbackFormsLinearMap f ζ := by
+  exact LinearMap.map_sub (pullbackFormsLinearMap f) η ζ
+
 end JacobianChallenge.TraceDegree

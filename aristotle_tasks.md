@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 05:16 EDT)
+## Live Status (2026-04-26 05:17 EDT)
+
+- Active jobs (ours): 3/5. All three QUEUED ~1 hr — backend
+  stalled since ~04:09 EDT, no jobs moving on any project.
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/TraceDegree/PullbackFormsLinearMapSimp.lean`:
+    +`pullbackFormsLinearMap_sub` (LinearMap-derived subtraction
+    linearity, named simp lemma matching the existing
+    `_zero`/`_neg`/`_add` pattern).
+- **Submitted this tick:** none (backlog still blocking).
+- Continuing local Claude-owned progress while Aristotle queue
+  remains frozen.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 05:16 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~57 min — backend
   stalled since ~04:09 EDT, no jobs moving on any project.
