@@ -12,26 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 23:57 EDT)
+## Live Status (2026-04-26 00:01 EDT)
 
-- Active jobs (ours): 1/5 (two integrated this tick).
+- Active jobs (ours): 2/5.
   | ID         | Target file                                       | Kind  | Status      |
   | ---------- | ------------------------------------------------- | ----- | ----------- |
   | 259b18a1   | `Jacobian/HolomorphicForms/TorusExample.lean`     | proof | in flight   |
-- 🎉🎉 **Integrated this tick:**
-  - `78ab4b77` — `Jacobian/Periods/PathPartition.lean`:
-    `exists_uniform_chart_partition`, the multi-chart partition
-    lemma. Aristotle's proof uses `norm_num`, `positivity`,
-    `nlinarith`, and a couple of explicit `mul_inv_cancel₀` /
-    `div_mul_cancel₀` casts for the unitInterval real arithmetic.
-    No sorry.
-  - `0ccee8d8` — `Jacobian/Periods/ChartedFormSimp.lean`:
-    `chartedForm_neg` and `chartedForm_add` via
-    `ContMDiffSection.coe_neg` / `coe_add`. Clean, no sorry.
-- The multi-chart partition is the input the opaque
-  `periodPairing` was waiting on; with this in place, the next
-  substantial step is to define the real `pathIntegralViaCover`
-  function and graduate `periodPairing`.
+  | 3a1d6716   | `Jacobian/Periods/PathLiftSimp.lean`              | proof | in flight   |
+- Nothing integrated this tick.
+- Submitted 3a1d6716 (pathIntegralViaChart_refl / _symm) to
+  keep the queue fed while TorusExample continues.
+- The multi-chart partition (78ab4b77, integrated) is the input
+  the opaque `periodPairing` was waiting on; with this in place,
+  the next substantial step is to define the real
+  `pathIntegralViaCover` function and graduate `periodPairing`
+  to a non-opaque AddMonoidHom.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +
