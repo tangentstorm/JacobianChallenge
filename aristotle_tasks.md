@@ -12,7 +12,7 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 22:17 EDT)
+## Live Status (2026-04-25 22:24 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 8h+). No new submissions.
@@ -21,14 +21,12 @@ identify our jobs without inspecting tarballs.
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +
   umbrella.
 - **Queue E foundation:** `AnalyticJacobianGroup E X` + umbrella.
-- **This tick — Queue F kickoff:** added
-  `Jacobian/AbelJacobi/Recon.lean`, a name-discovery and design
-  document for the Abel-Jacobi map. Inventories blockers
-  (multi-chart integration, path-connectedness lemma, smoothness,
-  Abel's theorem for injectivity), identifies what can move
-  forward independently (path-functional + self-zero), lays out 4
-  Aristotle-sized packets, flags `ofCurve_inj` as the deepest
-  anti-hack theorem.
+- **Queue F:** Recon document landed last tick.
+- **This tick:** added two simp lemmas to
+  `Jacobian/Periods/ChartedForm.lean` (`chartedForm_apply` and
+  `chartedForm_zero`). Both are small wins, no sorries; they let
+  simp unfold chart-transports without manual `unfold` calls in
+  downstream proofs.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
