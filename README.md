@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 10:27 EDT
+Last tick: 2026-04-26 10:39 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,14 +46,14 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 3/5 (backend stalled ~57 min, no movement
+Active jobs (ours): 3/5 (backend stalled ~6.5h, no movement
                       since 04:09 EDT).
 Integrated this tick: none — backend frozen.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      No new lemma — conditional `_add`/`_sub`
-                      ladders both span 3 layers (natural stopping
-                      point). Bookkeeping tick: refresh status,
-                      commit, push.
+                      Periods/ChartedFormPullbackApplyLinear:
+                      5 pointwise apply-form simp lemmas
+                      `chartedFormPullback_{zero,neg,add,sub,smul}_apply`,
+                      wired into Periods umbrella (builds green).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
@@ -144,6 +144,7 @@ TraceDegree.PullbackFormsLinearMapApply pass lake build Jacobian.TraceDegree.Pul
 Periods.PathIntegralChartCorrectApply pass lake build Jacobian.Periods.PathIntegralChartCorrectApply (no sorry)
 Periods.PathIntegralViaChartCorrectApply pass lake build Jacobian.Periods.PathIntegralViaChartCorrectApply (no sorry)
 Periods.ChartLiftApply pass    lake build Jacobian.Periods.ChartLiftApply (no sorry)
+Periods.ChartedFormPullbackApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackApplyLinear (no sorry)
 ```
 
 ```text
