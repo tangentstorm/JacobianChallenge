@@ -12,23 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 21:17 EDT)
+## Live Status (2026-04-25 21:21 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 7h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
-- **Queue C foundation in place:** `CotangentBundle.lean`,
-  `Defs.lean`, and now `FiniteDimensional.lean` —
-  `HolomorphicOneForm E X` is an analytic `ContMDiffSection` of
-  the cotangent bundle, with `AddCommGroup`, `Module ℂ`, the
-  `FiniteDimensionalHolomorphicOneForms E X` class, and
-  `analyticGenus E X` all in place. The `Module.Finite` proof
-  itself is deferred — that's the classical `dim H⁰(X, Ω¹) = g`
-  identity (Riemann–Roch / Hodge input required).
-- This tick lives in its own module
-  (`Jacobian/HolomorphicForms/FiniteDimensional.lean`) imports
-  `HolomorphicForms.Defs` directly, sidestepping the
-  `StatementBank` cascade discovered last tick.
+- **Queue C foundation in place:** type, module structure, class
+  for finite-dimensionality, and `analyticGenus` definition
+  (`HolomorphicForms/Defs.lean`,
+  `HolomorphicForms/CotangentBundle.lean`,
+  `HolomorphicForms/FiniteDimensional.lean`).
+- **This tick — Queue D kickoff:** added
+  `Jacobian/Periods/Recon.lean`, a name-discovery and design
+  document for the period-lattice machinery. Surveys Mathlib's
+  `curveIntegral` (PRESENT, normed-space only),
+  `singularHomologyFunctor` (PRESENT), and the missing pieces
+  (no manifold path integration, no Stokes on manifolds, no
+  period-pairing nondegeneracy). Lays out the chart-local lift
+  strategy and a 5-file Aristotle packet plan
+  (`PathIntegralChart`, `PathIntegral`, `IntegralOneCycle`,
+  `PeriodFunctional`, `PeriodSubgroup`).
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
