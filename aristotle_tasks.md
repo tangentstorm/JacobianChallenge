@@ -12,7 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 13:11 EDT)
+## Live Status (2026-04-26 13:17 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick:** none. Spent the tick planning the
+  full `pathIntegralViaCoverWith_symm` Finset.sum_bij' re-indexing
+  proof. The remaining piece needs:
+  1. Unfold both sides; pull `-∑ = ∑ -` via `Finset.sum_neg_distrib`
+  2. `Finset.sum_bij'` with `Fin.rev` (involution; rev_rev = id)
+  3. Per-term: apply `pathIntegralViaChartCorrect_symm_subpath_divFinIcc`
+     (the σ-form helper landed last tick)
+  4. Bridge σ-form-path to arith-form-path via `divFinIcc_symm`
+     (twice) + `pathIntegralViaChartCorrect_eq_of_path_eq` (the
+     congruence helper) to handle the Path-type mismatch
+  5. Use `Fin.val_rev` to convert `n - 1 - i.val` to `(Fin.rev i).val`
+  This is a substantive multi-step proof; deferred to a future
+  tick when more time is available. All 5 helper lemmas are
+  in place.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 13:11 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
