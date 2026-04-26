@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 01:55 EDT
+Last tick: 2026-04-26 02:01 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                ██████░░░░░░░░░�
 Path integration/periods         █████████░░░░░░░░░░░   45%  multi-chart cover def landed; well-definedness next
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
-Trace/degree/push-pull           ██░░░░░░░░░░░░░░░░░░   10%  pullbackFormsFun + linearity (no smoothness yet)
+Trace/degree/push-pull           ███░░░░░░░░░░░░░░░░░   15%  pullbackFormsFun: full linearity + LinearMap bundle + id
 
 Note: `chartedForm` currently misses the chart-derivative factor of
 the genuine 1-form pullback, so the period machinery is correct only
@@ -46,13 +46,19 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 5/5. ALL IN_PROGRESS now (1-4%).
-Integrated this tick: none.
-Submitted this tick:  none (full pipeline).
-Local progress: added Periods/PathIntegralViaCoverZero.lean —
-                pathIntegralViaCoverWith_zero by Finset.sum_eq_zero +
-                chart-local pathIntegralViaChartCorrect_zero. Lake
-                build green.
+Active jobs (ours): 5/5. Big integration tick.
+Integrated this tick: 🎉 5 of 5:
+                      `b20e4f00` PullbackFunId
+                      `9c8842f9` PathIntegralChartCorrectSmul
+                      `2a998690` PullbackFormsLinearMap
+                      `dff6cfb4` ChartedFormPullbackLinearMap
+                      `40031834` PathIntegralViaChartCorrectNeg
+Submitted this tick:  5 refills:
+                      `98e2e9c6` Periods/PathIntegralViaChartCorrectSmul
+                      `47f1811e` Periods/PathIntegralViaCoverNeg
+                      `bd02a68a` TraceDegree/PullbackFormsLinearMapId
+                      `6b4dec8c` TraceDegree/PullbackFormsLinearMapSimp
+                      `a698da94` Periods/ChartedFormPullbackLinearMapSimp
 Failed/split this tick: none.
 ```
 
@@ -104,6 +110,11 @@ Periods.DivFinIcc  pass    lake build Jacobian.Periods.DivFinIcc (no sorry)
 Periods.PathIntegralChartCorrectLinear pass lake build Jacobian.Periods.PathIntegralChartCorrectLinear (no sorry; _neg only)
 Periods.PathIntegralViaCover pass lake build Jacobian.Periods.PathIntegralViaCover (no sorry)
 Periods.PathIntegralViaCoverZero pass lake build Jacobian.Periods.PathIntegralViaCoverZero (no sorry)
+TraceDegree.PullbackFunId pass  lake build Jacobian.TraceDegree.PullbackFunId (no sorry)
+Periods.PathIntegralChartCorrectSmul pass lake build Jacobian.Periods.PathIntegralChartCorrectSmul (no sorry)
+TraceDegree.PullbackFormsLinearMap pass lake build Jacobian.TraceDegree.PullbackFormsLinearMap (no sorry)
+Periods.ChartedFormPullbackLinearMap pass lake build Jacobian.Periods.ChartedFormPullbackLinearMap (no sorry)
+Periods.PathIntegralViaChartCorrectNeg pass lake build Jacobian.Periods.PathIntegralViaChartCorrectNeg (no sorry)
 ```
 
 ```text
