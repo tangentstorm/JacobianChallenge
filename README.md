@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 18:58 EDT
+Last tick: 2026-04-26 19:02 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,13 +47,12 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 1/5 — `09cd85dd` canary still QUEUED
-                      (52 min). Backend still asleep.
+                      (55 min). Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW TraceDegree/PullbackFormsLinearMapIdApplyVec:
-                      `pullbackFormsLinearMap_id_apply_vec` —
-                      bundled-LinearMap-level analogue of last
-                      tick's vector-apply form. Build green (2436
-                      jobs).
+                      NEW TraceDegree/PullbackFormsLinearMapConstApplyVec:
+                      `pullbackFormsLinearMap_const_apply_vec` —
+                      vector-apply form of constant-map pullback
+                      (zero). Build green (2437 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -181,6 +180,7 @@ Periods.PathIntegralChartSmulSymmEqNegSmul pass lake build Jacobian.Periods.Path
 Periods.PathIntegralViaChartSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralViaChartSmulSymmEqNegSmul (no sorry)
 TraceDegree.PullbackFunIdApplyVec pass lake build Jacobian.TraceDegree.PullbackFunIdApplyVec (no sorry)
 TraceDegree.PullbackFormsLinearMapIdApplyVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapIdApplyVec (no sorry)
+TraceDegree.PullbackFormsLinearMapConstApplyVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapConstApplyVec (no sorry)
 ```
 
 ```text

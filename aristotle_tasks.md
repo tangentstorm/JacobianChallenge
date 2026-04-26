@@ -12,20 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 18:58 EDT)
+## Live Status (2026-04-26 19:02 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` still QUEUED
-  (52 min). Backend still asleep.
+  (55 min). Backend still asleep.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIdApplyVec.lean`:
-    `pullbackFormsLinearMap_id_apply_vec` — bundled-LinearMap-level
-    analogue of last tick's vector-apply form for identity
-    pullback. Same `rw + rfl` proof. Wired into TraceDegree
-    umbrella; build green (2436 jobs).
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapConstApplyVec.lean`:
+    `pullbackFormsLinearMap_const_apply_vec` — vector-apply
+    form of bundled pullback along constant map (zero).
+    Wired into TraceDegree umbrella; build green (2437 jobs).
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 18:56 EDT)
+## Stale Live Status (2026-04-26 18:58 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
