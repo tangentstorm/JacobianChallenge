@@ -12,30 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 00:44 EDT)
+## Live Status (2026-04-26 00:51 EDT)
 
 - Active jobs (ours): 4/5.
-- **In flight (4 disjoint files):**
-  - `091ac5d1` — `Jacobian/Periods/ChartedFormPullbackSimp.lean`.
-    Three @[simp] linearity lemmas (`chartedFormPullback_zero/_neg/_add`)
-    mirroring `ChartedFormSimp` but composing with the `mfderiv` factor.
-  - `ee3ce016` — `Jacobian/Periods/PathIntegralViaChartCorrect.lean`.
-    From-`X` wrapper around `pathIntegralInChartCorrect` (def +
-    `_refl` + `_symm`), mirroring `PathLift`/`PathLiftSimp` but
-    using the corrected pullback.
-  - `fe592ee1` — `Jacobian/Periods/PathIntegralChartCorrectLinear.lean`.
-    `pathIntegralInChartCorrect_neg` and `_add` with inline argument
-    (independent of `091ac5d1` to enable parallelism).
-  - `0b8b1163` — `Jacobian/TraceDegree/PullbackFun.lean`. Queue G's
-    first concrete packet: `pullbackFormsFun` (chain-rule pullback at
-    function level) + zero/neg/add linearity. Smoothness upgrade is
-    intentionally a follow-up.
-- **Local progress this tick (Claude-owned, no Aristotle in commit):**
-  added `Jacobian/Periods/PathIntegralChartCorrectZero.lean` —
-  `pathIntegralInChartCorrect_zero` proven inline by reducing
-  `chartedFormPullback c 0 = 0` via `ContMDiffSection.coe_zero` +
-  `ContinuousLinearMap.zero_comp`, then `curveIntegral_zero`. Wired
-  into the Periods umbrella; `lake build Jacobian.Periods` green.
+- 🎉 **Integrated this tick:** `ee3ce016` —
+  `Jacobian/Periods/PathIntegralViaChartCorrect.lean`. From-`X`
+  wrapper around `pathIntegralInChartCorrect` (def + `_refl` +
+  `_symm`). Aristotle followed the template exactly; one smart
+  deviation added the `PathIntegralChartCorrectSimp` import to pull
+  in the dependency lemmas. Clean, no sorry. Wired into Periods
+  umbrella; `lake build Jacobian.Periods` green.
+- **Submitted this tick:** `668a781a` —
+  `Jacobian/Periods/PathIntegralViaChartCorrectZero.lean`.
+  Two-line proof (`unfold` + `exact pathIntegralInChartCorrect_zero`)
+  refilling the slot freed by `ee3ce016`. Independent of all
+  in-flight packets.
+- **Still in flight:**
+  - `091ac5d1` — `ChartedFormPullbackSimp` (zero/neg/add linearity
+    for the chart pullback itself).
+  - `fe592ee1` — `PathIntegralChartCorrectLinear` (neg/add for
+    `pathIntegralInChartCorrect`, inline).
+  - `0b8b1163` — `TraceDegree/PullbackFun` (Queue G first packet:
+    `pullbackFormsFun` + linearity at function level).
 - **Last tick:** `e7aa502d` integrated —
   `PathIntegralChartCorrectSimp` (`_refl` and `_symm` for the
   corrected chart-local integral).
