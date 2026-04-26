@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:03 EDT
+Last tick: 2026-04-26 00:05 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,25 +46,18 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 3/5.
-                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`.
-                      IN_PROGRESS, 12%.
-                    - `3a1d6716` — `Periods/PathLiftSimp.lean`. IN_PROGRESS, 1%.
-                    - `26789359` — `Periods/PathIntegralChartCorrect.lean`.
-                      Just submitted (one-liner using
-                      `chartedFormPullback` instead of the
-                      provisional `chartedForm`).
+Active jobs (ours): 3/5, all IN_PROGRESS.
+                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`. 12%.
+                    - `3a1d6716` — `Periods/PathLiftSimp.lean`. 2%.
+                    - `26789359` — `Periods/PathIntegralChartCorrect.lean`. 1%.
 Integrated this tick: nothing.
-Local progress this tick: submitted `26789359` to migrate the
-                          chart-local integral toward the corrected
-                          pullback (next step: downstream code can
-                          eventually replace `pathIntegralInChart`
-                          calls).
+Local progress this tick: status check only — Aristotle still
+                          working on the three packets. No new
+                          submissions to keep load reasonable.
 Complex torus layer: complete and self-contained. Queue D now has
                      correct chart pullback, multi-chart partition,
                      basic chart-form algebra, and an in-flight
-                     corrected-integral wrapper; only downstream
-                     integral assembly + period proofs remain.
+                     corrected-integral wrapper.
 ```
 
 ```text
