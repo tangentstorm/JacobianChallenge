@@ -12,22 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 01:25 EDT)
+## Live Status (2026-04-26 01:30 EDT)
 
-- Active jobs (ours): 5/5. **All five are QUEUED**, waiting on the
-  shared Aristotle backlog. Worker slots appear to be occupied by
-  FourColor jobs.
-- **Integrated this tick:** none (nothing to retrieve — all queued).
+- Active jobs (ours): 5/5. **Still all QUEUED** — the shared Aristotle
+  backlog hasn't drained yet. Two have been queued >20 min.
+- **Integrated this tick:** none.
 - **Local progress this tick (Claude-owned):**
-  added `Jacobian/Periods/PathIntegralViaCoverRecon.lean` — design
-  document for the multi-chart `pathIntegralViaCover` definition.
-  Inventories the available inputs (`exists_uniform_chart_partition`,
-  `pathIntegralViaChartCorrect`), identifies the missing primitive
-  (`Path.subpath` via affine reparam of `unitInterval`), sketches the
-  construction, and lays out 5 follow-up Aristotle-sized packets
-  (A: `PathSubpath`, B: `PathIntegralViaCover` [Claude-owned],
-  C: `_refl`, D: linearity, E: chart-transition well-definedness).
-  Recon convention; not re-exported. Lake build green.
+  - Discovered (via codebase search) that Mathlib v4.28.0 already
+    provides `Path.subpath` in `Mathlib.Topology.Subpath` —
+    construction `γ.subpath t₀ t₁ : Path (γ t₀) (γ t₁)` via
+    `subpathAux`'s convex combination, with full API
+    (`subpath_zero_one`, `subpath_self`, `range_subpath`,
+    `symm_subpath`, `Path.Homotopy.concatSubpath`).
+  - Updated `Jacobian/Periods/PathIntegralViaCoverRecon.lean`:
+    deleted Packet A (`PathSubpath`) as superseded by Mathlib;
+    added a complete construction sketch using
+    `pathIntegralViaCoverWith` (given partition) + a thin wrapper
+    using `Classical.choose`. Identified the only remaining
+    nontrivial proof obligation (range subset via
+    `Path.range_subpath` + `uIcc_of_le`).
+  - Lake build green.
 - **Still in flight (unchanged from last tick):**
   - `fe592ee1` — `PathIntegralChartCorrectLinear` (neg/add for
     `pathIntegralInChartCorrect`, inline). Long-running; off the

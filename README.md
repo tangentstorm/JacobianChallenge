@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 01:25 EDT
+Last tick: 2026-04-26 01:30 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,15 +46,18 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 5/5. All five QUEUED on the shared backlog.
-Integrated this tick: none (nothing to retrieve — all queued).
+Active jobs (ours): 5/5. Still all QUEUED on the shared backlog;
+                    two have been waiting >20 min.
+Integrated this tick: none.
 Submitted this tick:  none (full pipeline; saving slots).
-Local progress: added Periods/PathIntegralViaCoverRecon.lean —
-                design document for the multi-chart path integral.
-                Inventories available inputs, identifies the missing
-                Path.subpath primitive, sketches construction, lays
-                out 5 follow-up packets. Recon convention; not
-                re-exported. Lake build green.
+Local progress: discovered Mathlib already has Path.subpath in
+                Mathlib.Topology.Subpath (with full subpath_self,
+                subpath_zero_one, range_subpath, Homotopy.concat-
+                Subpath). Updated PathIntegralViaCoverRecon.lean
+                to drop the planned PathSubpath helper packet and
+                provide a complete construction sketch (only
+                nontrivial step: range subset via range_subpath +
+                uIcc_of_le). Lake build green.
 Failed/split this tick: none.
 ```
 
