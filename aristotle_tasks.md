@@ -12,7 +12,7 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 22:24 EDT)
+## Live Status (2026-04-25 22:28 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 8h+). No new submissions.
@@ -21,12 +21,31 @@ identify our jobs without inspecting tarballs.
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +
   umbrella.
 - **Queue E foundation:** `AnalyticJacobianGroup E X` + umbrella.
-- **Queue F:** Recon document landed last tick.
-- **This tick:** added two simp lemmas to
-  `Jacobian/Periods/ChartedForm.lean` (`chartedForm_apply` and
-  `chartedForm_zero`). Both are small wins, no sorries; they let
-  simp unfold chart-transports without manual `unfold` calls in
-  downstream proofs.
+- **Queue F:** Recon document.
+- **This tick — Queue G kickoff:** added
+  `Jacobian/TraceDegree/Recon.lean`. Inventories Mathlib's
+  `mfderiv`/`ContMDiff` (PRESENT) vs `pullbackForms`/`traceForms`/
+  `analyticDegree` (ABSENT). Lays out chain-rule formula for
+  pullback, fiber-sum for trace, 6 Aristotle-sized packets,
+  flags `pushforward_pullback` as the strongest multiplicative
+  anti-hack theorem. Recon convention.
+- All challenge queues (A through G) now have at least a recon
+  document or production scaffold; Queue H's theorems live in
+  `Jacobian/Challenge.lean` directly.
+
+## Top open correctness item
+
+`chartedForm c ω e v` should equal
+`ω.toFun (c.symm e) (D(c.symm)_e v)`, but the current definition
+drops the chart-derivative `D(c.symm)_e` and only evaluates the
+section at `c.symm e`. Lean accepts the type only because
+`TangentSpace I _ = E` trivially. Consequence: `pathIntegralInChart`
+is the right integral only when chart transitions are translations
+(torus case); it is wrong on a general Riemann surface. Flagged in
+the `ChartedForm.lean` docstring and tracked here as the highest-
+priority correctness fix. The proper version uses
+`mfderiv 𝓘(ℂ, E) (chartedSpaceSelf ...) c.symm e` (or the
+inverse-chart partial derivative API).
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
