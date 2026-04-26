@@ -12,22 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 18:56 EDT)
+## Live Status (2026-04-26 18:58 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` still QUEUED
-  (50 min). Backend still asleep.
+  (52 min). Backend still asleep.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/TraceDegree/PullbackFunIdApplyVec.lean`:
-    `pullbackFormsFun_id_apply_vec` — applying identity-pullback
-    at a point and a tangent vector gives `η.toFun x v` directly.
-    Proof: `rw [pullbackFormsFun_id_apply]; rfl` (initial attempt
-    without `rfl` failed; the rewrite leaves an identical goal
-    that needs explicit `rfl`). Wired into TraceDegree umbrella;
-    build green (2435 jobs).
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIdApplyVec.lean`:
+    `pullbackFormsLinearMap_id_apply_vec` — bundled-LinearMap-level
+    analogue of last tick's vector-apply form for identity
+    pullback. Same `rw + rfl` proof. Wired into TraceDegree
+    umbrella; build green (2436 jobs).
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 18:51 EDT)
+## Stale Live Status (2026-04-26 18:56 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
