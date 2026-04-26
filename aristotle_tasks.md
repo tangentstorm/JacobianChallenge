@@ -12,31 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 00:59 EDT)
+## Live Status (2026-04-26 01:10 EDT)
 
 - Active jobs (ours): 5/5.
-- 🎉 **Integrated this tick:**
-  - `091ac5d1` — `Jacobian/Periods/ChartedFormPullbackSimp.lean`.
-    Three @[simp] linearity lemmas (`chartedFormPullback_zero/_neg/_add`)
-    via the concise `convert ContinuousLinearMap.{zero,neg,add}_comp`
-    pattern. Wired into Periods umbrella.
-  - `0b8b1163` — `Jacobian/TraceDegree/PullbackFun.lean`. Queue G's
-    first concrete packet: `pullbackFormsFun` (chain-rule pullback
-    at function level) + zero/neg/add linearity. Created the
-    `Jacobian/TraceDegree.lean` umbrella to re-export.
-- **Submitted this tick** (refilling toward 5):
-  - `835344a7` — `Jacobian/Periods/ChartedFormPullbackSmul.lean`.
-    Scalar-multiplication linearity for the chart pullback.
-  - `e32728ec` — `Jacobian/TraceDegree/PullbackFunSmul.lean`.
-    Scalar-multiplication linearity for the pullback function.
-  - `b20e4f00` — `Jacobian/TraceDegree/PullbackFunId.lean`.
-    `pullbackFormsFun (id : X → X) η = η.toFun` via `mfderiv_id` +
-    `ContinuousLinearMap.comp_id`.
-- **Still in flight from prior ticks:**
+- 🎉 **Integrated this tick:** `668a781a` —
+  `Jacobian/Periods/PathIntegralViaChartCorrectZero.lean`. Two-line
+  proof (`unfold` + `exact pathIntegralInChartCorrect_zero`) for the
+  from-`X` corrected integral of the zero form. Wired into Periods
+  umbrella; `lake build Jacobian.Periods` green.
+- **Submitted this tick** (refilling the slot freed by `668a781a`):
+  - `9c8842f9` — `Jacobian/Periods/PathIntegralChartCorrectSmul.lean`.
+    Scalar-multiplication linearity for `pathIntegralInChartCorrect`,
+    inline-proof so independent of the in-flight `835344a7`
+    (`ChartedFormPullbackSmul`).
+- **Still in flight:**
   - `fe592ee1` — `PathIntegralChartCorrectLinear` (neg/add for
-    `pathIntegralInChartCorrect`, inline).
-  - `668a781a` — `PathIntegralViaChartCorrectZero` (queued; from-`X`
-    zero lemma).
+    `pathIntegralInChartCorrect`, inline). Submitted at 00:43 EDT;
+    on the second page of `aristotle list`. Retrieval crashes on a
+    progress-printing UnicodeEncodeError — interpret as "still
+    running" (the CLI's `get_solution_if_complete` only invokes the
+    progress printer when the job is incomplete).
+  - `835344a7` — `ChartedFormPullbackSmul` (smul linearity for the
+    chart pullback).
+  - `e32728ec` — `PullbackFunSmul` (smul linearity for the pullback
+    function).
+  - `b20e4f00` — `PullbackFunId` (pullback along identity).
 - **Last tick:** `e7aa502d` integrated —
   `PathIntegralChartCorrectSimp` (`_refl` and `_symm` for the
   corrected chart-local integral).

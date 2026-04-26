@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:59 EDT
+Last tick: 2026-04-26 01:10 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,18 +47,15 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5.
-Integrated this tick: 🎉 `091ac5d1` — Periods/ChartedFormPullbackSimp
-                      (chartedFormPullback_zero/_neg/_add).
-                      🎉 `0b8b1163` — TraceDegree/PullbackFun
-                      (Queue G first packet: pullbackFormsFun +
-                      zero/neg/add). Created TraceDegree umbrella.
-Submitted this tick:  `835344a7` — Periods/ChartedFormPullbackSmul
-                      (scalar linearity for chart pullback).
-                      `e32728ec` — TraceDegree/PullbackFunSmul
-                      (scalar linearity for pullback function).
-                      `b20e4f00` — TraceDegree/PullbackFunId
-                      (pullbackFormsFun_id via mfderiv_id).
-Still in flight:      `fe592ee1`, `668a781a` (prior ticks).
+Integrated this tick: 🎉 `668a781a` —
+                      Periods/PathIntegralViaChartCorrectZero
+                      (from-X zero lemma, two-line proof).
+Submitted this tick:  `9c8842f9` —
+                      Periods/PathIntegralChartCorrectSmul
+                      (scalar linearity, inline so independent
+                      of the in-flight 835344a7).
+Still in flight:      `fe592ee1` (older; off the visible page),
+                      `835344a7`, `e32728ec`, `b20e4f00`.
 Failed/split this tick: none.
 ```
 
@@ -103,6 +100,7 @@ Periods.PathIntegralViaChartCorrect pass lake build Jacobian.Periods.PathIntegra
 Periods.ChartedFormPullbackSimp pass lake build Jacobian.Periods.ChartedFormPullbackSimp (no sorry)
 TraceDegree.PullbackFun pass    lake build Jacobian.TraceDegree.PullbackFun (no sorry)
 TraceDegree (umbrella) pass     lake build Jacobian.TraceDegree
+Periods.PathIntegralViaChartCorrectZero pass lake build Jacobian.Periods.PathIntegralViaChartCorrectZero (no sorry)
 ```
 
 ```text
