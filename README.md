@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 23:57 EDT
+Last tick: 2026-04-26 00:01 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,28 +46,22 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 (two integrated this tick).
+Active jobs (ours): 2/5.
                     - `259b18a1` — `HolomorphicForms/TorusExample.lean`.
-                      IN_PROGRESS, 6%.
-Integrated this tick: 🎉🎉 Two more Aristotle results:
-                      - `78ab4b77` —
-                        `Jacobian/Periods/PathPartition.lean`. The
-                        `exists_uniform_chart_partition` lemma — the
-                        multi-chart partition bottleneck for the
-                        period pairing. Proof uses `norm_num`,
-                        `positivity`, `nlinarith` for the real-
-                        arithmetic content. No sorry.
-                      - `0ccee8d8` —
-                        `Jacobian/Periods/ChartedFormSimp.lean`.
-                        `chartedForm_neg` and `chartedForm_add`
-                        simp lemmas via `ContMDiffSection.coe_neg`
-                        / `coe_add`. No sorry.
-                      Both wired into the `Jacobian.Periods`
-                      umbrella.
-Local progress this tick: integration of two Aristotle packets.
-Path-integration/periods bumped to 40% — the multi-chart
-combinatorial input is now in place; only the actual integral
-assembly + period proofs remain.
+                      IN_PROGRESS, 12%.
+                    - `3a1d6716` — `Periods/PathLiftSimp.lean`. Just
+                      submitted: `pathIntegralViaChart_refl` and
+                      `_symm` simp lemmas, mirroring the chart-local
+                      versions at the from-`X` level.
+Integrated this tick: nothing.
+Local progress this tick: submitted `3a1d6716` to keep the queue
+                          fed. Hints provided on `Path.map'` for
+                          `refl` / `symm` propagation.
+Complex torus layer: complete and self-contained. Queue D now has
+                     correct chart pullback, multi-chart partition,
+                     and basic chart-form algebra; only the
+                     downstream integral-assembly + period proofs
+                     remain.
 ```
 
 ```text
