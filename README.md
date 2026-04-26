@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 15:50 EDT
+Last tick: 2026-04-26 15:55 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,14 +49,15 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW Periods/PathIntegralChartCorrectSmulSymm:
-                      `pathIntegralInChartCorrect_smul_symm` — the
-                      in-chart corrected analogue of last tick's
-                      single-chart `_smul_symm`. 1-line proof
-                      `rw [_smul, _symm, smul_neg]`. Wired into
-                      Periods umbrella; build green (8117 jobs, 198s).
-                      The `_smul_symm` corollary now exists at all
-                      three layers: in-chart, via-chart, cover.
+                      NEW Periods/PathIntegralChartSmulSymm:
+                      `pathIntegralInChart_smul_symm` — provisional
+                      in-chart analogue of the corrected `_smul_symm`.
+                      1-line proof `rw [_smul, _symm, smul_neg]`.
+                      Wired into Periods umbrella; build green
+                      (8118 jobs, 121s). The `_smul_symm` corollary
+                      now exists at four layers: in-chart provisional
+                      (this tick), in-chart corrected, via-chart
+                      corrected, cover.
 Failed/split this tick: none.
 ```
 
@@ -152,6 +153,7 @@ TraceDegree.PullbackFunAddSubApply pass lake build Jacobian.TraceDegree.Pullback
 TraceDegree.PullbackFormsLinearMapApplyLinear pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapApplyLinear (no sorry)
 Periods.PathIntegralViaChartCorrectSmulSymm pass lake build Jacobian.Periods.PathIntegralViaChartCorrectSmulSymm (no sorry)
 Periods.PathIntegralChartCorrectSmulSymm pass lake build Jacobian.Periods.PathIntegralChartCorrectSmulSymm (no sorry)
+Periods.PathIntegralChartSmulSymm pass lake build Jacobian.Periods.PathIntegralChartSmulSymm (no sorry)
 ```
 
 ```text
