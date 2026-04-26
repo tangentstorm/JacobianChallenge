@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 11:45 EDT
+Last tick: 2026-04-26 11:49 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,15 +50,13 @@ Active jobs (ours): 0/5 (queue empty; 3 cancelled today during
                       the ~7.5h backend freeze).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Refactored `pathIntegralInChartCorrect_neg`
-                      and `_smul` proofs from the inline 17-line
-                      funext + ContinuousLinearMap.{neg,smul}_comp
-                      chains to clean 2-line proofs using the modern
-                      `chartedFormPullback_{neg,smul}` simp lemmas.
-                      Net: -29 lines, same semantics. Files:
-                      Periods/PathIntegralChartCorrectLinear and
-                      Periods/PathIntegralChartCorrectSmul. Build
-                      green (2673 jobs, 61s combined).
+                      Periods/DivFinIcc: added `divFinIcc_symm`
+                      (`σ (i/n) = (n-i)/n`) — the partition-point
+                      reflection identity needed downstream by
+                      `pathIntegralViaCoverWith_symm`. Proof:
+                      `apply Subtype.ext; show 1 - i/n = (n-i)/n;
+                      rw [Nat.cast_sub hi, sub_div, div_self _]`.
+                      Build green (1361 jobs, 32s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
