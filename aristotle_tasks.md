@@ -12,25 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 17:42 EDT)
+## Live Status (2026-04-26 18:05 EDT)
 
-- Active jobs (ours): 0/5 (queue empty); backend still frozen
-  (~14h since last movement). Continuing local work per the
-  frozen-backend rule.
+- Active jobs (ours): 1/5; submitted a canary at user request to
+  detect when Aristotle wakes from ~14h freeze. Job
+  `09cd85dd-37b7-4e6f-89f3-99cd16f58ab7` —
+  `pathIntegralViaChart_trans_of_curveIntegrable` (provisional
+  via-chart `_trans` lift). Proof should mirror the corrected
+  analogue I just landed (`unfold` + `chartLift_trans` rw +
+  `exact` in-chart trans).
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralViaChartNegSymmEqSelf.lean`:
-    `pathIntegralViaChart_neg_symm_eq_self` — provisional
-    via-chart layer, completing the negate-and-reverse
-    cancellation family. Same `_symm + _neg + neg_neg` chain.
-    Wired into Periods umbrella; build green (8131 jobs, 67s).
-- The negate-and-reverse identity `∫(-ω, γ.symm) = ∫(ω, γ)`
-  now exists at all five layers: in-chart provisional, in-chart
-  corrected, via-chart provisional (this tick), via-chart
-  corrected, cover-with. Family complete.
-- **Submitted this tick:** none.
+  - NEW `Jacobian/Periods/ChartLiftTrans.lean`:
+    `chartLift_trans` — chart lift commutes with `Path.trans`.
+    `Path.ext + funext + split_ifs + rfl` proof.
+  - NEW `Jacobian/Periods/ChartLiftTransApply.lean`:
+    `chartLift_trans_apply` — pointwise apply form (1-line `rw`).
+  - NEW `Jacobian/Periods/PathIntegralViaChartCorrectTrans.lean`:
+    `pathIntegralViaChartCorrect_trans_of_curveIntegrable` —
+    lifts the in-chart corrected `_trans` to from-`X` via
+    `chartLift_trans`. 3-line proof. Build green (8133 jobs).
+- **Submitted this tick:**
+  - `09cd85dd-37b7-4e6f-89f3-99cd16f58ab7` (Queue D) target
+    file `PathIntegralViaChartTrans.lean` — canary.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 17:38 EDT)
+## Stale Live Status (2026-04-26 17:42 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
