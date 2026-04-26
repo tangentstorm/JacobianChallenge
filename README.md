@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 13:02 EDT
+Last tick: 2026-04-26 13:11 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,23 +49,26 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Two new rfl-unfolding files at the
-                      provisional layer:
-                      - Periods/PathIntegralChartApply
-                        (pathIntegralInChart_apply : ... = curveIntegral)
-                      - Periods/PathIntegralViaChartApply
-                        (pathIntegralViaChart_apply : ... = pathIntegralInChart on chartLift)
-                      Mirror of corrected layer's
-                      PathIntegralChartCorrectApply +
-                      PathIntegralViaChartCorrectApply. Wired
-                      into Periods umbrella; build green
-                      (2672 jobs, 57s).
-                      Side note: a more substantive
-                      pathIntegralViaChartCorrect_symm_subpath_divFinIcc
-                      attempt was abandoned this tick — hit a
-                      dependent-type rewrite issue on the range-
-                      hypothesis transport that needs more careful
-                      handling.
+                      Resolved last tick's dependent-type rewrite
+                      blocker. Two new files:
+                      - Periods/PathIntegralCongr:
+                        pathIntegralViaChartCorrect_eq_of_path_eq
+                        (and provisional analogue) — congruence
+                        via `subst` + proof irrelevance, bridges
+                        equal paths under different range-hypothesis
+                        proofs.
+                      - Periods/PathIntegralSegmentSymm:
+                        pathIntegralViaChartCorrect_symm_subpath_divFinIcc
+                        — the per-segment sign-flip lemma. Proof
+                        uses `set σpath := ...; eq := path_symm_subpath_divFinIcc;
+                        h_symm' := eq ▸ h_symm; rw [eq_of_path_eq];
+                        exact pathIntegralViaChartCorrect_symm`. Wired
+                        into Periods umbrella; build green
+                        (2762 jobs, 51s).
+                      All path-side helpers for cover-symm now in
+                      place; remaining piece is the Finset.sum_bij
+                      Fin.rev re-indexing (full theorem statement
+                      remains TODO).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
