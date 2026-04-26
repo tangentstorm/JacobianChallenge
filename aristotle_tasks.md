@@ -12,22 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 05:56 EDT)
+## Live Status (2026-04-26 06:03 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~1 hr+ — backend
   stalled since ~04:09 EDT, no jobs moving on any project.
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
-  - `Jacobian/Periods/PathIntegralViaCoverRecon.lean`: document a
-    new Pick-level obstruction. The conditional
-    `pathIntegralViaCover_add_of_curveIntegrable` at the
-    `Classical.choose`-picked level requires referring to the chosen
-    partition data via long `.choose_spec.choose_spec.choose` chains,
-    which Lean's dotted-identifier parser rejects. Tried writing it
-    this tick; abandoned the attempt and recorded the design
-    consequence: the conditional `_add` ladder ends at the
-    parameterised `pathIntegralViaCoverWith` level. Pick-level
-    `_add` will be skipped and landed only as an unconditional
-    statement once Packet F removes the integrability hypothesis.
+  - `Jacobian/Periods/PathIntegralChartCorrectSub.lean` (new):
+    +`pathIntegralInChartCorrect_sub_of_curveIntegrable` —
+    conditional subtraction linearity at the path-integral level,
+    parallel to the conditional `_add` from yesterday's tick.
+    Reduces to `curveIntegral_sub` via the unconditional
+    function-level `chartedFormPullback_sub`. Wired into
+    `Jacobian.Periods` umbrella. Conditional `_sub` ladder will
+    follow the same shape as `_add` (lift to `ViaChartCorrect`,
+    then `ViaCoverWith`).
 - **Submitted this tick:** none (backlog still blocking).
 - Continuing local Claude-owned progress while Aristotle queue
   remains frozen.
