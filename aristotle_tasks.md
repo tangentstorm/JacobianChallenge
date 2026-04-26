@@ -12,26 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 16:07 EDT)
+## Live Status (2026-04-26 16:17 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
-  (~12h since last movement). Continuing local work per the
+  (~12.25h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralViaChartCorrectSymmAddSelf.lean`:
-    `pathIntegralViaChartCorrect_add_symm_self` — the round-trip
-    identity `∫(ω, γ) + ∫(ω, γ.symm) = 0`. 1-line proof
-    via `_symm` + `add_neg_cancel`. Wired into
+  - NEW `Jacobian/Periods/PathIntegralViaCoverSymmAddSelf.lean`:
+    `pathIntegralViaCoverWith_add_symm_self` — cover-layer
+    round-trip identity, lifted from last tick's via-chart
+    version. 2-line proof: `rw [_symm ω γ n hn pickChart hcov]`
+    (explicit args needed for unification — implicit `rw` failed
+    on first attempt) then `exact add_neg_cancel _`. Wired into
     `Jacobian/Periods.lean` umbrella; build green
-    (8120 jobs, 160s).
-- Geometrically a special case of Stokes: traversing γ and then
-  γ.symm closes up into an out-and-back loop, whose integral of
-  any 1-form is zero. Useful for compositional path-integral
-  arguments later in the periods chain.
+    (8121 jobs, 111s).
+- The round-trip identity `∫(ω, γ) + ∫(ω, γ.symm) = 0` now
+  exists at the via-chart corrected and cover-with layers.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 16:00 EDT)
+## Stale Live Status (2026-04-26 16:07 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
