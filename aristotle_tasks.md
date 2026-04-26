@@ -12,7 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 14:33 EDT)
+## Live Status (2026-04-26 14:36 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/PathIntegralViaCoverNegSymm.lean`:
+    `pathIntegralViaCoverWith_neg_form_eq_symm_path` — corollary
+    combining `_neg` (form negation) with `_symm` (path reversal):
+    integrating `-ω` along `γ` equals integrating `ω` along `γ.symm`
+    (with re-indexed cover). Both equal `-cover-with-integral`.
+  - Proof: 1 line `rw [pathIntegralViaCoverWith_neg,
+    pathIntegralViaCoverWith_symm]`.
+  - Wired into `Jacobian/Periods.lean` umbrella; build green
+    (8051 jobs, 178s).
+- This is the discrete analogue of the classical
+  `∫ -ω on γ = ∫ ω on -γ` from complex analysis.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 14:33 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick:** none. Wakeup fired 3 min after the
