@@ -25,6 +25,7 @@ import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverZero
 import Jacobian.Periods.PathLift
 import Jacobian.Periods.PathLiftSimp
+import Jacobian.Periods.PathReflSubpath
 import Jacobian.Periods.PathPartition
 import Jacobian.Periods.PeriodFunctional
 
