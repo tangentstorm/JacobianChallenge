@@ -12,7 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 12:40 EDT)
+## Live Status (2026-04-26 13:02 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/PathIntegralChartApply.lean`:
+    `pathIntegralInChart_apply` — definitional unfolding to
+    `curveIntegral (chartedForm c ω) γ` (rfl). Mirrors corrected
+    layer's `PathIntegralChartCorrectApply`.
+  - NEW `Jacobian/Periods/PathIntegralViaChartApply.lean`:
+    `pathIntegralViaChart_apply` — definitional unfolding to
+    `pathIntegralInChart c ω (chartLift c γ h)` (rfl). Mirrors
+    corrected layer's `PathIntegralViaChartCorrectApply`.
+  - Both wired into `Jacobian/Periods.lean` umbrella; build green
+    (2672 jobs, 57s).
+- **Abandoned attempt:** the more substantive
+  `pathIntegralViaChartCorrect_symm_subpath_divFinIcc` per-segment
+  symm lemma. Hit a dependent-type rewrite issue: the range
+  hypothesis `h_symm : range (γ.symm.subpath ...) ⊆ c.source` has
+  type that depends on the path argument, so rewriting the path
+  via `path_symm_subpath_divFinIcc` requires also transporting
+  the hypothesis. Lean's `rw` doesn't motive-compute through this
+  cleanly; needs explicit `Eq.mpr`/`cast`/`convert` handling,
+  beyond what fits in one tick. Marked for later.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 12:40 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
