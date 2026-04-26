@@ -71,50 +71,99 @@ for free from `ContMDiffSection`.
 
 Define `HolomorphicOneForm X` directly as a structure containing
 * a function `ω : Π x : X, TangentSpace 𝓘(ℂ, E) x →L[ℂ] ℂ`,
-* an analytic-coherence hypothesis: in each chart, the chart-coordinate
-  representation of `ω` (a function `chart.target → E →L[ℂ] ℂ`) is
-  `ContDiff ℂ ω`.
+* an analytic-coherence hypothesis enforcing that under chart
+  transitions, the local representation transforms by the
+  inverse-transpose of the transition's `mfderiv`.
 
 `AddCommGroup` and `Module ℂ` are provable directly from pointwise
-operations and the linearity of the analytic-coherence hypothesis under
-those operations.
+operations.
 
 * Pros: avoids the bundle scaffolding; a small, self-contained
   definition.
-* Cons: re-derives smoothness API that already exists for
-  `ContMDiffSection`; the "analytic coherence under chart changes"
-  needs its own glue lemma.
+* Cons: hand-rolled cotangent transformation rule under chart
+  changes; nontrivial to state correctly.
 
-### Recommendation
+### A note on a tempting wrong simplification
 
-Start with **Approach B** as a self-contained scaffold to unblock the
-genus / `analyticGenus` definitions. If/when the bundle infrastructure
-is needed for finer integration / pullback theorems, migrate to
-Approach A in a separate refactor.
+The most-naive form of Approach B —
+
+```text
+HolomorphicOneForm X := { ω : X → (E →L[ℂ] ℂ) // ContMDiff … ω }
+```
+
+— **does not give the right answer in general**. Without the
+inverse-transpose transformation rule under chart changes, the
+"smooth function `X → E*`" view is chart-dependent. Concretely:
+under the trivialization `TangentSpace I x = E`, two different
+charts trivialize the same tangent space differently, and the
+naive subtype identifies all those trivializations.
+
+Worked example: for `Riemann sphere`, the genus is 0 and there are
+no nonzero global holomorphic 1-forms; but global holomorphic
+functions `X → ℂ` (i.e., the naive subtype with `E = ℂ`,
+`E →L[ℂ] ℂ = ℂ`) form a 1-dimensional ℂ-space (the constants).
+The naive definition would compute `analyticGenus(sphere) = 1`,
+contradicting the genus-zero requirement.
+
+For `V ⧸ Λ.subgroup` the chart transitions are translations whose
+`mfderiv` is the identity, so the inverse-transpose is also the
+identity and the naive subtype happens to agree with the correct
+answer. Coincidence — do not generalize.
+
+### Recommendation (revised)
+
+Approach B's substantive content is the cotangent transformation
+rule, so once we write that down honestly we're effectively building
+the cotangent bundle by hand. **Approach A (Mathlib's
+`Bundle.continuousLinearMap` + `ContMDiffSection`) is the cleaner
+target.**
+
+Concretely:
+1. Build `CotangentBundle X := Bundle.continuousLinearMap ℂ
+   (TangentBundle 𝓘(ℂ, E) X) (Bundle.Trivial X ℂ)` (or the equivalent;
+   the bundle exists in `Topology/VectorBundle/Hom.lean`).
+2. `HolomorphicOneForm X := Cₛ^⊤⟮𝓘(ℂ, E); E →L[ℂ] ℂ, CotangentBundle X⟯`.
+3. Pull `AddCommGroup` and `Module ℂ` from
+   `ContMDiffSection.module`.
+
+This requires showing `CotangentBundle` is a `VectorBundle` over
+`X` with fiber `E →L[ℂ] ℂ`, which Mathlib's `Hom.lean` already
+provides scaffolding for once both `TangentBundle` and the trivial
+`X × ℂ` bundle are recognized as `VectorBundle`s — both are
+already instances.
 
 ## First Aristotle-sized packets (when queue unblocks)
 
-1. Define `HolomorphicOneForm X` per Approach B. Allowed write scope:
-   `Jacobian/HolomorphicForms/Defs.lean`. Forbidden files:
-   `Jacobian/Challenge.lean`, `Jacobian/WorkPackets/StatementBank.lean`.
-2. Prove `AddCommGroup (HolomorphicOneForm X)` (pointwise add).
-3. Prove `Module ℂ (HolomorphicOneForm X)`.
-4. Update `JacobianChallenge.HolomorphicForms.HolomorphicOneForm` in
-   `StatementBank.lean` from the `:= ℂ` placeholder to the new type.
-5. State `FiniteDimensionalHolomorphicOneForms X` as a class wrapping
+1. **`Jacobian/HolomorphicForms/CotangentBundle.lean`** — assemble
+   `CotangentBundle X` via `Bundle.continuousLinearMap`. Likely
+   ~30 lines: bundle declaration, `VectorBundle` instance derivation
+   from existing `TangentBundle` + `Bundle.Trivial` instances. Allowed
+   write scope: only that file.
+2. **`Jacobian/HolomorphicForms/Defs.lean`** — define
+   `HolomorphicOneForm X := Cₛ^⊤⟮𝓘(ℂ, E); E →L[ℂ] ℂ, CotangentBundle X⟯`,
+   plus the type abbreviation for use in `StatementBank`.
+3. **`Jacobian/HolomorphicForms/AddCommGroup.lean`** — derive
+   `AddCommGroup` from `ContMDiffSection.addCommGroup` (one-liner).
+4. **`Jacobian/HolomorphicForms/Module.lean`** — derive `Module ℂ`
+   similarly (one-liner).
+5. **Update `JacobianChallenge.HolomorphicForms.HolomorphicOneForm`** in
+   `StatementBank.lean` from the `:= ℂ` placeholder to the real type.
+6. State `FiniteDimensionalHolomorphicOneForms X` as a class wrapping
    `Module.Finite ℂ (HolomorphicOneForm X)`. The proof is deferred —
    it is the single largest missing analytic ingredient.
 
 ## Anti-hack considerations
 
-`HolomorphicOneForm X` must be defined so that the trivial answer
-`HolomorphicOneForm X := PUnit` is not viable. Approach B's
-chart-coherence hypothesis is non-vacuous: there are non-zero
-holomorphic 1-forms on a torus (e.g. `dz` pulled back via the chart),
-so the dimension must be at least 1 for the simplest non-trivial
-example. Confirming this concretely on `V ⧸ Λ.subgroup` is itself a
-non-trivial check that should land before claiming
-`genus_eq_analyticGenus` for that example.
+`HolomorphicOneForm X := PUnit` is not viable because of the
+`genus_eq_analyticGenus` and `analyticGenus_eq_zero_iff_homeomorphic_sphere`
+constraints in `Challenge.lean`. The cotangent-bundle definition
+naturally avoids over-counting (which the naive Approach B would
+suffer from on the Riemann sphere — see "tempting wrong simplification"
+above).
+
+Confirming nonzero holomorphic 1-forms on `V ⧸ Λ.subgroup` (`g = 1`
+yielding a 1-dim space spanned by `dz`) is the cleanest first
+sanity check after the type and module structure land.
 -/
 
 namespace JacobianChallenge.HolomorphicForms
