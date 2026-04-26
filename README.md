@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 19:51 EDT
+Last tick: 2026-04-26 19:56 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,12 +49,13 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~1.5h+.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralChartCorrectNegSmulSymmEqSelf:
-                      `pathIntegralInChartCorrect_neg_smul_symm_eq_self`
-                      — in-chart corrected triple-cancellation. Build
-                      green (8147 jobs). Identity now at three layers:
-                      in-chart corrected (this tick), via-chart
-                      corrected, cover-with.
+                      NEW Periods/PathIntegralChartNegSmulSymmEqSelf:
+                      `pathIntegralInChart_neg_smul_symm_eq_self`
+                      — provisional in-chart triple-cancellation.
+                      Build green (8148 jobs). Identity now at four
+                      layers: in-chart provisional (this tick),
+                      in-chart corrected, via-chart corrected,
+                      cover-with.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -192,6 +193,7 @@ Periods.PathIntegralViaChartNegSmul pass lake build Jacobian.Periods.PathIntegra
 Periods.PathIntegralViaChartCorrectNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaChartCorrectNegSmulSymmEqSelf (no sorry)
 Periods.PathIntegralViaCoverNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaCoverNegSmulSymmEqSelf (no sorry)
 Periods.PathIntegralChartCorrectNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralChartCorrectNegSmulSymmEqSelf (no sorry)
+Periods.PathIntegralChartNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralChartNegSmulSymmEqSelf (no sorry)
 ```
 
 ```text
