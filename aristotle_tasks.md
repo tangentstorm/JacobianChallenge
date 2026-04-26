@@ -12,7 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 14:05 EDT)
+## Live Status (2026-04-26 14:28 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick:** none. Refresh-only after the cover-symm
+  milestone landed at 14:05.
+- **Substantive work remaining (long-tail), in rough order of fit:**
+  1. Lift `pathIntegralViaCoverWith_symm` to the unparameterised
+     `pathIntegralViaCover` (Pick) layer. Needs well-definedness of
+     `pathIntegralViaCover` first (different `Classical.choose`
+     partitions for γ vs γ.symm).
+  2. Well-definedness of `pathIntegralViaCover` itself —
+     independence from the picked partition. Substantive.
+  3. `pullbackFormsFun_smooth` (Queue G) — the ContMDiff step
+     for upgrading `pullbackFormsFun` to `HolomorphicOneForm E X`.
+  4. Decomposed TorusExample retry around the
+     `Bundle.continuousLinearMap` constant-section roadblock.
+- These are all multi-tick jobs that benefit from careful planning.
+  Next ticks will pick one and outline a strategy.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 14:05 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
