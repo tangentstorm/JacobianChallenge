@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 10:51 EDT
+Last tick: 2026-04-26 10:54 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,17 +46,18 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 3/5 (backend stalled ~6.5h, no movement
+Active jobs (ours): 3/5 (backend stalled ~6.7h, no movement
                       since 04:09 EDT).
 Integrated this tick: none — backend frozen.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      TraceDegree/PullbackFunAddSubApply:
-                      `pullbackFormsFun_{add,sub}_apply` pointwise
-                      apply-form simp lemmas. Out of scope of the
-                      in-flight Aristotle job 82687eb7 (which
-                      targets _zero/_neg/_smul_apply only).
-                      Wired into TraceDegree umbrella; build green
-                      (2410 jobs, 25s).
+                      TraceDegree/PullbackFormsLinearMapApplyLinear:
+                      5 pointwise apply-form simp lemmas at the
+                      bundled-LinearMap layer
+                      `pullbackFormsLinearMap_{zero,neg,add,sub,smul}_apply`,
+                      mirroring the Periods-side
+                      ChartedFormPullbackLinearMapApplyLinear from
+                      tick 10:43. Wired into TraceDegree umbrella;
+                      module builds green (2416 jobs, 99s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
@@ -150,6 +151,7 @@ Periods.ChartLiftApply pass    lake build Jacobian.Periods.ChartLiftApply (no so
 Periods.ChartedFormPullbackApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackApplyLinear (no sorry)
 Periods.ChartedFormPullbackLinearMapApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackLinearMapApplyLinear (no sorry)
 TraceDegree.PullbackFunAddSubApply pass lake build Jacobian.TraceDegree.PullbackFunAddSubApply (no sorry)
+TraceDegree.PullbackFormsLinearMapApplyLinear pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapApplyLinear (no sorry)
 ```
 
 ```text
