@@ -12,26 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 21:21 EDT)
+## Live Status (2026-04-25 21:27 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 7h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place:** type, module structure, class
-  for finite-dimensionality, and `analyticGenus` definition
-  (`HolomorphicForms/Defs.lean`,
-  `HolomorphicForms/CotangentBundle.lean`,
-  `HolomorphicForms/FiniteDimensional.lean`).
-- **This tick — Queue D kickoff:** added
-  `Jacobian/Periods/Recon.lean`, a name-discovery and design
-  document for the period-lattice machinery. Surveys Mathlib's
-  `curveIntegral` (PRESENT, normed-space only),
-  `singularHomologyFunctor` (PRESENT), and the missing pieces
-  (no manifold path integration, no Stokes on manifolds, no
-  period-pairing nondegeneracy). Lays out the chart-local lift
-  strategy and a 5-file Aristotle packet plan
-  (`PathIntegralChart`, `PathIntegral`, `IntegralOneCycle`,
-  `PeriodFunctional`, `PeriodSubgroup`).
+  for finite-dimensionality, and `analyticGenus` definition.
+- **Queue D scaffolding in progress:** `Recon.lean` (last tick) +
+  two new modules this tick (no sorries):
+  - `Jacobian/Periods/ChartedForm.lean` — transport a
+    `HolomorphicOneForm E X` through a chart `c` to a 1-form on
+    `E`. Definition relies on `TangentSpace I _ = E` (definitional
+    equality from `MFDeriv.Defs`).
+  - `Jacobian/Periods/PathIntegralChart.lean` — chart-local path
+    integral via Mathlib's `curveIntegral`. Takes a path already
+    transported into `E` (i.e. `Path (a b : E)`); the from-`X`
+    wrapper requires more `Path.map` glue and is deferred.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
