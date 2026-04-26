@@ -12,14 +12,17 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 05:20 EDT)
+## Live Status (2026-04-26 05:22 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~1 hr+ — backend
   stalled since ~04:09 EDT, no jobs moving on any project.
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
-  - `Jacobian/TraceDegree/PullbackFormsLinearMapApply.lean`:
-    +`pullbackFormsLinearMap_apply_vec` (bundled tangent-vector
-    chain rule, `rfl`, matches the unbundled `_apply_apply`).
+  - `Jacobian/Periods/ChartedFormPullbackSub.lean`:
+    +`chartedFormPullback_sub` (subtraction linearity at function
+    level, derived from `_add` and `_neg`). Note: this is at the
+    pre-integration `chartedFormPullback` layer where `_add` is
+    unconditional, so `_sub` is too. Wired into `Jacobian.Periods`
+    umbrella.
 - **Submitted this tick:** none (backlog still blocking).
 - Continuing local Claude-owned progress while Aristotle queue
   remains frozen.
