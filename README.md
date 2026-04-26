@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 23:43 EDT
+Last tick: 2026-04-25 23:46 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,25 +46,20 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 3/5.
-                    - `78ab4b77` — `Periods/PathPartition.lean`
-                      (multi-chart partition lemma). IN_PROGRESS.
-                    - `3265ae48` — `Periods/ChartedFormPullback.lean`
-                      (genuine chart pullback using `mfderiv`).
-                      IN_PROGRESS.
-                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`
-                      (`dzSection` on `V/Λ` for `V = ℂ`, plus
-                      non-zero). Just submitted.
+Active jobs (ours): 4/5.
+                    - `78ab4b77` — `Periods/PathPartition.lean`. IN_PROGRESS, 3%.
+                    - `3265ae48` — `Periods/ChartedFormPullback.lean`. IN_PROGRESS, 4%.
+                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`. QUEUED.
+                    - `0ccee8d8` — `Periods/ChartedFormSimp.lean`. Just submitted.
 Integrated this tick: nothing yet.
-Local progress this tick: submitted third Aristotle packet
-                          (`259b18a1`) for the genus-1 torus
-                          sanity check — construct the constant
-                          `dz` cotangent as a non-zero
-                          `HolomorphicOneForm ℂ (V ⧸ Λ)`. Confirms
-                          `analyticGenus ≥ 1` for the simplest
-                          torus example.
+Local progress this tick: submitted a 4th packet (`0ccee8d8`) for
+                          two simp lemmas (`chartedForm_neg`,
+                          `chartedForm_add`) that mirror the
+                          existing `chartedForm_zero`. Small API
+                          extension following the established
+                          `ContMDiffSection.coe_*` pattern.
 Complex torus layer: complete and self-contained. Queue D
-                     primitives in place; three Aristotle jobs in
+                     primitives in place; four Aristotle jobs in
                      flight.
 ```
 
