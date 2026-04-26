@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 18:56 EDT
+Last tick: 2026-04-26 18:58 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,16 +47,13 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 1/5 — `09cd85dd` canary still QUEUED
-                      (50 min). Backend still asleep.
+                      (52 min). Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW TraceDegree/PullbackFunIdApplyVec:
-                      `pullbackFormsFun_id_apply_vec` — applying
-                      identity-pullback at point and tangent vector
-                      gives `η.toFun x v` directly. Proof: `rw
-                      [pullbackFormsFun_id_apply]; rfl` (initial
-                      attempt without `rfl` left an `η.toFun x v =
-                      η.toFun x v` goal that `rw` didn't auto-close).
-                      Build green (TraceDegree umbrella 2435 jobs).
+                      NEW TraceDegree/PullbackFormsLinearMapIdApplyVec:
+                      `pullbackFormsLinearMap_id_apply_vec` —
+                      bundled-LinearMap-level analogue of last
+                      tick's vector-apply form. Build green (2436
+                      jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -183,6 +180,7 @@ Periods.PathIntegralChartCorrectSmulSymmEqNegSmul pass lake build Jacobian.Perio
 Periods.PathIntegralChartSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralChartSmulSymmEqNegSmul (no sorry)
 Periods.PathIntegralViaChartSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralViaChartSmulSymmEqNegSmul (no sorry)
 TraceDegree.PullbackFunIdApplyVec pass lake build Jacobian.TraceDegree.PullbackFunIdApplyVec (no sorry)
+TraceDegree.PullbackFormsLinearMapIdApplyVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapIdApplyVec (no sorry)
 ```
 
 ```text
