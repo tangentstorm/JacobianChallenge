@@ -1,5 +1,6 @@
 import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackSimp
+import Jacobian.Periods.ChartedFormPullbackSmul
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
 
 /-!
@@ -33,5 +34,27 @@ theorem chartedFormPullback_zero_curveIntegrable
     CurveIntegrable (chartedFormPullback c (0 : HolomorphicOneForm E X)) γ := by
   rw [chartedFormPullback_zero]
   exact CurveIntegrable.zero
+
+/-- If the chart pullback of `ω` is curve-integrable along `γ`, then so
+is the chart pullback of `-ω`. Reduces to `CurveIntegrable.neg` via
+`chartedFormPullback_neg`. -/
+theorem chartedFormPullback_neg_curveIntegrable
+    (c : OpenPartialHomeomorph X E) {ω : HolomorphicOneForm E X}
+    {a b : E} {γ : Path a b}
+    (h : CurveIntegrable (chartedFormPullback c ω) γ) :
+    CurveIntegrable (chartedFormPullback c (-ω)) γ := by
+  rw [chartedFormPullback_neg]
+  exact h.neg
+
+/-- If the chart pullback of `ω` is curve-integrable along `γ`, then so
+is the chart pullback of `k • ω`. Reduces to `CurveIntegrable.smul`
+via `chartedFormPullback_smul`. -/
+theorem chartedFormPullback_smul_curveIntegrable
+    (c : OpenPartialHomeomorph X E) {ω : HolomorphicOneForm E X}
+    {a b : E} {γ : Path a b}
+    (h : CurveIntegrable (chartedFormPullback c ω) γ) (k : ℂ) :
+    CurveIntegrable (chartedFormPullback c (k • ω)) γ := by
+  rw [chartedFormPullback_smul]
+  exact h.smul
 
 end JacobianChallenge.Periods
