@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 05:44 EDT
+Last tick: 2026-04-26 05:46 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,12 +50,11 @@ Active jobs (ours): 3/5 (backend stalled ~57 min, no movement
                       since 04:09 EDT).
 Integrated this tick: none — backend frozen.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/ChartedFormPullbackCurveIntegrable.lean:
-                      add `_add` and `_sub` propagation footholds
-                      (conditional on both forms being
-                      curve-integrable). Conditional linearity API
-                      now closed on this file: `_zero` unconditional,
-                      `_neg`/`_smul`/`_add`/`_sub` conditional.
+                      Periods/PathIntegralChartCorrectAdd.lean (new):
+                      `pathIntegralInChartCorrect_add_of_curveIntegrable`
+                      — conditional `_add` linearity at the path-integral
+                      level. Becomes unconditional automatically once
+                      Packet F lands.
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
