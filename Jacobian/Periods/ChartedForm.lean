@@ -37,4 +37,22 @@ noncomputable def chartedForm
     E → E →L[ℂ] ℂ :=
   fun e => ω.toFun (c.symm e)
 
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+  {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
+  [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+
+@[simp] theorem chartedForm_apply
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) (e : E) :
+    chartedForm c ω e = ω.toFun (c.symm e) := rfl
+
+/-- The chart-transport of the zero `HolomorphicOneForm` is the zero
+1-form on the model space. -/
+@[simp] theorem chartedForm_zero
+    (c : OpenPartialHomeomorph X E) :
+    chartedForm c (0 : HolomorphicOneForm E X) = 0 := by
+  funext e
+  show ((0 : HolomorphicOneForm E X) : ∀ x, _) (c.symm e) = 0
+  rw [ContMDiffSection.coe_zero]
+  rfl
+
 end JacobianChallenge.Periods

@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 22:17 EDT
+Last tick: 2026-04-25 22:24 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -45,25 +45,21 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 8h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: opened Queue F with
-                          `Jacobian/AbelJacobi/Recon.lean`, a
-                          name-discovery and design document for
-                          the Abel-Jacobi map. Inventories the gaps
-                          (multi-chart integration, path-existence
-                          on compact manifolds, smoothness of the
-                          Jacobian's manifold structure, Abel's
-                          theorem for injectivity), identifies what
-                          can move forward independently
-                          (`analyticOfCurveAlongPath`,
-                          `analyticOfCurve_self`), lays out 4
-                          Aristotle-sized packets, and flags
-                          `ofCurve_inj` as the deepest anti-hack
-                          theorem. Recon convention: no production
-                          declarations beyond a stub; not
-                          re-exported.
-Complex torus layer: complete. Queue D primitives in place; Queue
-                     E foundation defined; Queue F now in design
-                     phase.
+Local progress this tick: extended `Jacobian/Periods/ChartedForm.lean`
+                          with two simp lemmas (no sorries):
+                          - `@[simp] chartedForm_apply` —
+                            `chartedForm c ω e = ω.toFun (c.symm e)`.
+                            One-line proof (`rfl`).
+                          - `@[simp] chartedForm_zero` —
+                            `chartedForm c 0 = 0`. ~3-line proof
+                            using `ContMDiffSection.coe_zero`.
+                          These give simp the tools to unfold
+                          chart-transports without manual
+                          `unfold` calls in downstream proofs.
+Complex torus layer: complete. Queue D primitives in place;
+                     chart-transport API now has `apply`/`zero`
+                     simp lemmas. Queue E foundation defined;
+                     Queue F in design phase.
 ```
 
 ```text
