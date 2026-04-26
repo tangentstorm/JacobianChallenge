@@ -12,15 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 03:55 EDT)
+## Live Status (2026-04-26 04:07 EDT)
 
-- Active jobs (ours): 1/5.
-- 🎉 **Integrated this tick (3 of 4):**
-  - `2e837ce5` — `TraceDegree/PullbackFormsLinearMapApply.lean`. `rfl`.
-  - `e3f89de0` — `Periods/PathIntegralChartCorrectApply.lean`. `rfl`.
-  - `59a2f682` — `Periods/PathIntegralViaChartCorrectApply.lean`. `rfl`.
-- **Still in flight:**
-  - `f9550953` — `Periods/ChartLiftApply.lean` (running 3%).
+- Active jobs (ours): 3/5.
+- 🎉 **Integrated this tick:** `f9550953` —
+  `Periods/ChartLiftApply.lean`. `rfl` one-liner.
+- **Submitted this tick (3 refills):**
+  - `f8faacda` — `Periods/ChartLiftBoundary.lean`. Boundary-value
+    simps (`chartLift_zero`, `chartLift_one`).
+  - `bf7d62c4` — `Periods/PathIntegralViaChartLinear.lean`.
+    Provisional from-`X` `_neg` and `_smul` (completes provisional
+    linearity except `_add`, same Packet F blocker).
+  - `82687eb7` — `TraceDegree/PullbackFunSimpApply.lean`. Pointwise
+    `_zero/_neg/_smul` apply lemmas for `pullbackFormsFun`.
 
 ## Layer status
 

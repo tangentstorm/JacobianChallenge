@@ -1,4 +1,5 @@
 import Jacobian.Periods.ChartBallAtPoint
+import Jacobian.Periods.ChartLiftApply
 import Jacobian.Periods.ChartLiftReflSubpath
 import Jacobian.Periods.DivFinIcc
 import Jacobian.Periods.ChartedForm
