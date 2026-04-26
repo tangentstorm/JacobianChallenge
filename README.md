@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 23:37 EDT
+Last tick: 2026-04-25 23:40 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,20 +46,24 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5. Aristotle queue **unblocked** — the 5
-                    cross-project jobs that had been wedged for ~9h
-                    have all completed. Submitted job
-                    `78ab4b77-3ddc-4d2b-b831-270f5090cbb1` for
-                    `Jacobian/Periods/PathPartition.lean`
-                    (`exists_uniform_chart_partition`, the
-                    multi-chart path partition lemma).
+Active jobs (ours): 2/5.
+                    - `78ab4b77` — `Periods/PathPartition.lean`
+                      (multi-chart partition lemma). IN_PROGRESS.
+                    - `3265ae48` — `Periods/ChartedFormPullback.lean`
+                      (genuine chart pullback using `mfderiv`,
+                      alongside the existing `chartedForm`). Just
+                      submitted.
 Integrated this tick: nothing yet.
-Local progress this tick: queue unblocked + first new submission;
-                          mostly bookkeeping.
+Local progress this tick: submitted second Aristotle packet
+                          (`3265ae48`) addressing the chartedForm
+                          correctness gap. The new file will house
+                          the corrected definition that includes
+                          the chart-derivative factor; existing
+                          `chartedForm` stays put so downstream
+                          code is unchanged.
 Complex torus layer: complete and self-contained. Queue D
-                     primitives in place; Queue E foundation;
-                     Queue F + Queue G in design phase. Multi-chart
-                     partition is now in flight with Aristotle.
+                     primitives in place; multi-chart partition +
+                     chartedForm pullback now both in flight.
 ```
 
 ```text
