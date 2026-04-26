@@ -12,25 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 15:55 EDT)
+## Live Status (2026-04-26 16:00 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
-  (~11.75h since last movement). Continuing local work per the
+  (~12h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartSmulSymm.lean`:
-    `pathIntegralInChart_smul_symm` — provisional in-chart
-    analogue of the corrected `_smul_symm`.
-    1-line proof: `rw [_smul, _symm, smul_neg]`. Wired into
+  - NEW `Jacobian/Periods/PathIntegralViaChartSmulSymm.lean`:
+    `pathIntegralViaChart_smul_symm` — provisional via-chart
+    analogue. 1-line proof:
+    `rw [_smul, _symm c ω γ h h', smul_neg]`. Wired into
     `Jacobian/Periods.lean` umbrella; build green
-    (8118 jobs, 121s).
-- The `_smul_symm` corollary now exists at four layers:
-  in-chart provisional (this tick), in-chart corrected,
-  via-chart corrected, cover-with.
+    (8119 jobs, 108s).
+- The `_smul_symm` corollary now exists at all five layers:
+  in-chart provisional, in-chart corrected, via-chart
+  provisional (this tick), via-chart corrected, cover-with.
+  Family complete.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 15:50 EDT)
+## Stale Live Status (2026-04-26 15:55 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
