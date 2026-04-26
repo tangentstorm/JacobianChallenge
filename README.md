@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:26 EDT
+Last tick: 2026-04-26 00:30 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,19 +46,16 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5.
-                    - `e7aa502d` — `Periods/PathIntegralChartCorrectSimp.lean`.
-                      IN_PROGRESS, 2%.
-Cancelled this tick: `259b18a1` (TorusExample.lean) was stuck at
-                     14% for >45 minutes — likely hit a
-                     `Bundle.continuousLinearMap` section
-                     construction roadblock (Mathlib has no
-                     `ContMDiffSection.const` for this bundle).
-                     Defer to a future tick with smaller helper
-                     lemmas (split into "constant section is
-                     smooth" + "evaluation gives non-zero").
-Integrated this tick: nothing.
-Local progress this tick: cancelled the stuck TorusExample packet.
+Active jobs (ours): 0/5.
+Integrated this tick: 🎉 `e7aa502d` —
+                      `Periods/PathIntegralChartCorrectSimp.lean`.
+                      Term-mode `_refl` and `_symm` lemmas for the
+                      corrected chart-local integral. Clean, no
+                      sorry.
+Local progress this tick: integration of e7aa502d. Queue D's
+                          chart-local integral now has full
+                          refl/symm/zero/etc API for both the
+                          provisional and corrected variants.
 ```
 
 ```text
@@ -96,6 +93,7 @@ Periods.ChartedFormSimp pass lake build Jacobian.Periods.ChartedFormSimp (no sor
 Periods.PathPartition pass lake build Jacobian.Periods.PathPartition (no sorry)
 Periods.PathIntegralChartCorrect pass lake build Jacobian.Periods.PathIntegralChartCorrect (no sorry)
 Periods.PathLiftSimp pass lake build Jacobian.Periods.PathLiftSimp (no sorry)
+Periods.PathIntegralChartCorrectSimp pass lake build Jacobian.Periods.PathIntegralChartCorrectSimp (no sorry)
 ```
 
 ```text
