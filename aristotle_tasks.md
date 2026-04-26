@@ -12,23 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 21:27 EDT)
+## Live Status (2026-04-25 21:32 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 7h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place:** type, module structure, class
   for finite-dimensionality, and `analyticGenus` definition.
-- **Queue D scaffolding in progress:** `Recon.lean` (last tick) +
-  two new modules this tick (no sorries):
+- **Queue D scaffolding in progress:** four files now in place
+  (no sorries):
+  - `Jacobian/Periods/Recon.lean` — design document.
   - `Jacobian/Periods/ChartedForm.lean` — transport a
-    `HolomorphicOneForm E X` through a chart `c` to a 1-form on
-    `E`. Definition relies on `TangentSpace I _ = E` (definitional
-    equality from `MFDeriv.Defs`).
-  - `Jacobian/Periods/PathIntegralChart.lean` — chart-local path
-    integral via Mathlib's `curveIntegral`. Takes a path already
-    transported into `E` (i.e. `Path (a b : E)`); the from-`X`
-    wrapper requires more `Path.map` glue and is deferred.
+    `HolomorphicOneForm E X` through a chart to a 1-form on `E`.
+  - `Jacobian/Periods/PathIntegralChart.lean` — chart-local
+    path integral, using Mathlib's `curveIntegral` on a path
+    already transported into `E`.
+  - `Jacobian/Periods/PathLift.lean` (this tick) — closes the
+    from-`X` gap. `chartLift c γ h` uses Mathlib's `Path.map'`
+    (which accepts `ContinuousOn f (range γ)`) so the chart-source
+    restriction is the only continuity input. `pathIntegralViaChart
+    c ω γ h` then integrates a path-on-X that stays inside one
+    chart.
+- The next bottleneck is multi-chart path integration (paths
+  crossing chart boundaries) and the bridge to `singularHomologyFunctor`
+  for the integral cycle type.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
