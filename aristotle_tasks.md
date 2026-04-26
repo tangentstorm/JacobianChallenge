@@ -12,7 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 12:10 EDT)
+## Live Status (2026-04-26 12:15 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/ChartedFormSub.lean`: `chartedForm_sub`
+    (provisional layer) — 1-line `rw [sub_eq_add_neg, sub_eq_add_neg,
+    chartedForm_add, chartedForm_neg]`.
+  - NEW `Jacobian/Periods/PathIntegralChartAdd.lean`:
+    `pathIntegralInChart_add_of_curveIntegrable` — conditional
+    addition linearity at the provisional in-chart layer
+    (`curveIntegral_add` needs CurveIntegrable). Mirrors corrected.
+  - NEW `Jacobian/Periods/PathIntegralChartSub.lean`:
+    `pathIntegralInChart_sub_of_curveIntegrable` — same shape.
+  - All three wired into `Jacobian/Periods.lean` umbrella; builds
+    green (2672 jobs, 21-22s each).
+- Provisional in-chart linearity ladder is now complete to match
+  the corrected layer:
+  zero ✓, neg ✓, smul ✓, refl ✓, symm ✓, add (cond) ✓, sub (cond) ✓.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 12:10 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
