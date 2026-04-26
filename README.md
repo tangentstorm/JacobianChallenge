@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:22 EDT
+Last tick: 2026-04-26 00:24 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,18 +47,17 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 2/5.
-                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`. IN_PROGRESS, 14%.
+                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`.
+                      IN_PROGRESS, 14% (stuck for >40 min — the
+                      cotangent-bundle section construction may be
+                      hitting an instance-resolution roadblock).
                     - `e7aa502d` — `Periods/PathIntegralChartCorrectSimp.lean`.
-                      Just submitted: `_refl` and `_symm` simp/API
-                      for the corrected chart integral.
+                      IN_PROGRESS, 1%.
 Integrated this tick: nothing.
-Local progress this tick: submitted `e7aa502d` to round out the
-                          corrected-integral API (refl / symm
-                          mirroring the provisional version).
-Complex torus layer: complete and self-contained. Queue D mostly
-                     in flight (TorusExample slow at 14%);
-                     submitted small additional API to keep the
-                     queue active.
+Local progress this tick: status check only. If TorusExample
+                          remains stuck next tick, consider
+                          cancelling it and splitting into smaller
+                          pieces.
 ```
 
 ```text
