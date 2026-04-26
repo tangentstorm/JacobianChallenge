@@ -216,11 +216,45 @@ E. The chart-transition lemma (well-definedness) — substantial; gates
    of "the integral does not depend on partition."
 
 F. **`Jacobian/Periods/ChartedFormPullbackCurveIntegrable.lean`** —
-   `CurveIntegrable (chartedFormPullback c ω) γ` for any path. This
-   unblocks `_add` (and the multi-chart well-definedness via
-   `curveIntegral_add` over partition pieces). The proof should
-   reduce to continuity of `chartedFormPullback c ω` and a
-   `CurveIntegrable.continuousOn` (or similar) helper.
+   `CurveIntegrable (chartedFormPullback c ω) γ`. This unblocks
+   `_add` (and the multi-chart well-definedness via
+   `curveIntegral_add` over partition pieces).
+
+   **Correction (2026-04-26):** Mathlib v4.28.0 has only
+   `ContinuousOn.curveIntegrable_of_contDiffOn` (requiring
+   `ContDiffOn ℝ 1 γ.extend I`). There is no
+   `CurveIntegrable.continuousOn` (continuous-only) variant. So
+   Packet F cannot prove integrability "for any path" — the path
+   must be at least `C¹`. Two design options:
+
+   1. Add a `ContDiffOn ℝ 1 γ.extend I` hypothesis to
+      `pathIntegralInChartCorrect` (or to its `_add` lemma). All
+      downstream (`pathIntegralViaChartCorrect_add`,
+      `pathIntegralViaCoverWith_add`,
+      `pathIntegralViaCoverPick_add`) inherit the hypothesis.
+
+   2. Restrict `Path a b` to a smooth-path subtype before
+      integrating. Heavier refactor but cleaner downstream API.
+
+   Option 1 is the smaller change and sufficient for `_add`. Option
+   2 is the right long-term shape. Decision deferred until a
+   concrete consumer (e.g. periodPairing) forces the issue.
+
+   The actual Packet F target (when delegated) should prove:
+
+   ```
+   theorem chartedFormPullback_curveIntegrable
+       (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
+       {a b : E} (γ : Path a b)
+       (hγ : ContDiffOn ℝ 1 γ.extend I)
+       (hrange : ∀ t, γ t ∈ c.target) :
+       CurveIntegrable (chartedFormPullback c ω) γ
+   ```
+
+   via `ContinuousOn.curveIntegrable_of_contDiffOn` plus continuity
+   of `chartedFormPullback c ω` (which itself requires the
+   smoothness of `mfderiv c.symm`, available since `c` is a chart
+   of a `[IsManifold ⊤]` space).
 
 ## Convention
 
