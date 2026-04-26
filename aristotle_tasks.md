@@ -12,26 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 16:45 EDT)
+## Live Status (2026-04-26 16:53 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
   (~13h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartTrans.lean`:
-    `pathIntegralInChart_trans_of_curveIntegrable` — provisional
-    in-chart path-concatenation linearity, mirroring last tick's
-    corrected version. 3-line proof reducing to Mathlib's
-    `curveIntegral_trans`. Wired into `Jacobian/Periods.lean`
-    umbrella; build green (8126 jobs, 110s).
-- The conditional `_trans` family now has both in-chart layers
-  (provisional + corrected). Lifting to via-chart and cover
-  layers awaits a strategy decision on whether subpath
-  concatenation matches the partition decomposition cleanly.
+  - NEW `Jacobian/TraceDegree/PullbackFunComp.lean`:
+    `pullbackFormsFun_comp_apply` — pointwise functoriality of
+    pullback via the chain rule for `mfderiv`. Conditional on
+    `MDifferentiableAt` for both maps `f` and `g`. Proof:
+    rewrite via `mfderiv_comp x hg hf` then
+    `ContinuousLinearMap.comp_assoc`. Wired into TraceDegree
+    umbrella; build green (2429 jobs).
+- This is the first chain-rule composition fact in the project,
+  reflecting the contravariant functoriality of pullback. A
+  global `pullbackFormsFun_comp` (without per-point hypotheses)
+  becomes possible after the smoothness upgrade lands and we
+  treat differentiability as "everywhere differentiable" via a
+  bundled type.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 16:41 EDT)
+## Stale Live Status (2026-04-26 16:45 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**

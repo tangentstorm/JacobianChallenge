@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 16:45 EDT
+Last tick: 2026-04-26 16:53 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,15 +49,15 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW Periods/PathIntegralChartTrans:
-                      `pathIntegralInChart_trans_of_curveIntegrable` —
-                      provisional in-chart path-concatenation linearity,
-                      mirror of last tick's corrected version. 3-line
-                      proof reducing to `curveIntegral_trans`. Wired
-                      into Periods umbrella; build green
-                      (8126 jobs, 110s). The conditional `_trans`
-                      family now has both in-chart layers
-                      (provisional + corrected).
+                      NEW TraceDegree/PullbackFunComp:
+                      `pullbackFormsFun_comp_apply` — pointwise
+                      functoriality of pullback via the chain rule
+                      for `mfderiv`. Conditional on `MDifferentiableAt`
+                      for both maps. Proof: rewrite via `mfderiv_comp`
+                      then `ContinuousLinearMap.comp_assoc`. Wired into
+                      TraceDegree umbrella; build green (2429 jobs).
+                      Substantive: this is the first chain-rule
+                      composition fact in the project.
 Failed/split this tick: none.
 ```
 
@@ -162,6 +162,7 @@ Periods.PathIntegralChartSymmAddSelf pass lake build Jacobian.Periods.PathIntegr
 Periods.PathIntegralViaChartSymmAddSelf pass lake build Jacobian.Periods.PathIntegralViaChartSymmAddSelf (no sorry)
 Periods.PathIntegralChartCorrectTrans pass lake build Jacobian.Periods.PathIntegralChartCorrectTrans (no sorry)
 Periods.PathIntegralChartTrans pass lake build Jacobian.Periods.PathIntegralChartTrans (no sorry)
+TraceDegree.PullbackFunComp pass lake build Jacobian.TraceDegree.PullbackFunComp (no sorry)
 ```
 
 ```text
