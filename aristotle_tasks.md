@@ -12,31 +12,17 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 18:05 EDT)
+## Live Status (2026-04-26 18:06 EDT)
 
-- Active jobs (ours): 1/5; submitted a canary at user request to
-  detect when Aristotle wakes from ~14h freeze. Job
-  `09cd85dd-37b7-4e6f-89f3-99cd16f58ab7` —
-  `pathIntegralViaChart_trans_of_curveIntegrable` (provisional
-  via-chart `_trans` lift). Proof should mirror the corrected
-  analogue I just landed (`unfold` + `chartLift_trans` rw +
-  `exact` in-chart trans).
-- **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/ChartLiftTrans.lean`:
-    `chartLift_trans` — chart lift commutes with `Path.trans`.
-    `Path.ext + funext + split_ifs + rfl` proof.
-  - NEW `Jacobian/Periods/ChartLiftTransApply.lean`:
-    `chartLift_trans_apply` — pointwise apply form (1-line `rw`).
-  - NEW `Jacobian/Periods/PathIntegralViaChartCorrectTrans.lean`:
-    `pathIntegralViaChartCorrect_trans_of_curveIntegrable` —
-    lifts the in-chart corrected `_trans` to from-`X` via
-    `chartLift_trans`. 3-line proof. Build green (8133 jobs).
-- **Submitted this tick:**
-  - `09cd85dd-37b7-4e6f-89f3-99cd16f58ab7` (Queue D) target
-    file `PathIntegralViaChartTrans.lean` — canary.
+- Active jobs (ours): 1/5; canary `09cd85dd` still QUEUED
+  (1 min). Backend still asleep — unrelated `9a695fe4` job
+  has been QUEUED for 13h.
+- **Integrated this tick:** none (refresh-only — brief check
+  on canary 1 min after submission).
+- **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 17:42 EDT)
+## Stale Live Status (2026-04-26 18:05 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**

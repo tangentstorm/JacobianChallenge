@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 18:05 EDT
+Last tick: 2026-04-26 18:06 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,25 +46,12 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `09cd85dd` canary submitted to detect
-                      Aristotle wake from ~14h freeze.
-Integrated this tick (local Claude-owned):
-                      Three new files:
-                      - Periods/ChartLiftTrans:
-                        `chartLift_trans` — chart lift commutes
-                        with `Path.trans`. Path.ext + funext +
-                        split_ifs + rfl proof.
-                      - Periods/ChartLiftTransApply: pointwise
-                        apply form, 1-line `rw` proof.
-                      - Periods/PathIntegralViaChartCorrectTrans:
-                        `pathIntegralViaChartCorrect_trans_of_curveIntegrable`
-                        — lifts the in-chart corrected `_trans` to
-                        from-`X` via `chartLift_trans`. 3-line
-                        proof. Build green (8133 jobs).
-Submitted this tick:  `09cd85dd-37b7-4e6f-89f3-99cd16f58ab7` —
-                      provisional via-chart `_trans` lift (canary;
-                      proof should mirror the corrected analogue
-                      I just landed).
+Active jobs (ours): 1/5 — `09cd85dd` canary still QUEUED
+                      (1 min so far). Backend likely still asleep
+                      — the unrelated `9a695fe4` job has been
+                      QUEUED for 13h.
+Integrated this tick: none (refresh-only, brief check on canary).
+Submitted this tick:  none.
 Failed/split this tick: none.
 ```
 
