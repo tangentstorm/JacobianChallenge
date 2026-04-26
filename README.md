@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 19:17 EDT
+Last tick: 2026-04-26 19:24 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,11 +49,12 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~1h+.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaChartCorrectNegSmul:
-                      `pathIntegralViaChartCorrect_neg_smul` —
-                      from-`X` corrected lift of last tick's
-                      `_neg_smul`. Proof composes `_neg + _smul +
-                      ← neg_smul`. Build green (8141 jobs).
+                      NEW Periods/PathIntegralViaCoverNegSmul:
+                      `pathIntegralViaCoverWith_neg_smul` —
+                      cover-layer lift of `_neg_smul`. Build green
+                      (8142 jobs). Identity now at three layers:
+                      in-chart corrected, via-chart corrected,
+                      cover-with.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -185,6 +186,7 @@ TraceDegree.PullbackFormsLinearMapConstApplyVec pass lake build Jacobian.TraceDe
 TraceDegree.PullbackFunConstApplyVec pass lake build Jacobian.TraceDegree.PullbackFunConstApplyVec (no sorry)
 Periods.PathIntegralChartCorrectNegSmul pass lake build Jacobian.Periods.PathIntegralChartCorrectNegSmul (no sorry)
 Periods.PathIntegralViaChartCorrectNegSmul pass lake build Jacobian.Periods.PathIntegralViaChartCorrectNegSmul (no sorry)
+Periods.PathIntegralViaCoverNegSmul pass lake build Jacobian.Periods.PathIntegralViaCoverNegSmul (no sorry)
 ```
 
 ```text
