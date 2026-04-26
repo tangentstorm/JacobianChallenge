@@ -12,10 +12,10 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 00:36 EDT)
+## Live Status (2026-04-26 00:44 EDT)
 
-- Active jobs (ours): 2/5.
-- **Submitted this tick** (continuing the corrected-pullback API):
+- Active jobs (ours): 4/5.
+- **In flight (4 disjoint files):**
   - `091ac5d1` — `Jacobian/Periods/ChartedFormPullbackSimp.lean`.
     Three @[simp] linearity lemmas (`chartedFormPullback_zero/_neg/_add`)
     mirroring `ChartedFormSimp` but composing with the `mfderiv` factor.
@@ -23,7 +23,19 @@ identify our jobs without inspecting tarballs.
     From-`X` wrapper around `pathIntegralInChartCorrect` (def +
     `_refl` + `_symm`), mirroring `PathLift`/`PathLiftSimp` but
     using the corrected pullback.
-  Both are independent (disjoint files, no cross-deps).
+  - `fe592ee1` — `Jacobian/Periods/PathIntegralChartCorrectLinear.lean`.
+    `pathIntegralInChartCorrect_neg` and `_add` with inline argument
+    (independent of `091ac5d1` to enable parallelism).
+  - `0b8b1163` — `Jacobian/TraceDegree/PullbackFun.lean`. Queue G's
+    first concrete packet: `pullbackFormsFun` (chain-rule pullback at
+    function level) + zero/neg/add linearity. Smoothness upgrade is
+    intentionally a follow-up.
+- **Local progress this tick (Claude-owned, no Aristotle in commit):**
+  added `Jacobian/Periods/PathIntegralChartCorrectZero.lean` —
+  `pathIntegralInChartCorrect_zero` proven inline by reducing
+  `chartedFormPullback c 0 = 0` via `ContMDiffSection.coe_zero` +
+  `ContinuousLinearMap.zero_comp`, then `curveIntegral_zero`. Wired
+  into the Periods umbrella; `lake build Jacobian.Periods` green.
 - **Last tick:** `e7aa502d` integrated —
   `PathIntegralChartCorrectSimp` (`_refl` and `_symm` for the
   corrected chart-local integral).
@@ -43,16 +55,18 @@ identify our jobs without inspecting tarballs.
   or production scaffold; Queue H's theorems live in
   `Jacobian/Challenge.lean` directly.
 
-### Queued for next submission round (when current pair lands)
+### Queued for next submission round (gated on current batch)
 
-- `Jacobian/Periods/PathIntegralChartCorrectLinear.lean` —
-  `pathIntegralInChartCorrect_zero/_neg/_add` (depends on
-  `ChartedFormPullbackSimp` from `091ac5d1`).
-- `Jacobian/Periods/PathIntegralViaChartCorrectZero.lean` —
-  from-`X` linearity (depends on the above).
+- `pullbackFormsFun_smooth` — Queue G follow-up to `0b8b1163`:
+  prove the chain-rule pullback function is `ContMDiff` when `f` is.
+  The substantive piece for upgrading to `HolomorphicOneForm E X`.
+- `pathIntegralViaChartCorrect` linearity (zero/neg/add) — gated on
+  `ee3ce016` + `fe592ee1`.
 - Multi-chart `pathIntegralViaCover` definition combining
   `exists_uniform_chart_partition` (from `PathPartition`) with
-  chart-local integrals.
+  chart-local integrals. Needs Claude-owned design step first
+  (subpath / affine reparam), then a clean Aristotle packet for
+  the well-definedness lemmas.
 - Decomposed TorusExample replacement (split into "constant
   function `_ ↦ id` is `ContMDiff`" as a standalone helper, then
   build the section on top), retrying `259b18a1`'s scope.

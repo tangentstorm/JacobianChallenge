@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:36 EDT
+Last tick: 2026-04-26 00:44 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,19 +46,25 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 2/5.
-Submitted this tick:  `091ac5d1` —
-                      `Periods/ChartedFormPullbackSimp.lean`
+Active jobs (ours): 4/5.
+In flight:            `091ac5d1` — Periods/ChartedFormPullbackSimp
                       (chartedFormPullback_zero/_neg/_add).
-                      `ee3ce016` —
-                      `Periods/PathIntegralViaChartCorrect.lean`
-                      (from-X wrapper, def + _refl + _symm).
+                      `ee3ce016` — Periods/PathIntegralViaChartCorrect
+                      (from-X wrapper def + _refl + _symm).
+                      `fe592ee1` — Periods/PathIntegralChartCorrectLinear
+                      (pathIntegralInChartCorrect_neg + _add, inline).
+                      `0b8b1163` — TraceDegree/PullbackFun
+                      (Queue G first packet: pullbackFormsFun + zero/neg/add).
 Integrated this tick: none.
 Failed/split this tick: none.
-Local progress: queued follow-on packets for
-                pathIntegralInChartCorrect linearity and
-                pathIntegralViaChartCorrect_zero once the
-                pullback simp lemmas land.
+Local progress: added Periods/PathIntegralChartCorrectZero.lean
+                (Claude-owned: pathIntegralInChartCorrect_zero
+                via ContMDiffSection.coe_zero +
+                ContinuousLinearMap.zero_comp). Periods umbrella
+                rebuilds clean. Held to 4/5 because the
+                obvious 5th candidates (multi-chart cover,
+                pullbackFormsFun smoothness) gate on either
+                Claude design work or the in-flight packets.
 ```
 
 ```text
@@ -97,20 +103,24 @@ Periods.PathPartition pass lake build Jacobian.Periods.PathPartition (no sorry)
 Periods.PathIntegralChartCorrect pass lake build Jacobian.Periods.PathIntegralChartCorrect (no sorry)
 Periods.PathLiftSimp pass lake build Jacobian.Periods.PathLiftSimp (no sorry)
 Periods.PathIntegralChartCorrectSimp pass lake build Jacobian.Periods.PathIntegralChartCorrectSimp (no sorry)
+Periods.PathIntegralChartCorrectZero pass lake build Jacobian.Periods.PathIntegralChartCorrectZero (no sorry)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Integrate `091ac5d1` and `ee3ce016` once Aristotle returns
-   them; wire the new files into the Periods umbrella.
-2. Submit follow-ons:
-   `pathIntegralInChartCorrect_zero/_neg/_add` (depends on
-   `ChartedFormPullbackSimp`), then `pathIntegralViaChartCorrect_zero`.
-3. Combine `exists_uniform_chart_partition` (from `PathPartition`)
-   with chart picks to define `pathIntegralViaCover`; this is the
-   bridge needed to graduate the `opaque periodPairing`.
-4. Decomposed TorusExample retry (smaller helpers around the
+1. Integrate the four in-flight packets as they land
+   (091ac5d1, ee3ce016, fe592ee1, 0b8b1163); wire each into
+   the appropriate umbrella.
+2. Submit `pullbackFormsFun_smooth` once 0b8b1163 lands —
+   the substantive ContMDiff step for upgrading to
+   HolomorphicOneForm E X via Queue G.
+3. Submit pathIntegralViaChartCorrect linearity (zero/neg/add)
+   once ee3ce016 + fe592ee1 land.
+4. Begin Claude-owned design of multi-chart `pathIntegralViaCover`
+   (subpath / affine reparam, then a clean Aristotle packet for
+   the well-definedness lemmas).
+5. Decomposed TorusExample retry (smaller helpers around the
    `Bundle.continuousLinearMap` constant-section roadblock that
    stalled `259b18a1`).
 ```
