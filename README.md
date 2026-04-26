@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 23:51 EDT
+Last tick: 2026-04-25 23:57 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -33,7 +33,7 @@ Quotient charted-space/manifold  ███████████████�
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
 Holomorphic forms                ██████░░░░░░░░░░░░░░   30%  type/module/analyticGenus
-Path integration/periods         ██████░░░░░░░░░░░░░░   30%  chart-local scaffolding; chartedForm is provisional
+Path integration/periods         ████████░░░░░░░░░░░░   40%  multi-chart partition + correct pullback landed
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
 Trace/degree/push-pull           █░░░░░░░░░░░░░░░░░░░    5%  Queue G recon only
@@ -46,24 +46,28 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 3/5 (one integrated this tick).
-                    - `78ab4b77` — `Periods/PathPartition.lean`. IN_PROGRESS, 5%.
-                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`. IN_PROGRESS, 1%.
-                    - `0ccee8d8` — `Periods/ChartedFormSimp.lean`. IN_PROGRESS, 1%.
-Integrated this tick: 🎉 `3265ae48` — `Periods/ChartedFormPullback.lean`.
-                      Aristotle delivered the definition exactly as
-                      specified, clean and no `sorry`. The corrected
-                      chart pullback `chartedFormPullback c ω e =
-                      (ω.toFun (c.symm e)).comp (mfderiv … c.symm e)`
-                      now lives alongside the provisional
-                      `chartedForm`. Wired into the `Jacobian.Periods`
-                      umbrella; type-checks against the existing
-                      `HolomorphicOneForm` API.
-Local progress this tick: integration of 3265ae48.
-Complex torus layer: complete and self-contained. Queue D now has
-                     a real chart-pullback definition alongside the
-                     provisional one; downstream migration is the
-                     follow-up.
+Active jobs (ours): 1/5 (two integrated this tick).
+                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`.
+                      IN_PROGRESS, 6%.
+Integrated this tick: 🎉🎉 Two more Aristotle results:
+                      - `78ab4b77` —
+                        `Jacobian/Periods/PathPartition.lean`. The
+                        `exists_uniform_chart_partition` lemma — the
+                        multi-chart partition bottleneck for the
+                        period pairing. Proof uses `norm_num`,
+                        `positivity`, `nlinarith` for the real-
+                        arithmetic content. No sorry.
+                      - `0ccee8d8` —
+                        `Jacobian/Periods/ChartedFormSimp.lean`.
+                        `chartedForm_neg` and `chartedForm_add`
+                        simp lemmas via `ContMDiffSection.coe_neg`
+                        / `coe_add`. No sorry.
+                      Both wired into the `Jacobian.Periods`
+                      umbrella.
+Local progress this tick: integration of two Aristotle packets.
+Path-integration/periods bumped to 40% — the multi-chart
+combinatorial input is now in place; only the actual integral
+assembly + period proofs remain.
 ```
 
 ```text
@@ -97,6 +101,8 @@ AnalyticJacobian (umbrella) pass lake build Jacobian.AnalyticJacobian
 AbelJacobi.Recon    pass    lake build Jacobian.AbelJacobi.Recon (recon)
 TraceDegree.Recon   pass    lake build Jacobian.TraceDegree.Recon (recon)
 Periods.ChartedFormPullback pass lake build Jacobian.Periods.ChartedFormPullback (no sorry)
+Periods.ChartedFormSimp pass lake build Jacobian.Periods.ChartedFormSimp (no sorry)
+Periods.PathPartition pass lake build Jacobian.Periods.PathPartition (no sorry)
 ```
 
 ```text
