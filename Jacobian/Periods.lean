@@ -54,6 +54,7 @@ import Jacobian.Periods.PathLift
 import Jacobian.Periods.PathLiftSimp
 import Jacobian.Periods.PathLiftSimpFromX
 import Jacobian.Periods.PathReflSubpath
+import Jacobian.Periods.PathSymmSubpath
 import Jacobian.Periods.PathPartition
 import Jacobian.Periods.PeriodFunctional
 

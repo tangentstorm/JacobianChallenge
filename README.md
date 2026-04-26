@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 11:49 EDT
+Last tick: 2026-04-26 11:53 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,13 +50,14 @@ Active jobs (ours): 0/5 (queue empty; 3 cancelled today during
                       the ~7.5h backend freeze).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/DivFinIcc: added `divFinIcc_symm`
-                      (`σ (i/n) = (n-i)/n`) — the partition-point
-                      reflection identity needed downstream by
-                      `pathIntegralViaCoverWith_symm`. Proof:
-                      `apply Subtype.ext; show 1 - i/n = (n-i)/n;
-                      rw [Nat.cast_sub hi, sub_div, div_self _]`.
-                      Build green (1361 jobs, 32s).
+                      Periods/PathSymmSubpath: new file with
+                      `path_symm_subpath_eq`:
+                      `γ.symm.subpath s t = γ.subpath (σ s) (σ t)`,
+                      proved by `Path.ext + funext + Subtype.ext + ring`
+                      (5-line proof). Second prerequisite helper for
+                      `pathIntegralViaCoverWith_symm` after this
+                      morning's `divFinIcc_symm`. Wired into
+                      Periods umbrella; build green (1580 jobs, 45s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
