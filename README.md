@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 06:03 EDT
+Last tick: 2026-04-26 06:06 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,11 +50,11 @@ Active jobs (ours): 3/5 (backend stalled ~57 min, no movement
                       since 04:09 EDT).
 Integrated this tick: none — backend frozen.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/PathIntegralChartCorrectSub.lean (new):
-                      `pathIntegralInChartCorrect_sub_of_curveIntegrable`
-                      — conditional `_sub` at the path-integral level,
-                      parallel to the conditional `_add`. Becomes
-                      unconditional once Packet F lands.
+                      Periods/PathIntegralViaChartCorrectSub.lean (new):
+                      `pathIntegralViaChartCorrect_sub_of_curveIntegrable`
+                      — lift conditional `_sub` from `InChartCorrect`
+                      across the path-lift wrapper to the from-`X`
+                      level, mirroring the `_add` ladder.
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
