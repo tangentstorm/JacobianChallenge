@@ -12,35 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 21:58 EDT)
+## Live Status (2026-04-25 22:01 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 8h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
-- **Queue D scaffolding (1 opaque, no sorries):** 7 files, with
-  basic chart-local integral API now including `refl`/`symm`/`zero`.
-  This tick attempted multi-chart partition (`PathPartition.lean`)
-  but the proof grew sorries; backed out and substituted
-  `pathIntegralInChart_zero` (`@[simp]`) for clean small progress.
-- Multi-chart partition remains the next bottleneck. Sketch (for
-  a future Aristotle packet or careful local tick):
-  ```lean
-  lemma exists_uniform_chart_partition
-      (E : Type*) [TopologicalSpace E]
-      {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
-      (γ : C(unitInterval, X)) :
-      ∃ (n : ℕ) (_ : 0 < n) (pickChart : Fin n → X),
-        ∀ (i : Fin n) (t : unitInterval),
-          (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
-          γ t ∈ (chartAt E (pickChart i)).source
-  ```
-  Proof outline: apply `exists_lebesgue_radius_chart` to get
-  `δ > 0`; pick `n` with `1/n < δ`; for each `i ∈ Fin n`, the
-  Lebesgue radius applied at the midpoint `(i + 1/2)/n` gives a
-  chart whose source contains `γ([i/n, (i+1)/n])` because
-  `|t - midpoint| ≤ 1/(2n) < δ`. Use `Classical.choose` for
-  `pickChart i`.
+- **Queue D scaffolding (1 opaque, no sorries):** 8 files. This
+  tick added `Jacobian/Periods/ChartBallAtPoint.lean`, a per-point
+  variant of the Lebesgue radius lemma — for any `t : K`, there's
+  a radius `r > 0` with `ball t r ⊆ γ ⁻¹' (chartAt E (γ t)).source`.
+  ~6-line proof: chart source open ⇒ preimage open ⇒
+  `Metric.isOpen_iff` gives the radius.
+- Multi-chart partition remains the next bottleneck — needs
+  careful real arithmetic that hasn't fit cleanly into single
+  ticks yet.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
