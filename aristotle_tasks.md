@@ -12,30 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 19:55 EDT)
+## Live Status (2026-04-25 20:14 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
-  jobs QUEUED 5h+). No new submissions.
-- **Quotient manifold layer: complete (sorry-free)** including the
-  `IsManifold (modelWithCornersSelf ℂ V) ω (V ⧸ Λ.subgroup)` instance.
-- **LieAddGroup smoothness — first of three theorems landed:**
-  - `Jacobian/ComplexTorus/MkSmoothOnChartTarget.lean` (this tick) —
-    one-line wrapper of Mathlib's `contMDiffOn_chart_symm` giving
-    smoothness of `mk` (= `chart.symm`) on each chart target ball.
-  - `Jacobian/ComplexTorus/MkSmooth.lean` (this tick) — full
-    theorem `ContMDiff (mk V Λ)`. At any `x : V`, get the
-    chart-target representative `x'` (with `mk x' = mk x`), apply
-    `MkSmoothOnChartTarget` for `ContMDiffAt mk x'`, compose with
-    smooth translation `y ↦ y + (x' - x)`, and use `mk`'s
-    translation-invariance to convert back to `ContMDiffAt mk x`.
-    ~50 lines, no automation.
-  - Earlier this session:
-    `Jacobian/ComplexTorus/MkLocallyTranslate.lean` (v₁-free
-    locally-translation lemma) and
-    `Jacobian/ComplexTorus/ContDiffAtLocalSectionMk.lean` (pointwise
-    `ContDiffAt` of `localSection ∘ mk`). These remain useful for
-    the `+`-smoothness and `-`-smoothness work next.
-- Two of three LieAddGroup-layer theorems remain (`+`, `-`).
+  jobs QUEUED 6h+). No new submissions.
+- **Quotient charted-space + IsManifold + LieAddGroup all complete
+  (sorry-free).** This tick landed the remaining two smoothness
+  theorems plus the `LieAddGroup` instance:
+  - `NegSmooth.lean` — `ContMDiff (· : V/Λ → V/Λ).neg` via the
+    chart-source decomposition `Neg.neg = mk ∘ Neg.neg ∘ chart` plus
+    `mk_neg` congr.
+  - `AddSmooth.lean` — `ContMDiff` of `+ : V/Λ × V/Λ → V/Λ` using
+    the product-chart version of the same pattern (`Add = mk ∘ + ∘
+    (chart1 × chart2)` plus `mk_add` congr).
+  - `LieAddGroup.lean` — assembles `ContMDiffAdd` and `LieAddGroup`
+    instances from those two theorems plus `complexTorusIsManifold`.
+- **Code-review feedback addressed (`feedback/QuotientManifoldLayer.md`):**
+  - Strengthened `quotientIsManifoldStatement` and
+    `quotientLieAddGroupStatement` in `StatementBank.lean` to require
+    the actual `IsManifold` and `LieAddGroup` predicates, not just a
+    `ChartedSpace` placeholder.
+  - Updated `Witness.lean` accordingly: each witness now bundles the
+    real instances (`complexTorusIsManifold`, `lieAddGroup_quotient`).
+  - Removed the completed
+    "ChartedSpace / IsManifold / LieAddGroup instance on V ⧸ Λ"
+    entry from `Inventory.missingItems`.
+  - Refreshed README progress accounting (split into
+    "charted-space/manifold", "projection (mk) smoothness", and
+    "LieAddGroup smoothness"), and refreshed the build-status table.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the

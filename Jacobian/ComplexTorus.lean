@@ -45,6 +45,9 @@ import Jacobian.ComplexTorus.MkLocallyTranslate
 import Jacobian.ComplexTorus.ContDiffAtLocalSectionMk
 import Jacobian.ComplexTorus.MkSmoothOnChartTarget
 import Jacobian.ComplexTorus.MkSmooth
+import Jacobian.ComplexTorus.NegSmooth
+import Jacobian.ComplexTorus.AddSmooth
+import Jacobian.ComplexTorus.LieAddGroup
 
 /-!
 # Complex torus infrastructure

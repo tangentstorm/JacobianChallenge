@@ -21,76 +21,82 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 19:55 EDT
+Last tick: 2026-04-25 20:14 EDT
 
 ```text
-Layer                     Bar                    %    Note
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Project scaffolding       ████████████████████  100%  done
-Mathlib inventory         ████████████████████  100%  v4.28.0 audit
-Complex torus quotient    ████████████████████  100%  ZLattice bridge sorry-free
-Quotient manifold layer   ████████████████████  100%  ChartedSpace + IsManifold sorry-free
-Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  pending
-Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  pending
-Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  pending
-Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Layer                          Bar                    %    Note
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Project scaffolding            ████████████████████  100%  done
+Mathlib inventory              ████████████████████  100%  v4.28.0 audit
+Complex torus quotient         ████████████████████  100%  ZLattice bridge sorry-free
+Quotient charted-space/manifold ████████████████████ 100%  ChartedSpace + IsManifold sorry-free
+Projection (mk) smoothness     ████████████████████  100%  contMDiff_mk
+LieAddGroup smoothness         ████████████████████  100%  +, -, LieAddGroup instance
+Holomorphic forms              ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Path integration/periods       ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Abel-Jacobi API                ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Trace/degree/push-pull         ░░░░░░░░░░░░░░░░░░░░    0%  pending
 ```
 
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
-                    jobs QUEUED 5h+).
+                    jobs QUEUED 6h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: 🎉 `ContMDiff (mk V Λ)` lands. Two new
-                          files:
-                          - `MkSmoothOnChartTarget.lean`: a one-liner
-                            from `contMDiffOn_chart_symm` giving
-                            smoothness of `mk` (as `chart.symm`) on
-                            each chart target ball.
-                          - `MkSmooth.lean`: the full theorem.
-                            Proof: at any `x : V`, get the
-                            chart-target representative
-                            `x' := chartAt(mk x) (mk x)` with
-                            `mk x' = mk x`, so `g := x' - x ∈
-                            Λ.subgroup`. Use
-                            `MkSmoothOnChartTarget` for `ContMDiffAt
-                            mk x'`, compose with the smooth
-                            translation `y ↦ y + g` (smooth affine,
-                            via `contDiff.add`), and use
-                            translation-invariance of `mk` (since
-                            `mk g = 0`) to convert
-                            `ContMDiffAt (mk ∘ T_g) x` into
-                            `ContMDiffAt mk x`. ~50 lines, no
-                            automation. Both files build green;
-                            wired into the umbrella.
-Quotient manifold layer: 100%. The first of three LieAddGroup-layer
-                         smoothness theorems (mk, +, -) is done.
+Local progress this tick: 🎉🎉 **LieAddGroup instance lands**.
+                          Three new files (all sorry-free):
+                          - `NegSmooth.lean`: `ContMDiff` of
+                            `q ↦ -q` via the chart-source
+                            decomposition `Neg.neg = mk ∘ Neg.neg ∘
+                            chart` (each step smooth) plus `mk_neg`
+                            congr.
+                          - `AddSmooth.lean`: `ContMDiff` of
+                            `(q1, q2) ↦ q1 + q2` via the
+                            same pattern with the product chart:
+                            `Add = mk ∘ + ∘ (chart1 × chart2)` plus
+                            `mk_add` congr.
+                          - `LieAddGroup.lean`: assembles the
+                            `ContMDiffAdd` and `LieAddGroup`
+                            instances. Two-line `where`-clauses
+                            providing `contMDiff_add` and
+                            `contMDiff_neg`.
+Lie group layer: complete. The complex torus is now a fully
+                 analytic Lie additive group:
+                 `LieAddGroup (modelWithCornersSelf ℂ V) ω
+                 (V ⧸ Λ.subgroup)`. All three anti-hack
+                 "torus-like analytic structure" instances on
+                 `Jacobian X` are now backed by real infrastructure.
 ```
 
 ```text
 Current build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Challenge        pass    lake build Jacobian.Challenge
-Statement bank   pass    lake build Jacobian.WorkPackets.StatementBank
-ComplexTorus     pass    lake build Jacobian.ComplexTorus (with IsManifold)
-IsManifold       pass    lake build Jacobian.ComplexTorus.IsManifold (no sorry)
-Witness          pass    lake build Jacobian.ComplexTorus.Witness (no sorry)
-MkLocallyTranslate pass  lake build Jacobian.ComplexTorus.MkLocallyTranslate (no sorry)
-ContDiffAtLocalSectionMk pass lake build Jacobian.ComplexTorus.ContDiffAtLocalSectionMk (no sorry)
-MkSmoothOnChartTarget pass lake build Jacobian.ComplexTorus.MkSmoothOnChartTarget (no sorry)
-MkSmooth         pass    lake build Jacobian.ComplexTorus.MkSmooth (no sorry)
+Challenge          pass    lake build Jacobian.Challenge
+Statement bank     pass    lake build Jacobian.WorkPackets.StatementBank
+ComplexTorus       pass    lake build Jacobian.ComplexTorus (umbrella)
+IsManifold         pass    lake build Jacobian.ComplexTorus.IsManifold (no sorry)
+Witness            pass    lake build Jacobian.ComplexTorus.Witness (no sorry)
+MkSmooth           pass    lake build Jacobian.ComplexTorus.MkSmooth (no sorry)
+AddSmooth          pass    lake build Jacobian.ComplexTorus.AddSmooth (no sorry)
+NegSmooth          pass    lake build Jacobian.ComplexTorus.NegSmooth (no sorry)
+LieAddGroup        pass    lake build Jacobian.ComplexTorus.LieAddGroup (no sorry)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. `Jacobian/ComplexTorus/AddSmooth.lean`: prove `ContMDiff` of
-   `+ : V/Λ × V/Λ → V/Λ`. The same pattern should adapt: pick
-   representatives via the product chart, lift down to `V × V`,
-   use the chart-target smoothness of `mk` plus translation by
-   the lattice element `g := (x'_1, x'_2) - (x_1, x_2) ∈ Λ²`.
-2. `Jacobian/ComplexTorus/NegSmooth.lean`: same approach for `-`.
-3. Assemble `LieAddGroup (modelWithCornersSelf ℂ V) ⊤ (quotient V Λ)`
-   from steps 1 and 2.
+1. Begin Queue C — `HolomorphicOneForm`. The complex-torus layer
+   (charted-space, manifold, projection smoothness, LieAddGroup) is
+   complete; the next infrastructure block is holomorphic
+   1-forms on a manifold. First packet: define `HolomorphicOneForm
+   X` for an analytic complex manifold `X` (using existing
+   differential-form API) and prove its `AddCommGroup` /
+   `Module ℂ` structure.
+2. State `FiniteDimensionalHolomorphicOneForms` as a named theorem
+   even if the proof is deferred (it is the single largest missing
+   ingredient for the genus identity).
+3. Begin path-integration / period scaffolding so the analytic
+   `Jacobian X = H⁰(X, Ω¹)* / H₁(X, ℤ)` definition is reachable
+   once Queue C has finite-dimensionality.
 ```

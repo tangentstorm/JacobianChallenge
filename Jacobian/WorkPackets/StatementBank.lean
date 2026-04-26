@@ -93,8 +93,11 @@ def pinnedMathlibInventory : MathlibInventory where
     , "Mathlib/Topology/Covering/Basic.lean"
     , "Mathlib/Analysis/Complex/CoveringMap.lean" ]
   missingItems :=
-    [ "ChartedSpace / IsManifold / LieAddGroup instance on V ⧸ Λ"
-    , "MDifferentialForm and HolomorphicOneForm types on manifolds"
+    -- ChartedSpace and IsManifold instances on `V ⧸ Λ.subgroup` are now
+    -- present (`Jacobian.ComplexTorus.ChartedSpace`,
+    -- `Jacobian.ComplexTorus.IsManifold`); the LieAddGroup instance has
+    -- also landed (`Jacobian.ComplexTorus.LieAddGroup`).
+    [ "MDifferentialForm and HolomorphicOneForm types on manifolds"
     , "Exterior derivative lifted from normed spaces to manifolds"
     , "Integration of a 1-form along a path in a manifold"
     , "Stokes' theorem on a compact manifold with boundary"
@@ -128,13 +131,20 @@ variable (V : Type*) [NormedAddCommGroup V] [NormedSpace ℂ V]
 def quotientChartedSpaceStatement (Λ : FullComplexLattice V) : Prop :=
   Nonempty (ChartedSpace V (quotient V Λ))
 
-/-- Work-packet target: prove the torus quotient is a complex manifold. -/
+/-- Work-packet target: prove the torus quotient is a complex manifold. The
+witness must provide a `ChartedSpace` and an `IsManifold` instance for the
+self-model on `V`, not merely a `ChartedSpace`. -/
 def quotientIsManifoldStatement (Λ : FullComplexLattice V) : Prop :=
-  ∃ _ : ChartedSpace V (quotient V Λ), True
+  ∃ _ : ChartedSpace V (quotient V Λ),
+    IsManifold (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞) (quotient V Λ)
 
-/-- Work-packet target: prove the torus quotient is a Lie additive group. -/
+/-- Work-packet target: prove the torus quotient is an additive Lie group. The
+witness must provide a `ChartedSpace`, an `IsManifold` instance, and the
+`LieAddGroup` class (smooth `+` and `-`). -/
 def quotientLieAddGroupStatement (Λ : FullComplexLattice V) : Prop :=
-  ∃ _ : ChartedSpace V (quotient V Λ), True
+  ∃ (_ : ChartedSpace V (quotient V Λ))
+    (_ : IsManifold (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞) (quotient V Λ)),
+    LieAddGroup (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞) (quotient V Λ)
 
 end ComplexTorus
 
