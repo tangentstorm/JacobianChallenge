@@ -12,33 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 01:51 EDT)
+## Live Status (2026-04-26 01:55 EDT)
 
-- Active jobs (ours): 5/5. Three IN_PROGRESS at 1% (`b20e4f00`,
-  `9c8842f9`, plus on the way), two still QUEUED.
-- **Integrated this tick:** none (no new completions yet).
+- Active jobs (ours): 5/5. **All five IN_PROGRESS now** (4% top,
+  1-2% rest). No completions this tick.
+- **Integrated this tick:** none (still waiting on first completions).
 - **Local progress this tick (Claude-owned):**
-  added `Jacobian/Periods/PathIntegralViaCover.lean` —
-  `pathIntegralViaCoverWith ω γ n hn pickChart hcov`, the multi-chart
-  path integral parameterised by an explicit chart-cover partition.
-  Sums `pathIntegralViaChartCorrect` over `Fin n` segments, with the
-  range-subset proof via `Path.range_subpath` + `Set.uIcc_of_le` +
-  `divFinIcc_le_succ`. Wired into Periods umbrella; `lake build
-  Jacobian.Periods` green. The unparameterised wrapper (using
-  `Classical.choose` on `exists_uniform_chart_partition`) is a
-  follow-up.
+  added `Jacobian/Periods/PathIntegralViaCoverZero.lean` —
+  `pathIntegralViaCoverWith_zero`. The multi-chart integral of the
+  zero form is zero, by `Finset.sum_eq_zero` + chart-local
+  `pathIntegralViaChartCorrect_zero`. Wired into Periods umbrella;
+  lake build green.
 - **Still in flight:**
-  - `b20e4f00` — `PullbackFunId` (running, 1%).
-  - `9c8842f9` — `PathIntegralChartCorrectSmul` (running, 1%).
-    Should not hit the integrability blocker since
-    `curveIntegral_smul` is unconditional.
-  - `2a998690` — `PullbackFormsLinearMap` (queued).
-  - `dff6cfb4` — `ChartedFormPullbackLinearMap` (queued).
-  - `40031834` — `PathIntegralViaChartCorrectNeg` (queued, just
-    submitted last tick).
+  - `b20e4f00` — `PullbackFunId` (4%, running 48 min).
+  - `9c8842f9` — `PathIntegralChartCorrectSmul` (4%, running 41 min).
+  - `2a998690` — `PullbackFormsLinearMap` (4%, running 35 min).
+  - `dff6cfb4` — `ChartedFormPullbackLinearMap` (2%, running 35 min).
+  - `40031834` — `PathIntegralViaChartCorrectNeg` (1%, running 6 min).
 - **Recently integrated:** `fe592ee1` (partial — `_neg` only;
-  `_add` blocked on `chartedFormPullback_curveIntegrable`, recorded
-  as Packet F in the recon).
+  `_add` blocked on `chartedFormPullback_curveIntegrable`).
 - **Last tick:** `e7aa502d` integrated —
   `PathIntegralChartCorrectSimp` (`_refl` and `_symm` for the
   corrected chart-local integral).
