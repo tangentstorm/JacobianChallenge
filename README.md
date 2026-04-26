@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 12:40 EDT
+Last tick: 2026-04-26 13:02 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,17 +49,23 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/PathPartitionCoverSymm: substantive
-                      new file with `cover_symm_of_cover` —
-                      converts a cover for γ via `pickChart` into
-                      a cover for γ.symm via `pickChart ∘ Fin.rev`.
-                      Proof uses `Fin.val_rev`, `coe_symm_eq`,
-                      `Nat.cast_sub`, `div_le_iff₀`, `le_div_iff₀`
-                      and linarith on stripped-of-division
-                      hypotheses. Hit and fixed two linarith
-                      failures (had to multiply through by n
-                      first). Wired into Periods umbrella; build
-                      green (8028 jobs, 123s).
+                      Two new rfl-unfolding files at the
+                      provisional layer:
+                      - Periods/PathIntegralChartApply
+                        (pathIntegralInChart_apply : ... = curveIntegral)
+                      - Periods/PathIntegralViaChartApply
+                        (pathIntegralViaChart_apply : ... = pathIntegralInChart on chartLift)
+                      Mirror of corrected layer's
+                      PathIntegralChartCorrectApply +
+                      PathIntegralViaChartCorrectApply. Wired
+                      into Periods umbrella; build green
+                      (2672 jobs, 57s).
+                      Side note: a more substantive
+                      pathIntegralViaChartCorrect_symm_subpath_divFinIcc
+                      attempt was abandoned this tick — hit a
+                      dependent-type rewrite issue on the range-
+                      hypothesis transport that needs more careful
+                      handling.
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
