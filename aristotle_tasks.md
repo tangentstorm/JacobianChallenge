@@ -12,7 +12,32 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 13:20 EDT)
+## Live Status (2026-04-26 13:27 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - Extended `Jacobian/Periods/PathIntegralCongr.lean` with
+    `pathIntegralViaChartCorrect_eq_of_heq` — HEq version of the
+    path-congruence lemma, taking `ha : a = a'`, `hb : b = b'`,
+    `hγ : HEq γ γ'`. Proof: `subst ha; subst hb; cases hγ; rfl`.
+    Useful when path endpoint terms are propositionally equal but
+    not definitionally.
+  - Build green (2676 jobs, 44s).
+- **Cover-symm progress:**
+  - Found the right re-indexing API: `Fintype.sum_equiv` with
+    `Fin.revPerm : Equiv.Perm (Fin n)` works as the bijection.
+  - Proof advances past `Fintype.sum_equiv` and `per-segment _symm`,
+    leaving two remaining hurdles:
+    1. Need `Fin.revPerm_apply` simp to identify `Fin.revPerm i`
+       with `Fin.rev i` after rewrites.
+    2. Need an explicit cover proof for the σ-form path (i.e.,
+       construct the range hypothesis from `hcov` at index `Fin.rev i`,
+       since the σ-form path equals γ's (Fin.rev i)-th segment).
+  - Will tackle these in the next tick.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 13:20 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick:** none. Attempted the full
