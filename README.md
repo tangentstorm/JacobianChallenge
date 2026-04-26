@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 20:30 EDT
+Last tick: 2026-04-25 20:38 EDT
 
 ```text
 Layer                          Bar                    %    Note
@@ -44,27 +44,29 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 6h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: Queue C kickoff. Added
-                          `Jacobian/HolomorphicForms/Recon.lean`,
-                          a name-discovery and design document for
-                          the `HolomorphicOneForm X` definition.
-                          Surveys Mathlib's TangentBundle / mfderiv /
-                          ContMDiffSection (PRESENT) vs
-                          CotangentBundle / MDifferentialForm /
-                          HolomorphicOneForm (ABSENT). Recommends
-                          starting with a self-contained
-                          chart-coherence definition (Approach B in
-                          the file) and lays out the first
-                          Aristotle-sized packets: define
-                          `HolomorphicOneForm`, prove `AddCommGroup`,
-                          prove `Module ℂ`, update the StatementBank
-                          placeholder, state
-                          `FiniteDimensionalHolomorphicOneForms` as a
-                          class. Build green; not re-exported as
-                          public API (recon convention).
+Local progress this tick: revised the Queue C reconnaissance after
+                          discovering that the naive
+                          "smooth function `X → E*`" definition
+                          would compute the wrong dimension on the
+                          Riemann sphere (1 instead of 0): without
+                          the inverse-transpose transformation rule
+                          under chart changes, the trivialization
+                          `TangentSpace I x = E` lets the naive
+                          subtype identify all chart trivializations,
+                          breaking the `analyticGenus_eq_zero_iff_
+                          homeomorphic_sphere` anti-hack. Updated
+                          `Recon.lean` accordingly: documented the
+                          worked counterexample, rejected naive
+                          Approach B, and recommended Approach A
+                          (Mathlib's `Bundle.continuousLinearMap`
+                          for the cotangent bundle, then
+                          `ContMDiffSection`). Refined the
+                          packet plan: 6 narrow target files
+                          starting with `CotangentBundle.lean`.
+                          Build still green.
 Complex torus layer: complete (charted-space, manifold, projection
                      smoothness, full `LieAddGroup` instance).
-                     Queue C is the next infrastructure block.
+                     Queue C now in design refinement.
 ```
 
 ```text
@@ -85,15 +87,14 @@ HolomorphicForms.Recon pass lake build Jacobian.HolomorphicForms.Recon (recon, n
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Promote the Queue C recon plan into code. New file
-   `Jacobian/HolomorphicForms/Defs.lean` containing the
-   chart-coherence definition of `HolomorphicOneForm X` per
-   Recon.lean Approach B.
-2. `Jacobian/HolomorphicForms/AddCommGroup.lean` and
-   `.../Module.lean`: derive `AddCommGroup` and `Module ℂ` from
-   pointwise operations.
-3. Update the `StatementBank.HolomorphicOneForm` placeholder
-   (currently `:= ℂ`) to use the real type, then state
-   `FiniteDimensionalHolomorphicOneForms` as a class with the
-   proof deferred.
+1. `Jacobian/HolomorphicForms/CotangentBundle.lean` —
+   construct `CotangentBundle X := Bundle.continuousLinearMap ℂ
+   (TangentBundle 𝓘(ℂ, E) X) (Bundle.Trivial X ℂ)` and derive its
+   `VectorBundle` instance from existing scaffolding in
+   `Topology/VectorBundle/Hom.lean`.
+2. `Jacobian/HolomorphicForms/Defs.lean` — define
+   `HolomorphicOneForm X := Cₛ^⊤⟮…; CotangentBundle X⟯`.
+3. `Jacobian/HolomorphicForms/AddCommGroup.lean` and `…/Module.lean`
+   — one-line wrappers of `ContMDiffSection.addCommGroup` and
+   `…module`.
 ```

@@ -12,28 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 20:30 EDT)
+## Live Status (2026-04-25 20:38 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 6h+). No new submissions.
-- **Complex torus layer: complete (sorry-free)** — charted-space,
-  manifold, projection smoothness, and full `LieAddGroup` instance
-  all landed in earlier ticks today.
-- **This tick — Queue C kickoff:** added
-  `Jacobian/HolomorphicForms/Recon.lean`, a name-discovery and
-  design document for the `HolomorphicOneForm X` definition.
-  Survey: Mathlib has `TangentBundle` / `mfderiv` /
-  `ContMDiffSection` but lacks `CotangentBundle`,
-  `MDifferentialForm`, and `HolomorphicOneForm`. Recommends a
-  self-contained chart-coherence definition (Approach B). Lays out
-  the first Aristotle-sized packets:
-  1. Define `HolomorphicOneForm X` per Approach B.
-  2. Prove `AddCommGroup (HolomorphicOneForm X)`.
-  3. Prove `Module ℂ (HolomorphicOneForm X)`.
-  4. Update StatementBank placeholder.
-  5. State `FiniteDimensionalHolomorphicOneForms` as a class.
-- The recon file is **not** re-exported by any umbrella (recon
-  convention).
+- **Complex torus layer: complete (sorry-free).**
+- **This tick — Queue C reconnaissance refinement:** caught a
+  significant design flaw in the previously-recommended Approach B
+  for `HolomorphicOneForm X`. The naive definition
+  `{ ω : X → (E →L[ℂ] ℂ) // ContMDiff … ω }` would assign
+  `analyticGenus = 1` to the Riemann sphere (the constants), but the
+  challenge requires `analyticGenus_eq_zero_iff_homeomorphic_sphere`,
+  i.e., the sphere has analytic genus 0. The flaw: without the
+  inverse-transpose transformation rule under chart changes,
+  `TangentSpace I x = E`'s trivialization makes the naive subtype
+  chart-dependent.
+- Updated `Jacobian/HolomorphicForms/Recon.lean` to document the
+  worked counterexample, reject naive Approach B, and recommend
+  Approach A (Mathlib's `Bundle.continuousLinearMap` for the
+  cotangent bundle + `ContMDiffSection`). Refined the packet plan
+  into 6 narrow target files starting with `CotangentBundle.lean`.
+- The recon file remains a recon document (not re-exported).
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
