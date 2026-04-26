@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:30 EDT
+Last tick: 2026-04-26 00:36 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,16 +46,19 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5.
-Integrated this tick: 🎉 `e7aa502d` —
-                      `Periods/PathIntegralChartCorrectSimp.lean`.
-                      Term-mode `_refl` and `_symm` lemmas for the
-                      corrected chart-local integral. Clean, no
-                      sorry.
-Local progress this tick: integration of e7aa502d. Queue D's
-                          chart-local integral now has full
-                          refl/symm/zero/etc API for both the
-                          provisional and corrected variants.
+Active jobs (ours): 2/5.
+Submitted this tick:  `091ac5d1` —
+                      `Periods/ChartedFormPullbackSimp.lean`
+                      (chartedFormPullback_zero/_neg/_add).
+                      `ee3ce016` —
+                      `Periods/PathIntegralViaChartCorrect.lean`
+                      (from-X wrapper, def + _refl + _symm).
+Integrated this tick: none.
+Failed/split this tick: none.
+Local progress: queued follow-on packets for
+                pathIntegralInChartCorrect linearity and
+                pathIntegralViaChartCorrect_zero once the
+                pullback simp lemmas land.
 ```
 
 ```text
@@ -99,14 +102,15 @@ Periods.PathIntegralChartCorrectSimp pass lake build Jacobian.Periods.PathIntegr
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Combine `exists_lebesgue_radius_chart` with a finite
-   `[0, 1]`-partition to define a multi-chart path integral
-   `pathIntegralViaCover`. The first version can return the sum of
-   chart-local integrals indexed by partition points + chart picks;
-   well-definedness (independence of partition) is a follow-up.
-2. With multi-chart `pathIntegralViaCover` in hand, the `opaque
-   periodPairing` can graduate to a real definition.
-3. Independently, attempt the torus sanity check
-   (`analyticGenus ℂ (V ⧸ Λ.subgroup) ≥ 1` via constructing a
-   non-trivial section).
+1. Integrate `091ac5d1` and `ee3ce016` once Aristotle returns
+   them; wire the new files into the Periods umbrella.
+2. Submit follow-ons:
+   `pathIntegralInChartCorrect_zero/_neg/_add` (depends on
+   `ChartedFormPullbackSimp`), then `pathIntegralViaChartCorrect_zero`.
+3. Combine `exists_uniform_chart_partition` (from `PathPartition`)
+   with chart picks to define `pathIntegralViaCover`; this is the
+   bridge needed to graduate the `opaque periodPairing`.
+4. Decomposed TorusExample retry (smaller helpers around the
+   `Bundle.continuousLinearMap` constant-section roadblock that
+   stalled `259b18a1`).
 ```

@@ -12,36 +12,50 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 00:30 EDT)
+## Live Status (2026-04-26 00:36 EDT)
 
-- Active jobs (ours): 0/5.
-- 🎉 **Integrated this tick:** `e7aa502d` —
-  `Jacobian/Periods/PathIntegralChartCorrectSimp.lean`. Term-mode
-  `_refl` and `_symm` lemmas for the corrected chart-local
-  integral, mirroring the provisional version's API. Clean,
-  no sorry.
-- All recent submissions cleared. Pipeline is empty; ready for
-  the next batch when there's clear work that fits.
+- Active jobs (ours): 2/5.
+- **Submitted this tick** (continuing the corrected-pullback API):
+  - `091ac5d1` — `Jacobian/Periods/ChartedFormPullbackSimp.lean`.
+    Three @[simp] linearity lemmas (`chartedFormPullback_zero/_neg/_add`)
+    mirroring `ChartedFormSimp` but composing with the `mfderiv` factor.
+  - `ee3ce016` — `Jacobian/Periods/PathIntegralViaChartCorrect.lean`.
+    From-`X` wrapper around `pathIntegralInChartCorrect` (def +
+    `_refl` + `_symm`), mirroring `PathLift`/`PathLiftSimp` but
+    using the corrected pullback.
+  Both are independent (disjoint files, no cross-deps).
+- **Last tick:** `e7aa502d` integrated —
+  `PathIntegralChartCorrectSimp` (`_refl` and `_symm` for the
+  corrected chart-local integral).
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
-- **Queue D scaffolding (1 opaque, no sorries):** 8 files +
-  umbrella.
+- **Queue D scaffolding (1 opaque, no sorries):** 11 files +
+  umbrella; growing.
 - **Queue E foundation:** `AnalyticJacobianGroup E X` + umbrella.
 - **Queue F:** Recon document.
-- **This tick — Queue G kickoff:** added
-  `Jacobian/TraceDegree/Recon.lean`. Inventories Mathlib's
-  `mfderiv`/`ContMDiff` (PRESENT) vs `pullbackForms`/`traceForms`/
-  `analyticDegree` (ABSENT). Lays out chain-rule formula for
-  pullback, fiber-sum for trace, 6 Aristotle-sized packets,
-  flags `pushforward_pullback` as the strongest multiplicative
-  anti-hack theorem. Recon convention.
-- All challenge queues (A through G) now have at least a recon
-  document or production scaffold; Queue H's theorems live in
+- **Queue G:** Recon document (`Jacobian/TraceDegree/Recon.lean`)
+  inventories `mfderiv`/`ContMDiff` (PRESENT) vs `pullbackForms`/
+  `traceForms`/`analyticDegree` (ABSENT); lays out chain-rule for
+  pullback, fiber-sum for trace, 6 packets, flags
+  `pushforward_pullback` as the strongest multiplicative anti-hack
+  theorem.
+- All challenge queues (A through G) have at least a recon document
+  or production scaffold; Queue H's theorems live in
   `Jacobian/Challenge.lean` directly.
-- **This tick:** dropped the `Jacobian.Challenge` import from
-  `Jacobian/ComplexTorus/Defs.lean` (it pulled the spec with all
-  its sorries despite Defs not using anything from it). Replaced
-  with `import Mathlib` directly. Umbrella still builds.
+
+### Queued for next submission round (when current pair lands)
+
+- `Jacobian/Periods/PathIntegralChartCorrectLinear.lean` —
+  `pathIntegralInChartCorrect_zero/_neg/_add` (depends on
+  `ChartedFormPullbackSimp` from `091ac5d1`).
+- `Jacobian/Periods/PathIntegralViaChartCorrectZero.lean` —
+  from-`X` linearity (depends on the above).
+- Multi-chart `pathIntegralViaCover` definition combining
+  `exists_uniform_chart_partition` (from `PathPartition`) with
+  chart-local integrals.
+- Decomposed TorusExample replacement (split into "constant
+  function `_ ↦ id` is `ContMDiff`" as a standalone helper, then
+  build the section on top), retrying `259b18a1`'s scope.
 
 ## Top open correctness item
 
