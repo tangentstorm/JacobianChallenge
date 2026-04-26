@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:01 EDT
+Last tick: 2026-04-26 00:03 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,22 +46,25 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 2/5.
+Active jobs (ours): 3/5.
                     - `259b18a1` — `HolomorphicForms/TorusExample.lean`.
                       IN_PROGRESS, 12%.
-                    - `3a1d6716` — `Periods/PathLiftSimp.lean`. Just
-                      submitted: `pathIntegralViaChart_refl` and
-                      `_symm` simp lemmas, mirroring the chart-local
-                      versions at the from-`X` level.
+                    - `3a1d6716` — `Periods/PathLiftSimp.lean`. IN_PROGRESS, 1%.
+                    - `26789359` — `Periods/PathIntegralChartCorrect.lean`.
+                      Just submitted (one-liner using
+                      `chartedFormPullback` instead of the
+                      provisional `chartedForm`).
 Integrated this tick: nothing.
-Local progress this tick: submitted `3a1d6716` to keep the queue
-                          fed. Hints provided on `Path.map'` for
-                          `refl` / `symm` propagation.
+Local progress this tick: submitted `26789359` to migrate the
+                          chart-local integral toward the corrected
+                          pullback (next step: downstream code can
+                          eventually replace `pathIntegralInChart`
+                          calls).
 Complex torus layer: complete and self-contained. Queue D now has
                      correct chart pullback, multi-chart partition,
-                     and basic chart-form algebra; only the
-                     downstream integral-assembly + period proofs
-                     remain.
+                     basic chart-form algebra, and an in-flight
+                     corrected-integral wrapper; only downstream
+                     integral assembly + period proofs remain.
 ```
 
 ```text
