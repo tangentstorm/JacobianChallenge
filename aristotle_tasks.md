@@ -12,17 +12,18 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 06:06 EDT)
+## Live Status (2026-04-26 06:09 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~1 hr+ — backend
   stalled since ~04:09 EDT, no jobs moving on any project.
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
-  - `Jacobian/Periods/PathIntegralViaChartCorrectSub.lean` (new):
-    +`pathIntegralViaChartCorrect_sub_of_curveIntegrable` — lift
-    conditional `_sub` from `pathIntegralInChartCorrect` across
-    the path-lift wrapper to the from-`X` level, mirroring the
-    `_add` ladder. Becomes unconditional once Packet F lands.
-    Wired into `Jacobian.Periods` umbrella.
+  - `Jacobian/Periods/PathIntegralViaCoverWithSub.lean` (new):
+    +`pathIntegralViaCoverWith_sub_of_curveIntegrable` — lift
+    conditional `_sub` from `pathIntegralViaChartCorrect` to the
+    multi-chart sum level via `Finset.sum_sub_distrib`. The
+    conditional `_sub` ladder now matches the `_add` ladder, with
+    parallel landings at `InChartCorrect`, `ViaChartCorrect`, and
+    `ViaCoverWith`. Wired into `Jacobian.Periods` umbrella.
 - **Submitted this tick:** none (backlog still blocking).
 - Continuing local Claude-owned progress while Aristotle queue
   remains frozen.
