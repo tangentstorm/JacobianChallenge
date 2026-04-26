@@ -33,6 +33,7 @@ import Jacobian.Periods.PathIntegralViaChartCorrectSmul
 import Jacobian.Periods.PathIntegralViaChartCorrectZero
 import Jacobian.Periods.PathIntegralViaCover
 import Jacobian.Periods.PathIntegralViaCoverNeg
+import Jacobian.Periods.PathIntegralViaCoverWithAdd
 import Jacobian.Periods.PathIntegralViaCoverWithApply
 import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverPickApply

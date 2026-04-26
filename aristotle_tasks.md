@@ -12,17 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 05:49 EDT)
+## Live Status (2026-04-26 05:51 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~1 hr+ — backend
   stalled since ~04:09 EDT, no jobs moving on any project.
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
-  - `Jacobian/Periods/PathIntegralViaChartCorrectAdd.lean` (new):
-    +`pathIntegralViaChartCorrect_add_of_curveIntegrable` —
-    lift the conditional `_add` from
-    `pathIntegralInChartCorrect` across the path-lift wrapper to
-    the from-`X` level. Becomes unconditional once Packet F lands.
-    Wired into `Jacobian.Periods` umbrella.
+  - `Jacobian/Periods/PathIntegralViaCoverWithAdd.lean` (new):
+    +`pathIntegralViaCoverWith_add_of_curveIntegrable` — lift
+    conditional `_add` from `pathIntegralViaChartCorrect` to the
+    multi-chart sum level via `Finset.sum_add_distrib`. Per-segment
+    `CurveIntegrable` hypotheses; once Packet F discharges them,
+    the multi-chart `_add` becomes unconditional. Wired into
+    `Jacobian.Periods` umbrella. The conditional `_add` API now
+    spans every integration layer (`InChartCorrect`,
+    `ViaChartCorrect`, `ViaCoverWith`).
 - **Submitted this tick:** none (backlog still blocking).
 - Continuing local Claude-owned progress while Aristotle queue
   remains frozen.
