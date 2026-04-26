@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 21:48 EDT
+Last tick: 2026-04-25 21:52 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -33,7 +33,7 @@ Quotient charted-space/manifold  ███████████████�
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
 Holomorphic forms                ██████░░░░░░░░░░░░░░   30%  type + module + analyticGenus
-Path integration/periods         █████░░░░░░░░░░░░░░░   25%  pairing stated, subgroup defined
+Path integration/periods         ██████░░░░░░░░░░░░░░   30%  +Lebesgue radius for chart cover
 Abel-Jacobi API                  ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Trace/degree/push-pull           ░░░░░░░░░░░░░░░░░░░░    0%  pending
 ```
@@ -44,28 +44,30 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 7h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: extended
-                          `Jacobian/Periods/PathIntegralChart.lean`
-                          with two basic API lemmas (no sorries):
-                          - `@[simp] pathIntegralInChart_refl`:
-                            integral over a constant path is 0.
-                            One-line wrapper of Mathlib's
-                            `curveIntegral_refl`.
-                          - `pathIntegralInChart_symm`: reversing
-                            the path negates the integral. One-line
-                            wrapper of `curveIntegral_symm`.
-                          Both are immediate from existing Mathlib
-                          API and don't add new opaques. They give
-                          the chart-local integral the basic API
-                          shape (zero on trivial paths, sign-reversal
-                          under symmetry) so downstream definitions
-                          can reason about it without unfolding to
-                          `curveIntegral` directly.
-Complex torus layer: complete. Queue D: chart-local path integral
-                     now has basic API lemmas; integral 1-cycle,
-                     period pairing (opaque) and period subgroup
-                     in place. Multi-chart path integration is the
-                     next substantive piece.
+Local progress this tick: added
+                          `Jacobian/Periods/LebesgueChartRadius.lean`
+                          (no sorries), the combinatorial input for
+                          multi-chart path integration. Statement:
+                          for any continuous `γ : C(K, X)` from a
+                          compact metric space `K` into a charted
+                          space `X`, there exists `δ > 0` such that
+                          every `δ`-ball in `K` lands inside some
+                          chart's source. ~10-line proof: cover `X`
+                          by chart sources (covers because
+                          `γ t ∈ (chartAt E (γ t)).source` by
+                          `mem_chart_source`), pull back via `γ` to
+                          get an open cover of `K`, apply
+                          `lebesgue_number_lemma_of_metric`. With
+                          this in hand, partitioning `[0, 1]` of
+                          mesh `< δ` lets each sub-path land inside
+                          a single chart and feed
+                          `pathIntegralInChart`.
+Complex torus layer: complete. Queue D: chart-local path integral,
+                     IntegralOneCycle, period pairing (opaque),
+                     period subgroup, and now Lebesgue radius. Next
+                     substantive step: combine the Lebesgue radius
+                     with a finite [0,1] partition to assemble
+                     multi-chart `pathIntegralViaCover`.
 ```
 
 ```text
@@ -90,18 +92,19 @@ Periods.PathIntegralChart pass lake build Jacobian.Periods.PathIntegralChart (no
 Periods.PathLift   pass    lake build Jacobian.Periods.PathLift (no sorry)
 Periods.IntegralOneCycle pass lake build Jacobian.Periods.IntegralOneCycle (no sorry)
 Periods.PeriodFunctional pass lake build Jacobian.Periods.PeriodFunctional (opaque pairing)
+Periods.LebesgueChartRadius pass lake build Jacobian.Periods.LebesgueChartRadius (no sorry)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Multi-chart path integration: extend `pathIntegralViaChart` to
-   paths that may cross chart boundaries via finite cover. With this
-   in place, the `opaque periodPairing` can graduate to a real
-   definition.
-2. State the closedness and full-lattice properties of
-   `periodSubgroup` as deferred lemmas (the actual proofs need
-   Riemann bilinear / Hodge input).
+1. Combine `exists_lebesgue_radius_chart` with a finite
+   `[0, 1]`-partition to define a multi-chart path integral
+   `pathIntegralViaCover`. The first version can return the sum of
+   chart-local integrals indexed by partition points + chart picks;
+   well-definedness (independence of partition) is a follow-up.
+2. With multi-chart `pathIntegralViaCover` in hand, the `opaque
+   periodPairing` can graduate to a real definition.
 3. Independently, attempt the torus sanity check
    (`analyticGenus ℂ (V ⧸ Λ.subgroup) ≥ 1` via constructing a
    non-trivial section).

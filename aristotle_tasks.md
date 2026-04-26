@@ -12,25 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 21:48 EDT)
+## Live Status (2026-04-25 21:52 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 7h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
-- **Queue D scaffolding now has 6 files + basic API lemmas.** This
-  tick added two small lemmas to `PathIntegralChart.lean`:
-  - `pathIntegralInChart_refl` (`@[simp]`) — integral over a
-    constant path is `0`.
-  - `pathIntegralInChart_symm` — path reversal negates the
-    integral.
-  Both are one-line wrappers of Mathlib's `curveIntegral` API.
-- The next substantive piece is multi-chart path integration
-  (paths crossing chart boundaries). Mathlib has Lebesgue's number
-  lemma (`Topology/MetricSpace/Pseudo/Lemmas.lean:120`) which can
-  be used to partition `[0, 1]` into sub-intervals each landing in
-  a single chart source. Implementation requires path
-  restriction-and-concatenation API.
+- **Queue D scaffolding has 7 files now (1 opaque, no sorries).**
+  Added `Jacobian/Periods/LebesgueChartRadius.lean` this tick — the
+  Lebesgue radius existence statement: for any continuous map from
+  a compact metric space into a charted space, there is a
+  `δ > 0` so every `δ`-ball lands inside a single chart source.
+  ~10-line proof composing `lebesgue_number_lemma_of_metric` with
+  the chart-source open cover.
+- This is the combinatorial input for the next step: combine with
+  a `[0, 1]` partition of mesh `< δ` to integrate a path that
+  crosses chart boundaries.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
