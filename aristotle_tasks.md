@@ -12,7 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 12:05 EDT)
+## Live Status (2026-04-26 12:10 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/PathIntegralChartLinear.lean`:
+    `pathIntegralInChart_neg` and `pathIntegralInChart_smul` at
+    the provisional in-chart layer (the `_zero` already lives in
+    `PathIntegralChart.lean`). Three-line proofs each: `show ...
+    rw [chartedForm_neg, curveIntegral_neg]` and the smul analogue.
+    Mirror of `PathIntegralChartCorrect{Linear,Smul}` at the
+    corrected layer.
+  - Refactored `Jacobian/Periods/PathIntegralViaChartLinear.lean`
+    (the from-X version landed at 11:38) to delegate through the
+    new in-chart lemmas: `unfold pathIntegralViaChart; exact
+    pathIntegralInChart_{neg,smul} c ω _` (2 lines per lemma,
+    down from 3). Cleaner because the chartLift application is now
+    just an underscore.
+  - Build green: `lake build Jacobian.Periods.PathIntegralChartLinear`
+    → 2672/2672 (58s); refactored ViaChart version → 2674/2674 (51s).
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 12:05 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
