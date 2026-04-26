@@ -12,22 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 22:13 EDT)
+## Live Status (2026-04-25 22:17 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 8h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
-- **Queue D scaffolding (1 opaque, no sorries):** 8 files.
-- **Queue E foundation:** `AnalyticJacobianGroup E X`.
-- **This tick — umbrella consolidation:** added three top-level
-  modules matching the `Jacobian/ComplexTorus.lean` pattern:
-  - `Jacobian/HolomorphicForms.lean` (re-exports the 3 production
-    files; excludes Recon).
-  - `Jacobian/Periods.lean` (re-exports the 7 production files;
-    excludes Recon).
-  - `Jacobian/AnalyticJacobian.lean` (re-exports Defs).
-  Callers can now import each layer with a single import.
+- **Queue D scaffolding (1 opaque, no sorries):** 8 files +
+  umbrella.
+- **Queue E foundation:** `AnalyticJacobianGroup E X` + umbrella.
+- **This tick — Queue F kickoff:** added
+  `Jacobian/AbelJacobi/Recon.lean`, a name-discovery and design
+  document for the Abel-Jacobi map. Inventories blockers
+  (multi-chart integration, path-connectedness lemma, smoothness,
+  Abel's theorem for injectivity), identifies what can move
+  forward independently (path-functional + self-zero), lays out 4
+  Aristotle-sized packets, flags `ofCurve_inj` as the deepest
+  anti-hack theorem.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
