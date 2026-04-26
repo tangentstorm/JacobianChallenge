@@ -12,7 +12,14 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 15:15 EDT)
+## Live Status (2026-04-26 15:18 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick:** none. Brief refresh — backend frozen ~11h.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 15:15 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick:** none. Brief refresh — backend frozen ~11h.
