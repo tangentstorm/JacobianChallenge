@@ -12,21 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 03:40 EDT)
+## Live Status (2026-04-26 03:47 EDT)
 
-- Active jobs (ours): 5/5.
-- 🎉 **Integrated this tick (3 of 5):**
-  - `eca997ee` — `TraceDegree/PullbackFormsLinearMapConst.lean`.
-    One-line term proof: `pullbackFormsFun_const y η`.
-  - `c183f1fa` — `Periods/PathIntegralViaCoverPickApply.lean`. `rfl`
-    unfolding the let-chain.
-  - `ba34d88d` — `Periods/PathLiftSimpFromX.lean`. `chartLift_refl`
-    via `apply Path.ext + funext + rfl` (Aristotle handled the
-    over-elaborated prompt correctly).
-  Both umbrellas updated; lake build green.
-- **Still in flight (last tick's two refills):**
-  - `d9cda755` — `TraceDegree/PullbackFunIdApply.lean` (queued).
-  - `cbbe4d1b` — `Periods/ChartedFormPullbackLinearMapApply.lean` (queued).
+- Active jobs (ours): 4/5.
+- 🎉 **Integrated this tick:**
+  - `d9cda755` — `TraceDegree/PullbackFunIdApply.lean`. One-line
+    `rw [pullbackFormsFun_id]`.
+- **Still in flight:**
+  - `cbbe4d1b` — `Periods/ChartedFormPullbackLinearMapApply.lean`
+    (running 1%).
+  - `2e837ce5` — `TraceDegree/PullbackFormsLinearMapApply.lean`
+    (running 1%).
+  - `e3f89de0` — `Periods/PathIntegralChartCorrectApply.lean` (queued).
+  - `59a2f682` — `Periods/PathIntegralViaChartCorrectApply.lean`
+    (queued).
 
 ## Layer status
 

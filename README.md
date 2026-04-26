@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 03:41 EDT
+Last tick: 2026-04-26 03:48 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,16 +47,9 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5.
-Integrated this tick: 🎉 3 of 5:
-                      `eca997ee` TraceDegree/PullbackFormsLinearMapConst
-                      `c183f1fa` Periods/PathIntegralViaCoverPickApply
-                      `ba34d88d` Periods/PathLiftSimpFromX
-                                 (chartLift_refl)
-Submitted this tick:  3 refills:
-                      `2e837ce5` TraceDegree/PullbackFormsLinearMapApply
-                      `e3f89de0` Periods/PathIntegralChartCorrectApply
-                      `59a2f682` Periods/PathIntegralViaChartCorrectApply
-Still running:        `d9cda755`, `cbbe4d1b` (last tick's refills).
+Integrated this tick: 🎉 `d9cda755` TraceDegree/PullbackFunIdApply.
+Submitted this tick:  `f9550953` Periods/ChartLiftApply (rfl).
+Still running:        `cbbe4d1b`, `2e837ce5`, `e3f89de0`, `59a2f682`.
 Failed/split this tick: none.
 ```
 
@@ -137,6 +130,7 @@ TraceDegree.PullbackFunApply pass lake build Jacobian.TraceDegree.PullbackFunApp
 TraceDegree.PullbackFormsLinearMapConst pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapConst (no sorry)
 Periods.PathIntegralViaCoverPickApply pass lake build Jacobian.Periods.PathIntegralViaCoverPickApply (no sorry)
 Periods.PathLiftSimpFromX pass lake build Jacobian.Periods.PathLiftSimpFromX (no sorry)
+TraceDegree.PullbackFunIdApply pass lake build Jacobian.TraceDegree.PullbackFunIdApply (no sorry)
 ```
 
 ```text
