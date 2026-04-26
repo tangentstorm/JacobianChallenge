@@ -12,28 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 00:51 EDT)
+## Live Status (2026-04-26 00:59 EDT)
 
-- Active jobs (ours): 4/5.
-- 🎉 **Integrated this tick:** `ee3ce016` —
-  `Jacobian/Periods/PathIntegralViaChartCorrect.lean`. From-`X`
-  wrapper around `pathIntegralInChartCorrect` (def + `_refl` +
-  `_symm`). Aristotle followed the template exactly; one smart
-  deviation added the `PathIntegralChartCorrectSimp` import to pull
-  in the dependency lemmas. Clean, no sorry. Wired into Periods
-  umbrella; `lake build Jacobian.Periods` green.
-- **Submitted this tick:** `668a781a` —
-  `Jacobian/Periods/PathIntegralViaChartCorrectZero.lean`.
-  Two-line proof (`unfold` + `exact pathIntegralInChartCorrect_zero`)
-  refilling the slot freed by `ee3ce016`. Independent of all
-  in-flight packets.
-- **Still in flight:**
-  - `091ac5d1` — `ChartedFormPullbackSimp` (zero/neg/add linearity
-    for the chart pullback itself).
+- Active jobs (ours): 5/5.
+- 🎉 **Integrated this tick:**
+  - `091ac5d1` — `Jacobian/Periods/ChartedFormPullbackSimp.lean`.
+    Three @[simp] linearity lemmas (`chartedFormPullback_zero/_neg/_add`)
+    via the concise `convert ContinuousLinearMap.{zero,neg,add}_comp`
+    pattern. Wired into Periods umbrella.
+  - `0b8b1163` — `Jacobian/TraceDegree/PullbackFun.lean`. Queue G's
+    first concrete packet: `pullbackFormsFun` (chain-rule pullback
+    at function level) + zero/neg/add linearity. Created the
+    `Jacobian/TraceDegree.lean` umbrella to re-export.
+- **Submitted this tick** (refilling toward 5):
+  - `835344a7` — `Jacobian/Periods/ChartedFormPullbackSmul.lean`.
+    Scalar-multiplication linearity for the chart pullback.
+  - `e32728ec` — `Jacobian/TraceDegree/PullbackFunSmul.lean`.
+    Scalar-multiplication linearity for the pullback function.
+  - `b20e4f00` — `Jacobian/TraceDegree/PullbackFunId.lean`.
+    `pullbackFormsFun (id : X → X) η = η.toFun` via `mfderiv_id` +
+    `ContinuousLinearMap.comp_id`.
+- **Still in flight from prior ticks:**
   - `fe592ee1` — `PathIntegralChartCorrectLinear` (neg/add for
     `pathIntegralInChartCorrect`, inline).
-  - `0b8b1163` — `TraceDegree/PullbackFun` (Queue G first packet:
-    `pullbackFormsFun` + linearity at function level).
+  - `668a781a` — `PathIntegralViaChartCorrectZero` (queued; from-`X`
+    zero lemma).
 - **Last tick:** `e7aa502d` integrated —
   `PathIntegralChartCorrectSimp` (`_refl` and `_symm` for the
   corrected chart-local integral).
