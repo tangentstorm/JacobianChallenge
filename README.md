@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 16:23 EDT
+Last tick: 2026-04-26 16:30 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,14 +49,14 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW Periods/PathIntegralChartCorrectSymmAddSelf:
-                      `pathIntegralInChartCorrect_add_symm_self` —
-                      in-chart corrected round-trip identity, the
-                      foundational case. 1-line proof
-                      `rw [_symm, add_neg_cancel]`. Wired into Periods
-                      umbrella; build green (8122 jobs, 137s).
-                      Round-trip identity now exists at three layers:
-                      in-chart corrected (this tick), via-chart
+                      NEW Periods/PathIntegralChartSymmAddSelf:
+                      `pathIntegralInChart_add_symm_self` —
+                      provisional in-chart round-trip identity.
+                      1-line proof `rw [_symm, add_neg_cancel]`.
+                      Wired into Periods umbrella; build green
+                      (8123 jobs, 233s). Round-trip identity now
+                      exists at four layers: in-chart provisional
+                      (this tick), in-chart corrected, via-chart
                       corrected, cover-with.
 Failed/split this tick: none.
 ```
@@ -158,6 +158,7 @@ Periods.PathIntegralViaChartSmulSymm pass lake build Jacobian.Periods.PathIntegr
 Periods.PathIntegralViaChartCorrectSymmAddSelf pass lake build Jacobian.Periods.PathIntegralViaChartCorrectSymmAddSelf (no sorry)
 Periods.PathIntegralViaCoverSymmAddSelf pass lake build Jacobian.Periods.PathIntegralViaCoverSymmAddSelf (no sorry)
 Periods.PathIntegralChartCorrectSymmAddSelf pass lake build Jacobian.Periods.PathIntegralChartCorrectSymmAddSelf (no sorry)
+Periods.PathIntegralChartSymmAddSelf pass lake build Jacobian.Periods.PathIntegralChartSymmAddSelf (no sorry)
 ```
 
 ```text
