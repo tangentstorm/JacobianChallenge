@@ -12,6 +12,7 @@ import Jacobian.Periods.ChartedFormPullbackLinearMapSimp
 import Jacobian.Periods.ChartedFormPullbackLinearMapSmul
 import Jacobian.Periods.ChartedFormPullbackSimp
 import Jacobian.Periods.ChartedFormPullbackSmul
+import Jacobian.Periods.ChartedFormPullbackSub
 import Jacobian.Periods.ChartedFormSimp
 import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.LebesgueChartRadius
