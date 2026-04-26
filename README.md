@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 16:53 EDT
+Last tick: 2026-04-26 16:56 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,15 +49,14 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW TraceDegree/PullbackFunComp:
-                      `pullbackFormsFun_comp_apply` — pointwise
-                      functoriality of pullback via the chain rule
-                      for `mfderiv`. Conditional on `MDifferentiableAt`
-                      for both maps. Proof: rewrite via `mfderiv_comp`
-                      then `ContinuousLinearMap.comp_assoc`. Wired into
-                      TraceDegree umbrella; build green (2429 jobs).
-                      Substantive: this is the first chain-rule
-                      composition fact in the project.
+                      NEW TraceDegree/PullbackFunCompApply:
+                      `pullbackFormsFun_comp_apply_apply` — fully
+                      unrolled chain-rule formula
+                      `(g ∘ f)^*η _x v = η_{g(f x)} (mfderiv g (f x)
+                      (mfderiv f x v))`. Apply form of last tick's
+                      `_comp_apply`. 2-line proof: `rw` + `rfl`.
+                      Wired into TraceDegree umbrella; build green
+                      (2430 jobs).
 Failed/split this tick: none.
 ```
 
@@ -163,6 +162,7 @@ Periods.PathIntegralViaChartSymmAddSelf pass lake build Jacobian.Periods.PathInt
 Periods.PathIntegralChartCorrectTrans pass lake build Jacobian.Periods.PathIntegralChartCorrectTrans (no sorry)
 Periods.PathIntegralChartTrans pass lake build Jacobian.Periods.PathIntegralChartTrans (no sorry)
 TraceDegree.PullbackFunComp pass lake build Jacobian.TraceDegree.PullbackFunComp (no sorry)
+TraceDegree.PullbackFunCompApply pass lake build Jacobian.TraceDegree.PullbackFunCompApply (no sorry)
 ```
 
 ```text
