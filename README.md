@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 17:05 EDT
+Last tick: 2026-04-26 17:08 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,13 +49,13 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW TraceDegree/PullbackFunConstComp:
-                      `pullbackFormsFun_const_comp` — pullback along
-                      `const z ∘ f` is zero (symmetric counterpart
-                      of last tick's `_comp_const`). 2-line proof
-                      reducing to `pullbackFormsFun_const`. Wired
-                      into TraceDegree umbrella; build green
-                      (2433 jobs).
+                      NEW TraceDegree/PullbackFormsLinearMapCompConst:
+                      `pullbackFormsLinearMap_comp_const_apply` and
+                      `_const_comp_apply` — bundled-LinearMap-level
+                      pointwise const-comp pair. Lifts the function-
+                      level lemmas via `pullbackFormsLinearMap_apply_at`.
+                      Each is a 2-line proof. Wired into TraceDegree
+                      umbrella; build green (2434 jobs).
 Failed/split this tick: none.
 ```
 
@@ -165,6 +165,7 @@ TraceDegree.PullbackFunCompApply pass lake build Jacobian.TraceDegree.PullbackFu
 TraceDegree.PullbackFormsLinearMapComp pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapComp (no sorry)
 TraceDegree.PullbackFunCompConst pass lake build Jacobian.TraceDegree.PullbackFunCompConst (no sorry)
 TraceDegree.PullbackFunConstComp pass lake build Jacobian.TraceDegree.PullbackFunConstComp (no sorry)
+TraceDegree.PullbackFormsLinearMapCompConst pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapCompConst (no sorry)
 ```
 
 ```text
