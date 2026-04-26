@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 18:51 EDT
+Last tick: 2026-04-26 18:56 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,16 +47,16 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 1/5 — `09cd85dd` canary still QUEUED
-                      (43 min). Backend still asleep.
+                      (50 min). Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaChartSmulSymmEqNegSmul:
-                      `pathIntegralViaChart_smul_symm_eq_neg_smul`
-                      — provisional via-chart layer, completing
-                      the smul-symm-eq-neg-smul family at all five
-                      layers (in-chart provisional, in-chart
-                      corrected, via-chart provisional (this tick),
-                      via-chart corrected, cover-with). Build green
-                      (8139 jobs, 62s).
+                      NEW TraceDegree/PullbackFunIdApplyVec:
+                      `pullbackFormsFun_id_apply_vec` — applying
+                      identity-pullback at point and tangent vector
+                      gives `η.toFun x v` directly. Proof: `rw
+                      [pullbackFormsFun_id_apply]; rfl` (initial
+                      attempt without `rfl` left an `η.toFun x v =
+                      η.toFun x v` goal that `rw` didn't auto-close).
+                      Build green (TraceDegree umbrella 2435 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -182,6 +182,7 @@ Periods.PathIntegralViaCoverSmulSymmEqNegSmul pass lake build Jacobian.Periods.P
 Periods.PathIntegralChartCorrectSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralChartCorrectSmulSymmEqNegSmul (no sorry)
 Periods.PathIntegralChartSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralChartSmulSymmEqNegSmul (no sorry)
 Periods.PathIntegralViaChartSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralViaChartSmulSymmEqNegSmul (no sorry)
+TraceDegree.PullbackFunIdApplyVec pass lake build Jacobian.TraceDegree.PullbackFunIdApplyVec (no sorry)
 ```
 
 ```text

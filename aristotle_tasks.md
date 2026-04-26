@@ -12,25 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 18:51 EDT)
+## Live Status (2026-04-26 18:56 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` still QUEUED
-  (43 min). Backend still asleep.
+  (50 min). Backend still asleep.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralViaChartSmulSymmEqNegSmul.lean`:
-    `pathIntegralViaChart_smul_symm_eq_neg_smul` —
-    provisional via-chart layer, completing the
-    smul-symm-eq-neg-smul family. Same proof shape as the
-    other layers. Wired into Periods umbrella; build green
-    (8139 jobs, 62s).
-- The smul-symm-eq-neg-smul identity now exists at all five
-  layers: in-chart provisional, in-chart corrected, via-chart
-  provisional (this tick), via-chart corrected, cover-with.
-  Family complete.
+  - NEW `Jacobian/TraceDegree/PullbackFunIdApplyVec.lean`:
+    `pullbackFormsFun_id_apply_vec` — applying identity-pullback
+    at a point and a tangent vector gives `η.toFun x v` directly.
+    Proof: `rw [pullbackFormsFun_id_apply]; rfl` (initial attempt
+    without `rfl` failed; the rewrite leaves an identical goal
+    that needs explicit `rfl`). Wired into TraceDegree umbrella;
+    build green (2435 jobs).
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 18:47 EDT)
+## Stale Live Status (2026-04-26 18:51 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
