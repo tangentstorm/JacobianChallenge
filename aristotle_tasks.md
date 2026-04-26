@@ -12,41 +12,24 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 02:43 EDT)
+## Live Status (2026-04-26 02:51 EDT)
 
-- Active jobs (ours): 5/5. Third consecutive 5-of-5 integration tick.
-- 🎉 **Integrated this tick (5 of 5):**
-  - `b478c88a` — `Periods/PathIntegralViaCoverSmul.lean`. Multi-chart
-    `_smul` via `Finset.smul_sum` + chart-local `_smul`.
-  - `a8aca9fa` — `Periods/PathIntegralViaCoverPickSimp.lean`.
-    Unparameterised `pathIntegralViaCover_zero` and `_neg`.
-    Classical.choose-only-depends-on-γ insight worked perfectly.
-  - `ecc4405a` — `TraceDegree/PullbackFormsLinearMapSmul.lean`.
-  - `ac357e8c` — `Periods/ChartedFormPullbackLinearMapSmul.lean`.
-  - `e7a078bd` — `Periods/CurveIntegralLinearity.lean`. Stub file
-    (reserved for AddHom packaging when Packet F lands). Aristotle
-    correctly handled the over-elaborated prompt.
-  Both umbrellas updated; lake build green.
-- **Submitted this tick (5 disjoint refills):**
-  - `ad85aa10` — `Periods/PathIntegralViaCoverPickSmul.lean`.
-    Unparameterised `_smul`, mirror of just-landed `_neg`.
-  - `5d2035c3` — `Periods/ChartLiftReflSubpath.lean`. Bridge helper
-    sidestepping the dependent-rewrite blocker.
-  - `b5511a61` — `TraceDegree/PullbackFunApply.lean`.
-    `rfl`-style definitional simp.
-  - `e0fd22dd` — `Periods/ChartedFormPullbackApply.lean`. Same pattern.
-  - `ea9c5d7a` — `Periods/PathIntegralViaCoverWithRefl.lean`.
-    Multi-chart `_refl` using the new chartLift bridge. Gated on
-    `5d2035c3`.
+- Active jobs (ours): 5/5. All running at 1-2% (just started).
+- **Integrated this tick:** none.
+- **Submitted this tick:** none (pipeline is full from last tick).
+- **Local progress:** brief tick — pipeline healthy, packets just
+  started, saving cycles for the next integration round.
 
 ### Currently in flight (last tick's refill)
 
-- `b478c88a` — `Periods/PathIntegralViaCoverSmul.lean`.
-- `a8aca9fa` — `Periods/PathIntegralViaCoverPickSimp.lean`.
-- `ecc4405a` — `TraceDegree/PullbackFormsLinearMapSmul.lean`.
-- `ac357e8c` — `Periods/ChartedFormPullbackLinearMapSmul.lean`.
-- `e7a078bd` — `Periods/CurveIntegralLinearity.lean` (stub; prompt
-  flagged for careful review).
+- `ad85aa10` — `Periods/PathIntegralViaCoverPickSmul.lean`.
+  Unparameterised `_smul`, mirror of just-landed `_neg`.
+- `5d2035c3` — `Periods/ChartLiftReflSubpath.lean`. Bridge helper
+  sidestepping the dependent-rewrite blocker.
+- `b5511a61` — `TraceDegree/PullbackFunApply.lean`.
+- `e0fd22dd` — `Periods/ChartedFormPullbackApply.lean`.
+- `ea9c5d7a` — `Periods/PathIntegralViaCoverWithRefl.lean`. Multi-chart
+  `_refl` using the new chartLift bridge. Gated on `5d2035c3`.
 
 ## Layer status
 
