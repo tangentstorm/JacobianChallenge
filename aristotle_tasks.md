@@ -12,7 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 12:36 EDT)
+## Live Status (2026-04-26 12:40 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/PathPartitionCoverSymm.lean`: substantive
+    helper `cover_symm_of_cover` — given an n-segment cover of γ
+    by `pickChart`, produces a cover of γ.symm by
+    `pickChart ∘ Fin.rev`. The intuition: segment i of γ.symm
+    (running through γ(σ t)) lies in chart `pickChart (n-1-i) =
+    pickChart (Fin.rev i)`.
+  - Proof: refine apply hcov at index `Fin.rev i` and time `σ t`;
+    discharge the two boundary inequalities via `Fin.val_rev`,
+    `coe_symm_eq`, `Nat.cast_sub i.isLt`, `div_le_iff₀`/`le_div_iff₀`,
+    `push_cast`, and linarith. Hit and fixed two initial linarith
+    failures by stripping divisions out of `hlo`/`hhi` before the
+    refine.
+  - Wired into `Jacobian/Periods.lean` umbrella; build green
+    (8028 jobs, 123s).
+- This is the fifth (and most substantive) helper toward
+  `pathIntegralViaCoverWith_symm`. With this in hand, the full
+  cover-symm proof reduces to a Finset.sum re-indexing under
+  Fin.rev plus the per-segment sign flip from
+  `pathIntegralInChartCorrect_symm` and the segment reflection
+  from `path_symm_subpath_divFinIcc`.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 12:36 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
