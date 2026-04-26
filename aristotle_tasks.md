@@ -12,7 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 14:52 EDT)
+## Live Status (2026-04-26 14:56 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick:** none. Refresh tick — diminishing returns
+  on bounded-target hunt. The post-cover-symm session has added
+  many useful but trivial corollaries:
+  - `pathIntegralViaCoverWith_symm` (the substantive milestone)
+  - `pathIntegralViaCoverWith_neg_form_eq_symm_path` (cover layer
+    corollary)
+  - `pathIntegralViaChartCorrect_neg_form_eq_symm_path`
+    (corrected via-chart layer)
+  - `pathIntegralInChartCorrect_neg_form_eq_symm_path`
+    (corrected in-chart layer)
+  - `pathIntegralInChart_neg_form_eq_symm_path` (provisional in-chart)
+  - `pathIntegralViaChart_neg_form_eq_symm_path` (provisional via-chart)
+- Bigger remaining items (well-definedness of `pathIntegralViaCover`,
+  Pick-layer `_symm` lift, `pullbackFormsFun_smooth`, periodPairing
+  Stokes step, decomposed TorusExample retry) all need careful
+  multi-tick planning.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 14:52 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
