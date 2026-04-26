@@ -12,13 +12,17 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 02:51 EDT)
+## Live Status (2026-04-26 02:55 EDT)
 
-- Active jobs (ours): 5/5. All running at 1-2% (just started).
+- Active jobs (ours): 5/5. All still running at 1-3%.
 - **Integrated this tick:** none.
-- **Submitted this tick:** none (pipeline is full from last tick).
-- **Local progress:** brief tick — pipeline healthy, packets just
-  started, saving cycles for the next integration round.
+- **Submitted this tick:** none (pipeline full).
+- **Local progress (Claude-owned):** refreshed
+  `Jacobian/Periods/PathIntegralViaCoverRecon.lean`'s "Aristotle-sized
+  packets" section to mark Packet B (multi-chart def) as ✓ landed,
+  Packet C (`_refl`) as ✓ in flight via `ea9c5d7a` + bridge
+  `5d2035c3`, and Packet D (linearity) as ✓ landed for zero/neg/smul
+  with add still gated on Packet F. Lake build green.
 
 ### Currently in flight (last tick's refill)
 

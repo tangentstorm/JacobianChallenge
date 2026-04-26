@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 02:51 EDT
+Last tick: 2026-04-26 02:55 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,8 +49,9 @@ Aristotle status
 Active jobs (ours): 5/5. All running at 1-2% (just started).
 Integrated this tick: none.
 Submitted this tick:  none (full pipeline).
-Local progress: none — pipeline is healthy and packets just kicked
-                off; saving cycles for the next integration round.
+Local progress: refreshed PathIntegralViaCoverRecon.lean's packet
+                plan to reflect the rapid recent integrations
+                (linearity API, _refl in flight, etc).
 Failed/split this tick: none.
 ```
 

@@ -179,22 +179,33 @@ blocker.
    should equal the sum of the two integrals. This requires careful
    handling of partitions on `[0, 1/2]` vs `[1/2, 1]`.
 
-## Aristotle-sized packets (revised)
+## Aristotle-sized packets (revised, with progress notes)
 
 ~~A. `Jacobian/Periods/PathSubpath.lean`~~ — superseded by Mathlib's
    `Path.subpath`. No packet needed.
 
-B. `Jacobian/Periods/PathIntegralViaCover.lean` — define
-   `pathIntegralViaCover ω γ` per the sketch above (Claude-owned;
-   too design-heavy for a single Aristotle packet).
+✓ B. `Jacobian/Periods/PathIntegralViaCover.lean` — `pathIntegralVia-
+   CoverWith` (parameterised) **landed** as Claude-owned local work
+   (commit 7a691e8). The unparameterised wrapper
+   `pathIntegralViaCover` lives in
+   `Jacobian/Periods/PathIntegralViaCoverPick.lean`.
 
-C. `Jacobian/Periods/PathIntegralViaCoverRefl.lean` —
-   `pathIntegralViaCover_refl ω a = 0`. Likely follows from
-   `Finset.sum_zero` after each segment-integral collapses to zero
-   (`Path.subpath_self` plus `pathIntegralViaChartCorrect_refl`).
+✓ C. **Multi-chart `_refl` (`pathIntegralViaCoverWith_refl`):** in
+   flight as `ea9c5d7a`, gated on `5d2035c3`
+   (`chartLift_refl_subpath`). Naive proof was blocked by a
+   dependent-rewrite issue when the range hypothesis depended on the
+   path; the bridge helper sidesteps that.
 
-D. `Jacobian/Periods/PathIntegralViaCoverLinear.lean` — zero/neg/add/smul
-   for `pathIntegralViaCover`, by distributing through `Finset.sum`.
+✓ D. **Linearity of `pathIntegralViaCoverWith`:** zero (`PathIntegralVia-
+   CoverZero.lean`), neg (`PathIntegralViaCoverNeg.lean`), smul
+   (`PathIntegralViaCoverSmul.lean`) all landed. Add still gated on
+   Packet F (integrability).
+
+   **Linearity of `pathIntegralViaCover` (unparameterised):** zero,
+   neg, smul landed (`PathIntegralViaCoverPickSimp.lean`,
+   `PathIntegralViaCoverPickSmul.lean` in flight as `ad85aa10`). The
+   key insight — `Classical.choose` only depends on `γ`, not `ω` —
+   makes both sides use the same picked partition.
 
 E. The chart-transition lemma (well-definedness) — substantial; gates
    on the smoothness theorem for `chartedFormPullback` (or for the
