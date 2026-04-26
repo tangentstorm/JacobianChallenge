@@ -1,4 +1,5 @@
 import Jacobian.Periods.PathLift
+import Jacobian.Periods.ChartLiftSymm
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
 
 namespace JacobianChallenge.Periods
@@ -26,10 +27,8 @@ theorem pathIntegralViaChart_symm
     {a b : X} (γ : Path a b) (h : range γ ⊆ c.source)
     (h' : range γ.symm ⊆ c.source) :
     pathIntegralViaChart c ω γ.symm h' = - pathIntegralViaChart c ω γ h := by
-  unfold pathIntegralViaChart chartLift
-  have : γ.symm.map' (c.continuousOn_toFun.mono h') = (γ.map' (c.continuousOn_toFun.mono h)).symm :=
-    Path.ext rfl
-  rw [this]
-  exact pathIntegralInChart_symm c ω (γ.map' (c.continuousOn_toFun.mono h))
+  unfold pathIntegralViaChart
+  rw [chartLift_symm c γ h h']
+  exact pathIntegralInChart_symm c ω (chartLift c γ h)
 
 end JacobianChallenge.Periods

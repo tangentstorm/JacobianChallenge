@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 12:02 EDT
+Last tick: 2026-04-26 12:05 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,16 +49,16 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/ChartLiftSymm: new file with
-                      `chartLift_symm`:
-                      `chartLift c γ.symm h' = (chartLift c γ h).symm`.
-                      Both sides are `c ∘ γ ∘ σ`; proof is
-                      `unfold chartLift; exact Path.ext rfl`.
-                      Promotes the inline `Path.ext rfl` from
-                      `pathIntegralViaChartCorrect_symm` to a named
-                      lemma for reuse by the cover-symm proof.
-                      Wired into Periods umbrella; build green
-                      (2671 jobs, 51s).
+                      Refactored two existing _symm proofs to
+                      use the new `chartLift_symm` lemma:
+                      Periods/PathIntegralViaChartCorrect (the
+                      corrected from-X _symm) and Periods/PathLiftSimp
+                      (the provisional _symm). Each proof now reads
+                      `unfold; rw [chartLift_symm c γ h h']; exact
+                      pathIntegralIn{Chart,ChartCorrect}_symm c ω
+                      (chartLift c γ h)` — three lines instead of the
+                      previous five-line inline `Path.ext rfl`.
+                      Build green (2672+2675 jobs).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
