@@ -12,24 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 18:47 EDT)
+## Live Status (2026-04-26 18:51 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` still QUEUED
-  (38 min). Backend still asleep.
+  (43 min). Backend still asleep.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartSmulSymmEqNegSmul.lean`:
-    `pathIntegralInChart_smul_symm_eq_neg_smul` —
-    provisional in-chart layer of the smul-symm-eq-neg-smul
-    identity. Same `_smul + _symm + _smul + neg_smul + smul_neg`
-    proof shape as last tick's corrected version. Wired into
-    Periods umbrella; build green (8138 jobs, 95s).
-- The smul-symm-eq-neg-smul identity now exists at four
-  layers: in-chart provisional (this tick), in-chart corrected,
-  via-chart corrected, cover-with.
+  - NEW `Jacobian/Periods/PathIntegralViaChartSmulSymmEqNegSmul.lean`:
+    `pathIntegralViaChart_smul_symm_eq_neg_smul` —
+    provisional via-chart layer, completing the
+    smul-symm-eq-neg-smul family. Same proof shape as the
+    other layers. Wired into Periods umbrella; build green
+    (8139 jobs, 62s).
+- The smul-symm-eq-neg-smul identity now exists at all five
+  layers: in-chart provisional, in-chart corrected, via-chart
+  provisional (this tick), via-chart corrected, cover-with.
+  Family complete.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 18:42 EDT)
+## Stale Live Status (2026-04-26 18:47 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
