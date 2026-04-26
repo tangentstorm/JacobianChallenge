@@ -18,6 +18,7 @@ import Jacobian.Periods.PathIntegralViaChartCorrect
 import Jacobian.Periods.PathIntegralViaChartCorrectNeg
 import Jacobian.Periods.PathIntegralViaChartCorrectZero
 import Jacobian.Periods.PathIntegralViaCover
+import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverZero
 import Jacobian.Periods.PathLift
 import Jacobian.Periods.PathLiftSimp

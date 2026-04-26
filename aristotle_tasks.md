@@ -12,35 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 02:01 EDT)
+## Live Status (2026-04-26 02:11 EDT)
 
-- Active jobs (ours): 5/5. **Massive integration tick** — all five
-  prior packets landed cleanly together.
-- 🎉 **Integrated this tick (5 of 5):**
-  - `b20e4f00` — `Jacobian/TraceDegree/PullbackFunId.lean`.
-    `pullbackFormsFun_id η = η.toFun` via `mfderiv_id` +
-    `ContinuousLinearMap.comp_id`. Aristotle used `import Mathlib`;
-    narrowed to `Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions`.
-  - `9c8842f9` — `Jacobian/Periods/PathIntegralChartCorrectSmul.lean`.
-    `pathIntegralInChartCorrect_smul` via `curveIntegral_smul`
-    (unconditional — no integrability hypothesis).
-  - `2a998690` — `Jacobian/TraceDegree/PullbackFormsLinearMap.lean`.
-    Bundles `pullbackFormsFun` as `HolomorphicOneForm E Y →ₗ[ℂ]
-    (X → E →L[ℂ] ℂ)` via `map_add'` / `map_smul'`. Plus rfl `_apply`.
-  - `dff6cfb4` — `Jacobian/Periods/ChartedFormPullbackLinearMap.lean`.
-    Same structure-literal pattern for `chartedFormPullback c`.
-  - `40031834` — `Jacobian/Periods/PathIntegralViaChartCorrectNeg.lean`.
-    Two-line lift of the chart-local `_neg` to the from-`X` wrapper.
-  Both `Periods` and `TraceDegree` umbrellas updated; lake build green.
-- **Submitted this tick** to refill the queue (5 disjoint files):
-  - `98e2e9c6` — `Periods/PathIntegralViaChartCorrectSmul.lean`.
-  - `47f1811e` — `Periods/PathIntegralViaCoverNeg.lean`.
-  - `bd02a68a` — `TraceDegree/PullbackFormsLinearMapId.lean`.
-  - `6b4dec8c` — `TraceDegree/PullbackFormsLinearMapSimp.lean`.
-  - `a698da94` — `Periods/ChartedFormPullbackLinearMapSimp.lean`.
-- **Last tick:** `e7aa502d` integrated —
-  `PathIntegralChartCorrectSimp` (`_refl` and `_symm` for the
-  corrected chart-local integral).
+- Active jobs (ours): 5/5. All five from last tick's refill batch
+  are IN_PROGRESS at 1-2%. No completions this tick.
+- **Integrated this tick:** none (waiting on the running batch).
+- **Local progress this tick (Claude-owned):**
+  added `Jacobian/Periods/PathIntegralViaCoverPick.lean` —
+  `pathIntegralViaCover ω γ`, the unparameterised wrapper around
+  `pathIntegralViaCoverWith` that picks a partition via
+  `Classical.choose` on `exists_uniform_chart_partition`. Three-line
+  `let`-chain of `choose`/`choose_spec`. Wired into Periods umbrella;
+  lake build green. Well-definedness across partition choices is
+  still a deferred follow-up.
+
+### Currently in flight (last tick's refill)
+
+- `98e2e9c6` — `Periods/PathIntegralViaChartCorrectSmul.lean`.
+- `47f1811e` — `Periods/PathIntegralViaCoverNeg.lean`.
+- `bd02a68a` — `TraceDegree/PullbackFormsLinearMapId.lean`.
+- `6b4dec8c` — `TraceDegree/PullbackFormsLinearMapSimp.lean`.
+- `a698da94` — `Periods/ChartedFormPullbackLinearMapSimp.lean`.
+
+## Layer status
+
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
 - **Queue D scaffolding (1 opaque, no sorries):** 11 files +
