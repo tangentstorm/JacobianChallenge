@@ -12,27 +12,36 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 02:11 EDT)
+## Live Status (2026-04-26 02:18 EDT)
 
-- Active jobs (ours): 5/5. All five from last tick's refill batch
-  are IN_PROGRESS at 1-2%. No completions this tick.
-- **Integrated this tick:** none (waiting on the running batch).
-- **Local progress this tick (Claude-owned):**
-  added `Jacobian/Periods/PathIntegralViaCoverPick.lean` —
-  `pathIntegralViaCover ω γ`, the unparameterised wrapper around
-  `pathIntegralViaCoverWith` that picks a partition via
-  `Classical.choose` on `exists_uniform_chart_partition`. Three-line
-  `let`-chain of `choose`/`choose_spec`. Wired into Periods umbrella;
-  lake build green. Well-definedness across partition choices is
-  still a deferred follow-up.
-
-### Currently in flight (last tick's refill)
-
-- `98e2e9c6` — `Periods/PathIntegralViaChartCorrectSmul.lean`.
-- `47f1811e` — `Periods/PathIntegralViaCoverNeg.lean`.
-- `bd02a68a` — `TraceDegree/PullbackFormsLinearMapId.lean`.
-- `6b4dec8c` — `TraceDegree/PullbackFormsLinearMapSimp.lean`.
-- `a698da94` — `Periods/ChartedFormPullbackLinearMapSimp.lean`.
+- Active jobs (ours): 5/5. **Second consecutive 5-of-5 integration**.
+- 🎉 **Integrated this tick (5 of 5):**
+  - `98e2e9c6` — `Periods/PathIntegralViaChartCorrectSmul.lean`.
+    Two-line lift of `pathIntegralInChartCorrect_smul` to the from-`X`
+    wrapper.
+  - `47f1811e` — `Periods/PathIntegralViaCoverNeg.lean`.
+    Multi-chart `_neg` via `Finset.sum_neg_distrib` + chart-local
+    `pathIntegralViaChartCorrect_neg`.
+  - `bd02a68a` — `TraceDegree/PullbackFormsLinearMapId.lean`.
+    One-line term proof: `pullbackFormsFun_id η` (since
+    `pullbackFormsLinearMap_apply` is `rfl`).
+  - `6b4dec8c` — `TraceDegree/PullbackFormsLinearMapSimp.lean`.
+    Three one-liners via `LinearMap.map_zero/_neg/_add`.
+  - `a698da94` — `Periods/ChartedFormPullbackLinearMapSimp.lean`.
+    Same pattern for `chartedFormPullbackLinearMap`.
+  Both `Periods` and `TraceDegree` umbrellas updated; lake build green.
+- **Submitted this tick** (5 disjoint refills):
+  - `b478c88a` — `Periods/PathIntegralViaCoverSmul.lean`.
+    `pathIntegralViaCoverWith_smul` (multi-chart smul).
+  - `a8aca9fa` — `Periods/PathIntegralViaCoverPickSimp.lean`.
+    Unparameterised wrapper linearity (`_zero`, `_neg`). Key insight:
+    `Classical.choose` only depends on `γ`, not `ω`.
+  - `ecc4405a` — `TraceDegree/PullbackFormsLinearMapSmul.lean`.
+  - `ac357e8c` — `Periods/ChartedFormPullbackLinearMapSmul.lean`.
+  - `e7a078bd` — `Periods/CurveIntegralLinearity.lean`. **Note:**
+    prompt was over-elaborated with embedded "REVISED INSTRUCTION";
+    flagged for careful review on integration. May need to cancel
+    and resubmit cleanly.
 
 ## Layer status
 

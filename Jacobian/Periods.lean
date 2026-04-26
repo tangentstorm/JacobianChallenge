@@ -3,6 +3,7 @@ import Jacobian.Periods.DivFinIcc
 import Jacobian.Periods.ChartedForm
 import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackLinearMap
+import Jacobian.Periods.ChartedFormPullbackLinearMapSimp
 import Jacobian.Periods.ChartedFormPullbackSimp
 import Jacobian.Periods.ChartedFormPullbackSmul
 import Jacobian.Periods.ChartedFormSimp
@@ -16,8 +17,10 @@ import Jacobian.Periods.PathIntegralChartCorrectSimp
 import Jacobian.Periods.PathIntegralChartCorrectZero
 import Jacobian.Periods.PathIntegralViaChartCorrect
 import Jacobian.Periods.PathIntegralViaChartCorrectNeg
+import Jacobian.Periods.PathIntegralViaChartCorrectSmul
 import Jacobian.Periods.PathIntegralViaChartCorrectZero
 import Jacobian.Periods.PathIntegralViaCover
+import Jacobian.Periods.PathIntegralViaCoverNeg
 import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverZero
 import Jacobian.Periods.PathLift
