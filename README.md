@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 16:41 EDT
+Last tick: 2026-04-26 16:45 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,14 +49,15 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW Periods/PathIntegralChartCorrectTrans:
-                      `pathIntegralInChartCorrect_trans_of_curveIntegrable` —
-                      conditional path-concatenation linearity. 3-line
-                      proof reducing to `curveIntegral_trans` (Mathlib).
-                      Becomes unconditional once Packet F's
-                      curve-integrability lands. Wired into Periods
-                      umbrella; build green (8125 jobs, 129s).
-                      First step toward `_trans` family.
+                      NEW Periods/PathIntegralChartTrans:
+                      `pathIntegralInChart_trans_of_curveIntegrable` —
+                      provisional in-chart path-concatenation linearity,
+                      mirror of last tick's corrected version. 3-line
+                      proof reducing to `curveIntegral_trans`. Wired
+                      into Periods umbrella; build green
+                      (8126 jobs, 110s). The conditional `_trans`
+                      family now has both in-chart layers
+                      (provisional + corrected).
 Failed/split this tick: none.
 ```
 
@@ -160,6 +161,7 @@ Periods.PathIntegralChartCorrectSymmAddSelf pass lake build Jacobian.Periods.Pat
 Periods.PathIntegralChartSymmAddSelf pass lake build Jacobian.Periods.PathIntegralChartSymmAddSelf (no sorry)
 Periods.PathIntegralViaChartSymmAddSelf pass lake build Jacobian.Periods.PathIntegralViaChartSymmAddSelf (no sorry)
 Periods.PathIntegralChartCorrectTrans pass lake build Jacobian.Periods.PathIntegralChartCorrectTrans (no sorry)
+Periods.PathIntegralChartTrans pass lake build Jacobian.Periods.PathIntegralChartTrans (no sorry)
 ```
 
 ```text
