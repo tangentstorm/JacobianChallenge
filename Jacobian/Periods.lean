@@ -6,6 +6,7 @@ import Jacobian.Periods.ChartedFormSmul
 import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackApply
 import Jacobian.Periods.ChartedFormPullbackLinearMap
+import Jacobian.Periods.ChartedFormPullbackLinearMapApply
 import Jacobian.Periods.ChartedFormPullbackLinearMapSimp
 import Jacobian.Periods.ChartedFormPullbackLinearMapSmul
 import Jacobian.Periods.ChartedFormPullbackSimp
