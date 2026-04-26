@@ -12,30 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 21:32 EDT)
+## Live Status (2026-04-25 21:39 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 7h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place:** type, module structure, class
   for finite-dimensionality, and `analyticGenus` definition.
-- **Queue D scaffolding in progress:** four files now in place
+- **Queue D scaffolding in progress:** five files in place
   (no sorries):
-  - `Jacobian/Periods/Recon.lean` — design document.
-  - `Jacobian/Periods/ChartedForm.lean` — transport a
-    `HolomorphicOneForm E X` through a chart to a 1-form on `E`.
-  - `Jacobian/Periods/PathIntegralChart.lean` — chart-local
-    path integral, using Mathlib's `curveIntegral` on a path
-    already transported into `E`.
-  - `Jacobian/Periods/PathLift.lean` (this tick) — closes the
-    from-`X` gap. `chartLift c γ h` uses Mathlib's `Path.map'`
-    (which accepts `ContinuousOn f (range γ)`) so the chart-source
-    restriction is the only continuity input. `pathIntegralViaChart
-    c ω γ h` then integrates a path-on-X that stays inside one
-    chart.
-- The next bottleneck is multi-chart path integration (paths
-  crossing chart boundaries) and the bridge to `singularHomologyFunctor`
-  for the integral cycle type.
+  - `Periods/Recon.lean` — design document.
+  - `Periods/ChartedForm.lean` — chart-local transport of a
+    `HolomorphicOneForm` to a 1-form on the model space.
+  - `Periods/PathIntegralChart.lean` — chart-local path integral
+    via Mathlib's `curveIntegral`.
+  - `Periods/PathLift.lean` — from-`X` wrapper using
+    `Path.map'` for paths inside a chart's source.
+  - `Periods/IntegralOneCycle.lean` (this tick) — defines
+    `IntegralOneCycle X` as `((singularHomologyFunctor (ModuleCat ℤ)
+    1).obj (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)`, the underlying
+    `ModuleCat ℤ` object of `H₁(X, ℤ)`. Imports
+    `ModuleCat.Colimits` and `ModuleCat.Abelian` for the
+    `HasCoproducts` instance the homology functor needs.
+- Next: state the period pairing as an `AddMonoidHom` (proof
+  deferred); extend path integration to multi-chart paths.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
