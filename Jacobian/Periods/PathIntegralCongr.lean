@@ -45,4 +45,20 @@ theorem pathIntegralViaChart_eq_of_path_eq
   subst hγ
   rfl
 
+/-- HEq version: if two paths between possibly-different endpoints
+agree heterogeneously, their corrected from-`X` integrals are equal.
+Useful when the endpoint terms are propositionally equal but not
+definitionally — e.g. `γ (σ (i/n))` vs `γ ((n-i)/n)`. -/
+theorem pathIntegralViaChartCorrect_eq_of_heq
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
+    {a b a' b' : X} (ha : a = a') (hb : b = b')
+    {γ : Path a b} {γ' : Path a' b'} (hγ : HEq γ γ')
+    (h : range γ ⊆ c.source) (h' : range γ' ⊆ c.source) :
+    pathIntegralViaChartCorrect c ω γ h =
+      pathIntegralViaChartCorrect c ω γ' h' := by
+  subst ha
+  subst hb
+  cases hγ
+  rfl
+
 end JacobianChallenge.Periods
