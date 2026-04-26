@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 02:55 EDT
+Last tick: 2026-04-26 03:01 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,12 +46,18 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 5/5. All running at 1-2% (just started).
-Integrated this tick: none.
-Submitted this tick:  none (full pipeline).
-Local progress: refreshed PathIntegralViaCoverRecon.lean's packet
-                plan to reflect the rapid recent integrations
-                (linearity API, _refl in flight, etc).
+Active jobs (ours): 5/5.
+Integrated this tick: 🎉 3 of 5:
+                      `ad85aa10` Periods/PathIntegralViaCoverPickSmul
+                      `5d2035c3` Periods/ChartLiftReflSubpath
+                      `e0fd22dd` Periods/ChartedFormPullbackApply
+Still running:        `b5511a61` TraceDegree/PullbackFunApply
+                      `ea9c5d7a` Periods/PathIntegralViaCoverWithRefl
+                                 (was gated on 5d2035c3 — now unblocked)
+Submitted this tick:  3 refills:
+                      `5a37f398` Periods/PathIntegralViaCoverWithApply
+                      `8a559c20` TraceDegree/PullbackFunConst
+                      `741d15c3` Periods/ChartedFormSmul
 Failed/split this tick: none.
 ```
 
@@ -120,6 +126,9 @@ Periods.PathIntegralViaCoverPickSimp pass lake build Jacobian.Periods.PathIntegr
 TraceDegree.PullbackFormsLinearMapSmul pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapSmul (no sorry)
 Periods.ChartedFormPullbackLinearMapSmul pass lake build Jacobian.Periods.ChartedFormPullbackLinearMapSmul (no sorry)
 Periods.CurveIntegralLinearity pass lake build Jacobian.Periods.CurveIntegralLinearity (stub)
+Periods.PathIntegralViaCoverPickSmul pass lake build Jacobian.Periods.PathIntegralViaCoverPickSmul (no sorry)
+Periods.ChartLiftReflSubpath pass lake build Jacobian.Periods.ChartLiftReflSubpath (no sorry)
+Periods.ChartedFormPullbackApply pass lake build Jacobian.Periods.ChartedFormPullbackApply (no sorry)
 ```
 
 ```text
