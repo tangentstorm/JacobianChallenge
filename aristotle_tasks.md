@@ -12,7 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 11:34 EDT)
+## Live Status (2026-04-26 11:38 EDT)
+
+- Active jobs (ours): 1/5. One QUEUED ~7.5h
+  (`82687eb7` PullbackFunSimpApply) — backend stalled since
+  ~04:09 EDT, no jobs moving on any project.
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/Periods/PathIntegralViaChartLinear.lean` —
+    `pathIntegralViaChart_neg` and `pathIntegralViaChart_smul` for
+    the provisional from-X integral. Proof per lemma:
+    `show curveIntegral (chartedForm c _) (chartLift c γ h) = ...; rw [chartedForm_neg/smul, curveIntegral_neg/smul]`
+    (3 lines).
+  - **In-flight job `bf7d62c4` cancelled** after local landing
+    (was QUEUED ~7.5h with no progress).
+  - Wired into `Jacobian/Periods.lean` umbrella; module builds
+    green (2673 jobs, 55s).
+- **Submitted this tick:** none.
+- Continuing to drain in-flight queue locally while backend frozen.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 11:34 EDT)
 
 - Active jobs (ours): 2/5. Two QUEUED ~7.5h — backend stalled
   since ~04:09 EDT, no jobs moving on any project.

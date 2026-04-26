@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 11:34 EDT
+Last tick: 2026-04-26 11:38 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,20 +46,21 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 2/5 (one cancelled this tick after local
-                      landing; backend stalled ~7.5h since 04:09 EDT).
-Integrated this tick: f8faacda chartLift_zero/_one — landed
-                      LOCALLY (Aristotle backend still frozen, so
-                      proved in-house and cancelled the in-flight
-                      job).
+Active jobs (ours): 1/5 (TWO cancelled today after local landing;
+                      backend stalled ~7.5h since 04:09 EDT).
+Integrated this tick: bf7d62c4 pathIntegralViaChart_{neg,smul}
+                      — landed LOCALLY (Aristotle backend still
+                      frozen, so proved in-house and cancelled
+                      the in-flight job).
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/ChartLiftBoundary: chartLift_zero
-                      and chartLift_one boundary-value simp lemmas,
-                      proved by `rw [chartLift_apply, γ.source]`
-                      and `[chartLift_apply, γ.target]` resp.
-                      In-flight job f8faacda cancelled (was QUEUED
-                      ~7.5h with no movement). Wired into Periods
-                      umbrella; module builds green (2672 jobs, 38s).
+                      Periods/PathIntegralViaChartLinear:
+                      pathIntegralViaChart_neg and _smul for the
+                      provisional from-X integral, proved by
+                      `show ... rw [chartedForm_neg, curveIntegral_neg]`
+                      and the smul analogue (3 lines per lemma).
+                      In-flight job bf7d62c4 cancelled (was QUEUED
+                      ~7.5h). Wired into Periods umbrella; module
+                      builds green (2673 jobs, 55s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
@@ -151,6 +152,7 @@ Periods.PathIntegralChartCorrectApply pass lake build Jacobian.Periods.PathInteg
 Periods.PathIntegralViaChartCorrectApply pass lake build Jacobian.Periods.PathIntegralViaChartCorrectApply (no sorry)
 Periods.ChartLiftApply pass    lake build Jacobian.Periods.ChartLiftApply (no sorry)
 Periods.ChartLiftBoundary pass lake build Jacobian.Periods.ChartLiftBoundary (no sorry)
+Periods.PathIntegralViaChartLinear pass lake build Jacobian.Periods.PathIntegralViaChartLinear (no sorry; _neg+_smul)
 Periods.ChartedFormPullbackApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackApplyLinear (no sorry)
 Periods.ChartedFormPullbackLinearMapApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackLinearMapApplyLinear (no sorry)
 TraceDegree.PullbackFunAddSubApply pass lake build Jacobian.TraceDegree.PullbackFunAddSubApply (no sorry)
