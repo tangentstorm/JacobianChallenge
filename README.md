@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:13 EDT
+Last tick: 2026-04-26 00:18 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,21 +46,24 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 2/5.
-                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`. IN_PROGRESS, 12%.
-                    - `3a1d6716` — `Periods/PathLiftSimp.lean`. IN_PROGRESS, 5%.
-Integrated this tick: 🎉 `26789359` —
-                      `Jacobian/Periods/PathIntegralChartCorrect.lean`.
-                      Aristotle returned the one-line definition
-                      `pathIntegralInChartCorrect c ω γ :=
-                      curveIntegral (chartedFormPullback c ω) γ`
-                      exactly as specified. Wired into the
+Active jobs (ours): 1/5.
+                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`. IN_PROGRESS, 14%.
+Integrated this tick: 🎉 `3a1d6716` —
+                      `Jacobian/Periods/PathLiftSimp.lean`. Two
+                      simp/API lemmas:
+                      - `pathIntegralViaChart_refl` (`@[simp]`):
+                        from-`X` integral over a constant path is
+                        `0`.
+                      - `pathIntegralViaChart_symm`: sign-reversal
+                        under path symmetry.
+                      Both proofs use `Path.ext rfl` to bridge
+                      `chartLift c (Path.refl a)` to `Path.refl (c a)`
+                      (and analogously for `symm`). Wired into the
                       `Jacobian.Periods` umbrella.
-Local progress this tick: integration of 26789359.
-Complex torus layer: complete and self-contained. Queue D now has
-                     correct chart pullback, multi-chart partition,
-                     basic chart-form algebra, and the corrected
-                     chart-local integral.
+Local progress this tick: integration of 3a1d6716.
+Complex torus layer: complete and self-contained. Queue D's
+                     from-`X` integration API now has refl/symm
+                     simp lemmas.
 ```
 
 ```text
@@ -97,6 +100,7 @@ Periods.ChartedFormPullback pass lake build Jacobian.Periods.ChartedFormPullback
 Periods.ChartedFormSimp pass lake build Jacobian.Periods.ChartedFormSimp (no sorry)
 Periods.PathPartition pass lake build Jacobian.Periods.PathPartition (no sorry)
 Periods.PathIntegralChartCorrect pass lake build Jacobian.Periods.PathIntegralChartCorrect (no sorry)
+Periods.PathLiftSimp pass lake build Jacobian.Periods.PathLiftSimp (no sorry)
 ```
 
 ```text
