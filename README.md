@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 10:41 EDT
+Last tick: 2026-04-26 10:43 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,10 +50,13 @@ Active jobs (ours): 3/5 (backend stalled ~6.5h, no movement
                       since 04:09 EDT).
 Integrated this tick: none — backend frozen.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/ChartedFormPullbackApplyLinear:
-                      5 pointwise apply-form simp lemmas
-                      `chartedFormPullback_{zero,neg,add,sub,smul}_apply`,
-                      wired into Periods umbrella (builds green).
+                      Periods/ChartedFormPullbackLinearMapApplyLinear:
+                      5 pointwise apply-form simp lemmas at the
+                      bundled-LinearMap layer
+                      `chartedFormPullbackLinearMap_{zero,neg,add,sub,smul}_apply`,
+                      mirroring the unbundled apply-bundle from
+                      the previous tick. Wired into Periods
+                      umbrella; build green (2418 jobs, 35s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
@@ -145,6 +148,7 @@ Periods.PathIntegralChartCorrectApply pass lake build Jacobian.Periods.PathInteg
 Periods.PathIntegralViaChartCorrectApply pass lake build Jacobian.Periods.PathIntegralViaChartCorrectApply (no sorry)
 Periods.ChartLiftApply pass    lake build Jacobian.Periods.ChartLiftApply (no sorry)
 Periods.ChartedFormPullbackApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackApplyLinear (no sorry)
+Periods.ChartedFormPullbackLinearMapApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackLinearMapApplyLinear (no sorry)
 ```
 
 ```text
