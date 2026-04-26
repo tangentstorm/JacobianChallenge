@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 23:46 EDT
+Last tick: 2026-04-25 23:51 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,21 +46,24 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 4/5.
-                    - `78ab4b77` — `Periods/PathPartition.lean`. IN_PROGRESS, 3%.
-                    - `3265ae48` — `Periods/ChartedFormPullback.lean`. IN_PROGRESS, 4%.
-                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`. QUEUED.
-                    - `0ccee8d8` — `Periods/ChartedFormSimp.lean`. Just submitted.
-Integrated this tick: nothing yet.
-Local progress this tick: submitted a 4th packet (`0ccee8d8`) for
-                          two simp lemmas (`chartedForm_neg`,
-                          `chartedForm_add`) that mirror the
-                          existing `chartedForm_zero`. Small API
-                          extension following the established
-                          `ContMDiffSection.coe_*` pattern.
-Complex torus layer: complete and self-contained. Queue D
-                     primitives in place; four Aristotle jobs in
-                     flight.
+Active jobs (ours): 3/5 (one integrated this tick).
+                    - `78ab4b77` — `Periods/PathPartition.lean`. IN_PROGRESS, 5%.
+                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`. IN_PROGRESS, 1%.
+                    - `0ccee8d8` — `Periods/ChartedFormSimp.lean`. IN_PROGRESS, 1%.
+Integrated this tick: 🎉 `3265ae48` — `Periods/ChartedFormPullback.lean`.
+                      Aristotle delivered the definition exactly as
+                      specified, clean and no `sorry`. The corrected
+                      chart pullback `chartedFormPullback c ω e =
+                      (ω.toFun (c.symm e)).comp (mfderiv … c.symm e)`
+                      now lives alongside the provisional
+                      `chartedForm`. Wired into the `Jacobian.Periods`
+                      umbrella; type-checks against the existing
+                      `HolomorphicOneForm` API.
+Local progress this tick: integration of 3265ae48.
+Complex torus layer: complete and self-contained. Queue D now has
+                     a real chart-pullback definition alongside the
+                     provisional one; downstream migration is the
+                     follow-up.
 ```
 
 ```text
@@ -93,6 +96,7 @@ Periods (umbrella)  pass    lake build Jacobian.Periods (1 opaque)
 AnalyticJacobian (umbrella) pass lake build Jacobian.AnalyticJacobian
 AbelJacobi.Recon    pass    lake build Jacobian.AbelJacobi.Recon (recon)
 TraceDegree.Recon   pass    lake build Jacobian.TraceDegree.Recon (recon)
+Periods.ChartedFormPullback pass lake build Jacobian.Periods.ChartedFormPullback (no sorry)
 ```
 
 ```text

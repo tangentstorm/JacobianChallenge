@@ -12,22 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 23:46 EDT)
+## Live Status (2026-04-25 23:51 EDT)
 
-- Active jobs (ours): 4/5.
+- Active jobs (ours): 3/5.
   | ID         | Target file                                       | Kind  | Status      |
   | ---------- | ------------------------------------------------- | ----- | ----------- |
   | 78ab4b77   | `Jacobian/Periods/PathPartition.lean`             | proof | in flight   |
-  | 3265ae48   | `Jacobian/Periods/ChartedFormPullback.lean`       | def   | in flight   |
   | 259b18a1   | `Jacobian/HolomorphicForms/TorusExample.lean`     | proof | in flight   |
   | 0ccee8d8   | `Jacobian/Periods/ChartedFormSimp.lean`           | proof | in flight   |
-  - 78ab4b77: `exists_uniform_chart_partition` — multi-chart
-    partition lemma.
-  - 3265ae48: `chartedFormPullback` — genuine chart pullback via
-    `mfderiv`, alongside the existing provisional `chartedForm`.
-  - 259b18a1: `dzSection` on the genus-1 torus + non-zero proof.
-  - 0ccee8d8 (this tick): `chartedForm_neg` and `chartedForm_add`
-    simp lemmas, mirroring the existing `chartedForm_zero`.
+- 🎉 **Integrated this tick:** `3265ae48` —
+  `Jacobian/Periods/ChartedFormPullback.lean`. Aristotle returned
+  the definition exactly as specified; clean, no sorry. Wired into
+  the `Jacobian.Periods` umbrella. The corrected pullback now
+  exists alongside the provisional `chartedForm`; migration of
+  downstream code is the follow-up.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +
