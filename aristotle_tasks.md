@@ -12,17 +12,16 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 00:18 EDT)
+## Live Status (2026-04-26 00:22 EDT)
 
-- Active jobs (ours): 1/5 (one integrated this tick).
-  | ID         | Target file                                       | Kind  | Status      |
-  | ---------- | ------------------------------------------------- | ----- | ----------- |
-  | 259b18a1   | `Jacobian/HolomorphicForms/TorusExample.lean`     | proof | in flight   |
-- 🎉 **Integrated this tick:** `3a1d6716` —
-  `Jacobian/Periods/PathLiftSimp.lean`. Two simp/API lemmas
-  (`pathIntegralViaChart_refl`, `pathIntegralViaChart_symm`)
-  proved via `Path.ext rfl` bridges between `chartLift c
-  (Path.refl a)` and `Path.refl (c a)`. Clean, no sorry.
+- Active jobs (ours): 2/5.
+  | ID         | Target file                                                    | Kind  | Status      |
+  | ---------- | -------------------------------------------------------------- | ----- | ----------- |
+  | 259b18a1   | `Jacobian/HolomorphicForms/TorusExample.lean`                  | proof | in flight   |
+  | e7aa502d   | `Jacobian/Periods/PathIntegralChartCorrectSimp.lean`           | proof | in flight   |
+- Nothing integrated this tick.
+- Submitted e7aa502d to round out the corrected-integral API
+  (`_refl` and `_symm` mirroring the provisional version).
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +
