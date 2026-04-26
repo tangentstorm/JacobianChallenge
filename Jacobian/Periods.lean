@@ -37,6 +37,7 @@ import Jacobian.Periods.PathIntegralViaCover
 import Jacobian.Periods.PathIntegralViaCoverNeg
 import Jacobian.Periods.PathIntegralViaCoverWithAdd
 import Jacobian.Periods.PathIntegralViaCoverWithApply
+import Jacobian.Periods.PathIntegralViaCoverWithSub
 import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverPickApply
 import Jacobian.Periods.PathIntegralViaCoverPickRefl
