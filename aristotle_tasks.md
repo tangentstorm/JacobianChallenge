@@ -12,14 +12,14 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 06:16 EDT)
+## Live Status (2026-04-26 06:18 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED 2h+ — backend stalled
   since ~04:09 EDT, no jobs moving on any project.
 - **Integrated this tick:** none.
 - **Submitted this tick:** none (backlog still blocking).
 - Bookkeeping tick. Conditional `_add`/`_sub` ladders both
-  complete. Waiting on backend recovery before extending further.
+  complete. Waiting on backend recovery.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-26 05:17 EDT)
