@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 12:27 EDT
+Last tick: 2026-04-26 12:30 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,15 +49,17 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/ChartedFormLinearMap: NEW file
-                      packaging the provisional `chartedForm` as a
-                      ℂ-linear map (mirror of corrected layer's
-                      ChartedFormPullbackLinearMap). Definition
-                      uses `chartedForm_add` and `chartedForm_smul`
-                      for `map_add'` and `map_smul'`; sanity
-                      `_apply : LinearMap c ω = chartedForm c ω`
-                      is `rfl`. Wired into Periods umbrella;
-                      build green (2411 jobs, 22s).
+                      Two new files derived from last tick's
+                      chartedFormLinearMap:
+                      - Periods/ChartedFormLinearMapSimp:
+                        chartedFormLinearMap_{zero,neg,add,sub}
+                        (LinearMap.map_zero/neg/add/sub).
+                      - Periods/ChartedFormLinearMapSmul:
+                        chartedFormLinearMap_smul.
+                      All five are 1-line term proofs. Mirror of
+                      ChartedFormPullbackLinearMap{Simp,Smul}.
+                      Wired into Periods umbrella; build green
+                      (2413 jobs, 27s each).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
