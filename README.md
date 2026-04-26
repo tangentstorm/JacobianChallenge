@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 17:42 EDT
+Last tick: 2026-04-26 18:05 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,19 +46,25 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5 (queue empty).
-Integrated this tick: none — queue empty.
-Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW Periods/PathIntegralViaChartNegSymmEqSelf:
-                      `pathIntegralViaChart_neg_symm_eq_self` —
-                      provisional via-chart layer, completing the
-                      negate-and-reverse cancellation family. Same
-                      `_symm + _neg + neg_neg` chain. Wired into
-                      Periods umbrella; build green (8131 jobs, 67s).
-                      Negate-and-reverse identity now at all five
-                      layers: in-chart provisional, in-chart
-                      corrected, via-chart provisional (this tick),
-                      via-chart corrected, cover-with.
+Active jobs (ours): 1/5 — `09cd85dd` canary submitted to detect
+                      Aristotle wake from ~14h freeze.
+Integrated this tick (local Claude-owned):
+                      Three new files:
+                      - Periods/ChartLiftTrans:
+                        `chartLift_trans` — chart lift commutes
+                        with `Path.trans`. Path.ext + funext +
+                        split_ifs + rfl proof.
+                      - Periods/ChartLiftTransApply: pointwise
+                        apply form, 1-line `rw` proof.
+                      - Periods/PathIntegralViaChartCorrectTrans:
+                        `pathIntegralViaChartCorrect_trans_of_curveIntegrable`
+                        — lifts the in-chart corrected `_trans` to
+                        from-`X` via `chartLift_trans`. 3-line
+                        proof. Build green (8133 jobs).
+Submitted this tick:  `09cd85dd-37b7-4e6f-89f3-99cd16f58ab7` —
+                      provisional via-chart `_trans` lift (canary;
+                      proof should mirror the corrected analogue
+                      I just landed).
 Failed/split this tick: none.
 ```
 
@@ -174,6 +180,10 @@ Periods.PathIntegralViaCoverNegSymmEqSelf pass lake build Jacobian.Periods.PathI
 Periods.PathIntegralChartCorrectNegSymmEqSelf pass lake build Jacobian.Periods.PathIntegralChartCorrectNegSymmEqSelf (no sorry)
 Periods.PathIntegralChartNegSymmEqSelf pass lake build Jacobian.Periods.PathIntegralChartNegSymmEqSelf (no sorry)
 Periods.PathIntegralViaChartNegSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaChartNegSymmEqSelf (no sorry)
+Periods.ChartLiftTrans pass lake build Jacobian.Periods.ChartLiftTrans (no sorry)
+Periods.ChartLiftTransApply pass lake build Jacobian.Periods.ChartLiftTransApply (no sorry)
+Periods.PathIntegralViaChartCorrectTrans pass lake build Jacobian.Periods.PathIntegralViaChartCorrectTrans (no sorry)
+Periods.PathIntegralViaChartTrans (canary — sorry'd, awaiting Aristotle)
 ```
 
 ```text
