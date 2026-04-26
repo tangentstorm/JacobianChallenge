@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 01:45 EDT
+Last tick: 2026-04-26 01:51 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -33,7 +33,7 @@ Quotient charted-space/manifold  ███████████████�
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
 Holomorphic forms                ██████░░░░░░░░░░░░░░   30%  type/module/analyticGenus
-Path integration/periods         ████████░░░░░░░░░░░░   40%  multi-chart partition + correct pullback landed
+Path integration/periods         █████████░░░░░░░░░░░   45%  multi-chart cover def landed; well-definedness next
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
 Trace/degree/push-pull           ██░░░░░░░░░░░░░░░░░░   10%  pullbackFormsFun + linearity (no smoothness yet)
@@ -46,17 +46,15 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 5/5. Backlog still heavy.
-Integrated this tick: 🎉 `fe592ee1` (partial) — Periods/PathIntegral-
-                      ChartCorrectLinear (only _neg, since _add needs
-                      CurveIntegrable hypotheses Aristotle couldn't
-                      discharge).
-Submitted this tick:  `40031834` —
-                      Periods/PathIntegralViaChartCorrectNeg
-                      (from-X negation lift, unblocked by _neg).
-Discovered blocker:   `chartedFormPullback_curveIntegrable` is the
-                      missing helper for `_add`. Recorded as
-                      Packet F in PathIntegralViaCoverRecon.
+Active jobs (ours): 5/5. Three running (1%), two queued.
+Integrated this tick: none.
+Submitted this tick:  none (full pipeline).
+Local progress: added Periods/PathIntegralViaCover.lean —
+                pathIntegralViaCoverWith ω γ n hn pickChart hcov
+                (multi-chart path integral with explicit partition).
+                Sums pathIntegralViaChartCorrect over Fin n via
+                Path.subpath; range-subset proof uses
+                Set.uIcc_of_le + divFinIcc_le_succ. Lake build green.
 Failed/split this tick: none.
 ```
 
@@ -106,6 +104,7 @@ Periods.ChartedFormPullbackSmul pass lake build Jacobian.Periods.ChartedFormPull
 TraceDegree.PullbackFunSmul pass lake build Jacobian.TraceDegree.PullbackFunSmul (no sorry)
 Periods.DivFinIcc  pass    lake build Jacobian.Periods.DivFinIcc (no sorry)
 Periods.PathIntegralChartCorrectLinear pass lake build Jacobian.Periods.PathIntegralChartCorrectLinear (no sorry; _neg only)
+Periods.PathIntegralViaCover pass lake build Jacobian.Periods.PathIntegralViaCover (no sorry)
 ```
 
 ```text

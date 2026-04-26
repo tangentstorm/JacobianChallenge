@@ -14,6 +14,7 @@ import Jacobian.Periods.PathIntegralChartCorrectSimp
 import Jacobian.Periods.PathIntegralChartCorrectZero
 import Jacobian.Periods.PathIntegralViaChartCorrect
 import Jacobian.Periods.PathIntegralViaChartCorrectZero
+import Jacobian.Periods.PathIntegralViaCover
 import Jacobian.Periods.PathLift
 import Jacobian.Periods.PathLiftSimp
 import Jacobian.Periods.PathPartition
