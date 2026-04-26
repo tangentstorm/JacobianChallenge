@@ -12,25 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 16:30 EDT)
+## Live Status (2026-04-26 16:35 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
-  (~12.5h since last movement). Continuing local work per the
+  (~12.75h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartSymmAddSelf.lean`:
-    `pathIntegralInChart_add_symm_self` — provisional in-chart
-    round-trip identity. 1-line proof:
-    `rw [_symm, add_neg_cancel]`. Wired into
+  - NEW `Jacobian/Periods/PathIntegralViaChartSymmAddSelf.lean`:
+    `pathIntegralViaChart_add_symm_self` — provisional via-chart
+    round-trip identity, completing the family. 1-line proof:
+    `rw [_symm c ω γ h h', add_neg_cancel]`. Wired into
     `Jacobian/Periods.lean` umbrella; build green
-    (8123 jobs, 233s).
+    (8124 jobs, 135s).
 - The round-trip identity `∫(ω, γ) + ∫(ω, γ.symm) = 0` now
-  exists at four layers: in-chart provisional (this tick),
-  in-chart corrected, via-chart corrected, cover-with.
+  exists at all five layers: in-chart provisional, in-chart
+  corrected, via-chart provisional (this tick), via-chart
+  corrected, cover-with. Family complete.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 16:23 EDT)
+## Stale Live Status (2026-04-26 16:30 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
