@@ -12,7 +12,24 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 14:50 EDT)
+## Live Status (2026-04-26 14:52 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/PathIntegralChartNegSymm.lean`:
+    `pathIntegralInChart_neg_form_eq_symm_path` (provisional in-chart).
+  - NEW `Jacobian/Periods/PathIntegralViaChartNegSymm.lean`:
+    `pathIntegralViaChart_neg_form_eq_symm_path` (provisional from-X).
+  - Both 1-line `rw [_neg, _symm]` proofs.
+  - Both wired into `Jacobian/Periods.lean` umbrella; builds green.
+- The `_neg_form_eq_symm_path` family is now complete at the
+  provisional layer too (in-chart, via-chart). Together with the
+  corrected versions (in-chart, via-chart, cover) from earlier
+  ticks, the full set is in place.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 14:50 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**

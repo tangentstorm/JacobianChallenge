@@ -33,6 +33,7 @@ import Jacobian.Periods.ChartedFormSub
 import Jacobian.Periods.PathIntegralChartAdd
 import Jacobian.Periods.PathIntegralChartApply
 import Jacobian.Periods.PathIntegralChartLinear
+import Jacobian.Periods.PathIntegralChartNegSymm
 import Jacobian.Periods.PathIntegralChartSub
 import Jacobian.Periods.PathIntegralChartCorrect
 import Jacobian.Periods.PathIntegralChartCorrectApply
@@ -48,6 +49,7 @@ import Jacobian.Periods.PathIntegralViaChartApply
 import Jacobian.Periods.PathIntegralCongr
 import Jacobian.Periods.PathIntegralSegmentSymm
 import Jacobian.Periods.PathIntegralViaChartLinear
+import Jacobian.Periods.PathIntegralViaChartNegSymm
 import Jacobian.Periods.PathIntegralViaChartSub
 import Jacobian.Periods.PathIntegralViaChartCorrect
 import Jacobian.Periods.PathIntegralViaChartCorrectAdd
