@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 01:30 EDT
+Last tick: 2026-04-26 01:40 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,18 +46,14 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 5/5. Still all QUEUED on the shared backlog;
-                    two have been waiting >20 min.
+Active jobs (ours): 5/5. Still all QUEUED; b20e4f00 >32 min waiting.
 Integrated this tick: none.
-Submitted this tick:  none (full pipeline; saving slots).
-Local progress: discovered Mathlib already has Path.subpath in
-                Mathlib.Topology.Subpath (with full subpath_self,
-                subpath_zero_one, range_subpath, Homotopy.concat-
-                Subpath). Updated PathIntegralViaCoverRecon.lean
-                to drop the planned PathSubpath helper packet and
-                provide a complete construction sketch (only
-                nontrivial step: range subset via range_subpath +
-                uIcc_of_le). Lake build green.
+Submitted this tick:  none (full pipeline).
+Local progress: added Periods/DivFinIcc.lean — boundary point i/n
+                in unitInterval for i ≤ n, the helper used to express
+                segment endpoints of pathIntegralViaCover. Includes
+                divFinIcc_val/_zero/_self/_le_succ. Wired into the
+                Periods umbrella; lake build green.
 Failed/split this tick: none.
 ```
 
@@ -105,6 +101,7 @@ TraceDegree (umbrella) pass     lake build Jacobian.TraceDegree
 Periods.PathIntegralViaChartCorrectZero pass lake build Jacobian.Periods.PathIntegralViaChartCorrectZero (no sorry)
 Periods.ChartedFormPullbackSmul pass lake build Jacobian.Periods.ChartedFormPullbackSmul (no sorry)
 TraceDegree.PullbackFunSmul pass lake build Jacobian.TraceDegree.PullbackFunSmul (no sorry)
+Periods.DivFinIcc  pass    lake build Jacobian.Periods.DivFinIcc (no sorry)
 ```
 
 ```text
