@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:07 EDT
+Last tick: 2026-04-26 00:13 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,16 +46,21 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 3/5, all IN_PROGRESS.
-                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`. 12%.
-                    - `3a1d6716` — `Periods/PathLiftSimp.lean`. 3%.
-                    - `26789359` — `Periods/PathIntegralChartCorrect.lean`. 3%.
-Integrated this tick: nothing.
-Local progress this tick: status check only.
+Active jobs (ours): 2/5.
+                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`. IN_PROGRESS, 12%.
+                    - `3a1d6716` — `Periods/PathLiftSimp.lean`. IN_PROGRESS, 5%.
+Integrated this tick: 🎉 `26789359` —
+                      `Jacobian/Periods/PathIntegralChartCorrect.lean`.
+                      Aristotle returned the one-line definition
+                      `pathIntegralInChartCorrect c ω γ :=
+                      curveIntegral (chartedFormPullback c ω) γ`
+                      exactly as specified. Wired into the
+                      `Jacobian.Periods` umbrella.
+Local progress this tick: integration of 26789359.
 Complex torus layer: complete and self-contained. Queue D now has
                      correct chart pullback, multi-chart partition,
-                     basic chart-form algebra, and an in-flight
-                     corrected-integral wrapper.
+                     basic chart-form algebra, and the corrected
+                     chart-local integral.
 ```
 
 ```text
@@ -91,6 +96,7 @@ TraceDegree.Recon   pass    lake build Jacobian.TraceDegree.Recon (recon)
 Periods.ChartedFormPullback pass lake build Jacobian.Periods.ChartedFormPullback (no sorry)
 Periods.ChartedFormSimp pass lake build Jacobian.Periods.ChartedFormSimp (no sorry)
 Periods.PathPartition pass lake build Jacobian.Periods.PathPartition (no sorry)
+Periods.PathIntegralChartCorrect pass lake build Jacobian.Periods.PathIntegralChartCorrect (no sorry)
 ```
 
 ```text
