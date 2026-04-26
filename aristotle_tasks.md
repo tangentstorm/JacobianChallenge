@@ -12,21 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 19:11 EDT)
+## Live Status (2026-04-26 19:17 EDT)
 
-- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~1h.
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~1h+.
   Backend still asleep.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartCorrectNegSmul.lean`:
-    `pathIntegralInChartCorrect_neg_smul` — form-negation
-    factors through scalar negation:
-    `∫(-(k • ω), γ) = (-k) • ∫(ω, γ)`. Proof composes
-    `_neg + _smul + ← neg_smul`. Wired into Periods umbrella;
-    build green (8140 jobs).
+  - NEW `Jacobian/Periods/PathIntegralViaChartCorrectNegSmul.lean`:
+    `pathIntegralViaChartCorrect_neg_smul` — from-`X`
+    corrected lift of the in-chart `_neg_smul` from last
+    tick. Wired into Periods umbrella; build green (8141 jobs).
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 19:05 EDT)
+## Stale Live Status (2026-04-26 19:11 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
