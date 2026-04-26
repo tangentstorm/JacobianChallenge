@@ -12,29 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 21:14 EDT)
+## Live Status (2026-04-25 21:17 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
-  jobs QUEUED 6h+). No new submissions.
+  jobs QUEUED 7h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
-- **Queue C foundation in place:** `CotangentBundle.lean` and
-  `Defs.lean` (previous tick) — `HolomorphicOneForm E X` is an
-  analytic `ContMDiffSection` of the cotangent bundle, with
-  `AddCommGroup` and `Module ℂ` automatic via Mathlib.
-- **This tick:** attempted to update `StatementBank`'s
-  `HolomorphicOneForm` placeholder to use the real type. Reverted
-  after discovering a cascade: `HolomorphicOneFormDual` uses
-  `→L[ℂ]` (requires `NormedAddCommGroup`, which `ContMDiffSection`
-  doesn't carry) and `periodFullComplexLattice` requires
-  `NormedSpace ℂ` on the dual. The downstream Period-layer
-  placeholders need their own redesign in conjunction with Queue D
-  work; trying to fix them piecemeal as part of a Queue C
-  StatementBank update creates churn that won't reflect the actual
-  Period design. Plan: leave the StatementBank placeholder as
-  `:= ℂ` for now, do the redesign once Queue D begins.
-- Also fixed README progress-bar alignment (label column padded to
-  33 chars so the "Quotient charted-space/manifold" row lines up
-  with the rest).
+- **Queue C foundation in place:** `CotangentBundle.lean`,
+  `Defs.lean`, and now `FiniteDimensional.lean` —
+  `HolomorphicOneForm E X` is an analytic `ContMDiffSection` of
+  the cotangent bundle, with `AddCommGroup`, `Module ℂ`, the
+  `FiniteDimensionalHolomorphicOneForms E X` class, and
+  `analyticGenus E X` all in place. The `Module.Finite` proof
+  itself is deferred — that's the classical `dim H⁰(X, Ω¹) = g`
+  identity (Riemann–Roch / Hodge input required).
+- This tick lives in its own module
+  (`Jacobian/HolomorphicForms/FiniteDimensional.lean`) imports
+  `HolomorphicForms.Defs` directly, sidestepping the
+  `StatementBank` cascade discovered last tick.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
