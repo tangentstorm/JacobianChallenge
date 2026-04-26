@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 21:52 EDT
+Last tick: 2026-04-25 21:58 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -42,32 +42,29 @@ Trace/degree/push-pull           ░░░░░░░░░░░░░░░�
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
-                    jobs QUEUED 7h+).
+                    jobs QUEUED 8h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: added
-                          `Jacobian/Periods/LebesgueChartRadius.lean`
-                          (no sorries), the combinatorial input for
-                          multi-chart path integration. Statement:
-                          for any continuous `γ : C(K, X)` from a
-                          compact metric space `K` into a charted
-                          space `X`, there exists `δ > 0` such that
-                          every `δ`-ball in `K` lands inside some
-                          chart's source. ~10-line proof: cover `X`
-                          by chart sources (covers because
-                          `γ t ∈ (chartAt E (γ t)).source` by
-                          `mem_chart_source`), pull back via `γ` to
-                          get an open cover of `K`, apply
-                          `lebesgue_number_lemma_of_metric`. With
-                          this in hand, partitioning `[0, 1]` of
-                          mesh `< δ` lets each sub-path land inside
-                          a single chart and feed
-                          `pathIntegralInChart`.
-Complex torus layer: complete. Queue D: chart-local path integral,
+Local progress this tick: attempted to start the multi-chart path
+                          partition lemma (`PathPartition.lean`)
+                          but the proof grew sorry placeholders;
+                          backed out per the
+                          "no axioms/sorries in production files"
+                          rule. Substituted a clean smaller
+                          contribution: added
+                          `pathIntegralInChart_zero` (`@[simp]`)
+                          to `PathIntegralChart.lean`, completing
+                          the basic API for the chart-local
+                          integral (refl/symm/zero). Proof: unfold
+                          `chartedForm` at zero via
+                          `ContMDiffSection.coe_zero`, then
+                          `curveIntegral_zero` finishes.
+Complex torus layer: complete. Queue D primitives: chart-local
+                     path integral with refl/symm/zero API,
                      IntegralOneCycle, period pairing (opaque),
-                     period subgroup, and now Lebesgue radius. Next
-                     substantive step: combine the Lebesgue radius
-                     with a finite [0,1] partition to assemble
-                     multi-chart `pathIntegralViaCover`.
+                     period subgroup, Lebesgue radius. The
+                     multi-chart partition is the next bottleneck
+                     — non-trivial and merits a careful tick of
+                     its own.
 ```
 
 ```text
