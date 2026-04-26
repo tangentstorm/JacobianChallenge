@@ -12,18 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 05:41 EDT)
+## Live Status (2026-04-26 05:44 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~1 hr+ — backend
   stalled since ~04:09 EDT, no jobs moving on any project.
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
   - `Jacobian/Periods/ChartedFormPullbackCurveIntegrable.lean`:
-    add `chartedFormPullback_neg_curveIntegrable` and
-    `chartedFormPullback_smul_curveIntegrable` propagation
-    lemmas (conditional on `chartedFormPullback c ω` being
-    curve-integrable). Together with the zero-form foothold
-    landed yesterday, this closes the linearity API on this
-    file modulo the unconditional general-form case.
+    add `chartedFormPullback_add_curveIntegrable` and
+    `chartedFormPullback_sub_curveIntegrable` propagation lemmas
+    (conditional on both forms being curve-integrable). The
+    conditional linearity API on this file is now complete:
+    `_zero` unconditional, `_neg`/`_smul`/`_add`/`_sub`
+    conditional. Only the unconditional general-form
+    `chartedFormPullback_curveIntegrable` (with `ContDiffOn ℝ 1`
+    hypothesis) remains for full Packet F.
 - **Submitted this tick:** none (backlog still blocking).
 - Continuing local Claude-owned progress while Aristotle queue
   remains frozen.
