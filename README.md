@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:05 EDT
+Last tick: 2026-04-26 00:07 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -48,12 +48,10 @@ Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 3/5, all IN_PROGRESS.
                     - `259b18a1` — `HolomorphicForms/TorusExample.lean`. 12%.
-                    - `3a1d6716` — `Periods/PathLiftSimp.lean`. 2%.
-                    - `26789359` — `Periods/PathIntegralChartCorrect.lean`. 1%.
+                    - `3a1d6716` — `Periods/PathLiftSimp.lean`. 3%.
+                    - `26789359` — `Periods/PathIntegralChartCorrect.lean`. 3%.
 Integrated this tick: nothing.
-Local progress this tick: status check only — Aristotle still
-                          working on the three packets. No new
-                          submissions to keep load reasonable.
+Local progress this tick: status check only.
 Complex torus layer: complete and self-contained. Queue D now has
                      correct chart pullback, multi-chart partition,
                      basic chart-form algebra, and an in-flight
