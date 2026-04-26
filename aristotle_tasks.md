@@ -12,7 +12,35 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 13:02 EDT)
+## Live Status (2026-04-26 13:11 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/PathIntegralCongr.lean`: path-congruence
+    helpers `pathIntegralViaChartCorrect_eq_of_path_eq` and the
+    provisional analogue `pathIntegralViaChart_eq_of_path_eq`.
+    Both proved by `subst hγ; rfl` — relies on proof irrelevance
+    in `Prop` to handle the range-hypothesis arguments under path
+    equality. Resolves last tick's dependent-type rewrite blocker.
+  - NEW `Jacobian/Periods/PathIntegralSegmentSymm.lean`: now
+    completes the per-segment sign-flip lemma
+    `pathIntegralViaChartCorrect_symm_subpath_divFinIcc`. Proof
+    pattern: `set σpath`, derive `eq : γ.symm.subpath ... = σpath.symm`
+    from `path_symm_subpath_divFinIcc`, transport `h_symm` along
+    `eq` to get `h_symm'`, use `pathIntegralViaChartCorrect_eq_of_path_eq`
+    to rewrite the LHS, and finish with `pathIntegralViaChartCorrect_symm`.
+  - Both wired into `Jacobian/Periods.lean` umbrella; build green
+    (2762 jobs, 51s).
+- All path-side helpers for `pathIntegralViaCoverWith_symm` are
+  now in place. Remaining: the Finset.sum_bij Fin.rev re-indexing
+  + putting the full theorem together. (Will need `cover_symm_of_cover`
+  + `pathIntegralViaChartCorrect_symm_subpath_divFinIcc` per
+  segment + Finset re-index by Fin.rev + `divFinIcc_symm` for
+  the σ-to-arithmetic conversion.)
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 13:02 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
