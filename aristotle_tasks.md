@@ -12,7 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 11:33 EDT)
+## Live Status (2026-04-26 11:34 EDT)
+
+- Active jobs (ours): 2/5. Two QUEUED ~7.5h — backend stalled
+  since ~04:09 EDT, no jobs moving on any project.
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/Periods/ChartLiftBoundary.lean` — `chartLift_zero`
+    and `chartLift_one` boundary-value simp lemmas. Proved by
+    `rw [chartLift_apply, γ.source]` and `rw [chartLift_apply, γ.target]`
+    respectively (2 lines each).
+  - **In-flight job `f8faacda` cancelled** after local landing
+    (was QUEUED ~7.5h with no progress).
+  - Wired into `Jacobian/Periods.lean` umbrella; module builds
+    green (2672 jobs, 38s).
+- **Submitted this tick:** none.
+- Per user feedback: when backend is frozen, do substantive local
+  proof work each tick instead of refresh-only commits.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 11:33 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~7h — backend stalled
   since ~04:09 EDT, no jobs moving on any project.
