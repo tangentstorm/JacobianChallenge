@@ -75,6 +75,7 @@ import Jacobian.Periods.PathReflSubpath
 import Jacobian.Periods.PathSymmSubpath
 import Jacobian.Periods.PathPartitionSymm
 import Jacobian.Periods.PathPartitionCoverSymm
+import Jacobian.Periods.PathPartitionCoverSigmaForm
 import Jacobian.Periods.PathPartition
 import Jacobian.Periods.PeriodFunctional
 

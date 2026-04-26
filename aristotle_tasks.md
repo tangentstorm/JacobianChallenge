@@ -12,7 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 13:27 EDT)
+## Live Status (2026-04-26 13:43 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/PathPartitionCoverSigmaForm.lean`:
+    `range_subpath_sigma_subset_source` — constructs the range
+    hypothesis for the σ-form γ-segment from `hcov`. Mostly
+    arithmetic: σ((i+1)/n) ≤ σ(i/n) iff (i+1)/n ≥ i/n (true);
+    the σ-form parameter range coincides with γ's segment-(Fin.rev i)
+    parameter range. Proof uses `symm_le_symm`, `divFinIcc_le_succ`,
+    `Set.uIcc_of_le`, `coe_symm_eq`, `Fin.val_rev`, `Nat.cast_sub`,
+    `div_le_iff₀`/`le_div_iff₀`, `mul_le_mul_of_nonneg_right`,
+    `div_mul_cancel₀`, and `linarith` to close after multiplying
+    through. Hit several iterative debug rounds (Real-vs-unitInterval
+    coercion, Nat.cast_sub firing).
+  - Build green (`lake build Jacobian.Periods.PathPartitionCoverSigmaForm`
+    → 8029 jobs, 128s).
+- This unblocks the cover-symm proof: with both `cover_symm_of_cover`
+  (handles γ.symm side) and `range_subpath_sigma_subset_source`
+  (handles σ-form γ side), all range hypotheses for the
+  per-segment sign-flip rewrite are now derivable from `hcov`.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 13:27 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
