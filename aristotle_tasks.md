@@ -12,7 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 15:03 EDT)
+## Live Status (2026-04-26 15:06 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/PathIntegralViaCoverSmulSymm.lean`:
+    `pathIntegralViaCoverWith_smul_symm` — integrating `k • ω` along
+    γ.symm equals `-(k • cover-with-integral)`. 1-line proof:
+    `rw [_smul, _symm, smul_neg]`.
+  - Wired into `Jacobian/Periods.lean` umbrella; build green
+    (8051 jobs, 40s).
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 15:03 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick:** none. Brief refresh.
