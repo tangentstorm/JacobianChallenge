@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 15:43 EDT
+Last tick: 2026-04-26 15:50 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,13 +49,14 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW Periods/PathIntegralViaChartCorrectSmulSymm:
-                      `pathIntegralViaChartCorrect_smul_symm` — the
-                      single-chart analogue of the existing cover-level
-                      `_smul_symm`. 1-line proof
-                      `rw [_smul, _symm c ω γ h h', smul_neg]`. Wired
-                      into Periods umbrella; build green
-                      (8116 jobs, 85s).
+                      NEW Periods/PathIntegralChartCorrectSmulSymm:
+                      `pathIntegralInChartCorrect_smul_symm` — the
+                      in-chart corrected analogue of last tick's
+                      single-chart `_smul_symm`. 1-line proof
+                      `rw [_smul, _symm, smul_neg]`. Wired into
+                      Periods umbrella; build green (8117 jobs, 198s).
+                      The `_smul_symm` corollary now exists at all
+                      three layers: in-chart, via-chart, cover.
 Failed/split this tick: none.
 ```
 
@@ -150,6 +151,7 @@ Periods.ChartedFormPullbackLinearMapApplyLinear pass lake build Jacobian.Periods
 TraceDegree.PullbackFunAddSubApply pass lake build Jacobian.TraceDegree.PullbackFunAddSubApply (no sorry)
 TraceDegree.PullbackFormsLinearMapApplyLinear pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapApplyLinear (no sorry)
 Periods.PathIntegralViaChartCorrectSmulSymm pass lake build Jacobian.Periods.PathIntegralViaChartCorrectSmulSymm (no sorry)
+Periods.PathIntegralChartCorrectSmulSymm pass lake build Jacobian.Periods.PathIntegralChartCorrectSmulSymm (no sorry)
 ```
 
 ```text
