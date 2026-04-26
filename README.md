@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 22:01 EDT
+Last tick: 2026-04-25 22:06 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -34,6 +34,7 @@ Projection (mk) smoothness       ███████████████�
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
 Holomorphic forms                ██████░░░░░░░░░░░░░░   30%  type + module + analyticGenus
 Path integration/periods         ██████░░░░░░░░░░░░░░   30%  +Lebesgue radius for chart cover
+Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient defined
 Abel-Jacobi API                  ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Trace/degree/push-pull           ░░░░░░░░░░░░░░░░░░░░    0%  pending
 ```
@@ -44,26 +45,28 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 8h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: added
-                          `Jacobian/Periods/ChartBallAtPoint.lean`
-                          (no sorries) — a per-point variant of
-                          `exists_lebesgue_radius_chart`. For
-                          `γ : C(K, X)` and any `t : K`, gives a
-                          radius `r > 0` such that
-                          `ball t r ⊆ γ ⁻¹' (chartAt E (γ t)).source`.
-                          ~6-line proof: chart source open ⇒
-                          preimage open ⇒ contains a ball around
-                          `t` (`Metric.isOpen_iff`). Useful as a
-                          building block for the multi-chart
-                          partition (the uniform Lebesgue radius
-                          packages this across all points; the
-                          pointwise version is sometimes simpler).
-Complex torus layer: complete. Queue D primitives: chart-local
-                     path integral with refl/symm/zero API,
-                     IntegralOneCycle, period pairing (opaque),
-                     period subgroup, Lebesgue radius (uniform),
-                     and pointwise chart-ball. Multi-chart partition
-                     is still the next bottleneck.
+Local progress this tick: pivoted to Queue E. Added
+                          `Jacobian/AnalyticJacobian/Defs.lean`
+                          (no sorries) defining
+                          `AnalyticJacobianGroup E X :=
+                          (HolomorphicOneForm E X →ₗ[ℂ] ℂ) ⧸
+                          periodSubgroup E X`,
+                          the abstract group quotient of the linear
+                          dual of holomorphic 1-forms by the period
+                          subgroup. `AddCommGroup
+                          (AnalyticJacobianGroup E X)` instance
+                          comes for free from `QuotientAddGroup`
+                          (verified with an `example`).
+                          This sidesteps the sorry-laden
+                          `periodFullComplexLattice` placeholder in
+                          StatementBank by working at the group
+                          level only — the topology / manifold /
+                          compact-torus structure is layered on top
+                          via the deferred full-lattice property.
+Complex torus layer: complete. Queue D primitives in place.
+                     Queue E foundation: abstract Jacobian group
+                     defined; Lie-group structure deferred to
+                     full-lattice work.
 ```
 
 ```text
@@ -90,6 +93,7 @@ Periods.IntegralOneCycle pass lake build Jacobian.Periods.IntegralOneCycle (no s
 Periods.PeriodFunctional pass lake build Jacobian.Periods.PeriodFunctional (opaque pairing)
 Periods.LebesgueChartRadius pass lake build Jacobian.Periods.LebesgueChartRadius (no sorry)
 Periods.ChartBallAtPoint pass lake build Jacobian.Periods.ChartBallAtPoint (no sorry)
+AnalyticJacobian.Defs pass lake build Jacobian.AnalyticJacobian.Defs (no sorry)
 ```
 
 ```text

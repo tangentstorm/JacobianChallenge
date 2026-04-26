@@ -12,21 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 22:01 EDT)
+## Live Status (2026-04-25 22:06 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 8h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
-- **Queue D scaffolding (1 opaque, no sorries):** 8 files. This
-  tick added `Jacobian/Periods/ChartBallAtPoint.lean`, a per-point
-  variant of the Lebesgue radius lemma — for any `t : K`, there's
-  a radius `r > 0` with `ball t r ⊆ γ ⁻¹' (chartAt E (γ t)).source`.
-  ~6-line proof: chart source open ⇒ preimage open ⇒
-  `Metric.isOpen_iff` gives the radius.
-- Multi-chart partition remains the next bottleneck — needs
-  careful real arithmetic that hasn't fit cleanly into single
-  ticks yet.
+- **Queue D scaffolding (1 opaque, no sorries):** 8 files including
+  Recon, ChartedForm, PathIntegralChart, PathLift,
+  IntegralOneCycle, PeriodFunctional, LebesgueChartRadius,
+  ChartBallAtPoint.
+- **Queue E foundation:** added
+  `Jacobian/AnalyticJacobian/Defs.lean` this tick (no sorries).
+  Defines `AnalyticJacobianGroup E X := (HolomorphicOneForm E X
+  →ₗ[ℂ] ℂ) ⧸ periodSubgroup E X` — the abstract group quotient
+  shape of the analytic Jacobian. `AddCommGroup` instance comes
+  for free from `QuotientAddGroup`. Sidesteps the sorry-laden
+  StatementBank `periodFullComplexLattice` placeholder by working
+  at the group level only.
+- Multi-chart partition remains the bottleneck for promoting the
+  opaque period pairing to a real definition; full Lie-group
+  structure on `AnalyticJacobianGroup` is deferred to the
+  full-lattice work.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
