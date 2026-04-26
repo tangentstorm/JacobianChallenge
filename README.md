@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:44 EDT
+Last tick: 2026-04-26 00:51 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,24 +47,15 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 4/5.
-In flight:            `091ac5d1` — Periods/ChartedFormPullbackSimp
-                      (chartedFormPullback_zero/_neg/_add).
-                      `ee3ce016` — Periods/PathIntegralViaChartCorrect
+Integrated this tick: 🎉 `ee3ce016` —
+                      `Periods/PathIntegralViaChartCorrect.lean`
                       (from-X wrapper def + _refl + _symm).
-                      `fe592ee1` — Periods/PathIntegralChartCorrectLinear
-                      (pathIntegralInChartCorrect_neg + _add, inline).
-                      `0b8b1163` — TraceDegree/PullbackFun
-                      (Queue G first packet: pullbackFormsFun + zero/neg/add).
-Integrated this tick: none.
+                      Clean term-mode proofs via Path.ext rfl.
+Submitted this tick:  `668a781a` —
+                      `Periods/PathIntegralViaChartCorrectZero.lean`
+                      (two-line proof refilling the slot).
+Still in flight:      `091ac5d1`, `fe592ee1`, `0b8b1163`.
 Failed/split this tick: none.
-Local progress: added Periods/PathIntegralChartCorrectZero.lean
-                (Claude-owned: pathIntegralInChartCorrect_zero
-                via ContMDiffSection.coe_zero +
-                ContinuousLinearMap.zero_comp). Periods umbrella
-                rebuilds clean. Held to 4/5 because the
-                obvious 5th candidates (multi-chart cover,
-                pullbackFormsFun smoothness) gate on either
-                Claude design work or the in-flight packets.
 ```
 
 ```text
@@ -104,6 +95,7 @@ Periods.PathIntegralChartCorrect pass lake build Jacobian.Periods.PathIntegralCh
 Periods.PathLiftSimp pass lake build Jacobian.Periods.PathLiftSimp (no sorry)
 Periods.PathIntegralChartCorrectSimp pass lake build Jacobian.Periods.PathIntegralChartCorrectSimp (no sorry)
 Periods.PathIntegralChartCorrectZero pass lake build Jacobian.Periods.PathIntegralChartCorrectZero (no sorry)
+Periods.PathIntegralViaChartCorrect pass lake build Jacobian.Periods.PathIntegralViaChartCorrect (no sorry)
 ```
 
 ```text
