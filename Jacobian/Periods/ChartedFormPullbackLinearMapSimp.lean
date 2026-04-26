@@ -27,4 +27,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
       chartedFormPullbackLinearMap c ω + chartedFormPullbackLinearMap c η :=
   LinearMap.map_add (chartedFormPullbackLinearMap c) ω η
 
+/-- `chartedFormPullbackLinearMap` distributes over subtraction. -/
+@[simp] theorem chartedFormPullbackLinearMap_sub
+    (c : OpenPartialHomeomorph X E) (ω η : HolomorphicOneForm E X) :
+    chartedFormPullbackLinearMap c (ω - η) =
+      chartedFormPullbackLinearMap c ω - chartedFormPullbackLinearMap c η :=
+  LinearMap.map_sub (chartedFormPullbackLinearMap c) ω η
+
 end JacobianChallenge.Periods
