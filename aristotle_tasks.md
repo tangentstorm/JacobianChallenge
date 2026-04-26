@@ -12,28 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 02:55 EDT)
+## Live Status (2026-04-26 03:01 EDT)
 
-- Active jobs (ours): 5/5. All still running at 1-3%.
-- **Integrated this tick:** none.
-- **Submitted this tick:** none (pipeline full).
-- **Local progress (Claude-owned):** refreshed
-  `Jacobian/Periods/PathIntegralViaCoverRecon.lean`'s "Aristotle-sized
-  packets" section to mark Packet B (multi-chart def) as ✓ landed,
-  Packet C (`_refl`) as ✓ in flight via `ea9c5d7a` + bridge
-  `5d2035c3`, and Packet D (linearity) as ✓ landed for zero/neg/smul
-  with add still gated on Packet F. Lake build green.
-
-### Currently in flight (last tick's refill)
-
-- `ad85aa10` — `Periods/PathIntegralViaCoverPickSmul.lean`.
-  Unparameterised `_smul`, mirror of just-landed `_neg`.
-- `5d2035c3` — `Periods/ChartLiftReflSubpath.lean`. Bridge helper
-  sidestepping the dependent-rewrite blocker.
-- `b5511a61` — `TraceDegree/PullbackFunApply.lean`.
-- `e0fd22dd` — `Periods/ChartedFormPullbackApply.lean`.
-- `ea9c5d7a` — `Periods/PathIntegralViaCoverWithRefl.lean`. Multi-chart
-  `_refl` using the new chartLift bridge. Gated on `5d2035c3`.
+- Active jobs (ours): 5/5.
+- 🎉 **Integrated this tick (3 of 5):**
+  - `ad85aa10` — `Periods/PathIntegralViaCoverPickSmul.lean`.
+    Unparameterised wrapper `_smul`.
+  - `5d2035c3` — `Periods/ChartLiftReflSubpath.lean`. Bridge helper
+    `chartLift_refl_subpath` — `apply Path.ext + funext + rfl`.
+  - `e0fd22dd` — `Periods/ChartedFormPullbackApply.lean`. `rfl` simp
+    lemma exposing the chart-pullback definition.
+  Periods umbrella updated; lake build green.
+- **Still in flight from last tick:**
+  - `b5511a61` — `TraceDegree/PullbackFunApply.lean` (1%).
+  - `ea9c5d7a` — `Periods/PathIntegralViaCoverWithRefl.lean` (7%, was
+    gated on `5d2035c3` which has now landed — should rebuild cleanly).
+- **Submitted this tick (3 refills, taking 2/5 → 5/5):**
+  - `5a37f398` — `Periods/PathIntegralViaCoverWithApply.lean`.
+    Definitional sum-unfolding lemma (rfl).
+  - `8a559c20` — `TraceDegree/PullbackFunConst.lean`.
+    Pullback along constant map is zero (via `mfderiv_const`).
+  - `741d15c3` — `Periods/ChartedFormSmul.lean`. Provisional `chartedForm`
+    scalar linearity, completing its zero/neg/add/smul API.
 
 ## Layer status
 
