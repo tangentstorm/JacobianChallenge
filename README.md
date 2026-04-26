@@ -21,21 +21,21 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 20:47 EDT
+Last tick: 2026-04-25 21:14 EDT
 
 ```text
-Layer                          Bar                    %    Note
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Project scaffolding            ████████████████████  100%  done
-Mathlib inventory              ████████████████████  100%  v4.28.0 audit
-Complex torus quotient         ████████████████████  100%  ZLattice bridge sorry-free
-Quotient charted-space/manifold ████████████████████ 100%  ChartedSpace + IsManifold sorry-free
-Projection (mk) smoothness     ████████████████████  100%  contMDiff_mk
-LieAddGroup smoothness         ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms              ████░░░░░░░░░░░░░░░░   25%  type + AddCommGroup + Module ℂ
-Path integration/periods       ░░░░░░░░░░░░░░░░░░░░    0%  pending
-Abel-Jacobi API                ░░░░░░░░░░░░░░░░░░░░    0%  pending
-Trace/degree/push-pull         ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Layer                            Bar                    %    Note
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Project scaffolding              ████████████████████  100%  done
+Mathlib inventory                ████████████████████  100%  v4.28.0 audit
+Complex torus quotient           ████████████████████  100%  ZLattice bridge sorry-free
+Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
+Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
+LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
+Holomorphic forms                ████░░░░░░░░░░░░░░░░   25%  type + AddCommGroup + Module ℂ
+Path integration/periods         ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Abel-Jacobi API                  ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Trace/degree/push-pull           ░░░░░░░░░░░░░░░░░░░░    0%  pending
 ```
 
 ```text
@@ -44,28 +44,27 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 6h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: 🎉 Queue C foundation lands. Two new
-                          files (no sorries):
-                          - `CotangentBundle.lean`: defines
-                            `CotangentSpace E X x` as
-                            `TangentSpace I x →L[ℂ] (Bundle.Trivial X
-                            ℂ) x` and `CotangentModelFiber E` as
-                            `E →L[ℂ] ℂ`. The
-                            `VectorBundle ℂ (E →L[ℂ] ℂ)
-                            (CotangentSpace E X)` instance is derived
-                            for free from Mathlib's
-                            `Bundle.ContinuousLinearMap.vectorBundle`.
-                            One `example` confirms inferInstance.
-                          - `Defs.lean`: defines
-                            `HolomorphicOneForm E X` as the
-                            `ContMDiffSection` of the cotangent
-                            bundle at smoothness `n = ⊤` (analytic).
-                            Two `example`s confirm
-                            `AddCommGroup` and `Module ℂ` instances
-                            are inherited automatically from
-                            `ContMDiffSection`'s mathlib instances.
-Complex torus layer: complete. Queue C foundation: type +
-                     vector-space structure now in place.
+Local progress this tick: attempted to update
+                          `StatementBank.HolomorphicOneForm`
+                          placeholder to use the real Defs.lean
+                          definition. Reverted: the cascade through
+                          `HolomorphicOneFormDual` (which uses
+                          `→L[ℂ]` requiring `NormedAddCommGroup`,
+                          which `ContMDiffSection` doesn't carry)
+                          and `periodFullComplexLattice` (requires
+                          `NormedSpace ℂ` on the dual) is broader
+                          than this tick — those placeholders need
+                          their own redesign together with the
+                          Period-layer work in Queue D. The real
+                          `HolomorphicOneForm` definition stays in
+                          `Defs.lean`; the StatementBank placeholder
+                          is left as `:= ℂ` until Queue D begins.
+                          Also fixed README progress-bar alignment
+                          (label column padded to 33 chars so the
+                          "Quotient charted-space/manifold" row
+                          lines up with the others).
+Complex torus layer: complete. Queue C foundation in
+                     `Jacobian/HolomorphicForms/Defs.lean`.
 ```
 
 ```text
@@ -88,16 +87,15 @@ HolomorphicForms.Defs pass lake build Jacobian.HolomorphicForms.Defs (no sorry)
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Update `JacobianChallenge.HolomorphicForms.HolomorphicOneForm`
-   in `StatementBank.lean` from the `:= ℂ` placeholder to the real
-   type defined in `Jacobian/HolomorphicForms/Defs.lean`. This is
-   blocked by typeclass alignment: the StatementBank uses `𝓘(ℂ)`
-   (modeled on `ℂ` itself, i.e., 1-dimensional) whereas Defs uses
-   the more general `modelWithCornersSelf ℂ E`. Either narrow Defs
-   to the 1-d case or generalize StatementBank.
-2. State `FiniteDimensionalHolomorphicOneForms X` as a class
-   wrapping `Module.Finite ℂ (HolomorphicOneForm X)`. Proof
-   deferred — the largest analytic ingredient.
-3. Stretch goal: confirm the dimension on the simple torus example
-   `V ⧸ Λ.subgroup` for `V = ℂ` (`g = 1`), as a sanity check.
+1. State `FiniteDimensionalHolomorphicOneForms X` over
+   `HolomorphicOneForm ℂ X` (using the real `Jacobian.HolomorphicForms.Defs`
+   type) as a class with the proof deferred. This needs to live in
+   a new module that imports `HolomorphicForms.Defs` rather than
+   `StatementBank.lean` (per the design-cascade discovery this tick).
+2. Sanity check on the torus: confirm `Module.finrank ℂ
+   (HolomorphicOneForm ℂ (V ⧸ Λ.subgroup))` is positive when
+   `V = ℂ` (genus 1 Riemann surface).
+3. Begin Queue D scaffolding (path integration, periods) so the
+   `HolomorphicOneFormDual` and `periodFullComplexLattice`
+   placeholders can be redesigned together.
 ```

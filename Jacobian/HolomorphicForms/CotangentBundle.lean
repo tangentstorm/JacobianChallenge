@@ -27,7 +27,9 @@ fiber at `x : X` is `TangentSpace 𝓘(ℂ, E) x →L[ℂ] ℂ`.
 namespace JacobianChallenge.HolomorphicForms
 
 /-- The cotangent space at `x : X`: continuous ℂ-linear functionals on
-the tangent space at `x`. -/
+the tangent space at `x`. The model fiber `E` is exposed as an
+explicit argument because Mathlib's `TangentSpace` indexes the model
+through the `ModelWithCorners`. -/
 abbrev CotangentSpace
     (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type*) [TopologicalSpace X] [ChartedSpace E X]

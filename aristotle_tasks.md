@@ -12,29 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 20:47 EDT)
+## Live Status (2026-04-25 21:14 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 6h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
-- **Queue C foundation lands this tick (no sorries):**
-  - `Jacobian/HolomorphicForms/CotangentBundle.lean` defines
-    `CotangentSpace E X x := TangentSpace 𝓘(ℂ, E) x →L[ℂ]
-    (Bundle.Trivial X ℂ) x` and `CotangentModelFiber E := E →L[ℂ] ℂ`.
-    The `VectorBundle` instance is derived for free from Mathlib's
-    `Bundle.ContinuousLinearMap.vectorBundle`; an `example` confirms
-    `inferInstance` works.
-  - `Jacobian/HolomorphicForms/Defs.lean` defines
-    `HolomorphicOneForm E X := Cₛ^⊤⟮𝓘(ℂ, E); CotangentModelFiber E,
-    CotangentSpace E X⟯` (i.e., analytic `ContMDiffSection` of the
-    cotangent bundle). Two `example`s confirm
-    `AddCommGroup (HolomorphicOneForm E X)` and
-    `Module ℂ (HolomorphicOneForm E X)` are inherited from
-    Mathlib's `ContMDiffSection` instances. The `Module ℂ` example
-    is `noncomputable` because `ContinuousLinearMap.toNormedSpace` is.
-- The recon file (`Recon.lean`) remains a recon document; the new
-  `Defs.lean` and `CotangentBundle.lean` are real production
-  modules.
+- **Queue C foundation in place:** `CotangentBundle.lean` and
+  `Defs.lean` (previous tick) — `HolomorphicOneForm E X` is an
+  analytic `ContMDiffSection` of the cotangent bundle, with
+  `AddCommGroup` and `Module ℂ` automatic via Mathlib.
+- **This tick:** attempted to update `StatementBank`'s
+  `HolomorphicOneForm` placeholder to use the real type. Reverted
+  after discovering a cascade: `HolomorphicOneFormDual` uses
+  `→L[ℂ]` (requires `NormedAddCommGroup`, which `ContMDiffSection`
+  doesn't carry) and `periodFullComplexLattice` requires
+  `NormedSpace ℂ` on the dual. The downstream Period-layer
+  placeholders need their own redesign in conjunction with Queue D
+  work; trying to fix them piecemeal as part of a Queue C
+  StatementBank update creates churn that won't reflect the actual
+  Period design. Plan: leave the StatementBank placeholder as
+  `:= ℂ` for now, do the redesign once Queue D begins.
+- Also fixed README progress-bar alignment (label column padded to
+  33 chars so the "Quotient charted-space/manifold" row lines up
+  with the rest).
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
