@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 01:40 EDT
+Last tick: 2026-04-26 01:45 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,14 +46,17 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 5/5. Still all QUEUED; b20e4f00 >32 min waiting.
-Integrated this tick: none.
-Submitted this tick:  none (full pipeline).
-Local progress: added Periods/DivFinIcc.lean — boundary point i/n
-                in unitInterval for i ≤ n, the helper used to express
-                segment endpoints of pathIntegralViaCover. Includes
-                divFinIcc_val/_zero/_self/_le_succ. Wired into the
-                Periods umbrella; lake build green.
+Active jobs (ours): 5/5. Backlog still heavy.
+Integrated this tick: 🎉 `fe592ee1` (partial) — Periods/PathIntegral-
+                      ChartCorrectLinear (only _neg, since _add needs
+                      CurveIntegrable hypotheses Aristotle couldn't
+                      discharge).
+Submitted this tick:  `40031834` —
+                      Periods/PathIntegralViaChartCorrectNeg
+                      (from-X negation lift, unblocked by _neg).
+Discovered blocker:   `chartedFormPullback_curveIntegrable` is the
+                      missing helper for `_add`. Recorded as
+                      Packet F in PathIntegralViaCoverRecon.
 Failed/split this tick: none.
 ```
 
@@ -102,6 +105,7 @@ Periods.PathIntegralViaChartCorrectZero pass lake build Jacobian.Periods.PathInt
 Periods.ChartedFormPullbackSmul pass lake build Jacobian.Periods.ChartedFormPullbackSmul (no sorry)
 TraceDegree.PullbackFunSmul pass lake build Jacobian.TraceDegree.PullbackFunSmul (no sorry)
 Periods.DivFinIcc  pass    lake build Jacobian.Periods.DivFinIcc (no sorry)
+Periods.PathIntegralChartCorrectLinear pass lake build Jacobian.Periods.PathIntegralChartCorrectLinear (no sorry; _neg only)
 ```
 
 ```text

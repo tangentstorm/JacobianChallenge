@@ -12,21 +12,36 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 01:40 EDT)
+## Live Status (2026-04-26 01:45 EDT)
 
-- Active jobs (ours): 5/5. **Still all QUEUED** — the shared Aristotle
-  backlog has not drained: `b20e4f00` queued >32 min,
-  `9c8842f9` >25 min.
-- **Integrated this tick:** none.
-- **Local progress this tick (Claude-owned):**
-  added `Jacobian/Periods/DivFinIcc.lean` — boundary point `i/n`
-  in `unitInterval` for `i ≤ n`, the helper used to express the
-  segment endpoints of `pathIntegralViaCover`. Includes
-  `divFinIcc_val` (val = `i/n` by `rfl`), `divFinIcc_zero`
-  (`0/n = 0`), `divFinIcc_self` (`n/n = 1`), and `divFinIcc_le_succ`
-  (monotone). All proofs direct (no automation beyond `simp`,
-  `field_simp`, `linarith`). Wired into Periods umbrella; lake
-  build green.
+- Active jobs (ours): 4/5. `fe592ee1` came back as
+  `partial_integrated` after >1h on the queue. The shared backlog
+  remains heavy: 5 fresh non-ours jobs queued ahead of our 4 oldest.
+- 🎉 **Integrated this tick (partial):** `fe592ee1` — landed
+  `pathIntegralInChartCorrect_neg` cleanly via `curveIntegral_neg`
+  (no integrability needed). `_add` blocked: Mathlib's
+  `curveIntegral_add` requires `CurveIntegrable` hypotheses for both
+  summands. Salvaged `_neg` only into
+  `Jacobian/Periods/PathIntegralChartCorrectLinear.lean`; deferred
+  `_add` until the chartedFormPullback continuity/integrability
+  theorem lands.
+- **New blocker recorded:** added Packet F in
+  `PathIntegralViaCoverRecon.lean` —
+  `chartedFormPullback_curveIntegrable`. Reduces to continuity of
+  `chartedFormPullback c ω : E → E →L[ℂ] ℂ` (which itself follows
+  from continuity of `ω` and `mfderiv c.symm`).
+- **Submitted this tick to refill:** `40031834` —
+  `Jacobian/Periods/PathIntegralViaChartCorrectNeg.lean`. Two-line
+  unfold-and-exact proof lifting `pathIntegralInChartCorrect_neg`
+  (just landed in `fe592ee1`'s salvaged file) through
+  `pathIntegralViaChartCorrect`'s wrapper.
+- **Still in flight:**
+  - `b20e4f00` — `PullbackFunId` (queued 37+ min).
+  - `9c8842f9` — `PathIntegralChartCorrectSmul` (queued 30 min).
+    Should NOT hit the integrability blocker since
+    `curveIntegral_smul` is unconditional.
+  - `2a998690` — `PullbackFormsLinearMap` (queued 24 min).
+  - `dff6cfb4` — `ChartedFormPullbackLinearMap` (queued 24 min).
 - **Still in flight (unchanged from last tick):**
   - `fe592ee1` — `PathIntegralChartCorrectLinear` (neg/add for
     `pathIntegralInChartCorrect`, inline). Long-running; off the

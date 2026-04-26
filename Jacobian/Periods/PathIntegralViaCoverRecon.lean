@@ -123,6 +123,41 @@ show `i/n ≤ t.val ≤ (i+1)/n`. Since `i/n ≤ (i+1)/n`, the unordered
 `uIcc` collapses to `Icc`, and the bounds follow from
 `Set.mem_Icc.mp` plus the `divFinIcc.val = i/n` definitional unfold.
 
+## Discovered blocker: `CurveIntegrable` for chartedFormPullback
+
+Mathlib's `curveIntegral_add f g γ` requires `CurveIntegrable f γ` and
+`CurveIntegrable g γ` hypotheses (otherwise the equation fails under
+the convention that non-integrable curves integrate to zero). This
+blocks the `_add` linearity lemma for `pathIntegralInChartCorrect`
+(salvaged version with only `_neg` lives in
+`Jacobian/Periods/PathIntegralChartCorrectLinear.lean`).
+
+**Required helper (Packet F):** prove
+```text
+chartedFormPullback_curveIntegrable
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
+    {a b : E} (γ : Path a b) :
+    CurveIntegrable (chartedFormPullback c ω) γ
+```
+which reduces (via `CurveIntegrable.continuous` or similar Mathlib
+helper) to continuity of `chartedFormPullback c ω : E → E →L[ℂ] ℂ`,
+which in turn follows from continuity (in fact analyticity) of `ω`
+and continuity of `mfderiv c.symm`.
+
+Once this lands, `_add` for `pathIntegralInChartCorrect` follows by
+the same proof template Aristotle attempted in `fe592ee1` (which
+landed `_neg` cleanly but had to `sorry` the integrability assumptions
+of `_add`).
+
+`curveIntegral_neg` does NOT need integrability (a single curve), so
+`_neg` was unblocked.
+
+`curveIntegral_smul` also does not need integrability (scaling a
+non-integrable function by k still gives a non-integrable function
+which integrates to zero, matching `k • 0 = 0`), so the in-flight
+`9c8842f9` (`pathIntegralInChartCorrect_smul`) should not hit this
+blocker.
+
 ## Open questions / well-definedness
 
 1. **Independence of partition.** Different choices of partition or
@@ -168,6 +203,13 @@ E. The chart-transition lemma (well-definedness) — substantial; gates
    relevant building block: it shows that concatenating subpaths is
    homotopic to a single subpath, which is the homotopy-level analog
    of "the integral does not depend on partition."
+
+F. **`Jacobian/Periods/ChartedFormPullbackCurveIntegrable.lean`** —
+   `CurveIntegrable (chartedFormPullback c ω) γ` for any path. This
+   unblocks `_add` (and the multi-chart well-definedness via
+   `curveIntegral_add` over partition pieces). The proof should
+   reduce to continuity of `chartedFormPullback c ω` and a
+   `CurveIntegrable.continuousOn` (or similar) helper.
 
 ## Convention
 
