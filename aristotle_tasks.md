@@ -12,27 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 16:41 EDT)
+## Live Status (2026-04-26 16:45 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
-  (~12.75h since last movement). Continuing local work per the
+  (~13h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartCorrectTrans.lean`:
-    `pathIntegralInChartCorrect_trans_of_curveIntegrable` —
-    conditional path-concatenation linearity, reducing to
-    Mathlib's `curveIntegral_trans` (which itself requires
-    `CurveIntegrable` hypotheses on both halves). Becomes
-    unconditional once Packet F lands the curve-integrability
-    of `chartedFormPullback c ω` for sufficiently smooth paths.
-    Wired into `Jacobian/Periods.lean` umbrella; build green
-    (8125 jobs, 129s).
-- This is the first step toward a `_trans` (concatenation) family
-  parallel to `_add` (which is also conditional on integrability).
+  - NEW `Jacobian/Periods/PathIntegralChartTrans.lean`:
+    `pathIntegralInChart_trans_of_curveIntegrable` — provisional
+    in-chart path-concatenation linearity, mirroring last tick's
+    corrected version. 3-line proof reducing to Mathlib's
+    `curveIntegral_trans`. Wired into `Jacobian/Periods.lean`
+    umbrella; build green (8126 jobs, 110s).
+- The conditional `_trans` family now has both in-chart layers
+  (provisional + corrected). Lifting to via-chart and cover
+  layers awaits a strategy decision on whether subpath
+  concatenation matches the partition decomposition cleanly.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 16:35 EDT)
+## Stale Live Status (2026-04-26 16:41 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
