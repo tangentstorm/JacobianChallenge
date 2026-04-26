@@ -12,29 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 03:22 EDT)
+## Live Status (2026-04-26 03:30 EDT)
 
-- Active jobs (ours): 5/5.
-- 🎉 **Integrated this tick (3 of 5):**
-  - `5a37f398` — `Periods/PathIntegralViaCoverWithApply.lean`. `rfl`
-    sum-unfolding lemma.
-  - `8a559c20` — `TraceDegree/PullbackFunConst.lean`. Pullback along
-    constant map is zero (via `mfderiv_const` + `comp_zero`).
-  - `741d15c3` — `Periods/ChartedFormSmul.lean`. Provisional
-    `chartedForm` scalar linearity, completing its zero/neg/add/smul
-    API.
+- Active jobs (ours): 3/5.
+- 🎉 **Integrated this tick:**
+  - `0e15a5af` — `Periods/PathIntegralViaCoverPickRefl.lean`.
+    Two-line `unfold + exact pathIntegralViaCoverWith_refl`.
+  - `b5511a61` (`TraceDegree/PullbackFunApply.lean`) —
+    `cancelled_after_local_proof` after running ~47 minutes for what
+    was supposed to be a one-line `rfl` packet. Never appeared on
+    the visible page of `aristotle list`. Cancelled and proved
+    locally (`:= rfl`).
 - **Still in flight:**
-  - `b5511a61` — `TraceDegree/PullbackFunApply.lean` (off-page,
-    long-running; CLI crashes on progress display).
-  - `0e15a5af` — `Periods/PathIntegralViaCoverPickRefl.lean` (running).
-- **Submitted this tick (3 refills):**
-  - `eca997ee` — `TraceDegree/PullbackFormsLinearMapConst.lean`.
-    Bundled pullback along constant map.
-  - `c183f1fa` — `Periods/PathIntegralViaCoverPickApply.lean`.
-    Definitional unfolding of `pathIntegralViaCover` to
-    `pathIntegralViaCoverWith` on the picked partition.
-  - `ba34d88d` — `Periods/PathLiftSimpFromX.lean`. `chartLift_refl`
-    (un-subpathed special case of `chartLift_refl_subpath`).
+  - `eca997ee` — `TraceDegree/PullbackFormsLinearMapConst.lean` (queued).
+  - `c183f1fa` — `Periods/PathIntegralViaCoverPickApply.lean` (queued).
+  - `ba34d88d` — `Periods/PathLiftSimpFromX.lean` (queued).
 
 ## Layer status
 

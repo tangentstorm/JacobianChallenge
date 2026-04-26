@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 03:22 EDT
+Last tick: 2026-04-26 03:31 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,17 +47,16 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5.
-Integrated this tick: 🎉 3 of 5:
-                      `5a37f398` Periods/PathIntegralViaCoverWithApply
-                      `8a559c20` TraceDegree/PullbackFunConst
-                      `741d15c3` Periods/ChartedFormSmul
-Submitted this tick:  3 refills:
-                      `eca997ee` TraceDegree/PullbackFormsLinearMapConst
-                      `c183f1fa` Periods/PathIntegralViaCoverPickApply
-                      `ba34d88d` Periods/PathLiftSimpFromX
-Still running:        `b5511a61` (long-running off-page),
-                      `0e15a5af` (PickRefl).
-Failed/split this tick: none.
+Integrated this tick: 🎉 `0e15a5af` Periods/PathIntegralViaCoverPickRefl
+                      (two-line unfold + exact).
+Cancelled this tick:  `b5511a61` after running ~47 min for what was
+                      supposed to be a one-line `rfl` packet. Proved
+                      locally as `:= rfl`.
+Submitted this tick:  2 refills:
+                      `d9cda755` TraceDegree/PullbackFunIdApply
+                      `cbbe4d1b` Periods/ChartedFormPullbackLinearMapApply
+Still running:        `eca997ee`, `c183f1fa`, `ba34d88d` (queued).
+Failed/split this tick: b5511a61 cancellation (recovered locally).
 ```
 
 ```text
@@ -132,6 +131,8 @@ Periods.PathIntegralViaCoverWithRefl pass lake build Jacobian.Periods.PathIntegr
 Periods.ChartedFormSmul pass lake build Jacobian.Periods.ChartedFormSmul (no sorry)
 TraceDegree.PullbackFunConst pass lake build Jacobian.TraceDegree.PullbackFunConst (no sorry)
 Periods.PathIntegralViaCoverWithApply pass lake build Jacobian.Periods.PathIntegralViaCoverWithApply (no sorry)
+Periods.PathIntegralViaCoverPickRefl pass lake build Jacobian.Periods.PathIntegralViaCoverPickRefl (no sorry)
+TraceDegree.PullbackFunApply pass lake build Jacobian.TraceDegree.PullbackFunApply (no sorry)
 ```
 
 ```text
