@@ -12,28 +12,24 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 18:42 EDT)
+## Live Status (2026-04-26 18:47 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` still QUEUED
-  (32 min). Backend still asleep.
+  (38 min). Backend still asleep.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartCorrectSmulSymmEqNegSmul.lean`:
-    `pathIntegralInChartCorrect_smul_symm_eq_neg_smul` —
-    in-chart corrected layer of the smul-symm-eq-neg-smul
-    identity (foundational case). Proof needs `_smul + _symm
-    + _smul + neg_smul + smul_neg`; the in-chart layer
-    requires both `neg_smul` and `smul_neg` because the rewrite
-    leaves a `k • (-…)` form that needs `smul_neg`, unlike the
-    cover layer where the cover-level `_smul_symm` already
-    produces `-(k • …)`. Wired into Periods umbrella;
-    build green (8137 jobs, 126s).
-- The smul-symm-eq-neg-smul identity now exists at three
-  layers: in-chart corrected (this tick), via-chart corrected,
-  cover-with.
+  - NEW `Jacobian/Periods/PathIntegralChartSmulSymmEqNegSmul.lean`:
+    `pathIntegralInChart_smul_symm_eq_neg_smul` —
+    provisional in-chart layer of the smul-symm-eq-neg-smul
+    identity. Same `_smul + _symm + _smul + neg_smul + smul_neg`
+    proof shape as last tick's corrected version. Wired into
+    Periods umbrella; build green (8138 jobs, 95s).
+- The smul-symm-eq-neg-smul identity now exists at four
+  layers: in-chart provisional (this tick), in-chart corrected,
+  via-chart corrected, cover-with.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 18:36 EDT)
+## Stale Live Status (2026-04-26 18:42 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
