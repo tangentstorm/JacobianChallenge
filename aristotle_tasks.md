@@ -12,16 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 00:24 EDT)
+## Live Status (2026-04-26 00:26 EDT)
 
-- Active jobs (ours): 2/5.
+- Active jobs (ours): 1/5.
   | ID         | Target file                                                    | Kind  | Status      |
   | ---------- | -------------------------------------------------------------- | ----- | ----------- |
-  | 259b18a1   | `Jacobian/HolomorphicForms/TorusExample.lean`                  | proof | in flight   |
   | e7aa502d   | `Jacobian/Periods/PathIntegralChartCorrectSimp.lean`           | proof | in flight   |
-- Nothing integrated this tick.
-- Submitted e7aa502d to round out the corrected-integral API
-  (`_refl` and `_symm` mirroring the provisional version).
+- **Cancelled this tick:** `259b18a1` (TorusExample) was stuck at
+  14% for >45 minutes. Likely hit a roadblock on the
+  `Bundle.continuousLinearMap` section construction. Mathlib has
+  no `ContMDiffSection.const` for this bundle, so the smoothness
+  proof requires manual work that didn't fit into a single
+  packet. Defer with a smaller decomposition next time
+  (e.g. submit "the constant function `fun _ => id : X →
+  E →L[ℂ] ℂ` is smooth" as a standalone lemma first).
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +

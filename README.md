@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:24 EDT
+Last tick: 2026-04-26 00:26 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,18 +46,19 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 2/5.
-                    - `259b18a1` — `HolomorphicForms/TorusExample.lean`.
-                      IN_PROGRESS, 14% (stuck for >40 min — the
-                      cotangent-bundle section construction may be
-                      hitting an instance-resolution roadblock).
+Active jobs (ours): 1/5.
                     - `e7aa502d` — `Periods/PathIntegralChartCorrectSimp.lean`.
-                      IN_PROGRESS, 1%.
+                      IN_PROGRESS, 2%.
+Cancelled this tick: `259b18a1` (TorusExample.lean) was stuck at
+                     14% for >45 minutes — likely hit a
+                     `Bundle.continuousLinearMap` section
+                     construction roadblock (Mathlib has no
+                     `ContMDiffSection.const` for this bundle).
+                     Defer to a future tick with smaller helper
+                     lemmas (split into "constant section is
+                     smooth" + "evaluation gives non-zero").
 Integrated this tick: nothing.
-Local progress this tick: status check only. If TorusExample
-                          remains stuck next tick, consider
-                          cancelling it and splitting into smaller
-                          pieces.
+Local progress this tick: cancelled the stuck TorusExample packet.
 ```
 
 ```text
