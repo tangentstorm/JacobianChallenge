@@ -22,4 +22,12 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     (f : X → Y) (η : HolomorphicOneForm E Y) (x : X) :
     pullbackFormsLinearMap f η x = pullbackFormsFun f η x := rfl
 
+/-- Applying the bundled pullback `LinearMap` at a point and then at a
+tangent vector gives the chain-rule formula. -/
+@[simp] theorem pullbackFormsLinearMap_apply_vec
+    (f : X → Y) (η : HolomorphicOneForm E Y) (x : X) (v : E) :
+    pullbackFormsLinearMap f η x v =
+      η.toFun (f x) (mfderiv (modelWithCornersSelf ℂ E)
+                             (modelWithCornersSelf ℂ E) f x v) := rfl
+
 end JacobianChallenge.TraceDegree
