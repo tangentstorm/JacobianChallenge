@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 19:29 EDT
+Last tick: 2026-04-26 19:34 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,16 +46,14 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~1h+.
+Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~1.5h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralChartNegSmul:
-                      `pathIntegralInChart_neg_smul` —
-                      provisional in-chart layer of `_neg_smul`.
-                      Build green (8143 jobs). Identity now at
-                      4 layers: in-chart provisional (this tick),
-                      in-chart corrected, via-chart corrected,
-                      cover-with.
+                      NEW Periods/PathIntegralViaChartNegSmul:
+                      `pathIntegralViaChart_neg_smul` —
+                      provisional via-chart layer, completing the
+                      `_neg_smul` family across all five layers.
+                      Build green (8144 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -189,6 +187,7 @@ Periods.PathIntegralChartCorrectNegSmul pass lake build Jacobian.Periods.PathInt
 Periods.PathIntegralViaChartCorrectNegSmul pass lake build Jacobian.Periods.PathIntegralViaChartCorrectNegSmul (no sorry)
 Periods.PathIntegralViaCoverNegSmul pass lake build Jacobian.Periods.PathIntegralViaCoverNegSmul (no sorry)
 Periods.PathIntegralChartNegSmul pass lake build Jacobian.Periods.PathIntegralChartNegSmul (no sorry)
+Periods.PathIntegralViaChartNegSmul pass lake build Jacobian.Periods.PathIntegralViaChartNegSmul (no sorry)
 ```
 
 ```text
