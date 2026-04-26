@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 05:26 EDT
+Last tick: 2026-04-26 05:27 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,10 +50,9 @@ Active jobs (ours): 3/5 (backend stalled ~57 min, no movement
                       since 04:09 EDT).
 Integrated this tick: none — backend frozen.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/ChartedFormPullbackLinearMapSimp.lean:
-                        +chartedFormPullbackLinearMap_sub
-                        (bundled subtraction linearity, derived
-                        from LinearMap.map_sub)
+                      Periods/ChartedFormPullbackApply.lean:
+                        +chartedFormPullback_apply_apply
+                        (tangent-vector chain rule, rfl)
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
