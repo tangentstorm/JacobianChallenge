@@ -12,7 +12,7 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 22:28 EDT)
+## Live Status (2026-04-25 23:33 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 8h+). No new submissions.
@@ -32,6 +32,10 @@ identify our jobs without inspecting tarballs.
 - All challenge queues (A through G) now have at least a recon
   document or production scaffold; Queue H's theorems live in
   `Jacobian/Challenge.lean` directly.
+- **This tick:** dropped the `Jacobian.Challenge` import from
+  `Jacobian/ComplexTorus/Defs.lean` (it pulled the spec with all
+  its sorries despite Defs not using anything from it). Replaced
+  with `import Mathlib` directly. Umbrella still builds.
 
 ## Top open correctness item
 

@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 22:28 EDT
+Last tick: 2026-04-25 23:33 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,25 +49,24 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 8h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: opened Queue G with
-                          `Jacobian/TraceDegree/Recon.lean`, a
-                          name-discovery and design document for
-                          the trace/degree/pullback machinery.
-                          Inventories what Mathlib has (`mfderiv`,
-                          `ContMDiff.comp`) and lacks (no
-                          form-level `pullbackForms`, no
-                          fiber-trace `traceForms`, no
-                          `analyticDegree` for compact Riemann
-                          surfaces). Lays out the chain-rule
-                          formula for `pullbackForms` and
-                          fiber-sum for `traceForms`, sketches 6
-                          Aristotle-sized packets, and flags
-                          `pushforward_pullback` as the strongest
-                          multiplicative anti-hack theorem.
-Complex torus layer: complete. Queue D primitives in place;
-                     Queue E foundation; Queue F + Queue G now in
-                     design phase. All seven queues now have at
-                     least a recon document.
+Local progress this tick: replaced
+                          `import Jacobian.Challenge` with
+                          `import Mathlib` in
+                          `Jacobian/ComplexTorus/Defs.lean`. Defs
+                          uses no Challenge-specific declarations,
+                          so the dependency was purely transitive.
+                          The change makes the torus quotient
+                          infrastructure independent of the
+                          challenge spec — addressing the review
+                          item about wrong dependency direction.
+                          The umbrella `Jacobian.ComplexTorus`
+                          still builds (8077 jobs, no sorries
+                          beyond the expected ones in
+                          `Challenge.lean`).
+Complex torus layer: complete and now self-contained (no longer
+                     depends on `Jacobian.Challenge`). Queue D
+                     primitives in place; Queue E foundation;
+                     Queue F + Queue G in design phase.
 ```
 
 ```text
