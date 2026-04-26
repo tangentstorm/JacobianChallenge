@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 03:01 EDT
+Last tick: 2026-04-26 03:13 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,18 +47,18 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5.
-Integrated this tick: 🎉 3 of 5:
-                      `ad85aa10` Periods/PathIntegralViaCoverPickSmul
-                      `5d2035c3` Periods/ChartLiftReflSubpath
-                      `e0fd22dd` Periods/ChartedFormPullbackApply
-Still running:        `b5511a61` TraceDegree/PullbackFunApply
-                      `ea9c5d7a` Periods/PathIntegralViaCoverWithRefl
-                                 (was gated on 5d2035c3 — now unblocked)
-Submitted this tick:  3 refills:
-                      `5a37f398` Periods/PathIntegralViaCoverWithApply
-                      `8a559c20` TraceDegree/PullbackFunConst
-                      `741d15c3` Periods/ChartedFormSmul
-Failed/split this tick: none.
+Integrated this tick: 🎉 `ea9c5d7a` —
+                      Periods/PathIntegralViaCoverWithRefl.
+                      Aristotle returned COMPLETE_WITH_ERRORS (its
+                      `convert ... using 1` left an open goal); fixed
+                      locally by using the chartLift_refl_subpath
+                      bridge directly (4 tactic lines).
+Submitted this tick:  `0e15a5af` —
+                      Periods/PathIntegralViaCoverPickRefl
+                      (unparameterised wrapper _refl).
+Still running:        `b5511a61`, `5a37f398`, `8a559c20`, `741d15c3`.
+Failed/split this tick: ea9c5d7a's Aristotle attempt counted as
+                        partial-fail-fixed-locally.
 ```
 
 ```text
@@ -129,6 +129,7 @@ Periods.CurveIntegralLinearity pass lake build Jacobian.Periods.CurveIntegralLin
 Periods.PathIntegralViaCoverPickSmul pass lake build Jacobian.Periods.PathIntegralViaCoverPickSmul (no sorry)
 Periods.ChartLiftReflSubpath pass lake build Jacobian.Periods.ChartLiftReflSubpath (no sorry)
 Periods.ChartedFormPullbackApply pass lake build Jacobian.Periods.ChartedFormPullbackApply (no sorry)
+Periods.PathIntegralViaCoverWithRefl pass lake build Jacobian.Periods.PathIntegralViaCoverWithRefl (no sorry)
 ```
 
 ```text
