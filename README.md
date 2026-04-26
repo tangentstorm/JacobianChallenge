@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 03:31 EDT
+Last tick: 2026-04-26 03:41 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,16 +47,17 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5.
-Integrated this tick: 🎉 `0e15a5af` Periods/PathIntegralViaCoverPickRefl
-                      (two-line unfold + exact).
-Cancelled this tick:  `b5511a61` after running ~47 min for what was
-                      supposed to be a one-line `rfl` packet. Proved
-                      locally as `:= rfl`.
-Submitted this tick:  2 refills:
-                      `d9cda755` TraceDegree/PullbackFunIdApply
-                      `cbbe4d1b` Periods/ChartedFormPullbackLinearMapApply
-Still running:        `eca997ee`, `c183f1fa`, `ba34d88d` (queued).
-Failed/split this tick: b5511a61 cancellation (recovered locally).
+Integrated this tick: 🎉 3 of 5:
+                      `eca997ee` TraceDegree/PullbackFormsLinearMapConst
+                      `c183f1fa` Periods/PathIntegralViaCoverPickApply
+                      `ba34d88d` Periods/PathLiftSimpFromX
+                                 (chartLift_refl)
+Submitted this tick:  3 refills:
+                      `2e837ce5` TraceDegree/PullbackFormsLinearMapApply
+                      `e3f89de0` Periods/PathIntegralChartCorrectApply
+                      `59a2f682` Periods/PathIntegralViaChartCorrectApply
+Still running:        `d9cda755`, `cbbe4d1b` (last tick's refills).
+Failed/split this tick: none.
 ```
 
 ```text
@@ -133,6 +134,9 @@ TraceDegree.PullbackFunConst pass lake build Jacobian.TraceDegree.PullbackFunCon
 Periods.PathIntegralViaCoverWithApply pass lake build Jacobian.Periods.PathIntegralViaCoverWithApply (no sorry)
 Periods.PathIntegralViaCoverPickRefl pass lake build Jacobian.Periods.PathIntegralViaCoverPickRefl (no sorry)
 TraceDegree.PullbackFunApply pass lake build Jacobian.TraceDegree.PullbackFunApply (no sorry)
+TraceDegree.PullbackFormsLinearMapConst pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapConst (no sorry)
+Periods.PathIntegralViaCoverPickApply pass lake build Jacobian.Periods.PathIntegralViaCoverPickApply (no sorry)
+Periods.PathLiftSimpFromX pass lake build Jacobian.Periods.PathLiftSimpFromX (no sorry)
 ```
 
 ```text
