@@ -27,6 +27,7 @@ import Jacobian.Periods.PathIntegralViaCoverNeg
 import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverPickSimp
 import Jacobian.Periods.PathIntegralViaCoverPickSmul
+import Jacobian.Periods.PathIntegralViaCoverWithRefl
 import Jacobian.Periods.PathIntegralViaCoverSmul
 import Jacobian.Periods.PathIntegralViaCoverZero
 import Jacobian.Periods.PathLift
