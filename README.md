@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 17:02 EDT
+Last tick: 2026-04-26 17:05 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,13 +49,13 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW TraceDegree/PullbackFunCompConst:
-                      `pullbackFormsFun_comp_const` — pullback along
-                      `f ∘ const x₀` is zero (composition factors
-                      through a single point, hence is itself
-                      constant). 2-line proof reducing to
-                      `pullbackFormsFun_const`. Wired into
-                      TraceDegree umbrella; build green (2432 jobs).
+                      NEW TraceDegree/PullbackFunConstComp:
+                      `pullbackFormsFun_const_comp` — pullback along
+                      `const z ∘ f` is zero (symmetric counterpart
+                      of last tick's `_comp_const`). 2-line proof
+                      reducing to `pullbackFormsFun_const`. Wired
+                      into TraceDegree umbrella; build green
+                      (2433 jobs).
 Failed/split this tick: none.
 ```
 
@@ -164,6 +164,7 @@ TraceDegree.PullbackFunComp pass lake build Jacobian.TraceDegree.PullbackFunComp
 TraceDegree.PullbackFunCompApply pass lake build Jacobian.TraceDegree.PullbackFunCompApply (no sorry)
 TraceDegree.PullbackFormsLinearMapComp pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapComp (no sorry)
 TraceDegree.PullbackFunCompConst pass lake build Jacobian.TraceDegree.PullbackFunCompConst (no sorry)
+TraceDegree.PullbackFunConstComp pass lake build Jacobian.TraceDegree.PullbackFunConstComp (no sorry)
 ```
 
 ```text
