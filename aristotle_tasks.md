@@ -12,22 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 23:40 EDT)
+## Live Status (2026-04-25 23:43 EDT)
 
-- Active jobs (ours): 2/5.
+- Active jobs (ours): 3/5.
   | ID         | Target file                                       | Kind  | Status      |
   | ---------- | ------------------------------------------------- | ----- | ----------- |
   | 78ab4b77   | `Jacobian/Periods/PathPartition.lean`             | proof | in flight   |
   | 3265ae48   | `Jacobian/Periods/ChartedFormPullback.lean`       | def   | in flight   |
+  | 259b18a1   | `Jacobian/HolomorphicForms/TorusExample.lean`     | proof | in flight   |
   - 78ab4b77: `exists_uniform_chart_partition` — multi-chart
-    partition lemma. Outline given to Aristotle: apply
-    `exists_lebesgue_radius_chart`, pick `n` with `1/n < δ`,
-    midpoints with arithmetic on `unitInterval`, `Classical.choose`
-    for `pickChart`.
-  - 3265ae48: `chartedFormPullback` — the genuine chart pullback
-    using `mfderiv`, defined alongside the existing (provisional)
-    `chartedForm`. Migration of downstream code to use the
-    corrected version is a separate follow-up.
+    partition lemma.
+  - 3265ae48: `chartedFormPullback` — genuine chart pullback using
+    `mfderiv`, alongside the existing provisional `chartedForm`.
+  - 259b18a1 (this tick): `dzSection` + `dzSection_ne_zero` —
+    constant `dz` cotangent on the genus-1 torus
+    `V/Λ` for `V = ℂ`, witnessing `analyticGenus ≥ 1`. Outline
+    given: constant `id : ℂ →L[ℂ] ℂ` lifts to a section because
+    chart transitions are translations.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +
