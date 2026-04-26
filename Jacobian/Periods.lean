@@ -23,6 +23,7 @@ import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.LebesgueChartRadius
 import Jacobian.Periods.PathIntegralChart
 import Jacobian.Periods.ChartedFormApplyLinear
+import Jacobian.Periods.ChartedFormCurveIntegrable
 import Jacobian.Periods.ChartedFormSub
 import Jacobian.Periods.PathIntegralChartAdd
 import Jacobian.Periods.PathIntegralChartLinear

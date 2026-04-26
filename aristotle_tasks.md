@@ -12,7 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 12:21 EDT)
+## Live Status (2026-04-26 12:24 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/ChartedFormCurveIntegrable.lean`:
+    five conditional curve-integrability propagation lemmas at
+    the provisional layer:
+    - `chartedForm_zero_curveIntegrable` (unconditional)
+    - `chartedForm_neg_curveIntegrable` (conditional on h)
+    - `chartedForm_smul_curveIntegrable` (conditional on h)
+    - `chartedForm_add_curveIntegrable` (conditional on hω, hη)
+    - `chartedForm_sub_curveIntegrable` (conditional on hω, hη)
+    Each is 2 lines: rewrite the function-level simp + apply
+    `CurveIntegrable.{zero,neg,smul,add,sub}`. Mirrors
+    `ChartedFormPullbackCurveIntegrable` at the corrected layer.
+  - Wired into `Jacobian/Periods.lean` umbrella; build green
+    (2672 jobs, 25s).
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 12:21 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**

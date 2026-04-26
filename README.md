@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 12:21 EDT
+Last tick: 2026-04-26 12:24 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,14 +49,15 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/ChartedFormApplyLinear: NEW file
-                      with five pointwise apply-form simp lemmas
-                      `chartedForm_{zero,neg,add,sub,smul}_apply`
-                      at the provisional layer, mirroring
-                      ChartedFormPullbackApplyLinear at the
-                      corrected layer. 2-line proofs each:
-                      `rw [chartedForm_*]; rfl`. Wired into
-                      Periods umbrella; build green (2412 jobs, 22s).
+                      Periods/ChartedFormCurveIntegrable: NEW file
+                      with five conditional curve-integrability
+                      propagation lemmas at the provisional layer
+                      `chartedForm_{zero,neg,smul,add,sub}_curveIntegrable`,
+                      mirroring ChartedFormPullbackCurveIntegrable
+                      at the corrected layer. 2-line proofs each:
+                      `rw [chartedForm_*]; exact CurveIntegrable.*`.
+                      Wired into Periods umbrella; build green
+                      (2672 jobs, 25s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
