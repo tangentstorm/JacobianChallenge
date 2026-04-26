@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 12:33 EDT
+Last tick: 2026-04-26 12:36 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,15 +49,17 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/ChartedFormLinearMapApply: NEW file
-                      with the LinearMap apply forms:
-                      - chartedFormLinearMap_apply_at (rfl,
-                        bridge to unbundled chartedForm)
-                      - chartedFormLinearMap_apply_vec (rfl,
-                        tangent-vector application = ω.toFun (c.symm e) v)
+                      Periods/ChartedFormLinearMapApplyLinear:
+                      NEW file with five pointwise apply-form simp
+                      lemmas at the bundled provisional LinearMap
+                      layer:
+                      `chartedFormLinearMap_{zero,neg,add,sub,smul}_apply`,
+                      each delegating through `_apply_at` to the
+                      apply-form bundle in ChartedFormApplyLinear.
                       Mirror of corrected layer's
-                      ChartedFormPullbackLinearMapApply. Wired into
-                      Periods umbrella; build green (2412 jobs, 20s).
+                      ChartedFormPullbackLinearMapApplyLinear.
+                      Wired into Periods umbrella; build green
+                      (2417 jobs, 46s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
