@@ -1,4 +1,5 @@
 import Jacobian.TraceDegree.PullbackFormsLinearMap
+import Jacobian.TraceDegree.PullbackFormsLinearMapApply
 import Jacobian.TraceDegree.PullbackFormsLinearMapConst
 import Jacobian.TraceDegree.PullbackFormsLinearMapId
 import Jacobian.TraceDegree.PullbackFormsLinearMapSimp
