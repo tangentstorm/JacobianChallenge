@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 20:38 EDT
+Last tick: 2026-04-25 20:47 EDT
 
 ```text
 Layer                          Bar                    %    Note
@@ -32,7 +32,7 @@ Complex torus quotient         ████████████████�
 Quotient charted-space/manifold ████████████████████ 100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness     ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness         ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms              █░░░░░░░░░░░░░░░░░░░    5%  Queue C recon landed
+Holomorphic forms              ████░░░░░░░░░░░░░░░░   25%  type + AddCommGroup + Module ℂ
 Path integration/periods       ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Abel-Jacobi API                ░░░░░░░░░░░░░░░░░░░░    0%  pending
 Trace/degree/push-pull         ░░░░░░░░░░░░░░░░░░░░    0%  pending
@@ -44,29 +44,28 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 6h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: revised the Queue C reconnaissance after
-                          discovering that the naive
-                          "smooth function `X → E*`" definition
-                          would compute the wrong dimension on the
-                          Riemann sphere (1 instead of 0): without
-                          the inverse-transpose transformation rule
-                          under chart changes, the trivialization
-                          `TangentSpace I x = E` lets the naive
-                          subtype identify all chart trivializations,
-                          breaking the `analyticGenus_eq_zero_iff_
-                          homeomorphic_sphere` anti-hack. Updated
-                          `Recon.lean` accordingly: documented the
-                          worked counterexample, rejected naive
-                          Approach B, and recommended Approach A
-                          (Mathlib's `Bundle.continuousLinearMap`
-                          for the cotangent bundle, then
-                          `ContMDiffSection`). Refined the
-                          packet plan: 6 narrow target files
-                          starting with `CotangentBundle.lean`.
-                          Build still green.
-Complex torus layer: complete (charted-space, manifold, projection
-                     smoothness, full `LieAddGroup` instance).
-                     Queue C now in design refinement.
+Local progress this tick: 🎉 Queue C foundation lands. Two new
+                          files (no sorries):
+                          - `CotangentBundle.lean`: defines
+                            `CotangentSpace E X x` as
+                            `TangentSpace I x →L[ℂ] (Bundle.Trivial X
+                            ℂ) x` and `CotangentModelFiber E` as
+                            `E →L[ℂ] ℂ`. The
+                            `VectorBundle ℂ (E →L[ℂ] ℂ)
+                            (CotangentSpace E X)` instance is derived
+                            for free from Mathlib's
+                            `Bundle.ContinuousLinearMap.vectorBundle`.
+                            One `example` confirms inferInstance.
+                          - `Defs.lean`: defines
+                            `HolomorphicOneForm E X` as the
+                            `ContMDiffSection` of the cotangent
+                            bundle at smoothness `n = ⊤` (analytic).
+                            Two `example`s confirm
+                            `AddCommGroup` and `Module ℂ` instances
+                            are inherited automatically from
+                            `ContMDiffSection`'s mathlib instances.
+Complex torus layer: complete. Queue C foundation: type +
+                     vector-space structure now in place.
 ```
 
 ```text
@@ -82,19 +81,23 @@ AddSmooth          pass    lake build Jacobian.ComplexTorus.AddSmooth (no sorry)
 NegSmooth          pass    lake build Jacobian.ComplexTorus.NegSmooth (no sorry)
 LieAddGroup        pass    lake build Jacobian.ComplexTorus.LieAddGroup (no sorry)
 HolomorphicForms.Recon pass lake build Jacobian.HolomorphicForms.Recon (recon, no sorry)
+HolomorphicForms.CotangentBundle pass lake build Jacobian.HolomorphicForms.CotangentBundle (no sorry)
+HolomorphicForms.Defs pass lake build Jacobian.HolomorphicForms.Defs (no sorry)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. `Jacobian/HolomorphicForms/CotangentBundle.lean` —
-   construct `CotangentBundle X := Bundle.continuousLinearMap ℂ
-   (TangentBundle 𝓘(ℂ, E) X) (Bundle.Trivial X ℂ)` and derive its
-   `VectorBundle` instance from existing scaffolding in
-   `Topology/VectorBundle/Hom.lean`.
-2. `Jacobian/HolomorphicForms/Defs.lean` — define
-   `HolomorphicOneForm X := Cₛ^⊤⟮…; CotangentBundle X⟯`.
-3. `Jacobian/HolomorphicForms/AddCommGroup.lean` and `…/Module.lean`
-   — one-line wrappers of `ContMDiffSection.addCommGroup` and
-   `…module`.
+1. Update `JacobianChallenge.HolomorphicForms.HolomorphicOneForm`
+   in `StatementBank.lean` from the `:= ℂ` placeholder to the real
+   type defined in `Jacobian/HolomorphicForms/Defs.lean`. This is
+   blocked by typeclass alignment: the StatementBank uses `𝓘(ℂ)`
+   (modeled on `ℂ` itself, i.e., 1-dimensional) whereas Defs uses
+   the more general `modelWithCornersSelf ℂ E`. Either narrow Defs
+   to the 1-d case or generalize StatementBank.
+2. State `FiniteDimensionalHolomorphicOneForms X` as a class
+   wrapping `Module.Finite ℂ (HolomorphicOneForm X)`. Proof
+   deferred — the largest analytic ingredient.
+3. Stretch goal: confirm the dimension on the simple torus example
+   `V ⧸ Λ.subgroup` for `V = ℂ` (`g = 1`), as a sanity check.
 ```

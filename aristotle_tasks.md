@@ -12,27 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 20:38 EDT)
+## Live Status (2026-04-25 20:47 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 6h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
-- **This tick — Queue C reconnaissance refinement:** caught a
-  significant design flaw in the previously-recommended Approach B
-  for `HolomorphicOneForm X`. The naive definition
-  `{ ω : X → (E →L[ℂ] ℂ) // ContMDiff … ω }` would assign
-  `analyticGenus = 1` to the Riemann sphere (the constants), but the
-  challenge requires `analyticGenus_eq_zero_iff_homeomorphic_sphere`,
-  i.e., the sphere has analytic genus 0. The flaw: without the
-  inverse-transpose transformation rule under chart changes,
-  `TangentSpace I x = E`'s trivialization makes the naive subtype
-  chart-dependent.
-- Updated `Jacobian/HolomorphicForms/Recon.lean` to document the
-  worked counterexample, reject naive Approach B, and recommend
-  Approach A (Mathlib's `Bundle.continuousLinearMap` for the
-  cotangent bundle + `ContMDiffSection`). Refined the packet plan
-  into 6 narrow target files starting with `CotangentBundle.lean`.
-- The recon file remains a recon document (not re-exported).
+- **Queue C foundation lands this tick (no sorries):**
+  - `Jacobian/HolomorphicForms/CotangentBundle.lean` defines
+    `CotangentSpace E X x := TangentSpace 𝓘(ℂ, E) x →L[ℂ]
+    (Bundle.Trivial X ℂ) x` and `CotangentModelFiber E := E →L[ℂ] ℂ`.
+    The `VectorBundle` instance is derived for free from Mathlib's
+    `Bundle.ContinuousLinearMap.vectorBundle`; an `example` confirms
+    `inferInstance` works.
+  - `Jacobian/HolomorphicForms/Defs.lean` defines
+    `HolomorphicOneForm E X := Cₛ^⊤⟮𝓘(ℂ, E); CotangentModelFiber E,
+    CotangentSpace E X⟯` (i.e., analytic `ContMDiffSection` of the
+    cotangent bundle). Two `example`s confirm
+    `AddCommGroup (HolomorphicOneForm E X)` and
+    `Module ℂ (HolomorphicOneForm E X)` are inherited from
+    Mathlib's `ContMDiffSection` instances. The `Module ℂ` example
+    is `noncomputable` because `ContinuousLinearMap.toNormedSpace` is.
+- The recon file (`Recon.lean`) remains a recon document; the new
+  `Defs.lean` and `CotangentBundle.lean` are real production
+  modules.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the
