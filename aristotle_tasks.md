@@ -12,27 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 21:43 EDT)
+## Live Status (2026-04-25 21:48 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 7h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
-- **Queue D scaffolding now reaches the period pairing.** Six
-  files in place (no sorries; one `opaque`):
-  - `Periods/Recon.lean` — design document.
-  - `Periods/ChartedForm.lean` — chart-local transport of a
-    `HolomorphicOneForm` to a 1-form on the model space.
-  - `Periods/PathIntegralChart.lean` — chart-local path integral
-    via Mathlib's `curveIntegral`.
-  - `Periods/PathLift.lean` — from-`X` wrapper using `Path.map'`.
-  - `Periods/IntegralOneCycle.lean` — `H₁(X, ℤ)` via
-    `singularHomologyFunctor`.
-  - `Periods/PeriodFunctional.lean` (this tick) —
-    `opaque periodPairing E X : IntegralOneCycle X →+
-    (HolomorphicOneForm E X →ₗ[ℂ] ℂ)` plus `periodSubgroup E X`
-    as the range. Construction is deferred pending multi-chart
-    path integration + Stokes on manifolds.
+- **Queue D scaffolding now has 6 files + basic API lemmas.** This
+  tick added two small lemmas to `PathIntegralChart.lean`:
+  - `pathIntegralInChart_refl` (`@[simp]`) — integral over a
+    constant path is `0`.
+  - `pathIntegralInChart_symm` — path reversal negates the
+    integral.
+  Both are one-line wrappers of Mathlib's `curveIntegral` API.
+- The next substantive piece is multi-chart path integration
+  (paths crossing chart boundaries). Mathlib has Lebesgue's number
+  lemma (`Topology/MetricSpace/Pseudo/Lemmas.lean:120`) which can
+  be used to partition `[0, 1]` into sub-intervals each landing in
+  a single chart source. Implementation requires path
+  restriction-and-concatenation API.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the

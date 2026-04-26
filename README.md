@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 21:43 EDT
+Last tick: 2026-04-25 21:48 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -44,34 +44,28 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 7h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: added
-                          `Jacobian/Periods/PeriodFunctional.lean`
-                          (no sorries; one `opaque`):
-                          - `opaque periodPairing E X :
-                            IntegralOneCycle X →+
-                            (HolomorphicOneForm E X →ₗ[ℂ] ℂ)`
-                            states the period-integration map
-                            without committing to an
-                            implementation. The construction
-                            requires multi-chart path integration
-                            + Stokes on manifolds (the largest
-                            remaining gap, per Inventory §4.5).
-                          - `noncomputable def periodSubgroup E X
-                            : AddSubgroup _ := (periodPairing E X)
-                            .range`. The full-lattice property is
-                            also deferred (Riemann bilinear
-                            relations).
-                          The `IntegralOneCycle X` (a `ModuleCat ℤ`
-                          object) coerces directly as the source of
-                          `→+`, no underlying-type extraction
-                          needed — ModuleCat objects carry
-                          `AddCommGroup` instances natively.
-Complex torus layer: complete. Queue D: chart-local path
-                     integration, integral 1-cycle, period pairing
-                     (opaque) and period subgroup all in place.
-                     Substantive deferred work: multi-chart path
-                     integration + Stokes on manifolds + full-lattice
-                     proof.
+Local progress this tick: extended
+                          `Jacobian/Periods/PathIntegralChart.lean`
+                          with two basic API lemmas (no sorries):
+                          - `@[simp] pathIntegralInChart_refl`:
+                            integral over a constant path is 0.
+                            One-line wrapper of Mathlib's
+                            `curveIntegral_refl`.
+                          - `pathIntegralInChart_symm`: reversing
+                            the path negates the integral. One-line
+                            wrapper of `curveIntegral_symm`.
+                          Both are immediate from existing Mathlib
+                          API and don't add new opaques. They give
+                          the chart-local integral the basic API
+                          shape (zero on trivial paths, sign-reversal
+                          under symmetry) so downstream definitions
+                          can reason about it without unfolding to
+                          `curveIntegral` directly.
+Complex torus layer: complete. Queue D: chart-local path integral
+                     now has basic API lemmas; integral 1-cycle,
+                     period pairing (opaque) and period subgroup
+                     in place. Multi-chart path integration is the
+                     next substantive piece.
 ```
 
 ```text

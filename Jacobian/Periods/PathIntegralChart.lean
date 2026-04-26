@@ -36,4 +36,21 @@ noncomputable def pathIntegralInChart
     (γ : Path a b) : ℂ :=
   curveIntegral (chartedForm c ω) γ
 
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+  {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
+  [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+
+/-- The chart-local path integral over a constant path is zero. -/
+@[simp] theorem pathIntegralInChart_refl
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) (a : E) :
+    pathIntegralInChart c ω (Path.refl a) = 0 :=
+  curveIntegral_refl _ a
+
+/-- The chart-local path integral reverses sign under path symmetry. -/
+theorem pathIntegralInChart_symm
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
+    {a b : E} (γ : Path a b) :
+    pathIntegralInChart c ω γ.symm = - pathIntegralInChart c ω γ :=
+  curveIntegral_symm _ γ
+
 end JacobianChallenge.Periods
