@@ -12,25 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 17:14 EDT)
+## Live Status (2026-04-26 17:23 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
   (~13.5h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralViaChartCorrectNegSymmEqSelf.lean`:
-    `pathIntegralViaChartCorrect_neg_symm_eq_self` —
-    negate-and-reverse cancellation:
-    `∫(-ω, γ.symm) = ∫(ω, γ)`. Proof: `_symm` + `_neg` +
-    `neg_neg`. First attempt with `_neg_form_eq_symm_path +
-    Path.symm_symm` hit a dependent-type rewrite issue
-    (γ.symm.symm with implicitly-built range hypothesis); the
-    direct chain works cleanly. Wired into Periods umbrella;
-    build green (8127 jobs, 153s).
+  - NEW `Jacobian/Periods/PathIntegralViaCoverNegSymmEqSelf.lean`:
+    `pathIntegralViaCoverWith_neg_symm_eq_self` — cover-layer
+    analogue of last tick's negate-and-reverse cancellation.
+    Same `_symm + _neg + neg_neg` chain. Wired into Periods
+    umbrella; build green (8128 jobs, 185s).
+- The negate-and-reverse identity `∫(-ω, γ.symm) = ∫(ω, γ)`
+  now exists at the via-chart corrected and cover-with layers.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 17:08 EDT)
+## Stale Live Status (2026-04-26 17:14 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
