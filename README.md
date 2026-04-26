@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 04:15 EDT
+Last tick: 2026-04-26 05:16 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                ██████░░░░░░░░░�
 Path integration/periods         ███████████░░░░░░░░░   55%  multi-chart cover full linearity API; refl in flight
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
-Trace/degree/push-pull           ███░░░░░░░░░░░░░░░░░   15%  pullbackFormsFun: full linearity + LinearMap bundle + id
+Trace/degree/push-pull           ███░░░░░░░░░░░░░░░░░   17%  pullbackFormsFun: full linearity (+sub) + LinearMap bundle + id + tangent-vec apply
 
 Note: `chartedForm` currently misses the chart-derivative factor of
 the genuine 1-form pullback, so the period machinery is correct only
@@ -46,15 +46,18 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 3/5.
-Integrated this tick: 🎉 `f9550953` Periods/ChartLiftApply (rfl).
-Submitted this tick:  3 refills:
+Active jobs (ours): 3/5 (backend stalled ~57 min, no movement
+                      since 04:09 EDT).
+Integrated this tick: none — backend frozen.
+Local progress this tick (Claude-owned, while Aristotle blocked):
+                      TraceDegree/PullbackFunApplyVec
+                        (chain-rule `(f^*η)_x v = η_{f x} (df_x v)`)
+                      TraceDegree/PullbackFunSub
+                        (subtraction linearity from add+neg)
+Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
-                                 (provisional _neg + _smul)
                       `82687eb7` TraceDegree/PullbackFunSimpApply
-                                 (pointwise _zero/_neg/_smul apply)
-Still running:        none from prior batches.
 Failed/split this tick: none.
 ```
 

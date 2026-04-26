@@ -6,10 +6,12 @@ import Jacobian.TraceDegree.PullbackFormsLinearMapSimp
 import Jacobian.TraceDegree.PullbackFormsLinearMapSmul
 import Jacobian.TraceDegree.PullbackFun
 import Jacobian.TraceDegree.PullbackFunApply
+import Jacobian.TraceDegree.PullbackFunApplyVec
 import Jacobian.TraceDegree.PullbackFunConst
 import Jacobian.TraceDegree.PullbackFunId
 import Jacobian.TraceDegree.PullbackFunIdApply
 import Jacobian.TraceDegree.PullbackFunSmul
+import Jacobian.TraceDegree.PullbackFunSub
 
 /-!
 # Trace, degree, pushforward, pullback infrastructure

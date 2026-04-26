@@ -12,7 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 04:14 EDT)
+## Live Status (2026-04-26 05:16 EDT)
+
+- Active jobs (ours): 3/5. All three QUEUED ~57 min — backend
+  stalled since ~04:09 EDT, no jobs moving on any project.
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/TraceDegree/PullbackFunApplyVec.lean` — tangent-vector
+    apply: `(pullbackFormsFun f η x) v = η.toFun (f x) (mfderiv f x v)`,
+    a `rfl` chain-rule unfolding.
+  - `Jacobian/TraceDegree/PullbackFunSub.lean` — subtraction
+    linearity: `pullbackFormsFun_sub` derived from `_add`/`_neg`.
+  - Both wired into `Jacobian/TraceDegree.lean` umbrella.
+- **Submitted this tick:** none (backlog still blocking).
+- No-op-on-Aristotle, locally productive: keep waiting on the 3
+  in-flight packets while pushing small Claude-owned lemmas.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 04:14 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED; backlog resurfaced
   (5 non-ours jobs ahead of us).
