@@ -12,21 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 06:09 EDT)
+## Live Status (2026-04-26 06:13 EDT)
 
-- Active jobs (ours): 3/5. All three QUEUED ~1 hr+ — backend
-  stalled since ~04:09 EDT, no jobs moving on any project.
-- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
-  - `Jacobian/Periods/PathIntegralViaCoverWithSub.lean` (new):
-    +`pathIntegralViaCoverWith_sub_of_curveIntegrable` — lift
-    conditional `_sub` from `pathIntegralViaChartCorrect` to the
-    multi-chart sum level via `Finset.sum_sub_distrib`. The
-    conditional `_sub` ladder now matches the `_add` ladder, with
-    parallel landings at `InChartCorrect`, `ViaChartCorrect`, and
-    `ViaCoverWith`. Wired into `Jacobian.Periods` umbrella.
+- Active jobs (ours): 3/5. All three now showing QUEUED 2h+ —
+  backend stalled since ~04:09 EDT, no jobs moving on any project.
+- **Integrated this tick:** none. No new local lemma either —
+  the conditional `_add` and `_sub` ladders both span 3
+  integration layers (`InChartCorrect` / `ViaChartCorrect` /
+  `ViaCoverWith`), a natural stopping point. Further conditional
+  lifts (Pick layer; or repeating for `_neg`/`_smul`) hit
+  diminishing returns: Pick layer is parser-blocked, and
+  `_neg`/`_smul` are already unconditional.
 - **Submitted this tick:** none (backlog still blocking).
-- Continuing local Claude-owned progress while Aristotle queue
-  remains frozen.
+- Bookkeeping tick: refresh status, commit, push. Waiting on
+  backend recovery for the next substantive step.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-26 05:17 EDT)
