@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 18:06 EDT
+Last tick: 2026-04-26 18:09 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,10 +47,8 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 1/5 — `09cd85dd` canary still QUEUED
-                      (1 min so far). Backend likely still asleep
-                      — the unrelated `9a695fe4` job has been
-                      QUEUED for 13h.
-Integrated this tick: none (refresh-only, brief check on canary).
+                      (4 min so far). Backend still asleep.
+Integrated this tick: none (refresh-only).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```

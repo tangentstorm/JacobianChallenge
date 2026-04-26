@@ -12,17 +12,15 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 18:06 EDT)
+## Live Status (2026-04-26 18:09 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` still QUEUED
-  (1 min). Backend still asleep — unrelated `9a695fe4` job
-  has been QUEUED for 13h.
-- **Integrated this tick:** none (refresh-only — brief check
-  on canary 1 min after submission).
+  (4 min). Backend still asleep.
+- **Integrated this tick:** none (refresh-only).
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 18:05 EDT)
+## Stale Live Status (2026-04-26 18:06 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
