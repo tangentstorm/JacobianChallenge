@@ -26,6 +26,7 @@ import Jacobian.Periods.ChartedFormApplyLinear
 import Jacobian.Periods.ChartedFormCurveIntegrable
 import Jacobian.Periods.ChartedFormLinearMap
 import Jacobian.Periods.ChartedFormLinearMapApply
+import Jacobian.Periods.ChartedFormLinearMapApplyLinear
 import Jacobian.Periods.ChartedFormLinearMapSimp
 import Jacobian.Periods.ChartedFormLinearMapSmul
 import Jacobian.Periods.ChartedFormSub
