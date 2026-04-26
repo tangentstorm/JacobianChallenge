@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 11:33 EDT
+Last tick: 2026-04-26 11:34 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,18 +46,20 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 3/5 (backend stalled ~6.7h, no movement
-                      since 04:09 EDT).
-Integrated this tick: none — backend frozen.
+Active jobs (ours): 2/5 (one cancelled this tick after local
+                      landing; backend stalled ~7.5h since 04:09 EDT).
+Integrated this tick: f8faacda chartLift_zero/_one — landed
+                      LOCALLY (Aristotle backend still frozen, so
+                      proved in-house and cancelled the in-flight
+                      job).
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      TraceDegree/PullbackFormsLinearMapApplyLinear:
-                      5 pointwise apply-form simp lemmas at the
-                      bundled-LinearMap layer
-                      `pullbackFormsLinearMap_{zero,neg,add,sub,smul}_apply`,
-                      mirroring the Periods-side
-                      ChartedFormPullbackLinearMapApplyLinear from
-                      tick 10:43. Wired into TraceDegree umbrella;
-                      module builds green (2416 jobs, 99s).
+                      Periods/ChartLiftBoundary: chartLift_zero
+                      and chartLift_one boundary-value simp lemmas,
+                      proved by `rw [chartLift_apply, γ.source]`
+                      and `[chartLift_apply, γ.target]` resp.
+                      In-flight job f8faacda cancelled (was QUEUED
+                      ~7.5h with no movement). Wired into Periods
+                      umbrella; module builds green (2672 jobs, 38s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
@@ -148,6 +150,7 @@ TraceDegree.PullbackFormsLinearMapApply pass lake build Jacobian.TraceDegree.Pul
 Periods.PathIntegralChartCorrectApply pass lake build Jacobian.Periods.PathIntegralChartCorrectApply (no sorry)
 Periods.PathIntegralViaChartCorrectApply pass lake build Jacobian.Periods.PathIntegralViaChartCorrectApply (no sorry)
 Periods.ChartLiftApply pass    lake build Jacobian.Periods.ChartLiftApply (no sorry)
+Periods.ChartLiftBoundary pass lake build Jacobian.Periods.ChartLiftBoundary (no sorry)
 Periods.ChartedFormPullbackApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackApplyLinear (no sorry)
 Periods.ChartedFormPullbackLinearMapApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackLinearMapApplyLinear (no sorry)
 TraceDegree.PullbackFunAddSubApply pass lake build Jacobian.TraceDegree.PullbackFunAddSubApply (no sorry)
