@@ -12,22 +12,32 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 02:30 EDT)
+## Live Status (2026-04-26 02:43 EDT)
 
-- Active jobs (ours): 5/5. Three running (1%), two queued
-  (`ecc4405a`, `e7a078bd`).
-- **Integrated this tick:** none.
-- **Local progress this tick (Claude-owned):**
-  added `Jacobian/Periods/PathReflSubpath.lean` —
-  `refl_subpath`: `(Path.refl a).subpath t₀ t₁ = Path.refl a` via
-  `Path.ext` + `rfl`. Useful primitive for `_refl` lemmas on
-  multi-chart integrals. Wired into Periods umbrella; lake build
-  green.
-- **Attempted but backed out:** `pathIntegralViaCoverWith_refl`. The
-  obvious `rw [refl_subpath]` fails because `pathIntegralViaChartCorrect`'s
-  range hypothesis depends on the path argument; rewriting the path
-  invalidates the existing range proof. Dependent-rewrite blocker —
-  needs `convert` or a chart-local "constant-path" helper. Deferred.
+- Active jobs (ours): 5/5. Third consecutive 5-of-5 integration tick.
+- 🎉 **Integrated this tick (5 of 5):**
+  - `b478c88a` — `Periods/PathIntegralViaCoverSmul.lean`. Multi-chart
+    `_smul` via `Finset.smul_sum` + chart-local `_smul`.
+  - `a8aca9fa` — `Periods/PathIntegralViaCoverPickSimp.lean`.
+    Unparameterised `pathIntegralViaCover_zero` and `_neg`.
+    Classical.choose-only-depends-on-γ insight worked perfectly.
+  - `ecc4405a` — `TraceDegree/PullbackFormsLinearMapSmul.lean`.
+  - `ac357e8c` — `Periods/ChartedFormPullbackLinearMapSmul.lean`.
+  - `e7a078bd` — `Periods/CurveIntegralLinearity.lean`. Stub file
+    (reserved for AddHom packaging when Packet F lands). Aristotle
+    correctly handled the over-elaborated prompt.
+  Both umbrellas updated; lake build green.
+- **Submitted this tick (5 disjoint refills):**
+  - `ad85aa10` — `Periods/PathIntegralViaCoverPickSmul.lean`.
+    Unparameterised `_smul`, mirror of just-landed `_neg`.
+  - `5d2035c3` — `Periods/ChartLiftReflSubpath.lean`. Bridge helper
+    sidestepping the dependent-rewrite blocker.
+  - `b5511a61` — `TraceDegree/PullbackFunApply.lean`.
+    `rfl`-style definitional simp.
+  - `e0fd22dd` — `Periods/ChartedFormPullbackApply.lean`. Same pattern.
+  - `ea9c5d7a` — `Periods/PathIntegralViaCoverWithRefl.lean`.
+    Multi-chart `_refl` using the new chartLift bridge. Gated on
+    `5d2035c3`.
 
 ### Currently in flight (last tick's refill)
 
