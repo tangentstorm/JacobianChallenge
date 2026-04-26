@@ -12,10 +12,18 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 23:33 EDT)
+## Live Status (2026-04-25 23:37 EDT)
 
-- Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
-  jobs QUEUED 8h+). No new submissions.
+- Active jobs (ours): 1/5. Aristotle queue **unblocked** — the
+  cross-project wedge cleared. New submission this tick:
+  | ID         | Target file                                       | Kind  | Status      |
+  | ---------- | ------------------------------------------------- | ----- | ----------- |
+  | 78ab4b77   | `Jacobian/Periods/PathPartition.lean`             | proof | in flight   |
+  Packet: `exists_uniform_chart_partition` — the multi-chart
+  partition lemma needed to graduate the opaque `periodPairing`.
+  Outline given to Aristotle: apply `exists_lebesgue_radius_chart`,
+  pick `n` with `1/n < δ`, midpoints with arithmetic on
+  `unitInterval`, `Classical.choose` for `pickChart`.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +

@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 23:33 EDT
+Last tick: 2026-04-25 23:37 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,27 +46,20 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
-                    jobs QUEUED 8h+).
-Integrated this tick: nothing from Aristotle.
-Local progress this tick: replaced
-                          `import Jacobian.Challenge` with
-                          `import Mathlib` in
-                          `Jacobian/ComplexTorus/Defs.lean`. Defs
-                          uses no Challenge-specific declarations,
-                          so the dependency was purely transitive.
-                          The change makes the torus quotient
-                          infrastructure independent of the
-                          challenge spec — addressing the review
-                          item about wrong dependency direction.
-                          The umbrella `Jacobian.ComplexTorus`
-                          still builds (8077 jobs, no sorries
-                          beyond the expected ones in
-                          `Challenge.lean`).
-Complex torus layer: complete and now self-contained (no longer
-                     depends on `Jacobian.Challenge`). Queue D
+Active jobs (ours): 1/5. Aristotle queue **unblocked** — the 5
+                    cross-project jobs that had been wedged for ~9h
+                    have all completed. Submitted job
+                    `78ab4b77-3ddc-4d2b-b831-270f5090cbb1` for
+                    `Jacobian/Periods/PathPartition.lean`
+                    (`exists_uniform_chart_partition`, the
+                    multi-chart path partition lemma).
+Integrated this tick: nothing yet.
+Local progress this tick: queue unblocked + first new submission;
+                          mostly bookkeeping.
+Complex torus layer: complete and self-contained. Queue D
                      primitives in place; Queue E foundation;
-                     Queue F + Queue G in design phase.
+                     Queue F + Queue G in design phase. Multi-chart
+                     partition is now in flight with Aristotle.
 ```
 
 ```text
