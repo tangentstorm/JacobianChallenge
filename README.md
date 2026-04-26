@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 05:30 EDT
+Last tick: 2026-04-26 05:33 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,9 +50,13 @@ Active jobs (ours): 3/5 (backend stalled ~57 min, no movement
                       since 04:09 EDT).
 Integrated this tick: none — backend frozen.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/ChartedFormPullbackLinearMapApply.lean:
-                        +chartedFormPullbackLinearMap_apply_vec
-                        (bundled tangent-vector chain rule, rfl)
+                      Periods/PathIntegralViaCoverRecon.lean:
+                      Packet F design correction. Mathlib v4.28.0
+                      has only `ContinuousOn.curveIntegrable_of_contDiffOn`
+                      (no continuous-only variant), so Packet F
+                      requires a `ContDiffOn ℝ 1 γ.extend I`
+                      hypothesis. Two options documented; option 1
+                      (add hypothesis) is the lighter fix.
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
