@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 12:19 EDT
+Last tick: 2026-04-26 12:21 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,16 +49,14 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Lifted the conditional add/sub linearity from
-                      the in-chart layer (last tick) to the from-X
-                      provisional layer:
-                      - Periods/PathIntegralViaChartAdd:
-                        pathIntegralViaChart_add_of_curveIntegrable
-                      - Periods/PathIntegralViaChartSub:
-                        pathIntegralViaChart_sub_of_curveIntegrable
-                      Each is a 2-line `unfold; exact` delegation
-                      through the in-chart version. Wired into
-                      Periods umbrella; builds green (2676 jobs, 24s).
+                      Periods/ChartedFormApplyLinear: NEW file
+                      with five pointwise apply-form simp lemmas
+                      `chartedForm_{zero,neg,add,sub,smul}_apply`
+                      at the provisional layer, mirroring
+                      ChartedFormPullbackApplyLinear at the
+                      corrected layer. 2-line proofs each:
+                      `rw [chartedForm_*]; rfl`. Wired into
+                      Periods umbrella; build green (2412 jobs, 22s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear

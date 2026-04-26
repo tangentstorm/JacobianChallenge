@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 12:19 EDT)
+## Live Status (2026-04-26 12:21 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/ChartedFormApplyLinear.lean`: five
+    pointwise apply-form simp lemmas at the provisional layer:
+    `chartedForm_{zero,neg,add,sub,smul}_apply`. Each rewrites the
+    function-level simp lemma and closes by `rfl` (2 lines).
+    Mirrors `ChartedFormPullbackApplyLinear` at the corrected layer.
+  - Wired into `Jacobian/Periods.lean` umbrella; build green
+    (2412 jobs, 22s).
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 12:19 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
