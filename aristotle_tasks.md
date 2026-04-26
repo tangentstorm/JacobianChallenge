@@ -12,7 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 12:24 EDT)
+## Live Status (2026-04-26 12:27 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - NEW `Jacobian/Periods/ChartedFormLinearMap.lean`: bundles the
+    provisional `chartedForm c` as a `HolomorphicOneForm E X →ₗ[ℂ]
+    (E → E →L[ℂ] ℂ)`. Uses the existing `chartedForm_add` and
+    `chartedForm_smul` for `map_add'` and `map_smul'`. The sanity
+    `_apply` simp is `rfl`. Mirror of corrected layer's
+    `ChartedFormPullbackLinearMap`.
+  - Wired into `Jacobian/Periods.lean` umbrella; build green
+    (2411 jobs, 22s).
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 12:24 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
