@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 12:05 EDT
+Last tick: 2026-04-26 12:10 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,16 +49,19 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Refactored two existing _symm proofs to
-                      use the new `chartLift_symm` lemma:
-                      Periods/PathIntegralViaChartCorrect (the
-                      corrected from-X _symm) and Periods/PathLiftSimp
-                      (the provisional _symm). Each proof now reads
-                      `unfold; rw [chartLift_symm c γ h h']; exact
-                      pathIntegralIn{Chart,ChartCorrect}_symm c ω
-                      (chartLift c γ h)` — three lines instead of the
-                      previous five-line inline `Path.ext rfl`.
-                      Build green (2672+2675 jobs).
+                      Periods/PathIntegralChartLinear: NEW file
+                      with `pathIntegralInChart_neg` and
+                      `pathIntegralInChart_smul` for the
+                      provisional in-chart integral (parallel to
+                      the corrected layer's PathIntegralChartCorrect
+                      Linear/Smul). 3-line proofs each:
+                      `show ... rw [chartedForm_neg/smul,
+                       curveIntegral_neg/smul]`. Then refactored
+                      Periods/PathIntegralViaChartLinear (the from-X
+                      version landed at 11:38) to delegate through
+                      the new in-chart lemmas — `unfold; exact`
+                      (2 lines per lemma). Wired into Periods
+                      umbrella; build green (2674 jobs, 51s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear

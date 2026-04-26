@@ -1,7 +1,5 @@
 import Jacobian.Periods.PathLift
-import Jacobian.Periods.ChartedFormSimp
-import Jacobian.Periods.ChartedFormSmul
-import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
+import Jacobian.Periods.PathIntegralChartLinear
 
 /-!
 # Linearity of the provisional `pathIntegralViaChart`
@@ -34,9 +32,8 @@ the form. -/
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (h : range γ ⊆ c.source) :
     pathIntegralViaChart c (-ω) γ h = - pathIntegralViaChart c ω γ h := by
-  show curveIntegral (chartedForm c (-ω)) (chartLift c γ h) =
-       - curveIntegral (chartedForm c ω) (chartLift c γ h)
-  rw [chartedForm_neg, curveIntegral_neg]
+  unfold pathIntegralViaChart
+  exact pathIntegralInChart_neg c ω _
 
 /-- The provisional from-`X` chart-local path integral is ℂ-linear
 in the form. -/
@@ -44,8 +41,7 @@ in the form. -/
     (c : OpenPartialHomeomorph X E) (k : ℂ) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (h : range γ ⊆ c.source) :
     pathIntegralViaChart c (k • ω) γ h = k • pathIntegralViaChart c ω γ h := by
-  show curveIntegral (chartedForm c (k • ω)) (chartLift c γ h) =
-       k • curveIntegral (chartedForm c ω) (chartLift c γ h)
-  rw [chartedForm_smul, curveIntegral_smul]
+  unfold pathIntegralViaChart
+  exact pathIntegralInChart_smul c k ω _
 
 end JacobianChallenge.Periods
