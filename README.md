@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 17:14 EDT
+Last tick: 2026-04-26 17:23 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,17 +49,15 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW Periods/PathIntegralViaChartCorrectNegSymmEqSelf:
-                      `pathIntegralViaChartCorrect_neg_symm_eq_self` —
-                      negate-and-reverse cancellation:
-                      `∫(-ω, γ.symm) = ∫(ω, γ)`. Proof: `_symm` then
-                      `_neg` then `neg_neg`. First attempt with
-                      `_neg_form_eq_symm_path + Path.symm_symm` hit
-                      a dependent-type rewrite issue (γ.symm.symm
-                      with implicitly-built range hypothesis); the
-                      direct `_symm + _neg + neg_neg` chain works
-                      cleanly. Wired into Periods umbrella; build
-                      green (8127 jobs, 153s).
+                      NEW Periods/PathIntegralViaCoverNegSymmEqSelf:
+                      `pathIntegralViaCoverWith_neg_symm_eq_self` —
+                      cover-layer analogue of last tick's negate-and-
+                      reverse cancellation. Same proof structure
+                      (`_symm` then `_neg` then `neg_neg`). Wired
+                      into Periods umbrella; build green (8128 jobs,
+                      185s). Negate-and-reverse cancellation now
+                      exists at the via-chart corrected and cover
+                      layers.
 Failed/split this tick: none.
 ```
 
@@ -171,6 +169,7 @@ TraceDegree.PullbackFunCompConst pass lake build Jacobian.TraceDegree.PullbackFu
 TraceDegree.PullbackFunConstComp pass lake build Jacobian.TraceDegree.PullbackFunConstComp (no sorry)
 TraceDegree.PullbackFormsLinearMapCompConst pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapCompConst (no sorry)
 Periods.PathIntegralViaChartCorrectNegSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaChartCorrectNegSymmEqSelf (no sorry)
+Periods.PathIntegralViaCoverNegSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaCoverNegSymmEqSelf (no sorry)
 ```
 
 ```text
