@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:51 EDT
+Last tick: 2026-04-26 00:59 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                ██████░░░░░░░░░�
 Path integration/periods         ████████░░░░░░░░░░░░   40%  multi-chart partition + correct pullback landed
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
-Trace/degree/push-pull           █░░░░░░░░░░░░░░░░░░░    5%  Queue G recon only
+Trace/degree/push-pull           ██░░░░░░░░░░░░░░░░░░   10%  pullbackFormsFun + linearity (no smoothness yet)
 
 Note: `chartedForm` currently misses the chart-derivative factor of
 the genuine 1-form pullback, so the period machinery is correct only
@@ -46,15 +46,19 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 4/5.
-Integrated this tick: 🎉 `ee3ce016` —
-                      `Periods/PathIntegralViaChartCorrect.lean`
-                      (from-X wrapper def + _refl + _symm).
-                      Clean term-mode proofs via Path.ext rfl.
-Submitted this tick:  `668a781a` —
-                      `Periods/PathIntegralViaChartCorrectZero.lean`
-                      (two-line proof refilling the slot).
-Still in flight:      `091ac5d1`, `fe592ee1`, `0b8b1163`.
+Active jobs (ours): 5/5.
+Integrated this tick: 🎉 `091ac5d1` — Periods/ChartedFormPullbackSimp
+                      (chartedFormPullback_zero/_neg/_add).
+                      🎉 `0b8b1163` — TraceDegree/PullbackFun
+                      (Queue G first packet: pullbackFormsFun +
+                      zero/neg/add). Created TraceDegree umbrella.
+Submitted this tick:  `835344a7` — Periods/ChartedFormPullbackSmul
+                      (scalar linearity for chart pullback).
+                      `e32728ec` — TraceDegree/PullbackFunSmul
+                      (scalar linearity for pullback function).
+                      `b20e4f00` — TraceDegree/PullbackFunId
+                      (pullbackFormsFun_id via mfderiv_id).
+Still in flight:      `fe592ee1`, `668a781a` (prior ticks).
 Failed/split this tick: none.
 ```
 
@@ -96,6 +100,9 @@ Periods.PathLiftSimp pass lake build Jacobian.Periods.PathLiftSimp (no sorry)
 Periods.PathIntegralChartCorrectSimp pass lake build Jacobian.Periods.PathIntegralChartCorrectSimp (no sorry)
 Periods.PathIntegralChartCorrectZero pass lake build Jacobian.Periods.PathIntegralChartCorrectZero (no sorry)
 Periods.PathIntegralViaChartCorrect pass lake build Jacobian.Periods.PathIntegralViaChartCorrect (no sorry)
+Periods.ChartedFormPullbackSimp pass lake build Jacobian.Periods.ChartedFormPullbackSimp (no sorry)
+TraceDegree.PullbackFun pass    lake build Jacobian.TraceDegree.PullbackFun (no sorry)
+TraceDegree (umbrella) pass     lake build Jacobian.TraceDegree
 ```
 
 ```text

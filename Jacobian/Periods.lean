@@ -1,6 +1,7 @@
 import Jacobian.Periods.ChartBallAtPoint
 import Jacobian.Periods.ChartedForm
 import Jacobian.Periods.ChartedFormPullback
+import Jacobian.Periods.ChartedFormPullbackSimp
 import Jacobian.Periods.ChartedFormSimp
 import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.LebesgueChartRadius
