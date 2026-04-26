@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 18:36 EDT
+Last tick: 2026-04-26 18:42 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,19 +47,17 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 1/5 — `09cd85dd` canary still QUEUED
-                      (16 min). Backend still asleep.
+                      (32 min). Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaCoverSmulSymmEqNegSmul:
-                      `pathIntegralViaCoverWith_smul_symm_eq_neg_smul`
-                      — cover-layer scalar-negation-absorbs-path-reversal
-                      `∫(k • ω, γ.symm) = ∫((-k) • ω, γ)` with
-                      Fin.rev-re-indexed cover. Proof composes
-                      `_smul_symm` + `_smul` + `neg_smul`. Initial
-                      attempt with extra `smul_neg` rewrite failed
-                      (no matching pattern after the prior rewrites);
-                      dropping it cleared the proof. Build green
-                      (8136 jobs, 121s). Identity now at via-chart
-                      corrected and cover-with layers.
+                      NEW Periods/PathIntegralChartCorrectSmulSymmEqNegSmul:
+                      `pathIntegralInChartCorrect_smul_symm_eq_neg_smul`
+                      — in-chart corrected layer of the
+                      smul-symm-eq-neg-smul identity. Proof needs
+                      both `neg_smul` and `smul_neg` (different
+                      from the cover-layer version which only
+                      needed `neg_smul`). Build green (8137 jobs).
+                      Identity now at three layers: in-chart
+                      corrected, via-chart corrected, cover-with.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -182,6 +180,7 @@ Periods.PathIntegralViaChartCorrectTrans pass lake build Jacobian.Periods.PathIn
 Periods.PathIntegralViaChartTrans (canary — sorry'd, awaiting Aristotle)
 Periods.PathIntegralViaChartCorrectSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralViaChartCorrectSmulSymmEqNegSmul (no sorry)
 Periods.PathIntegralViaCoverSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralViaCoverSmulSymmEqNegSmul (no sorry)
+Periods.PathIntegralChartCorrectSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralChartCorrectSmulSymmEqNegSmul (no sorry)
 ```
 
 ```text
