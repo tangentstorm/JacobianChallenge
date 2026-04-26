@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 17:38 EDT
+Last tick: 2026-04-26 17:42 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,13 +49,15 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW Periods/PathIntegralChartNegSymmEqSelf:
-                      `pathIntegralInChart_neg_symm_eq_self` —
-                      provisional in-chart layer. Same `_symm + _neg
-                      + neg_neg` chain. Wired into Periods umbrella;
-                      build green (8130 jobs, 248s). Negate-and-
-                      reverse identity now at four layers: in-chart
-                      provisional (this tick), in-chart corrected,
+                      NEW Periods/PathIntegralViaChartNegSymmEqSelf:
+                      `pathIntegralViaChart_neg_symm_eq_self` —
+                      provisional via-chart layer, completing the
+                      negate-and-reverse cancellation family. Same
+                      `_symm + _neg + neg_neg` chain. Wired into
+                      Periods umbrella; build green (8131 jobs, 67s).
+                      Negate-and-reverse identity now at all five
+                      layers: in-chart provisional, in-chart
+                      corrected, via-chart provisional (this tick),
                       via-chart corrected, cover-with.
 Failed/split this tick: none.
 ```
@@ -171,6 +173,7 @@ Periods.PathIntegralViaChartCorrectNegSymmEqSelf pass lake build Jacobian.Period
 Periods.PathIntegralViaCoverNegSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaCoverNegSymmEqSelf (no sorry)
 Periods.PathIntegralChartCorrectNegSymmEqSelf pass lake build Jacobian.Periods.PathIntegralChartCorrectNegSymmEqSelf (no sorry)
 Periods.PathIntegralChartNegSymmEqSelf pass lake build Jacobian.Periods.PathIntegralChartNegSymmEqSelf (no sorry)
+Periods.PathIntegralViaChartNegSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaChartNegSymmEqSelf (no sorry)
 ```
 
 ```text

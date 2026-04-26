@@ -58,6 +58,7 @@ import Jacobian.Periods.PathIntegralViaChartCorrectNegSymmEqSelf
 import Jacobian.Periods.PathIntegralViaCoverNegSymmEqSelf
 import Jacobian.Periods.PathIntegralChartCorrectNegSymmEqSelf
 import Jacobian.Periods.PathIntegralChartNegSymmEqSelf
+import Jacobian.Periods.PathIntegralViaChartNegSymmEqSelf
 import Jacobian.Periods.PathIntegralChartCorrectZero
 import Jacobian.Periods.PathIntegralViaChartAdd
 import Jacobian.Periods.PathIntegralViaChartApply
