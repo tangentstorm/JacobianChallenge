@@ -12,36 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 02:18 EDT)
+## Live Status (2026-04-26 02:30 EDT)
 
-- Active jobs (ours): 5/5. **Second consecutive 5-of-5 integration**.
-- 🎉 **Integrated this tick (5 of 5):**
-  - `98e2e9c6` — `Periods/PathIntegralViaChartCorrectSmul.lean`.
-    Two-line lift of `pathIntegralInChartCorrect_smul` to the from-`X`
-    wrapper.
-  - `47f1811e` — `Periods/PathIntegralViaCoverNeg.lean`.
-    Multi-chart `_neg` via `Finset.sum_neg_distrib` + chart-local
-    `pathIntegralViaChartCorrect_neg`.
-  - `bd02a68a` — `TraceDegree/PullbackFormsLinearMapId.lean`.
-    One-line term proof: `pullbackFormsFun_id η` (since
-    `pullbackFormsLinearMap_apply` is `rfl`).
-  - `6b4dec8c` — `TraceDegree/PullbackFormsLinearMapSimp.lean`.
-    Three one-liners via `LinearMap.map_zero/_neg/_add`.
-  - `a698da94` — `Periods/ChartedFormPullbackLinearMapSimp.lean`.
-    Same pattern for `chartedFormPullbackLinearMap`.
-  Both `Periods` and `TraceDegree` umbrellas updated; lake build green.
-- **Submitted this tick** (5 disjoint refills):
-  - `b478c88a` — `Periods/PathIntegralViaCoverSmul.lean`.
-    `pathIntegralViaCoverWith_smul` (multi-chart smul).
-  - `a8aca9fa` — `Periods/PathIntegralViaCoverPickSimp.lean`.
-    Unparameterised wrapper linearity (`_zero`, `_neg`). Key insight:
-    `Classical.choose` only depends on `γ`, not `ω`.
-  - `ecc4405a` — `TraceDegree/PullbackFormsLinearMapSmul.lean`.
-  - `ac357e8c` — `Periods/ChartedFormPullbackLinearMapSmul.lean`.
-  - `e7a078bd` — `Periods/CurveIntegralLinearity.lean`. **Note:**
-    prompt was over-elaborated with embedded "REVISED INSTRUCTION";
-    flagged for careful review on integration. May need to cancel
-    and resubmit cleanly.
+- Active jobs (ours): 5/5. Three running (1%), two queued
+  (`ecc4405a`, `e7a078bd`).
+- **Integrated this tick:** none.
+- **Local progress this tick (Claude-owned):**
+  added `Jacobian/Periods/PathReflSubpath.lean` —
+  `refl_subpath`: `(Path.refl a).subpath t₀ t₁ = Path.refl a` via
+  `Path.ext` + `rfl`. Useful primitive for `_refl` lemmas on
+  multi-chart integrals. Wired into Periods umbrella; lake build
+  green.
+- **Attempted but backed out:** `pathIntegralViaCoverWith_refl`. The
+  obvious `rw [refl_subpath]` fails because `pathIntegralViaChartCorrect`'s
+  range hypothesis depends on the path argument; rewriting the path
+  invalidates the existing range proof. Dependent-rewrite blocker —
+  needs `convert` or a chart-local "constant-path" helper. Deferred.
+
+### Currently in flight (last tick's refill)
+
+- `b478c88a` — `Periods/PathIntegralViaCoverSmul.lean`.
+- `a8aca9fa` — `Periods/PathIntegralViaCoverPickSimp.lean`.
+- `ecc4405a` — `TraceDegree/PullbackFormsLinearMapSmul.lean`.
+- `ac357e8c` — `Periods/ChartedFormPullbackLinearMapSmul.lean`.
+- `e7a078bd` — `Periods/CurveIntegralLinearity.lean` (stub; prompt
+  flagged for careful review).
 
 ## Layer status
 

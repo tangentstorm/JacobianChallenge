@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 02:18 EDT
+Last tick: 2026-04-26 02:30 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,21 +46,15 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 5/5. Second 5-of-5 integration tick.
-Integrated this tick: 🎉 5 of 5:
-                      `98e2e9c6` Periods/PathIntegralViaChartCorrectSmul
-                      `47f1811e` Periods/PathIntegralViaCoverNeg
-                      `bd02a68a` TraceDegree/PullbackFormsLinearMapId
-                      `6b4dec8c` TraceDegree/PullbackFormsLinearMapSimp
-                      `a698da94` Periods/ChartedFormPullbackLinearMapSimp
-Submitted this tick:  5 refills:
-                      `b478c88a` Periods/PathIntegralViaCoverSmul
-                      `a8aca9fa` Periods/PathIntegralViaCoverPickSimp
-                      `ecc4405a` TraceDegree/PullbackFormsLinearMapSmul
-                      `ac357e8c` Periods/ChartedFormPullbackLinearMapSmul
-                      `e7a078bd` Periods/CurveIntegralLinearity (stub;
-                                 prompt over-elaborated, flagged for
-                                 review on integration)
+Active jobs (ours): 5/5. Three running (1%), two queued.
+Integrated this tick: none.
+Submitted this tick:  none (full pipeline).
+Local progress: added Periods/PathReflSubpath.lean — `refl_subpath`
+                (Path.refl a).subpath t₀ t₁ = Path.refl a via
+                Path.ext + rfl. Useful primitive for future _refl
+                lemmas on multi-chart integrals.
+Attempted: pathIntegralViaCoverWith_refl — backed out due to
+           dependent-range rewrite blocker.
 Failed/split this tick: none.
 ```
 
@@ -123,6 +117,7 @@ Periods.PathIntegralViaCoverNeg pass lake build Jacobian.Periods.PathIntegralVia
 TraceDegree.PullbackFormsLinearMapId pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapId (no sorry)
 TraceDegree.PullbackFormsLinearMapSimp pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapSimp (no sorry)
 Periods.ChartedFormPullbackLinearMapSimp pass lake build Jacobian.Periods.ChartedFormPullbackLinearMapSimp (no sorry)
+Periods.PathReflSubpath pass lake build Jacobian.Periods.PathReflSubpath (no sorry)
 ```
 
 ```text
