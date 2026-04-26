@@ -12,7 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 11:38 EDT)
+## Live Status (2026-04-26 11:42 EDT)
+
+- Active jobs (ours): 0/5. **In-flight queue fully drained
+  locally** during the ~7.5h backend freeze (3 cancelled jobs
+  today: f8faacda, bf7d62c4, 82687eb7 — all proved in-house).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/TraceDegree/PullbackFunSimpApply.lean` — three
+    pointwise apply-form simp lemmas
+    `pullbackFormsFun_{zero,neg,smul}_apply`. Proved by
+    `rw [pullbackFormsFun_{zero,neg,smul}]; rfl` (2 lines each).
+  - **In-flight job `82687eb7` cancelled** after local landing.
+  - Wired into `Jacobian/TraceDegree.lean` umbrella; module builds
+    green (2410 jobs, 50s).
+- **Submitted this tick:** none.
+- Queue is now empty. Next ticks need to either (a) wait for backend
+  recovery, (b) prepare and submit a new substantive packet, or
+  (c) continue local Claude-owned proof work on bigger items
+  (e.g. pathIntegralViaCoverWith_symm, well-definedness of
+  pathIntegralViaCover, decomposed TorusExample retry).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 11:38 EDT)
 
 - Active jobs (ours): 1/5. One QUEUED ~7.5h
   (`82687eb7` PullbackFunSimpApply) — backend stalled since

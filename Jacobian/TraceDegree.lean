@@ -12,6 +12,7 @@ import Jacobian.TraceDegree.PullbackFunApplyVec
 import Jacobian.TraceDegree.PullbackFunConst
 import Jacobian.TraceDegree.PullbackFunId
 import Jacobian.TraceDegree.PullbackFunIdApply
+import Jacobian.TraceDegree.PullbackFunSimpApply
 import Jacobian.TraceDegree.PullbackFunSmul
 import Jacobian.TraceDegree.PullbackFunSub
 

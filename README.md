@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 11:38 EDT
+Last tick: 2026-04-26 11:42 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,21 +46,20 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 (TWO cancelled today after local landing;
-                      backend stalled ~7.5h since 04:09 EDT).
-Integrated this tick: bf7d62c4 pathIntegralViaChart_{neg,smul}
-                      — landed LOCALLY (Aristotle backend still
-                      frozen, so proved in-house and cancelled
-                      the in-flight job).
+Active jobs (ours): 0/5 (THREE cancelled today after local
+                      landing; backend stalled ~7.5h since 04:09 EDT).
+                      No more in-flight jobs to drain locally.
+Integrated this tick: 82687eb7 pullbackFormsFun_{zero,neg,smul}_apply
+                      — landed LOCALLY.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/PathIntegralViaChartLinear:
-                      pathIntegralViaChart_neg and _smul for the
-                      provisional from-X integral, proved by
-                      `show ... rw [chartedForm_neg, curveIntegral_neg]`
-                      and the smul analogue (3 lines per lemma).
-                      In-flight job bf7d62c4 cancelled (was QUEUED
-                      ~7.5h). Wired into Periods umbrella; module
-                      builds green (2673 jobs, 55s).
+                      TraceDegree/PullbackFunSimpApply: three
+                      pointwise apply-form simp lemmas
+                      `pullbackFormsFun_{zero,neg,smul}_apply`,
+                      proved by `rw [pullbackFormsFun_*]; rfl`
+                      (2 lines each). In-flight job 82687eb7
+                      cancelled (was QUEUED ~7.5h). Wired into
+                      TraceDegree umbrella; module builds green
+                      (2410 jobs, 50s). Queue now drained.
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
@@ -153,6 +152,7 @@ Periods.PathIntegralViaChartCorrectApply pass lake build Jacobian.Periods.PathIn
 Periods.ChartLiftApply pass    lake build Jacobian.Periods.ChartLiftApply (no sorry)
 Periods.ChartLiftBoundary pass lake build Jacobian.Periods.ChartLiftBoundary (no sorry)
 Periods.PathIntegralViaChartLinear pass lake build Jacobian.Periods.PathIntegralViaChartLinear (no sorry; _neg+_smul)
+TraceDegree.PullbackFunSimpApply pass lake build Jacobian.TraceDegree.PullbackFunSimpApply (no sorry)
 Periods.ChartedFormPullbackApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackApplyLinear (no sorry)
 Periods.ChartedFormPullbackLinearMapApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackLinearMapApplyLinear (no sorry)
 TraceDegree.PullbackFunAddSubApply pass lake build Jacobian.TraceDegree.PullbackFunAddSubApply (no sorry)
