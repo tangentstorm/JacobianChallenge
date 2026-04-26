@@ -12,21 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 00:01 EDT)
+## Live Status (2026-04-26 00:03 EDT)
 
-- Active jobs (ours): 2/5.
+- Active jobs (ours): 3/5.
   | ID         | Target file                                       | Kind  | Status      |
   | ---------- | ------------------------------------------------- | ----- | ----------- |
   | 259b18a1   | `Jacobian/HolomorphicForms/TorusExample.lean`     | proof | in flight   |
   | 3a1d6716   | `Jacobian/Periods/PathLiftSimp.lean`              | proof | in flight   |
+  | 26789359   | `Jacobian/Periods/PathIntegralChartCorrect.lean`  | def   | in flight   |
 - Nothing integrated this tick.
-- Submitted 3a1d6716 (pathIntegralViaChart_refl / _symm) to
-  keep the queue fed while TorusExample continues.
-- The multi-chart partition (78ab4b77, integrated) is the input
-  the opaque `periodPairing` was waiting on; with this in place,
-  the next substantial step is to define the real
-  `pathIntegralViaCover` function and graduate `periodPairing`
-  to a non-opaque AddMonoidHom.
+- 26789359: one-liner defining `pathIntegralInChartCorrect` via
+  `chartedFormPullback` (the corrected chart pullback). Sits
+  alongside the provisional `pathIntegralInChart`; a follow-up
+  packet can migrate downstream callers.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +
