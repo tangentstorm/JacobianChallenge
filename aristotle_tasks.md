@@ -12,23 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 15:43 EDT)
+## Live Status (2026-04-26 15:50 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
   (~11.5h since last movement). Per the
   "do-substantive-local-work-when-backend-frozen" rule,
-  searched for a tractable narrow target.
+  added another narrow corollary.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/PathIntegralChartCorrectSmulSymm.lean`:
+    `pathIntegralInChartCorrect_smul_symm` — in-chart corrected
+    analogue of last tick's single-chart `_smul_symm`.
+    1-line proof: `rw [_smul, _symm, smul_neg]`. Wired into
+    `Jacobian/Periods.lean` umbrella; build green
+    (8117 jobs, 198s).
+- The `_smul_symm` corollary now exists at all three layers:
+  in-chart corrected (this tick), via-chart corrected (last tick),
+  cover-with (earlier).
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 15:43 EDT)
+
+- Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
   - NEW `Jacobian/Periods/PathIntegralViaChartCorrectSmulSymm.lean`:
-    `pathIntegralViaChartCorrect_smul_symm` — single-chart
-    analogue of the existing cover-level `_smul_symm`.
-    1-line proof:
-    `rw [_smul, _symm c ω γ h h', smul_neg]`. Wired into
-    `Jacobian/Periods.lean` umbrella; build green
-    (8116 jobs, 85s).
-- Confirms the `_smul_symm` corollary is now available at both
-  the cover layer (`pathIntegralViaCoverWith_smul_symm`) and
-  the corrected single-chart layer.
+    `pathIntegralViaChartCorrect_smul_symm`. 1-line `rw` proof.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
