@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 02:43 EDT
+Last tick: 2026-04-26 02:51 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,20 +46,11 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 5/5. Third 5-of-5 integration tick.
-Integrated this tick: 🎉 5 of 5:
-                      `b478c88a` Periods/PathIntegralViaCoverSmul
-                      `a8aca9fa` Periods/PathIntegralViaCoverPickSimp
-                      `ecc4405a` TraceDegree/PullbackFormsLinearMapSmul
-                      `ac357e8c` Periods/ChartedFormPullbackLinearMapSmul
-                      `e7a078bd` Periods/CurveIntegralLinearity (stub)
-Submitted this tick:  5 refills:
-                      `ad85aa10` Periods/PathIntegralViaCoverPickSmul
-                      `5d2035c3` Periods/ChartLiftReflSubpath
-                      `b5511a61` TraceDegree/PullbackFunApply
-                      `e0fd22dd` Periods/ChartedFormPullbackApply
-                      `ea9c5d7a` Periods/PathIntegralViaCoverWithRefl
-                                 (gated on 5d2035c3)
+Active jobs (ours): 5/5. All running at 1-2% (just started).
+Integrated this tick: none.
+Submitted this tick:  none (full pipeline).
+Local progress: none — pipeline is healthy and packets just kicked
+                off; saving cycles for the next integration round.
 Failed/split this tick: none.
 ```
 
