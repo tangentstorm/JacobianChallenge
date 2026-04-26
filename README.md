@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 19:39 EDT
+Last tick: 2026-04-26 19:46 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,16 +46,14 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~1.5h.
+Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~1.5h+.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaChartCorrectNegSmulSymmEqSelf:
-                      `pathIntegralViaChartCorrect_neg_smul_symm_eq_self`
-                      — combining form-negation + scalar-mul +
-                      path-reversal cancels all three sign flips:
-                      `∫(-(k • ω), γ.symm) = k • ∫(ω, γ)`. Composes
-                      `_neg + _smul_symm + neg_neg`. Build green
-                      (8145 jobs).
+                      NEW Periods/PathIntegralViaCoverNegSmulSymmEqSelf:
+                      `pathIntegralViaCoverWith_neg_smul_symm_eq_self`
+                      — cover-layer triple-cancellation. Build green
+                      (8146 jobs). Identity now at via-chart and
+                      cover-with layers.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -191,6 +189,7 @@ Periods.PathIntegralViaCoverNegSmul pass lake build Jacobian.Periods.PathIntegra
 Periods.PathIntegralChartNegSmul pass lake build Jacobian.Periods.PathIntegralChartNegSmul (no sorry)
 Periods.PathIntegralViaChartNegSmul pass lake build Jacobian.Periods.PathIntegralViaChartNegSmul (no sorry)
 Periods.PathIntegralViaChartCorrectNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaChartCorrectNegSmulSymmEqSelf (no sorry)
+Periods.PathIntegralViaCoverNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaCoverNegSmulSymmEqSelf (no sorry)
 ```
 
 ```text
