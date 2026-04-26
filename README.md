@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 15:27 EDT
+Last tick: 2026-04-26 15:43 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,30 +49,13 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Resolved last tick's dependent-type rewrite
-                      blocker. Two new files:
-                      - Periods/PathIntegralCongr:
-                        pathIntegralViaChartCorrect_eq_of_path_eq
-                        (and provisional analogue) — congruence
-                        via `subst` + proof irrelevance, bridges
-                        equal paths under different range-hypothesis
-                        proofs.
-                      - Periods/PathIntegralSegmentSymm:
-                        pathIntegralViaChartCorrect_symm_subpath_divFinIcc
-                        — the per-segment sign-flip lemma. Proof
-                        uses `set σpath := ...; eq := path_symm_subpath_divFinIcc;
-                        h_symm' := eq ▸ h_symm; rw [eq_of_path_eq];
-                        exact pathIntegralViaChartCorrect_symm`. Wired
-                        into Periods umbrella; build green
-                        (2762 jobs, 51s).
-                      All path-side helpers for cover-symm now in
-                      place; remaining piece is the Finset.sum_bij
-                      Fin.rev re-indexing (full theorem statement
-                      remains TODO).
-Still running (queued, no progress):
-                      `f8faacda` Periods/ChartLiftBoundary
-                      `bf7d62c4` Periods/PathIntegralViaChartLinear
-                      `82687eb7` TraceDegree/PullbackFunSimpApply
+                      NEW Periods/PathIntegralViaChartCorrectSmulSymm:
+                      `pathIntegralViaChartCorrect_smul_symm` — the
+                      single-chart analogue of the existing cover-level
+                      `_smul_symm`. 1-line proof
+                      `rw [_smul, _symm c ω γ h h', smul_neg]`. Wired
+                      into Periods umbrella; build green
+                      (8116 jobs, 85s).
 Failed/split this tick: none.
 ```
 
@@ -166,6 +149,7 @@ Periods.ChartedFormPullbackApplyLinear pass lake build Jacobian.Periods.ChartedF
 Periods.ChartedFormPullbackLinearMapApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackLinearMapApplyLinear (no sorry)
 TraceDegree.PullbackFunAddSubApply pass lake build Jacobian.TraceDegree.PullbackFunAddSubApply (no sorry)
 TraceDegree.PullbackFormsLinearMapApplyLinear pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapApplyLinear (no sorry)
+Periods.PathIntegralViaChartCorrectSmulSymm pass lake build Jacobian.Periods.PathIntegralViaChartCorrectSmulSymm (no sorry)
 ```
 
 ```text

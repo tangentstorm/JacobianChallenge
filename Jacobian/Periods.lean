@@ -43,6 +43,7 @@ import Jacobian.Periods.PathIntegralChartCorrectNegSymm
 import Jacobian.Periods.PathIntegralChartCorrectSub
 import Jacobian.Periods.PathIntegralChartCorrectSmul
 import Jacobian.Periods.PathIntegralChartCorrectSimp
+import Jacobian.Periods.PathIntegralViaChartCorrectSmulSymm
 import Jacobian.Periods.PathIntegralChartCorrectZero
 import Jacobian.Periods.PathIntegralViaChartAdd
 import Jacobian.Periods.PathIntegralViaChartApply

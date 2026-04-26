@@ -12,7 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 15:27 EDT)
+## Live Status (2026-04-26 15:43 EDT)
+
+- Active jobs (ours): 0/5 (queue empty); backend still frozen
+  (~11.5h since last movement). Per the
+  "do-substantive-local-work-when-backend-frozen" rule,
+  searched for a tractable narrow target.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/PathIntegralViaChartCorrectSmulSymm.lean`:
+    `pathIntegralViaChartCorrect_smul_symm` — single-chart
+    analogue of the existing cover-level `_smul_symm`.
+    1-line proof:
+    `rw [_smul, _symm c ω γ h h', smul_neg]`. Wired into
+    `Jacobian/Periods.lean` umbrella; build green
+    (8116 jobs, 85s).
+- Confirms the `_smul_symm` corollary is now available at both
+  the cover layer (`pathIntegralViaCoverWith_smul_symm`) and
+  the corrected single-chart layer.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 15:27 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick:** none. Brief refresh.
