@@ -51,4 +51,16 @@ noncomputable def pathIntegralViaChart
     (h : range γ ⊆ c.source) : ℂ :=
   pathIntegralInChart c ω (chartLift c γ h)
 
+/-- The from-`X` chart-local path integral is `0` for the zero form. -/
+@[simp] theorem pathIntegralViaChart_zero
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
+    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+    (c : OpenPartialHomeomorph X E)
+    {a b : X} (γ : Path a b)
+    (h : range γ ⊆ c.source) :
+    pathIntegralViaChart c (0 : HolomorphicOneForm E X) γ h = 0 := by
+  unfold pathIntegralViaChart
+  exact pathIntegralInChart_zero _ _
+
 end JacobianChallenge.Periods

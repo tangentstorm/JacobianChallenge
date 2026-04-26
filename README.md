@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 22:06 EDT
+Last tick: 2026-04-25 22:10 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -45,28 +45,20 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 8h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: pivoted to Queue E. Added
-                          `Jacobian/AnalyticJacobian/Defs.lean`
-                          (no sorries) defining
-                          `AnalyticJacobianGroup E X :=
-                          (HolomorphicOneForm E X →ₗ[ℂ] ℂ) ⧸
-                          periodSubgroup E X`,
-                          the abstract group quotient of the linear
-                          dual of holomorphic 1-forms by the period
-                          subgroup. `AddCommGroup
-                          (AnalyticJacobianGroup E X)` instance
-                          comes for free from `QuotientAddGroup`
-                          (verified with an `example`).
-                          This sidesteps the sorry-laden
-                          `periodFullComplexLattice` placeholder in
-                          StatementBank by working at the group
-                          level only — the topology / manifold /
-                          compact-torus structure is layered on top
-                          via the deferred full-lattice property.
-Complex torus layer: complete. Queue D primitives in place.
-                     Queue E foundation: abstract Jacobian group
-                     defined; Lie-group structure deferred to
-                     full-lattice work.
+Local progress this tick: extended Queue D's path-integration API
+                          with `pathIntegralViaChart_zero` (`@[simp]`)
+                          in `Jacobian/Periods/PathLift.lean`. The
+                          from-`X` chart-local integral of the zero
+                          form is `0`. Two-line proof: unfold
+                          `pathIntegralViaChart`, apply
+                          `pathIntegralInChart_zero`. Mirrors the
+                          analogous lemma on the simpler
+                          `pathIntegralInChart`.
+Complex torus layer: complete. Queue D primitives in place with
+                     refl/symm/zero API on both chart-local and
+                     from-`X` integrals. Queue E foundation:
+                     abstract Jacobian group defined; Lie-group
+                     structure deferred to full-lattice work.
 ```
 
 ```text
