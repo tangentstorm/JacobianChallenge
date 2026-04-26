@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 22:10 EDT
+Last tick: 2026-04-25 22:13 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -45,20 +45,29 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 8h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: extended Queue D's path-integration API
-                          with `pathIntegralViaChart_zero` (`@[simp]`)
-                          in `Jacobian/Periods/PathLift.lean`. The
-                          from-`X` chart-local integral of the zero
-                          form is `0`. Two-line proof: unfold
-                          `pathIntegralViaChart`, apply
-                          `pathIntegralInChart_zero`. Mirrors the
-                          analogous lemma on the simpler
-                          `pathIntegralInChart`.
+Local progress this tick: consolidated three queues with umbrella
+                          modules (matching the existing
+                          `Jacobian/ComplexTorus.lean` pattern):
+                          - `Jacobian/HolomorphicForms.lean`
+                            re-exports `CotangentBundle`, `Defs`,
+                            `FiniteDimensional`. Excludes `Recon`.
+                          - `Jacobian/Periods.lean` re-exports the
+                            seven production files
+                            (`ChartBallAtPoint`, `ChartedForm`,
+                            `IntegralOneCycle`,
+                            `LebesgueChartRadius`,
+                            `PathIntegralChart`, `PathLift`,
+                            `PeriodFunctional`). Excludes `Recon`.
+                          - `Jacobian/AnalyticJacobian.lean`
+                            re-exports `Defs`.
+                          All three umbrellas build clean. Callers
+                          can now import the whole layer in one
+                          line.
 Complex torus layer: complete. Queue D primitives in place with
-                     refl/symm/zero API on both chart-local and
-                     from-`X` integrals. Queue E foundation:
-                     abstract Jacobian group defined; Lie-group
-                     structure deferred to full-lattice work.
+                     refl/symm/zero API; umbrella now usable.
+                     Queue E: abstract Jacobian group defined.
+                     Three umbrellas live alongside the existing
+                     `Jacobian.ComplexTorus`.
 ```
 
 ```text
@@ -86,6 +95,9 @@ Periods.PeriodFunctional pass lake build Jacobian.Periods.PeriodFunctional (opaq
 Periods.LebesgueChartRadius pass lake build Jacobian.Periods.LebesgueChartRadius (no sorry)
 Periods.ChartBallAtPoint pass lake build Jacobian.Periods.ChartBallAtPoint (no sorry)
 AnalyticJacobian.Defs pass lake build Jacobian.AnalyticJacobian.Defs (no sorry)
+HolomorphicForms (umbrella) pass lake build Jacobian.HolomorphicForms
+Periods (umbrella)  pass    lake build Jacobian.Periods (1 opaque)
+AnalyticJacobian (umbrella) pass lake build Jacobian.AnalyticJacobian
 ```
 
 ```text
