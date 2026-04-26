@@ -12,19 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 00:07 EDT)
+## Live Status (2026-04-26 00:13 EDT)
 
-- Active jobs (ours): 3/5.
+- Active jobs (ours): 2/5 (one integrated this tick).
   | ID         | Target file                                       | Kind  | Status      |
   | ---------- | ------------------------------------------------- | ----- | ----------- |
   | 259b18a1   | `Jacobian/HolomorphicForms/TorusExample.lean`     | proof | in flight   |
   | 3a1d6716   | `Jacobian/Periods/PathLiftSimp.lean`              | proof | in flight   |
-  | 26789359   | `Jacobian/Periods/PathIntegralChartCorrect.lean`  | def   | in flight   |
-- Nothing integrated this tick.
-- 26789359: one-liner defining `pathIntegralInChartCorrect` via
-  `chartedFormPullback` (the corrected chart pullback). Sits
-  alongside the provisional `pathIntegralInChart`; a follow-up
-  packet can migrate downstream callers.
+- 🎉 **Integrated this tick:** `26789359` —
+  `Jacobian/Periods/PathIntegralChartCorrect.lean`. The one-line
+  `pathIntegralInChartCorrect c ω γ := curveIntegral
+  (chartedFormPullback c ω) γ` is now in place alongside the
+  provisional version. Future migration of `pathIntegralViaChart`
+  callers to use the corrected variant is a follow-up.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +
