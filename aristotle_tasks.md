@@ -12,26 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 16:35 EDT)
+## Live Status (2026-04-26 16:41 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
   (~12.75h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralViaChartSymmAddSelf.lean`:
-    `pathIntegralViaChart_add_symm_self` — provisional via-chart
-    round-trip identity, completing the family. 1-line proof:
-    `rw [_symm c ω γ h h', add_neg_cancel]`. Wired into
-    `Jacobian/Periods.lean` umbrella; build green
-    (8124 jobs, 135s).
-- The round-trip identity `∫(ω, γ) + ∫(ω, γ.symm) = 0` now
-  exists at all five layers: in-chart provisional, in-chart
-  corrected, via-chart provisional (this tick), via-chart
-  corrected, cover-with. Family complete.
+  - NEW `Jacobian/Periods/PathIntegralChartCorrectTrans.lean`:
+    `pathIntegralInChartCorrect_trans_of_curveIntegrable` —
+    conditional path-concatenation linearity, reducing to
+    Mathlib's `curveIntegral_trans` (which itself requires
+    `CurveIntegrable` hypotheses on both halves). Becomes
+    unconditional once Packet F lands the curve-integrability
+    of `chartedFormPullback c ω` for sufficiently smooth paths.
+    Wired into `Jacobian/Periods.lean` umbrella; build green
+    (8125 jobs, 129s).
+- This is the first step toward a `_trans` (concatenation) family
+  parallel to `_add` (which is also conditional on integrability).
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 16:30 EDT)
+## Stale Live Status (2026-04-26 16:35 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
