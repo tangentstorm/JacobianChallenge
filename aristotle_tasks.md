@@ -12,20 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 03:47 EDT)
+## Live Status (2026-04-26 03:51 EDT)
 
 - Active jobs (ours): 4/5.
 - 🎉 **Integrated this tick:**
-  - `d9cda755` — `TraceDegree/PullbackFunIdApply.lean`. One-line
-    `rw [pullbackFormsFun_id]`.
+  - `cbbe4d1b` — `Periods/ChartedFormPullbackLinearMapApply.lean`.
+    `rfl` one-liner.
 - **Still in flight:**
-  - `cbbe4d1b` — `Periods/ChartedFormPullbackLinearMapApply.lean`
-    (running 1%).
   - `2e837ce5` — `TraceDegree/PullbackFormsLinearMapApply.lean`
+    (running 2%).
+  - `e3f89de0` — `Periods/PathIntegralChartCorrectApply.lean`
     (running 1%).
-  - `e3f89de0` — `Periods/PathIntegralChartCorrectApply.lean` (queued).
   - `59a2f682` — `Periods/PathIntegralViaChartCorrectApply.lean`
-    (queued).
+    (running 1%).
+  - `f9550953` — `Periods/ChartLiftApply.lean` (running 1%).
 
 ## Layer status
 
