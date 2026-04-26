@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 10:46 EDT
+Last tick: 2026-04-26 10:48 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,13 +50,13 @@ Active jobs (ours): 3/5 (backend stalled ~6.5h, no movement
                       since 04:09 EDT).
 Integrated this tick: none — backend frozen.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/ChartedFormPullbackLinearMapApplyLinear:
-                      5 pointwise apply-form simp lemmas at the
-                      bundled-LinearMap layer
-                      `chartedFormPullbackLinearMap_{zero,neg,add,sub,smul}_apply`,
-                      mirroring the unbundled apply-bundle from
-                      the previous tick. Wired into Periods
-                      umbrella; build green (2418 jobs, 35s).
+                      TraceDegree/PullbackFunAddSubApply:
+                      `pullbackFormsFun_{add,sub}_apply` pointwise
+                      apply-form simp lemmas. Out of scope of the
+                      in-flight Aristotle job 82687eb7 (which
+                      targets _zero/_neg/_smul_apply only).
+                      Wired into TraceDegree umbrella; build green
+                      (2410 jobs, 25s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
@@ -149,6 +149,7 @@ Periods.PathIntegralViaChartCorrectApply pass lake build Jacobian.Periods.PathIn
 Periods.ChartLiftApply pass    lake build Jacobian.Periods.ChartLiftApply (no sorry)
 Periods.ChartedFormPullbackApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackApplyLinear (no sorry)
 Periods.ChartedFormPullbackLinearMapApplyLinear pass lake build Jacobian.Periods.ChartedFormPullbackLinearMapApplyLinear (no sorry)
+TraceDegree.PullbackFunAddSubApply pass lake build Jacobian.TraceDegree.PullbackFunAddSubApply (no sorry)
 ```
 
 ```text

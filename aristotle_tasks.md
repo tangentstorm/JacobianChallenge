@@ -12,7 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 10:46 EDT)
+## Live Status (2026-04-26 10:48 EDT)
+
+- Active jobs (ours): 3/5. All three QUEUED ~6.5h — backend stalled
+  since ~04:09 EDT, no jobs moving on any project.
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/TraceDegree/PullbackFunAddSubApply.lean` — two
+    pointwise apply-form simp lemmas:
+    `pullbackFormsFun_add_apply` and `pullbackFormsFun_sub_apply`.
+    Each rewrites the function-level simp and closes by `rfl`.
+    Out of scope of the in-flight Aristotle job 82687eb7
+    (`PullbackFunSimpApply.lean`, which targets only
+    `_zero/_neg/_smul_apply`).
+  - Wired into `Jacobian/TraceDegree.lean` umbrella; module builds
+    green (2410 jobs, 25s).
+- **Submitted this tick:** none (backlog still blocking).
+- Continuing local Claude-owned progress while Aristotle queue
+  remains frozen.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 10:46 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~6.5h — backend stalled
   since ~04:09 EDT, no jobs moving on any project.
