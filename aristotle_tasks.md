@@ -12,7 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 11:58 EDT)
+## Live Status (2026-04-26 12:02 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/Periods/ChartLiftSymm.lean` — new file with
+    `chartLift_symm : chartLift c γ.symm h' = (chartLift c γ h).symm`.
+    Proof is `unfold chartLift; exact Path.ext rfl` — both sides
+    expand to `c ∘ γ ∘ σ`, the σ just gets factored out at
+    different points in the bracketing. Promotes the inline
+    `Path.ext rfl` from `pathIntegralViaChartCorrect_symm`
+    (PathLiftSimp.lean) to a reusable named lemma.
+  - Wired into `Jacobian/Periods.lean` umbrella; build green
+    (2671 jobs, 51s).
+- This is the fourth helper toward `pathIntegralViaCoverWith_symm`.
+  Status of toolkit:
+  1. `divFinIcc_symm` ✓ (boundary point reflection)
+  2. `path_symm_subpath_eq` ✓ (subpath through symm)
+  3. `path_symm_subpath_divFinIcc` ✓ (segment-level reflection)
+  4. `chartLift_symm` ✓ (chartLift commutes with symm) — NEW
+  Still needed: Fin.rev re-indexing of the Finset sum (the easy
+  combinatorial step).
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 11:58 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**

@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 11:58 EDT
+Last tick: 2026-04-26 12:02 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,18 +49,16 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      Periods/PathPartitionSymm: new file with
-                      `path_symm_subpath_divFinIcc` — the i-th
-                      segment of γ.symm equals the symm of γ's
-                      segment at endpoints `[σ((i+1)/n), σ(i/n)]`.
-                      Proof is a 2-line `rw` chain combining
-                      path_symm_subpath_eq and Mathlib's
-                      Path.symm_subpath. Hit and corrected one
-                      type-mismatch (kept σ in the statement so
-                      Path endpoints unify definitionally instead
-                      of through divFinIcc_symm's propositional
-                      equality). Wired into Periods umbrella;
-                      build green (1582 jobs, 31s).
+                      Periods/ChartLiftSymm: new file with
+                      `chartLift_symm`:
+                      `chartLift c γ.symm h' = (chartLift c γ h).symm`.
+                      Both sides are `c ∘ γ ∘ σ`; proof is
+                      `unfold chartLift; exact Path.ext rfl`.
+                      Promotes the inline `Path.ext rfl` from
+                      `pathIntegralViaChartCorrect_symm` to a named
+                      lemma for reuse by the cover-symm proof.
+                      Wired into Periods umbrella; build green
+                      (2671 jobs, 51s).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear
