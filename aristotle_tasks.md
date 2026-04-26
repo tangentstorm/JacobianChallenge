@@ -12,7 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 10:43 EDT)
+## Live Status (2026-04-26 10:46 EDT)
+
+- Active jobs (ours): 3/5. All three QUEUED ~6.5h — backend stalled
+  since ~04:09 EDT, no jobs moving on any project.
+- **Integrated this tick:** none (refresh-only; previous tick at
+  10:43 just landed 5 LinearMap-layer apply-form lemmas in
+  `ChartedFormPullbackLinearMapApplyLinear`).
+- **Submitted this tick:** none (backlog still blocking).
+- Quick bookkeeping refresh tick — wakeup fired sooner than the
+  scheduled 30 min window. No new code; tree clean.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 10:43 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~6.5h — backend stalled
   since ~04:09 EDT, no jobs moving on any project.
