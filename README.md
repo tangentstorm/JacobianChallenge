@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 00:18 EDT
+Last tick: 2026-04-26 00:22 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,24 +46,19 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5.
+Active jobs (ours): 2/5.
                     - `259b18a1` — `HolomorphicForms/TorusExample.lean`. IN_PROGRESS, 14%.
-Integrated this tick: 🎉 `3a1d6716` —
-                      `Jacobian/Periods/PathLiftSimp.lean`. Two
-                      simp/API lemmas:
-                      - `pathIntegralViaChart_refl` (`@[simp]`):
-                        from-`X` integral over a constant path is
-                        `0`.
-                      - `pathIntegralViaChart_symm`: sign-reversal
-                        under path symmetry.
-                      Both proofs use `Path.ext rfl` to bridge
-                      `chartLift c (Path.refl a)` to `Path.refl (c a)`
-                      (and analogously for `symm`). Wired into the
-                      `Jacobian.Periods` umbrella.
-Local progress this tick: integration of 3a1d6716.
-Complex torus layer: complete and self-contained. Queue D's
-                     from-`X` integration API now has refl/symm
-                     simp lemmas.
+                    - `e7aa502d` — `Periods/PathIntegralChartCorrectSimp.lean`.
+                      Just submitted: `_refl` and `_symm` simp/API
+                      for the corrected chart integral.
+Integrated this tick: nothing.
+Local progress this tick: submitted `e7aa502d` to round out the
+                          corrected-integral API (refl / symm
+                          mirroring the provisional version).
+Complex torus layer: complete and self-contained. Queue D mostly
+                     in flight (TorusExample slow at 14%);
+                     submitted small additional API to keep the
+                     queue active.
 ```
 
 ```text
