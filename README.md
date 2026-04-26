@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 19:05 EDT
+Last tick: 2026-04-26 19:11 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,15 +46,15 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `09cd85dd` canary still QUEUED
-                      (58 min). Backend still asleep.
+Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~1h.
+                      Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW TraceDegree/PullbackFunConstApplyVec:
-                      `pullbackFormsFun_const_apply` (vector-form)
-                      — function-level vector-apply for constant-map
-                      pullback (zero). Symmetric counterpart to last
-                      tick's bundled version. Build green (2438
-                      jobs).
+                      NEW Periods/PathIntegralChartCorrectNegSmul:
+                      `pathIntegralInChartCorrect_neg_smul` —
+                      form-negation factors through scalar negation:
+                      `∫(-(k • ω), γ) = (-k) • ∫(ω, γ)`. Proof
+                      composes `_neg + _smul + ← neg_smul`. Build
+                      green (8140 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -184,6 +184,7 @@ TraceDegree.PullbackFunIdApplyVec pass lake build Jacobian.TraceDegree.PullbackF
 TraceDegree.PullbackFormsLinearMapIdApplyVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapIdApplyVec (no sorry)
 TraceDegree.PullbackFormsLinearMapConstApplyVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapConstApplyVec (no sorry)
 TraceDegree.PullbackFunConstApplyVec pass lake build Jacobian.TraceDegree.PullbackFunConstApplyVec (no sorry)
+Periods.PathIntegralChartCorrectNegSmul pass lake build Jacobian.Periods.PathIntegralChartCorrectNegSmul (no sorry)
 ```
 
 ```text
