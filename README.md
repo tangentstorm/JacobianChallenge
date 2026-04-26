@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 16:59 EDT
+Last tick: 2026-04-26 17:02 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,15 +49,13 @@ Aristotle status
 Active jobs (ours): 0/5 (queue empty).
 Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      NEW TraceDegree/PullbackFormsLinearMapComp:
-                      `pullbackFormsLinearMap_comp_apply_at` and
-                      `_comp_apply_vec` — bundled-LinearMap-level
-                      pointwise chain rule. Lifts the last two
-                      ticks' `_comp_apply` and `_comp_apply_apply`
-                      from function-level to bundled. Each is a
-                      1-2 line proof bridging via
-                      `pullbackFormsLinearMap_apply_at`. Wired into
-                      TraceDegree umbrella; build green (2431 jobs).
+                      NEW TraceDegree/PullbackFunCompConst:
+                      `pullbackFormsFun_comp_const` — pullback along
+                      `f ∘ const x₀` is zero (composition factors
+                      through a single point, hence is itself
+                      constant). 2-line proof reducing to
+                      `pullbackFormsFun_const`. Wired into
+                      TraceDegree umbrella; build green (2432 jobs).
 Failed/split this tick: none.
 ```
 
@@ -165,6 +163,7 @@ Periods.PathIntegralChartTrans pass lake build Jacobian.Periods.PathIntegralChar
 TraceDegree.PullbackFunComp pass lake build Jacobian.TraceDegree.PullbackFunComp (no sorry)
 TraceDegree.PullbackFunCompApply pass lake build Jacobian.TraceDegree.PullbackFunCompApply (no sorry)
 TraceDegree.PullbackFormsLinearMapComp pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapComp (no sorry)
+TraceDegree.PullbackFunCompConst pass lake build Jacobian.TraceDegree.PullbackFunCompConst (no sorry)
 ```
 
 ```text
