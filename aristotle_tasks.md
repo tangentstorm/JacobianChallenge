@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 15:06 EDT)
+## Live Status (2026-04-26 15:13 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick:** none. Brief refresh — bounded-target
+  hunt is well past diminishing returns. Today's session has
+  added 30+ new files/lemmas; the substantive cover-symm milestone
+  + 5+ corollaries are all merged. The bigger remaining items
+  (well-definedness of pathIntegralViaCover, Pick-layer _symm,
+  pullbackFormsFun_smooth, periodPairing Stokes step, decomposed
+  TorusExample retry) all need careful multi-tick planning rather
+  than single-tick attempts.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 15:06 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
