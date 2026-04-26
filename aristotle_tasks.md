@@ -12,26 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 16:00 EDT)
+## Live Status (2026-04-26 16:07 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
   (~12h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralViaChartSmulSymm.lean`:
-    `pathIntegralViaChart_smul_symm` — provisional via-chart
-    analogue. 1-line proof:
-    `rw [_smul, _symm c ω γ h h', smul_neg]`. Wired into
+  - NEW `Jacobian/Periods/PathIntegralViaChartCorrectSymmAddSelf.lean`:
+    `pathIntegralViaChartCorrect_add_symm_self` — the round-trip
+    identity `∫(ω, γ) + ∫(ω, γ.symm) = 0`. 1-line proof
+    via `_symm` + `add_neg_cancel`. Wired into
     `Jacobian/Periods.lean` umbrella; build green
-    (8119 jobs, 108s).
-- The `_smul_symm` corollary now exists at all five layers:
-  in-chart provisional, in-chart corrected, via-chart
-  provisional (this tick), via-chart corrected, cover-with.
-  Family complete.
+    (8120 jobs, 160s).
+- Geometrically a special case of Stokes: traversing γ and then
+  γ.symm closes up into an out-and-back loop, whose integral of
+  any 1-form is zero. Useful for compositional path-integral
+  arguments later in the periods chain.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 15:55 EDT)
+## Stale Live Status (2026-04-26 16:00 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
