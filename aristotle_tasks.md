@@ -12,7 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 10:41 EDT)
+## Live Status (2026-04-26 10:43 EDT)
+
+- Active jobs (ours): 3/5. All three QUEUED ~6.5h — backend stalled
+  since ~04:09 EDT, no jobs moving on any project.
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/Periods/ChartedFormPullbackLinearMapApplyLinear.lean` —
+    five pointwise apply-form simp lemmas at the bundled-LinearMap
+    layer: `chartedFormPullbackLinearMap_{zero,neg,add,sub,smul}_apply`.
+    Each delegates through `chartedFormPullbackLinearMap_apply_at`
+    (the rfl-bridge to the unbundled form) to the apply-form bundle
+    landed in the previous tick.
+  - Wired into `Jacobian/Periods.lean` umbrella; module builds green
+    (2418 jobs, 35s).
+- **Submitted this tick:** none (backlog still blocking).
+- Continuing local Claude-owned progress while Aristotle queue
+  remains frozen.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 10:41 EDT)
 
 - Active jobs (ours): 3/5. All three QUEUED ~6.5h — backend stalled
   since ~04:09 EDT, no jobs moving on any project.
