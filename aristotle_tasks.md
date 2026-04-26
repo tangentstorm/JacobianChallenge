@@ -12,21 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 22:10 EDT)
+## Live Status (2026-04-25 22:13 EDT)
 
 - Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
   jobs QUEUED 8h+). No new submissions.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
-- **Queue D scaffolding (1 opaque, no sorries):** 8 files. This
-  tick added `pathIntegralViaChart_zero` to `PathLift.lean`,
-  mirroring the chart-local `_zero` lemma at the from-`X` level.
-- **Queue E foundation:** `AnalyticJacobianGroup E X` defined
-  (last tick).
-- Multi-chart partition remains the bottleneck for promoting the
-  opaque period pairing to a real definition; full Lie-group
-  structure on `AnalyticJacobianGroup` is deferred to the
-  full-lattice work.
+- **Queue D scaffolding (1 opaque, no sorries):** 8 files.
+- **Queue E foundation:** `AnalyticJacobianGroup E X`.
+- **This tick — umbrella consolidation:** added three top-level
+  modules matching the `Jacobian/ComplexTorus.lean` pattern:
+  - `Jacobian/HolomorphicForms.lean` (re-exports the 3 production
+    files; excludes Recon).
+  - `Jacobian/Periods.lean` (re-exports the 7 production files;
+    excludes Recon).
+  - `Jacobian/AnalyticJacobian.lean` (re-exports Defs).
+  Callers can now import each layer with a single import.
 - Deferred (per the user's explicit guidance and the
   reviewer-acknowledged staging-phase tradeoff): file granularity
   consolidation, naming-convention alignment, and the

@@ -1,0 +1,14 @@
+import Jacobian.AnalyticJacobian.Defs
+
+/-!
+# Analytic Jacobian infrastructure
+
+Top-level module that re-exports the production Queue E target
+files. Currently a single file (`Defs`) defining
+`AnalyticJacobianGroup E X` as the abstract group quotient
+`(HolomorphicOneForm E X →ₗ[ℂ] ℂ) ⧸ periodSubgroup E X`.
+
+The full Lie-group structure (topology, manifold, compact-torus
+instances) is layered on top of this base via the deferred
+full-lattice property of `periodSubgroup`.
+-/
