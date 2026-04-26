@@ -1,4 +1,5 @@
 import Jacobian.Periods.PathLift
+import Jacobian.Periods.ChartLiftSymm
 import Jacobian.Periods.PathIntegralChartCorrect
 import Jacobian.Periods.PathIntegralChartCorrectSimp
 
@@ -38,10 +39,8 @@ theorem pathIntegralViaChartCorrect_symm
     (h' : range γ.symm ⊆ c.source) :
     pathIntegralViaChartCorrect c ω γ.symm h' =
       - pathIntegralViaChartCorrect c ω γ h := by
-  unfold pathIntegralViaChartCorrect chartLift
-  have : γ.symm.map' (c.continuousOn_toFun.mono h') = (γ.map' (c.continuousOn_toFun.mono h)).symm :=
-    Path.ext rfl
-  rw [this]
-  exact pathIntegralInChartCorrect_symm c ω (γ.map' (c.continuousOn_toFun.mono h))
+  unfold pathIntegralViaChartCorrect
+  rw [chartLift_symm c γ h h']
+  exact pathIntegralInChartCorrect_symm c ω (chartLift c γ h)
 
 end JacobianChallenge.Periods

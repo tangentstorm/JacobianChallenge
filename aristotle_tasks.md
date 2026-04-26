@@ -12,7 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 12:02 EDT)
+## Live Status (2026-04-26 12:05 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - Refactored `pathIntegralViaChartCorrect_symm` (in
+    `PathIntegralViaChartCorrect.lean`) and `pathIntegralViaChart_symm`
+    (in `PathLiftSimp.lean`) to use the new `chartLift_symm` lemma
+    landed last tick. Each proof shrinks from a 5-line inline
+    `Path.ext rfl` setup to a 3-line `unfold; rw; exact` chain.
+  - Build green: `lake build Jacobian.Periods.PathIntegralViaChartCorrect`
+    → 2675/2675 (47s); `Jacobian.Periods.PathLiftSimp` →
+    2672/2672 (54s).
+- Cumulative session: 7 new local helpers/refactors today
+  (4 toolkit lemmas + 3 proof-cleanup refactors), total
+  net negative line count vs the original inline proofs.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 12:02 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
