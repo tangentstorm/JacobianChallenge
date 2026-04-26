@@ -12,27 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 16:59 EDT)
+## Live Status (2026-04-26 17:02 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
   (~13h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapComp.lean`:
-    `pullbackFormsLinearMap_comp_apply_at` and
-    `pullbackFormsLinearMap_comp_apply_vec` — bundled-LinearMap-level
-    pointwise chain rule. Lift the prior two ticks'
-    function-level `_comp_apply` and `_comp_apply_apply` to the
-    bundled form via `pullbackFormsLinearMap_apply_at`.
-    Each is a 1-2 line proof. Wired into TraceDegree umbrella;
-    build green (2431 jobs).
-- Chain-rule composition family now exists at both function
-  level and bundled-LinearMap level, in both form (linear-map
-  return) and apply-on-vector (scalar return).
+  - NEW `Jacobian/TraceDegree/PullbackFunCompConst.lean`:
+    `pullbackFormsFun_comp_const` — pullback along
+    `f ∘ Function.const X x₀` is zero (composition factors
+    through a single point, hence is itself a constant map
+    `Function.const X (f x₀)`). 2-line proof reducing to
+    `pullbackFormsFun_const`. Wired into TraceDegree umbrella;
+    build green (2432 jobs).
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 16:56 EDT)
+## Stale Live Status (2026-04-26 16:59 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
