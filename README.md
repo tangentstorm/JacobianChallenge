@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 01:10 EDT
+Last tick: 2026-04-26 01:16 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,15 +47,17 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 5/5.
-Integrated this tick: 🎉 `668a781a` —
-                      Periods/PathIntegralViaChartCorrectZero
-                      (from-X zero lemma, two-line proof).
-Submitted this tick:  `9c8842f9` —
-                      Periods/PathIntegralChartCorrectSmul
-                      (scalar linearity, inline so independent
-                      of the in-flight 835344a7).
-Still in flight:      `fe592ee1` (older; off the visible page),
-                      `835344a7`, `e32728ec`, `b20e4f00`.
+Integrated this tick: 🎉 `835344a7` — Periods/ChartedFormPullbackSmul
+                      (chartedFormPullback_smul, convert-style).
+                      🎉 `e32728ec` — TraceDegree/PullbackFunSmul
+                      (pullbackFormsFun_smul, verbose template).
+                      Linearity API for both layers (zero/neg/add/smul)
+                      now complete.
+Submitted this tick:  `2a998690` — TraceDegree/PullbackFormsLinearMap
+                      (bundle pullbackFormsFun as ℂ-LinearMap).
+                      `dff6cfb4` — Periods/ChartedFormPullbackLinearMap
+                      (bundle chartedFormPullback as ℂ-LinearMap).
+Still in flight:      `fe592ee1` (long-running), `b20e4f00`, `9c8842f9`.
 Failed/split this tick: none.
 ```
 
@@ -101,6 +103,8 @@ Periods.ChartedFormPullbackSimp pass lake build Jacobian.Periods.ChartedFormPull
 TraceDegree.PullbackFun pass    lake build Jacobian.TraceDegree.PullbackFun (no sorry)
 TraceDegree (umbrella) pass     lake build Jacobian.TraceDegree
 Periods.PathIntegralViaChartCorrectZero pass lake build Jacobian.Periods.PathIntegralViaChartCorrectZero (no sorry)
+Periods.ChartedFormPullbackSmul pass lake build Jacobian.Periods.ChartedFormPullbackSmul (no sorry)
+TraceDegree.PullbackFunSmul pass lake build Jacobian.TraceDegree.PullbackFunSmul (no sorry)
 ```
 
 ```text

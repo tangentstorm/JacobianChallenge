@@ -1,4 +1,5 @@
 import Jacobian.TraceDegree.PullbackFun
+import Jacobian.TraceDegree.PullbackFunSmul
 
 /-!
 # Trace, degree, pushforward, pullback infrastructure

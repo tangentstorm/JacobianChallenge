@@ -12,31 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 01:10 EDT)
+## Live Status (2026-04-26 01:16 EDT)
 
 - Active jobs (ours): 5/5.
-- 🎉 **Integrated this tick:** `668a781a` —
-  `Jacobian/Periods/PathIntegralViaChartCorrectZero.lean`. Two-line
-  proof (`unfold` + `exact pathIntegralInChartCorrect_zero`) for the
-  from-`X` corrected integral of the zero form. Wired into Periods
-  umbrella; `lake build Jacobian.Periods` green.
-- **Submitted this tick** (refilling the slot freed by `668a781a`):
-  - `9c8842f9` — `Jacobian/Periods/PathIntegralChartCorrectSmul.lean`.
-    Scalar-multiplication linearity for `pathIntegralInChartCorrect`,
-    inline-proof so independent of the in-flight `835344a7`
-    (`ChartedFormPullbackSmul`).
-- **Still in flight:**
+- 🎉 **Integrated this tick:**
+  - `835344a7` — `Jacobian/Periods/ChartedFormPullbackSmul.lean`.
+    `chartedFormPullback_smul` via the concise `convert
+    ContinuousLinearMap.smul_comp + infer_instance` pattern.
+  - `e32728ec` — `Jacobian/TraceDegree/PullbackFunSmul.lean`.
+    `pullbackFormsFun_smul` via the verbose `funext + coe_smul +
+    smul_comp` template.
+  Both wired into the respective umbrellas; lake build green.
+- **Submitted this tick** (bundling the now-complete linearity API
+  into LinearMap wrappers):
+  - `2a998690` — `Jacobian/TraceDegree/PullbackFormsLinearMap.lean`.
+    Bundle `pullbackFormsFun` as a ℂ-LinearMap at the function level
+    (smoothness-aware version is a follow-up).
+  - `dff6cfb4` — `Jacobian/Periods/ChartedFormPullbackLinearMap.lean`.
+    Bundle `chartedFormPullback c` as a ℂ-LinearMap.
+- **Still in flight from prior ticks:**
   - `fe592ee1` — `PathIntegralChartCorrectLinear` (neg/add for
     `pathIntegralInChartCorrect`, inline). Submitted at 00:43 EDT;
-    on the second page of `aristotle list`. Retrieval crashes on a
-    progress-printing UnicodeEncodeError — interpret as "still
-    running" (the CLI's `get_solution_if_complete` only invokes the
-    progress printer when the job is incomplete).
-  - `835344a7` — `ChartedFormPullbackSmul` (smul linearity for the
-    chart pullback).
-  - `e32728ec` — `PullbackFunSmul` (smul linearity for the pullback
-    function).
+    long-running. CLI retrieval crashes on a progress-display
+    UnicodeEncodeError, which the CLI only invokes when the job is
+    incomplete — read it as "still running."
   - `b20e4f00` — `PullbackFunId` (pullback along identity).
+  - `9c8842f9` — `PathIntegralChartCorrectSmul` (scalar linearity
+    for `pathIntegralInChartCorrect`, inline).
 - **Last tick:** `e7aa502d` integrated —
   `PathIntegralChartCorrectSimp` (`_refl` and `_symm` for the
   corrected chart-local integral).
