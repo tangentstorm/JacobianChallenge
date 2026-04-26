@@ -12,7 +12,42 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 13:43 EDT)
+## Live Status (2026-04-26 14:05 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  **🎉 The full `pathIntegralViaCoverWith_symm` theorem is proved
+  and compiles cleanly!**
+  - NEW `Jacobian/Periods/PathIntegralViaCoverSymm.lean`:
+    ```
+    theorem pathIntegralViaCoverWith_symm
+        (ω) (γ) (n) (hn) (pickChart) (hcov) :
+      pathIntegralViaCoverWith ω γ.symm n hn (pickChart ∘ Fin.rev)
+          (cover_symm_of_cover γ n hn pickChart hcov) =
+        - pathIntegralViaCoverWith ω γ n hn pickChart hcov
+    ```
+  - Proof structure:
+    1. `unfold pathIntegralViaCoverWith` to expose the Finset.sum
+    2. `← Finset.sum_neg_distrib` to pull negation out
+    3. `Fintype.sum_equiv Fin.revPerm` to set up the bijection
+    4. `simp only [Fin.revPerm_apply]` to rewrite to Fin.rev
+    5. Per-segment `pathIntegralViaChartCorrect_symm_subpath_divFinIcc`
+       with `range_subpath_sigma_subset_source` filling in the
+       σ-form range hypothesis
+    6. `congr 1` to drop the negation
+    7. `pathIntegralViaChartCorrect_eq_of_heq` (HEq path congruence)
+       with σ-to-arith endpoint equalities (e1, e2 via Subtype.ext +
+       coe_symm_eq + divFinIcc_val + Fin.val_rev + Nat.cast_sub +
+       field_simp + omega for the Nat sub identity)
+    8. `rw [e1, e2]` closes the HEq.
+  - Build green (8046 jobs, 133s).
+- This is the substantive cover-symm theorem that's been the
+  focus of the last ~10 ticks. All 8 prerequisite helper lemmas
+  combine cleanly.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 13:43 EDT)
 
 - Active jobs (ours): 0/5 (queue empty).
 - **Integrated this tick (local Claude-owned, while Aristotle blocked):**
