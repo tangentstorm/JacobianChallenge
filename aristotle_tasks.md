@@ -12,22 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 15:50 EDT)
+## Live Status (2026-04-26 15:55 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
-  (~11.5h since last movement). Per the
-  "do-substantive-local-work-when-backend-frozen" rule,
-  added another narrow corollary.
+  (~11.75h since last movement). Continuing local work per the
+  frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartCorrectSmulSymm.lean`:
-    `pathIntegralInChartCorrect_smul_symm` — in-chart corrected
-    analogue of last tick's single-chart `_smul_symm`.
+  - NEW `Jacobian/Periods/PathIntegralChartSmulSymm.lean`:
+    `pathIntegralInChart_smul_symm` — provisional in-chart
+    analogue of the corrected `_smul_symm`.
     1-line proof: `rw [_smul, _symm, smul_neg]`. Wired into
     `Jacobian/Periods.lean` umbrella; build green
-    (8117 jobs, 198s).
-- The `_smul_symm` corollary now exists at all three layers:
-  in-chart corrected (this tick), via-chart corrected (last tick),
-  cover-with (earlier).
+    (8118 jobs, 121s).
+- The `_smul_symm` corollary now exists at four layers:
+  in-chart provisional (this tick), in-chart corrected,
+  via-chart corrected, cover-with.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 15:50 EDT)
+
+- Active jobs (ours): 0/5 (queue empty); backend still frozen.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/PathIntegralChartCorrectSmulSymm.lean`:
+    `pathIntegralInChartCorrect_smul_symm`. 1-line `rw` proof.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
