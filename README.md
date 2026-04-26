@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 18:42 EDT
+Last tick: 2026-04-26 18:47 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,17 +47,17 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 1/5 — `09cd85dd` canary still QUEUED
-                      (32 min). Backend still asleep.
+                      (38 min). Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralChartCorrectSmulSymmEqNegSmul:
-                      `pathIntegralInChartCorrect_smul_symm_eq_neg_smul`
-                      — in-chart corrected layer of the
-                      smul-symm-eq-neg-smul identity. Proof needs
-                      both `neg_smul` and `smul_neg` (different
-                      from the cover-layer version which only
-                      needed `neg_smul`). Build green (8137 jobs).
-                      Identity now at three layers: in-chart
-                      corrected, via-chart corrected, cover-with.
+                      NEW Periods/PathIntegralChartSmulSymmEqNegSmul:
+                      `pathIntegralInChart_smul_symm_eq_neg_smul`
+                      — provisional in-chart layer of the
+                      smul-symm-eq-neg-smul identity. Proof same
+                      shape as last tick's corrected version.
+                      Build green (8138 jobs, 95s). Identity now
+                      at four layers: in-chart provisional,
+                      in-chart corrected, via-chart corrected,
+                      cover-with.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -181,6 +181,7 @@ Periods.PathIntegralViaChartTrans (canary — sorry'd, awaiting Aristotle)
 Periods.PathIntegralViaChartCorrectSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralViaChartCorrectSmulSymmEqNegSmul (no sorry)
 Periods.PathIntegralViaCoverSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralViaCoverSmulSymmEqNegSmul (no sorry)
 Periods.PathIntegralChartCorrectSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralChartCorrectSmulSymmEqNegSmul (no sorry)
+Periods.PathIntegralChartSmulSymmEqNegSmul pass lake build Jacobian.Periods.PathIntegralChartSmulSymmEqNegSmul (no sorry)
 ```
 
 ```text
