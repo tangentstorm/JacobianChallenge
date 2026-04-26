@@ -53,4 +53,16 @@ theorem pathIntegralInChart_symm
     pathIntegralInChart c ω γ.symm = - pathIntegralInChart c ω γ :=
   curveIntegral_symm _ γ
 
+/-- The chart-local path integral is `0` when the form is zero. -/
+@[simp] theorem pathIntegralInChart_zero
+    (c : OpenPartialHomeomorph X E) {a b : E} (γ : Path a b) :
+    pathIntegralInChart c (0 : HolomorphicOneForm E X) γ = 0 := by
+  show curveIntegral (chartedForm c 0) γ = 0
+  have : chartedForm c (0 : HolomorphicOneForm E X) = 0 := by
+    funext e
+    show ((0 : HolomorphicOneForm E X) : ∀ x, _) (c.symm e) = 0
+    rw [ContMDiffSection.coe_zero]
+    rfl
+  rw [this, curveIntegral_zero]
+
 end JacobianChallenge.Periods
