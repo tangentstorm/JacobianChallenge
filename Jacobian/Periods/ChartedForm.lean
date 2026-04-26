@@ -17,6 +17,22 @@ trivialization in `Mathlib.Geometry.Manifold.MFDeriv.Defs`.
 
 This is the chart-local building block used by the eventual
 `PathIntegralChart` definition.
+
+**Known correctness gap.** The current definition is *not* the
+genuine chart pullback of a 1-form. A proper chart pullback would be
+
+```text
+chartedForm c ω e v = ω.toFun (c.symm e) (D(c.symm)_e v)
+```
+
+— i.e., the value of `ω` at the manifold point `c.symm e`, applied
+to the chart-derivative `D(c.symm)` of the input tangent vector
+`v`. The current code drops the `D(c.symm)_e` factor, which Lean
+accepts only because Mathlib's `TangentSpace` trivialization makes
+this type-check. The integral defined from this transport agrees
+with the true integral only when chart transitions are translations
+(zero derivative correction), which is the torus case but not the
+general Riemann-surface case. Fixing this is a queued task.
 -/
 
 namespace JacobianChallenge.Periods

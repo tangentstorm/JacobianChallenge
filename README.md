@@ -21,22 +21,26 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-25 22:24 EDT
+Last tick: 2026-04-25 22:28 EDT
 
 ```text
 Layer                            Bar                    %    Note
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Project scaffolding              ████████████████████  100%  done
 Mathlib inventory                ████████████████████  100%  v4.28.0 audit
-Complex torus quotient           ████████████████████  100%  ZLattice bridge sorry-free
+Complex torus quotient API       ████████████████████  100%  FullComplexLattice + quotient
 Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms                ██████░░░░░░░░░░░░░░   30%  type + module + analyticGenus
-Path integration/periods         ██████░░░░░░░░░░░░░░   30%  +Lebesgue radius for chart cover
-Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient defined
-Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon landed
-Trace/degree/push-pull           ░░░░░░░░░░░░░░░░░░░░    0%  pending
+Holomorphic forms                ██████░░░░░░░░░░░░░░   30%  type/module/analyticGenus
+Path integration/periods         ██████░░░░░░░░░░░░░░   30%  chart-local scaffolding; chartedForm is provisional
+Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
+Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
+Trace/degree/push-pull           █░░░░░░░░░░░░░░░░░░░    5%  Queue G recon only
+
+Note: `chartedForm` currently misses the chart-derivative factor of
+the genuine 1-form pullback, so the period machinery is correct only
+for translation-transition charts (e.g. the torus case). To be fixed.
 ```
 
 ```text
@@ -45,21 +49,25 @@ Aristotle status
 Active jobs (ours): 0/5. Aristotle queue still wedged (5 unrelated
                     jobs QUEUED 8h+).
 Integrated this tick: nothing from Aristotle.
-Local progress this tick: extended `Jacobian/Periods/ChartedForm.lean`
-                          with two simp lemmas (no sorries):
-                          - `@[simp] chartedForm_apply` —
-                            `chartedForm c ω e = ω.toFun (c.symm e)`.
-                            One-line proof (`rfl`).
-                          - `@[simp] chartedForm_zero` —
-                            `chartedForm c 0 = 0`. ~3-line proof
-                            using `ContMDiffSection.coe_zero`.
-                          These give simp the tools to unfold
-                          chart-transports without manual
-                          `unfold` calls in downstream proofs.
+Local progress this tick: opened Queue G with
+                          `Jacobian/TraceDegree/Recon.lean`, a
+                          name-discovery and design document for
+                          the trace/degree/pullback machinery.
+                          Inventories what Mathlib has (`mfderiv`,
+                          `ContMDiff.comp`) and lacks (no
+                          form-level `pullbackForms`, no
+                          fiber-trace `traceForms`, no
+                          `analyticDegree` for compact Riemann
+                          surfaces). Lays out the chain-rule
+                          formula for `pullbackForms` and
+                          fiber-sum for `traceForms`, sketches 6
+                          Aristotle-sized packets, and flags
+                          `pushforward_pullback` as the strongest
+                          multiplicative anti-hack theorem.
 Complex torus layer: complete. Queue D primitives in place;
-                     chart-transport API now has `apply`/`zero`
-                     simp lemmas. Queue E foundation defined;
-                     Queue F in design phase.
+                     Queue E foundation; Queue F + Queue G now in
+                     design phase. All seven queues now have at
+                     least a recon document.
 ```
 
 ```text
@@ -91,6 +99,7 @@ HolomorphicForms (umbrella) pass lake build Jacobian.HolomorphicForms
 Periods (umbrella)  pass    lake build Jacobian.Periods (1 opaque)
 AnalyticJacobian (umbrella) pass lake build Jacobian.AnalyticJacobian
 AbelJacobi.Recon    pass    lake build Jacobian.AbelJacobi.Recon (recon)
+TraceDegree.Recon   pass    lake build Jacobian.TraceDegree.Recon (recon)
 ```
 
 ```text
