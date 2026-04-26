@@ -12,20 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-25 23:51 EDT)
+## Live Status (2026-04-25 23:57 EDT)
 
-- Active jobs (ours): 3/5.
+- Active jobs (ours): 1/5 (two integrated this tick).
   | ID         | Target file                                       | Kind  | Status      |
   | ---------- | ------------------------------------------------- | ----- | ----------- |
-  | 78ab4b77   | `Jacobian/Periods/PathPartition.lean`             | proof | in flight   |
   | 259b18a1   | `Jacobian/HolomorphicForms/TorusExample.lean`     | proof | in flight   |
-  | 0ccee8d8   | `Jacobian/Periods/ChartedFormSimp.lean`           | proof | in flight   |
-- 🎉 **Integrated this tick:** `3265ae48` —
-  `Jacobian/Periods/ChartedFormPullback.lean`. Aristotle returned
-  the definition exactly as specified; clean, no sorry. Wired into
-  the `Jacobian.Periods` umbrella. The corrected pullback now
-  exists alongside the provisional `chartedForm`; migration of
-  downstream code is the follow-up.
+- 🎉🎉 **Integrated this tick:**
+  - `78ab4b77` — `Jacobian/Periods/PathPartition.lean`:
+    `exists_uniform_chart_partition`, the multi-chart partition
+    lemma. Aristotle's proof uses `norm_num`, `positivity`,
+    `nlinarith`, and a couple of explicit `mul_inv_cancel₀` /
+    `div_mul_cancel₀` casts for the unitInterval real arithmetic.
+    No sorry.
+  - `0ccee8d8` — `Jacobian/Periods/ChartedFormSimp.lean`:
+    `chartedForm_neg` and `chartedForm_add` via
+    `ContMDiffSection.coe_neg` / `coe_add`. Clean, no sorry.
+- The multi-chart partition is the input the opaque
+  `periodPairing` was waiting on; with this in place, the next
+  substantial step is to define the real `pathIntegralViaCover`
+  function and graduate `periodPairing`.
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
 - **Queue D scaffolding (1 opaque, no sorries):** 8 files +

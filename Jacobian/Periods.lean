@@ -1,10 +1,12 @@
 import Jacobian.Periods.ChartBallAtPoint
 import Jacobian.Periods.ChartedForm
 import Jacobian.Periods.ChartedFormPullback
+import Jacobian.Periods.ChartedFormSimp
 import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.LebesgueChartRadius
 import Jacobian.Periods.PathIntegralChart
 import Jacobian.Periods.PathLift
+import Jacobian.Periods.PathPartition
 import Jacobian.Periods.PeriodFunctional
 
 /-!
