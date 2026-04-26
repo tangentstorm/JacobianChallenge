@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 11:42 EDT
+Last tick: 2026-04-26 11:45 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,20 +46,19 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 0/5 (THREE cancelled today after local
-                      landing; backend stalled ~7.5h since 04:09 EDT).
-                      No more in-flight jobs to drain locally.
-Integrated this tick: 82687eb7 pullbackFormsFun_{zero,neg,smul}_apply
-                      — landed LOCALLY.
+Active jobs (ours): 0/5 (queue empty; 3 cancelled today during
+                      the ~7.5h backend freeze).
+Integrated this tick: none — queue empty.
 Local progress this tick (Claude-owned, while Aristotle blocked):
-                      TraceDegree/PullbackFunSimpApply: three
-                      pointwise apply-form simp lemmas
-                      `pullbackFormsFun_{zero,neg,smul}_apply`,
-                      proved by `rw [pullbackFormsFun_*]; rfl`
-                      (2 lines each). In-flight job 82687eb7
-                      cancelled (was QUEUED ~7.5h). Wired into
-                      TraceDegree umbrella; module builds green
-                      (2410 jobs, 50s). Queue now drained.
+                      Refactored `pathIntegralInChartCorrect_neg`
+                      and `_smul` proofs from the inline 17-line
+                      funext + ContinuousLinearMap.{neg,smul}_comp
+                      chains to clean 2-line proofs using the modern
+                      `chartedFormPullback_{neg,smul}` simp lemmas.
+                      Net: -29 lines, same semantics. Files:
+                      Periods/PathIntegralChartCorrectLinear and
+                      Periods/PathIntegralChartCorrectSmul. Build
+                      green (2673 jobs, 61s combined).
 Still running (queued, no progress):
                       `f8faacda` Periods/ChartLiftBoundary
                       `bf7d62c4` Periods/PathIntegralViaChartLinear

@@ -1,5 +1,5 @@
 import Jacobian.Periods.PathIntegralChartCorrect
-import Mathlib.Geometry.Manifold.VectorBundle.SmoothSection
+import Jacobian.Periods.ChartedFormPullbackSimp
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
 
 /-!
@@ -29,20 +29,6 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     pathIntegralInChartCorrect c (-ω) γ = - pathIntegralInChartCorrect c ω γ := by
   show curveIntegral (chartedFormPullback c (-ω)) γ =
        - curveIntegral (chartedFormPullback c ω) γ
-  have h : chartedFormPullback c (-ω) = - chartedFormPullback c ω := by
-    funext e
-    show ((-ω).toFun (c.symm e)).comp
-           (mfderiv (modelWithCornersSelf ℂ E)
-                    (modelWithCornersSelf ℂ E) c.symm e) =
-         - (ω.toFun (c.symm e)).comp
-           (mfderiv (modelWithCornersSelf ℂ E)
-                    (modelWithCornersSelf ℂ E) c.symm e)
-    have hcoe : ((-ω : HolomorphicOneForm E X) : ∀ x, _) (c.symm e) =
-        - (ω : ∀ x, _) (c.symm e) := by
-      rw [ContMDiffSection.coe_neg]
-      rfl
-    rw [show (-ω).toFun (c.symm e) = - ω.toFun (c.symm e) from hcoe]
-    exact ContinuousLinearMap.neg_comp _ _
-  rw [h, curveIntegral_neg]
+  rw [chartedFormPullback_neg, curveIntegral_neg]
 
 end JacobianChallenge.Periods
