@@ -12,23 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 17:02 EDT)
+## Live Status (2026-04-26 17:05 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen
   (~13h since last movement). Continuing local work per the
   frozen-backend rule.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/TraceDegree/PullbackFunCompConst.lean`:
-    `pullbackFormsFun_comp_const` — pullback along
-    `f ∘ Function.const X x₀` is zero (composition factors
-    through a single point, hence is itself a constant map
-    `Function.const X (f x₀)`). 2-line proof reducing to
+  - NEW `Jacobian/TraceDegree/PullbackFunConstComp.lean`:
+    `pullbackFormsFun_const_comp` — pullback along
+    `Function.const Y z ∘ f` is zero (symmetric counterpart of
+    last tick's `_comp_const`). 2-line proof reducing to
     `pullbackFormsFun_const`. Wired into TraceDegree umbrella;
-    build green (2432 jobs).
+    build green (2433 jobs).
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 16:59 EDT)
+## Stale Live Status (2026-04-26 17:02 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
