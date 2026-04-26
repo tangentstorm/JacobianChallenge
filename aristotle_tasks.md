@@ -12,7 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 11:49 EDT)
+## Live Status (2026-04-26 11:53 EDT)
+
+- Active jobs (ours): 0/5 (queue empty).
+- **Integrated this tick (local Claude-owned, while Aristotle blocked):**
+  - `Jacobian/Periods/PathSymmSubpath.lean` — new file with
+    `path_symm_subpath_eq : γ.symm.subpath s t = γ.subpath (σ s) (σ t)`.
+    Proof: `Path.ext + funext + show + congr + Subtype.ext + ring`,
+    discharging the underlying real identity
+    `1 - ((1-r)s + rt) = (1-r)(1-s) + r(1-t)`.
+  - Wired into `Jacobian/Periods.lean` umbrella; build green
+    (`lake build Jacobian.Periods.PathSymmSubpath` → 1580 jobs, 45s).
+- This is the second prerequisite helper for the eventual
+  `pathIntegralViaCoverWith_symm` proof, after `divFinIcc_symm`
+  (last tick): with both lemmas in hand, the partition-by-partition
+  re-indexing for γ.symm reduces to `Fin.rev` re-indexing of the
+  Finset sum.
+- **Submitted this tick:** none.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 11:49 EDT)
 
 - Active jobs (ours): 0/5 (queue empty; 3 cancelled today during
   the ~7.5h backend freeze).
