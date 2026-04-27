@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 06:08 EDT
+Last tick: 2026-04-27 06:14 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                █████████░░░░░░�
 Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
-Trace/degree/push-pull           █████░░░░░░░░░░░░░░░   27%  pullbackFormsFun: full linearity (+sub) + LinearMap bundle + id + tangent-vec apply + comp-id + comp-const + const-of-const + mixed const/id + id-of-id with full apply/vec-apply matrix at both layers
+Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
 translation-transition charts, e.g. the torus), the corrected
@@ -53,10 +53,11 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~12h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW HolomorphicForms.EvalLinearMapApi:
-                      neg/sub/smul/nsmul API for `evalLinearMap`.
-                      Three from `LinearMap.map_*`; nsmul by
-                      induction.
+                      NEW TraceDegree.PullbackFunEvalLinearMap:
+                      light bridge between pullbackFormsFun and
+                      the HolomorphicForms.evalLinearMap facade —
+                      factorisation, id-collapse, evalLinearMap
+                      identity at id, ℂ-linear add via the new API.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -220,6 +221,7 @@ HolomorphicForms.ToFunApplyVec pass lake build Jacobian.HolomorphicForms.ToFunAp
 HolomorphicForms.ToFunApplyVecExtra pass lake build Jacobian.HolomorphicForms.ToFunApplyVecExtra (no sorry)
 HolomorphicForms.EvalLinearMap pass lake build Jacobian.HolomorphicForms.EvalLinearMap (no sorry)
 HolomorphicForms.EvalLinearMapApi pass lake build Jacobian.HolomorphicForms.EvalLinearMapApi (no sorry)
+TraceDegree.PullbackFunEvalLinearMap pass lake build Jacobian.TraceDegree.PullbackFunEvalLinearMap (no sorry)
 ```
 
 ```text
