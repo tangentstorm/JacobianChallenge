@@ -12,26 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 12:29 EDT)
+## Live Status (2026-04-27 12:32 EDT)
 
-- Active jobs (ours): 0/5; canary closed previous tick.
-  Backend healthy. No new submissions yet — preparing
-  small file-scoped packets for next tick.
+- Active jobs (ours): 0/5. Backend healthy. No new submissions
+  this tick — packets still queued for prep.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSmulNeg.lean`:
-    combined smul/neg ring-rewrite identities for arbitrary `f`:
-      - `pullbackFormsLinearMap_smul_neg`
-      - `pullbackFormsLinearMap_neg_smul`
-      - `pullbackFormsLinearMap_neg_add`
-      - `pullbackFormsLinearMap_add_neg`
-    All `@[simp]`. Each composes two of `map_neg` / `_smul` /
-    `_add` plus a single `smul_neg` / `sub_eq_add_neg` step.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSmulNegApplyVec.lean`:
+    vec-applied versions of smul/neg combined identities:
+      - `pullbackFormsLinearMap_smul_neg_apply_vec`
+      - `pullbackFormsLinearMap_neg_smul_apply_vec`
+      - `pullbackFormsLinearMap_neg_add_apply_vec`
+      - `pullbackFormsLinearMap_add_neg_apply_vec`
+    Each forwards via the function-level identity in
+    `PullbackFormsLinearMapSmulNeg` plus `rfl`. All `@[simp]`.
 - **Strategic note (carried forward):**
   Backend awake, queue empty. Continuing 4-lemma local cadence
-  in parallel; Aristotle packet preparation queued for next tick.
+  in parallel; Aristotle packet preparation still queued.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 12:21 EDT)
+## Stale Live Status (2026-04-27 12:29 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
