@@ -12,23 +12,37 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 07:43 EDT)
+## Live Status (2026-04-27 07:48 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~13h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 items, 2 new files):**
+  - **Pivot:** AbelJacobi was 5% (recon only); now seeded.
+  - NEW `Jacobian/AbelJacobi/Defs.lean`: witness skeleton:
+      - `witnessAbelJacobi basePoint P v :=
+        evalJacobianClass P v - evalJacobianClass basePoint v`
+      - `witnessAbelJacobi_self`
+      - `witnessAbelJacobi_swap` (antisymmetric in endpoints)
+      - `witnessAbelJacobi_diag` (alias for `_self`)
+  - NEW `Jacobian/AbelJacobi.lean` umbrella file (was missing).
+  - Note: a `_zero_vec` lemma was attempted but `simp`/`rw` could
+    not unify `evalJacobianClass _ 0` against the simp form;
+    skipped in favour of `_diag`. Documented in commit msg.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~13h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 07:43 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~13h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/AnalyticJacobian/NontrivialWitness.lean`:
-      - `evalJacobianClass_ne_zero` (witness outside periodSubgroup
-        ⇒ non-zero analytic Jacobian class)
+      - `evalJacobianClass_ne_zero`
       - `nontrivial_analyticJacobianGroup_of_evalLinearMap_ne_periodSubgroup`
       - `evalLinearMap_notMem_of_evalJacobianClass_ne_zero`
-        (contrapositive)
       - `evalLinearMap_notMem_iff_evalJacobianClass_ne_zero`
-        (iff form)
-    Wired into AnalyticJacobian umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~13h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 07:40 EDT)
