@@ -64,13 +64,6 @@ noncomputable def basisAlignedPeriodSubgroup :
     AddSubgroup (Fin (analyticGenus ℂ X) → ℂ) :=
   basisAlignedPeriodSubgroupConcrete X
 
-/-- The period subgroup is closed in the model space.
-
-Top-down obligation. Bottom-up: discreteness of the period image plus
-finite-dimensionality. -/
-lemma basisAlignedPeriodSubgroup_isClosed :
-    IsClosed (basisAlignedPeriodSubgroup X : Set (Fin (analyticGenus ℂ X) → ℂ)) := sorry
-
 /-- The period subgroup is discrete in the subspace topology.
 
 Top-down obligation. Bottom-up: the period pairing image of `H₁(X, ℤ)`
@@ -78,6 +71,15 @@ has no accumulation point near zero — a consequence of the integrality
 of period values on integral cycles. -/
 instance basisAlignedPeriodSubgroup_isDiscrete :
     DiscreteTopology (basisAlignedPeriodSubgroup X) := sorry
+
+/-- The period subgroup is closed in the model space.
+
+Pure assembly: `Fin g → ℂ` is `T2`, and the period subgroup carries
+`DiscreteTopology` (the previous instance), so closedness follows from
+Mathlib's `AddSubgroup.isClosed_of_discrete`. No own sorry. -/
+lemma basisAlignedPeriodSubgroup_isClosed :
+    IsClosed (basisAlignedPeriodSubgroup X : Set (Fin (analyticGenus ℂ X) → ℂ)) :=
+  AddSubgroup.isClosed_of_discrete
 
 /-- A fundamental domain for the period subgroup, in the basis-aligned model.
 
