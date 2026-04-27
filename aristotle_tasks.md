@@ -12,27 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 10:16 EDT)
+## Live Status (2026-04-27 10:19 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIdIdEval.lean`:
-    bundled along-(id ∘ id) inherits along-id results:
-      - `pullbackFormsLinearMap_id_id_apply_vec_eq_evalLinearMap`
-      - `pullbackFormsLinearMap_id_id_zero_apply_vec`
-      - `pullbackFormsLinearMap_id_id_add_apply_vec`
-      - `pullbackFormsLinearMap_id_id_apply_zero_vec`
-    Since `id ∘ id = id` definitionally, the bundled pullback along
-    `id ∘ id` collapses to the bundled pullback along `id`. These
-    forwarders make `id ∘ id` lemmas immediately available without
-    requiring callers to traverse the rfl bridge themselves.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIdIdEvalDist.lean`:
+    bundled along-(id ∘ id) form/vec-slot dist forwarders:
+      - `pullbackFormsLinearMap_id_id_neg_apply_vec`
+      - `pullbackFormsLinearMap_id_id_sub_apply_vec`
+      - `pullbackFormsLinearMap_id_id_smul_apply_vec`
+      - `pullbackFormsLinearMap_id_id_apply_add_vec`
+    Continues the `id ∘ id` forwarder bank with the form-slot
+    neg/sub/ℂ-smul cases plus a vec-slot add. Each forwards via
+    rfl through to the bundled along-id result.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~15h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 10:13 EDT)
+## Stale Live Status (2026-04-27 10:16 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
