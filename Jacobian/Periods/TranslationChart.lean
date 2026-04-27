@@ -251,4 +251,15 @@ theorem pathIntegralInChart_translationChart_zero
   funext e
   rw [neg_zero, add_zero]
 
+/-- Corrected analogue: the corrected in-chart integral on
+`translationChart 0` reduces to `curveIntegral ω.toFun γ`. -/
+theorem pathIntegralInChartCorrect_translationChart_zero
+    (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
+    pathIntegralInChartCorrect (translationChart (0 : E)) ω γ =
+      curveIntegral ω.toFun γ := by
+  rw [pathIntegralInChartCorrect_translationChart]
+  congr 1
+  funext e
+  rw [neg_zero, add_zero]
+
 end JacobianChallenge.Periods
