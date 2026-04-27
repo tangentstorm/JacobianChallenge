@@ -12,7 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 01:40 EDT)
+## Live Status (2026-04-27 01:44 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with
+    `translationChart_zero`: structure-level equality
+    `translationChart (0 : E) = OpenPartialHomeomorph.refl E`.
+    Proof: `OpenPartialHomeomorph.ext` + `add_zero` /
+    `neg_zero` + `add_zero` on each direction. Confirms the
+    translation atlas contains the identity chart. Combined with
+    last-tick's `translationChart_symm`, the translation chart
+    family has both identity (`0`) and inverses (`-v`) at the
+    OpenPartialHomeomorph structure level. Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 01:40 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
   `submitted-redundant`, kept as wake detector.
