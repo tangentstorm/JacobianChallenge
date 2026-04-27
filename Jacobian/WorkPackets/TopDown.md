@@ -337,15 +337,15 @@ This table is the current top-down bridge inventory. Keep it updated as
 | Challenge declaration | Intended solution source | Main missing bridge |
 | --- | --- | --- |
 | `genus` ✅ refined | `HolomorphicForms.analyticGenus` | FD instance — `compactRiemannSurface_finiteDimensionalHolomorphicOneForms` (named sorry in `Jacobian.HolomorphicForms.CompactRiemannSurface`) |
-| `genus_eq_zero_iff_homeo` ✅ refined | `analyticGenus_eq_zero_iff_homeomorphic_sphere` | classification theorem — named sorry in `Jacobian.HolomorphicForms.GenusZeroClassification` |
+| `genus_eq_zero_iff_homeo` ✅ refined | `analyticGenus_eq_zero_iff_homeomorphic_sphere` (assembly, no own sorry) | split into `analyticGenus_eq_zero_of_homeomorphic_sphere` (mp) and `homeomorphic_sphere_of_analyticGenus_eq_zero` (mpr); both still named sorries in `Jacobian.HolomorphicForms.GenusZeroClassification` (codex landed detailed Mathlib-blocker docstring + 3-step API plan, commit `2afd568`) |
 | `Jacobian` ✅ refined | `ULift (ComplexTorus.quotient (Fin (genus X) → ℂ) periodFullComplexLattice)` | `periodFullComplexLattice` (named sorry in `Jacobian.Periods.PeriodLattice`) |
 | `AddCommGroup` ✅ refined | `inferInstance` via ULift transport | (none — derived) |
 | `TopologicalSpace` ✅ refined | `inferInstance` via ULift transport | (none — derived) |
 | `T2Space` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice.isClosed` |
 | `CompactSpace` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice` fundamental-domain compactness |
-| `ChartedSpace` | `ComplexTorus.ChartedSpace` + ULift transport | Mathlib has no Homeomorph→ChartedSpace transport; needs hand-rolled `ULift M` charted-space instance |
-| `IsManifold` | `ComplexTorus.IsManifold` + ULift transport | same — model transport along `Homeomorph.ulift` |
-| `LieAddGroup` | `ComplexTorus.LieAddGroup` + ULift transport | same |
+| `ChartedSpace` ✅ refined | `complexTorusULift_chartedSpace` (real proof, no own sorry; codex commit `c49cf9a`) | (none — discharged) |
+| `IsManifold` ✅ refined (top-down) | `complexTorusULift_isManifold` (still sorry; HasGroupoid bookkeeping deferred) | OpenPartialHomeomorph associativity / EqOnSource bookkeeping for `Homeomorph.ulift` chart cancellation |
+| `LieAddGroup` ✅ refined (top-down) | `complexTorusULift_lieAddGroup` (still sorry) | smoothness of `+` and `-` on `ULift`-transported manifold structure |
 | `Jacobian.ofCurve` ✅ refined | `ULift.up ∘ AbelJacobi.analyticOfCurve` | `pathIntegralFunctional` (named `opaque` in `Jacobian.AbelJacobi.AnalyticOfCurveBasis`) |
 | `ofCurve_contMDiff` ✅ refined | `contMDiff_uLift_up.comp analyticOfCurve_contMDiff` | `analyticOfCurve_contMDiff` and `contMDiff_uLift_up` (named sorries) |
 | `ofCurve_self` ✅ refined | unfold + `pathIntegralFunctional_self` | `pathIntegralFunctional_self` (named sorry) |
