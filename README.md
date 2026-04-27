@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 01:44 EDT
+Last tick: 2026-04-27 01:50 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,16 +50,14 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED Periods/TranslationChart with
-                      `translationChart_zero`: structure-level
-                      equality `translationChart (0 : E) =
-                      OpenPartialHomeomorph.refl E`. Confirms the
-                      translation atlas contains the identity chart,
-                      i.e. it's a unital structure. Combined with
-                      `translationChart_symm`, the translation chart
-                      family has both inverses (`-v`) and identity
-                      (`0`) at the structure level. Build green
-                      (8189 jobs).
+                      EXTENDED Periods/TranslationChart with two
+                      cancellation simp lemmas:
+                      `translationChart_neg_apply_translationChart_apply`:
+                      `translationChart (-v) ∘ translationChart v = id`,
+                      and the dual variant. Function-level
+                      cancellation laws — useful as automatic simps
+                      whenever a translation gets composed with its
+                      negated counterpart. Build green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```

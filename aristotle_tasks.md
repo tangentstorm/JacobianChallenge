@@ -12,7 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 01:44 EDT)
+## Live Status (2026-04-27 01:50 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with two
+    function-level cancellation simp lemmas:
+      - `translationChart_neg_apply_translationChart_apply`:
+        `translationChart (-v) (translationChart v x) = x`
+        (proof: `add_neg_cancel_right`).
+      - `translationChart_apply_translationChart_neg_apply`:
+        `translationChart v (translationChart (-v) x) = x`
+        (proof: `neg_add_cancel_right`).
+    Cancellation laws — `simp` automatically closes any nested
+    `translationChart v / translationChart (-v)` composition.
+    Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 01:44 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
   `submitted-redundant`, kept as wake detector.

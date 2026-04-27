@@ -118,4 +118,22 @@ theorem translationChart_zero :
   · show x + (-0) = x
     rw [neg_zero, add_zero]
 
+set_option linter.unusedSectionVars false in
+/-- Applying `translationChart (-v)` after `translationChart v`
+recovers `x`. (Cancellation law for translations.) -/
+@[simp] theorem translationChart_neg_apply_translationChart_apply
+    (v x : E) :
+    translationChart (-v) (translationChart v x) = x := by
+  show (x + v) + (-v) = x
+  rw [add_neg_cancel_right]
+
+set_option linter.unusedSectionVars false in
+/-- Applying `translationChart v` after `translationChart (-v)`
+recovers `x`. -/
+@[simp] theorem translationChart_apply_translationChart_neg_apply
+    (v x : E) :
+    translationChart v (translationChart (-v) x) = x := by
+  show (x + (-v)) + v = x
+  rw [neg_add_cancel_right]
+
 end JacobianChallenge.Periods
