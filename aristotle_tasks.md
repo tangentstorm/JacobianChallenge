@@ -12,21 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 06:43 EDT)
+## Live Status (2026-04-27 06:47 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/HolomorphicForms/AnalyticGenusOrder.lean`:
+    relational helpers between `analyticGenus` and `ℕ`:
+      - `analyticGenus_le_iff_finrank_le`
+      - `analyticGenus_lt_iff_finrank_lt`
+      - `analyticGenus_eq_iff_finrank_eq`
+      - `analyticGenus_ge_iff_finrank_ge`
+    All `Iff.rfl` since `analyticGenus_def` is rfl. Wired into
+    HolomorphicForms umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~12h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 06:43 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/HolomorphicForms/EvalLinearMapVecExtra.lean`:
-    closes vec-slot linearity matrix for `evalLinearMap`:
       - `evalLinearMap_sub_vec`
-      - `evalLinearMap_nsmul_vec` (induction)
-      - `evalLinearMap_zsmul_vec` (via toAddMonoidHom.map_zsmul)
-      - `toFun_apply_add_vec` (toFun-side distributive)
-    Wired into HolomorphicForms umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~12h — not waiting.
+      - `evalLinearMap_nsmul_vec`
+      - `evalLinearMap_zsmul_vec`
+      - `toFun_apply_add_vec`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 06:39 EDT)
