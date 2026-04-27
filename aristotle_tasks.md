@@ -12,27 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 12:46 EDT)
+## Live Status (2026-04-27 12:49 EDT)
 
-- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~3 min
+- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~7 min
   (rfl-iff smoke test). Awaiting return.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/HolomorphicForms/EvalLinearMapEqIff.lean`:
-    eq/ne iff bridges between `evalLinearMap` and the underlying
-    `toFun`:
-      - `evalLinearMap_eq_iff_toFun_eq`
-      - `evalLinearMap_ne_iff_toFun_ne`
-      - `evalLinearMap_ne_zero_iff_toFun_ne_zero`
-      - `evalLinearMap_eq_of_toFun_eq` (sufficient direction)
-    Each is a `rw [evalLinearMap_apply]`-style rfl-iff. Wired
-    into the HolomorphicForms umbrella.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIntSmulAdd.lean`:
+    ℕ/ℤ-smul interplay with add/sub for bundled pullback,
+    arbitrary `f`:
+      - `pullbackFormsLinearMap_nsmul_add`
+      - `pullbackFormsLinearMap_nsmul_sub`
+      - `pullbackFormsLinearMap_zsmul_add`
+      - `pullbackFormsLinearMap_zsmul_sub`
+    All `@[simp]`. Each composes `_nsmul`/`_zsmul` with `_add`/`_sub`.
+- **Tree note:** untracked `Jacobian/Solution.lean` — unrelated
+  pre-existing addition, left untouched per PROMPT.md classification.
 - **Strategic note (carried forward):**
-  Continuing 4-lemma local cadence in parallel with Aristotle
-  smoke test. If `ee14b794` returns clean, scale up to 5 active
-  with substantive packets.
+  Continuing local cadence in parallel with Aristotle smoke test.
+  If `ee14b794` returns clean, scale up to 5 active.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 12:42 EDT)
+## Stale Live Status (2026-04-27 12:46 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
