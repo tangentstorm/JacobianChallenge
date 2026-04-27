@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 10:11 EDT
+Last tick: 2026-04-27 10:13 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                ███████████░░░░�
 Path integration/periods         ██████████████░░░░░░   69%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   28%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain
 Abel-Jacobi API                  ███████░░░░░░░░░░░░░   37%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges
-Trace/degree/push-pull           ███████░░░░░░░░░░░░░   35%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled along-id vec/form-slot full linearity + bundled along-const trivial form/vec-slot dist (sub/nsmul/zsmul/neg-neg vec extras)
+Trace/degree/push-pull           ███████░░░░░░░░░░░░░   36%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled along-id vec/form-slot full linearity + bundled along-const trivial form/vec-slot full dist (ℂ/ℕ/ℤ-smul + neg-zero + neg-neg)
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
 translation-transition charts, e.g. the torus), the corrected
@@ -53,9 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~15h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFormsLinearMapConstVecExtra:
-                      bundled along-const vec-slot extras
-                      (sub/nsmul/zsmul/neg-neg on `v`).
+                      NEW TraceDegree.PullbackFormsLinearMapConstSmul:
+                      bundled along-const form-slot ℕ/ℤ-smul + neg-zero
+                      + neg-neg helpers. Closes the bundled along-const
+                      form-slot picture for ℂ/ℕ/ℤ.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -235,6 +236,7 @@ TraceDegree.PullbackFormsLinearMapIdEvalSmul pass lake build Jacobian.TraceDegre
 TraceDegree.PullbackFormsLinearMapConstDist pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapConstDist (no sorry)
 TraceDegree.PullbackFormsLinearMapConstVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapConstVec (no sorry)
 TraceDegree.PullbackFormsLinearMapConstVecExtra pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapConstVecExtra (no sorry)
+TraceDegree.PullbackFormsLinearMapConstSmul pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapConstSmul (no sorry)
 HolomorphicForms.EvalLinearMapZsmul pass lake build Jacobian.HolomorphicForms.EvalLinearMapZsmul (no sorry)
 HolomorphicForms.Ext pass lake build Jacobian.HolomorphicForms.Ext (no sorry)
 HolomorphicForms.ExtEvalLinearMap pass lake build Jacobian.HolomorphicForms.ExtEvalLinearMap (no sorry)
