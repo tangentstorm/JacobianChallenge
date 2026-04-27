@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 23:39 EDT
+Last tick: 2026-04-26 23:45 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,15 +50,15 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/ChartedFormPullbackRefl:
-                      concrete-instance corollary —
-                      `chartedFormPullback (OpenPartialHomeomorph.refl
-                      E) ω e = chartedForm (refl E) ω e`
-                      unconditionally. First witness that the bridge
-                      ladder fires on a real chart instance (proof:
-                      apply EventuallyEq variant with the obvious
-                      witness `(refl E).symm = id`). Build green
-                      (8181 jobs).
+                      NEW Periods/PathIntegralReflChart: lifts the
+                      refl-chart bridge up the integration tower.
+                      Packages `mfderiv_refl_symm_eq_id` as the
+                      reusable global witness, then derives
+                      `pathIntegralInChartCorrect_refl =
+                      pathIntegralInChart_refl` and the via-chart
+                      analogue, both unconditional. The refl chart
+                      now has a fully concrete corrected ↔
+                      provisional pipeline. Build green (8182 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
