@@ -12,23 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 07:14 EDT)
+## Live Status (2026-04-27 07:20 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~13h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - **Pivot:** moved up the stack to AnalyticJacobian (was 10%).
-  - NEW `Jacobian/AnalyticJacobian/Mk.lean`: quotient projection
-    API on the abstract analytic Jacobian:
-      - `mk` (alias for `QuotientAddGroup.mk` on
-        `(HolomorphicOneForm E X →ₗ[ℂ] ℂ) ⧸ periodSubgroup E X`)
-      - `mk_zero`
-      - `mk_add`
-      - `mk_eq_zero_iff` (kernel = periodSubgroup)
+  - NEW `Jacobian/AnalyticJacobian/MkOps.lean`: extends `Mk`
+    with the remaining group-operation projections:
+      - `mk_neg`
+      - `mk_sub`
+      - `mk_nsmul` (induction on `n`)
+      - `mk_zsmul` (via `QuotientAddGroup.mk'.map_zsmul`)
     Wired into AnalyticJacobian umbrella.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~13h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 07:14 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~13h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AnalyticJacobian/Mk.lean`:
+      - `mk`
+      - `mk_zero`
+      - `mk_add`
+      - `mk_eq_zero_iff`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 07:09 EDT)
