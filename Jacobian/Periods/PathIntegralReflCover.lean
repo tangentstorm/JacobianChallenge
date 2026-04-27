@@ -62,4 +62,24 @@ theorem pathIntegralViaCover_self_eq_sum_provisional
   pathIntegralViaCover_eq_sum_provisional_of_mfderiv_id
     ω γ (fun _ e => mfderiv_refl_symm_eq_id e)
 
+set_option linter.unusedVariables false in
+/-- For `chartedSpaceSelf E`, the multi-chart integral reduces to a
+plain sum of `curveIntegral ω.toFun` over each segment subpath. -/
+theorem pathIntegralViaCover_self_eq_sum_curveIntegral
+    (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
+    pathIntegralViaCover ω γ =
+      let h0 := exists_uniform_chart_partition E γ.toContinuousMap
+      let h1 := h0.choose_spec
+      let h2 := h1.choose_spec
+      ∑ i : Fin h0.choose,
+        curveIntegral ω.toFun
+          (γ.subpath (divFinIcc h0.choose h1.choose i.val
+                                (le_of_lt i.isLt))
+                     (divFinIcc h0.choose h1.choose (i.val + 1)
+                                i.isLt)) := by
+  rw [pathIntegralViaCover_self_eq_sum_provisional]
+  apply Finset.sum_congr rfl
+  intro i _
+  exact pathIntegralViaChart_reflChart ω _ _
+
 end JacobianChallenge.Periods
