@@ -2,6 +2,7 @@ import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.AnalyticJacobian.Defs
 import Jacobian.AnalyticJacobian.Mk
 import Jacobian.AnalyticJacobian.MkExt
+import Jacobian.AbelJacobi.Defs
 
 /-!
 # Quotient-level equivalence
@@ -82,5 +83,24 @@ the previous mk-simp lemma. -/
           (JacobianChallenge.HolomorphicForms.evalLinearMap P v)) := by
   rw [JacobianChallenge.AnalyticJacobian.evalJacobianClass_def,
       analyticJacobianBasisAlignedEquiv_mk]
+
+/-- The basis-aligned image of a `witnessAbelJacobi` value: the equiv
+distributes over the underlying subtraction and the `evalJacobianClass`
+unfolding. -/
+theorem analyticJacobianBasisAlignedEquiv_witnessAbelJacobi
+    (basePoint P : X) (v : ℂ) :
+    analyticJacobianBasisAlignedEquiv X
+        (JacobianChallenge.AbelJacobi.witnessAbelJacobi
+          (E := ℂ) (X := X) basePoint P v) =
+      QuotientAddGroup.mk
+        (holomorphicOneFormDualEquiv ℂ X
+          (JacobianChallenge.HolomorphicForms.evalLinearMap P v)) -
+      QuotientAddGroup.mk
+        (holomorphicOneFormDualEquiv ℂ X
+          (JacobianChallenge.HolomorphicForms.evalLinearMap basePoint v)) := by
+  unfold JacobianChallenge.AbelJacobi.witnessAbelJacobi
+  rw [(analyticJacobianBasisAlignedEquiv X).map_sub,
+      analyticJacobianBasisAlignedEquiv_evalJacobianClass,
+      analyticJacobianBasisAlignedEquiv_evalJacobianClass]
 
 end JacobianChallenge.Periods
