@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 19:39 EDT
+Last tick: 2026-04-27 19:40 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -67,16 +67,36 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5  `b782c387` topology-on-ContMDiffSection recon —
-                        IN_PROGRESS at 17%, ~2h22m elapsed (normal long-running).
+Active jobs (ours):     3 / 5  Two new packets submitted this tick per user
+                        request "can you give aristotle more work to do?":
+                        `b782c387` ContMDiffSection topology recon — IN_PROGRESS
+                                   at 17%, ~2h25m elapsed (normal).
+                        `7abae190` basisAlignedPeriodSubgroup_isDiscrete — just
+                                   submitted. Survey/attempt on the discreteness
+                                   instance that blocks 3 PeriodLattice sorries.
+                        `600f7ff6` OnePointCxRecon — just submitted. NEW recon
+                                   file surveying Mathlib's OnePoint ℂ API for
+                                   making ℂℙ¹ a complex manifold (step (1) of
+                                   aadb7721's genus-zero plan).
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Heartbeat tick — no new work since last tick (which was the
-aristotle_tasks.md cleanup at 19:30, commit 127a78d).
+SUBMITTED two off-critical-path Aristotle packets per user request
+("can you give aristotle more work to do?"):
+  `7abae190` basisAlignedPeriodSubgroup_isDiscrete — discreteness
+            instance on the basis-aligned period subgroup
+            (PeriodLattice.lean). Realistic outcome: survey
+            identifying that integrality of `periodPairing` is not
+            yet declared as an opaque-property and needs to be added.
+            Discharging this would unblock 3 other PeriodLattice
+            sorries.
+  `600f7ff6` OnePointCxRecon — NEW recon file (created by Aristotle).
+            Surveys Mathlib's `OnePoint ℂ` API for making ℂℙ¹ into a
+            complex manifold via two-chart atlas. Step (1) of
+            aadb7721's genus-zero plan.
 
 Production sorry-free still 381 / 389.
 
