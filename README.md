@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 08:15 EDT
+Last tick: 2026-04-27 08:19 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -35,7 +35,7 @@ LieAddGroup smoothness           ███████████████�
 Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
 Path integration/periods         ██████████████░░░░░░   68%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances + named API around periodPairing/periodSubgroup with closure lemmas
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   28%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain
-Abel-Jacobi API                  █████░░░░░░░░░░░░░░░   25%  witness skeleton + composition + vec-slot algebra + base-change + class identities + coset wrappers + 4-point chain / telescoping
+Abel-Jacobi API                  █████░░░░░░░░░░░░░░░   28%  witness skeleton + composition + vec-slot algebra + base-change + class identities + coset wrappers + Finset.sum telescoping
 Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
@@ -53,9 +53,9 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~14h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AbelJacobi.Telescoping: 4-point chain
-                      `(P→Q)+(Q→R)+(R→S)=(P→S)`, telescope-pair,
-                      closed-loop telescoping, swap-eq-zero iff.
+                      NEW AbelJacobi.Sum: `Finset.sum` telescoping
+                      identities — `_sum_range`, `_sum_range_loop`,
+                      `_sum_range_const`, `_sum_range_split`.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -245,6 +245,7 @@ AbelJacobi.BaseChange pass lake build Jacobian.AbelJacobi.BaseChange (no sorry)
 AbelJacobi.Identities pass lake build Jacobian.AbelJacobi.Identities (no sorry)
 AbelJacobi.Coset pass lake build Jacobian.AbelJacobi.Coset (no sorry)
 AbelJacobi.Telescoping pass lake build Jacobian.AbelJacobi.Telescoping (no sorry)
+AbelJacobi.Sum pass lake build Jacobian.AbelJacobi.Sum (no sorry)
 AbelJacobi (umbrella) pass lake build Jacobian.AbelJacobi
 ```
 

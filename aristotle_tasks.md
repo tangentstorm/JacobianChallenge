@@ -12,22 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 08:15 EDT)
+## Live Status (2026-04-27 08:19 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AbelJacobi/Sum.lean`: `Finset.sum`-style
+    telescoping identities for the witness map:
+      - `witnessAbelJacobi_sum_range` (induction on `n` via
+        `Finset.sum_range_succ` + `chain_three`)
+      - `witnessAbelJacobi_sum_range_loop` (closed sequence ⇒ 0)
+      - `witnessAbelJacobi_sum_range_const`
+      - `witnessAbelJacobi_sum_range_split`
+    Wired into AbelJacobi umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~14h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 08:15 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/AbelJacobi/Telescoping.lean`:
       - `witnessAbelJacobi_chain_four`
-        ((P→Q)+(Q→R)+(R→S) = P→S)
       - `witnessAbelJacobi_telescope_pair`
       - `witnessAbelJacobi_telescope_loop`
-        ((P→Q)+(Q→R)+(R→P) = 0)
       - `witnessAbelJacobi_eq_iff_swap_eq_zero`
-    Wired into AbelJacobi umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~14h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 08:11 EDT)
