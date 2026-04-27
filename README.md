@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 06:32 EDT
+Last tick: 2026-04-27 06:35 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -32,7 +32,7 @@ Complex torus quotient API       ███████████████�
 Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms                █████████░░░░░░░░░░░   48%  type/module/analyticGenus + positivity API + full toFun matrix + `evalLinearMap` (neg/sub/smul/nsmul/zsmul) + extensionality through `evalLinearMap`
+Holomorphic forms                ██████████░░░░░░░░░░   50%  type/module/analyticGenus + positivity API + full toFun matrix + `evalLinearMap` (neg/sub/smul/nsmul/zsmul) + extensionality + witness-driven genus positivity
 Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
@@ -53,11 +53,11 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~12h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW HolomorphicForms.ExtEvalLinearMap:
-                      extensionality through `evalLinearMap`,
-                      a `_eq_zero_iff_evalLinearMap_eq_zero`
-                      criterion, and a non-vanishing witness
-                      `ne_zero_of_evalLinearMap_ne_zero`.
+                      NEW HolomorphicForms.AnalyticGenusWitness:
+                      witness-driven genus positivity. A single
+                      `(x, v, η)` with `evalLinearMap x v η ≠ 0`
+                      forces `0 < analyticGenus E X` and provides
+                      a `Nontrivial` form instance.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -225,6 +225,7 @@ TraceDegree.PullbackFunEvalLinearMap pass lake build Jacobian.TraceDegree.Pullba
 HolomorphicForms.EvalLinearMapZsmul pass lake build Jacobian.HolomorphicForms.EvalLinearMapZsmul (no sorry)
 HolomorphicForms.Ext pass lake build Jacobian.HolomorphicForms.Ext (no sorry)
 HolomorphicForms.ExtEvalLinearMap pass lake build Jacobian.HolomorphicForms.ExtEvalLinearMap (no sorry)
+HolomorphicForms.AnalyticGenusWitness pass lake build Jacobian.HolomorphicForms.AnalyticGenusWitness (no sorry)
 ```
 
 ```text
