@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 22:23 EDT)
+## Live Status (2026-04-26 22:29 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~4h —
+  now `submitted-redundant` (proof discharged locally this tick)
+  but kept running as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - DISCHARGED sorry in
+    `Jacobian/Periods/PathIntegralViaChartTrans.lean`:
+    `pathIntegralViaChart_trans_of_curveIntegrable` proven directly
+    (`unfold + chartLift_trans rw + exact in-chart trans`),
+    matching the corrected-layer proof exactly. The last via-chart
+    sorry is gone. Build green (8172 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 22:23 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~4h.
 - **Integrated this tick (local Claude-owned):**
