@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 22:29 EDT)
+## Live Status (2026-04-26 22:36 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~4h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/ChartedFormPullbackEqChartedFormCompMfderiv.lean`:
+    the `rfl` bridge between the corrected and provisional
+    chart-form towers. Names
+    `chartedFormPullback c ω e = (chartedForm c ω e).comp
+    (mfderiv c.symm e)` plus its tangent-vec apply form. Makes the
+    `mfderiv`-factor difference explicit and reusable. Build green
+    (8173 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 22:29 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~4h —
   now `submitted-redundant` (proof discharged locally this tick)

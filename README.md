@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 22:29 EDT
+Last tick: 2026-04-26 22:36 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -47,17 +47,18 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
-                      Backend still asleep. Canary is now
-                      submitted-redundant (proof locally discharged
-                      this tick) but kept as wake detector.
+                      Backend still asleep. Canary is
+                      submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      DISCHARGED sorry in
-                      Periods/PathIntegralViaChartTrans:
-                      `pathIntegralViaChart_trans_of_curveIntegrable`
-                      — provisional via-chart layer of conditional
-                      `_trans` lift (`unfold + chartLift_trans rw +
-                      exact in-chart trans`). Last via-chart sorry
-                      gone. Build green (8172 jobs).
+                      NEW Periods/ChartedFormPullbackEqChartedFormComp-
+                      Mfderiv: bridge between corrected/provisional
+                      chart-form towers. Names the rfl identity
+                      `chartedFormPullback c ω e =
+                      (chartedForm c ω e).comp (mfderiv c.symm e)`,
+                      plus its tangent-vec apply form. Makes explicit
+                      where the two layers diverge (the `mfderiv`
+                      factor) — relevant for the translation-chart
+                      simplification. Build green (8173 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
