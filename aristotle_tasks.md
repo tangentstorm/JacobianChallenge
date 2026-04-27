@@ -12,26 +12,32 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 12:16 EDT)
+## Live Status (2026-04-27 12:21 EDT)
 
-- Active jobs (ours): unknown — backend SSL cert expired (last
-  tick). Last known: canary `09cd85dd` QUEUED ~17h. Not waiting.
+- **Aristotle event this tick — canary woke up:**
+  - Canary `09cd85dd` COMPLETE 100% after backend SSL cert
+    renewal (was QUEUED ~18h).
+  - Retrieved patch is byte-identical to the locally-discharged
+    proof in `Jacobian/Periods/PathIntegralViaChartTrans.lean`
+    (diff is empty). Marked `redundant-identical` in
+    `aristotle_jobs.jsonl`.
+- Active jobs (ours): 0/5 (canary now closed; nothing else open).
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSubZeroApplyVec.lean`:
-    vec-applied forms of the sub/zero ring-rewrite identities
-    for arbitrary `f`:
-      - `pullbackFormsLinearMap_neg_add_self_apply_vec`
-      - `pullbackFormsLinearMap_sub_self_apply_vec`
-      - `pullbackFormsLinearMap_zero_sub_apply_vec`
-      - `pullbackFormsLinearMap_sub_zero_apply_vec`
-    Each forwards via the corresponding function-level lemma in
-    `PullbackFormsLinearMapSubZero` plus `rfl`. All `@[simp]`.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapNegNeg.lean`:
+    bundled-pullback double-negation collapse:
+      - `pullbackFormsLinearMap_neg_neg`
+      - `pullbackFormsLinearMap_neg_neg_apply`
+      - `pullbackFormsLinearMap_neg_neg_apply_vec`
+      - `pullbackFormsLinearMap_neg_sub`
+    All `@[simp]`. First three are `neg_neg` rewrites; the fourth
+    uses `map_neg`.
 - **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  SSL-expired / asleep — not waiting.
+  Backend wake is significant. Will resume submitting Aristotle
+  jobs next tick — start by submitting fresh small file-scoped
+  packets. Continuing 4-lemma local cadence in parallel.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 12:11 EDT)
+## Stale Live Status (2026-04-27 12:16 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
