@@ -12,22 +12,37 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 08:31 EDT)
+## Live Status (2026-04-27 08:37 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/AbelJacobi/Nontrivial.lean`: links
-    `witnessAbelJacobi` to `Nontrivial AnalyticJacobianGroup`:
-      - `nontrivial_analyticJacobian_of_witness_ne_zero`
-      - `evalJacobianClass_ne_of_witness_ne_zero`
-      - `evalLinearMap_diff_notMem_of_witness_ne_zero`
-        (uses `mk_eq_mk_iff` for the coset-membership form)
-      - `witness_zero_iff_evalJacobianClass_eq` (alias)
+  - NEW `Jacobian/AbelJacobi/GenusWitness.lean`: unified witness
+    chain — non-zero `witnessAbelJacobi` ⇒ both positive
+    `analyticGenus` and `Nontrivial AnalyticJacobianGroup`:
+      - `genus_pos_and_nontrivial_jacobian_of_witness_ne_zero`
+        (proven by-contradiction via the
+         `analyticGenus_eq_zero_iff_subsingleton` route)
+      - `genus_pos_of_witness_ne_zero` (projection)
+      - `nontrivial_jacobian_of_witness_ne_zero` (projection)
+      - `witness_eq_zero_of_subsingleton_jacobian` (contrapositive
+        — uses `Subsingleton.elim`)
     Wired into AbelJacobi umbrella.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~14h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 08:31 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AbelJacobi/Nontrivial.lean`:
+      - `nontrivial_analyticJacobian_of_witness_ne_zero`
+      - `evalJacobianClass_ne_of_witness_ne_zero`
+      - `evalLinearMap_diff_notMem_of_witness_ne_zero`
+      - `witness_zero_iff_evalJacobianClass_eq`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 08:25 EDT)
