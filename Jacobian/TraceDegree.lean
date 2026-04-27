@@ -23,6 +23,7 @@ import Jacobian.TraceDegree.PullbackFunId
 import Jacobian.TraceDegree.PullbackFunIdApply
 import Jacobian.TraceDegree.PullbackFunIdApplyVec
 import Jacobian.TraceDegree.PullbackFunSimpApply
+import Jacobian.TraceDegree.PullbackFunSimpApplyVec
 import Jacobian.TraceDegree.PullbackFunSmul
 import Jacobian.TraceDegree.PullbackFunSub
 

@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 21:13 EDT
+Last tick: 2026-04-26 21:19 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,9 +49,10 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~3h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/ChartedFormLinearMapApplyApplyLinear:
-                      five bundled provisional vector-apply forms.
-                      Build green (8163 jobs).
+                      NEW TraceDegree/PullbackFunSimpApplyVec: five
+                      vector-apply (x v) forms of pullbackFormsFun
+                      linearity (zero, neg, add, sub, smul).
+                      Build green (TraceDegree 2439 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
