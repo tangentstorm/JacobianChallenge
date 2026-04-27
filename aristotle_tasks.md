@@ -12,20 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 20:06 EDT)
+## Live Status (2026-04-26 20:11 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~2h.
   Backend still asleep.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartCorrectSmulSmul.lean`:
-    `pathIntegralInChartCorrect_smul_smul` — iterated scalar
-    multiplication composes: `∫(k • (l • ω), γ) = (k * l) • ∫(ω, γ)`.
-    Composes `_smul` twice + `smul_smul`. Wired into Periods
-    umbrella; build green (8150 jobs).
+  - NEW `Jacobian/Periods/PathIntegralViaChartCorrectSmulSmul.lean`:
+    `pathIntegralViaChartCorrect_smul_smul` — from-`X` lift of
+    last tick's iterated-smul identity. Wired into Periods
+    umbrella; build green (8151 jobs).
+- The iterated-smul identity now exists at the in-chart corrected
+  and via-chart corrected layers.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 20:01 EDT)
+## Stale Live Status (2026-04-26 20:06 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
