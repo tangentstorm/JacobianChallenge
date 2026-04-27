@@ -12,28 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 12:11 EDT)
+## Live Status (2026-04-27 12:16 EDT)
 
-- Active jobs (ours): unknown this tick — backend CLI returned
-  `SSL: CERTIFICATE_VERIFY_FAILED: certificate has expired`.
-  Last known: canary `09cd85dd` QUEUED ~17h. Not waiting per user.
+- Active jobs (ours): unknown — backend SSL cert expired (last
+  tick). Last known: canary `09cd85dd` QUEUED ~17h. Not waiting.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSubZero.lean`:
-    bundled-pullback sub/zero ring-rewrite identities for arbitrary
-    `f`:
-      - `pullbackFormsLinearMap_neg_add_self`  (`-η + η ↦ 0`)
-      - `pullbackFormsLinearMap_sub_self`      (`η - η ↦ 0`)
-      - `pullbackFormsLinearMap_zero_sub`      (`0 - η ↦ -pullback η`)
-      - `pullbackFormsLinearMap_sub_zero`      (`η - 0 ↦ pullback η`)
-    Continues `PullbackFormsLinearMapZeroIdent`. Each composes
-    `neg_add_cancel`/`sub_self`/`zero_sub`/`sub_zero` with
-    `map_zero` / `map_neg` / `rfl`. All `@[simp]`.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSubZeroApplyVec.lean`:
+    vec-applied forms of the sub/zero ring-rewrite identities
+    for arbitrary `f`:
+      - `pullbackFormsLinearMap_neg_add_self_apply_vec`
+      - `pullbackFormsLinearMap_sub_self_apply_vec`
+      - `pullbackFormsLinearMap_zero_sub_apply_vec`
+      - `pullbackFormsLinearMap_sub_zero_apply_vec`
+    Each forwards via the corresponding function-level lemma in
+    `PullbackFormsLinearMapSubZero` plus `rfl`. All `@[simp]`.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep / SSL-expired — not waiting.
+  SSL-expired / asleep — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 12:07 EDT)
+## Stale Live Status (2026-04-27 12:11 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
