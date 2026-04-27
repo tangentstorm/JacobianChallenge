@@ -12,15 +12,16 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 20:47 EDT)
+## Live Status (2026-04-26 20:51 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~2.5h+.
   Backend still asleep.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartNegEqNegOneSmul.lean`:
-    `pathIntegralInChart_neg_eq_neg_one_smul` — provisional
-    in-chart layer of the bridge identity. Wired into Periods
-    umbrella; build green (8158 jobs).
+  - NEW `Jacobian/Periods/PathIntegralViaChartNegEqNegOneSmul.lean`:
+    `pathIntegralViaChart_neg_eq_neg_one_smul` — provisional
+    via-chart layer, completing the bridge identity across all
+    five layers. Wired into Periods umbrella; build green
+    (8159 jobs).
 - The bridge identity now exists at four layers: in-chart
   provisional (this tick), in-chart corrected, via-chart
   corrected, cover-with.
