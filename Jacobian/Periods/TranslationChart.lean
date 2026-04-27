@@ -1,4 +1,5 @@
 import Jacobian.Periods.ChartedFormPullbackTranslationChart
+import Jacobian.Periods.PathIntegralTranslationChart
 import Mathlib.Topology.Algebra.Group.Basic
 import Mathlib.Topology.OpenPartialHomeomorph.Defs
 
@@ -40,6 +41,27 @@ theorem chartedFormPullback_translationChart_eq_chartedForm
       chartedForm (translationChart v) ω e := by
   apply chartedFormPullback_eq_chartedForm_of_symm_eq_add_const
     (translationChart v) ω e (-v)
+  funext x
+  rfl
+
+/-- In-chart corrected = provisional integral on the translation chart. -/
+theorem pathIntegralInChartCorrect_translationChart_eq_pathIntegralInChart
+    (v : E) (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
+    pathIntegralInChartCorrect (translationChart v) ω γ =
+      pathIntegralInChart (translationChart v) ω γ := by
+  apply pathIntegralInChartCorrect_eq_pathIntegralInChart_of_symm_eq_add_const
+    (translationChart v) ω γ (-v)
+  funext x
+  rfl
+
+/-- Via-chart corrected = provisional integral on the translation chart. -/
+theorem pathIntegralViaChartCorrect_translationChart_eq_pathIntegralViaChart
+    (v : E) (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b)
+    (h : Set.range γ ⊆ (translationChart v).source) :
+    pathIntegralViaChartCorrect (translationChart v) ω γ h =
+      pathIntegralViaChart (translationChart v) ω γ h := by
+  apply pathIntegralViaChartCorrect_eq_pathIntegralViaChart_of_symm_eq_add_const
+    (translationChart v) ω γ h (-v)
   funext x
   rfl
 
