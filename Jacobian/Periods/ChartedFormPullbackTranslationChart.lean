@@ -44,4 +44,15 @@ theorem chartedFormPullback_eq_chartedForm_of_symm_eq_const_add
   rw [show ((c.symm : E → E)) = (fun x => v + x) from h]
   exact mfderiv_const_add_self v e
 
+/-- Translation-chart bridge (subtraction form): if `c.symm =
+fun x => x - v`, the corrected chart-pullback equals the provisional
+chart-form unconditionally. -/
+theorem chartedFormPullback_eq_chartedForm_of_symm_eq_sub_const
+    (c : OpenPartialHomeomorph E E) (ω : HolomorphicOneForm E E)
+    (e v : E) (h : (fun x : E => c.symm x) = (fun x : E => x - v)) :
+    chartedFormPullback c ω e = chartedForm c ω e := by
+  apply chartedFormPullback_eq_chartedForm_of_mfderiv_id
+  rw [show ((c.symm : E → E)) = (fun x => x - v) from h]
+  exact mfderiv_sub_const_self v e
+
 end JacobianChallenge.Periods
