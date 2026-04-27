@@ -1,6 +1,7 @@
 import Jacobian.AbelJacobi.Defs
 import Jacobian.AbelJacobi.Composition
 import Jacobian.AbelJacobi.Smul
+import Jacobian.AbelJacobi.BaseChange
 
 /-!
 # Abel-Jacobi infrastructure (witness skeleton)
