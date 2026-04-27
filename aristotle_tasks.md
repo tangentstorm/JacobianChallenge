@@ -12,22 +12,24 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 19:56 EDT)
+## Live Status (2026-04-26 20:01 EDT)
 
-- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~1.5h+.
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~2h.
   Backend still asleep.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralChartNegSmulSymmEqSelf.lean`:
-    `pathIntegralInChart_neg_smul_symm_eq_self` — provisional
-    in-chart triple-cancellation. Wired into Periods umbrella;
-    build green (8148 jobs).
-- The triple-cancellation identity now exists at four layers:
-  in-chart provisional (this tick), in-chart corrected,
-  via-chart corrected, cover-with.
+  - NEW `Jacobian/Periods/PathIntegralViaChartNegSmulSymmEqSelf.lean`:
+    `pathIntegralViaChart_neg_smul_symm_eq_self` — provisional
+    via-chart triple-cancellation, completing the family across
+    all five layers. Wired into Periods umbrella; build green
+    (8149 jobs).
+- The triple-cancellation identity now exists at all five
+  layers: in-chart provisional, in-chart corrected, via-chart
+  provisional (this tick), via-chart corrected, cover-with.
+  Family complete.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 19:51 EDT)
+## Stale Live Status (2026-04-26 19:56 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
