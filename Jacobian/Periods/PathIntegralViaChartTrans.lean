@@ -34,6 +34,8 @@ theorem pathIntegralViaChart_trans_of_curveIntegrable
     pathIntegralViaChart c ω (γab.trans γbd) h =
       pathIntegralViaChart c ω γab hab +
         pathIntegralViaChart c ω γbd hbd := by
-  sorry
+  unfold pathIntegralViaChart
+  rw [chartLift_trans c γab γbd h hab hbd]
+  exact pathIntegralInChart_trans_of_curveIntegrable c ω _ _ h₁ h₂
 
 end JacobianChallenge.Periods
