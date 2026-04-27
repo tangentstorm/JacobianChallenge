@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 23:31 EDT
+Last tick: 2026-04-26 23:39 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,15 +50,15 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/ChartedFormPullbackEqChartedForm-
-                      OfSymmEventuallyEqId: weaker sufficient
-                      condition for the chartedForm bridge — for a
-                      self-chart `c : OpenPartialHomeomorph E E`,
-                      it suffices that `c.symm =ᶠ[𝓝 e] id` (proof:
-                      `EventuallyEq.mfderiv_eq` + `mfderiv_id`).
-                      Useful for translation charts on the model
-                      space `ℂ` itself (the torus example).
-                      Build green (8180 jobs).
+                      NEW Periods/ChartedFormPullbackRefl:
+                      concrete-instance corollary —
+                      `chartedFormPullback (OpenPartialHomeomorph.refl
+                      E) ω e = chartedForm (refl E) ω e`
+                      unconditionally. First witness that the bridge
+                      ladder fires on a real chart instance (proof:
+                      apply EventuallyEq variant with the obvious
+                      witness `(refl E).symm = id`). Build green
+                      (8181 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
