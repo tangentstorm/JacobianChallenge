@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 22:53 EDT
+Last tick: 2026-04-26 23:09 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,15 +50,17 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaChartCorrectEqOfMfderivId:
-                      lifts the in-chart bridge to the via-chart
-                      layer. `pathIntegralViaChartCorrect c ω γ h =
-                      pathIntegralViaChart c ω γ h` under the same
-                      `mfderiv c.symm = id` hypothesis (proof: just
-                      unfold and apply the in-chart bridge to the
-                      lifted path). Bridge ladder: in-chart ✓
-                      via-chart ✓; cover layers next. Build green
-                      (8176 jobs).
+                      NEW Periods/CoverSegmentSubpathRange (extracts
+                      reusable named version of the inline range
+                      proof in cover-with) + NEW Periods/PathIntegral-
+                      ViaCoverWithEqOfMfderivId: lifts the bridge to
+                      cover-with. `pathIntegralViaCoverWith ω γ n hn
+                      pickChart hcov = ∑ i, pathIntegralViaChart …`
+                      under per-chart `mfderiv c.symm = id` (proof:
+                      Finset.sum_congr + via-chart bridge per
+                      summand). Bridge ladder: chartedForm ✓ in-chart
+                      ✓ via-chart ✓ cover-with ✓ — Pick remains.
+                      Build green (8178 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
