@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 05:28 EDT
+Last tick: 2026-04-27 05:32 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                ██████░░░░░░░░░�
 Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
-Trace/degree/push-pull           █████░░░░░░░░░░░░░░░   25%  pullbackFormsFun: full linearity (+sub) + LinearMap bundle + id + tangent-vec apply + comp-id + comp-const + const-of-const + mixed const/id with apply + vec-apply variants at both layers
+Trace/degree/push-pull           █████░░░░░░░░░░░░░░░   26%  pullbackFormsFun: full linearity (+sub) + LinearMap bundle + id + tangent-vec apply + comp-id + comp-const + const-of-const + mixed const/id with full apply/vec-apply matrix at both layers
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
 translation-transition charts, e.g. the torus), the corrected
@@ -53,11 +53,11 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~11h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW PullbackFunMixedConstIdApply: apply and
-                      vec-apply forms of last tick's mixed
-                      `id ∘ const` / `const ∘ id` zero simps. All
-                      `rw [...]; rfl`. Wired into TraceDegree
-                      umbrella.
+                      NEW PullbackFormsLinearMapMixedConstId:
+                      bundled-LinearMap apply / vec-apply forms of
+                      last tick's mixed `id ∘ const` / `const ∘ id`
+                      zero simps. Closes the const/id matrix at
+                      the bundled level.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -212,6 +212,7 @@ TraceDegree.PullbackFormsLinearMapCompIdApply pass lake build Jacobian.TraceDegr
 TraceDegree.PullbackFunConstCompConst pass lake build Jacobian.TraceDegree.PullbackFunConstCompConst (no sorry)
 TraceDegree.PullbackFunConstCompConstBundled pass lake build Jacobian.TraceDegree.PullbackFunConstCompConstBundled (no sorry)
 TraceDegree.PullbackFunMixedConstIdApply pass lake build Jacobian.TraceDegree.PullbackFunMixedConstIdApply (no sorry)
+TraceDegree.PullbackFormsLinearMapMixedConstId pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapMixedConstId (no sorry)
 ```
 
 ```text
