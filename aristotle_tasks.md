@@ -12,7 +12,41 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 14:48 EDT)
+## Live Status (2026-04-27 15:13 EDT)
+
+- **All 5 in-flight packets COMPLETE at backend** but `aristotle result`
+  retrieval is failing with `httpx.ConnectError` (TLS / connectivity
+  hiccup). `aristotle list` itself works — only the tarball download
+  endpoint is failing. Will retry next tick.
+  - `37b183aa` evalLinearMap_ne_zero_of_toFun_ne_zero (HolomorphicForms)
+  - `6c252557` periodSubgroup_eq_range (Periods)
+  - `2f5d999b` mk_eq_zero_iff_mem_range (AnalyticJacobian)
+  - `b3a3b251` witnessAbelJacobi_self_both (AbelJacobi)
+  - `2d65778f` evalJacobianClass_self_sub_self (AnalyticJacobian) —
+    redundant: discharged locally last tick.
+- **Local proof work this tick (4 lemmas, 1 new file):**
+  - NEW `Jacobian/AnalyticJacobian/EvalJacobianClassEqSubMem.lean`:
+      - `evalJacobianClass_eq_iff_sub_mem`
+      - `evalJacobianClass_sub_eq_zero_iff_eq`
+      - `evalJacobianClass_sub_eq_zero_iff_sub_mem`
+      - `evalJacobianClass_eq_of_sub_mem`
+    Sub-membership variants of the equality / vanish-iff
+    characterizations, mirroring `mk_eq_mk_iff_sub_mem` upstream. All
+    proofs are term-mode unfold + existing-lemma application or
+    single-rewrite. Wired into `Jacobian/AnalyticJacobian.lean`.
+- **Headline numbers (recomputed):** production sorry-free **367 / 383**
+  (was 366/381 last tick; +2 production files added to disk —
+  EvalJacobianClassEqSubMem.lean (mine, sorry-free) and
+  TraceDegree/PullbackBasis.lean (user's untracked, 3 sorrys); +1 sorry
+  file from the latter, hence +1 sorry-free ratio adds 1).
+- **Tree note (left untouched per PROMPT.md):**
+  - `M Jacobian/Solution.lean` — pre-existing user refinement work.
+  - `M Jacobian/ComplexTorus/ULiftTransport.lean` — pre-existing.
+  - untracked `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` and
+    `Jacobian/TraceDegree/PullbackBasis.lean` — pre-existing.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 14:48 EDT)
 
 - **PROMPT.md updated this tick:** new "Accurate measurement rules" section
   in `## Progress Report Format` — every ratio in the README must come
@@ -36,17 +70,7 @@ identify our jobs without inspecting tarballs.
     `Jacobian/AnalyticJacobian/EvalJacobianClassSelfSub.lean` via
     term-mode `sub_self _` (one of last tick's parking-spot files).
 - **Active Aristotle jobs:** 5/5 (all from previous tick, all still
-  IN_PROGRESS / QUEUED at backend, none retrieved this tick):
-  - `37b183aa` evalLinearMap_ne_zero_of_toFun_ne_zero (HolomorphicForms)
-  - `6c252557` periodSubgroup_eq_range (Periods)
-  - `2f5d999b` mk_eq_zero_iff_mem_range (AnalyticJacobian)
-  - `b3a3b251` witnessAbelJacobi_self_both (AbelJacobi)
-  - `2d65778f` evalJacobianClass_self_sub_self (AnalyticJacobian) —
-    note: now redundant since I discharged it locally; will retrieve and
-    diff against my proof when it lands.
-- **Tree note:** Jacobian/Solution.lean and Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean
-  are dirty/untracked from prior session work — left untouched per
-  PROMPT.md.
+  IN_PROGRESS / QUEUED at backend, none retrieved this tick).
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 14:11 EDT)

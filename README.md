@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 14:48 EDT
+Last tick: 2026-04-27 15:13 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -13,21 +13,17 @@ Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (fr
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
 Aristotle integrations to date 82         `"status":"integrated"` lines in aristotle_jobs.jsonl
-                                          (was misreported as 31 in prior ticks; recounted today)
-Production sorry-free files   366 / 381   denominator excludes 11 intentional design files
+Production sorry-free files   367 / 383   denominator excludes 11 intentional design files
                                           (Challenge, Solution, StatementBank, 8 *Recon*.lean)
 
 Reproduction:
-  total       find Jacobian -name "*.lean" | wc -l                        → 392
-  intentional 7+8 (3 design files + 8 Recon discovery files)              → 15 wait,
-              Challenge.lean, Solution.lean, StatementBank.lean (3) +
-              {AbelJacobi,ComplexTorus,HolomorphicForms,Periods,TraceDegree}
-              /Recon.lean + DiscretenessRecon + ManifoldRecon +
-              ZLatticeRecon + PathIntegralViaCoverRecon                   → 11
-  prod        392 − 11                                                    → 381
-  with-sorry  grep -rl "\bsorry\b" prod-files                             → 17
-              (2 are doc-comment-only matches in umbrella files)          → 15 real
-  sorry-free  381 − 15                                                    → 366
+  total       find Jacobian -name "*.lean" | wc -l                        → 394
+  intentional Challenge + Solution + StatementBank + 8 *Recon* files      → 11
+  prod        394 − 11                                                    → 383
+  with-sorry  grep -rl "\bsorry\b" prod-files                             → 18
+              (2 are doc-comment-only matches in ComplexTorus.lean
+               and Periods.lean umbrellas)                                → 16 real
+  sorry-free  383 − 16                                                    → 367
 ```
 
 ```text
@@ -53,32 +49,35 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     5 / 5  (no movement at backend this tick — all 5 still IN_PROGRESS / QUEUED)
+Active jobs (ours):     5 / 5  ALL COMPLETE at backend this tick — but `result` retrieval
+                        is failing with httpx.ConnectError (TLS / connectivity). `list`
+                        works; only the tarball download fails. Will retry next tick.
                         `37b183aa` evalLinearMap_ne_zero_of_toFun_ne_zero (HolomorphicForms)
                         `6c252557` periodSubgroup_eq_range (Periods)
                         `2f5d999b` mk_eq_zero_iff_mem_range (AnalyticJacobian)
                         `b3a3b251` witnessAbelJacobi_self_both (AbelJacobi)
                         `2d65778f` evalJacobianClass_self_sub_self (AnalyticJacobian; now
-                                   redundant — discharged locally this tick by `sub_self _`)
-Integrated this tick:   2 lemmas via 1 new local file + 1 sorry-discharge
+                                   redundant — discharged locally last tick by `sub_self _`)
+Integrated this tick:   0 from Aristotle (retrieval blocked). 4 lemmas via 1 new local file
                         (see "Local cadence" below).
-Tree note:              Jacobian/Solution.lean and Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean
-                        are dirty/untracked from earlier work — left untouched per PROMPT.md.
+Tree note:              Jacobian/Solution.lean (M), Jacobian/ComplexTorus/ULiftTransport.lean (M)
+                        and Jacobian/{AbelJacobi/AnalyticOfCurveBasis,TraceDegree/PullbackBasis}.lean
+                        (untracked) are pre-existing user work — left untouched per PROMPT.md.
+                        TraceDegree/PullbackBasis.lean (3 sorrys) is included in the production
+                        denominator and counts against sorry-free total.
 ```
 
 ```text
 Local cadence this tick (Claude-owned, no Aristotle dependency)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-NEW Jacobian/AnalyticJacobian/EvalJacobianClassMkBridge.lean:
-  `evalJacobianClass_add_eq_mk`
-  `evalJacobianClass_sub_eq_mk`
-  `evalJacobianClass_neg_eq_mk`
-  `zero_analyticJacobianGroup_eq_mk_zero`
-  → 4 mk-bridge lemmas, all term-mode rewrites via existing mk_{add,sub,neg,zero}.
-
-DISCHARGED Jacobian/AnalyticJacobian/EvalJacobianClassSelfSub.lean:
-  `evalJacobianClass_self_sub_self` was a parking-spot sorry; closed
-  this tick with term-mode `sub_self _`.
+NEW Jacobian/AnalyticJacobian/EvalJacobianClassEqSubMem.lean:
+  `evalJacobianClass_eq_iff_sub_mem`
+  `evalJacobianClass_sub_eq_zero_iff_eq`
+  `evalJacobianClass_sub_eq_zero_iff_sub_mem`
+  `evalJacobianClass_eq_of_sub_mem`
+  → 4 sub-mem variants of the equality / vanish-iff characterizations,
+    mirroring `mk_eq_mk_iff_sub_mem` upstream. All proofs are
+    term-mode unfold + existing-lemma application or single-rewrite.
 ```
 
 ```text
@@ -86,39 +85,40 @@ Build status — recomputed each tick from the tree
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Challenge target          pass         lake build Jacobian.Challenge
 Statement bank            pass         lake build Jacobian.WorkPackets.StatementBank
-Current target            pass         lake build Jacobian.AnalyticJacobian.EvalJacobianClassMkBridge
-                          pass         lake build Jacobian.AnalyticJacobian.EvalJacobianClassSelfSub
+Current target            pass         lake build Jacobian.AnalyticJacobian.EvalJacobianClassEqSubMem
 
 Sorry-free coverage by directory (production files only — Recon files excluded
 from both numerator and denominator)
-                                       bar              ratio    %
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Jacobian/AnalyticJacobian        ███████████████████░  21 / 22  95.5%
-Jacobian/AbelJacobi              ██████████████████░░  18 / 20  90.0%
-Jacobian/HolomorphicForms        █████████████████░░░  25 / 28  89.3%
-Jacobian/ComplexTorus            █████████████████░░░  47 / 53  88.7%
-Jacobian/Periods                 ████████████████████  168 / 171  98.2%
-Jacobian/TraceDegree             ████████████████████  81 / 81  100.0%
-Top-level Jacobian/*.lean        ████████████████████  6 / 6   100.0%
+                                       bar              ratio       %
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Jacobian/AnalyticJacobian        ███████████████████░  22 / 23     95.7%
+Jacobian/AbelJacobi              ██████████████████░░  18 / 20     90.0%
+Jacobian/HolomorphicForms        █████████████████░░░  25 / 28     89.3%
+Jacobian/ComplexTorus            █████████████████░░░  47 / 53     88.7%
+Jacobian/Periods                 ████████████████████  168 / 171   98.2%
+Jacobian/TraceDegree             ████████████████████  81 / 82     98.8%
+Top-level Jacobian/*.lean        ████████████████████  6 / 6      100.0%
 
 Reproduction:
   per dir: total = `find <dir> -maxdepth 1 -name "*.lean" | wc -l`
            recon = `find <dir> -maxdepth 1 -name "*Recon*.lean" | wc -l`
-           with-sorry-real = (grep -l "\bsorry\b") minus doc-comment-only files
-           ratio = (total − recon − with-sorry-real) / (total − recon)
+           with-sorry-word = (grep -l "\bsorry\b") minus Recon files
+           clean = (total − recon) − with-sorry-word
+           ratio = clean / (total − recon)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Check the 5 in-flight Aristotle packets; integrate any that
-   land and replace `2d65778f` with a fresh packet (since the
-   original target was already discharged locally).
-2. Continue 4-lemma local cadence — candidate next file:
-   `Jacobian/AnalyticJacobian/MkAddCancel.lean` (mk_add_left_cancel
-   variants once mk_add is in hand) or another mk-bridge group.
-3. Re-derive headline numbers each tick, per the new
-   "Accurate measurement rules" in PROMPT.md.
+1. Retry Aristotle `result` retrieval for the 5 COMPLETE packets;
+   integrate any that come down clean. Network was up for `list`
+   but failing for tarball download — likely transient.
+2. If still blocked, replace `2d65778f` with a fresh packet anyway
+   (target already discharged locally); submit a new task to refill
+   the queue. Aim for 5/5 active.
+3. Continue local 4-lemma cadence. Candidate: a Sub-Mem-style
+   companion for the `evalLinearMap` (form-level) equality lemmas,
+   or further `mk` arithmetic decomposition.
 ```
 
 ## About
