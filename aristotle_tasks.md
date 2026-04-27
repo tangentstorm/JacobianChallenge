@@ -12,20 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 06:24 EDT)
+## Live Status (2026-04-27 06:28 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/HolomorphicForms/Ext.lean`: extensionality
+    principles for `HolomorphicOneForm`:
+      - `ext_toFun_iff`
+      - `ext_toFun`
+      - `ext_toFun_apply_iff`
+      - `ext_toFun_apply`
+    All forwarded through `ContMDiffSection.ext`. Wired into
+    HolomorphicForms umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~12h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 06:24 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/HolomorphicForms/EvalLinearMapZsmul.lean`:
-      - `evalLinearMap_zsmul` (via `LinearMap.toAddMonoidHom.map_zsmul`)
+      - `evalLinearMap_zsmul`
       - `evalLinearMap_natCast_smul`
       - `evalLinearMap_neg_neg`
-      - `zsmul_toFun_apply` (via `ContMDiffSection.coe_zsmul`)
-    Wired into HolomorphicForms umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~12h — not waiting.
+      - `zsmul_toFun_apply`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 06:14 EDT)
