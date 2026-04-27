@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 10:25 EDT
+Last tick: 2026-04-27 10:28 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                ███████████░░░░�
 Path integration/periods         ██████████████░░░░░░   69%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   28%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain
 Abel-Jacobi API                  ███████░░░░░░░░░░░░░   37%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges
-Trace/degree/push-pull           ████████░░░░░░░░░░░░   40%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled along-id+along-const full dist + bundled along-(id ∘ id) form/vec-slot ℂ/ℕ/ℤ-complete forwarder bank
+Trace/degree/push-pull           ████████░░░░░░░░░░░░   41%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled along-id+along-const full dist + bundled along-(id ∘ id) full forwarder bank + bundled comp-const/const-comp form-slot trivial dist
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
 translation-transition charts, e.g. the torus), the corrected
@@ -49,13 +49,13 @@ chart and the explicit `translationChart v` construction.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~15h.
+Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~16h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFormsLinearMapIdIdEvalSmul:
-                      bundled along-(id ∘ id) form/vec-slot ℕ/ℤ-smul
-                      forwarders, closing the integer-scalar picture.
+                      NEW TraceDegree.PullbackFormsLinearMapCompConstDist:
+                      bundled `f ∘ const` and `const ∘ f` form-slot
+                      trivial dist (add/neg) — both pullbacks vanish.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -240,6 +240,7 @@ TraceDegree.PullbackFormsLinearMapIdIdEval pass lake build Jacobian.TraceDegree.
 TraceDegree.PullbackFormsLinearMapIdIdEvalDist pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapIdIdEvalDist (no sorry)
 TraceDegree.PullbackFormsLinearMapIdIdEvalVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapIdIdEvalVec (no sorry)
 TraceDegree.PullbackFormsLinearMapIdIdEvalSmul pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapIdIdEvalSmul (no sorry)
+TraceDegree.PullbackFormsLinearMapCompConstDist pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapCompConstDist (no sorry)
 HolomorphicForms.EvalLinearMapZsmul pass lake build Jacobian.HolomorphicForms.EvalLinearMapZsmul (no sorry)
 HolomorphicForms.Ext pass lake build Jacobian.HolomorphicForms.Ext (no sorry)
 HolomorphicForms.ExtEvalLinearMap pass lake build Jacobian.HolomorphicForms.ExtEvalLinearMap (no sorry)
