@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 09:48 EDT
+Last tick: 2026-04-27 09:55 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                ███████████░░░░�
 Path integration/periods         ██████████████░░░░░░   69%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   28%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain
 Abel-Jacobi API                  ███████░░░░░░░░░░░░░   37%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges
-Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
+Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   29%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled vec-slot linearity along id
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
 translation-transition charts, e.g. the torus), the corrected
@@ -53,9 +53,9 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~15h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFormsLinearMapIdEval:
-                      bundled-LinearMap pullback-along-id ↔
-                      `evalLinearMap` bridges.
+                      NEW TraceDegree.PullbackFormsLinearMapIdEvalVec:
+                      bundled-LinearMap pullback-along-id vec-slot
+                      linearity (zero/add/neg/smul) via `evalLinearMap`.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -228,6 +228,7 @@ TraceDegree.PullbackFunIdEvalSmul pass lake build Jacobian.TraceDegree.PullbackF
 TraceDegree.PullbackFunIdEvalVec pass lake build Jacobian.TraceDegree.PullbackFunIdEvalVec (no sorry)
 TraceDegree.PullbackFunIdEvalVecExtra pass lake build Jacobian.TraceDegree.PullbackFunIdEvalVecExtra (no sorry)
 TraceDegree.PullbackFormsLinearMapIdEval pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapIdEval (no sorry)
+TraceDegree.PullbackFormsLinearMapIdEvalVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapIdEvalVec (no sorry)
 HolomorphicForms.EvalLinearMapZsmul pass lake build Jacobian.HolomorphicForms.EvalLinearMapZsmul (no sorry)
 HolomorphicForms.Ext pass lake build Jacobian.HolomorphicForms.Ext (no sorry)
 HolomorphicForms.ExtEvalLinearMap pass lake build Jacobian.HolomorphicForms.ExtEvalLinearMap (no sorry)
