@@ -12,22 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 05:51 EDT)
+## Live Status (2026-04-27 05:57 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/HolomorphicForms/ToFunApply.lean`: pointwise
-    `toFun` apply simps for zero/neg/add/sub of holomorphic forms:
-      - `zero_toFun_apply`
-      - `neg_toFun_apply`
-      - `add_toFun_apply`
-      - `sub_toFun_apply`
-    All proven via `change ((... : ∀ x, _)) x = ... ; rw [ContMDiffSection.coe_*]; rfl`.
+  - NEW `Jacobian/HolomorphicForms/ToFunApplyVec.lean`: closes
+    the `toFun` simp matrix:
+      - `smul_toFun_apply` (the missing scalar case)
+      - `zero_toFun_apply_vec`
+      - `neg_toFun_apply_vec`
+      - `add_toFun_apply_vec`
     Wired into HolomorphicForms umbrella.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~11h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 05:51 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/HolomorphicForms/ToFunApply.lean`:
+      - `zero_toFun_apply`
+      - `neg_toFun_apply`
+      - `add_toFun_apply`
+      - `sub_toFun_apply`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 05:46 EDT)
