@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 16:48 EDT
+Last tick: 2026-04-27 16:53 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -60,16 +60,33 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5  `72ac3a75` (Riemann-Roch finite-dimensionality theorem) is
-                        IN_PROGRESS at 9% (~53 min into the run; +1 percentage point
-                        since last tick). Per PROMPT.md "check Aristotle status once"
-                        — not polling further.
+Active jobs (ours):     1 / 5  `72ac3a75` (Riemann-Roch finite-dimensionality theorem)
+                        IN_PROGRESS at 10% (~58 min in; +1 percentage point since
+                        last tick). Per PROMPT.md not polling further.
 Integrated this tick:   None from Aristotle (still IN_PROGRESS).
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/Periods/BasisAlignedPeriodSubgroup.lean (+1 theorem)
+
+  holomorphicOneFormDualEquiv_bijOn_periodSubgroup
+    : Set.BijOn (holomorphicOneFormDualEquiv ℂ X)
+        (periodSubgroup ℂ X : Set _)
+        (basisAlignedPeriodSubgroupConcrete X : Set _)
+    Packages the bijection between functional-space and basis-aligned
+    period subgroups (as sets) — combining `_mem_*` (forward
+    transport), `LinearEquiv.injective`, and the surjective image
+    characterization. Useful for pulling Mathlib `BijOn`-style lemmas
+    onto the basis-aligned side.
+
+DOC: plan.md updated to reflect actual state of Phase 1.5b
+(`fundamentalDomain_covers` is now proved, `fullComplexLatticeOfZLattice`
+is sorry-free) and added a Phase 1.5c section describing the
+basis-aligned period bridge built across the last several ticks.
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedPeriodPairing.lean (+2 theorems)
 
   basisAlignedPeriodPairing_eq_iff
