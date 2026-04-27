@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 00:53 EDT
+Last tick: 2026-04-27 00:58 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,16 +50,14 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/TranslationChart: concrete
-                      `translationChart v : OpenPartialHomeomorph E E`
-                      built from `Homeomorph.addRight v`. Has
-                      `translationChart v x = x + v` and
-                      `(translationChart v).symm x = x + (-v)` as
-                      simp lemmas, plus a sanity-check bridge
-                      instance: `chartedFormPullback (translationChart
-                      v) ω e = chartedForm (translationChart v) ω e`
-                      unconditionally. Concrete, named witness for
-                      the bridge. Build green (8188 jobs).
+                      EXTENDED Periods/TranslationChart with
+                      integration-tower lifts:
+                      `pathIntegralInChartCorrect_translationChart_eq_
+                      pathIntegralInChart` and the via-chart analogue.
+                      Translation-chart pipeline at parity with
+                      refl-chart pipeline through via-chart for the
+                      concrete `translationChart v` instance. Build
+                      green (8188 jobs, no new module).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
