@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 14:04 EDT
+Last tick: 2026-04-27 14:11 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -15,7 +15,7 @@ Complex torus quotient API       ███████████████�
 Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms                ███████████░░░░░░░░░   56%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity + evalLinearMap eq/ne iff toFun eq/ne
+Holomorphic forms                ████████████░░░░░░░░   58%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity + ext + witness positivity + evalLinearMap eq/ne/neg/sub zero-iff family
 Path integration/periods         ██████████████░░░░░░   71%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts + integer-scalar periodPairing API + neg-iff and periodPairing-combination membership
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   32%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain + cycle-arithmetic mk∘periodPairing identities + evalJacobianClass equality characterizations + mk sub/neg/add combined arithmetic
 Abel-Jacobi API                  ████████░░░░░░░░░░░░   42%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges + `periodPairing` invariance + witness-zero/equality characterizations + nsmul/zsmul/neg periodPairing conditions + sub-chain identities (add-swap, sub-chain endpoint/basePoint, swap-cancel)
@@ -32,16 +32,19 @@ chart and the explicit `translationChart v` construction.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 2/5 — both IN_PROGRESS at 1%:
-                      `17176298` evalLinearMap_neg_eq_zero_iff,
-                      `638e3d5e` evalLinearMap_sub_eq_zero_iff_eq.
+Active jobs (ours): 0/5 — both packets COMPLETE this tick.
+                    Backend round-trip ~12 min (much faster than
+                    the 67min smoke test — backlog caught up).
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
-Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AbelJacobi.WitnessSubArith:
-                      sub-chain witness identities (add-swap-eq-zero,
-                      sub-chain endpoint/base-point, swap-cancel).
-Submitted this tick:  none new (2 still in flight at 1%).
+Aristotle integrations this tick (2 packets):
+                      `17176298` evalLinearMap_neg_eq_zero_iff
+                      → `rw [map_neg, neg_eq_zero]`;
+                      `638e3d5e` evalLinearMap_sub_eq_zero_iff_eq
+                      → `rw [map_sub, sub_eq_zero]`.
+                      Both proofs were exactly the predicted shape;
+                      integrated as-is and wired into umbrella.
+Submitted this tick:  none.
 Tree note:            Same 5 untracked files — unrelated.
 Submitted this tick:  none.
 Failed/split this tick: none.
@@ -52,7 +55,7 @@ Build status — all targets compile (lake build Jacobian.{Challenge, …, *.Rec
 
 Sorry-free coverage by directory               bar              %   files
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Jacobian/HolomorphicForms                █████████████████░░░   92%  (24/26)*
+Jacobian/HolomorphicForms                ████████████████████  100%  (26/26)
 Jacobian/AnalyticJacobian                ████████████████████  100%  (19/19)
 Jacobian/AbelJacobi                      ████████████████████  100%  (19/19)
 Jacobian/TraceDegree                     ████████████████████  100%  (82/82)
@@ -66,10 +69,6 @@ Production infrastructure (excluding intentional design files): 100% (372/372).
 † Single `*Recon.lean` discovery file with intentional sorries.
 ‡ Challenge.lean (frozen public spec) and StatementBank.lean
   (placeholder/dependency-shape file) — sorries are by design.
-* `EvalLinearMapNegEqZero.lean` and
-  `EvalLinearMapSubEqZeroIffEq.lean` are parking spots for
-  in-flight Aristotle packets `17176298`/`638e3d5e`; not yet
-  wired into the umbrella.
 ```
 
 ```text
