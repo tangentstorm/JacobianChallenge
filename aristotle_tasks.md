@@ -12,27 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 11:55 EDT)
+## Live Status (2026-04-27 11:59 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~17h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIntSmulApply.lean`:
-    at-point apply forms + zero-collapse for bundled
-    `pullbackFormsLinearMap` ℕ/ℤ-smul (arbitrary `f`):
-      - `pullbackFormsLinearMap_nsmul_apply`
-      - `pullbackFormsLinearMap_zsmul_apply`
-      - `pullbackFormsLinearMap_nsmul_zero`  (`(0:ℕ) • η ↦ 0`)
-      - `pullbackFormsLinearMap_zsmul_zero`  (`(0:ℤ) • η ↦ 0`)
-    Continues `PullbackFormsLinearMapIntSmul`. At-point via the
-    existing rfl-bridge; zero collapses use `zero_{n,z}smul +
-    map_zero`.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapZeroIdent.lean`:
+    bundled-pullback zero/neg/add ring-rewrite trivialities for
+    arbitrary `f`:
+      - `pullbackFormsLinearMap_add_neg_self` (`η + -η ↦ 0`)
+      - `pullbackFormsLinearMap_neg_zero` (`-(0 : Holo) ↦ 0`)
+      - `pullbackFormsLinearMap_add_zero`
+      - `pullbackFormsLinearMap_zero_add`
+    Initial draft used `smul_zero`/`map_zero` route, but
+    `SMulZeroClass ℂ (X → E →L[ℂ] ℂ)` typeclass synthesis times
+    out at 20000 heartbeats. Switched to `add_neg_cancel`/`map_zero`
+    AddCommGroup-only route. All `@[simp]`.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~17h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 11:49 EDT)
+## Stale Live Status (2026-04-27 11:55 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
