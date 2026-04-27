@@ -12,27 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 11:24 EDT)
+## Live Status (2026-04-27 11:39 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~17h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/HolomorphicForms/ToFunZsmul.lean`:
-    integer-scalar `toFun` extras:
-      - `zsmul_toFun_apply_vec`  (vec-applied form of zsmul)
-      - `nsmul_sub_self_toFun_apply`  (`(n • η - n • η).toFun = 0`)
-      - `zsmul_sub_self_toFun_apply`  (ℤ analogue)
-      - `neg_neg_toFun_apply`         (double-neg collapse)
-    First attempt used `smul_zero`, but `SMulZeroClass ℕ
-    (CotangentSpace _ _ _)` typeclass synthesis times out at
-    20000 heartbeats. Switched to the `sub_self`/`neg_neg`
-    AddCommGroup route.
+  - NEW `Jacobian/AbelJacobi/WitnessEqIff.lean`:
+    witness-equality characterizations via the chain identity:
+      - `witnessAbelJacobi_endpoint_eq_iff_chain_zero`
+      - `witnessAbelJacobi_endpoint_eq_of_chain_zero`
+      - `witnessAbelJacobi_basePoint_eq_iff_chain_zero`
+      - `witnessAbelJacobi_basePoint_eq_of_chain_zero`
+    Two iff/of pairs: `witness A P = witness A Q ↔ witness P Q = 0`
+    (shared base point) and `witness A R = witness B R ↔
+    witness A B = 0` (shared endpoint). First attempt at the
+    base-point case used `sub_right_cancel` (does not exist);
+    switched to a `← sub_eq_zero` rewrite combined with
+    `witness A R - witness B R = witness A B` proven by `abel`.
+  - README restructured per user request — one-line summary at
+    top, status sections, then full About description below.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~17h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 11:20 EDT)
+## Stale Live Status (2026-04-27 11:24 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
