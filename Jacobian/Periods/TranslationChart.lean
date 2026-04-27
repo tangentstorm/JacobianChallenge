@@ -239,4 +239,16 @@ theorem chartedFormLinearMap_translationChart_apply_eq_shifted
       (fun e : E => ω.toFun (e + (-v))) :=
   chartedForm_translationChart_eq_shifted v ω
 
+/-- The in-chart integral on `translationChart 0` reduces to the
+direct `curveIntegral ω.toFun γ` (since translation by 0 is the
+identity). -/
+theorem pathIntegralInChart_translationChart_zero
+    (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
+    pathIntegralInChart (translationChart (0 : E)) ω γ =
+      curveIntegral ω.toFun γ := by
+  rw [pathIntegralInChart_translationChart]
+  congr 1
+  funext e
+  rw [neg_zero, add_zero]
+
 end JacobianChallenge.Periods
