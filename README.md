@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 08:01 EDT
+Last tick: 2026-04-27 08:05 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -35,7 +35,7 @@ LieAddGroup smoothness           ███████████████�
 Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
 Path integration/periods         ██████████████░░░░░░   68%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances + named API around periodPairing/periodSubgroup with closure lemmas
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   28%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain
-Abel-Jacobi API                  ███░░░░░░░░░░░░░░░░░   15%  witness skeleton + composition + closed integer-action vec-slot (sub/nsmul/zsmul) + `_eq_zero_iff`
+Abel-Jacobi API                  ███░░░░░░░░░░░░░░░░░   18%  witness skeleton + composition + closed vec-slot algebra + base-change/chain-three/eq-iff identities
 Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
@@ -53,9 +53,9 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~13h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AbelJacobi.Smul: vec-slot sub/nsmul/zsmul
-                      and an `_eq_zero_iff` characterization
-                      linking `witnessAbelJacobi` to coset equality.
+                      NEW AbelJacobi.BaseChange: base-point change,
+                      three-point chain identity, equality
+                      criterion via class equality, swap-zero form.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -241,6 +241,7 @@ AnalyticJacobian.NontrivialWitness pass lake build Jacobian.AnalyticJacobian.Non
 AbelJacobi.Defs pass lake build Jacobian.AbelJacobi.Defs (no sorry)
 AbelJacobi.Composition pass lake build Jacobian.AbelJacobi.Composition (no sorry)
 AbelJacobi.Smul pass lake build Jacobian.AbelJacobi.Smul (no sorry)
+AbelJacobi.BaseChange pass lake build Jacobian.AbelJacobi.BaseChange (no sorry)
 AbelJacobi (umbrella) pass lake build Jacobian.AbelJacobi
 ```
 
