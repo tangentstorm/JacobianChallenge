@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 12:40 EDT
+Last tick: 2026-04-27 12:46 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -15,7 +15,7 @@ Complex torus quotient API       ███████████████�
 Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms                ███████████░░░░░░░░░   55%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix (zero/add/sub/neg/ℂ-smul/ℕ-smul/ℤ-smul/sub-self/double-neg) + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
+Holomorphic forms                ███████████░░░░░░░░░   56%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity + evalLinearMap eq/ne iff toFun eq/ne
 Path integration/periods         ██████████████░░░░░░   70%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts + integer-scalar periodPairing API (n/zsmul + matching subgroup membership)
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   31%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain + cycle-arithmetic mk∘periodPairing identities + evalJacobianClass equality characterizations (mem/exists-cycle iff)
 Abel-Jacobi API                  ████████░░░░░░░░░░░░   41%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges + `periodPairing` invariance + witness-zero/equality characterizations + nsmul/zsmul/neg periodPairing sufficient conditions for witness vanishing
@@ -32,18 +32,16 @@ chart and the explicit `translationChart v` construction.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `ee14b794` IN_PROGRESS
-                    (Jacobian/HolomorphicForms/EvalLinearMapEqZero.lean,
-                    rfl-iff smoke test for backend round-trip).
+Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~3 min
+                    (rfl-iff smoke test).
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFormsLinearMapSmulAddApplyVec:
-                      vec-applied versions of the smul-add /
-                      smul-sub / smul-left-add / sub-smul-right
-                      combined identities.
-Submitted this tick:  `ee14b794` HolomorphicForms.EvalLinearMapEqZero
-                      (rfl-iff smoke test).
+                      NEW HolomorphicForms.EvalLinearMapEqIff:
+                      evalLinearMap eq/ne ↔ toFun eq/ne (full iff
+                      pair + sufficient direction). Wired into the
+                      HolomorphicForms umbrella.
+Submitted this tick:  none new (`ee14b794` smoke test still queued).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -53,7 +51,7 @@ Build status — all targets compile (lake build Jacobian.{Challenge, …, *.Rec
 
 Sorry-free coverage by directory               bar              %   files
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Jacobian/HolomorphicForms                ███████████████████░   95%  (21/22)*
+Jacobian/HolomorphicForms                ███████████████████░   96%  (22/23)*
 Jacobian/AnalyticJacobian                ████████████████████  100%  (18/18)
 Jacobian/AbelJacobi                      ████████████████████  100%  (18/18)
 Jacobian/TraceDegree                     ████████████████████  100%  (76/76)
@@ -62,7 +60,7 @@ Jacobian/ComplexTorus                    █████████████
 Top-level umbrellas (Jacobian/*.lean)    █████████████████░░░   86%  (6/7)‡
 Jacobian/WorkPackets                     ░░░░░░░░░░░░░░░░░░░░    0%  (0/1)‡
 
-Production infrastructure (excluding intentional design files): 100% (361/361).
+Production infrastructure (excluding intentional design files): 100% (362/362).
 
 † Single `*Recon.lean` discovery file with intentional sorries.
 ‡ Challenge.lean (frozen public spec) and StatementBank.lean

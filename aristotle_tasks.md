@@ -12,36 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 12:42 EDT)
+## Live Status (2026-04-27 12:46 EDT)
 
-- Active jobs (ours): 1/5 — `ee14b794` IN_PROGRESS
-  (HolomorphicForms.EvalLinearMapEqZero, rfl-iff smoke test).
-  This is the first post-wake submission; deliberately tiny to
-  validate the project-side round-trip end to end before
-  scaling up.
+- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~3 min
+  (rfl-iff smoke test). Awaiting return.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSmulAddApplyVec.lean`:
-    vec-applied versions of the smul/add/sub combined identities:
-      - `pullbackFormsLinearMap_smul_add_apply_vec`
-      - `pullbackFormsLinearMap_smul_sub_apply_vec`
-      - `pullbackFormsLinearMap_smul_left_add_apply_vec`
-      - `pullbackFormsLinearMap_sub_smul_right_apply_vec`
-    All `@[simp]`. Each forwards via the function-level lemma
-    plus `rfl`.
-- **Submitted this tick:**
-  - `ee14b794-5d2d-4033-b9e8-6b91b277ccde` (Queue C):
-    `Jacobian/HolomorphicForms/EvalLinearMapEqZero.lean` — discharge
-    the single sorry on
-    `evalLinearMap_eq_zero_iff_toFun_eq_zero` (rfl-iff via
-    `evalLinearMap_apply`). Not wired into the HolomorphicForms
-    umbrella yet — file is a parking spot until COMPLETE.
+  - NEW `Jacobian/HolomorphicForms/EvalLinearMapEqIff.lean`:
+    eq/ne iff bridges between `evalLinearMap` and the underlying
+    `toFun`:
+      - `evalLinearMap_eq_iff_toFun_eq`
+      - `evalLinearMap_ne_iff_toFun_ne`
+      - `evalLinearMap_ne_zero_iff_toFun_ne_zero`
+      - `evalLinearMap_eq_of_toFun_eq` (sufficient direction)
+    Each is a `rw [evalLinearMap_apply]`-style rfl-iff. Wired
+    into the HolomorphicForms umbrella.
 - **Strategic note (carried forward):**
   Continuing 4-lemma local cadence in parallel with Aristotle
   smoke test. If `ee14b794` returns clean, scale up to 5 active
   with substantive packets.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 12:36 EDT)
+## Stale Live Status (2026-04-27 12:42 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
