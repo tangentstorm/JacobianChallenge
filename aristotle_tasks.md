@@ -12,25 +12,36 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 12:36 EDT)
+## Live Status (2026-04-27 12:42 EDT)
 
-- Active jobs (ours): 0/5. Backend healthy. No new submissions
-  this tick — local cadence is moving fast, low marginal value
-  in opening a packet round-trip right now.
+- Active jobs (ours): 1/5 — `ee14b794` IN_PROGRESS
+  (HolomorphicForms.EvalLinearMapEqZero, rfl-iff smoke test).
+  This is the first post-wake submission; deliberately tiny to
+  validate the project-side round-trip end to end before
+  scaling up.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSmulAdd.lean`:
-    combined smul/add/sub ring-rewrite identities for arbitrary `f`:
-      - `pullbackFormsLinearMap_smul_add`
-      - `pullbackFormsLinearMap_smul_sub`
-      - `pullbackFormsLinearMap_smul_left_add`
-      - `pullbackFormsLinearMap_sub_smul_right`
-    All `@[simp]`. Each composes two of `_smul`/`_add`/`_sub`.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSmulAddApplyVec.lean`:
+    vec-applied versions of the smul/add/sub combined identities:
+      - `pullbackFormsLinearMap_smul_add_apply_vec`
+      - `pullbackFormsLinearMap_smul_sub_apply_vec`
+      - `pullbackFormsLinearMap_smul_left_add_apply_vec`
+      - `pullbackFormsLinearMap_sub_smul_right_apply_vec`
+    All `@[simp]`. Each forwards via the function-level lemma
+    plus `rfl`.
+- **Submitted this tick:**
+  - `ee14b794-5d2d-4033-b9e8-6b91b277ccde` (Queue C):
+    `Jacobian/HolomorphicForms/EvalLinearMapEqZero.lean` — discharge
+    the single sorry on
+    `evalLinearMap_eq_zero_iff_toFun_eq_zero` (rfl-iff via
+    `evalLinearMap_apply`). Not wired into the HolomorphicForms
+    umbrella yet — file is a parking spot until COMPLETE.
 - **Strategic note (carried forward):**
-  Continuing local 4-lemma cadence per user directive. Backend
-  is awake but local compose-and-test loop is faster.
+  Continuing 4-lemma local cadence in parallel with Aristotle
+  smoke test. If `ee14b794` returns clean, scale up to 5 active
+  with substantive packets.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 12:32 EDT)
+## Stale Live Status (2026-04-27 12:36 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
