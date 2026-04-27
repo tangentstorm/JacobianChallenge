@@ -12,7 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 16:42 EDT)
+## Live Status (2026-04-27 16:48 EDT)
+
+- **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)**
+  IN_PROGRESS at 9% (~53 min in; +1 percentage point since last tick).
+  Per PROMPT.md not polling. Will check next tick.
+- **Local proof work this tick (Claude-owned):**
+  Extended `Jacobian/Periods/BasisAlignedPeriodPairing.lean` with two
+  injectivity/kernel theorems:
+  - `basisAlignedPeriodPairing_eq_iff` — basis-aligned periods agree iff
+    the underlying functional-space periods do (via injectivity of the
+    dual equivalence).
+  - `basisAlignedPeriodPairing_eq_zero_iff` — specialization at τ = 0.
+  Also added a doc comment in `Jacobian/Periods/IntegralOneCycle.lean`
+  explaining why `(X : Type)` is restricted to universe 0
+  (`singularHomologyFunctor` requires `HasCoproducts.{w} (ModuleCat ℤ)`
+  at universe 0); saves future ticks from re-attempting the naive lift.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 16:42 EDT)
 
 - **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)**
   IN_PROGRESS at 8% (~47 min in; +1 percentage point since last tick).

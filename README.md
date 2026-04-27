@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 16:42 EDT
+Last tick: 2026-04-27 16:48 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -61,17 +61,35 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5  `72ac3a75` (Riemann-Roch finite-dimensionality theorem) is
-                        IN_PROGRESS at 8% (~47 min into the run; +1 percentage point
-                        since last tick — slowed down vs the earlier 4-points-per-25-min
-                        rate, suggesting it has hit a harder sub-goal and is spending
-                        time there). Per PROMPT.md "check Aristotle status once" — not
-                        polling further.
+                        IN_PROGRESS at 9% (~53 min into the run; +1 percentage point
+                        since last tick). Per PROMPT.md "check Aristotle status once"
+                        — not polling further.
 Integrated this tick:   None from Aristotle (still IN_PROGRESS).
 ```
 
 ```text
-Local cadence this tick (Claude-owned, small but substantive)
+Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/Periods/BasisAlignedPeriodPairing.lean (+2 theorems)
+
+  basisAlignedPeriodPairing_eq_iff
+    : basisAlignedPeriodPairing X σ = basisAlignedPeriodPairing X τ
+      ↔ periodPairing ℂ X σ = periodPairing ℂ X τ
+    Two basis-aligned periods are equal iff the underlying functional-
+    space periods are. Follows from injectivity of `holomorphicOneFormDualEquiv`
+    via `EmbeddingLike.apply_eq_iff_eq`.
+
+  basisAlignedPeriodPairing_eq_zero_iff
+    : basisAlignedPeriodPairing X σ = 0 ↔ periodPairing ℂ X σ = 0
+    Specialization at τ = 0; useful kernel-side characterization.
+
+DOC: Jacobian/Periods/IntegralOneCycle.lean — added a comment block
+documenting why `(X : Type)` is restricted to universe 0 here
+(singularHomologyFunctor's `HasCoproducts.{w} (ModuleCat ℤ)` instance
+constraint at universe 0). Saves future ticks from re-attempting the
+naive lift to `(X : Type*)`.
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedPeriodSubgroup.lean (+2 theorems)
 
   holomorphicOneFormDualEquiv_symm_mem_periodSubgroup
