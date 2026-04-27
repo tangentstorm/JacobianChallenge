@@ -71,4 +71,28 @@ theorem pathIntegralViaChartCorrect_eq_pathIntegralViaChart_of_symm_eq_const_add
   rw [show ((c.symm : E → E)) = (fun x => v + x) from h]
   exact mfderiv_const_add_self v e
 
+/-- In-chart corrected = provisional for a subtraction-translation chart. -/
+theorem pathIntegralInChartCorrect_eq_pathIntegralInChart_of_symm_eq_sub_const
+    (c : OpenPartialHomeomorph E E) (ω : HolomorphicOneForm E E)
+    {a b : E} (γ : Path a b) (v : E)
+    (h : (fun x : E => c.symm x) = (fun x : E => x - v)) :
+    pathIntegralInChartCorrect c ω γ =
+      pathIntegralInChart c ω γ := by
+  apply pathIntegralInChartCorrect_eq_pathIntegralInChart_of_mfderiv_id
+  intro e
+  rw [show ((c.symm : E → E)) = (fun x => x - v) from h]
+  exact mfderiv_sub_const_self v e
+
+/-- Via-chart corrected = provisional for a subtraction-translation chart. -/
+theorem pathIntegralViaChartCorrect_eq_pathIntegralViaChart_of_symm_eq_sub_const
+    (c : OpenPartialHomeomorph E E) (ω : HolomorphicOneForm E E)
+    {a b : E} (γ : Path a b) (hr : Set.range γ ⊆ c.source) (v : E)
+    (h : (fun x : E => c.symm x) = (fun x : E => x - v)) :
+    pathIntegralViaChartCorrect c ω γ hr =
+      pathIntegralViaChart c ω γ hr := by
+  apply pathIntegralViaChartCorrect_eq_pathIntegralViaChart_of_mfderiv_id
+  intro e
+  rw [show ((c.symm : E → E)) = (fun x => x - v) from h]
+  exact mfderiv_sub_const_self v e
+
 end JacobianChallenge.Periods
