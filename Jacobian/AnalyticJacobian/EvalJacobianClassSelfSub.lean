@@ -19,7 +19,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 theorem evalJacobianClass_self_sub_self
     (P : X) (v : E) :
     evalJacobianClass (E := E) (X := X) P v -
-      evalJacobianClass P v = 0 := by
-  sorry
+      evalJacobianClass P v = 0 :=
+  sub_self _
 
 end JacobianChallenge.AnalyticJacobian
