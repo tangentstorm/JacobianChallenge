@@ -12,14 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 19:39 EDT)
+## Live Status (2026-04-27 19:40 EDT)
 
-- **Aristotle: 1/5 active.**
+- **Aristotle: 3/5 active.** Submitted two more off-critical-path
+  packets per user request "can you give aristotle more work to do?":
   - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%,
-    ~2h24m elapsed (normal long-running).
-- **Local proof work this tick:** Heartbeat. Nothing has changed since
-  the cleanup tick at 19:30 (commit 127a78d).
-- Tree: `M Jacobian/ComplexTorus/ULiftTransport.lean` (user WIP).
+    ~2h25m elapsed (normal long-running).
+  - `7abae190` basisAlignedPeriodSubgroup_isDiscrete — survey/attempt
+    on the PeriodLattice discreteness instance. Realistic outcome:
+    survey identifying that integrality of `periodPairing` is not
+    yet declared as an opaque-property and needs to be added.
+  - `600f7ff6` OnePointCxRecon — NEW recon file asking Aristotle to
+    survey Mathlib's `OnePoint ℂ` API for making ℂℙ¹ a complex
+    manifold (two-chart atlas). Step (1) of aadb7721's genus-zero
+    plan.
+- **User WIP:** `M Jacobian/ComplexTorus/ULiftTransport.lean`.
 
 
 ## Layer status
