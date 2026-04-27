@@ -12,7 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 22:48 EDT)
+## Live Status (2026-04-26 22:53 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~4h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/PathIntegralViaChartCorrectEqOfMfderivId.lean`:
+    lifts the in-chart bridge to the from-`X` via-chart layer.
+    `pathIntegralViaChartCorrect c ω γ h =
+    pathIntegralViaChart c ω γ h` under the same `mfderiv c.symm =
+    id` hypothesis. Proof: `unfold` + apply the in-chart bridge to
+    the chart-lifted path. Bridge ladder so far: chartedForm ✓,
+    in-chart ✓, via-chart ✓; cover layers next. Build green
+    (8176 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 22:48 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~4h —
   `submitted-redundant`, kept as wake detector.

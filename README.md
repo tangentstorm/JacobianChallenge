@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 22:48 EDT
+Last tick: 2026-04-26 22:53 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,15 +50,15 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralInChartCorrectEqOfMfderivId:
-                      lifts the chartedForm bridge to integrals.
-                      `pathIntegralInChartCorrect c ω γ =
-                      pathIntegralInChart c ω γ` whenever
-                      `mfderiv c.symm` is identity everywhere on `E`
-                      (one `funext` + the CLM bridge under
-                      `curveIntegral`). Provisional layer now exactly
-                      correct under a single named global hypothesis.
-                      Build green (8175 jobs).
+                      NEW Periods/PathIntegralViaChartCorrectEqOfMfderivId:
+                      lifts the in-chart bridge to the via-chart
+                      layer. `pathIntegralViaChartCorrect c ω γ h =
+                      pathIntegralViaChart c ω γ h` under the same
+                      `mfderiv c.symm = id` hypothesis (proof: just
+                      unfold and apply the in-chart bridge to the
+                      lifted path). Bridge ladder: in-chart ✓
+                      via-chart ✓; cover layers next. Build green
+                      (8176 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
