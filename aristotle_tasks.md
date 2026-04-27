@@ -12,22 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 07:29 EDT)
+## Live Status (2026-04-27 07:33 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~13h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AnalyticJacobian/EvalJacobianClassOps.lean`:
+    vec-slot neg/sub for `evalJacobianClass`:
+      - `evalLinearMap_vec_neg` (LinearMap-level)
+      - `evalLinearMap_vec_sub` (LinearMap-level)
+      - `evalJacobianClass_neg_vec`
+      - `evalJacobianClass_sub_vec`
+    Wired into AnalyticJacobian umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~13h — not waiting. ℂ-action on the Jacobian quotient is
+  not yet built, so smul-vec is still deferred.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 07:29 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~13h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/AnalyticJacobian/EvalJacobianClass.lean`:
-    vec-slot linearity for `evalJacobianClass`:
-      - `evalLinearMap_vec_add` (LinearMap-level)
-      - `evalLinearMap_vec_zero` (LinearMap-level)
+      - `evalLinearMap_vec_add`
+      - `evalLinearMap_vec_zero`
       - `evalJacobianClass_zero_vec`
       - `evalJacobianClass_add_vec`
-    Wired into AnalyticJacobian umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~13h — not waiting. ℂ-action on the Jacobian quotient is
-  not yet built, so smul-vec is deferred.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 07:25 EDT)
