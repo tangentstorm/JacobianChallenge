@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 20:32 EDT
+Last tick: 2026-04-26 20:37 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,11 +49,10 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~2.5h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralChartCorrectNegEqNegOneSmul:
-                      `pathIntegralInChartCorrect_neg_eq_neg_one_smul`
-                      — form negation equals `(-1) •` on the integral.
-                      Bridges unary negation and ℂ-scalar-mul views.
-                      Build green (8155 jobs).
+                      NEW Periods/PathIntegralViaChartCorrectNegEqNegOneSmul:
+                      `pathIntegralViaChartCorrect_neg_eq_neg_one_smul`
+                      — from-`X` lift of last tick's bridge identity.
+                      Build green (8156 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -199,6 +198,7 @@ Periods.PathIntegralViaCoverSmulSmul pass lake build Jacobian.Periods.PathIntegr
 Periods.PathIntegralChartSmulSmul pass lake build Jacobian.Periods.PathIntegralChartSmulSmul (no sorry)
 Periods.PathIntegralViaChartSmulSmul pass lake build Jacobian.Periods.PathIntegralViaChartSmulSmul (no sorry)
 Periods.PathIntegralChartCorrectNegEqNegOneSmul pass lake build Jacobian.Periods.PathIntegralChartCorrectNegEqNegOneSmul (no sorry)
+Periods.PathIntegralViaChartCorrectNegEqNegOneSmul pass lake build Jacobian.Periods.PathIntegralViaChartCorrectNegEqNegOneSmul (no sorry)
 ```
 
 ```text
