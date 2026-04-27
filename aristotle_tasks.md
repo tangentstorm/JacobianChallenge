@@ -12,7 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 04:54 EDT)
+## Live Status (2026-04-27 05:03 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 8 lemmas, 2 new files):**
+  - NEW `Jacobian/TraceDegree/PullbackFunCompConstApply.lean`:
+    four apply / vec-apply forms of the comp-const lemmas:
+      - `pullbackFormsFun_comp_const_apply`
+      - `pullbackFormsFun_comp_const_apply_vec`
+      - `pullbackFormsFun_const_comp_apply`
+      - `pullbackFormsFun_const_comp_apply_vec`
+    All `rw [pullbackFormsFun_(comp|const)_(const|comp)]; rfl`.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapCompConstApplyVec.lean`:
+    four bundled-LinearMap forms (function-equality + vec-apply):
+      - `pullbackFormsLinearMap_comp_const`
+      - `pullbackFormsLinearMap_const_comp`
+      - `pullbackFormsLinearMap_comp_const_apply_vec`
+      - `pullbackFormsLinearMap_const_comp_apply_vec`
+    Build green; both wired into TraceDegree umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~10h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 04:54 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h.
   Not waiting per user.
