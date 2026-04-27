@@ -12,7 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 23:53 EDT)
+## Live Status (2026-04-27 00:02 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/MfderivTranslation.lean`: building
+    blocks for translation-chart bridge instances. Two theorems:
+      - `mfderiv_add_const_self v e`: manifold derivative of
+        `x ↦ x + v` at any `e` is `id`.
+      - `mfderiv_const_add_self v e`: manifold derivative of
+        `x ↦ v + x` at any `e` is `id`.
+    Both proofs reduce to `fderiv` via `mfderiv_eq_fderiv`, then
+    `fderiv_add_const` (or `fderiv_const_add`) + `fderiv_id`. Sets
+    up future translation-chart bridge instances — torus
+    transition charts are translations by lattice elements.
+    Build green (8184 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 23:53 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~5h —
   `submitted-redundant`, kept as wake detector.
