@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 03:18 EDT
+Last tick: 2026-04-27 03:26 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -54,12 +54,11 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
                       EXTENDED Periods/PathIntegralReflCover with
-                      `pathIntegralViaCover_self_eq_sum_curveIntegral`:
-                      for `chartedSpaceSelf E`, the multi-chart
-                      integral reduces to a sum of plain
-                      `curveIntegral ω.toFun (subpath_i)` — the
-                      most reduced cover-layer formula, hooking
-                      directly into Mathlib's `curveIntegral`.
+                      `pathIntegralViaCoverWith_self_eq_sum_curveIntegral`:
+                      cover-with-with-explicit-partition variant of
+                      last tick's reduction. Goes through the
+                      corrected `pathIntegralViaChartCorrect_reflChart`
+                      directly, no need to bounce off the bridge.
                       Build green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.

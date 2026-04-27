@@ -12,7 +12,24 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 03:18 EDT)
+## Live Status (2026-04-27 03:26 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~9h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/PathIntegralReflCover.lean` with
+    `pathIntegralViaCoverWith_self_eq_sum_curveIntegral`: cover-with
+    (explicit-partition) variant of last tick's Pick-layer
+    reduction. Theorem: for `chartedSpaceSelf E`,
+    `pathIntegralViaCoverWith ω γ n hn pickChart hcov =
+    ∑ i, curveIntegral ω.toFun (γ.subpath_i)`. Proof: unfold
+    `pathIntegralViaCoverWith` + `Finset.sum_congr` +
+    `pathIntegralViaChartCorrect_reflChart` per summand —
+    going through the corrected layer directly without bouncing
+    off the bridge. Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 03:18 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~9h —
   `submitted-redundant`, kept as wake detector.
