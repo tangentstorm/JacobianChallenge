@@ -6,6 +6,7 @@ import Jacobian.ComplexTorus.ULiftTransport
 import Jacobian.AbelJacobi.AnalyticOfCurveBasis
 import Jacobian.TraceDegree.PullbackBasis
 import Jacobian.TraceDegree.PushforwardBasis
+import Jacobian.TraceDegree.AnalyticDegree
 
 /-!
 
@@ -62,8 +63,14 @@ sorries are discharged. See `Jacobian/WorkPackets/TopDown.md`.
   `pushforward_id_apply`, `pushforward_comp_apply` — symmetric
   to 4a in the opposite direction. Named obligations in
   `Jacobian/TraceDegree/PushforwardBasis.lean`.
+* **Round 4c** ✅ `ContMDiff.degree`, `pushforward_pullback` —
+  delegated to `analyticDegree` and the trace–pullback identity
+  in `Jacobian/TraceDegree/AnalyticDegree.lean`.
 
-Remaining: Round 4c (`degree` + `pushforward_pullback`).
+**Scaffolding complete.** Every declaration has a real body; all
+remaining `sorry`s now live in named bottom-up production modules,
+each a precise mathematical obligation that can be discharged
+independently.
 
 -/
 
@@ -267,12 +274,18 @@ lemma pullback_comp_apply (P : Jacobian Z) :
   rw [JacobianChallenge.TraceDegree.analyticPullback_comp_apply]
 
 /-- The degree of a holomorphic map between compact Riemann surfaces. Equal to zero
-for constant maps, otherwise equal to the usual degree. -/
-def _root_.ContMDiff.degree
+for constant maps, otherwise equal to the usual degree.
+Refinement (Round 4c): delegated to `analyticDegree`. -/
+noncomputable def _root_.ContMDiff.degree
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
-  sorry
+  JacobianChallenge.TraceDegree.analyticDegree f hf
 
 lemma pushforward_pullback (P : Jacobian Y) :
-  pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P := sorry
+    pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P := by
+  show ULift.up (JacobianChallenge.TraceDegree.analyticPushforward f hf
+      (JacobianChallenge.TraceDegree.analyticPullback f hf P.down)) =
+    (JacobianChallenge.TraceDegree.analyticDegree f hf) • P
+  rw [JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback]
+  rfl
 
 end Jacobian
