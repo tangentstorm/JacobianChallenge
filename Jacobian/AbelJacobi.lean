@@ -14,6 +14,7 @@ import Jacobian.AbelJacobi.WitnessMkPeriodPairing
 import Jacobian.AbelJacobi.WitnessZeroIff
 import Jacobian.AbelJacobi.WitnessEqIff
 import Jacobian.AbelJacobi.WitnessZeroSmul
+import Jacobian.AbelJacobi.WitnessSubArith
 import Jacobian.AbelJacobi.Symmetry
 
 /-!

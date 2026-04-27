@@ -12,29 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 13:56 EDT)
+## Live Status (2026-04-27 14:04 EDT)
 
-- Active jobs (ours): 2/5. Submitted this tick:
-  - `17176298-0dc0-41df-98ff-cd7f6a9584cb` (Queue C):
-    `Jacobian/HolomorphicForms/EvalLinearMapNegEqZero.lean` —
-    `evalLinearMap_neg_eq_zero_iff` via
-    `rw [(evalLinearMap x v).map_neg, neg_eq_zero]`.
-  - `638e3d5e-23bf-4cff-bb1c-de17bfb1aa58` (Queue C):
-    `Jacobian/HolomorphicForms/EvalLinearMapSubEqZeroIffEq.lean` —
-    `evalLinearMap_sub_eq_zero_iff_eq` via
-    `rw [(evalLinearMap x v).map_sub, sub_eq_zero]`.
-  Both are sorry-stubbed parking spots, not yet wired into the
-  umbrella.
-- **Integrated this tick (local Claude-owned, 0 new local files):**
-  - none (focus was on submitting the next batch of packets).
+- Active jobs (ours): 2/5 — both IN_PROGRESS at 1%:
+  - `17176298-0dc0-41df-98ff-cd7f6a9584cb`: evalLinearMap_neg_eq_zero_iff
+  - `638e3d5e-23bf-4cff-bb1c-de17bfb1aa58`: evalLinearMap_sub_eq_zero_iff_eq
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AbelJacobi/WitnessSubArith.lean`:
+    sub-chain witness identities:
+      - `witnessAbelJacobi_add_swap_eq_zero`
+      - `witnessAbelJacobi_sub_chain`
+      - `witnessAbelJacobi_sub_chain_basePoint`
+      - `witnessAbelJacobi_swap_cancel`
+    Each composes the existing `_chain` / `_swap` / `Defs`-level
+    algebra. Wired into the AbelJacobi umbrella.
 - **Tree note:** same 5 untracked files — unrelated.
 - **Strategic note:**
-  Smoke-test round-trip is validated; ~67min queue is heavy but
-  acceptable. Continuing to feed Aristotle small file-scoped
-  packets in the eq/iff family while doing local work in parallel.
+  2 packets in flight, no integration ready this tick.
+  Continuing local cadence in parallel.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 13:50 EDT)
+## Stale Live Status (2026-04-27 13:56 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
