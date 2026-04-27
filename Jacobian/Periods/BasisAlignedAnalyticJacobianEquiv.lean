@@ -1,4 +1,5 @@
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
+import Jacobian.Periods.BasisAlignedPeriodPairing
 import Jacobian.AnalyticJacobian.Defs
 import Jacobian.AnalyticJacobian.Mk
 import Jacobian.AnalyticJacobian.MkExt
@@ -112,5 +113,16 @@ follows from `witnessAbelJacobi_self` and `map_zero` of the equiv. -/
           (E := ℂ) (X := X) basePoint basePoint v) = 0 := by
   rw [JacobianChallenge.AbelJacobi.witnessAbelJacobi_self]
   exact (analyticJacobianBasisAlignedEquiv X).map_zero
+
+/-- Period pairings are killed by the basis-aligned quotient projection:
+`mk (basisAlignedPeriodPairing X σ) = 0` in the basis-aligned analytic
+Jacobian quotient, for any cycle `σ`. Follows from
+`basisAlignedPeriodPairing_mem` (membership in the period subgroup) plus
+`QuotientAddGroup.eq_zero_iff`. -/
+@[simp] theorem mk_basisAlignedPeriodPairing_eq_zero
+    (σ : IntegralOneCycle X) :
+    (QuotientAddGroup.mk (basisAlignedPeriodPairing X σ) :
+        BasisAlignedAnalyticJacobian X) = 0 :=
+  (QuotientAddGroup.eq_zero_iff _).mpr (basisAlignedPeriodPairing_mem X σ)
 
 end JacobianChallenge.Periods
