@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 05:14 EDT
+Last tick: 2026-04-27 05:23 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                ██████░░░░░░░░░�
 Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
-Trace/degree/push-pull           █████░░░░░░░░░░░░░░░   23%  pullbackFormsFun: full linearity (+sub) + LinearMap bundle + id + tangent-vec apply + comp-id + comp-const + bundled comp-id apply/vec-apply + const-of-const composition at both layers
+Trace/degree/push-pull           █████░░░░░░░░░░░░░░░   24%  pullbackFormsFun: full linearity (+sub) + LinearMap bundle + id + tangent-vec apply + comp-id + comp-const + const-of-const + mixed const/id compositions at both layers
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
 translation-transition charts, e.g. the torus), the corrected
@@ -53,11 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~11h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW PullbackFunConstCompConst: function-,
-                      apply-, vec-apply-, and bundled-LinearMap-apply
-                      forms of pullback along
-                      `Function.const Y z ∘ Function.const X y` (zero
-                      via `pullbackFormsFun_const_comp`). Wired into
+                      NEW PullbackFunConstCompConstBundled:
+                      bundled function-level zero, bundled vec-apply,
+                      and two mixed `id ∘ const` / `const ∘ id`
+                      function-level zero simps. Wired into
                       TraceDegree umbrella.
 Submitted this tick:  none.
 Failed/split this tick: none.
@@ -211,6 +210,7 @@ TraceDegree.PullbackFunCompConstApply pass lake build Jacobian.TraceDegree.Pullb
 TraceDegree.PullbackFormsLinearMapCompConstApplyVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapCompConstApplyVec (no sorry)
 TraceDegree.PullbackFormsLinearMapCompIdApply pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapCompIdApply (no sorry)
 TraceDegree.PullbackFunConstCompConst pass lake build Jacobian.TraceDegree.PullbackFunConstCompConst (no sorry)
+TraceDegree.PullbackFunConstCompConstBundled pass lake build Jacobian.TraceDegree.PullbackFunConstCompConstBundled (no sorry)
 ```
 
 ```text
