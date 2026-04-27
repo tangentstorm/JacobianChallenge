@@ -99,4 +99,13 @@ set_option linter.unusedSectionVars false in
 @[simp] theorem translationChart_target (v : E) :
     (translationChart v).target = Set.univ := rfl
 
+set_option linter.unusedSectionVars false in
+/-- The inverse of a translation chart is the translation chart at
+the negated translation, as `OpenPartialHomeomorph`s. -/
+theorem translationChart_symm (v : E) :
+    (translationChart v).symm = translationChart (-v) := by
+  refine OpenPartialHomeomorph.ext _ _ (fun _ => rfl) (fun x => ?_) rfl
+  show x + v = x + (- -v)
+  rw [neg_neg]
+
 end JacobianChallenge.Periods

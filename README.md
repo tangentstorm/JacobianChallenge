@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 01:32 EDT
+Last tick: 2026-04-27 01:40 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,15 +50,16 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED ChartedFormPullbackEqChartedFormOfMfderivId
-                      with primed function-equality form
-                      `chartedFormPullback_eq_chartedForm_of_mfderiv_id'`:
-                      under the global mfderiv-identity hypothesis,
-                      `chartedFormPullback c ω = chartedForm c ω` as
-                      functions. Useful where downstream callers
-                      need the function-level equality directly
-                      (e.g. for `funext`-free `congr` arguments).
-                      Build green (8189 jobs).
+                      EXTENDED Periods/TranslationChart with
+                      `translationChart_symm`: structure-level
+                      equality `(translationChart v).symm =
+                      translationChart (-v)` as
+                      `OpenPartialHomeomorph`s (proof:
+                      `OpenPartialHomeomorph.ext` + the involution
+                      via `neg_neg`). Now the involution is
+                      available at the OpenPartialHomeomorph layer,
+                      not just the function level. Build green
+                      (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
