@@ -12,26 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 13:24 EDT)
+## Live Status (2026-04-27 13:28 EDT)
 
-- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~39 min
+- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~44 min
   (rfl-iff smoke test). Backend has long queue depth post-wake.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapTripleRightApplyVec.lean`:
-    vec-applied versions of the right-associated 3-arg add/sub
-    distributivity:
-      - `pullbackFormsLinearMap_add_add_right_apply_vec`
-      - `pullbackFormsLinearMap_add_sub_right_apply_vec`
-      - `pullbackFormsLinearMap_sub_add_right_apply_vec`
-      - `pullbackFormsLinearMap_sub_sub_right_apply_vec`
-    Each forwards via the function-level lemma plus `rfl`.
-    All `@[simp]`.
-- **Tree note:** same 4 untracked files as last tick — unrelated.
+  - NEW `Jacobian/Periods/PeriodSubgroupNeg.lean`:
+    neg-iff + explicit `periodPairing`-combination membership:
+      - `neg_mem_periodSubgroup_iff`
+      - `neg_periodPairing_mem_periodSubgroup`
+      - `periodPairing_add_periodPairing_mem_periodSubgroup`
+      - `periodPairing_sub_periodPairing_mem_periodSubgroup`
+    Each is a one- or two-line wrapper around `AddSubgroup`
+    `neg_mem_iff` / `add_mem` / `sub_mem` composed with the
+    existing `periodPairing_mem_periodSubgroup`.
+- **Tree note:** same 4 untracked files — unrelated.
 - **Strategic note (carried forward):**
   Continuing local cadence in parallel with Aristotle smoke test.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 13:18 EDT)
+## Stale Live Status (2026-04-27 13:24 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
