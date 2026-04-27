@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 21:21 EDT
+Last tick: 2026-04-26 21:26 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,10 +49,10 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~3h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW TraceDegree/PullbackFormsLinearMapApplyApplyLinear:
-                      five bundled-LinearMap-level vector-apply (x v)
-                      forms of pullbackFormsLinearMap linearity.
-                      Build green (TraceDegree 2440 jobs).
+                      NEW Periods/PathIntegralViaCoverOneSmul:
+                      `pathIntegralViaCoverWith_one_smul` — identity-
+                      scalar normalization at cover layer
+                      `∫(1 • ω, γ) = ∫(ω, γ)`. Build green (8164 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
