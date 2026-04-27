@@ -34,6 +34,15 @@ open scoped Manifold
 
 universe u
 
+/-- The complex-torus chart at a `ULift`ed quotient point, transported
+through `Homeomorph.ulift`. -/
+noncomputable def complexTorusULiftChartAt
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    (Λ : FullComplexLattice V) (q : ULift.{u} (quotient V Λ)) :
+    OpenPartialHomeomorph (ULift.{u} (quotient V Λ)) V :=
+  (Homeomorph.ulift : ULift.{u} (quotient V Λ) ≃ₜ quotient V Λ).transOpenPartialHomeomorph
+    (chartAtPoint Λ q.down)
+
 /-- ULift transport of the complex torus charted-space structure.
 
 Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
@@ -41,7 +50,13 @@ Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
 noncomputable instance complexTorusULift_chartedSpace
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
-    ChartedSpace V (ULift.{u} (quotient V Λ)) := sorry
+    ChartedSpace V (ULift.{u} (quotient V Λ)) where
+  atlas := Set.range (complexTorusULiftChartAt Λ)
+  chartAt := complexTorusULiftChartAt Λ
+  mem_chart_source q := by
+    change q.down ∈ (chartAtPoint Λ q.down).source
+    exact mem_chartAtPoint_source Λ q.down
+  chart_mem_atlas q := ⟨q, rfl⟩
 
 /-- ULift transport of the complex torus manifold structure.
 
