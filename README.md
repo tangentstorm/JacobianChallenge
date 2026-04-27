@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 01:10 EDT
+Last tick: 2026-04-27 01:15 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -51,12 +51,13 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
                       EXTENDED Periods/TranslationChart with
-                      `translationChart_symm_apply_eq_translationChart_
-                      neg_apply`: rfl-level identity that
-                      `(translationChart v).symm x = translationChart
-                      (-v) x` as functions. Establishes the
-                      involution structure of translation charts at
-                      the function level. Build green (8188 jobs).
+                      `translationChart_source` and
+                      `translationChart_target` simp lemmas: both
+                      `Set.univ`. Removes a tedious step that would
+                      otherwise be needed to discharge `range γ ⊆
+                      source`-style subset hypotheses for downstream
+                      callers using translation charts. Build green
+                      (8188 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
