@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 07:29 EDT
+Last tick: 2026-04-27 07:33 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -34,7 +34,7 @@ Projection (mk) smoothness       ███████████████�
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
 Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
 Path integration/periods         ██████████████░░░░░░   68%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances + named API around periodPairing/periodSubgroup with closure lemmas
-Analytic Jacobian (group)        ████░░░░░░░░░░░░░░░░   20%  abstract quotient group + full mk projection API + surjectivity / coset extensionality + `evalJacobianClass` with vec-slot zero/add
+Analytic Jacobian (group)        █████░░░░░░░░░░░░░░░   22%  abstract quotient group + full mk projection API + surjectivity / coset ext + `evalJacobianClass` with vec-slot zero/add/neg/sub
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
 Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
 
@@ -53,11 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~13h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AnalyticJacobian.EvalJacobianClass:
-                      vec-slot linearity for `evalJacobianClass`
-                      (`_zero_vec`, `_add_vec`) plus the
-                      underlying LinearMap-level
-                      `evalLinearMap_vec_zero/add`.
+                      NEW AnalyticJacobian.EvalJacobianClassOps:
+                      vec-slot neg/sub for `evalJacobianClass` plus
+                      the underlying LinearMap-level
+                      `evalLinearMap_vec_neg/sub`.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -236,6 +235,7 @@ AnalyticJacobian.Mk pass lake build Jacobian.AnalyticJacobian.Mk (no sorry)
 AnalyticJacobian.MkOps pass lake build Jacobian.AnalyticJacobian.MkOps (no sorry)
 AnalyticJacobian.MkExt pass lake build Jacobian.AnalyticJacobian.MkExt (no sorry)
 AnalyticJacobian.EvalJacobianClass pass lake build Jacobian.AnalyticJacobian.EvalJacobianClass (no sorry)
+AnalyticJacobian.EvalJacobianClassOps pass lake build Jacobian.AnalyticJacobian.EvalJacobianClassOps (no sorry)
 ```
 
 ```text
