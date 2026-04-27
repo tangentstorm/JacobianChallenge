@@ -75,4 +75,22 @@ theorem basisAlignedPeriodPairing_mem
   rw [basisAlignedPeriodSubgroupConcrete_eq_range]
   exact ⟨σ, rfl⟩
 
+/-- Two basis-aligned period values are equal iff the underlying
+functional-space periods are equal. Follows from injectivity of the
+dual equivalence. -/
+theorem basisAlignedPeriodPairing_eq_iff (σ τ : IntegralOneCycle X) :
+    basisAlignedPeriodPairing X σ = basisAlignedPeriodPairing X τ ↔
+      periodPairing ℂ X σ = periodPairing ℂ X τ := by
+  rw [basisAlignedPeriodPairing_apply, basisAlignedPeriodPairing_apply,
+      EmbeddingLike.apply_eq_iff_eq]
+
+/-- `basisAlignedPeriodPairing X σ = 0` iff
+`periodPairing ℂ X σ = 0`. Special case of `_eq_iff` at `τ = 0`. -/
+theorem basisAlignedPeriodPairing_eq_zero_iff (σ : IntegralOneCycle X) :
+    basisAlignedPeriodPairing X σ = 0 ↔ periodPairing ℂ X σ = 0 := by
+  rw [show (0 : Fin (analyticGenus ℂ X) → ℂ) =
+        basisAlignedPeriodPairing X 0 from
+        ((basisAlignedPeriodPairing X).map_zero).symm,
+      basisAlignedPeriodPairing_eq_iff, (periodPairing ℂ X).map_zero]
+
 end JacobianChallenge.Periods
