@@ -12,7 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 18:30 EDT)
+## Live Status (2026-04-27 18:35 EDT)
+
+- **Aristotle: 2/5 active.**
+  - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%
+    (5 ticks of stall now).
+  - `027bb9d7` analyticGenus_eq_zero_of_homeomorphic_sphere — IN_PROGRESS
+    at 3% (~8 min in).
+- **User commits this tick:** `6b9c9fe PeriodLattice: discharge
+  basisAlignedPeriodSubgroup_isClosed` (via `AddSubgroup.isClosed_of_discrete`).
+  PeriodLattice sorries: 4 → 3 (still missing `_isDiscrete`,
+  `_fundamentalDomain_isCompact`, `_fundamentalDomain_covers`).
+- **Local proof work this tick (Claude-owned):** Extended
+  `Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean` with
+  `analyticJacobianBasisAlignedEquiv_witnessAbelJacobi_mk_sub` —
+  single-`mk` form of the witness-bridge theorem (combines the existing
+  two-`mk`-subtracted form with `QuotientAddGroup.mk_sub`).
+- **User WIP in flight:** `Jacobian/ComplexTorus/ULiftTransport.lean`
+  (Round 2b chart-transport).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 18:30 EDT)
 
 - **Aristotle: 2/5 active.**
   - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at

@@ -125,4 +125,22 @@ Jacobian quotient, for any cycle `σ`. Follows from
         BasisAlignedAnalyticJacobian X) = 0 :=
   (QuotientAddGroup.eq_zero_iff _).mpr (basisAlignedPeriodPairing_mem X σ)
 
+/-- Single-`mk` form of the witnessAbelJacobi-bridge theorem:
+distributes the bridge over witness subtraction and combines the two
+`mk`-classes via `QuotientAddGroup.mk_sub`. Useful when downstream
+proofs want to act on a single representative rather than on a
+subtraction of two. -/
+theorem analyticJacobianBasisAlignedEquiv_witnessAbelJacobi_mk_sub
+    (basePoint P : X) (v : ℂ) :
+    analyticJacobianBasisAlignedEquiv X
+        (JacobianChallenge.AbelJacobi.witnessAbelJacobi
+          (E := ℂ) (X := X) basePoint P v) =
+      QuotientAddGroup.mk
+        (holomorphicOneFormDualEquiv ℂ X
+          (JacobianChallenge.HolomorphicForms.evalLinearMap P v) -
+         holomorphicOneFormDualEquiv ℂ X
+          (JacobianChallenge.HolomorphicForms.evalLinearMap basePoint v)) := by
+  rw [analyticJacobianBasisAlignedEquiv_witnessAbelJacobi,
+      ← QuotientAddGroup.mk_sub]
+
 end JacobianChallenge.Periods
