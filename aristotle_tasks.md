@@ -12,21 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 09:44 EDT)
+## Live Status (2026-04-27 09:48 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIdEval.lean`:
+    bundled-LinearMap pullback-along-id ↔ `evalLinearMap`:
+      - `pullbackFormsLinearMap_id_apply_vec_eq_evalLinearMap`
+      - `pullbackFormsLinearMap_id_eq_zero_iff_evalLinearMap_eq_zero`
+      - `pullbackFormsLinearMap_id_add_apply_vec`
+      - `pullbackFormsLinearMap_id_smul_apply_vec`
+    Added `PullbackFormsLinearMapApply` import for the
+    `_apply_at` rfl bridge. Wired into TraceDegree umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~15h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 09:44 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/TraceDegree/PullbackFunIdEvalVecExtra.lean`:
-    sub/nsmul/zsmul vec-slot distributivity for pullback-along-id:
       - `pullbackFormsFun_id_apply_sub_vec`
       - `pullbackFormsFun_id_apply_nsmul_vec`
       - `pullbackFormsFun_id_apply_zsmul_vec`
       - `pullbackFormsFun_id_apply_neg_neg_vec`
-    Wired into TraceDegree umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~15h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 09:41 EDT)
