@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 17:41 EDT)
+## Live Status (2026-04-27 17:50 EDT)
+
+- **Aristotle recon packet `b782c387`** (topology on ContMDiffSection)
+  is now IN_PROGRESS at 5% (~45 min in; finally left the queue).
+  Per PROMPT.md not polling further.
+- **Local proof work this tick (Claude-owned):** Extended
+  `Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean` with
+  `analyticJacobianBasisAlignedEquiv_evalJacobianClass` — a simp
+  lemma chaining the basis-aligned bridge with `evalJacobianClass`
+  unfolding. Useful for bridging the AnalyticJacobian/AbelJacobi
+  witness API to the basis-aligned model.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 17:41 EDT)
 
 - **Aristotle recon packet `b782c387`** (topology on ContMDiffSection
   survey) still QUEUED at backend (~36 min in). Per PROMPT.md not
