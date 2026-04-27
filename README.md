@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 00:15 EDT
+Last tick: 2026-04-27 00:20 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,15 +50,14 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralTranslationChart:
-                      lifts the translation-chart bridge to in-chart
-                      and via-chart integrals. If `c.symm = fun x =>
-                      x + v`, then `pathIntegralInChartCorrect = path
-                      IntegralInChart` and the via-chart analogue
-                      both hold unconditionally. The translation-
-                      chart pipeline is now at parity with the refl-
-                      chart pipeline up through via-chart. Build
-                      green (8186 jobs).
+                      EXTENDED Periods/PathIntegralTranslationChart
+                      with left-translation variants:
+                      `pathIntegralInChartCorrect_eq_..._of_symm_eq_const_add`
+                      and the via-chart analogue. Translation
+                      pipeline now covers both `c.symm = x ↦ x + v`
+                      and `c.symm = x ↦ v + x` at in-chart and via-
+                      chart layers, all unconditional. Build green
+                      (8186 jobs, no new module).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
