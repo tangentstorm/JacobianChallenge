@@ -62,4 +62,13 @@ theorem mfderiv_chartAt_self_symm_eq_id (x e : E) :
       ContinuousLinearMap.id ℂ E :=
   mfderiv_refl_symm_eq_id e
 
+set_option linter.unusedSectionVars false in
+/-- Lifting a path through the refl chart is the path itself
+pointwise. -/
+@[simp] theorem chartLift_refl_apply
+    {a b : E} (γ : Path a b)
+    (h : Set.range γ ⊆ (OpenPartialHomeomorph.refl E).source)
+    (t : unitInterval) :
+    chartLift (OpenPartialHomeomorph.refl E) γ h t = γ t := rfl
+
 end JacobianChallenge.Periods

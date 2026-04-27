@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 02:02 EDT
+Last tick: 2026-04-27 02:09 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,12 +50,13 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED Periods/TranslationChart with
-                      `chartLift_translationChart_apply`: rfl simp
-                      lemma `chartLift (translationChart v) γ h t =
-                      γ t + v`. Lets `simp` unfold the chart-lift of
-                      a path through a translation to the explicit
-                      pointwise translation. Build green (8189 jobs).
+                      EXTENDED Periods/PathIntegralReflChart with
+                      `chartLift_refl_apply`: rfl simp lemma
+                      `chartLift (OpenPartialHomeomorph.refl E) γ h
+                      t = γ t`. Companion to last-tick's
+                      `chartLift_translationChart_apply` — `simp`
+                      now unfolds the chart-lift through both refl
+                      and translation charts. Build green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
