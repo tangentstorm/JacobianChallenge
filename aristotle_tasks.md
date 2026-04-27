@@ -12,26 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 10:39 EDT)
+## Live Status (2026-04-27 10:43 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~16h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapCompConstVecExtra.lean`:
-    bundled comp-const/const-comp vec-slot sub + ℂ-smul:
-      - `pullbackFormsLinearMap_comp_const_apply_sub_vec`
-      - `pullbackFormsLinearMap_comp_const_apply_smul_vec`
-      - `pullbackFormsLinearMap_const_comp_apply_sub_vec`
-      - `pullbackFormsLinearMap_const_comp_apply_smul_vec`
-    Continues `PullbackFormsLinearMapCompConstVec`. Vec-slot
-    sub/ℂ-smul distributivity for both bundled comp-const
-    pullbacks. All collapse via the const-pullback zero identity.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapCompConstIntSmul.lean`:
+    bundled comp-const/const-comp ℕ-smul (both slots, both sides):
+      - `pullbackFormsLinearMap_comp_const_nsmul_apply_vec`
+      - `pullbackFormsLinearMap_const_comp_nsmul_apply_vec`
+      - `pullbackFormsLinearMap_comp_const_apply_nsmul_vec`
+      - `pullbackFormsLinearMap_const_comp_apply_nsmul_vec`
+    Form-slot ℕ-smul + vec-slot ℕ-smul, for both `f ∘ const x₀`
+    and `const z ∘ f`. All collapse via the const-pullback zero
+    identity plus `smul_zero`.
+- **Tree note:** untracked `LICENSE` in working dir — unrelated
+  pre-existing addition, left untouched per PROMPT.md classification.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~16h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 10:36 EDT)
+## Stale Live Status (2026-04-27 10:39 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
