@@ -89,4 +89,14 @@ theorem translationChart_symm_apply_eq_translationChart_neg_apply
     (v x : E) :
     (translationChart v).symm x = translationChart (-v) x := rfl
 
+set_option linter.unusedSectionVars false in
+/-- The translation chart's source is all of `E`. -/
+@[simp] theorem translationChart_source (v : E) :
+    (translationChart v).source = Set.univ := rfl
+
+set_option linter.unusedSectionVars false in
+/-- The translation chart's target is all of `E`. -/
+@[simp] theorem translationChart_target (v : E) :
+    (translationChart v).target = Set.univ := rfl
+
 end JacobianChallenge.Periods
