@@ -71,4 +71,26 @@ theorem zero_mem_basisAlignedPeriodSubgroupConcrete :
       basisAlignedPeriodSubgroupConcrete X :=
   (basisAlignedPeriodSubgroupConcrete X).zero_mem
 
+/-- Inverse-direction transport: pulling back an element of the
+basis-aligned period subgroup through the inverse dual equivalence
+lands in the functional-space `periodSubgroup ℂ X`. -/
+theorem holomorphicOneFormDualEquiv_symm_mem_periodSubgroup
+    {v : Fin (analyticGenus ℂ X) → ℂ}
+    (hv : v ∈ basisAlignedPeriodSubgroupConcrete X) :
+    (holomorphicOneFormDualEquiv ℂ X).symm v ∈ periodSubgroup ℂ X := by
+  rw [mem_basisAlignedPeriodSubgroupConcrete_iff] at hv
+  obtain ⟨φ, hφ_mem, hφ_eq⟩ := hv
+  rw [← hφ_eq, LinearEquiv.symm_apply_apply]
+  exact hφ_mem
+
+/-- Forward-direction transport: pushing an element of the functional-space
+`periodSubgroup ℂ X` through the dual equivalence lands in the
+basis-aligned period subgroup. The trivial `mp` direction; recorded
+explicitly for use as a lemma at call sites. -/
+theorem holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete
+    {φ : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ}
+    (hφ : φ ∈ periodSubgroup ℂ X) :
+    holomorphicOneFormDualEquiv ℂ X φ ∈ basisAlignedPeriodSubgroupConcrete X :=
+  (mem_basisAlignedPeriodSubgroupConcrete_iff X _).mpr ⟨φ, hφ, rfl⟩
+
 end JacobianChallenge.Periods
