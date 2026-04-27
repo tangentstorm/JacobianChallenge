@@ -1,0 +1,359 @@
+# Top-Down Comparator Plan
+
+This file augments the bottom-up plan in `plan.md`,
+`Jacobian/WorkPackets/StatementBank.lean`, and `aristotle_tasks.md`.
+It is written for Claude timer ticks. The goal is to make
+`Jacobian/Solution.lean` into a top-down refinement of
+`Jacobian/Challenge.lean`, while Aristotle continues to work on small
+bottom-up proof packets.
+
+## Purpose
+
+`Jacobian/Challenge.lean` is the frozen public specification. Do not edit it
+unless the human explicitly asks.
+
+`Jacobian/Solution.lean` is the top-down refinement target. It should stay
+independent of `Jacobian/Challenge.lean`: both files import a trusted prelude
+and declare the same public names, and comparator checks externally that the
+solution proves the same statements as the challenge.
+
+The top-down lane has two jobs:
+
+1. Replace each top-level `sorry` in `Solution.lean` by a named analytic
+   construction or theorem.
+2. When a construction is still missing, expose that missing piece as a precise
+   helper declaration in a production module or narrow work-packet file.
+
+This deliberately moves `sorry`s downward. The number of top-level `sorry`s in
+`Solution.lean` should shrink over time, while named lower-level obligations
+become Aristotle-sized tasks.
+
+## Comparator Role
+
+Use `leanprover/comparator` to compare the trusted challenge module with the
+solution module.
+
+Canonical comparator shape:
+
+```json
+{
+  "challenge_module": "Jacobian.Challenge",
+  "solution_module": "Jacobian.Solution",
+  "theorem_names": [
+    "genus_eq_zero_iff_homeo",
+    "Jacobian.ofCurve_contMDiff",
+    "Jacobian.ofCurve_self",
+    "Jacobian.ofCurve_inj",
+    "Jacobian.pushforward_contMDiff",
+    "Jacobian.pushforward_id_apply",
+    "Jacobian.pushforward_comp_apply",
+    "Jacobian.pullback_contMDiff",
+    "Jacobian.pullback_id_apply",
+    "Jacobian.pullback_comp_apply",
+    "Jacobian.pushforward_pullback"
+  ],
+  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "enable_nanoda": false
+}
+```
+
+First smoke test: determine whether comparator should also list data
+declarations such as `genus`, `Jacobian`, `Jacobian.ofCurve`,
+`Jacobian.pushforward`, `Jacobian.pullback`, and `ContMDiff.degree`, or whether
+it should be used only for theorem/lemma declarations. Until that is checked,
+use comparator for theorem-surface equivalence and ordinary Lean builds for
+data-signature sanity.
+
+Do not make `Solution.lean` import `Challenge.lean`. That defeats the purpose of
+the independent comparison.
+
+## Current Production Layers
+
+The useful solution bank is no longer just `StatementBank.lean`; it is the
+production module hierarchy:
+
+- `Jacobian.ComplexTorus`: quotient complex torus infrastructure, including
+  quotient group/topology, charted space, manifold, projection smoothness,
+  addition/negation smoothness, and `LieAddGroup`.
+- `Jacobian.HolomorphicForms`: current holomorphic-form skeleton, analytic
+  genus, evaluation maps, extensionality, and finite-dimensional witness API.
+- `Jacobian.Periods`: path/chart integration scaffolding, period pairing API,
+  period subgroup closure/arithmetic, with the deepest period pairing
+  construction still intentionally opaque.
+- `Jacobian.AnalyticJacobian`: abstract quotient-group Jacobian skeleton and
+  algebra around `mk`, period-pairing classes, and equality criteria.
+- `Jacobian.AbelJacobi`: witness-level Abel-Jacobi algebra, base change,
+  telescoping, nontriviality, and vanishing criteria.
+- `Jacobian.TraceDegree`: pullback-form and trace/degree algebra skeletons.
+
+Before adding a new top-down helper, check whether a production module already
+has the right theorem under a slightly different name.
+
+## Mathematical Spine
+
+The intended top-down construction is:
+
+```text
+HolomorphicOneForm X
+  -> finite-dimensionality
+  -> genus X
+
+IntegralOneCycle X
+  -> periodPairing
+  -> periodSubgroup
+  -> periodFullComplexLattice
+
+HolomorphicOneFormDual X / period lattice
+  -> Jacobian X
+  -> compact complex Lie additive group
+
+pathIntegralFunctional P Q
+  -> Jacobian.ofCurve P Q
+
+pullbackForms / traceForms / analyticDegree
+  -> Jacobian.pullback / Jacobian.pushforward / ContMDiff.degree
+  -> pushforward_pullback
+```
+
+Top-down work should preserve this spine. Avoid introducing a fake abstraction
+that makes the challenge compile but has no path back to the period-lattice
+construction.
+
+## Refinement Order
+
+Work in small rounds. Each round should replace one cluster of top-level
+`sorry`s in `Solution.lean` with named lower-level declarations.
+
+### Round 0: Comparator Harness
+
+- Add a comparator config file once the local comparator checkout/binary path is
+  settled.
+- Run a smoke test only when the human/Claude tick is responsible for builds.
+- Record whether definitions/instances can be listed in comparator's
+  `theorem_names`.
+
+### Round 1: Genus
+
+Target declarations:
+
+- `genus`
+- `genus_eq_zero_iff_homeo`
+
+Desired refinement:
+
+```text
+genus X := analyticGenus X
+genus_eq_zero_iff_homeo := analytic genus zero classification theorem
+```
+
+Likely helper obligations:
+
+- real `HolomorphicOneForm` definition for compact Riemann surfaces;
+- `FiniteDimensional ℂ (HolomorphicOneForm X)`;
+- classification theorem:
+  `analyticGenus X = 0 <-> X ≃ₜ sphere`.
+
+This is mathematically deep. It is fine for the top-down file to expose this as
+a named theorem obligation, but do not ask Aristotle to prove the whole
+classification theorem in one job.
+
+### Round 2: Jacobian Type And Basic Instances
+
+Target declarations:
+
+- `Jacobian`
+- `AddCommGroup (Jacobian X)`
+- `TopologicalSpace (Jacobian X)`
+- `T2Space (Jacobian X)`
+- `CompactSpace (Jacobian X)`
+- `ChartedSpace (Fin (genus X) -> ℂ) (Jacobian X)`
+- `IsManifold ... (Jacobian X)`
+- `LieAddGroup ... (Jacobian X)`
+
+Desired refinement:
+
+```text
+Jacobian X := transported analytic period quotient
+```
+
+The period quotient should be built from:
+
+```text
+HolomorphicOneFormDual X / periodFullComplexLattice X
+```
+
+Use `Jacobian.ComplexTorus` for the quotient torus instances. The main design
+work is not the quotient torus anymore; it is the bridge from the actual period
+subgroup to a `FullComplexLattice` and the universe/model transport from the
+analytic quotient to the challenge's `Type u` and `Fin (genus X) -> ℂ` model.
+
+Likely helper obligations:
+
+- `periodFullComplexLattice X`;
+- finite-dimensional model equivalence
+  `HolomorphicOneFormDual X ≃L[ℂ] (Fin (genus X) -> ℂ)`;
+- additive/topological/manifold transport lemmas;
+- explicit universe bridge, probably via `ULift` or a chosen finite model.
+
+### Round 3: Abel-Jacobi Map
+
+Target declarations:
+
+- `Jacobian.ofCurve`
+- `Jacobian.ofCurve_contMDiff`
+- `Jacobian.ofCurve_self`
+- `Jacobian.ofCurve_inj`
+
+Desired refinement:
+
+```text
+ofCurve P Q := class of (ω |-> integral from P to Q of ω)
+```
+
+Likely helper obligations:
+
+- path integral functional from a base point to an endpoint;
+- path-independence modulo the period subgroup;
+- base-point integral is zero;
+- holomorphicity of the Abel-Jacobi map;
+- injectivity for positive genus.
+
+`ofCurve_inj` is a major anti-hack theorem. Treat it as its own theorem-level
+project. Do not collapse it into a broad opaque "Abel-Jacobi works" axiom unless
+the declaration name and mathematical dependency are explicit.
+
+### Round 4: Pullback, Pushforward, Degree
+
+Target declarations:
+
+- `Jacobian.pushforward`
+- `Jacobian.pullback`
+- `ContMDiff.degree`
+- `pushforward_contMDiff`
+- `pullback_contMDiff`
+- identity and composition lemmas for pushforward/pullback
+- `pushforward_pullback`
+
+Desired refinement:
+
+```text
+pullback: dual of pullback of holomorphic forms, descending through periods
+pushforward: trace on holomorphic forms or equivalent homological pushforward
+degree: analytic/geometric degree of a holomorphic map
+pushforward_pullback: trace_f (pullback_f ω) = degree(f) • ω
+```
+
+Likely helper obligations:
+
+- smooth pullback of holomorphic 1-forms;
+- trace map on holomorphic 1-forms;
+- preservation of period lattices;
+- functoriality of the induced quotient maps;
+- analytic degree and composition laws;
+- trace-pullback identity.
+
+Aristotle can help with the algebraic quotient-map and linear-map consequences
+once Claude states the trace/pullback assumptions precisely. Aristotle should
+not be asked to invent the degree theory globally.
+
+## Claude / Aristotle Division
+
+Claude owns:
+
+- editing `Solution.lean`;
+- choosing public helper theorem names;
+- deciding when a top-level `sorry` has been refined enough to move downward;
+- maintaining this file, `plan.md`, `aristotle_tasks.md`, and any comparator
+  config;
+- integrating production-module results into the top-down bridge.
+
+Aristotle owns:
+
+- one theorem family in one target file;
+- proof-only tasks after statements are fixed;
+- algebraic consequences of already-defined constructions;
+- blocker reports naming missing prerequisites.
+
+Good Aristotle tasks:
+
+- prove a transport lemma between an analytic quotient and a challenge-facing
+  wrapper type;
+- prove quotient-map functoriality from a lattice-preserving linear map;
+- prove pullback-form algebra after `pullbackFormsFun` is defined;
+- prove path-integral linearity/congruence lemmas in a fixed chart;
+- prove a small period-subgroup membership lemma.
+
+Bad Aristotle tasks:
+
+- "make `Solution.lean` pass comparator";
+- "define the Jacobian";
+- "prove Abel-Jacobi injectivity";
+- "prove genus zero classification";
+- "formalize all degree theory".
+
+## Tick Cadence
+
+Use alternating emphasis, not a hard rule:
+
+```text
+Top-down tick:
+  - inspect `Solution.lean` and this file;
+  - refine one top-level declaration or theorem cluster;
+  - expose the missing helper obligations with stable names;
+  - update this document or `aristotle_tasks.md` if new jobs are created.
+
+Bottom-up tick:
+  - pick one exposed helper obligation;
+  - solve it locally or submit an Aristotle job with disjoint write scope;
+  - integrate only narrow returned patches;
+  - wire successful results into the relevant umbrella module.
+```
+
+Do not let `StatementBank.lean` become a parallel implementation substrate.
+When a helper becomes real infrastructure, put it in the appropriate production
+module and let `StatementBank.lean` remain a mirror/index if needed.
+
+## Declaration Map
+
+This table is the current top-down bridge inventory. Keep it updated as
+`Solution.lean` changes.
+
+| Challenge declaration | Intended solution source | Main missing bridge |
+| --- | --- | --- |
+| `genus` ✅ refined | `HolomorphicForms.analyticGenus` | FD instance — `compactRiemannSurface_finiteDimensionalHolomorphicOneForms` (named sorry in `Jacobian.HolomorphicForms.CompactRiemannSurface`) |
+| `genus_eq_zero_iff_homeo` ✅ refined | `analyticGenus_eq_zero_iff_homeomorphic_sphere` | classification theorem — named sorry in `Jacobian.HolomorphicForms.GenusZeroClassification` |
+| `Jacobian` ✅ refined | `ULift (ComplexTorus.quotient (Fin (genus X) → ℂ) periodFullComplexLattice)` | `periodFullComplexLattice` (named sorry in `Jacobian.Periods.PeriodLattice`) |
+| `AddCommGroup` ✅ refined | `inferInstance` via ULift transport | (none — derived) |
+| `TopologicalSpace` ✅ refined | `inferInstance` via ULift transport | (none — derived) |
+| `T2Space` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice.isClosed` |
+| `CompactSpace` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice` fundamental-domain compactness |
+| `ChartedSpace` | `ComplexTorus.ChartedSpace` + ULift transport | Mathlib has no Homeomorph→ChartedSpace transport; needs hand-rolled `ULift M` charted-space instance |
+| `IsManifold` | `ComplexTorus.IsManifold` + ULift transport | same — model transport along `Homeomorph.ulift` |
+| `LieAddGroup` | `ComplexTorus.LieAddGroup` + ULift transport | same |
+| `Jacobian.ofCurve` | Abel-Jacobi path integral class | path-independent functional modulo periods |
+| `ofCurve_contMDiff` | Abel-Jacobi holomorphicity theorem | manifold path-integral differentiability |
+| `ofCurve_self` | zero path integral | base-point integral lemma |
+| `ofCurve_inj` | Abel-Jacobi injectivity | point-separation/Riemann-Roch theorem |
+| `pushforward` | trace-induced quotient map | trace preserves periods |
+| `pushforward_contMDiff` | complex torus map smoothness | trace-induced map model smoothness |
+| `pushforward_id_apply` | trace/id functoriality | quotient transport |
+| `pushforward_comp_apply` | trace composition | quotient transport |
+| `pullback` | dual pullback-induced quotient map | pullback preserves periods |
+| `pullback_contMDiff` | complex torus map smoothness | pullback-induced map model smoothness |
+| `pullback_id_apply` | pullback/id functoriality | quotient transport |
+| `pullback_comp_apply` | pullback composition | quotient transport |
+| `ContMDiff.degree` | analytic/geometric degree | branched-cover/local multiplicity theory |
+| `pushforward_pullback` | trace-pullback identity | `trace_f (pullback_f η) = degree f • η` plus quotient transport |
+
+## Practical Guardrails
+
+- Keep `Solution.lean` independent of `Challenge.lean`.
+- Keep public declaration names and statement shapes identical to the challenge.
+- Prefer importing production umbrellas into `Solution.lean` only when the
+  imported declarations are stable enough to be part of the comparison story.
+- Avoid broad new opaque declarations. If an opaque or `sorry` is unavoidable,
+  give it a mathematically precise name and place it in the layer that should
+  eventually prove it.
+- Record every new helper obligation in this file or `aristotle_tasks.md`.
+- Comparator is a check, not the design driver. The mathematical spine above is
+  the design driver.
