@@ -4,6 +4,7 @@ import Jacobian.AnalyticJacobian.MkOps
 import Jacobian.AnalyticJacobian.MkExt
 import Jacobian.AnalyticJacobian.MkMembership
 import Jacobian.AnalyticJacobian.MkArith
+import Jacobian.AnalyticJacobian.MkPeriodPairing
 import Jacobian.AnalyticJacobian.EvalJacobianClassMember
 import Jacobian.AnalyticJacobian.EvalJacobianClass
 import Jacobian.AnalyticJacobian.EvalJacobianClassOps

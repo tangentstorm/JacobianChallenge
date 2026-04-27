@@ -12,21 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 09:01 EDT)
+## Live Status (2026-04-27 09:05 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AnalyticJacobian/MkPeriodPairing.lean`:
+    `periodPairing` values are invisible to `mk` (all `@[simp]`):
+      - `mk_add_periodPairing`
+      - `mk_periodPairing_add`
+      - `mk_sub_periodPairing`
+      - `mk_neg_periodPairing`
+    Wired into AnalyticJacobian umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~14h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 09:01 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/AnalyticJacobian/MkArith.lean`:
-      - `mk_eq_neg_iff_add_mem` (proven via `mk_eq_mk_iff_sub_mem`
-        + `abel` to bridge `φ - -ψ = φ + ψ`)
-      - `neg_mk_eq_iff_add_mem` (commuted)
-      - `mk_add_eq` (alias of `mk_add` for `_eq` naming)
-      - `zero_eq_mk_zero` (the zero class as `mk 0`)
-    Wired into AnalyticJacobian umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~14h — not waiting.
+      - `mk_eq_neg_iff_add_mem`
+      - `neg_mk_eq_iff_add_mem`
+      - `mk_add_eq`
+      - `zero_eq_mk_zero`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 08:57 EDT)
