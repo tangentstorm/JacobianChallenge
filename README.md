@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 09:13 EDT
+Last tick: 2026-04-27 09:18 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -35,7 +35,7 @@ LieAddGroup smoothness           ███████████████�
 Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
 Path integration/periods         ██████████████░░░░░░   69%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   28%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain
-Abel-Jacobi API                  ███████░░░░░░░░░░░░░   35%  witness skeleton + composition + vec-slot algebra + base-change + class identities + telescoping + genus/Nontrivial chain + base-class specializations
+Abel-Jacobi API                  ███████░░░░░░░░░░░░░   37%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges
 Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
@@ -53,9 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~15h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AnalyticJacobian.EvalJacobianClassPeriodPairing:
-                      `evalJacobianClass` invariance criteria —
-                      add/sub/exact/zsmul of `periodPairing`.
+                      NEW AbelJacobi.WitnessMk: `witnessAbelJacobi`
+                      ↔ `mk` explicit-form bridges, plus
+                      `_eq_zero_iff_endpoint_diff_mem` linking to
+                      `periodSubgroup` membership.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -258,6 +259,7 @@ AbelJacobi.Sum pass lake build Jacobian.AbelJacobi.Sum (no sorry)
 AbelJacobi.Nontrivial pass lake build Jacobian.AbelJacobi.Nontrivial (no sorry)
 AbelJacobi.GenusWitness pass lake build Jacobian.AbelJacobi.GenusWitness (no sorry)
 AbelJacobi.Specialize pass lake build Jacobian.AbelJacobi.Specialize (no sorry)
+AbelJacobi.WitnessMk pass lake build Jacobian.AbelJacobi.WitnessMk (no sorry)
 AbelJacobi (umbrella) pass lake build Jacobian.AbelJacobi
 ```
 

@@ -12,22 +12,35 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 09:13 EDT)
+## Live Status (2026-04-27 09:18 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AbelJacobi/WitnessMk.lean`: explicit `mk`-form
+    bridges for `witnessAbelJacobi`:
+      - `witnessAbelJacobi_eq_mk_sub`
+      - `witnessAbelJacobi_eq_mk_evalLinearMap_sub`
+      - `witnessAbelJacobi_eq_mk_neg_basePoint_add_endpoint`
+      - `witnessAbelJacobi_eq_zero_iff_endpoint_diff_mem`
+        (vanishing iff endpoint `evalLinearMap` difference is in
+        `periodSubgroup`)
+    Wired into AbelJacobi umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~15h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 09:13 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/AnalyticJacobian/EvalJacobianClassPeriodPairing.lean`:
-    invariance of `evalJacobianClass` under `periodPairing`
-    adjustments to `evalLinearMap`:
       - `evalJacobianClass_eq_mk_of_evalLinearMap_eq_add_periodPairing`
       - `evalJacobianClass_eq_mk_of_evalLinearMap_eq_sub_periodPairing`
       - `evalJacobianClass_eq_zero_of_evalLinearMap_eq_periodPairing`
       - `evalJacobianClass_eq_zero_of_evalLinearMap_eq_zsmul_periodPairing`
-    Wired into AnalyticJacobian umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~15h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 09:09 EDT)
