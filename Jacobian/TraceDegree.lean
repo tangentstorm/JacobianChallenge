@@ -21,6 +21,7 @@ import Jacobian.TraceDegree.PullbackFormsLinearMapComp
 import Jacobian.TraceDegree.PullbackFunCompConst
 import Jacobian.TraceDegree.PullbackFunCompConstApply
 import Jacobian.TraceDegree.PullbackFunConstComp
+import Jacobian.TraceDegree.PullbackFunConstCompConst
 import Jacobian.TraceDegree.PullbackFormsLinearMapCompConst
 import Jacobian.TraceDegree.PullbackFormsLinearMapCompConstApplyVec
 import Jacobian.TraceDegree.PullbackFunConst

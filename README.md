@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 05:09 EDT
+Last tick: 2026-04-27 05:14 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                ██████░░░░░░░░░�
 Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
-Trace/degree/push-pull           █████░░░░░░░░░░░░░░░   22%  pullbackFormsFun: full linearity (+sub) + LinearMap bundle + id + tangent-vec apply + comp-id + comp-const + bundled comp-id apply/vec-apply at both layers
+Trace/degree/push-pull           █████░░░░░░░░░░░░░░░   23%  pullbackFormsFun: full linearity (+sub) + LinearMap bundle + id + tangent-vec apply + comp-id + comp-const + bundled comp-id apply/vec-apply + const-of-const composition at both layers
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
 translation-transition charts, e.g. the torus), the corrected
@@ -53,12 +53,12 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~11h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW PullbackFormsLinearMapCompIdApply: four
-                      pointwise apply / vec-apply simps for the
-                      bundled-LinearMap comp-id pair (`_id_comp_apply`,
-                      `_comp_id_apply`, `_id_comp_apply_vec`,
-                      `_comp_id_apply_vec`). All `rfl`.
-                      Wired into TraceDegree umbrella.
+                      NEW PullbackFunConstCompConst: function-,
+                      apply-, vec-apply-, and bundled-LinearMap-apply
+                      forms of pullback along
+                      `Function.const Y z ∘ Function.const X y` (zero
+                      via `pullbackFormsFun_const_comp`). Wired into
+                      TraceDegree umbrella.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -210,6 +210,7 @@ Periods.PathIntegralChartNegEqNegOneSmul pass lake build Jacobian.Periods.PathIn
 TraceDegree.PullbackFunCompConstApply pass lake build Jacobian.TraceDegree.PullbackFunCompConstApply (no sorry)
 TraceDegree.PullbackFormsLinearMapCompConstApplyVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapCompConstApplyVec (no sorry)
 TraceDegree.PullbackFormsLinearMapCompIdApply pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapCompIdApply (no sorry)
+TraceDegree.PullbackFunConstCompConst pass lake build Jacobian.TraceDegree.PullbackFunConstCompConst (no sorry)
 ```
 
 ```text
