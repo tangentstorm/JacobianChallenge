@@ -12,7 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 16:11 EDT)
+## Live Status (2026-04-27 16:32 EDT)
+
+- **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)**
+  IN_PROGRESS at 7% (~36 min in; +4 percentage points since last tick).
+  At this rate, completion is hours away. Per PROMPT.md "check Aristotle
+  status once" — not polling. Will check next tick.
+- **Local proof work this tick (Claude-owned, substantive):**
+  NEW `Jacobian/Periods/BasisAlignedPeriodPairing.lean` (1 def + 3 theorems).
+  Defines `basisAlignedPeriodPairing X : IntegralOneCycle X →+ (Fin (analyticGenus ℂ X) → ℂ)`
+  as the natural composition of `periodPairing ℂ X` with the basis-aligned
+  dual equivalence; proves
+  `basisAlignedPeriodSubgroupConcrete X = (basisAlignedPeriodPairing X).range`.
+  This is the natural arrow that the eventual discreteness/closedness
+  proofs will route through.
+- **Universe-lift attempted but blocked:** I tried changing
+  `IntegralOneCycle (X : Type)` → `(X : Type*)`. The change failed:
+  `singularHomologyFunctor` fixes its universe parameter to match
+  `ModuleCat ℤ` (universe 0), so `TopCat.of X` requires `Type 0`. Solving
+  requires explicit universe args or a ULift bridge. Reverted; deferred.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 16:11 EDT)
 
 - **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)**
   is IN_PROGRESS at 3%. Started ~15 min ago at the backend. Per PROMPT.md

@@ -1,0 +1,78 @@
+import Jacobian.Periods.BasisAlignedPeriodSubgroup
+
+/-!
+# Basis-aligned period pairing
+
+This file packages the composition of `periodPairing ℂ X` (functional-space)
+with the basis-aligned dual equivalence as a single `AddMonoidHom`:
+
+```text
+basisAlignedPeriodPairing X
+  : IntegralOneCycle X →+ (Fin (analyticGenus ℂ X) → ℂ)
+  = (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom.comp
+      (periodPairing ℂ X)
+```
+
+This is the natural arrow from cycles directly into the basis-aligned
+model, skipping the intermediate functional-space stop. The
+`basisAlignedPeriodSubgroupConcrete X` is exactly the range of this map.
+
+Useful for two later goals:
+1. Discharging `basisAlignedPeriodSubgroup_isDiscrete` once the opaque is
+   unfrozen — the discreteness reduces to "image of `H₁(X, ℤ)` under the
+   pairing has no accumulation in the basis-aligned model".
+2. Discharging the eventual fundamental-domain construction — the
+   `ZSpan.fundamentalDomain` machinery in Mathlib operates on a
+   `Module.Basis (Fin n) ℤ` of an additive subgroup; this file provides
+   the `Fin n → ℂ`-valued period pairing whose image we want to span.
+-/
+
+namespace JacobianChallenge.Periods
+
+open JacobianChallenge.HolomorphicForms
+
+variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+  [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+
+/-- The basis-aligned period pairing: integration of holomorphic 1-forms
+over integer 1-cycles, postcomposed with the basis-aligned dual
+equivalence. -/
+noncomputable def basisAlignedPeriodPairing :
+    IntegralOneCycle X →+ (Fin (analyticGenus ℂ X) → ℂ) :=
+  ((holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom).comp
+    (periodPairing ℂ X)
+
+/-- Pointwise: the basis-aligned period pairing applies the dual equiv to
+the functional-space period pairing. -/
+theorem basisAlignedPeriodPairing_apply (σ : IntegralOneCycle X) :
+    basisAlignedPeriodPairing X σ =
+      holomorphicOneFormDualEquiv ℂ X (periodPairing ℂ X σ) :=
+  rfl
+
+/-- The basis-aligned period subgroup is exactly the range of the
+basis-aligned period pairing. -/
+theorem basisAlignedPeriodSubgroupConcrete_eq_range :
+    basisAlignedPeriodSubgroupConcrete X =
+      (basisAlignedPeriodPairing X).range := by
+  unfold basisAlignedPeriodSubgroupConcrete basisAlignedPeriodPairing
+  ext v
+  simp only [AddSubgroup.mem_map, AddMonoidHom.mem_range,
+             AddMonoidHom.coe_comp, Function.comp_apply,
+             periodSubgroup, AddMonoidHom.mem_range]
+  constructor
+  · rintro ⟨φ, ⟨σ, hσ⟩, hv⟩
+    exact ⟨σ, hσ ▸ hv⟩
+  · rintro ⟨σ, hv⟩
+    exact ⟨periodPairing ℂ X σ, ⟨σ, rfl⟩, hv⟩
+
+/-- Period pairings of cycles always lie in the basis-aligned period
+subgroup. -/
+theorem basisAlignedPeriodPairing_mem
+    (σ : IntegralOneCycle X) :
+    basisAlignedPeriodPairing X σ ∈
+      basisAlignedPeriodSubgroupConcrete X := by
+  rw [basisAlignedPeriodSubgroupConcrete_eq_range]
+  exact ⟨σ, rfl⟩
+
+end JacobianChallenge.Periods

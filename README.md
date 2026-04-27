@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 16:11 EDT
+Last tick: 2026-04-27 16:32 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -13,7 +13,7 @@ Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (fr
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
 Aristotle integrations to date 87         `"status":"integrated"` lines in aristotle_jobs.jsonl
-Production sorry-free files  379 / 387    using the precise count (real `sorry` tactics; doc-comment
+Production sorry-free files  380 / 388    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded).
                                           The 8 production files with real sorries:
                                             Claude-owned (3 files, 7 sorries):
@@ -61,15 +61,46 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5  `72ac3a75` (Riemann-Roch finite-dimensionality theorem) is
-                        IN_PROGRESS at 3% (~15 min into the run). Per PROMPT.md "check
-                        Aristotle status once" — not polling further. Will check next
-                        tick; deep theorem, expected to take hours.
+                        IN_PROGRESS at 7% (~36 min into the run; +4 percentage points
+                        since last tick, ~25 min ago). At this rate, completion is
+                        ~9-10 hours away — very deep theorem. Per PROMPT.md
+                        "check Aristotle status once" — not polling further.
 Integrated this tick:   None from Aristotle (still IN_PROGRESS).
 ```
 
 ```text
-Local cadence this tick (Claude-owned, substantive infrastructure refactor)
+Local cadence this tick (Claude-owned, substantive infrastructure)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+NEW Jacobian/Periods/BasisAlignedPeriodPairing.lean (1 def + 3 theorems)
+
+  basisAlignedPeriodPairing X
+    : IntegralOneCycle X →+ (Fin (analyticGenus ℂ X) → ℂ)
+    = (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom.comp
+        (periodPairing ℂ X)
+    The natural arrow from cycles directly into the basis-aligned model,
+    composing functional-space periodPairing with the basis-aligned dual
+    equivalence.
+
+  basisAlignedPeriodPairing_apply — pointwise unfolding (rfl + sugar).
+
+  basisAlignedPeriodSubgroupConcrete_eq_range — characterizes the
+    concrete period subgroup as the range of basisAlignedPeriodPairing.
+    Real proof: ext + AddSubgroup.mem_map / AddMonoidHom.mem_range
+    unfolding + a constructor split (~10 lines of substantive content).
+
+  basisAlignedPeriodPairing_mem — membership corollary.
+
+Why this matters: future proofs of the 5 PeriodLattice obligations
+(`_isClosed`, `_isDiscrete`, `periodFundamentalDomain_isCompact` /
+`_covers`) will route through this map. In particular, discreteness of
+`basisAlignedPeriodSubgroup` (once unfrozen) reduces to "image of
+H₁(X, ℤ) under `basisAlignedPeriodPairing` has no accumulation in the
+basis-aligned model" — a tractable statement once we have the
+universe-lift in place.
+
+Wired into `Jacobian/Periods.lean` umbrella. Builds clean.
+
+PRIOR TICK (still standing — last tick's substantive work):
 Jacobian/Periods/PeriodLattice.lean — rename `periodSubgroup` to
 `basisAlignedPeriodSubgroup` (and similarly for the 2 of-the-subgroup
 lemmas: `_isClosed`, `_isDiscrete`). This frees the
@@ -160,7 +191,7 @@ Per-directory production sorry-free counts (recomputed):
   AnalyticJacobian             23 / 23
   AbelJacobi                   19 / 20
   TraceDegree                  81 / 84   (3 user-WIP files)
-  Periods                     170 / 172  (+1 prod file: BasisAlignedPeriodSubgroup)
+  Periods                     171 / 173  (+1 prod file vs last tick: BasisAlignedPeriodPairing)
   ComplexTorus                 47 / 53
 
 Reproduction (per dir):
@@ -174,20 +205,19 @@ Reproduction (per dir):
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. Check the Aristotle Riemann-Roch packet (`72ac3a75`); IN_PROGRESS
-   at 3% as of this tick.  If COMPLETE, retrieve and review whatever
-   sketch it produced (partial results are useful — they surface
-   Mathlib API gaps).
-2. Type/Type* generalization. To unfreeze
-   `opaque basisAlignedPeriodSubgroup` and route it through
-   `basisAlignedPeriodSubgroupConcrete`, lift `IntegralOneCycle` and
-   `periodPairing`/`periodSubgroup` in PeriodFunctional from
-   `(X : Type)` to `(X : Type*)`. Verify all transitive consumers
-   (the AnalyticJacobian/AbelJacobi work) still build.
-3. Once that lands, replace `opaque basisAlignedPeriodSubgroup` with
-   `noncomputable def := basisAlignedPeriodSubgroupConcrete X` and
-   the 2 sorry'd lemmas (`_isClosed`, `_isDiscrete`) become
-   provable-in-principle — package one as a substantive Aristotle
-   task.
+   at 7% (this tick) — at the current rate, won't COMPLETE for hours.
+2. Type/Type* generalization (still deferred). To unfreeze the opaque,
+   lift `IntegralOneCycle` to `(X : Type*)`. Attempted briefly this
+   tick — `singularHomologyFunctor` fixes its universe parameter to
+   match `ModuleCat ℤ` (universe 0), so naive `Type*` causes a
+   universe mismatch with `TopCat.of X`. Solving requires either
+   explicit universe arguments to the singular-homology functor or a
+   ULift bridge. Non-trivial; deferring.
+3. Build out more API around `basisAlignedPeriodPairing` —
+   functoriality-style lemmas (e.g. `basisAlignedPeriodPairing_zero`,
+   `_add`, `_neg`, etc., though these might just be inherited from
+   AddMonoidHom). Or: characterize the kernel/range further to set up
+   for the eventual discreteness proof.
 4. Continue ignoring the 5 user-WIP files (AnalyticOfCurveBasis,
    ULiftTransport, PullbackBasis, PushforwardBasis, AnalyticDegree)
    per PROMPT.md.
