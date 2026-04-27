@@ -12,27 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 10:11 EDT)
+## Live Status (2026-04-27 10:13 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapConstVecExtra.lean`:
-    bundled along-const vec-slot extras:
-      - `pullbackFormsLinearMap_const_apply_sub_vec`
-      - `pullbackFormsLinearMap_const_apply_nsmul_vec`
-      - `pullbackFormsLinearMap_const_apply_zsmul_vec`
-      - `pullbackFormsLinearMap_const_apply_neg_neg_vec`
-    Continuation of `PullbackFormsLinearMapConstVec` for sub /
-    integer-scalar mults / double-negation. All collapse via the
-    same const-pullback zero identity. Closes the bundled
-    along-const vec-slot picture.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapConstSmul.lean`:
+    bundled along-const form-slot integer-scalar + helpers:
+      - `pullbackFormsLinearMap_const_nsmul_apply_vec`
+      - `pullbackFormsLinearMap_const_zsmul_apply_vec`
+      - `pullbackFormsLinearMap_const_neg_zero_apply_vec`
+      - `pullbackFormsLinearMap_const_neg_neg_apply_vec`
+    Closes the bundled along-const form-slot picture (ℂ-smul was
+    already in `PullbackFormsLinearMapConstDist`). All collapse via
+    the same const-pullback zero identity.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~15h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 10:08 EDT)
+## Stale Live Status (2026-04-27 10:11 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
