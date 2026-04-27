@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 20:43 EDT
+Last tick: 2026-04-26 20:47 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,11 +49,10 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~2.5h+.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaCoverNegEqNegOneSmul:
-                      `pathIntegralViaCoverWith_neg_eq_neg_one_smul`
-                      — cover-layer lift of `_neg_eq_neg_one_smul`.
-                      Identity now at three layers. Build green
-                      (8157 jobs).
+                      NEW Periods/PathIntegralChartNegEqNegOneSmul:
+                      `pathIntegralInChart_neg_eq_neg_one_smul` —
+                      provisional in-chart layer. Identity now at
+                      4 layers. Build green (8158 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -201,6 +200,7 @@ Periods.PathIntegralViaChartSmulSmul pass lake build Jacobian.Periods.PathIntegr
 Periods.PathIntegralChartCorrectNegEqNegOneSmul pass lake build Jacobian.Periods.PathIntegralChartCorrectNegEqNegOneSmul (no sorry)
 Periods.PathIntegralViaChartCorrectNegEqNegOneSmul pass lake build Jacobian.Periods.PathIntegralViaChartCorrectNegEqNegOneSmul (no sorry)
 Periods.PathIntegralViaCoverNegEqNegOneSmul pass lake build Jacobian.Periods.PathIntegralViaCoverNegEqNegOneSmul (no sorry)
+Periods.PathIntegralChartNegEqNegOneSmul pass lake build Jacobian.Periods.PathIntegralChartNegEqNegOneSmul (no sorry)
 ```
 
 ```text
