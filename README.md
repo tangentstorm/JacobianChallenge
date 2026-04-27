@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 18:44 EDT
+Last tick: 2026-04-27 18:48 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -60,20 +60,24 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     2 / 5  Submitted a third off-critical-path packet this tick:
-                        `b782c387` topology-on-ContMDiffSection recon — still
-                                   IN_PROGRESS at 17% (~1h30m in; 7 ticks stalled).
-                        `aadb7721` homeomorphic_sphere_of_analyticGenus_eq_zero
-                                   (the HARD direction of genus-zero classification;
-                                   companion to 027bb9d7 easy direction). Asked
-                                   Aristotle to add a survey block alongside the
-                                   easy-direction one already in the file.
-Integrated this tick:   None (027bb9d7 was integrated last tick).
+Active jobs (ours):     2 / 5
+                        `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS
+                                   at 17% (~1h35m in; 8 ticks stalled — appears
+                                   stuck).
+                        `aadb7721` genus-zero hard direction — IN_PROGRESS at 1%
+                                   (just left the queue; ~1 min ago).
+Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WIRED `Jacobian.Periods.BasisAlignedAnalyticJacobianEquiv` into the
+`Jacobian/Periods.lean` umbrella. It had been a freestanding file
+since I built it 4 ticks ago; this completes its integration into
+the public Periods API.
+
+PRIOR TICK (still standing):
 This tick was an Aristotle submission (aadb7721 hard direction).
 No new local Lean work; the substantive deliverable is the queued
 follow-up survey packet.
