@@ -12,7 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 01:15 EDT)
+## Live Status (2026-04-27 01:21 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/ChartedFormPullbackEqOnOfMfderivId.lean`:
+    set-restricted bridge. Theorem
+    `chartedFormPullback_eqOn_chartedForm_of_mfderiv_id`: if
+    `mfderiv c.symm = id` for every `e ∈ s`, then
+    `EqOn (chartedFormPullback c ω) (chartedForm c ω) s`. Natural
+    intermediate between the per-point and global bridges —
+    matches the "agrees on `c.target` only" pattern of partial
+    chart inverses. Proof: just unfold `EqOn` and apply the
+    per-point bridge. Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 01:15 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
   `submitted-redundant`, kept as wake detector.

@@ -114,6 +114,7 @@ import Jacobian.Periods.ChartedFormPullbackTranslationChart
 import Jacobian.Periods.PathIntegralTranslationChart
 import Jacobian.Periods.ChartedFormPullbackLinearMapEqOfMfderivId
 import Jacobian.Periods.TranslationChart
+import Jacobian.Periods.ChartedFormPullbackEqOnOfMfderivId
 import Jacobian.Periods.PathIntegralChartSmulSymmEqNegSmul
 import Jacobian.Periods.PathIntegralViaChartSmulSymmEqNegSmul
 import Jacobian.Periods.PathIntegralChartCorrectZero
