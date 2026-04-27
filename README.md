@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 09:23 EDT
+Last tick: 2026-04-27 09:27 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,9 +53,9 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~15h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFunIdEval: pullback-
-                      along-id ↔ `evalLinearMap` characterizations
-                      (eq-zero / eq-iff / factor / alias).
+                      NEW AbelJacobi.Symmetry: sign/symmetry
+                      identities — neg-vec, doubling, and
+                      `_eq_zero_of_evalLinearMap_eq`.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -260,6 +260,7 @@ AbelJacobi.Nontrivial pass lake build Jacobian.AbelJacobi.Nontrivial (no sorry)
 AbelJacobi.GenusWitness pass lake build Jacobian.AbelJacobi.GenusWitness (no sorry)
 AbelJacobi.Specialize pass lake build Jacobian.AbelJacobi.Specialize (no sorry)
 AbelJacobi.WitnessMk pass lake build Jacobian.AbelJacobi.WitnessMk (no sorry)
+AbelJacobi.Symmetry pass lake build Jacobian.AbelJacobi.Symmetry (no sorry)
 AbelJacobi (umbrella) pass lake build Jacobian.AbelJacobi
 ```
 
