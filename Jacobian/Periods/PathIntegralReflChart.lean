@@ -1,5 +1,6 @@
 import Jacobian.Periods.ChartedFormPullbackRefl
 import Jacobian.Periods.ChartedFormPullbackLinearMap
+import Jacobian.Periods.ChartedFormLinearMap
 import Jacobian.Periods.PathIntegralInChartCorrectEqOfMfderivId
 import Jacobian.Periods.PathIntegralViaChartCorrectEqOfMfderivId
 import Mathlib.Topology.OpenPartialHomeomorph.Basic
@@ -155,5 +156,13 @@ theorem chartedFormPullbackLinearMap_refl_apply_eq_toFun
     chartedFormPullbackLinearMap (OpenPartialHomeomorph.refl E) ω =
       ω.toFun :=
   chartedFormPullback_refl_eq_toFun ω
+
+set_option linter.unusedSectionVars false in
+/-- Bundled-LinearMap (provisional): bundled provisional chart-form
+on the refl chart applied to ω equals `ω.toFun`. -/
+theorem chartedFormLinearMap_refl_apply_eq_toFun
+    (ω : HolomorphicOneForm E E) :
+    chartedFormLinearMap (OpenPartialHomeomorph.refl E) ω = ω.toFun :=
+  chartedForm_refl_eq_toFun ω
 
 end JacobianChallenge.Periods
