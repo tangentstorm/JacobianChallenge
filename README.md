@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 21:26 EDT
+Last tick: 2026-04-26 21:31 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,10 +49,10 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~3h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaCoverOneSmul:
-                      `pathIntegralViaCoverWith_one_smul` — identity-
-                      scalar normalization at cover layer
-                      `∫(1 • ω, γ) = ∫(ω, γ)`. Build green (8164 jobs).
+                      NEW Periods/PathIntegralViaChartCorrectOneSmul:
+                      `pathIntegralViaChartCorrect_one_smul` —
+                      via-chart corrected layer of identity-scalar
+                      normalization. Build green (8165 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
