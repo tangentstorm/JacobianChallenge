@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 07:57 EDT
+Last tick: 2026-04-27 08:01 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -35,7 +35,7 @@ LieAddGroup smoothness           ███████████████�
 Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
 Path integration/periods         ██████████████░░░░░░   68%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances + named API around periodPairing/periodSubgroup with closure lemmas
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   28%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain
-Abel-Jacobi API                  ██░░░░░░░░░░░░░░░░░░   12%  Queue F recon + witness skeleton + chain/zero-vec/add-vec/neg-vec composition lemmas
+Abel-Jacobi API                  ███░░░░░░░░░░░░░░░░░   15%  witness skeleton + composition + closed integer-action vec-slot (sub/nsmul/zsmul) + `_eq_zero_iff`
 Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
@@ -53,9 +53,9 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~13h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AbelJacobi.Composition: chain
-                      identity + zero-vec / add-vec / neg-vec
-                      lemmas for `witnessAbelJacobi`.
+                      NEW AbelJacobi.Smul: vec-slot sub/nsmul/zsmul
+                      and an `_eq_zero_iff` characterization
+                      linking `witnessAbelJacobi` to coset equality.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -240,6 +240,7 @@ AnalyticJacobian.EvalJacobianClassZero pass lake build Jacobian.AnalyticJacobian
 AnalyticJacobian.NontrivialWitness pass lake build Jacobian.AnalyticJacobian.NontrivialWitness (no sorry)
 AbelJacobi.Defs pass lake build Jacobian.AbelJacobi.Defs (no sorry)
 AbelJacobi.Composition pass lake build Jacobian.AbelJacobi.Composition (no sorry)
+AbelJacobi.Smul pass lake build Jacobian.AbelJacobi.Smul (no sorry)
 AbelJacobi (umbrella) pass lake build Jacobian.AbelJacobi
 ```
 
