@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 17:41 EDT
+Last tick: 2026-04-27 17:50 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -60,17 +60,29 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5  `b782c387` (recon: Mathlib survey for topology on
-                        ContMDiffSection) still QUEUED at backend (~36 min in).
-                        Per PROMPT.md not polling further. Recon packets typically
-                        complete fast once they leave the queue; will check next
-                        tick.
+Active jobs (ours):     1 / 5  `b782c387` (topology recon) finally moved off the
+                        queue: IN_PROGRESS at 5% (~45 min in). Per PROMPT.md not
+                        polling further.
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+1 theorem)
+
+  analyticJacobianBasisAlignedEquiv_evalJacobianClass
+    (P : X) (v : ℂ)
+    : analyticJacobianBasisAlignedEquiv X (evalJacobianClass P v)
+        = QuotientAddGroup.mk
+            (holomorphicOneFormDualEquiv ℂ X (evalLinearMap P v))
+    @[simp]; combines `evalJacobianClass_def` with last tick's
+    `_mk` simp lemma to give the natural unfolding rule for the
+    bridge applied to `evalJacobianClass` representatives. Useful
+    when bridging from the AnalyticJacobian/AbelJacobi witness API
+    over to the basis-aligned model.
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+2 theorems)
 
   analyticJacobianBasisAlignedEquiv_mk

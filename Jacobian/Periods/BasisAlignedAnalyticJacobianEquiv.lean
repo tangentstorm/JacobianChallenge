@@ -1,6 +1,7 @@
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.AnalyticJacobian.Defs
 import Jacobian.AnalyticJacobian.Mk
+import Jacobian.AnalyticJacobian.MkExt
 
 /-!
 # Quotient-level equivalence
@@ -67,5 +68,19 @@ theorem analyticJacobianBasisAlignedEquiv_symm_mk
       JacobianChallenge.AnalyticJacobian.mk ℂ X
         ((holomorphicOneFormDualEquiv ℂ X).symm v) :=
   rfl
+
+/-- The basis-aligned image of an `evalJacobianClass` value: applying the
+equiv to `evalJacobianClass P v` gives the basis-aligned class of the
+corresponding `evalLinearMap`. Combines `evalJacobianClass_def` with
+the previous mk-simp lemma. -/
+@[simp] theorem analyticJacobianBasisAlignedEquiv_evalJacobianClass
+    (P : X) (v : ℂ) :
+    analyticJacobianBasisAlignedEquiv X
+        (JacobianChallenge.AnalyticJacobian.evalJacobianClass P v) =
+      QuotientAddGroup.mk
+        (holomorphicOneFormDualEquiv ℂ X
+          (JacobianChallenge.HolomorphicForms.evalLinearMap P v)) := by
+  rw [JacobianChallenge.AnalyticJacobian.evalJacobianClass_def,
+      analyticJacobianBasisAlignedEquiv_mk]
 
 end JacobianChallenge.Periods
