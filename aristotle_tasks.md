@@ -12,7 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 01:21 EDT)
+## Live Status (2026-04-27 01:32 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/ChartedFormPullbackEqChartedFormOfMfderivId.lean`
+    with primed function-equality form
+    `chartedFormPullback_eq_chartedForm_of_mfderiv_id'`: under the
+    global mfderiv-identity hypothesis,
+    `chartedFormPullback c ω = chartedForm c ω` as functions
+    (proof: `funext` + per-point bridge). Lets downstream callers
+    use the function-level equality directly without an explicit
+    `funext`. Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 01:21 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
   `submitted-redundant`, kept as wake detector.

@@ -43,4 +43,16 @@ theorem chartedFormPullback_apply_eq_chartedForm_apply_of_mfderiv_id_apply
     chartedFormPullback c ω e v = chartedForm c ω e v := by
   rw [chartedFormPullback_apply_eq_chartedForm_apply_mfderiv, h]
 
+/-- Function-equality form: under the global mfderiv-identity
+hypothesis, the corrected chart-pullback function equals the
+provisional chart-form function on all of `E`. -/
+theorem chartedFormPullback_eq_chartedForm_of_mfderiv_id'
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
+    (h : ∀ e, mfderiv (modelWithCornersSelf ℂ E)
+                     (modelWithCornersSelf ℂ E) c.symm e =
+              ContinuousLinearMap.id ℂ E) :
+    chartedFormPullback c ω = chartedForm c ω := by
+  funext e
+  exact chartedFormPullback_eq_chartedForm_of_mfderiv_id c ω e (h e)
+
 end JacobianChallenge.Periods
