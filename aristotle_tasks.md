@@ -12,7 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 01:50 EDT)
+## Live Status (2026-04-27 01:56 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/PathIntegralReflChart.lean` with
+    `mfderiv_chartAt_self_symm_eq_id`: for `chartedSpaceSelf E`,
+    the manifold derivative of `(chartAt E x).symm` at any `e` is
+    `ContinuousLinearMap.id`. Direct corollary of the existing
+    `mfderiv_refl_symm_eq_id` since `chartAt E x = refl E`
+    definitionally for `chartedSpaceSelf`. Ties the bridge
+    witness directly to Mathlib's `chartAt` typeclass interface,
+    avoiding the need for callers to unfold the chartedSpace
+    instance. Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 01:50 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
   `submitted-redundant`, kept as wake detector.
