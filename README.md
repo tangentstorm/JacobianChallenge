@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 04:49 EDT
+Last tick: 2026-04-27 04:54 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -52,14 +52,12 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
-Integrated this tick (local Claude-owned, 4 lemmas, 2 new files):
-                      Branch out into TraceDegree (was at 17%).
-                      NEW PullbackFunCompId with 2 lemmas:
-                      `pullbackFormsFun_id_comp` and `_comp_id`
-                      (pullback along id ∘ f = pullback along f).
-                      NEW PullbackFormsLinearMapCompId mirrors at
-                      bundled level. All proofs `rfl`. Build green
-                      (TraceDegree umbrella).
+Integrated this tick (local Claude-owned, 4 lemmas):
+                      EXTENDED PullbackFunCompId with apply and
+                      vec-apply variants of last tick's comp-id
+                      simps: `_id_comp_apply`, `_comp_id_apply`,
+                      `_id_comp_apply_vec`, `_comp_id_apply_vec`.
+                      All `rfl`. Build green (TraceDegree umbrella).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
