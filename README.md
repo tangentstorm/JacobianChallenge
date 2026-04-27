@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 20:22 EDT
+Last tick: 2026-04-26 20:27 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,13 +49,11 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~2h+.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralChartSmulSmul:
-                      `pathIntegralInChart_smul_smul` —
-                      provisional in-chart layer of iterated-smul.
-                      Build green (8153 jobs). Identity now at four
-                      layers: in-chart provisional (this tick),
-                      in-chart corrected, via-chart corrected,
-                      cover-with.
+                      NEW Periods/PathIntegralViaChartSmulSmul:
+                      `pathIntegralViaChart_smul_smul` —
+                      provisional via-chart layer of iterated-smul,
+                      completing the family across all five layers.
+                      Build green (8154 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -199,6 +197,7 @@ Periods.PathIntegralChartCorrectSmulSmul pass lake build Jacobian.Periods.PathIn
 Periods.PathIntegralViaChartCorrectSmulSmul pass lake build Jacobian.Periods.PathIntegralViaChartCorrectSmulSmul (no sorry)
 Periods.PathIntegralViaCoverSmulSmul pass lake build Jacobian.Periods.PathIntegralViaCoverSmulSmul (no sorry)
 Periods.PathIntegralChartSmulSmul pass lake build Jacobian.Periods.PathIntegralChartSmulSmul (no sorry)
+Periods.PathIntegralViaChartSmulSmul pass lake build Jacobian.Periods.PathIntegralViaChartSmulSmul (no sorry)
 ```
 
 ```text
