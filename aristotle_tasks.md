@@ -12,27 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 10:25 EDT)
+## Live Status (2026-04-27 10:28 EDT)
 
-- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~16h.
+  Re-checked Aristotle: still asleep, no new completions.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIdIdEvalSmul.lean`:
-    bundled along-(id ∘ id) integer-scalar forwarders:
-      - `pullbackFormsLinearMap_id_id_nsmul_apply_vec`
-      - `pullbackFormsLinearMap_id_id_zsmul_apply_vec`
-      - `pullbackFormsLinearMap_id_id_apply_nsmul_vec`
-      - `pullbackFormsLinearMap_id_id_apply_zsmul_vec`
-    Closes the bundled along-(id ∘ id) picture for form/vec-slot
-    ℕ/ℤ-smul. Each forwards via rfl through to the bundled along-id
-    smul result. Combined with prior `id ∘ id` files the forwarder
-    bank is now ℂ/ℕ/ℤ-complete in both slots.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapCompConstDist.lean`:
+    bundled comp-const form-slot trivial dist:
+      - `pullbackFormsLinearMap_comp_const_add_apply_vec`
+      - `pullbackFormsLinearMap_comp_const_neg_apply_vec`
+      - `pullbackFormsLinearMap_const_comp_add_apply_vec`
+      - `pullbackFormsLinearMap_const_comp_neg_apply_vec`
+    Form-slot add/neg distributivity for the bundled pullbacks
+    along `f ∘ const x₀` and `const z ∘ f`. Both pullbacks vanish
+    so all four lemmas reduce to `0 = 0 ± 0` style identities.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~15h — not waiting.
+  asleep ~16h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 10:22 EDT)
+## Stale Live Status (2026-04-27 10:25 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
