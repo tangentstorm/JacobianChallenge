@@ -12,7 +12,38 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 15:25 EDT)
+## Live Status (2026-04-27 15:40 EDT)
+
+- **User course-correction this tick:** "just give aristotle something
+  off the critical path, even if it's big". Memory entry
+  `feedback_aristotle_substantive_work.md` updated to clarify that
+  off-path big tasks are fine — Aristotle can churn for hours and
+  partial sketches with named blockers are useful outcomes.
+- **NEW substantive Aristotle task submitted:** `72ac3a75-4738-4ffb-b3fd-5c3afbc26b9c`
+  → `Jacobian/HolomorphicForms/CompactRiemannSurface.lean`
+  → discharge `compactRiemannSurface_finiteDimensionalHolomorphicOneForms`,
+     i.e. prove that H⁰(X, Ω¹) is finite-dimensional on a compact
+     connected Riemann surface. Classical Hodge / Riemann-Roch theorem.
+  → Off the critical path: every other module already assumes this
+     instance via the type class. Nothing immediate is blocked.
+  → Expected outcome: partial sketch + named blocker. We told Aristotle
+     to leave gaps as `sorry` rather than `axiom` so future work-packets
+     can route them.
+- **Local proof work this tick (Claude-owned):** NEW
+  `Jacobian/HolomorphicForms/BasisAlignedDualEquiv.lean` — the basis-aligned
+  dual equivalence (`(HolomorphicOneForm E X →ₗ[ℂ] ℂ) ≃ₗ[ℂ] Fin (analyticGenus E X) → ℂ`)
+  built from `Module.finBasis` + `Basis.dualBasis`. Wired into the umbrella.
+  This is the bottom-up infrastructure for unfreezing the
+  `opaque periodSubgroup` in `Jacobian/Periods/PeriodLattice.lean`
+  (next-tick plan).
+- **Tree note (left untouched per PROMPT.md):**
+  - `M Jacobian/Solution.lean` — user's Round 4b refinement.
+  - untracked `Jacobian/TraceDegree/{PushforwardBasis,AnalyticDegree}.lean`
+    + `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` + `Jacobian/TraceDegree/PullbackBasis.lean`
+    + `Jacobian/ComplexTorus/ULiftTransport.lean` (M) — pre-existing user WIP.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 15:25 EDT)
 
 - **5 packets retrieved and integrated** (network was back; `result`
   worked again). Each returned proof matched my predicted shape exactly:

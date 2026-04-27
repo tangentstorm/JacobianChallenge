@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 15:25 EDT
+Last tick: 2026-04-27 15:35 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -13,22 +13,26 @@ Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (fr
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
 Aristotle integrations to date 87         `"status":"integrated"` lines in aristotle_jobs.jsonl
-                                          (was 82; +5 from this tick — 4 substantive replacements +
-                                          1 retroactive byte-identical match against my local proof)
-Production files w/ real sorry  4         after filtering doc-comment matches: only
-                                          CompactRiemannSurface (Riemann-Roch),
-                                          GenusZeroClassification (uniformization), and
-                                          PeriodLattice (5 sorries blocked on opaque definition).
-                                          Plus 3 user-WIP files (ULiftTransport M, AnalyticOfCurveBasis
-                                          ??, PullbackBasis ??) which Claude leaves untouched.
+Production sorry-free files  378 / 386    using the precise count (real `sorry` tactics; doc-comment
+                                          matches and intentional design files excluded).
+                                          The 8 production files with real sorries:
+                                            Claude-owned (3 files, 7 sorries):
+                                              HolomorphicForms/CompactRiemannSurface  (1, Riemann-Roch)
+                                              HolomorphicForms/GenusZeroClassification (1, uniformization)
+                                              Periods/PeriodLattice                   (5, blocked on opaque)
+                                            User-WIP (5 files, 22 sorries) — Claude leaves untouched:
+                                              AbelJacobi/AnalyticOfCurveBasis         (6)
+                                              ComplexTorus/ULiftTransport             (6)
+                                              TraceDegree/PullbackBasis               (6)
+                                              TraceDegree/PushforwardBasis            (3)
+                                              TraceDegree/AnalyticDegree              (1, untracked)
 
-Note on prior counts: previous ticks reported 14-16 production-sorry files because
-the `\bsorry\b` regex matches doc-comment occurrences (e.g. backtick-wrapped
-"`sorry`-style stub" or "no further sorry"). After excluding those, the real
-count is much lower — 4 production files contain genuine sorry tactics, and
-nearly all of the remaining work is either deep math (Hodge / Riemann-Roch
-/ uniformization) or blocked on Claude-owned design decisions (concrete
-definition of opaque `periodSubgroup`).
+Reproduction:
+  for f in $(grep -rl "\bsorry\b" Jacobian --include="*.lean" |
+              grep -vE "(Challenge|Solution|StatementBank|Recon)\.lean$"); do
+    real=$(grep -E "\bsorry\b" "$f" | grep -vE "^\s*--|\`sorry|sorry\`" | wc -l)
+    [ "$real" -gt 0 ] && echo "$f $real"
+  done
 ```
 
 ```text
@@ -54,54 +58,53 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     0 / 5  Deliberately not refilled this tick.
-                        User pushback (paraphrased): "stop giving Aristotle trivial work";
-                        the just-integrated 5-packet batch was indeed all 1-line proofs
-                        (rfl, sub_self, single rw). PROMPT.md updated to require
-                        substantive packets only (5-30+ line proofs); MEMORY entry
-                        `feedback_aristotle_substantive_work.md` saves the rule.
-                        Backend is healthy — `list` and `result` both work again.
-Integrated this tick:   4 substantive replacements + 1 byte-identical retroactive match.
-                        (Prediction track record: all 5 returned proofs matched my
-                        predicted shape exactly, which is the upside of bounded targets
-                        but also the reason the user flagged them as too trivial.)
-                        - `37b183aa` evalLinearMap_ne_zero_of_toFun_ne_zero (HolomorphicForms)
-                          → `mt (evalLinearMap_eq_zero_iff_toFun_eq_zero x v η).mp h`
-                        - `6c252557` periodSubgroup_eq_range (Periods) → `rfl`
-                        - `2f5d999b` mk_eq_zero_iff_mem_range (AnalyticJacobian)
-                          → `rw [mk_eq_zero_iff, periodSubgroup_eq_range]`
-                        - `b3a3b251` witnessAbelJacobi_self_both (AbelJacobi)
-                          → `rw [witnessAbelJacobi_self, witnessAbelJacobi_self]`
-                        - `2d65778f` evalJacobianClass_self_sub_self (AnalyticJacobian)
-                          → `sub_self _` (byte-identical to local discharge in commit 940eeab)
-Tree note:              Jacobian/Solution.lean (M), Jacobian/ComplexTorus/ULiftTransport.lean (M)
-                        and Jacobian/{AbelJacobi/AnalyticOfCurveBasis,TraceDegree/PullbackBasis}.lean
-                        (untracked) are pre-existing user work — left untouched per PROMPT.md.
+Active jobs (ours):     1 / 5  Off-critical-path big task submitted this tick per user feedback
+                        "just give aristotle something off the critical path, even if it's big":
+                        `72ac3a75` compactRiemannSurface_finiteDimensionalHolomorphicOneForms
+                                   (HolomorphicForms/CompactRiemannSurface.lean) — the deep
+                                   classical theorem that H⁰(X, Ω¹) is finite-dimensional for
+                                   a compact connected Riemann surface (Hodge / Riemann-Roch).
+                                   Expected to take hours; partial sketch + named blocker is
+                                   an acceptable outcome.
+Integrated this tick:   None from Aristotle.
 ```
 
 ```text
-What "real work" looks like for the bottom-up roadmap from here
+Local cadence this tick (Claude-owned, substantive bottom-up infrastructure)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-The previous round of bounded leaf-work has been absorbed. The 4
-remaining production sorry files are NOT bite-sized for Aristotle:
-- CompactRiemannSurface.lean → Hodge / Riemann-Roch route to
-  finite-dimensionality of holomorphic 1-forms. Phase 2 deep math.
-- GenusZeroClassification.lean → uniformization theorem. Anti-hack
-  guarantee, also Phase 2 deep.
-- PeriodLattice.lean → 5 sorries (closedness, discreteness, compact
-  fundamental domain, coverage). All blocked on `periodSubgroup`
-  being `opaque`; need a Claude-owned design move to give it a
-  concrete definition (e.g. `(periodPairing E X).range` mapped
-  through the basis identification) before any of these become
-  provable.
-- TraceDegree/PullbackBasis.lean → 3 sorries (analyticPullback id /
-  comp + injective). User's WIP, not Claude's to delegate.
+NEW Jacobian/HolomorphicForms/BasisAlignedDualEquiv.lean (3 defs + 1 theorem):
 
-Next-tick plan: a Claude-owned design move on `periodSubgroup` —
-unfreeze the opaque, choose a concrete representative, and push
-the resulting `_isClosed` / `_isDiscrete` obligations onto the
-periodPairing-image side where they CAN be packaged as substantive
-Aristotle tasks (each 10-20+ lines, real content).
+  `holomorphicOneFormFinBasis E X` — an arbitrary
+    `Module.Basis (Fin (analyticGenus E X)) ℂ (HolomorphicOneForm E X)`
+    via `Module.finBasis`. Non-canonical (uses `Module.Free.chooseBasis`).
+
+  `holomorphicOneFormDualFinBasis E X` — the dual basis (in the linear
+    dual space `HolomorphicOneForm E X →ₗ[ℂ] ℂ`).
+
+  `holomorphicOneFormDualEquiv E X :
+     (HolomorphicOneForm E X →ₗ[ℂ] ℂ) ≃ₗ[ℂ] (Fin (analyticGenus E X) → ℂ)`
+    — the basis-aligned dual equivalence; the bridge between the
+    intrinsic functional-space description used throughout the
+    AnalyticJacobian/AbelJacobi work and the basis-aligned model used
+    in `Jacobian/Periods/PeriodLattice.lean` and `Jacobian/Solution.lean`.
+
+  `holomorphicOneFormDualEquiv_dualBasis_apply` — pointwise check that
+    the equiv sends a dual basis vector at index i to `Pi.single i 1`.
+    Proof: by_cases on `i = j`, then `Module.Basis.equivFun_self` +
+    `Pi.single_apply` (~6 lines real content, not 1-line filler).
+
+Wired into `Jacobian/HolomorphicForms.lean` umbrella. Builds clean.
+
+Why this matters: it is the bottom-up infrastructure piece that lets a
+future tick replace `opaque periodSubgroup` in
+`Jacobian/Periods/PeriodLattice.lean` with the concrete definition
+`AddSubgroup.map holomorphicOneFormDualEquiv.toAddMonoidHom
+  (JacobianChallenge.Periods.periodSubgroup ℂ X)` — i.e., the image of
+the existing functional-space periodSubgroup under this basis bridge.
+Once the opaque is unfrozen, the 5 PeriodLattice sorries (closedness,
+discreteness, fundamental-domain compactness, coverage) become
+provable rather than literally-sorry-only, and at least some of them
+become substantive Aristotle-sized tasks.
 ```
 
 ```text
@@ -109,44 +112,42 @@ Build status — recomputed each tick from the tree
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Challenge target          pass         lake build Jacobian.Challenge
 Statement bank            pass         lake build Jacobian.WorkPackets.StatementBank
-Integrated targets        pass (4)     Jacobian.HolomorphicForms.EvalLinearMapNeZeroOfNeZero
-                                       Jacobian.Periods.PeriodSubgroupRange
-                                       Jacobian.AnalyticJacobian.MkEqZeroIffRange
-                                       Jacobian.AbelJacobi.WitnessSelfBoth
+HolomorphicForms umbrella pass         lake build Jacobian.HolomorphicForms
+This tick's new file      pass         lake build Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 
-Production files with REAL sorry (excluding doc-comment matches):
-  Jacobian/HolomorphicForms/CompactRiemannSurface.lean        1 sorry  (Riemann-Roch)
-  Jacobian/HolomorphicForms/GenusZeroClassification.lean      1 sorry  (uniformization)
-  Jacobian/Periods/PeriodLattice.lean                         5 sorrys (blocked on opaque periodSubgroup)
-  Jacobian/ComplexTorus/ULiftTransport.lean                   M, user WIP — left untouched
-  Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean               ?? user WIP — left untouched
-  Jacobian/TraceDegree/PullbackBasis.lean                     ?? user WIP — left untouched
+Per-directory production sorry-free counts (recomputed):
+                                  ratio
+  HolomorphicForms             27 / 29
+  AnalyticJacobian             23 / 23
+  AbelJacobi                   19 / 20
+  TraceDegree                  81 / 84   (3 user-WIP files added since last tick)
+  Periods                     169 / 171
+  ComplexTorus                 47 / 53
 
-Reproduction:
-  for f in $(grep -rl "\bsorry\b" Jacobian --include="*.lean" |
-              grep -vE "(Challenge|Solution|StatementBank|Recon)\.lean$"); do
-    real=$(grep -E "\bsorry\b" "$f" | grep -vE "^\s*--|\`sorry|sorry\`" | wc -l)
-    [ "$real" -gt 0 ] && echo "  $f  $real real sorry line(s)"
-  done
+Reproduction (per dir):
+  total  = `find <dir> -maxdepth 1 -name "*.lean" | wc -l`
+  recon  = `find <dir> -maxdepth 1 -name "*Recon*.lean" | wc -l`
+  with-sorry-word = (grep -lE "\bsorry\b" <dir>/*.lean) minus Recon files
+  ratio = (total − recon − with-sorry-word) / (total − recon)
 ```
 
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Claude-owned design move: unfreeze `opaque periodSubgroup` in
-   Jacobian/Periods/PeriodLattice.lean. Pick a concrete shape (likely
-   the basis-aligned image of `(periodPairing E X).range`). This is
-   the gate that turns the 5 PeriodLattice sorries from "literally
-   unprovable while opaque" into substantive but bounded Aristotle
-   targets (closedness, discreteness, fundamental-domain compactness,
-   covering).
-2. Once the opaque is replaced, submit ONE substantive Aristotle
-   task — `periodSubgroup_isClosed` is the natural first target
-   (closure of a pairing image; ~15-30 line proof).
-3. Do NOT submit any more 1-line filler packets (rfl / sub_self /
-   single rw / `mt _.mp h`). Per the new
-   `feedback_aristotle_substantive_work.md` rule: it is fine to
-   leave the queue at 0/5 if no real bounded work is ready.
+1. Use the new `holomorphicOneFormDualEquiv` to actually unfreeze
+   `opaque periodSubgroup` in `Jacobian/Periods/PeriodLattice.lean`.
+   Concrete plan: replace the opaque with
+     `noncomputable def periodSubgroup (X) [...] :=
+        AddSubgroup.map (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+          (JacobianChallenge.Periods.periodSubgroup ℂ X)`.
+   That converts 5 unprovable-while-opaque sorries into bounded
+   topology obligations on `AddSubgroup.map` of a discrete subgroup.
+2. Once unfrozen, package `periodSubgroup_isClosed` (and similar)
+   as substantive Aristotle tasks — these will be 15-30+ line proofs
+   about closures of subgroup images, not 1-line trivials.
+3. Continue ignoring the 5 user-WIP files (AnalyticOfCurveBasis,
+   ULiftTransport, PullbackBasis, PushforwardBasis, AnalyticDegree)
+   per PROMPT.md.
 ```
 
 ## About
