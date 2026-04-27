@@ -79,4 +79,13 @@ theorem holomorphicOneFormDualEquiv_dualBasis_apply
   · subst h; simp
   · rw [if_neg h, if_neg (fun heq : j = i => h heq.symm)]
 
+/-- Inverse direction: the standard basis vector `Pi.single i 1` pulls
+back through the equivalence to the dual basis vector at index `i`.
+Direct corollary of the forward apply lemma. -/
+theorem holomorphicOneFormDualEquiv_symm_pi_single
+    (i : Fin (analyticGenus E X)) :
+    (holomorphicOneFormDualEquiv E X).symm (Pi.single i 1) =
+      holomorphicOneFormDualFinBasis E X i := by
+  rw [LinearEquiv.symm_apply_eq, holomorphicOneFormDualEquiv_dualBasis_apply]
+
 end JacobianChallenge.HolomorphicForms

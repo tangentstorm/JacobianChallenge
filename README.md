@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 18:09 EDT
+Last tick: 2026-04-27 18:15 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -60,15 +60,26 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5  `b782c387` (topology recon) IN_PROGRESS at 16%
-                        (~1h in; +8 percentage points since last tick — accelerating).
-                        Per PROMPT.md not polling further.
+Active jobs (ours):     1 / 5  `b782c387` (topology recon) IN_PROGRESS at 17%
+                        (~1h6m in; +1 percentage point since last tick — back to
+                        slow grind). Per PROMPT.md not polling further.
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/HolomorphicForms/BasisAlignedDualEquiv.lean (+1 theorem)
+
+  holomorphicOneFormDualEquiv_symm_pi_single
+    (i : Fin (analyticGenus E X))
+    : (holomorphicOneFormDualEquiv E X).symm (Pi.single i 1)
+        = holomorphicOneFormDualFinBasis E X i
+    Inverse-direction unfold of the existing `_dualBasis_apply`
+    forward lemma. Proof: `LinearEquiv.symm_apply_eq` + the forward
+    apply lemma.
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+1 simp lemma)
 
   analyticJacobianBasisAlignedEquiv_witnessAbelJacobi_self
