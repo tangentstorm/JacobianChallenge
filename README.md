@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 15:35 EDT
+Last tick: 2026-04-27 15:57 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -13,19 +13,21 @@ Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (fr
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
 Aristotle integrations to date 87         `"status":"integrated"` lines in aristotle_jobs.jsonl
-Production sorry-free files  378 / 386    using the precise count (real `sorry` tactics; doc-comment
+Production sorry-free files  379 / 387    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded).
                                           The 8 production files with real sorries:
                                             Claude-owned (3 files, 7 sorries):
-                                              HolomorphicForms/CompactRiemannSurface  (1, Riemann-Roch)
+                                              HolomorphicForms/CompactRiemannSurface  (1, Riemann-Roch — submitted to Aristotle)
                                               HolomorphicForms/GenusZeroClassification (1, uniformization)
-                                              Periods/PeriodLattice                   (5, blocked on opaque)
+                                              Periods/PeriodLattice                   (5, blocked on opaque,
+                                                                                       parallel concrete defn now exists in
+                                                                                       BasisAlignedPeriodSubgroup.lean)
                                             User-WIP (5 files, 22 sorries) — Claude leaves untouched:
                                               AbelJacobi/AnalyticOfCurveBasis         (6)
                                               ComplexTorus/ULiftTransport             (6)
                                               TraceDegree/PullbackBasis               (6)
                                               TraceDegree/PushforwardBasis            (3)
-                                              TraceDegree/AnalyticDegree              (1, untracked)
+                                              TraceDegree/AnalyticDegree              (1)
 
 Reproduction:
   for f in $(grep -rl "\bsorry\b" Jacobian --include="*.lean" |
@@ -58,53 +60,58 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5  Off-critical-path big task submitted this tick per user feedback
-                        "just give aristotle something off the critical path, even if it's big":
-                        `72ac3a75` compactRiemannSurface_finiteDimensionalHolomorphicOneForms
-                                   (HolomorphicForms/CompactRiemannSurface.lean) — the deep
-                                   classical theorem that H⁰(X, Ω¹) is finite-dimensional for
-                                   a compact connected Riemann surface (Hodge / Riemann-Roch).
-                                   Expected to take hours; partial sketch + named blocker is
-                                   an acceptable outcome.
-Integrated this tick:   None from Aristotle.
+Active jobs (ours):     1 / 5  `72ac3a75` (Riemann-Roch finite-dimensionality theorem) is
+                        QUEUED at the backend (~2 min ago per `aristotle list`, but
+                        actually submitted ~17 min ago — the timestamp is for the
+                        QUEUED status transition). No movement to retrieve yet.
+                        Per PROMPT.md "check Aristotle status once" — not polling.
+Integrated this tick:   None from Aristotle (still QUEUED).
 ```
 
 ```text
 Local cadence this tick (Claude-owned, substantive bottom-up infrastructure)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-NEW Jacobian/HolomorphicForms/BasisAlignedDualEquiv.lean (3 defs + 1 theorem):
+NEW Jacobian/Periods/BasisAlignedPeriodSubgroup.lean (1 def + 2 theorems):
 
-  `holomorphicOneFormFinBasis E X` — an arbitrary
-    `Module.Basis (Fin (analyticGenus E X)) ℂ (HolomorphicOneForm E X)`
-    via `Module.finBasis`. Non-canonical (uses `Module.Free.chooseBasis`).
+  `basisAlignedPeriodSubgroupConcrete X
+      : AddSubgroup (Fin (analyticGenus ℂ X) → ℂ)
+      = AddSubgroup.map (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+                        (periodSubgroup ℂ X)`
+    The CONCRETE basis-aligned period subgroup, defined as the image of
+    the existing functional-space `periodSubgroup ℂ X`
+    (= `(periodPairing ℂ X).range`) under the basis-aligned dual equiv
+    introduced last tick. Builds against the deferred-instance
+    `[FiniteDimensionalHolomorphicOneForms ℂ X]`.
 
-  `holomorphicOneFormDualFinBasis E X` — the dual basis (in the linear
-    dual space `HolomorphicOneForm E X →ₗ[ℂ] ℂ`).
+  `mem_basisAlignedPeriodSubgroupConcrete_iff` — characterizes
+    membership as "image of some functional-space period under the
+    dual equivalence" (existential characterization).
 
-  `holomorphicOneFormDualEquiv E X :
-     (HolomorphicOneForm E X →ₗ[ℂ] ℂ) ≃ₗ[ℂ] (Fin (analyticGenus E X) → ℂ)`
-    — the basis-aligned dual equivalence; the bridge between the
-    intrinsic functional-space description used throughout the
-    AnalyticJacobian/AbelJacobi work and the basis-aligned model used
-    in `Jacobian/Periods/PeriodLattice.lean` and `Jacobian/Solution.lean`.
+  `zero_mem_basisAlignedPeriodSubgroupConcrete` — sanity check.
 
-  `holomorphicOneFormDualEquiv_dualBasis_apply` — pointwise check that
-    the equiv sends a dual basis vector at index i to `Pi.single i 1`.
-    Proof: by_cases on `i = j`, then `Module.Basis.equivFun_self` +
-    `Pi.single_apply` (~6 lines real content, not 1-line filler).
+Why a NEW file with a NEW name (rather than replacing
+`PeriodLattice.lean`'s opaque): Lean 4 does not allow two declarations
+with the same fully-qualified name to coexist in a single elaboration
+context. `Jacobian/Periods/PeriodFunctional.lean` already declares
+`JacobianChallenge.Periods.periodSubgroup (E X) [...]` (functional-space)
+and `Jacobian/Periods/PeriodLattice.lean` declares
+`opaque JacobianChallenge.Periods.periodSubgroup X (basis-aligned)` —
+they presently coexist only because nobody imports both. Renaming
+`PeriodLattice`'s opaque is a separate refactor that touches Solution.lean
+and AnalyticOfCurveBasis.lean (the only two files that import
+PeriodLattice). For this tick we deliver the concrete definition under
+`basisAlignedPeriodSubgroupConcrete` (uniquely named, no conflict);
+a future tick can do the rename + route `periodFullComplexLattice`
+through this file's def.
 
-Wired into `Jacobian/HolomorphicForms.lean` umbrella. Builds clean.
+Wired into `Jacobian/Periods.lean` umbrella (also added the
+previously-orphaned `PeriodSubgroupRange` import from the integrated
+6c252557 packet).
 
-Why this matters: it is the bottom-up infrastructure piece that lets a
-future tick replace `opaque periodSubgroup` in
-`Jacobian/Periods/PeriodLattice.lean` with the concrete definition
-`AddSubgroup.map holomorphicOneFormDualEquiv.toAddMonoidHom
-  (JacobianChallenge.Periods.periodSubgroup ℂ X)` — i.e., the image of
-the existing functional-space periodSubgroup under this basis bridge.
-Once the opaque is unfrozen, the 5 PeriodLattice sorries (closedness,
-discreteness, fundamental-domain compactness, coverage) become
-provable rather than literally-sorry-only, and at least some of them
-become substantive Aristotle-sized tasks.
+Builds:
+  lake build Jacobian.Periods.BasisAlignedPeriodSubgroup ✓
+  lake build Jacobian.Periods                            ✓
+  lake build Jacobian.Solution                           ✓
 ```
 
 ```text
@@ -112,16 +119,17 @@ Build status — recomputed each tick from the tree
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Challenge target          pass         lake build Jacobian.Challenge
 Statement bank            pass         lake build Jacobian.WorkPackets.StatementBank
-HolomorphicForms umbrella pass         lake build Jacobian.HolomorphicForms
-This tick's new file      pass         lake build Jacobian.HolomorphicForms.BasisAlignedDualEquiv
+Periods umbrella          pass         lake build Jacobian.Periods
+Solution                  pass         lake build Jacobian.Solution
+This tick's new file      pass         lake build Jacobian.Periods.BasisAlignedPeriodSubgroup
 
 Per-directory production sorry-free counts (recomputed):
                                   ratio
   HolomorphicForms             27 / 29
   AnalyticJacobian             23 / 23
   AbelJacobi                   19 / 20
-  TraceDegree                  81 / 84   (3 user-WIP files added since last tick)
-  Periods                     169 / 171
+  TraceDegree                  81 / 84   (3 user-WIP files)
+  Periods                     170 / 172  (+1 prod file: BasisAlignedPeriodSubgroup)
   ComplexTorus                 47 / 53
 
 Reproduction (per dir):
@@ -134,17 +142,18 @@ Reproduction (per dir):
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Use the new `holomorphicOneFormDualEquiv` to actually unfreeze
-   `opaque periodSubgroup` in `Jacobian/Periods/PeriodLattice.lean`.
-   Concrete plan: replace the opaque with
-     `noncomputable def periodSubgroup (X) [...] :=
-        AddSubgroup.map (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
-          (JacobianChallenge.Periods.periodSubgroup ℂ X)`.
-   That converts 5 unprovable-while-opaque sorries into bounded
-   topology obligations on `AddSubgroup.map` of a discrete subgroup.
-2. Once unfrozen, package `periodSubgroup_isClosed` (and similar)
-   as substantive Aristotle tasks — these will be 15-30+ line proofs
-   about closures of subgroup images, not 1-line trivials.
+1. Check the Aristotle Riemann-Roch packet (`72ac3a75`); it was
+   QUEUED at end-of-tick, may still be running. If COMPLETE,
+   retrieve and review whatever sketch it produced (partial
+   results are useful — they surface Mathlib API gaps).
+2. Substantive next step on the unfreeze: rename the opaque
+   `periodSubgroup` in `Jacobian/Periods/PeriodLattice.lean`
+   (e.g. to `basisAlignedPeriodSubgroup`) and update
+   `Jacobian/Solution.lean` + `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean`
+   accordingly. Then point `periodFullComplexLattice` at
+   `basisAlignedPeriodSubgroupConcrete` from the new file.
+   Three-step refactor; safe because the only direct importers of
+   PeriodLattice are well-known.
 3. Continue ignoring the 5 user-WIP files (AnalyticOfCurveBasis,
    ULiftTransport, PullbackBasis, PushforwardBasis, AnalyticDegree)
    per PROMPT.md.
