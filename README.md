@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 05:37 EDT
+Last tick: 2026-04-27 05:43 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -32,7 +32,7 @@ Complex torus quotient API       ███████████████�
 Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms                ██████░░░░░░░░░░░░░░   30%  type/module/analyticGenus
+Holomorphic forms                ███████░░░░░░░░░░░░░   33%  type/module/analyticGenus + small genus API (subsingleton iff zero)
 Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
@@ -53,11 +53,12 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~11h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW PullbackFunIdComposeId: id-of-id
-                      composition collapses to identity pullback.
-                      Function-level, apply, vec-apply, and bundled
-                      forms — closes the trivial corner of the
-                      composition matrix.
+                      Pivoted to HolomorphicForms layer (was 30%).
+                      NEW HolomorphicForms.AnalyticGenus:
+                      `analyticGenus_def`, `_eq_zero_iff_finrank_zero`,
+                      `_eq_zero_iff_subsingleton`,
+                      `_eq_zero_of_subsingleton`. Wired into
+                      HolomorphicForms umbrella.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -214,6 +215,7 @@ TraceDegree.PullbackFunConstCompConstBundled pass lake build Jacobian.TraceDegre
 TraceDegree.PullbackFunMixedConstIdApply pass lake build Jacobian.TraceDegree.PullbackFunMixedConstIdApply (no sorry)
 TraceDegree.PullbackFormsLinearMapMixedConstId pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapMixedConstId (no sorry)
 TraceDegree.PullbackFunIdComposeId pass lake build Jacobian.TraceDegree.PullbackFunIdComposeId (no sorry)
+HolomorphicForms.AnalyticGenus pass lake build Jacobian.HolomorphicForms.AnalyticGenus (no sorry)
 ```
 
 ```text

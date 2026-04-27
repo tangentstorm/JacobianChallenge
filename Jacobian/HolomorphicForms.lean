@@ -1,3 +1,4 @@
+import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.CotangentBundle
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.FiniteDimensional

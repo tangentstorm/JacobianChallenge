@@ -12,7 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 05:37 EDT)
+## Live Status (2026-04-27 05:43 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - **Pivot:** TraceDegree comp matrix exhausted; switched to
+    HolomorphicForms layer (was 30%, now 33%).
+  - NEW `Jacobian/HolomorphicForms/AnalyticGenus.lean`: small
+    `analyticGenus` API:
+      - `analyticGenus_def` (rfl unfold to `Module.finrank`)
+      - `analyticGenus_eq_zero_iff_finrank_zero`
+      - `analyticGenus_eq_zero_iff_subsingleton`
+        (via `Module.finrank_zero_iff`)
+      - `analyticGenus_eq_zero_of_subsingleton` (instance-driven)
+    Wired into HolomorphicForms umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~11h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 05:37 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
   Not waiting per user.
@@ -25,11 +45,6 @@ identify our jobs without inspecting tarballs.
       - `pullbackFormsFun_id_id_apply_vec`
       - `pullbackFormsLinearMap_id_id_apply`
     All collapse to `pullbackFormsFun_id` since `id ∘ id = id` rfl.
-    Wired into TraceDegree umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~11h — not waiting. Comp matrix at id/const corners is
-  now exhaustive at function and bundled levels.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 05:32 EDT)
