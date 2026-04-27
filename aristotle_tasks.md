@@ -12,7 +12,24 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 16:48 EDT)
+## Live Status (2026-04-27 16:53 EDT)
+
+- **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)**
+  IN_PROGRESS at 10% (~58 min in; +1 percentage point since last tick).
+  Per PROMPT.md not polling.
+- **Local proof work this tick (Claude-owned):**
+  Extended `Jacobian/Periods/BasisAlignedPeriodSubgroup.lean` with
+  `holomorphicOneFormDualEquiv_bijOn_periodSubgroup` — packages the
+  set-level bijection between functional-space and basis-aligned period
+  subgroups.
+- **plan.md updated** to reflect actual state of Phase 1.5b (closed) and
+  added a new Phase 1.5c section documenting the basis-aligned period
+  bridge built across the recent ticks (BasisAlignedDualEquiv,
+  BasisAlignedPeriodSubgroup, BasisAlignedPeriodPairing).
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 16:48 EDT)
 
 - **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)**
   IN_PROGRESS at 9% (~53 min in; +1 percentage point since last tick).

@@ -93,4 +93,25 @@ theorem holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete
     holomorphicOneFormDualEquiv ℂ X φ ∈ basisAlignedPeriodSubgroupConcrete X :=
   (mem_basisAlignedPeriodSubgroupConcrete_iff X _).mpr ⟨φ, hφ, rfl⟩
 
+/-- The dual equivalence restricts to a bijection between the
+functional-space and basis-aligned period subgroups (as sets). Combines
+the forward-direction membership transport, injectivity of the
+equivalence, and the surjective image characterization. -/
+theorem holomorphicOneFormDualEquiv_bijOn_periodSubgroup :
+    Set.BijOn (holomorphicOneFormDualEquiv ℂ X)
+      (periodSubgroup ℂ X : Set _)
+      (basisAlignedPeriodSubgroupConcrete X : Set _) := by
+  refine ⟨?_, ?_, ?_⟩
+  · -- maps into
+    intro φ hφ
+    exact holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete X hφ
+  · -- injective on the source set
+    intro φ _ ψ _ heq
+    exact (holomorphicOneFormDualEquiv ℂ X).injective heq
+  · -- surjective onto the target set
+    intro v hv
+    rw [SetLike.mem_coe, mem_basisAlignedPeriodSubgroupConcrete_iff] at hv
+    obtain ⟨φ, hφ_mem, hφ_eq⟩ := hv
+    exact ⟨φ, hφ_mem, hφ_eq⟩
+
 end JacobianChallenge.Periods

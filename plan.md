@@ -197,19 +197,54 @@ Of the five `FullComplexLattice` fields:
 | `isClosed` | proved (via a small `discreteTopology_toAddSubgroup` bridge) |
 | `fundamentalDomain` | proved (`closure (ZSpan.fundamentalDomain bR)`) |
 | `fundamentalDomain_isCompact` | proved (`fundamentalDomain_isBounded.isCompact_closure`) |
-| `fundamentalDomain_covers` | sketched, sorry pending packaging helper |
+| `fundamentalDomain_covers` | **proved** in `Jacobian/ComplexTorus/ZLatticeFundDom.lean` |
 
-The remaining gap is a small bounded packaging lemma
-`ZLattice.exists_sub_mem_closure_fundamentalDomain`: convert
+`ZLattice.exists_sub_mem_closure_fundamentalDomain` is fully proved
+(no sorrys) in `Jacobian/ComplexTorus/ZLatticeFundDom.lean`. It converts
 `ZSpan.exist_unique_vadd_mem_fundamentalDomain` from `vadd` form to
-subtraction form, transport membership via
-`Module.Basis.ofZLatticeBasis_span`, and weaken `∈ fundamentalDomain`
-to `∈ closure fundamentalDomain`. Aristotle's first attempt used
-`grind` and failed; replaced with a clean `sorry` carrying the proof
-sketch.
+subtraction form, transports membership via
+`Module.Basis.ofZLatticeBasis_span`, and weakens `∈ fundamentalDomain`
+to `∈ closure fundamentalDomain`.
 
-This is the natural next bounded packet at this layer: prove that
-single helper, then `fullComplexLatticeOfZLattice` is sorry-free.
+`fullComplexLatticeOfZLattice` (in `ZLatticeRecon.lean`) is now sorry-free
+on this leg. Phase 1.5b is closed.
+
+### Phase 1.5c — Basis-aligned period bridge (started 2026-04-27)
+
+To unfreeze `opaque basisAlignedPeriodSubgroup` (renamed from
+`periodSubgroup` this same day) in
+`Jacobian/Periods/PeriodLattice.lean`, the basis-aligned dual
+equivalence
+
+```text
+holomorphicOneFormDualEquiv : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ)
+  ≃ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ)
+```
+
+is now provided in `Jacobian/HolomorphicForms/BasisAlignedDualEquiv.lean`,
+together with the concrete representative
+
+```text
+basisAlignedPeriodSubgroupConcrete X
+  := AddSubgroup.map dualEquiv.toAddMonoidHom (periodSubgroup ℂ X)
+```
+
+in `Jacobian/Periods/BasisAlignedPeriodSubgroup.lean`, the natural
+`AddMonoidHom`
+
+```text
+basisAlignedPeriodPairing X
+  : IntegralOneCycle X →+ (Fin (analyticGenus ℂ X) → ℂ)
+  := dualEquiv.toAddMonoidHom.comp (periodPairing ℂ X)
+```
+
+in `Jacobian/Periods/BasisAlignedPeriodPairing.lean`, plus the supporting
+membership-transport and injectivity lemmas. The opaque cannot yet be
+routed through these because `IntegralOneCycle` is restricted to
+`(X : Type)` while `PeriodLattice.lean` and downstream use `(X : Type*)`.
+Lifting `IntegralOneCycle` requires either an explicit-universe call to
+`singularHomologyFunctor` (with `HasCoproducts.{u} (ModuleCat ℤ)`
+instance) or a ULift bridge — non-trivial; deferred.
 
 ## Phase 2: Compact Riemann Surfaces and Holomorphic Forms
 
