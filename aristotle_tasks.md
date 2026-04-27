@@ -12,26 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 11:13 EDT)
+## Live Status (2026-04-27 11:16 EDT)
 
-- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~16h.
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~17h.
+  Re-checked Aristotle this tick: still asleep, no new completions.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/AbelJacobi/WitnessMkPeriodPairing.lean`:
-    witness invariance under periodPairing perturbations:
-      - `witnessAbelJacobi_eq_mk_sub_add_periodPairing`
-      - `witnessAbelJacobi_eq_mk_sub_sub_periodPairing`
-      - `witnessAbelJacobi_eq_mk_sub_add_nsmul_periodPairing`
-      - `witnessAbelJacobi_eq_mk_sub_add_zsmul_periodPairing`
-    Each rewrites `witnessAbelJacobi_eq_mk_sub` and applies the
-    matching `mk_{add,sub}_periodPairing` (or its `n/z`smul
-    variant) — the well-definedness corollary of the witness map.
+  - NEW `Jacobian/AbelJacobi/WitnessZeroIff.lean`:
+    witness-zero characterizations:
+      - `witnessAbelJacobi_eq_zero_iff_exists_cycle`
+      - `witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_periodPairing`
+      - `witnessAbelJacobi_eq_zero_iff_evalJacobianClass_eq`
+      - `witnessAbelJacobi_eq_zero_of_evalJacobianClass_eq`
+    Two iff/of pairs: cycle-witness (via `mem_periodSubgroup_iff`)
+    and Jacobian-class equality (via `sub_eq_zero` on the
+    `evalJacobianClass`-difference shape of the witness).
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~16h — not waiting.
+  asleep ~17h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 11:11 EDT)
+## Stale Live Status (2026-04-27 11:13 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
