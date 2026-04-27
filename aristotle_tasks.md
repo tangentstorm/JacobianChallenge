@@ -12,7 +12,18 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 21:51 EDT)
+## Live Status (2026-04-26 22:02 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~3.5h.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/PathIntegralViaCoverPickOneSmul.lean`:
+    Pick (unparameterised multi-chart) layer of `_one_smul`
+    (`pathIntegralViaCover_one_smul`). Identity now at 6/6 layers
+    all the way to the user-facing `pathIntegralViaCover`
+    wrapper. Build green (8169 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 21:51 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~3.5h.
 - **Integrated this tick (local Claude-owned):**
