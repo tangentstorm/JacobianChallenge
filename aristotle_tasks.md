@@ -12,27 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 12:49 EDT)
+## Live Status (2026-04-27 12:58 EDT)
 
-- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~7 min
+- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~11 min
   (rfl-iff smoke test). Awaiting return.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIntSmulAdd.lean`:
-    ℕ/ℤ-smul interplay with add/sub for bundled pullback,
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIntSmulAddApplyVec.lean`:
+    vec-applied versions of the ℕ/ℤ-smul × add/sub identities for
     arbitrary `f`:
-      - `pullbackFormsLinearMap_nsmul_add`
-      - `pullbackFormsLinearMap_nsmul_sub`
-      - `pullbackFormsLinearMap_zsmul_add`
-      - `pullbackFormsLinearMap_zsmul_sub`
-    All `@[simp]`. Each composes `_nsmul`/`_zsmul` with `_add`/`_sub`.
-- **Tree note:** untracked `Jacobian/Solution.lean` — unrelated
-  pre-existing addition, left untouched per PROMPT.md classification.
+      - `pullbackFormsLinearMap_nsmul_add_apply_vec`
+      - `pullbackFormsLinearMap_nsmul_sub_apply_vec`
+      - `pullbackFormsLinearMap_zsmul_add_apply_vec`
+      - `pullbackFormsLinearMap_zsmul_sub_apply_vec`
+    Each forwards via the function-level lemma in
+    `PullbackFormsLinearMapIntSmulAdd` plus `rfl`. All `@[simp]`.
+- **Tree note:** untracked `Jacobian/Solution.lean` and
+  `Jacobian/WorkPackets/TopDown.md` — unrelated pre-existing
+  additions, left untouched.
 - **Strategic note (carried forward):**
   Continuing local cadence in parallel with Aristotle smoke test.
   If `ee14b794` returns clean, scale up to 5 active.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 12:46 EDT)
+## Stale Live Status (2026-04-27 12:49 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
