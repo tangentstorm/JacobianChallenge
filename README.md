@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 02:25 EDT
+Last tick: 2026-04-27 02:27 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -33,14 +33,17 @@ Quotient charted-space/manifold  ███████████████�
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
 Holomorphic forms                ██████░░░░░░░░░░░░░░   30%  type/module/analyticGenus
-Path integration/periods         ███████████░░░░░░░░░   55%  multi-chart cover full linearity API; refl in flight
+Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
 Trace/degree/push-pull           ███░░░░░░░░░░░░░░░░░   17%  pullbackFormsFun: full linearity (+sub) + LinearMap bundle + id + tangent-vec apply
 
-Note: `chartedForm` currently misses the chart-derivative factor of
-the genuine 1-form pullback, so the period machinery is correct only
-for translation-transition charts (e.g. the torus case). To be fixed.
+Note: under the global hypothesis `mfderiv c.symm = id` (true for
+translation-transition charts, e.g. the torus), the corrected
+period machinery reduces to the simpler provisional one across all
+5 integration layers (chartedForm → in-chart → via-chart →
+cover-with → Pick). Concrete instances established for the refl
+chart and the explicit `translationChart v` construction.
 ```
 
 ```text
@@ -50,14 +53,12 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED Periods/PathIntegralReflChart with
-                      `chartedForm_refl_apply` (rfl) and
-                      `chartedFormPullback_refl_apply`. Both
-                      reduce the chart-form on the refl chart to
-                      `ω.toFun e`. Companion to last-tick's
-                      translation-chart pointwise formulas — the
-                      refl chart version of the same simplification.
-                      Build green (8189 jobs).
+                      Stocktake/progress-report adjustment: bumped
+                      Path integration/periods from 55% to 65% and
+                      rewrote the explanatory note to reflect the
+                      bridge-ladder maturity and the concrete
+                      refl/translation-chart instances. No code
+                      changes this tick.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
