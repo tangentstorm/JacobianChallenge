@@ -12,7 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 18:39 EDT)
+## Live Status (2026-04-27 18:44 EDT)
+
+- **NEW Aristotle packet `aadb7721-60af-4ff2-9774-f2b3d409fee5`
+  submitted** — the HARD direction of genus-zero classification
+  (`homeomorphic_sphere_of_analyticGenus_eq_zero`). Off-critical-path
+  companion to 027bb9d7. Asked Aristotle to PRESERVE the existing
+  easy-direction blocker analysis and ADD a new survey block for the
+  hard direction (uniformization, ℂℙ¹↔S² homeomorphism, classification
+  of compact orientable surfaces).
+- **Aristotle: 2/5 active.**
+  - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%
+    (~1h30m in; 7 ticks stalled).
+  - `aadb7721` genus-zero hard direction — just submitted.
+- **User WIP in flight (left untouched):**
+  - `Jacobian/ComplexTorus/ULiftTransport.lean` (Round 2b chart-transport).
+  - `Jacobian/Solution.lean` (presumably wiring against Round 2b).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 18:39 EDT)
 
 - **Aristotle packet `027bb9d7` COMPLETE & integrated.** After ~15 min
   of backend time, returned the genus-zero classification target file
