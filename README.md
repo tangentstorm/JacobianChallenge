@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 20:06 EDT
+Last tick: 2026-04-26 20:11 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,12 +49,11 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~2h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralChartCorrectSmulSmul:
-                      `pathIntegralInChartCorrect_smul_smul` —
-                      iterated scalar multiplication composes:
-                      `∫(k • (l • ω), γ) = (k * l) • ∫(ω, γ)`.
-                      Composes `_smul` twice + `smul_smul`. Build
-                      green (8150 jobs).
+                      NEW Periods/PathIntegralViaChartCorrectSmulSmul:
+                      `pathIntegralViaChartCorrect_smul_smul` —
+                      from-`X` lift of last tick's iterated-smul.
+                      Build green (8151 jobs). Identity now at
+                      in-chart and via-chart corrected layers.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -195,6 +194,7 @@ Periods.PathIntegralChartCorrectNegSmulSymmEqSelf pass lake build Jacobian.Perio
 Periods.PathIntegralChartNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralChartNegSmulSymmEqSelf (no sorry)
 Periods.PathIntegralViaChartNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaChartNegSmulSymmEqSelf (no sorry)
 Periods.PathIntegralChartCorrectSmulSmul pass lake build Jacobian.Periods.PathIntegralChartCorrectSmulSmul (no sorry)
+Periods.PathIntegralViaChartCorrectSmulSmul pass lake build Jacobian.Periods.PathIntegralViaChartCorrectSmulSmul (no sorry)
 ```
 
 ```text
