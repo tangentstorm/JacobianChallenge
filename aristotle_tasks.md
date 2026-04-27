@@ -12,7 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 00:58 EDT)
+## Live Status (2026-04-27 01:03 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with chart-
+    transition simp lemmas:
+      - `translationChart_apply_translationChart_symm_apply`:
+        `translationChart v ((translationChart u).symm x) = x + (-u) + v`
+      - `translationChart_symm_apply_translationChart_apply`:
+        `(translationChart u).symm (translationChart v x) = (x + v) + (-u)`
+    Both proved by `rfl`. This is the geometric content showing
+    translation atlases close under chart transitions — the
+    composition of two translations is a translation. Foundational
+    for translation-only manifolds (e.g. complex torus). Build
+    green (8188 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 00:58 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
   `submitted-redundant`, kept as wake detector.

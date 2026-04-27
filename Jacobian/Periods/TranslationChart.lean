@@ -65,4 +65,20 @@ theorem pathIntegralViaChartCorrect_translationChart_eq_pathIntegralViaChart
   funext x
   rfl
 
+set_option linter.unusedSectionVars false in
+/-- Function-level transition: composing the inverse of `translationChart u`
+with `translationChart v` is itself a translation by `v + (-u)`. This is
+the geometric content of why translation atlases close under chart
+transitions (the torus structure relies on this). -/
+@[simp] theorem translationChart_apply_translationChart_symm_apply
+    (u v x : E) :
+    translationChart v ((translationChart u).symm x) = x + (-u) + v := rfl
+
+set_option linter.unusedSectionVars false in
+/-- Conversely, applying `translationChart u`'s inverse after
+`translationChart v` is a translation by `(-u) + v`. -/
+@[simp] theorem translationChart_symm_apply_translationChart_apply
+    (u v x : E) :
+    (translationChart u).symm (translationChart v x) = (x + v) + (-u) := rfl
+
 end JacobianChallenge.Periods
