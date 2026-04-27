@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 18:35 EDT
+Last tick: 2026-04-27 18:39 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 88         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 89         `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  381 / 389    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded).
                                           The 8 production files with real sorries:
@@ -60,17 +60,27 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     2 / 5
-                        `b782c387` topology-on-ContMDiffSection recon — still
-                                   IN_PROGRESS at 17% (5 ticks of stall now).
-                        `027bb9d7` analyticGenus_eq_zero_of_homeomorphic_sphere —
-                                   IN_PROGRESS at 3% (~8 min in).
-Integrated this tick:   None.
+Active jobs (ours):     1 / 5  `b782c387` topology-on-ContMDiffSection recon — still
+                        IN_PROGRESS at 17% (~1h25m in; 6 ticks of stall — likely
+                        getting nowhere). Per PROMPT.md not polling further.
+Integrated this tick:   1  `027bb9d7` analyticGenus_eq_zero_of_homeomorphic_sphere
+                        COMPLETE in ~15 min. Sorry left intact (uniformization
+                        theorem requires deep Mathlib infrastructure absent in
+                        v4.28.0). Returned a HIGH-QUALITY ~90-line doc-comment
+                        survey block listing: 3-step proof sketch, Mathlib gaps
+                        per step, dependency-graph blocker tree, and a 3-step
+                        Mathlib-API plan with an alternative Earle-Eells
+                        shortcut. Integrated as-is.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+This tick was an Aristotle integration (027bb9d7). No new local Lean
+work; the substantive deliverable is the integrated GenusZeroClassification
+survey block.
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+1 theorem)
 
   analyticJacobianBasisAlignedEquiv_witnessAbelJacobi_mk_sub
