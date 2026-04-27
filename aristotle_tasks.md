@@ -12,21 +12,35 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 07:09 EDT)
+## Live Status (2026-04-27 07:14 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~13h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - **Pivot:** moved up the stack to AnalyticJacobian (was 10%).
+  - NEW `Jacobian/AnalyticJacobian/Mk.lean`: quotient projection
+    API on the abstract analytic Jacobian:
+      - `mk` (alias for `QuotientAddGroup.mk` on
+        `(HolomorphicOneForm E X →ₗ[ℂ] ℂ) ⧸ periodSubgroup E X`)
+      - `mk_zero`
+      - `mk_add`
+      - `mk_eq_zero_iff` (kernel = periodSubgroup)
+    Wired into AnalyticJacobian umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~13h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 07:09 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/Periods/PeriodSubgroupClosure.lean`:
-    `periodSubgroup` closure under group operations:
       - `add_mem_periodSubgroup`
       - `sub_mem_periodSubgroup`
       - `nsmul_mem_periodSubgroup`
       - `zsmul_mem_periodSubgroup`
-    Wired into Periods umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~12h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 07:01 EDT)

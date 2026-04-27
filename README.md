@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 07:09 EDT
+Last tick: 2026-04-27 07:14 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -34,7 +34,7 @@ Projection (mk) smoothness       ███████████████�
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
 Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
 Path integration/periods         ██████████████░░░░░░   68%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances + named API around periodPairing/periodSubgroup with closure lemmas
-Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
+Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   13%  abstract quotient group + named mk projection API (mk_zero / mk_add / mk_eq_zero_iff)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
 Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
 
@@ -49,14 +49,14 @@ chart and the explicit `translationChart v` construction.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~12h.
+Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~13h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW Periods.PeriodSubgroupClosure: closure
-                      under add/sub/nsmul/zsmul of `periodSubgroup`
-                      (group-theoretic facts, exposed as named
-                      lemmas).
+                      NEW AnalyticJacobian.Mk: quotient
+                      projection `mk` plus `mk_zero` / `mk_add` /
+                      `mk_eq_zero_iff` named API around the
+                      QuotientAddGroup of analytic Jacobian.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -231,6 +231,7 @@ HolomorphicForms.AnalyticGenusOrder pass lake build Jacobian.HolomorphicForms.An
 Periods.PeriodFunctionalApi pass lake build Jacobian.Periods.PeriodFunctionalApi (no sorry)
 Periods.PeriodSubgroupApi pass lake build Jacobian.Periods.PeriodSubgroupApi (no sorry)
 Periods.PeriodSubgroupClosure pass lake build Jacobian.Periods.PeriodSubgroupClosure (no sorry)
+AnalyticJacobian.Mk pass lake build Jacobian.AnalyticJacobian.Mk (no sorry)
 ```
 
 ```text

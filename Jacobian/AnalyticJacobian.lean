@@ -1,4 +1,5 @@
 import Jacobian.AnalyticJacobian.Defs
+import Jacobian.AnalyticJacobian.Mk
 
 /-!
 # Analytic Jacobian infrastructure
