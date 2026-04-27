@@ -81,4 +81,12 @@ set_option linter.unusedSectionVars false in
     (u v x : E) :
     (translationChart u).symm (translationChart v x) = (x + v) + (-u) := rfl
 
+set_option linter.unusedSectionVars false in
+/-- The inverse of `translationChart v`, applied as a function,
+agrees pointwise with `translationChart (-v)`. (Both equal
+`x ↦ x + (-v)` definitionally.) -/
+theorem translationChart_symm_apply_eq_translationChart_neg_apply
+    (v x : E) :
+    (translationChart v).symm x = translationChart (-v) x := rfl
+
 end JacobianChallenge.Periods
