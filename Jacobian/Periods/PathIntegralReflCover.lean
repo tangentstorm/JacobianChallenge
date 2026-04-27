@@ -82,4 +82,23 @@ theorem pathIntegralViaCover_self_eq_sum_curveIntegral
   intro i _
   exact pathIntegralViaChart_reflChart ω _ _
 
+/-- For `chartedSpaceSelf E`, the cover-with multi-chart integral
+reduces directly through the corrected layer to a plain sum of
+`curveIntegral ω.toFun` over segment subpaths. -/
+theorem pathIntegralViaCoverWith_self_eq_sum_curveIntegral
+    (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b)
+    (n : ℕ) (hn : 0 < n) (pickChart : Fin n → E)
+    (hcov : ∀ (i : Fin n) (t : unitInterval),
+      (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+      γ t ∈ (chartAt E (pickChart i)).source) :
+    pathIntegralViaCoverWith ω γ n hn pickChart hcov =
+      ∑ i : Fin n,
+        curveIntegral ω.toFun
+          (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
+                     (divFinIcc n hn (i.val + 1) i.isLt)) := by
+  unfold pathIntegralViaCoverWith
+  apply Finset.sum_congr rfl
+  intro i _
+  exact pathIntegralViaChartCorrect_reflChart ω _ _
+
 end JacobianChallenge.Periods
