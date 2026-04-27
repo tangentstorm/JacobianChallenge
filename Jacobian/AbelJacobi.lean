@@ -10,6 +10,7 @@ import Jacobian.AbelJacobi.Nontrivial
 import Jacobian.AbelJacobi.GenusWitness
 import Jacobian.AbelJacobi.Specialize
 import Jacobian.AbelJacobi.WitnessMk
+import Jacobian.AbelJacobi.Symmetry
 
 /-!
 # Abel-Jacobi infrastructure (witness skeleton)

@@ -12,21 +12,32 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 09:23 EDT)
+## Live Status (2026-04-27 09:27 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AbelJacobi/Symmetry.lean`:
+      - `witnessAbelJacobi_neg_vec_eq_neg` (alias of `_neg_vec`)
+      - `evalJacobianClass_neg_vec_at_endpoint`
+      - `witnessAbelJacobi_two_smul_vec` (specialization of nsmul)
+      - `witnessAbelJacobi_eq_zero_of_evalLinearMap_eq`
+    Wired into AbelJacobi umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~15h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 09:23 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/TraceDegree/PullbackFunIdEval.lean`:
-    pullback-along-id ↔ `evalLinearMap` characterizations:
-      - `pullbackFormsFun_id_apply_vec_eq_evalLinearMap'` (alias)
+      - `pullbackFormsFun_id_apply_vec_eq_evalLinearMap'`
       - `pullbackFormsFun_id_eq_zero_iff_evalLinearMap_eq_zero`
       - `pullbackFormsFun_id_eq_iff_evalLinearMap_eq`
       - `pullbackFormsFun_id_factor_evalLinearMap`
-    Wired into TraceDegree umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~15h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 09:18 EDT)
