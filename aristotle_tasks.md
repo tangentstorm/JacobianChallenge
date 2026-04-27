@@ -12,27 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 11:49 EDT)
+## Live Status (2026-04-27 11:55 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~17h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIntSmul.lean`:
-    bundled `pullbackFormsLinearMap` ℕ/ℤ-smul for arbitrary `f`:
-      - `pullbackFormsLinearMap_nsmul`         (function-level)
-      - `pullbackFormsLinearMap_zsmul`         (function-level)
-      - `pullbackFormsLinearMap_nsmul_apply_vec`
-      - `pullbackFormsLinearMap_zsmul_apply_vec`
-    Function-level via `(pullbackFormsLinearMap f).toAddMonoidHom.
-    map_{n,z}smul`. Apply-vec versions via the existing rfl-bridge
-    `pullbackFormsLinearMap_apply_at`. Pivot from AbelJacobi
-    witness-zero work back to TraceDegree base layer.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIntSmulApply.lean`:
+    at-point apply forms + zero-collapse for bundled
+    `pullbackFormsLinearMap` ℕ/ℤ-smul (arbitrary `f`):
+      - `pullbackFormsLinearMap_nsmul_apply`
+      - `pullbackFormsLinearMap_zsmul_apply`
+      - `pullbackFormsLinearMap_nsmul_zero`  (`(0:ℕ) • η ↦ 0`)
+      - `pullbackFormsLinearMap_zsmul_zero`  (`(0:ℤ) • η ↦ 0`)
+    Continues `PullbackFormsLinearMapIntSmul`. At-point via the
+    existing rfl-bridge; zero collapses use `zero_{n,z}smul +
+    map_zero`.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~17h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 11:45 EDT)
+## Stale Live Status (2026-04-27 11:49 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.

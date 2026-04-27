@@ -9,6 +9,7 @@ import Jacobian.TraceDegree.PullbackFormsLinearMapIdApplyVec
 import Jacobian.TraceDegree.PullbackFormsLinearMapSimp
 import Jacobian.TraceDegree.PullbackFormsLinearMapSmul
 import Jacobian.TraceDegree.PullbackFormsLinearMapIntSmul
+import Jacobian.TraceDegree.PullbackFormsLinearMapIntSmulApply
 import Jacobian.TraceDegree.PullbackFun
 import Jacobian.TraceDegree.PullbackFunAddSubApply
 import Jacobian.TraceDegree.PullbackFunApply
