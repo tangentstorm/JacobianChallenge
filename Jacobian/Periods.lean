@@ -85,6 +85,7 @@ import Jacobian.Periods.PathIntegralViaChartCorrectNegEqNegOneSmul
 import Jacobian.Periods.PathIntegralViaCoverNegEqNegOneSmul
 import Jacobian.Periods.PathIntegralChartNegEqNegOneSmul
 import Jacobian.Periods.PathIntegralViaChartNegEqNegOneSmul
+import Jacobian.Periods.ChartedFormPullbackApplyApplyLinear
 import Jacobian.Periods.PathIntegralChartSmulSymmEqNegSmul
 import Jacobian.Periods.PathIntegralViaChartSmulSymmEqNegSmul
 import Jacobian.Periods.PathIntegralChartCorrectZero

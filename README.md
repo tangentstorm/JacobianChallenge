@@ -46,13 +46,13 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~2.5h+.
+Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~3h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralChartNegEqNegOneSmul:
-                      `pathIntegralInChart_neg_eq_neg_one_smul` —
-                      provisional in-chart layer. Identity now at
-                      4 layers. Build green (8158 jobs).
+                      NEW Periods/ChartedFormPullbackApplyApplyLinear:
+                      five vector-apply (e v) forms of
+                      `chartedFormPullback` linearity (zero, neg,
+                      add, sub, smul). Build green (8160 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
