@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 03:07 EDT
+Last tick: 2026-04-27 03:18 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,14 +53,14 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      Corrected via-chart simps for both refl and
-                      translation chart instances. Both
-                      `pathIntegralViaChartCorrect_reflChart` and
-                      `pathIntegralViaChartCorrect_translationChart`
-                      reduce directly to a `curveIntegral`. The
-                      corrected/provisional pipeline now has
-                      end-to-end direct curveIntegral simps for
-                      both chart instances. Build green (8189 jobs).
+                      EXTENDED Periods/PathIntegralReflCover with
+                      `pathIntegralViaCover_self_eq_sum_curveIntegral`:
+                      for `chartedSpaceSelf E`, the multi-chart
+                      integral reduces to a sum of plain
+                      `curveIntegral ω.toFun (subpath_i)` — the
+                      most reduced cover-layer formula, hooking
+                      directly into Mathlib's `curveIntegral`.
+                      Build green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
