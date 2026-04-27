@@ -130,4 +130,20 @@ theorem pathIntegralViaChartCorrect_reflChart
   rw [pathIntegralViaChartCorrect_refl_eq_pathIntegralViaChart_refl,
       pathIntegralViaChart_reflChart]
 
+set_option linter.unusedSectionVars false in
+/-- Function-level: the provisional chart-form on the refl chart is
+literally the underlying form's `toFun`. -/
+theorem chartedForm_refl_eq_toFun
+    (ω : HolomorphicOneForm E E) :
+    chartedForm (OpenPartialHomeomorph.refl E) ω = ω.toFun := rfl
+
+set_option linter.unusedSectionVars false in
+/-- Function-level: the corrected chart-pullback on the refl chart
+is the underlying form's `toFun` (mfderiv factor cancels). -/
+theorem chartedFormPullback_refl_eq_toFun
+    (ω : HolomorphicOneForm E E) :
+    chartedFormPullback (OpenPartialHomeomorph.refl E) ω = ω.toFun := by
+  funext e
+  exact chartedFormPullback_refl_apply ω e
+
 end JacobianChallenge.Periods
