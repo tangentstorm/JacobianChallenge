@@ -12,33 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 13:50 EDT)
+## Live Status (2026-04-27 13:56 EDT)
 
-- **Aristotle event this tick — smoke test integrated:**
-  - `ee14b794-5d2d-4033-b9e8-6b91b277ccde` (Queue C):
-    `Jacobian/HolomorphicForms/EvalLinearMapEqZero.lean` —
-    discharge `evalLinearMap_eq_zero_iff_toFun_eq_zero`. COMPLETE
-    100% after ~67 min queue. Returned proof: `rw [evalLinearMap_apply]`
-    (the rw rfl-finisher closes the residual `iff` of equal sides).
-    Integrated as-is and wired into the HolomorphicForms umbrella.
-    Backend round-trip validated end-to-end.
-- Active jobs (ours): 0/5. Ready to submit substantive packets.
-- **Integrated this tick (local Claude-owned, 0 new local files —
-  Aristotle integration was the focus):**
-  - none (the integration of `ee14b794` is the single file change
-    plus the umbrella wiring).
-- **Tree note:** 5 untracked files (Solution.lean, TopDown.md,
-  CompactRiemannSurface.lean, GenusZeroClassification.lean,
-  PeriodLattice.lean) — unrelated, left alone.
+- Active jobs (ours): 2/5. Submitted this tick:
+  - `17176298-0dc0-41df-98ff-cd7f6a9584cb` (Queue C):
+    `Jacobian/HolomorphicForms/EvalLinearMapNegEqZero.lean` —
+    `evalLinearMap_neg_eq_zero_iff` via
+    `rw [(evalLinearMap x v).map_neg, neg_eq_zero]`.
+  - `638e3d5e-23bf-4cff-bb1c-de17bfb1aa58` (Queue C):
+    `Jacobian/HolomorphicForms/EvalLinearMapSubEqZeroIffEq.lean` —
+    `evalLinearMap_sub_eq_zero_iff_eq` via
+    `rw [(evalLinearMap x v).map_sub, sub_eq_zero]`.
+  Both are sorry-stubbed parking spots, not yet wired into the
+  umbrella.
+- **Integrated this tick (local Claude-owned, 0 new local files):**
+  - none (focus was on submitting the next batch of packets).
+- **Tree note:** same 5 untracked files — unrelated.
 - **Strategic note:**
-  Smoke test confirmed the round-trip. ~67min queue is heavier
-  than expected but the post-wake backend is healthy. Will start
-  submitting more substantive packets next tick — candidates:
-  small evalLinearMap iff/extensions, simple bundled-pullback
-  facts that are tedious to do locally.
+  Smoke-test round-trip is validated; ~67min queue is heavy but
+  acceptable. Continuing to feed Aristotle small file-scoped
+  packets in the eq/iff family while doing local work in parallel.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 13:35 EDT)
+## Stale Live Status (2026-04-27 13:50 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
