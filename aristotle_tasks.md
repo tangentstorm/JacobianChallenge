@@ -12,7 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 23:09 EDT)
+## Live Status (2026-04-26 23:16 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~5h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/PathIntegralViaCoverEqOfMfderivId.lean`:
+    Pick-layer bridge — the user-facing
+    `pathIntegralViaCover ω γ` reduces to a sum of provisional
+    via-chart integrals on the `Classical.choose`-picked partition,
+    under the global hypothesis
+    `∀ (x : X) (e : E), mfderiv (chartAt E x).symm e = id`. Proof:
+    `unfold` + apply the cover-with bridge with the universal
+    hypothesis adapted to each segment chart. **Bridge ladder fully
+    closed: chartedForm ✓ in-chart ✓ via-chart ✓ cover-with ✓
+    Pick ✓.** All 5 layers now have a named bridge from corrected
+    to provisional under one global hypothesis. Apt for
+    translation-only manifolds (e.g. complex tori). Build green
+    (8179 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 23:09 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~5h —
   `submitted-redundant`, kept as wake detector.

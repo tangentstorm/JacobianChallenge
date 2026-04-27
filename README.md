@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 23:09 EDT
+Last tick: 2026-04-26 23:16 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,17 +50,16 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/CoverSegmentSubpathRange (extracts
-                      reusable named version of the inline range
-                      proof in cover-with) + NEW Periods/PathIntegral-
-                      ViaCoverWithEqOfMfderivId: lifts the bridge to
-                      cover-with. `pathIntegralViaCoverWith ω γ n hn
-                      pickChart hcov = ∑ i, pathIntegralViaChart …`
-                      under per-chart `mfderiv c.symm = id` (proof:
-                      Finset.sum_congr + via-chart bridge per
-                      summand). Bridge ladder: chartedForm ✓ in-chart
-                      ✓ via-chart ✓ cover-with ✓ — Pick remains.
-                      Build green (8178 jobs).
+                      NEW Periods/PathIntegralViaCoverEqOfMfderivId:
+                      Pick (user-facing) bridge under global
+                      `∀ x e, mfderiv (chartAt E x).symm e = id`.
+                      Closes the bridge ladder: chartedForm ✓
+                      in-chart ✓ via-chart ✓ cover-with ✓ Pick ✓ —
+                      ALL 5 LAYERS BRIDGED. Under one global
+                      hypothesis the corrected period machinery
+                      reduces to the provisional one end-to-end
+                      (apt for translation-only manifolds, e.g.
+                      complex tori). Build green (8179 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
