@@ -88,4 +88,14 @@ theorem holomorphicOneFormDualEquiv_symm_pi_single
       holomorphicOneFormDualFinBasis E X i := by
   rw [LinearEquiv.symm_apply_eq, holomorphicOneFormDualEquiv_dualBasis_apply]
 
+/-- The duality property of the chosen basis and its dual: the `i`-th
+dual basis vector applied to the `j`-th basis vector is `δ_{ji}`. Direct
+specialization of `Module.Basis.dualBasis_apply_self`. -/
+theorem holomorphicOneFormDualFinBasis_apply_holomorphicOneFormFinBasis
+    (i j : Fin (analyticGenus E X)) :
+    holomorphicOneFormDualFinBasis E X i
+        (holomorphicOneFormFinBasis E X j) =
+      (if j = i then 1 else 0 : ℂ) :=
+  (holomorphicOneFormFinBasis E X).dualBasis_apply_self i j
+
 end JacobianChallenge.HolomorphicForms

@@ -12,7 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 18:48 EDT)
+## Live Status (2026-04-27 18:52 EDT)
+
+- **Aristotle: 2/5 active.**
+  - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%
+    (~1h40m in; 9 ticks stalled — clearly stuck).
+  - `aadb7721` genus-zero hard direction — IN_PROGRESS at 6% (~6 min
+    in; healthy progress; the easy direction took ~15 min).
+- **Local proof work this tick (Claude-owned):** Extended
+  `Jacobian/HolomorphicForms/BasisAlignedDualEquiv.lean` with
+  `holomorphicOneFormDualFinBasis_apply_holomorphicOneFormFinBasis`
+  — the duality property `b.dualBasis i (b j) = δ_{ji}` specialized
+  to our chosen basis.
+- **User commits this tick:**
+  - `c49cf9a ComplexTorus: transport charted space through ULift`
+    (Round 2b chart-transport via `Homeomorph.ulift`).
+  - `17b31f7 Solution: restore universe-polymorphism for genus and
+    genus_eq_zero_iff_homeo` (un-doing keystone monomorphism for those
+    public declarations).
+  - `62d2f9c TopDown: refresh Declaration Map with post-keystone state`.
+- Tree: clean (user finished pending WIP).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 18:48 EDT)
 
 - **Aristotle: 2/5 active.**
   - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%
