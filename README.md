@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 05:51 EDT
+Last tick: 2026-04-27 05:57 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -32,7 +32,7 @@ Complex torus quotient API       ███████████████�
 Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms                ████████░░░░░░░░░░░░   37%  type/module/analyticGenus + zero/positivity API + pointwise toFun simps (zero/neg/add/sub)
+Holomorphic forms                ████████░░░░░░░░░░░░   39%  type/module/analyticGenus + zero/positivity API + pointwise toFun simps (zero/neg/add/sub/smul) + vec-apply variants
 Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
@@ -53,10 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~11h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW HolomorphicForms.ToFunApply: pointwise
-                      `toFun` apply simps for zero/neg/add/sub of
-                      forms. All proven via `change ... ; rw [coe_*]; rfl`.
-                      Wired into HolomorphicForms umbrella.
+                      NEW HolomorphicForms.ToFunApplyVec: smul
+                      `toFun` apply + vec-apply forms for
+                      zero/neg/add. Closes the toFun simp matrix at
+                      the function and vec-apply levels.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -216,6 +216,7 @@ TraceDegree.PullbackFunIdComposeId pass lake build Jacobian.TraceDegree.Pullback
 HolomorphicForms.AnalyticGenus pass lake build Jacobian.HolomorphicForms.AnalyticGenus (no sorry)
 HolomorphicForms.AnalyticGenusPos pass lake build Jacobian.HolomorphicForms.AnalyticGenusPos (no sorry)
 HolomorphicForms.ToFunApply pass lake build Jacobian.HolomorphicForms.ToFunApply (no sorry)
+HolomorphicForms.ToFunApplyVec pass lake build Jacobian.HolomorphicForms.ToFunApplyVec (no sorry)
 ```
 
 ```text
