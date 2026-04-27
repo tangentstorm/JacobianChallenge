@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 08:41 EDT
+Last tick: 2026-04-27 08:45 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,10 +53,11 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~14h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AnalyticJacobian.MkMembership: kernel
-                      of `mk` = `periodSubgroup`, plus
-                      `mk_periodPairing_eq_zero` and a
-                      `_sub_mem` form of `mk_eq_mk_iff`.
+                      NEW AnalyticJacobian.EvalJacobianClassMember:
+                      `evalJacobianClass` ↔ `periodSubgroup`
+                      membership; `_eq_zero_of_*`,
+                      `_eq_evalJacobianClass_iff_sub_mem`,
+                      `mk_evalLinearMap_eq_zero_iff`.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -236,6 +237,7 @@ AnalyticJacobian.Mk pass lake build Jacobian.AnalyticJacobian.Mk (no sorry)
 AnalyticJacobian.MkOps pass lake build Jacobian.AnalyticJacobian.MkOps (no sorry)
 AnalyticJacobian.MkExt pass lake build Jacobian.AnalyticJacobian.MkExt (no sorry)
 AnalyticJacobian.MkMembership pass lake build Jacobian.AnalyticJacobian.MkMembership (no sorry)
+AnalyticJacobian.EvalJacobianClassMember pass lake build Jacobian.AnalyticJacobian.EvalJacobianClassMember (no sorry)
 AnalyticJacobian.EvalJacobianClass pass lake build Jacobian.AnalyticJacobian.EvalJacobianClass (no sorry)
 AnalyticJacobian.EvalJacobianClassOps pass lake build Jacobian.AnalyticJacobian.EvalJacobianClassOps (no sorry)
 AnalyticJacobian.EvalJacobianClassSmul pass lake build Jacobian.AnalyticJacobian.EvalJacobianClassSmul (no sorry)
