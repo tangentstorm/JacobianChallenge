@@ -1,6 +1,7 @@
 import Jacobian.ComplexTorus.Defs
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.HolomorphicForms.AnalyticGenus
+import Jacobian.Periods.BasisAlignedPeriodSubgroup
 
 /-!
 # Period lattice in the basis-aligned model
@@ -18,9 +19,9 @@ definition delegates to. Following the project's preference for
 *small* named obligations over a single monolithic helper, the
 construction is split into separately named pieces:
 
-* `periodSubgroup X` — the period subgroup (data, `opaque`);
-* `periodSubgroup_isClosed` — closedness in the model space;
-* `periodSubgroup_isDiscrete` — discreteness in the subspace topology;
+* `basisAlignedPeriodSubgroup X` — the period subgroup (data, `opaque`);
+* `basisAlignedPeriodSubgroup_isClosed` — closedness in the model space;
+* `basisAlignedPeriodSubgroup_isDiscrete` — discreteness in the subspace topology;
 * `periodFundamentalDomain X` — a chosen fundamental domain (data);
 * `periodFundamentalDomain_isCompact` — compactness;
 * `periodFundamentalDomain_covers` — the translates cover the model space;
@@ -47,23 +48,30 @@ basis-aligned model `Fin (analyticGenus ℂ X) → ℂ`.
 
 Top-down obligation. Bottom-up: image of `H₁(X, ℤ)` under the period
 pairing (integration of a basis of holomorphic 1-forms over a basis of
-1-cycles). -/
-opaque periodSubgroup : AddSubgroup (Fin (analyticGenus ℂ X) → ℂ)
+1-cycles), transported through a chosen basis of holomorphic 1-forms.
+
+A concrete representative `basisAlignedPeriodSubgroupConcrete X` is
+provided in `Jacobian/Periods/BasisAlignedPeriodSubgroup.lean`. Routing
+this opaque to that concrete representative requires aligning the
+universe of `X` between PeriodFunctional (currently `(X : Type)`) and
+PeriodLattice (`(X : Type*)`); deferred to a follow-up Type/Type*
+refactor tick. -/
+opaque basisAlignedPeriodSubgroup : AddSubgroup (Fin (analyticGenus ℂ X) → ℂ)
 
 /-- The period subgroup is closed in the model space.
 
 Top-down obligation. Bottom-up: discreteness of the period image plus
 finite-dimensionality. -/
-lemma periodSubgroup_isClosed :
-    IsClosed (periodSubgroup X : Set (Fin (analyticGenus ℂ X) → ℂ)) := sorry
+lemma basisAlignedPeriodSubgroup_isClosed :
+    IsClosed (basisAlignedPeriodSubgroup X : Set (Fin (analyticGenus ℂ X) → ℂ)) := sorry
 
 /-- The period subgroup is discrete in the subspace topology.
 
 Top-down obligation. Bottom-up: the period pairing image of `H₁(X, ℤ)`
 has no accumulation point near zero — a consequence of the integrality
 of period values on integral cycles. -/
-instance periodSubgroup_isDiscrete :
-    DiscreteTopology (periodSubgroup X) := sorry
+instance basisAlignedPeriodSubgroup_isDiscrete :
+    DiscreteTopology (basisAlignedPeriodSubgroup X) := sorry
 
 /-- A fundamental domain for the period subgroup, in the basis-aligned model.
 
@@ -86,7 +94,7 @@ vectors in the 2g-dimensional ℝ-vector space underlying
 `Fin g → ℂ`. -/
 lemma periodFundamentalDomain_covers :
     ∀ v : Fin (analyticGenus ℂ X) → ℂ,
-      ∃ g ∈ periodSubgroup X, v - g ∈ periodFundamentalDomain X := sorry
+      ∃ g ∈ basisAlignedPeriodSubgroup X, v - g ∈ periodFundamentalDomain X := sorry
 
 /-- The period lattice of a compact Riemann surface, bundled as a
 `FullComplexLattice` in the basis-aligned model `Fin (analyticGenus ℂ X) → ℂ`.
@@ -96,9 +104,9 @@ obligations above; this declaration adds no new sorry. -/
 noncomputable def periodFullComplexLattice :
     JacobianChallenge.ComplexTorus.FullComplexLattice
       (Fin (analyticGenus ℂ X) → ℂ) where
-  subgroup := periodSubgroup X
-  isClosed := periodSubgroup_isClosed X
-  isDiscrete := periodSubgroup_isDiscrete X
+  subgroup := basisAlignedPeriodSubgroup X
+  isClosed := basisAlignedPeriodSubgroup_isClosed X
+  isDiscrete := basisAlignedPeriodSubgroup_isDiscrete X
   fundamentalDomain := periodFundamentalDomain X
   fundamentalDomain_isCompact := periodFundamentalDomain_isCompact X
   fundamentalDomain_covers := periodFundamentalDomain_covers X
