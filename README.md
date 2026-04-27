@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 18:48 EDT
+Last tick: 2026-04-27 18:52 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -62,20 +62,39 @@ Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     2 / 5
                         `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS
-                                   at 17% (~1h35m in; 8 ticks stalled — appears
-                                   stuck).
-                        `aadb7721` genus-zero hard direction — IN_PROGRESS at 1%
-                                   (just left the queue; ~1 min ago).
+                                   at 17% (~1h40m in; 9 ticks stalled — clearly
+                                   stuck or hung).
+                        `aadb7721` genus-zero hard direction — IN_PROGRESS at 6%
+                                   (~6 min in; healthy progress).
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/HolomorphicForms/BasisAlignedDualEquiv.lean (+1 theorem)
+
+  holomorphicOneFormDualFinBasis_apply_holomorphicOneFormFinBasis
+    (i j : Fin (analyticGenus E X))
+    : holomorphicOneFormDualFinBasis E X i
+        (holomorphicOneFormFinBasis E X j)
+        = if j = i then 1 else 0
+    Duality property of the chosen basis and its dual; direct
+    specialization of `Module.Basis.dualBasis_apply_self`. The δ_{ji}
+    convention matches Mathlib's; downstream uses can flip via `eq_comm`
+    if needed.
+
+User commits this tick:
+  c49cf9a ComplexTorus: transport charted space through ULift —
+          Round 2b chart-transport for Jacobian X via Homeomorph.ulift.
+  17b31f7 Solution: restore universe-polymorphism for genus and
+          genus_eq_zero_iff_homeo — un-doing the keystone monomorphism
+          for these specific public declarations.
+  62d2f9c TopDown: refresh Declaration Map with post-keystone state.
+
+PRIOR TICK (still standing):
 WIRED `Jacobian.Periods.BasisAlignedAnalyticJacobianEquiv` into the
-`Jacobian/Periods.lean` umbrella. It had been a freestanding file
-since I built it 4 ticks ago; this completes its integration into
-the public Periods API.
+`Jacobian/Periods.lean` umbrella.
 
 PRIOR TICK (still standing):
 This tick was an Aristotle submission (aadb7721 hard direction).
