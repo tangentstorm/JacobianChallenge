@@ -165,6 +165,8 @@ import Jacobian.Periods.PeriodSubgroupNeg
 import Jacobian.Periods.PeriodSubgroupApi
 import Jacobian.Periods.PeriodSubgroupClosure
 import Jacobian.Periods.PeriodSubgroupExt
+import Jacobian.Periods.PeriodSubgroupRange
+import Jacobian.Periods.BasisAlignedPeriodSubgroup
 
 /-!
 # Periods infrastructure

@@ -12,7 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 15:40 EDT)
+## Live Status (2026-04-27 15:57 EDT)
+
+- **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)
+  is QUEUED**. No movement to retrieve yet. Per PROMPT.md "check
+  Aristotle status once" — not polling. Will check next tick.
+- **Local proof work this tick (Claude-owned, substantive):** NEW
+  `Jacobian/Periods/BasisAlignedPeriodSubgroup.lean` (1 def + 2 theorems,
+  ~50 real lines) — provides `basisAlignedPeriodSubgroupConcrete` as
+  the concrete representative of the basis-aligned period subgroup,
+  defined as the image of the existing functional-space `periodSubgroup ℂ X`
+  under the basis-aligned dual equivalence introduced last tick. This
+  is the substantive next step toward unfreezing the opaque in
+  PeriodLattice.lean. A new name (`...Concrete`) was used to avoid the
+  Lean-4 same-name conflict with PeriodLattice's
+  `opaque periodSubgroup`; a future tick will do the rename refactor
+  (3 importers: PeriodLattice itself, Solution.lean,
+  AbelJacobi/AnalyticOfCurveBasis.lean).
+- Also wired the previously-orphaned `Jacobian.Periods.PeriodSubgroupRange`
+  (integrated last tick from packet 6c252557) into the umbrella.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 15:40 EDT)
 
 - **User course-correction this tick:** "just give aristotle something
   off the critical path, even if it's big". Memory entry
