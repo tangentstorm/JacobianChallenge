@@ -12,7 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 23:16 EDT)
+## Live Status (2026-04-26 23:31 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~5h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/ChartedFormPullbackEqChartedFormOfSymmEventuallyEqId.lean`:
+    weaker sufficient condition for the chartedForm bridge. For a
+    self-chart `c : OpenPartialHomeomorph E E`, the hypothesis
+    `c.symm =ᶠ[𝓝 e] id` (i.e. `c.symm` agrees with the identity in
+    a neighborhood of `e`) suffices. Proof: reduce to the previous
+    `_of_mfderiv_id` bridge via `Filter.EventuallyEq.mfderiv_eq` +
+    `mfderiv_id`. Useful instance for translation charts on the
+    model space `ℂ` itself (the torus example). Build green
+    (8180 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 23:16 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~5h —
   `submitted-redundant`, kept as wake detector.
