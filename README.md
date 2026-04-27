@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 02:41 EDT
+Last tick: 2026-04-27 02:46 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,12 +53,13 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED Periods/PathIntegralReflChart with
-                      `pathIntegralViaChart_reflChart`: via-chart
-                      analogue of last tick's reflChart integral
-                      simp. `pathIntegralViaChart (refl E) ω γ h =
-                      curveIntegral ω.toFun γ` directly. Build green
-                      (8189 jobs).
+                      EXTENDED Periods/TranslationChart with
+                      `pathIntegralInChart_translationChart`:
+                      `pathIntegralInChart (translationChart v) ω γ
+                      = curveIntegral (fun e => ω.toFun (e + (-v))) γ`.
+                      Hooks the in-chart layer of the translation
+                      chart directly into Mathlib's `curveIntegral`.
+                      Build green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
