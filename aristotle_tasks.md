@@ -12,20 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 09:27 EDT)
+## Live Status (2026-04-27 09:30 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/TraceDegree/PullbackFunIdEvalDist.lean`:
+    pullback-along-id form-side distributivity proven via
+    `(evalLinearMap x v).map_*`:
+      - `pullbackFormsFun_id_zero_apply_vec`
+      - `pullbackFormsFun_id_add_apply_vec`
+      - `pullbackFormsFun_id_neg_apply_vec`
+      - `pullbackFormsFun_id_sub_apply_vec`
+    Wired into TraceDegree umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~15h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 09:27 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/AbelJacobi/Symmetry.lean`:
-      - `witnessAbelJacobi_neg_vec_eq_neg` (alias of `_neg_vec`)
+      - `witnessAbelJacobi_neg_vec_eq_neg`
       - `evalJacobianClass_neg_vec_at_endpoint`
-      - `witnessAbelJacobi_two_smul_vec` (specialization of nsmul)
+      - `witnessAbelJacobi_two_smul_vec`
       - `witnessAbelJacobi_eq_zero_of_evalLinearMap_eq`
-    Wired into AbelJacobi umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~15h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 09:23 EDT)
