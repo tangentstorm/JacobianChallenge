@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 07:01 EDT
+Last tick: 2026-04-27 07:09 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -33,7 +33,7 @@ Quotient charted-space/manifold  ███████████████�
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
 Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
-Path integration/periods         █████████████░░░░░░░   67%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances + named API around opaque periodPairing/periodSubgroup
+Path integration/periods         ██████████████░░░░░░   68%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances + named API around periodPairing/periodSubgroup with closure lemmas
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
 Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
@@ -53,11 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~12h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW Periods.PeriodSubgroupApi: extends last
-                      tick — `periodPairing_sub`,
-                      `mem_periodSubgroup_iff`,
-                      `periodPairing_mem_periodSubgroup`,
-                      `neg_mem_periodSubgroup`.
+                      NEW Periods.PeriodSubgroupClosure: closure
+                      under add/sub/nsmul/zsmul of `periodSubgroup`
+                      (group-theoretic facts, exposed as named
+                      lemmas).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -231,6 +230,7 @@ HolomorphicForms.EvalLinearMapVecExtra pass lake build Jacobian.HolomorphicForms
 HolomorphicForms.AnalyticGenusOrder pass lake build Jacobian.HolomorphicForms.AnalyticGenusOrder (no sorry)
 Periods.PeriodFunctionalApi pass lake build Jacobian.Periods.PeriodFunctionalApi (no sorry)
 Periods.PeriodSubgroupApi pass lake build Jacobian.Periods.PeriodSubgroupApi (no sorry)
+Periods.PeriodSubgroupClosure pass lake build Jacobian.Periods.PeriodSubgroupClosure (no sorry)
 ```
 
 ```text

@@ -161,6 +161,7 @@ import Jacobian.Periods.PathPartition
 import Jacobian.Periods.PeriodFunctional
 import Jacobian.Periods.PeriodFunctionalApi
 import Jacobian.Periods.PeriodSubgroupApi
+import Jacobian.Periods.PeriodSubgroupClosure
 
 /-!
 # Periods infrastructure
