@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 17:06 EDT
+Last tick: 2026-04-27 17:11 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -69,16 +69,38 @@ Integrated this tick:   None.
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-EXTEND Jacobian/Periods/BasisAlignedPeriodSubgroup.lean (+1 def)
+NEW Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (1 abbrev + 1 def)
 
-  holomorphicOneFormDualPeriodSubgroupEquiv
-    : periodSubgroup ℂ X ≃+ basisAlignedPeriodSubgroupConcrete X
-    A noncomputable AddEquiv between the functional-space and
-    basis-aligned period subgroups, built from Mathlib's
-    `AddSubgroup.equivMapOfInjective`. Combines the existing
-    `BijOn`-style transport with the actual additive-group structure
-    on both sides. Useful for cleanly transporting any additive-group
-    or topological-group property across the bridge.
+  BasisAlignedAnalyticJacobian X : Type
+    := (Fin (analyticGenus ℂ X) → ℂ) ⧸ basisAlignedPeriodSubgroupConcrete X
+
+  analyticJacobianBasisAlignedEquiv X
+    : AnalyticJacobianGroup ℂ X ≃+ BasisAlignedAnalyticJacobian X
+    Built via Mathlib's `QuotientAddGroup.congr` against
+    `holomorphicOneFormDualEquiv` and the rfl image-equation on
+    period subgroups. Lifts the AddEquiv from the prior tick's
+    `holomorphicOneFormDualPeriodSubgroupEquiv` from the period
+    subgroups themselves up to the corresponding quotients.
+
+This is the top-of-stack of the basis-aligned period bridge: it
+connects the functional-space `AnalyticJacobianGroup ℂ X` (already
+heavily-built-out via the AnalyticJacobian directory) directly to a
+basis-aligned quotient. Future work that wants to use the existing
+mk/evalJacobianClass/etc. machinery from the basis-aligned side can
+route through this equivalence.
+
+Tree note: user has dirty WIP across 6 files
+(M Jacobian/{Solution,Periods/PeriodLattice,AbelJacobi/AnalyticOfCurveBasis,TraceDegree/{AnalyticDegree,PullbackBasis,PushforwardBasis}}.lean).
+The PeriodLattice change is a keystone refactor that unfreezes
+`opaque basisAlignedPeriodSubgroup` and points it at
+`basisAlignedPeriodSubgroupConcrete`; specializes `(X : Type*)` →
+`(X : Type)` to align with the IntegralOneCycle universe constraint.
+Currently `lake build Jacobian.Solution` fails (unrelated to my work)
+— the refactor is mid-flight. Left untouched per PROMPT.md.
+
+PRIOR TICK (still standing):
+EXTEND Jacobian/Periods/BasisAlignedPeriodSubgroup.lean (+1 def)
+holomorphicOneFormDualPeriodSubgroupEquiv
 
 PRIOR TICK (still standing):
 NEW Jacobian/HolomorphicForms/SectionTopologyRecon.lean (recon stub).
