@@ -21,6 +21,6 @@ theorem witnessAbelJacobi_self_both
     (P Q : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) P P v =
       witnessAbelJacobi Q Q v := by
-  sorry
+  rw [witnessAbelJacobi_self, witnessAbelJacobi_self]
 
 end JacobianChallenge.AbelJacobi

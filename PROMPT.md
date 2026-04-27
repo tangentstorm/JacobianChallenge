@@ -56,11 +56,18 @@ The timer will call you again.
    - Whenever you integrate Aristotle changes, refresh `README.md` with the
      current progress report before committing.
 
-3. Keep Aristotle busy.
-   - Aim for 5 active Aristotle tasks (counted from `aristotle_jobs.jsonl`,
-     not from `aristotle list`).
-   - Submit enough new independent tasks to bring the active count back
-     toward 5, but only if there are safe, file-scoped tasks available.
+3. Keep Aristotle busy — but **only with substantive work**.
+   - Aim for up to 5 active Aristotle tasks (counted from
+     `aristotle_jobs.jsonl`, not from `aristotle list`), but **do not
+     fill the queue with trivial fillers**. If a candidate task's
+     proof would be 1 line (`rfl`, `sub_self`, a single `rw`,
+     term-mode `mt _.mp h`, etc.), prove it locally instead. Aristotle
+     packets should be 5-30+ line proofs requiring non-obvious
+     reductions, multi-step rewrite chains, case splits, induction, or
+     careful `ext + simp/rw` bundling.
+   - It is fine to have 0/5 active when no real bounded work is
+     ready. Leaving the queue light beats round-tripping trivials
+     through the backend.
    - Use disjoint write scopes for parallel tasks.
    - Every time you submit a job, append a JSONL line to
      `aristotle_jobs.jsonl` with `{id, status: "submitted", queue,

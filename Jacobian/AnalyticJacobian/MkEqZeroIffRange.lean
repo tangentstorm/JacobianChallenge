@@ -20,6 +20,6 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 theorem mk_eq_zero_iff_mem_range
     (φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ) :
     mk E X φ = 0 ↔ φ ∈ (periodPairing E X).range := by
-  sorry
+  rw [mk_eq_zero_iff, periodSubgroup_eq_range]
 
 end JacobianChallenge.AnalyticJacobian

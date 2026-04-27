@@ -18,7 +18,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 /-- `periodSubgroup E X` equals `(periodPairing E X).range`. -/
 theorem periodSubgroup_eq_range :
-    periodSubgroup E X = (periodPairing E X).range := by
-  sorry
+    periodSubgroup E X = (periodPairing E X).range :=
+  rfl
 
 end JacobianChallenge.Periods
