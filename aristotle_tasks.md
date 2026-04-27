@@ -12,7 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 17:11 EDT)
+## Live Status (2026-04-27 17:41 EDT)
+
+- **Aristotle recon packet `b782c387`** (topology on ContMDiffSection
+  survey) still QUEUED at backend (~36 min in). Per PROMPT.md not
+  polling. Recon packets typically complete fast once they leave
+  the queue.
+- **User keystone refactor LANDED** as commit `952e750`. The 6-file
+  mid-flight WIP from last tick is resolved: PeriodLattice's
+  `basisAlignedPeriodSubgroup` is now the `noncomputable def` routing
+  to `basisAlignedPeriodSubgroupConcrete`. Solution.lean builds clean.
+- **Local proof work this tick (Claude-owned):** Extended
+  `Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean` with two
+  named simp lemmas — `analyticJacobianBasisAlignedEquiv_mk` and
+  `_symm_mk`. Both rfl proofs (direct corollaries of
+  `QuotientAddGroup.congr_mk`). Useful for downstream rewriting on
+  the basis-aligned bridge.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 17:11 EDT)
 
 - **Aristotle recon packet `b782c387`** still QUEUED at backend
   (~5 min in). Per PROMPT.md not polling.
