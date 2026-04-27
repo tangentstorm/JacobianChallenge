@@ -12,28 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 10:05 EDT)
+## Live Status (2026-04-27 10:08 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapConstDist.lean`:
-    bundled along-const form-slot trivial distributivity
-    (both sides collapse to 0):
-      - `pullbackFormsLinearMap_const_add_apply_vec`
-      - `pullbackFormsLinearMap_const_neg_apply_vec`
-      - `pullbackFormsLinearMap_const_sub_apply_vec`
-      - `pullbackFormsLinearMap_const_smul_apply_vec`
-    Each rewrites both sides via the existing
-    `pullbackFormsLinearMap_const_apply_vec` zero collapse plus
-    `add_zero` / `neg_zero` / `sub_zero` / `smul_zero`. Useful as
-    direct simp targets so callers don't need to re-derive.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapConstVec.lean`:
+    bundled along-const vec-slot trivial distributivity:
+      - `pullbackFormsLinearMap_const_apply_zero_vec`
+      - `pullbackFormsLinearMap_const_apply_add_vec`
+      - `pullbackFormsLinearMap_const_apply_neg_vec`
+      - `pullbackFormsLinearMap_const_apply_smul_vec`
+    Vec-slot mirror of `PullbackFormsLinearMapConstDist`; each
+    collapses both sides via the same const-pullback zero identity.
+    Useful as direct simp targets for vec-slot rewrites.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~15h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 10:03 EDT)
+## Stale Live Status (2026-04-27 10:05 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
