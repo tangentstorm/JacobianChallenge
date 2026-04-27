@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 00:40 EDT
+Last tick: 2026-04-27 00:45 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,14 +50,14 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EventuallyEq variants of the three translation
-                      bridges in ChartedFormPullbackTranslationChart:
-                      `_of_symm_eventuallyEq_{add_const, const_add,
-                      sub_const}`. Weaker hypothesis (`c.symm =ᶠ[𝓝 e]
-                      translation`) suffices since `mfderiv` is local.
-                      Useful for charts that agree with a translation
-                      only in a neighborhood of `e`. Build green
-                      (8186 jobs).
+                      NEW Periods/ChartedFormPullbackLinearMapEqOf-
+                      MfderivId: bundled-LinearMap bridge. Under the
+                      global `mfderiv c.symm = id` hypothesis,
+                      `chartedFormPullbackLinearMap c =
+                      chartedFormLinearMap c` as ℂ-linear maps.
+                      Proof: `LinearMap.ext` + `funext` + the
+                      previous-layer pointwise bridge. Build green
+                      (8187 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
