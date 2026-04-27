@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 19:30 EDT
+Last tick: 2026-04-27 19:37 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -68,23 +68,20 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5  `b782c387` topology-on-ContMDiffSection recon —
-                        IN_PROGRESS at 17%, ~2h12m elapsed (normal long-running).
+                        IN_PROGRESS at 17%, ~2h22m elapsed (normal long-running).
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CLEANUP: stripped 229 stale "Live Status" sections from
-`aristotle_tasks.md` (3824 lines → 317 lines, ~92% reduction). Per
-PROMPT.md the Live Status block must be REPLACED each tick, not
-appended; historical job detail belongs in `aristotle_jobs.jsonl`,
-which has been maintained throughout. The Layer-status and
-Queue-template sections at the bottom of `aristotle_tasks.md` are
-preserved as the durable parts of the file.
+Heartbeat tick — no new work since last tick (which was the
+aristotle_tasks.md cleanup at 19:30, commit 127a78d).
 
-Production sorry-free still 381 / 389 (8 real-sorry production
-files: 3 Claude-owned-deep, 5 user-WIP).
+Production sorry-free still 381 / 389.
+
+PRIOR TICK (still standing):
+CLEANUP of `aristotle_tasks.md` from 3824 → 317 lines.
 
 PRIOR TICK (still standing):
 DOC: refreshed top-of-file docstring in
