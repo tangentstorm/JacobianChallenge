@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 19:05 EDT
+Last tick: 2026-04-27 19:08 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -77,6 +77,14 @@ Integrated this tick:   None.
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DOC: refreshed top-of-file docstring in
+`Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean` to (a)
+include the four-file bridge architecture diagram and (b) note the
+post-keystone-refactor (commit 952e750) state where the user's
+`BasisAnalyticJacobian X` and this file's `BasisAlignedAnalyticJacobian X`
+are definitionally equal as types. Build verified clean.
+
+PRIOR TICK (still standing):
 Light tick: README sorry-free counts re-derived (still 381/389,
 no change since two ticks ago — user's `fb99006` exposure of a
 ULift transition obligation added 1 sorry to ULiftTransport, but
