@@ -12,29 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 13:06 EDT)
+## Live Status (2026-04-27 13:11 EDT)
 
-- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~20 min
+- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~27 min
   (rfl-iff smoke test). Backend has long queue depth post-wake;
   awaiting our turn.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/HolomorphicForms/EvalLinearMapApiExtra.lean`:
-    named LinearMap-bridge wrappers for `evalLinearMap`:
-      - `evalLinearMap_apply_zero`
-      - `evalLinearMap_apply_add`
-      - `evalLinearMap_apply_neg`
-      - `evalLinearMap_apply_sub`
-    Direct `(evalLinearMap x v).map_{zero,add,neg,sub}` unwraps,
-    exposed as named lemmas for callers that prefer not to unfold
-    the `LinearMap` interface.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapTriple.lean`:
+    3-arg add/sub combinations for bundled pullback, arbitrary `f`:
+      - `pullbackFormsLinearMap_add_add`
+      - `pullbackFormsLinearMap_sub_add`
+      - `pullbackFormsLinearMap_add_sub`
+      - `pullbackFormsLinearMap_sub_sub`
+    All `@[simp]`. Each composes two of the existing
+    `_add` / `_sub` distributivity laws.
 - **Tree note:** untracked `Jacobian/Solution.lean` and
   `Jacobian/WorkPackets/TopDown.md` — unrelated.
 - **Strategic note (carried forward):**
   Continuing local cadence in parallel with Aristotle smoke test.
-  If `ee14b794` returns clean, scale up to 5 active.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 12:58 EDT)
+## Stale Live Status (2026-04-27 13:06 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
