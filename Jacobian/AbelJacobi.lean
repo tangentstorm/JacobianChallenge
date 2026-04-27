@@ -4,6 +4,7 @@ import Jacobian.AbelJacobi.Smul
 import Jacobian.AbelJacobi.BaseChange
 import Jacobian.AbelJacobi.Identities
 import Jacobian.AbelJacobi.Coset
+import Jacobian.AbelJacobi.Telescoping
 
 /-!
 # Abel-Jacobi infrastructure (witness skeleton)
