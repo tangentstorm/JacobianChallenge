@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 06:14 EDT
+Last tick: 2026-04-27 06:24 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -32,7 +32,7 @@ Complex torus quotient API       ███████████████�
 Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms                █████████░░░░░░░░░░░   45%  type/module/analyticGenus + zero/positivity API + full toFun simp matrix + bundled `evalLinearMap` with neg/sub/smul/nsmul API
+Holomorphic forms                █████████░░░░░░░░░░░   46%  type/module/analyticGenus + zero/positivity API + full toFun simp matrix + bundled `evalLinearMap` with neg/sub/smul/nsmul/zsmul API
 Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
@@ -53,11 +53,11 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~12h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFunEvalLinearMap:
-                      light bridge between pullbackFormsFun and
-                      the HolomorphicForms.evalLinearMap facade —
-                      factorisation, id-collapse, evalLinearMap
-                      identity at id, ℂ-linear add via the new API.
+                      NEW HolomorphicForms.EvalLinearMapZsmul:
+                      `evalLinearMap_zsmul` (via
+                      `LinearMap.toAddMonoidHom.map_zsmul`),
+                      `_natCast_smul`, `_neg_neg`, plus
+                      `zsmul_toFun_apply`.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -222,6 +222,7 @@ HolomorphicForms.ToFunApplyVecExtra pass lake build Jacobian.HolomorphicForms.To
 HolomorphicForms.EvalLinearMap pass lake build Jacobian.HolomorphicForms.EvalLinearMap (no sorry)
 HolomorphicForms.EvalLinearMapApi pass lake build Jacobian.HolomorphicForms.EvalLinearMapApi (no sorry)
 TraceDegree.PullbackFunEvalLinearMap pass lake build Jacobian.TraceDegree.PullbackFunEvalLinearMap (no sorry)
+HolomorphicForms.EvalLinearMapZsmul pass lake build Jacobian.HolomorphicForms.EvalLinearMapZsmul (no sorry)
 ```
 
 ```text
