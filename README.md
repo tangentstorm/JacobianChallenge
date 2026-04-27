@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 19:23 EDT
+Last tick: 2026-04-27 19:25 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -68,18 +68,16 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5  `b782c387` topology-on-ContMDiffSection recon —
-                        IN_PROGRESS at 17%, ~2h05m elapsed (long IN_PROGRESS is
-                        normal).
+                        IN_PROGRESS at 17%, ~2h10m elapsed (normal long-running).
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Light tick. No new Lean work. ULiftTransport real-sorry count drops
-5 → 4 from user's `532e49d ULiftTransport: discharge homeomorph
-transition cancellation`. Headline production sorry-free unchanged
-at 381 / 389 (8 real-sorry production files; same set as last tick).
+Light tick. No new Lean work, no new commits since last tick.
+Production sorry-free still 381 / 389 (8 real-sorry production
+files: 3 Claude-owned-deep, 5 user-WIP).
 
 PRIOR TICK (still standing):
 DOC: refreshed top-of-file docstring in
