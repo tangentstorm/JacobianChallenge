@@ -12,26 +12,32 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 06:14 EDT)
+## Live Status (2026-04-27 06:24 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/HolomorphicForms/EvalLinearMapZsmul.lean`:
+      - `evalLinearMap_zsmul` (via `LinearMap.toAddMonoidHom.map_zsmul`)
+      - `evalLinearMap_natCast_smul`
+      - `evalLinearMap_neg_neg`
+      - `zsmul_toFun_apply` (via `ContMDiffSection.coe_zsmul`)
+    Wired into HolomorphicForms umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~12h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 06:14 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/TraceDegree/PullbackFunEvalLinearMap.lean`:
-    light bridge between `pullbackFormsFun` and the new
-    `HolomorphicForms.evalLinearMap`:
-      - `pullbackFormsFun_apply_eq_comp` (factorisation)
+      - `pullbackFormsFun_apply_eq_comp`
       - `pullbackFormsFun_id_apply_eq_toFun`
       - `pullbackFormsFun_id_apply_vec_eq_evalLinearMap`
-      - `pullbackFormsFun_apply_vec_add'` (ℂ-linear add via the
-        new toFun simp)
-    Note: full vec-applied identity not a rfl-bridge, since
-    `mfderiv f x v` lives in `TangentSpace 𝓘 (f x)` rather than
-    `E` and Lean doesn't unify them.
-    Wired into TraceDegree umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~12h — not waiting.
+      - `pullbackFormsFun_apply_vec_add'`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 06:08 EDT)
