@@ -58,6 +58,37 @@ noncomputable instance complexTorusULift_chartedSpace
     exact mem_chartAtPoint_source Λ q.down
   chart_mem_atlas q := ⟨q, rfl⟩
 
+/-- The transition between two `ULift`-transported quotient charts agrees,
+on its source, with the corresponding transition between the underlying
+quotient charts.
+
+Top-down obligation. Bottom-up: reassociate the `OpenPartialHomeomorph`
+composition and cancel
+`Homeomorph.ulift.toOpenPartialHomeomorph.symm ≫ₕ
+Homeomorph.ulift.toOpenPartialHomeomorph`. -/
+lemma complexTorusULift_transition_eqOnSource
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    (Λ : FullComplexLattice V)
+    (q q' : ULift.{u} (quotient V Λ)) :
+    (complexTorusULiftChartAt Λ q).symm ≫ₕ complexTorusULiftChartAt Λ q' ≈
+      (chartAtPoint Λ q.down).symm ≫ₕ chartAtPoint Λ q'.down := sorry
+
+/-- ULift transport of the complex torus `HasGroupoid` structure.
+
+Pure assembly from `complexTorusULift_transition_eqOnSource` and the
+underlying quotient manifold transition theorem. -/
+noncomputable instance complexTorusULift_hasGroupoid
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
+    HasGroupoid (ULift.{u} (quotient V Λ))
+      (contDiffGroupoid (⊤ : WithTop ℕ∞) (modelWithCornersSelf ℂ V)) := by
+  refine ⟨?_⟩
+  rintro e e' ⟨q, rfl⟩ ⟨q', rfl⟩
+  exact (contDiffGroupoid (⊤ : WithTop ℕ∞) (modelWithCornersSelf ℂ V)).mem_of_eqOnSource
+    ((contDiffGroupoid (⊤ : WithTop ℕ∞) (modelWithCornersSelf ℂ V)).compatible
+      (chart_mem_atlas V q.down) (chart_mem_atlas V q'.down))
+    (complexTorusULift_transition_eqOnSource Λ q q')
+
 /-- ULift transport of the complex torus manifold structure.
 
 Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
@@ -66,7 +97,7 @@ noncomputable instance complexTorusULift_isManifold
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
     IsManifold (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
-      (ULift.{u} (quotient V Λ)) := sorry
+      (ULift.{u} (quotient V Λ)) where
 
 /-- ULift transport of the complex torus Lie-add-group structure.
 
