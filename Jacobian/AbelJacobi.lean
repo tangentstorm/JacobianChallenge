@@ -13,6 +13,7 @@ import Jacobian.AbelJacobi.WitnessMk
 import Jacobian.AbelJacobi.WitnessMkPeriodPairing
 import Jacobian.AbelJacobi.WitnessZeroIff
 import Jacobian.AbelJacobi.WitnessEqIff
+import Jacobian.AbelJacobi.WitnessZeroSmul
 import Jacobian.AbelJacobi.Symmetry
 
 /-!

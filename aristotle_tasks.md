@@ -12,31 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 11:39 EDT)
+## Live Status (2026-04-27 11:45 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~17h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/AbelJacobi/WitnessEqIff.lean`:
-    witness-equality characterizations via the chain identity:
-      - `witnessAbelJacobi_endpoint_eq_iff_chain_zero`
-      - `witnessAbelJacobi_endpoint_eq_of_chain_zero`
-      - `witnessAbelJacobi_basePoint_eq_iff_chain_zero`
-      - `witnessAbelJacobi_basePoint_eq_of_chain_zero`
-    Two iff/of pairs: `witness A P = witness A Q ↔ witness P Q = 0`
-    (shared base point) and `witness A R = witness B R ↔
-    witness A B = 0` (shared endpoint). First attempt at the
-    base-point case used `sub_right_cancel` (does not exist);
-    switched to a `← sub_eq_zero` rewrite combined with
-    `witness A R - witness B R = witness A B` proven by `abel`.
-  - README restructured per user request — one-line summary at
-    top, status sections, then full About description below.
+  - NEW `Jacobian/AbelJacobi/WitnessZeroSmul.lean`:
+    sufficient conditions for witness vanishing via integer-scaled
+    / negated `periodPairing` endpoint differences:
+      - `witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_nsmul_periodPairing`
+      - `witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_zsmul_periodPairing`
+      - `witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_neg_periodPairing`
+      - `witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_natCast_zsmul_periodPairing`
+    Continues `WitnessZeroIff`. Each composes
+    `witnessAbelJacobi_eq_mk_sub` with the matching
+    `mk_{n,z}smul_periodPairing` / `mk_neg_periodPairing` collapse.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~17h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 11:24 EDT)
+## Stale Live Status (2026-04-27 11:39 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
