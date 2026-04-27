@@ -12,7 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 00:34 EDT)
+## Live Status (2026-04-27 00:40 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/ChartedFormPullbackTranslationChart.lean`
+    with EventuallyEq variants of all three translation bridges:
+      - `_of_symm_eventuallyEq_add_const`
+      - `_of_symm_eventuallyEq_const_add`
+      - `_of_symm_eventuallyEq_sub_const`
+    Weaker hypothesis (`c.symm =ᶠ[𝓝 e] translation`) suffices since
+    `mfderiv` is local at `e`. Proof: reduce to `_of_mfderiv_id` via
+    `Filter.EventuallyEq.mfderiv_eq` + the corresponding
+    `mfderiv_*_const_self`. Useful for charts that agree with a
+    translation only in a neighborhood of `e` (typical of partial
+    chart inverses). Build green (8186 jobs, no new module).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 00:34 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
   `submitted-redundant`, kept as wake detector.
