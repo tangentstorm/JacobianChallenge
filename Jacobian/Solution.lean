@@ -5,6 +5,7 @@ import Jacobian.Periods.PeriodLattice
 import Jacobian.ComplexTorus.ULiftTransport
 import Jacobian.AbelJacobi.AnalyticOfCurveBasis
 import Jacobian.TraceDegree.PullbackBasis
+import Jacobian.TraceDegree.PushforwardBasis
 
 /-!
 
@@ -57,9 +58,12 @@ sorries are discharged. See `Jacobian/WorkPackets/TopDown.md`.
   `pullback_id_apply`, `pullback_comp_apply` — basis-aligned
   analytic pullback (bundled `→ₜ+`) wrapped through `ULift.up`.
   Named obligations in `Jacobian/TraceDegree/PullbackBasis.lean`.
+* **Round 4b** ✅ `pushforward`, `pushforward_contMDiff`,
+  `pushforward_id_apply`, `pushforward_comp_apply` — symmetric
+  to 4a in the opposite direction. Named obligations in
+  `Jacobian/TraceDegree/PushforwardBasis.lean`.
 
-Remaining: Round 4b (`pushforward` family), Round 4c (`degree` +
-`pushforward_pullback`).
+Remaining: Round 4c (`degree` + `pushforward_pullback`).
 
 -/
 
@@ -169,18 +173,39 @@ variable {Y : Type*} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [Connecte
 
 variable (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
 
-/-- The pushforward map between Jacobians associated to a map of the underlying curves. -/
-def pushforward (f : X → Y)
+/-- The pushforward map between Jacobians associated to a map of the underlying curves.
+Refinement (Round 4b): bundled hom over `analyticPushforward` + `ULift.up`. -/
+noncomputable def pushforward (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    Jacobian X →ₜ+ Jacobian Y := sorry
+    Jacobian X →ₜ+ Jacobian Y where
+  toFun P := ULift.up (JacobianChallenge.TraceDegree.analyticPushforward f hf P.down)
+  map_zero' := by
+    show ULift.up _ = (0 : Jacobian Y)
+    rw [show (0 : Jacobian X).down = 0 from rfl, map_zero]
+    rfl
+  map_add' a b := by
+    show ULift.up _ = ULift.up _ + ULift.up _
+    rw [show (a + b).down = a.down + b.down from rfl, map_add]
+    rfl
+  continuous_toFun :=
+    continuous_uliftUp.comp
+      ((JacobianChallenge.TraceDegree.analyticPushforward f hf).continuous.comp
+        continuous_uliftDown)
 
 -- pushforward is holomorphic
 theorem pushforward_contMDiff :
-  ContMDiff (modelWithCornersSelf ℂ (Fin (genus X) → ℂ))
-  (modelWithCornersSelf ℂ (Fin (genus Y) → ℂ)) ω (pushforward f hf) := sorry
+    ContMDiff (modelWithCornersSelf ℂ (Fin (genus X) → ℂ))
+      (modelWithCornersSelf ℂ (Fin (genus Y) → ℂ)) ω (pushforward f hf) :=
+  (JacobianChallenge.ComplexTorus.contMDiff_uLift_up).comp
+    ((JacobianChallenge.TraceDegree.analyticPushforward_contMDiff f hf).comp
+      JacobianChallenge.ComplexTorus.contMDiff_uLift_down)
 
 -- functoriality
-lemma pushforward_id_apply (P : Jacobian X) : pushforward id contMDiff_id P = P := sorry
+lemma pushforward_id_apply (P : Jacobian X) : pushforward id contMDiff_id P = P := by
+  show ULift.up (JacobianChallenge.TraceDegree.analyticPushforward (X := X) (Y := X)
+      id contMDiff_id P.down) = P
+  rw [JacobianChallenge.TraceDegree.analyticPushforward_id_apply]
+  rfl
 
 variable {Z : Type*} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
   [ChartedSpace ℂ Z] [IsManifold 𝓘(ℂ) ω Z]
@@ -189,8 +214,12 @@ variable (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
 
 -- functoriality
 lemma pushforward_comp_apply (P : Jacobian X) :
-    pushforward (g ∘ f) (hg.comp hf) P = pushforward g hg (pushforward f hf P) :=
-  sorry
+    pushforward (g ∘ f) (hg.comp hf) P = pushforward g hg (pushforward f hf P) := by
+  show ULift.up (JacobianChallenge.TraceDegree.analyticPushforward (g ∘ f)
+      (hg.comp hf) P.down) =
+    ULift.up (JacobianChallenge.TraceDegree.analyticPushforward g hg
+      (JacobianChallenge.TraceDegree.analyticPushforward f hf P.down))
+  rw [JacobianChallenge.TraceDegree.analyticPushforward_comp_apply]
 
 /-- Pullback map between Jacobians associated to a map of the underlying curves.
 Equal to the zero map if the map on curves is constant.

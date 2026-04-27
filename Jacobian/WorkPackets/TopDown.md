@@ -334,10 +334,10 @@ This table is the current top-down bridge inventory. Keep it updated as
 | `ofCurve_contMDiff` ✅ refined | `contMDiff_uLift_up.comp analyticOfCurve_contMDiff` | `analyticOfCurve_contMDiff` and `contMDiff_uLift_up` (named sorries) |
 | `ofCurve_self` ✅ refined | unfold + `pathIntegralFunctional_self` | `pathIntegralFunctional_self` (named sorry) |
 | `ofCurve_inj` ✅ refined | `analyticOfCurve_injective` + `ULift.up_injective` | `analyticOfCurve_injective` (named sorry) — Abel theorem |
-| `pushforward` | trace-induced quotient map | trace preserves periods |
-| `pushforward_contMDiff` | complex torus map smoothness | trace-induced map model smoothness |
-| `pushforward_id_apply` | trace/id functoriality | quotient transport |
-| `pushforward_comp_apply` | trace composition | quotient transport |
+| `pushforward` ✅ refined | bundled hom over `analyticPushforward` + `ULift.up` | `analyticPushforward` (named `opaque` in `Jacobian.TraceDegree.PushforwardBasis`) |
+| `pushforward_contMDiff` ✅ refined | `contMDiff_uLift_up.comp (analyticPushforward_contMDiff.comp contMDiff_uLift_down)` | `analyticPushforward_contMDiff` (named sorry) |
+| `pushforward_id_apply` ✅ refined | unfold + `analyticPushforward_id_apply` | `analyticPushforward_id_apply` (named sorry) |
+| `pushforward_comp_apply` ✅ refined | unfold + `analyticPushforward_comp_apply` | `analyticPushforward_comp_apply` (named sorry) |
 | `pullback` ✅ refined | bundled hom over `analyticPullback` + `ULift.up` | `analyticPullback` (named `opaque` in `Jacobian.TraceDegree.PullbackBasis`) |
 | `pullback_contMDiff` ✅ refined | `contMDiff_uLift_up.comp (analyticPullback_contMDiff.comp contMDiff_uLift_down)` | `analyticPullback_contMDiff` (named sorry) |
 | `pullback_id_apply` ✅ refined | unfold + `analyticPullback_id_apply` | `analyticPullback_id_apply` (named sorry) |
