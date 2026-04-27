@@ -12,22 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 05:46 EDT)
+## Live Status (2026-04-27 05:51 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/HolomorphicForms/ToFunApply.lean`: pointwise
+    `toFun` apply simps for zero/neg/add/sub of holomorphic forms:
+      - `zero_toFun_apply`
+      - `neg_toFun_apply`
+      - `add_toFun_apply`
+      - `sub_toFun_apply`
+    All proven via `change ((... : ∀ x, _)) x = ... ; rw [ContMDiffSection.coe_*]; rfl`.
+    Wired into HolomorphicForms umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~11h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 05:46 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/HolomorphicForms/AnalyticGenusPos.lean`:
-    positivity / nontriviality side of the genus API:
       - `analyticGenus_pos_iff_nontrivial`
-        (via `Module.finrank_pos_iff`)
       - `analyticGenus_ne_zero_iff_nontrivial`
-      - `analyticGenus_pos_of_exists_ne_zero` (witness form)
-      - `subsingleton_of_analyticGenus_eq_zero` (contrapositive)
-    Wired into HolomorphicForms umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~11h — not waiting.
+      - `analyticGenus_pos_of_exists_ne_zero`
+      - `subsingleton_of_analyticGenus_eq_zero`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 05:43 EDT)
