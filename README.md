@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 08:57 EDT
+Last tick: 2026-04-27 09:01 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,10 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~14h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW HolomorphicForms.EvalLinearMapNeg:
-                      bundled-level analogue of last tick's
-                      ToFunNeg — double-negation cancellation,
-                      negation symmetry, and reversed-orientation.
+                      NEW AnalyticJacobian.MkArith: arithmetic
+                      identities — `mk_eq_neg_iff_add_mem`,
+                      `neg_mk_eq_iff_add_mem`, `mk_add_eq` alias,
+                      `zero_eq_mk_zero`.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -238,6 +238,7 @@ AnalyticJacobian.Mk pass lake build Jacobian.AnalyticJacobian.Mk (no sorry)
 AnalyticJacobian.MkOps pass lake build Jacobian.AnalyticJacobian.MkOps (no sorry)
 AnalyticJacobian.MkExt pass lake build Jacobian.AnalyticJacobian.MkExt (no sorry)
 AnalyticJacobian.MkMembership pass lake build Jacobian.AnalyticJacobian.MkMembership (no sorry)
+AnalyticJacobian.MkArith pass lake build Jacobian.AnalyticJacobian.MkArith (no sorry)
 AnalyticJacobian.EvalJacobianClassMember pass lake build Jacobian.AnalyticJacobian.EvalJacobianClassMember (no sorry)
 AnalyticJacobian.EvalJacobianClass pass lake build Jacobian.AnalyticJacobian.EvalJacobianClass (no sorry)
 AnalyticJacobian.EvalJacobianClassOps pass lake build Jacobian.AnalyticJacobian.EvalJacobianClassOps (no sorry)
