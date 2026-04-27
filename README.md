@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 03:26 EDT
+Last tick: 2026-04-27 03:33 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,13 +53,13 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED Periods/PathIntegralReflCover with
-                      `pathIntegralViaCoverWith_self_eq_sum_curveIntegral`:
-                      cover-with-with-explicit-partition variant of
-                      last tick's reduction. Goes through the
-                      corrected `pathIntegralViaChartCorrect_reflChart`
-                      directly, no need to bounce off the bridge.
-                      Build green (8189 jobs).
+                      EXTENDED Periods/PathIntegralReflChart with
+                      function-equality forms `chartedForm_refl_eq_
+                      toFun` (rfl) and `chartedFormPullback_refl_eq_
+                      toFun`. The refl chart-form is literally
+                      `ω.toFun` as a function — useful for
+                      `congr` arguments without `funext`. Build
+                      green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
