@@ -12,7 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 04:42 EDT)
+## Live Status (2026-04-27 04:49 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h.
+  Per user, NOT waiting for Aristotle to wake.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 2 new files):**
+  - NEW `Jacobian/TraceDegree/PullbackFunCompId.lean` with two
+    function-level rfl simps:
+      - `pullbackFormsFun_id_comp`: `pullbackFormsFun (id ∘ f) η =
+        pullbackFormsFun f η`.
+      - `pullbackFormsFun_comp_id`: `pullbackFormsFun (f ∘ id) η =
+        pullbackFormsFun f η`.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapCompId.lean`
+    mirrors at the bundled-LinearMap level:
+      - `pullbackFormsLinearMap_id_comp`
+      - `pullbackFormsLinearMap_comp_id`
+    Both also rfl.
+  Branched into TraceDegree (was at 17%) per "don't wait for
+  Aristotle" directive. Build green; bumped progress bar to 19%.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 04:42 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h —
   `submitted-redundant`, kept as wake detector.
