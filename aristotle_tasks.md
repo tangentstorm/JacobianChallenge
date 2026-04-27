@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 19:08 EDT)
+## Live Status (2026-04-27 19:23 EDT)
+
+- **Aristotle: 1/5 active.**
+  - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%,
+    ~2h05m elapsed (normal long-running).
+- **Local proof work this tick (Claude-owned):** Light tick, no new
+  Lean work.
+- **User commits this tick:** `532e49d ULiftTransport: discharge
+  homeomorph transition cancellation`. ULiftTransport real-sorry
+  count drops 5 → 4. Headline production sorry-free unchanged at
+  381 / 389 (8 real-sorry production files).
+- Tree: `M Jacobian/ComplexTorus/ULiftTransport.lean` (user WIP).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 19:08 EDT)
 
 - **Aristotle: 1/5 active.**
   - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%,

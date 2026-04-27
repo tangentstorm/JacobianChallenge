@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 19:08 EDT
+Last tick: 2026-04-27 19:23 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -68,21 +68,23 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5  `b782c387` topology-on-ContMDiffSection recon —
-                        IN_PROGRESS at 17%, ~1h50m elapsed (long IN_PROGRESS is
-                        normal Aristotle behavior, not a stall — only long
-                        QUEUED is a problem signal).
+                        IN_PROGRESS at 17%, ~2h05m elapsed (long IN_PROGRESS is
+                        normal).
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Light tick. No new Lean work. ULiftTransport real-sorry count drops
+5 → 4 from user's `532e49d ULiftTransport: discharge homeomorph
+transition cancellation`. Headline production sorry-free unchanged
+at 381 / 389 (8 real-sorry production files; same set as last tick).
+
+PRIOR TICK (still standing):
 DOC: refreshed top-of-file docstring in
-`Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean` to (a)
-include the four-file bridge architecture diagram and (b) note the
-post-keystone-refactor (commit 952e750) state where the user's
-`BasisAnalyticJacobian X` and this file's `BasisAlignedAnalyticJacobian X`
-are definitionally equal as types. Build verified clean.
+`Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean` (4-file
+bridge architecture diagram + post-keystone-refactor note).
 
 PRIOR TICK (still standing):
 Light tick: README sorry-free counts re-derived (still 381/389,
