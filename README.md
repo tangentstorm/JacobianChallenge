@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 02:27 EDT
+Last tick: 2026-04-27 02:35 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,12 +53,14 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      Stocktake/progress-report adjustment: bumped
-                      Path integration/periods from 55% to 65% and
-                      rewrote the explanatory note to reflect the
-                      bridge-ladder maturity and the concrete
-                      refl/translation-chart instances. No code
-                      changes this tick.
+                      EXTENDED Periods/PathIntegralReflChart with
+                      `pathIntegralInChart_reflChart`: the in-chart
+                      integral on the refl chart is just the direct
+                      `curveIntegral ω.toFun γ`. Hooks the refl
+                      chart into Mathlib's `curveIntegral` directly.
+                      (Renamed to disambiguate from the existing
+                      `_refl` variant for constant paths.) Build
+                      green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
