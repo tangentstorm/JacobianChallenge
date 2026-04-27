@@ -76,4 +76,35 @@ lemma contMDiff_uLift_up
     ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ V) n
       (ULift.up : quotient V Λ → ULift.{u} (quotient V Λ)) := sorry
 
+/-- `ULift.down : ULift M → M` is `ContMDiff` of every degree, for the
+ULift transports of any complex torus quotient. Companion to
+`contMDiff_uLift_up`. -/
+lemma contMDiff_uLift_down
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    [FiniteDimensional ℂ V] {Λ : FullComplexLattice V}
+    {n : WithTop ℕ∞} :
+    ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ V) n
+      (ULift.down : ULift.{u} (quotient V Λ) → quotient V Λ) := sorry
+
+/-- Lift a continuous additive group homomorphism from the analytic
+carriers up to their `ULift` versions.
+
+Pure assembly — composes `ULift.up` and `ULift.down` (both continuous)
+with the underlying hom; no sorry of its own. -/
+noncomputable def ULiftContinuousAddMonoidHom
+    {A B : Type*} [AddMonoid A] [AddMonoid B]
+    [TopologicalSpace A] [TopologicalSpace B]
+    (φ : A →ₜ+ B) : ULift.{u} A →ₜ+ ULift.{u} B where
+  toFun a := ULift.up (φ a.down)
+  map_zero' := by
+    show ULift.up (φ (0 : ULift.{u} A).down) = (0 : ULift.{u} B)
+    simp [map_zero]
+    rfl
+  map_add' a b := by
+    show ULift.up (φ (a + b).down) = ULift.up (φ a.down) + ULift.up (φ b.down)
+    simp [map_add]
+    rfl
+  continuous_toFun :=
+    continuous_uliftUp.comp (φ.continuous.comp continuous_uliftDown)
+
 end JacobianChallenge.ComplexTorus
