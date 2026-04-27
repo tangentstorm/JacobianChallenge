@@ -12,25 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 12:32 EDT)
+## Live Status (2026-04-27 12:36 EDT)
 
 - Active jobs (ours): 0/5. Backend healthy. No new submissions
-  this tick — packets still queued for prep.
+  this tick — local cadence is moving fast, low marginal value
+  in opening a packet round-trip right now.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSmulNegApplyVec.lean`:
-    vec-applied versions of smul/neg combined identities:
-      - `pullbackFormsLinearMap_smul_neg_apply_vec`
-      - `pullbackFormsLinearMap_neg_smul_apply_vec`
-      - `pullbackFormsLinearMap_neg_add_apply_vec`
-      - `pullbackFormsLinearMap_add_neg_apply_vec`
-    Each forwards via the function-level identity in
-    `PullbackFormsLinearMapSmulNeg` plus `rfl`. All `@[simp]`.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSmulAdd.lean`:
+    combined smul/add/sub ring-rewrite identities for arbitrary `f`:
+      - `pullbackFormsLinearMap_smul_add`
+      - `pullbackFormsLinearMap_smul_sub`
+      - `pullbackFormsLinearMap_smul_left_add`
+      - `pullbackFormsLinearMap_sub_smul_right`
+    All `@[simp]`. Each composes two of `_smul`/`_add`/`_sub`.
 - **Strategic note (carried forward):**
-  Backend awake, queue empty. Continuing 4-lemma local cadence
-  in parallel; Aristotle packet preparation still queued.
+  Continuing local 4-lemma cadence per user directive. Backend
+  is awake but local compose-and-test loop is faster.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 12:29 EDT)
+## Stale Live Status (2026-04-27 12:32 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
