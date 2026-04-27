@@ -338,10 +338,10 @@ This table is the current top-down bridge inventory. Keep it updated as
 | `pushforward_contMDiff` | complex torus map smoothness | trace-induced map model smoothness |
 | `pushforward_id_apply` | trace/id functoriality | quotient transport |
 | `pushforward_comp_apply` | trace composition | quotient transport |
-| `pullback` | dual pullback-induced quotient map | pullback preserves periods |
-| `pullback_contMDiff` | complex torus map smoothness | pullback-induced map model smoothness |
-| `pullback_id_apply` | pullback/id functoriality | quotient transport |
-| `pullback_comp_apply` | pullback composition | quotient transport |
+| `pullback` ✅ refined | bundled hom over `analyticPullback` + `ULift.up` | `analyticPullback` (named `opaque` in `Jacobian.TraceDegree.PullbackBasis`) |
+| `pullback_contMDiff` ✅ refined | `contMDiff_uLift_up.comp (analyticPullback_contMDiff.comp contMDiff_uLift_down)` | `analyticPullback_contMDiff` (named sorry) |
+| `pullback_id_apply` ✅ refined | unfold + `analyticPullback_id_apply` | `analyticPullback_id_apply` (named sorry) |
+| `pullback_comp_apply` ✅ refined | unfold + `analyticPullback_comp_apply` | `analyticPullback_comp_apply` (named sorry) |
 | `ContMDiff.degree` | analytic/geometric degree | branched-cover/local multiplicity theory |
 | `pushforward_pullback` | trace-pullback identity | `trace_f (pullback_f η) = degree f • η` plus quotient transport |
 

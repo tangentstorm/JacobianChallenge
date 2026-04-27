@@ -4,6 +4,7 @@ import Jacobian.HolomorphicForms.GenusZeroClassification
 import Jacobian.Periods.PeriodLattice
 import Jacobian.ComplexTorus.ULiftTransport
 import Jacobian.AbelJacobi.AnalyticOfCurveBasis
+import Jacobian.TraceDegree.PullbackBasis
 
 /-!
 
@@ -52,8 +53,12 @@ sorries are discharged. See `Jacobian/WorkPackets/TopDown.md`.
   `ofCurve_inj` — basis-aligned analytic Abel-Jacobi map plus
   ULift transport for the projection and `ContMDiff`. Named
   obligations live in `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean`.
+* **Round 4a** ✅ `pullback`, `pullback_contMDiff`,
+  `pullback_id_apply`, `pullback_comp_apply` — basis-aligned
+  analytic pullback (bundled `→ₜ+`) wrapped through `ULift.up`.
+  Named obligations in `Jacobian/TraceDegree/PullbackBasis.lean`.
 
-Remaining: Round 4 (`pushforward`, `pullback`, `degree`,
+Remaining: Round 4b (`pushforward` family), Round 4c (`degree` +
 `pushforward_pullback`).
 
 -/
@@ -188,22 +193,49 @@ lemma pushforward_comp_apply (P : Jacobian X) :
   sorry
 
 /-- Pullback map between Jacobians associated to a map of the underlying curves.
-Equal to the zero map if the map on curves is constant. -/
-def pullback (f : X → Y)
+Equal to the zero map if the map on curves is constant.
+Refinement (Round 4a): bundled hom directly in the basis-aligned model
+plus `ULift.up`. -/
+noncomputable def pullback (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    Jacobian Y →ₜ+ Jacobian X := sorry
+    Jacobian Y →ₜ+ Jacobian X where
+  toFun P := ULift.up (JacobianChallenge.TraceDegree.analyticPullback f hf P.down)
+  map_zero' := by
+    show ULift.up _ = (0 : Jacobian X)
+    rw [show (0 : Jacobian Y).down = 0 from rfl, map_zero]
+    rfl
+  map_add' a b := by
+    show ULift.up _ = ULift.up _ + ULift.up _
+    rw [show (a + b).down = a.down + b.down from rfl, map_add]
+    rfl
+  continuous_toFun :=
+    continuous_uliftUp.comp
+      ((JacobianChallenge.TraceDegree.analyticPullback f hf).continuous.comp
+        continuous_uliftDown)
 
 -- pullback is holomorphic
 theorem pullback_contMDiff :
     ContMDiff (modelWithCornersSelf ℂ (Fin (genus Y) → ℂ))
-      (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (pullback f hf) := sorry
+      (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (pullback f hf) :=
+  (JacobianChallenge.ComplexTorus.contMDiff_uLift_up).comp
+    ((JacobianChallenge.TraceDegree.analyticPullback_contMDiff f hf).comp
+      JacobianChallenge.ComplexTorus.contMDiff_uLift_down)
 
 -- functoriality
-lemma pullback_id_apply (P : Jacobian X) : pullback id contMDiff_id P = P := sorry
+lemma pullback_id_apply (P : Jacobian X) : pullback id contMDiff_id P = P := by
+  show ULift.up (JacobianChallenge.TraceDegree.analyticPullback (X := X) (Y := X)
+      id contMDiff_id P.down) = P
+  rw [JacobianChallenge.TraceDegree.analyticPullback_id_apply]
+  rfl
 
 -- functoriality
 lemma pullback_comp_apply (P : Jacobian Z) :
-    pullback (g.comp f) (hg.comp hf) P = pullback f hf (pullback g hg P) := sorry
+    pullback (g.comp f) (hg.comp hf) P = pullback f hf (pullback g hg P) := by
+  show ULift.up (JacobianChallenge.TraceDegree.analyticPullback (g.comp f)
+      (hg.comp hf) P.down) =
+    ULift.up (JacobianChallenge.TraceDegree.analyticPullback f hf
+      (JacobianChallenge.TraceDegree.analyticPullback g hg P.down))
+  rw [JacobianChallenge.TraceDegree.analyticPullback_comp_apply]
 
 /-- The degree of a holomorphic map between compact Riemann surfaces. Equal to zero
 for constant maps, otherwise equal to the usual degree. -/
