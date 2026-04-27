@@ -93,4 +93,13 @@ theorem basisAlignedPeriodPairing_eq_zero_iff (σ : IntegralOneCycle X) :
         ((basisAlignedPeriodPairing X).map_zero).symm,
       basisAlignedPeriodPairing_eq_iff, (periodPairing ℂ X).map_zero]
 
+/-- Pulling a basis-aligned period back through the inverse dual
+equivalence recovers the functional-space `periodPairing`. -/
+theorem holomorphicOneFormDualEquiv_symm_basisAlignedPeriodPairing
+    (σ : IntegralOneCycle X) :
+    (holomorphicOneFormDualEquiv ℂ X).symm
+        (basisAlignedPeriodPairing X σ) =
+      periodPairing ℂ X σ := by
+  rw [basisAlignedPeriodPairing_apply, LinearEquiv.symm_apply_apply]
+
 end JacobianChallenge.Periods
