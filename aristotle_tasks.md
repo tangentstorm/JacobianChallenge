@@ -12,22 +12,36 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 06:47 EDT)
+## Live Status (2026-04-27 06:52 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - **Pivot:** moved from HolomorphicForms to Periods layer.
+  - NEW `Jacobian/Periods/PeriodFunctionalApi.lean`: small named
+    API around the opaque `periodPairing` AddMonoidHom:
+      - `periodPairing_zero` (sends 0 cycle to 0 functional)
+      - `periodPairing_add` (additivity)
+      - `periodPairing_neg` (negation)
+      - `zero_mem_periodSubgroup`
+    All trivial corollaries of the `AddMonoidHom`/`AddSubgroup`
+    interfaces, exposed as named lemmas. Wired into Periods
+    umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~12h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 06:47 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/HolomorphicForms/AnalyticGenusOrder.lean`:
-    relational helpers between `analyticGenus` and `ℕ`:
       - `analyticGenus_le_iff_finrank_le`
       - `analyticGenus_lt_iff_finrank_lt`
       - `analyticGenus_eq_iff_finrank_eq`
       - `analyticGenus_ge_iff_finrank_ge`
-    All `Iff.rfl` since `analyticGenus_def` is rfl. Wired into
-    HolomorphicForms umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~12h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 06:43 EDT)
