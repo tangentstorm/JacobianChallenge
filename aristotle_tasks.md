@@ -12,27 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 10:28 EDT)
+## Live Status (2026-04-27 10:31 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~16h.
-  Re-checked Aristotle: still asleep, no new completions.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapCompConstDist.lean`:
-    bundled comp-const form-slot trivial dist:
-      - `pullbackFormsLinearMap_comp_const_add_apply_vec`
-      - `pullbackFormsLinearMap_comp_const_neg_apply_vec`
-      - `pullbackFormsLinearMap_const_comp_add_apply_vec`
-      - `pullbackFormsLinearMap_const_comp_neg_apply_vec`
-    Form-slot add/neg distributivity for the bundled pullbacks
-    along `f ∘ const x₀` and `const z ∘ f`. Both pullbacks vanish
-    so all four lemmas reduce to `0 = 0 ± 0` style identities.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapCompConstSmul.lean`:
+    bundled comp-const/const-comp form-slot sub + ℂ-smul:
+      - `pullbackFormsLinearMap_comp_const_sub_apply_vec`
+      - `pullbackFormsLinearMap_comp_const_smul_apply_vec`
+      - `pullbackFormsLinearMap_const_comp_sub_apply_vec`
+      - `pullbackFormsLinearMap_const_comp_smul_apply_vec`
+    Form-slot sub/ℂ-smul distributivity for the bundled pullbacks
+    along `f ∘ const x₀` and `const z ∘ f`. Continues
+    `PullbackFormsLinearMapCompConstDist`. All collapse via the
+    const-pullback zero identity.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~16h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 10:25 EDT)
+## Stale Live Status (2026-04-27 10:28 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
