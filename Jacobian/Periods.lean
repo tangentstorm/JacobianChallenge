@@ -159,6 +159,7 @@ import Jacobian.Periods.PathPartitionCoverSymm
 import Jacobian.Periods.PathPartitionCoverSigmaForm
 import Jacobian.Periods.PathPartition
 import Jacobian.Periods.PeriodFunctional
+import Jacobian.Periods.PeriodFunctionalApi
 
 /-!
 # Periods infrastructure

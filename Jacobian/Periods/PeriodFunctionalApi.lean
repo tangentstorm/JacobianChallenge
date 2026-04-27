@@ -1,0 +1,42 @@
+import Jacobian.Periods.PeriodFunctional
+
+/-!
+# Small named API around the opaque `periodPairing`
+
+`periodPairing` is opaque (the construction is deferred). But it
+*is* declared as an `AddMonoidHom`, so the standard `map_zero`,
+`map_add`, `map_neg`, and `map_sub` facts are immediately
+available. This file exposes them as named lemmas so downstream
+proofs don't need to know the precise type.
+-/
+
+namespace JacobianChallenge.Periods
+
+open JacobianChallenge.HolomorphicForms
+
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+  {X : Type} [TopologicalSpace X] [ChartedSpace E X]
+  [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+
+/-- The period pairing sends the 0-cycle to the zero functional. -/
+@[simp] theorem periodPairing_zero :
+    periodPairing E X 0 = 0 :=
+  (periodPairing E X).map_zero
+
+/-- The period pairing distributes over addition of cycles. -/
+theorem periodPairing_add (σ τ : IntegralOneCycle X) :
+    periodPairing E X (σ + τ) =
+      periodPairing E X σ + periodPairing E X τ :=
+  (periodPairing E X).map_add σ τ
+
+/-- The period pairing negates negation of cycles. -/
+@[simp] theorem periodPairing_neg (σ : IntegralOneCycle X) :
+    periodPairing E X (-σ) = -periodPairing E X σ :=
+  (periodPairing E X).map_neg σ
+
+/-- 0 lies in the period subgroup (immediate from `AddSubgroup`). -/
+@[simp] theorem zero_mem_periodSubgroup :
+    (0 : HolomorphicOneForm E X →ₗ[ℂ] ℂ) ∈ periodSubgroup E X :=
+  (periodSubgroup E X).zero_mem
+
+end JacobianChallenge.Periods
