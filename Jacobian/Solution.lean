@@ -85,12 +85,19 @@ Refinement (Round 1, top-down): `genus X := analyticGenus ℂ X`, the
 is supplied by the global instance
 `compactRiemannSurface_finiteDimensionalHolomorphicOneForms`
 in `Jacobian.HolomorphicForms.CompactRiemannSurface`. -/
-noncomputable def genus (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+noncomputable def genus (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] : ℕ :=
   JacobianChallenge.HolomorphicForms.analyticGenus ℂ X
 
+-- Universe-polymorphic `section` for declarations that don't depend on
+-- `Jacobian X` (which the keystone refactor specialised to `Type 0`).
+-- Keeping `genus` and `genus_eq_zero_iff_homeo` universe-poly recovers
+-- comparator-acceptance for these two declarations with respect to
+-- `Challenge.lean`'s `(X : Type*)` shape.
+section
+
 -- let X be a compact Riemann surface
-variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
+variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
 
 -- this proof avoids the hack answer `∀ X, genus X = 0`
@@ -99,6 +106,12 @@ variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Connected
 lemma genus_eq_zero_iff_homeo :
     genus X = 0 ↔ Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :=
   JacobianChallenge.HolomorphicForms.analyticGenus_eq_zero_iff_homeomorphic_sphere X
+
+end
+
+-- Type-0-specialised section for the Jacobian-related declarations.
+variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
 
 -- data
 /-- The Jacobian of a compact Riemann surface.
