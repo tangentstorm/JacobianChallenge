@@ -107,6 +107,7 @@ import Jacobian.Periods.PathIntegralViaCoverWithEqOfMfderivId
 import Jacobian.Periods.PathIntegralViaCoverEqOfMfderivId
 import Jacobian.Periods.ChartedFormPullbackEqChartedFormOfSymmEventuallyEqId
 import Jacobian.Periods.ChartedFormPullbackRefl
+import Jacobian.Periods.PathIntegralReflChart
 import Jacobian.Periods.PathIntegralChartSmulSymmEqNegSmul
 import Jacobian.Periods.PathIntegralViaChartSmulSymmEqNegSmul
 import Jacobian.Periods.PathIntegralChartCorrectZero
