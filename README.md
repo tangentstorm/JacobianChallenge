@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 05:43 EDT
+Last tick: 2026-04-27 05:46 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -32,7 +32,7 @@ Complex torus quotient API       ███████████████�
 Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms                ███████░░░░░░░░░░░░░   33%  type/module/analyticGenus + small genus API (subsingleton iff zero)
+Holomorphic forms                ███████░░░░░░░░░░░░░   35%  type/module/analyticGenus + zero/positivity API (subsingleton iff 0; nontrivial iff pos)
 Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
@@ -53,12 +53,11 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~11h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      Pivoted to HolomorphicForms layer (was 30%).
-                      NEW HolomorphicForms.AnalyticGenus:
-                      `analyticGenus_def`, `_eq_zero_iff_finrank_zero`,
-                      `_eq_zero_iff_subsingleton`,
-                      `_eq_zero_of_subsingleton`. Wired into
-                      HolomorphicForms umbrella.
+                      NEW HolomorphicForms.AnalyticGenusPos:
+                      `_pos_iff_nontrivial`, `_ne_zero_iff_nontrivial`,
+                      `_pos_of_exists_ne_zero` (witness form), and
+                      `subsingleton_of_analyticGenus_eq_zero`. Wired
+                      into HolomorphicForms umbrella.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -216,6 +215,7 @@ TraceDegree.PullbackFunMixedConstIdApply pass lake build Jacobian.TraceDegree.Pu
 TraceDegree.PullbackFormsLinearMapMixedConstId pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapMixedConstId (no sorry)
 TraceDegree.PullbackFunIdComposeId pass lake build Jacobian.TraceDegree.PullbackFunIdComposeId (no sorry)
 HolomorphicForms.AnalyticGenus pass lake build Jacobian.HolomorphicForms.AnalyticGenus (no sorry)
+HolomorphicForms.AnalyticGenusPos pass lake build Jacobian.HolomorphicForms.AnalyticGenusPos (no sorry)
 ```
 
 ```text
