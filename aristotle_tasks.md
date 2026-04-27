@@ -12,26 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 13:35 EDT)
+## Live Status (2026-04-27 13:50 EDT)
 
-- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~49 min
-  (rfl-iff smoke test). Backend backlog persistent.
-- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/AnalyticJacobian/MkSubArith.lean`:
-    mk sub/neg/add combined arithmetic identities:
-      - `mk_sub_neg`         (`mk (φ - -ψ) = mk φ + mk ψ`)
-      - `mk_neg_add`         (`mk (-φ + ψ) = -mk φ + mk ψ`)
-      - `mk_add_neg`         (`mk (φ + -ψ) = mk φ - mk ψ`)
-      - `mk_neg_add_distrib` (`mk (-(φ + ψ)) = -mk φ - mk ψ`)
-    Initial draft for `_neg_add_distrib` ended on
-    `-mk φ + -mk ψ` after `neg_add` — added a final
-    `← sub_eq_add_neg` to convert to the subtraction form.
-- **Tree note:** same 4 untracked files — unrelated.
-- **Strategic note (carried forward):**
-  Continuing local cadence in parallel with Aristotle smoke test.
+- **Aristotle event this tick — smoke test integrated:**
+  - `ee14b794-5d2d-4033-b9e8-6b91b277ccde` (Queue C):
+    `Jacobian/HolomorphicForms/EvalLinearMapEqZero.lean` —
+    discharge `evalLinearMap_eq_zero_iff_toFun_eq_zero`. COMPLETE
+    100% after ~67 min queue. Returned proof: `rw [evalLinearMap_apply]`
+    (the rw rfl-finisher closes the residual `iff` of equal sides).
+    Integrated as-is and wired into the HolomorphicForms umbrella.
+    Backend round-trip validated end-to-end.
+- Active jobs (ours): 0/5. Ready to submit substantive packets.
+- **Integrated this tick (local Claude-owned, 0 new local files —
+  Aristotle integration was the focus):**
+  - none (the integration of `ee14b794` is the single file change
+    plus the umbrella wiring).
+- **Tree note:** 5 untracked files (Solution.lean, TopDown.md,
+  CompactRiemannSurface.lean, GenusZeroClassification.lean,
+  PeriodLattice.lean) — unrelated, left alone.
+- **Strategic note:**
+  Smoke test confirmed the round-trip. ~67min queue is heavier
+  than expected but the post-wake backend is healthy. Will start
+  submitting more substantive packets next tick — candidates:
+  small evalLinearMap iff/extensions, simple bundled-pullback
+  facts that are tedious to do locally.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 13:28 EDT)
+## Stale Live Status (2026-04-27 13:35 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.

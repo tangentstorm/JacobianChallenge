@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 13:35 EDT
+Last tick: 2026-04-27 13:50 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -32,17 +32,21 @@ chart and the explicit `translationChart v` construction.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~49 min
-                    (rfl-iff smoke test). Backend backlog persistent.
+Active jobs (ours): 0/5 — `ee14b794` smoke test COMPLETE
+                    after ~67 min queue, integrated this tick.
+                    Backend round-trip validated end-to-end.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
-Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AnalyticJacobian.MkSubArith:
-                      mk sub/neg/add combined arithmetic
-                      (`mk_sub_neg`, `mk_neg_add`, `mk_add_neg`,
-                      `mk_neg_add_distrib`).
-Submitted this tick:  none new (smoke test still queued).
-Tree note:            Same 4 untracked files — unrelated.
+Aristotle event:      `ee14b794` smoke test COMPLETE 100%
+                      after ~67min queue. Returned proof:
+                      `rw [evalLinearMap_apply]`. Integrated as-is
+                      and wired into HolomorphicForms umbrella.
+                      Backend round-trip validated end-to-end.
+Submitted this tick:  none.
+Tree note:            5 untracked files (Solution.lean, TopDown.md,
+                      CompactRiemannSurface.lean,
+                      GenusZeroClassification.lean, PeriodLattice.lean)
+                      — unrelated, left alone.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -52,7 +56,7 @@ Build status — all targets compile (lake build Jacobian.{Challenge, …, *.Rec
 
 Sorry-free coverage by directory               bar              %   files
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Jacobian/HolomorphicForms                ███████████████████░   96%  (23/24)*
+Jacobian/HolomorphicForms                ████████████████████  100%  (24/24)
 Jacobian/AnalyticJacobian                ████████████████████  100%  (19/19)
 Jacobian/AbelJacobi                      ████████████████████  100%  (18/18)
 Jacobian/TraceDegree                     ████████████████████  100%  (82/82)
@@ -66,8 +70,6 @@ Production infrastructure (excluding intentional design files): 100% (371/371).
 † Single `*Recon.lean` discovery file with intentional sorries.
 ‡ Challenge.lean (frozen public spec) and StatementBank.lean
   (placeholder/dependency-shape file) — sorries are by design.
-* `EvalLinearMapEqZero.lean` is a parking spot for an in-flight
-  Aristotle packet (`ee14b794`); not yet wired into the umbrella.
 ```
 
 ```text
