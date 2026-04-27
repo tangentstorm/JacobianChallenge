@@ -97,4 +97,15 @@ theorem pathIntegralInChart_reflChart
        curveIntegral ω.toFun γ
   rfl
 
+set_option linter.unusedSectionVars false in
+/-- The provisional via-chart integral on the refl chart equals the
+direct curve integral of `ω.toFun`. -/
+theorem pathIntegralViaChart_reflChart
+    (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b)
+    (h : Set.range γ ⊆ (OpenPartialHomeomorph.refl E).source) :
+    pathIntegralViaChart (OpenPartialHomeomorph.refl E) ω γ h =
+      curveIntegral ω.toFun γ := by
+  unfold pathIntegralViaChart
+  exact pathIntegralInChart_reflChart ω _
+
 end JacobianChallenge.Periods
