@@ -119,4 +119,15 @@ theorem pathIntegralInChartCorrect_reflChart
   rw [pathIntegralInChartCorrect_refl_eq_pathIntegralInChart_refl,
       pathIntegralInChart_reflChart]
 
+set_option linter.unusedSectionVars false in
+/-- Corrected via-chart integral on the refl chart equals the direct
+`curveIntegral ω.toFun γ`. -/
+theorem pathIntegralViaChartCorrect_reflChart
+    (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b)
+    (h : Set.range γ ⊆ (OpenPartialHomeomorph.refl E).source) :
+    pathIntegralViaChartCorrect (OpenPartialHomeomorph.refl E) ω γ h =
+      curveIntegral ω.toFun γ := by
+  rw [pathIntegralViaChartCorrect_refl_eq_pathIntegralViaChart_refl,
+      pathIntegralViaChart_reflChart]
+
 end JacobianChallenge.Periods
