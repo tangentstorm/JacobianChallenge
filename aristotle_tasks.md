@@ -12,7 +12,35 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 16:53 EDT)
+## Live Status (2026-04-27 16:58 EDT)
+
+- **Aristotle deep packet `72ac3a75` COMPLETE & integrated.** After
+  ~1h18m of backend time, Aristotle returned the Riemann-Roch finite-
+  dimensionality target file with the sorry intact (correctly — the
+  theorem requires Mathlib infrastructure that doesn't exist) but
+  with a HIGH-QUALITY ~30-line doc-comment block surveying:
+  1. Mathlib lemmas tried (FiniteDimensional.of_locallyCompactSpace,
+     Riesz, MontelSpace, ArzelaAscoli — all blocked on missing topology
+     of sections);
+  2. The 3-layer dependency-graph blocker:
+     (a) no TopologicalSpace/NormedSpace instance for ContMDiffSection;
+     (b) no Montel for holomorphic sections;
+     (c) no Riemann-Roch / Serre duality / uniformization;
+  3. A 3-step plan for future infrastructure tickets:
+     (a) topology of uniform convergence on compact sets for
+         ContMDiffSection + Banach upgrade;
+     (b) Montel via local Cauchy estimates;
+     (c) finish via Riesz.
+  Integrated as-is (file copied into local tree). Useful project
+  intelligence — exactly the partial-result outcome we hoped for
+  ("off-path, even if big").
+- **Active jobs (ours):** 0 / 5. Per the substantive-only rule, not
+  refilling with trivial fillers. Considering a recon packet for
+  step (a) of Aristotle's 3-step plan as the next big task.
+- **Aristotle integrations to date:** 88 (was 87 +1 this tick).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 16:53 EDT)
 
 - **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)**
   IN_PROGRESS at 10% (~58 min in; +1 percentage point since last tick).

@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 16:53 EDT
+Last tick: 2026-04-27 16:58 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 87         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 88         `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  380 / 388    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded).
                                           The 8 production files with real sorries:
@@ -60,15 +60,32 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5  `72ac3a75` (Riemann-Roch finite-dimensionality theorem)
-                        IN_PROGRESS at 10% (~58 min in; +1 percentage point since
-                        last tick). Per PROMPT.md not polling further.
-Integrated this tick:   None from Aristotle (still IN_PROGRESS).
+Active jobs (ours):     0 / 5  `72ac3a75` (Riemann-Roch finite-dimensionality theorem)
+                        COMPLETE this tick after ~1h18m of backend time. Aristotle
+                        produced a HIGH-QUALITY survey of the gap rather than a
+                        proof — exactly the partial-result outcome we hoped for
+                        ("off-path, even if big"). Sorry left intact (correctly —
+                        Mathlib v4.28.0 lacks the foundational analytic machinery
+                        for holomorphic sections on manifolds). Integrated as-is.
+Integrated this tick:   1  `72ac3a75` Aristotle's doc-comment survey of Mathlib
+                        gaps blocking compactRiemannSurface_finiteDimensionalHolomorphicOneForms.
+                        Returned ~30-line block listing: (1) Mathlib lemmas tried;
+                        (2) the 3-layer dependency-graph blocker (no topology on
+                        ContMDiffSection → no Montel → no Riesz route); (3) a
+                        3-step plan: define topology-of-uniform-convergence on
+                        ContMDiffSection + Banach upgrade → Montel via local
+                        Cauchy estimates → finish via Riesz. Useful project
+                        intelligence for future infrastructure tickets.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+This tick was an Aristotle integration (above). No new local Lean
+work — the substantive deliverable is the integrated CompactRiemannSurface
+survey block.
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedPeriodSubgroup.lean (+1 theorem)
 
   holomorphicOneFormDualEquiv_bijOn_periodSubgroup
@@ -260,21 +277,20 @@ Reproduction (per dir):
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Check the Aristotle Riemann-Roch packet (`72ac3a75`); IN_PROGRESS
-   at 7% (this tick) — at the current rate, won't COMPLETE for hours.
-2. Type/Type* generalization (still deferred). To unfreeze the opaque,
-   lift `IntegralOneCycle` to `(X : Type*)`. Attempted briefly this
-   tick — `singularHomologyFunctor` fixes its universe parameter to
-   match `ModuleCat ℤ` (universe 0), so naive `Type*` causes a
-   universe mismatch with `TopCat.of X`. Solving requires either
-   explicit universe arguments to the singular-homology functor or a
-   ULift bridge. Non-trivial; deferring.
-3. Build out more API around `basisAlignedPeriodPairing` —
-   functoriality-style lemmas (e.g. `basisAlignedPeriodPairing_zero`,
-   `_add`, `_neg`, etc., though these might just be inherited from
-   AddMonoidHom). Or: characterize the kernel/range further to set up
-   for the eventual discreteness proof.
-4. Continue ignoring the 5 user-WIP files (AnalyticOfCurveBasis,
+1. Per Aristotle's plan in CompactRiemannSurface, the *next* off-path
+   substantive task is "define the topology of uniform convergence on
+   compact sets for ContMDiffSection, and upgrade it to a Banach
+   space structure when the base manifold is CompactSpace". This is
+   itself a substantial Mathlib infrastructure project. Consider
+   submitting a recon packet to scope it out before committing
+   Aristotle hours.
+2. Continue local cadence: the basis-aligned period bridge is now
+   well-stocked (BasisAlignedDualEquiv, BasisAlignedPeriodSubgroup,
+   BasisAlignedPeriodPairing, with bijection / kernel / mem-transport
+   theorems). Next natural Claude-owned move: try the universe lift
+   on IntegralOneCycle via explicit-universe call to
+   `singularHomologyFunctor.{u}`, or via a ULift bridge.
+3. Continue ignoring the 5 user-WIP files (AnalyticOfCurveBasis,
    ULiftTransport, PullbackBasis, PushforwardBasis, AnalyticDegree)
    per PROMPT.md.
 ```
