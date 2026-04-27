@@ -12,22 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 07:01 EDT)
+## Live Status (2026-04-27 07:09 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/Periods/PeriodSubgroupApi.lean`: extends last
-    tick's PeriodFunctionalApi:
-      - `periodPairing_sub`
-      - `mem_periodSubgroup_iff` (Iff.rfl unfold of
-        `AddMonoidHom.range`)
-      - `periodPairing_mem_periodSubgroup`
-      - `neg_mem_periodSubgroup`
+  - NEW `Jacobian/Periods/PeriodSubgroupClosure.lean`:
+    `periodSubgroup` closure under group operations:
+      - `add_mem_periodSubgroup`
+      - `sub_mem_periodSubgroup`
+      - `nsmul_mem_periodSubgroup`
+      - `zsmul_mem_periodSubgroup`
     Wired into Periods umbrella.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~12h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 07:01 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/Periods/PeriodSubgroupApi.lean`:
+      - `periodPairing_sub`
+      - `mem_periodSubgroup_iff`
+      - `periodPairing_mem_periodSubgroup`
+      - `neg_mem_periodSubgroup`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 06:52 EDT)
