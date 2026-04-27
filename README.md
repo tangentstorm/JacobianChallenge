@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 13:11 EDT
+Last tick: 2026-04-27 13:15 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -19,7 +19,7 @@ Holomorphic forms                ███████████░░░░�
 Path integration/periods         ██████████████░░░░░░   70%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts + integer-scalar periodPairing API (n/zsmul + matching subgroup membership)
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   31%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain + cycle-arithmetic mk∘periodPairing identities + evalJacobianClass equality characterizations (mem/exists-cycle iff)
 Abel-Jacobi API                  ████████░░░░░░░░░░░░   41%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges + `periodPairing` invariance + witness-zero/equality characterizations + nsmul/zsmul/neg periodPairing sufficient conditions for witness vanishing
-Trace/degree/push-pull           ████████████░░░░░░░░   60%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled along-id+along-const full dist + bundled along-(id ∘ id) full forwarder bank + bundled comp-const/const-comp full form/vec-slot dist + bundled `pullbackFormsLinearMap` ℕ/ℤ-smul + zero/neg/sub identities for arbitrary f + smul/neg/add combined identities + ℕ/ℤ-smul × add/sub + 3-arg add/sub combinations
+Trace/degree/push-pull           ████████████░░░░░░░░   61%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled along-id+along-const full dist + bundled along-(id ∘ id) full forwarder bank + bundled comp-const/const-comp full form/vec-slot dist + bundled `pullbackFormsLinearMap` ℕ/ℤ-smul + zero/neg/sub identities for arbitrary f + smul/neg/add combined identities + ℕ/ℤ-smul × add/sub + 3-arg combinations (function + vec-applied)
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
 translation-transition charts, e.g. the torus), the corrected
@@ -32,14 +32,14 @@ chart and the explicit `translationChart v` construction.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~27 min
+Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~32 min
                     (rfl-iff smoke test). Long queue depth.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFormsLinearMapTriple:
-                      bundled-pullback 3-arg add/sub combinations
-                      (`(η ± ζ) ± ξ` distributivity).
+                      NEW TraceDegree.PullbackFormsLinearMapTripleApplyVec:
+                      vec-applied versions of the 3-arg add/sub
+                      distributivity identities.
 Submitted this tick:  none new (smoke test still queued).
 Tree note:            Untracked `Jacobian/Solution.lean` and
                       `Jacobian/WorkPackets/TopDown.md` — unrelated.
@@ -55,13 +55,13 @@ Sorry-free coverage by directory               bar              %   files
 Jacobian/HolomorphicForms                ███████████████████░   96%  (23/24)*
 Jacobian/AnalyticJacobian                ████████████████████  100%  (18/18)
 Jacobian/AbelJacobi                      ████████████████████  100%  (18/18)
-Jacobian/TraceDegree                     ████████████████████  100%  (79/79)
+Jacobian/TraceDegree                     ████████████████████  100%  (80/80)
 Jacobian/Periods                         ███████████████████░   99%  (169/170)†
 Jacobian/ComplexTorus                    ███████████████████░   98%  (54/55)†
 Top-level umbrellas (Jacobian/*.lean)    █████████████████░░░   86%  (6/7)‡
 Jacobian/WorkPackets                     ░░░░░░░░░░░░░░░░░░░░    0%  (0/1)‡
 
-Production infrastructure (excluding intentional design files): 100% (366/366).
+Production infrastructure (excluding intentional design files): 100% (367/367).
 
 † Single `*Recon.lean` discovery file with intentional sorries.
 ‡ Challenge.lean (frozen public spec) and StatementBank.lean
