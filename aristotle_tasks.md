@@ -12,22 +12,35 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 06:01 EDT)
+## Live Status (2026-04-27 06:04 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/HolomorphicForms/EvalLinearMap.lean`: bundles
+    pointwise vec-evaluation `η ↦ η.toFun x v` as a ℂ-linear
+    `HolomorphicOneForm E X →ₗ[ℂ] ℂ`:
+      - `evalLinearMap` (the bundled definition)
+      - `evalLinearMap_apply` (rfl simp)
+      - `evalLinearMap_zero`
+      - `evalLinearMap_add`
+    Building block for period pairing. Wired into
+    HolomorphicForms umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~11h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 06:01 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/HolomorphicForms/ToFunApplyVecExtra.lean`:
-    fully closes the `toFun` matrix:
       - `sub_toFun_apply_vec`
       - `smul_toFun_apply_vec`
-      - `nsmul_toFun_apply` (induction on `n`)
+      - `nsmul_toFun_apply`
       - `nsmul_toFun_apply_vec`
-    Wired into HolomorphicForms umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~11h — not waiting. `toFun` simp matrix now fully closed
-  at function and vec-apply levels for zero/neg/add/sub/smul/nsmul.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 05:57 EDT)
