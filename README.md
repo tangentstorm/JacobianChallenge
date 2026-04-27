@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 09:35 EDT
+Last tick: 2026-04-27 09:41 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,9 +53,9 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~15h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFunIdEvalSmul:
-                      smul/nsmul/zsmul distributivity for
-                      pullback-along-id, plus `_neg_zero` corner.
+                      NEW TraceDegree.PullbackFunIdEvalVec:
+                      vec-slot distributivity for pullback-along-id
+                      (zero/add/neg/smul).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -225,6 +225,7 @@ TraceDegree.PullbackFunEvalLinearMap pass lake build Jacobian.TraceDegree.Pullba
 TraceDegree.PullbackFunIdEval pass lake build Jacobian.TraceDegree.PullbackFunIdEval (no sorry)
 TraceDegree.PullbackFunIdEvalDist pass lake build Jacobian.TraceDegree.PullbackFunIdEvalDist (no sorry)
 TraceDegree.PullbackFunIdEvalSmul pass lake build Jacobian.TraceDegree.PullbackFunIdEvalSmul (no sorry)
+TraceDegree.PullbackFunIdEvalVec pass lake build Jacobian.TraceDegree.PullbackFunIdEvalVec (no sorry)
 HolomorphicForms.EvalLinearMapZsmul pass lake build Jacobian.HolomorphicForms.EvalLinearMapZsmul (no sorry)
 HolomorphicForms.Ext pass lake build Jacobian.HolomorphicForms.Ext (no sorry)
 HolomorphicForms.ExtEvalLinearMap pass lake build Jacobian.HolomorphicForms.ExtEvalLinearMap (no sorry)
