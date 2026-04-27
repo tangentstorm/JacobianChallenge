@@ -12,7 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 02:25 EDT)
+## Live Status (2026-04-27 02:27 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~8h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - Stocktake/progress-report adjustment in `README.md`: Path
+    integration/periods bar bumped from 55% to 65%, and the
+    explanatory note updated to describe the bridge-ladder maturity
+    plus the concrete refl/translationChart instances. No source
+    code changes this tick.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 02:25 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~8h —
   `submitted-redundant`, kept as wake detector.
