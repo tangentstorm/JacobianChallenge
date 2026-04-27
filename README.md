@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 04:13 EDT
+Last tick: 2026-04-27 04:26 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,10 +53,16 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED Periods/TranslationChart with
-                      `pathIntegralInChartCorrect_translationChart_zero`:
-                      corrected variant of last tick's degenerate
-                      case. Build green (8189 jobs).
+                      EXTENDED Periods/TranslationChart with two
+                      degenerate-zero results:
+                      `pathIntegralInChartCorrect_translationChart_zero`
+                      and `chartedForm_translationChart_zero`. Both
+                      reduce to refl-chart formulas via
+                      `translationChart_zero`. Two attempted
+                      via-chart variants hit dependent-type rewrite
+                      blockers (h-coercion through translationChart_zero
+                      doesn't propagate cleanly) — left for later.
+                      Build green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```

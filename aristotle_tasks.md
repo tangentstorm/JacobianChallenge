@@ -12,7 +12,45 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 04:13 EDT)
+## Live Status (2026-04-27 04:26 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with two
+    degenerate-zero results (and dropped two attempts):
+      - `pathIntegralInChartCorrect_translationChart_zero`:
+        `pathIntegralInChartCorrect (translationChart 0) ω γ =
+        curveIntegral ω.toFun γ`. Proof: rewrite via the corrected
+        translation formula + `neg_zero; add_zero`.
+      - `chartedForm_translationChart_zero`:
+        `chartedForm (translationChart 0) ω = ω.toFun`. Proof:
+        `rw [translationChart_zero]` + `chartedForm_refl_eq_toFun`.
+    Two via-chart zero variants (provisional and corrected) hit a
+    dependent-type rewrite blocker — `rw [translationChart_zero]`
+    on a hypothesis whose type depends on the chart fails to
+    propagate the change to a `pathIntegralViaChart` argument.
+    Left for a later tick with a different proof strategy.
+    Build green (8189 jobs).
+- **Strategic note (in response to user "can you push to 100%?"):**
+  No — the remaining 35% on Path integration/periods is
+  substantive infrastructure, not many small simps:
+    - Packet F (full curveIntegrability for chartedFormPullback)
+      is a real analysis proof depending on Mathlib's continuity
+      stack.
+    - Cover-with `_add` becoming unconditional needs Packet F.
+    - Partition independence / well-definedness of
+      `pathIntegralViaCover` is a substantial chart-transition
+      theorem.
+    - Stokes / homotopy invariance is a major theorem.
+  Each is multi-tick to multi-day work. The ladder of small simps
+  extending the bridge has hit diminishing returns and should be
+  paused; resuming progress on the remaining 35% requires either
+  Aristotle-scale jobs or larger Claude-owned packets, neither of
+  which can land in a 5-minute tick.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 04:13 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h —
   `submitted-redundant`, kept as wake detector.

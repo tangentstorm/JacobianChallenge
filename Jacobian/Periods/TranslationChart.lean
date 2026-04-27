@@ -2,6 +2,7 @@ import Jacobian.Periods.ChartedFormPullbackTranslationChart
 import Jacobian.Periods.ChartedFormPullbackLinearMap
 import Jacobian.Periods.ChartedFormLinearMap
 import Jacobian.Periods.PathIntegralTranslationChart
+import Jacobian.Periods.PathIntegralReflChart
 import Mathlib.Topology.Algebra.Group.Basic
 import Mathlib.Topology.OpenPartialHomeomorph.Defs
 
@@ -261,5 +262,13 @@ theorem pathIntegralInChartCorrect_translationChart_zero
   congr 1
   funext e
   rw [neg_zero, add_zero]
+
+/-- The bundled chart-form on `translationChart 0` collapses to
+`ω.toFun` (matching refl). -/
+theorem chartedForm_translationChart_zero
+    (ω : HolomorphicOneForm E E) :
+    chartedForm (translationChart (0 : E)) ω = ω.toFun := by
+  rw [translationChart_zero]
+  exact chartedForm_refl_eq_toFun ω
 
 end JacobianChallenge.Periods
