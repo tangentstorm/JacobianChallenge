@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 17:11 EDT
+Last tick: 2026-04-27 17:41 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -61,14 +61,40 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5  `b782c387` (recon: Mathlib survey for topology on
-                        ContMDiffSection) is QUEUED at backend (1 min ago per
-                        `aristotle list`). Per PROMPT.md not polling further.
+                        ContMDiffSection) still QUEUED at backend (~36 min in).
+                        Per PROMPT.md not polling further. Recon packets typically
+                        complete fast once they leave the queue; will check next
+                        tick.
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+2 theorems)
+
+  analyticJacobianBasisAlignedEquiv_mk
+    (φ : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ)
+    : analyticJacobianBasisAlignedEquiv X (mk ℂ X φ)
+        = QuotientAddGroup.mk (holomorphicOneFormDualEquiv ℂ X φ)
+    rfl-proof; @[simp]. Direct corollary of `QuotientAddGroup.congr_mk`.
+
+  analyticJacobianBasisAlignedEquiv_symm_mk
+    (v : Fin (analyticGenus ℂ X) → ℂ)
+    : (analyticJacobianBasisAlignedEquiv X).symm (QuotientAddGroup.mk v)
+        = mk ℂ X ((holomorphicOneFormDualEquiv ℂ X).symm v)
+    rfl-proof. Inverse-direction simp lemma.
+
+These give the two natural unfolding rules for using the equiv on
+specific elements: forward and backward through the bridge.
+
+USER'S KEYSTONE REFACTOR LANDED THIS TICK as commit `952e750`
+("Keystone: route basisAlignedPeriodSubgroup to concrete representative").
+The 6-file mid-flight WIP from last tick is now resolved: PeriodLattice's
+opaque is unfrozen and routes to `basisAlignedPeriodSubgroupConcrete`,
+with downstream signatures updated. `lake build Jacobian.Solution` ✓.
+
+PRIOR TICK (still standing):
 NEW Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (1 abbrev + 1 def)
 
   BasisAlignedAnalyticJacobian X : Type

@@ -1,5 +1,6 @@
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.AnalyticJacobian.Defs
+import Jacobian.AnalyticJacobian.Mk
 
 /-!
 # Quotient-level equivalence
@@ -46,5 +47,25 @@ noncomputable def analyticJacobianBasisAlignedEquiv :
   QuotientAddGroup.congr (periodSubgroup ℂ X)
     (basisAlignedPeriodSubgroupConcrete X)
     (holomorphicOneFormDualEquiv ℂ X).toAddEquiv rfl
+
+/-- The quotient-level equiv sends the class of a functional to the class
+of its image under the basis-aligned dual equivalence. Direct corollary
+of `QuotientAddGroup.congr_mk`. -/
+@[simp] theorem analyticJacobianBasisAlignedEquiv_mk
+    (φ : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) :
+    analyticJacobianBasisAlignedEquiv X
+        (JacobianChallenge.AnalyticJacobian.mk ℂ X φ) =
+      QuotientAddGroup.mk (holomorphicOneFormDualEquiv ℂ X φ) :=
+  rfl
+
+/-- The inverse equiv sends a basis-aligned class back to the class of
+the inverse-equiv-pulled-back functional. -/
+theorem analyticJacobianBasisAlignedEquiv_symm_mk
+    (v : Fin (analyticGenus ℂ X) → ℂ) :
+    (analyticJacobianBasisAlignedEquiv X).symm
+        (QuotientAddGroup.mk v) =
+      JacobianChallenge.AnalyticJacobian.mk ℂ X
+        ((holomorphicOneFormDualEquiv ℂ X).symm v) :=
+  rfl
 
 end JacobianChallenge.Periods
