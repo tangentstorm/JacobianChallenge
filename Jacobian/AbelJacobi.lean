@@ -8,6 +8,7 @@ import Jacobian.AbelJacobi.Telescoping
 import Jacobian.AbelJacobi.Sum
 import Jacobian.AbelJacobi.Nontrivial
 import Jacobian.AbelJacobi.GenusWitness
+import Jacobian.AbelJacobi.Specialize
 
 /-!
 # Abel-Jacobi infrastructure (witness skeleton)

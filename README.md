@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 08:45 EDT
+Last tick: 2026-04-27 08:48 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -35,7 +35,7 @@ LieAddGroup smoothness           ███████████████�
 Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
 Path integration/periods         ██████████████░░░░░░   69%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   28%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain
-Abel-Jacobi API                  ██████░░░░░░░░░░░░░░   33%  witness skeleton + composition + vec-slot algebra + base-change + class identities + telescoping + unified genus+Nontrivial witness chain
+Abel-Jacobi API                  ███████░░░░░░░░░░░░░   35%  witness skeleton + composition + vec-slot algebra + base-change + class identities + telescoping + genus/Nontrivial chain + base-class specializations
 Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
@@ -53,11 +53,11 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~14h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AnalyticJacobian.EvalJacobianClassMember:
-                      `evalJacobianClass` ↔ `periodSubgroup`
-                      membership; `_eq_zero_of_*`,
-                      `_eq_evalJacobianClass_iff_sub_mem`,
-                      `mk_evalLinearMap_eq_zero_iff`.
+                      NEW AbelJacobi.Specialize: base-class /
+                      `evalLinearMap`-specialization shortcuts —
+                      witness simplifies when one or both endpoint
+                      classes / linear-map values are zero or in
+                      `periodSubgroup`.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -253,6 +253,7 @@ AbelJacobi.Telescoping pass lake build Jacobian.AbelJacobi.Telescoping (no sorry
 AbelJacobi.Sum pass lake build Jacobian.AbelJacobi.Sum (no sorry)
 AbelJacobi.Nontrivial pass lake build Jacobian.AbelJacobi.Nontrivial (no sorry)
 AbelJacobi.GenusWitness pass lake build Jacobian.AbelJacobi.GenusWitness (no sorry)
+AbelJacobi.Specialize pass lake build Jacobian.AbelJacobi.Specialize (no sorry)
 AbelJacobi (umbrella) pass lake build Jacobian.AbelJacobi
 ```
 
