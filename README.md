@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 23:53 EDT
+Last tick: 2026-04-27 00:02 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,16 +50,16 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralReflCover: tops out
-                      the refl-chart pipeline at cover-with and
-                      Pick. For `chartedSpaceSelf E`, both
-                      `pathIntegralViaCoverWith_self_eq_sum_provisional`
-                      and `pathIntegralViaCover_self_eq_sum_provisional`
-                      hold unconditionally — the refl-chart witness
-                      discharges the global mfderiv-id hypothesis at
-                      both layers. End-to-end refl pipeline now
-                      complete: chartedForm → in-chart → via-chart
-                      → cover-with → Pick. Build green (8183 jobs).
+                      NEW Periods/MfderivTranslation: building
+                      blocks for translation-chart bridge instances.
+                      Theorems `mfderiv_add_const_self v e` and
+                      `mfderiv_const_add_self v e`: manifold
+                      derivative of `x ↦ x + v` (resp. `v + x`) is
+                      identity. Reduces via `mfderiv_eq_fderiv` to
+                      `fderiv_add_const` + `fderiv_id`. Sets up
+                      future translation-chart instances (e.g. torus
+                      transition charts which are translations by
+                      lattice elements). Build green (8184 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
