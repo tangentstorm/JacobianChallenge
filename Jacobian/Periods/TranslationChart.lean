@@ -170,4 +170,16 @@ theorem pathIntegralInChart_translationChart
        curveIntegral (fun e => ω.toFun (e + (-v))) γ
   rfl
 
+/-- Via-chart variant: `pathIntegralViaChart` on a translation chart
+unfolds to the in-chart integral on the chart-lifted (translated)
+path. -/
+theorem pathIntegralViaChart_translationChart
+    (v : E) (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b)
+    (h : Set.range γ ⊆ (translationChart v).source) :
+    pathIntegralViaChart (translationChart v) ω γ h =
+      curveIntegral (fun e => ω.toFun (e + (-v)))
+        (chartLift (translationChart v) γ h) := by
+  unfold pathIntegralViaChart
+  exact pathIntegralInChart_translationChart v ω _
+
 end JacobianChallenge.Periods
