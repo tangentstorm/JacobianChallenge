@@ -12,7 +12,44 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 14:11 EDT)
+## Live Status (2026-04-27 14:48 EDT)
+
+- **PROMPT.md updated this tick:** new "Accurate measurement rules" section
+  in `## Progress Report Format` — every ratio in the README must come
+  from a counted source, no hand-picked per-layer percentages, recompute
+  each tick. Triggered by user pointing out the previous bars were
+  guesses, not calculations.
+- **README progress numbers re-derived from scratch.** Production
+  sorry-free was previously claimed as 372/372 (=100%); the real number
+  is **366 / 381** after excluding 11 intentional design files
+  (Challenge, Solution, StatementBank, 8 `*Recon*.lean`).
+- **Aristotle integrations to date** corrected from claimed 31 to actual
+  **82** (count of `"status":"integrated"` lines in
+  `aristotle_jobs.jsonl`).
+- **Local proof work this tick (2 lemmas, 1 new file):**
+  - NEW `Jacobian/AnalyticJacobian/EvalJacobianClassMkBridge.lean`:
+      - `evalJacobianClass_add_eq_mk`
+      - `evalJacobianClass_sub_eq_mk`
+      - `evalJacobianClass_neg_eq_mk`
+      - `zero_analyticJacobianGroup_eq_mk_zero`
+  - DISCHARGED sorry in
+    `Jacobian/AnalyticJacobian/EvalJacobianClassSelfSub.lean` via
+    term-mode `sub_self _` (one of last tick's parking-spot files).
+- **Active Aristotle jobs:** 5/5 (all from previous tick, all still
+  IN_PROGRESS / QUEUED at backend, none retrieved this tick):
+  - `37b183aa` evalLinearMap_ne_zero_of_toFun_ne_zero (HolomorphicForms)
+  - `6c252557` periodSubgroup_eq_range (Periods)
+  - `2f5d999b` mk_eq_zero_iff_mem_range (AnalyticJacobian)
+  - `b3a3b251` witnessAbelJacobi_self_both (AbelJacobi)
+  - `2d65778f` evalJacobianClass_self_sub_self (AnalyticJacobian) —
+    note: now redundant since I discharged it locally; will retrieve and
+    diff against my proof when it lands.
+- **Tree note:** Jacobian/Solution.lean and Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean
+  are dirty/untracked from prior session work — left untouched per
+  PROMPT.md.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 14:11 EDT)
 
 - **Aristotle event this tick — 2 packets COMPLETE & integrated:**
   - `17176298-0dc0-41df-98ff-cd7f6a9584cb`: evalLinearMap_neg_eq_zero_iff

@@ -207,7 +207,53 @@ a fenced code block so the shaded progress bars and aligned columns survive
 Markdown rendering — without fences, the lines collapse into wrapped
 paragraphs on GitHub.
 
-Use this template, tailoring the percentages and bullets to the actual state:
+### Accurate measurement rules (read before writing any number)
+
+The progress report describes the actual state of the tree, not aspirational
+status. **Every numeric value, percentage, or progress bar must come from a
+counted source.** If you cannot point to the command that produced the number,
+do not write it down.
+
+Concretely:
+
+- **No hand-picked per-layer percentages.** "Complex torus quotient 20%" with
+  no denominator is a vibe, not a measurement. Do not include rows like that
+  even as a "rough indicator." If a reader cannot verify the number from the
+  tree, it is misinformation.
+- **Every ratio needs a real denominator.** Use `X / Y` with the meaning of
+  `Y` made explicit (e.g. "8 / 20 substantive StatementBank declarations
+  promoted", "368 / 385 production .lean files sorry-free"). Do not collapse
+  to `Z%` without the underlying ratio.
+- **Bars must trace to a ratio.** `████████░░░░ 40%` is allowed only when
+  the same row shows the `X / Y` it came from. A bar without a ratio is
+  hand-picked by definition.
+- **Distinguish counted vs curated metrics.** A count like
+  `grep -rl "\bsorry\b" Jacobian --include="*.lean" | wc -l` is mechanical
+  and recomputable. A "promotion ratio" against a finite list of named
+  declarations is curated — fine, but label it as such and keep the list
+  visible (in the README, in `aristotle_tasks.md`, or in the StatementBank
+  itself). Never blend the two without saying which is which.
+- **Re-derive each tick.** Even ratios you trust drift: files are added,
+  sorrys are filled, declarations are renamed. Recompute counts at the start
+  of each tick rather than copying the previous tick's numbers.
+- **Exclude intentional design files explicitly.** `Challenge.lean`,
+  `Solution.lean`, `StatementBank.lean`, and `*Recon*.lean` carry `sorry` by
+  design. When reporting "sorry-free production files", subtract these and
+  say so on the same line.
+- **When unsure, omit.** If you do not have a clean way to count something,
+  do not estimate. Either compute it properly this tick or leave the row
+  out.
+
+A useful sanity check: if a future-you re-runs the same counting commands
+and gets a different number from what you wrote, the table is wrong — fix
+the table, not the commands.
+
+### Template
+
+Use this template, tailoring the rows and bullets to the actual state. The
+example rows below are illustrative — replace them with whatever ratios you
+actually computed this tick. Do not preserve rows for which you did not
+recompute the count.
 
 ````text
 ## Progress Report
@@ -215,16 +261,12 @@ Use this template, tailoring the percentages and bullets to the actual state:
 Last tick: YYYY-MM-DD HH:MM ZONE
 
 ```text
-Overall Jacobian infrastructure progress
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Project scaffolding       ████████████████████  100%  Lake project, cache, root modules
-Mathlib inventory         ████████████████████  100%  pinned v4.28.0 audit complete
-Complex torus quotient    ████░░░░░░░░░░░░░░░░   20%  quotient/lattice API starting
-Quotient manifold layer   ░░░░░░░░░░░░░░░░░░░░    0%  blocked on new charted-space work
-Holomorphic forms         ░░░░░░░░░░░░░░░░░░░░    0%  type absent in Mathlib
-Path integration/periods  ░░░░░░░░░░░░░░░░░░░░    0%  largest missing infrastructure
-Abel-Jacobi API           ░░░░░░░░░░░░░░░░░░░░    0%  waits on periods
-Trace/degree/push-pull    ░░░░░░░░░░░░░░░░░░░░    0%  local analytic theory partly present
+Headline progress markers (each a counted value, not an estimate)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Public spec discharged           X / 24   sorries in Jacobian/Challenge.lean
+StatementBank declarations       X        named decls in Jacobian/WorkPackets/StatementBank.lean
+Aristotle integrations to date   X        committed (count from aristotle_jobs.jsonl)
+Production sorry-free files      X / Y    excludes Challenge/Solution/StatementBank/*Recon*
 ```
 
 ```text

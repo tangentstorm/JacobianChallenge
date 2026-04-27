@@ -16,6 +16,7 @@ import Jacobian.AnalyticJacobian.EvalJacobianClass
 import Jacobian.AnalyticJacobian.EvalJacobianClassOps
 import Jacobian.AnalyticJacobian.EvalJacobianClassSmul
 import Jacobian.AnalyticJacobian.EvalJacobianClassZero
+import Jacobian.AnalyticJacobian.EvalJacobianClassMkBridge
 import Jacobian.AnalyticJacobian.NontrivialWitness
 
 /-!
