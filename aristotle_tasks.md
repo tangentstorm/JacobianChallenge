@@ -12,7 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 00:02 EDT)
+## Live Status (2026-04-27 00:10 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/ChartedFormPullbackTranslationChart.lean`:
+    translation-chart bridge instance using last-tick's
+    `MfderivTranslation` building blocks. Two theorems:
+      - `chartedFormPullback_eq_chartedForm_of_symm_eq_add_const`:
+        if `c.symm = fun x => x + v`, the corrected pullback equals
+        the provisional chart-form unconditionally.
+      - `chartedFormPullback_eq_chartedForm_of_symm_eq_const_add`:
+        same with left translation `c.symm = fun x => v + x`.
+    Proof: rewrite `c.symm` as the explicit translation, then
+    `mfderiv_{add,const}_const_self`. Second concrete bridge
+    instance after refl, directly relevant to torus transition
+    charts. Build green (8185 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 00:02 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
   `submitted-redundant`, kept as wake detector.

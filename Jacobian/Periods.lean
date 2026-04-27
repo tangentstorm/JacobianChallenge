@@ -110,6 +110,7 @@ import Jacobian.Periods.ChartedFormPullbackRefl
 import Jacobian.Periods.PathIntegralReflChart
 import Jacobian.Periods.PathIntegralReflCover
 import Jacobian.Periods.MfderivTranslation
+import Jacobian.Periods.ChartedFormPullbackTranslationChart
 import Jacobian.Periods.PathIntegralChartSmulSymmEqNegSmul
 import Jacobian.Periods.PathIntegralViaChartSmulSymmEqNegSmul
 import Jacobian.Periods.PathIntegralChartCorrectZero
