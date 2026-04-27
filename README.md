@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 00:34 EDT
+Last tick: 2026-04-27 00:40 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,13 +50,14 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      Subtraction-translation tower lifts:
-                      `pathIntegralInChartCorrect_eq_..._of_symm_eq_sub_const`
-                      and the via-chart analogue in
-                      PathIntegralTranslationChart. The translation
-                      pipeline now covers all three forms (`x + v`,
-                      `v + x`, `x - v`) at the chartedForm, in-chart,
-                      and via-chart layers. Build green (8186 jobs).
+                      EventuallyEq variants of the three translation
+                      bridges in ChartedFormPullbackTranslationChart:
+                      `_of_symm_eventuallyEq_{add_const, const_add,
+                      sub_const}`. Weaker hypothesis (`c.symm =ᶠ[𝓝 e]
+                      translation`) suffices since `mfderiv` is local.
+                      Useful for charts that agree with a translation
+                      only in a neighborhood of `e`. Build green
+                      (8186 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
