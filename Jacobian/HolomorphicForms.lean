@@ -4,6 +4,7 @@ import Jacobian.HolomorphicForms.ToFunApply
 import Jacobian.HolomorphicForms.ToFunApplyVec
 import Jacobian.HolomorphicForms.ToFunApplyVecExtra
 import Jacobian.HolomorphicForms.EvalLinearMap
+import Jacobian.HolomorphicForms.EvalLinearMapApi
 import Jacobian.HolomorphicForms.CotangentBundle
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.FiniteDimensional
