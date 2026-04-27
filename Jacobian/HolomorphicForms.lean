@@ -9,6 +9,7 @@ import Jacobian.HolomorphicForms.EvalLinearMapNeg
 import Jacobian.HolomorphicForms.EvalLinearMap
 import Jacobian.HolomorphicForms.EvalLinearMapApi
 import Jacobian.HolomorphicForms.EvalLinearMapEqIff
+import Jacobian.HolomorphicForms.EvalLinearMapEqZero
 import Jacobian.HolomorphicForms.EvalLinearMapApiExtra
 import Jacobian.HolomorphicForms.EvalLinearMapZsmul
 import Jacobian.HolomorphicForms.ToFunZsmul
