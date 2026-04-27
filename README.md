@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 03:52 EDT
+Last tick: 2026-04-27 03:59 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,12 +53,12 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED Periods/TranslationChart with
-                      `chartedFormPullbackLinearMap_translationChart_
-                      apply_eq_shifted`: bundled-LinearMap version of
-                      the translation pullback formula. Companion to
-                      last-tick's refl variant; both chart instances
-                      now have bundled-LinearMap pullback formulas.
+                      Provisional bundled-LinearMap formulas for
+                      both chart instances:
+                      `chartedFormLinearMap_refl_apply_eq_toFun` and
+                      `chartedFormLinearMap_translationChart_apply_
+                      eq_shifted`. Mirrors last-tick's corrected
+                      bundled simps with the provisional layer.
                       Build green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.

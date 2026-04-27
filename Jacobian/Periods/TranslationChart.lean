@@ -1,5 +1,6 @@
 import Jacobian.Periods.ChartedFormPullbackTranslationChart
 import Jacobian.Periods.ChartedFormPullbackLinearMap
+import Jacobian.Periods.ChartedFormLinearMap
 import Jacobian.Periods.PathIntegralTranslationChart
 import Mathlib.Topology.Algebra.Group.Basic
 import Mathlib.Topology.OpenPartialHomeomorph.Defs
@@ -229,5 +230,13 @@ theorem chartedFormPullbackLinearMap_translationChart_apply_eq_shifted
     chartedFormPullbackLinearMap (translationChart v) ω =
       (fun e : E => ω.toFun (e + (-v))) :=
   chartedFormPullback_translationChart_eq_shifted v ω
+
+/-- Bundled-LinearMap (provisional): bundled provisional chart-form
+on a translation chart applied to ω equals the shifted form. -/
+theorem chartedFormLinearMap_translationChart_apply_eq_shifted
+    (v : E) (ω : HolomorphicOneForm E E) :
+    chartedFormLinearMap (translationChart v) ω =
+      (fun e : E => ω.toFun (e + (-v))) :=
+  chartedForm_translationChart_eq_shifted v ω
 
 end JacobianChallenge.Periods

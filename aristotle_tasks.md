@@ -12,7 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 03:52 EDT)
+## Live Status (2026-04-27 03:59 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~9h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/PathIntegralReflChart.lean` with
+    `chartedFormLinearMap_refl_apply_eq_toFun`: provisional
+    bundled-LinearMap version. `chartedFormLinearMap (refl E) ω =
+    ω.toFun`.
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with
+    `chartedFormLinearMap_translationChart_apply_eq_shifted`:
+    `chartedFormLinearMap (translationChart v) ω =
+    fun e => ω.toFun (e + (-v))`.
+  Both reduce directly to the corresponding chartedForm function-
+  equality forms (via the bundled `_apply` rfl). Now both chart
+  instances have bundled-LinearMap formulas at both corrected and
+  provisional layers. Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 03:52 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~9h —
   `submitted-redundant`, kept as wake detector.
