@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 02:35 EDT)
+## Live Status (2026-04-27 02:41 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~8h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/PathIntegralReflChart.lean` with
+    `pathIntegralViaChart_reflChart`: via-chart analogue of last
+    tick's `pathIntegralInChart_reflChart`. Theorem:
+    `pathIntegralViaChart (OpenPartialHomeomorph.refl E) ω γ h =
+    curveIntegral ω.toFun γ`. Proof: unfold via-chart definition
+    and apply the in-chart variant — the chart-lift through refl
+    is the path itself. Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 02:35 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~8h —
   `submitted-redundant`, kept as wake detector.
