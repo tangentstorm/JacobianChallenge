@@ -136,4 +136,13 @@ recovers `x`. -/
   show (x + (-v)) + v = x
   rw [neg_add_cancel_right]
 
+set_option linter.unusedSectionVars false in
+/-- Lifting a path through the translation chart at `v` evaluates
+to `γ t + v`. (The chart-lift is just translation by `v` applied
+pointwise to the path's image.) -/
+@[simp] theorem chartLift_translationChart_apply
+    (v : E) {a b : E} (γ : Path a b)
+    (h : Set.range γ ⊆ (translationChart v).source) (t : unitInterval) :
+    chartLift (translationChart v) γ h t = γ t + v := rfl
+
 end JacobianChallenge.Periods
