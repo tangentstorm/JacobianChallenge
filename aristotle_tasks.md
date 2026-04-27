@@ -12,32 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 12:21 EDT)
+## Live Status (2026-04-27 12:29 EDT)
 
-- **Aristotle event this tick — canary woke up:**
-  - Canary `09cd85dd` COMPLETE 100% after backend SSL cert
-    renewal (was QUEUED ~18h).
-  - Retrieved patch is byte-identical to the locally-discharged
-    proof in `Jacobian/Periods/PathIntegralViaChartTrans.lean`
-    (diff is empty). Marked `redundant-identical` in
-    `aristotle_jobs.jsonl`.
-- Active jobs (ours): 0/5 (canary now closed; nothing else open).
+- Active jobs (ours): 0/5; canary closed previous tick.
+  Backend healthy. No new submissions yet — preparing
+  small file-scoped packets for next tick.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapNegNeg.lean`:
-    bundled-pullback double-negation collapse:
-      - `pullbackFormsLinearMap_neg_neg`
-      - `pullbackFormsLinearMap_neg_neg_apply`
-      - `pullbackFormsLinearMap_neg_neg_apply_vec`
-      - `pullbackFormsLinearMap_neg_sub`
-    All `@[simp]`. First three are `neg_neg` rewrites; the fourth
-    uses `map_neg`.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapSmulNeg.lean`:
+    combined smul/neg ring-rewrite identities for arbitrary `f`:
+      - `pullbackFormsLinearMap_smul_neg`
+      - `pullbackFormsLinearMap_neg_smul`
+      - `pullbackFormsLinearMap_neg_add`
+      - `pullbackFormsLinearMap_add_neg`
+    All `@[simp]`. Each composes two of `map_neg` / `_smul` /
+    `_add` plus a single `smul_neg` / `sub_eq_add_neg` step.
 - **Strategic note (carried forward):**
-  Backend wake is significant. Will resume submitting Aristotle
-  jobs next tick — start by submitting fresh small file-scoped
-  packets. Continuing 4-lemma local cadence in parallel.
+  Backend awake, queue empty. Continuing 4-lemma local cadence
+  in parallel; Aristotle packet preparation queued for next tick.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 12:16 EDT)
+## Stale Live Status (2026-04-27 12:21 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
