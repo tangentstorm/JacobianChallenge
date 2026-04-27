@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 01:56 EDT)
+## Live Status (2026-04-27 02:02 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with
+    `chartLift_translationChart_apply`: rfl simp lemma
+    `chartLift (translationChart v) γ h t = γ t + v`. Lets `simp`
+    unfold the chart-lift of a path through a translation chart to
+    the explicit pointwise translation. Useful for downstream
+    callers that need the lifted path's pointwise behavior. Build
+    green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 01:56 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
   `submitted-redundant`, kept as wake detector.
