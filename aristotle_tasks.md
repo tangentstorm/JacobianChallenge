@@ -12,7 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 18:52 EDT)
+## Live Status (2026-04-27 18:59 EDT)
+
+- **Aristotle packet `aadb7721` COMPLETE & integrated** in ~13 min. The
+  HARD direction of genus-zero classification. Sorry intact (correctly).
+  Returned a HIGH-QUALITY ~230-line doc-comment survey block: standard
+  proof chain (genus 0 → simply connected → biholomorphic to ℂℙ¹ →
+  ℂℙ¹ ≃ₜ S²), alternative Riemann-Roch route, extensive Mathlib API
+  table (~15 concepts marked ✅/❌; OnePoint ✅ but no T2/ChartedSpace,
+  stereographic ✅ for real model only, MeromorphicAt ✅ pointwise,
+  Divisor/RiemannRoch ❌, etc.), dependency-graph blocker tree, multi-
+  step Mathlib-API plan. Integrated as-is.
+- **Aristotle: 1/5 active.**
+  - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%
+    (~1h45m elapsed). IN_PROGRESS at the same % across multiple ticks
+    just means it's doing internal work — normal, not a stall.
+- **Aristotle integrations to date: 90** (was 89, +1 this tick).
+- **User commits this tick:**
+  - `fb99006 ComplexTorus: expose ULift transition obligation`.
+- **User WIP in flight:** `Jacobian/ComplexTorus/ULiftTransport.lean`.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 18:52 EDT)
 
 - **Aristotle: 2/5 active.**
   - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%

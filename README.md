@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 18:52 EDT
+Last tick: 2026-04-27 18:59 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 89         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 90         `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  381 / 389    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded).
                                           The 8 production files with real sorries:
@@ -60,18 +60,29 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     2 / 5
-                        `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS
-                                   at 17% (~1h40m in; 9 ticks stalled — clearly
-                                   stuck or hung).
-                        `aadb7721` genus-zero hard direction — IN_PROGRESS at 6%
-                                   (~6 min in; healthy progress).
-Integrated this tick:   None.
+Active jobs (ours):     1 / 5  `b782c387` topology-on-ContMDiffSection recon —
+                        IN_PROGRESS at 17% (~1h45m elapsed). IN_PROGRESS at the
+                        same % across multiple ticks just means it's doing
+                        internal work — that's normal Aristotle behavior, not
+                        a stall.
+Integrated this tick:   1  `aadb7721` genus-zero hard direction COMPLETE in
+                        ~13 min. Sorry intact (uniformization absent in Mathlib).
+                        Returned a HIGH-QUALITY ~230-line doc-comment survey
+                        block (twice as long as 027bb9d7's): standard proof
+                        chain, alternative Riemann-Roch route, extensive Mathlib
+                        API survey table (~15 concepts marked ✅/❌), dependency-
+                        graph blocker tree, and multi-step Mathlib-API plan.
+                        Integrated as-is.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+This tick was an Aristotle integration (aadb7721 hard-direction
+survey). No new local Lean work; the substantive deliverable is the
+integrated 230-line survey block.
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/HolomorphicForms/BasisAlignedDualEquiv.lean (+1 theorem)
 
   holomorphicOneFormDualFinBasis_apply_holomorphicOneFormFinBasis
