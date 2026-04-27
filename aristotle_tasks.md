@@ -12,21 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 08:25 EDT)
+## Live Status (2026-04-27 08:31 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - **Pivot:** back to Periods after several AbelJacobi ticks.
+  - NEW `Jacobian/AbelJacobi/Nontrivial.lean`: links
+    `witnessAbelJacobi` to `Nontrivial AnalyticJacobianGroup`:
+      - `nontrivial_analyticJacobian_of_witness_ne_zero`
+      - `evalJacobianClass_ne_of_witness_ne_zero`
+      - `evalLinearMap_diff_notMem_of_witness_ne_zero`
+        (uses `mk_eq_mk_iff` for the coset-membership form)
+      - `witness_zero_iff_evalJacobianClass_eq` (alias)
+    Wired into AbelJacobi umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~14h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 08:25 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/Periods/PeriodSubgroupExt.lean`:
       - `periodSubgroup_carrier_eq_range`
       - `range_periodPairing_subset_periodSubgroup`
       - `neg_periodPairing_mem_periodSubgroup`
       - `periodPairing_add_mem_periodSubgroup`
-    Wired into Periods umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~14h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 08:19 EDT)
