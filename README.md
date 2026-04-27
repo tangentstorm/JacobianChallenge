@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 00:45 EDT
+Last tick: 2026-04-27 00:53 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,14 +50,16 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/ChartedFormPullbackLinearMapEqOf-
-                      MfderivId: bundled-LinearMap bridge. Under the
-                      global `mfderiv c.symm = id` hypothesis,
-                      `chartedFormPullbackLinearMap c =
-                      chartedFormLinearMap c` as ℂ-linear maps.
-                      Proof: `LinearMap.ext` + `funext` + the
-                      previous-layer pointwise bridge. Build green
-                      (8187 jobs).
+                      NEW Periods/TranslationChart: concrete
+                      `translationChart v : OpenPartialHomeomorph E E`
+                      built from `Homeomorph.addRight v`. Has
+                      `translationChart v x = x + v` and
+                      `(translationChart v).symm x = x + (-v)` as
+                      simp lemmas, plus a sanity-check bridge
+                      instance: `chartedFormPullback (translationChart
+                      v) ω e = chartedForm (translationChart v) ω e`
+                      unconditionally. Concrete, named witness for
+                      the bridge. Build green (8188 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```

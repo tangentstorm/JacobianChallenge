@@ -12,7 +12,24 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 00:45 EDT)
+## Live Status (2026-04-27 00:53 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/TranslationChart.lean`: concrete
+    `translationChart v : OpenPartialHomeomorph E E` built from
+    `Homeomorph.addRight v`. Three theorems:
+      - `translationChart_apply v x = x + v` (rfl simp)
+      - `translationChart_symm_apply v x = x + (-v)` (rfl simp)
+      - `chartedFormPullback_translationChart_eq_chartedForm`:
+        the bridge fires unconditionally for translation charts.
+    Concrete named witness — anyone building chart constructions
+    based on translations now has a ready-to-use chart with the
+    bridge already proven. Build green (8188 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 00:45 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
   `submitted-redundant`, kept as wake detector.
