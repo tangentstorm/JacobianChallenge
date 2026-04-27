@@ -12,7 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 00:20 EDT)
+## Live Status (2026-04-27 00:28 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/MfderivTranslation.lean` with
+    `mfderiv_sub_const_self`: manifold derivative of `x ↦ x - v` is
+    `id`. Proof: rewrite `x - v = x + (-v)` then specialize
+    `mfderiv_add_const_self`.
+  - EXTENDED `Jacobian/Periods/ChartedFormPullbackTranslationChart.lean`
+    with `chartedFormPullback_eq_chartedForm_of_symm_eq_sub_const`:
+    bridge fires when `c.symm = x ↦ x - v`. Useful because charts
+    `c : x ↦ x + v` have `c.symm : x ↦ x - v`. Build green
+    (8186 jobs, two extensions, no new modules).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 00:20 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
   `submitted-redundant`, kept as wake detector.

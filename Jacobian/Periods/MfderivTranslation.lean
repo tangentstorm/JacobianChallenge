@@ -42,4 +42,16 @@ theorem mfderiv_const_add_self (v e : E) :
   rw [mfderiv_eq_fderiv, fderiv_const_add]
   exact fderiv_id
 
+/-- The manifold derivative of `x ↦ x - v` is the identity at every
+point. (Specializes `mfderiv_add_const_self` with `-v`.) -/
+theorem mfderiv_sub_const_self (v e : E) :
+    mfderiv (modelWithCornersSelf ℂ E)
+            (modelWithCornersSelf ℂ E)
+            (fun x : E => x - v) e =
+      ContinuousLinearMap.id ℂ E := by
+  have : (fun x : E => x - v) = (fun x : E => x + (-v)) := by
+    funext x; rw [sub_eq_add_neg]
+  rw [this]
+  exact mfderiv_add_const_self (-v) e
+
 end JacobianChallenge.Periods
