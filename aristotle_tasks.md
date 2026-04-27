@@ -12,7 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 18:24 EDT)
+## Live Status (2026-04-27 18:30 EDT)
+
+- **Aristotle: 2/5 active.**
+  - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at
+    17% after ~1h20m (4 ticks of stall).
+  - `027bb9d7` analyticGenus_eq_zero_of_homeomorphic_sphere —
+    IN_PROGRESS at 1% (just left the queue).
+- **Local proof work this tick (Claude-owned):** Extended
+  `Jacobian/Periods/BasisAlignedPeriodPairing.lean` with
+  `holomorphicOneFormDualEquiv_symm_basisAlignedPeriodPairing` —
+  pulling back through the inverse dual equiv recovers the
+  functional-space `periodPairing`.
+- **User WIP in flight (left untouched per PROMPT.md):**
+  - `Jacobian/Periods/PeriodLattice.lean`: discharging
+    `basisAlignedPeriodSubgroup_isClosed` via
+    `AddSubgroup.isClosed_of_discrete` (closed-from-discrete route).
+  - `Jacobian/ComplexTorus/ULiftTransport.lean`: discharging Round
+    2b `complexTorusULift_chartedSpace` instance with real
+    chart-transport machinery via `Homeomorph.ulift`.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 18:24 EDT)
 
 - **NEW Aristotle packet submitted: `027bb9d7-dfa7-402d-854d-eff0feb8c00b`.**
   Off-critical-path follow-up per new user feedback "aristotle may
