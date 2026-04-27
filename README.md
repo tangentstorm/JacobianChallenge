@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 08:48 EDT
+Last tick: 2026-04-27 08:54 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,11 +53,9 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~14h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AbelJacobi.Specialize: base-class /
-                      `evalLinearMap`-specialization shortcuts —
-                      witness simplifies when one or both endpoint
-                      classes / linear-map values are zero or in
-                      `periodSubgroup`.
+                      NEW HolomorphicForms.ToFunNeg: double-negation
+                      cancellation simps and reversed-orientation
+                      negation for `toFun_apply`/`toFun_apply_vec`.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -219,6 +217,7 @@ HolomorphicForms.AnalyticGenusPos pass lake build Jacobian.HolomorphicForms.Anal
 HolomorphicForms.ToFunApply pass lake build Jacobian.HolomorphicForms.ToFunApply (no sorry)
 HolomorphicForms.ToFunApplyVec pass lake build Jacobian.HolomorphicForms.ToFunApplyVec (no sorry)
 HolomorphicForms.ToFunApplyVecExtra pass lake build Jacobian.HolomorphicForms.ToFunApplyVecExtra (no sorry)
+HolomorphicForms.ToFunNeg pass lake build Jacobian.HolomorphicForms.ToFunNeg (no sorry)
 HolomorphicForms.EvalLinearMap pass lake build Jacobian.HolomorphicForms.EvalLinearMap (no sorry)
 HolomorphicForms.EvalLinearMapApi pass lake build Jacobian.HolomorphicForms.EvalLinearMapApi (no sorry)
 TraceDegree.PullbackFunEvalLinearMap pass lake build Jacobian.TraceDegree.PullbackFunEvalLinearMap (no sorry)
