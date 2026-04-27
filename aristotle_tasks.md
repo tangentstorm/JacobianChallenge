@@ -12,7 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 22:36 EDT)
+## Live Status (2026-04-26 22:42 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~4h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/ChartedFormPullbackEqChartedFormOfMfderivId.lean`:
+    conditional bridge — when `mfderiv c.symm e =
+    ContinuousLinearMap.id`, the corrected chart-pullback coincides
+    with the provisional chart-form (both at the CLM level and the
+    tangent-vec apply level). This is the precise hypothesis for
+    when the provisional layer is exactly correct (translation
+    transition charts; e.g. the torus example). Build green (8174
+    jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 22:36 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~4h —
   `submitted-redundant`, kept as wake detector.
