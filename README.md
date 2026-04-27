@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 16:58 EDT
+Last tick: 2026-04-27 17:02 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -60,30 +60,33 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     0 / 5  `72ac3a75` (Riemann-Roch finite-dimensionality theorem)
-                        COMPLETE this tick after ~1h18m of backend time. Aristotle
-                        produced a HIGH-QUALITY survey of the gap rather than a
-                        proof — exactly the partial-result outcome we hoped for
-                        ("off-path, even if big"). Sorry left intact (correctly —
-                        Mathlib v4.28.0 lacks the foundational analytic machinery
-                        for holomorphic sections on manifolds). Integrated as-is.
-Integrated this tick:   1  `72ac3a75` Aristotle's doc-comment survey of Mathlib
-                        gaps blocking compactRiemannSurface_finiteDimensionalHolomorphicOneForms.
-                        Returned ~30-line block listing: (1) Mathlib lemmas tried;
-                        (2) the 3-layer dependency-graph blocker (no topology on
-                        ContMDiffSection → no Montel → no Riesz route); (3) a
-                        3-step plan: define topology-of-uniform-convergence on
-                        ContMDiffSection + Banach upgrade → Montel via local
-                        Cauchy estimates → finish via Riesz. Useful project
-                        intelligence for future infrastructure tickets.
+Active jobs (ours):     1 / 5  `b782c387` (recon: Mathlib survey for topology on ContMDiffSection)
+                        — submitted this tick. Off-critical-path follow-up to
+                        Aristotle's 72ac3a75 plan: step (a) (define topology of
+                        uniform convergence on compact sets for ContMDiffSection)
+                        is itself substantial and needs scoping first. This
+                        packet asks Aristotle to fill in a recon-style stub
+                        (Jacobian/HolomorphicForms/SectionTopologyRecon.lean)
+                        with: existing Mathlib API, missing instances, design
+                        plan, dependency graph. Output is documentation, not a
+                        proof. Expected to take a few hours to a few hours; small
+                        risk and small reward (it's a survey, not blocking
+                        anything immediate).
+Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This tick was an Aristotle integration (above). No new local Lean
-work — the substantive deliverable is the integrated CompactRiemannSurface
-survey block.
+NEW Jacobian/HolomorphicForms/SectionTopologyRecon.lean (recon stub).
+Mirrors the existing recon-file convention (Jacobian/ComplexTorus/{Manifold,ZLattice,Discreteness}Recon.lean
++ Jacobian/HolomorphicForms/Recon.lean). Builds clean, contains no
+production declarations, not re-exported by any umbrella. The stub's
+docstring requests Aristotle to fill in a survey of (1) existing
+Mathlib API for topology on `ContMDiffSection`, (2) missing
+instances, (3) a concrete design plan with named Mathlib lemmas,
+(4) dependency graph. Submitted as packet `b782c387` — see Aristotle
+status above.
 
 PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedPeriodSubgroup.lean (+1 theorem)
