@@ -151,4 +151,13 @@ theorem chartedForm_translationChart_apply
     (v : E) (ω : HolomorphicOneForm E E) (e : E) :
     chartedForm (translationChart v) ω e = ω.toFun (e + (-v)) := rfl
 
+/-- The corrected chart-pullback on a translation chart agrees with
+the simple shifted form `ω.toFun (e + (-v))` (the `mfderiv` factor
+is the identity). -/
+theorem chartedFormPullback_translationChart_apply
+    (v : E) (ω : HolomorphicOneForm E E) (e : E) :
+    chartedFormPullback (translationChart v) ω e = ω.toFun (e + (-v)) := by
+  rw [chartedFormPullback_translationChart_eq_chartedForm,
+      chartedForm_translationChart_apply]
+
 end JacobianChallenge.Periods
