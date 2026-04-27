@@ -12,26 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 10:19 EDT)
+## Live Status (2026-04-27 10:22 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIdIdEvalDist.lean`:
-    bundled along-(id ∘ id) form/vec-slot dist forwarders:
-      - `pullbackFormsLinearMap_id_id_neg_apply_vec`
-      - `pullbackFormsLinearMap_id_id_sub_apply_vec`
-      - `pullbackFormsLinearMap_id_id_smul_apply_vec`
-      - `pullbackFormsLinearMap_id_id_apply_add_vec`
-    Continues the `id ∘ id` forwarder bank with the form-slot
-    neg/sub/ℂ-smul cases plus a vec-slot add. Each forwards via
-    rfl through to the bundled along-id result.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIdIdEvalVec.lean`:
+    bundled along-(id ∘ id) vec-slot dist forwarders:
+      - `pullbackFormsLinearMap_id_id_apply_neg_vec`
+      - `pullbackFormsLinearMap_id_id_apply_sub_vec`
+      - `pullbackFormsLinearMap_id_id_apply_smul_vec`
+      - `pullbackFormsLinearMap_id_id_apply_neg_neg_vec`
+    Continues the `id ∘ id` forwarder bank, mirroring the bundled
+    along-id `IdEvalVec`/`VecExtra` results. Each forwards via rfl.
+    Combined with prior forwarders, the bundled along-(id ∘ id)
+    picture covers form/vec-slot zero/add/neg/sub/ℂ-smul/neg-neg.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~15h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 10:16 EDT)
+## Stale Live Status (2026-04-27 10:19 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
