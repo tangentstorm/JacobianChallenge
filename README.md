@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 19:27 EDT
+Last tick: 2026-04-27 19:30 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -75,7 +75,14 @@ Integrated this tick:   None.
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Light tick. No new Lean work, no new commits since last tick.
+CLEANUP: stripped 229 stale "Live Status" sections from
+`aristotle_tasks.md` (3824 lines → 317 lines, ~92% reduction). Per
+PROMPT.md the Live Status block must be REPLACED each tick, not
+appended; historical job detail belongs in `aristotle_jobs.jsonl`,
+which has been maintained throughout. The Layer-status and
+Queue-template sections at the bottom of `aristotle_tasks.md` are
+preserved as the durable parts of the file.
+
 Production sorry-free still 381 / 389 (8 real-sorry production
 files: 3 Claude-owned-deep, 5 user-WIP).
 
