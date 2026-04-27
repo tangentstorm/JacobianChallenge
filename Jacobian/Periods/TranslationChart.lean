@@ -271,4 +271,25 @@ theorem chartedForm_translationChart_zero
   rw [translationChart_zero]
   exact chartedForm_refl_eq_toFun ω
 
+/-- The corrected chart-pullback on `translationChart 0` collapses
+to `ω.toFun` (mfderiv factor is identity). -/
+theorem chartedFormPullback_translationChart_zero
+    (ω : HolomorphicOneForm E E) :
+    chartedFormPullback (translationChart (0 : E)) ω = ω.toFun := by
+  rw [translationChart_zero]
+  exact chartedFormPullback_refl_eq_toFun ω
+
+/-- Bundled-LinearMap (provisional) form on `translationChart 0`. -/
+theorem chartedFormLinearMap_translationChart_zero
+    (ω : HolomorphicOneForm E E) :
+    chartedFormLinearMap (translationChart (0 : E)) ω = ω.toFun :=
+  chartedForm_translationChart_zero ω
+
+/-- Bundled-LinearMap (corrected) form on `translationChart 0`. -/
+theorem chartedFormPullbackLinearMap_translationChart_zero
+    (ω : HolomorphicOneForm E E) :
+    chartedFormPullbackLinearMap (translationChart (0 : E)) ω =
+      ω.toFun :=
+  chartedFormPullback_translationChart_zero ω
+
 end JacobianChallenge.Periods
