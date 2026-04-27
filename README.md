@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 22:15 EDT
+Last tick: 2026-04-26 22:23 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,12 +49,12 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~3.5h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaCoverPickSmulSmul:
-                      `pathIntegralViaCover_smul_smul` —
-                      Pick layer of iterated-scalar composition.
-                      This identity now at 6/6 layers, all the way
-                      to the user-facing wrapper. Build green
-                      (8171 jobs).
+                      NEW Periods/PathIntegralViaCoverPickNegSmul:
+                      `pathIntegralViaCover_neg_smul` — Pick layer
+                      of negated-scalar-multiple identity
+                      `∫(-(k•ω),γ) = (-k)•∫(ω,γ)`. This identity now
+                      at 6/6 layers all the way to the user-facing
+                      wrapper. Build green (8172 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
