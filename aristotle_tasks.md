@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 17:50 EDT)
+## Live Status (2026-04-27 17:57 EDT)
+
+- **Aristotle recon packet `b782c387`** (topology on ContMDiffSection)
+  IN_PROGRESS at 8% (~52 min in; +3 percentage points since last tick).
+  Per PROMPT.md not polling.
+- **Local proof work this tick (Claude-owned):** Extended
+  `Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean` with
+  `analyticJacobianBasisAlignedEquiv_witnessAbelJacobi` — distributes
+  the basis-aligned bridge over `witnessAbelJacobi`, lifting the
+  AbelJacobi witness machinery onto the basis-aligned model.
+- **User commits this tick:** `91139a0 Round 0: comparator harness setup`.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 17:50 EDT)
 
 - **Aristotle recon packet `b782c387`** (topology on ContMDiffSection)
   is now IN_PROGRESS at 5% (~45 min in; finally left the queue).

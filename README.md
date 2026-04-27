@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 17:50 EDT
+Last tick: 2026-04-27 17:57 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -60,15 +60,30 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5  `b782c387` (topology recon) finally moved off the
-                        queue: IN_PROGRESS at 5% (~45 min in). Per PROMPT.md not
-                        polling further.
+Active jobs (ours):     1 / 5  `b782c387` (topology recon) IN_PROGRESS at 8%
+                        (~52 min in; +3 percentage points since last tick).
+                        Per PROMPT.md not polling further.
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+1 theorem)
+
+  analyticJacobianBasisAlignedEquiv_witnessAbelJacobi
+    (basePoint P : X) (v : ℂ)
+    : analyticJacobianBasisAlignedEquiv X (witnessAbelJacobi basePoint P v)
+        = mk (dualEquiv (evalLinearMap P v)) - mk (dualEquiv (evalLinearMap basePoint v))
+    Distributes the bridge over witness subtraction; combines AddEquiv.map_sub
+    with last tick's evalJacobianClass corollary. Lifts the AbelJacobi witness
+    machinery cleanly onto the basis-aligned model.
+
+User commit `91139a0 Round 0: comparator harness setup` landed this tick.
+Tree note: Jacobian/Solution.lean is dirty (user WIP); also long-standing
+Jacobian/ComplexTorus/ULiftTransport.lean. Both left untouched per PROMPT.md.
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+1 theorem)
 
   analyticJacobianBasisAlignedEquiv_evalJacobianClass
