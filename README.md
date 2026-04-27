@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 23:45 EDT
+Last tick: 2026-04-26 23:53 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,15 +50,16 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralReflChart: lifts the
-                      refl-chart bridge up the integration tower.
-                      Packages `mfderiv_refl_symm_eq_id` as the
-                      reusable global witness, then derives
-                      `pathIntegralInChartCorrect_refl =
-                      pathIntegralInChart_refl` and the via-chart
-                      analogue, both unconditional. The refl chart
-                      now has a fully concrete corrected ↔
-                      provisional pipeline. Build green (8182 jobs).
+                      NEW Periods/PathIntegralReflCover: tops out
+                      the refl-chart pipeline at cover-with and
+                      Pick. For `chartedSpaceSelf E`, both
+                      `pathIntegralViaCoverWith_self_eq_sum_provisional`
+                      and `pathIntegralViaCover_self_eq_sum_provisional`
+                      hold unconditionally — the refl-chart witness
+                      discharges the global mfderiv-id hypothesis at
+                      both layers. End-to-end refl pipeline now
+                      complete: chartedForm → in-chart → via-chart
+                      → cover-with → Pick. Build green (8183 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
