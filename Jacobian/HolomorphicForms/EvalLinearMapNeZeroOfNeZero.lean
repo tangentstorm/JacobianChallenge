@@ -19,7 +19,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 theorem evalLinearMap_ne_zero_of_toFun_ne_zero
     (x : X) (v : E) {η : HolomorphicOneForm E X}
     (h : η.toFun x v ≠ 0) :
-    evalLinearMap x v η ≠ 0 := by
-  sorry
+    evalLinearMap x v η ≠ 0 :=
+  mt (evalLinearMap_eq_zero_iff_toFun_eq_zero x v η).mp h
 
 end JacobianChallenge.HolomorphicForms

@@ -12,40 +12,51 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 15:13 EDT)
+## Live Status (2026-04-27 15:25 EDT)
 
-- **All 5 in-flight packets COMPLETE at backend** but `aristotle result`
-  retrieval is failing with `httpx.ConnectError` (TLS / connectivity
-  hiccup). `aristotle list` itself works — only the tarball download
-  endpoint is failing. Will retry next tick.
-  - `37b183aa` evalLinearMap_ne_zero_of_toFun_ne_zero (HolomorphicForms)
-  - `6c252557` periodSubgroup_eq_range (Periods)
-  - `2f5d999b` mk_eq_zero_iff_mem_range (AnalyticJacobian)
-  - `b3a3b251` witnessAbelJacobi_self_both (AbelJacobi)
-  - `2d65778f` evalJacobianClass_self_sub_self (AnalyticJacobian) —
-    redundant: discharged locally last tick.
-- **Local proof work this tick (4 lemmas, 1 new file):**
-  - NEW `Jacobian/AnalyticJacobian/EvalJacobianClassEqSubMem.lean`:
-      - `evalJacobianClass_eq_iff_sub_mem`
-      - `evalJacobianClass_sub_eq_zero_iff_eq`
-      - `evalJacobianClass_sub_eq_zero_iff_sub_mem`
-      - `evalJacobianClass_eq_of_sub_mem`
-    Sub-membership variants of the equality / vanish-iff
-    characterizations, mirroring `mk_eq_mk_iff_sub_mem` upstream. All
-    proofs are term-mode unfold + existing-lemma application or
-    single-rewrite. Wired into `Jacobian/AnalyticJacobian.lean`.
-- **Headline numbers (recomputed):** production sorry-free **367 / 383**
-  (was 366/381 last tick; +2 production files added to disk —
-  EvalJacobianClassEqSubMem.lean (mine, sorry-free) and
-  TraceDegree/PullbackBasis.lean (user's untracked, 3 sorrys); +1 sorry
-  file from the latter, hence +1 sorry-free ratio adds 1).
+- **5 packets retrieved and integrated** (network was back; `result`
+  worked again). Each returned proof matched my predicted shape exactly:
+  - `37b183aa` evalLinearMap_ne_zero_of_toFun_ne_zero
+    → `mt (evalLinearMap_eq_zero_iff_toFun_eq_zero x v η).mp h`
+  - `6c252557` periodSubgroup_eq_range → `rfl`
+  - `2f5d999b` mk_eq_zero_iff_mem_range
+    → `rw [mk_eq_zero_iff, periodSubgroup_eq_range]`
+  - `b3a3b251` witnessAbelJacobi_self_both
+    → `rw [witnessAbelJacobi_self, witnessAbelJacobi_self]`
+  - `2d65778f` evalJacobianClass_self_sub_self → `sub_self _`
+    (byte-identical to my local discharge from commit 940eeab; no diff
+    to integrate but marked integrated in jsonl for accounting)
+- **User pushback** mid-tick: "stop giving aristotle trivial work...
+  give it something real to do". Indeed all 5 returned proofs were
+  one-liners. Saved as durable feedback memory
+  (`feedback_aristotle_substantive_work.md`) and baked the rule into
+  PROMPT.md §3: Aristotle packets must be substantive (5-30+ line
+  proofs); fine to leave queue at 0/5 when no real bounded work is
+  ready.
+- **No new packets submitted this tick** — applying the new rule.
+  Aristotle queue is intentionally 0/5.
+- **Aristotle integrations to date:** 87 (was 82 +5 this tick).
+- **Next-tick plan:** Claude-owned design move on
+  `Jacobian/Periods/PeriodLattice.lean` — replace the `opaque
+  periodSubgroup` with a concrete representative (probably the
+  basis-aligned image of `(periodPairing E X).range`). That converts
+  the 5 PeriodLattice sorries from "literally unprovable while opaque"
+  into bounded substantive targets that are appropriate Aristotle
+  packets (each ~15-30 lines).
 - **Tree note (left untouched per PROMPT.md):**
-  - `M Jacobian/Solution.lean` — pre-existing user refinement work.
+  - `M Jacobian/Solution.lean` — pre-existing user refinement.
   - `M Jacobian/ComplexTorus/ULiftTransport.lean` — pre-existing.
   - untracked `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` and
     `Jacobian/TraceDegree/PullbackBasis.lean` — pre-existing.
 
 ## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 15:13 EDT)
+
+- All 5 in-flight packets COMPLETE at backend but `result` retrieval
+  failing with `httpx.ConnectError`. NEW
+  `Jacobian/AnalyticJacobian/EvalJacobianClassEqSubMem.lean` (4 sub-mem
+  variants of the equality / vanish-iff characterizations).
+
 ## Stale Live Status (2026-04-27 14:48 EDT)
 
 - **PROMPT.md updated this tick:** new "Accurate measurement rules" section
