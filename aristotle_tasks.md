@@ -12,24 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 06:35 EDT)
+## Live Status (2026-04-27 06:39 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/HolomorphicForms/EvalLinearMapVec.lean`:
+    tangent-vector-slot linearity simps for `evalLinearMap`:
+      - `evalLinearMap_zero_vec`
+      - `evalLinearMap_add_vec`
+      - `evalLinearMap_smul_vec`
+      - `evalLinearMap_neg_vec`
+    All `@[simp]`, via `(η.toFun x).map_*`. Wired into
+    HolomorphicForms umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~12h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 06:35 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/HolomorphicForms/AnalyticGenusWitness.lean`:
-    witness-driven genus positivity (combines
-    `analyticGenus_pos_of_exists_ne_zero` with
-    `ne_zero_of_evalLinearMap_ne_zero`):
       - `analyticGenus_pos_of_evalLinearMap_ne_zero`
       - `analyticGenus_ne_zero_of_evalLinearMap_ne_zero`
-      - `analyticGenus_pos_of_toFun_ne_zero` (direct toFun form)
+      - `analyticGenus_pos_of_toFun_ne_zero`
       - `nontrivial_holomorphicOneForm_of_evalLinearMap_ne_zero`
-        (provides Nontrivial instance from a single witness)
-    Wired into HolomorphicForms umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~12h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 06:32 EDT)
