@@ -12,23 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 09:18 EDT)
+## Live Status (2026-04-27 09:23 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/AbelJacobi/WitnessMk.lean`: explicit `mk`-form
-    bridges for `witnessAbelJacobi`:
+  - NEW `Jacobian/TraceDegree/PullbackFunIdEval.lean`:
+    pullback-along-id ↔ `evalLinearMap` characterizations:
+      - `pullbackFormsFun_id_apply_vec_eq_evalLinearMap'` (alias)
+      - `pullbackFormsFun_id_eq_zero_iff_evalLinearMap_eq_zero`
+      - `pullbackFormsFun_id_eq_iff_evalLinearMap_eq`
+      - `pullbackFormsFun_id_factor_evalLinearMap`
+    Wired into TraceDegree umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~15h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 09:18 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AbelJacobi/WitnessMk.lean`:
       - `witnessAbelJacobi_eq_mk_sub`
       - `witnessAbelJacobi_eq_mk_evalLinearMap_sub`
       - `witnessAbelJacobi_eq_mk_neg_basePoint_add_endpoint`
       - `witnessAbelJacobi_eq_zero_iff_endpoint_diff_mem`
-        (vanishing iff endpoint `evalLinearMap` difference is in
-        `periodSubgroup`)
-    Wired into AbelJacobi umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~15h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 09:13 EDT)
