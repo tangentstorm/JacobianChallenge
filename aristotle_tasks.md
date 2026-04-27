@@ -12,27 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 11:16 EDT)
+## Live Status (2026-04-27 11:20 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~17h.
-  Re-checked Aristotle this tick: still asleep, no new completions.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/AbelJacobi/WitnessZeroIff.lean`:
-    witness-zero characterizations:
-      - `witnessAbelJacobi_eq_zero_iff_exists_cycle`
-      - `witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_periodPairing`
-      - `witnessAbelJacobi_eq_zero_iff_evalJacobianClass_eq`
-      - `witnessAbelJacobi_eq_zero_of_evalJacobianClass_eq`
-    Two iff/of pairs: cycle-witness (via `mem_periodSubgroup_iff`)
-    and Jacobian-class equality (via `sub_eq_zero` on the
-    `evalJacobianClass`-difference shape of the witness).
+  - NEW `Jacobian/AnalyticJacobian/EvalJacobianClassEq.lean`:
+    `evalJacobianClass` equality characterizations:
+      - `evalJacobianClass_eq_iff_mem`
+      - `evalJacobianClass_eq_iff_exists_cycle`
+      - `evalJacobianClass_eq_of_diff_eq_periodPairing`
+      - `evalJacobianClass_eq_zero_iff_mem`
+    Iff and sufficient-condition pairs. The first three say
+    `evalJacobianClass P v = evalJacobianClass Q w` is
+    characterized by `-evalLinearMap P v + evalLinearMap Q w` lying
+    in `periodSubgroup` (equivalently, being a `periodPairing`
+    image). The fourth specializes to the zero-class.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~17h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 11:13 EDT)
+## Stale Live Status (2026-04-27 11:16 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
