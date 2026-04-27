@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 18:15 EDT
+Last tick: 2026-04-27 18:19 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -61,14 +61,26 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5  `b782c387` (topology recon) IN_PROGRESS at 17%
-                        (~1h6m in; +1 percentage point since last tick — back to
-                        slow grind). Per PROMPT.md not polling further.
+                        (~1h10m in; unchanged from last tick — appears stalled).
+                        Per PROMPT.md not polling further.
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+1 simp lemma)
+
+  mk_basisAlignedPeriodPairing_eq_zero (σ : IntegralOneCycle X)
+    : (QuotientAddGroup.mk (basisAlignedPeriodPairing X σ) :
+         BasisAlignedAnalyticJacobian X) = 0
+    @[simp]; combines `basisAlignedPeriodPairing_mem` (membership in
+    the basis-aligned period subgroup) with `QuotientAddGroup.eq_zero_iff`
+    (kernel = subgroup) to show that period images are killed by the
+    quotient projection. Useful kernel-side simp rule for downstream
+    work over the basis-aligned analytic Jacobian.
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/HolomorphicForms/BasisAlignedDualEquiv.lean (+1 theorem)
 
   holomorphicOneFormDualEquiv_symm_pi_single
