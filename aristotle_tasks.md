@@ -12,23 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 06:04 EDT)
+## Live Status (2026-04-27 06:08 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/HolomorphicForms/EvalLinearMapApi.lean`:
+    neg/sub/smul/nsmul API around last tick's `evalLinearMap`:
+      - `evalLinearMap_neg`        (LinearMap.map_neg)
+      - `evalLinearMap_sub`        (LinearMap.map_sub)
+      - `evalLinearMap_smul`       (LinearMap.map_smul)
+      - `evalLinearMap_nsmul`      (induction on `n`)
+    Wired into HolomorphicForms umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~12h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 06:04 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/HolomorphicForms/EvalLinearMap.lean`: bundles
-    pointwise vec-evaluation `η ↦ η.toFun x v` as a ℂ-linear
-    `HolomorphicOneForm E X →ₗ[ℂ] ℂ`:
-      - `evalLinearMap` (the bundled definition)
-      - `evalLinearMap_apply` (rfl simp)
+  - NEW `Jacobian/HolomorphicForms/EvalLinearMap.lean`:
+      - `evalLinearMap`
+      - `evalLinearMap_apply`
       - `evalLinearMap_zero`
       - `evalLinearMap_add`
-    Building block for period pairing. Wired into
-    HolomorphicForms umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~11h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 06:01 EDT)

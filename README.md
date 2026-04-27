@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 06:04 EDT
+Last tick: 2026-04-27 06:08 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -32,7 +32,7 @@ Complex torus quotient API       ███████████████�
 Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms                ████████░░░░░░░░░░░░   43%  type/module/analyticGenus + zero/positivity API + full toFun simp matrix + bundled `evalLinearMap` (point/vec evaluation as ℂ-linear)
+Holomorphic forms                █████████░░░░░░░░░░░   45%  type/module/analyticGenus + zero/positivity API + full toFun simp matrix + bundled `evalLinearMap` with neg/sub/smul/nsmul API
 Path integration/periods         █████████████░░░░░░░   65%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances
 Analytic Jacobian (group)        ██░░░░░░░░░░░░░░░░░░   10%  abstract quotient group only (not yet torus)
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
@@ -49,14 +49,14 @@ chart and the explicit `translationChart v` construction.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~11h.
+Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~12h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW HolomorphicForms.EvalLinearMap: bundles
-                      pointwise vec-evaluation `η ↦ η.toFun x v`
-                      as a ℂ-linear `HolomorphicOneForm E X →ₗ[ℂ] ℂ`.
-                      Building block for period pairing.
+                      NEW HolomorphicForms.EvalLinearMapApi:
+                      neg/sub/smul/nsmul API for `evalLinearMap`.
+                      Three from `LinearMap.map_*`; nsmul by
+                      induction.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -219,6 +219,7 @@ HolomorphicForms.ToFunApply pass lake build Jacobian.HolomorphicForms.ToFunApply
 HolomorphicForms.ToFunApplyVec pass lake build Jacobian.HolomorphicForms.ToFunApplyVec (no sorry)
 HolomorphicForms.ToFunApplyVecExtra pass lake build Jacobian.HolomorphicForms.ToFunApplyVecExtra (no sorry)
 HolomorphicForms.EvalLinearMap pass lake build Jacobian.HolomorphicForms.EvalLinearMap (no sorry)
+HolomorphicForms.EvalLinearMapApi pass lake build Jacobian.HolomorphicForms.EvalLinearMapApi (no sorry)
 ```
 
 ```text
