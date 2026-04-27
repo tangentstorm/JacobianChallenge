@@ -103,4 +103,14 @@ theorem analyticJacobianBasisAlignedEquiv_witnessAbelJacobi
       analyticJacobianBasisAlignedEquiv_evalJacobianClass,
       analyticJacobianBasisAlignedEquiv_evalJacobianClass]
 
+/-- The basis-aligned image of a diagonal `witnessAbelJacobi` is `0`:
+follows from `witnessAbelJacobi_self` and `map_zero` of the equiv. -/
+@[simp] theorem analyticJacobianBasisAlignedEquiv_witnessAbelJacobi_self
+    (basePoint : X) (v : ℂ) :
+    analyticJacobianBasisAlignedEquiv X
+        (JacobianChallenge.AbelJacobi.witnessAbelJacobi
+          (E := ℂ) (X := X) basePoint basePoint v) = 0 := by
+  rw [JacobianChallenge.AbelJacobi.witnessAbelJacobi_self]
+  exact (analyticJacobianBasisAlignedEquiv X).map_zero
+
 end JacobianChallenge.Periods

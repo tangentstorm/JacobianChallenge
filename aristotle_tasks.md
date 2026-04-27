@@ -12,7 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 17:57 EDT)
+## Live Status (2026-04-27 18:09 EDT)
+
+- **Aristotle recon packet `b782c387`** (topology on ContMDiffSection)
+  IN_PROGRESS at 16% (~1h in; +8 percentage points since last tick —
+  accelerating). Per PROMPT.md not polling.
+- **Local proof work this tick (Claude-owned):** Extended
+  `Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean` with
+  `analyticJacobianBasisAlignedEquiv_witnessAbelJacobi_self` — a
+  diagonal-case simp lemma showing the bridge sends a self-self
+  witness to 0.
+- **User commits this tick:** `d1e0b3b GenusZeroClassification: split
+  into mp and mpr directions`. Both directions still sorry but
+  packaged as named theorems.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 17:57 EDT)
 
 - **Aristotle recon packet `b782c387`** (topology on ContMDiffSection)
   IN_PROGRESS at 8% (~52 min in; +3 percentage points since last tick).
