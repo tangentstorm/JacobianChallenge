@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 15:57 EDT
+Last tick: 2026-04-27 16:11 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -61,16 +61,47 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5  `72ac3a75` (Riemann-Roch finite-dimensionality theorem) is
-                        QUEUED at the backend (~2 min ago per `aristotle list`, but
-                        actually submitted ~17 min ago — the timestamp is for the
-                        QUEUED status transition). No movement to retrieve yet.
-                        Per PROMPT.md "check Aristotle status once" — not polling.
-Integrated this tick:   None from Aristotle (still QUEUED).
+                        IN_PROGRESS at 3% (~15 min into the run). Per PROMPT.md "check
+                        Aristotle status once" — not polling further. Will check next
+                        tick; deep theorem, expected to take hours.
+Integrated this tick:   None from Aristotle (still IN_PROGRESS).
 ```
 
 ```text
-Local cadence this tick (Claude-owned, substantive bottom-up infrastructure)
+Local cadence this tick (Claude-owned, substantive infrastructure refactor)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Jacobian/Periods/PeriodLattice.lean — rename `periodSubgroup` to
+`basisAlignedPeriodSubgroup` (and similarly for the 2 of-the-subgroup
+lemmas: `_isClosed`, `_isDiscrete`). This frees the
+`JacobianChallenge.Periods.periodSubgroup` fully-qualified name for the
+functional-space concrete definition in PeriodFunctional.lean,
+resolving the long-standing same-name conflict where the two
+declarations coexisted only because nobody imported both.
+
+Concrete result: `Jacobian/Periods.lean` umbrella now imports BOTH
+PeriodFunctional (with `periodSubgroup E X` functional-space) AND
+PeriodLattice (with `basisAlignedPeriodSubgroup X`) AND
+BasisAlignedPeriodSubgroup (with `basisAlignedPeriodSubgroupConcrete X`)
+with NO name conflict. This was structurally impossible before this tick.
+
+Builds:
+  lake build Jacobian.Periods.PeriodLattice ✓ (5 sorries — all renamed)
+  lake build Jacobian.Periods                ✓
+  lake build Jacobian.Solution              ✓ (no changes needed; only
+                                              uses `periodFullComplexLattice`,
+                                              which still exists with the same
+                                              shape, just now built atop the
+                                              renamed `basisAlignedPeriodSubgroup`)
+
+Universe-mismatch deferred: routing `basisAlignedPeriodSubgroup` to
+`basisAlignedPeriodSubgroupConcrete` (i.e. unfreezing the opaque) was
+attempted but blocked by `Type` vs `Type*`. PeriodFunctional uses
+`(X : Type)` (inheriting from `IntegralOneCycle`), but PeriodLattice
++ Solution + AnalyticOfCurveBasis all use `(X : Type*)`. Resolving
+this requires a Type/Type* generalization in IntegralOneCycle and
+PeriodFunctional — a separate Claude-owned refactor tick.
+
+PRIOR TICK (still standing):
 NEW Jacobian/Periods/BasisAlignedPeriodSubgroup.lean (1 def + 2 theorems):
 
   `basisAlignedPeriodSubgroupConcrete X
@@ -142,19 +173,22 @@ Reproduction (per dir):
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Check the Aristotle Riemann-Roch packet (`72ac3a75`); it was
-   QUEUED at end-of-tick, may still be running. If COMPLETE,
-   retrieve and review whatever sketch it produced (partial
-   results are useful — they surface Mathlib API gaps).
-2. Substantive next step on the unfreeze: rename the opaque
-   `periodSubgroup` in `Jacobian/Periods/PeriodLattice.lean`
-   (e.g. to `basisAlignedPeriodSubgroup`) and update
-   `Jacobian/Solution.lean` + `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean`
-   accordingly. Then point `periodFullComplexLattice` at
-   `basisAlignedPeriodSubgroupConcrete` from the new file.
-   Three-step refactor; safe because the only direct importers of
-   PeriodLattice are well-known.
-3. Continue ignoring the 5 user-WIP files (AnalyticOfCurveBasis,
+1. Check the Aristotle Riemann-Roch packet (`72ac3a75`); IN_PROGRESS
+   at 3% as of this tick.  If COMPLETE, retrieve and review whatever
+   sketch it produced (partial results are useful — they surface
+   Mathlib API gaps).
+2. Type/Type* generalization. To unfreeze
+   `opaque basisAlignedPeriodSubgroup` and route it through
+   `basisAlignedPeriodSubgroupConcrete`, lift `IntegralOneCycle` and
+   `periodPairing`/`periodSubgroup` in PeriodFunctional from
+   `(X : Type)` to `(X : Type*)`. Verify all transitive consumers
+   (the AnalyticJacobian/AbelJacobi work) still build.
+3. Once that lands, replace `opaque basisAlignedPeriodSubgroup` with
+   `noncomputable def := basisAlignedPeriodSubgroupConcrete X` and
+   the 2 sorry'd lemmas (`_isClosed`, `_isDiscrete`) become
+   provable-in-principle — package one as a substantive Aristotle
+   task.
+4. Continue ignoring the 5 user-WIP files (AnalyticOfCurveBasis,
    ULiftTransport, PullbackBasis, PushforwardBasis, AnalyticDegree)
    per PROMPT.md.
 ```

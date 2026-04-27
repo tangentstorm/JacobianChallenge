@@ -12,7 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 15:57 EDT)
+## Live Status (2026-04-27 16:11 EDT)
+
+- **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)**
+  is IN_PROGRESS at 3%. Started ~15 min ago at the backend. Per PROMPT.md
+  "check Aristotle status once" — not polling. Will check next tick.
+- **Local proof work this tick (Claude-owned, substantive refactor):**
+  Renamed `JacobianChallenge.Periods.periodSubgroup` (basis-aligned, in
+  PeriodLattice.lean) to `basisAlignedPeriodSubgroup`. This frees the
+  fully-qualified `JacobianChallenge.Periods.periodSubgroup` name for the
+  functional-space definition in PeriodFunctional.lean. Concrete result:
+  the `Jacobian/Periods` umbrella now imports BOTH PeriodFunctional AND
+  PeriodLattice AND BasisAlignedPeriodSubgroup with no name conflict —
+  structurally impossible before this tick.
+- **Universe-mismatch blocker identified:** routing the opaque
+  `basisAlignedPeriodSubgroup` to the concrete
+  `basisAlignedPeriodSubgroupConcrete` requires lifting
+  `IntegralOneCycle`, `periodPairing`, `periodSubgroup` in
+  PeriodFunctional from `(X : Type)` to `(X : Type*)`. Deferred to a
+  follow-up Claude-owned refactor tick.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 15:57 EDT)
 
 - **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)
   is QUEUED**. No movement to retrieve yet. Per PROMPT.md "check
