@@ -12,10 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 20:51 EDT)
+## Live Status (2026-04-26 20:59 EDT)
 
-- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~2.5h+.
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~3h.
   Backend still asleep.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/ChartedFormPullbackApplyApplyLinear.lean`:
+    five vector-apply (e v) forms of `chartedFormPullback`
+    linearity (zero, neg, add, sub, smul). Each is `rw` to the
+    point-apply form + `rfl`. Build green (8160 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 20:51 EDT)
+
 - **Integrated this tick (local Claude-owned):**
   - NEW `Jacobian/Periods/PathIntegralViaChartNegEqNegOneSmul.lean`:
     `pathIntegralViaChart_neg_eq_neg_one_smul` — provisional
