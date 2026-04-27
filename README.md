@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 02:19 EDT
+Last tick: 2026-04-27 02:25 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,14 +50,14 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED Periods/TranslationChart with
-                      `chartedFormPullback_translationChart_apply`:
-                      `chartedFormPullback (translationChart v) ω
-                      e = ω.toFun (e + (-v))`. Combines the bridge
-                      with the chartedForm formula — the corrected
-                      chart-pullback on a translation chart reduces
-                      to the simple shifted form (mfderiv factor
-                      cancels). Build green (8189 jobs).
+                      EXTENDED Periods/PathIntegralReflChart with
+                      `chartedForm_refl_apply` (rfl) and
+                      `chartedFormPullback_refl_apply`. Both
+                      reduce the chart-form on the refl chart to
+                      `ω.toFun e`. Companion to last-tick's
+                      translation-chart pointwise formulas — the
+                      refl chart version of the same simplification.
+                      Build green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```

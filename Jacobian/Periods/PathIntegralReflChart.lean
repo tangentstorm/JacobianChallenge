@@ -71,4 +71,18 @@ pointwise. -/
     (t : unitInterval) :
     chartLift (OpenPartialHomeomorph.refl E) γ h t = γ t := rfl
 
+set_option linter.unusedSectionVars false in
+/-- The provisional chart-form on the refl chart is just `ω.toFun`. -/
+theorem chartedForm_refl_apply
+    (ω : HolomorphicOneForm E E) (e : E) :
+    chartedForm (OpenPartialHomeomorph.refl E) ω e = ω.toFun e := rfl
+
+set_option linter.unusedSectionVars false in
+/-- The corrected chart-pullback on the refl chart is just `ω.toFun`
+(the `mfderiv` factor is the identity). -/
+theorem chartedFormPullback_refl_apply
+    (ω : HolomorphicOneForm E E) (e : E) :
+    chartedFormPullback (OpenPartialHomeomorph.refl E) ω e = ω.toFun e := by
+  rw [chartedFormPullback_refl_eq_chartedForm_refl, chartedForm_refl_apply]
+
 end JacobianChallenge.Periods
