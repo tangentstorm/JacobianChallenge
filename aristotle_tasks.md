@@ -12,7 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 04:26 EDT)
+## Live Status (2026-04-27 04:35 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned, 3 lemmas):**
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with three
+    more zero-translation chart-form collapses:
+      - `chartedFormPullback_translationChart_zero`:
+        `chartedFormPullback (translationChart 0) ω = ω.toFun`.
+      - `chartedFormLinearMap_translationChart_zero`:
+        bundled provisional version, equals `ω.toFun`.
+      - `chartedFormPullbackLinearMap_translationChart_zero`:
+        bundled corrected version, equals `ω.toFun`.
+    All proofs reduce via `translationChart_zero` to the refl
+    chart formula or directly delegate. Build green (8189 jobs).
+- **Strategic note (carried forward from previous tick):**
+  Pushing Path integration/periods to 100% requires substantive
+  infrastructure (Packet F, partition independence, Stokes), not
+  small simps. See previous tick's strategic note in commit
+  `005b4d9`.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 04:26 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h —
   `submitted-redundant`, kept as wake detector.
