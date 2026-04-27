@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 08:54 EDT
+Last tick: 2026-04-27 08:57 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,9 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~14h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW HolomorphicForms.ToFunNeg: double-negation
-                      cancellation simps and reversed-orientation
-                      negation for `toFun_apply`/`toFun_apply_vec`.
+                      NEW HolomorphicForms.EvalLinearMapNeg:
+                      bundled-level analogue of last tick's
+                      ToFunNeg — double-negation cancellation,
+                      negation symmetry, and reversed-orientation.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -218,6 +219,7 @@ HolomorphicForms.ToFunApply pass lake build Jacobian.HolomorphicForms.ToFunApply
 HolomorphicForms.ToFunApplyVec pass lake build Jacobian.HolomorphicForms.ToFunApplyVec (no sorry)
 HolomorphicForms.ToFunApplyVecExtra pass lake build Jacobian.HolomorphicForms.ToFunApplyVecExtra (no sorry)
 HolomorphicForms.ToFunNeg pass lake build Jacobian.HolomorphicForms.ToFunNeg (no sorry)
+HolomorphicForms.EvalLinearMapNeg pass lake build Jacobian.HolomorphicForms.EvalLinearMapNeg (no sorry)
 HolomorphicForms.EvalLinearMap pass lake build Jacobian.HolomorphicForms.EvalLinearMap (no sorry)
 HolomorphicForms.EvalLinearMapApi pass lake build Jacobian.HolomorphicForms.EvalLinearMapApi (no sorry)
 TraceDegree.PullbackFunEvalLinearMap pass lake build Jacobian.TraceDegree.PullbackFunEvalLinearMap (no sorry)

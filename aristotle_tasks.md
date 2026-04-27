@@ -12,21 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 08:54 EDT)
+## Live Status (2026-04-27 08:57 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/HolomorphicForms/EvalLinearMapNeg.lean`:
+    bundled analogue of `ToFunNeg`:
+      - `evalLinearMap_neg_neg_form`
+      - `evalLinearMap_neg_neg_result`
+      - `evalLinearMap_neg_form_eq_neg` (alias)
+      - `evalLinearMap_neg_form_swap` (reversed orientation)
+    Wired into HolomorphicForms umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~14h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 08:54 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/HolomorphicForms/ToFunNeg.lean`:
-    double-negation cancellation + reversed-orientation negation:
-      - `neg_neg_toFun_apply` (`@[simp]`)
-      - `neg_neg_toFun_apply_vec` (`@[simp]`)
+      - `neg_neg_toFun_apply`
+      - `neg_neg_toFun_apply_vec`
       - `toFun_neg_apply_swap`
       - `toFun_neg_apply_vec_swap`
-    Wired into HolomorphicForms umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~14h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 08:48 EDT)

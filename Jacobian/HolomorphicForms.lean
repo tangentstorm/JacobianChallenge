@@ -5,6 +5,7 @@ import Jacobian.HolomorphicForms.ToFunApply
 import Jacobian.HolomorphicForms.ToFunApplyVec
 import Jacobian.HolomorphicForms.ToFunApplyVecExtra
 import Jacobian.HolomorphicForms.ToFunNeg
+import Jacobian.HolomorphicForms.EvalLinearMapNeg
 import Jacobian.HolomorphicForms.EvalLinearMap
 import Jacobian.HolomorphicForms.EvalLinearMapApi
 import Jacobian.HolomorphicForms.EvalLinearMapZsmul
