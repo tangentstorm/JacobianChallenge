@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 21:03 EDT
+Last tick: 2026-04-26 21:10 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -49,10 +49,11 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~3h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/ChartedFormPullbackLinearMapApplyApplyLinear:
-                      five bundled-LinearMap-level vector-apply (e v)
-                      forms (zero, neg, add, sub, smul). Build green
-                      (8161 jobs).
+                      NEW Periods/ChartedFormApplyApplyLinear: five
+                      vector-apply (e v) forms of provisional
+                      `chartedForm` linearity (zero, neg, add, sub,
+                      smul). Mirrors the corrected chartedFormPullback
+                      family. Build green (8162 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
