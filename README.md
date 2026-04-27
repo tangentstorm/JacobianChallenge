@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 17:57 EDT
+Last tick: 2026-04-27 18:09 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -60,8 +60,8 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5  `b782c387` (topology recon) IN_PROGRESS at 8%
-                        (~52 min in; +3 percentage points since last tick).
+Active jobs (ours):     1 / 5  `b782c387` (topology recon) IN_PROGRESS at 16%
+                        (~1h in; +8 percentage points since last tick — accelerating).
                         Per PROMPT.md not polling further.
 Integrated this tick:   None.
 ```
@@ -69,6 +69,21 @@ Integrated this tick:   None.
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+1 simp lemma)
+
+  analyticJacobianBasisAlignedEquiv_witnessAbelJacobi_self
+    (basePoint : X) (v : ℂ)
+    : analyticJacobianBasisAlignedEquiv X
+        (witnessAbelJacobi basePoint basePoint v) = 0
+    @[simp]; uses `witnessAbelJacobi_self` (which gives 0 in source)
+    plus `map_zero` of the equiv. Diagonal-witness corollary of last
+    tick's general witnessAbelJacobi-distribution lemma.
+
+User commit `d1e0b3b GenusZeroClassification: split into mp and mpr
+directions` landed during this tick. Both directions still sorry but
+now packaged as named theorems.
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+1 theorem)
 
   analyticJacobianBasisAlignedEquiv_witnessAbelJacobi
