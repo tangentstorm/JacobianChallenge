@@ -12,19 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 20:37 EDT)
+## Live Status (2026-04-26 20:43 EDT)
 
-- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~2.5h.
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~2.5h+.
   Backend still asleep.
 - **Integrated this tick (local Claude-owned):**
-  - NEW `Jacobian/Periods/PathIntegralViaChartCorrectNegEqNegOneSmul.lean`:
-    `pathIntegralViaChartCorrect_neg_eq_neg_one_smul` — from-`X`
-    lift of the in-chart `_neg_eq_neg_one_smul` from last tick.
-    Wired into Periods umbrella; build green (8156 jobs).
+  - NEW `Jacobian/Periods/PathIntegralViaCoverNegEqNegOneSmul.lean`:
+    `pathIntegralViaCoverWith_neg_eq_neg_one_smul` —
+    cover-layer lift of `_neg_eq_neg_one_smul`. Wired into
+    Periods umbrella; build green (8157 jobs).
+- The bridge identity now exists at three layers: in-chart
+  corrected, via-chart corrected, cover-with.
 - **Submitted this tick:** none.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-26 20:32 EDT)
+## Stale Live Status (2026-04-26 20:37 EDT)
 
 - Active jobs (ours): 0/5 (queue empty); backend still frozen.
 - **Integrated this tick (local Claude-owned):**
