@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 21:31 EDT
+Last tick: 2026-04-26 21:36 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,13 +46,14 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~3h.
+Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~3.5h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaChartCorrectOneSmul:
-                      `pathIntegralViaChartCorrect_one_smul` —
-                      via-chart corrected layer of identity-scalar
-                      normalization. Build green (8165 jobs).
+                      NEW Periods/PathIntegralChartCorrectOneSmul:
+                      `pathIntegralInChartCorrect_one_smul` —
+                      in-chart corrected layer of identity-scalar
+                      normalization. Identity now at 3 layers.
+                      Build green (8166 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
