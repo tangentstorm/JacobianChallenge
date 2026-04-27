@@ -104,6 +104,7 @@ import Jacobian.Periods.PathIntegralInChartCorrectEqOfMfderivId
 import Jacobian.Periods.PathIntegralViaChartCorrectEqOfMfderivId
 import Jacobian.Periods.CoverSegmentSubpathRange
 import Jacobian.Periods.PathIntegralViaCoverWithEqOfMfderivId
+import Jacobian.Periods.PathIntegralViaCoverEqOfMfderivId
 import Jacobian.Periods.PathIntegralChartSmulSymmEqNegSmul
 import Jacobian.Periods.PathIntegralViaChartSmulSymmEqNegSmul
 import Jacobian.Periods.PathIntegralChartCorrectZero
