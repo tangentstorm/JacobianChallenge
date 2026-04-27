@@ -12,21 +12,38 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 06:08 EDT)
+## Live Status (2026-04-27 06:14 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/TraceDegree/PullbackFunEvalLinearMap.lean`:
+    light bridge between `pullbackFormsFun` and the new
+    `HolomorphicForms.evalLinearMap`:
+      - `pullbackFormsFun_apply_eq_comp` (factorisation)
+      - `pullbackFormsFun_id_apply_eq_toFun`
+      - `pullbackFormsFun_id_apply_vec_eq_evalLinearMap`
+      - `pullbackFormsFun_apply_vec_add'` (ℂ-linear add via the
+        new toFun simp)
+    Note: full vec-applied identity not a rfl-bridge, since
+    `mfderiv f x v` lives in `TangentSpace 𝓘 (f x)` rather than
+    `E` and Lean doesn't unify them.
+    Wired into TraceDegree umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~12h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 06:08 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/HolomorphicForms/EvalLinearMapApi.lean`:
-    neg/sub/smul/nsmul API around last tick's `evalLinearMap`:
-      - `evalLinearMap_neg`        (LinearMap.map_neg)
-      - `evalLinearMap_sub`        (LinearMap.map_sub)
-      - `evalLinearMap_smul`       (LinearMap.map_smul)
-      - `evalLinearMap_nsmul`      (induction on `n`)
-    Wired into HolomorphicForms umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~12h — not waiting.
+      - `evalLinearMap_neg`
+      - `evalLinearMap_sub`
+      - `evalLinearMap_smul`
+      - `evalLinearMap_nsmul`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 06:04 EDT)
