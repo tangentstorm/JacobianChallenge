@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 07:20 EDT
+Last tick: 2026-04-27 07:25 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -34,7 +34,7 @@ Projection (mk) smoothness       ███████████████�
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
 Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
 Path integration/periods         ██████████████░░░░░░   68%  full corrected/provisional bridge ladder (5 layers); refl + translation chart instances + named API around periodPairing/periodSubgroup with closure lemmas
-Analytic Jacobian (group)        ███░░░░░░░░░░░░░░░░░   16%  abstract quotient group + full mk projection API (zero/add/neg/sub/nsmul/zsmul + kernel characterization)
+Analytic Jacobian (group)        ████░░░░░░░░░░░░░░░░   18%  abstract quotient group + full mk projection API + surjectivity / coset extensionality + concrete `evalJacobianClass` lift
 Abel-Jacobi API                  █░░░░░░░░░░░░░░░░░░░    5%  Queue F recon only
 Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   28%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap
 
@@ -53,10 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~13h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AnalyticJacobian.MkOps: extends Mk with
-                      `mk_neg` / `mk_sub` / `mk_nsmul` / `mk_zsmul`,
-                      closing the group-operation matrix on the
-                      quotient projection.
+                      NEW AnalyticJacobian.MkExt: surjectivity of
+                      `mk`, coset extensionality `mk_eq_mk_iff`,
+                      and a concrete `evalJacobianClass` lift
+                      sending `(x, v)` directly to a Jacobian class.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -233,6 +233,7 @@ Periods.PeriodSubgroupApi pass lake build Jacobian.Periods.PeriodSubgroupApi (no
 Periods.PeriodSubgroupClosure pass lake build Jacobian.Periods.PeriodSubgroupClosure (no sorry)
 AnalyticJacobian.Mk pass lake build Jacobian.AnalyticJacobian.Mk (no sorry)
 AnalyticJacobian.MkOps pass lake build Jacobian.AnalyticJacobian.MkOps (no sorry)
+AnalyticJacobian.MkExt pass lake build Jacobian.AnalyticJacobian.MkExt (no sorry)
 ```
 
 ```text
