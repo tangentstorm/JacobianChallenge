@@ -342,8 +342,8 @@ This table is the current top-down bridge inventory. Keep it updated as
 | `pullback_contMDiff` ✅ refined | `contMDiff_uLift_up.comp (analyticPullback_contMDiff.comp contMDiff_uLift_down)` | `analyticPullback_contMDiff` (named sorry) |
 | `pullback_id_apply` ✅ refined | unfold + `analyticPullback_id_apply` | `analyticPullback_id_apply` (named sorry) |
 | `pullback_comp_apply` ✅ refined | unfold + `analyticPullback_comp_apply` | `analyticPullback_comp_apply` (named sorry) |
-| `ContMDiff.degree` | analytic/geometric degree | branched-cover/local multiplicity theory |
-| `pushforward_pullback` | trace-pullback identity | `trace_f (pullback_f η) = degree f • η` plus quotient transport |
+| `ContMDiff.degree` ✅ refined | `JacobianChallenge.TraceDegree.analyticDegree` | `analyticDegree` (named `opaque` in `Jacobian.TraceDegree.AnalyticDegree`) |
+| `pushforward_pullback` ✅ refined | trace–pullback identity through ULift | `analyticPushforward_analyticPullback` (named sorry — the `tr_f (f* Q) = deg(f) • Q` identity) |
 
 ## Practical Guardrails
 
