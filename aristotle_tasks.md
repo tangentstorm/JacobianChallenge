@@ -12,23 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 08:45 EDT)
+## Live Status (2026-04-27 08:48 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AbelJacobi/Specialize.lean`: shortcut lemmas
+    when endpoint classes / `evalLinearMap` values are zero or in
+    `periodSubgroup`:
+      - `witnessAbelJacobi_eq_endpoint_of_basePoint_class_zero`
+      - `witnessAbelJacobi_eq_zero_of_both_classes_zero`
+      - `witnessAbelJacobi_eq_zero_of_both_evalLinearMap_mem`
+      - `witnessAbelJacobi_eq_zero_of_both_evalLinearMap_zero`
+    Wired into AbelJacobi umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~14h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 08:45 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/AnalyticJacobian/EvalJacobianClassMember.lean`:
-    composes the `Mk` membership API with the
-    `EvalJacobianClassZero` characterizations:
       - `evalJacobianClass_eq_zero_of_evalLinearMap_mem_periodSubgroup`
       - `evalJacobianClass_eq_zero_of_evalLinearMap_zero`
       - `evalJacobianClass_eq_evalJacobianClass_iff_sub_mem`
-        (uses `mk_eq_mk_iff_sub_mem`)
       - `mk_evalLinearMap_eq_zero_iff`
-    Wired into AnalyticJacobian umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~14h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 08:41 EDT)
