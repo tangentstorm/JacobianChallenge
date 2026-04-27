@@ -6,6 +6,7 @@ import Jacobian.AnalyticJacobian.EvalJacobianClass
 import Jacobian.AnalyticJacobian.EvalJacobianClassOps
 import Jacobian.AnalyticJacobian.EvalJacobianClassSmul
 import Jacobian.AnalyticJacobian.EvalJacobianClassZero
+import Jacobian.AnalyticJacobian.NontrivialWitness
 
 /-!
 # Analytic Jacobian infrastructure
