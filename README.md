@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 18:30 EDT
+Last tick: 2026-04-27 18:35 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -62,15 +62,33 @@ Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     2 / 5
                         `b782c387` topology-on-ContMDiffSection recon — still
-                                   IN_PROGRESS at 17% after ~1h20m (4 ticks of stall).
+                                   IN_PROGRESS at 17% (5 ticks of stall now).
                         `027bb9d7` analyticGenus_eq_zero_of_homeomorphic_sphere —
-                                   IN_PROGRESS at 1% (~3 min in; just left the queue).
+                                   IN_PROGRESS at 3% (~8 min in).
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+1 theorem)
+
+  analyticJacobianBasisAlignedEquiv_witnessAbelJacobi_mk_sub
+    (basePoint P : X) (v : ℂ)
+    : analyticJacobianBasisAlignedEquiv X
+        (witnessAbelJacobi basePoint P v)
+        = QuotientAddGroup.mk (dualEquiv (evalLinearMap P v)
+                              - dualEquiv (evalLinearMap basePoint v))
+    Single-`mk` form of the witness-bridge theorem; combines the
+    existing two-`mk`-subtracted form with `QuotientAddGroup.mk_sub`.
+    Useful when downstream proofs want a single representative.
+
+USER COMMITS THIS TICK: `6b9c9fe PeriodLattice: discharge basisAlignedPeriodSubgroup_isClosed`
+— used `AddSubgroup.isClosed_of_discrete` (closedness from discreteness).
+PeriodLattice sorry count drops from 4 → 3 (only `_isDiscrete`,
+`_fundamentalDomain_isCompact`, `_fundamentalDomain_covers` remain).
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedPeriodPairing.lean (+1 theorem)
 
   holomorphicOneFormDualEquiv_symm_basisAlignedPeriodPairing
