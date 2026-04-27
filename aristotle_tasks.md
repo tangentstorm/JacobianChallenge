@@ -12,7 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 22:42 EDT)
+## Live Status (2026-04-26 22:48 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~4h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/PathIntegralInChartCorrectEqOfMfderivId.lean`:
+    lifts the previous-tick chartedForm bridge to integrals.
+    Theorem: `pathIntegralInChartCorrect c ω γ =
+    pathIntegralInChart c ω γ` whenever `mfderiv c.symm` is the
+    identity everywhere on `E`. Proof: `congr` under `curveIntegral`
+    + `funext` + the CLM-level bridge. The provisional integration
+    layer now coincides exactly with the corrected one under a
+    single named global hypothesis. Build green (8175 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 22:42 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~4h —
   `submitted-redundant`, kept as wake detector.
