@@ -12,7 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 02:59 EDT)
+## Live Status (2026-04-27 03:07 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~8h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/PathIntegralReflChart.lean` with
+    `pathIntegralViaChartCorrect_reflChart`:
+    `pathIntegralViaChartCorrect (refl E) ω γ h =
+    curveIntegral ω.toFun γ`.
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with
+    `pathIntegralViaChartCorrect_translationChart`:
+    `pathIntegralViaChartCorrect (translationChart v) ω γ h =
+    curveIntegral (fun e => ω.toFun (e + (-v)))
+    (chartLift (translationChart v) γ h)`.
+  Both proofs combine the chart-specific via-chart bridge with
+  last-tick's provisional via-chart formulas. Both chart instances
+  now have end-to-end direct `curveIntegral` simps spanning
+  corrected and provisional layers. Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 02:59 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~8h —
   `submitted-redundant`, kept as wake detector.
