@@ -12,21 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 09:05 EDT)
+## Live Status (2026-04-27 09:09 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AnalyticJacobian/MkPeriodPairingSmul.lean`:
+    `mk` invariance under integer-scaled `periodPairing` (all `@[simp]`):
+      - `mk_nsmul_periodPairing`
+      - `mk_zsmul_periodPairing`
+      - `mk_add_nsmul_periodPairing`
+      - `mk_add_zsmul_periodPairing`
+    Wired into AnalyticJacobian umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~15h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 09:05 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/AnalyticJacobian/MkPeriodPairing.lean`:
-    `periodPairing` values are invisible to `mk` (all `@[simp]`):
       - `mk_add_periodPairing`
       - `mk_periodPairing_add`
       - `mk_sub_periodPairing`
       - `mk_neg_periodPairing`
-    Wired into AnalyticJacobian umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~14h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 09:01 EDT)
