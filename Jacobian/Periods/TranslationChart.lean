@@ -182,4 +182,14 @@ theorem pathIntegralViaChart_translationChart
   unfold pathIntegralViaChart
   exact pathIntegralInChart_translationChart v ω _
 
+/-- Corrected in-chart integral on a translation chart reduces to
+the same `curveIntegral` as the provisional one. Combines the
+translation-chart bridge with the provisional formula. -/
+theorem pathIntegralInChartCorrect_translationChart
+    (v : E) (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
+    pathIntegralInChartCorrect (translationChart v) ω γ =
+      curveIntegral (fun e => ω.toFun (e + (-v))) γ := by
+  rw [pathIntegralInChartCorrect_translationChart_eq_pathIntegralInChart,
+      pathIntegralInChart_translationChart]
+
 end JacobianChallenge.Periods
