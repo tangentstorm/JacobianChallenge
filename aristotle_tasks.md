@@ -12,29 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 10:57 EDT)
+## Live Status (2026-04-27 11:01 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~16h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapCompConstZsmul.lean`:
-    bundled comp-const/const-comp ℤ-smul (both slots, both sides):
-      - `pullbackFormsLinearMap_comp_const_zsmul_apply_vec`
-      - `pullbackFormsLinearMap_const_comp_zsmul_apply_vec`
-      - `pullbackFormsLinearMap_comp_const_apply_zsmul_vec`
-      - `pullbackFormsLinearMap_const_comp_apply_zsmul_vec`
-    Closes the bundled comp-const ℂ/ℕ/ℤ-smul picture for both
-    form and vec slots. All collapse via the const-pullback zero
-    identity plus `smul_zero`.
-  - Side: also pushed `b33ec19` README cleanup (build-status
-    section collapsed from 224 lines into a per-directory
-    sorry-free coverage bar chart) per user request.
+  - NEW `Jacobian/Periods/PeriodFunctionalIntSmul.lean`:
+    integer-scalar API for the opaque `periodPairing`:
+      - `periodPairing_nsmul`
+      - `periodPairing_zsmul`
+      - `periodPairing_nsmul_mem_periodSubgroup`
+      - `periodPairing_zsmul_mem_periodSubgroup`
+    Bridges `AddMonoidHom.map_{n,z}smul` with the existing
+    closure lemmas in `PeriodSubgroupClosure`. Pivot off the
+    comp-const work (which is now ℂ/ℕ/ℤ-complete) into the
+    Periods layer.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~16h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 10:43 EDT)
+## Stale Live Status (2026-04-27 10:57 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.

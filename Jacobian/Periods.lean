@@ -160,6 +160,7 @@ import Jacobian.Periods.PathPartitionCoverSigmaForm
 import Jacobian.Periods.PathPartition
 import Jacobian.Periods.PeriodFunctional
 import Jacobian.Periods.PeriodFunctionalApi
+import Jacobian.Periods.PeriodFunctionalIntSmul
 import Jacobian.Periods.PeriodSubgroupApi
 import Jacobian.Periods.PeriodSubgroupClosure
 import Jacobian.Periods.PeriodSubgroupExt
