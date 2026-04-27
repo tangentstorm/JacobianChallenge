@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 00:10 EDT
+Last tick: 2026-04-27 00:15 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,16 +50,15 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/ChartedFormPullbackTranslationChart:
-                      translation-chart bridge instance. If a self-
-                      chart `c : OpenPartialHomeomorph E E` has
-                      `c.symm = fun x => x + v` (or `fun x => v + x`)
-                      as a function, then `chartedFormPullback c ω e
-                      = chartedForm c ω e` unconditionally. Second
-                      bridge instance after refl, and the one most
-                      directly relevant to the complex torus —
-                      transition charts on `ℂ` are translations by
-                      lattice elements. Build green (8185 jobs).
+                      NEW Periods/PathIntegralTranslationChart:
+                      lifts the translation-chart bridge to in-chart
+                      and via-chart integrals. If `c.symm = fun x =>
+                      x + v`, then `pathIntegralInChartCorrect = path
+                      IntegralInChart` and the via-chart analogue
+                      both hold unconditionally. The translation-
+                      chart pipeline is now at parity with the refl-
+                      chart pipeline up through via-chart. Build
+                      green (8186 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```

@@ -12,7 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 00:10 EDT)
+## Live Status (2026-04-27 00:15 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/PathIntegralTranslationChart.lean`:
+    lifts the translation-chart bridge up the integration tower.
+    Two theorems for a self-chart `c : OpenPartialHomeomorph E E`
+    with `c.symm = fun x => x + v`:
+      - `pathIntegralInChartCorrect_eq_pathIntegralInChart_of_symm_eq_add_const`:
+        in-chart corrected = provisional unconditionally.
+      - `pathIntegralViaChartCorrect_eq_pathIntegralViaChart_of_symm_eq_add_const`:
+        via-chart corrected = provisional unconditionally.
+    Each proof feeds `mfderiv_add_const_self` into the existing
+    layer-wise `_of_mfderiv_id` bridges. Translation pipeline now
+    at parity with refl through via-chart. Build green (8186 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 00:10 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~6h —
   `submitted-redundant`, kept as wake detector.
