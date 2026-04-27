@@ -12,21 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 07:25 EDT)
+## Live Status (2026-04-27 07:29 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~13h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AnalyticJacobian/EvalJacobianClass.lean`:
+    vec-slot linearity for `evalJacobianClass`:
+      - `evalLinearMap_vec_add` (LinearMap-level)
+      - `evalLinearMap_vec_zero` (LinearMap-level)
+      - `evalJacobianClass_zero_vec`
+      - `evalJacobianClass_add_vec`
+    Wired into AnalyticJacobian umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~13h — not waiting. ℂ-action on the Jacobian quotient is
+  not yet built, so smul-vec is deferred.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 07:25 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~13h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/AnalyticJacobian/MkExt.lean`:
-      - `mk_surjective` (Quot.mk_surjective)
-      - `mk_eq_mk_iff` (QuotientAddGroup.eq)
-      - `evalJacobianClass` (point/vec → Jacobian class via
-        `mk ∘ evalLinearMap`)
-      - `evalJacobianClass_def` (rfl simp)
-    Wired into AnalyticJacobian umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~13h — not waiting.
+      - `mk_surjective`
+      - `mk_eq_mk_iff`
+      - `evalJacobianClass`
+      - `evalJacobianClass_def`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 07:20 EDT)

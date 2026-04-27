@@ -2,6 +2,7 @@ import Jacobian.AnalyticJacobian.Defs
 import Jacobian.AnalyticJacobian.Mk
 import Jacobian.AnalyticJacobian.MkOps
 import Jacobian.AnalyticJacobian.MkExt
+import Jacobian.AnalyticJacobian.EvalJacobianClass
 
 /-!
 # Analytic Jacobian infrastructure
