@@ -203,4 +203,21 @@ theorem pathIntegralViaChartCorrect_translationChart
   rw [pathIntegralViaChartCorrect_translationChart_eq_pathIntegralViaChart,
       pathIntegralViaChart_translationChart]
 
+set_option linter.unusedSectionVars false in
+/-- Function-level: `chartedForm (translationChart v) ω` is the
+function `e ↦ ω.toFun (e + (-v))`. -/
+theorem chartedForm_translationChart_eq_shifted
+    (v : E) (ω : HolomorphicOneForm E E) :
+    chartedForm (translationChart v) ω =
+      (fun e : E => ω.toFun (e + (-v))) := rfl
+
+/-- Function-level: `chartedFormPullback (translationChart v) ω`
+is the function `e ↦ ω.toFun (e + (-v))` (mfderiv factor cancels). -/
+theorem chartedFormPullback_translationChart_eq_shifted
+    (v : E) (ω : HolomorphicOneForm E E) :
+    chartedFormPullback (translationChart v) ω =
+      (fun e : E => ω.toFun (e + (-v))) := by
+  funext e
+  exact chartedFormPullback_translationChart_apply v ω e
+
 end JacobianChallenge.Periods
