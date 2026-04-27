@@ -12,7 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 17:06 EDT)
+## Live Status (2026-04-27 17:11 EDT)
+
+- **Aristotle recon packet `b782c387`** still QUEUED at backend
+  (~5 min in). Per PROMPT.md not polling.
+- **Local proof work this tick (Claude-owned, substantive):**
+  NEW `Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean` —
+  an abbrev `BasisAlignedAnalyticJacobian X` for the basis-aligned
+  quotient and a noncomputable AddEquiv
+  `AnalyticJacobianGroup ℂ X ≃+ BasisAlignedAnalyticJacobian X`
+  (via `QuotientAddGroup.congr`). Top-of-stack of the basis-aligned
+  period bridge: lifts last tick's period-subgroup-level AddEquiv up
+  to the corresponding quotients. Future work on the basis-aligned
+  side can route through this to use existing functional-space
+  machinery.
+- **User WIP (left untouched):** 6 files dirty —
+  Solution, PeriodLattice, AnalyticOfCurveBasis, AnalyticDegree,
+  PullbackBasis, PushforwardBasis. The PeriodLattice change is a
+  keystone refactor (unfreezes the opaque, specializes X to Type 0).
+  `lake build Jacobian.Solution` currently fails mid-refactor;
+  expected to resolve when user finishes their work.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 17:06 EDT)
 
 - **Aristotle recon packet `b782c387`** (topology on ContMDiffSection
   survey) is QUEUED at backend, ~1 min ago per `aristotle list`. Per
