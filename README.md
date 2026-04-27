@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 20:01 EDT
+Last tick: 2026-04-26 20:06 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -46,14 +46,15 @@ for translation-transition charts (e.g. the torus case). To be fixed.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~1.5h+.
+Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~2h.
                       Backend still asleep.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaChartNegSmulSymmEqSelf:
-                      `pathIntegralViaChart_neg_smul_symm_eq_self`
-                      — provisional via-chart triple-cancellation,
-                      completing the family across all five layers.
-                      Build green (8149 jobs).
+                      NEW Periods/PathIntegralChartCorrectSmulSmul:
+                      `pathIntegralInChartCorrect_smul_smul` —
+                      iterated scalar multiplication composes:
+                      `∫(k • (l • ω), γ) = (k * l) • ∫(ω, γ)`.
+                      Composes `_smul` twice + `smul_smul`. Build
+                      green (8150 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -193,6 +194,7 @@ Periods.PathIntegralViaCoverNegSmulSymmEqSelf pass lake build Jacobian.Periods.P
 Periods.PathIntegralChartCorrectNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralChartCorrectNegSmulSymmEqSelf (no sorry)
 Periods.PathIntegralChartNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralChartNegSmulSymmEqSelf (no sorry)
 Periods.PathIntegralViaChartNegSmulSymmEqSelf pass lake build Jacobian.Periods.PathIntegralViaChartNegSmulSymmEqSelf (no sorry)
+Periods.PathIntegralChartCorrectSmulSmul pass lake build Jacobian.Periods.PathIntegralChartCorrectSmulSmul (no sorry)
 ```
 
 ```text
