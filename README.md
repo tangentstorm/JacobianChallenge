@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 04:35 EDT
+Last tick: 2026-04-27 04:42 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -52,14 +52,15 @@ Aristotle status
 Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
-Integrated this tick (local Claude-owned):
-                      Three more zero-translation chart-form
-                      collapses in TranslationChart:
-                      `chartedFormPullback_translationChart_zero`,
-                      `chartedFormLinearMap_translationChart_zero`,
-                      `chartedFormPullbackLinearMap_translationChart_zero`.
-                      All collapse to `ω.toFun` (matching refl).
-                      Build green (8189 jobs).
+Integrated this tick (local Claude-owned, 3 lemmas):
+                      Pointwise translation-zero simps —
+                      `chartedForm_translationChart_zero_apply`,
+                      `chartedFormPullback_translationChart_zero_apply`,
+                      `chartLift_translationChart_zero_apply`. The
+                      first two collapse the chart-form/pullback
+                      pointwise to `ω.toFun e`. The chartLift one
+                      reduces lifting through the zero translation
+                      chart to identity. Build green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
