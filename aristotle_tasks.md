@@ -12,21 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 09:41 EDT)
+## Live Status (2026-04-27 09:44 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/TraceDegree/PullbackFunIdEvalVecExtra.lean`:
+    sub/nsmul/zsmul vec-slot distributivity for pullback-along-id:
+      - `pullbackFormsFun_id_apply_sub_vec`
+      - `pullbackFormsFun_id_apply_nsmul_vec`
+      - `pullbackFormsFun_id_apply_zsmul_vec`
+      - `pullbackFormsFun_id_apply_neg_neg_vec`
+    Wired into TraceDegree umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~15h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 09:41 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/TraceDegree/PullbackFunIdEvalVec.lean`:
-    vec-slot distributivity for pullback-along-id:
       - `pullbackFormsFun_id_apply_zero_vec`
       - `pullbackFormsFun_id_apply_add_vec`
       - `pullbackFormsFun_id_apply_neg_vec`
       - `pullbackFormsFun_id_apply_smul_vec`
-    Wired into TraceDegree umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~15h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 09:35 EDT)
