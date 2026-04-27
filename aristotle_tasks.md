@@ -12,13 +12,13 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 19:45 EDT)
+## Live Status (2026-04-27 19:51 EDT)
 
 - **Aristotle: 3/5 active.**
   - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~2h30m elapsed (normal long-running).
-  - `7abae190` PeriodLattice discreteness — IN_PROGRESS at 3% (~3 min in).
-  - `600f7ff6` OnePointCxRecon — IN_PROGRESS at 1% (~2 min in).
+    ~2h35m elapsed (normal long-running).
+  - `7abae190` PeriodLattice discreteness — IN_PROGRESS at 10% (~8 min in).
+  - `600f7ff6` OnePointCxRecon — IN_PROGRESS at 6% (~7 min in).
 - **Local proof work this tick:** Heartbeat. Tree clean.
 
 
