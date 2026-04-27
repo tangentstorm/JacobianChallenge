@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 01:50 EDT
+Last tick: 2026-04-27 01:56 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,14 +50,15 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED Periods/TranslationChart with two
-                      cancellation simp lemmas:
-                      `translationChart_neg_apply_translationChart_apply`:
-                      `translationChart (-v) ∘ translationChart v = id`,
-                      and the dual variant. Function-level
-                      cancellation laws — useful as automatic simps
-                      whenever a translation gets composed with its
-                      negated counterpart. Build green (8189 jobs).
+                      EXTENDED Periods/PathIntegralReflChart with
+                      `mfderiv_chartAt_self_symm_eq_id`: for
+                      `chartedSpaceSelf E`, the manifold derivative
+                      of the chart-at-point's inverse is identity at
+                      every model point. Direct corollary of
+                      `mfderiv_refl_symm_eq_id` since `chartAt E x =
+                      refl E` definitionally for chartedSpaceSelf —
+                      ties the witness directly to Mathlib's chart
+                      typeclass. Build green (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```

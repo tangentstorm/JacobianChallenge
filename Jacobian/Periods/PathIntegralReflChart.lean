@@ -52,4 +52,14 @@ theorem pathIntegralViaChartCorrect_refl_eq_pathIntegralViaChart_refl
   pathIntegralViaChartCorrect_eq_pathIntegralViaChart_of_mfderiv_id _ _ _ _
     mfderiv_refl_symm_eq_id
 
+set_option linter.unusedSectionVars false in
+/-- For `chartedSpaceSelf E`, the chart at any point is the refl
+chart, and its inverse has identity manifold derivative. -/
+theorem mfderiv_chartAt_self_symm_eq_id (x e : E) :
+    mfderiv (modelWithCornersSelf ℂ E)
+            (modelWithCornersSelf ℂ E)
+            (chartAt E x).symm e =
+      ContinuousLinearMap.id ℂ E :=
+  mfderiv_refl_symm_eq_id e
+
 end JacobianChallenge.Periods
