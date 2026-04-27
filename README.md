@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 10:57 EDT
+Last tick: 2026-04-27 11:01 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -33,7 +33,7 @@ Quotient charted-space/manifold  ███████████████�
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
 Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
-Path integration/periods         ██████████████░░░░░░   69%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts
+Path integration/periods         ██████████████░░░░░░   70%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts + integer-scalar periodPairing API (n/zsmul + matching subgroup membership)
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   28%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain
 Abel-Jacobi API                  ███████░░░░░░░░░░░░░   37%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges
 Trace/degree/push-pull           █████████░░░░░░░░░░░   46%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled along-id+along-const full dist + bundled along-(id ∘ id) full forwarder bank + bundled comp-const/const-comp full form/vec-slot dist ℂ/ℕ/ℤ-complete
@@ -53,10 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~16h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFormsLinearMapCompConstZsmul:
-                      bundled comp-const/const-comp ℤ-smul
-                      (form-slot and vec-slot both sides).
-                      Closes the bundled comp-const ℂ/ℕ/ℤ picture.
+                      NEW Periods.PeriodFunctionalIntSmul:
+                      `periodPairing` ℕ/ℤ-smul + matching
+                      `… ∈ periodSubgroup` corollaries.
+                      (Pivot off comp-const → Periods layer.)
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -70,12 +70,12 @@ Jacobian/HolomorphicForms                █████████████
 Jacobian/AnalyticJacobian                ████████████████████  100%  (15/15)
 Jacobian/AbelJacobi                      ████████████████████  100%  (14/14)
 Jacobian/TraceDegree                     ████████████████████  100%  (65/65)
-Jacobian/Periods                         ███████████████████░   99%  (168/169)†
+Jacobian/Periods                         ███████████████████░   99%  (169/170)†
 Jacobian/ComplexTorus                    ███████████████████░   98%  (54/55)†
 Top-level umbrellas (Jacobian/*.lean)    █████████████████░░░   86%  (6/7)‡
 Jacobian/WorkPackets                     ░░░░░░░░░░░░░░░░░░░░    0%  (0/1)‡
 
-Production infrastructure (excluding intentional design files): 100% (342/342).
+Production infrastructure (excluding intentional design files): 100% (343/343).
 
 † Single `*Recon.lean` discovery file with intentional sorries.
 ‡ Challenge.lean (frozen public spec) and StatementBank.lean
