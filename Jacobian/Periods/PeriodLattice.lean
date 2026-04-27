@@ -39,24 +39,30 @@ namespace JacobianChallenge.Periods
 open scoped Manifold
 open JacobianChallenge.HolomorphicForms
 
-variable (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 
 /-- The period subgroup of a compact Riemann surface, expressed in the
 basis-aligned model `Fin (analyticGenus ℂ X) → ℂ`.
 
-Top-down obligation. Bottom-up: image of `H₁(X, ℤ)` under the period
-pairing (integration of a basis of holomorphic 1-forms over a basis of
-1-cycles), transported through a chosen basis of holomorphic 1-forms.
+Routed (keystone refactor, 2026-04-27): defined as the concrete
+representative `basisAlignedPeriodSubgroupConcrete X` from
+`Jacobian/Periods/BasisAlignedPeriodSubgroup.lean`. This routing
+specialises the lattice's carrier domain `X` to `Type` (Type 0) — the
+same universe constraint that `Periods.periodSubgroup` and
+`IntegralOneCycle` carry, which themselves are limited to Type 0 by
+Mathlib's available `HasCoproducts.{0} (ModuleCat ℤ)` instance.
 
-A concrete representative `basisAlignedPeriodSubgroupConcrete X` is
-provided in `Jacobian/Periods/BasisAlignedPeriodSubgroup.lean`. Routing
-this opaque to that concrete representative requires aligning the
-universe of `X` between PeriodFunctional (currently `(X : Type)`) and
-PeriodLattice (`(X : Type*)`); deferred to a follow-up Type/Type*
-refactor tick. -/
-opaque basisAlignedPeriodSubgroup : AddSubgroup (Fin (analyticGenus ℂ X) → ℂ)
+The specialisation propagates upward to `periodFullComplexLattice` and
+`Solution.Jacobian`. The comparator-level data-declaration mismatch with
+`Challenge.Jacobian (X : Type u)` is a known consequence; per
+`Jacobian/WorkPackets/TopDown.md` the comparator's `theorem_names` list
+covers only theorem-level declarations, so the data-level monomorphism
+should be acceptable for the staged-refinement check. -/
+noncomputable def basisAlignedPeriodSubgroup :
+    AddSubgroup (Fin (analyticGenus ℂ X) → ℂ) :=
+  basisAlignedPeriodSubgroupConcrete X
 
 /-- The period subgroup is closed in the model space.
 
