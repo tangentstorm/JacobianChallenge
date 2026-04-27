@@ -12,27 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 11:45 EDT)
+## Live Status (2026-04-27 11:49 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~17h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/AbelJacobi/WitnessZeroSmul.lean`:
-    sufficient conditions for witness vanishing via integer-scaled
-    / negated `periodPairing` endpoint differences:
-      - `witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_nsmul_periodPairing`
-      - `witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_zsmul_periodPairing`
-      - `witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_neg_periodPairing`
-      - `witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_natCast_zsmul_periodPairing`
-    Continues `WitnessZeroIff`. Each composes
-    `witnessAbelJacobi_eq_mk_sub` with the matching
-    `mk_{n,z}smul_periodPairing` / `mk_neg_periodPairing` collapse.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapIntSmul.lean`:
+    bundled `pullbackFormsLinearMap` ℕ/ℤ-smul for arbitrary `f`:
+      - `pullbackFormsLinearMap_nsmul`         (function-level)
+      - `pullbackFormsLinearMap_zsmul`         (function-level)
+      - `pullbackFormsLinearMap_nsmul_apply_vec`
+      - `pullbackFormsLinearMap_zsmul_apply_vec`
+    Function-level via `(pullbackFormsLinearMap f).toAddMonoidHom.
+    map_{n,z}smul`. Apply-vec versions via the existing rfl-bridge
+    `pullbackFormsLinearMap_apply_at`. Pivot from AbelJacobi
+    witness-zero work back to TraceDegree base layer.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~17h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 11:39 EDT)
+## Stale Live Status (2026-04-27 11:45 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
