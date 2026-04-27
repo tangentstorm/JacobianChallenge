@@ -124,13 +124,29 @@ construction.
 Work in small rounds. Each round should replace one cluster of top-level
 `sorry`s in `Solution.lean` with named lower-level declarations.
 
-### Round 0: Comparator Harness
+### Round 0: Comparator Harness ✅
 
-- Add a comparator config file once the local comparator checkout/binary path is
-  settled.
-- Run a smoke test only when the human/Claude tick is responsible for builds.
-- Record whether definitions/instances can be listed in comparator's
-  `theorem_names`.
+Done (2026-04-27). Configs live under `comparator/`:
+
+- `comparator/jacobian.json` — final config, axioms `propext / Quot.sound /
+  Classical.choice` only.
+- `comparator/jacobian-staged.json` — staged-refinement variant adding
+  `sorryAx` so comparator accepts shape-equivalence while bottom-up
+  obligations are still in flight.
+- `comparator/README.md` — usage notes plus the **known data-level
+  universe divergence** introduced by the keystone refactor (Solution's
+  `Jacobian X : Type` vs Challenge's `Jacobian X : Type u`), root-caused
+  to Mathlib's `HasCoproducts.{w} (ModuleCat ℤ)` only being at `w = 0`,
+  with three documented paths to repair.
+
+The smoke test itself is deferred until either the comparator binary is
+installed locally or one of the universe-repair paths lands.
+
+Theorem-name list contains theorem-level declarations only (matches the
+canonical config above). Decision on whether data declarations
+(`genus`, `Jacobian`, etc.) should be included is deferred — the
+universe-divergence issue must be settled first since it would
+trivially fail any data-level check today.
 
 ### Round 1: Genus
 
