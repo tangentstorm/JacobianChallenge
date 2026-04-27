@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.HolomorphicForms.GenusZeroClassification
 import Jacobian.Periods.PeriodLattice
 import Jacobian.ComplexTorus.ULiftTransport
+import Jacobian.AbelJacobi.AnalyticOfCurveBasis
 
 /-!
 
@@ -47,9 +48,13 @@ sorries are discharged. See `Jacobian/WorkPackets/TopDown.md`.
 * **Round 2b** ✅ `ChartedSpace`, `IsManifold`, `LieAddGroup` —
   ULift transport of complex-torus instances; transport itself
   is the named obligation.
+* **Round 3** ✅ `ofCurve`, `ofCurve_contMDiff`, `ofCurve_self`,
+  `ofCurve_inj` — basis-aligned analytic Abel-Jacobi map plus
+  ULift transport for the projection and `ContMDiff`. Named
+  obligations live in `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean`.
 
-Remaining: Round 3 (`ofCurve` family), Round 4 (`pushforward`,
-`pullback`, `degree`, `pushforward_pullback`).
+Remaining: Round 4 (`pushforward`, `pullback`, `degree`,
+`pushforward_pullback`).
 
 -/
 
@@ -132,16 +137,27 @@ noncomputable instance : LieAddGroup (modelWithCornersSelf ℂ (Fin (genus X) �
   inferInstanceAs (LieAddGroup (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω
     (ULift _))
 
-/-- The Abel-Jacobi map from a compact Riemann surface to its Jacobian. -/
-def ofCurve (P : X) : X → Jacobian X := sorry
+/-- The Abel-Jacobi map from a compact Riemann surface to its Jacobian.
+Refinement (Round 3): ULift of the basis-aligned `analyticOfCurve`. -/
+noncomputable def ofCurve (P : X) : X → Jacobian X :=
+  fun Q => ULift.up (JacobianChallenge.AbelJacobi.analyticOfCurve X P Q)
 
 lemma ofCurve_contMDiff (P : X) : ContMDiff 𝓘(ℂ)
-    (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (ofCurve P) := sorry
+    (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (ofCurve P) :=
+  (JacobianChallenge.ComplexTorus.contMDiff_uLift_up).comp
+    (JacobianChallenge.AbelJacobi.analyticOfCurve_contMDiff X P)
 
-lemma ofCurve_self (P : X) : ofCurve P P = 0 := sorry
+lemma ofCurve_self (P : X) : ofCurve P P = 0 := by
+  show ULift.up (JacobianChallenge.AbelJacobi.analyticOfCurve X P P) = 0
+  rw [JacobianChallenge.AbelJacobi.analyticOfCurve_self]
+  rfl
 
 -- this is the lemma which stops the hack answer "J(X)=0 for all X"
-lemma ofCurve_inj (P : X) (h : 0 < genus X) : Function.Injective (ofCurve P) := sorry
+lemma ofCurve_inj (P : X) (h : 0 < genus X) : Function.Injective (ofCurve P) := by
+  intro a b hab
+  apply JacobianChallenge.AbelJacobi.analyticOfCurve_injective X P
+    (by simpa [genus] using h)
+  exact ULift.up_injective hab
 
 variable {Y : Type*} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [ChartedSpace ℂ Y] [IsManifold 𝓘(ℂ) ω Y]

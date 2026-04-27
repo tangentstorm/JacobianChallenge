@@ -330,10 +330,10 @@ This table is the current top-down bridge inventory. Keep it updated as
 | `ChartedSpace` | `ComplexTorus.ChartedSpace` + ULift transport | Mathlib has no Homeomorph→ChartedSpace transport; needs hand-rolled `ULift M` charted-space instance |
 | `IsManifold` | `ComplexTorus.IsManifold` + ULift transport | same — model transport along `Homeomorph.ulift` |
 | `LieAddGroup` | `ComplexTorus.LieAddGroup` + ULift transport | same |
-| `Jacobian.ofCurve` | Abel-Jacobi path integral class | path-independent functional modulo periods |
-| `ofCurve_contMDiff` | Abel-Jacobi holomorphicity theorem | manifold path-integral differentiability |
-| `ofCurve_self` | zero path integral | base-point integral lemma |
-| `ofCurve_inj` | Abel-Jacobi injectivity | point-separation/Riemann-Roch theorem |
+| `Jacobian.ofCurve` ✅ refined | `ULift.up ∘ AbelJacobi.analyticOfCurve` | `pathIntegralFunctional` (named `opaque` in `Jacobian.AbelJacobi.AnalyticOfCurveBasis`) |
+| `ofCurve_contMDiff` ✅ refined | `contMDiff_uLift_up.comp analyticOfCurve_contMDiff` | `analyticOfCurve_contMDiff` and `contMDiff_uLift_up` (named sorries) |
+| `ofCurve_self` ✅ refined | unfold + `pathIntegralFunctional_self` | `pathIntegralFunctional_self` (named sorry) |
+| `ofCurve_inj` ✅ refined | `analyticOfCurve_injective` + `ULift.up_injective` | `analyticOfCurve_injective` (named sorry) — Abel theorem |
 | `pushforward` | trace-induced quotient map | trace preserves periods |
 | `pushforward_contMDiff` | complex torus map smoothness | trace-induced map model smoothness |
 | `pushforward_id_apply` | trace/id functoriality | quotient transport |
