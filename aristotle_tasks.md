@@ -12,7 +12,24 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 17:02 EDT)
+## Live Status (2026-04-27 17:06 EDT)
+
+- **Aristotle recon packet `b782c387`** (topology on ContMDiffSection
+  survey) is QUEUED at backend, ~1 min ago per `aristotle list`. Per
+  PROMPT.md not polling further.
+- **Local proof work this tick (Claude-owned, substantive):**
+  Extended `Jacobian/Periods/BasisAlignedPeriodSubgroup.lean` with
+  `holomorphicOneFormDualPeriodSubgroupEquiv : periodSubgroup ℂ X ≃+
+  basisAlignedPeriodSubgroupConcrete X`. A noncomputable AddEquiv
+  built via Mathlib's `AddSubgroup.equivMapOfInjective` against the
+  injective dual equivalence. This packages the previously-proven
+  `BijOn` as a proper AddEquiv, letting us transport additive-group
+  and (eventually) topological-group structure across the bridge in a
+  type-correct way.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 17:02 EDT)
 
 - **NEW Aristotle recon packet submitted: `b782c387-5718-4565-a3e8-ed049d6c4c26`.**
   Off-critical-path follow-up to last tick's 72ac3a75 plan (step (a):

@@ -114,4 +114,15 @@ theorem holomorphicOneFormDualEquiv_bijOn_periodSubgroup :
     obtain ⟨φ, hφ_mem, hφ_eq⟩ := hv
     exact ⟨φ, hφ_mem, hφ_eq⟩
 
+/-- The dual equivalence restricts to an additive isomorphism between
+the functional-space `periodSubgroup ℂ X` and the basis-aligned
+`basisAlignedPeriodSubgroupConcrete X`. Built from Mathlib's
+`AddSubgroup.equivMapOfInjective` against the injective dual
+equivalence. -/
+noncomputable def holomorphicOneFormDualPeriodSubgroupEquiv :
+    periodSubgroup ℂ X ≃+ basisAlignedPeriodSubgroupConcrete X :=
+  (periodSubgroup ℂ X).equivMapOfInjective
+    (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+    (holomorphicOneFormDualEquiv ℂ X).injective
+
 end JacobianChallenge.Periods

@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 17:02 EDT
+Last tick: 2026-04-27 17:06 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -60,24 +60,27 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5  `b782c387` (recon: Mathlib survey for topology on ContMDiffSection)
-                        — submitted this tick. Off-critical-path follow-up to
-                        Aristotle's 72ac3a75 plan: step (a) (define topology of
-                        uniform convergence on compact sets for ContMDiffSection)
-                        is itself substantial and needs scoping first. This
-                        packet asks Aristotle to fill in a recon-style stub
-                        (Jacobian/HolomorphicForms/SectionTopologyRecon.lean)
-                        with: existing Mathlib API, missing instances, design
-                        plan, dependency graph. Output is documentation, not a
-                        proof. Expected to take a few hours to a few hours; small
-                        risk and small reward (it's a survey, not blocking
-                        anything immediate).
+Active jobs (ours):     1 / 5  `b782c387` (recon: Mathlib survey for topology on
+                        ContMDiffSection) is QUEUED at backend (1 min ago per
+                        `aristotle list`). Per PROMPT.md not polling further.
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/Periods/BasisAlignedPeriodSubgroup.lean (+1 def)
+
+  holomorphicOneFormDualPeriodSubgroupEquiv
+    : periodSubgroup ℂ X ≃+ basisAlignedPeriodSubgroupConcrete X
+    A noncomputable AddEquiv between the functional-space and
+    basis-aligned period subgroups, built from Mathlib's
+    `AddSubgroup.equivMapOfInjective`. Combines the existing
+    `BijOn`-style transport with the actual additive-group structure
+    on both sides. Useful for cleanly transporting any additive-group
+    or topological-group property across the bridge.
+
+PRIOR TICK (still standing):
 NEW Jacobian/HolomorphicForms/SectionTopologyRecon.lean (recon stub).
 Mirrors the existing recon-file convention (Jacobian/ComplexTorus/{Manifold,ZLattice,Discreteness}Recon.lean
 + Jacobian/HolomorphicForms/Recon.lean). Builds clean, contains no
