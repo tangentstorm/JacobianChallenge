@@ -108,4 +108,15 @@ theorem pathIntegralViaChart_reflChart
   unfold pathIntegralViaChart
   exact pathIntegralInChart_reflChart ω _
 
+set_option linter.unusedSectionVars false in
+/-- Corrected in-chart integral on the refl chart equals the direct
+`curveIntegral ω.toFun γ`. Combines the refl bridge with the
+provisional formula. -/
+theorem pathIntegralInChartCorrect_reflChart
+    (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
+    pathIntegralInChartCorrect (OpenPartialHomeomorph.refl E) ω γ =
+      curveIntegral ω.toFun γ := by
+  rw [pathIntegralInChartCorrect_refl_eq_pathIntegralInChart_refl,
+      pathIntegralInChart_reflChart]
+
 end JacobianChallenge.Periods
