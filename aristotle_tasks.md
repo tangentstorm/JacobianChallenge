@@ -12,7 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 19:05 EDT)
+## Live Status (2026-04-27 19:08 EDT)
+
+- **Aristotle: 1/5 active.**
+  - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%,
+    ~2h elapsed (long IN_PROGRESS is normal Aristotle behavior).
+- **Local proof work this tick (Claude-owned, doc-only):** Refreshed
+  the top-of-file docstring in `Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean`
+  to include a 4-file bridge architecture diagram and note the
+  post-keystone-refactor state. Build verified clean.
+- Tree: `M Jacobian/ComplexTorus/ULiftTransport.lean` (user WIP).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 19:05 EDT)
 
 - **Aristotle: 1/5 active.**
   - `b782c387` topology-on-ContMDiffSection recon — IN_PROGRESS at 17%,

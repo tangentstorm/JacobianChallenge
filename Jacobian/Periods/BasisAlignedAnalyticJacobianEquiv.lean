@@ -6,23 +6,39 @@ import Jacobian.AnalyticJacobian.MkExt
 import Jacobian.AbelJacobi.Defs
 
 /-!
-# Quotient-level equivalence
+# Quotient-level equivalence — top of the basis-aligned period bridge
 
-Top-level result for the basis-aligned period bridge: the additive
-isomorphism between the functional-space `AnalyticJacobianGroup ℂ X`
-and the basis-aligned quotient
+This file packages the additive isomorphism between the functional-space
+`AnalyticJacobianGroup ℂ X` and the basis-aligned quotient
 `(Fin (analyticGenus ℂ X) → ℂ) ⧸ basisAlignedPeriodSubgroupConcrete X`.
 
 Built via `QuotientAddGroup.congr` against the
 `holomorphicOneFormDualEquiv` and the AddEquiv on the period subgroups
 constructed in `BasisAlignedPeriodSubgroup.lean`.
 
-This is the bridge that lets the basis-aligned-side of the project
-borrow the functional-side `AnalyticJacobianGroup` machinery (group
-operations, evalJacobianClass, mk-arith etc.) once the universe lift on
-`PeriodFunctional`/`IntegralOneCycle` lands. Currently uses the
-*concrete* basis-aligned representative — distinct from the opaque
-`basisAlignedPeriodSubgroup` in `Jacobian/Periods/PeriodLattice.lean`.
+This is the top of a four-file basis-aligned period bridge:
+
+```
+HolomorphicForms/BasisAlignedDualEquiv      (LinearEquiv on linear duals)
+   ↓
+Periods/BasisAlignedPeriodSubgroup          (image of periodSubgroup ℂ X)
+   ↓                                            +AddEquiv on subgroups
+Periods/BasisAlignedPeriodPairing           (cycles → basis-aligned model)
+   ↓
+Periods/BasisAlignedAnalyticJacobianEquiv   (this file: AddEquiv on quotients)
+```
+
+The bridge lets either side of the project borrow the other's machinery.
+Functional-space-side has rich AnalyticJacobianGroup machinery (group
+operations, evalJacobianClass, witnessAbelJacobi, mk-arith etc.); the
+basis-aligned side is what `Jacobian/Solution.lean` and the user's
+`Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` operate on.
+
+Post-keystone-refactor (commit 952e750, 2026-04-27): PeriodLattice's
+`basisAlignedPeriodSubgroup` is now `noncomputable def` routing to
+`basisAlignedPeriodSubgroupConcrete`, so the user's `BasisAnalyticJacobian X`
+and this file's `BasisAlignedAnalyticJacobian X` are definitionally
+equal as types, modulo the umbrella unfolding.
 -/
 
 namespace JacobianChallenge.Periods
