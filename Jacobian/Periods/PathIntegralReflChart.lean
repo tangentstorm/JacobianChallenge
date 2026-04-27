@@ -85,4 +85,16 @@ theorem chartedFormPullback_refl_apply
     chartedFormPullback (OpenPartialHomeomorph.refl E) ω e = ω.toFun e := by
   rw [chartedFormPullback_refl_eq_chartedForm_refl, chartedForm_refl_apply]
 
+set_option linter.unusedSectionVars false in
+/-- The provisional in-chart integral on the refl chart is just the
+direct curve integral of `ω.toFun`. (Disambiguated from the
+existing `pathIntegralInChart_refl`, which is for constant paths.) -/
+theorem pathIntegralInChart_reflChart
+    (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
+    pathIntegralInChart (OpenPartialHomeomorph.refl E) ω γ =
+      curveIntegral ω.toFun γ := by
+  show curveIntegral (chartedForm (OpenPartialHomeomorph.refl E) ω) γ =
+       curveIntegral ω.toFun γ
+  rfl
+
 end JacobianChallenge.Periods
