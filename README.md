@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-26 23:16 EDT
+Last tick: 2026-04-26 23:31 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,16 +50,15 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      NEW Periods/PathIntegralViaCoverEqOfMfderivId:
-                      Pick (user-facing) bridge under global
-                      `∀ x e, mfderiv (chartAt E x).symm e = id`.
-                      Closes the bridge ladder: chartedForm ✓
-                      in-chart ✓ via-chart ✓ cover-with ✓ Pick ✓ —
-                      ALL 5 LAYERS BRIDGED. Under one global
-                      hypothesis the corrected period machinery
-                      reduces to the provisional one end-to-end
-                      (apt for translation-only manifolds, e.g.
-                      complex tori). Build green (8179 jobs).
+                      NEW Periods/ChartedFormPullbackEqChartedForm-
+                      OfSymmEventuallyEqId: weaker sufficient
+                      condition for the chartedForm bridge — for a
+                      self-chart `c : OpenPartialHomeomorph E E`,
+                      it suffices that `c.symm =ᶠ[𝓝 e] id` (proof:
+                      `EventuallyEq.mfderiv_eq` + `mfderiv_id`).
+                      Useful for translation charts on the model
+                      space `ℂ` itself (the torus example).
+                      Build green (8180 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
