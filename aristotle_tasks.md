@@ -12,7 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 16:32 EDT)
+## Live Status (2026-04-27 16:42 EDT)
+
+- **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)**
+  IN_PROGRESS at 8% (~47 min in; +1 percentage point since last tick).
+  Slowing down — likely hit a harder sub-goal. Per PROMPT.md not polling.
+- **Local proof work this tick (Claude-owned, small):** Extended
+  `Jacobian/Periods/BasisAlignedPeriodSubgroup.lean` with two
+  membership-transport theorems:
+  - `holomorphicOneFormDualEquiv_symm_mem_periodSubgroup` (inverse)
+  - `holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete` (forward)
+  Both give named lemmas for moving membership between functional-space
+  and basis-aligned forms; useful for eventual closedness/discreteness
+  proofs.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 16:32 EDT)
 
 - **Aristotle deep packet `72ac3a75` (Riemann-Roch finite-dimensionality)**
   IN_PROGRESS at 7% (~36 min in; +4 percentage points since last tick).

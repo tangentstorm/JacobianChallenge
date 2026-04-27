@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 16:32 EDT
+Last tick: 2026-04-27 16:42 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -61,16 +61,37 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5  `72ac3a75` (Riemann-Roch finite-dimensionality theorem) is
-                        IN_PROGRESS at 7% (~36 min into the run; +4 percentage points
-                        since last tick, ~25 min ago). At this rate, completion is
-                        ~9-10 hours away — very deep theorem. Per PROMPT.md
-                        "check Aristotle status once" — not polling further.
+                        IN_PROGRESS at 8% (~47 min into the run; +1 percentage point
+                        since last tick — slowed down vs the earlier 4-points-per-25-min
+                        rate, suggesting it has hit a harder sub-goal and is spending
+                        time there). Per PROMPT.md "check Aristotle status once" — not
+                        polling further.
 Integrated this tick:   None from Aristotle (still IN_PROGRESS).
 ```
 
 ```text
-Local cadence this tick (Claude-owned, substantive infrastructure)
+Local cadence this tick (Claude-owned, small but substantive)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXTEND Jacobian/Periods/BasisAlignedPeriodSubgroup.lean (+2 theorems)
+
+  holomorphicOneFormDualEquiv_symm_mem_periodSubgroup
+    : v ∈ basisAlignedPeriodSubgroupConcrete X →
+        (holomorphicOneFormDualEquiv ℂ X).symm v ∈ periodSubgroup ℂ X
+    Inverse-direction transport. Proof: unfold via mem-iff, destructure
+    the existential, use `LinearEquiv.symm_apply_apply` to recover φ.
+    ~5 lines real content.
+
+  holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete
+    : φ ∈ periodSubgroup ℂ X →
+        holomorphicOneFormDualEquiv ℂ X φ ∈ basisAlignedPeriodSubgroupConcrete X
+    Forward-direction transport — `mp` direction of the iff, exposed
+    as a named lemma.
+
+Both give clean named lemmas for moving membership between
+functional-space and basis-aligned forms in both directions.
+Useful upstream for the eventual closedness/discreteness proofs.
+
+PRIOR TICK (still standing — last tick's substantive work):
 NEW Jacobian/Periods/BasisAlignedPeriodPairing.lean (1 def + 3 theorems)
 
   basisAlignedPeriodPairing X
