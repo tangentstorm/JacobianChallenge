@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 01:40 EDT
+Last tick: 2026-04-27 01:44 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -51,14 +51,14 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
                       EXTENDED Periods/TranslationChart with
-                      `translationChart_symm`: structure-level
-                      equality `(translationChart v).symm =
-                      translationChart (-v)` as
-                      `OpenPartialHomeomorph`s (proof:
-                      `OpenPartialHomeomorph.ext` + the involution
-                      via `neg_neg`). Now the involution is
-                      available at the OpenPartialHomeomorph layer,
-                      not just the function level. Build green
+                      `translationChart_zero`: structure-level
+                      equality `translationChart (0 : E) =
+                      OpenPartialHomeomorph.refl E`. Confirms the
+                      translation atlas contains the identity chart,
+                      i.e. it's a unital structure. Combined with
+                      `translationChart_symm`, the translation chart
+                      family has both inverses (`-v`) and identity
+                      (`0`) at the structure level. Build green
                       (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.

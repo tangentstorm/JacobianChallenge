@@ -108,4 +108,14 @@ theorem translationChart_symm (v : E) :
   show x + v = x + (- -v)
   rw [neg_neg]
 
+set_option linter.unusedSectionVars false in
+/-- The translation chart at zero is the identity (refl) chart. -/
+theorem translationChart_zero :
+    translationChart (0 : E) = OpenPartialHomeomorph.refl E := by
+  refine OpenPartialHomeomorph.ext _ _ (fun x => ?_) (fun x => ?_) rfl
+  · show x + 0 = x
+    rw [add_zero]
+  · show x + (-0) = x
+    rw [neg_zero, add_zero]
+
 end JacobianChallenge.Periods
