@@ -6,6 +6,7 @@ import Jacobian.AbelJacobi.Identities
 import Jacobian.AbelJacobi.Coset
 import Jacobian.AbelJacobi.Telescoping
 import Jacobian.AbelJacobi.Sum
+import Jacobian.AbelJacobi.Nontrivial
 
 /-!
 # Abel-Jacobi infrastructure (witness skeleton)
