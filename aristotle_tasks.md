@@ -12,22 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 06:28 EDT)
+## Live Status (2026-04-27 06:32 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/HolomorphicForms/Ext.lean`: extensionality
-    principles for `HolomorphicOneForm`:
+  - NEW `Jacobian/HolomorphicForms/ExtEvalLinearMap.lean`:
+    extensionality bridge between `Ext` and `EvalLinearMap`:
+      - `ext_evalLinearMap_iff`
+      - `ext_evalLinearMap`
+      - `eq_zero_iff_evalLinearMap_eq_zero`
+      - `ne_zero_of_evalLinearMap_ne_zero` (witness form)
+    Wired into HolomorphicForms umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~12h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 06:28 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~12h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/HolomorphicForms/Ext.lean`:
       - `ext_toFun_iff`
       - `ext_toFun`
       - `ext_toFun_apply_iff`
       - `ext_toFun_apply`
-    All forwarded through `ContMDiffSection.ext`. Wired into
-    HolomorphicForms umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~12h — not waiting.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 06:24 EDT)
