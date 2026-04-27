@@ -3,6 +3,7 @@ import Jacobian.AbelJacobi.Composition
 import Jacobian.AbelJacobi.Smul
 import Jacobian.AbelJacobi.BaseChange
 import Jacobian.AbelJacobi.Identities
+import Jacobian.AbelJacobi.Coset
 
 /-!
 # Abel-Jacobi infrastructure (witness skeleton)

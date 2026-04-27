@@ -12,21 +12,34 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 08:08 EDT)
+## Live Status (2026-04-27 08:11 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/AbelJacobi/Coset.lean`: coset-flavoured wrappers:
+      - `witnessAbelJacobi_eq_zero_iff_class_eq` (alias of
+        `_eq_zero_iff` from Smul, exposed in coset namespace)
+      - `witnessAbelJacobi_add_swap_eq_zero`
+      - `witnessAbelJacobi_endpoint_diff`
+      - `witnessAbelJacobi_base_change_eq` (additive form of
+        `BaseChange`'s `_base_change`)
+    Wired into AbelJacobi umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~14h — not waiting.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 08:08 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~14h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
   - NEW `Jacobian/AbelJacobi/Identities.lean`:
       - `witnessAbelJacobi_add_basePoint_class`
-        (witness + basePoint class = endpoint class)
-      - `basePoint_class_add_witness` (commuted form)
-      - `witnessAbelJacobi_chain_shift` (alias of chain_three)
-      - `witnessAbelJacobi_left_self_eq_zero` (simp)
-    Wired into AbelJacobi umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~14h — not waiting.
+      - `basePoint_class_add_witness`
+      - `witnessAbelJacobi_chain_shift`
+      - `witnessAbelJacobi_left_self_eq_zero`
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 08:05 EDT)
