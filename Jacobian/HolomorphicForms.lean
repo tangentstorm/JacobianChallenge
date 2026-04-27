@@ -9,6 +9,7 @@ import Jacobian.HolomorphicForms.EvalLinearMapZsmul
 import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.ExtEvalLinearMap
 import Jacobian.HolomorphicForms.AnalyticGenusWitness
+import Jacobian.HolomorphicForms.EvalLinearMapVec
 import Jacobian.HolomorphicForms.CotangentBundle
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.FiniteDimensional
