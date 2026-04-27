@@ -145,4 +145,10 @@ pointwise to the path's image.) -/
     (h : Set.range γ ⊆ (translationChart v).source) (t : unitInterval) :
     chartLift (translationChart v) γ h t = γ t + v := rfl
 
+/-- The provisional chart-form for a translation chart evaluates
+to `ω.toFun` shifted by `-v`. -/
+theorem chartedForm_translationChart_apply
+    (v : E) (ω : HolomorphicOneForm E E) (e : E) :
+    chartedForm (translationChart v) ω e = ω.toFun (e + (-v)) := rfl
+
 end JacobianChallenge.Periods

@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 02:09 EDT)
+## Live Status (2026-04-27 02:14 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~8h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with
+    `chartedForm_translationChart_apply`: rfl identity
+    `chartedForm (translationChart v) ω e = ω.toFun (e + (-v))`.
+    Names the explicit pointwise formula for the provisional
+    chart-form on a translation chart — useful for downstream
+    callers who want to compute integrals through translation
+    charts. Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 02:09 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~7h —
   `submitted-redundant`, kept as wake detector.
