@@ -12,7 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 18:09 EDT)
+## Live Status (2026-04-27 18:15 EDT)
+
+- **Aristotle recon packet `b782c387`** (topology on ContMDiffSection)
+  IN_PROGRESS at 17% (~1h6m in; +1 percentage point since last tick —
+  back to slow grind). Per PROMPT.md not polling.
+- **Local proof work this tick (Claude-owned):** Extended
+  `Jacobian/HolomorphicForms/BasisAlignedDualEquiv.lean` with
+  `holomorphicOneFormDualEquiv_symm_pi_single` — the inverse direction
+  of the existing `_dualBasis_apply` forward unfold lemma.
+- Active jobs (ours): 1/5.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 18:09 EDT)
 
 - **Aristotle recon packet `b782c387`** (topology on ContMDiffSection)
   IN_PROGRESS at 16% (~1h in; +8 percentage points since last tick —
