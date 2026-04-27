@@ -36,7 +36,7 @@ open scoped Manifold
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 open JacobianChallenge.ComplexTorus
 
-variable (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 

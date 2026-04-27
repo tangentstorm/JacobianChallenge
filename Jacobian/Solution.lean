@@ -85,12 +85,12 @@ Refinement (Round 1, top-down): `genus X := analyticGenus ℂ X`, the
 is supplied by the global instance
 `compactRiemannSurface_finiteDimensionalHolomorphicOneForms`
 in `Jacobian.HolomorphicForms.CompactRiemannSurface`. -/
-noncomputable def genus (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+noncomputable def genus (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] : ℕ :=
   JacobianChallenge.HolomorphicForms.analyticGenus ℂ X
 
 -- let X be a compact Riemann surface
-variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
+variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
 
 -- this proof avoids the hack answer `∀ X, genus X = 0`
@@ -100,18 +100,27 @@ lemma genus_eq_zero_iff_homeo :
     genus X = 0 ↔ Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :=
   JacobianChallenge.HolomorphicForms.analyticGenus_eq_zero_iff_homeomorphic_sphere X
 
-universe u in
 -- data
 /-- The Jacobian of a compact Riemann surface.
 
 Refinement (Round 2a, top-down): `Jacobian X := ULift (V ⧸ Λ)` where
 `V = Fin (genus X) → ℂ` is the basis-aligned model space and
-`Λ = periodFullComplexLattice X` is the period lattice. The `ULift`
-brings the analytic quotient (which lives in `Type 0`) up to the
-challenge's `Type u`. -/
-noncomputable def Jacobian (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] : Type u :=
-  ULift.{u} (JacobianChallenge.ComplexTorus.quotient
+`Λ = periodFullComplexLattice X` is the period lattice.
+
+**Universe note (post-keystone, 2026-04-27).** The carrier `X` is
+specialised to `Type` (Type 0) — the same constraint that
+`Periods.periodSubgroup` and `IntegralOneCycle` carry, propagated
+through `periodFullComplexLattice X` after the keystone refactor that
+routed `basisAlignedPeriodSubgroup` to its concrete representative.
+This is a divergence from `Challenge.Jacobian (X : Type u)` at the
+data-level signature; per `Jacobian/WorkPackets/TopDown.md` the
+comparator's `theorem_names` list is theorem-level and so should still
+match. The `ULift` in the body is now degenerate (`ULift.{0,0}` is
+`ULift` to the same universe) but kept for shape parity with the
+universe-poly intent. -/
+noncomputable def Jacobian (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] : Type :=
+  ULift (JacobianChallenge.ComplexTorus.quotient
     (Fin (genus X) → ℂ) (JacobianChallenge.Periods.periodFullComplexLattice X))
 
 namespace Jacobian
@@ -175,7 +184,7 @@ lemma ofCurve_inj (P : X) (h : 0 < genus X) : Function.Injective (ofCurve P) := 
     (by simpa [genus] using h)
   exact ULift.up_injective hab
 
-variable {Y : Type*} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [ChartedSpace ℂ Y] [IsManifold 𝓘(ℂ) ω Y]
 
 variable (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -214,7 +223,7 @@ lemma pushforward_id_apply (P : Jacobian X) : pushforward id contMDiff_id P = P 
   rw [JacobianChallenge.TraceDegree.analyticPushforward_id_apply]
   rfl
 
-variable {Z : Type*} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
+variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
   [ChartedSpace ℂ Z] [IsManifold 𝓘(ℂ) ω Z]
 
 variable (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
