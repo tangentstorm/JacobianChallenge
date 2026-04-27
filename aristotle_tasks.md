@@ -12,26 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 13:28 EDT)
+## Live Status (2026-04-27 13:35 EDT)
 
-- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~44 min
-  (rfl-iff smoke test). Backend has long queue depth post-wake.
+- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~49 min
+  (rfl-iff smoke test). Backend backlog persistent.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/Periods/PeriodSubgroupNeg.lean`:
-    neg-iff + explicit `periodPairing`-combination membership:
-      - `neg_mem_periodSubgroup_iff`
-      - `neg_periodPairing_mem_periodSubgroup`
-      - `periodPairing_add_periodPairing_mem_periodSubgroup`
-      - `periodPairing_sub_periodPairing_mem_periodSubgroup`
-    Each is a one- or two-line wrapper around `AddSubgroup`
-    `neg_mem_iff` / `add_mem` / `sub_mem` composed with the
-    existing `periodPairing_mem_periodSubgroup`.
+  - NEW `Jacobian/AnalyticJacobian/MkSubArith.lean`:
+    mk sub/neg/add combined arithmetic identities:
+      - `mk_sub_neg`         (`mk (φ - -ψ) = mk φ + mk ψ`)
+      - `mk_neg_add`         (`mk (-φ + ψ) = -mk φ + mk ψ`)
+      - `mk_add_neg`         (`mk (φ + -ψ) = mk φ - mk ψ`)
+      - `mk_neg_add_distrib` (`mk (-(φ + ψ)) = -mk φ - mk ψ`)
+    Initial draft for `_neg_add_distrib` ended on
+    `-mk φ + -mk ψ` after `neg_add` — added a final
+    `← sub_eq_add_neg` to convert to the subtraction form.
 - **Tree note:** same 4 untracked files — unrelated.
 - **Strategic note (carried forward):**
   Continuing local cadence in parallel with Aristotle smoke test.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 13:24 EDT)
+## Stale Live Status (2026-04-27 13:28 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
