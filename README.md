@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 01:15 EDT
+Last tick: 2026-04-27 01:21 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -50,14 +50,15 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~4h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned):
-                      EXTENDED Periods/TranslationChart with
-                      `translationChart_source` and
-                      `translationChart_target` simp lemmas: both
-                      `Set.univ`. Removes a tedious step that would
-                      otherwise be needed to discharge `range γ ⊆
-                      source`-style subset hypotheses for downstream
-                      callers using translation charts. Build green
-                      (8188 jobs).
+                      NEW Periods/ChartedFormPullbackEqOnOfMfderivId:
+                      set-restricted (EqOn) bridge. If
+                      `mfderiv c.symm = id` for every `e ∈ s`, then
+                      `chartedFormPullback c ω` agrees with
+                      `chartedForm c ω` pointwise on `s`. Natural
+                      intermediate between point-wise and global
+                      bridges — exactly the right form for "agrees
+                      on `c.target` only" charts. Build green
+                      (8189 jobs).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
