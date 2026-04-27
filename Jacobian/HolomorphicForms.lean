@@ -9,6 +9,7 @@ import Jacobian.HolomorphicForms.EvalLinearMapNeg
 import Jacobian.HolomorphicForms.EvalLinearMap
 import Jacobian.HolomorphicForms.EvalLinearMapApi
 import Jacobian.HolomorphicForms.EvalLinearMapZsmul
+import Jacobian.HolomorphicForms.ToFunZsmul
 import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.ExtEvalLinearMap
 import Jacobian.HolomorphicForms.AnalyticGenusWitness

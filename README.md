@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 11:20 EDT
+Last tick: 2026-04-27 11:24 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -32,7 +32,7 @@ Complex torus quotient API       ███████████████�
 Quotient charted-space/manifold  ████████████████████  100%  ChartedSpace + IsManifold sorry-free
 Projection (mk) smoothness       ████████████████████  100%  contMDiff_mk
 LieAddGroup smoothness           ████████████████████  100%  +, -, LieAddGroup instance
-Holomorphic forms                ███████████░░░░░░░░░   54%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
+Holomorphic forms                ███████████░░░░░░░░░   55%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix (zero/add/sub/neg/ℂ-smul/ℕ-smul/ℤ-smul/sub-self/double-neg) + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
 Path integration/periods         ██████████████░░░░░░   70%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts + integer-scalar periodPairing API (n/zsmul + matching subgroup membership)
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   31%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain + cycle-arithmetic mk∘periodPairing identities + evalJacobianClass equality characterizations (mem/exists-cycle iff)
 Abel-Jacobi API                  ████████░░░░░░░░░░░░   39%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges + `periodPairing` invariance + witness-zero characterizations (cycle / Jacobian class equality)
@@ -53,10 +53,13 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~17h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AnalyticJacobian.EvalJacobianClassEq:
-                      `evalJacobianClass` equality characterizations
-                      (member-of-periodSubgroup iff, cycle iff,
-                      sufficient direction, zero iff).
+                      NEW HolomorphicForms.ToFunZsmul:
+                      `(n • η).toFun x v` vec-applied + double-neg
+                      collapse + sub-self at toFun (ℕ and ℤ).
+                      Note: smul-zero on Holo would need
+                      `SMulZeroClass ℕ (CotangentSpace _ _ _)`
+                      typeclass which times out — used `sub_self`
+                      route to avoid the synth bottleneck.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -66,7 +69,7 @@ Build status — all targets compile (lake build Jacobian.{Challenge, …, *.Rec
 
 Sorry-free coverage by directory               bar              %   files
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Jacobian/HolomorphicForms                ████████████████████  100%  (20/20)
+Jacobian/HolomorphicForms                ████████████████████  100%  (21/21)
 Jacobian/AnalyticJacobian                ████████████████████  100%  (18/18)
 Jacobian/AbelJacobi                      ████████████████████  100%  (16/16)
 Jacobian/TraceDegree                     ████████████████████  100%  (65/65)
@@ -75,7 +78,7 @@ Jacobian/ComplexTorus                    █████████████
 Top-level umbrellas (Jacobian/*.lean)    █████████████████░░░   86%  (6/7)‡
 Jacobian/WorkPackets                     ░░░░░░░░░░░░░░░░░░░░    0%  (0/1)‡
 
-Production infrastructure (excluding intentional design files): 100% (348/348).
+Production infrastructure (excluding intentional design files): 100% (349/349).
 
 † Single `*Recon.lean` discovery file with intentional sorries.
 ‡ Challenge.lean (frozen public spec) and StatementBank.lean

@@ -12,28 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 11:20 EDT)
+## Live Status (2026-04-27 11:24 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~17h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/AnalyticJacobian/EvalJacobianClassEq.lean`:
-    `evalJacobianClass` equality characterizations:
-      - `evalJacobianClass_eq_iff_mem`
-      - `evalJacobianClass_eq_iff_exists_cycle`
-      - `evalJacobianClass_eq_of_diff_eq_periodPairing`
-      - `evalJacobianClass_eq_zero_iff_mem`
-    Iff and sufficient-condition pairs. The first three say
-    `evalJacobianClass P v = evalJacobianClass Q w` is
-    characterized by `-evalLinearMap P v + evalLinearMap Q w` lying
-    in `periodSubgroup` (equivalently, being a `periodPairing`
-    image). The fourth specializes to the zero-class.
+  - NEW `Jacobian/HolomorphicForms/ToFunZsmul.lean`:
+    integer-scalar `toFun` extras:
+      - `zsmul_toFun_apply_vec`  (vec-applied form of zsmul)
+      - `nsmul_sub_self_toFun_apply`  (`(n • η - n • η).toFun = 0`)
+      - `zsmul_sub_self_toFun_apply`  (ℤ analogue)
+      - `neg_neg_toFun_apply`         (double-neg collapse)
+    First attempt used `smul_zero`, but `SMulZeroClass ℕ
+    (CotangentSpace _ _ _)` typeclass synthesis times out at
+    20000 heartbeats. Switched to the `sub_self`/`neg_neg`
+    AddCommGroup route.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~17h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 11:16 EDT)
+## Stale Live Status (2026-04-27 11:20 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
