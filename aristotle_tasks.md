@@ -12,7 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 18:19 EDT)
+## Live Status (2026-04-27 18:24 EDT)
+
+- **NEW Aristotle packet submitted: `027bb9d7-dfa7-402d-854d-eff0feb8c00b`.**
+  Off-critical-path follow-up per new user feedback "aristotle may
+  take hours on something. give it a couple things to do. it's okay.
+  but: try to keep aristotle from blocking you". Target:
+  `analyticGenus_eq_zero_of_homeomorphic_sphere` (the "easy" direction
+  of genus-zero classification iff). Deep theorem requiring uniqueness
+  of complex structure on S² + H⁰(ℂℙ¹, Ω¹) = 0. Realistic outcome is
+  a partial-survey doc like `72ac3a75`; acceptable.
+- **Active jobs (ours): 2/5.**
+  - `b782c387` topology-on-ContMDiffSection recon — still IN_PROGRESS
+    at 17% after ~1h15m, stalled across 3 ticks now.
+  - `027bb9d7` analyticGenus_eq_zero_of_homeomorphic_sphere — just
+    submitted.
+- **PROMPT.md §3 updated** to clarify that off-critical-path big tasks
+  are fine and multiple may run in parallel; constraint is that
+  Aristotle never blocks Claude's local work. Memory entry
+  `feedback_aristotle_substantive_work.md` updated to match.
+- **Headline numbers re-derived:** production sorry-free 381 / 389
+  (up from 388 prod denominator due to user's Round 0 commits this
+  evening). 8 real-sorry production files: AnalyticOfCurveBasis,
+  ULiftTransport, CompactRiemannSurface, GenusZeroClassification (3),
+  PeriodLattice (5), AnalyticDegree, PullbackBasis, PushforwardBasis.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 18:19 EDT)
 
 - **Aristotle recon packet `b782c387`** (topology on ContMDiffSection)
   IN_PROGRESS at 17% (~1h10m in; unchanged from last tick — appears

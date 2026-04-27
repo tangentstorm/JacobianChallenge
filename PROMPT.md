@@ -56,7 +56,8 @@ The timer will call you again.
    - Whenever you integrate Aristotle changes, refresh `README.md` with the
      current progress report before committing.
 
-3. Keep Aristotle busy — but **only with substantive work**.
+3. Keep Aristotle busy — but **only with substantive work**, and
+   **never let Aristotle block you**.
    - Aim for up to 5 active Aristotle tasks (counted from
      `aristotle_jobs.jsonl`, not from `aristotle list`), but **do not
      fill the queue with trivial fillers**. If a candidate task's
@@ -65,9 +66,17 @@ The timer will call you again.
      packets should be 5-30+ line proofs requiring non-obvious
      reductions, multi-step rewrite chains, case splits, induction, or
      careful `ext + simp/rw` bundling.
-   - It is fine to have 0/5 active when no real bounded work is
-     ready. Leaving the queue light beats round-tripping trivials
-     through the backend.
+   - **Off-critical-path big tasks (hours of churn) are fine** — and
+     having a couple of them running in parallel is fine. Don't
+     constrain submissions to "bounded" or "fast"; deep theorems and
+     surveys are valid Aristotle work.
+   - **The constraint is that Claude's local work keeps advancing.**
+     Never wait on an Aristotle result. If Claude's next useful move
+     depends on a specific in-flight Aristotle outcome, switch to a
+     different local target — Aristotle is a parallel worker, not a
+     bottleneck.
+   - It is fine to have 0/5 active when no real work is ready.
+     Leaving the queue light beats round-tripping trivials.
    - Use disjoint write scopes for parallel tasks.
    - Every time you submit a job, append a JSONL line to
      `aristotle_jobs.jsonl` with `{id, status: "submitted", queue,

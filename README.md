@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 18:19 EDT
+Last tick: 2026-04-27 18:24 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -13,7 +13,7 @@ Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (fr
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
 Aristotle integrations to date 88         `"status":"integrated"` lines in aristotle_jobs.jsonl
-Production sorry-free files  380 / 388    using the precise count (real `sorry` tactics; doc-comment
+Production sorry-free files  381 / 389    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded).
                                           The 8 production files with real sorries:
                                             Claude-owned (3 files, 7 sorries):
@@ -60,15 +60,35 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5  `b782c387` (topology recon) IN_PROGRESS at 17%
-                        (~1h10m in; unchanged from last tick — appears stalled).
-                        Per PROMPT.md not polling further.
+Active jobs (ours):     2 / 5  Submitted a second off-critical-path packet this tick
+                        per user feedback "aristotle may take hours on something. give
+                        it a couple things to do. it's okay. but: try to keep aristotle
+                        from blocking you" (memory + PROMPT.md updated accordingly):
+                        `b782c387` topology-on-ContMDiffSection recon (still IN_PROGRESS
+                                   at 17% after ~1h15m — stalled across 3 ticks now).
+                        `027bb9d7` analyticGenus_eq_zero_of_homeomorphic_sphere (the
+                                   "easy" direction of the genus-zero classification iff;
+                                   off-critical-path deep theorem). Realistic outcome
+                                   is a partial-survey doc like 72ac3a75; acceptable.
 Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PROMPT.md §3 updated to clarify that off-critical-path big tasks are
+fine and multiple may run in parallel; the constraint is that
+Aristotle never blocks Claude's local work.
+
+Submitted second Aristotle packet `027bb9d7` —
+analyticGenus_eq_zero_of_homeomorphic_sphere ("easy" direction of
+genus-zero classification, deep). See Aristotle status above.
+
+Recomputed headline ratio: production sorry-free 381 / 389 (up from
+388 prod last tick: +1 file via user's Round 0 commits, plus 3
+additional sorrys in GenusZeroClassification).
+
+PRIOR TICK (still standing):
 EXTEND Jacobian/Periods/BasisAlignedAnalyticJacobianEquiv.lean (+1 simp lemma)
 
   mk_basisAlignedPeriodPairing_eq_zero (σ : IntegralOneCycle X)
