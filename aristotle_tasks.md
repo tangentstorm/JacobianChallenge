@@ -12,27 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 13:11 EDT)
+## Live Status (2026-04-27 13:15 EDT)
 
-- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~27 min
-  (rfl-iff smoke test). Backend has long queue depth post-wake;
-  awaiting our turn.
+- Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~32 min
+  (rfl-iff smoke test). Backend has long queue depth post-wake.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapTriple.lean`:
-    3-arg add/sub combinations for bundled pullback, arbitrary `f`:
-      - `pullbackFormsLinearMap_add_add`
-      - `pullbackFormsLinearMap_sub_add`
-      - `pullbackFormsLinearMap_add_sub`
-      - `pullbackFormsLinearMap_sub_sub`
-    All `@[simp]`. Each composes two of the existing
-    `_add` / `_sub` distributivity laws.
+  - NEW `Jacobian/TraceDegree/PullbackFormsLinearMapTripleApplyVec.lean`:
+    vec-applied versions of the 3-arg add/sub distributivity:
+      - `pullbackFormsLinearMap_add_add_apply_vec`
+      - `pullbackFormsLinearMap_sub_add_apply_vec`
+      - `pullbackFormsLinearMap_add_sub_apply_vec`
+      - `pullbackFormsLinearMap_sub_sub_apply_vec`
+    Each forwards via the function-level lemma plus `rfl`.
+    All `@[simp]`.
 - **Tree note:** untracked `Jacobian/Solution.lean` and
   `Jacobian/WorkPackets/TopDown.md` — unrelated.
 - **Strategic note (carried forward):**
   Continuing local cadence in parallel with Aristotle smoke test.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 13:06 EDT)
+## Stale Live Status (2026-04-27 13:11 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.
