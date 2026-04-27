@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 12:58 EDT
+Last tick: 2026-04-27 13:06 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -32,18 +32,17 @@ chart and the explicit `translationChart v` construction.
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~11 min
-                    (rfl-iff smoke test).
+Active jobs (ours): 1/5 — `ee14b794` still QUEUED ~20 min
+                    (rfl-iff smoke test). Long queue depth.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFormsLinearMapIntSmulAddApplyVec:
-                      vec-applied versions of ℕ/ℤ-smul × add/sub
-                      identities (4 `@[simp]` lemmas).
+                      NEW HolomorphicForms.EvalLinearMapApiExtra:
+                      named `evalLinearMap_apply_{zero,add,neg,sub}`
+                      wrappers around the inherited LinearMap API.
 Submitted this tick:  none new (smoke test still queued).
 Tree note:            Untracked `Jacobian/Solution.lean` and
-                      `Jacobian/WorkPackets/TopDown.md` — unrelated
-                      pre-existing additions, left alone.
+                      `Jacobian/WorkPackets/TopDown.md` — unrelated.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -53,7 +52,7 @@ Build status — all targets compile (lake build Jacobian.{Challenge, …, *.Rec
 
 Sorry-free coverage by directory               bar              %   files
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Jacobian/HolomorphicForms                ███████████████████░   96%  (22/23)*
+Jacobian/HolomorphicForms                ███████████████████░   96%  (23/24)*
 Jacobian/AnalyticJacobian                ████████████████████  100%  (18/18)
 Jacobian/AbelJacobi                      ████████████████████  100%  (18/18)
 Jacobian/TraceDegree                     ████████████████████  100%  (78/78)
@@ -62,7 +61,7 @@ Jacobian/ComplexTorus                    █████████████
 Top-level umbrellas (Jacobian/*.lean)    █████████████████░░░   86%  (6/7)‡
 Jacobian/WorkPackets                     ░░░░░░░░░░░░░░░░░░░░    0%  (0/1)‡
 
-Production infrastructure (excluding intentional design files): 100% (364/364).
+Production infrastructure (excluding intentional design files): 100% (365/365).
 
 † Single `*Recon.lean` discovery file with intentional sorries.
 ‡ Challenge.lean (frozen public spec) and StatementBank.lean
