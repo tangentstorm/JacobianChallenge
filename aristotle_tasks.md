@@ -12,7 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 05:32 EDT)
+## Live Status (2026-04-27 05:37 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
+  Not waiting per user.
+- **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
+  - NEW `Jacobian/TraceDegree/PullbackFunIdComposeId.lean`:
+    closes the trivial corner of the composition matrix where both
+    factors are `id`:
+      - `pullbackFormsFun_id_id`
+      - `pullbackFormsFun_id_id_apply`
+      - `pullbackFormsFun_id_id_apply_vec`
+      - `pullbackFormsLinearMap_id_id_apply`
+    All collapse to `pullbackFormsFun_id` since `id ∘ id = id` rfl.
+    Wired into TraceDegree umbrella.
+- **Strategic note (carried forward):**
+  Continuing 4-lemma/tick cadence per user directive. Backend
+  asleep ~11h — not waiting. Comp matrix at id/const corners is
+  now exhaustive at function and bundled levels.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 05:32 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~11h.
   Not waiting per user.
@@ -24,12 +44,7 @@ identify our jobs without inspecting tarballs.
       - `pullbackFormsLinearMap_id_comp_const_apply_vec`
       - `pullbackFormsLinearMap_const_comp_id_apply`
       - `pullbackFormsLinearMap_const_comp_id_apply_vec`
-    All zero, via
-    `rw [pullbackFormsLinearMap_apply_at, pullbackFormsFun_(id_comp_const|const_comp_id)]; rfl`.
-    Wired into TraceDegree umbrella.
-- **Strategic note (carried forward):**
-  Continuing 4-lemma/tick cadence per user directive. Backend
-  asleep ~11h — not waiting.
+    All zero. Wired into TraceDegree umbrella.
 
 ## Earlier (now stale; kept for context only)
 ## Stale Live Status (2026-04-27 05:28 EDT)
