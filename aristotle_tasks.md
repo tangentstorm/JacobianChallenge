@@ -12,7 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-26 23:45 EDT)
+## Live Status (2026-04-26 23:53 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~5h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - NEW `Jacobian/Periods/PathIntegralReflCover.lean`: tops out
+    the refl-chart pipeline at the cover-with and Pick layers.
+    Two theorems for `chartedSpaceSelf E`:
+      - `pathIntegralViaCoverWith_self_eq_sum_provisional`:
+        cover-with multi-chart integral = ∑ provisional via-chart
+        integrals on each segment, unconditionally.
+      - `pathIntegralViaCover_self_eq_sum_provisional`:
+        same identity at the user-facing Pick wrapper.
+    Both proofs feed the refl witness `mfderiv_refl_symm_eq_id`
+    into the existing `_of_mfderiv_id` cover-with / Pick bridges.
+    End-to-end refl pipeline now complete: chartedForm → in-chart
+    → via-chart → cover-with → Pick. Build green (8183 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-26 23:45 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~5h —
   `submitted-redundant`, kept as wake detector.
