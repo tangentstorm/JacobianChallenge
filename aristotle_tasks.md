@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 04:05 EDT)
+## Live Status (2026-04-27 04:13 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned):**
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with
+    `pathIntegralInChartCorrect_translationChart_zero`: corrected
+    variant of last-tick's degenerate-case lemma.
+    `pathIntegralInChartCorrect (translationChart 0) ω γ =
+    curveIntegral ω.toFun γ`. Proof: rewrite via the corrected
+    translation formula, then `congr 1; funext; neg_zero, add_zero`.
+    Build green (8189 jobs).
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 04:05 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~9h —
   `submitted-redundant`, kept as wake detector.
