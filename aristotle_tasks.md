@@ -12,27 +12,27 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 11:05 EDT)
+## Live Status (2026-04-27 11:11 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~16h.
   Not waiting per user.
 - **Integrated this tick (local Claude-owned, 4 lemmas, 1 new file):**
-  - NEW `Jacobian/AnalyticJacobian/MkPeriodPairingCycle.lean`:
-    mk ∘ periodPairing on cycle-arithmetic combinations:
-      - `mk_periodPairing_add_cycle`
-      - `mk_periodPairing_sub_cycle`
-      - `mk_periodPairing_add_periodPairing`
-      - `mk_periodPairing_sub_periodPairing`
-    First two follow directly from `mk_periodPairing_eq_zero`.
-    Last two combine `periodPairing_{add,sub}` (from
-    `PeriodFunctionalApi`) with `mk_periodPairing_eq_zero`. All
-    `@[simp]` for downstream rewrites.
+  - NEW `Jacobian/AnalyticJacobian/MkPeriodPairingCycleSmul.lean`:
+    mk ∘ periodPairing on integer-scaled cycles:
+      - `mk_periodPairing_nsmul_cycle`
+      - `mk_periodPairing_zsmul_cycle`
+      - `mk_add_periodPairing_nsmul_cycle`
+      - `mk_add_periodPairing_zsmul_cycle`
+    Continues `MkPeriodPairingCycle` with `n • σ` cycle-side
+    scaling. First two are direct corollaries of
+    `mk_periodPairing_eq_zero`; last two combine `mk_add` with
+    them via `add_zero`. All `@[simp]`.
 - **Strategic note (carried forward):**
   Continuing 4-lemma/tick cadence per user directive. Backend
   asleep ~16h — not waiting.
 
 ## Earlier (now stale; kept for context only)
-## Stale Live Status (2026-04-27 11:01 EDT)
+## Stale Live Status (2026-04-27 11:05 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~15h.
   Not waiting per user.

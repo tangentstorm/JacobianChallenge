@@ -7,6 +7,7 @@ import Jacobian.AnalyticJacobian.MkArith
 import Jacobian.AnalyticJacobian.MkPeriodPairing
 import Jacobian.AnalyticJacobian.MkPeriodPairingSmul
 import Jacobian.AnalyticJacobian.MkPeriodPairingCycle
+import Jacobian.AnalyticJacobian.MkPeriodPairingCycleSmul
 import Jacobian.AnalyticJacobian.EvalJacobianClassPeriodPairing
 import Jacobian.AnalyticJacobian.EvalJacobianClassMember
 import Jacobian.AnalyticJacobian.EvalJacobianClass
