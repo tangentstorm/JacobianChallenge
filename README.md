@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 09:18 EDT
+Last tick: 2026-04-27 09:23 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -53,10 +53,9 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~15h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW AbelJacobi.WitnessMk: `witnessAbelJacobi`
-                      ↔ `mk` explicit-form bridges, plus
-                      `_eq_zero_iff_endpoint_diff_mem` linking to
-                      `periodSubgroup` membership.
+                      NEW TraceDegree.PullbackFunIdEval: pullback-
+                      along-id ↔ `evalLinearMap` characterizations
+                      (eq-zero / eq-iff / factor / alias).
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -223,6 +222,7 @@ HolomorphicForms.EvalLinearMapNeg pass lake build Jacobian.HolomorphicForms.Eval
 HolomorphicForms.EvalLinearMap pass lake build Jacobian.HolomorphicForms.EvalLinearMap (no sorry)
 HolomorphicForms.EvalLinearMapApi pass lake build Jacobian.HolomorphicForms.EvalLinearMapApi (no sorry)
 TraceDegree.PullbackFunEvalLinearMap pass lake build Jacobian.TraceDegree.PullbackFunEvalLinearMap (no sorry)
+TraceDegree.PullbackFunIdEval pass lake build Jacobian.TraceDegree.PullbackFunIdEval (no sorry)
 HolomorphicForms.EvalLinearMapZsmul pass lake build Jacobian.HolomorphicForms.EvalLinearMapZsmul (no sorry)
 HolomorphicForms.Ext pass lake build Jacobian.HolomorphicForms.Ext (no sorry)
 HolomorphicForms.ExtEvalLinearMap pass lake build Jacobian.HolomorphicForms.ExtEvalLinearMap (no sorry)
