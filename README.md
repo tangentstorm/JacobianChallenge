@@ -21,7 +21,7 @@ delegation strategy for Aristotle.
 
 ## Progress Report
 
-Last tick: 2026-04-27 10:05 EDT
+Last tick: 2026-04-27 10:08 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -36,7 +36,7 @@ Holomorphic forms                ███████████░░░░�
 Path integration/periods         ██████████████░░░░░░   69%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   28%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain
 Abel-Jacobi API                  ███████░░░░░░░░░░░░░   37%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges
-Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   33%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled along-id vec/form-slot full linearity + bundled along-const trivial form-slot dist
+Trace/degree/push-pull           ██████░░░░░░░░░░░░░░   34%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled along-id vec/form-slot full linearity + bundled along-const trivial form/vec-slot dist
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
 translation-transition charts, e.g. the torus), the corrected
@@ -53,10 +53,10 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~15h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW TraceDegree.PullbackFormsLinearMapConstDist:
-                      bundled along-const form-slot trivial dist
-                      (add/neg/sub/smul) — both sides collapse to 0
-                      via `pullbackFormsLinearMap_const_apply_vec`.
+                      NEW TraceDegree.PullbackFormsLinearMapConstVec:
+                      bundled along-const vec-slot trivial dist
+                      (zero/add/neg/smul on `v`) — both sides collapse
+                      to 0 via the same const-pullback collapse.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -234,6 +234,7 @@ TraceDegree.PullbackFormsLinearMapIdEvalVecExtra pass lake build Jacobian.TraceD
 TraceDegree.PullbackFormsLinearMapIdEvalDist pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapIdEvalDist (no sorry)
 TraceDegree.PullbackFormsLinearMapIdEvalSmul pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapIdEvalSmul (no sorry)
 TraceDegree.PullbackFormsLinearMapConstDist pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapConstDist (no sorry)
+TraceDegree.PullbackFormsLinearMapConstVec pass lake build Jacobian.TraceDegree.PullbackFormsLinearMapConstVec (no sorry)
 HolomorphicForms.EvalLinearMapZsmul pass lake build Jacobian.HolomorphicForms.EvalLinearMapZsmul (no sorry)
 HolomorphicForms.Ext pass lake build Jacobian.HolomorphicForms.Ext (no sorry)
 HolomorphicForms.ExtEvalLinearMap pass lake build Jacobian.HolomorphicForms.ExtEvalLinearMap (no sorry)
