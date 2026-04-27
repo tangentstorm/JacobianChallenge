@@ -63,4 +63,17 @@ noncomputable instance complexTorusULift_lieAddGroup
     LieAddGroup (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
       (ULift.{u} (quotient V Λ)) := sorry
 
+/-- The map `ULift.up : quotient V Λ → ULift (quotient V Λ)` is `ContMDiff`
+of every degree.
+
+Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
+`ofCurve_contMDiff` lemma (composed with `analyticOfCurve_contMDiff`).
+Bottom-up: a chart-target identity through `Homeomorph.ulift`. -/
+lemma contMDiff_uLift_up
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    [FiniteDimensional ℂ V] {Λ : FullComplexLattice V}
+    {n : WithTop ℕ∞} :
+    ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ V) n
+      (ULift.up : quotient V Λ → ULift.{u} (quotient V Λ)) := sorry
+
 end JacobianChallenge.ComplexTorus
