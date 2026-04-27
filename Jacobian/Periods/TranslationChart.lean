@@ -160,4 +160,14 @@ theorem chartedFormPullback_translationChart_apply
   rw [chartedFormPullback_translationChart_eq_chartedForm,
       chartedForm_translationChart_apply]
 
+/-- The provisional in-chart integral on a translation chart is the
+direct curve integral of the shifted form `e ↦ ω.toFun (e + (-v))`. -/
+theorem pathIntegralInChart_translationChart
+    (v : E) (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
+    pathIntegralInChart (translationChart v) ω γ =
+      curveIntegral (fun e => ω.toFun (e + (-v))) γ := by
+  show curveIntegral (chartedForm (translationChart v) ω) γ =
+       curveIntegral (fun e => ω.toFun (e + (-v))) γ
+  rfl
+
 end JacobianChallenge.Periods
