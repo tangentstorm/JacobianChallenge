@@ -1,27 +1,10 @@
 # Jacobian Challenge
 
-A Lean 4 / Mathlib formalization project targeting the Jacobian variety of a
-compact Riemann surface.
-
-The public specification lives in `Jacobian/Challenge.lean` and asks for:
-
-- `genus X` for a compact Riemann surface `X`;
-- `Jacobian X` as a compact complex Lie additive group of dimension `genus X`;
-- the Abel-Jacobi map `Jacobian.ofCurve`;
-- pushforward and pullback maps along holomorphic maps;
-- the degree of a holomorphic map of compact Riemann surfaces;
-- the identity `pushforward f (pullback f P) = degree f • P`.
-
-Approach: the analytic period-lattice construction
-`Jacobian X = H0(X, Ω¹)* / H1(X, Z)`, built up through reusable layers
-(complex tori, holomorphic forms, period integration, Abel-Jacobi, degree).
-
-See `plan.md` for the full roadmap, phase breakdown, anti-hack audit, and
-delegation strategy for Aristotle.
+A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann surface (see _About_ below for scope).
 
 ## Progress Report
 
-Last tick: 2026-04-27 11:24 EDT
+Last tick: 2026-04-27 11:39 EDT
 
 ```text
 Layer                            Bar                    %    Note
@@ -35,7 +18,7 @@ LieAddGroup smoothness           ███████████████�
 Holomorphic forms                ███████████░░░░░░░░░   55%  type/module/analyticGenus + complete genus order/positivity API + full toFun matrix (zero/add/sub/neg/ℂ-smul/ℕ-smul/ℤ-smul/sub-self/double-neg) + `evalLinearMap` complete linearity in form & vec slots + ext + witness positivity
 Path integration/periods         ██████████████░░░░░░   70%  full bridge ladder + refl/translation chart instances + named API around periodPairing/periodSubgroup with closure + extensional carrier facts + integer-scalar periodPairing API (n/zsmul + matching subgroup membership)
 Analytic Jacobian (group)        ██████░░░░░░░░░░░░░░   31%  abstract quotient group + full mk + integer-action vec-slot + zero-class characterizations + Nontrivial witness chain + cycle-arithmetic mk∘periodPairing identities + evalJacobianClass equality characterizations (mem/exists-cycle iff)
-Abel-Jacobi API                  ████████░░░░░░░░░░░░   39%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges + `periodPairing` invariance + witness-zero characterizations (cycle / Jacobian class equality)
+Abel-Jacobi API                  ████████░░░░░░░░░░░░   40%  witness skeleton + composition + vec-slot algebra + base-change + telescoping + genus/Nontrivial chain + explicit `mk`/periodSubgroup bridges + `periodPairing` invariance + witness-zero/equality characterizations (chain-zero ↔ shared-endpoint / shared-base-point eq)
 Trace/degree/push-pull           █████████░░░░░░░░░░░   46%  pullbackFormsFun: full linearity + LinearMap bundle + id + comp-id/comp-const + const-of-const + mixed const/id + id-of-id + light bridge to HolomorphicForms.evalLinearMap + bundled along-id+along-const full dist + bundled along-(id ∘ id) full forwarder bank + bundled comp-const/const-comp full form/vec-slot dist ℂ/ℕ/ℤ-complete
 
 Note: under the global hypothesis `mfderiv c.symm = id` (true for
@@ -53,13 +36,13 @@ Active jobs (ours): 1/5 — `09cd85dd` canary QUEUED ~17h.
                       Backend still asleep. Canary is
                       submitted-redundant; kept as wake detector.
 Integrated this tick (local Claude-owned, 4 lemmas):
-                      NEW HolomorphicForms.ToFunZsmul:
-                      `(n • η).toFun x v` vec-applied + double-neg
-                      collapse + sub-self at toFun (ℕ and ℤ).
-                      Note: smul-zero on Holo would need
-                      `SMulZeroClass ℕ (CotangentSpace _ _ _)`
-                      typeclass which times out — used `sub_self`
-                      route to avoid the synth bottleneck.
+                      NEW AbelJacobi.WitnessEqIff:
+                      witness-equality characterizations via the
+                      chain identity (shared-endpoint and
+                      shared-base-point variants, iff + of forms).
+README structure:     Restructured per user request — one-line
+                      summary up top, status sections next, full
+                      About description moved below.
 Submitted this tick:  none.
 Failed/split this tick: none.
 ```
@@ -71,14 +54,14 @@ Sorry-free coverage by directory               bar              %   files
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Jacobian/HolomorphicForms                ████████████████████  100%  (21/21)
 Jacobian/AnalyticJacobian                ████████████████████  100%  (18/18)
-Jacobian/AbelJacobi                      ████████████████████  100%  (16/16)
+Jacobian/AbelJacobi                      ████████████████████  100%  (17/17)
 Jacobian/TraceDegree                     ████████████████████  100%  (65/65)
 Jacobian/Periods                         ███████████████████░   99%  (169/170)†
 Jacobian/ComplexTorus                    ███████████████████░   98%  (54/55)†
 Top-level umbrellas (Jacobian/*.lean)    █████████████████░░░   86%  (6/7)‡
 Jacobian/WorkPackets                     ░░░░░░░░░░░░░░░░░░░░    0%  (0/1)‡
 
-Production infrastructure (excluding intentional design files): 100% (349/349).
+Production infrastructure (excluding intentional design files): 100% (350/350).
 
 † Single `*Recon.lean` discovery file with intentional sorries.
 ‡ Challenge.lean (frozen public spec) and StatementBank.lean
@@ -103,3 +86,24 @@ Next tick priorities
    `Bundle.continuousLinearMap` constant-section roadblock that
    stalled `259b18a1`).
 ```
+
+## About
+
+A Lean 4 / Mathlib formalization project targeting the Jacobian variety of a
+compact Riemann surface.
+
+The public specification lives in `Jacobian/Challenge.lean` and asks for:
+
+- `genus X` for a compact Riemann surface `X`;
+- `Jacobian X` as a compact complex Lie additive group of dimension `genus X`;
+- the Abel-Jacobi map `Jacobian.ofCurve`;
+- pushforward and pullback maps along holomorphic maps;
+- the degree of a holomorphic map of compact Riemann surfaces;
+- the identity `pushforward f (pullback f P) = degree f • P`.
+
+Approach: the analytic period-lattice construction
+`Jacobian X = H0(X, Ω¹)* / H1(X, Z)`, built up through reusable layers
+(complex tori, holomorphic forms, period integration, Abel-Jacobi, degree).
+
+See `plan.md` for the full roadmap, phase breakdown, anti-hack audit, and
+delegation strategy for Aristotle.
