@@ -292,4 +292,33 @@ theorem chartedFormPullbackLinearMap_translationChart_zero
       ω.toFun :=
   chartedFormPullback_translationChart_zero ω
 
+/-- Pointwise apply form: `chartedForm` of a translation chart at
+zero, evaluated at any point, is just `ω.toFun e`. -/
+theorem chartedForm_translationChart_zero_apply
+    (ω : HolomorphicOneForm E E) (e : E) :
+    chartedForm (translationChart (0 : E)) ω e = ω.toFun e := by
+  rw [chartedForm_translationChart_apply]
+  congr 1
+  rw [neg_zero, add_zero]
+
+/-- Pointwise apply form: `chartedFormPullback` of a translation
+chart at zero collapses to `ω.toFun`. -/
+theorem chartedFormPullback_translationChart_zero_apply
+    (ω : HolomorphicOneForm E E) (e : E) :
+    chartedFormPullback (translationChart (0 : E)) ω e = ω.toFun e := by
+  rw [chartedFormPullback_translationChart_apply]
+  congr 1
+  rw [neg_zero, add_zero]
+
+set_option linter.unusedSectionVars false in
+/-- The `chartLift` through the translation chart at zero, applied
+at `t`, equals `γ t` (since translation by 0 is the identity). -/
+theorem chartLift_translationChart_zero_apply
+    {a b : E} (γ : Path a b)
+    (h : Set.range γ ⊆ (translationChart (0 : E)).source)
+    (t : unitInterval) :
+    chartLift (translationChart (0 : E)) γ h t = γ t := by
+  show γ t + 0 = γ t
+  rw [add_zero]
+
 end JacobianChallenge.Periods

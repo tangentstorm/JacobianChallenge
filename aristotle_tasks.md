@@ -12,7 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 04:35 EDT)
+## Live Status (2026-04-27 04:42 EDT)
+
+- Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h —
+  `submitted-redundant`, kept as wake detector.
+- **Integrated this tick (local Claude-owned, 3 lemmas):**
+  - EXTENDED `Jacobian/Periods/TranslationChart.lean` with three
+    pointwise translation-zero simp lemmas:
+      - `chartedForm_translationChart_zero_apply`:
+        `chartedForm (translationChart 0) ω e = ω.toFun e`.
+      - `chartedFormPullback_translationChart_zero_apply`:
+        `chartedFormPullback (translationChart 0) ω e = ω.toFun e`.
+      - `chartLift_translationChart_zero_apply`:
+        `chartLift (translationChart 0) γ h t = γ t`.
+    Pointwise/applied versions of last tick's collapse simps —
+    useful for downstream `simp` chains. Build green (8189 jobs).
+- **Strategic note (carried forward):**
+  Pushing Path integration/periods to 100% requires substantive
+  infrastructure (Packet F, partition independence, Stokes), not
+  small simps. Continuing micro-lemma work per user's "3-4 per
+  tick" directive.
+
+## Earlier (now stale; kept for context only)
+## Stale Live Status (2026-04-27 04:35 EDT)
 
 - Active jobs (ours): 1/5; canary `09cd85dd` QUEUED ~10h —
   `submitted-redundant`, kept as wake detector.
