@@ -16,6 +16,7 @@ import Jacobian.TraceDegree.PullbackFormsLinearMapSubZero
 import Jacobian.TraceDegree.PullbackFormsLinearMapSubZeroApplyVec
 import Jacobian.TraceDegree.PullbackFormsLinearMapNegNeg
 import Jacobian.TraceDegree.PullbackFormsLinearMapSmulNeg
+import Jacobian.TraceDegree.PullbackFormsLinearMapSmulNegApplyVec
 import Jacobian.TraceDegree.PullbackFun
 import Jacobian.TraceDegree.PullbackFunAddSubApply
 import Jacobian.TraceDegree.PullbackFunApply
