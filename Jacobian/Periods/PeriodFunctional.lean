@@ -97,40 +97,6 @@ theorem periodSubgroup_spans_real
         Set (Fin (analyticGenus ℂ X) → ℂ))
       = ⊤ := sorry
 
-/-- Existence of a compact fundamental domain for the basis-aligned
-period subgroup.
-
-Top-down obligation. Bottom-up content: under the `IsZLattice ℝ`
-witness assembled from `periodSubgroup_isZLattice` and
-`periodSubgroup_spans_real`, the set `closure (ZSpan.fundamentalDomain b)`
-(for `b` the lifted ℤ-basis) is compact — by
-`ZSpan.fundamentalDomain_isBounded` plus
-`Bornology.IsBounded.isCompact_closure` in the `ProperSpace`
-`Fin (analyticGenus ℂ X) → ℂ` — and its period-subgroup translates
-cover the model space, by
-`ZSpan.exist_unique_vadd_mem_fundamentalDomain` plus closure.
-
-This existence statement is the named bottom-up obligation that the
-`periodFundamentalDomain` definition (and the
-`periodFundamentalDomain_isCompact` / `_covers` lemmas) in
-`Jacobian/Periods/PeriodLattice.lean` delegate to. Stating it as
-`∃ D, IsCompact D ∧ (covering)` keeps `PeriodLattice.lean` free to
-*choose* a concrete `D` via `Classical.choose`, while the
-mathematical work — discreteness + full ℝ-rank ⇒ compact
-fundamental domain — is centralised here next to its inputs. -/
-theorem exists_compact_periodFundamentalDomain
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    ∃ D : Set (Fin (analyticGenus ℂ X) → ℂ),
-      IsCompact D ∧
-      ∀ v : Fin (analyticGenus ℂ X) → ℂ,
-        ∃ g ∈ (AddSubgroup.map
-          (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
-          ((periodPairing ℂ X).range) :
-          AddSubgroup (Fin (analyticGenus ℂ X) → ℂ)),
-          v - g ∈ D := sorry
-
 /-- The period subgroup: the image of the period pairing, as an
 additive subgroup of the linear dual of holomorphic 1-forms. -/
 noncomputable def periodSubgroup
@@ -237,5 +203,77 @@ noncomputable instance basisAlignedPeriodSubmoduleℤ_isZLattice
     -- `periodSubgroup_spans_real X`.
     simpa [basisAlignedPeriodSubmoduleℤ, AddSubgroup.coe_toIntSubmodule]
       using periodSubgroup_spans_real X
+
+/-! ### Existence of a compact fundamental domain (bottom-up consequence) -/
+
+/-- Existence of a compact fundamental domain for the basis-aligned
+period subgroup.
+
+Bottom-up content: under the `IsZLattice ℝ` witness assembled from
+`periodSubgroup_isZLattice` and `periodSubgroup_spans_real`, the set
+`closure (ZSpan.fundamentalDomain b)` (for `b` the lifted ℤ-basis) is
+compact — by `ZSpan.fundamentalDomain_isBounded` plus
+`Bornology.IsBounded.isCompact_closure` in the `ProperSpace`
+`Fin (analyticGenus ℂ X) → ℂ` — and its period-subgroup translates
+cover the model space via `ZSpan.fract_mem_fundamentalDomain` and
+`Module.Basis.ofZLatticeBasis_span`.
+
+This existence statement is the named bottom-up obligation that the
+`periodFundamentalDomain` definition (and the
+`periodFundamentalDomain_isCompact` / `_covers` lemmas) in
+`Jacobian/Periods/PeriodLattice.lean` delegate to. Stating it as
+`∃ D, IsCompact D ∧ (covering)` keeps `PeriodLattice.lean` free to
+*choose* a concrete `D` via `Classical.choose`, while the
+mathematical work — discreteness + full ℝ-rank ⇒ compact
+fundamental domain — is centralised here next to its inputs. -/
+theorem exists_compact_periodFundamentalDomain
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    ∃ D : Set (Fin (analyticGenus ℂ X) → ℂ),
+      IsCompact D ∧
+      ∀ v : Fin (analyticGenus ℂ X) → ℂ,
+        ∃ g ∈ (AddSubgroup.map
+          (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+          ((periodPairing ℂ X).range) :
+          AddSubgroup (Fin (analyticGenus ℂ X) → ℂ)),
+          v - g ∈ D := by
+  haveI : DiscreteTopology (basisAlignedPeriodSubmoduleℤ X) :=
+    basisAlignedPeriodSubmoduleℤ_discreteTopology X
+  haveI : IsZLattice ℝ (basisAlignedPeriodSubmoduleℤ X) :=
+    basisAlignedPeriodSubmoduleℤ_isZLattice X
+  haveI := ZLattice.module_free ℝ (basisAlignedPeriodSubmoduleℤ X)
+  haveI := ZLattice.module_finite ℝ (basisAlignedPeriodSubmoduleℤ X)
+  let bℤ : Module.Basis _ ℤ (basisAlignedPeriodSubmoduleℤ X) :=
+    Module.Free.chooseBasis ℤ _
+  let bR : Module.Basis _ ℝ (Fin (analyticGenus ℂ X) → ℂ) :=
+    bℤ.ofZLatticeBasis ℝ _
+  refine ⟨closure (ZSpan.fundamentalDomain bR), ?_, ?_⟩
+  · exact (ZSpan.fundamentalDomain_isBounded bR).isCompact_closure
+  · intro v
+    refine ⟨(ZSpan.floor bR v : Fin _ → ℂ), ?_, ?_⟩
+    · -- The floor lands in `span ℤ (range bR) = basisAlignedPeriodSubmoduleℤ X`,
+      -- and `(basisAlignedPeriodSubmoduleℤ X).toAddSubgroup = AddSubgroup.map ...`
+      -- by `AddSubgroup.toIntSubmodule_toAddSubgroup`.
+      have hmem_span : (ZSpan.floor bR v : Fin _ → ℂ) ∈
+          (Submodule.span ℤ (Set.range bR) : Submodule ℤ _) :=
+        (ZSpan.floor bR v).property
+      have hSub : (basisAlignedPeriodSubmoduleℤ X)
+            = Submodule.span ℤ (Set.range bR) :=
+        (Module.Basis.ofZLatticeBasis_span (K := ℝ) (b := bℤ)).symm
+      have hSubgroup :
+          (basisAlignedPeriodSubmoduleℤ X).toAddSubgroup =
+          (Submodule.span ℤ (Set.range bR)).toAddSubgroup :=
+        congrArg Submodule.toAddSubgroup hSub
+      rw [show (AddSubgroup.map
+            (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+            ((periodPairing ℂ X).range)) =
+          (basisAlignedPeriodSubmoduleℤ X).toAddSubgroup
+        from (AddSubgroup.toIntSubmodule_toAddSubgroup _).symm, hSubgroup]
+      exact hmem_span
+    · have hfract : v - (ZSpan.floor bR v : Fin _ → ℂ) = ZSpan.fract bR v := by
+        rw [ZSpan.fract_apply]
+      rw [hfract]
+      exact subset_closure (ZSpan.fract_mem_fundamentalDomain bR v)
 
 end JacobianChallenge.Periods
