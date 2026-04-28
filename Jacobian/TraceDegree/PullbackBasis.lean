@@ -151,14 +151,25 @@ noncomputable def basisDualPullback (f : X → Y)
     (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ) :=
   (basisAnalyticPullbackBundle f hf).basisDualPullback
 
+/-- Pointwise form of `basisDualPullback_id`: the dual form-pullback
+along `id` is pointwise the identity on the covering space.
+
+This is the smallest named obligation: a single pointwise equality
+in `Fin (analyticGenus ℂ X) → ℂ`. Bottom-up: pullback of forms along
+`id` is the identity on forms; dualization preserves this pointwise. -/
+theorem basisDualPullback_id_apply (v : Fin (analyticGenus ℂ X) → ℂ) :
+    basisDualPullback (X := X) (Y := X) id contMDiff_id v = v := sorry
+
 /-- Deeper companion: the dual form-pullback along `id` is the identity
 additive group homomorphism on the covering space.
 
-Bottom-up: pullback of forms along `id` is the identity on forms;
-dualization preserves this. -/
+Assembly from `basisDualPullback_id_apply` via `AddMonoidHom.ext`. -/
 theorem basisDualPullback_id :
     basisDualPullback (X := X) (Y := X) id contMDiff_id =
-      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := sorry
+      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
+  refine AddMonoidHom.ext ?_
+  intro v
+  exact basisDualPullback_id_apply (X := X) v
 
 /-- Descent compatibility: `analyticPullback` acts on the period
 quotient as the descended `basisDualPullback`.
