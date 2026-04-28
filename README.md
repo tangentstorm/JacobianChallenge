@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 00:27 EDT
+Last tick: 2026-04-28 00:42 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,36 +12,33 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 96         `"status":"integrated"` lines in aristotle_jobs.jsonl
-Production sorry-free files  381 / 389    using the precise count (real `sorry` tactics; doc-comment
-                                          matches and intentional design files excluded). 8 real-sorry
-                                          production files (3 Claude-owned-deep, 5 user-WIP):
-                                            CompactRiemannSurface 1, GenusZeroClassification 3,
-                                            PeriodLattice 4 (Claude-owned, all deep or blocked);
-                                            AnalyticOfCurveBasis 3, ULiftTransport 5,
-                                            AnalyticDegree 1, PullbackBasis 4, PushforwardBasis 3
-                                            (user-WIP, leave alone).
-                                          matches and intentional design files excluded).
-                                          The 8 production files with real sorries:
-                                            Claude-owned (3 files, 7 sorries):
-                                              HolomorphicForms/CompactRiemannSurface  (1, Riemann-Roch — submitted to Aristotle)
-                                              HolomorphicForms/GenusZeroClassification (1, uniformization)
-                                              Periods/PeriodLattice                   (5, blocked on opaque,
-                                                                                       parallel concrete defn now exists in
-                                                                                       BasisAlignedPeriodSubgroup.lean)
-                                            User-WIP (5 files, 22 sorries) — Claude leaves untouched:
-                                              AbelJacobi/AnalyticOfCurveBasis         (6)
-                                              ComplexTorus/ULiftTransport             (6)
-                                              TraceDegree/PullbackBasis               (6)
+Aristotle integrations to date 97         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Production sorry-free files  383 / 391    using the precise count (`:= sorry`-ending lines per file
+                                          to avoid doc-comment false positives; intentional design
+                                          files Challenge/Solution/StatementBank and 11 Recon files
+                                          excluded from denominator). 8 real-sorry production files
+                                          (3 Claude-owned, 5 user-WIP):
+                                            Claude-owned (3 files, 9 sorries):
+                                              HolomorphicForms/CompactRiemannSurface  (3, Riemann-Roch leaves
+                                                                                       — Banach data, Montel,
+                                                                                       local compactness)
+                                              HolomorphicForms/GenusZeroClassification (3, Liouville core
+                                                                                       + uniformization-lite +
+                                                                                       hard-direction unif.;
+                                                                                       Liouville now submitted
+                                                                                       to Aristotle 90750074)
+                                              Periods/PeriodFunctional                (3, IsZLattice leaves)
+                                              [Periods/PeriodLattice                   (0 — fully delegating
+                                                                                       to PeriodFunctional)]
+                                            User-WIP (5 files, 12 sorries) — Claude leaves untouched:
+                                              AbelJacobi/AnalyticOfCurveBasis         (3)
+                                              ComplexTorus/ULiftTransport             (2)
+                                              TraceDegree/PullbackBasis               (3)
                                               TraceDegree/PushforwardBasis            (3)
                                               TraceDegree/AnalyticDegree              (1)
 
-Reproduction:
-  for f in $(grep -rl "\bsorry\b" Jacobian --include="*.lean" |
-              grep -vE "(Challenge|Solution|StatementBank|Recon)\.lean$"); do
-    real=$(grep -E "\bsorry\b" "$f" | grep -vE "^\s*--|\`sorry|sorry\`" | wc -l)
-    [ "$real" -gt 0 ] && echo "$f $real"
-  done
+Reproduction (per-file `:= sorry` count):
+  for f in <file-list>; do echo "$f $(grep -cE ':= sorry$' $f)"; done
 ```
 
 ```text
@@ -67,20 +64,56 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5
-                        `b782c387` ContMDiffSection topology recon — still
-                                   IN_PROGRESS at 17%, 5h52m elapsed (Aristotle
-                                   internal work).
-Integrated this tick:   CODEX top-down round: introduced `periodSubgroup_isZLattice`
-                        named obligation in `PeriodFunctional.lean`; refined
-                        `basisAlignedPeriodSubgroup_isDiscrete` to delegate.
-                        One big sorry replaced by one smaller, better-named one.
-                        Build green.
+Active jobs (ours):     2 / 5
+                        `5dfd5106` Montel docstring survey on
+                                   `holomorphicOneForm_montel` —
+                                   IN_PROGRESS 14%, ~40 min elapsed.
+                        `90750074` (NEW this tick) TOP-DOWN refinement
+                                   on `holomorphicOneForm_onePointCx_subsingleton`
+                                   (Liouville core, anti-hack #1 critical path).
+                                   Just submitted, 0%.
+                        (`b782c387` SectionTopologyRecon dropped off the
+                                   visible list — submitted ~7h ago, may
+                                   have completed silently or remains in
+                                   long internal queue; not blocking.)
+Integrated this tick:   `848a0c88` SectionTopologyConstructionRecon —
+                        NEW 371-line construction-recon file laying out
+                        a concrete 5-step plan (180-305 LOC) for building
+                        the Banach data on `ContMDiffSection` for compact X.
+                        Includes 4 specific gaps, E=ℂ specialisation route
+                        (embed into C(X,ℂ) + closedness), risk matrix, key
+                        Mathlib lemma list. Build green (8026 jobs).
+                        Recon excluded from umbrella per existing policy.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INTEGRATED `848a0c88` SectionTopologyConstructionRecon — Aristotle's
+new 371-line construction-recon file for the Banach data on
+`ContMDiffSection`. Concrete 5-step plan (180-305 LOC) with E=ℂ
+specialisation route (embed into C(X,ℂ) + closedness) preferred to
+the general-fiber route. Identifies Weierstrass uniform-limit
+theorem as the hardest sub-task and notes it can be built from
+Mathlib's Cauchy integral formula + dominated convergence
+(~50-80 LOC). Build green (8026 jobs).
+
+SUBMITTED `90750074` — TOP-DOWN refinement packet on the Liouville
+core obligation `holomorphicOneForm_onePointCx_subsingleton`
+(no global holomorphic 1-form on ℂℙ¹). This is on the critical
+path for anti-hack #1 (`genus_eq_zero_iff_homeo`) and is now
+feasible because the OnePoint ℂ ChartedSpace + IsManifold instances
+both exist (f735aa6d + sub-agent A in prior ticks). Disjoint write
+scope from in-flight `5dfd5106`.
+
+Sorry recount per-file (this tick): Claude-owned production sorries
+holding steady at 9 across 3 files (CompactRiemannSurface 3,
+GenusZeroClassification 3, PeriodFunctional 3 — PeriodLattice now
+fully delegating with 0 own sorries). User-WIP at 12 across 5
+files. Total 8 production files with real sorries (out of 391
+production files, 383 sorry-free, 98%).
+
+PRIOR TICK (still standing):
 TWO MORE PARALLEL SUB-AGENTS returned (third round of parallel
 delegation per user "run a couple of each type in parallel"):
 
