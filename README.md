@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 02:28 EDT
+Last tick: 2026-04-28 02:30 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -66,10 +66,10 @@ Active jobs (ours):     2 / 5
                         `d493c66b` follow-up TOPDOWN on
                                    `holomorphicOneForm_onePointCx_toFun_eq_zero`
                                    (chart-coefficient extraction).
-                                   IN_PROGRESS at 29%, ~28 min.
+                                   IN_PROGRESS at 33%, ~31 min.
                         `63158306` Step 1 of Banach-data construction
                                    (NEW `SectionFiberNorm.lean`).
-                                   IN_PROGRESS at 1%, ~8 min.
+                                   IN_PROGRESS at 4%, ~11 min.
 Integrated this tick:   none — heartbeat.
 
 PRIOR TICK (still standing):
