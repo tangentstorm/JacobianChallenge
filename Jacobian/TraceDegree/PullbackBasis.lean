@@ -78,12 +78,17 @@ structure BasisAnalyticPullbackBundle
   mk_eq : ∀ v : Fin (analyticGenus ℂ Y) → ℂ,
     analyticPullback (QuotientAddGroup.mk v) =
       QuotientAddGroup.mk (basisDualPullback v)
+  /-- The bundled pullback is smooth as a manifold map. -/
+  contMDiff_pull :
+    ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
+      (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ)) ω analyticPullback
 
 noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     Inhabited (BasisAnalyticPullbackBundle X Y f hf) :=
   ⟨{ analyticPullback := 0
      basisDualPullback := 0
-     mk_eq := fun _ => rfl }⟩
+     mk_eq := fun _ => rfl
+     contMDiff_pull := contMDiff_const }⟩
 
 /-- The bundled analytic pullback (data + descent axiom), as an
 `opaque` value. The `Inhabited` witness uses the zero pullback,
@@ -103,16 +108,12 @@ noncomputable def analyticPullback (f : X → Y)
 
 /-- The analytic pullback is holomorphic.
 
-Top-down obligation. Delegates to
-`contMDiff_continuousAddMonoidHom_complexTorus` (in
-`Jacobian.TraceDegree.PushforwardBasis`): every continuous additive
-homomorphism between complex tori is smooth, and `analyticPullback f hf`
-is by construction a `ContinuousAddMonoidHom`. -/
+Sorry-free extraction from `basisAnalyticPullbackBundle.contMDiff_pull`. -/
 lemma analyticPullback_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ)) ω
       (analyticPullback f hf) :=
-  contMDiff_continuousAddMonoidHom_complexTorus _ _ (analyticPullback f hf)
+  (basisAnalyticPullbackBundle f hf).contMDiff_pull
 
 /-! ### Deeper companions for contravariant functoriality
 
