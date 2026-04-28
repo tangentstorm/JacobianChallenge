@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 04:39 EDT
+Last tick: 2026-04-28 04:42 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -67,15 +67,15 @@ Active jobs (ours):     2 / 5
                         `1f7d4399` TOPDOWN on the finite leaf
                                    `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
                                    in GenusZeroClassification.lean.
-                                   IN_PROGRESS at 10%, ~24min.
+                                   IN_PROGRESS at 13%, ~27min.
                         `f1786fa8` Step 2 of Banach-data construction recon —
                                    `ContMDiffSection.supNorm` + 5 sup-norm
                                    properties in NEW file SectionSupNorm.lean.
-                                   IN_PROGRESS at 3%, ~10min.
-Integrated this tick:   none — heartbeat. Both packets active and
-                        progressing (1f7d4399 7→10%; f1786fa8 1→3%).
-                        No substantive local moves available without
-                        conflicting with in-flight work.
+                                   IN_PROGRESS at 5%, ~13min.
+Integrated this tick:   none — heartbeat + cleanup. Both packets active
+                        (1f7d4399 10→13%; f1786fa8 3→5%). Trimmed stale
+                        Live Status content from aristotle_tasks.md
+                        (480→354 lines, -126 lines) per PROMPT.md.
 
 PRIOR TICK (still standing):
 Integrated `90750074` Liouville core TOPDOWN refinement —
