@@ -82,13 +82,26 @@ structure BasisAnalyticPullbackBundle
   contMDiff_pull :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ)) ω analyticPullback
+  /-- The (analytic) degree of `f`. Used in the trace-pullback identity
+  (anti-hack #4). -/
+  degree : ℕ
+  /-- Trace-pullback identity (anti-hack #4):
+  `pushf (pullback Q) = degree • Q` for every `Q`. -/
+  trace_pullback_spec : ∀ Q : BasisAnalyticJacobian Y,
+    analyticPushforward _f _hf (analyticPullback Q) = degree • Q
 
 noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     Inhabited (BasisAnalyticPullbackBundle X Y f hf) :=
   ⟨{ analyticPullback := 0
      basisDualPullback := 0
      mk_eq := fun _ => rfl
-     contMDiff_pull := contMDiff_const }⟩
+     contMDiff_pull := contMDiff_const
+     degree := 0
+     trace_pullback_spec := fun Q => by
+       -- pull = 0 here, so pull Q = 0, and pushf 0 = 0 = 0 • Q.
+       show (analyticPushforward f hf) (0 : BasisAnalyticJacobian X) =
+         (0 : ℕ) • Q
+       rw [map_zero, zero_smul] }⟩
 
 /-- The bundled analytic pullback (data + descent axiom), as an
 `opaque` value. The `Inhabited` witness uses the zero pullback,

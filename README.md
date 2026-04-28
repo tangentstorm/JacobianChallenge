@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 10:34 EDT
+Last tick: 2026-04-28 10:38 EDT
 
 ```text
 Headline progress
@@ -29,17 +29,17 @@ Reproduction: for f in <files>; do echo "$f $(grep -cE ':= sorry$' $f)"; done
 ```
 
 ```text
-Open sorries by file (all production sorries; 8 files, 16 total)
+Open sorries by file (all production sorries; 7 files, 15 total)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   HolomorphicForms/CompactRiemannSurface  2   Banach data, Montel
   HolomorphicForms/GenusZeroClassification 4  finite/infty Liouville leaves +
                                               uniformization-lite + hard-direction unif.
   Periods/PeriodFunctional                2   IsZLattice integrality + Riemann-bilinear nondegeneracy
-  AbelJacobi/AnalyticOfCurveBasis         1   Abel-injectivity (separates_points); path-integral smoothness via bundle
+  AbelJacobi/AnalyticOfCurveBasis         1   Abel-injectivity (separates_points)
   ComplexTorus/ULiftTransport             2   ULift transition obligations
-  TraceDegree/PullbackBasis               2   basisDualPullback companions (id, comp); _mk_eq + contMDiff via bundle
-  TraceDegree/PushforwardBasis            2   pushforwardTraceLift_{id,comp_spec}; _mk_spec/_preserves_lattice/contMDiff via bundle
-  TraceDegree/AnalyticDegree              1   anti-hack #4 trace-pullback identity (named _spec)
+  TraceDegree/PullbackBasis               2   basisDualPullback (id, comp); mk_eq/contMDiff/degree/trace_pullback via bundle
+  TraceDegree/PushforwardBasis            2   pushforwardTraceLift (id, comp_spec); other axioms via bundle
+  TraceDegree/AnalyticDegree              0   anti-hack #4 closed via PullbackBundle.trace_pullback_spec
 ```
 
 ```text
