@@ -12,7 +12,10 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 23:10 EDT)
+## Live Status (2026-04-27 23:12 EDT)
+
+- **User WIP:** `M Jacobian/ComplexTorus/ULiftTransport.lean` — Claude
+  leaves untouched.
 
 - **Aristotle: 1/5 active.** `b782c387` still IN_PROGRESS at 17%
   (~5h52m elapsed — Aristotle internal work).
