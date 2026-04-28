@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 19:52 EDT
+Last tick: 2026-04-27 19:55 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 90         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 91         `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  381 / 389    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded). 8 real-sorry
                                           production files (3 Claude-owned-deep, 5 user-WIP):
@@ -67,24 +67,30 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     3 / 5
+Active jobs (ours):     2 / 5
                         `b782c387` ContMDiffSection topology recon — IN_PROGRESS
-                                   at 17%, ~2h35m elapsed (normal).
-                        `7abae190` PeriodLattice discreteness — IN_PROGRESS at 10%
-                                   (~8 min in).
-                        `600f7ff6` OnePointCxRecon — IN_PROGRESS at 6% (~7 min in).
-Integrated this tick:   None.
+                                   at 17%, ~2h40m elapsed (normal).
+                        `600f7ff6` OnePointCxRecon — IN_PROGRESS at 9% (~10 min in).
+Integrated this tick:   `7abae190` — PeriodLattice discreteness blocker
+                                    analysis (110-line survey, sorry retained).
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Heartbeat — three Aristotle packets in flight, tree clean,
-production sorry-free still 381 / 389.
+INTEGRATED `7abae190` — PeriodLattice discreteness blocker analysis.
+Aristotle returned a high-quality ~110-line survey identifying the
+exact missing piece: `periodPairing` is opaque, and no integrality
+property is declared. Recommended fix: add an
+`opaque periodSubgroup_isZLattice` (or `_discreteTopology_basis_aligned`)
+companion to `periodPairing` in `PeriodFunctional.lean`. This single
+declaration would unblock 3 PeriodLattice sorries (`_isDiscrete`,
+`_fundamentalDomain_isCompact`, `_covers`). Sorry retained as
+designed (proof was impossible without the new opaque). Build green.
 
 PRIOR TICK (still standing):
-SUBMITTED two off-critical-path Aristotle packets per user request:
-  `7abae190` basisAlignedPeriodSubgroup_isDiscrete
+SUBMITTED two off-critical-path Aristotle packets:
+  `7abae190` basisAlignedPeriodSubgroup_isDiscrete (now integrated)
   `600f7ff6` OnePointCxRecon (NEW recon file)
 
 PRIOR TICK (still standing):

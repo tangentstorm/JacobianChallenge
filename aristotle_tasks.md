@@ -12,14 +12,18 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 19:52 EDT)
+## Live Status (2026-04-27 19:55 EDT)
 
-- **Aristotle: 3/5 active.**
+- **Aristotle: 2/5 active.**
   - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~2h35m elapsed (normal long-running).
-  - `7abae190` PeriodLattice discreteness — IN_PROGRESS at 10% (~8 min in).
-  - `600f7ff6` OnePointCxRecon — IN_PROGRESS at 6% (~7 min in).
-- **Local proof work this tick:** Heartbeat. Tree clean.
+    ~2h40m elapsed (normal long-running).
+  - `600f7ff6` OnePointCxRecon — IN_PROGRESS at 9% (~10 min in).
+- **Integrated this tick:** `7abae190` — PeriodLattice discreteness
+  blocker analysis (110-line survey, sorry retained). Identifies
+  `periodPairing` opaqueness + missing integrality declaration as the
+  blocker; recommends an `opaque periodSubgroup_isZLattice` companion
+  to `periodPairing` in PeriodFunctional.lean.
+- **Local proof work this tick:** integration only.
 
 
 ## Layer status
