@@ -125,25 +125,6 @@ noncomputable instance complexTorusULift_isManifold
     IsManifold (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
       (ULift.{u} (quotient V Λ)) where
 
-/-- Addition on the `ULift`ed quotient is analytic for the transported
-complex-torus manifold structure.
-
-Top-down obligation. Bottom-up: compose `ULift.down` on both inputs,
-use smooth addition on the quotient, and compose with `ULift.up`. -/
-lemma complexTorusULift_contMDiff_add
-    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
-    [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
-    ContMDiff ((modelWithCornersSelf ℂ V).prod (modelWithCornersSelf ℂ V))
-      (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
-      (fun p : ULift.{u} (quotient V Λ) × ULift.{u} (quotient V Λ) => p.1 + p.2) := sorry
-
-noncomputable instance complexTorusULift_contMDiffAdd
-    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
-    [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
-    ContMDiffAdd (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
-      (ULift.{u} (quotient V Λ)) where
-  contMDiff_add := complexTorusULift_contMDiff_add Λ
-
 /-- The quotient-to-ULift direction of the `Homeomorph.ulift` equivalence is
 analytic for the transported chart structure.
 
@@ -168,6 +149,43 @@ lemma complexTorusULift_contMDiff_down
     {n : WithTop ℕ∞} :
     ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ V) n
       (ULift.down : ULift.{u} (quotient V Λ) → quotient V Λ) := sorry
+
+/-- Addition on the `ULift`ed quotient is analytic for the transported
+complex-torus manifold structure.
+
+Top-down obligation. Bottom-up: compose `ULift.down` on both inputs,
+use smooth addition on the quotient, and compose with `ULift.up`. -/
+lemma complexTorusULift_contMDiff_add
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
+    ContMDiff ((modelWithCornersSelf ℂ V).prod (modelWithCornersSelf ℂ V))
+      (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
+      (fun p : ULift.{u} (quotient V Λ) × ULift.{u} (quotient V Λ) => p.1 + p.2) := by
+  have hdown :
+      ContMDiff ((modelWithCornersSelf ℂ V).prod (modelWithCornersSelf ℂ V))
+        ((modelWithCornersSelf ℂ V).prod (modelWithCornersSelf ℂ V))
+        (⊤ : WithTop ℕ∞)
+        (fun p : ULift.{u} (quotient V Λ) × ULift.{u} (quotient V Λ) =>
+          (p.1.down, p.2.down)) :=
+    ((complexTorusULift_contMDiff_down Λ).comp contMDiff_fst).prodMk
+      ((complexTorusULift_contMDiff_down Λ).comp contMDiff_snd)
+  have h : (fun p : ULift.{u} (quotient V Λ) × ULift.{u} (quotient V Λ) => p.1 + p.2) =
+      (ULift.up : quotient V Λ → ULift.{u} (quotient V Λ)) ∘
+      (fun p : quotient V Λ × quotient V Λ => p.1 + p.2) ∘
+      (fun p : ULift.{u} (quotient V Λ) × ULift.{u} (quotient V Λ) =>
+        (p.1.down, p.2.down)) := by
+    funext p
+    rfl
+  rw [h]
+  exact (complexTorusULift_contMDiff_up Λ).comp
+    ((contMDiff_quotient_add Λ).comp hdown)
+
+noncomputable instance complexTorusULift_contMDiffAdd
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
+    ContMDiffAdd (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
+      (ULift.{u} (quotient V Λ)) where
+  contMDiff_add := complexTorusULift_contMDiff_add Λ
 
 /-- Negation on the `ULift`ed quotient is analytic for the transported
 complex-torus manifold structure.
