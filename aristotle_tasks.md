@@ -12,18 +12,17 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 20:02 EDT)
+## Live Status (2026-04-27 20:08 EDT)
 
-- **Aristotle: 1/5 active.**
+- **Aristotle: 2/5 active.**
   - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~2h47m elapsed (normal long-running).
-- **Integrated this tick:** `600f7ff6` — OnePointCxRecon (~480-line
-  Mathlib API survey for making `OnePoint ℂ` a complex manifold).
-  Confirms NO `ChartedSpace ℂ (OnePoint ℂ)` exists in v4.28.0; must
-  build from scratch via two-chart atlas (identity + inversion).
-  Three concrete implementation packets queued (A: inversionChart,
-  B: ChartedSpace, C: IsManifold).
-- **Local proof work this tick:** integration only.
+    ~2h53m elapsed (normal long-running).
+  - `f735aa6d` OnePointCxChartedSpace — just submitted. Direct follow-up
+    to 600f7ff6's recon: build `inversionChart`, `identityChart`, and
+    the `ChartedSpace ℂ (OnePoint ℂ)` instance (Packets A+B of the
+    genus-zero plan). Substantive ~110-170 LOC implementation.
+- **Local proof work this tick:** Submitted Packet A+B per 600f7ff6's
+  three-step plan.
 
 
 ## Layer status
