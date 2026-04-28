@@ -197,7 +197,122 @@ opaque periodFundamentalDomain : Set (Fin (analyticGenus ℂ X) → ℂ)
 /-- The fundamental domain is compact.
 
 Top-down obligation. Bottom-up: bounded subset of a finite-dim
-ℂ-vector space; bounded ⇒ compact in finite dimensions. -/
+ℂ-vector space; bounded ⇒ compact in finite dimensions.
+
+### Blocker analysis for `periodFundamentalDomain_isCompact`
+
+**Goal.** Show `IsCompact (periodFundamentalDomain X)` where
+`periodFundamentalDomain X` is an `opaque` of type
+`Set (Fin (analyticGenus ℂ X) → ℂ)`. Its mathematical intent is
+"a fundamental domain for the action of the period subgroup on the
+basis-aligned model — for example the closure of
+`ZSpan.fundamentalDomain` against a chosen ℤ-basis of the subgroup".
+
+The ambient space `Fin (analyticGenus ℂ X) → ℂ` is finite-dimensional
+over `ℝ` (dimension `2 * analyticGenus ℂ X`), hence a `ProperSpace`,
+so the Heine–Borel theorem applies.
+
+#### Mathlib lemmas surveyed
+
+| Lemma | Signature | Applicability |
+|---|---|---|
+| `ZSpan.fundamentalDomain_isBounded` | `Bornology.IsBounded (ZSpan.fundamentalDomain b)` for a finite basis `b` over a `NormedLinearOrderedField` with `FloorRing` and `HasSolidNorm`. | Gives boundedness of the open fundamental domain `{x | ∀ i, b.repr x i ∈ Set.Ico 0 1}`. Would fire if `periodFundamentalDomain` were defined as `ZSpan.fundamentalDomain b` for a known basis `b`. |
+| `Bornology.IsBounded.isCompact_closure` | `IsBounded s → IsCompact (closure s)` in a `ProperSpace`. | Yields compactness of `closure (ZSpan.fundamentalDomain b)` once boundedness is established. This is the cleanest route for the "closure of a half-open parallelepiped" definition. |
+| `Metric.isCompact_of_isClosed_isBounded` | `IsClosed s → IsBounded s → IsCompact s` in a `ProperSpace`. | Alternative to the above; requires separate `IsClosed` witness. |
+| `Basis.parallelepiped` | `Basis ι ℝ E → TopologicalSpace.PositiveCompacts E` | The parallelepiped `{x | ∀ i, b.repr x i ∈ Set.Icc 0 1}` is a compact set with nonempty interior. Since `ZSpan.fundamentalDomain_subset_parallelepiped` shows `fundamentalDomain b ⊆ parallelepiped b`, the closure of the fundamental domain lies inside this compact set — hence is compact. |
+| `ZSpan.fundamentalDomain_subset_parallelepiped` | `ZSpan.fundamentalDomain b ⊆ parallelepiped b` for `[Fintype ι]`. | Reduces boundedness/compactness of the fundamental domain to that of the parallelepiped. |
+| `ZLattice.isAddFundamentalDomain` | `IsAddFundamentalDomain ↥L (ZSpan.fundamentalDomain (Basis.ofZLatticeBasis ℝ L b)) μ` for `[IsZLattice ℝ L]`, `[DiscreteTopology ↥L]`. | Confirms that `ZSpan.fundamentalDomain` against the real basis lifted from a ℤ-lattice basis is indeed a measure-theoretic fundamental domain. Needs `IsZLattice ℝ`. |
+
+#### Two independent blockers
+
+**Blocker 1 (shared with `_isDiscrete`): no `IsZLattice ℝ` instance.**
+The same gap identified in the discreteness survey above applies here.
+To construct the ℝ-basis `b` for `ZSpan.fundamentalDomain`, we need
+`IsZLattice ℝ L` where `L` is the period subgroup promoted to a
+`Submodule ℤ (Fin g → ℂ)`. This requires
+`Submodule.span ℝ ↑L = ⊤`, i.e. the period vectors span the full
+`2g`-dimensional ℝ-vector space — the Riemann bilinear nondegeneracy
+condition. Without this, no basis exists and none of the
+`ZSpan.fundamentalDomain_*` lemmas can fire.
+
+**Blocker 2 (compactness-specific): `periodFundamentalDomain` is opaque
+with no specification.** Even if `IsZLattice ℝ` were available, we
+still cannot prove `IsCompact (periodFundamentalDomain X)` because
+`periodFundamentalDomain` is declared as a bare `opaque` — no equation
+lemma, no axiom, no companion property ties it to any concrete set.
+The proof of compactness needs to know *what* the set is (e.g. that it
+equals `closure (ZSpan.fundamentalDomain b)` for some basis `b`). An
+`opaque` with zero specification is a black box: Lean treats it as an
+arbitrary set, and an arbitrary set in `Fin g → ℂ` is not compact.
+
+This is an **additional blocker beyond the discreteness survey**.
+The `_isDiscrete` obligation has only Blocker 1; `_isCompact` has
+both Blockers 1 and 2.
+
+#### Proposed resolution paths
+
+**(Option A — preferred) Replace the bare `opaque` with a concrete
+`noncomputable def`:** Define `periodFundamentalDomain X` as
+```
+noncomputable def periodFundamentalDomain : Set (Fin (analyticGenus ℂ X) → ℂ) :=
+  closure (ZSpan.fundamentalDomain (Basis.ofZLatticeBasis ℝ L (IsZLattice.basis L)))
+```
+where `L` is the period subgroup promoted to `Submodule ℤ`. Then
+compactness follows in one line:
+```
+exact (ZSpan.fundamentalDomain_isBounded _).isCompact_closure
+```
+This also provides `_covers` for free via
+`ZLattice.isAddFundamentalDomain` (fundamental domains cover a.e.,
+and the closure covers everywhere). Requires `IsZLattice ℝ L` +
+`DiscreteTopology ↥L`.
+
+**(Option B) Keep the `opaque` and add a companion axiom:** Declare a
+new `opaque` in `Jacobian/Periods/PeriodFunctional.lean` (or alongside
+`periodFundamentalDomain`):
+```
+opaque periodFundamentalDomain_isCompact_aux (X : Type) [...] :
+    IsCompact (periodFundamentalDomain X)
+```
+This is mathematically less informative but unblocks the top-down
+assembly immediately, deferring the bottom-up content to the same
+future work package as `periodPairing`.
+
+**(Option C) Add an `IsZLattice` opaque + a definitional equality
+opaque:** Keep `periodFundamentalDomain` opaque but add:
+```
+opaque periodFundamentalDomain_eq (X : Type) [...] :
+    periodFundamentalDomain X =
+      closure (ZSpan.fundamentalDomain (...))
+```
+Then rewrite and apply `IsBounded.isCompact_closure`. This is
+strictly worse than Option A unless there is a policy reason to keep
+the `opaque` wrapper.
+
+#### Recommended single-obligation prerequisite
+
+If **Option A** is adopted (preferred), the sole new named obligation
+needed — beyond the `IsZLattice ℝ` opaque already recommended by the
+discreteness survey — is to **un-opaque `periodFundamentalDomain`**
+and redefine it concretely. Once `IsZLattice ℝ` and the concrete
+definition are in place, `_isCompact` becomes:
+```
+exact (ZSpan.fundamentalDomain_isBounded _).isCompact_closure
+```
+and `_isDiscrete` is resolved by `ZSpan.instDiscreteTopology` or
+equivalent.
+
+#### Dependency graph
+
+```
+periodPairing (opaque, PeriodFunctional.lean)
+  └─► periodSubgroup_isZLattice (new opaque, PeriodFunctional.lean)
+        ├─► basisAlignedPeriodSubgroup_isDiscrete  [Blocker 1 only]
+        ├─► periodFundamentalDomain (un-opaque → concrete def)
+        │     └─► periodFundamentalDomain_isCompact  [one-liner]
+        └─► periodFundamentalDomain_covers          [one-liner]
+```
+-/
 lemma periodFundamentalDomain_isCompact :
     IsCompact (periodFundamentalDomain X) := sorry
 
