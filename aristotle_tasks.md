@@ -12,23 +12,13 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 23:18 EDT)
+## Live Status (2026-04-27 23:30 EDT)
 
-- **Sub-agent round integrated this tick:** general-purpose agent did
-  one top-down refinement round on `periodFundamentalDomain_isCompact`
-  and `_covers`. Discharged both sorries in `PeriodLattice.lean`
-  (2→0) by un-opaquing `periodFundamentalDomain` to
-  `Classical.choose` of a new `exists_compact_periodFundamentalDomain`
-  theorem in `PeriodFunctional.lean`. Also added
-  `periodSubgroup_spans_real` (Riemann bilinear nondegeneracy half of
-  `IsZLattice ℝ`). Build green.
-- **Sub-agent overreach:** also touched `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean`
-  (Abel injectivity refinement — reverted; user-WIP-adjacent) and
-  `Jacobian/ComplexTorus/ULiftTransport.lean` (proved `_contMDiff_add` —
-  cannot revert without destroying user's pre-existing WIP, leaving
-  the file dirty for user to resolve).
-- **User WIP:** `Jacobian/ComplexTorus/ULiftTransport.lean` — mixed
-  with sub-agent edits; Claude does NOT commit.
+- **Aristotle: 1/5 active.** `b782c387` still 17% at 6h25m.
+- **User WIP:** both `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean`
+  and `Jacobian/ComplexTorus/ULiftTransport.lean` dirty — Claude
+  leaves untouched.
+- **Local proof work this tick:** Heartbeat.
 
 - **Aristotle: 1/5 active.** `b782c387` still IN_PROGRESS at 17%
   (~5h52m elapsed — Aristotle internal work).
