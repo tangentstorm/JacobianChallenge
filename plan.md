@@ -288,6 +288,68 @@ literally false for arbitrary `B`: any Cauchy-estimate /
 Arzelà-Ascoli proof can use `B.norm_le σ` to bound `f(z)` pointwise
 from the global bound `‖σ‖_B ≤ 1`.
 
+### Phase 2 — Banach-data construction (in progress, 5-step plan)
+
+`Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean`
+(integrated Aristotle `848a0c88`) lays out a 5-step plan to construct
+the `HolomorphicOneFormBanachData` for compact `X`. Status:
+
+* **Step 1 — fiberNorm + continuity.** Integrated as `63158306`:
+  `Jacobian/HolomorphicForms/SectionFiberNorm.lean` (115 LOC,
+  sorry-free) defines `ContMDiffSection.fiberNorm σ x := ‖σ.toFun x‖`
+  and proves continuity via Trivialization composition.  Documents
+  the `NormedVectorBundle` Mathlib v4.28.0 API gap (requires explicit
+  `hcompat` hypothesis).
+
+* **Step 2 — supNorm + 5 properties.** Integrated as `f1786fa8`:
+  `Jacobian/HolomorphicForms/SectionSupNorm.lean` (117 LOC,
+  sorry-free) defines `supNorm σ := ⨆ x : M, ‖σ.toFun x‖` and proves
+  zero / eq_zero_iff / add_le / smul_le / neg via `ciSup`
+  manipulation + a `bddAbove_range_norm` helper threading `hcompat`.
+
+* **Step 3 — MetricSpace construction.** In flight as `51fd0fce`:
+  `Jacobian/HolomorphicForms/SectionMetric.lean` (target ~30 LOC).
+  Defines `dist σ τ := supNorm (σ - τ)` and proves the 4 MetricSpace
+  axioms + `dist_eq` compat, all without going through
+  `NormedAddCommGroup.mk` (avoiding the typeclass diamond).
+
+* **Step 4 — Completeness.** Not yet started.  Per the recon (~80-150
+  LOC): for `E = ℂ`, embed `HolomorphicOneForm ℂ X` into `C(X, ℂ)`
+  via the fiber identification `ℂ →L[ℂ] ℂ ≅ ℂ`, then show the image
+  is closed (Weierstrass closedness via Cauchy integral formula +
+  dominated convergence).
+
+* **Step 5 — Final assembly.** Not yet started.  Combines Steps 1-4
+  into `holomorphicOneFormBanachData_of_compact`.
+
+### Phase 2 — Chart-extraction Mathlib gap
+
+The Liouville-core leaves of genus-zero classification
+(`holomorphicOneForm_onePointCx_toFun_finite_eq_zero` and
+`_toFun_infty_eq_zero` in
+`Jacobian/HolomorphicForms/GenusZeroClassification.lean`) require
+reading a `ContMDiffSection` of the cotangent bundle (a
+`Bundle.ContinuousLinearMap` bundle) through chart trivializations
+on `OnePoint ℂ`, extracting the local coefficient as a
+`Differentiable ℂ` function.
+
+Mathlib v4.28.0 has no convenient API for this:
+
+- no lemma extracting the local representation of a
+  `ContMDiffSection` of `Bundle.ContinuousLinearMap` as a function
+  on the chart domain;
+- no chart-transition formula for the cotangent bundle in
+  user-facing form;
+- composing the bundle trivialization with the manifold chart
+  requires unwinding several layers of bundled structure.
+
+**Cancellation history:** Aristotle packets `d493c66b` (138 min stuck
+at 37%) and `1f7d4399` (31 min stuck at 20%) both hit this gap and
+were cancelled.  Until upstream Mathlib API additions (e.g., a
+project-local `ContMDiffSection.localCoeff` extraction lemma) land,
+the finite/infty leaves remain `sorry` with substantive docstrings
+naming the gap.
+
 ## Phase 3: Integration and Periods
 
 Develop integration of differential forms over paths and cycles on manifolds.
