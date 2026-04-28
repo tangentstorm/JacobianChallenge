@@ -12,23 +12,15 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 00:55 EDT)
+## Live Status (2026-04-28 00:58 EDT)
 
-- **Aristotle: 3/5 ours active.**
-  - `90750074` TOP-DOWN refinement on
-    `holomorphicOneForm_onePointCx_subsingleton` (Liouville core,
-    anti-hack #1 critical path). IN_PROGRESS at 11%, ~15 min elapsed.
-  - `dc8af381` substantive sorry-elimination on
-    `exists_compact_periodFundamentalDomain` in `PeriodFunctional.lean`
-    via existing `IsZLattice ℝ` instance + Mathlib `ZSpan` machinery.
-    Reduction target: file sorry count 3→2.  IN_PROGRESS at 3%, ~4 min.
-  - `6992e390` (NEW this tick) TOPDOWN reduction on
-    `holomorphicOneForm_locallyCompact_of_compactRiemannSurface` in
-    `CompactRiemannSurface.lean` — discharge sorry-free using the
-    still-sorry but named `holomorphicOneForm_montel B` plus
-    translation invariance on a normed space.  Reduction target:
-    file sorry count 3→2.  Disjoint write scope from `90750074` and
-    `dc8af381`.  Just submitted, 0%.
+- **Aristotle: 3/5 ours active.** (heartbeat — no integrations)
+  - `90750074` Liouville core (`holomorphicOneForm_onePointCx_subsingleton`).
+    IN_PROGRESS at 11%, ~18 min elapsed.
+  - `dc8af381` `exists_compact_periodFundamentalDomain` reduction in
+    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 6%, ~7 min.
+  - `6992e390` `holomorphicOneForm_locallyCompact_of_compactRiemannSurface`
+    reduction in `CompactRiemannSurface.lean` (3→2).  QUEUED, ~1 min.
 - **Aristotle integration this tick:** `5dfd5106`
   `holomorphicOneForm_montel` survey, +275 lines of docstring on
   `CompactRiemannSurface.lean`.  7-step proof outline (chart cover
