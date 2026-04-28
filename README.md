@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 04:10 EDT
+Last tick: 2026-04-28 04:24 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -15,17 +15,18 @@ StatementBank declarations     22         named decls in Jacobian/WorkPackets/St
 Aristotle integrations to date 101        `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  383 / 392    counting `:= sorry`-ending lines per file. 8 real-sorry
                                           production files (3 Claude-owned, 5 user-WIP):
-                                            Claude-owned (3 files, 7 sorries — 1 fewer this tick):
+                                            Claude-owned (3 files, 8 sorries — +1 this tick from
+                                                          GenusZeroClassification split):
                                               HolomorphicForms/CompactRiemannSurface  (2, Riemann-Roch leaves
-                                                                                       — Banach data, Montel;
-                                                                                       local-compactness reduced
-                                                                                       prior tick)
-                                              HolomorphicForms/GenusZeroClassification (3, Liouville core
-                                                                                       + uniformization-lite +
-                                                                                       hard-direction unif.;
-                                                                                       Liouville now submitted
-                                                                                       to Aristotle 90750074)
-                                              Periods/PeriodFunctional                (3, IsZLattice leaves)
+                                                                                       — Banach data, Montel)
+                                              HolomorphicForms/GenusZeroClassification (4, was 3 — split
+                                                                                       Liouville sorry into
+                                                                                       finite + infty leaves;
+                                                                                       assembly now sorry-free.
+                                                                                       Plus uniformization-lite
+                                                                                       + hard-direction unif.)
+                                              Periods/PeriodFunctional                (2, IsZLattice integrality
+                                                                                       + Riemann-bilinear nondeg.)
                                               [Periods/PeriodLattice                   (0 — fully delegating
                                                                                        to PeriodFunctional)]
                                             User-WIP (5 files, 12 sorries) — Claude leaves untouched:
@@ -63,15 +64,15 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5
-                        `d493c66b` follow-up TOPDOWN on
-                                   `holomorphicOneForm_onePointCx_toFun_eq_zero`
-                                   (chart-coefficient extraction).
-                                   IN_PROGRESS at 37%, ~2h10min (stuck ~96 min).
-Integrated this tick:   none — heartbeat after prior-tick `63158306`
-                        integration.
-Integrated this tick:   none — heartbeat after prior-tick Blocker 5
-                        resolution.
-Integrated this tick:   none — heartbeat.
+                        `1f7d4399` (NEW) TOPDOWN on the now-narrower finite
+                                   leaf `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
+                                   (Liouville application via identity-chart
+                                   pullback + EntireZero black-box).
+Cancelled this tick:    `d493c66b` — stuck at 37% for ~138 min (well past
+                        typical successful job duration of 30-75 min).
+                        Replaced by local split + 1f7d4399 follow-up.
+Integrated this tick:   none — substantive local split (see "Local cadence"
+                        below) + new submission.
 
 PRIOR TICK (still standing):
 Integrated `90750074` Liouville core TOPDOWN refinement —
@@ -97,6 +98,40 @@ Integrated `90750074` Liouville core TOPDOWN refinement —
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SUBSTANTIVE LOCAL SPLIT (per saved feedback "split top-down obligations"):
+The `holomorphicOneForm_onePointCx_toFun_eq_zero` sorry in
+`Jacobian/HolomorphicForms/GenusZeroClassification.lean` (the
+chart-extraction obligation surfaced by 90750074) is now split into
+two named bottom-up leaves keyed to the two charts of `OnePoint ℂ`:
+
+  • `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` — the
+    SUBSTANTIVE Liouville application on the identity chart (extract
+    f via (ω.toFun ↑z) 1, prove f differentiable + tendsto 0 cocompact,
+    apply Differentiable.eq_zero_of_tendsto_zero_cocompact from
+    EntireZero.lean). Re-delegated to Aristotle 1f7d4399.
+
+  • `holomorphicOneForm_onePointCx_toFun_infty_eq_zero` — vanishing
+    at ∞ via continuity of inversion-chart coefficient g. Depends on
+    finite leaf as a black box. Kept LOCAL for next tick (disjoint
+    write scope from 1f7d4399 forces serialization in this file).
+
+The original `_toFun_eq_zero` is now SORRY-FREE assembly via
+`cases x using OnePoint.rec`. Net file sorry count: 3 → 4 (one
+substantive sorry replaced by two narrower leaves + sorry-free
+assembly). Both leaves carry substantive docstrings naming the
+specific Mathlib v4.28.0 chart-extraction gap (no convenient API
+for reading a `ContMDiffSection` of `Bundle.ContinuousLinearMap`
+through chart trivialisations).
+
+Build green: `lake build Jacobian.HolomorphicForms.GenusZeroClassification` ✓.
+
+CANCELLED `d493c66b` after stuck at 37% for ~138 min (well past
+typical successful job duration of 30-75 min — successful packets
+this session: 5dfd5106 ~36min, 6992e390 ~32min, 90750074 ~73min,
+63158306 ~67min). Slot freed for 1f7d4399, which is a strict
+re-delegation of the now-narrower finite leaf only.
+
+PRIOR TICK (still standing):
 SUBMITTED `dc8af381` — substantive sorry-elimination packet on
 `exists_compact_periodFundamentalDomain` in `PeriodFunctional.lean`.
 This leaf is actually a corollary of the other two leaves
