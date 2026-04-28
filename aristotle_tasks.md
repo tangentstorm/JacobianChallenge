@@ -12,9 +12,9 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 02:40 EDT)
+## Live Status (2026-04-28 02:43 EDT)
 
-- **Aristotle: 2/5 ours active.** (heartbeat — both stuck ~6 min)
+- **Aristotle: 2/5 ours active.** (both stuck ~10 min — local work this tick)
   - `d493c66b` follow-up TOPDOWN refinement on
     `holomorphicOneForm_onePointCx_toFun_eq_zero` in
     `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — the
@@ -24,7 +24,13 @@ identify our jobs without inspecting tarballs.
     recon `848a0c88`: NEW file
     `Jacobian/HolomorphicForms/SectionFiberNorm.lean` with
     `ContMDiffSection.fiberNorm` + `continuous_fiberNorm`.
-    IN_PROGRESS at 5%, ~20 min.
+    IN_PROGRESS at 5%, ~23 min.
+- **Local proof work this tick (Aristotle stalled):** extended
+  `Jacobian/HolomorphicForms/EntireZero.lean` with a fifth corollary:
+    * `Differentiable.eq_zero_of_norm_eventually_le` — entire +
+      `‖f z‖ ≤ g z` eventually along `cocompact ℂ` for some `g`
+      tending to 0 ⇒ identically 0.
+  General form of the decay corollaries.  Build green (8026 jobs).
 - Past hour: 4 substantive Aristotle integrations
   (5dfd5106 / 848a0c88 / 6992e390 / 90750074) + Aristotle 100th
   integration milestone + Claude-owned `EntireZero.lean`

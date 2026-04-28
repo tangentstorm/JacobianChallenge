@@ -21,6 +21,10 @@ Mathlib v4.28.0 in this exact form.
 * `Differentiable.eq_zero_of_polynomial_decay_at_infty`
   — entire and `‖f z‖ ≤ C / ‖z‖^n` (any `n ≥ 1`) for `‖z‖ ≥ R`
     ⇒ identically `0`.
+* `Differentiable.eq_zero_of_norm_eventually_le`
+  — entire and `‖f z‖` eventually bounded by some `g z` that tends
+    to `0` along `cocompact ℂ` ⇒ identically `0`.  General form
+    of the decay corollaries above.
 
 The second is the simplest growth-bound form.  The third is the
 form that arises from the inversion-chart holomorphicity condition
@@ -121,5 +125,22 @@ theorem _root_.Differentiable.eq_zero_of_polynomial_decay_at_infty
   refine (h z hzR).trans ?_
   rw [div_eq_mul_one_div C, div_eq_mul_one_div C (‖z‖)]
   exact mul_le_mul_of_nonneg_left (one_div_le_one_div_of_le hzpos hzpow) hC
+
+/-- General form: an entire function whose norm is eventually
+bounded by some `g : ℂ → ℝ` that tends to `0` along `cocompact ℂ`
+is identically `0`.
+
+This subsumes the inv-decay, quadratic-decay, and polynomial-decay
+corollaries above (each of which can be obtained by taking
+`g z := C / ‖z‖^n` and a uniform bound for `‖z‖ ≥ R`). -/
+theorem _root_.Differentiable.eq_zero_of_norm_eventually_le
+    {f : ℂ → ℂ} (hf : Differentiable ℂ f)
+    {g : ℂ → ℝ} (hg : Tendsto g (cocompact ℂ) (𝓝 0))
+    (h : ∀ᶠ z in cocompact ℂ, ‖f z‖ ≤ g z) :
+    f = 0 := by
+  refine hf.eq_zero_of_tendsto_zero_cocompact ?_
+  rw [tendsto_zero_iff_norm_tendsto_zero]
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hg
+    (Eventually.of_forall fun z => norm_nonneg _) h
 
 end JacobianChallenge.HolomorphicForms.EntireZero
