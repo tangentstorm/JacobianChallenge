@@ -27,6 +27,7 @@ namespace JacobianChallenge.TraceDegree
 open scoped ContDiff Manifold
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 open JacobianChallenge.AbelJacobi
+open JacobianChallenge.ComplexTorus
 
 variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -86,16 +87,25 @@ lemma analyticPushforward_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘
       (analyticPushforward f hf) :=
   analyticPushforward_contMDiff_spec f hf
 
+/-- Deeper companion: the pushforward along the identity map equals
+the identity `ContinuousAddMonoidHom`.
+
+Bottom-up obligation. The trace of the identity branched covering
+(degree 1, single sheet) reduces to the identity on holomorphic
+1-forms, hence to the identity on the period quotient. -/
+theorem analyticPushforward_id_eq :
+    analyticPushforward (X := X) (Y := X) id contMDiff_id =
+      ContinuousAddMonoidHom.id (BasisAnalyticJacobian X) := sorry
+
 /-- Specification: the trace of the identity holomorphic map on
 holomorphic 1-forms is the identity; descending through the period
 quotient preserves this.
 
-Bottom-up obligation. Provable once `analyticPushforward` is concretized
-as a descent of the basis-aligned trace map: the trace of the identity
-branched covering (degree 1, single sheet) reduces to the identity on
-forms, hence to the identity on the period quotient. -/
+Assembly from `analyticPushforward_id_eq`. -/
 theorem analyticPushforward_id_spec (P : BasisAnalyticJacobian X) :
-    analyticPushforward (X := X) (Y := X) id contMDiff_id P = P := sorry
+    analyticPushforward (X := X) (Y := X) id contMDiff_id P = P := by
+  rw [analyticPushforward_id_eq]
+  rfl
 
 /-- Pushforward along the identity is the identity.
 
@@ -104,18 +114,88 @@ lemma analyticPushforward_id_apply (P : BasisAnalyticJacobian X) :
     analyticPushforward (X := X) (Y := X) id contMDiff_id P = P :=
   analyticPushforward_id_spec P
 
+/-! ### Deeper companions: trace lift on the covering space
+
+The opaque `analyticPushforward` is the descent of a covering-space
+linear map.  The companions below capture that decomposition:
+
+* `pushforwardTraceLift` — the additive trace map on covering spaces
+  (opaque);
+* `pushforwardTraceLift_preserves_lattice` — period-lattice
+  preservation (sorry);
+* `analyticPushforward_mk_spec` — descent compatibility:
+  `analyticPushforward f hf (mk v) = mk (traceLift v)` (sorry);
+* `pushforwardTraceLift_comp_spec` — covariant functoriality of
+  the trace lift on covering spaces (sorry).
+
+Together with `ComplexTorus.mk_surjective`, these assemble into the
+covariant-composition statement `analyticPushforward_comp_spec`. -/
+
+/-- The trace lift on the covering model spaces: the additive map
+`(Fin g_X → ℂ) →+ (Fin g_Y → ℂ)` from which `analyticPushforward`
+descends through the period quotient.
+
+Bottom-up obligation. Concretely, this is the matrix of the dual of the
+trace/norm map on holomorphic 1-forms, expressed in the chosen bases. -/
+noncomputable opaque pushforwardTraceLift (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ X) → ℂ) →+ (Fin (analyticGenus ℂ Y) → ℂ)
+
+/-- The trace lift preserves the period lattice: it sends the period
+subgroup of `X` into the period subgroup of `Y`.
+
+Bottom-up obligation. Provable from the fact that the trace/norm map
+on holomorphic 1-forms intertwines the period pairings. -/
+theorem pushforwardTraceLift_preserves_lattice
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    ∀ v ∈ (periodFullComplexLattice X).subgroup,
+      pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup := sorry
+
+/-- Characterization of `analyticPushforward` on the quotient
+projection: the pushforward applied to `mk v` equals `mk` of the
+trace lift applied to `v`.
+
+Bottom-up obligation. This is the defining property linking the opaque
+`analyticPushforward` to its covering-space representative
+`pushforwardTraceLift`. -/
+theorem analyticPushforward_mk_spec
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (v : Fin (analyticGenus ℂ X) → ℂ) :
+    analyticPushforward f hf
+      (ComplexTorus.mk _ (periodFullComplexLattice X) v) =
+      ComplexTorus.mk _ (periodFullComplexLattice Y)
+        (pushforwardTraceLift f hf v) := sorry
+
+/-- The trace lift is covariantly functorial under composition: the
+trace lift for `g ∘ f` equals the composition of trace lifts for `g`
+and `f`.
+
+Bottom-up obligation. Provable from the multiplicativity of the
+trace/norm map on holomorphic 1-forms. -/
+theorem pushforwardTraceLift_comp_spec
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
+    (pushforwardTraceLift (g ∘ f) (hg.comp hf) : _ →+ _) =
+      (pushforwardTraceLift g hg).comp (pushforwardTraceLift f hf) := sorry
+
 /-- Covariant composition specification for the analytic pushforward.
 
-Companion spec tying `analyticPushforward` to its expected functorial
-behaviour under composition.  Bottom-up: provable once
-`analyticPushforward` is concretized as the descent of the
-basis-aligned trace map on holomorphic 1-forms. -/
+Discharged via the deeper-companion split: uses
+`analyticPushforward_mk_spec` (descent compatibility on the covering
+space) and `pushforwardTraceLift_comp_spec` (functoriality of the
+trace lift) to reduce to a computation on the quotient projection. -/
 theorem analyticPushforward_comp_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (P : BasisAnalyticJacobian X) :
     analyticPushforward (g ∘ f) (hg.comp hf) P =
-      analyticPushforward g hg (analyticPushforward f hf P) := sorry
+      analyticPushforward g hg (analyticPushforward f hf P) := by
+  obtain ⟨v, rfl⟩ := ComplexTorus.mk_surjective _ (periodFullComplexLattice X) P
+  rw [analyticPushforward_mk_spec f hf v,
+      analyticPushforward_mk_spec (g ∘ f) (hg.comp hf) v,
+      analyticPushforward_mk_spec g hg (pushforwardTraceLift f hf v)]
+  congr 1
+  exact congr_fun (congr_arg _ (pushforwardTraceLift_comp_spec f hf g hg)) v
 
 /-- Pushforward distributes covariantly over composition.
 
