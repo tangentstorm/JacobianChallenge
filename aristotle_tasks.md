@@ -12,15 +12,15 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 06:45 EDT)
+## Live Status (2026-04-28 06:48 EDT)
 
 - **Aristotle: 1/5 ours active.**
   - `8585f085` Step 4 of the Banach-data construction recon —
     completeness via embedding HolomorphicOneForm ℂ X into C(X,ℂ) +
     Weierstrass-style closedness in NEW file
     `Jacobian/HolomorphicForms/SectionComplete.lean`.  Hardest step
-    of the recon (80-150 LOC). IN_PROGRESS at 26%, ~44min (still 26% —
-    stuck ~9min, below 30-min cancel threshold).
+    of the recon (80-150 LOC). IN_PROGRESS at 26%, ~47min (still 26% —
+    stuck ~12min, approaching 30-min cancel threshold).
 - **This tick:** heartbeat.  Aristotle integrations to date: 103.
 - **Recent local moves:**
     * `ChartCoeffExtractionRecon.lean` (NEW) — Mathlib API gap survey.
