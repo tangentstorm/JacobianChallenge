@@ -55,11 +55,18 @@ Top-down obligation. Bottom-up: requires multi-chart path integration
 plus a basis choice. -/
 opaque pathIntegralFunctional (P Q : X) : Fin (analyticGenus ℂ X) → ℂ
 
+/-- Specification: the path integral over a constant loop at a point is zero.
+
+Bottom-up obligation — requires multi-chart path-integration machinery. -/
+theorem pathIntegralFunctional_self_spec (P : X) :
+    pathIntegralFunctional X P P = 0 := sorry
+
 /-- The base-point self path integral vanishes.
 
-Top-down obligation. Bottom-up: a constant-path integral is zero. -/
+Top-down obligation. Proved from `pathIntegralFunctional_self_spec`. -/
 lemma pathIntegralFunctional_self (P : X) :
-    pathIntegralFunctional X P P = 0 := sorry
+    pathIntegralFunctional X P P = 0 :=
+  pathIntegralFunctional_self_spec X P
 
 /-- The analytic Abel-Jacobi map on the basis-aligned carrier.
 
