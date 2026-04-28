@@ -125,34 +125,24 @@ noncomputable instance complexTorusULift_isManifold
     IsManifold (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
       (ULift.{u} (quotient V Λ)) where
 
-/-- ULift transport of the complex torus Lie-add-group structure.
+/-- Addition on the `ULift`ed quotient is analytic for the transported
+complex-torus manifold structure.
 
-Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
-`LieAddGroup` instance on `Jacobian X`. -/
+Top-down obligation. Bottom-up: compose `ULift.down` on both inputs,
+use smooth addition on the quotient, and compose with `ULift.up`. -/
+lemma complexTorusULift_contMDiff_add
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
+    ContMDiff ((modelWithCornersSelf ℂ V).prod (modelWithCornersSelf ℂ V))
+      (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
+      (fun p : ULift.{u} (quotient V Λ) × ULift.{u} (quotient V Λ) => p.1 + p.2) := sorry
+
 noncomputable instance complexTorusULift_contMDiffAdd
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
     ContMDiffAdd (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
-      (ULift.{u} (quotient V Λ)) := sorry
-
-/-- Negation on the `ULift`ed quotient is analytic for the transported
-complex-torus manifold structure.
-
-Top-down obligation. Bottom-up: compose `ULift.down`, quotient negation,
-and `ULift.up`, using `contMDiff_quotient_neg` and the smoothness of the
-ULift equivalence. -/
-lemma complexTorusULift_contMDiff_neg
-    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
-    [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
-    ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ V)
-      (⊤ : WithTop ℕ∞) (fun a : ULift.{u} (quotient V Λ) => -a) := sorry
-
-noncomputable instance complexTorusULift_lieAddGroup
-    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
-    [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
-    LieAddGroup (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
       (ULift.{u} (quotient V Λ)) where
-  contMDiff_neg := complexTorusULift_contMDiff_neg Λ
+  contMDiff_add := complexTorusULift_contMDiff_add Λ
 
 /-- The quotient-to-ULift direction of the `Homeomorph.ulift` equivalence is
 analytic for the transported chart structure.
@@ -178,6 +168,39 @@ lemma complexTorusULift_contMDiff_down
     {n : WithTop ℕ∞} :
     ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ V) n
       (ULift.down : ULift.{u} (quotient V Λ) → quotient V Λ) := sorry
+
+/-- Negation on the `ULift`ed quotient is analytic for the transported
+complex-torus manifold structure.
+
+Pure assembly: `(-a) = ULift.up (-a.down)` definitionally, so
+negation on `ULift` factors as
+`ULift.up ∘ (Neg.neg : quotient V Λ → quotient V Λ) ∘ ULift.down`,
+each piece being smooth. -/
+lemma complexTorusULift_contMDiff_neg
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
+    ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ V)
+      (⊤ : WithTop ℕ∞) (fun a : ULift.{u} (quotient V Λ) => -a) := by
+  have h : (fun a : ULift.{u} (quotient V Λ) => -a) =
+      (ULift.up : quotient V Λ → ULift.{u} (quotient V Λ)) ∘
+      (fun a : quotient V Λ => -a) ∘
+      (ULift.down : ULift.{u} (quotient V Λ) → quotient V Λ) := by
+    funext a
+    rfl
+  rw [h]
+  exact (complexTorusULift_contMDiff_up Λ).comp
+    ((contMDiff_quotient_neg Λ).comp (complexTorusULift_contMDiff_down Λ))
+
+/-- ULift transport of the complex torus Lie-add-group structure.
+
+Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
+`LieAddGroup` instance on `Jacobian X`. -/
+noncomputable instance complexTorusULift_lieAddGroup
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
+    LieAddGroup (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
+      (ULift.{u} (quotient V Λ)) where
+  contMDiff_neg := complexTorusULift_contMDiff_neg Λ
 
 /-- The map `ULift.up : quotient V Λ → ULift (quotient V Λ)` is `ContMDiff`
 of every degree.
