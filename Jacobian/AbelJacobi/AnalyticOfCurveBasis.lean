@@ -2,6 +2,7 @@ import Jacobian.Periods.PeriodLattice
 import Jacobian.ComplexTorus.Defs
 import Jacobian.ComplexTorus.ChartedSpace
 import Jacobian.ComplexTorus.IsManifold
+import Jacobian.ComplexTorus.MkSmooth
 
 /-!
 # Analytic Abel-Jacobi map (basis-aligned carrier)
@@ -140,16 +141,15 @@ theorem pathIntegralFunctional_contMDiff_spec (P : X) :
 /-- Smoothness of the quotient projection `mk` from the model space
 to the complex torus.
 
-Bottom-up obligation: the charted-space instance on the quotient
-makes `mk` a local diffeomorphism, hence smooth. Requires
-wiring the chart construction in `Jacobian/ComplexTorus/Chart.lean`
-into a `ContMDiff` proof. -/
+Discharged via the existing `JacobianChallenge.ComplexTorus.contMDiff_mk`
+in `Jacobian/ComplexTorus/MkSmooth.lean`. -/
 theorem quotientMk_contMDiff_spec :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (⊤ : WithTop ℕ∞)
       (ComplexTorus.mk (Fin (analyticGenus ℂ X) → ℂ)
-        (periodFullComplexLattice X)) := sorry
+        (periodFullComplexLattice X)) :=
+  ComplexTorus.contMDiff_mk (periodFullComplexLattice X)
 
 /-- Smoothness specification for the analytic Abel-Jacobi map.
 
