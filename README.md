@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 20:02 EDT
+Last tick: 2026-04-27 20:08 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -67,26 +67,32 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5
+Active jobs (ours):     2 / 5
                         `b782c387` ContMDiffSection topology recon — IN_PROGRESS
-                                   at 17%, ~2h47m elapsed (normal).
-Integrated this tick:   `600f7ff6` — OnePointCxRecon (~480-line Mathlib
-                                    API survey, new file).
+                                   at 17%, ~2h53m elapsed (normal).
+                        `f735aa6d` OnePointCxChartedSpace — just submitted.
+                                   Implementation of Packets A+B from 600f7ff6's
+                                   plan: `inversionChart` + `ChartedSpace ℂ`.
+Integrated this tick:   None.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SUBMITTED `f735aa6d` — OnePointCxChartedSpace (Packets A+B from
+600f7ff6's plan). Asks Aristotle to build `inversionChart`,
+`identityChart`, and the `ChartedSpace ℂ (OnePoint ℂ)` instance in a
+new file `Jacobian/HolomorphicForms/OnePointCxChartedSpace.lean`.
+Source-of-truth API survey is the integrated recon file from the
+prior tick. Substantive ~110-170 LOC implementation; off the critical
+path; direct prerequisite for the IsManifold packet (C) which would
+in turn unblock `analyticGenus_eq_zero_of_homeomorphic_sphere`.
+
+PRIOR TICK (still standing):
 INTEGRATED `600f7ff6` — OnePointCxRecon (NEW ~480-line recon file).
 Aristotle's Mathlib API survey for making `OnePoint ℂ` a complex
-manifold (step (1) of the genus-zero classification's hard direction).
-Confirms NO `ChartedSpace ℂ (OnePoint ℂ)` instance exists in v4.28.0
-and proposes a self-contained two-chart-atlas construction:
-  - Packet A: `inversionChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ`
-  - Packet B: `ChartedSpace ℂ (OnePoint ℂ)` from {identity, inversion}
-  - Packet C: `IsManifold 𝓘(ℂ,ℂ) ⊤` via `contDiffAt_inv ℂ`
-The recon recommends working directly with `OnePoint ℂ` rather than
-transferring complex structure onto `S²`'s real charts.
+manifold. Confirms NO `ChartedSpace ℂ (OnePoint ℂ)` instance exists
+in v4.28.0 and proposes a self-contained two-chart-atlas construction.
 
 PRIOR TICK (still standing):
 INTEGRATED `7abae190` — PeriodLattice discreteness blocker analysis.
