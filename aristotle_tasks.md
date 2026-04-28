@@ -12,17 +12,31 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 05:36 EDT)
+## Live Status (2026-04-28 05:39 EDT)
 
 - **Aristotle: 1/5 ours active.**
   - `51fd0fce` Step 3 of the Banach-data construction recon —
     `ContMDiffSection.dist` + 4 MetricSpace axioms in NEW file
     `Jacobian/HolomorphicForms/SectionMetric.lean`.
-    QUEUED ~12min (backend genuinely stuck).
-- **This tick:** heartbeat.  Cancel-resubmit unlikely to help
-  against backend-wide congestion.
-- **Prior tick:** documented Banach-data 5-step construction
-  status + chart-extraction Mathlib gap in `plan.md` Phase 2.
+    QUEUED ~15min (backend frozen).
+- **Substantive local move this tick** (per saved feedback "do
+  substantive local proof work each tick when frozen"): NEW recon
+  file `Jacobian/HolomorphicForms/ChartCoeffExtractionRecon.lean`
+  (~120 LOC, sorry-free) documenting the Mathlib v4.28.0 API gap
+  for chart-coefficient extraction:
+    * Names what's missing (`ContMDiffSection.localCoeff`,
+      chart-transition formula for cotangent bundle).
+    * Surveys what Mathlib HAS (table of present/absent API).
+    * Proposes a project-local extraction lemma signature.
+    * Sketches concrete next steps (Aristotle survey packet for the
+      `localCoeff` design, then specialised
+      `holomorphicOneForm_localCoeff_onePointCx` for the concrete
+      case, then chart-transition formula).
+    * Documents the cancellation history (d493c66b 138min, 1f7d4399
+      31min) — both hit the same gap.
+  Build green (8026 jobs).
+- **Prior tick:** documented Banach-data 5-step construction +
+  chart-extraction Mathlib gap in `plan.md` Phase 2.
 - **Aristotle integration this tick:** `f1786fa8` Step 2 of the
   Banach-data construction recon.  CLEAN 117-line sorry-free
   `Jacobian/HolomorphicForms/SectionSupNorm.lean`.  Defines `supNorm`
