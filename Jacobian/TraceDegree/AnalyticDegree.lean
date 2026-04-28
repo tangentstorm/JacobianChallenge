@@ -35,30 +35,22 @@ variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
 
-/-- The analytic degree of a holomorphic map between compact Riemann
-surfaces. Equal to `0` for constant maps, otherwise the classical
-branched-cover degree (generic-fiber cardinality with ramification
-multiplicity).
-
-Top-down obligation. Bottom-up: requires local normal form for
-nonconstant holomorphic maps, ramification theory, and the constancy
-detection step. -/
-opaque analyticDegree (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ
+/-- The (analytic) degree of a holomorphic map `f : X → Y` of compact
+Riemann surfaces. Extracted from `basisAnalyticPullbackBundle.degree`.
+Equals `0` for constant maps; the bottom-up content (branched-cover
+degree, generic-fiber cardinality with ramification multiplicity) is
+deferred to the bundle's witness. -/
+noncomputable def analyticDegree (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
+  (basisAnalyticPullbackBundle f hf).degree
 
 /-- Companion specification (anti-hack obligation): the trace-pullback
-identity in basis-aligned form. Bottom-up obligation requiring the
-classical trace-pullback identity `tr_f (f* η) = deg(f) · η` on
-holomorphic 1-forms, descended through the period quotient.
-
-This is the **minimum intervention** required to unblock the top-down
-refinement chain (see Option A in the docstring of
-`analyticPushforward_analyticPullback` below). The push/pull/degree
-opaques remain individually unspecified, but their *interaction* — the
-content of the trace-pullback anti-hack — is captured here. -/
+identity in basis-aligned form. Sorry-free extraction from
+`basisAnalyticPullbackBundle.trace_pullback_spec`. -/
 theorem analyticPushforward_analyticPullback_spec (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
     analyticPushforward f hf (analyticPullback f hf Q) =
-      (analyticDegree f hf) • Q := sorry
+      (analyticDegree f hf) • Q :=
+  (basisAnalyticPullbackBundle f hf).trace_pullback_spec Q
 
 /-- The trace–pullback identity, in basis-aligned form: pushforward
 of pullback equals degree-multiplication on `BasisAnalyticJacobian Y`.
