@@ -80,19 +80,25 @@ The timer will call you again.
      rule). This keeps Aristotle focused on the front of the queue
      (likely the deeper proofs) while Claude clears the back.
    - **At least two sub-agents must always be running, in their own
-     git worktrees, on the two sorries furthest back in the Aristotle
-     queue** (i.e. the two longest-queued `submitted` jobs that are
-     still not `IN_PROGRESS`). Use the Agent tool with
+     git worktrees, on the two sorries at the END of the Aristotle
+     queue** — i.e. the two **newest-submitted** `submitted` jobs that
+     are still `QUEUED` (not yet `IN_PROGRESS`). Aristotle drains
+     FIFO from the front (oldest first), so the newest submissions
+     are what Aristotle will work on last; racing those with
+     sub-agents is what actually shortens the time-to-zero-sorries.
+     Do **not** target the oldest-queued packets — Aristotle will
+     get there on its own. Use the Agent tool with
      `isolation: "worktree"` so each sub-agent gets an isolated copy
      of the repo and cannot collide with the master or with each
-     other. At the start of every tick, run `TaskList` to see which
-     sub-agents are still alive; if fewer than two are running, launch
-     replacements *this tick* on the now-longest-queued back-of-queue
-     sorries. When a sub-agent finishes, integrate its patch via
-     cherry-pick (or by porting the targeted file edit), then
-     immediately spawn its replacement so the count stays ≥ 2.
-     Disjoint sorry targets — never two sub-agents on the same
-     declaration.
+     other. At the start of every tick, check which background
+     sub-agents you launched are still alive (you'll have received
+     completion notifications for any that finished); if fewer than
+     two are running, launch replacements *this tick* on the now-
+     newest QUEUED sorries (skipping any sorry already covered by a
+     live sub-agent — disjoint targets). When a sub-agent finishes,
+     integrate its patch via cherry-pick (or by porting the targeted
+     file edit), then immediately spawn its replacement so the count
+     stays ≥ 2.
    - **Off-critical-path big tasks (hours of churn) are fine** — deep
      theorems and surveys are valid Aristotle work.
    - **Never wait on an Aristotle result.** Aristotle is a parallel
