@@ -12,11 +12,16 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 20:57 EDT)
+## Live Status (2026-04-27 20:58 EDT)
 
-- **Aristotle: 1/5 active.**
+- **Aristotle: 2/5 active.**
   - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~3h42m elapsed (normal long-running).
+    ~3h43m elapsed (normal long-running).
+  - `75c45747` periodFundamentalDomain_isCompact — just submitted.
+    **TOP-DOWN REFINEMENT EXPERIMENT** per user request: companion to
+    7abae190's discreteness survey, asking Aristotle to do the same
+    Mathlib-survey-or-prove analysis on the compactness obligation
+    in `Jacobian/Periods/PeriodLattice.lean`.
 - **Integrated this tick:** `f735aa6d` — **NEW: `ChartedSpace ℂ (OnePoint ℂ)`
   instance** (sorry-free, 177-line file). Packets A+B of the genus-zero
   classification plan are DONE. Real new infrastructure: ℂℙ¹ now has a
