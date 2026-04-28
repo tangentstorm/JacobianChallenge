@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 21:36 EDT
+Last tick: 2026-04-27 21:39 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 94         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 95         `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  381 / 389    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded). 8 real-sorry
                                           production files (3 Claude-owned-deep, 5 user-WIP):
@@ -67,30 +67,33 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     3 / 5
+Active jobs (ours):     2 / 5
                         `b782c387` ContMDiffSection topology recon — IN_PROGRESS
-                                   at 17%, ~4h18m elapsed (normal).
-                        `84774271` analyticOfCurve_injective survey —
-                                   IN_PROGRESS at 7% (~10 min). Abel's theorem
-                                   (anti-hack #2).
+                                   at 17%, ~4h29m elapsed (normal).
                         `10e5bfbb` analyticPushforward_analyticPullback survey —
-                                   IN_PROGRESS at 3% (~9 min). Trace-pullback
+                                   IN_PROGRESS at 4% (~12 min). Trace-pullback
                                    identity (anti-hack #4).
-Integrated this tick:   None.
+Integrated this tick:   `84774271` — Abel's theorem survey (~218 lines,
+                                    sorry retained, build green).
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INTEGRATED `84774271` — **ABEL'S THEOREM** survey on
+`analyticOfCurve_injective` (anti-hack #2 — forces `ofCurve_inj`).
+~218-line analysis with: explicit `leansearch` outputs confirming
+Mathlib gaps (no Riemann-Roch, no theta function, no divisor theory),
+THREE proof routes (Riemann-Roch / 1-form separation / theta function),
+project-internal dependency analysis, RECOMMENDED RESOLUTION:
+declare `pathIntegralFunctional_separates_points` opaque to capture
+the Abel content, then `_injective` is a 5-line wiring assembly.
+Build green (8052 jobs).
+
+PRIOR TICK (still standing):
 INTEGRATED `75c45747` — TOP-DOWN refinement experiment (per user
-request) on `periodFundamentalDomain_isCompact`. Aristotle returned a
-115-line blocker analysis identifying TWO independent blockers:
-(1) the shared `IsZLattice ℝ` gap from 7abae190, and (2) a NEW
-finding — `periodFundamentalDomain` is a bare `opaque` with no
-companion equation/property, so compactness cannot be proven without
-either un-opaquing it or adding a companion axiom. Recommends Option
-A: redefine as `closure (ZSpan.fundamentalDomain b)`. Build green.
-**Verdict: Aristotle handled the top-down survey task very well.**
+request) on `periodFundamentalDomain_isCompact`. 115-line analysis
+identifying two blockers (IsZLattice + opaque-has-no-spec).
 
 PRIOR TICK (still standing):
 INTEGRATED `f735aa6d` — **NEW `ChartedSpace ℂ (OnePoint ℂ)` instance**
