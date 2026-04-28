@@ -12,14 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 05:54 EDT)
+## Live Status (2026-04-28 05:57 EDT)
 
 - **Aristotle: 1/5 ours active.**
-  - `51fd0fce` Step 3 of the Banach-data construction recon —
-    `ContMDiffSection.dist` + 4 MetricSpace axioms in NEW file
-    `Jacobian/HolomorphicForms/SectionMetric.lean`.
-    IN_PROGRESS at 7%, ~30min total (advancing 5→7%).
-- **This tick:** heartbeat.
+  - `8585f085` (NEW this tick) Step 4 of the Banach-data construction
+    recon — completeness of the supNorm metric on `HolomorphicOneForm ℂ X`
+    via embedding into `C(X, ℂ)` + closedness (Weierstrass-style
+    uniform-limit theorem).  NEW file
+    `Jacobian/HolomorphicForms/SectionComplete.lean`.  Hardest step
+    of the recon (80-150 LOC). Off-critical-path big task.
+- **Aristotle integration this tick:** `51fd0fce` Step 3 of the
+  Banach-data construction recon.  CLEAN 113-line sorry-free
+  `Jacobian/HolomorphicForms/SectionMetric.lean`.  All 4 MetricSpace
+  axioms + dist_eq proved exactly as sketched: sub_self/supNorm_zero,
+  neg_sub/supNorm_neg, abel/supNorm_add_le, supNorm_eq_zero_iff/sub_eq_zero,
+  and rfl.  `omit [CompactSpace M]` annotations drop unneeded typeclass
+  deps.  Build green (`lake build Jacobian.HolomorphicForms.SectionMetric`,
+  8028 jobs).  Step 3 of 5.  Aristotle integrations to date: 103.
 - **Recent local moves:**
     * `ChartCoeffExtractionRecon.lean` (NEW) — Mathlib API gap survey.
     * `plan.md` — documented Banach-data 5-step construction status
