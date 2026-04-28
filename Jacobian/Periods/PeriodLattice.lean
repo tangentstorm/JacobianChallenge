@@ -70,6 +70,9 @@ Top-down obligation. Bottom-up: the period pairing image of `H₁(X, ℤ)`
 has no accumulation point near zero — a consequence of the integrality
 of period values on integral cycles.
 
+This proof now delegates to `periodSubgroup_isZLattice` in
+`Jacobian/Periods/PeriodFunctional.lean`.
+
 ### Blocker analysis for `basisAlignedPeriodSubgroup_isDiscrete`
 
 **Goal.** Show `DiscreteTopology (basisAlignedPeriodSubgroup X)` where
@@ -177,7 +180,8 @@ is also **on the critical path** for `periodFundamentalDomain_isCompact` and
 subgroup being a well-structured lattice.
 -/
 instance basisAlignedPeriodSubgroup_isDiscrete :
-    DiscreteTopology (basisAlignedPeriodSubgroup X) := sorry
+    DiscreteTopology (basisAlignedPeriodSubgroup X) :=
+  periodSubgroup_isZLattice ℂ X
 
 /-- The period subgroup is closed in the model space.
 

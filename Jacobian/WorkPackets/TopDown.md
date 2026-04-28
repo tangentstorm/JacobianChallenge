@@ -341,8 +341,8 @@ This table is the current top-down bridge inventory. Keep it updated as
 | `Jacobian` ✅ refined | `ULift (ComplexTorus.quotient (Fin (genus X) → ℂ) periodFullComplexLattice)` | `periodFullComplexLattice` (named sorry in `Jacobian.Periods.PeriodLattice`) |
 | `AddCommGroup` ✅ refined | `inferInstance` via ULift transport | (none — derived) |
 | `TopologicalSpace` ✅ refined | `inferInstance` via ULift transport | (none — derived) |
-| `T2Space` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice.isClosed` |
-| `CompactSpace` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice` fundamental-domain compactness |
+| `T2Space` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice.isClosed`; `_isDiscrete` is discharged by `periodSubgroup_isZLattice` (opaque leaf in `Jacobian.Periods.PeriodFunctional`) |
+| `CompactSpace` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice` fundamental-domain compactness; `_isDiscrete` is discharged by `periodSubgroup_isZLattice` (opaque leaf in `Jacobian.Periods.PeriodFunctional`) |
 | `ChartedSpace` ✅ refined | `complexTorusULift_chartedSpace` (real proof, no own sorry; codex commit `c49cf9a`) | (none — discharged) |
 | `IsManifold` ✅ refined (top-down) | `complexTorusULift_isManifold` (still sorry; HasGroupoid bookkeeping deferred) | OpenPartialHomeomorph associativity / EqOnSource bookkeeping for `Homeomorph.ulift` chart cancellation |
 | `LieAddGroup` ✅ refined (top-down) | `complexTorusULift_lieAddGroup` (still sorry) | smoothness of `+` and `-` on `ULift`-transported manifold structure |
