@@ -34,6 +34,7 @@ namespace JacobianChallenge.TraceDegree
 open scoped ContDiff Manifold
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 open JacobianChallenge.AbelJacobi
+open JacobianChallenge.ComplexTorus
 
 variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -58,7 +59,9 @@ noncomputable opaque analyticPullback (f : X → Y)
 /-- The analytic pullback is holomorphic.
 
 Top-down obligation. Bottom-up: descent of the smooth dual map through
-the period quotient (which is itself a smooth submersion). -/
+the period quotient (which is itself a smooth submersion).  See
+`contMDiff_continuousAddMonoidHom_complexTorus` in `PushforwardBasis`
+for the matching general lemma. -/
 lemma analyticPullback_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ)) ω
@@ -81,20 +84,77 @@ lemma analyticPullback_id_apply (P : BasisAnalyticJacobian X) :
   rw [analyticPullback_id_spec]
   rfl
 
+/-! ### Deeper companions for contravariant functoriality
+
+The opaque `analyticPullback` is the descent through the period
+quotient of a linear map on the covering space — the dual of the
+basis-aligned form-pullback. The two specs below capture that
+relationship:
+
+* `basisDualPullback` — the additive group homomorphism on the
+  covering space (opaque data);
+* `analyticPullback_mk_eq` — descent compatibility (sorry);
+* `basisDualPullback_comp` — form-pullback contravariance (sorry).
+-/
+
+/-- The dual of the basis-aligned form-pullback, as an additive group
+homomorphism on the covering space
+`Fin (analyticGenus ℂ Y) → ℂ → Fin (analyticGenus ℂ X) → ℂ`.
+
+This is the linear-algebraic core of `analyticPullback`: the latter
+is its descent through the period quotient.
+
+Top-down obligation (data). Bottom-up: dualize the ℂ-linear map
+`pullbackFormsLinearMap f` in basis coordinates. -/
+noncomputable opaque basisDualPullback (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ)
+
+/-- Descent compatibility: `analyticPullback` acts on the period
+quotient as the descended `basisDualPullback`.
+
+Bottom-up content: the opaque `analyticPullback f hf` agrees with the
+`QuotientAddGroup.map` of `basisDualPullback f hf` (which preserves the
+period lattice). This is the defining property linking the quotient-level
+and covering-space-level maps. -/
+theorem analyticPullback_mk_eq
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (v : Fin (analyticGenus ℂ Y) → ℂ) :
+    analyticPullback f hf (QuotientAddGroup.mk v) =
+      QuotientAddGroup.mk (basisDualPullback f hf v) := sorry
+
+/-- Contravariant functoriality of the dual form-pullback on the
+covering space: `basisDualPullback (g ∘ f) = basisDualPullback f ∘ basisDualPullback g`.
+
+Bottom-up content: the dual of form-pullback reverses composition.
+This is the lifting of `pullbackFormsFun_comp_apply` to the
+basis-aligned linear maps, then dualization. -/
+theorem basisDualPullback_comp
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
+    (v : Fin (analyticGenus ℂ Z) → ℂ) :
+    basisDualPullback (g ∘ f) (hg.comp hf) v =
+      basisDualPullback f hf (basisDualPullback g hg v) := sorry
+
 /-- Companion spec for `analyticPullback_comp_apply`: pullback of forms is
 contravariantly functorial, and descent preserves composition.
 
-Bottom-up content: this is the named bottom-up obligation that
-`analyticPullback_comp_apply` (and any other lemma needing contravariant
-functoriality of the pullback) delegates to.  A real proof requires the
-descent through the period quotient of the contravariant functoriality
-of `pullbackForms` in basis coordinates. -/
+**Proof.** Assembly from the deeper companions `analyticPullback_mk_eq`
+and `basisDualPullback_comp`. Every element of the quotient is
+`⟦v⟧` for some covering-space vector `v`; rewrite both sides using
+descent compatibility, then apply the covering-space composition law. -/
 theorem analyticPullback_comp_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (P : BasisAnalyticJacobian Z) :
     analyticPullback (g ∘ f) (hg.comp hf) P =
-      analyticPullback f hf (analyticPullback g hg P) := sorry
+      analyticPullback f hf (analyticPullback g hg P) := by
+  induction P using QuotientAddGroup.induction_on with
+  | H v =>
+    rw [analyticPullback_mk_eq (g ∘ f) (hg.comp hf) v]
+    rw [analyticPullback_mk_eq g hg v]
+    rw [analyticPullback_mk_eq f hf (basisDualPullback g hg v)]
+    rw [basisDualPullback_comp f hf g hg v]
 
 /-- Pullback distributes contravariantly over composition.
 
