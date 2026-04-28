@@ -47,18 +47,34 @@ noncomputable opaque analyticPushforward (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisAnalyticJacobian X →ₜ+ BasisAnalyticJacobian Y
 
+open JacobianChallenge.ComplexTorus in
+/-- Every continuous additive group homomorphism between complex tori
+is smooth (`ContMDiff ω`).  This is a standard fact: continuous
+homomorphisms between Lie groups are automatically smooth.
+
+Bottom-up obligation.  The proof lifts the continuous homomorphism to a
+continuous linear map on the covering spaces (automatically smooth),
+then descends through the period-quotient projection (a local
+diffeomorphism). -/
+theorem contMDiff_continuousAddMonoidHom_complexTorus
+    {V W : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    [NormedAddCommGroup W] [NormedSpace ℂ W]
+    (ΛV : FullComplexLattice V) (ΛW : FullComplexLattice W)
+    (φ : quotient V ΛV →ₜ+ quotient W ΛW) :
+    ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ W) ω φ := sorry
+
 /-- Companion specification: the analytic pushforward is holomorphic.
 
-Bottom-up obligation. Provable once `analyticPushforward` is
-concretized as the descent of the basis-aligned trace map through
-the period quotient — the trace map is a continuous ℂ-linear map
-(hence smooth), and the period quotient projection is a local
-diffeomorphism, so the descended map is smooth. -/
+Bottom-up obligation. Delegates to
+`contMDiff_continuousAddMonoidHom_complexTorus`: the analytic
+pushforward is a `ContinuousAddMonoidHom` between complex tori,
+and every such homomorphism is smooth. -/
 theorem analyticPushforward_contMDiff_spec (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
-      (analyticPushforward f hf) := by sorry
+      (analyticPushforward f hf) :=
+  contMDiff_continuousAddMonoidHom_complexTorus _ _ (analyticPushforward f hf)
 
 /-- The analytic pushforward is holomorphic.
 
