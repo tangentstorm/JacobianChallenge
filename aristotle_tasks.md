@@ -12,16 +12,16 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 21:30 EDT)
+## Live Status (2026-04-27 21:33 EDT)
 
 - **Aristotle: 3/5 active.**
   - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~4h20m elapsed (normal long-running).
-  - `84774271` analyticOfCurve_injective survey — IN_PROGRESS at 5%
-    (~4 min). Abel's theorem (anti-hack #2).
-  - `10e5bfbb` analyticPushforward_analyticPullback survey — QUEUED
-    ~3 min. Trace-pullback identity (anti-hack #4).
-- **Codex:** ~19 min, pids alive but stdout still 0 bytes.
+    ~4h23m elapsed (normal long-running).
+  - `84774271` analyticOfCurve_injective survey — IN_PROGRESS at 6%
+    (~7 min). Abel's theorem (anti-hack #2).
+  - `10e5bfbb` analyticPushforward_analyticPullback survey —
+    IN_PROGRESS at 1% (~6 min, just dequeued). Trace-pullback identity.
+- **Codex:** ~22 min, pids alive but stdout still 0 bytes.
 - **Local proof work this tick:** Heartbeat.
 - **User WIP:** `M Jacobian/ComplexTorus/ULiftTransport.lean` — Claude
   leaves untouched.
