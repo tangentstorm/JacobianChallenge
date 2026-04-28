@@ -12,19 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 02:37 EDT)
+## Live Status (2026-04-28 02:40 EDT)
 
-- **Aristotle: 2/5 ours active.** (heartbeat — both stuck this tick)
+- **Aristotle: 2/5 ours active.** (heartbeat — both stuck ~6 min)
   - `d493c66b` follow-up TOPDOWN refinement on
     `holomorphicOneForm_onePointCx_toFun_eq_zero` in
     `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — the
     chart-coefficient extraction sorry exposed by `90750074`.
-    IN_PROGRESS at 37%, ~37 min (no advance vs last check).
+    IN_PROGRESS at 37%, ~40 min.
   - `63158306` Step 1 of the Banach-data construction plan from
     recon `848a0c88`: NEW file
     `Jacobian/HolomorphicForms/SectionFiberNorm.lean` with
     `ContMDiffSection.fiberNorm` + `continuous_fiberNorm`.
-    IN_PROGRESS at 5%, ~17 min (no advance vs last check).
+    IN_PROGRESS at 5%, ~20 min.
 - Past hour: 4 substantive Aristotle integrations
   (5dfd5106 / 848a0c88 / 6992e390 / 90750074) + Aristotle 100th
   integration milestone + Claude-owned `EntireZero.lean`
