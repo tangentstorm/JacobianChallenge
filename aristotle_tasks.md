@@ -12,37 +12,39 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 00:42 EDT)
+## Live Status (2026-04-28 00:50 EDT)
 
-- **Aristotle: 2/5 ours active.**
-  - `5dfd5106` `holomorphicOneForm_montel` Montel survey on
-    `CompactRiemannSurface.lean` — IN_PROGRESS at 14%, ~40 min elapsed.
-    Riemann-Roch chain step (b).
-  - `90750074` (NEW this tick) TOP-DOWN refinement on
+- **Aristotle: 1/5 ours active.**
+  - `90750074` TOP-DOWN refinement on
     `holomorphicOneForm_onePointCx_subsingleton` (Liouville core,
-    anti-hack #1 critical path). Just submitted, 0%.
-  - (`b782c387` SectionTopologyRecon dropped off the visible
-    aristotle list — submitted ~7h ago. Either completed silently
-    or remains in long internal queue. Not blocking anything; the
-    companion `848a0c88` recon now covers the construction recipe
-    in detail.)
-- **Aristotle integration this tick:** `848a0c88`
-  `SectionTopologyConstructionRecon.lean` (NEW 371-line construction
-  recon for the Banach data on `ContMDiffSection`).  Concrete 5-step
-  plan with line estimates (180-305 LOC), E=ℂ specialisation route
-  via embedding into `C(X,ℂ)` + closedness, full Mathlib lemma
-  inventory, risk matrix.  Builds green (8026 jobs).  Recon excluded
-  from umbrella per existing policy (`HolomorphicForms.lean`).
-- **Sub-agent delegation:** none this tick — focused on retrieving +
-  integrating `848a0c88` and submitting the Liouville-core packet to
-  Aristotle.  The next opportunity is the uniformization-lite
-  transport step `analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx`
-  (genus-zero easy direction's other open obligation).
-- **Build:** `lake build Jacobian.HolomorphicForms.SectionTopologyConstructionRecon`
-  green (8026 jobs); `lake build Jacobian.Challenge` green (8026 jobs).
+    anti-hack #1 critical path). IN_PROGRESS at 3%, ~9 min elapsed.
+- **Aristotle integration this tick:** `5dfd5106`
+  `holomorphicOneForm_montel` survey, +275 lines of docstring on
+  `CompactRiemannSurface.lean`.  7-step proof outline (chart cover
+  → chartwise representation → Cauchy ⇒ equicontinuity →
+  Arzelà–Ascoli → diagonal extraction → Weierstrass closedness →
+  sequential ⇔ topological compactness).  KEY STRUCTURAL FINDING
+  (Blocker 5): `holomorphicOneForm_montel` is FALSE for arbitrary
+  `B : HolomorphicOneFormBanachData X` because the structure has no
+  axiom relating `B.toNorm` to pointwise section evaluation.
+  Recommends adding `norm_le_iSup` (or `norm_eq_iSup`) field.
+  Statement-shape change deferred until step (a)
+  (`holomorphicOneForm_normedSpace_uniformOnCompact`) is being
+  attacked — currently itself a sorry, so no constructor breaks.
+- **Build:** `lake build Jacobian.HolomorphicForms.CompactRiemannSurface`
+  green (2409 jobs).  Sorry count unchanged in that file (3).
+- **Open structural design item:** Blocker 5 (norm-vs-pointwise
+  axiom on `HolomorphicOneFormBanachData`).  Track in `## Top open
+  correctness item` below.
+- **Sub-agent delegation:** none this tick — Aristotle survey
+  retrieval was the focus.  Next opportunity is the
+  uniformization-lite transport step
+  `analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx`
+  (different theorem from `90750074`'s target but in the same file —
+  must wait for `90750074` to retire before dispatching).
 - **Sorry recount per file:** Claude-owned production sorries 9 across
   3 files (CompactRiemannSurface 3, GenusZeroClassification 3,
-  PeriodFunctional 3 — PeriodLattice now fully delegating with 0 own
+  PeriodFunctional 3 — PeriodLattice fully delegating with 0 own
   sorries).  User-WIP at 12 across 5 files.  383/391 production files
   sorry-free.
 
