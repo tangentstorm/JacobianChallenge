@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 01:31 EDT
+Last tick: 2026-04-28 01:34 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -66,12 +66,16 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     2 / 5
-                        `90750074` Liouville core (11%, ~51 min, stuck).
-                        `dc8af381` PeriodFunctional 3→2 (11%, ~40 min, stuck).
-Integrated this tick:   none — heartbeat after prior-tick integration.
-                        Verified `lake build Jacobian.Challenge` still
-                        green after `6992e390` integration (8026 jobs;
-                        4 expected sorries in the frozen public target).
+                        `90750074` Liouville core (12%, ~54 min, slow).
+                        `dc8af381` PeriodFunctional 3→2 (14%, ~43 min, slow).
+Integrated this tick:   Local proof work — extended
+                        `Jacobian/HolomorphicForms/EntireZero.lean`
+                        with a fourth corollary
+                        `Differentiable.eq_zero_of_polynomial_decay_at_infty`
+                        — generalizes inv-decay (n=1) and quadratic-decay
+                        (n=2) to any `n ≥ 1`.  Reduces to inv-decay via
+                        `le_self_pow₀ : 1 ≤ a → n ≠ 0 → a ≤ a^n`.
+                        Sorry-free.  Build green.
 ```
 
 ```text

@@ -12,17 +12,23 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 01:31 EDT)
+## Live Status (2026-04-28 01:34 EDT)
 
-- **Aristotle: 2/5 ours active.** (heartbeat — no integrations)
+- **Aristotle: 2/5 ours active.** Slow advance.
   - `90750074` Liouville core (`holomorphicOneForm_onePointCx_subsingleton`).
-    IN_PROGRESS at 11%, ~51 min elapsed.
+    IN_PROGRESS at 12%, ~54 min elapsed (was 11%).
   - `dc8af381` `exists_compact_periodFundamentalDomain` reduction in
-    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 11%, ~40 min.
-- **Verification this tick:** `lake build Jacobian.Challenge` green
-  (8026 jobs) after integrating `6992e390` last tick — confirms the
-  reduced `CompactRiemannSurface.lean` (3→2 sorries) keeps the
-  public target compiling.
+    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 14%, ~43 min (was 11%).
+- **Local proof work this tick:** extended
+  `Jacobian/HolomorphicForms/EntireZero.lean` (now 132 lines, sorry-free)
+  with a fourth corollary:
+    * `Differentiable.eq_zero_of_polynomial_decay_at_infty` — entire +
+      `‖f z‖ ≤ C / ‖z‖^n` for `‖z‖ ≥ R` (any `n ≥ 1`, `C ≥ 0`)
+      ⇒ identically 0.  Generalizes the inv-decay (`n=1`) and
+      quadratic-decay (`n=2`) cases.  Reduces to inv-decay via
+      `le_self_pow₀ : 1 ≤ a → n ≠ 0 → a ≤ a^n`.
+  Build green: `lake build Jacobian.HolomorphicForms.EntireZero`
+  (8026 jobs).
 - **Aristotle integration this tick:** `5dfd5106`
   `holomorphicOneForm_montel` survey, +275 lines of docstring on
   `CompactRiemannSurface.lean`.  7-step proof outline (chart cover

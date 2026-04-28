@@ -18,11 +18,15 @@ Mathlib v4.28.0 in this exact form.
   — entire and `‖f z‖ ≤ C / ‖z‖` for `‖z‖ ≥ R` ⇒ identically `0`.
 * `Differentiable.eq_zero_of_quadratic_decay_at_infty`
   — entire and `‖f z‖ ≤ C / ‖z‖^2` for `‖z‖ ≥ R` ⇒ identically `0`.
+* `Differentiable.eq_zero_of_polynomial_decay_at_infty`
+  — entire and `‖f z‖ ≤ C / ‖z‖^n` (any `n ≥ 1`) for `‖z‖ ≥ R`
+    ⇒ identically `0`.
 
 The second is the simplest growth-bound form.  The third is the
 form that arises from the inversion-chart holomorphicity condition
 for a holomorphic 1-form on `ℂℙ¹`; it reduces to the second via the
-trivial bound `1 / ‖z‖^2 ≤ 1 / ‖z‖` for `‖z‖ ≥ 1`.
+trivial bound `1 / ‖z‖^2 ≤ 1 / ‖z‖` for `‖z‖ ≥ 1`.  The fourth
+generalizes to arbitrary positive integer powers.
 -/
 
 namespace JacobianChallenge.HolomorphicForms.EntireZero
@@ -93,5 +97,29 @@ theorem _root_.Differentiable.eq_zero_of_quadratic_decay_at_infty
   refine (h z hzR).trans ?_
   rw [div_eq_mul_one_div C, div_eq_mul_one_div C (‖z‖)]
   exact mul_le_mul_of_nonneg_left (one_div_le_one_div_of_le hzpos hzsq) hC
+
+/-- If `f : ℂ → ℂ` is entire and satisfies a polynomial decay bound
+`‖f z‖ ≤ C / ‖z‖^n` for `‖z‖ ≥ R` (with `C ≥ 0` and `n ≥ 1`), then
+`f` is identically `0`.
+
+Generalizes `eq_zero_of_inv_decay_at_infty` (the `n = 1` case) and
+`eq_zero_of_quadratic_decay_at_infty` (the `n = 2` case).  Reduces
+to the linear (`n = 1`) form by `‖z‖ ≤ ‖z‖^n` for `‖z‖ ≥ 1` and
+`n ≥ 1`. -/
+theorem _root_.Differentiable.eq_zero_of_polynomial_decay_at_infty
+    {f : ℂ → ℂ} (hf : Differentiable ℂ f) {C R : ℝ} (hC : 0 ≤ C)
+    {n : ℕ} (hn : 1 ≤ n)
+    (h : ∀ z : ℂ, R ≤ ‖z‖ → ‖f z‖ ≤ C / ‖z‖ ^ n) :
+    f = 0 := by
+  refine hf.eq_zero_of_inv_decay_at_infty (C := C) (R := max R 1) ?_
+  intro z hz
+  have hz1 : (1:ℝ) ≤ ‖z‖ := le_trans (le_max_right R 1) hz
+  have hzR : R ≤ ‖z‖ := le_trans (le_max_left R 1) hz
+  have hzpos : 0 < ‖z‖ := lt_of_lt_of_le zero_lt_one hz1
+  have hn0 : n ≠ 0 := Nat.one_le_iff_ne_zero.mp hn
+  have hzpow : ‖z‖ ≤ ‖z‖ ^ n := le_self_pow₀ hz1 hn0
+  refine (h z hzR).trans ?_
+  rw [div_eq_mul_one_div C, div_eq_mul_one_div C (‖z‖)]
+  exact mul_le_mul_of_nonneg_left (one_div_le_one_div_of_le hzpos hzpow) hC
 
 end JacobianChallenge.HolomorphicForms.EntireZero
