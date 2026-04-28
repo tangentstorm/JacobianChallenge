@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 20:30 EDT
+Last tick: 2026-04-27 20:33 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -70,8 +70,8 @@ Aristotle status
 Active jobs (ours):     2 / 5
                         `b782c387` ContMDiffSection topology recon — IN_PROGRESS
                                    at 17%, ~3h elapsed (normal).
-                        `f735aa6d` OnePointCxChartedSpace — IN_PROGRESS at 18%
-                                   (~20 min in).
+                        `f735aa6d` OnePointCxChartedSpace — IN_PROGRESS at 22%
+                                   (~23 min in).
 Integrated this tick:   None.
 ```
 
