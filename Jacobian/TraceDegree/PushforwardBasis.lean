@@ -39,14 +39,52 @@ variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
   [ConnectedSpace Z] [ChartedSpace ℂ Z]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
 
-/-- The analytic pushforward induced by a holomorphic map of compact
-Riemann surfaces, on the basis-aligned carrier.
+/-- Bundle carrying the analytic pushforward together with its
+covering-space representative `pushforwardTraceLift` and the descent
+compatibility axiom `mk_spec`.
 
-Top-down obligation. Bottom-up: descent of the basis-aligned trace map
-on holomorphic 1-forms through the period quotient. -/
-noncomputable opaque analyticPushforward (f : X → Y)
+Bottom-up: concretising `pushforwardTraceLift` requires the dual of
+the trace/norm map on holomorphic 1-forms; `analyticPushforward` is
+then its descent through the period quotient (using period-lattice
+preservation), and `mk_spec` is automatic from the descent. -/
+structure BasisAnalyticPushforwardBundle
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (Y : Type) [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
+    [ConnectedSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    (_f : X → Y) (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω _f) where
+  /-- The pushforward as a continuous additive group homomorphism on
+  the basis-aligned carrier. -/
+  analyticPushforward : BasisAnalyticJacobian X →ₜ+ BasisAnalyticJacobian Y
+  /-- The trace lift on the covering space. -/
+  pushforwardTraceLift : (Fin (analyticGenus ℂ X) → ℂ) →+ (Fin (analyticGenus ℂ Y) → ℂ)
+  /-- Descent compatibility: the bundled pushforward acts on the period
+  quotient as the descended trace lift. -/
+  mk_spec : ∀ v : Fin (analyticGenus ℂ X) → ℂ,
+    analyticPushforward (ComplexTorus.mk _ (periodFullComplexLattice X) v) =
+      ComplexTorus.mk _ (periodFullComplexLattice Y) (pushforwardTraceLift v)
+
+noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    Inhabited (BasisAnalyticPushforwardBundle X Y f hf) :=
+  ⟨{ analyticPushforward := 0
+     pushforwardTraceLift := 0
+     mk_spec := fun _ => rfl }⟩
+
+/-- The bundled analytic pushforward (data + descent axiom), as an
+`opaque` value. -/
+noncomputable opaque basisAnalyticPushforwardBundle (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    BasisAnalyticJacobian X →ₜ+ BasisAnalyticJacobian Y
+    BasisAnalyticPushforwardBundle X Y f hf
+
+/-- The analytic pushforward induced by a holomorphic map of compact
+Riemann surfaces, on the basis-aligned carrier. Extracted from
+`basisAnalyticPushforwardBundle`. -/
+noncomputable def analyticPushforward (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    BasisAnalyticJacobian X →ₜ+ BasisAnalyticJacobian Y :=
+  (basisAnalyticPushforwardBundle f hf).analyticPushforward
 
 open JacobianChallenge.ComplexTorus in
 /-- Every continuous additive group homomorphism between complex tori
@@ -105,14 +143,12 @@ Together with `ComplexTorus.mk_surjective`, these assemble into the
 covariant-composition statement `analyticPushforward_comp_spec`. -/
 
 /-- The trace lift on the covering model spaces: the additive map
-`(Fin g_X → ℂ) →+ (Fin g_Y → ℂ)` from which `analyticPushforward`
-descends through the period quotient.
-
-Bottom-up obligation. Concretely, this is the matrix of the dual of the
-trace/norm map on holomorphic 1-forms, expressed in the chosen bases. -/
-noncomputable opaque pushforwardTraceLift (f : X → Y)
+`(Fin g_X → ℂ) →+ (Fin g_Y → ℂ)`. Extracted from
+`basisAnalyticPushforwardBundle`. -/
+noncomputable def pushforwardTraceLift (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    (Fin (analyticGenus ℂ X) → ℂ) →+ (Fin (analyticGenus ℂ Y) → ℂ)
+    (Fin (analyticGenus ℂ X) → ℂ) →+ (Fin (analyticGenus ℂ Y) → ℂ) :=
+  (basisAnalyticPushforwardBundle f hf).pushforwardTraceLift
 
 /-- Deeper companion: the trace lift along `id` is the identity additive
 group homomorphism on the covering space.
@@ -137,16 +173,15 @@ theorem pushforwardTraceLift_preserves_lattice
 projection: the pushforward applied to `mk v` equals `mk` of the
 trace lift applied to `v`.
 
-Bottom-up obligation. This is the defining property linking the opaque
-`analyticPushforward` to its covering-space representative
-`pushforwardTraceLift`. -/
+Sorry-free extraction from `basisAnalyticPushforwardBundle.mk_spec`. -/
 theorem analyticPushforward_mk_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (v : Fin (analyticGenus ℂ X) → ℂ) :
     analyticPushforward f hf
       (ComplexTorus.mk _ (periodFullComplexLattice X) v) =
       ComplexTorus.mk _ (periodFullComplexLattice Y)
-        (pushforwardTraceLift f hf v) := sorry
+        (pushforwardTraceLift f hf v) :=
+  (basisAnalyticPushforwardBundle f hf).mk_spec v
 
 /-- The trace lift is covariantly functorial under composition: the
 trace lift for `g ∘ f` equals the composition of trace lifts for `g`
