@@ -45,4 +45,18 @@ theorem ext_toFun_apply {η ζ : HolomorphicOneForm E X}
     (h : ∀ x v, η.toFun x v = ζ.toFun x v) : η = ζ :=
   ext_toFun_apply_iff.mpr h
 
+/-- A holomorphic 1-form equals zero iff it vanishes pointwise.
+
+Specialization of `ext_toFun_iff` at `ζ = 0`.  The right-to-left
+direction unfolds `(0).toFun` via `ContMDiffSection.coe_zero`. -/
+theorem eq_zero_iff_toFun {η : HolomorphicOneForm E X} :
+    η = 0 ↔ ∀ x, η.toFun x = 0 := by
+  rw [ext_toFun_iff]
+  rfl
+
+/-- A holomorphic 1-form is zero from pointwise vanishing. -/
+theorem eq_zero_of_toFun {η : HolomorphicOneForm E X}
+    (h : ∀ x, η.toFun x = 0) : η = 0 :=
+  eq_zero_iff_toFun.mpr h
+
 end JacobianChallenge.HolomorphicForms
