@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 21:39 EDT
+Last tick: 2026-04-27 21:49 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 95         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 96         `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  381 / 389    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded). 8 real-sorry
                                           production files (3 Claude-owned-deep, 5 user-WIP):
@@ -67,19 +67,36 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     2 / 5
+Active jobs (ours):     1 / 5
                         `b782c387` ContMDiffSection topology recon — IN_PROGRESS
-                                   at 17%, ~4h29m elapsed (normal).
-                        `10e5bfbb` analyticPushforward_analyticPullback survey —
-                                   IN_PROGRESS at 4% (~12 min). Trace-pullback
-                                   identity (anti-hack #4).
-Integrated this tick:   `84774271` — Abel's theorem survey (~218 lines,
-                                    sorry retained, build green).
+                                   (off-page, 4h+, long-running).
+Integrated this tick:   `10e5bfbb` — Trace-pullback identity survey
+                                    (~220 lines, sorry retained, build green).
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INTEGRATED `10e5bfbb` — **TRACE-PULLBACK IDENTITY** survey on
+`analyticPushforward_analyticPullback` (anti-hack #4 — forces
+`pushforward_pullback`). ~220-line analysis with step-by-step proof
+outline (branched covering → fiber cardinality → fiber-trace
+summation → identity principle → period-quotient descent), Mathlib
+v4.28.0 status table, TWO blockers (all three opaques have no
+specification; no Mathlib infrastructure for branched coverings,
+form pullback, sheaf trace, or identity principle), and
+RECOMMENDED RESOLUTION: declare `analyticPushforward_analyticPullback_spec`
+companion opaque to `analyticDegree`, then this lemma is a one-liner.
+Build green (8055 jobs).
+
+Codex experiment: switched approach. The `run_in_background` codex
+invocation hung silently for 30+ min (stdout 0 bytes, processes
+zombied). Wrote a prompt file `codex-prompt.md` for the user to fire
+manually with `codex exec "$(cat codex-prompt.md)"`. Pending diff
+will introduce `periodSubgroup_isZLattice` opaque per 7abae190's
+recommendation.
+
+PRIOR TICK (still standing):
 INTEGRATED `84774271` — **ABEL'S THEOREM** survey on
 `analyticOfCurve_injective` (anti-hack #2 — forces `ofCurve_inj`).
 ~218-line analysis with: explicit `leansearch` outputs confirming

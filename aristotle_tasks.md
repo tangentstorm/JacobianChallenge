@@ -12,19 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 21:39 EDT)
+## Live Status (2026-04-27 21:49 EDT)
 
-- **Aristotle: 2/5 active.**
-  - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~4h29m elapsed (normal long-running).
-  - `10e5bfbb` analyticPushforward_analyticPullback survey —
-    IN_PROGRESS at 4% (~12 min). Trace-pullback identity.
-- **Integrated this tick:** `84774271` — ABEL'S THEOREM survey
-  (~218-line analysis with explicit leansearch outputs confirming
-  Mathlib gaps, 3 proof routes, recommended `pathIntegralFunctional_separates_points`
-  opaque to capture Abel content, anti-hack chain diagram). Build
-  green (8052 jobs). Sorry retained.
-- **Codex:** ~28 min, still silent.
+- **Aristotle: 1/5 active.**
+  - `b782c387` ContMDiffSection topology recon — IN_PROGRESS (off the
+    visible-list page after 4h+ — long-running, normal).
+- **Integrated this tick:** `10e5bfbb` — TRACE-PULLBACK IDENTITY survey
+  (anti-hack #4). ~220-line analysis with step-by-step proof outline
+  (branched-covering → fiber summation → identity principle), Mathlib
+  status table, two blockers (opaque-no-spec + missing-infrastructure),
+  recommends `analyticPushforward_analyticPullback_spec` opaque. Build
+  green (8055 jobs).
+- **Codex:** earlier `run_in_background` invocation appears stalled
+  (stdout 0 bytes for 30+ min). Switched to file-based prompt approach:
+  `codex-prompt.md` written for user to fire manually with
+  `codex exec "$(cat codex-prompt.md)"`.
 - **User WIP:** `M Jacobian/ComplexTorus/ULiftTransport.lean` — Claude
   leaves untouched.
 - **Local proof work this tick:** Heartbeat.
