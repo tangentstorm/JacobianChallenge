@@ -12,21 +12,18 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 21:23 EDT)
+## Live Status (2026-04-27 21:29 EDT)
 
-- **Aristotle: 3/5 active.** Scaled up per user request 2026-04-27
-  21:22 ("start farming top-down work to aristotle, too. send it the
-  parts of the tree that look like they might be the highest-risk"):
+- **Aristotle: 3/5 active.**
   - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~4h12m elapsed (normal long-running).
-  - `84774271` analyticOfCurve_injective survey — just submitted.
-    **HIGHEST-RISK** (Abel's theorem, anti-hack #2).
-  - `10e5bfbb` analyticPushforward_analyticPullback survey — just
-    submitted. **HIGHEST-RISK** (trace-pullback identity, anti-hack #4).
-- **Codex:** still running (~12 min, pids active but stdout 0 bytes).
-  No edits to integrate yet.
-- **Local proof work this tick:** scaled up Aristotle top-down farming
-  on the two highest-risk anti-hack surveys; disjoint write scopes.
+    ~4h18m elapsed (normal long-running).
+  - `84774271` analyticOfCurve_injective survey — IN_PROGRESS at 4%
+    (~3 min in). Abel's theorem (anti-hack #2).
+  - `10e5bfbb` analyticPushforward_analyticPullback survey — QUEUED
+    ~1 min (normal). Trace-pullback identity (anti-hack #4).
+- **Codex:** ~18 min, pids alive but stdout still 0 bytes. No edits
+  to integrate.
+- **Local proof work this tick:** Heartbeat.
 - **User WIP:** `M Jacobian/ComplexTorus/ULiftTransport.lean` — Claude
   leaves untouched.
 - **Local proof work this tick:** Heartbeat.
