@@ -12,17 +12,17 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 19:55 EDT)
+## Live Status (2026-04-27 20:02 EDT)
 
-- **Aristotle: 2/5 active.**
+- **Aristotle: 1/5 active.**
   - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~2h40m elapsed (normal long-running).
-  - `600f7ff6` OnePointCxRecon — IN_PROGRESS at 9% (~10 min in).
-- **Integrated this tick:** `7abae190` — PeriodLattice discreteness
-  blocker analysis (110-line survey, sorry retained). Identifies
-  `periodPairing` opaqueness + missing integrality declaration as the
-  blocker; recommends an `opaque periodSubgroup_isZLattice` companion
-  to `periodPairing` in PeriodFunctional.lean.
+    ~2h47m elapsed (normal long-running).
+- **Integrated this tick:** `600f7ff6` — OnePointCxRecon (~480-line
+  Mathlib API survey for making `OnePoint ℂ` a complex manifold).
+  Confirms NO `ChartedSpace ℂ (OnePoint ℂ)` exists in v4.28.0; must
+  build from scratch via two-chart atlas (identity + inversion).
+  Three concrete implementation packets queued (A: inversionChart,
+  B: ChartedSpace, C: IsManifold).
 - **Local proof work this tick:** integration only.
 
 
