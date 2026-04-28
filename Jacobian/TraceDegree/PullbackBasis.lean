@@ -64,22 +64,47 @@ lemma analyticPullback_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(�
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ)) ω
       (analyticPullback f hf) := sorry
 
+/-- Companion spec: pullback along the identity map equals the identity
+homomorphism (as a `ContinuousAddMonoidHom`).
+
+Bottom-up: pullback of forms along `id` is the identity on forms;
+descent through the period quotient preserves this. -/
+theorem analyticPullback_id_spec :
+    analyticPullback (X := X) (Y := X) id contMDiff_id =
+      ContinuousAddMonoidHom.id (BasisAnalyticJacobian X) := sorry
+
 /-- Pullback along the identity is the identity.
 
-Top-down obligation. Bottom-up: pullback of forms along `id` is the
-identity on forms; descent preserves identities. -/
+Assembly from `analyticPullback_id_spec`. -/
 lemma analyticPullback_id_apply (P : BasisAnalyticJacobian X) :
-    analyticPullback (X := X) (Y := X) id contMDiff_id P = P := sorry
+    analyticPullback (X := X) (Y := X) id contMDiff_id P = P := by
+  rw [analyticPullback_id_spec]
+  rfl
 
-/-- Pullback distributes contravariantly over composition.
+/-- Companion spec for `analyticPullback_comp_apply`: pullback of forms is
+contravariantly functorial, and descent preserves composition.
 
-Top-down obligation. Bottom-up: pullback of forms is contravariantly
-functorial; descent preserves composition. -/
-lemma analyticPullback_comp_apply
+Bottom-up content: this is the named bottom-up obligation that
+`analyticPullback_comp_apply` (and any other lemma needing contravariant
+functoriality of the pullback) delegates to.  A real proof requires the
+descent through the period quotient of the contravariant functoriality
+of `pullbackForms` in basis coordinates. -/
+theorem analyticPullback_comp_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (P : BasisAnalyticJacobian Z) :
     analyticPullback (g ∘ f) (hg.comp hf) P =
       analyticPullback f hf (analyticPullback g hg P) := sorry
+
+/-- Pullback distributes contravariantly over composition.
+
+Pure assembly of `analyticPullback_comp_spec`. -/
+lemma analyticPullback_comp_apply
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
+    (P : BasisAnalyticJacobian Z) :
+    analyticPullback (g ∘ f) (hg.comp hf) P =
+      analyticPullback f hf (analyticPullback g hg P) :=
+  analyticPullback_comp_spec f hf g hg P
 
 end JacobianChallenge.TraceDegree

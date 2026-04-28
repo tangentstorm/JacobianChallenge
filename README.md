@@ -1,10 +1,19 @@
+This project was edited by [Aristotle](https://aristotle.harmonic.fun).
+
+To cite Aristotle:
+- Tag @Aristotle-Harmonic on GitHub PRs/issues
+- Add as co-author to commits:
+```
+Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
+```
+
 # Jacobian Challenge
 
 A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann surface (see _About_ below for scope).
 
 ## Progress Report
 
-Last tick: 2026-04-28 07:21 EDT
+Last tick: 2026-04-28 07:39 EDT
 
 ```text
 Headline progress
@@ -12,7 +21,7 @@ Headline progress
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excludes 2 Inventory metadata items)
-Aristotle integrations to date 103        `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 104        `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  383 / 392    counting `:= sorry`-ending lines per file. 8 files with
                                           real sorries — see below.
 
