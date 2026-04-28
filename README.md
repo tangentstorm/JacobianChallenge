@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 00:54 EDT
+Last tick: 2026-04-28 00:52 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -68,16 +68,13 @@ Active jobs (ours):     2 / 5
                         `90750074` TOP-DOWN refinement on
                                    `holomorphicOneForm_onePointCx_subsingleton`
                                    (Liouville core, anti-hack #1 critical
-                                   path). IN_PROGRESS at 6%, ~13 min.
-                        `dc8af381` (NEW this tick) discharge
+                                   path). IN_PROGRESS at 10%, ~13 min.
+                        `dc8af381` discharge
                                    `exists_compact_periodFundamentalDomain`
-                                   in `PeriodFunctional.lean` from the
-                                   existing `IsZLattice ℝ` instance via
-                                   Mathlib's `ZSpan` machinery. Targeted
-                                   sorry-count reduction 3→2 in that
-                                   file. Just submitted, 0%.
-Integrated this tick:   none.  Tree was clean at start of tick;
-                        no new Aristotle deliveries since `5dfd5106`.
+                                   in `PeriodFunctional.lean` via Mathlib
+                                   `ZSpan`.  IN_PROGRESS at 1%, ~1 min.
+Integrated this tick:   none — heartbeat.  Tree was clean at start;
+                        both packets early-stage.
 ```
 
 ```text
