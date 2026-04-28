@@ -12,21 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 05:12 EDT)
+## Live Status (2026-04-28 05:15 EDT)
 
 - **Aristotle: 2/5 ours active.**
   - `1f7d4399` TOPDOWN on the finite leaf
     `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` in
     `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
-    IN_PROGRESS at 20%, ~57min (stuck ~18min — approaching 30min
-    cancel threshold).
+    IN_PROGRESS at 20%, ~60min (stuck ~21min — 9 min from announced
+    30min cancel threshold).
   - `f1786fa8` Step 2 of the Banach-data construction recon —
     `ContMDiffSection.supNorm` + 5 sup-norm properties in NEW file
     `Jacobian/HolomorphicForms/SectionSupNorm.lean`.
-    IN_PROGRESS at 17%, ~43min (advanced 14→17% — consistent
-    +3%/tick).
-- **This tick:** heartbeat.  f1786fa8 advancing consistently;
-  1f7d4399 still stuck at 20%.
+    IN_PROGRESS at 17%, ~46min (paused after 1→17% run — 3 min at 17%).
+- **This tick:** heartbeat.  Both packets stuck this tick; backend
+  congestion likely.
 - **Aristotle integrations to date:** 101 (from
   `aristotle_jobs.jsonl`).
 - **Most-recent integrations** (full detail in
