@@ -70,22 +70,46 @@ lemma analyticPushforward_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘
       (analyticPushforward f hf) :=
   analyticPushforward_contMDiff_spec f hf
 
-/-- Pushforward along the identity is the identity.
+/-- Specification: the trace of the identity holomorphic map on
+holomorphic 1-forms is the identity; descending through the period
+quotient preserves this.
 
-Top-down obligation. Bottom-up: the trace of the identity holomorphic
-map is the identity. -/
-lemma analyticPushforward_id_apply (P : BasisAnalyticJacobian X) :
+Bottom-up obligation. Provable once `analyticPushforward` is concretized
+as a descent of the basis-aligned trace map: the trace of the identity
+branched covering (degree 1, single sheet) reduces to the identity on
+forms, hence to the identity on the period quotient. -/
+theorem analyticPushforward_id_spec (P : BasisAnalyticJacobian X) :
     analyticPushforward (X := X) (Y := X) id contMDiff_id P = P := sorry
 
-/-- Pushforward distributes covariantly over composition.
+/-- Pushforward along the identity is the identity.
 
-Top-down obligation. Bottom-up: trace is covariantly functorial under
-composition of holomorphic maps. -/
-lemma analyticPushforward_comp_apply
+Top-down obligation. Assembled from `analyticPushforward_id_spec`. -/
+lemma analyticPushforward_id_apply (P : BasisAnalyticJacobian X) :
+    analyticPushforward (X := X) (Y := X) id contMDiff_id P = P :=
+  analyticPushforward_id_spec P
+
+/-- Covariant composition specification for the analytic pushforward.
+
+Companion spec tying `analyticPushforward` to its expected functorial
+behaviour under composition.  Bottom-up: provable once
+`analyticPushforward` is concretized as the descent of the
+basis-aligned trace map on holomorphic 1-forms. -/
+theorem analyticPushforward_comp_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (P : BasisAnalyticJacobian X) :
     analyticPushforward (g ∘ f) (hg.comp hf) P =
       analyticPushforward g hg (analyticPushforward f hf P) := sorry
+
+/-- Pushforward distributes covariantly over composition.
+
+Top-down obligation. Assembled from `analyticPushforward_comp_spec`. -/
+lemma analyticPushforward_comp_apply
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
+    (P : BasisAnalyticJacobian X) :
+    analyticPushforward (g ∘ f) (hg.comp hf) P =
+      analyticPushforward g hg (analyticPushforward f hf P) :=
+  analyticPushforward_comp_spec f hf g hg P
 
 end JacobianChallenge.TraceDegree
