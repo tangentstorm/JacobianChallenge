@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 22:00 EDT
+Last tick: 2026-04-27 22:03 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -67,12 +67,14 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     0 / 5
-                        `b782c387` apparently complete (off-page in `aristotle list`,
-                                   not in IN_PROGRESS column) but `aristotle result`
-                                   crashes with Windows cp1252 UnicodeEncodeError
-                                   in `print_compact` — separate CLI bug, can't
-                                   retrieve right now.
+Active jobs (ours):     1 / 5
+                        `b782c387` ContMDiffSection topology recon — still
+                                   IN_PROGRESS at 17%, 4h58m elapsed (off-page
+                                   in `aristotle list` but verified via direct
+                                   `aristotle result` call with PYTHONIOENCODING=utf-8
+                                   workaround for a Windows cp1252 CLI bug).
+                                   Same % across many ticks — Aristotle internal
+                                   work, not stuck.
 Integrated this tick:   None.
 ```
 
