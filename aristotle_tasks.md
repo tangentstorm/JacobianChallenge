@@ -12,27 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 01:25 EDT)
+## Live Status (2026-04-28 01:29 EDT)
 
-- **Aristotle: 3/5 ours active.** Backend slow — only 6992e390 advanced.
+- **Aristotle: 2/5 ours active.**
   - `90750074` Liouville core (`holomorphicOneForm_onePointCx_subsingleton`).
-    IN_PROGRESS at 11%, ~45 min elapsed.
+    IN_PROGRESS at 11%, ~49 min elapsed.
   - `dc8af381` `exists_compact_periodFundamentalDomain` reduction in
-    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 11%, ~33 min.
-  - `6992e390` `holomorphicOneForm_locallyCompact_of_compactRiemannSurface`
-    reduction in `CompactRiemannSurface.lean` (3→2).  IN_PROGRESS at 11%,
-    ~28 min (advanced 5%→11%).
-- **Local proof work this tick (Aristotle slow):** extended
-  `Jacobian/HolomorphicForms/EntireZero.lean` (now 105 lines, sorry-free)
-  with a third corollary:
-    * `Differentiable.eq_zero_of_quadratic_decay_at_infty` — entire +
-      `‖f z‖ ≤ C / ‖z‖^2` for `‖z‖ ≥ R` (with `C ≥ 0`) ⇒ identically 0.
-  Reduced to the existing `eq_zero_of_inv_decay_at_infty` via the
-  trivial bound `1/‖z‖^2 ≤ 1/‖z‖` for `‖z‖ ≥ 1`.  This is the
-  chart-pullback form on `ℂℙ¹` — directly applicable to the
-  Liouville core when 90750074 returns.
-  Build green: `lake build Jacobian.HolomorphicForms.EntireZero`
-  (8026 jobs).
+    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 11%, ~37 min.
+- **Aristotle integration this tick:** `6992e390`
+  `holomorphicOneForm_locallyCompact_of_compactRiemannSurface` —
+  clean 13-line proof using the still-sorry but named
+  `holomorphicOneForm_montel X B` plus translation invariance:
+  build `WeaklyLocallyCompactSpace` from the explicit set equality
+  `closedBall x 1 = (· + x) '' closedBall 0 1` (proved by `ext` +
+  `simp`), apply `IsCompact.image (continuous_add_right x)`, then
+  conclude `LocallyCompactSpace` via
+  `WeaklyLocallyCompactSpace.locallyCompactSpace`.  File sorry
+  count `CompactRiemannSurface.lean` reduced 3 → 2.  Only the two
+  Riemann-Roch leaves (`holomorphicOneForm_normedSpace_uniformOnCompact`
+  and `holomorphicOneForm_montel`) remain in this file.  Build
+  green (2409 jobs).
 - **Aristotle integration this tick:** `5dfd5106`
   `holomorphicOneForm_montel` survey, +275 lines of docstring on
   `CompactRiemannSurface.lean`.  7-step proof outline (chart cover

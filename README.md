@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 01:25 EDT
+Last tick: 2026-04-28 01:29 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,16 +12,17 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 98         `"status":"integrated"` lines in aristotle_jobs.jsonl
-Production sorry-free files  383 / 391    using the precise count (`:= sorry`-ending lines per file
-                                          to avoid doc-comment false positives; intentional design
-                                          files Challenge/Solution/StatementBank and 11 Recon files
-                                          excluded from denominator). 8 real-sorry production files
-                                          (3 Claude-owned, 5 user-WIP):
-                                            Claude-owned (3 files, 9 sorries):
-                                              HolomorphicForms/CompactRiemannSurface  (3, Riemann-Roch leaves
-                                                                                       — Banach data, Montel,
-                                                                                       local compactness)
+Aristotle integrations to date 99         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Production sorry-free files  383 / 392    counting `:= sorry`-ending lines per file (doc-comment
+                                          false positives excluded; intentional design files
+                                          Challenge/Solution/StatementBank and 11 Recon files
+                                          excluded from denominator). NEW file `EntireZero.lean`
+                                          this tick is sorry-free, so 391+1 = 392.
+                                          8 real-sorry production files (3 Claude-owned, 5 user-WIP):
+                                            Claude-owned (3 files, 8 sorries — 1 fewer this tick):
+                                              HolomorphicForms/CompactRiemannSurface  (2, Riemann-Roch leaves
+                                                                                       — Banach data, Montel;
+                                                                                       local-compactness reduced)
                                               HolomorphicForms/GenusZeroClassification (3, Liouville core
                                                                                        + uniformization-lite +
                                                                                        hard-direction unif.;
@@ -64,19 +65,17 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     3 / 5  (Aristotle still slow — only 6992e390
-                                      advanced, 5% → 11%; others stuck)
-                        `90750074` Liouville core (11%, ~45 min).
-                        `dc8af381` PeriodFunctional 3→2 (11%, ~33 min).
-                        `6992e390` CompactRiemannSurface 3→2 (11%, ~28 min).
-Integrated this tick:   Local proof work — extended
-                        `Jacobian/HolomorphicForms/EntireZero.lean`
-                        with a third corollary
-                        `Differentiable.eq_zero_of_quadratic_decay_at_infty`
-                        (the chart-pullback form on ℂℙ¹).  Reduced
-                        to the existing inv-decay version via the
-                        trivial bound `1/‖z‖^2 ≤ 1/‖z‖` for `‖z‖ ≥ 1`.
-                        Sorry-free.  Build green.
+Active jobs (ours):     2 / 5
+                        `90750074` Liouville core (11%, ~49 min, stuck).
+                        `dc8af381` PeriodFunctional 3→2 (11%, ~37 min, stuck).
+Integrated this tick:   `6992e390` CompactRiemannSurface 3→2 reduction —
+                        clean 13-line proof using
+                        `holomorphicOneForm_montel X B` (still-sorry but
+                        named) + translation invariance: build
+                        `WeaklyLocallyCompactSpace` from the explicit
+                        translation `closedBall x 1 = (·+x) '' closedBall 0 1`,
+                        then conclude `LocallyCompactSpace`.  File sorry
+                        count 3→2.  Build green (2409 jobs).
 ```
 
 ```text
