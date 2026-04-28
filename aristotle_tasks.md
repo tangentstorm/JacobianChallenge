@@ -12,15 +12,14 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 01:57 EDT)
+## Live Status (2026-04-28 02:00 EDT)
 
-- **Aristotle: 1/5 ours active.**
-  - `d493c66b` (NEW this tick) follow-up TOPDOWN refinement on
+- **Aristotle: 1/5 ours active.** (heartbeat)
+  - `d493c66b` follow-up TOPDOWN refinement on
     `holomorphicOneForm_onePointCx_toFun_eq_zero` in
     `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — the
-    chart-coefficient extraction sorry exposed by `90750074`.  Asks
-    for full proof (best), `≤4` named obligations split (good), or
-    second-level Mathlib-API survey (acceptable).  Just submitted, 0%.
+    chart-coefficient extraction sorry exposed by `90750074`.
+    QUEUED, ~2 min elapsed.
 - **Prior tick:** `90750074` Liouville core
   TOPDOWN refinement — substantive 3-piece split:
     1. `entire_tendsto_zero_eq_zero` (Liouville application).
