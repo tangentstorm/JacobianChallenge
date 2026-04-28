@@ -12,12 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 01:43 EDT)
+## Live Status (2026-04-28 01:52 EDT)
 
-- **Aristotle: 1/5 ours active.**
-  - `90750074` Liouville core (`holomorphicOneForm_onePointCx_subsingleton`).
-    IN_PROGRESS at 16%, ~58 min elapsed.
-- **Aristotle return + rescue this tick:** `dc8af381` returned with
+- **Aristotle: 0/5 ours active.** (clean checkpoint after substantive run)
+- **Aristotle integration this tick:** `90750074` Liouville core
+  TOPDOWN refinement — substantive 3-piece split:
+    1. `entire_tendsto_zero_eq_zero` (Liouville application).
+       Aristotle's proof was 5 lines using
+       `Complex.liouville_theorem_aux` + `simp_all +decide`.  Replaced
+       by Claude with a one-liner reference to
+       `Differentiable.eq_zero_of_tendsto_zero_cocompact` from
+       `EntireZero.lean` (avoids duplicate proof).
+    2. NEW sorry `holomorphicOneForm_onePointCx_toFun_eq_zero` —
+       the chart-coefficient-extraction obligation.  Excellent
+       docstring documenting the chart-pullback proof structure
+       (identity chart → f(z) dz; inversion chart → -f(1/w)/w² dw
+       forces f → 0 at infinity; Liouville).  Names the Mathlib gap:
+       no API for reading `ContMDiffSection` of cotangent bundle
+       through chart trivializations.
+    3. `holomorphicOneForm_onePointCx_subsingleton` is now sorry-free
+       assembly via `ext_toFun`.
+  NET: file sorry count UNCHANGED (3) but structure significantly
+  better — deep analytic content (Liouville) fully discharged via
+  `EntireZero.lean`; remaining sorry is specifically the chart
+  extraction.  Added import: `Jacobian.HolomorphicForms.Ext` (for
+  `ext_toFun`) and `Jacobian.HolomorphicForms.EntireZero`.
+  Build green (8036 jobs); Challenge green (8026 jobs).
+- **Prior tick rescue:** `dc8af381` returned with
   status COMPLETE_WITH_ERRORS.  Diff was unusable as-is (broad
   `import Mathlib`, commented-out docstring delimiter, tangled
   `convert ... aesop` chain that didn't typecheck).  HOWEVER the

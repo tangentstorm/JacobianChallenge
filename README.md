@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 01:43 EDT
+Last tick: 2026-04-28 01:52 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 99         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 100        `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  383 / 392    counting `:= sorry`-ending lines per file. 8 real-sorry
                                           production files (3 Claude-owned, 5 user-WIP):
                                             Claude-owned (3 files, 7 sorries — 1 fewer this tick):
@@ -62,23 +62,25 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5
-                        `90750074` Liouville core (16%, ~58 min).
-Integrated this tick:   `dc8af381` (PARTIAL) — Aristotle returned
-                        COMPLETE_WITH_ERRORS with a broken diff
-                        (broad `import Mathlib`, commented-out docstring,
-                        tangled `convert ... aesop` chain).  Diff NOT
-                        integrated as-is.  Claude rescued by writing a
-                        clean ~30-line local proof using Aristotle's
-                        correct outline (Module.Free.chooseBasis +
-                        Module.Basis.ofZLatticeBasis +
-                        ZSpan.fundamentalDomain +
-                        ZSpan.floor +
-                        AddSubgroup.toIntSubmodule_toAddSubgroup for the
-                        AddSubgroup lift).  Theorem MOVED to bottom of
-                        file (after the `_isZLattice` instances).
-                        Sorry count `PeriodFunctional.lean` reduced 3→2.
-                        Build green (2960 jobs); Challenge green.
+Active jobs (ours):     0 / 5  (queue empty — clean checkpoint)
+Integrated this tick:   `90750074` Liouville core TOPDOWN refinement —
+                        substantive 3-piece split on
+                        `holomorphicOneForm_onePointCx_subsingleton`.
+                        (1) Aristotle introduced
+                        `entire_tendsto_zero_eq_zero` (Liouville
+                        application — replaced by Claude with a
+                        one-liner reference to
+                        `Differentiable.eq_zero_of_tendsto_zero_cocompact`
+                        from `EntireZero.lean` to avoid duplicate proof).
+                        (2) NEW sorry `holomorphicOneForm_onePointCx_toFun_eq_zero`
+                        with excellent docstring naming the specific
+                        Mathlib gap (no chart-coefficient extraction API
+                        for `ContMDiffSection` of cotangent bundle).
+                        (3) `_subsingleton` is now sorry-free assembly
+                        via `ext_toFun`.  Net file sorry count
+                        UNCHANGED (3) but structure is significantly
+                        better — deep analytic content (Liouville)
+                        fully discharged by `EntireZero.lean`.
 ```
 
 ```text
