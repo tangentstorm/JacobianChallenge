@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 00:50 EDT
+Last tick: 2026-04-28 00:54 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -64,29 +64,35 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5
+Active jobs (ours):     2 / 5
                         `90750074` TOP-DOWN refinement on
                                    `holomorphicOneForm_onePointCx_subsingleton`
                                    (Liouville core, anti-hack #1 critical
-                                   path). IN_PROGRESS at 3%, ~9 min.
-Integrated this tick:   `5dfd5106` Montel survey — extended the
-                        `holomorphicOneForm_montel` docstring by
-                        ~275 lines with a 7-step proof outline,
-                        Mathlib v4.28.0 status table, dependency
-                        graph, and effort estimate (600-1100 LOC).
-                        KEY NEW STRUCTURAL FINDING (Blocker 5): the
-                        Montel statement is FALSE for arbitrary
-                        `B : HolomorphicOneFormBanachData X` because
-                        the structure has no axiom relating
-                        `B.toNorm` to pointwise section evaluation.
-                        Recommends adding a `norm_le_iSup` field;
-                        statement-shape change deferred until step
-                        (a) is being attacked. Build green (2409 jobs).
+                                   path). IN_PROGRESS at 6%, ~13 min.
+                        `dc8af381` (NEW this tick) discharge
+                                   `exists_compact_periodFundamentalDomain`
+                                   in `PeriodFunctional.lean` from the
+                                   existing `IsZLattice ℝ` instance via
+                                   Mathlib's `ZSpan` machinery. Targeted
+                                   sorry-count reduction 3→2 in that
+                                   file. Just submitted, 0%.
+Integrated this tick:   none.  Tree was clean at start of tick;
+                        no new Aristotle deliveries since `5dfd5106`.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SUBMITTED `dc8af381` — substantive sorry-elimination packet on
+`exists_compact_periodFundamentalDomain` in `PeriodFunctional.lean`.
+This leaf is actually a corollary of the other two leaves
+(discreteness + full ℝ-rank ⇒ compact fundamental domain via
+Mathlib's `ZSpan` machinery in a finite-dim ℝ-space).  Closing it
+collapses 3→2 sorries in that file and exposes that the structural
+content reduces to integrality + Riemann-bilinear nondegeneracy.
+Disjoint write scope from in-flight `90750074` (different file).
+
+PRIOR TICK (still standing):
 INTEGRATED `5dfd5106` Montel survey — Aristotle delivered a
 ~275-line docstring extension on `holomorphicOneForm_montel` in
 `Jacobian/HolomorphicForms/CompactRiemannSurface.lean`. Highlights:
