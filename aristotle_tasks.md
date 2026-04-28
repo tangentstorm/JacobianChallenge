@@ -12,76 +12,67 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 07:21 EDT)
+## Live Status (2026-04-28 09:46 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
-  Currently 13/20 sorries have a dedicated packet running.
-- **Active 1:1 packets (13 of 20 sorries):** see README's Aristotle
-  status table for the full list and ID mapping.
-- **Active infrastructure packet:** `8585f085` Step 4 SectionComplete.lean.
-- **7 sorries still pending packets** — hit Aristotle's
-  max-concurrent-jobs cap on the last 2 submits of this tick. As
-  packets complete, the remainder gets submitted: PeriodFunctional ×2,
-  GenusZeroClassification ×4, and CompactRiemannSurface
-  `_normedSpace_uniformOnCompact` (which waits on 8585f085 →
-  SectionComplete to land first anyway).
-- **Cancelled this tick (bundled, replaced 1:1):** `7e2bc288`,
-  `4d56b249`, `d1d10391`, `d967438b`, `c5101910`, `b3280ab0`.
-- Aristotle integrations to date: 103.
-- **This tick:** heartbeat.  Aristotle integrations to date: 103.
-- **Recent local moves:**
-    * `ChartCoeffExtractionRecon.lean` (NEW) — Mathlib API gap survey.
-    * `plan.md` — documented Banach-data 5-step construction status
-      + chart-extraction gap in Phase 2.
-    * `Ext.lean` — added `eq_zero_iff_toFun`, `eq_zero_of_toFun`.
-- **Aristotle integration this tick:** `f1786fa8` Step 2 of the
-  Banach-data construction recon.  CLEAN 117-line sorry-free
-  `Jacobian/HolomorphicForms/SectionSupNorm.lean`.  Defines `supNorm`
-  via `⨆ x : M, ‖σ.toFun x‖`; proves all 5 sup-norm properties
-  sorry-free:
-    * `supNorm_zero` — handles empty-M case via `Real.iSup_of_isEmpty`.
-    * `supNorm_eq_zero_iff` — `[Nonempty M]` + threading `hcompat`
-      through auxiliary `bddAbove_range_norm` helper.
-    * `supNorm_add_le` — `ciSup_le` + triangle inequality + sup
-      decomposition.
-    * `supNorm_smul_le` — `norm_smul_le` per fiber + sup distribution.
-    * `supNorm_neg` — `iSup_congr` + `norm_neg`.
-  `omit` annotations drop unneeded typeclass deps on supNorm_zero
-  and supNorm_neg.  Build green
-  (`lake build Jacobian.HolomorphicForms.SectionSupNorm`, 8027 jobs).
-  Step 2 of 5 toward eventual
-  `holomorphicOneForm_normedSpace_uniformOnCompact` discharge.
-  Aristotle integrations to date: 102.
-- **Aristotle integrations to date:** 101 (from
-  `aristotle_jobs.jsonl`).
-- **Most-recent integrations** (full detail in
-  `aristotle_jobs.jsonl`):
-    * `63158306` Step 1 of Banach-data construction
-      (`SectionFiberNorm.lean`, NEW 115 LOC sorry-free).
-    * `90750074` Liouville core 3-piece split on
-      `holomorphicOneForm_onePointCx_subsingleton`.
-    * `6992e390` translation-invariance reduction of
-      `holomorphicOneForm_locallyCompact_of_compactRiemannSurface`.
-    * `5dfd5106` `holomorphicOneForm_montel` survey
-      (CompactRiemannSurface.lean +275 LOC, surfaced Blocker 5).
-    * `848a0c88` `SectionTopologyConstructionRecon.lean` (NEW, 5-step
-      Banach-data construction plan; `f1786fa8` is Step 2).
-- **Most-recent local moves:**
-    * Split `holomorphicOneForm_onePointCx_toFun_eq_zero` into
-      `_toFun_finite_eq_zero` (substantive, delegated to 1f7d4399)
-      and `_toFun_infty_eq_zero` (continuity, kept local for next
-      tick — disjoint-write-scope constraint with 1f7d4399).
-      Original is now sorry-free assembly via
-      `cases x using OnePoint.rec`.
-    * Cancelled `d493c66b` after stuck at 37% × ~138 min (well past
-      typical 30-75 min) — replaced by local split + 1f7d4399.
-    * Resolved Blocker 5 by adding `norm_le` field to
-      `HolomorphicOneFormBanachData`.
-    * Created `EntireZero.lean` (5 corollaries, sorry-free Liouville-
-      zero lemmas: tendsto_zero_cocompact, inv_decay, quadratic_decay,
-      polynomial_decay, norm_eventually_le).
-    * Rescued `dc8af381` partial — Claude wrote clean local proof of
-      `exists_compact_periodFundamentalDomain` (PeriodFunctional 3→2).## Layer status
+  21 production sorries, ~14 covered by active packets (some older
+  packets still in flight may not be visible in `aristotle list`'s
+  top-10 window).
+- **Aristotle integrations to date: 116** (from `aristotle_jobs.jsonl`).
+- **Backend status:** queue saturated since ~08:21 EDT; all 11 visible
+  packets have been QUEUED for 10–95 minutes with **none transitioning
+  to IN_PROGRESS**. The Aristotle backend appears to be offline or
+  heavily backlogged. Treating "Never wait on an Aristotle result"
+  literally: working locally on whatever Claude can close.
+
+### Active our-packets (visible in `aristotle list`)
+
+| ID | File | Sorry | Submitted |
+|---|---|---|---|
+| `f914a263` | PushforwardBasis | `contMDiff_continuousAddMonoidHom_complexTorus` | 08:21 |
+| `654d5071` | AnalyticOfCurveBasis | `pathIntegralFunctional_contMDiff_spec` | 08:21 |
+| `7f3ec297` | PullbackBasis | `analyticPullback_mk_eq` + `basisDualPullback_comp` paired | 08:23 |
+| `e3dcd529` | PushforwardBasis | `analyticPushforward_mk_spec` | 08:23 |
+| `0a5f74a8` | PeriodFunctional | one of 2 sorries | 09:01 |
+| `03715a4d` | GenusZeroClassification | one of 4 sorries | 09:01 |
+| `05100f76` | PullbackBasis | `basisDualPullback_id` | 09:01 |
+| `b7799fc9` | PushforwardBasis | `pushforwardTraceLift_id` | 09:24 |
+| `6b2f47f1` | AnalyticOfCurveBasis | `pathIntegralFunctional_separates_points_spec` | 09:35 |
+
+### Older our-packets (likely still queued; not in top-10 window)
+
+- `8585f085` Step 4 SectionComplete (Banach-data construction).
+- `bbe527bb` AnalyticDegree anti-hack #4 (now matches the
+  Claude-introduced `_spec` companion, same content).
+- `c7feba63` CompactRiemannSurface `holomorphicOneForm_montel`.
+- `d8fd495f` ULiftTransport `_contMDiff_up`.
+- `2bd5f151` ULiftTransport `_contMDiff_down`.
+
+### Cancelled this session (replaced by local discharge)
+
+- `c69fcd88` (analyticPullback_id_spec) — local split via
+  `basisDualPullback_id` companion.
+- `369f3f7b` (analyticPullback_contMDiff) — local 1-line application
+  of `contMDiff_continuousAddMonoidHom_complexTorus`.
+- `16277f52` (quotientMk_contMDiff_spec) — local 1-line application
+  of `ComplexTorus.contMDiff_mk` (existing infra).
+- `65001239` (analyticPushforward_id_eq) — local split via
+  `pushforwardTraceLift_id` companion.
+
+### Recent local Claude moves (this session, ordered)
+
+- Integrated 6 Aristotle deeper-companion-spec splits in one cluster:
+  99825c13, 777f976c, 3264c622, a3b5ae84, 09a7e39c, 90fc4a81 —
+  collectively promoted ~6 spec sorries to real assembly proofs.
+- Skipped 2aab5e91 (structural conflict with 99825c13's
+  `basisDualPullback`) and 7f273ec8 (redundant blocker docstring).
+- Local discharges: 4 sorries (listed in Cancelled above).
+- Split `analyticPushforward_analyticPullback` (anti-hack #4) per
+  Option A in its own docstring: introduced `_spec` companion, public
+  lemma is now sorry-free assembly.
+- Submitted 9 new packets for newly-emerged or orphaned sorries.
+
+## Layer status
 
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
