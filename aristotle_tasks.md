@@ -12,24 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 21:57 EDT)
+## Live Status (2026-04-27 22:00 EDT)
 
-- **Aristotle: 1/5 active.**
-  - `b782c387` ContMDiffSection topology recon — IN_PROGRESS (off the
-    visible-list page after 4h+ — long-running, normal).
-- **Integrated this tick:** `10e5bfbb` — TRACE-PULLBACK IDENTITY survey
-  (anti-hack #4). ~220-line analysis with step-by-step proof outline
-  (branched-covering → fiber summation → identity principle), Mathlib
-  status table, two blockers (opaque-no-spec + missing-infrastructure),
-  recommends `analyticPushforward_analyticPullback_spec` opaque. Build
-  green (8055 jobs).
-- **Codex:** earlier `run_in_background` invocation appears stalled
-  (stdout 0 bytes for 30+ min). Switched to file-based prompt approach:
-  `codex-prompt.md` written for user to fire manually with
-  `codex exec "$(cat codex-prompt.md)"`.
-- **User WIP:** `M Jacobian/ComplexTorus/ULiftTransport.lean` — Claude
-  leaves untouched.
-- **Local proof work this tick:** Heartbeat.
+- **Aristotle: 0/5 active.** `b782c387` (ContMDiffSection topology recon)
+  appears to be COMPLETE — it's off-page in `aristotle list` after 4+ hours,
+  not in the IN_PROGRESS column. However `aristotle result b782c387`
+  crashes with a Windows cp1252 UnicodeEncodeError in
+  `aristotlelib/progress_utils.py:30` (print_compact). This is an
+  Aristotle-CLI Windows-encoding bug, not a project issue. Other
+  packets retrieved fine; `b782c387`'s print line apparently contains
+  characters (emoji?) that cp1252 can't handle. **Will retry next
+  tick** or work around if the bug persists.
+- **Codex:** awaiting user to fire `codex-prompt.md` manually.
+- **Local proof work this tick:** Heartbeat. Tree clean.
 
 
 ## Layer status
