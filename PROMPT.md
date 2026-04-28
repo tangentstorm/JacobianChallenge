@@ -1,14 +1,5 @@
 # Claude Timer-Tick Prompt
 
-Use this prompt on a repeating timer, for example:
-
-```text
-/loop 15m <contents of this file>
-```
-
-You are managing the JacobianChallenge Lean project at
-`C:\ver\JacobianChallenge`.
-
 The goal is a real Lean/Mathlib formalization of the Jacobian API in
 `Jacobian/Challenge.lean`, built bottom-up through reusable infrastructure.
 Claude manages the project. Aristotle does bounded proof/construction work.
