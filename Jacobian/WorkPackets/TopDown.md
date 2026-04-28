@@ -341,15 +341,15 @@ This table is the current top-down bridge inventory. Keep it updated as
 | `Jacobian` ✅ refined | `ULift (ComplexTorus.quotient (Fin (genus X) → ℂ) periodFullComplexLattice)` | `periodFullComplexLattice` (named sorry in `Jacobian.Periods.PeriodLattice`) |
 | `AddCommGroup` ✅ refined | `inferInstance` via ULift transport | (none — derived) |
 | `TopologicalSpace` ✅ refined | `inferInstance` via ULift transport | (none — derived) |
-| `T2Space` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice.isClosed`; `_isDiscrete` is discharged by `periodSubgroup_isZLattice` (opaque leaf in `Jacobian.Periods.PeriodFunctional`) |
-| `CompactSpace` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice` fundamental-domain compactness; `_isDiscrete` is discharged by `periodSubgroup_isZLattice` (opaque leaf in `Jacobian.Periods.PeriodFunctional`) |
+| `T2Space` ✅ refined | `inferInstance` via ULift transport | depends on `periodFullComplexLattice.isClosed`; `_isDiscrete` is discharged by `periodSubgroup_isZLattice` (named theorem leaf in `Jacobian.Periods.PeriodFunctional`) |
+| `CompactSpace` ✅ refined | `inferInstance` via ULift transport | `_fundamentalDomain_isCompact` and `_fundamentalDomain_covers` now both delegate to `exists_compact_periodFundamentalDomain` (single named-theorem leaf in `Jacobian.Periods.PeriodFunctional`); `periodFundamentalDomain` un-opaqued to `Classical.choose` of that existence statement; `_isDiscrete` is discharged by `periodSubgroup_isZLattice` (named theorem leaf, same module). Auxiliary leaf `periodSubgroup_spans_real` (Riemann bilinear nondegeneracy) declared but not yet wired. |
 | `ChartedSpace` ✅ refined | `complexTorusULift_chartedSpace` (real proof, no own sorry; codex commit `c49cf9a`) | (none — discharged) |
 | `IsManifold` ✅ refined (top-down) | `complexTorusULift_isManifold` (still sorry; HasGroupoid bookkeeping deferred) | OpenPartialHomeomorph associativity / EqOnSource bookkeeping for `Homeomorph.ulift` chart cancellation |
-| `LieAddGroup` ✅ refined (top-down) | `complexTorusULift_lieAddGroup` (still sorry) | smoothness of `+` and `-` on `ULift`-transported manifold structure |
+| `LieAddGroup` ✅ refined (top-down) | `complexTorusULift_lieAddGroup` (assembly; `complexTorusULift_contMDiff_add` now factors through down/add/up) | `complexTorusULift_contMDiff_up` and `_down` remain named transport sorries |
 | `Jacobian.ofCurve` ✅ refined | `ULift.up ∘ AbelJacobi.analyticOfCurve` | `pathIntegralFunctional` (named `opaque` in `Jacobian.AbelJacobi.AnalyticOfCurveBasis`) |
 | `ofCurve_contMDiff` ✅ refined | `contMDiff_uLift_up.comp analyticOfCurve_contMDiff` | `analyticOfCurve_contMDiff` and `contMDiff_uLift_up` (named sorries) |
 | `ofCurve_self` ✅ refined | unfold + `pathIntegralFunctional_self` | `pathIntegralFunctional_self` (named sorry) |
-| `ofCurve_inj` ✅ refined | `analyticOfCurve_injective` + `ULift.up_injective` | `analyticOfCurve_injective` (named sorry) — Abel theorem |
+| `ofCurve_inj` ✅ refined | `analyticOfCurve_injective` + `ULift.up_injective` | `pathIntegralFunctional_separates_points` (named sorry) — Abel theorem point-separation leaf |
 | `pushforward` ✅ refined | bundled hom over `analyticPushforward` + `ULift.up` | `analyticPushforward` (named `opaque` in `Jacobian.TraceDegree.PushforwardBasis`) |
 | `pushforward_contMDiff` ✅ refined | `contMDiff_uLift_up.comp (analyticPushforward_contMDiff.comp contMDiff_uLift_down)` | `analyticPushforward_contMDiff` (named sorry) |
 | `pushforward_id_apply` ✅ refined | unfold + `analyticPushforward_id_apply` | `analyticPushforward_id_apply` (named sorry) |

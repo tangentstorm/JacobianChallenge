@@ -194,9 +194,16 @@ lemma basisAlignedPeriodSubgroup_isClosed :
 
 /-- A fundamental domain for the period subgroup, in the basis-aligned model.
 
-Top-down obligation. Bottom-up: explicit construction (e.g. closure of
-`ZSpan.fundamentalDomain` against a chosen ℤ-basis of the subgroup). -/
-opaque periodFundamentalDomain : Set (Fin (analyticGenus ℂ X) → ℂ)
+Refined (this round): un-opaqued. Now defined as the chosen
+witness from `exists_compact_periodFundamentalDomain` in
+`Jacobian/Periods/PeriodFunctional.lean`. This routes the
+*existence* of a compact, covering fundamental domain to a single
+named bottom-up obligation, while keeping `periodFundamentalDomain`
+as concrete data in this file. The downstream lemmas
+`periodFundamentalDomain_isCompact` and `periodFundamentalDomain_covers`
+then become one-liners delegating to `Classical.choose_spec`. -/
+noncomputable def periodFundamentalDomain : Set (Fin (analyticGenus ℂ X) → ℂ) :=
+  (exists_compact_periodFundamentalDomain X).choose
 
 /-- The fundamental domain is compact.
 
@@ -318,17 +325,22 @@ periodPairing (opaque, PeriodFunctional.lean)
 ```
 -/
 lemma periodFundamentalDomain_isCompact :
-    IsCompact (periodFundamentalDomain X) := sorry
+    IsCompact (periodFundamentalDomain X) :=
+  (exists_compact_periodFundamentalDomain X).choose_spec.1
 
 /-- The fundamental-domain translates cover the model space.
 
-Top-down obligation. Bottom-up: full-rank / Riemann bilinear
-nondegeneracy — the period subgroup contains 2g ℝ-linearly independent
-vectors in the 2g-dimensional ℝ-vector space underlying
-`Fin g → ℂ`. -/
+Refined (this round): pure assembly — delegates to the second
+component of `(exists_compact_periodFundamentalDomain X).choose_spec`,
+which is the same statement modulo unfolding
+`basisAlignedPeriodSubgroup` to its concrete representative. The
+mathematical content (full-rank / Riemann bilinear nondegeneracy)
+lives in the named obligation `exists_compact_periodFundamentalDomain`
+in `Jacobian/Periods/PeriodFunctional.lean`. No own sorry. -/
 lemma periodFundamentalDomain_covers :
     ∀ v : Fin (analyticGenus ℂ X) → ℂ,
-      ∃ g ∈ basisAlignedPeriodSubgroup X, v - g ∈ periodFundamentalDomain X := sorry
+      ∃ g ∈ basisAlignedPeriodSubgroup X, v - g ∈ periodFundamentalDomain X :=
+  (exists_compact_periodFundamentalDomain X).choose_spec.2
 
 /-- The period lattice of a compact Riemann surface, bundled as a
 `FullComplexLattice` in the basis-aligned model `Fin (analyticGenus ℂ X) → ℂ`.

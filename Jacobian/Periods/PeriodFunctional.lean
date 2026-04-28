@@ -67,6 +67,69 @@ theorem periodSubgroup_isZLattice
         (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
         ((periodPairing ℂ X).range)) := sorry
 
+/-- The basis-aligned period subgroup spans the full ℝ-vector space
+`Fin (analyticGenus ℂ X) → ℂ`, viewed as ℝ²ᵍ. Together with
+`periodSubgroup_isZLattice`, this is the second half of the
+`IsZLattice ℝ` content for the period subgroup.
+
+Bottom-up content: Riemann bilinear nondegeneracy — the period
+subgroup contains 2g real-linearly independent vectors. The full
+ℤ-rank statement follows from the integrality of the period
+pairing on `H₁(X, ℤ)` plus the classical fact that the period
+matrix has nonzero imaginary determinant.
+
+This is the named bottom-up obligation that the eventual
+construction of an `IsZLattice ℝ` instance for the basis-aligned
+period subgroup will delegate to. It is not yet wired into
+`PeriodLattice.lean`'s assembly because the surrounding
+`IsZLattice` infrastructure (Submodule promotion of the
+AddSubgroup, basis extraction) is still being designed. -/
+theorem periodSubgroup_spans_real
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    Submodule.span ℝ
+      ((AddSubgroup.map
+        (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+        ((periodPairing ℂ X).range) :
+        AddSubgroup (Fin (analyticGenus ℂ X) → ℂ)) :
+        Set (Fin (analyticGenus ℂ X) → ℂ))
+      = ⊤ := sorry
+
+/-- Existence of a compact fundamental domain for the basis-aligned
+period subgroup.
+
+Top-down obligation. Bottom-up content: under the `IsZLattice ℝ`
+witness assembled from `periodSubgroup_isZLattice` and
+`periodSubgroup_spans_real`, the set `closure (ZSpan.fundamentalDomain b)`
+(for `b` the lifted ℤ-basis) is compact — by
+`ZSpan.fundamentalDomain_isBounded` plus
+`Bornology.IsBounded.isCompact_closure` in the `ProperSpace`
+`Fin (analyticGenus ℂ X) → ℂ` — and its period-subgroup translates
+cover the model space, by
+`ZSpan.exist_unique_vadd_mem_fundamentalDomain` plus closure.
+
+This existence statement is the named bottom-up obligation that the
+`periodFundamentalDomain` definition (and the
+`periodFundamentalDomain_isCompact` / `_covers` lemmas) in
+`Jacobian/Periods/PeriodLattice.lean` delegate to. Stating it as
+`∃ D, IsCompact D ∧ (covering)` keeps `PeriodLattice.lean` free to
+*choose* a concrete `D` via `Classical.choose`, while the
+mathematical work — discreteness + full ℝ-rank ⇒ compact
+fundamental domain — is centralised here next to its inputs. -/
+theorem exists_compact_periodFundamentalDomain
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    ∃ D : Set (Fin (analyticGenus ℂ X) → ℂ),
+      IsCompact D ∧
+      ∀ v : Fin (analyticGenus ℂ X) → ℂ,
+        ∃ g ∈ (AddSubgroup.map
+          (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+          ((periodPairing ℂ X).range) :
+          AddSubgroup (Fin (analyticGenus ℂ X) → ℂ)),
+          v - g ∈ D := sorry
+
 /-- The period subgroup: the image of the period pairing, as an
 additive subgroup of the linear dual of holomorphic 1-forms. -/
 noncomputable def periodSubgroup

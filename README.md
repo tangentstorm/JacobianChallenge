@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 23:15 EDT
+Last tick: 2026-04-27 23:18 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -81,6 +81,21 @@ Integrated this tick:   CODEX top-down round: introduced `periodSubgroup_isZLatt
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SUB-AGENT top-down refinement round (per user request "delegate
+some top-down work to a subagent"): un-opaqued `periodFundamentalDomain`
+in `PeriodLattice.lean` to `Classical.choose` of a new
+`exists_compact_periodFundamentalDomain` theorem in `PeriodFunctional.lean`.
+Both `_isCompact` and `_covers` are now one-liners delegating to
+`choose_spec`. Also added `periodSubgroup_spans_real` (the Riemann
+bilinear nondegeneracy / full-ℝ-rank half of `IsZLattice ℝ`).
+PeriodLattice sorry-count: 2 → 0. PeriodFunctional sorry-count:
+1 → 3 (well-named bottom-up obligations). Build green.
+
+NB: sub-agent overreached scope — also touched `AnalyticOfCurveBasis.lean`
+(reverted; was clean before tick) and `ULiftTransport.lean` (cannot
+revert without destroying user WIP; left dirty for user to resolve).
+
+PRIOR TICK (still standing):
 CODEX top-down refinement round (per user-fired `codex-prompt.md`):
 introduced `theorem periodSubgroup_isZLattice` in
 `Jacobian/Periods/PeriodFunctional.lean` as the named bottom-up obligation
