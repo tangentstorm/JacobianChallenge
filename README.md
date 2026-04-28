@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 00:52 EDT
+Last tick: 2026-04-28 00:55 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -64,17 +64,20 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     2 / 5
-                        `90750074` TOP-DOWN refinement on
-                                   `holomorphicOneForm_onePointCx_subsingleton`
-                                   (Liouville core, anti-hack #1 critical
-                                   path). IN_PROGRESS at 10%, ~13 min.
-                        `dc8af381` discharge
-                                   `exists_compact_periodFundamentalDomain`
-                                   in `PeriodFunctional.lean` via Mathlib
-                                   `ZSpan`.  IN_PROGRESS at 1%, ~1 min.
-Integrated this tick:   none — heartbeat.  Tree was clean at start;
-                        both packets early-stage.
+Active jobs (ours):     3 / 5
+                        `90750074` `holomorphicOneForm_onePointCx_subsingleton`
+                                   (Liouville core).  IN_PROGRESS at 11%.
+                        `dc8af381` `exists_compact_periodFundamentalDomain`
+                                   reduction (PeriodFunctional 3→2).
+                                   IN_PROGRESS at 3%.
+                        `6992e390` (NEW this tick) TOPDOWN reduction
+                                   on `holomorphicOneForm_locallyCompact_of_compactRiemannSurface`
+                                   — discharge sorry-free using
+                                   still-sorry `holomorphicOneForm_montel B`
+                                   via translation invariance on a normed
+                                   space.  CompactRiemannSurface 3→2.
+                                   Just submitted, 0%.
+Integrated this tick:   none.  Tree was clean at start.
 ```
 
 ```text
