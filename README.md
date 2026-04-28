@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 06:54 EDT
+Last tick: 2026-04-28 06:57 EDT
 
 ```text
 Headline progress
@@ -58,7 +58,7 @@ Active (ours): 1 / 5
   8585f085   Step 4 of Banach-data construction recon — completeness via
              embedding HolomorphicOneForm ℂ X into C(X,ℂ) + Weierstrass-style
              closedness in NEW file Jacobian/HolomorphicForms/SectionComplete.lean.
-             IN_PROGRESS 26%, ~54min. Off-critical-path.
+             IN_PROGRESS 26%, ~56min. Off-critical-path.
 
 Recent integrations
   51fd0fce   SectionMetric (Step 3) — dist + 4 MetricSpace axioms, sorry-free
