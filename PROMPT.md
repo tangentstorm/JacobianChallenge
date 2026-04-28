@@ -56,29 +56,39 @@ The timer will call you again.
    - Whenever you integrate Aristotle changes, refresh `README.md` with the
      current progress report before committing.
 
-3. Keep Aristotle busy — but **only with substantive work**, and
-   **never let Aristotle block you**.
-   - Aim for up to 5 active Aristotle tasks (counted from
-     `aristotle_jobs.jsonl`, not from `aristotle list`), but **do not
-     fill the queue with trivial fillers**. If a candidate task's
-     proof would be 1 line (`rfl`, `sub_self`, a single `rw`,
-     term-mode `mt _.mp h`, etc.), prove it locally instead. Aristotle
-     packets should be 5-30+ line proofs requiring non-obvious
-     reductions, multi-step rewrite chains, case splits, induction, or
-     careful `ext + simp/rw` bundling.
-   - **Off-critical-path big tasks (hours of churn) are fine** — and
-     having a couple of them running in parallel is fine. Don't
-     constrain submissions to "bounded" or "fast"; deep theorems and
-     surveys are valid Aristotle work.
-   - **The constraint is that Claude's local work keeps advancing.**
-     Never wait on an Aristotle result. If Claude's next useful move
-     depends on a specific in-flight Aristotle outcome, switch to a
-     different local target — Aristotle is a parallel worker, not a
-     bottleneck.
-   - It is fine to have 0/5 active when no real work is ready.
-     Leaving the queue light beats round-tripping trivials.
-   - Use disjoint write scopes for parallel tasks.
-   - Every time you submit a job, append a JSONL line to
+3. **Every production sorry has an active Aristotle job at all times.**
+   The queue is not capped at 5 — it should mirror the live sorry set.
+   Aristotle works the front; Claude works the back; whoever finishes
+   first wins.
+   - **Submission rule:** for every production `sorry` (every file in
+     the open-sorry list except the design files
+     `Challenge.lean`/`Solution.lean`/`StatementBank.lean`/`*Recon*.lean`),
+     there should be a corresponding Aristotle job in
+     `aristotle_jobs.jsonl` with `status: "submitted"` (and not yet
+     `integrated`/`cancelled`). When a new sorry appears (e.g. from a
+     top-down split), submit a packet for it. When a sorry is
+     discharged (locally or by Aristotle), the corresponding packet
+     either integrated or gets cancelled.
+   - **Trivial packets are fine now.** The old "no rfl/single-rw
+     packets" rule is replaced by this one: every sorry gets a job,
+     including the ones whose proofs are short. Claude will pick the
+     short ones up locally before Aristotle gets to them.
+   - **Claude's local pick: longest-queued sorry that still has a
+     `submitted` (not yet `IN_PROGRESS`) Aristotle job.** Work it
+     locally. When the local proof lands, cancel the corresponding
+     Aristotle job (per the "only cancel if already done locally"
+     rule). This keeps Aristotle focused on the front of the queue
+     (likely the deeper proofs) while Claude clears the back.
+   - **Off-critical-path big tasks (hours of churn) are fine** — deep
+     theorems and surveys are valid Aristotle work.
+   - **Never wait on an Aristotle result.** Aristotle is a parallel
+     worker, not a bottleneck. If Claude's next useful move depends on
+     a specific in-flight Aristotle outcome, switch to a different
+     sorry.
+   - **Disjoint write scopes for parallel tasks.** Aristotle packets
+     in flight on the same file can collide; serialize per-file or
+     scope each packet to a single declaration.
+   - **Every time you submit a job, append a JSONL line** to
      `aristotle_jobs.jsonl` with `{id, status: "submitted", queue,
      target_file, prompt_summary, submitted, integrated: null, notes}`
      before committing the tick.
