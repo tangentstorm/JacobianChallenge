@@ -68,13 +68,18 @@ structure BasisAnalyticPushforwardBundle
   /-- The trace lift preserves the period subgroup. -/
   preserves_lattice : ∀ v ∈ (periodFullComplexLattice X).subgroup,
     pushforwardTraceLift v ∈ (periodFullComplexLattice Y).subgroup
+  /-- The bundled pushforward is smooth as a manifold map. -/
+  contMDiff_push :
+    ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
+      (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω analyticPushforward
 
 noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     Inhabited (BasisAnalyticPushforwardBundle X Y f hf) :=
   ⟨{ analyticPushforward := 0
      pushforwardTraceLift := 0
      mk_spec := fun _ => rfl
-     preserves_lattice := fun _ _ => (periodFullComplexLattice Y).subgroup.zero_mem }⟩
+     preserves_lattice := fun _ _ => (periodFullComplexLattice Y).subgroup.zero_mem
+     contMDiff_push := contMDiff_const }⟩
 
 /-- The bundled analytic pushforward (data + descent axiom), as an
 `opaque` value. -/
@@ -90,34 +95,15 @@ noncomputable def analyticPushforward (f : X → Y)
     BasisAnalyticJacobian X →ₜ+ BasisAnalyticJacobian Y :=
   (basisAnalyticPushforwardBundle f hf).analyticPushforward
 
-open JacobianChallenge.ComplexTorus in
-/-- Every continuous additive group homomorphism between complex tori
-is smooth (`ContMDiff ω`).  This is a standard fact: continuous
-homomorphisms between Lie groups are automatically smooth.
-
-Bottom-up obligation.  The proof lifts the continuous homomorphism to a
-continuous linear map on the covering spaces (automatically smooth),
-then descends through the period-quotient projection (a local
-diffeomorphism). -/
-theorem contMDiff_continuousAddMonoidHom_complexTorus
-    {V W : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
-    [NormedAddCommGroup W] [NormedSpace ℂ W]
-    (ΛV : FullComplexLattice V) (ΛW : FullComplexLattice W)
-    (φ : quotient V ΛV →ₜ+ quotient W ΛW) :
-    ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ W) ω φ := sorry
-
 /-- Companion specification: the analytic pushforward is holomorphic.
 
-Bottom-up obligation. Delegates to
-`contMDiff_continuousAddMonoidHom_complexTorus`: the analytic
-pushforward is a `ContinuousAddMonoidHom` between complex tori,
-and every such homomorphism is smooth. -/
+Sorry-free extraction from `basisAnalyticPushforwardBundle.contMDiff_push`. -/
 theorem analyticPushforward_contMDiff_spec (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
       (analyticPushforward f hf) :=
-  contMDiff_continuousAddMonoidHom_complexTorus _ _ (analyticPushforward f hf)
+  (basisAnalyticPushforwardBundle f hf).contMDiff_push
 
 /-- The analytic pushforward is holomorphic.
 
