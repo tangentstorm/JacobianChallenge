@@ -12,13 +12,13 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 20:48 EDT)
+## Live Status (2026-04-27 20:51 EDT)
 
 - **Aristotle: 2/5 active.**
   - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~3h33m elapsed (normal long-running).
-  - `f735aa6d` OnePointCxChartedSpace — IN_PROGRESS at 26% (~38 min;
-    4th tick at 26% — internal work, not stalled).
+    ~3h36m elapsed (normal long-running).
+  - `f735aa6d` OnePointCxChartedSpace — IN_PROGRESS at 30% (~41 min;
+    broke out of 26% plateau).
 - **User WIP:** `M Jacobian/ComplexTorus/ULiftTransport.lean` — Claude
   leaves untouched.
 - **Local proof work this tick:** Heartbeat.
