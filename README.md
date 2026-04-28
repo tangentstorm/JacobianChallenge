@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 01:52 EDT
+Last tick: 2026-04-28 01:57 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -62,8 +62,16 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     0 / 5  (queue empty — clean checkpoint)
-Integrated this tick:   `90750074` Liouville core TOPDOWN refinement —
+Active jobs (ours):     1 / 5
+                        `d493c66b` (NEW this tick) follow-up TOPDOWN
+                                   on `holomorphicOneForm_onePointCx_toFun_eq_zero`
+                                   (chart-coefficient extraction — the
+                                   sorry exposed by 90750074's Liouville
+                                   split).  Just submitted, 0%.
+Integrated this tick:   none — heartbeat after prior-tick integration.
+
+PRIOR TICK (still standing):
+Integrated `90750074` Liouville core TOPDOWN refinement —
                         substantive 3-piece split on
                         `holomorphicOneForm_onePointCx_subsingleton`.
                         (1) Aristotle introduced
