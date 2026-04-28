@@ -12,14 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 07:03 EDT)
+## Live Status (2026-04-28 07:21 EDT)
 
-- **Aristotle: 1/5 ours active.**
-  - `8585f085` Step 4 of the Banach-data construction recon —
-    completeness via embedding HolomorphicOneForm ℂ X into C(X,ℂ) +
-    Weierstrass-style closedness in NEW file
-    `Jacobian/HolomorphicForms/SectionComplete.lean`.  Hardest step
-    of the recon (80-150 LOC). IN_PROGRESS at 26%, ~62min. Letting it run.
+- **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
+  Currently 13/20 sorries have a dedicated packet running.
+- **Active 1:1 packets (13 of 20 sorries):** see README's Aristotle
+  status table for the full list and ID mapping.
+- **Active infrastructure packet:** `8585f085` Step 4 SectionComplete.lean.
+- **7 sorries still pending packets** — hit Aristotle's
+  max-concurrent-jobs cap on the last 2 submits of this tick. As
+  packets complete, the remainder gets submitted: PeriodFunctional ×2,
+  GenusZeroClassification ×4, and CompactRiemannSurface
+  `_normedSpace_uniformOnCompact` (which waits on 8585f085 →
+  SectionComplete to land first anyway).
+- **Cancelled this tick (bundled, replaced 1:1):** `7e2bc288`,
+  `4d56b249`, `d1d10391`, `d967438b`, `c5101910`, `b3280ab0`.
+- Aristotle integrations to date: 103.
 - **This tick:** heartbeat.  Aristotle integrations to date: 103.
 - **Recent local moves:**
     * `ChartCoeffExtractionRecon.lean` (NEW) — Mathlib API gap survey.
