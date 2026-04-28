@@ -12,7 +12,29 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 00:02 EDT)
+## Live Status (2026-04-28 00:11 EDT)
+
+- **Aristotle: 2/5 ours active.** `b782c387` 17%, `848a0c88` 1%
+  (NEW recon file, just submitted), `5dfd5106` QUEUED. b782c387
+  still 17% at 7h6m.
+- **Both sub-agents returned this tick:**
+  - **#1** integrated: `GenusZeroClassification.lean` easy-direction
+    refinement. Original monolithic sorry split into
+    `holomorphicOneForm_onePointCx_subsingleton` (Liouville analytic
+    core — sorry retained) +
+    `analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx`
+    (uniformization-lite transport step — sorry retained); the
+    assembly theorem itself is now sorry-free. Two PROVED helpers
+    in between (`finiteDimensionalHolomorphicOneForms_onePointCx`,
+    `analyticGenus_onePointCx_eq_zero`). 2→3 sorries net, with
+    one big sorry replaced by two Aristotle-shaped ones.
+  - **#2** integrated: `PeriodFunctional.lean` — bridge to
+    `IsZLattice ℝ` via `basisAlignedPeriodSubmoduleℤ` +
+    derived discreteness/IsZLattice instances. Sorry count UNCHANGED
+    (3→3) — the bridge is pure type-level transport from existing
+    leaves; downstream code can now write `[IsZLattice ℝ
+    (basisAlignedPeriodSubmoduleℤ X)]` and have it inferred.
+- **Build:** both deliverables lake build green (8036 jobs).
 
 - **Aristotle: 3/5 active.** Per user request to "give aristotle
   multiple jobs in parallel" with focus on biggest bottom-up gaps:

@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 00:02 EDT
+Last tick: 2026-04-28 00:11 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -81,6 +81,29 @@ Integrated this tick:   CODEX top-down round: introduced `periodSubgroup_isZLatt
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TWO MORE PARALLEL SUB-AGENTS returned (third round of parallel
+delegation per user "run a couple of each type in parallel"):
+
+(C) **Genus-zero EASY direction refined** in
+    `Jacobian/HolomorphicForms/GenusZeroClassification.lean`:
+    monolithic sorry split into two Aristotle-shaped obligations —
+    `holomorphicOneForm_onePointCx_subsingleton` (Liouville analytic
+    core) + `analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx`
+    (uniformization-lite transport step). Assembly theorem
+    `analyticGenus_eq_zero_of_homeomorphic_sphere` is now sorry-free.
+    Bonus: `finiteDimensionalHolomorphicOneForms_onePointCx` instance
+    proved cleanly via subsingleton-implies-⊤=⊥.
+
+(D) **IsZLattice ℝ bridge** in `Jacobian/Periods/PeriodFunctional.lean`:
+    new `basisAlignedPeriodSubmoduleℤ` (Submodule ℤ promotion) +
+    derived `DiscreteTopology` and `IsZLattice ℝ` instances — clean
+    type-level bridges from the existing 3 leaves. Downstream code
+    can now write `[IsZLattice ℝ (basisAlignedPeriodSubmoduleℤ X)]`
+    and have it inferred. Sorry count unchanged (3→3); future round
+    can replace `Classical.choose` with explicit
+    `ZSpan.fundamentalDomain` machinery.
+
+PRIOR TICK (still standing):
 TWO PARALLEL SUB-AGENTS dispatched (per user request "continue
 delegating top-down work to sub-agents... narrow gaps from bottom-up
 work"). Both stayed in scope this time, no overreach:
