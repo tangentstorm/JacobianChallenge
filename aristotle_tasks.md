@@ -12,24 +12,17 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 05:33 EDT)
+## Live Status (2026-04-28 05:36 EDT)
 
 - **Aristotle: 1/5 ours active.**
   - `51fd0fce` Step 3 of the Banach-data construction recon —
     `ContMDiffSection.dist` + 4 MetricSpace axioms in NEW file
     `Jacobian/HolomorphicForms/SectionMetric.lean`.
-    QUEUED ~9min (backend really congested).
-- **Substantive local move this tick:** updated `plan.md` Phase 2
-  with two new subsections:
-    * "Banach-data construction (in progress, 5-step plan)" —
-      documents Steps 1-5 with integration/in-flight status
-      (`63158306`, `f1786fa8`, `51fd0fce` in flight; Steps 4-5 TBD).
-    * "Chart-extraction Mathlib gap" — documents the specific Mathlib
-      v4.28.0 API gap that blocked `d493c66b` (138 min) and
-      `1f7d4399` (31 min); names what's missing
-      (`ContMDiffSection.localCoeff` extraction lemma); explicitly
-      flags this as a real blocker on the Liouville-core leaves.
-- **Prior tick cancelled:** `1f7d4399` (stuck 31min at 20%).
+    QUEUED ~12min (backend genuinely stuck).
+- **This tick:** heartbeat.  Cancel-resubmit unlikely to help
+  against backend-wide congestion.
+- **Prior tick:** documented Banach-data 5-step construction
+  status + chart-extraction Mathlib gap in `plan.md` Phase 2.
 - **Aristotle integration this tick:** `f1786fa8` Step 2 of the
   Banach-data construction recon.  CLEAN 117-line sorry-free
   `Jacobian/HolomorphicForms/SectionSupNorm.lean`.  Defines `supNorm`
