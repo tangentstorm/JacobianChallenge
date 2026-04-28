@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 00:42 EDT
+Last tick: 2026-04-28 00:50 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 97         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 98         `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  383 / 391    using the precise count (`:= sorry`-ending lines per file
                                           to avoid doc-comment false positives; intentional design
                                           files Challenge/Solution/StatementBank and 11 Recon files
@@ -64,31 +64,53 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     2 / 5
-                        `5dfd5106` Montel docstring survey on
-                                   `holomorphicOneForm_montel` —
-                                   IN_PROGRESS 14%, ~40 min elapsed.
-                        `90750074` (NEW this tick) TOP-DOWN refinement
-                                   on `holomorphicOneForm_onePointCx_subsingleton`
-                                   (Liouville core, anti-hack #1 critical path).
-                                   Just submitted, 0%.
-                        (`b782c387` SectionTopologyRecon dropped off the
-                                   visible list — submitted ~7h ago, may
-                                   have completed silently or remains in
-                                   long internal queue; not blocking.)
-Integrated this tick:   `848a0c88` SectionTopologyConstructionRecon —
-                        NEW 371-line construction-recon file laying out
-                        a concrete 5-step plan (180-305 LOC) for building
-                        the Banach data on `ContMDiffSection` for compact X.
-                        Includes 4 specific gaps, E=ℂ specialisation route
-                        (embed into C(X,ℂ) + closedness), risk matrix, key
-                        Mathlib lemma list. Build green (8026 jobs).
-                        Recon excluded from umbrella per existing policy.
+Active jobs (ours):     1 / 5
+                        `90750074` TOP-DOWN refinement on
+                                   `holomorphicOneForm_onePointCx_subsingleton`
+                                   (Liouville core, anti-hack #1 critical
+                                   path). IN_PROGRESS at 3%, ~9 min.
+Integrated this tick:   `5dfd5106` Montel survey — extended the
+                        `holomorphicOneForm_montel` docstring by
+                        ~275 lines with a 7-step proof outline,
+                        Mathlib v4.28.0 status table, dependency
+                        graph, and effort estimate (600-1100 LOC).
+                        KEY NEW STRUCTURAL FINDING (Blocker 5): the
+                        Montel statement is FALSE for arbitrary
+                        `B : HolomorphicOneFormBanachData X` because
+                        the structure has no axiom relating
+                        `B.toNorm` to pointwise section evaluation.
+                        Recommends adding a `norm_le_iSup` field;
+                        statement-shape change deferred until step
+                        (a) is being attacked. Build green (2409 jobs).
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INTEGRATED `5dfd5106` Montel survey — Aristotle delivered a
+~275-line docstring extension on `holomorphicOneForm_montel` in
+`Jacobian/HolomorphicForms/CompactRiemannSurface.lean`. Highlights:
+7-step proof outline, dependency graph identifying 5 blockers, and
+effort estimate (600-1100 LOC across 3-5 modules to discharge).
+
+KEY NEW STRUCTURAL FINDING from `5dfd5106` (Blocker 5): the
+Montel statement is FALSE for arbitrary `B : HolomorphicOneFormBanachData X`
+— the structure currently has no axiom connecting `B.toNorm` to
+pointwise section evaluation. An arbitrary Banach norm need not
+make the closed unit ball compact. The fix is a small structure
+addition: a `norm_le_iSup` field bounding pointwise fiber norms by
+the global norm. Deferred until step (a) is being attacked,
+because `holomorphicOneForm_normedSpace_uniformOnCompact` is itself
+still a sorry (no constructor breaks).
+
+Sorry recount per-file (this tick): Claude-owned production sorries
+holding steady at 9 across 3 files (CompactRiemannSurface 3,
+GenusZeroClassification 3, PeriodFunctional 3 — PeriodLattice now
+fully delegating with 0 own sorries). User-WIP at 12 across 5
+files. Total 8 production files with real sorries (out of 391
+production files, 383 sorry-free, 98%).
+
+PRIOR TICK (still standing):
 INTEGRATED `848a0c88` SectionTopologyConstructionRecon — Aristotle's
 new 371-line construction-recon file for the Banach data on
 `ContMDiffSection`. Concrete 5-step plan (180-305 LOC) with E=ℂ
@@ -105,13 +127,6 @@ path for anti-hack #1 (`genus_eq_zero_iff_homeo`) and is now
 feasible because the OnePoint ℂ ChartedSpace + IsManifold instances
 both exist (f735aa6d + sub-agent A in prior ticks). Disjoint write
 scope from in-flight `5dfd5106`.
-
-Sorry recount per-file (this tick): Claude-owned production sorries
-holding steady at 9 across 3 files (CompactRiemannSurface 3,
-GenusZeroClassification 3, PeriodFunctional 3 — PeriodLattice now
-fully delegating with 0 own sorries). User-WIP at 12 across 5
-files. Total 8 production files with real sorries (out of 391
-production files, 383 sorry-free, 98%).
 
 PRIOR TICK (still standing):
 TWO MORE PARALLEL SUB-AGENTS returned (third round of parallel
