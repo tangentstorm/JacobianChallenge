@@ -12,20 +12,20 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 04:36 EDT)
+## Live Status (2026-04-28 04:39 EDT)
 
 - **Aristotle: 2/5 ours active.**
   - `1f7d4399` TOPDOWN on the finite leaf
     `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` in
     `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
-    IN_PROGRESS at 7%, ~21min.
+    IN_PROGRESS at 10%, ~24min.
   - `f1786fa8` Step 2 of the Banach-data construction recon —
     `ContMDiffSection.supNorm` + 5 sup-norm properties in NEW file
     `Jacobian/HolomorphicForms/SectionSupNorm.lean`.
-    IN_PROGRESS at 1%, ~7min (slow start).
-- **This tick:** heartbeat. Both packets active (1f7d4399 6→7%;
-  f1786fa8 still at 1%). No substantive local moves available
-  without conflicting with in-flight work.
+    IN_PROGRESS at 3%, ~10min.
+- **This tick:** heartbeat. Both packets active and progressing
+  (1f7d4399 7→10%; f1786fa8 1→3%). No substantive local moves
+  available without conflicting with in-flight work.
 - **Cancelled this tick:** `d493c66b` after stuck at 37% for ~138 min
   (well past typical successful job duration of 30-75 min — successful
   packets this session: 5dfd5106 ~36min, 6992e390 ~32min, 90750074 ~73min,
