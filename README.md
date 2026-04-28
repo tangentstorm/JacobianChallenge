@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 02:00 EDT
+Last tick: 2026-04-28 02:01 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -66,8 +66,10 @@ Active jobs (ours):     1 / 5
                         `d493c66b` follow-up TOPDOWN on
                                    `holomorphicOneForm_onePointCx_toFun_eq_zero`
                                    (chart-coefficient extraction).
-                                   QUEUED, ~2 min.
-Integrated this tick:   none — heartbeat.
+                                   QUEUED, ~3 min.
+Integrated this tick:   none — heartbeat.  The past hour delivered 4
+                        Aristotle integrations + EntireZero.lean
+                        (4 sorry-free Liouville lemmas).
 
 PRIOR TICK (still standing):
 Integrated `90750074` Liouville core TOPDOWN refinement —
