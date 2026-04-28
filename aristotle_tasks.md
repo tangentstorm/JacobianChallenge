@@ -12,19 +12,14 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 02:03 EDT)
+## Live Status (2026-04-28 02:06 EDT)
 
-- **Aristotle: 1/5 ours active.**
+- **Aristotle: 1/5 ours active.** (heartbeat — advancing)
   - `d493c66b` follow-up TOPDOWN refinement on
     `holomorphicOneForm_onePointCx_toFun_eq_zero` in
     `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — the
     chart-coefficient extraction sorry exposed by `90750074`.
-    IN_PROGRESS at 1%, ~4 min (just dequeued).
-- **Verification this tick:** `lake build Jacobian.Periods.PeriodLattice`
-  green (8036 jobs) — confirms the move of
-  `exists_compact_periodFundamentalDomain` to the bottom of
-  `PeriodFunctional.lean` (in the prior-tick rescue) didn't break
-  downstream consumers.
+    IN_PROGRESS at 5%, ~8 min (was 1% at last check).
 - Past hour: 4 substantive Aristotle integrations
   (5dfd5106 / 848a0c88 / 6992e390 / 90750074) + Aristotle 100th
   integration milestone + Claude-owned `EntireZero.lean`
