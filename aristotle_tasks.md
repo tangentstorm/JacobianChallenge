@@ -12,12 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 20:54 EDT)
+## Live Status (2026-04-27 20:57 EDT)
 
-- **Aristotle: 2/5 active.**
+- **Aristotle: 1/5 active.**
   - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~3h39m elapsed (normal long-running).
-  - `f735aa6d` OnePointCxChartedSpace — IN_PROGRESS at 32% (~44 min).
+    ~3h42m elapsed (normal long-running).
+- **Integrated this tick:** `f735aa6d` — **NEW: `ChartedSpace ℂ (OnePoint ℂ)`
+  instance** (sorry-free, 177-line file). Packets A+B of the genus-zero
+  classification plan are DONE. Real new infrastructure: ℂℙ¹ now has a
+  complex charted-space structure via the two-chart atlas
+  {identity, inversion}. Build green. Packet C (IsManifold) is the natural
+  follow-up.
+- **User WIP:** `M Jacobian/ComplexTorus/ULiftTransport.lean` — Claude
+  leaves untouched.
 - **User WIP:** `M Jacobian/ComplexTorus/ULiftTransport.lean` — Claude
   leaves untouched.
 - **Local proof work this tick:** Heartbeat.

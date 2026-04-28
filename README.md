@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 20:54 EDT
+Last tick: 2026-04-27 20:57 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 92         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 93         `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  381 / 389    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded). 8 real-sorry
                                           production files (3 Claude-owned-deep, 5 user-WIP):
@@ -67,17 +67,23 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     2 / 5
+Active jobs (ours):     1 / 5
                         `b782c387` ContMDiffSection topology recon — IN_PROGRESS
-                                   at 17%, ~3h elapsed (normal).
-                        `f735aa6d` OnePointCxChartedSpace — IN_PROGRESS at 32%
-                                   (~44 min in).
-Integrated this tick:   None.
+                                   at 17%, ~3h42m elapsed (normal).
+Integrated this tick:   `f735aa6d` — NEW `ChartedSpace ℂ (OnePoint ℂ)`
+                                    instance (sorry-free 177-line file).
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INTEGRATED `f735aa6d` — **NEW `ChartedSpace ℂ (OnePoint ℂ)` instance**
+in `Jacobian/HolomorphicForms/OnePointCxChartedSpace.lean` (sorry-free
+177-line file). Real new infrastructure: ℂℙ¹ now has a complex
+charted-space structure via the two-chart atlas {identity, inversion}.
+Build green. Packet C (`IsManifold 𝓘(ℂ,ℂ) ⊤`) is the natural follow-up.
+
+PRIOR TICK (still standing):
 SUBMITTED `f735aa6d` — OnePointCxChartedSpace (Packets A+B from
 600f7ff6's plan). Asks Aristotle to build `inversionChart`,
 `identityChart`, and the `ChartedSpace ℂ (OnePoint ℂ)` instance in a
