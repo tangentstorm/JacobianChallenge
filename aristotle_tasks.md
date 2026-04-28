@@ -12,19 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 22:00 EDT)
+## Live Status (2026-04-27 22:03 EDT)
 
-- **Aristotle: 0/5 active.** `b782c387` (ContMDiffSection topology recon)
-  appears to be COMPLETE — it's off-page in `aristotle list` after 4+ hours,
-  not in the IN_PROGRESS column. However `aristotle result b782c387`
-  crashes with a Windows cp1252 UnicodeEncodeError in
-  `aristotlelib/progress_utils.py:30` (print_compact). This is an
-  Aristotle-CLI Windows-encoding bug, not a project issue. Other
-  packets retrieved fine; `b782c387`'s print line apparently contains
-  characters (emoji?) that cp1252 can't handle. **Will retry next
-  tick** or work around if the bug persists.
+- **Aristotle: 1/5 active.**
+  - `b782c387` ContMDiffSection topology recon — verified via
+    `PYTHONIOENCODING=utf-8 aristotle result …` workaround: still
+    IN_PROGRESS at 17%, **4h58m elapsed**. Off-page in `aristotle list`
+    because of pagination, NOT because it completed. Per memory,
+    same-% across multiple ticks while IN_PROGRESS is Aristotle
+    internal work, not stuck. Workaround for the Windows cp1252
+    UnicodeEncodeError in `aristotlelib/progress_utils.py:30` is to
+    set `PYTHONIOENCODING=utf-8` before invoking the CLI.
 - **Codex:** awaiting user to fire `codex-prompt.md` manually.
-- **Local proof work this tick:** Heartbeat. Tree clean.
+- **Local proof work this tick:** verified b782c387 status; heartbeat.
 
 
 ## Layer status
