@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 01:16 EDT
+Last tick: 2026-04-28 01:25 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -64,18 +64,19 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     3 / 5  (all IN_PROGRESS, Aristotle backend
-                                      stalled — no % advance for ~10 min)
-                        `90750074` Liouville core (11%, ~36 min).
-                        `dc8af381` PeriodFunctional 3→2 (11%, ~25 min).
-                        `6992e390` CompactRiemannSurface 3→2 (5%, ~19 min).
-Integrated this tick:   Local proof work — NEW
+Active jobs (ours):     3 / 5  (Aristotle still slow — only 6992e390
+                                      advanced, 5% → 11%; others stuck)
+                        `90750074` Liouville core (11%, ~45 min).
+                        `dc8af381` PeriodFunctional 3→2 (11%, ~33 min).
+                        `6992e390` CompactRiemannSurface 3→2 (11%, ~28 min).
+Integrated this tick:   Local proof work — extended
                         `Jacobian/HolomorphicForms/EntireZero.lean`
-                        with two Liouville corollaries
-                        (`eq_zero_of_tendsto_zero_cocompact`,
-                        `eq_zero_of_inv_decay_at_infty`).  Both
-                        sorry-free.  Useful primitive for the
-                        Liouville-core chain on ℂℙ¹.
+                        with a third corollary
+                        `Differentiable.eq_zero_of_quadratic_decay_at_infty`
+                        (the chart-pullback form on ℂℙ¹).  Reduced
+                        to the existing inv-decay version via the
+                        trivial bound `1/‖z‖^2 ≤ 1/‖z‖` for `‖z‖ ≥ 1`.
+                        Sorry-free.  Build green.
 ```
 
 ```text
