@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 06:48 EDT
+Last tick: 2026-04-28 06:51 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -67,8 +67,9 @@ Active jobs (ours):     1 / 5
                         `8585f085` Step 4 of Banach-data recon —
                                    completeness via embedding HolomorphicOneForm
                                    ℂ X into C(X,ℂ) + closedness. Hardest
-                                   step (80-150 LOC). IN_PROGRESS at 26%, ~47min
-                                   (still 26% — stuck ~12min).
+                                   step (80-150 LOC). IN_PROGRESS at 26%, ~50min
+                                   (held same % for ~15min). Off-critical-path
+                                   big task — letting it run.
 Integrated this tick:   none — heartbeat.
 
 PRIOR TICK (still standing):
