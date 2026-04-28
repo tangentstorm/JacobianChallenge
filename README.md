@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 07:00 EDT
+Last tick: 2026-04-28 07:03 EDT
 
 ```text
 Headline progress
@@ -14,23 +14,20 @@ StatementBank declarations     22         named decls in Jacobian/WorkPackets/St
                                           (excludes 2 Inventory metadata items)
 Aristotle integrations to date 103        `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  383 / 392    counting `:= sorry`-ending lines per file. 8 files with
-                                          real sorries (3 Claude-owned, 5 user-WIP) — see below.
+                                          real sorries — see below.
 
 Reproduction: for f in <files>; do echo "$f $(grep -cE ':= sorry$' $f)"; done
 ```
 
 ```text
-Open sorries by file
+Open sorries by file (all production sorries; 8 files, 20 total)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Claude-owned (3 files, 8 sorries)
   HolomorphicForms/CompactRiemannSurface  2   Banach data, Montel
   HolomorphicForms/GenusZeroClassification 4  finite/infty Liouville leaves +
                                               uniformization-lite + hard-direction unif.
   Periods/PeriodFunctional                2   IsZLattice integrality + Riemann-bilinear nondegeneracy
-
-User-WIP (5 files, 12 sorries) — Claude leaves untouched
-  AbelJacobi/AnalyticOfCurveBasis         3
-  ComplexTorus/ULiftTransport             2
+  AbelJacobi/AnalyticOfCurveBasis         3   Abel-Jacobi injectivity scaffolding
+  ComplexTorus/ULiftTransport             2   ULift transition obligations
   TraceDegree/PullbackBasis               3
   TraceDegree/PushforwardBasis            3
   TraceDegree/AnalyticDegree              1
@@ -58,7 +55,7 @@ Active (ours): 1 / 5
   8585f085   Step 4 of Banach-data construction recon — completeness via
              embedding HolomorphicOneForm ℂ X into C(X,ℂ) + Weierstrass-style
              closedness in NEW file Jacobian/HolomorphicForms/SectionComplete.lean.
-             IN_PROGRESS 26%, ~59min. Off-critical-path.
+             IN_PROGRESS 26%, ~62min. Off-critical-path.
 
 Recent integrations
   51fd0fce   SectionMetric (Step 3) — dist + 4 MetricSpace axioms, sorry-free
@@ -84,7 +81,7 @@ Per-directory sorry-free ratios (production files)
   HolomorphicForms             27 / 29
   AnalyticJacobian             23 / 23
   AbelJacobi                   19 / 20
-  TraceDegree                  81 / 84   (3 user-WIP files)
+  TraceDegree                  81 / 84
   Periods                     171 / 173
   ComplexTorus                 47 / 53
 ```
@@ -98,8 +95,8 @@ Next priorities
 2. Liouville-core leaves in GenusZeroClassification.lean
    (_finite_eq_zero, _infty_eq_zero) — both blocked on the chart-extraction
    Mathlib gap documented in ChartCoeffExtractionRecon.lean.
-3. Continue ignoring the 5 user-WIP files (AnalyticOfCurveBasis,
-   ULiftTransport, PullbackBasis, PushforwardBasis, AnalyticDegree).
+3. The TraceDegree, ULiftTransport, and AnalyticOfCurveBasis sorries
+   are all in scope (no off-limits partition besides Challenge.lean).
 ```
 
 ## About
