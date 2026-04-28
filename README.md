@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 12:55 EDT
+Last tick: 2026-04-28 12:58 EDT
 
 ```text
 Headline progress
@@ -58,44 +58,45 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```
 
 ```text
-Aristotle status — 1 packet per sorry per PROMPT.md §3 (currently rolling out)
+Aristotle status — 1:1 packet/sorry coverage now complete (15/15)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active 1:1-targeted packets (covers 13 of 20 sorries)
-  bbe527bb   AnalyticDegree → analyticPushforward_analyticPullback (anti-hack #4)
-  c7feba63   CompactRiemannSurface → holomorphicOneForm_montel
+Active packets covering current sorries (15 / 15)
+  e7250841   CompactRiemannSurface → holomorphicOneForm_montel_subseq_tendsto (NEW this tick)
+  58eb31f0   CompactRiemannSurface → holomorphicOneForm_normedSpace_uniformOnCompact
+             (Step 5 assembly; depends on 8585f085 → SectionComplete first)
+  03715a4d   GenusZeroClassification → finite/infty Liouville leaves (generic)
+  e19361c4   GenusZeroClassification → Aristotle's pick (1:1 orphan coverage)
+  360a05bf   GenusZeroClassification → analyticGenus_eq_of_homeomorphic_sphere (L320)
+  fbfe1498   GenusZeroClassification → sphere homeomorph (L591)
+  0a5f74a8   PeriodFunctional → first sorry (isZLattice / spans_real)
+  bbca4cae   PeriodFunctional → second sorry
+  6b2f47f1   AnalyticOfCurveBasis → pathIntegralFunctional_separates_points (Abel)
   d8fd495f   ULiftTransport → complexTorusULift_contMDiff_up
   2bd5f151   ULiftTransport → complexTorusULift_contMDiff_down
-  b4029f72   PullbackBasis → analyticPullback_id_apply
-  c910ac80   PullbackBasis → analyticPullback_contMDiff
-  27c56154   PullbackBasis → analyticPullback_comp_apply
-  f280ecc6   PushforwardBasis → analyticPushforward_contMDiff
-  271cc21e   PushforwardBasis → analyticPushforward_id_apply
-  6c796045   PushforwardBasis → analyticPushforward_comp_apply
-  3d5f379e   AnalyticOfCurveBasis → pathIntegralFunctional_self
-  c6c4c612   AnalyticOfCurveBasis → analyticOfCurve_contMDiff
-  4f76ac75   AnalyticOfCurveBasis → pathIntegralFunctional_separates_points (Abel)
+  05100f76   PullbackBasis → basisDualPullback_id
+  403c9581   PullbackBasis → basisDualPullback_comp
+  b7799fc9   PushforwardBasis → pushforwardTraceLift_id
+  5f052643   PushforwardBasis → pushforwardTraceLift_comp_spec
 
 Active infrastructure packet
-  8585f085   Banach-data Step 4 (SectionComplete.lean, NEW). Builds toward
-             holomorphicOneForm_normedSpace_uniformOnCompact.
+  8585f085   Banach-data Step 4 (SectionComplete.lean, NEW). Feeds 58eb31f0.
 
-Sorries pending packets (7 remaining; Aristotle hit max-concurrent-jobs limit)
-  PeriodFunctional: 2 sorries (rate-limited)
-  GenusZeroClassification: 4 sorries (rate-limited)
-  CompactRiemannSurface: holomorphicOneForm_normedSpace_uniformOnCompact
-                          (waits on 8585f085 → SectionComplete first)
+Backend status: 10 packets QUEUED (none IN_PROGRESS) ~1-3 hours;
+no completions to integrate this tick.
 
-Cancelled earlier this tick (bundled, replaced by 1:1 above)
-  7e2bc288, 4d56b249, d1d10391, d967438b, c5101910, b3280ab0
+Stale packets (target sorry no longer exists post-TOPDOWN/bundle) — leave running:
+  bbe527bb (AnalyticDegree), c7feba63 (Montel monolithic), b4029f72/c910ac80/
+  27c56154/f280ecc6/271cc21e/6c796045/3d5f379e/c6c4c612 (older Pullback/
+  Pushforward/AnalyticOfCurve names). Per memory: only cancel if Claude has
+  done that exact work locally; here the work was reorganized, not finished —
+  let them run, results will be no-ops.
 
 Recent integrations
-  51fd0fce   SectionMetric (Step 3) — dist + 4 MetricSpace axioms, sorry-free
-  f1786fa8   SectionSupNorm (Step 2) — supNorm + 5 properties, sorry-free
-  63158306   SectionFiberNorm (Step 1) — fiberNorm + continuity, sorry-free
-  90750074   Liouville-core split (structure improved)
-  6992e390   Translation-invariance reduction in CompactRiemannSurface
-  5dfd5106   Montel survey + Blocker 5 finding
-  848a0c88   SectionTopologyConstructionRecon (5-step plan)
+  e833f04   Montel TOPDOWN split (subagent) — _subseq_tendsto + _norm_le
+  51fd0fce  SectionMetric (Step 3); f1786fa8 SectionSupNorm (Step 2);
+  63158306  SectionFiberNorm (Step 1)
+  90750074  Liouville-core split; 6992e390 LocallyCompact translation-inv
+  5dfd5106  Montel survey + Blocker 5; 848a0c88 ConstructionRecon (5-step plan)
 
 Full history in aristotle_jobs.jsonl.
 ```
