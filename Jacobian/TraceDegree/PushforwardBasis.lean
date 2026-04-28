@@ -47,13 +47,28 @@ noncomputable opaque analyticPushforward (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisAnalyticJacobian X →ₜ+ BasisAnalyticJacobian Y
 
+/-- Companion specification: the analytic pushforward is holomorphic.
+
+Bottom-up obligation. Provable once `analyticPushforward` is
+concretized as the descent of the basis-aligned trace map through
+the period quotient — the trace map is a continuous ℂ-linear map
+(hence smooth), and the period quotient projection is a local
+diffeomorphism, so the descended map is smooth. -/
+theorem analyticPushforward_contMDiff_spec (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
+      (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
+      (analyticPushforward f hf) := by sorry
+
 /-- The analytic pushforward is holomorphic.
 
-Top-down obligation. Bottom-up: smoothness of the trace descent. -/
+Top-down obligation. Assembly: delegates to
+`analyticPushforward_contMDiff_spec`. -/
 lemma analyticPushforward_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
-      (analyticPushforward f hf) := sorry
+      (analyticPushforward f hf) :=
+  analyticPushforward_contMDiff_spec f hf
 
 /-- Pushforward along the identity is the identity.
 
