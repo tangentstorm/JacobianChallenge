@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 01:09 EDT
+Last tick: 2026-04-28 01:12 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -64,12 +64,11 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     3 / 5  (all IN_PROGRESS, slow advance)
-                        `90750074` Liouville core (11%, ~30 min).
-                        `dc8af381` PeriodFunctional 3→2 (11%, ~19 min).
-                        `6992e390` CompactRiemannSurface 3→2 (5%, ~13 min).
-Integrated this tick:   none.  Local move: captured Blocker 5
-                        structural finding into `plan.md` Phase 2.
+Active jobs (ours):     3 / 5  (all IN_PROGRESS, no % change vs prior tick)
+                        `90750074` Liouville core (11%, ~33 min).
+                        `dc8af381` PeriodFunctional 3→2 (11%, ~22 min).
+                        `6992e390` CompactRiemannSurface 3→2 (5%, ~16 min).
+Integrated this tick:   none — heartbeat only.
 ```
 
 ```text
