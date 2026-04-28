@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 21:09 EDT
+Last tick: 2026-04-27 21:12 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -71,7 +71,7 @@ Active jobs (ours):     2 / 5
                         `b782c387` ContMDiffSection topology recon — IN_PROGRESS
                                    at 17%, ~4h elapsed (normal).
                         `75c45747` periodFundamentalDomain_isCompact —
-                                   IN_PROGRESS at 4% (~4 min in). TOP-DOWN
+                                   IN_PROGRESS at 6% (~7 min in). TOP-DOWN
                                    refinement experiment.
 Integrated this tick:   None.
 ```
