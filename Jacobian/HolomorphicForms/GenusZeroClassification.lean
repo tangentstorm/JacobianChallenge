@@ -1,5 +1,7 @@
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
+import Jacobian.HolomorphicForms.Ext
+import Jacobian.HolomorphicForms.EntireZero
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 
 /-!
@@ -132,20 +134,79 @@ assembly of these three pieces. The hard direction
 `homeomorphic_sphere_of_analyticGenus_eq_zero` below is unchanged.
 -/
 
-/-- The space of holomorphic 1-forms on `OnePoint ℂ` (= ℂℙ¹) is a
-subsingleton — there are no nonzero global holomorphic 1-forms.
+/-! #### Proof plan for `holomorphicOneForm_onePointCx_subsingleton`
 
-Bottom-up content: a holomorphic 1-form on `OnePoint ℂ` pulled back to
+A holomorphic 1-form on `OnePoint ℂ` pulled back to
 the identity chart is `f(z) dz` for some entire function `f : ℂ → ℂ`;
 under the inversion-chart transition `w = z⁻¹`, it becomes
 `-f(1/w) / w² dw`. Holomorphicity at `w = 0` forces `f(1/w) / w²` to be
-bounded near zero, which by Liouville's theorem (`Complex.liouville_theorem`)
-forces `f ≡ 0`.
+bounded near zero, which by Liouville's theorem forces `f ≡ 0`.
 
-This is the analytic core of `analyticGenus_eq_zero_of_homeomorphic_sphere`
-(easy direction of genus-zero classification). -/
+This is decomposed into:
+1. `entire_tendsto_zero_eq_zero` — Liouville-based vanishing of entire
+   functions that tend to 0 at infinity.
+2. `holomorphicOneForm_onePointCx_toFun_eq_zero` — the chart-level
+   argument showing every 1-form evaluates to zero at every point.
+3. `holomorphicOneForm_onePointCx_subsingleton` — pure assembly. -/
+
+/-- An entire function `f : ℂ → ℂ` that tends to `0` along `cocompact ℂ`
+(i.e. as `|z| → ∞`) is identically zero.
+
+This is the Liouville-application building block of the Liouville core.
+The proof is provided sorry-free in
+`Jacobian/HolomorphicForms/EntireZero.lean` as
+`Differentiable.eq_zero_of_tendsto_zero_cocompact`. -/
+theorem entire_tendsto_zero_eq_zero (f : ℂ → ℂ) (hf : Differentiable ℂ f)
+    (h : Filter.Tendsto f (Filter.cocompact ℂ) (nhds 0)) :
+    f = 0 :=
+  hf.eq_zero_of_tendsto_zero_cocompact h
+
+/-- Every holomorphic 1-form on `OnePoint ℂ` (= ℂℙ¹) evaluates to zero
+at every point.
+
+**Proof sketch.** The fiber `CotangentSpace ℂ (OnePoint ℂ) x` is
+`TangentSpace 𝓘(ℂ,ℂ) x →L[ℂ] ℂ`, which is definitionally `ℂ →L[ℂ] ℂ`.
+An element of `ℂ →L[ℂ] ℂ` is determined by its value at `1 : ℂ`
+(multiplication by a scalar). So a holomorphic 1-form `ω` defines a
+function `f : ℂ → ℂ` by `f(z) = (ω.toFun (↑z)) 1`.
+
+1. **`f` is entire.** The section `ω` is `ContMDiff ⊤` on `OnePoint ℂ`.
+   On the identity chart (source `{∞}ᶜ ≅ ℂ`), reading the section through
+   the tangent bundle trivialization gives a `ContDiff ℂ ⊤` map `ℂ → ℂ →L[ℂ] ℂ`,
+   and composing with evaluation at `1` gives a differentiable `f : ℂ → ℂ`.
+
+2. **`f(z) → 0` as `|z| → ∞`.** On the inversion chart (source `{↑0}ᶜ`,
+   forward map `∞ ↦ 0`, `↑z ↦ z⁻¹`), the chart transition sends
+   `f(z) dz` to `g(w) dw` where `g(w) = -f(w⁻¹) · w⁻²`. For `ω` to be
+   smooth at `∞`, the function `g` must extend `ContDiff` across `w = 0`.
+   In particular `g(w) → g(0)` as `w → 0`, forcing
+   `|f(w⁻¹)| = |g(w)| · |w|² → 0` as `w → 0`, i.e. `f(z) → 0` as `|z| → ∞`.
+
+3. **Liouville.** Apply `entire_tendsto_zero_eq_zero` to conclude `f = 0`,
+   hence `ω.toFun (↑z) = 0` for all finite `z`. Continuity of the section
+   gives `ω.toFun ∞ = 0` as well.
+
+**Mathlib gap:** Steps 1–2 require reading a `ContMDiffSection` of the
+cotangent bundle through chart trivializations and extracting the local
+coefficient function. The tangent/cotangent bundle trivialization API in
+Mathlib v4.28.0 does not provide convenient lemmas for this extraction
+on concrete manifolds like `OnePoint ℂ`. Specifically:
+- No lemma gives the local representation of a `ContMDiffSection` of
+  `Bundle.ContinuousLinearMap` in terms of a function on the chart domain.
+- The chart transition formula for the cotangent bundle is not available
+  in user-facing form.
+- Connecting `ContMDiff` of the section to `Differentiable` of the
+  coefficient function requires composing the vector bundle trivialization
+  with the manifold chart and unwinding several layers of bundled structure. -/
+theorem holomorphicOneForm_onePointCx_toFun_eq_zero
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (x : OnePoint ℂ) :
+    ω.toFun x = 0 := by sorry
+
 theorem holomorphicOneForm_onePointCx_subsingleton :
-    Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) := sorry
+    Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=
+  ⟨fun a b => ext_toFun (fun x => by
+    rw [holomorphicOneForm_onePointCx_toFun_eq_zero a x,
+        holomorphicOneForm_onePointCx_toFun_eq_zero b x])⟩
 
 /-- An auxiliary `FiniteDimensionalHolomorphicOneForms` instance on
 `OnePoint ℂ`, derived from the subsingleton fact above.  Needed in
