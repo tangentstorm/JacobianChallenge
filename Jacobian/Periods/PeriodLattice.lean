@@ -68,7 +68,114 @@ noncomputable def basisAlignedPeriodSubgroup :
 
 Top-down obligation. Bottom-up: the period pairing image of `H₁(X, ℤ)`
 has no accumulation point near zero — a consequence of the integrality
-of period values on integral cycles. -/
+of period values on integral cycles.
+
+### Blocker analysis for `basisAlignedPeriodSubgroup_isDiscrete`
+
+**Goal.** Show `DiscreteTopology (basisAlignedPeriodSubgroup X)` where
+`basisAlignedPeriodSubgroup X = basisAlignedPeriodSubgroupConcrete X`
+is defined as
+```
+AddSubgroup.map
+  (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+  (periodSubgroup ℂ X)
+```
+in `Jacobian/Periods/BasisAlignedPeriodSubgroup.lean`.
+
+The ambient space `Fin (analyticGenus ℂ X) → ℂ` carries the product
+topology and is a finite-dimensional normed space over `ℂ` (and `ℝ`).
+The subgroup topology on `↥(basisAlignedPeriodSubgroup X)` is the
+subspace topology induced from that product.
+
+#### Mathlib lemmas surveyed
+
+| Lemma | Signature / Status |
+|---|---|
+| `ZSpan.instDiscreteTopology...` | `DiscreteTopology ↥(Submodule.span ℤ (Set.range b)).toAddSubgroup` for a finite `ℝ`-basis `b`. Gives discreteness of ℤ-spans of ℝ-bases in normed spaces. Would apply if we could exhibit a finite `ℝ`-basis whose ℤ-span equals the period subgroup. |
+| `ZLattice.comap_discreteTopology` | Transports discreteness backwards along a continuous injective linear map: `DiscreteTopology ↥L → DiscreteTopology ↥(ZLattice.comap K L e)`. Operates on `Submodule ℤ`, not `AddSubgroup`, and goes in the *comap* direction (preimage), not *map* (image). |
+| `Homeomorph.discreteTopology_iff` | `DiscreteTopology X ↔ DiscreteTopology Y` for `X ≃ₜ Y`. Would transport discreteness if both sides carried compatible topologies. |
+| `AddSubgroup.isClosed_of_discrete` | Already used downstream (`basisAlignedPeriodSubgroup_isClosed`). Requires `DiscreteTopology` as input. |
+| `discreteTopology_of_isOpen_singleton_one` | For topological groups: `{1}` is open implies discrete. Could be used if we could show `{0}` is open in the subgroup topology. |
+| `DiscreteTopology.of_subset` | `DiscreteTopology ↑s → t ⊆ s → DiscreteTopology ↑t`. Useful for sub-subgroups of a known-discrete group. |
+| `AddSubgroup.map_discreteTopology` | **Does not exist** in Mathlib (v4.28.0). There is no general result transporting `DiscreteTopology` forward through `AddSubgroup.map`. |
+| `Int.instDiscreteTopologySubtypeRealMemAddSubgroupZmultiples` | `DiscreteTopology ↥(AddSubgroup.zmultiples a)` for `a : ℝ`. A one-dimensional special case. |
+
+#### Key blocker: `periodPairing` is opaque; integrality is not declared
+
+1. **`periodPairing E X` is `opaque`** (declared in
+   `Jacobian/Periods/PeriodFunctional.lean`). Its definition —
+   integrating holomorphic 1-forms over integral 1-cycles — is
+   deferred because it requires multi-chart path integration and Stokes'
+   theorem for 1-forms on manifolds, both absent from Mathlib v4.28.0.
+   Consequently, `periodSubgroup ℂ X = (periodPairing ℂ X).range` is
+   an abstract `AddSubgroup` about which nothing structural can be
+   proved from its API alone.
+
+2. **The algebraic dual `HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ` has no
+   `TopologicalSpace` instance.** Lean/Mathlib does not automatically
+   topologise the algebraic dual `V →ₗ[ℂ] ℂ` (as opposed to the
+   continuous dual `V →L[ℂ] ℂ`). So `periodSubgroup ℂ X` does not
+   even carry a topology in which "discrete" could be stated directly.
+   Discreteness only becomes a meaningful question after transport to
+   `Fin g → ℂ` via `holomorphicOneFormDualEquiv`.
+
+3. **No integrality / finite-generation property is available.** The
+   mathematical content — that the image of `H₁(X, ℤ)` under the period
+   pairing is a free ℤ-module of rank `2g`, spanned by `2g` ℝ-linearly
+   independent period vectors — is not encoded anywhere in the project.
+   Without this, `ZSpan.instDiscreteTopology...` cannot fire.
+
+#### Proposed 3-step resolution plan
+
+**(a) Declare a discreteness / finite-generation property on
+`periodPairing` or `periodSubgroup`.** The cleanest option is to add a
+new `opaque` alongside `periodPairing` in
+`Jacobian/Periods/PeriodFunctional.lean`:
+```
+opaque periodSubgroup_discreteTopology_basis_aligned
+    (E : Type*) [...] (X : Type) [...] :
+    DiscreteTopology (basisAlignedPeriodSubgroupConcrete X)
+```
+or, more structurally, declare that the image admits a ℤ-basis of
+cardinality `2 * analyticGenus ℂ X` spanning a full-rank ℤ-lattice:
+```
+opaque periodSubgroup_isZLattice
+    (E : Type*) [...] (X : Type) [...] :
+    IsZLattice ℝ (periodSubgroupAsSubmodule ℂ X)
+```
+where `periodSubgroupAsSubmodule` lifts the `AddSubgroup` to a
+`Submodule ℤ` and further witnesses that it spans `ℝ^(2g)`. The
+`IsZLattice` approach is mathematically richer and also yields the
+fundamental domain and covering properties needed downstream.
+
+**(b) Derive `DiscreteTopology (periodSubgroup ℂ X)` from (a).**
+If (a) declares `IsZLattice ℝ` on the ℤ-submodule spanned by
+the period vectors in `Fin g → ℂ`, then Mathlib's
+`ZSpan.instDiscreteTopology...` gives `DiscreteTopology` on the
+corresponding `AddSubgroup` directly.
+
+Alternatively, if (a) directly declares `DiscreteTopology` on the
+basis-aligned subgroup, step (b) is trivial.
+
+**(c) Wire the instance.** Replace `sorry` with the result from (b).
+If (a) declares discreteness directly on
+`basisAlignedPeriodSubgroupConcrete X`, the proof is:
+```
+instance basisAlignedPeriodSubgroup_isDiscrete :
+    DiscreteTopology (basisAlignedPeriodSubgroup X) :=
+  periodSubgroup_discreteTopology_basis_aligned ℂ X
+```
+If instead (a) declares `IsZLattice`, the proof assembles
+`ZSpan.instDiscreteTopology` with the basis data.
+
+#### Downstream impact
+
+This instance is the **sole blocker** for `basisAlignedPeriodSubgroup_isClosed`
+(which is already a pure assembly using `AddSubgroup.isClosed_of_discrete`). It
+is also **on the critical path** for `periodFundamentalDomain_isCompact` and
+`periodFundamentalDomain_covers`, both of which implicitly depend on the
+subgroup being a well-structured lattice.
+-/
 instance basisAlignedPeriodSubgroup_isDiscrete :
     DiscreteTopology (basisAlignedPeriodSubgroup X) := sorry
 
