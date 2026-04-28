@@ -12,17 +12,16 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 00:54 EDT)
+## Live Status (2026-04-28 00:52 EDT)
 
-- **Aristotle: 2/5 ours active.**
+- **Aristotle: 2/5 ours active.** (heartbeat — no integrations)
   - `90750074` TOP-DOWN refinement on
     `holomorphicOneForm_onePointCx_subsingleton` (Liouville core,
-    anti-hack #1 critical path). IN_PROGRESS at 6%, ~13 min elapsed.
-  - `dc8af381` (NEW this tick) substantive sorry-elimination on
+    anti-hack #1 critical path). IN_PROGRESS at 10%, ~13 min elapsed.
+  - `dc8af381` substantive sorry-elimination on
     `exists_compact_periodFundamentalDomain` in `PeriodFunctional.lean`
     via existing `IsZLattice ℝ` instance + Mathlib `ZSpan` machinery.
-    Reduction target: file sorry count 3→2.  Disjoint write scope
-    from `90750074`.  Just submitted, 0%.
+    Reduction target: file sorry count 3→2.  IN_PROGRESS at 1%, ~1 min.
 - **Aristotle integration this tick:** `5dfd5106`
   `holomorphicOneForm_montel` survey, +275 lines of docstring on
   `CompactRiemannSurface.lean`.  7-step proof outline (chart cover
