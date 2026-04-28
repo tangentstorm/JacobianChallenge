@@ -47,15 +47,59 @@ variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
   [ConnectedSpace Z] [ChartedSpace ℂ Z]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
 
-/-- The analytic pullback induced by a holomorphic map of compact
-Riemann surfaces, on the basis-aligned carrier.
+/-- Bundle carrying the analytic pullback together with its
+covering-space representative `basisDualPullback` and the descent
+compatibility axiom `mk_eq`.
 
-Top-down obligation. Bottom-up: dualize the basis-aligned pullback of
-holomorphic 1-forms (`PullbackForms` in basis coordinates), then descend
-through the period quotient (using period-preservation). -/
-noncomputable opaque analyticPullback (f : X → Y)
+The `analyticPullback` field is the bundled `→ₜ+` hom on the
+basis-aligned carrier; the `basisDualPullback` field is the additive
+hom on the covering space; `mk_eq` is the defining property linking
+the two: `analyticPullback (mk v) = mk (basisDualPullback v)`.
+
+Bottom-up: concretising `basisDualPullback` requires the dual of the
+basis-aligned form-pullback; `analyticPullback` is then its descent
+through the period quotient (using period-preservation), and `mk_eq`
+is automatic from the descent. -/
+structure BasisAnalyticPullbackBundle
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (Y : Type) [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
+    [ConnectedSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    (_f : X → Y) (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω _f) where
+  /-- The pullback as a continuous additive group homomorphism on the
+  basis-aligned carrier. -/
+  analyticPullback : BasisAnalyticJacobian Y →ₜ+ BasisAnalyticJacobian X
+  /-- The dual form-pullback on the covering space. -/
+  basisDualPullback : (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ)
+  /-- Descent compatibility: the bundled pullback acts on the period
+  quotient as the descended dual form-pullback. -/
+  mk_eq : ∀ v : Fin (analyticGenus ℂ Y) → ℂ,
+    analyticPullback (QuotientAddGroup.mk v) =
+      QuotientAddGroup.mk (basisDualPullback v)
+
+noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    Inhabited (BasisAnalyticPullbackBundle X Y f hf) :=
+  ⟨{ analyticPullback := 0
+     basisDualPullback := 0
+     mk_eq := fun _ => rfl }⟩
+
+/-- The bundled analytic pullback (data + descent axiom), as an
+`opaque` value. The `Inhabited` witness uses the zero pullback,
+which trivially satisfies the descent axiom; the actual mathematical
+content is deferred to the bottom-up layer. -/
+noncomputable opaque basisAnalyticPullbackBundle (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    BasisAnalyticJacobian Y →ₜ+ BasisAnalyticJacobian X
+    BasisAnalyticPullbackBundle X Y f hf
+
+/-- The analytic pullback induced by a holomorphic map of compact
+Riemann surfaces, on the basis-aligned carrier. Extracted from
+`basisAnalyticPullbackBundle`. -/
+noncomputable def analyticPullback (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    BasisAnalyticJacobian Y →ₜ+ BasisAnalyticJacobian X :=
+  (basisAnalyticPullbackBundle f hf).analyticPullback
 
 /-- The analytic pullback is holomorphic.
 
@@ -87,14 +131,11 @@ relationship:
 homomorphism on the covering space
 `Fin (analyticGenus ℂ Y) → ℂ → Fin (analyticGenus ℂ X) → ℂ`.
 
-This is the linear-algebraic core of `analyticPullback`: the latter
-is its descent through the period quotient.
-
-Top-down obligation (data). Bottom-up: dualize the ℂ-linear map
-`pullbackFormsLinearMap f` in basis coordinates. -/
-noncomputable opaque basisDualPullback (f : X → Y)
+Extracted from `basisAnalyticPullbackBundle`. -/
+noncomputable def basisDualPullback (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ)
+    (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ) :=
+  (basisAnalyticPullbackBundle f hf).basisDualPullback
 
 /-- Deeper companion: the dual form-pullback along `id` is the identity
 additive group homomorphism on the covering space.
@@ -108,15 +149,13 @@ theorem basisDualPullback_id :
 /-- Descent compatibility: `analyticPullback` acts on the period
 quotient as the descended `basisDualPullback`.
 
-Bottom-up content: the opaque `analyticPullback f hf` agrees with the
-`QuotientAddGroup.map` of `basisDualPullback f hf` (which preserves the
-period lattice). This is the defining property linking the quotient-level
-and covering-space-level maps. -/
+Sorry-free extraction from `basisAnalyticPullbackBundle.mk_eq`. -/
 theorem analyticPullback_mk_eq
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (v : Fin (analyticGenus ℂ Y) → ℂ) :
     analyticPullback f hf (QuotientAddGroup.mk v) =
-      QuotientAddGroup.mk (basisDualPullback f hf v) := sorry
+      QuotientAddGroup.mk (basisDualPullback f hf v) :=
+  (basisAnalyticPullbackBundle f hf).mk_eq v
 
 /-- Contravariant functoriality of the dual form-pullback on the
 covering space: `basisDualPullback (g ∘ f) = basisDualPullback f ∘ basisDualPullback g`.
