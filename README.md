@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 02:03 EDT
+Last tick: 2026-04-28 02:06 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -66,12 +66,8 @@ Active jobs (ours):     1 / 5
                         `d493c66b` follow-up TOPDOWN on
                                    `holomorphicOneForm_onePointCx_toFun_eq_zero`
                                    (chart-coefficient extraction).
-                                   IN_PROGRESS at 1%, ~4 min (just dequeued).
-Integrated this tick:   none — heartbeat.  Verified
-                        `lake build Jacobian.Periods.PeriodLattice` green
-                        (8036 jobs) after prior-tick move of
-                        `exists_compact_periodFundamentalDomain` to
-                        bottom of `PeriodFunctional.lean`.
+                                   IN_PROGRESS at 5%, ~8 min.
+Integrated this tick:   none — heartbeat.
 
 PRIOR TICK (still standing):
 Integrated `90750074` Liouville core TOPDOWN refinement —
