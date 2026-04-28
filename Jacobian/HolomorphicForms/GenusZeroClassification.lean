@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.AnalyticGenus
+import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 
 /-!
@@ -109,8 +110,109 @@ the fact that every orientation-preserving homeomorphism between
 Riemann surfaces is homotopic to a biholomorphism (Earle–Eells).
 -/
 
+/-! ### Refined decomposition of the easy direction
+
+The easy direction `analyticGenus_eq_zero_of_homeomorphic_sphere` is now
+assembled from three smaller named obligations, each Aristotle-shaped:
+
+* `holomorphicOneForm_onePointCx_subsingleton` — the space of holomorphic
+  1-forms on `ℂℙ¹ = OnePoint ℂ` is a subsingleton (i.e. only the zero
+  form exists).  This is the substantive analytic content
+  (Liouville-style argument on the inversion chart).
+* `analyticGenus_onePointCx_eq_zero` — pure corollary of the subsingleton
+  fact via `analyticGenus_eq_zero_of_subsingleton`.
+* `analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx` — the
+  uniformization-lite transport step: a compact Riemann surface
+  homeomorphic to `S²` has the same analytic genus as `OnePoint ℂ`.
+  This bundles the deep "every complex structure on `S²` is biholomorphic
+  to `ℂℙ¹`" content into a single named obligation.
+
+The original `analyticGenus_eq_zero_of_homeomorphic_sphere` becomes pure
+assembly of these three pieces. The hard direction
+`homeomorphic_sphere_of_analyticGenus_eq_zero` below is unchanged.
+-/
+
+/-- The space of holomorphic 1-forms on `OnePoint ℂ` (= ℂℙ¹) is a
+subsingleton — there are no nonzero global holomorphic 1-forms.
+
+Bottom-up content: a holomorphic 1-form on `OnePoint ℂ` pulled back to
+the identity chart is `f(z) dz` for some entire function `f : ℂ → ℂ`;
+under the inversion-chart transition `w = z⁻¹`, it becomes
+`-f(1/w) / w² dw`. Holomorphicity at `w = 0` forces `f(1/w) / w²` to be
+bounded near zero, which by Liouville's theorem (`Complex.liouville_theorem`)
+forces `f ≡ 0`.
+
+This is the analytic core of `analyticGenus_eq_zero_of_homeomorphic_sphere`
+(easy direction of genus-zero classification). -/
+theorem holomorphicOneForm_onePointCx_subsingleton :
+    Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) := sorry
+
+/-- An auxiliary `FiniteDimensionalHolomorphicOneForms` instance on
+`OnePoint ℂ`, derived from the subsingleton fact above.  Needed in
+order to apply the `analyticGenus` definition.
+
+A subsingleton module is trivially finite-dimensional (the empty set is
+a spanning set), so this is purely a typeclass-level lemma. -/
+noncomputable instance finiteDimensionalHolomorphicOneForms_onePointCx :
+    FiniteDimensionalHolomorphicOneForms ℂ (OnePoint ℂ) where
+  finiteDimensional := by
+    haveI : Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=
+      holomorphicOneForm_onePointCx_subsingleton
+    refine ⟨?_⟩
+    -- A subsingleton module has `⊤ = ⊥`, and `⊥` is finitely generated.
+    have htop : (⊤ : Submodule ℂ (HolomorphicOneForm ℂ (OnePoint ℂ))) = ⊥ := by
+      rw [Submodule.eq_bot_iff]
+      intro x _
+      exact Subsingleton.elim x 0
+    rw [htop]
+    exact Submodule.fg_bot
+
+/-- The analytic genus of `OnePoint ℂ` (= ℂℙ¹) is zero.
+
+Pure corollary of `holomorphicOneForm_onePointCx_subsingleton` via
+`analyticGenus_eq_zero_of_subsingleton`. -/
+theorem analyticGenus_onePointCx_eq_zero :
+    analyticGenus ℂ (OnePoint ℂ) = 0 := by
+  haveI : Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=
+    holomorphicOneForm_onePointCx_subsingleton
+  exact analyticGenus_eq_zero_of_subsingleton
+
+/-- Transport step: a compact Riemann surface `X` homeomorphic to the
+standard 2-sphere has the same analytic genus as `OnePoint ℂ`.
+
+This is the "uniformization-lite" content: a topological homeomorphism
+from `X` to `S²`, combined with the existing complex structure on `X`
+and the canonical complex structure on `OnePoint ℂ` (from
+`OnePointCxIsManifold`), forces a biholomorphism `X ≃ OnePoint ℂ` (since
+every complex structure on the topological 2-sphere is biholomorphic to
+`ℂℙ¹` — uniformization at genus 0). The biholomorphism induces a
+ℂ-linear isomorphism of holomorphic 1-form spaces, hence equality of
+analytic genera.
+
+Stated as an equality of natural numbers, since both sides are defined
+once their `FiniteDimensionalHolomorphicOneForms` instances are
+available (`X`'s comes from the hypothesis, `OnePoint ℂ`'s comes from
+`finiteDimensionalHolomorphicOneForms_onePointCx` above).
+
+Bottom-up content for a future job: build a complex-structure-transfer
+API for homeomorphisms between Riemann surfaces (Mathlib gap), or — more
+realistically — go via `onePointCxHomeoS2` and the uniqueness of complex
+structure on `S²` (deep, see the survey above). -/
+theorem analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
+    analyticGenus ℂ X = analyticGenus ℂ (OnePoint ℂ) := sorry
+
 /-- The "easy" direction: if `X` is homeomorphic to the standard 2-sphere
 then `analyticGenus ℂ X = 0`.
+
+Pure assembly of `analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx`
+(the uniformization-lite transport step) and
+`analyticGenus_onePointCx_eq_zero` (the analytic core
+`H⁰(ℂℙ¹, Ω¹) = 0`).
 
 Bottom-up content: a compact Riemann surface homeomorphic to `S²` has
 the complex structure of `ℂℙ¹` (every smooth structure on `S²` is unique,
@@ -123,8 +225,10 @@ theorem analyticGenus_eq_zero_of_homeomorphic_sphere
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
-    analyticGenus ℂ X = 0 := sorry
+    (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
+    analyticGenus ℂ X = 0 := by
+  rw [analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx X h]
+  exact analyticGenus_onePointCx_eq_zero
 
 /-!
 ### Blocker analysis for `homeomorphic_sphere_of_analyticGenus_eq_zero`

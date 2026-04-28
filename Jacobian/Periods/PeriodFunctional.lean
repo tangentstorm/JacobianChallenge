@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.Periods.IntegralOneCycle
+import Mathlib.Algebra.Module.ZLattice.Basic
 
 /-!
 # Period functional (target statement)
@@ -138,5 +139,103 @@ noncomputable def periodSubgroup
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] :
     AddSubgroup (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
   (periodPairing E X).range
+
+/-! ### Bridge: assembling `IsZLattice ℝ` from the three leaves
+
+This section bridges the three named bottom-up obligations above
+(`periodSubgroup_isZLattice`, `periodSubgroup_spans_real`,
+`exists_compact_periodFundamentalDomain`) to the
+Mathlib `IsZLattice ℝ` typeclass.
+
+`IsZLattice ℝ L` (in `Mathlib.Algebra.Module.ZLattice.Basic`) is a
+typeclass on a `Submodule ℤ E` carrying the field
+`span_top : Submodule.span ℝ ↑L = ⊤`, with `[DiscreteTopology L]` as
+a class parameter. Mathlib's downstream API
+(`ZSpan.fundamentalDomain`, `Basis.ofZLatticeBasis`,
+`ZLattice.isAddFundamentalDomain`, etc.) consumes `IsZLattice ℝ L`
+plus `DiscreteTopology L`, so to expose our period subgroup to that
+API we must (1) promote it from `AddSubgroup` to `Submodule ℤ`, then
+(2) give both `DiscreteTopology` and `IsZLattice ℝ` instances on the
+promoted form.
+
+The promotion uses `AddSubgroup.toIntSubmodule`, whose underlying set
+is definitionally the same `Set` as the source `AddSubgroup` (see
+`AddSubgroup.coe_toIntSubmodule`). This means the
+`Submodule`-subtype `↥L.toIntSubmodule` and the `AddSubgroup`-subtype
+`↥L` carry the same induced subspace topology, but they are distinct
+Lean types — a thin bridge `DiscreteTopology.of_continuous_injective`
+transports discreteness across the type-level boundary, mirroring the
+`discreteTopology_toAddSubgroup` helper in
+`Jacobian/ComplexTorus/ZLatticeRecon.lean` (which goes the opposite
+direction). -/
+
+/-- The basis-aligned period subgroup, promoted to a `Submodule ℤ`
+of the model space `Fin (analyticGenus ℂ X) → ℂ`.
+
+This is the `Submodule ℤ` form of the period subgroup that Mathlib's
+`IsZLattice` API consumes. It is built by applying
+`AddSubgroup.toIntSubmodule` to the same `AddSubgroup.map` image
+that the three named bottom-up obligations above (and
+`Jacobian/Periods/PeriodLattice.lean`'s
+`basisAlignedPeriodSubgroup`) refer to.
+
+Bottom-up content: nothing new — purely a type-level repackaging.
+The mathematical content (discreteness, full ℝ-rank, compact
+fundamental domain) is delegated to the three theorems above. -/
+noncomputable def basisAlignedPeriodSubmoduleℤ
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    Submodule ℤ (Fin (analyticGenus ℂ X) → ℂ) :=
+  AddSubgroup.toIntSubmodule
+    (AddSubgroup.map
+      (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+      ((periodPairing ℂ X).range))
+
+/-- `DiscreteTopology` for the `Submodule ℤ`-promoted period subgroup.
+
+Pure type-level transport from `periodSubgroup_isZLattice` (which gives
+`DiscreteTopology` on the underlying `AddSubgroup`). The carriers are
+the same `Set`, so a `Subtype.mk`-along-the-identity map is continuous
+and injective, and `DiscreteTopology.of_continuous_injective` does the
+rest. No new bottom-up content. -/
+noncomputable instance basisAlignedPeriodSubmoduleℤ_discreteTopology
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    DiscreteTopology (basisAlignedPeriodSubmoduleℤ X) := by
+  haveI : DiscreteTopology
+      (AddSubgroup.map
+        (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+        ((periodPairing ℂ X).range)) :=
+    periodSubgroup_isZLattice ℂ X
+  exact DiscreteTopology.of_continuous_injective
+    (f := fun (x : basisAlignedPeriodSubmoduleℤ X) =>
+      (⟨x.1, x.2⟩ :
+        AddSubgroup.map
+          (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+          ((periodPairing ℂ X).range)))
+    (continuous_induced_rng.mpr continuous_subtype_val)
+    (fun _ _ h => Subtype.ext (congr_arg Subtype.val h))
+
+/-- `IsZLattice ℝ` for the `Submodule ℤ`-promoted period subgroup.
+
+Pure assembly: the `span_top` field reduces to
+`periodSubgroup_spans_real` after applying `AddSubgroup.coe_toIntSubmodule`
+to identify the carriers as `Set`s. The `[DiscreteTopology …]` class
+parameter is supplied by `basisAlignedPeriodSubmoduleℤ_discreteTopology`
+above. No new bottom-up content. -/
+noncomputable instance basisAlignedPeriodSubmoduleℤ_isZLattice
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    IsZLattice ℝ (basisAlignedPeriodSubmoduleℤ X) where
+  span_top := by
+    -- `(basisAlignedPeriodSubmoduleℤ X : Set _)` reduces by `rfl` to the
+    -- underlying `AddSubgroup.map …` carrier (via
+    -- `AddSubgroup.coe_toIntSubmodule`), so the goal is exactly
+    -- `periodSubgroup_spans_real X`.
+    simpa [basisAlignedPeriodSubmoduleℤ, AddSubgroup.coe_toIntSubmodule]
+      using periodSubgroup_spans_real X
 
 end JacobianChallenge.Periods
