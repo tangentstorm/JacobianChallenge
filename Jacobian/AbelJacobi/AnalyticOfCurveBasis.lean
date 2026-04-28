@@ -86,6 +86,20 @@ lemma analyticOfCurve_contMDiff (P : X) :
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (⊤ : WithTop ℕ∞) (analyticOfCurve X P) := sorry
 
+/-- Abel's theorem in basis-aligned path-integral coordinates: if two
+path-integral coordinate vectors differ by a period vector, then their
+endpoints are equal.
+
+Top-down leaf obligation. Bottom-up: point separation for Abel-Jacobi,
+usually proved from Riemann-Roch/divisor theory or an equivalent
+Abel-theorem formalization. -/
+theorem pathIntegralFunctional_separates_points
+    (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
+    (hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X) :
+    Q₁ = Q₂ := sorry
+
 /-- Abel injectivity for positive genus.
 
 Top-down obligation. Bottom-up: Abel's theorem — for `0 < g`, the
@@ -303,6 +317,10 @@ substantial new Mathlib infrastructure (meromorphic functions on
 manifolds, divisor theory, degree of maps between Riemann surfaces).
 -/
 lemma analyticOfCurve_injective (P : X) (h : 0 < analyticGenus ℂ X) :
-    Function.Injective (analyticOfCurve X P) := sorry
+    Function.Injective (analyticOfCurve X P) := by
+  intro Q₁ Q₂ heq
+  apply pathIntegralFunctional_separates_points X P h Q₁ Q₂
+  unfold analyticOfCurve at heq
+  exact QuotientAddGroup.eq.mp heq
 
 end JacobianChallenge.AbelJacobi
