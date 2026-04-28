@@ -90,7 +90,13 @@ The timer will call you again.
      get there on its own. Use the Agent tool with
      `isolation: "worktree"` so each sub-agent gets an isolated copy
      of the repo and cannot collide with the master or with each
-     other. At the start of every tick, check which background
+     other. **Do not include a `Working directory: C:\ver\JacobianChallenge`
+     line in the sub-agent prompt** — that line directs the agent
+     back to the main checkout (via absolute-path Edit calls) and
+     defeats the worktree isolation. The agent's cwd is already its
+     worktree (`.claude/worktrees/agent-…`); leave it implicit, or
+     say "use your current working directory (your worktree)" if you
+     must mention it. At the start of every tick, check which background
      sub-agents you launched are still alive (you'll have received
      completion notifications for any that finished); if fewer than
      two are running, launch replacements *this tick* on the now-
