@@ -144,10 +144,18 @@ bounded near zero, which by Liouville's theorem forces `f ≡ 0`.
 
 This is decomposed into:
 1. `entire_tendsto_zero_eq_zero` — Liouville-based vanishing of entire
-   functions that tend to 0 at infinity.
-2. `holomorphicOneForm_onePointCx_toFun_eq_zero` — the chart-level
-   argument showing every 1-form evaluates to zero at every point.
-3. `holomorphicOneForm_onePointCx_subsingleton` — pure assembly. -/
+   functions that tend to 0 at infinity. Available sorry-free in
+   `EntireZero.lean`.
+2. `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` — the substantive
+   chart-pullback + Liouville application on the identity chart
+   (finite points). Carries the chart-extraction Mathlib gap.
+3. `holomorphicOneForm_onePointCx_toFun_infty_eq_zero` — vanishing at
+   the point at infinity, via the inversion chart. Continuity of the
+   smooth section forces `g(0) = lim_{w→0} g(w) = 0`.
+4. `holomorphicOneForm_onePointCx_toFun_eq_zero` — sorry-free assembly
+   via `cases x using OnePoint.rec` of leaves (2) and (3).
+5. `holomorphicOneForm_onePointCx_subsingleton` — sorry-free assembly
+   via `ext_toFun`. -/
 
 /-- An entire function `f : ℂ → ℂ` that tends to `0` along `cocompact ℂ`
 (i.e. as `|z| → ∞`) is identically zero.
@@ -161,46 +169,90 @@ theorem entire_tendsto_zero_eq_zero (f : ℂ → ℂ) (hf : Differentiable ℂ f
     f = 0 :=
   hf.eq_zero_of_tendsto_zero_cocompact h
 
+/-! #### Refined chart-extraction split
+
+The original single `holomorphicOneForm_onePointCx_toFun_eq_zero` sorry
+is now split into two named leaves keyed to the two charts of
+`OnePoint ℂ` (identity chart on `{∞}ᶜ` and inversion chart on `{↑0}ᶜ`).
+
+Both leaves carry the same chart-extraction Mathlib gap, but they are
+analytically distinct: the finite-chart leaf is the substantive Liouville
+application, while the infinity-chart leaf is a continuity argument
+(the inversion-chart coefficient `g(w) = -f(1/w)/w²` extends across
+`w = 0` to `g(0) = 0`).
+
+Splitting them lets two separate Aristotle/sub-agent jobs target each
+leaf with disjoint reasoning patterns. -/
+
+/-- Vanishing of a holomorphic 1-form on the *finite* chart of
+`OnePoint ℂ`: for every `z : ℂ`, the form evaluates to zero at `↑z`.
+
+**Substantive content (chart-pullback + Liouville).**
+On the identity chart (source `{∞}ᶜ ≅ ℂ`) the section `ω` reads as
+`f(z) · dz` for some `f : ℂ → ℂ`, where `f(z) = (ω.toFun ↑z) 1`
+(the cotangent fiber `CotangentSpace ℂ (OnePoint ℂ) (↑z) = ℂ →L[ℂ] ℂ`
+is determined by its value at `1 : ℂ`).
+
+1. `f` is entire: `ω` is `ContMDiff ⊤`, so its trivialization on the
+   identity chart is `ContDiff ℂ ⊤`, and post-composition with
+   evaluation at `1 : ℂ` is differentiable.
+2. `f(z) → 0` as `|z| → ∞`: on the inversion chart `w = 1/z`, the
+   transition sends `f(z) dz` to `g(w) dw` where `g(w) = -f(1/w)/w²`,
+   and smoothness at `w = 0` forces `g(0) = lim_{w → 0} -f(1/w)/w²`
+   finite, hence `f(1/w)·w⁻² → g(0)` and `f(1/w) → 0`.
+3. Liouville: `Differentiable.eq_zero_of_tendsto_zero_cocompact` from
+   `EntireZero.lean` applied to `f` gives `f = 0`, hence
+   `ω.toFun (↑z) = 0` (the zero linear map at `↑z`).
+
+**Mathlib gap:** the chart-pullback formula is not user-facing in
+Mathlib v4.28.0. Specifically there is no lemma reading a
+`ContMDiffSection` of `Bundle.ContinuousLinearMap` (the cotangent bundle)
+through chart trivializations, nor a chart-transition formula for the
+cotangent bundle in user-facing form. -/
+theorem holomorphicOneForm_onePointCx_toFun_finite_eq_zero
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (z : ℂ) :
+    ω.toFun (↑z : OnePoint ℂ) = 0 := sorry
+
+/-- Vanishing of a holomorphic 1-form at the point at infinity of
+`OnePoint ℂ`.
+
+**Substantive content (continuity of inversion-chart coefficient).**
+On the inversion chart (source `(OnePoint ℂ) \ {↑0}`, forward map
+`↑z ↦ z⁻¹`, `∞ ↦ 0`), the section `ω` reads as `g(w) dw` for some
+`g : ℂ → ℂ`, where `g(w) = (ω.toFun ((·⁻¹) w)) 1` for `w ≠ 0` and
+`g(0) = (ω.toFun ∞) 1`.
+
+By `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`, for `w ≠ 0`
+the value `ω.toFun ↑(w⁻¹) = 0`, so `g(w) = 0` on `{w | w ≠ 0}`.
+Continuity of the bundle-trivialised section at `w = 0` then forces
+`g(0) = 0`, i.e. `(ω.toFun ∞) 1 = 0`. Since the cotangent fiber over
+`∞` is `ℂ →L[ℂ] ℂ` (also determined by its value at `1`), we conclude
+`ω.toFun ∞ = 0`.
+
+**Mathlib gap:** same as the finite case — no user-facing
+`ContMDiffSection` chart-trivialisation API. The continuity argument
+itself is elementary once the trivialisation is set up.
+
+**Note:** this lemma takes `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
+as a *hypothesis* through the calling order (the assembly theorem
+provides it via `cases x using OnePoint.rec`). The two leaves carry
+disjoint analytic content. -/
+theorem holomorphicOneForm_onePointCx_toFun_infty_eq_zero
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    ω.toFun (OnePoint.infty : OnePoint ℂ) = 0 := sorry
+
 /-- Every holomorphic 1-form on `OnePoint ℂ` (= ℂℙ¹) evaluates to zero
 at every point.
 
-**Proof sketch.** The fiber `CotangentSpace ℂ (OnePoint ℂ) x` is
-`TangentSpace 𝓘(ℂ,ℂ) x →L[ℂ] ℂ`, which is definitionally `ℂ →L[ℂ] ℂ`.
-An element of `ℂ →L[ℂ] ℂ` is determined by its value at `1 : ℂ`
-(multiplication by a scalar). So a holomorphic 1-form `ω` defines a
-function `f : ℂ → ℂ` by `f(z) = (ω.toFun (↑z)) 1`.
-
-1. **`f` is entire.** The section `ω` is `ContMDiff ⊤` on `OnePoint ℂ`.
-   On the identity chart (source `{∞}ᶜ ≅ ℂ`), reading the section through
-   the tangent bundle trivialization gives a `ContDiff ℂ ⊤` map `ℂ → ℂ →L[ℂ] ℂ`,
-   and composing with evaluation at `1` gives a differentiable `f : ℂ → ℂ`.
-
-2. **`f(z) → 0` as `|z| → ∞`.** On the inversion chart (source `{↑0}ᶜ`,
-   forward map `∞ ↦ 0`, `↑z ↦ z⁻¹`), the chart transition sends
-   `f(z) dz` to `g(w) dw` where `g(w) = -f(w⁻¹) · w⁻²`. For `ω` to be
-   smooth at `∞`, the function `g` must extend `ContDiff` across `w = 0`.
-   In particular `g(w) → g(0)` as `w → 0`, forcing
-   `|f(w⁻¹)| = |g(w)| · |w|² → 0` as `w → 0`, i.e. `f(z) → 0` as `|z| → ∞`.
-
-3. **Liouville.** Apply `entire_tendsto_zero_eq_zero` to conclude `f = 0`,
-   hence `ω.toFun (↑z) = 0` for all finite `z`. Continuity of the section
-   gives `ω.toFun ∞ = 0` as well.
-
-**Mathlib gap:** Steps 1–2 require reading a `ContMDiffSection` of the
-cotangent bundle through chart trivializations and extracting the local
-coefficient function. The tangent/cotangent bundle trivialization API in
-Mathlib v4.28.0 does not provide convenient lemmas for this extraction
-on concrete manifolds like `OnePoint ℂ`. Specifically:
-- No lemma gives the local representation of a `ContMDiffSection` of
-  `Bundle.ContinuousLinearMap` in terms of a function on the chart domain.
-- The chart transition formula for the cotangent bundle is not available
-  in user-facing form.
-- Connecting `ContMDiff` of the section to `Differentiable` of the
-  coefficient function requires composing the vector bundle trivialization
-  with the manifold chart and unwinding several layers of bundled structure. -/
+Sorry-free assembly via `cases x using OnePoint.rec` of the two leaves
+`holomorphicOneForm_onePointCx_toFun_finite_eq_zero` and
+`holomorphicOneForm_onePointCx_toFun_infty_eq_zero`. -/
 theorem holomorphicOneForm_onePointCx_toFun_eq_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (x : OnePoint ℂ) :
-    ω.toFun x = 0 := by sorry
+    ω.toFun x = 0 := by
+  cases x using OnePoint.rec
+  · exact holomorphicOneForm_onePointCx_toFun_infty_eq_zero ω
+  · exact holomorphicOneForm_onePointCx_toFun_finite_eq_zero ω _
 
 theorem holomorphicOneForm_onePointCx_subsingleton :
     Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=

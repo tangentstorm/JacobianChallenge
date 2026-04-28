@@ -12,21 +12,33 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 04:10 EDT)
+## Live Status (2026-04-28 04:24 EDT)
 
-- **Aristotle: 1/5 ours active.** (63158306 returned & integrated)
-  - `d493c66b` follow-up TOPDOWN refinement on
-    `holomorphicOneForm_onePointCx_toFun_eq_zero` in
+- **Aristotle: 1/5 ours active.**
+  - `1f7d4399` (NEW) TOPDOWN refinement on the now-narrower finite
+    leaf `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` in
     `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — the
-    chart-coefficient extraction sorry exposed by `90750074`.
-    IN_PROGRESS at 37%, ~2h10min (stuck ~96 min).
-- **Aristotle integration this tick:** `63158306` Step 1 of the
-  Banach-data construction.  NEW 115-line sorry-free file
-  `Jacobian/HolomorphicForms/SectionFiberNorm.lean` with
-  `ContMDiffSection.fiberNorm` + `continuous_fiberNorm`.  Documents
-  Mathlib v4.28.0 API gap: no `NormedVectorBundle` class, so the
-  continuity proof needs an `hcompat` hypothesis (trivialization
-  preserves fiber norms).  Build green (8026 jobs).
+    SUBSTANTIVE Liouville application via identity-chart pullback +
+    `EntireZero.lean` black-box.  Submitted at 04:15 EDT.
+- **Cancelled this tick:** `d493c66b` after stuck at 37% for ~138 min
+  (well past typical successful job duration of 30-75 min — successful
+  packets this session: 5dfd5106 ~36min, 6992e390 ~32min, 90750074 ~73min,
+  63158306 ~67min). Slot freed; replaced by local split + 1f7d4399.
+- **Substantive local split this tick** (per saved feedback "split
+  top-down obligations"): the original
+  `holomorphicOneForm_onePointCx_toFun_eq_zero` sorry is now split
+  into two named bottom-up leaves keyed to the two charts of `OnePoint ℂ`:
+    * `_toFun_finite_eq_zero` — identity chart, substantive Liouville
+      application (re-delegated to 1f7d4399).
+    * `_toFun_infty_eq_zero` — inversion chart, continuity-of-coefficient
+      argument depending on the finite leaf as a black box (kept LOCAL
+      for next tick — disjoint write scope from 1f7d4399 forces
+      serialization in this file).
+  The original `_toFun_eq_zero` is now SORRY-FREE assembly via
+  `cases x using OnePoint.rec`.  Net file sorry count: 3 → 4 (one
+  substantive sorry replaced by two narrower leaves + sorry-free
+  assembly).  Build green:
+  `lake build Jacobian.HolomorphicForms.GenusZeroClassification` ✓.
   Aristotle integrations to date: 101.
 
 - **Claude-owned structural move this tick:** Blocker 5 RESOLVED.
