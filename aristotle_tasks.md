@@ -12,21 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 04:57 EDT)
+## Live Status (2026-04-28 05:00 EDT)
 
 - **Aristotle: 2/5 ours active.**
   - `1f7d4399` TOPDOWN on the finite leaf
     `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` in
     `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
-    IN_PROGRESS at 20%, ~42min (stuck ~6min).
+    IN_PROGRESS at 20%, ~45min (stuck ~6min).
   - `f1786fa8` Step 2 of the Banach-data construction recon —
     `ContMDiffSection.supNorm` + 5 sup-norm properties in NEW file
     `Jacobian/HolomorphicForms/SectionSupNorm.lean`.
-    IN_PROGRESS at 7%, ~28min (stuck ~15min — approaching cancel
-    threshold ~30min).
-- **This tick:** heartbeat.  Both packets stuck; compute backend may
-  be having capacity issues.  Will reassess f1786fa8 cancel decision
-  next tick if still no progress.
+    IN_PROGRESS at 7%, ~31min (stuck ~15min).
+- **Substantive local move this tick** (per saved feedback "do
+  substantive local proof work each tick when frozen"): added 2
+  helpers to `Jacobian/HolomorphicForms/Ext.lean`:
+    * `eq_zero_iff_toFun` — `η = 0 ↔ ∀ x, η.toFun x = 0` (specializes
+      `ext_toFun_iff` at `ζ = 0`; proof: `rw [ext_toFun_iff]; rfl`,
+      so `(0).toFun x = 0` reduces definitionally).
+    * `eq_zero_of_toFun` — mp direction as a named lemma.
+  Both useful for the future `_toFun_infty_eq_zero` assembly and any
+  other proofs concluding η = 0 from pointwise vanishing.
+  Build green: `lake build Jacobian.HolomorphicForms.Ext` (2410 jobs);
+  `lake build Jacobian.Challenge` (8026 jobs).
+- **Both packets stalled simultaneously** — suggests backend capacity
+  issue; cancel-and-resubmit unlikely to help.  Continuing to monitor.
 - **Aristotle integrations to date:** 101 (from
   `aristotle_jobs.jsonl`).
 - **Most-recent integrations** (full detail in

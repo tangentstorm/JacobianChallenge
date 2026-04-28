@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 04:57 EDT
+Last tick: 2026-04-28 05:00 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -67,16 +67,16 @@ Active jobs (ours):     2 / 5
                         `1f7d4399` TOPDOWN on the finite leaf
                                    `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
                                    in GenusZeroClassification.lean.
-                                   IN_PROGRESS at 20%, ~42min (stuck ~6min).
+                                   IN_PROGRESS at 20%, ~45min (stuck ~6min).
                         `f1786fa8` Step 2 of Banach-data construction recon —
                                    `ContMDiffSection.supNorm` + 5 sup-norm
                                    properties in NEW file SectionSupNorm.lean.
-                                   IN_PROGRESS at 7%, ~28min (stuck ~15min —
-                                   approaching cancel threshold ~30min).
-Integrated this tick:   none — heartbeat. Both packets stuck this tick;
-                        compute backend may be having capacity issues.
-                        Will reassess f1786fa8 cancel decision next tick
-                        if still no progress.
+                                   IN_PROGRESS at 7%, ~31min (stuck ~15min —
+                                   approaching cancel threshold).
+Integrated this tick:   none — substantive local move (Ext.lean +2
+                        helpers).  Both packets stalled simultaneously,
+                        suggesting backend capacity issue; cancel-and-
+                        resubmit unlikely to help in that case.
 
 PRIOR TICK (still standing):
 Integrated `90750074` Liouville core TOPDOWN refinement —
