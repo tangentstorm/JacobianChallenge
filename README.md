@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 04:30 EDT
+Last tick: 2026-04-28 04:33 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -67,16 +67,15 @@ Active jobs (ours):     2 / 5
                         `1f7d4399` TOPDOWN on the finite leaf
                                    `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
                                    in GenusZeroClassification.lean.
-                                   IN_PROGRESS at 4%, ~15min.
+                                   IN_PROGRESS at 6%, ~18min.
                         `f1786fa8` Step 2 of Banach-data construction recon —
                                    `ContMDiffSection.supNorm` + 5 sup-norm
                                    properties in NEW file SectionSupNorm.lean.
-                                   QUEUED.
-Integrated this tick:   none — heartbeat after prior-tick submission.
-                        Both packets healthy; PeriodFunctional 2 remaining
-                        sorries are deep math (period-pairing integrality
-                        + Riemann bilinear nondegeneracy) not feasible
-                        without major Mathlib infrastructure.
+                                   IN_PROGRESS at 1%, ~4min (just dequeued).
+Integrated this tick:   none — heartbeat. Both packets active and
+                        progressing (1f7d4399 4→6%; f1786fa8 dequeued).
+                        No substantive local moves available without
+                        conflicting with in-flight work.
 
 PRIOR TICK (still standing):
 Integrated `90750074` Liouville core TOPDOWN refinement —
