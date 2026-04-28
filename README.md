@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 09:24 EDT
+Last tick: 2026-04-28 09:30 EDT
 
 ```text
 Headline progress
@@ -39,7 +39,7 @@ Open sorries by file (all production sorries; 8 files, 21 total)
   ComplexTorus/ULiftTransport             2   ULift transition obligations
   TraceDegree/PullbackBasis               3   basisDualPullback companions (id, mk_eq, comp)
   TraceDegree/PushforwardBasis            5   complex-torus smoothness + pushforwardTraceLift_{id,preserves_lattice,mk_spec,comp_spec}
-  TraceDegree/AnalyticDegree              1
+  TraceDegree/AnalyticDegree              1   anti-hack #4 trace-pullback identity (named _spec)
 ```
 
 ```text

@@ -45,6 +45,21 @@ nonconstant holomorphic maps, ramification theory, and the constancy
 detection step. -/
 opaque analyticDegree (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ
 
+/-- Companion specification (anti-hack obligation): the trace-pullback
+identity in basis-aligned form. Bottom-up obligation requiring the
+classical trace-pullback identity `tr_f (f* η) = deg(f) · η` on
+holomorphic 1-forms, descended through the period quotient.
+
+This is the **minimum intervention** required to unblock the top-down
+refinement chain (see Option A in the docstring of
+`analyticPushforward_analyticPullback` below). The push/pull/degree
+opaques remain individually unspecified, but their *interaction* — the
+content of the trace-pullback anti-hack — is captured here. -/
+theorem analyticPushforward_analyticPullback_spec (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
+    analyticPushforward f hf (analyticPullback f hf Q) =
+      (analyticDegree f hf) • Q := sorry
+
 /-- The trace–pullback identity, in basis-aligned form: pushforward
 of pullback equals degree-multiplication on `BasisAnalyticJacobian Y`.
 
@@ -267,6 +282,7 @@ trace–pullback identity. -/
 lemma analyticPushforward_analyticPullback (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
     analyticPushforward f hf (analyticPullback f hf Q) =
-      (analyticDegree f hf) • Q := sorry
+      (analyticDegree f hf) • Q :=
+  analyticPushforward_analyticPullback_spec f hf Q
 
 end JacobianChallenge.TraceDegree
