@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 22:57 EDT
+Last tick: 2026-04-27 23:00 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -69,18 +69,31 @@ Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     1 / 5
                         `b782c387` ContMDiffSection topology recon — still
-                                   IN_PROGRESS at 17%, 4h58m elapsed (off-page
-                                   in `aristotle list` but verified via direct
-                                   `aristotle result` call with PYTHONIOENCODING=utf-8
-                                   workaround for a Windows cp1252 CLI bug).
-                                   Same % across many ticks — Aristotle internal
-                                   work, not stuck.
-Integrated this tick:   None.
+                                   IN_PROGRESS at 17%, 5h52m elapsed (Aristotle
+                                   internal work).
+Integrated this tick:   CODEX top-down round: introduced `periodSubgroup_isZLattice`
+                        named obligation in `PeriodFunctional.lean`; refined
+                        `basisAlignedPeriodSubgroup_isDiscrete` to delegate.
+                        One big sorry replaced by one smaller, better-named one.
+                        Build green.
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CODEX top-down refinement round (per user-fired `codex-prompt.md`):
+introduced `theorem periodSubgroup_isZLattice` in
+`Jacobian/Periods/PeriodFunctional.lean` as the named bottom-up obligation
+for the integrality of the period pairing image, and refined
+`basisAlignedPeriodSubgroup_isDiscrete` in
+`Jacobian/Periods/PeriodLattice.lean` to a one-liner delegating to it.
+Also updated `Jacobian/WorkPackets/TopDown.md` Declaration Map.
+**Sorry-count delta: 0** (one sorry replaced by a strictly smaller,
+better-named one). Note: codex used `opaque` for a Prop-valued declaration;
+Claude fixed by switching to `theorem ... := sorry` per TOPDOWN.md rule 7
+(opaque is for type-level data, instance/theorem for Props).
+
+PRIOR TICK (still standing):
 INTEGRATED `10e5bfbb` — **TRACE-PULLBACK IDENTITY** survey on
 `analyticPushforward_analyticPullback` (anti-hack #4 — forces
 `pushforward_pullback`). ~220-line analysis with step-by-step proof

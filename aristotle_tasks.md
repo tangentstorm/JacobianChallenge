@@ -12,19 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 22:57 EDT)
+## Live Status (2026-04-27 23:00 EDT)
 
-- **Aristotle: 1/5 active.**
-  - `b782c387` ContMDiffSection topology recon — verified via
-    `PYTHONIOENCODING=utf-8 aristotle result …` workaround: still
-    IN_PROGRESS at 17%, **4h58m elapsed**. Off-page in `aristotle list`
-    because of pagination, NOT because it completed. Per memory,
-    same-% across multiple ticks while IN_PROGRESS is Aristotle
-    internal work, not stuck. Workaround for the Windows cp1252
-    UnicodeEncodeError in `aristotlelib/progress_utils.py:30` is to
-    set `PYTHONIOENCODING=utf-8` before invoking the CLI.
-- **Codex:** awaiting user to fire `codex-prompt.md` manually.
-- **Local proof work this tick:** verified b782c387 status; heartbeat.
+- **Aristotle: 1/5 active.** `b782c387` still IN_PROGRESS at 17%
+  (~5h52m elapsed — Aristotle internal work).
+- **Codex round integrated this tick:** introduced
+  `theorem periodSubgroup_isZLattice` in `PeriodFunctional.lean` as
+  the named bottom-up obligation; refined
+  `basisAlignedPeriodSubgroup_isDiscrete` in `PeriodLattice.lean`
+  to a one-liner delegation. Codex initially used `opaque` (build
+  error: Prop needs Inhabited/Nonempty); Claude fixed by switching
+  to `theorem ... := sorry` per TOPDOWN.md rule 7. Build green.
+- **Local proof work this tick:** integrated codex round + post-fix.
+
 
 
 ## Layer status
