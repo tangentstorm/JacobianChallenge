@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 08:08 EDT
+Last tick: 2026-04-28 08:14 EDT
 
 ```text
 Headline progress
@@ -21,7 +21,7 @@ Headline progress
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excludes 2 Inventory metadata items)
-Aristotle integrations to date 112        `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 114        `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  383 / 392    counting `:= sorry`-ending lines per file. 8 files with
                                           real sorries — see below.
 
@@ -35,7 +35,7 @@ Open sorries by file (all production sorries; 8 files, 21 total)
   HolomorphicForms/GenusZeroClassification 4  finite/infty Liouville leaves +
                                               uniformization-lite + hard-direction unif.
   Periods/PeriodFunctional                2   IsZLattice integrality + Riemann-bilinear nondegeneracy
-  AbelJacobi/AnalyticOfCurveBasis         3   Abel-Jacobi injectivity scaffolding
+  AbelJacobi/AnalyticOfCurveBasis         3   bundle/quotientMk/path-integral splits + Abel-injectivity
   ComplexTorus/ULiftTransport             2   ULift transition obligations
   TraceDegree/PullbackBasis               4   includes deeper companions for comp_spec
   TraceDegree/PushforwardBasis            3   includes general complex-torus smoothness lemma
