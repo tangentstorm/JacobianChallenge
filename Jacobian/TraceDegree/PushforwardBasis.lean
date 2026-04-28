@@ -65,12 +65,16 @@ structure BasisAnalyticPushforwardBundle
   mk_spec : ∀ v : Fin (analyticGenus ℂ X) → ℂ,
     analyticPushforward (ComplexTorus.mk _ (periodFullComplexLattice X) v) =
       ComplexTorus.mk _ (periodFullComplexLattice Y) (pushforwardTraceLift v)
+  /-- The trace lift preserves the period subgroup. -/
+  preserves_lattice : ∀ v ∈ (periodFullComplexLattice X).subgroup,
+    pushforwardTraceLift v ∈ (periodFullComplexLattice Y).subgroup
 
 noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     Inhabited (BasisAnalyticPushforwardBundle X Y f hf) :=
   ⟨{ analyticPushforward := 0
      pushforwardTraceLift := 0
-     mk_spec := fun _ => rfl }⟩
+     mk_spec := fun _ => rfl
+     preserves_lattice := fun _ _ => (periodFullComplexLattice Y).subgroup.zero_mem }⟩
 
 /-- The bundled analytic pushforward (data + descent axiom), as an
 `opaque` value. -/
@@ -162,12 +166,12 @@ theorem pushforwardTraceLift_id :
 /-- The trace lift preserves the period lattice: it sends the period
 subgroup of `X` into the period subgroup of `Y`.
 
-Bottom-up obligation. Provable from the fact that the trace/norm map
-on holomorphic 1-forms intertwines the period pairings. -/
+Sorry-free extraction from `basisAnalyticPushforwardBundle.preserves_lattice`. -/
 theorem pushforwardTraceLift_preserves_lattice
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice X).subgroup,
-      pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup := sorry
+      pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup :=
+  (basisAnalyticPushforwardBundle f hf).preserves_lattice
 
 /-- Characterization of `analyticPushforward` on the quotient
 projection: the pushforward applied to `mk v` equals `mk` of the

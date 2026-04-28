@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 10:00 EDT
+Last tick: 2026-04-28 10:07 EDT
 
 ```text
 Headline progress
@@ -29,7 +29,7 @@ Reproduction: for f in <files>; do echo "$f $(grep -cE ':= sorry$' $f)"; done
 ```
 
 ```text
-Open sorries by file (all production sorries; 8 files, 19 total)
+Open sorries by file (all production sorries; 8 files, 18 total)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   HolomorphicForms/CompactRiemannSurface  2   Banach data, Montel
   HolomorphicForms/GenusZeroClassification 4  finite/infty Liouville leaves +
@@ -38,7 +38,7 @@ Open sorries by file (all production sorries; 8 files, 19 total)
   AbelJacobi/AnalyticOfCurveBasis         2   path-integral smoothness + Abel-injectivity
   ComplexTorus/ULiftTransport             2   ULift transition obligations
   TraceDegree/PullbackBasis               2   basisDualPullback companions (id, comp); _mk_eq via bundle
-  TraceDegree/PushforwardBasis            4   complex-torus smoothness + pushforwardTraceLift_{id,preserves_lattice,comp_spec}; _mk_spec via bundle
+  TraceDegree/PushforwardBasis            3   complex-torus smoothness + pushforwardTraceLift_{id,comp_spec}; _mk_spec/_preserves_lattice via bundle
   TraceDegree/AnalyticDegree              1   anti-hack #4 trace-pullback identity (named _spec)
 ```
 
