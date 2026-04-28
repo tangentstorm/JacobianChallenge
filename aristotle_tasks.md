@@ -12,16 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 01:06 EDT)
+## Live Status (2026-04-28 01:09 EDT)
 
-- **Aristotle: 3/5 ours active.** (heartbeat — slow advance, no integrations)
+- **Aristotle: 3/5 ours active.** (slow advance, no integrations)
   - `90750074` Liouville core (`holomorphicOneForm_onePointCx_subsingleton`).
-    IN_PROGRESS at 11%, ~27 min elapsed.
+    IN_PROGRESS at 11%, ~30 min elapsed.
   - `dc8af381` `exists_compact_periodFundamentalDomain` reduction in
-    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 11%, ~16 min.
+    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 11%, ~19 min.
   - `6992e390` `holomorphicOneForm_locallyCompact_of_compactRiemannSurface`
     reduction in `CompactRiemannSurface.lean` (3→2).  IN_PROGRESS at 5%,
-    ~10 min.
+    ~13 min.
+- **Local move this tick:** captured Blocker 5 structural finding from
+  Aristotle `5dfd5106` (Montel survey) into `plan.md` Phase 2.  Records
+  the open `HolomorphicOneFormBanachData.norm_le_iSup` field addition
+  needed before Montel becomes provable; deferred until step (a) is
+  attacked.
 - **Aristotle integration this tick:** `5dfd5106`
   `holomorphicOneForm_montel` survey, +275 lines of docstring on
   `CompactRiemannSurface.lean`.  7-step proof outline (chart cover

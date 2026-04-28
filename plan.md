@@ -266,6 +266,29 @@ The theorem `genus_eq_zero_iff_homeo` is especially deep with this definition.
 It likely depends on uniformization or the classification of genus-zero compact
 Riemann surfaces, not just local complex analysis.
 
+### Phase 2 — open structural item (Blocker 5, surfaced 2026-04-28)
+
+The current `HolomorphicOneFormBanachData` (in
+`Jacobian/HolomorphicForms/CompactRiemannSurface.lean`) bundles a `Norm`,
+`MetricSpace`, `dist_eq`, `norm_smul_le`, and `complete` field — but
+**no axiom relating the norm to pointwise section evaluation.** The
+intended sup-norm makes the closed unit ball compact (Montel); an
+arbitrary Banach norm need not. So `holomorphicOneForm_montel B` is
+literally false for arbitrary `B`.
+
+Fix when step (a) is being attacked: add a field
+
+```lean
+  norm_le_iSup : ∀ σ : HolomorphicOneForm ℂ X, ∀ x : X,
+    ‖σ.1 x‖ ≤ toNorm.norm σ
+```
+
+(or the stronger `norm_eq_iSup` for compact `X`). Deferred for now
+because `holomorphicOneForm_normedSpace_uniformOnCompact` is itself
+still a sorry — no constructor exists yet to break.
+
+Recorded in commit log of Aristotle survey `5dfd5106`.
+
 ## Phase 3: Integration and Periods
 
 Develop integration of differential forms over paths and cycles on manifolds.
