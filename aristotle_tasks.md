@@ -12,7 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 23:33 EDT)
+## Live Status (2026-04-27 23:36 EDT)
+
+- **Aristotle: 1/5 active.** `b782c387` still 17%.
+- **TWO sub-agent rounds integrated this tick** (parallel dispatch
+  per user request to narrow biggest gaps from bottom-up work):
+  - (A) NEW `IsManifold 𝓘(ℂ,ℂ) ⊤ (OnePoint ℂ)` in
+    `Jacobian/HolomorphicForms/OnePointCxIsManifold.lean` (224 lines,
+    sorry-free; ℂℙ¹ is now a real complex manifold in the project).
+  - (B) Refined `compactRiemannSurface_finiteDimensionalHolomorphicOneForms`
+    into 3 named obligations (`HolomorphicOneFormBanachData`,
+    `holomorphicOneForm_montel`, `holomorphicOneForm_locallyCompact_*`);
+    FD instance is now sorry-free assembly via
+    `FiniteDimensional.of_locallyCompactSpace`.
+  - Both stayed in scope; build green; no user-WIP touched.
+- **User WIP:** clean (user committed during the parallel run).
 
 - **Aristotle: 1/5 active.** `b782c387` still 17% at 6h25m.
 - **User WIP:** both `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean`

@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 23:33 EDT
+Last tick: 2026-04-27 23:36 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -81,6 +81,28 @@ Integrated this tick:   CODEX top-down round: introduced `periodSubgroup_isZLatt
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+TWO PARALLEL SUB-AGENTS dispatched (per user request "continue
+delegating top-down work to sub-agents... narrow gaps from bottom-up
+work"). Both stayed in scope this time, no overreach:
+
+(A) **NEW: `IsManifold 𝓘(ℂ,ℂ) ⊤ (OnePoint ℂ)` instance** in
+    `Jacobian/HolomorphicForms/OnePointCxIsManifold.lean` (224 lines,
+    sorry-free, build green). Closes Packet C of the genus-zero plan.
+    Sequel to f735aa6d's ChartedSpace. ℂℙ¹ is now a real complex
+    manifold in our project. Bottom-up content discharged via
+    `contDiffAt_inv ℂ` + 4-way chart-pair case split.
+
+(B) **Refined `compactRiemannSurface_finiteDimensionalHolomorphicOneForms`**
+    in `Jacobian/HolomorphicForms/CompactRiemannSurface.lean`: the
+    single big sorry on Riemann-Roch is replaced by 3 named
+    theorem-sorry obligations matching 72ac3a75's 3-step plan
+    (Banach data on the section space, Montel for holomorphic 1-forms,
+    local compactness). FD instance is now sorry-free assembly that
+    derives finite-dim from local compactness via
+    `FiniteDimensional.of_locallyCompactSpace`. Sorry-count delta:
+    1 → 3 (canonical TOPDOWN.md success pattern).
+
+PRIOR TICK (still standing):
 SUB-AGENT top-down refinement round (per user request "delegate
 some top-down work to a subagent"): un-opaqued `periodFundamentalDomain`
 in `PeriodLattice.lean` to `Classical.choose` of a new
