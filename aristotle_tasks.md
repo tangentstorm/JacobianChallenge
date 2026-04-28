@@ -12,20 +12,22 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 04:28 EDT)
+## Live Status (2026-04-28 04:30 EDT)
 
 - **Aristotle: 2/5 ours active.**
-  - `1f7d4399` (prior tick) TOPDOWN refinement on the finite leaf
+  - `1f7d4399` TOPDOWN on the finite leaf
     `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` in
-    `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — the
-    SUBSTANTIVE Liouville application via identity-chart pullback +
-    `EntireZero.lean` black-box.  IN_PROGRESS at 1%, ~12min.
-  - `f1786fa8` (NEW this tick) Step 2 of the Banach-data construction
-    recon — define `ContMDiffSection.supNorm` and prove 5 sup-norm
-    properties (zero, eq_zero_iff, add_le, smul_le, neg) in NEW file
-    `Jacobian/HolomorphicForms/SectionSupNorm.lean`.  Builds on
-    63158306's Step 1 (fiberNorm + continuity).  ~40-60 LOC per recon
-    §5 Step 2.  Off-critical-path; disjoint write scope from 1f7d4399.
+    `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
+    IN_PROGRESS at 4%, ~15min.
+  - `f1786fa8` Step 2 of the Banach-data construction recon —
+    `ContMDiffSection.supNorm` + 5 sup-norm properties in NEW file
+    `Jacobian/HolomorphicForms/SectionSupNorm.lean`.  QUEUED.
+- **This tick:** heartbeat after prior-tick submission of f1786fa8.
+  Both packets healthy.  PeriodFunctional 2 remaining sorries
+  (`periodSubgroup_isZLattice` discreteness + `periodSubgroup_spans_real`
+  Riemann bilinear) are deep math not feasible without major Mathlib
+  infrastructure (period-pairing integrality + nondegeneracy theorem).
+  Refreshed README "Next tick priorities" to reflect current state.
 - **Cancelled this tick:** `d493c66b` after stuck at 37% for ~138 min
   (well past typical successful job duration of 30-75 min — successful
   packets this session: 5dfd5106 ~36min, 6992e390 ~32min, 90750074 ~73min,

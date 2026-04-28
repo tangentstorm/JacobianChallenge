@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 04:28 EDT
+Last tick: 2026-04-28 04:30 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -64,17 +64,19 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     2 / 5
-                        `1f7d4399` (prior tick) TOPDOWN on the finite leaf
+                        `1f7d4399` TOPDOWN on the finite leaf
                                    `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
                                    in GenusZeroClassification.lean.
-                                   IN_PROGRESS at 1%, ~12min.
-                        `f1786fa8` (NEW this tick) Step 2 of Banach-data
-                                   construction recon — `ContMDiffSection.supNorm`
-                                   + 5 sup-norm properties in NEW file
-                                   `Jacobian/HolomorphicForms/SectionSupNorm.lean`.
-                                   Off-critical-path; disjoint write scope.
-Cancelled prior tick:   `d493c66b` — stuck at 37% for ~138 min.
-Integrated this tick:   none — second parallel packet f1786fa8 just submitted.
+                                   IN_PROGRESS at 4%, ~15min.
+                        `f1786fa8` Step 2 of Banach-data construction recon —
+                                   `ContMDiffSection.supNorm` + 5 sup-norm
+                                   properties in NEW file SectionSupNorm.lean.
+                                   QUEUED.
+Integrated this tick:   none — heartbeat after prior-tick submission.
+                        Both packets healthy; PeriodFunctional 2 remaining
+                        sorries are deep math (period-pairing integrality
+                        + Riemann bilinear nondegeneracy) not feasible
+                        without major Mathlib infrastructure.
 
 PRIOR TICK (still standing):
 Integrated `90750074` Liouville core TOPDOWN refinement —
@@ -751,20 +753,17 @@ Reproduction (per dir):
 ```text
 Next tick priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Per Aristotle's plan in CompactRiemannSurface, the *next* off-path
-   substantive task is "define the topology of uniform convergence on
-   compact sets for ContMDiffSection, and upgrade it to a Banach
-   space structure when the base manifold is CompactSpace". This is
-   itself a substantial Mathlib infrastructure project. Consider
-   submitting a recon packet to scope it out before committing
-   Aristotle hours.
-2. Continue local cadence: the basis-aligned period bridge is now
-   well-stocked (BasisAlignedDualEquiv, BasisAlignedPeriodSubgroup,
-   BasisAlignedPeriodPairing, with bijection / kernel / mem-transport
-   theorems). Next natural Claude-owned move: try the universe lift
-   on IntegralOneCycle via explicit-universe call to
-   `singularHomologyFunctor.{u}`, or via a ULift bridge.
-3. Continue ignoring the 5 user-WIP files (AnalyticOfCurveBasis,
+1. Wait on Aristotle: 1f7d4399 (finite leaf, GenusZeroClassification,
+   IN_PROGRESS 4%) and f1786fa8 (SectionSupNorm Step 2, QUEUED).
+   Earliest expected return ~30 min from submission.
+2. Once f1786fa8 lands: prep Step 3 (SectionTopologyConstructionRecon
+   §5 Step 3, MetricSpace construction, ~20-30 LOC). Either submit
+   to Aristotle or do locally — depends on quality of f1786fa8 result.
+3. Once 1f7d4399 lands: integrate result, then attack the infty leaf
+   (`holomorphicOneForm_onePointCx_toFun_infty_eq_zero`) locally. The
+   inversion-chart continuity argument depends on the finite leaf as
+   a black box; both leaves share the chart-extraction Mathlib gap.
+4. Continue ignoring the 5 user-WIP files (AnalyticOfCurveBasis,
    ULiftTransport, PullbackBasis, PushforwardBasis, AnalyticDegree)
    per PROMPT.md.
 ```
