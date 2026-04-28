@@ -16,23 +16,75 @@ back precisely.
 
 ## What "a round" means
 
-A round replaces some `sorry`s in `Solution.lean` with real bodies. Each body
-delegates to **named, small** helper declarations in production modules under
-`Jacobian/HolomorphicForms/`, `Jacobian/Periods/`, `Jacobian/ComplexTorus/`,
-`Jacobian/AbelJacobi/`, or `Jacobian/TraceDegree/`. Each helper is either a
-real proof or its own typed `sorry` (smaller and more precise than the one it
-replaced).
+A round picks **one or more `sorry`-d declarations anywhere in the project**
+and replaces each one with a real Lean term whose body delegates to
+**named, smaller** helper declarations. Those helpers are either real
+proofs or their own typed `sorry`s — strictly smaller and more precise
+than the one being replaced.
 
 A round may touch any number of files but is generally a **small batch**:
-typically 1–8 Solution declarations refined, 1–3 new or updated production
-modules, each with a handful of named obligations.
+typically 1–8 declarations refined, 1–3 new or updated modules, each with
+a handful of named obligations.
+
+### Stepwise refinement, applied recursively
+
+The same pattern applies at every layer of the obligation tree. Don't
+think of refinement as "Solution.lean → production module" once and done;
+think of it as a **recursive shrinking move**:
+
+```text
+sorry₀  ─refine→  body delegating to {sorry₁, sorry₂, sorry₃}
+sorry₂  ─refine→  body delegating to {sorry₂.a, sorry₂.b}
+sorry₂.a  ─refine→  body delegating to {sorry₂.a.i, …}
+…
+```
+
+A "round" can be any one of these refinements. The Solution.lean →
+production-module refinement is just round 1 at the outermost layer.
+Refining a production-module obligation (e.g. `complexTorusULift_isManifold`)
+into a smaller named lemma plus an assembly is *also* a round, and a
+valuable one.
+
+A canonical example: `complexTorusULift_isManifold` (sorry) was refined
+into `complexTorusULift_hasGroupoid` (assembly with no own sorry) +
+`complexTorusULift_transition_eqOnSource` (sorry), which was further
+refined into `homeomorph_transOpenPartialHomeomorph_transition_eqOnSource`
+(a Mathlib-style abstract sorry). At that point the abstract sorry was
+small enough to discharge directly using Mathlib's
+`OpenPartialHomeomorph.symm_trans_self` machinery — the *bottom-up*
+work meeting *top-down* refinement at a named obligation.
+
+### Goal: meet in the middle
+
+The whole point of recursive top-down refinement is to **drive each
+top-level sorry down to a named obligation that bottom-up work can
+discharge directly** — usually because Mathlib already has a relevant
+lemma, or because a project-internal infrastructure module has built
+the prerequisite. When the refinement chain reaches a named sorry whose
+statement matches what's already proven (or provable in a few lines)
+elsewhere, the chain collapses and a real-proof tree falls out.
+
+A round is "successful" when:
+
+* the count of *unresolved* sorries goes down (a sorry was discharged),
+  **or**
+* the count stays the same but the remaining sorries are *strictly
+  smaller and better-named* (one big sorry replaced by N smaller named
+  ones, each Aristotle-shaped).
+
+A round that just renames or shuffles without making sorries strictly
+smaller is wasted work.
 
 ## Your input from the master
 
-* **Round name** (e.g. "Round 3: Abel-Jacobi family").
-* **Challenge declarations targeted** (e.g. `ofCurve`, `ofCurve_self`,
-  `ofCurve_inj`, `ofCurve_contMDiff`).
-* Possibly: hints on intended construction or named obligations to introduce.
+* **Round name** (e.g. "Round 3: Abel-Jacobi family", or
+  "ULiftTransport: discharge contMDiff_neg via up/down assembly").
+* **Targeted declarations** — either Challenge declarations whose
+  Solution-side `sorry` you should refine, or named production-module
+  obligations (typically `sorry`-d or `opaque`) you should refine
+  further or discharge.
+* Possibly: hints on intended construction or named obligations to
+  introduce.
 
 If unsure about scope, ask the master before starting.
 
@@ -77,12 +129,17 @@ If unsure about scope, ask the master before starting.
    * Small named obligations, not bundled.
    * Doc comments naming the *top-down obligation* role and the *bottom-up
      content* (what a real proof would require).
-5. **Edit Solution.lean**:
+5. **Edit the target file** (Solution.lean for a Round-1-style refinement,
+   or the production module being refined deeper):
    * Add narrow imports for each new module.
    * Refine the targeted declarations. Use full namespace paths
      (`JacobianChallenge.HolomorphicForms.foo`) rather than `open` to avoid
      surprising name collisions (see "Surprises" below).
-   * Update the file's "Refinement progress" docstring.
+   * If editing Solution.lean, update its "Refinement progress" docstring.
+   * If refining a production-module obligation, the *replaced* sorry
+     stops being load-bearing; ensure the smaller named obligations you
+     introduce above it have informative docstrings explaining the
+     bottom-up content each requires.
 6. **Optional narrow build** of a new module to catch obvious errors:
    `lake build Jacobian.<NewModule>`. Skip iterative builds — they are slow
    (5–15 min) and the master will build the full target. One verification
