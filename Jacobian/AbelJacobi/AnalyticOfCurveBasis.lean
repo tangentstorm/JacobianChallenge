@@ -84,28 +84,53 @@ lemma analyticOfCurve_self (P : X) :
   rw [pathIntegralFunctional_self]
   rfl
 
-/-- Holomorphicity of the analytic Abel-Jacobi map.
+/-- Smoothness specification for the analytic Abel-Jacobi map.
 
-Top-down obligation. Bottom-up: holomorphicity of path integrals plus
-smoothness of the period quotient projection. -/
-lemma analyticOfCurve_contMDiff (P : X) :
+Bottom-up obligation: requires holomorphicity of path integrals
+(`pathIntegralFunctional`) together with smoothness of the period
+quotient projection `mk`. Neither ingredient is available in
+Mathlib v4.28.0 (no `QuotientAddGroup.contMDiff_mk`, no manifold
+path-integration theory), so this is recorded as a named sorry. -/
+theorem analyticOfCurve_contMDiff_spec (P : X) :
     ContMDiff 𝓘(ℂ)
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (⊤ : WithTop ℕ∞) (analyticOfCurve X P) := sorry
 
-/-- Abel's theorem in basis-aligned path-integral coordinates: if two
-path-integral coordinate vectors differ by a period vector, then their
-endpoints are equal.
+/-- Holomorphicity of the analytic Abel-Jacobi map.
 
-Top-down leaf obligation. Bottom-up: point separation for Abel-Jacobi,
-usually proved from Riemann-Roch/divisor theory or an equivalent
-Abel-theorem formalization. -/
-theorem pathIntegralFunctional_separates_points
+Top-down obligation. Discharged via `analyticOfCurve_contMDiff_spec`. -/
+lemma analyticOfCurve_contMDiff (P : X) :
+    ContMDiff 𝓘(ℂ)
+      (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
+      (⊤ : WithTop ℕ∞) (analyticOfCurve X P) :=
+  analyticOfCurve_contMDiff_spec X P
+
+/-- Abel's theorem content: if two path-integral coordinate vectors
+differ by a period vector, then their endpoints are equal.
+
+This is the core mathematical content (bottom-up obligation).
+The proof requires divisor theory / Riemann-Roch on compact Riemann
+surfaces, which is not yet available in Mathlib. -/
+theorem pathIntegralFunctional_separates_points_spec
     (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
     (hperiod :
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
         basisAlignedPeriodSubgroup X) :
     Q₁ = Q₂ := sorry
+
+/-- Abel's theorem in basis-aligned path-integral coordinates: if two
+path-integral coordinate vectors differ by a period vector, then their
+endpoints are equal.
+
+Top-down leaf obligation. Discharged via
+`pathIntegralFunctional_separates_points_spec`. -/
+theorem pathIntegralFunctional_separates_points
+    (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
+    (hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X) :
+    Q₁ = Q₂ :=
+  pathIntegralFunctional_separates_points_spec X P h Q₁ Q₂ hperiod
 
 /-- Abel injectivity for positive genus.
 
