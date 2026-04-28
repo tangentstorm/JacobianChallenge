@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 21:12 EDT
+Last tick: 2026-04-27 21:15 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 93         `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 94         `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  381 / 389    using the precise count (real `sorry` tactics; doc-comment
                                           matches and intentional design files excluded). 8 real-sorry
                                           production files (3 Claude-owned-deep, 5 user-WIP):
@@ -67,18 +67,28 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     2 / 5
+Active jobs (ours):     1 / 5
                         `b782c387` ContMDiffSection topology recon — IN_PROGRESS
-                                   at 17%, ~4h elapsed (normal).
-                        `75c45747` periodFundamentalDomain_isCompact —
-                                   IN_PROGRESS at 6% (~7 min in). TOP-DOWN
-                                   refinement experiment.
-Integrated this tick:   None.
+                                   at 17%, ~4h05m elapsed (normal).
+Integrated this tick:   `75c45747` — periodFundamentalDomain_isCompact
+                                    blocker analysis (115-line survey;
+                                    sorry retained; build green).
 ```
 
 ```text
 Local cadence this tick (Claude-owned)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INTEGRATED `75c45747` — TOP-DOWN refinement experiment (per user
+request) on `periodFundamentalDomain_isCompact`. Aristotle returned a
+115-line blocker analysis identifying TWO independent blockers:
+(1) the shared `IsZLattice ℝ` gap from 7abae190, and (2) a NEW
+finding — `periodFundamentalDomain` is a bare `opaque` with no
+companion equation/property, so compactness cannot be proven without
+either un-opaquing it or adding a companion axiom. Recommends Option
+A: redefine as `closure (ZSpan.fundamentalDomain b)`. Build green.
+**Verdict: Aristotle handled the top-down survey task very well.**
+
+PRIOR TICK (still standing):
 INTEGRATED `f735aa6d` — **NEW `ChartedSpace ℂ (OnePoint ℂ)` instance**
 in `Jacobian/HolomorphicForms/OnePointCxChartedSpace.lean` (sorry-free
 177-line file). Real new infrastructure: ℂℙ¹ now has a complex

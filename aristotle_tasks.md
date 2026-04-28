@@ -12,18 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-27 21:12 EDT)
+## Live Status (2026-04-27 21:15 EDT)
 
-- **Aristotle: 2/5 active.**
+- **Aristotle: 1/5 active.**
   - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~4h elapsed (normal long-running).
-  - `75c45747` periodFundamentalDomain_isCompact — IN_PROGRESS at 6%
-    (~7 min in). TOP-DOWN refinement experiment.
-- **Codex:** running in background (pids 62776 + 176380) on
-  `periodSubgroup_isZLattice` opaque introduction. ~3 min in, no
-  stdout yet — still working through the prompt. Disjoint from
-  75c45747's write scope.
-- **Local proof work this tick:** Heartbeat.
+    ~4h05m elapsed (normal long-running).
+- **Integrated this tick:** `75c45747` — TOP-DOWN refinement experiment
+  succeeded. 115-line blocker analysis on `periodFundamentalDomain_isCompact`,
+  identifying TWO independent blockers (shared IsZLattice + opaque-has-no-
+  spec). Recommends un-opaquing `periodFundamentalDomain`. Build green.
+  Verdict: Aristotle handled top-down survey work very well.
+- **Codex:** running in background (~7 min, pids active but stdout still
+  0 bytes — `byinky0z8.output`). Tree clean — no edits yet. Investigation
+  pending.
 - **User WIP:** `M Jacobian/ComplexTorus/ULiftTransport.lean` — Claude
   leaves untouched.
 - **Local proof work this tick:** Heartbeat.
