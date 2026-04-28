@@ -87,33 +87,6 @@ lemma analyticPushforward_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘
       (analyticPushforward f hf) :=
   analyticPushforward_contMDiff_spec f hf
 
-/-- Deeper companion: the pushforward along the identity map equals
-the identity `ContinuousAddMonoidHom`.
-
-Bottom-up obligation. The trace of the identity branched covering
-(degree 1, single sheet) reduces to the identity on holomorphic
-1-forms, hence to the identity on the period quotient. -/
-theorem analyticPushforward_id_eq :
-    analyticPushforward (X := X) (Y := X) id contMDiff_id =
-      ContinuousAddMonoidHom.id (BasisAnalyticJacobian X) := sorry
-
-/-- Specification: the trace of the identity holomorphic map on
-holomorphic 1-forms is the identity; descending through the period
-quotient preserves this.
-
-Assembly from `analyticPushforward_id_eq`. -/
-theorem analyticPushforward_id_spec (P : BasisAnalyticJacobian X) :
-    analyticPushforward (X := X) (Y := X) id contMDiff_id P = P := by
-  rw [analyticPushforward_id_eq]
-  rfl
-
-/-- Pushforward along the identity is the identity.
-
-Top-down obligation. Assembled from `analyticPushforward_id_spec`. -/
-lemma analyticPushforward_id_apply (P : BasisAnalyticJacobian X) :
-    analyticPushforward (X := X) (Y := X) id contMDiff_id P = P :=
-  analyticPushforward_id_spec P
-
 /-! ### Deeper companions: trace lift on the covering space
 
 The opaque `analyticPushforward` is the descent of a covering-space
@@ -140,6 +113,15 @@ trace/norm map on holomorphic 1-forms, expressed in the chosen bases. -/
 noncomputable opaque pushforwardTraceLift (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ X) → ℂ) →+ (Fin (analyticGenus ℂ Y) → ℂ)
+
+/-- Deeper companion: the trace lift along `id` is the identity additive
+group homomorphism on the covering space.
+
+Bottom-up: the trace of the identity branched covering (degree 1) is
+the identity on holomorphic 1-forms; dualization preserves this. -/
+theorem pushforwardTraceLift_id :
+    pushforwardTraceLift (X := X) (Y := X) id contMDiff_id =
+      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := sorry
 
 /-- The trace lift preserves the period lattice: it sends the period
 subgroup of `X` into the period subgroup of `Y`.
@@ -207,5 +189,37 @@ lemma analyticPushforward_comp_apply
     analyticPushforward (g ∘ f) (hg.comp hf) P =
       analyticPushforward g hg (analyticPushforward f hf P) :=
   analyticPushforward_comp_spec f hf g hg P
+
+/-- Deeper companion: the pushforward along the identity map equals
+the identity `ContinuousAddMonoidHom`.
+
+**Proof.** Assembly from the deeper companions `analyticPushforward_mk_spec`
+(descent compatibility) and `pushforwardTraceLift_id` (covering-space
+identity functoriality). On each `mk v`, rewrite via descent and
+identify the trace lift as the identity. -/
+theorem analyticPushforward_id_eq :
+    analyticPushforward (X := X) (Y := X) id contMDiff_id =
+      ContinuousAddMonoidHom.id (BasisAnalyticJacobian X) := by
+  ext P
+  obtain ⟨v, rfl⟩ := ComplexTorus.mk_surjective _ (periodFullComplexLattice X) P
+  rw [analyticPushforward_mk_spec id contMDiff_id v, pushforwardTraceLift_id]
+  rfl
+
+/-- Specification: the trace of the identity holomorphic map on
+holomorphic 1-forms is the identity; descending through the period
+quotient preserves this.
+
+Assembly from `analyticPushforward_id_eq`. -/
+theorem analyticPushforward_id_spec (P : BasisAnalyticJacobian X) :
+    analyticPushforward (X := X) (Y := X) id contMDiff_id P = P := by
+  rw [analyticPushforward_id_eq]
+  rfl
+
+/-- Pushforward along the identity is the identity.
+
+Top-down obligation. Assembled from `analyticPushforward_id_spec`. -/
+lemma analyticPushforward_id_apply (P : BasisAnalyticJacobian X) :
+    analyticPushforward (X := X) (Y := X) id contMDiff_id P = P :=
+  analyticPushforward_id_spec P
 
 end JacobianChallenge.TraceDegree
