@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 04:24 EDT
+Last tick: 2026-04-28 04:28 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -63,16 +63,18 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours):     1 / 5
-                        `1f7d4399` (NEW) TOPDOWN on the now-narrower finite
-                                   leaf `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
-                                   (Liouville application via identity-chart
-                                   pullback + EntireZero black-box).
-Cancelled this tick:    `d493c66b` — stuck at 37% for ~138 min (well past
-                        typical successful job duration of 30-75 min).
-                        Replaced by local split + 1f7d4399 follow-up.
-Integrated this tick:   none — substantive local split (see "Local cadence"
-                        below) + new submission.
+Active jobs (ours):     2 / 5
+                        `1f7d4399` (prior tick) TOPDOWN on the finite leaf
+                                   `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
+                                   in GenusZeroClassification.lean.
+                                   IN_PROGRESS at 1%, ~12min.
+                        `f1786fa8` (NEW this tick) Step 2 of Banach-data
+                                   construction recon — `ContMDiffSection.supNorm`
+                                   + 5 sup-norm properties in NEW file
+                                   `Jacobian/HolomorphicForms/SectionSupNorm.lean`.
+                                   Off-critical-path; disjoint write scope.
+Cancelled prior tick:   `d493c66b` — stuck at 37% for ~138 min.
+Integrated this tick:   none — second parallel packet f1786fa8 just submitted.
 
 PRIOR TICK (still standing):
 Integrated `90750074` Liouville core TOPDOWN refinement —
