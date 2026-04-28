@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 12:15 EDT
+Last tick: 2026-04-28 12:19 EDT
 
 ```text
 Headline progress
@@ -31,7 +31,7 @@ Reproduction: for f in <files>; do echo "$f $(grep -cE ':= sorry$' $f)"; done
 ```text
 Open sorries by file (all production sorries; 7 files, 15 total)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  HolomorphicForms/CompactRiemannSurface  2   Banach data, Montel
+  HolomorphicForms/CompactRiemannSurface  2   Banach data + montel_subseq_tendsto (Montel split via TOPDOWN by subagent)
   HolomorphicForms/GenusZeroClassification 4  finite/infty Liouville leaves +
                                               uniformization-lite + hard-direction unif.
   Periods/PeriodFunctional                2   IsZLattice integrality + Riemann-bilinear nondegeneracy

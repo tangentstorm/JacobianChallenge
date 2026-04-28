@@ -146,7 +146,7 @@ theorem holomorphicOneForm_normedSpace_uniformOnCompact
 
 /-! ### Step (b): Montel — bounded sequences are relatively compact -/
 
-/-- **(b) Montel's theorem for holomorphic 1-forms.**
+/-! **(b) Montel's theorem for holomorphic 1-forms.**
 For any Banach realisation of `HolomorphicOneForm ℂ X` whose topology is
 uniform convergence on compact sets, the closed unit ball is compact.
 Equivalently (in a metric space): every uniformly bounded sequence of
@@ -424,6 +424,98 @@ chartwise section evaluation API — make discharge infeasible without
 substantial bottom-up infrastructure work. The statement itself
 (Blocker 5) also needs a minor fix to connect `B`'s abstract norm to
 pointwise section values. -/
+/-! #### Sub-obligations of `holomorphicOneForm_montel`
+
+The Montel statement is split into two named obligations that
+correspond to the mathematical content of the proof:
+
+* `holomorphicOneForm_montel_subseq_tendsto` — every sequence in the
+  closed unit ball admits a subsequence converging (in `B`'s metric
+  topology) to *some* element of `HolomorphicOneForm ℂ X`.  This is
+  the analytic core: chartwise Cauchy estimates ⇒ equicontinuity ⇒
+  Arzelà–Ascoli for a uniformly convergent subsequence; Weierstrass
+  closure gives the limit's holomorphicity.
+* `holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le` — if a
+  sequence of sections with `‖σₙ‖ ≤ 1` converges to `σ` in `B`'s
+  topology, then `‖σ‖ ≤ 1`.  (Closed-ball-is-closed wiring on the
+  norm-induced metric, fully discharged below.)
+
+`holomorphicOneForm_montel` then assembles these into sequential
+compactness of the closed unit ball, and concludes via
+`IsSeqCompact.isCompact` (metric ⇒ pseudometrizable ⇒
+Bolzano–Weierstrass).
+-/
+
+/-- **Subsequence extraction (Montel core).** Every sequence in the
+closed unit ball of `B` admits a subsequence converging in `B`'s
+metric topology.
+
+This is the analytic heart of Montel.  Discharging it requires:
+1. chartwise Cauchy first-derivative estimates on holomorphic 1-forms
+   (Blocker 2 of the parent docstring),
+2. uniform Lipschitz / equicontinuity on each chart,
+3. Arzelà–Ascoli on the compact base (`arzela_ascoli₁` /
+   `arzela_ascoli` from
+   `Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli`) plus a
+   diagonal extraction across the finite chart cover, and
+4. Weierstrass closure (uniform limit of holomorphic = holomorphic;
+   Blocker 3) to keep the limit inside `HolomorphicOneForm ℂ X`.
+
+The limit `a` is *unconstrained* by this lemma; the norm bound
+`‖a‖_B ≤ 1` is established separately by
+`holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le`.
+
+Bottom-up content: this is the substantive Mathlib-gap-laden
+lemma.  Discharging it requires the chartwise-section evaluation
+API (Blocker 4) and the Cauchy/Weierstrass infrastructure
+(Blockers 2–3) listed in the parent docstring.  See
+`Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean`
+for the recon. -/
+theorem holomorphicOneForm_montel_subseq_tendsto
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (B : HolomorphicOneFormBanachData X)
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (_hσ : ∀ n, B.toNorm.norm (σ n) ≤ 1) :
+    ∃ (a : HolomorphicOneForm ℂ X) (φ : ℕ → ℕ), StrictMono φ ∧
+      @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) (σ ∘ φ) Filter.atTop
+        (@nhds (HolomorphicOneForm ℂ X)
+          B.toMetricSpace.toUniformSpace.toTopologicalSpace a) := by
+  sorry
+
+/-- **Norm bound preserved under metric convergence.** If a sequence of
+sections has `B.toNorm.norm (σₙ) ≤ 1` and converges to `a` in `B`'s
+metric topology, then `B.toNorm.norm a ≤ 1`.
+
+In any normed space, the closed ball is closed in the norm-induced
+metric topology — Mathlib's `Metric.isClosed_closedBall` applied to
+`B.toNormedAddCommGroup`.  This obligation is fully discharged below
+and is *not* a sorry. -/
+theorem holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (B : HolomorphicOneFormBanachData X)
+    (σ : ℕ → HolomorphicOneForm ℂ X) (a : HolomorphicOneForm ℂ X)
+    (hσ : ∀ n, B.toNorm.norm (σ n) ≤ 1)
+    (hlim : @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
+      (@nhds (HolomorphicOneForm ℂ X)
+        B.toMetricSpace.toUniformSpace.toTopologicalSpace a)) :
+    B.toNorm.norm a ≤ 1 := by
+  letI : NormedAddCommGroup (HolomorphicOneForm ℂ X) := B.toNormedAddCommGroup
+  have hball : ∀ n, σ n ∈ Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1 := by
+    intro n
+    have h := hσ n
+    show dist (σ n) (0 : HolomorphicOneForm ℂ X) ≤ 1
+    simpa [dist_zero_right] using h
+  have hclosed : IsClosed (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
+    Metric.isClosed_closedBall
+  have ha_mem : a ∈ Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1 :=
+    hclosed.mem_of_tendsto hlim (Filter.Eventually.of_forall hball)
+  have hd : dist a (0 : HolomorphicOneForm ℂ X) ≤ 1 := ha_mem
+  simpa [dist_zero_right] using hd
+
 theorem holomorphicOneForm_montel
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -432,7 +524,28 @@ theorem holomorphicOneForm_montel
     @IsCompact (HolomorphicOneForm ℂ X)
       B.toMetricSpace.toUniformSpace.toTopologicalSpace
       (@Metric.closedBall (HolomorphicOneForm ℂ X)
-        B.toMetricSpace.toPseudoMetricSpace 0 1) := sorry
+        B.toMetricSpace.toPseudoMetricSpace 0 1) := by
+  -- Round of top-down refinement: split this monolithic Montel sorry
+  -- into two strictly smaller named obligations
+  -- (`holomorphicOneForm_montel_subseq_tendsto` and
+  -- `holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le`).  The
+  -- assembly here reduces compactness in `B`'s metric topology to
+  -- sequential compactness, then combines the two sub-obligations.
+  letI : NormedAddCommGroup (HolomorphicOneForm ℂ X) := B.toNormedAddCommGroup
+  refine IsSeqCompact.isCompact ?_
+  intro σ hσ
+  have hσ_norm : ∀ n, B.toNorm.norm (σ n) ≤ 1 := by
+    intro n
+    have hd : dist (σ n) (0 : HolomorphicOneForm ℂ X) ≤ 1 := hσ n
+    simpa [dist_zero_right] using hd
+  obtain ⟨a, φ, hφ_mono, hφ_tendsto⟩ :=
+    holomorphicOneForm_montel_subseq_tendsto X B σ hσ_norm
+  refine ⟨a, ?_, φ, hφ_mono, hφ_tendsto⟩
+  have ha_norm : B.toNorm.norm a ≤ 1 :=
+    holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le X B
+      (σ ∘ φ) a (fun n => hσ_norm (φ n)) hφ_tendsto
+  show dist a (0 : HolomorphicOneForm ℂ X) ≤ 1
+  simpa [dist_zero_right] using ha_norm
 
 /-! ### Step (c): assembly — local compactness from (a) + (b) -/
 
