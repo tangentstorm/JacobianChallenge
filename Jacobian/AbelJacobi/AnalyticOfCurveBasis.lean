@@ -69,9 +69,14 @@ structure PathIntegralFunctionalBundle
   val : X → X → Fin (analyticGenus ℂ X) → ℂ
   /-- Integrating over a constant loop yields zero. -/
   self_spec : ∀ P : X, val P P = 0
+  /-- The path integral depends smoothly on the endpoint, for each fixed
+  base point. -/
+  contMDiff_endpoint : ∀ P : X,
+    ContMDiff 𝓘(ℂ) (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
+      (⊤ : WithTop ℕ∞) (val P)
 
 instance : Inhabited (PathIntegralFunctionalBundle X) :=
-  ⟨⟨fun _ _ => 0, fun _ => rfl⟩⟩
+  ⟨⟨fun _ _ => 0, fun _ => rfl, fun _ => contMDiff_const⟩⟩
 
 /-- The bundled path-integral functional, carrying both the function
 and its constant-loop specification as an `opaque` value.
@@ -131,12 +136,12 @@ lemma analyticOfCurve_self (P : X) :
 /-- Smoothness of the path-integral functional as a map between
 manifolds `X → Fin g → ℂ`.
 
-Bottom-up obligation: requires multi-chart path-integration theory
-for holomorphic 1-forms on compact Riemann surfaces. -/
+Sorry-free extraction from `pathIntegralFunctionalBundle.contMDiff_endpoint`. -/
 theorem pathIntegralFunctional_contMDiff_spec (P : X) :
     ContMDiff 𝓘(ℂ)
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
-      (⊤ : WithTop ℕ∞) (pathIntegralFunctional X P) := sorry
+      (⊤ : WithTop ℕ∞) (pathIntegralFunctional X P) :=
+  (pathIntegralFunctionalBundle X).contMDiff_endpoint P
 
 /-- Smoothness of the quotient projection `mk` from the model space
 to the complex torus.
