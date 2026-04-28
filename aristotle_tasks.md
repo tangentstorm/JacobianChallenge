@@ -12,180 +12,54 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 04:39 EDT)
+## Live Status (2026-04-28 04:42 EDT)
 
 - **Aristotle: 2/5 ours active.**
   - `1f7d4399` TOPDOWN on the finite leaf
     `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` in
-    `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
-    IN_PROGRESS at 10%, ~24min.
+    `Jacobian/HolomorphicForms/GenusZeroClassification.lean` —
+    SUBSTANTIVE Liouville application via identity-chart pullback +
+    `EntireZero.lean` black-box.  IN_PROGRESS at 13%, ~27min.
   - `f1786fa8` Step 2 of the Banach-data construction recon —
     `ContMDiffSection.supNorm` + 5 sup-norm properties in NEW file
     `Jacobian/HolomorphicForms/SectionSupNorm.lean`.
-    IN_PROGRESS at 3%, ~10min.
-- **This tick:** heartbeat. Both packets active and progressing
-  (1f7d4399 7→10%; f1786fa8 1→3%). No substantive local moves
-  available without conflicting with in-flight work.
-- **Cancelled this tick:** `d493c66b` after stuck at 37% for ~138 min
-  (well past typical successful job duration of 30-75 min — successful
-  packets this session: 5dfd5106 ~36min, 6992e390 ~32min, 90750074 ~73min,
-  63158306 ~67min). Slot freed; replaced by local split + 1f7d4399.
-- **Substantive local split this tick** (per saved feedback "split
-  top-down obligations"): the original
-  `holomorphicOneForm_onePointCx_toFun_eq_zero` sorry is now split
-  into two named bottom-up leaves keyed to the two charts of `OnePoint ℂ`:
-    * `_toFun_finite_eq_zero` — identity chart, substantive Liouville
-      application (re-delegated to 1f7d4399).
-    * `_toFun_infty_eq_zero` — inversion chart, continuity-of-coefficient
-      argument depending on the finite leaf as a black box (kept LOCAL
-      for next tick — disjoint write scope from 1f7d4399 forces
-      serialization in this file).
-  The original `_toFun_eq_zero` is now SORRY-FREE assembly via
-  `cases x using OnePoint.rec`.  Net file sorry count: 3 → 4 (one
-  substantive sorry replaced by two narrower leaves + sorry-free
-  assembly).  Build green:
-  `lake build Jacobian.HolomorphicForms.GenusZeroClassification` ✓.
-  Aristotle integrations to date: 101.
-
-- **Claude-owned structural move this tick:** Blocker 5 RESOLVED.
-  Added a `norm_le` field to `HolomorphicOneFormBanachData` in
-  `Jacobian/HolomorphicForms/CompactRiemannSurface.lean`:
-  ```
-  norm_le : ∀ (σ : HolomorphicOneForm ℂ X) (x : X),
-    ‖σ.1 x‖ ≤ toNorm.norm σ
-  ```
-  Connects the abstract Banach norm to pointwise fiber evaluation,
-  making `holomorphicOneForm_montel B` no-longer-false for arbitrary B.
-  No constructor breaks because the only constructor
-  (`holomorphicOneForm_normedSpace_uniformOnCompact`) is itself still
-  a sorry; the eventual sup-norm construction satisfies the bound
-  trivially.  `plan.md` Phase 2 updated to mark Blocker 5 resolved.
-  Build green: `lake build Jacobian.HolomorphicForms.CompactRiemannSurface`
-  (2409 jobs); `lake build Jacobian.Challenge` (8026 jobs).
-- **Local proof work this tick (Aristotle stalled):** extended
-  `Jacobian/HolomorphicForms/EntireZero.lean` with a fifth corollary:
-    * `Differentiable.eq_zero_of_norm_eventually_le` — entire +
-      `‖f z‖ ≤ g z` eventually along `cocompact ℂ` for some `g`
-      tending to 0 ⇒ identically 0.
-  General form of the decay corollaries.  Build green (8026 jobs).
-- Past hour: 4 substantive Aristotle integrations
-  (5dfd5106 / 848a0c88 / 6992e390 / 90750074) + Aristotle 100th
-  integration milestone + Claude-owned `EntireZero.lean`
-  (4 sorry-free Liouville-zero lemmas) + `dc8af381` partial-rescue
-  with local proof.
-- **Prior tick:** `90750074` Liouville core
-  TOPDOWN refinement — substantive 3-piece split:
-    1. `entire_tendsto_zero_eq_zero` (Liouville application).
-       Aristotle's proof was 5 lines using
-       `Complex.liouville_theorem_aux` + `simp_all +decide`.  Replaced
-       by Claude with a one-liner reference to
-       `Differentiable.eq_zero_of_tendsto_zero_cocompact` from
-       `EntireZero.lean` (avoids duplicate proof).
-    2. NEW sorry `holomorphicOneForm_onePointCx_toFun_eq_zero` —
-       the chart-coefficient-extraction obligation.  Excellent
-       docstring documenting the chart-pullback proof structure
-       (identity chart → f(z) dz; inversion chart → -f(1/w)/w² dw
-       forces f → 0 at infinity; Liouville).  Names the Mathlib gap:
-       no API for reading `ContMDiffSection` of cotangent bundle
-       through chart trivializations.
-    3. `holomorphicOneForm_onePointCx_subsingleton` is now sorry-free
-       assembly via `ext_toFun`.
-  NET: file sorry count UNCHANGED (3) but structure significantly
-  better — deep analytic content (Liouville) fully discharged via
-  `EntireZero.lean`; remaining sorry is specifically the chart
-  extraction.  Added import: `Jacobian.HolomorphicForms.Ext` (for
-  `ext_toFun`) and `Jacobian.HolomorphicForms.EntireZero`.
-  Build green (8036 jobs); Challenge green (8026 jobs).
-- **Prior tick rescue:** `dc8af381` returned with
-  status COMPLETE_WITH_ERRORS.  Diff was unusable as-is (broad
-  `import Mathlib`, commented-out docstring delimiter, tangled
-  `convert ... aesop` chain that didn't typecheck).  HOWEVER the
-  proof OUTLINE was correct, identifying the right Mathlib API
-  (`Module.Free.chooseBasis`, `Module.Basis.ofZLatticeBasis`,
-  `ZSpan.fundamentalDomain`, `ZSpan.floor`,
-  `ZSpan.fract_mem_fundamentalDomain`).  Claude wrote a clean
-  ~30-line local proof using that outline:
-    1. Get `bℤ := Module.Free.chooseBasis ℤ (basisAlignedPeriodSubmoduleℤ X)`.
-    2. Get `bR := bℤ.ofZLatticeBasis ℝ _` (lifts to ℝ-basis of ambient).
-    3. `D := closure (ZSpan.fundamentalDomain bR)` — compact via
-       `(fundamentalDomain_isBounded bR).isCompact_closure` (proper
-       space).
-    4. Coverage: for any `v`, take `g := ZSpan.floor bR v`.  Then
-       `v - g = ZSpan.fract bR v ∈ ZSpan.fundamentalDomain bR ⊆ D`.
-       Lift `g` from `Submodule ℤ` to `AddSubgroup` via
-       `AddSubgroup.toIntSubmodule_toAddSubgroup`.
-  Subtleties: (a) the theorem had to be MOVED to the bottom of the
-  file (after the `_isZLattice` instance) since it now uses it; (b)
-  `▸` substitution on `Module.Basis.ofZLatticeBasis_span` blows up
-  motive-inference (basis index type depends on the Submodule), so
-  used `congrArg Submodule.toAddSubgroup` to lift the equality at
-  the AddSubgroup level instead.
-  Sorry count `PeriodFunctional.lean` reduced 3→2.  Build green
-  (2960 jobs); `lake build Jacobian.Challenge` green (8026 jobs).
-  Aristotle's broken diff is NOT integrated — only the outline was
-  used; `dc8af381` logged as `failed_partial_used_for_outline`.
-- **Aristotle integration this tick:** `5dfd5106`
-  `holomorphicOneForm_montel` survey, +275 lines of docstring on
-  `CompactRiemannSurface.lean`.  7-step proof outline (chart cover
-  → chartwise representation → Cauchy ⇒ equicontinuity →
-  Arzelà–Ascoli → diagonal extraction → Weierstrass closedness →
-  sequential ⇔ topological compactness).  KEY STRUCTURAL FINDING
-  (Blocker 5): `holomorphicOneForm_montel` is FALSE for arbitrary
-  `B : HolomorphicOneFormBanachData X` because the structure has no
-  axiom relating `B.toNorm` to pointwise section evaluation.
-  Recommends adding `norm_le_iSup` (or `norm_eq_iSup`) field.
-  Statement-shape change deferred until step (a)
-  (`holomorphicOneForm_normedSpace_uniformOnCompact`) is being
-  attacked — currently itself a sorry, so no constructor breaks.
-- **Build:** `lake build Jacobian.HolomorphicForms.CompactRiemannSurface`
-  green (2409 jobs).  Sorry count unchanged in that file (3).
-- **Open structural design item:** Blocker 5 (norm-vs-pointwise
-  axiom on `HolomorphicOneFormBanachData`).  Track in `## Top open
-  correctness item` below.
-- **Sub-agent delegation:** none this tick — Aristotle survey
-  retrieval was the focus.  Next opportunity is the
-  uniformization-lite transport step
-  `analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx`
-  (different theorem from `90750074`'s target but in the same file —
-  must wait for `90750074` to retire before dispatching).
-- **Sorry recount per file:** Claude-owned production sorries 9 across
-  3 files (CompactRiemannSurface 3, GenusZeroClassification 3,
-  PeriodFunctional 3 — PeriodLattice fully delegating with 0 own
-  sorries).  User-WIP at 12 across 5 files.  383/391 production files
-  sorry-free.
-
-- **Aristotle: 3/5 active.** Per user request to "give aristotle
-  multiple jobs in parallel" with focus on biggest bottom-up gaps:
-  - `b782c387` ContMDiffSection topology recon — IN_PROGRESS at 17%,
-    ~6h54m elapsed.
-  - `5dfd5106` `holomorphicOneForm_montel` survey — just submitted.
-    Riemann-Roch chain step (b).
-  - `848a0c88` NEW `SectionTopologyConstructionRecon.lean` — just
-    submitted. Companion to b782c387, focused specifically on
-    constructing the Banach data on `ContMDiffSection` for compact X.
-- **Sub-agents (2 async):**
-  - #1: refining `analyticGenus_eq_zero_of_homeomorphic_sphere`
-    (genus-zero easy direction) in `GenusZeroClassification.lean`.
-  - #2: bridging `periodSubgroup_isZLattice` to `IsZLattice ℝ`
-    instance in `PeriodFunctional.lean`.
-- **Disjoint write scopes:** sub-agent #1 → GenusZero; sub-agent #2
-  → PeriodFunctional; Aristotle 5dfd5106 → CompactRiemannSurface;
-  Aristotle 848a0c88 → NEW file. No two workers target the same file.
-- **Local proof work this tick:** scaled up parallel delegation to
-  4 workers (2 sub-agents + 2 Aristotle).
-
-- **Codex round integrated this tick:** introduced
-  `theorem periodSubgroup_isZLattice` in `PeriodFunctional.lean` as
-  the named bottom-up obligation; refined
-  `basisAlignedPeriodSubgroup_isDiscrete` in `PeriodLattice.lean`
-  to a one-liner delegation. Codex initially used `opaque` (build
-  error: Prop needs Inhabited/Nonempty); Claude fixed by switching
-  to `theorem ... := sorry` per TOPDOWN.md rule 7. Build green.
-- **Local proof work this tick:** integrated codex round + post-fix.
-
-
-
-## Layer status
+    IN_PROGRESS at 5%, ~13min.
+- **This tick:** heartbeat + cleanup.  Both packets active and
+  progressing (1f7d4399 10→13%; f1786fa8 3→5%).  No substantive
+  local moves available without conflicting with in-flight work.
+  Trimmed stale Live Status content per PROMPT.md "must be replaced
+  each tick, not appended to. Historical job detail belongs in
+  `aristotle_jobs.jsonl`".
+- **Aristotle integrations to date:** 101 (from
+  `aristotle_jobs.jsonl`).
+- **Most-recent integrations** (full detail in
+  `aristotle_jobs.jsonl`):
+    * `63158306` Step 1 of Banach-data construction
+      (`SectionFiberNorm.lean`, NEW 115 LOC sorry-free).
+    * `90750074` Liouville core 3-piece split on
+      `holomorphicOneForm_onePointCx_subsingleton`.
+    * `6992e390` translation-invariance reduction of
+      `holomorphicOneForm_locallyCompact_of_compactRiemannSurface`.
+    * `5dfd5106` `holomorphicOneForm_montel` survey
+      (CompactRiemannSurface.lean +275 LOC, surfaced Blocker 5).
+    * `848a0c88` `SectionTopologyConstructionRecon.lean` (NEW, 5-step
+      Banach-data construction plan; `f1786fa8` is Step 2).
+- **Most-recent local moves:**
+    * Split `holomorphicOneForm_onePointCx_toFun_eq_zero` into
+      `_toFun_finite_eq_zero` (substantive, delegated to 1f7d4399)
+      and `_toFun_infty_eq_zero` (continuity, kept local for next
+      tick — disjoint-write-scope constraint with 1f7d4399).
+      Original is now sorry-free assembly via
+      `cases x using OnePoint.rec`.
+    * Cancelled `d493c66b` after stuck at 37% × ~138 min (well past
+      typical 30-75 min) — replaced by local split + 1f7d4399.
+    * Resolved Blocker 5 by adding `norm_le` field to
+      `HolomorphicOneFormBanachData`.
+    * Created `EntireZero.lean` (5 corollaries, sorry-free Liouville-
+      zero lemmas: tendsto_zero_cocompact, inv_decay, quadratic_decay,
+      polynomial_decay, norm_eventually_le).
+    * Rescued `dc8af381` partial — Claude wrote clean local proof of
+      `exists_compact_periodFundamentalDomain` (PeriodFunctional 3→2).## Layer status
 
 - **Complex torus layer: complete (sorry-free).**
 - **Queue C foundation in place.**
