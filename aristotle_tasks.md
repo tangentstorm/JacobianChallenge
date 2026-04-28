@@ -12,20 +12,37 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 05:15 EDT)
+## Live Status (2026-04-28 05:18 EDT)
 
 - **Aristotle: 2/5 ours active.**
   - `1f7d4399` TOPDOWN on the finite leaf
     `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` in
     `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
-    IN_PROGRESS at 20%, ~60min (stuck ~21min — 9 min from announced
-    30min cancel threshold).
-  - `f1786fa8` Step 2 of the Banach-data construction recon —
-    `ContMDiffSection.supNorm` + 5 sup-norm properties in NEW file
-    `Jacobian/HolomorphicForms/SectionSupNorm.lean`.
-    IN_PROGRESS at 17%, ~46min (paused after 1→17% run — 3 min at 17%).
-- **This tick:** heartbeat.  Both packets stuck this tick; backend
-  congestion likely.
+    IN_PROGRESS at 20%, ~63min (stuck ~24min).
+  - `51fd0fce` (NEW this tick) Step 3 of the Banach-data construction
+    recon — `ContMDiffSection.dist` + 4 MetricSpace axioms (dist_self,
+    dist_comm, dist_triangle, eq_of_dist_eq_zero) + dist_eq compat
+    in NEW file `Jacobian/HolomorphicForms/SectionMetric.lean`.
+    Builds on Step 1 (63158306) + Step 2 (f1786fa8) as black boxes.
+    Critical design note: avoid NormedAddCommGroup.mk diamond.
+- **Aristotle integration this tick:** `f1786fa8` Step 2 of the
+  Banach-data construction recon.  CLEAN 117-line sorry-free
+  `Jacobian/HolomorphicForms/SectionSupNorm.lean`.  Defines `supNorm`
+  via `⨆ x : M, ‖σ.toFun x‖`; proves all 5 sup-norm properties
+  sorry-free:
+    * `supNorm_zero` — handles empty-M case via `Real.iSup_of_isEmpty`.
+    * `supNorm_eq_zero_iff` — `[Nonempty M]` + threading `hcompat`
+      through auxiliary `bddAbove_range_norm` helper.
+    * `supNorm_add_le` — `ciSup_le` + triangle inequality + sup
+      decomposition.
+    * `supNorm_smul_le` — `norm_smul_le` per fiber + sup distribution.
+    * `supNorm_neg` — `iSup_congr` + `norm_neg`.
+  `omit` annotations drop unneeded typeclass deps on supNorm_zero
+  and supNorm_neg.  Build green
+  (`lake build Jacobian.HolomorphicForms.SectionSupNorm`, 8027 jobs).
+  Step 2 of 5 toward eventual
+  `holomorphicOneForm_normedSpace_uniformOnCompact` discharge.
+  Aristotle integrations to date: 102.
 - **Aristotle integrations to date:** 101 (from
   `aristotle_jobs.jsonl`).
 - **Most-recent integrations** (full detail in

@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 05:15 EDT
+Last tick: 2026-04-28 05:18 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -12,7 +12,7 @@ Headline progress markers (every value below is a fresh count from this tick)
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excluding 2 Inventory metadata items)
-Aristotle integrations to date 101        `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 102        `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  383 / 392    counting `:= sorry`-ending lines per file. 8 real-sorry
                                           production files (3 Claude-owned, 5 user-WIP):
                                             Claude-owned (3 files, 8 sorries — +1 this tick from
@@ -67,15 +67,20 @@ Active jobs (ours):     2 / 5
                         `1f7d4399` TOPDOWN on the finite leaf
                                    `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
                                    in GenusZeroClassification.lean.
-                                   IN_PROGRESS at 20%, ~60min (stuck ~21min).
-                        `f1786fa8` Step 2 of Banach-data construction recon —
-                                   `ContMDiffSection.supNorm` + 5 sup-norm
-                                   properties in NEW file SectionSupNorm.lean.
-                                   IN_PROGRESS at 17%, ~46min (paused
-                                   after strong run — 3 min at 17%).
-Integrated this tick:   none — heartbeat. Both packets stuck this tick;
-                        backend congestion likely. 1f7d4399 at 21min
-                        stuck — 9 min from announced 30min threshold.
+                                   IN_PROGRESS at 20%, ~63min (stuck ~24min).
+                        `51fd0fce` (NEW) Step 3 of Banach-data recon —
+                                   `ContMDiffSection.dist` + 4 MetricSpace
+                                   axioms in NEW file SectionMetric.lean.
+                                   Just submitted.
+Integrated this tick:   `f1786fa8` Step 2 (SectionSupNorm) — CLEAN 117-line
+                        sorry-free file. All 5 sup-norm properties
+                        (zero, eq_zero_iff, add_le, smul_le, neg) proved
+                        via `ciSup` manipulation + `bddAbove_range_norm`
+                        helper. `omit` annotations drop unneeded typeclass
+                        deps. Build: `lake build Jacobian.HolomorphicForms.SectionSupNorm`
+                        ✓ (8027 jobs).  Step 2 of 5 toward eventual
+                        `holomorphicOneForm_normedSpace_uniformOnCompact`
+                        discharge.
 
 PRIOR TICK (still standing):
 Integrated `90750074` Liouville core TOPDOWN refinement —
