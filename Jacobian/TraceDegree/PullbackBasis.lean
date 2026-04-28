@@ -1,4 +1,5 @@
 import Jacobian.AbelJacobi.AnalyticOfCurveBasis
+import Jacobian.TraceDegree.PushforwardBasis
 
 /-!
 # Analytic pullback on the basis-aligned carrier
@@ -58,14 +59,16 @@ noncomputable opaque analyticPullback (f : X → Y)
 
 /-- The analytic pullback is holomorphic.
 
-Top-down obligation. Bottom-up: descent of the smooth dual map through
-the period quotient (which is itself a smooth submersion).  See
-`contMDiff_continuousAddMonoidHom_complexTorus` in `PushforwardBasis`
-for the matching general lemma. -/
+Top-down obligation. Delegates to
+`contMDiff_continuousAddMonoidHom_complexTorus` (in
+`Jacobian.TraceDegree.PushforwardBasis`): every continuous additive
+homomorphism between complex tori is smooth, and `analyticPullback f hf`
+is by construction a `ContinuousAddMonoidHom`. -/
 lemma analyticPullback_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ)) ω
-      (analyticPullback f hf) := sorry
+      (analyticPullback f hf) :=
+  contMDiff_continuousAddMonoidHom_complexTorus _ _ (analyticPullback f hf)
 
 /-! ### Deeper companions for contravariant functoriality
 
