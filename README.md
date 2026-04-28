@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-27 21:29 EDT
+Last tick: 2026-04-27 21:30 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -71,11 +71,11 @@ Active jobs (ours):     3 / 5
                         `b782c387` ContMDiffSection topology recon — IN_PROGRESS
                                    at 17%, ~4h18m elapsed (normal).
                         `84774271` analyticOfCurve_injective survey —
-                                   IN_PROGRESS at 4% (~3 min in). Abel's
+                                   IN_PROGRESS at 5% (~4 min in). Abel's
                                    theorem (anti-hack #2).
                         `10e5bfbb` analyticPushforward_analyticPullback survey —
-                                   QUEUED ~1 min (normal). Trace-pullback
-                                   identity (anti-hack #4).
+                                   QUEUED ~3 min. Trace-pullback identity
+                                   (anti-hack #4).
 Integrated this tick:   None.
 ```
 
