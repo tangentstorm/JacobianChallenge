@@ -12,14 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 02:00 EDT)
+## Live Status (2026-04-28 02:01 EDT)
 
-- **Aristotle: 1/5 ours active.** (heartbeat)
+- **Aristotle: 1/5 ours active.** (heartbeat — productive recent stretch)
   - `d493c66b` follow-up TOPDOWN refinement on
     `holomorphicOneForm_onePointCx_toFun_eq_zero` in
     `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — the
     chart-coefficient extraction sorry exposed by `90750074`.
-    QUEUED, ~2 min elapsed.
+    QUEUED, ~3 min elapsed.
+- Past hour: 4 substantive Aristotle integrations
+  (5dfd5106 / 848a0c88 / 6992e390 / 90750074) + Aristotle 100th
+  integration milestone + Claude-owned `EntireZero.lean`
+  (4 sorry-free Liouville-zero lemmas) + `dc8af381` partial-rescue
+  with local proof.
 - **Prior tick:** `90750074` Liouville core
   TOPDOWN refinement — substantive 3-piece split:
     1. `entire_tendsto_zero_eq_zero` (Liouville application).
