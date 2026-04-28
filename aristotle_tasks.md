@@ -12,23 +12,39 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 01:34 EDT)
+## Live Status (2026-04-28 01:43 EDT)
 
-- **Aristotle: 2/5 ours active.** Slow advance.
+- **Aristotle: 1/5 ours active.**
   - `90750074` Liouville core (`holomorphicOneForm_onePointCx_subsingleton`).
-    IN_PROGRESS at 12%, ~54 min elapsed (was 11%).
-  - `dc8af381` `exists_compact_periodFundamentalDomain` reduction in
-    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 14%, ~43 min (was 11%).
-- **Local proof work this tick:** extended
-  `Jacobian/HolomorphicForms/EntireZero.lean` (now 132 lines, sorry-free)
-  with a fourth corollary:
-    * `Differentiable.eq_zero_of_polynomial_decay_at_infty` — entire +
-      `‖f z‖ ≤ C / ‖z‖^n` for `‖z‖ ≥ R` (any `n ≥ 1`, `C ≥ 0`)
-      ⇒ identically 0.  Generalizes the inv-decay (`n=1`) and
-      quadratic-decay (`n=2`) cases.  Reduces to inv-decay via
-      `le_self_pow₀ : 1 ≤ a → n ≠ 0 → a ≤ a^n`.
-  Build green: `lake build Jacobian.HolomorphicForms.EntireZero`
-  (8026 jobs).
+    IN_PROGRESS at 16%, ~58 min elapsed.
+- **Aristotle return + rescue this tick:** `dc8af381` returned with
+  status COMPLETE_WITH_ERRORS.  Diff was unusable as-is (broad
+  `import Mathlib`, commented-out docstring delimiter, tangled
+  `convert ... aesop` chain that didn't typecheck).  HOWEVER the
+  proof OUTLINE was correct, identifying the right Mathlib API
+  (`Module.Free.chooseBasis`, `Module.Basis.ofZLatticeBasis`,
+  `ZSpan.fundamentalDomain`, `ZSpan.floor`,
+  `ZSpan.fract_mem_fundamentalDomain`).  Claude wrote a clean
+  ~30-line local proof using that outline:
+    1. Get `bℤ := Module.Free.chooseBasis ℤ (basisAlignedPeriodSubmoduleℤ X)`.
+    2. Get `bR := bℤ.ofZLatticeBasis ℝ _` (lifts to ℝ-basis of ambient).
+    3. `D := closure (ZSpan.fundamentalDomain bR)` — compact via
+       `(fundamentalDomain_isBounded bR).isCompact_closure` (proper
+       space).
+    4. Coverage: for any `v`, take `g := ZSpan.floor bR v`.  Then
+       `v - g = ZSpan.fract bR v ∈ ZSpan.fundamentalDomain bR ⊆ D`.
+       Lift `g` from `Submodule ℤ` to `AddSubgroup` via
+       `AddSubgroup.toIntSubmodule_toAddSubgroup`.
+  Subtleties: (a) the theorem had to be MOVED to the bottom of the
+  file (after the `_isZLattice` instance) since it now uses it; (b)
+  `▸` substitution on `Module.Basis.ofZLatticeBasis_span` blows up
+  motive-inference (basis index type depends on the Submodule), so
+  used `congrArg Submodule.toAddSubgroup` to lift the equality at
+  the AddSubgroup level instead.
+  Sorry count `PeriodFunctional.lean` reduced 3→2.  Build green
+  (2960 jobs); `lake build Jacobian.Challenge` green (8026 jobs).
+  Aristotle's broken diff is NOT integrated — only the outline was
+  used; `dc8af381` logged as `failed_partial_used_for_outline`.
 - **Aristotle integration this tick:** `5dfd5106`
   `holomorphicOneForm_montel` survey, +275 lines of docstring on
   `CompactRiemannSurface.lean`.  7-step proof outline (chart cover
