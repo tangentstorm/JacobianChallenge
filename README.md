@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 01:29 EDT
+Last tick: 2026-04-28 01:31 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -66,16 +66,12 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 Aristotle status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Active jobs (ours):     2 / 5
-                        `90750074` Liouville core (11%, ~49 min, stuck).
-                        `dc8af381` PeriodFunctional 3→2 (11%, ~37 min, stuck).
-Integrated this tick:   `6992e390` CompactRiemannSurface 3→2 reduction —
-                        clean 13-line proof using
-                        `holomorphicOneForm_montel X B` (still-sorry but
-                        named) + translation invariance: build
-                        `WeaklyLocallyCompactSpace` from the explicit
-                        translation `closedBall x 1 = (·+x) '' closedBall 0 1`,
-                        then conclude `LocallyCompactSpace`.  File sorry
-                        count 3→2.  Build green (2409 jobs).
+                        `90750074` Liouville core (11%, ~51 min, stuck).
+                        `dc8af381` PeriodFunctional 3→2 (11%, ~40 min, stuck).
+Integrated this tick:   none — heartbeat after prior-tick integration.
+                        Verified `lake build Jacobian.Challenge` still
+                        green after `6992e390` integration (8026 jobs;
+                        4 expected sorries in the frozen public target).
 ```
 
 ```text
