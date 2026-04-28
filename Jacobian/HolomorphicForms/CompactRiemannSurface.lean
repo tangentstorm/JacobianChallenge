@@ -442,7 +442,20 @@ theorem holomorphicOneForm_locallyCompact_of_compactRiemannSurface
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     @LocallyCompactSpace (HolomorphicOneForm ℂ X)
-      B.toMetricSpace.toUniformSpace.toTopologicalSpace := sorry
+      B.toMetricSpace.toUniformSpace.toTopologicalSpace := by
+  letI : NormedAddCommGroup (HolomorphicOneForm ℂ X) := B.toNormedAddCommGroup
+  letI : NormedSpace ℂ (HolomorphicOneForm ℂ X) := B.toNormedSpace
+  have hCompact := holomorphicOneForm_montel X B
+  have : WeaklyLocallyCompactSpace (HolomorphicOneForm ℂ X) := by
+    constructor
+    intro x
+    refine ⟨Metric.closedBall x 1, ?_, Metric.closedBall_mem_nhds x one_pos⟩
+    have heq : Metric.closedBall x 1 = (· + x) '' Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1 := by
+      ext y
+      simp [Metric.mem_closedBall, dist_comm]
+    rw [heq]
+    exact hCompact.image (continuous_add_right x)
+  exact WeaklyLocallyCompactSpace.locallyCompactSpace
 
 /-! ### Final assembly: Riesz finite-dimensionality -/
 
