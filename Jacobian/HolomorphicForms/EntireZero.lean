@@ -16,11 +16,13 @@ Mathlib v4.28.0 in this exact form.
   — entire and tends to `0` along `cocompact ℂ` ⇒ identically `0`.
 * `Differentiable.eq_zero_of_inv_decay_at_infty`
   — entire and `‖f z‖ ≤ C / ‖z‖` for `‖z‖ ≥ R` ⇒ identically `0`.
+* `Differentiable.eq_zero_of_quadratic_decay_at_infty`
+  — entire and `‖f z‖ ≤ C / ‖z‖^2` for `‖z‖ ≥ R` ⇒ identically `0`.
 
-The second is the simplest growth-bound form. The standard quadratic
-form `‖f z‖ ≤ C / ‖z‖^2` (which arises from the inversion-chart
-holomorphicity condition for a 1-form on `ℂℙ¹`) reduces to this via
-the trivial bound `1 / ‖z‖^2 ≤ 1 / ‖z‖` for `‖z‖ ≥ 1`.
+The second is the simplest growth-bound form.  The third is the
+form that arises from the inversion-chart holomorphicity condition
+for a holomorphic 1-form on `ℂℙ¹`; it reduces to the second via the
+trivial bound `1 / ‖z‖^2 ≤ 1 / ‖z‖` for `‖z‖ ≥ 1`.
 -/
 
 namespace JacobianChallenge.HolomorphicForms.EntireZero
@@ -66,5 +68,30 @@ theorem _root_.Differentiable.eq_zero_of_inv_decay_at_infty
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds hctrl
     (Eventually.of_forall fun z => norm_nonneg _) ?_
   filter_upwards [hnorm_atTop.eventually_ge_atTop R] with z hz using h z hz
+
+/-- If `f : ℂ → ℂ` is entire and satisfies a quadratic decay bound
+`‖f z‖ ≤ C / ‖z‖^2` for `‖z‖ ≥ R` (with `C ≥ 0`), then `f` is
+identically `0`.
+
+This is the form that arises naturally from holomorphicity of a
+1-form `f(z) dz` at the point at infinity in the standard two-chart
+atlas of `ℂℙ¹`: the inversion-chart pullback `-f(1/w)/w² dw` is
+holomorphic at `w = 0` iff `f(1/w) / w²` is bounded near `0`, i.e.
+`|f(z)| ≤ C / |z|^2` for `|z|` large. -/
+theorem _root_.Differentiable.eq_zero_of_quadratic_decay_at_infty
+    {f : ℂ → ℂ} (hf : Differentiable ℂ f) {C R : ℝ} (hC : 0 ≤ C)
+    (h : ∀ z : ℂ, R ≤ ‖z‖ → ‖f z‖ ≤ C / ‖z‖ ^ 2) :
+    f = 0 := by
+  refine hf.eq_zero_of_inv_decay_at_infty (C := C) (R := max R 1) ?_
+  intro z hz
+  have hz1 : (1:ℝ) ≤ ‖z‖ := le_trans (le_max_right R 1) hz
+  have hzR : R ≤ ‖z‖ := le_trans (le_max_left R 1) hz
+  have hzpos : 0 < ‖z‖ := lt_of_lt_of_le zero_lt_one hz1
+  have hzsq : ‖z‖ ≤ ‖z‖ ^ 2 := by
+    rw [pow_two]
+    exact le_mul_of_one_le_left hzpos.le hz1
+  refine (h z hzR).trans ?_
+  rw [div_eq_mul_one_div C, div_eq_mul_one_div C (‖z‖)]
+  exact mul_le_mul_of_nonneg_left (one_div_le_one_div_of_le hzpos hzsq) hC
 
 end JacobianChallenge.HolomorphicForms.EntireZero

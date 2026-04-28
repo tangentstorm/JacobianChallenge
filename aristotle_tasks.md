@@ -12,26 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 01:16 EDT)
+## Live Status (2026-04-28 01:25 EDT)
 
-- **Aristotle: 3/5 ours active.** Backend stalled — no % advance in ~10 min.
+- **Aristotle: 3/5 ours active.** Backend slow — only 6992e390 advanced.
   - `90750074` Liouville core (`holomorphicOneForm_onePointCx_subsingleton`).
-    IN_PROGRESS at 11%, ~36 min elapsed.
+    IN_PROGRESS at 11%, ~45 min elapsed.
   - `dc8af381` `exists_compact_periodFundamentalDomain` reduction in
-    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 11%, ~25 min.
+    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 11%, ~33 min.
   - `6992e390` `holomorphicOneForm_locallyCompact_of_compactRiemannSurface`
-    reduction in `CompactRiemannSurface.lean` (3→2).  IN_PROGRESS at 5%,
-    ~19 min.
-- **Local proof work this tick (Aristotle stalled):** new
-  `Jacobian/HolomorphicForms/EntireZero.lean` (78 lines, sorry-free).
-  Contains two corollaries of Mathlib's
-  `Differentiable.eq_const_of_tendsto_cocompact`:
-    * `Differentiable.eq_zero_of_tendsto_zero_cocompact` — entire +
-      tends-to-0-at-∞ ⇒ identically 0.
-    * `Differentiable.eq_zero_of_inv_decay_at_infty` — entire +
-      `‖f z‖ ≤ C / ‖z‖` for `‖z‖ ≥ R` ⇒ identically 0 (squeeze via
-      `tendsto_inv_atTop_zero`).
-  Both are useful primitives for the Liouville-core chain on ℂℙ¹.
+    reduction in `CompactRiemannSurface.lean` (3→2).  IN_PROGRESS at 11%,
+    ~28 min (advanced 5%→11%).
+- **Local proof work this tick (Aristotle slow):** extended
+  `Jacobian/HolomorphicForms/EntireZero.lean` (now 105 lines, sorry-free)
+  with a third corollary:
+    * `Differentiable.eq_zero_of_quadratic_decay_at_infty` — entire +
+      `‖f z‖ ≤ C / ‖z‖^2` for `‖z‖ ≥ R` (with `C ≥ 0`) ⇒ identically 0.
+  Reduced to the existing `eq_zero_of_inv_decay_at_infty` via the
+  trivial bound `1/‖z‖^2 ≤ 1/‖z‖` for `‖z‖ ≥ 1`.  This is the
+  chart-pullback form on `ℂℙ¹` — directly applicable to the
+  Liouville core when 90750074 returns.
   Build green: `lake build Jacobian.HolomorphicForms.EntireZero`
   (8026 jobs).
 - **Aristotle integration this tick:** `5dfd5106`
