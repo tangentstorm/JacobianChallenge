@@ -67,23 +67,6 @@ lemma analyticPullback_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(�
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ)) ω
       (analyticPullback f hf) := sorry
 
-/-- Companion spec: pullback along the identity map equals the identity
-homomorphism (as a `ContinuousAddMonoidHom`).
-
-Bottom-up: pullback of forms along `id` is the identity on forms;
-descent through the period quotient preserves this. -/
-theorem analyticPullback_id_spec :
-    analyticPullback (X := X) (Y := X) id contMDiff_id =
-      ContinuousAddMonoidHom.id (BasisAnalyticJacobian X) := sorry
-
-/-- Pullback along the identity is the identity.
-
-Assembly from `analyticPullback_id_spec`. -/
-lemma analyticPullback_id_apply (P : BasisAnalyticJacobian X) :
-    analyticPullback (X := X) (Y := X) id contMDiff_id P = P := by
-  rw [analyticPullback_id_spec]
-  rfl
-
 /-! ### Deeper companions for contravariant functoriality
 
 The opaque `analyticPullback` is the descent through the period
@@ -109,6 +92,15 @@ Top-down obligation (data). Bottom-up: dualize the ℂ-linear map
 noncomputable opaque basisDualPullback (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ)
+
+/-- Deeper companion: the dual form-pullback along `id` is the identity
+additive group homomorphism on the covering space.
+
+Bottom-up: pullback of forms along `id` is the identity on forms;
+dualization preserves this. -/
+theorem basisDualPullback_id :
+    basisDualPullback (X := X) (Y := X) id contMDiff_id =
+      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := sorry
 
 /-- Descent compatibility: `analyticPullback` acts on the period
 quotient as the descended `basisDualPullback`.
@@ -166,5 +158,29 @@ lemma analyticPullback_comp_apply
     analyticPullback (g ∘ f) (hg.comp hf) P =
       analyticPullback f hf (analyticPullback g hg P) :=
   analyticPullback_comp_spec f hf g hg P
+
+/-- Companion spec: pullback along the identity map equals the identity
+homomorphism (as a `ContinuousAddMonoidHom`).
+
+**Proof.** Assembly from the deeper companions `analyticPullback_mk_eq`
+(descent compatibility) and `basisDualPullback_id` (covering-space
+identity functoriality). On each `mk v`, rewrite via descent and
+identify the dual pullback as the identity. -/
+theorem analyticPullback_id_spec :
+    analyticPullback (X := X) (Y := X) id contMDiff_id =
+      ContinuousAddMonoidHom.id (BasisAnalyticJacobian X) := by
+  ext P
+  induction P using QuotientAddGroup.induction_on with
+  | H v =>
+    rw [analyticPullback_mk_eq id contMDiff_id v, basisDualPullback_id]
+    rfl
+
+/-- Pullback along the identity is the identity.
+
+Assembly from `analyticPullback_id_spec`. -/
+lemma analyticPullback_id_apply (P : BasisAnalyticJacobian X) :
+    analyticPullback (X := X) (Y := X) id contMDiff_id P = P := by
+  rw [analyticPullback_id_spec]
+  rfl
 
 end JacobianChallenge.TraceDegree
