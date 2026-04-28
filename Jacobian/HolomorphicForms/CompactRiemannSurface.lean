@@ -81,6 +81,20 @@ structure HolomorphicOneFormBanachData
   complete :
     @CompleteSpace (HolomorphicOneForm ℂ X)
       toMetricSpace.toUniformSpace
+  /-- Pointwise upper bound: the fiber norm of `σ.1 x` is at most
+  the global norm of `σ`.  This connects the abstract norm to
+  pointwise section evaluation; without it, an arbitrary Banach
+  norm need not make the closed unit ball compact (so
+  `holomorphicOneForm_montel` is not provable from
+  `toNorm`/`toMetricSpace`/`complete` alone).
+
+  Recorded as Blocker 5 in `plan.md` Phase 2; surfaced by Aristotle
+  Montel survey `5dfd5106`.  No constructor breaks adding this field
+  because `holomorphicOneForm_normedSpace_uniformOnCompact` is itself
+  still a sorry — the eventual sup-norm construction satisfies this
+  bound trivially. -/
+  norm_le : ∀ (σ : HolomorphicOneForm ℂ X) (x : X),
+    ‖σ.1 x‖ ≤ toNorm.norm σ
 
 namespace HolomorphicOneFormBanachData
 

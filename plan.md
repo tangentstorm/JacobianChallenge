@@ -266,28 +266,27 @@ The theorem `genus_eq_zero_iff_homeo` is especially deep with this definition.
 It likely depends on uniformization or the classification of genus-zero compact
 Riemann surfaces, not just local complex analysis.
 
-### Phase 2 — open structural item (Blocker 5, surfaced 2026-04-28)
+### Phase 2 — Blocker 5 (resolved 2026-04-28)
 
-The current `HolomorphicOneFormBanachData` (in
-`Jacobian/HolomorphicForms/CompactRiemannSurface.lean`) bundles a `Norm`,
-`MetricSpace`, `dist_eq`, `norm_smul_le`, and `complete` field — but
-**no axiom relating the norm to pointwise section evaluation.** The
-intended sup-norm makes the closed unit ball compact (Montel); an
-arbitrary Banach norm need not. So `holomorphicOneForm_montel B` is
-literally false for arbitrary `B`.
-
-Fix when step (a) is being attacked: add a field
+The `HolomorphicOneFormBanachData` structure now carries a `norm_le`
+field connecting the global norm to pointwise fiber evaluation:
 
 ```lean
-  norm_le_iSup : ∀ σ : HolomorphicOneForm ℂ X, ∀ x : X,
+  norm_le : ∀ (σ : HolomorphicOneForm ℂ X) (x : X),
     ‖σ.1 x‖ ≤ toNorm.norm σ
 ```
 
-(or the stronger `norm_eq_iSup` for compact `X`). Deferred for now
-because `holomorphicOneForm_normedSpace_uniformOnCompact` is itself
-still a sorry — no constructor exists yet to break.
+Surfaced by Aristotle Montel survey `5dfd5106`; added by Claude
+under the "small Claude-owned infrastructure edit" rule.  No
+existing constructor breaks because
+`holomorphicOneForm_normedSpace_uniformOnCompact` is itself still a
+sorry — the eventual sup-norm construction satisfies the bound
+trivially.
 
-Recorded in commit log of Aristotle survey `5dfd5106`.
+With this field in place, `holomorphicOneForm_montel B` is no longer
+literally false for arbitrary `B`: any Cauchy-estimate /
+Arzelà-Ascoli proof can use `B.norm_le σ` to bound `f(z)` pointwise
+from the global bound `‖σ‖_B ≤ 1`.
 
 ## Phase 3: Integration and Periods
 

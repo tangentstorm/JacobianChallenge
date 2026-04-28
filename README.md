@@ -4,7 +4,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 02:52 EDT
+Last tick: 2026-04-28 02:55 EDT
 
 ```text
 Headline progress markers (every value below is a fresh count from this tick)
@@ -66,13 +66,20 @@ Active jobs (ours):     2 / 5
                         `d493c66b` follow-up TOPDOWN on
                                    `holomorphicOneForm_onePointCx_toFun_eq_zero`
                                    (chart-coefficient extraction).
-                                   IN_PROGRESS at 37%, ~52 min (stuck ~19 min).
+                                   IN_PROGRESS at 37%, ~55 min (stuck ~22 min).
                         `63158306` Step 1 of Banach-data construction
                                    (NEW `SectionFiberNorm.lean`).
-                                   IN_PROGRESS at 5%, ~31 min (stuck ~19 min).
-Integrated this tick:   none — heartbeat.  Past tick added
-                        `Differentiable.eq_zero_of_norm_eventually_le`
-                        (5th sorry-free corollary in EntireZero.lean).
+                                   IN_PROGRESS at 5%, ~35 min (stuck ~22 min).
+Integrated this tick:   Claude-owned design move — Blocker 5 RESOLVED.
+                        Added `norm_le` field to `HolomorphicOneFormBanachData`
+                        in `CompactRiemannSurface.lean` connecting the
+                        global norm to pointwise fiber evaluation
+                        (`‖σ.1 x‖ ≤ toNorm.norm σ`).  No constructor
+                        breaks (the only constructor is itself a sorry).
+                        With this field, `holomorphicOneForm_montel B`
+                        is no longer false for arbitrary `B`.  Plan.md
+                        Phase 2 updated to mark Blocker 5 resolved.
+                        Build green (2409 + 8026 jobs).
 Integrated this tick:   none — heartbeat.
 
 PRIOR TICK (still standing):
