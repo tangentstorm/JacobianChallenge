@@ -12,24 +12,21 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 04:42 EDT)
+## Live Status (2026-04-28 04:45 EDT)
 
 - **Aristotle: 2/5 ours active.**
   - `1f7d4399` TOPDOWN on the finite leaf
     `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` in
-    `Jacobian/HolomorphicForms/GenusZeroClassification.lean` —
-    SUBSTANTIVE Liouville application via identity-chart pullback +
-    `EntireZero.lean` black-box.  IN_PROGRESS at 13%, ~27min.
+    `Jacobian/HolomorphicForms/GenusZeroClassification.lean`.
+    IN_PROGRESS at 14%, ~30min.  Trajectory: 1% → 4% → 6% → 7% → 10%
+    → 13% → 14% — slow but steady, ETA 2-3h.
   - `f1786fa8` Step 2 of the Banach-data construction recon —
     `ContMDiffSection.supNorm` + 5 sup-norm properties in NEW file
     `Jacobian/HolomorphicForms/SectionSupNorm.lean`.
-    IN_PROGRESS at 5%, ~13min.
-- **This tick:** heartbeat + cleanup.  Both packets active and
-  progressing (1f7d4399 10→13%; f1786fa8 3→5%).  No substantive
-  local moves available without conflicting with in-flight work.
-  Trimmed stale Live Status content per PROMPT.md "must be replaced
-  each tick, not appended to. Historical job detail belongs in
-  `aristotle_jobs.jsonl`".
+    IN_PROGRESS at 7%, ~16min.
+- **This tick:** heartbeat.  Both packets active and progressing
+  (1f7d4399 13→14%; f1786fa8 5→7%).  No substantive local moves
+  available without conflicting with in-flight work.
 - **Aristotle integrations to date:** 101 (from
   `aristotle_jobs.jsonl`).
 - **Most-recent integrations** (full detail in
