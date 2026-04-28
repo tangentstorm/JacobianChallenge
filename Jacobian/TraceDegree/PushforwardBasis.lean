@@ -145,9 +145,15 @@ group homomorphism on the covering space.
 
 Bottom-up: the trace of the identity branched covering (degree 1) is
 the identity on holomorphic 1-forms; dualization preserves this. -/
+theorem pushforwardTraceLift_id_apply (v : Fin (analyticGenus ℂ X) → ℂ) :
+    pushforwardTraceLift (X := X) (Y := X) id contMDiff_id v = v := sorry
+
 theorem pushforwardTraceLift_id :
     pushforwardTraceLift (X := X) (Y := X) id contMDiff_id =
-      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := sorry
+      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
+  refine AddMonoidHom.ext ?_
+  intro v
+  exact pushforwardTraceLift_id_apply (X := X) v
 
 /-- The trace lift preserves the period lattice: it sends the period
 subgroup of `X` into the period subgroup of `Y`.
@@ -177,13 +183,30 @@ theorem analyticPushforward_mk_spec
 trace lift for `g ∘ f` equals the composition of trace lifts for `g`
 and `f`.
 
+Pointwise form: the trace lift for `g ∘ f` evaluated at `v` equals
+the iterated trace-lift composition.
+
 Bottom-up obligation. Provable from the multiplicativity of the
 trace/norm map on holomorphic 1-forms. -/
+theorem pushforwardTraceLift_comp_spec_apply
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
+    (v : Fin (analyticGenus ℂ X) → ℂ) :
+    pushforwardTraceLift (g ∘ f) (hg.comp hf) v =
+      pushforwardTraceLift g hg (pushforwardTraceLift f hf v) := sorry
+
+/-- The trace lift is covariantly functorial under composition.
+
+Assembly from `pushforwardTraceLift_comp_spec_apply` via
+`AddMonoidHom.ext`. -/
 theorem pushforwardTraceLift_comp_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     (pushforwardTraceLift (g ∘ f) (hg.comp hf) : _ →+ _) =
-      (pushforwardTraceLift g hg).comp (pushforwardTraceLift f hf) := sorry
+      (pushforwardTraceLift g hg).comp (pushforwardTraceLift f hf) := by
+  refine AddMonoidHom.ext ?_
+  intro v
+  exact pushforwardTraceLift_comp_spec_apply f hf g hg v
 
 /-- Covariant composition specification for the analytic pushforward.
 
