@@ -12,26 +12,17 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 01:29 EDT)
+## Live Status (2026-04-28 01:31 EDT)
 
-- **Aristotle: 2/5 ours active.**
+- **Aristotle: 2/5 ours active.** (heartbeat — no integrations)
   - `90750074` Liouville core (`holomorphicOneForm_onePointCx_subsingleton`).
-    IN_PROGRESS at 11%, ~49 min elapsed.
+    IN_PROGRESS at 11%, ~51 min elapsed.
   - `dc8af381` `exists_compact_periodFundamentalDomain` reduction in
-    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 11%, ~37 min.
-- **Aristotle integration this tick:** `6992e390`
-  `holomorphicOneForm_locallyCompact_of_compactRiemannSurface` —
-  clean 13-line proof using the still-sorry but named
-  `holomorphicOneForm_montel X B` plus translation invariance:
-  build `WeaklyLocallyCompactSpace` from the explicit set equality
-  `closedBall x 1 = (· + x) '' closedBall 0 1` (proved by `ext` +
-  `simp`), apply `IsCompact.image (continuous_add_right x)`, then
-  conclude `LocallyCompactSpace` via
-  `WeaklyLocallyCompactSpace.locallyCompactSpace`.  File sorry
-  count `CompactRiemannSurface.lean` reduced 3 → 2.  Only the two
-  Riemann-Roch leaves (`holomorphicOneForm_normedSpace_uniformOnCompact`
-  and `holomorphicOneForm_montel`) remain in this file.  Build
-  green (2409 jobs).
+    `PeriodFunctional.lean` (3→2).  IN_PROGRESS at 11%, ~40 min.
+- **Verification this tick:** `lake build Jacobian.Challenge` green
+  (8026 jobs) after integrating `6992e390` last tick — confirms the
+  reduced `CompactRiemannSurface.lean` (3→2 sorries) keeps the
+  public target compiling.
 - **Aristotle integration this tick:** `5dfd5106`
   `holomorphicOneForm_montel` survey, +275 lines of docstring on
   `CompactRiemannSurface.lean`.  7-step proof outline (chart cover
