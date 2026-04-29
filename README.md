@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 23:50 EDT
+Last tick: 2026-04-29 00:05 EDT
 
 ```text
 Headline progress
@@ -69,25 +69,17 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status — 14 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Subagent integrated this tick (1)
-  Montel TOPDOWN split (a7b046e5b69cfb1ea worktree, integrated):
-    holomorphicOneForm_montel_subseq_tendsto is now sorry-free 3-line
-    assembly via the new sorry-free wrapper
-    HolomorphicOneFormBanachData.cauchySeq_tendsto + the new sorry on
-    holomorphicOneForm_montel_subseq_isCauchy (the analytic core,
-    absorbing all 5 Mathlib-gap blockers). Net 0 sorry change.
+Rejected this tick (1)
+  e7250841   Original Montel subseq_tendsto packet — stale 16+ hr
+             baseline; would have destructively reverted Step 5 +
+             Montel TOPDOWN. Net 0 effect on main.
 
-New packet submitted this tick (1)
-  20995679   holomorphicOneForm_montel_subseq_isCauchy (NEW from
-             Montel TOPDOWN split)
-
-Sub-agents launched this tick (2; worktree-isolated)
+Sub-agents in flight (2; worktree-isolated)
   a5920caf   racing 20995679 on holomorphicOneForm_montel_subseq_isCauchy
   a8db8a8f   racing bed365ae on holomorphicOneForm_supNorm_completeSpace
 
 Active our-packets — covering current sorries
-  e7250841   CompactRiemannSurface → montel_subseq_tendsto STALE
-             (target now sorry-free; let it run, results will be no-ops)
+  e7250841   COMPLETED, REJECTED this tick (stale baseline pre-Step5/Montel)
   03715a4d   GenusZero → Liouville leaves (one of 4)
   6b2f47f1   AnalyticOfCurveBasis → separates_points
   0a5f74a8   PeriodFunctional → range/isZLattice
@@ -107,8 +99,9 @@ Full history in aristotle_jobs.jsonl.
 ```text
 Build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CompactRiemannSurface         pass               lake build Jacobian.HolomorphicForms.CompactRiemannSurface
+CompactRiemannSurface         pass (prior tick)  lake build Jacobian.HolomorphicForms.CompactRiemannSurface
                                                    (127s, 3 sorries: 2 Step 5 prereqs + montel_subseq_isCauchy)
+This tick                     no Lean changes    bookkeeping only (e7250841 rejected)
 ```
 
 ```text

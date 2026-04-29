@@ -12,30 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 23:50 EDT)
+## Live Status (2026-04-29 00:05 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 14 (unchanged; Montel TOPDOWN this
   tick is net 0).
 - **Aristotle integrations to date: 120** (no Aristotle integration
-  this tick — only subagent integration and new packets).
-- **Backend status:** 1 in-flight (e7250841 STALE — its target is now
-  sorry-free, leave running), several queued packets (ba57741f,
-  dc58e548, de8822fb, bed365ae, 20995679).
+  this tick).
+- **Backend status:** 5 of our packets now IN_PROGRESS at 1–6%:
+  ba57741f, dc58e548, de8822fb, bed365ae, 20995679. e7250841 just
+  COMPLETE but rejected (stale baseline).
 
-### Integrated this tick
+### This tick
 
-- Subagent `a7b046e5b69cfb1ea` Montel TOPDOWN split:
-  `holomorphicOneForm_montel_subseq_tendsto` is now sorry-free 3-line
-  assembly via the new sorry-free wrapper
-  `HolomorphicOneFormBanachData.cauchySeq_tendsto` plus the new
-  sorry on `holomorphicOneForm_montel_subseq_isCauchy` (analytic
-  core, absorbs all 5 Mathlib-gap blockers). Net 0 sorry change.
-- New Aristotle packet `20995679` submitted for the new
-  `_subseq_isCauchy` sorry.
-- Two sub-agents launched (worktree-isolated):
-  `a5920caf` racing on `_subseq_isCauchy`, `a8db8a8f` racing on
-  `_supNorm_completeSpace`.
+- **Rejected** `e7250841` (original Montel subseq_tendsto): stale
+  baseline (~16h old, predates Step 5 + Montel TOPDOWN); accepting
+  it would have destructively reverted both. Recorded in
+  aristotle_jobs.jsonl. No code change in main.
+- Sub-agents `a5920caf` (subseq_isCauchy) and `a8db8a8f`
+  (supNorm_completeSpace) still running in their worktrees.
 
 ### Rejected / skipped this tick
 
