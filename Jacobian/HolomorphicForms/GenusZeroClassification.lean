@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.EntireZero
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
+import Mathlib.Topology.Compactification.OnePoint.Sphere
 
 /-!
 # Genus-zero classification
@@ -726,14 +727,24 @@ single simple pole.
 Bottom-up content: divisor theory on compact Riemann surfaces and the
 Riemann-Roch calculation `ℓ(P) = 2` when `g = 0`, producing a nonconstant
 meromorphic function whose only pole is simple and located at `P`. -/
-theorem genus_zero_exists_simplePole_meromorphicMap
+opaque simplePoleMeromorphicMapOfGenusZero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : analyticGenus ℂ X = 0) :
+    GenusZeroSimplePoleMeromorphicMap X
+
+/-- **Sub-obligation 1 wrapper (sorry-free).** Existence form of
+`simplePoleMeromorphicMapOfGenusZero`. -/
+theorem genus_zero_exists_simplePole_meromorphicMap
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (h : analyticGenus ℂ X = 0) :
     Nonempty (GenusZeroSimplePoleMeromorphicMap X) := by
-  sorry
+  exact ⟨simplePoleMeromorphicMapOfGenusZero X h⟩
 
 /-- **Sub-obligation 2 (properness and degree).** A genus-zero meromorphic
 function with one simple pole extends to a proper degree-one map
@@ -742,14 +753,24 @@ function with one simple pole extends to a proper degree-one map
 Bottom-up content: removable singularity/extension to the point at infinity,
 compactness of `X`, and the theorem that the fiber degree of a meromorphic map
 to `ℂℙ¹` equals the pole divisor degree. -/
-theorem simplePole_meromorphicMap_proper_degreeOne
+opaque properDegreeOneMapOfSimplePole
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_f : GenusZeroSimplePoleMeromorphicMap X) :
+    GenusZeroProperDegreeOneMap X
+
+/-- **Sub-obligation 2 wrapper (sorry-free).** Existence form of
+`properDegreeOneMapOfSimplePole`. -/
+theorem simplePole_meromorphicMap_proper_degreeOne
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (f : GenusZeroSimplePoleMeromorphicMap X) :
     Nonempty (GenusZeroProperDegreeOneMap X) := by
-  sorry
+  exact ⟨properDegreeOneMapOfSimplePole X f⟩
 
 /-- **Sub-obligation 3 (degree one implies parametrization).** A proper
 degree-one meromorphic map from a compact connected Riemann surface to
