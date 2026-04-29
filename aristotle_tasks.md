@@ -12,29 +12,28 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 22:50 EDT)
+## Live Status (2026-04-28 23:30 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
-- **Open production sorries:** 13 (down from 15 at tick start).
-- **Aristotle integrations to date: 119** (3 new this tick:
-  `fbfe1498`, `360a05bf`, `bbca4cae`).
-- **Backend status:** alive again — 6 of our packets COMPLETE this
-  tick, 2 IN_PROGRESS, 2 QUEUED. The earlier "saturated/offline"
-  diagnosis was wrong; queue drained between ticks.
+- **Open production sorries:** 14 (was 13; +1 from Step 5 split adding
+  2 well-named sub-obligations while discharging 1).
+- **Aristotle integrations to date: 120** (1 new this tick:
+  `58eb31f0` partial — Step 5 assembly only, Montel revert rejected).
+- **Backend status:** queue still draining. 1 in-flight (e7250841),
+  2 just-submitted (de8822fb, bed365ae) for the new Step 5
+  sub-obligations.
 
 ### Integrated this tick
 
-- `fbfe1498` (GenusZero L591 sphere homeo) — TOPDOWN split:
-  `onePointCx_homeomorph_sphere` (sorry-free via Mathlib's
-  `onePointEquivSphereOfFinrankEq`) + `genus_zero_homeomorph_onePointCx`
-  (deep uniformization sorry).
-- `360a05bf` (GenusZero L320 analyticGenus eq) — TOPDOWN split:
-  `holomorphicOneFormLinearEquivOfHomeoSphere` (sorry, deep
-  uniformization-lite) + `LinearEquiv.finrank_eq` assembly.
-- `bbca4cae` (PeriodFunctional spans_real) — TOPDOWN split:
-  `periodVectors_linearIndependent` (sorry, Riemann bilinear) +
-  `span_real_eq_top_of_subset_linearIndependent` (sorry-free pure
-  linear algebra in new `Jacobian/Periods/PeriodSpanHelpers.lean`).
+- `58eb31f0` (CompactRiemannSurface Step 5) — partial integration:
+  added `SectionMetric` import + new prerequisite section
+  (`holomorphicOneForm_fiberNorm_continuous` sorry,
+  `holomorphicOneForm_metricSpace` sorry-free,
+  `holomorphicOneForm_supNorm_completeSpace` sorry awaiting
+  `8585f085`) + sorry-free Step 5 assembly of
+  `_normedSpace_uniformOnCompact`. **Rejected** Aristotle's
+  destructive Montel revert (it had a stale baseline pre-`e833f04`
+  and would have undone the Montel TOPDOWN split).
 
 ### Rejected / skipped this tick
 
