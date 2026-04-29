@@ -70,16 +70,25 @@ The timer will call you again.
      Aristotle job (per the "cancel if proven locally" rule below).
      This keeps Aristotle focused on the front of the queue (likely
      the deeper proofs) while Claude clears the back.
-   - **Cancel an Aristotle packet whenever its target sorry no
-     longer exists locally** — whether discharged outright or lifted
-     to a different named obligation by a TOPDOWN refactor / split /
-     restructuring. "Lifted" counts as "proven locally" for
-     cancellation purposes: the packet is grinding on a target that
-     doesn't exist anymore, and any patch it produces will be a
-     stale-baseline revert. Don't waste Aristotle's wall-clock on
-     unusable work. Stuckness alone (e.g. "0% for hours") is **not**
-     a cancel signal — only target-no-longer-exists is. If unsure
-     whether a target was discharged or lifted, err toward cancel.
+   - **Aristotle packets are only ever cancelled for two reasons,
+     and no others:**
+     1. **The target sorry no longer exists locally** — discharged
+        outright OR lifted to a different named obligation by a
+        TOPDOWN refactor / split / restructuring. "Lifted" counts as
+        "proven locally": the packet is grinding on a target that
+        doesn't exist anymore, and any patch it produces will be a
+        stale-baseline revert. Don't waste Aristotle's wall-clock.
+     2. **Explicit user instruction** — e.g. "cancel <id>".
+
+     Anything else is **not** a cancel signal. Specifically: do
+     **not** cancel based on stuckness ("0% for hours"), slow
+     progress, looking blocked, "approaching some threshold",
+     packet-looks-redundant-with-another, or your own judgment that
+     it's "probably hopeless". Aristotle is a parallel worker — let
+     packets that still have a live target run regardless of how
+     stuck they look. If unsure whether a target was discharged or
+     lifted, err toward cancel; if unsure whether a target is still
+     live, err toward letting it run.
    - **At least two sub-agents must always be running, in their own
      git worktrees, on the two sorries at the END of the Aristotle
      queue** — i.e. the two **newest-submitted** `submitted` jobs that
