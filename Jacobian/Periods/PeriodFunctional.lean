@@ -77,21 +77,69 @@ Delegates to three named sub-obligations:
 - `period_vectors_mem_subgroup` (membership, definitional — sorry-free)
 - `period_vectors_linearIndependent_of_symplectic` (Riemann bilinear — sorry) -/
 
+/-! ### TOPDOWN decomposition of `h1_basis_of_compact_riemann_surface`
+(integrated from Aristotle 921772f5)
+
+Decomposes into two named sub-obligations:
+- `h1_free_of_compact_surface` (cellular homology of the surface)
+- `analyticGenus_eq_topologicalGenus` (Hodge/de Rham bridge)
+plus a sorry-free reindex assembly.
+
+Each sub-obligation maps to a substantial multi-month Mathlib
+formalization effort (≈ 5,000–15,000 lines total): cellular
+homology, surface classification, de Rham theorem on manifolds,
+Hodge decomposition, Dolbeault, Serre duality. All ABSENT in
+v4.28.0. -/
+
+/-- **Sub-obligation 1a (definition).** The topological genus of a
+compact connected surface, `rank_ℤ H₁(X, ℤ) / 2`. Names the
+topological invariant the analytic genus must equal. -/
+noncomputable def topologicalGenus
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] : ℕ :=
+  Module.finrank ℤ (IntegralOneCycle X) / 2
+
+/-- **Sub-obligation 1b.** `H₁(X, ℤ)` of a compact connected
+Riemann surface of topological genus `g_top` is free of rank
+`2 g_top`. Mathlib blockers: surface classification, CW-structure,
+cellular homology — all absent in v4.28.0. -/
+theorem h1_free_of_compact_surface
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    Nonempty (Module.Basis (Fin (2 * topologicalGenus X)) ℤ
+      (IntegralOneCycle X)) := by
+  sorry
+
+/-- **Sub-obligation 2.** The analytic genus equals the topological
+genus for a compact connected Riemann surface. Classical proof via
+de Rham (`H¹_dR ≅ H¹_sing ⊗ ℂ`) + Hodge decomposition
+(`H¹_dR ≅ H⁰(Ω¹) ⊕ H¹(𝒪)`) + Serre duality.
+
+Mathlib blockers (all absent in v4.28.0): de Rham theorem on
+manifolds, Hodge decomposition, Dolbeault cohomology, Serre
+duality. -/
+theorem analyticGenus_eq_topologicalGenus
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    analyticGenus ℂ X = topologicalGenus X := by
+  sorry
+
 /-- **TOPDOWN helper.** H₁(X, ℤ) of a compact connected Riemann surface
 of analytic genus `g` admits a ℤ-basis indexed by `Fin (2g)`.
 
-Mathlib blockers (all absent in v4.28.0):
-- No computation of `singularHomology` for surfaces.
-- No identification of topological genus with analytic genus.
-- Would require: surface classification → CW-structure → cellular
-  chain complex → `H₁ ≅ ℤ^{2g}` → Hodge/de Rham. -/
+TOPDOWN assembly (Aristotle 921772f5): combines
+`h1_free_of_compact_surface` and `analyticGenus_eq_topologicalGenus`
+via `Fin.castOrderIso` reindex. -/
 theorem h1_basis_of_compact_riemann_surface
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Nonempty (Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
       (IntegralOneCycle X)) := by
-  sorry
+  obtain ⟨b⟩ := h1_free_of_compact_surface X
+  exact ⟨b.reindex (Fin.castOrderIso (by rw [analyticGenus_eq_topologicalGenus])).toEquiv⟩
 
 /-- **Sub-obligation 1.** A compact connected Riemann surface of genus
 `g` has `2g` integral 1-cycles forming a symplectic basis (encodes
