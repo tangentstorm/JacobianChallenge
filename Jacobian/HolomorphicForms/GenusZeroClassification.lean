@@ -253,22 +253,50 @@ theorem holomorphicOneForm_coeff_entire
 Blocker (chart-extraction + chart-transition gap): requires the
 inversion-chart formula `g(w) = -f(1/w)/w²` for the cotangent bundle
 and smoothness at `w = 0`. Both absent in v4.28.0. -/
+noncomputable def holomorphicOneForm_inversionCoeff
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
+  fun w => ω.toFun (invBwd w)
+    (show TangentSpace (modelWithCornersSelf ℂ ℂ) (invBwd w) from (1 : ℂ))
+
 structure HolomorphicOneFormCoeffTendstoZeroData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
   tendsto_coeff_zero :
     Filter.Tendsto (holomorphicOneForm_coeff ω)
       (Filter.cocompact ℂ) (nhds 0)
 
-/-- **Opaque data obligation (chart transition at infinity).** The
-identity-chart coefficient tends to zero at infinity.
+/-- **Inversion-chart continuity leaf.** The inversion-chart coefficient of
+a holomorphic 1-form is continuous at the point `w = 0`, i.e. at infinity of
+`OnePoint ℂ`.
 
-Bottom-up content: extract the inversion-chart coefficient for a
-`ContMDiffSection` of the cotangent bundle on `OnePoint ℂ`, prove the
-transition formula `g(w) = -f(1 / w) / w²`, and use smoothness at `w = 0`
-to obtain the needed decay of `f` along `cocompact ℂ`. -/
-opaque holomorphicOneFormCoeffTendstoZeroData
+Bottom-up content: expose the cotangent-bundle chart trivialization for
+`ContMDiffSection` in the inversion chart and identify its coefficient by
+evaluation at `1 : ℂ`. -/
+opaque holomorphicOneFormInversionCoeffContinuousAtZero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
-    HolomorphicOneFormCoeffTendstoZeroData ω
+    ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0
+
+/-- **Chart-transition leaf.** Continuity of the inversion-chart coefficient
+at zero, together with the cotangent transition formula
+`g(w) = -f(1 / w) / w²`, forces the identity-chart coefficient to tend to
+zero along `cocompact ℂ`.
+
+Bottom-up content: prove the explicit cotangent transition formula between
+`identityChart` and `inversionChart`, then translate bounded/continuous
+extension at `w = 0` into decay of `f` at infinity. -/
+opaque holomorphicOneFormCoeffTendstoZeroFromInversion
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
+    Filter.Tendsto (holomorphicOneForm_coeff ω)
+      (Filter.cocompact ℂ) (nhds 0)
+
+/-- **Assembly for coefficient decay.** The remaining work is split into
+inversion-chart continuity and the transition-formula decay lemma. -/
+def holomorphicOneFormCoeffTendstoZeroData
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    HolomorphicOneFormCoeffTendstoZeroData ω where
+  tendsto_coeff_zero :=
+    holomorphicOneFormCoeffTendstoZeroFromInversion ω
+      (holomorphicOneFormInversionCoeffContinuousAtZero ω)
 
 /-- **Sub-obligation 2 wrapper (sorry-free).** Extracts the decay of the
 identity-chart coefficient from `holomorphicOneFormCoeffTendstoZeroData`. -/
