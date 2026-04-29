@@ -576,11 +576,10 @@ compactness of the closed unit ball, and concludes via
 Bolzano–Weierstrass).
 -/
 
-/-- **Subsequence extraction (Montel core).** Every sequence in the
-closed unit ball of `B` admits a subsequence converging in `B`'s
-metric topology.
+/-! ### Notes on the (deeper) Montel-core obligations
 
-This is the analytic heart of Montel.  Discharging it requires:
+The analytic heart of Montel for holomorphic 1-forms requires:
+
 1. chartwise Cauchy first-derivative estimates on holomorphic 1-forms
    (Blocker 2 of the parent docstring),
 2. uniform Lipschitz / equicontinuity on each chart,
