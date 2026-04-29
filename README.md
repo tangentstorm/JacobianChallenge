@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 07:20 EDT
+Last tick: 2026-04-29 07:37 EDT
 
 ```text
 Headline progress
@@ -75,29 +75,25 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status — 17 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This tick: backend frozen — 6 QUEUED, 0 IN_PROGRESS on first page, no
-new completions to integrate. Local-only progress:
-  • Committed prior-tick docstring on _comp_traceLift (PushforwardBasis,
-    8fc61ab — substantive ~50-line blocker analysis mirroring _id_traceLift).
-  • TOPDOWN bundle-primitive refactor on PullbackBasis (71a5eaf):
-    lifted both leaf sorries (`basisDualPullback_id_apply`,
-    `basisDualPullback_comp` per-vector) into bundle-level
-    `AddMonoidHom`-equalities (`basisAnalyticPullbackBundle_{id,comp}_dualPullback`).
-    Per-vector / per-coord forms are now sorry-free assemblies.
-    Net 0 sorries; mirrors PushforwardBasis pattern (af653549 / a8778c20 / a1ce4200).
-  • Submitted 2 new packets for the bundle-primitive sorries:
-    `6547fde4` (id), `86bef3e0` (comp).
+This tick: backend still frozen, sub-agents racing the two newest QUEUED.
+  • Cancelled 362e259f (target `pushforwardTraceLift_comp` is sorry-free
+    locally — clean cancel).
+  • Tried to cancel 4d0d28d6 and 3683ef39 (stale-target packets lifted
+    to bundle primitives by recent TOPDOWN refactors); harness denied
+    both, citing the memory rule "only cancel if already done locally"
+    — lifted ≠ discharged. Both stay running as stale packets.
+  • Sub-agents active (worktree-isolated):
+    `ad96003a19385a71c` racing 6547fde4 (`_id_dualPullback`)
+    `a5ded3e9db49ff1f7` racing 86bef3e0 (`_comp_dualPullback`)
 
-Active our-packets covering current sorries (8 of 17 sorries; the
-remainder are covered by older packets paginated below the first page):
+Active our-packets after cancellation:
   f3a8e713   PushforwardBasis _comp_traceLift           QUEUED
   6f6f015d   PushforwardBasis _id_traceLift             QUEUED
   9c222f2d   PeriodFunctional period_vectors_lin_ind    QUEUED
-  362e259f   PushforwardBasis pushforwardTraceLift_comp QUEUED (stale-target)
-  3683ef39   PushforwardBasis _id_apply_at              QUEUED (stale-target)
-  4d0d28d6   PullbackBasis basisDualPullback_comp       QUEUED (stale-target after 71a5eaf)
-  6547fde4   PullbackBasis _id_dualPullback             SUBMITTED (NEW this tick)
-  86bef3e0   PullbackBasis _comp_dualPullback           SUBMITTED (NEW this tick)
+  3683ef39   PushforwardBasis _id_apply_at              QUEUED (stale, denied cancel)
+  4d0d28d6   PullbackBasis basisDualPullback_comp       QUEUED (stale, denied cancel)
+  6547fde4   PullbackBasis _id_dualPullback             QUEUED   (raced by sub-agent)
+  86bef3e0   PullbackBasis _comp_dualPullback           QUEUED   (raced by sub-agent)
 
 Full history in aristotle_jobs.jsonl.
 ```
@@ -105,8 +101,9 @@ Full history in aristotle_jobs.jsonl.
 ```text
 Build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PushforwardBasis    pass    lake build (83s replay; 2 sorries L236, L388)
+PushforwardBasis    pass    lake build (83s; 2 sorries L236, L388 — bundle primitives)
 PullbackBasis       pass    lake build (176s; 2 sorries L178, L264 — bundle primitives)
+(no rebuild this tick — no Lean source changes since 71a5eaf)
 ```
 
 ```text
