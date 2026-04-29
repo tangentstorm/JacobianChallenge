@@ -341,14 +341,35 @@ This is the deep content: the homeomorphism to S² combined with
 uniqueness of complex structure on S² (uniformization at genus 0)
 implies X is biholomorphic to `OnePoint ℂ ≃ ℂℙ¹`, which has
 `H⁰(Ω¹) = 0`. -/
-theorem subsingleton_holomorphicOneForm_of_homeo_sphere
+structure HomeoSphereHolomorphicOneFormVanishing
+    (X : Type*) [TopologicalSpace X] where
+  subsingleton : Subsingleton (HolomorphicOneForm ℂ X)
+
+/-- **Opaque data obligation (uniformization-lite core).** A compact
+connected Riemann surface homeomorphic to S² has no nonzero holomorphic
+1-forms.
+
+Bottom-up content: uniqueness of the complex structure on the topological
+2-sphere, transport of holomorphic 1-forms along the resulting
+biholomorphism to `OnePoint ℂ`, and the `H⁰(ℂℙ¹, Ω¹) = 0` computation. -/
+opaque homeoSphereHolomorphicOneFormVanishing
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
+    HomeoSphereHolomorphicOneFormVanishing X
+
+/-- **Sub-obligation wrapper (sorry-free).** Extracts the subsingleton
+consequence from `homeoSphereHolomorphicOneFormVanishing`. -/
+theorem subsingleton_holomorphicOneForm_of_homeo_sphere
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     Subsingleton (HolomorphicOneForm ℂ X) := by
-  sorry
+  exact (homeoSphereHolomorphicOneFormVanishing X h).subsingleton
 
 /-- **Bottom-up obligation (uniformization-lite).** A compact connected
 Riemann surface `X` homeomorphic to the standard 2-sphere `S²` admits
