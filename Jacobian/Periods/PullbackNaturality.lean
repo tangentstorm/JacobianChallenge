@@ -220,6 +220,19 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM
       pathIntegralViaCover η (γ.map hf.continuous) :=
   sorry
 
+/-- **Identity special case** of path-level naturality: when `f = id`,
+both sides equal `pathIntegralViaCover η γ` since `id^* η = η` and
+`γ.map continuous_id = γ`. Sorry-free. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_id
+    (η : HolomorphicOneForm ℂ X) {a b : X} (γ : Path a b) :
+    pathIntegralViaCover (pullbackFormsBundledLM X X id contMDiff_id η) γ =
+      pathIntegralViaCover η (γ.map continuous_id) := by
+  -- pullbackFormsBundledLM X X id _ η = η via pullbackFormsBundledLM_id.
+  rw [show pullbackFormsBundledLM X X (id : X → X) contMDiff_id η = η by
+    rw [pullbackFormsBundledLM_id]; rfl]
+  -- γ.map continuous_id = γ.
+  rw [show γ.map continuous_id = γ from Path.ext (by ext t; rfl)]
+
 /-- **Refl special case**: path integral over a constant path is zero,
 so naturality at `Path.refl a` is `0 = 0`. Sorry-free. -/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
