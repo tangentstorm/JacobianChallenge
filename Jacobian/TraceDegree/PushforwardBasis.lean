@@ -1,5 +1,7 @@
 import Jacobian.AbelJacobi.AnalyticOfCurveBasis
+import Jacobian.ComplexTorus.OfClm
 import Mathlib.LinearAlgebra.Matrix.ToLin
+import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 /-!
 # Analytic pushforward on the basis-aligned carrier
@@ -198,15 +200,6 @@ piece of geometric content (lattice preservation, descent
 compatibility, smoothness of the descent).
 -/
 
-/-- The analytic pushforward induced by a holomorphic map of compact
-Riemann surfaces, on the basis-aligned carrier. Opaque: the actual
-construction is the descent of `pushforwardTraceLift` through the
-period quotient (using `pushforwardTraceLift_preserves_lattice_raw`);
-its specs are the three raw sorries below. -/
-noncomputable opaque analyticPushforward (f : X → Y)
-    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    BasisAnalyticJacobian X →ₜ+ BasisAnalyticJacobian Y
-
 /-- Raw obligation: the trace lift preserves the period subgroup.
 
 Bottom-up: integrality of the period pairing on `H₁(X, ℤ)` plus the
@@ -219,28 +212,82 @@ theorem pushforwardTraceLift_preserves_lattice_raw
       pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup :=
   sorry
 
+/-- The basis-coordinate trace lift as a `ℂ`-linear map (i.e. the
+linear-map version of `pushforwardTraceLift`, before forgetting the
+`ℂ`-action). Sorry-free: the underlying `LinearMap` of the matrix-
+transpose definition. -/
+noncomputable def pushforwardTraceLiftLinearMap
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ X) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ Y) → ℂ) :=
+  Matrix.toLin' (holomorphicTraceCoord f hf).toMatrix'.transpose
+
+/-- The basis-coordinate trace lift as a continuous `ℂ`-linear map.
+Upgrade of `pushforwardTraceLiftLinearMap` via finite-dimensional
+auto-continuity. Sorry-free. -/
+noncomputable def pushforwardTraceLiftCLM
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ X) → ℂ) →L[ℂ] (Fin (analyticGenus ℂ Y) → ℂ) :=
+  LinearMap.toContinuousLinearMap (pushforwardTraceLiftLinearMap f hf)
+
+/-- The analytic pushforward induced by a holomorphic map of compact
+Riemann surfaces, on the basis-aligned carrier.
+
+Concrete (non-opaque) descent of `pushforwardTraceLiftCLM` through
+the period quotient via `ComplexTorus.mapClm`, using
+`pushforwardTraceLift_preserves_lattice_raw` for the lattice
+preservation hypothesis. The continuity of the descent comes from
+`mapClm_continuous`; the smoothness companion
+`analyticPushforward_contMDiff_raw` remains a (named) sorry —
+quotient-of-manifold smoothness is the genuine geometric content.
+
+Note: `pushforwardTraceLiftCLM` has type `→L[ℂ]` while
+`pushforwardTraceLift` has type `→+`; the underlying additive maps
+agree definitionally (the `→L[ℂ]` and `→ₗ[ℂ]` and `→+` are all
+extracted from the same matrix-transpose `Matrix.toLin'` value). -/
+noncomputable def analyticPushforward (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    BasisAnalyticJacobian X →ₜ+ BasisAnalyticJacobian Y where
+  toFun := ComplexTorus.mapClm (pushforwardTraceLiftCLM f hf)
+    (pushforwardTraceLift_preserves_lattice_raw f hf)
+  map_zero' := (ComplexTorus.mapClm _ _).map_zero
+  map_add' := (ComplexTorus.mapClm _ _).map_add
+  continuous_toFun :=
+    ComplexTorus.mapClm_continuous (pushforwardTraceLiftCLM f hf)
+      (pushforwardTraceLift_preserves_lattice_raw f hf)
+
 /-- Raw obligation: descent compatibility — `analyticPushforward` is
 the descent of `pushforwardTraceLift` through the period quotient.
 
-Bottom-up: the universal property of the quotient
-`AddSubgroup.lift`, plus
-`pushforwardTraceLift_preserves_lattice_raw`. -/
+Sorry-free: unfold `analyticPushforward` to `mapClm`, then
+`ComplexTorus.map_mk` (which is `rfl`); the underlying additive
+hom of `pushforwardTraceLiftCLM` is definitionally
+`pushforwardTraceLift`. -/
 theorem analyticPushforward_mk_spec_raw
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (v : Fin (analyticGenus ℂ X) → ℂ) :
     analyticPushforward f hf
       (ComplexTorus.mk _ (periodFullComplexLattice X) v) =
       ComplexTorus.mk _ (periodFullComplexLattice Y)
-        (pushforwardTraceLift f hf v) :=
-  sorry
+        (pushforwardTraceLift f hf v) := by
+  change ComplexTorus.mapClm (pushforwardTraceLiftCLM f hf)
+      (pushforwardTraceLift_preserves_lattice_raw f hf)
+      (ComplexTorus.mk _ (periodFullComplexLattice X) v) =
+    ComplexTorus.mk _ (periodFullComplexLattice Y)
+      (pushforwardTraceLift f hf v)
+  rfl
 
 /-- Raw obligation: the descended map is holomorphic.
 
-Bottom-up: a continuous additive group homomorphism between
-quotients of `ℂⁿ` by lattices is automatically smooth (in fact
-analytic), since locally it lifts to a `ℂ`-linear map. The lift here
-is `pushforwardTraceLift`, which is `ℂ`-linear (it's the additive
-hom underlying the `LinearMap` produced by `Matrix.toLin'`). -/
+Bottom-up: smoothness of a `ℂ`-linear-map descent through the period
+quotient. Mathlib has continuity of such a descent
+(`mapClm_continuous`) but no general `ContMDiff.quotient_lift` lemma
+for `QuotientAddGroup` between manifolds. Once the
+project's `MkSmooth` / quotient-charted-space infrastructure proves
+quotient maps are smooth (already partly available via `contMDiff_mk`
+and the project's chart construction), this becomes a sorry-free
+assembly: the lift `pushforwardTraceLiftCLM` is smooth (CLM between
+finite-dim spaces), so the descent is smooth via the universal
+property of the quotient charted-space. -/
 theorem analyticPushforward_contMDiff_raw
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
