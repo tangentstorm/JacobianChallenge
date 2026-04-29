@@ -194,16 +194,56 @@ noncomputable def holomorphicOneForm_metricSpace
     toBornology := Bornology.ofDist SectionMetric.dist
       (SectionMetric.dist_comm hc) (SectionMetric.dist_triangle hc) }
 
-/-- **Prerequisite 2 (sorry — awaiting `SectionComplete.lean` / `8585f085`).**
-Completeness of the sup-norm metric on `HolomorphicOneForm ℂ X`.
-Wire `SectionComplete.holomorphicOneForm_supNorm_completeSpace` here
-when `8585f085` lands. -/
+/-- **Prerequisite 2a (sorry — analytic core of completeness).**
+Every sup-norm Cauchy sequence of holomorphic 1-forms converges (in
+the sup-norm metric topology) to a holomorphic 1-form.
+
+Concentrates the genuine Mathlib gaps:
+1. *Pointwise convergence.* Sup-norm Cauchy is uniformly Cauchy,
+   hence pointwise Cauchy in each fiber. Each fiber is a Banach
+   space, so the pointwise limit exists.
+2. *Continuity of the limit.* `TendstoUniformly.continuous`.
+3. *Smoothness of the limit (Weierstrass).* Uniform limit of
+   holomorphic 1-forms is holomorphic. **Genuine blocker** (Blocker
+   3 of `holomorphicOneForm_montel`'s docstring): Mathlib v4.28.0
+   does not have a Weierstrass-convergence theorem for holomorphic
+   functions, let alone for holomorphic sections. Routes to fill
+   it in: Morera (also absent) or power-series-coefficient
+   convergence via `DiffContOnCl.hasFPowerSeriesOnBall`.
+4. *Convergence in the sup-norm metric.* Pointwise + uniform Cauchy
+   ⇒ uniform convergence ⇒ sup-norm convergence; routine once
+   (1)–(3) hold.
+
+(Integrated from subagent a8db8a8f8315e0535's TOPDOWN split.) -/
+theorem holomorphicOneForm_supNorm_cauchySeq_tendsto
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
+      (holomorphicOneForm_metricSpace X).toUniformSpace _ σ) :
+    ∃ a : HolomorphicOneForm ℂ X,
+      @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
+        (@nhds (HolomorphicOneForm ℂ X)
+          (holomorphicOneForm_metricSpace X).toUniformSpace.toTopologicalSpace a) := by
+  sorry
+
+/-- **Prerequisite 2 (sorry-free assembly).** Completeness of the
+sup-norm metric on `HolomorphicOneForm ℂ X`.
+
+Reduces directly to `holomorphicOneForm_supNorm_cauchySeq_tendsto`
+via `Metric.complete_of_cauchySeq_tendsto`. All non-trivial analytic
+content is in the sub-obligation. -/
 theorem holomorphicOneForm_supNorm_completeSpace
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     @CompleteSpace (HolomorphicOneForm ℂ X)
-      (holomorphicOneForm_metricSpace X).toUniformSpace := by sorry
+      (holomorphicOneForm_metricSpace X).toUniformSpace := by
+  letI : MetricSpace (HolomorphicOneForm ℂ X) := holomorphicOneForm_metricSpace X
+  refine Metric.complete_of_cauchySeq_tendsto ?_
+  intro σ hCauchy
+  exact holomorphicOneForm_supNorm_cauchySeq_tendsto X σ hCauchy
 
 end SupNormAssembly
 
@@ -575,7 +615,47 @@ The parent obligation factors into two strictly smaller pieces:
   Banach-completeness wrapper: `cauchySeq_tendsto_of_complete` with
   `B.complete` supplying the `CompleteSpace`.
 
-The parent below is then a 3-line assembly of these two pieces. -/
+The parent below is then a 3-line assembly of these two pieces.
+
+##### TOPDOWN refinement of `holomorphicOneForm_montel_subseq_isCauchy` (Aristotle 20995679)
+
+The Cauchy-subsequence extraction factors into one genuinely
+analytic sub-obligation plus sorry-free metric-space bookkeeping:
+
+* `holomorphicOneForm_closedBall_totallyBounded` (sorry) — the
+  closed unit ball in `B`'s metric is totally bounded. This is the
+  core Montel content (chartwise Cauchy first-derivative estimates
+  + Arzelà–Ascoli + finite chart cover).
+
+The assembly below chains:
+  totallyBounded + complete → compact → seqCompact → convergent
+  subseq → Cauchy subseq. -/
+
+/-- **Sub-obligation: total boundedness of the closed unit ball.**
+For every `ε > 0`, the set `{σ | B.toNorm.norm σ ≤ 1}` can be
+covered by finitely many `ε`-balls in `B`'s metric.
+
+The classical proof: pointwise bounds from `B.norm_le` make the
+family equibounded on every chart; Cauchy first-derivative estimates
+on each chart disc make the chart representatives uniformly
+Lipschitz (hence equicontinuous); Arzelà–Ascoli on the compact
+base + finite chart cover gives total boundedness.
+
+Mathlib gaps: Cauchy derivative estimate must be composed from
+`DiffContOnCl.circleIntegral_sub_inv_smul` +
+`circleIntegral.norm_integral_le_of_norm_le_const`; Weierstrass
+convergence theorem absent in v4.28.0. -/
+theorem holomorphicOneForm_closedBall_totallyBounded
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (B : HolomorphicOneFormBanachData X) :
+    @TotallyBounded (HolomorphicOneForm ℂ X)
+      B.toMetricSpace.toUniformSpace
+      (@Metric.closedBall (HolomorphicOneForm ℂ X)
+        B.toMetricSpace.toPseudoMetricSpace 0 1) := by
+  sorry
+
 theorem holomorphicOneForm_montel_subseq_isCauchy
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -586,7 +666,22 @@ theorem holomorphicOneForm_montel_subseq_isCauchy
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
       @CauchySeq (HolomorphicOneForm ℂ X) ℕ
         B.toMetricSpace.toUniformSpace _ (σ ∘ φ) := by
-  sorry
+  letI : MetricSpace (HolomorphicOneForm ℂ X) := B.toMetricSpace
+  haveI : CompleteSpace (HolomorphicOneForm ℂ X) := B.complete
+  have htb := holomorphicOneForm_closedBall_totallyBounded X B
+  have hclosed : IsClosed (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
+    Metric.isClosed_closedBall
+  have hcomplete : IsComplete (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
+    hclosed.isComplete
+  have hcompact : IsCompact (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
+    htb.isCompact_of_isComplete hcomplete
+  have hseq : IsSeqCompact (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
+    isCompact_iff_isSeqCompact.mp hcompact
+  have hmem : ∀ n, σ n ∈ Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1 := fun n => by
+    simp only [Metric.mem_closedBall, B.dist_eq, sub_zero]
+    exact _hσ n
+  obtain ⟨_, _, φ, hφ_mono, hφ_tendsto⟩ := hseq hmem
+  exact ⟨φ, hφ_mono, hφ_tendsto.cauchySeq⟩
 
 namespace HolomorphicOneFormBanachData
 

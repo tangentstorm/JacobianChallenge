@@ -227,16 +227,51 @@ theorem analyticPushforward_mk_spec
         (pushforwardTraceLift f hf v) :=
   (basisAnalyticPushforwardBundle f hf).mk_spec v
 
-/-- Per-coordinate form of `pushforwardTraceLift_comp_spec_apply`: the
-trace lift for `g ∘ f`, evaluated at `v` and projected onto coordinate
-`i`, equals the iterated trace-lift composition projected onto `i`.
+/--
+### Blocker analysis for `pushforwardTraceLift_comp_spec_apply_at`
+(integrated from Aristotle dc58e548)
 
-This is the smallest named obligation: a single equality in `ℂ`.
-Bottom-up: provable from the multiplicativity of the trace/norm map
-on holomorphic 1-forms (on each coordinate of a basis-aligned
-representation).
+**Goal.** Show that the covering-space trace lift for `g ∘ f`
+equals the composition of trace lifts for `g` and `f`, at each
+coordinate.
 
-Blocked at the bundle layer: see the section docstring above. -/
+**Root cause.** The three `pushforwardTraceLift` values appearing in
+this equation originate from *three distinct opaque values*:
+`basisAnalyticPushforwardBundle (g ∘ f) (hg.comp hf)`,
+`basisAnalyticPushforwardBundle f hf`, and
+`basisAnalyticPushforwardBundle g hg`. Each `opaque` is selected
+independently by `Classical.choice`, so Lean has no propositional
+relationship between the three covering-space lifts.
+
+**Why a composition bundle does not resolve it.** A
+`BasisAnalyticPushforwardCompBundle f hf g hg` carrying its own
+three trace lifts plus a composition axiom can be made `Inhabited`
+with zero maps, but `pushforwardTraceLift f hf` is defined by
+`(basisAnalyticPushforwardBundle f hf).pushforwardTraceLift`, which
+cannot depend on `g`. Re-routing through any canonical companion
+still leaves three different opaque comp-bundle instances whose
+internal lifts are unrelated.
+
+**Mathlib API required to land this:**
+- Trace/norm map on differentials of a finite morphism of Riemann
+  surfaces (absent).
+- Holomorphic 1-forms `H⁰(X, Ω¹)` as a finite-dim ℂ-vector space
+  with a basis (absent; project-internal `HolomorphicOneForm` is a
+  placeholder).
+- Functoriality of trace: `Tr(g ∘ f) = Tr(g) ∘ Tr(f)` for branched
+  coverings (absent).
+- Pushforward of 1-forms `f_* : H⁰(X, Ω¹) → H⁰(Y, Ω¹)` via trace
+  (absent).
+
+**Structural change required.** Replace the per-`(f, hf)` opaque
+bundle with a *concrete* (non-opaque) definition:
+`pushforwardTraceLift f hf := dualOfTraceMap (...) (traceMapOnForms f hf)`
+where `traceMapOnForms f hf : H⁰(Y, Ω¹) →ₗ[ℂ] H⁰(X, Ω¹)` is the
+pullback-then-trace-on-fibres map. Then both
+`pushforwardTraceLift_id_apply_at` and `_comp_spec_apply_at`
+follow from the multiplicativity / identity laws of the trace
+map on 1-forms, which require the substantial new Mathlib
+infrastructure listed above. -/
 theorem pushforwardTraceLift_comp_spec_apply_at
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
