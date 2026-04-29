@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 08:49 EDT
+Last tick: 2026-04-29 08:53 EDT
 
 ```text
 Headline progress
@@ -82,17 +82,17 @@ This tick: backend still frozen, sub-agents racing the two newest QUEUED.
     to bundle primitives by recent TOPDOWN refactors); harness denied
     both, citing the memory rule "only cancel if already done locally"
     — lifted ≠ discharged. Both stay running as stale packets.
-  • This tick: Aristotle 4d0d28d6 completed (was the stale packet on
-    the lifted `basisDualPullback_comp` per-vector sorry).
-    REJECTED — its diff predates 71a5eaf and would revert my
-    bundle-primitive refactor (cosmetic rename + level shift, no
-    new content). Same pattern as 0de5af2a.
+  • This tick: added TOPDOWN-plan docstring to
+    `pathIntegralFunctional_separates_points_spec` (Abel injectivity)
+    in AnalyticOfCurveBasis.lean — outlines the classical proof
+    (contradiction + Abel + Riemann-Hurwitz) and decomposes into 2
+    named sub-obligations + sorry-free assembly. Parallel to last
+    tick's `periodSubgroup_isZLattice` plan. Worth executing once a
+    project-internal `Divisor X` / `IsPrincipal d` API exists.
   • Sub-agents active (worktree-isolated):
-    `ad96003a19385a71c` racing 6547fde4 (`_id_dualPullback`, ~80+ min)
+    `ad96003a19385a71c` racing 6547fde4 (`_id_dualPullback`, ~85+ min)
   • 5 prior audit-only agents on the comp-side bundle primitives
-    all confirmed structural dead-end (~3 min total runtime across all
-    five). Spawn cycle remains stopped; will resume ≥2 racers when
-    target landscape changes.
+    all confirmed structural dead-end. Spawn cycle remains stopped.
 
 Active our-packets after cancellation:
   f3a8e713   PushforwardBasis _comp_traceLift           QUEUED

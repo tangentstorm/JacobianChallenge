@@ -182,7 +182,54 @@ differ by a period vector, then their endpoints are equal.
 
 This is the core mathematical content (bottom-up obligation).
 The proof requires divisor theory / Riemann-Roch on compact Riemann
-surfaces, which is not yet available in Mathlib. -/
+surfaces, which is not yet available in Mathlib.
+
+#### TOPDOWN plan (planned split, not yet executed)
+
+Classical proof outline (Forster / Farkas-Kra / Griffiths-Harris):
+
+* By contradiction, assume `Q₁ ≠ Q₂` while
+  `J(Q₁) = J(Q₂)` in `Jac(X)` (which is what `hperiod` encodes).
+* Then the divisor `Q₁ - Q₂ ∈ Div⁰(X)` is non-zero with zero
+  Abel-Jacobi image.
+* **Abel's theorem (existence)** — divisors with zero Abel-Jacobi
+  image are principal: there exists a meromorphic `f : X → ℂP¹`
+  with `div(f) = Q₁ - Q₂`.
+* Such `f` has exactly one simple zero (at `Q₁`) and one simple pole
+  (at `Q₂`), so `deg(f) = 1`.
+* **Riemann-Hurwitz** — a degree-1 holomorphic surjection `f : X → ℂP¹`
+  forces `X ≅ ℂP¹` and therefore `genus X = 0`.
+* Contradicts the hypothesis `0 < analyticGenus ℂ X`.
+
+Decomposition into named sub-obligations:
+
+1. **`abelJacobi_image_zero_implies_principal`** (NEW sorry, Abel's
+   theorem existence direction): if `J(Q₁ - Q₂) = 0` then `Q₁ - Q₂`
+   is principal — there exists meromorphic `f` with `div(f) = Q₁ - Q₂`.
+   Mathlib gap: no divisor theory on compact Riemann surfaces, no
+   formal `Div⁰(X)` / `Pic⁰(X)` / Abel-Jacobi map at the divisor
+   level. (~5,000+ lines of upstream work.)
+
+2. **`degree_one_meromorphic_implies_genus_zero`** (NEW sorry,
+   Riemann-Hurwitz at degree 1): if there is a non-constant
+   meromorphic `f : X → ℂP¹` of degree 1 (one simple zero, one simple
+   pole), then `genus X = 0`. Mathlib gap: no Riemann-Hurwitz formula,
+   no degree theory for branched coverings. (~3,000+ lines.)
+
+3. **`pathIntegralFunctional_separates_points_spec`** (sorry-free
+   assembly): from (1) and the principal-divisor witness, derive
+   `f` of degree 1; from (2), conclude `genus X = 0`, contradicting
+   `0 < analyticGenus ℂ X`. The translation between `analyticGenus`
+   (analytic/Hodge) and topological/Riemann-Hurwitz genus uses the
+   already-stated `analyticGenus_eq_topologicalGenus`
+   (in `PeriodFunctional.lean`, also a sorry).
+
+Net effect of the split: 1 deep sorry → 2 substantive named sub-
+obligations + 1 sorry-free assembly. Worth executing once the divisor
+theory layer or even a placeholder `Divisor X` / `IsPrincipal d` API
+exists in the project. The docstring already captures the canonical
+proof so future Aristotle/sub-agent jobs can split rather than
+rediscover the structure. -/
 theorem pathIntegralFunctional_separates_points_spec
     (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
     (hperiod :
