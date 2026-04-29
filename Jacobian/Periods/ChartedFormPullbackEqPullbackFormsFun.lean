@@ -76,4 +76,24 @@ theorem chartedFormPullback_eq_pullbackFormsFun
   rw [chartedFormPullback_eq_pullbackFormsFun]
   exact pullbackFormsFun_zero c.symm
 
+/-- The chart-symm pullback distributes over addition of forms.
+Sorry-free via the bridge + `pullbackFormsFun_add`. -/
+theorem chartedFormPullback_add
+    (c : OpenPartialHomeomorph X E) (η ζ : HolomorphicOneForm E X) :
+    chartedFormPullback c (η + ζ) =
+      chartedFormPullback c η + chartedFormPullback c ζ := by
+  rw [chartedFormPullback_eq_pullbackFormsFun,
+      chartedFormPullback_eq_pullbackFormsFun,
+      chartedFormPullback_eq_pullbackFormsFun]
+  exact pullbackFormsFun_add c.symm η ζ
+
+/-- The chart-symm pullback distributes over negation of forms.
+Sorry-free via the bridge + `pullbackFormsFun_neg`. -/
+@[simp] theorem chartedFormPullback_neg
+    (c : OpenPartialHomeomorph X E) (η : HolomorphicOneForm E X) :
+    chartedFormPullback c (-η) = - chartedFormPullback c η := by
+  rw [chartedFormPullback_eq_pullbackFormsFun,
+      chartedFormPullback_eq_pullbackFormsFun]
+  exact pullbackFormsFun_neg c.symm η
+
 end JacobianChallenge.Periods
