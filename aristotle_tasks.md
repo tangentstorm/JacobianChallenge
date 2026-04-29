@@ -12,7 +12,7 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 10:23 EDT)
+## Live Status (2026-04-29 10:34 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 17 (unchanged).
@@ -23,11 +23,11 @@ identify our jobs without inspecting tarballs.
   4d0d28d6 rejected this tick — stale baseline). 1 CANCELED
   (362e259f).
 - **Sub-agents:** `ad96003a19385a71c` racing 6547fde4
-  (`_id_dualPullback`, still running ~3+ hr). 6th audit racer
-  `a202c6b8c55ac4049` launched on 86bef3e0 per user reminder to
-  maintain ≥2 racers. Prior 5 audits all returned "redundant"
-  (a5ded3e9 ~60min, a02a7b2c 94s, a0fcf1108 22s, a260f9097 25s,
-  a73fd8de 19s). Spawn cycle resumed on user instruction.
+  (`_id_dualPullback`, ~3.5+ hr). 8th audit racer `a2cced5d3b722f465`
+  launched on 86bef3e0. 7 prior comp-side audits all returned
+  "redundant" (a5ded3e9 ~60min, a02a7b2c 94s, a0fcf1108 22s,
+  a260f9097 25s, a73fd8de 19s, a202c6b8 25s, a5d90e37 24s). Spawn
+  cycle continuing per user instruction.
 
 ### This tick
 
