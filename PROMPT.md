@@ -67,9 +67,19 @@ The timer will call you again.
    - **Claude's local pick: longest-queued sorry that still has a
      `submitted` (not yet `IN_PROGRESS`) Aristotle job.** Work it
      locally. When the local proof lands, cancel the corresponding
-     Aristotle job (per the "only cancel if already done locally"
-     rule). This keeps Aristotle focused on the front of the queue
-     (likely the deeper proofs) while Claude clears the back.
+     Aristotle job (per the "cancel if proven locally" rule below).
+     This keeps Aristotle focused on the front of the queue (likely
+     the deeper proofs) while Claude clears the back.
+   - **Cancel an Aristotle packet whenever its target sorry no
+     longer exists locally** — whether discharged outright or lifted
+     to a different named obligation by a TOPDOWN refactor / split /
+     restructuring. "Lifted" counts as "proven locally" for
+     cancellation purposes: the packet is grinding on a target that
+     doesn't exist anymore, and any patch it produces will be a
+     stale-baseline revert. Don't waste Aristotle's wall-clock on
+     unusable work. Stuckness alone (e.g. "0% for hours") is **not**
+     a cancel signal — only target-no-longer-exists is. If unsure
+     whether a target was discharged or lifted, err toward cancel.
    - **At least two sub-agents must always be running, in their own
      git worktrees, on the two sorries at the END of the Aristotle
      queue** — i.e. the two **newest-submitted** `submitted` jobs that
