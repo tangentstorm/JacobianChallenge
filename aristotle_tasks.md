@@ -17,16 +17,24 @@ identify our jobs without inspecting tarballs.
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 14 (unchanged; Montel TOPDOWN this
   tick is net 0).
-- **Aristotle integrations to date: 123** (no integration this tick;
-  quiet tick — all 3 packets remain IN_PROGRESS at 13%).
-- **Backend status:** 3 IN_PROGRESS: de8822fb (13%), 8a8ea66d (13%),
-  706bf2e2 (13%). No new completions.
+- **Aristotle integrations to date: 123** (no integration this tick).
+- **Backend status:** 3 IN_PROGRESS at 13% (de8822fb, 8a8ea66d,
+  706bf2e2) plus 7 NEW QUEUED packets submitted this tick to restore
+  strict 1:1 coverage (76c01cf9, c2a57d71, 88effa1c, 0cfa1878,
+  ad278fcd, 9b4998a5, 3b7e5dac).
 
 ### This tick
 
-- Quiet management cycle: no Aristotle completions since `ba57741f`.
-- Verified PushforwardBasis builds clean after last tick's
-  blocker-docstring integration (33s, 2 expected sorries).
+- **Audit revealed 1:1 coverage gaps** after the recent TOPDOWN
+  splits and blocker-docstring integrations. 7 sorries were lacking
+  active packets:
+  - 3 GenusZero leaves (finite Liouville, infty Liouville,
+    uniformization-lite),
+  - PeriodFunctional periodVectors_linearIndependent,
+  - PullbackBasis basisDualPullback_comp (after 403c9581 rejection),
+  - PushforwardBasis _id_apply_at and _comp_spec_apply_at (after
+    ba57741f and dc58e548 integrated as docstrings, not proofs).
+- Submitted 7 new packets to close the gap.
 
 ### Rejected / skipped this tick
 
