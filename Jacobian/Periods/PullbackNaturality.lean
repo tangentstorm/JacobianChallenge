@@ -265,6 +265,38 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
   -- Use pathIntegralViaCoverPick_refl on each side.
   rw [pathIntegralViaCover_refl, pathIntegralViaCover_refl]
 
+/-- **Concatenated path conditional special case** of path-level
+naturality: naturality at `γ.trans γ'` follows from naturality at `γ`
+and `γ'` (as hypotheses), via `Path.map_trans` (which states
+`(γ.trans γ').map h = (γ.map h).trans (γ'.map h)`).
+
+Requires the additivity of `pathIntegralViaCover` over `Path.trans`,
+which the project has at the partition-parametric `_With` level
+(`pathIntegralViaCoverWith_trans`) but not yet at the un-`With` level.
+Stated as a hypothesis-conditional. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_of_trans
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) {a b c : X}
+    (γ : Path a b) (γ' : Path b c)
+    (h_γ : pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+      pathIntegralViaCover η (γ.map hf.continuous))
+    (h_γ' : pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ' =
+      pathIntegralViaCover η (γ'.map hf.continuous))
+    (h_trans_X : pathIntegralViaCover
+        (pullbackFormsBundledLM X Y f hf η) (γ.trans γ') =
+      pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ +
+      pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ')
+    (h_trans_Y : pathIntegralViaCover η
+        ((γ.map hf.continuous).trans (γ'.map hf.continuous)) =
+      pathIntegralViaCover η (γ.map hf.continuous) +
+      pathIntegralViaCover η (γ'.map hf.continuous)) :
+    pathIntegralViaCover
+        (pullbackFormsBundledLM X Y f hf η) (γ.trans γ') =
+      pathIntegralViaCover η ((γ.trans γ').map hf.continuous) := by
+  rw [h_trans_X, h_γ, h_γ']
+  rw [Path.map_trans]
+  rw [h_trans_Y]
+
 /-- **Symmetric path conditional special case** of path-level
 naturality: naturality at `γ.symm` follows from naturality at `γ`
 (as a hypothesis), via `Path.map_symm` (which states
