@@ -477,6 +477,52 @@ theorem periodPairing_pullbackFormsBundledLM_of_nsmul
       (periodPairing ℂ Y).map_nsmul, LinearMap.smul_apply, LinearMap.smul_apply,
       h_nat]
 
+/-- **Form-zero special case**: naturality at η = 0; both sides
+vanish via linearity of `pullbackFormsBundledLM` and the
+linear-map-valuedness of `periodPairing γ`. Sorry-free. -/
+theorem periodPairing_pullbackFormsBundledLM_zero_form
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X) :
+    (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf 0) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) 0 := by
+  rw [LinearMap.map_zero, LinearMap.map_zero, LinearMap.map_zero]
+
+/-- **Form-additivity special case**: naturality at η + ζ from
+naturality at η and at ζ separately, via linearity in the form
+argument. Sorry-free. -/
+theorem periodPairing_pullbackFormsBundledLM_of_add_form
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X) (η ζ : HolomorphicOneForm ℂ Y)
+    (h_η : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η)
+    (h_ζ : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf ζ) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) ζ) :
+    (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf (η + ζ)) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) (η + ζ) := by
+  rw [LinearMap.map_add, LinearMap.map_add, LinearMap.map_add, h_η, h_ζ]
+
+/-- **Form-smul special case**: naturality at k • η follows from
+naturality at η, via ℂ-linearity of `pullbackFormsBundledLM` and
+ℂ-linearity of `periodPairing γ`. Sorry-free. -/
+theorem periodPairing_pullbackFormsBundledLM_of_smul_form
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X) (k : ℂ) (η : HolomorphicOneForm ℂ Y)
+    (h_η : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η) :
+    (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf (k • η)) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) (k • η) := by
+  rw [LinearMap.map_smul, LinearMap.map_smul, LinearMap.map_smul, h_η]
+
+/-- **Form-neg special case**: naturality at -η from naturality at η. -/
+theorem periodPairing_pullbackFormsBundledLM_of_neg_form
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
+    (h_η : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η) :
+    (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf (-η)) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) (-η) := by
+  rw [map_neg, map_neg, map_neg, h_η]
+
 /-- **Subtraction special case** of `periodPairing_pullbackFormsBundledLM`. -/
 theorem periodPairing_pullbackFormsBundledLM_of_sub
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
