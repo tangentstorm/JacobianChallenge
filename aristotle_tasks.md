@@ -12,28 +12,30 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 23:30 EDT)
+## Live Status (2026-04-28 23:50 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
-- **Open production sorries:** 14 (was 13; +1 from Step 5 split adding
-  2 well-named sub-obligations while discharging 1).
-- **Aristotle integrations to date: 120** (1 new this tick:
-  `58eb31f0` partial — Step 5 assembly only, Montel revert rejected).
-- **Backend status:** queue still draining. 1 in-flight (e7250841),
-  2 just-submitted (de8822fb, bed365ae) for the new Step 5
-  sub-obligations.
+- **Open production sorries:** 14 (unchanged; Montel TOPDOWN this
+  tick is net 0).
+- **Aristotle integrations to date: 120** (no Aristotle integration
+  this tick — only subagent integration and new packets).
+- **Backend status:** 1 in-flight (e7250841 STALE — its target is now
+  sorry-free, leave running), several queued packets (ba57741f,
+  dc58e548, de8822fb, bed365ae, 20995679).
 
 ### Integrated this tick
 
-- `58eb31f0` (CompactRiemannSurface Step 5) — partial integration:
-  added `SectionMetric` import + new prerequisite section
-  (`holomorphicOneForm_fiberNorm_continuous` sorry,
-  `holomorphicOneForm_metricSpace` sorry-free,
-  `holomorphicOneForm_supNorm_completeSpace` sorry awaiting
-  `8585f085`) + sorry-free Step 5 assembly of
-  `_normedSpace_uniformOnCompact`. **Rejected** Aristotle's
-  destructive Montel revert (it had a stale baseline pre-`e833f04`
-  and would have undone the Montel TOPDOWN split).
+- Subagent `a7b046e5b69cfb1ea` Montel TOPDOWN split:
+  `holomorphicOneForm_montel_subseq_tendsto` is now sorry-free 3-line
+  assembly via the new sorry-free wrapper
+  `HolomorphicOneFormBanachData.cauchySeq_tendsto` plus the new
+  sorry on `holomorphicOneForm_montel_subseq_isCauchy` (analytic
+  core, absorbs all 5 Mathlib-gap blockers). Net 0 sorry change.
+- New Aristotle packet `20995679` submitted for the new
+  `_subseq_isCauchy` sorry.
+- Two sub-agents launched (worktree-isolated):
+  `a5920caf` racing on `_subseq_isCauchy`, `a8db8a8f` racing on
+  `_supNorm_completeSpace`.
 
 ### Rejected / skipped this tick
 

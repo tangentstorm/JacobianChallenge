@@ -560,19 +560,74 @@ lemma.  Discharging it requires the chartwise-section evaluation
 API (Blocker 4) and the Cauchy/Weierstrass infrastructure
 (Blockers 2–3) listed in the parent docstring.  See
 `Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean`
-for the recon. -/
-theorem holomorphicOneForm_montel_subseq_tendsto
+for the recon.
+
+##### TOPDOWN refinement (subagent a7b046e5b69cfb1ea)
+
+The parent obligation factors into two strictly smaller pieces:
+
+* `holomorphicOneForm_montel_subseq_isCauchy` — analytic core
+  (sorry): given `‖σ n‖ ≤ 1`, extract a strictly monotone `φ` such
+  that `σ ∘ φ` is Cauchy in `B`'s metric. Absorbs all five Mathlib-
+  gap blockers (Cauchy first-derivative estimate, equicontinuity,
+  Arzelà–Ascoli, Weierstrass closure, chartwise eval API).
+* `HolomorphicOneFormBanachData.cauchySeq_tendsto` — sorry-free
+  Banach-completeness wrapper: `cauchySeq_tendsto_of_complete` with
+  `B.complete` supplying the `CompleteSpace`.
+
+The parent below is then a 3-line assembly of these two pieces. -/
+theorem holomorphicOneForm_montel_subseq_isCauchy
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X)
     (σ : ℕ → HolomorphicOneForm ℂ X)
     (_hσ : ∀ n, B.toNorm.norm (σ n) ≤ 1) :
+    ∃ φ : ℕ → ℕ, StrictMono φ ∧
+      @CauchySeq (HolomorphicOneForm ℂ X) ℕ
+        B.toMetricSpace.toUniformSpace _ (σ ∘ φ) := by
+  sorry
+
+namespace HolomorphicOneFormBanachData
+
+/-- **Completeness wrapper.** A Cauchy sequence in `B`'s metric
+admits a limit, by `B.complete : CompleteSpace _` plus
+`cauchySeq_tendsto_of_complete`. Sorry-free. -/
+theorem cauchySeq_tendsto
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (B : HolomorphicOneFormBanachData X)
+    {τ : ℕ → HolomorphicOneForm ℂ X}
+    (hτ : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
+      B.toMetricSpace.toUniformSpace _ τ) :
+    ∃ a : HolomorphicOneForm ℂ X,
+      @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) τ Filter.atTop
+        (@nhds (HolomorphicOneForm ℂ X)
+          B.toMetricSpace.toUniformSpace.toTopologicalSpace a) := by
+  letI : MetricSpace (HolomorphicOneForm ℂ X) := B.toMetricSpace
+  haveI : CompleteSpace (HolomorphicOneForm ℂ X) := B.complete
+  exact cauchySeq_tendsto_of_complete hτ
+
+end HolomorphicOneFormBanachData
+
+/-- Subsequence extraction (Montel core), public face. Now a 3-line
+assembly of `holomorphicOneForm_montel_subseq_isCauchy` and
+`HolomorphicOneFormBanachData.cauchySeq_tendsto`. -/
+theorem holomorphicOneForm_montel_subseq_tendsto
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (B : HolomorphicOneFormBanachData X)
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (hσ : ∀ n, B.toNorm.norm (σ n) ≤ 1) :
     ∃ (a : HolomorphicOneForm ℂ X) (φ : ℕ → ℕ), StrictMono φ ∧
       @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) (σ ∘ φ) Filter.atTop
         (@nhds (HolomorphicOneForm ℂ X)
           B.toMetricSpace.toUniformSpace.toTopologicalSpace a) := by
-  sorry
+  obtain ⟨φ, hφ_mono, hφ_cauchy⟩ :=
+    holomorphicOneForm_montel_subseq_isCauchy X B σ hσ
+  obtain ⟨a, ha⟩ := B.cauchySeq_tendsto hφ_cauchy
+  exact ⟨a, φ, hφ_mono, ha⟩
 
 /-- **Norm bound preserved under metric convergence.** If a sequence of
 sections has `B.toNorm.norm (σₙ) ≤ 1` and converges to `a` in `B`'s

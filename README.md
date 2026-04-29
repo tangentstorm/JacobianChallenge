@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 23:30 EDT
+Last tick: 2026-04-28 23:50 EDT
 
 ```text
 Headline progress
@@ -22,6 +22,8 @@ Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (fr
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excludes 2 Inventory metadata items)
 Aristotle integrations to date 120        `"status":"integrated"` lines in aristotle_jobs.jsonl
+                                          (subagent Montel TOPDOWN integrated this tick — not counted
+                                          as Aristotle integration)
 Production sorry-free files  391 / 397    counting `:= sorry`-ending lines per file. 6 files with
                                           real sorries — see below. (412 total .lean − 15 design
                                           files: Challenge, Solution, StatementBank, *Recon*.)
@@ -32,9 +34,10 @@ Reproduction: for f in <files>; do echo "$f $(grep -cE ':= sorry$' $f)"; done
 ```text
 Open sorries by file (all production sorries; 6 files, 14 total)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  HolomorphicForms/CompactRiemannSurface   3   fiberNorm_continuous (NEW Step 5 split) +
-                                               supNorm_completeSpace (NEW Step 5 split, awaits 8585f085) +
-                                               montel_subseq_tendsto (existing)
+  HolomorphicForms/CompactRiemannSurface   3   fiberNorm_continuous (Step 5 split) +
+                                               supNorm_completeSpace (Step 5 split, awaits 8585f085) +
+                                               montel_subseq_isCauchy (NEW from subagent Montel TOPDOWN;
+                                               replaces montel_subseq_tendsto with sorry-free assembly)
   HolomorphicForms/GenusZeroClassification 4   finite/infty Liouville leaves +
                                                uniformization-lite (holomorphicOneFormLinearEquivOfHomeoSphere) +
                                                deep uniformization (genus_zero_homeomorph_onePointCx)
@@ -66,36 +69,37 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status — 14 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Integrated this tick (1, partial)
-  58eb31f0   CompactRiemannSurface Step 5 assembly only. Rejected the
-             packet's destructive Montel revert (stale baseline pre-e833f04).
-             Net +1 sorry (1 → 2 in CompactRiemannSurface): original
-             _normedSpace_uniformOnCompact is now sorry-free assembly with
-             named sub-obligations holomorphicOneForm_fiberNorm_continuous and
-             holomorphicOneForm_supNorm_completeSpace.
+Subagent integrated this tick (1)
+  Montel TOPDOWN split (a7b046e5b69cfb1ea worktree, integrated):
+    holomorphicOneForm_montel_subseq_tendsto is now sorry-free 3-line
+    assembly via the new sorry-free wrapper
+    HolomorphicOneFormBanachData.cauchySeq_tendsto + the new sorry on
+    holomorphicOneForm_montel_subseq_isCauchy (the analytic core,
+    absorbing all 5 Mathlib-gap blockers). Net 0 sorry change.
 
-New packets submitted this tick (2)
-  de8822fb   holomorphicOneForm_fiberNorm_continuous (NEW Step 5 sub-obligation)
-  bed365ae   holomorphicOneForm_supNorm_completeSpace (NEW; awaits 8585f085)
+New packet submitted this tick (1)
+  20995679   holomorphicOneForm_montel_subseq_isCauchy (NEW from
+             Montel TOPDOWN split)
+
+Sub-agents launched this tick (2; worktree-isolated)
+  a5920caf   racing 20995679 on holomorphicOneForm_montel_subseq_isCauchy
+  a8db8a8f   racing bed365ae on holomorphicOneForm_supNorm_completeSpace
 
 Active our-packets — covering current sorries
-  e7250841   CompactRiemannSurface → montel_subseq_tendsto (IN_PROGRESS 15%)
+  e7250841   CompactRiemannSurface → montel_subseq_tendsto STALE
+             (target now sorry-free; let it run, results will be no-ops)
   03715a4d   GenusZero → Liouville leaves (one of 4)
   6b2f47f1   AnalyticOfCurveBasis → separates_points
   0a5f74a8   PeriodFunctional → range/isZLattice
   05100f76   PullbackBasis → basisDualPullback_id
   ba57741f   PushforwardBasis → pushforwardTraceLift_id_apply_at
   dc58e548   PushforwardBasis → pushforwardTraceLift_comp_spec_apply_at
-  de8822fb   CompactRiemannSurface → fiberNorm_continuous (NEW)
-  bed365ae   CompactRiemannSurface → supNorm_completeSpace (NEW)
+  de8822fb   CompactRiemannSurface → fiberNorm_continuous
+  bed365ae   CompactRiemannSurface → supNorm_completeSpace
+  20995679   CompactRiemannSurface → montel_subseq_isCauchy (NEW)
 
 Active infrastructure packet
   8585f085   Banach-data Step 4 (SectionComplete.lean) — feeds bed365ae.
-
-Pending sub-agent integration (next tick)
-  Montel subseq_tendsto TOPDOWN split (a7b046e5b69cfb1ea worktree).
-    Splits subseq_tendsto sorry → subseq_isCauchy sorry + sorry-free
-    Banach-completeness wrapper. Defer to keep diff small.
 
 Full history in aristotle_jobs.jsonl.
 ```
@@ -104,22 +108,20 @@ Full history in aristotle_jobs.jsonl.
 Build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 CompactRiemannSurface         pass               lake build Jacobian.HolomorphicForms.CompactRiemannSurface
-Previous tick combined        pass (post-fact)   lake build Jacobian.HolomorphicForms.GenusZeroClassification
-                                                   Jacobian.Periods.PeriodFunctional
+                                                   (127s, 3 sorries: 2 Step 5 prereqs + montel_subseq_isCauchy)
 ```
 
 ```text
 Next priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Integrate the Montel subagent's TOPDOWN split (worktree
-   a7b046e5b69cfb1ea) — converts subseq_tendsto sorry into
-   subseq_isCauchy sorry + sorry-free Banach-completeness wrapper.
-2. Aristotle e7250841 (Montel subseq_tendsto, IN_PROGRESS 15%) — when it
-   completes, evaluate against the subagent's split.
-3. PushforwardBasis _apply_at sorries — packets ba57741f / dc58e548 in flight.
-4. Liouville-core leaves in GenusZeroClassification.lean — blocked on the
+1. Wait on subagents a5920caf (subseq_isCauchy) and a8db8a8f
+   (supNorm_completeSpace) racing Aristotle 20995679 / bed365ae.
+2. PushforwardBasis _apply_at sorries — packets ba57741f / dc58e548 in flight.
+3. Liouville-core leaves in GenusZeroClassification.lean — blocked on the
    chart-extraction Mathlib gap.
-5. PullbackBasis basisDualPullback_id / _comp — revisit with a richer bundle.
+4. PullbackBasis basisDualPullback_id / _comp — revisit with a richer bundle.
+5. Aristotle e7250841 is now stale (montel_subseq_tendsto target is
+   sorry-free); leave running per memory rule.
 ```
 
 ## About
