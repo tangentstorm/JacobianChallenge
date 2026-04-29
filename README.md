@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 00:50 EDT
+Last tick: 2026-04-29 00:55 EDT
 
 ```text
 Headline progress
@@ -69,26 +69,21 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status — 14 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Integrated this tick (1, partial)
-  ba57741f   pushforwardTraceLift_id_apply_at — accepted ~60-line
-             blocker analysis docstring (4 structural blockers
-             enumerated: opaque inaccessibility, insufficient bundle
-             type, instance diamond, compile-time instance resolution).
-             Rejected the destructive revert of the dc58e548 blocker
-             docstring (stale-baseline diff).
+This tick: quiet — no Aristotle completions, all 3 of our packets
+  remain IN_PROGRESS at 13%. Verified prior tick's PushforwardBasis
+  build (33s, 2 expected sorries).
 
 Active our-packets — covering current sorries
   de8822fb   CompactRiemannSurface → fiberNorm_continuous (IN_PROGRESS 13%)
-  8a8ea66d   CompactRiemannSurface → closedBall_totallyBounded (IN_PROGRESS 11%)
+  8a8ea66d   CompactRiemannSurface → closedBall_totallyBounded (IN_PROGRESS 13%)
   706bf2e2   CompactRiemannSurface → supNorm_cauchySeq_tendsto (IN_PROGRESS 13%)
   03715a4d   GenusZero → Liouville leaves
   6b2f47f1   AnalyticOfCurveBasis → separates_points
   0a5f74a8   PeriodFunctional → range/isZLattice
   05100f76   PullbackBasis → basisDualPullback_id
-  ba57741f   integrated this tick (covered _id_apply_at via docstring;
-             sorry persists awaiting structural change)
-  dc58e548   integrated last tick (covered _comp_spec_apply_at via
-             docstring; sorry persists)
+  ba57741f, dc58e548   PushforwardBasis _id_apply_at, _comp_spec_apply_at
+                        — both integrated as blocker docstrings;
+                        sorries persist awaiting structural Mathlib trace work
 
 Active our-packets — covering current sorries
   e7250841   COMPLETED, REJECTED this tick (stale baseline pre-Step5/Montel)
@@ -111,9 +106,8 @@ Full history in aristotle_jobs.jsonl.
 ```text
 Build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Commit 0e02ade (Step 5+Montel)  syntax error → fixed in 59d4c43
 CompactRiemannSurface          pass               lake build (110s, 3 sorries)
-PushforwardBasis               in flight          ba57741f docstring integration verification
+PushforwardBasis               pass               lake build (33s, 2 sorries)
 ```
 
 ```text
