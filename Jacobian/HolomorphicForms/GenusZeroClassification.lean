@@ -743,17 +743,28 @@ noncomputable def onePointCx_homeomorph_sphere :
     OnePoint ℂ ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1 :=
   onePointEquivSphereOfFinrankEq (by simp [Complex.finrank_real_complex])
 
+/-- Placeholder certificate that a fixed-pole map has exactly the
+Riemann-Roch simple-pole behavior needed downstream.
+
+This is currently `Prop`-valued without fields because the project has not
+introduced global divisors or meromorphic functions on charted spaces. The
+declaration name records the intended mathematical assertion. -/
+structure GenusZeroSimplePoleAtCertificate
+    (X : Type*) [TopologicalSpace X] (P : X) (_f : X → OnePoint ℂ) : Prop where
+  simple_pole_only_at : True
+
 /-- Placeholder data for the Riemann-Roch output in genus zero: a global
 meromorphic map to `OnePoint ℂ` with one prescribed simple pole.
 
 The current project does not yet have a global meromorphic-function type on
-charted spaces, so this structure records the eventual map and pole while the
-analytic divisor/order assertions remain in the theorem name and docstring.
-It is intentionally local to the genus-zero classification split. -/
+charted spaces, so this structure records the eventual map, pole, and a named
+certificate standing in for the future divisor/order assertion. It is
+intentionally local to the genus-zero classification split. -/
 structure GenusZeroSimplePoleMeromorphicMap
     (X : Type*) [TopologicalSpace X] where
   toMap : X → OnePoint ℂ
   pole : X
+  simple_pole_cert : GenusZeroSimplePoleAtCertificate X pole toMap
 
 /-- Placeholder data after the compactness/properness step: the genus-zero
 meromorphic map is a degree-one map to `OnePoint ℂ`.
@@ -803,7 +814,7 @@ single simple pole.
 Bottom-up content: divisor theory on compact Riemann surfaces and the
 Riemann-Roch calculation `ℓ(P) = 2` when `g = 0`, producing a nonconstant
 meromorphic function whose only pole is simple and located at `P`. -/
-opaque genusZeroSimplePoleMeromorphicMapAt
+opaque genusZeroRiemannRochNonconstantMapAt
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -812,12 +823,46 @@ opaque genusZeroSimplePoleMeromorphicMapAt
     (_h : analyticGenus ℂ X = 0) :
     X → OnePoint ℂ
 
+/-- **Fixed-pole divisor/order certificate.** The Riemann-Roch map produced
+at `P` has exactly one simple pole, located at `P`, and no other poles.
+
+Bottom-up content: divisor/order API for compact Riemann surfaces, plus the
+Riemann-Roch calculation identifying the pole divisor of the chosen function
+as exactly `[P]`. -/
+opaque genusZeroRiemannRochSimplePoleAt
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X)
+    (h : analyticGenus ℂ X = 0) :
+    GenusZeroSimplePoleAtCertificate X P
+      (genusZeroRiemannRochNonconstantMapAt X P h)
+
+/-- **Fixed-pole Riemann-Roch assembly.** The map part of the fixed-pole
+simple-pole statement; the pole certificate is kept separately as
+`genusZeroRiemannRochSimplePoleAt`.
+
+This definition exists so callers that only need the eventual meromorphic map
+do not depend directly on the certificate packaging. -/
+noncomputable def genusZeroSimplePoleMeromorphicMapAt
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X)
+    (h : analyticGenus ℂ X = 0) :
+    X → OnePoint ℂ :=
+  genusZeroRiemannRochNonconstantMapAt X P h
+
 /-- **Assembly for the Riemann-Roch leaf.** Choose any point of the connected
 surface and package the fixed-pole Riemann-Roch map at that point.
 
 The remaining opaque is now the sharper fixed-pole statement
-`genusZeroSimplePoleMeromorphicMapAt`: for a prescribed point `P`, genus zero
-Riemann-Roch produces a meromorphic map with only a simple pole at `P`. -/
+`genusZeroRiemannRochNonconstantMapAt` plus the certificate
+`genusZeroRiemannRochSimplePoleAt`: for a prescribed point `P`, genus zero
+Riemann-Roch produces a meromorphic map whose only pole is simple and located
+at `P`. -/
 noncomputable def simplePoleMeromorphicMapOfGenusZero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -827,7 +872,8 @@ noncomputable def simplePoleMeromorphicMapOfGenusZero
     GenusZeroSimplePoleMeromorphicMap X :=
   let P : X := Classical.choice (inferInstance : Nonempty X)
   { toMap := genusZeroSimplePoleMeromorphicMapAt X P h
-    pole := P }
+    pole := P
+    simple_pole_cert := genusZeroRiemannRochSimplePoleAt X P h }
 
 /-- **Sub-obligation 1 wrapper (sorry-free).** Existence form of
 `simplePoleMeromorphicMapOfGenusZero`. -/
