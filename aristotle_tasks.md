@@ -12,36 +12,25 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 00:30 EDT)
+## Live Status (2026-04-29 00:25 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 14 (unchanged; Montel TOPDOWN this
   tick is net 0).
-- **Aristotle integrations to date: 122** (2 new this tick: `20995679`
-  Montel subseq_isCauchy TOPDOWN, `dc58e548` blocker analysis).
-- **Backend status:** queue draining nicely. 3 IN_PROGRESS
-  (ba57741f, de8822fb, bed365ae); 2 just-submitted (8a8ea66d,
-  706bf2e2) for the new TOPDOWN sub-obligations.
+- **Aristotle integrations to date: 122** (no integration this tick;
+  bed365ae rejected as stale).
+- **Backend status:** 4 IN_PROGRESS: ba57741f (17%), de8822fb (13%),
+  8a8ea66d (1%), 706bf2e2 (3%). No new completions this tick except
+  bed365ae (rejected).
 
 ### This tick
 
-- **Integrated** Aristotle `20995679` (Montel `_subseq_isCauchy`
-  TOPDOWN): replaced the analytic-core sorry with sorry-free
-  assembly (totallyBounded+complete→compact→seqCompact→Cauchy
-  via `IsSeqCompact.subseq` + `Tendsto.cauchySeq`). New residual
-  sorry: `holomorphicOneForm_closedBall_totallyBounded`.
-- **Integrated** Aristotle `dc58e548` (Pushforward
-  `_comp_spec_apply_at`): substantive ~50-line blocker analysis
-  docstring documenting the cross-instance opacity gap and the
-  required structural change (concrete `dualOfTraceMap`).
-- **Integrated** subagent `a8db8a8f8315e0535`
-  (`_supNorm_completeSpace` TOPDOWN): replaced sorry with
-  sorry-free assembly via `Metric.complete_of_cauchySeq_tendsto`.
-  New residual sorry: `holomorphicOneForm_supNorm_cauchySeq_tendsto`.
-- Submitted new packets: `8a8ea66d` (closedBall_totallyBounded),
-  `706bf2e2` (supNorm_cauchySeq_tendsto).
+- **Rejected** `bed365ae` (original `_supNorm_completeSpace`
+  packet): stale baseline (predates a8db8a8f subagent and 20995679
+  Montel TOPDOWN); returns no proof, only a blocker docstring +
+  destructive Montel revert. No code change in main.
 - Sub-agent `a5920caf` (was racing now-discharged subseq_isCauchy)
-  pending completion; will evaluate against the new sorry.
+  still running.
 
 ### Rejected / skipped this tick
 
