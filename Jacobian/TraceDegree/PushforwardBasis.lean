@@ -229,18 +229,64 @@ compatibility, smoothness of the descent).
 /-- Bridge identity between `pushforwardTraceLift` and the form-pullback /
 basis-aligned dual equivalence.
 
-Sorry: the algebraic relationship "matrix-transpose-of-coordinate-form
-equals dual-of-form-pullback" — a `LinearMap.toMatrix' / Matrix.toLin'
-/ LinearMap.dualMap` chase. In a fully-fleshed-out Mathlib this is
-probably `LinearMap.dualMap_eq_transpose` or similar; here we expose it
-as a single named obligation. -/
+The algebraic relationship: `pushforwardTraceLift = transpose-of-matrix(holomorphicTraceCoord)`,
+and `holomorphicTraceCoord = basisX.equivFun ∘ pullbackFormsBundledLM ∘ basisY.equivFun.symm`.
+So `pushforwardTraceLift v j = ∑ i, (holomorphicTraceCoord matrix)[i,j] * v i
+= ∑ i, (basisX.equivFun (pullbackFormsBundledLM (basisY j))) i * v i`.
+When `v = dualEquiv X φ`, `v i = φ (basisX i)`, and the sum collapses via
+linearity of `φ` to `φ (pullbackFormsBundledLM (basisY j))`, which equals
+`(φ ∘ pullbackFormsBundledLM)(basisY j) = (dualEquiv Y (φ ∘ pullbackFormsBundledLM)) j`.
+
+Sorry: the calculation chain through `Matrix.toLin'`, `LinearMap.toMatrix'`,
+`Basis.equivFun`, `Basis.equivFun_symm_apply`, and `Module.Basis.dualBasis_apply_self`.
+A pure linear-algebra identity; no period theory. -/
 theorem pushforwardTraceLift_apply_holomorphicOneFormDualEquiv
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (φ : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) :
     pushforwardTraceLift f hf (holomorphicOneFormDualEquiv ℂ X φ) =
       holomorphicOneFormDualEquiv ℂ Y
-        (φ.comp (pullbackFormsBundledLM X Y f hf)) :=
-  sorry
+        (φ.comp (pullbackFormsBundledLM X Y f hf)) := by
+  classical
+  ext j
+  -- RHS: dualEquiv Y (φ.comp pullbackBundled) j = (φ.comp pullbackBundled) (basisY j)
+  --                                              = φ (pullbackBundled (basisY j))
+  -- via the new auxiliary `holomorphicOneFormDualEquiv_apply_eq_apply_basis`.
+  rw [holomorphicOneFormDualEquiv_apply_eq_apply_basis]
+  show (Matrix.toLin' (LinearMap.toMatrix' (holomorphicTraceCoord f hf)).transpose
+      (holomorphicOneFormDualEquiv ℂ X φ)) j =
+    (φ.comp (pullbackFormsBundledLM X Y f hf)) (holomorphicOneFormFinBasis ℂ Y j)
+  -- LHS: matrix-vector product via toLin'.
+  rw [Matrix.toLin'_apply]
+  simp only [Matrix.mulVec, Matrix.transpose_apply, dotProduct,
+    LinearMap.toMatrix'_apply]
+  -- LHS: ∑ i, holomorphicTraceCoord f hf (Pi.single j 1) i * (dualEquiv X φ) i.
+  -- (dualEquiv X φ) i = φ (basisX i) by the auxiliary.
+  simp_rw [holomorphicOneFormDualEquiv_apply_eq_apply_basis]
+  -- LHS: ∑ i, holomorphicTraceCoord f hf (Pi.single j 1) i * φ (basisX i).
+  -- Unfold holomorphicTraceCoord: it's basisX.equivFun ∘ pullbackBundled ∘ basisY.equivFun.symm.
+  unfold holomorphicTraceCoord
+  simp only [LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_coe]
+  -- LHS: ∑ i, (basisX.equivFun (pullbackBundled (basisY.equivFun.symm (Pi.single j 1)))) i * φ (basisX i).
+  -- Reduce basisY.equivFun.symm (Pi.single j 1) = basisY j.
+  rw [show (holomorphicOneFormFinBasis ℂ Y).equivFun.symm (Pi.single j 1) =
+      holomorphicOneFormFinBasis ℂ Y j from by
+    rw [Module.Basis.equivFun_symm_apply, Finset.sum_eq_single j]
+    · rw [Pi.single_eq_same, one_smul]
+    · intro i _ hij
+      rw [Pi.single_eq_of_ne hij, zero_smul]
+    · intro hj; exact (hj (Finset.mem_univ _)).elim]
+  -- LHS: ∑ i, (basisX.equivFun (pullbackBundled (basisY j))) i * φ (basisX i).
+  -- Use ω = ∑ i, ((basisX.equivFun ω) i) • (basisX i) and linearity of φ.
+  set ωX : HolomorphicOneForm ℂ X :=
+    (pullbackFormsBundledLM X Y f hf) (holomorphicOneFormFinBasis ℂ Y j)
+  show ∑ i, (holomorphicOneFormFinBasis ℂ X).equivFun ωX i *
+      φ (holomorphicOneFormFinBasis ℂ X i) = φ ωX
+  -- ωX = ∑ i, ((basisX.equivFun ωX) i) • basisX i.
+  conv_rhs => rw [← (holomorphicOneFormFinBasis ℂ X).sum_equivFun ωX]
+  rw [map_sum]
+  refine Finset.sum_congr rfl ?_
+  intro i _
+  rw [map_smul, smul_eq_mul]
 
 /-- Raw obligation: the trace lift preserves the period subgroup.
 
