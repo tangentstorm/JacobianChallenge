@@ -247,6 +247,34 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
   -- Use pathIntegralViaCoverPick_refl on each side.
   rw [pathIntegralViaCover_refl, pathIntegralViaCover_refl]
 
+/-- **Composition assembly** of path-level naturality: if naturality
+holds for `f` and for `g`, then it holds for `g ∘ f`.
+
+Sorry-free assembly via `pullbackFormsBundledLM_comp` and `Path.map`'s
+composition-functoriality. This shows that the genuinely-needed content
+of path-level naturality is the per-map base case. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_of_comp
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
+    {a b : X} (γ : Path a b) (η : HolomorphicOneForm ℂ Z)
+    (hf_nat : ∀ (η' : HolomorphicOneForm ℂ Y) {a' b' : X} (γ' : Path a' b'),
+      pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η') γ' =
+      pathIntegralViaCover η' (γ'.map hf.continuous))
+    (hg_nat : ∀ (η' : HolomorphicOneForm ℂ Z) {a' b' : Y} (γ' : Path a' b'),
+      pathIntegralViaCover (pullbackFormsBundledLM Y Z g hg η') γ' =
+      pathIntegralViaCover η' (γ'.map hg.continuous)) :
+    pathIntegralViaCover
+        (pullbackFormsBundledLM X Z (g ∘ f) (hg.comp hf) η) γ =
+      pathIntegralViaCover η (γ.map (hg.comp hf).continuous) := by
+  -- pullbackFormsBundledLM (g ∘ f) = pullbackFormsBundledLM f ∘ pullbackFormsBundledLM g.
+  rw [pullbackFormsBundledLM_comp f hf g hg, LinearMap.comp_apply]
+  -- Apply f-naturality to push from X to Y.
+  rw [hf_nat (pullbackFormsBundledLM Y Z g hg η) γ]
+  -- Apply g-naturality to push from Y to Z.
+  rw [hg_nat η (γ.map hf.continuous)]
+  -- (γ.map hf.continuous).map hg.continuous = γ.map (hg.comp hf).continuous.
+  rfl
+
 /-- **Composition assembly** of `periodPairing_pullbackFormsBundledLM`:
 naturality is preserved under composition of maps. If naturality holds
 for `f` and for `g`, then it holds for `g ∘ f`.
