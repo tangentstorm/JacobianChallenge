@@ -265,6 +265,36 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
   -- Use pathIntegralViaCoverPick_refl on each side.
   rw [pathIntegralViaCover_refl, pathIntegralViaCover_refl]
 
+/-- **Symmetric path conditional special case** of path-level
+naturality: naturality at `γ.symm` follows from naturality at `γ`
+(as a hypothesis), via `Path.map_symm` (which states
+`(γ.map h).symm = γ.symm.map h`).
+
+This requires the `pathIntegralViaCover_symm` connection, which the
+project has at the partition-parametric `_With` level
+(`pathIntegralViaCoverWith_symm`) but not yet at the un-`With` level.
+Stated here as a hypothesis-conditional. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_of_symm
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (h_nat : pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+      pathIntegralViaCover η (γ.map hf.continuous))
+    (h_symm_X : pathIntegralViaCover
+        (pullbackFormsBundledLM X Y f hf η) γ.symm =
+      - pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ)
+    (h_symm_Y : pathIntegralViaCover η (γ.map hf.continuous).symm =
+      - pathIntegralViaCover η (γ.map hf.continuous)) :
+    pathIntegralViaCover
+        (pullbackFormsBundledLM X Y f hf η) γ.symm =
+      pathIntegralViaCover η (γ.symm.map hf.continuous) := by
+  rw [h_symm_X, h_nat]
+  -- Goal: -pathIntegralViaCover η (γ.map hf.continuous) =
+  --       pathIntegralViaCover η (γ.symm.map hf.continuous).
+  -- (γ.symm.map h) = (γ.map h).symm by Path.map_symm.
+  rw [show γ.symm.map hf.continuous = (γ.map hf.continuous).symm from
+    (Path.map_symm γ hf.continuous).symm]
+  rw [h_symm_Y]
+
 /-- **Composition assembly** of path-level naturality: if naturality
 holds for `f` and for `g`, then it holds for `g ∘ f`.
 
