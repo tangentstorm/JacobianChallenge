@@ -2,6 +2,8 @@ import Jacobian.AbelJacobi.AnalyticOfCurveBasis
 import Jacobian.ComplexTorus.OfClm
 import Jacobian.HolomorphicForms.PullbackBundled
 import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
+import Jacobian.Periods.PullbackNaturality
+import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Mathlib.LinearAlgebra.Matrix.ToLin
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 
@@ -224,17 +226,63 @@ piece of geometric content (lattice preservation, descent
 compatibility, smoothness of the descent).
 -/
 
+/-- Bridge identity between `pushforwardTraceLift` and the form-pullback /
+basis-aligned dual equivalence.
+
+Sorry: the algebraic relationship "matrix-transpose-of-coordinate-form
+equals dual-of-form-pullback" — a `LinearMap.toMatrix' / Matrix.toLin'
+/ LinearMap.dualMap` chase. In a fully-fleshed-out Mathlib this is
+probably `LinearMap.dualMap_eq_transpose` or similar; here we expose it
+as a single named obligation. -/
+theorem pushforwardTraceLift_apply_holomorphicOneFormDualEquiv
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (φ : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) :
+    pushforwardTraceLift f hf (holomorphicOneFormDualEquiv ℂ X φ) =
+      holomorphicOneFormDualEquiv ℂ Y
+        (φ.comp (pullbackFormsBundledLM X Y f hf)) :=
+  sorry
+
 /-- Raw obligation: the trace lift preserves the period subgroup.
 
-Bottom-up: integrality of the period pairing on `H₁(X, ℤ)` plus the
-fact that `pushforwardTraceLift` is the basis-coordinate transpose of
-the form-pullback (which preserves the lattice of integral period
-vectors). -/
+Sorry-free assembly via:
+* `mem_basisAlignedPeriodSubgroupConcrete_iff` (membership characterization);
+* `pushforwardTraceLift_apply_holomorphicOneFormDualEquiv` (algebraic bridge);
+* `periodPairing_pullbackFormsBundledLM` (Stokes naturality);
+* `holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete`
+  (membership transport).
+
+The genuinely geometric content is now isolated to two named sorries:
+the algebraic bridge above (a `LinearMap.dualMap` identity) and the
+Stokes naturality in `Periods/PullbackNaturality.lean`. -/
 theorem pushforwardTraceLift_preserves_lattice_raw
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice X).subgroup,
-      pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup :=
-  sorry
+      pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup := by
+  intro v hv
+  -- Unfold to the concrete representative.
+  show pushforwardTraceLift f hf v ∈ basisAlignedPeriodSubgroupConcrete Y
+  -- Extract the witness functional φ from membership in the X-side subgroup.
+  have hv' : v ∈ basisAlignedPeriodSubgroupConcrete X := hv
+  rw [mem_basisAlignedPeriodSubgroupConcrete_iff] at hv'
+  obtain ⟨φ, hφ_mem, hφ_eq⟩ := hv'
+  -- φ is in the range of periodPairing; extract a cycle γ.
+  change φ ∈ (periodPairing ℂ X).range at hφ_mem
+  rw [AddMonoidHom.mem_range] at hφ_mem
+  obtain ⟨γ, hγ⟩ := hφ_mem
+  -- Apply the bridge + naturality.
+  rw [← hφ_eq, ← hγ,
+    pushforwardTraceLift_apply_holomorphicOneFormDualEquiv f hf]
+  -- Now goal: holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ X γ ∘ pullbackFormsBundledLM ...) ∈ ...
+  -- Use naturality: periodPairing X γ ∘ pullbackBundled = periodPairing Y (cyclePushforward γ).
+  have hnat : (periodPairing ℂ X γ).comp (pullbackFormsBundledLM X Y f hf) =
+      periodPairing ℂ Y (cyclePushforward f hf γ) := by
+    refine LinearMap.ext fun η => ?_
+    exact periodPairing_pullbackFormsBundledLM f hf γ η
+  rw [hnat]
+  -- Now: holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y (cyclePushforward f hf γ)) ∈ basisAlignedPeriodSubgroupConcrete Y.
+  refine holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete Y ?_
+  show periodPairing ℂ Y (cyclePushforward f hf γ) ∈ (periodPairing ℂ Y).range
+  exact AddMonoidHom.mem_range.mpr ⟨cyclePushforward f hf γ, rfl⟩
 
 /-- The basis-coordinate trace lift as a `ℂ`-linear map (i.e. the
 linear-map version of `pushforwardTraceLift`, before forgetting the
