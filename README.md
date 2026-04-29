@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 14:56 EDT
+Last tick: 2026-04-29 15:16 EDT
 
 ```text
 Headline progress
