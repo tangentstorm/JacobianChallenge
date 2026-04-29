@@ -68,4 +68,12 @@ theorem chartedFormPullback_eq_pullbackFormsFun
   funext e
   exact chartedFormPullback_eq_pullbackFormsFun_symm c ω e
 
+/-- The chart-symm pullback of the zero form is the zero function on
+`E`. Sorry-free via the bridge + `pullbackFormsFun_zero`. -/
+@[simp] theorem chartedFormPullback_zero
+    (c : OpenPartialHomeomorph X E) :
+    chartedFormPullback c (0 : HolomorphicOneForm E X) = 0 := by
+  rw [chartedFormPullback_eq_pullbackFormsFun]
+  exact pullbackFormsFun_zero c.symm
+
 end JacobianChallenge.Periods
