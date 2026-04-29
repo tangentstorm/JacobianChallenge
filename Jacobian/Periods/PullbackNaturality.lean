@@ -54,6 +54,19 @@ noncomputable def cyclePushforward
   (((AlgebraicTopology.singularHomologyFunctor (ModuleCat ℤ) 1).obj
     (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom ⟨f, hf.continuous⟩)).hom.toAddMonoidHom
 
+/-- Identity-functoriality: `cyclePushforward id _` is the identity. -/
+theorem cyclePushforward_id :
+    cyclePushforward (id : X → X) contMDiff_id = AddMonoidHom.id _ := by
+  unfold cyclePushforward
+  -- TopCat.ofHom of the continuous identity is the identity in TopCat.
+  -- singularHomologyFunctor preserves identities (it's a functor).
+  -- The .hom.toAddMonoidHom of the identity is AddMonoidHom.id.
+  have hid : TopCat.ofHom ⟨(id : X → X), continuous_id⟩ =
+      CategoryTheory.CategoryStruct.id (TopCat.of X) := rfl
+  rw [hid]
+  simp
+  rfl
+
 /-- Naturality of the period pairing under form-pullback / cycle-pushforward.
 
 For `γ ∈ H₁(X, ℤ)` and `η ∈ H⁰(Y, Ω¹)`:
@@ -72,5 +85,18 @@ theorem periodPairing_pullbackFormsBundledLM
     (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
       (periodPairing ℂ Y (cyclePushforward f hf γ)) η :=
   sorry
+
+/-- **Identity special case** of `periodPairing_pullbackFormsBundledLM`:
+when `f = id`, the cycle pushforward is the identity (by
+`cyclePushforward_id`), the form-pullback along `id` is the identity
+(by `pullbackFormsBundledLM_id`), and naturality becomes `rfl`-shaped.
+
+Sorry-free assembly of `cyclePushforward_id` + `pullbackFormsBundledLM_id`. -/
+theorem periodPairing_pullbackFormsBundledLM_id
+    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ X) :
+    (periodPairing ℂ X γ) (pullbackFormsBundledLM X X id contMDiff_id η) =
+      (periodPairing ℂ X (cyclePushforward (id : X → X) contMDiff_id γ)) η := by
+  rw [cyclePushforward_id, AddMonoidHom.id_apply]
+  rw [pullbackFormsBundledLM_id, LinearMap.id_apply]
 
 end JacobianChallenge.Periods
