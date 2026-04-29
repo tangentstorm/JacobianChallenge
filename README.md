@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 00:05 EDT
+Last tick: 2026-04-29 00:30 EDT
 
 ```text
 Headline progress
@@ -21,9 +21,7 @@ Headline progress
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excludes 2 Inventory metadata items)
-Aristotle integrations to date 120        `"status":"integrated"` lines in aristotle_jobs.jsonl
-                                          (subagent Montel TOPDOWN integrated this tick — not counted
-                                          as Aristotle integration)
+Aristotle integrations to date 122        `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  391 / 397    counting `:= sorry`-ending lines per file. 6 files with
                                           real sorries — see below. (412 total .lean − 15 design
                                           files: Challenge, Solution, StatementBank, *Recon*.)
@@ -34,10 +32,12 @@ Reproduction: for f in <files>; do echo "$f $(grep -cE ':= sorry$' $f)"; done
 ```text
 Open sorries by file (all production sorries; 6 files, 14 total)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  HolomorphicForms/CompactRiemannSurface   3   fiberNorm_continuous (Step 5 split) +
-                                               supNorm_completeSpace (Step 5 split, awaits 8585f085) +
-                                               montel_subseq_isCauchy (NEW from subagent Montel TOPDOWN;
-                                               replaces montel_subseq_tendsto with sorry-free assembly)
+  HolomorphicForms/CompactRiemannSurface   3   fiberNorm_continuous +
+                                               supNorm_cauchySeq_tendsto (NEW: subagent a8db8a8f split;
+                                                supNorm_completeSpace now sorry-free assembly) +
+                                               closedBall_totallyBounded (NEW: Aristotle 20995679 split;
+                                                montel_subseq_isCauchy and _subseq_tendsto now
+                                                sorry-free assemblies)
   HolomorphicForms/GenusZeroClassification 4   finite/infty Liouville leaves +
                                                uniformization-lite (holomorphicOneFormLinearEquivOfHomeoSphere) +
                                                deep uniformization (genus_zero_homeomorph_onePointCx)
@@ -69,14 +69,25 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status — 14 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Rejected this tick (1)
-  e7250841   Original Montel subseq_tendsto packet — stale 16+ hr
-             baseline; would have destructively reverted Step 5 +
-             Montel TOPDOWN. Net 0 effect on main.
+Integrated this tick (3 — 2 Aristotle + 1 subagent)
+  20995679   Montel subseq_isCauchy TOPDOWN: closedBall_totallyBounded
+             (NEW sorry, analytic core) + sorry-free assembly via
+             totallyBounded+complete→seqCompact→Cauchy chain.
+  dc58e548   Pushforward _comp_spec_apply_at — substantive ~50-line
+             blocker analysis docstring (no proof but documents the
+             cross-instance opacity gap and required structural change
+             via concrete dualOfTraceMap). Sorry persists.
+  Subagent a8db8a8f8315e0535 supNorm TOPDOWN: supNorm_cauchySeq_tendsto
+             (NEW sorry, analytic core) + sorry-free assembly via
+             Metric.complete_of_cauchySeq_tendsto.
 
-Sub-agents in flight (2; worktree-isolated)
-  a5920caf   racing 20995679 on holomorphicOneForm_montel_subseq_isCauchy
-  a8db8a8f   racing bed365ae on holomorphicOneForm_supNorm_completeSpace
+New packets submitted this tick (2)
+  8a8ea66d   holomorphicOneForm_closedBall_totallyBounded
+  706bf2e2   holomorphicOneForm_supNorm_cauchySeq_tendsto
+
+Sub-agent a5920caf still racing on the now-discharged subseq_isCauchy
+  (its target became sorry-free this tick; result will be evaluated
+  against the new closedBall_totallyBounded sorry on completion).
 
 Active our-packets — covering current sorries
   e7250841   COMPLETED, REJECTED this tick (stale baseline pre-Step5/Montel)
