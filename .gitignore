@@ -1,3 +1,6 @@
 .lake/
 .claude
 aristotle-staging/
+.worktrees/
+codex-prompt.md
+sorry-prompt.md
