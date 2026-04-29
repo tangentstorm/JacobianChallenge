@@ -12,29 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 00:55 EDT)
+## Live Status (2026-04-29 01:05 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 14 (unchanged; Montel TOPDOWN this
   tick is net 0).
 - **Aristotle integrations to date: 123** (no integration this tick).
-- **Backend status:** 3 IN_PROGRESS at 13% (de8822fb, 8a8ea66d,
-  706bf2e2) plus 7 NEW QUEUED packets submitted this tick to restore
-  strict 1:1 coverage (76c01cf9, c2a57d71, 88effa1c, 0cfa1878,
-  ad278fcd, 9b4998a5, 3b7e5dac).
+- **Backend status:** 4 IN_PROGRESS (8a8ea66d 17%, 706bf2e2 13%,
+  76c01cf9 2%, c2a57d71 4%); 5 QUEUED (3b7e5dac, 9b4998a5,
+  ad278fcd, 0cfa1878, 88effa1c). de8822fb visible last tick at 13%
+  not in current top-10 — likely still IN_PROGRESS in deeper page.
+- **Local sub-agents:** 2 racing (abcfd3e5 on `_comp_spec_apply_at`,
+  a7498d24 on `_id_apply_at`).
 
 ### This tick
 
-- **Audit revealed 1:1 coverage gaps** after the recent TOPDOWN
-  splits and blocker-docstring integrations. 7 sorries were lacking
-  active packets:
-  - 3 GenusZero leaves (finite Liouville, infty Liouville,
-    uniformization-lite),
-  - PeriodFunctional periodVectors_linearIndependent,
-  - PullbackBasis basisDualPullback_comp (after 403c9581 rejection),
-  - PushforwardBasis _id_apply_at and _comp_spec_apply_at (after
-    ba57741f and dc58e548 integrated as docstrings, not proofs).
-- Submitted 7 new packets to close the gap.
+- Heartbeat. All 14 sorries have ≥1 active packet (10 in flight
+  visible in top-10, plus older de8822fb, 0a5f74a8, 03715a4d,
+  05100f76, 6b2f47f1, 7f273ec8 deeper in the queue history).
+- Two sub-agents launched on the two newest QUEUED packets per
+  PROMPT.md §3 rule.
 
 ### Rejected / skipped this tick
 
