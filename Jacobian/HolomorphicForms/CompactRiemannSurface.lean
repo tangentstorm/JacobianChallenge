@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.FiniteDimensional
+import Jacobian.HolomorphicForms.SectionMetric
 import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 /-!
@@ -125,6 +126,87 @@ noncomputable abbrev toNormedSpace :
 
 end HolomorphicOneFormBanachData
 
+/-! ### Prerequisites for Step (a) — TOPDOWN split (integrated from Aristotle 58eb31f0)
+
+Step 5 of the 5-step Banach-data plan in
+`SectionTopologyConstructionRecon.lean` is now sorry-free *assembly*;
+the genuine sorries are concentrated in two named prerequisites:
+
+1. `holomorphicOneForm_fiberNorm_continuous` — fiberwise norm
+   continuity (genuine analysis; for `E = ℂ` reduces to continuity of
+   `x ↦ |(σ x) 1|` via `ℂ →L[ℂ] ℂ ≃ₗᵢ[ℂ] ℂ`).
+2. `holomorphicOneForm_supNorm_completeSpace` — completeness in the
+   sup-norm metric (Step 4, awaiting `SectionComplete.lean` /
+   in-flight `8585f085`).
+
+Net: 1 monolithic sorry on `_normedSpace_uniformOnCompact` is replaced
+by 2 named sub-obligations + a sorry-free assembly. -/
+
+section SupNormAssembly
+
+open SectionFiberNorm SectionSupNorm SectionMetric
+
+/-- **Prerequisite 1 (sorry).** Fiberwise norm of a holomorphic 1-form is
+continuous.
+
+For the `E = ℂ` specialisation the fibers `CotangentSpace ℂ X x` are
+`ℂ →L[ℂ] ℂ ≃ₗᵢ[ℂ] ℂ`, so `‖σ x‖ = |(σ x) 1|`. Since `σ` is smooth
+(hence continuous into the total space) and evaluation at `1` is a
+continuous linear map, `x ↦ |(σ x) 1|` is continuous. -/
+theorem holomorphicOneForm_fiberNorm_continuous
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : HolomorphicOneForm ℂ X) :
+    Continuous (ContMDiffSection.fiberNorm σ) := by sorry
+
+/-- Package the fiberwise-norm-continuity into the `hcompat` form
+used by `SectionSupNorm` and `SectionMetric`. -/
+theorem holomorphicOneForm_hcompat
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    ∀ (σ : HolomorphicOneForm ℂ X),
+      Continuous (ContMDiffSection.fiberNorm σ) :=
+  holomorphicOneForm_fiberNorm_continuous X
+
+/-- The `MetricSpace` on `HolomorphicOneForm ℂ X` induced by the
+sup-norm distance `dist σ τ = ⨆ x, ‖(σ - τ) x‖`. Constructed from
+the individual axioms proved in `SectionMetric.lean`. -/
+noncomputable def holomorphicOneForm_metricSpace
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    MetricSpace (HolomorphicOneForm ℂ X) :=
+  let hc := holomorphicOneForm_hcompat X
+  { dist := SectionMetric.dist
+    dist_self := SectionMetric.dist_self
+    dist_comm := SectionMetric.dist_comm hc
+    dist_triangle := SectionMetric.dist_triangle hc
+    eq_of_dist_eq_zero := fun h => by
+      by_cases hne : Nonempty X
+      · exact SectionMetric.eq_of_dist_eq_zero hc h
+      · rw [not_nonempty_iff] at hne
+        exact ContMDiffSection.ext fun x => (hne.false x).elim
+    toUniformSpace := UniformSpace.ofDist SectionMetric.dist
+      SectionMetric.dist_self (SectionMetric.dist_comm hc)
+      (SectionMetric.dist_triangle hc)
+    toBornology := Bornology.ofDist SectionMetric.dist
+      (SectionMetric.dist_comm hc) (SectionMetric.dist_triangle hc) }
+
+/-- **Prerequisite 2 (sorry — awaiting `SectionComplete.lean` / `8585f085`).**
+Completeness of the sup-norm metric on `HolomorphicOneForm ℂ X`.
+Wire `SectionComplete.holomorphicOneForm_supNorm_completeSpace` here
+when `8585f085` lands. -/
+theorem holomorphicOneForm_supNorm_completeSpace
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    @CompleteSpace (HolomorphicOneForm ℂ X)
+      (holomorphicOneForm_metricSpace X).toUniformSpace := by sorry
+
+end SupNormAssembly
+
 /-! ### Step (a): Banach structure of uniform-on-compact topology -/
 
 /-- **(a) Topology of uniform convergence on compacts.**
@@ -134,15 +216,23 @@ convergence on compact sets, built atop the existing `ContMDiffSection`
 additive / ℂ-module structure. (On a compact base this is the sup-norm
 topology.)
 
-Bottom-up content: a topology on `ContMDiffSection` plus completeness
-under uniform convergence. Mathlib v4.28.0 has neither; see
-`Jacobian/HolomorphicForms/SectionTopologyRecon.lean` for the on-going
-recon of the API surface required (Aristotle packet `b782c387`). -/
+**Step 5 assembly** (sorry-free): packages Steps 1–4 into the
+`HolomorphicOneFormBanachData` structure using `supNorm`,
+`holomorphicOneForm_metricSpace`, the Step 2 / Step 3 axioms, and
+the two prerequisite sorries above. -/
 theorem holomorphicOneForm_normedSpace_uniformOnCompact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    Nonempty (HolomorphicOneFormBanachData X) := sorry
+    Nonempty (HolomorphicOneFormBanachData X) :=
+  let hc := holomorphicOneForm_hcompat X
+  ⟨{ toNorm := ⟨SectionSupNorm.supNorm⟩
+     toMetricSpace := holomorphicOneForm_metricSpace X
+     dist_eq := fun _ _ => rfl
+     norm_smul_le := SectionSupNorm.supNorm_smul_le hc
+     complete := holomorphicOneForm_supNorm_completeSpace X
+     norm_le := fun σ x =>
+       le_ciSup (SectionSupNorm.bddAbove_range_norm hc σ) x }⟩
 
 /-! ### Step (b): Montel — bounded sequences are relatively compact -/
 
