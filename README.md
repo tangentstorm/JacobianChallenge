@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 14:36 EDT (cleanup — cron throttled to hourly, worktrees pruned)
+Last tick: 2026-04-29 14:49 EDT
 
 ```text
 Headline progress
@@ -75,7 +75,19 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status — 17 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This tick: backend still frozen. Backed out the HEq-field structural
+This tick: **off-host worker pushed `origin/pushforward-trace-coord-refactor`**
+(commit 70bc6d3, single file, +275/-370). Architectural review in
+chat: drops the opaque `BasisAnalyticPushforwardBundle`, replaces with
+contravariant `holomorphicTraceCoord` + concrete `pushforwardTraceLift
+:= matrix-transpose`. Net 2→5 sorries on file but the diamond blocker
+is gone, and the 5 new sorries are smaller and Mathlib-pattern-shaped.
+Awaiting user green-light to merge.
+
+Aristotle: `3683ef39` just transitioned QUEUED → IN_PROGRESS (1%) on
+`pushforwardTraceLift_id_apply_at` — that target is sorry-free locally
+(stale packet), expected to return no-op.
+
+Earlier this session: backed out the HEq-field structural
 fix attempt on PullbackBasis after recognizing it triggers the same
 instance diamond documented in `diamond-problem.txt`:
   • The `subst hYX; subst hf_id` pattern produces two distinct
