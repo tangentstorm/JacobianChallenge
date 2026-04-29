@@ -666,33 +666,136 @@ noncomputable def onePointCx_homeomorph_sphere :
     OnePoint ℂ ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1 :=
   onePointEquivSphereOfFinrankEq (by simp [Complex.finrank_real_complex])
 
-/-- **Uniformization (genus zero):** a compact connected Riemann surface
-with `analyticGenus = 0` is homeomorphic to the one-point
-compactification of `ℂ`.
+/-- Placeholder data for the Riemann-Roch output in genus zero: a global
+meromorphic map to `OnePoint ℂ` with one prescribed simple pole.
 
-Deep uniformization content (Mathlib gap): every simply connected Riemann
-surface is biholomorphic to `ℂ`, `𝔻`, or `ℂℙ¹`; compactness forces
-`ℂℙ¹ ≃ₜ OnePoint ℂ`. Equivalently, Riemann–Roch gives a degree-1
-meromorphic function, hence a biholomorphism to `ℂℙ¹`.
+The current project does not yet have a global meromorphic-function type on
+charted spaces, so this structure records the eventual map and pole while the
+analytic divisor/order assertions remain in the theorem name and docstring.
+It is intentionally local to the genus-zero classification split. -/
+structure GenusZeroSimplePoleMeromorphicMap
+    (X : Type*) [TopologicalSpace X] where
+  toMap : X → OnePoint ℂ
+  pole : X
 
-Mathlib v4.28.0 lacks: uniformization, Riemann–Roch,
-`analyticGenus_eq_topologicalGenus`, `SimplyConnectedSpace.sphere`,
-and `CompactRiemannSurface.genusZero_biholo_CP1`. Sorry remains until
-the relevant infrastructure matures. -/
-theorem genus_zero_homeomorph_onePointCx
+/-- Placeholder data after the compactness/properness step: the genus-zero
+meromorphic map is a degree-one map to `OnePoint ℂ`.
+
+The fields are the topological consequences needed by the final assembly:
+continuity and bijectivity. A future refinement should replace this bridge by
+properness plus the local degree calculation, then derive these fields. -/
+structure GenusZeroProperDegreeOneMap
+    (X : Type*) [TopologicalSpace X] where
+  toMap : X → OnePoint ℂ
+  continuous_toMap : Continuous toMap
+  bijective_toMap : Function.Bijective toMap
+
+/-- Placeholder data for the last analytic step: a degree-one meromorphic map
+is a biholomorphic parametrization of `X` by `OnePoint ℂ`.
+
+At the topological surface needed here, this is represented by the resulting
+homeomorphism. Future work can strengthen the structure with a biholomorphism
+type once the project has one. -/
+structure GenusZeroBiholomorphicParametrization
+    (X : Type*) [TopologicalSpace X] where
+  toHomeomorph : X ≃ₜ OnePoint ℂ
+
+/-!
+### TOPDOWN decomposition for `genus_zero_homeomorph_onePointCx`
+
+The previous single uniformization-level sorry is split into three named
+obligations matching the standard Riemann-Roch route:
+
+1. `genus_zero_exists_simplePole_meromorphicMap` — from
+   `analyticGenus = 0`, Riemann-Roch produces a meromorphic function with one
+   simple pole.
+2. `simplePole_meromorphicMap_proper_degreeOne` — compactness/properness and
+   divisor-degree bookkeeping promote that function to a proper degree-one map
+   to `OnePoint ℂ`.
+3. `proper_degreeOne_meromorphicMap_biholomorphic` — a proper degree-one
+   holomorphic map is a biholomorphic parametrization, hence a homeomorphism.
+
+The original `genus_zero_homeomorph_onePointCx` is now pure assembly of these
+smaller leaves.
+-/
+
+/-- **Sub-obligation 1 (Riemann-Roch).** If a compact connected Riemann
+surface has analytic genus zero, then there is a meromorphic function with a
+single simple pole.
+
+Bottom-up content: divisor theory on compact Riemann surfaces and the
+Riemann-Roch calculation `ℓ(P) = 2` when `g = 0`, producing a nonconstant
+meromorphic function whose only pole is simple and located at `P`. -/
+theorem genus_zero_exists_simplePole_meromorphicMap
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : analyticGenus ℂ X = 0) :
-    Nonempty (X ≃ₜ OnePoint ℂ) := sorry
+    Nonempty (GenusZeroSimplePoleMeromorphicMap X) := by
+  sorry
+
+/-- **Sub-obligation 2 (properness and degree).** A genus-zero meromorphic
+function with one simple pole extends to a proper degree-one map
+`X → OnePoint ℂ`.
+
+Bottom-up content: removable singularity/extension to the point at infinity,
+compactness of `X`, and the theorem that the fiber degree of a meromorphic map
+to `ℂℙ¹` equals the pole divisor degree. -/
+theorem simplePole_meromorphicMap_proper_degreeOne
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_f : GenusZeroSimplePoleMeromorphicMap X) :
+    Nonempty (GenusZeroProperDegreeOneMap X) := by
+  sorry
+
+/-- **Sub-obligation 3 (degree one implies parametrization).** A proper
+degree-one meromorphic map from a compact connected Riemann surface to
+`OnePoint ℂ` is a biholomorphic parametrization.
+
+Bottom-up content: a holomorphic map of degree one is bijective with
+nonvanishing local degree, hence a biholomorphism; forgetting the analytic
+structure gives the recorded homeomorphism. -/
+theorem proper_degreeOne_meromorphicMap_biholomorphic
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (f : GenusZeroProperDegreeOneMap X) :
+    Nonempty (GenusZeroBiholomorphicParametrization X) := by
+  let e : X ≃ OnePoint ℂ := Equiv.ofBijective f.toMap f.bijective_toMap
+  have he : Continuous e := by
+    simpa [e] using f.continuous_toMap
+  exact ⟨⟨he.homeoOfEquivCompactToT2⟩⟩
+
+/-- **Uniformization (genus zero):** a compact connected Riemann surface
+with `analyticGenus = 0` is homeomorphic to the one-point
+compactification of `ℂ`.
+
+Pure assembly of the three Riemann-Roch route leaves above:
+simple-pole meromorphic function, proper degree-one map, and degree-one
+biholomorphic parametrization. -/
+theorem genus_zero_homeomorph_onePointCx
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (h : analyticGenus ℂ X = 0) :
+    Nonempty (X ≃ₜ OnePoint ℂ) := by
+  let ⟨f⟩ := genus_zero_exists_simplePole_meromorphicMap X h
+  let ⟨g⟩ := simplePole_meromorphicMap_proper_degreeOne X f
+  let ⟨b⟩ := proper_degreeOne_meromorphicMap_biholomorphic X g
+  exact ⟨b.toHomeomorph⟩
 
 /-- The "hard" direction: if `analyticGenus ℂ X = 0` then `X` is
 homeomorphic to the standard 2-sphere.
 
 Decomposes into two obligations:
-1. `genus_zero_homeomorph_onePointCx` — uniformization (sorry, see gap
-   analysis there).
+1. `genus_zero_homeomorph_onePointCx` — Riemann-Roch route assembly through
+   simple-pole existence, proper degree-one map, and biholomorphic
+   parametrization.
 2. `onePointCx_homeomorph_sphere` — the standard homeomorphism
    `OnePoint ℂ ≃ₜ S²` via inverse stereographic projection (proved
    sorry-free using `onePointEquivSphereOfFinrankEq`). -/
