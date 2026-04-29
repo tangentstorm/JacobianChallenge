@@ -1,6 +1,7 @@
 import Jacobian.Periods.PeriodFunctional
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.Periods.PathIntegralViaCoverPick
+import Jacobian.Periods.PathIntegralViaCoverPickRefl
 import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.Algebra.Category.ModuleCat.Basic
@@ -218,6 +219,20 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) :=
   sorry
+
+/-- **Refl special case**: path integral over a constant path is zero,
+so naturality at `Path.refl a` is `0 = 0`. Sorry-free. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) (a : X) :
+    pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (Path.refl a) =
+      pathIntegralViaCover η ((Path.refl a).map hf.continuous) := by
+  -- Path.refl a maps to Path.refl (f a) under hf.continuous.
+  rw [show (Path.refl a).map hf.continuous = Path.refl (f a) from
+    Path.ext (by ext t; rfl)]
+  -- Now both sides are pathIntegralViaCover ω (Path.refl _), which is 0.
+  -- Use pathIntegralViaCoverPick_refl on each side.
+  rw [pathIntegralViaCover_refl, pathIntegralViaCover_refl]
 
 /-- **Composition assembly** of `periodPairing_pullbackFormsBundledLM`:
 naturality is preserved under composition of maps. If naturality holds
