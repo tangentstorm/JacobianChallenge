@@ -36,6 +36,9 @@ variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
 variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
+  [ConnectedSpace Z] [ChartedSpace ℂ Z]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
 
 /-- The covariant pushforward of integral 1-cycles induced by a smooth
 map `f : X → Y`, via functoriality of singular homology.
@@ -53,6 +56,24 @@ noncomputable def cyclePushforward
     IntegralOneCycle X →+ IntegralOneCycle Y :=
   (((AlgebraicTopology.singularHomologyFunctor (ModuleCat ℤ) 1).obj
     (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom ⟨f, hf.continuous⟩)).hom.toAddMonoidHom
+
+/-- Composition-functoriality of cycle pushforward: `(g ∘ f)_* = g_* ∘ f_*`.
+Direct from functoriality of `singularHomologyFunctor`. -/
+theorem cyclePushforward_comp
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
+    cyclePushforward (g ∘ f) (hg.comp hf) =
+      (cyclePushforward g hg).comp (cyclePushforward f hf) := by
+  unfold cyclePushforward
+  -- TopCat.ofHom of the composition is the composition of TopCat.ofHom.
+  have hcomp : TopCat.ofHom ⟨g ∘ f, (hg.comp hf).continuous⟩ =
+      CategoryTheory.CategoryStruct.comp
+        (TopCat.ofHom ⟨f, hf.continuous⟩)
+        (TopCat.ofHom ⟨g, hg.continuous⟩) := rfl
+  rw [hcomp]
+  -- singularHomologyFunctor preserves composition (functoriality).
+  rw [CategoryTheory.Functor.map_comp]
+  rfl
 
 /-- Identity-functoriality: `cyclePushforward id _` is the identity. -/
 theorem cyclePushforward_id :
@@ -98,5 +119,40 @@ theorem periodPairing_pullbackFormsBundledLM_id
       (periodPairing ℂ X (cyclePushforward (id : X → X) contMDiff_id γ)) η := by
   rw [cyclePushforward_id, AddMonoidHom.id_apply]
   rw [pullbackFormsBundledLM_id, LinearMap.id_apply]
+
+/-- **Zero-cycle special case** of `periodPairing_pullbackFormsBundledLM`:
+naturality at the zero cycle is trivially true since both sides vanish.
+Sorry-free. -/
+theorem periodPairing_pullbackFormsBundledLM_zero
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) :
+    (periodPairing ℂ X 0) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf 0)) η := by
+  rw [(cyclePushforward f hf).map_zero, (periodPairing ℂ X).map_zero,
+      (periodPairing ℂ Y).map_zero, LinearMap.zero_apply, LinearMap.zero_apply]
+
+/-- **Composition assembly** of `periodPairing_pullbackFormsBundledLM`:
+naturality is preserved under composition of maps. If naturality holds
+for `f` and for `g`, then it holds for `g ∘ f`.
+
+Sorry-free assembly via `cyclePushforward_comp` and
+`pullbackFormsBundledLM_comp`. -/
+theorem periodPairing_pullbackFormsBundledLM_of_comp
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
+    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Z)
+    (hf_nat : ∀ (γ' : IntegralOneCycle X) (η' : HolomorphicOneForm ℂ Y),
+      (periodPairing ℂ X γ') (pullbackFormsBundledLM X Y f hf η') =
+      (periodPairing ℂ Y (cyclePushforward f hf γ')) η')
+    (hg_nat : ∀ (γ' : IntegralOneCycle Y) (η' : HolomorphicOneForm ℂ Z),
+      (periodPairing ℂ Y γ') (pullbackFormsBundledLM Y Z g hg η') =
+      (periodPairing ℂ Z (cyclePushforward g hg γ')) η') :
+    (periodPairing ℂ X γ)
+        (pullbackFormsBundledLM X Z (g ∘ f) (hg.comp hf) η) =
+      (periodPairing ℂ Z (cyclePushforward (g ∘ f) (hg.comp hf) γ)) η := by
+  rw [pullbackFormsBundledLM_comp f hf g hg, LinearMap.comp_apply]
+  rw [hf_nat γ (pullbackFormsBundledLM Y Z g hg η)]
+  rw [hg_nat (cyclePushforward f hf γ) η]
+  rw [cyclePushforward_comp f hf g hg, AddMonoidHom.comp_apply]
 
 end JacobianChallenge.Periods
