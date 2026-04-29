@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-28 13:26 EDT
+Last tick: 2026-04-28 23:05 EDT
 
 ```text
 Headline progress
@@ -21,25 +21,29 @@ Headline progress
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excludes 2 Inventory metadata items)
-Aristotle integrations to date 116        `"status":"integrated"` lines in aristotle_jobs.jsonl
-Production sorry-free files  383 / 392    counting `:= sorry`-ending lines per file. 8 files with
-                                          real sorries — see below.
+Aristotle integrations to date 119        `"status":"integrated"` lines in aristotle_jobs.jsonl
+Production sorry-free files  391 / 397    counting `:= sorry`-ending lines per file. 6 files with
+                                          real sorries — see below. (412 total .lean − 15 design
+                                          files: Challenge, Solution, StatementBank, *Recon*.)
 
 Reproduction: for f in <files>; do echo "$f $(grep -cE ':= sorry$' $f)"; done
 ```
 
 ```text
-Open sorries by file (all production sorries; 7 files, 15 total)
+Open sorries by file (all production sorries; 6 files, 13 total)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  HolomorphicForms/CompactRiemannSurface  2   Banach data + montel_subseq_tendsto (Montel split via TOPDOWN by subagent)
-  HolomorphicForms/GenusZeroClassification 4  finite/infty Liouville leaves +
-                                              uniformization-lite + hard-direction unif.
-  Periods/PeriodFunctional                2   IsZLattice integrality + Riemann-bilinear nondegeneracy
-  AbelJacobi/AnalyticOfCurveBasis         1   Abel-injectivity (separates_points)
-  ComplexTorus/ULiftTransport             2   ULift transition obligations
-  TraceDegree/PullbackBasis               2   basisDualPullback (id, comp); mk_eq/contMDiff/degree/trace_pullback via bundle
-  TraceDegree/PushforwardBasis            2   pushforwardTraceLift (id, comp_spec); other axioms via bundle
-  TraceDegree/AnalyticDegree              0   anti-hack #4 closed via PullbackBundle.trace_pullback_spec
+  HolomorphicForms/CompactRiemannSurface   2   Banach data + montel_subseq_tendsto
+  HolomorphicForms/GenusZeroClassification 4   finite/infty Liouville leaves +
+                                               uniformization-lite (holomorphicOneFormLinearEquivOfHomeoSphere) +
+                                               deep uniformization (genus_zero_homeomorph_onePointCx)
+  Periods/PeriodFunctional                 2   ZLattice integrality + Riemann-bilinear lin-indep
+                                               (split via PeriodSpanHelpers helper file)
+  AbelJacobi/AnalyticOfCurveBasis          1   Abel-injectivity (separates_points)
+  TraceDegree/PullbackBasis                2   basisDualPullback (id, comp)
+  TraceDegree/PushforwardBasis             2   pushforwardTraceLift_apply_at (id, comp) — pointwise form
+  -----------------------------------------
+  ComplexTorus/ULiftTransport              0   contMDiff_up/down DISCHARGED this tick (subagent)
+  TraceDegree/AnalyticDegree               0   anti-hack #4 closed via PullbackBundle.trace_pullback_spec
 ```
 
 ```text
@@ -58,45 +62,54 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```
 
 ```text
-Aristotle status — 1:1 packet/sorry coverage now complete (15/15)
+Aristotle status — 13 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active packets covering current sorries (15 / 15)
-  e7250841   CompactRiemannSurface → holomorphicOneForm_montel_subseq_tendsto (NEW this tick)
-  58eb31f0   CompactRiemannSurface → holomorphicOneForm_normedSpace_uniformOnCompact
-             (Step 5 assembly; depends on 8585f085 → SectionComplete first)
-  03715a4d   GenusZeroClassification → finite/infty Liouville leaves (generic)
-  e19361c4   GenusZeroClassification → Aristotle's pick (1:1 orphan coverage)
-  360a05bf   GenusZeroClassification → analyticGenus_eq_of_homeomorphic_sphere (L320)
-  fbfe1498   GenusZeroClassification → sphere homeomorph (L591)
-  0a5f74a8   PeriodFunctional → first sorry (isZLattice / spans_real)
-  bbca4cae   PeriodFunctional → second sorry
-  6b2f47f1   AnalyticOfCurveBasis → pathIntegralFunctional_separates_points (Abel)
-  d8fd495f   ULiftTransport → complexTorusULift_contMDiff_up
-  2bd5f151   ULiftTransport → complexTorusULift_contMDiff_down
+Backend ALIVE this tick — queue draining; 6 of our packets COMPLETE.
+
+Integrated this tick (3)
+  fbfe1498   GenusZero L591 sphere homeo TOPDOWN split (sorry-free assembly +
+             1 deep uniformization sorry + 1 sorry-free Mathlib stereographic helper)
+  360a05bf   GenusZero L320 analyticGenus eq TOPDOWN split (sorry-free assembly +
+             1 sorry on holomorphicOneFormLinearEquivOfHomeoSphere)
+  bbca4cae   PeriodFunctional spans_real TOPDOWN split (added sorry-free
+             Jacobian/Periods/PeriodSpanHelpers.lean + 1 Riemann-bilinear sorry on
+             periodVectors_linearIndependent + sorry-free assembly)
+
+Rejected this tick (2)
+  5f052643   PushforwardBasis comp_spec — zero-placeholder regression (paper-over)
+  403c9581   PullbackBasis basisDualPullback_comp — destructive bundle refactor
+             would have removed fields needed by AnalyticDegree anti-hack #4
+  e19361c4   GenusZero (Aristotle's pick) — duplicate of fbfe1498 (skipped)
+
+Subagent-integrated this tick (worktree-isolated)
+  ULiftTransport contMDiff_up + _down — substantive proofs (Claude fixed two
+    .symm direction errors). Net −2 sorries (15 → 13).
+  PushforwardBasis TOPDOWN refinement — _id_apply / _comp_spec_apply now
+    sorry-free assemblies on smaller per-coordinate _apply_at sorries.
+
+Active our-packets (after this tick) — covering open sorries
+  e7250841   CompactRiemannSurface → montel_subseq_tendsto (IN_PROGRESS 5%)
+  58eb31f0   CompactRiemannSurface → normedSpace_uniformOnCompact (IN_PROGRESS 27%)
+  03715a4d   GenusZero → Liouville leaves (one of 4)
+  6b2f47f1   AnalyticOfCurveBasis → separates_points
+  0a5f74a8   PeriodFunctional → range/isZLattice
   05100f76   PullbackBasis → basisDualPullback_id
-  403c9581   PullbackBasis → basisDualPullback_comp
-  b7799fc9   PushforwardBasis → pushforwardTraceLift_id
-  5f052643   PushforwardBasis → pushforwardTraceLift_comp_spec
+  ba57741f   PushforwardBasis → pushforwardTraceLift_id_apply_at (NEW)
+  dc58e548   PushforwardBasis → pushforwardTraceLift_comp_spec_apply_at (NEW)
 
 Active infrastructure packet
-  8585f085   Banach-data Step 4 (SectionComplete.lean, NEW). Feeds 58eb31f0.
+  8585f085   Banach-data Step 4 (SectionComplete.lean) — feeds 58eb31f0.
 
-Backend status: 10 packets QUEUED (none IN_PROGRESS) ~1-3 hours;
-no completions to integrate this tick.
+Stale packets (target sorry no longer exists; left running per memory rule):
+  d8fd495f, 2bd5f151, b7799fc9, 5f052643, 7f3ec297, e3dcd529, 654d5071,
+  f914a263, 65001239, c69fcd88, 369f3f7b, 16277f52, bbe527bb, c7feba63,
+  b4029f72, c910ac80, 27c56154, f280ecc6, 271cc21e, 6c796045, 3d5f379e,
+  c6c4c612.
 
-Stale packets (target sorry no longer exists post-TOPDOWN/bundle) — leave running:
-  bbe527bb (AnalyticDegree), c7feba63 (Montel monolithic), b4029f72/c910ac80/
-  27c56154/f280ecc6/271cc21e/6c796045/3d5f379e/c6c4c612 (older Pullback/
-  Pushforward/AnalyticOfCurve names). Per memory: only cancel if Claude has
-  done that exact work locally; here the work was reorganized, not finished —
-  let them run, results will be no-ops.
-
-Recent integrations
-  e833f04   Montel TOPDOWN split (subagent) — _subseq_tendsto + _norm_le
-  51fd0fce  SectionMetric (Step 3); f1786fa8 SectionSupNorm (Step 2);
-  63158306  SectionFiberNorm (Step 1)
-  90750074  Liouville-core split; 6992e390 LocallyCompact translation-inv
-  5dfd5106  Montel survey + Blocker 5; 848a0c88 ConstructionRecon (5-step plan)
+Sub-agents launched this tick (worktree, racing Aristotle's back of queue)
+  GenusZero L591 sphere homeo (raced fbfe1498 — Aristotle won; subagent's
+    parallel-equivalent edit not merged)
+  Montel subseq_tendsto (still running, racing e7250841)
 
 Full history in aristotle_jobs.jsonl.
 ```
@@ -104,31 +117,27 @@ Full history in aristotle_jobs.jsonl.
 ```text
 Build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Challenge target          pass    lake build Jacobian.Challenge
-Statement bank            pass    lake build Jacobian.WorkPackets.StatementBank
-Periods umbrella          pass    lake build Jacobian.Periods
-Solution                  pass    lake build Jacobian.Solution
-
-Per-directory sorry-free ratios (production files)
-  HolomorphicForms             27 / 29
-  AnalyticJacobian             23 / 23
-  AbelJacobi                   19 / 20
-  TraceDegree                  81 / 84
-  Periods                     171 / 173
-  ComplexTorus                 47 / 53
+Challenge target              not run this tick   lake build Jacobian.Challenge
+Statement bank                not run this tick   lake build Jacobian.WorkPackets.StatementBank
+GenusZeroClassification       pass               lake build Jacobian.HolomorphicForms.GenusZeroClassification
+ULiftTransport                pass               lake build Jacobian.ComplexTorus.ULiftTransport
+PushforwardBasis              pass               lake build Jacobian.TraceDegree.PushforwardBasis
+PeriodSpanHelpers (NEW)       pass               lake build Jacobian.Periods.PeriodSpanHelpers
+PeriodFunctional              in flight          lake build Jacobian.Periods.PeriodFunctional
 ```
 
 ```text
 Next priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Step 4 (8585f085) — completeness of supNorm metric.
-   When it returns, Step 5 (assembly into HolomorphicOneFormBanachData_of_compact)
-   is a 10-15 LOC follow-up.
-2. Liouville-core leaves in GenusZeroClassification.lean
-   (_finite_eq_zero, _infty_eq_zero) — both blocked on the chart-extraction
-   Mathlib gap documented in ChartCoeffExtractionRecon.lean.
-3. The TraceDegree, ULiftTransport, and AnalyticOfCurveBasis sorries
-   are all in scope (no off-limits partition besides Challenge.lean).
+1. Wait on Montel subagent (a7b046e5b69cfb1ea) and Aristotle e7250841 — whichever
+   wins the race for `holomorphicOneForm_montel_subseq_tendsto`.
+2. PushforwardBasis _apply_at sorries — packets ba57741f / dc58e548 in flight;
+   bundle-incompatibility blocker documented in file docstring.
+3. Liouville-core leaves in GenusZeroClassification.lean (existing) — still
+   blocked on the chart-extraction Mathlib gap documented in
+   `ChartCoeffExtractionRecon.lean`.
+4. PullbackBasis basisDualPullback_id / _comp — Aristotle's 403c9581 was
+   destructive (bundle field removal); revisit with a richer bundle approach.
 ```
 
 ## About

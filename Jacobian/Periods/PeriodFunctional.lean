@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.Periods.IntegralOneCycle
+import Jacobian.Periods.PeriodSpanHelpers
 import Mathlib.Algebra.Module.ZLattice.Basic
 
 /-!
@@ -68,6 +69,36 @@ theorem periodSubgroup_isZLattice
         (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
         ((periodPairing ℂ X).range)) := sorry
 
+/-- The period subgroup contains `2g` ℝ-linearly independent vectors.
+
+This is the core analytic content of `periodSubgroup_spans_real`.
+It encodes the Riemann bilinear relations / period matrix full-rank
+theorem for a compact connected Riemann surface.
+
+Proof sketch (classical): choose a symplectic basis
+`{α_i, β_i}` of `H_1(X,ℤ)` and a normalised basis `{ω_j}` of
+`H^0(X, Ω^1)` with `∫_{α_i} ω_j = δ_{ij}`. The period matrix is
+`[I_g | τ]` where `τ_{ij} = ∫_{β_i} ω_j`. By the Riemann bilinear
+relations, `Im(τ)` is positive-definite, so the `2g` columns
+`e_1,…,e_g, τ_1,…,τ_g` are ℝ-linearly independent in `ℂ^g`.
+
+Mathlib v4.28.0 dependencies (all currently `sorry`/`opaque`): the
+`periodPairing` implementation (multi-chart integration + Stokes),
+`H_1(X,ℤ) ≅ ℤ^{2g}` (homology computation for surfaces), and the
+Riemann bilinear relations (`Im(τ) > 0`). See
+`Jacobian/Periods/PeriodVectorsLinearIndependent.lean`. -/
+theorem periodVectors_linearIndependent
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    ∃ (b : Fin (2 * analyticGenus ℂ X) → Fin (analyticGenus ℂ X) → ℂ),
+      LinearIndependent ℝ b ∧
+      ∀ i, b i ∈ (AddSubgroup.map
+        (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+        ((periodPairing ℂ X).range) :
+        Set (Fin (analyticGenus ℂ X) → ℂ)) := by
+  sorry
+
 /-- The basis-aligned period subgroup spans the full ℝ-vector space
 `Fin (analyticGenus ℂ X) → ℂ`, viewed as ℝ²ᵍ. Together with
 `periodSubgroup_isZLattice`, this is the second half of the
@@ -84,7 +115,13 @@ construction of an `IsZLattice ℝ` instance for the basis-aligned
 period subgroup will delegate to. It is not yet wired into
 `PeriodLattice.lean`'s assembly because the surrounding
 `IsZLattice` infrastructure (Submodule promotion of the
-AddSubgroup, basis extraction) is still being designed. -/
+AddSubgroup, basis extraction) is still being designed.
+
+Decomposed assembly: combine `periodVectors_linearIndependent`
+(Riemann bilinear relations — sorry) with
+`span_real_eq_top_of_subset_linearIndependent` (pure linear
+algebra, sorry-free in
+`Jacobian/Periods/PeriodSpanHelpers.lean`). -/
 theorem periodSubgroup_spans_real
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -95,7 +132,16 @@ theorem periodSubgroup_spans_real
         ((periodPairing ℂ X).range) :
         AddSubgroup (Fin (analyticGenus ℂ X) → ℂ)) :
         Set (Fin (analyticGenus ℂ X) → ℂ))
-      = ⊤ := sorry
+      = ⊤ := by
+  obtain ⟨b, hli, hmem⟩ := periodVectors_linearIndependent X
+  exact span_real_eq_top_of_subset_linearIndependent
+    (analyticGenus ℂ X)
+    ((AddSubgroup.map
+      (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+      ((periodPairing ℂ X).range) :
+      AddSubgroup (Fin (analyticGenus ℂ X) → ℂ)) :
+      Set (Fin (analyticGenus ℂ X) → ℂ))
+    b hli (Set.range_subset_iff.mpr hmem)
 
 /-- The period subgroup: the image of the period pairing, as an
 additive subgroup of the linear dual of holomorphic 1-forms. -/

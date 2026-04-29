@@ -125,6 +125,24 @@ noncomputable instance complexTorusULift_isManifold
     IsManifold (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
       (ULift.{u} (quotient V Λ)) where
 
+/-- The chart on `ULift (quotient V Λ)` at `ULift.up x` applied to `ULift.up y`
+unfolds to applying the underlying chart on `quotient V Λ` at `x` to `y`.
+
+Pure unfolding of `complexTorusULiftChartAt`. -/
+lemma complexTorusULiftChartAt_up_apply_up
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    (Λ : FullComplexLattice V) (x y : quotient V Λ) :
+    complexTorusULiftChartAt Λ (ULift.up x) (ULift.up y) =
+      chartAtPoint Λ x y := rfl
+
+/-- The inverse of the chart on `ULift (quotient V Λ)` at `ULift.up x` applied
+to a vector `v : V` produces `ULift.up` of the underlying chart's inverse. -/
+lemma complexTorusULiftChartAt_up_symm_apply
+    {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    (Λ : FullComplexLattice V) (x : quotient V Λ) (v : V) :
+    (complexTorusULiftChartAt Λ (ULift.up x)).symm v =
+      ULift.up ((chartAtPoint Λ x).symm v) := rfl
+
 /-- The quotient-to-ULift direction of the `Homeomorph.ulift` equivalence is
 analytic for the transported chart structure.
 
@@ -135,7 +153,63 @@ lemma complexTorusULift_contMDiff_up
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V)
     {n : WithTop ℕ∞} :
     ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ V) n
-      (ULift.up : quotient V Λ → ULift.{u} (quotient V Λ)) := sorry
+      (ULift.up : quotient V Λ → ULift.{u} (quotient V Λ)) := by
+  intro x
+  -- We use `contMDiffAt_iff_of_mem_source` with source-chart at `x` and
+  -- target-chart at `ULift.up x`. With the self-model, the model is the
+  -- identity, so the chart-pulled-back map reduces to
+  -- `chartAtPoint Λ x ∘ (chartAtPoint Λ x).symm`, which is the identity on
+  -- `(chartAtPoint Λ x).target`, an open neighborhood of
+  -- `extChartAt _ x x = chartAtPoint Λ x x`.
+  have hx_src : x ∈ (chartAt V x).source := mem_chart_source V x
+  have hux_src : (ULift.up x : ULift.{u} (quotient V Λ)) ∈
+      (chartAt V (ULift.up x : ULift.{u} (quotient V Λ))).source :=
+    mem_chart_source V (ULift.up x : ULift.{u} (quotient V Λ))
+  rw [contMDiffAt_iff_of_mem_source (x := x) (y := (ULift.up x : ULift.{u} (quotient V Λ)))
+    hx_src hux_src]
+  refine ⟨continuous_uliftUp.continuousAt, ?_⟩
+  -- The composition equals `id` on the chart's target.
+  set chart : OpenPartialHomeomorph (quotient V Λ) V := chartAt V x with chart_def
+  have htgt_open : IsOpen chart.target := chart.open_target
+  have hxchart : chart x ∈ chart.target := chart.map_source hx_src
+  -- The chart-pulled-back composition.
+  set f : V → V := fun v =>
+    (chartAt V (ULift.up x : ULift.{u} (quotient V Λ))) (ULift.up (chart.symm v)) with f_def
+  -- On `chart.target`, `f = id`.
+  have hf_eq_on : ∀ v ∈ chart.target, f v = v := by
+    intro v hv
+    show (chartAt V (ULift.up x : ULift.{u} (quotient V Λ)))
+        (ULift.up (chart.symm v)) = v
+    -- chartAt V (ULift.up x) = complexTorusULiftChartAt Λ (ULift.up x).
+    -- Applied to ULift.up (chart.symm v), it equals chartAtPoint Λ x (chart.symm v).
+    -- chart = chartAtPoint Λ x, so chart (chart.symm v) = v on chart.target.
+    change complexTorusULiftChartAt Λ (ULift.up x) (ULift.up (chart.symm v)) = v
+    rw [complexTorusULiftChartAt_up_apply_up]
+    change chart (chart.symm v) = v
+    exact chart.right_inv hv
+  -- Convert `ContDiffWithinAt` of `id` at `chart x` within `univ` to `f`.
+  have hid : ContDiffWithinAt ℂ n (id : V → V) (Set.range (modelWithCornersSelf ℂ V))
+      (extChartAt (modelWithCornersSelf ℂ V) x x) :=
+    contDiffWithinAt_id
+  -- f and id agree on the chart's target, which is a neighborhood of chart x.
+  have htgt_mem : chart.target ∈ nhds (chart x) := htgt_open.mem_nhds hxchart
+  have hee : f =ᶠ[nhds (chart x)] (id : V → V) := by
+    refine Filter.eventuallyEq_iff_exists_mem.mpr ⟨chart.target, htgt_mem, ?_⟩
+    intro v hv
+    exact hf_eq_on v hv
+  -- Translate from `nhds` to `nhdsWithin`.
+  have hee' : f =ᶠ[nhdsWithin
+      (extChartAt (modelWithCornersSelf ℂ V) x x)
+      (Set.range (modelWithCornersSelf ℂ V))] id := by
+    have : (extChartAt (modelWithCornersSelf ℂ V) x) x = chart x := rfl
+    rw [this]
+    exact hee.filter_mono nhdsWithin_le_nhds
+  have hfx : f (chart x) = id (chart x) := hf_eq_on (chart x) hxchart
+  have : ContDiffWithinAt ℂ n f (Set.range (modelWithCornersSelf ℂ V))
+      (extChartAt (modelWithCornersSelf ℂ V) x x) :=
+    hid.congr_of_eventuallyEq hee' hfx
+  -- Match the goal shape.
+  convert this using 1
 
 /-- The ULift-to-quotient direction of the `Homeomorph.ulift` equivalence is
 analytic for the transported chart structure.
@@ -148,7 +222,56 @@ lemma complexTorusULift_contMDiff_down
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V)
     {n : WithTop ℕ∞} :
     ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ V) n
-      (ULift.down : ULift.{u} (quotient V Λ) → quotient V Λ) := sorry
+      (ULift.down : ULift.{u} (quotient V Λ) → quotient V Λ) := by
+  intro q
+  have hq_src : q ∈ (chartAt V q).source := mem_chart_source V q
+  have hdq_src : q.down ∈ (chartAt V q.down).source := mem_chart_source V q.down
+  rw [contMDiffAt_iff_of_mem_source (x := q) (y := q.down) hq_src hdq_src]
+  refine ⟨continuous_uliftDown.continuousAt, ?_⟩
+  -- Use the underlying chart on `quotient V Λ` at `q.down`.
+  set chart : OpenPartialHomeomorph (quotient V Λ) V := chartAt V q.down with chart_def
+  have htgt_open : IsOpen chart.target := chart.open_target
+  have hxchart : chart q.down ∈ chart.target := chart.map_source hdq_src
+  set f : V → V := fun v =>
+    chart ((chartAt V q).symm v).down with f_def
+  -- (chartAt V q).symm v = ULift.up (chart.symm v).
+  have hf_eq : f = fun v => chart (chart.symm v) := by
+    funext v
+    show chart ((chartAt V q).symm v).down = chart (chart.symm v)
+    -- chartAt V q is `complexTorusULiftChartAt Λ q`, whose symm sends v
+    -- to `ULift.up ((chartAtPoint Λ q.down).symm v)`. The `.down` of that
+    -- is `(chartAtPoint Λ q.down).symm v = chart.symm v`.
+    rfl
+  -- On chart.target, chart (chart.symm v) = v.
+  have hf_eq_on : ∀ v ∈ chart.target, f v = v := by
+    intro v hv
+    rw [hf_eq]
+    exact chart.right_inv hv
+  -- The chart at q sends q to the same model-space value as chart at q.down.
+  -- (chartAt V q) q = complexTorusULiftChartAt Λ q q = chartAtPoint Λ q.down q.down.
+  have hchart_q : (extChartAt (modelWithCornersSelf ℂ V) q) q = chart q.down := rfl
+  have hid : ContDiffWithinAt ℂ n (id : V → V)
+      (Set.range (modelWithCornersSelf ℂ V))
+      (extChartAt (modelWithCornersSelf ℂ V) q q) := contDiffWithinAt_id
+  have htgt_mem : chart.target ∈ nhds (chart q.down) := htgt_open.mem_nhds hxchart
+  have hee : f =ᶠ[nhds (chart q.down)] (id : V → V) := by
+    refine Filter.eventuallyEq_iff_exists_mem.mpr ⟨chart.target, htgt_mem, ?_⟩
+    intro v hv
+    exact hf_eq_on v hv
+  have hee' : f =ᶠ[nhdsWithin
+      (extChartAt (modelWithCornersSelf ℂ V) q q)
+      (Set.range (modelWithCornersSelf ℂ V))] id := by
+    rw [hchart_q]
+    exact hee.filter_mono nhdsWithin_le_nhds
+  have hfx : f ((extChartAt (modelWithCornersSelf ℂ V) q) q) =
+      id ((extChartAt (modelWithCornersSelf ℂ V) q) q) := by
+    rw [hchart_q]
+    exact hf_eq_on (chart q.down) hxchart
+  have : ContDiffWithinAt ℂ n f
+      (Set.range (modelWithCornersSelf ℂ V))
+      (extChartAt (modelWithCornersSelf ℂ V) q q) :=
+    hid.congr_of_eventuallyEq hee' hfx
+  convert this using 1
 
 /-- Addition on the `ULift`ed quotient is analytic for the transported
 complex-torus manifold structure.

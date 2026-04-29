@@ -290,6 +290,26 @@ theorem analyticGenus_onePointCx_eq_zero :
     holomorphicOneForm_onePointCx_subsingleton
   exact analyticGenus_eq_zero_of_subsingleton
 
+/-- **Bottom-up obligation (uniformization-lite).** A compact connected
+Riemann surface `X` homeomorphic to the standard 2-sphere `S²` admits
+a ℂ-linear equivalence between its space of holomorphic 1-forms and
+that of `OnePoint ℂ` (≃ ℂℙ¹).
+
+Mathlib gap: requires the genus-0 case of uniformization (every
+compact connected Riemann surface homeomorphic to `S²` is
+biholomorphic to `ℂℙ¹`) and a holomorphic-form pullback API along
+biholomorphisms. Mathlib v4.28.0 has neither: no uniformization, no
+`ℂℙ¹` as a complex manifold, no `Biholomorphism` type, and no
+`HolomorphicOneForm.linearEquivOfBiholomorphism`. -/
+noncomputable def holomorphicOneFormLinearEquivOfHomeoSphere
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
+    HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ) := by
+  sorry
+
 /-- Transport step: a compact Riemann surface `X` homeomorphic to the
 standard 2-sphere has the same analytic genus as `OnePoint ℂ`.
 
@@ -317,7 +337,12 @@ theorem analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
-    analyticGenus ℂ X = analyticGenus ℂ (OnePoint ℂ) := sorry
+    analyticGenus ℂ X = analyticGenus ℂ (OnePoint ℂ) := by
+  -- Decompose via a ℂ-linear equivalence of holomorphic 1-form spaces;
+  -- existence is the deep uniformization-lite content sorry'd out to
+  -- `holomorphicOneFormLinearEquivOfHomeoSphere`.
+  have e := holomorphicOneFormLinearEquivOfHomeoSphere X _h
+  exact e.finrank_eq
 
 /-- The "easy" direction: if `X` is homeomorphic to the standard 2-sphere
 then `analyticGenus ℂ X = 0`.
@@ -573,22 +598,53 @@ matures.
   pursuing uniformization via universal covers.
 -/
 
+/-- The one-point compactification of `ℂ` is homeomorphic to the unit
+2-sphere `S² ⊂ ℝ³`.  This uses `onePointEquivSphereOfFinrankEq` from
+`Mathlib.Topology.Compactification.OnePoint.Sphere`, instantiated with
+`V = ℂ` (which has `Module.finrank ℝ ℂ = 2`) and `ι = Fin 3`. -/
+noncomputable def onePointCx_homeomorph_sphere :
+    OnePoint ℂ ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1 :=
+  onePointEquivSphereOfFinrankEq (by simp [Complex.finrank_real_complex])
+
+/-- **Uniformization (genus zero):** a compact connected Riemann surface
+with `analyticGenus = 0` is homeomorphic to the one-point
+compactification of `ℂ`.
+
+Deep uniformization content (Mathlib gap): every simply connected Riemann
+surface is biholomorphic to `ℂ`, `𝔻`, or `ℂℙ¹`; compactness forces
+`ℂℙ¹ ≃ₜ OnePoint ℂ`. Equivalently, Riemann–Roch gives a degree-1
+meromorphic function, hence a biholomorphism to `ℂℙ¹`.
+
+Mathlib v4.28.0 lacks: uniformization, Riemann–Roch,
+`analyticGenus_eq_topologicalGenus`, `SimplyConnectedSpace.sphere`,
+and `CompactRiemannSurface.genusZero_biholo_CP1`. Sorry remains until
+the relevant infrastructure matures. -/
+theorem genus_zero_homeomorph_onePointCx
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_h : analyticGenus ℂ X = 0) :
+    Nonempty (X ≃ₜ OnePoint ℂ) := sorry
+
 /-- The "hard" direction: if `analyticGenus ℂ X = 0` then `X` is
 homeomorphic to the standard 2-sphere.
 
-Bottom-up content: this is essentially a uniformization-level theorem.
-Genus zero in the analytic sense means the space of holomorphic 1-forms
-is `Subsingleton` (equivalently `Module.finrank ℂ … = 0`); together with
-compactness and connectedness this forces `X` to be biholomorphic to
-`ℂℙ¹` (uniformization theorem), and `ℂℙ¹` is homeomorphic to `S²` via
-the standard stereographic charts. -/
+Decomposes into two obligations:
+1. `genus_zero_homeomorph_onePointCx` — uniformization (sorry, see gap
+   analysis there).
+2. `onePointCx_homeomorph_sphere` — the standard homeomorphism
+   `OnePoint ℂ ≃ₜ S²` via inverse stereographic projection (proved
+   sorry-free using `onePointEquivSphereOfFinrankEq`). -/
 theorem homeomorphic_sphere_of_analyticGenus_eq_zero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : analyticGenus ℂ X = 0) :
-    Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1) := sorry
+    Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1) :=
+  let ⟨e⟩ := genus_zero_homeomorph_onePointCx X _h
+  ⟨e.trans onePointCx_homeomorph_sphere⟩
 
 /-- A compact connected Riemann surface has analytic genus zero iff it is
 homeomorphic to the standard 2-sphere.

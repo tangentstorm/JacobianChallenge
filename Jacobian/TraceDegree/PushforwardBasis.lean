@@ -123,14 +123,44 @@ linear map.  The companions below capture that decomposition:
 * `pushforwardTraceLift` — the additive trace map on covering spaces
   (opaque);
 * `pushforwardTraceLift_preserves_lattice` — period-lattice
-  preservation (sorry);
+  preservation (sorry-free, extracted from the bundle);
 * `analyticPushforward_mk_spec` — descent compatibility:
-  `analyticPushforward f hf (mk v) = mk (traceLift v)` (sorry);
+  `analyticPushforward f hf (mk v) = mk (traceLift v)` (sorry-free,
+  extracted from the bundle);
 * `pushforwardTraceLift_comp_spec` — covariant functoriality of
-  the trace lift on covering spaces (sorry).
+  the trace lift on covering spaces (sorry, see blocker note below).
 
 Together with `ComplexTorus.mk_surjective`, these assemble into the
-covariant-composition statement `analyticPushforward_comp_spec`. -/
+covariant-composition statement `analyticPushforward_comp_spec`.
+
+#### Bundle-incompatibility blocker
+
+The opaque value `basisAnalyticPushforwardBundle f hf` is selected by
+`Classical.choice` from the `Inhabited` witness, which uses
+`pushforwardTraceLift := 0` (forced because the codomain
+`Fin (analyticGenus ℂ Y) → ℂ` differs from the domain in general, so
+the only canonical zero-witness available is the additive zero).
+Therefore the opaque value's `pushforwardTraceLift` may be `0`, and
+the identity functoriality `pushforwardTraceLift id contMDiff_id v = v`
+is *not* derivable from the bundle alone — it asserts behaviour the
+zero witness cannot have unless `v = 0`.
+
+To unblock `pushforwardTraceLift_id_apply` and
+`pushforwardTraceLift_comp_spec_apply` at the bundle layer, one of:
+
+* introduce a richer bundle that takes additional parameters
+  (e.g. `BasisAnalyticPushforwardIdBundle X` carrying
+  `pushforwardTraceLift = AddMonoidHom.id` as a field, with
+  Inhabited witness using the literal identity hom);
+* add an upstream concretisation step that fixes
+  `pushforwardTraceLift` non-opaquely as the dual of a trace map on
+  holomorphic forms (e.g. via `JacobianChallenge.HolomorphicForms`),
+  then the id and comp axioms become provable from the
+  multiplicativity of the trace/norm.
+
+Pending that structural fix, the two sorries below are split into
+per-coordinate (single-`ℂ`-value) form so the residual obligations
+have the smallest possible goal type. -/
 
 /-- The trace lift on the covering model spaces: the additive map
 `(Fin g_X → ℂ) →+ (Fin g_Y → ℂ)`. Extracted from
@@ -140,13 +170,31 @@ noncomputable def pushforwardTraceLift (f : X → Y)
     (Fin (analyticGenus ℂ X) → ℂ) →+ (Fin (analyticGenus ℂ Y) → ℂ) :=
   (basisAnalyticPushforwardBundle f hf).pushforwardTraceLift
 
+/-- Per-coordinate form of `pushforwardTraceLift_id_apply`: the trace
+lift along `id`, evaluated at `v` and projected onto coordinate `i`,
+equals `v i`.
+
+This is the smallest named obligation: a single equality in `ℂ`.
+Bottom-up: the trace of the identity branched covering (degree 1) is
+the identity on holomorphic 1-forms; dualization preserves this
+pointwise on each basis coordinate.
+
+Blocked at the bundle layer: see the section docstring above. -/
+theorem pushforwardTraceLift_id_apply_at
+    (i : Fin (analyticGenus ℂ X)) (v : Fin (analyticGenus ℂ X) → ℂ) :
+    pushforwardTraceLift (X := X) (Y := X) id contMDiff_id v i = v i := sorry
+
 /-- Deeper companion: the trace lift along `id` is the identity additive
 group homomorphism on the covering space.
 
 Bottom-up: the trace of the identity branched covering (degree 1) is
-the identity on holomorphic 1-forms; dualization preserves this. -/
+the identity on holomorphic 1-forms; dualization preserves this.
+
+Assembled from `pushforwardTraceLift_id_apply_at` via `funext`. -/
 theorem pushforwardTraceLift_id_apply (v : Fin (analyticGenus ℂ X) → ℂ) :
-    pushforwardTraceLift (X := X) (Y := X) id contMDiff_id v = v := sorry
+    pushforwardTraceLift (X := X) (Y := X) id contMDiff_id v = v := by
+  funext i
+  exact pushforwardTraceLift_id_apply_at (X := X) i v
 
 theorem pushforwardTraceLift_id :
     pushforwardTraceLift (X := X) (Y := X) id contMDiff_id =
@@ -179,6 +227,23 @@ theorem analyticPushforward_mk_spec
         (pushforwardTraceLift f hf v) :=
   (basisAnalyticPushforwardBundle f hf).mk_spec v
 
+/-- Per-coordinate form of `pushforwardTraceLift_comp_spec_apply`: the
+trace lift for `g ∘ f`, evaluated at `v` and projected onto coordinate
+`i`, equals the iterated trace-lift composition projected onto `i`.
+
+This is the smallest named obligation: a single equality in `ℂ`.
+Bottom-up: provable from the multiplicativity of the trace/norm map
+on holomorphic 1-forms (on each coordinate of a basis-aligned
+representation).
+
+Blocked at the bundle layer: see the section docstring above. -/
+theorem pushforwardTraceLift_comp_spec_apply_at
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
+    (v : Fin (analyticGenus ℂ X) → ℂ) (i : Fin (analyticGenus ℂ Z)) :
+    pushforwardTraceLift (g ∘ f) (hg.comp hf) v i =
+      pushforwardTraceLift g hg (pushforwardTraceLift f hf v) i := sorry
+
 /-- The trace lift is covariantly functorial under composition: the
 trace lift for `g ∘ f` equals the composition of trace lifts for `g`
 and `f`.
@@ -187,13 +252,17 @@ Pointwise form: the trace lift for `g ∘ f` evaluated at `v` equals
 the iterated trace-lift composition.
 
 Bottom-up obligation. Provable from the multiplicativity of the
-trace/norm map on holomorphic 1-forms. -/
+trace/norm map on holomorphic 1-forms.
+
+Assembled from `pushforwardTraceLift_comp_spec_apply_at` via `funext`. -/
 theorem pushforwardTraceLift_comp_spec_apply
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (v : Fin (analyticGenus ℂ X) → ℂ) :
     pushforwardTraceLift (g ∘ f) (hg.comp hf) v =
-      pushforwardTraceLift g hg (pushforwardTraceLift f hf v) := sorry
+      pushforwardTraceLift g hg (pushforwardTraceLift f hf v) := by
+  funext i
+  exact pushforwardTraceLift_comp_spec_apply_at f hf g hg v i
 
 /-- The trace lift is covariantly functorial under composition.
 
