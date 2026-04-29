@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 10:34 EDT
+Last tick: 2026-04-29 10:37 EDT
 
 ```text
 Headline progress
@@ -91,8 +91,8 @@ This tick: backend still frozen, sub-agents racing the two newest QUEUED.
     project-internal `Divisor X` / `IsPrincipal d` API exists.
   • Sub-agents active (worktree-isolated):
     `ad96003a19385a71c` racing 6547fde4 (`_id_dualPullback`, ~3.5+ hr)
-    `a2cced5d3b722f465` racing 86bef3e0 (8th audit, expected redundant)
-  • 7 prior comp-side audits all confirmed structural dead-end.
+    `acb43c8352dfa219c` racing 86bef3e0 (10th audit)
+  • 9 prior comp-side audits all confirmed structural dead-end.
 
 Active our-packets after cancellation:
   f3a8e713   PushforwardBasis _comp_traceLift           QUEUED
