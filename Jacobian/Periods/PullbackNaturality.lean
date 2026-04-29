@@ -265,6 +265,45 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
   -- Use pathIntegralViaCoverPick_refl on each side.
   rw [pathIntegralViaCover_refl, pathIntegralViaCover_refl]
 
+/-- **Zero-form special case** of path-level naturality: at `η = 0`,
+both sides vanish via linearity of `pullbackFormsBundledLM` and
+`pathIntegralViaCover`. Sorry-free, **modulo** the un-`With`
+zero-vanishing of `pathIntegralViaCover` (project has the `_With` form
+in `PathIntegralViaCoverZero.lean`). Stated conditionally. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_zero
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
+    (h_zero_X : pathIntegralViaCover
+        (pullbackFormsBundledLM X Y f hf 0) γ = 0)
+    (h_zero_Y : pathIntegralViaCover (0 : HolomorphicOneForm ℂ Y)
+        (γ.map hf.continuous) = 0) :
+    pathIntegralViaCover (pullbackFormsBundledLM X Y f hf 0) γ =
+      pathIntegralViaCover (0 : HolomorphicOneForm ℂ Y)
+        (γ.map hf.continuous) := by
+  rw [h_zero_X, h_zero_Y]
+
+/-- **Form-additivity conditional case**: naturality at `η + ζ` follows
+from naturality at `η` and at `ζ`, via the linearity of
+`pullbackFormsBundledLM` (which is a `ℂ`-linear map). The
+`pathIntegralViaCover` additivity-in-form would tie this together
+once the un-`With` form-additivity lemma exists. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_of_add_form
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
+    (η ζ : HolomorphicOneForm ℂ Y)
+    (h_η : pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+      pathIntegralViaCover η (γ.map hf.continuous))
+    (h_ζ : pathIntegralViaCover (pullbackFormsBundledLM X Y f hf ζ) γ =
+      pathIntegralViaCover ζ (γ.map hf.continuous))
+    (h_add_X : pathIntegralViaCover
+        (pullbackFormsBundledLM X Y f hf (η + ζ)) γ =
+      pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ +
+      pathIntegralViaCover (pullbackFormsBundledLM X Y f hf ζ) γ)
+    (h_add_Y : pathIntegralViaCover (η + ζ) (γ.map hf.continuous) =
+      pathIntegralViaCover η (γ.map hf.continuous) +
+      pathIntegralViaCover ζ (γ.map hf.continuous)) :
+    pathIntegralViaCover (pullbackFormsBundledLM X Y f hf (η + ζ)) γ =
+      pathIntegralViaCover (η + ζ) (γ.map hf.continuous) := by
+  rw [h_add_X, h_add_Y, h_η, h_ζ]
+
 /-- **Concatenated path conditional special case** of path-level
 naturality: naturality at `γ.trans γ'` follows from naturality at `γ`
 and `γ'` (as hypotheses), via `Path.map_trans` (which states
