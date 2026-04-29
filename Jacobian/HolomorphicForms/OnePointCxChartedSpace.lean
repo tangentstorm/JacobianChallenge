@@ -1,4 +1,8 @@
-import Mathlib
+import Mathlib.Analysis.Normed.Field.Lemmas
+import Mathlib.Geometry.Manifold.ChartedSpace
+import Mathlib.Topology.Compactification.OnePoint.Basic
+import Mathlib.Topology.MetricSpace.Bounded
+import Mathlib.Topology.OpenPartialHomeomorph.Basic
 
 /-!
 # Complex charted space structure on `OnePoint ℂ`
