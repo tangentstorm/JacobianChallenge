@@ -1,5 +1,7 @@
 import Jacobian.AbelJacobi.AnalyticOfCurveBasis
 import Jacobian.ComplexTorus.OfClm
+import Jacobian.HolomorphicForms.PullbackBundled
+import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Mathlib.LinearAlgebra.Matrix.ToLin
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 
@@ -115,33 +117,55 @@ which is why the codomain is `Fin g_X → ℂ` and the domain is
 `pushforwardTraceLift f hf : (Fin g_X → ℂ) →+ (Fin g_Y → ℂ)`
 is defined below as the matrix transpose of this map.
 
-Bottom-up: concrete construction requires a Mathlib trace/norm map
-on holomorphic 1-forms (`Mathlib.Analysis.Complex.RiemannSurface.Trace`,
-absent in v4.28.0); see the file-level docstring. -/
-noncomputable opaque holomorphicTraceCoord
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ)
+Bottom-up: built concretely from `pullbackFormsBundledLM` (the smooth
+bundle of the chain-rule pullback), composed with the basis-aligned
+linear equivalences `holomorphicOneFormFinBasis.equivFun` to convert
+between abstract forms and `Fin g → ℂ` coordinates.
+
+Functoriality (`holomorphicTraceCoord_id`, `holomorphicTraceCoord_comp`)
+reduces to the corresponding `pullbackFormsBundledLM` functoriality
+(`pullbackFormsBundledLM_id`, `pullbackFormsBundledLM_comp`), both of
+which are sorry-free in `Jacobian/HolomorphicForms/PullbackBundled.lean`. -/
+noncomputable def holomorphicTraceCoord
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ Y] :
+    (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
+  (holomorphicOneFormFinBasis ℂ X).equivFun.toLinearMap ∘ₗ
+    (pullbackFormsBundledLM X Y f hf) ∘ₗ
+    (holomorphicOneFormFinBasis ℂ Y).equivFun.symm.toLinearMap
 
 /-- Identity functoriality of the trace-coordinate map.
 
-Bottom-up: the pullback of holomorphic 1-forms along the identity
-map is the identity. With a concrete `traceMap` definition, this
-would be `traceMap_id`. -/
-theorem holomorphicTraceCoord_id :
+Sorry-free: the `pullbackFormsBundledLM` functoriality
+`pullbackFormsBundledLM_id` reduces the inner factor to `LinearMap.id`,
+and the outer `Basis.equivFun` round trip cancels. -/
+theorem holomorphicTraceCoord_id
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
     holomorphicTraceCoord (X := X) (Y := X) id contMDiff_id =
-      LinearMap.id := sorry
+      LinearMap.id := by
+  unfold holomorphicTraceCoord
+  rw [pullbackFormsBundledLM_id]
+  ext v
+  simp
 
 /-- Composition functoriality of the trace-coordinate map.
 
-Note the *contravariant* composition law: the form-pullback along
-`g ∘ f` factors as the form-pullback along `f` of the form-pullback
-along `g`. Bottom-up: with a concrete `traceMap` definition, this
-would be `traceMap_comp`. -/
+Sorry-free: the `pullbackFormsBundledLM` contravariant composition
+`pullbackFormsBundledLM_comp` reduces the inner factor; the inner
+`Basis.equivFun` round trip on `Y` cancels. -/
 theorem holomorphicTraceCoord_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ Y]
+    [FiniteDimensionalHolomorphicOneForms ℂ Z] :
     holomorphicTraceCoord (g ∘ f) (hg.comp hf) =
-      (holomorphicTraceCoord f hf).comp (holomorphicTraceCoord g hg) := sorry
+      (holomorphicTraceCoord f hf).comp (holomorphicTraceCoord g hg) := by
+  unfold holomorphicTraceCoord
+  rw [pullbackFormsBundledLM_comp f hf g hg]
+  ext v
+  simp [LinearMap.comp_apply]
 
 /-! ### Top-level `pushforwardTraceLift` via matrix transpose
 
