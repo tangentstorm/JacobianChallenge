@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 07:37 EDT
+Last tick: 2026-04-29 07:43 EDT
 
 ```text
 Headline progress
@@ -84,7 +84,10 @@ This tick: backend still frozen, sub-agents racing the two newest QUEUED.
     — lifted ≠ discharged. Both stay running as stale packets.
   • Sub-agents active (worktree-isolated):
     `ad96003a19385a71c` racing 6547fde4 (`_id_dualPullback`)
-    `a5ded3e9db49ff1f7` racing 86bef3e0 (`_comp_dualPullback`)
+    `a02a7b2cac5c62653` racing 86bef3e0 (replacement after `a5ded3e9` skipped — same structural blocker rediscovered)
+  • Added TOPDOWN-plan docstring to `periodSubgroup_isZLattice`
+    (3-step split with named sub-obligations) — `lake build
+    Jacobian.Periods.PeriodFunctional` passes (exit 0).
 
 Active our-packets after cancellation:
   f3a8e713   PushforwardBasis _comp_traceLift           QUEUED

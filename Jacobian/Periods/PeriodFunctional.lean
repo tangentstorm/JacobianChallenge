@@ -56,7 +56,43 @@ independent period vectors after transport to the basis-aligned model.
 This is the named bottom-up obligation that
 `Jacobian.Periods.basisAlignedPeriodSubgroup_isDiscrete` delegates to.
 A real proof requires the integrality of `periodPairing` on integral
-1-cycles. -/
+1-cycles.
+
+#### TOPDOWN plan (planned split, not yet executed)
+
+The single `sorry` here can be discharged by the following named
+sub-obligations, each carrying a distinct portion of the blocker:
+
+1. **`periodSubgroup_eq_zspan_of_basis`** (NEW sorry, integrality):
+   the transported range equals the ℤ-span of the basis-aligned period
+   vectors `b i := holomorphicOneFormDualEquiv X (periodPairing X (σ i))`,
+   where `σ : Fin (2g) → IntegralOneCycle X` is the symplectic basis
+   from `symplectic_basis_of_cycles`. Bottom-up: `periodPairing` is an
+   `AddMonoidHom`, `IntegralOneCycle X` is the ℤ-span of `σ` (this is
+   the deeper content of `h1_basis_of_compact_riemann_surface`), so the
+   range is the ℤ-span of `periodPairing (σ i)`. Transport via the
+   ℤ-linear `holomorphicOneFormDualEquiv.toAddMonoidHom` preserves
+   ℤ-spans.
+
+2. **`periodVectors_linearIndependent`** (already sorry-free assembly,
+   line ~194): provides 2g ℝ-linearly-independent vectors in `Fin g → ℂ`
+   that lie in the period subgroup.
+
+3. **`zspan_of_RLinearIndep_isDiscrete`** (NEW helper, possibly available
+   in Mathlib `IsZLattice` API): the ℤ-span of ℝ-linearly-independent
+   vectors in finite-dim ℝ-space carries `DiscreteTopology`. Mathlib
+   v4.28.0 exposes this via `Submodule.IsLattice.discreteTopology` or
+   the `IsZLattice` instance machinery on `Submodule.span ℤ` of an
+   ℝ-LI family.
+
+4. **`periodSubgroup_isZLattice`** becomes a sorry-free assembly:
+   rewrite the range using (1) to expose it as the ℤ-span of an ℝ-LI
+   family (via 2), then conclude via (3).
+
+Net effect of the split: 1 deep sorry → 1 substantive new sorry on
+integrality (1) + 1 generic helper that may already be in Mathlib (3).
+Worth executing once `h1_basis_of_compact_riemann_surface` lands or
+the integrality argument is independently formalised. -/
 theorem periodSubgroup_isZLattice
     (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
