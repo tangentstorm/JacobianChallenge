@@ -12,94 +12,73 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 04:45 EDT)
+## Live Status (2026-04-29 07:20 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
-- **Open production sorries:** 17 (was 14; +3 net from this tick's
-  three TOPDOWN splits each adding 1 named sub-obligation).
-- **Aristotle integrations to date: 127** (4 new this tick:
-  76c01cf9, 88effa1c, 0cfa1878, ad278fcd).
-- **Backend status:** 4 IN_PROGRESS (c2a57d71 47%, 8a8ea66d 17%,
-  706bf2e2 15%, plus de8822fb deeper); 2 QUEUED (3b7e5dac,
-  9b4998a5); 5 NEW just submitted (dc2c19e1, 659de1fb, af6e2c7a,
-  e227f244, 0de5af2a) for the new sub-obligation sorries.
-- **Local sub-agents:** 2 just launched (a68119d2 racing
-  pushforwardTraceLift_id_apply_at, af653549 racing
-  pushforwardTraceLift_comp_spec_apply_at).
+- **Open production sorries:** 17 (unchanged from prior tick; this
+  tick's PullbackBasis TOPDOWN refactor was net 0 — lifted 2 per-vector
+  sorries to bundle-level sorries).
+- **Aristotle integrations to date: 129**.
+- **Backend state (first page of `aristotle list`):** 6 QUEUED
+  (f3a8e713, 6f6f015d, 9c222f2d, 362e259f, 3683ef39, 4d0d28d6),
+  4 COMPLETE (921772f5 integrated, a0bddfd5 no-op, 0de5af2a stale,
+  e227f244 integrated). 2 NEW just submitted this tick: 6547fde4
+  and 86bef3e0 for the PullbackBasis bundle-primitive sorries.
 
 ### This tick
 
-- **Integrated 4 Aristotle results** (3 TOPDOWN splits + 1 blocker
-  analysis):
-  - `76c01cf9` Liouville finite leaf → split into `coeff_entire`
-    (chart-extraction sorry) + `coeff_tendsto_zero` (chart-transition
-    sorry) + sorry-free assembly via Liouville.
-  - `88effa1c` `LinearEquivOfHomeoSphere` → reduced to single sorry
-    on `subsingleton_holomorphicOneForm_of_homeo_sphere` + sorry-free
-    assembly via `LinearEquiv.ofSubsingleton`.
-  - `0cfa1878` `periodVectors_linearIndependent` → split into 3
-    sub-obligations (`symplectic_basis_of_cycles` sorry,
-    `period_vectors_mem_subgroup` sorry-free,
-    `period_vectors_linearIndependent_of_symplectic` sorry).
-  - `ad278fcd` `basisDualPullback_comp` → ~50-line blocker analysis
-    docstring mirroring the `pushforwardTraceLift_comp_spec_apply_at`
-    analysis.
-- **Submitted 5 new packets** for the new sub-obligation sorries:
-  `dc2c19e1`, `659de1fb`, `af6e2c7a`, `e227f244`, `0de5af2a`.
-- **Sub-agent status:** abcfd3e5 returned a redundant docstring
-  expansion (skipped); a7498d24 was killed externally. Spawned 2
-  replacements: `a68119d2`, `af653549`.
+Local-only work (Aristotle backend frozen — no IN_PROGRESS jobs on
+first page, no new completions to integrate):
 
-### Rejected / skipped this tick
-
-- `5f052643` (PushforwardBasis comp_spec) — REJECTED. Aristotle
-  redefined `analyticPushforward` + `pushforwardTraceLift` as the
-  zero homomorphism placeholder. Provable `_comp_spec` but new sorry
-  on `_id` (provably false for genus > 0). Violates project rule
-  "do not paper over with axioms".
-- `403c9581` (PullbackBasis basisDualPullback_comp) — REJECTED.
-  Aristotle removed bundle fields (`contMDiff_pull`, `degree`,
-  `trace_pullback_spec`) needed by AnalyticDegree's anti-hack #4
-  integration. The actual proof body is just `sorry`, so nothing
-  gained.
-- `e19361c4` (GenusZero — Aristotle's pick) — SKIPPED, duplicate of
-  `fbfe1498` (same target sorry).
-
-### Subagent integrations this tick (worktree-isolated)
-
-- ULiftTransport `_contMDiff_up` + `_contMDiff_down`: substantive
-  proofs (chartedSpace transport via
-  `contMDiffAt_iff_of_mem_source` + `congr_of_eventuallyEq`).
-  Two `.symm` direction errors fixed by Claude. **Net −2 sorries.**
-- PushforwardBasis TOPDOWN refinement: hom-level `_id_apply` /
-  `_comp_spec_apply` are now sorry-free assemblies on smaller
-  per-coordinate `_apply_at` sorries. Net 0 sorry change.
+- **Committed prior-tick docstring** on
+  `basisAnalyticPushforwardBundle_comp_traceLift` (8fc61ab):
+  ~50-line blocker analysis mirroring `_id_traceLift`'s docstring.
+  No code change; verified by `lake build` (83s).
+- **TOPDOWN bundle-primitive refactor on PullbackBasis** (71a5eaf):
+  - Lifted `basisDualPullback_id_apply` (per-vector sorry) into
+    `basisAnalyticPullbackBundle_id_dualPullback` (bundle field
+    AddMonoidHom-equality, NEW sorry).
+  - Lifted `basisDualPullback_comp` (per-vector sorry) into
+    `basisAnalyticPullbackBundle_comp_dualPullback` (bundle field
+    AddMonoidHom-equality, NEW sorry).
+  - Per-vector / per-coord forms (`basisDualPullback_id`,
+    `basisDualPullback_id_apply`, `basisDualPullback_comp_top`,
+    `basisDualPullback_comp`) are now sorry-free assemblies via
+    `unfold + rw + rfl` and `AddMonoidHom.comp_apply`.
+  - Net 0 sorries; mirrors PushforwardBasis pattern
+    (af653549 + a8778c20 + a1ce4200).
+  - Verified: `lake build Jacobian.TraceDegree.PullbackBasis`
+    (176s, exit 0).
+- **Submitted 2 new packets** for the new bundle-primitive sorries:
+  `6547fde4` (`_id_dualPullback`), `86bef3e0` (`_comp_dualPullback`).
 
 ### Active our-packets after this tick
 
-Still QUEUED / IN_PROGRESS (per `aristotle list`):
+Visible on first page of `aristotle list`:
 
-| ID | File | Sorry | Status |
+| ID | File | Target | Status |
 |---|---|---|---|
-| `e7250841` | CompactRiemannSurface | `holomorphicOneForm_montel_subseq_tendsto` | IN_PROGRESS 5% |
-| `58eb31f0` | CompactRiemannSurface | `holomorphicOneForm_normedSpace_uniformOnCompact` (Step 5) | IN_PROGRESS 27% |
-| `ba57741f` | PushforwardBasis | `pushforwardTraceLift_id_apply_at` (NEW) | QUEUED |
-| `dc58e548` | PushforwardBasis | `pushforwardTraceLift_comp_spec_apply_at` (NEW) | QUEUED |
+| `f3a8e713` | PushforwardBasis | `_comp_traceLift` (bundle) | QUEUED |
+| `6f6f015d` | PushforwardBasis | `_id_traceLift` (bundle) | QUEUED |
+| `9c222f2d` | PeriodFunctional | `period_vectors_linearIndependent_of_symplectic` | QUEUED |
+| `362e259f` | PushforwardBasis | `pushforwardTraceLift_comp` (stale, target sorry-free) | QUEUED |
+| `3683ef39` | PushforwardBasis | `_id_apply_at` (stale, target sorry-free) | QUEUED |
+| `4d0d28d6` | PullbackBasis | `basisDualPullback_comp` (stale after 71a5eaf) | QUEUED |
+| `6547fde4` | PullbackBasis | `_id_dualPullback` (NEW) | SUBMITTED |
+| `86bef3e0` | PullbackBasis | `_comp_dualPullback` (NEW) | SUBMITTED |
 
-Stale packets remaining (target sorry no longer exists post-TOPDOWN
-or discharged locally; left running per memory rule "let them run"):
+Older packets covering CompactRiemannSurface, GenusZeroClassification,
+PeriodFunctional `periodSubgroup_isZLattice`, and AnalyticOfCurveBasis
+sorries are paginated below the first page. Per `aristotle_jobs.jsonl`,
+the open sorries are all covered.
+
+### Stale packets (target sorry sorry-free / renamed; left running)
+
+`362e259f` `3683ef39` `4d0d28d6` (this tick) plus earlier
 `bbe527bb` `c7feba63` `b4029f72` `c910ac80` `27c56154` `f280ecc6`
 `271cc21e` `6c796045` `3d5f379e` `c6c4c612` `d8fd495f` `2bd5f151`
 `b7799fc9` `5f052643` `8585f085` `0a5f74a8` `6b2f47f1` `03715a4d`
 `05100f76`.
-
-### Sub-agents launched this tick (background, worktree-isolated)
-
-- GenusZero L591 sphere homeo (a652c36cfe9703951) — RACING with
-  Aristotle's `fbfe1498`, which Aristotle won and we integrated.
-  Subagent's result will be evaluated when it returns.
-- Montel `subseq_tendsto` (a7b046e5b69cfb1ea) — RACING with
-  Aristotle's `e7250841`.
 
 ## Layer status
 
