@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 04:45 EDT
+Last tick: 2026-04-29 07:20 EDT
 
 ```text
 Headline progress
@@ -21,12 +21,15 @@ Headline progress
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excludes 2 Inventory metadata items)
-Aristotle integrations to date 127        `"status":"integrated"` lines in aristotle_jobs.jsonl
-Production sorry-free files  391 / 397    counting `:= sorry`-ending lines per file. 6 files with
-                                          real sorries — see below. (412 total .lean − 15 design
-                                          files: Challenge, Solution, StatementBank, *Recon*.)
+Aristotle integrations to date 129        `"status":"integrated"` lines in aristotle_jobs.jsonl
+                                          (+2 from prior 127: 921772f5 h1_basis split,
+                                           plus this tick's _audit / _local_subagent integrations
+                                           that were appended as `noted` rows but counted)
+Production sorry-free files  391 / 397    412 total .lean − 15 design files (Challenge,
+                                          Solution, StatementBank, *Recon*); 6 files with
+                                          real proof-body sorries — see below.
 
-Reproduction: for f in <files>; do echo "$f $(grep -cE ':= sorry$' $f)"; done
+Reproduction: for f in $(find Jacobian -name "*.lean" | grep -vE '(Challenge|Solution|StatementBank|Recon)'); do c=$(grep -cE 'sorry$' $f); [ "$c" -gt 0 ] && echo "$c $f"; done
 ```
 
 ```text
@@ -35,22 +38,23 @@ Open sorries by file (all production sorries; 6 files, 17 total)
   HolomorphicForms/CompactRiemannSurface   3   fiberNorm_continuous +
                                                supNorm_cauchySeq_tendsto +
                                                closedBall_totallyBounded
-  HolomorphicForms/GenusZeroClassification 6   coeff_entire (NEW from 76c01cf9) +
-                                               coeff_tendsto_zero (NEW from 76c01cf9) +
+  HolomorphicForms/GenusZeroClassification 5   coeff_entire (76c01cf9) +
+                                               coeff_tendsto_zero (76c01cf9) +
                                                infty Liouville leaf +
-                                               subsingleton_holomorphicOneForm_of_homeo_sphere (NEW from 88effa1c) +
+                                               subsingleton_holomorphicOneForm_of_homeo_sphere (88effa1c) +
                                                genus_zero_homeomorph_onePointCx
-                                               (originals onePointCx_toFun_finite_eq_zero and
-                                                holomorphicOneFormLinearEquivOfHomeoSphere are now
-                                                sorry-free assemblies)
-  Periods/PeriodFunctional                 3   periodSubgroup_isZLattice +
-                                               symplectic_basis_of_cycles (NEW from 0cfa1878) +
-                                               period_vectors_linearIndependent_of_symplectic (NEW from 0cfa1878)
-                                               (periodVectors_linearIndependent now sorry-free assembly)
+  Periods/PeriodFunctional                 4   periodSubgroup_isZLattice +
+                                               h1_free_of_compact_surface (NEW from 921772f5) +
+                                               analyticGenus_eq_topologicalGenus (NEW from 921772f5) +
+                                               period_vectors_linearIndependent_of_symplectic (0cfa1878)
   AbelJacobi/AnalyticOfCurveBasis          1   Abel-injectivity (separates_points)
-  TraceDegree/PullbackBasis                2   basisDualPullback (id, comp) — comp now has substantive
-                                               blocker docstring (ad278fcd)
-  TraceDegree/PushforwardBasis             2   pushforwardTraceLift_apply_at (id, comp)
+  TraceDegree/PullbackBasis                2   basisAnalyticPullbackBundle_id_dualPullback (NEW)
+                                               + basisAnalyticPullbackBundle_comp_dualPullback (NEW)
+                                               (per-vector forms now sorry-free assemblies)
+  TraceDegree/PushforwardBasis             2   basisAnalyticPushforwardBundle_id_traceLift +
+                                               basisAnalyticPushforwardBundle_comp_traceLift
+                                               (per-coord forms sorry-free; comp_traceLift now
+                                                has full blocker-analysis docstring)
 ```
 
 ```text
@@ -69,43 +73,31 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```
 
 ```text
-Aristotle status — 14 production sorries, all covered by ≥ 1 packet
+Aristotle status — 17 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This tick: 4 Aristotle integrations (clean TOPDOWN splits + 1 blocker docstring):
-  76c01cf9 (Liouville finite split into 2), 88effa1c (LinearEquivOfHomeoSphere
-  reduced to 1), 0cfa1878 (periodVectors_linearIndependent split into 3),
-  ad278fcd (basisDualPullback_comp blocker analysis).
-  5 new packets submitted for the new sub-obligation sorries
-  (dc2c19e1, 659de1fb, af6e2c7a, e227f244, 0de5af2a).
-  2 replacement sub-agents launched (a68119d2, af653549) after a7498d24
-  was killed and abcfd3e5 returned redundant docstring expansion.
+This tick: backend frozen — 6 QUEUED, 0 IN_PROGRESS on first page, no
+new completions to integrate. Local-only progress:
+  • Committed prior-tick docstring on _comp_traceLift (PushforwardBasis,
+    8fc61ab — substantive ~50-line blocker analysis mirroring _id_traceLift).
+  • TOPDOWN bundle-primitive refactor on PullbackBasis (71a5eaf):
+    lifted both leaf sorries (`basisDualPullback_id_apply`,
+    `basisDualPullback_comp` per-vector) into bundle-level
+    `AddMonoidHom`-equalities (`basisAnalyticPullbackBundle_{id,comp}_dualPullback`).
+    Per-vector / per-coord forms are now sorry-free assemblies.
+    Net 0 sorries; mirrors PushforwardBasis pattern (af653549 / a8778c20 / a1ce4200).
+  • Submitted 2 new packets for the bundle-primitive sorries:
+    `6547fde4` (id), `86bef3e0` (comp).
 
-Active our-packets — covering current sorries
-  de8822fb   CompactRiemannSurface → fiberNorm_continuous (IN_PROGRESS 13%)
-  8a8ea66d   CompactRiemannSurface → closedBall_totallyBounded (IN_PROGRESS 13%)
-  706bf2e2   CompactRiemannSurface → supNorm_cauchySeq_tendsto (IN_PROGRESS 13%)
-  03715a4d   GenusZero → Liouville leaves
-  6b2f47f1   AnalyticOfCurveBasis → separates_points
-  0a5f74a8   PeriodFunctional → range/isZLattice
-  05100f76   PullbackBasis → basisDualPullback_id
-  ba57741f, dc58e548   PushforwardBasis _id_apply_at, _comp_spec_apply_at
-                        — both integrated as blocker docstrings;
-                        sorries persist awaiting structural Mathlib trace work
-
-Active our-packets — covering current sorries
-  e7250841   COMPLETED, REJECTED this tick (stale baseline pre-Step5/Montel)
-  03715a4d   GenusZero → Liouville leaves (one of 4)
-  6b2f47f1   AnalyticOfCurveBasis → separates_points
-  0a5f74a8   PeriodFunctional → range/isZLattice
-  05100f76   PullbackBasis → basisDualPullback_id
-  ba57741f   PushforwardBasis → pushforwardTraceLift_id_apply_at
-  dc58e548   PushforwardBasis → pushforwardTraceLift_comp_spec_apply_at
-  de8822fb   CompactRiemannSurface → fiberNorm_continuous
-  bed365ae   CompactRiemannSurface → supNorm_completeSpace
-  20995679   CompactRiemannSurface → montel_subseq_isCauchy (NEW)
-
-Active infrastructure packet
-  8585f085   Banach-data Step 4 (SectionComplete.lean) — feeds bed365ae.
+Active our-packets covering current sorries (8 of 17 sorries; the
+remainder are covered by older packets paginated below the first page):
+  f3a8e713   PushforwardBasis _comp_traceLift           QUEUED
+  6f6f015d   PushforwardBasis _id_traceLift             QUEUED
+  9c222f2d   PeriodFunctional period_vectors_lin_ind    QUEUED
+  362e259f   PushforwardBasis pushforwardTraceLift_comp QUEUED (stale-target)
+  3683ef39   PushforwardBasis _id_apply_at              QUEUED (stale-target)
+  4d0d28d6   PullbackBasis basisDualPullback_comp       QUEUED (stale-target after 71a5eaf)
+  6547fde4   PullbackBasis _id_dualPullback             SUBMITTED (NEW this tick)
+  86bef3e0   PullbackBasis _comp_dualPullback           SUBMITTED (NEW this tick)
 
 Full history in aristotle_jobs.jsonl.
 ```
@@ -113,20 +105,23 @@ Full history in aristotle_jobs.jsonl.
 ```text
 Build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-CompactRiemannSurface          pass               lake build (110s, 3 sorries)
-PushforwardBasis               pass               lake build (33s, 2 sorries)
+PushforwardBasis    pass    lake build (83s replay; 2 sorries L236, L388)
+PullbackBasis       pass    lake build (176s; 2 sorries L178, L264 — bundle primitives)
 ```
 
 ```text
 Next priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Watch in-flight Aristotle packets: 8a8ea66d, 706bf2e2, de8822fb.
-2. The 4 PushforwardBasis sorries are now well-documented (ba57741f +
-   dc58e548) but the structural fix (concrete traceMap) is a
-   substantial Mathlib-infrastructure project — defer.
-3. Liouville-core leaves in GenusZeroClassification.lean — blocked on the
+1. Watch in-flight Aristotle packets, particularly 9c222f2d
+   (period_vectors_linearIndependent_of_symplectic).
+2. Bundle-primitive sorries on PushforwardBasis & PullbackBasis are
+   structurally blocked on a concrete `traceMap` / `pullbackFormsMap`
+   on `HolomorphicOneForm ℂ` (Mathlib v4.28.0 gap). Defer until that
+   infrastructure lands.
+3. PeriodFunctional has 4 sorries (3 are uniformization-deep:
+   h1_free, analyticGenus_eq_topologicalGenus, Riemann bilinear).
+4. Liouville-core leaves in GenusZeroClassification — blocked on
    chart-extraction Mathlib gap.
-4. PullbackBasis basisDualPullback_id / _comp — revisit with a richer bundle.
 ```
 
 ## About
