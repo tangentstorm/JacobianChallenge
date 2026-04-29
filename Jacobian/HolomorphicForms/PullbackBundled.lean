@@ -73,9 +73,48 @@ noncomputable def pullbackFormsFunFiber
     (mfderiv (modelWithCornersSelf ℂ ℂ)
              (modelWithCornersSelf ℂ ℂ) f x)
 
-/-- Section-level smoothness of the chain-rule pullback. Lone sorry of
-this file. Bottom-up content: chart-coefficient extraction through the
-cotangent-bundle trivializations; see `ChartCoeffExtractionRecon.lean`. -/
+/-- Section-level smoothness of the chain-rule pullback.
+
+The lone bottom-up obligation of the `PullbackBundled` module:
+smoothness of a `Bundle.ContinuousLinearMap`-valued section formed by
+composing two smooth CLM-bundle sections.
+
+Specifically `pullbackFormsFunFiber f η x = (η.toFun (f x)).comp (mfderiv f x)`
+is the composition (in `→L[ℂ]`) of:
+
+* `mfderiv 𝓘(ℂ,ℂ) 𝓘(ℂ,ℂ) f x : TangentSpace 𝓘(ℂ,ℂ) x →L[ℂ] TangentSpace 𝓘(ℂ,ℂ) (f x)`
+  — smooth in tangent coordinates via `ContMDiffAt.mfderiv_const`.
+* `η.toFun (f x) : TangentSpace 𝓘(ℂ,ℂ) (f x) →L[ℂ] (Bundle.Trivial Y ℂ) (f x)`
+  — smooth as a section of the cotangent bundle along `f`, by
+  composition of `η`'s smoothness with `f`'s smoothness.
+
+#### Mathlib gap
+
+Mathlib v4.28.0 provides `ContMDiff.clm_bundle_apply` (CLM-section applied
+to a vector-section is a vector-section) and the underlying
+`ContMDiffWithinAt.clm_apply_of_inCoordinates` primitive, but it lacks
+the dual-position analogue **`ContMDiff.clm_bundle_compose`** (CLM-section
+composed with a CLM-section is a CLM-section), and likewise lacks
+`ContMDiffWithinAt.clm_compose_of_inCoordinates`.
+
+The proof is symmetric to Mathlib's `clm_apply_of_inCoordinates`: at each
+point, work in trivializations of both the source and target hom-bundles,
+and use `ContinuousLinearMap.compL` smoothness on the chart-image fibers.
+A Mathlib PR adding this primitive (~30 lines mirroring lines 156–202 of
+`Mathlib/Geometry/Manifold/VectorBundle/Hom.lean`) would discharge this
+sorry as a ~10-line assembly applying `clm_bundle_compose` to the smooth
+sections `mfderiv f` and `η ∘ f`.
+
+#### Project status
+
+This is the documented project gap, partially overlapping with
+`ChartCoeffExtractionRecon.lean`. Discharging it requires either:
+1. The Mathlib PR above, or
+2. A project-local proof of `clm_bundle_compose` (in this file or a
+   `Jacobian/HolomorphicForms/CLMBundleCompose.lean` sibling).
+
+Either way, the obligation is now isolated as a single named sorry on a
+clean section-of-a-CLM-bundle smoothness statement. -/
 theorem pullbackFormsFunFiber_contMDiff_section
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ Y) :
