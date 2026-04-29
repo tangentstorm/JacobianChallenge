@@ -182,12 +182,50 @@ theorem analyticPullback_mk_eq
       QuotientAddGroup.mk (basisDualPullback f hf v) :=
   (basisAnalyticPullbackBundle f hf).mk_eq v
 
-/-- Contravariant functoriality of the dual form-pullback on the
+/--
+Contravariant functoriality of the dual form-pullback on the
 covering space: `basisDualPullback (g ∘ f) = basisDualPullback f ∘ basisDualPullback g`.
 
 Bottom-up content: the dual of form-pullback reverses composition.
 This is the lifting of `pullbackFormsFun_comp_apply` to the
-basis-aligned linear maps, then dualization. -/
+basis-aligned linear maps, then dualization.
+
+### Blocker analysis (integrated from Aristotle ad278fcd)
+
+**Goal.** Show that the covering-space dual pullback for `g ∘ f`
+equals the composition of dual pullbacks for `f` and `g`
+(contravariantly), at each covering-space vector.
+
+**Root cause: three independent opaques.** The three
+`basisDualPullback` values appearing in this equation originate
+from three distinct opaque values:
+`basisAnalyticPullbackBundle (g ∘ f) (hg.comp hf)`,
+`basisAnalyticPullbackBundle f hf`, and
+`basisAnalyticPullbackBundle g hg`. Each `opaque` is selected
+independently by `Classical.choice` from the `Inhabited` witness
+(which uses `basisDualPullback := 0`), so Lean has no propositional
+relationship between the three covering-space lifts.
+
+**Why `mk_eq` is insufficient.** The `mk_eq` field of
+`BasisAnalyticPullbackBundle` only gives quotient-level descent
+compatibility, yielding congruence modulo the period lattice — not
+the exact covering-space equality required.
+
+**Why a composition bundle does not resolve it.** Same cross-instance
+opacity issue as `pushforwardTraceLift_comp_spec_apply_at`: a comp
+bundle cannot constrain the per-`(f, hf)` opaques, since
+`basisDualPullback f hf` is defined directly from
+`basisAnalyticPullbackBundle f hf`.
+
+**Mathlib API required to land this:** concrete pullback of
+holomorphic 1-forms `f* : H⁰(Y, Ω¹) → H⁰(X, Ω¹)`, contravariant
+functoriality `(g ∘ f)* = f* ∘ g*`, basis-coordinate matrix
+representation. All absent in v4.28.0.
+
+**Structural change required:** replace the per-`(f, hf)` opaque
+bundle with a concrete (non-opaque) definition built from
+`pullbackFormsMap`. This is the exact dual of the blocker on
+`pushforwardTraceLift_comp_spec_apply_at`. -/
 theorem basisDualPullback_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
