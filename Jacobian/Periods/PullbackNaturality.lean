@@ -307,6 +307,18 @@ theorem periodPairing_pullbackFormsBundledLM_of_add
       (periodPairing ℂ Y).map_add, LinearMap.add_apply, LinearMap.add_apply,
       h_γ, h_δ]
 
+/-- **Natural-scalar special case** of `periodPairing_pullbackFormsBundledLM`. -/
+theorem periodPairing_pullbackFormsBundledLM_of_nsmul
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (n : ℕ) (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
+    (h_nat : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η) :
+    (periodPairing ℂ X (n • γ)) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf (n • γ))) η := by
+  rw [(cyclePushforward f hf).map_nsmul, (periodPairing ℂ X).map_nsmul,
+      (periodPairing ℂ Y).map_nsmul, LinearMap.smul_apply, LinearMap.smul_apply,
+      h_nat]
+
 /-- **Subtraction special case** of `periodPairing_pullbackFormsBundledLM`. -/
 theorem periodPairing_pullbackFormsBundledLM_of_sub
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
