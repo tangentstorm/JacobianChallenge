@@ -1,5 +1,6 @@
 import Jacobian.Periods.PeriodFunctional
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
+import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.Algebra.Category.ModuleCat.Basic
@@ -159,6 +160,64 @@ theorem periodPairing_pullbackFormsBundledLM_zero
       (periodPairing ℂ Y (cyclePushforward f hf 0)) η := by
   rw [(cyclePushforward f hf).map_zero, (periodPairing ℂ X).map_zero,
       (periodPairing ℂ Y).map_zero, LinearMap.zero_apply, LinearMap.zero_apply]
+
+/-! ### Path-level naturality (the underlying mathematical content)
+
+The cycle-level naturality `periodPairing_pullbackFormsBundledLM` is
+gated on:
+
+1. The connection between `opaque periodPairing` and the project's
+   concrete `pathIntegralViaCover` infrastructure (currently absent —
+   they're parallel but unconnected), and
+2. A Stokes argument to descend from path-level to cycle-level (since
+   `IntegralOneCycle X = H₁(X, ℤ)` is a quotient).
+
+Step 2 is the genuine multi-week Stokes content. Step 1 is a
+project-level integration / unification step.
+
+The *path-level* analogue, however, is a pure chain-rule calculation —
+no Stokes needed. It can be stated directly using
+`pathIntegralViaCover` from `Jacobian/Periods/PathIntegralViaCoverPick.lean`,
+and it is the *attackable* part of the discharge chain. We state it
+as a separate named obligation.
+-/
+
+/-- **Path-level naturality**: integrating the form-pullback along a
+path equals integrating the original form along the pushed path.
+
+Mathematical content: chain rule for path integration. For a smooth
+path `γ : Path a b` on `X`, a smooth `f : X → Y`, and a holomorphic
+1-form `η` on `Y`:
+
+  `∫_γ (f^*η) = ∫_{f∘γ} η`
+
+Equivalently: `pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ
+  = pathIntegralViaCover η (γ.map hf.continuous)`.
+
+This is the simpler, attackable refinement of the Stokes-shaped
+cycle-level naturality `periodPairing_pullbackFormsBundledLM`. It does
+*not* require Stokes — only the chain rule for `intervalIntegral`
+applied chart-by-chart through `pathIntegralViaCoverWith`'s definition.
+
+Bottom-up proof outline:
+1. Reduce to `pathIntegralViaCoverWith` form via the `Classical.choose`
+   wrapper.
+2. For each segment, `pathIntegralViaChartCorrect c (f^*η) γ_i =
+   pathIntegralViaChartCorrect (c.transFun f hf) η (γ_i.map hf.continuous)`
+   — the chart-level naturality, where `c.transFun f hf` is the
+   composed chart on `Y`.
+3. The chart-level naturality is a `ChartedFormPullback` calculation
+   plus `curveIntegral`'s `congr` with the chart-transition identity.
+
+The work is substantial but stays within the Mathlib-existing
+single-variable integration toolbox; no new Mathlib-level analysis
+needed. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b) :
+    pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+      pathIntegralViaCover η (γ.map hf.continuous) :=
+  sorry
 
 /-- **Composition assembly** of `periodPairing_pullbackFormsBundledLM`:
 naturality is preserved under composition of maps. If naturality holds
