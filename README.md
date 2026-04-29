@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 12:13 EDT
+Last tick: 2026-04-29 13:34 EDT
 
 ```text
 Headline progress
@@ -75,28 +75,27 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status — 17 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This tick: backend still frozen, sub-agents racing the two newest QUEUED.
-  • Cancelled 362e259f (target `pushforwardTraceLift_comp` is sorry-free
-    locally — clean cancel).
-  • Tried to cancel 4d0d28d6 and 3683ef39 (stale-target packets lifted
-    to bundle primitives by recent TOPDOWN refactors); harness denied
-    both, citing the memory rule "only cancel if already done locally"
-    — lifted ≠ discharged. Both stay running as stale packets.
-  • This tick: added TOPDOWN-plan docstring to
-    `pathIntegralFunctional_separates_points_spec` (Abel injectivity)
-    in AnalyticOfCurveBasis.lean — outlines the classical proof
-    (contradiction + Abel + Riemann-Hurwitz) and decomposes into 2
-    named sub-obligations + sorry-free assembly. Parallel to last
-    tick's `periodSubgroup_isZLattice` plan. Worth executing once a
-    project-internal `Divisor X` / `IsPrincipal d` API exists.
-  • Sub-agents active (worktree-isolated):
-    `ad96003a19385a71c` racing 6547fde4 (`_id_dualPullback`, ~5+ hr;
-      this agent leaked an HEq-field structural fix into main mid-prior-tick
-      which was reverted — the approach is a real candidate but was not
-      integrated this cycle)
-    `aba662f5edc58b055` racing 86bef3e0 (11th audit, expected redundant)
-  • aac9fa55 (Riemann bilinear audit on 9c222f2d) returned "redundant"
-    last tick — confirmed opaque `periodPairing` blocks ℝ-LI proof.
+This tick: backend still frozen.
+  • Killed long-running sub-agent `ad96003a19385a71c` (was hogging CPU
+    with repeated cold-cache mathlib builds in its worktree). Stopped
+    stale lake builds (bgcrmt1ng, bopqkk7ih) from prior ticks.
+  • Re-applied the HEq-field structural fix to PullbackBasis.lean
+    locally (sits in working tree pending build verification). The fix
+    adds a propositional `id_dualPullback_HEq` field to the bundle
+    structure and rewrites the `Inhabited` instance with a 3-way case
+    split, discharging `basisAnalyticPullbackBundle_id_dualPullback`
+    via `eq_of_heq ∘ HEq.rfl`. Build started but did not complete
+    within the tick window (>76 min, likely starved by codex's
+    worktree build on `genus_zero_homeomorph_onePointCx`).
+  • PROMPT.md updated with "no `import Mathlib`" hard constraint
+    (cardinal sin — narrow imports only, every sub-agent prompt must
+    forbid it).
+  • Created `sorry-prompt.md` (gitignored) — work assignment for
+    `basisAnalyticPushforwardBundle_id_traceLift` (Pushforward parallel
+    of the local HEq fix), to be scp'd to a remote machine for an
+    off-host sub-agent.
+  • Codex working on `genus_zero_homeomorph_onePointCx` in its own
+    worktree (per user direction).
 
 Active our-packets after cancellation:
   f3a8e713   PushforwardBasis _comp_traceLift           QUEUED

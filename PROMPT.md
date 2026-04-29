@@ -164,6 +164,16 @@ The timer will call you again.
   `intro`, `apply`, and small helper lemmas.
 - Tell Aristotle not to rely on large `aesop`, `grind`, broad `simp_all`, or
   fragile automation unless the task explicitly justifies it.
+- **Imports are minimal and load-bearing.** `import Mathlib` is a cardinal
+  sin — it pulls in the entire library, blowing up build times by an order
+  of magnitude. Every Aristotle / sub-agent / Codex prompt must explicitly
+  forbid `import Mathlib` and any `import Mathlib.Foo` not strictly required
+  by the proof. New imports must be the narrowest possible
+  `import Mathlib.Topic.Subtopic.SpecificFile`, and only when a needed
+  declaration is genuinely absent from the file's existing imports. Review
+  every retrieved diff for unnecessary imports before integration; if a
+  result adds `import Mathlib` or otherwise broadens the import surface, it
+  is rejected by default.
 - Keep public theorem names and statements stable once they are used by another
   file or Aristotle job.
 - If a statement is too hard, split it. Do not paper over it with axioms in
