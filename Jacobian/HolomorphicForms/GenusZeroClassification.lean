@@ -243,10 +243,30 @@ theorem holomorphicOneForm_coeff_entire
 Blocker (chart-extraction + chart-transition gap): requires the
 inversion-chart formula `g(w) = -f(1/w)/w²` for the cotangent bundle
 and smoothness at `w = 0`. Both absent in v4.28.0. -/
+structure HolomorphicOneFormCoeffTendstoZeroData
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
+  tendsto_coeff_zero :
+    Filter.Tendsto (holomorphicOneForm_coeff ω)
+      (Filter.cocompact ℂ) (nhds 0)
+
+/-- **Opaque data obligation (chart transition at infinity).** The
+identity-chart coefficient tends to zero at infinity.
+
+Bottom-up content: extract the inversion-chart coefficient for a
+`ContMDiffSection` of the cotangent bundle on `OnePoint ℂ`, prove the
+transition formula `g(w) = -f(1 / w) / w²`, and use smoothness at `w = 0`
+to obtain the needed decay of `f` along `cocompact ℂ`. -/
+opaque holomorphicOneFormCoeffTendstoZeroData
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    HolomorphicOneFormCoeffTendstoZeroData ω
+
+/-- **Sub-obligation 2 wrapper (sorry-free).** Extracts the decay of the
+identity-chart coefficient from `holomorphicOneFormCoeffTendstoZeroData`. -/
 theorem holomorphicOneForm_coeff_tendsto_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     Filter.Tendsto (holomorphicOneForm_coeff ω)
-      (Filter.cocompact ℂ) (nhds 0) := by sorry
+      (Filter.cocompact ℂ) (nhds 0) :=
+  (holomorphicOneFormCoeffTendstoZeroData ω).tendsto_coeff_zero
 
 theorem holomorphicOneForm_onePointCx_toFun_finite_eq_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (z : ℂ) :
