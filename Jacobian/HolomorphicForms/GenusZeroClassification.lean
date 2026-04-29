@@ -226,9 +226,19 @@ a holomorphic 1-form on the identity chart of `OnePoint ℂ` is entire.
 Bottom-up content: expose a chart-trivialization API for `ContMDiffSection`
 on the cotangent bundle and identify the coefficient obtained by evaluating
 the local representative at `1 : ℂ`. -/
-opaque holomorphicOneFormCoeffEntireData
+opaque holomorphicOneFormCoeffContDiff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
-    HolomorphicOneFormCoeffEntireData ω
+    ContDiff ℂ (⊤ : WithTop ℕ∞) (holomorphicOneForm_coeff ω)
+
+/-- **Assembly from chart extraction to differentiability.** The actual
+chart-extraction obligation is `holomorphicOneFormCoeffContDiff`; this
+packages the standard `ContDiff.differentiable` consequence needed by
+Liouville. -/
+def holomorphicOneFormCoeffEntireData
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    HolomorphicOneFormCoeffEntireData ω where
+  differentiable_coeff :=
+    (holomorphicOneFormCoeffContDiff ω).differentiable (by simp)
 
 /-- **Sub-obligation 1 wrapper (sorry-free).** Extracts differentiability of
 the identity-chart coefficient from `holomorphicOneFormCoeffEntireData`. -/
