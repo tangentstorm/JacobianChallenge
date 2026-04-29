@@ -344,16 +344,39 @@ structure HolomorphicOneFormOnePointCxInfinityVanishingData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
   infinity_vanishing : ω.toFun (OnePoint.infty : OnePoint ℂ) = 0
 
-/-- **Opaque data obligation (inversion-chart continuity).** A holomorphic
-1-form on `OnePoint ℂ` vanishes at the point at infinity.
+/-- Away from `w = 0` in the inversion chart, the inversion coefficient
+vanishes by the finite-chart Liouville argument. -/
+theorem holomorphicOneForm_inversionCoeff_eq_zero_of_ne_zero
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) {w : ℂ} (hw : w ≠ 0) :
+    holomorphicOneForm_inversionCoeff ω w = 0 := by
+  unfold holomorphicOneForm_inversionCoeff
+  rw [invBwd_ne_zero hw]
+  rw [holomorphicOneForm_onePointCx_toFun_finite_eq_zero]
+  simp only [ContinuousLinearMap.zero_apply]
 
-Bottom-up content: use the inversion-chart local representative, continuity
-of the cotangent-bundle trivialization at `w = 0`, and the finite-chart
-vanishing already proved by Liouville to force the coefficient at infinity to
-be zero. -/
-opaque holomorphicOneFormOnePointCxInfinityVanishingData
+/-- **Removable-singularity leaf.** If the inversion coefficient is
+continuous at `0` and vanishes away from `0`, then the holomorphic 1-form
+vanishes at infinity.
+
+Bottom-up content: convert punctured-neighborhood vanishing plus continuity
+of the inversion-chart coefficient into `g(0) = 0`, then use that a
+continuous linear map `ℂ →L[ℂ] ℂ` is determined by its value on `1`. -/
+opaque holomorphicOneForm_infty_vanishing_of_inversionCoeff
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
+    (∀ {w : ℂ}, w ≠ 0 → holomorphicOneForm_inversionCoeff ω w = 0) →
+    ω.toFun (OnePoint.infty : OnePoint ℂ) = 0
+
+/-- **Assembly for infinity vanishing.** The remaining leaf is the
+removable-singularity step from the inversion coefficient. -/
+def holomorphicOneFormOnePointCxInfinityVanishingData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     HolomorphicOneFormOnePointCxInfinityVanishingData ω
+    where
+  infinity_vanishing :=
+    holomorphicOneForm_infty_vanishing_of_inversionCoeff ω
+      (holomorphicOneFormInversionCoeffContinuousAtZero ω)
+      (fun {w} hw => holomorphicOneForm_inversionCoeff_eq_zero_of_ne_zero ω (w := w) hw)
 
 /-- **Infinity-chart wrapper (sorry-free).** Extracts the vanishing at
 `∞` from `holomorphicOneFormOnePointCxInfinityVanishingData`. -/
