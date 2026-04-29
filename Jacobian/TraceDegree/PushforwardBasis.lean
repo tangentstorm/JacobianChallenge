@@ -328,7 +328,63 @@ Mathlib gap; it is not discharged by `pushforwardTraceLift_comp`. -/
 /-- Bundle-level axiom (integrated from subagent a1ce4200): the three
 opaque bundle values for `f`, `g`, and `g ∘ f` have their
 `pushforwardTraceLift` fields related by composition. Mirrors the
-identity-case primitive `basisAnalyticPushforwardBundle_id_traceLift`. -/
+identity-case primitive `basisAnalyticPushforwardBundle_id_traceLift`.
+
+#### Detailed blocker analysis for the composition case
+
+This sorry is structurally analogous to
+`basisAnalyticPushforwardBundle_id_traceLift` but **strictly harder**
+because it relates *three* independent opaque bundle values, not one:
+
+1. **Three independent `Classical.choice` selections.** The opaque
+   `basisAnalyticPushforwardBundle` is realised by `Classical.choice`
+   on the `Inhabited` witness for each input pair `(map, smoothness)`.
+   The instances `basisAnalyticPushforwardBundle f hf`,
+   `basisAnalyticPushforwardBundle g hg`, and
+   `basisAnalyticPushforwardBundle (g ∘ f) (hg.comp hf)` are *three
+   separate selections*. `opaque` semantics block any definitional
+   unfolding, so even if all three witnesses happened to be `0` (as
+   the `Inhabited` instance would deliver), Lean cannot see through.
+
+2. **Bundle field type carries no comp-axiom.** The structure
+   `BasisAnalyticPushforwardBundle X Y f hf` has no field of the form
+   `comp_lift_spec : ∀ (g : Y → Z) (hg : …), traceLift (g ∘ f) = …`,
+   so the type system gives us nothing. `mk_spec` only states
+   quotient-level descent — applying it across all three bundles and
+   chasing through `mk_surjective` yields equality *modulo* the period
+   subgroup, not the exact covering-space equality required here.
+
+3. **Cross-bundle propositional gap.** Even adding a per-bundle
+   "id-like" field (as proposed for the id case) would not suffice:
+   the comp case asserts a relationship *between distinct triples*
+   of bundles, which a single bundle's fields cannot express. Any
+   structural fix must be three-bundle-aware (e.g. a global
+   `traceMap`-based concretisation, not a bundle field).
+
+4. **Mathlib gap is the same.** As documented for
+   `basisAnalyticPushforwardBundle_id_traceLift`, the missing
+   ingredient is a concrete trace/norm map on holomorphic 1-forms
+   (`traceMap : HolomorphicOneForm ℂ Y →ₗ[ℂ] HolomorphicOneForm ℂ X`)
+   together with `traceMap_comp : traceMap (g ∘ f) = traceMap f ∘ traceMap g`
+   (multiplicativity of the field-theoretic norm). The pinned Mathlib
+   v4.28.0 lacks `Mathlib.Analysis.Complex.RiemannSurface.Trace` and
+   any equivalent.
+
+5. **No tactic-level workaround.** `rfl` fails (opaque values are not
+   definitionally equal across three independent selections),
+   `congr` fails (no congruence of `Classical.choice` across distinct
+   inputs), `simp [basisAnalyticPushforwardBundle]` fails (opaque,
+   no equation lemmas), and `decide` is irrelevant (proposition is
+   not decidable). No combination of `unfold`, `show`, `change`, or
+   `funext` makes progress because the goal exposes three opaque
+   sub-terms with no propositional connection.
+
+**Resolution path.** Replace the `opaque` declaration of
+`basisAnalyticPushforwardBundle` with a `noncomputable def` whose
+`pushforwardTraceLift` is *definitionally* the basis-coordinate
+representation of a concrete trace map on holomorphic 1-forms; then
+this theorem's proof is `traceMap_comp` plus dualisation. That is
+the same upstream change required to discharge the id case. -/
 theorem basisAnalyticPushforwardBundle_comp_traceLift
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
