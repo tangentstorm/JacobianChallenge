@@ -1,9 +1,11 @@
 import Jacobian.HolomorphicForms.Defs
+import Jacobian.HolomorphicForms.CLMBundleCompose
 import Jacobian.TraceDegree.PullbackFun
 import Jacobian.TraceDegree.PullbackFunId
 import Jacobian.TraceDegree.PullbackFunComp
 import Jacobian.TraceDegree.PullbackFormsLinearMap
 import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
+import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import Mathlib.Geometry.Manifold.VectorBundle.SmoothSection
 
 /-!
@@ -121,8 +123,30 @@ theorem pullbackFormsFunFiber_contMDiff_section
     ContMDiff 𝓘(ℂ, ℂ) (𝓘(ℂ, ℂ).prod 𝓘(ℂ, CotangentModelFiber ℂ))
       (⊤ : WithTop ℕ∞)
       (fun x => Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) x
-        (pullbackFormsFunFiber f η x)) :=
-  sorry
+        (pullbackFormsFunFiber f η x)) := by
+  intro x
+  -- Decompose the section's smoothness into base smoothness + in-coords smoothness.
+  rw [contMDiffAt_hom_bundle]
+  refine ⟨contMDiffAt_id, ?_⟩
+  -- Inner factor: mfderiv f, smooth in tangent coordinates.
+  -- Need (⊤ : WithTop ℕ∞) + 1 ≤ ⊤; in WithTop, ⊤ + 1 = ⊤.
+  have htop : (⊤ : WithTop ℕ∞) + 1 ≤ (⊤ : WithTop ℕ∞) := by
+    rw [WithTop.top_add]
+  have hψ_raw := ContMDiffAt.mfderiv_const (I := 𝓘(ℂ, ℂ)) (I' := 𝓘(ℂ, ℂ))
+    (f := f) (n := (⊤ : WithTop ℕ∞)) (hf x) htop
+  -- hψ_raw : ContMDiffAt _ 𝓘(ℂ, ℂ →L[ℂ] ℂ) _
+  --   (inTangentCoordinates 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) id f (mfderiv ...) x) x
+  -- inTangentCoordinates is exactly the inCoordinates form we need.
+  -- Outer factor: η.toFun (f m), smooth as a section of cotangent bundle of Y over f.
+  have hηf : ContMDiffAt 𝓘(ℂ, ℂ) (𝓘(ℂ, ℂ).prod 𝓘(ℂ, ℂ →L[ℂ] ℂ))
+      (⊤ : WithTop ℕ∞)
+      (fun m => Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) (f m)
+        ((η.toFun (f m) : CotangentSpace ℂ Y (f m)))) x :=
+    ((η.contMDiff).comp hf) x
+  rw [contMDiffAt_hom_bundle] at hηf
+  -- hηf.2 : in-coords smoothness of m ↦ η.toFun (f m), with both source/target bases = f.
+  -- Apply the new clm_compose_of_inCoordinates.
+  exact hηf.2.clm_compose_of_inCoordinates hψ_raw contMDiffAt_id (hf x) (hf x)
 
 /-- Bundled pullback of a holomorphic 1-form along a smooth map.
 Concrete (non-opaque): the underlying function is `pullbackFormsFunFiber`
