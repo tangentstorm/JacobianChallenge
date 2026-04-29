@@ -275,6 +275,38 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_comp
   -- (γ.map hf.continuous).map hg.continuous = γ.map (hg.comp hf).continuous.
   rfl
 
+/-- **Negation special case** of `periodPairing_pullbackFormsBundledLM`:
+naturality at `-γ` follows from naturality at `γ` (as a hypothesis)
+since both `cyclePushforward` and `periodPairing` are additive (so
+they negate `-γ` consistently on both sides). Sorry-free assembly. -/
+theorem periodPairing_pullbackFormsBundledLM_of_neg
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
+    (h_nat : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η) :
+    (periodPairing ℂ X (-γ)) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf (-γ))) η := by
+  rw [(cyclePushforward f hf).map_neg, (periodPairing ℂ X).map_neg,
+      (periodPairing ℂ Y).map_neg, LinearMap.neg_apply, LinearMap.neg_apply,
+      h_nat]
+
+/-- **Additivity special case** of `periodPairing_pullbackFormsBundledLM`:
+naturality at `γ + δ` follows from naturality at `γ` and at `δ`
+(as hypotheses) since both `cyclePushforward` and `periodPairing` are
+additive. Sorry-free assembly. -/
+theorem periodPairing_pullbackFormsBundledLM_of_add
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ δ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
+    (h_γ : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η)
+    (h_δ : (periodPairing ℂ X δ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf δ)) η) :
+    (periodPairing ℂ X (γ + δ)) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf (γ + δ))) η := by
+  rw [(cyclePushforward f hf).map_add, (periodPairing ℂ X).map_add,
+      (periodPairing ℂ Y).map_add, LinearMap.add_apply, LinearMap.add_apply,
+      h_γ, h_δ]
+
 /-- **Composition assembly** of `periodPairing_pullbackFormsBundledLM`:
 naturality is preserved under composition of maps. If naturality holds
 for `f` and for `g`, then it holds for `g ∘ f`.
