@@ -179,7 +179,51 @@ Bottom-up: the trace of the identity branched covering (degree 1) is
 the identity on holomorphic 1-forms; dualization preserves this
 pointwise on each basis coordinate.
 
-Blocked at the bundle layer: see the section docstring above. -/
+Blocked at the bundle layer: see the section docstring above.
+
+#### Detailed blocker analysis (integrated from Aristotle ba57741f)
+
+This lemma cannot be proved from the current `opaque` bundle:
+
+1. **Opaque inaccessibility.** `pushforwardTraceLift id contMDiff_id`
+   is defined as
+   `(basisAnalyticPushforwardBundle id contMDiff_id).pushforwardTraceLift`,
+   where `basisAnalyticPushforwardBundle` is `opaque`. An `opaque`
+   value in Lean 4 is uninterpreted — no definitional unfolding is
+   possible, so only properties encoded in its *type* are reachable.
+
+2. **Insufficient type.** The type
+   `BasisAnalyticPushforwardBundle X X id contMDiff_id` does not carry
+   a field asserting `pushforwardTraceLift = AddMonoidHom.id`. The
+   `mk_spec` field only gives quotient-level descent compatibility,
+   which yields `pushforwardTraceLift v ≡ v (mod period lattice)`,
+   not the exact covering-space equality `pushforwardTraceLift v = v`.
+
+3. **Instance diamond blocks enriching the type.** Adding an
+   `id_lift_spec` field parameterised by both `X` and `Y` requires a
+   propositional `Y = X` or `HEq f id` hypothesis. After `subst`, the
+   structure literal carries duplicate typeclass instances on `X`,
+   and Lean rejects with "synthesized type class instance is not
+   definitionally equal to expression inferred by typing rules".
+
+4. **Instance resolution is compile-time.** Replacing `opaque` with
+   `noncomputable def … := default` and a specialised `Inhabited`
+   for the `(X, X, id)` case fails because instance resolution at the
+   definition site uses the general (zero-valued) instance.
+
+**Mathlib API needed to unblock:**
+- A *concrete* (non-opaque) trace/norm map on holomorphic 1-forms,
+  e.g. `traceMap f : HolomorphicOneForm ℂ Y →ₗ[ℂ] HolomorphicOneForm ℂ X`
+  (Mathlib lacks `Mathlib.Analysis.Complex.RiemannSurface.Trace`).
+- Functoriality lemmas `traceMap_id`, `traceMap_comp` (multiplicativity
+  of the field-theoretic norm/trace on branched coverings).
+
+**Structural change required:** replace the current `opaque`
+`basisAnalyticPushforwardBundle` with a `noncomputable def` built
+concretely from `traceMap`, so that `pushforwardTraceLift` is
+*definitionally* the basis-coordinate representation of the trace
+map and the identity/composition axioms reduce to
+`traceMap_id` / `traceMap_comp`. -/
 theorem pushforwardTraceLift_id_apply_at
     (i : Fin (analyticGenus ℂ X)) (v : Fin (analyticGenus ℂ X) → ℂ) :
     pushforwardTraceLift (X := X) (Y := X) id contMDiff_id v i = v i := sorry

@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 00:25 EDT
+Last tick: 2026-04-29 00:50 EDT
 
 ```text
 Headline progress
@@ -21,7 +21,7 @@ Headline progress
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excludes 2 Inventory metadata items)
-Aristotle integrations to date 122        `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 123        `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  391 / 397    counting `:= sorry`-ending lines per file. 6 files with
                                           real sorries — see below. (412 total .lean − 15 design
                                           files: Challenge, Solution, StatementBank, *Recon*.)
@@ -69,28 +69,26 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status — 14 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Rejected this tick (1)
-  bed365ae   Original supNorm_completeSpace packet — stale baseline
-             (predates a8db8a8f subagent + 20995679 Montel TOPDOWN).
-             Returns no proof, just a blocker docstring + destructive
-             Montel revert. Net 0 effect on main.
+Integrated this tick (1, partial)
+  ba57741f   pushforwardTraceLift_id_apply_at — accepted ~60-line
+             blocker analysis docstring (4 structural blockers
+             enumerated: opaque inaccessibility, insufficient bundle
+             type, instance diamond, compile-time instance resolution).
+             Rejected the destructive revert of the dc58e548 blocker
+             docstring (stale-baseline diff).
 
 Active our-packets — covering current sorries
-  ba57741f   PushforwardBasis → pushforwardTraceLift_id_apply_at (IN_PROGRESS 17%)
   de8822fb   CompactRiemannSurface → fiberNorm_continuous (IN_PROGRESS 13%)
-  8a8ea66d   CompactRiemannSurface → closedBall_totallyBounded (IN_PROGRESS 1%)
-  706bf2e2   CompactRiemannSurface → supNorm_cauchySeq_tendsto (IN_PROGRESS 3%)
+  8a8ea66d   CompactRiemannSurface → closedBall_totallyBounded (IN_PROGRESS 11%)
+  706bf2e2   CompactRiemannSurface → supNorm_cauchySeq_tendsto (IN_PROGRESS 13%)
   03715a4d   GenusZero → Liouville leaves
   6b2f47f1   AnalyticOfCurveBasis → separates_points
   0a5f74a8   PeriodFunctional → range/isZLattice
   05100f76   PullbackBasis → basisDualPullback_id
-
-Stale: e7250841 (rejected last tick), bed365ae (rejected this tick),
-  dc58e548 (integrated), 20995679 (integrated).
-
-Sub-agent in flight: a5920caf (was racing now-discharged subseq_isCauchy;
-  result will be evaluated against the new closedBall_totallyBounded
-  sorry on completion).
+  ba57741f   integrated this tick (covered _id_apply_at via docstring;
+             sorry persists awaiting structural change)
+  dc58e548   integrated last tick (covered _comp_spec_apply_at via
+             docstring; sorry persists)
 
 Active our-packets — covering current sorries
   e7250841   COMPLETED, REJECTED this tick (stale baseline pre-Step5/Montel)
@@ -113,19 +111,18 @@ Full history in aristotle_jobs.jsonl.
 ```text
 Build status
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Last commit (0e02ade)          unverified         lake stalled past 10-min capture window
-                                                   (structural assemblies via Tendsto.cauchySeq +
-                                                   Metric.complete_of_cauchySeq_tendsto; verify next tick)
-This tick                      no Lean changes    bookkeeping only (bed365ae rejected)
+Commit 0e02ade (Step 5+Montel)  syntax error → fixed in 59d4c43
+CompactRiemannSurface          pass               lake build (110s, 3 sorries)
+PushforwardBasis               in flight          ba57741f docstring integration verification
 ```
 
 ```text
 Next priorities
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Verify last commit (0e02ade) builds clean.
-2. Watch in-flight Aristotle packets: 8a8ea66d (closedBall_totallyBounded),
-   706bf2e2 (supNorm_cauchySeq_tendsto), de8822fb (fiberNorm_continuous),
-   ba57741f (pushforwardTraceLift_id_apply_at).
+1. Watch in-flight Aristotle packets: 8a8ea66d, 706bf2e2, de8822fb.
+2. The 4 PushforwardBasis sorries are now well-documented (ba57741f +
+   dc58e548) but the structural fix (concrete traceMap) is a
+   substantial Mathlib-infrastructure project — defer.
 3. Liouville-core leaves in GenusZeroClassification.lean — blocked on the
    chart-extraction Mathlib gap.
 4. PullbackBasis basisDualPullback_id / _comp — revisit with a richer bundle.

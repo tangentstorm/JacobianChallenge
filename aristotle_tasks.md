@@ -12,25 +12,26 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 00:25 EDT)
+## Live Status (2026-04-29 00:50 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 14 (unchanged; Montel TOPDOWN this
   tick is net 0).
-- **Aristotle integrations to date: 122** (no integration this tick;
-  bed365ae rejected as stale).
-- **Backend status:** 4 IN_PROGRESS: ba57741f (17%), de8822fb (13%),
-  8a8ea66d (1%), 706bf2e2 (3%). No new completions this tick except
-  bed365ae (rejected).
+- **Aristotle integrations to date: 123** (1 new this tick:
+  `ba57741f` blocker analysis on `_id_apply_at`).
+- **Backend status:** 3 IN_PROGRESS: de8822fb (13%), 8a8ea66d (11%),
+  706bf2e2 (13%). ba57741f just COMPLETE.
 
 ### This tick
 
-- **Rejected** `bed365ae` (original `_supNorm_completeSpace`
-  packet): stale baseline (predates a8db8a8f subagent and 20995679
-  Montel TOPDOWN); returns no proof, only a blocker docstring +
-  destructive Montel revert. No code change in main.
-- Sub-agent `a5920caf` (was racing now-discharged subseq_isCauchy)
-  still running.
+- **Integrated** Aristotle `ba57741f` (Pushforward `_id_apply_at`):
+  accepted the new ~60-line blocker analysis docstring (4
+  enumerated structural blockers); rejected the destructive revert
+  of the dc58e548 docstring on `_comp_spec_apply_at` (stale
+  baseline). Sorry persists; net 0 change in sorry count.
+- **Fixed** the syntax error in commit `0e02ade` (nested `/-- -/`
+  doc-comments) via commit `59d4c43`. CompactRiemannSurface now
+  builds clean.
 
 ### Rejected / skipped this tick
 
