@@ -162,6 +162,24 @@ theorem periodPairing_pullbackFormsBundledLM_zero
   rw [(cyclePushforward f hf).map_zero, (periodPairing ℂ X).map_zero,
       (periodPairing ℂ Y).map_zero, LinearMap.zero_apply, LinearMap.zero_apply]
 
+/-! ### Connection: from path-level naturality to cycle-level naturality
+
+The cycle-level `periodPairing_pullbackFormsBundledLM` would be a
+sorry-free assembly of:
+
+1. The connection `periodPairing_eq_pathIntegralViaCover_descent` —
+   stating that `periodPairing ℂ X γ` as a functional acts as the
+   path/cycle integral via `pathIntegralViaCover`. (Currently a
+   sorry; tied to making `opaque periodPairing` concrete.)
+2. The path-level naturality
+   `pathIntegralViaCover_pullbackFormsBundledLM` (currently a sorry).
+3. The cycle-level pushforward `cyclePushforward` matches the
+   path/cycle pushforward at the level of `pathIntegralViaCover`.
+
+Once items 1 and 2 are proven, the cycle-level naturality follows
+*sorry-free*.
+-/
+
 /-! ### Path-level naturality (the underlying mathematical content)
 
 The cycle-level naturality `periodPairing_pullbackFormsBundledLM` is
