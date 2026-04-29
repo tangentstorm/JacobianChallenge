@@ -80,6 +80,20 @@ the open sorries are all covered.
 `b7799fc9` `5f052643` `8585f085` `0a5f74a8` `6b2f47f1` `03715a4d`
 `05100f76`.
 
+### Sub-agents launched this tick (background, worktree-isolated)
+
+Per PROMPT.md §3 — racing the two newest-submitted QUEUED Aristotle
+packets:
+
+- `ad96003a19385a71c` — racing `6547fde4`
+  (`basisAnalyticPullbackBundle_id_dualPullback`)
+- `a5ded3e9db49ff1f7` — racing `86bef3e0`
+  (`basisAnalyticPullbackBundle_comp_dualPullback`)
+
+Both target the same file but disjoint declarations. Each runs in its
+own git worktree; integration is by cherry-pick of the targeted file
+edit when (and only when) the agent's local `lake build` passes.
+
 ## Layer status
 
 - **Complex torus layer: complete (sorry-free).**
