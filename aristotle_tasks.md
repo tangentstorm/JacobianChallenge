@@ -12,65 +12,80 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-28 09:46 EDT)
+## Live Status (2026-04-28 22:50 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
-  21 production sorries, ~14 covered by active packets (some older
-  packets still in flight may not be visible in `aristotle list`'s
-  top-10 window).
-- **Aristotle integrations to date: 116** (from `aristotle_jobs.jsonl`).
-- **Backend status:** queue saturated since ~08:21 EDT; all 11 visible
-  packets have been QUEUED for 10–95 minutes with **none transitioning
-  to IN_PROGRESS**. The Aristotle backend appears to be offline or
-  heavily backlogged. Treating "Never wait on an Aristotle result"
-  literally: working locally on whatever Claude can close.
+- **Open production sorries:** 13 (down from 15 at tick start).
+- **Aristotle integrations to date: 119** (3 new this tick:
+  `fbfe1498`, `360a05bf`, `bbca4cae`).
+- **Backend status:** alive again — 6 of our packets COMPLETE this
+  tick, 2 IN_PROGRESS, 2 QUEUED. The earlier "saturated/offline"
+  diagnosis was wrong; queue drained between ticks.
 
-### Active our-packets (visible in `aristotle list`)
+### Integrated this tick
 
-| ID | File | Sorry | Submitted |
+- `fbfe1498` (GenusZero L591 sphere homeo) — TOPDOWN split:
+  `onePointCx_homeomorph_sphere` (sorry-free via Mathlib's
+  `onePointEquivSphereOfFinrankEq`) + `genus_zero_homeomorph_onePointCx`
+  (deep uniformization sorry).
+- `360a05bf` (GenusZero L320 analyticGenus eq) — TOPDOWN split:
+  `holomorphicOneFormLinearEquivOfHomeoSphere` (sorry, deep
+  uniformization-lite) + `LinearEquiv.finrank_eq` assembly.
+- `bbca4cae` (PeriodFunctional spans_real) — TOPDOWN split:
+  `periodVectors_linearIndependent` (sorry, Riemann bilinear) +
+  `span_real_eq_top_of_subset_linearIndependent` (sorry-free pure
+  linear algebra in new `Jacobian/Periods/PeriodSpanHelpers.lean`).
+
+### Rejected / skipped this tick
+
+- `5f052643` (PushforwardBasis comp_spec) — REJECTED. Aristotle
+  redefined `analyticPushforward` + `pushforwardTraceLift` as the
+  zero homomorphism placeholder. Provable `_comp_spec` but new sorry
+  on `_id` (provably false for genus > 0). Violates project rule
+  "do not paper over with axioms".
+- `403c9581` (PullbackBasis basisDualPullback_comp) — REJECTED.
+  Aristotle removed bundle fields (`contMDiff_pull`, `degree`,
+  `trace_pullback_spec`) needed by AnalyticDegree's anti-hack #4
+  integration. The actual proof body is just `sorry`, so nothing
+  gained.
+- `e19361c4` (GenusZero — Aristotle's pick) — SKIPPED, duplicate of
+  `fbfe1498` (same target sorry).
+
+### Subagent integrations this tick (worktree-isolated)
+
+- ULiftTransport `_contMDiff_up` + `_contMDiff_down`: substantive
+  proofs (chartedSpace transport via
+  `contMDiffAt_iff_of_mem_source` + `congr_of_eventuallyEq`).
+  Two `.symm` direction errors fixed by Claude. **Net −2 sorries.**
+- PushforwardBasis TOPDOWN refinement: hom-level `_id_apply` /
+  `_comp_spec_apply` are now sorry-free assemblies on smaller
+  per-coordinate `_apply_at` sorries. Net 0 sorry change.
+
+### Active our-packets after this tick
+
+Still QUEUED / IN_PROGRESS (per `aristotle list`):
+
+| ID | File | Sorry | Status |
 |---|---|---|---|
-| `f914a263` | PushforwardBasis | `contMDiff_continuousAddMonoidHom_complexTorus` | 08:21 |
-| `654d5071` | AnalyticOfCurveBasis | `pathIntegralFunctional_contMDiff_spec` | 08:21 |
-| `7f3ec297` | PullbackBasis | `analyticPullback_mk_eq` + `basisDualPullback_comp` paired | 08:23 |
-| `e3dcd529` | PushforwardBasis | `analyticPushforward_mk_spec` | 08:23 |
-| `0a5f74a8` | PeriodFunctional | one of 2 sorries | 09:01 |
-| `03715a4d` | GenusZeroClassification | one of 4 sorries | 09:01 |
-| `05100f76` | PullbackBasis | `basisDualPullback_id` | 09:01 |
-| `b7799fc9` | PushforwardBasis | `pushforwardTraceLift_id` | 09:24 |
-| `6b2f47f1` | AnalyticOfCurveBasis | `pathIntegralFunctional_separates_points_spec` | 09:35 |
+| `e7250841` | CompactRiemannSurface | `holomorphicOneForm_montel_subseq_tendsto` | IN_PROGRESS 5% |
+| `58eb31f0` | CompactRiemannSurface | `holomorphicOneForm_normedSpace_uniformOnCompact` (Step 5) | IN_PROGRESS 27% |
+| `ba57741f` | PushforwardBasis | `pushforwardTraceLift_id_apply_at` (NEW) | QUEUED |
+| `dc58e548` | PushforwardBasis | `pushforwardTraceLift_comp_spec_apply_at` (NEW) | QUEUED |
 
-### Older our-packets (likely still queued; not in top-10 window)
+Stale packets remaining (target sorry no longer exists post-TOPDOWN
+or discharged locally; left running per memory rule "let them run"):
+`bbe527bb` `c7feba63` `b4029f72` `c910ac80` `27c56154` `f280ecc6`
+`271cc21e` `6c796045` `3d5f379e` `c6c4c612` `d8fd495f` `2bd5f151`
+`b7799fc9` `5f052643` `8585f085` `0a5f74a8` `6b2f47f1` `03715a4d`
+`05100f76`.
 
-- `8585f085` Step 4 SectionComplete (Banach-data construction).
-- `bbe527bb` AnalyticDegree anti-hack #4 (now matches the
-  Claude-introduced `_spec` companion, same content).
-- `c7feba63` CompactRiemannSurface `holomorphicOneForm_montel`.
-- `d8fd495f` ULiftTransport `_contMDiff_up`.
-- `2bd5f151` ULiftTransport `_contMDiff_down`.
+### Sub-agents launched this tick (background, worktree-isolated)
 
-### Cancelled this session (replaced by local discharge)
-
-- `c69fcd88` (analyticPullback_id_spec) — local split via
-  `basisDualPullback_id` companion.
-- `369f3f7b` (analyticPullback_contMDiff) — local 1-line application
-  of `contMDiff_continuousAddMonoidHom_complexTorus`.
-- `16277f52` (quotientMk_contMDiff_spec) — local 1-line application
-  of `ComplexTorus.contMDiff_mk` (existing infra).
-- `65001239` (analyticPushforward_id_eq) — local split via
-  `pushforwardTraceLift_id` companion.
-
-### Recent local Claude moves (this session, ordered)
-
-- Integrated 6 Aristotle deeper-companion-spec splits in one cluster:
-  99825c13, 777f976c, 3264c622, a3b5ae84, 09a7e39c, 90fc4a81 —
-  collectively promoted ~6 spec sorries to real assembly proofs.
-- Skipped 2aab5e91 (structural conflict with 99825c13's
-  `basisDualPullback`) and 7f273ec8 (redundant blocker docstring).
-- Local discharges: 4 sorries (listed in Cancelled above).
-- Split `analyticPushforward_analyticPullback` (anti-hack #4) per
-  Option A in its own docstring: introduced `_spec` companion, public
-  lemma is now sorry-free assembly.
-- Submitted 9 new packets for newly-emerged or orphaned sorries.
+- GenusZero L591 sphere homeo (a652c36cfe9703951) — RACING with
+  Aristotle's `fbfe1498`, which Aristotle won and we integrated.
+  Subagent's result will be evaluated when it returns.
+- Montel `subseq_tendsto` (a7b046e5b69cfb1ea) — RACING with
+  Aristotle's `e7250841`.
 
 ## Layer status
 
