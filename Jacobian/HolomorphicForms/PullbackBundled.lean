@@ -58,25 +58,81 @@ variable {Y : Type*} [TopologicalSpace Y] [ChartedSpace ℂ Y]
 variable {Z : Type*} [TopologicalSpace Z] [ChartedSpace ℂ Z]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
 
+/-- The chain-rule pullback of a holomorphic 1-form's value at a point,
+typed natively as a section value in the cotangent fiber of `X` over `x`.
+
+The composition `η.toFun (f x) ∘L mfderiv f x` is *natively* a continuous
+linear map `TangentSpace 𝓘(ℂ,ℂ) x →L[ℂ] TangentSpace 𝓘(ℂ,ℂ) (f x)`, and
+since `(Bundle.Trivial Y ℂ) (f x) = ℂ = (Bundle.Trivial X ℂ) x` (the trivial
+bundle's fiber is the constant `ℂ`), this is precisely the cotangent fiber
+type at `x`. -/
+noncomputable def pullbackFormsFunFiber
+    (f : X → Y) (η : HolomorphicOneForm ℂ Y) (x : X) :
+    CotangentSpace ℂ X x :=
+  (η.toFun (f x)).comp
+    (mfderiv (modelWithCornersSelf ℂ ℂ)
+             (modelWithCornersSelf ℂ ℂ) f x)
+
+/-- Section-level smoothness of the chain-rule pullback. Lone sorry of
+this file. Bottom-up content: chart-coefficient extraction through the
+cotangent-bundle trivializations; see `ChartCoeffExtractionRecon.lean`. -/
+theorem pullbackFormsFunFiber_contMDiff_section
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) :
+    ContMDiff 𝓘(ℂ, ℂ) (𝓘(ℂ, ℂ).prod 𝓘(ℂ, CotangentModelFiber ℂ))
+      (⊤ : WithTop ℕ∞)
+      (fun x => Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) x
+        (pullbackFormsFunFiber f η x)) :=
+  sorry
+
+/-- Bundled pullback of a holomorphic 1-form along a smooth map.
+Concrete (non-opaque): the underlying function is `pullbackFormsFunFiber`
+(natively in the cotangent fiber); smoothness is supplied by
+`pullbackFormsFunFiber_contMDiff_section`. -/
+noncomputable def pullbackFormsBundled
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) :
+    HolomorphicOneForm ℂ X where
+  toFun := pullbackFormsFunFiber f η
+  contMDiff_toFun := pullbackFormsFunFiber_contMDiff_section f hf η
+
 /-- The pullback of holomorphic 1-forms as a ℂ-linear map between the
-form spaces. Bottom-up: opaque pending the project's chart-coefficient
-extraction API (see `ChartCoeffExtractionRecon.lean`). -/
-noncomputable opaque pullbackFormsBundledLM
+form spaces. Concrete (non-opaque). -/
+noncomputable def pullbackFormsBundledLM
     (X Y : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [TopologicalSpace Y] [ChartedSpace ℂ Y]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
-    HolomorphicOneForm ℂ Y →ₗ[ℂ] HolomorphicOneForm ℂ X
+    HolomorphicOneForm ℂ Y →ₗ[ℂ] HolomorphicOneForm ℂ X where
+  toFun η := pullbackFormsBundled f hf η
+  map_add' η ζ := by
+    apply ContMDiffSection.coe_inj
+    funext x
+    show pullbackFormsFunFiber f (η + ζ) x =
+      pullbackFormsFunFiber f η x + pullbackFormsFunFiber f ζ x
+    unfold pullbackFormsFunFiber
+    have hcoe : ((η + ζ) : ∀ y, _) (f x) = (η : ∀ y, _) (f x) + (ζ : ∀ y, _) (f x) := by
+      rw [ContMDiffSection.coe_add]; rfl
+    rw [show (η + ζ).toFun (f x) = η.toFun (f x) + ζ.toFun (f x) from hcoe]
+    exact ContinuousLinearMap.add_comp _ _ _
+  map_smul' k η := by
+    apply ContMDiffSection.coe_inj
+    funext x
+    show pullbackFormsFunFiber f (k • η) x = k • pullbackFormsFunFiber f η x
+    unfold pullbackFormsFunFiber
+    have hcoe : ((k • η) : ∀ y, _) (f x) = k • (η : ∀ y, _) (f x) := by
+      rw [ContMDiffSection.coe_smul]; rfl
+    rw [show (k • η).toFun (f x) = k • η.toFun (f x) from hcoe]
+    exact ContinuousLinearMap.smul_comp k _ _
 
-/-- Section-extraction axiom: the underlying function of the bundled
-pullback agrees with `pullbackFormsFun f η`. Sorry: the project-local
-chart-coefficient API would make this `rfl` for a concrete construction. -/
-theorem pullbackFormsBundledLM_apply_fun
+/-- The underlying function of the bundled pullback, evaluated at a
+point, equals the chain-rule pullback function. Sorry-free: definitional
+via the concrete construction. -/
+@[simp] theorem pullbackFormsBundledLM_apply_fun
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ Y) (x : X) :
-    (pullbackFormsBundledLM X Y f hf η).toFun x = pullbackFormsFun f η x :=
-  sorry
+    (pullbackFormsBundledLM X Y f hf η).toFun x = pullbackFormsFun f η x := rfl
 
 /-- Identity functoriality: pullback of a form along the identity map is
 the form itself. Sorry-free assembly via `pullbackFormsBundledLM_apply_fun`
