@@ -223,10 +223,26 @@ This lemma cannot be proved from the current `opaque` bundle:
 concretely from `traceMap`, so that `pushforwardTraceLift` is
 *definitionally* the basis-coordinate representation of the trace
 map and the identity/composition axioms reduce to
-`traceMap_id` / `traceMap_comp`. -/
+`traceMap_id` / `traceMap_comp`.
+
+#### Bundle-primitive split (integrated from subagent a8778c20 + Aristotle 9b4998a5)
+
+The opaque bundle's identity-case trace lift is now isolated as a
+single `AddMonoidHom`-equality at the bundle field level, replacing
+the per-coordinate split as a more reusable primitive:
+`basisAnalyticPushforwardBundle_id_traceLift` (sorry) below carries
+the residual obligation; `pushforwardTraceLift_id_apply_at` is now
+sorry-free assembly via `unfold pushforwardTraceLift; rw; rfl`. -/
+theorem basisAnalyticPushforwardBundle_id_traceLift :
+    (basisAnalyticPushforwardBundle (X := X) (Y := X) id contMDiff_id).pushforwardTraceLift =
+      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := sorry
+
 theorem pushforwardTraceLift_id_apply_at
     (i : Fin (analyticGenus ℂ X)) (v : Fin (analyticGenus ℂ X) → ℂ) :
-    pushforwardTraceLift (X := X) (Y := X) id contMDiff_id v i = v i := sorry
+    pushforwardTraceLift (X := X) (Y := X) id contMDiff_id v i = v i := by
+  unfold pushforwardTraceLift
+  rw [basisAnalyticPushforwardBundle_id_traceLift]
+  rfl
 
 /-- Deeper companion: the trace lift along `id` is the identity additive
 group homomorphism on the covering space.
@@ -309,19 +325,28 @@ Note: `pushforwardTraceLift_id_apply_at` is left as a separate `sorry`
 because the identity functoriality `Tr(id) = id` is an *independent*
 Mathlib gap; it is not discharged by `pushforwardTraceLift_comp`. -/
 
-/-- Top-level functoriality of the basis-coordinate trace lift:
-`Tr(g ∘ f) = Tr(g) ∘ Tr(f)` as additive group homomorphisms.
+/-- Bundle-level axiom (integrated from subagent a1ce4200): the three
+opaque bundle values for `f`, `g`, and `g ∘ f` have their
+`pushforwardTraceLift` fields related by composition. Mirrors the
+identity-case primitive `basisAnalyticPushforwardBundle_id_traceLift`. -/
+theorem basisAnalyticPushforwardBundle_comp_traceLift
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
+    (basisAnalyticPushforwardBundle (g ∘ f) (hg.comp hf)).pushforwardTraceLift =
+      ((basisAnalyticPushforwardBundle g hg).pushforwardTraceLift).comp
+        (basisAnalyticPushforwardBundle f hf).pushforwardTraceLift :=
+  sorry
 
-This is the project-internal placeholder for the eventual Mathlib
-trace-on-1-forms functoriality lemma (currently absent — see the
-surrounding section docstring). The blocker is real Mathlib
-infrastructure, not a missing local proof tactic. -/
+/-- Top-level functoriality of the basis-coordinate trace lift:
+`Tr(g ∘ f) = Tr(g) ∘ Tr(f)`. Sorry-free: extracts the bundle-level
+axiom `basisAnalyticPushforwardBundle_comp_traceLift` via `unfold`. -/
 theorem pushforwardTraceLift_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     pushforwardTraceLift (g ∘ f) (hg.comp hf) =
-      (pushforwardTraceLift g hg).comp (pushforwardTraceLift f hf) :=
-  sorry
+      (pushforwardTraceLift g hg).comp (pushforwardTraceLift f hf) := by
+  unfold pushforwardTraceLift
+  exact basisAnalyticPushforwardBundle_comp_traceLift f hf g hg
 
 /-- Per-coordinate covariant composition for the trace lift.
 
