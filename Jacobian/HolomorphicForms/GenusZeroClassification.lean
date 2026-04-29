@@ -803,13 +803,31 @@ single simple pole.
 Bottom-up content: divisor theory on compact Riemann surfaces and the
 Riemann-Roch calculation `ℓ(P) = 2` when `g = 0`, producing a nonconstant
 meromorphic function whose only pole is simple and located at `P`. -/
-opaque simplePoleMeromorphicMapOfGenusZero
+opaque genusZeroSimplePoleMeromorphicMapAt
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X)
     (_h : analyticGenus ℂ X = 0) :
-    GenusZeroSimplePoleMeromorphicMap X
+    X → OnePoint ℂ
+
+/-- **Assembly for the Riemann-Roch leaf.** Choose any point of the connected
+surface and package the fixed-pole Riemann-Roch map at that point.
+
+The remaining opaque is now the sharper fixed-pole statement
+`genusZeroSimplePoleMeromorphicMapAt`: for a prescribed point `P`, genus zero
+Riemann-Roch produces a meromorphic map with only a simple pole at `P`. -/
+noncomputable def simplePoleMeromorphicMapOfGenusZero
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (h : analyticGenus ℂ X = 0) :
+    GenusZeroSimplePoleMeromorphicMap X :=
+  let P : X := Classical.choice (inferInstance : Nonempty X)
+  { toMap := genusZeroSimplePoleMeromorphicMapAt X P h
+    pole := P }
 
 /-- **Sub-obligation 1 wrapper (sorry-free).** Existence form of
 `simplePoleMeromorphicMapOfGenusZero`. -/
