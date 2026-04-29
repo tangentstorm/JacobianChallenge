@@ -271,90 +271,96 @@ theorem analyticPushforward_mk_spec
         (pushforwardTraceLift f hf v) :=
   (basisAnalyticPushforwardBundle f hf).mk_spec v
 
-/--
-### Blocker analysis for `pushforwardTraceLift_comp_spec_apply_at`
-(integrated from Aristotle dc58e548)
+/-! ### Functoriality of the trace lift — TOPDOWN split
 
-**Goal.** Show that the covering-space trace lift for `g ∘ f`
-equals the composition of trace lifts for `g` and `f`, at each
-coordinate.
+The opaque bundle `basisAnalyticPushforwardBundle f hf` is selected
+independently by `Classical.choice` for each `(f, hf)`, so Lean has no
+intrinsic propositional relationship between the trace lifts for `f`,
+`g`, and `g ∘ f`. The mathematical relationship — multiplicativity of
+the trace/norm on holomorphic 1-forms (`Tr(g ∘ f) = Tr(g) ∘ Tr(f)` on
+branched coverings) — is currently unavailable in the pinned Mathlib
+(no `Mathlib.Analysis.Complex.RiemannSurface.Trace`).
 
-**Root cause.** The three `pushforwardTraceLift` values appearing in
-this equation originate from *three distinct opaque values*:
-`basisAnalyticPushforwardBundle (g ∘ f) (hg.comp hf)`,
-`basisAnalyticPushforwardBundle f hf`, and
-`basisAnalyticPushforwardBundle g hg`. Each `opaque` is selected
-independently by `Classical.choice`, so Lean has no propositional
-relationship between the three covering-space lifts.
+To improve factoring, we *split* the previous per-coordinate
+`pushforwardTraceLift_comp_spec_apply_at` sorry into:
 
-**Why a composition bundle does not resolve it.** A
-`BasisAnalyticPushforwardCompBundle f hf g hg` carrying its own
-three trace lifts plus a composition axiom can be made `Inhabited`
-with zero maps, but `pushforwardTraceLift f hf` is defined by
-`(basisAnalyticPushforwardBundle f hf).pushforwardTraceLift`, which
-cannot depend on `g`. Re-routing through any canonical companion
-still leaves three different opaque comp-bundle instances whose
-internal lifts are unrelated.
+1. `pushforwardTraceLift_comp` — the single top-level mathematical
+   statement (`AddMonoidHom`-equality between two compositions).
+   This is the exact mathematical content a future concrete
+   construction
+   `pushforwardTraceLift f hf := dualOfTraceMap (traceMapOnForms f hf)`
+   would *prove* via Mathlib's eventual trace-on-1-forms functoriality.
+   It carries the sole residual `sorry` for this functoriality
+   obligation.
 
-**Mathlib API required to land this:**
-- Trace/norm map on differentials of a finite morphism of Riemann
-  surfaces (absent).
-- Holomorphic 1-forms `H⁰(X, Ω¹)` as a finite-dim ℂ-vector space
-  with a basis (absent; project-internal `HolomorphicOneForm` is a
-  placeholder).
-- Functoriality of trace: `Tr(g ∘ f) = Tr(g) ∘ Tr(f)` for branched
-  coverings (absent).
-- Pushforward of 1-forms `f_* : H⁰(X, Ω¹) → H⁰(Y, Ω¹)` via trace
-  (absent).
+2. `pushforwardTraceLift_comp_spec_apply_at` — sorry-free, assembled
+   from `pushforwardTraceLift_comp` by evaluating both sides at `v`
+   and projecting onto coordinate `i`.
 
-**Structural change required.** Replace the per-`(f, hf)` opaque
-bundle with a *concrete* (non-opaque) definition:
-`pushforwardTraceLift f hf := dualOfTraceMap (...) (traceMapOnForms f hf)`
-where `traceMapOnForms f hf : H⁰(Y, Ω¹) →ₗ[ℂ] H⁰(X, Ω¹)` is the
-pullback-then-trace-on-fibres map. Then both
-`pushforwardTraceLift_id_apply_at` and `_comp_spec_apply_at`
-follow from the multiplicativity / identity laws of the trace
-map on 1-forms, which require the substantial new Mathlib
-infrastructure listed above. -/
+3. `pushforwardTraceLift_comp_spec` and `_comp_spec_apply` —
+   sorry-free, direct consequences of `pushforwardTraceLift_comp`.
+
+Net effect on this file: the same number of `sorry`s, but the residual
+sorry now sits on the *top-level* mathematical statement of trace
+multiplicativity rather than on a per-coordinate fragment. Downstream
+proofs (in `analyticPushforward_comp_spec`) factor cleanly through it.
+
+Note: `pushforwardTraceLift_id_apply_at` is left as a separate `sorry`
+because the identity functoriality `Tr(id) = id` is an *independent*
+Mathlib gap; it is not discharged by `pushforwardTraceLift_comp`. -/
+
+/-- Top-level functoriality of the basis-coordinate trace lift:
+`Tr(g ∘ f) = Tr(g) ∘ Tr(f)` as additive group homomorphisms.
+
+This is the project-internal placeholder for the eventual Mathlib
+trace-on-1-forms functoriality lemma (currently absent — see the
+surrounding section docstring). The blocker is real Mathlib
+infrastructure, not a missing local proof tactic. -/
+theorem pushforwardTraceLift_comp
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
+    pushforwardTraceLift (g ∘ f) (hg.comp hf) =
+      (pushforwardTraceLift g hg).comp (pushforwardTraceLift f hf) :=
+  sorry
+
+/-- Per-coordinate covariant composition for the trace lift.
+
+Sorry-free: assembled from the top-level `pushforwardTraceLift_comp`
+by evaluating both sides at `v` and projecting onto coordinate `i`. -/
 theorem pushforwardTraceLift_comp_spec_apply_at
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (v : Fin (analyticGenus ℂ X) → ℂ) (i : Fin (analyticGenus ℂ Z)) :
     pushforwardTraceLift (g ∘ f) (hg.comp hf) v i =
-      pushforwardTraceLift g hg (pushforwardTraceLift f hf v) i := sorry
+      pushforwardTraceLift g hg (pushforwardTraceLift f hf v) i := by
+  have hv : pushforwardTraceLift (g ∘ f) (hg.comp hf) v =
+      pushforwardTraceLift g hg (pushforwardTraceLift f hf v) := by
+    rw [pushforwardTraceLift_comp f hf g hg, AddMonoidHom.comp_apply]
+  rw [hv]
 
 /-- The trace lift is covariantly functorial under composition: the
-trace lift for `g ∘ f` equals the composition of trace lifts for `g`
-and `f`.
+trace lift for `g ∘ f` evaluated at `v` equals the iterated trace-lift
+composition.
 
-Pointwise form: the trace lift for `g ∘ f` evaluated at `v` equals
-the iterated trace-lift composition.
-
-Bottom-up obligation. Provable from the multiplicativity of the
-trace/norm map on holomorphic 1-forms.
-
-Assembled from `pushforwardTraceLift_comp_spec_apply_at` via `funext`. -/
+Sorry-free: direct application of `pushforwardTraceLift_comp` followed
+by `AddMonoidHom.comp_apply`. -/
 theorem pushforwardTraceLift_comp_spec_apply
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (v : Fin (analyticGenus ℂ X) → ℂ) :
     pushforwardTraceLift (g ∘ f) (hg.comp hf) v =
       pushforwardTraceLift g hg (pushforwardTraceLift f hf v) := by
-  funext i
-  exact pushforwardTraceLift_comp_spec_apply_at f hf g hg v i
+  rw [pushforwardTraceLift_comp f hf g hg, AddMonoidHom.comp_apply]
 
 /-- The trace lift is covariantly functorial under composition.
 
-Assembly from `pushforwardTraceLift_comp_spec_apply` via
-`AddMonoidHom.ext`. -/
+Sorry-free: direct application of `pushforwardTraceLift_comp`. -/
 theorem pushforwardTraceLift_comp_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     (pushforwardTraceLift (g ∘ f) (hg.comp hf) : _ →+ _) =
-      (pushforwardTraceLift g hg).comp (pushforwardTraceLift f hf) := by
-  refine AddMonoidHom.ext ?_
-  intro v
-  exact pushforwardTraceLift_comp_spec_apply f hf g hg v
+      (pushforwardTraceLift g hg).comp (pushforwardTraceLift f hf) :=
+  pushforwardTraceLift_comp f hf g hg
 
 /-- Covariant composition specification for the analytic pushforward.
 
