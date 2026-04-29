@@ -307,6 +307,33 @@ theorem periodPairing_pullbackFormsBundledLM_of_add
       (periodPairing ℂ Y).map_add, LinearMap.add_apply, LinearMap.add_apply,
       h_γ, h_δ]
 
+/-- **Subtraction special case** of `periodPairing_pullbackFormsBundledLM`. -/
+theorem periodPairing_pullbackFormsBundledLM_of_sub
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ δ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
+    (h_γ : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η)
+    (h_δ : (periodPairing ℂ X δ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf δ)) η) :
+    (periodPairing ℂ X (γ - δ)) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf (γ - δ))) η := by
+  rw [(cyclePushforward f hf).map_sub, (periodPairing ℂ X).map_sub,
+      (periodPairing ℂ Y).map_sub, LinearMap.sub_apply, LinearMap.sub_apply,
+      h_γ, h_δ]
+
+/-- **Integer-scalar special case** of `periodPairing_pullbackFormsBundledLM`:
+naturality at `n • γ` follows from naturality at `γ` and additivity. -/
+theorem periodPairing_pullbackFormsBundledLM_of_zsmul
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (n : ℤ) (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
+    (h_nat : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η) :
+    (periodPairing ℂ X (n • γ)) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf (n • γ))) η := by
+  rw [(cyclePushforward f hf).map_zsmul, (periodPairing ℂ X).map_zsmul,
+      (periodPairing ℂ Y).map_zsmul, LinearMap.smul_apply, LinearMap.smul_apply,
+      h_nat]
+
 /-- **Composition assembly** of `periodPairing_pullbackFormsBundledLM`:
 naturality is preserved under composition of maps. If naturality holds
 for `f` and for `g`, then it holds for `g ∘ f`.
