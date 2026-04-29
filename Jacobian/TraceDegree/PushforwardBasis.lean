@@ -278,22 +278,82 @@ theorem analyticPushforward_mk_spec_raw
 
 /-- Raw obligation: the descended map is holomorphic.
 
-Bottom-up: smoothness of a `ℂ`-linear-map descent through the period
-quotient. Mathlib has continuity of such a descent
-(`mapClm_continuous`) but no general `ContMDiff.quotient_lift` lemma
-for `QuotientAddGroup` between manifolds. Once the
-project's `MkSmooth` / quotient-charted-space infrastructure proves
-quotient maps are smooth (already partly available via `contMDiff_mk`
-and the project's chart construction), this becomes a sorry-free
-assembly: the lift `pushforwardTraceLiftCLM` is smooth (CLM between
-finite-dim spaces), so the descent is smooth via the universal
-property of the quotient charted-space. -/
+Sorry-free: chart-glue smoothness, mirroring the pattern in
+`Jacobian/ComplexTorus/AddSmooth.lean`. At any `q`, take the chart
+`chart := chartAt _ q`. On `chart.source`, the descent
+`analyticPushforward = mapClm pushforwardTraceLiftCLM` equals
+`mk_Y ∘ pushforwardTraceLiftCLM ∘ chart.toFun`, a composition of
+smooth maps:
+* `chart.toFun` is `ContMDiffOn` on `chart.source` (`contMDiffOn_chart`);
+* `pushforwardTraceLiftCLM` is a continuous linear map between
+  finite-dim spaces, hence `ContMDiff` (`ContinuousLinearMap.contMDiff`);
+* `mk Y _` is `ContMDiff` (`contMDiff_mk`).
+
+The equation on `chart.source` uses `chart.left_inv'` plus
+`mapClm`'s definition (`map_mk`). -/
 theorem analyticPushforward_contMDiff_raw
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
-      (analyticPushforward f hf) :=
-  sorry
+      (analyticPushforward f hf) := by
+  intro q
+  set chartX :=
+    chartAt (Fin (analyticGenus ℂ X) → ℂ) q with chartX_def
+  have hsrc : q ∈ chartX.source := mem_chart_source _ q
+  have hOpen : IsOpen chartX.source := chartX.open_source
+  have hMem : chartX.source ∈ nhds q := hOpen.mem_nhds hsrc
+  -- chart.toFun is ContMDiffOn on chart.source.
+  have hChart :
+      ContMDiffOn (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
+        (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
+        (⊤ : WithTop ℕ∞) chartX chartX.source :=
+    contMDiffOn_chart
+  -- pushforwardTraceLiftCLM is ContMDiff (continuous linear map).
+  have hCLM :
+      ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
+        (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
+        (⊤ : WithTop ℕ∞)
+        (pushforwardTraceLiftCLM f hf) :=
+    (pushforwardTraceLiftCLM f hf).contMDiff
+  -- mk Y is ContMDiff.
+  have hMk :
+      ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
+        (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
+        (⊤ : WithTop ℕ∞)
+        (ComplexTorus.mk (Fin (analyticGenus ℂ Y) → ℂ)
+          (periodFullComplexLattice Y)) :=
+    ComplexTorus.contMDiff_mk (periodFullComplexLattice Y)
+  -- Compose to get the auxiliary smooth function on chart.source.
+  have hComp :
+      ContMDiffOn (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
+        (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
+        (⊤ : WithTop ℕ∞)
+        (fun q' => ComplexTorus.mk _ (periodFullComplexLattice Y)
+          (pushforwardTraceLiftCLM f hf (chartX q')))
+        chartX.source :=
+    (hMk.comp hCLM).comp_contMDiffOn hChart
+  -- On chart.source, analyticPushforward equals the auxiliary.
+  have hEq : ∀ q' ∈ chartX.source,
+      analyticPushforward f hf q' =
+        ComplexTorus.mk _ (periodFullComplexLattice Y)
+          (pushforwardTraceLiftCLM f hf (chartX q')) := by
+    intro q' hq'
+    have hLeft : ComplexTorus.mk _ (periodFullComplexLattice X)
+        (chartX q') = q' := chartX.left_inv' hq'
+    -- Rewrite q' on the LHS as mk (chartX q'), then invoke
+    -- the sorry-free descent compatibility analyticPushforward_mk_spec_raw.
+    conv_lhs => rw [← hLeft]
+    exact analyticPushforward_mk_spec_raw f hf (chartX q')
+  -- ContMDiffOn on chart.source → ContMDiffAt at q.
+  have hOn :
+      ContMDiffOn (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
+        (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
+        (⊤ : WithTop ℕ∞)
+        (analyticPushforward f hf) chartX.source := by
+    refine hComp.congr ?_
+    intro q' hq'
+    exact hEq q' hq'
+  exact hOn.contMDiffAt hMem
 
 /-! ### Sorry-free assemblies: keeping the existing public API
 
