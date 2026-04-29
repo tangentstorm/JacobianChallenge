@@ -77,20 +77,37 @@ Delegates to three named sub-obligations:
 - `period_vectors_mem_subgroup` (membership, definitional — sorry-free)
 - `period_vectors_linearIndependent_of_symplectic` (Riemann bilinear — sorry) -/
 
+/-- **TOPDOWN helper.** H₁(X, ℤ) of a compact connected Riemann surface
+of analytic genus `g` admits a ℤ-basis indexed by `Fin (2g)`.
+
+Mathlib blockers (all absent in v4.28.0):
+- No computation of `singularHomology` for surfaces.
+- No identification of topological genus with analytic genus.
+- Would require: surface classification → CW-structure → cellular
+  chain complex → `H₁ ≅ ℤ^{2g}` → Hodge/de Rham. -/
+theorem h1_basis_of_compact_riemann_surface
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    Nonempty (Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
+      (IntegralOneCycle X)) := by
+  sorry
+
 /-- **Sub-obligation 1.** A compact connected Riemann surface of genus
 `g` has `2g` integral 1-cycles forming a symplectic basis (encodes
 `H₁(X, ℤ) ≅ ℤ^{2g}`).
 
-Mathlib gap: `singularHomologyFunctor` exists but no computation of
-`H_n` for surfaces is available; requires cellular homology /
-Mayer–Vietoris + agreement of topological / analytic genus. -/
+TOPDOWN assembly (Aristotle e227f244): extracts a ℤ-basis from
+`h1_basis_of_compact_riemann_surface` and derives injectivity via
+`LinearIndependent.injective`. -/
 theorem symplectic_basis_of_cycles
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X),
       Function.Injective σ := by
-  sorry
+  obtain ⟨b⟩ := h1_basis_of_compact_riemann_surface X
+  exact ⟨b, b.linearIndependent.injective⟩
 
 /-- **Sub-obligation 2 (sorry-free).** The image of each cycle under
 the period pairing, transported through the basis-aligned dual
