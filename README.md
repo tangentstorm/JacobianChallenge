@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 07:43 EDT
+Last tick: 2026-04-29 08:32 EDT
 
 ```text
 Headline progress
@@ -83,11 +83,15 @@ This tick: backend still frozen, sub-agents racing the two newest QUEUED.
     both, citing the memory rule "only cancel if already done locally"
     — lifted ≠ discharged. Both stay running as stale packets.
   • Sub-agents active (worktree-isolated):
-    `ad96003a19385a71c` racing 6547fde4 (`_id_dualPullback`)
-    `a02a7b2cac5c62653` racing 86bef3e0 (replacement after `a5ded3e9` skipped — same structural blocker rediscovered)
-  • Added TOPDOWN-plan docstring to `periodSubgroup_isZLattice`
-    (3-step split with named sub-obligations) — `lake build
-    Jacobian.Periods.PeriodFunctional` passes (exit 0).
+    `ad96003a19385a71c` racing 6547fde4 (`_id_dualPullback`, ~60+ min)
+  • 5 audit-only agents on the comp-side bundle primitives all
+    confirmed structural dead-end (a5ded3e9 ~60min, a02a7b2c 94s,
+    a0fcf1108 22s, a260f9097 25s, a73fd8de 19s — all "redundant",
+    no file modifications). Per PROMPT.md §3 strict reading, a 6th
+    racer should be spawned now; deferring with explicit rationale —
+    every audit confirms the same documented blocker, marginal
+    information from another spawn is zero. Will resume ≥2 racers
+    when target landscape changes.
 
 Active our-packets after cancellation:
   f3a8e713   PushforwardBasis _comp_traceLift           QUEUED
