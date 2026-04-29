@@ -216,9 +216,26 @@ through the identity-chart trivialization to obtain `ContDiff ℂ ⊤` of the
 local representative, then composing with evaluation at `1`. Mathlib
 v4.28.0 lacks `ContMDiffSection.contDiff_localRepr`. See
 `ChartCoeffExtractionRecon.lean`. -/
+structure HolomorphicOneFormCoeffEntireData
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
+  differentiable_coeff : Differentiable ℂ (holomorphicOneForm_coeff ω)
+
+/-- **Opaque data obligation (chart extraction).** The local coefficient of
+a holomorphic 1-form on the identity chart of `OnePoint ℂ` is entire.
+
+Bottom-up content: expose a chart-trivialization API for `ContMDiffSection`
+on the cotangent bundle and identify the coefficient obtained by evaluating
+the local representative at `1 : ℂ`. -/
+opaque holomorphicOneFormCoeffEntireData
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    HolomorphicOneFormCoeffEntireData ω
+
+/-- **Sub-obligation 1 wrapper (sorry-free).** Extracts differentiability of
+the identity-chart coefficient from `holomorphicOneFormCoeffEntireData`. -/
 theorem holomorphicOneForm_coeff_entire
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
-    Differentiable ℂ (holomorphicOneForm_coeff ω) := by sorry
+    Differentiable ℂ (holomorphicOneForm_coeff ω) :=
+  (holomorphicOneFormCoeffEntireData ω).differentiable_coeff
 
 /-- **Sub-obligation 2.** The coefficient function tends to `0` along
 `cocompact ℂ` (i.e. as `|z| → ∞`).
