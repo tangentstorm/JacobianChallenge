@@ -12,15 +12,16 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 08:32 EDT)
+## Live Status (2026-04-29 08:49 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 17 (unchanged).
 - **Aristotle integrations to date: 129**.
-- **Backend state (first page of `aristotle list`):** 7 QUEUED after
-  this tick's cancellation of 362e259f (f3a8e713, 6f6f015d, 9c222f2d,
-  3683ef39, 4d0d28d6, 6547fde4, 86bef3e0), 2 COMPLETE on first page
-  (921772f5 integrated, a0bddfd5 no-op).
+- **Backend state (first page of `aristotle list`):** 6 QUEUED
+  (f3a8e713, 6f6f015d, 9c222f2d, 3683ef39, 6547fde4, 86bef3e0),
+  3 COMPLETE on first page (921772f5 integrated, a0bddfd5 no-op,
+  4d0d28d6 rejected this tick — stale baseline). 1 CANCELED
+  (362e259f).
 - **Sub-agents:** `ad96003a19385a71c` racing 6547fde4
   (`_id_dualPullback`, still running ~60+ min). 5 audit-only racers
   on the comp-side bundle primitives all returned "redundant" with no
