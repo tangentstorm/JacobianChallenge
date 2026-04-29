@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 13:34 EDT
+Last tick: 2026-04-29 14:30 EDT
 
 ```text
 Headline progress
@@ -75,27 +75,24 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status — 17 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This tick: backend still frozen.
-  • Killed long-running sub-agent `ad96003a19385a71c` (was hogging CPU
-    with repeated cold-cache mathlib builds in its worktree). Stopped
-    stale lake builds (bgcrmt1ng, bopqkk7ih) from prior ticks.
-  • Re-applied the HEq-field structural fix to PullbackBasis.lean
-    locally (sits in working tree pending build verification). The fix
-    adds a propositional `id_dualPullback_HEq` field to the bundle
-    structure and rewrites the `Inhabited` instance with a 3-way case
-    split, discharging `basisAnalyticPullbackBundle_id_dualPullback`
-    via `eq_of_heq ∘ HEq.rfl`. Build started but did not complete
-    within the tick window (>76 min, likely starved by codex's
-    worktree build on `genus_zero_homeomorph_onePointCx`).
-  • PROMPT.md updated with "no `import Mathlib`" hard constraint
-    (cardinal sin — narrow imports only, every sub-agent prompt must
-    forbid it).
-  • Created `sorry-prompt.md` (gitignored) — work assignment for
-    `basisAnalyticPushforwardBundle_id_traceLift` (Pushforward parallel
-    of the local HEq fix), to be scp'd to a remote machine for an
-    off-host sub-agent.
-  • Codex working on `genus_zero_homeomorph_onePointCx` in its own
-    worktree (per user direction).
+This tick: backend still frozen. Backed out the HEq-field structural
+fix attempt on PullbackBasis after recognizing it triggers the same
+instance diamond documented in `diamond-problem.txt`:
+  • The `subst hYX; subst hf_id` pattern produces two distinct
+    typeclass instance bundles on the same type X after substitution;
+    Lean rejects the structure literal with "synthesized type class
+    instance is not definitionally equal".
+  • Reverted `Jacobian/TraceDegree/PullbackBasis.lean` to clean state
+    (working tree now matches origin/main).
+  • Killed sub-agent's stale build was running inside its worktree
+    cache and failing on mathlib modules — confirmed the local HEq
+    attempt was never actually verified.
+  • Rewrote `sorry-prompt.md` (gitignored) with the diamond-aware
+    approach: drop `opaque basisAnalyticPushforwardBundle`, use
+    `noncomputable def` + `Eq.mpr`/`▸` for codomain transport, never
+    `subst` on the type variable. Permits TOPDOWN split with smaller
+    bundle-field sorries.
+  • Codex still working on `genus_zero_homeomorph_onePointCx`.
 
 Active our-packets after cancellation:
   f3a8e713   PushforwardBasis _comp_traceLift           QUEUED

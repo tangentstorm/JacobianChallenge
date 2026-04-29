@@ -12,7 +12,7 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 13:34 EDT)
+## Live Status (2026-04-29 14:30 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 17 (unchanged).
@@ -22,12 +22,13 @@ identify our jobs without inspecting tarballs.
   3 COMPLETE on first page (921772f5 integrated, a0bddfd5 no-op,
   4d0d28d6 rejected this tick — stale baseline). 1 CANCELED
   (362e259f).
-- **Sub-agents:** all local sub-agents stopped this tick. Plan
-  shifting to off-host sub-agents via scp'd work-assignment files
-  (`sorry-prompt.md` is the first such artifact, targeting
-  `basisAnalyticPushforwardBundle_id_traceLift`). The local HEq-field
-  fix on `_id_dualPullback` is in working tree pending build
-  verification; will commit next tick when build returns.
+- **Sub-agents:** local HEq-field fix attempt on PullbackBasis
+  reverted this tick — triggered the instance diamond per
+  `diamond-problem.txt` analysis. Working tree clean. `sorry-prompt.md`
+  rewritten with the diamond-aware approach (`noncomputable def`
+  + `Eq.mpr`/`▸` instead of `subst`) for off-host dispatch on
+  `basisAnalyticPushforwardBundle_id_traceLift`. Codex still racing
+  `genus_zero_homeomorph_onePointCx` in its own worktree.
 
 ### This tick
 
