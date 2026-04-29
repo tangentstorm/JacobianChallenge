@@ -69,24 +69,63 @@ theorem periodSubgroup_isZLattice
         (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
         ((periodPairing ℂ X).range)) := sorry
 
+/-! ### TOPDOWN decomposition of `periodVectors_linearIndependent`
+(integrated from Aristotle 0cfa1878)
+
+Delegates to three named sub-obligations:
+- `symplectic_basis_of_cycles` (homology rank — sorry)
+- `period_vectors_mem_subgroup` (membership, definitional — sorry-free)
+- `period_vectors_linearIndependent_of_symplectic` (Riemann bilinear — sorry) -/
+
+/-- **Sub-obligation 1.** A compact connected Riemann surface of genus
+`g` has `2g` integral 1-cycles forming a symplectic basis (encodes
+`H₁(X, ℤ) ≅ ℤ^{2g}`).
+
+Mathlib gap: `singularHomologyFunctor` exists but no computation of
+`H_n` for surfaces is available; requires cellular homology /
+Mayer–Vietoris + agreement of topological / analytic genus. -/
+theorem symplectic_basis_of_cycles
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    ∃ (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X),
+      Function.Injective σ := by
+  sorry
+
+/-- **Sub-obligation 2 (sorry-free).** The image of each cycle under
+the period pairing, transported through the basis-aligned dual
+equivalence, lies in the period subgroup. Definitional. -/
+theorem period_vectors_mem_subgroup
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X) :
+    ∀ i, (holomorphicOneFormDualEquiv ℂ X) ((periodPairing ℂ X) (σ i))
+      ∈ (AddSubgroup.map
+        (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+        ((periodPairing ℂ X).range) :
+        Set (Fin (analyticGenus ℂ X) → ℂ)) := by
+  exact fun i => AddSubgroup.mem_map_of_mem _ (AddMonoidHom.mem_range.mpr ⟨σ i, rfl⟩)
+
+/-- **Sub-obligation 3.** Given a symplectic basis `{σ i}`, the `2g`
+period vectors are ℝ-linearly independent in `ℂ^g`.
+
+Mathlib gaps (3 independent): wedge product of forms on manifolds;
+Riemann bilinear identity (Stokes on polygon); Kähler/Hodge for
+`∫_X ω ∧ ω̄ > 0`. All absent in v4.28.0. -/
+theorem period_vectors_linearIndependent_of_symplectic
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
+    (hσ : Function.Injective σ) :
+    LinearIndependent ℝ
+      (fun i => (holomorphicOneFormDualEquiv ℂ X)
+        ((periodPairing ℂ X) (σ i))) := by
+  sorry
+
 /-- The period subgroup contains `2g` ℝ-linearly independent vectors.
-
-This is the core analytic content of `periodSubgroup_spans_real`.
-It encodes the Riemann bilinear relations / period matrix full-rank
-theorem for a compact connected Riemann surface.
-
-Proof sketch (classical): choose a symplectic basis
-`{α_i, β_i}` of `H_1(X,ℤ)` and a normalised basis `{ω_j}` of
-`H^0(X, Ω^1)` with `∫_{α_i} ω_j = δ_{ij}`. The period matrix is
-`[I_g | τ]` where `τ_{ij} = ∫_{β_i} ω_j`. By the Riemann bilinear
-relations, `Im(τ)` is positive-definite, so the `2g` columns
-`e_1,…,e_g, τ_1,…,τ_g` are ℝ-linearly independent in `ℂ^g`.
-
-Mathlib v4.28.0 dependencies (all currently `sorry`/`opaque`): the
-`periodPairing` implementation (multi-chart integration + Stokes),
-`H_1(X,ℤ) ≅ ℤ^{2g}` (homology computation for surfaces), and the
-Riemann bilinear relations (`Im(τ) > 0`). See
-`Jacobian/Periods/PeriodVectorsLinearIndependent.lean`. -/
+Now sorry-free assembly of the three sub-obligations above. -/
 theorem periodVectors_linearIndependent
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -97,7 +136,10 @@ theorem periodVectors_linearIndependent
         (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
         ((periodPairing ℂ X).range) :
         Set (Fin (analyticGenus ℂ X) → ℂ)) := by
-  sorry
+  obtain ⟨σ, hσ⟩ := symplectic_basis_of_cycles X
+  exact ⟨fun i => (holomorphicOneFormDualEquiv ℂ X) ((periodPairing ℂ X) (σ i)),
+         period_vectors_linearIndependent_of_symplectic X σ hσ,
+         period_vectors_mem_subgroup X σ⟩
 
 /-- The basis-aligned period subgroup spans the full ℝ-vector space
 `Fin (analyticGenus ℂ X) → ℂ`, viewed as ℝ²ᵍ. Together with

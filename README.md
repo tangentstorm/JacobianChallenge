@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 01:30 EDT
+Last tick: 2026-04-29 01:40 EDT
 
 ```text
 Headline progress
@@ -21,7 +21,7 @@ Headline progress
 Public spec discharged          0 / 24    sorries in Jacobian/Challenge.lean (frozen target)
 StatementBank declarations     22         named decls in Jacobian/WorkPackets/StatementBank.lean
                                           (excludes 2 Inventory metadata items)
-Aristotle integrations to date 123        `"status":"integrated"` lines in aristotle_jobs.jsonl
+Aristotle integrations to date 127        `"status":"integrated"` lines in aristotle_jobs.jsonl
 Production sorry-free files  391 / 397    counting `:= sorry`-ending lines per file. 6 files with
                                           real sorries — see below. (412 total .lean − 15 design
                                           files: Challenge, Solution, StatementBank, *Recon*.)
@@ -30,25 +30,27 @@ Reproduction: for f in <files>; do echo "$f $(grep -cE ':= sorry$' $f)"; done
 ```
 
 ```text
-Open sorries by file (all production sorries; 6 files, 14 total)
+Open sorries by file (all production sorries; 6 files, 17 total)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   HolomorphicForms/CompactRiemannSurface   3   fiberNorm_continuous +
-                                               supNorm_cauchySeq_tendsto (NEW: subagent a8db8a8f split;
-                                                supNorm_completeSpace now sorry-free assembly) +
-                                               closedBall_totallyBounded (NEW: Aristotle 20995679 split;
-                                                montel_subseq_isCauchy and _subseq_tendsto now
+                                               supNorm_cauchySeq_tendsto +
+                                               closedBall_totallyBounded
+  HolomorphicForms/GenusZeroClassification 6   coeff_entire (NEW from 76c01cf9) +
+                                               coeff_tendsto_zero (NEW from 76c01cf9) +
+                                               infty Liouville leaf +
+                                               subsingleton_holomorphicOneForm_of_homeo_sphere (NEW from 88effa1c) +
+                                               genus_zero_homeomorph_onePointCx
+                                               (originals onePointCx_toFun_finite_eq_zero and
+                                                holomorphicOneFormLinearEquivOfHomeoSphere are now
                                                 sorry-free assemblies)
-  HolomorphicForms/GenusZeroClassification 4   finite/infty Liouville leaves +
-                                               uniformization-lite (holomorphicOneFormLinearEquivOfHomeoSphere) +
-                                               deep uniformization (genus_zero_homeomorph_onePointCx)
-  Periods/PeriodFunctional                 2   ZLattice integrality + Riemann-bilinear lin-indep
-                                               (split via PeriodSpanHelpers helper file)
+  Periods/PeriodFunctional                 3   periodSubgroup_isZLattice +
+                                               symplectic_basis_of_cycles (NEW from 0cfa1878) +
+                                               period_vectors_linearIndependent_of_symplectic (NEW from 0cfa1878)
+                                               (periodVectors_linearIndependent now sorry-free assembly)
   AbelJacobi/AnalyticOfCurveBasis          1   Abel-injectivity (separates_points)
-  TraceDegree/PullbackBasis                2   basisDualPullback (id, comp)
-  TraceDegree/PushforwardBasis             2   pushforwardTraceLift_apply_at (id, comp) — pointwise form
-  -----------------------------------------
-  HolomorphicForms/CompactRiemannSurface   ↑   _normedSpace_uniformOnCompact DISCHARGED this tick (Step 5
-                                               assembly via Aristotle 58eb31f0 partial integration)
+  TraceDegree/PullbackBasis                2   basisDualPullback (id, comp) — comp now has substantive
+                                               blocker docstring (ad278fcd)
+  TraceDegree/PushforwardBasis             2   pushforwardTraceLift_apply_at (id, comp)
 ```
 
 ```text
@@ -69,10 +71,14 @@ Substantive total            8 / 20  (40%)   excludes 2 Inventory metadata items
 ```text
 Aristotle status — 14 production sorries, all covered by ≥ 1 packet
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This tick: heartbeat. All 14 sorries covered by active packets after
-  the prior coverage audit. Two new sub-agents launched
-  (abcfd3e5 racing 3b7e5dac, a7498d24 racing 9b4998a5) on the two
-  newest QUEUED PushforwardBasis sub-obligations.
+This tick: 4 Aristotle integrations (clean TOPDOWN splits + 1 blocker docstring):
+  76c01cf9 (Liouville finite split into 2), 88effa1c (LinearEquivOfHomeoSphere
+  reduced to 1), 0cfa1878 (periodVectors_linearIndependent split into 3),
+  ad278fcd (basisDualPullback_comp blocker analysis).
+  5 new packets submitted for the new sub-obligation sorries
+  (dc2c19e1, 659de1fb, af6e2c7a, e227f244, 0de5af2a).
+  2 replacement sub-agents launched (a68119d2, af653549) after a7498d24
+  was killed and abcfd3e5 returned redundant docstring expansion.
 
 Active our-packets — covering current sorries
   de8822fb   CompactRiemannSurface → fiberNorm_continuous (IN_PROGRESS 13%)

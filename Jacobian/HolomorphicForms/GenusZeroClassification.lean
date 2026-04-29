@@ -184,34 +184,61 @@ application, while the infinity-chart leaf is a continuity argument
 Splitting them lets two separate Aristotle/sub-agent jobs target each
 leaf with disjoint reasoning patterns. -/
 
-/-- Vanishing of a holomorphic 1-form on the *finite* chart of
-`OnePoint ℂ`: for every `z : ℂ`, the form evaluates to zero at `↑z`.
+/-!
+### TOPDOWN decomposition for `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
+(integrated from Aristotle 76c01cf9)
 
-**Substantive content (chart-pullback + Liouville).**
-On the identity chart (source `{∞}ᶜ ≅ ℂ`) the section `ω` reads as
-`f(z) · dz` for some `f : ℂ → ℂ`, where `f(z) = (ω.toFun ↑z) 1`
-(the cotangent fiber `CotangentSpace ℂ (OnePoint ℂ) (↑z) = ℂ →L[ℂ] ℂ`
-is determined by its value at `1 : ℂ`).
+The proof is split into two named sub-obligations + sorry-free assembly:
 
-1. `f` is entire: `ω` is `ContMDiff ⊤`, so its trivialization on the
-   identity chart is `ContDiff ℂ ⊤`, and post-composition with
-   evaluation at `1 : ℂ` is differentiable.
-2. `f(z) → 0` as `|z| → ∞`: on the inversion chart `w = 1/z`, the
-   transition sends `f(z) dz` to `g(w) dw` where `g(w) = -f(1/w)/w²`,
-   and smoothness at `w = 0` forces `g(0) = lim_{w → 0} -f(1/w)/w²`
-   finite, hence `f(1/w)·w⁻² → g(0)` and `f(1/w) → 0`.
-3. Liouville: `Differentiable.eq_zero_of_tendsto_zero_cocompact` from
-   `EntireZero.lean` applied to `f` gives `f = 0`, hence
-   `ω.toFun (↑z) = 0` (the zero linear map at `↑z`).
+* `holomorphicOneForm_coeff_entire` — the coefficient function
+  `holomorphicOneForm_coeff ω` is entire (carries the chart-extraction gap).
+* `holomorphicOneForm_coeff_tendsto_zero` — the coefficient function tends
+  to `0` along `cocompact ℂ` (carries the chart-extraction + chart-transition
+  formula gap).
 
-**Mathlib gap:** the chart-pullback formula is not user-facing in
-Mathlib v4.28.0. Specifically there is no lemma reading a
-`ContMDiffSection` of `Bundle.ContinuousLinearMap` (the cotangent bundle)
-through chart trivializations, nor a chart-transition formula for the
-cotangent bundle in user-facing form. -/
+Assembly: apply `Differentiable.eq_zero_of_tendsto_zero_cocompact` (Liouville)
+to `holomorphicOneForm_coeff ω`, then `ω.toFun (↑z) = 0` follows because
+`ℂ →L[ℂ] ℂ` is determined by its value at `1` (via `ext`).
+-/
+
+/-- The chart-local coefficient of a holomorphic 1-form on `OnePoint ℂ`
+in the identity chart: `f(z) = (ω.toFun ↑z) 1`. -/
+noncomputable def holomorphicOneForm_coeff
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
+  fun z => ω.toFun (↑z : OnePoint ℂ)
+    (show TangentSpace (modelWithCornersSelf ℂ ℂ) (↑z : OnePoint ℂ) from (1 : ℂ))
+
+/-- **Sub-obligation 1.** The coefficient function is entire.
+
+Blocker (chart-extraction gap): requires reading the `ContMDiff ⊤` section
+through the identity-chart trivialization to obtain `ContDiff ℂ ⊤` of the
+local representative, then composing with evaluation at `1`. Mathlib
+v4.28.0 lacks `ContMDiffSection.contDiff_localRepr`. See
+`ChartCoeffExtractionRecon.lean`. -/
+theorem holomorphicOneForm_coeff_entire
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    Differentiable ℂ (holomorphicOneForm_coeff ω) := by sorry
+
+/-- **Sub-obligation 2.** The coefficient function tends to `0` along
+`cocompact ℂ` (i.e. as `|z| → ∞`).
+
+Blocker (chart-extraction + chart-transition gap): requires the
+inversion-chart formula `g(w) = -f(1/w)/w²` for the cotangent bundle
+and smoothness at `w = 0`. Both absent in v4.28.0. -/
+theorem holomorphicOneForm_coeff_tendsto_zero
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    Filter.Tendsto (holomorphicOneForm_coeff ω)
+      (Filter.cocompact ℂ) (nhds 0) := by sorry
+
 theorem holomorphicOneForm_onePointCx_toFun_finite_eq_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (z : ℂ) :
-    ω.toFun (↑z : OnePoint ℂ) = 0 := sorry
+    ω.toFun (↑z : OnePoint ℂ) = 0 := by
+  have hzero : holomorphicOneForm_coeff ω = 0 :=
+    (holomorphicOneForm_coeff_entire ω).eq_zero_of_tendsto_zero_cocompact
+      (holomorphicOneForm_coeff_tendsto_zero ω)
+  ext
+  simp only [ContinuousLinearMap.zero_apply]
+  exact congr_fun hzero z
 
 /-- Vanishing of a holomorphic 1-form at the point at infinity of
 `OnePoint ℂ`.
@@ -290,17 +317,46 @@ theorem analyticGenus_onePointCx_eq_zero :
     holomorphicOneForm_onePointCx_subsingleton
   exact analyticGenus_eq_zero_of_subsingleton
 
+/-!
+### TOPDOWN decomposition of `holomorphicOneFormLinearEquivOfHomeoSphere`
+(integrated from Aristotle 88effa1c)
+
+Reduced to a single sub-obligation
+`subsingleton_holomorphicOneForm_of_homeo_sphere`. The linear
+equivalence is then constructed via `LinearEquiv.ofSubsingleton`,
+using the existing `holomorphicOneForm_onePointCx_subsingleton` for
+the codomain.
+
+Mathlib gaps for the sub-obligation: uniformization at genus 0,
+pullback of holomorphic 1-forms along biholomorphisms, simply-connected
+instance for `Metric.sphere` / `OnePoint ℂ`. All absent in v4.28.0.
+-/
+
+/-- **Sub-obligation (uniformization-lite core).** A compact connected
+Riemann surface homeomorphic to S² has a subsingleton space of
+holomorphic 1-forms.
+
+This is the deep content: the homeomorphism to S² combined with
+uniqueness of complex structure on S² (uniformization at genus 0)
+implies X is biholomorphic to `OnePoint ℂ ≃ ℂℙ¹`, which has
+`H⁰(Ω¹) = 0`. -/
+theorem subsingleton_holomorphicOneForm_of_homeo_sphere
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
+    Subsingleton (HolomorphicOneForm ℂ X) := by
+  sorry
+
 /-- **Bottom-up obligation (uniformization-lite).** A compact connected
 Riemann surface `X` homeomorphic to the standard 2-sphere `S²` admits
 a ℂ-linear equivalence between its space of holomorphic 1-forms and
-that of `OnePoint ℂ` (≃ ℂℙ¹).
+that of `OnePoint ℂ`.
 
-Mathlib gap: requires the genus-0 case of uniformization (every
-compact connected Riemann surface homeomorphic to `S²` is
-biholomorphic to `ℂℙ¹`) and a holomorphic-form pullback API along
-biholomorphisms. Mathlib v4.28.0 has neither: no uniformization, no
-`ℂℙ¹` as a complex manifold, no `Biholomorphism` type, and no
-`HolomorphicOneForm.linearEquivOfBiholomorphism`. -/
+Reduced to `subsingleton_holomorphicOneForm_of_homeo_sphere` (the sole
+remaining sorry) plus `holomorphicOneForm_onePointCx_subsingleton`
+(sorry-free), assembled via `LinearEquiv.ofSubsingleton`. -/
 noncomputable def holomorphicOneFormLinearEquivOfHomeoSphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -308,7 +364,11 @@ noncomputable def holomorphicOneFormLinearEquivOfHomeoSphere
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ) := by
-  sorry
+  haveI : Subsingleton (HolomorphicOneForm ℂ X) :=
+    subsingleton_holomorphicOneForm_of_homeo_sphere X _h
+  haveI : Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=
+    holomorphicOneForm_onePointCx_subsingleton
+  exact LinearEquiv.ofSubsingleton _ _
 
 /-- Transport step: a compact Riemann surface `X` homeomorphic to the
 standard 2-sphere has the same analytic genus as `OnePoint ℂ`.

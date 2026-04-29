@@ -12,26 +12,43 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 01:30 EDT)
+## Live Status (2026-04-29 01:40 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
-- **Open production sorries:** 14 (unchanged; Montel TOPDOWN this
-  tick is net 0).
-- **Aristotle integrations to date: 123** (no integration this tick).
-- **Backend status:** 4 IN_PROGRESS (8a8ea66d 17%, 706bf2e2 13%,
-  76c01cf9 2%, c2a57d71 4%); 5 QUEUED (3b7e5dac, 9b4998a5,
-  ad278fcd, 0cfa1878, 88effa1c). de8822fb visible last tick at 13%
-  not in current top-10 — likely still IN_PROGRESS in deeper page.
-- **Local sub-agents:** 2 racing (abcfd3e5 on `_comp_spec_apply_at`,
-  a7498d24 on `_id_apply_at`).
+- **Open production sorries:** 17 (was 14; +3 net from this tick's
+  three TOPDOWN splits each adding 1 named sub-obligation).
+- **Aristotle integrations to date: 127** (4 new this tick:
+  76c01cf9, 88effa1c, 0cfa1878, ad278fcd).
+- **Backend status:** 4 IN_PROGRESS (c2a57d71 47%, 8a8ea66d 17%,
+  706bf2e2 15%, plus de8822fb deeper); 2 QUEUED (3b7e5dac,
+  9b4998a5); 5 NEW just submitted (dc2c19e1, 659de1fb, af6e2c7a,
+  e227f244, 0de5af2a) for the new sub-obligation sorries.
+- **Local sub-agents:** 2 just launched (a68119d2 racing
+  pushforwardTraceLift_id_apply_at, af653549 racing
+  pushforwardTraceLift_comp_spec_apply_at).
 
 ### This tick
 
-- Heartbeat. All 14 sorries have ≥1 active packet (10 in flight
-  visible in top-10, plus older de8822fb, 0a5f74a8, 03715a4d,
-  05100f76, 6b2f47f1, 7f273ec8 deeper in the queue history).
-- Two sub-agents launched on the two newest QUEUED packets per
-  PROMPT.md §3 rule.
+- **Integrated 4 Aristotle results** (3 TOPDOWN splits + 1 blocker
+  analysis):
+  - `76c01cf9` Liouville finite leaf → split into `coeff_entire`
+    (chart-extraction sorry) + `coeff_tendsto_zero` (chart-transition
+    sorry) + sorry-free assembly via Liouville.
+  - `88effa1c` `LinearEquivOfHomeoSphere` → reduced to single sorry
+    on `subsingleton_holomorphicOneForm_of_homeo_sphere` + sorry-free
+    assembly via `LinearEquiv.ofSubsingleton`.
+  - `0cfa1878` `periodVectors_linearIndependent` → split into 3
+    sub-obligations (`symplectic_basis_of_cycles` sorry,
+    `period_vectors_mem_subgroup` sorry-free,
+    `period_vectors_linearIndependent_of_symplectic` sorry).
+  - `ad278fcd` `basisDualPullback_comp` → ~50-line blocker analysis
+    docstring mirroring the `pushforwardTraceLift_comp_spec_apply_at`
+    analysis.
+- **Submitted 5 new packets** for the new sub-obligation sorries:
+  `dc2c19e1`, `659de1fb`, `af6e2c7a`, `e227f244`, `0de5af2a`.
+- **Sub-agent status:** abcfd3e5 returned a redundant docstring
+  expansion (skipped); a7498d24 was killed externally. Spawned 2
+  replacements: `a68119d2`, `af653549`.
 
 ### Rejected / skipped this tick
 
