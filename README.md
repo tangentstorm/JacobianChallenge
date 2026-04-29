@@ -13,7 +13,7 @@ A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann su
 
 ## Progress Report
 
-Last tick: 2026-04-29 10:49 EDT
+Last tick: 2026-04-29 12:13 EDT
 
 ```text
 Headline progress
@@ -90,10 +90,13 @@ This tick: backend still frozen, sub-agents racing the two newest QUEUED.
     tick's `periodSubgroup_isZLattice` plan. Worth executing once a
     project-internal `Divisor X` / `IsPrincipal d` API exists.
   • Sub-agents active (worktree-isolated):
-    `ad96003a19385a71c` racing 6547fde4 (`_id_dualPullback`, ~4+ hr)
-    `aac9fa55b59cbbf8a` racing 9c222f2d (period_vectors Riemann bilinear)
-      — pivoted from comp-side after 10 audits all returned "redundant"
-  • Comp-side dead-end exhaustively documented.
+    `ad96003a19385a71c` racing 6547fde4 (`_id_dualPullback`, ~5+ hr;
+      this agent leaked an HEq-field structural fix into main mid-prior-tick
+      which was reverted — the approach is a real candidate but was not
+      integrated this cycle)
+    `aba662f5edc58b055` racing 86bef3e0 (11th audit, expected redundant)
+  • aac9fa55 (Riemann bilinear audit on 9c222f2d) returned "redundant"
+    last tick — confirmed opaque `periodPairing` blocks ℝ-LI proof.
 
 Active our-packets after cancellation:
   f3a8e713   PushforwardBasis _comp_traceLift           QUEUED

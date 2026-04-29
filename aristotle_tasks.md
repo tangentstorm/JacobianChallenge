@@ -12,7 +12,7 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 10:49 EDT)
+## Live Status (2026-04-29 12:13 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 17 (unchanged).
@@ -23,12 +23,11 @@ identify our jobs without inspecting tarballs.
   4d0d28d6 rejected this tick — stale baseline). 1 CANCELED
   (362e259f).
 - **Sub-agents:** `ad96003a19385a71c` racing 6547fde4
-  (`_id_dualPullback`, ~4+ hr). After 10 comp-side audits all
-  returned "redundant", pivoted second slot to substantively
-  different territory: `aac9fa55b59cbbf8a` racing 9c222f2d
-  (`period_vectors_linearIndependent_of_symplectic`, Riemann
-  bilinear / Hodge content). Same audit-only prompt; uncharted
-  problem class.
+  (`_id_dualPullback`, ~5+ hr — leaked an HEq-field structural fix
+  into main last tick; reverted by user/harness). 11th audit racer
+  `aba662f5edc58b055` on 86bef3e0 per user reminder. The Riemann-
+  bilinear audit (`aac9fa55`) confirmed `period_vectors_lin_ind` is
+  also blocked (opaque `periodPairing` exposes no nondegeneracy).
 
 ### This tick
 
