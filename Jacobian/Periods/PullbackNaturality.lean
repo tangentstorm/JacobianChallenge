@@ -95,11 +95,40 @@ For `γ ∈ H₁(X, ℤ)` and `η ∈ H⁰(Y, Ω¹)`:
   `(periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) = (periodPairing ℂ Y (cyclePushforward f hf γ)) η`
 
 Mathematically: integrate-then-pull-back equals push-cycle-forward-then-integrate.
-A change-of-variable / Stokes calculation; the geometric content lives here.
 
-Bottom-up: requires multi-chart path integration and either Stokes
-(if cycles are paths) or chain-level naturality (if cycles are
-singular chains). Mathlib v4.28.0 has neither for manifolds. -/
+#### What discharging this sorry requires
+
+Currently `periodPairing` is `opaque` (in `Jacobian/Periods/PeriodFunctional.lean`).
+For the general naturality identity, we need *either* of:
+
+1. **A concrete `periodPairing` definition** built from chart-local
+   path integration (the project's `Jacobian/Periods/PathIntegral*` work,
+   incomplete in v4.28.0). Once concrete, naturality reduces to the
+   chain-rule for integration: `∫_γ (f^*η) = ∫_{f∘γ} η`, applied
+   simplex-by-simplex, then descended through the H₁ quotient.
+
+2. **A chain-level naturality companion** added alongside the
+   `opaque periodPairing`: a separate (smaller, isolated) sorry stating
+   that `periodPairing` factors through a *chain-level* pairing
+   `chainFormPairing : SingularChain X → ...` for which the chain-level
+   naturality is direct. This refactors the file without changing the
+   total sorry count, but exposes the chain-level naturality as a
+   smaller named obligation.
+
+#### Already-proven special cases (in this file)
+
+* `periodPairing_pullbackFormsBundledLM_id` — naturality at `f = id`
+  (identity-functoriality, trivial via `pullbackFormsBundledLM_id` +
+  `cyclePushforward_id`).
+* `periodPairing_pullbackFormsBundledLM_zero` — naturality at γ = 0
+  (additive zero, trivial via `map_zero`).
+* `periodPairing_pullbackFormsBundledLM_of_comp` — composition assembly
+  (if naturality holds for `f` and `g`, it holds for `g ∘ f`).
+
+These don't reduce the sorry count, but they prove the structural
+implications that the general statement *would* have, exposing that
+the genuine geometric content is the per-map per-cycle base case
+(integration / Stokes). -/
 theorem periodPairing_pullbackFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y) :
