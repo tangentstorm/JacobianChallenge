@@ -12,18 +12,19 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 07:20 EDT)
+## Live Status (2026-04-29 07:37 EDT)
 
 - **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
-- **Open production sorries:** 17 (unchanged from prior tick; this
-  tick's PullbackBasis TOPDOWN refactor was net 0 — lifted 2 per-vector
-  sorries to bundle-level sorries).
+- **Open production sorries:** 17 (unchanged).
 - **Aristotle integrations to date: 129**.
-- **Backend state (first page of `aristotle list`):** 6 QUEUED
-  (f3a8e713, 6f6f015d, 9c222f2d, 362e259f, 3683ef39, 4d0d28d6),
-  4 COMPLETE (921772f5 integrated, a0bddfd5 no-op, 0de5af2a stale,
-  e227f244 integrated). 2 NEW just submitted this tick: 6547fde4
-  and 86bef3e0 for the PullbackBasis bundle-primitive sorries.
+- **Backend state (first page of `aristotle list`):** 7 QUEUED after
+  this tick's cancellation of 362e259f (f3a8e713, 6f6f015d, 9c222f2d,
+  3683ef39, 4d0d28d6, 6547fde4, 86bef3e0), 2 COMPLETE on first page
+  (921772f5 integrated, a0bddfd5 no-op).
+- **Sub-agents:** `ad96003a19385a71c` and `a5ded3e9db49ff1f7` racing
+  the two newest QUEUED bundle-primitive sorries (PullbackBasis
+  `_id_dualPullback`, `_comp_dualPullback`). Launched 2026-04-29
+  07:32 EDT; still running.
 
 ### This tick
 
