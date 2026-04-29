@@ -304,6 +304,45 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_add_form
       pathIntegralViaCover (η + ζ) (γ.map hf.continuous) := by
   rw [h_add_X, h_add_Y, h_η, h_ζ]
 
+/-- **Form-smul conditional case**: naturality at `k • η` follows from
+naturality at `η` plus smul-compatibility of `pathIntegralViaCover`.
+The latter exists at `_With` level
+(`pathIntegralViaCoverWith_smul`); un-`With` lift is conditional. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_of_smul_form
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
+    (k : ℂ) (η : HolomorphicOneForm ℂ Y)
+    (h_η : pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+      pathIntegralViaCover η (γ.map hf.continuous))
+    (h_smul_X : pathIntegralViaCover
+        (pullbackFormsBundledLM X Y f hf (k • η)) γ =
+      k • pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ)
+    (h_smul_Y : pathIntegralViaCover (k • η) (γ.map hf.continuous) =
+      k • pathIntegralViaCover η (γ.map hf.continuous)) :
+    pathIntegralViaCover
+        (pullbackFormsBundledLM X Y f hf (k • η)) γ =
+      pathIntegralViaCover (k • η) (γ.map hf.continuous) := by
+  rw [h_smul_X, h_η, h_smul_Y]
+
+/-- **Form-neg case**: naturality at `-η` follows from naturality at
+`η`, since both sides commute with `Neg`. The neg-compatibility is
+unconditionally provable from the additive structure of forms +
+`pathIntegralViaCover`-additivity (when available). Stated
+conditionally for now. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_of_neg_form
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
+    (η : HolomorphicOneForm ℂ Y)
+    (h_η : pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+      pathIntegralViaCover η (γ.map hf.continuous))
+    (h_neg_X : pathIntegralViaCover
+        (pullbackFormsBundledLM X Y f hf (-η)) γ =
+      - pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ)
+    (h_neg_Y : pathIntegralViaCover (-η) (γ.map hf.continuous) =
+      - pathIntegralViaCover η (γ.map hf.continuous)) :
+    pathIntegralViaCover
+        (pullbackFormsBundledLM X Y f hf (-η)) γ =
+      pathIntegralViaCover (-η) (γ.map hf.continuous) := by
+  rw [h_neg_X, h_η, h_neg_Y]
+
 /-- **Concatenated path conditional special case** of path-level
 naturality: naturality at `γ.trans γ'` follows from naturality at `γ`
 and `γ'` (as hypotheses), via `Path.map_trans` (which states
