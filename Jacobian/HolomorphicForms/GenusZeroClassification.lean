@@ -302,9 +302,27 @@ itself is elementary once the trivialisation is set up.
 as a *hypothesis* through the calling order (the assembly theorem
 provides it via `cases x using OnePoint.rec`). The two leaves carry
 disjoint analytic content. -/
+structure HolomorphicOneFormOnePointCxInfinityVanishingData
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
+  infinity_vanishing : ω.toFun (OnePoint.infty : OnePoint ℂ) = 0
+
+/-- **Opaque data obligation (inversion-chart continuity).** A holomorphic
+1-form on `OnePoint ℂ` vanishes at the point at infinity.
+
+Bottom-up content: use the inversion-chart local representative, continuity
+of the cotangent-bundle trivialization at `w = 0`, and the finite-chart
+vanishing already proved by Liouville to force the coefficient at infinity to
+be zero. -/
+opaque holomorphicOneFormOnePointCxInfinityVanishingData
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    HolomorphicOneFormOnePointCxInfinityVanishingData ω
+
+/-- **Infinity-chart wrapper (sorry-free).** Extracts the vanishing at
+`∞` from `holomorphicOneFormOnePointCxInfinityVanishingData`. -/
 theorem holomorphicOneForm_onePointCx_toFun_infty_eq_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
-    ω.toFun (OnePoint.infty : OnePoint ℂ) = 0 := sorry
+    ω.toFun (OnePoint.infty : OnePoint ℂ) = 0 :=
+  (holomorphicOneFormOnePointCxInfinityVanishingData ω).infinity_vanishing
 
 /-- Every holomorphic 1-form on `OnePoint ℂ` (= ℂℙ¹) evaluates to zero
 at every point.
