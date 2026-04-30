@@ -282,6 +282,26 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_zero
         (γ.map hf.continuous) := by
   rw [LinearMap.map_zero, pathIntegralViaCover_zero, pathIntegralViaCover_zero]
 
+/-- **Form-negation independent special case**: the path-pullback of
+`-η` along `γ` (without naturality) equals the negation of the path-pullback
+of `η`. **Unconditional** via `LinearMap.map_neg` + `pathIntegralViaCover_neg`. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_neg
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b) :
+    pathIntegralViaCover (pullbackFormsBundledLM X Y f hf (-η)) γ =
+      - pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ := by
+  rw [map_neg, pathIntegralViaCover_neg]
+
+/-- **Form-scalar-mul independent special case**: the path-pullback of
+`k • η` along `γ` (without naturality) equals `k`-scalar-times the path-pullback
+of `η`. **Unconditional** via `LinearMap.map_smul` + `pathIntegralViaCover_smul`. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_smul
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (k : ℂ) (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b) :
+    pathIntegralViaCover (pullbackFormsBundledLM X Y f hf (k • η)) γ =
+      k • pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ := by
+  rw [LinearMap.map_smul, pathIntegralViaCover_smul]
+
 /-- **Form-additivity conditional case**: naturality at `η + ζ` follows
 from naturality at `η` and at `ζ`, via the linearity of
 `pullbackFormsBundledLM` (which is a `ℂ`-linear map). The
