@@ -114,4 +114,36 @@ Sorry-free via the bridge + `pullbackFormsFun_smul`. -/
   rw [sub_eq_add_neg, sub_eq_add_neg, chartedFormPullback_add,
       chartedFormPullback_neg]
 
+/-- Vector-apply form of the bridge identity: applying the chart-symm
+pullback at `(e, v)` agrees with applying the smooth-map pullback
+along `c.symm` at the same arguments. Sorry-free pointwise. -/
+theorem chartedFormPullback_apply_eq_pullbackFormsFun_apply
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
+    (e v : E) :
+    chartedFormPullback c ω e v = pullbackFormsFun c.symm ω e v := rfl
+
+/-- Sum-of-forms applied at a point: useful for downstream manipulation. -/
+theorem chartedFormPullback_add_apply
+    (c : OpenPartialHomeomorph X E) (η ζ : HolomorphicOneForm E X)
+    (e : E) :
+    chartedFormPullback c (η + ζ) e =
+      chartedFormPullback c η e + chartedFormPullback c ζ e := by
+  rw [chartedFormPullback_add]
+  rfl
+
+/-- Negated form applied at a point. -/
+theorem chartedFormPullback_neg_apply
+    (c : OpenPartialHomeomorph X E) (η : HolomorphicOneForm E X) (e : E) :
+    chartedFormPullback c (-η) e = - chartedFormPullback c η e := by
+  rw [chartedFormPullback_neg]
+  rfl
+
+/-- Scalar-multiplied form applied at a point. -/
+theorem chartedFormPullback_smul_apply
+    (c : OpenPartialHomeomorph X E) (k : ℂ) (η : HolomorphicOneForm E X)
+    (e : E) :
+    chartedFormPullback c (k • η) e = k • chartedFormPullback c η e := by
+  rw [chartedFormPullback_smul]
+  rfl
+
 end JacobianChallenge.Periods
