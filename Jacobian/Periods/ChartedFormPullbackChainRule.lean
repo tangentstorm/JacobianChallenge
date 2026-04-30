@@ -1,5 +1,6 @@
 import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackEqPullbackFormsFun
+import Jacobian.Periods.PathIntegralViaChartCorrect
 import Jacobian.HolomorphicForms.PullbackBundled
 import Jacobian.TraceDegree.PullbackFunComp
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
@@ -423,5 +424,49 @@ integrability and is stated as a hypothesis-conditional. -/
       k • curveIntegral
         (chartedFormPullback c (pullbackFormsBundledLM X Y f hf η)) γ_X := by
   rw [chartedFormPullback_pullbackFormsBundledLM_smul, curveIntegral_smul]
+
+/-! ### `pathIntegralViaChartCorrect` linearity in the form
+
+These wrap the curveIntegral linearity to live at the project's
+chart-local path-integration level. -/
+
+/-- Zero-form chart-local path integral: vanishes. -/
+@[simp] theorem pathIntegralViaChartCorrect_pullbackFormsBundledLM_zero
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f) {a b : X} (γ : Path a b)
+    (h : Set.range γ ⊆ c.source) :
+    pathIntegralViaChartCorrect c
+      (pullbackFormsBundledLM X Y f hf (0 : HolomorphicOneForm ℂ Y)) γ h = 0 := by
+  unfold pathIntegralViaChartCorrect pathIntegralInChartCorrect
+  exact curveIntegral_chartedFormPullback_pullbackFormsBundledLM_zero c f hf _
+
+/-- Neg-form chart-local path integral: distributes over negation. -/
+theorem pathIntegralViaChartCorrect_pullbackFormsBundledLM_neg
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (h : Set.range γ ⊆ c.source) :
+    pathIntegralViaChartCorrect c
+        (pullbackFormsBundledLM X Y f hf (-η)) γ h =
+      - pathIntegralViaChartCorrect c
+          (pullbackFormsBundledLM X Y f hf η) γ h := by
+  unfold pathIntegralViaChartCorrect pathIntegralInChartCorrect
+  exact curveIntegral_chartedFormPullback_pullbackFormsBundledLM_neg c f hf η _
+
+/-- Smul-form chart-local path integral: distributes over scalar multiplication. -/
+theorem pathIntegralViaChartCorrect_pullbackFormsBundledLM_smul
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (k : ℂ) (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (h : Set.range γ ⊆ c.source) :
+    pathIntegralViaChartCorrect c
+        (pullbackFormsBundledLM X Y f hf (k • η)) γ h =
+      k • pathIntegralViaChartCorrect c
+          (pullbackFormsBundledLM X Y f hf η) γ h := by
+  unfold pathIntegralViaChartCorrect pathIntegralInChartCorrect
+  exact curveIntegral_chartedFormPullback_pullbackFormsBundledLM_smul c f hf k η _
 
 end JacobianChallenge.Periods
