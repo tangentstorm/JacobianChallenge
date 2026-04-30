@@ -584,4 +584,24 @@ theorem curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM_eq
   funext t
   exact curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM c f hf η γ_X t
 
+/-- **Curve-integral chain-rule expansion**: the chart-coord curve
+integral of the bundled pullback form along `γ_X` equals the
+interval integral of the chain-rule expansion. Bridge from integrand
+to full integral. -/
+theorem curveIntegral_chartedFormPullback_pullbackFormsBundledLM_eq_intervalIntegral
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) {a b : ℂ} (γ_X : Path a b) :
+    curveIntegral (chartedFormPullback c (pullbackFormsBundledLM X Y f hf η)) γ_X =
+      ∫ t in (0 : ℝ)..1,
+        η.toFun (f (c.symm (γ_X.extend t)))
+          ((mfderiv (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f
+            (c.symm (γ_X.extend t)))
+            ((mfderiv (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) c.symm
+              (γ_X.extend t))
+              (derivWithin γ_X.extend unitInterval t))) := by
+  rw [curveIntegral_def,
+      curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM_eq c f hf η γ_X]
+
 end JacobianChallenge.Periods
