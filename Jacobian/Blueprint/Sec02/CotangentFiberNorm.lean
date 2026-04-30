@@ -49,7 +49,7 @@ the cotangent covector `v` in the fiber over `x`. -/
 noncomputable def cotangentFiberNorm
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_p : Σ x : X, CotangentSpace ℂ X x) : ℝ := sorry
+    (p : Σ x : X, CotangentSpace ℂ X x) : ℝ := ‖p.2‖
 
 /-- Pointwise convenience accessor: `cotangentFiberNormAt X x v`
 unfolds to `cotangentFiberNorm X ⟨x, v⟩`. -/

@@ -30,8 +30,8 @@ theorem input_finite_dimensionality
     (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
     (_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) :
     FiniteDimensional ℂ H := by
-  -- TODO: combine `hone_unit_ball_compact X e _h_norm` with
-  -- `fd_from_riesz (E := H) (r := 1) one_pos`.
+  -- DEPENDS ON node 5 (`hone_unit_ball_compact`). Once that landed:
+  -- `exact fd_from_riesz one_pos (hone_unit_ball_compact X e _h_norm)`
   sorry
 
 end JacobianChallenge.Blueprint
