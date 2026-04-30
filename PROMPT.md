@@ -183,6 +183,20 @@ The timer will call you again.
   `intro`, `apply`, and small helper lemmas.
 - Tell Aristotle not to rely on large `aesop`, `grind`, broad `simp_all`, or
   fragile automation unless the task explicitly justifies it.
+- **Always credit Aristotle on integration commits.** When a commit
+  integrates Aristotle output (clean diff, partial discharge, or even
+  a rejected stale-baseline review), add this trailer line in addition
+  to Claude's `Co-Authored-By:`:
+
+  ```
+  Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
+  ```
+
+  This applies to every commit that touches `aristotle_jobs.jsonl`
+  with an `"integrated"` or `"rejected"` status update, plus any Lean
+  file changes derived from an Aristotle result. On heartbeat /
+  cleanup commits with no Aristotle content, the trailer is not
+  required.
 - **Imports are minimal and load-bearing.** `import Mathlib` is a cardinal
   sin — it pulls in the entire library, blowing up build times by an order
   of magnitude. Every Aristotle / sub-agent / Codex prompt must explicitly
