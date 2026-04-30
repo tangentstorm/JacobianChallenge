@@ -46,7 +46,11 @@ jobs:
           sudo apt-get install -y graphviz libgraphviz-dev
 
       - name: Install Lean Blueprint
-        run: python3 -m pip install leanblueprint
+        # Pin plastex to <3.1: plastex 3.1 broke `\input` relative-path
+        # resolution from web.tex's directory in our setup (every
+        # ../../tex/... path was reported as "File not found" even though
+        # the files exist and cwd is correct). Older plastex 3.0.x works.
+        run: python3 -m pip install 'plastex<3.1' leanblueprint
 
       - name: Diagnose pre-build state
         working-directory: blueprint/src
