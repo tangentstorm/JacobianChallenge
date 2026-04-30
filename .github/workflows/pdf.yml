@@ -42,13 +42,22 @@ jobs:
         working-directory: tex
         run: latexmk -pdf -interaction=nonstopmode -halt-on-error main-with-layman.tex
 
+      # Stage both PDFs into a single dir so upload-artifact@v4 uploads them
+      # as a flat pair under that dir. The earlier multi-line `path:` form
+      # silently dropped one of the files in v4 (common-prefix stripping
+      # quirk); explicit single-dir upload avoids the issue.
+      - name: Stage PDFs for artifact
+        run: |
+          mkdir -p _pdfs
+          cp tex/main.pdf _pdfs/main.pdf
+          cp tex/main-with-layman.pdf _pdfs/main-with-layman.pdf
+          ls -la _pdfs
+
       - name: Upload PDF artifact (both variants)
         uses: actions/upload-artifact@v4
         with:
           name: jacobian-informal-proof
-          path: |
-            tex/main.pdf
-            tex/main-with-layman.pdf
+          path: _pdfs/
           retention-days: 90
           if-no-files-found: error
 
