@@ -113,4 +113,13 @@ theorem curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM
   rw [curveIntegralFun_def]
   exact chartedFormPullback_pullbackFormsBundledLM_apply c f hf η _ _
 
+/-- **Identity case** of the chain rule: when `f = id`, the chart-coord
+pullback of `id^*η` equals the chart-coord pullback of `η` directly. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_id
+    (c : OpenPartialHomeomorph X ℂ) (η : HolomorphicOneForm ℂ X) :
+    chartedFormPullback c (pullbackFormsBundledLM X X id contMDiff_id η) =
+      chartedFormPullback c η := by
+  rw [pullbackFormsBundledLM_id]
+  rfl
+
 end JacobianChallenge.Periods
