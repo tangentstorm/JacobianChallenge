@@ -74,7 +74,7 @@ open Filter JacobianChallenge.HolomorphicForms
 /-- The sup norm `holomorphicSupNorm X ω = ⨆ x, ‖ω.1 x‖` is
 nonnegative. -/
 lemma holomorphicSupNorm_nonneg
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (ω : HolomorphicOneForm ℂ X) :
     0 ≤ holomorphicSupNorm X ω := by
@@ -85,7 +85,7 @@ lemma holomorphicSupNorm_nonneg
 `X`, then so is the sup norm. Routine `Real.iSup_le` after unfolding
 the definition through `cotangentFiberNormAt` and `cotangentFiberNorm`. -/
 lemma holomorphicSupNorm_le_of_pointwise
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (ω : HolomorphicOneForm ℂ X) {r : ℝ} (hr : 0 ≤ r)
     (h : ∀ x, ‖ω.1 x‖ ≤ r) :
@@ -115,7 +115,7 @@ sections, Arzelà–Ascoli for `OpenPartialHomeomorph`-domain functions,
 manifold-Weierstrass) is not yet in place. Downstream workers can
 sub-split when they have the supporting Mathlib lemmas. -/
 private theorem montel_pointwise_extraction
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (ω : ℕ → HolomorphicOneForm ℂ X)
     (_h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) :
