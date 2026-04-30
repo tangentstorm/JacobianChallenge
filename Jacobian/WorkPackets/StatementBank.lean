@@ -182,6 +182,33 @@ lemma analyticGenus_eq_zero_iff_homeomorphic_sphere [FiniteDimensionalHolomorphi
       Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) := by
   sorry
 
+/-! ### Queue C2: Riemann surface substrate index
+
+These are index entries only.  The production substrate lives under
+`Jacobian/HolomorphicForms/` and must not depend on this file, because this
+file imports the frozen challenge spec.
+-/
+
+/-- Work-packet target: define finitely supported integer divisors on a
+Riemann surface, with degree and point-divisor API.  Production module:
+`Jacobian.HolomorphicForms.Divisor`. -/
+def divisorSubstrateStatement : Prop := True
+
+/-- Work-packet target: define meromorphic maps to the Riemann sphere and
+attach zero/pole divisors.  Production module:
+`Jacobian.HolomorphicForms.Meromorphic`. -/
+def meromorphicMapToSphereStatement : Prop := True
+
+/-- Work-packet target: genus-zero Riemann-Roch produces, for every point
+`P`, a meromorphic map whose pole divisor is `[P]`.  Production module:
+`Jacobian.HolomorphicForms.RiemannRoch`. -/
+def genusZeroRiemannRochFixedPoleStatement : Prop := True
+
+/-- Work-packet target: a meromorphic map with pole divisor `[P]` has degree
+one and gives a continuous bijection to `OnePoint ℂ`.  Production module:
+`Jacobian.HolomorphicForms.MeromorphicDegree`. -/
+def meromorphicDegreeOneStatement : Prop := True
+
 end HolomorphicForms
 
 /-! ## Queue D: integration, periods, and the period lattice -/
