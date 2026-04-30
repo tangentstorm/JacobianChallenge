@@ -27,10 +27,10 @@ theorem input_finite_dimensionality
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
-    (_e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
-    (_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖_e ω‖ = holomorphicSupNorm X ω) :
+    (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
+    (_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) :
     FiniteDimensional ℂ H := by
-  -- TODO: combine `hone_unit_ball_compact X _e _h_norm` with
+  -- TODO: combine `hone_unit_ball_compact X e _h_norm` with
   -- `fd_from_riesz (E := H) (r := 1) one_pos`.
   sorry
 

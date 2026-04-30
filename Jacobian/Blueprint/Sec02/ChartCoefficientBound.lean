@@ -25,7 +25,7 @@ theorem chart_coefficient_bound
     (e : OpenPartialHomeomorph X ℂ) (_he : e ∈ atlas ℂ X) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (ω : HolomorphicOneForm ℂ X) (x : X),
       x ∈ e.source →
-        cotangentFiberNorm X x (ω.1 x) ≤ C * holomorphicSupNorm X ω := by
+        cotangentFiberNormAt X x (ω.1 x) ≤ C * holomorphicSupNorm X ω := by
   sorry
 
 end JacobianChallenge.Blueprint

@@ -26,7 +26,19 @@ Proof outline (downstream worker):
    subsequence; diagonalise across the finite atlas.
 4. Weierstrass: the uniform limit of holomorphic functions is
    holomorphic, so the limit lies in `H⁰(X, Ω¹)`.
-5. Sup norm passes to the limit. -/
+5. Sup norm passes to the limit.
+
+NOTE FOR WORKERS: this lemma stops at the **sequential**
+`Tendsto (fun n => holomorphicSupNorm X (ω (φ n) - ωlim)) atTop (𝓝 0)`.
+The downstream consumer `hone_unit_ball_compact` wants
+`IsCompact (Metric.closedBall (0 : H) 1)` for a normed-space
+realisation `H`. The conversion is **not** trivially this lemma —
+it requires the metric-space bridge "sequential compactness ⇒
+topological compactness on first-countable spaces" (Mathlib:
+`UniformSpace.isCompact_iff_isSeqCompact`, or
+`IsSeqCompact.isCompact` on a metric space). Whoever picks up
+`hone_unit_ball_compact` (Node 5) is responsible for that bridge —
+this lemma's contract is the sequential form only. -/
 
 namespace JacobianChallenge.Blueprint
 
