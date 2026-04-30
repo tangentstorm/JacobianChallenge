@@ -11,9 +11,11 @@ Changing the path changes \(I_{P,Q}\) by a period, so its class in
 
 \begin{lemma}[Path independence modulo periods]
 \label{lem:aj-path-independence}
+\uses{def:period-pairing}
 The class of \(I_{P,Q}\) in \(\HdualX/\periods_X\) is independent of the path
 from \(P\) to \(Q\).
-\lean{JacobianChallenge.AbelJacobi.analyticOfCurve_path_independent}
+\lean{JacobianChallenge.AbelJacobi.analyticOfCurve}
+\leanok
 \end{lemma}
 
 \begin{proof}
@@ -23,8 +25,10 @@ holomorphic one-form over that cycle gives an element of the period lattice.
 
 \begin{lemma}[Base point maps to zero]
 \label{lem:aj-self}
+\uses{def:abel-jacobi}
 \(\AJ_P(P)=0\).
 \lean{Jacobian.ofCurve_self}
+\leanok
 \end{lemma}
 
 \begin{proof}
@@ -34,8 +38,10 @@ the constant path is zero.
 
 \begin{lemma}[Holomorphicity of Abel-Jacobi]
 \label{lem:aj-holomorphic}
+\uses{def:abel-jacobi,prop:complex-torus-package}
 The map \(\AJ_P:X\to\Jac(X)\) is holomorphic.
 \lean{Jacobian.ofCurve_contMDiff}
+\leanok
 \end{lemma}
 
 \begin{proof}
@@ -48,10 +54,12 @@ coordinate of the lift to \(\HdualX\) is holomorphic, and the quotient map to
 
 \begin{classicalinput}[Abel's theorem]
 \label{input:abel-theorem}
+\uses{input:divisors,def:abel-jacobi,input:degree-one-isomorphism}
 For degree-zero divisors on \(X\), the Abel-Jacobi map has kernel exactly the
 principal divisors. In particular, if \(g(X)>0\) and
 \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
 \lean{JacobianChallenge.AbelJacobi.pathIntegralFunctional_separates_points}
+\leanok
 \end{classicalinput}
 
 \begin{proofsketch}
@@ -68,4 +76,3 @@ map \(X\to\CPone\). By Riemann-Hurwitz, a degree-one map identifies \(X\) with
 Assume \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\). By the point-separation form
 of Abel's theorem, \(Q_1=Q_2\). Thus \(\AJ_P\) is injective.
 \end{proof}
-

@@ -5,10 +5,12 @@ on:
     branches:
       - main
     paths:
+      - "blueprint/**"
       - "tex/**"
       - ".github/workflows/tex-pdf.yml"
   pull_request:
     paths:
+      - "blueprint/**"
       - "tex/**"
       - ".github/workflows/tex-pdf.yml"
   workflow_dispatch:
@@ -35,14 +37,21 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            graphviz \
             latexmk \
             texlive-fonts-recommended \
             texlive-latex-extra \
             texlive-latex-recommended
 
+      - name: Install Lean Blueprint
+        run: python3 -m pip install leanblueprint
+
       - name: Build PDF
         working-directory: tex
         run: latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+
+      - name: Build Lean Blueprint site
+        run: python3 -m leanblueprint.client web
 
       - name: Prepare Pages site
         if: github.event_name != 'pull_request'
@@ -50,27 +59,7 @@ jobs:
           mkdir -p _site/blueprint
           cp tex/main.pdf _site/jacobian-informal-proof.pdf
 
-          if [ -d blueprint/web ]; then
-            cp -R blueprint/web/. _site/blueprint/
-          else
-            cat > _site/blueprint/index.html <<'EOF'
-          <!doctype html>
-          <html lang="en">
-            <head>
-              <meta charset="utf-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1">
-              <title>Jacobian Challenge Blueprint</title>
-            </head>
-            <body>
-              <main>
-                <h1>Jacobian Challenge Blueprint</h1>
-                <p>The Lean Blueprint site has not been generated yet.</p>
-                <p><a href="../">Back to the proof roadmap</a></p>
-              </main>
-            </body>
-          </html>
-          EOF
-          fi
+          cp -R blueprint/web/. _site/blueprint/
 
           cat > _site/index.html <<'EOF'
           <!doctype html>
@@ -108,6 +97,7 @@ jobs:
             tex/*.log
             tex/*.fls
             tex/*.fdb_latexmk
+            blueprint/src/*.log
           if-no-files-found: ignore
 
       - name: Configure GitHub Pages

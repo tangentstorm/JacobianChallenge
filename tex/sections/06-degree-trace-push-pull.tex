@@ -11,7 +11,8 @@ Pullback gives a complex-linear map
 \[
   f^{*}:\HY\to\HX.
 \]
-\lean{JacobianChallenge.TraceDegree.pullbackForms}
+\lean{JacobianChallenge.TraceDegree.pullbackFormsLinearMap}
+\leanok
 \end{lemma}
 
 \begin{proof}
@@ -24,11 +25,13 @@ which is holomorphic. Linearity is immediate.
 
 \begin{lemma}[Trace of holomorphic one-forms]
 \label{lem:trace-forms}
+\notready
 For nonconstant \(f\), there is a complex-linear trace map
 \[
   \tr_f:\HX\to\HY.
 \]
-\lean{JacobianChallenge.TraceDegree.traceForms}
+\lean{JacobianChallenge.TraceDegree.analyticPushforward}
+\leanok
 \end{lemma}
 
 \begin{proof}
@@ -57,12 +60,14 @@ of the finite branch locus extends across the branch locus.
 
 \begin{lemma}[Maps descend to Jacobians]
 \label{lem:push-pull-descend}
+\uses{def:analytic-jacobian,lem:pullback-forms,lem:trace-forms}
 Pullback and trace preserve period lattices in the appropriate dual directions,
 therefore induce continuous holomorphic group homomorphisms
 \[
   f^{*}:\Jac(Y)\to\Jac(X), \qquad f_*:\Jac(X)\to\Jac(Y).
 \]
 \lean{Jacobian.pullback, Jacobian.pushforward}
+\leanok
 \end{lemma}
 
 \begin{proof}
