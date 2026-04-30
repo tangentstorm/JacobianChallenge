@@ -4,18 +4,40 @@
 }
 
 /* Make the dependency-graph legend self-explanatory by injecting a visual
-   swatch before each label. plastexdepgraph emits a fixed-order <dt><dd>
-   list; we target it via :nth-of-type(N).
+   swatch before each label. plastexdepgraph emits a fixed-order
+   <div id="Legend"> ... <dl class="legend"> <dt> <dd> ... list, and
+   dep_graph.css does `#Legend dd { display: inline }` which makes the
+   dt/dd pairs flow horizontally and overlap. We override that here
+   (using the same #Legend ID selector so specificity wins) AND
+   inline-prepend a colored swatch inside each <dt> via ::before.
    Color reference (matches plastexdepgraph defaults):
      blue          = #1f77b4 (border) / #A3D6FF (fill)
      orange/#FFAA33 = "classical input / deferred"
      green         = #5cb85c (border) / #B0ECA3 (fill)  → Lean exists
-     darkgreen     = #1b5e20 (border) / #9CEC8B (fill)  → in Mathlib
+     darkgreen     = #1b5e20 (border) / #9CEC8B (fill)  → in Mathlib */
 
-   Layout-wise: keep the default <dl>/<dt>/<dd> block flow. Just
-   inline-prepend a swatch inside each <dt> via ::before. */
+#Legend dl.legend {
+  display: block;
+}
 
-dl.legend dt::before {
+/* Each dt-dd pair on its own row. Override the dep_graph.css inline dd. */
+#Legend dl.legend dt {
+  display: block;
+  margin-top: 0.6em;
+}
+
+#Legend dl.legend dd {
+  display: block;
+  margin: 0 0 0 2em;
+}
+
+/* Drop the trailing ":" after dt that dep_graph.css adds — we'll add the
+   visual swatch instead. */
+#Legend dl.legend dt::after {
+  content: none;
+}
+
+#Legend dl.legend dt::before {
   content: "";
   display: inline-block;
   width: 1.1em;
@@ -25,57 +47,48 @@ dl.legend dt::before {
   box-sizing: border-box;
 }
 
-/* dt #1: "Boxes" → square outline */
-dl.legend dt:nth-of-type(1)::before {
+#Legend dl.legend dt:nth-of-type(1)::before {
   border: 2px solid #555;
   background: transparent;
 }
 
-/* dt #2: "Ellipses" → oval outline */
-dl.legend dt:nth-of-type(2)::before {
+#Legend dl.legend dt:nth-of-type(2)::before {
   border: 2px solid #555;
   border-radius: 50%;
   background: transparent;
 }
 
-/* dt #3: "Blue border" */
-dl.legend dt:nth-of-type(3)::before {
+#Legend dl.legend dt:nth-of-type(3)::before {
   border: 2px solid #1f77b4;
   background: white;
 }
 
-/* dt #4: "Classical input or deferred formalization gap border" → orange */
-dl.legend dt:nth-of-type(4)::before {
+#Legend dl.legend dt:nth-of-type(4)::before {
   border: 2px solid #FFAA33;
   background: white;
 }
 
-/* dt #5: "Blue background" */
-dl.legend dt:nth-of-type(5)::before {
+#Legend dl.legend dt:nth-of-type(5)::before {
   border: 2px solid #1f77b4;
   background: #A3D6FF;
 }
 
-/* dt #6: "Lean declaration exists in the current project border" → light green border */
-dl.legend dt:nth-of-type(6)::before {
+#Legend dl.legend dt:nth-of-type(6)::before {
   border: 2px solid #5cb85c;
   background: white;
 }
 
-/* dt #7: "Lean declaration exists in the current project background" → light green fill */
-dl.legend dt:nth-of-type(7)::before {
+#Legend dl.legend dt:nth-of-type(7)::before {
   border: 2px solid #5cb85c;
   background: #B0ECA3;
 }
 
-/* dt #8: "Dark green background" (proof + ancestors all formalized) */
-dl.legend dt:nth-of-type(8)::before {
+#Legend dl.legend dt:nth-of-type(8)::before {
   border: 2px solid #1b5e20;
   background: #9CEC8B;
 }
 
-/* dt #9: "Dark green border" (in Mathlib) */
-dl.legend dt:nth-of-type(9)::before {
+#Legend dl.legend dt:nth-of-type(9)::before {
   border: 2px solid #1b5e20;
   background: white;
 }
