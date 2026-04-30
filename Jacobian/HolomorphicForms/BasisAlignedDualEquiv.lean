@@ -98,4 +98,36 @@ theorem holomorphicOneFormDualFinBasis_apply_holomorphicOneFormFinBasis
       (if j = i then 1 else 0 : ℂ) :=
   (holomorphicOneFormFinBasis E X).dualBasis_apply_self i j
 
+/-- The basis-aligned dual equivalence applied to a functional `φ` and
+evaluated at coordinate `i` reproduces `φ` applied to the `i`-th basis
+1-form. This is the natural "evaluate-at-basis" interpretation of the
+basis-aligned dual equivalence. -/
+theorem holomorphicOneFormDualEquiv_apply_eq_apply_basis
+    (φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ)
+    (i : Fin (analyticGenus E X)) :
+    holomorphicOneFormDualEquiv E X φ i =
+      φ (holomorphicOneFormFinBasis E X i) := by
+  classical
+  -- holomorphicOneFormDualEquiv E X = (basisX.dualBasis).equivFun
+  -- ((basisX.dualBasis).equivFun φ) i = the i-th coefficient when φ is
+  -- expressed in the dual basis.
+  -- φ = ∑ k, ((basisX.dualBasis).equivFun φ) k • basisX.dualBasis k
+  -- Apply both sides at basisX i; on RHS, dualBasis k (basisX i) = δ_{i,k}
+  -- so only the k = i term survives, giving the i-th coefficient.
+  have hsum : ∑ k, ((holomorphicOneFormFinBasis E X).dualBasis.equivFun φ k) •
+      ((holomorphicOneFormFinBasis E X).dualBasis k) = φ :=
+    (holomorphicOneFormFinBasis E X).dualBasis.sum_equivFun φ
+  have h := congrArg (fun ψ => ψ (holomorphicOneFormFinBasis E X i)) hsum
+  simp only at h
+  rw [LinearMap.coe_sum, Finset.sum_apply] at h
+  simp only [LinearMap.smul_apply, smul_eq_mul,
+    Module.Basis.dualBasis_apply_self] at h
+  rw [Finset.sum_eq_single i] at h
+  · rw [if_pos rfl, mul_one] at h
+    show ((holomorphicOneFormFinBasis E X).dualBasis.equivFun φ) i = _
+    exact h
+  · intro k _ hki
+    rw [if_neg (fun h' => hki h'.symm), mul_zero]
+  · intro hi; exact (hi (Finset.mem_univ _)).elim
+
 end JacobianChallenge.HolomorphicForms
