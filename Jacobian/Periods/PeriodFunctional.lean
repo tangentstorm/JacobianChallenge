@@ -47,64 +47,6 @@ opaque periodPairing
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] :
     IntegralOneCycle X →+ (HolomorphicOneForm E X →ₗ[ℂ] ℂ)
 
-/-- The basis-aligned period subgroup is discrete.
-
-Bottom-up content: integrality of the period pairing image. Equivalently,
-the image is a free `ℤ`-module of rank `2g`, spanned by `2g` real-linearly
-independent period vectors after transport to the basis-aligned model.
-
-This is the named bottom-up obligation that
-`Jacobian.Periods.basisAlignedPeriodSubgroup_isDiscrete` delegates to.
-A real proof requires the integrality of `periodPairing` on integral
-1-cycles.
-
-#### TOPDOWN plan (planned split, not yet executed)
-
-The single `sorry` here can be discharged by the following named
-sub-obligations, each carrying a distinct portion of the blocker:
-
-1. **`periodSubgroup_eq_zspan_of_basis`** (NEW sorry, integrality):
-   the transported range equals the ℤ-span of the basis-aligned period
-   vectors `b i := holomorphicOneFormDualEquiv X (periodPairing X (σ i))`,
-   where `σ : Fin (2g) → IntegralOneCycle X` is the symplectic basis
-   from `symplectic_basis_of_cycles`. Bottom-up: `periodPairing` is an
-   `AddMonoidHom`, `IntegralOneCycle X` is the ℤ-span of `σ` (this is
-   the deeper content of `h1_basis_of_compact_riemann_surface`), so the
-   range is the ℤ-span of `periodPairing (σ i)`. Transport via the
-   ℤ-linear `holomorphicOneFormDualEquiv.toAddMonoidHom` preserves
-   ℤ-spans.
-
-2. **`periodVectors_linearIndependent`** (already sorry-free assembly,
-   line ~194): provides 2g ℝ-linearly-independent vectors in `Fin g → ℂ`
-   that lie in the period subgroup.
-
-3. **`zspan_of_RLinearIndep_isDiscrete`** (NEW helper, possibly available
-   in Mathlib `IsZLattice` API): the ℤ-span of ℝ-linearly-independent
-   vectors in finite-dim ℝ-space carries `DiscreteTopology`. Mathlib
-   v4.28.0 exposes this via `Submodule.IsLattice.discreteTopology` or
-   the `IsZLattice` instance machinery on `Submodule.span ℤ` of an
-   ℝ-LI family.
-
-4. **`periodSubgroup_isZLattice`** becomes a sorry-free assembly:
-   rewrite the range using (1) to expose it as the ℤ-span of an ℝ-LI
-   family (via 2), then conclude via (3).
-
-Net effect of the split: 1 deep sorry → 1 substantive new sorry on
-integrality (1) + 1 generic helper that may already be in Mathlib (3).
-Worth executing once `h1_basis_of_compact_riemann_surface` lands or
-the integrality argument is independently formalised. -/
-theorem periodSubgroup_isZLattice
-    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace E X]
-    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    DiscreteTopology
-      (AddSubgroup.map
-        (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
-        ((periodPairing ℂ X).range)) := sorry
-
 /-! ### TOPDOWN decomposition of `periodVectors_linearIndependent`
 (integrated from Aristotle 0cfa1878)
 
@@ -346,6 +288,102 @@ theorem periodVectors_linearIndependent
   exact ⟨fun i => (holomorphicOneFormDualEquiv ℂ X) ((periodPairing ℂ X) (σ i)),
          period_vectors_linearIndependent_of_symplectic X σ hσ,
          period_vectors_mem_subgroup X σ⟩
+
+/-! ### TOPDOWN decomposition of `periodSubgroup_isZLattice`
+(integrated from Aristotle 303edecd)
+
+The original single `sorry` in `periodSubgroup_isZLattice` is now
+decomposed into three named sub-obligations:
+
+1. **`periodSubgroup_eq_zspan_of_basis`** (integrality — sorry):
+   the transported range equals the ℤ-span of the period vectors.
+
+2. **`periodVectors_linearIndependent`** (above, sorry-free assembly):
+   provides `2g` ℝ-linearly independent vectors in the subgroup.
+
+3. **`zspan_of_RLinearIndep_isDiscrete`** (sorry-free, Mathlib):
+   the ℤ-span of ℝ-linearly independent vectors has `DiscreteTopology`.
+
+`periodSubgroup_isZLattice` is now a sorry-free assembly of (1)+(3). -/
+
+/-- **Sub-obligation 1 (integrality).** The basis-aligned period
+subgroup equals the ℤ-span of the `2g` period vectors obtained from
+a symplectic basis of cycles.
+
+Bottom-up content: `periodPairing` is an `AddMonoidHom` and
+`IntegralOneCycle X` is the free ℤ-module on `σ` (the deeper content
+of `h1_basis_of_compact_riemann_surface`). The image of a ℤ-span
+under a ℤ-linear map is the ℤ-span of the images. Transport via the
+ℤ-linear `holomorphicOneFormDualEquiv` preserves this structure. -/
+theorem periodSubgroup_eq_zspan_of_basis
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    ∃ (b : Fin (2 * analyticGenus ℂ X) → Fin (analyticGenus ℂ X) → ℂ),
+      LinearIndependent ℝ b ∧
+      AddSubgroup.map
+        (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+        ((periodPairing ℂ X).range) =
+      (Submodule.span ℤ (Set.range b)).toAddSubgroup := by
+  obtain ⟨b, hli, hmem⟩ := periodVectors_linearIndependent X
+  exact ⟨b, hli, sorry⟩
+
+/-- **Sub-obligation 3 (generic discreteness).** The ℤ-span of `2g`
+ℝ-linearly independent vectors in `Fin g → ℂ` carries
+`DiscreteTopology`. This is the generic linear-algebra fact that
+connects integrality + linear independence to discreteness.
+
+Assembly: construct an ℝ-basis via dimension counting
+(`basisOfLinearIndependentOfCardEqFinrank`), then invoke the
+`ZSpan` discreteness instance from
+`Mathlib.Algebra.Module.ZLattice.Basic`. -/
+theorem zspan_of_RLinearIndep_isDiscrete (g : ℕ)
+    (b : Fin (2 * g) → Fin g → ℂ)
+    (hli : LinearIndependent ℝ b) :
+    DiscreteTopology (Submodule.span ℤ (Set.range b)).toAddSubgroup := by
+  rcases Nat.eq_zero_or_pos g with rfl | hg
+  · haveI : Unique (Fin 0 → ℂ) := Pi.uniqueOfIsEmpty _
+    haveI : Subsingleton (Submodule.span ℤ (Set.range b)).toAddSubgroup := by
+      constructor; intro ⟨a, _⟩ ⟨b, _⟩; ext i; exact i.elim0
+    exact Subsingleton.discreteTopology
+  · haveI : Nonempty (Fin (2 * g)) := ⟨⟨0, by omega⟩⟩
+    have hcard : Fintype.card (Fin (2 * g)) = Module.finrank ℝ (Fin g → ℂ) := by
+      rw [Fintype.card_fin, Module.finrank_pi_fintype, Complex.finrank_real_complex,
+          Finset.sum_const, Finset.card_fin, smul_eq_mul, mul_comm]
+    let bR := basisOfLinearIndependentOfCardEqFinrank hli hcard
+    rw [show (Submodule.span ℤ (Set.range b)) =
+        (Submodule.span ℤ (Set.range bR)) from by
+          congr 1; simp [bR, basisOfLinearIndependentOfCardEqFinrank]]
+    exact ZSpan.instDiscreteTopologySubtypeMemAddSubgroupToAddSubgroupIntSpanRangeCoeBasisRealOfFinite bR
+
+/-- The basis-aligned period subgroup is discrete.
+
+Bottom-up content: integrality of the period pairing image. Equivalently,
+the image is a free `ℤ`-module of rank `2g`, spanned by `2g` real-linearly
+independent period vectors after transport to the basis-aligned model.
+
+This is the named bottom-up obligation that
+`Jacobian.Periods.basisAlignedPeriodSubgroup_isDiscrete` delegates to.
+
+#### TOPDOWN assembly (executed via Aristotle 303edecd)
+
+Uses `periodSubgroup_eq_zspan_of_basis` (integrality, sorry) to
+rewrite the subgroup as a ℤ-span, then `zspan_of_RLinearIndep_isDiscrete`
+(sorry-free, Mathlib `ZSpan` API) to conclude `DiscreteTopology`. -/
+theorem periodSubgroup_isZLattice
+    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace E X]
+    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    DiscreteTopology
+      (AddSubgroup.map
+        (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+        ((periodPairing ℂ X).range)) := by
+  obtain ⟨b, hli, heq⟩ := periodSubgroup_eq_zspan_of_basis X
+  rw [heq]
+  exact zspan_of_RLinearIndep_isDiscrete (analyticGenus ℂ X) b hli
 
 /-- The basis-aligned period subgroup spans the full ℝ-vector space
 `Fin (analyticGenus ℂ X) → ℂ`, viewed as ℝ²ᵍ. Together with
