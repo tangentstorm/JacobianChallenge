@@ -1,5 +1,6 @@
 import Mathlib.Topology.Path
 import Mathlib.Topology.Connected.PathConnected
+import Mathlib.Topology.Subpath
 import Mathlib.Geometry.Manifold.ContMDiff.Basic
 import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 import Mathlib.Geometry.Manifold.ContMDiff.Atlas
@@ -135,6 +136,57 @@ def map {Y : Type*} [TopologicalSpace Y] {H' : Type*} [TopologicalSpace H']
       rfl
     rw [hext]
     exact hf.comp_contMDiffOn γ.contMDiffOn_extend
+
+/-- The subpath of a smooth path: smoothness propagates through the
+affine reparameterization `s ↦ (1-s)·t₀ + s·t₁` (which maps `[0,1]`
+into `[0,1]` since `t₀, t₁ ∈ unitInterval`). -/
+def subpath (γ : SmoothPath I_M a b) (t₀ t₁ : unitInterval) :
+    SmoothPath I_M (γ.toPath t₀) (γ.toPath t₁) where
+  toPath := γ.toPath.subpath t₀ t₁
+  contMDiffOn_extend := by
+    -- On [0,1], (γ.subpath t₀ t₁).extend s = γ.extend ((1-s)·t₀ + s·t₁).
+    -- The affine map sends [0,1] into [0,1] (convex combination of points
+    -- in [0,1] stays in [0,1]).
+    have aff_C1 : ContMDiff (modelWithCornersSelf ℝ ℝ) (modelWithCornersSelf ℝ ℝ)
+        (1 : WithTop ℕ∞) (fun s : ℝ => (1 - s) * (t₀ : ℝ) + s * (t₁ : ℝ)) :=
+      ContDiff.contMDiff (by fun_prop)
+    have aff_maps : Set.MapsTo
+        (fun s : ℝ => (1 - s) * (t₀ : ℝ) + s * (t₁ : ℝ))
+        (Set.Icc 0 1) (Set.Icc 0 1) := by
+      intro s hs
+      rcases hs with ⟨hs0, hs1⟩
+      have ht0 := t₀.2
+      have ht1 := t₁.2
+      refine ⟨?_, ?_⟩
+      · have h1ms : (0 : ℝ) ≤ 1 - s := by linarith
+        have h1 : 0 ≤ (1 - s) * (t₀ : ℝ) := mul_nonneg h1ms ht0.1
+        have h2 : 0 ≤ s * (t₁ : ℝ) := mul_nonneg hs0 ht1.1
+        linarith
+      · have h1 : (1 - s) * (t₀ : ℝ) ≤ (1 - s) * 1 := by
+          apply mul_le_mul_of_nonneg_left ht0.2 (by linarith)
+        have h2 : s * (t₁ : ℝ) ≤ s * 1 := by
+          apply mul_le_mul_of_nonneg_left ht1.2 hs0
+        nlinarith
+    -- Reduce (subpath).extend on [0,1] to γ.extend ∘ affine.
+    have hext : ∀ s ∈ Set.Icc (0 : ℝ) 1,
+        (γ.toPath.subpath t₀ t₁).extend s =
+          (γ.toPath.extend ∘ (fun s : ℝ => (1 - s) * (t₀ : ℝ) + s * (t₁ : ℝ))) s := by
+      intro s hs
+      have hin : (1 - s) * (t₀ : ℝ) + s * (t₁ : ℝ) ∈ Set.Icc (0 : ℝ) 1 :=
+        aff_maps hs
+      simp only [Function.comp_apply]
+      rw [Path.extend_apply _ hs, Path.extend_apply _ hin]
+      show γ.toPath.subpath t₀ t₁ ⟨s, hs⟩ =
+           γ.toPath ⟨(1 - s) * (t₀ : ℝ) + s * (t₁ : ℝ), hin⟩
+      -- subpath is γ.toPath ∘ subpathAux t₀ t₁; both sides are γ.toPath
+      -- applied to the same value-in-I.
+      rfl
+    -- Apply ContMDiffOn.congr to swap to the explicit form, then compose.
+    have hcomp : ContMDiffOn (modelWithCornersSelf ℝ ℝ) I_M (1 : WithTop ℕ∞)
+        (γ.toPath.extend ∘ fun s : ℝ => (1 - s) * (t₀ : ℝ) + s * (t₁ : ℝ))
+        (Set.Icc 0 1) :=
+      γ.contMDiffOn_extend.comp aff_C1.contMDiffOn aff_maps
+    exact hcomp.congr hext
 
 /-! ### Bridge to chart coordinates
 
