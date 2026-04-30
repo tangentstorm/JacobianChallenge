@@ -300,6 +300,18 @@ theorem extend_eq_toPath (γ : SmoothPath I_M a b) (t : unitInterval) :
     (hf : ContMDiff I_M I_N (1 : WithTop ℕ∞) f) :
     (γ.map I_N f hf).toPath = γ.toPath.map hf.continuous := rfl
 
+/-- A smooth path is, in particular, continuous. -/
+theorem continuous_extend (γ : SmoothPath I_M a b) :
+    ContinuousOn γ.toPath.extend (Set.Icc 0 1) :=
+  γ.contMDiffOn_extend.continuousOn
+
+/-- The underlying continuous-path `toPath` is itself continuous on
+the unit interval (this is automatic for any `Path`, but is exposed
+here for ergonomics). -/
+theorem continuous_toPath (γ : SmoothPath I_M a b) :
+    Continuous γ.toPath.toFun :=
+  γ.toPath.continuous_toFun
+
 end SmoothPath
 
 end JacobianChallenge.Periods
