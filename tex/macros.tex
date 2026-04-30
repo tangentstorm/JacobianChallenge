@@ -7,10 +7,11 @@
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=magenta]{hyperref}
 
 % \begin{layman}...\end{layman} blocks contain plain-English narrations
-% mirroring the formal proof system. The standalone formal PDF drops
-% them; the blueprint web build keeps them with a UI toggle so readers
-% can see math both ways.
-\excludecomment{layman}
+% mirroring the formal proof system. The blueprint web build styles them
+% as a side-banded callout with a UI toggle. The two PDF entry points
+% provide their own definitions:
+%   * tex/main.tex             — \excludecomment{layman}      (formal-only)
+%   * tex/main-with-layman.tex — renders as italicized inset  (companion)
 
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}

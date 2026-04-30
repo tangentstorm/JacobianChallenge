@@ -98,9 +98,16 @@ jobs:
 
           if [ -f tex/main.pdf ]; then
             cp tex/main.pdf _site/jacobian-informal-proof.pdf
-            echo "PDF included from pdf.yml artifact"
+            echo "Formal PDF included from pdf.yml artifact"
           else
-            echo "No PDF artifact available — site will deploy without PDF"
+            echo "No formal PDF available — site will deploy without it"
+          fi
+
+          if [ -f tex/main-with-layman.pdf ]; then
+            cp tex/main-with-layman.pdf _site/jacobian-informal-proof-with-layman.pdf
+            echo "Plain-English companion PDF included from pdf.yml artifact"
+          else
+            echo "No companion PDF available — site will deploy without it"
           fi
 
           cat > _site/index.html <<'EOF'
@@ -115,8 +122,9 @@ jobs:
               <main>
                 <h1>Jacobian Challenge</h1>
                 <ul>
-                  <li><a href="jacobian-informal-proof.pdf">Informal proof roadmap (PDF)</a></li>
-                  <li><a href="blueprint/">Lean Blueprint dependency graph</a></li>
+                  <li><a href="blueprint/">Lean Blueprint dependency graph</a> — interactive, with Plain-English toggle</li>
+                  <li><a href="jacobian-informal-proof-with-layman.pdf">Informal proof roadmap with Plain-English companion (PDF)</a></li>
+                  <li><a href="jacobian-informal-proof.pdf">Informal proof roadmap, formal only (PDF)</a></li>
                 </ul>
               </main>
             </body>
