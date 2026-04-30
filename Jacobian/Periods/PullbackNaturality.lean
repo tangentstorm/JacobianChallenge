@@ -8,6 +8,8 @@ import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.Algebra.Category.ModuleCat.Basic
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Naturality of `periodPairing` under form-pullback
 
