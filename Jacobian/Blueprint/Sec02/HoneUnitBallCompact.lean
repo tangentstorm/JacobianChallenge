@@ -1,5 +1,6 @@
 import Jacobian.Blueprint.Sec02.MontelCompactness
 import Mathlib.Analysis.Normed.Module.Basic
+import Mathlib.Topology.Sequences
 
 /-! # Blueprint stub: `thm:hone-unit-ball-compact`
 
@@ -50,6 +51,27 @@ theorem hone_unit_ball_compact
     (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
     (_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) :
     IsCompact (Metric.closedBall (0 : H) 1) := by
-  sorry
+  suffices h : IsSeqCompact (Metric.closedBall (0 : H) 1) from h.isCompact
+  intro v hv
+  set ω : ℕ → HolomorphicOneForm ℂ X := fun n => e.symm (v n) with ω_def
+  have hev : ∀ n, e (ω n) = v n := fun n => by
+    simp [ω_def, e.apply_symm_apply]
+  have hω_bd : ∀ n, holomorphicSupNorm X (ω n) ≤ 1 := by
+    intro n
+    rw [← _h_norm, hev n]
+    simpa [Metric.mem_closedBall, dist_zero_right] using hv n
+  obtain ⟨φ, hφ, ωlim, hlim_norm, htends⟩ := montel_compactness X ω hω_bd
+  refine ⟨e ωlim, ?_, φ, hφ, ?_⟩
+  · rw [Metric.mem_closedBall, dist_zero_right, _h_norm]
+    exact hlim_norm
+  · rw [tendsto_iff_norm_sub_tendsto_zero]
+    have heq : (fun n => ‖(v ∘ φ) n - e ωlim‖)
+        = (fun n => holomorphicSupNorm X (ω (φ n) - ωlim)) := by
+      funext n
+      have h1 : (v ∘ φ) n - e ωlim = e (ω (φ n) - ωlim) := by
+        rw [Function.comp_apply, ← hev (φ n), ← map_sub]
+      rw [h1, _h_norm]
+    rw [heq]
+    exact htends
 
 end JacobianChallenge.Blueprint
