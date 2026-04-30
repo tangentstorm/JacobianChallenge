@@ -147,4 +147,52 @@ theorem chartedFormPullback_pullbackFormsBundledLM_comp
           (pullbackFormsBundledLM Y Z g hg η)) := by
   rw [pullbackFormsBundledLM_comp f hf g hg, LinearMap.comp_apply]
 
+/-! ### Linearity-in-the-form companions
+
+The chain-rule pullback is `ℂ`-linear in the form argument. These
+chart-coord lemmas make that linearity directly visible. -/
+
+/-- Zero form: `chartedFormPullback c (pullback 0) = 0`. -/
+@[simp] theorem chartedFormPullback_pullbackFormsBundledLM_zero
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f) :
+    chartedFormPullback c
+      (pullbackFormsBundledLM X Y f hf (0 : HolomorphicOneForm ℂ Y)) = 0 := by
+  rw [LinearMap.map_zero, chartedFormPullback_zero]
+
+/-- Additivity: `chartedFormPullback c (pullback (η + ζ)) = chartedFormPullback c (pullback η) + chartedFormPullback c (pullback ζ)`. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_add
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η ζ : HolomorphicOneForm ℂ Y) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (η + ζ)) =
+      chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) +
+      chartedFormPullback c (pullbackFormsBundledLM X Y f hf ζ) := by
+  rw [LinearMap.map_add, chartedFormPullback_add]
+
+/-- Scalar multiplication: `chartedFormPullback c (pullback (k • η)) = k • chartedFormPullback c (pullback η)`. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_smul
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (k : ℂ) (η : HolomorphicOneForm ℂ Y) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (k • η)) =
+      k • chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) := by
+  rw [LinearMap.map_smul, chartedFormPullback_smul]
+
+/-- Negation: `chartedFormPullback c (pullback (-η)) = - chartedFormPullback c (pullback η)`. -/
+@[simp] theorem chartedFormPullback_pullbackFormsBundledLM_neg
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (-η)) =
+      - chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) := by
+  rw [map_neg, chartedFormPullback_neg]
+
 end JacobianChallenge.Periods
