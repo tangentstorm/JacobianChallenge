@@ -93,11 +93,13 @@
   background: white;
 }
 
-/* Plain-English narrations. Each \begin{layman}...\end{layman} block
-   becomes a <div class="layman">. Default: visible. Toggle button (see
-   inject-layman-toggle.py for the button HTML/JS) flips
-   `body.hide-layman`, which hides every layman block. */
-.layman {
+/* Plain-English narrations. Each \begin{layman}...\end{layman} block is
+   defined via `\newtheorem*{layman}{Plain English}` (theorem-style) so
+   plastex auto-emits it as `<div class="thmwrapper layman_thmwrapper">`
+   with a `<div class="thm_header">Plain English.</div>` and a
+   `<div class="thm_text">...</div>` body. Default: visible. The toggle
+   button (inject-layman-toggle.py) flips `body.hide-layman`. */
+.layman_thmwrapper {
   background: #fff8e7;
   border-left: 4px solid #d4a017;
   padding: 0.7em 1em;
@@ -105,15 +107,16 @@
   font-size: 0.97em;
   line-height: 1.55;
   color: #3a2c00;
+  border-radius: 0 4px 4px 0;
 }
 
-.layman::before {
-  content: "Plain English. ";
+.layman_thmwrapper .thm_header {
   font-weight: 700;
   color: #8a6800;
+  margin-right: 0.4em;
 }
 
-body.hide-layman .layman {
+body.hide-layman .layman_thmwrapper {
   display: none;
 }
 
