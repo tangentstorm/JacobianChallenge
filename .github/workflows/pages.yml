@@ -5,8 +5,12 @@ on:
     branches:
       - main
     paths:
+      # NOTE: deliberately omit `tex/**` here — tex changes trigger pdf.yml,
+      # which then triggers this workflow via `workflow_run` AFTER the PDF
+      # artifact exists. If `tex/**` were listed here, the push would fire
+      # this workflow concurrently with pdf.yml and we'd deploy a Pages
+      # site that's missing the PDF.
       - "blueprint/**"
-      - "tex/**"
       - ".github/workflows/pages.yml"
   pull_request:
     paths:
@@ -56,15 +60,21 @@ jobs:
       - name: Build Lean Blueprint site
         run: python3 -m leanblueprint.client web
 
-      - name: Download latest PDF artifact
+      - name: Download PDF artifact (from triggering pdf.yml run if any)
         if: github.event_name != 'pull_request'
         uses: dawidd6/action-download-artifact@v3
         with:
           workflow: pdf.yml
           name: jacobian-informal-proof
+          # When this workflow was triggered by `workflow_run`, pin to the
+          # exact pdf.yml run that just succeeded — eliminates the race
+          # where an in-progress pdf.yml hasn't published yet. For other
+          # triggers (manual / blueprint-only push), `run_id` is empty and
+          # the action falls back to the latest successful run on main.
+          run_id: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || '' }}
           branch: main
           path: tex
-          if_no_artifact_found: warn
+          if_no_artifact_found: fail
 
       - name: Prepare Pages site
         if: github.event_name != 'pull_request'
