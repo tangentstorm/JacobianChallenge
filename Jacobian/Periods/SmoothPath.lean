@@ -262,6 +262,35 @@ theorem extChart_comp_extend_contDiffOn_unitInterval
   rw [heq] at this
   exact this
 
+/-! ### Convenience equalities for the underlying `Path` -/
+
+/-- The underlying path of a smooth path, evaluated at the source endpoint. -/
+@[simp] theorem toPath_zero (γ : SmoothPath I_M a b) :
+    γ.toPath 0 = a := γ.toPath.source
+
+/-- The underlying path of a smooth path, evaluated at the target endpoint. -/
+@[simp] theorem toPath_one (γ : SmoothPath I_M a b) :
+    γ.toPath 1 = b := γ.toPath.target
+
+/-- The smooth-path's extension agrees with its underlying path on
+the unit interval. -/
+theorem extend_eq_toPath (γ : SmoothPath I_M a b) (t : unitInterval) :
+    γ.toPath.extend t = γ.toPath t :=
+  γ.toPath.extend_apply t.2
+
+/-- `SmoothPath.refl I_M a` has underlying path `Path.refl a`. -/
+@[simp] theorem refl_toPath (a : X) :
+    (refl I_M a).toPath = Path.refl a := rfl
+
+/-- `SmoothPath.symm γ` has underlying path `γ.toPath.symm`. -/
+@[simp] theorem symm_toPath (γ : SmoothPath I_M a b) :
+    γ.symm.toPath = γ.toPath.symm := rfl
+
+/-- `SmoothPath.subpath γ t₀ t₁` has underlying path
+`γ.toPath.subpath t₀ t₁`. -/
+@[simp] theorem subpath_toPath (γ : SmoothPath I_M a b) (t₀ t₁ : unitInterval) :
+    (γ.subpath t₀ t₁).toPath = γ.toPath.subpath t₀ t₁ := rfl
+
 end SmoothPath
 
 end JacobianChallenge.Periods
