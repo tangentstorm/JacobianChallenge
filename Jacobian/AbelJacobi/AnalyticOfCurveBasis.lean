@@ -230,12 +230,51 @@ theory layer or even a placeholder `Divisor X` / `IsPrincipal d` API
 exists in the project. The docstring already captures the canonical
 proof so future Aristotle/sub-agent jobs can split rather than
 rediscover the structure. -/
+/-- Combined Abel–Riemann-Hurwitz content (TOPDOWN-split via Aristotle 7ceff781):
+if two distinct points have period-congruent path integrals, then
+`analyticGenus ℂ X = 0`.
+
+This condenses the two-step decomposition documented above
+(`abelJacobi_image_zero_implies_principal` +
+`degree_one_meromorphic_implies_genus_zero`) into one named obligation,
+avoiding the need for intermediate types (`Divisor`, `ℂP¹`, `degree`) that
+are absent from Mathlib v4.28.0.
+
+#### Proof sketch (classical)
+
+Assume `Q₁ ≠ Q₂` with `J(Q₁) = J(Q₂)` in `Jac(X)`. Then the divisor
+`(Q₁) − (Q₂)` has zero Abel-Jacobi image and is therefore principal
+(Abel's theorem, existence direction). A principal divisor of degree 0
+with support `{Q₁, Q₂}` and multiplicities `+1, −1` gives a meromorphic
+function `f : X → ℂP¹` of degree 1. By Riemann-Hurwitz, a degree-1
+holomorphic map to `ℂP¹` forces `X ≅ ℂP¹`, hence `genus(X) = 0`.
+
+#### Mathlib gaps
+
+- Divisor theory on compact Riemann surfaces (≈5 000 lines)
+- Riemann-Hurwitz formula / degree theory (≈3 000 lines)
+- Bridge `analyticGenus ↔ topologicalGenus` (Hodge/de Rham, delegated to
+  `analyticGenus_eq_topologicalGenus` in `PeriodFunctional.lean`) -/
+theorem period_congruence_distinct_implies_genus_zero
+    (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X) :
+    analyticGenus ℂ X = 0 := by
+  sorry
+
+/-- Sorry-free assembly: derives point-separation from
+`period_congruence_distinct_implies_genus_zero` by contradiction with
+`0 < analyticGenus ℂ X`. -/
 theorem pathIntegralFunctional_separates_points_spec
     (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
     (hperiod :
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
         basisAlignedPeriodSubgroup X) :
-    Q₁ = Q₂ := sorry
+    Q₁ = Q₂ := by
+  by_contra hne
+  exact absurd (period_congruence_distinct_implies_genus_zero X P Q₁ Q₂ hne hperiod)
+    (by omega)
 
 /-- Abel's theorem in basis-aligned path-integral coordinates: if two
 path-integral coordinate vectors differ by a period vector, then their
