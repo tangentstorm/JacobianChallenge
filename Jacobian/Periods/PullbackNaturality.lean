@@ -580,6 +580,44 @@ theorem periodPairing_pullbackFormsBundledLM_neg_cycle_rhs
   rw [(cyclePushforward f hf).map_neg, (periodPairing ℂ Y).map_neg,
       LinearMap.neg_apply]
 
+/-- **Unconditional cycle-nsmul LHS identity**: the X-side periodPairing
+applied to `n • γ` distributes (with `n : ℕ`). -/
+theorem periodPairing_pullbackFormsBundledLM_nsmul_cycle_lhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (n : ℕ) (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y) :
+    (periodPairing ℂ X (n • γ)) (pullbackFormsBundledLM X Y f hf η) =
+      n • (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) := by
+  rw [(periodPairing ℂ X).map_nsmul, LinearMap.smul_apply]
+
+/-- **Unconditional cycle-nsmul RHS identity**: the Y-side periodPairing
+applied to `cyclePushforward (n • γ)` distributes (with `n : ℕ`). -/
+theorem periodPairing_pullbackFormsBundledLM_nsmul_cycle_rhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (n : ℕ) (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y) :
+    (periodPairing ℂ Y (cyclePushforward f hf (n • γ))) η =
+      n • (periodPairing ℂ Y (cyclePushforward f hf γ)) η := by
+  rw [(cyclePushforward f hf).map_nsmul, (periodPairing ℂ Y).map_nsmul,
+      LinearMap.smul_apply]
+
+/-- **Unconditional cycle-zsmul LHS identity**: the X-side periodPairing
+applied to `n • γ` distributes (with `n : ℤ`). -/
+theorem periodPairing_pullbackFormsBundledLM_zsmul_cycle_lhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (n : ℤ) (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y) :
+    (periodPairing ℂ X (n • γ)) (pullbackFormsBundledLM X Y f hf η) =
+      n • (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) := by
+  rw [(periodPairing ℂ X).map_zsmul, LinearMap.smul_apply]
+
+/-- **Unconditional cycle-zsmul RHS identity**: the Y-side periodPairing
+applied to `cyclePushforward (n • γ)` distributes (with `n : ℤ`). -/
+theorem periodPairing_pullbackFormsBundledLM_zsmul_cycle_rhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (n : ℤ) (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y) :
+    (periodPairing ℂ Y (cyclePushforward f hf (n • γ))) η =
+      n • (periodPairing ℂ Y (cyclePushforward f hf γ)) η := by
+  rw [(cyclePushforward f hf).map_zsmul, (periodPairing ℂ Y).map_zsmul,
+      LinearMap.smul_apply]
+
 /-- **Form-additivity special case**: naturality at η + ζ from
 naturality at η and at ζ separately, via linearity in the form
 argument. Sorry-free. -/
