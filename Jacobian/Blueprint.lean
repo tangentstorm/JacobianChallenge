@@ -20,6 +20,9 @@ import Jacobian.Blueprint.Sec02.HolomorphicSupNorm
 import Jacobian.Blueprint.Sec02.ChartCoefficientBound
 import Jacobian.Blueprint.Sec02.MontelCompactness
 import Jacobian.Blueprint.Sec02.HoneUnitBallCompact
+import Jacobian.Blueprint.Sec02.FdFromRiesz
+import Jacobian.Blueprint.Sec02.InputFiniteDimensionality
+import Jacobian.Blueprint.Sec02.FdHolomorphicOneForms
 
 /-!
 # Blueprint stubs index
