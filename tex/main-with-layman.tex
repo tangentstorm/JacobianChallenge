@@ -2,11 +2,19 @@
 
 \input{macros}
 
-% Formal-only PDF: drop every Plain-English layman block.
-% The companion build at tex/main-with-layman.tex renders them instead.
-\excludecomment{layman}
+% Companion PDF: render every Plain-English layman block as an
+% italicized inset so the document doubles as a Quanta-style narrative
+% alongside the formal mathematics.
+%
+% (The formal-only build at tex/main.tex strips these blocks instead.)
+\newenvironment{layman}{%
+  \par\medskip\begin{quote}\itshape\noindent\textbf{Plain English. }\ignorespaces%
+}{%
+  \end{quote}\medskip%
+}
 
-\title{Informal Proof Roadmap for the Jacobian Challenge}
+\title{Informal Proof Roadmap for the Jacobian Challenge\\
+  \large with Plain-English Companion}
 \author{Jacobian Challenge}
 \date{\today}
 
@@ -31,4 +39,3 @@
 \bibliography{references}
 
 \end{document}
-
