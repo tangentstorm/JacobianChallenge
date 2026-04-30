@@ -1,4 +1,5 @@
 import Jacobian.Blueprint.Sec02.HolomorphicSupNorm
+import Jacobian.HolomorphicForms.CompactRiemannSurface
 
 /-! # Blueprint stub: `lem:chart-coefficient-bound`
 
@@ -18,14 +19,33 @@ open JacobianChallenge.HolomorphicForms
 /-- Chart-local fiber-norm bound: for each chart `e` in the atlas of
 `X`, there is a constant `C ≥ 0` such that the fiber norm of any
 holomorphic 1-form on `e.source` is bounded by `C` times the global
-sup norm. -/
+sup norm.
+
+With the integrator's choice
+`cotangentFiberNorm X ⟨x, v⟩ = ‖v‖`
+and
+`holomorphicSupNorm X ω = ⨆ x, cotangentFiberNormAt X x (ω.1 x)`,
+the constant `C = 1` works: the fiber norm at any point is bounded by
+the iSup, and the chart `e` plays no role beyond delineating the open
+set on which the bound is asserted. The argument is the standard
+`le_ciSup` once `BddAbove` of the range is known; that finiteness is
+supplied by the upstream
+`holomorphicOneForm_fiberNorm_continuous` (compactness ⇒ bounded image
+of a continuous fiber-norm function), which is sorry-blocked upstream
+but treated here as a black box. -/
 theorem chart_coefficient_bound
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (e : OpenPartialHomeomorph X ℂ) (_he : e ∈ atlas ℂ X) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (ω : HolomorphicOneForm ℂ X) (x : X),
       x ∈ e.source →
         cotangentFiberNormAt X x (ω.1 x) ≤ C * holomorphicSupNorm X ω := by
-  sorry
+  refine ⟨1, zero_le_one, fun ω x _hx => ?_⟩
+  have hbdd : BddAbove (Set.range fun y => ‖ω.1 y‖) :=
+    SectionSupNorm.bddAbove_range_norm (holomorphicOneForm_hcompat X) ω
+  have hle : ‖ω.1 x‖ ≤ ⨆ y : X, ‖ω.1 y‖ := le_ciSup hbdd x
+  show cotangentFiberNorm X ⟨x, ω.1 x⟩ ≤ 1 * holomorphicSupNorm X ω
+  rw [one_mul]
+  exact hle
 
 end JacobianChallenge.Blueprint
