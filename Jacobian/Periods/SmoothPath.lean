@@ -312,6 +312,15 @@ theorem continuous_toPath (γ : SmoothPath I_M a b) :
     Continuous γ.toPath.toFun :=
   γ.toPath.continuous_toFun
 
+/-- The smooth path's extension is `ContMDiffOn` on any subset of the
+unit interval. Convenience lemma — applies `mono` to `contMDiffOn_extend`. -/
+theorem contMDiffOn_extend_subset (γ : SmoothPath I_M a b)
+    {s : Set ℝ} (hs : s ⊆ Set.Icc 0 1) :
+    ContMDiffOn (modelWithCornersSelf ℝ ℝ) I_M (1 : WithTop ℕ∞)
+      γ.toPath.extend s :=
+  γ.contMDiffOn_extend.mono hs
+
+
 end SmoothPath
 
 end JacobianChallenge.Periods
