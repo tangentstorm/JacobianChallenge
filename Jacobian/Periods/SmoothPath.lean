@@ -1,6 +1,7 @@
 import Mathlib.Topology.Path
 import Mathlib.Topology.Connected.PathConnected
 import Mathlib.Geometry.Manifold.ContMDiff.Basic
+import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 
 /-!
@@ -76,6 +77,45 @@ def refl (I_M : ModelWithCorners ℝ E H) (a : X) : SmoothPath I_M a a where
       simp [Path.extend, Set.IccExtend, Path.refl]
     rw [this]
     exact contMDiff_const
+
+/-- The reverse of a smooth path, obtained by `Path.symm` on the
+underlying path. Smoothness of the extension follows from smoothness
+of `t ↦ 1 - t` (the reflection on `ℝ`) composed with the original
+extension's smoothness.
+
+Uses `Path.extend_symm` (`γ.symm.extend = (γ.extend <| 1 - ·)`). -/
+def symm (γ : SmoothPath I_M a b) : SmoothPath I_M b a where
+  toPath := γ.toPath.symm
+  contMDiff_extend := by
+    rw [Path.extend_symm]
+    -- Goal: ContMDiff _ I_M 1 (fun t : ℝ => γ.toPath.extend (1 - t)).
+    -- This is γ.contMDiff_extend composed with the smooth map t ↦ 1 - t.
+    have hsub : ContMDiff (modelWithCornersSelf ℝ ℝ) (modelWithCornersSelf ℝ ℝ)
+        (1 : WithTop ℕ∞) (fun t : ℝ => 1 - t) :=
+      ContDiff.contMDiff (by fun_prop)
+    exact γ.contMDiff_extend.comp hsub
+
+/-- Push a smooth path forward along a `ContMDiff` map between manifolds.
+The smoothness of the underlying `Path.map` extension follows from
+composition of smooth maps: `(γ.map h).extend = f ∘ γ.extend` (when
+`f` is continuous; here we strengthen `Continuous` to `ContMDiff`). -/
+def map {Y : Type*} [TopologicalSpace Y] {H' : Type*} [TopologicalSpace H']
+    {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+    [ChartedSpace H' Y] (I_N : ModelWithCorners ℝ E' H')
+    (γ : SmoothPath I_M a b) (f : X → Y)
+    (hf : ContMDiff I_M I_N (1 : WithTop ℕ∞) f) :
+    SmoothPath I_N (f a) (f b) where
+  toPath := γ.toPath.map hf.continuous
+  contMDiff_extend := by
+    -- (γ.toPath.map h).extend t = f (γ.toPath.extend t).
+    have hext : (γ.toPath.map hf.continuous).extend = f ∘ γ.toPath.extend := by
+      funext t
+      show (γ.toPath.map hf.continuous).extend t = f (γ.toPath.extend t)
+      unfold Path.extend
+      simp only [ContinuousMap.coe_mk, Set.IccExtend, Function.comp_apply]
+      rfl
+    rw [hext]
+    exact hf.comp γ.contMDiff_extend
 
 end SmoothPath
 
