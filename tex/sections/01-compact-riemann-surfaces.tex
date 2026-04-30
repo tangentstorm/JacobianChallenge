@@ -25,6 +25,22 @@ independence proved via composition of analytic equivalences.}
 \leanok
 \end{definition}
 
+\begin{layman}
+Near any single point on the surface, a function does one of three things: it
+sits at a finite, nonzero value (boring), it dwindles to zero, or it blows up
+to infinity. The ``order of vanishing'' is one whole number that captures how
+aggressively. Order \(+1\) means the function shrinks roughly as fast as the
+distance to the point; order \(+2\) means as fast as the distance squared
+(twice as fast); order \(-1\) means it blows up roughly like one-over-distance.
+A boring nonzero value gets order \(0\). The all-zero function gets order
+\(+\infty\) by convention. The catch is that ``distance to a point'' isn't
+intrinsic to a curvy surface — you have to pick a flat coordinate chart, like
+laying graph paper over a patch of globe. The lemma quietly proves that the
+answer doesn't depend on which chart you pick. Why bother? This single integer
+is the atom out of which divisors, principal divisors, and the whole
+zero-and-pole bookkeeping of the next sections will be built.
+\end{layman}
+
 \begin{proofsketch}[Lean formalization strategy]
 Mathlib v4.28 provides \texttt{MeromorphicAt} and \texttt{meromorphicOrderAt}
 in \texttt{Mathlib.Analysis.Meromorphic.\{Basic, Order\}} for functions
@@ -69,6 +85,20 @@ For a nonzero meromorphic function \(f\) on \(X\), the set
 \notready
 \end{lemma}
 
+\begin{layman}
+Take a meromorphic function — one that's allowed finitely many points where
+it hits zero or blows up. The claim is that those special points can never
+crowd together: between any two of them there's always some breathing room.
+Said another way, you can't have an infinite sequence of zeros or poles
+clustering around a single spot. This is the same magic that lets a
+polynomial have only finitely many roots in any bounded region: complex
+analytic functions are rigid, and ``rigid'' rules out a sea of nearby
+misbehavior. Why bother? Together with compactness of the surface (the next
+step), this turns ``the set of interesting points'' from something
+potentially wild into a tidy finite list — exactly the input the divisor
+bookkeeping needs.
+\end{layman}
+
 \begin{proofsketch}
 Locally, in a chart \(\varphi\), \(f\circ\varphi^{-1}\) is meromorphic on
 an open subset of \(\C\). Either the Laurent series at \(\varphi(p)\)
@@ -86,6 +116,19 @@ For a nonzero meromorphic function \(f\) on the compact Riemann surface
 \(X\), the set \(\{p\in X:\ord_p(f)\ne 0\}\) is finite.
 \notready
 \end{lemma}
+
+\begin{layman}
+Combine two facts and you get a clean conclusion. Fact one: the surface is
+compact, meaning it's closed and bounded — a sphere, a donut, a pretzel,
+never an infinitely-extending plane. Fact two (just shown): the points where
+a meromorphic function vanishes or blows up never crowd together. On a
+compact space, any infinite set of points has to crowd somewhere — there's
+nowhere for them to spread out to. So if our points refuse to crowd, there
+can only be finitely many of them. Why bother? This is the moment the
+abstract ``divisor'' machinery snaps into focus: each meromorphic function
+gives a genuine finite shopping list of zeros and poles, with concrete
+weights, ready to be added and compared.
+\end{layman}
 
 \begin{proof}
 A subset of a compact space with no accumulation point is finite.
@@ -125,6 +168,21 @@ The degree map \(\deg:\Div(X)\to\Z\) sends \(D=\sum_p n_p\,p\) to
 \(\sum_p n_p\). It is a group homomorphism.
 \notready
 \end{definition}
+
+\begin{layman}
+We saw that a divisor is a tagged collection of points with whole-number
+weights — a shopping list, possibly with negative quantities. The
+\emph{degree} is the simplest thing you can do with such a list: just add up
+all the weights, ignoring which points they were attached to. Three apples,
+minus two oranges, plus seven pears? Degree \(3 - 2 + 7 = 8\). It's the
+checkout total without caring what's in the cart. This map respects addition:
+combining two shopping lists and totalling is the same as totalling each list
+and then adding the totals. So degree is a clean homomorphism from divisors
+to the integers. Why bother? It splits divisors into ``net positive,''
+``net negative,'' and ``net zero'' classes. The degree-zero divisors are the
+ones that can come from a single meromorphic function, and they're the input
+to the Abel–Jacobi map down the road.
+\end{layman}
 
 \begin{proofsketch}[Lean formalization strategy]
 Mathlib v4.28 already has \texttt{FreeAbelianGroup} in
@@ -168,6 +226,23 @@ chart atlas to a global field on \(X\) is project-side work.}
 \notready
 \end{definition}
 
+\begin{layman}
+A holomorphic function on the surface is one that's complex-differentiable
+everywhere — the smoothest, most rigid kind there is. A \emph{meromorphic}
+function relaxes this slightly: it's holomorphic except at finitely many
+points where it's allowed to blow up to infinity in a controlled way (think
+\(1/z\) at the origin). On a compact surface, the holomorphic functions are
+boring — they have to be constants — but the meromorphic ones form a rich
+field, the kind of algebraic object where you can add, subtract, multiply,
+and divide, just like rational numbers. You can also picture a meromorphic
+function as a holomorphic map to the Riemann sphere — the complex plane with
+a single extra ``point at infinity'' — where ``blowing up'' just means
+``going to that point.'' Why bother? Meromorphic functions are the test
+functions of the entire theory: their zeros and poles generate principal
+divisors, and Riemann–Roch is the question of how many of them fit a given
+pattern.
+\end{layman}
+
 \begin{definition}[Principal divisor of a meromorphic function]
 \label{def:principal-divisor}
 \uses{def:divisor,def:meromorphic-function,lem:divisor-finite-support}
@@ -180,6 +255,22 @@ homomorphism (\(\Mer(X)^{\times}\) under multiplication).
 \notready
 \end{definition}
 
+\begin{layman}
+Each nonzero meromorphic function comes with a free shopping list: tag every
+zero with a positive weight equal to its order (a double zero gets a 2), tag
+every pole with a negative weight equal to how badly it blows up (a simple
+pole gets a \(-1\)), and ignore every other point. The result is the
+\emph{principal divisor} of the function. Multiplying two functions adds
+their shopping lists — zeros stack, poles stack, and a zero meeting a
+matching pole cancels — so this is a genuine group homomorphism from the
+multiplicative group of nonzero meromorphic functions into the additive
+group of divisors. Why bother? Principal divisors are the
+``trivially achievable'' divisors. The big question of the whole theory is:
+which other divisors are reachable, in what sense, and what's the
+obstruction? The Jacobian variety, several sections later, is in spirit
+exactly the answer to that obstruction question.
+\end{layman}
+
 \begin{definition}[Principal divisors]
 \label{def:principal-divisors}
 \uses{def:principal-divisor}
@@ -188,12 +279,41 @@ The subgroup of principal divisors is
 \notready
 \end{definition}
 
+\begin{layman}
+Collect every shopping list that comes from a meromorphic function in the
+way just described. This collection is closed under addition (the product
+of two functions gives the sum of their lists), closed under negation (one
+over the function flips signs), and contains the empty list (the constant
+function \(1\)). So the principal divisors form a subgroup inside the group
+of all divisors. Picture all divisors as a vast warehouse of imaginable
+shopping lists, and the principal divisors as the narrow aisle of lists
+that actually correspond to a real meromorphic function. Why bother?
+The quotient of all divisors by this subgroup is the
+\emph{divisor class group} (and, in degree zero, the Picard group). That
+quotient is exactly what the Jacobian variety geometrizes: we're
+quotienting out the ``trivial'' equivalence so we can study what's left.
+\end{layman}
+
 \begin{theorem}[Principal divisors have degree zero]
 \label{thm:principal-degree-zero}
 \uses{def:principal-divisor,def:divisor-degree}
 For every nonzero \(f\in\Mer(X)\), \(\deg(f)=0\).
 \notready
 \end{theorem}
+
+\begin{layman}
+Take any nonzero meromorphic function and write down its shopping list of
+zeros and poles, weighted by order. The claim: the weights always sum to
+exactly zero. Zeros and poles are perfectly balanced — for every total of
+\(k\) units of vanishing, there's an equal total of pole strength elsewhere.
+A physical picture: think of the function as defining a flow on the surface;
+zeros are ``sources,'' poles are ``sinks,'' and on a closed surface with
+no boundary, sources and sinks must balance globally — there's nowhere
+else for the flow to go. Why bother? It tells us that every principal
+divisor lives entirely inside the degree-zero divisors. So when we later
+quotient out, we'll be quotienting inside one fixed degree level — exactly
+the structural setup the Jacobian needs.
+\end{layman}
 
 \begin{proofsketch}
 The classical proof uses the argument principle on a polygonal model of
@@ -216,6 +336,22 @@ Riemann surfaces.
 \notready
 \end{definition}
 
+\begin{layman}
+Any meromorphic function naturally extends to a map into the \emph{Riemann
+sphere} — the complex plane plus a single extra ``point at infinity''
+wrapped around like the north pole of a globe. Wherever the function gives
+a finite value, send the point there as usual; wherever the function blows
+up, send the point to that distinguished north pole. Suddenly there's
+nothing to apologize for: poles are just the preimage of one specific
+extra point, no different from any other value. The blown-up
+discontinuity becomes a smooth, well-defined output. And this extended
+map is holomorphic everywhere. Why bother? It converts ``meromorphic
+function with ugly poles'' into ``holomorphic map between two compact
+surfaces,'' which unlocks topological tools like degree, ramification,
+and covering theory — exactly what we'll need to analyze maps between
+Riemann surfaces.
+\end{layman}
+
 \begin{theorem}[Meromorphic-to-\(\CPone\) bijection]
 \label{thm:meromorphic-as-cp1-map}
 \uses{def:meromorphic-to-cp1}
@@ -224,6 +360,21 @@ meromorphic functions on \(X\) and nonconstant holomorphic maps
 \(X\to\CPone\).
 \notready
 \end{theorem}
+
+\begin{layman}
+The promotion to a sphere-valued map isn't just a convenience — it's a
+perfect two-way correspondence. Every nonzero meromorphic function gives a
+nonconstant holomorphic map to the Riemann sphere; every nonconstant
+holomorphic map to the Riemann sphere comes from a unique meromorphic
+function (just read off its values, with the preimages of the north pole
+becoming poles). The two points of view are completely interchangeable:
+``meromorphic function'' and ``map to the sphere'' are the same object
+wearing different clothes. Why bother? It lets us swap fluently between
+the algebraic picture (functions you can multiply and divide) and the
+geometric picture (maps with fibers, branch points, and degree). Most of
+the cleverness in classical Riemann surface theory lives in choosing the
+right outfit for the moment.
+\end{layman}
 
 \begin{proofsketch}
 Forward: a meromorphic function on \(X\) is exactly a holomorphic
@@ -246,12 +397,42 @@ For a divisor \(D\),
 \notready
 \end{definition}
 
+\begin{layman}
+Pick a divisor — your shopping list of points with whole-number weights.
+The associated Riemann–Roch space is the collection of all meromorphic
+functions whose own shopping list is, position by position, no worse than
+the one you picked. Concretely: if your list permits a double pole at a
+point, the function is allowed to blow up at most that badly there; if
+your list demands a zero at another point, the function must vanish there.
+(The zero function is included by convention.) Think of the divisor as a
+budget — points where poles are permitted, points where zeros are required —
+and the Riemann–Roch space as every meromorphic function that lives within
+budget. Why bother? The dimension of this space, as a complex vector
+space, is the central quantity of the whole classical theory. Riemann–Roch
+is a formula computing exactly how many independent functions fit any
+given budget, and from that flows everything about line bundles,
+embeddings, and the geometry of curves.
+\end{layman}
+
 \begin{lemma}[\(L(D)\) is a complex vector space]
 \label{lem:riemann-roch-space-vector}
 \uses{def:riemann-roch-space}
 \(L(D)\) is a \(\C\)-vector subspace of \(\Mer(X)\).
 \notready
 \end{lemma}
+
+\begin{layman}
+The Riemann–Roch space — meromorphic functions fitting a given budget of
+zeros and poles — is closed under the two basic vector-space operations.
+If two functions both fit the budget, their sum still fits the budget
+(the worst poles can't get worse by adding); and scaling a function by a
+complex number doesn't change its zeros or poles at all. So this set
+isn't just a collection, it's a complex vector space, with a finite
+dimension we can count. Why bother? A vector space is the playground of
+linear algebra. Once we know Riemann–Roch spaces are vector spaces, we
+can ask: what's their dimension? That single number is the protagonist
+of the Riemann–Roch theorem.
+\end{layman}
 
 \subsection{Aggregate input}
 
@@ -264,6 +445,20 @@ divisors, the degree map, and Riemann-Roch spaces on a compact
 Riemann surface, packaged as a single dependency for downstream
 classical inputs (Riemann-Roch, Abel's theorem).
 \end{theorem}
+
+\begin{layman}
+We package every classical fact above into one named bundle: the theory
+of meromorphic functions, divisors, principal divisors, the degree map,
+and Riemann–Roch spaces on a compact Riemann surface. Each piece is more
+than a century old, fully understood by professionals, and, frankly,
+hundreds of pages to formalize from first principles in a proof
+assistant. Rather than reinvent that wheel inside this project, we cite
+the whole package as a single classical input and build the rest of the
+proof on top of it. Why bother? Modular accounting. Future steps depend
+on \emph{the package}, so any later upgrade that swaps the package for
+a fully-formalized version will slot right in without disturbing the
+proof of the main theorem.
+\end{layman}
 
 \begin{formalizationnote}
 The repository currently has substantial chart and path-integration
