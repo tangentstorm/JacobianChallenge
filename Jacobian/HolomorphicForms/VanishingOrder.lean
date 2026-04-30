@@ -54,19 +54,19 @@ theorem orderAt_zero (p : X) :
     orderAt p (fun _ : X => (0 : ℂ)) (meromorphicAtX_zero p) = (⊤ : WithTop ℤ) := by
   sorry
 
-/-- Chart-independence of `orderAt`: the value computed via the extended
-chart at `p` agrees with the value computed via any other holomorphic chart
-at `p`. Placeholder — proof requires the analyticity-of-transition-maps
-infrastructure plus the complex inverse function theorem.
-
-The blueprint version (`def:vanishing-order`, line 21 of
-`tex/sections/01-compact-riemann-surfaces.tex`) is stated for two charts
-`e₁, e₂` with `e₁ p = 0`. Mathlib v4.28 provides
-`MeromorphicAt.meromorphicOrderAt_comp` for the analytic-equivalence reduction. -/
-theorem orderAt_chart_independent
+/-- Chart-independence of `orderAt`: computing the meromorphic order of `f`
+through any holomorphic chart `e` at `p` (with `p ∈ e.source`) yields the
+same value as the canonical `orderAt`. Placeholder — proof reduces to
+`MeromorphicAt.meromorphicOrderAt_comp` applied to the analytic equivalence
+`extChartAt 𝓘(ℂ) p ∘ e.symm`, whose derivative is nonzero at `e p` by the
+complex inverse function theorem (see blueprint
+`tex/sections/01-compact-riemann-surfaces.tex` line 42-51). -/
+theorem orderAt_via_chart
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : X → ℂ) (p : X) (hf : MeromorphicAtX f p) :
-    orderAt p f hf = orderAt p f hf := by
+    (f : X → ℂ) (p : X) (hf : MeromorphicAtX f p)
+    (e : PartialHomeomorph X ℂ) (_hep : p ∈ e.source)
+    (_hfe : MeromorphicAt (f ∘ e.symm) (e p)) :
+    meromorphicOrderAt (f ∘ e.symm) (e p) = orderAt p f hf := by
   sorry
 
 end JacobianChallenge.HolomorphicForms
