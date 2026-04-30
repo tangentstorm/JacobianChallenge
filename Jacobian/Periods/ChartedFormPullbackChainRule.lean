@@ -195,4 +195,17 @@ theorem chartedFormPullback_pullbackFormsBundledLM_smul
       - chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) := by
   rw [map_neg, chartedFormPullback_neg]
 
+/-- Subtraction: `chartedFormPullback c (pullback (η - ζ)) = chartedFormPullback c (pullback η) - chartedFormPullback c (pullback ζ)`. -/
+@[simp] theorem chartedFormPullback_pullbackFormsBundledLM_sub
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η ζ : HolomorphicOneForm ℂ Y) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (η - ζ)) =
+      chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) -
+      chartedFormPullback c (pullbackFormsBundledLM X Y f hf ζ) := by
+  rw [sub_eq_add_neg, sub_eq_add_neg, map_add, map_neg,
+      chartedFormPullback_add, chartedFormPullback_neg]
+
 end JacobianChallenge.Periods
