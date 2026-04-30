@@ -1,3 +1,4 @@
+import Mathlib.Analysis.Normed.Module.Convex
 import Mathlib.Topology.Algebra.Group.Quotient
 import Mathlib.Topology.Connected.PathConnected
 import Jacobian.ComplexTorus.Defs
