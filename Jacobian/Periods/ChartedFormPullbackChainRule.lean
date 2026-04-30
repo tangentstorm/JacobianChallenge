@@ -1,6 +1,7 @@
 import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackEqPullbackFormsFun
 import Jacobian.Periods.PathIntegralViaChartCorrect
+import Jacobian.Periods.PathIntegralViaCover
 import Jacobian.HolomorphicForms.PullbackBundled
 import Jacobian.TraceDegree.PullbackFunComp
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
@@ -468,5 +469,26 @@ theorem pathIntegralViaChartCorrect_pullbackFormsBundledLM_smul
           (pullbackFormsBundledLM X Y f hf η) γ h := by
   unfold pathIntegralViaChartCorrect pathIntegralInChartCorrect
   exact curveIntegral_chartedFormPullback_pullbackFormsBundledLM_smul c f hf k η _
+
+/-! ### `pathIntegralViaCoverWith` linearity in the form
+
+Sum over chart-local pieces of the chart-local linearity. -/
+
+/-- Zero-form chart-cover path integral: vanishes via chart-by-chart zero. -/
+theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_zero
+    (f : X → Y) (hf : ContMDiff (modelWithCornersSelf ℂ ℂ)
+      (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) f)
+    {a b : X} (γ : Path a b) (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
+    (hcov : ∀ (i : Fin n) (t : unitInterval),
+      (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+      γ t ∈ (chartAt ℂ (pickChart i)).source) :
+    pathIntegralViaCoverWith
+        (pullbackFormsBundledLM X Y f hf (0 : HolomorphicOneForm ℂ Y))
+        γ n hn pickChart hcov = 0 := by
+  unfold pathIntegralViaCoverWith
+  -- Each summand is pathIntegralViaChartCorrect ... 0 ... = 0.
+  refine Finset.sum_eq_zero (fun i _ => ?_)
+  exact pathIntegralViaChartCorrect_pullbackFormsBundledLM_zero
+    (chartAt ℂ (pickChart i)) f hf _ _
 
 end JacobianChallenge.Periods
