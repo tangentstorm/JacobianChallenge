@@ -563,4 +563,25 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_refl
         (Path.refl a) n hn pickChart hcov = 0 :=
   pathIntegralViaCoverWith_refl _ a n hn pickChart hcov
 
+/-- **Curve-integral chain-rule integrand identity**: the curve integrand
+at point `t` of the chart-coord pullback of the bundled pullback form
+equals `η`'s value at the pushed point applied to the iterated `mfderiv`
+on the path's `derivWithin`. This is the chain rule in `curveIntegralFun`
+form, ready to be summed via `intervalIntegral.integral_congr`. -/
+theorem curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM_eq
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) {a b : ℂ} (γ_X : Path a b) :
+    curveIntegralFun (chartedFormPullback c (pullbackFormsBundledLM X Y f hf η)) γ_X =
+      fun t : ℝ =>
+        η.toFun (f (c.symm (γ_X.extend t)))
+          ((mfderiv (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f
+            (c.symm (γ_X.extend t)))
+            ((mfderiv (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) c.symm
+              (γ_X.extend t))
+              (derivWithin γ_X.extend unitInterval t))) := by
+  funext t
+  exact curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM c f hf η γ_X t
+
 end JacobianChallenge.Periods
