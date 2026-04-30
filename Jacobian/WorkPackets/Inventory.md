@@ -109,7 +109,7 @@ follows from `T3 ⇒ T2`, but the project will want a direct lemma.
   construction + transition maps + verification that addition/negation
   descend smoothly.
 
-**First-milestone summary.** `plan.md` picks, as its first concrete
+**First-milestone summary.** `ref/plan.md` picks, as its first concrete
 milestone, a standalone file proving that a finite-dimensional complex vector
 space modulo a full lattice is a compact complex Lie additive group. The
 inventory says: the lattice side is ready (§2.1); the quotient-topology side
@@ -274,7 +274,7 @@ this.
 
 The period-lattice route `Jacobian X = H⁰(X, Ω¹)^∨ / H₁(X, ℤ)` remains the
 intended default, but the inventory changes the **order of attack** and
-sharpens the cost estimates in `plan.md`.
+sharpens the cost estimates in `ref/plan.md`.
 
 ### Layers in roughly bottom-up build order
 
@@ -306,7 +306,7 @@ sharpens the cost estimates in `plan.md`.
 - `ofCurve_inj` depends on layers 4–7; blocked until the integration layer
   exists.
 - `pushforward_pullback` depends on layers 7 and 8; the trace-of-forms
-  approach from `plan.md` needs the forms type (layer 2) first.
+  approach from `ref/plan.md` needs the forms type (layer 2) first.
 - `genus_eq_zero_iff_homeo` depends on finite-dimensionality of `H⁰(X, Ω¹)`
   (layer 3) **and** a classification theorem (uniformization or Riemann-Roch
   +construction of a degree-one meromorphic function). Outside layer 3, this
@@ -337,7 +337,7 @@ sharpens the cost estimates in `plan.md`.
 
 ## 7. Snapshot Tables
 
-### 7.1 Status by plan.md Phase 0.5 checklist
+### 7.1 Status by ref/plan.md Phase 0.5 checklist
 
 | # | Item | Status | Primary file(s) |
 |---|------|--------|-----------------|

@@ -89,7 +89,7 @@ structure HolomorphicOneFormBanachData
   `holomorphicOneForm_montel` is not provable from
   `toNorm`/`toMetricSpace`/`complete` alone).
 
-  Recorded as Blocker 5 in `plan.md` Phase 2; surfaced by Aristotle
+  Recorded as Blocker 5 in `ref/plan.md` Phase 2; surfaced by Aristotle
   Montel survey `5dfd5106`.  No constructor breaks adding this field
   because `holomorphicOneForm_normedSpace_uniformOnCompact` is itself
   still a sorry — the eventual sup-norm construction satisfies this
