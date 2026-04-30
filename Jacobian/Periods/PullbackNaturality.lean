@@ -520,6 +520,26 @@ theorem periodPairing_pullbackFormsBundledLM_smul_form_lhs
       k • (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) := by
   rw [LinearMap.map_smul, LinearMap.map_smul]
 
+/-- **Unconditional form-neg RHS identity**: the cycle-level period
+pairing on Y applied to `-η` equals the negation of the period pairing
+applied to `η`. RHS-side analogue of `_neg_form_lhs`. -/
+theorem periodPairing_pullbackFormsBundledLM_neg_form_rhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y) :
+    (periodPairing ℂ Y (cyclePushforward f hf γ)) (-η) =
+      - (periodPairing ℂ Y (cyclePushforward f hf γ)) η := by
+  rw [LinearMap.map_neg]
+
+/-- **Unconditional form-smul RHS identity**: the cycle-level period
+pairing on Y applied to `k • η` equals `k`-scalar-times the period
+pairing applied to `η`. -/
+theorem periodPairing_pullbackFormsBundledLM_smul_form_rhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X) (k : ℂ) (η : HolomorphicOneForm ℂ Y) :
+    (periodPairing ℂ Y (cyclePushforward f hf γ)) (k • η) =
+      k • (periodPairing ℂ Y (cyclePushforward f hf γ)) η := by
+  rw [LinearMap.map_smul]
+
 /-- **Form-additivity special case**: naturality at η + ζ from
 naturality at η and at ζ separately, via linearity in the form
 argument. Sorry-free. -/
