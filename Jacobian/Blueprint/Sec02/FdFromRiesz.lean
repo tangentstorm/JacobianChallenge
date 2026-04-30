@@ -21,11 +21,9 @@ namespace JacobianChallenge.Blueprint
 radius in a normed `ℂ`-vector space is compact, the space is
 finite-dimensional. -/
 theorem fd_from_riesz
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {r : ℝ} (_hr : 0 < r)
-    (_h : IsCompact (Metric.closedBall (0 : E) r)) :
-    FiniteDimensional ℂ E := by
-  -- TODO: exact FiniteDimensional.of_isCompact_closedBall₀ ℂ _hr _h
-  -- (field argument first; `[CompleteSpace ℂ]` is supplied by Mathlib.)
-  sorry
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {r : ℝ} (hr : 0 < r)
+    (h : IsCompact (Metric.closedBall (0 : E) r)) :
+    FiniteDimensional ℂ E :=
+  FiniteDimensional.of_isCompact_closedBall₀ ℂ hr h
 
 end JacobianChallenge.Blueprint

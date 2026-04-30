@@ -29,12 +29,18 @@ namespace JacobianChallenge.Blueprint
 open scoped Manifold
 open JacobianChallenge.HolomorphicForms
 
-/-- The sup norm on `H⁰(X, Ω¹)` for a compact complex 1-manifold `X`.
-Stub: the value is the supremum over `x : X` of
-`cotangentFiberNormAt X x (ω.1 x)`. -/
+/-- The sup norm on `H⁰(X, Ω¹)` for a compact complex 1-manifold `X`:
+the supremum over `x : X` of `cotangentFiberNormAt X x (ω.1 x)`.
+
+The supremum is realised via `Real.iSup` (= `sSup` of the range with a
+`0` fallback for empty/unbounded). When the base is compact and the
+fiber-norm composition is continuous, the supremum is attained and
+finite; cf.\ `IsCompact.exists_isMaxOn` and the production
+`SectionSupNorm.supNorm`. -/
 noncomputable def holomorphicSupNorm
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_ω : HolomorphicOneForm ℂ X) : ℝ := sorry
+    (ω : HolomorphicOneForm ℂ X) : ℝ :=
+  ⨆ x : X, cotangentFiberNormAt X x (ω.1 x)
 
 end JacobianChallenge.Blueprint
