@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.AnalyticGenus
+import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.EntireZero
@@ -913,28 +914,24 @@ noncomputable def onePointCx_homeomorph_sphere :
     OnePoint ℂ ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1 :=
   onePointEquivSphereOfFinrankEq (by simp [Complex.finrank_real_complex])
 
-/-- Placeholder certificate that a fixed-pole map has exactly the
-Riemann-Roch simple-pole behavior needed downstream.
-
-This is currently `Prop`-valued without fields because the project has not
-introduced global divisors or meromorphic functions on charted spaces. The
-declaration name records the intended mathematical assertion. -/
-structure GenusZeroSimplePoleAtCertificate
-    (X : Type*) [TopologicalSpace X] (P : X) (_f : X → OnePoint ℂ) : Prop where
-  simple_pole_only_at : True
-
-/-- Placeholder data for the Riemann-Roch output in genus zero: a global
-meromorphic map to `OnePoint ℂ` with one prescribed simple pole.
-
-The current project does not yet have a global meromorphic-function type on
-charted spaces, so this structure records the eventual map, pole, and a named
-certificate standing in for the future divisor/order assertion. It is
-intentionally local to the genus-zero classification split. -/
+/-- The Riemann-Roch output in genus zero: a meromorphic map to `OnePoint ℂ`
+whose pole divisor is the point divisor `[pole]`. -/
 structure GenusZeroSimplePoleMeromorphicMap
-    (X : Type*) [TopologicalSpace X] where
-  toMap : X → OnePoint ℂ
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
+  meromorphicMap : MeromorphicMapToSphere X
   pole : X
-  simple_pole_cert : GenusZeroSimplePoleAtCertificate X pole toMap
+  simple_pole_cert : meromorphicMap.poles = Divisor.point pole
+
+namespace GenusZeroSimplePoleMeromorphicMap
+
+/-- The underlying map to the Riemann sphere. -/
+def toMap {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : GenusZeroSimplePoleMeromorphicMap X) : X → OnePoint ℂ :=
+  f.meromorphicMap.toMap
+
+end GenusZeroSimplePoleMeromorphicMap
 
 /-- Placeholder data after the compactness/properness step: the genus-zero
 meromorphic map is a degree-one map to `OnePoint ℂ`.
@@ -943,10 +940,13 @@ The fields are the topological consequences needed by the final assembly:
 continuity and bijectivity. A future refinement should replace this bridge by
 properness plus the local degree calculation, then derive these fields. -/
 structure GenusZeroProperDegreeOneMap
-    (X : Type*) [TopologicalSpace X] where
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
   toMap : X → OnePoint ℂ
   continuous_toMap : Continuous toMap
   bijective_toMap : Function.Bijective toMap
+  degree_one_data : ∃ f : MeromorphicMapToSphere X,
+    toMap = f.toMap ∧ Nonempty (MeromorphicDegreeOneData X f)
 
 /-- Placeholder data for the last analytic step: a degree-one meromorphic map
 is a biholomorphic parametrization of `X` by `OnePoint ℂ`.
@@ -977,20 +977,16 @@ The original `genus_zero_homeomorph_onePointCx` is now pure assembly of these
 smaller leaves.
 -/
 
-/-- Fixed-pole Riemann-Roch output: a map to `OnePoint ℂ` together with the
-certificate that its only pole is simple and located at the prescribed point.
-
-The project still lacks a global meromorphic-function/divisor API, so this
-records exactly the data consumed by the later genus-zero assembly. -/
-structure GenusZeroRiemannRochFixedPoleData
+/-- Fixed-pole Riemann-Roch output, now backed by the production
+meromorphic/divisor substrate. -/
+abbrev GenusZeroRiemannRochFixedPoleData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
-    (_h : analyticGenus ℂ X = 0) where
-  toMap : X → OnePoint ℂ
-  simple_pole_cert : GenusZeroSimplePoleAtCertificate X P toMap
+    (h : analyticGenus ℂ X = 0) : Type _ :=
+  GenusZeroFixedPoleMeromorphicData X P h
 
 /-- **Fixed-pole Riemann-Roch existence leaf.** If a compact connected
 Riemann surface has analytic genus zero, then for any prescribed point `P`
@@ -1007,7 +1003,7 @@ theorem genusZeroRiemannRochFixedPoleData_nonempty
     (P : X)
     (h : analyticGenus ℂ X = 0) :
     Nonempty (GenusZeroRiemannRochFixedPoleData X P h) := by
-  sorry
+  exact genusZero_fixedPole_meromorphicData_nonempty X P h
 
 /-- **Fixed-pole Riemann-Roch data assembly.** Extracts the map/certificate
 package from the named existence leaf. -/
@@ -1030,7 +1026,7 @@ noncomputable def genusZeroRiemannRochNonconstantMapAt
     (P : X)
     (h : analyticGenus ℂ X = 0) :
     X → OnePoint ℂ :=
-  (genusZeroRiemannRochFixedPoleData X P h).toMap
+  (genusZeroRiemannRochFixedPoleData X P h).meromorphicMap.toMap
 
 /-- **Fixed-pole divisor/order certificate projection.** The Riemann-Roch
 map produced at `P` has exactly one simple pole, located at `P`, and no
@@ -1042,10 +1038,9 @@ theorem genusZeroRiemannRochSimplePoleAt
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
     (h : analyticGenus ℂ X = 0) :
-    GenusZeroSimplePoleAtCertificate X P
-      (genusZeroRiemannRochNonconstantMapAt X P h) := by
-  unfold genusZeroRiemannRochNonconstantMapAt
-  exact (genusZeroRiemannRochFixedPoleData X P h).simple_pole_cert
+    (genusZeroRiemannRochFixedPoleData X P h).meromorphicMap.poles =
+      Divisor.point P := by
+  exact (genusZeroRiemannRochFixedPoleData X P h).poleDivisor_eq_point
 
 /-- **Fixed-pole Riemann-Roch assembly.** The map part of the fixed-pole
 simple-pole statement; the pole certificate is kept separately as
@@ -1078,7 +1073,8 @@ noncomputable def simplePoleMeromorphicMapOfGenusZero
     (h : analyticGenus ℂ X = 0) :
     GenusZeroSimplePoleMeromorphicMap X :=
   let P : X := Classical.choice (inferInstance : Nonempty X)
-  { toMap := genusZeroSimplePoleMeromorphicMapAt X P h
+  let data := genusZeroRiemannRochFixedPoleData X P h
+  { meromorphicMap := data.meromorphicMap
     pole := P
     simple_pole_cert := genusZeroRiemannRochSimplePoleAt X P h }
 
@@ -1107,7 +1103,16 @@ theorem properDegreeOneMapOfSimplePole_nonempty
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_f : GenusZeroSimplePoleMeromorphicMap X) :
     Nonempty (GenusZeroProperDegreeOneMap X) := by
-  sorry
+  let hdegree :=
+    meromorphicDegreeOneData_of_poleDivisor_point X _f.meromorphicMap _f.pole
+      _f.simple_pole_cert
+  refine hdegree.elim ?_
+  intro data
+  exact ⟨
+    { toMap := _f.meromorphicMap.toMap
+      continuous_toMap := data.continuous_toMap
+      bijective_toMap := data.bijective_toMap
+      degree_one_data := ⟨_f.meromorphicMap, rfl, ⟨data⟩⟩ }⟩
 
 /-- **Properness/degree data assembly.** Extracts the degree-one promotion
 from the named existence leaf. -/
