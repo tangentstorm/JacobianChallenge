@@ -24,7 +24,7 @@ open JacobianChallenge.HolomorphicForms
 norm equals `holomorphicSupNorm`, the realisation is finite-dimensional
 over `ℂ`. -/
 theorem input_finite_dimensionality
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
     (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
