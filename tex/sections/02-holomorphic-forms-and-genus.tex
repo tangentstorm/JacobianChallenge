@@ -1,0 +1,90 @@
+\section{Holomorphic Forms and Genus}
+\label{sec:holomorphic-forms-and-genus}
+
+Let \(\HX\) be the vector space of global holomorphic one-forms. Define the
+analytic genus by \(g(X)=\dim_{\C}\HX\), as in
+Definition~\ref{def:analytic-genus}.
+
+\begin{classicalinput}[Finite-dimensionality]
+\label{input:finite-dimensionality}
+The space \(\HX\) is finite-dimensional.
+\depends{compactness, local coefficient extraction for one-forms, Montel or
+Riemann-Roch}
+\end{classicalinput}
+
+\begin{proofsketch}
+One route uses Riemann-Roch and identifies \(\HX\) with the space of sections
+of the canonical divisor. Another analytic route puts a sup norm on
+holomorphic one-forms, proves a normal-family compactness theorem, and derives
+finite-dimensionality by local coefficient estimates. The Lean development is
+currently closer to the analytic route: it already tracks fiber norms, sup
+norms, and Montel-style compactness obligations.
+\end{proofsketch}
+
+\begin{classicalinput}[Riemann-Roch]
+\label{input:riemann-roch}
+For every divisor \(D\) on \(X\),
+\[
+  \ell(D)-\ell(K-D)=\deg(D)+1-g(X),
+\]
+where \(K\) is a canonical divisor and \(\ell(D)=\dim_{\C} L(D)\).
+\end{classicalinput}
+
+\begin{proofsketch}
+This is the standard Riemann-Roch theorem for compact Riemann surfaces. It may
+be proved analytically using sheaf cohomology and Serre duality, or through
+classical function theory. In this roadmap it is a named classical input, not
+a small lemma.
+\end{proofsketch}
+
+\begin{proposition}[Genus zero gives a degree-one meromorphic function]
+\label{prop:genus-zero-degree-one-map}
+If \(g(X)=0\), then for every \(p\in X\) there is a meromorphic function
+\(f:X\to\CPone\) with exactly one simple pole at \(p\). In particular, \(f\)
+has degree one.
+\lean{JacobianChallenge.HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero}
+\end{proposition}
+
+\begin{proof}
+Apply Riemann-Roch to \(D=p\). Since \(\deg(p)=1\) and \(g(X)=0\),
+\[
+  \ell(p)-\ell(K-p)=2.
+\]
+The second term is zero because \(K-p\) has negative degree in genus zero.
+Thus \(L(p)\) has dimension \(2\), so it contains a nonconstant meromorphic
+function with at most a simple pole at \(p\). Such a function cannot have any
+other pole and therefore defines a degree-one map to \(\CPone\).
+\end{proof}
+
+\begin{classicalinput}[Degree-one maps are isomorphisms]
+\label{input:degree-one-isomorphism}
+A nonconstant holomorphic map \(f:X\to\CPone\) of degree one is a
+biholomorphism.
+\end{classicalinput}
+
+\begin{proofsketch}
+Away from finitely many branch points, a degree-one holomorphic map is a
+one-sheeted covering, hence injective. Ramification would increase local
+degree, so no ramification occurs. The map is therefore bijective and locally
+biholomorphic. Compact-to-Hausdorff bijectivity gives a homeomorphism, and
+the local inverse theorem gives the complex-analytic inverse.
+\end{proofsketch}
+
+\begin{proof}[Proof of Theorem~\ref{thm:genus-zero-classification}]
+If \(g(X)=0\), Proposition~\ref{prop:genus-zero-degree-one-map} and
+Input~\ref{input:degree-one-isomorphism} identify \(X\) biholomorphically,
+hence homeomorphically, with \(\CPone\), whose underlying topological space is
+\(\Sphere\).
+
+Conversely, if \(X\) is homeomorphic to \(\Sphere\), the topological genus is
+zero. The comparison theorem between analytic genus
+\(\dim_{\C}H^{0}(X,\Omega^{1}_{X})\) and topological genus gives \(g(X)=0\).
+\end{proof}
+
+\begin{formalizationnote}
+The current Lean target splits this into the two directions in
+\code{Jacobian/HolomorphicForms/GenusZeroClassification.lean}. The forward
+direction needs Riemann-Roch, meromorphic functions, and degree-one map
+classification. The reverse direction needs comparison of analytic and
+topological genus.
+\end{formalizationnote}

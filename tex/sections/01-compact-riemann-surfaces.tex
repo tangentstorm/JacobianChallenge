@@ -1,0 +1,35 @@
+\section{Compact Riemann Surfaces}
+\label{sec:compact-riemann-surfaces}
+
+Throughout, \(X,Y,Z\) denote compact connected Riemann surfaces, and maps
+between them are holomorphic unless otherwise specified. Compactness implies
+that every holomorphic function \(X\to\C\) is constant. Holomorphic maps
+between compact Riemann surfaces are either constant or finite branched
+coverings.
+
+\begin{classicalinput}[Meromorphic functions and divisors]
+\label{input:divisors}
+There is a divisor group \(\Div(X)\), a subgroup of principal divisors
+\(\Prin(X)\), a degree map \(\deg:\Div(X)\to\Z\), and the Riemann-Roch spaces
+\[
+  L(D)=\{ f\text{ meromorphic on }X : (f)+D\ge 0\}.
+\]
+Principal divisors have degree zero, and a nonconstant meromorphic function
+defines a holomorphic map \(X\to\CPone\).
+\end{classicalinput}
+
+\begin{proofsketch}
+The local theory of holomorphic functions gives zeros and poles with finite
+orders. Summing orders defines divisors. Compactness gives finiteness of the
+support of a divisor associated to a meromorphic function. The meromorphic
+function is interpreted as a holomorphic map to \(\CPone\) by using the value
+\(\infty\) at poles.
+\end{proofsketch}
+
+\begin{formalizationnote}
+The repository currently has substantial chart and path-integration
+infrastructure, but not a full divisor or meromorphic-function theory on
+compact Riemann surfaces. This input is the source for later theorem names
+around Riemann-Roch, Abel's theorem, and degree theory.
+\end{formalizationnote}
+

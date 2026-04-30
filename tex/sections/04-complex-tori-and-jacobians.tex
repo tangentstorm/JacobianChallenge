@@ -1,0 +1,43 @@
+\section{Complex Tori and the Jacobian}
+\label{sec:complex-tori-jacobians}
+
+Let \(V\) be a finite-dimensional complex vector space and \(\Lambda\subset V\)
+a full lattice. Then \(V/\Lambda\) is a compact complex Lie additive group.
+The quotient map is a local biholomorphism after restricting to sufficiently
+small balls avoiding nonzero lattice translates.
+
+\begin{proposition}[Complex torus package]
+\label{prop:complex-torus-package}
+The quotient \(V/\Lambda\) has an additive commutative group structure,
+Hausdorff topology, compactness, complex charted-space structure, complex
+manifold structure, and compatible Lie additive group structure.
+\lean{JacobianChallenge.ComplexTorus}
+\end{proposition}
+
+\begin{proof}
+The group and topology are induced by the quotient of the additive topological
+group \(V\). Closedness and discreteness of \(\Lambda\) give Hausdorffness and
+local injectivity of the quotient map. A compact fundamental parallelepiped
+covers \(V/\Lambda\), proving compactness. Local charts are obtained by
+choosing a ball \(B(v,r)\) on which the quotient map is injective; transition
+maps are translations in \(V\), hence holomorphic and smooth. Addition and
+negation are induced from smooth maps on \(V\).
+\end{proof}
+
+\begin{proof}[Construction of Definition~\ref{def:analytic-jacobian}]
+Apply Proposition~\ref{prop:complex-torus-package} to
+\[
+  V=\HdualX,\qquad \Lambda=\Pi_X(H_1(X,\Z)).
+\]
+The full-lattice condition is exactly Theorem~\ref{thm:period-lattice}. This
+produces the Jacobian \(\Jac(X)\) with all structural instances required by
+the challenge.
+\end{proof}
+
+\begin{formalizationnote}
+Most complex torus infrastructure is already present in
+\code{Jacobian/ComplexTorus}. The challenge-facing carrier uses a
+basis-aligned model \(\operatorname{Fin}(g)\to\C\) and a universe bridge via
+\code{ULift}. The informal proof treats this as transport along a chosen
+linear equivalence \(\HdualX\cong\C^g\).
+\end{formalizationnote}

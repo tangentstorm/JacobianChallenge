@@ -1,0 +1,71 @@
+\section{The Abel-Jacobi Map}
+\label{sec:abel-jacobi}
+
+Fix a base point \(P\in X\). For \(Q\in X\), choose a path from \(P\) to \(Q\)
+and define
+\[
+  I_{P,Q}(\omega)=\int_P^Q\omega.
+\]
+Changing the path changes \(I_{P,Q}\) by a period, so its class in
+\(\Jac(X)\) is well-defined. This is Definition~\ref{def:abel-jacobi}.
+
+\begin{lemma}[Path independence modulo periods]
+\label{lem:aj-path-independence}
+The class of \(I_{P,Q}\) in \(\HdualX/\periods_X\) is independent of the path
+from \(P\) to \(Q\).
+\lean{JacobianChallenge.AbelJacobi.analyticOfCurve_path_independent}
+\end{lemma}
+
+\begin{proof}
+Two paths from \(P\) to \(Q\) differ by a closed one-cycle. Integrating a
+holomorphic one-form over that cycle gives an element of the period lattice.
+\end{proof}
+
+\begin{lemma}[Base point maps to zero]
+\label{lem:aj-self}
+\(\AJ_P(P)=0\).
+\lean{Jacobian.ofCurve_self}
+\end{lemma}
+
+\begin{proof}
+Use the constant path from \(P\) to \(P\). The integral of every one-form over
+the constant path is zero.
+\end{proof}
+
+\begin{lemma}[Holomorphicity of Abel-Jacobi]
+\label{lem:aj-holomorphic}
+The map \(\AJ_P:X\to\Jac(X)\) is holomorphic.
+\lean{Jacobian.ofCurve_contMDiff}
+\end{lemma}
+
+\begin{proof}
+Locally, choose a coordinate disk and write a holomorphic one-form as
+\(h(z)\,dz\). The coordinate expression for \(\AJ_P\) differs from a constant
+by primitives of the holomorphic coefficient functions \(h\). Hence each
+coordinate of the lift to \(\HdualX\) is holomorphic, and the quotient map to
+\(\Jac(X)\) is holomorphic.
+\end{proof}
+
+\begin{classicalinput}[Abel's theorem]
+\label{input:abel-theorem}
+For degree-zero divisors on \(X\), the Abel-Jacobi map has kernel exactly the
+principal divisors. In particular, if \(g(X)>0\) and
+\(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
+\lean{JacobianChallenge.AbelJacobi.pathIntegralFunctional_separates_points}
+\end{classicalinput}
+
+\begin{proofsketch}
+The equality \(\AJ_P(Q_1)=\AJ_P(Q_2)\) says that the divisor
+\(Q_1-Q_2\) maps to zero in the Jacobian. Abel's theorem says this divisor is
+principal, so there is a meromorphic function with divisor \(Q_1-Q_2\). Such a
+function has one simple zero and one simple pole, hence defines a degree-one
+map \(X\to\CPone\). By Riemann-Hurwitz, a degree-one map identifies \(X\) with
+\(\CPone\), forcing genus zero. If \(g(X)>0\), this is impossible unless
+\(Q_1=Q_2\).
+\end{proofsketch}
+
+\begin{proof}[Proof of Theorem~\ref{thm:abel-jacobi-injective}]
+Assume \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\). By the point-separation form
+of Abel's theorem, \(Q_1=Q_2\). Thus \(\AJ_P\) is injective.
+\end{proof}
+

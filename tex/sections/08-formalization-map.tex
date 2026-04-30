@@ -1,0 +1,54 @@
+\section{Formalization Map}
+\label{sec:formalization-map}
+
+This section maps the informal proof to the current Lean project structure.
+
+\begin{center}
+\begin{tabular}{p{0.34\linewidth}p{0.56\linewidth}}
+\textbf{Challenge declaration} & \textbf{Informal source} \\
+\hline
+\code{genus} &
+Definition~\ref{def:analytic-genus}; finite-dimensionality from
+Input~\ref{input:finite-dimensionality}. \\
+\code{genus_eq_zero_iff_homeo} &
+Theorem~\ref{thm:genus-zero-classification}; uses Riemann-Roch and
+degree-one map classification. \\
+\code{Jacobian} and basic instances &
+Definition~\ref{def:analytic-jacobian}; period lattice theorem plus complex
+torus package. \\
+\code{Jacobian.ofCurve} &
+Definition~\ref{def:abel-jacobi}; path independence modulo periods. \\
+\code{ofCurve_contMDiff} &
+Lemma~\ref{lem:aj-holomorphic}. \\
+\code{ofCurve_self} &
+Lemma~\ref{lem:aj-self}. \\
+\code{ofCurve_inj} &
+Theorem~\ref{thm:abel-jacobi-injective}; Abel's theorem. \\
+\code{pushforward}, \code{pullback} &
+Lemma~\ref{lem:push-pull-descend}; trace and pullback preserving periods. \\
+\code{pushforward_contMDiff} and \code{pullback_contMDiff} &
+Theorem~\ref{thm:push-pull-functoriality}; descended complex-linear maps are
+holomorphic. \\
+\code{pushforward_id_apply} and \code{pullback_id_apply} &
+Theorem~\ref{thm:push-pull-functoriality}; identity laws for pullback and
+trace. \\
+\code{pushforward_comp_apply} and \code{pullback_comp_apply} &
+Theorem~\ref{thm:push-pull-functoriality}; composition laws for pullback and
+trace. \\
+\code{ContMDiff.degree} &
+Definition~\ref{def:degree-trace}. \\
+\code{pushforward_pullback} &
+Theorem~\ref{thm:pushforward-pullback}; trace-pullback identity. \\
+\end{tabular}
+\end{center}
+
+The current repo already has production modules for many algebraic and
+topological parts of this map. The largest classical gaps are:
+
+\begin{itemize}
+\item Riemann-Roch and divisor theory for compact Riemann surfaces.
+\item Abel's theorem in point-separation form.
+\item Riemann bilinear relations and full-rank period lattice theorem.
+\item Branched-cover degree theory and trace of holomorphic differentials.
+\item Analytic genus versus topological genus comparison.
+\end{itemize}

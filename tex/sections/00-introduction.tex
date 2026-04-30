@@ -1,0 +1,20 @@
+\section{Introduction}
+\label{sec:introduction}
+
+The public target is the API in \code{Jacobian/Challenge.lean}. This
+document gives an informal proof that the API is satisfied by the classical
+analytic construction of the Jacobian of a compact connected Riemann surface.
+
+The construction is:
+\[
+  \Jac(X)=H^{0}(X,\Omega^{1}_{X})^{\vee}/\Pi_X(H_{1}(X,\Z)),
+\]
+where \(\Pi_X(\gamma)(\omega)=\int_{\gamma}\omega\). The main mathematical
+work is to prove that the period image is a full lattice, to relate the genus
+to the dimension of holomorphic one-forms, and to prove the Abel-Jacobi and
+trace identities needed by the challenge.
+
+The document has two roles. First, it is a readable classical proof. Second, it
+is a naming and dependency plan for formalization: every major theorem has a
+stable label and, when possible, a \code{Lean target} annotation matching the
+current repository.

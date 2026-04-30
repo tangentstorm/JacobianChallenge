@@ -1,0 +1,37 @@
+\section{Main Theorem Assembly}
+\label{sec:main-assembly}
+
+We now assemble the declarations required by \code{Jacobian/Challenge.lean}.
+
+\begin{theorem}[Challenge API from the analytic construction]
+\label{thm:challenge-api}
+The analytic period-lattice construction supplies all definitions and theorems
+in the Jacobian Challenge API.
+\end{theorem}
+
+\begin{proof}
+Define \code{genus X} to be the analytic genus
+\(\dim_{\C}H^{0}(X,\Omega^{1}_{X})\). Theorem~\ref{thm:fd-holomorphic-one-forms}
+ensures this dimension is finite, and Theorem~\ref{thm:genus-zero-classification}
+proves \code{genus_eq_zero_iff_homeo}.
+
+Define \code{Jacobian X} to be the complex torus
+\(\HdualX/\periods_X\). Theorem~\ref{thm:period-lattice} makes
+\(\periods_X\) a full lattice, and Proposition~\ref{prop:complex-torus-package}
+gives the additive group, topology, Hausdorffness, compactness, charted-space,
+manifold, and Lie additive group structures.
+
+Define \code{Jacobian.ofCurve P} to be \(\AJ_P\). Lemma~\ref{lem:aj-self}
+proves \code{ofCurve_self}; Lemma~\ref{lem:aj-holomorphic} proves
+\code{ofCurve_contMDiff}; Theorem~\ref{thm:abel-jacobi-injective} proves
+\code{ofCurve_inj}.
+
+For a holomorphic map \(f:X\to Y\), define \code{ContMDiff.degree f hf} as
+the analytic degree. Define \code{Jacobian.pullback f hf} and
+\code{Jacobian.pushforward f hf} by the descended maps from
+Lemma~\ref{lem:push-pull-descend}. The holomorphicity, identity, and
+composition laws are Theorem~\ref{thm:push-pull-functoriality}.
+
+Finally, \code{pushforward_pullback} is exactly
+Theorem~\ref{thm:pushforward-pullback}.
+\end{proof}
