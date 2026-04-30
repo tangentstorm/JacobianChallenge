@@ -172,6 +172,24 @@ theorem extChart_comp_extend_contDiffOn
   rw [← contMDiffOn_iff_contDiffOn]
   exact γ.extChart_comp_extend_contMDiffOn x
 
+/-- If a smooth path's range is contained in the source of a single chart,
+the chart-coordinate path is `ContDiffOn ℝ 1` on the entire `Set.Icc 0 1`. -/
+theorem extChart_comp_extend_contDiffOn_unitInterval
+    [IsManifold I_M (1 : WithTop ℕ∞) X]
+    (γ : SmoothPath I_M a b) (x : X)
+    (hsrc : Set.range γ.toPath ⊆ (chartAt H x).source) :
+    ContDiffOn ℝ (1 : WithTop ℕ∞)
+      (extChartAt I_M x ∘ γ.toPath.extend) (Set.Icc 0 1) := by
+  -- The full preimage already contains the unit interval since the
+  -- path's range (= image on [0,1] under extend) lies in the chart's source.
+  apply (γ.extChart_comp_extend_contDiffOn x).mono
+  intro t ht
+  show γ.toPath.extend t ∈ (chartAt H x).source
+  -- For t ∈ [0,1], γ.extend t = γ ⟨t, ht⟩.
+  rw [show γ.toPath.extend t = γ.toPath ⟨t, ht⟩ from
+        γ.toPath.extend_apply ht]
+  exact hsrc ⟨_, rfl⟩
+
 end SmoothPath
 
 end JacobianChallenge.Periods
