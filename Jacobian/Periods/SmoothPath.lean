@@ -291,6 +291,15 @@ theorem extend_eq_toPath (γ : SmoothPath I_M a b) (t : unitInterval) :
 @[simp] theorem subpath_toPath (γ : SmoothPath I_M a b) (t₀ t₁ : unitInterval) :
     (γ.subpath t₀ t₁).toPath = γ.toPath.subpath t₀ t₁ := rfl
 
+/-- `SmoothPath.map I_N γ f hf` has underlying path `γ.toPath.map hf.continuous`. -/
+@[simp] theorem map_toPath {Y : Type*} [TopologicalSpace Y]
+    {H' : Type*} [TopologicalSpace H']
+    {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
+    [ChartedSpace H' Y] (I_N : ModelWithCorners ℝ E' H')
+    (γ : SmoothPath I_M a b) (f : X → Y)
+    (hf : ContMDiff I_M I_N (1 : WithTop ℕ∞) f) :
+    (γ.map I_N f hf).toPath = γ.toPath.map hf.continuous := rfl
+
 end SmoothPath
 
 end JacobianChallenge.Periods
