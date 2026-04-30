@@ -48,6 +48,18 @@ jobs:
       - name: Install Lean Blueprint
         run: python3 -m pip install leanblueprint
 
+      - name: Diagnose pre-build state
+        working-directory: blueprint/src
+        run: |
+          echo "=== pwd ==="; pwd
+          echo "=== ls blueprint/src/ ==="; ls -la
+          echo "=== ls macros/ ==="; ls -la macros/
+          echo "=== ls ../../tex/ ==="; ls -la ../../tex/
+          echo "=== plastex --version ==="; plastex --version || echo "plastex not on PATH"
+          echo "=== pip show plastex ==="; pip show plastex 2>/dev/null | head -5
+          echo "=== pip show leanblueprint ==="; pip show leanblueprint 2>/dev/null | head -5
+          echo "=== TEXINPUTS ==="; echo "${TEXINPUTS:-<unset>}"
+
       - name: Build Lean Blueprint site
         # Bypass `leanblueprint.client web`'s wrapper — recent versions
         # appear to break the relative-path resolution for `../../tex/...`
