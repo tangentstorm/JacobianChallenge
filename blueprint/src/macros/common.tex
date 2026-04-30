@@ -5,9 +5,13 @@
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{classicalinput}[theorem]{Classical input}
 
+% Remark-style asides: starred (counterless) so plastexdepgraph does NOT
+% emit them as nodes in the dependency graph. Sharing the [theorem]
+% counter caused unlabeled asides to surface as `a0000000NN`-style
+% disconnected nodes.
 \theoremstyle{remark}
-\newtheorem{formalizationnote}[theorem]{Formalization note}
-\newtheorem{proofsketch}[theorem]{Proof sketch}
+\newtheorem*{formalizationnote}{Formalization note}
+\newtheorem*{proofsketch}{Proof sketch}
 
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\R}{\mathbb{R}}
