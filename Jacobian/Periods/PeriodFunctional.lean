@@ -208,12 +208,115 @@ theorem period_vectors_mem_subgroup
         Set (Fin (analyticGenus ℂ X) → ℂ)) := by
   exact fun i => AddSubgroup.mem_map_of_mem _ (AddMonoidHom.mem_range.mpr ⟨σ i, rfl⟩)
 
-/-- **Sub-obligation 3.** Given a symplectic basis `{σ i}`, the `2g`
-period vectors are ℝ-linearly independent in `ℂ^g`.
+/-! #### TOPDOWN sub-decomposition of Sub-obligation 3
+(integrated from Aristotle 9c222f2d)
 
-Mathlib gaps (3 independent): wedge product of forms on manifolds;
-Riemann bilinear identity (Stokes on polygon); Kähler/Hodge for
-`∫_X ω ∧ ω̄ > 0`. All absent in v4.28.0. -/
+The ℝ-linear independence of period vectors in the basis-aligned
+model `Fin g → ℂ` is decomposed into:
+
+1. **`period_functionals_ℝ_linearIndependent`** — ℝ-linear independence
+   of the period *functionals* `(periodPairing ℂ X) ∘ σ` in the dual
+   space `HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ` (sorry — hard analytic
+   content).
+2. **Sorry-free transport** through `holomorphicOneFormDualEquiv`,
+   using `LinearIndependent.map'`.
+
+The analytic content in (1) depends on three independent Mathlib
+blockers, each absent in v4.28.0:
+
+- `wedge_integration_pairing_exists`: wedge product of 1-forms on a
+  manifold and its integration (requires differential forms on
+  manifolds, absent).
+- `riemann_bilinear_identity`: classical identity
+  `∫_X ω ∧ η = Σ_k (∫_{A_k} ω · ∫_{B_k} η − ∫_{B_k} ω · ∫_{A_k} η)`
+  for a symplectic basis `{A_k, B_k}` of `H₁(X, ℤ)` (requires Stokes'
+  theorem on a fundamental polygon, absent).
+- `hodge_form_posDef`: positivity of the Hodge form
+  `ω ↦ i · ∫_X ω ∧ ω̄ > 0` for `ω ≠ 0` holomorphic (requires
+  Kähler/Hodge theory, absent).
+-/
+
+/-- **Blocker 1.** Existence of a bilinear pairing on holomorphic
+1-forms given by wedge-product integration `(ω, η) ↦ ∫_X ω ∧ η̄`.
+Mathlib gap: differential forms on manifolds and their integration
+(`Ω^p(X)`, wedge product, `∫_X`) are entirely absent in v4.28.0. -/
+theorem wedge_integration_pairing_exists
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    ∃ (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
+           (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ),
+      ∀ f g, Q f g = -Q g f := by
+  sorry
+
+/-- **Blocker 2.** The Riemann bilinear identity: for a symplectic
+basis `{σ_k}_{k=0}^{2g-1}` of `H₁(X, ℤ)` and holomorphic 1-forms `ω, η`,
+
+`∫_X ω ∧ η = Σ_{k<g} (∫_{A_k} ω · ∫_{B_k} η − ∫_{B_k} ω · ∫_{A_k} η)`.
+
+Mathlib gap: requires Stokes' theorem on the `4g`-gon fundamental
+polygon of the surface (Stokes for manifolds with corners, plus the
+fundamental polygon construction, both absent in v4.28.0). -/
+theorem riemann_bilinear_identity
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
+    (hσ : Function.Injective σ)
+    (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
+         (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ) :
+    ∀ (f g : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
+      Q f g = ∑ k : Fin (analyticGenus ℂ X),
+        (f (holomorphicOneFormFinBasis ℂ X k) *
+         g (holomorphicOneFormFinBasis ℂ X k) -
+         g (holomorphicOneFormFinBasis ℂ X k) *
+         f (holomorphicOneFormFinBasis ℂ X k)) := by
+  sorry
+
+/-- **Blocker 3.** Positivity of the Hodge form: for any nonzero
+ℂ-linear functional `f` on holomorphic 1-forms, `i · ∫_X ω ∧ ω̄ > 0`.
+Mathlib gap: Kähler / Hodge geometry on Riemann surfaces (Hodge `*`,
+the `|ω|² dA` identity, positivity of integrals of nonneg continuous
+functions; all build on Blocker 1 infrastructure). -/
+theorem hodge_form_posDef
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
+         (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ) :
+    ∀ f : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ,
+      f ≠ 0 → (Complex.I * Q f f).re > 0 := by
+  sorry
+
+/-- **Analytic core.** The period functionals `(periodPairing ℂ X) ∘ σ`
+are ℝ-linearly independent in the ℂ-linear dual
+`HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ` (viewed as an ℝ-module).
+
+The classical proof combines all three blockers above:
+1. Obtain the wedge-integration pairing `Q` from
+   `wedge_integration_pairing_exists`.
+2. Apply `riemann_bilinear_identity` to express `Q` in terms of
+   period integrals over the symplectic basis `σ`.
+3. Suppose `Σ cᵢ · (periodPairing ℂ X)(σ i) = 0` with `cᵢ ∈ ℝ`.
+   Then `f = Σ cᵢ · (periodPairing ℂ X)(σ i)` is zero, so `Q f f = 0`.
+4. By `hodge_form_posDef`, `f = 0` implies all `cᵢ = 0`. -/
+theorem period_functionals_ℝ_linearIndependent
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
+    (hσ : Function.Injective σ) :
+    LinearIndependent ℝ
+      (fun i => (periodPairing ℂ X) (σ i)) := by
+  sorry
+
+/-- **Sub-obligation 3 (TOPDOWN transport, sorry-free).** Given a
+symplectic basis `{σ i}`, the `2g` period vectors are ℝ-linearly
+independent in `ℂ^g`.
+
+Proof: transport `period_functionals_ℝ_linearIndependent` through
+the ℂ-linear (hence ℝ-linear) equivalence
+`holomorphicOneFormDualEquiv ℂ X` using `LinearIndependent.map'`. -/
 theorem period_vectors_linearIndependent_of_symplectic
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -223,7 +326,9 @@ theorem period_vectors_linearIndependent_of_symplectic
     LinearIndependent ℝ
       (fun i => (holomorphicOneFormDualEquiv ℂ X)
         ((periodPairing ℂ X) (σ i))) := by
-  sorry
+  exact (period_functionals_ℝ_linearIndependent X σ hσ).map'
+    ((holomorphicOneFormDualEquiv ℂ X).restrictScalars ℝ).toLinearMap
+    (LinearMap.ker_eq_bot.mpr (LinearEquiv.injective _))
 
 /-- The period subgroup contains `2g` ℝ-linearly independent vectors.
 Now sorry-free assembly of the three sub-obligations above. -/
