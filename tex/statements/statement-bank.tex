@@ -1,0 +1,116 @@
+\section{Statement Bank}
+\label{sec:statement-bank}
+
+This bank fixes names for the informal mathematical obligations. The labels are
+chosen so they can later become Lean-blueprint nodes.
+
+\begin{definition}[Analytic genus]
+\label{def:analytic-genus}
+For a compact connected Riemann surface \(X\), define
+\[
+  g(X) := \dim_{\C} H^{0}(X,\Omega^{1}_{X}).
+\]
+\lean{JacobianChallenge.HolomorphicForms.analyticGenus}
+\end{definition}
+
+\begin{theorem}[Finite-dimensionality of holomorphic one-forms]
+\label{thm:fd-holomorphic-one-forms}
+The vector space \(\HX\) is finite-dimensional.
+\lean{JacobianChallenge.HolomorphicForms.compactRiemannSurface_finiteDimensionalHolomorphicOneForms}
+\end{theorem}
+
+\begin{theorem}[Genus-zero classification]
+\label{thm:genus-zero-classification}
+For a compact connected Riemann surface \(X\),
+\[
+  g(X)=0 \quad\Longleftrightarrow\quad X \cong_{\mathrm{homeo}} \Sphere .
+\]
+\lean{genus_eq_zero_iff_homeo}
+\end{theorem}
+
+\begin{definition}[Period pairing]
+\label{def:period-pairing}
+The period pairing is the group homomorphism
+\[
+  \Pi_X : H_{1}(X,\Z) \longrightarrow \HdualX,\qquad
+  \gamma \longmapsto \left(\omega \mapsto \int_{\gamma}\omega\right).
+\]
+\lean{JacobianChallenge.Periods.periodPairing}
+\end{definition}
+
+\begin{theorem}[Period lattice theorem]
+\label{thm:period-lattice}
+The image \(\periods_X := \Pi_X(H_1(X,\Z))\) is a full lattice in the
+real vector space underlying \(\HdualX\).
+\lean{JacobianChallenge.Periods.periodFullComplexLattice}
+\end{theorem}
+
+\begin{definition}[Analytic Jacobian]
+\label{def:analytic-jacobian}
+The Jacobian of \(X\) is the complex torus
+\[
+  \Jac(X) := \HdualX / \periods_X .
+\]
+\lean{Jacobian}
+\end{definition}
+
+\begin{definition}[Abel-Jacobi map]
+\label{def:abel-jacobi}
+For \(P\in X\), define
+\[
+  \AJ_P(Q) :=
+    \left[ \omega \mapsto \int_{P}^{Q}\omega \right] \in \Jac(X),
+\]
+where the path is arbitrary and the class is taken modulo periods.
+\lean{Jacobian.ofCurve}
+\end{definition}
+
+\begin{theorem}[Abel-Jacobi theorem, point-separation form]
+\label{thm:abel-jacobi-injective}
+If \(g(X)>0\), then \(\AJ_P : X\to \Jac(X)\) is injective.
+\lean{Jacobian.ofCurve_inj}
+\end{theorem}
+
+\begin{definition}[Degree and trace]
+\label{def:degree-trace}
+For a holomorphic map \(f:X\to Y\), define \(\deg(f)\) to be \(0\) if
+\(f\) is constant and otherwise the topological degree of the associated
+branched covering. For nonconstant \(f\), define the trace on one-forms
+\[
+  \tr_f : H^{0}(X,\Omega^{1}_{X}) \to H^{0}(Y,\Omega^{1}_{Y})
+\]
+by summing local inverse branches away from the branch locus and extending
+holomorphically.
+\lean{ContMDiff.degree, JacobianChallenge.TraceDegree.traceForms}
+\end{definition}
+
+\begin{theorem}[Trace-pullback identity]
+\label{thm:trace-pullback}
+For every \(\eta\in\HY\),
+\[
+  \tr_f(f^{*}\eta)=\deg(f)\,\eta.
+\]
+\lean{JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback}
+\end{theorem}
+
+\begin{theorem}[Functoriality and holomorphicity of induced Jacobian maps]
+\label{thm:push-pull-functoriality}
+The maps \(f_{*}\) and \(f^{*}\) induced on Jacobians are holomorphic group
+homomorphisms. They satisfy identity and composition laws:
+\[
+  (\mathrm{id})_*=\mathrm{id},\qquad (g\circ f)_*=g_*\circ f_*,
+\]
+\[
+  (\mathrm{id})^{*}=\mathrm{id},\qquad (g\circ f)^{*}=f^{*}\circ g^{*}.
+\]
+\lean{Jacobian.pushforward_contMDiff, Jacobian.pushforward_id_apply, Jacobian.pushforward_comp_apply, Jacobian.pullback_contMDiff, Jacobian.pullback_id_apply, Jacobian.pullback_comp_apply}
+\end{theorem}
+
+\begin{theorem}[Pushforward-pullback identity]
+\label{thm:pushforward-pullback}
+For every \(P\in\Jac(Y)\),
+\[
+  f_{*}(f^{*}P)=\deg(f)\,P.
+\]
+\lean{Jacobian.pushforward_pullback}
+\end{theorem}

@@ -1,0 +1,98 @@
+\section{Degree, Trace, Pushforward, and Pullback}
+\label{sec:degree-trace}
+
+Let \(f:X\to Y\) be holomorphic. If \(f\) is constant, define
+\(\deg(f)=0\). Otherwise \(f\) is a finite branched covering, and
+\(\deg(f)\) is the cardinality of a generic fiber counted with multiplicity.
+
+\begin{lemma}[Pullback of holomorphic one-forms]
+\label{lem:pullback-forms}
+Pullback gives a complex-linear map
+\[
+  f^{*}:\HY\to\HX.
+\]
+\lean{JacobianChallenge.TraceDegree.pullbackForms}
+\end{lemma}
+
+\begin{proof}
+In local coordinates, if \(\eta=h(w)\,dw\), then
+\[
+  f^{*}\eta = h(f(z))f'(z)\,dz,
+\]
+which is holomorphic. Linearity is immediate.
+\end{proof}
+
+\begin{lemma}[Trace of holomorphic one-forms]
+\label{lem:trace-forms}
+For nonconstant \(f\), there is a complex-linear trace map
+\[
+  \tr_f:\HX\to\HY.
+\]
+\lean{JacobianChallenge.TraceDegree.traceForms}
+\end{lemma}
+
+\begin{proof}
+Away from the branch locus, define \(\tr_f(\omega)\) by summing the pullbacks
+of \(\omega\) along all local inverse branches of \(f\). Symmetric functions
+of the inverse branches extend holomorphically across branch points, so the
+form extends globally to \(Y\). The constant-map case is treated separately in
+the challenge API.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:trace-pullback}]
+Away from the branch locus, choose local inverse branches
+\(s_1,\dots,s_d\) of \(f\), where \(d=\deg(f)\). Then
+\[
+  \tr_f(f^{*}\eta)
+  =
+  \sum_{i=1}^{d}s_i^{*}f^{*}\eta
+  =
+  \sum_{i=1}^{d}(f\circ s_i)^{*}\eta
+  =
+  d\,\eta.
+\]
+Both sides are holomorphic one-forms on \(Y\), so equality on the complement
+of the finite branch locus extends across the branch locus.
+\end{proof}
+
+\begin{lemma}[Maps descend to Jacobians]
+\label{lem:push-pull-descend}
+Pullback and trace preserve period lattices in the appropriate dual directions,
+therefore induce continuous holomorphic group homomorphisms
+\[
+  f^{*}:\Jac(Y)\to\Jac(X), \qquad f_*:\Jac(X)\to\Jac(Y).
+\]
+\lean{Jacobian.pullback, Jacobian.pushforward}
+\end{lemma}
+
+\begin{proof}
+The pullback map on forms dualizes to a map \(\HdualX\to\HdualY\), and the
+trace map dualizes in the opposite direction. Naturality of integration says
+that these dual maps send periods to periods. Therefore they descend to the
+quotient tori. Holomorphicity follows because the descended maps are induced
+by complex-linear maps between the covering vector spaces.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:push-pull-functoriality}]
+The maps on Jacobians are descended from complex-linear maps between the
+universal covering vector spaces, so they are holomorphic group homomorphisms.
+The identity laws follow because pullback and trace for the identity map are
+the identity on holomorphic one-forms. The composition laws follow from
+functoriality of pullback, functoriality of trace for finite holomorphic maps,
+and the universal property of quotienting by the period lattices. Equality on
+the covering vector spaces descends to equality on the quotient tori.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:pushforward-pullback}]
+Represent \(P\in\Jac(Y)\) by a functional \(\lambda\in\HdualY\). Pullback and
+then pushforward acts on the representative by precomposition with
+\[
+  \HY \xrightarrow{f^{*}} \HX \xrightarrow{\tr_f} \HY .
+\]
+By Theorem~\ref{thm:trace-pullback}, this composite is multiplication by
+\(\deg(f)\). Hence the induced map on the quotient Jacobian is multiplication
+by \(\deg(f)\), proving
+\[
+  f_*(f^{*}P)=\deg(f)\,P.
+\]
+\end{proof}
