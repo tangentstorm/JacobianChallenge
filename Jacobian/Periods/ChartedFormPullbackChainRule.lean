@@ -208,4 +208,70 @@ theorem chartedFormPullback_pullbackFormsBundledLM_smul
   rw [sub_eq_add_neg, sub_eq_add_neg, map_add, map_neg,
       chartedFormPullback_add, chartedFormPullback_neg]
 
+/-! ### Pointwise companions of the linearity lemmas
+
+Apply the linearity at a specific point `e ∈ ℂ`, returning a value in
+`ℂ →L[ℂ] ℂ`. Useful for downstream curve-integrand manipulation. -/
+
+/-- Pointwise zero. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_zero_apply
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f) (e : ℂ) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (0 : HolomorphicOneForm ℂ Y)) e =
+      0 := by
+  rw [chartedFormPullback_pullbackFormsBundledLM_zero]
+  rfl
+
+/-- Pointwise additivity. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_add_apply
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η ζ : HolomorphicOneForm ℂ Y) (e : ℂ) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (η + ζ)) e =
+      chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) e +
+      chartedFormPullback c (pullbackFormsBundledLM X Y f hf ζ) e := by
+  rw [chartedFormPullback_pullbackFormsBundledLM_add]
+  rfl
+
+/-- Pointwise scalar multiplication. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_smul_apply
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (k : ℂ) (η : HolomorphicOneForm ℂ Y) (e : ℂ) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (k • η)) e =
+      k • chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) e := by
+  rw [chartedFormPullback_pullbackFormsBundledLM_smul]
+  rfl
+
+/-- Pointwise negation. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_neg_apply
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) (e : ℂ) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (-η)) e =
+      - chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) e := by
+  rw [chartedFormPullback_pullbackFormsBundledLM_neg]
+  rfl
+
+/-- Pointwise subtraction. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_sub_apply
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η ζ : HolomorphicOneForm ℂ Y) (e : ℂ) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (η - ζ)) e =
+      chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) e -
+      chartedFormPullback c (pullbackFormsBundledLM X Y f hf ζ) e := by
+  rw [chartedFormPullback_pullbackFormsBundledLM_sub]
+  rfl
+
 end JacobianChallenge.Periods
