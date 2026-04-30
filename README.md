@@ -1,12 +1,3 @@
-This project was edited by [Aristotle](https://aristotle.harmonic.fun).
-
-To cite Aristotle:
-- Tag @Aristotle-Harmonic on GitHub PRs/issues
-- Add as co-author to commits:
-```
-Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
-```
-
 # Jacobian Challenge
 
 A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann surface (see _About_ below for scope).
