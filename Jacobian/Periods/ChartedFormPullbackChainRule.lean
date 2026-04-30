@@ -486,9 +486,52 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_zero
         (pullbackFormsBundledLM X Y f hf (0 : HolomorphicOneForm ℂ Y))
         γ n hn pickChart hcov = 0 := by
   unfold pathIntegralViaCoverWith
-  -- Each summand is pathIntegralViaChartCorrect ... 0 ... = 0.
   refine Finset.sum_eq_zero (fun i _ => ?_)
   exact pathIntegralViaChartCorrect_pullbackFormsBundledLM_zero
     (chartAt ℂ (pickChart i)) f hf _ _
+
+/-- Neg-form chart-cover path integral: distributes over negation via
+chart-by-chart negation and `Finset.sum_neg_distrib`. -/
+theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_neg
+    (f : X → Y) (hf : ContMDiff (modelWithCornersSelf ℂ ℂ)
+      (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y)
+    {a b : X} (γ : Path a b) (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
+    (hcov : ∀ (i : Fin n) (t : unitInterval),
+      (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+      γ t ∈ (chartAt ℂ (pickChart i)).source) :
+    pathIntegralViaCoverWith
+        (pullbackFormsBundledLM X Y f hf (-η))
+        γ n hn pickChart hcov =
+      - pathIntegralViaCoverWith
+          (pullbackFormsBundledLM X Y f hf η)
+          γ n hn pickChart hcov := by
+  unfold pathIntegralViaCoverWith
+  rw [← Finset.sum_neg_distrib]
+  refine Finset.sum_congr rfl (fun i _ => ?_)
+  exact pathIntegralViaChartCorrect_pullbackFormsBundledLM_neg
+    (chartAt ℂ (pickChart i)) f hf η _ _
+
+/-- Smul-form chart-cover path integral: distributes over scalar mul via
+chart-by-chart smul and `Finset.smul_sum`. -/
+theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_smul
+    (f : X → Y) (hf : ContMDiff (modelWithCornersSelf ℂ ℂ)
+      (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) f)
+    (k : ℂ) (η : HolomorphicOneForm ℂ Y)
+    {a b : X} (γ : Path a b) (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
+    (hcov : ∀ (i : Fin n) (t : unitInterval),
+      (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+      γ t ∈ (chartAt ℂ (pickChart i)).source) :
+    pathIntegralViaCoverWith
+        (pullbackFormsBundledLM X Y f hf (k • η))
+        γ n hn pickChart hcov =
+      k • pathIntegralViaCoverWith
+          (pullbackFormsBundledLM X Y f hf η)
+          γ n hn pickChart hcov := by
+  unfold pathIntegralViaCoverWith
+  rw [Finset.smul_sum]
+  refine Finset.sum_congr rfl (fun i _ => ?_)
+  exact pathIntegralViaChartCorrect_pullbackFormsBundledLM_smul
+    (chartAt ℂ (pickChart i)) f hf k η _ _
 
 end JacobianChallenge.Periods
