@@ -109,6 +109,33 @@ The degree map \(\deg:\Div(X)\to\Z\) sends \(D=\sum_p n_p\,p\) to
 \notready
 \end{definition}
 
+\begin{proofsketch}[Lean formalization strategy]
+Mathlib v4.28 already has \texttt{FreeAbelianGroup} in
+\texttt{Mathlib.GroupTheory.FreeAbelianGroup}, with the universal map
+\texttt{FreeAbelianGroup.lift : ($\alpha\to\beta$) $\simeq$
+(FreeAbelianGroup $\alpha\to_+\beta$)} and the simp lemma
+\texttt{FreeAbelianGroup.lift\_apply\_of}. Cross-checked against v4.28 by
+an LLM round (ChatGPT proposed the wrapper, Grok confirmed name
+correctness against the v4.28 source and refined the instance pattern).
+The two definitions reduce to a $\sim$15--25 LOC file
+\texttt{Jacobian/HolomorphicForms/Divisor.lean}:
+\begin{enumerate}
+\item \texttt{def Divisor (X : Type u) : Type u := FreeAbelianGroup X},
+  with \texttt{instance : AddCommGroup (Divisor X) := inferInstanceAs \_}.
+  No \texttt{noncomputable}, no \texttt{@[reducible]}, no extra type
+  classes on \(X\) (the blueprint says ``free abelian group on the
+  points of \(X\)'' — \(X\) is a plain \texttt{Type}).
+\item \texttt{def Divisor.of (p : X) : Divisor X := FreeAbelianGroup.of p}.
+\item \texttt{def Divisor.degree : Divisor X $\to_+$ $\Z$ :=
+  FreeAbelianGroup.lift (fun \_ => 1)}.
+\item \texttt{@[simp] theorem degree\_of (p : X) :
+  degree (of p) = 1 := by simp [degree, of]} —
+  one-line proof via \texttt{FreeAbelianGroup.lift\_apply\_of}.
+\end{enumerate}
+No new sorries, no Mathlib gap. This is a clean leaf chosen specifically
+to verify the cloud SessionStart cache-prime hook.
+\end{proofsketch}
+
 \subsection{Meromorphic functions, principal divisors, principal degree}
 
 \begin{definition}[Meromorphic functions on a compact Riemann surface]
