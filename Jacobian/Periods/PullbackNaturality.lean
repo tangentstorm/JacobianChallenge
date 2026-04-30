@@ -302,6 +302,28 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_smul
       k • pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ := by
   rw [LinearMap.map_smul, pathIntegralViaCover_smul]
 
+/-- **RHS form-zero**: the path-pullback on Y-side of `0` is 0. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_zero_form_rhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b) :
+    pathIntegralViaCover (0 : HolomorphicOneForm ℂ Y) (γ.map hf.continuous) = 0 :=
+  pathIntegralViaCover_zero _
+
+/-- **RHS form-neg**: the path-pullback on Y-side of `-η` negates. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_neg_form_rhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b) :
+    pathIntegralViaCover (-η) (γ.map hf.continuous) =
+      - pathIntegralViaCover η (γ.map hf.continuous) :=
+  pathIntegralViaCover_neg _ _
+
+/-- **RHS form-smul**: the path-pullback on Y-side of `k • η` distributes. -/
+theorem pathIntegralViaCover_pullbackFormsBundledLM_smul_form_rhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (k : ℂ) (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b) :
+    pathIntegralViaCover (k • η) (γ.map hf.continuous) =
+      k • pathIntegralViaCover η (γ.map hf.continuous) :=
+  pathIntegralViaCover_smul k η _
+
 /-- **Form-additivity conditional case**: naturality at `η + ζ` follows
 from naturality at `η` and at `ζ`, via the linearity of
 `pullbackFormsBundledLM` (which is a `ℂ`-linear map). The
