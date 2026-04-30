@@ -5,6 +5,7 @@ import Jacobian.Periods.PathIntegralViaCover
 import Jacobian.Periods.PathIntegralViaCoverNeg
 import Jacobian.Periods.PathIntegralViaCoverSmul
 import Jacobian.Periods.PathIntegralViaCoverZero
+import Jacobian.Periods.PathIntegralViaCoverWithRefl
 import Jacobian.HolomorphicForms.PullbackBundled
 import Jacobian.TraceDegree.PullbackFunComp
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
@@ -545,5 +546,21 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_id
       pathIntegralViaCoverWith η γ n hn pickChart hcov := by
   rw [show pullbackFormsBundledLM X X (id : X → X) contMDiff_id η = η by
     rw [pullbackFormsBundledLM_id]; rfl]
+
+/-- **Constant-path case** at the chart-cover-with level: the chart-cover
+path integral of `pullbackFormsBundledLM` along `Path.refl a` is 0.
+Sorry-free via `pathIntegralViaCoverWith_refl`. -/
+theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_refl
+    (f : X → Y) (hf : ContMDiff (modelWithCornersSelf ℂ ℂ)
+      (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) (a : X)
+    (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
+    (hcov : ∀ (i : Fin n) (t : unitInterval),
+      (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+      (Path.refl a) t ∈ (chartAt ℂ (pickChart i)).source) :
+    pathIntegralViaCoverWith
+        (pullbackFormsBundledLM X Y f hf η)
+        (Path.refl a) n hn pickChart hcov = 0 :=
+  pathIntegralViaCoverWith_refl _ a n hn pickChart hcov
 
 end JacobianChallenge.Periods
