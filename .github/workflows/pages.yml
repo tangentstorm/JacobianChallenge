@@ -49,7 +49,14 @@ jobs:
         run: python3 -m pip install leanblueprint
 
       - name: Build Lean Blueprint site
-        run: python3 -m leanblueprint.client web
+        # Bypass `leanblueprint.client web`'s wrapper — recent versions
+        # appear to break the relative-path resolution for `../../tex/...`
+        # imports from blueprint/src/content.tex (`File not found` warnings
+        # on every section file). Call plastex directly from blueprint/src/
+        # so cwd is unambiguous and the existing plastex.cfg + web.tex chain
+        # resolves correctly.
+        working-directory: blueprint/src
+        run: plastex --config plastex.cfg web.tex
 
       - name: Download latest PDF artifact
         if: github.event_name != 'pull_request'
