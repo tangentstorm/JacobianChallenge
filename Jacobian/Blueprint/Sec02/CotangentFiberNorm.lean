@@ -1,26 +1,37 @@
-import Mathlib.Analysis.Complex.Basic
-import Mathlib.Geometry.Manifold.IsManifold.Basic
+import Jacobian.HolomorphicForms.CotangentBundle
 
-/-! Blueprint: `def:cotangent-fiber-norm` in
-`tex/sections/02-holomorphic-forms-and-genus.tex`.
+/-! # Blueprint stub: `def:cotangent-fiber-norm`
 
-A continuous fiber norm `‖·‖_x` on the cotangent bundle obtained from a
-holomorphic atlas plus a partition-of-unity weight. -/
+Section 2 of `tex/sections/02-holomorphic-forms-and-genus.tex`.
+
+A continuous fiber norm `‖·‖_x` on the cotangent bundle of a complex
+1-manifold `X`, obtained chartwise from the canonical norm on
+`ℂ →L[ℂ] ℂ` and assembled by a partition of unity.
+
+The cotangent fiber over `x : X` is
+`CotangentSpace ℂ X x = TangentSpace 𝓘(ℂ, ℂ) x →L[ℂ] (Bundle.Trivial X ℂ) x`,
+which inherits a `NormedAddCommGroup` instance from the operator norm.
+This stub records the function `(x, v) ↦ ‖v‖_x` explicitly so the
+downstream sup-norm definition has a named handle.
+
+The downstream worker may either:
+* unfold this to the operator norm `‖v‖`, in which case continuity is
+  inherited from the bundle topology;
+* or take the chart-pulled-back form `|h(z)|` weighted by a partition
+  of unity, in which case continuity needs the partition-of-unity glue.
+-/
 
 namespace JacobianChallenge.Blueprint
 
 open scoped Manifold
+open JacobianChallenge.HolomorphicForms
 
-/-- Stub for the continuous fiber norm on the cotangent bundle of a
-complex manifold. The current type is `X → ℝ`, taking a base point to
-the norm-of-cotangent-vector at that point — abstracted away because the
-project-side fiber-norm API is not stable yet. -/
--- TODO: pin down to `ContinuousLinearMap.norm` on cotangent fibers
--- once the `CotangentSpace` API in `Jacobian.HolomorphicForms.CotangentBundle`
--- is exposed at the top level.
+/-- Continuous fiber norm on the cotangent bundle of a complex
+1-manifold. The value `cotangentFiberNorm X x v` is the norm of the
+cotangent covector `v` in the fiber over `x`. -/
 noncomputable def cotangentFiberNorm
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    X → ℝ := sorry
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (x : X) (_v : CotangentSpace ℂ X x) : ℝ := sorry
 
 end JacobianChallenge.Blueprint

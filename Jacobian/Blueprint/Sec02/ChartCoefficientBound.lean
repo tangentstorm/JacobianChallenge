@@ -1,22 +1,31 @@
 import Jacobian.Blueprint.Sec02.HolomorphicSupNorm
 
-/-! Blueprint: `lem:chart-coefficient-bound` in
-`tex/sections/02-holomorphic-forms-and-genus.tex`.
+/-! # Blueprint stub: `lem:chart-coefficient-bound`
 
-Local coefficient bound on a chart: if `ω = h(z) dz` on `φ(U) ⊂ ℂ`, then
-`|h(z)|` is bounded above by a chart-dependent constant times `‖ω‖`. -/
+Section 2 of `tex/sections/02-holomorphic-forms-and-genus.tex`.
+
+Local coefficient bound on a chart `e : OpenPartialHomeomorph X ℂ` in
+the atlas: there is a chart-local constant `C ≥ 0` such that for every
+holomorphic 1-form `ω` and every `x ∈ e.source`, the fiber norm
+`‖ω x‖_x` is bounded by `C * ‖ω‖`. The constant `C` depends only on the
+chart and the partition-of-unity weight, not on `ω`. -/
 
 namespace JacobianChallenge.Blueprint
 
 open scoped Manifold
+open JacobianChallenge.HolomorphicForms
 
-/-- Stub: there exists a chart-local constant such that the coefficient
-function is bounded by that constant times the sup norm of the form. -/
+/-- Chart-local fiber-norm bound: for each chart `e` in the atlas of
+`X`, there is a constant `C ≥ 0` such that the fiber norm of any
+holomorphic 1-form on `e.source` is bounded by `C` times the global
+sup norm. -/
 theorem chart_coefficient_bound
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (ω : X → ℂ) :
-    ∃ C : ℝ, ∀ x : X, ‖ω x‖ ≤ C * holomorphicSupNorm X ω := by
+    (e : OpenPartialHomeomorph X ℂ) (_he : e ∈ atlas ℂ X) :
+    ∃ C : ℝ, 0 ≤ C ∧ ∀ (ω : HolomorphicOneForm ℂ X) (x : X),
+      x ∈ e.source →
+        cotangentFiberNorm X x (ω.1 x) ≤ C * holomorphicSupNorm X ω := by
   sorry
 
 end JacobianChallenge.Blueprint
