@@ -68,6 +68,21 @@ theorem genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point
     {h : analyticGenus ℂ X = 0}
     (f : GenusZeroPointRiemannRochElement X P h) :
     f.meromorphicMap.poles = Divisor.point P := by
+  -- BLOCKER: The theorem is unprovable from the current definitions.
+  -- `MeromorphicMapToSphere` carries `poleDivisor` as a free data field with
+  -- no axiom linking it to the actual behavior of `toMap`.  A counterexample
+  -- exists: take `poleDivisor = 0`, `zeroDivisor = 0`, any nonconstant
+  -- `toMap`, and `mem_L_point` holds because `Effective (point P)` is true,
+  -- yet `poleDivisor ≠ point P`.  To make this provable, two pieces are
+  -- needed:
+  --   1. An axiom on `MeromorphicMapToSphere` connecting `poleDivisor = 0`
+  --      to the map being holomorphic (pole-free), e.g.
+  --      `poles_zero_iff_holomorphic : poleDivisor = 0 ↔ ∀ x, toMap x ≠ ∞`.
+  --   2. A Liouville-type theorem for compact connected Riemann surfaces:
+  --      holomorphic `X → ℂ` implies constant (missing from Mathlib;
+  --      requires maximum modulus principle or open mapping theorem for
+  --      ℂ-valued holomorphic functions on compact connected complex
+  --      manifolds).
   sorry
 
 /-- **Riemann-Roch assembly.** On a compact connected genus-zero Riemann
