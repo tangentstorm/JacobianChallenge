@@ -96,16 +96,29 @@ jobs:
           mkdir -p _site/blueprint
           cp -R blueprint/web/. _site/blueprint/
 
-          if [ -f tex/main.pdf ]; then
-            cp tex/main.pdf _site/jacobian-informal-proof.pdf
-            echo "Formal PDF included from pdf.yml artifact"
+          # Diagnostic: list everything the artifact download deposited.
+          echo "::group::Artifact contents (tex/ and any subdirs)"
+          ls -laR tex/ || true
+          find tex -type f -name '*.pdf' -print -exec wc -c {} \; || true
+          echo "::endgroup::"
+
+          # Be flexible about where the artifact landed — earlier upload-artifact
+          # quirks staged into _pdfs/, and dawidd6 sometimes nests subdirs.
+          # Search for both PDFs anywhere under tex/ and copy whichever name
+          # we find.
+          FORMAL=$(find tex -type f -name 'main.pdf' | head -1)
+          LAYMAN=$(find tex -type f -name 'main-with-layman.pdf' | head -1)
+
+          if [ -n "$FORMAL" ] && [ -f "$FORMAL" ]; then
+            cp "$FORMAL" _site/jacobian-informal-proof.pdf
+            echo "Formal PDF included from $FORMAL"
           else
             echo "No formal PDF available — site will deploy without it"
           fi
 
-          if [ -f tex/main-with-layman.pdf ]; then
-            cp tex/main-with-layman.pdf _site/jacobian-informal-proof-with-layman.pdf
-            echo "Plain-English companion PDF included from pdf.yml artifact"
+          if [ -n "$LAYMAN" ] && [ -f "$LAYMAN" ]; then
+            cp "$LAYMAN" _site/jacobian-informal-proof-with-layman.pdf
+            echo "Plain-English companion PDF included from $LAYMAN"
           else
             echo "No companion PDF available — site will deploy without it"
           fi
