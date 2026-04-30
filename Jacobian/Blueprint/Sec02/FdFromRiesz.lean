@@ -24,7 +24,8 @@ theorem fd_from_riesz
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {r : ℝ} (_hr : 0 < r)
     (_h : IsCompact (Metric.closedBall (0 : E) r)) :
     FiniteDimensional ℂ E := by
-  -- TODO: `exact FiniteDimensional.of_isCompact_closedBall₀ ℂ _hr _h`
+  -- TODO: exact FiniteDimensional.of_isCompact_closedBall₀ ℂ _hr _h
+  -- (field argument first; `[CompleteSpace ℂ]` is supplied by Mathlib.)
   sorry
 
 end JacobianChallenge.Blueprint

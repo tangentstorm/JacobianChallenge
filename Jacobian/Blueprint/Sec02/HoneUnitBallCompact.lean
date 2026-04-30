@@ -21,7 +21,19 @@ The downstream worker should prove this as: take a sequence in the
 closed ball, push it through `e.symm` to a sequence of holomorphic
 1-forms with sup norm `≤ 1`, apply `montel_compactness` to extract a
 sup-norm convergent subsequence, push the limit back through `e` to
-exhibit the metric-convergent subsequence. -/
+exhibit the metric-convergent subsequence.
+
+NOTE FOR WORKERS (the seq→topo bridge): `montel_compactness` returns
+the **sequential** form `Tendsto (fun n => holomorphicSupNorm X (ω (φ n) - ωlim)) atTop (𝓝 0)`.
+The conclusion below — `IsCompact (Metric.closedBall (0 : H) 1)` — is
+the **topological** form. The two are not the same theorem; in a
+metric (hence first-countable) space they coincide via Mathlib's
+`UniformSpace.isCompact_iff_isSeqCompact` or `IsSeqCompact.isCompact`.
+You will need: (a) translate Montel's `Tendsto`-conclusion into
+`IsSeqCompact (e '' { ω | holomorphicSupNorm X ω ≤ 1 })`, transporting
+the sup-norm distance to `H`'s metric via `_h_norm`; (b) note that
+`Metric.closedBall (0 : H) 1 = e '' { ω | holomorphicSupNorm X ω ≤ 1 }`
+(same `_h_norm`); (c) apply `IsSeqCompact.isCompact`. -/
 
 namespace JacobianChallenge.Blueprint
 
