@@ -46,33 +46,13 @@ jobs:
           sudo apt-get install -y graphviz libgraphviz-dev
 
       - name: Install Lean Blueprint
-        # Pin plastex to <3.1: plastex 3.1 broke `\input` relative-path
-        # resolution from web.tex's directory in our setup (every
-        # ../../tex/... path was reported as "File not found" even though
-        # the files exist and cwd is correct). Older plastex 3.0.x works.
-        run: python3 -m pip install 'plastex<3.1' leanblueprint
-
-      - name: Diagnose pre-build state
-        working-directory: blueprint/src
-        run: |
-          echo "=== pwd ==="; pwd
-          echo "=== ls blueprint/src/ ==="; ls -la
-          echo "=== ls macros/ ==="; ls -la macros/
-          echo "=== ls ../../tex/ ==="; ls -la ../../tex/
-          echo "=== plastex --version ==="; plastex --version || echo "plastex not on PATH"
-          echo "=== pip show plastex ==="; pip show plastex 2>/dev/null | head -5
-          echo "=== pip show leanblueprint ==="; pip show leanblueprint 2>/dev/null | head -5
-          echo "=== TEXINPUTS ==="; echo "${TEXINPUTS:-<unset>}"
+        # Pin to versions known to work at commit 8cfd9b9 (deploy at
+        # 15:27 UTC). plasTeX 3.1 broke our `\input` relative-path
+        # resolution; some leanblueprint releases also broke compatibility.
+        run: python3 -m pip install 'plastex==3.0' 'leanblueprint==0.0.18'
 
       - name: Build Lean Blueprint site
-        # Bypass `leanblueprint.client web`'s wrapper — recent versions
-        # appear to break the relative-path resolution for `../../tex/...`
-        # imports from blueprint/src/content.tex (`File not found` warnings
-        # on every section file). Call plastex directly from blueprint/src/
-        # so cwd is unambiguous and the existing plastex.cfg + web.tex chain
-        # resolves correctly.
-        working-directory: blueprint/src
-        run: plastex --config plastex.cfg web.tex
+        run: python3 -m leanblueprint.client web
 
       - name: Download latest PDF artifact
         if: github.event_name != 'pull_request'
