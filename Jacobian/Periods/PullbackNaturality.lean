@@ -640,6 +640,27 @@ theorem periodPairing_pullbackFormsBundledLM_zsmul_cycle_rhs
   rw [(cyclePushforward f hf).map_zsmul, (periodPairing ℂ Y).map_zsmul,
       LinearMap.smul_apply]
 
+/-- **Unconditional cycle-sub LHS identity**: the X-side periodPairing
+applied to `γ - δ` distributes. -/
+theorem periodPairing_pullbackFormsBundledLM_sub_cycle_lhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ δ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y) :
+    (periodPairing ℂ X (γ - δ)) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) -
+      (periodPairing ℂ X δ) (pullbackFormsBundledLM X Y f hf η) := by
+  rw [(periodPairing ℂ X).map_sub, LinearMap.sub_apply]
+
+/-- **Unconditional cycle-sub RHS identity**: the Y-side periodPairing
+applied to `cyclePushforward (γ - δ)` distributes. -/
+theorem periodPairing_pullbackFormsBundledLM_sub_cycle_rhs
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ δ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y) :
+    (periodPairing ℂ Y (cyclePushforward f hf (γ - δ))) η =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η -
+      (periodPairing ℂ Y (cyclePushforward f hf δ)) η := by
+  rw [(cyclePushforward f hf).map_sub, (periodPairing ℂ Y).map_sub,
+      LinearMap.sub_apply]
+
 /-- **Form-additivity special case**: naturality at η + ζ from
 naturality at η and at ζ separately, via linearity in the form
 argument. Sorry-free. -/
