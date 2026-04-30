@@ -39,8 +39,16 @@
 \newcommand{\depends}[1]{\par\smallskip\noindent\textbf{Depends on:} #1\par\smallskip}
 \newcommand{\todoformal}[1]{\par\smallskip\noindent\textbf{Formalization gap:} #1\par\smallskip}
 
-% Plain-English narration block. Plastex emits this as a div with class
-% "layman" which the blueprint's extra_styles.css styles, and which the
-% on-page toggle button can hide. The blueprint print build renders it
-% as an italicized inset.
-\newenvironment{layman}{\par\smallskip\noindent}{\par\smallskip}
+% Plain-English narration block.
+%
+% Defined as a theorem-style env so plastex auto-wraps it in a div with
+% a recognizable class (`thm_text_layman` / `thmwrapper.layman_thmwrapper`),
+% which extra_styles.css and the on-page toggle target. A bare
+% `\newenvironment{layman}{...}{...}` does NOT get a class wrapper from
+% plastex — the body text just renders as flat <p>, so a `display:none`
+% CSS rule has nothing to hit.
+%
+% The standalone formal PDF (tex/main.tex) overrides this with
+% \excludecomment{layman}, dropping the body entirely.
+\theoremstyle{remark}
+\newtheorem*{layman}{Plain English}
