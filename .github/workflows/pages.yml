@@ -60,18 +60,29 @@ jobs:
       - name: Build Lean Blueprint site
         run: python3 -m leanblueprint.client web
 
-      - name: Download PDF artifact (from triggering pdf.yml run if any)
-        if: github.event_name != 'pull_request'
+      # `dawidd6/action-download-artifact@v3` errors out if both `branch` and
+      # `run_id` are set, so we have two mutually-exclusive download steps.
+      #
+      # workflow_run path: pin to the exact pdf.yml run that just succeeded.
+      # We don't pass `branch` because the `branches: [main]` filter on the
+      # workflow_run trigger already restricts what fires this.
+      - name: Download PDF artifact (from triggering pdf.yml run)
+        if: github.event_name == 'workflow_run'
         uses: dawidd6/action-download-artifact@v3
         with:
           workflow: pdf.yml
           name: jacobian-informal-proof
-          # When this workflow was triggered by `workflow_run`, pin to the
-          # exact pdf.yml run that just succeeded — eliminates the race
-          # where an in-progress pdf.yml hasn't published yet. For other
-          # triggers (manual / blueprint-only push), `run_id` is empty and
-          # the action falls back to the latest successful run on main.
-          run_id: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.id || '' }}
+          run_id: ${{ github.event.workflow_run.id }}
+          path: tex
+          if_no_artifact_found: fail
+      # Other triggers (manual dispatch, blueprint-only push): grab the
+      # latest successful pdf.yml run on main. No run_id, just `branch`.
+      - name: Download PDF artifact (latest successful on main)
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_run'
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: pdf.yml
+          name: jacobian-informal-proof
           branch: main
           path: tex
           if_no_artifact_found: fail
