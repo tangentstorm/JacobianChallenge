@@ -25,13 +25,49 @@ structure MeromorphicDegreeOneData
   bijective_toMap : Function.Bijective f.toMap
   degree_eq_pole_degree : Divisor.degree f.poles = 1
 
-/-- **Degree/pole-divisor leaf.** A meromorphic map whose pole divisor is
-`[P]` has degree one and therefore is continuous and bijective as a map to
-`OnePoint ℂ`.
+/-- **Extension-continuity leaf.** A meromorphic map to the Riemann sphere
+with pole divisor `[P]` extends continuously over the pole.
 
-Bottom-up content: prove the extension/removable-singularity theorem,
-properness from compactness, and the theorem that the map degree equals the
-degree of the pole divisor. -/
+Bottom-up content: prove the local removable-singularity/one-point extension
+statement in charts and glue over the compact surface. -/
+theorem meromorphicMapToSphere_continuous_of_poleDivisor_point
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (_hpole : f.poles = Divisor.point P) :
+    Continuous f.toMap := by
+  sorry
+
+/-- **Degree bookkeeping leaf.** If the pole divisor is `[P]`, then its
+degree is one. -/
+theorem meromorphicMapToSphere_poleDivisor_degree_eq_one_of_point
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    Divisor.degree f.poles = 1 := by
+  rw [hpole]
+  exact Divisor.degree_point P
+
+/-- **Degree-one bijectivity leaf.** A continuous meromorphic map to
+`OnePoint ℂ` whose pole divisor has degree one is bijective.
+
+Bottom-up content: prove map degree equals pole-divisor degree, then use
+degree-one fiber counting and ramification theory to obtain bijectivity. -/
+theorem meromorphicMapToSphere_bijective_of_poleDivisor_degree_one
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X)
+    (_hcont : Continuous f.toMap)
+    (_hdegree : Divisor.degree f.poles = 1) :
+    Function.Bijective f.toMap := by
+  sorry
+
+/-- **Degree-one assembly.** A meromorphic map whose pole divisor is `[P]`
+has degree one and therefore is continuous and bijective as a map to
+`OnePoint ℂ`. -/
 theorem meromorphicDegreeOneData_of_poleDivisor_point
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -39,6 +75,14 @@ theorem meromorphicDegreeOneData_of_poleDivisor_point
     (f : MeromorphicMapToSphere X) (P : X)
     (hpole : f.poles = Divisor.point P) :
     Nonempty (MeromorphicDegreeOneData X f) := by
-  sorry
+  have hcont : Continuous f.toMap :=
+    meromorphicMapToSphere_continuous_of_poleDivisor_point X f P hpole
+  have hdegree : Divisor.degree f.poles = 1 :=
+    meromorphicMapToSphere_poleDivisor_degree_eq_one_of_point f P hpole
+  exact ⟨
+    { continuous_toMap := hcont
+      bijective_toMap :=
+        meromorphicMapToSphere_bijective_of_poleDivisor_degree_one X f hcont hdegree
+      degree_eq_pole_degree := hdegree }⟩
 
 end JacobianChallenge.HolomorphicForms

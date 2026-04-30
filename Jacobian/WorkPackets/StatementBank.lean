@@ -204,8 +204,9 @@ def meromorphicMapToSphereStatement : Prop := True
 `[P]`.  Production module: `Jacobian.HolomorphicForms.RiemannRoch`. -/
 def genusZeroRiemannRochFixedPoleStatement : Prop := True
 
-/-- Work-packet target: a meromorphic map with pole divisor `[P]` has degree
-one and gives a continuous bijection to `OnePoint ℂ`.  Production module:
+/-- Work-packet target: a meromorphic map with pole divisor `[P]` extends
+continuously; the point-divisor degree is one; and degree-one map theory gives
+a bijection to `OnePoint ℂ`.  Production module:
 `Jacobian.HolomorphicForms.MeromorphicDegree`. -/
 def meromorphicDegreeOneStatement : Prop := True
 
