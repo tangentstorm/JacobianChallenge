@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.OnePointCxChartedSpace
+import Mathlib.Geometry.Manifold.IsManifold.Basic
 
 /-!
 # Complex manifold structure on `OnePoint ℂ`
