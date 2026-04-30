@@ -1,4 +1,4 @@
-name: Build proof site
+name: Deploy Pages
 
 on:
   push:
@@ -7,18 +7,17 @@ on:
     paths:
       - "blueprint/**"
       - "tex/**"
-      - "Jacobian/**"
-      - "lakefile.toml"
-      - "lake-manifest.json"
-      - ".github/workflows/tex-pdf.yml"
+      - ".github/workflows/pages.yml"
   pull_request:
     paths:
       - "blueprint/**"
       - "tex/**"
-      - "Jacobian/**"
-      - "lakefile.toml"
-      - "lake-manifest.json"
-      - ".github/workflows/tex-pdf.yml"
+      - ".github/workflows/pages.yml"
+  workflow_run:
+    # When the PDF rebuilds, re-deploy Pages so the latest PDF is picked up.
+    workflows: ["Build PDF"]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -31,48 +30,49 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-pdf:
-    name: Build PDF
+  build-blueprint:
+    name: Build Blueprint
     runs-on: ubuntu-latest
+    # On workflow_run, only deploy if the PDF build itself succeeded.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Install TeX dependencies
+      - name: Install graphviz dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
-            graphviz \
-            libgraphviz-dev \
-            latexmk \
-            texlive-fonts-recommended \
-            texlive-latex-extra \
-            texlive-latex-recommended
+          sudo apt-get install -y graphviz libgraphviz-dev
 
       - name: Install Lean Blueprint
         run: python3 -m pip install leanblueprint
 
-      - name: Build PDF
-        working-directory: tex
-        run: latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
-
       - name: Build Lean Blueprint site
         run: python3 -m leanblueprint.client web
 
-      # doc-gen4 docs build is currently disabled. `lake build Jacobian:docs`
-      # documents the entire import closure including Mathlib (~22k modules,
-      # multi-hour build, multi-GB output that exceeds GitHub Pages' 1 GB
-      # limit). Tracked in task #5 (CI restructure + Lean source linking).
-      # Until that's resolved, we deploy only the PDF + blueprint web site.
+      - name: Download latest PDF artifact
+        if: github.event_name != 'pull_request'
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: pdf.yml
+          name: jacobian-informal-proof
+          branch: main
+          path: tex
+          if_no_artifact_found: warn
 
       - name: Prepare Pages site
         if: github.event_name != 'pull_request'
         run: |
           mkdir -p _site/blueprint
-          cp tex/main.pdf _site/jacobian-informal-proof.pdf
-
           cp -R blueprint/web/. _site/blueprint/
+
+          if [ -f tex/main.pdf ]; then
+            cp tex/main.pdf _site/jacobian-informal-proof.pdf
+            echo "PDF included from pdf.yml artifact"
+          else
+            echo "No PDF artifact available — site will deploy without PDF"
+          fi
 
           cat > _site/index.html <<'EOF'
           <!doctype html>
@@ -94,25 +94,6 @@ jobs:
           </html>
           EOF
 
-      - name: Upload PDF artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: jacobian-informal-proof
-          path: tex/main.pdf
-          if-no-files-found: error
-
-      - name: Upload LaTeX logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: latex-build-logs
-          path: |
-            tex/*.log
-            tex/*.fls
-            tex/*.fdb_latexmk
-            blueprint/src/*.log
-          if-no-files-found: ignore
-
       - name: Configure GitHub Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
@@ -126,7 +107,7 @@ jobs:
   deploy:
     name: Deploy Pages
     if: github.event_name != 'pull_request'
-    needs: build-pdf
+    needs: build-blueprint
     runs-on: ubuntu-latest
     environment:
       name: github-pages

@@ -1,0 +1,58 @@
+name: Build PDF
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "tex/**"
+      - ".github/workflows/pdf.yml"
+  pull_request:
+    paths:
+      - "tex/**"
+      - ".github/workflows/pdf.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-pdf:
+    name: Build PDF
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install TeX dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            latexmk \
+            texlive-fonts-recommended \
+            texlive-latex-extra \
+            texlive-latex-recommended
+
+      - name: Build PDF
+        working-directory: tex
+        run: latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacobian-informal-proof
+          path: tex/main.pdf
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Upload LaTeX logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: latex-build-logs
+          path: |
+            tex/*.log
+            tex/*.fls
+            tex/*.fdb_latexmk
+          if-no-files-found: ignore
