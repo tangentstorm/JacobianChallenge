@@ -14,7 +14,7 @@ identify our jobs without inspecting tarballs.
 
 ## Live Status (2026-04-29 17:01 EDT)
 
-- **PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
+- **ref/PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 17 (unchanged).
 - **Aristotle integrations to date: 129**.
 - **Backend state (first page of `aristotle list`):** 6 QUEUED
@@ -87,7 +87,7 @@ the open sorries are all covered.
 
 ### Sub-agents launched this tick (background, worktree-isolated)
 
-Per PROMPT.md §3 — racing the two newest-submitted QUEUED Aristotle
+Per ref/PROMPT.md §3 — racing the two newest-submitted QUEUED Aristotle
 packets:
 
 - `ad96003a19385a71c` — racing `6547fde4`

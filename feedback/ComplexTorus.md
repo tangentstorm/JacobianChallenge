@@ -169,7 +169,7 @@ existing namespace.
 ### 8. Small files are fine during the work-queue phase
 
 The current one-lemma-or-small-cluster-per-file layout is consistent with
-`plan.md`'s Aristotle workflow: many small jobs with disjoint write scopes are
+`ref/plan.md`'s Aristotle workflow: many small jobs with disjoint write scopes are
 easier to submit, review, and integrate. I would keep that structure while the
 work is still being formalized.
 

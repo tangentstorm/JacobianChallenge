@@ -28,7 +28,7 @@ Three load-bearing files define the project's structure:
 - **`Jacobian/WorkPackets/StatementBank.lean`** — intermediate statements organized by infrastructure layer, namespaced under `JacobianChallenge.{Inventory, ComplexTorus, HolomorphicForms, Periods, AnalyticJacobian, AbelJacobi, TraceDegree, AntiHack}`. Many definitions are deliberate placeholders (`opaque`, `abbrev ... := ℂ`, `Prop := True`) that expose dependency shape without committing to a final definition. Used to seed Aristotle work packets.
 - **`Jacobian/WorkPackets/Inventory.md`** — Phase 0.5 narrative inventory of the pinned Mathlib commit, marking each prerequisite **PRESENT** / **PARTIAL** / **ABSENT**. The machine-readable pointer is `JacobianChallenge.Inventory.pinnedMathlibInventory` in the statement bank.
 
-Construction strategy (per `plan.md`): use the analytic period-lattice route, `Jacobian X = H⁰(X, Ω¹)* / H₁(X, ℤ)`, built bottom-up through reusable layers (complex tori → holomorphic forms → periods → Jacobian → Abel-Jacobi → trace/degree). The empty `Jacobian/ComplexTorus/` directory is a placeholder for the first concrete milestone: a standalone proof that a finite-dimensional complex vector space modulo a full lattice is a compact complex Lie additive group.
+Construction strategy (per `ref/plan.md`): use the analytic period-lattice route, `Jacobian X = H⁰(X, Ω¹)* / H₁(X, ℤ)`, built bottom-up through reusable layers (complex tori → holomorphic forms → periods → Jacobian → Abel-Jacobi → trace/degree). The empty `Jacobian/ComplexTorus/` directory is a placeholder for the first concrete milestone: a standalone proof that a finite-dimensional complex vector space modulo a full lattice is a compact complex Lie additive group.
 
 Phase ordering matters. Do not drift into a higher layer (e.g. periods, Abel-Jacobi) until the lower-layer dependency is explicitly stable or formally blocked. The quotient group/topology/lattice API must come before quotient charted-space/manifold/LieAddGroup work.
 
@@ -44,17 +44,17 @@ When designing or reviewing definitions, keep an explicit audit trail showing wh
 
 ## Aristotle delegation workflow
 
-This project runs on a timer (`PROMPT.md`, intended for `/loop 15m`). Each tick: read state, check Aristotle status once (no polling), retrieve completed jobs, integrate clean patches, refresh `README.md` progress report, keep ~5 active Aristotle tasks with disjoint write scopes, update `aristotle_tasks.md` (the human-readable ledger).
+This project runs on a timer (`ref/PROMPT.md`, intended for `/loop 15m`). Each tick: read state, check Aristotle status once (no polling), retrieve completed jobs, integrate clean patches, refresh `README.md` progress report, keep ~5 active Aristotle tasks with disjoint write scopes, update `aristotle_tasks.md` (the human-readable ledger).
 
 Every Aristotle job must specify: working directory `C:\ver\JacobianChallenge`, exact target file, allowed write scope, forbidden files (always including `Jacobian/Challenge.lean`), exact declaration names, expected `lake build` command, and fallback behavior if blocked. Prefer many small file-scoped jobs over one large job. `aristotle_tasks.md` has per-queue templates (Queues A–H) keyed to the namespaces in the statement bank.
 
 Tell Aristotle to prefer direct tactics (`simp`, `rw`, `exact`, `refine`, `constructor`, `ext`, `intro`, `apply`) and small helper lemmas. Avoid large `aesop`, `grind`, broad `simp_all`, and fragile automation unless the task explicitly justifies it.
 
-Bad delegation ("solve the Jacobian challenge", "fix all sorries") is explicitly listed in `plan.md` as forbidden — Claude owns global definition choices and statement design; Aristotle owns bounded local proofs.
+Bad delegation ("solve the Jacobian challenge", "fix all sorries") is explicitly listed in `ref/plan.md` as forbidden — Claude owns global definition choices and statement design; Aristotle owns bounded local proofs.
 
 ## Conventions
 
 - `autoImplicit = false` is set in `lakefile.toml` — declare every variable explicitly.
 - Public theorem names and statements stay stable once another file or Aristotle job depends on them.
 - If a statement is too hard, split it into helper lemmas. Do not paper over it with axioms in production files (placeholders in the statement bank are acceptable but should be tracked as missing infrastructure).
-- After integrating Aristotle work, update `README.md`'s progress report (UTF-8 shaded bars `█`/`░`, separator `━` — exact format in `PROMPT.md`) and include both `README.md` and `aristotle_tasks.md` in the integration commit.
+- After integrating Aristotle work, update `README.md`'s progress report (UTF-8 shaded bars `█`/`░`, separator `━` — exact format in `ref/PROMPT.md`) and include both `README.md` and `aristotle_tasks.md` in the integration commit.

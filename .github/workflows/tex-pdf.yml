@@ -60,20 +60,11 @@ jobs:
       - name: Build Lean Blueprint site
         run: python3 -m leanblueprint.client web
 
-      - name: Set up Lean toolchain
-        uses: leanprover/lean-action@v1
-        with:
-          auto-config: false
-          use-mathlib-cache: true
-          build: false
-          test: false
-          lint: false
-
-      - name: Build doc-gen4 docs
-        id: docs
-        continue-on-error: true
-        run: |
-          lake build Jacobian:docs
+      # doc-gen4 docs build is currently disabled. `lake build Jacobian:docs`
+      # documents the entire import closure including Mathlib (~22k modules,
+      # multi-hour build, multi-GB output that exceeds GitHub Pages' 1 GB
+      # limit). Tracked in task #5 (CI restructure + Lean source linking).
+      # Until that's resolved, we deploy only the PDF + blueprint web site.
 
       - name: Prepare Pages site
         if: github.event_name != 'pull_request'
@@ -82,15 +73,6 @@ jobs:
           cp tex/main.pdf _site/jacobian-informal-proof.pdf
 
           cp -R blueprint/web/. _site/blueprint/
-
-          # Copy doc-gen4 output if the build succeeded.
-          if [ -d ".lake/build/doc" ] && [ "${{ steps.docs.outcome }}" = "success" ]; then
-            mkdir -p _site/docs
-            cp -R .lake/build/doc/. _site/docs/
-            echo "docs included"
-          else
-            echo "docs build failed or output missing — skipping /docs/ section"
-          fi
 
           cat > _site/index.html <<'EOF'
           <!doctype html>
@@ -106,7 +88,6 @@ jobs:
                 <ul>
                   <li><a href="jacobian-informal-proof.pdf">Informal proof roadmap (PDF)</a></li>
                   <li><a href="blueprint/">Lean Blueprint dependency graph</a></li>
-                  <li><a href="docs/">Lean API documentation (doc-gen4)</a></li>
                 </ul>
               </main>
             </body>

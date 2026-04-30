@@ -22,7 +22,7 @@ Queue C now provides:
 
 The next layer is the period-lattice construction
 `H₁(X, ℤ) → H⁰(X, Ω¹)*` whose image is a full lattice. This is the
-"central technical bottleneck" per `plan.md` Phase 3.
+"central technical bottleneck" per `ref/plan.md` Phase 3.
 
 ## What Mathlib v4.28.0 has
 

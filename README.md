@@ -152,5 +152,5 @@ Approach: the analytic period-lattice construction
 `Jacobian X = H0(X, Ω¹)* / H1(X, Z)`, built up through reusable layers
 (complex tori, holomorphic forms, period integration, Abel-Jacobi, degree).
 
-See `plan.md` for the full roadmap, phase breakdown, anti-hack audit, and
+See `ref/plan.md` for the full roadmap, phase breakdown, anti-hack audit, and
 delegation strategy for Aristotle.

@@ -1,6 +1,6 @@
 # Top-Down Comparator Plan
 
-This file augments the bottom-up plan in `plan.md`,
+This file augments the bottom-up plan in `ref/plan.md`,
 `Jacobian/WorkPackets/StatementBank.lean`, and `aristotle_tasks.md`.
 It is written for Claude timer ticks. The goal is to make
 `Jacobian/Solution.lean` into a top-down refinement of
@@ -279,7 +279,7 @@ Claude owns:
 - editing `Solution.lean`;
 - choosing public helper theorem names;
 - deciding when a top-level `sorry` has been refined enough to move downward;
-- maintaining this file, `plan.md`, `aristotle_tasks.md`, and any comparator
+- maintaining this file, `ref/plan.md`, `aristotle_tasks.md`, and any comparator
   config;
 - integrating production-module results into the top-down bridge.
 
