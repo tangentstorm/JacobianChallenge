@@ -24,6 +24,42 @@ independence proved via composition of analytic equivalences.}
 \notready
 \end{definition}
 
+\begin{proofsketch}[Lean formalization strategy]
+Mathlib v4.28 provides \texttt{MeromorphicAt} and \texttt{meromorphicOrderAt}
+in \texttt{Mathlib.Analysis.Meromorphic.\{Basic, Order\}} for functions
+\(f : \mathbb{k} \to E\) on a normed field, so the manifold case requires a
+project-side wrapper that reduces to the chart-local statement. Concrete
+plan (vetted against v4.28 by an LLM cross-check round):
+
+\begin{enumerate}
+\item Define \texttt{MeromorphicAtX (f : X $\to$ \(\C\)) (p : X)} as
+  \texttt{MeromorphicAt (f $\circ$ (extChartAt $\mathcal I(\C)$ p).symm)
+  (extChartAt $\mathcal I(\C)$ p p)}, using the extended chart of
+  \texttt{IsManifold $\mathcal I(\C)$ $\omega$ X}.
+\item Define \texttt{orderAt p f hf := meromorphicOrderAt (f $\circ$
+  (extChartAt $\mathcal I(\C)$ p).symm) (extChartAt $\mathcal I(\C)$ p p) :
+  WithTop $\Z$}, with \texttt{hf : MeromorphicAtX f p}.
+\item Chart-independence: for two extended charts
+  \(e_1, e_2\) at \(p\), the transition map
+  \(g := e_2 \circ e_1^{-1}\) is analytic at \(e_1(p)\) and
+  \(g(e_1(p)) = e_2(p)\); the manifold typeclass provides
+  \texttt{ContMDiff} of order \(\omega\), which on the standard model
+  \(\mathcal I(\C)\) means analytic. The complex inverse function theorem
+  gives \(g'(e_1(p)) \ne 0\). Apply
+  \texttt{MeromorphicAt.meromorphicOrderAt\_comp}
+  (\texttt{Mathlib.Analysis.Meromorphic.Order} line 725) to conclude
+  \(\ord_{e_1}(f \circ e_1^{-1}) = \ord_{e_2}(f \circ e_2^{-1})\).
+\end{enumerate}
+
+Estimated cost: ~250--350 LOC across one new file
+(\texttt{Jacobian/HolomorphicForms/VanishingOrder.lean}). The transition
+derivative-non-zero step is the only piece without an off-the-shelf
+Mathlib lemma; it costs ~30--50 LOC and reduces to the complex inverse
+function theorem (\texttt{Mathlib.Analysis.Calculus.InverseFunctionTheorem}).
+Naming note: \texttt{PartialHomeomorph}, not \texttt{LocalHomeomorph}
+(already renamed in pre-v4.28).
+\end{proofsketch}
+
 \begin{lemma}[Discreteness of the divisor support]
 \label{lem:divisor-discrete}
 \uses{def:vanishing-order}
