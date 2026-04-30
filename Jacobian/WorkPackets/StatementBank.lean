@@ -200,8 +200,8 @@ attach zero/pole divisors.  Production module:
 def meromorphicMapToSphereStatement : Prop := True
 
 /-- Work-packet target: genus-zero Riemann-Roch produces, for every point
-`P`, a meromorphic map whose pole divisor is `[P]`.  Production module:
-`Jacobian.HolomorphicForms.RiemannRoch`. -/
+`P`, a nonconstant element of `L([P])`, then identifies its pole divisor as
+`[P]`.  Production module: `Jacobian.HolomorphicForms.RiemannRoch`. -/
 def genusZeroRiemannRochFixedPoleStatement : Prop := True
 
 /-- Work-packet target: a meromorphic map with pole divisor `[P]` has degree
