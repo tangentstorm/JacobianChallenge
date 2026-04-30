@@ -15,6 +15,27 @@ manifold structure, and compatible Lie additive group structure.
 \leanok
 \end{proposition}
 
+\begin{layman}
+Take a finite-dimensional complex vector space \(V\) — a few copies of
+the complex plane — and a \emph{full lattice} \(\Lambda\) inside it: a
+discrete grid of points whose integer combinations spread out evenly in
+every direction, like the vertices of a tiled wallpaper pattern in
+real-dimension \(2g\). Glue the space to itself by declaring two points
+equivalent whenever they differ by a lattice vector. The result is a
+\emph{complex torus}: in dimension one, just the surface of an ordinary
+donut; in higher dimension, a higher-genus generalization that's still
+compact, smooth, and inherits an addition law from \(V\). The
+proposition packages all the structural facts at once: addition
+commutes, the topology is Hausdorff and compact, the smooth structure
+makes it a complex manifold, and addition itself is smooth. (You can
+think of the building blocks like a Lego set: snap together vector
+space, group, topology, manifold, and Lie group.) Why bother? When the
+Jacobian is built later as ``dual of holomorphic 1-forms modulo period
+lattice,'' we just plug \(V = \HdualX\) and \(\Lambda = \) period
+lattice into this proposition and inherit every structural property
+the challenge's anti-hack theorems demand.
+\end{layman}
+
 \begin{proof}
 The group and topology are induced by the quotient of the additive topological
 group \(V\). Closedness and discreteness of \(\Lambda\) give Hausdorffness and
