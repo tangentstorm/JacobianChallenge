@@ -2,7 +2,7 @@
 
 A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann surface (see _About_ below for scope).
 
-📄 **[Informal proof roadmap (PDF)](https://tangentstorm.github.io/JacobianChallenge/jacobian-informal-proof.pdf)** — classical mathematical source-of-truth for the project, with `\lean{...}` annotations bridging to Lean declarations.
+📘 **[Lean blueprint](https://tangentstorm.github.io/JacobianChallenge/blueprint/)** — classical mathematical source-of-truth for the project, with the [dependency graph](https://tangentstorm.github.io/JacobianChallenge/blueprint/dep_graph_document.html) and `\lean{...}` annotations bridging each node to Lean declarations. ([PDF version](https://tangentstorm.github.io/JacobianChallenge/jacobian-informal-proof.pdf))
 
 ## Progress Report
 
