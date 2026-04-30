@@ -30,6 +30,12 @@ theorem input_finite_dimensionality
     (_e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
     (_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖_e ω‖ = holomorphicSupNorm X ω) :
     FiniteDimensional ℂ H := by
+  /- PROOF SKETCH:
+  1. Invoke `hone_unit_ball_compact X _e _h_norm` to obtain compactness of the
+     closed unit ball in `H`.
+  2. Apply `fd_from_riesz (E := H) (r := 1) one_pos` to that compact ball.
+  3. Conclude `FiniteDimensional ℂ H`.
+  -/
   -- TODO: combine `hone_unit_ball_compact X _e _h_norm` with
   -- `fd_from_riesz (E := H) (r := 1) one_pos`.
   sorry

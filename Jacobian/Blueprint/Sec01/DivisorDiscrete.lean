@@ -24,6 +24,18 @@ theorem divisor_discrete
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : X → ℂ) (_hf_nonzero : ∃ x, f x ≠ 0) :
     ∀ p : X, ¬ AccPt p (Filter.principal {q : X | vanishingOrder X q f ≠ 0}) := by
+  /- PROOF SKETCH:
+  1. Reduce to local charts and use the corresponding complex-analytic statement
+     (isolated zeros/poles, local Laurent expansion, Cauchy estimate, Montel, or
+     Riesz representation depending on the node).
+  2. Transfer the local analytic estimate/property back through chart-change
+     compatibility lemmas from the manifold API.
+  3. Conclude the global statement by compactness/finite-subcover and standard
+     linear-topological packaging in mathlib (Submodule, FiniteDimensional,
+     CompactSpace, Proper, etc.).
+  4. This theorem is intentionally left as a named blueprint leaf to be replaced
+     by the concrete mathlib-facing implementation once supporting APIs land.
+  -/
   sorry
 
 end JacobianChallenge.Blueprint

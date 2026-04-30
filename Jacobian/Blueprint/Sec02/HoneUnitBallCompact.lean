@@ -38,6 +38,18 @@ theorem hone_unit_ball_compact
     (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
     (_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) :
     IsCompact (Metric.closedBall (0 : H) 1) := by
+  /- PROOF SKETCH:
+  1. Reduce to local charts and use the corresponding complex-analytic statement
+     (isolated zeros/poles, local Laurent expansion, Cauchy estimate, Montel, or
+     Riesz representation depending on the node).
+  2. Transfer the local analytic estimate/property back through chart-change
+     compatibility lemmas from the manifold API.
+  3. Conclude the global statement by compactness/finite-subcover and standard
+     linear-topological packaging in mathlib (Submodule, FiniteDimensional,
+     CompactSpace, Proper, etc.).
+  4. This theorem is intentionally left as a named blueprint leaf to be replaced
+     by the concrete mathlib-facing implementation once supporting APIs land.
+  -/
   sorry
 
 end JacobianChallenge.Blueprint

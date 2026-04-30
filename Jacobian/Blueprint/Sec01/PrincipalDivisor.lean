@@ -17,7 +17,14 @@ open scoped Manifold
 noncomputable def principalDivisor
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_f : MeromorphicFunctionType X) : Divisor X :=
+    (_f : MeromorphicFunctionType X) : Divisor X := by
+  /- PROOF SKETCH:
+  1. Define coefficient at `p` as `vanishingOrder X p _f`.
+  2. Use `divisor_finite_support` to show only finitely many nonzero coefficients.
+  3. Package coefficients + finite-support proof into `Divisor X`.
+  4. Keep this as a named blueprint constructor until production divisor API
+     (`Finsupp`/`Divisor`) is finalized upstream.
+  -/
   sorry
 
 end JacobianChallenge.Blueprint

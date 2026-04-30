@@ -22,6 +22,12 @@ Stub: the value is the supremum over `x : X` of
 noncomputable def holomorphicSupNorm
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_ω : HolomorphicOneForm ℂ X) : ℝ := sorry
+    (_ω : HolomorphicOneForm ℂ X) : ℝ := by
+  /- PROOF SKETCH:
+  Define this norm via a Hermitian metric on the cotangent bundle in charts,
+  check chart-independence on overlaps, and then package the resulting scalar
+  as the blueprint placeholder for later metric API integration.
+  -/
+  sorry
 
 end JacobianChallenge.Blueprint

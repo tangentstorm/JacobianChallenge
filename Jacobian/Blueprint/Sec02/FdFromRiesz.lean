@@ -24,6 +24,11 @@ theorem fd_from_riesz
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {r : ℝ} (_hr : 0 < r)
     (_h : IsCompact (Metric.closedBall (0 : E) r)) :
     FiniteDimensional ℂ E := by
+  /- PROOF SKETCH:
+  Directly delegate to mathlib's
+  `FiniteDimensional.of_isCompact_closedBall₀` (or equivalent closed-ball
+  compactness criterion) with radius `r > 0`.
+  -/
   -- TODO: `exact FiniteDimensional.of_isCompact_closedBall₀ ℂ _hr _h`
   sorry
 

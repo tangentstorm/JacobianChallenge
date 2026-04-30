@@ -26,6 +26,18 @@ theorem chart_coefficient_bound
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (ω : HolomorphicOneForm ℂ X) (x : X),
       x ∈ e.source →
         cotangentFiberNorm X x (ω.1 x) ≤ C * holomorphicSupNorm X ω := by
+  /- PROOF SKETCH:
+  1. Reduce to local charts and use the corresponding complex-analytic statement
+     (isolated zeros/poles, local Laurent expansion, Cauchy estimate, Montel, or
+     Riesz representation depending on the node).
+  2. Transfer the local analytic estimate/property back through chart-change
+     compatibility lemmas from the manifold API.
+  3. Conclude the global statement by compactness/finite-subcover and standard
+     linear-topological packaging in mathlib (Submodule, FiniteDimensional,
+     CompactSpace, Proper, etc.).
+  4. This theorem is intentionally left as a named blueprint leaf to be replaced
+     by the concrete mathlib-facing implementation once supporting APIs land.
+  -/
   sorry
 
 end JacobianChallenge.Blueprint

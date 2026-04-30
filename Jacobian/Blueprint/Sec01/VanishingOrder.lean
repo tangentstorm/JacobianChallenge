@@ -23,7 +23,14 @@ negative integers for poles). -/
 noncomputable def vanishingOrder
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_p : X) (_f : X → ℂ) : WithTop ℤ :=
+    (_p : X) (_f : X → ℂ) : WithTop ℤ := by
+  /- PROOF SKETCH:
+  1. Define the local representative `g := _f ∘ (extChartAt 𝓘(ℂ) _p).symm`.
+  2. Set `vanishingOrder := meromorphicOrderAt g (extChartAt 𝓘(ℂ) _p _p)`.
+  3. Show independence of the chosen chart via nonvanishing Jacobian of
+     transition maps in complex dimension one, hence invariance of Laurent order.
+  4. Keep this as a blueprint alias until the manifold-meromorphic API is fixed.
+  -/
   sorry
 
 end JacobianChallenge.Blueprint

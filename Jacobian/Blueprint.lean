@@ -23,6 +23,41 @@ import Jacobian.Blueprint.Sec02.HoneUnitBallCompact
 import Jacobian.Blueprint.Sec02.FdFromRiesz
 import Jacobian.Blueprint.Sec02.InputFiniteDimensionality
 import Jacobian.Blueprint.Sec02.FdHolomorphicOneForms
+import Jacobian.Blueprint.Sec02.AnalyticGenusDef
+import Jacobian.Blueprint.Sec02.FdHolomorphicOneFormsThm
+import Jacobian.Blueprint.Sec02.GenusZeroClassification
+
+-- sec03
+import Jacobian.Blueprint.Sec03.HolomorphicFormIsClosed
+import Jacobian.Blueprint.Sec03.StokesOnRsWithBoundary
+import Jacobian.Blueprint.Sec03.SymplecticBasis
+import Jacobian.Blueprint.Sec03.PolygonalModel
+import Jacobian.Blueprint.Sec03.PrimitiveOnPolygon
+import Jacobian.Blueprint.Sec03.BilinearFromStokes
+import Jacobian.Blueprint.Sec03.HermitianPositivity
+import Jacobian.Blueprint.Sec03.PeriodVectorsFullRealRank
+import Jacobian.Blueprint.Sec03.PeriodPairing
+import Jacobian.Blueprint.Sec03.PeriodLattice
+
+-- sec04
+import Jacobian.Blueprint.Sec04.AnalyticJacobian
+
+-- sec05
+import Jacobian.Blueprint.Sec05.AbelJacobiDef
+import Jacobian.Blueprint.Sec05.AbelJacobiInjective
+import Jacobian.Blueprint.Sec05.AjDivisorHom
+import Jacobian.Blueprint.Sec05.AbelExistence
+import Jacobian.Blueprint.Sec05.PrincipalDeg0SimpleSupportDeg1
+import Jacobian.Blueprint.Sec05.RiemannHurwitzDeg1
+import Jacobian.Blueprint.Sec05.AbelPointSeparation
+
+-- sec06
+import Jacobian.Blueprint.Sec06.TracePullback
+import Jacobian.Blueprint.Sec06.PushPullFunctoriality
+import Jacobian.Blueprint.Sec06.PushforwardPullback
+
+-- sec07
+import Jacobian.Blueprint.Sec07.ChallengeApi
 
 /-!
 # Blueprint stubs index
@@ -33,9 +68,7 @@ each blueprint label has a corresponding Lean declaration (real or
 `sorry`-stubbed), so a contributor can pick any node, see its statement,
 and discharge the proof.
 
-Phase A audit doc: `ref/blueprint-audit.md`. As of this commit, sec01 is
-fully covered; sec02 is partial (5 of 11 stubs); sec03–sec07 still need
-stubs (see Tables 2–4 of the audit doc for the full plan).
+Phase A+D audit doc: `ref/blueprint-audit.md`.
 
 This module is intentionally separate from the production `Jacobian.*`
 modules: the stubs here are scaffolds, not production decls. When a

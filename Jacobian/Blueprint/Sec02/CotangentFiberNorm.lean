@@ -32,6 +32,12 @@ cotangent covector `v` in the fiber over `x`. -/
 noncomputable def cotangentFiberNorm
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (x : X) (_v : CotangentSpace ℂ X x) : ℝ := sorry
+    (x : X) (_v : CotangentSpace ℂ X x) : ℝ := by
+  /- PROOF SKETCH:
+  Define this norm via a Hermitian metric on the cotangent bundle in charts,
+  check chart-independence on overlaps, and then package the resulting scalar
+  as the blueprint placeholder for later metric API integration.
+  -/
+  sorry
 
 end JacobianChallenge.Blueprint
