@@ -2,6 +2,7 @@ import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackEqPullbackFormsFun
 import Jacobian.HolomorphicForms.PullbackBundled
 import Jacobian.TraceDegree.PullbackFunComp
+import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
 
 /-!
 # Chain rule for `chartedFormPullback` of a `pullbackFormsBundledLM`
@@ -87,5 +88,29 @@ theorem chartedFormPullback_pullbackFormsBundledLM_apply
           ((mfderiv (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) c.symm e) v)) := by
   rw [chartedFormPullback_pullbackFormsBundledLM]
   rfl
+
+/-- **Curve-integrand chain rule**: `curveIntegralFun` of the chart-coord
+pullback of `pullbackFormsBundledLM X Y f hf η`, applied at a point `t`,
+equals `η.toFun` evaluated at `f (c.symm (γ_X.extend t))`, applied to
+the iterated `mfderiv` of `f` and `c.symm` on the path's `derivWithin`.
+
+This is the integrand-level chain rule. It is the unfolding step
+that drives path-level naturality: every term in the curve integral
+of the chart-coord pullback factors through `η`'s value at
+the pushed point and the chain-rule derivative. -/
+theorem curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) {a b : ℂ} (γ_X : Path a b) (t : ℝ) :
+    curveIntegralFun (chartedFormPullback c (pullbackFormsBundledLM X Y f hf η)) γ_X t =
+      η.toFun (f (c.symm (γ_X.extend t)))
+        ((mfderiv (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f
+          (c.symm (γ_X.extend t)))
+          ((mfderiv (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) c.symm
+            (γ_X.extend t))
+            (derivWithin γ_X.extend unitInterval t))) := by
+  rw [curveIntegralFun_def]
+  exact chartedFormPullback_pullbackFormsBundledLM_apply c f hf η _ _
 
 end JacobianChallenge.Periods
