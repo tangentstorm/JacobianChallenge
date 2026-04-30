@@ -122,4 +122,29 @@ theorem chartedFormPullback_pullbackFormsBundledLM_id
   rw [pullbackFormsBundledLM_id]
   rfl
 
+/-- **Pointwise** identity-case of the chain rule. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_id_apply
+    (c : OpenPartialHomeomorph X ℂ) (η : HolomorphicOneForm ℂ X) (e v : ℂ) :
+    chartedFormPullback c (pullbackFormsBundledLM X X id contMDiff_id η) e v =
+      chartedFormPullback c η e v := by
+  rw [chartedFormPullback_pullbackFormsBundledLM_id]
+
+/-- **Composition case** of the chain rule: pullback along `g ∘ f`
+factors via the contravariant composition of pullbacks, by
+`pullbackFormsBundledLM_comp`. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_comp
+    {Z : Type*} [TopologicalSpace Z] [ChartedSpace ℂ Z]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (g : Y → Z) (hg : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) g)
+    (η : HolomorphicOneForm ℂ Z) :
+    chartedFormPullback c (pullbackFormsBundledLM X Z (g ∘ f) (hg.comp hf) η) =
+      chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf
+          (pullbackFormsBundledLM Y Z g hg η)) := by
+  rw [pullbackFormsBundledLM_comp f hf g hg, LinearMap.comp_apply]
+
 end JacobianChallenge.Periods
