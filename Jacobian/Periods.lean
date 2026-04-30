@@ -170,6 +170,10 @@ import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.Periods.BasisAlignedPeriodPairing
 import Jacobian.Periods.BasisAlignedAnalyticJacobianEquiv
 import Jacobian.Periods.PeriodLattice
+import Jacobian.Periods.SmoothPath
+import Jacobian.Periods.ChartedFormPullbackChainRule
+import Jacobian.Periods.ChartedFormPullbackEqPullbackFormsFun
+import Jacobian.Periods.PullbackNaturality
 
 /-!
 # Periods infrastructure
