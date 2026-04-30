@@ -95,12 +95,18 @@ noncomputable def pathIntegralViaCoverWith
       (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
                  (divFinIcc n hn (i.val + 1) i.isLt))
       (by
-        -- range γᵢ ⊆ chart.source via Path.range_subpath + hcov
         rw [Path.range_subpath]
-        intro x ⟨t, ht, rfl⟩
-        -- ht : t ∈ uIcc (divFinIcc n hn i ...) (divFinIcc n hn (i+1) ...)
-        -- hcov needs t.val ∈ [i/n, (i+1)/n]
-        sorry)
+        intro x hx
+        obtain ⟨t, ht, rfl⟩ := hx
+        rw [Set.uIcc_of_le (divFinIcc_le_succ n hn i.val i.isLt)] at ht
+        rcases Set.mem_Icc.mp ht with ⟨h1, h2⟩
+        have hle1 : ((i.val : ℝ) / n) ≤ (t : ℝ) := h1
+        have hle2 : (t : ℝ) ≤ ((i.val : ℝ) + 1) / n := by
+          have h2' : (t : ℝ) ≤ (divFinIcc n hn (i.val + 1) i.isLt : ℝ) := h2
+          rw [divFinIcc_val] at h2'
+          push_cast at h2'
+          exact h2'
+        exact hcov i t hle1 hle2)
 
 -- Wrapper: choose any partition via Classical.
 noncomputable def pathIntegralViaCover
