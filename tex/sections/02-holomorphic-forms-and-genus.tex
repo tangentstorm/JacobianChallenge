@@ -5,40 +5,143 @@ Let \(\HX\) be the vector space of global holomorphic one-forms. Define the
 analytic genus by \(g(X)=\dim_{\C}\HX\), as in
 Definition~\ref{def:analytic-genus}.
 
-\begin{classicalinput}[Finite-dimensionality]
-\label{input:finite-dimensionality}
+\subsection{Finite-dimensionality (analytic route)}
+
+The project's preferred route to \(\dim_{\C}\HX<\infty\) is analytic: a
+sup-norm makes \(\HX\) a normed space, Montel's theorem makes the closed
+unit ball compact, and Riesz's lemma forces finite dimensionality.
+
+\begin{definition}[Fiber norm on the cotangent bundle]
+\label{def:cotangent-fiber-norm}
+A choice of holomorphic atlas equips each fiber of the cotangent bundle
+\(T^{*}X\) with a norm coming from the chart isomorphism with \(\C\),
+plus a positive smooth weight function obtained via a partition of
+unity. The result is a continuous fiber norm
+\(\|\cdot\|_{x}\) on \(T^{*}_{x}X\).
+\depends{Mathlib has fiber norms on vector bundles via
+\texttt{NormedSpace} structure on each fiber; project-side glue
+provides the partition-of-unity weight.}
 \notready
-The space \(\HX\) is finite-dimensional.
-\depends{compactness, local coefficient extraction for one-forms, Montel or
-Riemann-Roch}
-\end{classicalinput}
+\end{definition}
+
+\begin{definition}[Sup norm on \(\HX\)]
+\label{def:holomorphic-sup-norm}
+\uses{def:cotangent-fiber-norm}
+For \(\omega\in\HX\), let
+\(\|\omega\| := \sup_{x\in X}\|\omega_x\|_{x}\). Compactness of \(X\)
+makes the sup finite. \((\HX,\|\cdot\|)\) is a normed \(\C\)-vector
+space.
+\notready
+\end{definition}
+
+\begin{lemma}[Local coefficient bound on a chart]
+\label{lem:chart-coefficient-bound}
+\uses{def:holomorphic-sup-norm}
+On a chart \(\varphi:U\to B(0,r)\subset\C\), if \(\omega=h(z)\,dz\) on
+\(\varphi(U)\), then \(|h(z)|\) is bounded above by a constant times
+\(\|\omega\|\) on \(\varphi(U)\). The constant depends only on the chart
+weight, not on \(\omega\).
+\notready
+\end{lemma}
+
+\begin{lemma}[Montel compactness]
+\label{lem:montel-compactness}
+\uses{def:holomorphic-sup-norm,lem:chart-coefficient-bound}
+The closed unit ball of \(\HX\) is sequentially compact: every sequence
+\(\omega_n\) with \(\|\omega_n\|\le 1\) has a subsequence converging
+uniformly on \(X\) to some \(\omega_\infty\in\HX\) with
+\(\|\omega_\infty\|\le 1\).
+\notready
+\end{lemma}
 
 \begin{proofsketch}
-One route uses Riemann-Roch and identifies \(\HX\) with the space of sections
-of the canonical divisor. Another analytic route puts a sup norm on
-holomorphic one-forms, proves a normal-family compactness theorem, and derives
-finite-dimensionality by local coefficient estimates. The Lean development is
-currently closer to the analytic route: it already tracks fiber norms, sup
-norms, and Montel-style compactness obligations.
+Cover \(X\) by finitely many charts. Apply Montel's theorem on each chart
+to the local coefficient functions \(h_n\), which are uniformly bounded
+holomorphic functions on disks (Lemma~\ref{lem:chart-coefficient-bound}).
+A diagonal argument extracts a subsequence converging uniformly on each
+chart; gluing gives a uniform limit on \(X\). The limit is holomorphic by
+Weierstrass's theorem and a holomorphic one-form by closedness of the
+chart-form representation.
 \end{proofsketch}
 
-\begin{classicalinput}[Riemann-Roch]
+\begin{theorem}[Closed unit ball is compact]
+\label{thm:hone-unit-ball-compact}
+\uses{lem:montel-compactness}
+The closed unit ball of \((\HX,\|\cdot\|)\) is compact.
+\notready
+\end{theorem}
+
+\begin{theorem}[Finite-dimensionality from Riesz]
+\label{thm:fd-from-riesz}
+\uses{thm:hone-unit-ball-compact}
+A normed \(\C\)-vector space whose closed unit ball is compact is
+finite-dimensional. Applied to \(\HX\), this gives
+\(\dim_{\C}\HX<\infty\).
+\depends{Mathlib's \texttt{Riesz's lemma} /
+\texttt{FiniteDimensional.of\_isCompact\_unitBall}.}
+\leanok
+\end{theorem}
+
+\begin{classicalinput}[Finite-dimensionality (umbrella)]
+\label{input:finite-dimensionality}
+\uses{thm:fd-from-riesz}
+\notready
+The space \(\HX\) is finite-dimensional. Decomposed above into
+sup-norm + Montel + Riesz; the alternative Riemann-Roch route
+(\ref{input:riemann-roch}) is named separately and not used by the
+analytic finite-dim proof.
+\depends{compactness, local coefficient extraction for one-forms, Montel
+or Riemann-Roch}
+\end{classicalinput}
+
+\subsection{Riemann-Roch}
+
+We package Riemann-Roch as a single classical input, with named
+prerequisite sheaf/cohomology infrastructure that makes the
+decomposition visible in the dep graph.
+
+\begin{definition}[Sheaf cohomology of line bundles on \(X\) (placeholder)]
+\label{def:sheaf-cohomology-rs}
+For an invertible sheaf \(\mathcal{L}\) on \(X\) (equivalently a divisor
+class), there are cohomology groups \(H^{0}(X,\mathcal{L})\) and
+\(H^{1}(X,\mathcal{L})\), with \(H^{0}(X,\mathcal{O}_X(D))=L(D)\).
+\depends{Sheaves on Riemann surfaces, sheaf cohomology, line bundles —
+none packaged in Mathlib for compact RS at v4.28.0.}
+\notready
+\end{definition}
+
+\begin{theorem}[Serre duality on a compact Riemann surface]
+\label{thm:serre-duality-rs}
+\uses{def:sheaf-cohomology-rs}
+For an invertible sheaf \(\mathcal{L}\) and the canonical sheaf \(K\),
+\[
+  H^{1}(X,\mathcal{L})\cong H^{0}(X,K\otimes\mathcal{L}^{-1})^{\vee}.
+\]
+\notready
+\end{theorem}
+
+\begin{theorem}[Euler characteristic of an invertible sheaf]
+\label{thm:euler-char-line-bundle}
+\uses{def:sheaf-cohomology-rs,def:divisor-degree}
+For an invertible sheaf \(\mathcal{L}=\mathcal{O}_X(D)\),
+\(\chi(\mathcal{L}) := h^{0}(\mathcal{L}) - h^{1}(\mathcal{L})
+                     = \deg(D) + 1 - g(X).\)
+\notready
+\end{theorem}
+
+\begin{classicalinput}[Riemann-Roch (umbrella)]
 \label{input:riemann-roch}
-\uses{input:divisors}
+\uses{input:divisors,thm:serre-duality-rs,thm:euler-char-line-bundle}
 \notready
 For every divisor \(D\) on \(X\),
 \[
   \ell(D)-\ell(K-D)=\deg(D)+1-g(X),
 \]
 where \(K\) is a canonical divisor and \(\ell(D)=\dim_{\C} L(D)\).
+Combines the Euler-characteristic formula
+(Theorem~\ref{thm:euler-char-line-bundle}) with Serre duality
+(Theorem~\ref{thm:serre-duality-rs}).
 \end{classicalinput}
-
-\begin{proofsketch}
-This is the standard Riemann-Roch theorem for compact Riemann surfaces. It may
-be proved analytically using sheaf cohomology and Serre duality, or through
-classical function theory. In this roadmap it is a named classical input, not
-a small lemma.
-\end{proofsketch}
 
 \begin{proposition}[Genus zero gives a degree-one meromorphic function]
 \label{prop:genus-zero-degree-one-map}
@@ -61,20 +164,92 @@ function with at most a simple pole at \(p\). Such a function cannot have any
 other pole and therefore defines a degree-one map to \(\CPone\).
 \end{proof}
 
-\begin{classicalinput}[Degree-one maps are isomorphisms]
+\subsection{Degree-one holomorphic maps to \texorpdfstring{\(\CPone\)}{CP1}}
+
+\begin{definition}[Branched-cover degree of a nonconstant holomorphic map]
+\label{def:branched-degree}
+\uses{def:vanishing-order}
+For a nonconstant holomorphic \(f:X\to Y\), the degree \(\deg(f)\) is
+the cardinality, counted with multiplicity, of any generic fiber. Each
+preimage \(p\in f^{-1}(q)\) contributes its ramification index
+\(e_p(f)=\ord_p(f - f(p))\ge 1\); the sum is constant in \(q\) and
+equals \(\deg(f)\).
+\depends{Local power-series order at \(p\) (\texttt{analyticOrderAt});
+constancy in the generic fiber from the open-mapping + isolated-zeros
+machinery.}
+\notready
+\end{definition}
+
+\begin{lemma}[Branch locus is finite]
+\label{lem:branch-locus-finite}
+\uses{def:branched-degree}
+The set \(\{p\in X : e_p(f)\ge 2\}\) is finite.
+\notready
+\end{lemma}
+
+\begin{proofsketch}
+\(e_p(f)\ge 2\) iff the local derivative of \(f\) vanishes. The
+derivative is itself meromorphic; its zero set is discrete by the
+identity theorem, and finite by compactness.
+\end{proofsketch}
+
+\begin{lemma}[Degree-one forces no ramification]
+\label{lem:degree-one-no-ramification}
+\uses{def:branched-degree,lem:branch-locus-finite}
+If \(\deg(f)=1\), then \(e_p(f)=1\) for every \(p\in X\), so \(f\) is
+unramified.
+\notready
+\end{lemma}
+
+\begin{proof}
+At a generic fiber, the sum of ramification indices equals \(1\), so the
+fiber has exactly one point with index \(1\). At a branch point \(p\),
+the sum of indices over the fiber is also \(1\), but each index is
+\(\ge 1\), so the fiber is a singleton \(\{p\}\) with \(e_p(f)=1\).
+\end{proof}
+
+\begin{theorem}[Local biholomorphism from unramified holomorphic]
+\label{thm:local-biholo-unramified}
+\uses{lem:degree-one-no-ramification}
+An unramified nonconstant holomorphic map \(f:X\to Y\) is a local
+biholomorphism: every \(p\in X\) has a neighborhood mapped
+biholomorphically onto a neighborhood of \(f(p)\).
+\depends{Mathlib's local inverse function theorem on \(\C\) plus the
+fact that unramification means the local derivative is nonzero.}
+\notready
+\end{theorem}
+
+\begin{theorem}[Degree-one is bijective]
+\label{thm:degree-one-bijective}
+\uses{def:branched-degree,thm:local-biholo-unramified}
+A degree-one holomorphic map \(f:X\to Y\) is bijective.
+\notready
+\end{theorem}
+
+\begin{proofsketch}
+Surjective: a degree-\(d\) holomorphic map between compact Riemann
+surfaces is surjective (the image is open by open-mapping and closed by
+compactness). Injective: by
+Lemma~\ref{lem:degree-one-no-ramification}, every fiber has exactly one
+point with ramification index 1, hence cardinality 1.
+\end{proofsketch}
+
+\begin{theorem}[Compact-Hausdorff bijective continuous map is a homeomorphism]
+\label{thm:compact-bijection-homeo}
+A continuous bijection between compact Hausdorff spaces is a
+homeomorphism.
+\depends{Mathlib's \texttt{Continuous.homeomorphOfCompactToT2OfBijective}
+or analogous topology fact (PRESENT).}
+\leanok
+\end{theorem}
+
+\begin{classicalinput}[Degree-one maps are isomorphisms (umbrella)]
 \label{input:degree-one-isomorphism}
+\uses{thm:degree-one-bijective,thm:local-biholo-unramified,thm:compact-bijection-homeo}
 \notready
 A nonconstant holomorphic map \(f:X\to\CPone\) of degree one is a
 biholomorphism.
 \end{classicalinput}
-
-\begin{proofsketch}
-Away from finitely many branch points, a degree-one holomorphic map is a
-one-sheeted covering, hence injective. Ramification would increase local
-degree, so no ramification occurs. The map is therefore bijective and locally
-biholomorphic. Compact-to-Hausdorff bijectivity gives a homeomorphism, and
-the local inverse theorem gives the complex-analytic inverse.
-\end{proofsketch}
 
 \begin{proof}[Proof of Theorem~\ref{thm:genus-zero-classification}]
 If \(g(X)=0\), Proposition~\ref{prop:genus-zero-degree-one-map} and

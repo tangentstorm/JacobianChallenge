@@ -52,27 +52,99 @@ coordinate of the lift to \(\HdualX\) is holomorphic, and the quotient map to
 \(\Jac(X)\) is holomorphic.
 \end{proof}
 
-\begin{classicalinput}[Abel's theorem]
+\subsection{Abel's existence theorem and its consequences}
+
+The named "Abel's theorem" used in
+Theorem~\ref{thm:abel-jacobi-injective} is the existence direction:
+divisors of degree zero with zero Abel-Jacobi image are principal. We
+decompose this and the corollary \(g(X)>0\) ⟹ injectivity into named
+sub-obligations so the dep graph reflects the actual classical inputs.
+
+\begin{theorem}[Abel-Jacobi sends divisors to a homomorphism]
+\label{thm:aj-divisor-hom}
+\uses{def:abel-jacobi}
+The Abel-Jacobi map extends \(\Z\)-linearly to a group homomorphism
+\(\AJ : \Div^{0}(X) \to \Jac(X)\) on degree-zero divisors. In
+particular, \(\AJ_P(Q_1)=\AJ_P(Q_2)\) iff \(\AJ(Q_1-Q_2)=0\).
+\depends{Linear extension of \(\AJ_P\) to formal sums; degree-zero
+condition is needed to make the result independent of base point.}
+\notready
+\end{theorem}
+
+\begin{theorem}[Abel existence: zero AJ image implies principal]
+\label{thm:abel-existence}
+\uses{thm:aj-divisor-hom,def:principal-divisor,input:divisors,input:riemann-bilinear}
+For \(D\in\Div^{0}(X)\), if \(\AJ(D)=0\) in \(\Jac(X)\), then there is a
+nonzero meromorphic function \(f\in\Mer(X)^{\times}\) with \((f)=D\).
+\depends{ABSENT in Mathlib. Classical proof uses the surjectivity of the
+exponential of the period map together with a meromorphic-function
+construction (theta-function-style). Multi-thousand-line classical
+result; see e.g.\ Forster Lectures on Riemann Surfaces, Chapter 3.}
+\notready
+\end{theorem}
+
+\begin{lemma}[Principal divisor of degree zero with simple two-point support yields a degree-one map]
+\label{lem:principal-deg0-simple-support-deg1}
+\uses{def:principal-divisor,thm:principal-degree-zero,def:meromorphic-to-cp1}
+If \(f\in\Mer(X)^{\times}\) has \((f)=Q_1-Q_2\) with \(Q_1\ne Q_2\), then
+the associated map \(\widehat{f}:X\to\CPone\) is nonconstant of
+degree~\(1\).
+\notready
+\end{lemma}
+
+\begin{proofsketch}
+\((f)=Q_1-Q_2\) means \(f\) has a simple zero at \(Q_1\), a simple pole
+at \(Q_2\), and no other zeros or poles. The pole gives \(\widehat
+f^{-1}(\infty)=\{Q_2\}\) with multiplicity 1, so the generic fiber has
+size~1.
+\end{proofsketch}
+
+\begin{theorem}[Riemann-Hurwitz for degree-1 map: target genus 0]
+\label{thm:riemann-hurwitz-deg1}
+\uses{def:branched-degree,input:degree-one-isomorphism}
+A nonconstant holomorphic map \(f:X\to\CPone\) of degree \(1\) is a
+biholomorphism. In particular, \(g(X)=g(\CPone)=0\).
+\notready
+\end{theorem}
+
+\begin{proof}
+Biholomorphism: Input~\ref{input:degree-one-isomorphism} (degree-one
+maps are isomorphisms). Genus equality: biholomorphic Riemann surfaces
+have isomorphic spaces of holomorphic 1-forms, so the same analytic
+genus, and \(g(\CPone)=0\) is a separate well-known computation
+(\(H^{0}(\CPone,\Omega^{1})=0\) since the only meromorphic 1-form on
+\(\CPone\) up to scaling has poles).
+\end{proof}
+
+\begin{theorem}[Point-separation form of Abel's theorem]
+\label{thm:abel-point-separation}
+\uses{thm:aj-divisor-hom,thm:abel-existence,lem:principal-deg0-simple-support-deg1,thm:riemann-hurwitz-deg1}
+If \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
+\notready
+\end{theorem}
+
+\begin{proof}
+Assume \(Q_1\ne Q_2\). Theorem~\ref{thm:aj-divisor-hom} reduces to
+\(\AJ(Q_1-Q_2)=0\). Theorem~\ref{thm:abel-existence} produces a
+meromorphic \(f\) with \((f)=Q_1-Q_2\).
+Lemma~\ref{lem:principal-deg0-simple-support-deg1} promotes \(f\) to a
+degree-one holomorphic \(\widehat f:X\to\CPone\), and
+Theorem~\ref{thm:riemann-hurwitz-deg1} forces \(g(X)=0\), contradicting
+the hypothesis.
+\end{proof}
+
+\begin{classicalinput}[Abel's theorem (umbrella)]
 \label{input:abel-theorem}
-\uses{input:divisors,def:abel-jacobi,input:degree-one-isomorphism}
+\uses{thm:abel-existence,thm:abel-point-separation}
+\notready
 For degree-zero divisors on \(X\), the Abel-Jacobi map has kernel exactly the
 principal divisors. In particular, if \(g(X)>0\) and
 \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
 \lean{JacobianChallenge.AbelJacobi.pathIntegralFunctional_separates_points}
-\leanok
 \end{classicalinput}
 
-\begin{proofsketch}
-The equality \(\AJ_P(Q_1)=\AJ_P(Q_2)\) says that the divisor
-\(Q_1-Q_2\) maps to zero in the Jacobian. Abel's theorem says this divisor is
-principal, so there is a meromorphic function with divisor \(Q_1-Q_2\). Such a
-function has one simple zero and one simple pole, hence defines a degree-one
-map \(X\to\CPone\). By Riemann-Hurwitz, a degree-one map identifies \(X\) with
-\(\CPone\), forcing genus zero. If \(g(X)>0\), this is impossible unless
-\(Q_1=Q_2\).
-\end{proofsketch}
-
 \begin{proof}[Proof of Theorem~\ref{thm:abel-jacobi-injective}]
-Assume \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\). By the point-separation form
-of Abel's theorem, \(Q_1=Q_2\). Thus \(\AJ_P\) is injective.
+Assume \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\). By
+Theorem~\ref{thm:abel-point-separation}, \(Q_1=Q_2\). Thus \(\AJ_P\) is
+injective.
 \end{proof}
