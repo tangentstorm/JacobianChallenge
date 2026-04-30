@@ -177,7 +177,7 @@ lemma analyticOfCurve_contMDiff (P : X) :
       (⊤ : WithTop ℕ∞) (analyticOfCurve X P) :=
   analyticOfCurve_contMDiff_spec X P
 
-/-- Abel's theorem content: if two path-integral coordinate vectors
+/- Abel's theorem content: if two path-integral coordinate vectors
 differ by a period vector, then their endpoints are equal.
 
 This is the core mathematical content (bottom-up obligation).

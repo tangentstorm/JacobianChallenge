@@ -1,5 +1,6 @@
 import Jacobian.ComplexTorus.MkSmooth
 import Jacobian.ComplexTorus.Add
+import Mathlib.Geometry.Manifold.Algebra.Monoid
 import Mathlib.Geometry.Manifold.ContMDiff.Atlas
 import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 import Mathlib.Geometry.Manifold.ContMDiff.Constructions

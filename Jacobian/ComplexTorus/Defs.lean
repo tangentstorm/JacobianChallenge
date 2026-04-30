@@ -1,4 +1,6 @@
-import Mathlib
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Normed.Module.Basic
+import Mathlib.Topology.Algebra.Group.Quotient
 
 /-!
 # Complex torus core definitions

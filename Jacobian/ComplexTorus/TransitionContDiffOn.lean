@@ -1,6 +1,7 @@
 import Jacobian.ComplexTorus.Defs
 import Jacobian.ComplexTorus.TransitionLocallyTranslate
 import Mathlib.Analysis.Calculus.ContDiff.Basic
+import Mathlib.Analysis.Calculus.ContDiff.Operations
 
 /-!
 # `ContDiffOn ω` for the chart-transition map
