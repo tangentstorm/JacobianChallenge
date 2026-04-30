@@ -9,8 +9,11 @@ Since holomorphic one-forms are closed, the integral only depends on the
 homology class of \(\gamma\). This gives the period pairing of
 Definition~\ref{def:period-pairing}.
 
+\subsection{Homology invariance of periods}
+
 \begin{lemma}[Homology invariance of periods]
 \label{lem:period-homology-invariance}
+\uses{thm:stokes-on-rs-with-boundary,lem:holomorphic-form-is-closed}
 \notready
 If \(\gamma\) and \(\gamma'\) represent the same class in \(H_1(X,\Z)\), then
 \[
@@ -22,15 +25,80 @@ for every \(\omega\in\HX\).
 
 \begin{proof}
 The difference \(\gamma-\gamma'\) is a boundary. Holomorphic one-forms are
-closed. Stokes' theorem gives that the integral of a closed form over a
-boundary vanishes.
+closed (Lemma~\ref{lem:holomorphic-form-is-closed}). Stokes' theorem
+(Theorem~\ref{thm:stokes-on-rs-with-boundary}) gives that the integral of
+a closed form over a boundary vanishes.
 \end{proof}
 
-\begin{classicalinput}[Riemann bilinear relations]
-\label{input:riemann-bilinear}
+\begin{lemma}[Holomorphic 1-forms are closed]
+\label{lem:holomorphic-form-is-closed}
+For \(\omega\in\HX\), \(d\omega=0\).
+\depends{Local computation: \(d(h(z)\,dz)=\frac{\partial h}{\partial \bar
+z}\,d\bar z\wedge dz=0\) by Cauchy-Riemann; globalization via the chart
+atlas.}
 \notready
-Let \(a_1,\dots,a_g,b_1,\dots,b_g\) be a symplectic basis of
-\(H_1(X,\Z)\). For holomorphic one-forms \(\omega,\eta\),
+\end{lemma}
+
+\begin{theorem}[Stokes' theorem on Riemann surfaces with boundary]
+\label{thm:stokes-on-rs-with-boundary}
+For an oriented compact Riemann surface with boundary \(M\) and a smooth
+1-form \(\omega\) on \(M\),
+\[
+  \int_{\partial M}\omega = \int_{M} d\omega.
+\]
+\depends{ABSENT in Mathlib v4.28.0 (Mathlib has Stokes only on box /
+rectangle subsets of \(\R^n\), not on manifolds with boundary). This is
+the single largest classical-analysis gap for the period-lattice route
+per the project inventory.}
+\notready
+\end{theorem}
+
+\subsection{Riemann bilinear relations and full real rank}
+
+The Riemann bilinear relations come from cutting \(X\) along a
+symplectic basis to obtain a polygon and applying Stokes there.
+
+\begin{definition}[Symplectic basis of \(H_1(X,\Z)\)]
+\label{def:symplectic-basis}
+A symplectic basis of \(H_1(X,\Z)\) is a \(\Z\)-basis
+\(a_1,\dots,a_g,b_1,\dots,b_g\) for which the algebraic intersection
+pairing satisfies
+\((a_i,a_j)=(b_i,b_j)=0\) and \((a_i,b_j)=\delta_{ij}\).
+\depends{Mathlib has the algebraic theory of symplectic bilinear forms;
+the existence of a symplectic basis on a compact orientable surface is
+a topological theorem (every nondegenerate alternating form on a free
+\(\Z\)-module of rank \(2g\) admits a symplectic basis).}
+\notready
+\end{definition}
+
+\begin{theorem}[Polygonal model of a compact Riemann surface]
+\label{thm:polygonal-model}
+\uses{def:symplectic-basis}
+A compact connected oriented Riemann surface \(X\) of genus \(g\) is
+homeomorphic to a \(4g\)-gon \(P\) with sides identified in the
+standard pattern \(a_1b_1a_1^{-1}b_1^{-1}\cdots a_gb_ga_g^{-1}b_g^{-1}\),
+inducing the symplectic basis on \(H_1\).
+\depends{Standard topological classification of compact orientable
+surfaces; not packaged in Mathlib as far as the inventory tracks.}
+\notready
+\end{theorem}
+
+\begin{lemma}[Primitive of a holomorphic 1-form on a polygon]
+\label{lem:primitive-on-polygon}
+\uses{thm:polygonal-model,lem:holomorphic-form-is-closed}
+On the open polygon (interior of \(P\)) — which is simply connected —
+every holomorphic 1-form \(\omega\) has a holomorphic primitive
+\(F:P^{\circ}\to\C\) with \(dF=\omega\).
+\depends{Mathlib has primitives of closed 1-forms on simply connected
+open subsets of \(\C\); the polygon interior pulls back to such a
+subset via the polygonal-model homeomorphism.}
+\notready
+\end{lemma}
+
+\begin{theorem}[Bilinear identity from Stokes on the polygon]
+\label{thm:bilinear-from-stokes}
+\uses{thm:polygonal-model,lem:primitive-on-polygon,thm:stokes-on-rs-with-boundary}
+For holomorphic one-forms \(\omega,\eta\) on \(X\),
 \[
   \int_X \omega\wedge\eta
   =
@@ -41,29 +109,73 @@ Let \(a_1,\dots,a_g,b_1,\dots,b_g\) be a symplectic basis of
     \int_{b_i}\omega\int_{a_i}\eta
   \right).
 \]
-In particular, the period vectors of a basis of \(\HX\) have full real rank
-\(2g\).
-\lean{JacobianChallenge.Periods.period_vectors_linearIndependent_of_symplectic}
-\end{classicalinput}
+\notready
+\end{theorem}
 
 \begin{proofsketch}
-Cut \(X\) along the symplectic basis to obtain a polygon. On the polygon every
-holomorphic one-form has a primitive. Apply Stokes' theorem to the boundary
-integral and identify opposite sides. Taking \(\eta=\overline{\omega}\) in
-the Hermitian variant gives positivity:
+Pull \(\omega,\eta\) back to the polygon \(P\). On \(P\), let \(F\) be a
+primitive of \(\omega\) (Lemma~\ref{lem:primitive-on-polygon}). Then
 \[
-  i\int_X \omega\wedge\overline{\omega}>0
+  \omega\wedge\eta = d(F\eta).
 \]
-for \(\omega\ne 0\). This positivity forces nondegeneracy of the period
-matrix and full rank of the period lattice.
+Apply Stokes to integrate over \(\partial P\). The side identifications
+group the boundary integral into pairs of cycles; the algebraic
+combination of \(F\) values across paired sides is exactly the symplectic
+bilinear sum on the right.
 \end{proofsketch}
+
+\begin{theorem}[Hermitian positivity \(i\int_X\omega\wedge\bar\omega>0\)]
+\label{thm:hermitian-positivity}
+\uses{thm:bilinear-from-stokes}
+For a nonzero holomorphic 1-form \(\omega\),
+\[
+  i\int_X \omega\wedge\overline{\omega} > 0.
+\]
+\notready
+\end{theorem}
+
+\begin{proofsketch}
+Locally \(\omega = h(z)\,dz\), so
+\(i\,\omega\wedge\bar\omega = 2|h(z)|^{2}\,dx\wedge dy\),
+which is a nonnegative volume form, strictly positive at any point
+where \(\omega\) is nonzero. Integrate over \(X\) and use connectedness
+to conclude positivity.
+\end{proofsketch}
+
+\begin{theorem}[Period vectors have full real rank]
+\label{thm:period-vectors-full-real-rank}
+\uses{thm:bilinear-from-stokes,thm:hermitian-positivity,def:symplectic-basis}
+The \(2g\) period vectors
+\(\Pi_X(a_1),\dots,\Pi_X(a_g),\Pi_X(b_1),\dots,\Pi_X(b_g)
+   \in\HdualX\)
+are linearly independent over \(\R\).
+\notready
+\end{theorem}
+
+\begin{proofsketch}
+Suppose a real linear combination is zero. Pair both sides with
+\(\bar\omega\) for an arbitrary basis \((\omega_i)\) of \(\HX\); the
+bilinear identity together with Hermitian positivity forces all
+coefficients to vanish.
+\end{proofsketch}
+
+\begin{classicalinput}[Riemann bilinear relations (umbrella)]
+\label{input:riemann-bilinear}
+\uses{thm:bilinear-from-stokes,thm:hermitian-positivity,thm:period-vectors-full-real-rank}
+\notready
+The classical Riemann bilinear relations and Hermitian positivity, with
+their consequence that the \(2g\) symplectic-basis period vectors are
+\(\R\)-linearly independent.
+\lean{JacobianChallenge.Periods.period_vectors_linearIndependent_of_symplectic}
+\end{classicalinput}
 
 \begin{proof}[Proof of Theorem~\ref{thm:period-lattice}]
 Choose a \(\C\)-basis \(\omega_1,\dots,\omega_g\) of \(\HX\), so
 \(\HdualX\cong\C^g\). The images of the \(2g\) symplectic cycles under
-\(\Pi_X\) are the columns of the period matrix. By the Riemann bilinear
-relations, these \(2g\) vectors are linearly independent over \(\R\). Since
-\(\HdualX\) has real dimension \(2g\), their \(\Z\)-span is a full lattice.
+\(\Pi_X\) are the columns of the period matrix.
+By Theorem~\ref{thm:period-vectors-full-real-rank}, these \(2g\) vectors
+are linearly independent over \(\R\). Since \(\HdualX\) has real
+dimension \(2g\), their \(\Z\)-span is a full lattice.
 \end{proof}
 
 \begin{formalizationnote}
