@@ -1,5 +1,6 @@
 import Jacobian.Periods.ChartedFormPullback
 import Jacobian.TraceDegree.PullbackFun
+import Jacobian.TraceDegree.PullbackFunSmul
 
 /-!
 # Bridge: `chartedFormPullback c = pullbackFormsFun c.symm`
@@ -95,5 +96,22 @@ Sorry-free via the bridge + `pullbackFormsFun_neg`. -/
   rw [chartedFormPullback_eq_pullbackFormsFun,
       chartedFormPullback_eq_pullbackFormsFun]
   exact pullbackFormsFun_neg c.symm η
+
+/-- The chart-symm pullback is `ℂ`-scalar-linear in the form.
+Sorry-free via the bridge + `pullbackFormsFun_smul`. -/
+@[simp] theorem chartedFormPullback_smul
+    (c : OpenPartialHomeomorph X E) (k : ℂ) (η : HolomorphicOneForm E X) :
+    chartedFormPullback c (k • η) = k • chartedFormPullback c η := by
+  rw [chartedFormPullback_eq_pullbackFormsFun,
+      chartedFormPullback_eq_pullbackFormsFun]
+  exact pullbackFormsFun_smul c.symm k η
+
+/-- Subtraction case, derived from add + neg. Sorry-free. -/
+@[simp] theorem chartedFormPullback_sub
+    (c : OpenPartialHomeomorph X E) (η ζ : HolomorphicOneForm E X) :
+    chartedFormPullback c (η - ζ) =
+      chartedFormPullback c η - chartedFormPullback c ζ := by
+  rw [sub_eq_add_neg, sub_eq_add_neg, chartedFormPullback_add,
+      chartedFormPullback_neg]
 
 end JacobianChallenge.Periods
