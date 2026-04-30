@@ -27,10 +27,13 @@ cd tex
 latexmk -pdf main.tex
 ```
 
+GitHub Actions builds the same file on pushes and pull requests that touch
+`tex/**`, then uploads `tex/main.pdf` as the `jacobian-informal-proof`
+artifact.
+
 If no TeX distribution is installed, a useful text-only check is:
 
 ```powershell
 rg "\\input|\\include" main.tex sections statements
 rg "\\lean\\{" tex
 ```
-
