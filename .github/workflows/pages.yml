@@ -40,16 +40,18 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Install graphviz dependencies
+      - name: Install graphviz + minimal TeX
+        # texlive-binaries provides `kpsewhich`, which plastex needs to
+        # resolve relative paths in `\input{...}` (without it, every
+        # cross-directory input is reported as "File not found"). The PDF
+        # build's heavy texlive-* packages live in pdf.yml; here we just
+        # need the path resolver. Cheap to install.
         run: |
           sudo apt-get update
-          sudo apt-get install -y graphviz libgraphviz-dev
+          sudo apt-get install -y graphviz libgraphviz-dev texlive-binaries
 
       - name: Install Lean Blueprint
-        # Pin to versions known to work at commit 8cfd9b9 (deploy at
-        # 15:27 UTC). plasTeX 3.1 broke our `\input` relative-path
-        # resolution; some leanblueprint releases also broke compatibility.
-        run: python3 -m pip install 'plastex==3.0' 'leanblueprint==0.0.18'
+        run: python3 -m pip install leanblueprint
 
       - name: Build Lean Blueprint site
         run: python3 -m leanblueprint.client web
