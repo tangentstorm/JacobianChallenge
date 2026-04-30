@@ -147,3 +147,101 @@ declaration matching the blueprint statement.
 - `thm:pushforward-pullback` (Phase B; pointable at existing decl)
 
 (sec04, sec07, sec08 have all labels covered; sec00 is intro.)
+
+## Phase D — Handoff completeness pass (2026-04-30)
+
+Short answer: **not fully complete yet** for blind implementation by other agents.
+The Sec01/Sec02 leaf files now have useful local proof sketches, but the
+global graph still misses an explicit "for each node, what exact Lean target
+should be implemented next?" table.
+
+This section adds that implementation contract.
+
+### D.1 Blueprint graph nodes currently imported by `Jacobian/Blueprint.lean`
+
+Each row records: (i) declaration status, (ii) expected implementation shape,
+(iii) intended production/mathlib landing spot.
+
+#### Sec01
+
+| Node file | Decl status | Implementation target (next action) | Landing/API target |
+|---|---|---|---|
+| `Sec01/VanishingOrder.lean` | Stub with sketch + `sorry` | Define via chart-local `meromorphicOrderAt`; prove chart-independence lemma | `Jacobian.HolomorphicForms.VanishingOrder` + Mathlib `meromorphicOrderAt` |
+| `Sec01/Divisor.lean` | Concrete structure scaffold | Keep as lightweight blueprint alias | `Jacobian.HolomorphicForms.Divisor` |
+| `Sec01/DivisorDegree.lean` | Concrete scaffold | Connect to `Finsupp.total`-style sum over finite support | `Divisor.degree` API |
+| `Sec01/DivisorDiscrete.lean` | Stub with sketch + `sorry` | Reduce to isolated zeros/poles in charts, then transfer globally | local complex analysis + manifold chart-change |
+| `Sec01/DivisorFiniteSupport.lean` | Stub with sketch + `sorry` | Use compactness + discrete support to get finiteness | `Set.Finite` / compact-discrete argument |
+| `Sec01/MeromorphicFunction.lean` | Abstract placeholder type | Decide final representation (`X →ₘ OnePoint ℂ` vs local-germ class) | production `MeromorphicMapToSphere` |
+| `Sec01/PrincipalDivisor.lean` | Stub with sketch + `sorry` | Package vanishing-order coefficients + finite support | `Divisor` constructor |
+| `Sec01/PrincipalDivisors.lean` | Stub with sketch + `sorry` | Build `AddSubgroup`; multiplication/inversion ↔ add/neg identities | `AddSubgroup` closure lemmas |
+| `Sec01/PrincipalDegreeZero.lean` | Stub with sketch + `sorry` | Prove `degree (principalDivisor f)=0` via residue/order conservation | divisor degree API |
+| `Sec01/MeromorphicToCp1.lean` | Definition scaffold | keep; wire coercions/eval notation | map-to-sphere interface |
+| `Sec01/MeromorphicAsCp1Map.lean` | Stub with sketch + `sorry` | Build continuous map to `ℂP¹` and prove nonconstancy | production `MeromorphicDegree` helpers |
+| `Sec01/RiemannRochSpace.lean` | Definition scaffold | finalize as `Submodule` of meromorphic functions with divisor bound | RR space API |
+| `Sec01/RiemannRochSpaceVector.lean` | Theorem scaffold | prove vector-space instance closure | submodule machinery |
+| `Sec01/InputDivisors.lean` | Umbrella statement | assemble sec01 endpoint theorem | section-level import glue |
+
+#### Sec02
+
+| Node file | Decl status | Implementation target (next action) | Landing/API target |
+|---|---|---|---|
+| `Sec02/CotangentFiberNorm.lean` | Stub with sketch + `sorry` | Pick Hermitian metric model and prove chart invariance | `SectionMetric`/`SectionFiberNorm` production files |
+| `Sec02/HolomorphicSupNorm.lean` | Stub with sketch + `sorry` | Define sup over compact base; prove finiteness/compatibility | `SectionSupNorm` production file |
+| `Sec02/ChartCoefficientBound.lean` | Stub with sketch + `sorry` | Cauchy estimate in chart balls with explicit constants | `ChartCoeffExtractionRecon` + `Periods/ChartBallAtPoint` helpers |
+| `Sec02/MontelCompactness.lean` | Stub with sketch + `sorry` | Arzelà–Ascoli/Montel subsequence extraction on atlas cover | `CompactRiemannSurface` Montel obligations |
+| `Sec02/HoneUnitBallCompact.lean` | Stub with sketch + `sorry` | combine coefficient bounds + Montel to compact closed unit ball | Banach-data compactness leaf |
+| `Sec02/FdFromRiesz.lean` | Stub with sketch + `sorry` | direct wrapper of `FiniteDimensional.of_isCompact_closedBall₀` | Mathlib finite-dimensionality theorem |
+| `Sec02/InputFiniteDimensionality.lean` | Stub with sketch + `sorry` | one-line assembly: previous row + unit ball compact | section endpoint theorem |
+| `Sec02/FdHolomorphicOneForms.lean` | Stub with sketch + `sorry` | transfer FD result to analytic genus API | `analyticGenus` / `FiniteDimensionalHolomorphicOneForms` |
+
+### D.2 Remaining graph-level gap (critical for handoff)
+
+Status update (2026-04-30, later pass): `Blueprint/Sec03`–`Sec07` stub files
+have now been created and imported in `Jacobian/Blueprint.lean`, so the graph is
+no longer missing whole sections at the file level.
+
+Remaining risk is now **statement fidelity** (some newly created stubs are
+intentionally coarse placeholders and should be tightened to match the exact TeX
+quantifiers/types before implementation sprinting begins).
+
+### D.3 Acceptance checklist for "complete enough"
+
+Mark handoff complete only when all are true:
+
+- [ ] Every `\label{...}` node in sec01–sec07 has exactly one Lean declaration
+      in `Jacobian/Blueprint/SecXX`.
+- [ ] Every declaration has either a real proof or a `PROOF SKETCH` naming the
+      concrete API lemmas expected to discharge it.
+- [ ] `Jacobian/Blueprint.lean` imports all node files, with no missing section.
+- [ ] Each dangling TeX `\uses{...}` reference has either a new label or has
+      been removed/renamed consistently.
+- [ ] Theorem names in blueprint stubs match production-facing names sufficiently
+      to allow `rw`/`exact` assembly without ad hoc translation layers.
+
+## Phase E — Exact handoff signatures (cloud-worker ready)
+
+This section records the **exact target statement shape** each remaining coarse
+stub should be upgraded to before implementation.
+
+| Blueprint stub | Target Lean statement/API |
+|---|---|
+| `Sec02/AnalyticGenusDef` | `noncomputable def analyticGenus (𝕜 X) : ℕ := FiniteDimensional.finrank 𝕜 (HolomorphicOneForm 𝕜 X)` |
+| `Sec02/FdHolomorphicOneFormsThm` | theorem `[FiniteDimensional ℂ (HolomorphicOneForm ℂ X)]` via `compactRiemannSurface_finiteDimensionalHolomorphicOneForms` |
+| `Sec02/GenusZeroClassification` | `analyticGenus ℂ X = 0 ↔ Nonempty (X ≃ₜ OnePoint ℂ)` (or sphere-homeomorphic equivalent) |
+| `Sec03/PeriodPairing` | `periodPairing : H₁(X,ℤ) →+ (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ)` |
+| `Sec03/PeriodLattice` | theorem `IsFullLattice` for `AddSubgroup.range periodPairing` (bridge: `periodFullComplexLattice`) |
+| `Sec04/AnalyticJacobian` | `def analyticJacobian := quotient (Hdual / periods)` compatible with `AnalyticJacobianType` |
+| `Sec05/AbelJacobiDef` | `abelJacobi (P : X) : X → analyticJacobian X` |
+| `Sec05/AbelJacobiInjective` | `(0 < analyticGenus ℂ X) → Function.Injective (abelJacobi (X:=X) P)` |
+| `Sec05/AbelPointSeparation` | point-separation functional theorem (`pathIntegralFunctional_separates_points`) |
+| `Sec06/TracePullback` | `analyticPushforward f hf (analyticPullback f hf η) = (ContMDiff.degree f hf) • η` |
+| `Sec06/PushPullFunctoriality` | id/comp laws + holomorphicity for descended `pushforward`/`pullback` |
+| `Sec06/PushforwardPullback` | `pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P` |
+
+Recommended worker protocol per node:
+1. Replace placeholder type/`True` statement with the target signature above.
+2. Add a bridge lemma naming the production declaration used for discharge.
+3. Keep one intentional `sorry` only if upstream API is genuinely missing.
+
+Operational assignment cards for less-capable agents are tracked in:
+`ref/cloud-worker-handoff.md`.
