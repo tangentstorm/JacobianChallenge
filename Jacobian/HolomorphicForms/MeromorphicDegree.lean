@@ -37,6 +37,15 @@ theorem meromorphicMapToSphere_continuous_of_poleDivisor_point
     (f : MeromorphicMapToSphere X) (P : X)
     (_hpole : f.poles = Divisor.point P) :
     Continuous f.toMap := by
+  -- BLOCKER: `MeromorphicMapToSphere.toMap` is an unconstrained function `X → OnePoint ℂ`;
+  -- `locally_meromorphic` is a bare `Prop` placeholder carrying no analytic content, and
+  -- `poleDivisor` is an arbitrary `Divisor X` with no proven link to the map.  Consequently,
+  -- one can construct a counterexample (discontinuous `toMap` with `poleDivisor = point P`),
+  -- making this theorem unprovable from the current definitions.
+  -- Missing piece: `MeromorphicMapToSphere` needs either a `Continuous toMap` field or
+  -- genuine meromorphic data (e.g. via Mathlib's `MeromorphicAt` API) connecting `toMap`
+  -- to its divisors, so that continuity can be derived from the local removable-singularity
+  -- theorem.
   sorry
 
 /-- **Degree bookkeeping leaf.** If the pole divisor is `[P]`, then its
