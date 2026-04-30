@@ -11,6 +11,8 @@ Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
 
 A Lean 4 / Mathlib formalization of the Jacobian variety of a compact Riemann surface (see _About_ below for scope).
 
+📄 **[Informal proof roadmap (PDF)](https://tangentstorm.github.io/JacobianChallenge/jacobian-informal-proof.pdf)** — classical mathematical source-of-truth for the project, with `\lean{...}` annotations bridging to Lean declarations.
+
 ## Progress Report
 
 Last tick: 2026-04-29 17:01 EDT — hourly Aristotle check-in
