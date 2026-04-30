@@ -38,6 +38,17 @@ theorem fd_holomorphic_one_forms
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     FiniteDimensional ℂ (HolomorphicOneForm ℂ X) := by
+  -- DEPENDS ON node 7 (`input_finite_dimensionality`), which in turn
+  -- depends on node 5 (`hone_unit_ball_compact`). Once both landed, the
+  -- discharge is plumbing only:
+  --   1. extract a `HolomorphicOneFormBanachData X` realisation `B` from
+  --      `JacobianChallenge.HolomorphicForms.holomorphicOneForm_normedSpace_uniformOnCompact`
+  --      (Jacobian/HolomorphicForms/CompactRiemannSurface.lean);
+  --   2. the realisation gives a `≃ₗ[ℂ]` `e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H`
+  --      and a norm-match hypothesis `h_norm`;
+  --   3. `have : FiniteDimensional ℂ H := input_finite_dimensionality X e h_norm`;
+  --   4. transport back along `e.symm` via
+  --      `LinearEquiv.finiteDimensional` (Mathlib).
   sorry
 
 end JacobianChallenge.Blueprint
