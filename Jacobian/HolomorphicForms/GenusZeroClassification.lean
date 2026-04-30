@@ -486,12 +486,56 @@ def holomorphicOneFormOnePointCxInfinityVanishingData
       (holomorphicOneFormInversionCoeffContinuousAtZero ω)
       (fun {w} hw => holomorphicOneForm_inversionCoeff_eq_zero_of_ne_zero ω (w := w) hw)
 
-/-- **Infinity-chart wrapper (sorry-free).** Extracts the vanishing at
-`∞` from `holomorphicOneFormOnePointCxInfinityVanishingData`. -/
+/-- **Infinity vanishing of holomorphic 1-forms on `OnePoint ℂ`.**
+
+Direct proof (integrated from Aristotle 50ed9388, salvaged via the
+bundle-trivialization + density argument): use the local trivialization
+of the cotangent bundle around `OnePoint.infty` to translate
+the bundle-section vanishing into a continuous function `phi` on the
+trivialization base set; show `phi` vanishes at every finite point
+(via the existing `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`);
+conclude by density of `OnePoint.some : ℂ → OnePoint ℂ`.
+
+This bypasses the inversion-chart route — `holomorphicOneFormOnePointCxInfinityVanishingData`
+and the inversion-chart leaves it depends on are no longer load-bearing for
+this theorem (they remain useful for `holomorphicOneForm_coeff_tendsto_zero`). -/
 theorem holomorphicOneForm_onePointCx_toFun_infty_eq_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
-    ω.toFun (OnePoint.infty : OnePoint ℂ) = 0 :=
-  (holomorphicOneFormOnePointCxInfinityVanishingData ω).infinity_vanishing
+    ω.toFun (OnePoint.infty : OnePoint ℂ) = 0 := by
+  set e := trivializationAt (CotangentModelFiber ℂ) (CotangentSpace ℂ (OnePoint ℂ))
+    (OnePoint.infty : OnePoint ℂ) with he_def
+  have h_mem : (OnePoint.infty : OnePoint ℂ) ∈ e.baseSet :=
+    FiberBundle.mem_baseSet_trivializationAt' _
+  let phi : OnePoint ℂ → CotangentModelFiber ℂ :=
+    fun x => (e (Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) x (ω.toFun x))).2
+  have hphi_cont : ContinuousOn phi e.baseSet := by
+    apply ContinuousOn.comp continuous_snd.continuousOn
+    · apply ContinuousOn.comp e.continuousOn
+        (Continuous.continuousOn (ω.contMDiff.continuous))
+      intro x hx
+      rw [Trivialization.mem_source]
+      exact hx
+    · exact Set.mapsTo_univ _ _
+  have hphi_fin : ∀ z : ℂ, (↑z : OnePoint ℂ) ∈ e.baseSet → phi (↑z : OnePoint ℂ) = 0 := by
+    intro z hz
+    show (e (Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) (↑z : OnePoint ℂ)
+      (ω.toFun (↑z : OnePoint ℂ)))).2 = 0
+    rw [holomorphicOneForm_onePointCx_toFun_finite_eq_zero ω z]
+    rw [← Trivialization.linearEquivAt_apply (R := ℂ) e (↑z : OnePoint ℂ) hz]
+    exact map_zero _
+  suffices h_phi_infty : phi OnePoint.infty = 0 by
+    have htriv : (e.linearEquivAt ℂ OnePoint.infty h_mem) (ω.toFun OnePoint.infty) = 0 := by
+      rw [Trivialization.linearEquivAt_apply (R := ℂ)]
+      exact h_phi_infty
+    exact (e.linearEquivAt ℂ OnePoint.infty h_mem).injective (by rw [htriv, map_zero])
+  by_contra h
+  have hopen : IsOpen (e.baseSet ∩ phi ⁻¹' {(0 : CotangentModelFiber ℂ)}ᶜ) :=
+    hphi_cont.isOpen_inter_preimage e.open_baseSet isClosed_singleton.isOpen_compl
+  have hne : (e.baseSet ∩ phi ⁻¹' {(0 : CotangentModelFiber ℂ)}ᶜ).Nonempty := by
+    exact ⟨OnePoint.infty, h_mem, fun hmem => h (Set.mem_singleton_iff.mp hmem)⟩
+  have hdense : DenseRange (OnePoint.some : ℂ → OnePoint ℂ) := OnePoint.denseRange_coe
+  obtain ⟨z, hz⟩ := hdense.exists_mem_open hopen hne
+  exact hz.2 (hphi_fin z hz.1)
 
 /-- Every holomorphic 1-form on `OnePoint ℂ` (= ℂℙ¹) evaluates to zero
 at every point.
