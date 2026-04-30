@@ -35,7 +35,7 @@ open JacobianChallenge.HolomorphicForms
 `Module.Finite` form is `FiniteDimensional` definitionally and a
 corollary in either direction is a one-liner if needed downstream. -/
 theorem fd_holomorphic_one_forms
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     FiniteDimensional ℂ (HolomorphicOneForm ℂ X) := by
   -- DEPENDS ON node 7 (`input_finite_dimensionality`), which in turn

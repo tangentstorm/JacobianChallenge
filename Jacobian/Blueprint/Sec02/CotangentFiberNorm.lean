@@ -47,14 +47,14 @@ open JacobianChallenge.HolomorphicForms
 `Σ x : X, CotangentSpace ℂ X x`. The value at `⟨x, v⟩` is the norm of
 the cotangent covector `v` in the fiber over `x`. -/
 noncomputable def cotangentFiberNorm
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (p : Σ x : X, CotangentSpace ℂ X x) : ℝ := ‖p.2‖
 
 /-- Pointwise convenience accessor: `cotangentFiberNormAt X x v`
 unfolds to `cotangentFiberNorm X ⟨x, v⟩`. -/
 noncomputable def cotangentFiberNormAt
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (x : X) (v : CotangentSpace ℂ X x) : ℝ :=
   cotangentFiberNorm X ⟨x, v⟩

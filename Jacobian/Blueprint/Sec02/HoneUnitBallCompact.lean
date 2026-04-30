@@ -45,7 +45,7 @@ open JacobianChallenge.HolomorphicForms
 parameterised by a normed-space realisation `H` of the section space
 whose norm equals `holomorphicSupNorm`. -/
 theorem hone_unit_ball_compact
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
     (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)

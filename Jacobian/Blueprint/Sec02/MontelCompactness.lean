@@ -48,7 +48,7 @@ open Filter JacobianChallenge.HolomorphicForms
 /-- Montel compactness (sequential form): the closed unit ball of
 `H⁰(X, Ω¹)` is sequentially compact in the sup-norm sense. -/
 theorem montel_compactness
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (ω : ℕ → HolomorphicOneForm ℂ X)
     (_h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) :
