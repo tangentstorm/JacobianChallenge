@@ -274,4 +274,47 @@ theorem chartedFormPullback_pullbackFormsBundledLM_sub_apply
   rw [chartedFormPullback_pullbackFormsBundledLM_sub]
   rfl
 
+/-! ### Vector-applied (twice-evaluated) companions
+
+Apply the linearity lemmas at both a point `e ∈ ℂ` and a tangent vector
+`v : ℂ`, returning a value in `ℂ`. Suited for `curveIntegralFun`
+integrand manipulation. -/
+
+/-- Vector-applied additivity. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_add_apply_apply
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η ζ : HolomorphicOneForm ℂ Y) (e v : ℂ) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (η + ζ)) e v =
+      chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) e v +
+      chartedFormPullback c (pullbackFormsBundledLM X Y f hf ζ) e v := by
+  rw [chartedFormPullback_pullbackFormsBundledLM_add_apply]
+  rfl
+
+/-- Vector-applied scalar multiplication. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_smul_apply_apply
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (k : ℂ) (η : HolomorphicOneForm ℂ Y) (e v : ℂ) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (k • η)) e v =
+      k • chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) e v := by
+  rw [chartedFormPullback_pullbackFormsBundledLM_smul_apply]
+  rfl
+
+/-- Vector-applied negation. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_neg_apply_apply
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) (e v : ℂ) :
+    chartedFormPullback c
+        (pullbackFormsBundledLM X Y f hf (-η)) e v =
+      - chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) e v := by
+  rw [chartedFormPullback_pullbackFormsBundledLM_neg_apply]
+  rfl
+
 end JacobianChallenge.Periods
