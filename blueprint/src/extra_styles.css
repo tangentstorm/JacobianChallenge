@@ -92,3 +92,57 @@
   border: 2px solid #1b5e20;
   background: white;
 }
+
+/* Plain-English narrations. Each \begin{layman}...\end{layman} block
+   becomes a <div class="layman">. Default: visible. Toggle button (see
+   inject-layman-toggle.py for the button HTML/JS) flips
+   `body.hide-layman`, which hides every layman block. */
+.layman {
+  background: #fff8e7;
+  border-left: 4px solid #d4a017;
+  padding: 0.7em 1em;
+  margin: 0.8em 0;
+  font-size: 0.97em;
+  line-height: 1.55;
+  color: #3a2c00;
+}
+
+.layman::before {
+  content: "Plain English. ";
+  font-weight: 700;
+  color: #8a6800;
+}
+
+body.hide-layman .layman {
+  display: none;
+}
+
+/* Floating toggle button — fixed top-right; see inject-layman-toggle.py
+   for the injected HTML. */
+#layman-toggle {
+  position: fixed;
+  top: 0.6em;
+  right: 0.6em;
+  z-index: 1000;
+}
+
+#layman-toggle button {
+  font-size: 0.85em;
+  padding: 0.4em 0.7em;
+  border: 1px solid #d4a017;
+  border-radius: 4px;
+  background: #fff8e7;
+  color: #3a2c00;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+#layman-toggle button:hover {
+  background: #ffefc4;
+}
+
+body.hide-layman #layman-toggle button {
+  background: #f0f0f0;
+  border-color: #999;
+  color: #555;
+}

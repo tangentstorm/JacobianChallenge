@@ -60,6 +60,9 @@ jobs:
       - name: Build Lean Blueprint site
         run: python3 -m leanblueprint.client web
 
+      - name: Inject Plain-English toggle into blueprint HTML
+        run: python3 blueprint/src/inject-layman-toggle.py blueprint/web
+
       # `dawidd6/action-download-artifact@v3` errors out if both `branch` and
       # `run_id` are set, so we have two mutually-exclusive download steps.
       #

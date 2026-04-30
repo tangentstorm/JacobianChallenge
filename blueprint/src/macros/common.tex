@@ -38,3 +38,9 @@
 \newcommand{\code}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\depends}[1]{\par\smallskip\noindent\textbf{Depends on:} #1\par\smallskip}
 \newcommand{\todoformal}[1]{\par\smallskip\noindent\textbf{Formalization gap:} #1\par\smallskip}
+
+% Plain-English narration block. Plastex emits this as a div with class
+% "layman" which the blueprint's extra_styles.css styles, and which the
+% on-page toggle button can hide. The blueprint print build renders it
+% as an italicized inset.
+\newenvironment{layman}{\par\smallskip\noindent}{\par\smallskip}
