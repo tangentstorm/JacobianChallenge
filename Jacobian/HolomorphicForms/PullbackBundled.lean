@@ -40,12 +40,18 @@ file already names.
 ## API exposed
 
 * `pullbackFormsBundledLM f hf : HolomorphicOneForm ℂ Y →ₗ[ℂ] HolomorphicOneForm ℂ X`
-  — opaque ℂ-linear map.
+  — concrete (non-opaque) ℂ-linear map, built from `pullbackFormsFunFiber`.
 * `pullbackFormsBundledLM_apply_fun` — pointwise `.toFun` agreement with
-  `pullbackFormsFun` (sorry).
+  `pullbackFormsFun` (sorry-free, definitional via the concrete construction).
 * `pullbackFormsBundledLM_id` — identity functoriality (sorry-free assembly).
 * `pullbackFormsBundledLM_comp` — composition functoriality (sorry-free
   assembly).
+
+This file is sorry-free as of the `pushforward-trace-coord-refactor` branch.
+The original section-smoothness obligation `pullbackFormsFunFiber_contMDiff_section`
+is dispatched via the project-local Mathlib-style primitive
+`ContMDiffWithinAt.clm_compose_of_inCoordinates` from
+`Jacobian/HolomorphicForms/CLMBundleCompose.lean`.
 -/
 
 namespace JacobianChallenge.HolomorphicForms
