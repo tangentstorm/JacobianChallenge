@@ -1,0 +1,4 @@
+.theorem_thmcontent .lean_link,
+.theorem_thmheading .lean_link {
+  font-weight: 600;
+}

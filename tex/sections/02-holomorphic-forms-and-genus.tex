@@ -7,6 +7,7 @@ Definition~\ref{def:analytic-genus}.
 
 \begin{classicalinput}[Finite-dimensionality]
 \label{input:finite-dimensionality}
+\notready
 The space \(\HX\) is finite-dimensional.
 \depends{compactness, local coefficient extraction for one-forms, Montel or
 Riemann-Roch}
@@ -23,6 +24,8 @@ norms, and Montel-style compactness obligations.
 
 \begin{classicalinput}[Riemann-Roch]
 \label{input:riemann-roch}
+\uses{input:divisors}
+\notready
 For every divisor \(D\) on \(X\),
 \[
   \ell(D)-\ell(K-D)=\deg(D)+1-g(X),
@@ -39,10 +42,12 @@ a small lemma.
 
 \begin{proposition}[Genus zero gives a degree-one meromorphic function]
 \label{prop:genus-zero-degree-one-map}
+\uses{input:riemann-roch}
 If \(g(X)=0\), then for every \(p\in X\) there is a meromorphic function
 \(f:X\to\CPone\) with exactly one simple pole at \(p\). In particular, \(f\)
 has degree one.
 \lean{JacobianChallenge.HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero}
+\leanok
 \end{proposition}
 
 \begin{proof}
@@ -58,6 +63,7 @@ other pole and therefore defines a degree-one map to \(\CPone\).
 
 \begin{classicalinput}[Degree-one maps are isomorphisms]
 \label{input:degree-one-isomorphism}
+\notready
 A nonconstant holomorphic map \(f:X\to\CPone\) of degree one is a
 biholomorphism.
 \end{classicalinput}

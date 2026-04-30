@@ -5,8 +5,11 @@ We now assemble the declarations required by \code{Jacobian/Challenge.lean}.
 
 \begin{theorem}[Challenge API from the analytic construction]
 \label{thm:challenge-api}
+\uses{thm:fd-holomorphic-one-forms,thm:genus-zero-classification,def:analytic-jacobian,def:abel-jacobi,lem:aj-self,lem:aj-holomorphic,thm:abel-jacobi-injective,thm:push-pull-functoriality,thm:pushforward-pullback}
 The analytic period-lattice construction supplies all definitions and theorems
 in the Jacobian Challenge API.
+\lean{genus, genus_eq_zero_iff_homeo, Jacobian, Jacobian.ofCurve, Jacobian.pushforward, Jacobian.pullback, Jacobian.pushforward_pullback}
+\leanok
 \end{theorem}
 
 \begin{proof}

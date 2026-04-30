@@ -1,9 +1,8 @@
 # Informal proof roadmap
 
 This directory contains a standalone informal proof plan for the Jacobian
-Challenge. It is intentionally separate from `blueprint/`: the goal here is to
-write the classical mathematical source of truth first, then extract a
-Lean-blueprint dependency graph later.
+Challenge. It is paired with the root-level `blueprint/` directory, which
+builds a Lean Blueprint web graph from the same TeX source files.
 
 Main entrypoint:
 
@@ -35,7 +34,22 @@ artifact. Pushes also publish a small GitHub Pages site with the PDF at:
 https://tangentstorm.github.io/JacobianChallenge/jacobian-informal-proof.pdf
 ```
 
-The site reserves `/blueprint/` for the future Lean Blueprint dependency graph.
+The site publishes the Lean Blueprint dependency graph at `/blueprint/`, built
+from `blueprint/src/web.tex`.
+
+Useful Lean Blueprint checks from the repository root:
+
+```powershell
+python -m leanblueprint.client pdf
+python -m leanblueprint.client web
+python -m leanblueprint.client checkdecls
+```
+
+On this machine the Python package is installed, but the `leanblueprint.exe`
+script is not necessarily on PATH, so the `python -m leanblueprint.client ...`
+form is the most reliable invocation. The web build still shells out to
+`plastex`, so the Python Scripts directory and a TeX distribution containing
+`kpsewhich` must also be on PATH.
 
 If no TeX distribution is installed, a useful text-only check is:
 
