@@ -28,8 +28,14 @@ latexmk -pdf main.tex
 ```
 
 GitHub Actions builds the same file on pushes and pull requests that touch
-`tex/**`, then uploads `tex/main.pdf` as the `jacobian-informal-proof`
-artifact.
+`tex/**`. Pull requests upload `tex/main.pdf` as the `jacobian-informal-proof`
+artifact. Pushes also publish a small GitHub Pages site with the PDF at:
+
+```text
+https://tangentstorm.github.io/JacobianChallenge/jacobian-informal-proof.pdf
+```
+
+The site reserves `/blueprint/` for the future Lean Blueprint dependency graph.
 
 If no TeX distribution is installed, a useful text-only check is:
 
