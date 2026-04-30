@@ -73,4 +73,19 @@ theorem chartedFormPullback_pullbackFormsBundledLM_comp_mfderiv
   rw [mfderiv_comp e hf_at hcs]
   exact (ContinuousLinearMap.comp_assoc _ _ _).symm
 
+/-- **Vector-applied form** of the chain rule: applying both sides at
+a tangent vector `v : ℂ`. Useful when the chart-coord pullback appears
+inside an integrand. -/
+theorem chartedFormPullback_pullbackFormsBundledLM_apply
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) (e v : ℂ) :
+    chartedFormPullback c (pullbackFormsBundledLM X Y f hf η) e v =
+      η.toFun (f (c.symm e))
+        ((mfderiv (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f (c.symm e))
+          ((mfderiv (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) c.symm e) v)) := by
+  rw [chartedFormPullback_pullbackFormsBundledLM]
+  rfl
+
 end JacobianChallenge.Periods
