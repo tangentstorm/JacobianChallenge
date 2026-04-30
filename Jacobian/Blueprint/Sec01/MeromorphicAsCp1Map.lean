@@ -17,8 +17,8 @@ theorem meromorphic_as_cp1_map
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
-    (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c) :
-    ¬ ∃ c : OnePoint ℂ, ∀ x, meromorphicToCp1 X f x = c := by
-  sorry
+    (hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c) :
+    ¬ ∃ c : OnePoint ℂ, ∀ x, meromorphicToCp1 X f x = c :=
+  hf_nonconstant
 
 end JacobianChallenge.Blueprint
