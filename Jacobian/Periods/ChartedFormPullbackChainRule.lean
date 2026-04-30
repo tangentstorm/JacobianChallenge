@@ -2,6 +2,9 @@ import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackEqPullbackFormsFun
 import Jacobian.Periods.PathIntegralViaChartCorrect
 import Jacobian.Periods.PathIntegralViaCover
+import Jacobian.Periods.PathIntegralViaCoverNeg
+import Jacobian.Periods.PathIntegralViaCoverSmul
+import Jacobian.Periods.PathIntegralViaCoverZero
 import Jacobian.HolomorphicForms.PullbackBundled
 import Jacobian.TraceDegree.PullbackFunComp
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
@@ -474,7 +477,8 @@ theorem pathIntegralViaChartCorrect_pullbackFormsBundledLM_smul
 
 Sum over chart-local pieces of the chart-local linearity. -/
 
-/-- Zero-form chart-cover path integral: vanishes via chart-by-chart zero. -/
+/-- Zero-form chart-cover path integral: vanishes via the existing
+unconditional `pathIntegralViaCoverWith` zero. -/
 theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_zero
     (f : X → Y) (hf : ContMDiff (modelWithCornersSelf ℂ ℂ)
       (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) f)
@@ -485,13 +489,11 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_zero
     pathIntegralViaCoverWith
         (pullbackFormsBundledLM X Y f hf (0 : HolomorphicOneForm ℂ Y))
         γ n hn pickChart hcov = 0 := by
-  unfold pathIntegralViaCoverWith
-  refine Finset.sum_eq_zero (fun i _ => ?_)
-  exact pathIntegralViaChartCorrect_pullbackFormsBundledLM_zero
-    (chartAt ℂ (pickChart i)) f hf _ _
+  rw [LinearMap.map_zero, pathIntegralViaCoverWith_zero]
 
-/-- Neg-form chart-cover path integral: distributes over negation via
-chart-by-chart negation and `Finset.sum_neg_distrib`. -/
+/-- Neg-form chart-cover path integral: distributes via
+`pullbackFormsBundledLM`'s neg + the existing
+`pathIntegralViaCoverWith_neg`. -/
 theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_neg
     (f : X → Y) (hf : ContMDiff (modelWithCornersSelf ℂ ℂ)
       (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) f)
@@ -506,14 +508,11 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_neg
       - pathIntegralViaCoverWith
           (pullbackFormsBundledLM X Y f hf η)
           γ n hn pickChart hcov := by
-  unfold pathIntegralViaCoverWith
-  rw [← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl (fun i _ => ?_)
-  exact pathIntegralViaChartCorrect_pullbackFormsBundledLM_neg
-    (chartAt ℂ (pickChart i)) f hf η _ _
+  rw [map_neg, pathIntegralViaCoverWith_neg]
 
-/-- Smul-form chart-cover path integral: distributes over scalar mul via
-chart-by-chart smul and `Finset.smul_sum`. -/
+/-- Smul-form chart-cover path integral: distributes via
+`pullbackFormsBundledLM`'s smul + the existing
+`pathIntegralViaCoverWith_smul`. -/
 theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_smul
     (f : X → Y) (hf : ContMDiff (modelWithCornersSelf ℂ ℂ)
       (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) f)
@@ -528,10 +527,7 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_smul
       k • pathIntegralViaCoverWith
           (pullbackFormsBundledLM X Y f hf η)
           γ n hn pickChart hcov := by
-  unfold pathIntegralViaCoverWith
-  rw [Finset.smul_sum]
-  refine Finset.sum_congr rfl (fun i _ => ?_)
-  exact pathIntegralViaChartCorrect_pullbackFormsBundledLM_smul
-    (chartAt ℂ (pickChart i)) f hf k η _ _
+  rw [LinearMap.map_smul]
+  exact pathIntegralViaCoverWith_smul k _ γ n hn pickChart hcov
 
 end JacobianChallenge.Periods
