@@ -42,6 +42,22 @@ structure on \(T^{*}X\), and the operator-norm continuity from
 \notready
 \end{definition}
 
+\begin{layman}
+At each point of the surface, a holomorphic 1-form picks out a tiny
+linear gadget — a local rule that turns a direction into a complex number.
+This local gadget lives in a one-dimensional space called the
+\emph{cotangent fiber}, and we want to measure how big the gadget is.
+The trick: borrow a coordinate chart at the point (a bit of flat graph
+paper laid over the curvy surface), use it to declare a unit length on
+tangent directions, and then ask, ``what's the largest absolute value the
+gadget outputs on a unit-length input?'' That maximum is its norm.
+Different charts give slightly different units, but we standardize by
+always using the canonical chart that's already attached to the surface's
+atlas. Why bother? With a length on every fiber, we can ask whether a
+1-form is big or small at any point — a prerequisite to defining a global
+``size'' on the whole space of holomorphic 1-forms in the next step.
+\end{layman}
+
 \begin{definition}[Sup norm on \(\HX\)]
 \label{def:holomorphic-sup-norm}
 \uses{def:cotangent-fiber-norm}
@@ -64,6 +80,22 @@ Surfaces}, \S 14.)
 \notready
 \end{definition}
 
+\begin{layman}
+We've measured the size of a holomorphic 1-form at each point. To get a
+single number summarizing the whole 1-form on the whole surface, just
+take the largest pointwise size that ever occurs. This \emph{supremum
+norm} is finite because the surface is compact, the size function is
+continuous, and a continuous function on a closed-and-bounded space
+always attains a maximum (no sneaking off to infinity). The standard
+checks pass: the norm is zero exactly for the zero 1-form, scales
+correctly under multiplication by a complex number, and obeys the
+triangle inequality. So the space of holomorphic 1-forms becomes a
+\emph{normed vector space} — the same structural home as Euclidean space
+or any Banach space. Why bother? Once you have a norm, you have notions
+of distance, convergence, balls, and compactness. The whole analytic
+strategy for proving finite-dimensionality runs on those notions.
+\end{layman}
+
 \begin{lemma}[Local coefficient bound on a chart]
 \label{lem:chart-coefficient-bound}
 \uses{def:holomorphic-sup-norm}
@@ -80,6 +112,22 @@ choice of fiber norm on \(T^{*}X\)), such that
 \]
 \notready
 \end{lemma}
+
+\begin{layman}
+Open up a single coordinate chart — a flat patch of graph paper laid over
+a piece of the surface. On that patch, every holomorphic 1-form looks
+like an ordinary holomorphic function multiplied by the differential of
+the coordinate. The lemma says the size of that ordinary function at
+each point is bounded above by a fixed constant — depending only on the
+chart — times the global supremum norm of the 1-form. In plain terms,
+shrinking a 1-form globally shrinks its local coefficient on the chart
+by at most a fixed factor; the chart can't blow up the constants behind
+your back. Why bother? It's the bridge between the abstract norm on the
+space of 1-forms and the concrete behavior of holomorphic functions on
+disks in the plane, where Mathlib's existing complex-analysis toolbox
+already applies. We need that bridge to invoke Cauchy's estimates and
+Montel's theorem in the next step.
+\end{layman}
 
 \begin{proofsketch}
 Set \(p := \varphi^{-1}(z)\). The chart trivialisation identifies the
@@ -107,6 +155,24 @@ strictly increasing \(\varphi:\N\to\N\) and a limit
 \(X\)).
 \notready
 \end{lemma}
+
+\begin{layman}
+Now the analytic punchline. Take any sequence of holomorphic 1-forms
+whose norms are all bounded by 1 — the closed unit ball. The claim: you
+can always extract a subsequence converging uniformly on the whole
+surface to another holomorphic 1-form of norm at most 1. This is Montel's
+theorem in disguise — magic special to holomorphic functions, with no
+analogue for plain continuous or merely smooth functions. The proof works
+chart by chart: in each chart, Cauchy's integral formula bounds
+derivatives, which forces the sequence to be \emph{equicontinuous} — every
+form in the sequence wiggles at the same controlled rate. Arzelà–Ascoli
+then extracts a convergent subsequence, and the chartwise limits glue
+into a global holomorphic limit by Weierstrass's convergence theorem
+(uniform limits of holomorphic functions are again holomorphic). Why
+bother? It says the unit ball is sequentially compact — a heavy hammer
+that, in normed spaces, is the trademark signature of being
+finite-dimensional.
+\end{layman}
 
 \begin{proofsketch}
 \emph{Step 1: finite chart cover.} Compactness of \(X\) supplies a
@@ -167,6 +233,20 @@ Definition~\ref{def:holomorphic-sup-norm}, the closed unit ball
 \notready
 \end{theorem}
 
+\begin{layman}
+The previous lemma extracted convergent subsequences — that's
+\emph{sequential} compactness. This theorem upgrades it to ordinary
+\emph{topological} compactness, the textbook ``every open cover has a
+finite subcover'' kind. The two flavors agree in any normed space,
+because such spaces are metrisable, and in metric spaces sequential and
+topological compactness are the same notion. So the closed unit ball of
+holomorphic 1-forms — the set of forms with norm at most 1 — is compact in
+the textbook sense. Why bother? Compactness of a closed ball is one of
+those innocent-sounding facts that's actually a structural giveaway: in
+a normed space, it \emph{forces} the space to be finite-dimensional.
+That's the next step.
+\end{layman}
+
 \begin{proofsketch}
 A normed space is metrisable, hence first-countable; in a first-countable
 space sequential compactness and topological compactness coincide
@@ -194,6 +274,22 @@ Theorem~\ref{thm:hone-unit-ball-compact}, this gives
 \leanok
 \end{theorem}
 
+\begin{layman}
+Here's a surprising fact called Riesz's lemma: in any normed vector
+space, if even a single closed ball of positive radius is compact, then
+the whole space must be finite-dimensional. The intuition is that
+infinite-dimensional spaces are too roomy to be compact — you can always
+find a sequence of unit-distance-apart points that never converges, and
+compactness rules this out, so room runs out. Mathlib already has this
+packaged. Apply it to our setting: the closed unit ball of holomorphic
+1-forms is compact (just shown), therefore the space of holomorphic
+1-forms is finite-dimensional. Why bother? This is the headline
+conclusion of the entire chapter. The genus of the surface — defined as
+the dimension of this space — is now guaranteed to be a finite whole
+number. Without it, the whole rest of the project (lattices, Jacobians,
+Abel–Jacobi maps) would have nothing to grab onto.
+\end{layman}
+
 \begin{proofsketch}
 Direct invocation of
 \texttt{FiniteDimensional.of\_isCompact\_closedBall ℂ one\_pos h}
@@ -219,6 +315,22 @@ separately and not used by the analytic finite-dim proof.
 Montel + Riesz.}
 \end{theorem}
 
+\begin{layman}
+We package the analytic route as a single named input: any normed-space
+realization of the global holomorphic 1-forms whose norm matches our
+sup norm is automatically finite-dimensional. This bundles the fiber
+norm, the sup norm, the local coefficient bound, Montel's compactness
+theorem, the upgrade from sequential to topological compactness, and
+Riesz's lemma. There's a separate route to the same conclusion via
+Riemann–Roch — listed alongside as its own umbrella — but the analytic
+route is the project's preferred path because its prerequisites are
+mostly already in Mathlib. Why bother? Naming the umbrella keeps the
+dependency graph clean. Downstream theorems depend on
+``finite-dimensionality, by some route,'' rather than on the specific
+analytic chain, so a future swap of routes won't disturb anything that
+depends on it.
+\end{layman}
+
 \begin{proofsketch}
 Combine Theorem~\ref{thm:hone-unit-ball-compact}, which gives
 \texttt{IsCompact (Metric.closedBall 0 1)} on the realisation \(H\),
@@ -234,6 +346,21 @@ The vector space \(\HX\) is finite-dimensional:
 \(g(X)=\dim_{\C}\HX\) is a finite natural number.
 \notready
 \end{theorem}
+
+\begin{layman}
+This is the headline statement, in its public form: the space of global
+holomorphic 1-forms on a compact Riemann surface is finite-dimensional.
+Equivalently, the analytic genus — defined as the complex dimension of
+that space — is a finite natural number. We get it by taking any
+project-side normed-space realization of this space, applying the
+finite-dimensionality umbrella, and transporting the conclusion back.
+Why bother? Genus is the single most important invariant of a Riemann
+surface. ``Sphere'' has genus 0, ``donut'' has genus 1, ``two-handled
+pretzel'' has genus 2, and so on up. Knowing genus is finite means we
+can actually compute with it — and the finite-dimensionality of the
+1-forms is what makes period lattices, Jacobians, and the entire
+downstream story even formulable.
+\end{layman}
 
 \begin{proofsketch}
 Transport \(\HX\) into the canonical sup-norm realisation supplied by
@@ -261,6 +388,23 @@ none packaged in Mathlib for compact RS at v4.28.0.}
 \notready
 \end{definition}
 
+\begin{layman}
+A \emph{line bundle} on the surface is a way of attaching a tiny
+one-dimensional complex line to every point, varying smoothly from point
+to point — like a ribbon glued onto the surface. Sometimes those ribbons
+can be twisted together globally; sometimes not. The two cohomology
+groups \(H^0\) and \(H^1\) are linear-algebraic gadgets that count,
+respectively, how many \emph{global sections} the bundle has (smooth
+choices of one point on each ribbon) and how badly the bundle is twisted
+(the obstruction to having sections). For a bundle coming from a
+divisor — a budget of zeros and poles — the global sections are exactly
+the Riemann–Roch space we already met. The first group is harder to
+picture, but the next step (Serre duality) will rewrite it as global
+sections of a different bundle, making it computable. Why bother?
+Riemann–Roch in its modern form is a relationship between these two
+groups, and stating it cleanly requires giving them names.
+\end{layman}
+
 \begin{theorem}[Serre duality on a compact Riemann surface]
 \label{thm:serre-duality-rs}
 \uses{def:sheaf-cohomology-rs}
@@ -271,6 +415,21 @@ For an invertible sheaf \(\mathcal{L}\) and the canonical sheaf \(K\),
 \notready
 \end{theorem}
 
+\begin{layman}
+Serre duality is a magical identity. The first cohomology group of a
+line bundle — the slippery, hard-to-picture one — turns out to be the
+linear dual of a much friendlier object: the global sections of the
+\emph{canonical} bundle twisted by the inverse of your bundle. ``Linear
+dual'' just means ``space of linear functions on,'' so the dimension
+matches. In short, every difficult \(H^1\) on a compact Riemann surface
+quietly is a familiar \(H^0\) of something else. The canonical bundle
+itself is the bundle of holomorphic 1-forms, the same finite-dimensional
+space we just learned to bound. Why bother? It converts the
+two-cohomology-group statement of Riemann–Roch into a single inequality
+between countable, vector-space dimensions — exactly the form most useful
+for producing meromorphic functions with prescribed zeros and poles.
+\end{layman}
+
 \begin{theorem}[Euler characteristic of an invertible sheaf]
 \label{thm:euler-char-line-bundle}
 \uses{def:sheaf-cohomology-rs,def:divisor-degree}
@@ -279,6 +438,21 @@ For an invertible sheaf \(\mathcal{L}=\mathcal{O}_X(D)\),
                      = \deg(D) + 1 - g(X).\)
 \notready
 \end{theorem}
+
+\begin{layman}
+Take the dimensions of the two cohomology groups of a line bundle and
+subtract: that's the \emph{Euler characteristic} of the bundle. The
+theorem says this single number is determined by an embarrassingly simple
+formula — the degree of the divisor (i.e., its total weight, possibly
+negative), plus 1, minus the genus of the surface. No matter how
+intricately the bundle is twisted, the alternating sum of its cohomology
+dimensions collapses to that line. It's the same kind of magic as
+Euler's classical \(V - E + F = 2\) for polyhedra: a wild combinatorial
+quantity that's secretly determined by topology. Why bother? Combined
+with Serre duality, this formula is exactly Riemann–Roch — the theorem
+that lets us count how many independent meromorphic functions fit any
+given budget of zeros and poles.
+\end{layman}
 
 \begin{theorem}[Classical input: Riemann-Roch (umbrella)]
 \label{input:riemann-roch}
@@ -294,6 +468,23 @@ Combines the Euler-characteristic formula
 (Theorem~\ref{thm:serre-duality-rs}).
 \end{theorem}
 
+\begin{layman}
+We package the Riemann–Roch theorem as a single classical input.
+Combining Serre duality (which converts hard cohomology into easy
+cohomology) and the Euler-characteristic formula (which equates an
+alternating sum to a topological constant) yields, for every divisor,
+the famous identity: the dimension of functions fitting your budget,
+minus the dimension of functions fitting the complementary budget,
+equals degree-of-budget plus one minus genus. In plain words, the gap
+between two sibling counting questions is a single number you can read
+off from degree and genus. Why bother? Riemann–Roch is the workhorse
+that turns abstract divisor theory into actual constructions: produce a
+meromorphic function with this pole here, that zero there, and the
+formula tells you whether it exists and how many such functions are
+independent. Many of the proofs further down the dependency graph are
+one-line corollaries of it.
+\end{layman}
+
 \begin{proposition}[Genus zero gives a degree-one meromorphic function]
 \label{prop:genus-zero-degree-one-map}
 \uses{input:riemann-roch}
@@ -303,6 +494,22 @@ has degree one.
 \lean{JacobianChallenge.HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero}
 \leanok
 \end{proposition}
+
+\begin{layman}
+Suppose the surface has genus zero — so the dimension of holomorphic
+1-forms is zero. Pick any single point on the surface. Riemann–Roch,
+applied to that one-point divisor, says the budget ``functions allowed
+at most a simple pole there, holomorphic everywhere else'' has dimension
+exactly \(2\). Two dimensions worth of functions means at least one of
+them is nonconstant, and the constraint guarantees its only pole is the
+one we chose. Such a function has exactly one pole on the surface —
+which, viewed as a map to the Riemann sphere, has degree one (it's
+one-to-one on a generic value). Why bother? This is the forward
+direction of the genus-zero classification. Any genus-zero surface
+admits a degree-one map to the sphere, and degree-one maps will turn out
+to be honest isomorphisms — pinning the surface down as the sphere
+itself.
+\end{layman}
 
 \begin{proof}
 Apply Riemann-Roch to \(D=p\). Since \(\deg(p)=1\) and \(g(X)=0\),
@@ -331,12 +538,44 @@ machinery.}
 \notready
 \end{definition}
 
+\begin{layman}
+For a nonconstant holomorphic map between two compact Riemann surfaces,
+the \emph{degree} counts how many times the map covers its target.
+Pick a generic point downstairs and count its preimages, with
+multiplicities at branch points where two or more sheets pinch together:
+that count is the degree, and it's the same whichever generic target
+point you choose. The multiplicity at a preimage is its
+\emph{ramification index}, which measures how many sheets meet there. An
+index of \(1\) means the map is a clean local homeomorphism nearby; an
+index of \(2\) means two sheets pinch into one (like the square-root
+function); higher indices mean more pinching. Why bother? Degree turns
+holomorphic maps between surfaces into measurable things — the way
+``2-to-1 covering'' or ``5-to-1 covering'' captures the structure. Most
+of the classical theory of maps between Riemann surfaces (Riemann–Hurwitz,
+the trace, push-pull) runs on this number.
+\end{layman}
+
 \begin{lemma}[Branch locus is finite]
 \label{lem:branch-locus-finite}
 \uses{def:branched-degree}
 The set \(\{p\in X : e_p(f)\ge 2\}\) is finite.
 \notready
 \end{lemma}
+
+\begin{layman}
+The branch points of a map — places where two or more sheets pinch
+together, so the ramification index jumps above \(1\) — can never form
+an infinite cluster. Locally, ramification means the derivative of the
+map vanishes. Derivatives of holomorphic gadgets are themselves
+holomorphic, and on a compact surface the zero set of a nonzero
+holomorphic gadget is always discrete and finite, by the same
+identity-theorem-plus-compactness combo we saw for divisors. So branch
+points come in tidy finite quantity. Why bother? Most theorems about
+branched covers are easier to state and prove ``away from the branch
+locus,'' and knowing that locus is finite guarantees we can always
+extend conclusions across it by continuity — exactly how the trace of a
+1-form will be defined later.
+\end{layman}
 
 \begin{proofsketch}
 \(e_p(f)\ge 2\) iff the local derivative of \(f\) vanishes. The
@@ -351,6 +590,18 @@ If \(\deg(f)=1\), then \(e_p(f)=1\) for every \(p\in X\), so \(f\) is
 unramified.
 \notready
 \end{lemma}
+
+\begin{layman}
+If a holomorphic map between compact Riemann surfaces has degree one,
+every fiber's ramification indices sum to one. Since each index is at
+least one, the only way the total can equal one is if the fiber consists
+of exactly one point with index exactly one. So no branching anywhere —
+the map is everywhere a clean local homeomorphism. Why bother?
+Degree-one maps are the candidate isomorphisms between Riemann surfaces.
+Showing they have no branching is the first hurdle; the next hurdle
+(local biholomorphism) and the final hurdle (global bijection) follow
+from there. The whole genus-zero classification runs on this chain.
+\end{layman}
 
 \begin{proof}
 At a generic fiber, the sum of ramification indices equals \(1\), so the
@@ -370,12 +621,41 @@ fact that unramification means the local derivative is nonzero.}
 \notready
 \end{theorem}
 
+\begin{layman}
+Take a nonconstant holomorphic map that's unramified — meaning it never
+pinches sheets together. Around every point, the map is a \emph{local
+biholomorphism}: a small neighborhood of the source maps in a smooth,
+invertible, holomorphic way onto a small neighborhood of the target.
+The mechanism is the inverse function theorem from one-variable complex
+analysis: unramified means the local derivative is nonzero, and a
+nonzero derivative is exactly the condition for a holomorphic function
+to have a holomorphic local inverse. Why bother? Locally, the map looks
+like the identity (after a change of coordinates). Combined with
+degree-one (every fiber a singleton), this will force the whole map to
+be a global biholomorphism — the isomorphism we need to identify
+genus-zero surfaces with the sphere.
+\end{layman}
+
 \begin{theorem}[Degree-one is bijective]
 \label{thm:degree-one-bijective}
 \uses{def:branched-degree,thm:local-biholo-unramified}
 A degree-one holomorphic map \(f:X\to Y\) is bijective.
 \notready
 \end{theorem}
+
+\begin{layman}
+A degree-one holomorphic map between compact Riemann surfaces is a
+bijection. \emph{Surjective}: a nonconstant holomorphic map between
+compact surfaces is always onto — its image is open (open mapping
+theorem) and closed (compactness), and a nonempty subset that's both
+open and closed in a connected space is the whole thing. \emph{Injective}:
+each fiber has size exactly one, by the no-ramification lemma. So the
+map is both onto and one-to-one — a set-theoretic bijection. Why bother?
+A continuous bijection between compact Hausdorff spaces is automatically
+a homeomorphism (next theorem), and combined with the local
+biholomorphism from above, that promotes our degree-one map to a full
+biholomorphism between surfaces.
+\end{layman}
 
 \begin{proofsketch}
 Surjective: a degree-\(d\) holomorphic map between compact Riemann
@@ -394,6 +674,20 @@ or analogous topology fact (PRESENT).}
 \leanok
 \end{theorem}
 
+\begin{layman}
+A purely topological gem: any continuous one-to-one onto map from one
+compact Hausdorff space to another is automatically a homeomorphism —
+its inverse is continuous for free, no extra checking required. The
+reason is a chain of clean implications. Closed subsets of a compact
+space are themselves compact. Compact subsets of a Hausdorff space are
+closed. So the map sends closed sets to closed sets, which is exactly
+continuity of the inverse. Why bother? Without it we'd have to manually
+verify that the inverse is continuous everywhere, which on a curvy
+surface is fiddly. With it, going from ``continuous bijection'' to
+``isomorphism of topological spaces'' is one line. Mathlib already has
+this packaged.
+\end{layman}
+
 \begin{theorem}[Classical input: Degree-one maps are isomorphisms (umbrella)]
 \label{input:degree-one-isomorphism}
 \uses{thm:degree-one-bijective,thm:local-biholo-unramified,thm:compact-bijection-homeo}
@@ -401,6 +695,22 @@ or analogous topology fact (PRESENT).}
 A nonconstant holomorphic map \(f:X\to\CPone\) of degree one is a
 biholomorphism.
 \end{theorem}
+
+\begin{layman}
+We package the chain ``degree-one nonconstant holomorphic map between
+compact Riemann surfaces is a biholomorphism'' as a single classical
+input. It bundles three steps: degree one means no ramification; no
+ramification means a local biholomorphism everywhere; and a continuous
+bijection between compact Hausdorff spaces is a homeomorphism — together
+giving a global holomorphic isomorphism. Why bother? Combined with the
+genus-zero existence proposition (genus zero gives a degree-one map to
+the sphere), this umbrella delivers the forward direction of the
+genus-zero classification: any genus-zero compact Riemann surface is
+\emph{biholomorphic} to the Riemann sphere, hence in particular
+homeomorphic to the topological sphere. That's the anti-hack
+``genus zero iff homeomorphic to sphere'' baked into the challenge
+statement.
+\end{layman}
 
 \begin{proof}[Proof of Theorem~\ref{thm:genus-zero-classification}]
 If \(g(X)=0\), Proposition~\ref{prop:genus-zero-degree-one-map} and

@@ -18,6 +18,21 @@ sup norm \(\to\) compact unit ball (Montel) \(\to\) Riesz theorem; then define
 \(g(X)\) by `FiniteDimensional.finrank`.
 \end{definition}
 
+\begin{layman}
+The \emph{analytic genus} of a compact Riemann surface is the complex
+dimension of the space of global holomorphic 1-forms on it. The
+previous section established that this dimension is finite, so it's an
+honest natural number. By the genus-zero classification (next item),
+this number also matches the topological genus — the count of handles
+you'd see if you held the surface in your hands. The sphere has
+analytic genus 0, the donut has 1, the two-handled pretzel has 2, and
+so on. Why bother? Genus is the single most important invariant in
+Riemann surface theory. The whole challenge revolves around tying the
+analytic definition (vector-space dimension) to the topological one
+(number of handles), and the bridge between them is forged by
+Riemann–Roch.
+\end{layman}
+
 % Note: thm:fd-holomorphic-one-forms moved to
 % tex/sections/02-holomorphic-forms-and-genus.tex (after
 % input:finite-dimensionality), where it sits at the correct point in
@@ -40,6 +55,22 @@ to \(\mathbf{P}^1\), then classify degree-one maps as homeomorphisms.
 \(\Leftarrow\): compute holomorphic one-forms on the sphere as zero.
 \end{theorem}
 
+\begin{layman}
+This is the first anti-hack theorem of the challenge: the analytic
+genus of a compact Riemann surface is zero if and only if the surface
+is homeomorphic to the topological sphere. Forward direction: genus
+zero produces a degree-one meromorphic function, which is a
+biholomorphism onto the Riemann sphere, which is homeomorphic to the
+2-sphere. Reverse direction: a homeomorphism with the sphere makes
+the topological genus zero, and the comparison theorem identifies
+analytic and topological genus, giving analytic genus zero. Why
+bother? It forbids the trivial fake construction
+``\code{genus X := 0}.'' The genus has to actually equal the
+topological genus — ruling out any constant function pretending to be
+genus. Without this anchor, all the challenge's anti-hacks would be
+wide open.
+\end{layman}
+
 \begin{definition}[Period pairing]
 \label{def:period-pairing}
 \uses{lem:period-homology-invariance}
@@ -55,6 +86,20 @@ Define integration functional on cycles, prove path/homology invariance, and
 package as an additive homomorphism into \(\HdualX\).
 \end{definition}
 
+\begin{layman}
+The \emph{period pairing} bundles all the loop integrals at once. Take
+any closed loop on the surface (a class in the integer homology — a
+finite-rank free abelian group) and map it to the linear functional
+``integrate any holomorphic 1-form along me.'' That gives an element
+of the dual of the space of holomorphic 1-forms — an honest
+finite-dimensional linear-algebraic gadget. The pairing sends loops to
+such functionals, in a way that respects loop addition (concatenation)
+and integer scaling. Why bother? It's the bridge from topology
+(homology classes of loops) to analysis (linear functionals on
+1-forms). The image of this map will be the period lattice, the
+discrete grid that gets quotiented to form the Jacobian.
+\end{layman}
+
 \begin{theorem}[Period lattice theorem]
 \label{thm:period-lattice}
 \uses{input:riemann-bilinear,def:period-pairing}
@@ -66,6 +111,21 @@ real vector space underlying \(\HdualX\).
 Apply Riemann bilinear relations to show full real rank and discreteness; combine
 to obtain a full lattice in the underlying real vector space.
 \end{theorem}
+
+\begin{layman}
+The image of the period pairing — the set of all integer-coefficient
+combinations of period vectors — is a \emph{full lattice} inside the
+real vector space underlying the dual of the holomorphic 1-forms.
+``Full'' means it's a discrete grid spanning the whole real space, not
+a sublattice of lower rank. This is a direct consequence of the linear
+independence of the \(2g\) symplectic-basis period vectors (from the
+Riemann bilinear relations), since \(2g\) independent vectors in a
+\(2g\)-real-dimensional space generate a lattice of full rank. Why
+bother? A full lattice is exactly the input the complex-torus package
+needs to produce a compact quotient. With the period lattice in
+hand, the Jacobian is just ``dual-of-1-forms modulo lattice'' — and
+that quotient is automatically a compact complex Lie additive group.
+\end{layman}
 
 \begin{definition}[Analytic Jacobian]
 \label{def:analytic-jacobian}
@@ -80,6 +140,19 @@ The Jacobian of \(X\) is the complex torus
 Use period lattice theorem + complex torus quotient package to construct
 \(\HdualX/\periods_X\) with additive, topological, and manifold structures.
 \end{definition}
+
+\begin{layman}
+The \emph{Jacobian} of a compact Riemann surface is the quotient: take
+the dual of the holomorphic 1-forms (a finite-dimensional complex
+vector space), mod out by the period lattice (a full discrete grid),
+and the result is a compact complex torus — a higher-dimensional
+generalization of an ordinary donut. Why bother? This is the central
+object of the challenge. Every theorem in the public API is about the
+Jacobian or about maps into and out of it. The construction inherits
+all the structural goodness of the complex-torus package — addition,
+compactness, holomorphic atlas, Lie group structure — for free, just
+by plugging in the dual space and the period lattice.
+\end{layman}
 
 \begin{definition}[Abel-Jacobi map]
 \label{def:abel-jacobi}
@@ -97,6 +170,20 @@ Define by integrating forms from \(P\) to \(Q\); prove path-independence modulo
 period lattice, then descend to Jacobian quotient class.
 \end{definition}
 
+\begin{layman}
+Pick a base point on the surface. The \emph{Abel–Jacobi} map sends
+any other point to the class in the Jacobian represented by ``integrate
+every holomorphic 1-form along a path from base to here.'' Different
+paths give answers differing by periods, but the period lattice is
+exactly what the Jacobian quotients out, so the class doesn't depend
+on which path you chose. The result is a holomorphic map from the
+surface into its own Jacobian, sending the base point to zero. Why
+bother? This is the central comparison map between the surface and
+its Jacobian. It's holomorphic, and (crucially, on positive-genus
+surfaces) it's injective — so the surface sits inside its Jacobian as a
+genuine curve rather than collapsing to a point.
+\end{layman}
+
 \begin{theorem}[Abel-Jacobi theorem, point-separation form]
 \label{thm:abel-jacobi-injective}
 \uses{def:abel-jacobi,input:abel-theorem}
@@ -107,6 +194,22 @@ If \(g(X)>0\), then \(\AJ_P : X\to \Jac(X)\) is injective.
 Reduce equality of Jacobian classes to vanishing of all period functionals and
 invoke Abel point-separation (Abel theorem input).
 \end{theorem}
+
+\begin{layman}
+On a compact Riemann surface of positive genus, the Abel–Jacobi map is
+\emph{injective}: distinct points on the surface go to distinct points
+in the Jacobian. This is the second anti-hack theorem of the
+challenge. The proof chain (worked out in detail in section 05):
+equality of Abel–Jacobi images forces a principal divisor of the form
+``one point minus another,'' which gives a degree-one map to the
+Riemann sphere, which forces the surface to be the sphere — but the
+sphere has genus zero, contradiction. Why bother? Injectivity rules
+out trivial fake Jacobians like ``\code{Jacobian X := PUnit}''
+(which would collapse all points to one) or any other construction
+that fails to actually distinguish the surface's points. The genuine
+compact-complex-Lie-group structure on the Jacobian, plus
+point-separation, forces the construction to be honest.
+\end{layman}
 
 \begin{definition}[Degree and trace]
 \label{def:degree-trace}
@@ -126,6 +229,22 @@ Define degree by constant/nonconstant split; define trace by summing inverse
 branches off branch locus and extending holomorphically across it.
 \end{definition}
 
+\begin{layman}
+Two operations associated to a holomorphic map between compact Riemann
+surfaces. The \emph{degree} counts how many times the map covers its
+target — zero if the map is constant; otherwise the size of a generic
+fiber, with multiplicities at branch points. The \emph{trace on
+1-forms} is the natural way to push a holomorphic 1-form on the source
+down to a holomorphic 1-form on the target, by summing over local
+inverse branches and extending holomorphically across the branch
+locus. Both are core ingredients of the push-pull machinery the
+challenge demands. Why bother? Degree is the ``size'' of a
+holomorphic map; trace is the natural pushforward operation on
+1-forms. Together with pullback, they assemble into the trace
+identity (next theorem), which forces the right interaction between
+push, pull, and degree on Jacobians.
+\end{layman}
+
 \begin{theorem}[Trace-pullback identity]
 \label{thm:trace-pullback}
 \uses{def:degree-trace,lem:trace-forms,lem:pullback-forms}
@@ -139,6 +258,20 @@ For every \(\eta\in\HY\),
 Compute locally on regular values using inverse branches, then globalize by
 analytic continuation to conclude \(\tr_f(f^*\eta)=\deg(f)\eta\).
 \end{theorem}
+
+\begin{layman}
+Take a holomorphic 1-form on the target. Pull it back along the map
+to get a 1-form on the source. Trace it back down to the target. The
+result equals the original 1-form multiplied by the degree of the
+map. The intuition: pulling back creates \(d\) copies of the form (one
+per inverse branch in a generic fiber); summing them via the trace
+recovers \(d\) times the original. Why bother? This is the algebraic
+backbone of the fourth anti-hack theorem. After dualizing and
+descending to Jacobians, it becomes ``push-then-pull equals
+multiplication-by-degree'' on Jacobian elements — forcing push, pull,
+and degree to interact through the classical trace identity rather
+than through arbitrary homomorphisms invented to game the challenge.
+\end{layman}
 
 \begin{theorem}[Functoriality and holomorphicity of induced Jacobian maps]
 \label{thm:push-pull-functoriality}
@@ -158,6 +291,22 @@ Construct descended maps from linear maps on \(\Hdual\), prove they preserve
 period lattice, then establish holomorphicity and identity/composition laws.
 \end{theorem}
 
+\begin{layman}
+The maps induced on Jacobians by holomorphic maps between Riemann
+surfaces are well-behaved: they are holomorphic group homomorphisms,
+they take the identity map of a surface to the identity map of its
+Jacobian, and they compose correctly under composition of holomorphic
+maps. The pullback reverses arrow direction (target to source); the
+pushforward respects arrow direction (source to target). It's
+``functoriality'' in the categorical sense: the assignment
+``Riemann surface'' \(\mapsto\) ``Jacobian'' is a functor — both
+contravariantly (via pullback) and covariantly (via pushforward).
+Why bother? Without functoriality, the push-pull operations would be
+ad-hoc and could be gamed; with it, they're forced to behave like
+genuine geometric pushforwards and pullbacks. The challenge's API
+requires this exact set of compatibility laws.
+\end{layman}
+
 \begin{theorem}[Pushforward-pullback identity]
 \label{thm:pushforward-pullback}
 \uses{thm:trace-pullback,lem:push-pull-descend}
@@ -171,3 +320,20 @@ For every \(P\in\Jac(Y)\),
 Descend the trace-pullback identity from one-forms to Jacobian quotient classes
 and transport through the pushforward/pullback descent maps.
 \end{theorem}
+
+\begin{layman}
+The fourth anti-hack theorem of the challenge. For any holomorphic
+map between compact Riemann surfaces and any element of the target
+Jacobian, applying pullback (to get an element of the source
+Jacobian) and then pushforward (to get back to the target Jacobian)
+recovers the original element multiplied by the degree of the map.
+Combined with functoriality from the previous theorem, this forces
+push, pull, and degree to interact through the classical trace
+identity, no other interaction allowed. Why bother? This rules out
+any fake construction that defines push and pull as arbitrary
+unrelated homomorphisms. The genuine geometric pullback and
+pushforward must satisfy this identity, so any implementation in Lean
+has to actually compute the trace correctly. Together with the genus
+classification, point separation, and torus structure, these four
+anti-hack theorems make trivial fake Jacobians impossible.
+\end{layman}

@@ -23,6 +23,23 @@ for every \(\omega\in\HX\).
 \lean{JacobianChallenge.Periods.period_homology_invariance_statement}
 \end{lemma}
 
+\begin{layman}
+Pick a holomorphic 1-form on the surface — a tiny linear gadget at every
+point — and a closed loop. Integrating the form along the loop produces a
+single complex number, the \emph{period}. The lemma says: if you wiggle
+the loop continuously, dragging it through the surface, the period
+doesn't change. More precisely, two loops that represent the same class
+in homology — meaning they bound a 2-dimensional region between them —
+give the same period. The argument is Stokes' theorem applied to the
+region enclosed, plus the fact that holomorphic 1-forms have zero
+exterior derivative. Why bother? This makes the period a function of the
+\emph{homology class} of a loop, not the loop itself. Since the homology
+of a compact genus-\(g\) surface is a small free abelian group of rank
+\(2g\), we now have a clean finite-dimensional ``period pairing''
+between homology and 1-forms — the ingredient that builds the Jacobian's
+lattice.
+\end{layman}
+
 \begin{proof}
 The difference \(\gamma-\gamma'\) is a boundary. Holomorphic one-forms are
 closed (Lemma~\ref{lem:holomorphic-form-is-closed}). Stokes' theorem
@@ -39,6 +56,22 @@ atlas.}
 \notready
 \end{lemma}
 
+\begin{layman}
+A holomorphic 1-form, written locally as a holomorphic function times the
+differential of the coordinate, has zero exterior derivative. The
+exterior derivative of \(h(z)\,dz\) — the gadget that measures
+``infinitesimal swirl'' — vanishes because of the Cauchy–Riemann
+equations: holomorphic functions don't depend on the conjugate
+coordinate, so the only term that could appear cancels automatically.
+Concretely, holomorphic 1-forms are \emph{closed}: no swirl, no
+infinitesimal failure of being a total derivative. Why bother? Closed
+1-forms are exactly the gadgets where Stokes' theorem makes the integral
+over a boundary equal to zero. That fact is what makes the period
+computation depend only on the homology class of a loop, and what
+underlies all the rigidity statements about the period lattice further
+down.
+\end{layman}
+
 \begin{theorem}[Stokes' theorem on Riemann surfaces with boundary]
 \label{thm:stokes-on-rs-with-boundary}
 For an oriented compact Riemann surface with boundary \(M\) and a smooth
@@ -52,6 +85,22 @@ the single largest classical-analysis gap for the period-lattice route
 per the project inventory.}
 \notready
 \end{theorem}
+
+\begin{layman}
+Stokes' theorem is the grandfather of all integration-by-parts results.
+On a compact 2-dimensional surface with boundary — think of a disk, or
+a piece cut out of a donut — and any smooth 1-form on it, the integral
+of the form along the boundary equals the integral of its exterior
+derivative over the surface. ``Boundary integral'' walks you along an
+edge; ``derivative-of-form integrated over the surface'' is a 2D
+integral. The theorem says these two flavors of integration are
+miraculously equal. Mathlib only has this for boxes in Euclidean space,
+not for general curved manifolds with boundary, which makes it the
+single largest classical-analysis gap on our path. Why bother? Stokes
+is the engine that turns local differential properties into global
+integral identities. The entire Riemann bilinear story — and homology
+invariance of periods — cashes out via Stokes on the polygonal model.
+\end{layman}
 
 \subsection{Riemann bilinear relations and full real rank}
 
@@ -71,6 +120,22 @@ a topological theorem (every nondegenerate alternating form on a free
 \notready
 \end{definition}
 
+\begin{layman}
+On a compact genus-\(g\) surface, the closed-loop equivalence classes
+form a free abelian group of rank \(2g\): exactly \(2g\) independent
+``ways to go around.'' On a donut (\(g = 1\)) there are two: once
+around the hole, and once through it. On a two-handled surface there
+are four: two per handle. A \emph{symplectic basis} chooses \(g\) of
+those loops to be ``\(a\)'s'' and the other \(g\) to be ``\(b\)'s,''
+arranged so that any \(a\) loop crosses its matching \(b\) loop exactly
+once and crosses every other basis loop zero times. It's a sharply
+normalized basis where the geometric intersection matrix is the
+simplest possible: zeros and ones in a tidy pattern. Why bother? The
+Riemann bilinear relations and the period-lattice argument become
+genuinely tractable only after this normalization — a tangle of loops
+becomes a tidy \(2g\)-vector with predictable interactions.
+\end{layman}
+
 \begin{theorem}[Polygonal model of a compact Riemann surface]
 \label{thm:polygonal-model}
 \uses{def:symplectic-basis}
@@ -83,6 +148,23 @@ surfaces; not packaged in Mathlib as far as the inventory tracks.}
 \notready
 \end{theorem}
 
+\begin{layman}
+A compact connected oriented genus-\(g\) surface can always be
+``unfolded'' into a single flat \(4g\)-sided polygon with edges glued
+back together in a fixed pattern. For a donut (\(g = 1\)), the polygon
+is a square, and the gluing identifies the top edge with the bottom and
+the left with the right — exactly the way an old arcade game's screen
+wraps around. Higher genus uses a \(4g\)-gon with the gluing pattern
+\(a_1 b_1 a_1^{-1} b_1^{-1} \cdots a_g b_g a_g^{-1} b_g^{-1}\), each
+matched pair corresponding to one of the symplectic basis loops. Inside
+the polygon the surface is just flat paper, simply connected, with no
+loops at all; all the topological complexity is hidden in the boundary
+identification. Why bother? It converts a curvy global object into a
+flat local one, where Stokes' theorem on a polygon is much easier than
+Stokes on a curved surface — and from there the bilinear relations
+follow directly.
+\end{layman}
+
 \begin{lemma}[Primitive of a holomorphic 1-form on a polygon]
 \label{lem:primitive-on-polygon}
 \uses{thm:polygonal-model,lem:holomorphic-form-is-closed}
@@ -94,6 +176,21 @@ open subsets of \(\C\); the polygon interior pulls back to such a
 subset via the polygonal-model homeomorphism.}
 \notready
 \end{lemma}
+
+\begin{layman}
+Open up the polygonal model and look at its interior — the inside of a
+flat \(4g\)-gon, with no loops to worry about. On any simply connected
+flat region, every closed 1-form has a \emph{primitive}: a single
+function whose differential equals the form. Compare: on the punctured
+plane the form \(d\theta\) has no global primitive because the puncture
+leaves a loop, but on a disk the same form does. Pull our holomorphic
+1-form back to the polygon's interior, and produce its primitive there.
+Why bother? The primitive is the trick that turns a wedge integral
+over the surface into a boundary integral over the polygon's edges,
+where the explicit gluing pattern lets us read off the answer in terms
+of the symplectic periods. That's how the bilinear identity gets proved
+in the next step.
+\end{layman}
 
 \begin{theorem}[Bilinear identity from Stokes on the polygon]
 \label{thm:bilinear-from-stokes}
@@ -111,6 +208,23 @@ For holomorphic one-forms \(\omega,\eta\) on \(X\),
 \]
 \notready
 \end{theorem}
+
+\begin{layman}
+Take two holomorphic 1-forms on the surface. The integral of their
+wedge product (a 2-form) over the whole surface miraculously equals a
+finite sum of products of single-loop periods: pair up the symplectic
+basis cycles \((a_i, b_i)\), compute four numbers (the integrals of
+each form along each cycle), multiply across the pairs in a specific
+alternating way, and add. The bookkeeping mirrors the simple algebraic
+``determinant'' of a \(2 \times 2\) period matrix, summed over handles.
+The proof is Stokes on the polygonal model: turn the surface integral
+into a polygon-edge integral via the primitive of one of the forms,
+then use the gluing pattern to fold opposite edges together — the
+difference of integrand values across a glued pair is exactly a
+period. Why bother? This identity is the foundation of the Riemann
+bilinear relations and (combined with positivity in the next step)
+forces the period lattice to be \emph{full}.
+\end{layman}
 
 \begin{proofsketch}
 Pull \(\omega,\eta\) back to the polygon \(P\). On \(P\), let \(F\) be a
@@ -134,6 +248,22 @@ For a nonzero holomorphic 1-form \(\omega\),
 \notready
 \end{theorem}
 
+\begin{layman}
+For any nonzero holomorphic 1-form, the integral of the form wedged with
+its complex conjugate (multiplied by an orientation-fixing factor of
+\(i\)) is strictly positive. Locally, in a chart where the form looks
+like \(h(z)\,dz\), the integrand simplifies to \(2|h(z)|^2\) times the
+ordinary area element — a nonnegative density that's strictly positive
+wherever \(h\) doesn't vanish. Integrate this nonnegative thing over
+the whole surface: the result is positive unless the form vanished
+identically, which it didn't by assumption. The stray \(i\) at the
+front handles the orientation factor; without it you'd get a strictly
+negative number instead. Why bother? This positivity, paired with the
+bilinear identity from the previous step, is what forces the period
+vectors to be linearly independent over the real numbers. No
+positivity, no lattice.
+\end{layman}
+
 \begin{proofsketch}
 Locally \(\omega = h(z)\,dz\), so
 \(i\,\omega\wedge\bar\omega = 2|h(z)|^{2}\,dx\wedge dy\),
@@ -152,6 +282,24 @@ are linearly independent over \(\R\).
 \notready
 \end{theorem}
 
+\begin{layman}
+A compact genus-\(g\) surface has \(2g\) independent loops in homology
+(the symplectic basis). Each loop, integrated against holomorphic
+1-forms, gives a vector of length \(g\) in the dual of the 1-form
+space — the \emph{period} of that loop. Bundle the \(2g\) such
+vectors. The theorem: they are linearly independent over the real
+numbers. So inside a \(2g\)-real-dimensional space we have \(2g\)
+independent vectors; they form a basis. The proof is a beautiful
+mash-up of the previous two ingredients: assume a real linear
+combination vanishes, pair both sides with the conjugate of an arbitrary
+holomorphic 1-form, apply the bilinear identity, and use Hermitian
+positivity to force every coefficient to be zero. Why bother? It's the
+rigorous statement that ``the period vectors fill out the full real
+space.'' Equivalently, their integer combinations form a \emph{full
+lattice} — and that lattice is what quotients to give the Jacobian its
+compactness.
+\end{layman}
+
 \begin{proofsketch}
 Suppose a real linear combination is zero. Pair both sides with
 \(\bar\omega\) for an arbitrary basis \((\omega_i)\) of \(\HX\); the
@@ -168,6 +316,20 @@ their consequence that the \(2g\) symplectic-basis period vectors are
 \(\R\)-linearly independent.
 \lean{JacobianChallenge.Periods.period_vectors_linearIndependent_of_symplectic}
 \end{theorem}
+
+\begin{layman}
+We package three deep facts as one classical input: the bilinear
+identity expressing a wedge integral as a sum of period products,
+Hermitian positivity of the self-pairing of a holomorphic 1-form, and
+the consequence that the \(2g\) symplectic-basis period vectors are
+linearly independent over the reals. Each is a tiny gem on its own,
+but together they form the analytical core of the period-lattice
+route. Why bother? The Jacobian's definition needs ``the integer span
+of the period vectors is a full lattice in the dual space.'' That
+single statement is formally a corollary of the umbrella, and naming
+the umbrella keeps downstream constructions (Jacobian, Abel–Jacobi,
+push-pull) from depending on the internal pieces.
+\end{layman}
 
 \begin{proof}[Proof of Theorem~\ref{thm:period-lattice}]
 Choose a \(\C\)-basis \(\omega_1,\dots,\omega_g\) of \(\HX\), so
