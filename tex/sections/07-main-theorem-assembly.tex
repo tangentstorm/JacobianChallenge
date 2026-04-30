@@ -12,6 +12,25 @@ in the Jacobian Challenge API.
 \leanok
 \end{theorem}
 
+\begin{layman}
+This is the moment all the bookkeeping pays off. We assemble the public
+API of the Jacobian Challenge — the small set of definitions and
+theorems that \texttt{Jacobian/Challenge.lean} exposes — directly from
+the analytic period-lattice construction. \emph{Genus} is the
+finite-dimensional dimension of holomorphic 1-forms; the genus-zero
+classification matches it to the topological sphere. The
+\emph{Jacobian} is the dual-of-1-forms quotient by the period lattice,
+inheriting all its algebraic, topological, and analytic structure from
+the complex-torus package. \emph{Abel–Jacobi} is the path-integration
+map, holomorphic and (in positive genus) injective. \emph{Pullback}
+and \emph{pushforward} between Jacobians come from the dual of the
+1-form maps, and the trace identity gives the key
+``push-then-pull equals multiplication-by-degree'' equation. Why
+bother? This is the deliverable. Once every constituent theorem is
+formally proved in Lean, this assembly node certifies that the entire
+\texttt{Challenge.lean} API holds — finishing the challenge.
+\end{layman}
+
 \begin{proof}
 Define \code{genus X} to be the analytic genus
 \(\dim_{\C}H^{0}(X,\Omega^{1}_{X})\). Theorem~\ref{thm:fd-holomorphic-one-forms}
