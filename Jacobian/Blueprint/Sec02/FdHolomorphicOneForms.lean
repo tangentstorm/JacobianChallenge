@@ -30,11 +30,14 @@ open scoped Manifold
 open JacobianChallenge.HolomorphicForms
 
 /-- Finite-dimensionality of holomorphic 1-forms on a compact complex
-1-manifold. -/
+1-manifold. Conclusion is `FiniteDimensional ℂ` (matching
+`fd_from_riesz` and `input_finite_dimensionality`); the
+`Module.Finite` form is `FiniteDimensional` definitionally and a
+corollary in either direction is a one-liner if needed downstream. -/
 theorem fd_holomorphic_one_forms
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    Module.Finite ℂ (HolomorphicOneForm ℂ X) := by
+    FiniteDimensional ℂ (HolomorphicOneForm ℂ X) := by
   sorry
 
 end JacobianChallenge.Blueprint
