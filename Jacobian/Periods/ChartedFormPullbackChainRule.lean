@@ -530,4 +530,20 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_smul
   rw [LinearMap.map_smul]
   exact pathIntegralViaCoverWith_smul k _ γ n hn pickChart hcov
 
+/-- **Identity case** at the chart-cover-with level: the chart-cover
+path integral of `pullbackFormsBundledLM id` equals the cover integral
+of the form itself. Sorry-free via `pullbackFormsBundledLM_id`. -/
+theorem pathIntegralViaCoverWith_pullbackFormsBundledLM_id
+    (η : HolomorphicOneForm ℂ X)
+    {a b : X} (γ : Path a b) (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
+    (hcov : ∀ (i : Fin n) (t : unitInterval),
+      (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+      γ t ∈ (chartAt ℂ (pickChart i)).source) :
+    pathIntegralViaCoverWith
+        (pullbackFormsBundledLM X X (id : X → X) contMDiff_id η)
+        γ n hn pickChart hcov =
+      pathIntegralViaCoverWith η γ n hn pickChart hcov := by
+  rw [show pullbackFormsBundledLM X X (id : X → X) contMDiff_id η = η by
+    rw [pullbackFormsBundledLM_id]; rfl]
+
 end JacobianChallenge.Periods
