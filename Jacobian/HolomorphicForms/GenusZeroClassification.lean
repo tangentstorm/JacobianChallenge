@@ -209,6 +209,25 @@ noncomputable def holomorphicOneForm_coeff
   fun z => ω.toFun (↑z : OnePoint ℂ)
     (show TangentSpace (modelWithCornersSelf ℂ ℂ) (↑z : OnePoint ℂ) from (1 : ℂ))
 
+private lemma onePointCx_identityChart_symm_apply (z : ℂ) :
+    (identityChart.symm : ℂ → OnePoint ℂ) z = ↑z := by
+  rw [identityChart]
+  simp [Topology.IsOpenEmbedding.toOpenPartialHomeomorph]
+
+private lemma onePointCx_inversionChart_symm_apply (w : ℂ) :
+    (inversionChart.symm : ℂ → OnePoint ℂ) w = invBwd w := rfl
+
+/-- The coefficient obtained by first reading `ω` in `identityChart` and
+then evaluating the resulting covector on `1 : ℂ`.
+
+This is intentionally separate from `holomorphicOneForm_coeff`: the bridge
+between the project-internal direct formula and Mathlib's chart API is one
+of the chart-extraction leaves below. -/
+noncomputable def holomorphicOneForm_identityChartCoeff
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
+  fun z => ω.toFun (identityChart.symm z)
+    (show TangentSpace (modelWithCornersSelf ℂ ℂ) (identityChart.symm z) from (1 : ℂ))
+
 /-- **Sub-obligation 1.** The coefficient function is entire.
 
 Blocker (chart-extraction gap): requires reading the `ContMDiff ⊤` section
@@ -220,15 +239,36 @@ structure HolomorphicOneFormCoeffEntireData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
   differentiable_coeff : Differentiable ℂ (holomorphicOneForm_coeff ω)
 
-/-- **Opaque data obligation (chart extraction).** The local coefficient of
-a holomorphic 1-form on the identity chart of `OnePoint ℂ` is entire.
+/-- **Identity-chart extraction leaf.** The coefficient read directly from
+the identity-chart local representative is `C^∞`.
 
 Bottom-up content: expose a chart-trivialization API for `ContMDiffSection`
-on the cotangent bundle and identify the coefficient obtained by evaluating
-the local representative at `1 : ℂ`. -/
-opaque holomorphicOneFormCoeffContDiff
+on the cotangent bundle, specialized to `identityChart`, and compose the
+local representative with evaluation at `1 : ℂ`. -/
+theorem holomorphicOneFormIdentityChartCoeffContDiff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
-    ContDiff ℂ (⊤ : WithTop ℕ∞) (holomorphicOneForm_coeff ω)
+    ContDiff ℂ (⊤ : WithTop ℕ∞) (holomorphicOneForm_identityChartCoeff ω) := by
+  sorry
+
+/-- **Identity-chart identification leaf.** The chart-local coefficient
+agrees with the direct finite-point formula used by the Liouville assembly.
+
+Bottom-up content: unfold `identityChart.symm` from
+`OnePointCxChartedSpace.lean`, transport the tangent-space trivialization,
+and reduce the chart expression to evaluation at `↑z`. -/
+theorem holomorphicOneForm_coeff_eq_identityChartCoeff
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    holomorphicOneForm_coeff ω = holomorphicOneForm_identityChartCoeff ω := by
+  funext z
+  unfold holomorphicOneForm_coeff holomorphicOneForm_identityChartCoeff
+  rw [onePointCx_identityChart_symm_apply]
+
+/-- **Assembly of the identity-chart extraction split.** -/
+theorem holomorphicOneFormCoeffContDiff
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    ContDiff ℂ (⊤ : WithTop ℕ∞) (holomorphicOneForm_coeff ω) := by
+  rw [holomorphicOneForm_coeff_eq_identityChartCoeff]
+  exact holomorphicOneFormIdentityChartCoeffContDiff ω
 
 /-- **Assembly from chart extraction to differentiability.** The actual
 chart-extraction obligation is `holomorphicOneFormCoeffContDiff`; this
@@ -258,36 +298,102 @@ noncomputable def holomorphicOneForm_inversionCoeff
   fun w => ω.toFun (invBwd w)
     (show TangentSpace (modelWithCornersSelf ℂ ℂ) (invBwd w) from (1 : ℂ))
 
+/-- The coefficient obtained by reading `ω` in `inversionChart` and then
+evaluating on `1 : ℂ`.
+
+This keeps the Mathlib chart expression separate from the direct formula
+using `invBwd`, so the bottom-up work can prove the chart identification
+without being entangled with continuity of the local representative. -/
+noncomputable def holomorphicOneForm_inversionChartCoeff
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
+  fun w => ω.toFun (inversionChart.symm w)
+    (show TangentSpace (modelWithCornersSelf ℂ ℂ) (inversionChart.symm w) from (1 : ℂ))
+
 structure HolomorphicOneFormCoeffTendstoZeroData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
   tendsto_coeff_zero :
     Filter.Tendsto (holomorphicOneForm_coeff ω)
       (Filter.cocompact ℂ) (nhds 0)
 
-/-- **Inversion-chart continuity leaf.** The inversion-chart coefficient of
+/-- **Inversion-chart extraction leaf.** The inversion-chart coefficient of
 a holomorphic 1-form is continuous at the point `w = 0`, i.e. at infinity of
 `OnePoint ℂ`.
 
 Bottom-up content: expose the cotangent-bundle chart trivialization for
 `ContMDiffSection` in the inversion chart and identify its coefficient by
 evaluation at `1 : ℂ`. -/
-opaque holomorphicOneFormInversionCoeffContinuousAtZero
+theorem holomorphicOneFormInversionChartCoeffContinuousAtZero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
-    ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0
+    ContinuousAt (holomorphicOneForm_inversionChartCoeff ω) 0 := by
+  sorry
 
-/-- **Chart-transition leaf.** Continuity of the inversion-chart coefficient
-at zero, together with the cotangent transition formula
-`g(w) = -f(1 / w) / w²`, forces the identity-chart coefficient to tend to
-zero along `cocompact ℂ`.
+/-- **Inversion-chart identification leaf.** The chart-local inversion
+coefficient agrees with the direct `invBwd` formula.
+
+Bottom-up content: unfold `inversionChart.symm`, use the definition of
+`invBwd`, and transport the tangent-space trivialization. -/
+theorem holomorphicOneForm_inversionCoeff_eq_inversionChartCoeff
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    holomorphicOneForm_inversionCoeff ω = holomorphicOneForm_inversionChartCoeff ω := by
+  funext w
+  unfold holomorphicOneForm_inversionCoeff holomorphicOneForm_inversionChartCoeff
+  rw [onePointCx_inversionChart_symm_apply]
+
+/-- **Assembly of the inversion-chart extraction split.** -/
+theorem holomorphicOneFormInversionCoeffContinuousAtZero
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 := by
+  rw [holomorphicOneForm_inversionCoeff_eq_inversionChartCoeff]
+  exact holomorphicOneFormInversionChartCoeffContinuousAtZero ω
+
+/-- The punctured-neighborhood transition statement between identity and
+inversion coefficients. For `w ≠ 0`, the cotangent transition law is
+equivalently `f(w⁻¹) = -w² * g(w)`. -/
+def holomorphicOneForm_identityInversionTransition
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : Prop :=
+  ∀ᶠ w in nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ),
+    holomorphicOneForm_coeff ω (w⁻¹) =
+      -w ^ 2 * holomorphicOneForm_inversionCoeff ω w
+
+/-- **Cotangent transition formula leaf.** On the overlap of the identity
+and inversion charts, the two coefficient functions are related by the
+Jacobian factor of `z = w⁻¹`.
 
 Bottom-up content: prove the explicit cotangent transition formula between
-`identityChart` and `inversionChart`, then translate bounded/continuous
-extension at `w = 0` into decay of `f` at infinity. -/
-opaque holomorphicOneFormCoeffTendstoZeroFromInversion
+`identityChart` and `inversionChart`, including the derivative factor
+`d(w⁻¹) = -w⁻² dw`, and rewrite it in the displayed `f(w⁻¹)` form. -/
+theorem holomorphicOneForm_identityInversionTransition_eventually
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    holomorphicOneForm_identityInversionTransition ω := by
+  sorry
+
+/-- **Analytic decay leaf.** A continuous inversion coefficient at `0`,
+together with the punctured cotangent-transition formula, forces the
+identity-chart coefficient to tend to zero at infinity.
+
+Bottom-up content: use continuity to make `g(w)` bounded near `0`, multiply
+by `w² → 0`, and transfer the resulting `f(w⁻¹) → 0` statement through
+the inversion homeomorphism between punctured neighborhoods of zero and
+the cocompact filter on `ℂ`. -/
+theorem holomorphicOneFormCoeffTendstoZeroOfTransition
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
+    holomorphicOneForm_identityInversionTransition ω →
+    Filter.Tendsto (holomorphicOneForm_coeff ω)
+      (Filter.cocompact ℂ) (nhds 0) := by
+  sorry
+
+/-- **Chart-transition assembly.** Continuity and the explicit transition
+formula are the remaining leaves; the old broad decay obligation is no
+longer load-bearing. -/
+theorem holomorphicOneFormCoeffTendstoZeroFromInversion
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
     Filter.Tendsto (holomorphicOneForm_coeff ω)
-      (Filter.cocompact ℂ) (nhds 0)
+      (Filter.cocompact ℂ) (nhds 0) :=
+  fun hcont =>
+    holomorphicOneFormCoeffTendstoZeroOfTransition ω hcont
+      (holomorphicOneForm_identityInversionTransition_eventually ω)
 
 /-- **Assembly for coefficient decay.** The remaining work is split into
 inversion-chart continuity and the transition-formula decay lemma. -/
@@ -361,11 +467,12 @@ vanishes at infinity.
 Bottom-up content: convert punctured-neighborhood vanishing plus continuity
 of the inversion-chart coefficient into `g(0) = 0`, then use that a
 continuous linear map `ℂ →L[ℂ] ℂ` is determined by its value on `1`. -/
-opaque holomorphicOneForm_infty_vanishing_of_inversionCoeff
+theorem holomorphicOneForm_infty_vanishing_of_inversionCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
     (∀ {w : ℂ}, w ≠ 0 → holomorphicOneForm_inversionCoeff ω w = 0) →
-    ω.toFun (OnePoint.infty : OnePoint ℂ) = 0
+    ω.toFun (OnePoint.infty : OnePoint ℂ) = 0 := by
+  sorry
 
 /-- **Assembly for infinity vanishing.** The remaining leaf is the
 removable-singularity step from the inversion coefficient. -/
@@ -458,7 +565,8 @@ uniqueness of complex structure on S² (uniformization at genus 0)
 implies X is biholomorphic to `OnePoint ℂ ≃ ℂℙ¹`, which has
 `H⁰(Ω¹) = 0`. -/
 structure HomeoSphereHolomorphicOneFormVanishing
-    (X : Type*) [TopologicalSpace X] where
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
   subsingleton : Subsingleton (HolomorphicOneForm ℂ X)
 
 /-- **Opaque data obligation (uniformization-lite core).** A compact
@@ -468,13 +576,14 @@ connected Riemann surface homeomorphic to S² has no nonzero holomorphic
 Bottom-up content: uniqueness of the complex structure on the topological
 2-sphere, transport of holomorphic 1-forms along the resulting
 biholomorphism to `OnePoint ℂ`, and the `H⁰(ℂℙ¹, Ω¹) = 0` computation. -/
-opaque homeoSphereHolomorphicOneFormVanishing
+theorem homeoSphereHolomorphicOneFormVanishing
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
-    HomeoSphereHolomorphicOneFormVanishing X
+    Subsingleton (HolomorphicOneForm ℂ X) := by
+  sorry
 
 /-- **Sub-obligation wrapper (sorry-free).** Extracts the subsingleton
 consequence from `homeoSphereHolomorphicOneFormVanishing`. -/
@@ -485,7 +594,7 @@ theorem subsingleton_holomorphicOneForm_of_homeo_sphere
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     Subsingleton (HolomorphicOneForm ℂ X) := by
-  exact (homeoSphereHolomorphicOneFormVanishing X h).subsingleton
+  exact homeoSphereHolomorphicOneFormVanishing X h
 
 /-- **Bottom-up obligation (uniformization-lite).** A compact connected
 Riemann surface `X` homeomorphic to the standard 2-sphere `S²` admits
@@ -890,7 +999,7 @@ at `P` has exactly one simple pole, located at `P`, and no other poles.
 Bottom-up content: divisor/order API for compact Riemann surfaces, plus the
 Riemann-Roch calculation identifying the pole divisor of the chosen function
 as exactly `[P]`. -/
-opaque genusZeroRiemannRochSimplePoleAt
+theorem genusZeroRiemannRochSimplePoleAt
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -898,7 +1007,8 @@ opaque genusZeroRiemannRochSimplePoleAt
     (P : X)
     (h : analyticGenus ℂ X = 0) :
     GenusZeroSimplePoleAtCertificate X P
-      (genusZeroRiemannRochNonconstantMapAt X P h)
+      (genusZeroRiemannRochNonconstantMapAt X P h) := by
+  sorry
 
 /-- **Fixed-pole Riemann-Roch assembly.** The map part of the fixed-pole
 simple-pole statement; the pole certificate is kept separately as
@@ -947,20 +1057,32 @@ theorem genus_zero_exists_simplePole_meromorphicMap
     Nonempty (GenusZeroSimplePoleMeromorphicMap X) := by
   exact ⟨simplePoleMeromorphicMapOfGenusZero X h⟩
 
-/-- **Sub-obligation 2 (properness and degree).** A genus-zero meromorphic
-function with one simple pole extends to a proper degree-one map
-`X → OnePoint ℂ`.
+/-- **Properness/degree data existence leaf.** A one-simple-pole map has
+some proper degree-one promotion.
 
-Bottom-up content: removable singularity/extension to the point at infinity,
-compactness of `X`, and the theorem that the fiber degree of a meromorphic map
-to `ℂℙ¹` equals the pole divisor degree. -/
-opaque properDegreeOneMapOfSimplePole
+This refines the old properness/degree opaque into a named existence
+statement. Bottom-up content: prove continuity of the extended map,
+compactness-driven properness, and the divisor-degree computation giving
+bijectivity. -/
+theorem properDegreeOneMapOfSimplePole_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_f : GenusZeroSimplePoleMeromorphicMap X) :
-    GenusZeroProperDegreeOneMap X
+    Nonempty (GenusZeroProperDegreeOneMap X) := by
+  sorry
+
+/-- **Properness/degree data assembly.** Extracts the degree-one promotion
+from the named existence leaf. -/
+noncomputable def properDegreeOneMapOfSimplePole
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (f : GenusZeroSimplePoleMeromorphicMap X) :
+    GenusZeroProperDegreeOneMap X :=
+  Classical.choice (properDegreeOneMapOfSimplePole_nonempty X f)
 
 /-- **Sub-obligation 2 wrapper (sorry-free).** Existence form of
 `properDegreeOneMapOfSimplePole`. -/
