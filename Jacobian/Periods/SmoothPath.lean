@@ -123,27 +123,54 @@ def map {Y : Type*} [TopologicalSpace Y] {H' : Type*} [TopologicalSpace H']
 `SmoothPath`'s smoothness is *manifold*-smoothness. For path
 integration via `Mathlib`'s `curveIntegrable_of_contDiffOn`, we need
 *chart-coordinate* `ContDiffOn ℝ 1` of the lifted path. The bridge:
-compose with the chart's `toFun` and use `contMDiffOn_chart` plus
-`contMDiff_iff_contDiff` (since both source and target are normed
-spaces in chart coordinates). -/
+compose with `extChartAt` (chart followed by the model embedding into
+the normed space `E`), then convert from `ContMDiffOn` to `ContDiffOn`
+via `contMDiffOn_iff_contDiffOn` (both sides now between normed
+spaces). -/
 
-/-- The chart-lifted extension of a smooth path is `ContMDiff` to the
-model space, on the `Path`'s domain (in fact on all of `ℝ` if the
-chart-source membership is everywhere; more generally, on the
-preimage of the chart's source under the extension). -/
+/-- The chart-lifted extension of a smooth path is `ContMDiffOn` to
+the chart's target chart-source as a partial map into `H`. Composes
+the path's manifold smoothness with the chart's manifold smoothness. -/
 theorem chart_comp_extend_contMDiffOn
     [IsManifold I_M (1 : WithTop ℕ∞) X]
     (γ : SmoothPath I_M a b) (x : X) :
     ContMDiffOn (modelWithCornersSelf ℝ ℝ) I_M (1 : WithTop ℕ∞)
       (chartAt H x ∘ γ.toPath.extend)
       (γ.toPath.extend ⁻¹' (chartAt H x).source) := by
-  -- chartAt H x is ContMDiffOn on its source.
   have hchart : ContMDiffOn I_M I_M (1 : WithTop ℕ∞)
       (chartAt H x) (chartAt H x).source := contMDiffOn_chart
-  -- γ.toPath.extend is ContMDiff into X.
   have hext : ContMDiff (modelWithCornersSelf ℝ ℝ) I_M (1 : WithTop ℕ∞)
       γ.toPath.extend := γ.contMDiff_extend
   exact hchart.comp hext.contMDiffOn (fun _ ht => ht)
+
+/-- The `extChartAt`-lifted extension of a smooth path is `ContMDiffOn`
+to `(E, 𝓘(ℝ, E))` — a *normed-space-target* smoothness. This converts
+to `ContDiffOn ℝ 1` via `contMDiffOn_iff_contDiffOn`. -/
+theorem extChart_comp_extend_contMDiffOn
+    [IsManifold I_M (1 : WithTop ℕ∞) X]
+    (γ : SmoothPath I_M a b) (x : X) :
+    ContMDiffOn (modelWithCornersSelf ℝ ℝ) (modelWithCornersSelf ℝ E)
+      (1 : WithTop ℕ∞)
+      (extChartAt I_M x ∘ γ.toPath.extend)
+      (γ.toPath.extend ⁻¹' (chartAt H x).source) := by
+  have hchart : ContMDiffOn I_M (modelWithCornersSelf ℝ E) (1 : WithTop ℕ∞)
+      (extChartAt I_M x) (chartAt H x).source :=
+    contMDiffOn_extChartAt
+  have hext : ContMDiff (modelWithCornersSelf ℝ ℝ) I_M (1 : WithTop ℕ∞)
+      γ.toPath.extend := γ.contMDiff_extend
+  exact hchart.comp hext.contMDiffOn (fun _ ht => ht)
+
+/-- The chart-coordinate path is `ContDiffOn ℝ 1`, which is exactly the
+hypothesis Mathlib's `curveIntegrable_of_contDiffOn` consumes. Derived
+from `extChart_comp_extend_contMDiffOn` by `contMDiffOn_iff_contDiffOn`. -/
+theorem extChart_comp_extend_contDiffOn
+    [IsManifold I_M (1 : WithTop ℕ∞) X]
+    (γ : SmoothPath I_M a b) (x : X) :
+    ContDiffOn ℝ (1 : WithTop ℕ∞)
+      (extChartAt I_M x ∘ γ.toPath.extend)
+      (γ.toPath.extend ⁻¹' (chartAt H x).source) := by
+  rw [← contMDiffOn_iff_contDiffOn]
+  exact γ.extChart_comp_extend_contMDiffOn x
 
 end SmoothPath
 
