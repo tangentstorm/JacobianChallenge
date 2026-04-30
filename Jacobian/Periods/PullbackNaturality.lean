@@ -2,6 +2,8 @@ import Jacobian.Periods.PeriodFunctional
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverPickRefl
+import Jacobian.Periods.PathIntegralViaCoverPickSimp
+import Jacobian.Periods.PathIntegralViaCoverPickSmul
 import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.Algebra.Category.ModuleCat.Basic
@@ -266,20 +268,17 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
   rw [pathIntegralViaCover_refl, pathIntegralViaCover_refl]
 
 /-- **Zero-form special case** of path-level naturality: at `η = 0`,
-both sides vanish via linearity of `pullbackFormsBundledLM` and
-`pathIntegralViaCover`. Sorry-free, **modulo** the un-`With`
-zero-vanishing of `pathIntegralViaCover` (project has the `_With` form
-in `PathIntegralViaCoverZero.lean`). Stated conditionally. -/
+both sides vanish via `LinearMap.map_zero` of `pullbackFormsBundledLM`
+and `pathIntegralViaCover_zero` (the unconditional un-`With`
+zero-vanishing of `pathIntegralViaCover` in
+`Jacobian/Periods/PathIntegralViaCoverPickSimp.lean`). Sorry-free
+**unconditionally**. -/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_zero
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
-    (h_zero_X : pathIntegralViaCover
-        (pullbackFormsBundledLM X Y f hf 0) γ = 0)
-    (h_zero_Y : pathIntegralViaCover (0 : HolomorphicOneForm ℂ Y)
-        (γ.map hf.continuous) = 0) :
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b) :
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf 0) γ =
       pathIntegralViaCover (0 : HolomorphicOneForm ℂ Y)
         (γ.map hf.continuous) := by
-  rw [h_zero_X, h_zero_Y]
+  rw [LinearMap.map_zero, pathIntegralViaCover_zero, pathIntegralViaCover_zero]
 
 /-- **Form-additivity conditional case**: naturality at `η + ζ` follows
 from naturality at `η` and at `ζ`, via the linearity of
@@ -304,44 +303,35 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_add_form
       pathIntegralViaCover (η + ζ) (γ.map hf.continuous) := by
   rw [h_add_X, h_add_Y, h_η, h_ζ]
 
-/-- **Form-smul conditional case**: naturality at `k • η` follows from
-naturality at `η` plus smul-compatibility of `pathIntegralViaCover`.
-The latter exists at `_With` level
-(`pathIntegralViaCoverWith_smul`); un-`With` lift is conditional. -/
+/-- **Form-smul case**: naturality at `k • η` follows from naturality
+at `η`. **Unconditional** via `LinearMap.map_smul` of
+`pullbackFormsBundledLM` and `pathIntegralViaCover_smul` (sorry-free in
+`Jacobian/Periods/PathIntegralViaCoverPickSmul.lean`). -/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_of_smul_form
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
     (k : ℂ) (η : HolomorphicOneForm ℂ Y)
     (h_η : pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
-      pathIntegralViaCover η (γ.map hf.continuous))
-    (h_smul_X : pathIntegralViaCover
-        (pullbackFormsBundledLM X Y f hf (k • η)) γ =
-      k • pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ)
-    (h_smul_Y : pathIntegralViaCover (k • η) (γ.map hf.continuous) =
-      k • pathIntegralViaCover η (γ.map hf.continuous)) :
+      pathIntegralViaCover η (γ.map hf.continuous)) :
     pathIntegralViaCover
         (pullbackFormsBundledLM X Y f hf (k • η)) γ =
       pathIntegralViaCover (k • η) (γ.map hf.continuous) := by
-  rw [h_smul_X, h_η, h_smul_Y]
+  rw [LinearMap.map_smul, pathIntegralViaCover_smul,
+      pathIntegralViaCover_smul, h_η]
 
 /-- **Form-neg case**: naturality at `-η` follows from naturality at
-`η`, since both sides commute with `Neg`. The neg-compatibility is
-unconditionally provable from the additive structure of forms +
-`pathIntegralViaCover`-additivity (when available). Stated
-conditionally for now. -/
+`η`, since both sides commute with `Neg`. **Unconditional** via
+`map_neg` of `pullbackFormsBundledLM` (a `LinearMap`) and
+`pathIntegralViaCover_neg` (sorry-free in
+`Jacobian/Periods/PathIntegralViaCoverPickSimp.lean`). -/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_of_neg_form
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
     (η : HolomorphicOneForm ℂ Y)
     (h_η : pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
-      pathIntegralViaCover η (γ.map hf.continuous))
-    (h_neg_X : pathIntegralViaCover
-        (pullbackFormsBundledLM X Y f hf (-η)) γ =
-      - pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ)
-    (h_neg_Y : pathIntegralViaCover (-η) (γ.map hf.continuous) =
-      - pathIntegralViaCover η (γ.map hf.continuous)) :
+      pathIntegralViaCover η (γ.map hf.continuous)) :
     pathIntegralViaCover
         (pullbackFormsBundledLM X Y f hf (-η)) γ =
       pathIntegralViaCover (-η) (γ.map hf.continuous) := by
-  rw [h_neg_X, h_η, h_neg_Y]
+  rw [map_neg, pathIntegralViaCover_neg, pathIntegralViaCover_neg, h_η]
 
 /-- **Concatenated path conditional special case** of path-level
 naturality: naturality at `γ.trans γ'` follows from naturality at `γ`
