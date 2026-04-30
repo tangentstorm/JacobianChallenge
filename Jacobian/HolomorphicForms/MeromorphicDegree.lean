@@ -72,6 +72,20 @@ theorem meromorphicMapToSphere_bijective_of_poleDivisor_degree_one
     (_hcont : Continuous f.toMap)
     (_hdegree : Divisor.degree f.poles = 1) :
     Function.Bijective f.toMap := by
+  -- BLOCKER: same MeromorphicMapToSphere design gap as the continuous-of-pole
+  -- theorem above. `_hdegree : Divisor.degree f.poles = 1` says nothing about
+  -- the map's fibers because there is no axiom linking poleDivisor to the
+  -- preimage of ∞.
+  --
+  -- Missing pieces (per Aristotle 4d754005):
+  --   1. An axiom in MeromorphicMapToSphere that the pole divisor faithfully
+  --      records the preimage of ∞ with multiplicities (e.g.,
+  --      `poles_eq_preimage_infty : ∀ x, poleDivisor x = orderAt f x ∞`).
+  --   2. Degree theory for proper holomorphic maps between compact connected
+  --      Riemann surfaces (fiber cardinality = degree, counted with
+  --      multiplicity).
+  --   3. The open mapping theorem for nonconstant holomorphic maps between
+  --      Riemann surfaces (needed for surjectivity via open+closed argument).
   sorry
 
 /-- **Degree-one assembly.** A meromorphic map whose pole divisor is `[P]`
