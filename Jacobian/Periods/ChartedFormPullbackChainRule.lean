@@ -317,4 +317,67 @@ theorem chartedFormPullback_pullbackFormsBundledLM_neg_apply_apply
   rw [chartedFormPullback_pullbackFormsBundledLM_neg_apply]
   rfl
 
+/-! ### `curveIntegralFun` linearity in the form
+
+These lift the chart-coord pullback linearity through `curveIntegralFun`.
+They are the integrand-level identities that chain to integral-level
+linearity via `intervalIntegral.integral_add`/`integral_smul`/etc. -/
+
+/-- Zero-form integrand: vanishes pointwise. -/
+theorem curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM_zero
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    {a b : ℂ} (γ_X : Path a b) (t : ℝ) :
+    curveIntegralFun
+        (chartedFormPullback c
+          (pullbackFormsBundledLM X Y f hf (0 : HolomorphicOneForm ℂ Y))) γ_X t = 0 := by
+  rw [curveIntegralFun_def, chartedFormPullback_pullbackFormsBundledLM_zero_apply]
+  rfl
+
+/-- Add-form integrand: distributes over `+`. -/
+theorem curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM_add
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η ζ : HolomorphicOneForm ℂ Y) {a b : ℂ} (γ_X : Path a b) (t : ℝ) :
+    curveIntegralFun
+        (chartedFormPullback c
+          (pullbackFormsBundledLM X Y f hf (η + ζ))) γ_X t =
+      curveIntegralFun
+        (chartedFormPullback c (pullbackFormsBundledLM X Y f hf η)) γ_X t +
+      curveIntegralFun
+        (chartedFormPullback c (pullbackFormsBundledLM X Y f hf ζ)) γ_X t := by
+  rw [curveIntegralFun_def, curveIntegralFun_def, curveIntegralFun_def,
+      chartedFormPullback_pullbackFormsBundledLM_add_apply_apply]
+
+/-- Smul-form integrand: distributes over scalar multiplication. -/
+theorem curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM_smul
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (k : ℂ) (η : HolomorphicOneForm ℂ Y)
+    {a b : ℂ} (γ_X : Path a b) (t : ℝ) :
+    curveIntegralFun
+        (chartedFormPullback c
+          (pullbackFormsBundledLM X Y f hf (k • η))) γ_X t =
+      k • curveIntegralFun
+        (chartedFormPullback c (pullbackFormsBundledLM X Y f hf η)) γ_X t := by
+  rw [curveIntegralFun_def, curveIntegralFun_def,
+      chartedFormPullback_pullbackFormsBundledLM_smul_apply_apply]
+
+/-- Neg-form integrand: distributes over negation. -/
+theorem curveIntegralFun_chartedFormPullback_pullbackFormsBundledLM_neg
+    (c : OpenPartialHomeomorph X ℂ) (f : X → Y)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) {a b : ℂ} (γ_X : Path a b) (t : ℝ) :
+    curveIntegralFun
+        (chartedFormPullback c
+          (pullbackFormsBundledLM X Y f hf (-η))) γ_X t =
+      - curveIntegralFun
+        (chartedFormPullback c (pullbackFormsBundledLM X Y f hf η)) γ_X t := by
+  rw [curveIntegralFun_def, curveIntegralFun_def,
+      chartedFormPullback_pullbackFormsBundledLM_neg_apply_apply]
+
 end JacobianChallenge.Periods
