@@ -1,6 +1,8 @@
 import Mathlib.Analysis.Meromorphic.Basic
 import Mathlib.Analysis.Meromorphic.Order
 import Mathlib.Analysis.Calculus.ContDiff.Defs
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.FDeriv.Analytic
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Geometry.Manifold.IsManifold.ExtChartAt
@@ -41,16 +43,17 @@ Chart independence is the substantive content.
 The chart-independence theorem reduces to two sub-obligations about
 the transition map `g := chartAt ℂ p ∘ e.symm`:
 
-* `transition_analyticAt` — the transition is analytic at `e p`. This
-  follows from the manifold typeclass: transitions in `IsManifold 𝓘(ℂ) ω X`
+* `transition_analyticAt` — the transition is analytic at `e p`. Follows
+  from the manifold typeclass: transitions in `IsManifold 𝓘(ℂ) ω X`
   are `C^ω`, which on the trivial model coincides with analyticity.
 * `transition_deriv_ne_zero` — the transition's derivative at `e p` is
-  nonzero. This is the complex inverse function theorem applied to the
-  fact that the transition has a holomorphic inverse (the symmetric
-  transition is also `C^ω`).
+  nonzero. The symmetric transition is analytic too (apply the same
+  lemma with chart roles swapped), and the round trip is the identity
+  near `e p`; the chain rule gives the product of the two derivatives
+  equal to `1`, so neither factor can vanish.
 
-Both sub-obligations are stated as named theorems with `sorry` bodies in
-this file; downstream sessions can discharge them independently.
+Both sub-obligations are now discharged in this file via the named
+helper `analyticAt_transition_of_mem_maximalAtlas`.
 -/
 
 namespace JacobianChallenge.HolomorphicForms.VanishingOrder
@@ -167,57 +170,133 @@ about the transition map `g := chartAt ℂ p ∘ e.symm`:
 * `transition_analyticAt` — the transition is analytic at `e p`.
 * `transition_deriv_ne_zero` — the transition has nonzero derivative at `e p`.
 
-Both are stated with `sorry` bodies; the assembly applying
-`meromorphicOrderAt_comp_of_deriv_ne_zero` is fully discharged. -/
+Both are discharged below via the named helper
+`analyticAt_transition_of_mem_maximalAtlas` (compatibility +
+`ContDiffAt.analyticAt`) and a chain-rule argument on the round trip. -/
+
+set_option linter.unusedSectionVars false
 
 variable [IsManifold 𝓘(ℂ) ω X]
 
-/-- **Sub-obligation 1.** The transition map between two holomorphic
-charts in the analytic atlas is analytic at the relevant point.
+/-- **Generalized analyticity of transitions.** For any two charts
+`e₁, e₂ ∈ maximalAtlas 𝓘(ℂ) ω X` containing `p` in their sources, the
+transition `e₂ ∘ e₁.symm` is analytic at `e₁ p`.
 
-Concretely: for any `e ∈ maximalAtlas 𝓘(ℂ) ω X` with `p ∈ e.source`,
-the composite `chartAt ℂ p ∘ e.symm` is analytic at `e p`.
+Proof: `compatible_of_mem_maximalAtlas` gives
+`e₁.symm.trans e₂ ∈ contDiffGroupoid ω 𝓘(ℂ)`. Unfolding through
+`mem_groupoid_of_pregroupoid` and `contDiffPregroupoid` (and simplifying
+under the trivial model `𝓘(ℂ)`) gives `ContDiffOn ℂ ω (e₂ ∘ e₁.symm)`
+on the open transition source. Restricting to a neighborhood of `e₁ p`
+upgrades to `ContDiffAt`, then `ContDiffAt.analyticAt` finishes.
 
-Proof sketch: `compatible_of_mem_maximalAtlas` gives
-`e.symm.trans (chartAt ℂ p) ∈ contDiffGroupoid ω 𝓘(ℂ)`. Unfolding
-`mem_groupoid_of_pregroupoid` yields
-`ContDiffOn ℂ ω (chartAt ℂ p ∘ e.symm) ((e.symm.trans (chartAt ℂ p)).source)`
-(after eliminating `𝓘(ℂ)` via `modelWithCornersSelf_coe`). The point
-`e p` is in this open source, so `ContDiffOn` upgrades to `ContDiffAt`
-at `e p`, and `ContDiffAt.analyticAt` finishes.
+Note: the proof depends on the maximal-atlas membership but not on the
+`IsManifold` typeclass directly; we keep the typeclass in scope anyway
+for uniformity with the rest of the section. -/
+theorem analyticAt_transition_of_mem_maximalAtlas
+    {p : X} {e₁ e₂ : OpenPartialHomeomorph X ℂ}
+    (he₁ : e₁ ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X)
+    (he₂ : e₂ ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X)
+    (hp₁ : p ∈ e₁.source) (hp₂ : p ∈ e₂.source) :
+    AnalyticAt ℂ (e₂ ∘ e₁.symm) (e₁ p) := by
+  -- Step 1: get groupoid membership of the transition.
+  have hcompat := IsManifold.compatible_of_mem_maximalAtlas he₁ he₂
+  rw [contDiffGroupoid, mem_groupoid_of_pregroupoid] at hcompat
+  -- The forward (toFun) component of the pregroupoid property.
+  have hcd := hcompat.1
+  -- Step 2: simplify under the trivial model `𝓘(ℂ)`.
+  -- `contDiffPregroupoid.property f s` is
+  -- `ContDiffOn ℂ ω (𝓘(ℂ) ∘ f ∘ 𝓘(ℂ).symm) (𝓘(ℂ).symm ⁻¹' s ∩ range 𝓘(ℂ))`,
+  -- which reduces to `ContDiffOn ℂ ω f s` since `𝓘(ℂ) = id` and
+  -- `range 𝓘(ℂ) = univ`.
+  simp only [contDiffPregroupoid, modelWithCornersSelf_coe,
+    modelWithCornersSelf_coe_symm, Function.id_comp, Function.comp_id,
+    range_id, preimage_id, inter_univ] at hcd
+  -- Step 3: rewrite through `coe_trans` so the function becomes `e₂ ∘ e₁.symm`.
+  have hcoe : ⇑(e₁.symm.trans e₂) = e₂ ∘ e₁.symm := by
+    funext y; rfl
+  rw [hcoe] at hcd
+  -- Step 4: `e₁ p` is in the (open) transition source.
+  have hep_target : e₁ p ∈ e₁.symm.source := by
+    show e₁ p ∈ e₁.target
+    exact e₁.map_source hp₁
+  have hep_pre : e₁.symm (e₁ p) ∈ e₂.source := by
+    rw [e₁.left_inv hp₁]; exact hp₂
+  have hep_mem : e₁ p ∈ (e₁.symm.trans e₂).source := by
+    rw [OpenPartialHomeomorph.trans_source]
+    exact ⟨hep_target, hep_pre⟩
+  -- Step 5: upgrade `ContDiffOn` at an interior point to `ContDiffAt`.
+  have hopen : IsOpen (e₁.symm.trans e₂).source := (e₁.symm.trans e₂).open_source
+  have hcdat : ContDiffAt ℂ ω (e₂ ∘ e₁.symm) (e₁ p) :=
+    (hcd (e₁ p) hep_mem).contDiffAt (hopen.mem_nhds hep_mem)
+  -- Step 6: `ContDiffAt 𝕜 ω → AnalyticAt 𝕜`.
+  exact hcdat.analyticAt
 
-Left as a sorry'd sub-obligation; the bookkeeping involves several
-unfolds of `contDiffGroupoid`, `contDiffPregroupoid`, and the source
-of `e.symm.trans`. -/
+/-- **Sub-obligation 1 (discharged).** The transition `chartAt ℂ p ∘ e.symm`
+is analytic at `e p`. Specialization of
+`analyticAt_transition_of_mem_maximalAtlas` to `e₂ = chartAt ℂ p`. -/
 theorem transition_analyticAt
     {p : X} (e : OpenPartialHomeomorph X ℂ)
     (he : e ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X) (hp : p ∈ e.source) :
-    AnalyticAt ℂ (chartAt ℂ p ∘ e.symm) (e p) := by
-  sorry
+    AnalyticAt ℂ (chartAt ℂ p ∘ e.symm) (e p) :=
+  analyticAt_transition_of_mem_maximalAtlas he
+    (IsManifold.chart_mem_maximalAtlas p) hp (mem_chart_source ℂ p)
 
-/-- **Sub-obligation 2.** The transition map between two holomorphic
-charts in the analytic atlas has nonzero derivative.
+/-- **Sub-obligation 2 (discharged).** The transition `chartAt ℂ p ∘ e.symm`
+has nonzero derivative at `e p`.
 
-Concretely: for any `e ∈ maximalAtlas 𝓘(ℂ) ω X` with `p ∈ e.source`,
-`deriv (chartAt ℂ p ∘ e.symm) (e p) ≠ 0`.
-
-Proof sketch: the symmetric transition `e ∘ (chartAt ℂ p).symm` is also
-analytic at `chartAt ℂ p p` (apply `transition_analyticAt` with the roles
-of `e` and `chartAt ℂ p` swapped). Since the two are local inverses near
-`e p`, the chain rule applied to `id = e.symm ∘ e` (after composing with
-`chartAt ℂ p` on both sides) gives that the product of their derivatives
-at corresponding points equals `1`, hence each derivative is nonzero.
-
-This is the only step in the construction without a single off-the-shelf
-Mathlib lemma; it reduces to the complex inverse function theorem
-(`Mathlib.Analysis.Calculus.InverseFunctionTheorem`) plus chain-rule
-algebra on `deriv`. Estimated 30–50 LOC when discharged. Left as a
-sorry'd sub-obligation. -/
+Proof: the symmetric transition `e ∘ (chartAt ℂ p).symm` is also analytic
+(apply the generalized lemma with chart roles swapped). The two compose
+to the identity on a neighborhood of `e p`. Differentiating via the chain
+rule gives `(deriv g')(g(e p)) * (deriv g)(e p) = 1`, so neither factor
+can be zero. -/
 theorem transition_deriv_ne_zero
     {p : X} (e : OpenPartialHomeomorph X ℂ)
     (he : e ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X) (hp : p ∈ e.source) :
     deriv (chartAt ℂ p ∘ e.symm) (e p) ≠ 0 := by
-  sorry
+  -- The forward and backward transitions, both analytic.
+  have hg : AnalyticAt ℂ (chartAt ℂ p ∘ e.symm) (e p) :=
+    transition_analyticAt e he hp
+  have hgep : (chartAt ℂ p ∘ e.symm) (e p) = chartAt ℂ p p := by
+    simp [Function.comp_apply, e.left_inv hp]
+  have hg' : AnalyticAt ℂ (e ∘ (chartAt ℂ p).symm) (chartAt ℂ p p) :=
+    analyticAt_transition_of_mem_maximalAtlas
+      (IsManifold.chart_mem_maximalAtlas p) he (mem_chart_source ℂ p) hp
+  -- Eventual identity of the round trip near `e p`.
+  have hid : (e ∘ (chartAt ℂ p).symm) ∘ (chartAt ℂ p ∘ e.symm) =ᶠ[𝓝 (e p)] id := by
+    have hmem : e.target ∩ e.symm ⁻¹' (chartAt ℂ p).source ∈ 𝓝 (e p) :=
+      target_inter_preimage_mem_nhds e hp
+    filter_upwards [hmem] with y hy
+    obtain ⟨hy₁, hy₂⟩ := hy
+    show e ((chartAt ℂ p).symm ((chartAt ℂ p) (e.symm y))) = y
+    rw [(chartAt ℂ p).left_inv hy₂, e.right_inv hy₁]
+  -- Chain rule: derivative of round trip = product of factor derivatives.
+  have hg_d : HasDerivAt (chartAt ℂ p ∘ e.symm)
+      (deriv (chartAt ℂ p ∘ e.symm) (e p)) (e p) :=
+    hg.differentiableAt.hasDerivAt
+  have hg'_d : HasDerivAt (e ∘ (chartAt ℂ p).symm)
+      (deriv (e ∘ (chartAt ℂ p).symm) (chartAt ℂ p p)) (chartAt ℂ p p) :=
+    hg'.differentiableAt.hasDerivAt
+  -- `comp_of_eq` consumes the equality `chartAt ℂ p p = (chartAt ℂ p ∘ e.symm) (e p)`,
+  -- avoiding higher-order unification on the third HasDerivAt argument.
+  -- Note: the lemma takes `x` (here `e p`) as an explicit positional argument,
+  -- per the section variable convention in `Mathlib/Analysis/Calculus/Deriv/Comp.lean`.
+  have hcomp : HasDerivAt ((e ∘ (chartAt ℂ p).symm) ∘ (chartAt ℂ p ∘ e.symm))
+      (deriv (e ∘ (chartAt ℂ p).symm) (chartAt ℂ p p) *
+        deriv (chartAt ℂ p ∘ e.symm) (e p)) (e p) :=
+    HasDerivAt.comp_of_eq (e p) hg'_d hg_d hgep.symm
+  -- The round trip is eventually `id`, so its derivative is `1`.
+  have hcomp1 : HasDerivAt ((e ∘ (chartAt ℂ p).symm) ∘ (chartAt ℂ p ∘ e.symm))
+      (1 : ℂ) (e p) :=
+    (hasDerivAt_id (e p)).congr_of_eventuallyEq hid
+  -- Uniqueness of the derivative.
+  have hprod :
+      deriv (e ∘ (chartAt ℂ p).symm) (chartAt ℂ p p) *
+        deriv (chartAt ℂ p ∘ e.symm) (e p) = 1 :=
+    hcomp.unique hcomp1
+  -- Conclude.
+  intro h
+  rw [h, mul_zero] at hprod
+  exact zero_ne_one hprod
 
 /-! ### Main chart-independence theorem -/
 
