@@ -7,29 +7,192 @@ that every holomorphic function \(X\to\C\) is constant. Holomorphic maps
 between compact Riemann surfaces are either constant or finite branched
 coverings.
 
-\begin{classicalinput}[Meromorphic functions and divisors]
-\label{input:divisors}
+\subsection{Order of vanishing}
+
+Throughout, all charts are holomorphic. We work locally and then glue.
+
+\begin{definition}[Order of vanishing of a meromorphic germ at a point]
+\label{def:vanishing-order}
+For a holomorphic chart \(\varphi:U\to\C\) sending \(p\mapsto 0\) and a
+meromorphic germ \(f\) at \(p\), the order of vanishing
+\(\ord_p(f)\in\Z\cup\{+\infty\}\) is the order of the Laurent series of
+\(f\circ\varphi^{-1}\) at \(0\). The convention is
+\(\ord_p(0)=+\infty\) and \(\ord_p(f)<0\) for poles. The value is
+independent of the chart.
+\depends{Mathlib's \texttt{analyticOrderAt} for normed spaces; chart
+independence proved via composition of analytic equivalences.}
 \notready
-There is a divisor group \(\Div(X)\), a subgroup of principal divisors
-\(\Prin(X)\), a degree map \(\deg:\Div(X)\to\Z\), and the Riemann-Roch spaces
-\[
-  L(D)=\{ f\text{ meromorphic on }X : (f)+D\ge 0\}.
-\]
-Principal divisors have degree zero, and a nonconstant meromorphic function
-defines a holomorphic map \(X\to\CPone\).
-\end{classicalinput}
+\end{definition}
+
+\begin{lemma}[Discreteness of the divisor support]
+\label{lem:divisor-discrete}
+\uses{def:vanishing-order}
+For a nonzero meromorphic function \(f\) on \(X\), the set
+\(\{p\in X:\ord_p(f)\ne 0\}\) has no accumulation point.
+\notready
+\end{lemma}
 
 \begin{proofsketch}
-The local theory of holomorphic functions gives zeros and poles with finite
-orders. Summing orders defines divisors. Compactness gives finiteness of the
-support of a divisor associated to a meromorphic function. The meromorphic
-function is interpreted as a holomorphic map to \(\CPone\) by using the value
-\(\infty\) at poles.
+Locally, in a chart \(\varphi\), \(f\circ\varphi^{-1}\) is meromorphic on
+an open subset of \(\C\). Either the Laurent series at \(\varphi(p)\)
+vanishes identically (impossible for a nonzero meromorphic function on
+a connected open set, by the identity theorem), or it has finite order.
+Finite order at a point \(p\) gives a chart neighborhood on which \(f\)
+has no zeros and no poles other than at \(p\). The identity theorem
+applied across the chart atlas globalizes this.
 \end{proofsketch}
+
+\begin{lemma}[Compactness gives finite divisor support]
+\label{lem:divisor-finite-support}
+\uses{lem:divisor-discrete}
+For a nonzero meromorphic function \(f\) on the compact Riemann surface
+\(X\), the set \(\{p\in X:\ord_p(f)\ne 0\}\) is finite.
+\notready
+\end{lemma}
+
+\begin{proof}
+A subset of a compact space with no accumulation point is finite.
+\end{proof}
+
+\subsection{Divisor group}
+
+\begin{definition}[Divisor group]
+\label{def:divisor}
+The divisor group \(\Div(X)\) is the free abelian group on the points of
+\(X\). A divisor is a formal finite \(\Z\)-linear combination
+\(D=\sum_{p}n_p\,p\) with \(n_p\in\Z\) and \(\{p:n_p\ne 0\}\) finite.
+\depends{Mathlib's \texttt{FreeAbelianGroup}.}
+\notready
+\end{definition}
+
+\begin{definition}[Degree of a divisor]
+\label{def:divisor-degree}
+\uses{def:divisor}
+The degree map \(\deg:\Div(X)\to\Z\) sends \(D=\sum_p n_p\,p\) to
+\(\sum_p n_p\). It is a group homomorphism.
+\notready
+\end{definition}
+
+\subsection{Meromorphic functions, principal divisors, principal degree}
+
+\begin{definition}[Meromorphic functions on a compact Riemann surface]
+\label{def:meromorphic-function}
+\uses{def:vanishing-order}
+The set \(\Mer(X)\) of meromorphic functions on \(X\) is the set of
+sections of the sheaf of meromorphic germs. \(\Mer(X)\) is a field with
+the constants \(\C\) embedded as constant functions, and a nonzero
+\(f\in\Mer(X)\) defines a holomorphic map \(X\to\CPone\) with poles at
+\(\{p:\ord_p(f)<0\}\).
+\depends{Mathlib has \texttt{MeromorphicAt} on normed spaces; gluing along a
+chart atlas to a global field on \(X\) is project-side work.}
+\notready
+\end{definition}
+
+\begin{definition}[Principal divisor of a meromorphic function]
+\label{def:principal-divisor}
+\uses{def:divisor,def:meromorphic-function,lem:divisor-finite-support}
+For a nonzero \(f\in\Mer(X)\),
+\[
+  (f) := \sum_{p\in X} \ord_p(f)\,p \in \Div(X).
+\]
+The map \((\,\cdot\,):\Mer(X)^{\times}\to\Div(X)\) is a group
+homomorphism (\(\Mer(X)^{\times}\) under multiplication).
+\notready
+\end{definition}
+
+\begin{definition}[Principal divisors]
+\label{def:principal-divisors}
+\uses{def:principal-divisor}
+The subgroup of principal divisors is
+\(\Prin(X) := \{(f) : f\in\Mer(X)^{\times}\}\subset\Div(X)\).
+\notready
+\end{definition}
+
+\begin{theorem}[Principal divisors have degree zero]
+\label{thm:principal-degree-zero}
+\uses{def:principal-divisor,def:divisor-degree}
+For every nonzero \(f\in\Mer(X)\), \(\deg(f)=0\).
+\notready
+\end{theorem}
+
+\begin{proofsketch}
+The classical proof uses the argument principle on a polygonal model of
+\(X\): the integral
+\(\frac{1}{2\pi i}\oint_{\partial X}\,d\!\log f\) counts zeros minus
+poles, but the polygon's boundary cancels out by the identification of
+opposite sides, so the difference is zero. Equivalently, this is a
+special case of \(\sum\Res = 0\) for the meromorphic 1-form \(df/f\).
+\end{proofsketch}
+
+\subsection{Meromorphic functions as maps to \texorpdfstring{\(\CPone\)}{CP1}}
+
+\begin{definition}[Map to \(\CPone\) associated to a meromorphic function]
+\label{def:meromorphic-to-cp1}
+\uses{def:meromorphic-function}
+For nonzero \(f\in\Mer(X)\), define \(\widehat{f}:X\to\CPone\) by
+\(\widehat{f}(p)=f(p)\) where \(f\) is holomorphic at \(p\) and
+\(\widehat{f}(p)=\infty\) at poles. This is a holomorphic map of compact
+Riemann surfaces.
+\notready
+\end{definition}
+
+\begin{theorem}[Meromorphic-to-\(\CPone\) bijection]
+\label{thm:meromorphic-as-cp1-map}
+\uses{def:meromorphic-to-cp1}
+The map \(f\mapsto\widehat{f}\) is a bijection between nonzero
+meromorphic functions on \(X\) and nonconstant holomorphic maps
+\(X\to\CPone\).
+\notready
+\end{theorem}
+
+\begin{proofsketch}
+Forward: a meromorphic function on \(X\) is exactly a holomorphic
+section of \(X\to\CPone\) defined off the polar set, with continuous
+extension to \(\infty\) at the polar set; the extension is forced and
+holomorphic. Reverse: given \(g:X\to\CPone\), restrict to
+\(g^{-1}(\C)\) and observe the result is holomorphic, with the
+preimages of \(\infty\) becoming poles.
+\end{proofsketch}
+
+\subsection{Riemann-Roch space}
+
+\begin{definition}[Riemann-Roch space \(L(D)\)]
+\label{def:riemann-roch-space}
+\uses{def:divisor,def:meromorphic-function,def:principal-divisor}
+For a divisor \(D\),
+\[
+  L(D) := \{f\in\Mer(X) : (f)+D\ge 0\}\cup\{0\}.
+\]
+\notready
+\end{definition}
+
+\begin{lemma}[\(L(D)\) is a complex vector space]
+\label{lem:riemann-roch-space-vector}
+\uses{def:riemann-roch-space}
+\(L(D)\) is a \(\C\)-vector subspace of \(\Mer(X)\).
+\notready
+\end{lemma}
+
+\subsection{Aggregate input}
+
+\begin{classicalinput}[Meromorphic functions and divisors (umbrella)]
+\label{input:divisors}
+\uses{def:divisor,def:divisor-degree,def:meromorphic-function,def:principal-divisor,def:principal-divisors,thm:principal-degree-zero,def:meromorphic-to-cp1,thm:meromorphic-as-cp1-map,def:riemann-roch-space,lem:riemann-roch-space-vector}
+\notready
+The classical theory of meromorphic functions, divisors, principal
+divisors, the degree map, and Riemann-Roch spaces on a compact
+Riemann surface, packaged as a single dependency for downstream
+classical inputs (Riemann-Roch, Abel's theorem).
+\end{classicalinput}
 
 \begin{formalizationnote}
 The repository currently has substantial chart and path-integration
 infrastructure, but not a full divisor or meromorphic-function theory on
-compact Riemann surfaces. This input is the source for later theorem names
-around Riemann-Roch, Abel's theorem, and degree theory.
+compact Riemann surfaces. The pieces above are individually
+project-sized but each is a clean stand-alone obligation; some
+(\texttt{def:divisor}, \texttt{def:divisor-degree}) reduce to existing
+Mathlib infrastructure (\texttt{FreeAbelianGroup}). Others
+(\texttt{def:meromorphic-function}, \texttt{thm:principal-degree-zero})
+require sheaf-of-meromorphic-germs gluing or argument-principle work
+that is not yet in Mathlib.
 \end{formalizationnote}
