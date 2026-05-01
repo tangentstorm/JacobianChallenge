@@ -8,7 +8,19 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-04-30 (CI-thread, post-`857c23b`)
+Last tick: 2026-04-30 (CI-thread, post-`6a60b24`)
+
+```text
+Sec01 progress (most recent: 7d9b44a + 6a60b24)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Closed this tick                             1  lem:divisor-finite-support
+                                                (Worker H, sorry-free real proof)
+BLOCKER documented                              divisor_discrete: hypothesis
+                                                (∃ x, f x ≠ 0) admits disconnected
+                                                counterexample X = ℂ ⊔ ℂ;
+                                                real proof needs MeromorphicAtX +
+                                                ConnectedSpace X (Worker M BLOCKER doc)
+```
 
 ```text
 Blueprint annotation coverage (most recent: PR #8 / 857c23b)
@@ -41,12 +53,14 @@ Sorry-free chain decls                       7 / 8 (Sec02 user-facing)
 ```text
 Blueprint sorry totals (lake build Jacobian.Blueprint)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Sec01                                        5  (Divisor* + Principal* + degree-zero)
+Sec01                                        4  (DivisorDiscrete[BLOCKER]
+                                                 + PrincipalDegreeZero +
+                                                 PrincipalDivisor + PrincipalDivisors)
 Sec02 user-facing                            1  (FdHolomorphicOneForms)
 Sec02 named leaves                           1  (montel_pointwise_extraction)
 HolomorphicForms/CompactRiemannSurface       3  (production sorries pulled in via Sec02 chain)
                                             ───
-Total declaration-uses-sorry warnings       10
+Total declaration-uses-sorry warnings        9   (was 10; -1 from divisor-finite-support closure)
 ```
 
 Earlier (pre-CI-thread) progress on production / Aristotle integrations preserved below for context.
