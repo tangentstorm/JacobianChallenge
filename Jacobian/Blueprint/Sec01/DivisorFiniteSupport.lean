@@ -18,6 +18,9 @@ theorem divisor_finite_support
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : X → ℂ) (_hf_nonzero : ∃ x, f x ≠ 0) :
     Set.Finite {q : X | vanishingOrder X q f ≠ 0} := by
-  sorry
+  by_contra h
+  rw [Set.not_finite] at h
+  obtain ⟨x, hx⟩ := h.exists_accPt_principal
+  exact divisor_discrete X f _hf_nonzero x hx
 
 end JacobianChallenge.Blueprint
