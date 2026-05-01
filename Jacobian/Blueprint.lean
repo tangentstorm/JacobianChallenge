@@ -29,6 +29,9 @@ import Jacobian.Blueprint.Sec02.DegreeOneNoRamification
 -- sec03
 import Jacobian.Blueprint.Sec03.HolomorphicFormIsClosed
 
+-- sec03
+import Jacobian.Blueprint.Sec03.StokesOnRSWithBoundary
+
 /-!
 # Blueprint stubs index
 
