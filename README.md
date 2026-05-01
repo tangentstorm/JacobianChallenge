@@ -8,10 +8,35 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-04-30 (CI-thread, post-`7edff69`)
+Last tick: 2026-04-30 (CI-thread, post-`65bdb33`)
 
 ```text
-Stub additions (this tick) — five new cloud-worker batches
+Stub additions + leanok flips (this tick)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Stub added                                   1  thm:abel-existence
+                                                TRIVIAL/SHORT sub-leaves
+                                                (Worker AE, 43450e4):
+                                                Sec05/AbelExistence.lean
+                                                exposes Div0 + AJ Unit-aliases
+                                                (sub-leaves 1+2 of Grok plan).
+                                                MEDIUM/HARD sub-leaves
+                                                (AJ_principal_zero,
+                                                 existence_of_f,
+                                                 principal_iff_AJ_zero) remain
+                                                DECOMPOSE-tagged in scope-out.md.
+\leanok flip on main (65bdb33)               1  thm:abel-existence
+                                                (matches 5d14969 pattern;
+                                                 dep-graph color updated)
+Resolved merge conflict in Blueprint.lean       3-way: kept all sec03 imports
+                                                (Stokes + SymplecticBasis from
+                                                 prior tick) AND added new
+                                                 sec05 AbelExistence import.
+```
+
+Earlier ticks recorded below for context.
+
+```text
+Stub additions (post-7edff69) — five new cloud-worker batches
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. def:sheaf-cohomology-rs leaves 1+2+5+6   Worker C, 35cac7e
    (Jacobian/HolomorphicForms/SheafCohomologyRS.lean, NEW)
