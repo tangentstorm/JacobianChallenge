@@ -49,6 +49,7 @@ import Jacobian.Blueprint.Sec05.AbelExistence
 import Jacobian.Blueprint.Sec05.AjDivisorHom
 import Jacobian.Blueprint.Sec05.PrincipalDeg0SimpleSupportDeg1
 import Jacobian.Blueprint.Sec05.InputAbelTheorem
+import Jacobian.Blueprint.Sec05.RiemannHurwitzDeg1
 
 /-!
 # Blueprint stubs index
