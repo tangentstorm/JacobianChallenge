@@ -142,7 +142,8 @@ The divisor group \(\Div(X)\) is the free abelian group on the points of
 \(X\). A divisor is a formal finite \(\Z\)-linear combination
 \(D=\sum_{p}n_p\,p\) with \(n_p\in\Z\) and \(\{p:n_p\ne 0\}\) finite.
 \depends{Mathlib's \texttt{FreeAbelianGroup}.}
-\notready
+\lean{JacobianChallenge.Blueprint.Divisor}
+\leanok
 \end{definition}
 
 \begin{layman}
@@ -166,7 +167,8 @@ much. The bookkeeping turns out to be exactly what's needed to ask
 \uses{def:divisor}
 The degree map \(\deg:\Div(X)\to\Z\) sends \(D=\sum_p n_p\,p\) to
 \(\sum_p n_p\). It is a group homomorphism.
-\notready
+\lean{JacobianChallenge.Blueprint.Divisor.degree}
+\leanok
 \end{definition}
 
 \begin{layman}
@@ -276,6 +278,7 @@ exactly the answer to that obstruction question.
 \uses{def:principal-divisor}
 The subgroup of principal divisors is
 \(\Prin(X) := \{(f) : f\in\Mer(X)^{\times}\}\subset\Div(X)\).
+\lean{JacobianChallenge.Blueprint.principalDivisors}
 \leanok
 \end{definition}
 
@@ -333,6 +336,7 @@ For nonzero \(f\in\Mer(X)\), define \(\widehat{f}:X\to\CPone\) by
 \(\widehat{f}(p)=f(p)\) where \(f\) is holomorphic at \(p\) and
 \(\widehat{f}(p)=\infty\) at poles. This is a holomorphic map of compact
 Riemann surfaces.
+\lean{JacobianChallenge.Blueprint.meromorphicToCp1}
 \leanok
 \end{definition}
 
@@ -358,6 +362,7 @@ Riemann surfaces.
 The map \(f\mapsto\widehat{f}\) is a bijection between nonzero
 meromorphic functions on \(X\) and nonconstant holomorphic maps
 \(X\to\CPone\).
+\lean{JacobianChallenge.Blueprint.meromorphic_as_cp1_map}
 \leanok
 \end{theorem}
 
@@ -444,6 +449,7 @@ The classical theory of meromorphic functions, divisors, principal
 divisors, the degree map, and Riemann-Roch spaces on a compact
 Riemann surface, packaged as a single dependency for downstream
 classical inputs (Riemann-Roch, Abel's theorem).
+\lean{JacobianChallenge.Blueprint.input_divisors_holds}
 \end{theorem}
 
 \begin{layman}
