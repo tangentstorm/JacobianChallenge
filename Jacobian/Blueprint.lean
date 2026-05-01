@@ -28,6 +28,9 @@ import Jacobian.Blueprint.Sec02.DegreeOneNoRamification
 -- sec03
 import Jacobian.Blueprint.Sec03.HolomorphicFormIsClosed
 
+-- sec05
+import Jacobian.Blueprint.Sec05.AbelExistence
+
 /-!
 # Blueprint stubs index
 
