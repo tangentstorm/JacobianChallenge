@@ -15,6 +15,6 @@ noncomputable def principalDivisors
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     AddSubgroup (Divisor X) :=
-  sorry
+  AddSubgroup.closure (Set.range (principalDivisor X))
 
 end JacobianChallenge.Blueprint

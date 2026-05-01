@@ -29,26 +29,24 @@ namespace JacobianChallenge.Blueprint
 open scoped Manifold
 open JacobianChallenge.HolomorphicForms
 
-/-- Finite-dimensionality of holomorphic 1-forms on a compact complex
-1-manifold. Conclusion is `FiniteDimensional ℂ` (matching
-`fd_from_riesz` and `input_finite_dimensionality`); the
-`Module.Finite` form is `FiniteDimensional` definitionally and a
-corollary in either direction is a one-liner if needed downstream. -/
+/-- Finite-dimensionality of holomorphic 1-forms on a compact connected
+complex 1-manifold. The proof extracts a `HolomorphicOneFormBanachData`
+from `holomorphicOneForm_normedSpace_uniformOnCompact`, installs the
+resulting `NormedAddCommGroup` / `NormedSpace ℂ` instances, derives
+local compactness via `holomorphicOneForm_locallyCompact_of_compactRiemannSurface`,
+and closes with Riesz's theorem (`FiniteDimensional.of_locallyCompactSpace`).
+
+(Aristotle a489296c, sorry-free transport.) -/
 theorem fd_holomorphic_one_forms
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     FiniteDimensional ℂ (HolomorphicOneForm ℂ X) := by
-  -- DEPENDS ON node 7 (`input_finite_dimensionality`), which in turn
-  -- depends on node 5 (`hone_unit_ball_compact`). Once both landed, the
-  -- discharge is plumbing only:
-  --   1. extract a `HolomorphicOneFormBanachData X` realisation `B` from
-  --      `JacobianChallenge.HolomorphicForms.holomorphicOneForm_normedSpace_uniformOnCompact`
-  --      (Jacobian/HolomorphicForms/CompactRiemannSurface.lean);
-  --   2. the realisation gives a `≃ₗ[ℂ]` `e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H`
-  --      and a norm-match hypothesis `h_norm`;
-  --   3. `have : FiniteDimensional ℂ H := input_finite_dimensionality X e h_norm`;
-  --   4. transport back along `e.symm` via
-  --      `LinearEquiv.finiteDimensional` (Mathlib).
-  sorry
+  obtain ⟨B⟩ := holomorphicOneForm_normedSpace_uniformOnCompact X
+  letI : NormedAddCommGroup (HolomorphicOneForm ℂ X) := B.toNormedAddCommGroup
+  letI : NormedSpace ℂ (HolomorphicOneForm ℂ X) := B.toNormedSpace
+  letI : LocallyCompactSpace (HolomorphicOneForm ℂ X) :=
+    holomorphicOneForm_locallyCompact_of_compactRiemannSurface X B
+  exact FiniteDimensional.of_locallyCompactSpace ℂ
 
 end JacobianChallenge.Blueprint
