@@ -385,6 +385,7 @@ class), there are cohomology groups \(H^{0}(X,\mathcal{L})\) and
 \(H^{1}(X,\mathcal{L})\), with \(H^{0}(X,\mathcal{O}_X(D))=L(D)\).
 \depends{Sheaves on Riemann surfaces, sheaf cohomology, line bundles —
 none packaged in Mathlib for compact RS at v4.28.0.}
+\lean{JacobianChallenge.HolomorphicForms.RSSheafCohomology}
 \leanok
 \end{definition}
 
@@ -412,6 +413,7 @@ For an invertible sheaf \(\mathcal{L}\) and the canonical sheaf \(K\),
 \[
   H^{1}(X,\mathcal{L})\cong H^{0}(X,K\otimes\mathcal{L}^{-1})^{\vee}.
 \]
+\lean{JacobianChallenge.HolomorphicForms.serre_duality_rs}
 \notready
 \end{theorem}
 
@@ -436,6 +438,7 @@ for producing meromorphic functions with prescribed zeros and poles.
 For an invertible sheaf \(\mathcal{L}=\mathcal{O}_X(D)\),
 \(\chi(\mathcal{L}) := h^{0}(\mathcal{L}) - h^{1}(\mathcal{L})
                      = \deg(D) + 1 - g(X).\)
+\lean{JacobianChallenge.HolomorphicForms.euler_char_line_bundle}
 \notready
 \end{theorem}
 
