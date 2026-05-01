@@ -29,7 +29,7 @@ the chosen breakdown.
 | `def:meromorphic-function` | `Blueprint.MeromorphicFunctionType` | `Sec01/MeromorphicFunction.lean` | DECOMPOSE | sub-leaves: meromorphic-germ-sheaf, field-of-fractions on Riemann surface |
 | `def:principal-divisor` | `Blueprint.principalDivisor` | `Sec01/PrincipalDivisor.lean` | MEDIUM | `Finsupp.onFinset` over `divisor_finite_support`, coefficients = `vanishingOrder` |
 | `def:principal-divisors` | `Blueprint.principalDivisors` | `Sec01/PrincipalDivisors.lean` | SHORT | `AddSubgroup.closure (range principalDivisor)` or direct subgroup with `add/neg` closure lemmas |
-| `thm:principal-degree-zero` | `Blueprint.principal_degree_zero` | `Sec01/PrincipalDegreeZero.lean` | DECOMPOSE | sub-leaves: residue-theorem on RS, divisor-degree-as-integral, argument-principle |
+| `thm:principal-degree-zero` | `Blueprint.principal_degree_zero` | `Sec01/PrincipalDegreeZero.lean` | DECOMPOSE | umbrella + 7 named sub-leaves landed via CP¹ branched-cover route (`ref/plans/principal-degree-zero.md`); leaf 1 sorry-free, leaves 2–7 reduce to `Sec02/BranchedDegree.lean` leaf 8 + chart-local Laurent normal form |
 | `def:meromorphic-to-cp1` | `Blueprint.meromorphicToCp1` | `Sec01/MeromorphicToCp1.lean` | DONE | identity on placeholder type |
 | `thm:meromorphic-as-cp1-map` | `Blueprint.meromorphic_as_cp1_map` | `Sec01/MeromorphicAsCp1Map.lean` | DONE | definitionally trivial on placeholder |
 | `def:riemann-roch-space` | `Blueprint.riemannRochSpace` | `Sec01/RiemannRochSpace.lean` | DONE | scaffold submodule definition |
