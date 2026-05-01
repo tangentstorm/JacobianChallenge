@@ -28,10 +28,8 @@ theorem input_finite_dimensionality
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
     (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
-    (_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) :
-    FiniteDimensional ℂ H := by
-  -- DEPENDS ON node 5 (`hone_unit_ball_compact`). Once that landed:
-  -- `exact fd_from_riesz one_pos (hone_unit_ball_compact X e _h_norm)`
-  sorry
+    (h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) :
+    FiniteDimensional ℂ H :=
+  fd_from_riesz one_pos (hone_unit_ball_compact X e h_norm)
 
 end JacobianChallenge.Blueprint
