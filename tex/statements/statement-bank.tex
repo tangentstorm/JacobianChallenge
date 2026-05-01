@@ -12,7 +12,7 @@ For a compact connected Riemann surface \(X\), define
 \]
 \lean{JacobianChallenge.HolomorphicForms.analyticGenus}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 Instantiate finite-dimensionality of \(H^0(X,\Omega_X^1)\) from the Sec02 chain:
 sup norm \(\to\) compact unit ball (Montel) \(\to\) Riesz theorem; then define
 \(g(X)\) by `FiniteDimensional.finrank`.
@@ -49,7 +49,7 @@ For a compact connected Riemann surface \(X\),
 \]
 \lean{genus_eq_zero_iff_homeo}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 \(\Rightarrow\): use Riemann--Roch at genus \(0\) to build degree-one meromorphic map
 to \(\mathbf{P}^1\), then classify degree-one maps as homeomorphisms.
 \(\Leftarrow\): compute holomorphic one-forms on the sphere as zero.
@@ -81,7 +81,7 @@ The period pairing is the group homomorphism
 \]
 \lean{JacobianChallenge.Periods.periodPairing}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 Define integration functional on cycles, prove path/homology invariance, and
 package as an additive homomorphism into \(\HdualX\).
 \end{definition}
@@ -107,7 +107,7 @@ The image \(\periods_X := \Pi_X(H_1(X,\Z))\) is a full lattice in the
 real vector space underlying \(\HdualX\).
 \lean{JacobianChallenge.Periods.periodFullComplexLattice}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 Apply Riemann bilinear relations to show full real rank and discreteness; combine
 to obtain a full lattice in the underlying real vector space.
 \end{theorem}
@@ -136,7 +136,7 @@ The Jacobian of \(X\) is the complex torus
 \]
 \lean{Jacobian}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 Use period lattice theorem + complex torus quotient package to construct
 \(\HdualX/\periods_X\) with additive, topological, and manifold structures.
 \end{definition}
@@ -165,7 +165,7 @@ For \(P\in X\), define
 where the path is arbitrary and the class is taken modulo periods.
 \lean{Jacobian.ofCurve}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 Define by integrating forms from \(P\) to \(Q\); prove path-independence modulo
 period lattice, then descend to Jacobian quotient class.
 \end{definition}
@@ -190,7 +190,7 @@ genuine curve rather than collapsing to a point.
 If \(g(X)>0\), then \(\AJ_P : X\to \Jac(X)\) is injective.
 \lean{Jacobian.ofCurve_inj}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 Reduce equality of Jacobian classes to vanishing of all period functionals and
 invoke Abel point-separation (Abel theorem input).
 \end{theorem}
@@ -224,7 +224,7 @@ by summing local inverse branches away from the branch locus and extending
 holomorphically.
 \lean{ContMDiff.degree, JacobianChallenge.TraceDegree.pullbackFormsLinearMap}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 Define degree by constant/nonconstant split; define trace by summing inverse
 branches off branch locus and extending holomorphically across it.
 \end{definition}
@@ -254,7 +254,7 @@ For every \(\eta\in\HY\),
 \]
 \lean{JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 Compute locally on regular values using inverse branches, then globalize by
 analytic continuation to conclude \(\tr_f(f^*\eta)=\deg(f)\eta\).
 \end{theorem}
@@ -286,7 +286,7 @@ homomorphisms. They satisfy identity and composition laws:
 \]
 \lean{Jacobian.pushforward_contMDiff, Jacobian.pushforward_id_apply, Jacobian.pushforward_comp_apply, Jacobian.pullback_contMDiff, Jacobian.pullback_id_apply, Jacobian.pullback_comp_apply}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 Construct descended maps from linear maps on \(\HdualX\), prove they preserve
 period lattice, then establish holomorphicity and identity/composition laws.
 \end{theorem}
@@ -316,7 +316,7 @@ For every \(P\in\Jac(Y)\),
 \]
 \lean{Jacobian.pushforward_pullback}
 \leanok
-\paragraph{Proof plan (Lean handoff).}
+\proofplan
 Descend the trace-pullback identity from one-forms to Jacobian quotient classes
 and transport through the pushforward/pullback descent maps.
 \end{theorem}

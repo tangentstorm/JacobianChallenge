@@ -5,13 +5,9 @@
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{classicalinput}[theorem]{Classical input}
 
-% Remark-style asides: starred (counterless) so plastexdepgraph does NOT
-% emit them as nodes in the dependency graph. Sharing the [theorem]
-% counter caused unlabeled asides to surface as `a0000000NN`-style
-% disconnected nodes.
 \theoremstyle{remark}
-\newtheorem*{formalizationnote}{Formalization note}
-\newtheorem*{proofsketch}{Proof sketch}
+\newtheorem{formalizationnote}[theorem]{Formalization note}
+\newtheorem{proofsketch}[theorem]{Proof sketch}
 
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\R}{\mathbb{R}}
@@ -42,6 +38,11 @@
 \newcommand{\code}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\depends}[1]{\par\smallskip\noindent\textbf{Depends on:} #1\par\smallskip}
 \newcommand{\todoformal}[1]{\par\smallskip\noindent\textbf{Formalization gap:} #1\par\smallskip}
+% \proofplan replaces `\paragraph{Proof plan (Lean handoff).}` inside
+% theorem-counter envs. The sectional `\paragraph` form caused plastex
+% to close the surrounding env early, spawning empty `a0000000NN`
+% phantom wrappers that surfaced as disconnected dep-graph nodes.
+\newcommand{\proofplan}{\par\smallskip\noindent\textbf{Proof plan (Lean handoff).}\quad}
 
 % Plain-English narration block.
 %

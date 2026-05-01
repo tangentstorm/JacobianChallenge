@@ -20,13 +20,9 @@
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{classicalinput}[theorem]{Classical input}
 
-% Remark-style asides: starred (counterless) so plastexdepgraph does NOT
-% emit them as nodes in the dependency graph. Sharing the [theorem]
-% counter caused unlabeled asides to surface as `a0000000NN`-style
-% disconnected nodes on the web build.
 \theoremstyle{remark}
-\newtheorem*{formalizationnote}{Formalization note}
-\newtheorem*{proofsketch}{Proof sketch}
+\newtheorem{formalizationnote}[theorem]{Formalization note}
+\newtheorem{proofsketch}[theorem]{Proof sketch}
 
 \newcommand{\C}{\mathbb{C}}
 \newcommand{\R}{\mathbb{R}}
@@ -59,6 +55,12 @@
 \newcommand{\lean}[1]{\par\smallskip\noindent\textbf{Lean target:} \code{#1}\par\smallskip}
 \newcommand{\depends}[1]{\par\smallskip\noindent\textbf{Depends on:} #1\par\smallskip}
 \newcommand{\todoformal}[1]{\par\smallskip\noindent\textbf{Formalization gap:} #1\par\smallskip}
+% \proofplan replaces `\paragraph{Proof plan (Lean handoff).}` inside
+% theorem-counter envs. The sectional `\paragraph` form caused plastex
+% to close the surrounding `\begin{definition}` early on the web build,
+% spawning empty `a0000000NN` phantom wrappers that surfaced as
+% disconnected nodes in the dep graph.
+\newcommand{\proofplan}{\par\smallskip\noindent\textbf{Proof plan (Lean handoff).}\quad}
 
 % Lean Blueprint annotations. The standalone informal PDF ignores graph
 % metadata while the blueprint web build interprets these commands.
