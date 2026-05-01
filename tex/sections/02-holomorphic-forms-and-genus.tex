@@ -536,6 +536,7 @@ equals \(\deg(f)\).
 \depends{Local power-series order at \(p\) (\texttt{analyticOrderAt});
 constancy in the generic fiber from the open-mapping + isolated-zeros
 machinery.}
+\lean{JacobianChallenge.Blueprint.branchedDegree}
 \leanok
 \end{definition}
 
@@ -560,6 +561,7 @@ the trace, push-pull) runs on this number.
 \label{lem:branch-locus-finite}
 \uses{def:branched-degree}
 The set \(\{p\in X : e_p(f)\ge 2\}\) is finite.
+\lean{JacobianChallenge.Blueprint.branch_locus_finite}
 \notready
 \end{lemma}
 
@@ -589,6 +591,7 @@ identity theorem, and finite by compactness.
 \uses{def:branched-degree,lem:branch-locus-finite}
 If \(\deg(f)=1\), then \(e_p(f)=1\) for every \(p\in X\), so \(f\) is
 unramified.
+\lean{JacobianChallenge.Blueprint.degree_one_no_ramification}
 \leanok
 \end{lemma}
 
@@ -619,6 +622,7 @@ biholomorphism: every \(p\in X\) has a neighborhood mapped
 biholomorphically onto a neighborhood of \(f(p)\).
 \depends{Mathlib's local inverse function theorem on \(\C\) plus the
 fact that unramification means the local derivative is nonzero.}
+\lean{JacobianChallenge.Blueprint.local_biholo_unramified}
 \notready
 \end{theorem}
 
@@ -641,6 +645,7 @@ genus-zero surfaces with the sphere.
 \label{thm:degree-one-bijective}
 \uses{def:branched-degree,thm:local-biholo-unramified}
 A degree-one holomorphic map \(f:X\to Y\) is bijective.
+\lean{JacobianChallenge.Blueprint.degree_one_bijective}
 \notready
 \end{theorem}
 
