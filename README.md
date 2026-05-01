@@ -8,7 +8,18 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-04-30 (CI-thread, post-`b66e8d0`)
+Last tick: 2026-04-30 (CI-thread, post-`857c23b`)
+
+```text
+Blueprint annotation coverage (most recent: PR #8 / 857c23b)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Annotated this tick                          2  thm:compact-bijection-homeo
+                                                + thm:abel-jacobi-injective
+\proofplan macro fix (170e94b on main)          paragraph→proofplan retrofit
+                                                across statement-bank entries
+\mathlibok flag introduced                      points compact-bijection-homeo
+                                                at Continuous.homeoOfEquivCompactToT2
+```
 
 ```text
 Blueprint Sec02 finite-dim chain (sec02 leftmost chain to fd-holomorphic-one-forms)
