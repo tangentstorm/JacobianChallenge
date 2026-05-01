@@ -8,10 +8,48 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-05-01 (hourly /loop, post-`f2279b4`)
+Last tick: 2026-05-01 (claude/formalize-divisor-discrete-w9XH6)
 
 ```text
-Worker re-prompts + Aristotle queue check (this tick)
+divisor-discrete BLOCKER cleared (this tick)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Sec01 lem:divisor-discrete                  Hypothesis fixed (was disprovable
+                                            ∃ x, f x ≠ 0; now ∀ q,
+                                            MeromorphicAtX f q ∧
+                                            vanishingOrder X q f ≠ ⊤)
+                                            and proof discharged sorry-free.
+Helper added                                meromorphicAt_chart_pullback_of_
+                                            meromorphicAtX +
+                                            meromorphicOn_chart_pullback_of_
+                                            meromorphicAtX in
+                                            Jacobian/HolomorphicForms/
+                                            VanishingOrder.lean (lifts
+                                            manifold-pointwise meromorphy
+                                            to chart-target MeromorphicOn
+                                            via meromorphicAt_comp_iff_of_
+                                            deriv_ne_zero + existing
+                                            transition-analyticity infra).
+Proof core                                  Mathlib's
+                                            codiscrete_setOf_meromorphic-
+                                            OrderAt_eq_zero_or_top on the
+                                            chart pullback; the order=⊤
+                                            disjunct excluded by
+                                            hf_finite via chart-independence;
+                                            pulled back through chartAt ℂ p
+                                            homeomorphism.
+Downstream threading                        divisor_finite_support and
+                                            principalDivisor signatures
+                                            updated to consume the new
+                                            hypothesis pair (no sorry
+                                            regressions).
+Blueprint annotation                        \notready → \leanok on
+                                            lem:divisor-discrete
+                                            (tex/sections/
+                                            01-compact-riemann-surfaces.tex).
+```
+
+```text
+Worker re-prompts + Aristotle queue check (prior tick, post-`f2279b4`)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Workers S, B, SB, AE re-prompted    Each fed MEDIUM-leaf continuation:
                                     replace prose-only leaves with
@@ -86,14 +124,22 @@ Stubs added                                  2  lem:holomorphic-form-is-closed (
 ```
 
 ```text
-Sec01 progress (most recent: a1744ab)
+Sec01 progress (most recent: claude/formalize-divisor-discrete-w9XH6)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Recently closed                                 def:principal-divisor (Worker C, a1744ab)
+Recently closed                                 lem:divisor-discrete (this tick,
+                                                hypothesis fix + sorry-free proof
+                                                via codiscrete-of-meromorphic-order
+                                                + chart-pullback transition lift)
+                                                def:principal-divisor (Worker C, a1744ab)
                                                 lem:divisor-finite-support (Worker H, 7d9b44a)
                                                 principalDivisors (fef531b leanok flip)
-BLOCKER documented                              divisor_discrete (Worker M, 6a60b24)
-                                                hypothesis ∃ x, f x ≠ 0 too weak;
-                                                needs MeromorphicAtX + ConnectedSpace X
+BLOCKER cleared                                 divisor_discrete: hypothesis was
+                                                disprovable ∃ x, f x ≠ 0; now uses
+                                                pointwise ∀ q, MeromorphicAtX f q ∧
+                                                vanishingOrder X q f ≠ ⊤. Connected-
+                                                ness propagation (∃ p, order ≠ ⊤
+                                                + ConnectedSpace X ⇒ ∀ p) deferred
+                                                to a follow-on lemma.
 ```
 
 ```text
@@ -127,15 +173,15 @@ Sorry-free chain decls                       8 / 8 (Sec02 user-facing) ✓
 ```text
 Blueprint sorry totals (lake build Jacobian.Blueprint)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Sec01                                        2  (DivisorDiscrete[BLOCKER]
-                                                 + PrincipalDegreeZero)
+Sec01                                        1  (PrincipalDegreeZero)
 Sec02 named leaves                           1  (montel_pointwise_extraction)
 HolomorphicForms/CompactRiemannSurface       3  (production sorries pulled in via Sec02 chain)
                                             ───
-Total declaration-uses-sorry warnings        6   (was 8; -2 net from leanok flips on
-                                                 principal-divisors + fd-holomorphic-one-forms;
-                                                 stub additions this tick are placeholder
-                                                 True-conclusion theorems and add no sorry)
+Total declaration-uses-sorry warnings        5   (was 6; -1 net from divisor_discrete
+                                                 BLOCKER clearance — hypothesis fix +
+                                                 chart-pullback codiscrete proof, no
+                                                 new sorries introduced anywhere
+                                                 downstream)
 ```
 
 Earlier (pre-CI-thread) progress on production / Aristotle integrations preserved below for context.
