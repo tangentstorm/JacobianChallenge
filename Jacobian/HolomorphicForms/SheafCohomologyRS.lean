@@ -1,5 +1,8 @@
 import Mathlib.Topology.Sheaves.Sheaf
 import Mathlib.CategoryTheory.Sites.SheafCohomology.Basic
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.LinearAlgebra.FiniteDimensional.Defs
+import Mathlib.Geometry.Manifold.IsManifold.Basic
 
 /-!
 # Sheaf cohomology on a Riemann surface (project API layer)
@@ -37,8 +40,15 @@ topological space `X`. This file is the leaf bank for
   `Sheaf.H`, so the wrapper is redundant. (Recorded for completeness;
   no project work needed.)
 * Leaf 4 (Čech cochain complex packaging) — MEDIUM, deferred.
-* Leaf 7 (`FiniteDimensionalSheafCohomologyRS` class) — HARD frontier
-  class, deferred.
+
+This round adds:
+* Leaf 7 (`FiniteDimensionalSheafCohomologyRS`, HARD) as a frontier
+  class, since coherent analytic sheaf theory is ABSENT in Mathlib
+  v4.28.0 (per the plan's inventory). The class records the two
+  finite-dimensionality axioms that classical RR/Serre duality would
+  prove; downstream consumers can either supply instances by hand for
+  specific sheaves (e.g. constant sheaves on a discrete base) or wait
+  for analytic-sheaf machinery to land.
 -/
 
 namespace JacobianChallenge.HolomorphicForms
@@ -81,5 +91,40 @@ noncomputable abbrev RSLineBundleCohomology
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X) (q : ℕ) : Type 0 :=
   RSSheafCohomology X L q
+
+open scoped Manifold in
+/-- **Frontier class.** Records, as a typeclass boundary, the
+finite-dimensionality of `H⁰` and `H¹` of an abelian sheaf on a
+compact Riemann surface — the two cohomological degrees that classical
+Riemann-Roch / Serre duality cares about.
+
+This is plan leaf 7 (HARD). Mathlib v4.28.0 has neither coherent
+analytic 𝒪_X-modules nor the finite-dimensionality theorem for
+coherent sheaf cohomology on a compact Riemann surface (both ABSENT
+in the plan's inventory), so we cannot prove this as a theorem here.
+Exposing it as a class lets downstream consumers state results
+parametrically over "F whose cohomology is finite-dimensional" and
+discharge the obligation when the analytic-sheaf machinery lands or
+for ad-hoc sheaves where a direct argument exists.
+
+The `[Module ℂ (RSSheafCohomology X F q)]` instance arguments are not
+auto-derivable from `Sheaf.H`'s `AddCommGroup` alone; consumers
+provide them (e.g. via a sheaf-of-ℂ-modules realisation, or a
+`letI`-built `Module` instance via Mathlib's
+`AddCommGroup.toIntModule` and a `ℂ`-action witness). The class only
+asserts the two `FiniteDimensional` properties on top of those data. -/
+class FiniteDimensionalSheafCohomologyRS
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
+    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
+    (F : RSAbSheaf X)
+    [Module ℂ (RSSheafCohomology X F 0)]
+    [Module ℂ (RSSheafCohomology X F 1)] : Prop where
+  /-- `H⁰(X, F)` is a finite-dimensional ℂ-vector space. -/
+  finiteDimensional_H0 : FiniteDimensional ℂ (RSSheafCohomology X F 0)
+  /-- `H¹(X, F)` is a finite-dimensional ℂ-vector space. -/
+  finiteDimensional_H1 : FiniteDimensional ℂ (RSSheafCohomology X F 1)
 
 end JacobianChallenge.HolomorphicForms
