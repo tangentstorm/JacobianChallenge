@@ -337,6 +337,76 @@ theorem orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas
     simp [Function.comp_apply, e.left_inv hp]
   rw [hep]
 
+/-! ### Manifold meromorphy ⇒ chart-pullback meromorphy
+
+If `f : X → ℂ` is meromorphic at every point of `X` (in the manifold sense
+encoded by `MeromorphicAtX`), then for every base point `p : X`, the
+chart pullback `f ∘ (chartAt ℂ p).symm` is meromorphic on the entire
+chart target `(chartAt ℂ p).target`.
+
+The proof at a point `w ∈ (chartAt ℂ p).target` factorises through the
+chart at `q := (chartAt ℂ p).symm w`: the transition
+`chartAt ℂ q ∘ (chartAt ℂ p).symm` is analytic at `w` with nonzero
+derivative (the existing transition-analyticity infrastructure), so
+`meromorphicAt_comp_iff_of_deriv_ne_zero` lifts manifold-level meromorphy
+at `q` to chart-target-level meromorphy at `w`.
+-/
+
+/-- **Chart pullback is meromorphic at every target point.**
+
+Given pointwise manifold meromorphy of `f`, the chart pullback through
+`chartAt ℂ p` is `MeromorphicAt` at every `w ∈ (chartAt ℂ p).target`. -/
+theorem meromorphicAt_chart_pullback_of_meromorphicAtX
+    {f : X → ℂ} (hf : ∀ q : X, MeromorphicAtX f q) (p : X)
+    {w : ℂ} (hw : w ∈ (chartAt ℂ p).target) :
+    MeromorphicAt (f ∘ (chartAt ℂ p).symm) w := by
+  set q : X := (chartAt ℂ p).symm w with hq_def
+  have hq_source : q ∈ (chartAt ℂ p).source := (chartAt ℂ p).map_target hw
+  have hpq : (chartAt ℂ p) q = w := (chartAt ℂ p).right_inv hw
+  -- Membership of charts in the maximal atlas.
+  have hp_mem : (chartAt ℂ p) ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X :=
+    IsManifold.chart_mem_maximalAtlas p
+  have hq_mem : (chartAt ℂ q) ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X :=
+    IsManifold.chart_mem_maximalAtlas q
+  have hq_q_source : q ∈ (chartAt ℂ q).source := mem_chart_source ℂ q
+  -- The transition `chartAt ℂ q ∘ (chartAt ℂ p).symm` is analytic at `w`.
+  have h_an : AnalyticAt ℂ ((chartAt ℂ q) ∘ (chartAt ℂ p).symm) w := by
+    rw [show w = (chartAt ℂ p) q from hpq.symm]
+    exact analyticAt_transition_of_mem_maximalAtlas hp_mem hq_mem hq_source hq_q_source
+  -- Its derivative at `w` is nonzero.
+  have h_der : deriv ((chartAt ℂ q) ∘ (chartAt ℂ p).symm) w ≠ 0 := by
+    rw [show w = (chartAt ℂ p) q from hpq.symm]
+    exact transition_deriv_ne_zero (chartAt ℂ p) hp_mem hq_source
+  -- Manifold meromorphy at `q` translates to `MeromorphicAt (f ∘ chartAt ℂ q .symm)`
+  -- at `chartAt ℂ q q`.
+  have hfq : MeromorphicAt (f ∘ (chartAt ℂ q).symm) ((chartAt ℂ q) q) := by
+    have h := hf q
+    unfold MeromorphicAtX at h
+    rwa [extChartAt_symm_eq_chartAt_symm, extChartAt_eq_chartAt] at h
+  -- Lift to meromorphy of the composite at `w`.
+  have hcomp : MeromorphicAt
+      ((f ∘ (chartAt ℂ q).symm) ∘ ((chartAt ℂ q) ∘ (chartAt ℂ p).symm)) w := by
+    rw [meromorphicAt_comp_iff_of_deriv_ne_zero h_an h_der]
+    have heval : ((chartAt ℂ q) ∘ (chartAt ℂ p).symm) w = (chartAt ℂ q) q := by
+      simp [Function.comp_apply, hq_def]
+    rw [heval]; exact hfq
+  -- The composite agrees with `f ∘ (chartAt ℂ p).symm` on a punctured nbhd of `w`.
+  -- Use `eventuallyEq_pullback` with role-bookkeeping (outer chart at `q`, `e := chartAt ℂ p`).
+  have heq : (f ∘ (chartAt ℂ p).symm) =ᶠ[𝓝[≠] w]
+      (f ∘ (chartAt ℂ q).symm) ∘ ((chartAt ℂ q) ∘ (chartAt ℂ p).symm) := by
+    have := eventuallyEq_pullback (p := q) (chartAt ℂ p) hq_source f
+    rwa [hpq] at this
+  exact hcomp.congr heq.symm
+
+/-- **Chart pullback is meromorphic on the chart target.**
+
+Packages `meromorphicAt_chart_pullback_of_meromorphicAtX` as a
+`MeromorphicOn` statement. -/
+theorem meromorphicOn_chart_pullback_of_meromorphicAtX
+    {f : X → ℂ} (hf : ∀ q : X, MeromorphicAtX f q) (p : X) :
+    MeromorphicOn (f ∘ (chartAt ℂ p).symm) (chartAt ℂ p).target :=
+  fun _w hw ↦ meromorphicAt_chart_pullback_of_meromorphicAtX hf p hw
+
 /-- **Chart-independence (two arbitrary atlas charts).** For two charts
 `e₁, e₂ ∈ maximalAtlas 𝓘(ℂ) ω X` both containing `p` in their sources,
 the meromorphic-order pullbacks agree. -/
