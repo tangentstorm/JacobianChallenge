@@ -33,6 +33,9 @@ import Jacobian.Blueprint.Sec03.HolomorphicFormIsClosed
 -- sec03
 import Jacobian.Blueprint.Sec03.StokesOnRSWithBoundary
 
+-- sec03
+import Jacobian.Blueprint.Sec03.SymplecticBasis
+
 /-!
 # Blueprint stubs index
 
