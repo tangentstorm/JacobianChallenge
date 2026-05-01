@@ -8,10 +8,25 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-05-01 (hourly /loop, post-`f2279b4`)
+Last tick: 2026-05-01 (`thm:degree-one-bijective` discharged on `claude/formalize-degree-one-bijective-QIaE9`)
 
 ```text
-Worker re-prompts + Aristotle queue check (this tick)
+Sec02 degree-one-bijective discharged (this tick)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BranchedCoverData                            ████████  +weightedFiberCard_eq invariant
+branchedDegree_pos (leaf 5)                  ████████  sorry-free (Finset.sum_pos witness)
+branchedDegree_eq_card_…unramified (leaf 6)  ████████  sorry-free (sum_congr + sum_const)
+branchedDegree_one_fiber_singleton (helper)  ████████  sorry-free (card ≤ sum = 1 ⇒ singleton)
+branchedDegree_one_fiber_unique (leaf 7)     ████████  sorry-free (corollary of helper)
+degree_one_bijective                         ████████  sorry-free against `BranchedCoverData`
+branchedCoverData_of_nonconstant_holo (8)    ░░░░░░░░  blocked: Mathlib v4.28.0 lacks
+                                                       open-mapping for analytic + AnalyticAt.order
+```
+
+Earlier ticks recorded below for context.
+
+```text
+Worker re-prompts + Aristotle queue check (prior tick, post-`f2279b4`)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Workers S, B, SB, AE re-prompted    Each fed MEDIUM-leaf continuation:
                                     replace prose-only leaves with
