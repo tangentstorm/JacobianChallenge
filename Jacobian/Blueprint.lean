@@ -24,6 +24,9 @@ import Jacobian.Blueprint.Sec02.FdFromRiesz
 import Jacobian.Blueprint.Sec02.InputFiniteDimensionality
 import Jacobian.Blueprint.Sec02.FdHolomorphicOneForms
 
+-- sec03
+import Jacobian.Blueprint.Sec03.StokesOnRSWithBoundary
+
 /-!
 # Blueprint stubs index
 
