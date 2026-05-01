@@ -274,18 +274,43 @@ theorem hodge_form_posDef
       f ≠ 0 → (Complex.I * Q f f).re > 0 := by
   sorry
 
+/-- **Named helper (TOPDOWN, Aristotle 178b41f9).** If the wedge-integration
+pairing `Q` is antisymmetric, expressible in terms of period integrals via
+the Riemann bilinear identity, and the associated Hodge form
+`ω ↦ i · Q(ω, ω̄)` is positive-definite on nonzero functionals, then the
+period functionals `(periodPairing ℂ X) ∘ σ` are ℝ-linearly independent.
+
+This packages the deep analytic content (Riemann bilinear identity +
+Hodge positivity ⇒ linear independence) into a single named sorry,
+separating it from the mere *existence* of `Q` / the identity / the
+positivity (which are the three Mathlib blockers above). -/
+theorem riemann_bilinear_real_lin_indep_witness
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
+    (hσ : Function.Injective σ)
+    (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
+         (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ)
+    (hQ_antisym : ∀ f g, Q f g = -Q g f)
+    (hQ_bilinear : ∀ (f g : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
+      Q f g = ∑ k : Fin (analyticGenus ℂ X),
+        (f (holomorphicOneFormFinBasis ℂ X k) *
+         g (holomorphicOneFormFinBasis ℂ X k) -
+         g (holomorphicOneFormFinBasis ℂ X k) *
+         f (holomorphicOneFormFinBasis ℂ X k)))
+    (hQ_pos_def : ∀ f : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ,
+      f ≠ 0 → (Complex.I * Q f f).re > 0) :
+    LinearIndependent ℝ
+      (fun i => (periodPairing ℂ X) (σ i)) := by
+  sorry
+
 /-- **Analytic core.** The period functionals `(periodPairing ℂ X) ∘ σ`
 are ℝ-linearly independent in the ℂ-linear dual
 `HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ` (viewed as an ℝ-module).
 
-The classical proof combines all three blockers above:
-1. Obtain the wedge-integration pairing `Q` from
-   `wedge_integration_pairing_exists`.
-2. Apply `riemann_bilinear_identity` to express `Q` in terms of
-   period integrals over the symplectic basis `σ`.
-3. Suppose `Σ cᵢ · (periodPairing ℂ X)(σ i) = 0` with `cᵢ ∈ ℝ`.
-   Then `f = Σ cᵢ · (periodPairing ℂ X)(σ i)` is zero, so `Q f f = 0`.
-4. By `hodge_form_posDef`, `f = 0` implies all `cᵢ = 0`. -/
+Sorry-free assembly of the three blockers above into
+`riemann_bilinear_real_lin_indep_witness`. (Aristotle 178b41f9.) -/
 theorem period_functionals_ℝ_linearIndependent
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -294,7 +319,10 @@ theorem period_functionals_ℝ_linearIndependent
     (hσ : Function.Injective σ) :
     LinearIndependent ℝ
       (fun i => (periodPairing ℂ X) (σ i)) := by
-  sorry
+  obtain ⟨Q, hQ_antisym⟩ := wedge_integration_pairing_exists X
+  exact riemann_bilinear_real_lin_indep_witness X σ hσ Q hQ_antisym
+    (riemann_bilinear_identity X σ hσ Q)
+    (hodge_form_posDef X Q)
 
 /-- **Sub-obligation 3 (TOPDOWN transport, sorry-free).** Given a
 symplectic basis `{σ i}`, the `2g` period vectors are ℝ-linearly
