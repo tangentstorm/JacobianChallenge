@@ -26,6 +26,7 @@ import Jacobian.Blueprint.Sec02.InputFiniteDimensionality
 import Jacobian.Blueprint.Sec02.FdHolomorphicOneForms
 import Jacobian.Blueprint.Sec02.DegreeOneNoRamification
 import Jacobian.Blueprint.Sec02.BranchedDegree
+import Jacobian.Blueprint.Sec02.InputDegreeOneIsomorphism
 
 -- sec03
 import Jacobian.Blueprint.Sec03.HolomorphicFormIsClosed
