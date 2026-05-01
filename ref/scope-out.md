@@ -53,13 +53,13 @@ the chosen breakdown.
 | `thm:euler-char-line-bundle` | `<missing>` | `<missing>` | DECOMPOSE | sub-leaves: line bundles on RS, Euler characteristic, divisor↔line-bundle correspondence |
 | `input:riemann-roch` | `<missing>` | `<missing>` | DECOMPOSE | sub-leaves: euler-char-line-bundle + serre-duality-rs (assembly is short) |
 | `prop:genus-zero-degree-one-map` | `HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero` | `Jacobian/HolomorphicForms/GenusZeroClassification.lean` | WORKER | Aristotle/Codex on RiemannRoch+MeromorphicDegree cluster |
-| `def:branched-degree` | `<missing>` | `<missing>` | DECOMPOSE | sub-leaves: ramification index, local degree of holomorphic map, branch points finite |
-| `lem:branch-locus-finite` | `<missing>` | `<missing>` | DECOMPOSE | sub-leaves: ramification-index ≥ 2 set is closed-discrete (analytic), then compact+discrete ⇒ finite |
-| `lem:degree-one-no-ramification` | `<missing>` | `<missing>` | MEDIUM | unramified ↔ derivative nonzero; degree=1 forces every fiber size 1 hence no branching |
-| `thm:local-biholo-unramified` | `<missing>` | `<missing>` | MEDIUM | inverse function theorem on complex 1-manifolds; Mathlib has `HasFDerivAt.localHomeomorph` machinery to wire |
-| `thm:degree-one-bijective` | `<missing>` | `<missing>` | SHORT | degree=1 ⇒ injective (covering with one sheet); combine with surjective-from-properness |
-| `thm:compact-bijection-homeo` | Mathlib `Continuous.homeoOfEquivCompactToT2` | (re-export) | DONE | sorry-free Mathlib; add `\lean{}` re-export stub if blueprint wants its own name |
-| `input:degree-one-isomorphism` | `<missing>` | `<missing>` | SHORT | umbrella combining `degree-one-bijective` + `local-biholo-unramified` + `compact-bijection-homeo` |
+| `def:branched-degree` | `Blueprint.branchedDegree` | `Sec02/BranchedDegree.lean` | SHORT | def landed (weighted-fibre-count over chosen base point); BranchedCoverData structure + `branchedDegree_eq_weightedFiberCard` rewrite still sorry-bearing |
+| `lem:branch-locus-finite` | `Blueprint.branch_locus_finite` | `Sec02/BranchLocusFinite.lean` | MEDIUM | stub landed; body sorry pending the analytic chart-local discreteness fact for ramification-index ≥ 2 |
+| `lem:degree-one-no-ramification` | `Blueprint.degree_one_no_ramification` | `Sec02/DegreeOneNoRamification.lean` | MEDIUM | stub landed; body sorry pending unramified ↔ derivative-nonzero in chart |
+| `thm:local-biholo-unramified` | `Blueprint.local_biholo_unramified` | `Sec02/LocalBiholoUnramified.lean` | MEDIUM | stub landed; body sorry pending biholomorphism API + chart-local inverse function theorem |
+| `thm:degree-one-bijective` | `Blueprint.degree_one_bijective` | `Sec02/DegreeOneBijective.lean` | SHORT | stub landed; body is `True := trivial` placeholder pending real conclusion (degree=1 ⇒ injective covering) |
+| `thm:compact-bijection-homeo` | Mathlib `Continuous.homeoOfEquivCompactToT2` | (re-export) | DONE | sorry-free Mathlib; tex pinned with `\mathlibok` |
+| `input:degree-one-isomorphism` | `Blueprint.input_degree_one_isomorphism` | `Sec02/InputDegreeOneIsomorphism.lean` | SHORT | umbrella stub landed; body sorry pending `branchedDegree_one_fiber_unique` injectivity leaf |
 
 ## sec03 — Periods and Riemann bilinear
 
