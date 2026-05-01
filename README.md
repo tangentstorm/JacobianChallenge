@@ -8,10 +8,33 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-04-30 (CI-thread, post-`a73e77a`)
+Last tick: 2026-04-30 (CI-thread, post-`7edff69`)
 
 ```text
-Stub additions + leanok flips (this tick)
+Stub additions (this tick) — five new cloud-worker batches
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. def:sheaf-cohomology-rs leaves 1+2+5+6   Worker C, 35cac7e
+   (Jacobian/HolomorphicForms/SheafCohomologyRS.lean, NEW)
+2. def:meromorphic-function leaves 1+4      Worker N, e737307
+   (Jacobian/Blueprint/Sec01/MeromorphicFunctionConcrete.lean, NEW)
+3. thm:stokes-on-rs-with-boundary leaves    Worker S, fc97d9c
+   (Jacobian/Blueprint/Sec03/StokesOnRSWithBoundary.lean, NEW)
+4. def:branched-degree leaves               Worker B, 6f8651c
+   (Jacobian/Blueprint/Sec02/BranchedDegree.lean, NEW)
+5. def:symplectic-basis TRIVIAL/SHORT       Worker SB, 7edff69
+   (Jacobian/Blueprint/Sec03/SymplecticBasis.lean, NEW)
+
+All five are placeholder stubs (purely additive, no protected-file
+regression). Net Blueprint sorry count unchanged at 6. Merge 4
+required a 3-way resolution on Jacobian/Blueprint.lean import-line
+ordering — kept all sides additively (Sec02.BranchedDegree +
+Sec02.DegreeOneNoRamification + Sec03 imports all coexist).
+```
+
+Earlier ticks recorded below for context.
+
+```text
+Stub additions + leanok flips (prior tick, post-a73e77a)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Stubs added                                  2  lem:holomorphic-form-is-closed (Sec03,
                                                 Worker M, placeholder True-conclusion)
