@@ -121,22 +121,33 @@ All labels covered by `prop:complex-torus-package` (`\leanok` in blueprint, sorr
 
 ## TRIVIAL/SHORT nodes discharged or wired across the trivial-batch series
 
-The Small Jobs Worker has run 11 trivial-batch PRs (#8, #22, #30, #35, #40, #44, #48, #51, #54, #57, #59) covering:
+The Small Jobs Worker has run 12 trivial-batch PRs (#8, #22, #30, #35, #40, #44, #48, #51, #54, #57, #59, #61) covering:
 
 - **Lean discharges (3)**: `input_finite_dimensionality` (a6e8efe), `vanishingOrder` (560e1b0), `meromorphic_as_cp1_map` (2d929d1).
 - **New Mathlib-free Sec02/Sec03/Sec05 placeholder stubs**: `Sec02/InputDegreeOneIsomorphism.lean`, `Sec03/{PolygonalModel, PrimitiveOnPolygon, BilinearFromStokes, HermitianPositivity}.lean`, `Sec05/PrincipalDeg0SimpleSupportDeg1.lean` — each `theorem ... : True := trivial` with a docstring recording the replacement-target signature and DECOMPOSE/MEDIUM sub-leaves.
-- **`\lean{}` annotations pinned**: every `\label{}` block in `tex/sections/0[1-7]-*.tex` and `tex/statements/*.tex` now has a resolvable `\lean{}` target (verified by sweep at top of batch 12).
+- **`\lean{}` annotations pinned**: every `\label{}` block in `tex/sections/0[1-7]-*.tex` and `tex/statements/*.tex` has a resolvable `\lean{}` target.
 - **`\notready → \leanok` promotions** (where the named decl body is sorry-free per the integrator convention): `thm:principal-degree-zero`, `input:divisors` (PR #57); `thm:riemann-hurwitz-deg1`, `thm:aj-divisor-hom` (PR #59); plus the historical `def:divisor`, `def:divisor-degree` (PR #30) and many others.
 - **Sec06 cleanup**: stray `\notready` removed from `lem:trace-forms` (PR #59).
+- **Project-bookkeeping refresh** (PR #61, batch 12): scope-out.md sec02 WORKER → DONE for Worker C/M/H; `<missing>` rows replaced with file paths; footer rewrite.
 
-## Remaining easy pickups
+The integrator's 11e706d milestone (concurrent with batches 11-12) added `\begin{proof}\leanok\end{proof}` blocks for 11 sorry-free theorems across all sections, unblocking GREEN BACKGROUND fills on the dep graph proof ellipses. As of that commit, the `\lean{}` / `\leanok` / proof-leanok wiring on the blueprint is in a coherent steady state.
 
-- **`\notready → \leanok` candidates** where the named decl is sorry-free but kept conservative:
-  - `thm:abel-point-separation` / `input:abel-theorem` (both → `pathIntegralFunctional_separates_points`, sorry-free body via the opaque `*_spec`).
-  - `thm:degree-one-bijective`, `thm:polygonal-model`, `lem:primitive-on-polygon`, `thm:bilinear-from-stokes`, `thm:hermitian-positivity` — all `True := trivial` placeholders. Promotion correctness depends on the integrator's policy on `True` placeholders (kept `\notready` so far for accuracy of conclusion).
+## Saturation report (post-batch 12)
+
+The trivial-batch series has reached saturation — the remaining `\notready` items either:
+
+1. point at production decls whose own body is sorry-bearing (no convention-supported `\leanok` promotion), or
+2. point at `True := trivial` placeholders whose conclusion isn't the real lemma (integrator policy: keep `\notready` for accuracy), or
+3. point at sorry-free assemblies above sorry-bearing transitive helpers (already promoted in batches 10-11; further promotion would risk over-claiming completeness on the dep graph).
+
+Any further trivial work would need the integrator to explicitly direct it (e.g., new placeholder-stub creation, or a policy clarification on `True` placeholders).
+
+## Remaining work shape
 
 - **First DECOMPOSE worker should target**: `def:sheaf-cohomology-rs` is now scaffolded (`Jacobian/HolomorphicForms/SheafCohomologyRS.lean`); the next step is filling `RSAbSheaf` / `RSSheafCohomology` consumer lemmas needed by `serre_duality_rs` and `euler_char_line_bundle`.
 
-- **Stokes chain (DECOMPOSE)**: `thm:stokes-on-rs-with-boundary` umbrella stub now landed in `Sec03/StokesOnRSWithBoundary.lean` with 8 named sub-leaves; the eight-leaf decomposition is in `ref/plans/stokes-on-rs-with-boundary.md` and ready for follow-up workers.
+- **Stokes chain (DECOMPOSE)**: `thm:stokes-on-rs-with-boundary` umbrella stub landed in `Sec03/StokesOnRSWithBoundary.lean` with 8 named sub-leaves; the eight-leaf decomposition is in `ref/plans/stokes-on-rs-with-boundary.md` and ready for follow-up workers.
 
-- **Theta-function chain (HARD, in flight)**: `Sec05/RiemannTheta.lean` records the theta-function infrastructure feeding `AbelExistence.existence_of_f`. The next worker can split off the Siegel-upper-half-space + quasi-periodicity sub-leaves.
+- **Theta-function chain (HARD, in flight)**: `Sec05/RiemannTheta.lean` records the theta-function infrastructure feeding `AbelExistence.existence_of_f`. `Sec05/JacobiInversion.lean` (Worker AE) is its sibling decomposition feeding `aj_Pic0_surjective`. Both are in active development.
+
+- **Genus identification (DONE)**: `Jacobian/HolomorphicForms/GenusEqH0Canonical.lean` (Worker H, post-batch-12) caps the chain `analyticGenus ℂ X = h⁰(X, K_X) = h¹(X, 𝒪_X) = RSGenus X` as a sorry-free assembly above `GenusIdentification.lean`'s frontier sorries.
