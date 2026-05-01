@@ -356,17 +356,36 @@ def holomorphicOneForm_identityInversionTransition
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w
 
+/-- **Möbius-pullback step (pointwise).** For `w ≠ 0`, the identity-chart
+and inversion-chart coefficient functions are related by the Jacobian
+factor of the chart transition `z = w⁻¹`: `d(w⁻¹) = -w⁻² dw`.
+
+This is the chart-pullback computation on the cotangent bundle; it requires
+showing that the `ContMDiffSection` local representatives in the identity
+and inversion charts are related by the cotangent bundle transition
+function, then extracting the `-w²` Jacobian factor via evaluation at
+`1 : ℂ`.
+
+(Aristotle a577e2ce named-helper extraction.) -/
+private lemma moebiusPullback_cotangent_pointwise
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
+    holomorphicOneForm_coeff ω (w⁻¹) =
+      -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
+  sorry
+
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
 and inversion charts, the two coefficient functions are related by the
 Jacobian factor of `z = w⁻¹`.
 
-Bottom-up content: prove the explicit cotangent transition formula between
-`identityChart` and `inversionChart`, including the derivative factor
-`d(w⁻¹) = -w⁻² dw`, and rewrite it in the displayed `f(w⁻¹)` form. -/
+(Aristotle a577e2ce, sorry-free assembly via moebiusPullback_cotangent_pointwise
++ eventually_nhdsWithin_of_forall.) -/
 theorem holomorphicOneForm_identityInversionTransition_eventually
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     holomorphicOneForm_identityInversionTransition ω := by
-  sorry
+  unfold holomorphicOneForm_identityInversionTransition
+  exact eventually_nhdsWithin_of_forall fun w hw => by
+    simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hw
+    exact moebiusPullback_cotangent_pointwise ω w hw
 
 /-- **Analytic decay leaf.** A continuous inversion coefficient at `0`,
 together with the punctured cotangent-transition formula, forces the

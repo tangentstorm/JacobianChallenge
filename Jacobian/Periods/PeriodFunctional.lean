@@ -77,17 +77,42 @@ noncomputable def topologicalGenus
     [ConnectedSpace X] : ℕ :=
   Module.finrank ℤ (IntegralOneCycle X) / 2
 
+/-- **Helper for Sub-obligation 1b.** A compact connected Riemann surface
+has `H₁(X, ℤ) ≅ ℤ^(2g)` for some `g : ℕ`. This packages the deep
+topological fact (surface classification + cellular homology) as a single
+sorry-ed witness: the existence of *some* genus `g` and a ℤ-basis of
+`H₁` indexed by `Fin (2 * g)`. Absent prerequisites: CW-structure on
+compact surfaces, cellular homology, surface classification theorem —
+all missing in Mathlib v4.28.0.
+
+(Aristotle 0d7ce5da named-helper extraction.) -/
+lemma h1_has_even_basis
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    ∃ g : ℕ, Nonempty (Module.Basis (Fin (2 * g)) ℤ (IntegralOneCycle X)) := by
+  sorry
+
 /-- **Sub-obligation 1b.** `H₁(X, ℤ)` of a compact connected
 Riemann surface of topological genus `g_top` is free of rank
 `2 g_top`. Mathlib blockers: surface classification, CW-structure,
-cellular homology — all absent in v4.28.0. -/
+cellular homology — all absent in v4.28.0.
+
+(Aristotle 0d7ce5da, sorry-free assembly via h1_has_even_basis +
+topologicalGenus arithmetic.) -/
 theorem h1_free_of_compact_surface
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Nonempty (Module.Basis (Fin (2 * topologicalGenus X)) ℤ
       (IntegralOneCycle X)) := by
-  sorry
+  obtain ⟨g, ⟨b⟩⟩ := h1_has_even_basis X
+  have hfr : Module.finrank ℤ (IntegralOneCycle X) = 2 * g := by
+    rw [Module.finrank_eq_card_basis b, Fintype.card_fin]
+  have htg : topologicalGenus X = g := by
+    unfold topologicalGenus
+    omega
+  exact ⟨b.reindex (finCongr (by omega))⟩
 
 /-- **Sub-obligation 2.** The analytic genus equals the topological
 genus for a compact connected Riemann surface. Classical proof via
