@@ -58,6 +58,7 @@ import Jacobian.Blueprint.Sec05.RiemannHurwitzViaEulerChar
 import Jacobian.Blueprint.Sec05.AbelPointSeparation
 import Jacobian.Blueprint.Sec05.Pic0
 import Jacobian.Blueprint.Sec05.RiemannTheta
+import Jacobian.Blueprint.Sec05.JacobiInversion
 
 /-!
 # Blueprint stubs index
