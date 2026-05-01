@@ -42,9 +42,9 @@ the chosen breakdown.
 |---|---|---|---|---|
 | `def:cotangent-fiber-norm` | `Blueprint.cotangentFiberNormAt` | `Sec02/CotangentFiberNorm.lean` | DONE | merged via sec02-trivial-batch |
 | `def:holomorphic-sup-norm` | `Blueprint.holomorphicSupNorm` | `Sec02/HolomorphicSupNorm.lean` | DONE | merged via sec02-trivial-batch |
-| `lem:chart-coefficient-bound` | `Blueprint.chart_coefficient_bound` | `Sec02/ChartCoefficientBound.lean` | WORKER | Worker C in flight |
-| `lem:montel-compactness` | `Blueprint.montel_compactness` | `Sec02/MontelCompactness.lean` | WORKER | Worker M in flight |
-| `thm:hone-unit-ball-compact` | `Blueprint.hone_unit_ball_compact` | `Sec02/HoneUnitBallCompact.lean` | WORKER | Worker H in flight |
+| `lem:chart-coefficient-bound` | `Blueprint.chart_coefficient_bound` | `Sec02/ChartCoefficientBound.lean` | DONE | Worker C landed; body is sorry-free `‖ω x‖ ≤ 1 · holomorphicSupNorm X ω` via `SectionSupNorm.bddAbove_range_norm` + `le_ciSup` |
+| `lem:montel-compactness` | `Blueprint.montel_compactness` | `Sec02/MontelCompactness.lean` | DONE | Worker M landed; umbrella body sorry-free assembly above private leaf `montel_pointwise_extraction` (which carries the 1 remaining genuine math sorry) |
+| `thm:hone-unit-ball-compact` | `Blueprint.hone_unit_ball_compact` | `Sec02/HoneUnitBallCompact.lean` | DONE | Worker H landed; full file is sorry-free |
 | `thm:fd-from-riesz` | `Blueprint.fd_from_riesz` | `Sec02/FdFromRiesz.lean` | DONE | merged via sec02-trivial-batch |
 | `input:finite-dimensionality` | `Blueprint.input_finite_dimensionality` | `Sec02/InputFiniteDimensionality.lean` | DONE | discharged this branch (one-liner via `fd_from_riesz` + `hone_unit_ball_compact`) |
 | `thm:fd-holomorphic-one-forms` | `Blueprint.fd_holomorphic_one_forms` | `Sec02/FdHolomorphicOneForms.lean` | SHORT | Banach-data realisation + transport via `LinearEquiv.finiteDimensional`; needs T2/Connected typeclass aligned with production `compactRiemannSurface_finiteDimensionalHolomorphicOneForms` |
