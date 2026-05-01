@@ -1,8 +1,12 @@
 import Mathlib.Topology.Sheaves.Sheaf
 import Mathlib.CategoryTheory.Sites.SheafCohomology.Basic
+import Mathlib.CategoryTheory.Sites.SheafCohomology.Cech
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 import Mathlib.Geometry.Manifold.IsManifold.Basic
+import Mathlib.Algebra.Category.Grp.Limits
+import Mathlib.Algebra.Category.Grp.Preadditive
+import Mathlib.CategoryTheory.Limits.Lattice
 
 /-!
 # Sheaf cohomology on a Riemann surface (project API layer)
@@ -35,13 +39,19 @@ topological space `X`. This file is the leaf bank for
 
 ## What is intentionally NOT here
 
-* Leaf 3 (`AddCommGroup` instance wrapper) — Mathlib already provides
-  `noncomputable instance : AddCommGroup (F.H n)` directly on
-  `Sheaf.H`, so the wrapper is redundant. (Recorded for completeness;
-  no project work needed.)
-* Leaf 4 (Čech cochain complex packaging) — MEDIUM, deferred.
+* (was leaf 3) — see `RSSheafCohomologyGroup` below; reinstated as a
+  thin project-facing API alias.
 
 This round adds:
+* Leaf 3 (`RSSheafCohomologyGroup`, TRIVIAL) — exposes the
+  `AddCommGroup (RSSheafCohomology X F q)` instance through a
+  named project-facing alias. Mathlib provides the underlying
+  instance on `Sheaf.H` directly; the alias just renames it for
+  consistency with the rest of this file.
+* Leaf 4 (`RSCechComplex`, MEDIUM) — packages
+  `CategoryTheory.cechComplexFunctor` for an open cover of `X`
+  with values in abelian-group presheaves. Pure aliasing; no
+  Čech-derived comparison theorem here.
 * Leaf 7 (`FiniteDimensionalSheafCohomologyRS`, HARD) as a frontier
   class, since coherent analytic sheaf theory is ABSENT in Mathlib
   v4.28.0 (per the plan's inventory). The class records the two
@@ -75,6 +85,43 @@ noncomputable abbrev RSSheafCohomology
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F : RSAbSheaf X) (q : ℕ) : Type 0 :=
   Sheaf.H F q
+
+/-- Project-facing alias for the `AddCommGroup` instance on
+`RSSheafCohomology X F q`. Plan leaf 3 (TRIVIAL).
+
+Mathlib already provides this instance directly on `Sheaf.H`; the
+alias just exposes it under a project-side name for downstream
+consumers that want to depend only on this file. -/
+noncomputable abbrev RSSheafCohomologyGroup
+    (X : Type*) [TopologicalSpace X]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
+    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
+    (F : RSAbSheaf X) (q : ℕ) : AddCommGroup (RSSheafCohomology X F q) :=
+  inferInstance
+
+/-- Čech cochain complex of an abelian-group-valued presheaf along an
+open cover. Plan leaf 4 (MEDIUM).
+
+Thin alias around Mathlib's `CategoryTheory.cechComplexFunctor`,
+specialised to the topological-presheaf source category
+`(Opens (TopCat.of X))ᵒᵖ ⥤ AddCommGrpCat`. The instance arguments
+required by `cechComplexFunctor`
+(`HasFiniteProducts (Opens (TopCat.of X))`,
+`Preadditive AddCommGrpCat`,
+`HasProducts AddCommGrpCat`) are all derivable in Mathlib v4.28.0:
+`Opens` is a `CompleteLattice` (so has all small limits, hence finite
+products), and `AddCommGrpCat` is a Grothendieck-abelian preadditive
+category with all small limits.
+
+No Čech-derived comparison theorem (i.e. quasi-iso to derived global
+sections, or `H^*(Cech) ≃ H^*` under good cover hypotheses) is
+provided here — that is downstream work tracked separately. -/
+noncomputable abbrev RSCechComplex
+    (X : Type*) [TopologicalSpace X]
+    {ι : Type} (U : ι → TopologicalSpace.Opens (TopCat.of X))
+    (F : TopCat.Presheaf AddCommGrpCat.{0} (TopCat.of X)) :
+    CochainComplex AddCommGrpCat.{0} ℕ :=
+  (cechComplexFunctor (A := AddCommGrpCat.{0}) U).obj F
 
 /-- Placeholder alias: until coherent analytic `𝒪_X`-module sheaves
 exist in Mathlib, the "line bundle sheaf" datum is just an underlying
