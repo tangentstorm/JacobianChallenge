@@ -270,6 +270,13 @@ theorem abel_existence_witness
         basisAlignedPeriodSubgroup X)
     (hpos : 0 < analyticGenus ℂ X) :
     False := by
+  -- BLOCKER (Aristotle 356a801e, Riemann-Hurwitz, Mathlib v4.28.0): This
+  -- requires the Riemann-Hurwitz formula for branched coverings, which is
+  -- absent from Mathlib. Specifically missing: (1) ramification divisor
+  -- and branched-degree for holomorphic maps between compact Riemann
+  -- surfaces, (2) the Riemann-Hurwitz genus formula
+  -- 2g(X)-2 = deg(f)·(2g(Y)-2) + deg(R), and (3) divisor-class-group /
+  -- Pic⁰(X) infrastructure connecting Abel-Jacobi to principal divisors.
   sorry
 
 theorem period_congruence_distinct_implies_genus_zero
