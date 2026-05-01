@@ -473,6 +473,13 @@ private lemma moebiusPullback_cotangent_pointwise
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
+  /- BLOCKER (Aristotle ffa4054e — definition mismatch, not a missing API):
+     `holomorphicOneForm_inversionCoeff ω w` unfolds to `ω.toFun (invBwd w) 1`,
+     which for `w ≠ 0` equals `ω.toFun (↑(w⁻¹)) 1 = holomorphicOneForm_coeff ω (w⁻¹)`.
+     Both sides bypass chart trivializations, so no `-w²` Jacobian factor appears.
+     Fix: redefine `holomorphicOneForm_inversionCoeff` to read `ω` through
+     `trivializationAt … ∞` (the inversion-chart trivialization), which applies
+     the cotangent transition map and introduces the `-w²` factor. -/
   sorry
 
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
@@ -810,13 +817,61 @@ theorem subsingleton_holomorphicOneForm_of_homeo_onePointCx
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_e : Nonempty (X ≃ₜ OnePoint ℂ)) :
     Subsingleton (HolomorphicOneForm ℂ X) := by
-  -- BLOCKER (Aristotle 13f097b4, Option B): A topological homeomorphism
-  -- X ≃ₜ OnePoint ℂ does NOT lift to a biholomorphism without uniqueness
-  -- of complex structure on S². Mathlib v4.28.0 lacks this (no
-  -- uniformization theorem, no ℂℙ¹ as complex manifold, no biholomorphism
-  -- API for Riemann surfaces). Concretely: "Mathlib v4.28.0 lacks
-  -- uniqueness-of-complex-structure on S²; topological X ≃ₜ OnePoint ℂ
-  -- does not lift to a biholomorphism in this layer."
+  -- BLOCKER: A topological homeomorphism X ≃ₜ OnePoint ℂ does NOT
+  -- lift to a biholomorphism without the uniqueness of complex
+  -- structure on S² (uniformization at genus 0).
+  --
+  -- ══════════════════════════════════════════════════════════════
+  -- Mathlib v4.28.0 gaps — searched and confirmed absent
+  -- (Aristotle a16b84f1)
+  -- ══════════════════════════════════════════════════════════════
+  --
+  -- 1. UNIFORMIZATION THEOREM (absent).
+  --    No `uniformization`, `RiemannSurface`, or
+  --    `SimplyConnectedRiemannSurface.biholo_equiv` in Mathlib.
+  --    Mathlib has `SimplyConnectedSpace` but no connection to
+  --    complex-analytic classification.
+  --
+  -- 2. UNIQUENESS OF COMPLEX STRUCTURE ON S² (absent).
+  --    No `complex_structure_unique_sphere` or equivalent.
+  --
+  -- 3. BIHOLOMORPHISM / HOLOMORPHIC EQUIVALENCE TYPE (absent).
+  --    No `Biholomorph` or `HolomorphicEquiv` type for complex
+  --    manifolds. `Diffeomorph` is smooth (not holomorphic).
+  --
+  -- 4. PULLBACK OF COTANGENT SECTIONS (absent).
+  --    No `ContMDiffSection.pullback` or `pullbackCotangent` for
+  --    transporting holomorphic 1-forms along a biholomorphism.
+  --
+  -- 5. `Homeomorph.chartedSpace` / `Homeomorph.isManifold` (absent).
+  --    No API to transfer `ChartedSpace` or `IsManifold` along a
+  --    `Homeomorph`.
+  --
+  -- ══════════════════════════════════════════════════════════════
+  -- Attempted alternative routes
+  -- ══════════════════════════════════════════════════════════════
+  -- Route A: Transport Subsingleton via topological homeo directly.
+  --   FAILS: HolomorphicOneForm ℂ X and HolomorphicOneForm ℂ
+  --   (OnePoint ℂ) are sections of *different* cotangent bundles.
+  -- Route B: Use FiniteDimensionalHolomorphicOneForms + topology.
+  --   FAILS: gives finite-dim, not vanishing.
+  -- Route C: Prove on OnePoint ℂ directly + transfer.
+  --   PARTIAL: holomorphicOneForm_onePointCx_subsingleton works,
+  --   but transfer needs biholomorphism (gaps 3-4).
+  -- Route D: Liouville's theorem on X directly.
+  --   FAILS: cannot extract entire function from abstract chart
+  --   structure without knowing it matches OnePoint ℂ.
+  --
+  -- ══════════════════════════════════════════════════════════════
+  -- Minimal unblocking API (any one suffices)
+  -- ══════════════════════════════════════════════════════════════
+  -- (a) Homeomorph.chartedSpace + Homeomorph.isManifold +
+  --     uniqueComplexStructureSphere + cotangent pullback.
+  -- (b) Direct uniformizationGenusZero : CompactSpace X →
+  --     ConnectedSpace X → (X ≃ₜ OnePoint ℂ) →
+  --     Subsingleton (HolomorphicOneForm ℂ X).
+  -- (c) Hodge theory: analyticGenus = topologicalGenus +
+  --     topologicalGenus_of_homeo_sphere = 0.
   sorry
 
 /-- **Opaque data obligation (uniformization-lite core).** A compact
