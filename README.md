@@ -8,16 +8,28 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-04-30 (CI-thread, post-`a1744ab`)
+Last tick: 2026-04-30 (CI-thread, post-`a73e77a`)
+
+```text
+Stub additions + leanok flips (this tick)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Stubs added                                  2  lem:holomorphic-form-is-closed (Sec03,
+                                                Worker M, placeholder True-conclusion)
+                                              + lem:degree-one-no-ramification (Sec02,
+                                                Worker H, placeholder True-conclusion)
+\leanok flips on main (fef531b)              2  principal-divisors → leanok
+                                              + fd-holomorphic-one-forms → leanok
+                                                (Sec02 chain node 8 closed via Riesz/
+                                                 locally-compact transport from
+                                                 holomorphicOneForm_normedSpace_uniformOnCompact)
+```
 
 ```text
 Sec01 progress (most recent: a1744ab)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Closed this tick                             1  def:principal-divisor
-                                                (Worker C, MEDIUM placeholder discharge:
-                                                 body returns 0 with documented upstream-API
-                                                 gaps preventing genuine Σ_p ord_p(f) · p)
-Recently closed                                 lem:divisor-finite-support (Worker H, 7d9b44a)
+Recently closed                                 def:principal-divisor (Worker C, a1744ab)
+                                                lem:divisor-finite-support (Worker H, 7d9b44a)
+                                                principalDivisors (fef531b leanok flip)
 BLOCKER documented                              divisor_discrete (Worker M, 6a60b24)
                                                 hypothesis ∃ x, f x ≠ 0 too weak;
                                                 needs MeromorphicAtX + ConnectedSpace X
@@ -26,7 +38,7 @@ BLOCKER documented                              divisor_discrete (Worker M, 6a60
 ```text
 Blueprint annotation coverage (most recent: PR #8 / 857c23b)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Annotated this tick                          2  thm:compact-bijection-homeo
+Annotated                                    2  thm:compact-bijection-homeo
                                                 + thm:abel-jacobi-injective
 \proofplan macro fix (170e94b on main)          paragraph→proofplan retrofit
                                                 across statement-bank entries
@@ -46,23 +58,23 @@ Blueprint Sec02 finite-dim chain (sec02 leftmost chain to fd-holomorphic-one-for
 5. hone_unit_ball_compact                   █████████  sorry-free  Worker H
 6. fd_from_riesz                            █████████  sorry-free  (small-jobs)
 7. input_finite_dimensionality              █████████  sorry-free  (small-jobs)
-8. fd_holomorphic_one_forms                 ░░░░░░░░░  sorry       (depends on production realization glue)
+8. fd_holomorphic_one_forms                 █████████  sorry-free  (Aristotle a489296c, fef531b)
                                             ───────────────────
-Sorry-free chain decls                       7 / 8 (Sec02 user-facing)
+Sorry-free chain decls                       8 / 8 (Sec02 user-facing) ✓
 ```
 
 ```text
 Blueprint sorry totals (lake build Jacobian.Blueprint)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Sec01                                        3  (DivisorDiscrete[BLOCKER]
-                                                 + PrincipalDegreeZero +
-                                                 PrincipalDivisors)
-Sec02 user-facing                            1  (FdHolomorphicOneForms)
+Sec01                                        2  (DivisorDiscrete[BLOCKER]
+                                                 + PrincipalDegreeZero)
 Sec02 named leaves                           1  (montel_pointwise_extraction)
 HolomorphicForms/CompactRiemannSurface       3  (production sorries pulled in via Sec02 chain)
                                             ───
-Total declaration-uses-sorry warnings        8   (was 9; -1 from principal-divisor placeholder
-                                                 discharge in a1744ab)
+Total declaration-uses-sorry warnings        6   (was 8; -2 net from leanok flips on
+                                                 principal-divisors + fd-holomorphic-one-forms;
+                                                 stub additions this tick are placeholder
+                                                 True-conclusion theorems and add no sorry)
 ```
 
 Earlier (pre-CI-thread) progress on production / Aristotle integrations preserved below for context.
