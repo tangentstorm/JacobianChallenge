@@ -36,6 +36,9 @@ import Jacobian.Blueprint.Sec03.StokesOnRSWithBoundary
 -- sec03
 import Jacobian.Blueprint.Sec03.SymplecticBasis
 
+-- sec05
+import Jacobian.Blueprint.Sec05.AbelExistence
+
 /-!
 # Blueprint stubs index
 
