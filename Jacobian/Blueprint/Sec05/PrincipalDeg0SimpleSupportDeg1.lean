@@ -96,19 +96,48 @@ theorem coefficients_opposite (D : TwoPointDivisor)
 two-point support and degree zero forces `D = ±([p] - [q])`,
 i.e. `(m, n) ∈ {(1, -1), (-1, 1)}`.
 
-In `Int`, `m * m = 1` is the unit-normalisation of `|m| = 1`.
-
-The unit step `m * m = 1 → m = 1 ∨ m = -1` is nonlinear and beyond
-core `omega`; left as `sorry` (the SHORT-class proof in the
-production file will use Mathlib's `Int.isUnit_iff` /
-`Int.eq_one_or_self_of_prime` once the file is upgraded to import
-narrow Mathlib). -/
+In `Int`, `m * m = 1` is the unit-normalisation of `|m| = 1`. The
+unit step `m * m = 1 → m = 1 ∨ m = -1` is nonlinear, but a
+case analysis combined with `Int.mul_le_mul_of_nonneg_left` and
+`Int.neg_mul_neg` bounds `|m| * |m| ≥ 4` whenever `|m| ≥ 2`,
+contradicting `m * m = 1`. -/
 theorem principal_deg0_simple_support_deg1
     (D : TwoPointDivisor)
-    (_hdeg : D.degree = 0) (_hnt : D.bothNonzero)
-    (_hunit : D.m * D.m = 1) :
+    (hdeg : D.degree = 0) (hnt : D.bothNonzero)
+    (hunit : D.m * D.m = 1) :
     (D.m = 1 ∧ D.n = -1) ∨ (D.m = -1 ∧ D.n = 1) := by
-  sorry
+  have hopp : D.n = -D.m := coefficients_opposite D hdeg hnt
+  have hm_unit : D.m = 1 ∨ D.m = -1 := by
+    by_cases hpos : 0 < D.m
+    · by_cases h1 : D.m = 1
+      · exact Or.inl h1
+      · exfalso
+        have h3 : 2 ≤ D.m := by omega
+        have h3' : (0 : Int) ≤ D.m := by omega
+        have h4 : D.m * 2 ≤ D.m * D.m :=
+          Int.mul_le_mul_of_nonneg_left h3 h3'
+        rw [hunit] at h4
+        omega
+    · by_cases hzero : D.m = 0
+      · exfalso
+        rw [hzero, Int.zero_mul] at hunit
+        omega
+      · by_cases hn1 : D.m = -1
+        · exact Or.inr hn1
+        · exfalso
+          have h3 : 2 ≤ -D.m := by omega
+          have h3' : (0 : Int) ≤ -D.m := by omega
+          have h4 : (-D.m) * 2 ≤ (-D.m) * (-D.m) :=
+            Int.mul_le_mul_of_nonneg_left h3 h3'
+          have h5 : (-D.m) * (-D.m) = D.m * D.m := Int.neg_mul_neg D.m D.m
+          rw [h5, hunit] at h4
+          omega
+  rcases hm_unit with hpm | hpm
+  · refine Or.inl ⟨hpm, ?_⟩
+    rw [hopp, hpm]
+  · refine Or.inr ⟨hpm, ?_⟩
+    rw [hopp, hpm]
+    decide
 
 end PrincipalDeg0SimpleSupportDeg1
 end AbelExistence
