@@ -29,6 +29,7 @@ import Jacobian.Blueprint.Sec02.DegreeOneNoRamification
 import Jacobian.Blueprint.Sec02.DegreeOneBijective
 import Jacobian.Blueprint.Sec02.DegreeOneIsomorphism
 import Jacobian.Blueprint.Sec02.BranchedDegree
+import Jacobian.Blueprint.Sec02.LocalBiholoUnramified
 import Jacobian.Blueprint.Sec02.InputDegreeOneIsomorphism
 
 -- sec03
