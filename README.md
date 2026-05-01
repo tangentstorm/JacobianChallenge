@@ -8,10 +8,34 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-04-30 (CI-thread, post-`65bdb33`)
+Last tick: 2026-05-01 (hourly /loop, post-`f2279b4`)
 
 ```text
-Stub additions + leanok flips (this tick)
+Worker re-prompts + Aristotle queue check (this tick)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Workers S, B, SB, AE re-prompted    Each fed MEDIUM-leaf continuation:
+                                    replace prose-only leaves with
+                                    concrete Lean theorem/def shapes
+                                    (sorry as proof allowed).
+Workers C, H, N, Small Jobs         (re-prompted prior turn; awaiting PRs)
+                                    deeper-leaf continuations are running
+Aristotle queue                     5 active (3 IN_PROGRESS @ 3-10%,
+                                    2 QUEUED). Below 15-cap; will refill
+                                    after surveying open production
+                                    sorries this tick.
+Recent COMPLETE not yet integrated  636fe30e (no diff vs current — no-op,
+                                    skipped per stale-baseline policy).
+Production sorry counts             AnalyticOfCurveBasis.lean: 16
+                                    GenusZeroClassification.lean: 26
+                                    PeriodFunctional.lean: 26
+                                    PushforwardBasis.lean: 15
+                                    (no change since f2279b4)
+```
+
+Earlier ticks recorded below for context.
+
+```text
+Stub additions + leanok flips (prior tick, post-65bdb33)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Stub added                                   1  thm:abel-existence
                                                 TRIVIAL/SHORT sub-leaves
@@ -19,18 +43,7 @@ Stub added                                   1  thm:abel-existence
                                                 Sec05/AbelExistence.lean
                                                 exposes Div0 + AJ Unit-aliases
                                                 (sub-leaves 1+2 of Grok plan).
-                                                MEDIUM/HARD sub-leaves
-                                                (AJ_principal_zero,
-                                                 existence_of_f,
-                                                 principal_iff_AJ_zero) remain
-                                                DECOMPOSE-tagged in scope-out.md.
 \leanok flip on main (65bdb33)               1  thm:abel-existence
-                                                (matches 5d14969 pattern;
-                                                 dep-graph color updated)
-Resolved merge conflict in Blueprint.lean       3-way: kept all sec03 imports
-                                                (Stokes + SymplecticBasis from
-                                                 prior tick) AND added new
-                                                 sec05 AbelExistence import.
 ```
 
 Earlier ticks recorded below for context.
