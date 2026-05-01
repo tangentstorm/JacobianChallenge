@@ -240,16 +240,118 @@ structure HolomorphicOneFormCoeffEntireData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
   differentiable_coeff : Differentiable ℂ (holomorphicOneForm_coeff ω)
 
+private lemma chartAt_coe_eq_identityChart (z : ℂ) :
+    chartAt ℂ (↑z : OnePoint ℂ) = identityChart := rfl
+
+/-
+The cotangent-bundle trivialization at a finite point `↑z₀` acts as the
+identity on fibers at any finite point `↑w`.  This holds because both
+`↑z₀` and `↑w` sit in the same chart (`identityChart`), so the tangent-bundle
+coordinate change is the identity.
+-/
+private lemma cotangent_trivializationAt_coe_snd_eq (z₀ w : ℂ)
+    (L : CotangentSpace ℂ (OnePoint ℂ) (↑w)) :
+    (trivializationAt (CotangentModelFiber ℂ) (CotangentSpace ℂ (OnePoint ℂ)) (↑z₀)
+      ⟨↑w, L⟩).2 = L := by
+  erw [ hom_trivializationAt_apply ];
+  simp [ContinuousLinearMap.inCoordinates];
+  rw [ TangentBundle.symmL_trivializationAt_eq_core ];
+  · rw [ tangentBundleCore_coordChange_achart ];
+    rw [ fderivWithin_eq_fderiv ] <;> norm_num [ extChartAt ];
+    · rw [ show ( chartAt ℂ ( ↑w ) : OnePoint ℂ → ℂ ) ∘ ( chartAt ℂ ( ↑z₀ ) ).symm = id from ?_ ] ; norm_num;
+      ext; simp [chartAt];
+      simp +decide [ ChartedSpace.chartAt, identityChart ];
+      grind +suggestions;
+    · rw [ chartAt_coe_eq_identityChart, chartAt_coe_eq_identityChart ];
+      simp +decide [ identityChart ];
+      simp +decide [ Topology.IsOpenEmbedding.toOpenPartialHomeomorph ];
+      refine' DifferentiableAt.congr_of_eventuallyEq _ _;
+      exact fun x => x;
+      · exact differentiableAt_id;
+      · filter_upwards [ ] with x using by simp +decide [ Function.invFunOn ] ;
+  · rw [ chartAt_coe_eq_identityChart ] ; simp +decide [ identityChart ]
+
+/-
+The embedding `↑· : ℂ → OnePoint ℂ` is `ContMDiff` (smooth between manifolds).
+-/
+private lemma coe_contMDiff :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ⊤
+      (fun z : ℂ => (↑z : OnePoint ℂ)) := by
+  have h_cont_diff : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ⊤ (fun z : ℂ => (identityChart.symm z : OnePoint ℂ)) := by
+    rw [ contMDiff_iff ];
+    refine' ⟨ _, _ ⟩;
+    · -- The inclusion map from ℂ to OnePoint ℂ is continuous by definition of the one-point compactification.
+      apply OnePoint.continuous_coe;
+    · intro x y;
+      cases y <;> simp +decide [ extChartAt ];
+      · refine' ContDiffOn.congr _ _;
+        exact fun z => z⁻¹;
+        · exact ContDiffOn.inv contDiffOn_id fun z hz => by aesop;
+        · simp +decide [ chartAt, identityChart ];
+          simp +decide [ ChartedSpace.chartAt ];
+          simp +decide [ inversionChart ];
+      · simp +decide [ chartAt_coe_eq_identityChart ];
+        simp +decide [ identityChart ];
+        simp +decide [ Topology.IsOpenEmbedding.toOpenPartialHomeomorph ];
+        refine' ContDiffOn.congr _ _;
+        exact fun x => x;
+        · exact contDiffOn_id;
+        · simp +decide [ Function.invFunOn ];
+  convert h_cont_diff using 1
+
+/-
+The trivialized and direct section functions agree on `{∞}ᶜ`.
+-/
+private lemma section_triv_eventuallyEq
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (z : ℂ) :
+    (fun x : OnePoint ℂ => (trivializationAt (CotangentModelFiber ℂ)
+        (CotangentSpace ℂ (OnePoint ℂ)) (↑z) ⟨x, ω x⟩).2) =ᶠ[nhds (↑z : OnePoint ℂ)]
+    (fun x : OnePoint ℂ => (show CotangentModelFiber ℂ from ω x)) := by
+  refine' Filter.eventuallyEq_of_mem _ _;
+  exact ( Set.range ( ( ↑ ) : ℂ → OnePoint ℂ ) );
+  · simp +decide [ OnePoint.nhds_coe_eq ];
+  · intro x hx; obtain ⟨ w, rfl ⟩ := hx; simp +decide [ cotangent_trivializationAt_coe_snd_eq ] ;
+
+/-- At each finite point `↑z`, the direct section function `fun x ↦ ω x` (viewed as
+a function from `OnePoint ℂ` to `CotangentModelFiber ℂ`) is `ContMDiffAt`. This
+follows from `contMDiffAt_section` + `cotangent_trivializationAt_coe_snd_eq`. -/
+private lemma omega_contMDiffAt_fiber
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (z : ℂ) :
+    ContMDiffAt (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ (CotangentModelFiber ℂ)) ⊤
+      (fun x : OnePoint ℂ => (show CotangentModelFiber ℂ from ω x)) (↑z) := by
+  have h_triv := (Bundle.contMDiffAt_section (↑z : OnePoint ℂ)
+    (s := fun x => ω x) (F := CotangentModelFiber ℂ) (E := CotangentSpace ℂ (OnePoint ℂ))).mp
+    ω.contMDiff_toFun.contMDiffAt
+  exact h_triv.congr_of_eventuallyEq (section_triv_eventuallyEq ω z).symm
+
+/-- A smooth section of the cotangent bundle on `OnePoint ℂ`, precomposed with the
+identity-chart embedding `↑· : ℂ → OnePoint ℂ`, yields a `ContDiff` function
+into the model fiber `ℂ →L[ℂ] ℂ`. -/
+private lemma section_comp_coe_contDiff
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    ContDiff ℂ (⊤ : WithTop ℕ∞)
+      (fun z : ℂ => (show CotangentModelFiber ℂ from ω (↑z : OnePoint ℂ))) := by
+  rw [contDiff_iff_contDiffAt]
+  intro z
+  rw [← contMDiffAt_iff_contDiffAt]
+  exact (omega_contMDiffAt_fiber ω z).comp z coe_contMDiff.contMDiffAt
+
 /-- **Identity-chart extraction leaf.** The coefficient read directly from
 the identity-chart local representative is `C^∞`.
 
 Bottom-up content: expose a chart-trivialization API for `ContMDiffSection`
 on the cotangent bundle, specialized to `identityChart`, and compose the
-local representative with evaluation at `1 : ℂ`. -/
+local representative with evaluation at `1 : ℂ`.
+
+(Aristotle b720818b: substantive proof via cotangent-bundle trivialization
+at finite points, composed with evaluation at `1 : ℂ`.) -/
 theorem holomorphicOneFormIdentityChartCoeffContDiff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContDiff ℂ (⊤ : WithTop ℕ∞) (holomorphicOneForm_identityChartCoeff ω) := by
-  sorry
+  have hsc := section_comp_coe_contDiff ω
+  have : ContDiff ℂ ⊤ (fun z : ℂ => (show CotangentModelFiber ℂ from ω (↑z : OnePoint ℂ)) (1 : ℂ)) :=
+    hsc.clm_apply contDiff_const
+  convert this using 1
 
 /-- **Identity-chart identification leaf.** The chart-local coefficient
 agrees with the direct finite-point formula used by the Liouville assembly.
