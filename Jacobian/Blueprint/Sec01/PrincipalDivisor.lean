@@ -5,32 +5,60 @@ import Jacobian.Blueprint.Sec01.DivisorFiniteSupport
 /-! Blueprint: `def:principal-divisor` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
 
-The principal divisor `(f) := Σ_p ord_p(f) · p` of a nonzero meromorphic
-function. Combined finiteness of the support comes from
-`lem:divisor-finite-support`. -/
+The principal divisor `(f) := Σ_p ord_p(f) · p` of a meromorphic
+function on a compact Riemann surface, packaged as a `Finsupp` whose
+support is finite by `lem:divisor-finite-support`. -/
 
 namespace JacobianChallenge.Blueprint
 
 open scoped Manifold
 
-/-- The principal divisor of a (nonzero) meromorphic function.
+/-- Underlying ℂ-valued projection of a `MeromorphicFunctionType X`.
+Sends `∞` to the sentinel `0`. The convention is lossy at poles
+(the OnePoint representation collapses pole information), but it is
+sufficient for the regular-part Laurent order computations performed
+by `vanishingOrder`. Once the meromorphic-germ-sheaf gluing lands,
+this projection should be replaced with the genuine
+"meromorphic germ ↦ underlying function on the domain of holomorphy"
+extraction. -/
+private noncomputable def underlyingC
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) : X → ℂ :=
+  fun p => (f p).getD 0
 
-Placeholder: returns `0`. Two pieces of upstream API need to thicken
-before the genuine `Σ_p ord_p(f) · p` Finsupp can be assembled here.
-First, `MeromorphicFunctionType X` is currently `X → OnePoint ℂ`, so
-extracting the underlying `X → ℂ` that `vanishingOrder` and
-`divisor_finite_support` consume needs a fixed projection convention
-(e.g. `(_f x).getD 0`). Second, `divisor_finite_support` requires
-`_hf_nonzero : ∃ x, f x ≠ 0`, which this signature does not carry — a
-nonzero predicate or subtype on `MeromorphicFunctionType` will need to
-land first. Until then `0` is a sound default: the zero meromorphic
-function legitimately has the zero principal divisor, and downstream
-consumers that want the genuine principal divisor will pattern-match
-on the (eventually) richer `MeromorphicFunctionType`. -/
+/-- The principal divisor `(f) := Σ_p ord_p(f) · p` of a meromorphic
+function on a compact Riemann surface, expressed as a `Finsupp`.
+
+Returns the zero divisor whenever the underlying ℂ-valued projection
+of `f` is identically zero — in particular for the literal zero
+meromorphic function. For any nonzero projection, `Finsupp.onFinset`
+packages the support `{q | ord_q(f) ≠ 0}` (finite by
+`divisor_finite_support`) and the integer coefficient
+`(ord_q f).untopD 0`.
+
+This places the blueprint dep-graph node `def:principal-divisor`
+on a real Lean footing: the body is sorry-free; the upstream sorries
+are in `MeromorphicFunctionType` (whose richer "field of meromorphic
+germs" structure is still pending) and `vanishingOrder`'s pole-aware
+extension. -/
 noncomputable def principalDivisor
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_f : MeromorphicFunctionType X) : Divisor X :=
-  0
+    (f : MeromorphicFunctionType X) : Divisor X := by
+  classical
+  by_cases hf : ∃ x, underlyingC f x ≠ 0
+  · exact Finsupp.onFinset
+      (divisor_finite_support X (underlyingC f) hf).toFinset
+      (fun p => (vanishingOrder X p (underlyingC f)).untopD 0)
+      (by
+        intro p hp
+        rw [Set.Finite.mem_toFinset]
+        intro h_eq
+        apply hp
+        show WithTop.untopD 0 (vanishingOrder X p (underlyingC f)) = 0
+        rw [h_eq]
+        rfl)
+  · exact 0
 
 end JacobianChallenge.Blueprint
