@@ -235,7 +235,7 @@ genus, and \(g(\CPone)=0\) is a separate well-known computation
 \uses{thm:aj-divisor-hom,thm:abel-existence,lem:principal-deg0-simple-support-deg1,thm:riemann-hurwitz-deg1}
 If \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
 \lean{JacobianChallenge.AbelJacobi.pathIntegralFunctional_separates_points}
-\notready
+\leanok
 \end{theorem}
 
 \begin{layman}
@@ -268,7 +268,7 @@ the hypothesis.
 \begin{theorem}[Classical input: Abel's theorem (umbrella)]
 \label{input:abel-theorem}
 \uses{thm:abel-existence,thm:abel-point-separation}
-\notready
+\leanok
 For degree-zero divisors on \(X\), the Abel-Jacobi map has kernel exactly the
 principal divisors. In particular, if \(g(X)>0\) and
 \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
@@ -294,3 +294,20 @@ Assume \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\). By
 Theorem~\ref{thm:abel-point-separation}, \(Q_1=Q_2\). Thus \(\AJ_P\) is
 injective.
 \end{proof}
+
+\subsection{Theta divisor}
+
+\begin{theorem}[Riemann's theorem on the theta divisor]
+\label{thm:riemann-theorem-theta-divisor}
+\uses{def:analytic-jacobian,input:riemann-roch}
+For \(g\ge 1\), a point \(z\in\Jac(X)\) lies on the theta divisor
+\(\Theta\) if and only if \(z = \kappa + \AJ_{g-1}(s)\) for some
+\(s\in\Sym^{g-1}(X)\), where \(\kappa\) is the Riemann constant and
+\(\AJ_{g-1}\) is the Abel-Jacobi map on symmetric \((g-1)\)-fold
+products.
+\depends{Mumford, Tata Lectures on Theta II, \S3. Mathlib hooks: theta
+function on Siegel upper half space, Riemann-Roch for line bundles
+attached to divisors on \(X\).}
+\lean{JacobianChallenge.Blueprint.AbelExistence.RiemannTheoremThetaDivisor.riemann_theorem_theta_divisor}
+\leanok
+\end{theorem}

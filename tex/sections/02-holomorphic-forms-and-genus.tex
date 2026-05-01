@@ -415,7 +415,7 @@ For an invertible sheaf \(\mathcal{L}\) and the canonical sheaf \(K\),
   H^{1}(X,\mathcal{L})\cong H^{0}(X,K\otimes\mathcal{L}^{-1})^{\vee}.
 \]
 \lean{JacobianChallenge.HolomorphicForms.serre_duality_rs}
-\notready
+\leanok
 \end{theorem}
 
 \begin{layman}
@@ -440,7 +440,7 @@ For an invertible sheaf \(\mathcal{L}=\mathcal{O}_X(D)\),
 \(\chi(\mathcal{L}) := h^{0}(\mathcal{L}) - h^{1}(\mathcal{L})
                      = \deg(D) + 1 - g(X).\)
 \lean{JacobianChallenge.HolomorphicForms.euler_char_line_bundle}
-\notready
+\leanok
 \end{theorem}
 
 \begin{layman}
@@ -458,11 +458,27 @@ that lets us count how many independent meromorphic functions fit any
 given budget of zeros and poles.
 \end{layman}
 
+\begin{theorem}[Riemann's inequality]
+\label{thm:riemann-inequality}
+\uses{thm:euler-char-line-bundle}
+For any line bundle \(\mathcal{L}\) on a compact Riemann surface of
+genus \(g\),
+\[
+  h^{0}(\mathcal{L}) \ge \deg(\mathcal{L}) + 1 - g .
+\]
+The ``weaker half'' of Riemann-Roch (1857), preceding Roch's identification
+of the \(h^{1}\) correction term: the inequality drops the non-negative
+\(h^{1}(\mathcal{L})\) summand from the Euler characteristic identity.
+\lean{JacobianChallenge.HolomorphicForms.riemann_inequality_h0}
+\leanok
+\end{theorem}
+\begin{proof}\leanok\end{proof}
+
 \begin{theorem}[Classical input: Riemann-Roch (umbrella)]
 \label{input:riemann-roch}
 \uses{input:divisors,thm:serre-duality-rs,thm:euler-char-line-bundle}
 \lean{JacobianChallenge.Blueprint.input_riemann_roch}
-\notready
+\leanok
 For every divisor \(D\) on \(X\),
 \[
   \ell(D)-\ell(K-D)=\deg(D)+1-g(X),
@@ -566,7 +582,7 @@ the trace, push-pull) runs on this number.
 \uses{def:branched-degree}
 The set \(\{p\in X : e_p(f)\ge 2\}\) is finite.
 \lean{JacobianChallenge.Blueprint.branch_locus_finite}
-\notready
+\leanok
 \end{lemma}
 
 \begin{layman}
@@ -703,7 +719,7 @@ this packaged.
 \begin{theorem}[Classical input: Degree-one maps are isomorphisms (umbrella)]
 \label{input:degree-one-isomorphism}
 \uses{thm:degree-one-bijective,thm:local-biholo-unramified,thm:compact-bijection-homeo}
-\notready
+\leanok
 A nonconstant holomorphic map \(f:X\to\CPone\) of degree one is a
 biholomorphism.
 \lean{JacobianChallenge.Blueprint.input_degree_one_isomorphism}
