@@ -401,14 +401,51 @@ theorem holomorphicOneFormCoeffTendstoZeroOfTransition
     holomorphicOneForm_identityInversionTransition ω →
     Filter.Tendsto (holomorphicOneForm_coeff ω)
       (Filter.cocompact ℂ) (nhds 0) := by
-  -- BLOCKER: Aristotle b19e41ad's tendsto-arithmetic proof was integrated
-  -- in f2279b4 but does not typecheck against current Mathlib v4.28.0
-  -- (typeclass resolution failure on `Filter.Tendsto.mul` — `ContinuousMul`
-  -- can't be inferred when arguments are metavariables, plus unsolved goals
-  -- on the cocompact↔nhdsWithin transport). Reverted to `sorry` to restore
-  -- a green build; the b19e41ad strategy is still correct in spirit and can
-  -- be re-attempted with explicit type annotations.
-  sorry
+  -- Aristotle 1e424cc3: re-derived b19e41ad with explicit type annotations.
+  intro hcont htrans
+  -- Step 1: Tendsto (·⁻¹) (cocompact ℂ) (nhdsWithin 0 {0}ᶜ)
+  have h_inv : Filter.Tendsto (Inv.inv : ℂ → ℂ) (Filter.cocompact ℂ)
+      (nhdsWithin (0 : ℂ) ({0}ᶜ)) := by
+    apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
+    · rw [Metric.tendsto_nhds]
+      intro ε hε
+      apply Filter.Eventually.mono
+        (show ∀ᶠ z in Filter.cocompact ℂ, z ∈ (Metric.closedBall (0 : ℂ) ε⁻¹)ᶜ from
+          IsCompact.compl_mem_cocompact (isCompact_closedBall (0 : ℂ) ε⁻¹))
+      intro z hz
+      simp only [Metric.mem_closedBall, dist_zero_right, not_le, Set.mem_compl_iff] at hz ⊢
+      rw [norm_inv]; exact inv_lt_of_inv_lt₀ hε hz
+    · apply Filter.Eventually.mono
+        (show ∀ᶠ z in Filter.cocompact ℂ, z ∈ ({0} : Set ℂ)ᶜ from
+          IsCompact.compl_mem_cocompact (isCompact_singleton (x := (0 : ℂ))))
+      intro z hz hinv
+      simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hz
+      exact hz (inv_eq_zero.mp hinv)
+  -- Step 2: -w^2 → 0 as w → 0
+  have h_neg_sq : Filter.Tendsto (fun w : ℂ => -w ^ 2)
+      (nhdsWithin (0 : ℂ) ({0}ᶜ)) (nhds 0) := by
+    apply Filter.Tendsto.mono_left _ nhdsWithin_le_nhds
+    have h1 : Filter.Tendsto (fun w : ℂ => w ^ 2) (nhds 0) (nhds 0) := by
+      have := (continuous_pow 2).continuousAt (x := (0 : ℂ))
+      simp [ContinuousAt] at this; exact this
+    have h2 := h1.neg; rwa [neg_zero] at h2
+  -- Step 3: invCoeff ω bounded near 0
+  have h_bdd : Filter.IsBoundedUnder (· ≤ ·) (nhdsWithin (0 : ℂ) ({0}ᶜ))
+      ((fun x => ‖x‖) ∘ (holomorphicOneForm_inversionCoeff ω)) :=
+    (continuous_norm.continuousAt.tendsto.comp hcont.tendsto).isBoundedUnder_le.mono
+      nhdsWithin_le_nhds
+  -- Step 4: product → 0 via zero_mul_isBoundedUnder
+  have h_prod : Filter.Tendsto
+      (fun w => (-w ^ 2) * holomorphicOneForm_inversionCoeff ω w)
+      (nhdsWithin (0 : ℂ) ({0}ᶜ)) (nhds 0) :=
+    h_neg_sq.zero_mul_isBoundedUnder_le h_bdd
+  -- Step 5: coeff ω (w⁻¹) → 0 by transition formula (eventually equal)
+  have h_comp : Filter.Tendsto (fun w => holomorphicOneForm_coeff ω (w⁻¹))
+      (nhdsWithin (0 : ℂ) ({0}ᶜ)) (nhds 0) := by
+    rw [Filter.Tendsto]
+    exact le_trans (le_of_eq (Filter.map_congr htrans)) h_prod
+  -- Step 6: compose inversion on cocompact with (·⁻¹)⁻¹ = id
+  exact (h_comp.comp h_inv).congr (fun z => by simp [Function.comp, inv_inv])
 
 /-- **Chart-transition assembly.** Continuity and the explicit transition
 formula are the remaining leaves; the old broad decay obligation is no
@@ -671,6 +708,13 @@ theorem subsingleton_holomorphicOneForm_of_homeo_onePointCx
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_e : Nonempty (X ≃ₜ OnePoint ℂ)) :
     Subsingleton (HolomorphicOneForm ℂ X) := by
+  -- BLOCKER (Aristotle 13f097b4, Option B): A topological homeomorphism
+  -- X ≃ₜ OnePoint ℂ does NOT lift to a biholomorphism without uniqueness
+  -- of complex structure on S². Mathlib v4.28.0 lacks this (no
+  -- uniformization theorem, no ℂℙ¹ as complex manifold, no biholomorphism
+  -- API for Riemann surfaces). Concretely: "Mathlib v4.28.0 lacks
+  -- uniqueness-of-complex-structure on S²; topological X ≃ₜ OnePoint ℂ
+  -- does not lift to a biholomorphism in this layer."
   sorry
 
 /-- **Opaque data obligation (uniformization-lite core).** A compact
