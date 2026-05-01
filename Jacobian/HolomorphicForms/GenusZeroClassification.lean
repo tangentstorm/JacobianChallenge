@@ -401,7 +401,26 @@ theorem holomorphicOneFormCoeffTendstoZeroOfTransition
     holomorphicOneForm_identityInversionTransition ω →
     Filter.Tendsto (holomorphicOneForm_coeff ω)
       (Filter.cocompact ℂ) (nhds 0) := by
-  sorry
+  -- Aristotle b19e41ad: tendsto-arithmetic on the Möbius transition.
+  intro h_cont h_trans
+  have h_inv : Filter.Tendsto (fun w => (holomorphicOneForm_coeff ω) (w⁻¹))
+      (nhdsWithin 0 {0}ᶜ) (nhds 0) := by
+    have h_inv : Filter.Tendsto (fun w => -w ^ 2 *
+        (holomorphicOneForm_inversionCoeff ω) w)
+        (nhdsWithin 0 {0}ᶜ) (nhds 0) := by
+      exact tendsto_nhdsWithin_of_tendsto_nhds (by simpa using
+        Filter.Tendsto.mul (Filter.Tendsto.neg (Filter.tendsto_id.pow 2)) h_cont)
+    exact h_inv.congr' (by filter_upwards [h_trans] with w hw; aesop)
+  convert h_inv.comp (show Filter.Tendsto (fun w : ℂ => w⁻¹)
+      (Filter.cocompact ℂ) (nhdsWithin 0 {0}ᶜ) from ?_) using 1
+  · aesop
+  · rw [tendsto_nhdsWithin_iff]
+    rw [tendsto_zero_iff_norm_tendsto_zero]
+    simp +zetaDelta at *
+    exact ⟨tendsto_inv_atTop_zero.comp tendsto_norm_cocompact_atTop,
+      Filter.mem_cocompact.mpr ⟨Metric.closedBall 0 1,
+        ProperSpace.isCompact_closedBall _ _,
+        fun x hx => by contrapose! hx; aesop⟩⟩
 
 /-- **Chart-transition assembly.** Continuity and the explicit transition
 formula are the remaining leaves; the old broad decay obligation is no
