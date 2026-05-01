@@ -43,6 +43,10 @@ import Jacobian.Blueprint.Sec03.StokesOnRSWithBoundary
 
 -- sec03
 import Jacobian.Blueprint.Sec03.SymplecticBasis
+import Jacobian.Blueprint.Sec03.PolygonalModel
+import Jacobian.Blueprint.Sec03.PrimitiveOnPolygon
+import Jacobian.Blueprint.Sec03.BilinearFromStokes
+import Jacobian.Blueprint.Sec03.HermitianPositivity
 
 -- sec05
 import Jacobian.Blueprint.Sec05.AbelExistence
