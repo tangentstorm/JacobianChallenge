@@ -8,7 +8,37 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-04-29 17:01 EDT — hourly Aristotle check-in
+Last tick: 2026-04-30 (CI-thread, post-`b66e8d0`)
+
+```text
+Blueprint Sec02 finite-dim chain (sec02 leftmost chain to fd-holomorphic-one-forms)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+                                                       discharge   integrator
+1. cotangentFiberNorm                       █████████  sorry-free  (small-jobs)
+2. holomorphicSupNorm                       █████████  sorry-free  (small-jobs)
+3. chart_coefficient_bound                  █████████  sorry-free  Worker C
+4. montel_compactness (orchestration)       █████████  sorry-free  Worker M
+   └ montel_pointwise_extraction (leaf)     ░░░░░░░░░  named TODO  Worker M (next-stage)
+5. hone_unit_ball_compact                   █████████  sorry-free  Worker H
+6. fd_from_riesz                            █████████  sorry-free  (small-jobs)
+7. input_finite_dimensionality              █████████  sorry-free  (small-jobs)
+8. fd_holomorphic_one_forms                 ░░░░░░░░░  sorry       (depends on production realization glue)
+                                            ───────────────────
+Sorry-free chain decls                       7 / 8 (Sec02 user-facing)
+```
+
+```text
+Blueprint sorry totals (lake build Jacobian.Blueprint)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Sec01                                        5  (Divisor* + Principal* + degree-zero)
+Sec02 user-facing                            1  (FdHolomorphicOneForms)
+Sec02 named leaves                           1  (montel_pointwise_extraction)
+HolomorphicForms/CompactRiemannSurface       3  (production sorries pulled in via Sec02 chain)
+                                            ───
+Total declaration-uses-sorry warnings       10
+```
+
+Earlier (pre-CI-thread) progress on production / Aristotle integrations preserved below for context.
 
 ```text
 Headline progress
