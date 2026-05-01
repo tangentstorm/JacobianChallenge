@@ -1,5 +1,6 @@
-/-! Blueprint stubs: `thm:abel-existence` (sec05) sub-leaves classified
-**TRIVIAL** and **SHORT** in `ref/plans/abel-existence.md`.
+/-! Blueprint stubs: `thm:abel-existence` (sec05) sub-leaves
+classified **TRIVIAL**, **SHORT**, **MEDIUM**, and **HARD** in
+`ref/plans/abel-existence.md`.
 
 Abel's theorem: for a compact connected Riemann surface `X` of genus
 `g ≥ 1` with a fixed base point, a degree-zero divisor `D` is principal
@@ -14,10 +15,14 @@ into five sub-leaves:
 4. `existence_of_f` — backwards direction via theta/Riemann existence (HARD)
 5. `principal_iff_AJ_zero` — assembly of (3) + (4) (MEDIUM)
 
-This file stubs **only the TRIVIAL/SHORT leaves** (`Div0` and `AJ`).
-The MEDIUM/HARD leaves remain unstubbed pending dedicated worker
-allocations; the table in `ref/scope-out.md` (sec05 row
-`thm:abel-existence`) classifies the umbrella theorem as `DECOMPOSE`.
+This file stubs **all five leaves**: the TRIVIAL/SHORT leaves
+(`Div0`, `AJ`) are sorry-free `Unit` placeholders, and the
+MEDIUM/HARD leaves (`AJ_principal_zero`, `existence_of_f`,
+`principal_iff_AJ_zero`) carry the concrete Lean signatures from
+the Grok plan with `sorry`-bearing proofs (where genuine math is
+needed) or full assembly proofs (where the leaf reduces to its
+siblings). Per `ref/scope-out.md` the umbrella `thm:abel-existence`
+is `DECOMPOSE`; this file is the decomposition target.
 
 ## Conventions
 
@@ -75,5 +80,96 @@ Path-independence is a separate downstream obligation tracked under
 `lem:aj-path-independence` (already discharged production-side as
 `AbelJacobi.analyticOfCurve`, see `ref/scope-out.md` sec05 row 1). -/
 def AJ (X : Type) (_D : Div0 X) : Unit := ()
+
+/-! ## Supporting placeholders for the MEDIUM/HARD leaves
+
+`MeromorphicFunction X`, `divisor f`, and `IsPrincipal D` are needed
+to type-check leaves 3–5. Like `Div0` and `AJ`, they are deliberate
+`Unit`/`Prop` placeholders so this file can be compiled without
+Mathlib; the eventual real definitions live in
+`Mathlib.Analysis.Meromorphic.Divisor` (`MeromorphicOn`,
+`MeromorphicOn.divisor`) and the still-to-build
+`JacobianChallenge.Sec01.MeromorphicFunctionConcrete`. -/
+
+/-- Placeholder for the type of meromorphic functions on `X`. The
+real definition will use Mathlib's `MeromorphicOn` from
+`Mathlib.Analysis.Meromorphic.Basic` once the Sec01 meromorphic
+function chain (`def:meromorphic-function`, see
+`Jacobian/Blueprint/Sec01/MeromorphicFunction.lean` and the
+in-progress `MeromorphicFunctionConcrete.lean`) lands. -/
+def MeromorphicFunction (_X : Type) : Type := Unit
+
+/-- Placeholder for the divisor `(f) := ∑_{p ∈ X} ord_p(f) ⋅ [p]`
+of a meromorphic function. The real construction uses
+`MeromorphicOn.divisor` from
+`Mathlib.Analysis.Meromorphic.Divisor`; the resulting divisor lies
+in `Div0 X` because the sum of orders of a meromorphic function on
+a compact Riemann surface is zero (residue theorem applied to
+`df/f`, see `thm:principal-degree-zero` in `ref/scope-out.md`). -/
+def divisor {X : Type} (_f : MeromorphicFunction X) : Div0 X := ()
+
+/-- Placeholder predicate: a divisor is **principal** iff it is the
+divisor of some meromorphic function `f ≠ 0`. The real definition
+will additionally require `f ≠ 0`; here, with `MeromorphicFunction`
+a `Unit` placeholder, the nonvanishing constraint is suppressed.
+
+`IsPrincipal D := ∃ f : MeromorphicFunction X, divisor f = D`. -/
+def IsPrincipal {X : Type} (D : Div0 X) : Prop :=
+  ∃ f : MeromorphicFunction X, divisor f = D
+
+/-! ## MEDIUM/HARD leaves -/
+
+/-- **Sub-leaf 3 (MEDIUM).** The Abel–Jacobi map vanishes on
+principal divisors:
+`AJ (divisor f) = 0` for every meromorphic `f` on `X`.
+
+**Proof sketch (per `ref/plans/abel-existence.md`).** Apply the
+residue theorem (equivalently, Stokes) to the logarithmic
+derivative `df/f`. The integral of `df/f` along any cycle in
+`X ∖ supp(divisor f)` is `2πi ⋅ ∑ residues = 0`. Restricted to a
+homology basis, this means each period of the divisor pulls back
+to a lattice element, i.e. `AJ (divisor f) = 0` in `Jac X`.
+
+The Mathlib hooks are
+`Mathlib.Analysis.Meromorphic.Divisor.MeromorphicOn.divisor` for
+the source side and a not-yet-formalised residue/Stokes statement
+on a compact Riemann surface (cf. `thm:stokes-on-rs-with-boundary`
+in `ref/scope-out.md`) for the target side. -/
+theorem AJ_principal_zero (X : Type) (f : MeromorphicFunction X) :
+    AJ X (divisor f) = () := by
+  sorry
+
+/-- **Sub-leaf 4 (HARD).** Existence direction of Abel's theorem:
+if `AJ D = 0` for a degree-zero divisor `D`, then `D` is the
+divisor of some meromorphic function on `X`.
+
+**Proof sketch (per `ref/plans/abel-existence.md`).** Either
+(a) construct `f` via the Riemann theta function:
+`f(p) := θ(AJ([p] - [p₀]) - e)` for a suitable vector `e`
+depending on `D`, then verify `divisor f = D` using the heat-kernel
+properties of `θ`; or (b) cut `X` along a symplectic homology basis
+to obtain a fundamental polygon, define a multivalued logarithmic
+primitive, exponentiate, and check well-definedness using
+`AJ D = 0` (the period lattice obstruction vanishes). Both routes
+need the period-lattice / theta-function infrastructure listed
+**ABSENT** in the plan's Mathlib inventory. ≤250 LOC of glue once
+the primitives land. -/
+theorem existence_of_f (X : Type) (D : Div0 X) (_h : AJ X D = ()) :
+    ∃ f : MeromorphicFunction X, divisor f = D := by
+  sorry
+
+/-- **Sub-leaf 5 (MEDIUM).** Abel's theorem assembled:
+`D` is principal iff `AJ D = 0`.
+
+**Proof.** The forward direction unpacks `IsPrincipal` to extract
+`f` with `divisor f = D` and applies `AJ_principal_zero`. The
+backward direction applies `existence_of_f` to obtain the witness.
+This assembly is purely propositional and matches the closed-form
+proof in §4 of `ref/plans/abel-existence.md`. -/
+theorem principal_iff_AJ_zero (X : Type) (D : Div0 X) :
+    IsPrincipal D ↔ AJ X D = () := by
+  refine ⟨fun ⟨f, hf⟩ => ?_, fun h => existence_of_f X D h⟩
+  -- Forward: `D = divisor f` so `AJ X D = AJ X (divisor f) = 0` by `AJ_principal_zero`.
+  exact hf ▸ AJ_principal_zero X f
 
 end JacobianChallenge.Blueprint
