@@ -398,7 +398,19 @@ theorem periodSubgroup_eq_zspan_of_basis
         ((periodPairing ℂ X).range) =
       (Submodule.span ℤ (Set.range b)).toAddSubgroup := by
   obtain ⟨b, hli, hmem⟩ := periodVectors_linearIndependent X
-  exact ⟨b, hli, sorry⟩
+  exact ⟨b, hli,
+    -- BLOCKER (Aristotle 665d5c84, Option B): the ⊇ inclusion follows
+    -- from `hmem`, but the ⊆ inclusion requires that every element of
+    -- `(periodPairing ℂ X).range` is a ℤ-linear combination of the `σ i`
+    -- that generated `b`. This needs the full ℤ-basis structure on
+    -- `IntegralOneCycle X` (from `h1_basis_of_compact_riemann_surface`),
+    -- which is not extractable here because
+    -- `periodVectors_linearIndependent` discards it. Unblocking requires
+    -- either (a) threading the `Module.Basis` through
+    -- `periodVectors_linearIndependent`, or (b) proving the sorry in
+    -- `h1_has_even_basis` so `h1_basis_of_compact_riemann_surface` can be
+    -- called directly in this proof.
+    sorry⟩
 
 /-- **Sub-obligation 3 (generic discreteness).** The ℤ-span of `2g`
 ℝ-linearly independent vectors in `Fin g → ℂ` carries
