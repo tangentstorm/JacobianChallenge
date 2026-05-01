@@ -5,6 +5,7 @@ import Jacobian.Blueprint.Sec01.DivisorDegree
 import Jacobian.Blueprint.Sec01.DivisorDiscrete
 import Jacobian.Blueprint.Sec01.DivisorFiniteSupport
 import Jacobian.Blueprint.Sec01.MeromorphicFunction
+import Jacobian.Blueprint.Sec01.MeromorphicFunctionConcrete
 import Jacobian.Blueprint.Sec01.PrincipalDivisor
 import Jacobian.Blueprint.Sec01.PrincipalDivisors
 import Jacobian.Blueprint.Sec01.PrincipalDegreeZero
