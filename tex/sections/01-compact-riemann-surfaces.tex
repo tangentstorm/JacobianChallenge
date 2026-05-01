@@ -82,6 +82,7 @@ Naming note: \texttt{PartialHomeomorph}, not \texttt{LocalHomeomorph}
 \uses{def:vanishing-order}
 For a nonzero meromorphic function \(f\) on \(X\), the set
 \(\{p\in X:\ord_p(f)\ne 0\}\) has no accumulation point.
+\lean{JacobianChallenge.Blueprint.divisor_discrete}
 \notready
 \end{lemma}
 
@@ -114,6 +115,7 @@ applied across the chart atlas globalizes this.
 \uses{lem:divisor-discrete}
 For a nonzero meromorphic function \(f\) on the compact Riemann surface
 \(X\), the set \(\{p\in X:\ord_p(f)\ne 0\}\) is finite.
+\lean{JacobianChallenge.Blueprint.divisor_finite_support}
 \leanok
 \end{lemma}
 
@@ -225,6 +227,7 @@ the constants \(\C\) embedded as constant functions, and a nonzero
 \(\{p:\ord_p(f)<0\}\).
 \depends{Mathlib has \texttt{MeromorphicAt} on normed spaces; gluing along a
 chart atlas to a global field on \(X\) is project-side work.}
+\lean{JacobianChallenge.Blueprint.MeromorphicFunctionType}
 \leanok
 \end{definition}
 
@@ -254,6 +257,7 @@ For a nonzero \(f\in\Mer(X)\),
 \]
 The map \((\,\cdot\,):\Mer(X)^{\times}\to\Div(X)\) is a group
 homomorphism (\(\Mer(X)^{\times}\) under multiplication).
+\lean{JacobianChallenge.Blueprint.principalDivisor}
 \leanok
 \end{definition}
 
@@ -301,6 +305,7 @@ quotienting out the ``trivial'' equivalence so we can study what's left.
 \label{thm:principal-degree-zero}
 \uses{def:principal-divisor,def:divisor-degree}
 For every nonzero \(f\in\Mer(X)\), \(\deg(f)=0\).
+\lean{JacobianChallenge.Blueprint.principal_degree_zero}
 \notready
 \end{theorem}
 
@@ -399,6 +404,7 @@ For a divisor \(D\),
 \[
   L(D) := \{f\in\Mer(X) : (f)+D\ge 0\}\cup\{0\}.
 \]
+\lean{JacobianChallenge.Blueprint.riemannRochSpace}
 \leanok
 \end{definition}
 
@@ -423,6 +429,7 @@ embeddings, and the geometry of curves.
 \label{lem:riemann-roch-space-vector}
 \uses{def:riemann-roch-space}
 \(L(D)\) is a \(\C\)-vector subspace of \(\Mer(X)\).
+\lean{JacobianChallenge.Blueprint.riemann_roch_space_vector}
 \leanok
 \end{lemma}
 
