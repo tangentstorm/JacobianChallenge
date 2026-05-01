@@ -59,6 +59,7 @@ import Jacobian.Blueprint.Sec05.AbelPointSeparation
 import Jacobian.Blueprint.Sec05.Pic0
 import Jacobian.Blueprint.Sec05.RiemannTheta
 import Jacobian.Blueprint.Sec05.JacobiInversion
+import Jacobian.Blueprint.Sec05.RiemannTheoremThetaDivisor
 
 /-!
 # Blueprint stubs index
