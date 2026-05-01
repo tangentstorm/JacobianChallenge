@@ -45,6 +45,7 @@ import Jacobian.Blueprint.Sec03.SymplecticBasis
 
 -- sec05
 import Jacobian.Blueprint.Sec05.AbelExistence
+import Jacobian.Blueprint.Sec05.PrincipalDeg0SimpleSupportDeg1
 
 /-!
 # Blueprint stubs index
