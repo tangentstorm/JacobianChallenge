@@ -42,9 +42,9 @@ the chosen breakdown.
 |---|---|---|---|---|
 | `def:cotangent-fiber-norm` | `Blueprint.cotangentFiberNormAt` | `Sec02/CotangentFiberNorm.lean` | DONE | merged via sec02-trivial-batch |
 | `def:holomorphic-sup-norm` | `Blueprint.holomorphicSupNorm` | `Sec02/HolomorphicSupNorm.lean` | DONE | merged via sec02-trivial-batch |
-| `lem:chart-coefficient-bound` | `Blueprint.chart_coefficient_bound` | `Sec02/ChartCoefficientBound.lean` | WORKER | Worker C in flight |
-| `lem:montel-compactness` | `Blueprint.montel_compactness` | `Sec02/MontelCompactness.lean` | WORKER | Worker M in flight |
-| `thm:hone-unit-ball-compact` | `Blueprint.hone_unit_ball_compact` | `Sec02/HoneUnitBallCompact.lean` | WORKER | Worker H in flight |
+| `lem:chart-coefficient-bound` | `Blueprint.chart_coefficient_bound` | `Sec02/ChartCoefficientBound.lean` | DONE | Worker C landed; body is sorry-free `‖ω x‖ ≤ 1 · holomorphicSupNorm X ω` via `SectionSupNorm.bddAbove_range_norm` + `le_ciSup` |
+| `lem:montel-compactness` | `Blueprint.montel_compactness` | `Sec02/MontelCompactness.lean` | DONE | Worker M landed; umbrella body sorry-free assembly above private leaf `montel_pointwise_extraction` (which carries the 1 remaining genuine math sorry) |
+| `thm:hone-unit-ball-compact` | `Blueprint.hone_unit_ball_compact` | `Sec02/HoneUnitBallCompact.lean` | DONE | Worker H landed; full file is sorry-free |
 | `thm:fd-from-riesz` | `Blueprint.fd_from_riesz` | `Sec02/FdFromRiesz.lean` | DONE | merged via sec02-trivial-batch |
 | `input:finite-dimensionality` | `Blueprint.input_finite_dimensionality` | `Sec02/InputFiniteDimensionality.lean` | DONE | discharged this branch (one-liner via `fd_from_riesz` + `hone_unit_ball_compact`) |
 | `thm:fd-holomorphic-one-forms` | `Blueprint.fd_holomorphic_one_forms` | `Sec02/FdHolomorphicOneForms.lean` | SHORT | Banach-data realisation + transport via `LinearEquiv.finiteDimensional`; needs T2/Connected typeclass aligned with production `compactRiemannSurface_finiteDimensionalHolomorphicOneForms` |
@@ -53,13 +53,13 @@ the chosen breakdown.
 | `thm:euler-char-line-bundle` | `<missing>` | `<missing>` | DECOMPOSE | sub-leaves: line bundles on RS, Euler characteristic, divisor↔line-bundle correspondence |
 | `input:riemann-roch` | `<missing>` | `<missing>` | DECOMPOSE | sub-leaves: euler-char-line-bundle + serre-duality-rs (assembly is short) |
 | `prop:genus-zero-degree-one-map` | `HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero` | `Jacobian/HolomorphicForms/GenusZeroClassification.lean` | WORKER | Aristotle/Codex on RiemannRoch+MeromorphicDegree cluster |
-| `def:branched-degree` | `<missing>` | `<missing>` | DECOMPOSE | sub-leaves: ramification index, local degree of holomorphic map, branch points finite |
-| `lem:branch-locus-finite` | `<missing>` | `<missing>` | DECOMPOSE | sub-leaves: ramification-index ≥ 2 set is closed-discrete (analytic), then compact+discrete ⇒ finite |
-| `lem:degree-one-no-ramification` | `<missing>` | `<missing>` | MEDIUM | unramified ↔ derivative nonzero; degree=1 forces every fiber size 1 hence no branching |
-| `thm:local-biholo-unramified` | `<missing>` | `<missing>` | MEDIUM | inverse function theorem on complex 1-manifolds; Mathlib has `HasFDerivAt.localHomeomorph` machinery to wire |
-| `thm:degree-one-bijective` | `<missing>` | `<missing>` | SHORT | degree=1 ⇒ injective (covering with one sheet); combine with surjective-from-properness |
-| `thm:compact-bijection-homeo` | Mathlib `Continuous.homeoOfEquivCompactToT2` | (re-export) | DONE | sorry-free Mathlib; add `\lean{}` re-export stub if blueprint wants its own name |
-| `input:degree-one-isomorphism` | `<missing>` | `<missing>` | SHORT | umbrella combining `degree-one-bijective` + `local-biholo-unramified` + `compact-bijection-homeo` |
+| `def:branched-degree` | `Blueprint.branchedDegree` | `Sec02/BranchedDegree.lean` | SHORT | def landed (weighted-fibre-count over chosen base point); BranchedCoverData structure + `branchedDegree_eq_weightedFiberCard` rewrite still sorry-bearing |
+| `lem:branch-locus-finite` | `Blueprint.branch_locus_finite` | `Sec02/BranchLocusFinite.lean` | MEDIUM | stub landed; body sorry pending the analytic chart-local discreteness fact for ramification-index ≥ 2 |
+| `lem:degree-one-no-ramification` | `Blueprint.degree_one_no_ramification` | `Sec02/DegreeOneNoRamification.lean` | MEDIUM | stub landed; body sorry pending unramified ↔ derivative-nonzero in chart |
+| `thm:local-biholo-unramified` | `Blueprint.local_biholo_unramified` | `Sec02/LocalBiholoUnramified.lean` | MEDIUM | stub landed; body sorry pending biholomorphism API + chart-local inverse function theorem |
+| `thm:degree-one-bijective` | `Blueprint.degree_one_bijective` | `Sec02/DegreeOneBijective.lean` | SHORT | stub landed; body is `True := trivial` placeholder pending real conclusion (degree=1 ⇒ injective covering) |
+| `thm:compact-bijection-homeo` | Mathlib `Continuous.homeoOfEquivCompactToT2` | (re-export) | DONE | sorry-free Mathlib; tex pinned with `\mathlibok` |
+| `input:degree-one-isomorphism` | `Blueprint.input_degree_one_isomorphism` | `Sec02/InputDegreeOneIsomorphism.lean` | SHORT | umbrella stub landed; body sorry pending `branchedDegree_one_fiber_unique` injectivity leaf |
 
 ## sec03 — Periods and Riemann bilinear
 
@@ -119,15 +119,24 @@ All labels covered by `prop:complex-torus-package` (`\leanok` in blueprint, sorr
 |---|---|---|---|---|
 | `thm:challenge-api` | public API in `Challenge.lean` | `Jacobian/Challenge.lean` | DONE | `\leanok`; sorry-bearing internally but covered by other rows |
 
-## TRIVIAL nodes discharged on this branch
+## TRIVIAL/SHORT nodes discharged or wired across the trivial-batch series
 
-- `input_finite_dimensionality` (commit a6e8efe)
-- `vanishingOrder` (commit 560e1b0)
-- `meromorphic_as_cp1_map` (commit 2d929d1)
+The Small Jobs Worker has run 11 trivial-batch PRs (#8, #22, #30, #35, #40, #44, #48, #51, #54, #57, #59) covering:
 
-## Suggested next pickups
+- **Lean discharges (3)**: `input_finite_dimensionality` (a6e8efe), `vanishingOrder` (560e1b0), `meromorphic_as_cp1_map` (2d929d1).
+- **New Mathlib-free Sec02/Sec03/Sec05 placeholder stubs**: `Sec02/InputDegreeOneIsomorphism.lean`, `Sec03/{PolygonalModel, PrimitiveOnPolygon, BilinearFromStokes, HermitianPositivity}.lean`, `Sec05/PrincipalDeg0SimpleSupportDeg1.lean` — each `theorem ... : True := trivial` with a docstring recording the replacement-target signature and DECOMPOSE/MEDIUM sub-leaves.
+- **`\lean{}` annotations pinned**: every `\label{}` block in `tex/sections/0[1-7]-*.tex` and `tex/statements/*.tex` now has a resolvable `\lean{}` target (verified by sweep at top of batch 12).
+- **`\notready → \leanok` promotions** (where the named decl body is sorry-free per the integrator convention): `thm:principal-degree-zero`, `input:divisors` (PR #57); `thm:riemann-hurwitz-deg1`, `thm:aj-divisor-hom` (PR #59); plus the historical `def:divisor`, `def:divisor-degree` (PR #30) and many others.
+- **Sec06 cleanup**: stray `\notready` removed from `lem:trace-forms` (PR #59).
 
-- **Easiest SHORT**: `principalDivisors` (AddSubgroup wrapper), `input_divisors` (umbrella), `input_riemann_bilinear` (umbrella once deps land), `input_degree_one_isomorphism` (umbrella).
-- **Easiest MEDIUM**: `divisor_finite_support` (compact+discrete ⇒ finite), `principalDivisor` (Finsupp on finite-support set), `principal_deg0_simple_support_deg1` (combinatorial).
-- **First DECOMPOSE worker should target**: `def:sheaf-cohomology-rs` (largest dependency cluster — feeds Serre duality, Riemann-Roch, eventually genus-zero classification).
-- **Stokes chain (DECOMPOSE)**: `thm:stokes-on-rs-with-boundary` is the single biggest classical-input gap; once decomposed it unlocks `thm:bilinear-from-stokes` → `thm:period-vectors-full-real-rank` → `thm:period-lattice`.
+## Remaining easy pickups
+
+- **`\notready → \leanok` candidates** where the named decl is sorry-free but kept conservative:
+  - `thm:abel-point-separation` / `input:abel-theorem` (both → `pathIntegralFunctional_separates_points`, sorry-free body via the opaque `*_spec`).
+  - `thm:degree-one-bijective`, `thm:polygonal-model`, `lem:primitive-on-polygon`, `thm:bilinear-from-stokes`, `thm:hermitian-positivity` — all `True := trivial` placeholders. Promotion correctness depends on the integrator's policy on `True` placeholders (kept `\notready` so far for accuracy of conclusion).
+
+- **First DECOMPOSE worker should target**: `def:sheaf-cohomology-rs` is now scaffolded (`Jacobian/HolomorphicForms/SheafCohomologyRS.lean`); the next step is filling `RSAbSheaf` / `RSSheafCohomology` consumer lemmas needed by `serre_duality_rs` and `euler_char_line_bundle`.
+
+- **Stokes chain (DECOMPOSE)**: `thm:stokes-on-rs-with-boundary` umbrella stub now landed in `Sec03/StokesOnRSWithBoundary.lean` with 8 named sub-leaves; the eight-leaf decomposition is in `ref/plans/stokes-on-rs-with-boundary.md` and ready for follow-up workers.
+
+- **Theta-function chain (HARD, in flight)**: `Sec05/RiemannTheta.lean` records the theta-function infrastructure feeding `AbelExistence.existence_of_f`. The next worker can split off the Siegel-upper-half-space + quasi-periodicity sub-leaves.
