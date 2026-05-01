@@ -52,6 +52,7 @@ import Jacobian.Blueprint.Sec05.InputAbelTheorem
 import Jacobian.Blueprint.Sec05.RiemannHurwitzDeg1
 import Jacobian.Blueprint.Sec05.RiemannHurwitzViaEulerChar
 import Jacobian.Blueprint.Sec05.AbelPointSeparation
+import Jacobian.Blueprint.Sec05.Pic0
 
 /-!
 # Blueprint stubs index
