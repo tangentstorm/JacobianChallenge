@@ -1,34 +1,37 @@
-import Jacobian.HolomorphicForms.CotangentBundle
+import Jacobian.Blueprint.Sec02.BranchedDegree
 
 /-! # Blueprint stub: `lem:degree-one-no-ramification`
 
 Section 2 of `tex/sections/02-holomorphic-forms-and-genus.tex`.
 
-A degree-one holomorphic map between compact connected Riemann
-surfaces is unramified — every fiber is a single point and the local
-derivative of the map (in any chart) is nonzero.
+A degree-one branched cover is unramified everywhere: at every source
+point the ramification index is `1`. Combinatorial heart of the
+degree-one ⇒ bijective ⇒ biholomorphism chain.
 
-This file is a scaffold so the blueprint dep-graph node has a Lean
-target via `\lean{}`. The real statement requires the project's
-`branched_degree` API (see `ref/plans/branched-degree.md`); until that
-lands the body is a placeholder so this file compiles cleanly. -/
+This stub records the statement using the existing `BranchedCoverData`
+API (`Jacobian/Blueprint/Sec02/BranchedDegree.lean`). The proof is the
+companion to leaf 7 `branchedDegree_one_fiber_unique`:
+weighted-fibre-sum equal to `1` over a finite fibre with
+positive-integer summands forces every summand to be `1` (so every
+fibre has a single element, and its ramification index is `1`). -/
 
 namespace JacobianChallenge.Blueprint
 
-open scoped Manifold
+/-- **MEDIUM.** A degree-one branched cover is unramified at every
+source point.
 
-/-- Degree-one holomorphic maps are unramified.
-
-PLACEHOLDER STATEMENT: pending the project's `branched_degree` API the
-conclusion is recorded as `True`. The intended statement is roughly
-"for every `y : Y` the fiber `f ⁻¹' {y}` is a singleton and the chart
-derivative of `f` at that point is nonzero". -/
+PROOF SKETCH (sorry pending the analytic frontier / structural axiom
+on `weightedFiberCard`): for any `x : X`, set `y := f x` and rewrite
+`branchedDegree h` via `branchedDegree_eq_weightedFiberCard h y`; the
+weighted-fibre sum at `y` equals `1`, the summand
+`h.ramificationIndex x` is positive (`h.ramificationIndex_pos x`), and
+all summands are positive — so the sum-equals-one forces every
+summand (in particular at `x`) to be `1`. -/
 theorem degree_one_no_ramification
-    (X Y : Type*) [TopologicalSpace X] [TopologicalSpace Y]
-    [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
-    (_f : X → Y) :
-    True := trivial
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f)
+    (_hdeg : branchedDegree h = 1) :
+    ∀ x : X, h.ramificationIndex x = 1 := by
+  sorry
 
 end JacobianChallenge.Blueprint
