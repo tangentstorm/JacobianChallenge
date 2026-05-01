@@ -401,26 +401,14 @@ theorem holomorphicOneFormCoeffTendstoZeroOfTransition
     holomorphicOneForm_identityInversionTransition ω →
     Filter.Tendsto (holomorphicOneForm_coeff ω)
       (Filter.cocompact ℂ) (nhds 0) := by
-  -- Aristotle b19e41ad: tendsto-arithmetic on the Möbius transition.
-  intro h_cont h_trans
-  have h_inv : Filter.Tendsto (fun w => (holomorphicOneForm_coeff ω) (w⁻¹))
-      (nhdsWithin 0 {0}ᶜ) (nhds 0) := by
-    have h_inv : Filter.Tendsto (fun w => -w ^ 2 *
-        (holomorphicOneForm_inversionCoeff ω) w)
-        (nhdsWithin 0 {0}ᶜ) (nhds 0) := by
-      exact tendsto_nhdsWithin_of_tendsto_nhds (by simpa using
-        Filter.Tendsto.mul (Filter.Tendsto.neg (Filter.tendsto_id.pow 2)) h_cont)
-    exact h_inv.congr' (by filter_upwards [h_trans] with w hw; aesop)
-  convert h_inv.comp (show Filter.Tendsto (fun w : ℂ => w⁻¹)
-      (Filter.cocompact ℂ) (nhdsWithin 0 {0}ᶜ) from ?_) using 1
-  · aesop
-  · rw [tendsto_nhdsWithin_iff]
-    rw [tendsto_zero_iff_norm_tendsto_zero]
-    simp +zetaDelta at *
-    exact ⟨tendsto_inv_atTop_zero.comp tendsto_norm_cocompact_atTop,
-      Filter.mem_cocompact.mpr ⟨Metric.closedBall 0 1,
-        ProperSpace.isCompact_closedBall _ _,
-        fun x hx => by contrapose! hx; aesop⟩⟩
+  -- BLOCKER: Aristotle b19e41ad's tendsto-arithmetic proof was integrated
+  -- in f2279b4 but does not typecheck against current Mathlib v4.28.0
+  -- (typeclass resolution failure on `Filter.Tendsto.mul` — `ContinuousMul`
+  -- can't be inferred when arguments are metavariables, plus unsolved goals
+  -- on the cocompact↔nhdsWithin transport). Reverted to `sorry` to restore
+  -- a green build; the b19e41ad strategy is still correct in spirit and can
+  -- be re-attempted with explicit type annotations.
+  sorry
 
 /-- **Chart-transition assembly.** Continuity and the explicit transition
 formula are the remaining leaves; the old broad decay obligation is no
@@ -511,7 +499,20 @@ theorem holomorphicOneForm_infty_vanishing_of_inversionCoeff
     ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
     (∀ {w : ℂ}, w ≠ 0 → holomorphicOneForm_inversionCoeff ω w = 0) →
     ω.toFun (OnePoint.infty : OnePoint ℂ) = 0 := by
-  sorry
+  -- Aristotle 0f24ef1b: continuity + punctured-vanishing → inversionCoeff 0 = 0.
+  intro h1 h2
+  have h3 : holomorphicOneForm_inversionCoeff ω 0 = 0 := by
+    have h_punct : Filter.Tendsto (fun w : ℂ => holomorphicOneForm_inversionCoeff ω w)
+        (nhdsWithin 0 {0}ᶜ) (nhds 0) := by
+      exact tendsto_const_nhds.congr'
+        (Filter.eventuallyEq_of_mem self_mem_nhdsWithin fun x hx => by aesop)
+    exact tendsto_nhds_unique (h1.mono_left nhdsWithin_le_nhds) h_punct
+  ext
+  convert h3 using 1
+  unfold holomorphicOneForm_inversionCoeff
+  norm_num
+  unfold invBwd
+  grind +splitIndPred
 
 /-- **Assembly for infinity vanishing.** The remaining leaf is the
 removable-singularity step from the inversion coefficient. -/
@@ -652,13 +653,33 @@ structure HomeoSphereHolomorphicOneFormVanishing
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
   subsingleton : Subsingleton (HolomorphicOneForm ℂ X)
 
+/-- **Uniformization-lite helper.** A compact connected Riemann surface
+topologically homeomorphic to `OnePoint ℂ` has subsingleton holomorphic
+1-forms. This encapsulates the deep content: the uniqueness of the
+complex structure on the topological 2-sphere forces X to be
+biholomorphic to `OnePoint ℂ ≃ ℂℙ¹`, whose canonical bundle has
+negative degree, yielding `H⁰(Ω¹) = 0`.
+
+Mathlib gaps: uniqueness of smooth/complex structure on S², pullback of
+holomorphic 1-forms along biholomorphisms.
+
+(Aristotle 22577167 named-helper extraction.) -/
+theorem subsingleton_holomorphicOneForm_of_homeo_onePointCx
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_e : Nonempty (X ≃ₜ OnePoint ℂ)) :
+    Subsingleton (HolomorphicOneForm ℂ X) := by
+  sorry
+
 /-- **Opaque data obligation (uniformization-lite core).** A compact
 connected Riemann surface homeomorphic to S² has no nonzero holomorphic
 1-forms.
 
-Bottom-up content: uniqueness of the complex structure on the topological
-2-sphere, transport of holomorphic 1-forms along the resulting
-biholomorphism to `OnePoint ℂ`, and the `H⁰(ℂℙ¹, Ω¹) = 0` computation. -/
+Reduced to `subsingleton_holomorphicOneForm_of_homeo_onePointCx` by
+composing the given homeomorphism `X ≃ₜ S²` with the inverse of
+`onePointEquivSphereOfFinrankEq`. (Aristotle 22577167.) -/
 theorem homeoSphereHolomorphicOneFormVanishing
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -666,7 +687,10 @@ theorem homeoSphereHolomorphicOneFormVanishing
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     Subsingleton (HolomorphicOneForm ℂ X) := by
-  sorry
+  exact subsingleton_holomorphicOneForm_of_homeo_onePointCx X
+    (_h.map (fun e => e.trans
+      (onePointEquivSphereOfFinrankEq
+        (by simp [Complex.finrank_real_complex])).symm))
 
 /-- **Sub-obligation wrapper (sorry-free).** Extracts the subsingleton
 consequence from `homeoSphereHolomorphicOneFormVanishing`. -/
