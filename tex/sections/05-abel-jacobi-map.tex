@@ -112,6 +112,7 @@ The Abel-Jacobi map extends \(\Z\)-linearly to a group homomorphism
 particular, \(\AJ_P(Q_1)=\AJ_P(Q_2)\) iff \(\AJ(Q_1-Q_2)=0\).
 \depends{Linear extension of \(\AJ_P\) to formal sums; degree-zero
 condition is needed to make the result independent of base point.}
+\lean{JacobianChallenge.Blueprint.AbelExistence.AjDivisorHom.AJ_addHom}
 \notready
 \end{theorem}
 
@@ -140,6 +141,7 @@ nonzero meromorphic function \(f\in\Mer(X)^{\times}\) with \((f)=D\).
 exponential of the period map together with a meromorphic-function
 construction (theta-function-style). Multi-thousand-line classical
 result; see e.g.\ Forster Lectures on Riemann Surfaces, Chapter 3.}
+\lean{JacobianChallenge.Blueprint.AbelExistence.principal_iff_AJ_zero}
 \leanok
 \end{theorem}
 
@@ -197,6 +199,7 @@ size~1.
 \uses{def:branched-degree,input:degree-one-isomorphism}
 A nonconstant holomorphic map \(f:X\to\CPone\) of degree \(1\) is a
 biholomorphism. In particular, \(g(X)=g(\CPone)=0\).
+\lean{JacobianChallenge.Blueprint.AbelExistence.RiemannHurwitzDeg1.riemann_hurwitz_deg1}
 \notready
 \end{theorem}
 
@@ -228,6 +231,7 @@ genus, and \(g(\CPone)=0\) is a separate well-known computation
 \label{thm:abel-point-separation}
 \uses{thm:aj-divisor-hom,thm:abel-existence,lem:principal-deg0-simple-support-deg1,thm:riemann-hurwitz-deg1}
 If \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
+\lean{JacobianChallenge.AbelJacobi.pathIntegralFunctional_separates_points}
 \notready
 \end{theorem}
 
