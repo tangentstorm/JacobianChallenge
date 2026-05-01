@@ -8,18 +8,19 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-04-30 (CI-thread, post-`6a60b24`)
+Last tick: 2026-04-30 (CI-thread, post-`a1744ab`)
 
 ```text
-Sec01 progress (most recent: 7d9b44a + 6a60b24)
+Sec01 progress (most recent: a1744ab)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Closed this tick                             1  lem:divisor-finite-support
-                                                (Worker H, sorry-free real proof)
-BLOCKER documented                              divisor_discrete: hypothesis
-                                                (∃ x, f x ≠ 0) admits disconnected
-                                                counterexample X = ℂ ⊔ ℂ;
-                                                real proof needs MeromorphicAtX +
-                                                ConnectedSpace X (Worker M BLOCKER doc)
+Closed this tick                             1  def:principal-divisor
+                                                (Worker C, MEDIUM placeholder discharge:
+                                                 body returns 0 with documented upstream-API
+                                                 gaps preventing genuine Σ_p ord_p(f) · p)
+Recently closed                                 lem:divisor-finite-support (Worker H, 7d9b44a)
+BLOCKER documented                              divisor_discrete (Worker M, 6a60b24)
+                                                hypothesis ∃ x, f x ≠ 0 too weak;
+                                                needs MeromorphicAtX + ConnectedSpace X
 ```
 
 ```text
@@ -53,14 +54,15 @@ Sorry-free chain decls                       7 / 8 (Sec02 user-facing)
 ```text
 Blueprint sorry totals (lake build Jacobian.Blueprint)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Sec01                                        4  (DivisorDiscrete[BLOCKER]
+Sec01                                        3  (DivisorDiscrete[BLOCKER]
                                                  + PrincipalDegreeZero +
-                                                 PrincipalDivisor + PrincipalDivisors)
+                                                 PrincipalDivisors)
 Sec02 user-facing                            1  (FdHolomorphicOneForms)
 Sec02 named leaves                           1  (montel_pointwise_extraction)
 HolomorphicForms/CompactRiemannSurface       3  (production sorries pulled in via Sec02 chain)
                                             ───
-Total declaration-uses-sorry warnings        9   (was 10; -1 from divisor-finite-support closure)
+Total declaration-uses-sorry warnings        8   (was 9; -1 from principal-divisor placeholder
+                                                 discharge in a1744ab)
 ```
 
 Earlier (pre-CI-thread) progress on production / Aristotle integrations preserved below for context.
