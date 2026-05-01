@@ -428,6 +428,17 @@ evaluation at `1 : ℂ`. -/
 theorem holomorphicOneFormInversionChartCoeffContinuousAtZero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (holomorphicOneForm_inversionChartCoeff ω) 0 := by
+  /- BLOCKER (Aristotle 6b7b944f): Unlike the identity-chart case
+     (closed by b720818b), the cotangent trivialization at ∞ does NOT act as
+     the identity on nearby fibers. By `hom_trivializationAt_apply` +
+     `symmL_trivializationAt_eq_core`, the trivialized section at ↑(w⁻¹) is
+     `ω(↑(w⁻¹)) ∘ symmL` where `symmL = -w⁻²`, giving trivialized value
+     `-w⁻² f(w⁻¹)` ≠ `f(w⁻¹)`. The theorem is true but its proof requires
+     showing `f = 0` (via Liouville on `-w⁻² f(w⁻¹)` being holomorphic at 0),
+     making it logically equivalent to the main `ω = 0` result, not a stepping
+     stone toward it. The proof plan's transition formula
+     `moebiusPullback_cotangent_pointwise` is also false as stated (both sides
+     evaluate `ω` at `1 = ∂/∂z`, not at the inversion-chart tangent vector). -/
   sorry
 
 /-- **Inversion-chart identification leaf.** The chart-local inversion
