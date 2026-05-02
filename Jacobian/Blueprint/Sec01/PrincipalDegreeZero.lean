@@ -44,23 +44,32 @@ namespace JacobianChallenge.Blueprint
 
 open scoped Manifold
 open scoped OnePoint
+open scoped Topology
+open Filter
+open JacobianChallenge.HolomorphicForms.VanishingOrder
 
 /-! ## Sub-leaf #1 (SHORT) — constant-zero case. -/
 
 /-- **Sub-leaf #1 of `thm:principal-degree-zero` (plan class: SHORT).**
 
-When the underlying ℂ-valued projection of `f` is identically `0` the
-`principalDivisor` constructor takes its second `by_cases` branch and
-returns the zero divisor; its degree is then `0` definitionally.
+When the discriminant of `principalDivisor`'s `by_cases` is false —
+either the projection fails to be meromorphic at some point, or its
+Laurent order is `⊤` everywhere (i.e. the projection is identically
+zero on a punctured neighbourhood of every point) — the constructor
+takes its `else` branch and returns the zero divisor; its degree is
+then `0` definitionally.
 
-This handles the constant-`0` case of the umbrella theorem so the
-branched-cover route in leaves 2–7 only has to deal with nonzero
-projections. -/
+In our setup the meromorphicity conjunct is always provided by
+`f.isMeromorphic`, so in practice the only way this leaf fires is when
+the projection has `vanishingOrder = ⊤` at every point (e.g. the
+literal zero meromorphic function). -/
 theorem principalDivisor_zero_of_underlying_zero
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
-    (hf : ¬ ∃ x, (f x).getD 0 ≠ 0) :
+    (hf : ¬ ((∀ q : X, MeromorphicAtX (fun p => (f p).getD 0) q) ∧
+              (∃ p : X, vanishingOrder X p (fun p => (f p).getD 0) ≠ ⊤))) :
     Divisor.degree (principalDivisor X f) = 0 := by
   classical
   unfold principalDivisor
@@ -88,8 +97,8 @@ the continuity hypothesis discharged by `liftToCp1_continuous`. The
 remaining mathematical content lives in those two named obligations
 plus the Mathlib instance `ConnectedSpace (OnePoint ℂ)`. -/
 noncomputable def liftToCp1_branchedCoverData
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
-    [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
     (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
@@ -116,8 +125,8 @@ The `WithTop.untopD 0` projection is well-defined here because at a
 zero (not a pole) the `vanishingOrder` is a finite nonnegative integer;
 see leaf 5 for the support-side bookkeeping. -/
 theorem vanishingOrder_eq_ramificationIndex_at_zero
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
-    [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
     (hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
@@ -140,8 +149,8 @@ The chart on `OnePoint ℂ` at `∞` is `1/w`, so the local normal form for
 the lift becomes `f(z) = c · z^{-e} + …` with `c ≠ 0`. The
 `WithTop.untopD 0` projection lands on the integer `-e`. -/
 theorem vanishingOrder_eq_neg_ramificationIndex_at_pole
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
-    [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
     (hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
@@ -159,24 +168,81 @@ theorem vanishingOrder_eq_neg_ramificationIndex_at_pole
 At a "regular point" of `f` — neither a zero nor a pole — the Laurent
 order of the underlying ℂ-projection of `f` at `p` is the integer `0`.
 
-Mathematical content: in a chart at `p`, the function `f` is locally a
-nonvanishing holomorphic germ, so by Mathlib's
-`tendsto_ne_zero_iff_meromorphicOrderAt_eq_zero` its `meromorphicOrderAt`
-is `0`. Routing through the chart-independence theorem
-`orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas` then gives
-`vanishingOrder X p (underlyingC f) = 0`.
-
-This is the single HARD analytic obligation that leaf 5's body
-delegates to. -/
+Discharge route: the projection `(f.toFun q).getD 0` is continuous at
+`p` (composing `f.toFun_continuous` with continuity of `(·).getD 0` at
+the non-`∞` point `f.toFun p`); pulling this continuity through the
+chart `extChartAt 𝓘(ℂ) p` gives `Tendsto (proj ∘ chart.symm)
+(𝓝 (chart p)) (𝓝 z)` where `z = (f.toFun p).getD 0 ≠ 0`. Restricting
+to the punctured neighbourhood and applying Mathlib's
+`tendsto_ne_zero_iff_meromorphicOrderAt_eq_zero` (mp direction) gives
+`meromorphicOrderAt = 0`, which equals `orderAt = vanishingOrder` by
+the project's chart-pullback definition. -/
 theorem vanishingOrder_eq_zero_of_regular_point
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
-    [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) (_hholo : True) (p : X)
-    (_h0 : meromorphicToCp1 X f p ≠ ((0 : ℂ) : OnePoint ℂ))
-    (_hinf : meromorphicToCp1 X f p ≠ (∞ : OnePoint ℂ)) :
+    (h0 : meromorphicToCp1 X f p ≠ ((0 : ℂ) : OnePoint ℂ))
+    (hinf : meromorphicToCp1 X f p ≠ (∞ : OnePoint ℂ)) :
     vanishingOrder X p (fun q => (f q).getD 0) = 0 := by
-  sorry
+  classical
+  -- Step 1. Extract z : ℂ from `f.toFun p ≠ ↑0` and `≠ ∞`.
+  obtain ⟨z, hz_eq, hz_ne⟩ :
+      ∃ z : ℂ, f.toFun p = (↑z : OnePoint ℂ) ∧ z ≠ 0 := by
+    rcases hcase : f.toFun p with _ | z
+    · exact absurd hcase hinf
+    · refine ⟨z, rfl, ?_⟩
+      intro hz0
+      apply h0
+      show f.toFun p = ((0 : ℂ) : OnePoint ℂ)
+      rw [hcase, hz0]
+      rfl
+  -- Step 2. Continuity of `(·).getD 0` at `f.toFun p = ↑z`.
+  have hgetD_at :
+      ContinuousAt (fun w : OnePoint ℂ => w.getD 0) (f.toFun p) := by
+    rw [hz_eq, OnePoint.continuousAt_coe]
+    exact continuousAt_id
+  -- Step 3. Continuity of the projection at p.
+  have hproj_at :
+      ContinuousAt (fun q : X => (f.toFun q).getD 0) p :=
+    hgetD_at.comp f.toFun_continuous.continuousAt
+  -- Step 4. Compose with chart.symm: projection ∘ chart.symm is
+  -- continuous at chart p, with limiting value z.
+  have hsymm_at :
+      ContinuousAt (extChartAt 𝓘(ℂ) p).symm ((extChartAt 𝓘(ℂ) p) p) :=
+    continuousAt_extChartAt_symm p
+  have hsymm_apply :
+      (extChartAt 𝓘(ℂ) p).symm ((extChartAt 𝓘(ℂ) p) p) = p :=
+    extChartAt_to_inv p
+  have hcomp_at :
+      ContinuousAt ((fun q : X => (f.toFun q).getD 0)
+          ∘ (extChartAt 𝓘(ℂ) p).symm)
+        ((extChartAt 𝓘(ℂ) p) p) := by
+    have hproj_at' :
+        ContinuousAt (fun q : X => (f.toFun q).getD 0)
+          ((extChartAt 𝓘(ℂ) p).symm ((extChartAt 𝓘(ℂ) p) p)) := by
+      rw [hsymm_apply]; exact hproj_at
+    exact hproj_at'.comp hsymm_at
+  -- Step 5. Tendsto in punctured neighbourhood with limit z.
+  have hval :
+      ((fun q : X => (f.toFun q).getD 0) ∘ (extChartAt 𝓘(ℂ) p).symm)
+        ((extChartAt 𝓘(ℂ) p) p) = z := by
+    show (f.toFun ((extChartAt 𝓘(ℂ) p).symm ((extChartAt 𝓘(ℂ) p) p))).getD 0 = z
+    rw [hsymm_apply, hz_eq]
+    rfl
+  have htendsto :
+      Tendsto ((fun q : X => (f.toFun q).getD 0)
+          ∘ (extChartAt 𝓘(ℂ) p).symm)
+        (𝓝[≠] ((extChartAt 𝓘(ℂ) p) p)) (𝓝 z) := by
+    have h := hcomp_at.tendsto
+    rw [hval] at h
+    exact h.mono_left nhdsWithin_le_nhds
+  -- Step 6. Apply Mathlib's iff (mp direction).
+  show JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p
+      (fun q => (f q).getD 0) = 0
+  unfold JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt
+  exact (tendsto_ne_zero_iff_meromorphicOrderAt_eq_zero
+            (f.isMeromorphic p)).mp ⟨z, hz_ne, htendsto⟩
 
 /-- **Sub-leaf #5 of `thm:principal-degree-zero` (plan class: MEDIUM).**
 
@@ -193,8 +259,8 @@ coefficient drops out of the support.
 This is the bookkeeping leaf that lets the degree sum in leaf 6 be
 split into the two finite fibre sums. -/
 theorem principalDivisor_support_subset_zeros_union_poles
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
-    [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
     (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
@@ -246,13 +312,14 @@ case-analysis of `principalDivisor`'s `by_cases` definition; the
 constant-zero-projection branch is handled by leaf 1, not here.
 Consumer: leaf 7a (`principal_degree_zero_of_nonzero`). -/
 theorem degree_principalDivisor_eq_zeros_minus_poles
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
-    [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
     (hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
     (hholo : True)
-    (hcond : ∃ x, (f x).getD 0 ≠ 0) :
+    (hcond : (∀ q : X, MeromorphicAtX (fun p => (f p).getD 0) q) ∧
+              (∃ p : X, vanishingOrder X p (fun p => (f p).getD 0) ≠ ⊤)) :
     let h := liftToCp1_branchedCoverData X f hf_nonconstant hholo
     Divisor.degree (principalDivisor X f)
       = (((h.finite_fiber ((0 : ℂ) : OnePoint ℂ)).toFinset).sum
@@ -365,7 +432,8 @@ Mathematical content: when the underlying ℂ-projection of `f` is the
 nonzero constant `z`, every coefficient `vanishingOrder p _` is `0`
 (by leaf 7b), so the `Finsupp.onFinset` reduces to `0`. -/
 theorem principalDivisor_eq_zero_of_constant_nonzero
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
     {z : ℂ} (hz : z ≠ 0) (hconst : ∀ x, (f x).getD 0 = z) :
@@ -401,37 +469,69 @@ Body case-splits on whether `f : X → OnePoint ℂ` is itself constant:
   `(branchedDegree h : ℤ)` via `branchedDegree_eq_weightedFiberCard`
   combined with the now-derived `BranchedCoverData.weightedFiberCard`. -/
 theorem principal_degree_zero_of_nonzero
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
-    [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
-    (hf : ∃ x, (f x).getD 0 ≠ 0) :
+    (hf : ∃ p : X, vanishingOrder X p (fun q => (f q).getD 0) ≠ ⊤) :
     Divisor.degree (principalDivisor X f) = 0 := by
   classical
+  -- Combine `f.isMeromorphic` with `hf` to form the discriminant of
+  -- `principalDivisor`'s `by_cases`, used by leaf 6 below.
+  have hcond_disc :
+      (∀ q : X, MeromorphicAtX (fun p => (f p).getD 0) q) ∧
+      (∃ p : X, vanishingOrder X p (fun p => (f p).getD 0) ≠ ⊤) :=
+    ⟨f.isMeromorphic, hf⟩
   by_cases hconst : ∃ c : OnePoint ℂ, ∀ x, f x = c
   · -- Constant case. Determine which constant.
     obtain ⟨c, hc⟩ := hconst
-    -- Show c = ↑z for some z ≠ 0.
-    obtain ⟨x, hx⟩ := hf
-    have hx' : (c : OnePoint ℂ).getD 0 ≠ 0 := by
-      rw [← hc x]; exact hx
-    -- c can't be ∞ (because (∞).getD 0 = 0).
-    have hc_ne_inf : c ≠ (∞ : OnePoint ℂ) := by
-      intro heq; apply hx'; rw [heq]; rfl
-    -- Therefore c = ↑z for some z : ℂ.
-    obtain ⟨z, rfl⟩ : ∃ z : ℂ, c = (↑z : OnePoint ℂ) := by
-      cases c with
-      | infty => exact absurd rfl hc_ne_inf
-      | coe z => exact ⟨z, rfl⟩
-    -- And z ≠ 0 since (↑z).getD 0 = z ≠ 0.
-    have hz_ne : z ≠ 0 := hx'
+    -- The constant cannot be ∞ (would force vanishingOrder = ⊤ everywhere,
+    -- contradicting hf). Hence c = ↑z. Furthermore z ≠ 0, otherwise
+    -- (f x).getD 0 = 0 always and vanishingOrder = ⊤ everywhere.
+    have hf_const_proj : ∀ q, (f q).getD 0 = c.getD 0 := by
+      intro q; rw [hc q]
+    -- Either c = ∞ or c = ↑z; rule out both bad subcases.
+    have hc_finite_proj : ∃ z : ℂ, c = (↑z : OnePoint ℂ) ∧ z ≠ 0 := by
+      cases hcase : c with
+      | infty =>
+        exfalso
+        -- (f x).getD 0 = 0 for all x, so vanishingOrder = ⊤ everywhere
+        -- (constant zero function), contradicting hf.
+        obtain ⟨p, hp⟩ := hf
+        apply hp
+        have heq : (fun q : X => (f q).getD 0) = (fun _ : X => (0 : ℂ)) := by
+          funext q; rw [hf_const_proj q, hcase]; rfl
+        rw [heq]
+        -- vanishingOrder X p (fun _ => 0) = ⊤
+        show JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p
+            (fun _ : X => (0 : ℂ)) = ⊤
+        unfold JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt
+        show meromorphicOrderAt (fun _ : ℂ => (0 : ℂ))
+            ((extChartAt 𝓘(ℂ) p) p) = ⊤
+        rw [meromorphicOrderAt_const]; exact if_pos rfl
+      | coe z =>
+        refine ⟨z, rfl, ?_⟩
+        intro hz0
+        -- z = 0 ⇒ projection identically 0 ⇒ vanishingOrder = ⊤ everywhere
+        obtain ⟨p, hp⟩ := hf
+        apply hp
+        have heq : (fun q : X => (f q).getD 0) = (fun _ : X => (0 : ℂ)) := by
+          funext q; rw [hf_const_proj q, hcase, hz0]; rfl
+        rw [heq]
+        show JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p
+            (fun _ : X => (0 : ℂ)) = ⊤
+        unfold JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt
+        show meromorphicOrderAt (fun _ : ℂ => (0 : ℂ))
+            ((extChartAt 𝓘(ℂ) p) p) = ⊤
+        rw [meromorphicOrderAt_const]; exact if_pos rfl
+    obtain ⟨z, rfl, hz_ne⟩ := hc_finite_proj
     -- Each (f x).getD 0 = z.
     have hconst_z : ∀ x, (f x).getD 0 = z := by
       intro x; rw [hc x]; rfl
     rw [principalDivisor_eq_zero_of_constant_nonzero X f hz_ne hconst_z, map_zero]
   · -- Nonconstant case: apply leaf 6, then cancel.
     have h6 := degree_principalDivisor_eq_zeros_minus_poles
-      X f hconst trivial hf
+      X f hconst trivial hcond_disc
     simp only at h6
     rw [h6]
     -- Now: cancel the two ℤ-fibre-sums via Nat.cast_sum + weightedFiberCard_const.
@@ -496,21 +596,17 @@ The constant-`0` case is discharged sorry-free by leaf 1
 (`principalDivisor_zero_of_underlying_zero`). -/
 theorem principal_degree_zero
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
-    [ChartedSpace ℂ X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) :
     Divisor.degree (principalDivisor X f) = 0 := by
   classical
-  by_cases hf : ∃ x, (f x).getD 0 ≠ 0
-  · -- The umbrella's public signature lacks `[T2Space X]`, but the
-    -- branched-cover machinery in leaf 7a requires it. Until the
-    -- compact-Riemann-surface bundle in this project is upgraded to
-    -- include T2 (or until a `[ChartedSpace ℂ X] → T2Space X` instance
-    -- lands), we record this typeclass gap as an isolated `haveI`.
-    -- Mathematically, every Riemann surface is Hausdorff by definition,
-    -- so this gap is documentation rather than substantive math.
-    haveI : T2Space X := sorry
-    exact principal_degree_zero_of_nonzero X f hf
-  · exact principalDivisor_zero_of_underlying_zero X f hf
+  by_cases hf : ∃ p : X, vanishingOrder X p (fun q => (f q).getD 0) ≠ ⊤
+  · exact principal_degree_zero_of_nonzero X f hf
+  · -- The discriminant of `principalDivisor` is `(meromorphic) ∧ (∃ finite
+    -- order)`. The first conjunct is `f.isMeromorphic`; the second
+    -- conjunct is exactly `hf`. So `¬ hf` falsifies the discriminant.
+    refine principalDivisor_zero_of_underlying_zero X f ?_
+    rintro ⟨_, hf'⟩; exact hf hf'
 
 end JacobianChallenge.Blueprint
