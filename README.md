@@ -8,25 +8,31 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-05-01 (`thm:degree-one-bijective` + `IsHolomorphic` scaffold on `claude/formalize-degree-one-bijective-QIaE9`)
+Last tick: 2026-05-01 (`thm:degree-one-bijective` + `IsHolomorphic` + leaf-8 partial discharge on `claude/formalize-degree-one-bijective-QIaE9`)
 
 ```text
-Sec02 degree-one-bijective + analytic scaffold (this tick)
+Sec02 degree-one-bijective + analytic infrastructure (this tick)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 BranchedCoverData                            ████████  +weightedFiberCard_eq invariant
-branchedDegree_pos (leaf 5)                  ████████  sorry-free (Finset.sum_pos witness)
-branchedDegree_eq_card_…unramified (leaf 6)  ████████  sorry-free (sum_congr + sum_const)
-branchedDegree_one_fiber_singleton (helper)  ████████  sorry-free (card ≤ sum = 1 ⇒ singleton)
-branchedDegree_one_fiber_unique (leaf 7)     ████████  sorry-free (corollary of helper)
+branchedDegree leaves 1–7                    ████████  all sorry-free
 degree_one_bijective                         ████████  sorry-free against `BranchedCoverData`
 IsHolomorphicAt / IsHolomorphic predicate    ████████  new file `HolomorphicForms/HolomorphicMap.lean`
-mapAnalyticOrderAt (chart-local order)       ████████  sorry-free definition via `analyticOrderNatAt`
-leaf 8 signature (`IsHolomorphic f`)         ████████  signature meaningful in
-                                                       `Sec02/BranchedDegreeFromHolomorphic.lean`
-leaf 8 body                                  ░░░░░░░░  blocked on three named obstacles:
-                                                       chart-indep of `mapAnalyticOrderAt`,
-                                                       finite-fibre identity argument,
-                                                       constancy of weighted fibre count
+mapAnalyticOrderAt (chart-local order)       ████████  sorry-free definition + alt-chart equality
+chart independence of mapAnalyticOrderAt     ████████  `analyticOrderAt_alternate_chart_eq` +
+                                                       `mapAnalyticOrderAt_eq_of_mem_maximalAtlas`
+local identity principle (chart)             ████████  `analyticAt_eventually_eq_zero_of_frequently`
+local identity principle (manifold)          ████████  `IsHolomorphicAt.eventually_eq_of_frequently_eq`
+local-constant ⇒ global-constant (connected) ████████  `IsHolomorphic.eq_const_of_eventuallyEq`
+finite fibres of nonconstant holomorphic     ████████  `isHolomorphic_finite_fiber`
+mapAnalyticOrderAt_pos (positivity)          ████████  via order ≠ 0 (vanishes) + ≠ ⊤ (connected)
+leaf 8 (BranchedCoverData constructor)       ███████░  3 of 4 obligations sorry-free:
+                                                       ramificationIndex (= mapAnalyticOrderAt),
+                                                       ramificationIndex_pos, finite_fiber.
+                                                       Single remaining sorry:
+weightedFiberCard_const (degree well-def)    ░░░░░░░░  the genuinely hard analytic gap;
+                                                       needs branch-locus finiteness + local
+                                                       triviality off branch values + a
+                                                       continuity argument across branch values
 ```
 
 Note: Mathlib v4.28.0 *does* have `analyticOrderNatAt`, isolated zeros,
