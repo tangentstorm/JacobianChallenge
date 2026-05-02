@@ -1,0 +1,48 @@
+import Jacobian.Periods.Orientable
+import Mathlib.Geometry.Manifold.IsManifold.Basic
+import Mathlib.Analysis.Complex.Basic
+
+/-!
+# Complex 1-manifolds are orientable
+
+Stage B2 of the polygonal-model plan: a complex one-dimensional
+manifold is orientable as a real two-dimensional manifold.
+
+## Top-down role
+
+`complexManifold_orientable` is the (currently-trivial) instance
+that makes `[Orientable X]` available wherever a complex chart on
+`X` is in scope. The instance is the named site at which the eventual
+holomorphic-Jacobian-positivity argument will land.
+
+## Bottom-up content
+
+A holomorphic transition map `ψ ∘ φ⁻¹ : ℂ → ℂ` is orientation-preserving
+because its real Jacobian
+`((Re w)_x  (Re w)_y; (Im w)_x  (Im w)_y) =
+  ((Re w)_x  -(Im w)_x; (Im w)_x   (Re w)_x)`
+(by Cauchy–Riemann) has determinant `|w'|² ≥ 0`. Once
+`Jacobian.Periods.Orientable` carries genuine content (consistent
+chart choice / top-degree homology / volume form), this instance will
+produce a real proof from `IsManifold (modelWithCornersSelf ℂ ℂ) ⊤ X`.
+
+For now `Orientable` is a `True`-field placeholder, so the witness is
+`⟨trivial⟩`.
+-/
+
+namespace JacobianChallenge.Periods
+
+open scoped Manifold
+
+/-- Every complex one-dimensional manifold is `Orientable` as a real
+two-dimensional manifold. Currently a placeholder (the witness comes
+from the `True`-field placeholder of the `Orientable` class); the named
+instance is the API hook for the eventual holomorphic-Jacobian
+argument. -/
+instance complexManifold_orientable
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    Orientable X :=
+  ⟨trivial⟩
+
+end JacobianChallenge.Periods
