@@ -72,7 +72,7 @@ the chosen breakdown.
 
 | Label | Decl | File | Class | Sketch |
 |---|---|---|---|---|
-| `lem:period-homology-invariance` | `Periods.period_homology_invariance_statement` | `Jacobian/Periods/PeriodFunctional.lean` | HARD | production decl is sorry; needs Stokes + closed-form lemma |
+| `lem:period-homology-invariance` | `Periods.period_homology_invariance_statement` (typed form, sorry-free congrArg in `WorkPackets/StatementBank.lean`) + `Blueprint.Sec03.period_homology_invariance` (typed form, sorry-free congrArg in `Blueprint/Sec03/PeriodHomologyInvariance.lean`) + `Blueprint.Sec03.period_homology_invariance_descent` (descent obligation, `True` placeholder pending closed-forms + Stokes) | `Jacobian/WorkPackets/StatementBank.lean`, `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` | DECOMPOSE | typed form discharged — `IntegralOneCycle X = H₁(X,ℤ)` makes the conclusion `congrArg`; descent obligation aggregates `lem:holomorphic-form-is-closed` + `thm:stokes-on-rs-with-boundary` |
 | `lem:holomorphic-form-is-closed` | `<missing>` | `<missing>` | MEDIUM | `dω = 0` for holomorphic 1-form via Cauchy-Riemann in chart; chart-invariance via pullback compatibility |
 | `thm:stokes-on-rs-with-boundary` | `<missing>` | `<missing>` | DECOMPOSE | sub-leaves: manifold-with-corners on RS, integration of forms, Stokes on simplex/box, partition-of-unity assembly |
 | `def:symplectic-basis` | `<missing>` (related: `Periods.symplectic_basis_of_cycles`) | (Periods file) | DECOMPOSE | sub-leaves: H₁(X,ℤ), intersection pairing, existence of symplectic basis (homology rank 2g) |

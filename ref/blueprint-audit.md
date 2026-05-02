@@ -22,7 +22,7 @@ in Lean (real decl or `sorry`-stub) and see all dependencies.
 | Label                                              | Lean decl                                                                                       |
 |----------------------------------------------------|-------------------------------------------------------------------------------------------------|
 | `prop:genus-zero-degree-one-map`                   | `JacobianChallenge.HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero` (NB: actually points at the wrong proposition; that decl is the assembled `thm:genus-zero-classification`) |
-| `lem:period-homology-invariance`                   | `JacobianChallenge.Periods.period_homology_invariance_statement`                                |
+| `lem:period-homology-invariance`                   | `JacobianChallenge.Periods.period_homology_invariance_statement` (typed-form ∀-statement) + `JacobianChallenge.Periods.period_homology_invariance` (sorry-free congrArg) + Blueprint Sec03 forms (`period_homology_invariance` / `period_homology_invariance_descent`) |
 | `input:riemann-bilinear`                           | `JacobianChallenge.Periods.period_vectors_linearIndependent_of_symplectic`                      |
 | `prop:complex-torus-package`                       | `JacobianChallenge.ComplexTorus.{FullComplexLattice, quotient, quotient_addCommGroup, ...}`     |
 | `lem:aj-path-independence`                         | `JacobianChallenge.AbelJacobi.analyticOfCurve`                                                  |

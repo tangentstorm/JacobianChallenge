@@ -261,8 +261,42 @@ noncomputable def periodFullComplexLattice :
   fundamentalDomain_covers := by
     sorry
 
-/-- Work-packet target: period functionals are invariant under homologous cycles. -/
-def period_homology_invariance_statement : Prop := True
+/-- Work-packet target: period functionals are invariant under homologous cycles.
+
+If two integral 1-cycles `σ, τ` represent the same class in `H₁(X, ℤ)`,
+then `(periodFunctional X σ) ω = (periodFunctional X τ) ω` for every
+holomorphic 1-form `ω`.
+
+In the production typing, `IntegralOneCycle X` is the homology group
+`H₁(X, ℤ)` itself (built from `singularHomologyFunctor` in
+`Jacobian/Periods/IntegralOneCycle.lean`), so two cycles representing
+the same class are *equal* as elements of this type and the conclusion
+is a one-line `congrArg`. The actual mathematical content (descent of
+chain-level integration through the boundary map) is paid up-front
+when `periodFunctional`/`periodPairing` is given the type
+`IntegralOneCycle X →+ …` rather than the singular-1-chain type.
+
+That descent obligation is recorded by
+`JacobianChallenge.Blueprint.Sec03.period_homology_invariance_descent`
+(in `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean`) and
+aggregates the `lem:holomorphic-form-is-closed` and
+`thm:stokes-on-rs-with-boundary` blockers. -/
+def period_homology_invariance_statement : Prop :=
+  ∀ (σ τ : IntegralOneCycle X), σ = τ →
+    ∀ (η : HolomorphicOneForm X),
+      (periodFunctional X σ) η = (periodFunctional X τ) η
+
+/-- The typed form of period-homology invariance is a one-line
+`congrArg`: in the production typing, `IntegralOneCycle X = H₁(X, ℤ)`,
+so equality of cycles already encodes the homology relation. The
+real mathematical content lives in the construction of
+`periodFunctional`/`periodPairing` (descent of the chain-level integral
+through `∂₂`), tracked by the descent obligation in
+`Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean`. -/
+lemma period_homology_invariance :
+    period_homology_invariance_statement X := by
+  intro σ τ h η
+  rw [h]
 
 /-- Work-packet target: Riemann bilinear relations/nondegeneracy of the period pairing. -/
 def period_pairing_full_rank_statement : Prop := True
