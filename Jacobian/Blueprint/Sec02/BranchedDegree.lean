@@ -53,7 +53,13 @@ noncomputable def ramificationIndexStub
 and the constancy theorem for the weighted fibre count. Bundling the
 constancy hypothesis as a structure field is the load-bearing trick
 that lets `branchedDegree` exist before the analytic open-mapping
-theorem is in place. -/
+theorem is in place.
+
+`weightedFiberCard` is provided as a derived definition (not a
+structure field), so consumers can rely on the formula
+`((finite_fiber y).toFinset).sum ramificationIndex` without worrying
+about user overrides. The constancy field is stated directly in terms
+of the formula. -/
 structure BranchedCoverData
     (X Y : Type*) [TopologicalSpace X] [TopologicalSpace Y]
     (f : X → Y) where
@@ -64,20 +70,20 @@ structure BranchedCoverData
   /-- Every fibre is finite (a deep fact for nonconstant holomorphic
   maps between compact Riemann surfaces). -/
   finite_fiber : ∀ y : Y, (f ⁻¹' {y}).Finite
-  /-- Weighted cardinality of the fibre over `y`: sum of ramification
-  indices of all preimages of `y`. -/
-  weightedFiberCard : Y → ℕ := fun y =>
-    ((finite_fiber y).toFinset).sum ramificationIndex
-  /-- `weightedFiberCard` agrees with the explicit fibre sum.  When the
-  default value of `weightedFiberCard` is used this is `fun _ => rfl`;
-  the field is exposed so that downstream consumers can reason about
-  the explicit sum without unfolding `weightedFiberCard`. -/
-  weightedFiberCard_eq :
-    ∀ y, weightedFiberCard y = ((finite_fiber y).toFinset).sum ramificationIndex
   /-- The weighted fibre count is constant on `Y` (the genuinely
-  nontrivial part of the definition). -/
-  weightedFiberCard_const :
-    ∀ y₁ y₂ : Y, weightedFiberCard y₁ = weightedFiberCard y₂
+  nontrivial part of the definition); stated directly via the fibre
+  sum so that `branchedDegree_eq_weightedFiberCard` is unconditional. -/
+  fiberSum_const :
+    ∀ y₁ y₂ : Y,
+      ((finite_fiber y₁).toFinset).sum ramificationIndex
+        = ((finite_fiber y₂).toFinset).sum ramificationIndex
+
+/-- Derived: the weighted cardinality of the fibre over `y`, i.e. the
+sum of ramification indices of all preimages of `y`. -/
+noncomputable def BranchedCoverData.weightedFiberCard
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {f : X → Y} (h : BranchedCoverData X Y f) (y : Y) : ℕ :=
+  ((h.finite_fiber y).toFinset).sum h.ramificationIndex
 
 /-- **Plan leaf 3 (SHORT).** The branched degree of a packaged cover:
 the weighted fibre cardinality at any base point. We pick the base
@@ -90,13 +96,22 @@ noncomputable def branchedDegree
 
 /-- **Plan leaf 4 (SHORT).** Main downstream rewrite: `branchedDegree`
 agrees with the weighted fibre count at **any** chosen base point
-`y : Y`. Direct corollary of `weightedFiberCard_const`. -/
+`y : Y`. Direct corollary of `fiberSum_const`. -/
 theorem branchedDegree_eq_weightedFiberCard
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f) (y : Y) :
     branchedDegree h = h.weightedFiberCard y := by
-  unfold branchedDegree
-  exact h.weightedFiberCard_const _ y
+  unfold branchedDegree BranchedCoverData.weightedFiberCard
+  exact h.fiberSum_const _ y
+
+/-- The weighted fibre count is constant on `Y`: the formula version
+of `branchedDegree_eq_weightedFiberCard` that does not route through
+`branchedDegree`. -/
+theorem BranchedCoverData.weightedFiberCard_const
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {f : X → Y} (h : BranchedCoverData X Y f) (y₁ y₂ : Y) :
+    h.weightedFiberCard y₁ = h.weightedFiberCard y₂ :=
+  h.fiberSum_const y₁ y₂
 
 /-- **Plan leaf 5 (MEDIUM).** Surjective covers have positive degree:
 pick any `y : Y`, pick a preimage `x` over `y`, observe
@@ -108,7 +123,8 @@ theorem branchedDegree_pos
     (hsurj : Function.Surjective f) :
     0 < branchedDegree h := by
   set y : Y := Classical.arbitrary Y with hy
-  rw [branchedDegree_eq_weightedFiberCard h y, h.weightedFiberCard_eq]
+  rw [branchedDegree_eq_weightedFiberCard h y]
+  show 0 < ((h.finite_fiber y).toFinset).sum h.ramificationIndex
   obtain ⟨x, hx⟩ := hsurj y
   refine Finset.sum_pos (fun z _ => h.ramificationIndex_pos z) ⟨x, ?_⟩
   rw [Set.Finite.mem_toFinset]
@@ -123,7 +139,9 @@ theorem branchedDegree_eq_card_toFinset_of_unramified_fiber
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f) (y : Y)
     (hunram : ∀ x ∈ f ⁻¹' {y}, h.ramificationIndex x = 1) :
     branchedDegree h = (h.finite_fiber y).toFinset.card := by
-  rw [branchedDegree_eq_weightedFiberCard h y, h.weightedFiberCard_eq]
+  rw [branchedDegree_eq_weightedFiberCard h y]
+  show ((h.finite_fiber y).toFinset).sum h.ramificationIndex
+      = (h.finite_fiber y).toFinset.card
   have hcongr : ((h.finite_fiber y).toFinset).sum h.ramificationIndex
       = ((h.finite_fiber y).toFinset).sum (fun _ : X => (1 : ℕ)) := by
     refine Finset.sum_congr rfl (fun x hx => ?_)
@@ -143,7 +161,8 @@ theorem branchedDegree_one_fiber_singleton
     (hdeg : branchedDegree h = 1) :
     ∃ x, (h.finite_fiber y).toFinset = {x} ∧ h.ramificationIndex x = 1 := by
   have hsum : ((h.finite_fiber y).toFinset).sum h.ramificationIndex = 1 := by
-    rw [← h.weightedFiberCard_eq, ← branchedDegree_eq_weightedFiberCard h y]
+    show h.weightedFiberCard y = 1
+    rw [← branchedDegree_eq_weightedFiberCard h y]
     exact hdeg
   set s := (h.finite_fiber y).toFinset with hs
   have hcard_le_sum : s.card ≤ s.sum h.ramificationIndex := by

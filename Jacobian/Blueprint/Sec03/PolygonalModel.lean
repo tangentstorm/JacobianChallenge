@@ -1,3 +1,7 @@
+import Jacobian.Periods.Polygon4g
+import Jacobian.HolomorphicForms.AnalyticGenus
+import Jacobian.HolomorphicForms.FiniteDimensional
+
 /-! # Blueprint stub: `thm:polygonal-model`
 
 Section 3 of `tex/sections/03-periods-and-riemann-bilinear.tex`.
@@ -9,33 +13,36 @@ basis on `H₁`.
 
 ## Status
 
-**DECOMPOSE placeholder** per `ref/scope-out.md`. Sub-leaves the
-follow-up worker should factor out:
+Statement-level formalization. The codomain is the project-local
+fundamental polygon `JacobianChallenge.Periods.Polygon4g g`
+(constructed in `Jacobian/Periods/Polygon4g.lean` as a quotient of
+the closed unit disk by side-pairings).
 
-* triangulation of a compact orientable surface,
-* cut-along-cycles construction,
-* fundamental polygon identification with the `4g`-gon glued in
-  standard symplectic pattern.
+The proof is `sorry`-bound — discharging it is the "surface
+classification" project (Radó's triangulation theorem +
+combinatorial reduction to the standard 4g-gon, or a Morse-theoretic
+handle-decomposition argument). Mathlib v4.28.0 has none of those
+classical-topology results as packaged theorems.
 
-Mathlib v4.28.0 has none of these as a packaged theorem; this is the
-classical-topology side of Sec03's bookkeeping.
-
-The conclusion is stated as `True` and the proof is `trivial`; the
-declaration name exists today so the blueprint dep-graph can pin
-`\lean{...}` and downstream Sec03 nodes (`primitive-on-polygon`,
-`bilinear-from-stokes`) can record their dependency on it. The body
-will be replaced with the real conclusion once the upstream
-classical-topology API lands.
-
-Imports: intentionally Mathlib-free, mirroring the Sec02
-`BranchedDegree.lean` / `InputDegreeOneIsomorphism.lean` placeholder
-pattern. -/
+The induced-symplectic-basis half of the blueprint claim is split off
+into a separate downstream theorem (deferred until the intersection
+form on `H₁(X, ℤ)` lands at the project level).
+-/
 
 namespace JacobianChallenge.Blueprint
 
-/-- **DECOMPOSE placeholder.** Polygonal model of a compact connected
-oriented Riemann surface of genus `g`: homeomorphism with the
-standard `4g`-gon under symplectic side identification. -/
-theorem polygonal_model : True := trivial
+open JacobianChallenge.Periods JacobianChallenge.HolomorphicForms
+
+/-- **Polygonal model of a compact connected oriented Riemann
+surface.** Statement-level formalization (proof deferred to surface
+classification). -/
+theorem polygonal_model
+    (X : Type) [TopologicalSpace X] [CompactSpace X] [T2Space X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (g : ℕ) (_hg : analyticGenus ℂ X = g) :
+    Nonempty (X ≃ₜ Polygon4g g) := by
+  sorry
 
 end JacobianChallenge.Blueprint

@@ -28,8 +28,8 @@ Three of the four originally-named obstacles have been discharged in
      Bolzano–Weierstrass — sorry-free, `isHolomorphic_finite_fiber`.
 
 The remaining obstacle — well-definedness of the branched degree
-(`weightedFiberCard_const`) — has been split into four sub-leaves in
-`Sec02/WeightedFiberCardConst.lean`:
+(`fiberSum_const`, formerly named `weightedFiberCard_const`) — has been
+split into four sub-leaves in `Sec02/WeightedFiberCardConst.lean`:
 
   * leaf A — `mapAnalyticOrderAt_ramified_finite` (branch locus
     finite),
@@ -61,10 +61,8 @@ index.
 Three of the four structural obligations are discharged: the
 ramification index and its positivity come from
 `mapAnalyticOrderAt` and `mapAnalyticOrderAt_pos`; finite fibres come
-from `isHolomorphic_finite_fiber`; the default `weightedFiberCard`
-field is the explicit fibre sum, so `weightedFiberCard_eq` is `rfl`.
-The remaining `sorry` is `weightedFiberCard_const` — the
-well-definedness of the branched degree. -/
+from `isHolomorphic_finite_fiber`; constancy of the fibre sum comes
+from `isHolomorphic_weightedFiberSum_const`. -/
 noncomputable def branchedCoverData_of_nonconstant_holomorphic
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -77,7 +75,6 @@ noncomputable def branchedCoverData_of_nonconstant_holomorphic
   ramificationIndex := mapAnalyticOrderAt f
   ramificationIndex_pos := mapAnalyticOrderAt_pos hf hnonconst
   finite_fiber := isHolomorphic_finite_fiber hf hnonconst
-  weightedFiberCard_eq := fun _ => rfl
-  weightedFiberCard_const := isHolomorphic_weightedFiberSum_const hf hnonconst
+  fiberSum_const := isHolomorphic_weightedFiberSum_const hf hnonconst
 
 end JacobianChallenge.Blueprint
