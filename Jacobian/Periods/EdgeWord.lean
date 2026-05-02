@@ -104,6 +104,27 @@ determined by `w`. -/
 def wordQuotient (g : ℕ) (w : EdgeWord g) : Type :=
   Quotient ⟨sidePairingRel g w, sidePairingRel_equivalence g w⟩
 
+/-- The Setoid used to construct `wordQuotient g w`. -/
+def wordSetoid (g : ℕ) (w : EdgeWord g) : Setoid DiskC :=
+  ⟨sidePairingRel g w, sidePairingRel_equivalence g w⟩
+
+/-- For the standard word, the wordSetoid equals `Polygon4g.sideSetoid g`. -/
+theorem wordSetoid_standardWord (g : ℕ) :
+    wordSetoid g (standardWord g) = Polygon4g.sideSetoid g := by
+  unfold wordSetoid Polygon4g.sideSetoid
+  congr 1
+  exact sidePairingRel_standardWord g
+
+/-- **A3.1.** For the standard word, `wordQuotient` is the same type as
+`Polygon4g g`. The two are constructed as quotients of `DiskC` by the
+same equivalence relation (`SideRel g`); their setoids coincide via
+`wordSetoid_standardWord`. -/
+theorem polygon4g_eq_standard_word_quotient (g : ℕ) :
+    wordQuotient g (standardWord g) = Polygon4g g := by
+  unfold wordQuotient Polygon4g
+  rw [show (⟨sidePairingRel g (standardWord g), sidePairingRel_equivalence g (standardWord g)⟩
+        : Setoid DiskC) = Polygon4g.sideSetoid g from wordSetoid_standardWord g]
+
 /-! ### List-level Tietze cancellation -/
 
 /-- The single-step Tietze swap relation: cancel an adjacent
