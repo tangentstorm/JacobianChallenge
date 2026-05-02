@@ -230,17 +230,49 @@ the duplicate `topologicalGenus` definitions (one in `TopologicalGenus`,
 one in `PeriodFunctional`). When those are unified, this leaf
 discharges directly.
 
-### Current named-sorry frontier (3 leaves)
+### Polygon CW computation refinement (Round 10–15)
+
+`singularH1_polygon4g_finrank` (the polygon's `H₁` rank leaf) was
+case-split on `g`:
+
+* `singularH1_polygon4g_zero_finrank` (`g = 0`) — *no own sorry*.
+  Body composes:
+  - `polygon4g_zero_homeo_diskC` (**real proof**) — `Polygon4g 0 ≃ₜ DiskC`,
+    via the empty-`SideGen 0` collapsing `SideRel 0` to equality and the
+    compact-to-T2 universal property.
+  - `singularH1_finrank_homeo_invariant` (Round 4, real proof).
+  - `singularH1_diskC_finrank_eq_zero` (assembled).
+* `singularH1_polygon4g_succ_finrank` (`g ≥ 1`, **named sorry**) — the
+  cellular-homology computation on the one-vertex `2(g+1)`-edge
+  one-2-cell complex with attaching word `∏ᵢ[aᵢ,bᵢ]`.
+
+The `g = 0` `H₁` vanishing leaf decomposes through:
+
+* `singularH1_diskC_subsingleton` (**named sorry, frontier**) — `singular
+  H₁` of the closed unit disk is subsingleton (zero module). Bottom-up:
+  needs `ContractibleSpace DiskC` plus *homotopy invariance of singular
+  homology* (Mathlib v4.28.0 gap; `AlgebraicTopology.SingularHomology`
+  currently only has `Basic.lean` and lacks the homotopy-invariance
+  theorem). Once present, `Module.finrank_zero_of_subsingleton` finishes.
+
+Side benefits added in Rounds 14–15:
+
+* `Polygon4g g.instPathConnectedSpace` — inherited from
+  `Metric.isPathConnected_closedBall` via `Quotient.instPathConnectedSpace`.
+* `Polygon4g 0.t2Space` — derived from `polygon4g_zero_homeo_diskC`.
+
+### Current named-sorry frontier (4 leaves)
 
 | Leaf | File | Bottom-up content |
 | --- | --- | --- |
 | `existsPolygonalQuotientPresentation` | `SurfaceClassification.lean` | Surface classification (Radó + edge-word reduction) |
-| `singularH1_polygon4g_finrank` | `SurfaceClassification.lean` | Cellular `H₁` of the standard `4g`-gon CW structure |
-| `singularH1_finrank_eq_two_mul_analyticGenus` | `AnalyticGenusEqTopologicalGenus.lean` | Hodge / de Rham + Riemann-Roch / period-lattice |
+| `singularH1_polygon4g_succ_finrank` | `SurfaceClassification.lean` | Cellular `H₁` of the standard `4(g+1)`-gon CW structure |
+| `singularH1_diskC_subsingleton` | `SurfaceClassification.lean` | `ContractibleSpace DiskC` + homotopy invariance of singular homology (Mathlib gap) |
+| `singularH1_finrank_eq_two_mul_analyticGenus` | `AnalyticGenusEqTopologicalGenus.lean` | Hodge / de Rham + Riemann-Roch / period-lattice (meet-in-the-middle with project's `hodge_deRham_rank_eq`) |
 
 ### Build status
 
 `lake build Jacobian.Blueprint.Sec03.PolygonalModel` succeeds. The
 `polygonal_model` declaration has no own `sorry`; the only remaining
-`sorry`s in its dependency closure are the three leaves above
+`sorry`s in its dependency closure are the four leaves above
 (plus pre-existing project sorries unchanged by this refinement).
