@@ -26,7 +26,8 @@ placeholder lacks the meromorphic-germ-sheaf structure required to
 formulate the residue identity, and the chart-local Laurent residue
 sum is itself a frontier sub-leaf. -/
 theorem principal_degree_zero
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) :
     Divisor.degree (principalDivisor X f) = 0 := by

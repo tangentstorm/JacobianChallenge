@@ -337,6 +337,76 @@ theorem orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas
     simp [Function.comp_apply, e.left_inv hp]
   rw [hep]
 
+/-! ### Manifold meromorphy ⇒ chart-pullback meromorphy
+
+If `f : X → ℂ` is meromorphic at every point of `X` (in the manifold sense
+encoded by `MeromorphicAtX`), then for every base point `p : X`, the
+chart pullback `f ∘ (chartAt ℂ p).symm` is meromorphic on the entire
+chart target `(chartAt ℂ p).target`.
+
+The proof at a point `w ∈ (chartAt ℂ p).target` factorises through the
+chart at `q := (chartAt ℂ p).symm w`: the transition
+`chartAt ℂ q ∘ (chartAt ℂ p).symm` is analytic at `w` with nonzero
+derivative (the existing transition-analyticity infrastructure), so
+`meromorphicAt_comp_iff_of_deriv_ne_zero` lifts manifold-level meromorphy
+at `q` to chart-target-level meromorphy at `w`.
+-/
+
+/-- **Chart pullback is meromorphic at every target point.**
+
+Given pointwise manifold meromorphy of `f`, the chart pullback through
+`chartAt ℂ p` is `MeromorphicAt` at every `w ∈ (chartAt ℂ p).target`. -/
+theorem meromorphicAt_chart_pullback_of_meromorphicAtX
+    {f : X → ℂ} (hf : ∀ q : X, MeromorphicAtX f q) (p : X)
+    {w : ℂ} (hw : w ∈ (chartAt ℂ p).target) :
+    MeromorphicAt (f ∘ (chartAt ℂ p).symm) w := by
+  set q : X := (chartAt ℂ p).symm w with hq_def
+  have hq_source : q ∈ (chartAt ℂ p).source := (chartAt ℂ p).map_target hw
+  have hpq : (chartAt ℂ p) q = w := (chartAt ℂ p).right_inv hw
+  -- Membership of charts in the maximal atlas.
+  have hp_mem : (chartAt ℂ p) ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X :=
+    IsManifold.chart_mem_maximalAtlas p
+  have hq_mem : (chartAt ℂ q) ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X :=
+    IsManifold.chart_mem_maximalAtlas q
+  have hq_q_source : q ∈ (chartAt ℂ q).source := mem_chart_source ℂ q
+  -- The transition `chartAt ℂ q ∘ (chartAt ℂ p).symm` is analytic at `w`.
+  have h_an : AnalyticAt ℂ ((chartAt ℂ q) ∘ (chartAt ℂ p).symm) w := by
+    rw [show w = (chartAt ℂ p) q from hpq.symm]
+    exact analyticAt_transition_of_mem_maximalAtlas hp_mem hq_mem hq_source hq_q_source
+  -- Its derivative at `w` is nonzero.
+  have h_der : deriv ((chartAt ℂ q) ∘ (chartAt ℂ p).symm) w ≠ 0 := by
+    rw [show w = (chartAt ℂ p) q from hpq.symm]
+    exact transition_deriv_ne_zero (chartAt ℂ p) hp_mem hq_source
+  -- Manifold meromorphy at `q` translates to `MeromorphicAt (f ∘ chartAt ℂ q .symm)`
+  -- at `chartAt ℂ q q`.
+  have hfq : MeromorphicAt (f ∘ (chartAt ℂ q).symm) ((chartAt ℂ q) q) := by
+    have h := hf q
+    unfold MeromorphicAtX at h
+    rwa [extChartAt_symm_eq_chartAt_symm, extChartAt_eq_chartAt] at h
+  -- Lift to meromorphy of the composite at `w`.
+  have hcomp : MeromorphicAt
+      ((f ∘ (chartAt ℂ q).symm) ∘ ((chartAt ℂ q) ∘ (chartAt ℂ p).symm)) w := by
+    rw [meromorphicAt_comp_iff_of_deriv_ne_zero h_an h_der]
+    have heval : ((chartAt ℂ q) ∘ (chartAt ℂ p).symm) w = (chartAt ℂ q) q := by
+      simp [Function.comp_apply, hq_def]
+    rw [heval]; exact hfq
+  -- The composite agrees with `f ∘ (chartAt ℂ p).symm` on a punctured nbhd of `w`.
+  -- Use `eventuallyEq_pullback` with role-bookkeeping (outer chart at `q`, `e := chartAt ℂ p`).
+  have heq : (f ∘ (chartAt ℂ p).symm) =ᶠ[𝓝[≠] w]
+      (f ∘ (chartAt ℂ q).symm) ∘ ((chartAt ℂ q) ∘ (chartAt ℂ p).symm) := by
+    have := eventuallyEq_pullback (p := q) (chartAt ℂ p) hq_source f
+    rwa [hpq] at this
+  exact hcomp.congr heq.symm
+
+/-- **Chart pullback is meromorphic on the chart target.**
+
+Packages `meromorphicAt_chart_pullback_of_meromorphicAtX` as a
+`MeromorphicOn` statement. -/
+theorem meromorphicOn_chart_pullback_of_meromorphicAtX
+    {f : X → ℂ} (hf : ∀ q : X, MeromorphicAtX f q) (p : X) :
+    MeromorphicOn (f ∘ (chartAt ℂ p).symm) (chartAt ℂ p).target :=
+  fun _w hw ↦ meromorphicAt_chart_pullback_of_meromorphicAtX hf p hw
+
 /-- **Chart-independence (two arbitrary atlas charts).** For two charts
 `e₁, e₂ ∈ maximalAtlas 𝓘(ℂ) ω X` both containing `p` in their sources,
 the meromorphic-order pullbacks agree. -/
@@ -349,5 +419,113 @@ theorem meromorphicOrderAt_pullback_eq
       meromorphicOrderAt (f ∘ e₂.symm) (e₂ p) := by
   rw [← orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas f e₁ he₁ hp₁,
       ← orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas f e₂ he₂ hp₂]
+
+/-! ### Connectedness propagation of meromorphic non-vanishing
+
+`isClopen_setOf_orderAt_eq_top` says the manifold-level set of points
+where `f` is locally identically zero is clopen — a transfer of
+Mathlib's `MeromorphicOn.isClopen_setOf_meromorphicOrderAt_eq_top`
+through the chart-pullback machinery developed above. Combined with
+`[PreconnectedSpace X]` (`orderAt_ne_top_of_exists`), it lifts the
+"`f` is non-vanishing somewhere" hypothesis to "`f` is non-vanishing
+everywhere", which is the analytic-identity-principle leg of the
+classical "nonzero meromorphic function" definition on a connected
+Riemann surface. -/
+
+/-- Helper for `isClopen_setOf_orderAt_eq_top`: extract the chart-target
+ambient open set carrying a chart-target subtype-open property of
+`meromorphicOrderAt (f ∘ chartAt ℂ p .symm)`, transport it to
+`X` via `chartAt ℂ p`, and conclude the corresponding `orderAt`
+property is open in `X`.
+
+Encapsulates the boilerplate shared by both `IsOpen Z` and `IsOpen Zᶜ`
+for `Z = {q | orderAt q f = ⊤}`. -/
+private theorem isOpen_setOf_orderAt_of_chartTarget_open
+    {f : X → ℂ} (Q : WithTop ℤ → Prop)
+    (hQ_chart : ∀ p : X, IsOpen
+        {u : (chartAt ℂ p).target |
+          Q (meromorphicOrderAt (f ∘ (chartAt ℂ p).symm) ↑u)}) :
+    IsOpen {q : X | Q (orderAt q f)} := by
+  rw [isOpen_iff_forall_mem_open]
+  intro p hp
+  set chart_p := chartAt ℂ p with hchart_p_def
+  have hp_atlas : chart_p ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X :=
+    IsManifold.chart_mem_maximalAtlas p
+  have hp_source : p ∈ chart_p.source := mem_chart_source ℂ p
+  have hp_target : chart_p p ∈ chart_p.target := chart_p.map_source hp_source
+  have hQ_p := hQ_chart p
+  rw [isOpen_induced_iff] at hQ_p
+  obtain ⟨T, hT_open, hT_eq⟩ := hQ_p
+  have h_chart_indep : ∀ {q : X}, q ∈ chart_p.source →
+      orderAt q f = meromorphicOrderAt (f ∘ chart_p.symm) (chart_p q) :=
+    fun {q} hq => orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas
+      (p := q) f chart_p hp_atlas hq
+  have h_p_in_T : chart_p p ∈ T := by
+    have h_subtype : (⟨chart_p p, hp_target⟩ : chart_p.target) ∈
+        ({u | Q (meromorphicOrderAt (f ∘ chart_p.symm) ↑u)} : Set chart_p.target) := by
+      show Q (meromorphicOrderAt (f ∘ chart_p.symm) (chart_p p))
+      rw [← h_chart_indep hp_source]
+      exact hp
+    rw [← hT_eq] at h_subtype
+    exact h_subtype
+  refine ⟨chart_p.source ∩ chart_p ⁻¹' T, ?_,
+          chart_p.isOpen_inter_preimage hT_open, hp_source, h_p_in_T⟩
+  rintro q ⟨hq_src, hq_T⟩
+  show Q (orderAt q f)
+  have hcq_target : chart_p q ∈ chart_p.target := chart_p.map_source hq_src
+  have h_subtype : (⟨chart_p q, hcq_target⟩ : chart_p.target) ∈
+      ({u | Q (meromorphicOrderAt (f ∘ chart_p.symm) ↑u)} : Set chart_p.target) := by
+    rw [← hT_eq]; exact hq_T
+  rw [h_chart_indep hq_src]
+  exact h_subtype
+
+/-- **The set of locally-identically-zero points is clopen.**
+
+For `f : X → ℂ` meromorphic at every point of an analytic complex
+1-manifold `X`, the set `{q : X | orderAt q f = ⊤}` is clopen.
+
+Proof: Mathlib's `MeromorphicOn.isClopen_setOf_meromorphicOrderAt_eq_top`
+gives the analogous fact for the chart pullback `f ∘ (chartAt ℂ p).symm`
+on each `(chartAt ℂ p).target`; the chart-pullback meromorphy
+(`meromorphicOn_chart_pullback_of_meromorphicAtX`) and chart-independence
+(`orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas`) transport the
+result to the manifold via the helper
+`isOpen_setOf_orderAt_of_chartTarget_open` applied separately to the
+`= ⊤` and `≠ ⊤` predicates. -/
+theorem isClopen_setOf_orderAt_eq_top
+    {f : X → ℂ} (hf : ∀ q : X, MeromorphicAtX f q) :
+    IsClopen {q : X | orderAt q f = ⊤} := by
+  have hOpen_top : ∀ p : X, IsOpen
+      {u : (chartAt ℂ p).target |
+        meromorphicOrderAt (f ∘ (chartAt ℂ p).symm) ↑u = ⊤} := fun p =>
+    (meromorphicOn_chart_pullback_of_meromorphicAtX hf p).isClopen_setOf_meromorphicOrderAt_eq_top.isOpen
+  have hOpen_ne_top : ∀ p : X, IsOpen
+      {u : (chartAt ℂ p).target |
+        meromorphicOrderAt (f ∘ (chartAt ℂ p).symm) ↑u ≠ ⊤} := fun p =>
+    isOpen_compl_iff.mpr
+      (meromorphicOn_chart_pullback_of_meromorphicAtX hf p).isClopen_setOf_meromorphicOrderAt_eq_top.isClosed
+  refine ⟨?_, isOpen_setOf_orderAt_of_chartTarget_open (· = ⊤) hOpen_top⟩
+  exact isOpen_compl_iff.mp
+    (isOpen_setOf_orderAt_of_chartTarget_open (· ≠ ⊤) hOpen_ne_top)
+
+/-- **Identity-principle propagation of meromorphic non-vanishing.**
+
+If `f` is meromorphic at every point of a preconnected complex
+1-manifold `X` and has finite vanishing order at some single point,
+then `f` has finite vanishing order at every point. The classical
+"identity principle" leg of "nonzero meromorphic function on a
+connected Riemann surface". -/
+theorem orderAt_ne_top_of_exists [PreconnectedSpace X]
+    {f : X → ℂ} (hf : ∀ q : X, MeromorphicAtX f q)
+    (h_nontriv : ∃ p : X, orderAt p f ≠ ⊤) :
+    ∀ q : X, orderAt q f ≠ ⊤ := by
+  intro q hq_top
+  rcases isClopen_iff.mp (isClopen_setOf_orderAt_eq_top hf) with h_empty | h_univ
+  · rw [Set.eq_empty_iff_forall_notMem] at h_empty
+    exact h_empty q hq_top
+  · obtain ⟨p₀, hp₀⟩ := h_nontriv
+    apply hp₀
+    have hp₀_in : p₀ ∈ ({q | orderAt q f = ⊤} : Set X) := h_univ ▸ Set.mem_univ p₀
+    exact hp₀_in
 
 end JacobianChallenge.HolomorphicForms.VanishingOrder

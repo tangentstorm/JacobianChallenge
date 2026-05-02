@@ -12,7 +12,8 @@ open scoped Manifold
 
 /-- The subgroup of principal divisors. -/
 noncomputable def principalDivisors
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     AddSubgroup (Divisor X) :=
   AddSubgroup.closure (Set.range (principalDivisor X))
