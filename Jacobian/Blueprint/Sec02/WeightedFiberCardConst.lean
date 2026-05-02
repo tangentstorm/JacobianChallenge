@@ -1,6 +1,9 @@
 import Jacobian.Blueprint.Sec02.BranchedDegree
 import Jacobian.HolomorphicForms.HolomorphicMap
 import Mathlib.Topology.LocallyConstant.Basic
+import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 
 /-! # Blueprint: well-definedness of the branched degree (4-step decomposition)
 
@@ -113,21 +116,49 @@ The decomposition is:
   * A4 `mapAnalyticOrderAt_ramified_finite` — assembly: closed
     discrete subset of compact ⇒ finite. -/
 
-/-- **A2 (sorry).** The unramified set
+/-
+**A2 (sorry).** The unramified set
 `{x : X | mapAnalyticOrderAt f x = 1}` is open in `X`.
 
 Proof sketch: order = 1 at `x` ⇔ chart-local derivative nonzero at
 `chartAt ℂ x x` (common helper).  The chart-local derivative is itself
 analytic, hence continuous; the set where a continuous function is
 nonzero is open in `ℂ`; pull back through the chart to get openness
-in `X`. -/
+in `X`.
+-/
 theorem isOpen_setOf_mapAnalyticOrderAt_eq_one
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} (_hf : IsHolomorphic f) :
     IsOpen {x : X | mapAnalyticOrderAt f x = 1} := by
-  sorry
+  refine' isOpen_iff_forall_mem_open.2 _;
+  intro x hx;
+  obtain ⟨U, hU_open, hxU, hU⟩ : ∃ U : Set X, IsOpen U ∧ x ∈ U ∧ ∀ x' ∈ U, AnalyticAt ℂ (chartLocalAt f x) (chartAt ℂ x x') ∧ deriv (chartLocalAt f x) (chartAt ℂ x x') ≠ 0 := by
+    have h_analytic : AnalyticAt ℂ (chartLocalAt f x) (chartAt ℂ x x) := by
+      exact _hf.holomorphicAt x;
+    have := mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero (_hf.holomorphicAt x) |>.1 hx;
+    obtain ⟨U, hU_open, hxU, hU⟩ : ∃ U : Set ℂ, IsOpen U ∧ chartAt ℂ x x ∈ U ∧ ∀ z ∈ U, AnalyticAt ℂ (chartLocalAt f x) z ∧ deriv (chartLocalAt f x) z ≠ 0 := by
+      have h_cont : ContinuousAt (deriv (chartLocalAt f x)) (chartAt ℂ x x) := by
+        exact h_analytic.deriv.continuousAt;
+      have := h_cont.eventually_ne this;
+      rcases mem_nhds_iff.mp this with ⟨ U, hUo, hxU, hU ⟩;
+      exact ⟨ U ∩ { z | AnalyticAt ℂ ( chartLocalAt f x ) z }, hxU.inter ( isOpen_analyticAt ℂ ( chartLocalAt f x ) ), ⟨ hU, h_analytic ⟩, fun z hz => ⟨ hz.2, hUo hz.1 ⟩ ⟩;
+    refine' ⟨ ( chartAt ℂ x ).source ∩ ( chartAt ℂ x ) ⁻¹' U, _, _, _ ⟩ <;> simp_all +decide [ Set.preimage ];
+    exact isOpen_iff_mem_nhds.mpr fun y hy => Filter.inter_mem ( chartAt ℂ x |>.open_source.mem_nhds hy.1 ) ( Filter.mem_of_superset ( ( chartAt ℂ x |>.continuousAt hy.1 ) |> fun h => h ( hU_open.mem_nhds hy.2 ) ) fun z hz => hz );
+  refine' ⟨ U ∩ ( chartAt ℂ x ).source ∩ f ⁻¹' ( chartAt ℂ ( f x ) ).source, _, _, _ ⟩ <;> simp_all +decide [ IsOpen.inter ];
+  · intro x' hx'
+    have h_eq : mapAnalyticOrderAt f x' = analyticOrderNatAt (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x')) (chartAt ℂ x x') := by
+      apply Eq.symm; exact (by
+        have := mapAnalyticOrderAt_eq_of_mem_maximalAtlas _hf (IsManifold.chart_mem_maximalAtlas x) hx'.1.2 (IsManifold.chart_mem_maximalAtlas (f x)) hx'.2;
+        unfold chartLocalAt; aesop;
+      );
+    have h_eq : analyticOrderAt (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x')) (chartAt ℂ x x') = 1 := by
+      apply AnalyticAt.analyticOrderAt_sub_eq_one_of_deriv_ne_zero;
+      · exact hU x' hx'.1.1 |>.1;
+      · exact hU x' hx'.1.1 |>.2;
+    simp_all +decide [ analyticOrderNatAt ];
+  · exact IsOpen.inter ( IsOpen.inter hU_open ( chartAt ℂ x |>.open_source ) ) ( _hf.continuous.isOpen_preimage _ ( chartAt ℂ ( f x ) |>.open_source ) )
 
 /-- **A3 (sorry).** Every ramified point is isolated in the ramified
 set: at a point `x` with order ≠ 1, there's a neighborhood `U` of `x`
@@ -285,7 +316,20 @@ theorem analyticAt_kth_root_of_ne_zero
     {g : ℂ → ℂ} {z₀ : ℂ} (_hg : AnalyticAt ℂ g z₀) (_hg_ne : g z₀ ≠ 0)
     {k : ℕ} (_hk : 0 < k) :
     ∃ h : ℂ → ℂ, AnalyticAt ℂ h z₀ ∧ ∀ᶠ z in 𝓝 z₀, h z ^ k = g z := by
-  sorry
+  set ψ : ℂ → ℂ := fun z => g z / g z₀
+  obtain ⟨α, hα⟩ : ∃ α : ℂ, Complex.exp α = g z₀ :=
+    ⟨Complex.log (g z₀), Complex.exp_log _hg_ne⟩
+  have hψ_analytic : AnalyticAt ℂ ψ z₀ :=
+    _hg.div (analyticAt_const) _hg_ne
+  have hψ_eq_one : ψ z₀ = 1 := div_self _hg_ne
+  have h_log_analytic : AnalyticAt ℂ (fun z => Complex.log (ψ z)) z₀ := by
+    apply_rules [AnalyticAt.clog, hψ_analytic]
+    norm_num [hψ_eq_one]
+  refine ⟨fun z => Complex.exp ((α + Complex.log (ψ z)) / k), ?_, ?_⟩
+  · fun_prop (disch := norm_num)
+  · filter_upwards [hψ_analytic.continuousAt.eventually_ne (show ψ z₀ ≠ 0 by aesop)] with z hz
+    simp_all +decide [← Complex.exp_nat_mul, mul_div_cancel₀, _hk.ne']
+    rw [Complex.exp_add, Complex.exp_log hz, hα, mul_div_cancel₀ _ _hg_ne]
 
 /-- **C3 (sorry).** Local conjugacy to `s ↦ s^k`: combining C1 and
 C2, near `chartAt ℂ x x` the chart-local function satisfies

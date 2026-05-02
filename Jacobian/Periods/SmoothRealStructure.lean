@@ -54,14 +54,24 @@ structure SmoothReal2Structure
     IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) X
 
-/-- A complex one-manifold has an induced smooth real two-manifold structure.
+private theorem complexEquivReal2_contDiff :
+    ContDiff ℝ ⊤ complexEquivReal2 :=
+  complexEquivReal2.contDiff
 
-The intended construction composes each complex chart with
-`complexEquivReal2.toHomeomorph.toOpenPartialHomeomorph`, whose first factor is
-Mathlib's `Complex.equivRealProd`.  The compatibility proof is the standard
-restriction-of-scalars argument for holomorphic transition maps, followed by
-the smoothness of continuous linear equivalences between the real model
-spaces.
+private theorem complexEquivReal2_symm_contDiff :
+    ContDiff ℝ ⊤ complexEquivReal2.symm :=
+  complexEquivReal2.symm.contDiff
+
+/-- Every chart in the singleton atlas on ℂ equals the standard chart. -/
+private theorem singleton_atlas_eq
+    (e : OpenPartialHomeomorph ℂ (EuclideanSpace ℝ (Fin 2)))
+    (he : e ∈ complexChartedSpaceReal2.atlas) :
+    e = complexEquivReal2.toHomeomorph.toOpenPartialHomeomorph := by
+  exact complexEquivReal2.toHomeomorph.toOpenPartialHomeomorph.singletonChartedSpace_mem_atlas_eq
+    (by simp [Homeomorph.toOpenPartialHomeomorph]) e he
+
+/-
+A complex one-manifold has an induced smooth real two-manifold structure.
 -/
 theorem ChartedSpaceComplex_to_smoothReal2
     (X : Type*) [TopologicalSpace X]
@@ -69,15 +79,36 @@ theorem ChartedSpaceComplex_to_smoothReal2
     [IsManifold (modelWithCornersSelf ℂ ℂ) ⊤ X] :
     Nonempty (SmoothReal2Structure X) := by
   classical
-  -- Compose the original complex charts with the fixed real-coordinate chart
-  -- `ℂ ≃L[ℝ] EuclideanSpace ℝ (Fin 2)`.
   letI : ChartedSpace (EuclideanSpace ℝ (Fin 2)) ℂ := complexChartedSpaceReal2
   letI cs : ChartedSpace (EuclideanSpace ℝ (Fin 2)) X :=
     ChartedSpace.comp (EuclideanSpace ℝ (Fin 2)) ℂ X
   refine ⟨{ chartedSpace := cs, isManifold := ?_ }⟩
-  -- The induced atlas is smooth because holomorphic changes of coordinates
-  -- are smooth after restriction of scalars, and the extra chart changes are
-  -- continuous linear equivalences.
-  sorry
+  apply isManifold_of_contDiffOn
+  intro e e' he he'
+  -- Charts in the composed atlas are of the form e₁ ≫ₕ b where e₁ ∈ atlas ℂ X
+  -- and b ∈ atlas (EuclideanSpace ℝ (Fin 2)) ℂ.
+  -- Since the atlas on ℂ is a singleton, all b are equal to complexEquivReal2.toHomeomorph.toOpenPartialHomeomorph.
+  obtain ⟨e₁, he₁, b, hb, rfl⟩ := he
+  obtain ⟨e₂, he₂, c, hc, rfl⟩ := he'
+  have hb_eq := singleton_atlas_eq b hb
+  have hc_eq := singleton_atlas_eq c hc
+  subst hb_eq; subst hc_eq
+  -- Now the transition map is:
+  -- complexEquivReal2 ∘ (e₁.symm.trans e₂) ∘ complexEquivReal2.symm
+  -- on the appropriate domain. This is smooth because:
+  -- 1. The complex transition e₁.symm.trans e₂ is ContDiffOn ℂ ⊤ (from IsManifold ℂ),
+  --    hence ContDiffOn ℝ ⊤ by restrict_scalars
+  -- 2. complexEquivReal2 and its symm are ContDiff ℝ ⊤ (continuous linear equivs)
+  have h_complex : ContDiffOn ℂ ⊤ (e₂ ∘ e₁.symm) (e₁.symm ≫ₕ e₂).source := by
+    have := ‹IsManifold ( modelWithCornersSelf ℂ ℂ ) ⊤ X›.compatible he₁ he₂;
+    convert this.1;
+    ext; simp [contDiffPregroupoid];
+  convert h_complex.restrict_scalars ℝ |> ContDiffOn.comp <| ( show ContDiffOn ℝ ⊤ ( fun x : EuclideanSpace ℝ ( Fin 2 ) => complexEquivReal2.symm x ) _ from ?_ ) using 1;
+  rotate_left;
+  exact ( e₁ ≫ₕ complexEquivReal2.toHomeomorph.toOpenPartialHomeomorph ).symm ≫ₕ e₂ ≫ₕ complexEquivReal2.toHomeomorph.toOpenPartialHomeomorph |> fun f => f.source;
+  · exact complexEquivReal2_symm_contDiff.contDiffOn;
+  · constructor <;> intro h <;> simp_all +decide [ Set.MapsTo ];
+    · exact ContDiffOn.comp ( h_complex.restrict_scalars ℝ ) ( complexEquivReal2_symm_contDiff.contDiffOn ) fun x hx => by aesop;
+    · convert h.continuousLinearMap_comp ( complexEquivReal2.toContinuousLinearMap ) using 1
 
 end JacobianChallenge.Periods
