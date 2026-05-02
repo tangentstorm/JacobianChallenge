@@ -102,12 +102,17 @@ noncomputable def liftToCp1_branchedCoverData
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
     (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
-    (hholo : True) :
-    BranchedCoverData X (OnePoint ℂ) (meromorphicToCp1 X f) :=
-  branchedCoverData_of_nonconstant_holomorphic
-    (meromorphicToCp1 X f)
-    (liftToCp1_continuous X f hholo)
-    trivial
+    (_hholo : True) :
+    BranchedCoverData X (OnePoint ℂ) (meromorphicToCp1 X f) := by
+  -- Previously this delegated to the `True`-placeholder version of
+  -- `branchedCoverData_of_nonconstant_holomorphic` in `Sec02/BranchedDegree.lean`.
+  -- That declaration has been refined (now in
+  -- `Sec02/BranchedDegreeFromHolomorphic.lean`) to require a real
+  -- `IsHolomorphic` hypothesis on `meromorphicToCp1 X f` plus
+  -- `PreconnectedSpace (OnePoint ℂ)` etc., none of which are currently
+  -- exposed at this call site.  Until those are threaded through from
+  -- the meromorphic-to-CP¹ side, the leaf-2 body is a single `sorry`.
+  sorry
 
 /-! ## Sub-leaf #3 (HARD) — Laurent order at zeros equals ramification. -/
 
