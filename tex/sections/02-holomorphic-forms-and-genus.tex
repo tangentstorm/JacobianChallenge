@@ -601,7 +601,7 @@ The set \(\{x\in X : e_x(f)=1\}\) is open in \(X\).
 \depends{Continuity of the chart-local derivative plus the chart-pull
 of the open condition \(\{(z) : g'(z)\ne 0\}\subseteq\C\).}
 \lean{JacobianChallenge.Blueprint.isOpen_setOf_mapAnalyticOrderAt_eq_one}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Every ramified point is isolated]
@@ -613,7 +613,7 @@ neighborhood of \(x\) consisting entirely of unramified points.
 chart-local derivative (which has order \(\ge k-1\ge 1\) at the chart
 image of \(x\)) plus the common helper.}
 \lean{JacobianChallenge.Blueprint.mapAnalyticOrderAt_isolated_at_ramified}
-\notready
+\leanok
 \end{lemma}
 
 \begin{layman}
@@ -648,7 +648,7 @@ If \(e_x(f)=1\) at a point \(x\in X\), there is an open neighborhood
 (B2, Mathlib's \texttt{AnalyticAt.localInverse}); assembly is chart
 transport.}
 \lean{JacobianChallenge.Blueprint.IsHolomorphicAt.exists_local_inj_of_unramified}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Order one iff chart-local derivative nonzero]
@@ -662,7 +662,7 @@ The chart-local order \(e_x(f)=1\) iff the derivative
 plus the
 \texttt{analyticOrderNatAt}\(\,=1\) \(\iff\) \texttt{analyticOrderAt}\(\,=1\) characterisation.}
 \lean{JacobianChallenge.Blueprint.mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Chart-local inverse at unramified]
@@ -674,7 +674,7 @@ near \(\chi(f(x))\).
 \depends{\texttt{AnalyticAt.localInverse} from
 \texttt{Mathlib/Analysis/Analytic/Inverse.lean}.}
 \lean{JacobianChallenge.Blueprint.chartLocalAt_localInverse_of_unramified}
-\notready
+\leanok
 \end{lemma}
 
 \begin{layman}
@@ -707,7 +707,7 @@ where \(z_0\) is the chart image of \(x\).
 \depends{Direct application of Mathlib's
 \texttt{AnalyticAt.analyticOrderAt\_eq\_natCast}.}
 \lean{JacobianChallenge.Blueprint.chartLocalAt_eq_pow_mul_of_order}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Holomorphic \texorpdfstring{\(k\)}{k}-th root]
@@ -719,7 +719,7 @@ there is an analytic \(h\) near \(z_0\) with \(h(z)^k=g(z)\) locally.
 \(g(z_0)\) avoiding \(0\)) plus \(\exp\) plus
 \(h:=\exp((1/k)\cdot\log g)\).}
 \lean{JacobianChallenge.Blueprint.analyticAt_kth_root_of_ne_zero}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Local \texorpdfstring{\(k\)}{k}-fold structure at a ramified point]
@@ -768,7 +768,7 @@ neighborhood \(V\) of \(y_0\) such that for every \(y\in V\),
 compact ⇒ closed in \(T_2\); \(y_0\notin f(U^c)\); take
 \(V:=f(U^c)^c\).}
 \lean{JacobianChallenge.Blueprint.eventually_fiber_subset_of_compact_T2}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Weighted fibre count locally constant at a single point]
@@ -799,7 +799,7 @@ preconnected complex \(1\)-manifold and a Hausdorff complex
 \(y_0\)) plus
 \texttt{IsLocallyConstant.iff\_eventuallyEq} from Mathlib.}
 \lean{JacobianChallenge.Blueprint.isHolomorphic_weightedFiberSum_isLocallyConstant}
-\notready
+\leanok
 \end{lemma}
 
 \begin{layman}
