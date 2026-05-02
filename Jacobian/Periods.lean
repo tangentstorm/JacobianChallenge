@@ -174,16 +174,17 @@ import Jacobian.Periods.Polygon4g
 import Jacobian.Periods.Orientable
 import Jacobian.Periods.SmoothRealStructure
 import Jacobian.Periods.ComplexManifoldOrientable
--- The polygonal-model umbrella modules below carry a duplicate
--- `JacobianChallenge.Periods.topologicalGenus` definition with the older
--- one in `PeriodFunctional.lean` (which is already imported above), so
--- re-exporting them through this hub would clash. Import them directly
--- where needed (e.g. from `Jacobian/Blueprint/Sec03/PolygonalModel.lean`)
--- until the duplicate is unified:
---   - Jacobian.Periods.TopologicalGenus
---   - Jacobian.Periods.TopologicalGenusInvariance
---   - Jacobian.Periods.SurfaceClassification
---   - Jacobian.Periods.AnalyticGenusEqTopologicalGenus
+import Jacobian.Periods.TopologicalGenus
+import Jacobian.Periods.TopologicalGenusInvariance
+import Jacobian.Periods.SurfaceClassification
+-- `Jacobian.Periods.AnalyticGenusEqTopologicalGenus` not re-exported here
+-- because it carries a Stage B umbrella theorem
+-- `JacobianChallenge.Periods.analyticGenus_eq_topologicalGenus` whose name
+-- collides with the existing parallel theorem of the same fully-qualified
+-- name in `PeriodFunctional.lean` (which is imported above). Both prove
+-- the same statement under different hypothesis sets; consolidation is
+-- a follow-up refinement. Import `AnalyticGenusEqTopologicalGenus`
+-- directly where needed (e.g. from `Jacobian/Blueprint/Sec03/PolygonalModel.lean`).
 
 /-!
 # Periods infrastructure
