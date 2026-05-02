@@ -1,4 +1,5 @@
 import Jacobian.Periods.TopologicalGenus
+import Jacobian.Periods.PeriodFunctional
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.FiniteDimensional
 
@@ -12,35 +13,38 @@ equals the topological genus (half the ℤ-rank of singular `H₁`).
 
 ## Top-down role
 
-`analyticGenus_eq_topologicalGenus` is the named obligation that the
-umbrella `polygonal_model` delegates to in order to translate between
-the analytic genus that appears in the challenge hypothesis and the
-topological genus that appears in the conclusion of Stage A.
+The umbrella theorem `analyticGenus_eq_topologicalGenus` is the named
+obligation that `polygonal_model` delegates to in order to translate
+between the analytic genus that appears in the challenge hypothesis and
+the topological genus that appears in the conclusion of Stage A.
 
-Refined into a single named ℤ-rank leaf:
+After Round 26 unification, the umbrella *is* the same declaration as
+`JacobianChallenge.Periods.analyticGenus_eq_topologicalGenus` defined in
+`Jacobian.Periods.PeriodFunctional` (re-exported through the import
+above) — both share the canonical
+`JacobianChallenge.Periods.topologicalGenus` from
+`Jacobian.Periods.TopologicalGenus`.
 
-* `singularH1_finrank_eq_two_mul_analyticGenus` — for a compact
-  connected Riemann surface `X`,
-  `Module.finrank ℤ (singularH1 X) = 2 * analyticGenus ℂ X`.
+## Stage B leaves
 
-The umbrella body just unfolds `topologicalGenus`, rewrites by the
-leaf, and divides by 2.
+This file additionally factors the Stage B work into two precise leaves
+*on top of* the canonical umbrella, with a meet-in-the-middle discharge
+of the structural-iso leaf via the project's existing
+`h1_basis_of_compact_riemann_surface`:
 
-## Bottom-up content of the leaf
+* `singularH1_compactRiemannSurface_iso_freeZ` (**real proof**) — the
+  ℤ-linear iso `singularH1 X ≃ₗ[ℤ] (Fin (2 * analyticGenus ℂ X) → ℤ)`,
+  produced by `b.equivFun` on the basis from
+  `h1_basis_of_compact_riemann_surface`. This was the Stage B
+  structural sorry; it is now discharged.
+* `singularH1_finrank_eq_two_mul_analyticGenus` (**real proof**) —
+  rank statement, derived from the iso via `LinearEquiv.finrank_eq` +
+  `Module.finrank_pi` + `Fintype.card_fin`.
 
-Two classical proof routes are available:
-
-* **Hodge route.** `H¹(X, ℝ) ≃ H^{1,0}(X) ⊕ H^{0,1}(X)` with
-  `dim H^{1,0} = dim H^{0,1} = g`. This requires Dolbeault cohomology
-  on Riemann surfaces, which Mathlib v4.28.0 lacks.
-* **De Rham + Riemann–Roch route.** Combine Stokes-on-RS with
-  Riemann–Roch (planned in `ref/plans/stokes-on-rs-with-boundary.md`
-  and `input:riemann-roch`) to compare `H¹_{dR}` and `H⁰(K)`.
-* **Period-lattice route (project-internal).** The project's
-  `periodSubgroup` is a `ℤ`-lattice of rank `2g` inside
-  `HolomorphicOneFormDual ℂ X`; singular `H₁` maps isomorphically
-  onto it (period pairing). Rank-of-period-lattice computations live
-  in `Jacobian.Periods.PeriodFunctional`.
+The remaining Stage B sorry is one level lower at
+`Jacobian.Periods.PeriodFunctional.h1_has_even_basis`
+(or equivalently `hodge_deRham_rank_eq`), where the Hodge / de Rham +
+Riemann–Roch / period-lattice analytic content lives.
 -/
 
 namespace JacobianChallenge.Periods
@@ -49,46 +53,33 @@ open JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
-/-- **Frontier structural leaf.** On a compact connected Riemann
-surface, singular `H₁(X, ℤ)` is ℤ-linearly isomorphic to the free
-module of rank `2g`, where `g = analyticGenus ℂ X`.
+/-- **Stage B structural leaf (real proof, meet-in-the-middle).** On a
+compact connected Riemann surface, singular `H₁(X, ℤ)` is ℤ-linearly
+isomorphic to the free module of rank `2g`, where `g = analyticGenus ℂ X`.
 
-Bottom-up routes:
-
-* **Hodge route.** `H¹(X, ℝ) ≃ H^{1,0}(X) ⊕ H^{0,1}(X)` with
-  `dim H^{1,0} = dim H^{0,1} = g`. Requires Dolbeault cohomology
-  (Mathlib v4.28.0 gap).
-* **De Rham + Riemann–Roch route.** Combine Stokes-on-RS with
-  Riemann–Roch (planned in `ref/plans/stokes-on-rs-with-boundary.md`
-  and `input:riemann-roch`).
-* **Period-lattice route (project-internal).** The project's
-  `periodSubgroup` is a `ℤ`-lattice of rank `2g` inside
-  `HolomorphicOneFormDual ℂ X`; singular `H₁` maps isomorphically
-  onto it via the period pairing. See
-  `Jacobian.Periods.PeriodFunctional` (`h1_basis_of_compact_riemann_surface`,
-  `periodSubgroup_isZLattice`) for the existing project hooks.
-
-**Note (meet-in-the-middle).** The project's
-`h1_basis_of_compact_riemann_surface` already gives a ℤ-basis of
-`IntegralOneCycle X = singularH1 X` (modulo `ModuleCat ℤ` coercion)
-indexed by `Fin (2 * analyticGenus ℂ X)`. That basis lifts directly
-to the linear iso required here once the duplicate `topologicalGenus`
-definition between `TopologicalGenus.lean` and `PeriodFunctional.lean`
-is reconciled. -/
+Body: extract the basis from
+`JacobianChallenge.Periods.h1_basis_of_compact_riemann_surface`
+(in `Jacobian.Periods.PeriodFunctional`) and turn it into a linear
+equivalence via `Basis.equivFun`. Uses `singularH1 X = IntegralOneCycle X`
+(definitionally, by abbrev) so no transport lemma is needed. -/
 theorem singularH1_compactRiemannSurface_iso_freeZ
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Nonempty (singularH1 X ≃ₗ[ℤ] (Fin (2 * analyticGenus ℂ X) → ℤ)) := by
-  sorry
+  obtain ⟨b⟩ := h1_basis_of_compact_riemann_surface X
+  exact ⟨b.equivFun⟩
 
 /-- **Stage B leaf.** On a compact connected Riemann surface,
 the ℤ-rank of singular `H₁` equals `2g` where `g = analyticGenus ℂ X`.
 
 Body: lift through `singularH1_compactRiemannSurface_iso_freeZ` to
 the free ℤ-module `Fin (2g) → ℤ`, then compute via
-`LinearEquiv.finrank_eq`, `Module.finrank_pi`, and `Fintype.card_fin`. -/
+`LinearEquiv.finrank_eq`, `Module.finrank_pi`, and `Fintype.card_fin`.
+
+Both sub-steps are real proofs; the only remaining analytic content
+sits below in `PeriodFunctional.h1_has_even_basis`. -/
 theorem singularH1_finrank_eq_two_mul_analyticGenus
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -97,21 +88,5 @@ theorem singularH1_finrank_eq_two_mul_analyticGenus
     Module.finrank ℤ (singularH1 X) = 2 * analyticGenus ℂ X := by
   obtain ⟨e⟩ := singularH1_compactRiemannSurface_iso_freeZ X
   rw [e.finrank_eq, Module.finrank_pi, Fintype.card_fin]
-
-/-- **Stage B umbrella.** On a compact connected Riemann surface,
-`analyticGenus ℂ X = topologicalGenus X`.
-
-Body: unfold `topologicalGenus = finrank ℤ singularH1 / 2`, rewrite
-through `singularH1_finrank_eq_two_mul_analyticGenus`, and divide
-`2 * g` by `2`. -/
-theorem analyticGenus_eq_topologicalGenus
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X] :
-    analyticGenus ℂ X = topologicalGenus X := by
-  unfold JacobianChallenge.Periods.topologicalGenus
-  rw [singularH1_finrank_eq_two_mul_analyticGenus X,
-      Nat.mul_div_cancel_left _ (by norm_num : (0 : ℕ) < 2)]
 
 end JacobianChallenge.Periods
