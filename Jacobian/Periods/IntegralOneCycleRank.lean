@@ -1,4 +1,6 @@
 import Jacobian.Periods.IntegralOneCycle
+import Jacobian.Periods.CellularHomologyRS
+import Jacobian.Periods.FreeModuleHomFinrank
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.LinearAlgebra.Dimension.Finrank
@@ -51,8 +53,8 @@ theorem IntegralOneCycle_finite
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    Module.Finite ℤ (IntegralOneCycle X) := by
-  sorry
+    Module.Finite ℤ (IntegralOneCycle X) :=
+  IntegralOneCycle_finite_via_cellular X
 
 /-- **Topology leaf (sorry).** `IntegralOneCycle X` has no ℤ-torsion on a
 compact connected smooth manifold.
@@ -71,8 +73,8 @@ theorem IntegralOneCycle_torsionFree
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    Module.Free ℤ (IntegralOneCycle X) := by
-  sorry
+    Module.Free ℤ (IntegralOneCycle X) :=
+  IntegralOneCycle_torsionFree_via_cellular X
 
 /-- **Pure-algebra leaf (sorry, ARISTOTLE-SIZED).** For a finitely
 generated free ℤ-module `M`, the ℝ-dimension of `Hom_ℤ(M, ℝ)` equals the
@@ -89,7 +91,7 @@ should fit in <40 lines.  -/
 theorem finrank_homℤℝ_eq_finrank_of_free
     (M : Type*) [AddCommGroup M] [Module ℤ M]
     [Module.Free ℤ M] [Module.Finite ℤ M] :
-    Module.finrank ℝ (M →ₗ[ℤ] ℝ) = Module.finrank ℤ M := by
-  sorry
+    Module.finrank ℝ (M →ₗ[ℤ] ℝ) = Module.finrank ℤ M :=
+  finrank_homℤℝ_eq_finrank_of_free_via_basis M
 
 end JacobianChallenge.Periods

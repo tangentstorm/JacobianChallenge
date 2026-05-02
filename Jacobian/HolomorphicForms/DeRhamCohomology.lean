@@ -84,23 +84,11 @@ noncomputable opaque complexDimDeRhamH0ℂ
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ
 
-/-- **Frontier theorem (sorry).** The real dim of H¹_dR(X, ℝ) equals the
-complex dim of H¹_dR(X, ℂ).
-
-Bottom-up content: `H¹_dR(X, ℂ) ≃ H¹_dR(X, ℝ) ⊗_ℝ ℂ` as ℂ-vector
-spaces, so the complex dim of the LHS equals the real dim of the
-real-coefficient cohomology (`dim_ℂ (V ⊗_ℝ ℂ) = dim_ℝ V`).
-
-This identity moves between the ℝ-valued de Rham picture (which matches
-singular cohomology over ℝ) and the ℂ-valued one (which carries Hodge
-decomposition). It is equality, **not** doubling — the
-`realDimDeRhamH1` is the real dim of the real-coefficient cohomology,
-not of the complex one viewed as a real vector space. -/
-theorem realDim_deRhamH1_eq_complexDim_deRhamH1ℂ
-    (X : Type) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    realDimDeRhamH1 X = complexDimDeRhamH1ℂ X := by
-  sorry
+-- The real-of-complex de Rham identity has been moved to
+-- `Jacobian/HolomorphicForms/RealComplexDeRham.lean` and refined into a
+-- sorry-free assembly of two named obligations
+-- (`complexDeRhamH1_eq_tensorℂ_realDeRhamH1` analytic;
+-- `tensorℂ_finrank_eq_real_finrank` pure algebra).
 
 /-- **Frontier theorem (sorry).** Connected compact `X` has
 `dim_ℂ H⁰_dR(X, ℂ) = 1`.
