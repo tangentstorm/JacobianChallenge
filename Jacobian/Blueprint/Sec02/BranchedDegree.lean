@@ -15,12 +15,14 @@ ChatGPT plan `ref/plans/branched-degree.md`:
 * leaf 2 — `BranchedCoverData` (SHORT, structure)
 * leaf 3 — `branchedDegree` (SHORT, proved)
 * leaf 4 — `branchedDegree_eq_weightedFiberCard` (SHORT, proved)
-* leaf 5 — `branchedDegree_pos` (MEDIUM, `sorry`)
+* leaf 5 — `branchedDegree_pos` (MEDIUM, proved)
 * leaf 6 — `branchedDegree_eq_card_toFinset_of_unramified_fiber`
-  (MEDIUM, `sorry`)
-* leaf 7 — `branchedDegree_one_fiber_unique` (HARD, `sorry`)
-* leaf 8 — `branchedCoverData_of_nonconstant_holomorphic` (HARD,
-  `sorry`)
+  (MEDIUM, proved)
+* leaf 7 — `branchedDegree_one_fiber_unique` (HARD, proved via
+  `branchedDegree_one_fiber_singleton`)
+* leaf 8 — `branchedCoverData_of_nonconstant_holomorphic` lives in a
+  separate file `Jacobian/Blueprint/Sec02/BranchedDegreeFromHolomorphic.lean`
+  so this file remains free of manifold imports.
 
 Imports are narrow (no `import Mathlib`): `Set.Finite` /
 `Set.Finite.toFinset`, `Finset.sum` and `Finset.card`, and the
@@ -180,27 +182,5 @@ theorem branchedDegree_one_fiber_unique
     rw [Set.Finite.mem_toFinset]; exact hfx'
   rw [hxs, Finset.mem_singleton] at hx'_mem
   exact hx'_mem
-
-/-- **Plan leaf 8 (HARD).** Analytic constructor for
-`BranchedCoverData`: a nonconstant continuous map `f : X → Y` between
-a compact Hausdorff `X` and a connected `Y` (the topological skeleton
-of the analytic hypothesis) can be packaged as a branched-cover datum.
-
-The eventual proof requires the open-mapping theorem for analytic maps
-(absent in Mathlib v4.28.0), the isolated-zeros theorem, and a local
-normal-form lemma — all of which live in the analytic frontier.
-Stated here so downstream code can refer to it; the `sorry` is the
-single biggest analytic gap in the branched-degree story.
-
-The `_hf` hypothesis is intentionally a `True` placeholder: we leave
-the precise analytic hypothesis (nonconstant holomorphic) to be
-sharpened once the holomorphic-map predicate stabilises in the
-project. -/
-noncomputable def branchedCoverData_of_nonconstant_holomorphic
-    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
-    [CompactSpace X] [T2Space X] [ConnectedSpace Y]
-    (f : X → Y) (_hcont : Continuous f) (_hf : True) :
-    BranchedCoverData X Y f := by
-  sorry
 
 end JacobianChallenge.Blueprint

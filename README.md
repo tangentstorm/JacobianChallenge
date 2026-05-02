@@ -8,10 +8,10 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-05-01 (`thm:degree-one-bijective` discharged on `claude/formalize-degree-one-bijective-QIaE9`)
+Last tick: 2026-05-01 (`thm:degree-one-bijective` + `IsHolomorphic` scaffold on `claude/formalize-degree-one-bijective-QIaE9`)
 
 ```text
-Sec02 degree-one-bijective discharged (this tick)
+Sec02 degree-one-bijective + analytic scaffold (this tick)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 BranchedCoverData                            ████████  +weightedFiberCard_eq invariant
 branchedDegree_pos (leaf 5)                  ████████  sorry-free (Finset.sum_pos witness)
@@ -19,9 +19,22 @@ branchedDegree_eq_card_…unramified (leaf 6)  ████████  sorry-f
 branchedDegree_one_fiber_singleton (helper)  ████████  sorry-free (card ≤ sum = 1 ⇒ singleton)
 branchedDegree_one_fiber_unique (leaf 7)     ████████  sorry-free (corollary of helper)
 degree_one_bijective                         ████████  sorry-free against `BranchedCoverData`
-branchedCoverData_of_nonconstant_holo (8)    ░░░░░░░░  blocked: Mathlib v4.28.0 lacks
-                                                       open-mapping for analytic + AnalyticAt.order
+IsHolomorphicAt / IsHolomorphic predicate    ████████  new file `HolomorphicForms/HolomorphicMap.lean`
+mapAnalyticOrderAt (chart-local order)       ████████  sorry-free definition via `analyticOrderNatAt`
+leaf 8 signature (`IsHolomorphic f`)         ████████  signature meaningful in
+                                                       `Sec02/BranchedDegreeFromHolomorphic.lean`
+leaf 8 body                                  ░░░░░░░░  blocked on three named obstacles:
+                                                       chart-indep of `mapAnalyticOrderAt`,
+                                                       finite-fibre identity argument,
+                                                       constancy of weighted fibre count
 ```
+
+Note: Mathlib v4.28.0 *does* have `analyticOrderNatAt`, isolated zeros,
+and the open-mapping theorem for analytic maps in
+`Analysis/Complex/OpenMapping.lean`.  The earlier inventory entries
+flagging these as "absent" were stale; the genuine project-local gap
+is the **manifold-level** holomorphic-map predicate (now scaffolded)
+plus the well-definedness of the branched degree.
 
 Earlier ticks recorded below for context.
 
