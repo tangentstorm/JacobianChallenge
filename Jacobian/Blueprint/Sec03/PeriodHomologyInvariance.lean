@@ -298,8 +298,8 @@ theorem singularChain_integration_from_simplex
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (_Iσ : C(unitInterval, X) → (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ)) :
     ∃ I : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
-      True := by
-  sorry
+      True :=
+  ⟨0, trivial⟩
 
 /-- **Sub-leaf A (chain-level integration exists).**
 
