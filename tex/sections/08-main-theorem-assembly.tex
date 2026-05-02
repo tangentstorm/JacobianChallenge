@@ -1,6 +1,45 @@
 \section{Main Theorem Assembly}
 \label{sec:main-assembly}
 
+\begin{layman}
+Every previous section has been constructive: each built one piece
+of infrastructure that the challenge demands. This section is the
+moment of assembly. We take the analytic genus from section 2, the
+period lattice from section 4, the complex-torus package from
+section 5, the Abel--Jacobi map from section 6, and the trace
+identity from section 7, and we plug them, one at a time, into
+the slots demanded by \code{Jacobian/Challenge.lean}.
+
+What does ``the slots'' mean? The challenge file declares about
+two dozen named definitions and theorems with literal \code{sorry}
+placeholders. \code{genus X} is a slot: it must be a natural
+number. \code{Jacobian X} is a slot: it must be a type carrying
+addition, topology, compactness, smoothness, complex structure,
+Lie group structure. \code{ofCurve P} is a slot: a holomorphic
+map from \(X\) to its Jacobian. \code{ofCurve_inj} is a slot:
+the proof that this map is injective in positive genus.
+\code{pushforward}, \code{pullback}, \code{degree}, and
+\code{pushforward_pullback} are further slots, demanding the
+trace identity of section 7. Each slot is filled by pointing
+at the corresponding theorem of the previous sections.
+
+Slot-filling sounds mechanical, but it has subtleties. The
+challenge wants \code{Jacobian X} to be a particular kind of
+algebraic-topological gadget — an additive abelian group with
+extra structure — and the analytic construction produces a
+quotient of a vector space by a lattice, which is a different
+formal object until we transport along the right equivalences.
+The Lean side handles these transports via the
+\emph{basis-aligned} model that picks an explicit isomorphism
+\(H^0(X,\Omega^1_X)^{\vee} \cong \mathbb{C}^{g(X)}\) and runs the
+construction on the standard \(\mathbb{C}^g\) carrier. The
+informal proof here is silent about the bookkeeping and focuses
+on the mathematical content of each slot.
+
+When this section's single theorem is fully discharged in Lean,
+the entire challenge is met.
+\end{layman}
+
 We now assemble the declarations required by \code{Jacobian/Challenge.lean}.
 
 \begin{theorem}[Challenge API from the analytic construction]

@@ -1,6 +1,51 @@
 \section{Complex Tori and the Jacobian}
 \label{sec:complex-tori-jacobians}
 
+\begin{layman}
+A \emph{complex torus} is one of the cleanest objects in geometry.
+Take a finite-dimensional complex vector space \(V\) — say
+\(\mathbb{C}^g\). Pick a \emph{full lattice} \(\Lambda\) inside it:
+a discrete grid of points whose integer combinations spread evenly
+in every direction, like the vertices of a wallpaper pattern. Glue
+the space to itself by declaring two vectors equivalent whenever
+they differ by an element of \(\Lambda\). What remains is a
+compact, smooth, complex manifold \(V/\Lambda\). In dimension one,
+it is the surface of an ordinary doughnut. In higher dimension, it
+is a higher-genus generalisation that retains every desirable
+property: it adds (the addition descends from \(V\)), it's
+Hausdorff and compact, it's a complex manifold, addition is smooth.
+Every operation you might want is automatic.
+
+This section packages those properties into a single
+\emph{complex torus package} — a proposition that asserts, at
+once, that \(V/\Lambda\) carries each of the structures the
+challenge demands. The proof is a careful unwinding of a quotient:
+the topology and group come from the quotient of an abelian
+topological group; charts come from balls small enough to avoid
+nonzero lattice translates; the smooth and complex structures
+inherit through the chart maps. None of this is exotic, but the
+project does need every piece in place before it can construct
+the Jacobian.
+
+The \emph{Jacobian} of a Riemann surface is then a particular
+complex torus: take \(V = H^0(X,\Omega^1_X)^{\vee}\), the dual of
+the holomorphic 1-forms; take \(\Lambda = \) the period lattice
+built in the previous section; apply the package. The resulting
+quotient is a compact complex Lie additive group of complex
+dimension \(g(X)\). Every challenge property of the Jacobian
+follows directly from the package; we don't have to prove
+``\(\Jac(X)\) is compact'' or ``\(\Jac(X)\) is a manifold'' as
+separate theorems. The structural facts come bundled.
+
+Why bother? In Buzzard's challenge, the third anti-hack family of
+theorems is precisely a list of structural assertions: ``\(\Jac\)
+is a compact complex manifold,'' ``\(\Jac\) is a Lie additive
+group,'' ``addition and negation are smooth.'' Without the
+complex-torus package, each of these would have to be proved by
+hand for the period-lattice quotient — a thousand-line excursion.
+With it, they fall out of one application.
+\end{layman}
+
 Let \(V\) be a finite-dimensional complex vector space and \(\Lambda\subset V\)
 a full lattice. Then \(V/\Lambda\) is a compact complex Lie additive group.
 The quotient map is a local biholomorphism after restricting to sufficiently
@@ -47,7 +92,7 @@ maps are translations in \(V\), hence holomorphic and smooth. Addition and
 negation are induced from smooth maps on \(V\).
 \end{proof}
 
-\begin{proof}[Construction of Definition~\ref{def:analytic-jacobian}]
+\begin{proof}[Construction of Definition~\ref{def:analytic-jacobian}]\leanok
 Apply Proposition~\ref{prop:complex-torus-package} to
 \[
   V=\HdualX,\qquad \Lambda=\Pi_X(H_1(X,\Z)).

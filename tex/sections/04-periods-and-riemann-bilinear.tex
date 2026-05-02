@@ -1,6 +1,56 @@
 \section{Periods and Riemann Bilinear Relations}
 \label{sec:periods}
 
+\begin{layman}
+A \emph{period} is a number you get by integrating a holomorphic
+1-form along a closed loop on a Riemann surface. For an elliptic
+curve (genus 1, topologically a doughnut) there are two
+fundamental loops — once through the hole, once around it — and
+correspondingly two fundamental periods. They are complex numbers,
+typically transcendental, and historically they're where the entire
+theory began: the \emph{elliptic integrals} of the eighteenth
+century are exactly the period functions of genus-one curves.
+Riemann's insight was to abstract the period across all genera:
+the complete \emph{period pairing} of a Riemann surface is the
+linear map sending each homology class to ``the linear functional
+\(\omega \mapsto \int \omega\) along that class.''
+
+The first major theorem of this section says periods only depend on
+the homology class of the loop, not the loop itself. The mechanism
+is Stokes' theorem: if two loops are homologous they bound a
+surface region, the integrand is closed (because holomorphic
+1-forms are closed), and Stokes turns the region's surface integral
+into the difference of the loop integrals — which is zero. This
+homology invariance is what lets us call ``\(\Pi_X\)'' a
+\emph{pairing} on \(H_1(X,\Z)\) at all.
+
+The deeper theorem of this section is the \emph{Riemann bilinear
+relations}. They identify a wedge integral of two 1-forms over the
+whole surface with a sum of period products picked out by a
+\emph{symplectic basis} of homology — a normalised basis where the
+\(g\) loops paired with \(g\) other loops cross each other exactly
+once and don't otherwise interact. The proof is a beautiful
+choreography: cut the surface along the symplectic basis to lay it
+flat as the \(4g\)-gon of the previous section; on the polygon's
+flat interior, find a primitive \(F\) of one form (using simple
+connectedness); apply Stokes on the polygon, where the boundary
+collapses by the gluing pattern into a sum over symplectic-basis
+periods. From this identity plus a positivity statement
+(\(i\int \omega \wedge \bar\omega > 0\) for nonzero \(\omega\)) we
+conclude that the \(2g\) symplectic-basis period vectors are
+linearly independent over the reals.
+
+Why bother? Linear independence over the reals means the integer
+combinations of period vectors form a \emph{full lattice} — a
+discrete grid spanning the entire real vector space underlying the
+dual of the 1-forms. That full lattice is the \emph{period lattice};
+the next section quotients by it to build the Jacobian. Every
+geometric and analytic property of the Jacobian — compactness,
+manifold structure, group structure, complex structure — flows
+from the period lattice being full. Without these bilinear
+relations there would be no Jacobian.
+\end{layman}
+
 For a singular one-cycle \(\gamma\) and \(\omega\in\HX\), define
 \[
   \Pi_X(\gamma)(\omega)=\int_{\gamma}\omega.
@@ -108,7 +158,10 @@ invariance of periods — cashes out via Stokes on the polygonal model.
 \subsection{Riemann bilinear relations and full real rank}
 
 The Riemann bilinear relations come from cutting \(X\) along a
-symplectic basis to obtain a polygon and applying Stokes there.
+symplectic basis to obtain the standard \(4g\)-gon
+(Theorem~\ref{thm:polygonal-model}) and applying Stokes there with
+the help of the polygon-interior primitive
+(Lemma~\ref{lem:primitive-on-polygon}).
 
 \begin{definition}[Symplectic basis of \(H_1(X,\Z)\)]
 \label{def:symplectic-basis}
@@ -119,7 +172,11 @@ pairing satisfies
 \depends{Mathlib has the algebraic theory of symplectic bilinear forms;
 the existence of a symplectic basis on a compact orientable surface is
 a topological theorem (every nondegenerate alternating form on a free
-\(\Z\)-module of rank \(2g\) admits a symplectic basis).}
+\(\Z\)-module of rank \(2g\) admits a symplectic basis). The
+polygonal model of Section~\ref{sec:polygonal-model} provides a
+direct construction: the boundary identification of
+\(\mathrm{Polygon4g}(g)\) reads off the symplectic generators
+\(a_i, b_i\) by handle index.}
 \lean{JacobianChallenge.Blueprint.Sec03.isSymplecticBasis}
 \leanok
 \end{definition}
@@ -138,64 +195,6 @@ simplest possible: zeros and ones in a tidy pattern. Why bother? The
 Riemann bilinear relations and the period-lattice argument become
 genuinely tractable only after this normalization — a tangle of loops
 becomes a tidy \(2g\)-vector with predictable interactions.
-\end{layman}
-
-\begin{theorem}[Polygonal model of a compact Riemann surface]
-\label{thm:polygonal-model}
-\uses{def:symplectic-basis}
-A compact connected oriented Riemann surface \(X\) of genus \(g\) is
-homeomorphic to a \(4g\)-gon \(P\) with sides identified in the
-standard pattern \(a_1b_1a_1^{-1}b_1^{-1}\cdots a_gb_ga_g^{-1}b_g^{-1}\),
-inducing the symplectic basis on \(H_1\).
-\depends{Standard topological classification of compact orientable
-surfaces; not packaged in Mathlib as far as the inventory tracks.}
-\lean{JacobianChallenge.Blueprint.polygonal_model}
-\notready
-\end{theorem}
-
-\begin{layman}
-A compact connected oriented genus-\(g\) surface can always be
-``unfolded'' into a single flat \(4g\)-sided polygon with edges glued
-back together in a fixed pattern. For a donut (\(g = 1\)), the polygon
-is a square, and the gluing identifies the top edge with the bottom and
-the left with the right — exactly the way an old arcade game's screen
-wraps around. Higher genus uses a \(4g\)-gon with the gluing pattern
-\(a_1 b_1 a_1^{-1} b_1^{-1} \cdots a_g b_g a_g^{-1} b_g^{-1}\), each
-matched pair corresponding to one of the symplectic basis loops. Inside
-the polygon the surface is just flat paper, simply connected, with no
-loops at all; all the topological complexity is hidden in the boundary
-identification. Why bother? It converts a curvy global object into a
-flat local one, where Stokes' theorem on a polygon is much easier than
-Stokes on a curved surface — and from there the bilinear relations
-follow directly.
-\end{layman}
-
-\begin{lemma}[Primitive of a holomorphic 1-form on a polygon]
-\label{lem:primitive-on-polygon}
-\uses{thm:polygonal-model,lem:holomorphic-form-is-closed}
-On the open polygon (interior of \(P\)) — which is simply connected —
-every holomorphic 1-form \(\omega\) has a holomorphic primitive
-\(F:P^{\circ}\to\C\) with \(dF=\omega\).
-\depends{Mathlib has primitives of closed 1-forms on simply connected
-open subsets of \(\C\); the polygon interior pulls back to such a
-subset via the polygonal-model homeomorphism.}
-\lean{JacobianChallenge.Blueprint.primitive_on_polygon}
-\notready
-\end{lemma}
-
-\begin{layman}
-Open up the polygonal model and look at its interior — the inside of a
-flat \(4g\)-gon, with no loops to worry about. On any simply connected
-flat region, every closed 1-form has a \emph{primitive}: a single
-function whose differential equals the form. Compare: on the punctured
-plane the form \(d\theta\) has no global primitive because the puncture
-leaves a loop, but on a disk the same form does. Pull our holomorphic
-1-form back to the polygon's interior, and produce its primitive there.
-Why bother? The primitive is the trick that turns a wedge integral
-over the surface into a boundary integral over the polygon's edges,
-where the explicit gluing pattern lets us read off the answer in terms
-of the symplectic periods. That's how the bilinear identity gets proved
-in the next step.
 \end{layman}
 
 \begin{theorem}[Bilinear identity from Stokes on the polygon]
@@ -340,7 +339,7 @@ the umbrella keeps downstream constructions (Jacobian, Abel–Jacobi,
 push-pull) from depending on the internal pieces.
 \end{layman}
 
-\begin{proof}[Proof of Theorem~\ref{thm:period-lattice}]
+\begin{proof}[Proof of Theorem~\ref{thm:period-lattice}]\leanok
 Choose a \(\C\)-basis \(\omega_1,\dots,\omega_g\) of \(\HX\), so
 \(\HdualX\cong\C^g\). The images of the \(2g\) symplectic cycles under
 \(\Pi_X\) are the columns of the period matrix.
