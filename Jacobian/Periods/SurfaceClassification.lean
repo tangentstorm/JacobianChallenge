@@ -125,14 +125,43 @@ theorem existsHomeoToPolygon4g
   obtain ⟨homeo⟩ := polygonalQuotientPresentation_to_homeo g' M q hcts hsurj hker
   exact ⟨g', ⟨homeo.symm⟩⟩
 
-/-- **Sub-sub-sub-leaf (Polygon4g 0 ≃ₜ DiskC).** Since `SideGen 0`
-has no constructors (the index `i : Fin 0` is uninhabited), the
-equivalence relation `SideRel 0 = EqvGen (SideGen 0)` collapses to
-equality on `DiskC`. Hence the quotient `Polygon4g 0` is canonically
-homeomorphic to `DiskC` itself. -/
+/-- The side relation `Polygon4g.SideRel 0` collapses to equality on
+`DiskC`, since the underlying generator `SideGen 0` has no
+constructors (the index `i : Fin 0` is uninhabited). -/
+lemma polygon4g_sideRel_zero_iff_eq (a b : DiskC) :
+    Polygon4g.SideRel 0 a b ↔ a = b := by
+  refine ⟨fun h => ?_, fun h => h ▸ Relation.EqvGen.refl _⟩
+  induction h with
+  | rel _ _ hr =>
+    cases hr with
+    | a_pair i _ _ => exact i.elim0
+    | b_pair i _ _ => exact i.elim0
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+/-- **Sub-sub-sub-leaf (Polygon4g 0 ≃ₜ DiskC, real proof).** Since
+`SideGen 0` has no constructors, `SideRel 0` is equality on `DiskC`,
+so the quotient `Polygon4g 0` is canonically homeomorphic to `DiskC`.
+
+Body: `Quotient.lift id` produces the inverse of `Polygon4g.mk 0` as
+a continuous bijection `Polygon4g 0 → DiskC`; compactness of
+`Polygon4g 0` (inherited via `Quotient.compactSpace`) and `T2Space`
+of `DiskC` upgrade it to a homeomorphism via
+`Continuous.homeoOfEquivCompactToT2`. -/
 theorem polygon4g_zero_homeo_diskC :
     Nonempty (Polygon4g 0 ≃ₜ DiskC) := by
-  sorry
+  let f : Polygon4g 0 → DiskC :=
+    Quotient.lift id (fun a b hab => (polygon4g_sideRel_zero_iff_eq a b).mp hab)
+  have hf_cts : Continuous f := continuous_id.quotient_lift _
+  let e : Polygon4g 0 ≃ DiskC :=
+    { toFun := f
+      invFun := Polygon4g.mk 0
+      left_inv := fun q => by
+        induction q using Quotient.inductionOn with
+        | _ z => rfl
+      right_inv := fun _ => rfl }
+  exact ⟨hf_cts.homeoOfEquivCompactToT2 (f := e)⟩
 
 /-- **Sub-sub-sub-leaf (singular H₁ of the disk vanishes).** The
 closed unit disk `DiskC` is convex (subspace of ℂ), hence
