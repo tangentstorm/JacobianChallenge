@@ -2,6 +2,7 @@ import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Geometry.Manifold.Instances.Real
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Basic
+import Mathlib.MeasureTheory.Integral.Prod
 
 /-! # Blueprint stubs: sub-leaves of `thm:stokes-on-rs-with-boundary`
 
@@ -181,21 +182,34 @@ theorem stokes_local_euclidean_Q
       = ∫ y in c..d, ∫ x in a..b, fderiv ℝ Q (x, y) (1, 0) := by
   sorry
 
-/-- **Fubini swap (sub-leaf for #5 assembly).**
+/-
+**Fubini swap (sub-leaf for #5 assembly).**
 
 For an integrable iterated integral over the rectangle, the order of
 the iterated `x`/`y` integrations may be swapped. This is just a
 named local handle for `MeasureTheory.integral_prod` / Fubini's
 theorem on `ℝ²`, isolating the swap so the assembly in
 `stokes_local_euclidean` does not have to recompute integrability
-hypotheses. -/
+hypotheses.
+-/
 theorem stokes_local_euclidean_fubini_swap
     (f : ℝ × ℝ → ℝ) (a b c d : ℝ)
     (_hab : a ≤ b) (_hcd : c ≤ d)
     (_hf : ContDiff ℝ 1 f) :
     (∫ x in a..b, ∫ y in c..d, f (x, y))
       = ∫ y in c..d, ∫ x in a..b, f (x, y) := by
-  sorry
+  -- By Fubini's theorem, the order of integration can be swapped since the function is continuous on the compact set [a, b] × [c, d].
+  have h_fubini : ∫ x in a..b, ∫ y in c..d, f (x, y) = ∫ p in Set.Icc a b ×ˢ Set.Icc c d, f p := by
+    erw [ MeasureTheory.setIntegral_prod ];
+    · simp +decide [ *, MeasureTheory.integral_Icc_eq_integral_Ioc, intervalIntegral.integral_of_le ];
+    · exact ContinuousOn.integrableOn_compact ( isCompact_Icc.prod CompactIccSpace.isCompact_Icc ) ( _hf.continuous.continuousOn );
+  erw [ h_fubini, MeasureTheory.setIntegral_prod ];
+  · rw [ MeasureTheory.integral_integral_swap ];
+    · simp +decide only [MeasureTheory.integral_Icc_eq_integral_Ioc, intervalIntegral.integral_of_le _hab,
+          intervalIntegral.integral_of_le _hcd];
+    · rw [ MeasureTheory.Measure.prod_restrict ];
+      exact ContinuousOn.integrableOn_compact ( isCompact_Icc.prod CompactIccSpace.isCompact_Icc ) ( _hf.continuous.continuousOn );
+  · exact ContinuousOn.integrableOn_compact ( isCompact_Icc.prod CompactIccSpace.isCompact_Icc ) ( _hf.continuous.continuousOn )
 
 /-- **Sub-leaf #5 of `thm:stokes-on-rs-with-boundary` (plan class: MEDIUM).**
 
