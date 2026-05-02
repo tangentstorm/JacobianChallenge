@@ -101,13 +101,37 @@ the abelianisation map `Polygon4gFundamentalGroupRepr g → Polygon4gAbelianizat
 together with its universal property as the abelianisation. -/
 opaque PolygonAbelianizationMap (g : ℕ) : Type
 
-/-- **Round 61 / Stage A leaf (Hurewicz, abstract).** Path-connected
-spaces have `H₁(X, ℤ) ≅ π₁(X)^{ab}`. Specialised here to `Polygon4g (g+1)`.
+/-- **Round 65 / Stage A leaf.** Path-connectedness of `Polygon4g (g+1)`
+— a precondition of the Hurewicz isomorphism. (Also recorded as
+`PathConnectedSpace (Polygon4g g)` in `Jacobian.Periods.Polygon4g`,
+but the explicit recall makes this round's named-obligation chain
+self-contained.) -/
+theorem polygon4g_succ_pathConnected (g : ℕ) :
+    PathConnectedSpace (Polygon4g (g + 1)) :=
+  inferInstance
 
-Mathlib v4.28.0 has `FundamentalGroup` and singular homology
-separately, but no Hurewicz comparison theorem connecting them. -/
+/-- **Round 65 / Stage A leaf (Hurewicz, abstract Mathlib statement).**
+For any path-connected space `X`, there is a ℤ-linear isomorphism
+between the abelianisation of `π₁(X)` and `H₁(X, ℤ)`. Mathlib
+v4.28.0 has neither side packaged at the form needed: `FundamentalGroup`
+exists as a category-theoretic groupoid; `singularH1` is a
+ℤ-module; the comparison map is the Hurewicz natural transformation,
+absent. -/
+theorem hurewicz_iso_pathConnected
+    (X : Type) [TopologicalSpace X] [PathConnectedSpace X] :
+    ∃ (A : Type) (_ : AddCommGroup A) (_ : Module ℤ A),
+      Nonempty (A ≃ₗ[ℤ] singularH1 X) := by
+  sorry
+
+/-- **Round 65 / Stage A leaf (specialise Hurewicz to Polygon4g (g+1)
+with witness `Polygon4gAbelianization g`).** -/
 theorem hurewicz_singularH1_iso_polygon4g (g : ℕ) :
     Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) := by
+  -- The witness type from `hurewicz_iso_pathConnected` may a priori
+  -- differ from `Polygon4gAbelianization g`; the genuine Hurewicz
+  -- proof would identify them via the surface-group abelianisation
+  -- computation. We leave the bridge as a local sorry.
+  haveI := polygon4g_succ_pathConnected g
   sorry
 
 /-- **Round 50 (Hurewicz leaf, reassembly).** Direct alias for

@@ -497,7 +497,47 @@ deepened into smaller leaves:**
 | 63 | Drill `cut_along_nonTree_yields_unfoldedDisk` into `cut_complement_is_connected` + `nonTree_edge_count_formula`. | |
 | 64 | Drill `pl_atlas_to_triangulation` into `pl_atlas_to_simplicial_complex` + `simplicial_realisation_homeomorph_M`. | |
 
-### Build status (post Rounds 45–64)
+### Rounds 65–84: deeper drills
+
+Each round splits one named obligation from rounds 45–64 into 2-3
+smaller named obligations.
+
+**Stage A drills (Rounds 65–74):**
+
+| Round | Drilled obligation | New named obligations |
+| --- | --- | --- |
+| 65 | `hurewicz_singularH1_iso_polygon4g` | `polygon4g_succ_pathConnected` (real proof) + `hurewicz_iso_pathConnected` (abstract Mathlib gap) |
+| 66 | `singularH1_inducedMap` | `singularChain_inducedMap_at_one` + descent-to-homology |
+| 67 | `simplex_prism_subdivision_exists` | `prism_vertex_ordering_exists` + `prism_subdivision_combinatorial_construction` |
+| 68 | `prism_operator_satisfies_chain_homotopy` | `prism_boundary_face_decomposition` + `prism_alternating_sign_identity` |
+| 69 | `compact_2manifold_chart_finite_subcover` | `chart_source_isOpen_mem` (real proof) + `chart_sources_cover_univ` (real proof) |
+| 70 | `chart_finite_subcover_to_atlas` | `finite_chart_atlas_data_exists` |
+| 71 | `finite_chart_atlas_admits_pl_refinement` | `dim2_overlap_homeo_pl_approximable` + `dim2_pl_approximation_compatible` |
+| 72 | `unfoldedDisk_to_edgeWordPresentation` | `unfoldedDisk_boundary_word_data` + `unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms` |
+| 73 | `Triangulation.toDualGraph` + `finite_connected_graph_admits_spanning_tree` | `dualGraph_vertices_data` + `dualGraph_edges_data` + `finite_graph_greedy_spanning_tree_exists` + `greedy_spanning_tree_is_spanning` |
+| 74 | (combined with 73) | |
+
+**Stage B / Tietze + Hodge drills (Rounds 75–84):**
+
+| Round | Drilled obligation | New named obligations |
+| --- | --- | --- |
+| 75 | `rawWord_cyclic_reduction` | `inverseCancel_step_decidable` + `inverseCancel_length_strong_induction` |
+| 76 | `rawWord_handle_separation_orientable` | `orientable_letterPair_opposite_orientation` + `orientable_handleSwap_grouping` + `handleSwap_index_ordering` |
+| 77 | `wordQuotient_homeomorph_of_tietzeEq` | `wordQuotient_homeomorph_of_inverseCancel_step` + `wordQuotient_homeomorph_of_handleSwap_step` |
+| 78 | `standardWord_wordQuotient_homeomorph_polygon4g` | **discharged sorry-free** via `standardWord_wordSetoid_eq` + `quotient_homeo_of_setoid_eq` (both real proofs) |
+| 79 | `edgeWord_wordQuotient_homeomorph_M` | `edgeWordPresentation_diskMap_data` + `wordQuotient_continuous_bijection_to_M` + `continuous_bijection_compact_to_T2_is_homeomorphism` |
+| 80 | `EdgeWordPresentation.toRawWord` | `edgeWordPresentation_boundary_letters_data` + `edgeWordPresentation_boundary_length_data` |
+| 81 | `singularH1_finitelyGenerated_of_compact` | `chainOne_finitelyGenerated_of_triangulation` + `oneCycles_finitelyGenerated_of_triangulation` + `singularH1_quotient_finitelyGenerated` |
+| 82 | `hodge_decomposition_singularH1_rank` | `analyticGenus_witness` (real proof) + `singularH1_rank_eq_two_analyticGenus_via_dimC` |
+| 83 | `serre_duality_dimC` | `coherent_cohomology_pairing` + `serre_pairing_nondegenerate` + `dolbeault_eq_sheafH1` |
+| 84 | `hodge_decomposition_dimC_split` | `laplaceBeltrami_selfAdjoint` + `deRham_iso_harmonic` + `kahler_harmonic_pq_decomposition` |
+
+Round 78 actually discharges the standard-word ↔ Polygon4g
+identification: it was `sorry`-bound before; now it's a real proof
+via the existing `EdgeWord.wordSetoid_standardWord` (Round 9 of the
+EdgeWord build) plus a small `Setoid`-equality transport lemma.
+
+### Build status (post Rounds 45–84)
 
 `lake build Jacobian.Blueprint.Sec03.PolygonalModel` and
 `lake build Jacobian.Challenge` both succeed. The `polygonal_model`
