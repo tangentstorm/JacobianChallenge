@@ -8,25 +8,25 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-05-02 (Polygonal-model Stage B1 sorry-free + Sec02 leaf-8 5/14 sub-sub-leaves discharged)
+Last tick: 2026-05-02 (Sec02 leaf-8 12/14 sub-sub-leaves sorry-free + polygonal-model Stage B1 sorry-free)
 
 ```text
 Sec02 leaf-8 sub-sub-leaves + polygonal-model Stage B (this tick)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 common helper: order=1 ⇔ deriv≠0             ████████  `..._eq_one_iff_chartLocal_deriv_ne_zero` (d10d68a9)
 A2: unramified set is open                   ████████  `isOpen_setOf_mapAnalyticOrderAt_eq_one` (a15c8916)
-A3: ramified points are isolated             ░░░░░░░░  `mapAnalyticOrderAt_isolated_at_ramified` (in flight)
-A4: branch locus finite (assembly)           ░░░░░░░░  `mapAnalyticOrderAt_ramified_finite`
-B2: chart-local inverse at unramified        ░░░░░░░░  `chartLocalAt_localInverse_of_unramified` (in flight)
-B3: local inj at unramified (assembly)       ░░░░░░░░  `IsHolomorphicAt.exists_local_inj_of_unramified`
-C1: local power-series `(t-z₀)^k · g(t)`     ░░░░░░░░  `chartLocalAt_eq_pow_mul_of_order`
+A3: ramified points are isolated             ████████  `mapAnalyticOrderAt_isolated_at_ramified` (c7005593)
+A4: branch locus finite (assembly)           ████████  `mapAnalyticOrderAt_ramified_finite` (7fc48b4f)
+B2: chart-local inverse at unramified        ████████  `chartLocalAt_localInverse_of_unramified` (fc7c0dca)
+B3: local inj at unramified (assembly)       ████████  `IsHolomorphicAt.exists_local_inj_of_unramified` (a21e4411)
+C1: local power-series `(t-z₀)^k · g(t)`     ████████  `chartLocalAt_eq_pow_mul_of_order` (52558ec2)
 C2: holomorphic k-th root                    ████████  `analyticAt_kth_root_of_ne_zero` (4f97fe87)
-C3: locally conjugate to `s ↦ s^k`           ░░░░░░░░  `chartLocalAt_locally_conjugate_pow`
-C4: local k-fold at ramified (assembly)      ░░░░░░░░  `IsHolomorphicAt.exists_local_kfold_of_ramified`
+C3: locally conjugate to `s ↦ s^k`           ████████  `chartLocalAt_locally_conjugate_pow` (e6816d0e)
+C4: local k-fold at ramified (assembly)      ░░░░░░░░  `IsHolomorphicAt.exists_local_kfold_of_ramified` (in flight)
 D1: pairwise-disjoint nbhds                  ████████  `Set.Finite.exists_pairwiseDisjoint_open_nbhds` (6c41b65a)
 D2: properness fibre-shrink                  ████████  `eventually_fiber_subset_of_compact_T2` (cd172880)
-D3: weighted-sum eventually-eq at y₀         ░░░░░░░░  `weightedFiberSum_eventually_eq`
-D4: weighted-sum locally constant (asmbly)   ░░░░░░░░  `isHolomorphic_weightedFiberSum_isLocallyConstant`
+D3: weighted-sum eventually-eq at y₀         ░░░░░░░░  `weightedFiberSum_eventually_eq` (in flight)
+D4: weighted-sum locally constant (asmbly)   ████████  `isHolomorphic_weightedFiberSum_isLocallyConstant` (63897c45)
 final assembly (sub-leaf D + Y preconn)      ████████  `isHolomorphic_weightedFiberSum_const`
 
 Polygonal-model plan, Stage B (analytic↔topological genus bridge)
@@ -45,10 +45,13 @@ Stokes plan (Sec03)
 stokes_local_euclidean_fubini_swap           ████████  setIntegral_prod + integral_integral_swap (b2737a1e)
 ```
 
-12 Aristotle integrations this session: ffee77a7, eebe8ef8, 37bd4dcf,
+19 Aristotle integrations this session: ffee77a7, eebe8ef8, 37bd4dcf,
 b2737a1e, f725ffe6, 39501850, ad3eb2dc, 6c41b65a, cd172880, d10d68a9,
-a15c8916, 4f97fe87, 49c446c0. **`SmoothRealStructure.lean` and three
-Sec02 sub-sub-leaves are now closed sorry-free.**
+a15c8916, 4f97fe87, 49c446c0, c7005593, 52558ec2, fc7c0dca, e6816d0e,
+7fc48b4f, a21e4411, 63897c45. **`SmoothRealStructure.lean` is sorry-
+free, `WeightedFiberCardConst.lean` is down to 2 sorries (C4 + D3,
+both in flight), and 9 stale `\notready` blueprint annotations were
+flipped to `\leanok`.**
 
 Each sub-sub-leaf has a docstring with proof sketch naming the
 specific Mathlib lemmas it'll use (`AnalyticAt.localInverse`,
