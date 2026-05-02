@@ -274,11 +274,43 @@ standard word, we get a normal-form theorem — and that's exactly the
 heart of the surface-classification step (Stage A) below.
 \end{layman}
 
+\subsection{Classical inputs for surface classification}
+
+\begin{theorem}[Classical input: Radó's triangulation theorem]
+\label{input:rado-triangulation}
+Every compact connected oriented topological 2-manifold admits a
+triangulation: a homeomorphism with the underlying space of a finite
+two-dimensional simplicial complex.
+\depends{Classical 1925 result (T. Radó, \emph{Über den Begriff der
+Riemannschen Fläche}). Mathlib v4.28.0 has neither the
+simplicial-complex side nor the existence theorem; the formalisation
+is a multi-month project in its own right, conventionally treated
+through PL or smooth-triangulation methods.}
+\lean{JacobianChallenge.Blueprint.Sec03.rado_triangulation}
+\notready
+\end{theorem}
+
+\begin{layman}
+Radó's theorem says every compact two-dimensional surface — Riemann
+surface or not — can be cut into a finite collection of triangles
+glued along their edges, in a way that respects the topology
+exactly. For a sphere, three or four triangles suffice. For a
+torus, two triangles glued into a square (with the canonical wrap-
+around) work. For higher-genus surfaces, more triangles are needed,
+but always finitely many. Why bother? The polygonal-model theorem
+runs on triangulations: cut the triangulation into a tree, lay it
+flat as a polygon, run Tietze moves to reduce the boundary word.
+Without Radó's theorem the entire Stage-A machinery has no input.
+Mathlib does not yet have it; the project carries a thin
+\code{rado\_triangulation} stub naming the classical result, to be
+filled by a future formalisation.
+\end{layman}
+
 \subsection{The polygonal model theorem (Stage A)}
 
 \begin{theorem}[Polygonal model of a compact Riemann surface]
 \label{thm:polygonal-model}
-\uses{def:polygon4g,lem:polygon4g-eq-standard-word-quotient}
+\uses{def:polygon4g,lem:polygon4g-eq-standard-word-quotient,def:tietze-equivalence,def:orientable,input:rado-triangulation}
 A compact connected oriented Riemann surface \(X\) of analytic
 genus \(g\) is homeomorphic to \(\mathrm{Polygon4g}(g)\):
 \[
@@ -415,17 +447,63 @@ different normal form (\(a_1^2 a_2^2 \cdots\)), so we need to flag
 the orientability hypothesis explicitly.
 \end{layman}
 
+\begin{theorem}[Classical input: Hodge / de Rham rank for a Riemann surface]
+\label{input:hodge-deRham}
+\uses{def:topological-genus}
+For a compact connected oriented Riemann surface \(X\) of analytic
+genus \(g\), the rank of the integer first homology group is
+\(2g\):
+\[
+  \mathrm{rank}_{\Z}\,H_1(X,\Z) = 2 g_{\mathrm{an}}(X).
+\]
+\depends{The standard route is the Hodge / de Rham theorem:
+holomorphic 1-forms together with their conjugates span the
+de Rham cohomology \(H^1_{\mathrm{dR}}(X)\), which by de Rham's
+theorem is dual to singular \(H_1(X,\R)\); the integer lattice
+\(H_1(X,\Z)\) is then full of rank \(2g\). Mathlib v4.28.0 has
+neither de Rham cohomology of manifolds, the de Rham theorem, nor
+Hodge decomposition for Riemann surfaces. The project's Lean target
+is currently a sorry-bound assembly through which the
+\(g_{\mathrm{an}}=g_{\mathrm{top}}\) bridge is wired.}
+\lean{JacobianChallenge.Periods.hodge_deRham_rank_eq}
+\notready
+\end{theorem}
+
+\begin{layman}
+The Hodge / de Rham bridge is the deep input that makes the
+analytic and topological notions of genus agree at the level of
+ranks. Phrased one way: a compact Riemann surface of analytic
+genus \(g\) (the dimension of its space of holomorphic 1-forms) has
+exactly \(2g\) independent loops in integer homology. Phrased
+another way: every closed 1-form is the sum of a holomorphic and
+an anti-holomorphic part, and the holomorphic and anti-holomorphic
+spaces both have dimension \(g\) — so the de Rham cohomology has
+real dimension \(2g\), which by de Rham's theorem matches the
+real dimension of \(H_1(X,\R)\), forcing the integer lattice
+\(H_1(X,\Z)\) to be free of rank \(2g\). Why bother? Two of the
+four anti-hack theorems hinge on this rank computation: the
+genus-zero classification (forcing \(g=0\) to mean ``no loops at
+all'') and the period-lattice fullness (forcing the
+\(2g\) symplectic-basis vectors to span the dual real space).
+Mathlib lacks the entire Hodge / de Rham apparatus on manifolds,
+making this the third major classical-analysis gap on the path,
+alongside Riemann-Roch and Stokes.
+\end{layman}
+
 \begin{theorem}[Analytic genus equals topological genus]
 \label{thm:analytic-eq-topological-genus}
-\uses{thm:polygonal-model,def:topological-genus}
+\uses{thm:polygonal-model,def:topological-genus,input:hodge-deRham}
 For a compact connected oriented Riemann surface \(X\),
 \[
   g_{\mathrm{an}}(X) = g_{\mathrm{top}}(X).
 \]
-\depends{Combines the polygonal-model homeomorphism with a
-homology computation on \(\mathrm{Polygon4g}(g)\) (rank \(2g\)
-from the \(2g\) symplectic loops). The homology computation is
-itself nontrivial; tracked under Stage B.}
+\depends{Combines the polygonal-model homeomorphism with the
+Hodge / de Rham rank computation
+(\ref{input:hodge-deRham}): the polygonal model
+identifies \(X\) topologically with \(\mathrm{Polygon4g}(g)\) of
+known \(H_1\) rank \(2g\), and Hodge / de Rham fixes that rank
+to be \(2 g_{\mathrm{an}}(X)\), so dividing by two gives
+\(g_{\mathrm{top}}(X) = g_{\mathrm{an}}(X)\).}
 \lean{JacobianChallenge.Periods.analyticGenus_eq_topologicalGenus}
 \notready
 \end{theorem}
