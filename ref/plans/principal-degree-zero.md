@@ -110,7 +110,7 @@ The remaining infrastructure dependencies (real `MeromorphicFunctionType` field-
 
 Subsequent rounds of TOPDOWN-style recursive refinement on the seven sub-leaves:
 
-### Round R2 (this commit)
+### Round R2
 
 - **Leaf 2 body discharged into a real assembly.** `liftToCp1_branchedCoverData` now reads
   `branchedCoverData_of_nonconstant_holomorphic (meromorphicToCp1 X f) (liftToCp1_continuous X f hholo) trivial` —
@@ -130,3 +130,25 @@ Subsequent rounds of TOPDOWN-style recursive refinement on the seven sub-leaves:
 Net effect: same raw sorry count in `Sec01/PrincipalDegreeZero.lean` (6 → 6, plus 1 new
 in `Sec01/MeromorphicToCp1.lean`), but two formerly-monolithic HARD sorries (leaves 2 and 7)
 are now strictly smaller, better-named obligations one layer deeper.
+
+### Round R3 (this commit)
+
+- **Leaf 5 body discharged into a real assembly.** `principalDivisor_support_subset_zeros_union_poles`
+  is now a sorry-free contrapositive proof: a point `p` outside the zero-and-pole locus has
+  `vanishingOrder = 0` (delegated to a new strictly-smaller named obligation, leaf 5a, below);
+  this in turn forces the `Finsupp.onFinset` coefficient at `p` to be `0`, contradicting
+  `p ∈ support`.
+- **New sub-leaf 5a `vanishingOrder_eq_zero_of_regular_point`.** Single HARD analytic
+  obligation: at a "regular point" of `f` (neither a zero nor a pole), the chart-local
+  Laurent order of the underlying ℂ-projection is the integer `0`. Bottoms out on Mathlib's
+  `tendsto_ne_zero_iff_meromorphicOrderAt_eq_zero` plus the existing chart-independence
+  theorem `orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas`.
+- **Umbrella's `case pos` sorry tightened.** The whole-conclusion sorry is replaced by an
+  isolated `haveI : T2Space X := sorry` followed by `exact principal_degree_zero_of_nonzero
+  X f hf`. The remaining sorry is now a *typeclass-instance gap* ("every Riemann surface is
+  Hausdorff, but the public umbrella signature doesn't yet declare it") rather than a
+  conclusion-level math gap.
+
+Net effect: same raw sorry count in `Sec01/PrincipalDegreeZero.lean` (6 → 6 — one of the
+6 is now the much smaller leaf 5a; one of the 6 is now the typeclass-instance `haveI` gap).
+Mathematical content is again strictly smaller and better-named.

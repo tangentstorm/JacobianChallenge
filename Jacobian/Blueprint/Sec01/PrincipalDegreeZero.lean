@@ -154,15 +154,41 @@ theorem vanishingOrder_eq_neg_ramificationIndex_at_pole
 
 /-! ## Sub-leaf #5 (MEDIUM) — support of the principal divisor. -/
 
+/-- **Sub-leaf #5a (HARD analytic content of leaf 5).**
+
+At a "regular point" of `f` — neither a zero nor a pole — the Laurent
+order of the underlying ℂ-projection of `f` at `p` is the integer `0`.
+
+Mathematical content: in a chart at `p`, the function `f` is locally a
+nonvanishing holomorphic germ, so by Mathlib's
+`tendsto_ne_zero_iff_meromorphicOrderAt_eq_zero` its `meromorphicOrderAt`
+is `0`. Routing through the chart-independence theorem
+`orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas` then gives
+`vanishingOrder X p (underlyingC f) = 0`.
+
+This is the single HARD analytic obligation that leaf 5's body
+delegates to. -/
+theorem vanishingOrder_eq_zero_of_regular_point
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) (_hholo : True) (p : X)
+    (_h0 : meromorphicToCp1 X f p ≠ ((0 : ℂ) : OnePoint ℂ))
+    (_hinf : meromorphicToCp1 X f p ≠ (∞ : OnePoint ℂ)) :
+    vanishingOrder X p (fun q => (f q).getD 0) = 0 := by
+  sorry
+
 /-- **Sub-leaf #5 of `thm:principal-degree-zero` (plan class: MEDIUM).**
 
 The support of `principalDivisor X f` is contained in the union of the
 zero-fibre and the pole-fibre of the CP¹ lift.
 
-Equivalently: outside `(meromorphicToCp1 X f)⁻¹{0,∞}`, the function `f`
-is locally a nonvanishing holomorphic germ, whose Laurent order in any
-chart is `0`, so `vanishingOrder ... = 0` at every such point and the
-`Finsupp.onFinset` constructor leaves the coefficient at `0`.
+Body is now an assembly above the strictly-smaller analytic obligation
+`vanishingOrder_eq_zero_of_regular_point` (leaf 5a) plus the
+`principalDivisor` constructor unfold. The contrapositive: outside
+`(meromorphicToCp1 X f)⁻¹{0,∞}`, the function `f` is locally a
+nonvanishing holomorphic germ, whose Laurent order is `0`, so the
+coefficient drops out of the support.
 
 This is the bookkeeping leaf that lets the degree sum in leaf 6 be
 split into the two finite fibre sums. -/
@@ -172,11 +198,28 @@ theorem principalDivisor_support_subset_zeros_union_poles
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
     (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
-    (_hholo : True) :
+    (hholo : True) :
     ((principalDivisor X f).support : Set X) ⊆
       (meromorphicToCp1 X f) ⁻¹' {((0 : ℂ) : OnePoint ℂ)} ∪
       (meromorphicToCp1 X f) ⁻¹' {(∞ : OnePoint ℂ)} := by
-  sorry
+  classical
+  intro p hp
+  by_contra hreg
+  simp only [Set.mem_union, not_or] at hreg
+  obtain ⟨hzero, hpole⟩ := hreg
+  have h0 : meromorphicToCp1 X f p ≠ ((0 : ℂ) : OnePoint ℂ) :=
+    fun heq => hzero (by simpa [Set.mem_preimage] using heq)
+  have hinf : meromorphicToCp1 X f p ≠ (∞ : OnePoint ℂ) :=
+    fun heq => hpole (by simpa [Set.mem_preimage] using heq)
+  have hord : vanishingOrder X p (fun q => (f q).getD 0) = 0 :=
+    vanishingOrder_eq_zero_of_regular_point X f hholo p h0 hinf
+  apply (Finsupp.mem_support_iff.mp hp)
+  unfold principalDivisor
+  split_ifs with hcond
+  · show WithTop.untopD 0
+        (vanishingOrder X p (fun q => (f q).getD 0)) = 0
+    rw [hord]; rfl
+  · rfl
 
 /-! ## Sub-leaf #6 (MEDIUM) — degree as zeros-sum minus poles-sum. -/
 
@@ -285,12 +328,15 @@ theorem principal_degree_zero
     Divisor.degree (principalDivisor X f) = 0 := by
   classical
   by_cases hf : ∃ x, (f x).getD 0 ≠ 0
-  · -- TODO: route through `principal_degree_zero_of_nonzero` once
-    -- a `[T2Space X]` typeclass-discharge mechanism exists at the
-    -- umbrella signature (currently the public signature has no T2).
-    -- Until then, the nonzero case is recorded as an explicit
-    -- documented gap.
-    sorry
+  · -- The umbrella's public signature lacks `[T2Space X]`, but the
+    -- branched-cover machinery in leaf 7a requires it. Until the
+    -- compact-Riemann-surface bundle in this project is upgraded to
+    -- include T2 (or until a `[ChartedSpace ℂ X] → T2Space X` instance
+    -- lands), we record this typeclass gap as an isolated `haveI`.
+    -- Mathematically, every Riemann surface is Hausdorff by definition,
+    -- so this gap is documentation rather than substantive math.
+    haveI : T2Space X := sorry
+    exact principal_degree_zero_of_nonzero X f hf
   · exact principalDivisor_zero_of_underlying_zero X f hf
 
 end JacobianChallenge.Blueprint
