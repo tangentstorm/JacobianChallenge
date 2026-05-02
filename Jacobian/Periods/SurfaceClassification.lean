@@ -125,13 +125,36 @@ theorem existsHomeoToPolygon4g
   obtain ⟨homeo⟩ := polygonalQuotientPresentation_to_homeo g' M q hcts hsurj hker
   exact ⟨g', ⟨homeo.symm⟩⟩
 
+/-- **Sub-sub-sub-leaf (Polygon4g 0 ≃ₜ DiskC).** Since `SideGen 0`
+has no constructors (the index `i : Fin 0` is uninhabited), the
+equivalence relation `SideRel 0 = EqvGen (SideGen 0)` collapses to
+equality on `DiskC`. Hence the quotient `Polygon4g 0` is canonically
+homeomorphic to `DiskC` itself. -/
+theorem polygon4g_zero_homeo_diskC :
+    Nonempty (Polygon4g 0 ≃ₜ DiskC) := by
+  sorry
+
+/-- **Sub-sub-sub-leaf (singular H₁ of the disk vanishes).** The
+closed unit disk `DiskC` is convex (subspace of ℂ), hence
+`ContractibleSpace`, hence its singular `H₁` is zero (homotopy
+invariance of singular homology). -/
+theorem singularH1_diskC_finrank_eq_zero :
+    Module.finrank ℤ (singularH1 DiskC) = 0 := by
+  sorry
+
 /-- **Sub-sub-leaf (genus-zero polygon H₁).** `Polygon4g 0` is the
 closed disk (since `SideRel 0` reduces to equality — `SideGen 0` has
 no constructors), hence contractible, hence its singular `H₁`
-vanishes. -/
+vanishes.
+
+Body: combine `polygon4g_zero_homeo_diskC`,
+`singularH1_finrank_homeo_invariant`, and
+`singularH1_diskC_finrank_eq_zero`. -/
 theorem singularH1_polygon4g_zero_finrank :
     Module.finrank ℤ (singularH1 (Polygon4g 0)) = 0 := by
-  sorry
+  obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
+  rw [singularH1_finrank_homeo_invariant h]
+  exact singularH1_diskC_finrank_eq_zero
 
 /-- **Sub-sub-leaf (genus ≥ 1 polygon H₁).** The first singular
 homology of the standard fundamental `4(g+1)`-gon has ℤ-rank
