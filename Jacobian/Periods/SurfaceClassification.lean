@@ -304,11 +304,26 @@ theorem singularH1_polygon4g_zero_finrank :
   rw [singularH1_finrank_homeo_invariant h]
   exact singularH1_diskC_finrank_eq_zero
 
-/-- **Frontier leaf (genus ≥ 1 polygon H₁ structure).** The first
+/-- **Frontier leaf (genus ≥ 1 polygon H₁ as basis).** The first
+singular homology of the standard `4(g+1)`-gon admits a ℤ-basis
+indexed by `Fin (2*(g+1))`. This is the *combinatorial* heart of the
+polygon-rank computation: a basis on `H₁` is the data carrying the
+2(g+1) cycles `[a₀], [b₀], …, [a_g], [b_g]`. -/
+theorem polygon4g_succ_singularH1_basis (g : ℕ) :
+    Nonempty (Module.Basis (Fin (2 * (g + 1))) ℤ
+      (singularH1 (Polygon4g (g + 1)))) := by
+  sorry
+
+/-- **Sub-sub-leaf (genus ≥ 1 polygon H₁ structure).** The first
 singular homology of the standard `4(g+1)`-gon is ℤ-linearly
 isomorphic to the free ℤ-module `Fin (2*(g+1)) → ℤ`.
 
-Bottom-up routes:
+Body: extract the basis from `polygon4g_succ_singularH1_basis` and
+turn it into a linear equivalence via `Basis.equivFun`. (Same
+meet-in-the-middle pattern as the Stage B leaf
+`singularH1_compactRiemannSurface_iso_freeZ`.)
+
+Bottom-up routes for the underlying basis:
 
 * **Cellular route.** CW structure on `Polygon4g (g+1)` with one vertex,
   `2(g+1)` edges (`a₀,b₀,…,a_g,b_g`), and one 2-cell whose attaching
@@ -323,7 +338,8 @@ Bottom-up routes:
   singular homology. -/
 theorem singularH1_polygon4g_succ_iso_freeZ (g : ℕ) :
     Nonempty (singularH1 (Polygon4g (g + 1)) ≃ₗ[ℤ] (Fin (2 * (g + 1)) → ℤ)) := by
-  sorry
+  obtain ⟨b⟩ := polygon4g_succ_singularH1_basis g
+  exact ⟨b.equivFun⟩
 
 /-- **Sub-sub-leaf (genus ≥ 1 polygon H₁ rank).** Rank `2(g+1)` for
 the polygon's singular `H₁`.
