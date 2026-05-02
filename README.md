@@ -63,6 +63,62 @@ plus the well-definedness of the branched degree.
 
 Earlier ticks recorded below for context.
 
+Last tick: 2026-05-01 (claude/formalize-divisor-discrete-w9XH6)
+
+```text
+divisor-discrete BLOCKER cleared — blueprint-faithful (this tick)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Sec01 lem:divisor-discrete                  Hypothesis fixed to match
+                                            the blueprint phrase
+                                            "nonzero meromorphic function
+                                            on X" exactly: [ConnectedSpace
+                                            X] + ∀ q, MeromorphicAtX f q +
+                                            ∃ p, vanishingOrder X p f ≠ ⊤.
+                                            Sorry-free.
+Helpers added (production)                  In Jacobian/HolomorphicForms/
+                                            VanishingOrder.lean:
+                                            · meromorphicAt/On_chart_pullback
+                                              _of_meromorphicAtX (lifts
+                                              manifold-pointwise meromorphy
+                                              to chart-target MeromorphicOn
+                                              via meromorphicAt_comp_iff_of_
+                                              deriv_ne_zero + existing
+                                              transition-analyticity infra).
+                                            · isClopen_setOf_orderAt_eq_top
+                                              (transports Mathlib's
+                                              isClopen_setOf_meromorphic-
+                                              OrderAt_eq_top from the chart
+                                              pullback to the manifold via
+                                              chart-independence).
+                                            · orderAt_ne_top_of_exists
+                                              (identity-principle propagation:
+                                              [PreconnectedSpace X] + ∃ + the
+                                              clopen fact ⇒ ∀).
+Proof core                                  Step 1: orderAt_ne_top_of_exists
+                                            lifts the existential to ∀.
+                                            Step 2: Mathlib's
+                                            codiscrete_setOf_meromorphic-
+                                            OrderAt_eq_zero_or_top on the
+                                            chart pullback; the order=⊤
+                                            disjunct excluded by Step 1
+                                            via chart-independence; pulled
+                                            back through chartAt ℂ p
+                                            homeomorphism.
+Downstream threading                        divisor_finite_support takes
+                                            the same blueprint hypotheses;
+                                            principalDivisor / principal-
+                                            Divisors / principal_degree_zero
+                                            / inputDivisors all gain the
+                                            [ConnectedSpace X] instance,
+                                            and principalDivisor's by_cases
+                                            updated to the existential form.
+                                            No new sorries anywhere.
+Blueprint annotation                        \notready → \leanok on
+                                            lem:divisor-discrete
+                                            (tex/sections/
+                                            01-compact-riemann-surfaces.tex).
+```
+
 ```text
 Worker re-prompts + Aristotle queue check (prior tick, post-`f2279b4`)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -139,14 +195,22 @@ Stubs added                                  2  lem:holomorphic-form-is-closed (
 ```
 
 ```text
-Sec01 progress (most recent: a1744ab)
+Sec01 progress (most recent: claude/formalize-divisor-discrete-w9XH6)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Recently closed                                 def:principal-divisor (Worker C, a1744ab)
+Recently closed                                 lem:divisor-discrete (this tick,
+                                                hypothesis fix + sorry-free proof
+                                                via codiscrete-of-meromorphic-order
+                                                + chart-pullback transition lift)
+                                                def:principal-divisor (Worker C, a1744ab)
                                                 lem:divisor-finite-support (Worker H, 7d9b44a)
                                                 principalDivisors (fef531b leanok flip)
-BLOCKER documented                              divisor_discrete (Worker M, 6a60b24)
-                                                hypothesis ∃ x, f x ≠ 0 too weak;
-                                                needs MeromorphicAtX + ConnectedSpace X
+BLOCKER cleared                                 divisor_discrete: hypothesis was
+                                                disprovable ∃ x, f x ≠ 0; now uses
+                                                pointwise ∀ q, MeromorphicAtX f q ∧
+                                                vanishingOrder X q f ≠ ⊤. Connected-
+                                                ness propagation (∃ p, order ≠ ⊤
+                                                + ConnectedSpace X ⇒ ∀ p) deferred
+                                                to a follow-on lemma.
 ```
 
 ```text
@@ -180,15 +244,15 @@ Sorry-free chain decls                       8 / 8 (Sec02 user-facing) ✓
 ```text
 Blueprint sorry totals (lake build Jacobian.Blueprint)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Sec01                                        2  (DivisorDiscrete[BLOCKER]
-                                                 + PrincipalDegreeZero)
+Sec01                                        1  (PrincipalDegreeZero)
 Sec02 named leaves                           1  (montel_pointwise_extraction)
 HolomorphicForms/CompactRiemannSurface       3  (production sorries pulled in via Sec02 chain)
                                             ───
-Total declaration-uses-sorry warnings        6   (was 8; -2 net from leanok flips on
-                                                 principal-divisors + fd-holomorphic-one-forms;
-                                                 stub additions this tick are placeholder
-                                                 True-conclusion theorems and add no sorry)
+Total declaration-uses-sorry warnings        5   (was 6; -1 net from divisor_discrete
+                                                 BLOCKER clearance — hypothesis fix +
+                                                 chart-pullback codiscrete proof, no
+                                                 new sorries introduced anywhere
+                                                 downstream)
 ```
 
 Earlier (pre-CI-thread) progress on production / Aristotle integrations preserved below for context.

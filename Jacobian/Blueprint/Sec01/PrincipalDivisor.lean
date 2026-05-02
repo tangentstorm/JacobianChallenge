@@ -12,6 +12,7 @@ support is finite by `lem:divisor-finite-support`. -/
 namespace JacobianChallenge.Blueprint
 
 open scoped Manifold
+open JacobianChallenge.HolomorphicForms.VanishingOrder
 
 /-- Underlying ℂ-valued projection of a `MeromorphicFunctionType X`.
 Sends `∞` to the sentinel `0`. The convention is lossy at poles
@@ -31,8 +32,13 @@ private noncomputable def underlyingC
 function on a compact Riemann surface, expressed as a `Finsupp`.
 
 Returns the zero divisor whenever the underlying ℂ-valued projection
-of `f` is identically zero — in particular for the literal zero
-meromorphic function. For any nonzero projection, `Finsupp.onFinset`
+of `f` fails to satisfy the manifold-level "nonzero meromorphic"
+hypotheses required by `divisor_finite_support` — namely (i) meromorphy
+at every point and (ii) finite vanishing order at every point. In
+particular the zero divisor is returned for the literal zero
+meromorphic function and whenever the placeholder `MeromorphicFunctionType`
+fails to expose enough analytic structure on the projection. For any
+projection that does satisfy both hypotheses, `Finsupp.onFinset`
 packages the support `{q | ord_q(f) ≠ 0}` (finite by
 `divisor_finite_support`) and the integer coefficient
 `(ord_q f).untopD 0`.
@@ -43,13 +49,15 @@ are in `MeromorphicFunctionType` (whose richer "field of meromorphic
 germs" structure is still pending) and `vanishingOrder`'s pole-aware
 extension. -/
 noncomputable def principalDivisor
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) : Divisor X := by
   classical
-  by_cases hf : ∃ x, underlyingC f x ≠ 0
+  by_cases hf : (∀ q : X, MeromorphicAtX (underlyingC f) q) ∧
+                (∃ p : X, vanishingOrder X p (underlyingC f) ≠ ⊤)
   · exact Finsupp.onFinset
-      (divisor_finite_support X (underlyingC f) hf).toFinset
+      (divisor_finite_support X (underlyingC f) hf.1 hf.2).toFinset
       (fun p => (vanishingOrder X p (underlyingC f)).untopD 0)
       (by
         intro p hp
