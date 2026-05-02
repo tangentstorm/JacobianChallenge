@@ -49,29 +49,54 @@ open JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
+/-- **Frontier structural leaf.** On a compact connected Riemann
+surface, singular `H₁(X, ℤ)` is ℤ-linearly isomorphic to the free
+module of rank `2g`, where `g = analyticGenus ℂ X`.
+
+Bottom-up routes:
+
+* **Hodge route.** `H¹(X, ℝ) ≃ H^{1,0}(X) ⊕ H^{0,1}(X)` with
+  `dim H^{1,0} = dim H^{0,1} = g`. Requires Dolbeault cohomology
+  (Mathlib v4.28.0 gap).
+* **De Rham + Riemann–Roch route.** Combine Stokes-on-RS with
+  Riemann–Roch (planned in `ref/plans/stokes-on-rs-with-boundary.md`
+  and `input:riemann-roch`).
+* **Period-lattice route (project-internal).** The project's
+  `periodSubgroup` is a `ℤ`-lattice of rank `2g` inside
+  `HolomorphicOneFormDual ℂ X`; singular `H₁` maps isomorphically
+  onto it via the period pairing. See
+  `Jacobian.Periods.PeriodFunctional` (`h1_basis_of_compact_riemann_surface`,
+  `periodSubgroup_isZLattice`) for the existing project hooks.
+
+**Note (meet-in-the-middle).** The project's
+`h1_basis_of_compact_riemann_surface` already gives a ℤ-basis of
+`IntegralOneCycle X = singularH1 X` (modulo `ModuleCat ℤ` coercion)
+indexed by `Fin (2 * analyticGenus ℂ X)`. That basis lifts directly
+to the linear iso required here once the duplicate `topologicalGenus`
+definition between `TopologicalGenus.lean` and `PeriodFunctional.lean`
+is reconciled. -/
+theorem singularH1_compactRiemannSurface_iso_freeZ
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
+    Nonempty (singularH1 X ≃ₗ[ℤ] (Fin (2 * analyticGenus ℂ X) → ℤ)) := by
+  sorry
+
 /-- **Stage B leaf.** On a compact connected Riemann surface,
 the ℤ-rank of singular `H₁` equals `2g` where `g = analyticGenus ℂ X`.
 
-Bottom-up: any of the three proof routes named in the file docstring
-works (Hodge, de Rham + Riemann–Roch, or project-internal
-period-lattice). All bottom out in the same arithmetic fact about the
-period subgroup of `HolomorphicOneFormDual ℂ X`.
-
-**Note (meet-in-the-middle):** the project also has a parallel
-sorry'd statement `hodge_deRham_rank_eq` in
-`Jacobian.Periods.PeriodFunctional` over the project-internal
-`IntegralOneCycle X` (definitionally equal to `singularH1 X` modulo
-the `ModuleCat ℤ` coercion). When the duplicate `topologicalGenus`
-definition in `PeriodFunctional` is unified with the canonical
-`Jacobian.Periods.TopologicalGenus.topologicalGenus`, this leaf can
-be discharged by a thin `.symm` wrapper around `hodge_deRham_rank_eq`. -/
+Body: lift through `singularH1_compactRiemannSurface_iso_freeZ` to
+the free ℤ-module `Fin (2g) → ℤ`, then compute via
+`LinearEquiv.finrank_eq`, `Module.finrank_pi`, and `Fintype.card_fin`. -/
 theorem singularH1_finrank_eq_two_mul_analyticGenus
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Module.finrank ℤ (singularH1 X) = 2 * analyticGenus ℂ X := by
-  sorry
+  obtain ⟨e⟩ := singularH1_compactRiemannSurface_iso_freeZ X
+  rw [e.finrank_eq, Module.finrank_pi, Fintype.card_fin]
 
 /-- **Stage B umbrella.** On a compact connected Riemann surface,
 `analyticGenus ℂ X = topologicalGenus X`.
