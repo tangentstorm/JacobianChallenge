@@ -399,14 +399,13 @@ theorem polygon4g_singularH1_basis (g : ℕ) :
 The first singular homology of the standard fundamental polygon has
 ℤ-rank `2g`.
 
-Body: case split on `g`; the `g = 0` branch reduces to the disk
-contractibility leaf, and the `g = g'+1` branch reduces to the
-cellular-homology leaf. -/
+Body: extract the unified basis from `polygon4g_singularH1_basis`,
+then `Module.finrank_eq_card_basis` + `Fintype.card_fin`. The case
+split on `g` is folded into the basis construction, not exposed here. -/
 theorem singularH1_polygon4g_finrank (g : ℕ) :
     Module.finrank ℤ (singularH1 (Polygon4g g)) = 2 * g := by
-  cases g with
-  | zero => simpa using singularH1_polygon4g_zero_finrank
-  | succ g => exact singularH1_polygon4g_succ_finrank g
+  obtain ⟨b⟩ := polygon4g_singularH1_basis g
+  rw [Module.finrank_eq_card_basis b, Fintype.card_fin]
 
 /-- **Stage A2 leaf (polygon genus).** The topological genus of the
 standard fundamental polygon `Polygon4g g` equals `g`.
