@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Jacobian.HolomorphicForms.HodgeDeRhamRank
 import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.TopologicalGenus
 import Jacobian.Periods.PeriodSpanHelpers
@@ -125,24 +126,67 @@ theorem h1_free_of_compact_surface
 
 /-- **Frontier helper (Hodge–de Rham bridge).**
 `2 · dim_ℂ H⁰(X, Ω¹) = rank_ℤ H₁(X, ℤ)` for a compact connected
-Riemann surface. Combines three deep results, all absent in
-Mathlib v4.28.0:
+Riemann surface.
 
-1. **de Rham theorem on compact manifolds** — `H¹_dR(X, ℂ) ≅ H¹_sing(X, ℤ) ⊗_ℤ ℂ`,
-   giving `dim_ℂ H¹_dR = rank_ℤ H₁`.
-2. **Hodge decomposition** — `H¹_dR(X) ≅ H⁰(X, Ω¹) ⊕ conj H⁰(X, Ω¹)`,
-   giving `dim_ℂ H¹_dR = 2 · dim_ℂ H⁰(Ω¹)`.
-3. **Serre duality** (used in step 2) — `H¹(X, 𝒪) ≅ conj H⁰(X, Ω¹)`.
+#### TOPDOWN refinement (claude/expand-hodge-derham-RbzcT)
 
-(Aristotle 2d93b076 named-helper extraction; Round 55 split into
-`HodgeDeRham.deRham_singularH1_dim_witness` (de Rham step) and
-`HodgeDeRham.hodge_decomposition_singularH1_rank` (Hodge step).) -/
+The original single `sorry` is now a **sorry-free assembly** delegating
+to a multi-file frontier-obligation tree:
+
+```text
+hodge_deRham_rank_eq                              -- this theorem
+└── two_analyticGenus_eq_finrank_intH1            -- HodgeDeRhamRank.lean (sorry-free)
+    ├── realDimDeRhamH1_eq_two_analyticGenus      -- HodgeDecomposition.lean (sorry-free)
+    │   ├── realDim_deRhamH1_eq_complexDim_deRhamH1ℂ
+    │   │                                          -- RealComplexDeRham.lean (sorry-free
+    │   │                                             round-2 assembly through
+    │   │                                             complexDeRhamH1_eq_tensorℂ_realDeRhamH1
+    │   │                                             + tensorℂ_finrank_eq_real_finrank)
+    │   ├── complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus
+    │   │                                          -- HodgeDecomposition.lean → HodgeProjection
+    │   │                                             (Hodge harmonic projection,
+    │   │                                             round-2 split into 5 named leaves)
+    │   ├── analyticHarmonicGenus_eq_analyticGenus_add_anti
+    │   │                                          -- HodgeStarRS.lean (frontier sorry)
+    │   └── analyticAntiGenus_eq_analyticGenus    -- AntiHolomorphicOneForm.lean (rfl-via-alias)
+    └── realDim_deRhamH1_eq_finrank_intH1         -- DeRhamSingular.lean (sorry-free)
+        ├── realDim_deRhamH1_eq_realDim_singularH1 -- DeRhamSingular.lean → DeRhamComparisonMap
+        │                                            (de Rham theorem, round-2 split into
+        │                                             Stokes + surjectivity + injectivity)
+        └── realDim_singularH1_eq_finrank_intH1    -- DeRhamSingular.lean → RealHomologyTensor
+                                                     (UCT, round-2 split through
+                                                     IntegralOneCycle_finite (CellularHomologyRS),
+                                                     IntegralOneCycle_torsionFree, and
+                                                     finrank_homℤℝ_eq_finrank_of_free
+                                                     (FreeModuleHomFinrank))
+```
+
+Each frontier sorry now names a precise mathematical obligation.  Three
+classes of obligation appear:
+
+* **Major analytic input** (de Rham theorem, harmonic projection,
+  Hodge decomposition, Hermitian metric existence, anti-holomorphic
+  conjugation) — multi-month Mathlib efforts each.
+
+* **Topology input** (finite generation of `H₁` on a compact manifold,
+  torsion-freeness from cellular homology) — depends on Radó
+  triangulation / surface classification.
+
+* **Pure algebra leaf** (`finrank_homℤℝ_eq_finrank_of_free`) —
+  Aristotle-sized; ~40 lines using `Module.Basis.constr`,
+  `LinearEquiv.finrank_eq`, `Module.finrank_pi`.
+
+(See also `Jacobian.Periods.HodgeDeRham`, an alternative parallel
+refinement of this same statement via `hodge_deRham_rank_eq_via_classical_route`,
+which decomposes through `deRham_singularH1_dim_witness` and
+`hodge_decomposition_singularH1_rank`. Either chain provides a body for
+this theorem; we pick the more decomposed multi-file tree below.) -/
 theorem hodge_deRham_rank_eq
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) :=
-  hodge_deRham_rank_eq_via_classical_route X
+  JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1 X
 
 /-- **Sub-obligation 2.** The analytic genus equals the topological
 genus for a compact connected Riemann surface. Assembly: applies

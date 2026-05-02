@@ -390,6 +390,112 @@ Externally-visible discharges:
 
 Plan and full file inventory: `ref/plans/serre-duality-rs.md`.
 
+## Frontier-input refinement: `input:hodge-deRham`
+
+The blueprint big-umbrella `input:hodge-deRham` corresponds to the Lean
+declaration `JacobianChallenge.Periods.hodge_deRham_rank_eq` in
+`Jacobian/Periods/PeriodFunctional.lean`:
+
+```lean
+theorem hodge_deRham_rank_eq (X) [...] :
+    2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X)
+```
+
+Round (claude/expand-hodge-derham-RbzcT) refined this single `sorry` into
+a multi-file frontier-obligation tree.  The body of `hodge_deRham_rank_eq`
+is now a sorry-free assembly delegating to
+`HolomorphicForms.two_analyticGenus_eq_finrank_intH1`.
+
+### New helper modules
+
+- `Jacobian/HolomorphicForms/DeRhamCohomology.lean` — opaque ℕ-valued
+  dimensions `realDimDeRhamH1`, `complexDimDeRhamH1ℂ`, `realDimDeRhamH0`,
+  `complexDimDeRhamH0ℂ`; frontier identities
+  `realDim_deRhamH1_eq_complexDim_deRhamH1ℂ` (sorry, real-of-complex
+  identification), `complexDim_deRhamH0ℂ_eq_one_of_compact_connected`
+  (sorry), `realDim_deRhamH0_eq_one_of_compact_connected` (sorry).
+
+- `Jacobian/HolomorphicForms/AntiHolomorphicOneForm.lean` — anti-holomorphic
+  forms (currently aliased to `HolomorphicOneForm ℂ X` pending Mathlib
+  Dolbeault decomposition); `analyticAntiGenus`,
+  `analyticAntiGenus_eq_analyticGenus` (currently `rfl` under the alias),
+  `AntiHolomorphicOneForm.module_finite_of_compact`,
+  `AntiHolomorphicOneForm.realLinearEquiv_holomorphic`.
+
+- `Jacobian/HolomorphicForms/HodgeStarRS.lean` — `HarmonicOneForm`
+  (currently aliased to `Fin 2 → HolomorphicOneForm ℂ X`),
+  `analyticHarmonicGenus`,
+  `complexDim_deRhamH1_eq_analyticHarmonicGenus` (placeholder rfl),
+  `analyticHarmonicGenus_eq_analyticGenus_add_anti` (sorry, Hodge
+  decomposition by bidegree),
+  `riemannSurface_hasGlobalConformalMetric` (placeholder),
+  `analyticHarmonicGenus_finite` (sorry).
+
+- `Jacobian/HolomorphicForms/HodgeDecomposition.lean` —
+  `complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus` (sorry, harmonic
+  projection), `analyticHarmonicGenus_eq_two_analyticGenus` (sorry-free
+  assembly), `complexDimDeRhamH1ℂ_eq_two_analyticGenus` (sorry-free
+  assembly), `realDimDeRhamH1_eq_two_analyticGenus` (sorry-free
+  assembly).
+
+- `Jacobian/HolomorphicForms/DeRhamSingular.lean` — `realDimSingularH1`
+  (opaque ℕ); `realDim_deRhamH1_eq_realDim_singularH1` (sorry, de Rham
+  theorem on a compact smooth manifold);
+  `realDim_singularH1_eq_finrank_intH1` (sorry, UCT + free-ℤ-module
+  algebra); `realDim_deRhamH1_eq_finrank_intH1` (sorry-free assembly).
+
+- `Jacobian/Periods/IntegralOneCycleRank.lean` — pure-algebra leaves:
+  `IntegralOneCycle_finite` (sorry), `IntegralOneCycle_torsionFree`
+  (sorry), `finrank_homℤℝ_eq_finrank_of_free` (sorry, ARISTOTLE-SIZED
+  pure algebra ~40 lines).
+
+- `Jacobian/HolomorphicForms/HodgeDeRhamRank.lean` — outer assembly:
+  `two_analyticGenus_eq_finrank_intH1` (sorry-free assembly of the Hodge
+  side and de Rham side).
+
+### Refinement chain
+
+```text
+hodge_deRham_rank_eq                                -- PeriodFunctional.lean (✅ sorry-free)
+└── two_analyticGenus_eq_finrank_intH1              -- HodgeDeRhamRank.lean (✅ sorry-free)
+    ├── realDimDeRhamH1_eq_two_analyticGenus        -- HodgeDecomposition.lean (✅ sorry-free)
+    │   ├── realDim_deRhamH1_eq_complexDim_deRhamH1ℂ  -- DeRhamCohomology.lean (sorry)
+    │   ├── complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus
+    │   │                                              -- HodgeDecomposition.lean (sorry)
+    │   ├── analyticHarmonicGenus_eq_analyticGenus_add_anti
+    │   │                                              -- HodgeStarRS.lean (sorry)
+    │   └── analyticAntiGenus_eq_analyticGenus       -- AntiHolomorphicOneForm.lean (rfl-via-alias)
+    └── realDim_deRhamH1_eq_finrank_intH1            -- DeRhamSingular.lean (✅ sorry-free)
+        ├── realDim_deRhamH1_eq_realDim_singularH1    -- DeRhamSingular.lean (sorry, de Rham theorem)
+        └── realDim_singularH1_eq_finrank_intH1       -- DeRhamSingular.lean (sorry)
+            └── factors through IntegralOneCycle_finite,
+                IntegralOneCycle_torsionFree,
+                finrank_homℤℝ_eq_finrank_of_free      -- IntegralOneCycleRank.lean (3 sorries)
+```
+
+### Sorry inventory (frontier obligations, after refinement)
+
+| File | Decl | Class |
+| --- | --- | --- |
+| `DeRhamCohomology.lean` | `realDim_deRhamH1_eq_complexDim_deRhamH1ℂ` | major analytic |
+| `DeRhamCohomology.lean` | `complexDim_deRhamH0ℂ_eq_one_of_compact_connected` | analytic (downstream) |
+| `DeRhamCohomology.lean` | `realDim_deRhamH0_eq_one_of_compact_connected` | analytic (downstream) |
+| `HodgeStarRS.lean` | `analyticHarmonicGenus_eq_analyticGenus_add_anti` | major analytic (Hodge ⋆) |
+| `HodgeStarRS.lean` | `analyticHarmonicGenus_finite` | analytic (elliptic regularity) |
+| `HodgeDecomposition.lean` | `complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus` | major analytic (Hodge theorem) |
+| `DeRhamSingular.lean` | `realDim_deRhamH1_eq_realDim_singularH1` | **major analytic** (de Rham theorem) |
+| `DeRhamSingular.lean` | `realDim_singularH1_eq_finrank_intH1` | algebra (factors through algebra leaves) |
+| `IntegralOneCycleRank.lean` | `IntegralOneCycle_finite` | **major topology** (cellular homology) |
+| `IntegralOneCycleRank.lean` | `IntegralOneCycle_torsionFree` | topology (UCT + Poincaré) |
+| `IntegralOneCycleRank.lean` | `finrank_homℤℝ_eq_finrank_of_free` | **pure algebra (Aristotle-sized)** |
+| `AntiHolomorphicOneForm.lean` | `module_finite_of_compact` | inheritable (alias) |
+
+The single original `sorry` in `hodge_deRham_rank_eq` has been replaced
+by a tree of ~12 named frontier obligations, each precisely scoped.
+The pure-algebra leaf `finrank_homℤℝ_eq_finrank_of_free` is
+Aristotle-sized; the major analytic leaves remain multi-month Mathlib
+efforts as flagged by the blueprint's red-border umbrella status.
+
 ## Practical Guardrails
 
 - Keep `Solution.lean` independent of `Challenge.lean`.
