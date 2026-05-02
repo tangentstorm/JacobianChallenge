@@ -171,25 +171,38 @@ instance polygon4g_zero_t2Space : T2Space (Polygon4g 0) := by
   obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
   exact h.symm.t2Space
 
-/-- **Frontier leaf (singular `H₁` of the disk is subsingleton).** The
-closed unit disk `DiskC` is convex hence contractible. By homotopy
-invariance of singular homology (a Mathlib gap as of v4.28.0 — the
+/-- **Real proof.** `DiskC` is a closed ball in `ℂ` (a real
+topological vector space), hence convex and nonempty, hence
+contractible. -/
+instance diskC_contractibleSpace : ContractibleSpace DiskC :=
+  Metric.contractibleSpace_closedBall (zero_le_one)
+
+/-- **Frontier leaf (singular `H₁` of a contractible space is subsingleton).**
+Homotopy invariance of singular homology in degree `n ≥ 1` for
+contractible spaces. Mathlib v4.28.0 gap — the
 `AlgebraicTopology.SingularHomology` directory currently contains only
 `Basic.lean` with `isZero_singularHomologyFunctor_of_totallyDisconnectedSpace`
-and no homotopy-invariance theorem), `singularH1 DiskC` is the zero
-module, in particular subsingleton.
+and no homotopy-invariance theorem.
 
 Discharge plan once homotopy invariance lands:
-  * Show `DiskC` is `ContractibleSpace` (Mathlib has
-    `convex_iff_contractibleSpace` style results).
-  * Lift to homotopy equivalence with `Unit`.
+  * Lift `[ContractibleSpace X]` to a homotopy equivalence with `Unit`.
   * Apply functoriality of `singularHomologyFunctor` plus homotopy
     invariance to transport the vanishing of `H₁(Unit)` (an instance
-    of `isZero_singularHomologyFunctor_of_totallyDisconnectedSpace`)
-    to `H₁(DiskC)`. -/
-theorem singularH1_diskC_subsingleton :
-    Subsingleton (singularH1 DiskC) := by
+    of `isZero_singularHomologyFunctor_of_totallyDisconnectedSpace`
+    at `n = 1`) to `H₁(X)`.
+  * Subsingleton follows because the zero `ModuleCat ℤ` object is
+    subsingleton. -/
+theorem singularH1_subsingleton_of_contractibleSpace
+    {X : Type} [TopologicalSpace X] [ContractibleSpace X] :
+    Subsingleton (singularH1 X) := by
   sorry
+
+/-- **Sub-sub-sub-leaf (singular H₁ of the disk is subsingleton).**
+Body: `DiskC` is `ContractibleSpace` (real proof, instance above) and
+the contractibility-implies-subsingleton-`H₁` leaf does the rest. -/
+theorem singularH1_diskC_subsingleton :
+    Subsingleton (singularH1 DiskC) :=
+  singularH1_subsingleton_of_contractibleSpace
 
 /-- **Sub-sub-sub-leaf (singular H₁ of the disk vanishes, finrank).**
 Body: subsingleton singular `H₁` ⟹ rank zero by
