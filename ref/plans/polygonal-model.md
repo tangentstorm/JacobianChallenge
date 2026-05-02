@@ -157,3 +157,90 @@ challenge.
 For now `Jacobian/Blueprint/Sec03/PolygonalModel.lean` retains its
 sorry-bound umbrella with the real type signature; that's already
 the right scaffold.
+
+## 9. Top-down refinement progress (2026-05)
+
+`Jacobian/Blueprint/Sec03/PolygonalModel.lean` no longer carries a
+single monolithic `sorry`. The body of `polygonal_model` is now an
+*assembly* delegating to four named obligations:
+
+* `JacobianChallenge.Periods.ChartedSpaceComplex_to_smoothReal2`
+  (Stage B1, real proof — preexisting in
+  `Jacobian/Periods/SmoothRealStructure.lean`).
+* `JacobianChallenge.Periods.complexManifold_orientable`
+  (Stage B2, instance — new
+  `Jacobian/Periods/ComplexManifoldOrientable.lean`; placeholder
+  witness from the `True`-field `Orientable` class).
+* `JacobianChallenge.Periods.compactOrientableSurface_homeomorph_polygon4g_topologicalGenus`
+  (Stage A umbrella — new
+  `Jacobian/Periods/SurfaceClassification.lean`, *no own `sorry`*).
+* `JacobianChallenge.Periods.analyticGenus_eq_topologicalGenus`
+  (Stage B umbrella — new
+  `Jacobian/Periods/AnalyticGenusEqTopologicalGenus.lean`,
+  *no own `sorry`*).
+
+### Stage A refinement (`SurfaceClassification.lean`)
+
+The Stage A umbrella body assembles three further leaves:
+
+* `existsPolygonalQuotientPresentation` (Stage A1+A2, **named sorry**)
+  — for compact connected orientable smooth real 2-manifold `M`,
+  exists `g'` and a continuous surjection `q : DiskC → M` whose fibres
+  coincide with `Polygon4g.SideRel g'`. This is the heart of the
+  classical surface-classification theorem (Radó + combinatorial
+  reduction to the standard `4g'`-gon edge word). Discharge would
+  itself require a multi-thousand-LOC sub-project; recommend opening
+  `ref/plans/surface-classification.md` for the next-level decomposition.
+* `polygonalQuotientPresentation_to_homeo` (Stage A3+A4, **real proof**)
+  — universal-property assembly: lifts `q` through the side-pairing
+  quotient via `Quotient.lift`, derives bijectivity from the kernel
+  iff, upgrades to a homeomorphism via
+  `Continuous.homeoOfEquivCompactToT2`.
+* `existsHomeoToPolygon4g` (**real proof, derived**) — combines the
+  two above.
+
+The Stage A umbrella additionally uses:
+
+* `singularH1_polygon4g_finrank` (**named sorry**) — the polygon's
+  singular `H₁` has ℤ-rank `2g`. Bottom-up: cellular homology on the
+  one-vertex `2g`-edge one-2-cell CW structure with attaching word
+  `∏ [aᵢ,bᵢ]`.
+* `topologicalGenus_polygon4g` (**real proof**) — Nat division wrap
+  around the leaf above.
+* `topologicalGenus_homeo_invariant` (**real proof**) — unfolds and
+  rewrites through `singularH1_finrank_homeo_invariant` (now in
+  `Jacobian/Periods/TopologicalGenusInvariance.lean`, *no sorry*)
+  via `TopCat.isoOfHomeo` + functoriality of
+  `singularHomologyFunctor (ModuleCat ℤ) 1` + `Iso.toLinearEquiv` +
+  `LinearEquiv.finrank_eq`.
+
+### Stage B refinement (`AnalyticGenusEqTopologicalGenus.lean`)
+
+The Stage B umbrella body delegates to a single ℤ-rank leaf:
+
+* `singularH1_finrank_eq_two_mul_analyticGenus` (**named sorry**)
+  — `Module.finrank ℤ (singularH1 X) = 2 * analyticGenus ℂ X` for
+  compact connected Riemann surfaces.
+
+Meet-in-the-middle: this is the same statement as the project's
+existing `JacobianChallenge.Periods.hodge_deRham_rank_eq` in
+`Jacobian/Periods/PeriodFunctional.lean`, modulo the
+`IntegralOneCycle X = singularH1 X` definitional identification and
+the duplicate `topologicalGenus` definitions (one in `TopologicalGenus`,
+one in `PeriodFunctional`). When those are unified, this leaf
+discharges directly.
+
+### Current named-sorry frontier (3 leaves)
+
+| Leaf | File | Bottom-up content |
+| --- | --- | --- |
+| `existsPolygonalQuotientPresentation` | `SurfaceClassification.lean` | Surface classification (Radó + edge-word reduction) |
+| `singularH1_polygon4g_finrank` | `SurfaceClassification.lean` | Cellular `H₁` of the standard `4g`-gon CW structure |
+| `singularH1_finrank_eq_two_mul_analyticGenus` | `AnalyticGenusEqTopologicalGenus.lean` | Hodge / de Rham + Riemann-Roch / period-lattice |
+
+### Build status
+
+`lake build Jacobian.Blueprint.Sec03.PolygonalModel` succeeds. The
+`polygonal_model` declaration has no own `sorry`; the only remaining
+`sorry`s in its dependency closure are the three leaves above
+(plus pre-existing project sorries unchanged by this refinement).
