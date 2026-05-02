@@ -270,9 +270,73 @@ Side benefits added in Rounds 14–15:
 | `singularH1_diskC_subsingleton` | `SurfaceClassification.lean` | `ContractibleSpace DiskC` + homotopy invariance of singular homology (Mathlib gap) |
 | `singularH1_finrank_eq_two_mul_analyticGenus` | `AnalyticGenusEqTopologicalGenus.lean` | Hodge / de Rham + Riemann-Roch / period-lattice (meet-in-the-middle with project's `hodge_deRham_rank_eq`) |
 
+### Round 17–18: Structural-iso refinement of rank leaves
+
+Both `singularH1_polygon4g_succ_finrank` (Stage A polygon-rank leaf)
+and `singularH1_finrank_eq_two_mul_analyticGenus` (Stage B leaf) were
+refactored from bare rank statements into structural-iso leaves +
+finrank-of-free-module finishers:
+
+* `singularH1_polygon4g_succ_iso_freeZ` (sorry, frontier) — the
+  ℤ-linear isomorphism `singularH1 (Polygon4g (g+1)) ≃ₗ[ℤ] Fin (2(g+1)) → ℤ`.
+  The downstream `singularH1_polygon4g_succ_finrank` is then real
+  proof: `LinearEquiv.finrank_eq` + `Module.finrank_pi` +
+  `Fintype.card_fin`.
+* `singularH1_compactRiemannSurface_iso_freeZ` (sorry, frontier) — the
+  analogous ℤ-linear iso `singularH1 X ≃ₗ[ℤ] Fin (2 * analyticGenus ℂ X) → ℤ`.
+
+Each frontier sorry now records *both* rank and module structure (a
+strict refinement of the bare rank statement).
+
+### Round 19–20: ContractibleSpace discharges
+
+* `diskC_contractibleSpace` (instance, **real proof**) — via Mathlib's
+  `Metric.contractibleSpace_closedBall` on the convex unit ball.
+* `polygon4g_zero_contractibleSpace` (theorem, **real proof**) —
+  transports through `polygon4g_zero_homeo_diskC.contractibleSpace`.
+* `singularH1_subsingleton_of_contractibleSpace` (sorry, frontier) —
+  generic statement covering both `DiskC` and any other contractible
+  site once homotopy invariance of singular homology lands in Mathlib.
+
+### Round 22–23: Bundled `PolygonalQuotientPresentation`
+
+The 5-tuple `(genus, q, cts, surj, ker)` is now wrapped in a structure
+with a namespaced API:
+
+```
+structure PolygonalQuotientPresentation (M : Type) [TopologicalSpace M]
+P.qLift            : Polygon4g P.genus → M    (computable lift)
+P.qLift_continuous : Continuous P.qLift
+P.qLift_bijective  : Function.Bijective P.qLift
+P.toHomeo          : Polygon4g P.genus ≃ₜ M   (noncomputable)
+```
+
+`existsPolygonalQuotientPresentation` returns `Nonempty (PolygonalQuotientPresentation M)`
+and `polygonalQuotientPresentation_to_homeo` becomes a thin `Nonempty`
+wrapper around `P.toHomeo`. Downstream code (`existsHomeoToPolygon4g`,
+the Stage A umbrella) consumes the bundled form.
+
+### Round 21: `Periods.lean` re-exports
+
+`Jacobian.Periods` now re-exports `Polygon4g`, `Orientable`,
+`SmoothRealStructure`, and `ComplexManifoldOrientable`. The polygonal-model
+helpers carrying the canonical `topologicalGenus` (`TopologicalGenus`,
+`TopologicalGenusInvariance`, `SurfaceClassification`,
+`AnalyticGenusEqTopologicalGenus`) cannot be re-exported through
+`Periods.lean` until the duplicate `topologicalGenus` definition in
+`PeriodFunctional.lean` is unified — the name collision is documented
+inline in `Jacobian/Periods.lean`.
+
 ### Build status
 
 `lake build Jacobian.Blueprint.Sec03.PolygonalModel` succeeds. The
 `polygonal_model` declaration has no own `sorry`; the only remaining
-`sorry`s in its dependency closure are the four leaves above
-(plus pre-existing project sorries unchanged by this refinement).
+`sorry`s in its dependency closure are four frontier leaves
+(plus pre-existing project sorries unchanged by this refinement):
+
+| Frontier leaf | File | Bottom-up content |
+| --- | --- | --- |
+| `existsPolygonalQuotientPresentation` | `SurfaceClassification.lean` | Surface classification (Radó + edge-word reduction) |
+| `singularH1_polygon4g_succ_iso_freeZ` | `SurfaceClassification.lean` | Polygon `H₁` as free ℤ-module via cellular / Hurewicz route |
+| `singularH1_subsingleton_of_contractibleSpace` | `SurfaceClassification.lean` | Homotopy invariance of singular homology (Mathlib gap) |
+| `singularH1_compactRiemannSurface_iso_freeZ` | `AnalyticGenusEqTopologicalGenus.lean` | Hodge / de Rham + Riemann-Roch / period-lattice; meet-in-the-middle with project's existing `h1_basis_of_compact_riemann_surface` |
