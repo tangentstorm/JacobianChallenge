@@ -30,6 +30,8 @@ import Jacobian.Blueprint.Sec02.DegreeOneNoRamification
 import Jacobian.Blueprint.Sec02.DegreeOneBijective
 import Jacobian.Blueprint.Sec02.DegreeOneIsomorphism
 import Jacobian.Blueprint.Sec02.BranchedDegree
+import Jacobian.Blueprint.Sec02.WeightedFiberCardConst
+import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 import Jacobian.Blueprint.Sec02.BranchLocusFinite
 import Jacobian.Blueprint.Sec02.LocalBiholoUnramified
 import Jacobian.Blueprint.Sec02.InputDegreeOneIsomorphism

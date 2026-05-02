@@ -1,36 +1,54 @@
-import Jacobian.HolomorphicForms.CotangentBundle
+import Jacobian.Blueprint.Sec02.BranchedDegree
 
-/-! # Blueprint stub: `thm:degree-one-bijective`
+/-! # Blueprint: `thm:degree-one-bijective`
 
 Section 2 of `tex/sections/02-holomorphic-forms-and-genus.tex`.
 
 A degree-one holomorphic map between compact connected Riemann
-surfaces is bijective: degree one forces every fiber to have a single
-sheet (injectivity), and properness of holomorphic maps from a compact
-domain forces surjectivity onto the connected target.
+surfaces is bijective: degree one forces every fibre to have a single
+sheet (injectivity), and the same singleton fibre witness gives
+surjectivity.
 
-This file is a scaffold so the blueprint dep-graph node has a Lean
-target via `\lean{}`. The real statement requires the project's
-`branched_degree` API (`ref/plans/branched-degree.md`); until that
-lands the body is a placeholder so this file compiles cleanly. -/
+The analytic hypothesis "non-constant holomorphic between compact
+connected Riemann surfaces" is absorbed into the existence of a
+`BranchedCoverData X Y f`; the analytic constructor producing such
+data from the holomorphic input is the still-open
+`branchedCoverData_of_nonconstant_holomorphic` (leaf 8 in
+`Jacobian/Blueprint/Sec02/BranchedDegree.lean`).  Once that lands, the
+hypothesis here is fed by the constructor and this theorem becomes a
+direct consequence of the combinatorial leaf 7. -/
 
 namespace JacobianChallenge.Blueprint
 
-open scoped Manifold
-
-/-- Degree-one holomorphic maps between compact connected Riemann
-surfaces are bijective.
-
-PLACEHOLDER STATEMENT: pending the project's `branched_degree` API the
-conclusion is recorded as `True`. The intended statement is roughly
-"`f.Bijective`", with hypotheses pinning down `branchedDegree f = 1`
-and connectedness/compactness on `X` and `Y`. -/
+/-- **`thm:degree-one-bijective`.** A degree-one branched cover is
+bijective.  Surjectivity comes from the singleton fibre over any
+target point; injectivity follows because two distinct preimages of
+the same point would each contribute a positive summand to a weighted
+fibre sum already equal to one. -/
 theorem degree_one_bijective
-    (X Y : Type*) [TopologicalSpace X] [TopologicalSpace Y]
-    [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
-    (_f : X → Y) :
-    True := trivial
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f)
+    (hdeg : branchedDegree h = 1) :
+    Function.Bijective f := by
+  refine ⟨?_, ?_⟩
+  · intro x₁ x₂ heq
+    obtain ⟨x, hxs, _⟩ := branchedDegree_one_fiber_singleton h (f x₁) hdeg
+    have hx₁ : x₁ = x := by
+      have hmem : x₁ ∈ (h.finite_fiber (f x₁)).toFinset := by
+        rw [Set.Finite.mem_toFinset]; rfl
+      rw [hxs, Finset.mem_singleton] at hmem
+      exact hmem
+    have hx₂ : x₂ = x := by
+      have hmem : x₂ ∈ (h.finite_fiber (f x₁)).toFinset := by
+        rw [Set.Finite.mem_toFinset]; exact heq.symm
+      rw [hxs, Finset.mem_singleton] at hmem
+      exact hmem
+    rw [hx₁, hx₂]
+  · intro y
+    obtain ⟨x, hxs, _⟩ := branchedDegree_one_fiber_singleton h y hdeg
+    have hmem : x ∈ (h.finite_fiber y).toFinset := by
+      rw [hxs]; exact Finset.mem_singleton_self x
+    rw [Set.Finite.mem_toFinset] at hmem
+    exact ⟨x, hmem⟩
 
 end JacobianChallenge.Blueprint

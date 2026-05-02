@@ -1,5 +1,6 @@
 import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Topology.Connected.Basic
 
 /-! # Blueprint: `def:branched-degree` (TRIVIAL/SHORT/MEDIUM/HARD leaves)
@@ -14,12 +15,14 @@ ChatGPT plan `ref/plans/branched-degree.md`:
 * leaf 2 — `BranchedCoverData` (SHORT, structure)
 * leaf 3 — `branchedDegree` (SHORT, proved)
 * leaf 4 — `branchedDegree_eq_weightedFiberCard` (SHORT, proved)
-* leaf 5 — `branchedDegree_pos` (MEDIUM, `sorry`)
+* leaf 5 — `branchedDegree_pos` (MEDIUM, proved)
 * leaf 6 — `branchedDegree_eq_card_toFinset_of_unramified_fiber`
-  (MEDIUM, `sorry`)
-* leaf 7 — `branchedDegree_one_fiber_unique` (HARD, `sorry`)
-* leaf 8 — `branchedCoverData_of_nonconstant_holomorphic` (HARD,
-  `sorry`)
+  (MEDIUM, proved)
+* leaf 7 — `branchedDegree_one_fiber_unique` (HARD, proved via
+  `branchedDegree_one_fiber_singleton`)
+* leaf 8 — `branchedCoverData_of_nonconstant_holomorphic` lives in a
+  separate file `Jacobian/Blueprint/Sec02/BranchedDegreeFromHolomorphic.lean`
+  so this file remains free of manifold imports.
 
 Imports are narrow (no `import Mathlib`): `Set.Finite` /
 `Set.Finite.toFinset`, `Finset.sum` and `Finset.card`, and the
@@ -113,74 +116,90 @@ theorem BranchedCoverData.weightedFiberCard_const
 /-- **Plan leaf 5 (MEDIUM).** Surjective covers have positive degree:
 pick any `y : Y`, pick a preimage `x` over `y`, observe
 `ramificationIndex x ≥ 1` is a positive summand in the finite
-weighted-fibre sum.
-
-Proof outline (≈70 LOC when discharged): reduce via
-`branchedDegree_eq_weightedFiberCard` to showing the weighted fibre
-sum at a chosen `y` is positive; surjectivity gives a witness `x` in
-the fibre; positivity of the ramification index makes the corresponding
-summand strictly positive; conclude with `Finset.sum_pos`. -/
+weighted-fibre sum. -/
 theorem branchedDegree_pos
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f)
-    (_hsurj : Function.Surjective f) :
+    (hsurj : Function.Surjective f) :
     0 < branchedDegree h := by
-  sorry
+  set y : Y := Classical.arbitrary Y with hy
+  rw [branchedDegree_eq_weightedFiberCard h y]
+  show 0 < ((h.finite_fiber y).toFinset).sum h.ramificationIndex
+  obtain ⟨x, hx⟩ := hsurj y
+  refine Finset.sum_pos (fun z _ => h.ramificationIndex_pos z) ⟨x, ?_⟩
+  rw [Set.Finite.mem_toFinset]
+  exact hx
 
 /-- **Plan leaf 6 (MEDIUM).** On a fibre with no ramification, the
 branched degree equals the (finite) cardinality of the fibre. We state
 the fibre cardinality via `(h.finite_fiber y).toFinset.card` so the
-file remains free of `Nat.card`/`SetTheory.Cardinal` imports.
-
-Proof outline (≈80 LOC when discharged): rewrite via
-`branchedDegree_eq_weightedFiberCard h y`, replace each summand
-`ramificationIndex x` (for `x` in the fibre `Finset`) by `1` using
-`hunram`, then `Finset.sum_const` and `Nat.smul_one_eq_cast`-style
-plumbing. -/
+file remains free of `Nat.card`/`SetTheory.Cardinal` imports. -/
 theorem branchedDegree_eq_card_toFinset_of_unramified_fiber
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f) (y : Y)
-    (_hunram : ∀ x ∈ f ⁻¹' {y}, h.ramificationIndex x = 1) :
+    (hunram : ∀ x ∈ f ⁻¹' {y}, h.ramificationIndex x = 1) :
     branchedDegree h = (h.finite_fiber y).toFinset.card := by
-  sorry
+  rw [branchedDegree_eq_weightedFiberCard h y]
+  show ((h.finite_fiber y).toFinset).sum h.ramificationIndex
+      = (h.finite_fiber y).toFinset.card
+  have hcongr : ((h.finite_fiber y).toFinset).sum h.ramificationIndex
+      = ((h.finite_fiber y).toFinset).sum (fun _ : X => (1 : ℕ)) := by
+    refine Finset.sum_congr rfl (fun x hx => ?_)
+    rw [Set.Finite.mem_toFinset] at hx
+    exact hunram x hx
+  rw [hcongr]
+  simp
+
+/-- Helper for leaf 7: when `branchedDegree h = 1`, the fibre `Finset`
+over any `y : Y` is a singleton `{x}` and the unique element has
+ramification index `1`.  This is the load-bearing combinatorial fact
+behind both `branchedDegree_one_fiber_unique` and the downstream
+`degree_one_bijective`. -/
+theorem branchedDegree_one_fiber_singleton
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f) (y : Y)
+    (hdeg : branchedDegree h = 1) :
+    ∃ x, (h.finite_fiber y).toFinset = {x} ∧ h.ramificationIndex x = 1 := by
+  have hsum : ((h.finite_fiber y).toFinset).sum h.ramificationIndex = 1 := by
+    show h.weightedFiberCard y = 1
+    rw [← branchedDegree_eq_weightedFiberCard h y]
+    exact hdeg
+  set s := (h.finite_fiber y).toFinset with hs
+  have hcard_le_sum : s.card ≤ s.sum h.ramificationIndex := by
+    have hconst : s.card = s.sum (fun _ : X => (1 : ℕ)) := by simp
+    rw [hconst]
+    exact Finset.sum_le_sum (fun x _ => h.ramificationIndex_pos x)
+  rw [hsum] at hcard_le_sum
+  have hne : s.Nonempty := by
+    by_contra hempty
+    rw [Finset.not_nonempty_iff_eq_empty] at hempty
+    rw [hempty, Finset.sum_empty] at hsum
+    exact zero_ne_one hsum
+  have hcard : s.card = 1 :=
+    le_antisymm hcard_le_sum hne.card_pos
+  rw [Finset.card_eq_one] at hcard
+  obtain ⟨x, hx⟩ := hcard
+  refine ⟨x, hx, ?_⟩
+  rw [hx, Finset.sum_singleton] at hsum
+  exact hsum
 
 /-- **Plan leaf 7 (HARD).** A degree-one branched cover has a unique
 preimage of every base point, and that preimage is unramified. The
-combinatorial heart of the degree-one ⇒ bijective chain.
-
-Proof outline (≈120-180 LOC when discharged): use
-`branchedDegree_eq_weightedFiberCard` to reduce to the weighted fibre
-sum at `y`; a sum of positive naturals equal to `1` forces a singleton
-support and the unique summand to be `1`; convert back to
-`f ⁻¹' {y}`. The `∃!` packaging combines existence (a witness in the
-fibre) with uniqueness (any two preimages collapse). -/
+combinatorial heart of the degree-one ⇒ bijective chain. -/
 theorem branchedDegree_one_fiber_unique
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f) (y : Y)
-    (_hdeg : branchedDegree h = 1) :
+    (hdeg : branchedDegree h = 1) :
     ∃! x : X, f x = y ∧ h.ramificationIndex x = 1 := by
-  sorry
-
-/-- **Plan leaf 8 (HARD).** Analytic constructor for
-`BranchedCoverData`: a nonconstant continuous map `f : X → Y` between
-a compact Hausdorff `X` and a connected `Y` (the topological skeleton
-of the analytic hypothesis) can be packaged as a branched-cover datum.
-
-The eventual proof requires the open-mapping theorem for analytic maps
-(absent in Mathlib v4.28.0), the isolated-zeros theorem, and a local
-normal-form lemma — all of which live in the analytic frontier.
-Stated here so downstream code can refer to it; the `sorry` is the
-single biggest analytic gap in the branched-degree story.
-
-The `_hf` hypothesis is intentionally a `True` placeholder: we leave
-the precise analytic hypothesis (nonconstant holomorphic) to be
-sharpened once the holomorphic-map predicate stabilises in the
-project. -/
-noncomputable def branchedCoverData_of_nonconstant_holomorphic
-    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
-    [CompactSpace X] [T2Space X] [ConnectedSpace Y]
-    (f : X → Y) (_hcont : Continuous f) (_hf : True) :
-    BranchedCoverData X Y f := by
-  sorry
+  obtain ⟨x, hxs, hrx⟩ := branchedDegree_one_fiber_singleton h y hdeg
+  have hx_mem : x ∈ (h.finite_fiber y).toFinset := by
+    rw [hxs]; exact Finset.mem_singleton_self x
+  rw [Set.Finite.mem_toFinset] at hx_mem
+  refine ⟨x, ⟨hx_mem, hrx⟩, ?_⟩
+  rintro x' ⟨hfx', _⟩
+  have hx'_mem : x' ∈ (h.finite_fiber y).toFinset := by
+    rw [Set.Finite.mem_toFinset]; exact hfx'
+  rw [hxs, Finset.mem_singleton] at hx'_mem
+  exact hx'_mem
 
 end JacobianChallenge.Blueprint

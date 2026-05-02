@@ -8,6 +8,61 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
+Last tick: 2026-05-01 (`thm:degree-one-bijective` + `IsHolomorphic` + leaf-8 partial discharge on `claude/formalize-degree-one-bijective-QIaE9`)
+
+```text
+Sec02 degree-one-bijective + analytic infrastructure (this tick)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BranchedCoverData                            ████████  +weightedFiberCard_eq invariant
+branchedDegree leaves 1–7                    ████████  all sorry-free
+degree_one_bijective                         ████████  sorry-free against `BranchedCoverData`
+IsHolomorphicAt / IsHolomorphic predicate    ████████  new file `HolomorphicForms/HolomorphicMap.lean`
+mapAnalyticOrderAt (chart-local order)       ████████  sorry-free definition + alt-chart equality
+chart independence of mapAnalyticOrderAt     ████████  `analyticOrderAt_alternate_chart_eq` +
+                                                       `mapAnalyticOrderAt_eq_of_mem_maximalAtlas`
+local identity principle (chart)             ████████  `analyticAt_eventually_eq_zero_of_frequently`
+local identity principle (manifold)          ████████  `IsHolomorphicAt.eventually_eq_of_frequently_eq`
+local-constant ⇒ global-constant (connected) ████████  `IsHolomorphic.eq_const_of_eventuallyEq`
+finite fibres of nonconstant holomorphic     ████████  `isHolomorphic_finite_fiber`
+mapAnalyticOrderAt_pos (positivity)          ████████  via order ≠ 0 (vanishes) + ≠ ⊤ (connected)
+leaf 8 (BranchedCoverData constructor)       ████████  sorry-free.  4 sub-leaves +
+                                                       9 sub-sub-leaves in
+                                                       `Sec02/WeightedFiberCardConst.lean`:
+common helper: order=1 ⇔ deriv≠0             ░░░░░░░░  `mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero`
+A2: unramified set is open                   ░░░░░░░░  `isOpen_setOf_mapAnalyticOrderAt_eq_one`
+A3: ramified points are isolated             ░░░░░░░░  `mapAnalyticOrderAt_isolated_at_ramified`
+A4: branch locus finite (assembly)           ░░░░░░░░  `mapAnalyticOrderAt_ramified_finite`
+B2: chart-local inverse at unramified        ░░░░░░░░  `chartLocalAt_localInverse_of_unramified`
+B3: local inj at unramified (assembly)       ░░░░░░░░  `IsHolomorphicAt.exists_local_inj_of_unramified`
+C1: local power-series `(t-z₀)^k · g(t)`     ░░░░░░░░  `chartLocalAt_eq_pow_mul_of_order`
+C2: holomorphic k-th root                    ░░░░░░░░  `analyticAt_kth_root_of_ne_zero`
+C3: locally conjugate to `s ↦ s^k`           ░░░░░░░░  `chartLocalAt_locally_conjugate_pow`
+C4: local k-fold at ramified (assembly)      ░░░░░░░░  `IsHolomorphicAt.exists_local_kfold_of_ramified`
+D1: pairwise-disjoint nbhds (Mathlib?)       ░░░░░░░░  `Set.Finite.exists_pairwiseDisjoint_open_nbhds`
+D2: properness fibre-shrink                  ░░░░░░░░  `eventually_fiber_subset_of_compact_T2`
+D3: weighted-sum eventually-eq at y₀         ░░░░░░░░  `weightedFiberSum_eventually_eq`
+D4: weighted-sum locally constant (asmbly)   ░░░░░░░░  `isHolomorphic_weightedFiberSum_isLocallyConstant`
+final assembly (sub-leaf D + Y preconn)      ████████  `isHolomorphic_weightedFiberSum_const`
+                                                       sorry-free; satisfies leaf 8's
+                                                       `weightedFiberCard_const` field.
+```
+
+Each sub-sub-leaf has a docstring with proof sketch naming the
+specific Mathlib lemmas it'll use (`AnalyticAt.localInverse`,
+`AnalyticAt.analyticOrderAt_eq_natCast`, `Complex.analyticAt_log`,
+`AnalyticAt.eventually_ne`, `IsLocallyConstant.iff_eventuallyEq`,
+etc.).  The decomposition is now fine-grained enough that each
+remaining `sorry` is a clearly-scoped Aristotle-sized job.
+
+Note: Mathlib v4.28.0 *does* have `analyticOrderNatAt`, isolated zeros,
+and the open-mapping theorem for analytic maps in
+`Analysis/Complex/OpenMapping.lean`.  The earlier inventory entries
+flagging these as "absent" were stale; the genuine project-local gap
+is the **manifold-level** holomorphic-map predicate (now scaffolded)
+plus the well-definedness of the branched degree.
+
+Earlier ticks recorded below for context.
+
 Last tick: 2026-05-01 (claude/formalize-divisor-discrete-w9XH6)
 
 ```text
