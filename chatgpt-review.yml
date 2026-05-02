@@ -1,0 +1,825 @@
+- generic [ref=e1]:
+  - link "Skip to content" [ref=e1601] [cursor=pointer]:
+    - /url: "#main"
+  - generic [ref=e1605]:
+    - generic [ref=e1607]:
+      - navigation "Sidebar":
+        - generic:
+          - generic:
+            - generic:
+              - button "Open sidebar":
+                - img
+        - generic:
+          - generic:
+            - link "New chat":
+              - /url: /
+              - generic:
+                - img
+              - generic: New chat
+          - generic:
+            - button "Search chats":
+              - generic:
+                - img
+              - generic: Search chats
+          - generic:
+            - button "Recents":
+              - generic:
+                - img
+              - generic: Recents
+        - generic:
+          - generic:
+            - button "Open profile menu"
+      - generic [ref=e1608]:
+        - heading "Chat history" [level=2] [ref=e1609]
+        - generic [ref=e1610]:
+          - navigation "Chat history" [ref=e1611]:
+            - generic [ref=e1614]:
+              - link "Home" [ref=e1615] [cursor=pointer]:
+                - /url: /
+                - generic [ref=e1616]: ChatGPT
+              - button "Close sidebar" [expanded] [ref=e1618]:
+                - img [ref=e1619]
+            - list [ref=e1622]:
+              - listitem [ref=e1623]:
+                - link "New chat Control Shift O" [ref=e1624] [cursor=pointer]:
+                  - /url: /
+                  - generic [ref=e1625]:
+                    - img [ref=e1627]
+                    - generic [ref=e1630]: New chat
+                  - generic [ref=e1632]:
+                    - generic "Control" [ref=e1633]:
+                      - generic [ref=e1634]: Ctrl
+                      - text: +
+                    - generic "Shift" [ref=e1635]:
+                      - generic [ref=e1636]: Shift
+                      - text: +
+                    - generic [ref=e1638]: O
+              - listitem [ref=e1639]:
+                - button "Search chats Control K" [ref=e1640] [cursor=pointer]:
+                  - generic [ref=e1641]:
+                    - img [ref=e1643]
+                    - generic [ref=e1646]: Search chats
+                  - generic [ref=e1648]:
+                    - generic "Control" [ref=e1649]:
+                      - generic [ref=e1650]: Ctrl
+                      - text: +
+                    - generic [ref=e1652]: K
+            - link "Codex" [ref=e1653] [cursor=pointer]:
+              - /url: /codex/cloud
+              - generic [ref=e1654]:
+                - img [ref=e1656]
+                - generic [ref=e1659]: Codex
+              - img [ref=e1661]
+            - generic [ref=e1664] [cursor=pointer]:
+              - img [ref=e1666]
+              - generic [ref=e1669]: More
+            - generic [ref=e1670]:
+              - button "GPTs" [expanded] [ref=e1672] [cursor=pointer]:
+                - heading "GPTs" [level=2] [ref=e1673]
+              - list [ref=e1674]:
+                - listitem [ref=e1675]:
+                  - link "Scholar GPT" [ref=e1676] [cursor=pointer]:
+                    - /url: /g/g-kZ0eYXlJe-scholar-gpt
+                    - generic [ref=e1681]: Scholar GPT
+                    - button [ref=e1683]:
+                      - img [ref=e1685]
+                - listitem [ref=e1687]:
+                  - link "のYouTube Video Summarizer ✏️ のYouTube Unaffiliated" [ref=e1688] [cursor=pointer]:
+                    - /url: /g/g-GvcYCKPIH-noyoutube-video-summarizer-noyoutube-unaffiliated
+                    - generic "のYouTube Video Summarizer ✏️ のYouTube Unaffiliated" [ref=e1693]
+                    - button [ref=e1695]:
+                      - img [ref=e1697]
+              - link "Explore GPTs" [ref=e1699] [cursor=pointer]:
+                - /url: /gpts
+                - img [ref=e1701]
+                - generic [ref=e1704]: Explore GPTs
+            - generic [ref=e1705]:
+              - button "Projects" [expanded] [ref=e1707] [cursor=pointer]:
+                - heading "Projects" [level=2] [ref=e1708]
+              - list [ref=e1709]:
+                - listitem [ref=e1710]:
+                  - button "New project" [ref=e1711] [cursor=pointer]:
+                    - img [ref=e1713]
+                    - generic [ref=e1716]: New project
+                - listitem [ref=e1717]:
+                  - link "Hide chats jacobian challege Open project options for jacobian challege" [ref=e1718] [cursor=pointer]:
+                    - /url: /g/g-p-69f3716fa3b08191bf7c55a46e1b4b28-jacobian-challege/project
+                    - generic [ref=e1719]:
+                      - button "Hide chats" [ref=e1721]:
+                        - generic [ref=e1722]:
+                          - img [ref=e1726]
+                          - img [ref=e1736]
+                      - generic [ref=e1739]: jacobian challege
+                    - button "Open project options for jacobian challege" [ref=e1741]:
+                      - img [ref=e1743]
+                  - list [ref=e1746]:
+                    - listitem [ref=e1747]:
+                      - link "Design Review Consensus, chat in project jacobian challege" [ref=e1748] [cursor=pointer]:
+                        - /url: /g/g-p-69f3716fa3b08191bf7c55a46e1b4b28/c/69f3b22f-559c-83ea-ba48-0d577615a8bf
+                        - generic [ref=e1750]: Design Review Consensus
+                        - button "Open conversation options for Design Review Consensus" [ref=e1753]:
+                          - img [ref=e1755]
+                    - listitem [ref=e1757]:
+                      - link "Phase B Strategy for Divisors, chat in project jacobian challege" [ref=e1758] [cursor=pointer]:
+                        - /url: /g/g-p-69f3716fa3b08191bf7c55a46e1b4b28/c/69f39c8b-c9d4-83ea-bcd6-10772440a360
+                        - generic [ref=e1760]: Phase B Strategy for Divisors
+                        - button "Open conversation options for Phase B Strategy for Divisors" [ref=e1763]:
+                          - img [ref=e1765]
+                    - listitem [ref=e1767]:
+                      - link "Jacobian Challenge in Lean, chat in project jacobian challege" [ref=e1768] [cursor=pointer]:
+                        - /url: /g/g-p-69f3716fa3b08191bf7c55a46e1b4b28/c/69f37e12-e16c-83ea-9fb3-ed3c3dc94b84
+                        - generic [ref=e1770]: Jacobian Challenge in Lean
+                        - button "Open conversation options for Jacobian Challenge in Lean" [ref=e1773]:
+                          - img [ref=e1775]
+                - listitem [ref=e1777]:
+                  - link "Show chats property tax thing Open project options for property tax thing" [ref=e1778] [cursor=pointer]:
+                    - /url: /g/g-p-69d57f801f60819183ce931a3e1af91f-property-tax-thing/project
+                    - generic [ref=e1779]:
+                      - button "Show chats" [ref=e1781]:
+                        - generic [ref=e1782]:
+                          - img [ref=e1786]
+                          - img [ref=e1796]
+                      - generic [ref=e1799]: property tax thing
+                    - button "Open project options for property tax thing" [ref=e1801]:
+                      - img [ref=e1803]
+                - listitem [ref=e1805]:
+                  - link "Show chats woslbimi Open project options for woslbimi" [ref=e1806] [cursor=pointer]:
+                    - /url: /g/g-p-6760e0f12fe08191bae283968716840f-woslbimi/project
+                    - generic [ref=e1807]:
+                      - button "Show chats" [ref=e1809]:
+                        - generic [ref=e1810]:
+                          - img [ref=e1814]
+                          - img [ref=e1824]
+                      - generic [ref=e1827]: woslbimi
+                    - button "Open project options for woslbimi" [ref=e1829]:
+                      - img [ref=e1831]
+                - listitem [ref=e1833]:
+                  - link "Show chats Math + CS Paper channel Open project options for Math + CS Paper channel" [ref=e1834] [cursor=pointer]:
+                    - /url: /g/g-p-68fa95a5b42481918ff15295ad4a2139-math-cs-paper-channel/project
+                    - generic [ref=e1835]:
+                      - button "Show chats" [ref=e1837]:
+                        - generic [ref=e1838]:
+                          - img [ref=e1842]
+                          - img [ref=e1852]
+                      - generic [ref=e1855]: Math + CS Paper channel
+                    - button "Open project options for Math + CS Paper channel" [ref=e1857]:
+                      - img [ref=e1859]
+                - listitem [ref=e1861]:
+                  - link "Show chats service launch Open project options for service launch" [ref=e1862] [cursor=pointer]:
+                    - /url: /g/g-p-6760cda253048191be176419b5ec887e-service-launch/project
+                    - generic [ref=e1863]:
+                      - button "Show chats" [ref=e1865]:
+                        - generic [ref=e1866]:
+                          - img [ref=e1870]
+                          - img [ref=e1880]
+                      - generic [ref=e1883]: service launch
+                    - button "Open project options for service launch" [ref=e1885]:
+                      - img [ref=e1887]
+                - listitem [ref=e1889]:
+                  - generic [ref=e1890] [cursor=pointer]:
+                    - img [ref=e1892]
+                    - generic [ref=e1895]: More
+            - generic [ref=e1896]:
+              - button "Recents" [expanded] [ref=e1898] [cursor=pointer]:
+                - heading "Recents" [level=2] [ref=e1899]
+              - generic [ref=e1900]:
+                - list [ref=e1901]:
+                  - listitem [ref=e1902]:
+                    - link "Stopping Unwanted Tax Service, pinned conversation" [ref=e1903] [cursor=pointer]:
+                      - /url: /c/69d4152a-3984-832b-b291-36193f74abdd
+                      - generic "Stopping Unwanted Tax ServicePinned" [ref=e1905]:
+                        - text: Stopping Unwanted Tax Service
+                        - generic [ref=e1906]: Pinned
+                      - generic [ref=e1907]:
+                        - generic [ref=e1909]:
+                          - img [ref=e1911]
+                          - button "Open conversation options for Stopping Unwanted Tax Service" [ref=e1913]:
+                            - img [ref=e1915]
+                        - img [ref=e1919]
+                - list [ref=e1921]:
+                  - listitem [ref=e1922]:
+                    - link "D2 vs D3 Differences" [ref=e1923] [cursor=pointer]:
+                      - /url: /c/69f36065-8e3c-83ea-bf6d-9ae06d224289
+                      - generic [ref=e1925]: D2 vs D3 Differences
+                      - button "Open conversation options for D2 vs D3 Differences" [ref=e1928]:
+                        - img [ref=e1930]
+                  - listitem [ref=e1932]:
+                    - link "Sprite Sheet Design" [ref=e1933] [cursor=pointer]:
+                      - /url: /c/69f293c8-5c0c-83ea-9a1e-3ee831f10b8d
+                      - generic [ref=e1935]: Sprite Sheet Design
+                      - button "Open conversation options for Sprite Sheet Design" [ref=e1938]:
+                        - img [ref=e1940]
+                  - listitem [ref=e1942]:
+                    - link "Ship and Alien Sprites" [ref=e1943] [cursor=pointer]:
+                      - /url: /c/67ef4991-e190-8001-9eb2-8e128a420cfc
+                      - generic [ref=e1945]: Ship and Alien Sprites
+                      - button "Open conversation options for Ship and Alien Sprites" [ref=e1948]:
+                        - img [ref=e1950]
+                  - listitem [ref=e1952]:
+                    - link "Throat Soreness After Reflux" [ref=e1953] [cursor=pointer]:
+                      - /url: /c/69f13aca-11dc-83ea-abf2-9720fe9d672c
+                      - generic [ref=e1955]: Throat Soreness After Reflux
+                      - button "Open conversation options for Throat Soreness After Reflux" [ref=e1958]:
+                        - img [ref=e1960]
+                  - listitem [ref=e1962]:
+                    - link "Elimination Step Error" [ref=e1963] [cursor=pointer]:
+                      - /url: /c/69f12bd4-ab48-83ea-a5e7-6ee9096184c8
+                      - generic [ref=e1965]: Elimination Step Error
+                      - button "Open conversation options for Elimination Step Error" [ref=e1968]:
+                        - img [ref=e1970]
+                  - listitem [ref=e1972]:
+                    - link "Translate Punjabi phrase" [ref=e1973] [cursor=pointer]:
+                      - /url: /c/69f11c00-0384-83ea-a607-d4d34193599a
+                      - generic [ref=e1975]: Translate Punjabi phrase
+                      - button "Open conversation options for Translate Punjabi phrase" [ref=e1978]:
+                        - img [ref=e1980]
+                  - listitem [ref=e1982]:
+                    - link "Space Decoration Ideas" [ref=e1983] [cursor=pointer]:
+                      - /url: /c/69f10be3-aa58-83ea-bb6d-e11abe57559d
+                      - generic [ref=e1985]: Space Decoration Ideas
+                      - button "Open conversation options for Space Decoration Ideas" [ref=e1988]:
+                        - img [ref=e1990]
+                  - listitem [ref=e1992]:
+                    - link "Hadamard matrix eigenvectors" [ref=e1993] [cursor=pointer]:
+                      - /url: /c/69effb93-fb00-83ea-b1ec-d9e532b8c672
+                      - generic [ref=e1995]: Hadamard matrix eigenvectors
+                      - button "Open conversation options for Hadamard matrix eigenvectors" [ref=e1998]:
+                        - img [ref=e2000]
+                  - listitem [ref=e2002]:
+                    - link "Toothpaste for Kids No Bleaching" [ref=e2003] [cursor=pointer]:
+                      - /url: /c/69ef9a2c-85b8-83ea-ba7d-523fe8731c8f
+                      - generic [ref=e2005]: Toothpaste for Kids No Bleaching
+                      - button "Open conversation options for Toothpaste for Kids No Bleaching" [ref=e2008]:
+                        - img [ref=e2010]
+                  - listitem [ref=e2012]:
+                    - link "Burns Avenue Access Code" [ref=e2013] [cursor=pointer]:
+                      - /url: /c/69ef865b-4bc4-83ea-a6f9-1f8b64be759d
+                      - generic [ref=e2015]: Burns Avenue Access Code
+                      - button "Open conversation options for Burns Avenue Access Code" [ref=e2018]:
+                        - img [ref=e2020]
+                  - listitem [ref=e2022]:
+                    - link "Tonsil Throat Pain Causes" [ref=e2023] [cursor=pointer]:
+                      - /url: /c/69ef6513-c05c-83ea-bac4-a5921e6ea390
+                      - generic [ref=e2025]: Tonsil Throat Pain Causes
+                      - button "Open conversation options for Tonsil Throat Pain Causes" [ref=e2028]:
+                        - img [ref=e2030]
+                  - listitem [ref=e2032]:
+                    - link "Matrix Inverse Correction" [ref=e2033] [cursor=pointer]:
+                      - /url: /c/69ef4773-1a14-83ea-8181-2b4604f4c88f
+                      - generic [ref=e2035]: Matrix Inverse Correction
+                      - button "Open conversation options for Matrix Inverse Correction" [ref=e2038]:
+                        - img [ref=e2040]
+                  - listitem [ref=e2042]:
+                    - link "Punjabi Presentation Ideas" [ref=e2043] [cursor=pointer]:
+                      - /url: /c/69ee34ec-4bf0-83ea-b926-a0f5474b5f56
+                      - generic [ref=e2045]: Punjabi Presentation Ideas
+                      - button "Open conversation options for Punjabi Presentation Ideas" [ref=e2048]:
+                        - img [ref=e2050]
+                  - listitem [ref=e2052]:
+                    - link "AI Debugging Prompt" [ref=e2053] [cursor=pointer]:
+                      - /url: /c/69ed8868-185c-83ea-9687-3c13d7fb8f40
+                      - generic [ref=e2055]: AI Debugging Prompt
+                      - button "Open conversation options for AI Debugging Prompt" [ref=e2058]:
+                        - img [ref=e2060]
+                  - listitem [ref=e2062]:
+                    - link "Easy Father of the Flame Strategy" [ref=e2063] [cursor=pointer]:
+                      - /url: /c/69ed71ee-41d0-83ea-bf2e-e365a3a7af36
+                      - generic [ref=e2065]: Easy Father of the Flame Strategy
+                      - button "Open conversation options for Easy Father of the Flame Strategy" [ref=e2068]:
+                        - img [ref=e2070]
+                  - listitem [ref=e2072]:
+                    - link "Jacobian Compactness Proof" [ref=e2073] [cursor=pointer]:
+                      - /url: /c/69ecfc72-77f4-83ea-a40d-827cff2efa7a
+                      - generic [ref=e2075]: Jacobian Compactness Proof
+                      - button "Open conversation options for Jacobian Compactness Proof" [ref=e2078]:
+                        - img [ref=e2080]
+                  - listitem [ref=e2082]:
+                    - link "Ooda Gurmukhi Words" [ref=e2083] [cursor=pointer]:
+                      - /url: /c/69ece339-dd08-83ea-b30d-7a5092b0a6ce
+                      - generic [ref=e2085]: Ooda Gurmukhi Words
+                      - button "Open conversation options for Ooda Gurmukhi Words" [ref=e2088]:
+                        - img [ref=e2090]
+                  - listitem [ref=e2092]:
+                    - link "Investment Strategy for $500" [ref=e2093] [cursor=pointer]:
+                      - /url: /c/69ecd867-456c-83ea-9b7a-1cc86a8adadb
+                      - generic [ref=e2095]: Investment Strategy for $500
+                      - button "Open conversation options for Investment Strategy for $500" [ref=e2098]:
+                        - img [ref=e2100]
+                  - listitem [ref=e2102]:
+                    - link "Global Trend Food Zine" [ref=e2103] [cursor=pointer]:
+                      - /url: /c/69ebaa1c-9d4c-83ea-90e3-70ec4ff36153
+                      - generic [ref=e2105]: Global Trend Food Zine
+                      - button "Open conversation options for Global Trend Food Zine" [ref=e2108]:
+                        - img [ref=e2110]
+                  - listitem [ref=e2112]:
+                    - link "Phospho-Trin 250 Info" [ref=e2113] [cursor=pointer]:
+                      - /url: /c/69eb7a20-c774-83ea-bbe6-d1db99a20ff6
+                      - generic [ref=e2115]: Phospho-Trin 250 Info
+                      - button "Open conversation options for Phospho-Trin 250 Info" [ref=e2118]:
+                        - img [ref=e2120]
+                  - listitem [ref=e2122]:
+                    - link "Zepbound Weight Loss Timeline" [ref=e2123] [cursor=pointer]:
+                      - /url: /c/69ea3f98-e50c-83ea-9c40-09305136e5aa
+                      - generic [ref=e2125]: Zepbound Weight Loss Timeline
+                      - button "Open conversation options for Zepbound Weight Loss Timeline" [ref=e2128]:
+                        - img [ref=e2130]
+                  - listitem [ref=e2132]:
+                    - link "Punjabi Learning Companies India" [ref=e2133] [cursor=pointer]:
+                      - /url: /c/69e549b7-b5c0-83ea-8be6-3881c4f065f0
+                      - generic [ref=e2135]: Punjabi Learning Companies India
+                      - button "Open conversation options for Punjabi Learning Companies India" [ref=e2138]:
+                        - img [ref=e2140]
+                  - listitem [ref=e2142]:
+                    - link "AI and Military Ethics" [ref=e2143] [cursor=pointer]:
+                      - /url: /c/69e4616f-2274-83ea-8091-d487e3a493ec
+                      - generic [ref=e2145]: AI and Military Ethics
+                      - button "Open conversation options for AI and Military Ethics" [ref=e2148]:
+                        - img [ref=e2150]
+                  - listitem [ref=e2152]:
+                    - link "Indian Language Learning Companies" [ref=e2153] [cursor=pointer]:
+                      - /url: /c/69e45bd8-ab08-83ea-8d2f-5e0699a4d19c
+                      - generic "Indian Language Learning Companies" [ref=e2155]
+                      - button "Open conversation options for Indian Language Learning Companies" [ref=e2158]:
+                        - img [ref=e2160]
+                  - listitem [ref=e2162]:
+                    - link "Beth property and interpolation" [ref=e2163] [cursor=pointer]:
+                      - /url: /c/69e1369f-06e0-83ea-93cd-c40ee1df4b95
+                      - generic [ref=e2165]: Beth property and interpolation
+                      - button "Open conversation options for Beth property and interpolation" [ref=e2168]:
+                        - img [ref=e2170]
+                  - listitem [ref=e2172]:
+                    - link "Proof Extraction for Canonical Form" [ref=e2173] [cursor=pointer]:
+                      - /url: /c/69dfc7be-8b38-83ea-9390-7f23cb350126
+                      - generic "Proof Extraction for Canonical Form" [ref=e2175]
+                      - button "Open conversation options for Proof Extraction for Canonical Form" [ref=e2178]:
+                        - img [ref=e2180]
+                  - listitem [ref=e2182]:
+                    - link "Erdős Problems and SAT" [ref=e2183] [cursor=pointer]:
+                      - /url: /c/69deaa68-7b1c-83ea-8a2f-9cdbf096b855
+                      - generic [ref=e2185]: Erdős Problems and SAT
+                      - button "Open conversation options for Erdős Problems and SAT" [ref=e2188]:
+                        - img [ref=e2190]
+                  - listitem [ref=e2192]:
+                    - link "Mathematical Breakthrough Process" [ref=e2193] [cursor=pointer]:
+                      - /url: /c/69db00d4-fb98-8332-9323-b495bf0bb1bd
+                      - generic "Mathematical Breakthrough Process" [ref=e2195]
+                      - button "Open conversation options for Mathematical Breakthrough Process" [ref=e2198]:
+                        - img [ref=e2200]
+          - button "tangentstorm, open profile menu" [ref=e2204] [cursor=pointer]:
+            - generic [ref=e2207]:
+              - generic [ref=e2209]: tangentstorm
+              - generic [ref=e2212]: Plus
+    - generic [ref=e2214]:
+      - banner:
+        - link "Open jacobian challege project" [ref=e2217] [cursor=pointer]:
+          - /url: /g/g-p-69f3716fa3b08191bf7c55a46e1b4b28-jacobian-challege/project
+          - generic [ref=e2218]:
+            - img "Default color, black in light mode, white in dark mode Folder" [ref=e2220]
+            - generic [ref=e2222]: jacobian challege
+        - generic [ref=e2225]:
+          - button "Share" [ref=e2226] [cursor=pointer]:
+            - generic [ref=e2227]:
+              - img [ref=e2228]
+              - text: Share
+          - button "Open conversation options" [ref=e2232] [cursor=pointer]:
+            - img [ref=e2233]
+      - main [ref=e2235]:
+        - generic [ref=e2236]:
+          - generic [ref=e2238]:
+            - generic [ref=e2239]:
+              - heading "You said:" [level=4] [ref=e2240]
+              - generic [ref=e2242]:
+                - generic [ref=e2247]:
+                  - text: "Design review for an 8-node chain in the JacobianChallenge blueprint (Lean 4 + Mathlib v4.28.0, commit 8f9d9cff). The chain proves finite-dimensionality of holomorphic 1-forms on a compact Riemann surface via the analytic route (sup-norm + Montel + Riesz). I want to spawn 8 parallel cloud workers next, each filling in ONE node — but only after a 3-AI consensus (you, Grok, Claude) that the API holds together cleanly across the chain. I need: (1) Are these 8 statements internally coherent — each node consumes its predecessors' outputs without API mismatch? (2) Are the types right? (3) Are there cleaner Mathlib-native formulations I'm missing? (4) Did we hallucinate any decl name? The 8 nodes (leaf-first):"
+                  - code [ref=e2249]: "lean -- 1. def:cotangent-fiber-norm noncomputable def cotangentFiberNorm (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] (x : X) (_v : CotangentSpace ℂ X x) : ℝ := sorry -- (uses Jacobian.HolomorphicForms.CotangentBundle, where -- CotangentSpace ℂ X x = TangentSpace 𝓘(ℂ, ℂ) x →L[ℂ] (Bundle.Trivial X ℂ) x) -- 2. def:holomorphic-sup-norm noncomputable def holomorphicSupNorm (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] (_ω : HolomorphicOneForm ℂ X) : ℝ := sorry -- (HolomorphicOneForm is a project-side struct, not a Mathlib type) -- 3. lem:chart-coefficient-bound theorem chart_coefficient_bound (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] (e : OpenPartialHomeomorph X ℂ) (_he : e ∈ atlas ℂ X) : ∃ C : ℝ, 0 ≤ C ∧ ∀ (ω : HolomorphicOneForm ℂ X) (x : X), x ∈ e.source → cotangentFiberNorm X x (ω.1 x) ≤ C * holomorphicSupNorm X ω := sorry -- 4. lem:montel-compactness (sequential form) theorem montel_compactness (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] (ω : ℕ → HolomorphicOneForm ℂ X) (_h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) : ∃ (φ : ℕ → ℕ), StrictMono φ ∧ ∃ ωlim : HolomorphicOneForm ℂ X, holomorphicSupNorm X ωlim ≤ 1 ∧ Tendsto (fun n => holomorphicSupNorm X (ω (φ n) - ωlim)) atTop (𝓝 0) := sorry -- 5. thm:hone-unit-ball-compact (topological form, parameterised by abstract -- normed realisation H of HolomorphicOneForm — because Mathlib has no -- canonical norm on the section space) theorem hone_unit_ball_compact (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H] (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H) (_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) : IsCompact (Metric.closedBall (0 : H) 1) := sorry -- 6. thm:fd-from-riesz (re-export of Mathlib's -- FiniteDimensional.of_isCompact_closedBall₀) theorem fd_from_riesz {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {r : ℝ} (_hr : 0 < r) (_h : IsCompact (Metric.closedBall (0 : E) r)) : FiniteDimensional ℂ E := sorry -- 7. input:finite-dimensionality (umbrella; same parameterisation as #5) theorem input_finite_dimensionality (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H] (_e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H) (_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖_e ω‖ = holomorphicSupNorm X ω) : FiniteDimensional ℂ H := sorry -- 8. thm:fd-holomorphic-one-forms (user-facing; no abstract H) theorem fd_holomorphic_one_forms (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : Module.Finite ℂ (HolomorphicOneForm ℂ X) := sorry"
+                  - text: "QUESTIONS: 1. **API coherence** — does each node's signature consume only what its predecessors produce? Specific worry: node 8 says"
+                  - code [ref=e2250]: Module.Finite
+                  - text: ", node 6/7 say"
+                  - code [ref=e2251]: FiniteDimensional ℂ
+                  - text: . Should they be unified? (In v4.28 they're equivalent for a normed
+                  - code [ref=e2252]: ℂ
+                  - text: "-space, but there's no canonical norm on"
+                  - code [ref=e2253]: HolomorphicOneForm ℂ X
+                  - text: directly, so node 8 needs to transport across
+                  - code [ref=e2254]: e
+                  - text: from node 7. Is the
+                  - code [ref=e2255]: Module.Finite
+                  - text: "formulation cleanest for the user?) 2. **Sequential vs topological compactness split** (#4 vs #5) — I split because Mathlib's compactness over a metric space needs a normed structure, and we don't have one on"
+                  - code [ref=e2256]: HolomorphicOneForm
+                  - text: "directly. So #4 is sup-norm-of-difference convergence (no normed structure required), and #5 lifts to topological compactness via a parameterised normed realization"
+                  - code [ref=e2257]: H
+                  - text: . Is this the right separation, or can we do better? 3. **Parameterised
+                  - code [ref=e2258]: H
+                  - text: "realisation in #5/#7** — we let workers stay agnostic about the concrete normed-space realization (the project supplies"
+                  - code [ref=e2259]: HolomorphicOneFormBanachData
+                  - text: later). Is this a clean pattern, or over-engineered? Should we instead just instantiate
+                  - code [ref=e2260]: H := PiLp 2 (Fin (analyticGenus ℂ X) → ℂ)
+                  - text: "or similar inline? 4. **Mathlib decl names against v4.28** — verify these EXIST: -"
+                  - code [ref=e2261]: FiniteDimensional.of_isCompact_closedBall₀
+                  - text: (in
+                  - code [ref=e2262]: Mathlib.Analysis.Normed.Module.FiniteDimension
+                  - text: ) -
+                  - code [ref=e2263]: OpenPartialHomeomorph
+                  - text: (in v4.28; we know
+                  - code [ref=e2264]: PartialHomeomorph
+                  - text: was renamed, but this might be a different thing —
+                  - code [ref=e2265]: OpenPartialHomeomorph
+                  - text: for charts?) -
+                  - code [ref=e2266]: CotangentSpace ℂ X x
+                  - text: — does this exist as a manifold type? Or did we hallucinate? -
+                  - code [ref=e2267]: atlas ℂ X
+                  - text: for ChartedSpace ℂ X — name correct? -
+                  - code [ref=e2268]: "IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X"
+                  - text: — is this the standard analytic-1-manifold typeclass usage? (We want
+                  - code [ref=e2269]: C^ω
+                  - text: ", full analyticity.) 5. **Alternative type for"
+                  - code [ref=e2270]: cotangentFiberNorm
+                  - text: "** — passing"
+                  - code [ref=e2271]: (x v)
+                  - text: separately is awkward since
+                  - code [ref=e2272]: v
+                  - text: "'s type depends on"
+                  - code [ref=e2273]: x
+                  - text: ". Should it instead be a section:"
+                  - code [ref=e2274]: "(p : Σ x, CotangentSpace ℂ X x) → ℝ"
+                  - text: "? Or operate on the bundle"
+                  - code [ref=e2275]: Bundle.TotalSpace
+                  - text: "? Concrete recommendation requested. 6. **Anything else** that would block 8 parallel workers from each filling their own sorry without API friction. Especially: typo or import issue in the chain that would fail to compile if a worker tries to use a predecessor's declaration. Be specific with Mathlib decl paths. Don't just say \"looks fine\" — flag the weakest link."
+                - generic [ref=e2276]:
+                  - group "Your message actions":
+                    - button "Copy message":
+                      - generic:
+                        - img
+                    - button "Share prompt":
+                      - generic:
+                        - img
+                    - button "Edit message":
+                      - generic:
+                        - img
+            - generic [ref=e2278]:
+              - heading "ChatGPT said:" [level=4] [ref=e2279]
+              - generic [ref=e2281]:
+                - generic [ref=e2282]:
+                  - paragraph [ref=e2286]: I’ll check the risky Mathlib/API names against upstream and then review the chain as Lean signatures, not just mathematically. The main weak points are likely the manifold smoothness type, chart type, and transporting compactness from the sequential statement.
+                  - button "Thought for 25s" [ref=e2288] [cursor=pointer]:
+                    - text: Thought for 25s
+                    - img [ref=e2289]
+                  - button "Received app response" [ref=e2294] [cursor=pointer]:
+                    - generic [ref=e2295]:
+                      - generic [ref=e2296]: Received app response
+                      - img [ref=e2297]
+                  - paragraph [ref=e2302]:
+                    - text: "I found one confirmed Mathlib mismatch already: analytic regularity is documented as"
+                    - code [ref=e2303]: ω
+                    - text: ", while your signatures use"
+                    - code [ref=e2304]: ⊤
+                    - text: ; in Mathlib docs
+                    - code [ref=e2305]: ⊤
+                    - text: means smooth/infinite differentiability, not analytic.
+                  - button "Received app response" [ref=e2309] [cursor=pointer]:
+                    - generic [ref=e2310]:
+                      - generic [ref=e2311]: Received app response
+                      - img [ref=e2312]
+                  - generic [ref=e2316]:
+                    - paragraph [ref=e2317]:
+                      - strong [ref=e2318]: "Verdict: not ready for 8 parallel workers as written."
+                      - text: The chain is close, but there are API breaks.
+                    - paragraph [ref=e2319]: "Weakest links:"
+                    - list [ref=e2320]:
+                      - listitem [ref=e2321]:
+                        - paragraph [ref=e2322]:
+                          - strong [ref=e2323]:
+                            - code [ref=e2324]: ⊤
+                            - text: is not analytic.
+                          - text: In Mathlib docs,
+                          - code [ref=e2325]: n = ∞
+                          - text: /
+                          - code [ref=e2326]: ⊤
+                          - text: is smooth;
+                          - code [ref=e2327]: n = ω
+                          - text: is analytic. Your project currently defines
+                          - code [ref=e2328]: HolomorphicOneForm
+                          - text: with
+                          - code [ref=e2329]: ⊤
+                          - text: ", despite the comment saying analytic. Fix either the blueprint wording or the type."
+                          - link "Lean Community" [ref=e2332] [cursor=pointer]:
+                            - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Geometry/Manifold/IsManifold/Basic.html
+                            - generic [ref=e2335]: Lean Community
+                          - link "Defs" [ref=e2337] [cursor=pointer]:
+                            - /url: https://github.com/tangentstorm/JacobianChallenge/blob/70d3c3be86318803a33d1365b9e66da8f129fed9/Jacobian/HolomorphicForms/Defs.lean
+                            - img [ref=e2338]
+                            - paragraph [ref=e2340]: Defs
+                      - listitem [ref=e2341]:
+                        - paragraph [ref=e2342]:
+                          - strong [ref=e2343]:
+                            - code [ref=e2344]: HolomorphicOneForm ℂ X
+                            - text: is probably arity-wrong.
+                          - text: "Project definition is:"
+                        - generic [ref=e2352]:
+                          - generic [ref=e2354]:
+                            - generic [ref=e2355]:
+                              - img [ref=e2356]
+                              - text: lean
+                            - button "Copy" [ref=e2359] [cursor=pointer]:
+                              - img [ref=e2360]
+                          - code [ref=e2368]:
+                            - text: HolomorphicOneForm
+                            - text: "(E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]"
+                            - text: "(X : Type*) ..."
+                        - paragraph [ref=e2369]:
+                          - text: so
+                          - code [ref=e2370]: HolomorphicOneForm ℂ X
+                          - text: is okay only because
+                          - code [ref=e2371]: E := ℂ
+                          - text: ", but workers must import/open namespace:"
+                        - generic [ref=e2379]:
+                          - generic [ref=e2381]:
+                            - generic [ref=e2382]:
+                              - img [ref=e2383]
+                              - text: lean
+                            - button "Copy" [ref=e2386] [cursor=pointer]:
+                              - img [ref=e2387]
+                          - code [ref=e2395]: JacobianChallenge.HolomorphicForms
+                        - paragraph [ref=e2396]:
+                          - link "Defs" [ref=e2398] [cursor=pointer]:
+                            - /url: https://github.com/tangentstorm/JacobianChallenge/blob/70d3c3be86318803a33d1365b9e66da8f129fed9/Jacobian/HolomorphicForms/Defs.lean
+                            - img [ref=e2399]
+                            - paragraph [ref=e2401]: Defs
+                      - listitem [ref=e2402]:
+                        - paragraph [ref=e2403]:
+                          - strong [ref=e2404]:
+                            - code [ref=e2405]: CotangentSpace ℂ X x
+                            - text: is project-side, not Mathlib-side.
+                          - text: Mathlib has
+                          - code [ref=e2406]: TangentSpace
+                          - text: ", but your"
+                          - code [ref=e2407]: CotangentSpace
+                          - text: abbrev is in
+                          - code [ref=e2408]: Jacobian.HolomorphicForms.CotangentBundle
+                          - text: . So do not tell workers it is Mathlib-native.
+                          - link "Lean Community" [ref=e2411] [cursor=pointer]:
+                            - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Geometry/Manifold/IsManifold/Basic.html
+                            - generic [ref=e2414]: Lean Community
+                          - link "CotangentBundle" [ref=e2416] [cursor=pointer]:
+                            - /url: https://github.com/tangentstorm/JacobianChallenge/blob/70d3c3be86318803a33d1365b9e66da8f129fed9/Jacobian/HolomorphicForms/CotangentBundle.lean
+                            - img [ref=e2417]
+                            - paragraph [ref=e2419]: CotangentBundle
+                      - listitem [ref=e2420]:
+                        - paragraph [ref=e2421]:
+                          - strong [ref=e2422]: "Node 7 has a hard typo:"
+                        - generic [ref=e2430]:
+                          - generic [ref=e2432]:
+                            - generic [ref=e2433]:
+                              - img [ref=e2434]
+                              - text: lean
+                            - button "Copy" [ref=e2437] [cursor=pointer]:
+                              - img [ref=e2438]
+                          - code [ref=e2446]: ‖_e ω‖
+                        - paragraph [ref=e2447]: "must be:"
+                        - generic [ref=e2455]:
+                          - generic [ref=e2457]:
+                            - generic [ref=e2458]:
+                              - img [ref=e2459]
+                              - text: lean
+                            - button "Copy" [ref=e2462] [cursor=pointer]:
+                              - img [ref=e2463]
+                          - code [ref=e2471]: ‖e ω‖
+                      - listitem [ref=e2472]:
+                        - paragraph [ref=e2473]:
+                          - strong [ref=e2474]: Node 5 does not actually follow from Node 4 as stated.
+                          - text: Node 4 gives sequential compactness in the pseudometric induced by
+                          - code [ref=e2475]: holomorphicSupNorm
+                          - text: . Node 5 needs
+                          - code [ref=e2476]: "IsCompact (Metric.closedBall (0 : H) 1)"
+                          - text: in the topology of
+                          - code [ref=e2477]: H
+                          - text: ". To bridge this, you need a lemma like:"
+                        - generic [ref=e2485]:
+                          - generic [ref=e2487]:
+                            - generic [ref=e2488]:
+                              - img [ref=e2489]
+                              - text: lean
+                            - button "Copy" [ref=e2492] [cursor=pointer]:
+                              - img [ref=e2493]
+                          - code [ref=e2501]:
+                            - text: theorem hone_closedBall_seqCompact
+                            - text: "... :"
+                            - text: "SeqCompactSpace (Metric.closedBall (0 : H) 1)"
+                        - paragraph [ref=e2502]:
+                          - text: or a direct
+                          - code [ref=e2503]: IsCompact
+                          - text: "proof using metric compactness equivalence. Otherwise the worker for #5 has to invent missing topology glue."
+                      - listitem [ref=e2504]:
+                        - paragraph [ref=e2505]:
+                          - strong [ref=e2506]: "Node 8 cannot be proved from #7 without a supplied realization."
+                          - text: "#7 requires:"
+                        - generic [ref=e2514]:
+                          - generic [ref=e2516]:
+                            - generic [ref=e2517]:
+                              - img [ref=e2518]
+                              - text: lean
+                            - button "Copy" [ref=e2521] [cursor=pointer]:
+                              - img [ref=e2522]
+                          - code [ref=e2530]: "e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H"
+                        - paragraph [ref=e2531]:
+                          - text: Node 8 has no
+                          - code [ref=e2532]: H
+                          - text: ", no"
+                          - code [ref=e2533]: e
+                          - text: ", no norm data. You need a project-side structure/class:"
+                        - generic [ref=e2541]:
+                          - generic [ref=e2543]:
+                            - generic [ref=e2544]:
+                              - img [ref=e2545]
+                              - text: lean
+                            - button "Copy" [ref=e2548] [cursor=pointer]:
+                              - img [ref=e2549]
+                          - code [ref=e2557]:
+                            - text: class HolomorphicOneFormBanachData ... where
+                            - text: "H : Type*"
+                            - text: "instNormedAddCommGroup : NormedAddCommGroup H"
+                            - text: "instNormedSpace : NormedSpace ℂ H"
+                            - text: "e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H"
+                            - text: "h_norm : ∀ ω, ‖e ω‖ = holomorphicSupNorm X ω"
+                    - paragraph [ref=e2558]: "Decl checks:"
+                    - list [ref=e2559]:
+                      - listitem [ref=e2560]:
+                        - paragraph [ref=e2561]:
+                          - code [ref=e2562]: FiniteDimensional.of_isCompact_closedBall₀
+                          - strong [ref=e2563]: exists
+                          - text: ", but needs the field argument first:"
+                        - generic [ref=e2571]:
+                          - generic [ref=e2573]:
+                            - generic [ref=e2574]:
+                              - img [ref=e2575]
+                              - text: lean
+                            - button "Copy" [ref=e2578] [cursor=pointer]:
+                              - img [ref=e2579]
+                          - code [ref=e2587]: FiniteDimensional.of_isCompact_closedBall₀ ℂ hr h
+                        - paragraph [ref=e2588]:
+                          - text: It assumes
+                          - code [ref=e2589]: "[CompleteSpace ℂ]"
+                          - text: ", available."
+                          - link "Lean Community" [ref=e2592] [cursor=pointer]:
+                            - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Normed/Module/FiniteDimension.html
+                            - generic [ref=e2595]: Lean Community
+                      - listitem [ref=e2596]:
+                        - paragraph [ref=e2597]:
+                          - code [ref=e2598]: OpenPartialHomeomorph
+                          - strong [ref=e2599]: exists
+                          - text: .
+                          - link "Lean Community" [ref=e2602] [cursor=pointer]:
+                            - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Geometry/Manifold/IsManifold/Basic.html
+                            - generic [ref=e2605]: Lean Community
+                      - listitem [ref=e2606]:
+                        - paragraph [ref=e2607]:
+                          - code [ref=e2608]: atlas ℂ X
+                          - strong [ref=e2609]: exists
+                          - text: for
+                          - code [ref=e2610]: "[ChartedSpace ℂ X]"
+                          - text: .
+                          - link "Lean Community" [ref=e2613] [cursor=pointer]:
+                            - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Geometry/Manifold/IsManifold/Basic.html
+                            - generic [ref=e2616]: Lean Community
+                      - listitem [ref=e2617]:
+                        - paragraph [ref=e2618]: "Better chart hypothesis for #3:"
+                        - generic [ref=e2626]:
+                          - generic [ref=e2628]:
+                            - generic [ref=e2629]:
+                              - img [ref=e2630]
+                              - text: lean
+                            - button "Copy" [ref=e2633] [cursor=pointer]:
+                              - img [ref=e2634]
+                          - code [ref=e2642]: e ∈ atlas ℂ X
+                        - paragraph [ref=e2643]: "is okay, but if you need analytic compatibility, prefer:"
+                        - generic [ref=e2651]:
+                          - generic [ref=e2653]:
+                            - generic [ref=e2654]:
+                              - img [ref=e2655]
+                              - text: lean
+                            - button "Copy" [ref=e2658] [cursor=pointer]:
+                              - img [ref=e2659]
+                          - code [ref=e2667]: "e ∈ IsManifold.maximalAtlas (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X"
+                        - paragraph [ref=e2668]:
+                          - text: or
+                          - code [ref=e2669]: ω
+                          - text: if switching to analytic.
+                    - paragraph [ref=e2670]: "Recommendation:"
+                    - paragraph [ref=e2671]:
+                      - text: "Keep #5/#7 parameterized by"
+                      - code [ref=e2672]: H
+                      - text: . Do
+                      - strong [ref=e2673]: not
+                      - text: inline
+                      - code [ref=e2674]: PiLp
+                      - text: or
+                      - code [ref=e2675]: Fin (analyticGenus ℂ X)
+                      - text: ; that presupposes the theorem you are proving.
+                    - paragraph [ref=e2676]:
+                      - text: For
+                      - code [ref=e2677]: cotangentFiberNorm
+                      - text: ", use the dependent pair form:"
+                    - generic [ref=e2685]:
+                      - generic [ref=e2687]:
+                        - generic [ref=e2688]:
+                          - img [ref=e2689]
+                          - text: lean
+                        - button "Copy" [ref=e2692] [cursor=pointer]:
+                          - img [ref=e2693]
+                      - code [ref=e2701]:
+                        - text: noncomputable def cotangentFiberNorm
+                        - text: "(X : Type*) ..."
+                        - text: "(p : Σ x : X, CotangentSpace ℂ X x) : ℝ := sorry"
+                    - paragraph [ref=e2702]: "and add convenience lemma/API:"
+                    - generic [ref=e2710]:
+                      - generic [ref=e2712]:
+                        - generic [ref=e2713]:
+                          - img [ref=e2714]
+                          - text: lean
+                        - button "Copy" [ref=e2717] [cursor=pointer]:
+                          - img [ref=e2718]
+                      - code [ref=e2726]: notation "‖₁" v "‖ₓ" => cotangentFiberNorm X ⟨x, v⟩
+                    - paragraph [ref=e2727]: "Final blocker list before spawning workers:"
+                    - list [ref=e2728]:
+                      - listitem [ref=e2729]:
+                        - paragraph [ref=e2730]:
+                          - text: Replace
+                          - code [ref=e2731]: ⊤
+                          - text: by analytic
+                          - code [ref=e2732]: ω
+                          - strong [ref=e2733]: or
+                          - text: admit this is smooth, not analytic.
+                      - listitem [ref=e2734]:
+                        - paragraph [ref=e2735]:
+                          - text: Fix
+                          - code [ref=e2736]: ‖_e ω‖
+                          - text: .
+                      - listitem [ref=e2737]:
+                        - paragraph [ref=e2738]:
+                          - text: "Add bridge lemma from #4 sequential compactness to #5"
+                          - code [ref=e2739]: IsCompact
+                          - text: .
+                      - listitem [ref=e2740]:
+                        - paragraph [ref=e2741]:
+                          - text: Add/require
+                          - code [ref=e2742]: HolomorphicOneFormBanachData
+                          - text: "for #8."
+                      - listitem [ref=e2743]:
+                        - paragraph [ref=e2744]:
+                          - text: Decide whether final statement is
+                          - code [ref=e2745]: FiniteDimensional ℂ ...
+                          - text: or
+                          - code [ref=e2746]: Module.Finite ℂ ...
+                          - text: ; I’d use
+                          - code [ref=e2747]: FiniteDimensional ℂ (HolomorphicOneForm ℂ X)
+                          - text: internally and optionally expose
+                          - code [ref=e2748]: Module.Finite
+                          - text: as a wrapper.
+                - button "Sources" [ref=e2751] [cursor=pointer]:
+                  - img [ref=e2755]
+                  - generic [ref=e2757]: Sources
+                - generic [ref=e2758]:
+                  - group "Response actions":
+                    - button "Copy response":
+                      - generic:
+                        - img
+                    - button "Good response":
+                      - generic:
+                        - img
+                    - button "Bad response":
+                      - generic:
+                        - img
+                    - button "Add to project sources":
+                      - generic:
+                        - img
+                    - generic:
+                      - button "Switch model":
+                        - generic:
+                          - img
+                    - button "More actions":
+                      - img
+                    - button "Sources":
+                      - generic: Sources
+          - generic [ref=e2759]:
+            - button [ref=e2760] [cursor=pointer]:
+              - img [ref=e2761]
+            - generic [ref=e2770]:
+              - generic [ref=e2774]:
+                - button "Add files and more" [ref=e2777] [cursor=pointer]:
+                  - img
+                - textbox "Chat with ChatGPT" [active] [ref=e2780]:
+                  - paragraph [ref=e2781]: Ask anything
+                - generic [ref=e2782]:
+                  - button "Instant" [ref=e2787] [cursor=pointer]:
+                    - generic [ref=e2788]: Instant
+                    - img
+                  - generic [ref=e2789]:
+                    - button "Start dictation" [ref=e2790] [cursor=pointer]:
+                      - img
+                    - button "Start Voice" [ref=e2794] [cursor=pointer]:
+                      - img [ref=e2796]
+              - button [ref=e2798]
+              - button [ref=e2799]
+            - generic [ref=e2803]: ChatGPT can make mistakes. Check important info. See Cookie Preferences.
+  - alert [ref=e82]
+  - status [ref=e83]

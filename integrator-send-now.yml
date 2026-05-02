@@ -1,0 +1,2205 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e7]:
+      - complementary [ref=e9]:
+        - link "Skip to content" [ref=e10]:
+          - /url: "#dframe-main"
+        - generic:
+          - generic: Click to collapseCtrl+B
+          - generic: Drag to resize
+        - button "Open sidebar" [ref=e2508]:
+          - img [ref=e2510]
+        - generic:
+          - generic:
+            - generic:
+              - button "New session ⇧⌘O":
+                - generic:
+                  - generic: 
+                - text: New session
+                - generic: ⇧⌘O
+              - button "Routines":
+                - generic:
+                  - generic: 
+                - generic: Routines
+              - button "Customize":
+                - generic:
+                  - generic: 
+                - generic: Customize
+              - button "More navigation items":
+                - generic:
+                  - generic: 
+                - generic: More
+            - generic:
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - button "Pinned" [expanded]:
+                          - generic: Pinned
+                          - generic: 
+                    - generic:
+                      - generic:
+                        - generic:
+                          - img
+                      - generic: Drag to pin
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - button "Recents" [expanded]:
+                            - generic: Recents
+                            - generic: 
+                          - button "Filter":
+                            - generic: 
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Running Implement chart coefficient bound for Jacobian":
+                                - generic:
+                                  - status "Running"
+                                - generic:
+                                  - generic: Implement chart coefficient bound for Jacobian
+                              - generic:
+                                - button "More options for Implement chart coefficient bound for Jacobian":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Running Implement montel_compactness node with Arzelà–Ascoli":
+                                - generic:
+                                  - status "Running"
+                                - generic:
+                                  - generic: Implement montel_compactness node with Arzelà–Ascoli
+                              - generic:
+                                - button "More options for Implement montel_compactness node with Arzelà–Ascoli":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Refactor hone_unit_ball_compact in JacobianChallenge":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Refactor hone_unit_ball_compact in JacobianChallenge
+                              - generic:
+                                - button "More options for Refactor hone_unit_ball_compact in JacobianChallenge":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Running BUILD INTEGRATION":
+                                - generic:
+                                  - status "Running"
+                                - generic:
+                                  - generic: BUILD INTEGRATION
+                              - generic:
+                                - button "More options for BUILD INTEGRATION":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Add Plain-English narrations to Jacobian Challenge nodes":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Add Plain-English narrations to Jacobian Challenge nodes
+                              - generic:
+                                - button "More options for Add Plain-English narrations to Jacobian Challenge nodes":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Ready Formalize divisor and divisor-degree definitions":
+                                - generic:
+                                  - status "Ready"
+                                - generic:
+                                  - generic: Formalize divisor and divisor-degree definitions
+                              - generic:
+                                - button "More options for Formalize divisor and divisor-degree definitions":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request closed Formalize blueprint leaf node end-to-end":
+                                - generic:
+                                  - img "Pull request closed":
+                                    - img
+                                - generic:
+                                  - generic: Formalize blueprint leaf node end-to-end
+                              - generic:
+                                - button "More options for Formalize blueprint leaf node end-to-end":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Awaiting input Format Lean proofs for comparator tool":
+                                - generic:
+                                  - status "Awaiting input"
+                                - generic:
+                                  - generic: Format Lean proofs for comparator tool
+                              - generic:
+                                - button "More options for Format Lean proofs for comparator tool":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Test TTC accuracy for larger problem sizes":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Test TTC accuracy for larger problem sizes
+                              - generic:
+                                - button "More options for Test TTC accuracy for larger problem sizes":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Optimize program per TICK-PROMPT instructions":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Optimize program per TICK-PROMPT instructions
+                              - generic:
+                                - button "More options for Optimize program per TICK-PROMPT instructions":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #86 Review remaining universal search tasks"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#86 Review remaining universal search tasks"
+                              - generic:
+                                - 'button "More options for #86 Review remaining universal search tasks"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Idle Review PR #86 for TTC metric implementation"':
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: "Review PR #86 for TTC metric implementation"
+                              - generic:
+                                - 'button "More options for Review PR #86 for TTC metric implementation"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Ready Compare Turyn Radical and CaDiCaL features":
+                                - generic:
+                                  - status "Ready"
+                                - generic:
+                                  - generic: Compare Turyn Radical and CaDiCaL features
+                              - generic:
+                                - button "More options for Compare Turyn Radical and CaDiCaL features":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Ready Optimize TTC performance with new ideas":
+                                - generic:
+                                  - status "Ready"
+                                - generic:
+                                  - generic: Optimize TTC performance with new ideas
+                              - generic:
+                                - button "More options for Optimize TTC performance with new ideas":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Ready Optimize turyn hybrid search performance":
+                                - generic:
+                                  - status "Ready"
+                                - generic:
+                                  - generic: Optimize turyn hybrid search performance
+                              - generic:
+                                - button "More options for Optimize turyn hybrid search performance":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Ready tte -> ttc":
+                                - generic:
+                                  - status "Ready"
+                                - generic:
+                                  - generic: tte -> ttc
+                              - generic:
+                                - button "More options for tte -> ttc":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #66 xyzw"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#66 xyzw"
+                              - generic:
+                                - 'button "More options for #66 xyzw"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Review sum checks in SAT solver":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Review sum checks in SAT solver
+                              - generic:
+                                - button "More options for Review sum checks in SAT solver":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Ready #69 Verify fast lookup of Turyn type sequences"':
+                                - generic:
+                                  - status "Ready"
+                                - generic:
+                                  - generic: "#69 Verify fast lookup of Turyn type sequences"
+                              - generic:
+                                - 'button "More options for #69 Verify fast lookup of Turyn type sequences"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Ready #68 Refactor main.rs into organized submodules"':
+                                - generic:
+                                  - status "Ready"
+                                - generic:
+                                  - generic: "#68 Refactor main.rs into organized submodules"
+                              - generic:
+                                - 'button "More options for #68 Refactor main.rs into organized submodules"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Ready #67 Merge bdkr canonicity constraints into MDD generator"':
+                                - generic:
+                                  - status "Ready"
+                                - generic:
+                                  - generic: "#67 Merge bdkr canonicity constraints into MDD generator"
+                              - generic:
+                                - 'button "More options for #67 Merge bdkr canonicity constraints into MDD generator"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Fix missing z[n-1] pin in gen_mdd experiment":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Fix missing z[n-1] pin in gen_mdd experiment
+                              - generic:
+                                - button "More options for Fix missing z[n-1] pin in gen_mdd experiment":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Add README file to radical directory":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Add README file to radical directory
+                              - generic:
+                                - button "More options for Add README file to radical directory":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Add XY constraint to canonical representations":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Add XY constraint to canonical representations
+                              - generic:
+                                - button "More options for Add XY constraint to canonical representations":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Create math ideas file with famous mathematicians":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Create math ideas file with famous mathematicians
+                              - generic:
+                                - button "More options for Create math ideas file with famous mathematicians":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Ready Create lightweight MCP server for J language":
+                                - generic:
+                                  - status "Ready"
+                                - generic:
+                                  - generic: Create lightweight MCP server for J language
+                              - generic:
+                                - button "More options for Create lightweight MCP server for J language":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #65 Add Divan benchmarks for Turyn sequences"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#65 Add Divan benchmarks for Turyn sequences"
+                              - generic:
+                                - 'button "More options for #65 Add Divan benchmarks for Turyn sequences"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Audit and fix performance regression issue":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Audit and fix performance regression issue
+                              - generic:
+                                - button "More options for Audit and fix performance regression issue":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged (SLOW!) canonical form for TT(n)":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: (SLOW!) canonical form for TT(n)
+                              - generic:
+                                - button "More options for (SLOW!) canonical form for TT(n)":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Check BDD benchmark integration status":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Check BDD benchmark integration status
+                              - generic:
+                                - button "More options for Check BDD benchmark integration status":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Add ZDD module":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Add ZDD module
+                              - generic:
+                                - button "More options for Add ZDD module":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Add state loading and saving for vhlswarm":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Add state loading and saving for vhlswarm
+                              - generic:
+                                - button "More options for Add state loading and saving for vhlswarm":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Implement benchmarks using Divan crate":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Implement benchmarks using Divan crate
+                              - generic:
+                                - button "More options for Implement benchmarks using Divan crate":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Implement COZ profiler integration":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Implement COZ profiler integration
+                              - generic:
+                                - button "More options for Implement COZ profiler integration":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Search for T-sequence of length 167":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Search for T-sequence of length 167
+                              - generic:
+                                - button "More options for Search for T-sequence of length 167":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Implement k3ipc for ksharp":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Implement k3ipc for ksharp
+                              - generic:
+                                - button "More options for Implement k3ipc for ksharp":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Add extra timestamp bits to AST block":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Add extra timestamp bits to AST block
+                              - generic:
+                                - button "More options for Add extra timestamp bits to AST block":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged [merged] top-down for def-worke":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "[merged] top-down for def-worke"
+                              - generic:
+                                - button "More options for [merged] top-down for def-worke":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged Diagnose and solve issue #22"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "Diagnose and solve issue #22"
+                              - generic:
+                                - 'button "More options for Diagnose and solve issue #22"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #58/#59 turyn: merge pipelines"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#58/#59 turyn: merge pipelines"
+                              - generic:
+                                - 'button "More options for #58/#59 turyn: merge pipelines"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Awaiting input retro pascal":
+                                - generic:
+                                  - status "Awaiting input"
+                                - generic:
+                                  - generic: retro pascal
+                              - generic:
+                                - button "More options for retro pascal":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #57 metrics"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#57 metrics"
+                              - generic:
+                                - 'button "More options for #57 metrics"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #56 turyn throughput"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#56 turyn throughput"
+                              - generic:
+                                - 'button "More options for #56 turyn throughput"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Initialize repo and set up main branch":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Initialize repo and set up main branch
+                              - generic:
+                                - button "More options for Initialize repo and set up main branch":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged bex+woz together":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: bex+woz together
+                              - generic:
+                                - button "More options for bex+woz together":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged table nids":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: table nids
+                              - generic:
+                                - button "More options for table nids":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged bex optimization":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: bex optimization
+                              - generic:
+                                - button "More options for bex optimization":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged def-worker":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: def-worker
+                              - generic:
+                                - button "More options for def-worker":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #55 ToC workflow"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#55 ToC workflow"
+                              - generic:
+                                - 'button "More options for #55 ToC workflow"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #54 spectral sat + n=56 phase C"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#54 spectral sat + n=56 phase C"
+                              - generic:
+                                - 'button "More options for #54 spectral sat + n=56 phase C"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #50,#53 even faster gen_mdd"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#50,#53 even faster gen_mdd"
+                              - generic:
+                                - 'button "More options for #50,#53 even faster gen_mdd"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #52 refactor turyn"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#52 refactor turyn"
+                              - generic:
+                                - 'button "More options for #52 refactor turyn"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #51 refactor radical"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#51 refactor radical"
+                              - generic:
+                                - 'button "More options for #51 refactor radical"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Test MDD with fully separated variable layers":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Test MDD with fully separated variable layers
+                              - generic:
+                                - button "More options for Test MDD with fully separated variable layers":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged Create Lean formal verification system":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: Create Lean formal verification system
+                              - generic:
+                                - button "More options for Create Lean formal verification system":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Pull request merged gen_mdd ++":
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: gen_mdd ++
+                              - generic:
+                                - button "More options for gen_mdd ++":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #45b / #46 MDD+SAT + better MDD"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#45b / #46 MDD+SAT + better MDD"
+                              - generic:
+                                - 'button "More options for #45b / #46 MDD+SAT + better MDD"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Idle #45 mdd table gets us k=9"':
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: "#45 mdd table gets us k=9"
+                              - generic:
+                                - 'button "More options for #45 mdd table gets us k=9"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Pull request merged #44: PB+470% for n=56"':
+                                - generic:
+                                  - img "Pull request merged":
+                                    - img
+                                - generic:
+                                  - generic: "#44: PB+470% for n=56"
+                              - generic:
+                                - 'button "More options for #44: PB+470% for n=56"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Idle #43b recover SAT ideas"':
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: "#43b recover SAT ideas"
+                              - generic:
+                                - 'button "More options for #43b recover SAT ideas"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Idle #42 xor propagation"':
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: "#42 xor propagation"
+                              - generic:
+                                - 'button "More options for #42 xor propagation"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Idle #41 SatWorkItem"':
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: "#41 SatWorkItem"
+                              - generic:
+                                - 'button "More options for #41 SatWorkItem"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - 'button "Idle #40 help message for args"':
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: "#40 help message for args"
+                              - generic:
+                                - 'button "More options for #40 help message for args"':
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Optimize performance with seven interventions":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Optimize performance with seven interventions
+                              - generic:
+                                - button "More options for Optimize performance with seven interventions":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Dispatch background conversation":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Dispatch background conversation
+                              - generic:
+                                - button "More options for Dispatch background conversation":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Profile and optimize for n=26":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Profile and optimize for n=26
+                              - generic:
+                                - button "More options for Profile and optimize for n=26":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Profile and benchmark with k=7 table":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Profile and benchmark with k=7 table
+                              - generic:
+                                - button "More options for Profile and benchmark with k=7 table":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Profile and identify new performance hotspots":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Profile and identify new performance hotspots
+                              - generic:
+                                - button "More options for Profile and identify new performance hotspots":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Debug missing solutions at n=28":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Debug missing solutions at n=28
+                              - generic:
+                                - button "More options for Debug missing solutions at n=28":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Debug spectral bound auto-widening for n=28":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Debug spectral bound auto-widening for n=28
+                              - generic:
+                                - button "More options for Debug spectral bound auto-widening for n=28":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Load and run XY table boundary computation":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Load and run XY table boundary computation
+                              - generic:
+                                - button "More options for Load and run XY table boundary computation":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Profile hybrid search performance with n=22":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Profile hybrid search performance with n=22
+                              - generic:
+                                - button "More options for Profile hybrid search performance with n=22":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Construct Turyn sequences and Hadamard matrices":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Construct Turyn sequences and Hadamard matrices
+                              - generic:
+                                - button "More options for Construct Turyn sequences and Hadamard matrices":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Add and test SAT/CP hybrid ideas":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Add and test SAT/CP hybrid ideas
+                              - generic:
+                                - button "More options for Add and test SAT/CP hybrid ideas":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Add Gemini suggestions to IDEAS file":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Add Gemini suggestions to IDEAS file
+                              - generic:
+                                - button "More options for Add Gemini suggestions to IDEAS file":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Summarize current test failures":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Summarize current test failures
+                              - generic:
+                                - button "More options for Summarize current test failures":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Build self-hosted assembler with dual VMs":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Build self-hosted assembler with dual VMs
+                              - generic:
+                                - button "More options for Build self-hosted assembler with dual VMs":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Fix failing tests excluding database ones":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Fix failing tests excluding database ones
+                              - generic:
+                                - button "More options for Fix failing tests excluding database ones":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Implement Pineapple Open Face Chinese game":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Implement Pineapple Open Face Chinese game
+                              - generic:
+                                - button "More options for Implement Pineapple Open Face Chinese game":
+                                  - generic:
+                                    - img
+                        - generic:
+                          - generic:
+                            - generic:
+                              - button "Idle Port k-ipc implementation to ngn-k":
+                                - generic:
+                                  - img "Idle"
+                                - generic:
+                                  - generic: Port k-ipc implementation to ngn-k
+                              - generic:
+                                - button "More options for Port k-ipc implementation to ngn-k":
+                                  - generic:
+                                    - img
+          - generic:
+            - generic:
+              - generic:
+                - generic:
+                  - img
+                - generic: Try Claude Code on desktop
+                - button "Download": Download
+                - button "Dismiss":
+                  - img
+          - generic:
+            - generic:
+              - button "Michal Wallace":
+                - generic:
+                  - generic: 
+                - generic: Michal Wallace
+            - generic:
+              - button "Appearance":
+                - generic:
+                  - generic: 
+      - main [ref=e828]:
+        - region "Primary pane" [ref=e831]:
+          - generic [ref=e835]:
+            - generic [ref=e836]:
+              - generic [ref=e842]:
+                - generic [ref=e843]:
+                  - generic [ref=e845]:
+                    - button "jacobianchallenge" [ref=e847]:
+                      - img [ref=e850]
+                      - generic [ref=e854]: jacobianchallenge
+                    - generic [ref=e855]: /
+                    - generic [ref=e856]:
+                      - button "BUILD INTEGRATION" [ref=e1696]
+                      - button "Session actions" [ref=e858]:
+                        - img [ref=e859]
+                  - button "Share" [ref=e862]:
+                    - img [ref=e864]
+                - generic [ref=e866]:
+                  - generic [ref=e870]:
+                    - generic [ref=e2258]:
+                      - paragraph [ref=e2261]: please just fix/integrate
+                      - generic:
+                        - button "Copy message":
+                          - img
+                        - generic "Apr 30, 2026, 4:41:39 PM": 2h ago
+                    - generic [ref=e2524]:
+                      - generic [ref=e2525]:
+                        - button "Ran Inspect audit changes" [ref=e2528]:
+                          - generic [ref=e2529]: Ran
+                          - generic [ref=e2530]: Inspect audit changes
+                          - img [ref=e2532]
+                        - paragraph [ref=e2536]:
+                          - text: "User said \"just fix/integrate\". Switching from report-only to action: integrate the safe parts of PR"
+                          - link "#3" [ref=e2537]:
+                            - /url: https://github.com/tangentstorm/jacobianchallenge/issues/3
+                          - text: onto a fresh branch (not main). Given the catastrophic Lean defects (build fails, vacuous
+                          - code [ref=e2538]: "True"
+                          - text: /
+                          - code [ref=e2539]: Unit
+                          - text: stubs, 25
+                          - code [ref=e2540]: import Mathlib
+                          - text: violations, regressions to design-pass fixes) I'll
+                          - strong [ref=e2541]: integrate only the docs
+                          - text: ", drop all Lean changes, then build+push."
+                        - button "Ran 5 commands, updated todos" [ref=e2544]:
+                          - generic [ref=e2546]:
+                            - text: Ran
+                            - generic [ref=e2547]: 5 commands
+                            - text: ", updated"
+                            - generic [ref=e2548]: todos
+                          - img [ref=e2550]
+                        - paragraph [ref=e2554]: Building to verify docs-only integration leaves Lean unchanged.
+                        - button "Ran 4 commands, updated todos" [ref=e2557]:
+                          - generic [ref=e2559]:
+                            - text: Ran
+                            - generic [ref=e2560]: 4 commands
+                            - text: ", updated"
+                            - generic [ref=e2561]: todos
+                          - img [ref=e2563]
+                        - generic [ref=e2566]:
+                          - 'heading "PR #3 review report (codex/review-and-fill-proof-plan-gaps)" [level=2] [ref=e2567]':
+                            - text: PR
+                            - link "#3" [ref=e2568]:
+                              - /url: https://github.com/tangentstorm/jacobianchallenge/issues/3
+                            - text: review report (codex/review-and-fill-proof-plan-gaps)
+                          - heading "1. Fetch + diff" [level=3] [ref=e2569]
+                          - list [ref=e2570]:
+                            - listitem [ref=e2571]:
+                              - text: 1 commit (
+                              - code [ref=e2572]: 7851bf3
+                              - text: ), 44 files, +682/-8.
+                            - listitem [ref=e2573]:
+                              - text: Branched from main at
+                              - code [ref=e2574]: 6ed4538
+                              - text: (the same point as our cleanup branch).
+                          - heading "2. Build status — FAILED" [level=3] [ref=e2575]:
+                            - text: 2. Build status —
+                            - strong [ref=e2576]: FAILED
+                          - list [ref=e2577]:
+                            - listitem [ref=e2578]:
+                              - code [ref=e2579]: lake build Jacobian.Blueprint
+                              - strong [ref=e2580]: exit 1
+                              - text: (~10s).
+                            - listitem [ref=e2581]:
+                              - text: "Error:"
+                              - code [ref=e2582]: import Jacobian.Blueprint.Sec02.FdHolomorphicOneFormsThm failed, environment already contains 'JacobianChallenge.Blueprint.fd_holomorphic_one_forms' from Jacobian.Blueprint.Sec02.FdHolomorphicOneForms
+                              - text: — duplicate declaration in the same namespace.
+                            - listitem [ref=e2583]:
+                              - text: Sorry count 34 (up from 15 on main), but
+                              - strong [ref=e2584]: misleading
+                              - text: ": many decls have type"
+                              - code [ref=e2585]: "True"
+                              - text: or are
+                              - code [ref=e2586]: def := Unit
+                              - text: ", which add nothing."
+                          - heading "3. What's new vs main" [level=3] [ref=e2587]
+                          - table [ref=e2589]:
+                            - rowgroup [ref=e2590]:
+                              - row "Area Change" [ref=e2591]:
+                                - columnheader "Area" [ref=e2592]
+                                - columnheader "Change" [ref=e2593]
+                            - rowgroup [ref=e2594]:
+                              - 'row "Sec02 3 new files: AnalyticGenusDef.lean, FdHolomorphicOneFormsThm.lean, GenusZeroClassification.lean (the second collides with existing FdHolomorphicOneForms.lean)" [ref=e2595]':
+                                - cell "Sec02" [ref=e2596]
+                                - 'cell "3 new files: AnalyticGenusDef.lean, FdHolomorphicOneFormsThm.lean, GenusZeroClassification.lean (the second collides with existing FdHolomorphicOneForms.lean)" [ref=e2597]':
+                                  - text: "3 new files:"
+                                  - code [ref=e2598]: AnalyticGenusDef.lean
+                                  - text: ","
+                                  - code [ref=e2599]: FdHolomorphicOneFormsThm.lean
+                                  - text: ","
+                                  - code [ref=e2600]: GenusZeroClassification.lean
+                                  - text: (the second collides with existing
+                                  - code [ref=e2601]: FdHolomorphicOneForms.lean
+                                  - text: )
+                              - row "Sec03 10 new files (PeriodLattice, PeriodPairing, PolygonalModel, PrimitiveOnPolygon, BilinearFromStokes, HermitianPositivity, HolomorphicFormIsClosed, StokesOnRsWithBoundary, SymplecticBasis, PeriodVectorsFullRealRank)" [ref=e2602]:
+                                - cell "Sec03" [ref=e2603]
+                                - cell "10 new files (PeriodLattice, PeriodPairing, PolygonalModel, PrimitiveOnPolygon, BilinearFromStokes, HermitianPositivity, HolomorphicFormIsClosed, StokesOnRsWithBoundary, SymplecticBasis, PeriodVectorsFullRealRank)" [ref=e2604]
+                              - row "Sec04 1 new file (AnalyticJacobian)" [ref=e2605]:
+                                - cell "Sec04" [ref=e2606]
+                                - cell "1 new file (AnalyticJacobian)" [ref=e2607]
+                              - row "Sec05 7 new files (AbelExistence, AbelJacobiDef, AbelJacobiInjective, AbelPointSeparation, AjDivisorHom, PrincipalDeg0SimpleSupportDeg1, RiemannHurwitzDeg1)" [ref=e2608]:
+                                - cell "Sec05" [ref=e2609]
+                                - cell "7 new files (AbelExistence, AbelJacobiDef, AbelJacobiInjective, AbelPointSeparation, AjDivisorHom, PrincipalDeg0SimpleSupportDeg1, RiemannHurwitzDeg1)" [ref=e2610]
+                              - row "Sec06 3 new files (PushforwardPullback, PushPullFunctoriality, TracePullback)" [ref=e2611]:
+                                - cell "Sec06" [ref=e2612]
+                                - cell "3 new files (PushforwardPullback, PushPullFunctoriality, TracePullback)" [ref=e2613]
+                              - row "Sec07 1 new file (ChallengeApi)" [ref=e2614]:
+                                - cell "Sec07" [ref=e2615]
+                                - cell "1 new file (ChallengeApi)" [ref=e2616]
+                              - row "Blueprint.lean imports all of the above" [ref=e2617]:
+                                - cell "Blueprint.lean" [ref=e2618]:
+                                  - code [ref=e2619]: Blueprint.lean
+                                - cell "imports all of the above" [ref=e2620]
+                              - 'row "ref/cloud-worker-handoff.md NEW doc (92 lines): per-node implementation contracts" [ref=e2621]':
+                                - cell "ref/cloud-worker-handoff.md" [ref=e2622]:
+                                  - link "ref/cloud-worker-handoff.md" [ref=e2623]:
+                                    - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/ref/cloud-worker-handoff.md
+                                    - code [ref=e2624]: ref/cloud-worker-handoff.md
+                                - 'cell "NEW doc (92 lines): per-node implementation contracts" [ref=e2625]'
+                              - 'row "ref/blueprint-audit.md +98 lines: Phase D table + acceptance checklist" [ref=e2626]':
+                                - cell "ref/blueprint-audit.md" [ref=e2627]:
+                                  - link "ref/blueprint-audit.md" [ref=e2628]:
+                                    - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/ref/blueprint-audit.md
+                                    - code [ref=e2629]: ref/blueprint-audit.md
+                                - 'cell "+98 lines: Phase D table + acceptance checklist" [ref=e2630]'
+                              - 'row "tex/statements/statement-bank.tex +35 lines: \"Proof plan (Lean handoff)\" paragraphs on 11 nodes — compatible with our move of thm:fd-holomorphic-one-forms" [ref=e2631]':
+                                - cell "tex/statements/statement-bank.tex" [ref=e2632]:
+                                  - link "tex/statements/statement-bank.tex" [ref=e2633]:
+                                    - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/tex/statements/statement-bank.tex
+                                    - code [ref=e2634]: tex/statements/statement-bank.tex
+                                - 'cell "+35 lines: \"Proof plan (Lean handoff)\" paragraphs on 11 nodes — compatible with our move of thm:fd-holomorphic-one-forms" [ref=e2635]':
+                                  - text: "+35 lines: \"Proof plan (Lean handoff)\" paragraphs on 11 nodes —"
+                                  - strong [ref=e2636]: compatible
+                                  - text: with our move of
+                                  - code [ref=e2637]: thm:fd-holomorphic-one-forms
+                          - heading "4. Quality defects" [level=3] [ref=e2638]
+                          - list [ref=e2639]:
+                            - listitem [ref=e2640]:
+                              - strong [ref=e2641]:
+                                - text: 25 files with bare
+                                - code [ref=e2642]: import Mathlib
+                              - text: (Hard Rule
+                              - link "#1" [ref=e2643]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/issues/1
+                              - text: violation). Every Sec03–Sec07 stub plus 3 Sec02 stubs.
+                            - listitem [ref=e2644]:
+                              - strong [ref=e2645]:
+                                - text: Vacuous
+                                - code [ref=e2646]: "True"
+                                - text: theorems
+                              - text: with
+                              - code [ref=e2647]: := by sorry
+                              - text: (or worse,
+                              - code [ref=e2648]: := by trivial
+                              - text: "):"
+                              - code [ref=e2649]: Sec02/FdHolomorphicOneFormsThm
+                              - text: ","
+                              - code [ref=e2650]: Sec02/GenusZeroClassification
+                              - text: ","
+                              - code [ref=e2651]: Sec03/HolomorphicFormIsClosed
+                              - text: ","
+                              - code [ref=e2652]: Sec03/PeriodLattice
+                              - text: ","
+                              - code [ref=e2653]: Sec03/*
+                              - text: other lemmas,
+                              - code [ref=e2654]: Sec06/PushforwardPullback
+                              - text: ","
+                              - code [ref=e2655]: Sec07/ChallengeApi
+                              - text: (
+                              - code [ref=e2656]: := by trivial
+                              - text: — no sorry warning).
+                            - listitem [ref=e2657]:
+                              - strong [ref=e2658]:
+                                - code [ref=e2659]: := Unit
+                                - text: /
+                                - code [ref=e2660]: := 0
+                                - text: constant stubs
+                              - text: ":"
+                              - code [ref=e2661]: Sec02/AnalyticGenusDef
+                              - text: (
+                              - code [ref=e2662]: def analytic_genus := 0
+                              - text: ),
+                              - code [ref=e2663]: Sec04/AnalyticJacobian
+                              - text: (
+                              - code [ref=e2664]: := Unit
+                              - text: ),
+                              - code [ref=e2665]: Sec05/AbelJacobiDef
+                              - text: (
+                              - code [ref=e2666]: := Unit
+                              - text: ). These compile cleanly, advertise themselves as done, but are mathematically wrong/empty.
+                            - listitem [ref=e2667]:
+                              - strong [ref=e2668]: Regressions to design-pass consensus fixes
+                              - text: "in all 8 Sec02 files: reverts"
+                              - code [ref=e2669]: cotangentFiberNorm
+                              - text: Σ-type, restores
+                              - code [ref=e2670]: _e
+                              - text: underscore, restores
+                              - code [ref=e2671]: Module.Finite
+                              - text: ", drops worker docs headers, replaces specific 5-step Montel outline with a generic 4-step boilerplate duplicated to every file."
+                            - listitem [ref=e2672]:
+                              - code [ref=e2673]: OpenPartialHomeomorph
+                              - text: is preserved (correct) — that one decl-name issue is fine.
+                            - listitem [ref=e2674]:
+                              - text: Snake_case names (
+                              - code [ref=e2675]: analytic_genus
+                              - text: ","
+                              - code [ref=e2676]: abel_jacobi
+                              - text: ) on definitions (project convention is camelCase for definitions).
+                          - heading "5. Recommendation — what to integrate" [level=3] [ref=e2677]
+                          - paragraph [ref=e2678]:
+                            - strong [ref=e2679]: INTEGRATED
+                            - text: onto
+                            - code [ref=e2680]: claude/integrate-pr3-docs
+                            - text: "(build clean, exit 0, sorry count unchanged at 15):"
+                          - list [ref=e2681]:
+                            - listitem [ref=e2682]:
+                              - link "ref/cloud-worker-handoff.md" [ref=e2683]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/ref/cloud-worker-handoff.md
+                                - code [ref=e2684]: ref/cloud-worker-handoff.md
+                              - text: (NEW)
+                            - listitem [ref=e2685]:
+                              - link "ref/blueprint-audit.md" [ref=e2686]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/ref/blueprint-audit.md
+                                - code [ref=e2687]: ref/blueprint-audit.md
+                              - text: Phase D + E append
+                            - listitem [ref=e2688]:
+                              - link "tex/statements/statement-bank.tex" [ref=e2689]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/tex/statements/statement-bank.tex
+                                - code [ref=e2690]: tex/statements/statement-bank.tex
+                              - text: proof-plan paragraphs
+                          - paragraph [ref=e2691]:
+                            - strong [ref=e2692]: REJECTED
+                            - text: "(do not integrate any of these):"
+                          - list [ref=e2693]:
+                            - listitem [ref=e2694]:
+                              - text: All 33 new
+                              - code [ref=e2695]: .lean
+                              - text: files in
+                              - code [ref=e2696]: Jacobian/Blueprint/Sec0[2–7]/
+                            - listitem [ref=e2697]:
+                              - text: The
+                              - code [ref=e2698]: Blueprint.lean
+                              - text: import-list expansion
+                            - listitem [ref=e2699]: The duplicating-boilerplate edits to existing Sec01 + Sec02 stubs (these would back out the design-pass + cleanup work)
+                          - paragraph [ref=e2700]:
+                            - text: The pending
+                            - code [ref=e2701]: claude/design-fd-chain-fixes
+                            - text: branch (consensus cleanup) and the new
+                            - code [ref=e2702]: claude/integrate-pr3-docs
+                            - text: branch (docs subset of PR
+                            - link "#3" [ref=e2703]:
+                              - /url: https://github.com/tangentstorm/jacobianchallenge/issues/3
+                            - text: ) are independent and can be merged in either order.
+                          - paragraph [ref=e2704]:
+                            - text: "Branch URL:"
+                            - link "https://github.com/tangentstorm/JacobianChallenge/tree/claude/integrate-pr3-docs" [ref=e2705]:
+                              - /url: https://github.com/tangentstorm/JacobianChallenge/tree/claude/integrate-pr3-docs
+                          - paragraph [ref=e2706]: Standing by.
+                      - generic:
+                        - button "Copy message":
+                          - img
+                        - button "Pin as chapter":
+                          - img
+                        - generic "Apr 30, 2026, 4:44:45 PM": 2h ago
+                    - generic [ref=e2488]:
+                      - generic [ref=e2489]:
+                        - paragraph [ref=e2491]:
+                          - text: "Merge all three pending branches into main, in this order: 1. **"
+                          - code [ref=e2492]: claude/design-fd-chain-fixes
+                          - text: "** (your cleanup branch — consensus design fixes) 2. **"
+                          - code [ref=e2493]: claude/integrate-pr3-docs
+                          - text: "** (your PR #3 docs subset) 3. **PR #4 /"
+                          - code [ref=e2494]: claude/add-jacobian-narrations-2QTEL
+                          - text: "** (Plain-English narrations from a separate cloud session) Workflow per merge: 1."
+                          - code [ref=e2495]: git fetch origin && git checkout main && git reset --hard origin/main
+                          - text: "2."
+                          - code [ref=e2496]: git merge --no-ff origin/<branch>
+                          - text: (preserve the branch's commits as a merge commit) 3.
+                          - code [ref=e2497]: lake build Jacobian.Blueprint
+                          - text: ". Must exit 0. Sorry count must not regress (15 today, 8 sec02 + 7 sec01). 4. If green:"
+                          - code [ref=e2498]: git push origin main
+                          - text: ". If red: STOP, abort the merge, report the error, do not proceed to the next branch. 5. After each push, also close the corresponding PR if there is one (PR #4 for branch 3; the cleanup branch and integrate-pr3-docs branch were never opened as PRs, so just delete them after merge). For PR #4 specifically: it touches only"
+                          - code [ref=e2499]: tex/sections/*.tex
+                          - text: and
+                          - code [ref=e2500]: tex/statements/*.tex
+                          - text: . The build SHOULDN'T be affected, but verify anyway — the layman environment is defined in tex/macros.tex (excluded) and blueprint/src/macros/common.tex, and would render in the blueprint web build. If
+                          - code [ref=e2501]: lake build Jacobian.Blueprint
+                          - text: "is green after merge, you're done. Final report should include: - Three \"Merged: <branch> → main\" lines with the resulting commit hashes - Final"
+                          - code [ref=e2502]: lake build Jacobian.Blueprint
+                          - text: "exit code + sorry count - A brief note on whether anything surprised you during merge (conflicts, etc.) Then estimate proof complexity for each of the 8 sec02 chain nodes (cotangent_fiber_norm, holomorphic_sup_norm, chart_coefficient_bound, montel_compactness, hone_unit_ball_compact, fd_from_riesz, input_finite_dimensionality, fd_holomorphic_one_forms). For each, pick one of: - TRIVIAL (one-liner, single"
+                          - code [ref=e2503]: exact
+                          - text: /
+                          - code [ref=e2504]: apply
+                          - text: ) - SHORT (5–20 LOC, mostly straightforward Mathlib calls) - MEDIUM (20–80 LOC, real proof structure but no major obstacle) - HARD (80+ LOC, substantial work; isolated cloud worker recommended) I'll use those estimates to decide which nodes to fan out to dedicated cloud workers vs. which to handle in your thread. Don't spawn any workers yourself — just merge, build, report, and rate. Stand by after.
+                        - button "Show more" [ref=e2505]: Show more
+                      - generic:
+                        - button "Copy message":
+                          - img
+                    - generic [ref=e2709]:
+                      - button "Resumed session" [expanded] [ref=e2710]:
+                        - generic [ref=e2711]: Resumed session
+                        - img [ref=e2713]
+                      - generic [ref=e2716]:
+                        - generic [ref=e2718]:
+                          - generic [ref=e2719]:
+                            - generic [ref=e2720]: Completed
+                            - img [ref=e2721]
+                          - generic [ref=e2723]: Resumed your cloud container
+                        - generic [ref=e2725]:
+                          - generic [ref=e2726]:
+                            - generic [ref=e2727]: Completed
+                            - img [ref=e2728]
+                          - generic [ref=e2730]: Refreshed your repository
+                        - generic [ref=e2732]:
+                          - generic [ref=e2733]:
+                            - generic [ref=e2734]: Completed
+                            - img [ref=e2735]
+                          - generic [ref=e2737]: Started Claude Code
+                    - generic [ref=e2741]:
+                      - generic [ref=e2742]:
+                        - button "Ran 2 commands, updated todos" [ref=e2745]:
+                          - generic [ref=e2747]:
+                            - text: Ran
+                            - generic [ref=e2748]: 2 commands
+                            - text: ", updated"
+                            - generic [ref=e2749]: todos
+                          - img [ref=e2751]
+                        - 'heading "Merge 1/3: claude/design-fd-chain-fixes" [level=3] [ref=e2755]':
+                          - text: "Merge 1/3:"
+                          - code [ref=e2756]: claude/design-fd-chain-fixes
+                        - button "Merged origin/claude/design-fd-chain-fixes" [ref=e2759]:
+                          - generic [ref=e2760]: Merged
+                          - generic [ref=e2761]: origin/claude/design-fd-chain-fixes
+                          - img [ref=e2763]
+                        - paragraph [ref=e2767]: Merge 1 done cleanly. Building.
+                        - generic [ref=e2769]:
+                          - button "Ran 6 commands" [expanded] [ref=e2770]:
+                            - generic [ref=e2772]:
+                              - text: Ran
+                              - generic [ref=e2773]: 6 commands
+                            - img [ref=e2775]
+                          - generic [ref=e2778]:
+                            - button "Ran Build after merge 1" [ref=e2780]:
+                              - generic [ref=e2781]: Ran
+                              - generic [ref=e2782]: Build after merge 1
+                              - img [ref=e2784]
+                            - button "Pushed Tally sorries and push merge 1" [ref=e2787]:
+                              - generic [ref=e2788]: Pushed
+                              - generic [ref=e2789]: Tally sorries and push merge 1
+                              - img [ref=e2791]
+                            - button "Ran Inspect divergence with origin/main" [ref=e2794]:
+                              - generic [ref=e2795]: Ran
+                              - generic [ref=e2796]: Inspect divergence with origin/main
+                              - img [ref=e2798]
+                            - button "Merged Reset to new origin/main and re-merge" [ref=e2801]:
+                              - generic [ref=e2802]: Merged
+                              - generic [ref=e2803]: Reset to new origin/main and re-merge
+                              - img [ref=e2805]
+                            - button "Ran Build after re-merge" [ref=e2808]:
+                              - generic [ref=e2809]: Ran
+                              - generic [ref=e2810]: Build after re-merge
+                              - img [ref=e2812]
+                            - button "Pushed main" [ref=e2815]:
+                              - generic [ref=e2816]: Pushed
+                              - generic [ref=e2817]: main
+                              - img [ref=e2819]
+                        - generic [ref=e2822]:
+                          - paragraph [ref=e2823]:
+                            - strong [ref=e2824]:
+                              - text: "Merged:"
+                              - code [ref=e2825]: claude/design-fd-chain-fixes
+                              - text: → main as
+                              - code [ref=e2826]: 5b682bb
+                            - text: (build green, 15 sorries).
+                          - 'heading "Merge 2/3: claude/integrate-pr3-docs" [level=3] [ref=e2827]':
+                            - text: "Merge 2/3:"
+                            - code [ref=e2828]: claude/integrate-pr3-docs
+                        - button "Ran 3 commands, updated todos" [ref=e2831]:
+                          - generic [ref=e2833]:
+                            - text: Ran
+                            - generic [ref=e2834]: 3 commands
+                            - text: ", updated"
+                            - generic [ref=e2835]: todos
+                          - img [ref=e2837]
+                        - generic [ref=e2840]:
+                          - paragraph [ref=e2841]:
+                            - strong [ref=e2842]:
+                              - text: "Merged:"
+                              - code [ref=e2843]: claude/integrate-pr3-docs
+                              - text: → main as
+                              - code [ref=e2844]: 3547fae
+                            - text: (build green, 15 sorries).
+                          - 'heading "Merge 3/3: PR #4 / claude/add-jacobian-narrations-2QTEL" [level=3] [ref=e2845]':
+                            - text: "Merge 3/3: PR"
+                            - link "#4" [ref=e2846]:
+                              - /url: https://github.com/tangentstorm/jacobianchallenge/issues/4
+                            - text: /
+                            - code [ref=e2847]: claude/add-jacobian-narrations-2QTEL
+                        - button "Ran 2 commands" [ref=e2850]:
+                          - generic [ref=e2852]:
+                            - text: Ran
+                            - generic [ref=e2853]: 2 commands
+                          - img [ref=e2855]
+                        - paragraph [ref=e2859]: Merge clean (auto-merged statement-bank.tex). Building.
+                        - button "Ran 2 commands" [ref=e2862]:
+                          - generic [ref=e2864]:
+                            - text: Ran
+                            - generic [ref=e2865]: 2 commands
+                          - img [ref=e2867]
+                        - generic [ref=e2870]:
+                          - paragraph [ref=e2871]:
+                            - strong [ref=e2872]:
+                              - text: "Merged: PR"
+                              - link "#4" [ref=e2873]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/issues/4
+                              - text: /
+                              - code [ref=e2874]: claude/add-jacobian-narrations-2QTEL
+                              - text: → main as
+                              - code [ref=e2875]: f9aae93
+                            - text: (build green, 15 sorries).
+                          - paragraph [ref=e2876]:
+                            - text: Now close PR
+                            - link "#4" [ref=e2877]:
+                              - /url: https://github.com/tangentstorm/jacobianchallenge/issues/4
+                            - text: and clean up branches.
+                        - button "Using pull request read" [ref=e2880]:
+                          - generic [ref=e2882]: Using pull request read
+                          - img [ref=e2884]
+                        - paragraph [ref=e2888]:
+                          - text: PR
+                          - link "#4" [ref=e2889]:
+                            - /url: https://github.com/tangentstorm/jacobianchallenge/issues/4
+                          - text: already auto-closed by GitHub on merge detection. Now delete the three merged branches.
+                        - button "Pushed Delete merged branches" [ref=e2892]:
+                          - generic [ref=e2893]: Pushed
+                          - generic [ref=e2894]: Delete merged branches
+                          - img [ref=e2896]
+                        - paragraph [ref=e2900]:
+                          - text: Remote branch deletion blocked (HTTP 403 — the harness proxy doesn't permit
+                          - code [ref=e2901]: "--delete"
+                          - text: ). Local branches cleaned. Remote feature branches are harmless leftovers; the user can delete via GitHub UI if desired.
+                        - button "Updated todos" [ref=e2904]:
+                          - generic [ref=e2905]: Updated todos
+                        - generic [ref=e2907]:
+                          - heading "Final report" [level=2] [ref=e2908]
+                          - heading "Merges" [level=3] [ref=e2909]
+                          - table [ref=e2911]:
+                            - rowgroup [ref=e2912]:
+                              - row "# Branch Merge commit Build Sorries" [ref=e2913]:
+                                - columnheader "#" [ref=e2914]
+                                - columnheader "Branch" [ref=e2915]
+                                - columnheader "Merge commit" [ref=e2916]
+                                - columnheader "Build" [ref=e2917]
+                                - columnheader "Sorries" [ref=e2918]
+                            - rowgroup [ref=e2919]:
+                              - row "1 claude/design-fd-chain-fixes 5b682bb exit 0 (~3min cold rebuild) 15" [ref=e2920]:
+                                - cell "1" [ref=e2921]
+                                - cell "claude/design-fd-chain-fixes" [ref=e2922]:
+                                  - code [ref=e2923]: claude/design-fd-chain-fixes
+                                - cell "5b682bb" [ref=e2924]:
+                                  - code [ref=e2925]: 5b682bb
+                                - cell "exit 0 (~3min cold rebuild)" [ref=e2926]
+                                - cell "15" [ref=e2927]
+                              - row "2 claude/integrate-pr3-docs 3547fae exit 0 (~2s replay) 15" [ref=e2928]:
+                                - cell "2" [ref=e2929]
+                                - cell "claude/integrate-pr3-docs" [ref=e2930]:
+                                  - code [ref=e2931]: claude/integrate-pr3-docs
+                                - cell "3547fae" [ref=e2932]:
+                                  - code [ref=e2933]: 3547fae
+                                - cell "exit 0 (~2s replay)" [ref=e2934]
+                                - cell "15" [ref=e2935]
+                              - 'row "3 claude/add-jacobian-narrations-2QTEL (PR #4) f9aae93 exit 0 (~2s replay) 15" [ref=e2936]':
+                                - cell "3" [ref=e2937]
+                                - 'cell "claude/add-jacobian-narrations-2QTEL (PR #4)" [ref=e2938]':
+                                  - code [ref=e2939]: claude/add-jacobian-narrations-2QTEL
+                                  - text: (PR
+                                  - link "#4" [ref=e2940]:
+                                    - /url: https://github.com/tangentstorm/jacobianchallenge/issues/4
+                                  - text: )
+                                - cell "f9aae93" [ref=e2941]:
+                                  - code [ref=e2942]: f9aae93
+                                - cell "exit 0 (~2s replay)" [ref=e2943]
+                                - cell "15" [ref=e2944]
+                          - paragraph [ref=e2945]:
+                            - text: "Final:"
+                            - code [ref=e2946]: lake build Jacobian.Blueprint
+                            - text: exits 0;
+                            - strong [ref=e2947]: "15"
+                            - text: declaration-uses-sorry warnings (8 in Sec02 + 7 in Sec01) — no regression vs main pre-merge. Tip of main is
+                            - code [ref=e2948]: f9aae93
+                            - text: .
+                          - heading "Surprises" [level=3] [ref=e2949]
+                          - list [ref=e2950]:
+                            - listitem [ref=e2951]:
+                              - text: Origin/main moved between fetch and push during the first merge (commit
+                              - code [ref=e2952]: a3afd36
+                              - text: "\"Two PDF builds: formal-only and Plain-English companion\" landed concurrently). Reset+remerge resolved cleanly; no conflicts."
+                            - listitem [ref=e2953]:
+                              - text: PR
+                              - link "#4" [ref=e2954]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/issues/4
+                              - text: merge needed a
+                              - strong [ref=e2955]: 3-way auto-merge
+                              - text: in
+                              - link "tex/statements/statement-bank.tex" [ref=e2956]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/tex/statements/statement-bank.tex
+                                - code [ref=e2957]: tex/statements/statement-bank.tex
+                              - text: because PR
+                              - link "#4" [ref=e2958]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/issues/4
+                              - text: "'s base predated our merge of"
+                              - code [ref=e2959]: claude/integrate-pr3-docs
+                              - text: (which had added "Proof plan (Lean handoff)" paragraphs). Git's
+                              - code [ref=e2960]: ort
+                              - text: strategy reconciled both edit sets without conflict — PR
+                              - link "#4" [ref=e2961]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/issues/4
+                              - text: "'s layman blocks were inserted after the formal blocks, and the proof-plan paragraphs from the docs branch were preserved."
+                            - listitem [ref=e2962]:
+                              - text: PR
+                              - link "#4" [ref=e2963]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/issues/4
+                              - text: was auto-closed by GitHub once the merge commit landed (no manual close call needed).
+                            - listitem [ref=e2964]:
+                              - code [ref=e2965]: git push --delete
+                              - text: for remote branches returned HTTP 403 (sandbox proxy restriction). The three remote feature branches (
+                              - code [ref=e2966]: claude/design-fd-chain-fixes
+                              - text: ","
+                              - code [ref=e2967]: claude/integrate-pr3-docs
+                              - text: ","
+                              - code [ref=e2968]: claude/add-jacobian-narrations-2QTEL
+                              - text: ) are still on origin but are no longer reachable from main; cleanup via the GitHub UI when convenient.
+                          - separator [ref=e2969]
+                          - heading "Proof complexity estimates (8 sec02 chain nodes)" [level=2] [ref=e2970]
+                          - table [ref=e2972]:
+                            - rowgroup [ref=e2973]:
+                              - row "# Node Rating Why" [ref=e2974]:
+                                - columnheader "#" [ref=e2975]
+                                - columnheader "Node" [ref=e2976]
+                                - columnheader "Rating" [ref=e2977]
+                                - columnheader "Why" [ref=e2978]
+                            - rowgroup [ref=e2979]:
+                              - row "1 cotangentFiberNorm TRIVIAL The fibers CotangentSpace ℂ X x = T_x X →L[ℂ] (Bundle.Trivial X ℂ) x already inherit NormedAddCommGroup from operator norm. Body is ‖p.2‖. The Σ-type is just for tidy total-space composition. One-liner." [ref=e2980]:
+                                - cell "1" [ref=e2981]
+                                - cell "cotangentFiberNorm" [ref=e2982]:
+                                  - code [ref=e2983]: cotangentFiberNorm
+                                - cell "TRIVIAL" [ref=e2984]:
+                                  - strong [ref=e2985]: TRIVIAL
+                                - cell "The fibers CotangentSpace ℂ X x = T_x X →L[ℂ] (Bundle.Trivial X ℂ) x already inherit NormedAddCommGroup from operator norm. Body is ‖p.2‖. The Σ-type is just for tidy total-space composition. One-liner." [ref=e2986]:
+                                  - text: The fibers
+                                  - code [ref=e2987]: CotangentSpace ℂ X x = T_x X →L[ℂ] (Bundle.Trivial X ℂ) x
+                                  - text: already inherit
+                                  - code [ref=e2988]: NormedAddCommGroup
+                                  - text: from operator norm. Body is
+                                  - code [ref=e2989]: ‖p.2‖
+                                  - text: . The Σ-type is just for tidy total-space composition. One-liner.
+                              - 'row "2 holomorphicSupNorm SHORT ⨆ x : X, cotangentFiberNormAt X x (ω.1 x), mirroring the production SectionSupNorm.supNorm. Possibly need BddAbove lemma or use sSup/Real.iSup machinery, but Mathlib''s IsCompact.exists_isMaxOn covers finiteness. ~10 LOC." [ref=e2990]':
+                                - cell "2" [ref=e2991]
+                                - cell "holomorphicSupNorm" [ref=e2992]:
+                                  - code [ref=e2993]: holomorphicSupNorm
+                                - cell "SHORT" [ref=e2994]:
+                                  - strong [ref=e2995]: SHORT
+                                - 'cell "⨆ x : X, cotangentFiberNormAt X x (ω.1 x), mirroring the production SectionSupNorm.supNorm. Possibly need BddAbove lemma or use sSup/Real.iSup machinery, but Mathlib''s IsCompact.exists_isMaxOn covers finiteness. ~10 LOC." [ref=e2996]':
+                                  - code [ref=e2997]: "⨆ x : X, cotangentFiberNormAt X x (ω.1 x)"
+                                  - text: ", mirroring the production"
+                                  - code [ref=e2998]: SectionSupNorm.supNorm
+                                  - text: . Possibly need
+                                  - code [ref=e2999]: BddAbove
+                                  - text: lemma or use
+                                  - code [ref=e3000]: sSup
+                                  - text: /
+                                  - code [ref=e3001]: Real.iSup
+                                  - text: machinery, but Mathlib's
+                                  - code [ref=e3002]: IsCompact.exists_isMaxOn
+                                  - text: covers finiteness. ~10 LOC.
+                              - row "3 chart_coefficient_bound MEDIUM Need to instantiate the chart, extract the trivialisation of CotangentSpace over e.source, identify ω.1 x with the multiplication-by-h(z) ContinuousLinearMap, then bound by sup norm. The trivialisation API for the cotangent bundle isn't fully ergonomic in v4.28; expect ~40-60 LOC of unfolding + a continuity argument for the chart-comparison constant C_e. No deep mathlib gaps — just plumbing." [ref=e3003]:
+                                - cell "3" [ref=e3004]
+                                - cell "chart_coefficient_bound" [ref=e3005]:
+                                  - code [ref=e3006]: chart_coefficient_bound
+                                - cell "MEDIUM" [ref=e3007]:
+                                  - strong [ref=e3008]: MEDIUM
+                                - cell "Need to instantiate the chart, extract the trivialisation of CotangentSpace over e.source, identify ω.1 x with the multiplication-by-h(z) ContinuousLinearMap, then bound by sup norm. The trivialisation API for the cotangent bundle isn't fully ergonomic in v4.28; expect ~40-60 LOC of unfolding + a continuity argument for the chart-comparison constant C_e. No deep mathlib gaps — just plumbing." [ref=e3009]:
+                                  - text: Need to instantiate the chart, extract the trivialisation of
+                                  - code [ref=e3010]: CotangentSpace
+                                  - text: over
+                                  - code [ref=e3011]: e.source
+                                  - text: ", identify"
+                                  - code [ref=e3012]: ω.1 x
+                                  - text: with the multiplication-by-
+                                  - code [ref=e3013]: h(z)
+                                  - text: ContinuousLinearMap, then bound by sup norm. The trivialisation API for the cotangent bundle isn't fully ergonomic in v4.28; expect ~40-60 LOC of unfolding + a continuity argument for the chart-comparison constant
+                                  - code [ref=e3014]: C_e
+                                  - text: . No deep mathlib gaps — just plumbing.
+                              - 'row "4 montel_compactness HARD Documented blockers in Jacobian/HolomorphicForms/CompactRiemannSurface.lean: no Cauchy-first-derivative-estimate lemma, no Weierstrass uniform-limit theorem, no chart-coefficient-extraction API for ContMDiffSection, plus diagonal subsequence + Arzelà–Ascoli plumbing. Mathematically the heart of the chain. Isolated cloud worker strongly recommended — likely 200+ LOC plus 2-3 helper lemmas the worker has to build from primitives." [ref=e3015]':
+                                - cell "4" [ref=e3016]
+                                - cell "montel_compactness" [ref=e3017]:
+                                  - code [ref=e3018]: montel_compactness
+                                - cell "HARD" [ref=e3019]:
+                                  - strong [ref=e3020]: HARD
+                                - 'cell "Documented blockers in Jacobian/HolomorphicForms/CompactRiemannSurface.lean: no Cauchy-first-derivative-estimate lemma, no Weierstrass uniform-limit theorem, no chart-coefficient-extraction API for ContMDiffSection, plus diagonal subsequence + Arzelà–Ascoli plumbing. Mathematically the heart of the chain. Isolated cloud worker strongly recommended — likely 200+ LOC plus 2-3 helper lemmas the worker has to build from primitives." [ref=e3021]':
+                                  - text: Documented blockers in
+                                  - link "Jacobian/HolomorphicForms/CompactRiemannSurface.lean" [ref=e3022]:
+                                    - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/Jacobian/HolomorphicForms/CompactRiemannSurface.lean
+                                    - code [ref=e3023]: Jacobian/HolomorphicForms/CompactRiemannSurface.lean
+                                  - text: ": no Cauchy-first-derivative-estimate lemma, no Weierstrass uniform-limit theorem, no chart-coefficient-extraction API for"
+                                  - code [ref=e3024]: ContMDiffSection
+                                  - text: ", plus diagonal subsequence + Arzelà–Ascoli plumbing. Mathematically the heart of the chain."
+                                  - strong [ref=e3025]: Isolated cloud worker strongly recommended
+                                  - text: — likely 200+ LOC plus 2-3 helper lemmas the worker has to build from primitives.
+                              - 'row "5 hone_unit_ball_compact MEDIUM Pure metric/topology bridge: transport Montel''s Tendsto-form into `IsSeqCompact (e '''' {ω" [ref=e3026]':
+                                - cell "5" [ref=e3027]
+                                - cell "hone_unit_ball_compact" [ref=e3028]:
+                                  - code [ref=e3029]: hone_unit_ball_compact
+                                - cell "MEDIUM" [ref=e3030]:
+                                  - strong [ref=e3031]: MEDIUM
+                                - 'cell "Pure metric/topology bridge: transport Montel''s Tendsto-form into `IsSeqCompact (e '''' {ω" [ref=e3032]':
+                                  - text: "Pure metric/topology bridge: transport Montel's"
+                                  - code [ref=e3033]: Tendsto
+                                  - text: "-form into `IsSeqCompact (e '' {ω"
+                              - row "6 fd_from_riesz TRIVIAL Literally exact FiniteDimensional.of_isCompact_closedBall₀ ℂ _hr _h. The TODO comment in the stub already spells it out. One-liner." [ref=e3034]:
+                                - cell "6" [ref=e3035]
+                                - cell "fd_from_riesz" [ref=e3036]:
+                                  - code [ref=e3037]: fd_from_riesz
+                                - cell "TRIVIAL" [ref=e3038]:
+                                  - strong [ref=e3039]: TRIVIAL
+                                - cell "Literally exact FiniteDimensional.of_isCompact_closedBall₀ ℂ _hr _h. The TODO comment in the stub already spells it out. One-liner." [ref=e3040]:
+                                  - text: Literally
+                                  - code [ref=e3041]: exact FiniteDimensional.of_isCompact_closedBall₀ ℂ _hr _h
+                                  - text: . The TODO comment in the stub already spells it out. One-liner.
+                              - 'row "7 input_finite_dimensionality TRIVIAL Two-line composition: have := hone_unit_ball_compact X e _h_norm; exact fd_from_riesz one_pos this. The whole point of this node is to be the umbrella one-liner." [ref=e3042]':
+                                - cell "7" [ref=e3043]
+                                - cell "input_finite_dimensionality" [ref=e3044]:
+                                  - code [ref=e3045]: input_finite_dimensionality
+                                - cell "TRIVIAL" [ref=e3046]:
+                                  - strong [ref=e3047]: TRIVIAL
+                                - 'cell "Two-line composition: have := hone_unit_ball_compact X e _h_norm; exact fd_from_riesz one_pos this. The whole point of this node is to be the umbrella one-liner." [ref=e3048]':
+                                  - text: "Two-line composition:"
+                                  - code [ref=e3049]: have := hone_unit_ball_compact X e _h_norm; exact fd_from_riesz one_pos this
+                                  - text: . The whole point of this node is to be the umbrella one-liner.
+                              - row "8 fd_holomorphic_one_forms SHORT Need to construct/borrow the production HolomorphicOneFormBanachData (already exists as holomorphicOneForm_normedSpace_uniformOnCompact), extract a ≃ₗ[ℂ] realisation, then LinearEquiv.finiteDimensional. Plumbing only — ~15 LOC. The mathematical content is fully delegated to nodes 1–7." [ref=e3050]:
+                                - cell "8" [ref=e3051]
+                                - cell "fd_holomorphic_one_forms" [ref=e3052]:
+                                  - code [ref=e3053]: fd_holomorphic_one_forms
+                                - cell "SHORT" [ref=e3054]:
+                                  - strong [ref=e3055]: SHORT
+                                - cell "Need to construct/borrow the production HolomorphicOneFormBanachData (already exists as holomorphicOneForm_normedSpace_uniformOnCompact), extract a ≃ₗ[ℂ] realisation, then LinearEquiv.finiteDimensional. Plumbing only — ~15 LOC. The mathematical content is fully delegated to nodes 1–7." [ref=e3056]:
+                                  - text: Need to construct/borrow the production
+                                  - code [ref=e3057]: HolomorphicOneFormBanachData
+                                  - text: (already exists as
+                                  - code [ref=e3058]: holomorphicOneForm_normedSpace_uniformOnCompact
+                                  - text: ), extract a
+                                  - code [ref=e3059]: ≃ₗ[ℂ]
+                                  - text: realisation, then
+                                  - code [ref=e3060]: LinearEquiv.finiteDimensional
+                                  - text: . Plumbing only — ~15 LOC. The mathematical content is fully delegated to nodes 1–7.
+                          - heading "Recommended fan-out" [level=3] [ref=e3061]
+                          - list [ref=e3062]:
+                            - listitem [ref=e3063]:
+                              - strong [ref=e3064]: "Cloud worker (HARD, isolated):"
+                              - text: Node 4
+                              - code [ref=e3065]: montel_compactness
+                              - text: . Has named blockers requiring substantial Mathlib-side construction (Cauchy estimate, Weierstrass, chart-coeff API). Worth its own queue with disjoint write scope on
+                              - link "Jacobian/Blueprint/Sec02/MontelCompactness.lean" [ref=e3066]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/Jacobian/Blueprint/Sec02/MontelCompactness.lean
+                                - code [ref=e3067]: Jacobian/Blueprint/Sec02/MontelCompactness.lean
+                              - text: plus optional helper files.
+                            - listitem [ref=e3068]:
+                              - strong [ref=e3069]: "Cloud worker (MEDIUM):"
+                              - text: Node 3
+                              - code [ref=e3070]: chart_coefficient_bound
+                              - text: and Node 5
+                              - code [ref=e3071]: hone_unit_ball_compact
+                              - text: can each be standalone workers; both are bounded plumbing with no Mathlib gaps.
+                            - listitem [ref=e3072]:
+                              - strong [ref=e3073]: "Handle in this thread (TRIVIAL+SHORT):"
+                              - text: Nodes 1, 2, 6, 7, 8 are all small, mutually compatible, and don't need isolation. I can knock these out in a single sweep when you give the word.
+                          - paragraph [ref=e3074]: Standing by.
+                      - generic:
+                        - button "Copy message":
+                          - img
+                        - button "Pin as chapter":
+                          - img
+                        - generic "Apr 30, 2026, 6:36:24 PM": 17m ago
+                    - generic [ref=e3103]:
+                      - generic [ref=e3104]:
+                        - paragraph [ref=e3106]:
+                          - text: Per your ratings, please discharge the 5 TRIVIAL/SHORT sec02 nodes here in this thread on a feature branch
+                          - code [ref=e3107]: claude/sec02-trivial-batch
+                          - text: ": 1. **"
+                          - code [ref=e3108]: cotangent_fiber_norm
+                          - text: "** (TRIVIAL) —"
+                          - code [ref=e3109]: Jacobian/Blueprint/Sec02/CotangentFiberNorm.lean
+                          - text: ". Body:"
+                          - code [ref=e3110]: ‖p.2‖
+                          - text: (operator norm on the fiber). One-liner. 2. **
+                          - code [ref=e3111]: holomorphic_sup_norm
+                          - text: "** (SHORT) —"
+                          - code [ref=e3112]: Jacobian/Blueprint/Sec02/HolomorphicSupNorm.lean
+                          - text: . Use
+                          - code [ref=e3113]: "⨆ x : X, cotangentFiberNormAt X x (ω.1 x)"
+                          - text: mirroring the production
+                          - code [ref=e3114]: SectionSupNorm.supNorm
+                          - text: . Add a
+                          - code [ref=e3115]: BddAbove
+                          - text: lemma if needed; finiteness is delivered by
+                          - code [ref=e3116]: IsCompact.exists_isMaxOn
+                          - text: since
+                          - code [ref=e3117]: "[CompactSpace X]"
+                          - text: . 3. **
+                          - code [ref=e3118]: fd_from_riesz
+                          - text: "** (TRIVIAL) —"
+                          - code [ref=e3119]: Jacobian/Blueprint/Sec02/FdFromRiesz.lean
+                          - text: ". Body:"
+                          - code [ref=e3120]: exact FiniteDimensional.of_isCompact_closedBall₀ ℂ _hr _h
+                          - text: . The TODO comment in the stub already spells it out. 4. **
+                          - code [ref=e3121]: input_finite_dimensionality
+                          - text: "** (TRIVIAL) —"
+                          - code [ref=e3122]: Jacobian/Blueprint/Sec02/InputFiniteDimensionality.lean
+                          - text: ". Body: combine #5 ("
+                          - code [ref=e3123]: hone_unit_ball_compact
+                          - text: ") and #6 ("
+                          - code [ref=e3124]: fd_from_riesz
+                          - text: "): ```lean exact fd_from_riesz one_pos (hone_unit_ball_compact X e _h_norm) ``` ASSUMING"
+                          - code [ref=e3125]: hone_unit_ball_compact
+                          - text: already exists with that signature. Since worker C will fill node 5, this node 7 stays a
+                          - code [ref=e3126]: sorry
+                          - text: until 5 lands. So just leave a one-line
+                          - code [ref=e3127]: "-- DEPENDS ON node 5; once it lands, exact …"
+                          - text: TODO comment and keep the existing
+                          - code [ref=e3128]: sorry
+                          - text: ". Same for #8. 5. **"
+                          - code [ref=e3129]: fd_holomorphic_one_forms
+                          - text: "** (SHORT) —"
+                          - code [ref=e3130]: Jacobian/Blueprint/Sec02/FdHolomorphicOneForms.lean
+                          - text: ". Plumbing only: borrow the production-side"
+                          - code [ref=e3131]: holomorphicOneForm_normedSpace_uniformOnCompact
+                          - text: (or whatever the existing realization data is in
+                          - code [ref=e3132]: Jacobian/HolomorphicForms/CompactRiemannSurface.lean
+                          - text: ), extract a
+                          - code [ref=e3133]: ≃ₗ[ℂ]
+                          - text: ", then"
+                          - code [ref=e3134]: exact (input_finite_dimensionality X e h_norm).of_linearEquiv
+                          - text: or
+                          - code [ref=e3135]: LinearEquiv.finiteDimensional
+                          - text: ". Same caveat: depends on #7. If #7's sorry isn't closeable yet, leave #8 with a TODO and"
+                          - code [ref=e3136]: sorry
+                          - text: ". Per-node workflow: - Cut"
+                          - code [ref=e3137]: claude/sec02-trivial-batch
+                          - text: from current
+                          - code [ref=e3138]: main
+                          - text: "(after the 3-merge cycle). - For nodes 1, 2, 3: discharge fully. Build after each. If a build breaks, revert that node and continue with the others. - For nodes 4, 5: write the TODO comments and leave the sorry. Don't try to discharge until cloud workers ship #5 ("
+                          - code [ref=e3139]: hone_unit_ball_compact
+                          - text: "). - After all done:"
+                          - code [ref=e3140]: lake build Jacobian.Blueprint
+                          - text: ". Sorry count goes from 8 → 5 in sec02 (we close 3 of the 8). - Push the branch but DO NOT merge to main. I'll review and merge. Report: which nodes you closed, which you left with TODO + sorry (and why), final sorry count, branch URL. Stand by after that — I'll be spawning 3 cloud workers in parallel for the MEDIUM/HARD nodes."
+                        - button "Show more" [ref=e3141]: Show more
+                      - generic:
+                        - button "Copy message":
+                          - img
+                    - generic [ref=e3148]:
+                      - generic [ref=e3149]:
+                        - button "Ran a command, updated todos" [ref=e3152]:
+                          - generic [ref=e3154]:
+                            - text: Ran
+                            - generic [ref=e3155]: a command
+                            - text: ", updated"
+                            - generic [ref=e3156]: todos
+                          - img [ref=e3158]
+                        - 'heading "Node 1: cotangentFiberNorm" [level=3] [ref=e3162]':
+                          - text: "Node 1:"
+                          - code [ref=e3163]: cotangentFiberNorm
+                        - button "Read a file, edited a file, ran a command" [ref=e3166]:
+                          - generic [ref=e3168]:
+                            - text: Read
+                            - generic [ref=e3169]: a file
+                            - text: ", edited"
+                            - generic [ref=e3170]: a file
+                            - text: ", ran"
+                            - generic [ref=e3171]: a command
+                          - img [ref=e3173]
+                        - generic [ref=e3176]:
+                          - paragraph [ref=e3177]: Node 1 closed cleanly — no sorry warnings now. Moving to node 2.
+                          - 'heading "Node 2: holomorphicSupNorm" [level=3] [ref=e3178]':
+                            - text: "Node 2:"
+                            - code [ref=e3179]: holomorphicSupNorm
+                        - button "Read a file, edited a file, ran a command" [ref=e3182]:
+                          - generic [ref=e3184]:
+                            - text: Read
+                            - generic [ref=e3185]: a file
+                            - text: ", edited"
+                            - generic [ref=e3186]: a file
+                            - text: ", ran"
+                            - generic [ref=e3187]: a command
+                          - img [ref=e3189]
+                        - paragraph [ref=e3193]:
+                          - text: Node 2 closed cleanly. Let me also verify downstream files still build (ChartCoefficientBound, MontelCompactness, HoneUnitBallCompact use
+                          - code [ref=e3194]: holomorphicSupNorm
+                          - text: ).
+                        - button "Ran Build downstream consumers" [ref=e3197]:
+                          - generic [ref=e3198]: Ran
+                          - generic [ref=e3199]: Build downstream consumers
+                          - img [ref=e3201]
+                        - paragraph [ref=e3205]: Downstream consumers still compile (their unrelated sorries are unchanged). Moving to node 3.
+                        - button "Updated todos" [ref=e3208]:
+                          - generic [ref=e3209]: Updated todos
+                        - 'heading "Node 3: fdFromRiesz" [level=3] [ref=e3212]':
+                          - text: "Node 3:"
+                          - code [ref=e3213]: fdFromRiesz
+                        - button "Read a file, edited a file, ran a command" [ref=e3216]:
+                          - generic [ref=e3218]:
+                            - text: Read
+                            - generic [ref=e3219]: a file
+                            - text: ", edited"
+                            - generic [ref=e3220]: a file
+                            - text: ", ran"
+                            - generic [ref=e3221]: a command
+                          - img [ref=e3223]
+                        - paragraph [ref=e3227]:
+                          - text: Node 3 closed cleanly — sorry-free. Now nodes 4 and 5 get TODO comments only (they depend on node 5
+                          - code [ref=e3228]: hone_unit_ball_compact
+                          - text: ", which is being handled by a cloud worker)."
+                        - button "Updated todos" [ref=e3231]:
+                          - generic [ref=e3232]: Updated todos
+                        - 'heading "Node 4: inputFiniteDimensionality (TODO + sorry)" [level=3] [ref=e3235]':
+                          - text: "Node 4:"
+                          - code [ref=e3236]: inputFiniteDimensionality
+                          - text: (TODO + sorry)
+                        - button "Read a file, edited a file" [ref=e3239]:
+                          - generic [ref=e3241]:
+                            - text: Read
+                            - generic [ref=e3242]: a file
+                            - text: ", edited"
+                            - generic [ref=e3243]: a file
+                          - img [ref=e3245]
+                        - 'heading "Node 5: fdHolomorphicOneForms (TODO + sorry)" [level=3] [ref=e3249]':
+                          - text: "Node 5:"
+                          - code [ref=e3250]: fdHolomorphicOneForms
+                          - text: (TODO + sorry)
+                        - button "Read a file, edited a file" [ref=e3253]:
+                          - generic [ref=e3255]:
+                            - text: Read
+                            - generic [ref=e3256]: a file
+                            - text: ", edited"
+                            - generic [ref=e3257]: a file
+                          - img [ref=e3259]
+                        - paragraph [ref=e3263]: Now final build + sorry tally.
+                        - button "Updated todos, ran a command" [ref=e3266]:
+                          - generic [ref=e3268]:
+                            - text: Updated
+                            - generic [ref=e3269]: todos
+                            - text: ", ran"
+                            - generic [ref=e3270]: a command
+                          - img [ref=e3272]
+                        - generic [ref=e3275]:
+                          - paragraph [ref=e3276]:
+                            - strong [ref=e3277]: "Build green. Sec02 sorries: 5 (down from 8). Total: 12 (down from 15)."
+                            - text: "Closed 3 nodes (1, 2, 3); 5 remaining (3, 4, 5 plus deferred 7, 8) — wait let me re-check. The 5 remaining sec02 sorries are:"
+                          - list [ref=e3278]:
+                            - listitem [ref=e3279]: ChartCoefficientBound (node 3 of the chain — MEDIUM, cloud worker)
+                            - listitem [ref=e3280]: MontelCompactness (node 4 — HARD, cloud worker)
+                            - listitem [ref=e3281]: HoneUnitBallCompact (node 5 — MEDIUM, cloud worker)
+                            - listitem [ref=e3282]: InputFiniteDimensionality (node 7 — deferred, depends on node 5)
+                            - listitem [ref=e3283]: FdHolomorphicOneForms (node 8 — deferred, depends on node 7)
+                          - paragraph [ref=e3284]: "That matches the user's expectation: \"Sorry count goes from 8 → 5 in sec02 (we close 3 of the 8)\"."
+                        - button "Ran 3 commands, updated todos" [ref=e3287]:
+                          - generic [ref=e3289]:
+                            - text: Ran
+                            - generic [ref=e3290]: 3 commands
+                            - text: ", updated"
+                            - generic [ref=e3291]: todos
+                          - img [ref=e3293]
+                        - generic [ref=e3296]:
+                          - paragraph [ref=e3297]:
+                            - text: Branch
+                            - code [ref=e3298]: claude/sec02-trivial-batch
+                            - text: pushed at
+                            - code [ref=e3299]: 4b96e99
+                            - text: . Not merged.
+                          - heading "Closed (sorry-free)" [level=3] [ref=e3300]
+                          - table [ref=e3302]:
+                            - rowgroup [ref=e3303]:
+                              - 'row "Chain # Node Implementation" [ref=e3304]':
+                                - 'columnheader "Chain #" [ref=e3305]'
+                                - columnheader "Node" [ref=e3306]
+                                - columnheader "Implementation" [ref=e3307]
+                            - rowgroup [ref=e3308]:
+                              - row "1 cotangentFiberNorm ‖p.2‖ — operator norm on the cotangent fiber." [ref=e3309]:
+                                - cell "1" [ref=e3310]
+                                - cell "cotangentFiberNorm" [ref=e3311]:
+                                  - code [ref=e3312]: cotangentFiberNorm
+                                - cell "‖p.2‖ — operator norm on the cotangent fiber." [ref=e3313]:
+                                  - code [ref=e3314]: ‖p.2‖
+                                  - text: — operator norm on the cotangent fiber.
+                              - 'row "2 holomorphicSupNorm ⨆ x : X, cotangentFiberNormAt X x (ω.1 x)." [ref=e3315]':
+                                - cell "2" [ref=e3316]
+                                - cell "holomorphicSupNorm" [ref=e3317]:
+                                  - code [ref=e3318]: holomorphicSupNorm
+                                - 'cell "⨆ x : X, cotangentFiberNormAt X x (ω.1 x)." [ref=e3319]':
+                                  - code [ref=e3320]: "⨆ x : X, cotangentFiberNormAt X x (ω.1 x)"
+                                  - text: .
+                              - row "6 fd_from_riesz FiniteDimensional.of_isCompact_closedBall₀ ℂ hr h." [ref=e3321]:
+                                - cell "6" [ref=e3322]
+                                - cell "fd_from_riesz" [ref=e3323]:
+                                  - code [ref=e3324]: fd_from_riesz
+                                - cell "FiniteDimensional.of_isCompact_closedBall₀ ℂ hr h." [ref=e3325]:
+                                  - code [ref=e3326]: FiniteDimensional.of_isCompact_closedBall₀ ℂ hr h
+                                  - text: .
+                          - heading "Left as TODO + sorry" [level=3] [ref=e3327]
+                          - table [ref=e3329]:
+                            - rowgroup [ref=e3330]:
+                              - 'row "Chain # Node Why" [ref=e3331]':
+                                - 'columnheader "Chain #" [ref=e3332]'
+                                - columnheader "Node" [ref=e3333]
+                                - columnheader "Why" [ref=e3334]
+                            - rowgroup [ref=e3335]:
+                              - 'row "7 input_finite_dimensionality Depends on node 5 (hone_unit_ball_compact). TODO comment names the one-liner: exact fd_from_riesz one_pos (hone_unit_ball_compact X e _h_norm)." [ref=e3336]':
+                                - cell "7" [ref=e3337]
+                                - cell "input_finite_dimensionality" [ref=e3338]:
+                                  - code [ref=e3339]: input_finite_dimensionality
+                                - 'cell "Depends on node 5 (hone_unit_ball_compact). TODO comment names the one-liner: exact fd_from_riesz one_pos (hone_unit_ball_compact X e _h_norm)." [ref=e3340]':
+                                  - text: Depends on node 5 (
+                                  - code [ref=e3341]: hone_unit_ball_compact
+                                  - text: "). TODO comment names the one-liner:"
+                                  - code [ref=e3342]: exact fd_from_riesz one_pos (hone_unit_ball_compact X e _h_norm)
+                                  - text: .
+                              - row "8 fd_holomorphic_one_forms Transitively depends on node 5 via node 7. TODO comment lays out the 4-step plumbing through HolomorphicOneFormBanachData." [ref=e3343]:
+                                - cell "8" [ref=e3344]
+                                - cell "fd_holomorphic_one_forms" [ref=e3345]:
+                                  - code [ref=e3346]: fd_holomorphic_one_forms
+                                - cell "Transitively depends on node 5 via node 7. TODO comment lays out the 4-step plumbing through HolomorphicOneFormBanachData." [ref=e3347]:
+                                  - text: Transitively depends on node 5 via node 7. TODO comment lays out the 4-step plumbing through
+                                  - code [ref=e3348]: HolomorphicOneFormBanachData
+                                  - text: .
+                          - heading "Build status" [level=3] [ref=e3349]
+                          - list [ref=e3350]:
+                            - listitem [ref=e3351]:
+                              - code [ref=e3352]: lake build Jacobian.Blueprint
+                              - text: exit 0 (~9s warm).
+                            - listitem [ref=e3353]:
+                              - strong [ref=e3354]: "Sec02 sorries: 8 → 5"
+                              - text: (closed 3 of 8).
+                            - listitem [ref=e3355]:
+                              - text: "Total declaration-uses-sorry:"
+                              - strong [ref=e3356]: 15 → 12
+                              - text: (Sec01 unchanged at 7, Sec02 down to 5).
+                            - listitem [ref=e3357]: "Remaining sec02 sorries: ChartCoefficientBound (MEDIUM), MontelCompactness (HARD), HoneUnitBallCompact (MEDIUM), InputFiniteDimensionality (deferred), FdHolomorphicOneForms (deferred)."
+                          - heading "Branch URL" [level=3] [ref=e3358]
+                          - paragraph [ref=e3359]:
+                            - link "https://github.com/tangentstorm/JacobianChallenge/tree/claude/sec02-trivial-batch" [ref=e3360]:
+                              - /url: https://github.com/tangentstorm/JacobianChallenge/tree/claude/sec02-trivial-batch
+                          - paragraph [ref=e3361]: Standing by.
+                      - generic:
+                        - button "Copy message":
+                          - img
+                        - button "Pin as chapter":
+                          - img
+                        - generic "Apr 30, 2026, 6:42:12 PM": 11m ago
+                    - generic [ref=e3427]:
+                      - generic [ref=e3428]:
+                        - paragraph [ref=e3430]:
+                          - text: "Next standing-task: when you finish the sec02 trivial batch, do this scope-out for ALL remaining unproved blueprint dep-graph nodes (sec01, sec03–sec07, plus the dangling refs that still need labels) using the same TRIVIAL/SHORT/MEDIUM/HARD scale you used for sec02. ## Scope Every"
+                          - code [ref=e3431]: "\\label{...}"
+                          - text: in
+                          - code [ref=e3432]: tex/sections/0[1-7]-*.tex
+                          - text: and
+                          - code [ref=e3433]: tex/statements/*.tex
+                          - text: ", EXCLUDING: - Section labels ("
+                          - code [ref=e3434]: "\\label{sec:*}"
+                          - text: ) - Nodes that are already
+                          - code [ref=e3435]: \leanok
+                          - text: in the blueprint TeX (those are done) - Nodes whose
+                          - code [ref=e3436]: "\\lean{...}"
+                          - text: annotation points at a sorry-free production decl (those are done in spirit) That leaves the ones still backed by
+                          - code [ref=e3437]: sorry
+                          - text: somewhere in the project tree, plus the dangling-
+                          - code [ref=e3438]: "\\uses{}"
+                          - text: labels with no
+                          - code [ref=e3439]: "\\label{}"
+                          - text: block (per
+                          - code [ref=e3440]: ref/blueprint-audit.md
+                          - text: Table 2 —
+                          - code [ref=e3441]: def:abel-jacobi
+                          - text: ","
+                          - code [ref=e3442]: def:analytic-jacobian
+                          - text: ","
+                          - code [ref=e3443]: def:period-pairing
+                          - text: ","
+                          - code [ref=e3444]: thm:abel-jacobi-injective
+                          - text: ","
+                          - code [ref=e3445]: thm:fd-holomorphic-one-forms
+                          - text: ","
+                          - code [ref=e3446]: thm:genus-zero-classification
+                          - text: ","
+                          - code [ref=e3447]: thm:pushforward-pullback
+                          - text: ","
+                          - code [ref=e3448]: thm:push-pull-functoriality
+                          - text: ", plus the three additionally-discovered danglers"
+                          - code [ref=e3449]: def:analytic-genus
+                          - text: ","
+                          - code [ref=e3450]: thm:trace-pullback
+                          - text: ","
+                          - code [ref=e3451]: thm:period-lattice
+                          - text: "). ## Workflow 1. Wait for the 4 in-flight cloud workers (Worker M / Worker C / Worker H / sec02 trivial batch) to either finish or stabilize. Don't context-switch mid-task. (Hint: the trivial batch is YOUR current task.) 2. Cut a feature branch"
+                          - code [ref=e3452]: claude/scope-out-remaining-nodes
+                          - text: ". 3. For each remaining node, classify: - **TRIVIAL** (one-liner"
+                          - code [ref=e3453]: exact
+                          - text: /
+                          - code [ref=e3454]: apply
+                          - text: / direct Mathlib call) - **SHORT** (5–20 LOC, project plumbing, single helper) - **MEDIUM** (20–80 LOC, real proof structure, no major Mathlib gap) - **HARD** (80+ LOC, isolated cloud worker, OR a Mathlib-frontier blocker) - **ABSENT** (multi-thousand-line classical input genuinely missing from Mathlib v4.28; tag with the gap, e.g. "Hodge/de Rham", "Stokes on manifolds with boundary", "Riemann–Hurwitz", "Abel existence") For each ABSENT-tagged node, note the rough Mathlib gap; we treat those as "umbrella classical input" and don't try to formalize them in the worker pipeline. 4. Knock off any TRIVIAL ones yourself in this thread. For each, write the proof, build with the appropriate
+                          - code [ref=e3455]: lake build Jacobian.<Module>
+                          - text: "target, commit per node (\"scope-out: discharge"
+                          - code [ref=e3456]: <decl>
+                          - text: "\"). After ~5 such nodes, push the batch. 5. For SHORT/MEDIUM/HARD nodes: produce a single Markdown table at"
+                          - code [ref=e3457]: ref/scope-out.md
+                          - text: "with columns: -"
+                          - code [ref=e3458]: Label
+                          - text: (the blueprint
+                          - code [ref=e3459]: "\\label{...}"
+                          - text: ) -
+                          - code [ref=e3460]: Decl
+                          - text: (the Lean decl name, or
+                          - code [ref=e3461]: <missing>
+                          - text: if no stub yet) -
+                          - code [ref=e3462]: File
+                          - text: (the .lean file path, or
+                          - code [ref=e3463]: <missing>
+                          - text: ) -
+                          - code [ref=e3464]: Class
+                          - text: (TRIVIAL/SHORT/MEDIUM/HARD/ABSENT) -
+                          - code [ref=e3465]: Sketch
+                          - text: (one or two sentences with the recommended proof outline OR Mathlib gap) -
+                          - code [ref=e3466]: Strategy reviewer
+                          - text: "(blank for now; we'll fill in \"GPT\" / \"Grok\" later) 6. Push that branch when done. DO NOT merge to main. I'll review the table and feed the SHORT/MEDIUM/HARD rows to ChatGPT/Grok before assigning to cloud workers as those workers free up. ## Stop conditions - All remaining nodes classified, all TRIVIAL ones discharged, scope-out.md written, branch pushed: STOP and report. - You hit a node where you genuinely can't tell which class it falls into: tag it"
+                          - code [ref=e3467]: "?"
+                          - text: "in the table and explain why in the Sketch column. Don't guess. ## Hard rules (unchanged) 1. NO"
+                          - code [ref=e3468]: import Mathlib
+                          - text: . 2. NO new sorries — even when discharging TRIVIAL ones, no sorry-shaped placeholders. 3. Don't touch
+                          - code [ref=e3469]: Jacobian/Challenge.lean
+                          - text: . 4. After each TRIVIAL knock-off, build the relevant module and verify exit 0 before committing. This is a deliberately big scope-out task — could take a while. Pace yourself; commit incrementally so progress is visible if you hit your token cap. Stand by waiting for trivial-batch completion first.
+                        - button "Show more" [ref=e3470]: Show more
+                      - button "Copy message" [ref=e3482]:
+                        - img [ref=e3484]
+                    - button "Resumed session" [ref=e3476]:
+                      - generic [ref=e3477]: Resumed session
+                      - img [ref=e3479]
+                    - generic [ref=e2445]: 3m 45s
+                  - generic [ref=e1176]:
+                    - button:
+                      - img
+                    - generic [ref=e1178]:
+                      - generic [ref=e1179]:
+                        - button "#2 · Closed" [ref=e1180]:
+                          - img [ref=e1182]
+                        - generic [ref=e1184]:
+                          - button "main" [ref=e1185]: main
+                          - img [ref=e1187]
+                          - button "claude/design-jacobian-leftmost-chain-6kzCF" [ref=e1189]:
+                            - generic [ref=e1191]: claude/design-jacobian-leftmost-chain-6kzCF
+                            - img [ref=e1192]
+                      - button "427 additions, 94 deletions" [ref=e1194]:
+                        - generic [ref=e1196]:
+                          - generic [ref=e1197]: 427 additions, 94 deletions
+                          - generic [ref=e1198]:
+                            - generic [ref=e1199]: "+427"
+                            - generic [ref=e1200]: −94
+                      - button "CI" [ref=e1201]:
+                        - text: CI
+                        - img [ref=e1204]
+                      - button "View PR" [ref=e1206]: View PR
+                    - generic [ref=e1209]:
+                      - generic "Prompt" [active] [ref=e1211]:
+                        - paragraph [ref=e3486]: "Policy update: continuous integration. Merge clean cloud worker output to main as soon as it lands and builds, don't queue branches."
+                        - paragraph [ref=e3487]
+                        - paragraph [ref=e3488]: "Specifically: at the next checkpoint in your scope-out task, please:"
+                        - paragraph [ref=e3489]
+                        - paragraph [ref=e3490]: 1. Pause/checkpoint whatever scope-out work is in flight (commit-in-progress is fine — push it).
+                        - paragraph [ref=e3491]: "2. `git fetch origin && git checkout main && git reset --hard origin/main`"
+                        - paragraph [ref=e3492]: "3. `git merge --no-ff origin/claude/sec02-trivial-batch -m \"Merge claude/sec02-trivial-batch: discharge cotangent_fiber_norm, holomorphic_sup_norm, fd_from_riesz\"`"
+                        - paragraph [ref=e3493]: "4. `lake build Jacobian.Blueprint` — must exit 0, sorry count 12 (expected drop from 15 after the 3 closures land)."
+                        - paragraph [ref=e3494]: "5. `git push origin main`."
+                        - paragraph [ref=e3495]: "6. Then resume scope-out — `git checkout claude/scope-out-remaining-nodes` and continue. Rebase if needed: `git rebase main` (should be conflict-free since the trivial-batch closures are in `Jacobian/Blueprint/Sec02/*` which scope-out doesn't touch)."
+                        - paragraph [ref=e3496]
+                        - paragraph [ref=e3497]: "Going forward — make this your default behavior for any future cloud worker branches you're handling: as soon as a branch is verified clean, merge to main, push, then continue. Don't ask permission per merge; just do it. (Exception: if the build breaks after merge, abort the merge and report.)"
+                      - button "Stop" [ref=e3472]:
+                        - img [ref=e1216]
+                    - generic [ref=e1218]:
+                      - generic [ref=e1219]:
+                        - button "Accept edits" [ref=e1220]:
+                          - generic [ref=e1221]: Accept edits
+                        - button "Transcript view mode" [ref=e1222]:
+                          - img [ref=e1224]
+                        - button "Add" [ref=e1226]:
+                          - img [ref=e1228]
+                        - group "Dictation" [ref=e1230]:
+                          - button "Press and hold to record" [ref=e1231]:
+                            - img [ref=e1232]
+                          - button "Dictation settings" [ref=e1234]:
+                            - img [ref=e1235]
+                      - generic [ref=e1237]:
+                        - button "Opus 4.7 · High" [ref=e3363]:
+                          - generic [ref=e1240]:
+                            - generic [ref=e1241]: Opus 4.7
+                            - generic [ref=e1242]: · High
+                        - 'button "Usage: plan 49%" [ref=e3076]':
+                          - img [ref=e1245]
+              - generic [ref=e1248]: Arrow keys move the tile. Perpendicular arrows preview a split; press Enter to commit or Escape to cancel.
+              - status [ref=e1249]
+            - button "Views" [ref=e1251]:
+              - img [ref=e1253]
+              - img [ref=e1255]
+    - region "Notifications (F8)":
+      - list
+  - iframe [ref=e1257]:
+    
