@@ -159,6 +159,38 @@ theorem WordEq.trans {g : ℕ} {a b c : EdgeWord g}
     (hab : WordEq a b) (hbc : WordEq b c) : WordEq a c :=
   Relation.ReflTransGen.trans hab hbc
 
+/-- Handle swap: a full handle block `[a i, b i, aInv i, bInv i]` may
+be exchanged with any two adjacent letters that are independent of `i`.
+This is one of the two essential moves (the other being InverseCancel)
+in the classical proof that any orientable edge word reduces to the
+standard form. -/
+inductive HandleSwap : {g : ℕ} → EdgeWord g → EdgeWord g → Prop where
+  | move {g : ℕ} (i : Fin g) (xs ys : List (Letter g))
+      (h : List (Letter g)) (_hh : h = [Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i]) :
+      HandleSwap (xs ++ h ++ ys) (ys ++ h ++ xs)
+
+/-- The combined word equivalence: closed under both `InverseCancel`
+and `HandleSwap`. -/
+inductive TietzeStep : {g : ℕ} → EdgeWord g → EdgeWord g → Prop where
+  | cancel {g : ℕ} {w v : EdgeWord g} (h : InverseCancel w v) : TietzeStep w v
+  | swap   {g : ℕ} {w v : EdgeWord g} (h : HandleSwap w v) : TietzeStep w v
+
+/-- Word equivalence under the full Tietze move set. -/
+def TietzeEq {g : ℕ} : EdgeWord g → EdgeWord g → Prop :=
+  Relation.ReflTransGen TietzeStep
+
+theorem TietzeEq.refl {g : ℕ} (w : EdgeWord g) : TietzeEq w w :=
+  Relation.ReflTransGen.refl
+
+theorem TietzeEq.trans {g : ℕ} {a b c : EdgeWord g}
+    (hab : TietzeEq a b) (hbc : TietzeEq b c) : TietzeEq a c :=
+  Relation.ReflTransGen.trans hab hbc
+
+/-- Single-step embedding of `WordEq` (cancellations only) into `TietzeEq`. -/
+theorem WordEq.toTietzeEq {g : ℕ} {w v : EdgeWord g} (h : WordEq w v) :
+    TietzeEq w v :=
+  h.mono (fun _ _ hc => TietzeStep.cancel hc)
+
 end EdgeWord
 
 end JacobianChallenge.Periods
