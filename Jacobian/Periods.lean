@@ -170,6 +170,21 @@ import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.Periods.BasisAlignedPeriodPairing
 import Jacobian.Periods.BasisAlignedAnalyticJacobianEquiv
 import Jacobian.Periods.PeriodLattice
+import Jacobian.Periods.Polygon4g
+import Jacobian.Periods.Orientable
+import Jacobian.Periods.SmoothRealStructure
+import Jacobian.Periods.ComplexManifoldOrientable
+import Jacobian.Periods.TopologicalGenus
+import Jacobian.Periods.TopologicalGenusInvariance
+import Jacobian.Periods.SurfaceClassification
+-- `Jacobian.Periods.AnalyticGenusEqTopologicalGenus` not re-exported here
+-- because it carries a Stage B umbrella theorem
+-- `JacobianChallenge.Periods.analyticGenus_eq_topologicalGenus` whose name
+-- collides with the existing parallel theorem of the same fully-qualified
+-- name in `PeriodFunctional.lean` (which is imported above). Both prove
+-- the same statement under different hypothesis sets; consolidation is
+-- a follow-up refinement. Import `AnalyticGenusEqTopologicalGenus`
+-- directly where needed (e.g. from `Jacobian/Blueprint/Sec03/PolygonalModel.lean`).
 
 /-!
 # Periods infrastructure

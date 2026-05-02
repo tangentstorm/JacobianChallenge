@@ -2,7 +2,10 @@ import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.Periods.IntegralOneCycle
+import Jacobian.Periods.TopologicalGenus
 import Jacobian.Periods.PeriodSpanHelpers
+import Jacobian.Periods.HodgeDeRham
+import Jacobian.Periods.H1EvenBasisViaSurfaceClassification
 import Mathlib.Algebra.Module.ZLattice.Basic
 
 /-!
@@ -69,13 +72,15 @@ homology, surface classification, de Rham theorem on manifolds,
 Hodge decomposition, Dolbeault, Serre duality. All ABSENT in
 v4.28.0. -/
 
-/-- **Sub-obligation 1a (definition).** The topological genus of a
-compact connected surface, `rank_ℤ H₁(X, ℤ) / 2`. Names the
-topological invariant the analytic genus must equal. -/
-noncomputable def topologicalGenus
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] : ℕ :=
-  Module.finrank ℤ (IntegralOneCycle X) / 2
+/-! **Sub-obligation 1a (definition).** The topological genus of a
+compact connected surface, `rank_ℤ H₁(X, ℤ) / 2`, is the canonical
+`JacobianChallenge.Periods.topologicalGenus` from
+`Jacobian.Periods.TopologicalGenus`, re-exported through the import
+above. The previously-local duplicate definition was removed in
+favour of the canonical one (Round 26 refinement); the canonical
+definition is `Module.finrank ℤ (singularH1 X) / 2`, where
+`singularH1 X = (IntegralOneCycle X : Type)` definitionally, so the
+two formulations are interchangeable in proofs. -/
 
 /-- **Helper for Sub-obligation 1b.** A compact connected Riemann surface
 has `H₁(X, ℤ) ≅ ℤ^(2g)` for some `g : ℕ`. This packages the deep
@@ -85,13 +90,17 @@ sorry-ed witness: the existence of *some* genus `g` and a ℤ-basis of
 compact surfaces, cellular homology, surface classification theorem —
 all missing in Mathlib v4.28.0.
 
-(Aristotle 0d7ce5da named-helper extraction.) -/
+(Aristotle 0d7ce5da named-helper extraction; Round 56 refines this
+into `h1_has_even_basis_via_surface_classification`, which delegates
+to the Stage A surface-classification API + Stage B1/B2 bridges. The
+remaining sorries live in the Stage A leaves, not in this Stage B
+file.) -/
 lemma h1_has_even_basis
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    ∃ g : ℕ, Nonempty (Module.Basis (Fin (2 * g)) ℤ (IntegralOneCycle X)) := by
-  sorry
+    ∃ g : ℕ, Nonempty (Module.Basis (Fin (2 * g)) ℤ (IntegralOneCycle X)) :=
+  h1_has_even_basis_via_surface_classification X
 
 /-- **Sub-obligation 1b.** `H₁(X, ℤ)` of a compact connected
 Riemann surface of topological genus `g_top` is free of rank
@@ -110,7 +119,7 @@ theorem h1_free_of_compact_surface
   have hfr : Module.finrank ℤ (IntegralOneCycle X) = 2 * g := by
     rw [Module.finrank_eq_card_basis b, Fintype.card_fin]
   have htg : topologicalGenus X = g := by
-    unfold topologicalGenus
+    show Module.finrank ℤ (IntegralOneCycle X) / 2 = g
     omega
   exact ⟨b.reindex (finCongr (by omega))⟩
 
@@ -125,13 +134,15 @@ Mathlib v4.28.0:
    giving `dim_ℂ H¹_dR = 2 · dim_ℂ H⁰(Ω¹)`.
 3. **Serre duality** (used in step 2) — `H¹(X, 𝒪) ≅ conj H⁰(X, Ω¹)`.
 
-(Aristotle 2d93b076 named-helper extraction.) -/
+(Aristotle 2d93b076 named-helper extraction; Round 55 split into
+`HodgeDeRham.deRham_singularH1_dim_witness` (de Rham step) and
+`HodgeDeRham.hodge_decomposition_singularH1_rank` (Hodge step).) -/
 theorem hodge_deRham_rank_eq
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) := by
-  sorry
+    2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) :=
+  hodge_deRham_rank_eq_via_classical_route X
 
 /-- **Sub-obligation 2.** The analytic genus equals the topological
 genus for a compact connected Riemann surface. Assembly: applies
@@ -143,7 +154,7 @@ theorem analyticGenus_eq_topologicalGenus
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     analyticGenus ℂ X = topologicalGenus X := by
-  unfold topologicalGenus
+  show analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) / 2
   have h := hodge_deRham_rank_eq X
   omega
 

@@ -2,7 +2,7 @@
 Copyright (c) 2025 Jacobian Challenge contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 -/
-import Mathlib.AlgebraicTopology.SingularHomology.Basic
+import Jacobian.Periods.IntegralOneCycle
 import Mathlib.Algebra.Category.ModuleCat.Colimits
 import Mathlib.Algebra.Category.ModuleCat.Abelian
 import Mathlib.LinearAlgebra.Dimension.Finrank
@@ -20,7 +20,10 @@ but the definition is still well-typed.
 ## Main definitions
 
 * `JacobianChallenge.Periods.singularH1` — the first singular homology H₁(M; ℤ)
-  as a type carrying `AddCommGroup` and `Module ℤ` instances.
+  as a type carrying `AddCommGroup` and `Module ℤ` instances. By design
+  this is just `IntegralOneCycle M` re-exposed as a `Type` so the canonical
+  `topologicalGenus` here unifies definitionally with the duplicate
+  declaration in `Jacobian.Periods.PeriodFunctional`.
 * `JacobianChallenge.Periods.topologicalGenus` — `Module.finrank ℤ H₁(M; ℤ) / 2`.
 -/
 
@@ -30,13 +33,14 @@ namespace JacobianChallenge.Periods
 
 open AlgebraicTopology CategoryTheory
 
-/-- The first singular homology of `M` with ℤ-coefficients, viewed as a ℤ-module.
-
-This extracts the carrier of the `ModuleCat ℤ` object produced by
-`singularHomologyFunctor (ModuleCat ℤ) 1` applied to `TopCat.of M`. -/
+/-- The first singular homology of `M` with ℤ-coefficients, viewed as a
+ℤ-module type. Defined as the coercion of `IntegralOneCycle M` (a
+`ModuleCat ℤ` object) to its underlying `Type` — this makes
+`singularH1 M = IntegralOneCycle M` reducible by `abbrev`, so the two
+parallel `topologicalGenus` formulations across the project unify
+definitionally. -/
 abbrev singularH1 (M : Type) [TopologicalSpace M] : Type :=
-  ((singularHomologyFunctor (ModuleCat.{0} ℤ) 1).obj
-    (ModuleCat.of ℤ ℤ)).obj (TopCat.of M)
+  (IntegralOneCycle M : Type)
 
 instance singularH1.addCommGroup (M : Type) [TopologicalSpace M] :
     AddCommGroup (singularH1 M) :=
