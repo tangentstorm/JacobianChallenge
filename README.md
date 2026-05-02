@@ -25,15 +25,22 @@ local identity principle (manifold)          ████████  `IsHolomo
 local-constant ⇒ global-constant (connected) ████████  `IsHolomorphic.eq_const_of_eventuallyEq`
 finite fibres of nonconstant holomorphic     ████████  `isHolomorphic_finite_fiber`
 mapAnalyticOrderAt_pos (positivity)          ████████  via order ≠ 0 (vanishes) + ≠ ⊤ (connected)
-leaf 8 (BranchedCoverData constructor)       ███████░  3 of 4 obligations sorry-free:
-                                                       ramificationIndex (= mapAnalyticOrderAt),
-                                                       ramificationIndex_pos, finite_fiber.
-                                                       Single remaining sorry:
-weightedFiberCard_const (degree well-def)    ░░░░░░░░  the genuinely hard analytic gap;
-                                                       needs branch-locus finiteness + local
-                                                       triviality off branch values + a
-                                                       continuity argument across branch values
+leaf 8 (BranchedCoverData constructor)       ████████  sorry-free against four sub-leaves
+                                                       in `Sec02/WeightedFiberCardConst.lean`:
+sub-leaf A: branch locus finite              ░░░░░░░░  `mapAnalyticOrderAt_ramified_finite`
+sub-leaf B: local inj at unramified          ░░░░░░░░  `IsHolomorphicAt.exists_local_inj_of_unramified`
+sub-leaf C: local k-fold at ramified         ░░░░░░░░  `IsHolomorphicAt.exists_local_kfold_of_ramified`
+sub-leaf D: weighted-sum locally constant    ░░░░░░░░  `isHolomorphic_weightedFiberSum_isLocallyConstant`
+final assembly (sub-leaf D + Y preconn)      ████████  `isHolomorphic_weightedFiberSum_const`
+                                                       sorry-free; satisfies leaf 8's
+                                                       `weightedFiberCard_const` field.
 ```
+
+The four sub-leaves are individually scoped: A is closed-discrete +
+compact ⇒ finite; B is the analytic inverse function theorem (exists
+in Mathlib) plus chart transport; C is the local power-series form
+`f(t) = t^k · g(t)` plus a holomorphic `k`-th root substitution; D
+combines B and C with finite-fibre + T2 disjoint-neighborhoods.
 
 Note: Mathlib v4.28.0 *does* have `analyticOrderNatAt`, isolated zeros,
 and the open-mapping theorem for analytic maps in
