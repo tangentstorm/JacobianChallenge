@@ -12,7 +12,46 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
-## Live Status (2026-04-29 17:01 EDT)
+## Live Status (2026-05-02, roadmap-driven saturation tick)
+
+Roadmap-driven saturation wave per `ref/plans/roadmap.org`. 14 packets
+submitted across W1 P1/P2/P3; 15th rejected with "too many requests"
+(cap hit). 1 pre-existing packet (`f74d0ed8`) carries over.
+
+**Submitted this tick (14):**
+
+| ID | File | Target |
+|---|---|---|
+| `2799e6e5` | HolomorphicForms/GenusZeroClassification.lean | line 442 (sub-obligation 1) |
+| `0366d364` | HolomorphicForms/GenusZeroClassification.lean | line 494 (sub-obligation 2) |
+| `ce81878d` | HolomorphicForms/GenusZeroClassification.lean | line 886 (subsingleton) |
+| `1c513243` | Periods/PullbackNaturality.lean | line 139 `periodPairing_pullbackFormsBundledLM` |
+| `c42f5c52` | Periods/PullbackNaturality.lean | line 239 `pathIntegralViaCover_pullbackFormsBundledLM` |
+| `78190419` | HolomorphicForms/CompactRiemannSurface.lean | line 161 (fiberNorm continuity) |
+| `f98d8709` | HolomorphicForms/CompactRiemannSurface.lean | line 229 (Cauchy completeness) |
+| `ea5f8d3c` | HolomorphicForms/CompactRiemannSurface.lean | line 656 (Montel closed-ball totally bounded) |
+| `bdaae2fc` | Periods/PeriodFunctional.lean | line 260 `hodge_form_riemannBilinear` |
+| `574477c0` | Periods/PeriodFunctional.lean | line 275 `hodge_form_posDef` |
+| `fff296dc` | Periods/PeriodFunctional.lean | line 306 `period_functionals_via_hodge` |
+| `9d200ee7` | HolomorphicForms/CanonicalDivisor.lean | line 101 (canonical degree = 2g - 2) |
+| `6519d1a1` | HolomorphicForms/EulerCharLineBundle.lean | line 123 (RR / Euler char) |
+| `3f20f469` | HolomorphicForms/RiemannRochHighDegree.lean | line 83 (high-degree RR) |
+
+**Skipped from this wave (gated):** `analyticOfCurve_injective`
+(AbelJacobi line 280 — needs cloud-Claude scoping pass per
+`ref/plans/roadmap.org`); the Stage-A-blocked sorries in PeriodFunctional
+(`h1_has_even_basis`, `h1_free`, `analyticGenus_eq_topologicalGenus`,
+`periodSubgroup_eq_zspan_of_basis`); SerreDualityRS line 139 (rejected at
+the cap — retry next tick).
+
+Many of the deeper frontier-sorries (Hodge bilinear/positivity, Serre
+duality, RR, Euler char) are likely BLOCKER returns; per memory the
+BLOCKER-only diffs route to brainstorm rather than integrate. The
+attackable subset is GenusZeroClassification 442/494/886, the two
+PullbackNaturality cycle/path naturality lemmas, and the three
+CompactRiemannSurface fiberNorm/completeness/Montel sub-steps.
+
+## Live Status (2026-04-29 17:01 EDT, prior tick — kept for context)
 
 - **ref/PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
 - **Open production sorries:** 17 (unchanged).
