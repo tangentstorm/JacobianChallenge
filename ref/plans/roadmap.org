@@ -493,15 +493,110 @@ Each umbrella ~Jacobian/<Layer>.lean~ should re-export exactly the
 production modules currently in use. Drop any imports that no longer
 resolve to a real file or that no consumer touches.
 
+* mathlib enhancements (W6) [/]                                       :mathlib:upstream:
+
+This workstream tracks proposed Mathlib upstream contributions —
+universe-polymorphism gaps, missing instances, and infrastructure holes
+that block kernel-level goals from sealing.
+
+These are *type-theoretic plumbing items*, not mathematical content.
+Lean's universe hierarchy exists to avoid Russell's paradox without
+ZFC; classical mathematicians (Jacobi included) worked in a single
+Grothendieck universe and never thought about whether `HasCoproducts`
+is polymorphic over `w`. The items here are gaps in how Mathlib has
+*proven its instances within the universe hierarchy*, not gaps in the
+mathematics. Closing them benefits the whole Mathlib ecosystem, not
+just this project.
+
+Status of each item: keep "consumer" pointer fresh so when the
+upstream lands the project knows where to thread the new annotation.
+
+** TODO [#B] [ ] HasCoproducts.{u} (ModuleCat ℤ) — universe-polymorphic instance :upstream:cloud:
+:PROPERTIES:
+:GAP:         Mathlib v4.28.0 ships only HasCoproducts.{0} (ModuleCat ℤ)
+:CONSUMER:    JacobianChallenge.Periods.IntegralOneCycle (forces W2 Option B)
+:LOCATION:    likely Mathlib/Algebra/Category/ModuleCat/Colimits.lean (or nearby)
+:UPSTREAM:    Mathlib PR
+:GATES:       W2 Option B (universe parity for Solution.Jacobian)
+:END:
+
+The class `HasCoproducts` and the type `ModuleCat` are already
+universe-polymorphic in Mathlib. The gap is solely that the *instance*
+`HasCoproducts.{0} (ModuleCat ℤ)` has only been proven at universe 0.
+
+Investigation steps before committing to a PR:
+
+1. Locate the existing `HasCoproducts.{0} (ModuleCat ℤ)` instance and
+   its proof in Mathlib (search for `instHasCoproductsModuleCat` or
+   similar; check `Mathlib/Algebra/Category/ModuleCat/`).
+2. Read the proof. Identify whether it uses universe-0-specific tricks
+   (small-vs-large category constructions, ULift juggling that
+   pre-computes at Type 0, etc.).
+3. Try threading `universe u` through. If it goes through with minor
+   tweaks → small Mathlib PR.
+4. If it requires substantive generalization (small-vs-large category
+   cleanup, new colimit infrastructure) → document obstruction here
+   and route W2 to Option C (ULift bridge) as the practical path.
+
+**Consumer threading note** (when upstream lands): the chain
+~IntegralOneCycle → periodPairing → periodSubgroup →
+basisAlignedPeriodSubgroup → periodFullComplexLattice →
+Solution.Jacobian~ each currently has explicit `(X : Type)`. After the
+Mathlib PR merges and the pinned commit bumps, walk each declaration
+in this chain and replace `(X : Type)` with `(X : Type u)` where the
+universe variable threads through cleanly.
+
+#+BEGIN_SRC text
+[CLOUD CLAUDE CODE PROMPT — investigation only, no PR yet]
+Project: C:\ver\JacobianChallenge (Lean 4 + Mathlib v4.28.0).
+Read-only investigation. No code edits in this project.
+
+Goal: assess whether the Mathlib v4.28.0 instance
+`HasCoproducts.{0} (ModuleCat ℤ)` (used by
+`AlgebraicTopology.singularHomologyFunctor`) can be generalized to
+`HasCoproducts.{u} (ModuleCat ℤ)` for arbitrary `u`, with a small
+upstream-able patch.
+
+Steps:
+1. Locate the instance and its proof in the local Mathlib checkout
+   (look in `Mathlib/Algebra/Category/ModuleCat/Colimits.lean`,
+   `Mathlib/Algebra/Category/ModuleCat/Limits.lean`, and adjacent files).
+2. Read the proof. Note any universe-0-specific tricks (e.g. small
+   set-of-objects assumptions, ULift normalization, `AddCommGroup` of a
+   specific universe).
+3. Locate downstream consumers in Mathlib that use the instance —
+   estimate whether universe-poly variant would conflict with existing
+   typeclass resolution.
+4. Output: a short report at ref/plans/mathlib-hascoproducts-report.org
+   with (a) instance location and signature, (b) proof obstruction
+   summary, (c) verdict: TRACTABLE (sketch the PR shape),
+   COMPLEX (estimate scope), or BLOCKED (explain why no PR is feasible
+   in v4.28.0).
+
+Do NOT modify any project files. Do NOT modify any Mathlib files. The
+deliverable is a single org report.
+#+END_SRC
+
+** Future entries (placeholder)
+
+Other Mathlib v4.28.0 gaps documented in
+~Jacobian/WorkPackets/Inventory.md~ (quotient manifolds by discrete
+group actions, differential forms on manifolds, path integration on
+manifolds, surface-classification → cellular homology of compact
+surfaces) are candidate W6 entries if they reach the "we'd PR Mathlib
+to close this" decision threshold. Most are deeper than the
+HasCoproducts case and currently out-of-scope, but file new TODOs here
+as the project's needs sharpen.
+
 * Phasing & Sequencing
 
-| Phase | Workstreams           | Parallelism                          |
-|-------+-----------------------+--------------------------------------|
-| α     | W3 catalog, W4 B, W5  | All low-risk; do alongside ticks     |
-| β     | W1 P1, W1 P2, W4 C    | Aristotle wave + cloud-Claude split  |
-| γ     | W1 P3, W4 D           | Aristotle full queue (cap 15)        |
-| δ     | W1 P4 (Stage A)       | Plan first → implement; long pole    |
-| ε     | W2 universe parity    | Calm-tree refactor                   |
+| Phase | Workstreams                | Parallelism                          |
+|-------+----------------------------+--------------------------------------|
+| α     | W3 catalog, W4 B, W5, W6 investigation | All low-risk; do alongside ticks |
+| β     | W1 P1, W1 P2, W4 C         | Aristotle wave + cloud-Claude split  |
+| γ     | W1 P3, W4 D                | Aristotle full queue (cap 15)        |
+| δ     | W1 P4 (Stage A)            | Plan first → implement; long pole    |
+| ε     | W2 universe parity (option) | Gated on W6 outcome or Option C decision |
 | ζ     | W3 final delete, W4 \leanok sweep, W5 finalize | hygiene |
 
 * Verification (Definition of Done) [/]
