@@ -458,6 +458,16 @@ For an invertible sheaf \(\mathcal{L}\) and the canonical sheaf \(K\),
 \[
   H^{1}(X,\mathcal{L})\cong H^{0}(X,K\otimes\mathcal{L}^{-1})^{\vee}.
 \]
+\depends{Mathlib v4.28.0 has scheme-level sheaf cohomology but not
+the Riemann-surface invertible-sheaf / canonical-bundle / duality
+package needed here. The project ships a top-down decomposition of
+the proof tree under \code{Jacobian/HolomorphicForms/Serre/}
+(${\sim}30$ files: structure / cotangent / tensor presheaves and
+sheaves, Dolbeault, harmonic forms, residue map, trace map,
+\(L^2\) and Hodge pairings, cup-product / Yoneda, dualizing sheaf,
+non-degeneracy, line-bundle Serre, Riemann--Roch corollaries) plus
+a parallel bottom-up sketch in \code{Jacobian/StageB/SerreDuality.lean}.
+All sub-leaves currently sorry.}
 \lean{JacobianChallenge.HolomorphicForms.serre_duality_rs}
 \notready
 \end{theorem}
