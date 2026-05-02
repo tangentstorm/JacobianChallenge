@@ -386,14 +386,14 @@ closed disk (since `SideRel 0` reduces to equality — `SideGen 0` has
 no constructors), hence contractible, hence its singular `H₁`
 vanishes.
 
-Body: combine `polygon4g_zero_homeo_diskC`,
-`singularH1_finrank_homeo_invariant`, and
-`singularH1_diskC_finrank_eq_zero`. -/
+Body: direct corollary of the
+`polygon4g_zero_singularH1_subsingleton` instance via
+`Module.finrank_zero_of_subsingleton`. The earlier route through
+`polygon4g_zero_homeo_diskC` + `singularH1_finrank_homeo_invariant`
++ `singularH1_diskC_finrank_eq_zero` still composes to the same thing. -/
 theorem singularH1_polygon4g_zero_finrank :
-    Module.finrank ℤ (singularH1 (Polygon4g 0)) = 0 := by
-  obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
-  rw [singularH1_finrank_homeo_invariant h]
-  exact singularH1_diskC_finrank_eq_zero
+    Module.finrank ℤ (singularH1 (Polygon4g 0)) = 0 :=
+  Module.finrank_zero_of_subsingleton
 
 /-- **Frontier leaf (genus ≥ 1 polygon H₁ as basis).** The first
 singular homology of the standard `4(g+1)`-gon admits a ℤ-basis
