@@ -78,22 +78,28 @@ LEGEND_REPLACE = re.compile(
 INJECTED_STYLE = """
 <style id="depgraph-extras-style">
 /* Compact legend layout — fit the page without scrolling. */
+#Legend { font-size: 0.78em; }
+#Legend #legend_title { font-size: 1.05em; }
+#Legend dl.legend {
+  margin-top: 0.4em;
+}
 #Legend dl.legend dt {
-  margin-top: 0.35em;
+  margin-top: 0.25em;
   font-weight: 600;
+  line-height: 1.2;
 }
 #Legend dl.legend dd {
-  margin: 0 0 0 1.6em;
-  font-size: 0.92em;
-  line-height: 1.35;
+  margin: 0 0 0 1.4em;
+  line-height: 1.25;
+  color: #333;
 }
 #Legend dl.legend dt::after { content: none; }
 #Legend dl.legend dt::before {
   content: "";
   display: inline-block;
-  width: 1.1em;
-  height: 0.85em;
-  margin-right: 0.45em;
+  width: 1em;
+  height: 0.75em;
+  margin-right: 0.4em;
   vertical-align: -2px;
   box-sizing: border-box;
 }
