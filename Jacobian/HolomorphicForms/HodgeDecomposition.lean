@@ -1,6 +1,8 @@
 import Jacobian.HolomorphicForms.HodgeStarRS
 import Jacobian.HolomorphicForms.AntiHolomorphicOneForm
 import Jacobian.HolomorphicForms.DeRhamCohomology
+import Jacobian.HolomorphicForms.HodgeProjection
+import Jacobian.HolomorphicForms.RealComplexDeRham
 import Jacobian.HolomorphicForms.AnalyticGenus
 
 /-!
@@ -62,8 +64,8 @@ theorem complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    complexDimDeRhamH1ℂ X = analyticHarmonicGenus X := by
-  sorry
+    complexDimDeRhamH1ℂ X = analyticHarmonicGenus X :=
+  complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus_via_cocycle X
 
 /-- **Sorry-free arithmetic.** From the conjugation isomorphism and
 the Hodge harmonic decomposition,

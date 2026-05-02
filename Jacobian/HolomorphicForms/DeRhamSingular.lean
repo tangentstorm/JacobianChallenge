@@ -1,5 +1,9 @@
 import Jacobian.HolomorphicForms.DeRhamCohomology
+import Jacobian.HolomorphicForms.RealSingularH1
+import Jacobian.HolomorphicForms.DeRhamComparisonMap
 import Jacobian.Periods.IntegralOneCycle
+import Jacobian.Periods.RealHomologyTensor
+import Mathlib.Geometry.Manifold.IsManifold.Basic
 
 /-!
 # De Rham theorem and singular bridge (frontier API)
@@ -51,15 +55,6 @@ open JacobianChallenge.Periods
 
 open scoped Manifold
 
-/-- **Frontier ℕ-valued opaque.** Real dimension of
-`Hom_ℤ(H₁(X, ℤ), ℝ)`, the singular cohomology `H¹_sing(X, ℝ)` of a
-topological space `X` (in degree 1, free part by UCT). Used as the
-intermediate ℕ-valued bridge between de Rham (analytic) and integer
-homology (topological).  Strictly project-local — no Mathlib counterpart
-exists in v4.28.0. -/
-noncomputable opaque realDimSingularH1
-    (X : Type) [TopologicalSpace X] : ℕ
-
 /-- **Frontier theorem (sorry, de Rham theorem in degree 1).**
 `dim_ℝ H¹_dR(X, ℝ) = dim_ℝ H¹_sing(X, ℝ)` for a compact smooth manifold
 `X`.
@@ -79,8 +74,8 @@ theorem realDim_deRhamH1_eq_realDim_singularH1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    realDimDeRhamH1 X = realDimSingularH1 X := by
-  sorry
+    realDimDeRhamH1 X = realDimSingularH1 X :=
+  realDimDeRhamH1_eq_realDimSingularH1_via_cocycle X
 
 /-- **Frontier theorem (sorry).** Algebraic fact: for `M` a finitely
 generated ℤ-module,
@@ -103,8 +98,8 @@ theorem realDim_singularH1_eq_finrank_intH1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    realDimSingularH1 X = Module.finrank ℤ (IntegralOneCycle X) := by
-  sorry
+    realDimSingularH1 X = Module.finrank ℤ (IntegralOneCycle X) :=
+  realDim_singularH1_eq_finrank_intH1_via_uct X
 
 /-- **Assembled (sorry-free).** De Rham–singular bridge:
 `dim_ℝ H¹_dR(X, ℝ) = rank_ℤ H₁(X, ℤ)` for a compact connected Riemann
