@@ -49,12 +49,13 @@ are in `MeromorphicFunctionType` (whose richer "field of meromorphic
 germs" structure is still pending) and `vanishingOrder`'s pole-aware
 extension. -/
 noncomputable def principalDivisor
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) : Divisor X := by
   classical
   by_cases hf : (∀ q : X, MeromorphicAtX (underlyingC f) q) ∧
-                (∀ q : X, vanishingOrder X q (underlyingC f) ≠ ⊤)
+                (∃ p : X, vanishingOrder X p (underlyingC f) ≠ ⊤)
   · exact Finsupp.onFinset
       (divisor_finite_support X (underlyingC f) hf.1 hf.2).toFinset
       (fun p => (vanishingOrder X p (underlyingC f)).untopD 0)
