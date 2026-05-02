@@ -25,18 +25,18 @@ import sys
 from pathlib import Path
 
 # Labels that should get the RED-BORDER "major classical-input" highlight.
-# These are the umbrellas that hide multi-month formalization gaps relative
-# to current Mathlib.
+# Criteria: huge classical-analysis statement AND not in current Mathlib AND
+# the project has not stubbed a Lean declaration for it (i.e. \notready).
+# `\leanok` umbrellas like `input:riemann-roch`, `input:abel-theorem`,
+# `input:divisors`, `input:finite-dimensionality`, `input:riemann-bilinear`,
+# `input:degree-one-isomorphism`, and `thm:stokes-on-rs-with-boundary` carry
+# at least a project-side Lean stub so they get the regular `\leanok` green
+# border, not the red one — even though their *proofs* are still sorry-bound.
 BIG_UMBRELLAS = [
-    "input:divisors",
-    "input:riemann-roch",
-    "input:abel-theorem",
-    "input:riemann-bilinear",
-    "input:degree-one-isomorphism",
-    "input:finite-dimensionality",
     "input:hodge-deRham",
     "input:rado-triangulation",
-    "thm:stokes-on-rs-with-boundary",
+    "thm:polygonal-model",
+    "thm:serre-duality-rs",
 ]
 
 MARKER = "<!-- DEPGRAPH-EXTRAS-INJECTED -->"
