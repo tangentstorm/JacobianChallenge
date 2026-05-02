@@ -255,25 +255,40 @@ theorem polygon4g_zero_contractibleSpace : ContractibleSpace (Polygon4g 0) := by
   obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
   exact h.contractibleSpace
 
-/-- **Frontier leaf (singular `H₁` of a contractible space is subsingleton).**
-Homotopy invariance of singular homology in degree `n ≥ 1` for
-contractible spaces. Mathlib v4.28.0 gap — the
-`AlgebraicTopology.SingularHomology` directory currently contains only
-`Basic.lean` with `isZero_singularHomologyFunctor_of_totallyDisconnectedSpace`
-and no homotopy-invariance theorem.
+/-- **Sub-sub-leaf (singular `H₁` of `Unit` is subsingleton).** `Unit`
+is totally disconnected, hence by Mathlib's
+`isZero_singularHomologyFunctor_of_totallyDisconnectedSpace` (at
+`n = 1`) the singular `H₁` is the zero `ModuleCat ℤ` object, whence
+subsingleton via `subsingleton_of_isZero`. -/
+theorem singularH1_unit_subsingleton :
+    Subsingleton (singularH1 Unit) := by
+  sorry
 
-Discharge plan once homotopy invariance lands:
-  * Lift `[ContractibleSpace X]` to a homotopy equivalence with `Unit`.
-  * Apply functoriality of `singularHomologyFunctor` plus homotopy
-    invariance to transport the vanishing of `H₁(Unit)` (an instance
-    of `isZero_singularHomologyFunctor_of_totallyDisconnectedSpace`
-    at `n = 1`) to `H₁(X)`.
-  * Subsingleton follows because the zero `ModuleCat ℤ` object is
-    subsingleton. -/
+/-- **Frontier leaf (singular `H₁` is invariant under homotopy
+equivalence to `Unit`).** A homotopy equivalence `X ≃ₕ Unit` induces
+a ℤ-linear isomorphism on `singularH1`. Mathlib v4.28.0 gap — the
+`AlgebraicTopology.SingularHomology` directory has no homotopy-invariance
+theorem for `singularHomologyFunctor`. Once it lands, the discharge
+is functoriality of the functor on the homotopy equivalence.
+
+This is the `Unit`-shaped instance of the more general homotopy-invariance
+statement; once present in Mathlib, the contractibility leaf
+`singularH1_subsingleton_of_contractibleSpace` is a one-line
+consequence. -/
+theorem singularH1_subsingleton_of_homotopyEquivUnit
+    {X : Type} [TopologicalSpace X] (_h : ContinuousMap.HomotopyEquiv X Unit) :
+    Subsingleton (singularH1 X) := by
+  sorry
+
+/-- **Sub-sub-leaf (singular H₁ of a contractible space is subsingleton).**
+Body: extract the homotopy equivalence with `Unit` from
+`ContractibleSpace.hequiv_unit`, then apply
+`singularH1_subsingleton_of_homotopyEquivUnit`. -/
 theorem singularH1_subsingleton_of_contractibleSpace
     {X : Type} [TopologicalSpace X] [ContractibleSpace X] :
     Subsingleton (singularH1 X) := by
-  sorry
+  obtain ⟨h⟩ := ContractibleSpace.hequiv_unit X
+  exact singularH1_subsingleton_of_homotopyEquivUnit h
 
 /-- **Sub-sub-sub-leaf (singular H₁ of the disk is subsingleton).**
 Body: `DiskC` is `ContractibleSpace` (real proof, instance above) and
