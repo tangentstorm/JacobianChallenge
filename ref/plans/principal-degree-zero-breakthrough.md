@@ -222,13 +222,61 @@ Leaf 2 body sorry-free; umbrella case-splits via leaf 1; new leaf 7a
 Leaf 5 body sorry-free above new leaf 5a; umbrella's typeclass gap
 isolated to a `haveI` (commit `3d8486b`).
 
-### Round R4 (this commit, Phase A1)
-Leaf 6 body discharged as Finsupp/Finset algebra above leaves 3, 4, 5.
+### Round R4 (Phase A1 + A2 + supporting refactor)
 
-### Round R5 (this commit, Phase A2)
-Leaf 7a body discharged as the small assembly above leaves 1, 2, 6 +
-`branchedDegree_eq_weightedFiberCard`. New named obligation
-`principalDivisor_eq_zero_of_nonzero_constant` (HARD, blocked by Phase B).
+**A1 — leaf 6 discharged.** `degree_principalDivisor_eq_zeros_minus_poles`
+body became a real Finsupp/Finset assembly above leaves 3, 4, 5.
+Required adding the hypothesis `(hcond : ∃ x, (f x).getD 0 ≠ 0)` to
+leaf 6's signature so that the `principalDivisor` `by_cases`
+constructor lives in its non-trivial branch; the constant-zero-projection
+case is handled separately by the umbrella + leaf 1.
 
-### Round R6+ (future)
-Phase B + Phase C + Phase D as outlined above.
+**Sec02 supporting refactor.** `BranchedCoverData.weightedFiberCard`
+was a structure field with default `((finite_fiber y).toFinset).sum
+ramificationIndex`. As a field, it could be overridden by any
+constructor, breaking the link between the formula and the
+`weightedFiberCard_const` field. Refactor: make `weightedFiberCard` a
+derived (`noncomputable`) `def` outside the structure, and rename the
+constancy field to `fiberSum_const` (stated directly in terms of the
+formula). Backward-compat lemma `weightedFiberCard_const` reproved as
+a one-liner. No external module broke.
+
+**A2 — leaf 7a discharged.** `principal_degree_zero_of_nonzero` body
+became a `by_cases` on whether `f` is constant on `OnePoint ℂ`:
+
+- **Constant case:** new sub-leaves 7b
+  (`vanishingOrder_const_nonzero`, HARD analytic, bottoms out on
+  Mathlib `meromorphicOrderAt_const`) and 7c
+  (`principalDivisor_eq_zero_of_constant_nonzero`, sorry-free assembly
+  above 7b) drive the constant `c = ↑z` (`z ≠ 0`) case to the zero
+  divisor; the constant cases `c = ∞` and `c = ↑0` are ruled out by
+  `hf : ∃ x, (f x).getD 0 ≠ 0`.
+- **Nonconstant case:** apply leaf 6 to express degree as
+  `(Z fibre sum) − (P fibre sum)`, then identify each ℤ-fibre-sum with
+  `(h.weightedFiberCard y : ℤ)` via the new derived definition and
+  cancel through `weightedFiberCard_const`.
+
+**Net sorry-shape after R4:**
+
+- `Sec01/PrincipalDegreeZero.lean`: 6 → 5 (leaves 3, 4, 5a, 7b, umbrella's
+  T2-typeclass `haveI`).
+- `Sec01/MeromorphicToCp1.lean`: 1 (`liftToCp1_continuous`).
+- `Sec02/BranchedDegree.lean`: 4 (leaves 5, 6, 7, 8 — unchanged).
+
+The remaining sorries on the chain to `principal_degree_zero` are:
+- Leaves 3, 4 (HARD chart-local Laurent normal form).
+- Leaf 5a (HARD Mathlib `tendsto_ne_zero_iff_meromorphicOrderAt_eq_zero`).
+- Leaf 7b (HARD Mathlib `meromorphicOrderAt_const`).
+- Sec02 leaf 8 (HARD analytic constructor).
+- `liftToCp1_continuous` (HARD continuity of the CP¹ lift).
+- Umbrella's T2-typeclass gap (Phase D).
+
+All of these except the umbrella's T2 gap require the Phase B refactor
+of `MeromorphicFunctionType` to provide a real meromorphicity hypothesis;
+once that lands, leaves 3, 4, 5a, 7b, `liftToCp1_continuous` reduce to
+short Mathlib lookups, and Sec02 leaf 8 becomes the major HARD analytic
+construction.
+
+### Round R5+ (future)
+Phase B (architectural refactor of `MeromorphicFunctionType`), then
+Phase C (analytic discharges), then Phase D (T2 typeclass gap closure).
