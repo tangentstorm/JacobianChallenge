@@ -389,17 +389,61 @@ helper. The `Unit` base case is **discharged**:
 * `singularH1_subsingleton_of_homotopyEquivUnit` (sorry, frontier) —
   the only remaining homotopy-invariance content.
 
+### Round 36: Stage A2 split via `EdgeWordPresentation`
+
+`Triangulation.toPolygonalQuotient` is now real proof, factored into
+two strictly more focused sub-leaves:
+
+* `EdgeWordPresentation M` (opaque type) — placeholder for "M as a
+  `2k`-gon with side identifications via some edge-pairing word".
+* `Triangulation.toEdgeWordPresentation` (sorry, A2.a) — dual-tree
+  unfolding (Massey / Lee).
+* `EdgeWordPresentation.toPolygonalQuotient` (sorry, A2.b) — Tietze
+  reduction to standard form (Brahana / Seifert–Threlfall).
+
+### Round 37: Unified `polygon4g_singularH1_iso_freeZ`
+
+Adds the unified linear iso `polygon4g_singularH1_iso_freeZ (g : ℕ)`
+covering all genera via `Basis.equivFun` of the unified basis — the
+polygon-side analogue of `singularH1_compactRiemannSurface_iso_freeZ`.
+
+### Round 38: Generic homotopy-invariance leaf
+
+`singularH1_subsingleton_of_homotopyEquivUnit` is now real proof,
+delegating to a more general:
+
+* `singularH1_iso_of_homotopyEquiv` (sorry, frontier) — for any
+  `X ≃ₕ Y`, `Nonempty (singularH1 X ≃ₗ[ℤ] singularH1 Y)`. Mathlib gap;
+  natural discharge is the chain-level prism construction descending
+  to homology functoriality.
+
+The Unit-specialised umbrella body extracts the iso, transports the
+discharged `singularH1_unit_subsingleton` along it via
+`Equiv.subsingleton`.
+
+### Round 39–40: Promoted instances + simplified zero-finrank
+
+* `polygon4g_zero_contractibleSpace` promoted from theorem to
+  `instance` so `[ContractibleSpace (Polygon4g 0)]` is automatically
+  inferred.
+* `polygon4g_zero_singularH1_subsingleton` (new instance) —
+  `Subsingleton (singularH1 (Polygon4g 0))`.
+* `singularH1_polygon4g_zero_finrank` simplified to one-liner
+  `Module.finrank_zero_of_subsingleton` instead of the 3-step homeo
+  chain (which still composes to the same thing via Round 12 work).
+
 ### Build status
 
 `lake build Jacobian.Blueprint.Sec03.PolygonalModel` and
 `lake build Jacobian.Periods` both succeed. The `polygonal_model`
 declaration has no own `sorry`; the only remaining `sorry`s in its
-dependency closure are four frontier leaves (plus pre-existing project
+dependency closure are five frontier leaves (plus pre-existing project
 sorries unchanged by this refinement):
 
 | Frontier leaf | File | Bottom-up content |
 | --- | --- | --- |
 | `exists_triangulation_of_compact_2manifold` | `SurfaceClassification.lean` | Radó's triangulability theorem |
-| `Triangulation.toPolygonalQuotient` | `SurfaceClassification.lean` | Combinatorial reduction to standard 4g'-gon |
+| `Triangulation.toEdgeWordPresentation` | `SurfaceClassification.lean` | Dual-tree unfolding to a `2k`-gon edge word (Stage A2.a) |
+| `EdgeWordPresentation.toPolygonalQuotient` | `SurfaceClassification.lean` | Tietze reduction to standard `4g'`-gon (Stage A2.b) |
 | `polygon4g_succ_singularH1_basis` | `SurfaceClassification.lean` | Polygon `H₁` basis (cellular / Hurewicz) |
-| `singularH1_subsingleton_of_homotopyEquivUnit` | `SurfaceClassification.lean` | Homotopy invariance of singular homology (Mathlib gap) |
+| `singularH1_iso_of_homotopyEquiv` | `SurfaceClassification.lean` | Homotopy invariance of singular homology (Mathlib gap) |
