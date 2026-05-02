@@ -19,3 +19,7 @@ ralph-progress.txt
 ralph-logs/
 .codex-gitconfig
 .codex-empty-gitconfig
+
+# local debug / scratch artifacts (worker session dumps, screenshots, etc.)
+*.yml
+*.png
