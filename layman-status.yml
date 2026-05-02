@@ -1,0 +1,747 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e7]:
+      - complementary [ref=e9]:
+        - link "Skip to content" [ref=e10]:
+          - /url: "#dframe-main"
+        - separator "Resize sidebar" [ref=e12]
+        - generic:
+          - generic: Click to collapseCtrl+B
+          - generic: Drag to resize
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - link "Claude Code" [ref=e16]:
+              - /url: /code
+              - img "Claude Code" [ref=e17]
+            - generic [ref=e28]: Research preview
+          - button "Collapse sidebar" [ref=e31]:
+            - generic [ref=e32]: 
+          - button "Search" [ref=e35]:
+            - generic [ref=e36]: 
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - button "New session ⇧⌘O" [ref=e40]:
+                - generic [ref=e42]: 
+                - text: New session
+                - generic [ref=e43]: ⇧⌘O
+              - button "Routines" [ref=e44]:
+                - generic [ref=e46]: 
+                - generic [ref=e47]: Routines
+              - button "Customize" [ref=e48]:
+                - generic [ref=e50]: 
+                - generic [ref=e51]: Customize
+              - button "More navigation items" [ref=e52]:
+                - generic [ref=e54]: 
+                - generic [ref=e55]: More
+            - generic [ref=e59]:
+              - generic [ref=e60]:
+                - button "Pinned" [expanded] [ref=e63]:
+                  - generic [ref=e64]: Pinned
+                  - generic [ref=e65]: 
+                - generic [ref=e66]:
+                  - img [ref=e69]
+                  - generic [ref=e71]: Drag to pin
+              - generic [ref=e73]:
+                - generic [ref=e75]:
+                  - button "Recents" [expanded] [ref=e76]:
+                    - generic [ref=e77]: Recents
+                    - generic [ref=e78]: 
+                  - button "Filter" [ref=e79]:
+                    - generic [ref=e80]: 
+                - generic [ref=e81]:
+                  - generic [ref=e1315]:
+                    - button "Pull request open Add Plain-English narrations to Jacobian Challenge nodes" [ref=e1316]:
+                      - img "Pull request open" [ref=e1318]:
+                        - img [ref=e1319]
+                      - generic [ref=e1322]: Add Plain-English narrations to Jacobian Challenge nodes
+                    - generic:
+                      - button "More options for Add Plain-English narrations to Jacobian Challenge nodes":
+                        - generic:
+                          - img
+                  - generic [ref=e84]:
+                    - button "Pull request closed BUILD INTEGRATION" [ref=e85]:
+                      - img "Pull request closed" [ref=e87]:
+                        - img [ref=e88]
+                      - generic [ref=e91]: BUILD INTEGRATION
+                    - generic:
+                      - button "More options for BUILD INTEGRATION":
+                        - generic:
+                          - img
+                  - generic [ref=e94]:
+                    - button "Ready Formalize divisor and divisor-degree definitions" [ref=e95]:
+                      - status "Ready" [ref=e97]
+                      - generic [ref=e100]: Formalize divisor and divisor-degree definitions
+                    - generic:
+                      - button "More options for Formalize divisor and divisor-degree definitions":
+                        - generic:
+                          - img
+                  - generic [ref=e103]:
+                    - button "Pull request closed Formalize blueprint leaf node end-to-end" [ref=e104]:
+                      - img "Pull request closed" [ref=e106]:
+                        - img [ref=e107]
+                      - generic [ref=e110]: Formalize blueprint leaf node end-to-end
+                    - generic:
+                      - button "More options for Formalize blueprint leaf node end-to-end":
+                        - generic:
+                          - img
+                  - generic [ref=e113]:
+                    - button "Awaiting input Format Lean proofs for comparator tool" [ref=e114]:
+                      - status "Awaiting input" [ref=e116]
+                      - generic [ref=e119]: Format Lean proofs for comparator tool
+                    - generic:
+                      - button "More options for Format Lean proofs for comparator tool":
+                        - generic:
+                          - img
+                  - generic [ref=e122]:
+                    - button "Pull request merged Test TTC accuracy for larger problem sizes" [ref=e123]:
+                      - img "Pull request merged" [ref=e125]:
+                        - img [ref=e126]
+                      - generic [ref=e129]: Test TTC accuracy for larger problem sizes
+                    - generic:
+                      - button "More options for Test TTC accuracy for larger problem sizes":
+                        - generic:
+                          - img
+                  - generic [ref=e132]:
+                    - button "Idle Optimize program per TICK-PROMPT instructions" [ref=e133]:
+                      - img "Idle" [ref=e135]
+                      - generic [ref=e138]: Optimize program per TICK-PROMPT instructions
+                    - generic:
+                      - button "More options for Optimize program per TICK-PROMPT instructions":
+                        - generic:
+                          - img
+                  - generic [ref=e141]:
+                    - 'button "Pull request merged #86 Review remaining universal search tasks" [ref=e142]':
+                      - img "Pull request merged" [ref=e144]:
+                        - img [ref=e145]
+                      - generic [ref=e148]: "#86 Review remaining universal search tasks"
+                    - generic:
+                      - 'button "More options for #86 Review remaining universal search tasks"':
+                        - generic:
+                          - img
+                  - generic [ref=e151]:
+                    - 'button "Idle Review PR #86 for TTC metric implementation" [ref=e152]':
+                      - img "Idle" [ref=e154]
+                      - generic [ref=e157]: "Review PR #86 for TTC metric implementation"
+                    - generic:
+                      - 'button "More options for Review PR #86 for TTC metric implementation"':
+                        - generic:
+                          - img
+                  - generic [ref=e160]:
+                    - button "Ready Compare Turyn Radical and CaDiCaL features" [ref=e161]:
+                      - status "Ready" [ref=e163]
+                      - generic [ref=e166]: Compare Turyn Radical and CaDiCaL features
+                    - generic:
+                      - button "More options for Compare Turyn Radical and CaDiCaL features":
+                        - generic:
+                          - img
+                  - generic [ref=e169]:
+                    - button "Ready Optimize TTC performance with new ideas" [ref=e170]:
+                      - status "Ready" [ref=e172]
+                      - generic [ref=e175]: Optimize TTC performance with new ideas
+                    - generic:
+                      - button "More options for Optimize TTC performance with new ideas":
+                        - generic:
+                          - img
+                  - generic [ref=e178]:
+                    - button "Ready Optimize turyn hybrid search performance" [ref=e179]:
+                      - status "Ready" [ref=e181]
+                      - generic [ref=e184]: Optimize turyn hybrid search performance
+                    - generic:
+                      - button "More options for Optimize turyn hybrid search performance":
+                        - generic:
+                          - img
+                  - generic [ref=e187]:
+                    - button "Ready tte -> ttc" [ref=e188]:
+                      - status "Ready" [ref=e190]
+                      - generic [ref=e193]: tte -> ttc
+                    - generic:
+                      - button "More options for tte -> ttc":
+                        - generic:
+                          - img
+                  - generic [ref=e196]:
+                    - 'button "Pull request merged #66 xyzw" [ref=e197]':
+                      - img "Pull request merged" [ref=e199]:
+                        - img [ref=e200]
+                      - generic [ref=e203]: "#66 xyzw"
+                    - generic:
+                      - 'button "More options for #66 xyzw"':
+                        - generic:
+                          - img
+                  - generic [ref=e206]:
+                    - button "Idle Review sum checks in SAT solver" [ref=e207]:
+                      - img "Idle" [ref=e209]
+                      - generic [ref=e212]: Review sum checks in SAT solver
+                    - generic:
+                      - button "More options for Review sum checks in SAT solver":
+                        - generic:
+                          - img
+                  - generic [ref=e215]:
+                    - 'button "Ready #69 Verify fast lookup of Turyn type sequences" [ref=e216]':
+                      - status "Ready" [ref=e218]
+                      - generic [ref=e221]: "#69 Verify fast lookup of Turyn type sequences"
+                    - generic:
+                      - 'button "More options for #69 Verify fast lookup of Turyn type sequences"':
+                        - generic:
+                          - img
+                  - generic [ref=e224]:
+                    - 'button "Ready #68 Refactor main.rs into organized submodules" [ref=e225]':
+                      - status "Ready" [ref=e227]
+                      - generic [ref=e230]: "#68 Refactor main.rs into organized submodules"
+                    - generic:
+                      - 'button "More options for #68 Refactor main.rs into organized submodules"':
+                        - generic:
+                          - img
+                  - generic [ref=e233]:
+                    - 'button "Ready #67 Merge bdkr canonicity constraints into MDD generator" [ref=e234]':
+                      - status "Ready" [ref=e236]
+                      - generic [ref=e239]: "#67 Merge bdkr canonicity constraints into MDD generator"
+                    - generic:
+                      - 'button "More options for #67 Merge bdkr canonicity constraints into MDD generator"':
+                        - generic:
+                          - img
+                  - generic [ref=e242]:
+                    - button "Idle Fix missing z[n-1] pin in gen_mdd experiment" [ref=e243]:
+                      - img "Idle" [ref=e245]
+                      - generic [ref=e248]: Fix missing z[n-1] pin in gen_mdd experiment
+                    - generic:
+                      - button "More options for Fix missing z[n-1] pin in gen_mdd experiment":
+                        - generic:
+                          - img
+                  - generic [ref=e251]:
+                    - button "Pull request merged Add README file to radical directory" [ref=e252]:
+                      - img "Pull request merged" [ref=e254]:
+                        - img [ref=e255]
+                      - generic [ref=e258]: Add README file to radical directory
+                    - generic:
+                      - button "More options for Add README file to radical directory":
+                        - generic:
+                          - img
+                  - generic [ref=e261]:
+                    - button "Pull request merged Add XY constraint to canonical representations" [ref=e262]:
+                      - img "Pull request merged" [ref=e264]:
+                        - img [ref=e265]
+                      - generic [ref=e268]: Add XY constraint to canonical representations
+                    - generic:
+                      - button "More options for Add XY constraint to canonical representations":
+                        - generic:
+                          - img
+                  - generic [ref=e271]:
+                    - button "Pull request merged Create math ideas file with famous mathematicians" [ref=e272]:
+                      - img "Pull request merged" [ref=e274]:
+                        - img [ref=e275]
+                      - generic [ref=e278]: Create math ideas file with famous mathematicians
+                    - generic:
+                      - button "More options for Create math ideas file with famous mathematicians":
+                        - generic:
+                          - img
+                  - generic [ref=e281]:
+                    - button "Ready Create lightweight MCP server for J language" [ref=e282]:
+                      - status "Ready" [ref=e284]
+                      - generic [ref=e287]: Create lightweight MCP server for J language
+                    - generic:
+                      - button "More options for Create lightweight MCP server for J language":
+                        - generic:
+                          - img
+                  - generic [ref=e290]:
+                    - 'button "Pull request merged #65 Add Divan benchmarks for Turyn sequences" [ref=e291]':
+                      - img "Pull request merged" [ref=e293]:
+                        - img [ref=e294]
+                      - generic [ref=e297]: "#65 Add Divan benchmarks for Turyn sequences"
+                    - generic:
+                      - 'button "More options for #65 Add Divan benchmarks for Turyn sequences"':
+                        - generic:
+                          - img
+                  - generic [ref=e300]:
+                    - button "Pull request merged Audit and fix performance regression issue" [ref=e301]:
+                      - img "Pull request merged" [ref=e303]:
+                        - img [ref=e304]
+                      - generic [ref=e307]: Audit and fix performance regression issue
+                    - generic:
+                      - button "More options for Audit and fix performance regression issue":
+                        - generic:
+                          - img
+                  - generic [ref=e310]:
+                    - button "Pull request merged (SLOW!) canonical form for TT(n)" [ref=e311]:
+                      - img "Pull request merged" [ref=e313]:
+                        - img [ref=e314]
+                      - generic [ref=e317]: (SLOW!) canonical form for TT(n)
+                    - generic:
+                      - button "More options for (SLOW!) canonical form for TT(n)":
+                        - generic:
+                          - img
+                  - generic [ref=e320]:
+                    - button "Pull request merged Check BDD benchmark integration status" [ref=e321]:
+                      - img "Pull request merged" [ref=e323]:
+                        - img [ref=e324]
+                      - generic [ref=e327]: Check BDD benchmark integration status
+                    - generic:
+                      - button "More options for Check BDD benchmark integration status":
+                        - generic:
+                          - img
+                  - generic [ref=e330]:
+                    - button "Pull request merged Add ZDD module" [ref=e331]:
+                      - img "Pull request merged" [ref=e333]:
+                        - img [ref=e334]
+                      - generic [ref=e337]: Add ZDD module
+                    - generic:
+                      - button "More options for Add ZDD module":
+                        - generic:
+                          - img
+                  - generic [ref=e340]:
+                    - button "Pull request merged Add state loading and saving for vhlswarm" [ref=e341]:
+                      - img "Pull request merged" [ref=e343]:
+                        - img [ref=e344]
+                      - generic [ref=e347]: Add state loading and saving for vhlswarm
+                    - generic:
+                      - button "More options for Add state loading and saving for vhlswarm":
+                        - generic:
+                          - img
+                  - generic [ref=e350]:
+                    - button "Pull request merged Implement benchmarks using Divan crate" [ref=e351]:
+                      - img "Pull request merged" [ref=e353]:
+                        - img [ref=e354]
+                      - generic [ref=e357]: Implement benchmarks using Divan crate
+                    - generic:
+                      - button "More options for Implement benchmarks using Divan crate":
+                        - generic:
+                          - img
+                  - generic [ref=e360]:
+                    - button "Pull request merged Implement COZ profiler integration" [ref=e361]:
+                      - img "Pull request merged" [ref=e363]:
+                        - img [ref=e364]
+                      - generic [ref=e367]: Implement COZ profiler integration
+                    - generic:
+                      - button "More options for Implement COZ profiler integration":
+                        - generic:
+                          - img
+                  - generic [ref=e370]:
+                    - button "Pull request merged Search for T-sequence of length 167" [ref=e371]:
+                      - img "Pull request merged" [ref=e373]:
+                        - img [ref=e374]
+                      - generic [ref=e377]: Search for T-sequence of length 167
+                    - generic:
+                      - button "More options for Search for T-sequence of length 167":
+                        - generic:
+                          - img
+                  - generic [ref=e380]:
+                    - button "Pull request merged Implement k3ipc for ksharp" [ref=e381]:
+                      - img "Pull request merged" [ref=e383]:
+                        - img [ref=e384]
+                      - generic [ref=e387]: Implement k3ipc for ksharp
+                    - generic:
+                      - button "More options for Implement k3ipc for ksharp":
+                        - generic:
+                          - img
+                  - generic [ref=e390]:
+                    - button "Pull request merged Add extra timestamp bits to AST block" [ref=e391]:
+                      - img "Pull request merged" [ref=e393]:
+                        - img [ref=e394]
+                      - generic [ref=e397]: Add extra timestamp bits to AST block
+                    - generic:
+                      - button "More options for Add extra timestamp bits to AST block":
+                        - generic:
+                          - img
+                  - generic [ref=e400]:
+                    - button "Pull request merged [merged] top-down for def-worke" [ref=e401]:
+                      - img "Pull request merged" [ref=e403]:
+                        - img [ref=e404]
+                      - generic [ref=e407]: "[merged] top-down for def-worke"
+                    - generic:
+                      - button "More options for [merged] top-down for def-worke":
+                        - generic:
+                          - img
+                  - generic [ref=e410]:
+                    - 'button "Pull request merged Diagnose and solve issue #22" [ref=e411]':
+                      - img "Pull request merged" [ref=e413]:
+                        - img [ref=e414]
+                      - generic [ref=e417]: "Diagnose and solve issue #22"
+                    - generic:
+                      - 'button "More options for Diagnose and solve issue #22"':
+                        - generic:
+                          - img
+                  - generic [ref=e420]:
+                    - 'button "Pull request merged #58/#59 turyn: merge pipelines" [ref=e421]':
+                      - img "Pull request merged" [ref=e423]:
+                        - img [ref=e424]
+                      - generic [ref=e427]: "#58/#59 turyn: merge pipelines"
+                    - generic:
+                      - 'button "More options for #58/#59 turyn: merge pipelines"':
+                        - generic:
+                          - img
+                  - generic [ref=e430]:
+                    - button "Awaiting input retro pascal" [ref=e431]:
+                      - status "Awaiting input" [ref=e433]
+                      - generic [ref=e436]: retro pascal
+                    - generic:
+                      - button "More options for retro pascal":
+                        - generic:
+                          - img
+                  - generic [ref=e439]:
+                    - 'button "Pull request merged #57 metrics" [ref=e440]':
+                      - img "Pull request merged" [ref=e442]:
+                        - img [ref=e443]
+                      - generic [ref=e446]: "#57 metrics"
+                    - generic:
+                      - 'button "More options for #57 metrics"':
+                        - generic:
+                          - img
+                  - generic [ref=e449]:
+                    - 'button "Pull request merged #56 turyn throughput" [ref=e450]':
+                      - img "Pull request merged" [ref=e452]:
+                        - img [ref=e453]
+                      - generic [ref=e456]: "#56 turyn throughput"
+                    - generic:
+                      - 'button "More options for #56 turyn throughput"':
+                        - generic:
+                          - img
+                  - generic [ref=e459]:
+                    - button "Idle Initialize repo and set up main branch" [ref=e460]:
+                      - img "Idle" [ref=e462]
+                      - generic [ref=e465]: Initialize repo and set up main branch
+                    - generic:
+                      - button "More options for Initialize repo and set up main branch":
+                        - generic:
+                          - img
+                  - generic [ref=e468]:
+                    - button "Pull request merged bex+woz together" [ref=e469]:
+                      - img "Pull request merged" [ref=e471]:
+                        - img [ref=e472]
+                      - generic [ref=e475]: bex+woz together
+                    - generic:
+                      - button "More options for bex+woz together":
+                        - generic:
+                          - img
+                  - generic [ref=e478]:
+                    - button "Pull request merged table nids" [ref=e479]:
+                      - img "Pull request merged" [ref=e481]:
+                        - img [ref=e482]
+                      - generic [ref=e485]: table nids
+                    - generic:
+                      - button "More options for table nids":
+                        - generic:
+                          - img
+                  - generic [ref=e488]:
+                    - button "Pull request merged bex optimization" [ref=e489]:
+                      - img "Pull request merged" [ref=e491]:
+                        - img [ref=e492]
+                      - generic [ref=e495]: bex optimization
+                    - generic:
+                      - button "More options for bex optimization":
+                        - generic:
+                          - img
+                  - generic [ref=e498]:
+                    - button "Pull request merged def-worker" [ref=e499]:
+                      - img "Pull request merged" [ref=e501]:
+                        - img [ref=e502]
+                      - generic [ref=e505]: def-worker
+                    - generic:
+                      - button "More options for def-worker":
+                        - generic:
+                          - img
+                  - generic [ref=e508]:
+                    - 'button "Pull request merged #55 ToC workflow" [ref=e509]':
+                      - img "Pull request merged" [ref=e511]:
+                        - img [ref=e512]
+                      - generic [ref=e515]: "#55 ToC workflow"
+                    - generic:
+                      - 'button "More options for #55 ToC workflow"':
+                        - generic:
+                          - img
+                  - generic [ref=e518]:
+                    - 'button "Pull request merged #54 spectral sat + n=56 phase C" [ref=e519]':
+                      - img "Pull request merged" [ref=e521]:
+                        - img [ref=e522]
+                      - generic [ref=e525]: "#54 spectral sat + n=56 phase C"
+                    - generic:
+                      - 'button "More options for #54 spectral sat + n=56 phase C"':
+                        - generic:
+                          - img
+                  - generic [ref=e528]:
+                    - 'button "Pull request merged #50,#53 even faster gen_mdd" [ref=e529]':
+                      - img "Pull request merged" [ref=e531]:
+                        - img [ref=e532]
+                      - generic [ref=e535]: "#50,#53 even faster gen_mdd"
+                    - generic:
+                      - 'button "More options for #50,#53 even faster gen_mdd"':
+                        - generic:
+                          - img
+                  - generic [ref=e538]:
+                    - 'button "Pull request merged #52 refactor turyn" [ref=e539]':
+                      - img "Pull request merged" [ref=e541]:
+                        - img [ref=e542]
+                      - generic [ref=e545]: "#52 refactor turyn"
+                    - generic:
+                      - 'button "More options for #52 refactor turyn"':
+                        - generic:
+                          - img
+                  - generic [ref=e548]:
+                    - 'button "Pull request merged #51 refactor radical" [ref=e549]':
+                      - img "Pull request merged" [ref=e551]:
+                        - img [ref=e552]
+                      - generic [ref=e555]: "#51 refactor radical"
+                    - generic:
+                      - 'button "More options for #51 refactor radical"':
+                        - generic:
+                          - img
+                  - generic [ref=e558]:
+                    - button "Idle Test MDD with fully separated variable layers" [ref=e559]:
+                      - img "Idle" [ref=e561]
+                      - generic [ref=e564]: Test MDD with fully separated variable layers
+                    - generic:
+                      - button "More options for Test MDD with fully separated variable layers":
+                        - generic:
+                          - img
+                  - generic [ref=e567]:
+                    - button "Pull request merged Create Lean formal verification system" [ref=e1059]:
+                      - img "Pull request merged" [ref=e1060]:
+                        - img [ref=e1061]
+                      - generic [ref=e573]: Create Lean formal verification system
+                    - generic:
+                      - button "More options for Create Lean formal verification system":
+                        - generic:
+                          - img
+                  - generic [ref=e576]:
+                    - button "Pull request merged gen_mdd ++" [ref=e1063]:
+                      - img "Pull request merged" [ref=e1064]:
+                        - img [ref=e1065]
+                      - generic [ref=e582]: gen_mdd ++
+                    - generic:
+                      - button "More options for gen_mdd ++":
+                        - generic:
+                          - img
+                  - generic [ref=e585]:
+                    - 'button "Pull request merged #45b / #46 MDD+SAT + better MDD" [ref=e1067]':
+                      - img "Pull request merged" [ref=e1068]:
+                        - img [ref=e1069]
+                      - generic [ref=e591]: "#45b / #46 MDD+SAT + better MDD"
+                    - generic:
+                      - 'button "More options for #45b / #46 MDD+SAT + better MDD"':
+                        - generic:
+                          - img
+                  - generic [ref=e594]:
+                    - 'button "Idle #45 mdd table gets us k=9" [ref=e595]':
+                      - img "Idle" [ref=e597]
+                      - generic [ref=e600]: "#45 mdd table gets us k=9"
+                    - generic:
+                      - 'button "More options for #45 mdd table gets us k=9"':
+                        - generic:
+                          - img
+                  - generic [ref=e603]:
+                    - 'button "Idle #44: PB+470% for n=56" [ref=e604]':
+                      - img "Idle" [ref=e606]
+                      - generic [ref=e609]: "#44: PB+470% for n=56"
+                    - generic:
+                      - 'button "More options for #44: PB+470% for n=56"':
+                        - generic:
+                          - img
+                  - generic [ref=e612]:
+                    - 'button "Idle #43b recover SAT ideas" [ref=e613]':
+                      - img "Idle" [ref=e615]
+                      - generic [ref=e618]: "#43b recover SAT ideas"
+                    - generic:
+                      - 'button "More options for #43b recover SAT ideas"':
+                        - generic:
+                          - img
+                  - generic [ref=e621]:
+                    - 'button "Idle #42 xor propagation" [ref=e622]':
+                      - img "Idle" [ref=e624]
+                      - generic [ref=e627]: "#42 xor propagation"
+                    - generic:
+                      - 'button "More options for #42 xor propagation"':
+                        - generic:
+                          - img
+                  - generic [ref=e630]:
+                    - 'button "Idle #41 SatWorkItem" [ref=e631]':
+                      - img "Idle" [ref=e633]
+                      - generic [ref=e636]: "#41 SatWorkItem"
+                    - generic:
+                      - 'button "More options for #41 SatWorkItem"':
+                        - generic:
+                          - img
+                  - generic [ref=e639]:
+                    - 'button "Idle #40 help message for args" [ref=e640]':
+                      - img "Idle" [ref=e642]
+                      - generic [ref=e645]: "#40 help message for args"
+                    - generic:
+                      - 'button "More options for #40 help message for args"':
+                        - generic:
+                          - img
+                  - generic [ref=e648]:
+                    - button "Idle Optimize performance with seven interventions" [ref=e649]:
+                      - img "Idle" [ref=e651]
+                      - generic [ref=e654]: Optimize performance with seven interventions
+                    - generic:
+                      - button "More options for Optimize performance with seven interventions":
+                        - generic:
+                          - img
+                  - generic [ref=e657]:
+                    - button "Idle Dispatch background conversation" [ref=e658]:
+                      - img "Idle" [ref=e660]
+                      - generic [ref=e663]: Dispatch background conversation
+                    - generic:
+                      - button "More options for Dispatch background conversation":
+                        - generic:
+                          - img
+                  - generic [ref=e666]:
+                    - button "Idle Profile and optimize for n=26" [ref=e667]:
+                      - img "Idle" [ref=e669]
+                      - generic [ref=e672]: Profile and optimize for n=26
+                    - generic:
+                      - button "More options for Profile and optimize for n=26":
+                        - generic:
+                          - img
+                  - generic [ref=e675]:
+                    - button "Idle Profile and benchmark with k=7 table" [ref=e676]:
+                      - img "Idle" [ref=e678]
+                      - generic [ref=e681]: Profile and benchmark with k=7 table
+                    - generic:
+                      - button "More options for Profile and benchmark with k=7 table":
+                        - generic:
+                          - img
+                  - generic [ref=e684]:
+                    - button "Idle Profile and identify new performance hotspots" [ref=e685]:
+                      - img "Idle" [ref=e687]
+                      - generic [ref=e690]: Profile and identify new performance hotspots
+                    - generic:
+                      - button "More options for Profile and identify new performance hotspots":
+                        - generic:
+                          - img
+                  - generic [ref=e693]:
+                    - button "Idle Debug missing solutions at n=28" [ref=e694]:
+                      - img "Idle" [ref=e696]
+                      - generic [ref=e699]: Debug missing solutions at n=28
+                    - generic:
+                      - button "More options for Debug missing solutions at n=28":
+                        - generic:
+                          - img
+                  - generic [ref=e702]:
+                    - button "Idle Debug spectral bound auto-widening for n=28" [ref=e703]:
+                      - img "Idle" [ref=e705]
+                      - generic [ref=e708]: Debug spectral bound auto-widening for n=28
+                    - generic:
+                      - button "More options for Debug spectral bound auto-widening for n=28":
+                        - generic:
+                          - img
+                  - generic [ref=e711]:
+                    - button "Idle Load and run XY table boundary computation" [ref=e712]:
+                      - img "Idle" [ref=e714]
+                      - generic [ref=e717]: Load and run XY table boundary computation
+                    - generic:
+                      - button "More options for Load and run XY table boundary computation":
+                        - generic:
+                          - img
+                  - generic [ref=e720]:
+                    - button "Idle Profile hybrid search performance with n=22" [ref=e721]:
+                      - img "Idle" [ref=e723]
+                      - generic [ref=e726]: Profile hybrid search performance with n=22
+                    - generic:
+                      - button "More options for Profile hybrid search performance with n=22":
+                        - generic:
+                          - img
+                  - generic [ref=e729]:
+                    - button "Idle Construct Turyn sequences and Hadamard matrices" [ref=e730]:
+                      - img "Idle" [ref=e732]
+                      - generic [ref=e735]: Construct Turyn sequences and Hadamard matrices
+                    - generic:
+                      - button "More options for Construct Turyn sequences and Hadamard matrices":
+                        - generic:
+                          - img
+                  - generic [ref=e738]:
+                    - button "Idle Add and test SAT/CP hybrid ideas" [ref=e739]:
+                      - img "Idle" [ref=e741]
+                      - generic [ref=e744]: Add and test SAT/CP hybrid ideas
+                    - generic:
+                      - button "More options for Add and test SAT/CP hybrid ideas":
+                        - generic:
+                          - img
+                  - generic [ref=e747]:
+                    - button "Idle Add Gemini suggestions to IDEAS file" [ref=e748]:
+                      - img "Idle" [ref=e750]
+                      - generic [ref=e753]: Add Gemini suggestions to IDEAS file
+                    - generic:
+                      - button "More options for Add Gemini suggestions to IDEAS file":
+                        - generic:
+                          - img
+                  - generic [ref=e756]:
+                    - button "Idle Summarize current test failures" [ref=e757]:
+                      - img "Idle" [ref=e759]
+                      - generic [ref=e762]: Summarize current test failures
+                    - generic:
+                      - button "More options for Summarize current test failures":
+                        - generic:
+                          - img
+                  - generic [ref=e765]:
+                    - button "Idle Build self-hosted assembler with dual VMs" [ref=e766]:
+                      - img "Idle" [ref=e768]
+                      - generic [ref=e771]: Build self-hosted assembler with dual VMs
+                    - generic:
+                      - button "More options for Build self-hosted assembler with dual VMs":
+                        - generic:
+                          - img
+                  - generic [ref=e774]:
+                    - button "Idle Fix failing tests excluding database ones" [ref=e775]:
+                      - img "Idle" [ref=e777]
+                      - generic [ref=e780]: Fix failing tests excluding database ones
+                    - generic:
+                      - button "More options for Fix failing tests excluding database ones":
+                        - generic:
+                          - img
+                  - generic [ref=e783]:
+                    - button "Idle Implement Pineapple Open Face Chinese game" [ref=e784]:
+                      - img "Idle" [ref=e786]
+                      - generic [ref=e789]: Implement Pineapple Open Face Chinese game
+                    - generic:
+                      - button "More options for Implement Pineapple Open Face Chinese game":
+                        - generic:
+                          - img
+                  - generic [ref=e792]:
+                    - button "Idle Port k-ipc implementation to ngn-k" [ref=e793]:
+                      - img "Idle" [ref=e795]
+                      - generic [ref=e798]: Port k-ipc implementation to ngn-k
+                    - generic:
+                      - button "More options for Port k-ipc implementation to ngn-k":
+                        - generic:
+                          - img
+          - generic [ref=e801]:
+            - img [ref=e803]
+            - generic [ref=e805]: Try Claude Code on desktop
+            - button "Download" [ref=e806]: Download
+            - button "Dismiss" [ref=e809]:
+              - img [ref=e811]
+          - generic [ref=e813]:
+            - button "Michal Wallace" [ref=e815]:
+              - generic [ref=e817]: 
+              - generic [ref=e818]: Michal Wallace
+            - button "Appearance" [ref=e820]:
+              - generic [ref=e823]: 
+      - main [ref=e824]:
+        - region "Primary pane" [ref=e827]:
+          - generic [ref=e1151]:
+            - generic [ref=e1152]:
+              - generic [ref=e1158]:
+                - generic [ref=e1161]:
+                  - button "JacobianChallenge" [ref=e1163]:
+                    - img [ref=e1166]
+                    - generic [ref=e1170]: JacobianChallenge
+                  - generic [ref=e1171]: /
+                  - generic [ref=e1172]:
+                    - button "Untitled" [ref=e1323]
+                    - button "Session actions" [ref=e1174]:
+                      - img [ref=e1175]
+                - generic [ref=e1182]:
+                  - generic [ref=e1325]:
+                    - generic [ref=e1326]: This session could not be found. It may have been deleted, or you may not have access.
+                    - button "Start a new session" [ref=e1327]: Start a new session
+                  - generic:
+                    - button:
+                      - img
+              - generic [ref=e1304]: Arrow keys move the tile. Perpendicular arrows preview a split; press Enter to commit or Escape to cancel.
+              - status [ref=e1305]
+            - button "Views" [ref=e1307]:
+              - img [ref=e1309]
+              - img [ref=e1311]
+    - region "Notifications (F8)":
+      - list
+  - iframe [ref=e1058]:
+    

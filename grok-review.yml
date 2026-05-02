@@ -1,0 +1,404 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e6]:
+      - link "Home page" [ref=e8] [cursor=pointer]:
+        - /url: /
+        - img [ref=e9]
+      - generic [ref=e18]:
+        - list [ref=e20]:
+          - listitem [ref=e21]:
+            - button "Search" [ref=e22] [cursor=pointer]:
+              - img [ref=e26]
+        - list [ref=e34]:
+          - listitem [ref=e35]:
+            - link [ref=e745] [cursor=pointer]:
+              - /url: /c/8d55ba3e-faf1-480c-9f6e-9c10948dd87d
+              - img [ref=e40]
+        - list [ref=e51]:
+          - listitem [ref=e52]:
+            - link [ref=e746] [cursor=pointer]:
+              - /url: /?voice=true
+              - img [ref=e57]
+        - list [ref=e64]:
+          - listitem [ref=e65]:
+            - link [ref=e747] [cursor=pointer]:
+              - /url: /imagine
+              - img [ref=e70]
+      - generic [ref=e88]:
+        - list [ref=e748]:
+          - listitem [ref=e749]:
+            - link [ref=e750] [cursor=pointer]:
+              - /url: /project
+              - img [ref=e754]
+        - list [ref=e762]:
+          - listitem [ref=e763]:
+            - button "History" [ref=e764] [cursor=pointer]:
+              - img [ref=e768]
+      - generic [ref=e242]:
+        - button "Toggle Sidebar" [ref=e781] [cursor=pointer]:
+          - img [ref=e782]
+          - generic [ref=e785]: Toggle Sidebar
+        - button "pfp" [ref=e244] [cursor=pointer]:
+          - img "pfp" [ref=e248]
+    - main [ref=e253]:
+      - generic "Side panel content" [ref=e255]:
+        - generic:
+          - generic:
+            - button "Change icon" [ref=e258] [cursor=pointer]:
+              - img [ref=e259]
+            - button "jacobian challenge"
+            - button "Open menu" [ref=e263] [cursor=pointer]:
+              - img [ref=e264]
+            - button "Collapse side panel" [active] [ref=e268] [cursor=pointer]:
+              - img [ref=e269]
+        - button "Instructions Set up instructions for Grok in this project" [ref=e271] [cursor=pointer]:
+          - generic:
+            - generic:
+              - generic:
+                - img [ref=e276]
+                - img [ref=e280]
+              - generic: Instructions
+          - generic:
+            - generic: Set up instructions for Grok in this project
+        - generic [ref=e286]:
+          - generic:
+            - generic:
+              - img [ref=e291]
+              - generic: Sources
+          - paragraph: Custom knowledge base for this project
+          - button "Personal files 0" [ref=e296] [cursor=pointer]:
+            - generic [ref=e297]:
+              - img [ref=e298]
+              - generic [ref=e300]: Personal files
+            - generic [ref=e301]:
+              - generic [ref=e302]: "0"
+              - img [ref=e303]
+        - generic:
+          - tablist:
+            - tab "Conversations" [selected] [ref=e307] [cursor=pointer]
+          - tabpanel "Conversations":
+            - generic:
+              - generic:
+                - generic:
+                  - link:
+                    - /url: /c/3c652c3b-afb9-4be4-9e1a-836975e89279
+                  - generic [ref=e314] [cursor=pointer]:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: "review proof plan: vanishing order"
+                    - generic [ref=e319]: 1 hour ago
+                - generic:
+                  - link:
+                    - /url: /c/fbf663ea-292b-4e59-b14b-19e19fa64f8e
+                  - generic [ref=e322] [cursor=pointer]:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: Mathlib Updates for Jacobian Proof
+                    - generic [ref=e327]: 3 hours ago
+        - generic:
+          - generic:
+            - img
+            - img
+          - generic: Attach to project
+          - generic: Drop here to add files to project
+      - separator
+      - generic [ref=e329]:
+        - generic [ref=e786]:
+          - button "Expand side panel" [ref=e787] [cursor=pointer]:
+            - img [ref=e788]
+          - button "jacobian challenge" [ref=e790] [cursor=pointer]:
+            - img [ref=e791]
+            - generic [ref=e794]: jacobian challenge
+        - generic [ref=e330]:
+          - generic [ref=e479]:
+            - button "More" [ref=e480] [cursor=pointer]:
+              - img [ref=e481]
+            - button "Create share link" [ref=e485] [cursor=pointer]:
+              - img [ref=e487]
+              - generic [ref=e490]: Share
+            - link [ref=e492] [cursor=pointer]:
+              - /url: /project/78ec79b9-5d3b-4d6a-a44b-9282221e25ce?tab=conversations
+              - img [ref=e493]
+          - generic [ref=e496]:
+            - generic [ref=e499]:
+              - generic [ref=e501]:
+                - generic [ref=e505]:
+                  - paragraph [ref=e506]: "Design review for an 8-node chain in the JacobianChallenge blueprint (Lean 4 + Mathlib v4.28.0, commit 8f9d9cff). The chain proves finite-dimensionality of holomorphic 1-forms on a compact Riemann surface via the analytic route (sup-norm + Montel + Riesz). I want to spawn 8 parallel cloud workers next, each filling in ONE node — but only after a 3-AI consensus (you, ChatGPT, Claude) that the API holds together cleanly across the chain. I need: (1) Are these 8 statements internally coherent — each node consumes its predecessors' outputs without API mismatch? (2) Are the types right? (3) Are there cleaner Mathlib-native formulations I'm missing? (4) Did we hallucinate any decl name? The 8 nodes (leaf-first):"
+                  - generic [ref=e509]:
+                    - generic [ref=e510]:
+                      - generic [ref=e511]: lean
+                      - generic [ref=e512]:
+                        - button "Collapse" [ref=e514] [cursor=pointer]:
+                          - img [ref=e515]
+                        - button [ref=e518] [cursor=pointer]:
+                          - img [ref=e521]
+                    - code [ref=e532]:
+                      - generic [ref=e533]: "-- 1. def:cotangent-fiber-norm"
+                      - generic [ref=e534]: noncomputable def cotangentFiberNorm
+                      - generic [ref=e535]: "(X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]"
+                      - generic [ref=e536]: "[IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]"
+                      - generic [ref=e537]: "(x : X) (_v : CotangentSpace ℂ X x) : ℝ := sorry"
+                      - generic [ref=e538]: "-- (uses Jacobian.HolomorphicForms.CotangentBundle, where"
+                      - generic [ref=e539]: "-- CotangentSpace ℂ X x = TangentSpace 𝓘(ℂ, ℂ) x →L[ℂ] (Bundle.Trivial X ℂ) x)"
+                      - generic [ref=e541]: "-- 2. def:holomorphic-sup-norm"
+                      - generic [ref=e542]: noncomputable def holomorphicSupNorm
+                      - generic [ref=e543]: "(X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]"
+                      - generic [ref=e544]: "[IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]"
+                      - generic [ref=e545]: "(_ω : HolomorphicOneForm ℂ X) : ℝ := sorry"
+                      - generic [ref=e546]: "-- (HolomorphicOneForm is a project-side struct, not a Mathlib type)"
+                      - generic [ref=e548]: "-- 3. lem:chart-coefficient-bound"
+                      - generic [ref=e549]: theorem chart_coefficient_bound
+                      - generic [ref=e550]: "(X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]"
+                      - generic [ref=e551]: "[IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]"
+                      - generic [ref=e552]: "(e : OpenPartialHomeomorph X ℂ) (_he : e ∈ atlas ℂ X) :"
+                      - generic [ref=e553]: "∃ C : ℝ, 0 ≤ C ∧ ∀ (ω : HolomorphicOneForm ℂ X) (x : X),"
+                      - generic [ref=e554]: x ∈ e.source →
+                      - generic [ref=e555]: cotangentFiberNorm X x (ω.1 x) ≤ C * holomorphicSupNorm X ω := sorry
+                      - generic [ref=e557]: "-- 4. lem:montel-compactness (sequential form)"
+                      - generic [ref=e558]: theorem montel_compactness
+                      - generic [ref=e559]: "(X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]"
+                      - generic [ref=e560]: "[IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]"
+                      - generic [ref=e561]: "(ω : ℕ → HolomorphicOneForm ℂ X)"
+                      - generic [ref=e562]: "(_h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) :"
+                      - generic [ref=e563]: "∃ (φ : ℕ → ℕ), StrictMono φ ∧"
+                      - generic [ref=e564]: "∃ ωlim : HolomorphicOneForm ℂ X,"
+                      - generic [ref=e565]: holomorphicSupNorm X ωlim ≤ 1 ∧
+                      - generic [ref=e566]: Tendsto (fun n => holomorphicSupNorm X (ω (φ n) - ωlim))
+                      - generic [ref=e567]: atTop (𝓝 0) := sorry
+                      - generic [ref=e569]: "-- 5. thm:hone-unit-ball-compact (topological form, parameterised by abstract"
+                      - generic [ref=e570]: "-- normed realisation H of HolomorphicOneForm — because Mathlib has no"
+                      - generic [ref=e571]: "-- canonical norm on the section space)"
+                      - generic [ref=e572]: theorem hone_unit_ball_compact
+                      - generic [ref=e573]: "(X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]"
+                      - generic [ref=e574]: "[IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]"
+                      - generic [ref=e575]: "{H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]"
+                      - generic [ref=e576]: "(e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)"
+                      - generic [ref=e577]: "(_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) :"
+                      - generic [ref=e578]: "IsCompact (Metric.closedBall (0 : H) 1) := sorry"
+                      - generic [ref=e580]: "-- 6. thm:fd-from-riesz (re-export of Mathlib's"
+                      - generic [ref=e581]: "-- FiniteDimensional.of_isCompact_closedBall₀)"
+                      - generic [ref=e582]: theorem fd_from_riesz
+                      - generic [ref=e583]: "{E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {r : ℝ} (_hr : 0 < r)"
+                      - generic [ref=e584]: "(_h : IsCompact (Metric.closedBall (0 : E) r)) :"
+                      - generic [ref=e585]: FiniteDimensional ℂ E := sorry
+                      - generic [ref=e587]: "-- 7. input:finite-dimensionality (umbrella; same parameterisation as #5)"
+                      - generic [ref=e588]: theorem input_finite_dimensionality
+                      - generic [ref=e589]: "(X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]"
+                      - generic [ref=e590]: "[IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]"
+                      - generic [ref=e591]: "{H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]"
+                      - generic [ref=e592]: "(_e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)"
+                      - generic [ref=e593]: "(_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖_e ω‖ = holomorphicSupNorm X ω) :"
+                      - generic [ref=e594]: FiniteDimensional ℂ H := sorry
+                      - generic [ref=e596]: "-- 8. thm:fd-holomorphic-one-forms (user-facing; no abstract H)"
+                      - generic [ref=e597]: theorem fd_holomorphic_one_forms
+                      - generic [ref=e598]: "(X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]"
+                      - generic [ref=e599]: "[IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :"
+                      - generic [ref=e600]: Module.Finite ℂ (HolomorphicOneForm ℂ X) := sorry
+                  - paragraph [ref=e601]: "QUESTIONS:"
+                  - list [ref=e602]:
+                    - listitem [ref=e603]:
+                      - generic [ref=e604]: "**API coherence**"
+                      - text: "— does each node's signature consume only what its predecessors produce? Worry: node 8 says Module.Finite, node 6/7 say FiniteDimensional ℂ. Should they be unified?"
+                    - listitem [ref=e605]:
+                      - generic [ref=e606]: "**Sequential vs topological compactness split**"
+                      - text: "(#4 vs #5) — I split because Mathlib's IsCompact (Metric.closedBall …) needs a normed structure, and we don't have one on HolomorphicOneForm directly. Is this the right separation, or can we do better?"
+                    - listitem [ref=e607]:
+                      - generic [ref=e608]: "**Parameterised H realisation in #5/#7**"
+                      - text: — workers stay agnostic about the concrete normed-space realization (the project supplies HolomorphicOneFormBanachData later). Clean pattern, or over-engineered? Should we just instantiate H := PiLp 2 (Fin (analyticGenus ℂ X) → ℂ) inline?
+                    - listitem [ref=e609]:
+                      - generic [ref=e610]: "**Mathlib decl names against v4.28**"
+                      - text: "— verify these EXIST: - FiniteDimensional.of_isCompact_closedBall₀ (in Mathlib.Analysis.Normed.Module.FiniteDimension) - OpenPartialHomeomorph (in v4.28; we know PartialHomeomorph was renamed) - CotangentSpace ℂ X x — does this exist as a manifold type? - atlas ℂ X for ChartedSpace ℂ X — name correct? - IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X — standard analytic-1-manifold typeclass usage?"
+                    - listitem [ref=e611]:
+                      - generic [ref=e612]: "**Alternative type for cotangentFiberNorm**"
+                      - text: "— passing (x v) separately is awkward since v's type depends on x. Should it instead be a section: (p : Σ x, CotangentSpace ℂ X x) → ℝ? Or operate on Bundle.TotalSpace?"
+                    - listitem [ref=e613]:
+                      - generic [ref=e614]: "**Anything else**"
+                      - text: that would block 8 parallel workers from each filling their own sorry without API friction. Be specific with Mathlib decl paths. Don't just say "looks fine" — flag the weakest link. Be concise but concrete.
+                - generic [ref=e616]:
+                  - button "Edit" [ref=e617] [cursor=pointer]:
+                    - img [ref=e619]
+                  - button "Copy" [ref=e622] [cursor=pointer]:
+                    - img [ref=e625]
+              - generic [ref=e796]:
+                - generic [ref=e798]:
+                  - button "Thought for 7s" [ref=e801] [cursor=pointer]:
+                    - img [ref=e803]
+                    - img [ref=e812]
+                    - generic [ref=e815]: Thought for 7s
+                  - generic [ref=e817]:
+                    - paragraph [ref=e818]:
+                      - strong [ref=e819]: "Overall assessment:"
+                      - text: "The chain is mostly coherent and types align well for parallel workers. The parameterization via abstract H (nodes 5/7) is a clean, standard pattern for normed realizations of abstract spaces in Mathlib (avoids committing early to a concrete Banach structure). No major hallucinations on core decls, but some tweaks needed for exact names/paths and minor API friction. Weakest links: cotangent norm (awkward dependent typing), minor unification on finiteness, and chart coefficient (relies on project-specific HolomorphicOneForm)."
+                      - button "⁠Leanprover-community.github +1" [ref=e820] [cursor=pointer]:
+                        - text: ⁠Leanprover-community.github
+                        - generic [ref=e821]: "+1"
+                    - heading "1. API Coherence & Type Flow (leaf-to-root)" [level=3] [ref=e822]
+                    - list [ref=e823]:
+                      - listitem [ref=e824]:
+                        - strong [ref=e825]: Strong flow overall.
+                        - text: "Outputs feed cleanly:"
+                        - list [ref=e826]:
+                          - listitem [ref=e827]: 1 (cotangentFiberNorm) → 2/3 (holomorphicSupNorm + local bound).
+                          - listitem [ref=e828]: 3 → 4 (Montel via uniform bounds on charts).
+                          - listitem [ref=e829]: 4 (seq. compactness) → 5 (topological compactness of unit ball via equiv to normed H).
+                          - listitem [ref=e830]: 5 → 6/7 (Riesz → FD) → 8 (project type).
+                      - listitem [ref=e831]: No signature mismatches. Node 8's Module.Finite ℂ _ is the right user-facing form (see below).
+                      - listitem [ref=e832]:
+                        - strong [ref=e833]: "Minor unification (Q1):"
+                        - text: "Yes, unify FiniteDimensional ℂ E (Mathlib core) with Module.Finite. FiniteDimensional implies Module.Finite (and vice versa over fields), but prefer:"
+                        - generic [ref=e836]:
+                          - generic [ref=e837]:
+                            - generic [ref=e838]: lean
+                            - generic [ref=e839]:
+                              - button "Wrap" [ref=e841] [cursor=pointer]:
+                                - img [ref=e842]
+                              - button [ref=e845] [cursor=pointer]:
+                                - img [ref=e848]
+                          - code [ref=e859]:
+                            - generic [ref=e860]: "-- In node 8 / user API"
+                            - generic [ref=e861]: FiniteDimensional ℂ (HolomorphicOneForm ℂ X) -- or Module.Finite if you prefer the module-only view
+                        - text: Mathlib.LinearAlgebra.FiniteDimensional.Defs has both; they are interconvertible via FiniteDimensional.of_finiteDimensional etc. No breakage, just keep consistent.
+                        - link "⁠Leanprover-community.github" [ref=e862] [cursor=pointer]:
+                          - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/LinearAlgebra/FiniteDimensional/Defs.html
+                    - 'heading "2. Sequential vs Topological Split (#4 vs #5)" [level=3] [ref=e863]'
+                    - paragraph [ref=e864]:
+                      - text: "Good split. HolomorphicOneForm lacks a canonical normed structure (project supplies it later via HolomorphicOneFormBanachData). Mathlib's Riesz (of_isCompact_closedBall) requires NormedAddCommGroup + NormedSpace, so the equiv-to-H in #5 is exactly the right bridge. No cleaner native way without defining a norm on the section space first (which defeats the point of the analytic route)."
+                      - link "⁠Leanprover-community.github" [ref=e865] [cursor=pointer]:
+                        - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Normed/Module/FiniteDimension.html
+                    - 'heading "3. Parameterized H in #5/#7" [level=3] [ref=e866]'
+                    - paragraph [ref=e867]:
+                      - text: Clean and
+                      - strong [ref=e868]: not
+                      - text: "over-engineered. This is standard Mathlib style (e.g., for abstract Banach spaces or operator norms). Workers stay agnostic; the project later proves the equiv + norm equality. Avoid inlining PiLp 2 (Fin genus → ℂ)—keeps #5/#7 reusable and parallelizable. Good pattern."
+                    - heading "4. Mathlib Decl Verification (v4.28.0 era, commit ~8f9d9cff)" [level=3] [ref=e869]
+                    - list [ref=e870]:
+                      - listitem [ref=e871]:
+                        - strong [ref=e872]: FiniteDimensional.of_isCompact_closedBall₀
+                        - text: ": Exists as FiniteDimensional.of_isCompact_closedBall (or close variant) in"
+                        - strong [ref=e873]: Mathlib.Analysis.Normed.Module.FiniteDimension
+                        - text: . Riesz theorem. The _₀ suffix may be a minor variant or old name; current is without. Safe.
+                        - link "⁠Leanprover-community.github" [ref=e874] [cursor=pointer]:
+                          - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Analysis/Normed/Module/FiniteDimension.html
+                      - listitem [ref=e875]:
+                        - strong [ref=e876]: OpenPartialHomeomorph
+                        - text: ": Yes,"
+                        - strong [ref=e877]: Mathlib.Topology.OpenPartialHomeomorph.Defs
+                        - text: (and used heavily in manifolds). PartialHomeomorph is the base; Open* adds openness. Atlas members are OpenPartialHomeomorph. Correct.
+                        - link "⁠Leanprover-community.github" [ref=e878] [cursor=pointer]:
+                          - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Geometry/Manifold/IsManifold/ExtChartAt.html
+                      - listitem [ref=e879]:
+                        - strong [ref=e880]: CotangentSpace ℂ X x
+                        - text: ": Tangent bundle exists (TangentSpace I x in"
+                        - strong [ref=e881]: Mathlib.Geometry.Manifold.VectorBundle.Tangent
+                        - text: ), type synonym for model fiber. Cotangent is dual (not a core named CotangentSpace in standard manifold API; more algebraic in Mathlib.RingTheory.Extension.Cotangent). Your project wrapper is fine, but expect Dual (TangentSpace ...) or custom. Minor risk.
+                        - link "⁠Leanprover-community.github" [ref=e882] [cursor=pointer]:
+                          - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Geometry/Manifold/VectorBundle/Tangent.html
+                      - listitem [ref=e883]:
+                        - strong [ref=e884]: atlas ℂ X
+                        - text: ": Yes,"
+                        - strong [ref=e885]: atlas H X
+                        - text: in
+                        - strong [ref=e886]: Mathlib.Geometry.Manifold.ChartedSpace
+                        - text: (for ChartedSpace H X). Your usage with ℂ as model space is correct for Riemann surfaces.
+                        - link "⁠Leanprover-community.github" [ref=e887] [cursor=pointer]:
+                          - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Geometry/Manifold/ChartedSpace.html
+                      - listitem [ref=e888]:
+                        - strong [ref=e889]: IsManifold (modelWithCornersSelf ℂ ℂ) ⊤ X
+                        - text: ": Standard for complex 1-manifolds (analytic). modelWithCornersSelf 𝕜 E + WithTop ℕ∞ for C^∞. Correct and common."
+                        - link "⁠Leanprover-community.github" [ref=e890] [cursor=pointer]:
+                          - /url: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Geometry/Manifold/IsManifold/Basic.html
+                    - paragraph [ref=e891]: No major hallucinations.
+                    - heading "5. Alternative for cotangentFiberNorm (Q5)" [level=3] [ref=e892]
+                    - paragraph [ref=e893]:
+                      - strong [ref=e894]: Yes, awkward as-is
+                      - text: "(dependent v : CotangentSpace ... x). Weakest link for parallel workers."
+                    - paragraph [ref=e895]:
+                      - strong [ref=e896]: "Better:"
+                    - generic [ref=e899]:
+                      - generic [ref=e900]:
+                        - generic [ref=e901]: lean
+                        - button "Copy" [ref=e903] [cursor=pointer]:
+                          - img [ref=e906]
+                          - generic [ref=e915]: Copy
+                      - code [ref=e918]:
+                        - generic [ref=e919]: noncomputable def cotangentFiberNorm
+                        - generic [ref=e920]: "(X : Type*) [.. manifold] (p : Bundle.TotalSpace (CotangentBundle ℂ X)) : ℝ :="
+                        - generic [ref=e921]: "-- or Σ-type"
+                        - generic [ref=e922]: let ⟨x, v⟩ := p; -- norm on fiber
+                    - paragraph [ref=e923]: Or make CotangentBundle a proper VectorBundle and use bundle norms. Your CotangentSpace comment (trivial bundle) suggests it works, but Σ/TotalSpace is cleaner.
+                    - heading "6. Other Blockers / Recommendations" [level=3] [ref=e924]
+                    - list [ref=e925]:
+                      - listitem [ref=e926]:
+                        - strong [ref=e927]: chart_coefficient_bound (#3)
+                        - text: ": Relies on e ∈ atlas ℂ X + project HolomorphicOneForm.1 (coefficient extraction). Ensure ω.1 x type-matches CotangentSpace. Add explicit he : e.IsChart or use extChartAt for robustness."
+                      - listitem [ref=e928]:
+                        - strong [ref=e929]: Montel (#4)
+                        - text: ": Sequential form is fine (Mathlib often prefers seq compactness for Montel); equiv to topological via IsCompact in #5."
+                      - listitem [ref=e930]:
+                        - strong [ref=e931]: Node 2/3
+                        - text: ": HolomorphicOneForm is project struct—document its fields (val : X → CotangentSpace etc.) explicitly for workers."
+                      - listitem [ref=e932]:
+                        - strong [ref=e933]: Imports
+                        - text: ": Ensure consistent import Mathlib.Geometry.Manifold.*, Mathlib.Analysis.Normed.Module.FiniteDimension, Mathlib.Topology.OpenPartialHomeomorph."
+                      - listitem [ref=e934]:
+                        - strong [ref=e935]: No other friction
+                        - text: ": Types are tight; 3-AI consensus on H-equiv + sup-norm equality should suffice. Spawn workers."
+                    - paragraph [ref=e936]:
+                      - strong [ref=e937]: "Flag summary (weakest to strongest):"
+                    - list [ref=e938]:
+                      - listitem [ref=e939]: Cotangent norm typing (use TotalSpace).
+                      - listitem [ref=e940]: Exact Riesz name (drop _₀).
+                      - listitem [ref=e941]: Project-specific HolomorphicOneForm (document API).
+                      - listitem [ref=e942]: Everything else solid.
+                    - paragraph [ref=e943]: This unblocks 8 parallel workers cleanly. Proceed after consensus on the H-norm equiv and cotangent bundle def.
+                - generic [ref=e945]:
+                  - button "Copy" [ref=e946] [cursor=pointer]:
+                    - img [ref=e949]
+                  - button "Create share link" [ref=e958] [cursor=pointer]:
+                    - img [ref=e960]
+                  - button "Like" [ref=e963] [cursor=pointer]:
+                    - img [ref=e965]
+                  - button "Dislike" [ref=e967] [cursor=pointer]:
+                    - img [ref=e969]
+                  - button "Regenerate" [ref=e971] [cursor=pointer]:
+                    - img [ref=e973]
+                  - button "Read aloud" [ref=e975] [cursor=pointer]:
+                    - img [ref=e977]
+                  - button "More actions" [ref=e981] [cursor=pointer]:
+                    - img [ref=e983]
+                  - generic [ref=e987]: 480ms
+                  - button "79 sources" [ref=e989] [cursor=pointer]:
+                    - generic [ref=e993]: 79 sources
+                - generic [ref=e994]:
+                  - button "Verify CotangentBundle VectorBundle instance" [ref=e995] [cursor=pointer]:
+                    - img [ref=e996]
+                    - text: Verify CotangentBundle VectorBundle instance
+                  - button "Explore Mathlib Riemann surface atlas" [ref=e999] [cursor=pointer]:
+                    - img [ref=e1000]
+                    - text: Explore Mathlib Riemann surface atlas
+            - generic [ref=e714]:
+              - paragraph [ref=e719]: Ask anything
+              - generic [ref=e721]:
+                - button "Attach" [ref=e723] [cursor=pointer]:
+                  - img [ref=e724]
+                - generic [ref=e726]:
+                  - button "Model select" [ref=e728] [cursor=pointer]:
+                    - generic [ref=e1004]: Fast
+                    - generic [ref=e1005]:
+                      - img [ref=e1006]
+                      - img [ref=e1011]
+                  - button "Dictation (Ctrl+D)" [ref=e735] [cursor=pointer]:
+                    - img [ref=e736]
+                  - button "Submit" [disabled] [ref=e1014]:
+                    - img [ref=e1016]
+          - generic:
+            - generic:
+              - img
+              - img
+            - generic: Attach to message
+            - generic: Drop here to add files to your message
+    - heading "Upgrade to SuperGrok" [level=2] [ref=e375]
+  - region "Notifications alt+T"
+  - alert [ref=e376]: jacobian challenge - Grok

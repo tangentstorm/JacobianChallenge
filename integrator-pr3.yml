@@ -1,0 +1,1510 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e7]:
+      - complementary [ref=e9]:
+        - link "Skip to content" [ref=e10]:
+          - /url: "#dframe-main"
+        - separator "Resize sidebar" [ref=e12]
+        - generic:
+          - generic: Click to collapseCtrl+B
+          - generic: Drag to resize
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - link "Claude Code" [ref=e16]:
+              - /url: /code
+              - img "Claude Code" [ref=e17]
+            - generic [ref=e28]: Research preview
+          - button "Collapse sidebar" [ref=e31]:
+            - generic [ref=e32]: 
+          - button "Search" [ref=e35]:
+            - generic [ref=e36]: 
+        - generic [ref=e37]:
+          - generic [ref=e38]:
+            - generic [ref=e39]:
+              - button "New session ⇧⌘O" [ref=e40]:
+                - generic [ref=e42]: 
+                - text: New session
+                - generic [ref=e43]: ⇧⌘O
+              - button "Routines" [ref=e44]:
+                - generic [ref=e46]: 
+                - generic [ref=e47]: Routines
+              - button "Customize" [ref=e48]:
+                - generic [ref=e50]: 
+                - generic [ref=e51]: Customize
+              - button "More navigation items" [ref=e52]:
+                - generic [ref=e54]: 
+                - generic [ref=e55]: More
+            - generic [ref=e59]:
+              - generic [ref=e60]:
+                - button "Pinned" [expanded] [ref=e63]:
+                  - generic [ref=e64]: Pinned
+                  - generic [ref=e65]: 
+                - generic [ref=e66]:
+                  - img [ref=e69]
+                  - generic [ref=e71]: Drag to pin
+              - generic [ref=e73]:
+                - generic [ref=e75]:
+                  - button "Recents" [expanded] [ref=e76]:
+                    - generic [ref=e77]: Recents
+                    - generic [ref=e78]: 
+                  - button "Filter" [ref=e79]:
+                    - generic [ref=e80]: 
+                - generic [ref=e81]:
+                  - generic [ref=e1688]:
+                    - button "Pull request closed BUILD INTEGRATION" [ref=e1689]:
+                      - img "Pull request closed" [ref=e1691]:
+                        - img [ref=e1692]
+                      - generic [ref=e1695]: BUILD INTEGRATION
+                    - generic:
+                      - button "More options for BUILD INTEGRATION":
+                        - generic:
+                          - img
+                  - generic [ref=e84]:
+                    - button "Ready Formalize divisor and divisor-degree definitions" [ref=e85]:
+                      - status "Ready" [ref=e87]
+                      - generic [ref=e90]: Formalize divisor and divisor-degree definitions
+                    - generic:
+                      - button "More options for Formalize divisor and divisor-degree definitions":
+                        - generic:
+                          - img
+                  - generic [ref=e103]:
+                    - button "Pull request closed Formalize blueprint leaf node end-to-end" [ref=e104]:
+                      - img "Pull request closed" [ref=e106]:
+                        - img [ref=e107]
+                      - generic [ref=e110]: Formalize blueprint leaf node end-to-end
+                    - generic:
+                      - button "More options for Formalize blueprint leaf node end-to-end":
+                        - generic:
+                          - img
+                  - generic [ref=e113]:
+                    - button "Awaiting input Format Lean proofs for comparator tool" [ref=e114]:
+                      - status "Awaiting input" [ref=e116]
+                      - generic [ref=e119]: Format Lean proofs for comparator tool
+                    - generic:
+                      - button "More options for Format Lean proofs for comparator tool":
+                        - generic:
+                          - img
+                  - generic [ref=e122]:
+                    - button "Pull request merged Test TTC accuracy for larger problem sizes" [ref=e123]:
+                      - img "Pull request merged" [ref=e125]:
+                        - img [ref=e126]
+                      - generic [ref=e129]: Test TTC accuracy for larger problem sizes
+                    - generic:
+                      - button "More options for Test TTC accuracy for larger problem sizes":
+                        - generic:
+                          - img
+                  - generic [ref=e132]:
+                    - button "Idle Optimize program per TICK-PROMPT instructions" [ref=e133]:
+                      - img "Idle" [ref=e135]
+                      - generic [ref=e138]: Optimize program per TICK-PROMPT instructions
+                    - generic:
+                      - button "More options for Optimize program per TICK-PROMPT instructions":
+                        - generic:
+                          - img
+                  - generic [ref=e141]:
+                    - 'button "Pull request merged #86 Review remaining universal search tasks" [ref=e142]':
+                      - img "Pull request merged" [ref=e144]:
+                        - img [ref=e145]
+                      - generic [ref=e148]: "#86 Review remaining universal search tasks"
+                    - generic:
+                      - 'button "More options for #86 Review remaining universal search tasks"':
+                        - generic:
+                          - img
+                  - generic [ref=e151]:
+                    - 'button "Idle Review PR #86 for TTC metric implementation" [ref=e152]':
+                      - img "Idle" [ref=e154]
+                      - generic [ref=e157]: "Review PR #86 for TTC metric implementation"
+                    - generic:
+                      - 'button "More options for Review PR #86 for TTC metric implementation"':
+                        - generic:
+                          - img
+                  - generic [ref=e160]:
+                    - button "Ready Compare Turyn Radical and CaDiCaL features" [ref=e161]:
+                      - status "Ready" [ref=e163]
+                      - generic [ref=e166]: Compare Turyn Radical and CaDiCaL features
+                    - generic:
+                      - button "More options for Compare Turyn Radical and CaDiCaL features":
+                        - generic:
+                          - img
+                  - generic [ref=e169]:
+                    - button "Ready Optimize TTC performance with new ideas" [ref=e170]:
+                      - status "Ready" [ref=e172]
+                      - generic [ref=e175]: Optimize TTC performance with new ideas
+                    - generic:
+                      - button "More options for Optimize TTC performance with new ideas":
+                        - generic:
+                          - img
+                  - generic [ref=e178]:
+                    - button "Ready Optimize turyn hybrid search performance" [ref=e179]:
+                      - status "Ready" [ref=e181]
+                      - generic [ref=e184]: Optimize turyn hybrid search performance
+                    - generic:
+                      - button "More options for Optimize turyn hybrid search performance":
+                        - generic:
+                          - img
+                  - generic [ref=e187]:
+                    - button "Ready tte -> ttc" [ref=e188]:
+                      - status "Ready" [ref=e190]
+                      - generic [ref=e193]: tte -> ttc
+                    - generic:
+                      - button "More options for tte -> ttc":
+                        - generic:
+                          - img
+                  - generic [ref=e196]:
+                    - 'button "Pull request merged #66 xyzw" [ref=e197]':
+                      - img "Pull request merged" [ref=e199]:
+                        - img [ref=e200]
+                      - generic [ref=e203]: "#66 xyzw"
+                    - generic:
+                      - 'button "More options for #66 xyzw"':
+                        - generic:
+                          - img
+                  - generic [ref=e206]:
+                    - button "Idle Review sum checks in SAT solver" [ref=e207]:
+                      - img "Idle" [ref=e209]
+                      - generic [ref=e212]: Review sum checks in SAT solver
+                    - generic:
+                      - button "More options for Review sum checks in SAT solver":
+                        - generic:
+                          - img
+                  - generic [ref=e215]:
+                    - 'button "Ready #69 Verify fast lookup of Turyn type sequences" [ref=e216]':
+                      - status "Ready" [ref=e218]
+                      - generic [ref=e221]: "#69 Verify fast lookup of Turyn type sequences"
+                    - generic:
+                      - 'button "More options for #69 Verify fast lookup of Turyn type sequences"':
+                        - generic:
+                          - img
+                  - generic [ref=e224]:
+                    - 'button "Ready #68 Refactor main.rs into organized submodules" [ref=e225]':
+                      - status "Ready" [ref=e227]
+                      - generic [ref=e230]: "#68 Refactor main.rs into organized submodules"
+                    - generic:
+                      - 'button "More options for #68 Refactor main.rs into organized submodules"':
+                        - generic:
+                          - img
+                  - generic [ref=e233]:
+                    - 'button "Ready #67 Merge bdkr canonicity constraints into MDD generator" [ref=e234]':
+                      - status "Ready" [ref=e236]
+                      - generic [ref=e239]: "#67 Merge bdkr canonicity constraints into MDD generator"
+                    - generic:
+                      - 'button "More options for #67 Merge bdkr canonicity constraints into MDD generator"':
+                        - generic:
+                          - img
+                  - generic [ref=e242]:
+                    - button "Idle Fix missing z[n-1] pin in gen_mdd experiment" [ref=e243]:
+                      - img "Idle" [ref=e245]
+                      - generic [ref=e248]: Fix missing z[n-1] pin in gen_mdd experiment
+                    - generic:
+                      - button "More options for Fix missing z[n-1] pin in gen_mdd experiment":
+                        - generic:
+                          - img
+                  - generic [ref=e251]:
+                    - button "Pull request merged Add README file to radical directory" [ref=e252]:
+                      - img "Pull request merged" [ref=e254]:
+                        - img [ref=e255]
+                      - generic [ref=e258]: Add README file to radical directory
+                    - generic:
+                      - button "More options for Add README file to radical directory":
+                        - generic:
+                          - img
+                  - generic [ref=e261]:
+                    - button "Pull request merged Add XY constraint to canonical representations" [ref=e262]:
+                      - img "Pull request merged" [ref=e264]:
+                        - img [ref=e265]
+                      - generic [ref=e268]: Add XY constraint to canonical representations
+                    - generic:
+                      - button "More options for Add XY constraint to canonical representations":
+                        - generic:
+                          - img
+                  - generic [ref=e271]:
+                    - button "Pull request merged Create math ideas file with famous mathematicians" [ref=e272]:
+                      - img "Pull request merged" [ref=e274]:
+                        - img [ref=e275]
+                      - generic [ref=e278]: Create math ideas file with famous mathematicians
+                    - generic:
+                      - button "More options for Create math ideas file with famous mathematicians":
+                        - generic:
+                          - img
+                  - generic [ref=e281]:
+                    - button "Ready Create lightweight MCP server for J language" [ref=e282]:
+                      - status "Ready" [ref=e284]
+                      - generic [ref=e287]: Create lightweight MCP server for J language
+                    - generic:
+                      - button "More options for Create lightweight MCP server for J language":
+                        - generic:
+                          - img
+                  - generic [ref=e290]:
+                    - 'button "Pull request merged #65 Add Divan benchmarks for Turyn sequences" [ref=e291]':
+                      - img "Pull request merged" [ref=e293]:
+                        - img [ref=e294]
+                      - generic [ref=e297]: "#65 Add Divan benchmarks for Turyn sequences"
+                    - generic:
+                      - 'button "More options for #65 Add Divan benchmarks for Turyn sequences"':
+                        - generic:
+                          - img
+                  - generic [ref=e300]:
+                    - button "Pull request merged Audit and fix performance regression issue" [ref=e301]:
+                      - img "Pull request merged" [ref=e303]:
+                        - img [ref=e304]
+                      - generic [ref=e307]: Audit and fix performance regression issue
+                    - generic:
+                      - button "More options for Audit and fix performance regression issue":
+                        - generic:
+                          - img
+                  - generic [ref=e310]:
+                    - button "Pull request merged (SLOW!) canonical form for TT(n)" [ref=e311]:
+                      - img "Pull request merged" [ref=e313]:
+                        - img [ref=e314]
+                      - generic [ref=e317]: (SLOW!) canonical form for TT(n)
+                    - generic:
+                      - button "More options for (SLOW!) canonical form for TT(n)":
+                        - generic:
+                          - img
+                  - generic [ref=e320]:
+                    - button "Pull request merged Check BDD benchmark integration status" [ref=e321]:
+                      - img "Pull request merged" [ref=e323]:
+                        - img [ref=e324]
+                      - generic [ref=e327]: Check BDD benchmark integration status
+                    - generic:
+                      - button "More options for Check BDD benchmark integration status":
+                        - generic:
+                          - img
+                  - generic [ref=e330]:
+                    - button "Pull request merged Add ZDD module" [ref=e331]:
+                      - img "Pull request merged" [ref=e333]:
+                        - img [ref=e334]
+                      - generic [ref=e337]: Add ZDD module
+                    - generic:
+                      - button "More options for Add ZDD module":
+                        - generic:
+                          - img
+                  - generic [ref=e340]:
+                    - button "Pull request merged Add state loading and saving for vhlswarm" [ref=e341]:
+                      - img "Pull request merged" [ref=e343]:
+                        - img [ref=e344]
+                      - generic [ref=e347]: Add state loading and saving for vhlswarm
+                    - generic:
+                      - button "More options for Add state loading and saving for vhlswarm":
+                        - generic:
+                          - img
+                  - generic [ref=e350]:
+                    - button "Pull request merged Implement benchmarks using Divan crate" [ref=e351]:
+                      - img "Pull request merged" [ref=e353]:
+                        - img [ref=e354]
+                      - generic [ref=e357]: Implement benchmarks using Divan crate
+                    - generic:
+                      - button "More options for Implement benchmarks using Divan crate":
+                        - generic:
+                          - img
+                  - generic [ref=e360]:
+                    - button "Pull request merged Implement COZ profiler integration" [ref=e361]:
+                      - img "Pull request merged" [ref=e363]:
+                        - img [ref=e364]
+                      - generic [ref=e367]: Implement COZ profiler integration
+                    - generic:
+                      - button "More options for Implement COZ profiler integration":
+                        - generic:
+                          - img
+                  - generic [ref=e370]:
+                    - button "Pull request merged Search for T-sequence of length 167" [ref=e371]:
+                      - img "Pull request merged" [ref=e373]:
+                        - img [ref=e374]
+                      - generic [ref=e377]: Search for T-sequence of length 167
+                    - generic:
+                      - button "More options for Search for T-sequence of length 167":
+                        - generic:
+                          - img
+                  - generic [ref=e380]:
+                    - button "Pull request merged Implement k3ipc for ksharp" [ref=e381]:
+                      - img "Pull request merged" [ref=e383]:
+                        - img [ref=e384]
+                      - generic [ref=e387]: Implement k3ipc for ksharp
+                    - generic:
+                      - button "More options for Implement k3ipc for ksharp":
+                        - generic:
+                          - img
+                  - generic [ref=e390]:
+                    - button "Pull request merged Add extra timestamp bits to AST block" [ref=e391]:
+                      - img "Pull request merged" [ref=e393]:
+                        - img [ref=e394]
+                      - generic [ref=e397]: Add extra timestamp bits to AST block
+                    - generic:
+                      - button "More options for Add extra timestamp bits to AST block":
+                        - generic:
+                          - img
+                  - generic [ref=e400]:
+                    - button "Pull request merged [merged] top-down for def-worke" [ref=e401]:
+                      - img "Pull request merged" [ref=e403]:
+                        - img [ref=e404]
+                      - generic [ref=e407]: "[merged] top-down for def-worke"
+                    - generic:
+                      - button "More options for [merged] top-down for def-worke":
+                        - generic:
+                          - img
+                  - generic [ref=e410]:
+                    - 'button "Pull request merged Diagnose and solve issue #22" [ref=e411]':
+                      - img "Pull request merged" [ref=e413]:
+                        - img [ref=e414]
+                      - generic [ref=e417]: "Diagnose and solve issue #22"
+                    - generic:
+                      - 'button "More options for Diagnose and solve issue #22"':
+                        - generic:
+                          - img
+                  - generic [ref=e420]:
+                    - 'button "Pull request merged #58/#59 turyn: merge pipelines" [ref=e421]':
+                      - img "Pull request merged" [ref=e423]:
+                        - img [ref=e424]
+                      - generic [ref=e427]: "#58/#59 turyn: merge pipelines"
+                    - generic:
+                      - 'button "More options for #58/#59 turyn: merge pipelines"':
+                        - generic:
+                          - img
+                  - generic [ref=e430]:
+                    - button "Awaiting input retro pascal" [ref=e431]:
+                      - status "Awaiting input" [ref=e433]
+                      - generic [ref=e436]: retro pascal
+                    - generic:
+                      - button "More options for retro pascal":
+                        - generic:
+                          - img
+                  - generic [ref=e439]:
+                    - 'button "Pull request merged #57 metrics" [ref=e440]':
+                      - img "Pull request merged" [ref=e442]:
+                        - img [ref=e443]
+                      - generic [ref=e446]: "#57 metrics"
+                    - generic:
+                      - 'button "More options for #57 metrics"':
+                        - generic:
+                          - img
+                  - generic [ref=e449]:
+                    - 'button "Pull request merged #56 turyn throughput" [ref=e450]':
+                      - img "Pull request merged" [ref=e452]:
+                        - img [ref=e453]
+                      - generic [ref=e456]: "#56 turyn throughput"
+                    - generic:
+                      - 'button "More options for #56 turyn throughput"':
+                        - generic:
+                          - img
+                  - generic [ref=e459]:
+                    - button "Idle Initialize repo and set up main branch" [ref=e460]:
+                      - img "Idle" [ref=e462]
+                      - generic [ref=e465]: Initialize repo and set up main branch
+                    - generic:
+                      - button "More options for Initialize repo and set up main branch":
+                        - generic:
+                          - img
+                  - generic [ref=e468]:
+                    - button "Pull request merged bex+woz together" [ref=e469]:
+                      - img "Pull request merged" [ref=e471]:
+                        - img [ref=e472]
+                      - generic [ref=e475]: bex+woz together
+                    - generic:
+                      - button "More options for bex+woz together":
+                        - generic:
+                          - img
+                  - generic [ref=e478]:
+                    - button "Pull request merged table nids" [ref=e479]:
+                      - img "Pull request merged" [ref=e481]:
+                        - img [ref=e482]
+                      - generic [ref=e485]: table nids
+                    - generic:
+                      - button "More options for table nids":
+                        - generic:
+                          - img
+                  - generic [ref=e488]:
+                    - button "Pull request merged bex optimization" [ref=e489]:
+                      - img "Pull request merged" [ref=e491]:
+                        - img [ref=e492]
+                      - generic [ref=e495]: bex optimization
+                    - generic:
+                      - button "More options for bex optimization":
+                        - generic:
+                          - img
+                  - generic [ref=e498]:
+                    - button "Pull request merged def-worker" [ref=e499]:
+                      - img "Pull request merged" [ref=e501]:
+                        - img [ref=e502]
+                      - generic [ref=e505]: def-worker
+                    - generic:
+                      - button "More options for def-worker":
+                        - generic:
+                          - img
+                  - generic [ref=e508]:
+                    - 'button "Pull request merged #55 ToC workflow" [ref=e509]':
+                      - img "Pull request merged" [ref=e511]:
+                        - img [ref=e512]
+                      - generic [ref=e515]: "#55 ToC workflow"
+                    - generic:
+                      - 'button "More options for #55 ToC workflow"':
+                        - generic:
+                          - img
+                  - generic [ref=e518]:
+                    - 'button "Pull request merged #54 spectral sat + n=56 phase C" [ref=e519]':
+                      - img "Pull request merged" [ref=e521]:
+                        - img [ref=e522]
+                      - generic [ref=e525]: "#54 spectral sat + n=56 phase C"
+                    - generic:
+                      - 'button "More options for #54 spectral sat + n=56 phase C"':
+                        - generic:
+                          - img
+                  - generic [ref=e528]:
+                    - 'button "Pull request merged #50,#53 even faster gen_mdd" [ref=e529]':
+                      - img "Pull request merged" [ref=e531]:
+                        - img [ref=e532]
+                      - generic [ref=e535]: "#50,#53 even faster gen_mdd"
+                    - generic:
+                      - 'button "More options for #50,#53 even faster gen_mdd"':
+                        - generic:
+                          - img
+                  - generic [ref=e538]:
+                    - 'button "Pull request merged #52 refactor turyn" [ref=e539]':
+                      - img "Pull request merged" [ref=e541]:
+                        - img [ref=e542]
+                      - generic [ref=e545]: "#52 refactor turyn"
+                    - generic:
+                      - 'button "More options for #52 refactor turyn"':
+                        - generic:
+                          - img
+                  - generic [ref=e548]:
+                    - 'button "Pull request merged #51 refactor radical" [ref=e549]':
+                      - img "Pull request merged" [ref=e551]:
+                        - img [ref=e552]
+                      - generic [ref=e555]: "#51 refactor radical"
+                    - generic:
+                      - 'button "More options for #51 refactor radical"':
+                        - generic:
+                          - img
+                  - generic [ref=e558]:
+                    - button "Idle Test MDD with fully separated variable layers" [ref=e559]:
+                      - img "Idle" [ref=e561]
+                      - generic [ref=e564]: Test MDD with fully separated variable layers
+                    - generic:
+                      - button "More options for Test MDD with fully separated variable layers":
+                        - generic:
+                          - img
+                  - generic [ref=e567]:
+                    - button "Pull request merged Create Lean formal verification system" [ref=e568]:
+                      - img "Pull request merged" [ref=e570]:
+                        - img [ref=e571]
+                      - generic [ref=e574]: Create Lean formal verification system
+                    - generic:
+                      - button "More options for Create Lean formal verification system":
+                        - generic:
+                          - img
+                  - generic [ref=e577]:
+                    - button "Pull request merged gen_mdd ++" [ref=e578]:
+                      - img "Pull request merged" [ref=e580]:
+                        - img [ref=e581]
+                      - generic [ref=e584]: gen_mdd ++
+                    - generic:
+                      - button "More options for gen_mdd ++":
+                        - generic:
+                          - img
+                  - generic [ref=e587]:
+                    - 'button "Pull request merged #45b / #46 MDD+SAT + better MDD" [ref=e588]':
+                      - img "Pull request merged" [ref=e590]:
+                        - img [ref=e591]
+                      - generic [ref=e594]: "#45b / #46 MDD+SAT + better MDD"
+                    - generic:
+                      - 'button "More options for #45b / #46 MDD+SAT + better MDD"':
+                        - generic:
+                          - img
+                  - generic [ref=e597]:
+                    - 'button "Idle #45 mdd table gets us k=9" [ref=e598]':
+                      - img "Idle" [ref=e600]
+                      - generic [ref=e603]: "#45 mdd table gets us k=9"
+                    - generic:
+                      - 'button "More options for #45 mdd table gets us k=9"':
+                        - generic:
+                          - img
+                  - generic [ref=e606]:
+                    - 'button "Pull request merged #44: PB+470% for n=56" [ref=e607]':
+                      - img "Pull request merged" [ref=e609]:
+                        - img [ref=e610]
+                      - generic [ref=e613]: "#44: PB+470% for n=56"
+                    - generic:
+                      - 'button "More options for #44: PB+470% for n=56"':
+                        - generic:
+                          - img
+                  - generic [ref=e616]:
+                    - 'button "Idle #43b recover SAT ideas" [ref=e617]':
+                      - img "Idle" [ref=e619]
+                      - generic [ref=e622]: "#43b recover SAT ideas"
+                    - generic:
+                      - 'button "More options for #43b recover SAT ideas"':
+                        - generic:
+                          - img
+                  - generic [ref=e625]:
+                    - 'button "Idle #42 xor propagation" [ref=e626]':
+                      - img "Idle" [ref=e628]
+                      - generic [ref=e631]: "#42 xor propagation"
+                    - generic:
+                      - 'button "More options for #42 xor propagation"':
+                        - generic:
+                          - img
+                  - generic [ref=e634]:
+                    - 'button "Idle #41 SatWorkItem" [ref=e635]':
+                      - img "Idle" [ref=e637]
+                      - generic [ref=e640]: "#41 SatWorkItem"
+                    - generic:
+                      - 'button "More options for #41 SatWorkItem"':
+                        - generic:
+                          - img
+                  - generic [ref=e643]:
+                    - 'button "Idle #40 help message for args" [ref=e644]':
+                      - img "Idle" [ref=e646]
+                      - generic [ref=e649]: "#40 help message for args"
+                    - generic:
+                      - 'button "More options for #40 help message for args"':
+                        - generic:
+                          - img
+                  - generic [ref=e652]:
+                    - button "Idle Optimize performance with seven interventions" [ref=e653]:
+                      - img "Idle" [ref=e655]
+                      - generic [ref=e658]: Optimize performance with seven interventions
+                    - generic:
+                      - button "More options for Optimize performance with seven interventions":
+                        - generic:
+                          - img
+                  - generic [ref=e661]:
+                    - button "Idle Dispatch background conversation" [ref=e662]:
+                      - img "Idle" [ref=e664]
+                      - generic [ref=e667]: Dispatch background conversation
+                    - generic:
+                      - button "More options for Dispatch background conversation":
+                        - generic:
+                          - img
+                  - generic [ref=e670]:
+                    - button "Idle Profile and optimize for n=26" [ref=e671]:
+                      - img "Idle" [ref=e673]
+                      - generic [ref=e676]: Profile and optimize for n=26
+                    - generic:
+                      - button "More options for Profile and optimize for n=26":
+                        - generic:
+                          - img
+                  - generic [ref=e679]:
+                    - button "Idle Profile and benchmark with k=7 table" [ref=e680]:
+                      - img "Idle" [ref=e682]
+                      - generic [ref=e685]: Profile and benchmark with k=7 table
+                    - generic:
+                      - button "More options for Profile and benchmark with k=7 table":
+                        - generic:
+                          - img
+                  - generic [ref=e688]:
+                    - button "Idle Profile and identify new performance hotspots" [ref=e689]:
+                      - img "Idle" [ref=e691]
+                      - generic [ref=e694]: Profile and identify new performance hotspots
+                    - generic:
+                      - button "More options for Profile and identify new performance hotspots":
+                        - generic:
+                          - img
+                  - generic [ref=e697]:
+                    - button "Idle Debug missing solutions at n=28" [ref=e698]:
+                      - img "Idle" [ref=e700]
+                      - generic [ref=e703]: Debug missing solutions at n=28
+                    - generic:
+                      - button "More options for Debug missing solutions at n=28":
+                        - generic:
+                          - img
+                  - generic [ref=e706]:
+                    - button "Idle Debug spectral bound auto-widening for n=28" [ref=e707]:
+                      - img "Idle" [ref=e709]
+                      - generic [ref=e712]: Debug spectral bound auto-widening for n=28
+                    - generic:
+                      - button "More options for Debug spectral bound auto-widening for n=28":
+                        - generic:
+                          - img
+                  - generic [ref=e715]:
+                    - button "Idle Load and run XY table boundary computation" [ref=e716]:
+                      - img "Idle" [ref=e718]
+                      - generic [ref=e721]: Load and run XY table boundary computation
+                    - generic:
+                      - button "More options for Load and run XY table boundary computation":
+                        - generic:
+                          - img
+                  - generic [ref=e724]:
+                    - button "Idle Profile hybrid search performance with n=22" [ref=e725]:
+                      - img "Idle" [ref=e727]
+                      - generic [ref=e730]: Profile hybrid search performance with n=22
+                    - generic:
+                      - button "More options for Profile hybrid search performance with n=22":
+                        - generic:
+                          - img
+                  - generic [ref=e733]:
+                    - button "Idle Construct Turyn sequences and Hadamard matrices" [ref=e734]:
+                      - img "Idle" [ref=e736]
+                      - generic [ref=e739]: Construct Turyn sequences and Hadamard matrices
+                    - generic:
+                      - button "More options for Construct Turyn sequences and Hadamard matrices":
+                        - generic:
+                          - img
+                  - generic [ref=e742]:
+                    - button "Idle Add and test SAT/CP hybrid ideas" [ref=e743]:
+                      - img "Idle" [ref=e745]
+                      - generic [ref=e748]: Add and test SAT/CP hybrid ideas
+                    - generic:
+                      - button "More options for Add and test SAT/CP hybrid ideas":
+                        - generic:
+                          - img
+                  - generic [ref=e751]:
+                    - button "Idle Add Gemini suggestions to IDEAS file" [ref=e752]:
+                      - img "Idle" [ref=e754]
+                      - generic [ref=e757]: Add Gemini suggestions to IDEAS file
+                    - generic:
+                      - button "More options for Add Gemini suggestions to IDEAS file":
+                        - generic:
+                          - img
+                  - generic [ref=e760]:
+                    - button "Idle Summarize current test failures" [ref=e761]:
+                      - img "Idle" [ref=e763]
+                      - generic [ref=e766]: Summarize current test failures
+                    - generic:
+                      - button "More options for Summarize current test failures":
+                        - generic:
+                          - img
+                  - generic [ref=e769]:
+                    - button "Idle Build self-hosted assembler with dual VMs" [ref=e770]:
+                      - img "Idle" [ref=e772]
+                      - generic [ref=e775]: Build self-hosted assembler with dual VMs
+                    - generic:
+                      - button "More options for Build self-hosted assembler with dual VMs":
+                        - generic:
+                          - img
+                  - generic [ref=e778]:
+                    - button "Idle Fix failing tests excluding database ones" [ref=e779]:
+                      - img "Idle" [ref=e781]
+                      - generic [ref=e784]: Fix failing tests excluding database ones
+                    - generic:
+                      - button "More options for Fix failing tests excluding database ones":
+                        - generic:
+                          - img
+                  - generic [ref=e787]:
+                    - button "Idle Implement Pineapple Open Face Chinese game" [ref=e788]:
+                      - img "Idle" [ref=e790]
+                      - generic [ref=e793]: Implement Pineapple Open Face Chinese game
+                    - generic:
+                      - button "More options for Implement Pineapple Open Face Chinese game":
+                        - generic:
+                          - img
+                  - generic [ref=e796]:
+                    - button "Idle Port k-ipc implementation to ngn-k" [ref=e797]:
+                      - img "Idle" [ref=e799]
+                      - generic [ref=e802]: Port k-ipc implementation to ngn-k
+                    - generic:
+                      - button "More options for Port k-ipc implementation to ngn-k":
+                        - generic:
+                          - img
+          - generic [ref=e805]:
+            - img [ref=e807]
+            - generic [ref=e809]: Try Claude Code on desktop
+            - button "Download" [ref=e810]: Download
+            - button "Dismiss" [ref=e813]:
+              - img [ref=e815]
+          - generic [ref=e817]:
+            - button "Michal Wallace" [ref=e819]:
+              - generic [ref=e821]: 
+              - generic [ref=e822]: Michal Wallace
+            - button "Appearance" [ref=e824]:
+              - generic [ref=e827]: 
+      - main [ref=e828]:
+        - region "Primary pane" [ref=e831]:
+          - generic [ref=e835]:
+            - generic [ref=e836]:
+              - generic [ref=e842]:
+                - generic [ref=e843]:
+                  - generic [ref=e845]:
+                    - button "jacobianchallenge" [ref=e847]:
+                      - img [ref=e850]
+                      - generic [ref=e854]: jacobianchallenge
+                    - generic [ref=e855]: /
+                    - generic [ref=e856]:
+                      - button "BUILD INTEGRATION" [ref=e1696]
+                      - button "Session actions" [ref=e858]:
+                        - img [ref=e859]
+                  - button "Share" [ref=e862]:
+                    - img [ref=e864]
+                - generic [ref=e866]:
+                  - generic [ref=e870]:
+                    - button "Initialized session" [ref=e961]:
+                      - generic [ref=e962]: Initialized session
+                      - img [ref=e964]
+                    - generic [ref=e969]:
+                      - generic [ref=e970]:
+                        - paragraph [ref=e973]: I'll start by verifying the cache-prime hook output (which I see succeeded above), then explore the project structure to understand what exists.
+                        - button "Ran Check git state" [ref=e976]:
+                          - generic [ref=e977]: Ran
+                          - generic [ref=e978]: Check git state
+                          - img [ref=e980]
+                        - paragraph [ref=e984]: Good, I'm on the right branch. Cache-prime succeeded (8010 .olean files >> 1000 threshold). Let me explore the project structure.
+                        - button "Ran 17 commands, updated todos, read 2 files, used a tool" [ref=e987]:
+                          - generic [ref=e989]:
+                            - text: Ran
+                            - generic [ref=e990]: 17 commands
+                            - text: ", updated"
+                            - generic [ref=e991]: todos
+                            - text: ", read"
+                            - generic [ref=e992]: 2 files
+                            - text: ", used"
+                            - generic [ref=e993]: a tool
+                          - img [ref=e995]
+                        - paragraph [ref=e999]: Now I have enough info to design. Let me verify a few more Mathlib decl names quickly.
+                        - button "Ran 6 commands, read a file, updated todos" [ref=e1002]:
+                          - generic [ref=e1004]:
+                            - text: Ran
+                            - generic [ref=e1005]: 6 commands
+                            - text: ", read"
+                            - generic [ref=e1006]: a file
+                            - text: ", updated"
+                            - generic [ref=e1007]: todos
+                          - img [ref=e1009]
+                        - paragraph [ref=e1013]: Now rewriting all 8 stubs.
+                        - button "Created 6 files, read 5 files" [ref=e1016]:
+                          - generic [ref=e1018]:
+                            - text: Created
+                            - generic [ref=e1019]: 6 files
+                            - text: ", read"
+                            - generic [ref=e1020]: 5 files
+                          - img [ref=e1022]
+                        - paragraph [ref=e1026]:
+                          - text: "Now create the 3 new files:"
+                          - code [ref=e1027]: FdFromRiesz
+                          - text: ","
+                          - code [ref=e1028]: InputFiniteDimensionality
+                          - text: ","
+                          - code [ref=e1029]: FdHolomorphicOneForms
+                          - text: .
+                        - button "Created 3 files" [ref=e1032]:
+                          - generic [ref=e1034]:
+                            - text: Created
+                            - generic [ref=e1035]: 3 files
+                          - img [ref=e1037]
+                        - paragraph [ref=e1041]: Now update the Blueprint.lean import index.
+                        - button "Edited 2 files, read a file, updated todos" [ref=e1044]:
+                          - generic [ref=e1046]:
+                            - text: Edited
+                            - generic [ref=e1047]: 2 files
+                            - text: ", read"
+                            - generic [ref=e1048]: a file
+                            - text: ", updated"
+                            - generic [ref=e1049]: todos
+                          - img [ref=e1051]
+                        - paragraph [ref=e1055]: Let me run an incremental build to check if all stubs typecheck.
+                        - button "Ran 4 commands, edited a file" [ref=e1058]:
+                          - generic [ref=e1060]:
+                            - text: Ran
+                            - generic [ref=e1061]: 4 commands
+                            - text: ", edited"
+                            - generic [ref=e1062]: a file
+                          - img [ref=e1064]
+                        - paragraph [ref=e1068]:
+                          - text: All 8 stubs build with exactly one
+                          - code [ref=e1069]: sorry
+                          - text: warning each. Now build the full Blueprint module to confirm.
+                        - button "Ran 2 commands" [ref=e1072]:
+                          - generic [ref=e1074]:
+                            - text: Ran
+                            - generic [ref=e1075]: 2 commands
+                          - img [ref=e1077]
+                        - paragraph [ref=e1081]: Exactly 8 sorries — one per node. Now expand the TeX blueprint.
+                        - button "Updated todos, read 2 files" [ref=e1084]:
+                          - generic [ref=e1086]:
+                            - text: Updated
+                            - generic [ref=e1087]: todos
+                            - text: ", read"
+                            - generic [ref=e1088]: 2 files
+                          - img [ref=e1090]
+                        - paragraph [ref=e1094]:
+                          - text: Now I'll rewrite this section block (lines 14-95) with expanded informal proofs,
+                          - code [ref=e1095]: "\\lean{}"
+                          - text: annotations, and add the
+                          - code [ref=e1096]: thm:fd-holomorphic-one-forms
+                          - text: block.
+                        - button "Edited 02-holomorphic-forms-and-genus.tex +188 -37" [ref=e1099]:
+                          - generic [ref=e1100]: Edited
+                          - generic [ref=e1101]: 02-holomorphic-forms-and-genus.tex
+                          - generic [ref=e1103]:
+                            - generic [ref=e1104]: "+188"
+                            - generic [ref=e1105]: "-37"
+                          - img [ref=e1107]
+                        - paragraph [ref=e1111]:
+                          - text: Now remove the duplicate
+                          - code [ref=e1112]: thm:fd-holomorphic-one-forms
+                          - text: block from
+                          - code [ref=e1113]: statement-bank.tex
+                          - text: since the canonical version now lives in sec02.
+                        - button "Edited 2 files, read a file" [ref=e1116]:
+                          - generic [ref=e1118]:
+                            - text: Edited
+                            - generic [ref=e1119]: 2 files
+                            - text: ", read"
+                            - generic [ref=e1120]: a file
+                          - img [ref=e1122]
+                        - paragraph [ref=e1126]: Now run the full Blueprint build one final time to confirm everything still compiles cleanly.
+                        - button "Ran 4 commands, updated todos, used a tool" [ref=e1129]:
+                          - generic [ref=e1131]:
+                            - text: Ran
+                            - generic [ref=e1132]: 4 commands
+                            - text: ", updated"
+                            - generic [ref=e1133]: todos
+                            - text: ", used"
+                            - generic [ref=e1134]: a tool
+                          - img [ref=e1136]
+                        - generic [ref=e1139]:
+                          - paragraph [ref=e1140]:
+                            - text: "Draft PR opened:"
+                            - link "https://github.com/tangentstorm/JacobianChallenge/pull/2" [ref=e1141]:
+                              - /url: https://github.com/tangentstorm/JacobianChallenge/pull/2
+                          - paragraph [ref=e1142]:
+                            - strong [ref=e1143]: Summary
+                          - list [ref=e1144]:
+                            - listitem [ref=e1145]:
+                              - text: Cache-prime hook restored 8010 .olean files — well above the 1000 floor; full
+                              - code [ref=e1146]: lake build Jacobian.Blueprint
+                              - text: exits 0 with only
+                              - code [ref=e1147]: declaration uses sorry
+                              - text: warnings.
+                            - listitem [ref=e1148]:
+                              - text: 8 Lean stubs in
+                              - code [ref=e1149]: Jacobian/Blueprint/Sec02/
+                              - text: "(3 new:"
+                              - code [ref=e1150]: FdFromRiesz
+                              - text: ","
+                              - code [ref=e1151]: InputFiniteDimensionality
+                              - text: ","
+                              - code [ref=e1152]: FdHolomorphicOneForms
+                              - text: ; 5 redesigned to use
+                              - code [ref=e1153]: HolomorphicOneForm ℂ X
+                              - text: /
+                              - code [ref=e1154]: CotangentSpace ℂ X
+                              - text: instead of
+                              - code [ref=e1155]: X → ℂ
+                              - text: placeholders). Sorry count = exactly 8.
+                            - listitem [ref=e1156]:
+                              - text: TeX
+                              - link "tex/sections/02-holomorphic-forms-and-genus.tex" [ref=e1157]:
+                                - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/tex/sections/02-holomorphic-forms-and-genus.tex
+                                - code [ref=e1158]: tex/sections/02-holomorphic-forms-and-genus.tex
+                              - text: expanded with self-contained proofsketches for each of the 8 nodes,
+                              - code [ref=e1159]: "\\lean{...}"
+                              - text: annotations to all stubs, and a fresh
+                              - code [ref=e1160]: "\\label{thm:fd-holomorphic-one-forms}"
+                              - text: block (moved from
+                              - code [ref=e1161]: statement-bank.tex
+                              - text: to its proper position in the chain).
+                            - listitem [ref=e1162]:
+                              - text: "Key design decisions: Montel split into a sequential form (analytic content) plus a topological-"
+                              - code [ref=e1163]: IsCompact
+                              - text: form parameterised by an abstract Banach realisation, mirroring the production
+                              - code [ref=e1164]: HolomorphicOneFormBanachData
+                              - text: pattern. Verified
+                              - code [ref=e1165]: OpenPartialHomeomorph
+                              - text: (not
+                              - code [ref=e1166]: PartialHomeomorph
+                              - text: ) and
+                              - code [ref=e1167]: FiniteDimensional.of_isCompact_closedBall
+                              - text: (not
+                              - code [ref=e1168]: …_unitBall
+                              - text: ) against the v4.28.0 source.
+                            - listitem [ref=e1169]: PR opened as draft per instructions; no merge.
+                      - generic:
+                        - button "Copy message":
+                          - img
+                        - button "Pin as chapter":
+                          - img
+                        - generic "Apr 30, 2026, 3:21:13 PM": 1h ago
+                    - generic [ref=e1313]:
+                      - generic [ref=e1314]:
+                        - generic [ref=e1315]:
+                          - paragraph [ref=e1316]:
+                            - text: "Role change. Your design pass landed (cherry-picked onto main as 6ed4538; PR #2 closed); thanks for that. From now on, you're the **Build Integrator** for this project. The local Lean toolchain bogs down my human's machine, so we're moving every"
+                            - code [ref=e1317]: lake build
+                            - text: "and most git ops to you. Your cache is already primed (5.5G, 7655 .olean files), so this is the right session to keep alive for it. ## What I'll send you Short messages like: - \"Pull main and run"
+                            - code [ref=e1318]: lake build Jacobian.HolomorphicForms.Foo
+                            - text: . Report exit code + tail of stderr." - "Cherry-pick
+                            - code [ref=e1319]: Jacobian/Bar.lean
+                            - text: "from PR #5 onto main; build"
+                            - code [ref=e1320]: Jacobian.Bar
+                            - text: ; if green, commit and push." - "Fetch
+                            - code [ref=e1321]: pull/N/head
+                            - text: as branch
+                            - code [ref=e1322]: prN
+                            - text: ; show me
+                            - code [ref=e1323]: git diff main..prN --stat
+                            - text: and the commit messages." - "Branch off main as
+                            - code [ref=e1324]: claude/xyz
+                            - text: "; apply this diff: [paste]; build target X; push if green.\" I'll be specific about the target so you don't waste cache cycles building everything. ## What you do 1. Run the requested git/lake operation in the existing checkout (no need to re-prime the cache; you've already paid that cost). 2. Report back with the actual command output — exit code, last ~30 lines of stderr/stdout, build time, and any new sorry warnings introduced. 3. Don't merge to main without me telling you to. Don't open PRs unless I ask. Don't push to feature branches unless I ask. 4. Keep"
+                            - code [ref=e1325]: main
+                            - text: "clean: when I tell you to \"pull main\", do"
+                            - code [ref=e1326]: git fetch origin && git checkout main && git reset --hard origin/main
+                            - text: "(we're treating origin/main as authoritative and your local main as a mirror). ## Hard rules (unchanged) 1. NO"
+                            - code [ref=e1327]: import Mathlib
+                            - text: — narrow
+                            - code [ref=e1328]: import Mathlib.Topic.Subtopic
+                            - text: only. 2. NO new sorries unless I ask for a stub explicitly. 3. DO NOT edit
+                            - code [ref=e1329]: Jacobian/Challenge.lean
+                            - text: ". 4. If a build fails: stop; don't try to \"fix\" it; show me the error and let me decide. 5. If you've been idle a while and the toolchain rotted:"
+                            - code [ref=e1330]: elan default leanprover/lean4:v4.28.0
+                            - text: then proceed. If
+                            - code [ref=e1331]: lake exe cache get
+                            - text: is needed for an unfamiliar Mathlib commit, run it; otherwise trust the existing
+                            - code [ref=e1332]: .lake/
+                            - text: ". ## First task Pull"
+                            - code [ref=e1333]: origin/main
+                            - text: (currently at
+                            - code [ref=e1334]: 6ed4538
+                            - text: ") and run:"
+                          - code [ref=e1338]:
+                            - generic [ref=e1340]: lake build Jacobian.Blueprint
+                          - paragraph [ref=e1341]:
+                            - text: "Confirm: - Exit 0 - Sorry warnings: 8 in"
+                            - code [ref=e1342]: Sec02/*
+                            - text: (one per node) + the existing sec01 stubs (~14 sorries) = ~22 total
+                            - code [ref=e1343]: declaration uses sorry
+                            - text: warnings. Report time and the warning count. After that, just stay alive and wait for my next instruction.
+                        - button "Show more" [ref=e1344]: Show more
+                      - generic:
+                        - button "Copy message":
+                          - img
+                    - button "Resumed session" [ref=e1360]:
+                      - generic [ref=e1361]: Resumed session
+                      - img [ref=e1363]
+                    - generic [ref=e1368]:
+                      - generic [ref=e1369]:
+                        - button "Ran 3 commands" [ref=e1372]:
+                          - generic [ref=e1374]:
+                            - text: Ran
+                            - generic [ref=e1375]: 3 commands
+                          - img [ref=e1377]
+                        - generic [ref=e1380]:
+                          - paragraph [ref=e1381]: Done.
+                          - list [ref=e1382]:
+                            - listitem [ref=e1383]:
+                              - code [ref=e1384]: git reset --hard origin/main
+                              - text: → at
+                              - code [ref=e1385]: "6ed4538 Integrate sec02 fd-chain design pass (PR #2 cherry-pick)"
+                            - listitem [ref=e1386]:
+                              - code [ref=e1387]: lake build Jacobian.Blueprint
+                              - text: →
+                              - strong [ref=e1388]: exit 0
+                              - text: ","
+                              - strong [ref=e1389]: 4.4s
+                              - text: (cache replay only, no recompile)
+                            - listitem [ref=e1390]:
+                              - text: "Sorry warnings:"
+                              - strong [ref=e1391]: 15 total
+                              - text: =
+                              - strong [ref=e1392]: 8 in Sec02
+                              - text: (one per node, as expected) +
+                              - strong [ref=e1393]: 7 in Sec01
+                              - text: — not 14. Either the audit estimate was rough or some Sec01 stubs got closed since.
+                          - paragraph [ref=e1394]: "Sec02 sorry locations match the design pass exactly:"
+                          - generic [ref=e1396]:
+                            - code [ref=e1400]:
+                              - generic [ref=e1401]:
+                                - generic [ref=e1402]: CotangentFiberNorm:32, HolomorphicSupNorm:22, ChartCoefficientBound:22,
+                                - generic [ref=e1403]: MontelCompactness:38, HoneUnitBallCompact:34, FdFromRiesz:23,
+                                - generic [ref=e1404]: InputFiniteDimensionality:26, FdHolomorphicOneForms:34
+                            - button "Copy code" [ref=e1406]:
+                              - img [ref=e1408]
+                          - paragraph [ref=e1410]: Standing by for next instruction.
+                      - generic:
+                        - button "Copy message":
+                          - img
+                        - button "Pin as chapter":
+                          - img
+                        - generic "Apr 30, 2026, 3:41:33 PM": 47m ago
+                    - generic [ref=e1541]:
+                      - generic [ref=e1542]:
+                        - generic [ref=e1543]:
+                          - paragraph [ref=e1544]:
+                            - text: Pre-spawn cleanup task. ChatGPT and Grok reviewed the sec02 design pass and converged on a few real fixes. Apply them all on a feature branch
+                            - code [ref=e1545]: claude/design-fd-chain-fixes
+                            - text: ", build clean, and push. DON'T merge to main yet — I want to look at the diff before I OK it. Also DON'T spawn workers from this session. ## Investigation FIRST (one read, no edits) Before applying any fix, answer this question by reading the relevant source files: **Q: What value of"
+                            - code [ref=e1546]: "n"
+                            - text: (the smoothness/regularity index) does the project's existing
+                            - code [ref=e1547]: HolomorphicOneForm ℂ X
+                            - text: definition use —
+                            - code [ref=e1548]: ⊤
+                            - text: (smooth/C∞) or
+                            - code [ref=e1549]: ω
+                            - text: "(analytic)?** Read: 1."
+                            - link "Jacobian/HolomorphicForms/Defs.lean" [ref=e1697]:
+                              - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/Jacobian/HolomorphicForms/Defs.lean
+                            - text: — find the
+                            - code [ref=e1551]: HolomorphicOneForm
+                            - text: structure/def. 2. The
+                            - code [ref=e1552]: IsManifold
+                            - text: typeclass parameter on
+                            - code [ref=e1553]: X
+                            - text: for that decl. 3. Cross-check against
+                            - link "Mathlib/Geometry/Manifold/IsManifold/Basic.lean" [ref=e1698]:
+                              - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/Mathlib/Geometry/Manifold/IsManifold/Basic.lean
+                            - text: to confirm what
+                            - code [ref=e1555]: "⊤ : WithTop ℕ∞"
+                            - text: actually means in v4.28 (per ChatGPT it's smooth, not analytic). Report the answer in your reply. The chain's
+                            - code [ref=e1556]: "[IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]"
+                            - text: should MATCH the project's choice — chain is downstream of the project's definition, it doesn't get to redefine regularity. So if the project uses
+                            - code [ref=e1557]: ⊤
+                            - text: ", the chain is correct (and the proofsketches just need to say \"smooth\" not \"analytic\"). If the project uses"
+                            - code [ref=e1558]: ω
+                            - text: ", the chain needs s/⊤/ω/ in all 8 stubs. ## Consensus fixes (apply after the regularity check) Both reviewers agreed on: ### Fix 1:"
+                            - code [ref=e1559]: cotangentFiberNorm
+                            - text: should take a
+                            - code [ref=e1560]: Σ
+                            - text: "-type, not"
+                            - code [ref=e1561]: (x v)
+                            - text: "separately Currently:"
+                          - code [ref=e1565]:
+                            - generic [ref=e1566]:
+                              - generic [ref=e1567]: noncomputable def cotangentFiberNorm
+                              - generic [ref=e1568]: "(X : Type*) [...] (x : X) (_v : CotangentSpace ℂ X x) : ℝ := sorry"
+                          - paragraph [ref=e1569]: "Change to:"
+                          - code [ref=e1573]:
+                            - generic [ref=e1574]:
+                              - generic [ref=e1575]: noncomputable def cotangentFiberNorm
+                              - generic [ref=e1576]: "(X : Type*) [...] (_p : Σ x : X, CotangentSpace ℂ X x) : ℝ := sorry"
+                          - paragraph [ref=e1577]: "And add a convenience accessor for the existing call sites in #2 and #3:"
+                          - code [ref=e1581]:
+                            - generic [ref=e1582]:
+                              - generic [ref=e1583]: noncomputable def cotangentFiberNormAt
+                              - generic [ref=e1584]: "(X : Type*) [...] (x : X) (v : CotangentSpace ℂ X x) : ℝ :="
+                              - generic [ref=e1585]: cotangentFiberNorm X ⟨x, v⟩
+                          - paragraph [ref=e1586]:
+                            - text: Then in
+                            - code [ref=e1587]: HolomorphicSupNorm.lean
+                            - text: and
+                            - code [ref=e1588]: ChartCoefficientBound.lean
+                            - text: ", switch from"
+                            - code [ref=e1589]: cotangentFiberNorm X x (ω.1 x)
+                            - text: to
+                            - code [ref=e1590]: cotangentFiberNormAt X x (ω.1 x)
+                            - text: "(or reshape the supremum). Pick whichever makes the chain build clean. ### Fix 2: Node 7 — drop the underscore prefix on"
+                            - code [ref=e1591]: e
+                            - text: Currently in
+                            - code [ref=e1592]: InputFiniteDimensionality.lean
+                            - text: ":"
+                          - code [ref=e1596]:
+                            - generic [ref=e1597]:
+                              - generic [ref=e1598]: "(_e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)"
+                              - generic [ref=e1599]: "(_h_norm : ∀ ω, ‖_e ω‖ = holomorphicSupNorm X ω) :"
+                          - paragraph [ref=e1600]:
+                            - text: Lean accepts
+                            - code [ref=e1601]: _e
+                            - text: as a binding but it's stylistically broken (the underscore prefix advertises "unused" while
+                            - code [ref=e1602]: _h_norm
+                            - text: "'s type body uses it). Change to:"
+                          - code [ref=e1606]:
+                            - generic [ref=e1607]:
+                              - generic [ref=e1608]: "(e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)"
+                              - generic [ref=e1609]: "(_h_norm : ∀ ω, ‖e ω‖ = holomorphicSupNorm X ω) :"
+                          - paragraph [ref=e1610]:
+                            - text: "### Fix 3: Node 8 — use"
+                            - code [ref=e1611]: FiniteDimensional ℂ
+                            - text: ", not"
+                            - code [ref=e1612]: Module.Finite
+                            - text: Currently in
+                            - code [ref=e1613]: FdHolomorphicOneForms.lean
+                            - text: ":"
+                          - code [ref=e1617]:
+                            - generic [ref=e1618]:
+                              - generic [ref=e1619]: "theorem fd_holomorphic_one_forms ... :"
+                              - generic [ref=e1620]: Module.Finite ℂ (HolomorphicOneForm ℂ X) := sorry
+                          - paragraph [ref=e1621]: "Change to:"
+                          - code [ref=e1625]:
+                            - generic [ref=e1626]:
+                              - generic [ref=e1627]: "theorem fd_holomorphic_one_forms ... :"
+                              - generic [ref=e1628]: FiniteDimensional ℂ (HolomorphicOneForm ℂ X) := sorry
+                          - paragraph [ref=e1629]:
+                            - text: "(Both reviewers preferred this for consistency with #6 and #7. A"
+                            - code [ref=e1630]: Module.Finite
+                            - text: "corollary can always be derived later.) ### Fix 4:"
+                            - code [ref=e1631]: FiniteDimensional.of_isCompact_closedBall₀
+                            - text: needs explicit
+                            - code [ref=e1632]: ℂ
+                            - text: In
+                            - code [ref=e1633]: FdFromRiesz.lean
+                            - text: ", the comment hint should say:"
+                          - code [ref=e1637]:
+                            - generic [ref=e1639]: "-- exact FiniteDimensional.of_isCompact_closedBall₀ ℂ _hr _h"
+                          - paragraph [ref=e1640]:
+                            - text: (field arg first; needs
+                            - code [ref=e1641]: "[CompleteSpace ℂ]"
+                            - text: "which is available). Just update the comment, don't try to discharge the sorry — that's a worker's job. ### Fix 5: Add a \"DOCS\" header to"
+                            - link "Jacobian/Blueprint/Sec02/CotangentFiberNorm.lean" [ref=e1699]:
+                              - /url: https://github.com/tangentstorm/jacobianchallenge/blob/claude/design-jacobian-leftmost-chain-6kzCF/Jacobian/Blueprint/Sec02/CotangentFiberNorm.lean
+                            - text: and
+                            - code [ref=e1643]: HolomorphicSupNorm.lean
+                            - text: clarifying that
+                            - code [ref=e1644]: CotangentSpace ℂ X x
+                            - text: and
+                            - code [ref=e1645]: HolomorphicOneForm ℂ X
+                            - text: "are PROJECT-SIDE types, not Mathlib-native, with their full paths:"
+                          - code [ref=e1649]:
+                            - generic [ref=e1650]:
+                              - generic [ref=e1651]: "NOTE FOR WORKERS: Both `CotangentSpace ℂ X x` and `HolomorphicOneForm ℂ X` are"
+                              - generic [ref=e1652]: "project-side definitions, not Mathlib types. Find them at:"
+                              - generic [ref=e1653]: "- CotangentSpace: Jacobian/HolomorphicForms/CotangentBundle.lean"
+                              - generic [ref=e1654]: "- HolomorphicOneForm: Jacobian/HolomorphicForms/Defs.lean"
+                              - generic [ref=e1655]: "Open `JacobianChallenge.HolomorphicForms` in your file or use the fully"
+                              - generic [ref=e1656]: qualified name. Don't search Mathlib for these.
+                          - paragraph [ref=e1657]:
+                            - text: "## Open question (do NOT fix; just record) ChatGPT flagged that Node 5's"
+                            - code [ref=e1658]: "IsCompact (Metric.closedBall (0 : H) 1)"
+                            - text: doesn't trivially follow from Node 4's
+                            - code [ref=e1659]: Tendsto
+                            - text: "-style sequential compactness — it needs an explicit bridge (sequential compactness in a metric space ⇒ topological compactness, via something like"
+                            - code [ref=e1660]: SeqCompactSpace
+                            - text: /
+                            - code [ref=e1661]: IsSeqCompact.isCompact
+                            - text: ). Add a TODO comment in
+                            - code [ref=e1662]: MontelCompactness.lean
+                            - text: and
+                            - code [ref=e1663]: HoneUnitBallCompact.lean
+                            - text: "flagging this so the worker who picks Node 5 knows it has to do the bridge work. Don't add a separate Node 4.5 file. ## Workflow 1."
+                            - code [ref=e1664]: git fetch origin && git checkout main && git reset --hard origin/main
+                            - text: (verify at
+                            - code [ref=e1665]: 6ed4538
+                            - text: ). 2.
+                            - code [ref=e1666]: git checkout -b claude/design-fd-chain-fixes
+                            - text: . 3. Investigate Q1 (read files, no edits). Report findings. 4. Apply the 5 fixes. 5.
+                            - code [ref=e1667]: lake build Jacobian.Blueprint
+                            - text: ". Must exit 0. Sorry count must still be 8 in Sec02 (or 9 if you split a helper). 6. Push to origin (the branch, NOT main). Report: - Answer to Q1 (regularity) - Sorry count - Build time -"
+                            - code [ref=e1668]: git diff --stat main..HEAD
+                            - text: "- Branch URL on GitHub for me to inspect Stay alive after that — once I OK the diff I'll have you merge to main, then we spawn 8 workers."
+                        - button "Show less" [expanded] [ref=e1700]: Show less
+                      - generic:
+                        - button "Copy message":
+                          - img
+                    - generic [ref=e1674]:
+                      - generic [ref=e1675]:
+                        - button "Ran Sync main and create feature branch" [ref=e1701]:
+                          - generic [ref=e1680]: Ran
+                          - generic [ref=e1681]: Sync main and create feature branch
+                          - img [ref=e1683]
+                        - paragraph [ref=e1704]:
+                          - text: At
+                          - code [ref=e1705]: 6ed4538
+                          - text: . Now Q1 investigation — read the project's
+                          - code [ref=e1706]: HolomorphicOneForm
+                          - text: definition and Mathlib's
+                          - code [ref=e1707]: IsManifold
+                          - text: .
+                        - button "Reading Basic.lean" [ref=e1710]:
+                          - generic [ref=e1711]:
+                            - generic [ref=e1712]: Reading
+                            - generic [ref=e1713]: Basic.lean
+                          - img [ref=e1715]
+                        - generic [ref=e1718]:
+                          - paragraph [ref=e1719]:
+                            - strong [ref=e1720]: "Q1 answer (before any edits):"
+                          - paragraph [ref=e1721]:
+                            - text: The project's
+                            - code [ref=e1722]: HolomorphicOneForm
+                            - text: uses
+                            - code [ref=e1723]: "(⊤ : WithTop ℕ∞)"
+                            - text: (Defs.lean:24, 26).
+                          - paragraph [ref=e1724]:
+                            - text: Per
+                            - code [ref=e1725]: Mathlib/Geometry/Manifold/IsManifold/Basic.lean:781-782
+                            - text: ":"
+                          - blockquote [ref=e1726]:
+                            - paragraph [ref=e1727]:
+                              - text: "\"a smoothness parameter"
+                              - code [ref=e1728]: "n : WithTop ℕ∞"
+                              - text: (where
+                              - code [ref=e1729]: n = 0
+                              - text: means topological manifold,
+                              - code [ref=e1730]: n = ∞
+                              - text: means smooth manifold and
+                              - code [ref=e1731]: n = ω
+                              - text: means analytic manifold)"
+                          - paragraph [ref=e1732]:
+                            - text: In
+                            - code [ref=e1733]: WithTop ℕ∞
+                            - text: ", the literal"
+                            - code [ref=e1734]: ⊤
+                            - text: is the
+                            - strong [ref=e1735]: top
+                            - text: element. The instance at line 850
+                            - code [ref=e1736]: "[IsManifold I ω M] → IsManifold I a M"
+                            - text: is implemented by
+                            - code [ref=e1737]: IsManifold.of_le le_top
+                            - text: ", which only typechecks if"
+                            - code [ref=e1738]: ω = ⊤
+                            - text: . So
+                            - code [ref=e1739]: "(⊤ : WithTop ℕ∞) = ω = analytic"
+                            - text: .
+                          - paragraph [ref=e1740]:
+                            - strong [ref=e1741]: "Conclusion:"
+                            - text: the project uses
+                            - strong [ref=e1742]:
+                              - text: analytic regularity (
+                              - code [ref=e1743]: ω
+                              - text: )
+                            - text: ", written as"
+                            - code [ref=e1744]: "(⊤ : WithTop ℕ∞)"
+                            - text: . ChatGPT's claim that
+                            - code [ref=e1745]: ⊤
+                            - text: means "smooth" is incorrect — smooth is
+                            - code [ref=e1746]: "(∞ : WithTop ℕ∞)"
+                            - text: (the lifted
+                            - code [ref=e1747]: ℕ∞.⊤
+                            - text: ), which is strictly less than
+                            - code [ref=e1748]: "(⊤ : WithTop ℕ∞)"
+                            - text: . The chain's
+                            - code [ref=e1749]: "[IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]"
+                            - text: already matches the project's choice.
+                            - strong [ref=e1750]: No s/⊤/ω/ substitution is needed in the stubs.
+                          - paragraph [ref=e1751]: I'll fix the proofsketch text in the TeX (currently says "smooth" / "C∞" implicitly; should say "analytic / holomorphic") as a bonus, but the Lean stubs are correct as-is on regularity.
+                          - paragraph [ref=e1752]: Now applying the 5 fixes.
+                        - button "Read a file, ran 2 commands, created a file, edited a file" [ref=e1755]:
+                          - generic [ref=e1757]:
+                            - text: Read
+                            - generic [ref=e1758]: a file
+                            - text: ", ran"
+                            - generic [ref=e1759]: 2 commands
+                            - text: ", created"
+                            - generic [ref=e1760]: a file
+                            - text: ", edited"
+                            - generic [ref=e1761]: a file
+                          - img [ref=e1763]
+                        - paragraph [ref=e1767]:
+                          - text: Fix 3 — node 8 swap to
+                          - code [ref=e1768]: FiniteDimensional
+                          - text: .
+                        - button "Ran a command, edited a file" [ref=e1771]:
+                          - generic [ref=e1773]:
+                            - text: Ran
+                            - generic [ref=e1774]: a command
+                            - text: ", edited"
+                            - generic [ref=e1775]: a file
+                          - img [ref=e1777]
+                        - paragraph [ref=e1781]:
+                          - text: Fix 4 — Riesz comment hint (
+                          - code [ref=e1782]: ℂ
+                          - text: first).
+                        - button "Ran a command, updated todos, edited a file" [ref=e1785]:
+                          - generic [ref=e1787]:
+                            - text: Ran
+                            - generic [ref=e1788]: a command
+                            - text: ", updated"
+                            - generic [ref=e1789]: todos
+                            - text: ", edited"
+                            - generic [ref=e1790]: a file
+                          - img [ref=e1792]
+                        - paragraph [ref=e1796]:
+                          - text: Fix 5 — DOCS header on
+                          - code [ref=e1797]: HolomorphicSupNorm.lean
+                          - text: (CotangentFiberNorm already has it from Fix 1).
+                        - button "Ran a command, created a file" [ref=e1800]:
+                          - generic [ref=e1802]:
+                            - text: Ran
+                            - generic [ref=e1803]: a command
+                            - text: ", created"
+                            - generic [ref=e1804]: a file
+                          - img [ref=e1806]
+                        - paragraph [ref=e1810]:
+                          - text: Now update
+                          - code [ref=e1811]: ChartCoefficientBound.lean
+                          - text: — it uses
+                          - code [ref=e1812]: cotangentFiberNorm X x (ω.1 x)
+                          - text: ", which under Fix 1 needs to become"
+                          - code [ref=e1813]: cotangentFiberNormAt
+                          - text: .
+                        - button "Ran a command, edited a file" [ref=e1816]:
+                          - generic [ref=e1818]:
+                            - text: Ran
+                            - generic [ref=e1819]: a command
+                            - text: ", edited"
+                            - generic [ref=e1820]: a file
+                          - img [ref=e1822]
+                        - paragraph [ref=e1826]: Now the seq→topo bridge TODO comments in Montel and HoneUnitBall.
+                        - button "Ran 2 commands, edited 2 files" [ref=e1829]:
+                          - generic [ref=e1831]:
+                            - text: Ran
+                            - generic [ref=e1832]: 2 commands
+                            - text: ", edited"
+                            - generic [ref=e1833]: 2 files
+                          - img [ref=e1835]
+                        - paragraph [ref=e1839]: Now build incrementally to catch any wiring errors.
+                        - generic [ref=e1841]:
+                          - button "Updated todos, ran 5 commands" [expanded] [active] [ref=e1842]:
+                            - generic [ref=e1844]:
+                              - text: Updated
+                              - generic [ref=e1845]: todos
+                              - text: ", ran"
+                              - generic [ref=e1846]: 5 commands
+                            - img [ref=e1848]
+                          - generic [ref=e1851]:
+                            - button "Updated todos" [ref=e1853]:
+                              - generic [ref=e1854]: Updated todos
+                            - button "Ran Build Blueprint and tally sorries" [ref=e1856]:
+                              - generic [ref=e1857]: Ran
+                              - generic [ref=e1858]: Build Blueprint and tally sorries
+                              - img [ref=e1860]
+                            - button "Ran Check background build output" [ref=e1863]:
+                              - generic [ref=e1864]: Ran
+                              - generic [ref=e1865]: Check background build output
+                              - img [ref=e1867]
+                            - button "Ran Wait for build and read output" [ref=e1870]:
+                              - generic [ref=e1871]: Ran
+                              - generic [ref=e1872]: Wait for build and read output
+                              - img [ref=e1874]
+                            - button "Ran Run blueprint build foreground" [ref=e1877]:
+                              - generic [ref=e1878]: Ran
+                              - generic [ref=e1879]: Run blueprint build foreground
+                              - img [ref=e1881]
+                            - button "Ran Tally sorry warnings" [ref=e1884]:
+                              - generic [ref=e1885]: Ran
+                              - generic [ref=e1886]: Tally sorry warnings
+                              - img [ref=e1888]
+                        - button "View background task" [ref=e1890]:
+                          - generic [ref=e1891]: Background task completed
+                          - generic [ref=e1892]: Background command "Build Blueprint and tally sorries" completed (exit code 0)
+                        - paragraph [ref=e1895]: Build clean, exit 0, exactly 8 sorries in Sec02. Committing and pushing.
+                        - button "Ran 4 commands, updated todos" [ref=e1898]:
+                          - generic [ref=e1900]:
+                            - text: Ran
+                            - generic [ref=e1901]: 4 commands
+                            - text: ", updated"
+                            - generic [ref=e1902]: todos
+                          - img [ref=e1904]
+                        - generic [ref=e1907]:
+                          - paragraph [ref=e1908]: Done. Branch pushed; not merged.
+                          - heading "Q1 — regularity index investigation" [level=2] [ref=e1909]
+                          - paragraph [ref=e1910]:
+                            - text: Project's
+                            - code [ref=e1911]: HolomorphicOneForm
+                            - text: uses
+                            - code [ref=e1912]: "(⊤ : WithTop ℕ∞)"
+                            - text: (
+                            - code [ref=e1913]: Jacobian/HolomorphicForms/Defs.lean:24,26
+                            - text: ). Per
+                            - code [ref=e1914]: Mathlib/Geometry/Manifold/IsManifold/Basic.lean:781-782
+                            - text: ":"
+                          - blockquote [ref=e1915]:
+                            - paragraph [ref=e1916]: "\"n = 0 means topological manifold, n = ∞ means smooth manifold and n = ω means analytic manifold\""
+                          - paragraph [ref=e1917]:
+                            - code [ref=e1918]: "(⊤ : WithTop ℕ∞)"
+                            - text: IS
+                            - code [ref=e1919]: ω
+                            - text: (analytic). The instance at line 850 (
+                            - code [ref=e1920]: "[IsManifold I ω M] → IsManifold I a M"
+                            - text: via
+                            - code [ref=e1921]: IsManifold.of_le le_top
+                            - text: ) only typechecks if
+                            - code [ref=e1922]: ω = ⊤
+                            - text: . So
+                            - strong [ref=e1923]: the project uses analytic regularity (ω)
+                            - text: ; ChatGPT's "smooth" reading was wrong. The chain's
+                            - code [ref=e1924]: "(⊤ : WithTop ℕ∞)"
+                            - text: matches the project —
+                            - strong [ref=e1925]: no s/⊤/ω/ substitution required
+                            - text: .
+                          - heading "Sorry count" [level=2] [ref=e1926]
+                          - list [ref=e1927]:
+                            - listitem [ref=e1928]:
+                              - text: "Total: 15 ("
+                              - code [ref=e1929]: declaration uses sorry
+                              - text: warnings)
+                            - listitem [ref=e1930]:
+                              - text: "Sec02:"
+                              - strong [ref=e1931]: "8"
+                              - text: (one per node, unchanged from main; the new
+                              - code [ref=e1932]: cotangentFiberNormAt
+                              - text: helper is a transparent alias and does not introduce a fresh
+                              - code [ref=e1933]: sorry
+                              - text: )
+                          - heading "Build time" [level=2] [ref=e1934]
+                          - list [ref=e1935]:
+                            - listitem [ref=e1936]:
+                              - text: "Cold (recompiled the whole Sec02 stack after edits):"
+                              - strong [ref=e1937]: 1m51s
+                              - text: (real)
+                            - listitem [ref=e1938]: "Warm replay: ~5s"
+                          - heading "git diff --stat main..HEAD" [level=2] [ref=e1939]:
+                            - code [ref=e1940]: git diff --stat main..HEAD
+                          - generic [ref=e1942]:
+                            - code [ref=e1946]:
+                              - generic [ref=e1947]:
+                                - generic [ref=e1948]: Jacobian/Blueprint/Sec02/ChartCoefficientBound.lean | 2 +-
+                                - generic [ref=e1949]: Jacobian/Blueprint/Sec02/CotangentFiberNorm.lean | 31 +++++++++++++++++++---
+                                - generic [ref=e1950]: Jacobian/Blueprint/Sec02/FdFromRiesz.lean | 3 ++-
+                                - generic [ref=e1951]: Jacobian/Blueprint/Sec02/FdHolomorphicOneForms.lean | 7 +++--
+                                - generic [ref=e1952]: Jacobian/Blueprint/Sec02/HolomorphicSupNorm.lean | 21 ++++++++++++---
+                                - generic [ref=e1953]: Jacobian/Blueprint/Sec02/HoneUnitBallCompact.lean | 14 +++++++++-
+                                - generic [ref=e1954]: Jacobian/Blueprint/Sec02/InputFiniteDimensionality.lean | 6 ++---
+                                - generic [ref=e1955]: Jacobian/Blueprint/Sec02/MontelCompactness.lean | 14 +++++++++-
+                                - generic [ref=e1956]: 8 files changed, 82 insertions(+), 16 deletions(-)
+                            - button "Copy code" [ref=e1958]:
+                              - img [ref=e1960]
+                          - heading "Branch URL" [level=2] [ref=e1962]
+                          - paragraph [ref=e1963]:
+                            - link "https://github.com/tangentstorm/JacobianChallenge/tree/claude/design-fd-chain-fixes" [ref=e1964]:
+                              - /url: https://github.com/tangentstorm/JacobianChallenge/tree/claude/design-fd-chain-fixes
+                          - paragraph [ref=e1965]: Standing by.
+                      - generic:
+                        - button "Copy message":
+                          - img
+                        - button "Pin as chapter":
+                          - img
+                        - generic "Apr 30, 2026, 4:04:50 PM": 23m ago
+                    - generic [ref=e1175]: 0s
+                  - generic [ref=e1176]:
+                    - button:
+                      - img
+                    - generic [ref=e1178]:
+                      - generic [ref=e1179]:
+                        - button "#2 · Closed" [ref=e1180]:
+                          - img [ref=e1182]
+                        - generic [ref=e1184]:
+                          - button "main" [ref=e1185]: main
+                          - img [ref=e1187]
+                          - button "claude/design-jacobian-leftmost-chain-6kzCF" [ref=e1189]:
+                            - generic [ref=e1191]: claude/design-jacobian-leftmost-chain-6kzCF
+                            - img [ref=e1192]
+                      - button "427 additions, 94 deletions" [ref=e1194]:
+                        - generic [ref=e1196]:
+                          - generic [ref=e1197]: 427 additions, 94 deletions
+                          - generic [ref=e1198]:
+                            - generic [ref=e1199]: "+427"
+                            - generic [ref=e1200]: −94
+                      - button "CI" [ref=e1201]:
+                        - text: CI
+                        - img [ref=e1204]
+                      - button "View PR" [ref=e1206]: View PR
+                    - generic [ref=e1209]:
+                      - generic "Prompt" [ref=e1211]:
+                        - paragraph [ref=e1415]: Type / for commands
+                      - button "Send" [disabled] [ref=e1966]:
+                        - img [ref=e1216]
+                    - generic [ref=e1218]:
+                      - generic [ref=e1219]:
+                        - button "Accept edits" [ref=e1220]:
+                          - generic [ref=e1221]: Accept edits
+                        - button "Transcript view mode" [ref=e1222]:
+                          - img [ref=e1224]
+                        - button "Add" [ref=e1226]:
+                          - img [ref=e1228]
+                        - group "Dictation" [ref=e1230]:
+                          - button "Press and hold to record" [ref=e1231]:
+                            - img [ref=e1232]
+                          - button "Dictation settings" [ref=e1234]:
+                            - img [ref=e1235]
+                      - generic [ref=e1237]:
+                        - button "Opus 4.7 · High" [ref=e1238]:
+                          - generic [ref=e1240]:
+                            - generic [ref=e1241]: Opus 4.7
+                            - generic [ref=e1242]: · High
+                        - 'button "Usage: plan 47%" [ref=e1243]':
+                          - img [ref=e1245]
+              - generic [ref=e1248]: Arrow keys move the tile. Perpendicular arrows preview a split; press Enter to commit or Escape to cancel.
+              - status [ref=e1249]
+            - button "Views" [ref=e1251]:
+              - img [ref=e1253]
+              - img [ref=e1255]
+    - region "Notifications (F8)":
+      - list
+  - iframe [ref=e1257]:
+    
