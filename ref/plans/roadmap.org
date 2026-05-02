@@ -298,65 +298,100 @@ just theorem-name level.
 ** DONE [#A] [X] Audit Periods.periodFullComplexLattice chain for Type-u readiness :hand:
 :PROPERTIES:
 :SCOPE:       read-only audit
-:OUTPUT:      ref/plans/universe-parity.org (185 LOC)
-:RESULT:      Mathlib gap, NOT a project-internal thread-and-flip
+:OUTPUT:      ref/plans/universe-parity.org (185 LOC) + correction header
+:RESULT:      Project-internal lift via ULift on IntegralOneCycle's coefficient module
 :END:
 
-Audit complete (2026-05-02). See ~ref/plans/universe-parity.org~ for the
-full table. Headline finding: the ~Type 0~ specialisation is *not* a
-spurious project-internal annotation gap. It traces to a genuine Mathlib
-v4.28.0 limitation:
+Audit complete (2026-05-02), then corrected by the W6 tractability
+investigation (also 2026-05-02). See ~ref/plans/universe-parity.org~
+(table + correction header) and ~ref/plans/mathlib-hascoproducts-report.org~
+(decisive read-only investigation).
 
-- ~JacobianChallenge.Periods.IntegralOneCycle~ requires
-  ~[HasCoproducts.{0} (ModuleCat ℤ)]~ via ~singularHomologyFunctor~.
-- Mathlib v4.28.0 only ships the ~.{0}~ instance; no universe-polymorphic
-  variant exists.
-- This propagates: ~IntegralOneCycle~ → ~periodPairing~ →
-  ~periodSubgroup~ → ~basisAlignedPeriodSubgroup~ →
-  ~periodFullComplexLattice~ → ~Solution.Jacobian~.
+Corrected headline finding: the ~Type 0~ specialisation is **not** a
+Mathlib gap — Mathlib v4.28.0 already ships universe-poly
+~HasCoproducts.{u} (ModuleCat.{u} ℤ)~ via
+~Mathlib/Algebra/Category/Grp/Colimits.lean:270~ + ~ModuleCat~-side
+transport at ~Mathlib/Algebra/Category/ModuleCat/Colimits.lean:115~.
 
-Project-internal ~universe u~ annotations alone will not lift the chain.
+The real obstruction is *local and mechanical*: in
+~Jacobian/Periods/IntegralOneCycle.lean:28~, the coefficient module
+~ModuleCat.of ℤ ℤ~ lives in ~ModuleCat.{0} ℤ~ because ~ℤ : Type 0~. To
+lift ~(X : Type u)~ we replace it with ~ModuleCat.of ℤ (ULift.{u} ℤ)~
+(or another ~u~-small ℤ-module), then thread ~universe u~ through
+~periodPairing~ → ~periodSubgroup~ → ~basisAlignedPeriodSubgroup~ →
+~periodFullComplexLattice~ → ~Solution.Jacobian~ — that part is the
+trivial annotation work the original audit assumed the whole job would
+be. **No Mathlib PR needed.**
 
-*** Three honest options for closing the divergence
+Secondary risks (still valid; need attention during the refactor): the
+ZSpan / ZLattice / DiscreteTopology lemmas in the chain may have
+hidden universe-0 assumptions in their Mathlib statements; verify each
+~inferInstance~ at the new universe level as we thread.
 
-**** Option A — Accept ~Type 0~ specialisation (status quo)
-Keep ~Solution.Jacobian (X : Type)~. Comparator passes at theorem-name
-level (already does). Document the divergence in Solution.lean's
-docstring (already does). Zero additional work. The "Universe parity"
-goal in the plan's Definition-of-Done is downgraded from "kernel
-equivalence" to "theorem-name equivalence."
-
-**** Option B — Upstream Mathlib PR for ~HasCoproducts.{u} (ModuleCat ℤ)~
-Most correct path. Add the universe-polymorphic instance to Mathlib
-proper, then update the pinned commit, then thread ~universe u~ through
-the chain. Timeline: months-years (Mathlib review + upstream coordination
-+ pinned-commit bump).
-
-**** Option C — ULift bridge inside ~periodPairing~
-Realistic mid-path. Concretise ~periodPairing~ to expose a ~Type u~
-interface that internally lifts cycles to ~Type 0~ via ~ULift~ before
-calling ~singularHomologyFunctor~. The chain above ~periodPairing~ then
-lifts to ~Type u~. Timeline: weeks-months once ~periodPairing~ is no
-longer ~opaque~ (which itself is gated on W1 P2 path-integral / Stokes
-work).
-
-*** Decision required (was previously baked in)
-
-Earlier in the plan-cycle the user picked "fix the divergence as part of
-completion" assuming this was a small project-internal lift. The audit
-shows that was wrong premise. The user should re-pick:
-
-- [ ] Option A (downgrade Definition-of-Done; closes divergence by accepting it)
-- [ ] Option B (Mathlib upstream; long pole, most correct)
-- [ ] Option C (ULift bridge; realistic, gated on ~periodPairing~ being concrete)
-
-The TODOs below presume Option C unless the user picks A or B.
-
-** BLOCKED [#A] [ ] Implement Option C — ULift bridge in periodPairing :refactor:cloud:
+** TODO [#A] [ ] Lift IntegralOneCycle and chain to (X : Type u) :refactor:cloud:
 :PROPERTIES:
-:DEPENDS_ON:  Option choice + W1 P2 (periodPairing concretisation)
-:NOTE:        Skipped if Option A; replaced with Mathlib PR if Option B
+:FILES:       Jacobian/Periods/IntegralOneCycle.lean (coefficient module + binder), then propagate via Jacobian/Periods/PeriodFunctional.lean (periodPairing, periodSubgroup), Jacobian/Periods/BasisAlignedPeriodSubgroup.lean, Jacobian/Periods/PeriodLattice.lean
+:BUILD:       lake build Jacobian.Periods.PeriodLattice (and full chain)
+:VERIFY:      `inferInstance` at every universe-instance site; ZLattice / DiscreteTopology lemmas elaborate at u > 0
 :END:
+
+Mechanical refactor, cloud-Claude-shaped because it touches several files
+in a coordinated edit. Steps:
+
+1. Generalise ~IntegralOneCycle~'s binder to ~(X : Type u)~ and replace
+   the coefficient module ~ModuleCat.of ℤ ℤ~ with
+   ~ModuleCat.of ℤ (ULift.{u} ℤ)~. Update or remove the (now-incorrect)
+   "Note on universe" comment at lines 21–28.
+2. Thread ~universe u~ through ~periodPairing~ (lines 37 et seq. in
+   ~PeriodFunctional.lean~) — the codomain ~IntegralOneCycle X →+ ...~
+   should accept the lifted ~IntegralOneCycle~.
+3. Thread through ~periodSubgroup~, ~basisAlignedPeriodSubgroupConcrete~,
+   ~basisAlignedPeriodSubgroup~, ~periodFullComplexLattice~. Each is a
+   spurious-blocker per the original audit table — they lift cleanly
+   once the parent does.
+4. Re-verify the ~ZLattice~ / ~DiscreteTopology~ / ~zspan~ lemmas
+   downstream — these are the secondary-risk items flagged by the audit.
+
+Cloud-Claude prompt template:
+
+#+BEGIN_SRC text
+Project: C:\ver\JacobianChallenge (Lean 4 + Mathlib v4.28.0).
+Working dir: C:\ver\JacobianChallenge
+
+Read first:
+- ref/plans/mathlib-hascoproducts-report.org (the tractability finding)
+- ref/plans/universe-parity.org (the audit table + correction header)
+
+Task: lift Jacobian/Periods/IntegralOneCycle.lean and its downstream
+chain to (X : Type u). Per the report, the only real obstruction is
+that ModuleCat.of ℤ ℤ lives at ModuleCat.{0} ℤ; replace with
+ModuleCat.of ℤ (ULift.{u} ℤ) and thread `universe u` through the
+chain.
+
+Files in scope (in this order):
+1. Jacobian/Periods/IntegralOneCycle.lean (coefficient module + binder + comment)
+2. Jacobian/Periods/PeriodFunctional.lean (periodPairing + periodSubgroup binders)
+3. Jacobian/Periods/BasisAlignedPeriodSubgroup.lean
+4. Jacobian/Periods/PeriodLattice.lean (basisAlignedPeriodSubgroup + periodFullComplexLattice)
+
+Forbidden:
+- Jacobian/Challenge.lean (frozen public spec)
+- Jacobian/Solution.lean (will be flipped in a follow-up TODO)
+- `import Mathlib` (use narrow Mathlib.Topic.Subtopic only)
+- introducing axioms, opaque-on-Prop, or new sorries
+
+Verify after each file: `lake build Jacobian.Periods.<Module>` succeeds.
+Final: `lake build Jacobian.Periods.PeriodLattice`. Pay particular
+attention to ZLattice / DiscreteTopology / zspan lemmas in
+PeriodLattice.lean — these are the secondary-risk items that the
+universe-parity audit flagged. If any inferInstance fails at u > 0
+(e.g. a Mathlib lemma that's universe-0-specific), document it
+inline as a sub-blocker and stop; do NOT introduce axioms.
+
+Output: edits to those four files plus a one-paragraph note appended
+to ref/plans/mathlib-hascoproducts-report.org under a "## Implementation
+notes" header summarising what changed and any sub-blockers found.
+#+END_SRC
 
 Concretise ~JacobianChallenge.Periods.periodPairing~ to a ~Type u~
 signature, lifting the curve carrier into ~Type 0~ via ~ULift~ at the
@@ -511,71 +546,28 @@ just this project.
 Status of each item: keep "consumer" pointer fresh so when the
 upstream lands the project knows where to thread the new annotation.
 
-** TODO [#B] [ ] mathlib: HasCoproducts.{u} (ModuleCat ℤ) — universe-polymorphic instance :mathlib:upstream:cloud:
+** DONE [#B] [X] mathlib: HasCoproducts.{u} (ModuleCat ℤ) — RESOLVED, no PR needed :mathlib:upstream:cloud:
 :PROPERTIES:
-:GAP:         Mathlib v4.28.0 ships only HasCoproducts.{0} (ModuleCat ℤ)
-:CONSUMER:    JacobianChallenge.Periods.IntegralOneCycle (forces W2 Option B)
-:LOCATION:    likely Mathlib/Algebra/Category/ModuleCat/Colimits.lean (or nearby)
-:UPSTREAM:    Mathlib PR
-:GATES:       W2 Option B (universe parity for Solution.Jacobian)
+:VERDICT:     TRACTABLE — Mathlib v4.28.0 already ships the instance
+:REPORT:      ref/plans/mathlib-hascoproducts-report.org
+:RESOLVED:    2026-05-02 (read-only investigation by cloud Claude Code)
+:OUTCOME:     Refactor moves to W2 (project-internal ULift on IntegralOneCycle's coefficient module)
 :END:
 
-The class `HasCoproducts` and the type `ModuleCat` are already
-universe-polymorphic in Mathlib. The gap is solely that the *instance*
-`HasCoproducts.{0} (ModuleCat ℤ)` has only been proven at universe 0.
+Investigation finding: the original premise was wrong. Mathlib v4.28.0
+already provides universe-poly ~HasCoproducts.{u} (ModuleCat.{u} ℤ)~ via
+~Mathlib/Algebra/Category/Grp/Colimits.lean:270~ + the ~ModuleCat~-side
+transport at ~Mathlib/Algebra/Category/ModuleCat/Colimits.lean:115~. No
+universe-0 specialisation in either proof. Empirically verified by a
+scratch ~inferInstance~ test against the pinned commit (since deleted).
 
-Investigation steps before committing to a PR:
-
-1. Locate the existing `HasCoproducts.{0} (ModuleCat ℤ)` instance and
-   its proof in Mathlib (search for `instHasCoproductsModuleCat` or
-   similar; check `Mathlib/Algebra/Category/ModuleCat/`).
-2. Read the proof. Identify whether it uses universe-0-specific tricks
-   (small-vs-large category constructions, ULift juggling that
-   pre-computes at Type 0, etc.).
-3. Try threading `universe u` through. If it goes through with minor
-   tweaks → small Mathlib PR.
-4. If it requires substantive generalization (small-vs-large category
-   cleanup, new colimit infrastructure) → document obstruction here
-   and route W2 to Option C (ULift bridge) as the practical path.
-
-**Consumer threading note** (when upstream lands): the chain
-~IntegralOneCycle → periodPairing → periodSubgroup →
-basisAlignedPeriodSubgroup → periodFullComplexLattice →
-Solution.Jacobian~ each currently has explicit `(X : Type)`. After the
-Mathlib PR merges and the pinned commit bumps, walk each declaration
-in this chain and replace `(X : Type)` with `(X : Type u)` where the
-universe variable threads through cleanly.
-
-#+BEGIN_SRC text
-[CLOUD CLAUDE CODE PROMPT — investigation only, no PR yet]
-Project: C:\ver\JacobianChallenge (Lean 4 + Mathlib v4.28.0).
-Read-only investigation. No code edits in this project.
-
-Goal: assess whether the Mathlib v4.28.0 instance
-`HasCoproducts.{0} (ModuleCat ℤ)` (used by
-`AlgebraicTopology.singularHomologyFunctor`) can be generalized to
-`HasCoproducts.{u} (ModuleCat ℤ)` for arbitrary `u`, with a small
-upstream-able patch.
-
-Steps:
-1. Locate the instance and its proof in the local Mathlib checkout
-   (look in `Mathlib/Algebra/Category/ModuleCat/Colimits.lean`,
-   `Mathlib/Algebra/Category/ModuleCat/Limits.lean`, and adjacent files).
-2. Read the proof. Note any universe-0-specific tricks (e.g. small
-   set-of-objects assumptions, ULift normalization, `AddCommGroup` of a
-   specific universe).
-3. Locate downstream consumers in Mathlib that use the instance —
-   estimate whether universe-poly variant would conflict with existing
-   typeclass resolution.
-4. Output: a short report at ref/plans/mathlib-hascoproducts-report.org
-   with (a) instance location and signature, (b) proof obstruction
-   summary, (c) verdict: TRACTABLE (sketch the PR shape),
-   COMPLEX (estimate scope), or BLOCKED (explain why no PR is feasible
-   in v4.28.0).
-
-Do NOT modify any project files. Do NOT modify any Mathlib files. The
-deliverable is a single org report.
-#+END_SRC
+The actual blocker for ~IntegralOneCycle (X : Type u)~ is local: the
+coefficient module ~ModuleCat.of ℤ ℤ~ lives in ~ModuleCat.{0} ℤ~
+because ~ℤ : Type 0~. Replacing it with ~ModuleCat.of ℤ (ULift.{u} ℤ)~
+makes the universe-poly version elaborate. That refactor is project-
+internal — see W2's "Lift IntegralOneCycle and chain to (X : Type u)"
+TODO. **No Mathlib PR is needed and none should be proposed against
+v4.28.0 on this basis.**
 
 ** mathlib: future entries (placeholder)
 
