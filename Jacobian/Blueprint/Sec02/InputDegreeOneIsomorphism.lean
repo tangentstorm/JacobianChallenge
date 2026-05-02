@@ -1,5 +1,6 @@
 import Jacobian.Blueprint.Sec02.BranchedDegree
-import Mathlib.Topology.Homeomorph.Defs
+import Jacobian.Blueprint.Sec02.DegreeOneBijective
+import Mathlib.Topology.Homeomorph.Lemmas
 
 /-! # Blueprint stub: `input:degree-one-isomorphism`
 
@@ -41,6 +42,7 @@ theorem input_degree_one_isomorphism
     (_hsurj : Function.Surjective f)
     (_hcont : Continuous f) :
     Nonempty (X ≃ₜ Y) := by
-  sorry
+  have hbij : Function.Bijective f := degree_one_bijective h _hdeg
+  exact ⟨Continuous.homeoOfEquivCompactToT2 (f := Equiv.ofBijective f hbij) _hcont⟩
 
 end JacobianChallenge.Blueprint

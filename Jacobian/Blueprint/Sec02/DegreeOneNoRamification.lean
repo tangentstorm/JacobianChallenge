@@ -32,6 +32,13 @@ theorem degree_one_no_ramification
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f)
     (_hdeg : branchedDegree h = 1) :
     ∀ x : X, h.ramificationIndex x = 1 := by
-  sorry
+  intro x
+  have h_one := branchedDegree_one_fiber_singleton h (f x) _hdeg
+  obtain ⟨x', hxs, hrx'⟩ := h_one
+  have hx_mem : x ∈ (h.finite_fiber (f x)).toFinset := by
+    rw [Set.Finite.mem_toFinset]; rfl
+  rw [hxs, Finset.mem_singleton] at hx_mem
+  rw [hx_mem]
+  exact hrx'
 
 end JacobianChallenge.Blueprint
