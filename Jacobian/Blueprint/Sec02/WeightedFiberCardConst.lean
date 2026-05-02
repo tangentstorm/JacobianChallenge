@@ -593,6 +593,25 @@ theorem eventually_fiber_subset_of_compact_T2
     (show y₀ ∉ f '' Uᶜ from fun ⟨x, hx, hy⟩ => hx <| _hU_fibre <| hy ▸ rfl)
   filter_upwards [this] with y hy using fun x hx => Classical.not_not.1 fun hx' => hy ⟨x, hx', hx⟩
 
+/-! ### D3 helper lemmas -/
+
+/-- Local properness variant: if all fibre points of `y₀` that lie in
+`closure U` are already in `W`, then for `y` near `y₀` every preimage of
+`y` in `U` also lies in `W`. -/
+private theorem preimage_inter_closure_subset
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    [CompactSpace X] [T2Space Y]
+    {f : X → Y} (hf_cont : Continuous f)
+    {y₀ : Y} {U W : Set X} (hW : IsOpen W)
+    (hfiber : f ⁻¹' {y₀} ∩ closure U ⊆ W) :
+    ∀ᶠ y in 𝓝 y₀, f ⁻¹' {y} ∩ U ⊆ W := by
+  have h_finite : ∀ᶠ y in 𝓝 y₀, f ⁻¹' {y} ⊆ W ∪ (closure U)ᶜ := by
+    apply_rules [eventually_fiber_subset_of_compact_T2]
+    · exact hW.union (isOpen_compl_iff.mpr isClosed_closure)
+    · grind
+  filter_upwards [h_finite] with y hy using
+    fun x hx => Or.resolve_right (hy hx.1) fun hx' => hx' <| subset_closure hx.2
+
 /-- **D3 (sorry).** Local conservation at a single base point.
 Combining D1, D2, sub-leaf B (at unramified preimages) and sub-leaf C
 (at ramified preimages), the weighted fibre sum is constant on a

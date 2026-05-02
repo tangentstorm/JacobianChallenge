@@ -6,7 +6,7 @@
 # Order = priority (top picked first). Seeds chosen for low risk +
 # unblock-effect per §6 of the surface-classification plan.
 
-# A2.1 (the unblocker): EdgeWord inductive type + normal form predicate + wordQuotient. Add a new file Jacobian/Periods/EdgeWord.lean with `inductive EdgeWord (g : ℕ) : Type` carrying letters `a_i`, `b_i` and inverses (use a `Letter` helper inductive), plus a definition `wordQuotient : EdgeWord g → TopCat` via the standard polygon-quotient relation. Pure data + definitions, no theorems. ~80 LOC. See ref/plans/surface-classification.md §4 A2.1.
+# DONE (Aristotle 6dc419db): A2.1 — EdgeWord inductive type + normal form predicate + wordQuotient. Shipped 2026-05-02 in Jacobian/Periods/EdgeWord.lean (77 LOC, 1 placeholder sorry on sidePairingRel).
 
 # A1.1: finite chart cover of compact 2-manifold. Add Jacobian/Periods/CompactChartCover.lean with `theorem compact_2manifold_has_finite_chart_cover : [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M] [CompactSpace M] : ∃ (n : ℕ) (cover : Fin n → OpenPartialHomeomorph M (EuclideanSpace ℝ (Fin 2))), (∀ i, cover i ∈ atlas (EuclideanSpace ℝ (Fin 2)) M) ∧ ⋃ i, (cover i).source = univ`. Pure Mathlib finite-subcover. ~50 LOC. See ref/plans/surface-classification.md §4 A1.1.
 
