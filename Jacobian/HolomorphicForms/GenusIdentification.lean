@@ -81,8 +81,8 @@ noncomputable def cohomologicalGenusH0KX
     (X : Type*) [TopologicalSpace X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf.{_, 0} X) 0)] : ℕ :=
-  Module.finrank ℂ (RSSheafCohomology X (RSDualizingSheaf.{_, 0} X) 0)
+    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)] : ℕ :=
+  Module.finrank ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)
 
 /-- **Frontier theorem (sorry).** Analytic genus equals the
 cohomological genus via the canonical bundle:
@@ -105,7 +105,7 @@ theorem analyticGenus_eq_cohomological_genus_h0_KX
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf.{_, 0} X) 0)] :
+    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)] :
     analyticGenus ℂ X = cohomologicalGenusH0KX X := by
   sorry
 

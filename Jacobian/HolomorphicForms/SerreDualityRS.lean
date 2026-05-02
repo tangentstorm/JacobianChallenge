@@ -1,4 +1,8 @@
 import Jacobian.HolomorphicForms.SheafCohomologyRS
+import Jacobian.HolomorphicForms.Serre.CotangentSheaf
+import Jacobian.HolomorphicForms.Serre.DualizingSheaf
+import Jacobian.HolomorphicForms.Serre.Datum
+import Jacobian.HolomorphicForms.Serre.DatumExists
 
 /-!
 # Serre duality on a compact Riemann surface (project API layer)
@@ -63,56 +67,16 @@ namespace JacobianChallenge.HolomorphicForms
 
 open CategoryTheory
 
-/-- **Frontier `def` (sorry).** The dualizing sheaf `K_X` on a
-topological space `X`, viewed as an abelian sheaf via the project's
-`RSAbSheaf` alias. Classically `K_X` is the sheaf of holomorphic
-1-forms; making this concrete in Lean requires locally-free
-`𝒪_X`-modules, which are ABSENT in Mathlib v4.28.0. -/
-noncomputable def RSDualizingSheaf (X : Type*) [TopologicalSpace X] :
-    RSAbSheaf X :=
-  sorry
+-- `RSDualizingSheaf` is declared in
+-- `Jacobian/HolomorphicForms/Serre/DualizingSheaf.lean` (round 1
+-- refinement: delegates to `RSCotangentSheaf`). The original public
+-- name is preserved verbatim through the namespace.
 
-/-- **Frontier structure.** Serre duality datum for a single abelian
-sheaf `F` on a compact Riemann surface `X`, against a fixed candidate
-dual sheaf `Fᵛ` (which classically is `F^∨ ⊗ K_X`).
-
-Records the abstract data — pairing and nondegeneracy — needed to
-state Riemann-Roch / Serre-pairing-style consequences without
-committing to an explicit construction. Once coherent analytic
-sheaves land in Mathlib (or via an ad-hoc argument for specific
-sheaves), an inhabitant of this structure can be supplied and the
-downstream machinery snaps together.
-
-The `[Module ℂ ...]` instances on `H⁰(X, F)` and `H¹(X, Fᵛ)` are
-required to talk about ℂ-linear pairings — they are not
-auto-derivable from `Sheaf.H`'s `AddCommGroup`-only structure
-(see `FiniteDimensionalSheafCohomologyRS`'s docstring).
-
-Both nondegeneracy axioms are recorded in the conventional "left/right
-radical is trivial" form. -/
-structure SerreDualityRSDatum
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
-    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (F dualSheaf : RSAbSheaf X)
-    [Module ℂ (RSSheafCohomology X F 0)]
-    [Module ℂ (RSSheafCohomology X dualSheaf 1)] where
-  /-- The Serre pairing `H⁰(X, F) × H¹(X, Fᵛ ⊗ K_X) → ℂ`. -/
-  pairing :
-    RSSheafCohomology X F 0 →ₗ[ℂ] RSSheafCohomology X dualSheaf 1 →ₗ[ℂ] ℂ
-  /-- The pairing is nondegenerate on the left: a class in `H⁰(X, F)`
-  pairing trivially with every class in `H¹(X, Fᵛ ⊗ K_X)` is zero. -/
-  nondegenerate_left :
-    ∀ a : RSSheafCohomology X F 0,
-      (∀ b : RSSheafCohomology X dualSheaf 1, pairing a b = 0) → a = 0
-  /-- The pairing is nondegenerate on the right: a class in
-  `H¹(X, Fᵛ ⊗ K_X)` paired trivially with every class in `H⁰(X, F)`
-  is zero. -/
-  nondegenerate_right :
-    ∀ b : RSSheafCohomology X dualSheaf 1,
-      (∀ a : RSSheafCohomology X F 0, pairing a b = 0) → b = 0
+-- The structure `SerreDualityRSDatum` is now declared in
+-- `Jacobian/HolomorphicForms/Serre/Datum.lean` to break the import
+-- cycle introduced by the round-2/round-3 refinement. The original
+-- public name `JacobianChallenge.HolomorphicForms.SerreDualityRSDatum`
+-- is preserved verbatim.
 
 /-- **Frontier theorem (sorry).** Serre duality on a compact Riemann
 surface: every abelian sheaf admits a Serre duality datum against
@@ -136,6 +100,8 @@ theorem serre_duality_rs
       (_ : Module ℂ (RSSheafCohomology X F 0))
       (_ : Module ℂ (RSSheafCohomology X dualSheaf 1)),
       Nonempty (SerreDualityRSDatum X F dualSheaf) := by
-  sorry
+  refine ⟨serreDualSheaf X F, serreDualSheaf_module_H0 X F,
+          serreDualSheaf_module_H1 X F, ?_⟩
+  exact serre_datum_for_canonical_dual_exists X F
 
 end JacobianChallenge.HolomorphicForms
