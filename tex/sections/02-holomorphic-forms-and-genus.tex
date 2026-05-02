@@ -633,7 +633,7 @@ The set \(\{p\in X : e_p(f)\ge 2\}\) is finite.
 \depends{Sub-sub-leaves: \texttt{lem:unramified-set-open} (the
 unramified set is open) and \texttt{lem:ramified-isolated} (every
 ramified point is isolated in the ramified set); assembly is
-"closed-discrete subset of compact ⇒ finite".}
+``closed-discrete subset of compact \(\Rightarrow\) finite''.}
 \lean{JacobianChallenge.Blueprint.branch_locus_finite}
 \notready
 \end{lemma}
@@ -808,8 +808,8 @@ For a continuous map \(f\) from a compact source to a Hausdorff
 target, and any open \(U\) containing \(f^{-1}(y_0)\), there is a
 neighborhood \(V\) of \(y_0\) such that for every \(y\in V\),
 \(f^{-1}(y)\subseteq U\).
-\depends{\(U^c\) is closed-in-compact ⇒ compact; image \(f(U^c)\) is
-compact ⇒ closed in \(T_2\); \(y_0\notin f(U^c)\); take
+\depends{\(U^c\) is closed-in-compact \(\Rightarrow\) compact; image \(f(U^c)\) is
+compact \(\Rightarrow\) closed in \(T_2\); \(y_0\notin f(U^c)\); take
 \(V:=f(U^c)^c\).}
 \lean{JacobianChallenge.Blueprint.eventually_fiber_subset_of_compact_T2}
 \leanok
@@ -867,7 +867,7 @@ point.
 \depends{Local-constancy from
 \texttt{lem:weighted-fiber-locally-constant} plus
 \texttt{IsLocallyConstant.apply\_eq\_of\_preconnectedSpace} from
-Mathlib (preconnected target ⇒ globally constant).}
+Mathlib (preconnected target \(\Rightarrow\) globally constant).}
 \lean{JacobianChallenge.Blueprint.isHolomorphic_weightedFiberSum_const}
 \leanok
 \end{theorem}
