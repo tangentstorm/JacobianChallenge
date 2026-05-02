@@ -432,6 +432,26 @@ discharged `singularH1_unit_subsingleton` along it via
   `Module.finrank_zero_of_subsingleton` instead of the 3-step homeo
   chain (which still composes to the same thing via Round 12 work).
 
+### Round 42–43: Public corollaries chained from the umbrella
+
+On top of the Stage A umbrella, three downstream corollaries are now
+exposed, all real proofs over the existing leaves:
+
+* `singularH1_iso_freeZ_of_compactOrientableSurface` — the linear iso
+  `singularH1 M ≃ₗ[ℤ] (Fin (2 * topologicalGenus M) → ℤ)`.
+  Body: chains the polygonal-model homeo through
+  `singularH1LinearEquivOfHomeo` (Round 4) and the unified polygon
+  iso `polygon4g_singularH1_iso_freeZ` (Round 37).
+* `singularH1_finrank_eq_two_mul_topologicalGenus_of_compactOrientableSurface`
+  — the matching rank statement.
+* `singularH1_basis_of_compactOrientableSurface` — the basis-shaped
+  variant, mirroring the Riemann-surface side's
+  `h1_basis_of_compact_riemann_surface`.
+
+These give the polygonal-model dependency closure an output API that
+parallels (and meets-in-the-middle with) the existing
+`PeriodFunctional` / Riemann-surface side.
+
 ### Build status
 
 `lake build Jacobian.Blueprint.Sec03.PolygonalModel` and
