@@ -344,14 +344,19 @@ on a complex 1-manifold is `0`.
 Mathematical content: for any chart at `p`, the function
 `(fun _ : X => z)` pulled back through the chart is the constant
 function `z` on the model space. Mathlib's `meromorphicOrderAt_const`
-(or its equivalent for nonzero constants) says the order of a nonzero
-constant is `0`. -/
+says the order of a nonzero constant is `0`. -/
 theorem vanishingOrder_const_nonzero
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (p : X) {z : ℂ} (_hz : z ≠ 0) :
+    (p : X) {z : ℂ} (hz : z ≠ 0) :
     vanishingOrder X p (fun _ => z) = 0 := by
-  sorry
+  classical
+  show JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p
+      (fun _ : X => z) = 0
+  unfold JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt
+  show meromorphicOrderAt (fun _ : ℂ => z) ((extChartAt 𝓘(ℂ) p) p) = 0
+  rw [meromorphicOrderAt_const]
+  exact if_neg hz
 
 /-- **Sub-leaf #7c** — `principalDivisor` of a constant nonzero
 projection is the zero divisor.
