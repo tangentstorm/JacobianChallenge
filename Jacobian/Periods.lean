@@ -170,6 +170,20 @@ import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.Periods.BasisAlignedPeriodPairing
 import Jacobian.Periods.BasisAlignedAnalyticJacobianEquiv
 import Jacobian.Periods.PeriodLattice
+import Jacobian.Periods.Polygon4g
+import Jacobian.Periods.Orientable
+import Jacobian.Periods.SmoothRealStructure
+import Jacobian.Periods.ComplexManifoldOrientable
+-- The polygonal-model umbrella modules below carry a duplicate
+-- `JacobianChallenge.Periods.topologicalGenus` definition with the older
+-- one in `PeriodFunctional.lean` (which is already imported above), so
+-- re-exporting them through this hub would clash. Import them directly
+-- where needed (e.g. from `Jacobian/Blueprint/Sec03/PolygonalModel.lean`)
+-- until the duplicate is unified:
+--   - Jacobian.Periods.TopologicalGenus
+--   - Jacobian.Periods.TopologicalGenusInvariance
+--   - Jacobian.Periods.SurfaceClassification
+--   - Jacobian.Periods.AnalyticGenusEqTopologicalGenus
 
 /-!
 # Periods infrastructure
