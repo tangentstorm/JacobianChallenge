@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.CotangentBundle
+import Mathlib.Geometry.Manifold.Complex
 
 /-! # Global holomorphic functions on a compact connected Riemann surface
 
@@ -30,25 +31,26 @@ namespace JacobianChallenge.HolomorphicForms
 open scoped Manifold
 
 /-- **MEDIUM.** Every holomorphic function on a compact connected
-complex 1-manifold is constant.
-
-PROOF SKETCH (sorry pending the analytic frontier): the modulus
-`fun x => ‖f x‖` is continuous on the compact `X`, so attains its
-supremum at some `x₀`; in a chart around `x₀` the chart-pulled
-function `f ∘ φ⁻¹ : ℂ → ℂ` is analytic and attains an interior
-maximum modulus, hence is locally constant by the maximum modulus
-principle (`Mathlib.Analysis.Complex.AbsMax.AnalyticOn.eqOn_of_isMaxOn`-
-flavoured); connectedness of `X` upgrades local constancy to global
-constancy. -/
+complex 1-manifold is constant. Proof via Mathlib's
+`MDifferentiable.exists_eq_const_of_compactSpace`
+(`Mathlib.Geometry.Manifold.Complex`), which packages the maximum
+modulus principle in the manifold-`MDifferentiable` form. Steps:
+`ContMDiff … ⊤ f` ⇒ `MDifferentiable I 𝓘(ℂ,ℂ) f` (via
+`ContMDiff.mdifferentiable` with `1 ≤ ⊤`), and `[ConnectedSpace X]`
+implies `[PreconnectedSpace X]`. -/
 theorem holomorphic_compact_connected_constant
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : X → ℂ)
-    (_hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+    (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) f) :
     ∃ c : ℂ, ∀ x : X, f x = c := by
-  sorry
+  have hmd : MDifferentiable (modelWithCornersSelf ℂ ℂ)
+      (modelWithCornersSelf ℂ ℂ) f :=
+    hf.mdifferentiable WithTop.top_ne_zero
+  obtain ⟨c, hc⟩ := hmd.exists_eq_const_of_compactSpace
+  exact ⟨c, fun x => congrFun hc x⟩
 
 /-- Corollary statement: the unit-modulus form of the maximum modulus
 principle. Sorry-free; immediate from
