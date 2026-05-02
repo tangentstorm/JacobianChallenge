@@ -102,17 +102,43 @@ theorem mk_injOn_openDisk (g : ℕ) :
   exact Polygon4g.eqvGen_sideGen_eq_of_norm_lt hmk
     (Or.inl (by simp [OpenDisk, Metric.mem_ball, dist_zero_right] at hz; exact hz))
 
+/-- The open-disk subset of `DiskC` is saturated under the quotient
+map: its preimage along `Polygon4g.mk g` is itself, because the
+side-pairing relation only equates boundary points (sub-leaf 1
+infrastructure). -/
+private lemma openDisk_saturated (g : ℕ) :
+    Polygon4g.mk g ⁻¹' (Polygon4g.mk g '' {z : DiskC | (z : ℂ) ∈ OpenDisk})
+      = {z : DiskC | (z : ℂ) ∈ OpenDisk} := by
+  ext z
+  refine ⟨?_, fun h => ⟨z, h, rfl⟩⟩
+  rintro ⟨w, hw, hwz⟩
+  rw [Polygon4g.mk_eq_mk_iff] at hwz
+  have hint : ‖(w : ℂ)‖ < 1 := by
+    simpa [OpenDisk, Metric.mem_ball, dist_zero_right] using hw
+  have hwz' := Polygon4g.eqvGen_sideGen_eq_of_norm_lt hwz (Or.inl hint)
+  rw [hwz'] at hw
+  exact hw
+
+/-- The open-disk subset of `DiskC` is open in the subspace topology
+on `DiskC` (preimage of an open ball under the continuous inclusion). -/
+private lemma openDisk_isOpen_in_DiskC :
+    IsOpen {z : DiskC | (z : ℂ) ∈ OpenDisk} :=
+  Metric.isOpen_ball.preimage continuous_subtype_val
+
 /-- **Sub-leaf 2 (SHORT).** The image of the open unit disk under
 `Polygon4g.mk g` is open in `Polygon4g g`.
 
-Proof sketch: the quotient map `Polygon4g.mk g` is continuous
-(`Polygon4g.mk_continuous`), and `OpenDisk` is open in `DiskC`. Use
-`isOpen_iff_preimage_isOpen` for the quotient topology together with
-sub-leaf 1 (so the preimage of the image equals `OpenDisk` itself,
-not a larger saturation). -/
+Proof: a set in the quotient is open iff its preimage is open
+(`isOpen_iff_preimage_isOpen` / quotient topology). The preimage
+equals the open-disk subset of `DiskC` itself by `openDisk_saturated`
+(saturation under the side-pairing), and that subset is open by
+`openDisk_isOpen_in_DiskC`. -/
 theorem mk_image_openDisk_isOpen (g : ℕ) :
     IsOpen (Polygon4g.mk g '' {z : DiskC | (z : ℂ) ∈ OpenDisk}) := by
-  sorry
+  rw [isOpen_coinduced]
+  show IsOpen (Polygon4g.mk g ⁻¹' _)
+  rw [openDisk_saturated g]
+  exact openDisk_isOpen_in_DiskC
 
 /-- **Sub-leaf 3 (MEDIUM).** Every holomorphic function on the open
 unit disk has a holomorphic primitive.
