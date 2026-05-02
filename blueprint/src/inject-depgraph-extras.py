@@ -35,6 +35,10 @@ from pathlib import Path
 BIG_UMBRELLAS = [
     "input:hodge-deRham",
     "input:rado-triangulation",
+    "input:de-rham-theorem",
+    "input:hodge-decomposition",
+    "input:dolbeault",
+    "input:tietze-normal-form",
     "thm:polygonal-model",
     "thm:serre-duality-rs",
 ]

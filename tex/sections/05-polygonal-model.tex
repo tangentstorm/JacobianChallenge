@@ -312,11 +312,49 @@ Mathlib does not yet have it; the project carries a thin
 filled by a future formalisation.
 \end{layman}
 
+\begin{theorem}[Classical input: Tietze normal form for orientable surface words]
+\label{input:tietze-normal-form}
+\uses{def:tietze-equivalence,def:orientable}
+Every edge word arising from a polygonal presentation of a compact
+connected orientable 2-manifold of genus \(g\) is Tietze-equivalent to
+the standard relator
+\(a_1 b_1 a_1^{-1} b_1^{-1} \cdots a_g b_g a_g^{-1} b_g^{-1}\).
+\depends{Classical Brahana--Seifert--Threlfall reduction. Mathlib
+v4.28.0 has neither edge words nor Tietze transformations on them;
+the project ships a top-down sketch under
+\code{Jacobian/StageA/EdgeWordTietze.lean}
+(\code{orientable_edgeWord_tietzeEq_standardWord}) and a parallel
+project-side decomposition in \code{Jacobian/Periods/TietzeReduction.lean}
+(handle separation, inverse cancellation, cyclic reduction).}
+\lean{JacobianChallenge.StageA.orientable_edgeWord_tietzeEq_standardWord}
+\notready
+\end{theorem}
+
+\begin{layman}
+The Tietze normal-form theorem is the combinatorial heart of
+surface classification. Take any cell-complex presentation of an
+orientable closed surface: triangulate it, cut along a spanning
+tree, lay it flat as a polygon, and read off the boundary word — a
+sequence in the four letters \(a_i, b_i, a_i^{-1}, b_i^{-1}\). The
+theorem says: by a finite sequence of \emph{Tietze moves} (cancel
+adjacent inverse pairs; permute complete handle blocks), every such
+word transforms into the standard relator
+\(a_1 b_1 a_1^{-1} b_1^{-1} \cdots a_g b_g a_g^{-1} b_g^{-1}\).
+For a torus (\(g = 1\)) the standard form is \(aba^{-1}b^{-1}\); for
+a genus-2 surface, \(a_1 b_1 a_1^{-1} b_1^{-1} a_2 b_2 a_2^{-1}
+b_2^{-1}\); and so on. Why bother? Combined with Radó's theorem
+(triangulation always exists), Tietze normal form gives the
+polygonal-model theorem: every orientable surface looks
+topologically like the standard \(4g\)-gon. The Lean side
+formalises the move-by-move reduction algorithm; the headline
+theorem currently sits at the top of a sorry tree.
+\end{layman}
+
 \subsection{The polygonal model theorem (Stage A)}
 
 \begin{theorem}[Polygonal model of a compact Riemann surface]
 \label{thm:polygonal-model}
-\uses{def:polygon4g,lem:polygon4g-eq-standard-word-quotient,def:tietze-equivalence,def:orientable,input:rado-triangulation}
+\uses{def:polygon4g,lem:polygon4g-eq-standard-word-quotient,def:tietze-equivalence,def:orientable,input:rado-triangulation,input:tietze-normal-form}
 A compact connected oriented Riemann surface \(X\) of analytic
 genus \(g\) is homeomorphic to \(\mathrm{Polygon4g}(g)\):
 \[
@@ -462,9 +500,88 @@ different normal form (\(a_1^2 a_2^2 \cdots\)), so we need to flag
 the orientability hypothesis explicitly.
 \end{layman}
 
+\begin{theorem}[Classical input: de Rham theorem]
+\label{input:de-rham-theorem}
+For a smooth manifold \(M\), integration of forms over chains gives
+an isomorphism between de Rham and singular cohomology:
+\[
+  H^{k}_{\mathrm{dR}}(M,\C) \cong H^{k}_{\mathrm{sing}}(M,\C).
+\]
+\depends{Classical 1931 result of Georges de Rham. Mathlib v4.28.0
+has neither de Rham cohomology of manifolds nor the integration
+pairing that realises the comparison. The project sketches it in
+\code{Jacobian/StageB/DeRhamComplex.lean}
+(\(d^2 = 0\), closed/exact subspaces) and
+\code{Jacobian/StageB/DeRhamComparison.lean}
+(\code{deRham_theorem}, ${\sim}220$ LOC of typed sorries via good
+covers + Mayer--Vietoris).}
+\lean{JacobianChallenge.StageB.deRham_theorem}
+\notready
+\end{theorem}
+
+\begin{layman}
+The de Rham theorem is the bridge between two ways of counting
+holes in a smooth manifold. The first way uses
+\emph{differential forms}: closed forms (\(d\omega = 0\)) modulo
+exact ones (\(\omega = d\alpha\)) gives the de Rham cohomology
+\(H^k_{\mathrm{dR}}\). The second way uses \emph{singular chains}:
+formal sums of continuous simplices, with cycles (\(\partial = 0\))
+modulo boundaries, giving singular cohomology. De Rham's theorem
+says these are naturally isomorphic, and the isomorphism is
+\emph{integration}: given a closed form and a singular cycle, the
+integral pairs them. Why bother? It promotes ``how many independent
+closed forms are there'' (an analytic question) into ``how many
+independent loops are there'' (a topological question), with
+matching integer ranks on both sides. Without de Rham, the
+analytic side of the genus identity has no topological referent.
+\end{layman}
+
+\begin{theorem}[Classical input: Hodge decomposition on a compact Riemann surface]
+\label{input:hodge-decomposition}
+\uses{input:de-rham-theorem}
+For a compact Kähler manifold \(X\) (in particular a compact Riemann
+surface) every de Rham cohomology class has a unique harmonic
+representative, and harmonic forms split by bidegree:
+\[
+  H^{1}_{\mathrm{dR}}(X,\C) \cong
+  H^{1,0}_{\bar\partial}(X) \oplus H^{0,1}_{\bar\partial}(X).
+\]
+\depends{Classical Hodge theorem (W.~V.~D.~Hodge, 1941). Requires
+elliptic regularity for the Laplace--Beltrami operator. Mathlib
+v4.28.0 has neither the Laplacian on a Riemannian manifold,
+elliptic-PDE compactness, harmonic-form decomposition, nor Kähler
+\((p,q)\)-bidegree. The project sketches the chain in
+\code{Jacobian/StageB/LaplaceBeltrami.lean}
+(volume form, Hodge star, codifferential, \(\Delta\) self-adjoint) +
+\code{Jacobian/StageB/HarmonicForms.lean}
+(\code{hodge_decomposition},
+\code{deRhamH_iso_Harmonic}, Poincaré duality) +
+\code{Jacobian/StageB/KahlerStructure.lean}
+(Dolbeault \((p,q)\)-decomposition, Hodge symmetry).}
+\lean{JacobianChallenge.StageB.hodge_decomposition}
+\notready
+\end{theorem}
+
+\begin{layman}
+The Hodge decomposition theorem says that on a compact Kähler
+manifold, every cohomology class has a unique \emph{harmonic}
+representative — a form lying in the kernel of the
+Laplace--Beltrami operator \(\Delta = d\delta + \delta d\). On a
+compact Riemann surface, harmonic 1-forms split further by
+\((p,q)\)-bidegree: the holomorphic 1-forms (type \((1,0)\)) and
+the anti-holomorphic 1-forms (type \((0,1)\)) each form a
+\(g\)-dimensional space, summing to \(2g\). Why bother? This is
+the single fact that makes the analytic genus and the topological
+genus agree: \(2g_{\mathrm{an}} = \dim H^1_{\mathrm{dR}} =
+\mathrm{rank}\, H_1(X,\Z)\) (using de Rham). It is the third
+big classical-analysis input on the project's path, alongside
+Riemann--Roch and Stokes, and Mathlib has none of the underlying
+elliptic-operator + harmonic-form theory yet.
+\end{layman}
+
 \begin{theorem}[Classical input: Hodge / de Rham rank for a Riemann surface]
 \label{input:hodge-deRham}
-\uses{def:topological-genus}
+\uses{def:topological-genus,input:de-rham-theorem,input:hodge-decomposition,input:dolbeault}
 For a compact connected oriented Riemann surface \(X\) of analytic
 genus \(g\), the rank of the integer first homology group is
 \(2g\):
