@@ -2,6 +2,12 @@ import Jacobian.Periods.Polygon4g
 import Jacobian.Periods.Orientable
 import Jacobian.Periods.TopologicalGenus
 import Jacobian.Periods.TopologicalGenusInvariance
+import Jacobian.Periods.SurfaceClassificationData
+import Jacobian.Periods.RadoTriangulation
+import Jacobian.Periods.DualGraphCut
+import Jacobian.Periods.TietzeReduction
+import Jacobian.Periods.Polygon4gCellular
+import Jacobian.Periods.SingularH1Homotopy
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Analysis.InnerProductSpace.PiL2
 
@@ -51,58 +57,31 @@ namespace JacobianChallenge.Periods
 
 open scoped Manifold
 
-/-- Bundled polygonal-quotient datum: a continuous surjection
-`q : DiskC → M` whose fibres coincide with the side-pairing
-equivalence `Polygon4g.SideRel genus`. The point of the bundle is
-to make Stage A leaves and downstream constructions (universal-property
-homeomorphism, period-pairing functoriality, …) parameterisable over
-*one* hypothesis instead of `(genus, q, cts, surj, ker)` quintuples. -/
-structure PolygonalQuotientPresentation
-    (M : Type) [TopologicalSpace M] where
-  /-- The genus parameter — the topological genus of the surface
-  presented by this datum. -/
-  genus : ℕ
-  /-- The continuous surjection from the closed disk witnessing the
-  presentation. -/
-  proj : DiskC → M
-  /-- Continuity of `proj`. -/
-  cts : Continuous proj
-  /-- Surjectivity of `proj` (every point of `M` is presented by some
-  disk point). -/
-  surj : Function.Surjective proj
-  /-- Kernel: `proj z = proj w` exactly when the standard `4*genus`-gon
-  side identification relates `z` and `w`. -/
-  kernel : ∀ z w : DiskC, proj z = proj w ↔ Polygon4g.SideRel genus z w
-
-/-- **Opaque placeholder for a finite triangulation of `M`.** Bundles the
-combinatorial data (vertices, edges, 2-simplices, incidence relations,
-realisation map) of a triangulation of a compact connected 2-manifold
-without committing to a specific internal representation. The opaque
-declaration lets the Stage A leaves below name it; a concrete unfolding
-will land when the triangulation infrastructure is built (see
-`ref/plans/polygonal-model.md` Stage A1 sub-leaves). -/
-opaque Triangulation (M : Type) [TopologicalSpace M] : Type
-
 /-- **Stage A1 leaf (Radó).** Every compact 2-manifold admits a finite
-triangulation. Bottom-up content: classical Radó theorem on
-triangulability of compact surfaces (combined with the existence of a
-finite atlas refinement). Mathlib v4.28.0 has neither Radó nor the
-abstract simplicial complex theory required to state it directly. -/
+triangulation.
+
+**Round 47 refinement.** The body delegates to
+`exists_triangulation_of_compact_2manifold_via_pl` in
+`Jacobian.Periods.RadoTriangulation`, which itself decomposes into:
+
+* `compact_2manifold_finite_chart_atlas` — finite chart atlas
+  extraction.
+* `finite_chart_atlas_admits_pl_refinement` — dimension-2 PL
+  refinement (the Doyle–Moran/Thomassen step).
+* `pl_atlas_to_triangulation` — assemble the simplicial complex from
+  a compatible PL atlas.
+
+Bottom-up content: classical Radó theorem on triangulability of
+compact surfaces. Mathlib v4.28.0 has neither Radó nor the abstract
+simplicial complex theory required to state it directly. -/
 theorem exists_triangulation_of_compact_2manifold
     (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
     [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
     [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) M] :
-    Nonempty (Triangulation M) := by
-  sorry
-
-/-- **Opaque placeholder for an edge-word presentation of `M`.** Bundles
-the data of "M presented as a `2k`-gon with side identifications given
-by some edge-pairing word `w` of length `2k`". The opaque declaration
-lets the Stage A2 sub-leaves below name it; a concrete unfolding will
-land when the combinatorial-reduction infrastructure is built. -/
-opaque EdgeWordPresentation (M : Type) [TopologicalSpace M] : Type
+    Nonempty (Triangulation M) :=
+  exists_triangulation_of_compact_2manifold_via_pl M
 
 /-- **Stage A2.a leaf (cut along non-tree edges).** Given a finite
 triangulation of a compact connected 2-manifold, the dual graph
@@ -119,8 +98,8 @@ noncomputable def Triangulation.toEdgeWordPresentation
     [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
     [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) M]
-    (_T : Triangulation M) : EdgeWordPresentation M :=
-  sorry
+    (T : Triangulation M) : EdgeWordPresentation M :=
+  Classical.choice (T.toEdgeWordPresentation_via_cut)
 
 /-- **Stage A2.b leaf (Tietze reduction to standard form).** Any
 edge-word presentation of an orientable 2-manifold reduces to the
@@ -135,8 +114,8 @@ noncomputable def EdgeWordPresentation.toPolygonalQuotient
     [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) M]
     [Orientable M]
-    (_E : EdgeWordPresentation M) : PolygonalQuotientPresentation M :=
-  sorry
+    (E : EdgeWordPresentation M) : PolygonalQuotientPresentation M :=
+  E.toPolygonalQuotient_via_tietze
 
 /-- **Stage A2 leaf (combinatorial reduction).** Given a triangulation
 of a compact connected orientable smooth real 2-manifold, one obtains a
@@ -333,9 +312,9 @@ wrapper around `Functor.mapIso` on a `homotopyEquiv`-derived
 `TopCat`-isomorphism. -/
 theorem singularH1_iso_of_homotopyEquiv
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
-    (_h : ContinuousMap.HomotopyEquiv X Y) :
-    Nonempty (singularH1 X ≃ₗ[ℤ] singularH1 Y) := by
-  sorry
+    (h : ContinuousMap.HomotopyEquiv X Y) :
+    Nonempty (singularH1 X ≃ₗ[ℤ] singularH1 Y) :=
+  singularH1_iso_of_homotopyEquiv_via_prism h
 
 /-- **Sub-leaf (singular `H₁` is invariant under homotopy
 equivalence to `Unit`).** Body: lift through `singularH1_iso_of_homotopyEquiv`
@@ -395,15 +374,21 @@ theorem singularH1_polygon4g_zero_finrank :
     Module.finrank ℤ (singularH1 (Polygon4g 0)) = 0 :=
   Module.finrank_zero_of_subsingleton
 
-/-- **Frontier leaf (genus ≥ 1 polygon H₁ as basis).** The first
+/-- **Stage A leaf (genus ≥ 1 polygon H₁ as basis).** The first
 singular homology of the standard `4(g+1)`-gon admits a ℤ-basis
 indexed by `Fin (2*(g+1))`. This is the *combinatorial* heart of the
 polygon-rank computation: a basis on `H₁` is the data carrying the
-2(g+1) cycles `[a₀], [b₀], …, [a_g], [b_g]`. -/
+2(g+1) cycles `[a₀], [b₀], …, [a_g], [b_g]`.
+
+**Round 45 refinement.** Body delegates to
+`polygon4g_succ_singularH1_basis_via_hurewicz` (Hurewicz +
+abelianised-surface-group route) in `Jacobian.Periods.Polygon4gCellular`.
+That helper itself bottoms out in `polygon4g_fundamentalGroup_abelianized_basis`
+which packages the surface-group abelianisation computation. -/
 theorem polygon4g_succ_singularH1_basis (g : ℕ) :
     Nonempty (Module.Basis (Fin (2 * (g + 1))) ℤ
-      (singularH1 (Polygon4g (g + 1)))) := by
-  sorry
+      (singularH1 (Polygon4g (g + 1)))) :=
+  polygon4g_succ_singularH1_basis_via_hurewicz g
 
 /-- **Sub-sub-leaf (genus ≥ 1 polygon H₁ structure).** The first
 singular homology of the standard `4(g+1)`-gon is ℤ-linearly

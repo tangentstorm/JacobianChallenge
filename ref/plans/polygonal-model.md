@@ -452,18 +452,68 @@ These give the polygonal-model dependency closure an output API that
 parallels (and meets-in-the-middle with) the existing
 `PeriodFunctional` / Riemann-surface side.
 
-### Build status
+### Rounds 45–64: Stage A and Stage B frontier decomposition
+
+**Stage A frontier sorries (Rounds 45–49) — each `SurfaceClassification.lean`
+sorry replaced by a delegation to a fresh helper module:**
+
+| Frontier leaf | New helper module | Round |
+| --- | --- | --- |
+| `polygon4g_succ_singularH1_basis` | `Jacobian.Periods.Polygon4gCellular` (Hurewicz / abelianised-surface-group route) | 45 |
+| `singularH1_iso_of_homotopyEquiv` | `Jacobian.Periods.SingularH1Homotopy` (prism construction) | 46 |
+| `exists_triangulation_of_compact_2manifold` | `Jacobian.Periods.RadoTriangulation` (finite atlas + PL refinement + simplicial assembly) | 47 |
+| `Triangulation.toEdgeWordPresentation` | `Jacobian.Periods.DualGraphCut` (dual graph + spanning tree + cut + unfolded-disk → edge-word) | 48 |
+| `EdgeWordPresentation.toPolygonalQuotient` | `Jacobian.Periods.TietzeReduction` (raw word + Brahana reduction + standard-quotient identification, **sorry-free assembly** via Classical.choice) | 49 |
+
+The opaque `Triangulation`, `EdgeWordPresentation`, and the
+`PolygonalQuotientPresentation` structure now live in a small base
+module `Jacobian.Periods.SurfaceClassificationData` so the helper
+modules can refine them without an import cycle through
+`SurfaceClassification.lean`.
+
+**Stage A drill (Rounds 50–54) — one named obligation per round
+deepened into smaller leaves:**
+
+| Round | Drilled obligation | New named obligations |
+| --- | --- | --- |
+| 50 | `polygon4g_fundamentalGroup_abelianized_basis` | `polygon4g_abelianization_basis` (Round 60: real proof via `Pi.basisFun`) + `polygon4g_hurewicz_iso` (sorry, named-Hurewicz site) |
+| 51 | `singularChain_homotopy_chainHomotopy` | `simplex_prism_subdivision_exists` + `prism_operator_satisfies_chain_homotopy` |
+| 52 | `compact_2manifold_finite_chart_atlas` | `compact_2manifold_chart_finite_subcover` + `chart_finite_subcover_to_atlas` |
+| 53 | `DualGraph.spanningTree` | `DualGraph.isConnected` + `DualGraph.isFinite` + `finite_connected_graph_admits_spanning_tree` |
+| 54 | `rawWord_tietzeEq_standardWord_orientable` | `rawWord_cyclic_reduction` (cancellation) + `rawWord_handle_separation_orientable` (Brahana handle move) |
+
+**Stage B refinements (Rounds 55–64):**
+
+| Round | Action | Details |
+| --- | --- | --- |
+| 55 | New module `Jacobian.Periods.HodgeDeRham`. Refines `hodge_deRham_rank_eq` into `deRham_singularH1_dim_witness` + `hodge_decomposition_singularH1_rank` + a sorry-free assembly. | The original PeriodFunctional sorry is now sorry-free (delegates). |
+| 56 | New module `Jacobian.Periods.H1EvenBasisViaSurfaceClassification`. Refines `h1_has_even_basis` to delegate to Stage A's `singularH1_basis_of_compactOrientableSurface` via `ChartedSpaceComplex_to_smoothReal2` (B1) and `complexManifold_orientable` (B2). | The original PeriodFunctional sorry is now sorry-free; Stage B's basis problem reduces to the existing Stage A leaves. |
+| 57 | Drill `deRham_singularH1_dim_witness` into `deRham_eq_singularCohomology_dimC` (manifold de Rham comparison) + `singularH1_rank_eq_singularCohomology_dim` (universal coefficients). | |
+| 58 | Drill `hodge_decomposition_singularH1_rank` into `hodge_decomposition_dimC_split` (Hodge splitting) + `serre_duality_dimC` (Serre duality). | |
+| 59 | Drill `singularH1_rank_eq_singularCohomology_dim` into `singularH1_finitelyGenerated_of_compact` + `singularH1_finrank_finite` (sorry-free witness). | The reassembly is sorry-free; the residual is the f.g. property. |
+| 60 | Drill `polygon4g_abelianization_basis`. Make `Polygon4gAbelianization g := Fin (2*(g+1)) → ℤ` concretely. **Real proof** via `Pi.basisFun ℤ _`; introduce `commutator_product_abelianizes_to_zero` (real proof by `ring`) as a named arithmetic ingredient. | One Stage A sorry actually discharged (real proof). |
+| 61 | Drill `polygon4g_hurewicz_iso` into `Polygon4gFundamentalGroupRepr` + `PolygonAbelianizationMap` + `hurewicz_singularH1_iso_polygon4g`. | Names the Mathlib Hurewicz gap precisely. |
+| 62 | Drill `singularH1_iso_of_homotopyEquiv_via_prism` into `singularH1_inducedMap` + functoriality + homotopy-invariance leaves. | |
+| 63 | Drill `cut_along_nonTree_yields_unfoldedDisk` into `cut_complement_is_connected` + `nonTree_edge_count_formula`. | |
+| 64 | Drill `pl_atlas_to_triangulation` into `pl_atlas_to_simplicial_complex` + `simplicial_realisation_homeomorph_M`. | |
+
+### Build status (post Rounds 45–64)
 
 `lake build Jacobian.Blueprint.Sec03.PolygonalModel` and
-`lake build Jacobian.Periods` both succeed. The `polygonal_model`
-declaration has no own `sorry`; the only remaining `sorry`s in its
-dependency closure are five frontier leaves (plus pre-existing project
-sorries unchanged by this refinement):
+`lake build Jacobian.Challenge` both succeed. The `polygonal_model`
+declaration has no own `sorry`. The Stage A frontier sorries have
+each been split into smaller named obligations in fresh helper
+modules; one Stage A sorry (`polygon4g_abelianization_basis`) was
+discharged outright via `Pi.basisFun`. The Stage B frontier sorries
+`h1_has_even_basis` and `hodge_deRham_rank_eq` are now sorry-free
+delegations.
 
-| Frontier leaf | File | Bottom-up content |
+| Helper module | Sorry count | Notes |
 | --- | --- | --- |
-| `exists_triangulation_of_compact_2manifold` | `SurfaceClassification.lean` | Radó's triangulability theorem |
-| `Triangulation.toEdgeWordPresentation` | `SurfaceClassification.lean` | Dual-tree unfolding to a `2k`-gon edge word (Stage A2.a) |
-| `EdgeWordPresentation.toPolygonalQuotient` | `SurfaceClassification.lean` | Tietze reduction to standard `4g'`-gon (Stage A2.b) |
-| `polygon4g_succ_singularH1_basis` | `SurfaceClassification.lean` | Polygon `H₁` basis (cellular / Hurewicz) |
-| `singularH1_iso_of_homotopyEquiv` | `SurfaceClassification.lean` | Homotopy invariance of singular homology (Mathlib gap) |
+| `Polygon4gCellular.lean` | 1 | `hurewicz_singularH1_iso_polygon4g` (Mathlib Hurewicz gap) |
+| `SingularH1Homotopy.lean` | 3 | `simplex_prism_subdivision_exists`, `prism_operator_satisfies_chain_homotopy`, `singularH1_iso_of_homotopyEquiv_via_prism`, plus `singularH1_inducedMap` |
+| `RadoTriangulation.lean` | 4 | `compact_2manifold_chart_finite_subcover`, `chart_finite_subcover_to_atlas`, `finite_chart_atlas_admits_pl_refinement`, `pl_atlas_to_triangulation` |
+| `DualGraphCut.lean` | 4 | `Triangulation.toDualGraph`, `finite_connected_graph_admits_spanning_tree`, `cut_along_nonTree_yields_unfoldedDisk`, `unfoldedDisk_to_edgeWordPresentation` |
+| `TietzeReduction.lean` | 6 | `EdgeWordPresentation.toRawWord`, `rawWord_cyclic_reduction`, `rawWord_handle_separation_orientable`, `wordQuotient_homeomorph_of_tietzeEq`, `standardWord_wordQuotient_homeomorph_polygon4g`, `edgeWord_wordQuotient_homeomorph_M` |
+| `HodgeDeRham.lean` | 2 | `singularH1_finitelyGenerated_of_compact`, `hodge_decomposition_singularH1_rank` |
+| `H1EvenBasisViaSurfaceClassification.lean` | 0 | sorry-free assembly |
