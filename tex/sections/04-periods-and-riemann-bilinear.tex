@@ -59,6 +59,164 @@ Since holomorphic one-forms are closed, the integral only depends on the
 homology class of \(\gamma\). This gives the period pairing of
 Definition~\ref{def:period-pairing}.
 
+\subsection{Path integration of holomorphic 1-forms on a manifold}
+
+The integral \(\int_\gamma\omega\) is not a standard Mathlib operation:
+Mathlib's curve-integral machinery
+(\texttt{Mathlib.MeasureTheory.Integral.CircleIntegral} and friends)
+operates on paths in \(\C\) or \(\R^n\), but a path on a compact
+Riemann surface \(X\) generally crosses chart boundaries and cannot
+be lifted to a single Euclidean parameterization. The project
+develops the path integral chart-by-chart and assembles a global
+value via a finite cover; this subsection records the construction
+at the level needed by what follows.
+
+\begin{definition}[Chart-local path integral]
+\label{def:path-integral-in-chart}
+Let \(\omega\) be a holomorphic 1-form on \(X\), \(c\) a holomorphic
+chart with image \(U\subseteq\C\), and \(\gamma:[0,1]\to X\) a
+continuous path whose image lies in the domain of \(c\). Write
+\(c\circ\gamma\) for the Euclidean parameterization, and let
+\(h_c(z)\,dz\) be the local representation of \(\omega\) in \(c\).
+The \emph{chart-local path integral} is the Riemann line integral
+\[
+  \mathrm{pathIntegralInChart}_c(\omega,\gamma)
+    := \int_{c\circ\gamma} h_c(z)\,dz
+    = \int_0^1 h_c(c(\gamma(t)))\,(c\circ\gamma)'(t)\,dt.
+\]
+\lean{JacobianChallenge.Periods.pathIntegralInChartCorrect}
+\leanok
+\end{definition}
+
+\begin{layman}
+On a small enough patch of the surface, a single chart parameterises
+the patch by a piece of the complex plane. Inside that single
+chart, ``integrate the form along the path'' is just the classical
+line integral of complex calculus: write the form as \(h(z)\,dz\),
+trace the path as a curve in \(\C\), integrate. Why bother? It's
+the building block. Globally a path will not fit in a single chart,
+but locally — over a sufficiently short subpath — it always does.
+The full multi-chart definition will assemble these local pieces.
+\end{layman}
+
+\begin{lemma}[Linearity of the chart-local integral]
+\label{lem:path-integral-in-chart-linearity}
+\uses{def:path-integral-in-chart}
+The chart-local path integral is \(\C\)-linear in the form, additive
+under concatenation of subpaths, and changes sign under path
+reversal.
+\lean{JacobianChallenge.Periods.pathIntegralInChartCorrect_smul,
+JacobianChallenge.Periods.pathIntegralInChartCorrect_trans_of_curveIntegrable,
+JacobianChallenge.Periods.pathIntegralInChartCorrect_neg_form_eq_symm_path}
+\leanok
+\end{lemma}
+
+\begin{layman}
+Three structural facts about the chart-local integral, each proved
+by reducing to the corresponding fact about Riemann integrals on
+\([0,1]\): scaling the form scales the integral; running two paths
+end-to-end adds their integrals; running a path backwards negates
+the integral. Why bother? The global multi-chart integral inherits
+each of these properties one chart at a time, so verifying them
+locally is the way the global linearity gets proved at all.
+\end{layman}
+
+\begin{definition}[Path integral via a chart cover]
+\label{def:path-integral-via-cover}
+\uses{def:path-integral-in-chart}
+Let \(\gamma:[0,1]\to X\) be a continuous path. Compactness of
+\([0,1]\) gives a finite partition
+\(0=t_0<t_1<\cdots<t_n=1\) and a chart \(c_i\) covering each
+sub-segment \(\gamma([t_{i-1},t_i])\). The \emph{cover-based path
+integral} is
+\[
+  \int_\gamma \omega
+    := \sum_{i=1}^{n}
+       \mathrm{pathIntegralInChart}_{c_i}(\omega,\gamma|_{[t_{i-1},t_i]}).
+\]
+\lean{JacobianChallenge.Periods.pathIntegralViaCover,
+JacobianChallenge.Periods.pathIntegralViaCoverWith}
+\leanok
+\end{definition}
+
+\begin{layman}
+Take a path that wanders all over the surface, possibly crossing
+several charts. Cut the path into short enough pieces that each
+piece fits inside a single chart; integrate each piece using the
+chart-local definition; sum the results. The construction
+formalises the standard pen-and-paper trick of ``integrate along
+the curve, switching coordinates as you go.'' Why bother? It gives
+the global path integral as a finite sum of Mathlib-native
+Riemann integrals, with no continuous-coordinate-change machinery
+required. Linearity, additivity, and reversal lift from each chart
+to the sum.
+\end{layman}
+
+\begin{lemma}[Cover-independence of the path integral]
+\label{lem:path-integral-cover-independent}
+\uses{def:path-integral-via-cover}
+The cover-based path integral is independent of the choice of
+finite chart cover: any two valid covers yield the same value.
+\depends{Refines via the common refinement of two covers; chart
+overlap maps are biholomorphic, so chain-rule equality of the chart
+representations of \(\omega\) follows from the holomorphic
+transformation of 1-forms. Project-side construction; Mathlib has
+the chain-rule lemmas but not the overall path-integral
+well-definedness.}
+\lean{JacobianChallenge.Periods.pathIntegralViaCover_eq_pathIntegralViaCoverWith}
+\leanok
+\end{lemma}
+
+\begin{layman}
+The total integral does not depend on which finite chart cover you
+chose, only on the path itself. Two different covers can be
+refined to a common third one; on each piece of the common
+refinement, the chart-local integral is the same in either chart
+because holomorphic transitions transform 1-forms by the chain
+rule. Why bother? Without this, ``\(\int_\gamma\omega\)'' would
+not be a well-defined function of \((\gamma,\omega)\), and every
+later argument would have to specify a cover. With it, the path
+integral is a clean global notion.
+\end{layman}
+
+\begin{theorem}[Path integral descends to the period pairing]
+\label{thm:period-pairing-from-path-integral}
+\uses{def:path-integral-via-cover,lem:path-integral-cover-independent,lem:period-homology-invariance}
+The cover-based path integral assembles into a \(\Z\)-bilinear
+pairing
+\[
+  \Pi_X : H_1(X,\Z) \to (\HX \to \C)
+\]
+sending each homology class \([\gamma]\) to the linear functional
+\(\omega \mapsto \int_\gamma\omega\).
+\depends{Linearity in the cycle is summation across simplices.
+Well-definedness on homology classes is
+\ref{lem:period-homology-invariance}, which itself depends on
+Stokes on a manifold with boundary
+(\ref{thm:stokes-on-rs-with-boundary}). The Lean side currently
+exposes the pairing as an \texttt{opaque} declaration pending the
+Stokes blocker; once Stokes lands, the opaque is replaced by the
+constructed pairing.}
+\lean{JacobianChallenge.Periods.periodPairing}
+\notready
+\end{theorem}
+
+\begin{layman}
+Bundle the path integrals into a single mathematical object: a
+linear pairing between integer homology classes of loops and
+holomorphic 1-forms. Linearity in the homology class is just the
+sum-of-integrals rule. The hard part is well-definedness — that
+the integral depends only on the homology class, not the chosen
+representative loop. That is the homology-invariance lemma above,
+which routes through Stokes' theorem on a manifold with boundary
+(the largest single classical-analysis gap on the project's
+critical path). Why bother? This is the precise object used by
+the next section's bilinear-relations argument and by the
+period-lattice quotient that defines the Jacobian. Once Stokes
+on a 2-manifold-with-boundary is in Mathlib, the opaque
+declaration in the Lean code becomes a constructed term.
+\end{layman}
+
 \subsection{Homology invariance of periods}
 
 \begin{lemma}[Homology invariance of periods]

@@ -42,7 +42,7 @@ Riemann–Roch.
 
 \begin{theorem}[Genus-zero classification]
 \label{thm:genus-zero-classification}
-\uses{input:riemann-roch,prop:genus-zero-degree-one-map,input:degree-one-isomorphism}
+\uses{input:riemann-roch,prop:genus-zero-degree-one-map,input:degree-one-isomorphism,def:analytic-genus,thm:analytic-eq-topological-genus}
 For a compact connected Riemann surface \(X\),
 \[
   g(X)=0 \quad\Longleftrightarrow\quad X \cong_{\mathrm{homeo}} \Sphere .
@@ -73,7 +73,7 @@ wide open.
 
 \begin{definition}[Period pairing]
 \label{def:period-pairing}
-\uses{lem:period-homology-invariance}
+\uses{lem:period-homology-invariance,thm:period-pairing-from-path-integral}
 The period pairing is the group homomorphism
 \[
   \Pi_X : H_{1}(X,\Z) \longrightarrow \HdualX,\qquad
@@ -102,7 +102,7 @@ discrete grid that gets quotiented to form the Jacobian.
 
 \begin{theorem}[Period lattice theorem]
 \label{thm:period-lattice}
-\uses{input:riemann-bilinear,def:period-pairing}
+\uses{input:riemann-bilinear,def:period-pairing,thm:analytic-eq-topological-genus}
 The image \(\periods_X := \Pi_X(H_1(X,\Z))\) is a full lattice in the
 real vector space underlying \(\HdualX\).
 \lean{JacobianChallenge.Periods.periodFullComplexLattice}
@@ -129,7 +129,7 @@ that quotient is automatically a compact complex Lie additive group.
 
 \begin{definition}[Analytic Jacobian]
 \label{def:analytic-jacobian}
-\uses{thm:period-lattice,prop:complex-torus-package}
+\uses{thm:period-lattice,prop:complex-torus-package,def:analytic-genus}
 The Jacobian of \(X\) is the complex torus
 \[
   \Jac(X) := \HdualX / \periods_X .
