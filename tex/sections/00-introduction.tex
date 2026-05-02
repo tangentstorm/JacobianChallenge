@@ -1,6 +1,86 @@
 \section{Introduction}
 \label{sec:introduction}
 
+\begin{layman}
+\textbf{What is this document?}\par
+
+In late 2024, the mathematician Kevin Buzzard issued a public
+challenge: formalize, in the proof assistant Lean, a small but
+pivotal piece of modern mathematics — the construction and basic
+properties of the \emph{Jacobian} of a compact Riemann surface. The
+Jacobian is one of the most studied objects in nineteenth- and
+twentieth-century geometry. To a curved two-dimensional surface
+like a doughnut or a pretzel, it attaches a higher-dimensional
+companion that records all the surface's topological information in
+a clean, linear-algebraic form. From genus-one curves and elliptic
+integrals to the Birch--Swinnerton-Dyer conjecture and Wiles's proof
+of Fermat's Last Theorem, every road in modern arithmetic geometry
+passes through the Jacobian.
+
+The challenge has a peculiar structure. Its public goal is a short
+Lean file, \code{Jacobian/Challenge.lean}, listing perhaps two dozen
+named definitions and theorems. Filling those entries with literal
+\code{sorry} placeholders takes about thirty lines. The hard part
+is that four of the theorems are deliberately constructed to defeat
+any cheat — any attempt to define \code{Jacobian X := PUnit} (a
+single point) or \code{genus X := 0} (always zero) and call it done.
+They force the genus to track topology, the Jacobian to be a
+genuine compact complex Lie group, the Abel--Jacobi map to be
+injective, and pullback and pushforward to interact through the
+classical trace identity. To meet them one must build real
+mathematical infrastructure: not just statements but the
+several-layer stack of definitions, lemmas, and analytic background
+that make the statements provable.
+
+This document is the \emph{informal proof roadmap} for that
+formalization. It plays two roles at once. As a piece of
+mathematical exposition, it lays out a complete paper-style proof
+that the classical analytic construction satisfies the challenge:
+every \code{sorry} in \code{Challenge.lean} corresponds to an
+English theorem here, with sources and dependencies attached. As a
+planning document, it gives every theorem a stable label and,
+where the Lean has been written, a pointer to the corresponding
+declaration. The dependency graph between labels is what drives the
+project's automated proof work; a remote tool called
+\emph{Aristotle} picks bounded leaves off the graph and discharges
+them one at a time.
+
+The construction we use is one of several available routes — the
+\emph{analytic period-lattice} construction. Pick a compact connected
+Riemann surface \(X\). Form the finite-dimensional complex vector
+space \(H^0(X,\Omega^1_X)\) of holomorphic 1-forms on \(X\). Take its
+linear dual. Inside that dual, find the \emph{period lattice}: the
+discrete grid of vectors obtained by integrating each form along
+each integer-homology loop. Quotient by this lattice. The result, a
+compact complex torus of dimension \(g(X)\), is the Jacobian. Every
+challenge property — group structure, manifold structure, every
+anti-hack theorem — falls out of this single construction once
+enough analytic background has been established.
+
+The nine-section spine of the document mirrors that construction.
+Section~1 sets up the algebraic machinery (vanishing orders,
+divisors) shared with the algebraic-geometric route. Section~2
+develops \(H^0(X,\Omega^1_X)\), its finite-dimensionality,
+Riemann--Roch, and the genus-zero classification. Section~3 develops
+the \emph{polygonal model} — the classical unfolding of the surface
+onto a flat \(4g\)-gon — that underlies all later integration
+arguments. Section~4 builds the period pairing and the Riemann
+bilinear relations. Section~5 constructs the Jacobian via the
+complex-torus package. Section~6 establishes the Abel--Jacobi map
+and its injectivity. Section~7 develops degree, trace, pullback and
+pushforward, and the trace identity. Section~8 assembles the public
+API. Section~9 maps each Lean declaration in \code{Challenge.lean}
+back to its informal source.
+
+A reader can approach the document at three levels. Skim only the
+section headings for a high-level sense of the construction. Read
+the boldfaced theorem statements and surrounding prose for a
+working mathematician's tour. Read the \textbf{Plain English}
+insets — like this one — for a general-audience narrative version,
+free of any prerequisite beyond curiosity. The formal-only PDF
+strips these insets; the companion build keeps them.
+\end{layman}
+
 The public target is the API in \code{Jacobian/Challenge.lean}. This
 document gives an informal proof that the API is satisfied by the classical
 analytic construction of the Jacobian of a compact connected Riemann surface.

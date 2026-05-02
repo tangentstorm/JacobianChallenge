@@ -1,6 +1,53 @@
 \section{The Abel-Jacobi Map}
 \label{sec:abel-jacobi}
 
+\begin{layman}
+The \emph{Abel--Jacobi map} answers a deceptively simple question:
+given a Riemann surface and its Jacobian, is there a natural way to
+embed the surface into the Jacobian? The answer is yes, and the
+construction is breathtakingly direct. Pick a base point \(P\) on
+the surface. For any other point \(Q\), choose any path from \(P\)
+to \(Q\) and define the Abel--Jacobi class of \(Q\) to be ``the
+linear functional that integrates each holomorphic 1-form along
+this path,'' viewed in the Jacobian quotient. Different path
+choices change the answer by a period vector — exactly an element
+of the period lattice — so the result is well-defined modulo the
+lattice. We get a holomorphic map
+\(\AJ_P : X \to \Jac(X)\),
+sending \(P\) to zero, smooth and complex-analytic everywhere.
+
+The deep theorem of this section is that \(\AJ_P\) is
+\emph{injective} when the genus is positive. Distinct points of the
+surface give distinct points of the Jacobian. This is the second
+anti-hack theorem of the challenge: the genuine geometric
+construction must distinguish points, ruling out trivial fakes that
+collapse the surface to a single class. The proof is a beautiful
+chain that loops back through every section so far. Equality of
+Abel--Jacobi images would force a principal divisor of the form
+``one point minus another,'' i.e., a meromorphic function with a
+single simple pole at one point and a single simple zero at another.
+That function is a degree-one map to the Riemann sphere — and
+section 2 already proved that any degree-one holomorphic map from a
+compact Riemann surface to the sphere is a homeomorphism. So the
+surface is the sphere, but the sphere has genus zero, contradicting
+our positive-genus assumption.
+
+The Abel--Jacobi map has more structure than this section uses
+directly. It extends to a group homomorphism from the divisor group
+to the Jacobian, and the famous \emph{Abel theorem} characterises
+the kernel of this extension as the principal divisors. The full
+classical Abel theorem is treated as a classical input in this
+section: the Lean side has it stated in point-separation form,
+which is exactly the form we need for injectivity.
+
+Why bother? Without injectivity, the Jacobian would not actually
+``see'' the surface. The challenge file insists on injectivity for
+positive-genus precisely because the construction needs to be
+honest: it cannot collapse, cheat, or otherwise smudge the
+distinction between points. With this section's theorems in hand,
+the surface sits inside its Jacobian as a genuine curve.
+\end{layman}
+
 Fix a base point \(P\in X\). For \(Q\in X\), choose a path from \(P\) to \(Q\)
 and define
 \[

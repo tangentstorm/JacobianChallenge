@@ -1,6 +1,57 @@
 \section{Degree, Trace, Pushforward, and Pullback}
 \label{sec:degree-trace}
 
+\begin{layman}
+This section is about how Riemann surfaces \emph{interact} when
+mapped to one another. A holomorphic map \(f : X \to Y\) between
+compact Riemann surfaces is either constant or a \emph{finite
+branched covering} — a map where every point of \(Y\) has the same
+finite number of preimages on \(X\), with multiplicities at a
+finite set of \emph{branch points}. The number is the
+\emph{degree} of \(f\), and is the first invariant we attach to
+the map.
+
+Two natural operations come along for the ride. \emph{Pullback}
+\(f^*\) takes a holomorphic 1-form on the target \(Y\) and pulls
+it up to a 1-form on the source \(X\), via the chain rule: in
+local coordinates, \(f^*(h(w)\,dw) = h(f(z))\,f'(z)\,dz\). It is
+linear and well-behaved everywhere. \emph{Trace} \(\tr_f\), or
+\emph{pushforward}, goes the opposite direction: takes a 1-form
+on the source and pushes it down to one on the target. The
+construction is delicate — one must sum over the local inverse
+branches of \(f\) on the target, define a putative form there,
+and then prove that the result extends holomorphically across
+the branch points (where the inverse branches collide). The
+extension uses symmetric-function tricks; the result is a
+complex-linear map \(\tr_f : H^0(X, \Omega^1_X) \to
+H^0(Y, \Omega^1_Y)\).
+
+The combination of pullback and trace, when dualised, descends to
+the Jacobian: the pullback induces a holomorphic group
+homomorphism \(f^* : \Jac(Y) \to \Jac(X)\), and the trace induces
+the dual \(f_* : \Jac(X) \to \Jac(Y)\). The pair satisfies the
+expected functoriality: identity goes to identity, composition
+respects composition. The fourth and final anti-hack theorem of
+the challenge then asserts the \emph{trace identity}:
+\(f_*(f^* P) = \deg(f) \cdot P\)
+for every Jacobian element \(P\). Equivalently, ``pulling back
+then pushing forward equals multiplication by the degree.'' This
+is forced upon us by the underlying linear identity on 1-forms:
+\(\tr_f \circ f^* = \deg(f)\).
+The geometric mnemonic: pulling back creates \(d = \deg(f)\)
+copies of every form; tracing them down sums those \(d\) copies
+back together.
+
+Why bother? The four challenge anti-hack theorems are all in
+play by now: genus tied to topology (section 2), Abel--Jacobi
+injective (section 6), Jacobian a complex Lie group (section 5),
+and \emph{this} section's trace identity. Together they rule out
+every cheap construction that might define push and pull as ad
+hoc homomorphisms unrelated to the underlying geometry. With the
+trace identity, push and pull are forced to behave as classical
+geometers always wanted them to behave.
+\end{layman}
+
 Let \(f:X\to Y\) be holomorphic. If \(f\) is constant, define
 \(\deg(f)=0\). Otherwise \(f\) is a finite branched covering, and
 \(\deg(f)\) is the cardinality of a generic fiber counted with multiplicity.
@@ -68,7 +119,7 @@ backbone of the ``push-then-pull = multiplication-by-degree''
 anti-hack theorem.
 \end{layman}
 
-\begin{proof}
+\begin{proof}\leanok
 Away from the branch locus, define \(\tr_f(\omega)\) by summing the pullbacks
 of \(\omega\) along all local inverse branches of \(f\). Symmetric functions
 of the inverse branches extend holomorphically across branch points, so the
@@ -76,7 +127,7 @@ form extends globally to \(Y\). The constant-map case is treated separately in
 the challenge API.
 \end{proof}
 
-\begin{proof}[Proof of Theorem~\ref{thm:trace-pullback}]
+\begin{proof}[Proof of Theorem~\ref{thm:trace-pullback}]\leanok
 Away from the branch locus, choose local inverse branches
 \(s_1,\dots,s_d\) of \(f\), where \(d=\deg(f)\). Then
 \[
@@ -120,7 +171,7 @@ pushforward would be undefined; with it, they satisfy the functoriality
 and trace identity that the challenge demands.
 \end{layman}
 
-\begin{proof}
+\begin{proof}\leanok
 The pullback map on forms dualizes to a map \(\HdualX\to\HdualY\), and the
 trace map dualizes in the opposite direction. Naturality of integration says
 that these dual maps send periods to periods. Therefore they descend to the
@@ -128,7 +179,7 @@ quotient tori. Holomorphicity follows because the descended maps are induced
 by complex-linear maps between the covering vector spaces.
 \end{proof}
 
-\begin{proof}[Proof of Theorem~\ref{thm:push-pull-functoriality}]
+\begin{proof}[Proof of Theorem~\ref{thm:push-pull-functoriality}]\leanok
 The maps on Jacobians are descended from complex-linear maps between the
 universal covering vector spaces, so they are holomorphic group homomorphisms.
 The identity laws follow because pullback and trace for the identity map are
@@ -138,7 +189,7 @@ and the universal property of quotienting by the period lattices. Equality on
 the covering vector spaces descends to equality on the quotient tori.
 \end{proof}
 
-\begin{proof}[Proof of Theorem~\ref{thm:pushforward-pullback}]
+\begin{proof}[Proof of Theorem~\ref{thm:pushforward-pullback}]\leanok
 Represent \(P\in\Jac(Y)\) by a functional \(\lambda\in\HdualY\). Pullback and
 then pushforward acts on the representative by precomposition with
 \[

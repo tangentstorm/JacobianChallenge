@@ -1,6 +1,42 @@
 \section{Formalization Map}
 \label{sec:formalization-map}
 
+\begin{layman}
+This final section is the bridge between two parallel tracks. On
+one track, the prose of sections 0--8 makes a complete
+mathematical argument: a paper-style proof that the Jacobian
+construction works. On the other, the Lean code of the
+\code{Jacobian/} repository turns each step of that argument into
+machine-verified theorems. The bridge below is a simple table
+mapping each declaration in \code{Challenge.lean} — the
+public-facing API — to its informal source: a section, a theorem,
+sometimes a chain of lemmas culminating in a single informal
+claim.
+
+The same table also lays out where the project still has work to
+do. Some informal theorems have been fully formalised; their
+table rows are decorated with green check marks (\(\leanok\)) in
+the dependency graph. Others are still open, pinned by literal
+\code{sorry} in the Lean code; those rows are decorated with
+yellow ``not ready'' flags. The largest remaining gaps are the
+classical inputs that Mathlib does not yet contain — the
+Riemann--Roch theorem, Stokes on manifolds with boundary, Abel's
+theorem, and the surface classification underlying the polygonal
+model. Each is a multi-month formalisation project in its own
+right, and several are actively in progress in the wider Mathlib
+community.
+
+The dependency graph rendered alongside the web blueprint is
+generated automatically from these annotations. A reader curious
+about a particular theorem can click through its dependencies —
+upstream to the lemmas it uses, downstream to the theorems it
+supports — and trace the entire fabric of the proof until they
+reach either an axiom of mathematics or a yet-unfilled box. That
+graph is the project's long-term planning instrument: when a
+node turns green, every downstream node it was blocking moves one
+step closer to formal closure.
+\end{layman}
+
 This section maps the informal proof to the current Lean project structure.
 
 \begin{center}

@@ -1,0 +1,561 @@
+\section{The Polygonal Model}
+\label{sec:polygonal-model}
+
+\begin{layman}
+There is a classical trick — known to topologists since the late
+nineteenth century — for turning a curved closed surface into a
+single flat sheet of paper. Take a doughnut. Cut along the loop
+that goes through the hole; you've turned it into a tube. Cut the
+tube once around its length; it unrolls into a flat rectangle.
+The four edges of the rectangle, suitably glued back together,
+recover the doughnut. Higher-genus surfaces work the same way: a
+two-handled pretzel cuts open into an octagon, a three-handled one
+into a twelve-gon, and a genus-\(g\) surface into a \(4g\)-gon.
+The boundary identifications follow a single canonical pattern:
+\(a_1 b_1 a_1^{-1} b_1^{-1} \cdots a_g b_g a_g^{-1} b_g^{-1}\),
+four arcs per handle.
+
+This is the \emph{polygonal model}, and it is the bridge between
+two languages. On the original surface, integration is hard: there
+are loops that nothing can fill in, so closed forms can integrate
+to nonzero numbers around those loops, and Stokes' theorem doesn't
+apply directly. On the unfolded polygon, the interior is a flat
+disk — simply connected, no loops at all — and Stokes becomes
+elementary. Every period integral on the surface translates into a
+boundary integral on the polygon, and the canonical gluing pattern
+lets us pair up boundary edges to recover the original loops.
+The \emph{Riemann bilinear relations} of the next section are
+exactly the residue of this translation.
+
+The polygonal model also bridges \emph{analytic} and
+\emph{topological} genus. The analytic genus we built in section
+2 is a complex vector-space dimension; the topological genus is
+``half the rank of \(H_1(X,\Z)\)'' — pure topology, blind to the
+complex structure. The polygon's \(2g\) symplectic loops give an
+explicit basis of homology, computing the topological genus
+directly; the polygonal homeomorphism then transports that
+computation back to the original surface, finally identifying the
+two notions of genus. Without this bridge, the genus-zero
+classification of section 2 would be circular.
+
+Two technical projects sit inside this chapter. \textbf{Stage A},
+the \emph{surface classification theorem}, is the homeomorphism
+\(X \cong \mathrm{Polygon4g}(g)\) itself. Buzzard's challenge cannot
+work without it, but Mathlib does not yet contain it. The current
+formalization develops the combinatorial side — edge words, the
+standard relator, Tietze moves — as the substrate on which a future
+proof will rest. \textbf{Stage B}, the \emph{topological-genus
+bridge}, is the chain that takes a complex curve, derives its real
+two-dimensional manifold structure, computes its first homology
+group via singular chains, and divides by two to recover the
+analytic genus. A non-trivial fraction of Stage B is already
+sorry-free; the remainder is on a known path.
+\end{layman}
+
+A compact connected oriented Riemann surface \(X\) of genus \(g\) is
+homeomorphic to a single flat \(4g\)-gon \(P\) with edges glued back
+together in the canonical pattern
+\(a_1b_1a_1^{-1}b_1^{-1}\cdots a_gb_ga_g^{-1}b_g^{-1}\). This chapter
+develops that polygonal model as a self-contained subsystem: the
+quotient construction \(\mathrm{Polygon4g}\), the edge-word algebra
+that certifies the standard boundary identification, the smooth real
+2-manifold structure underlying any complex curve, the topological
+genus, and the analysis-on-the-polygon lemmas. The next chapter then
+builds the Riemann bilinear relations on top of this scaffold, by
+running Stokes' theorem on the open polygon and folding edges
+together pairwise via the identification pattern.
+
+\subsection{The fundamental \(4g\)-gon}
+
+\begin{definition}[Boundary parameterization of the closed unit disk]
+\label{def:polygon4g-boundary-param}
+For each genus \(g\geq 1\) and each index \(i\in\{0,\ldots,4g-1\}\),
+the \(i\)-th boundary arc of the disk is the map
+\(t\mapsto e^{i\,2\pi(i+t)/4g}\) for \(t\in[0,1]\), lifted into the
+closed unit disk. The \(4g\) arcs cover the boundary circle once
+each.
+\lean{JacobianChallenge.Periods.boundaryParamC}
+\leanok
+\end{definition}
+
+\begin{layman}
+Take the closed unit disk in the plane. March around its boundary
+circle and chop the lap into \(4g\) equal arcs, numbered
+\(0,1,\ldots,4g-1\). Each arc gets a parameter \(t\in[0,1]\)
+running from start to end. This is just preparation: every face of
+the future polygon will turn out to be one of these arcs, and the
+gluing rule will be expressed as a map between paired arcs. Why
+bother? It puts a concrete, computable structure onto ``the
+boundary of the polygon,'' so that the later equivalence relation
+can be defined by a simple formula in \(t\) rather than an abstract
+combinatorial chart.
+\end{layman}
+
+\begin{definition}[Standard \(4g\)-gon side-pairing relation]
+\label{def:polygon4g-side-rel}
+\uses{def:polygon4g-boundary-param}
+The \emph{standard side-pairing relation} on the closed unit disk
+identifies, for every handle index \(i\in\{0,\ldots,g-1\}\) and every
+parameter \(t\in[0,1]\):
+\begin{itemize}
+  \item the point on arc \(4i\) at parameter \(t\) with the point on
+    arc \(4i+2\) at parameter \(1-t\) (the \(a_i\)-cycle);
+  \item the point on arc \(4i+1\) at parameter \(t\) with the point on
+    arc \(4i+3\) at parameter \(1-t\) (the \(b_i\)-cycle).
+\end{itemize}
+The full relation is the equivalence closure of these generating
+pairs.
+\lean{JacobianChallenge.Periods.Polygon4g.SideRel}
+\leanok
+\end{definition}
+
+\begin{layman}
+Pair up the \(4g\) arcs in groups of four — one group per handle.
+Within each group of four consecutive arcs, glue the first to the
+third with reversed orientation, and the second to the fourth with
+reversed orientation. ``With reversed orientation'' means that the
+parameter \(t\) running from \(0\) to \(1\) on one arc gets matched
+against the parameter running from \(1\) to \(0\) on its partner.
+For a torus (\(g=1\)) the pattern matches the top edge to the bottom
+and the left to the right of a square — the classical wrap-around.
+For higher genus, every handle adds another four-arc block. Why
+bother? This single algebraic rule — applied uniformly for every
+handle — is what turns the disk into a higher-genus surface after
+quotienting.
+\end{layman}
+
+\begin{definition}[Standard fundamental polygon \(\mathrm{Polygon4g}\)]
+\label{def:polygon4g}
+\uses{def:polygon4g-side-rel}
+The standard fundamental \(4g\)-gon is the topological quotient of
+the closed unit disk by the standard side-pairing relation:
+\[
+  \mathrm{Polygon4g}(g) := \overline{D}^{1}\,/\!\sim_{\mathrm{side}}.
+\]
+Its quotient map is denoted \(\mathrm{mk}_g\) and is continuous by
+construction.
+\lean{JacobianChallenge.Periods.Polygon4g}
+\leanok
+\end{definition}
+
+\begin{layman}
+Take the closed unit disk and collapse together every pair of
+boundary points that the side-pairing relation declared equivalent.
+The resulting space is the standard genus-\(g\) fundamental polygon.
+Topologically, the boundary disappears (it has been folded onto
+itself) and the quotient is a compact surface — for \(g=1\), an
+ordinary torus; for \(g=2\), a two-handled pretzel; and so on. The
+quotient map sends each disk point to its equivalence class, and is
+continuous because the equivalence relation is generated by a closed
+set of identifications. Why bother? Every topological subtlety in
+the surface — its handles, its homology, its non-simply-connectedness
+— is now encoded in the boundary identifications, while the
+\emph{interior} of the disk remains a flat, simply connected piece
+of paper. That separation is what makes Stokes-on-the-polygon
+tractable.
+\end{layman}
+
+\subsection{Edge-word combinatorics}
+
+The polygonal model is most naturally manipulated through its
+\emph{boundary word}: a sequence of letters from a four-letter
+alphabet that records, in order, the identification class of each
+boundary arc. The standard side-pairing corresponds to a specific
+word; alternative words give homeomorphic surfaces if and only if
+they are related by an explicit set of combinatorial moves (Tietze
+transformations).
+
+\begin{definition}[Edge-word alphabet]
+\label{def:edge-word-alphabet}
+For each genus \(g\), the edge-word alphabet \(\mathrm{Letter}(g)\)
+has four families of letters indexed by handle \(i\in\{0,\ldots,g-1\}\):
+\(a_i\), \(b_i\), \(a_i^{-1}\), \(b_i^{-1}\).
+An \emph{edge word} is a finite list of letters,
+\(\mathrm{EdgeWord}(g) := \mathrm{List}(\mathrm{Letter}(g))\).
+\lean{JacobianChallenge.Periods.Letter, JacobianChallenge.Periods.EdgeWord}
+\leanok
+\end{definition}
+
+\begin{layman}
+Pick a four-letter alphabet for each handle: ``go around the
+\(a\)-loop,'' ``go around the \(b\)-loop,'' and their inverses ``go
+backwards around \(a\),'' ``go backwards around \(b\).'' An edge
+word is a finite sequence of such letters — a walking direction
+through the boundary loops. For a single-handle surface (genus 1)
+the alphabet has four letters and a typical word is \(aba^{-1}b^{-1}\).
+Why bother? Storing the gluing pattern as a list of letters lets us
+manipulate it combinatorially: we can ask when two patterns produce
+homeomorphic surfaces, decompose handles, cancel inverses, and run
+the surface-classification algorithm — all as list operations.
+\end{layman}
+
+\begin{definition}[Standard relator word]
+\label{def:standard-word}
+\uses{def:edge-word-alphabet}
+The \emph{standard relator word} of genus \(g\) is the concatenation
+\[
+  \mathrm{standardWord}(g)
+    := a_0\,b_0\,a_0^{-1}\,b_0^{-1}\,
+       a_1\,b_1\,a_1^{-1}\,b_1^{-1}\,\cdots\,
+       a_{g-1}\,b_{g-1}\,a_{g-1}^{-1}\,b_{g-1}^{-1}.
+\]
+A word is in \emph{standard form} if it equals
+\(\mathrm{standardWord}(g)\).
+\lean{JacobianChallenge.Periods.EdgeWord.standardWord}
+\leanok
+\end{definition}
+
+\begin{layman}
+Concatenating the four-letter handle blocks for every
+\(i=0,1,\ldots,g-1\) gives one canonical word of length \(4g\). For
+\(g=2\) the standard relator is \(a_0 b_0 a_0^{-1} b_0^{-1}
+a_1 b_1 a_1^{-1} b_1^{-1}\). This is the precise word every compact
+orientable genus-\(g\) surface ``simplifies to'' under the topological
+classification theorem. Why bother? Naming this canonical word fixes
+a normal form. Every other gluing pattern can be checked against
+this template; when an arbitrary edge word is shown equivalent
+(combinatorially) to the standard one, that's a certificate that the
+underlying surface is genuinely the genus-\(g\) closed orientable
+surface and not some exotic close cousin.
+\end{layman}
+
+\begin{lemma}[Standard word's quotient is \(\mathrm{Polygon4g}\)]
+\label{lem:polygon4g-eq-standard-word-quotient}
+\uses{def:polygon4g,def:standard-word}
+The quotient of the closed unit disk by the side-pairing induced by
+\(\mathrm{standardWord}(g)\) is identical (as a type) to
+\(\mathrm{Polygon4g}(g)\).
+\lean{JacobianChallenge.Periods.EdgeWord.polygon4g_eq_standard_word_quotient}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{layman}
+Two routes to ``the polygon'' coincide. One: directly identify the
+\(4g\) boundary arcs by the standard pattern and quotient. Two:
+write down the standard relator word, derive its arc-pairing rule
+from the word's letters, and quotient. The lemma says these two
+constructions land in the same type. Why bother? It lets us freely
+swap between the geometric construction (used for topology and
+analysis on the polygon) and the combinatorial one (used for surface
+classification and Tietze moves), without translating back and forth
+through an awkward homeomorphism.
+\end{layman}
+
+\begin{definition}[Tietze equivalence on edge words]
+\label{def:tietze-equivalence}
+\uses{def:edge-word-alphabet}
+Two edge words are \emph{Tietze-equivalent} if one can be obtained
+from the other by a finite sequence of moves drawn from:
+\begin{itemize}
+  \item \emph{Inverse cancellation}: insert or remove a consecutive
+    pair \(\ell\,\ell^{-1}\) anywhere in the word;
+  \item \emph{Handle swap}: permute two complete four-letter handle
+    blocks within the word.
+\end{itemize}
+The relation is generated as the equivalence closure of these single
+moves.
+\lean{JacobianChallenge.Periods.EdgeWord.TietzeEq}
+\leanok
+\end{definition}
+
+\begin{layman}
+Two recipes for gluing the boundary of a polygon are
+\emph{Tietze-equivalent} if you can transform one into the other by
+a sequence of small, combinatorially trivial steps: cancel a
+generator immediately followed by its inverse (because gluing
+\(\ell\) and then ungluing \(\ell\) is the same as not gluing); or
+swap the order of two complete four-letter handle blocks (because
+relabeling which handle is ``first'' doesn't change the surface).
+Why bother? Tietze equivalence is the combinatorial side of
+``producing the same topological surface.'' If we can show every
+\emph{some} edge word for a given surface is Tietze-equivalent to the
+standard word, we get a normal-form theorem — and that's exactly the
+heart of the surface-classification step (Stage A) below.
+\end{layman}
+
+\subsection{The polygonal model theorem (Stage A)}
+
+\begin{theorem}[Polygonal model of a compact Riemann surface]
+\label{thm:polygonal-model}
+\uses{def:polygon4g,lem:polygon4g-eq-standard-word-quotient}
+A compact connected oriented Riemann surface \(X\) of analytic
+genus \(g\) is homeomorphic to \(\mathrm{Polygon4g}(g)\):
+\[
+  X \cong_{\mathrm{homeo}} \mathrm{Polygon4g}(g).
+\]
+\depends{Standard topological classification of compact orientable
+surfaces (triangulation + reduction to the standard relator word via
+Tietze moves), or a Morse-theoretic handle decomposition. Mathlib
+v4.28.0 has none of these as packaged theorems; this is the largest
+classical-topology gap on the polygonal-model route. Tracked
+internally as ``Stage A,'' a roughly 3,000--5,000 LOC formalization
+project in its own right, currently in progress (edge-word algebra
+and Tietze relation are sorry-free; the umbrella reduction theorem
+remains).}
+\lean{JacobianChallenge.Blueprint.polygonal_model}
+\notready
+\end{theorem}
+
+\begin{layman}
+Every compact connected oriented genus-\(g\) Riemann surface can be
+``unfolded'' onto a single flat \(4g\)-gon with the standard boundary
+identification pattern. The unfolding is a homeomorphism: the surface
+and the polygon are topologically the same. For a torus (\(g=1\))
+the polygon is a square; for genus \(2\), an octagon; for genus
+\(g\), a \(4g\)-gon. Inside the polygon there are no loops at all —
+it's a flat, simply connected disk. All the topological complexity
+of the surface lives in the gluing pattern on the boundary. Why
+bother? It converts a global, curved object into a local, flat one.
+On a flat polygon, Stokes' theorem and primitive constructions
+become pedestrian; the period-lattice argument and the Riemann
+bilinear relations all run on this scaffolding. The proof itself
+goes through ``triangulate the surface, reduce the resulting boundary
+word to the standard form via Tietze moves'' — the standard
+classification of compact orientable surfaces, formalized over a
+multi-thousand-line stretch of project Stage A.
+\end{layman}
+
+\begin{proofsketch}
+Triangulate \(X\) (Radó's theorem: every compact surface admits a
+triangulation). Cut along a maximal tree of edges to lay the
+triangulation flat as a polygon. Read off the resulting boundary
+word, an alternating-sign list of edge labels. Apply Tietze moves
+(\ref{def:tietze-equivalence}) to reduce the word to the standard
+relator. The induced map on the disk descends to a homeomorphism
+between \(X\) and \(\mathrm{Polygon4g}(g)\) by
+Lemma~\ref{lem:polygon4g-eq-standard-word-quotient}.
+\end{proofsketch}
+
+\subsection{Smooth and topological structure (Stage B)}
+
+The polygonal-model theorem above is purely topological: it produces
+a homeomorphism, not a diffeomorphism. To bridge analytic genus
+(dimension of holomorphic 1-forms) with topological genus (rank of
+\(H_1(X,\Z)\) divided by two), we record the smooth-real-2-manifold
+structure underlying any complex curve and the singular-homology
+definition of topological genus.
+
+\begin{definition}[Smooth real 2-manifold structure on a complex curve]
+\label{def:smooth-real-structure}
+A complex one-dimensional manifold \(X\) carries an induced smooth
+real 2-dimensional manifold structure, obtained by composing each
+complex chart with the real-coordinate equivalence
+\(\C \xrightarrow{\sim} \R\times\R \xrightarrow{\sim}
+\mathrm{EuclideanSpace}\,\R\,(\mathrm{Fin}\,2)\).
+\lean{JacobianChallenge.Periods.complexChartedSpaceReal2,
+JacobianChallenge.Periods.ChartedSpaceComplex_to_smoothReal2}
+\leanok
+\end{definition}
+
+\begin{layman}
+A complex one-dimensional manifold is the same data as a smooth
+real two-dimensional manifold with extra structure: the complex
+multiplication on each tangent space picks out a preferred
+\(90^{\circ}\)-rotation, but the underlying smooth atlas is just
+charts to \(\R^2\). Concretely, every complex chart \(z=x+iy\) is
+secretly a real chart \((x,y)\), and complex differentiability
+implies real smoothness. The construction here packages that
+identification once and for all, so downstream code can talk about
+``the underlying real surface'' without re-deriving charts. Why
+bother? Topological genus is defined on real 2-manifolds via
+singular homology; analytic genus lives on complex curves. The
+bridge between them runs through this smooth-real-2-manifold
+structure.
+\end{layman}
+
+\begin{definition}[Topological genus]
+\label{def:topological-genus}
+\uses{def:smooth-real-structure}
+The \emph{topological genus} of a compact connected topological
+space \(M\) is half the \(\Z\)-rank of its first singular homology:
+\[
+  g_{\mathrm{top}}(M) := \tfrac{1}{2}\,\mathrm{rank}_{\Z}\,H_1(M;\Z).
+\]
+For compact connected oriented 2-manifolds the value equals the
+classical genus.
+\lean{JacobianChallenge.Periods.topologicalGenus,
+JacobianChallenge.Periods.singularH1}
+\leanok
+\end{definition}
+
+\begin{layman}
+The \emph{topological genus} of a compact connected space is half
+the rank of its integer first homology group. For a compact
+orientable surface of genus \(g\), the rank of \(H_1\) is \(2g\)
+(the symplectic loops contribute two generators per handle), so
+half of that is exactly \(g\). For a sphere, \(H_1 = 0\) and the
+genus is \(0\). For a torus, \(H_1 = \Z^2\) and the genus is \(1\).
+Why bother? It expresses the topological notion of genus in a
+purely homological form, ready to be compared against the analytic
+notion (dimension of holomorphic 1-forms) by combining with the
+polygonal-model theorem and the period-lattice rank computation.
+\end{layman}
+
+\begin{definition}[Orientable typeclass]
+\label{def:orientable}
+A topological space \(M\) is \emph{orientable} if it carries a
+consistent choice of orientation across all charts. (In the current
+formalization this is a thin placeholder typeclass with the
+real witness deferred to a later round.)
+\lean{JacobianChallenge.Periods.Orientable}
+\leanok
+\end{definition}
+
+\begin{layman}
+A surface is \emph{orientable} when you can paint it with a
+consistent local sense of clockwise vs counterclockwise — like the
+two-coloring of a chessboard, but for ``which way around am I
+spinning.'' The Möbius strip and Klein bottle are not orientable;
+the sphere, torus, and \(4g\)-gon-with-standard-pattern are. Why
+bother? The polygonal-model theorem applies only to orientable
+surfaces; the standard relator word \(a_1b_1a_1^{-1}b_1^{-1}\cdots\)
+is the orientable normal form. Non-orientable surfaces have a
+different normal form (\(a_1^2 a_2^2 \cdots\)), so we need to flag
+the orientability hypothesis explicitly.
+\end{layman}
+
+\begin{theorem}[Analytic genus equals topological genus]
+\label{thm:analytic-eq-topological-genus}
+\uses{thm:polygonal-model,def:topological-genus}
+For a compact connected oriented Riemann surface \(X\),
+\[
+  g_{\mathrm{an}}(X) = g_{\mathrm{top}}(X).
+\]
+\depends{Combines the polygonal-model homeomorphism with a
+homology computation on \(\mathrm{Polygon4g}(g)\) (rank \(2g\)
+from the \(2g\) symplectic loops). The homology computation is
+itself nontrivial; tracked under Stage B.}
+\lean{JacobianChallenge.Periods.analyticGenus_eq_topologicalGenus}
+\notready
+\end{theorem}
+
+\begin{layman}
+The two genera agree. Compute the topological genus of \(X\) by
+homology; compute the analytic genus as the dimension of
+holomorphic 1-forms; they're the same number. The proof factors
+through the polygonal model: the homeomorphism \(X\cong
+\mathrm{Polygon4g}(g)\) lets us compute \(H_1(X)\) on the
+combinatorially explicit polygon (where the symplectic loops are
+visible), giving rank \(2g\), so the topological genus is \(g\).
+That \(g\) was put in by hand to match the analytic genus, closing
+the loop. Why bother? It's the bridge that makes the
+genus-zero classification (\ref{thm:genus-zero-classification})
+work: ``analytic genus \(=0\) means topological genus \(=0\) means
+\(H_1=0\) means homeomorphic to \(S^2\).''
+\end{layman}
+
+\subsection{Analysis on the polygon}
+
+The interior of the standard fundamental polygon is, by construction,
+homeomorphic to an open disk: the side-pairing only identifies
+\emph{boundary} points. This subsection records the consequences
+needed by the next chapter: that the interior is open in the
+quotient, that the quotient map is injective there, and that every
+holomorphic 1-form on it admits a primitive.
+
+\begin{lemma}[Quotient is injective on the polygon interior]
+\label{lem:mk-injOn-openDisk}
+\uses{def:polygon4g}
+The polygon-quotient map \(\mathrm{mk}_g\) is injective on the open
+unit disk: distinct interior points stay distinct after taking
+equivalence classes.
+\lean{JacobianChallenge.Periods.PrimitiveOnPolygon.mk_injOn_openDisk}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Every generating pair in the side-pairing relation has both points on
+the boundary circle. Hence the equivalence closure cannot relate any
+strictly interior point to any other point.
+\end{proof}
+
+\begin{layman}
+Inside the open disk \(\{|z|<1\}\), the quotient map is one-to-one.
+The side-pairing relation only ever glues boundary points
+(\(|z|=1\)) to other boundary points; it never touches the interior.
+Why bother? It says the interior of the polygon embeds verbatim
+into the quotient — making it possible to talk about ``the inside
+of the polygon'' as a single open subset on which classical
+complex-analysis lemmas apply directly.
+\end{layman}
+
+\begin{lemma}[Polygon interior is open in the quotient]
+\label{lem:mk-image-openDisk-isOpen}
+\uses{def:polygon4g,lem:mk-injOn-openDisk}
+The image of the open unit disk under \(\mathrm{mk}_g\) is open in
+\(\mathrm{Polygon4g}(g)\).
+\lean{JacobianChallenge.Periods.PrimitiveOnPolygon.mk_image_openDisk_isOpen}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{layman}
+The image of the open disk in the quotient is itself an open subset
+of the polygon. The proof goes through the quotient topology:
+the preimage of the image equals the open disk again (because the
+side-pairing only identifies boundary points to boundary points), and
+the open disk is open in the original disk. Why bother? Stokes,
+Cauchy, and primitive arguments need to know the polygon's
+interior is open so that ``differentiable on the open polygon''
+is well-defined.
+\end{layman}
+
+\begin{lemma}[Holomorphic primitive on the open disk]
+\label{lem:holomorphic-primitive-openDisk}
+Every holomorphic function on the open unit disk admits a holomorphic
+primitive on it.
+\depends{Cauchy's theorem on a convex domain (Mathlib has this in
+\code{Mathlib.Analysis.Complex.HasPrimitives}).}
+\lean{JacobianChallenge.Periods.PrimitiveOnPolygon.holomorphic_has_primitive_openDisk}
+\leanok
+\end{lemma}
+\begin{proof}\leanok\end{proof}
+
+\begin{layman}
+On a convex region (and the open unit disk is convex), every
+holomorphic function has a primitive: a holomorphic antiderivative.
+The proof in Mathlib goes via Cauchy's theorem on contractible
+domains. Why bother? The next-chapter Stokes-on-the-polygon
+argument turns ``integrate \(\omega\) along a polygon edge'' into
+``evaluate the primitive \(F\) at the endpoints,'' so we need
+\(F\) to exist.
+\end{layman}
+
+\begin{lemma}[Primitive of a holomorphic 1-form on the polygon]
+\label{lem:primitive-on-polygon}
+\uses{thm:polygonal-model,lem:mk-injOn-openDisk,lem:mk-image-openDisk-isOpen,lem:holomorphic-primitive-openDisk}
+On the interior of the standard fundamental polygon, every
+holomorphic 1-form \(\omega\) admits a holomorphic primitive
+\(F\) with \(dF=\omega\).
+\lean{JacobianChallenge.Blueprint.primitive_on_polygon}
+\notready
+\end{lemma}
+
+\begin{layman}
+Pull the holomorphic 1-form back to the polygon's flat interior.
+The interior is simply connected (in fact convex, since it's the
+open unit disk). On any simply connected flat region, every
+closed 1-form admits a primitive — a single function whose
+differential equals the form. Compare: on the punctured plane
+\(d\theta\) has no global primitive because of the puncture-loop;
+on the disk it does. Apply this to \(\omega\); the resulting
+primitive \(F\) is the bookkeeping device that turns wedge
+integrals over the surface into boundary integrals around the
+polygon. Why bother? Without a primitive, the next chapter's
+bilinear-from-Stokes argument cannot fold edges together pairwise
+to pick up periods. With it, the entire Riemann bilinear
+identity falls out by an integration by parts.
+\end{layman}
+
+\begin{formalizationnote}
+The current formalization splits this lemma into three Aristotle-sized
+sub-leaves, all sorry-free
+(\ref{lem:mk-injOn-openDisk}, \ref{lem:mk-image-openDisk-isOpen},
+\ref{lem:holomorphic-primitive-openDisk}). The umbrella statement
+above remains \emph{not ready} pending a complex-manifold structure on
+\(\mathrm{Polygon4g}\), which would let the holomorphic 1-form
+\(\omega\) be pulled back along the chart
+\(\mathrm{mk}_g|_{\mathrm{open\,disk}}\) and the resulting scalar
+function fed to
+\ref{lem:holomorphic-primitive-openDisk}.
+\end{formalizationnote}

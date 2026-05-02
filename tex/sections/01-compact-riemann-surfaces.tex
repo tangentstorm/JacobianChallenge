@@ -1,6 +1,47 @@
 \section{Compact Riemann Surfaces}
 \label{sec:compact-riemann-surfaces}
 
+\begin{layman}
+A \emph{Riemann surface} is one of the most patient objects in
+mathematics: a curved two-dimensional surface that, when you put a
+microscope to any patch of it, looks like a piece of the complex
+plane. The sphere is a Riemann surface — every patch can be
+described by a single complex coordinate \(z\). The doughnut surface
+is a Riemann surface. Every smooth algebraic curve in the projective
+plane, like the elliptic curve \(y^2 = x^3 + ax + b\), is a Riemann
+surface. They are simultaneously geometric objects (something you
+could mould out of clay) and analytic ones (you can do calculus on
+them with complex numbers).
+
+This section sets up the algebraic dictionary we'll need in every
+later section. The first move is to ask: ``How does a function blow
+up or vanish at a point?'' On the complex plane the answer is the
+familiar \emph{order} of a Taylor expansion — \(z^3\) vanishes to
+order three at the origin, \(1/z^2\) blows up to order minus two.
+On a curved surface we have to make sure this order is independent
+of which microscope (which chart) we used to look. It is, and that
+single fact lets us define \emph{vanishing order} unambiguously at
+every point.
+
+The second move is to use vanishing orders for accounting. A
+\emph{divisor} is just a tally sheet: ``vanishes to order three
+here, blows up to order two there, otherwise zero.'' Divisors form
+an abelian group under addition. The set of zeros and poles of a
+nonzero meromorphic function is a finite, signed tally — a
+\emph{principal divisor} — and the principle of conservation we'll
+prove (``a meromorphic function has equally many zeros and poles,
+counted with multiplicity'') becomes the slogan that the degree of a
+principal divisor is zero. From here, the deeper theorems
+(Riemann--Roch, the genus--zero classification, Abel's theorem) are
+each refinements of this very simple bookkeeping.
+
+Why bother? Because the bookkeeping is what later turns into the
+\emph{Picard group}, the \emph{Jacobian}, and the bridge between
+algebra and geometry on which the rest of the document rests. A
+clean treatment of vanishing orders and divisors here lets every
+later argument feel like algebra, even when it's secretly analysis.
+\end{layman}
+
 Throughout, \(X,Y,Z\) denote compact connected Riemann surfaces, and maps
 between them are holomorphic unless otherwise specified. Compactness implies
 that every holomorphic function \(X\to\C\) is constant. Holomorphic maps
@@ -132,7 +173,7 @@ gives a genuine finite shopping list of zeros and poles, with concrete
 weights, ready to be added and compared.
 \end{layman}
 
-\begin{proof}
+\begin{proof}\leanok
 A subset of a compact space with no accumulation point is finite.
 \end{proof}
 

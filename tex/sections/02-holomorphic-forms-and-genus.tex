@@ -1,6 +1,50 @@
 \section{Holomorphic Forms and Genus}
 \label{sec:holomorphic-forms-and-genus}
 
+\begin{layman}
+Every smooth surface has a notion of \emph{tangent vector} at a
+point — a little arrow giving a direction of motion. Dual to that,
+every surface has a notion of \emph{cotangent vector}: a tiny linear
+gadget that takes a tangent vector and returns a number. A
+\emph{holomorphic 1-form} on a Riemann surface is a global,
+complex-linear assignment of such a gadget at every point, varying
+holomorphically. In any chart \(z\), a holomorphic 1-form looks like
+\(h(z)\,dz\) for some holomorphic function \(h\); under a change of
+chart it transforms by the chain rule. The space of all such global
+forms is denoted \(H^0(X,\Omega^1_X)\). Its complex dimension is the
+\emph{analytic genus} \(g(X)\) — the most fundamental invariant we
+attach to \(X\).
+
+The first deep fact, and the engine of this section, is that \(g(X)\)
+is finite. The argument is a triumph of twentieth-century complex
+analysis: equip \(H^0(X,\Omega^1_X)\) with a sup-norm; show that the
+unit ball is compact (\emph{Montel's theorem}: a bounded sequence of
+holomorphic functions has a uniformly convergent subsequence); apply
+Riesz's lemma (a normed space whose unit ball is compact must be
+finite-dimensional). The compactness of the surface is what makes the
+sup-norm finite in the first place — on the entire complex plane,
+the dimension of holomorphic 1-forms is uncountably infinite.
+
+From finite-dimensionality, the rest of the section unspools. The
+\emph{Riemann--Roch theorem} relates the dimension of the space of
+meromorphic functions with prescribed pole bounds to the genus and
+the divisor's degree. It is the linchpin of the entire classical
+theory: from it we deduce the existence of degree-one meromorphic
+functions on any genus-zero surface, hence the genus-zero
+classification (the first ``anti-hack'' theorem of the challenge:
+analytic genus zero is equivalent to being topologically a sphere).
+A subsidiary thread develops the \emph{branched degree} of a
+holomorphic map and tools to compute its fibres — the machinery
+needed for the Riemann--Hurwitz formula and the genus-zero
+classification's homeomorphism step.
+
+Why bother? Genus is the single most important invariant of a
+Riemann surface; it controls everything else. Tying it down rigorously
+to a finite-dimensional vector space dimension is what lets all the
+later constructions — Jacobian, Abel--Jacobi, push-pull — even be
+\emph{stated}.
+\end{layman}
+
 Let \(\HX\) be the vector space of global holomorphic one-forms. Define the
 analytic genus by \(g(X)=\dim_{\C}\HX\), as in
 Definition~\ref{def:analytic-genus}.
@@ -415,7 +459,7 @@ For an invertible sheaf \(\mathcal{L}\) and the canonical sheaf \(K\),
   H^{1}(X,\mathcal{L})\cong H^{0}(X,K\otimes\mathcal{L}^{-1})^{\vee}.
 \]
 \lean{JacobianChallenge.HolomorphicForms.serre_duality_rs}
-\leanok
+\notready
 \end{theorem}
 
 \begin{layman}
@@ -440,7 +484,7 @@ For an invertible sheaf \(\mathcal{L}=\mathcal{O}_X(D)\),
 \(\chi(\mathcal{L}) := h^{0}(\mathcal{L}) - h^{1}(\mathcal{L})
                      = \deg(D) + 1 - g(X).\)
 \lean{JacobianChallenge.HolomorphicForms.euler_char_line_bundle}
-\leanok
+\notready
 \end{theorem}
 
 \begin{layman}
@@ -532,7 +576,7 @@ to be honest isomorphisms — pinning the surface down as the sphere
 itself.
 \end{layman}
 
-\begin{proof}
+\begin{proof}\leanok
 Apply Riemann-Roch to \(D=p\). Since \(\deg(p)=1\) and \(g(X)=0\),
 \[
   \ell(p)-\ell(K-p)=2.
@@ -591,7 +635,7 @@ unramified set is open) and \texttt{lem:ramified-isolated} (every
 ramified point is isolated in the ramified set); assembly is
 "closed-discrete subset of compact ⇒ finite".}
 \lean{JacobianChallenge.Blueprint.branch_locus_finite}
-\leanok
+\notready
 \end{lemma}
 
 \begin{lemma}[Unramified set is open]
@@ -857,7 +901,7 @@ Showing they have no branching is the first hurdle; the next hurdle
 from there. The whole genus-zero classification runs on this chain.
 \end{layman}
 
-\begin{proof}
+\begin{proof}\leanok
 At a generic fiber, the sum of ramification indices equals \(1\), so the
 fiber has exactly one point with index \(1\). At a branch point \(p\),
 the sum of indices over the fiber is also \(1\), but each index is
@@ -873,7 +917,7 @@ biholomorphically onto a neighborhood of \(f(p)\).
 \depends{Mathlib's local inverse function theorem on \(\C\) plus the
 fact that unramification means the local derivative is nonzero.}
 \lean{JacobianChallenge.Blueprint.local_biholo_unramified}
-\leanok
+\notready
 \end{theorem}
 
 \begin{layman}
