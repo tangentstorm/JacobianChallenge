@@ -11,37 +11,53 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 Last tick: 2026-05-01 (claude/formalize-divisor-discrete-w9XH6)
 
 ```text
-divisor-discrete BLOCKER cleared (this tick)
+divisor-discrete BLOCKER cleared — blueprint-faithful (this tick)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Sec01 lem:divisor-discrete                  Hypothesis fixed (was disprovable
-                                            ∃ x, f x ≠ 0; now ∀ q,
-                                            MeromorphicAtX f q ∧
-                                            vanishingOrder X q f ≠ ⊤)
-                                            and proof discharged sorry-free.
-Helper added                                meromorphicAt_chart_pullback_of_
-                                            meromorphicAtX +
-                                            meromorphicOn_chart_pullback_of_
-                                            meromorphicAtX in
-                                            Jacobian/HolomorphicForms/
-                                            VanishingOrder.lean (lifts
-                                            manifold-pointwise meromorphy
-                                            to chart-target MeromorphicOn
-                                            via meromorphicAt_comp_iff_of_
-                                            deriv_ne_zero + existing
-                                            transition-analyticity infra).
-Proof core                                  Mathlib's
+Sec01 lem:divisor-discrete                  Hypothesis fixed to match
+                                            the blueprint phrase
+                                            "nonzero meromorphic function
+                                            on X" exactly: [ConnectedSpace
+                                            X] + ∀ q, MeromorphicAtX f q +
+                                            ∃ p, vanishingOrder X p f ≠ ⊤.
+                                            Sorry-free.
+Helpers added (production)                  In Jacobian/HolomorphicForms/
+                                            VanishingOrder.lean:
+                                            · meromorphicAt/On_chart_pullback
+                                              _of_meromorphicAtX (lifts
+                                              manifold-pointwise meromorphy
+                                              to chart-target MeromorphicOn
+                                              via meromorphicAt_comp_iff_of_
+                                              deriv_ne_zero + existing
+                                              transition-analyticity infra).
+                                            · isClopen_setOf_orderAt_eq_top
+                                              (transports Mathlib's
+                                              isClopen_setOf_meromorphic-
+                                              OrderAt_eq_top from the chart
+                                              pullback to the manifold via
+                                              chart-independence).
+                                            · orderAt_ne_top_of_exists
+                                              (identity-principle propagation:
+                                              [PreconnectedSpace X] + ∃ + the
+                                              clopen fact ⇒ ∀).
+Proof core                                  Step 1: orderAt_ne_top_of_exists
+                                            lifts the existential to ∀.
+                                            Step 2: Mathlib's
                                             codiscrete_setOf_meromorphic-
                                             OrderAt_eq_zero_or_top on the
                                             chart pullback; the order=⊤
-                                            disjunct excluded by
-                                            hf_finite via chart-independence;
-                                            pulled back through chartAt ℂ p
+                                            disjunct excluded by Step 1
+                                            via chart-independence; pulled
+                                            back through chartAt ℂ p
                                             homeomorphism.
-Downstream threading                        divisor_finite_support and
-                                            principalDivisor signatures
-                                            updated to consume the new
-                                            hypothesis pair (no sorry
-                                            regressions).
+Downstream threading                        divisor_finite_support takes
+                                            the same blueprint hypotheses;
+                                            principalDivisor / principal-
+                                            Divisors / principal_degree_zero
+                                            / inputDivisors all gain the
+                                            [ConnectedSpace X] instance,
+                                            and principalDivisor's by_cases
+                                            updated to the existential form.
+                                            No new sorries anywhere.
 Blueprint annotation                        \notready → \leanok on
                                             lem:divisor-discrete
                                             (tex/sections/

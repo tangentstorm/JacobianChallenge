@@ -18,43 +18,45 @@ open JacobianChallenge.HolomorphicForms.VanishingOrder
 
 /-- **Discreteness of the divisor support.**
 
-For a meromorphic function `f` on a complex 1-manifold `X` whose vanishing
-order is finite at every point (the manifold-level encoding of "`f` is
-nonzero"), the set of points with nonzero vanishing order has no
+For a nonzero meromorphic function `f` on a connected complex
+1-manifold `X`, the set of points with nonzero vanishing order has no
 accumulation point.
 
-The hypotheses encode the blueprint phrase "nonzero meromorphic function"
-pointwise:
+The hypotheses encode the blueprint phrase "nonzero meromorphic function":
 
-* `hf_mero : ∀ q, MeromorphicAtX f q` — `f` is meromorphic at every point
-  of `X`. Without this, the conclusion is meaningless (the `vanishingOrder`
-  is `0` junk-default outside meromorphy).
-* `hf_finite : ∀ q, vanishingOrder X q f ≠ ⊤` — `f` is not locally
-  identically zero anywhere. Without this, the disjoint counterexample
-  `X = ℂ ⊔ ℂ, f = 0 ⊔ 1` makes the statement false (the zero copy has
-  `meromorphicOrderAt = ⊤` everywhere and accumulates with itself).
-  On a connected Riemann surface, this hypothesis follows from the
-  existential form `∃ q, vanishingOrder X q f ≠ ⊤` via the identity
-  principle (`isClopen_setOf_meromorphicOrderAt_eq_top` plus
-  `[ConnectedSpace X]`); that propagation is left to a separate lemma
-  to keep this leaf statement chart-local.
+* `[ConnectedSpace X]` — Riemann-surface convention. Required: without
+  it the disjoint counterexample `X = ℂ ⊔ ℂ, f = 0 ⊔ 1` makes the
+  statement false (the zero component's `vanishingOrder` is `⊤`
+  everywhere and accumulates with itself).
+* `hf_mero : ∀ q, MeromorphicAtX f q` — `f` is meromorphic at every
+  point of `X`. Without this, `vanishingOrder` is the `0` junk-default
+  outside meromorphy and the conclusion is meaningless.
+* `h_nontriv : ∃ p, vanishingOrder X p f ≠ ⊤` — `f` is not locally
+  identically zero somewhere. Connectedness propagates this to "`f` is
+  not locally zero anywhere" via the identity principle, packaged as
+  `orderAt_ne_top_of_exists` (proved from
+  `isClopen_setOf_orderAt_eq_top` + `IsClopen.eq_empty_or_eq_univ`).
 
-Proof: pick `p`, work in the chart at `p`. The pullback
-`f ∘ (chartAt ℂ p).symm` is meromorphic on the entire chart target via
-`meromorphicOn_chart_pullback_of_meromorphicAtX`. Mathlib's
+Proof: first lift `h_nontriv` to "`vanishingOrder ≠ ⊤` everywhere" using
+`orderAt_ne_top_of_exists`. Then pick `p`, work in the chart at `p`. The
+pullback `f ∘ (chartAt ℂ p).symm` is meromorphic on the entire chart
+target via `meromorphicOn_chart_pullback_of_meromorphicAtX`. Mathlib's
 `MeromorphicOn.codiscrete_setOf_meromorphicOrderAt_eq_zero_or_top`
 provides a punctured chart-target neighborhood of `chartAt ℂ p p` on
 which the meromorphic order is `0` or `⊤`. The `⊤` disjunct is excluded
-by `hf_finite` (transferred via chart-independence). Pulling back through
-`chartAt ℂ p` gives a punctured `X`-neighborhood of `p` on which
-`vanishingOrder X · f = 0`. -/
+by the propagated finiteness (transferred via chart-independence).
+Pulling back through `chartAt ℂ p` gives a punctured `X`-neighborhood
+of `p` on which `vanishingOrder X · f = 0`. -/
 theorem divisor_discrete
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : X → ℂ)
     (hf_mero : ∀ q : X, MeromorphicAtX f q)
-    (hf_finite : ∀ q : X, vanishingOrder X q f ≠ ⊤) :
+    (h_nontriv : ∃ p : X, vanishingOrder X p f ≠ ⊤) :
     ∀ p : X, ¬ AccPt p (Filter.principal {q : X | vanishingOrder X q f ≠ 0}) := by
+  -- Step 1: connectedness propagates `≠ ⊤` from one point to all points.
+  have hf_finite : ∀ q : X, vanishingOrder X q f ≠ ⊤ :=
+    orderAt_ne_top_of_exists hf_mero h_nontriv
   intro p
   -- Reformulate as filter membership: `{q | order q f = 0} ∈ 𝓝[≠] p`.
   rw [accPt_iff_frequently_nhdsNE, Filter.not_frequently]
