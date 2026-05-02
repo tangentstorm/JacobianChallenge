@@ -313,21 +313,32 @@ theorem singularH1_unit_subsingleton :
     AlgebraicTopology.isZero_singularHomologyFunctor_of_totallyDisconnectedSpace
       (ModuleCat.{0} ℤ) 1 (ModuleCat.of ℤ ℤ) (TopCat.of Unit) one_ne_zero
 
-/-- **Frontier leaf (singular `H₁` is invariant under homotopy
-equivalence to `Unit`).** A homotopy equivalence `X ≃ₕ Unit` induces
-a ℤ-linear isomorphism on `singularH1`. Mathlib v4.28.0 gap — the
+/-- **Frontier leaf (homotopy invariance of singular `H₁`).** A
+homotopy equivalence `X ≃ₕ Y` induces a ℤ-linear isomorphism on
+`singularH1`. Mathlib v4.28.0 gap — the
 `AlgebraicTopology.SingularHomology` directory has no homotopy-invariance
-theorem for `singularHomologyFunctor`. Once it lands, the discharge
-is functoriality of the functor on the homotopy equivalence.
-
-This is the `Unit`-shaped instance of the more general homotopy-invariance
-statement; once present in Mathlib, the contractibility leaf
-`singularH1_subsingleton_of_contractibleSpace` is a one-line
-consequence. -/
-theorem singularH1_subsingleton_of_homotopyEquivUnit
-    {X : Type} [TopologicalSpace X] (_h : ContinuousMap.HomotopyEquiv X Unit) :
-    Subsingleton (singularH1 X) := by
+theorem for `singularHomologyFunctor`. Once it lands (the natural
+discharge is the chain-level prism construction giving a chain
+homotopy between `singularChainComplexFunctor` evaluated at homotopic
+maps, then descending to `homologyFunctor`), this leaf becomes a thin
+wrapper around `Functor.mapIso` on a `homotopyEquiv`-derived
+`TopCat`-isomorphism. -/
+theorem singularH1_iso_of_homotopyEquiv
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    (_h : ContinuousMap.HomotopyEquiv X Y) :
+    Nonempty (singularH1 X ≃ₗ[ℤ] singularH1 Y) := by
   sorry
+
+/-- **Sub-leaf (singular `H₁` is invariant under homotopy
+equivalence to `Unit`).** Body: lift through `singularH1_iso_of_homotopyEquiv`
+to get a ℤ-linear iso with `singularH1 Unit`, then transport the
+subsingleton from `singularH1_unit_subsingleton` along the iso. -/
+theorem singularH1_subsingleton_of_homotopyEquivUnit
+    {X : Type} [TopologicalSpace X] (h : ContinuousMap.HomotopyEquiv X Unit) :
+    Subsingleton (singularH1 X) := by
+  obtain ⟨e⟩ := singularH1_iso_of_homotopyEquiv h
+  haveI := singularH1_unit_subsingleton
+  exact e.toEquiv.subsingleton
 
 /-- **Sub-sub-leaf (singular H₁ of a contractible space is subsingleton).**
 Body: extract the homotopy equivalence with `Unit` from
