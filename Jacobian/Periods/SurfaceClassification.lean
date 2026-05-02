@@ -95,37 +95,53 @@ theorem existsPolygonalQuotientPresentation
     Nonempty (PolygonalQuotientPresentation M) := by
   sorry
 
-/-- **Stage A3+A4 leaf (universal-property assembly).** A polygonal-quotient
-presentation `(g', q)` of a compact T2 space `M` lifts through the
-quotient `Polygon4g g' = DiskC / SideRel g'` to a continuous bijection
-`Polygon4g g' → M`. By the compact-to-T2 theorem this is a
-homeomorphism.
+namespace PolygonalQuotientPresentation
 
-Body: real proof, no own `sorry`. Uses `Quotient.lift`,
-`continuous_quotient_lift`, and `Continuous.homeoOfEquivCompactToT2`. -/
+/-- The lift of `P.proj : DiskC → M` through the side-pairing
+quotient, producing a continuous bijection `Polygon4g P.genus → M`. -/
+noncomputable def qLift {M : Type} [TopologicalSpace M]
+    (P : PolygonalQuotientPresentation M) : Polygon4g P.genus → M :=
+  Quotient.lift P.proj (fun z w hzw => (P.kernel z w).mpr hzw)
+
+lemma qLift_continuous {M : Type} [TopologicalSpace M]
+    (P : PolygonalQuotientPresentation M) : Continuous P.qLift :=
+  P.cts.quotient_lift _
+
+lemma qLift_bijective {M : Type} [TopologicalSpace M]
+    (P : PolygonalQuotientPresentation M) : Function.Bijective P.qLift := by
+  refine ⟨?_, ?_⟩
+  · intro a b hab
+    induction a using Quotient.inductionOn with
+    | _ z =>
+      induction b using Quotient.inductionOn with
+      | _ w =>
+        change P.proj z = P.proj w at hab
+        exact Quotient.sound ((P.kernel z w).mp hab)
+  · intro y
+    obtain ⟨z, hz⟩ := P.surj y
+    exact ⟨⟦z⟧, hz⟩
+
+/-- The polygon-to-surface homeomorphism produced by a polygonal
+quotient presentation. Compact source + T2 target + continuous
+bijection → homeomorphism via `Continuous.homeoOfEquivCompactToT2`. -/
+noncomputable def toHomeo {M : Type} [TopologicalSpace M]
+    [CompactSpace M] [T2Space M]
+    (P : PolygonalQuotientPresentation M) : Polygon4g P.genus ≃ₜ M :=
+  P.qLift_continuous.homeoOfEquivCompactToT2
+    (f := Equiv.ofBijective P.qLift P.qLift_bijective)
+
+end PolygonalQuotientPresentation
+
+/-- **Stage A3+A4 leaf (universal-property assembly).** A polygonal-quotient
+presentation `P` of a compact T2 space `M` produces a homeomorphism
+`Polygon4g P.genus ≃ₜ M`, packaged as `Nonempty` for backwards
+compatibility (the underlying construction is the noncomputable
+`P.toHomeo` defined above). -/
 theorem polygonalQuotientPresentation_to_homeo
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     (P : PolygonalQuotientPresentation M) :
-    Nonempty (Polygon4g P.genus ≃ₜ M) := by
-  -- Lift `P.proj` through the side-pairing setoid quotient.
-  let qLift : Polygon4g P.genus → M :=
-    Quotient.lift P.proj (fun z w hzw => (P.kernel z w).mpr hzw)
-  have hqLift_cts : Continuous qLift := P.cts.quotient_lift _
-  -- Bijection: surjectivity from `P.surj`, injectivity from `P.kernel`.
-  have hqLift_bij : Function.Bijective qLift := by
-    refine ⟨?_, ?_⟩
-    · intro a b hab
-      induction a using Quotient.inductionOn with
-      | _ z =>
-        induction b using Quotient.inductionOn with
-        | _ w =>
-          change P.proj z = P.proj w at hab
-          exact Quotient.sound ((P.kernel z w).mp hab)
-    · intro y
-      obtain ⟨z, hz⟩ := P.surj y
-      exact ⟨⟦z⟧, hz⟩
-  -- Compact source + T2 target + continuous bijection → homeomorphism.
-  exact ⟨hqLift_cts.homeoOfEquivCompactToT2 (f := Equiv.ofBijective qLift hqLift_bij)⟩
+    Nonempty (Polygon4g P.genus ≃ₜ M) :=
+  ⟨P.toHomeo⟩
 
 /-- **Stage A1 umbrella (existence form).** Every compact connected
 orientable smooth real 2-manifold is homeomorphic to `Polygon4g g'`
