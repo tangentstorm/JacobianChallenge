@@ -51,6 +51,29 @@ namespace JacobianChallenge.Periods
 
 open scoped Manifold
 
+/-- Bundled polygonal-quotient datum: a continuous surjection
+`q : DiskC → M` whose fibres coincide with the side-pairing
+equivalence `Polygon4g.SideRel genus`. The point of the bundle is
+to make Stage A leaves and downstream constructions (universal-property
+homeomorphism, period-pairing functoriality, …) parameterisable over
+*one* hypothesis instead of `(genus, q, cts, surj, ker)` quintuples. -/
+structure PolygonalQuotientPresentation
+    (M : Type) [TopologicalSpace M] where
+  /-- The genus parameter — the topological genus of the surface
+  presented by this datum. -/
+  genus : ℕ
+  /-- The continuous surjection from the closed disk witnessing the
+  presentation. -/
+  proj : DiskC → M
+  /-- Continuity of `proj`. -/
+  cts : Continuous proj
+  /-- Surjectivity of `proj` (every point of `M` is presented by some
+  disk point). -/
+  surj : Function.Surjective proj
+  /-- Kernel: `proj z = proj w` exactly when the standard `4*genus`-gon
+  side identification relates `z` and `w`. -/
+  kernel : ∀ z w : DiskC, proj z = proj w ↔ Polygon4g.SideRel genus z w
+
 /-- **Stage A1+A2 leaf (existence of a polygonal-quotient presentation).**
 Every compact connected orientable smooth real 2-manifold admits a
 *polygonal-quotient presentation* in standard `4g'`-gon form: there is
@@ -69,8 +92,7 @@ theorem existsPolygonalQuotientPresentation
     [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) M]
     [Orientable M] :
-    ∃ g' : ℕ, ∃ q : DiskC → M, Continuous q ∧ Function.Surjective q ∧
-      (∀ z w : DiskC, q z = q w ↔ Polygon4g.SideRel g' z w) := by
+    Nonempty (PolygonalQuotientPresentation M) := by
   sorry
 
 /-- **Stage A3+A4 leaf (universal-property assembly).** A polygonal-quotient
@@ -82,15 +104,14 @@ homeomorphism.
 Body: real proof, no own `sorry`. Uses `Quotient.lift`,
 `continuous_quotient_lift`, and `Continuous.homeoOfEquivCompactToT2`. -/
 theorem polygonalQuotientPresentation_to_homeo
-    (g' : ℕ) (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
-    (q : DiskC → M) (hcts : Continuous q) (hsurj : Function.Surjective q)
-    (hker : ∀ z w : DiskC, q z = q w ↔ Polygon4g.SideRel g' z w) :
-    Nonempty (Polygon4g g' ≃ₜ M) := by
-  -- Lift `q` through the side-pairing setoid quotient.
-  let qLift : Polygon4g g' → M :=
-    Quotient.lift q (fun z w hzw => (hker z w).mpr hzw)
-  have hqLift_cts : Continuous qLift := hcts.quotient_lift _
-  -- Bijection: surjectivity from `q`, injectivity from the kernel iff.
+    {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    (P : PolygonalQuotientPresentation M) :
+    Nonempty (Polygon4g P.genus ≃ₜ M) := by
+  -- Lift `P.proj` through the side-pairing setoid quotient.
+  let qLift : Polygon4g P.genus → M :=
+    Quotient.lift P.proj (fun z w hzw => (P.kernel z w).mpr hzw)
+  have hqLift_cts : Continuous qLift := P.cts.quotient_lift _
+  -- Bijection: surjectivity from `P.surj`, injectivity from `P.kernel`.
   have hqLift_bij : Function.Bijective qLift := by
     refine ⟨?_, ?_⟩
     · intro a b hab
@@ -98,10 +119,10 @@ theorem polygonalQuotientPresentation_to_homeo
       | _ z =>
         induction b using Quotient.inductionOn with
         | _ w =>
-          change q z = q w at hab
-          exact Quotient.sound ((hker z w).mp hab)
+          change P.proj z = P.proj w at hab
+          exact Quotient.sound ((P.kernel z w).mp hab)
     · intro y
-      obtain ⟨z, hz⟩ := hsurj y
+      obtain ⟨z, hz⟩ := P.surj y
       exact ⟨⟦z⟧, hz⟩
   -- Compact source + T2 target + continuous bijection → homeomorphism.
   exact ⟨hqLift_cts.homeoOfEquivCompactToT2 (f := Equiv.ofBijective qLift hqLift_bij)⟩
@@ -121,9 +142,9 @@ theorem existsHomeoToPolygon4g
       (⊤ : WithTop ℕ∞) M]
     [Orientable M] :
     ∃ g' : ℕ, Nonempty (M ≃ₜ Polygon4g g') := by
-  obtain ⟨g', q, hcts, hsurj, hker⟩ := existsPolygonalQuotientPresentation M
-  obtain ⟨homeo⟩ := polygonalQuotientPresentation_to_homeo g' M q hcts hsurj hker
-  exact ⟨g', ⟨homeo.symm⟩⟩
+  obtain ⟨P⟩ := existsPolygonalQuotientPresentation M
+  obtain ⟨homeo⟩ := polygonalQuotientPresentation_to_homeo P
+  exact ⟨P.genus, ⟨homeo.symm⟩⟩
 
 /-- The side relation `Polygon4g.SideRel 0` collapses to equality on
 `DiskC`, since the underlying generator `SideGen 0` has no
