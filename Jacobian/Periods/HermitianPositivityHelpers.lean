@@ -26,14 +26,14 @@ namespace JacobianChallenge.Periods.Hermitian
 /-- **Leaf 3 (SHORT).** The pointwise integrand `2 * ‖h‖²` of
 `i ω ∧ conj ω` is nonneg. Direct from `sq_nonneg` / `pow_two_nonneg`. -/
 theorem two_norm_sq_nonneg (h : ℂ) : (0 : ℝ) ≤ 2 * ‖h‖ ^ 2 := by
-  sorry
+  positivity
 
 /-- **Leaf 4 (SHORT).** The pointwise integrand `2 * ‖h‖²` is strictly
 positive at points where `h ≠ 0`. Direct from
 `norm_pos_iff` + `pow_pos` + `mul_pos`. -/
 theorem two_norm_sq_pos_of_ne_zero (h : ℂ) (hh : h ≠ 0) :
-    (0 : ℝ) < 2 * ‖h‖ ^ 2 := by
-  sorry
+    (0 : ℝ) < 2 * ‖h‖ ^ 2 :=
+  mul_pos two_pos (pow_pos (norm_pos_iff.mpr hh) 2)
 
 /-- **Leaf 8 (SHORT — pointwise version).** A nonzero complex number
 trivially has a "witness" — itself. This is the pointwise stand-in
