@@ -511,7 +511,7 @@ just this project.
 Status of each item: keep "consumer" pointer fresh so when the
 upstream lands the project knows where to thread the new annotation.
 
-** TODO [#B] [ ] HasCoproducts.{u} (ModuleCat ℤ) — universe-polymorphic instance :upstream:cloud:
+** TODO [#B] [ ] mathlib: HasCoproducts.{u} (ModuleCat ℤ) — universe-polymorphic instance :mathlib:upstream:cloud:
 :PROPERTIES:
 :GAP:         Mathlib v4.28.0 ships only HasCoproducts.{0} (ModuleCat ℤ)
 :CONSUMER:    JacobianChallenge.Periods.IntegralOneCycle (forces W2 Option B)
@@ -577,7 +577,7 @@ Do NOT modify any project files. Do NOT modify any Mathlib files. The
 deliverable is a single org report.
 #+END_SRC
 
-** Future entries (placeholder)
+** mathlib: future entries (placeholder)
 
 Other Mathlib v4.28.0 gaps documented in
 ~Jacobian/WorkPackets/Inventory.md~ (quotient manifolds by discrete
