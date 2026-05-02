@@ -177,6 +177,13 @@ contractible. -/
 instance diskC_contractibleSpace : ContractibleSpace DiskC :=
   Metric.contractibleSpace_closedBall (zero_le_one)
 
+/-- **Genus-zero contractibility instance.** `Polygon4g 0` inherits
+contractibility from `DiskC` along the homeomorphism
+`polygon4g_zero_homeo_diskC`. -/
+theorem polygon4g_zero_contractibleSpace : ContractibleSpace (Polygon4g 0) := by
+  obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
+  exact h.contractibleSpace
+
 /-- **Frontier leaf (singular `H₁` of a contractible space is subsingleton).**
 Homotopy invariance of singular homology in degree `n ≥ 1` for
 contractible spaces. Mathlib v4.28.0 gap — the
