@@ -31,16 +31,28 @@ noncomputable section
 
 namespace JacobianChallenge.Periods
 
+open AlgebraicTopology CategoryTheory
+
+/-- A homeomorphism `M ≃ₜ N` lifts to a ℤ-linear isomorphism of
+`singularH1 M ≃ₗ[ℤ] singularH1 N`, by functoriality of
+`singularHomologyFunctor (ModuleCat ℤ) 1`. -/
+def singularH1LinearEquivOfHomeo
+    {M N : Type} [TopologicalSpace M] [TopologicalSpace N]
+    (h : M ≃ₜ N) :
+    singularH1 M ≃ₗ[ℤ] singularH1 N :=
+  (((singularHomologyFunctor (ModuleCat.{0} ℤ) 1).obj
+      (ModuleCat.of ℤ ℤ)).mapIso (TopCat.isoOfHomeo h)).toLinearEquiv
+
 /-- **Leaf (homeomorphism invariance of `singularH1` finrank).**
 A homeomorphism `M ≃ₜ N` between topological spaces induces equality
-of the ℤ-finrank of singular `H₁`. The bottom-up content is functoriality
-of `singularHomologyFunctor (ModuleCat ℤ) 1` applied to
-`TopCat.isoOfHomeo`, plus invariance of `Module.finrank` under
-ℤ-linear isomorphism. -/
+of the ℤ-finrank of singular `H₁`.
+
+Body: lift to a ℤ-linear isomorphism via
+`singularH1LinearEquivOfHomeo` and apply `LinearEquiv.finrank_eq`. -/
 theorem singularH1_finrank_homeo_invariant
     {M N : Type} [TopologicalSpace M] [TopologicalSpace N]
     (h : M ≃ₜ N) :
-    Module.finrank ℤ (singularH1 M) = Module.finrank ℤ (singularH1 N) := by
-  sorry
+    Module.finrank ℤ (singularH1 M) = Module.finrank ℤ (singularH1 N) :=
+  (singularH1LinearEquivOfHomeo h).finrank_eq
 
 end JacobianChallenge.Periods
