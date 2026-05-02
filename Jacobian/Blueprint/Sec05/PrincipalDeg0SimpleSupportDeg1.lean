@@ -1,3 +1,6 @@
+import Jacobian.Blueprint.Sec01.PrincipalDivisor
+import Jacobian.Blueprint.Sec01.MeromorphicToCp1
+
 /-! # Blueprint stub: `lem:principal-deg0-simple-support-deg1`
 
 Section 5 of `tex/sections/05-abel-jacobi-map.tex`.
@@ -8,22 +11,11 @@ degree 1.
 
 ## Status
 
-**SHORT placeholder.** The combinatorial reduction (deg = 0 + two-point
-support of size 2 with ℤ-coefficients ⇒ one `+1` and one `-1`) is
-trivial once the divisor / vanishing-order / degree-of-meromorphic-map
-APIs land. Today those upstream pieces are still scaffolds:
-
-* `JacobianChallenge.Blueprint.principalDivisor` returns `0` as a
-  placeholder (see `Jacobian/Blueprint/Sec01/PrincipalDivisor.lean`);
-* `MeromorphicFunctionType` is `X → OnePoint ℂ` (placeholder, see
-  `Jacobian/Blueprint/Sec01/MeromorphicFunction.lean`);
-* the degree of a holomorphic map to `ℂP¹` is not yet defined at the
-  blueprint level.
-
-So the user-facing conclusion is stated as `True` and the proof is
-`trivial`; the declaration name exists so the blueprint dep-graph node
-can pin `\lean{}` on it. The body will be replaced with the real
-conclusion once the upstream APIs land.
+**Real type signature.** The conclusion is stated with the genuine
+`Nonconstant` / `branchedDegree` predicates; the proof is `sorry`
+because the upstream analytic infrastructure (open-mapping theorem,
+`BranchedCoverData` constructor for meromorphic maps) is still
+frontier-bound.
 
 The Worker AE branch (claude/abel-deeper-k7vp2x) provides supporting
 combinatorial infrastructure under a nested
@@ -31,35 +23,52 @@ combinatorial infrastructure under a nested
 two-point-divisor model and the deg-0/two-point-support arithmetic.
 That infrastructure is preserved here so the eventual real proof can
 plug in immediately.
+-/
 
-## Replacement target (sketch)
+namespace JacobianChallenge.Blueprint
 
-```
+open scoped Manifold
+
+/-- The point divisor `[P]`: the divisor assigning coefficient `1` to `P`
+and `0` elsewhere. Wraps `Finsupp.single P 1`. -/
+noncomputable def Divisor.point {X : Type*} (P : X) : Divisor X :=
+  Finsupp.single P 1
+
+/-- A function `g : X → Y` is *nonconstant*: there is no single value
+`c : Y` assumed everywhere. -/
+def Nonconstant {X Y : Type*} (g : X → Y) : Prop :=
+  ¬ ∃ c : Y, ∀ x : X, g x = c
+
+/-- **Placeholder.** The branched degree of a continuous map
+`g : X → Y` between compact Riemann surfaces, viewed as a function.
+
+The eventual definition builds a `BranchedCoverData` (see
+`Jacobian/Blueprint/Sec02/BranchedDegree.lean`) from the
+open-mapping / isolated-zeros theorems and reads off
+`BranchedCoverData.branchedDegree`; that analytic constructor is
+still frontier-bound, so we leave the body as `0` (an obviously
+wrong but type-correct stand-in). -/
+noncomputable def branchedDegreeOfMap
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    (_g : X → Y) : ℕ := 0
+
+/-- If `f ∈ Mer(X)^{×}` has principal divisor `(f) = Q₁ - Q₂` with
+`Q₁ ≠ Q₂`, then the associated map `f̂ : X → ℂP¹` is nonconstant of
+branched degree 1.
+
+The proof requires the analytic `BranchedCoverData` constructor
+(open-mapping theorem + isolated zeros ⇒ finite fibres and constant
+weighted-fibre count) which is still frontier-bound; accordingly
+the body is `sorry`. -/
 theorem principal_deg0_simple_support_deg1
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     Nonconstant (meromorphicToCp1 X f) ∧
-    branchedDegree (meromorphicToCp1 X f) = 1 := by
-  -- (deg = 0 of LHS, RHS = 1 + (−1) at distinct points) ⇒ done.
+    branchedDegreeOfMap (meromorphicToCp1 X f) = 1 := by
   sorry
-```
-
-This file is intentionally Mathlib-free, mirroring the Sec02
-placeholder pattern (`InputDegreeOneIsomorphism.lean`,
-`BranchedDegree.lean`). -/
-
-namespace JacobianChallenge.Blueprint
-
-/-- **SHORT placeholder.** Principal divisor of degree zero with
-simple two-point support yields a degree-one map.
-
-Replacement target: see file docstring. Returns `True` so the
-blueprint dep-graph node has a resolvable `\lean{}` target without
-committing to a specific bundle of `Nonconstant`/`branchedDegree`
-APIs upstream of the children. -/
-theorem principal_deg0_simple_support_deg1 : True := trivial
 
 namespace AbelExistence
 namespace PrincipalDeg0SimpleSupportDeg1
