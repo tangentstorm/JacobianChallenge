@@ -531,4 +531,26 @@ theorem compactOrientableSurface_homeomorph_polygon4g_topologicalGenus
     rw [hinv, topologicalGenus_polygon4g]
   exact ⟨hgM ▸ homeo⟩
 
+/-- **Direct corollary (M's singular H₁ is free of rank `2 * topGenus M`).**
+For a compact connected orientable smooth real 2-manifold `M` whose
+polygonal model is `Polygon4g (topologicalGenus M)`, singular `H₁(M, ℤ)`
+is ℤ-linearly isomorphic to the free module `Fin (2 * topologicalGenus M) → ℤ`.
+
+Body: chain `compactOrientableSurface_homeomorph_polygon4g_topologicalGenus`
+through `singularH1LinearEquivOfHomeo` (Round 4 — *real proof*) and
+`polygon4g_singularH1_iso_freeZ` (Round 37 — discharged via the
+unified basis). -/
+theorem singularH1_iso_freeZ_of_compactOrientableSurface
+    (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    [ConnectedSpace M]
+    [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
+    [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) M]
+    [Orientable M] :
+    Nonempty (singularH1 M ≃ₗ[ℤ] (Fin (2 * topologicalGenus M) → ℤ)) := by
+  obtain ⟨homeo⟩ :=
+    compactOrientableSurface_homeomorph_polygon4g_topologicalGenus M
+  obtain ⟨polyIso⟩ := polygon4g_singularH1_iso_freeZ (topologicalGenus M)
+  exact ⟨(singularH1LinearEquivOfHomeo homeo).trans polyIso⟩
+
 end JacobianChallenge.Periods
