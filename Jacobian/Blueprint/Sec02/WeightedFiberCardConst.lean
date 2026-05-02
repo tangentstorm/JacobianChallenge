@@ -4,6 +4,7 @@ import Mathlib.Topology.LocallyConstant.Basic
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
+import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Analytic
 
 /-! # Blueprint: well-definedness of the branched degree (4-step decomposition)
 
@@ -332,7 +333,19 @@ theorem chartLocalAt_localInverse_of_unramified
       (∀ᶠ t in 𝓝 (chartAt ℂ x x), g (chartLocalAt f x t) = t) ∧
       (∀ᶠ s in 𝓝 (chartAt ℂ (f x) (f x)),
         chartLocalAt f x (g s) = s) := by
-  sorry
+  have hderiv := mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero _hf |>.1 _hramx
+  refine' ⟨_, _, _, _, _⟩
+  exact _hf.hasStrictDerivAt.localInverse (chartLocalAt f x)
+    (deriv (chartLocalAt f x) (chartAt ℂ x x)) (chartAt ℂ x x) hderiv
+  · convert AnalyticAt.analyticAt_localInverse _hf hderiv using 1
+    exact (chartLocalAt_chartAt_self f x).symm
+  · rw [← chartLocalAt_chartAt_self]
+    exact HasStrictFDerivAt.localInverse_apply_image
+      (HasStrictDerivAt.hasStrictFDerivAt_equiv _hf.hasStrictDerivAt hderiv)
+  · exact HasStrictFDerivAt.eventually_left_inverse
+      (HasStrictDerivAt.hasStrictFDerivAt_equiv _hf.hasStrictDerivAt hderiv)
+  · convert HasStrictDerivAt.eventually_right_inverse _hf.hasStrictDerivAt hderiv using 1
+    exact congr_arg _ (chartLocalAt_chartAt_self f x).symm
 
 /-- **B3 = Sub-leaf 2 (sorry).** Local injectivity at an unramified
 point: if `mapAnalyticOrderAt f x = 1`, there is an open neighborhood
