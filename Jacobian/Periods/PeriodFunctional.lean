@@ -4,6 +4,8 @@ import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.TopologicalGenus
 import Jacobian.Periods.PeriodSpanHelpers
+import Jacobian.Periods.HodgeDeRham
+import Jacobian.Periods.H1EvenBasisViaSurfaceClassification
 import Mathlib.Algebra.Module.ZLattice.Basic
 
 /-!
@@ -88,13 +90,17 @@ sorry-ed witness: the existence of *some* genus `g` and a ℤ-basis of
 compact surfaces, cellular homology, surface classification theorem —
 all missing in Mathlib v4.28.0.
 
-(Aristotle 0d7ce5da named-helper extraction.) -/
+(Aristotle 0d7ce5da named-helper extraction; Round 56 refines this
+into `h1_has_even_basis_via_surface_classification`, which delegates
+to the Stage A surface-classification API + Stage B1/B2 bridges. The
+remaining sorries live in the Stage A leaves, not in this Stage B
+file.) -/
 lemma h1_has_even_basis
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    ∃ g : ℕ, Nonempty (Module.Basis (Fin (2 * g)) ℤ (IntegralOneCycle X)) := by
-  sorry
+    ∃ g : ℕ, Nonempty (Module.Basis (Fin (2 * g)) ℤ (IntegralOneCycle X)) :=
+  h1_has_even_basis_via_surface_classification X
 
 /-- **Sub-obligation 1b.** `H₁(X, ℤ)` of a compact connected
 Riemann surface of topological genus `g_top` is free of rank
@@ -128,13 +134,15 @@ Mathlib v4.28.0:
    giving `dim_ℂ H¹_dR = 2 · dim_ℂ H⁰(Ω¹)`.
 3. **Serre duality** (used in step 2) — `H¹(X, 𝒪) ≅ conj H⁰(X, Ω¹)`.
 
-(Aristotle 2d93b076 named-helper extraction.) -/
+(Aristotle 2d93b076 named-helper extraction; Round 55 split into
+`HodgeDeRham.deRham_singularH1_dim_witness` (de Rham step) and
+`HodgeDeRham.hodge_decomposition_singularH1_rank` (Hodge step).) -/
 theorem hodge_deRham_rank_eq
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) := by
-  sorry
+    2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) :=
+  hodge_deRham_rank_eq_via_classical_route X
 
 /-- **Sub-obligation 2.** The analytic genus equals the topological
 genus for a compact connected Riemann surface. Assembly: applies
