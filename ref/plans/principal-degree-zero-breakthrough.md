@@ -277,6 +277,94 @@ once that lands, leaves 3, 4, 5a, 7b, `liftToCp1_continuous` reduce to
 short Mathlib lookups, and Sec02 leaf 8 becomes the major HARD analytic
 construction.
 
-### Round R5+ (future)
-Phase B (architectural refactor of `MeromorphicFunctionType`), then
-Phase C (analytic discharges), then Phase D (T2 typeclass gap closure).
+### Round R5 (Phase B refactor + initial Phase C)
+
+**Phase B refactor.** `MeromorphicFunctionType` upgraded from a placeholder
+`def := X → OnePoint ℂ` to a structure with three fields: `toFun`,
+`toFun_continuous`, `isMeromorphic`. A `CoeFun` instance preserves the
+existing `f x` syntax at every consumer; only `meromorphicToCp1`'s body
+changed from `:= f` to `:= f.toFun`. No other consumer broke.
+
+**Phase C — initial discharges using the new structure:**
+
+- `liftToCp1_continuous` (`Sec01/MeromorphicToCp1.lean`): sorry-free,
+  reduces to `f.toFun_continuous`.
+- Leaf 7b `vanishingOrder_const_nonzero`: sorry-free, reduces to Mathlib
+  `meromorphicOrderAt_const` after unfolding through the project's
+  `orderAt` chart-pullback definition.
+
+### Round R6 (Phase C — leaf 5a + Phase D — umbrella)
+
+**Leaf 5a `vanishingOrder_eq_zero_of_regular_point` discharged.** Six-step
+proof:
+
+1. From `meromorphicToCp1 X f p ≠ ↑0` and `≠ ∞`, extract `z : ℂ` with
+   `f.toFun p = ↑z` and `z ≠ 0`.
+2. `(·).getD 0` is continuous at `f.toFun p = ↑z` via Mathlib's
+   `OnePoint.continuousAt_coe` reducing to `id`-continuity.
+3. Compose with `f.toFun_continuous` to get continuity of the projection
+   at `p`.
+4. Pull back through the chart via `continuousAt_extChartAt_symm` and
+   `extChartAt_to_inv` to get continuity of
+   `(projection ∘ chart.symm)` at `chart p`.
+5. Continuity at the chart point + `nhdsWithin_le_nhds` gives
+   `Tendsto (proj ∘ chart.symm) (𝓝[≠] (chart p)) (𝓝 z)`.
+6. Mathlib's `tendsto_ne_zero_iff_meromorphicOrderAt_eq_zero` (mp,
+   feeding `f.isMeromorphic p`) closes
+   `meromorphicOrderAt = 0`, hence `vanishingOrder = 0`.
+
+Required adding `open Filter` and `open scoped Topology` to the file.
+
+**Phase D — umbrella's T2 typeclass gap closed.** Added `[T2Space X]`
+to both `principal_degree_zero` and its consumer
+`InputDivisors.input_divisors_holds`. The umbrella body simplifies:
+
+```
+by_cases hf : ∃ x, (f x).getD 0 ≠ 0
+· exact principal_degree_zero_of_nonzero X f hf
+· exact principalDivisor_zero_of_underlying_zero X f hf
+```
+
+— sorry-free.
+
+**Net sorry-shape after R6 on the principal_degree_zero chain:**
+
+- `Sec01/PrincipalDegreeZero.lean`: 4 → 2 (leaves 3, 4 only).
+- `Sec01/MeromorphicToCp1.lean`: 0 → 0.
+- `Sec01/InputDivisors.lean`: 0 → 0 (only signature change).
+- `Sec02/BranchedDegree.lean`: 4 → 4 (only leaf 8 is on our chain).
+
+Total: 3 named sorries between the umbrella and the analytic floor.
+
+### Remaining work to fully discharge `principal_degree_zero`
+
+Three named obligations stand between the current state and a fully
+sorry-free umbrella:
+
+1. **Leaf 3 (HARD)** `vanishingOrder_eq_ramificationIndex_at_zero`.
+   Reduces to: at a zero of `f` of "multiplicity `e`" in the chart,
+   `meromorphicOrderAt = e`, and `ramificationIndex p = e` by
+   construction of `liftToCp1_branchedCoverData`.
+
+2. **Leaf 4 (HARD)** `vanishingOrder_eq_neg_ramificationIndex_at_pole`.
+   Symmetric to leaf 3 at poles, with the chart at `∞ ∈ OnePoint ℂ`
+   substituting `1/w` for the chart variable.
+
+3. **Sec02 leaf 8 (HARD)**
+   `branchedCoverData_of_nonconstant_holomorphic`. The full analytic
+   constructor: open-mapping theorem for analytic maps + isolated-zeros
+   theorem + compactness-of-fibres on a compact RS, with concrete
+   definitions for `ramificationIndex`, `finite_fiber`, `fiberSum_const`.
+
+To make leaves 3 and 4 *trivially* dischargeable, the cleanest move is
+to re-implement `liftToCp1_branchedCoverData`'s body directly in
+`Sec01/PrincipalDegreeZero.lean` (rather than delegating to Sec02 leaf
+8), defining `ramificationIndex p` explicitly via `vanishingOrder`. The
+remaining content (`finite_fiber`, `fiberSum_const`) collapses to two
+focused HARD analytic obligations covering all of Sec02 leaf 8's
+content.
+
+LOC estimate to reach a fully sorry-free `principal_degree_zero`:
+roughly 800–1500 LOC of analytic infrastructure (isolated-zeros on
+compact RS + chart-local Laurent analysis), spread across Sec01 and
+Sec02. This is multi-session work.

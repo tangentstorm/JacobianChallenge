@@ -26,7 +26,7 @@ infrastructure. The actual content is the conjunction of all the named
 sub-statements; here we record a `Prop`-level placeholder. -/
 def inputDivisors
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
-    [ChartedSpace ℂ X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : Prop :=
   -- The four "real" subgoals carved out as named theorems; the umbrella
   -- proof asserts that all of them hold.
@@ -35,7 +35,7 @@ def inputDivisors
 
 theorem input_divisors_holds
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
-    [ChartedSpace ℂ X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     inputDivisors X := by
   intro f
