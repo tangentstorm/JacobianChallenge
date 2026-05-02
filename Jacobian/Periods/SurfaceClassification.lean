@@ -125,14 +125,36 @@ theorem existsHomeoToPolygon4g
   obtain ⟨homeo⟩ := polygonalQuotientPresentation_to_homeo g' M q hcts hsurj hker
   exact ⟨g', ⟨homeo.symm⟩⟩
 
+/-- **Sub-sub-leaf (genus-zero polygon H₁).** `Polygon4g 0` is the
+closed disk (since `SideRel 0` reduces to equality — `SideGen 0` has
+no constructors), hence contractible, hence its singular `H₁`
+vanishes. -/
+theorem singularH1_polygon4g_zero_finrank :
+    Module.finrank ℤ (singularH1 (Polygon4g 0)) = 0 := by
+  sorry
+
+/-- **Sub-sub-leaf (genus ≥ 1 polygon H₁).** The first singular
+homology of the standard fundamental `4(g+1)`-gon has ℤ-rank
+`2(g+1)`. Bottom-up: cellular `H₁` computation on the
+one-vertex `2(g+1)`-edge one-2-cell CW structure with attaching word
+`∏ᵢ [aᵢ,bᵢ]` (commutators vanish in the abelianized chain), then
+`H₁(K_g) = ker ∂₁ / im ∂₂ = ℤ^{2(g+1)} / 0`. -/
+theorem singularH1_polygon4g_succ_finrank (g : ℕ) :
+    Module.finrank ℤ (singularH1 (Polygon4g (g + 1))) = 2 * (g + 1) := by
+  sorry
+
 /-- **Stage A2 sub-leaf (rank of singular `H₁` of the polygon).**
 The first singular homology of the standard fundamental polygon has
-ℤ-rank `2g`. Bottom-up: cellular `H₁` computation on the CW structure
-with one vertex, `2g` edges, and one 2-cell whose attaching word is
-`∏ [aᵢ,bᵢ]` (commutators vanish in the abelianized chain). -/
+ℤ-rank `2g`.
+
+Body: case split on `g`; the `g = 0` branch reduces to the disk
+contractibility leaf, and the `g = g'+1` branch reduces to the
+cellular-homology leaf. -/
 theorem singularH1_polygon4g_finrank (g : ℕ) :
     Module.finrank ℤ (singularH1 (Polygon4g g)) = 2 * g := by
-  sorry
+  cases g with
+  | zero => simpa using singularH1_polygon4g_zero_finrank
+  | succ g => exact singularH1_polygon4g_succ_finrank g
 
 /-- **Stage A2 leaf (polygon genus).** The topological genus of the
 standard fundamental polygon `Polygon4g g` equals `g`.
