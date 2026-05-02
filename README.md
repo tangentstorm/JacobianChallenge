@@ -25,22 +25,34 @@ local identity principle (manifold)          ████████  `IsHolomo
 local-constant ⇒ global-constant (connected) ████████  `IsHolomorphic.eq_const_of_eventuallyEq`
 finite fibres of nonconstant holomorphic     ████████  `isHolomorphic_finite_fiber`
 mapAnalyticOrderAt_pos (positivity)          ████████  via order ≠ 0 (vanishes) + ≠ ⊤ (connected)
-leaf 8 (BranchedCoverData constructor)       ████████  sorry-free against four sub-leaves
-                                                       in `Sec02/WeightedFiberCardConst.lean`:
-sub-leaf A: branch locus finite              ░░░░░░░░  `mapAnalyticOrderAt_ramified_finite`
-sub-leaf B: local inj at unramified          ░░░░░░░░  `IsHolomorphicAt.exists_local_inj_of_unramified`
-sub-leaf C: local k-fold at ramified         ░░░░░░░░  `IsHolomorphicAt.exists_local_kfold_of_ramified`
-sub-leaf D: weighted-sum locally constant    ░░░░░░░░  `isHolomorphic_weightedFiberSum_isLocallyConstant`
+leaf 8 (BranchedCoverData constructor)       ████████  sorry-free.  4 sub-leaves +
+                                                       9 sub-sub-leaves in
+                                                       `Sec02/WeightedFiberCardConst.lean`:
+common helper: order=1 ⇔ deriv≠0             ░░░░░░░░  `mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero`
+A2: unramified set is open                   ░░░░░░░░  `isOpen_setOf_mapAnalyticOrderAt_eq_one`
+A3: ramified points are isolated             ░░░░░░░░  `mapAnalyticOrderAt_isolated_at_ramified`
+A4: branch locus finite (assembly)           ░░░░░░░░  `mapAnalyticOrderAt_ramified_finite`
+B2: chart-local inverse at unramified        ░░░░░░░░  `chartLocalAt_localInverse_of_unramified`
+B3: local inj at unramified (assembly)       ░░░░░░░░  `IsHolomorphicAt.exists_local_inj_of_unramified`
+C1: local power-series `(t-z₀)^k · g(t)`     ░░░░░░░░  `chartLocalAt_eq_pow_mul_of_order`
+C2: holomorphic k-th root                    ░░░░░░░░  `analyticAt_kth_root_of_ne_zero`
+C3: locally conjugate to `s ↦ s^k`           ░░░░░░░░  `chartLocalAt_locally_conjugate_pow`
+C4: local k-fold at ramified (assembly)      ░░░░░░░░  `IsHolomorphicAt.exists_local_kfold_of_ramified`
+D1: pairwise-disjoint nbhds (Mathlib?)       ░░░░░░░░  `Set.Finite.exists_pairwiseDisjoint_open_nbhds`
+D2: properness fibre-shrink                  ░░░░░░░░  `eventually_fiber_subset_of_compact_T2`
+D3: weighted-sum eventually-eq at y₀         ░░░░░░░░  `weightedFiberSum_eventually_eq`
+D4: weighted-sum locally constant (asmbly)   ░░░░░░░░  `isHolomorphic_weightedFiberSum_isLocallyConstant`
 final assembly (sub-leaf D + Y preconn)      ████████  `isHolomorphic_weightedFiberSum_const`
                                                        sorry-free; satisfies leaf 8's
                                                        `weightedFiberCard_const` field.
 ```
 
-The four sub-leaves are individually scoped: A is closed-discrete +
-compact ⇒ finite; B is the analytic inverse function theorem (exists
-in Mathlib) plus chart transport; C is the local power-series form
-`f(t) = t^k · g(t)` plus a holomorphic `k`-th root substitution; D
-combines B and C with finite-fibre + T2 disjoint-neighborhoods.
+Each sub-sub-leaf has a docstring with proof sketch naming the
+specific Mathlib lemmas it'll use (`AnalyticAt.localInverse`,
+`AnalyticAt.analyticOrderAt_eq_natCast`, `Complex.analyticAt_log`,
+`AnalyticAt.eventually_ne`, `IsLocallyConstant.iff_eventuallyEq`,
+etc.).  The decomposition is now fine-grained enough that each
+remaining `sorry` is a clearly-scoped Aristotle-sized job.
 
 Note: Mathlib v4.28.0 *does* have `analyticOrderNatAt`, isolated zeros,
 and the open-mapping theorem for analytic maps in

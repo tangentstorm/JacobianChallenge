@@ -583,10 +583,37 @@ the trace, push-pull) runs on this number.
 
 \begin{lemma}[Branch locus is finite]
 \label{lem:branch-locus-finite}
-\uses{def:branched-degree}
+\uses{def:branched-degree, lem:order-eq-one-iff-deriv-ne-zero,
+lem:unramified-set-open, lem:ramified-isolated}
 The set \(\{p\in X : e_p(f)\ge 2\}\) is finite.
+\depends{Sub-sub-leaves: \texttt{lem:unramified-set-open} (the
+unramified set is open) and \texttt{lem:ramified-isolated} (every
+ramified point is isolated in the ramified set); assembly is
+"closed-discrete subset of compact ⇒ finite".}
 \lean{JacobianChallenge.Blueprint.branch_locus_finite}
 \leanok
+\end{lemma}
+
+\begin{lemma}[Unramified set is open]
+\label{lem:unramified-set-open}
+\uses{lem:order-eq-one-iff-deriv-ne-zero}
+The set \(\{x\in X : e_x(f)=1\}\) is open in \(X\).
+\depends{Continuity of the chart-local derivative plus the chart-pull
+of the open condition \(\{(z) : g'(z)\ne 0\}\subseteq\C\).}
+\lean{JacobianChallenge.Blueprint.isOpen_setOf_mapAnalyticOrderAt_eq_one}
+\notready
+\end{lemma}
+
+\begin{lemma}[Every ramified point is isolated]
+\label{lem:ramified-isolated}
+\uses{lem:order-eq-one-iff-deriv-ne-zero}
+At a ramified point \(x\) (\(e_x(f)\ge 2\)), there is a punctured
+neighborhood of \(x\) consisting entirely of unramified points.
+\depends{Mathlib's \texttt{AnalyticAt.eventually\_ne} applied to the
+chart-local derivative (which has order \(\ge k-1\ge 1\) at the chart
+image of \(x\)) plus the common helper.}
+\lean{JacobianChallenge.Blueprint.mapAnalyticOrderAt_isolated_at_ramified}
+\notready
 \end{lemma}
 
 \begin{layman}
@@ -612,13 +639,41 @@ identity theorem, and finite by compactness.
 
 \begin{lemma}[Local injectivity at an unramified point]
 \label{lem:local-inj-unramified}
-\uses{def:branched-degree}
+\uses{def:branched-degree, lem:order-eq-one-iff-deriv-ne-zero, lem:chart-local-inverse-unramified}
 If \(e_x(f)=1\) at a point \(x\in X\), there is an open neighborhood
 \(U\ni x\) and an open neighborhood \(V\ni f(x)\) such that for every
 \(y\in V\), the set \(U\cap f^{-1}(y)\) is a singleton.
-\depends{Mathlib's analytic inverse function theorem
-(\texttt{AnalyticAt.localInverse}) plus chart transport.}
+\depends{Sub-sub-leaves: \texttt{lem:order-eq-one-iff-deriv-ne-zero}
+(common B1=A1 helper) and \texttt{lem:chart-local-inverse-unramified}
+(B2, Mathlib's \texttt{AnalyticAt.localInverse}); assembly is chart
+transport.}
 \lean{JacobianChallenge.Blueprint.IsHolomorphicAt.exists_local_inj_of_unramified}
+\notready
+\end{lemma}
+
+\begin{lemma}[Order one iff chart-local derivative nonzero]
+\label{lem:order-eq-one-iff-deriv-ne-zero}
+\uses{def:branched-degree, def:vanishing-order}
+The chart-local order \(e_x(f)=1\) iff the derivative
+\((\chi\circ f\circ\varphi^{-1})'(\varphi(x))\ne 0\), where
+\((\varphi,\chi)\) are the canonical charts at \(x\) and \(f(x)\).
+\depends{Mathlib's
+\texttt{AnalyticAt.analyticOrderAt\_sub\_eq\_one\_of\_deriv\_ne\_zero}
+plus the
+\(\analyticOrderNatAt = 1 \iff \analyticOrderAt = 1\) characterisation.}
+\lean{JacobianChallenge.Blueprint.mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero}
+\notready
+\end{lemma}
+
+\begin{lemma}[Chart-local inverse at unramified]
+\label{lem:chart-local-inverse-unramified}
+\uses{lem:order-eq-one-iff-deriv-ne-zero}
+At an unramified point \(x\), the chart-local presentation
+\(\chi\circ f\circ\varphi^{-1}\) admits a holomorphic local inverse
+near \(\chi(f(x))\).
+\depends{\texttt{AnalyticAt.localInverse} from
+\texttt{Mathlib/Analysis/Analytic/Inverse.lean}.}
+\lean{JacobianChallenge.Blueprint.chartLocalAt_localInverse_of_unramified}
 \notready
 \end{lemma}
 
@@ -643,16 +698,42 @@ neighborhood; transport back through the canonical charts on \(X\)
 and \(Y\).
 \end{proofsketch}
 
+\begin{lemma}[Local power-series form at order \texorpdfstring{\(k\)}{k}]
+\label{lem:chart-local-pow-mul}
+\uses{def:branched-degree, def:vanishing-order}
+If \(e_x(f)=k\ge 1\), the centred chart-local difference factors as
+\((t-z_0)^k\cdot g(t)\) for some analytic \(g\) with \(g(z_0)\ne 0\),
+where \(z_0\) is the chart image of \(x\).
+\depends{Direct application of Mathlib's
+\texttt{AnalyticAt.analyticOrderAt\_eq\_natCast}.}
+\lean{JacobianChallenge.Blueprint.chartLocalAt_eq_pow_mul_of_order}
+\notready
+\end{lemma}
+
+\begin{lemma}[Holomorphic \texorpdfstring{\(k\)}{k}-th root]
+\label{lem:analytic-kth-root}
+If \(g\) is analytic at \(z_0\) with \(g(z_0)\ne 0\) and \(k\ge 1\),
+there is an analytic \(h\) near \(z_0\) with \(h(z)^k=g(z)\) locally.
+\depends{Holomorphic logarithm
+(\texttt{Complex.analyticAt\_log} on a simply-connected nbhd of
+\(g(z_0)\) avoiding \(0\)) plus \(\exp\) plus
+\(h:=\exp((1/k)\cdot\log g)\).}
+\lean{JacobianChallenge.Blueprint.analyticAt_kth_root_of_ne_zero}
+\notready
+\end{lemma}
+
 \begin{lemma}[Local \texorpdfstring{\(k\)}{k}-fold structure at a ramified point]
 \label{lem:local-kfold-ramified}
-\uses{def:branched-degree,def:vanishing-order}
+\uses{def:branched-degree, def:vanishing-order,
+lem:chart-local-pow-mul, lem:analytic-kth-root}
 If \(e_x(f)=k\ge 1\), there is an open neighborhood \(U\ni x\) and an
 open neighborhood \(V\ni f(x)\) such that for every \(y\in V\) with
 \(y\ne f(x)\), the set \(U\cap f^{-1}(y)\) consists of exactly \(k\)
 distinct unramified preimages.
-\depends{Mathlib's \texttt{AnalyticAt.analyticOrderAt\_eq\_natCast}
-gives the local form \(f(t)=t^k\cdot g(t)\) with \(g(0)\ne 0\); a
-holomorphic \(k\)-th root of \(g\) flattens this to \(s\mapsto s^k\),
+\depends{Sub-sub-leaves: \texttt{lem:chart-local-pow-mul} (C1, local
+power-series form) and \texttt{lem:analytic-kth-root} (C2,
+holomorphic \(k\)-th root); assembly is the substitution
+\(s=(t-z_0)\cdot h(t)\) flattening the local form to \(s\mapsto s^k\),
 which has exactly \(k\) simple preimages of any nonzero target.}
 \lean{JacobianChallenge.Blueprint.IsHolomorphicAt.exists_local_kfold_of_ramified}
 \notready
@@ -677,19 +758,46 @@ exactly \(k\) simple preimages of any nonzero point. Transport back
 through charts.
 \end{proofsketch}
 
+\begin{lemma}[Properness of fibre below an open neighborhood]
+\label{lem:proper-fiber-shrink}
+For a continuous map \(f\) from a compact source to a Hausdorff
+target, and any open \(U\) containing \(f^{-1}(y_0)\), there is a
+neighborhood \(V\) of \(y_0\) such that for every \(y\in V\),
+\(f^{-1}(y)\subseteq U\).
+\depends{\(U^c\) is closed-in-compact ⇒ compact; image \(f(U^c)\) is
+compact ⇒ closed in \(T_2\); \(y_0\notin f(U^c)\); take
+\(V:=f(U^c)^c\).}
+\lean{JacobianChallenge.Blueprint.eventually_fiber_subset_of_compact_T2}
+\notready
+\end{lemma}
+
+\begin{lemma}[Weighted fibre count locally constant at a single point]
+\label{lem:weighted-fiber-eventually-eq}
+\uses{lem:local-inj-unramified, lem:local-kfold-ramified, lem:proper-fiber-shrink}
+At every \(y_0\in Y\), there is a neighborhood \(V\ni y_0\) on which
+the weighted fibre sum is constant equal to its value at \(y_0\).
+\depends{Choose pairwise-disjoint open nbhds \(U_x\) around each
+\(x\in f^{-1}(y_0)\) (T2 + finite); shrink each \(U_x\) so that
+either \texttt{lem:local-inj-unramified} (if \(e_x=1\)) or
+\texttt{lem:local-kfold-ramified} (if \(e_x\ge 2\)) applies, with an
+associated \(V_x\); intersect with the neighborhood from
+\texttt{lem:proper-fiber-shrink} to ensure all preimages of nearby
+\(y\) lie in \(\bigcup U_x\); sum contributions.}
+\lean{JacobianChallenge.Blueprint.weightedFiberSum_eventually_eq}
+\notready
+\end{lemma}
+
 \begin{lemma}[Weighted fibre count is locally constant]
 \label{lem:weighted-fiber-locally-constant}
-\uses{lem:branch-locus-finite, lem:local-inj-unramified, lem:local-kfold-ramified}
+\uses{lem:weighted-fiber-eventually-eq}
 For a nonconstant holomorphic \(f:X\to Y\) between a compact
 preconnected complex \(1\)-manifold and a Hausdorff complex
 \(1\)-manifold, the weighted fibre sum
 \(y\mapsto\sum_{p\in f^{-1}(y)}e_p(f)\) is locally constant on \(Y\).
-\depends{Combine the local-injectivity lemma at unramified preimages
-(contribution \(1\) each) with the local \(k\)-fold structure at
-ramified preimages (\(k\) simple preimages contributing \(1\) each, or
-the single ramified preimage of weight \(k\), depending on the target
-point); the disjoint-union choice uses \texttt{T2Space} on \(X\) and
-finiteness of the fibre.}
+\depends{Direct corollary of
+\texttt{lem:weighted-fiber-eventually-eq} (which holds at every
+\(y_0\)) plus
+\texttt{IsLocallyConstant.iff\_eventuallyEq} from Mathlib.}
 \lean{JacobianChallenge.Blueprint.isHolomorphic_weightedFiberSum_isLocallyConstant}
 \notready
 \end{lemma}
