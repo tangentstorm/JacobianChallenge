@@ -125,12 +125,25 @@ theorem existsHomeoToPolygon4g
   obtain ⟨homeo⟩ := polygonalQuotientPresentation_to_homeo g' M q hcts hsurj hker
   exact ⟨g', ⟨homeo.symm⟩⟩
 
+/-- **Stage A2 sub-leaf (rank of singular `H₁` of the polygon).**
+The first singular homology of the standard fundamental polygon has
+ℤ-rank `2g`. Bottom-up: cellular `H₁` computation on the CW structure
+with one vertex, `2g` edges, and one 2-cell whose attaching word is
+`∏ [aᵢ,bᵢ]` (commutators vanish in the abelianized chain). -/
+theorem singularH1_polygon4g_finrank (g : ℕ) :
+    Module.finrank ℤ (singularH1 (Polygon4g g)) = 2 * g := by
+  sorry
+
 /-- **Stage A2 leaf (polygon genus).** The topological genus of the
-standard fundamental polygon `Polygon4g g` equals `g`. Concretely,
-`H₁(Polygon4g g, ℤ)` has rank `2g`. -/
+standard fundamental polygon `Polygon4g g` equals `g`.
+
+Body: unfold `topologicalGenus`, rewrite through
+`singularH1_polygon4g_finrank`, divide by 2. -/
 theorem topologicalGenus_polygon4g (g : ℕ) :
     topologicalGenus (Polygon4g g) = g := by
-  sorry
+  unfold topologicalGenus
+  rw [singularH1_polygon4g_finrank g,
+      Nat.mul_div_cancel_left _ (by norm_num : (0 : ℕ) < 2)]
 
 /-- **Stage A3 leaf (homeomorphism invariance of `topologicalGenus`).**
 A topological homeomorphism between compact connected spaces preserves
