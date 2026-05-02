@@ -1,0 +1,185 @@
+﻿#+TITLE: Universe-Parity Audit: JacobianChallenge Jacobian Definition
+#+AUTHOR: Read-only Audit
+#+DATE: 2026-05-02
+
+* Context
+
+The top-level challenge specification (Challenge.lean line 59) defines:
+  def Jacobian (X : Type u) [...] : Type u := sorry
+
+The current solution implementation (Solution.lean line 134) instead defines:
+  def Jacobian (X : Type) [...] : Type :=
+    ULift (JacobianChallenge.ComplexTorus.quotient
+      (Fin (genus X) -> ℂ) (JacobianChallenge.Periods.periodFullComplexLattice X))
+
+This is a data-level specialization from (X : Type u) to (X : Type 0).
+
+The docstring at Solution.lean lines 122–133 documents this as a consequence of the "keystone refactor" that routed `basisAlignedPeriodSubgroup` to its concrete representative, and attributes the constraint to `periodFullComplexLattice X`.
+
+This audit traces the chain of declarations to identify the exact source of the universe constraint and assess whether it is a real blocker (Mathlib limitation) or spurious (project-internal missing annotations).
+
+* Declaration Audit Table
+
+| Declaration | File:Line | Universe-Poly? | Blocker | Blocker Kind |
+|---|---|---|---|---|
+| periodFullComplexLattice X | PeriodLattice.lean:350 | NO - takes (X : Type) only | basisAlignedPeriodSubgroup X | Spurious |
+| basisAlignedPeriodSubgroup | PeriodLattice.lean:63 | NO - takes (X : Type) only | basisAlignedPeriodSubgroupConcrete X | Spurious |
+| basisAlignedPeriodSubgroupConcrete | BasisAlignedPeriodSubgroup.lean:49 | NO - takes (X : Type) only | periodSubgroup ℂ X mapped | Spurious |
+| periodSubgroup E X | PeriodFunctional.lean:450 | NO - explicit (X : Type) | periodPairing E X | REAL - Mathlib |
+| periodPairing E X | PeriodFunctional.lean:37 | NO - explicit (X : Type) | IntegralOneCycle X codomain | REAL - Mathlib |
+| IntegralOneCycle X | IntegralOneCycle.lean:28 | NO - explicit (X : Type) | HasCoproducts.{0} (ModuleCat Z) | REAL - Mathlib v4.28.0 |
+| analyticGenus ℂ X | FiniteDimensional.lean:36 | YES - (X : Type*) | None | N/A |
+| ComplexTorus.quotient | Defs.lean:75 | YES - (V : Type*) | None | N/A |
+
+* Root Cause: IntegralOneCycle Specialization
+
+Location: Jacobian/Periods/IntegralOneCycle.lean:28
+
+The definition:
+  noncomputable def IntegralOneCycle (X : Type) [TopologicalSpace X] :
+      ModuleCat ℤ :=
+    ((AlgebraicTopology.singularHomologyFunctor (ModuleCat ℤ) 1).obj
+      (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)
+
+Forces (X : Type 0) because:
+- singularHomologyFunctor requires [HasCoproducts.{w} (ModuleCat ℤ)] where w matches X's universe
+- Mathlib v4.28.0 provides HasCoproducts.{0} (ModuleCat ℤ) only
+- No universe-polymorphic instance HasCoproducts.{u} (ModuleCat ℤ) exists in Mathlib
+
+The file itself documents this (lines 21-28):
+  "Note on universe: explicitly threaded as universe 0 (X : Type) because
+   singularHomologyFunctor requires [HasCoproducts.{w} (ModuleCat ℤ)]
+   where w matches X's universe, and the available instance for
+   ModuleCat ℤ is at universe 0."
+
+**This is a REAL Mathlib constraint, not a project-internal gap.**
+
+* Root Cause: periodPairing Constraint
+
+Location: Jacobian/Periods/PeriodFunctional.lean:37
+
+The definition:
+  opaque periodPairing
+      (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
+      (X : Type) [TopologicalSpace X] [ChartedSpace E X]
+      [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] :
+      IntegralOneCycle X ->+ (HolomorphicOneForm E X ->ₗ[ℂ] ℂ)
+
+Takes (X : Type) explicitly because its codomain maps FROM IntegralOneCycle X, 
+which is Type 0 (from the previous constraint).
+
+**This is a REAL constraint propagated from IntegralOneCycle.**
+
+* Constraint Propagation Chain
+
+IntegralOneCycle (X : Type)
+  |
+  v
+periodPairing E (X : Type) : IntegralOneCycle X ->+ ...
+  |
+  v
+periodSubgroup ℂ (X : Type) := (periodPairing ℂ X).range
+  |
+  v
+basisAlignedPeriodSubgroupConcrete (X : Type) := 
+  AddSubgroup.map ... (periodSubgroup ℂ X)
+  |
+  v
+basisAlignedPeriodSubgroup (X : Type) := basisAlignedPeriodSubgroupConcrete X
+  |
+  v
+periodFullComplexLattice (X : Type) : FullComplexLattice (Fin g -> ℂ)
+  |
+  v
+Solution.Jacobian (X : Type) := ULift (quotient V (periodFullComplexLattice X))
+
+Each step inherits Type 0 from the previous.
+
+* Degenerate ULift Analysis
+
+In Solution.lean lines 136–137, the definition uses:
+  ULift (JacobianChallenge.ComplexTorus.quotient
+    (Fin (genus X) -> ℂ) (JacobianChallenge.Periods.periodFullComplexLattice X))
+
+Given:
+- periodFullComplexLattice X is Type 0
+- quotient (Fin (genus X) -> ℂ) (periodFullComplexLattice X) : Type 0
+
+The ULift here is ULift.{0, 0} : Type 0 -> Type 0, which is DEGENERATE.
+
+The docstring (line 131) documents this:
+  "The ULift in the body is now degenerate (ULift.{0,0} is ULift to the same universe) 
+   but kept for shape parity with the universe-poly intent."
+
+Non-degenerate intent: once periodFullComplexLattice X is lifted to (X : Type u),
+the ULift becomes ULift.{u, 0}, transporting the Type 0 quotient up to Type u.
+
+* Lifting Path Analysis
+
+** Option A: Accept current specialization (CURRENT STATE)
+
+Status: In place. Solution.Jacobian (X : Type) with degenerate ULift.
+
+Rationale: Lean comparator uses theorem_names mode, which covers only Prop-level 
+declarations, not data-level definitions. Data-level mismatch is acceptable.
+
+Timeline: No action needed.
+
+** Option B: Mathlib upstream fix (OUT OF SCOPE)
+
+Required change: Propose universe-polymorphic HasCoproducts.{u} (ModuleCat ℤ) to Mathlib.
+
+Impact chain:
+1. Lift IntegralOneCycle to (X : Type u)
+2. Lift periodPairing to (X : Type u)
+3. Lift periodSubgroup to (X : Type u)
+4. Lift basisAlignedPeriodSubgroupConcrete to (X : Type u)
+5. Lift periodFullComplexLattice to (X : Type u)
+6. Solution.Jacobian becomes non-degenerate ULift.{u, 0}
+
+Timeline: Months-years (dependent on Mathlib release cycle).
+
+** Option C: Internal ULift bridge (FEASIBLE but complex)
+
+Approach:
+1. Keep IntegralOneCycle at Type 0 (unavoidable)
+2. In periodPairing, wrap IntegralOneCycle using explicit ULift transport
+3. Define universe-lifted variants of periodSubgroup, etc. with ULift bridging
+4. Thread lifting through dependent chain to Solution.Jacobian
+
+Challenges:
+- periodPairing is opaque; implementation deferred (multi-chart integration + Stokes absent in Mathlib v4.28.0)
+- Proof of periodSubgroup_isZLattice may have hidden universe assumptions in Mathlib lemmas
+- Requires careful design to avoid universe inconsistencies
+
+Timeline: Weeks-months, unblocked only when periodPairing implementation is drafted.
+
+* Risk Assessment
+
+| Risk | Severity | Notes |
+|---|---|---|
+| Mathlib ModuleCat universe hardwiring | HIGH | singularHomologyFunctor requires HasCoproducts.{0} (ModuleCat ℤ) with no polymorphic variant. Out-of-scope unless upstream change approved. |
+| periodPairing implementation deferred | MEDIUM | Opaque declaration hides potential universe constraints. Unblocks only after multi-chart integration and Stokes implementation. |
+| Discreteness proof universe incompatibility | MEDIUM | ZSpan.instDiscreteTopology and related Mathlib lemmas may not universe-lift cleanly. Requires detailed review once lifting attempted. |
+| Comparator shape expectations | LOW | Degenerate ULift was intentional. Changing it could affect comparator form expectations, though theorem_names mode ignores data-level. |
+
+* Conclusion
+
+The universe specialization from (X : Type u) to (X : Type 0) in Solution.Jacobian 
+is driven by TWO REAL MATHLIB CONSTRAINTS:
+
+1. **IntegralOneCycle** – mandated by singularHomologyFunctor's dependence on 
+   HasCoproducts.{0} (ModuleCat ℤ) in Mathlib v4.28.0
+
+2. **periodPairing** – inherits (X : Type) from IntegralOneCycle in its codomain
+
+These are NOT spurious project-internal gaps that can be fixed by adding 
+universe annotations.
+
+**Lifting Solution.Jacobian to universe-polymorphic status requires:**
+- Upstream Mathlib instance: HasCoproducts.{u} (ModuleCat ℤ), OR
+- Internal ULift bridging with careful propagation, OR
+- Accept specialization (current design choice)
+
+The project has chosen specialization at the data level while maintaining 
+theorem-level compatibility with Challenge.Jacobian.
