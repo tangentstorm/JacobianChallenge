@@ -337,17 +337,20 @@ Decomposition:
   * D4 `isHolomorphic_weightedFiberSum_isLocallyConstant` —
     assembly: D3 holding at every `y₀` is exactly local-constancy. -/
 
-/-- **D1 (likely already in Mathlib).** Pairwise-disjoint open
+/-
+**D1 (likely already in Mathlib).** Pairwise-disjoint open
 neighborhoods of a finite set of points in a `T2Space`.  Stated here
 as a sub-leaf placeholder; the actual proof should `exact` Mathlib's
-`Set.Finite.exists_disjoint_iUnion_open` or similar. -/
+`Set.Finite.exists_disjoint_iUnion_open` or similar.
+-/
 theorem Set.Finite.exists_pairwiseDisjoint_open_nbhds
     {X : Type*} [TopologicalSpace X] [T2Space X]
     {s : Set X} (_hs : s.Finite) :
     ∃ U : X → Set X,
       (∀ x ∈ s, IsOpen (U x) ∧ x ∈ U x) ∧
       Set.Pairwise s (fun x y => Disjoint (U x) (U y)) := by
-  sorry
+  obtain ⟨U, hU⟩ := Set.Finite.t2_separation _hs;
+  exact ⟨ U, fun x hx => ⟨ hU.1 x |>.2, hU.1 x |>.1 ⟩, hU.2 ⟩
 
 /-- **D2 (sorry).** Properness on a compact source: for any open `U`
 containing the fibre `f⁻¹ {y₀}`, there is a neighborhood `V` of `y₀`
@@ -364,7 +367,11 @@ theorem eventually_fiber_subset_of_compact_T2
     {f : X → Y} (_hf_cont : Continuous f) {y₀ : Y} {U : Set X}
     (_hU_open : IsOpen U) (_hU_fibre : f ⁻¹' {y₀} ⊆ U) :
     ∀ᶠ y in 𝓝 y₀, f ⁻¹' {y} ⊆ U := by
-  sorry
+  have h_compact : IsCompact (f '' (Uᶜ)) := by
+    exact IsCompact.image (isClosed_compl_iff.mpr _hU_open |> IsClosed.isCompact) _hf_cont
+  have := h_compact.isClosed.isOpen_compl.mem_nhds
+    (show y₀ ∉ f '' Uᶜ from fun ⟨x, hx, hy⟩ => hx <| _hU_fibre <| hy ▸ rfl)
+  filter_upwards [this] with y hy using fun x hx => Classical.not_not.1 fun hx' => hy ⟨x, hx', hx⟩
 
 /-- **D3 (sorry).** Local conservation at a single base point.
 Combining D1, D2, sub-leaf B (at unramified preimages) and sub-leaf C

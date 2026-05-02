@@ -39,10 +39,9 @@ theorem complexEquivReal2_apply (z : ℂ) :
 /-- The real charted-space structure on `ℂ` obtained from
 `complexEquivReal2`, equivalently from `Complex.equivRealProd` followed by the
 standard identification of `ℝ × ℝ` with `ℝ²`. -/
-def complexChartedSpaceReal2 : ChartedSpace (EuclideanSpace ℝ (Fin 2)) ℂ := by
-  -- This is the singleton atlas whose only chart is
-  -- `complexEquivReal2.toHomeomorph.toOpenPartialHomeomorph`.
-  sorry
+def complexChartedSpaceReal2 : ChartedSpace (EuclideanSpace ℝ (Fin 2)) ℂ :=
+  complexEquivReal2.toHomeomorph.toOpenPartialHomeomorph.singletonChartedSpace
+    (by simp [Homeomorph.toOpenPartialHomeomorph])
 
 /-- Bundled real 2-manifold structure on a complex 1-manifold:
 both the `ChartedSpace` witness and the smoothness proof, packaged so
