@@ -2,6 +2,36 @@
 #+AUTHOR: Read-only Audit
 #+DATE: 2026-05-02
 
+* CORRECTION (2026-05-02, post-tractability investigation)
+
+The "Real – Mathlib v4.28.0 gap" classification on `IntegralOneCycle` /
+`HasCoproducts.{0} (ModuleCat ℤ)` in this audit's main table is **wrong**.
+
+A follow-up read-only investigation (see
+~ref/plans/mathlib-hascoproducts-report.org~) found that Mathlib v4.28.0
+already ships universe-polymorphic `HasCoproducts.{u} (ModuleCat.{u} ℤ)`
+via `Mathlib/Algebra/Category/Grp/Colimits.lean:270` plus the
+`ModuleCat`-side transport at `Mathlib/Algebra/Category/ModuleCat/Colimits.lean:115`.
+Empirically verified by a scratch `inferInstance` test (since deleted)
+against the pinned commit.
+
+The real obstruction in `Jacobian/Periods/IntegralOneCycle.lean:28` is
+local: the *coefficient module* `ModuleCat.of ℤ ℤ` lives in
+`ModuleCat.{0} ℤ` because `ℤ : Type 0`. Lifting `(X : Type u)` requires
+replacing it with `ModuleCat.of ℤ (ULift.{u} ℤ)` (or another `u`-small
+ℤ-module). That's a mechanical project-internal refactor — no Mathlib
+PR needed.
+
+Treat the "REAL – Mathlib" rows in the table below as legacy. The table
+is otherwise still correct on the propagation chain, so it remains
+useful as a roadmap for *which* declarations need universe threading
+once the IntegralOneCycle coefficient is lifted. The "Risk Assessment"
+section's secondary concerns (ZLattice / discreteness lemma universe
+behavior) remain valid and need attention during the actual refactor.
+
+The roadmap (`ref/plans/roadmap.org` W2) has been updated to reflect
+the new path.
+
 * Context
 
 The top-level challenge specification (Challenge.lean line 59) defines:
