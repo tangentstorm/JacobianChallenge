@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.SerreDualityRS
+import Jacobian.HolomorphicForms.Serre.H1CanonicalIso
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Mathlib.LinearAlgebra.Dimension.Finrank
 
@@ -83,7 +84,12 @@ theorem h1_dualizing_sheaf_one_dim
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
     Module.finrank ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1) = 1 := by
-  sorry
+  -- Round 19 refinement: the canonical iso `h1Canonical_isoToC X`
+  -- (round 5 / round 15 named obligation) lets us transport the
+  -- finrank computation along a `LinearEquiv`. `finrank ℂ ℂ = 1`,
+  -- so `finrank ℂ (H¹(X, K_X)) = 1`.
+  rw [LinearEquiv.finrank_eq (h1Canonical_isoToC X)]
+  exact Module.finrank_self ℂ
 
 /-- Finite-dimensionality corollary: `H¹(X, K_X)` is finite-
 dimensional over `ℂ`, with `finrank` equal to `1`. Sorry-free given

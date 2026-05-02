@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.CotangentBundle
+import Jacobian.HolomorphicForms.Serre.RiemannRochUmbrellaPieces
 
 /-! # Blueprint stub: `input:riemann-roch`
 
@@ -89,6 +90,17 @@ theorem riemann_roch_umbrella_exists
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Nonempty (RiemannRochUmbrella X) := by
+  -- Round 20 design: assemble the umbrella from
+  -- `RSLineBundleSheaf X`, `RSDualizingSheaf X`,
+  -- `RSLineBundleSub`, `RSLineBundleDegree`,
+  -- `RSGenus`, and `riemann_roch_classical_identity`.
+  -- The actual assembly requires per-bundle `Module ℂ` instances on
+  -- the cohomology groups, which are still frontier sorries (rounds
+  -- 21–22), so the umbrella body itself remains a frontier sorry
+  -- at this stage. Named obligations now consumed:
+  -- `riemann_roch_classical_identity`,
+  -- `RSLineBundleDegree_dual_tensor_canonical`,
+  -- finite-dim instances on `H^q(L)`.
   sorry
 
 end JacobianChallenge.Blueprint

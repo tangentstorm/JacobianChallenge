@@ -46,7 +46,7 @@ theorem RSGenus_eq_h0_KX
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf.{_, 0} X) 0)] :
+    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)] :
     RSGenus X = cohomologicalGenusH0KX X := by
   rw [RSGenus_eq_analyticGenus X, analyticGenus_eq_cohomological_genus_h0_KX X]
 
@@ -59,9 +59,9 @@ theorem RSGenus_eq_finrank_h0_KX
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf.{_, 0} X) 0)] :
+    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)] :
     RSGenus X
-      = Module.finrank ℂ (RSSheafCohomology X (RSDualizingSheaf.{_, 0} X) 0) := by
+      = Module.finrank ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0) := by
   rw [RSGenus_eq_h0_KX X]
   rfl
 
