@@ -290,10 +290,18 @@ instance diskC_contractibleSpace : ContractibleSpace DiskC :=
 
 /-- **Genus-zero contractibility instance.** `Polygon4g 0` inherits
 contractibility from `DiskC` along the homeomorphism
-`polygon4g_zero_homeo_diskC`. -/
-theorem polygon4g_zero_contractibleSpace : ContractibleSpace (Polygon4g 0) := by
+`polygon4g_zero_homeo_diskC`. Promoted to a top-level instance so
+downstream code can `[ContractibleSpace (Polygon4g 0)]` -infer
+without explicit setup. -/
+instance polygon4g_zero_contractibleSpace : ContractibleSpace (Polygon4g 0) := by
   obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
   exact h.contractibleSpace
+
+-- The natural follow-up corollary `Subsingleton (singularH1 (Polygon4g 0))`
+-- can't be stated here (forward reference to
+-- `singularH1_subsingleton_of_contractibleSpace`). It is exposed below
+-- via `polygon4g_zero_singularH1_subsingleton` once the contractibility
+-- chain is in scope.
 
 /-- `Unit` is totally disconnected (it is subsingleton, so its
 connected components are singletons). Local instance — not declared
@@ -349,6 +357,14 @@ theorem singularH1_subsingleton_of_contractibleSpace
     Subsingleton (singularH1 X) := by
   obtain ⟨h⟩ := ContractibleSpace.hequiv_unit X
   exact singularH1_subsingleton_of_homotopyEquivUnit h
+
+/-- **Genus-zero singular `H₁` is subsingleton (instance).** Direct
+corollary of `polygon4g_zero_contractibleSpace` (Round 20) and
+`singularH1_subsingleton_of_contractibleSpace` (Round 19), now wired
+as a top-level instance for downstream typeclass inference. -/
+instance polygon4g_zero_singularH1_subsingleton :
+    Subsingleton (singularH1 (Polygon4g 0)) :=
+  singularH1_subsingleton_of_contractibleSpace
 
 /-- **Sub-sub-sub-leaf (singular H₁ of the disk is subsingleton).**
 Body: `DiskC` is `ContractibleSpace` (real proof, instance above) and
@@ -439,9 +455,6 @@ theorem polygon4g_singularH1_basis (g : ℕ) :
       (singularH1 (Polygon4g g))) := by
   cases g with
   | zero =>
-    haveI : Subsingleton (singularH1 (Polygon4g 0)) := by
-      haveI := polygon4g_zero_contractibleSpace
-      exact singularH1_subsingleton_of_contractibleSpace
     haveI : IsEmpty (Fin (2 * 0)) := by simpa using Fin.isEmpty
     exact ⟨Module.Basis.empty _⟩
   | succ g => exact polygon4g_succ_singularH1_basis g
