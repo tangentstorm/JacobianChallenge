@@ -160,6 +160,79 @@ theorem isOpen_setOf_mapAnalyticOrderAt_eq_one
     simp_all +decide [ analyticOrderNatAt ];
   · exact IsOpen.inter ( IsOpen.inter hU_open ( chartAt ℂ x |>.open_source ) ) ( _hf.continuous.isOpen_preimage _ ( chartAt ℂ ( f x ) |>.open_source ) )
 
+/-
+Helper A3a: if `f` is holomorphic and non-constant, then
+`deriv (chartLocalAt f x)` is not identically zero near `chartAt ℂ x x`.
+-/
+private theorem chartLocalAt_deriv_not_eventually_zero
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    [PreconnectedSpace X] [T2Space Y]
+    {f : X → Y} (_hf : IsHolomorphic f)
+    (_hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) (x : X) :
+    ¬ (∀ᶠ z in 𝓝 (chartAt ℂ x x), deriv (chartLocalAt f x) z = 0) := by
+  contrapose! _hnonconst; (have := _hf.holomorphicAt x; (
+  have h_const : ∀ᶠ z in 𝓝 (chartAt ℂ x x), chartLocalAt f x z = chartLocalAt f x (chartAt ℂ x x) := by
+    have h_const : analyticOrderAt (fun z => chartLocalAt f x z - chartLocalAt f x (chartAt ℂ x x)) (chartAt ℂ x x) = ⊤ := by
+      have h_const : analyticOrderAt (deriv (chartLocalAt f x)) (chartAt ℂ x x) = ⊤ := by
+        exact analyticOrderAt_eq_top.mpr _hnonconst
+      have h_const : AnalyticAt ℂ (chartLocalAt f x) (chartAt ℂ x x) := by
+        exact this;
+      have := AnalyticAt.analyticOrderAt_deriv_add_one h_const; aesop;
+    rw [ analyticOrderAt_eq_top ] at h_const;
+    simpa only [ sub_eq_zero ] using h_const;
+  have h_eq : ∀ᶠ x' in 𝓝 x, f x' = f x := by
+    have h_eq : ∀ᶠ x' in 𝓝 x, x' ∈ (chartAt ℂ x).source ∧ chartAt ℂ (f x) (f x') = chartAt ℂ (f x) (f x) := by
+      have h_eq : ∀ᶠ x' in 𝓝 x, x' ∈ (chartAt ℂ x).source ∧ chartLocalAt f x (chartAt ℂ x x') = chartLocalAt f x (chartAt ℂ x x) := by
+        have h_eq : ∀ᶠ x' in 𝓝 x, x' ∈ (chartAt ℂ x).source := by
+          exact IsOpen.mem_nhds ( chartAt ℂ x |>.open_source ) ( by simp +decide );
+        have h_eq : Filter.Tendsto (fun x' => chartAt ℂ x x') (𝓝 x) (𝓝 (chartAt ℂ x x)) := by
+          exact ContinuousAt.comp ( show ContinuousAt ( fun x' => ( chartAt ℂ x ) x' ) x from by exact ( chartAt ℂ x ).continuousAt ( by aesop ) ) ( continuousAt_id );
+        exact Filter.Eventually.and ‹_› ( h_eq.eventually h_const );
+      convert h_eq using 1;
+      ext; simp [chartLocalAt];
+      intro hx; rw [ ( chartAt ℂ x ).left_inv hx ] ;
+    filter_upwards [ h_eq, _hf.continuous.continuousAt.preimage_mem_nhds ( show { y | y ∈ ( chartAt ℂ ( f x ) ).source } ∈ 𝓝 ( f x ) from ( chartAt ℂ ( f x ) ).open_source.mem_nhds ( by simp +decide ) ) ] with x' hx' hx'' using by have := ( chartAt ℂ ( f x ) ).injOn ( show f x' ∈ ( chartAt ℂ ( f x ) ).source from hx'' ) ( show f x ∈ ( chartAt ℂ ( f x ) ).source from by simp +decide ) ; aesop;
+  exact ⟨ f x, fun x' => _hf.eq_const_of_eventuallyEq h_eq x' ⟩))
+
+/-
+Helper A3b: pulling a punctured-nhds property through a chart.
+-/
+private theorem eventually_nhdsNE_chart_pullback
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {x : X} {P : ℂ → Prop}
+    (hP : ∀ᶠ z in 𝓝[≠] (chartAt ℂ x x), P z) :
+    ∀ᶠ x' in 𝓝[≠] x, x' ∈ (chartAt ℂ x).source ∧ P (chartAt ℂ x x') := by
+  simp_all +decide [ eventually_nhdsWithin_iff ];
+  rw [ Filter.eventually_iff_exists_mem ] at *;
+  rcases hP with ⟨ v, hv, hv' ⟩;
+  refine' ⟨ ( chartAt ℂ x ).source ∩ ( chartAt ℂ x ) ⁻¹' v, _, _ ⟩;
+  · exact Filter.inter_mem ( ( chartAt ℂ x ).open_source.mem_nhds ( by simp +decide ) ) ( ( chartAt ℂ x ).continuousAt ( by simp +decide ) ( by simpa using hv ) );
+  · exact fun y hy hyx => ⟨ hy.1, hv' _ hy.2 ( by contrapose! hyx; have := ( chartAt ℂ x ).injOn hy.1 ( by aesop : x ∈ ( chartAt ℂ x ).source ) ; aesop ) ⟩
+
+/-
+Helper A3c: at a chart-source point with chart-local deriv nonzero,
+the manifold-level order = 1.
+-/
+private theorem order_eq_one_of_deriv_ne_zero_at_chart
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    {f : X → Y} (_hf : IsHolomorphic f) {x x' : X}
+    (hx' : x' ∈ (chartAt ℂ x).source)
+    (hfx' : f x' ∈ (chartAt ℂ (f x)).source)
+    (han : AnalyticAt ℂ (chartLocalAt f x) (chartAt ℂ x x'))
+    (hd : deriv (chartLocalAt f x) (chartAt ℂ x x') ≠ 0) :
+    mapAnalyticOrderAt f x' = 1 := by
+  rw [ ← mapAnalyticOrderAt_eq_of_mem_maximalAtlas ];
+  any_goals assumption;
+  · have := han.analyticOrderAt_sub_eq_one_of_deriv_ne_zero hd;
+    unfold analyticOrderNatAt;
+    unfold chartLocalAt at this; aesop;
+  · exact IsManifold.chart_mem_maximalAtlas x
+  · exact IsManifold.chart_mem_maximalAtlas (f x)
+
 /-- **A3 (sorry).** Every ramified point is isolated in the ramified
 set: at a point `x` with order ≠ 1, there's a neighborhood `U` of `x`
 such that every other point in `U` is unramified.
@@ -181,7 +254,30 @@ theorem mapAnalyticOrderAt_isolated_at_ramified
     (_hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) {x : X}
     (_hramx : mapAnalyticOrderAt f x ≠ 1) :
     ∀ᶠ x' in 𝓝[≠] x, mapAnalyticOrderAt f x' = 1 := by
-  sorry
+  have hf_an : AnalyticAt ℂ (chartLocalAt f x) (chartAt ℂ x x) := _hf.holomorphicAt x
+  have hd_zero : deriv (chartLocalAt f x) (chartAt ℂ x x) = 0 := by
+    by_contra h
+    exact _hramx ((mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero
+      (_hf.holomorphicAt x)).mpr h)
+  have hd_an : AnalyticAt ℂ (deriv (chartLocalAt f x)) (chartAt ℂ x x) := hf_an.deriv
+  have hd_not_ev_zero := chartLocalAt_deriv_not_eventually_zero _hf _hnonconst x
+  have hd_punct : ∀ᶠ z in 𝓝[≠] (chartAt ℂ x x), deriv (chartLocalAt f x) z ≠ 0 := by
+    rcases hd_an.eventually_eq_zero_or_eventually_ne_zero with h | h
+    · exact absurd h hd_not_ev_zero
+    · exact h
+  have han_ev : ∀ᶠ z in 𝓝 (chartAt ℂ x x), AnalyticAt ℂ (chartLocalAt f x) z :=
+    hf_an.eventually_analyticAt
+  have hd_punct' : ∀ᶠ z in 𝓝[≠] (chartAt ℂ x x),
+      AnalyticAt ℂ (chartLocalAt f x) z ∧ deriv (chartLocalAt f x) z ≠ 0 :=
+    Filter.Eventually.and (han_ev.filter_mono nhdsWithin_le_nhds) hd_punct
+  have h_chart_pull := eventually_nhdsNE_chart_pullback (P := fun z =>
+    AnalyticAt ℂ (chartLocalAt f x) z ∧ deriv (chartLocalAt f x) z ≠ 0) hd_punct'
+  have hfx_ev : ∀ᶠ x' in 𝓝[≠] x, f x' ∈ (chartAt ℂ (f x)).source := by
+    exact Filter.Eventually.filter_mono nhdsWithin_le_nhds
+      (_hf.continuous.continuousAt ((chartAt ℂ (f x)).open_source.mem_nhds
+        (mem_chart_source ℂ (f x))))
+  filter_upwards [h_chart_pull, hfx_ev] with x' ⟨hx'_src, han_x', hd_x'⟩ hfx'_src
+  exact order_eq_one_of_deriv_ne_zero_at_chart _hf hx'_src hfx'_src han_x' hd_x'
 
 /-- **A4 = Sub-leaf 1 (sorry).** For a nonconstant holomorphic map
 between compact preconnected complex 1-manifolds, the source-side
@@ -299,7 +395,12 @@ theorem chartLocalAt_eq_pow_mul_of_order
       ∀ᶠ t in 𝓝 (chartAt ℂ x x),
         chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x) =
           (t - chartAt ℂ x x) ^ k * g t := by
-  sorry
+  unfold mapAnalyticOrderAt at _hramx;
+  unfold analyticOrderNatAt at _hramx;
+  have h_analytic : AnalyticAt ℂ (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x)) (chartAt ℂ x x) := by
+    exact _hf.sub analyticAt_const;
+  convert h_analytic.analyticOrderNatAt_eq_iff _ |> fun h => h.mp _hramx;
+  aesop
 
 /-- **C2 (sorry).** Holomorphic `k`-th root of a locally
 non-vanishing analytic function: if `g` is analytic at `z₀` with
