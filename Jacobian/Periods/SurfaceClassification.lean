@@ -163,13 +163,33 @@ theorem polygon4g_zero_homeo_diskC :
       right_inv := fun _ => rfl }
   exact ⟨hf_cts.homeoOfEquivCompactToT2 (f := e)⟩
 
-/-- **Sub-sub-sub-leaf (singular H₁ of the disk vanishes).** The
-closed unit disk `DiskC` is convex (subspace of ℂ), hence
-`ContractibleSpace`, hence its singular `H₁` is zero (homotopy
-invariance of singular homology). -/
+/-- **Frontier leaf (singular `H₁` of the disk is subsingleton).** The
+closed unit disk `DiskC` is convex hence contractible. By homotopy
+invariance of singular homology (a Mathlib gap as of v4.28.0 — the
+`AlgebraicTopology.SingularHomology` directory currently contains only
+`Basic.lean` with `isZero_singularHomologyFunctor_of_totallyDisconnectedSpace`
+and no homotopy-invariance theorem), `singularH1 DiskC` is the zero
+module, in particular subsingleton.
+
+Discharge plan once homotopy invariance lands:
+  * Show `DiskC` is `ContractibleSpace` (Mathlib has
+    `convex_iff_contractibleSpace` style results).
+  * Lift to homotopy equivalence with `Unit`.
+  * Apply functoriality of `singularHomologyFunctor` plus homotopy
+    invariance to transport the vanishing of `H₁(Unit)` (an instance
+    of `isZero_singularHomologyFunctor_of_totallyDisconnectedSpace`)
+    to `H₁(DiskC)`. -/
+theorem singularH1_diskC_subsingleton :
+    Subsingleton (singularH1 DiskC) := by
+  sorry
+
+/-- **Sub-sub-sub-leaf (singular H₁ of the disk vanishes, finrank).**
+Body: subsingleton singular `H₁` ⟹ rank zero by
+`Module.finrank_zero_of_subsingleton`. -/
 theorem singularH1_diskC_finrank_eq_zero :
     Module.finrank ℤ (singularH1 DiskC) = 0 := by
-  sorry
+  haveI := singularH1_diskC_subsingleton
+  exact Module.finrank_zero_of_subsingleton
 
 /-- **Sub-sub-leaf (genus-zero polygon H₁).** `Polygon4g 0` is the
 closed disk (since `SideRel 0` reduces to equality — `SideGen 0` has
