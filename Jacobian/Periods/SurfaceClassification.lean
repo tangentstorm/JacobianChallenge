@@ -255,14 +255,23 @@ theorem polygon4g_zero_contractibleSpace : ContractibleSpace (Polygon4g 0) := by
   obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
   exact h.contractibleSpace
 
-/-- **Sub-sub-leaf (singular `H₁` of `Unit` is subsingleton).** `Unit`
-is totally disconnected, hence by Mathlib's
-`isZero_singularHomologyFunctor_of_totallyDisconnectedSpace` (at
-`n = 1`) the singular `H₁` is the zero `ModuleCat ℤ` object, whence
-subsingleton via `subsingleton_of_isZero`. -/
+/-- `Unit` is totally disconnected (it is subsingleton, so its
+connected components are singletons). Local instance — not declared
+globally because the project doesn't otherwise need it. -/
+private instance unit_totallyDisconnected :
+    TotallyDisconnectedSpace Unit :=
+  ⟨fun _ _ _ => Set.subsingleton_of_subsingleton⟩
+
+/-- **Sub-sub-leaf (singular `H₁` of `Unit` is subsingleton, real proof).**
+`Unit` is totally disconnected, so by Mathlib's
+`isZero_singularHomologyFunctor_of_totallyDisconnectedSpace` at
+`n = 1` the singular `H₁` is the zero `ModuleCat ℤ` object, hence
+subsingleton via `ModuleCat.subsingleton_of_isZero`. -/
 theorem singularH1_unit_subsingleton :
-    Subsingleton (singularH1 Unit) := by
-  sorry
+    Subsingleton (singularH1 Unit) :=
+  ModuleCat.subsingleton_of_isZero <|
+    AlgebraicTopology.isZero_singularHomologyFunctor_of_totallyDisconnectedSpace
+      (ModuleCat.{0} ℤ) 1 (ModuleCat.of ℤ ℤ) (TopCat.of Unit) one_ne_zero
 
 /-- **Frontier leaf (singular `H₁` is invariant under homotopy
 equivalence to `Unit`).** A homotopy equivalence `X ≃ₕ Unit` induces
