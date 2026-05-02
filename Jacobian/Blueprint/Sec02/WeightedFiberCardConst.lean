@@ -70,20 +70,36 @@ open JacobianChallenge.HolomorphicForms.HolomorphicMap
 The next two helpers are used by both sub-leaf A (branch locus
 finite) and sub-leaf B (local injectivity at unramified). -/
 
-/-- **Common helper (sorry).** Order = 1 at `x` is equivalent to
+/-
+**Common helper (sorry).** Order = 1 at `x` is equivalent to
 the chart-local derivative being nonzero at `chartAt ℂ x x`.
 
 This is a direct re-packaging of Mathlib's
 `AnalyticAt.analyticOrderAt_sub_eq_one_of_deriv_ne_zero` plus the
 characterisation `analyticOrderNatAt = 1 ↔ analyticOrderAt = 1` on
-finite-order analytic functions. -/
+finite-order analytic functions.
+-/
 theorem mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} {x : X} (_hf : IsHolomorphicAt f x) :
     mapAnalyticOrderAt f x = 1 ↔ deriv (chartLocalAt f x) (chartAt ℂ x x) ≠ 0 := by
-  sorry
+  constructor <;> intro h;
+  · have h_order : analyticOrderAt (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x)) (chartAt ℂ x x) = 1 := by
+      convert h using 1;
+      unfold mapAnalyticOrderAt;
+      simp +decide [ analyticOrderNatAt ];
+    have h_deriv : analyticOrderAt (deriv (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))) (chartAt ℂ x x) = 0 := by
+      have := AnalyticAt.analyticOrderAt_deriv_add_one ( show AnalyticAt ℂ ( fun t => chartLocalAt f x t - chartLocalAt f x ( chartAt ℂ x x ) ) ( chartAt ℂ x x ) from ?_ );
+      · aesop;
+      · exact _hf.sub ( analyticAt_const );
+    rw [ analyticOrderAt_eq_zero ] at h_deriv;
+    simp_all +decide [ deriv_sub_const ];
+    exact h_deriv.resolve_left fun h => h <| AnalyticAt.deriv _hf;
+  · unfold mapAnalyticOrderAt;
+    rw [ analyticOrderNatAt ];
+    rw [ AnalyticAt.analyticOrderAt_sub_eq_one_of_deriv_ne_zero ] <;> aesop
 
 /-! ### Sub-leaf A: branch locus finite
 
