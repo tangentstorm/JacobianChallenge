@@ -44,6 +44,7 @@ import Jacobian.Blueprint.Sec03.HolomorphicFormIsClosed
 import Jacobian.Blueprint.Sec03.StokesOnRSWithBoundary
 
 -- sec03
+import Jacobian.Blueprint.Sec03.PeriodHomologyInvariance
 import Jacobian.Blueprint.Sec03.SymplecticBasis
 import Jacobian.Blueprint.Sec03.PolygonalModel
 import Jacobian.Blueprint.Sec03.PrimitiveOnPolygon
