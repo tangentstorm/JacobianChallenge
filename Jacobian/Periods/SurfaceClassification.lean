@@ -213,15 +213,38 @@ theorem singularH1_polygon4g_zero_finrank :
   rw [singularH1_finrank_homeo_invariant h]
   exact singularH1_diskC_finrank_eq_zero
 
-/-- **Sub-sub-leaf (genus ≥ 1 polygon H₁).** The first singular
-homology of the standard fundamental `4(g+1)`-gon has ℤ-rank
-`2(g+1)`. Bottom-up: cellular `H₁` computation on the
-one-vertex `2(g+1)`-edge one-2-cell CW structure with attaching word
-`∏ᵢ [aᵢ,bᵢ]` (commutators vanish in the abelianized chain), then
-`H₁(K_g) = ker ∂₁ / im ∂₂ = ℤ^{2(g+1)} / 0`. -/
+/-- **Frontier leaf (genus ≥ 1 polygon H₁ structure).** The first
+singular homology of the standard `4(g+1)`-gon is ℤ-linearly
+isomorphic to the free ℤ-module `Fin (2*(g+1)) → ℤ`.
+
+Bottom-up routes:
+
+* **Cellular route.** CW structure on `Polygon4g (g+1)` with one vertex,
+  `2(g+1)` edges (`a₀,b₀,…,a_g,b_g`), and one 2-cell whose attaching
+  word is `∏ᵢ[aᵢ,bᵢ]`. The cellular boundary `∂₂` sends the 2-cell to
+  the abelianized commutator product, which is zero, so
+  `H₁ = ker ∂₁ / im ∂₂ = ℤ^{2(g+1)} / 0`. Mathlib v4.28.0 lacks
+  cellular homology of CW complexes packaged as a `singularHomology`-
+  comparable module.
+* **Hurewicz route.** `H₁(X, ℤ) ≃ π₁(X)^{ab}` for path-connected `X`,
+  combined with the surface-group abelianization computation. Mathlib
+  v4.28.0 has `FundamentalGroup` but no Hurewicz isomorphism with
+  singular homology. -/
+theorem singularH1_polygon4g_succ_iso_freeZ (g : ℕ) :
+    Nonempty (singularH1 (Polygon4g (g + 1)) ≃ₗ[ℤ] (Fin (2 * (g + 1)) → ℤ)) := by
+  sorry
+
+/-- **Sub-sub-leaf (genus ≥ 1 polygon H₁ rank).** Rank `2(g+1)` for
+the polygon's singular `H₁`.
+
+Body: lift through `singularH1_polygon4g_succ_iso_freeZ` to the free
+ℤ-module `Fin (2*(g+1)) → ℤ`, then compute `Module.finrank` via
+`LinearEquiv.finrank_eq` and `Module.finrank_pi` /
+`Module.finrank_self`. -/
 theorem singularH1_polygon4g_succ_finrank (g : ℕ) :
     Module.finrank ℤ (singularH1 (Polygon4g (g + 1))) = 2 * (g + 1) := by
-  sorry
+  obtain ⟨e⟩ := singularH1_polygon4g_succ_iso_freeZ g
+  rw [e.finrank_eq, Module.finrank_pi, Fintype.card_fin]
 
 /-- **Stage A2 sub-leaf (rank of singular `H₁` of the polygon).**
 The first singular homology of the standard fundamental polygon has
