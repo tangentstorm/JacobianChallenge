@@ -1,5 +1,13 @@
 % Web-only customizations for the Lean Blueprint output.
+%
+% NOTE: the descriptions below feed leanblueprint's auto-generated
+% legend (each becomes "<color> border" / "<color> background"), so
+% they should be plain color names — anything longer reads
+% ungrammatically once it's suffixed with "border".  The actual legend
+% is then *replaced* in post-processing by inject-depgraph-extras.py
+% with a tighter, project-specific version (and a red-border highlight
+% for major classical-analysis-input umbrellas).
 
-\graphcolor{not_ready}{#FFAA33}{Classical input or deferred formalization gap}
-\graphcolor{proved}{#9CEC8B}{Lean declaration exists in the current project}
-\graphcolor{can_prove}{#A3D6FF}{Dependencies are available to prove next}
+\graphcolor{not_ready}{#FFAA33}{Orange}
+\graphcolor{proved}{#9CEC8B}{Light green}
+\graphcolor{can_prove}{#A3D6FF}{Light blue}
