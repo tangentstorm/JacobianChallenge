@@ -17,7 +17,7 @@ DONE: Build Stage B sub-leaf B1: define a smooth real 2-manifold structure on a 
 
 Build Stage B sub-leaf B3: define `topologicalGenus` for a compact connected oriented 2-manifold via singular homology rank. Add a new file Jacobian/Periods/TopologicalGenus.lean with `noncomputable def topologicalGenus (M : Type*) [TopologicalSpace M] [CompactSpace M] [ConnectedSpace M] : ℕ := (Module.finrank ℤ (H_1 M ℤ)) / 2` using Mathlib.AlgebraicTopology.SingularHomology.Basic. Sorry-bound or `noncomputable` placeholder OK if H_1 finrank machinery is partial. ~50 LOC.
 
-Sketch a project-side `Orientable` typeclass: add `Jacobian/Periods/Orientable.lean` with `class Orientable (M : Type*) [TopologicalSpace M] : Prop where existsConsistentChartChoice : True := trivial` as a placeholder that future work will fill in. Document the typeclass in the file's docstring as the analytic-orientability hook for compact 2-manifolds. ~30 LOC.
+DONE: Sketch a project-side `Orientable` typeclass: add `Jacobian/Periods/Orientable.lean` with `class Orientable (M : Type*) [TopologicalSpace M] : Prop where existsConsistentChartChoice : True := trivial` as a placeholder that future work will fill in. Document the typeclass in the file's docstring as the analytic-orientability hook for compact 2-manifolds. ~30 LOC.
 
 # ---------- Stage A: surface classification (the big one) ----------
 # Skipped from this ralph batch — these need their own focused planning round.
