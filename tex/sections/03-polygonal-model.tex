@@ -285,7 +285,13 @@ two-dimensional simplicial complex.
 Riemannschen Fläche}). Mathlib v4.28.0 has neither the
 simplicial-complex side nor the existence theorem; the formalisation
 is a multi-month project in its own right, conventionally treated
-through PL or smooth-triangulation methods.}
+through PL or smooth-triangulation methods. The project carries a
+bottom-up sketch of the classical proof in
+\code{Jacobian/StageA/RadoTheorem.lean} (chart cover, PL
+approximation, combinatorial assembly, ${\sim}150$ LOC of typed
+sorries) backed by the supporting modules
+\code{StageA/SimplicialComplex.lean} and
+\code{StageA/SpanningTree.lean}.}
 \lean{JacobianChallenge.Blueprint.Sec03.rado_triangulation}
 \notready
 \end{theorem}
@@ -322,9 +328,18 @@ Tietze moves), or a Morse-theoretic handle decomposition. Mathlib
 v4.28.0 has none of these as packaged theorems; this is the largest
 classical-topology gap on the polygonal-model route. Tracked
 internally as ``Stage A,'' a roughly 3,000--5,000 LOC formalization
-project in its own right, currently in progress (edge-word algebra
-and Tietze relation are sorry-free; the umbrella reduction theorem
-remains).}
+project in its own right. The project ships a top-down sketch of
+the proof tree under \code{Jacobian/StageA/} (seven files: simplicial
+complexes, Radó, spanning tree, prism operator, Hurewicz, edge-word
+Tietze, cellular--singular comparison; ${\sim}120$ typed declarations,
+all sorry) and a parallel project-side chain in
+\code{Jacobian/Periods/SurfaceClassification.lean} +
+\code{TietzeReduction.lean} + \code{Polygon4gCellular.lean} +
+\code{H1EvenBasisViaSurfaceClassification.lean} that wires the
+classical pieces into the analytic genus equality the rest of the
+blueprint consumes. Edge-word algebra and the Tietze relation are
+sorry-free; the umbrella reduction theorem and the Stage~A bottom-up
+infrastructure remain open.}
 \lean{JacobianChallenge.Blueprint.polygonal_model}
 \notready
 \end{theorem}
@@ -462,8 +477,16 @@ de Rham cohomology \(H^1_{\mathrm{dR}}(X)\), which by de Rham's
 theorem is dual to singular \(H_1(X,\R)\); the integer lattice
 \(H_1(X,\Z)\) is then full of rank \(2g\). Mathlib v4.28.0 has
 neither de Rham cohomology of manifolds, the de Rham theorem, nor
-Hodge decomposition for Riemann surfaces. The project's Lean target
-is currently a sorry-bound assembly through which the
+Hodge decomposition for Riemann surfaces. The project ships a
+bottom-up sketch of the chain under \code{Jacobian/StageB/}
+(\code{DifferentialForms} \(\to\) \code{DeRhamComplex} \(\to\)
+\code{DeRhamComparison} \(\to\) \code{LaplaceBeltrami} \(\to\)
+\code{HarmonicForms} \(\to\) \code{KahlerStructure} \(\to\)
+\code{CoherentSheaves} \(\to\) \code{SerreDuality}; eight files,
+${\sim}960$ LOC, all sorry) plus a top-down refinement under
+\code{Jacobian/Periods/HodgeDeRham.lean} (30 named sub-leaves).
+The project's Lean target is currently a sorry-bound assembly
+through which the
 \(g_{\mathrm{an}}=g_{\mathrm{top}}\) bridge is wired.}
 \lean{JacobianChallenge.Periods.hodge_deRham_rank_eq}
 \notready
@@ -503,7 +526,8 @@ Hodge / de Rham rank computation
 identifies \(X\) topologically with \(\mathrm{Polygon4g}(g)\) of
 known \(H_1\) rank \(2g\), and Hodge / de Rham fixes that rank
 to be \(2 g_{\mathrm{an}}(X)\), so dividing by two gives
-\(g_{\mathrm{top}}(X) = g_{\mathrm{an}}(X)\).}
+\(g_{\mathrm{top}}(X) = g_{\mathrm{an}}(X)\). Project assembly:
+\code{Jacobian/Periods/AnalyticGenusEqTopologicalGenus.lean}.}
 \lean{JacobianChallenge.Periods.analyticGenus_eq_topologicalGenus}
 \notready
 \end{theorem}
