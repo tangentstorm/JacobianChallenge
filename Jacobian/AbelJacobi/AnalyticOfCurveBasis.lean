@@ -230,6 +230,30 @@ theory layer or even a placeholder `Divisor X` / `IsPrincipal d` API
 exists in the project. The docstring already captures the canonical
 proof so future Aristotle/sub-agent jobs can split rather than
 rediscover the structure. -/
+/-- **Abel–Riemann-Hurwitz leaf obligation.** Frontier-helper named-leaf
+extraction (Aristotle c7242a5d). If a compact connected Riemann surface
+of positive analytic genus has two distinct points whose period-congruent
+path integrals differ by a period vector, derive a contradiction.
+
+Classical proof: Abel's existence ⇒ principal divisor of degree 1 ⇒
+Riemann-Hurwitz forces genus 0, contradicting hpos. Mathlib gaps:
+divisor theory + Riemann-Hurwitz (≈8000 lines). -/
+theorem abel_existence_witness
+    (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X)
+    (hpos : 0 < analyticGenus ℂ X) :
+    False := by
+  -- BLOCKER (Aristotle 356a801e, Riemann-Hurwitz, Mathlib v4.28.0): This
+  -- requires the Riemann-Hurwitz formula for branched coverings, which is
+  -- absent from Mathlib. Specifically missing: (1) ramification divisor
+  -- and branched-degree for holomorphic maps between compact Riemann
+  -- surfaces, (2) the Riemann-Hurwitz genus formula
+  -- 2g(X)-2 = deg(f)·(2g(Y)-2) + deg(R), and (3) divisor-class-group /
+  -- Pic⁰(X) infrastructure connecting Abel-Jacobi to principal divisors.
+  sorry
+
 /-- Combined Abel–Riemann-Hurwitz content (TOPDOWN-split via Aristotle 7ceff781):
 if two distinct points have period-congruent path integrals, then
 `analyticGenus ℂ X = 0`.
@@ -255,30 +279,6 @@ holomorphic map to `ℂP¹` forces `X ≅ ℂP¹`, hence `genus(X) = 0`.
 - Riemann-Hurwitz formula / degree theory (≈3 000 lines)
 - Bridge `analyticGenus ↔ topologicalGenus` (Hodge/de Rham, delegated to
   `analyticGenus_eq_topologicalGenus` in `PeriodFunctional.lean`) -/
-/-- **Abel–Riemann-Hurwitz leaf obligation.** Frontier-helper named-leaf
-extraction (Aristotle c7242a5d). If a compact connected Riemann surface
-of positive analytic genus has two distinct points whose period-congruent
-path integrals differ by a period vector, derive a contradiction.
-
-Classical proof: Abel's existence ⇒ principal divisor of degree 1 ⇒
-Riemann-Hurwitz forces genus 0, contradicting hpos. Mathlib gaps:
-divisor theory + Riemann-Hurwitz (≈8000 lines). -/
-theorem abel_existence_witness
-    (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
-    (hperiod :
-      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
-        basisAlignedPeriodSubgroup X)
-    (hpos : 0 < analyticGenus ℂ X) :
-    False := by
-  -- BLOCKER (Aristotle 356a801e, Riemann-Hurwitz, Mathlib v4.28.0): This
-  -- requires the Riemann-Hurwitz formula for branched coverings, which is
-  -- absent from Mathlib. Specifically missing: (1) ramification divisor
-  -- and branched-degree for holomorphic maps between compact Riemann
-  -- surfaces, (2) the Riemann-Hurwitz genus formula
-  -- 2g(X)-2 = deg(f)·(2g(Y)-2) + deg(R), and (3) divisor-class-group /
-  -- Pic⁰(X) infrastructure connecting Abel-Jacobi to principal divisors.
-  sorry
-
 theorem period_congruence_distinct_implies_genus_zero
     (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hperiod :
