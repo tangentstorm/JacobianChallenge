@@ -74,17 +74,50 @@ structure PolygonalQuotientPresentation
   side identification relates `z` and `w`. -/
   kernel : ∀ z w : DiskC, proj z = proj w ↔ Polygon4g.SideRel genus z w
 
+/-- **Opaque placeholder for a finite triangulation of `M`.** Bundles the
+combinatorial data (vertices, edges, 2-simplices, incidence relations,
+realisation map) of a triangulation of a compact connected 2-manifold
+without committing to a specific internal representation. The opaque
+declaration lets the Stage A leaves below name it; a concrete unfolding
+will land when the triangulation infrastructure is built (see
+`ref/plans/polygonal-model.md` Stage A1 sub-leaves). -/
+opaque Triangulation (M : Type) [TopologicalSpace M] : Type
+
+/-- **Stage A1 leaf (Radó).** Every compact 2-manifold admits a finite
+triangulation. Bottom-up content: classical Radó theorem on
+triangulability of compact surfaces (combined with the existence of a
+finite atlas refinement). Mathlib v4.28.0 has neither Radó nor the
+abstract simplicial complex theory required to state it directly. -/
+theorem exists_triangulation_of_compact_2manifold
+    (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    [ConnectedSpace M]
+    [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
+    [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) M] :
+    Nonempty (Triangulation M) := by
+  sorry
+
+/-- **Stage A2 leaf (combinatorial reduction).** Given a triangulation
+of a compact connected orientable smooth real 2-manifold, one can
+extract a polygonal-quotient presentation by walking the dual tree of
+2-simplices, cutting along non-tree edges to unfold the surface into a
+2g-gon, and reducing the resulting edge-pairing word to the standard
+`a₁b₁a₁⁻¹b₁⁻¹⋯` form via Tietze-style moves. -/
+noncomputable def Triangulation.toPolygonalQuotient
+    {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    [ConnectedSpace M]
+    [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
+    [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) M]
+    [Orientable M]
+    (_T : Triangulation M) : PolygonalQuotientPresentation M :=
+  sorry
+
 /-- **Stage A1+A2 leaf (existence of a polygonal-quotient presentation).**
 Every compact connected orientable smooth real 2-manifold admits a
-*polygonal-quotient presentation* in standard `4g'`-gon form: there is
-some `g' : ℕ` and a continuous surjection from the closed unit disk
-onto `M` whose fibres coincide with the side-pairing equivalence
-`Polygon4g.SideRel g'`.
+*polygonal-quotient presentation* in standard `4g'`-gon form.
 
-This is the heart of the surface classification theorem (Radó's
-triangulation + combinatorial reduction to the standard
-`a₁b₁a₁⁻¹b₁⁻¹⋯` edge word). Its discharge is itself a multi-thousand-LOC
-project; see `ref/plans/polygonal-model.md` Stage A. -/
+Body: `exists_triangulation_of_compact_2manifold` + `Triangulation.toPolygonalQuotient`. -/
 theorem existsPolygonalQuotientPresentation
     (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -93,7 +126,8 @@ theorem existsPolygonalQuotientPresentation
       (⊤ : WithTop ℕ∞) M]
     [Orientable M] :
     Nonempty (PolygonalQuotientPresentation M) := by
-  sorry
+  obtain ⟨T⟩ := exists_triangulation_of_compact_2manifold M
+  exact ⟨T.toPolygonalQuotient⟩
 
 namespace PolygonalQuotientPresentation
 
