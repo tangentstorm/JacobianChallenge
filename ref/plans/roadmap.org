@@ -1,0 +1,566 @@
+#+TITLE: Jacobian Challenge — Roadmap to Complete Formalization
+#+STARTUP: overview indent
+#+TODO: TODO(t) BLOCKED(b) IN-PROGRESS(p) | DONE(d)
+#+TAGS: aristotle(a) cloud(c) hand(h) blueprint(b) refactor(r)
+
+* Audit Summary (2026-05-02)
+
+~Jacobian/Solution.lean~ is already skeleton-aligned with
+~Jacobian/Challenge.lean~: 0 top-level sorries, all 24 declarations present
+with real bodies, anti-hack theorems anchored. Remaining work breaks into
+five workstreams below.
+
+Source-of-truth: blueprint .tex (under ~tex/sections/~) + production decls
+(under ~Jacobian/<Layer>/~). ~StatementBank.lean~ is to be retired entirely.
+Solution.lean's ~(X : Type)~ specialisation will be lifted to ~(X : Type u)~
+to match Challenge exactly.
+
+Toggle each ~[ ]~ to ~[X]~ as work lands. Org-mode users can also flip the
+TODO keyword to DONE. Top-level cookies ~[/]~ summarise child progress.
+
+* W1 — Discharge ~30 Production Sorries [/]                      :aristotle:
+
+Closure of ~Solution.lean~'s 8 imports. Each TODO names the file and
+expected decl(s). Most are Aristotle-shaped (file-scoped, one or two named
+sorries each). Group P1/P2/P3 by anti-hack/period/RR-stack ancestry.
+
+** P1 — Anti-Hack Blocking Sorries [/]
+
+*** TODO [#A] [ ] Discharge ~analyticOfCurve_injective~ (AnalyticOfCurveBasis.lean:280) :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean
+:LINE:        280
+:DECL:        JacobianChallenge.AbelJacobi.analyticOfCurve_injective
+:WRITE_SCOPE: file
+:BUILD:       lake build Jacobian.AbelJacobi.AnalyticOfCurveBasis
+:ROUTE:       aristotle (may need cloud-Claude scoping pass first)
+:GATES:       Solution.lean ofCurve_inj (anti-hack #2)
+:END:
+
+The Abel-Jacobi map is injective on positive-genus curves. Bottoms out in
+Abel's separation theorem. Likely needs a multi-step scoping pass (split
+into 3–5 named lemmas) before Aristotle can take it. Prompt the cloud
+Claude Code agent first if Aristotle returns BLOCKER.
+
+#+BEGIN_SRC text
+[ARISTOTLE PROMPT]
+Project: C:\ver\JacobianChallenge (Lean 4 + Mathlib v4.28.0).
+Working dir: C:\ver\JacobianChallenge
+Target file: Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean
+Target decl: analyticOfCurve_injective (line ~280)
+Allowed write scope: this file only.
+Forbidden: Jacobian/Challenge.lean, Jacobian/Solution.lean, anything
+outside Jacobian/AbelJacobi/.
+Forbidden imports: `import Mathlib` (use narrow Mathlib.Topic.Subtopic).
+Build: lake build Jacobian.AbelJacobi.AnalyticOfCurveBasis
+
+Goal: discharge the sorry in analyticOfCurve_injective. The statement is
+that the basis-aligned Abel-Jacobi map is injective when 0 < analyticGenus.
+Use direct tactics (refine, exact, intro, simp, rw); avoid aesop/grind.
+If blocked by missing infrastructure, return BLOCKER with the specific
+declaration that's missing — do NOT introduce axioms.
+#+END_SRC
+
+*** TODO [#A] [ ] Discharge 3 sorries in GenusZeroClassification.lean (lines 442, 494, 886) :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/GenusZeroClassification.lean
+:LINES:       442, 494, 886
+:DECL:        JacobianChallenge.HolomorphicForms.analyticGenus_eq_zero_iff_homeomorphic_sphere (and helpers)
+:WRITE_SCOPE: file
+:BUILD:       lake build Jacobian.HolomorphicForms.GenusZeroClassification
+:ROUTE:       aristotle, one packet per sorry
+:GATES:       Solution.lean genus_eq_zero_iff_homeo (anti-hack #1)
+:END:
+
+Three sorries. Uniformization theorem + smooth-structure identification
+between an analytic-genus-0 compact Riemann surface and the round 2-sphere.
+Submit 3 separate Aristotle packets, one per sorry. If a sorry resists,
+escalate to cloud Claude Code to split into helper lemmas.
+
+- [ ] line 442
+- [ ] line 494
+- [ ] line 886
+
+#+BEGIN_SRC text
+[ARISTOTLE PROMPT — repeat per sorry]
+Project: C:\ver\JacobianChallenge
+Target file: Jacobian/HolomorphicForms/GenusZeroClassification.lean
+Target sorry: line <442 | 494 | 886>
+Allowed write scope: this file only (you may add small private helper
+lemmas above the target decl).
+Forbidden: Jacobian/Challenge.lean, Jacobian/Solution.lean.
+Forbidden imports: `import Mathlib`.
+Build: lake build Jacobian.HolomorphicForms.GenusZeroClassification
+
+Goal: close the named sorry only. Direct tactics; no aesop/grind/simp_all.
+Return BLOCKER + missing-Mathlib-decl name if you can't proceed without
+new infrastructure.
+#+END_SRC
+
+** P2 — Period-Lattice Well-Definedness [/]
+
+*** TODO [#A] [ ] PeriodFunctional.lean — 5 sorries                    :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/Periods/PeriodFunctional.lean
+:DECL:        homology_rank, h1_free, analyticGenus_eq_topologicalGenus, period_vectors_linearIndependent_of_symplectic, (one more)
+:WRITE_SCOPE: file
+:BUILD:       lake build Jacobian.Periods.PeriodFunctional
+:ROUTE:       aristotle (one packet per decl); some may need cloud scoping
+:END:
+
+Underwrites period lattice fullness — gates ~periodFullComplexLattice~,
+which gates Solution.lean's ~Jacobian X~ definition. The
+~analyticGenus_eq_topologicalGenus~ obligation depends on Stage A
+(W1 P4); coordinate.
+
+- [ ] homology_rank
+- [ ] h1_free
+- [ ] analyticGenus_eq_topologicalGenus  (depends on Stage A)
+- [ ] period_vectors_linearIndependent_of_symplectic
+- [ ] (5th sorry — confirm name from current grep)
+
+#+BEGIN_SRC text
+[ARISTOTLE PROMPT TEMPLATE]
+Project: C:\ver\JacobianChallenge
+Target file: Jacobian/Periods/PeriodFunctional.lean
+Target decl: <one of: homology_rank | h1_free | analyticGenus_eq_topologicalGenus | period_vectors_linearIndependent_of_symplectic | <other>>
+Allowed write scope: this file (small private helpers allowed).
+Forbidden: Jacobian/Challenge.lean, Jacobian/Solution.lean.
+Forbidden imports: `import Mathlib`.
+Build: lake build Jacobian.Periods.PeriodFunctional
+
+Goal: discharge the named sorry only. Direct tactics. BLOCKER + missing-decl
+if blocked.
+#+END_SRC
+
+*** TODO [#A] [ ] PullbackNaturality.lean — 2 sorries                   :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/Periods/PullbackNaturality.lean
+:WRITE_SCOPE: file
+:BUILD:       lake build Jacobian.Periods.PullbackNaturality
+:ROUTE:       aristotle, one packet per sorry
+:END:
+
+Supports pullback functoriality on periods. Standard Aristotle packets.
+
+- [ ] sorry #1
+- [ ] sorry #2
+
+** P3 — Riemann-Roch / Serre Duality Stack [/]
+
+Each item is one production file, 1–3 sorries. Submit as a wave to fill
+the Aristotle queue (cap 15 in-flight). All share the same forbidden
+clause and direct-tactic constraint.
+
+*** TODO [#B] [ ] CanonicalDivisor.lean                                 :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/CanonicalDivisor.lean
+:BUILD:       lake build Jacobian.HolomorphicForms.CanonicalDivisor
+:END:
+
+*** TODO [#B] [ ] CompactRiemannSurface.lean — 2 sorries (lines 229, 656) :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/CompactRiemannSurface.lean
+:LINES:       229, 656
+:NOTE:        line 229 is a Montel-compactness sub-step; 656 is a convergence subspecialization
+:BUILD:       lake build Jacobian.HolomorphicForms.CompactRiemannSurface
+:END:
+
+- [ ] line 229
+- [ ] line 656
+
+*** TODO [#B] [ ] EulerCharLineBundle.lean — 3 sorries                  :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/EulerCharLineBundle.lean
+:BUILD:       lake build Jacobian.HolomorphicForms.EulerCharLineBundle
+:END:
+
+*** TODO [#B] [ ] GenusIdentification.lean — 2 sorries                  :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/GenusIdentification.lean
+:BUILD:       lake build Jacobian.HolomorphicForms.GenusIdentification
+:END:
+
+*** TODO [#B] [ ] H1DualizingSheaf.lean                                 :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/H1DualizingSheaf.lean
+:BUILD:       lake build Jacobian.HolomorphicForms.H1DualizingSheaf
+:END:
+
+*** TODO [#B] [ ] MeromorphicDegree.lean — 2 sorries                    :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/MeromorphicDegree.lean
+:BUILD:       lake build Jacobian.HolomorphicForms.MeromorphicDegree
+:END:
+
+*** TODO [#B] [ ] RiemannRoch.lean — 2 sorries                          :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/RiemannRoch.lean
+:BUILD:       lake build Jacobian.HolomorphicForms.RiemannRoch
+:END:
+
+*** TODO [#B] [ ] RiemannRochHighDegree.lean                            :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/RiemannRochHighDegree.lean
+:BUILD:       lake build Jacobian.HolomorphicForms.RiemannRochHighDegree
+:END:
+
+*** TODO [#B] [ ] RiemannRochLowDegree.lean                             :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/RiemannRochLowDegree.lean
+:BUILD:       lake build Jacobian.HolomorphicForms.RiemannRochLowDegree
+:END:
+
+*** TODO [#B] [ ] SerreDualityRS.lean — 2 sorries                       :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/SerreDualityRS.lean
+:BUILD:       lake build Jacobian.HolomorphicForms.SerreDualityRS
+:END:
+
+*** Reusable P3 Aristotle prompt template
+
+#+BEGIN_SRC text
+Project: C:\ver\JacobianChallenge
+Target file: Jacobian/HolomorphicForms/<NAME>.lean
+Target sorry: <line number — copy from current `grep -n sorry`>
+Allowed write scope: this file only (small private helper lemmas allowed
+above the target decl).
+Forbidden: Jacobian/Challenge.lean, Jacobian/Solution.lean.
+Forbidden imports: `import Mathlib` (use narrow Mathlib.Topic.Subtopic).
+Build: lake build Jacobian.HolomorphicForms.<NAME>
+
+Goal: discharge the named sorry. Direct tactics: simp, rw, exact, refine,
+constructor, ext, intro, apply. Avoid aesop, grind, broad simp_all.
+Return BLOCKER + missing-Mathlib-decl name if blocked. Do NOT introduce
+axioms.
+#+END_SRC
+
+** P4 — Stage A: Surface Classification (~3–5 kLOC) [/]          :cloud:hand:
+
+NOTE: ~ref/plans/surface-classification.md~ already exists in this repo.
+Verify whether that doc covers the Stage A planning round before
+commissioning a fresh agent.
+
+*** TODO [#A] [ ] Stage A — verify or refresh planning round
+:PROPERTIES:
+:SCOPE:       Surface classification (handle-decomp → fundamental polygon → polygonal model)
+:DEPS:        Periods.PeriodFunctional.analyticGenus_eq_topologicalGenus
+:OUTPUT:      ref/plans/surface-classification.org (or update existing .md to org with TODOs)
+:ROUTE:       cloud Claude Code (multi-day planning + multi-file implementation)
+:END:
+
+README explicitly flags: "Stage A (surface classification) — needs its
+own planning round (~3000-5000 LOC)". Don't try to Aristotle this; run a
+planning agent. First action: ~cat ref/plans/surface-classification.md~
+and decide whether it's already a sufficient plan, needs refresh, or
+needs full re-do.
+
+#+BEGIN_SRC text
+[CLOUD CLAUDE CODE PROMPT]
+You are planning Stage A of the JacobianChallenge polygonal-model effort:
+the classification of compact orientable smooth surfaces (handle decomposition,
+fundamental polygon, polygonal model with edge identifications). This is a
+~3000-5000 LOC sub-project.
+
+FIRST: read C:\ver\JacobianChallenge\ref\plans\surface-classification.md
+and decide whether it already constitutes a usable plan, or whether to
+refresh it.
+
+Then read for context:
+- C:\ver\JacobianChallenge\CLAUDE.md
+- C:\ver\JacobianChallenge\ref\plan.md
+- C:\ver\JacobianChallenge\ref\TOPDOWN.md
+- C:\ver\JacobianChallenge\Jacobian\Periods\PeriodFunctional.lean (the
+  consumer that needs analyticGenus_eq_topologicalGenus)
+- C:\ver\JacobianChallenge\tex\sections\03-polygonal-model.tex
+- The current README progress report
+
+Output: a delegation-ready org file at ref/plans/surface-classification.org
+with TODO items in the same format as ref/plans/roadmap.org. Each TODO
+should be a file-scoped or small-multi-file leaf that an Aristotle
+packet (or hand-written work) can discharge in isolation. Identify the
+top-level theorems, the decomposition into helper lemmas, the Mathlib
+prerequisites that are PRESENT vs ABSENT, and the order in which to attack.
+
+Do NOT write Lean code yet — only the plan.
+
+Forbidden: edits to Jacobian/Challenge.lean, Jacobian/Solution.lean, or
+the existing Stage B files unless you find a real bug.
+#+END_SRC
+
+* W2 — Universe parity: Solution.Jacobian to Type u [/]              :refactor:hand:
+
+Today: ~Solution.lean:134~ ~def Jacobian (X : Type) ... : Type~. Challenge:
+~(X : Type u)~. ULift in body is degenerate. Closes the documented
+divergence so comparator passes at kernel level (data + theorem), not
+just theorem-name level.
+
+** TODO [#A] [ ] Audit Periods.periodFullComplexLattice chain for Type-u readiness :hand:
+:PROPERTIES:
+:SCOPE:       read-only audit
+:OUTPUT:      ref/plans/universe-parity.org
+:DEPENDS_ON:  W1 P1 + P2 (do this when those obligations are stable)
+:END:
+
+For every declaration in the ~periodFullComplexLattice~ ancestry, identify:
+- universe variables already poly?
+- forced ~Type 0~ via instance argument shape?
+- forced ~Type 0~ via Mathlib gap (specific Mathlib decl that's not yet
+  universe-poly in v4.28.0)?
+
+#+BEGIN_SRC text
+[CLOUD CLAUDE CODE PROMPT — read-only]
+Working dir: C:\ver\JacobianChallenge
+Audit task. No code edits.
+
+For each of the following declarations, report (a) the current universe
+variables, (b) whether the declaration is universe-polymorphic in `X`,
+(c) if not, which Mathlib lemma or instance forces Type 0:
+
+- JacobianChallenge.Periods.periodFullComplexLattice
+- JacobianChallenge.Periods.periodSubgroup
+- JacobianChallenge.Periods.IntegralOneCycle
+- JacobianChallenge.Periods.basisAlignedPeriodSubgroup
+- JacobianChallenge.ComplexTorus.quotient (universe shape)
+- Any instance JacobianChallenge.Periods.* on the chain
+
+Output: a markdown/org table at ref/plans/universe-parity.org with one
+row per declaration. The row should name the universe-blocker (e.g.
+"Mathlib `AddSubgroup.zmultiples` has X : Type" or "instance
+LocallyCompactGroup forces Type 0").
+#+END_SRC
+
+** TODO [#A] [ ] Implement Type u promotion of period lattice chain :refactor:cloud:
+:PROPERTIES:
+:DEPENDS_ON:  audit TODO above
+:END:
+
+Once the audit identifies blockers, do the refactor. Cloud-Claude-shaped
+because it touches multiple files in a coordinated edit.
+
+** TODO [#A] [ ] Flip Solution.Jacobian to (X : Type u), remove ULift degenerate :refactor:hand:
+:PROPERTIES:
+:FILE:        Jacobian/Solution.lean
+:BUILD:       lake build Jacobian.Solution
+:VERIFY:      comparator accepts at kernel-equivalence level (not just theorem-name)
+:DEPENDS_ON:  the two TODOs above
+:END:
+
+Final flip. Update Solution.lean's docstring to remove the divergence note.
+
+* W3 — Retire StatementBank.lean [/]                                   :refactor:
+
+** TODO [#A] [ ] Catalog StatementBank external references             :hand:
+:PROPERTIES:
+:SCOPE:       read-only audit
+:END:
+
+#+BEGIN_SRC bash
+grep -rn 'JacobianChallenge\.\(Inventory\|ComplexTorus\|HolomorphicForms\|Periods\|AnalyticJacobian\|AbelJacobi\|TraceDegree\|AntiHack\)' Jacobian/ tex/ ref/ blueprint/ aristotle_tasks.md
+#+END_SRC
+
+For each StatementBank decl, classify:
+- (D) duplicates a production decl → delete
+- (R) referenced by tex/ ~\lean{...}~ macro → re-point to production
+- (M) no production replacement, real content → migrate to ~Jacobian/<Layer>/~
+
+** TODO [#B] [ ] Migrate (M) decls into production                      :hand:
+:PROPERTIES:
+:DEPENDS_ON:  catalog TODO above
+:END:
+
+For each StatementBank decl tagged "migrate", drop it into the right
+production file. Mark its sorry (if any) into W1's queue.
+
+** TODO [#B] [ ] Re-point tex/ \lean{...} macros from StatementBank to production :hand:
+:PROPERTIES:
+:DEPENDS_ON:  catalog TODO above
+:END:
+
+** TODO [#A] [ ] Move Inventory.md to ref/, delete StatementBank.lean and WorkPackets/ dir :hand:
+:PROPERTIES:
+:DEPENDS_ON:  three TODOs above
+:VERIFY:      lake build Jacobian.Challenge && lake build Jacobian.Solution
+:END:
+
+#+BEGIN_SRC bash
+git mv Jacobian/WorkPackets/Inventory.md ref/Inventory.md
+git rm Jacobian/WorkPackets/StatementBank.lean
+rmdir Jacobian/WorkPackets
+# update Jacobian.lean umbrella to drop the WorkPackets import
+lake build Jacobian.Challenge
+lake build Jacobian.Solution
+#+END_SRC
+
+* W4 — Blueprint↔Lean linking (Phases B/C/D) [/]                        :blueprint:
+
+Drives ~ref/blueprint-audit.md~ to completion. Goal: every of the 57
+~\label{...}~ nodes has a ~\lean{...}~ pointing at production, every
+~\uses{...}~ resolves, ~\leanok~ is set wherever the target is sorry-free.
+
+** TODO [#A] [ ] Phase B — resolve dangling \uses{} references          :blueprint:hand:
+:PROPERTIES:
+:FILES:       tex/sections/*.tex, ref/blueprint-audit.md
+:OUTPUT:      blueprint-audit.md updated, 8 dangling refs closed
+:END:
+
+8 dangling references identified in ~ref/blueprint-audit.md~ (e.g.
+~def:period-pairing~, ~def:analytic-jacobian~, ~thm:abel-jacobi-injective~).
+For each: either define the missing ~\label{}~ in tex/ or fix the use site.
+
+** TODO [#A] [ ] Phase C — fill missing \lean{} annotations             :blueprint:hand:
+:PROPERTIES:
+:FILES:       tex/sections/*.tex
+:END:
+
+For each ~\label{}~ without a ~\lean{}~, point at production decl
+(preferred) or create a properly-namespaced stub in
+~Jacobian/Blueprint/SecXX/~ (and add a W1 task to fill it).
+
+** TODO [#B] [ ] Phase D — retire redundant Blueprint/SecXX/*.lean stubs :blueprint:refactor:
+:PROPERTIES:
+:DEPENDS_ON:  Phase C complete
+:END:
+
+Where a stub duplicates a production decl, delete the stub, drop the
+import from ~Jacobian/Blueprint.lean~, repoint ~\lean{}~ at production.
+
+** TODO [#B] [ ] \leanok sweep + \proves macros for theorem-typed labels :blueprint:hand:
+:PROPERTIES:
+:DEPENDS_ON:  Phase C
+:END:
+
+Walk every label; add ~\leanok~ if its ~\lean{}~ target is sorry-free in
+the current build. Use ~\proves~ on labels whose target is a
+theorem/lemma (not a def).
+
+* W5 — Repo Hygiene [/]                                                 :refactor:
+
+** TODO [#C] [ ] Delete ManifoldRecon.lean                              :hand:
+:PROPERTIES:
+:FILE:        Jacobian/ComplexTorus/ManifoldRecon.lean
+:VERIFY:      lake build Jacobian.ComplexTorus
+:END:
+
+Marked for removal. Migrate any still-useful scaffolding into the production
+ComplexTorus modules first.
+
+** TODO [#C] [ ] Delete ChartCoeffExtractionRecon.lean                  :hand:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/ChartCoeffExtractionRecon.lean
+:END:
+
+** TODO [#C] [ ] Delete SectionTopologyConstructionRecon.lean           :hand:
+:PROPERTIES:
+:FILE:        Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean
+:END:
+
+** TODO [#C] [ ] Audit umbrella files for dead imports                  :hand:
+:PROPERTIES:
+:FILES:       Jacobian/{ComplexTorus,HolomorphicForms,Periods,AnalyticJacobian,AbelJacobi,TraceDegree}.lean, Jacobian.lean
+:END:
+
+Each umbrella ~Jacobian/<Layer>.lean~ should re-export exactly the
+production modules currently in use. Drop any imports that no longer
+resolve to a real file or that no consumer touches.
+
+* Phasing & Sequencing
+
+| Phase | Workstreams           | Parallelism                          |
+|-------+-----------------------+--------------------------------------|
+| α     | W3 catalog, W4 B, W5  | All low-risk; do alongside ticks     |
+| β     | W1 P1, W1 P2, W4 C    | Aristotle wave + cloud-Claude split  |
+| γ     | W1 P3, W4 D           | Aristotle full queue (cap 15)        |
+| δ     | W1 P4 (Stage A)       | Plan first → implement; long pole    |
+| ε     | W2 universe parity    | Calm-tree refactor                   |
+| ζ     | W3 final delete, W4 \leanok sweep, W5 finalize | hygiene |
+
+* Verification (Definition of Done) [/]
+
+End state — all of these must hold:
+
+- [ ] ~lake build Jacobian.Challenge~ green
+- [ ] ~lake build Jacobian.Solution~ green and *sorry-free*
+- [ ] ~#print axioms~ on every Challenge declaration shows no ~sorryAx~
+- [ ] Comparator accepts ~Solution.lean~ vs ~Challenge.lean~ at
+  kernel-equivalence level (not just theorem-name)
+- [ ] ~grep -rE ':=\s*sorry|by sorry' Jacobian/ --include='*.lean' | grep -v Challenge.lean~ returns empty
+- [ ] ~Jacobian/WorkPackets/StatementBank.lean~ does not exist
+- [ ] Blueprint web build shows every node ~\leanok~
+- [ ] PDF blueprint contains no broken ~\lean{}~ / ~\uses{}~ references
+- [ ] README progress shows 100% on every layer; final tick on origin/main
+
+* Open Decisions Baked In
+
+- StatementBank.lean → delete (production + tex are sole truth)
+- Universe parity (~Type u~) → in scope as part of completion
+- Stage A (surface classification) → its own dedicated planning round
+  before implementation begins (existing draft at
+  ~ref/plans/surface-classification.md~ — review/refresh)
+- Aristotle vs cloud Claude Code: Aristotle for file-scoped, narrow
+  bounded proofs; cloud Claude for multi-file refactors and planning
+  sub-rounds.
+
+* Reusable Prompt Templates
+
+** Aristotle (single-sorry, file-scoped)
+
+#+BEGIN_SRC text
+Project: C:\ver\JacobianChallenge (Lean 4 + Mathlib v4.28.0)
+Working dir: C:\ver\JacobianChallenge
+Target file: <PATH>
+Target sorry: <line number>  (or: target decl <NAME>)
+Allowed write scope: this file only. Small private helper lemmas above
+the target decl are allowed.
+Forbidden: Jacobian/Challenge.lean, Jacobian/Solution.lean. Anything
+outside the target file's directory.
+Forbidden imports: `import Mathlib` is forbidden — use narrow
+`import Mathlib.Topic.Subtopic` only.
+Build: <lake build command>
+
+Goal: discharge the named sorry. Use direct tactics (simp, rw, exact,
+refine, constructor, ext, intro, apply). Avoid aesop, grind, broad
+simp_all. If blocked by missing Mathlib infrastructure, return BLOCKER
+with the exact missing declaration name. Do NOT introduce axioms or
+opaque definitions.
+#+END_SRC
+
+** Cloud Claude Code (multi-file scoping / planning)
+
+#+BEGIN_SRC text
+Project: C:\ver\JacobianChallenge (Lean 4 + Mathlib v4.28.0)
+Working dir: C:\ver\JacobianChallenge
+Read for context:
+- CLAUDE.md
+- ref/plan.md
+- ref/TOPDOWN.md
+- aristotle_tasks.md
+- <task-specific files>
+
+Task: <one-sentence goal>
+
+Forbidden:
+- edits to Jacobian/Challenge.lean
+- `import Mathlib` (use narrow imports)
+- introducing axioms or `opaque` for Prop-valued obligations
+  (use `theorem ... := sorry` per TOPDOWN.md rule 7)
+
+Output: <e.g. ref/plans/<name>.org following the same TODO/PROPERTIES
+shape as ref/plans/roadmap.org>
+
+Do NOT close any production sorry yourself unless the plan explicitly
+calls for that. The deliverable is the plan; Aristotle and downstream
+ticks discharge sorries.
+#+END_SRC
+
+* Notes for the Tick Driver
+
+- Aristotle cap: 15 IN_PROGRESS+QUEUED. Submit aggressively from W1 P3
+  (10 file-scoped TODOs with the same template). When P3 drains, move
+  to P2/P1.
+- BLOCKER results route to brainstorm; never integrate BLOCKER-only diffs.
+- W1 P4 (Stage A) is gated on its planning sub-round; commission that
+  cloud-Claude prompt before queuing any Stage A Aristotle work.
+- W2 (universe parity) is best done on a calm tree — schedule after
+  W1 P1+P2 settle.
+- Each tick: refresh README, commit, push to origin/main.
