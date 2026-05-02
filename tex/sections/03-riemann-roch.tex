@@ -85,7 +85,7 @@ groups, and stating it cleanly requires giving them names.
 
 \begin{theorem}[Serre duality on a compact Riemann surface]
 \label{thm:serre-duality-rs}
-\uses{def:sheaf-cohomology-rs}
+\uses{def:sheaf-cohomology-rs,input:dolbeault}
 For an invertible sheaf \(\mathcal{L}\) and the canonical sheaf \(K\),
 \[
   H^{1}(X,\mathcal{L})\cong H^{0}(X,K\otimes\mathcal{L}^{-1})^{\vee}.
@@ -117,6 +117,44 @@ space we just learned to bound. Why bother? It converts the
 two-cohomology-group statement of Riemann–Roch into a single inequality
 between countable, vector-space dimensions — exactly the form most useful
 for producing meromorphic functions with prescribed zeros and poles.
+\end{layman}
+
+\begin{theorem}[Classical input: Dolbeault isomorphism]
+\label{input:dolbeault}
+\uses{def:sheaf-cohomology-rs}
+For a complex manifold \(X\) and integers \(p,q\geq 0\),
+\[
+  H^{p,q}_{\bar\partial}(X)\cong H^{q}(X,\Omega^{p}_{X}).
+\]
+On a compact Riemann surface this specialises to
+\(H^{0,1}_{\bar\partial}(X)\cong H^{1}(X,\mathcal{O}_X)\) and is the
+analytic--algebraic bridge that turns Hodge-theoretic content into
+sheaf-cohomological content; Serre duality on a Riemann surface
+factors through it.
+\depends{Classical 1956 result of Pierre Dolbeault. Mathlib v4.28.0
+has neither the Dolbeault complex nor the cohomology comparison.
+The project sketches it in \code{Jacobian/StageB/CoherentSheaves.lean}
+(\code{dolbeault_isomorphism}, \code{dolbeault_iso_zero_one}) and
+\code{Jacobian/HolomorphicForms/Serre/Dolbeault.lean}.}
+\lean{JacobianChallenge.StageB.dolbeault_isomorphism}
+\notready
+\end{theorem}
+
+\begin{layman}
+The Dolbeault isomorphism bridges two notions of ``cohomology of a
+complex manifold.'' On the analytic side, the Dolbeault cohomology
+\(H^{p,q}_{\bar\partial}\) is built from holomorphic-coordinate-
+flavored differential forms and the \(\bar\partial\) operator
+(``how far is this form from being holomorphic''). On the
+algebraic side, the sheaf cohomology \(H^q(X,\Omega^p)\) is built
+from sheaves of holomorphic differential forms via a
+homological-algebra construction. Dolbeault's theorem says they
+agree. Why bother? Hodge decomposition (next chapter's bridge)
+gives that every de Rham class on a compact Riemann surface has a
+unique \((p,q)\)-decomposition; Dolbeault then promotes the
+\((p,q)\) piece to global sections of a coherent sheaf — exactly
+the input Riemann--Roch and Serre duality consume. Without
+Dolbeault, the Hodge / Riemann--Roch chain has no shared currency.
 \end{layman}
 
 \begin{theorem}[Euler characteristic of an invertible sheaf]
