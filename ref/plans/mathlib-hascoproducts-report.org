@@ -1,0 +1,166 @@
+#+TITLE: Mathlib HasCoproducts.{u} (ModuleCat ℤ) — Tractability Report
+#+AUTHOR: Read-only Investigation
+#+DATE: 2026-05-02
+
+* Verdict (TL;DR)
+
+**TRACTABLE — and in fact NO MATHLIB PR IS NEEDED.**
+
+Mathlib v4.28.0 (commit 8f9d9cff…) already ships a universe-polymorphic
+HasCoproducts instance for ModuleCat. The premise stated in
+Jacobian/Periods/IntegralOneCycle.lean:26-33 — "the available instance for
+ModuleCat ℤ is at universe 0" and "Mathlib doesn't provide
+HasCoproducts.{u} (ModuleCat ℤ) universe-polymorphically" — is incorrect.
+The earlier note in ref/plans/universe-parity.org propagates the same
+misdiagnosis.
+
+The actual obstruction to lifting IntegralOneCycle from (X : Type 0) to
+(X : Type u) lives elsewhere: it is the choice of *coefficient module*
+ModuleCat.of ℤ ℤ, which lives in ModuleCat.{0} ℤ (because ℤ : Type 0).
+The fix is mechanical and project-local — replace ℤ by ULift.{u} ℤ — not
+upstream.
+
+* Existing Universe-Polymorphic Instance Chain
+
+The instance that fires for HasCoproducts.{u} (ModuleCat.{w} R) is
+assembled from two declarations.
+
+** AddCommGrpCat side (the real work)
+
+File:
+  .lake/packages/mathlib/Mathlib/Algebra/Category/Grp/Colimits.lean
+
+Line 270, signature:
+  instance hasColimitsOfShape [Small.{w} J] :
+      HasColimitsOfShape J (AddCommGrpCat.{w}) where
+
+Line 274, companion:
+  instance (priority := 1300) hasColimitsOfSize [UnivLE.{u, w}] :
+      HasColimitsOfSize.{v, u} (AddCommGrpCat.{w}) where
+
+These instances are universe-polymorphic in *both* the shape category J
+(any (J : Type u) with [Small.{w} J] is admitted) and the underlying
+module universe w. Together with
+Mathlib/CategoryTheory/EssentiallySmall.lean:278
+
+  instance [Small.{w} C] : Small.{w} (Discrete C) := small_map discreteEquiv
+
+they cover Discrete-shape colimits for any small enough J — exactly the
+shapes underlying HasCoproducts.
+
+** ModuleCat side (transport)
+
+File:
+  .lake/packages/mathlib/Mathlib/Algebra/Category/ModuleCat/Colimits.lean
+
+Line 115:
+  instance hasColimitsOfShape [HasColimitsOfShape J AddCommGrpCat.{w'}] :
+      HasColimitsOfShape J (ModuleCat.{w'} R) where
+
+Line 121:
+  instance hasColimitsOfSize [HasColimitsOfSize.{v, u} AddCommGrpCat.{w'}] :
+      HasColimitsOfSize.{v, u} (ModuleCat.{w'} R) where
+
+These transport every shape AddCommGrpCat has to ModuleCat over any ring
+R, in any universe w'.
+
+** Resulting derivation
+
+For (J : Type u), HasColimitsOfShape (Discrete J) (ModuleCat.{w} R) is
+synthesised whenever Small.{w} J. Universally quantifying over J : Type u
+yields HasCoproducts.{u} (ModuleCat.{w} R) under [UnivLE.{u, w}], and in
+particular at u ≤ w it is fully automatic via small_self/small_zero
+(Mathlib/Logic/Small/Defs.lean:73,90).
+
+* Proof Obstruction Summary
+
+There is no obstruction. The colimit construction in
+Algebra/Category/Grp/Colimits.lean builds the colimit as a quotient of
+DFinsupp(j ↦ F.obj j), then shrinks via Shrink.{w} once Small.{w} (Quot F)
+is established. Universe parameters are threaded through Quot.desc,
+quotToQuotUlift / quotUliftToQuot, and isColimit_of_bijective_desc; there
+is no universe-0 specialisation, no hardcoded set-of-objects shape, and
+no ULift normalisation step that fixes w = 0. The Module-side reduction
+just transports the AddCommGrpCat colimit and adds the R-action via
+coconePointSMul. Both files use the universe variables (u, v, w, w')
+genuinely.
+
+* Empirical Verification
+
+A scratch file (since deleted) under Jacobian/Scratch/HasCoproductsTest.lean
+built cleanly against the pinned Mathlib commit, with the following
+inferInstance checks:
+
+  example : HasCoproducts.{0} (ModuleCat.{0} ℤ) := inferInstance
+  example : HasCoproducts.{u} (ModuleCat.{u} ℤ) := inferInstance
+  example : HasCoproducts.{0} (ModuleCat.{u} ℤ) := inferInstance
+  example [UnivLE.{u, w}] : HasCoproducts.{u} (ModuleCat.{w} ℤ) := inferInstance
+  example : HasCoproducts.{u} (ModuleCat.{max u v} ℤ) := inferInstance
+
+All five elaborated. Build: lake build Jacobian.Scratch.HasCoproductsTest →
+"Built (25s) — Build completed successfully (1313 jobs)."
+
+Additionally, the universe-polymorphic application that
+IntegralOneCycle wants:
+
+  noncomputable example (X : Type u) [TopologicalSpace X] : ModuleCat.{u} ℤ :=
+    ((AlgebraicTopology.singularHomologyFunctor (ModuleCat.{u} ℤ) 1).obj
+      (ModuleCat.of ℤ (ULift.{u} ℤ))).obj (TopCat.of X)
+
+elaborates after also importing Mathlib.Algebra.Category.ModuleCat.Abelian
+(for CategoryWithHomology). The naive form using ModuleCat.of ℤ ℤ fails
+not because of HasCoproducts but with:
+
+  Application type mismatch: argument ℤ has type Type of sort `Type 1`
+  but is expected to have type Type u of sort `Type (u + 1)`
+
+i.e. ℤ : Type 0 cannot inhabit ModuleCat.{u} ℤ for u > 0. Replacing it
+with the ULift transport makes the elaboration succeed.
+
+* Downstream Conflict Check
+
+Searched all of Mathlib for instances/abbreviations producing
+HasCoproducts, HasColimitsOfShape, HasColimitsOfSize against ModuleCat
+or AddCommGrpCat (grep over .lake/packages/mathlib/Mathlib/Algebra/Category/).
+The only producers of these classes for ModuleCat are the two instances
+in ModuleCat/Colimits.lean above, and the only producer for AddCommGrpCat
+is the pair in Grp/Colimits.lean above. No competing instance pins w = 0.
+There is therefore no instance-resolution ambiguity; the existing
+instances *are* the universe-polymorphic ones.
+
+* Implications for the Project
+
+The audit at ref/plans/universe-parity.org should be revised. The chain
+
+    IntegralOneCycle (X : Type) ⇐ "Mathlib only ships HasCoproducts.{0}"
+
+was the load-bearing claim that propagated Type 0 through periodPairing,
+periodSubgroup, basisAlignedPeriodSubgroup, periodFullComplexLattice,
+and ultimately Solution.Jacobian. That premise is false. The real work
+needed to lift IntegralOneCycle is local and project-internal:
+
+  1. Generalise the binder to (X : Type u).
+  2. Pick a target universe for ModuleCat (most natural: ModuleCat.{u} ℤ).
+  3. Lift the coefficient module from ModuleCat.of ℤ ℤ to
+     ModuleCat.of ℤ (ULift.{u} ℤ) (or pick another u-small ℤ-module).
+  4. Adjust downstream consumers (AbelJacobi/Witness*, Periods/*, etc.)
+     that currently rely on IntegralOneCycle X : ModuleCat.{0} ℤ. Their
+     pairings into (HolomorphicOneFormDual X →ₗ[ℂ] ℂ) etc. will need
+     analogous universe lifting, and the keystone questions about
+     ZLattice / discreteness lemmas in
+     ref/plans/universe-parity.org §"Risk Assessment" remain valid as
+     *secondary* concerns — but the primary HasCoproducts blocker is
+     not real.
+
+This is therefore a project-internal generalisation task, not a
+Mathlib upstream task. No PR draft is provided because no Mathlib
+change is required.
+
+* Verdict, Restated
+
+  TRACTABLE.
+
+  Sub-classification: NOT EVEN A MATHLIB PROBLEM. The instance is already
+  upstream and already universe-polymorphic. Action item is local
+  refactor of IntegralOneCycle and its consumers; no Mathlib change is
+  needed and none should be proposed against v4.28.0 on this basis.
