@@ -54,7 +54,7 @@ LEGEND_HTML = """
   <dt class="legend-shape legend-box">Boxes</dt><dd>definitions</dd>
   <dt class="legend-shape legend-ellipse">Ellipses</dt><dd>theorems and lemmas</dd>
   <dt class="legend-swatch legend-red-border">Red border</dt>
-    <dd>major classical-analysis input — admitted, not in current Mathlib (Riemann-Roch, Stokes on manifolds, Hodge/de Rham, surface classification, Abel's theorem, &hellip;)</dd>
+    <dd>major classical-analysis input — admitted, not in current Mathlib</dd>
   <dt class="legend-swatch legend-orange-border">Orange border</dt>
     <dd>blueprint statement still being refined or split into sub-leaves</dd>
   <dt class="legend-swatch legend-blue-border">Blue border</dt>
