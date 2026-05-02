@@ -3,6 +3,8 @@ import Mathlib.Analysis.Normed.Module.Connected
 import Mathlib.Logic.Relation
 import Mathlib.Topology.Compactness.Compact
 import Mathlib.Topology.Connected.Basic
+import Mathlib.Topology.Connected.PathConnected
+import Mathlib.Topology.Connected.LocPathConnected
 import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Topology.Constructions
 
@@ -157,6 +159,16 @@ instance instCompactSpace (g : ℕ) : CompactSpace (Polygon4g g) :=
 
 instance instConnectedSpace (g : ℕ) : ConnectedSpace (Polygon4g g) :=
   Quotient.instConnectedSpace
+
+/-- The closed unit disk is path-connected (closed balls in normed
+spaces are path-connected). -/
+instance _root_.JacobianChallenge.Periods.DiskC.instPathConnectedSpace :
+    PathConnectedSpace JacobianChallenge.Periods.DiskC :=
+  isPathConnected_iff_pathConnectedSpace.mp <|
+    Metric.isPathConnected_closedBall (zero_le_one)
+
+instance instPathConnectedSpace (g : ℕ) : PathConnectedSpace (Polygon4g g) :=
+  Quotient.instPathConnectedSpace
 
 /-- Quotient map from the closed disk to the polygon. -/
 def mk (g : ℕ) : DiskC → Polygon4g g :=
