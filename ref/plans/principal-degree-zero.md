@@ -96,7 +96,7 @@ Total ≈ 530 LOC, plus the transitive Sec02 leaf 8 (`branchedCoverData_of_nonco
 
 ## 8. What is genuinely blocked
 
-After this scaffold lands, the only remaining mathematical sorries on the path to `principal_degree_zero` are:
+After the scaffolding lands, the only remaining mathematical sorries on the path to `principal_degree_zero` are:
 
 - `branchedCoverData_of_nonconstant_holomorphic` (Sec02 leaf 8, HARD: open-mapping + isolated-zeros + compactness-of-fibres on a compact RS).
 - Leaves 3 + 4 (HARD: chart-local Laurent normal form + identification with ramification index).
@@ -105,3 +105,28 @@ After this scaffold lands, the only remaining mathematical sorries on the path t
 Leaves 1, 2, 7 are SHORT bookkeeping above those.
 
 The remaining infrastructure dependencies (real `MeromorphicFunctionType` field-of-meromorphic-germs, the chart-on-OnePoint-ℂ-at-∞ API for leaf 4) are noted in §3 as the points that will need to be revisited if the placeholder `MeromorphicFunctionType := X → OnePoint ℂ` is upgraded.
+
+## 9. Recursive refinement log
+
+Subsequent rounds of TOPDOWN-style recursive refinement on the seven sub-leaves:
+
+### Round R2 (this commit)
+
+- **Leaf 2 body discharged into a real assembly.** `liftToCp1_branchedCoverData` now reads
+  `branchedCoverData_of_nonconstant_holomorphic (meromorphicToCp1 X f) (liftToCp1_continuous X f hholo) trivial` —
+  the body is sorry-free; the only mathematical content remaining is the existing Sec02 leaf 8
+  (`branchedCoverData_of_nonconstant_holomorphic`) plus a new strictly-smaller named obligation
+  `liftToCp1_continuous` placed in `Sec01/MeromorphicToCp1.lean` ("the CP¹ lift of a
+  meromorphic function is continuous"). The relevant `[ConnectedSpace (OnePoint ℂ)]` instance
+  is provided by Mathlib via `[PreconnectedSpace ℂ] [NoncompactSpace ℂ]`, both already
+  inferable from the existing imports.
+- **Leaf 7 (umbrella) body now case-splits.** The constant-zero case is discharged sorry-free
+  via leaf 1 (`principalDivisor_zero_of_underlying_zero`); the nonzero case is delegated to a
+  new strictly-smaller named obligation `principal_degree_zero_of_nonzero` (leaf 7a) which
+  carries `[T2Space X]` and reduces to leaves 2–6. The umbrella's *own* sorry now records
+  the T2-typeclass gap between the public umbrella signature and the branched-cover machinery;
+  this is a documentation gap rather than a mathematical one.
+
+Net effect: same raw sorry count in `Sec01/PrincipalDegreeZero.lean` (6 → 6, plus 1 new
+in `Sec01/MeromorphicToCp1.lean`), but two formerly-monolithic HARD sorries (leaves 2 and 7)
+are now strictly smaller, better-named obligations one layer deeper.

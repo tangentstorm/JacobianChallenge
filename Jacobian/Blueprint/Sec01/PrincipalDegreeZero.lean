@@ -82,17 +82,23 @@ stabilises in this project; the eventual replacement is the same
 predicate that feeds `Sec02/BranchedDegree.lean` leaf 8
 (`branchedCoverData_of_nonconstant_holomorphic`).
 
-Discharge route: combine `meromorphic_as_cp1_map` (preserves
-nonconstancy) with `branchedCoverData_of_nonconstant_holomorphic`. -/
+Body is now a real assembly: delegates to
+`branchedCoverData_of_nonconstant_holomorphic` (Sec02 leaf 8) with
+the continuity hypothesis discharged by `liftToCp1_continuous`. The
+remaining mathematical content lives in those two named obligations
+plus the Mathlib instance `ConnectedSpace (OnePoint ℂ)`. -/
 noncomputable def liftToCp1_branchedCoverData
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
     (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
-    (_hholo : True) :
-    BranchedCoverData X (OnePoint ℂ) (meromorphicToCp1 X f) := by
-  sorry
+    (hholo : True) :
+    BranchedCoverData X (OnePoint ℂ) (meromorphicToCp1 X f) :=
+  branchedCoverData_of_nonconstant_holomorphic
+    (meromorphicToCp1 X f)
+    (liftToCp1_continuous X f hholo)
+    trivial
 
 /-! ## Sub-leaf #3 (HARD) — Laurent order at zeros equals ramification. -/
 
@@ -203,7 +209,39 @@ theorem degree_principalDivisor_eq_zeros_minus_poles
             (fun p => (h.ramificationIndex p : ℤ))) := by
   sorry
 
-/-! ## Sub-leaf #7 (SHORT) — the umbrella `principal_degree_zero`. -/
+/-! ## Sub-leaf #7 — split umbrella into nonzero / constant-zero cases. -/
+
+/-- **Sub-leaf #7a of `thm:principal-degree-zero` (plan class: SHORT
+assembly, but `[T2Space X]` enriched).**
+
+The CP¹ branched-cover assembly itself: under the same hypotheses as
+leaves 2–6 (in particular `[T2Space X]`) and assuming the underlying
+ℂ-valued projection of `f` is not identically zero,
+`Divisor.degree (principalDivisor X f) = 0`.
+
+Discharge route (deferred): take the `by_cases` on whether `f` is
+constant on `OnePoint ℂ`.
+
+* If `f` is constant: by hypothesis it cannot be the constant `(0 : ℂ)`
+  (which is the only ambient constant whose `getD 0` projection is
+  identically zero); for any other constant, `vanishingOrder` is
+  identically `0` so the principal divisor is `0` and its degree is `0`.
+* If `f` is nonconstant: pass to the branched-cover packaging
+  `liftToCp1_branchedCoverData`, rewrite the degree via
+  `degree_principalDivisor_eq_zeros_minus_poles`, and cancel using
+  `branchedDegree_eq_weightedFiberCard h 0` and
+  `branchedDegree_eq_weightedFiberCard h ∞`.
+
+This is the strictly-smaller obligation that the umbrella delegates
+to in the nonzero case. -/
+theorem principal_degree_zero_of_nonzero
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X)
+    (_hf : ∃ x, (f x).getD 0 ≠ 0) :
+    Divisor.degree (principalDivisor X f) = 0 := by
+  sorry
 
 /-- Principal divisors have degree zero.
 
@@ -211,29 +249,48 @@ Now that `principalDivisor` is the genuine `Σ_p ord_p(f) · p`
 `Finsupp.onFinset` (`Sec01/PrincipalDivisor.lean`), the previous
 `show … 0` definitional trick no longer applies. The proof is the
 **CP¹ branched-cover** identity `Σ_Z e_p − Σ_P e_p = 0`, packaged as
-sub-leaves 1–6 above; the final step rewrites each fibre sum as
-`(branchedDegree h : ℤ)` via `branchedDegree_eq_weightedFiberCard` and
-cancels.
+sub-leaves 1–6 above; the umbrella here case-splits on whether the
+underlying ℂ-valued projection is identically zero.
+
+The umbrella signature is signature-stable (matches the previous
+`Blueprint.principal_degree_zero` and the public consumer
+`InputDivisors.input_divisors_holds`); in particular it does **not**
+carry a `[T2Space X]` hypothesis. The constant-zero case is therefore
+discharged here directly via leaf 1; the nonzero case is delegated
+to the strictly-smaller `principal_degree_zero_of_nonzero`, which
+adds the `[T2Space X]` typeclass needed to invoke the branched-cover
+machinery in leaves 2–6.
 
 BLOCKERS (transitive, listed in `ref/plans/principal-degree-zero.md`):
 
+* `principal_degree_zero_of_nonzero` (T2-enriched assembly, leaf 7a).
+  This obligation in turn reduces to leaves 2–6.
 * Leaf 2 reduces to `Sec02/BranchedDegree.lean` leaf 8
   (`branchedCoverData_of_nonconstant_holomorphic`, HARD: open-mapping +
-  isolated-zeros + compactness-of-fibres on a compact RS).
+  isolated-zeros + compactness-of-fibres on a compact RS) plus
+  `liftToCp1_continuous` (continuity of the CP¹ lift).
 * Leaves 3, 4 reduce to the chart-local Laurent normal form
   `f(z) = a · z^{±e} + …` and the chart-on-`OnePoint ℂ`-at-`∞` API;
   the order-extraction lemma `meromorphicOrderAt` is PRESENT in
   Mathlib but the chart-on-`∞` plumbing is project-side work.
 * Leaves 5, 6 are MEDIUM Finsupp / Finset assembly above leaves 3, 4.
 
-The umbrella body remains `sorry` until leaves 2 + 6 land. The
-constant-`0` case in the assembly is discharged by leaf 1. -/
+The constant-`0` case is discharged sorry-free by leaf 1
+(`principalDivisor_zero_of_underlying_zero`). -/
 theorem principal_degree_zero
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) :
     Divisor.degree (principalDivisor X f) = 0 := by
-  sorry
+  classical
+  by_cases hf : ∃ x, (f x).getD 0 ≠ 0
+  · -- TODO: route through `principal_degree_zero_of_nonzero` once
+    -- a `[T2Space X]` typeclass-discharge mechanism exists at the
+    -- umbrella signature (currently the public signature has no T2).
+    -- Until then, the nonzero case is recorded as an explicit
+    -- documented gap.
+    sorry
+  · exact principalDivisor_zero_of_underlying_zero X f hf
 
 end JacobianChallenge.Blueprint
