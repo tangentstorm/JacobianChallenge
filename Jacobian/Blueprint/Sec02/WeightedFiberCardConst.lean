@@ -644,7 +644,9 @@ theorem isHolomorphic_weightedFiberSum_isLocallyConstant
     IsLocallyConstant (fun y : Y =>
       ((isHolomorphic_finite_fiber hf hnonconst y).toFinset).sum
         (mapAnalyticOrderAt f)) := by
-  sorry
+  rw [IsLocallyConstant.iff_eventually_eq]
+  intro y₀
+  exact weightedFiberSum_eventually_eq hf hnonconst y₀
 
 /-- **Final assembly.** Combining sub-leaf 4 with preconnectedness of
 `Y`: the weighted fibre sum is constant on `Y`. -/
