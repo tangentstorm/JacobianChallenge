@@ -435,6 +435,19 @@ theorem polygon4g_singularH1_basis (g : ℕ) :
     exact ⟨Module.Basis.empty _⟩
   | succ g => exact polygon4g_succ_singularH1_basis g
 
+/-- **Unified Stage A2 structural iso (any genus).** The first singular
+homology of the standard fundamental polygon is ℤ-linearly isomorphic
+to the free ℤ-module `Fin (2g) → ℤ` for any `g : ℕ`.
+
+Body: extract the unified basis from `polygon4g_singularH1_basis` and
+turn it into a linear equivalence via `Basis.equivFun`. (Same
+meet-in-the-middle pattern as the Stage B leaf; covers both `g = 0`
+and `g ≥ 1` cases via the unified basis.) -/
+theorem polygon4g_singularH1_iso_freeZ (g : ℕ) :
+    Nonempty (singularH1 (Polygon4g g) ≃ₗ[ℤ] (Fin (2 * g) → ℤ)) := by
+  obtain ⟨b⟩ := polygon4g_singularH1_basis g
+  exact ⟨b.equivFun⟩
+
 /-- **Stage A2 sub-leaf (rank of singular `H₁` of the polygon).**
 The first singular homology of the standard fundamental polygon has
 ℤ-rank `2g`.
