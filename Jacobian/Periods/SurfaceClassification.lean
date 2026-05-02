@@ -51,10 +51,68 @@ namespace JacobianChallenge.Periods
 
 open scoped Manifold
 
-/-- **Stage A1 leaf (existence).** Every compact connected orientable
-smooth real 2-manifold is homeomorphic to `Polygon4g g'` for *some*
-`g' : ℕ`. Identification of that `g'` with the topological genus is
-the Stage A2 leaf. -/
+/-- **Stage A1+A2 leaf (existence of a polygonal-quotient presentation).**
+Every compact connected orientable smooth real 2-manifold admits a
+*polygonal-quotient presentation* in standard `4g'`-gon form: there is
+some `g' : ℕ` and a continuous surjection from the closed unit disk
+onto `M` whose fibres coincide with the side-pairing equivalence
+`Polygon4g.SideRel g'`.
+
+This is the heart of the surface classification theorem (Radó's
+triangulation + combinatorial reduction to the standard
+`a₁b₁a₁⁻¹b₁⁻¹⋯` edge word). Its discharge is itself a multi-thousand-LOC
+project; see `ref/plans/polygonal-model.md` Stage A. -/
+theorem existsPolygonalQuotientPresentation
+    (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    [ConnectedSpace M]
+    [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
+    [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) M]
+    [Orientable M] :
+    ∃ g' : ℕ, ∃ q : DiskC → M, Continuous q ∧ Function.Surjective q ∧
+      (∀ z w : DiskC, q z = q w ↔ Polygon4g.SideRel g' z w) := by
+  sorry
+
+/-- **Stage A3+A4 leaf (universal-property assembly).** A polygonal-quotient
+presentation `(g', q)` of a compact T2 space `M` lifts through the
+quotient `Polygon4g g' = DiskC / SideRel g'` to a continuous bijection
+`Polygon4g g' → M`. By the compact-to-T2 theorem this is a
+homeomorphism.
+
+Body: real proof, no own `sorry`. Uses `Quotient.lift`,
+`continuous_quotient_lift`, and `Continuous.homeoOfEquivCompactToT2`. -/
+theorem polygonalQuotientPresentation_to_homeo
+    (g' : ℕ) (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    (q : DiskC → M) (hcts : Continuous q) (hsurj : Function.Surjective q)
+    (hker : ∀ z w : DiskC, q z = q w ↔ Polygon4g.SideRel g' z w) :
+    Nonempty (Polygon4g g' ≃ₜ M) := by
+  -- Lift `q` through the side-pairing setoid quotient.
+  let qLift : Polygon4g g' → M :=
+    Quotient.lift q (fun z w hzw => (hker z w).mpr hzw)
+  have hqLift_cts : Continuous qLift := hcts.quotient_lift _
+  -- Bijection: surjectivity from `q`, injectivity from the kernel iff.
+  have hqLift_bij : Function.Bijective qLift := by
+    refine ⟨?_, ?_⟩
+    · intro a b hab
+      induction a using Quotient.inductionOn with
+      | _ z =>
+        induction b using Quotient.inductionOn with
+        | _ w =>
+          change q z = q w at hab
+          exact Quotient.sound ((hker z w).mp hab)
+    · intro y
+      obtain ⟨z, hz⟩ := hsurj y
+      exact ⟨⟦z⟧, hz⟩
+  -- Compact source + T2 target + continuous bijection → homeomorphism.
+  exact ⟨hqLift_cts.homeoOfEquivCompactToT2 (f := Equiv.ofBijective qLift hqLift_bij)⟩
+
+/-- **Stage A1 umbrella (existence form).** Every compact connected
+orientable smooth real 2-manifold is homeomorphic to `Polygon4g g'`
+for *some* `g' : ℕ`. Identification of that `g'` with the topological
+genus is the Stage A umbrella body, *not* this leaf.
+
+Body: assembled from `existsPolygonalQuotientPresentation` and
+`polygonalQuotientPresentation_to_homeo`. -/
 theorem existsHomeoToPolygon4g
     (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -63,7 +121,9 @@ theorem existsHomeoToPolygon4g
       (⊤ : WithTop ℕ∞) M]
     [Orientable M] :
     ∃ g' : ℕ, Nonempty (M ≃ₜ Polygon4g g') := by
-  sorry
+  obtain ⟨g', q, hcts, hsurj, hker⟩ := existsPolygonalQuotientPresentation M
+  obtain ⟨homeo⟩ := polygonalQuotientPresentation_to_homeo g' M q hcts hsurj hker
+  exact ⟨g', ⟨homeo.symm⟩⟩
 
 /-- **Stage A2 leaf (polygon genus).** The topological genus of the
 standard fundamental polygon `Polygon4g g` equals `g`. Concretely,
