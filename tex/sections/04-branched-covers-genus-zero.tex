@@ -1,0 +1,495 @@
+\section{Branched Covers and the Genus-Zero Classification}
+\label{sec:branched-covers-genus-zero}
+
+\begin{layman}
+A nonconstant holomorphic map between compact Riemann surfaces is
+never just an injection — it is a \emph{branched covering}. Most
+points in the target have the same finite number \(d\) of preimages
+in the source; at finitely many \emph{branch points} the preimages
+collide with multiplicity. The number \(d\) is the \emph{degree} of
+the map, the basic numerical invariant of the cover. A degree-one
+holomorphic map between compact Riemann surfaces — generic fibre is
+a single point — is automatically a homeomorphism, and in fact a
+biholomorphism: this is one of the chapter's punch lines and the
+key step in the genus-zero classification.
+
+The chapter begins by formalising what ``degree'' means. Each
+preimage \(p\) of a base point \(q\) carries a \emph{ramification
+index} \(e_p(f)\), the local-power-series order of \(f - f(p)\) at
+\(p\). The fibre sum \(\sum_{p \in f^{-1}(q)} e_p(f)\) is the
+weighted count of preimages; the weighted-fibre-sum-is-locally-
+constant theorem then forces this count to be the same for every
+\(q\) — that constant value is the degree. Showing local constancy
+costs real work: the unramified locus is open, ramified points are
+isolated and finite, the chart-local power series can be put in a
+local conjugate-to-\(z^k\) normal form via a holomorphic \(k\)-th
+root, and the weighted sum is locally constant on each side and
+glues across.
+
+With the degree definition in hand, the chapter develops the
+infrastructure that pins down a degree-one map. At every unramified
+point the map is locally a chart-to-chart inverse; the entire fibre
+of a regular value is a singleton when degree is one; an unramified
+nonconstant holomorphic map is a local biholomorphism; a degree-one
+nonconstant holomorphic map between compact Riemann surfaces is a
+homeomorphism. Combine with Riemann-Roch on a genus-zero surface
+(producing a degree-one meromorphic function to the Riemann sphere)
+and you get the first anti-hack theorem of the challenge:
+\emph{analytic genus zero is equivalent to being homeomorphic to
+the 2-sphere}. The chapter ends with that classification.
+
+Why bother? The genus-zero classification is one of the four anti-
+hack theorems pinned by \texttt{Jacobian/Challenge.lean}. It rules
+out trivial fake constructions like \texttt{genus X := 0}: the
+challenge demands that \texttt{genus X = 0} actually entails \(X\)
+is the topological sphere. Reaching that conclusion goes through
+exactly this chapter — branched degree, Riemann-Hurwitz, degree-one
+classification, and the analytic-genus-zero \(\Rightarrow\)
+sphere argument.
+\end{layman}
+
+
+\begin{definition}[Branched-cover degree of a nonconstant holomorphic map]
+\label{def:branched-degree}
+\uses{def:vanishing-order}
+For a nonconstant holomorphic \(f:X\to Y\), the degree \(\deg(f)\) is
+the cardinality, counted with multiplicity, of any generic fiber. Each
+preimage \(p\in f^{-1}(q)\) contributes its ramification index
+\(e_p(f)=\ord_p(f - f(p))\ge 1\); the sum is constant in \(q\) and
+equals \(\deg(f)\).
+\depends{Local power-series order at \(p\) (\texttt{analyticOrderAt});
+constancy in \(q\) is the content of
+\texttt{thm:branched-degree-well-defined}, decomposed into
+\texttt{lem:branch-locus-finite},
+\texttt{lem:local-inj-unramified},
+\texttt{lem:local-kfold-ramified}, and
+\texttt{lem:weighted-fiber-locally-constant}.}
+\lean{JacobianChallenge.Blueprint.branchedDegree}
+\leanok
+\end{definition}
+
+\begin{layman}
+For a nonconstant holomorphic map between two compact Riemann surfaces,
+the \emph{degree} counts how many times the map covers its target.
+Pick a generic point downstairs and count its preimages, with
+multiplicities at branch points where two or more sheets pinch together:
+that count is the degree, and it's the same whichever generic target
+point you choose. The multiplicity at a preimage is its
+\emph{ramification index}, which measures how many sheets meet there. An
+index of \(1\) means the map is a clean local homeomorphism nearby; an
+index of \(2\) means two sheets pinch into one (like the square-root
+function); higher indices mean more pinching. Why bother? Degree turns
+holomorphic maps between surfaces into measurable things — the way
+``2-to-1 covering'' or ``5-to-1 covering'' captures the structure. Most
+of the classical theory of maps between Riemann surfaces (Riemann–Hurwitz,
+the trace, push-pull) runs on this number.
+\end{layman}
+
+\begin{lemma}[Branch locus is finite]
+\label{lem:branch-locus-finite}
+\uses{def:branched-degree, lem:order-eq-one-iff-deriv-ne-zero,
+lem:unramified-set-open, lem:ramified-isolated}
+The set \(\{p\in X : e_p(f)\ge 2\}\) is finite.
+\depends{Sub-sub-leaves: \texttt{lem:unramified-set-open} (the
+unramified set is open) and \texttt{lem:ramified-isolated} (every
+ramified point is isolated in the ramified set); assembly is
+``closed-discrete subset of compact \(\Rightarrow\) finite''.}
+\lean{JacobianChallenge.Blueprint.branch_locus_finite}
+\notready
+\end{lemma}
+
+\begin{lemma}[Unramified set is open]
+\label{lem:unramified-set-open}
+\uses{lem:order-eq-one-iff-deriv-ne-zero}
+The set \(\{x\in X : e_x(f)=1\}\) is open in \(X\).
+\depends{Continuity of the chart-local derivative plus the chart-pull
+of the open condition \(\{(z) : g'(z)\ne 0\}\subseteq\C\).}
+\lean{JacobianChallenge.Blueprint.isOpen_setOf_mapAnalyticOrderAt_eq_one}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Every ramified point is isolated]
+\label{lem:ramified-isolated}
+\uses{lem:order-eq-one-iff-deriv-ne-zero}
+At a ramified point \(x\) (\(e_x(f)\ge 2\)), there is a punctured
+neighborhood of \(x\) consisting entirely of unramified points.
+\depends{Mathlib's \texttt{AnalyticAt.eventually\_ne} applied to the
+chart-local derivative (which has order \(\ge k-1\ge 1\) at the chart
+image of \(x\)) plus the common helper.}
+\lean{JacobianChallenge.Blueprint.mapAnalyticOrderAt_isolated_at_ramified}
+\leanok
+\end{lemma}
+
+\begin{layman}
+The branch points of a map — places where two or more sheets pinch
+together, so the ramification index jumps above \(1\) — can never form
+an infinite cluster. Locally, ramification means the derivative of the
+map vanishes. Derivatives of holomorphic gadgets are themselves
+holomorphic, and on a compact surface the zero set of a nonzero
+holomorphic gadget is always discrete and finite, by the same
+identity-theorem-plus-compactness combo we saw for divisors. So branch
+points come in tidy finite quantity. Why bother? Most theorems about
+branched covers are easier to state and prove ``away from the branch
+locus,'' and knowing that locus is finite guarantees we can always
+extend conclusions across it by continuity — exactly how the trace of a
+1-form will be defined later.
+\end{layman}
+
+\begin{proofsketch}
+\(e_p(f)\ge 2\) iff the local derivative of \(f\) vanishes. The
+derivative is itself meromorphic; its zero set is discrete by the
+identity theorem, and finite by compactness.
+\end{proofsketch}
+
+\begin{lemma}[Local injectivity at an unramified point]
+\label{lem:local-inj-unramified}
+\uses{def:branched-degree, lem:order-eq-one-iff-deriv-ne-zero, lem:chart-local-inverse-unramified}
+If \(e_x(f)=1\) at a point \(x\in X\), there is an open neighborhood
+\(U\ni x\) and an open neighborhood \(V\ni f(x)\) such that for every
+\(y\in V\), the set \(U\cap f^{-1}(y)\) is a singleton.
+\depends{Sub-sub-leaves: \texttt{lem:order-eq-one-iff-deriv-ne-zero}
+(common B1=A1 helper) and \texttt{lem:chart-local-inverse-unramified}
+(B2, Mathlib's \texttt{AnalyticAt.localInverse}); assembly is chart
+transport.}
+\lean{JacobianChallenge.Blueprint.IsHolomorphicAt.exists_local_inj_of_unramified}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Order one iff chart-local derivative nonzero]
+\label{lem:order-eq-one-iff-deriv-ne-zero}
+\uses{def:branched-degree, def:vanishing-order}
+The chart-local order \(e_x(f)=1\) iff the derivative
+\((\chi\circ f\circ\varphi^{-1})'(\varphi(x))\ne 0\), where
+\((\varphi,\chi)\) are the canonical charts at \(x\) and \(f(x)\).
+\depends{Mathlib's
+\texttt{AnalyticAt.analyticOrderAt\_sub\_eq\_one\_of\_deriv\_ne\_zero}
+plus the
+\texttt{analyticOrderNatAt}\(\,=1\) \(\iff\) \texttt{analyticOrderAt}\(\,=1\) characterisation.}
+\lean{JacobianChallenge.Blueprint.mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Chart-local inverse at unramified]
+\label{lem:chart-local-inverse-unramified}
+\uses{lem:order-eq-one-iff-deriv-ne-zero}
+At an unramified point \(x\), the chart-local presentation
+\(\chi\circ f\circ\varphi^{-1}\) admits a holomorphic local inverse
+near \(\chi(f(x))\).
+\depends{\texttt{AnalyticAt.localInverse} from
+\texttt{Mathlib/Analysis/Analytic/Inverse.lean}.}
+\lean{JacobianChallenge.Blueprint.chartLocalAt_localInverse_of_unramified}
+\leanok
+\end{lemma}
+
+\begin{layman}
+At a point where the holomorphic map doesn't pinch sheets together
+(ramification index \(1\)), the map is a clean local
+homeomorphism: zoom in enough and you see a single sheet covering a
+single small disk, with each downstairs point having a unique upstairs
+preimage. Why bother? This is the building block for conservation of
+the weighted fibre count off branch values: every unramified preimage
+contributes exactly \(1\) to the count, and that count is locally
+stable because nearby downstairs points have exactly the same
+unique-preimage neighborhoods.
+\end{layman}
+
+\begin{proofsketch}
+The chart-local power-series expansion at \(x\) is
+\(f(t)=a\cdot t+O(t^2)\) with \(a\ne 0\), so the chart-local derivative
+is nonzero at the chart image of \(x\). Apply the analytic inverse
+function theorem for \(\C\to\C\) to get a chart-local inverse on a
+neighborhood; transport back through the canonical charts on \(X\)
+and \(Y\).
+\end{proofsketch}
+
+\begin{lemma}[Local power-series form at order \texorpdfstring{\(k\)}{k}]
+\label{lem:chart-local-pow-mul}
+\uses{def:branched-degree, def:vanishing-order}
+If \(e_x(f)=k\ge 1\), the centred chart-local difference factors as
+\((t-z_0)^k\cdot g(t)\) for some analytic \(g\) with \(g(z_0)\ne 0\),
+where \(z_0\) is the chart image of \(x\).
+\depends{Direct application of Mathlib's
+\texttt{AnalyticAt.analyticOrderAt\_eq\_natCast}.}
+\lean{JacobianChallenge.Blueprint.chartLocalAt_eq_pow_mul_of_order}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Holomorphic \texorpdfstring{\(k\)}{k}-th root]
+\label{lem:analytic-kth-root}
+If \(g\) is analytic at \(z_0\) with \(g(z_0)\ne 0\) and \(k\ge 1\),
+there is an analytic \(h\) near \(z_0\) with \(h(z)^k=g(z)\) locally.
+\depends{Holomorphic logarithm
+(\texttt{Complex.analyticAt\_log} on a simply-connected nbhd of
+\(g(z_0)\) avoiding \(0\)) plus \(\exp\) plus
+\(h:=\exp((1/k)\cdot\log g)\).}
+\lean{JacobianChallenge.Blueprint.analyticAt_kth_root_of_ne_zero}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Local \texorpdfstring{\(k\)}{k}-fold structure at a ramified point]
+\label{lem:local-kfold-ramified}
+\uses{def:branched-degree, def:vanishing-order,
+lem:chart-local-pow-mul, lem:analytic-kth-root}
+If \(e_x(f)=k\ge 1\), there is an open neighborhood \(U\ni x\) and an
+open neighborhood \(V\ni f(x)\) such that for every \(y\in V\) with
+\(y\ne f(x)\), the set \(U\cap f^{-1}(y)\) consists of exactly \(k\)
+distinct unramified preimages.
+\depends{Sub-sub-leaves: \texttt{lem:chart-local-pow-mul} (C1, local
+power-series form) and \texttt{lem:analytic-kth-root} (C2,
+holomorphic \(k\)-th root); assembly is the substitution
+\(s=(t-z_0)\cdot h(t)\) flattening the local form to \(s\mapsto s^k\),
+which has exactly \(k\) simple preimages of any nonzero target.}
+\lean{JacobianChallenge.Blueprint.IsHolomorphicAt.exists_local_kfold_of_ramified}
+\notready
+\end{lemma}
+
+\begin{layman}
+At a branch point of order \(k\), the map locally looks like
+\(z\mapsto z^k\): the \(k\) sheets that meet at the branch point pull
+apart as you move slightly away, becoming \(k\) distinct simple
+preimages of any nearby target. This is what conserves the weighted
+fibre count across branch values: the single ramified preimage with
+weight \(k\) splits into \(k\) simple preimages, each with weight
+\(1\), summing to \(k\) again.
+\end{layman}
+
+\begin{proofsketch}
+Write \(f(t)=t^k\cdot g(t)\) in a chart at \(x\), with \(g(0)\ne 0\).
+Choose a holomorphic \(k\)-th root \(g(t)^{1/k}\) (exists since \(g\)
+is nonvanishing near \(0\)) and substitute \(s=t\cdot g(t)^{1/k}\) to
+flatten the local form to \(f(s)=s^k\). The map \(s\mapsto s^k\) has
+exactly \(k\) simple preimages of any nonzero point. Transport back
+through charts.
+\end{proofsketch}
+
+\begin{lemma}[Properness of fibre below an open neighborhood]
+\label{lem:proper-fiber-shrink}
+For a continuous map \(f\) from a compact source to a Hausdorff
+target, and any open \(U\) containing \(f^{-1}(y_0)\), there is a
+neighborhood \(V\) of \(y_0\) such that for every \(y\in V\),
+\(f^{-1}(y)\subseteq U\).
+\depends{\(U^c\) is closed-in-compact \(\Rightarrow\) compact; image \(f(U^c)\) is
+compact \(\Rightarrow\) closed in \(T_2\); \(y_0\notin f(U^c)\); take
+\(V:=f(U^c)^c\).}
+\lean{JacobianChallenge.Blueprint.eventually_fiber_subset_of_compact_T2}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Weighted fibre count locally constant at a single point]
+\label{lem:weighted-fiber-eventually-eq}
+\uses{lem:local-inj-unramified, lem:local-kfold-ramified, lem:proper-fiber-shrink}
+At every \(y_0\in Y\), there is a neighborhood \(V\ni y_0\) on which
+the weighted fibre sum is constant equal to its value at \(y_0\).
+\depends{Choose pairwise-disjoint open nbhds \(U_x\) around each
+\(x\in f^{-1}(y_0)\) (T2 + finite); shrink each \(U_x\) so that
+either \texttt{lem:local-inj-unramified} (if \(e_x=1\)) or
+\texttt{lem:local-kfold-ramified} (if \(e_x\ge 2\)) applies, with an
+associated \(V_x\); intersect with the neighborhood from
+\texttt{lem:proper-fiber-shrink} to ensure all preimages of nearby
+\(y\) lie in \(\bigcup U_x\); sum contributions.}
+\lean{JacobianChallenge.Blueprint.weightedFiberSum_eventually_eq}
+\notready
+\end{lemma}
+
+\begin{lemma}[Weighted fibre count is locally constant]
+\label{lem:weighted-fiber-locally-constant}
+\uses{lem:weighted-fiber-eventually-eq}
+For a nonconstant holomorphic \(f:X\to Y\) between a compact
+preconnected complex \(1\)-manifold and a Hausdorff complex
+\(1\)-manifold, the weighted fibre sum
+\(y\mapsto\sum_{p\in f^{-1}(y)}e_p(f)\) is locally constant on \(Y\).
+\depends{Direct corollary of
+\texttt{lem:weighted-fiber-eventually-eq} (which holds at every
+\(y_0\)) plus
+\texttt{IsLocallyConstant.iff\_eventuallyEq} from Mathlib.}
+\lean{JacobianChallenge.Blueprint.isHolomorphic_weightedFiberSum_isLocallyConstant}
+\leanok
+\end{lemma}
+
+\begin{layman}
+The weighted fibre count is the same for nearby downstairs points: at
+each preimage, the local picture (either a single unramified sheet of
+weight \(1\), or \(k\) simple sheets summing to \(k\), or one
+ramified sheet of weight \(k\)) contributes the same amount whether
+you're sitting exactly at the branch value or slightly displaced.
+Stitching together all the preimages of a target point — there are
+finitely many — and choosing disjoint neighborhoods around each, the
+total weighted count is locally constant.
+\end{layman}
+
+\begin{theorem}[Branched degree is well-defined]
+\label{thm:branched-degree-well-defined}
+\uses{lem:weighted-fiber-locally-constant}
+For a nonconstant holomorphic \(f:X\to Y\) between compact preconnected
+complex \(1\)-manifolds, the weighted fibre sum is constant on \(Y\):
+the same nonnegative integer \(\deg(f)\) is obtained at every base
+point.
+\depends{Local-constancy from
+\texttt{lem:weighted-fiber-locally-constant} plus
+\texttt{IsLocallyConstant.apply\_eq\_of\_preconnectedSpace} from
+Mathlib (preconnected target \(\Rightarrow\) globally constant).}
+\lean{JacobianChallenge.Blueprint.isHolomorphic_weightedFiberSum_const}
+\leanok
+\end{theorem}
+
+\begin{layman}
+Locally constant on a connected target means globally constant. So the
+weighted fibre count assigns the same number — the degree — to every
+target point. This is the proof that ``the degree of a holomorphic map''
+is actually a single well-defined number, not a value that drifts as
+you move around the target.
+\end{layman}
+
+\begin{lemma}[Degree-one forces no ramification]
+\label{lem:degree-one-no-ramification}
+\uses{def:branched-degree,lem:branch-locus-finite}
+If \(\deg(f)=1\), then \(e_p(f)=1\) for every \(p\in X\), so \(f\) is
+unramified.
+\lean{JacobianChallenge.Blueprint.degree_one_no_ramification}
+\leanok
+\end{lemma}
+
+\begin{layman}
+If a holomorphic map between compact Riemann surfaces has degree one,
+every fiber's ramification indices sum to one. Since each index is at
+least one, the only way the total can equal one is if the fiber consists
+of exactly one point with index exactly one. So no branching anywhere —
+the map is everywhere a clean local homeomorphism. Why bother?
+Degree-one maps are the candidate isomorphisms between Riemann surfaces.
+Showing they have no branching is the first hurdle; the next hurdle
+(local biholomorphism) and the final hurdle (global bijection) follow
+from there. The whole genus-zero classification runs on this chain.
+\end{layman}
+
+\begin{proof}\leanok
+At a generic fiber, the sum of ramification indices equals \(1\), so the
+fiber has exactly one point with index \(1\). At a branch point \(p\),
+the sum of indices over the fiber is also \(1\), but each index is
+\(\ge 1\), so the fiber is a singleton \(\{p\}\) with \(e_p(f)=1\).
+\end{proof}
+
+\begin{theorem}[Local biholomorphism from unramified holomorphic]
+\label{thm:local-biholo-unramified}
+\uses{lem:degree-one-no-ramification}
+An unramified nonconstant holomorphic map \(f:X\to Y\) is a local
+biholomorphism: every \(p\in X\) has a neighborhood mapped
+biholomorphically onto a neighborhood of \(f(p)\).
+\depends{Mathlib's local inverse function theorem on \(\C\) plus the
+fact that unramification means the local derivative is nonzero.}
+\lean{JacobianChallenge.Blueprint.local_biholo_unramified}
+\notready
+\end{theorem}
+
+\begin{layman}
+Take a nonconstant holomorphic map that's unramified — meaning it never
+pinches sheets together. Around every point, the map is a \emph{local
+biholomorphism}: a small neighborhood of the source maps in a smooth,
+invertible, holomorphic way onto a small neighborhood of the target.
+The mechanism is the inverse function theorem from one-variable complex
+analysis: unramified means the local derivative is nonzero, and a
+nonzero derivative is exactly the condition for a holomorphic function
+to have a holomorphic local inverse. Why bother? Locally, the map looks
+like the identity (after a change of coordinates). Combined with
+degree-one (every fiber a singleton), this will force the whole map to
+be a global biholomorphism — the isomorphism we need to identify
+genus-zero surfaces with the sphere.
+\end{layman}
+
+\begin{theorem}[Degree-one is bijective]
+\label{thm:degree-one-bijective}
+\uses{def:branched-degree,thm:local-biholo-unramified}
+A degree-one holomorphic map \(f:X\to Y\) is bijective.
+\lean{JacobianChallenge.Blueprint.degree_one_bijective}
+\leanok
+\end{theorem}
+
+\begin{layman}
+A degree-one holomorphic map between compact Riemann surfaces is a
+bijection. \emph{Surjective}: a nonconstant holomorphic map between
+compact surfaces is always onto — its image is open (open mapping
+theorem) and closed (compactness), and a nonempty subset that's both
+open and closed in a connected space is the whole thing. \emph{Injective}:
+each fiber has size exactly one, by the no-ramification lemma. So the
+map is both onto and one-to-one — a set-theoretic bijection. Why bother?
+A continuous bijection between compact Hausdorff spaces is automatically
+a homeomorphism (next theorem), and combined with the local
+biholomorphism from above, that promotes our degree-one map to a full
+biholomorphism between surfaces.
+\end{layman}
+
+\begin{proofsketch}
+Surjective: a degree-\(d\) holomorphic map between compact Riemann
+surfaces is surjective (the image is open by open-mapping and closed by
+compactness). Injective: by
+Lemma~\ref{lem:degree-one-no-ramification}, every fiber has exactly one
+point with ramification index 1, hence cardinality 1.
+\end{proofsketch}
+
+\begin{theorem}[Compact-Hausdorff bijective continuous map is a homeomorphism]
+\label{thm:compact-bijection-homeo}
+A continuous bijection between compact Hausdorff spaces is a
+homeomorphism.
+\depends{Mathlib's \texttt{Continuous.homeoOfEquivCompactToT2}
+or analogous topology fact (PRESENT).}
+\lean{Continuous.homeoOfEquivCompactToT2}
+\leanok\mathlibok
+\end{theorem}
+\begin{proof}\leanok\end{proof}
+
+\begin{layman}
+A purely topological gem: any continuous one-to-one onto map from one
+compact Hausdorff space to another is automatically a homeomorphism —
+its inverse is continuous for free, no extra checking required. The
+reason is a chain of clean implications. Closed subsets of a compact
+space are themselves compact. Compact subsets of a Hausdorff space are
+closed. So the map sends closed sets to closed sets, which is exactly
+continuity of the inverse. Why bother? Without it we'd have to manually
+verify that the inverse is continuous everywhere, which on a curvy
+surface is fiddly. With it, going from ``continuous bijection'' to
+``isomorphism of topological spaces'' is one line. Mathlib already has
+this packaged.
+\end{layman}
+
+\begin{theorem}[Classical input: Degree-one maps are isomorphisms (umbrella)]
+\label{input:degree-one-isomorphism}
+\uses{thm:degree-one-bijective,thm:local-biholo-unramified,thm:compact-bijection-homeo}
+\leanok
+A nonconstant holomorphic map \(f:X\to\CPone\) of degree one is a
+biholomorphism.
+\lean{JacobianChallenge.Blueprint.input_degree_one_isomorphism}
+\end{theorem}
+
+\begin{layman}
+We package the chain ``degree-one nonconstant holomorphic map between
+compact Riemann surfaces is a biholomorphism'' as a single classical
+input. It bundles three steps: degree one means no ramification; no
+ramification means a local biholomorphism everywhere; and a continuous
+bijection between compact Hausdorff spaces is a homeomorphism — together
+giving a global holomorphic isomorphism. Why bother? Combined with the
+genus-zero existence proposition (genus zero gives a degree-one map to
+the sphere), this umbrella delivers the forward direction of the
+genus-zero classification: any genus-zero compact Riemann surface is
+\emph{biholomorphic} to the Riemann sphere, hence in particular
+homeomorphic to the topological sphere. That's the anti-hack
+``genus zero iff homeomorphic to sphere'' baked into the challenge
+statement.
+\end{layman}
+
+\begin{proof}[Proof of Theorem~\ref{thm:genus-zero-classification}]
+If \(g(X)=0\), Proposition~\ref{prop:genus-zero-degree-one-map} and
+Input~\ref{input:degree-one-isomorphism} identify \(X\) biholomorphically,
+hence homeomorphically, with \(\CPone\), whose underlying topological space is
+\(\Sphere\).
+
+Conversely, if \(X\) is homeomorphic to \(\Sphere\), the topological genus is
+zero. The comparison theorem between analytic genus
+\(\dim_{\C}H^{0}(X,\Omega^{1}_{X})\) and topological genus gives \(g(X)=0\).
+\end{proof}
+
+\begin{formalizationnote}
+The current Lean target splits this into the two directions in
+\code{Jacobian/HolomorphicForms/GenusZeroClassification.lean}. The forward
+direction needs Riemann-Roch, meromorphic functions, and degree-one map
+classification. The reverse direction needs comparison of analytic and
+topological genus.
+\end{formalizationnote}
