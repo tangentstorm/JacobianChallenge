@@ -327,16 +327,79 @@ helpers carrying the canonical `topologicalGenus` (`TopologicalGenus`,
 `PeriodFunctional.lean` is unified — the name collision is documented
 inline in `Jacobian/Periods.lean`.
 
+### Round 26: `topologicalGenus` unification
+
+The two parallel `JacobianChallenge.Periods.topologicalGenus`
+declarations (in `TopologicalGenus.lean` and `PeriodFunctional.lean`)
+are now unified. The canonical declaration lives in
+`TopologicalGenus.lean`; `PeriodFunctional.lean` imports it. The
+abbrev `singularH1 M := (IntegralOneCycle M : Type)` makes the two
+historical formulations definitionally equal — `unfold` calls in
+PeriodFunctional now go through `show` first to recover the
+`IntegralOneCycle` form for `omega`. `Periods.lean` re-exports
+`TopologicalGenus`/`TopologicalGenusInvariance`/`SurfaceClassification`
+through the hub.
+
+### Round 27: Stage B leaf discharged via meet-in-the-middle
+
+`singularH1_compactRiemannSurface_iso_freeZ` is **discharged**: with
+unification in hand, the project's existing
+`h1_basis_of_compact_riemann_surface` (in `PeriodFunctional`) yields a
+`Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ (IntegralOneCycle X)`,
+which is now definitionally the same as a basis of `singularH1 X`.
+Wrapping with `Basis.equivFun` produces the linear iso. The Stage B
+umbrella `analyticGenus_eq_topologicalGenus` was removed from
+`AnalyticGenusEqTopologicalGenus.lean` in favour of PeriodFunctional's
+canonical declaration.
+
+The only remaining Stage B analytic content sits one level lower at
+`Jacobian.Periods.PeriodFunctional.h1_has_even_basis` and
+`hodge_deRham_rank_eq` (both pre-existing project sorries).
+
+### Round 28: Surface classification refined via opaque `Triangulation`
+
+The Stage A1+A2 leaf is now decomposed:
+
+* `Triangulation M` (opaque type) — placeholder for finite triangulation data.
+* `exists_triangulation_of_compact_2manifold` (sorry, Stage A1) —
+  Radó's triangulability theorem.
+* `Triangulation.toPolygonalQuotient` (sorry, Stage A2) —
+  combinatorial reduction to standard 4g'-gon presentation.
+* `existsPolygonalQuotientPresentation` — *real proof*; assembles A1 + A2.
+
+### Round 29: Polygon ≥1 H₁ leaf refined into a basis leaf
+
+Following the Round-27 / Stage-B pattern,
+`singularH1_polygon4g_succ_iso_freeZ` is decomposed:
+
+* `polygon4g_succ_singularH1_basis` (sorry) — `Module.Basis (Fin (2*(g+1))) ℤ (singularH1 (Polygon4g (g+1)))`.
+* `singularH1_polygon4g_succ_iso_freeZ` — *real proof*; wraps the
+  basis with `Basis.equivFun`.
+
+### Round 30–31: Subsingleton-H₁ leaf split + `Unit` case discharged
+
+`singularH1_subsingleton_of_contractibleSpace` is now an assembly
+through `ContractibleSpace.hequiv_unit` and the homotopy-equivalence
+helper. The `Unit` base case is **discharged**:
+
+* `unit_totallyDisconnected` (private instance) — `Subsingleton ⟹ TD`.
+* `singularH1_unit_subsingleton` (**real proof**) — composed of
+  `isZero_singularHomologyFunctor_of_totallyDisconnectedSpace` (Mathlib)
+  + `ModuleCat.subsingleton_of_isZero` (Mathlib).
+* `singularH1_subsingleton_of_homotopyEquivUnit` (sorry, frontier) —
+  the only remaining homotopy-invariance content.
+
 ### Build status
 
-`lake build Jacobian.Blueprint.Sec03.PolygonalModel` succeeds. The
-`polygonal_model` declaration has no own `sorry`; the only remaining
-`sorry`s in its dependency closure are four frontier leaves
-(plus pre-existing project sorries unchanged by this refinement):
+`lake build Jacobian.Blueprint.Sec03.PolygonalModel` and
+`lake build Jacobian.Periods` both succeed. The `polygonal_model`
+declaration has no own `sorry`; the only remaining `sorry`s in its
+dependency closure are four frontier leaves (plus pre-existing project
+sorries unchanged by this refinement):
 
 | Frontier leaf | File | Bottom-up content |
 | --- | --- | --- |
-| `existsPolygonalQuotientPresentation` | `SurfaceClassification.lean` | Surface classification (Radó + edge-word reduction) |
-| `singularH1_polygon4g_succ_iso_freeZ` | `SurfaceClassification.lean` | Polygon `H₁` as free ℤ-module via cellular / Hurewicz route |
-| `singularH1_subsingleton_of_contractibleSpace` | `SurfaceClassification.lean` | Homotopy invariance of singular homology (Mathlib gap) |
-| `singularH1_compactRiemannSurface_iso_freeZ` | `AnalyticGenusEqTopologicalGenus.lean` | Hodge / de Rham + Riemann-Roch / period-lattice; meet-in-the-middle with project's existing `h1_basis_of_compact_riemann_surface` |
+| `exists_triangulation_of_compact_2manifold` | `SurfaceClassification.lean` | Radó's triangulability theorem |
+| `Triangulation.toPolygonalQuotient` | `SurfaceClassification.lean` | Combinatorial reduction to standard 4g'-gon |
+| `polygon4g_succ_singularH1_basis` | `SurfaceClassification.lean` | Polygon `H₁` basis (cellular / Hurewicz) |
+| `singularH1_subsingleton_of_homotopyEquivUnit` | `SurfaceClassification.lean` | Homotopy invariance of singular homology (Mathlib gap) |
