@@ -1,5 +1,8 @@
 import Mathlib.Analysis.SpecialFunctions.Complex.Circle
+import Mathlib.Analysis.Normed.Module.Connected
 import Mathlib.Logic.Relation
+import Mathlib.Topology.Compactness.Compact
+import Mathlib.Topology.Connected.Basic
 import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Topology.Constructions
 
@@ -135,6 +138,25 @@ namespace Polygon4g
 
 instance instTopologicalSpace (g : ℕ) : TopologicalSpace (Polygon4g g) :=
   inferInstanceAs (TopologicalSpace (Quotient _))
+
+/-- The closed unit disk is compact (ℂ is a `ProperSpace`). -/
+instance _root_.JacobianChallenge.Periods.DiskC.instCompactSpace :
+    CompactSpace JacobianChallenge.Periods.DiskC :=
+  isCompact_iff_compactSpace.mp <|
+    ProperSpace.isCompact_closedBall (0 : ℂ) 1
+
+/-- The closed unit disk is connected (closed balls in normed spaces are
+path-connected, hence connected). -/
+instance _root_.JacobianChallenge.Periods.DiskC.instConnectedSpace :
+    ConnectedSpace JacobianChallenge.Periods.DiskC :=
+  isConnected_iff_connectedSpace.mp <|
+    Metric.isConnected_closedBall (zero_le_one)
+
+instance instCompactSpace (g : ℕ) : CompactSpace (Polygon4g g) :=
+  Quotient.compactSpace
+
+instance instConnectedSpace (g : ℕ) : ConnectedSpace (Polygon4g g) :=
+  Quotient.instConnectedSpace
 
 /-- Quotient map from the closed disk to the polygon. -/
 def mk (g : ℕ) : DiskC → Polygon4g g :=
