@@ -57,8 +57,6 @@ LEGEND_HTML = """
     <dd>major classical-analysis input — admitted, not in current Mathlib</dd>
   <dt class="legend-swatch legend-orange-border">Orange border</dt>
     <dd>blueprint statement still being refined or split into sub-leaves</dd>
-  <dt class="legend-swatch legend-blue-border">Blue border</dt>
-    <dd>statement ready to be formalized — all prerequisites done</dd>
   <dt class="legend-swatch legend-green-border">Green border</dt>
     <dd>Lean declaration for the statement exists in this project</dd>
   <dt class="legend-swatch legend-green-fill">Green fill</dt>
