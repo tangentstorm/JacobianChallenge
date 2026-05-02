@@ -61,7 +61,7 @@ The explicit universe annotation `.{_, 0}` pins the
 `RSSheafCohomology` and friends in `SheafCohomologyRS.lean`. -/
 noncomputable def RSCanonicalDegree
     (X : Type*) [TopologicalSpace X] : ℤ :=
-  RSLineBundleDegree.{_, 0} X (RSDualizingSheaf.{_, 0} X)
+  RSLineBundleDegree.{_, 0} X (RSDualizingSheaf X)
 
 /-- **Frontier theorem (sorry).** Degree of the canonical divisor on
 a compact Riemann surface of genus `g`:
@@ -95,8 +95,8 @@ theorem canonical_degree_eq_two_genus_minus_two
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf.{_, 0} X) 0)]
-    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf.{_, 0} X) 1)] :
+    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)]
+    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
     RSCanonicalDegree X = 2 * (RSGenus X : ℤ) - 2 := by
   sorry
 

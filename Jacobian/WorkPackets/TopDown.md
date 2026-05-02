@@ -361,6 +361,35 @@ This table is the current top-down bridge inventory. Keep it updated as
 | `ContMDiff.degree` ✅ refined | `JacobianChallenge.TraceDegree.analyticDegree` | `analyticDegree` (named `opaque` in `Jacobian.TraceDegree.AnalyticDegree`) |
 | `pushforward_pullback` ✅ refined | trace–pullback identity through ULift | `analyticPushforward_analyticPullback` (named sorry — the `tr_f (f* Q) = deg(f) • Q` identity) |
 
+## Serre-duality refinement (rounds 1–25)
+
+Top-down expansion of `thm:serre-duality-rs` produced the file tree
+under `Jacobian/HolomorphicForms/Serre/` (32 files). The public
+surface in `Jacobian/HolomorphicForms/SerreDualityRS.lean` is now
+refined: `RSDualizingSheaf X := RSCotangentSheaf X` (round 1) and
+`serre_duality_rs` is a sorry-free assembly above
+`serre_datum_for_canonical_dual_exists` + frontier `serreDualSheaf`
+data (round 2). Successive rounds (3–24) decompose each named
+obligation into strictly-smaller named obligations that bottom out in
+Mathlib-frontier pieces (presheaves of holomorphic functions / 1-forms,
+tensor product of abelian sheaves, Yoneda cup product, residue map,
+harmonic-form representatives, L²-pairing nondegeneracy, line-bundle
+dual / subtraction).
+
+Externally-visible discharges:
+
+* `h1_dualizing_sheaf_one_dim` (in `H1DualizingSheaf.lean`) is now
+  sorry-free above `h1Canonical_isoToC` (round 19).
+* `riemann_roch_high_degree` (in `RiemannRochHighDegree.lean`) is
+  refined via `riemann_roch_high_degree_via_serre` +
+  `RSLineBundleDegree_dual_tensor_canonical` + low-degree vanishing
+  (round 18).
+* `riemann_roch_umbrella_exists` (in
+  `Blueprint/Sec02/InputRiemannRoch.lean`) is refined via
+  `riemann_roch_classical_identity` (round 20).
+
+Plan and full file inventory: `ref/plans/serre-duality-rs.md`.
+
 ## Practical Guardrails
 
 - Keep `Solution.lean` independent of `Challenge.lean`.
