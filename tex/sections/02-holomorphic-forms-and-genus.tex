@@ -554,8 +554,12 @@ preimage \(p\in f^{-1}(q)\) contributes its ramification index
 \(e_p(f)=\ord_p(f - f(p))\ge 1\); the sum is constant in \(q\) and
 equals \(\deg(f)\).
 \depends{Local power-series order at \(p\) (\texttt{analyticOrderAt});
-constancy in the generic fiber from the open-mapping + isolated-zeros
-machinery.}
+constancy in \(q\) is the content of
+\texttt{thm:branched-degree-well-defined}, decomposed into
+\texttt{lem:branch-locus-finite},
+\texttt{lem:local-inj-unramified},
+\texttt{lem:local-kfold-ramified}, and
+\texttt{lem:weighted-fiber-locally-constant}.}
 \lean{JacobianChallenge.Blueprint.branchedDegree}
 \leanok
 \end{definition}
@@ -605,6 +609,124 @@ extend conclusions across it by continuity — exactly how the trace of a
 derivative is itself meromorphic; its zero set is discrete by the
 identity theorem, and finite by compactness.
 \end{proofsketch}
+
+\begin{lemma}[Local injectivity at an unramified point]
+\label{lem:local-inj-unramified}
+\uses{def:branched-degree}
+If \(e_x(f)=1\) at a point \(x\in X\), there is an open neighborhood
+\(U\ni x\) and an open neighborhood \(V\ni f(x)\) such that for every
+\(y\in V\), the set \(U\cap f^{-1}(y)\) is a singleton.
+\depends{Mathlib's analytic inverse function theorem
+(\texttt{AnalyticAt.localInverse}) plus chart transport.}
+\lean{JacobianChallenge.Blueprint.IsHolomorphicAt.exists_local_inj_of_unramified}
+\notready
+\end{lemma}
+
+\begin{layman}
+At a point where the holomorphic map doesn't pinch sheets together
+(ramification index \(1\)), the map is a clean local
+homeomorphism: zoom in enough and you see a single sheet covering a
+single small disk, with each downstairs point having a unique upstairs
+preimage. Why bother? This is the building block for conservation of
+the weighted fibre count off branch values: every unramified preimage
+contributes exactly \(1\) to the count, and that count is locally
+stable because nearby downstairs points have exactly the same
+unique-preimage neighborhoods.
+\end{layman}
+
+\begin{proofsketch}
+The chart-local power-series expansion at \(x\) is
+\(f(t)=a\cdot t+O(t^2)\) with \(a\ne 0\), so the chart-local derivative
+is nonzero at the chart image of \(x\). Apply the analytic inverse
+function theorem for \(\C\to\C\) to get a chart-local inverse on a
+neighborhood; transport back through the canonical charts on \(X\)
+and \(Y\).
+\end{proofsketch}
+
+\begin{lemma}[Local \texorpdfstring{\(k\)}{k}-fold structure at a ramified point]
+\label{lem:local-kfold-ramified}
+\uses{def:branched-degree,def:vanishing-order}
+If \(e_x(f)=k\ge 1\), there is an open neighborhood \(U\ni x\) and an
+open neighborhood \(V\ni f(x)\) such that for every \(y\in V\) with
+\(y\ne f(x)\), the set \(U\cap f^{-1}(y)\) consists of exactly \(k\)
+distinct unramified preimages.
+\depends{Mathlib's \texttt{AnalyticAt.analyticOrderAt\_eq\_natCast}
+gives the local form \(f(t)=t^k\cdot g(t)\) with \(g(0)\ne 0\); a
+holomorphic \(k\)-th root of \(g\) flattens this to \(s\mapsto s^k\),
+which has exactly \(k\) simple preimages of any nonzero target.}
+\lean{JacobianChallenge.Blueprint.IsHolomorphicAt.exists_local_kfold_of_ramified}
+\notready
+\end{lemma}
+
+\begin{layman}
+At a branch point of order \(k\), the map locally looks like
+\(z\mapsto z^k\): the \(k\) sheets that meet at the branch point pull
+apart as you move slightly away, becoming \(k\) distinct simple
+preimages of any nearby target. This is what conserves the weighted
+fibre count across branch values: the single ramified preimage with
+weight \(k\) splits into \(k\) simple preimages, each with weight
+\(1\), summing to \(k\) again.
+\end{layman}
+
+\begin{proofsketch}
+Write \(f(t)=t^k\cdot g(t)\) in a chart at \(x\), with \(g(0)\ne 0\).
+Choose a holomorphic \(k\)-th root \(g(t)^{1/k}\) (exists since \(g\)
+is nonvanishing near \(0\)) and substitute \(s=t\cdot g(t)^{1/k}\) to
+flatten the local form to \(f(s)=s^k\). The map \(s\mapsto s^k\) has
+exactly \(k\) simple preimages of any nonzero point. Transport back
+through charts.
+\end{proofsketch}
+
+\begin{lemma}[Weighted fibre count is locally constant]
+\label{lem:weighted-fiber-locally-constant}
+\uses{lem:branch-locus-finite, lem:local-inj-unramified, lem:local-kfold-ramified}
+For a nonconstant holomorphic \(f:X\to Y\) between a compact
+preconnected complex \(1\)-manifold and a Hausdorff complex
+\(1\)-manifold, the weighted fibre sum
+\(y\mapsto\sum_{p\in f^{-1}(y)}e_p(f)\) is locally constant on \(Y\).
+\depends{Combine the local-injectivity lemma at unramified preimages
+(contribution \(1\) each) with the local \(k\)-fold structure at
+ramified preimages (\(k\) simple preimages contributing \(1\) each, or
+the single ramified preimage of weight \(k\), depending on the target
+point); the disjoint-union choice uses \texttt{T2Space} on \(X\) and
+finiteness of the fibre.}
+\lean{JacobianChallenge.Blueprint.isHolomorphic_weightedFiberSum_isLocallyConstant}
+\notready
+\end{lemma}
+
+\begin{layman}
+The weighted fibre count is the same for nearby downstairs points: at
+each preimage, the local picture (either a single unramified sheet of
+weight \(1\), or \(k\) simple sheets summing to \(k\), or one
+ramified sheet of weight \(k\)) contributes the same amount whether
+you're sitting exactly at the branch value or slightly displaced.
+Stitching together all the preimages of a target point — there are
+finitely many — and choosing disjoint neighborhoods around each, the
+total weighted count is locally constant.
+\end{layman}
+
+\begin{theorem}[Branched degree is well-defined]
+\label{thm:branched-degree-well-defined}
+\uses{lem:weighted-fiber-locally-constant}
+For a nonconstant holomorphic \(f:X\to Y\) between compact preconnected
+complex \(1\)-manifolds, the weighted fibre sum is constant on \(Y\):
+the same nonnegative integer \(\deg(f)\) is obtained at every base
+point.
+\depends{Local-constancy from
+\texttt{lem:weighted-fiber-locally-constant} plus
+\texttt{IsLocallyConstant.apply\_eq\_of\_preconnectedSpace} from
+Mathlib (preconnected target ⇒ globally constant).}
+\lean{JacobianChallenge.Blueprint.isHolomorphic_weightedFiberSum_const}
+\leanok
+\end{theorem}
+
+\begin{layman}
+Locally constant on a connected target means globally constant. So the
+weighted fibre count assigns the same number — the degree — to every
+target point. This is the proof that ``the degree of a holomorphic map''
+is actually a single well-defined number, not a value that drifts as
+you move around the target.
+\end{layman}
 
 \begin{lemma}[Degree-one forces no ramification]
 \label{lem:degree-one-no-ramification}

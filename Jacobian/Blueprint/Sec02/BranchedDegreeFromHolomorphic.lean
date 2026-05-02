@@ -1,5 +1,4 @@
-import Jacobian.Blueprint.Sec02.BranchedDegree
-import Jacobian.HolomorphicForms.HolomorphicMap
+import Jacobian.Blueprint.Sec02.WeightedFiberCardConst
 
 /-! # Blueprint: `def:branched-degree`, leaf 8 — analytic constructor
 
@@ -28,15 +27,24 @@ Three of the four originally-named obstacles have been discharged in
   3. **Finite fibres** via the chart-local identity principle and
      Bolzano–Weierstrass — sorry-free, `isHolomorphic_finite_fiber`.
 
-The remaining obstacle is the genuinely hard one:
+The remaining obstacle — well-definedness of the branched degree
+(`weightedFiberCard_const`) — has been split into four sub-leaves in
+`Sec02/WeightedFiberCardConst.lean`:
 
-  4. **Constancy of the weighted fibre count
-     (`weightedFiberCard_const`)** — the well-definedness of the
-     branched degree.  Standard proofs use local triviality of
-     branched coverings off the (finite) branch locus plus a
-     continuity argument across branch values, or homological /
-     proper-degree machinery.  The single remaining `sorry` in this
-     file is precisely that step. -/
+  * leaf A — `mapAnalyticOrderAt_ramified_finite` (branch locus
+    finite),
+  * leaf B — `IsHolomorphicAt.exists_local_inj_of_unramified` (local
+    injectivity at unramified points),
+  * leaf C — `IsHolomorphicAt.exists_local_kfold_of_ramified` (local
+    `k`-fold structure at ramified points),
+  * leaf D — `isHolomorphic_weightedFiberSum_isLocallyConstant`
+    (local conservation of weighted fibre count).
+
+The final-assembly theorem `isHolomorphic_weightedFiberSum_const`
+(in that file) combines leaf D with `PreconnectedSpace Y` and is
+sorry-free.  Its statement is exactly the field needed for
+`weightedFiberCard_const` here, so this constructor body is also
+sorry-free *modulo* the four sub-leaves (each still `sorry`). -/
 
 namespace JacobianChallenge.Blueprint
 
@@ -61,7 +69,7 @@ noncomputable def branchedCoverData_of_nonconstant_holomorphic
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
     [CompactSpace X] [T2Space X]
-    [PreconnectedSpace X] [T2Space Y]
+    [PreconnectedSpace X] [T2Space Y] [PreconnectedSpace Y]
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} (hf : IsHolomorphic f)
     (hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) :
@@ -70,18 +78,6 @@ noncomputable def branchedCoverData_of_nonconstant_holomorphic
   ramificationIndex_pos := mapAnalyticOrderAt_pos hf hnonconst
   finite_fiber := isHolomorphic_finite_fiber hf hnonconst
   weightedFiberCard_eq := fun _ => rfl
-  weightedFiberCard_const := by
-    -- The single remaining analytic obstacle: the weighted fibre count
-    -- is constant on `Y`.  This is the well-definedness of the branched
-    -- degree.  Standard proofs use:
-    --   * branch locus discreteness + finiteness (compactness),
-    --   * local triviality of the branched cover off the finite set of
-    --     branch values,
-    --   * continuity across branch values (the weighted count "absorbs"
-    --     ramification mass at branch values to compensate for fibres
-    --     converging together).
-    -- This step is genuinely hard and is the single biggest remaining
-    -- gap in the branched-degree story.
-    sorry
+  weightedFiberCard_const := isHolomorphic_weightedFiberSum_const hf hnonconst
 
 end JacobianChallenge.Blueprint
