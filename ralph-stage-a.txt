@@ -13,10 +13,10 @@
 
 # ---------- active ralph seed ----------
 
-Replace the placeholder `sidePairingRel` in Jacobian/Periods/EdgeWord.lean with a real disk-side relation. Currently `sidePairingRel : ℕ → EdgeWord _ → Unit → Unit → Prop := sorry`. Replace with a definition over the closed unit disk `Metric.closedBall (0 : ℂ) 1` that pairs boundary points on opposite sides of the 4g-gon parametrisation, in the standard side-pairing pattern dictated by the EdgeWord. Reference Jacobian/Periods/Polygon4g.lean (the existing 4g-gon side-pairing relation `SideRel`) for the pattern. The new `sidePairingRel` should generalise `SideRel` to arbitrary edge words: `SideRel` is the special case where the word is `standardWord g`. Update `wordQuotient` accordingly so it quotients the closed unit disk by the new relation.
+# DONE (Claude direct, 2026-05-02): Replace the placeholder `sidePairingRel` with a real `DiskC → DiskC → Prop` relation. EdgeWord.lean is now sorry-free; for the standard word, `sidePairingRel g (standardWord g) = Polygon4g.SideRel g` (proven). Non-standard words use `Eq` as a placeholder until the general construction lands per A2.2.
 
-# ---------- A3.1 (blocked) ----------
-# A3.1 (`polygon4g_eq_standard_word_quotient`) is blocked until the above seed lands — it requires `wordQuotient g (standardWord g)` to actually be the quotient of the disk by `SideRel`, not the placeholder Quot of a Unit relation.
+# ---------- A3.1 (now unblocked) ----------
+# A3.1 (`polygon4g_eq_standard_word_quotient`) is now attackable — `wordQuotient g (standardWord g)` is the quotient of `DiskC` by `Polygon4g.SideRel g`, which is the same structure as `Polygon4g g`. The proof should be a `Quotient.congrRight`-style argument plus the `sidePairingRel_standardWord` lemma now in EdgeWord.lean.
 
 # ---------- bigger leaves ----------
 # Skipped from this ralph batch — see ref/plans/surface-classification.md §4 A1.4, A2.4, A2.5.
