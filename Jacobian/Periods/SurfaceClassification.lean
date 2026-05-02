@@ -97,12 +97,52 @@ theorem exists_triangulation_of_compact_2manifold
     Nonempty (Triangulation M) := by
   sorry
 
+/-- **Opaque placeholder for an edge-word presentation of `M`.** Bundles
+the data of "M presented as a `2k`-gon with side identifications given
+by some edge-pairing word `w` of length `2k`". The opaque declaration
+lets the Stage A2 sub-leaves below name it; a concrete unfolding will
+land when the combinatorial-reduction infrastructure is built. -/
+opaque EdgeWordPresentation (M : Type) [TopologicalSpace M] : Type
+
+/-- **Stage A2.a leaf (cut along non-tree edges).** Given a finite
+triangulation of a compact connected 2-manifold, the dual graph
+contains a maximal spanning tree; cutting `M` along the *non-tree*
+edges unfolds the surface into a single 2-cell with side identifications
+encoded as an edge-pairing word. The resulting word is *not yet
+standardized* — that is the job of A2.b.
+
+Bottom-up content: dual-tree unfolding (Massey, *Algebraic Topology*,
+§I.4 / Lee, *Topological Manifolds*, §6.3). -/
+noncomputable def Triangulation.toEdgeWordPresentation
+    {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    [ConnectedSpace M]
+    [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
+    [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) M]
+    (_T : Triangulation M) : EdgeWordPresentation M :=
+  sorry
+
+/-- **Stage A2.b leaf (Tietze reduction to standard form).** Any
+edge-word presentation of an orientable 2-manifold reduces to the
+standard `a₁b₁a₁⁻¹b₁⁻¹⋯` form via finitely many Tietze moves. The
+resulting standard presentation is exactly a `PolygonalQuotientPresentation`.
+
+Bottom-up content: classical Brahana / Seifert–Threlfall reduction. -/
+noncomputable def EdgeWordPresentation.toPolygonalQuotient
+    {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    [ConnectedSpace M]
+    [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
+    [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) M]
+    [Orientable M]
+    (_E : EdgeWordPresentation M) : PolygonalQuotientPresentation M :=
+  sorry
+
 /-- **Stage A2 leaf (combinatorial reduction).** Given a triangulation
-of a compact connected orientable smooth real 2-manifold, one can
-extract a polygonal-quotient presentation by walking the dual tree of
-2-simplices, cutting along non-tree edges to unfold the surface into a
-2g-gon, and reducing the resulting edge-pairing word to the standard
-`a₁b₁a₁⁻¹b₁⁻¹⋯` form via Tietze-style moves. -/
+of a compact connected orientable smooth real 2-manifold, one obtains a
+polygonal-quotient presentation. Body assembles
+`Triangulation.toEdgeWordPresentation` (A2.a) followed by
+`EdgeWordPresentation.toPolygonalQuotient` (A2.b). -/
 noncomputable def Triangulation.toPolygonalQuotient
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -110,8 +150,8 @@ noncomputable def Triangulation.toPolygonalQuotient
     [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) M]
     [Orientable M]
-    (_T : Triangulation M) : PolygonalQuotientPresentation M :=
-  sorry
+    (T : Triangulation M) : PolygonalQuotientPresentation M :=
+  T.toEdgeWordPresentation.toPolygonalQuotient
 
 /-- **Stage A1+A2 leaf (existence of a polygonal-quotient presentation).**
 Every compact connected orientable smooth real 2-manifold admits a
