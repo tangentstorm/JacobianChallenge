@@ -20,11 +20,8 @@ namespace JacobianChallenge.Periods
 
 /-- The continuous linear equivalence identifying `ℝ × ℝ` with the real
 Euclidean model space `EuclideanSpace ℝ (Fin 2)`. -/
-def realProdEquivReal2 : (ℝ × ℝ) ≃L[ℝ] EuclideanSpace ℝ (Fin 2) := by
-  -- The map sends `(x, y)` to the vector `![x, y]`; this elementary
-  -- continuous linear equivalence is kept opaque for now because B1 only
-  -- needs a stable named bridge.
-  sorry
+def realProdEquivReal2 : (ℝ × ℝ) ≃L[ℝ] EuclideanSpace ℝ (Fin 2) :=
+  ((WithLp.linearEquiv 2 ℝ (Fin 2 → ℝ)).trans (LinearEquiv.finTwoArrow ℝ ℝ)).symm.toContinuousLinearEquiv
 
 /-- The fixed real-coordinate equivalence used to turn complex charts into
 charts valued in `EuclideanSpace ℝ (Fin 2)`.  Its underlying map is
@@ -36,7 +33,8 @@ def complexEquivReal2 : ℂ ≃L[ℝ] EuclideanSpace ℝ (Fin 2) :=
 @[simp]
 theorem complexEquivReal2_apply (z : ℂ) :
     complexEquivReal2 z = WithLp.toLp 2 ![z.re, z.im] := by
-  sorry
+  ext i;
+  fin_cases i <;> aesop
 
 /-- The real charted-space structure on `ℂ` obtained from
 `complexEquivReal2`, equivalently from `Complex.equivRealProd` followed by the
