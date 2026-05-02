@@ -295,58 +295,87 @@ Today: ~Solution.lean:134~ ~def Jacobian (X : Type) ... : Type~. Challenge:
 divergence so comparator passes at kernel level (data + theorem), not
 just theorem-name level.
 
-** TODO [#A] [ ] Audit Periods.periodFullComplexLattice chain for Type-u readiness :hand:
+** DONE [#A] [X] Audit Periods.periodFullComplexLattice chain for Type-u readiness :hand:
 :PROPERTIES:
 :SCOPE:       read-only audit
-:OUTPUT:      ref/plans/universe-parity.org
-:DEPENDS_ON:  W1 P1 + P2 (do this when those obligations are stable)
+:OUTPUT:      ref/plans/universe-parity.org (185 LOC)
+:RESULT:      Mathlib gap, NOT a project-internal thread-and-flip
 :END:
 
-For every declaration in the ~periodFullComplexLattice~ ancestry, identify:
-- universe variables already poly?
-- forced ~Type 0~ via instance argument shape?
-- forced ~Type 0~ via Mathlib gap (specific Mathlib decl that's not yet
-  universe-poly in v4.28.0)?
+Audit complete (2026-05-02). See ~ref/plans/universe-parity.org~ for the
+full table. Headline finding: the ~Type 0~ specialisation is *not* a
+spurious project-internal annotation gap. It traces to a genuine Mathlib
+v4.28.0 limitation:
 
-#+BEGIN_SRC text
-[CLOUD CLAUDE CODE PROMPT — read-only]
-Working dir: C:\ver\JacobianChallenge
-Audit task. No code edits.
+- ~JacobianChallenge.Periods.IntegralOneCycle~ requires
+  ~[HasCoproducts.{0} (ModuleCat ℤ)]~ via ~singularHomologyFunctor~.
+- Mathlib v4.28.0 only ships the ~.{0}~ instance; no universe-polymorphic
+  variant exists.
+- This propagates: ~IntegralOneCycle~ → ~periodPairing~ →
+  ~periodSubgroup~ → ~basisAlignedPeriodSubgroup~ →
+  ~periodFullComplexLattice~ → ~Solution.Jacobian~.
 
-For each of the following declarations, report (a) the current universe
-variables, (b) whether the declaration is universe-polymorphic in `X`,
-(c) if not, which Mathlib lemma or instance forces Type 0:
+Project-internal ~universe u~ annotations alone will not lift the chain.
 
-- JacobianChallenge.Periods.periodFullComplexLattice
-- JacobianChallenge.Periods.periodSubgroup
-- JacobianChallenge.Periods.IntegralOneCycle
-- JacobianChallenge.Periods.basisAlignedPeriodSubgroup
-- JacobianChallenge.ComplexTorus.quotient (universe shape)
-- Any instance JacobianChallenge.Periods.* on the chain
+*** Three honest options for closing the divergence
 
-Output: a markdown/org table at ref/plans/universe-parity.org with one
-row per declaration. The row should name the universe-blocker (e.g.
-"Mathlib `AddSubgroup.zmultiples` has X : Type" or "instance
-LocallyCompactGroup forces Type 0").
-#+END_SRC
+**** Option A — Accept ~Type 0~ specialisation (status quo)
+Keep ~Solution.Jacobian (X : Type)~. Comparator passes at theorem-name
+level (already does). Document the divergence in Solution.lean's
+docstring (already does). Zero additional work. The "Universe parity"
+goal in the plan's Definition-of-Done is downgraded from "kernel
+equivalence" to "theorem-name equivalence."
 
-** TODO [#A] [ ] Implement Type u promotion of period lattice chain :refactor:cloud:
+**** Option B — Upstream Mathlib PR for ~HasCoproducts.{u} (ModuleCat ℤ)~
+Most correct path. Add the universe-polymorphic instance to Mathlib
+proper, then update the pinned commit, then thread ~universe u~ through
+the chain. Timeline: months-years (Mathlib review + upstream coordination
++ pinned-commit bump).
+
+**** Option C — ULift bridge inside ~periodPairing~
+Realistic mid-path. Concretise ~periodPairing~ to expose a ~Type u~
+interface that internally lifts cycles to ~Type 0~ via ~ULift~ before
+calling ~singularHomologyFunctor~. The chain above ~periodPairing~ then
+lifts to ~Type u~. Timeline: weeks-months once ~periodPairing~ is no
+longer ~opaque~ (which itself is gated on W1 P2 path-integral / Stokes
+work).
+
+*** Decision required (was previously baked in)
+
+Earlier in the plan-cycle the user picked "fix the divergence as part of
+completion" assuming this was a small project-internal lift. The audit
+shows that was wrong premise. The user should re-pick:
+
+- [ ] Option A (downgrade Definition-of-Done; closes divergence by accepting it)
+- [ ] Option B (Mathlib upstream; long pole, most correct)
+- [ ] Option C (ULift bridge; realistic, gated on ~periodPairing~ being concrete)
+
+The TODOs below presume Option C unless the user picks A or B.
+
+** BLOCKED [#A] [ ] Implement Option C — ULift bridge in periodPairing :refactor:cloud:
 :PROPERTIES:
-:DEPENDS_ON:  audit TODO above
+:DEPENDS_ON:  Option choice + W1 P2 (periodPairing concretisation)
+:NOTE:        Skipped if Option A; replaced with Mathlib PR if Option B
 :END:
 
-Once the audit identifies blockers, do the refactor. Cloud-Claude-shaped
-because it touches multiple files in a coordinated edit.
+Concretise ~JacobianChallenge.Periods.periodPairing~ to a ~Type u~
+signature, lifting the curve carrier into ~Type 0~ via ~ULift~ at the
+boundary where ~singularHomologyFunctor~ is called. Then thread
+~universe u~ through the chain ~periodSubgroup~ →
+~basisAlignedPeriodSubgroup~ → ~periodFullComplexLattice~. Multi-file
+coordinated edit; cloud-Claude-shaped.
 
-** TODO [#A] [ ] Flip Solution.Jacobian to (X : Type u), remove ULift degenerate :refactor:hand:
+** BLOCKED [#A] [ ] Flip Solution.Jacobian to (X : Type u), remove ULift degenerate :refactor:hand:
 :PROPERTIES:
 :FILE:        Jacobian/Solution.lean
 :BUILD:       lake build Jacobian.Solution
 :VERIFY:      comparator accepts at kernel-equivalence level (not just theorem-name)
-:DEPENDS_ON:  the two TODOs above
+:DEPENDS_ON:  Option C implementation, OR Option B Mathlib bump
+:NOTE:        Skipped if Option A
 :END:
 
-Final flip. Update Solution.lean's docstring to remove the divergence note.
+Final flip. Update Solution.lean's docstring to remove the divergence
+note. Becomes a no-op if Option A is chosen.
 
 * W3 — Retire StatementBank.lean [/]                                   :refactor:
 
