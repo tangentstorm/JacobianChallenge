@@ -104,6 +104,40 @@ determined by `w`. -/
 def wordQuotient (g : ℕ) (w : EdgeWord g) : Type :=
   Quotient ⟨sidePairingRel g w, sidePairingRel_equivalence g w⟩
 
+/-! ### List-level Tietze cancellation -/
+
+/-- The single-step Tietze swap relation: cancel an adjacent
+inverse pair `[ℓ, ℓ⁻¹]` (or `[ℓ⁻¹, ℓ]`) anywhere in a word. -/
+inductive InverseCancel : {g : ℕ} → EdgeWord g → EdgeWord g → Prop where
+  | ax_aInv {g : ℕ} (i : Fin g) (xs ys : List (Letter g)) :
+      InverseCancel (xs ++ [Letter.a i, Letter.aInv i] ++ ys) (xs ++ ys)
+  | aInv_a {g : ℕ} (i : Fin g) (xs ys : List (Letter g)) :
+      InverseCancel (xs ++ [Letter.aInv i, Letter.a i] ++ ys) (xs ++ ys)
+  | bx_bInv {g : ℕ} (i : Fin g) (xs ys : List (Letter g)) :
+      InverseCancel (xs ++ [Letter.b i, Letter.bInv i] ++ ys) (xs ++ ys)
+  | bInv_b {g : ℕ} (i : Fin g) (xs ys : List (Letter g)) :
+      InverseCancel (xs ++ [Letter.bInv i, Letter.b i] ++ ys) (xs ++ ys)
+
+/-- Length strictly decreases by 2 under `InverseCancel`. -/
+theorem InverseCancel.length_lt {g : ℕ} {w v : EdgeWord g}
+    (h : InverseCancel w v) :
+    v.length + 2 = w.length := by
+  cases h <;> simp [List.length_append] <;> omega
+
+/-- The reflexive-transitive closure (word equivalence under
+finitely many cancellations). -/
+def WordEq {g : ℕ} : EdgeWord g → EdgeWord g → Prop :=
+  Relation.ReflTransGen InverseCancel
+
+/-- `WordEq` is reflexive. -/
+theorem WordEq.refl {g : ℕ} (w : EdgeWord g) : WordEq w w :=
+  Relation.ReflTransGen.refl
+
+/-- `WordEq` is transitive. -/
+theorem WordEq.trans {g : ℕ} {a b c : EdgeWord g}
+    (hab : WordEq a b) (hbc : WordEq b c) : WordEq a c :=
+  Relation.ReflTransGen.trans hab hbc
+
 end EdgeWord
 
 end JacobianChallenge.Periods
