@@ -1,6 +1,7 @@
 import Jacobian.Periods.Polygon4g
 import Jacobian.Periods.Orientable
 import Jacobian.Periods.TopologicalGenus
+import Jacobian.Periods.TopologicalGenusInvariance
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Analysis.InnerProductSpace.PiL2
 
@@ -73,13 +74,16 @@ theorem topologicalGenus_polygon4g (g : ℕ) :
 
 /-- **Stage A3 leaf (homeomorphism invariance of `topologicalGenus`).**
 A topological homeomorphism between compact connected spaces preserves
-the topological genus. Pure singular-homology functoriality; should
-ultimately be proved entirely from Mathlib. -/
+the topological genus.
+
+Body: by `singularH1_finrank_homeo_invariant`, both sides reduce to the
+same `Module.finrank ℤ (singularH1 _)`, then divide by 2. -/
 theorem topologicalGenus_homeo_invariant
     {M N : Type} [TopologicalSpace M] [CompactSpace M] [ConnectedSpace M]
     [TopologicalSpace N] [CompactSpace N] [ConnectedSpace N]
     (h : M ≃ₜ N) : topologicalGenus M = topologicalGenus N := by
-  sorry
+  unfold topologicalGenus
+  rw [singularH1_finrank_homeo_invariant h]
 
 /-- **Stage A umbrella (surface classification).** A compact connected
 orientable smooth real 2-manifold `M` is homeomorphic to the standard
