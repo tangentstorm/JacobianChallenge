@@ -1,0 +1,195 @@
+#!/usr/bin/env python3
+"""Post-process plastex's dep_graph_*.html to:
+
+1. Replace the auto-generated legend with a tighter, color-name-led
+   version. Drops leanblueprint's ``Blue background'' entry, which
+   refers to a state ("proof ready to formalize") that doesn't appear
+   in this project's graph; relabels every other entry so the swatch's
+   visible color matches its caption (the upstream legend instead
+   echoes the project-specific ``can_state border'' description text,
+   which doesn't tell a reader what color they're looking at).
+
+2. Add a red-border highlight for the big classical-analysis-input
+   umbrellas — Riemann-Roch, Stokes on a 2-manifold with boundary,
+   Hodge / de Rham, Radó triangulation, Abel's theorem, divisors,
+   degree-one isomorphism, finite-dimensionality, Riemann bilinear.
+   These are each multi-month sub-projects, distinct in scale from
+   ordinary `\notready` lemmas in flight.
+
+Idempotent.
+"""
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+# Labels that should get the RED-BORDER "major classical-input" highlight.
+# These are the umbrellas that hide multi-month formalization gaps relative
+# to current Mathlib.
+BIG_UMBRELLAS = [
+    "input:divisors",
+    "input:riemann-roch",
+    "input:abel-theorem",
+    "input:riemann-bilinear",
+    "input:degree-one-isomorphism",
+    "input:finite-dimensionality",
+    "input:hodge-deRham",
+    "input:rado-triangulation",
+    "thm:stokes-on-rs-with-boundary",
+]
+
+MARKER = "<!-- DEPGRAPH-EXTRAS-INJECTED -->"
+
+# Color reference (must match macros/web.tex + leanblueprint defaults):
+#   blue          = #1f77b4
+#   light blue    = #A3D6FF
+#   orange        = #FFAA33
+#   red           = #d62828
+#   light green   = #B0ECA3 (background) / #5cb85c (border equivalent)
+#   green         = #9CEC8B
+#   dark green    = #1CAC78 (fill) / darkgreen (border)
+LEGEND_HTML = """
+<dl class="legend">
+  <dt class="legend-shape legend-box">Boxes</dt><dd>definitions</dd>
+  <dt class="legend-shape legend-ellipse">Ellipses</dt><dd>theorems and lemmas</dd>
+  <dt class="legend-swatch legend-red-border">Red border</dt>
+    <dd>major classical-analysis input — admitted, not in current Mathlib (Riemann-Roch, Stokes on manifolds, Hodge/de Rham, surface classification, Abel's theorem, &hellip;)</dd>
+  <dt class="legend-swatch legend-orange-border">Orange border</dt>
+    <dd>blueprint statement still being refined or split into sub-leaves</dd>
+  <dt class="legend-swatch legend-blue-border">Blue border</dt>
+    <dd>statement ready to be formalized — all prerequisites done</dd>
+  <dt class="legend-swatch legend-green-border">Green border</dt>
+    <dd>Lean declaration for the statement exists in this project</dd>
+  <dt class="legend-swatch legend-green-fill">Green fill</dt>
+    <dd>proof formalized in this project</dd>
+  <dt class="legend-swatch legend-darkgreen-fill">Dark-green fill</dt>
+    <dd>proof and every ancestor formalized</dd>
+  <dt class="legend-swatch legend-darkgreen-border">Dark-green border</dt>
+    <dd>declaration is in Mathlib</dd>
+</dl>
+"""
+
+# Replace the auto-generated <dl class="legend">...</dl> block with ours.
+LEGEND_REPLACE = re.compile(
+    r'<dl class="legend">.*?</dl>', re.DOTALL
+)
+
+INJECTED_STYLE = """
+<style id="depgraph-extras-style">
+/* Compact legend layout — fit the page without scrolling. */
+#Legend dl.legend dt {
+  margin-top: 0.35em;
+  font-weight: 600;
+}
+#Legend dl.legend dd {
+  margin: 0 0 0 1.6em;
+  font-size: 0.92em;
+  line-height: 1.35;
+}
+#Legend dl.legend dt::after { content: none; }
+#Legend dl.legend dt::before {
+  content: "";
+  display: inline-block;
+  width: 1.1em;
+  height: 0.85em;
+  margin-right: 0.45em;
+  vertical-align: -2px;
+  box-sizing: border-box;
+}
+.legend-box::before     { border: 2px solid #555; background: transparent; }
+.legend-ellipse::before { border: 2px solid #555; border-radius: 50%; background: transparent; }
+
+.legend-red-border::before        { border: 3px solid #d62828; background: white; }
+.legend-orange-border::before     { border: 2px solid #FFAA33; background: white; }
+.legend-blue-border::before       { border: 2px solid #1f77b4; background: white; }
+.legend-green-border::before      { border: 2px solid #5cb85c; background: white; }
+.legend-green-fill::before        { border: 2px solid #5cb85c; background: #B0ECA3; }
+.legend-darkgreen-fill::before    { border: 2px solid #1CAC78; background: #9CEC8B; }
+.legend-darkgreen-border::before  { border: 2px solid #1CAC78; background: white; }
+
+/* Big-umbrella highlight — applied via JS to specific nodes after the
+   d3-graphviz render finishes. The .big-umbrella class is added to the
+   <g class="node"> element. */
+.node.big-umbrella ellipse,
+.node.big-umbrella polygon,
+.node.big-umbrella path {
+  stroke: #d62828 !important;
+  stroke-width: 3 !important;
+}
+</style>
+"""
+
+# JS adds a `.big-umbrella` class to specific node groups so the CSS
+# above can target them. d3-graphviz emits each node as
+# <g class="node"><title>label</title><ellipse/>...</g>, so we look up
+# by <title> text. This runs after every render (the graph viewer
+# re-renders on zoom/pan, but the class survives because we observe
+# DOM mutations).
+INJECTED_SCRIPT = """
+<script id="depgraph-extras-script">
+(function () {
+  var BIG = %s;
+  function tag() {
+    var nodes = document.querySelectorAll('g.node');
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i];
+      var t = n.querySelector('title');
+      if (!t) continue;
+      var name = t.textContent.trim();
+      if (BIG.indexOf(name) >= 0) n.classList.add('big-umbrella');
+    }
+  }
+  // Run once when the SVG first appears, then re-run on subsequent
+  // d3-graphviz transitions (zoom/pan can cause re-attach).
+  var attempts = 0;
+  function poll() {
+    if (document.querySelector('g.node')) { tag(); }
+    attempts++;
+    if (attempts < 40) setTimeout(poll, 250);
+  }
+  poll();
+  if (window.MutationObserver) {
+    var graph = document.querySelector('#graph');
+    if (graph) {
+      new MutationObserver(tag).observe(graph, { childList: true, subtree: true });
+    }
+  }
+})();
+</script>
+""" % (str(BIG_UMBRELLAS).replace("'", '"'),)
+
+
+def inject(html: str) -> str:
+    if MARKER in html:
+        return html
+    new = LEGEND_REPLACE.sub(LEGEND_HTML.strip(), html, count=1)
+    new = new.replace(
+        "</body>",
+        f"{INJECTED_STYLE}{INJECTED_SCRIPT}\n{MARKER}\n</body>",
+        1,
+    )
+    return new
+
+
+def main(argv: list[str]) -> int:
+    if len(argv) != 2:
+        print(f"usage: {argv[0]} <web-output-dir>", file=sys.stderr)
+        return 2
+    root = Path(argv[1])
+    if not root.is_dir():
+        print(f"error: not a directory: {root}", file=sys.stderr)
+        return 1
+    n = 0
+    for path in root.glob("dep_graph*.html"):
+        original = path.read_text(encoding="utf-8")
+        updated = inject(original)
+        if updated != original:
+            path.write_text(updated, encoding="utf-8")
+            n += 1
+    print(f"inject-depgraph-extras: updated {n} dep_graph*.html files under {root}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
