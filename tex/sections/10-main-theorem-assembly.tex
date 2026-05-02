@@ -5,9 +5,9 @@
 Every previous section has been constructive: each built one piece
 of infrastructure that the challenge demands. This section is the
 moment of assembly. We take the analytic genus from section 2, the
-period lattice from section 4, the complex-torus package from
-section 5, the Abel--Jacobi map from section 6, and the trace
-identity from section 7, and we plug them, one at a time, into
+period lattice from section 6, the complex-torus package from
+section 7, the Abel--Jacobi map from section 8, and the trace
+identity from section 9, and we plug them, one at a time, into
 the slots demanded by \code{Jacobian/Challenge.lean}.
 
 What does ``the slots'' mean? The challenge file declares about
@@ -20,7 +20,7 @@ map from \(X\) to its Jacobian. \code{ofCurve_inj} is a slot:
 the proof that this map is injective in positive genus.
 \code{pushforward}, \code{pullback}, \code{degree}, and
 \code{pushforward_pullback} are further slots, demanding the
-trace identity of section 7. Each slot is filled by pointing
+trace identity of section 9. Each slot is filled by pointing
 at the corresponding theorem of the previous sections.
 
 Slot-filling sounds mechanical, but it has subtleties. The

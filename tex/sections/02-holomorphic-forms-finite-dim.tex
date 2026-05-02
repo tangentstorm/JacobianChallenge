@@ -1,0 +1,417 @@
+\section{Holomorphic 1-Forms and Finite Dimensionality}
+\label{sec:holomorphic-forms-finite-dim}
+
+\begin{layman}
+Every smooth surface has a notion of \emph{tangent vector} at a
+point — a little arrow giving a direction of motion. Dual to that,
+every surface has a notion of \emph{cotangent vector}: a tiny linear
+gadget that takes a tangent vector and returns a number. A
+\emph{holomorphic 1-form} on a Riemann surface is a global,
+complex-linear assignment of such a gadget at every point, varying
+holomorphically. In any chart \(z\), a holomorphic 1-form looks like
+\(h(z)\,dz\) for some holomorphic function \(h\); under a change of
+chart it transforms by the chain rule. The space of all such global
+forms is denoted \(H^0(X,\Omega^1_X)\). Its complex dimension is the
+\emph{analytic genus} \(g(X)\) — the most fundamental invariant we
+attach to \(X\).
+
+The deep fact of this chapter is that \(g(X)\) is finite. The
+argument is a triumph of twentieth-century complex analysis: equip
+\(H^0(X,\Omega^1_X)\) with a sup-norm; show that the unit ball is
+compact (\emph{Montel's theorem}: a bounded sequence of holomorphic
+functions has a uniformly convergent subsequence); apply Riesz's
+lemma (a normed space whose unit ball is compact must be
+finite-dimensional). The compactness of the surface is what makes
+the sup-norm finite in the first place — on the entire complex
+plane, the dimension of holomorphic 1-forms is uncountably infinite.
+
+The chapter develops this in stages. The cotangent bundle gets a
+fibre-by-fibre Hermitian norm; that norm assembles into a global
+sup-norm by taking the maximum over the (compact) surface; under
+uniform-on-compact convergence, sequences of holomorphic 1-forms
+behave like sequences of holomorphic functions on a chart, so
+Montel's theorem on the chart side propagates to the global form
+space; closed unit ball compactness then forces finite
+dimensionality through Riesz.
+
+Why bother? Genus is the single most important invariant of a
+Riemann surface; it controls everything else. Tying it down
+rigorously to a finite-dimensional vector-space dimension is what
+lets all the later constructions — Riemann--Roch, the Jacobian,
+Abel--Jacobi, push-pull — even be \emph{stated}. The next chapter
+combines this finite-dim result with sheaf cohomology to prove
+Riemann--Roch.
+\end{layman}
+
+Let \(\HX\) be the vector space of global holomorphic one-forms. Define the
+analytic genus by \(g(X)=\dim_{\C}\HX\), as in
+Definition~\ref{def:analytic-genus}.
+
+\subsection{Finite-dimensionality (analytic route)}
+
+The project's preferred route to \(\dim_{\C}\HX<\infty\) is analytic: a
+sup-norm makes \(\HX\) a normed space, Montel's theorem makes the closed
+unit ball compact, and Riesz's lemma forces finite dimensionality.
+
+\begin{definition}[Fiber norm on the cotangent bundle]
+\label{def:cotangent-fiber-norm}
+\lean{JacobianChallenge.Blueprint.cotangentFiberNorm}
+For each \(x\in X\) the cotangent fiber
+\(T^{*}_{x}X = T_{x}X \to_{\C}\C\) is a one-dimensional complex vector
+space. Equip it with the canonical operator norm
+\(\|v\|_{x} := \sup_{\xi\in T_{x}X,\ \|\xi\|=1} |v(\xi)|\),
+where \(\|\xi\|\) is taken via any chart isomorphism
+\(\dd\varphi_{x}: T_{x}X \xrightarrow{\sim} \C\) (any two chart norms
+on a one-dimensional fiber differ by a positive scalar, so the operator
+norm on \(T^{*}_{x}X\) inherits a chart-independent equivalence class;
+to fix a single function rather than an equivalence class we choose
+the chart norm coming from the preferred \texttt{chartAt} of the
+\texttt{ChartedSpace} structure).
+
+The resulting function
+\((x, v) \mapsto \|v\|_{x}\) is continuous on the total space of
+\(T^{*}X\): on each chart neighbourhood \(U\) the trivialisation
+identifies \(T^{*}_{x}X\) with \(\C\to_{\C}\C\) by an isomorphism
+varying continuously in \(x\), and the operator norm is itself
+continuous on \(\C\to_{\C}\C\); composition of continuous maps is
+continuous. (See Mathlib
+\texttt{Bundle.ContinuousLinearMap.vectorBundle} for the vector-bundle
+structure on \(T^{*}X\), and the operator-norm continuity from
+\texttt{ContinuousLinearMap.opNorm\_le\_iff}.)
+\depends{Mathlib operator norm on \(\C\to_{\C}\C\); project-side
+\texttt{CotangentSpace} from
+\texttt{Jacobian/HolomorphicForms/CotangentBundle.lean}.}
+\leanok
+\end{definition}
+
+\begin{layman}
+At each point of the surface, a holomorphic 1-form picks out a tiny
+linear gadget — a local rule that turns a direction into a complex number.
+This local gadget lives in a one-dimensional space called the
+\emph{cotangent fiber}, and we want to measure how big the gadget is.
+The trick: borrow a coordinate chart at the point (a bit of flat graph
+paper laid over the curvy surface), use it to declare a unit length on
+tangent directions, and then ask, ``what's the largest absolute value the
+gadget outputs on a unit-length input?'' That maximum is its norm.
+Different charts give slightly different units, but we standardize by
+always using the canonical chart that's already attached to the surface's
+atlas. Why bother? With a length on every fiber, we can ask whether a
+1-form is big or small at any point — a prerequisite to defining a global
+``size'' on the whole space of holomorphic 1-forms in the next step.
+\end{layman}
+
+\begin{definition}[Sup norm on \(\HX\)]
+\label{def:holomorphic-sup-norm}
+\uses{def:cotangent-fiber-norm}
+\lean{JacobianChallenge.Blueprint.holomorphicSupNorm}
+For \(\omega\in\HX\), define
+\[
+  \|\omega\| := \sup_{x\in X}\|\omega_x\|_{x},
+\]
+where \(\|\omega_x\|_{x}\) is the fiber norm of
+Definition~\ref{def:cotangent-fiber-norm}. Compactness of \(X\) plus
+continuity of \(x \mapsto \|\omega_x\|_{x}\) (the composition of the
+continuous section \(\omega\) with the continuous fiber-norm function)
+implies the sup is attained and finite, by the extreme value theorem
+(Mathlib \texttt{IsCompact.exists\_isMaxOn}). The standard checks
+\(\|\omega\|=0\iff \omega=0\), \(\|\lambda\omega\|=|\lambda|\|\omega\|\)
+and the triangle inequality follow pointwise from the corresponding
+properties of the fiber norm; this makes \((\HX,\|\cdot\|)\) a normed
+\(\C\)-vector space. (Cf.\ Forster, \emph{Lectures on Riemann
+Surfaces}, \S 14.)
+\leanok
+\end{definition}
+
+\begin{layman}
+We've measured the size of a holomorphic 1-form at each point. To get a
+single number summarizing the whole 1-form on the whole surface, just
+take the largest pointwise size that ever occurs. This \emph{supremum
+norm} is finite because the surface is compact, the size function is
+continuous, and a continuous function on a closed-and-bounded space
+always attains a maximum (no sneaking off to infinity). The standard
+checks pass: the norm is zero exactly for the zero 1-form, scales
+correctly under multiplication by a complex number, and obeys the
+triangle inequality. So the space of holomorphic 1-forms becomes a
+\emph{normed vector space} — the same structural home as Euclidean space
+or any Banach space. Why bother? Once you have a norm, you have notions
+of distance, convergence, balls, and compactness. The whole analytic
+strategy for proving finite-dimensionality runs on those notions.
+\end{layman}
+
+\begin{lemma}[Local coefficient bound on a chart]
+\label{lem:chart-coefficient-bound}
+\uses{def:holomorphic-sup-norm}
+\lean{JacobianChallenge.Blueprint.chart_coefficient_bound}
+Let \(\varphi:U\to V\subseteq\C\) be a chart in the holomorphic atlas
+of \(X\). On \(U\) every \(\omega\in\HX\) admits a unique
+representation \(\omega = h_{\varphi}(z)\,dz\) with
+\(h_{\varphi} : V \to \C\) holomorphic. Then there is a constant
+\(C_{\varphi}\ge 0\), depending only on the chart \(\varphi\) (and the
+choice of fiber norm on \(T^{*}X\)), such that
+\[
+  |h_{\varphi}(z)| \;\le\; C_{\varphi}\,\|\omega\|
+  \qquad\text{for all } z \in V.
+\]
+\leanok
+\end{lemma}
+
+\begin{layman}
+Open up a single coordinate chart — a flat patch of graph paper laid over
+a piece of the surface. On that patch, every holomorphic 1-form looks
+like an ordinary holomorphic function multiplied by the differential of
+the coordinate. The lemma says the size of that ordinary function at
+each point is bounded above by a fixed constant — depending only on the
+chart — times the global supremum norm of the 1-form. In plain terms,
+shrinking a 1-form globally shrinks its local coefficient on the chart
+by at most a fixed factor; the chart can't blow up the constants behind
+your back. Why bother? It's the bridge between the abstract norm on the
+space of 1-forms and the concrete behavior of holomorphic functions on
+disks in the plane, where Mathlib's existing complex-analysis toolbox
+already applies. We need that bridge to invoke Cauchy's estimates and
+Montel's theorem in the next step.
+\end{layman}
+
+\begin{proofsketch}
+Set \(p := \varphi^{-1}(z)\). The chart trivialisation identifies the
+fiber \(T^{*}_{p}X\) with \(\C \to_{\C} \C\) isometrically up to a
+chart-dependent positive constant \(C_{\varphi}^{-1}\); under this
+identification \(\omega_{p}\) corresponds to the linear map
+\(\xi\mapsto h_{\varphi}(z)\,\xi\), whose operator norm is exactly
+\(|h_{\varphi}(z)|\). Therefore
+\(|h_{\varphi}(z)| \le C_{\varphi}\,\|\omega_{p}\|_{p} \le
+C_{\varphi}\,\|\omega\|\). The constant \(C_{\varphi}\) is bounded by
+the supremum on the (relatively compact) chart image of the
+trivialisation comparison factor, which is finite by continuity.
+\end{proofsketch}
+
+\begin{lemma}[Montel compactness]
+\label{lem:montel-compactness}
+\uses{def:holomorphic-sup-norm,lem:chart-coefficient-bound}
+\lean{JacobianChallenge.Blueprint.montel_compactness}
+The closed unit ball of \(\HX\) is sequentially compact: every sequence
+\(\omega_n\in\HX\) with \(\|\omega_n\|\le 1\) for all \(n\) admits a
+strictly increasing \(\varphi:\N\to\N\) and a limit
+\(\omega_\infty\in\HX\) with \(\|\omega_\infty\|\le 1\) such that
+\(\|\omega_{\varphi(n)} - \omega_\infty\| \to 0\) as \(n\to\infty\)
+(equivalently, \(\omega_{\varphi(n)} \to \omega_\infty\) uniformly on
+\(X\)).
+\leanok
+\end{lemma}
+
+\begin{layman}
+Now the analytic punchline. Take any sequence of holomorphic 1-forms
+whose norms are all bounded by 1 — the closed unit ball. The claim: you
+can always extract a subsequence converging uniformly on the whole
+surface to another holomorphic 1-form of norm at most 1. This is Montel's
+theorem in disguise — magic special to holomorphic functions, with no
+analogue for plain continuous or merely smooth functions. The proof works
+chart by chart: in each chart, Cauchy's integral formula bounds
+derivatives, which forces the sequence to be \emph{equicontinuous} — every
+form in the sequence wiggles at the same controlled rate. Arzelà–Ascoli
+then extracts a convergent subsequence, and the chartwise limits glue
+into a global holomorphic limit by Weierstrass's convergence theorem
+(uniform limits of holomorphic functions are again holomorphic). Why
+bother? It says the unit ball is sequentially compact — a heavy hammer
+that, in normed spaces, is the trademark signature of being
+finite-dimensional.
+\end{layman}
+
+\begin{proofsketch}
+\emph{Step 1: finite chart cover.} Compactness of \(X\) supplies a
+finite atlas \(\{(U_i,\varphi_i)\}_{i=1}^{N}\) with each
+\(\varphi_i(U_i) \supseteq \overline{B(c_i, R_i)}\); choose
+\(0 < r_i < R_i\) with \(\bigcup_i \varphi_i^{-1}(B(c_i, r_i)) = X\).
+
+\emph{Step 2: chartwise sup bound.} Lemma~\ref{lem:chart-coefficient-bound}
+gives constants \(C_i\) such that the chart coefficient
+\(h_{n,i}\) of \(\omega_n\) on \(U_i\) satisfies
+\(|h_{n,i}(z)| \le C_i\) for all \(z \in \overline{B(c_i, R_i)}\) and
+all \(n\).
+
+\emph{Step 3: Cauchy estimates yield equicontinuity.} For
+\(z \in \overline{B(c_i, r_i)}\) the Cauchy integral formula for the
+derivative,
+\(h_{n,i}'(z) = \frac{1}{2\pi i}\oint_{|w-c_i|=R_i}
+\frac{h_{n,i}(w)}{(w-z)^2}\,dw\),
+combined with \(|w-z| \ge R_i - r_i\), gives
+\(|h_{n,i}'(z)| \le C_i \,R_i / (R_i - r_i)^2\). The family
+\(\{h_{n,i}\}\) is therefore uniformly Lipschitz, hence equicontinuous,
+on \(\overline{B(c_i, r_i)}\). (Mathlib:
+\texttt{DiffContOnCl.circleIntegral\_sub\_inv\_smul} for the
+Cauchy formula;
+\texttt{circleIntegral.norm\_integral\_le\_of\_norm\_le\_const} for the
+\(L^{\infty}\)–to–integral bound.)
+
+\emph{Step 4: Arzelà–Ascoli on each chart.} The Arzelà–Ascoli theorem
+(Mathlib \texttt{ArzelaAscoli.isCompact\_closure\_of\_isClosedEmbedding})
+extracts a subsequence converging uniformly on
+\(\overline{B(c_i, r_i)}\). Iterating across the \(N\) charts
+diagonally produces a single subsequence
+\(\omega_{\varphi(n)}\) whose chart restrictions all converge
+uniformly.
+
+\emph{Step 5: glue and pass to the limit.} The chartwise uniform
+limits agree on overlaps (because they are obtained from a single
+diagonal subsequence), so they assemble into a function on \(X\) which
+is the uniform limit of \(\omega_{\varphi(n)}\). By Weierstrass's
+convergence theorem (uniform limit of holomorphic functions is
+holomorphic; cf.\ Forster \S 14 or Griffiths–Harris pp.~7–8) the chart
+coefficients of the limit are again holomorphic, so the limit is a
+holomorphic 1-form \(\omega_\infty\). The sup-norm bound
+\(\|\omega_\infty\|\le 1\) follows by taking the limit in
+\(|h_{\varphi(n),i}(z)|\le 1\) (with our normalisation; if not unit
+norm, by passing to the limit in the explicit estimate).
+\end{proofsketch}
+
+\begin{theorem}[Closed unit ball is compact]
+\label{thm:hone-unit-ball-compact}
+\uses{lem:montel-compactness}
+\lean{JacobianChallenge.Blueprint.hone_unit_ball_compact}
+Under any normed-\(\C\)-vector-space realisation of \(\HX\) whose norm
+agrees with the sup norm of
+Definition~\ref{def:holomorphic-sup-norm}, the closed unit ball
+\(\overline{B}(0,1) = \{\omega \in \HX : \|\omega\|\le 1\}\) is
+(topologically) compact.
+\leanok
+\end{theorem}
+
+\begin{layman}
+The previous lemma extracted convergent subsequences — that's
+\emph{sequential} compactness. This theorem upgrades it to ordinary
+\emph{topological} compactness, the textbook ``every open cover has a
+finite subcover'' kind. The two flavors agree in any normed space,
+because such spaces are metrisable, and in metric spaces sequential and
+topological compactness are the same notion. So the closed unit ball of
+holomorphic 1-forms — the set of forms with norm at most 1 — is compact in
+the textbook sense. Why bother? Compactness of a closed ball is one of
+those innocent-sounding facts that's actually a structural giveaway: in
+a normed space, it \emph{forces} the space to be finite-dimensional.
+That's the next step.
+\end{layman}
+
+\begin{proofsketch}
+A normed space is metrisable, hence first-countable; in a first-countable
+space sequential compactness and topological compactness coincide
+(Mathlib \texttt{UniformSpace.isCompact\_iff\_isSeqCompact} or
+\texttt{IsSeqCompact.isCompact}). Apply
+Lemma~\ref{lem:montel-compactness} to obtain sequential compactness of
+the closed unit ball, then convert. The closed unit ball is closed in
+the metric topology by continuity of the norm, so the conclusion is
+exactly \texttt{IsCompact (Metric.closedBall 0 1)}.
+\end{proofsketch}
+
+\begin{theorem}[Finite-dimensionality from Riesz]
+\label{thm:fd-from-riesz}
+\uses{thm:hone-unit-ball-compact}
+\lean{JacobianChallenge.Blueprint.fd_from_riesz}
+A normed \(\C\)-vector space whose closed ball of some positive radius
+is compact is finite-dimensional. This is Riesz's lemma; in Mathlib it
+is \texttt{FiniteDimensional.of\_isCompact\_closedBall} (file
+\texttt{Mathlib/Analysis/Normed/Module/FiniteDimension.lean}). Applied
+to a normed-space realisation of \(\HX\) supplied by
+Theorem~\ref{thm:hone-unit-ball-compact}, this gives
+\(\dim_{\C}\HX<\infty\).
+\depends{Mathlib's
+\texttt{FiniteDimensional.of\_isCompact\_closedBall}.}
+\leanok
+\end{theorem}
+\begin{proof}\leanok\end{proof}
+
+\begin{layman}
+Here's a surprising fact called Riesz's lemma: in any normed vector
+space, if even a single closed ball of positive radius is compact, then
+the whole space must be finite-dimensional. The intuition is that
+infinite-dimensional spaces are too roomy to be compact — you can always
+find a sequence of unit-distance-apart points that never converges, and
+compactness rules this out, so room runs out. Mathlib already has this
+packaged. Apply it to our setting: the closed unit ball of holomorphic
+1-forms is compact (just shown), therefore the space of holomorphic
+1-forms is finite-dimensional. Why bother? This is the headline
+conclusion of the entire chapter. The genus of the surface — defined as
+the dimension of this space — is now guaranteed to be a finite whole
+number. Without it, the whole rest of the project (lattices, Jacobians,
+Abel–Jacobi maps) would have nothing to grab onto.
+\end{layman}
+
+\begin{proofsketch}
+Direct invocation of
+\texttt{FiniteDimensional.of\_isCompact\_closedBall} \(\C\) \texttt{one\_pos\;h}
+where \(h\) is the conclusion of
+Theorem~\ref{thm:hone-unit-ball-compact} for the chosen realisation.
+\end{proofsketch}
+
+\begin{theorem}[Classical input: Finite-dimensionality (umbrella)]
+\label{input:finite-dimensionality}
+\uses{thm:fd-from-riesz}
+\lean{JacobianChallenge.Blueprint.input_finite_dimensionality}
+\leanok
+For any normed-\(\C\)-vector-space realisation \(H\) of \(\HX\) whose
+norm equals the sup norm, \(H\) is finite-dimensional.
+
+This is the umbrella combining the analytic ingredients
+(Definitions~\ref{def:cotangent-fiber-norm}--\ref{def:holomorphic-sup-norm},
+Lemmas~\ref{lem:chart-coefficient-bound}--\ref{lem:montel-compactness},
+Theorems~\ref{thm:hone-unit-ball-compact}--\ref{thm:fd-from-riesz}).
+The alternative Riemann-Roch route (\ref{input:riemann-roch}) is named
+separately and not used by the analytic finite-dim proof.
+\depends{compactness, local coefficient extraction for one-forms,
+Montel + Riesz.}
+\end{theorem}
+
+\begin{layman}
+We package the analytic route as a single named input: any normed-space
+realization of the global holomorphic 1-forms whose norm matches our
+sup norm is automatically finite-dimensional. This bundles the fiber
+norm, the sup norm, the local coefficient bound, Montel's compactness
+theorem, the upgrade from sequential to topological compactness, and
+Riesz's lemma. There's a separate route to the same conclusion via
+Riemann–Roch — listed alongside as its own umbrella — but the analytic
+route is the project's preferred path because its prerequisites are
+mostly already in Mathlib. Why bother? Naming the umbrella keeps the
+dependency graph clean. Downstream theorems depend on
+``finite-dimensionality, by some route,'' rather than on the specific
+analytic chain, so a future swap of routes won't disturb anything that
+depends on it.
+\end{layman}
+
+\begin{proofsketch}
+Combine Theorem~\ref{thm:hone-unit-ball-compact}, which gives
+\texttt{IsCompact (Metric.closedBall 0 1)} on the realisation \(H\),
+with Theorem~\ref{thm:fd-from-riesz}.
+\end{proofsketch}
+
+\begin{theorem}[Finite-dimensionality of holomorphic one-forms]
+\label{thm:fd-holomorphic-one-forms}
+\uses{input:finite-dimensionality,def:analytic-genus}
+\lean{JacobianChallenge.Blueprint.fd_holomorphic_one_forms}
+The vector space \(\HX\) is finite-dimensional:
+\(\dim_{\C}\HX<\infty\). Equivalently, the analytic genus
+\(g(X)=\dim_{\C}\HX\) is a finite natural number.
+\leanok
+\end{theorem}
+
+\begin{layman}
+This is the headline statement, in its public form: the space of global
+holomorphic 1-forms on a compact Riemann surface is finite-dimensional.
+Equivalently, the analytic genus — defined as the complex dimension of
+that space — is a finite natural number. We get it by taking any
+project-side normed-space realization of this space, applying the
+finite-dimensionality umbrella, and transporting the conclusion back.
+Why bother? Genus is the single most important invariant of a Riemann
+surface. ``Sphere'' has genus 0, ``donut'' has genus 1, ``two-handled
+pretzel'' has genus 2, and so on up. Knowing genus is finite means we
+can actually compute with it — and the finite-dimensionality of the
+1-forms is what makes period lattices, Jacobians, and the entire
+downstream story even formulable.
+\end{layman}
+
+\begin{proofsketch}
+Transport \(\HX\) into the canonical sup-norm realisation supplied by
+the project-side \texttt{HolomorphicOneFormBanachData}
+(Jacobian/HolomorphicForms/CompactRiemannSurface.lean), apply
+Theorem~\ref{input:finite-dimensionality} to conclude
+finite-dimensionality of the realisation, and transport back along
+the realisation isomorphism. (\(\C\)-linear bijections preserve
+finite-dimensionality.)
+\end{proofsketch}
+
