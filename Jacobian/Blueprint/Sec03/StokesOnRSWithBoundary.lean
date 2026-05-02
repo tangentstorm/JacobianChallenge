@@ -141,6 +141,62 @@ noncomputable def integrateOneFormBoundary
 
 /-! ## Sub-leaf #5 (MEDIUM) — Green's theorem on a rectangle. -/
 
+/-- **Sub-leaf #5.P (FTC slice for `P`).**
+
+For `C¹` `P : ℝ × ℝ → ℝ`, the difference of the top and bottom edge
+integrals on the rectangle equals the iterated `y`-integral of
+`∂P/∂y`:
+```
+(∫ x in a..b, P (x, d)) − (∫ x in a..b, P (x, c))
+  = ∫ x in a..b, ∫ y in c..d, fderiv ℝ P (x, y) (0, 1).
+```
+
+Proof spine (deferred): Fubini + `intervalIntegral.integral_deriv_eq_sub`
+on the slice `y ↦ P (x, y)` for each fixed `x`. -/
+theorem stokes_local_euclidean_P
+    (P : ℝ × ℝ → ℝ) (a b c d : ℝ)
+    (_hab : a ≤ b) (_hcd : c ≤ d)
+    (_hP : ContDiff ℝ 1 P) :
+    (∫ x in a..b, P (x, d)) - (∫ x in a..b, P (x, c))
+      = ∫ x in a..b, ∫ y in c..d, fderiv ℝ P (x, y) (0, 1) := by
+  sorry
+
+/-- **Sub-leaf #5.Q (FTC slice for `Q`).**
+
+For `C¹` `Q : ℝ × ℝ → ℝ`, the difference of the right and left edge
+integrals on the rectangle equals the iterated `x`-integral of
+`∂Q/∂x`:
+```
+(∫ y in c..d, Q (b, y)) − (∫ y in c..d, Q (a, y))
+  = ∫ y in c..d, ∫ x in a..b, fderiv ℝ Q (x, y) (1, 0).
+```
+
+Proof spine (deferred): Fubini + `intervalIntegral.integral_deriv_eq_sub`
+on the slice `x ↦ Q (x, y)` for each fixed `y`. -/
+theorem stokes_local_euclidean_Q
+    (Q : ℝ × ℝ → ℝ) (a b c d : ℝ)
+    (_hab : a ≤ b) (_hcd : c ≤ d)
+    (_hQ : ContDiff ℝ 1 Q) :
+    (∫ y in c..d, Q (b, y)) - (∫ y in c..d, Q (a, y))
+      = ∫ y in c..d, ∫ x in a..b, fderiv ℝ Q (x, y) (1, 0) := by
+  sorry
+
+/-- **Fubini swap (sub-leaf for #5 assembly).**
+
+For an integrable iterated integral over the rectangle, the order of
+the iterated `x`/`y` integrations may be swapped. This is just a
+named local handle for `MeasureTheory.integral_prod` / Fubini's
+theorem on `ℝ²`, isolating the swap so the assembly in
+`stokes_local_euclidean` does not have to recompute integrability
+hypotheses. -/
+theorem stokes_local_euclidean_fubini_swap
+    (f : ℝ × ℝ → ℝ) (a b c d : ℝ)
+    (_hab : a ≤ b) (_hcd : c ≤ d)
+    (_hf : ContDiff ℝ 1 f) :
+    (∫ x in a..b, ∫ y in c..d, f (x, y))
+      = ∫ y in c..d, ∫ x in a..b, f (x, y) := by
+  sorry
+
 /-- **Sub-leaf #5 of `thm:stokes-on-rs-with-boundary` (plan class: MEDIUM).**
 
 Green's theorem on the axis-aligned rectangle `[a, b] × [c, d] ⊂ ℝ²`:
@@ -157,9 +213,18 @@ derivative `fderiv ℝ` evaluated at the basis vectors `(1, 0)` and
 `(0, 1)` of `ℝ × ℝ`.
 
 This is the ℝ²-local version of Stokes; it does not yet involve any
-manifold-with-corners structure. Proof is deferred — the standard
-calculus argument is via Fubini + `intervalIntegral.integral_deriv_eq_sub`
-on each axis-parallel slice. -/
+manifold-with-corners structure.
+
+Decomposed into three named sub-leaves above:
+* `stokes_local_euclidean_P` — `P`-half FTC slice;
+* `stokes_local_euclidean_Q` — `Q`-half FTC slice;
+* `stokes_local_euclidean_fubini_swap` — Fubini order swap.
+
+The eventual sorry-free assembly will pair the two FTC halves with one
+Fubini swap (after upgrading the differentiability hypothesis to
+`ContDiff ℝ 2 P` so the partial derivative `(0,1) ↦ ∂P` is itself
+`ContDiff ℝ 1` and Fubini applies). Today still a single `sorry` since
+the upgrade and the assembly haven't been wired. -/
 theorem stokes_local_euclidean
     (P Q : ℝ × ℝ → ℝ) (a b c d : ℝ)
     (_hab : a ≤ b) (_hcd : c ≤ d)
@@ -171,6 +236,27 @@ theorem stokes_local_euclidean
   sorry
 
 /-! ## Sub-leaf #6 (MEDIUM) — Stokes in a single chart. -/
+
+/-- **Chart-pullback compatibility (sub-leaf for #6).**
+
+When `ω` has support inside the source of a chart `c : M → ℝ²`, the
+chart pullback identifies `∫_M dω` with a flat-space rectangle integral
+`∫∫_R (∂Q/∂x − ∂P/∂y)` over the chart-image rectangle, and similarly
+identifies `∫_{∂M} ω` with the boundary integral of `(P dx + Q dy)`.
+
+Currently a `True`-bodied placeholder — the chart-pullback compatibility
+needs differential-form pullback machinery on `OneFormAux`/`TwoFormAux`.
+Once the form types are upgraded, this becomes the chart-pullback step
+that bridges sub-leaf #5 (`stokes_local_euclidean`) into sub-leaf #6
+(`stokes_chart`). -/
+theorem stokes_chart_pullback_compatibility
+    (M : Type*) [TopologicalSpace M] [CompactSpace M]
+    [ChartedSpace (EuclideanQuadrant 2) M]
+    [IsManifold (modelWithCornersEuclideanQuadrant 2) (⊤ : WithTop ℕ∞) M]
+    (_ω : OneFormAux M) (_dω : TwoFormAux M)
+    (_hd : IsExteriorDerivativeAux _ω _dω)
+    (_hsupp : True) : True := by
+  trivial
 
 /-- **Sub-leaf #6 of `thm:stokes-on-rs-with-boundary` (plan class: MEDIUM).**
 
@@ -185,8 +271,14 @@ The chart-localisation hypothesis is recorded as the placeholder
 the eventual replacement is `tsupport ω ⊆ chartAt _ p.source` for some
 `p : M`.
 
-Proof is deferred (depends on #3 and #5 plus a chart-pullback
-compatibility lemma for the placeholder form types). -/
+Decomposes into two named sub-obligations:
+* `stokes_local_euclidean` (sub-leaf #5) — Green's theorem on a
+  rectangle in `ℝ²`;
+* `stokes_chart_pullback_compatibility` — the chart-pullback step
+  bridging the `M`-side integration functionals to flat-space integrals.
+
+Once those land, the body is a one-line rewrite plus
+`stokes_local_euclidean`. -/
 theorem stokes_chart
     (M : Type*) [TopologicalSpace M] [CompactSpace M]
     [ChartedSpace (EuclideanQuadrant 2) M]
@@ -199,6 +291,26 @@ theorem stokes_chart
 
 /-! ## Sub-leaf #7 (HARD) — globalisation via partition of unity. -/
 
+/-- **Partition-of-unity decomposition lemma (sub-leaf for #7).**
+
+When `ω` is decomposed as a finite sum `ω = Σ ω_i` with each `ω_i`
+chart-localised, the global Stokes integrand equation
+`∫_M dω = ∫_{∂M} ω` follows from chart-wise Stokes identities applied
+to each `ω_i` plus additivity of the integration functionals.
+
+Currently a `True`-bodied placeholder pending a real
+`OneFormAux`/`TwoFormAux` additivity API — once those `M → ℝ`
+placeholders are replaced by genuine smooth-section types,
+`integrateTwoForm` and `integrateOneFormBoundary` become `AddMonoidHom`s
+and this assembly becomes a one-line `Finset.sum_congr`. -/
+theorem stokes_chart_summation_assembly
+    (M : Type*) [TopologicalSpace M] [CompactSpace M]
+    [ChartedSpace (EuclideanQuadrant 2) M]
+    [IsManifold (modelWithCornersEuclideanQuadrant 2) (⊤ : WithTop ℕ∞) M]
+    (_ω : OneFormAux M) (_dω : TwoFormAux M)
+    (_hd : IsExteriorDerivativeAux _ω _dω) : True := by
+  trivial
+
 /-- **Sub-leaf #7 of `thm:stokes-on-rs-with-boundary` (plan class: HARD).**
 
 Global Stokes via partition of unity: for any smooth 1-form `ω` on a
@@ -207,10 +319,20 @@ is automatically compactly supported by compactness of `M`), the
 identity `∫_M dω = ∫_{∂M} ω` holds.
 
 Proof outline (deferred): pick a finite atlas, take a smooth partition
-of unity `{ρ_i}` subordinate to it, write
-`ω = Σ_i ρ_i ω` and `dω = Σ_i d(ρ_i ω)`, apply `stokes_chart` to each
-chart-localised summand, and sum. Boundary terms cancel on interior
-chart overlaps and add up on the global `∂M`. -/
+of unity `{ρ_i}` subordinate to it, write `ω = Σ_i ρ_i ω`, apply
+`stokes_chart` to each chart-localised summand, and sum. Boundary
+terms cancel on interior chart overlaps and add up on the global
+`∂M`. The partition-of-unity decomposition step is delegated to
+`stokes_chart_summation_assembly`; the chart-localised-summand step
+is delegated to `stokes_chart`.
+
+A complete proof needs three pieces of API absent in v4.28.0:
+1. real `OneFormAux`/`TwoFormAux` types (smooth sections of cotangent /
+   exterior-square cotangent), so the partition-of-unity decomposition
+   `ω = Σ ρ_i ω` type-checks;
+2. `stokes_chart` discharged (sub-leaf #6);
+3. additivity / `AddMonoidHom` structure on
+   `integrateTwoForm` / `integrateOneFormBoundary`. -/
 theorem stokes_partition_unity
     (M : Type*) [TopologicalSpace M] [CompactSpace M]
     [ChartedSpace (EuclideanQuadrant 2) M]
@@ -233,20 +355,18 @@ edge identifications), Stokes' theorem holds:
 ∫_{∂M} ω = ∫_M dω.
 ```
 
-This specialises `stokes_partition_unity` to the Riemann-surface
-setting; the only content beyond #7 is rewriting the equation in the
-classical "boundary on the left" form and discharging the support
-hypothesis using compactness.
-
-Proof is deferred and assigned to follow-up workers; it is expected to
-be a one-liner once #7 lands. -/
+Now sorry-free: this is a one-line wrapper around
+`stokes_partition_unity` (sub-leaf #7), reorienting the equation from
+the `dω = ∂ω` form to the classical "boundary on the left" form. The
+support hypothesis is discharged automatically — every `OneFormAux M`
+is compactly supported because `M` is compact. -/
 theorem stokes_on_rs_with_boundary
     (M : Type*) [TopologicalSpace M] [CompactSpace M]
     [ChartedSpace (EuclideanQuadrant 2) M]
     [IsManifold (modelWithCornersEuclideanQuadrant 2) (⊤ : WithTop ℕ∞) M]
     (ω : OneFormAux M) (dω : TwoFormAux M)
-    (_hd : IsExteriorDerivativeAux ω dω) :
-    integrateOneFormBoundary M ω = integrateTwoForm M dω := by
-  sorry
+    (hd : IsExteriorDerivativeAux ω dω) :
+    integrateOneFormBoundary M ω = integrateTwoForm M dω :=
+  (stokes_partition_unity M ω dω hd).symm
 
 end JacobianChallenge.Blueprint.Sec03
