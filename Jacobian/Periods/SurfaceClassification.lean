@@ -553,4 +553,38 @@ theorem singularH1_iso_freeZ_of_compactOrientableSurface
   obtain ⟨polyIso⟩ := polygon4g_singularH1_iso_freeZ (topologicalGenus M)
   exact ⟨(singularH1LinearEquivOfHomeo homeo).trans polyIso⟩
 
+/-- **Finrank corollary.** For a compact connected orientable smooth
+real 2-manifold `M`, the ℤ-rank of singular `H₁(M, ℤ)` equals
+`2 * topologicalGenus M`.
+
+Body: extract the iso from `singularH1_iso_freeZ_of_compactOrientableSurface`
+and finish via `LinearEquiv.finrank_eq` + `Module.finrank_pi` +
+`Fintype.card_fin`. -/
+theorem singularH1_finrank_eq_two_mul_topologicalGenus_of_compactOrientableSurface
+    (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    [ConnectedSpace M]
+    [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
+    [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) M]
+    [Orientable M] :
+    Module.finrank ℤ (singularH1 M) = 2 * topologicalGenus M := by
+  obtain ⟨e⟩ := singularH1_iso_freeZ_of_compactOrientableSurface M
+  rw [e.finrank_eq, Module.finrank_pi, Fintype.card_fin]
+
+/-- **Singular `H₁` of a compact orientable smooth real 2-manifold
+admits a ℤ-basis indexed by `Fin (2 * topologicalGenus M)`.** Public
+companion to `singularH1_iso_freeZ_of_compactOrientableSurface`,
+matching the basis-shaped form used by `h1_basis_of_compact_riemann_surface`
+on the Riemann-surface side. -/
+theorem singularH1_basis_of_compactOrientableSurface
+    (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    [ConnectedSpace M]
+    [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
+    [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) M]
+    [Orientable M] :
+    Nonempty (Module.Basis (Fin (2 * topologicalGenus M)) ℤ (singularH1 M)) := by
+  obtain ⟨e⟩ := singularH1_iso_freeZ_of_compactOrientableSurface M
+  exact ⟨Module.Basis.ofEquivFun e⟩
+
 end JacobianChallenge.Periods
