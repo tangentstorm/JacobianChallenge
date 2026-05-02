@@ -300,7 +300,18 @@ theorem mapAnalyticOrderAt_ramified_finite
     {f : X → Y} (_hf : IsHolomorphic f)
     (_hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) :
     {x : X | mapAnalyticOrderAt f x ≠ 1}.Finite := by
-  sorry
+  have h_discrete : DiscreteTopology {x : X | mapAnalyticOrderAt f x ≠ 1} := by
+    refine' singletons_open_iff_discrete.mp _;
+    rintro ⟨ x, hx ⟩;
+    rw [ isOpen_iff_mem_nhds ];
+    simp +decide [ nhds_induced ];
+    obtain ⟨ t, ht, ht' ⟩ := mem_nhdsWithin.mp ( mapAnalyticOrderAt_isolated_at_ramified _hf _hnonconst hx );
+    exact ⟨ t, ht.mem_nhds ht'.1, fun y hy hy' => Classical.not_not.1 fun hy'' => hy <| ht' |>.2 ⟨ hy', hy'' ⟩ ⟩;
+  have h_closed : IsClosed {x : X | mapAnalyticOrderAt f x ≠ 1} := by
+    convert isOpen_setOf_mapAnalyticOrderAt_eq_one _hf |> IsOpen.isClosed_compl using 1;
+  have h_compact : CompactSpace {x : X | mapAnalyticOrderAt f x ≠ 1} := by
+    exact isCompact_iff_compactSpace.mp ( h_closed.isCompact );
+  exact Set.finite_coe_iff.mp finite_of_compact_of_discrete
 
 /-! ### Sub-leaf B: local injectivity at unramified points
 
@@ -370,7 +381,38 @@ theorem IsHolomorphicAt.exists_local_inj_of_unramified
     ∃ U : Set X, IsOpen U ∧ x ∈ U ∧
     ∃ V : Set Y, IsOpen V ∧ f x ∈ V ∧
     ∀ y ∈ V, ∃! x' : X, x' ∈ U ∧ f x' = y := by
-  sorry
+  obtain ⟨g, hg⟩ := chartLocalAt_localInverse_of_unramified ( show IsHolomorphicAt f x from _hf.holomorphicAt x ) _hramx;
+  obtain ⟨U, hU⟩ : ∃ U : Set X, IsOpen U ∧ x ∈ U ∧ ∀ x' ∈ U, x' ∈ (chartAt ℂ x).source ∧ chartAt ℂ x x' ∈ {t | g (chartLocalAt f x t) = t} ∧ f x' ∈ (chartAt ℂ (f x)).source := by
+    obtain ⟨U₁, hU₁⟩ : ∃ U₁ : Set X, IsOpen U₁ ∧ x ∈ U₁ ∧ ∀ x' ∈ U₁, x' ∈ (chartAt ℂ x).source ∧ chartAt ℂ x x' ∈ {t | g (chartLocalAt f x t) = t} := by
+      rcases mem_nhds_iff.mp hg.2.2.1 with ⟨ U, hUo, hxU, hU ⟩;
+      refine' ⟨ ( chartAt ℂ x ).source ∩ ( chartAt ℂ x ) ⁻¹' U, _, _, _ ⟩ <;> simp_all +decide [ Set.subset_def ];
+      exact OpenPartialHomeomorph.isOpen_inter_preimage (chartAt ℂ x) hxU;
+    obtain ⟨U₂, hU₂⟩ : ∃ U₂ : Set X, IsOpen U₂ ∧ x ∈ U₂ ∧ ∀ x' ∈ U₂, f x' ∈ (chartAt ℂ (f x)).source := by
+      have := _hf.continuous.tendsto x;
+      exact Exists.imp ( by tauto ) ( mem_nhds_iff.mp ( this ( IsOpen.mem_nhds ( OpenPartialHomeomorph.open_source _ ) ( by simp +decide ) ) ) );
+    exact ⟨ U₁ ∩ U₂, hU₁.1.inter hU₂.1, ⟨ hU₁.2.1, hU₂.2.1 ⟩, fun x' hx' => ⟨ hU₁.2.2 x' hx'.1 |>.1, hU₁.2.2 x' hx'.1 |>.2, hU₂.2.2 x' hx'.2 ⟩ ⟩;
+  obtain ⟨V, hV⟩ : ∃ V : Set Y, IsOpen V ∧ f x ∈ V ∧ ∀ y ∈ V, y ∈ (chartAt ℂ (f x)).source ∧ chartAt ℂ (f x) y ∈ {t | chartLocalAt f x (g t) = t} ∧ (chartAt ℂ x).symm (g (chartAt ℂ (f x) y)) ∈ U := by
+    have h_cont : ContinuousAt (fun y => (chartAt ℂ x).symm (g (chartAt ℂ (f x) y))) (f x) := by
+      have h_cont : ContinuousAt (fun y => g (chartAt ℂ (f x) y)) (f x) := by
+        exact hg.1.continuousAt.comp ( chartAt ℂ ( f x ) |>.continuousAt ( by simp +decide ) );
+      exact ContinuousAt.comp ( show ContinuousAt ( fun y => ( chartAt ℂ x ).symm y ) ( g ( chartAt ℂ ( f x ) ( f x ) ) ) from by exact ( chartAt ℂ x ).continuousAt_symm ( by aesop ) ) h_cont;
+    have h_cont : ∀ᶠ y in 𝓝 (f x), (chartAt ℂ x).symm (g (chartAt ℂ (f x) y)) ∈ U := by
+      convert h_cont.preimage_mem_nhds ( hU.1.mem_nhds _ ) using 1;
+      aesop;
+    have h_cont : ∀ᶠ y in 𝓝 (f x), y ∈ (chartAt ℂ (f x)).source ∧ chartAt ℂ (f x) y ∈ {t | chartLocalAt f x (g t) = t} := by
+      have h_cont : ∀ᶠ y in 𝓝 (f x), y ∈ (chartAt ℂ (f x)).source := by
+        exact IsOpen.mem_nhds ( chartAt ℂ ( f x ) |>.open_source ) ( mem_chart_source _ _ );
+      filter_upwards [ h_cont, hg.2.2.2.filter_mono ( show Filter.Tendsto ( fun y => ( chartAt ℂ ( f x ) ) y ) ( 𝓝 ( f x ) ) ( 𝓝 ( chartAt ℂ ( f x ) ( f x ) ) ) from by exact ( chartAt ℂ ( f x ) ).continuousAt ( by simp +decide ) ) ] with y hy₁ hy₂ using ⟨ hy₁, hy₂ ⟩;
+    rw [ eventually_nhds_iff ] at *;
+    obtain ⟨ t, ht₁, ht₂, ht₃ ⟩ := h_cont;
+    exact ⟨ t ∩ h_cont.choose, ht₂.inter h_cont.choose_spec.2.1, ⟨ ht₃, h_cont.choose_spec.2.2 ⟩, fun y hy => ⟨ ht₁ y hy.1 |>.1, ht₁ y hy.1 |>.2, h_cont.choose_spec.1 y hy.2 ⟩ ⟩;
+  refine' ⟨ U, hU.1, hU.2.1, V, hV.1, hV.2.1, fun y hy => _ ⟩;
+  refine' ⟨ ( chartAt ℂ x ).symm ( g ( chartAt ℂ ( f x ) y ) ), _, _ ⟩ <;> simp_all +decide [ chartLocalAt ];
+  · exact ( chartAt ℂ ( f x ) ).injOn ( hV.2.2 y hy |>.2.1 |> fun h => by aesop ) ( hV.2.2 y hy |>.1 ) ( hV.2.2 y hy |>.2.1 );
+  · intro x' hx' hfx'
+    have h_eq : chartAt ℂ x x' = g (chartAt ℂ (f x) y) := by
+      have := hU.2.2 x' hx'; aesop;
+    rw [ ← h_eq, ( chartAt ℂ x ).left_inv ( hU.2.2 x' hx' |>.1 ) ]
 
 /-! ### Sub-leaf C: local k-fold structure at ramified points
 
@@ -466,7 +508,11 @@ theorem chartLocalAt_locally_conjugate_pow
       ∀ᶠ t in 𝓝 (chartAt ℂ x x),
         chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x) =
           ((t - chartAt ℂ x x) * h t) ^ k := by
-  sorry
+  obtain ⟨g, hg_analytic, hg_zero, hg⟩ := chartLocalAt_eq_pow_mul_of_order _hf _hk _hramx;
+  obtain ⟨h_root, h_root_analytic, h_root_k⟩ := analyticAt_kth_root_of_ne_zero hg_analytic hg_zero _hk;
+  refine' ⟨ h_root, h_root_analytic, _, _ ⟩;
+  · intro h; have := h_root_k.self_of_nhds; simp_all +decide [ ne_of_gt _hk ] ;
+  · filter_upwards [ hg, h_root_k ] with t ht₁ ht₂ using by rw [ ht₁, mul_pow, ht₂ ] ;
 
 /-- **C4 = Sub-leaf 3 (sorry).** Local `k`-fold structure at a
 ramified point: combining C3 with the fact that `s ↦ s^k` has exactly
