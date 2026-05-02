@@ -163,6 +163,14 @@ theorem polygon4g_zero_homeo_diskC :
       right_inv := fun _ => rfl }
   exact ⟨hf_cts.homeoOfEquivCompactToT2 (f := e)⟩
 
+/-- **Genus-zero T2 instance.** `Polygon4g 0` inherits T2 separation
+from `DiskC` along the homeomorphism `polygon4g_zero_homeo_diskC`.
+(For general `g ≥ 1`, T2 separation of `Polygon4g g` is folded into
+the surface-classification leaf `existsPolygonalQuotientPresentation`.) -/
+instance polygon4g_zero_t2Space : T2Space (Polygon4g 0) := by
+  obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
+  exact h.symm.t2Space
+
 /-- **Frontier leaf (singular `H₁` of the disk is subsingleton).** The
 closed unit disk `DiskC` is convex hence contractible. By homotopy
 invariance of singular homology (a Mathlib gap as of v4.28.0 — the
