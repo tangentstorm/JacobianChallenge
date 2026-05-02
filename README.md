@@ -8,44 +8,47 @@ PDF versions: [formal only](https://tangentstorm.github.io/JacobianChallenge/jac
 
 ## Progress Report
 
-Last tick: 2026-05-01 (`thm:degree-one-bijective` + `IsHolomorphic` + leaf-8 partial discharge on `claude/formalize-degree-one-bijective-QIaE9`)
+Last tick: 2026-05-02 (Polygonal-model Stage B1 sorry-free + Sec02 leaf-8 5/14 sub-sub-leaves discharged)
 
 ```text
-Sec02 degree-one-bijective + analytic infrastructure (this tick)
+Sec02 leaf-8 sub-sub-leaves + polygonal-model Stage B (this tick)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-BranchedCoverData                            ████████  +weightedFiberCard_eq invariant
-branchedDegree leaves 1–7                    ████████  all sorry-free
-degree_one_bijective                         ████████  sorry-free against `BranchedCoverData`
-IsHolomorphicAt / IsHolomorphic predicate    ████████  new file `HolomorphicForms/HolomorphicMap.lean`
-mapAnalyticOrderAt (chart-local order)       ████████  sorry-free definition + alt-chart equality
-chart independence of mapAnalyticOrderAt     ████████  `analyticOrderAt_alternate_chart_eq` +
-                                                       `mapAnalyticOrderAt_eq_of_mem_maximalAtlas`
-local identity principle (chart)             ████████  `analyticAt_eventually_eq_zero_of_frequently`
-local identity principle (manifold)          ████████  `IsHolomorphicAt.eventually_eq_of_frequently_eq`
-local-constant ⇒ global-constant (connected) ████████  `IsHolomorphic.eq_const_of_eventuallyEq`
-finite fibres of nonconstant holomorphic     ████████  `isHolomorphic_finite_fiber`
-mapAnalyticOrderAt_pos (positivity)          ████████  via order ≠ 0 (vanishes) + ≠ ⊤ (connected)
-leaf 8 (BranchedCoverData constructor)       ████████  sorry-free.  4 sub-leaves +
-                                                       9 sub-sub-leaves in
-                                                       `Sec02/WeightedFiberCardConst.lean`:
-common helper: order=1 ⇔ deriv≠0             ░░░░░░░░  `mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero`
-A2: unramified set is open                   ░░░░░░░░  `isOpen_setOf_mapAnalyticOrderAt_eq_one`
-A3: ramified points are isolated             ░░░░░░░░  `mapAnalyticOrderAt_isolated_at_ramified`
+common helper: order=1 ⇔ deriv≠0             ████████  `..._eq_one_iff_chartLocal_deriv_ne_zero` (d10d68a9)
+A2: unramified set is open                   ████████  `isOpen_setOf_mapAnalyticOrderAt_eq_one` (a15c8916)
+A3: ramified points are isolated             ░░░░░░░░  `mapAnalyticOrderAt_isolated_at_ramified` (in flight)
 A4: branch locus finite (assembly)           ░░░░░░░░  `mapAnalyticOrderAt_ramified_finite`
-B2: chart-local inverse at unramified        ░░░░░░░░  `chartLocalAt_localInverse_of_unramified`
+B2: chart-local inverse at unramified        ░░░░░░░░  `chartLocalAt_localInverse_of_unramified` (in flight)
 B3: local inj at unramified (assembly)       ░░░░░░░░  `IsHolomorphicAt.exists_local_inj_of_unramified`
 C1: local power-series `(t-z₀)^k · g(t)`     ░░░░░░░░  `chartLocalAt_eq_pow_mul_of_order`
-C2: holomorphic k-th root                    ░░░░░░░░  `analyticAt_kth_root_of_ne_zero`
+C2: holomorphic k-th root                    ████████  `analyticAt_kth_root_of_ne_zero` (4f97fe87)
 C3: locally conjugate to `s ↦ s^k`           ░░░░░░░░  `chartLocalAt_locally_conjugate_pow`
 C4: local k-fold at ramified (assembly)      ░░░░░░░░  `IsHolomorphicAt.exists_local_kfold_of_ramified`
-D1: pairwise-disjoint nbhds (Mathlib?)       ░░░░░░░░  `Set.Finite.exists_pairwiseDisjoint_open_nbhds`
-D2: properness fibre-shrink                  ░░░░░░░░  `eventually_fiber_subset_of_compact_T2`
+D1: pairwise-disjoint nbhds                  ████████  `Set.Finite.exists_pairwiseDisjoint_open_nbhds` (6c41b65a)
+D2: properness fibre-shrink                  ████████  `eventually_fiber_subset_of_compact_T2` (cd172880)
 D3: weighted-sum eventually-eq at y₀         ░░░░░░░░  `weightedFiberSum_eventually_eq`
 D4: weighted-sum locally constant (asmbly)   ░░░░░░░░  `isHolomorphic_weightedFiberSum_isLocallyConstant`
 final assembly (sub-leaf D + Y preconn)      ████████  `isHolomorphic_weightedFiberSum_const`
-                                                       sorry-free; satisfies leaf 8's
-                                                       `weightedFiberCard_const` field.
+
+Polygonal-model plan, Stage B (analytic↔topological genus bridge)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+B1 SmoothRealStructure.lean (real 2-mfld)    ████████  **sorry-free**.  3 leaves:
+  realProdEquivReal2                         ████████  via WithLp.linearEquiv + finTwoArrow (f725ffe6)
+  complexEquivReal2_apply (simp)             ████████  ext + fin_cases + aesop (f725ffe6)
+  complexChartedSpaceReal2                   ████████  singletonChartedSpace (39501850)
+  ChartedSpaceComplex_to_smoothReal2 (umbr.) ████████  isManifold_of_contDiffOn + restrict_scalars (49c446c0)
+B3 TopologicalGenus.lean                     ████████  `singularH1` + `topologicalGenus = finrank/2` (ad3eb2dc)
+Orientable.lean (placeholder typeclass)      ████████  shipped as 25-LOC API hook
+Stage A (surface classification)             ░░░░░░░░  needs its own planning round (~3000-5000 LOC)
+
+Stokes plan (Sec03)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+stokes_local_euclidean_fubini_swap           ████████  setIntegral_prod + integral_integral_swap (b2737a1e)
 ```
+
+12 Aristotle integrations this session: ffee77a7, eebe8ef8, 37bd4dcf,
+b2737a1e, f725ffe6, 39501850, ad3eb2dc, 6c41b65a, cd172880, d10d68a9,
+a15c8916, 4f97fe87, 49c446c0. **`SmoothRealStructure.lean` and three
+Sec02 sub-sub-leaves are now closed sorry-free.**
 
 Each sub-sub-leaf has a docstring with proof sketch naming the
 specific Mathlib lemmas it'll use (`AnalyticAt.localInverse`,
