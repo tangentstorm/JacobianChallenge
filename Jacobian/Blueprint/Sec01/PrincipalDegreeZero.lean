@@ -226,6 +226,9 @@ theorem principalDivisor_support_subset_zeros_union_poles
 /-- **Sub-leaf #6 of `thm:principal-degree-zero` (plan class: MEDIUM).**
 
 Assembly leaf above 3, 4, 5. Under the same hypotheses as leaves 2–5,
+**plus the assumption that the underlying ℂ-projection of `f` is not
+identically zero** (so the principal divisor takes the
+`Finsupp.onFinset` branch of its definition):
 
 ```
 Divisor.degree (principalDivisor X f)
@@ -236,23 +239,144 @@ Divisor.degree (principalDivisor X f)
 where both fibres are finite via `h.finite_fiber`. The proof is pure
 `Finsupp` / `Finset.sum` algebra: split the support along leaf 5,
 substitute leaves 3 and 4 for the coefficient values, and use the
-disjointness `0 ≠ ∞` in `OnePoint ℂ` to keep the two sums separate. -/
+disjointness `0 ≠ ∞` in `OnePoint ℂ` to keep the two sums separate.
+
+The extra hypothesis `_hcond` lets the assembly avoid a subtle
+case-analysis of `principalDivisor`'s `by_cases` definition; the
+constant-zero-projection branch is handled by leaf 1, not here.
+Consumer: leaf 7a (`principal_degree_zero_of_nonzero`). -/
 theorem degree_principalDivisor_eq_zeros_minus_poles
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
     (hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
-    (hholo : True) :
+    (hholo : True)
+    (hcond : ∃ x, (f x).getD 0 ≠ 0) :
     let h := liftToCp1_branchedCoverData X f hf_nonconstant hholo
     Divisor.degree (principalDivisor X f)
       = (((h.finite_fiber ((0 : ℂ) : OnePoint ℂ)).toFinset).sum
             (fun p => (h.ramificationIndex p : ℤ)))
         - (((h.finite_fiber (∞ : OnePoint ℂ)).toFinset).sum
             (fun p => (h.ramificationIndex p : ℤ))) := by
-  sorry
+  classical
+  -- Strip the `let h := …` binder so subsequent `set` calls fold inside
+  -- the goal.
+  intro h
+  -- Cache the two fibre Finsets.
+  set Z := (h.finite_fiber ((0 : ℂ) : OnePoint ℂ)).toFinset with hZ
+  set P := (h.finite_fiber (∞ : OnePoint ℂ)).toFinset with hP
+  -- Z and P are disjoint because (0 : OnePoint ℂ) ≠ ∞.
+  have hZP_disj : Disjoint Z P := by
+    refine Finset.disjoint_left.mpr ?_
+    intro p hpZ hpP
+    rw [hZ, Set.Finite.mem_toFinset, Set.mem_preimage,
+        Set.mem_singleton_iff] at hpZ
+    rw [hP, Set.Finite.mem_toFinset, Set.mem_preimage,
+        Set.mem_singleton_iff] at hpP
+    exact OnePoint.coe_ne_infty (0 : ℂ) (hpZ.symm.trans hpP)
+  -- `principalDivisor X f` is `Finsupp.onFinset`-shaped at every point.
+  have hd_apply : ∀ p, principalDivisor X f p
+      = (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0 := by
+    intro p
+    show (principalDivisor X f) p = _
+    unfold principalDivisor
+    split_ifs with hcond'
+    · rfl
+    · exact absurd hcond hcond'
+  -- Support inclusion (leaf 5).
+  have hsupp_sub_finset :
+      (principalDivisor X f).support ⊆ Z ∪ P := by
+    have hL5 :=
+      principalDivisor_support_subset_zeros_union_poles
+        X f hf_nonconstant hholo
+    intro p hp
+    have hp' : p ∈ ((principalDivisor X f).support : Set X) := hp
+    have hp_union := hL5 hp'
+    rw [Finset.mem_union]
+    rcases hp_union with hZ' | hP'
+    · refine Or.inl ?_
+      rw [hZ, Set.Finite.mem_toFinset]; exact hZ'
+    · refine Or.inr ?_
+      rw [hP, Set.Finite.mem_toFinset]; exact hP'
+  -- Step 1: degree = ∑ p ∈ supp, d p
+  rw [show (Divisor.degree : Divisor X →+ ℤ) (principalDivisor X f)
+      = ∑ p ∈ (principalDivisor X f).support, principalDivisor X f p
+      from rfl]
+  -- Step 2: extend the sum to Z ∪ P; outside support the coefficient is 0.
+  rw [Finset.sum_subset hsupp_sub_finset
+        (fun x _ hx => Finsupp.notMem_support_iff.mp hx)]
+  -- Step 3: split Z ∪ P into Z + P (disjoint).
+  rw [Finset.sum_union hZP_disj]
+  -- Step 4: substitute leaves 3 and 4 inside each sum.
+  have hZ_substitute :
+      (∑ p ∈ Z, principalDivisor X f p)
+        = ∑ p ∈ Z, (h.ramificationIndex p : ℤ) := by
+    refine Finset.sum_congr rfl (fun p hpZ => ?_)
+    have hp_zero :
+        meromorphicToCp1 X f p = ((0 : ℂ) : OnePoint ℂ) := by
+      rw [hZ, Set.Finite.mem_toFinset] at hpZ
+      simpa [Set.mem_preimage] using hpZ
+    have hL3 := vanishingOrder_eq_ramificationIndex_at_zero
+      X f hf_nonconstant hholo p hp_zero
+    simp only at hL3
+    rw [hd_apply p, hL3]
+  have hP_substitute :
+      (∑ p ∈ P, principalDivisor X f p)
+        = ∑ p ∈ P, -(h.ramificationIndex p : ℤ) := by
+    refine Finset.sum_congr rfl (fun p hpP => ?_)
+    have hp_inf :
+        meromorphicToCp1 X f p = (∞ : OnePoint ℂ) := by
+      rw [hP, Set.Finite.mem_toFinset] at hpP
+      simpa [Set.mem_preimage] using hpP
+    have hL4 := vanishingOrder_eq_neg_ramificationIndex_at_pole
+      X f hf_nonconstant hholo p hp_inf
+    simp only at hL4
+    rw [hd_apply p, hL4]
+  rw [hZ_substitute, hP_substitute, Finset.sum_neg_distrib]
+  ring
 
 /-! ## Sub-leaf #7 — split umbrella into nonzero / constant-zero cases. -/
+
+/-- **Sub-leaf #7b** — vanishing order of a nonzero constant function
+on a complex 1-manifold is `0`.
+
+Mathematical content: for any chart at `p`, the function
+`(fun _ : X => z)` pulled back through the chart is the constant
+function `z` on the model space. Mathlib's `meromorphicOrderAt_const`
+(or its equivalent for nonzero constants) says the order of a nonzero
+constant is `0`. -/
+theorem vanishingOrder_const_nonzero
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (p : X) {z : ℂ} (_hz : z ≠ 0) :
+    vanishingOrder X p (fun _ => z) = 0 := by
+  sorry
+
+/-- **Sub-leaf #7c** — `principalDivisor` of a constant nonzero
+projection is the zero divisor.
+
+Mathematical content: when the underlying ℂ-projection of `f` is the
+nonzero constant `z`, every coefficient `vanishingOrder p _` is `0`
+(by leaf 7b), so the `Finsupp.onFinset` reduces to `0`. -/
+theorem principalDivisor_eq_zero_of_constant_nonzero
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X)
+    {z : ℂ} (hz : z ≠ 0) (hconst : ∀ x, (f x).getD 0 = z) :
+    principalDivisor X f = 0 := by
+  classical
+  apply Finsupp.ext
+  intro p
+  show (principalDivisor X f) p = 0
+  unfold principalDivisor
+  split_ifs with hcond
+  · show WithTop.untopD 0 (vanishingOrder X p (fun q => (f q).getD 0)) = 0
+    have heq : (fun q : X => (f q).getD 0) = (fun _ : X => z) := by
+      funext q; exact hconst q
+    rw [heq, vanishingOrder_const_nonzero X p hz]
+    rfl
+  · rfl
 
 /-- **Sub-leaf #7a of `thm:principal-degree-zero` (plan class: SHORT
 assembly, but `[T2Space X]` enriched).**
@@ -262,29 +386,74 @@ leaves 2–6 (in particular `[T2Space X]`) and assuming the underlying
 ℂ-valued projection of `f` is not identically zero,
 `Divisor.degree (principalDivisor X f) = 0`.
 
-Discharge route (deferred): take the `by_cases` on whether `f` is
-constant on `OnePoint ℂ`.
+Body case-splits on whether `f : X → OnePoint ℂ` is itself constant:
 
-* If `f` is constant: by hypothesis it cannot be the constant `(0 : ℂ)`
-  (which is the only ambient constant whose `getD 0` projection is
-  identically zero); for any other constant, `vanishingOrder` is
-  identically `0` so the principal divisor is `0` and its degree is `0`.
-* If `f` is nonconstant: pass to the branched-cover packaging
-  `liftToCp1_branchedCoverData`, rewrite the degree via
-  `degree_principalDivisor_eq_zeros_minus_poles`, and cancel using
-  `branchedDegree_eq_weightedFiberCard h 0` and
-  `branchedDegree_eq_weightedFiberCard h ∞`.
-
-This is the strictly-smaller obligation that the umbrella delegates
-to in the nonzero case. -/
+* If `f` is constant on `OnePoint ℂ`: the constant cannot be `∞` or
+  `↑0` (both contradict `_hf`), so it is `↑z` with `z ≠ 0`. Leaf 7c
+  forces the principal divisor to be `0`, hence its degree.
+* If `f` is nonconstant: leaf 6 expresses the degree as
+  `(Z fibre sum) − (P fibre sum)`; both sums equal
+  `(branchedDegree h : ℤ)` via `branchedDegree_eq_weightedFiberCard`
+  combined with the now-derived `BranchedCoverData.weightedFiberCard`. -/
 theorem principal_degree_zero_of_nonzero
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X)
-    (_hf : ∃ x, (f x).getD 0 ≠ 0) :
+    (hf : ∃ x, (f x).getD 0 ≠ 0) :
     Divisor.degree (principalDivisor X f) = 0 := by
-  sorry
+  classical
+  by_cases hconst : ∃ c : OnePoint ℂ, ∀ x, f x = c
+  · -- Constant case. Determine which constant.
+    obtain ⟨c, hc⟩ := hconst
+    -- Show c = ↑z for some z ≠ 0.
+    obtain ⟨x, hx⟩ := hf
+    have hx' : (c : OnePoint ℂ).getD 0 ≠ 0 := by
+      rw [← hc x]; exact hx
+    -- c can't be ∞ (because (∞).getD 0 = 0).
+    have hc_ne_inf : c ≠ (∞ : OnePoint ℂ) := by
+      intro heq; apply hx'; rw [heq]; rfl
+    -- Therefore c = ↑z for some z : ℂ.
+    obtain ⟨z, rfl⟩ : ∃ z : ℂ, c = (↑z : OnePoint ℂ) := by
+      cases c with
+      | infty => exact absurd rfl hc_ne_inf
+      | coe z => exact ⟨z, rfl⟩
+    -- And z ≠ 0 since (↑z).getD 0 = z ≠ 0.
+    have hz_ne : z ≠ 0 := hx'
+    -- Each (f x).getD 0 = z.
+    have hconst_z : ∀ x, (f x).getD 0 = z := by
+      intro x; rw [hc x]; rfl
+    rw [principalDivisor_eq_zero_of_constant_nonzero X f hz_ne hconst_z, map_zero]
+  · -- Nonconstant case: apply leaf 6, then cancel.
+    have h6 := degree_principalDivisor_eq_zeros_minus_poles
+      X f hconst trivial hf
+    simp only at h6
+    rw [h6]
+    -- Now: cancel the two ℤ-fibre-sums via Nat.cast_sum + weightedFiberCard_const.
+    set h := liftToCp1_branchedCoverData X f hconst trivial with _hh
+    -- Each ℤ-fibre-sum equals the cast of weightedFiberCard.
+    have hZ_eq : (((h.finite_fiber ((0 : ℂ) : OnePoint ℂ)).toFinset).sum
+            (fun p => (h.ramificationIndex p : ℤ)))
+        = (h.weightedFiberCard ((0 : ℂ) : OnePoint ℂ) : ℤ) := by
+      show ((h.finite_fiber ((0 : ℂ) : OnePoint ℂ)).toFinset).sum
+              (fun p => ((h.ramificationIndex p : ℕ) : ℤ))
+          = ((h.weightedFiberCard ((0 : ℂ) : OnePoint ℂ) : ℕ) : ℤ)
+      unfold BranchedCoverData.weightedFiberCard
+      rw [Nat.cast_sum]
+    have hP_eq : (((h.finite_fiber (∞ : OnePoint ℂ)).toFinset).sum
+            (fun p => (h.ramificationIndex p : ℤ)))
+        = (h.weightedFiberCard (∞ : OnePoint ℂ) : ℤ) := by
+      show ((h.finite_fiber (∞ : OnePoint ℂ)).toFinset).sum
+              (fun p => ((h.ramificationIndex p : ℕ) : ℤ))
+          = ((h.weightedFiberCard (∞ : OnePoint ℂ) : ℕ) : ℤ)
+      unfold BranchedCoverData.weightedFiberCard
+      rw [Nat.cast_sum]
+    rw [hZ_eq, hP_eq]
+    have hWFC :
+        h.weightedFiberCard ((0 : ℂ) : OnePoint ℂ)
+          = h.weightedFiberCard (∞ : OnePoint ℂ) :=
+      h.weightedFiberCard_const _ _
+    rw [hWFC, sub_self]
 
 /-- Principal divisors have degree zero.
 
