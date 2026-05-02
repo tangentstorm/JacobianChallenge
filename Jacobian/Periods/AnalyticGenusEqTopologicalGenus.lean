@@ -55,10 +55,19 @@ the ℤ-rank of singular `H₁` equals `2g` where `g = analyticGenus ℂ X`.
 Bottom-up: any of the three proof routes named in the file docstring
 works (Hodge, de Rham + Riemann–Roch, or project-internal
 period-lattice). All bottom out in the same arithmetic fact about the
-period subgroup of `HolomorphicOneFormDual ℂ X`. -/
+period subgroup of `HolomorphicOneFormDual ℂ X`.
+
+**Note (meet-in-the-middle):** the project also has a parallel
+sorry'd statement `hodge_deRham_rank_eq` in
+`Jacobian.Periods.PeriodFunctional` over the project-internal
+`IntegralOneCycle X` (definitionally equal to `singularH1 X` modulo
+the `ModuleCat ℤ` coercion). When the duplicate `topologicalGenus`
+definition in `PeriodFunctional` is unified with the canonical
+`Jacobian.Periods.TopologicalGenus.topologicalGenus`, this leaf can
+be discharged by a thin `.symm` wrapper around `hodge_deRham_rank_eq`. -/
 theorem singularH1_finrank_eq_two_mul_analyticGenus
-    (X : Type) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
-    [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Module.finrank ℤ (singularH1 X) = 2 * analyticGenus ℂ X := by
@@ -71,12 +80,12 @@ Body: unfold `topologicalGenus = finrank ℤ singularH1 / 2`, rewrite
 through `singularH1_finrank_eq_two_mul_analyticGenus`, and divide
 `2 * g` by `2`. -/
 theorem analyticGenus_eq_topologicalGenus
-    (X : Type) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
-    [ChartedSpace ℂ X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     analyticGenus ℂ X = topologicalGenus X := by
-  unfold topologicalGenus
+  unfold JacobianChallenge.Periods.topologicalGenus
   rw [singularH1_finrank_eq_two_mul_analyticGenus X,
       Nat.mul_div_cancel_left _ (by norm_num : (0 : ℕ) < 2)]
 
