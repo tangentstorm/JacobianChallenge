@@ -44,7 +44,10 @@ redundant path). Iterate until acyclic. -/
 theorem exists_spanningTree_of_finite_connected
     [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
     (_hConn : G.Connected) :
-    ∃ H : SimpleGraph V, IsSpanningTree G H := sorry
+    ∃ H : SimpleGraph V, IsSpanningTree G H := by
+  obtain ⟨T, _hbot_le_T, hT_max⟩ :=
+    G.exists_maximal_isAcyclic_of_le_isAcyclic (bot_le : ⊥ ≤ G) SimpleGraph.isAcyclic_bot
+  exact ⟨T, hT_max.1.1, (_hConn.maximal_le_isAcyclic_iff_isTree hT_max.1.1).mp hT_max⟩
 
 /-- The *complement of a spanning tree*: edges of `G` not in `T`. -/
 def cotreeEdges (T : SimpleGraph V) : Set (Sym2 V) :=
