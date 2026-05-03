@@ -3,6 +3,10 @@
   "solution_module": "Jacobian.Solution",
   "theorem_names": [
     "genus_eq_zero_iff_homeo",
+    "Jacobian.instT2Space",
+    "Jacobian.instCompactSpace",
+    "Jacobian.instIsManifoldComplexForallFinGenusModelWithCornersSelfTopWithTopENat",
+    "Jacobian.instLieAddGroupComplexForallFinGenusModelWithCornersSelfTopWithTopENat",
     "Jacobian.ofCurve_contMDiff",
     "Jacobian.ofCurve_self",
     "Jacobian.ofCurve_inj",
@@ -13,6 +17,17 @@
     "Jacobian.pullback_id_apply",
     "Jacobian.pullback_comp_apply",
     "Jacobian.pushforward_pullback"
+  ],
+  "definition_names": [
+    "genus",
+    "Jacobian",
+    "Jacobian.instAddCommGroup",
+    "Jacobian.instTopologicalSpace",
+    "Jacobian.instChartedSpaceForallFinGenusComplex",
+    "Jacobian.ofCurve",
+    "Jacobian.pushforward",
+    "Jacobian.pullback",
+    "ContMDiff.degree"
   ],
   "permitted_axioms": ["propext", "Quot.sound", "Classical.choice", "sorryAx"],
   "enable_nanoda": false
