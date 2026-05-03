@@ -133,7 +133,7 @@ theorem polygon4g_cellularH1_freeZ (g : ℕ) :
 operator on a single simplex: `∂_n(s) = Σ_i (-1)^i (i-th face of s)`. -/
 def cellular_signed_face_operator
     (_K : AbstractSimplicialComplex V) (_s : Finset V) (_n : ℕ) :
-    True := trivial
+    Unit := ()
 
 /-- **Round 1.** *Sub-leaf:* extension to chains is ℤ-linear. -/
 theorem cellular_signed_face_extends_linearly

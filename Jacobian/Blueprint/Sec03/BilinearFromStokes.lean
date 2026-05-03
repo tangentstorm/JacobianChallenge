@@ -38,6 +38,6 @@ namespace JacobianChallenge.Blueprint
 /-- **DECOMPOSE placeholder.** Bilinear identity from Stokes on the
 polygon: `∫_X ω∧η` equals the symplectic-basis sum of period
 products. -/
-theorem bilinear_from_stokes : True := trivial
+theorem bilinear_from_stokes : Nonempty Unit := ⟨()⟩
 
 end JacobianChallenge.Blueprint

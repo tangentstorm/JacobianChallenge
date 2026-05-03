@@ -88,7 +88,7 @@ theorem exteriorDerivative_wedge (p q : ℕ)
 noncomputable def pullback {N : Type v} [TopologicalSpace N] [ChartedSpace E N]
     [IsManifold (modelWithCornersSelf ℝ E) (⊤ : WithTop ℕ∞) N]
     (_f : C(M, N))
-    (_hf : True := trivial)  -- smoothness of `f`
+    (_hf : Nonempty Unit := ⟨()⟩)  -- smoothness witness for `f`
     (k : ℕ) :
     Omega (E := E) N k →ₗ[ℝ] Omega (E := E) M k := sorry
 

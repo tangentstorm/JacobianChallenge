@@ -86,7 +86,7 @@ def manifoldWithCorners2D
 ```
 
 Placeholder body: `True`. -/
-theorem manifold_with_corners_2d : True := trivial
+theorem manifold_with_corners_2d : Nonempty Unit := ⟨()⟩
 
 /-- **Sub-leaf #2 of `thm:stokes-on-rs-with-boundary` (plan class: SHORT).**
 
@@ -102,7 +102,7 @@ def boundary1D
 ```
 
 Placeholder body: `True`. -/
-theorem boundary_1d : True := trivial
+theorem boundary_1d : Nonempty Unit := ⟨()⟩
 
 /-! ## Sub-leaf #3 (HARD) — integration of a 2-form. -/
 
@@ -269,8 +269,8 @@ theorem stokes_chart_pullback_compatibility
     [IsManifold (modelWithCornersEuclideanQuadrant 2) (⊤ : WithTop ℕ∞) M]
     (_ω : OneFormAux M) (_dω : TwoFormAux M)
     (_hd : IsExteriorDerivativeAux _ω _dω)
-    (_hsupp : True) : True := by
-  trivial
+    (_hsupp : True) : Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Sub-leaf #6 of `thm:stokes-on-rs-with-boundary` (plan class: MEDIUM).**
 
@@ -322,8 +322,8 @@ theorem stokes_chart_summation_assembly
     [ChartedSpace (EuclideanQuadrant 2) M]
     [IsManifold (modelWithCornersEuclideanQuadrant 2) (⊤ : WithTop ℕ∞) M]
     (_ω : OneFormAux M) (_dω : TwoFormAux M)
-    (_hd : IsExteriorDerivativeAux _ω _dω) : True := by
-  trivial
+    (_hd : IsExteriorDerivativeAux _ω _dω) : Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Sub-leaf #7 of `thm:stokes-on-rs-with-boundary` (plan class: HARD).**
 

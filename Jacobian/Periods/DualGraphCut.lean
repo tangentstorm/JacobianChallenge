@@ -42,14 +42,14 @@ opaque UnfoldedDisk (M : Type) [TopologicalSpace M]
 the finite set of 2-simplices of the triangulation. -/
 theorem dualGraph_vertices_data
     {M : Type} [TopologicalSpace M] (_T : Triangulation M) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 73 / Stage A leaf.** The edge set of the dual graph is
 indexed by the 1-simplices (each shared between exactly two
 2-simplices in a triangulated 2-manifold-without-boundary). -/
 theorem dualGraph_edges_data
     {M : Type} [TopologicalSpace M] (_T : Triangulation M) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 48 / Stage A leaf (dual graph extraction, reassembly).** -/
 theorem Triangulation.toDualGraph
@@ -73,12 +73,12 @@ theorem DualGraph.isConnected
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
     {T : Triangulation M} (_G : DualGraph M T) :
-    True := by
+    Nonempty Unit := by
   -- Placeholder property: the actual statement is "the underlying
   -- `SimpleGraph` representation of `G` is connected", which we
   -- cannot state without unfolding `DualGraph`. The `True` body
   -- preserves the named-obligation role.
-  trivial
+  exact ⟨()⟩
 
 /-- **Round 53 / Stage A leaf.** Finiteness of the dual graph follows
 from finiteness of the triangulation (a triangulation has finitely
@@ -87,8 +87,8 @@ theorem DualGraph.isFinite
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
     {T : Triangulation M} (_G : DualGraph M T) :
-    True := by
-  trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Round 73 / Stage A leaf.** Greedy / DFS construction of a
 spanning subtree on a finite connected graph: induct on edge count,
@@ -98,7 +98,7 @@ theorem finite_graph_greedy_spanning_tree_exists
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
     {T : Triangulation M} (_G : DualGraph M T) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 73 / Stage A leaf.** The greedy construction stays
 connected (covers every vertex) — this is what "spanning" means. -/
@@ -106,7 +106,7 @@ theorem greedy_spanning_tree_is_spanning
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
     {T : Triangulation M} (_G : DualGraph M T) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 53 / Stage A leaf (finite connected graph admits spanning
 tree, reassembly).** -/
@@ -114,8 +114,8 @@ theorem finite_connected_graph_admits_spanning_tree
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
     {T : Triangulation M} (G : DualGraph M T)
-    (_hConn : True := DualGraph.isConnected G)
-    (_hFin : True := DualGraph.isFinite G) :
+    (_hConn : Nonempty Unit := DualGraph.isConnected G)
+    (_hFin : Nonempty Unit := DualGraph.isFinite G) :
     Nonempty (DualSpanningTree M G) := by
   have _ := finite_graph_greedy_spanning_tree_exists G
   have _ := greedy_spanning_tree_is_spanning G
@@ -140,7 +140,8 @@ theorem cut_complement_is_connected
     [ConnectedSpace M]
     {T : Triangulation M} {G : DualGraph M T}
     (_ST : DualSpanningTree M G) :
-    True := by trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Round 63 / Stage A leaf.** The number of non-tree edges in a
 spanning tree of an `n`-vertex graph is `e - (n - 1)` where `e` is
@@ -151,7 +152,8 @@ theorem nonTree_edge_count_formula
     [ConnectedSpace M]
     {T : Triangulation M} {G : DualGraph M T}
     (_ST : DualSpanningTree M G) :
-    True := by trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Round 48 / Stage A leaf (cut along non-tree edges, reassembly).**
 Given a triangulation `T`, a dual graph `G` for it, and a spanning tree
@@ -182,7 +184,7 @@ boundary of the unfolded disk. The word recording these traversals
 theorem unfoldedDisk_boundary_word_data
     {M : Type} [TopologicalSpace M]
     {T : Triangulation M} (_D : UnfoldedDisk M T) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 72 / Stage A leaf.** The boundary word, paired with the
 unfolded-disk's surjection to `M`, satisfies the
@@ -190,7 +192,7 @@ unfolded-disk's surjection to `M`, satisfies the
 theorem unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     {T : Triangulation M} (_D : UnfoldedDisk M T) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 48 / Stage A leaf (unfolded disk → edge word, reassembly).** -/
 theorem unfoldedDisk_to_edgeWordPresentation

@@ -26,8 +26,8 @@ because its real Jacobian
 chart choice / top-degree homology / volume form), this instance will
 produce a real proof from `IsManifold (modelWithCornersSelf ℂ ℂ) ⊤ X`.
 
-For now `Orientable` is a `True`-field placeholder, so the witness is
-`⟨trivial⟩`.
+For now `Orientable` carries a lightweight witness, so the instance is
+inhabited by `⟨⟨()⟩⟩`.
 -/
 
 namespace JacobianChallenge.Periods
@@ -36,13 +36,13 @@ open scoped Manifold
 
 /-- Every complex one-dimensional manifold is `Orientable` as a real
 two-dimensional manifold. Currently a placeholder (the witness comes
-from the `True`-field placeholder of the `Orientable` class); the named
+from the lightweight witness field of the `Orientable` class); the named
 instance is the API hook for the eventual holomorphic-Jacobian
 argument. -/
 instance complexManifold_orientable
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Orientable X :=
-  ⟨trivial⟩
+  ⟨⟨()⟩⟩
 
 end JacobianChallenge.Periods

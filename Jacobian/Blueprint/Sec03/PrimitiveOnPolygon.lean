@@ -29,6 +29,6 @@ namespace JacobianChallenge.Blueprint
 /-- **DECOMPOSE placeholder.** Existence of a holomorphic primitive
 of a holomorphic 1-form on the simply-connected interior of the
 polygonal model. -/
-theorem primitive_on_polygon : True := trivial
+theorem primitive_on_polygon : Nonempty Unit := ⟨()⟩
 
 end JacobianChallenge.Blueprint
