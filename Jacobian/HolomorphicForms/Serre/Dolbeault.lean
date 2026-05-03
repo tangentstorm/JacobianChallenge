@@ -51,17 +51,11 @@ theorem serrePairing_witness_left
     (a : RSSheafCohomology X F 0) (ha : a ≠ 0) :
     ∃ b : RSSheafCohomology X (serreDualSheaf X F) 1,
       pairing a b ≠ 0 := by
-  -- Round 13 design: lift `a` to a harmonic representative via
-  -- `harmonicForms_toH0_surjective`, apply
-  -- `harmonicL2Pairing_witness_left`, push the result back via
-  -- `harmonicForms_toH1`, and use `harmonicL2Pairing_compatible` to
-  -- relate `pairing` to the L²-pairing. The proof is left as a
-  -- (smaller) sorry pending universe-bookkeeping cleanup of the
-  -- L²-pairing API; the named obligations consumed by this proof
-  -- (`harmonicForms_toH0_surjective`, `harmonicL2Pairing_witness_left`,
-  -- `harmonicL2Pairing_compatible`) are now strictly smaller than the
-  -- original Serre nondegeneracy sorry.
-  sorry
+  obtain ⟨α, rfl⟩ := harmonicForms_toH0_surjective X F a
+  have hα : harmonicForms_toH0 X F α ≠ 0 := ha
+  obtain ⟨β, hβ⟩ := @harmonicL2Pairing_witness_left.{_, 0, 0} _ _ _ _ _ _ _ _ F _ _ α hα
+  exact ⟨harmonicForms_toH1 X (serreDualSheaf X F) β,
+    by rw [@harmonicL2Pairing_compatible.{_, 0, 0} _ _ _ _ _ _ _ _ F _ _ pairing α β]; exact hβ⟩
 
 /-- **Refined (round 13).** "Witness" form of Serre nondegeneracy on
 the right, dual to `serrePairing_witness_left`. -/
@@ -79,8 +73,17 @@ theorem serrePairing_witness_right
         RSSheafCohomology X (serreDualSheaf X F) 1 →ₗ[ℂ] ℂ)
     (b : RSSheafCohomology X (serreDualSheaf X F) 1) (hb : b ≠ 0) :
     ∃ a : RSSheafCohomology X F 0, pairing a b ≠ 0 := by
-  -- Round 13 (right) design: dual to the left case. Sorry left
-  -- pending universe-bookkeeping cleanup (see left case).
-  sorry
+  -- Lift b to a harmonic representative β via surjectivity of the
+  -- harmonic-form projection onto H¹.
+  obtain ⟨β, hβ⟩ := harmonicForms_toH1_surjective X (serreDualSheaf X F) b
+  -- The harmonic representative maps to a nonzero cohomology class.
+  have hβ_ne : harmonicForms_toH1 X (serreDualSheaf X F) β ≠ 0 := hβ ▸ hb
+  -- Apply L²-pairing nondegeneracy on the right to obtain a harmonic
+  -- witness α whose L²-pairing with β is nonzero.
+  obtain ⟨α, hα⟩ := @harmonicL2Pairing_witness_right.{_, 0, 0} X _ _ _ _ _ _ _ F _ _ β hβ_ne
+  -- Push α down to H⁰ and relate pairings via compatibility.
+  exact ⟨harmonicForms_toH0 X F α, by
+    rw [← hβ, @harmonicL2Pairing_compatible.{_, 0, 0} X _ _ _ _ _ _ _ F _ _ pairing α β]
+    exact hα⟩
 
 end JacobianChallenge.HolomorphicForms
