@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.SheafCohomologyRS
 import Jacobian.HolomorphicForms.SerreDualityRS
+import Jacobian.HolomorphicForms.Defs
 import Mathlib.LinearAlgebra.Dimension.Finrank
 
 /-!
@@ -65,16 +66,22 @@ noncomputable def RSLineBundleDegree
     (_L : RSLineBundleSheaf X) : ℤ :=
   sorry
 
-/-- **Frontier `def` (sorry).** The genus of a compact Riemann
-surface. Classically `g = dim_ℂ H¹(X, 𝒪_X)`. Pinning it down here
-needs the structure sheaf `𝒪_X` and the
-`FiniteDimensionalSheafCohomologyRS` instance for it; both are
-ABSENT / placeholder in Mathlib v4.28.0. -/
+/-- The genus of a compact Riemann surface, defined as
+`dim_ℂ H⁰(X, Ω¹_X) = Module.finrank ℂ (HolomorphicOneForm ℂ X)`.
+
+Classically `g = dim_ℂ H¹(X, 𝒪_X) = dim_ℂ H⁰(X, Ω¹_X)` by Serre
+duality / Hodge theory.  The `H⁰(X, Ω¹)` realisation avoids the
+frontier sheaf-cohomology prerequisites (`HasSheafify`, `HasExt`,
+`Module ℂ` on `H¹(X, 𝒪_X)`) and gives a concrete `ℕ` for every
+complex-manifold charted space.  When the space of holomorphic
+1-forms is not finite-dimensional, `Module.finrank` returns `0` by
+Mathlib convention; for a compact Riemann surface this dimension is
+always finite and equals the topological genus. -/
 noncomputable def RSGenus
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ :=
-  sorry
+  Module.finrank ℂ (HolomorphicOneForm ℂ X)
 
 /-- The Euler characteristic of a line-bundle sheaf on a compact
 Riemann surface, computed as

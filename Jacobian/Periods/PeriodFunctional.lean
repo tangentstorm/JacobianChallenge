@@ -441,7 +441,7 @@ theorem periodVectors_linearIndependent
 The original single `sorry` in `periodSubgroup_isZLattice` is now
 decomposed into three named sub-obligations:
 
-1. **`periodSubgroup_eq_zspan_of_basis`** (integrality — sorry):
+1. **`periodSubgroup_eq_zspan_of_basis`** (integrality — sorry-free):
    the transported range equals the ℤ-span of the period vectors.
 
 2. **`periodVectors_linearIndependent`** (above, sorry-free assembly):
@@ -456,11 +456,15 @@ decomposed into three named sub-obligations:
 subgroup equals the ℤ-span of the `2g` period vectors obtained from
 a symplectic basis of cycles.
 
-Bottom-up content: `periodPairing` is an `AddMonoidHom` and
-`IntegralOneCycle X` is the free ℤ-module on `σ` (the deeper content
-of `h1_basis_of_compact_riemann_surface`). The image of a ℤ-span
-under a ℤ-linear map is the ℤ-span of the images. Transport via the
-ℤ-linear `holomorphicOneFormDualEquiv` preserves this structure. -/
+Proof: uses `h1_basis_of_compact_riemann_surface` to obtain a full
+ℤ-basis `bH1` of `IntegralOneCycle X`. The range of the composed
+homomorphism `equiv ∘ periodPairing` equals the ℤ-span of its images
+on the basis elements. The ⊆ direction uses `Module.Basis.sum_repr`
+to decompose each domain element as a finite ℤ-combination of basis
+vectors (bridging the ModuleCat vs AddCommGroup ℤ-smul diamond via
+`int_smul_eq_zsmul`). The ⊇ direction follows from
+`Submodule.span_induction`. Linear independence follows from
+`period_vectors_linearIndependent_of_symplectic`. -/
 theorem periodSubgroup_eq_zspan_of_basis
     (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -471,20 +475,60 @@ theorem periodSubgroup_eq_zspan_of_basis
         (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
         ((periodPairing ℂ X).range) =
       (Submodule.span ℤ (Set.range b)).toAddSubgroup := by
-  obtain ⟨b, hli, hmem⟩ := periodVectors_linearIndependent X
-  exact ⟨b, hli,
-    -- BLOCKER (Aristotle 665d5c84, Option B): the ⊇ inclusion follows
-    -- from `hmem`, but the ⊆ inclusion requires that every element of
-    -- `(periodPairing ℂ X).range` is a ℤ-linear combination of the `σ i`
-    -- that generated `b`. This needs the full ℤ-basis structure on
-    -- `IntegralOneCycle X` (from `h1_basis_of_compact_riemann_surface`),
-    -- which is not extractable here because
-    -- `periodVectors_linearIndependent` discards it. Unblocking requires
-    -- either (a) threading the `Module.Basis` through
-    -- `periodVectors_linearIndependent`, or (b) proving the sorry in
-    -- `h1_has_even_basis` so `h1_basis_of_compact_riemann_surface` can be
-    -- called directly in this proof.
-    sorry⟩
+  -- Obtain a ℤ-basis of IntegralOneCycle X
+  obtain ⟨bH1⟩ := h1_basis_of_compact_riemann_surface X
+  -- Define the composed hom and its period vectors
+  set ep : IntegralOneCycle X →+ (Fin (analyticGenus ℂ X) → ℂ) :=
+    (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom.comp (periodPairing ℂ X)
+    with hep_def
+  set b : Fin (2 * analyticGenus ℂ X) → Fin (analyticGenus ℂ X) → ℂ :=
+    fun i => ep (bH1 i) with hb_def
+  refine ⟨b, ?_, ?_⟩
+  · -- Linear independence
+    exact period_vectors_linearIndependent_of_symplectic X bH1
+      bH1.linearIndependent.injective
+  · -- ℤ-span equality: LHS = ep.range = ℤ-span of {ep (bH1 i)} = RHS
+    -- Rewrite LHS as ep.range
+    have h_lhs : AddSubgroup.map
+        (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
+        ((periodPairing ℂ X).range) = ep.range := by
+      ext x; constructor
+      · rintro ⟨y, ⟨m, rfl⟩, rfl⟩; exact ⟨m, rfl⟩
+      · rintro ⟨m, rfl⟩; exact ⟨(periodPairing ℂ X) m, ⟨m, rfl⟩, rfl⟩
+    rw [h_lhs]
+    -- Now prove ep.range = (Submodule.span ℤ (Set.range b)).toAddSubgroup
+    ext x
+    constructor
+    · -- ⊆: every ep m is in the ℤ-span of {b i}
+      rintro ⟨m, rfl⟩
+      rw [Submodule.mem_toAddSubgroup]
+      -- Decompose m = ∑ i, c_i • bH1 i using the basis, then push ep through
+      rw [← bH1.sum_repr m, map_sum]
+      apply Submodule.sum_mem
+      intro i _
+      -- Bridge the ℤ-smul diamond (ModuleCat vs AddCommGroup instances):
+      -- bH1 uses ModuleCat's Module ℤ, but ep.map_zsmul uses SubNegMonoid's
+      suffices h : ep (@HSMul.hSMul ℤ _ _ (@instHSMul _ _ SubNegMonoid.toZSMul)
+          ((bH1.repr m) i) (bH1 i)) ∈
+          Submodule.span ℤ (Set.range b) by
+        rwa [← int_smul_eq_zsmul (ModuleCat.isModule _) ((bH1.repr m) i) (bH1 i)] at h
+      rw [ep.map_zsmul]
+      exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
+    · -- ⊇: every b i = ep (bH1 i) is in ep.range, so span is too
+      intro hx
+      rw [Submodule.mem_toAddSubgroup] at hx
+      induction hx using Submodule.span_induction with
+      | mem x hx =>
+        obtain ⟨i, rfl⟩ := hx
+        exact ⟨bH1 i, rfl⟩
+      | zero => exact ⟨0, map_zero ep⟩
+      | add x y _ _ hx hy =>
+        obtain ⟨a, rfl⟩ := hx
+        obtain ⟨c, rfl⟩ := hy
+        exact ⟨a + c, map_add ep a c⟩
+      | smul n x _ hx =>
+        obtain ⟨a, rfl⟩ := hx
+        exact ⟨n • a, AddMonoidHom.map_zsmul ep a n⟩
 
 /-- **Sub-obligation 3 (generic discreteness).** The ℤ-span of `2g`
 ℝ-linearly independent vectors in `Fin g → ℂ` carries
@@ -525,7 +569,7 @@ This is the named bottom-up obligation that
 
 #### TOPDOWN assembly (executed via Aristotle 303edecd)
 
-Uses `periodSubgroup_eq_zspan_of_basis` (integrality, sorry) to
+Uses `periodSubgroup_eq_zspan_of_basis` (integrality, sorry-free) to
 rewrite the subgroup as a ℤ-span, then `zspan_of_RLinearIndep_isDiscrete`
 (sorry-free, Mathlib `ZSpan` API) to conclude `DiscreteTopology`. -/
 theorem periodSubgroup_isZLattice
