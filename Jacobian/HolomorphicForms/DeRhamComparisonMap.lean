@@ -2,6 +2,8 @@ import Jacobian.HolomorphicForms.SmoothDifferentialForm
 import Jacobian.HolomorphicForms.DeRhamComplex
 import Jacobian.HolomorphicForms.RealSingularH1
 import Jacobian.Periods.IntegralOneCycle
+import Jacobian.Periods.RealHomologyTensor
+import Mathlib.LinearAlgebra.Isomorphisms
 
 /-!
 # De Rham comparison map (frontier API)
@@ -145,19 +147,98 @@ theorem deRhamComparisonMap1_descends
     ∃ _ : deRhamH1Cocycle X →ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ), True := by
   sorry
 
+/-! ### Private helpers for `deRhamH1Cocycle_finrank_eq_realDim_singularH1`
+
+The proof assembles the frontier identities (Stokes, surjectivity,
+injectivity) into a linear equivalence via the first isomorphism theorem,
+then bridges to `realDimSingularH1` through UCT + pure-algebra finrank.
+-/
+
+/-- Kernel of the de Rham comparison map equals the exact submodule
+inside closed forms.  Proved from `deRhamComparisonMap1_vanishes_on_exact`
+(⊇ direction) and `deRhamComparisonMap1_kernel_subset_exact`
+(⊆ direction). -/
+private theorem comparison_ker_eq_exact
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    LinearMap.ker (deRhamComparisonMap1 X) = ExactForm.toClosedSubmodule 0 X := by
+  ext η
+  constructor
+  · intro hη
+    show (ClosedForm 1 X).subtype η ∈ ExactForm 0 X
+    exact deRhamComparisonMap1_kernel_subset_exact X η (LinearMap.mem_ker.mp hη)
+  · intro hη
+    apply LinearMap.mem_ker.mpr
+    exact deRhamComparisonMap1_vanishes_on_exact X η hη
+
+/-- Range of the de Rham comparison map is all of the target space.
+Proved from `deRhamComparisonMap1_surjective`. -/
+private theorem comparison_range_eq_top
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    LinearMap.range (deRhamComparisonMap1 X) = ⊤ := by
+  rw [LinearMap.range_eq_top]
+  intro φ
+  obtain ⟨ω, hω⟩ := deRhamComparisonMap1_surjective X φ
+  exact ⟨ω, hω⟩
+
+/-- The de Rham comparison map descends to a ℂ-linear equivalence
+from `deRhamH1Cocycle X` (closed mod exact) to the space of
+ℤ-linear functionals `IntegralOneCycle X →ₗ[ℤ] ℂ`.
+
+Constructed via the first isomorphism theorem: the descended map from
+the quotient by the kernel to the range is an isomorphism, and the kernel
+equals the exact submodule (Stokes + injectivity) while the range is
+everything (surjectivity). -/
+private noncomputable def deRhamH1_linearEquiv
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    deRhamH1Cocycle X ≃ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ) :=
+  -- Step 1: deRhamH1Cocycle X ≃ₗ[ℂ] (ClosedFormSub 1 X ⧸ ker)
+  (Submodule.quotEquivOfEq _ _ (comparison_ker_eq_exact X).symm) |>.trans
+  -- Step 2: (ClosedFormSub 1 X ⧸ ker) ≃ₗ[ℂ] range
+  ((LinearMap.quotKerEquivRange (deRhamComparisonMap1 X)) |>.trans
+  -- Step 3: range ≃ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ)
+  (LinearEquiv.ofTop _ (comparison_range_eq_top X)))
+
+/-
+Pure algebra: for a finitely generated free ℤ-module `M`,
+the ℂ-dimension of `Hom_ℤ(M, ℂ)` equals the ℤ-rank of `M`.
+
+Analogous to `finrank_homℤℝ_eq_finrank_of_free` but over ℂ.
+-/
+private theorem finrank_homℤℂ_eq_finrank_of_free
+    (M : Type*) [AddCommGroup M] [Module ℤ M]
+    [Module.Free ℤ M] [Module.Finite ℤ M] :
+    Module.finrank ℂ (M →ₗ[ℤ] ℂ) = Module.finrank ℤ M := by
+  have h_basis : ∃ b : Module.Basis (Fin (Module.finrank ℤ M)) ℤ M, True := by
+    exact ⟨ Module.finBasis ℤ M, trivial ⟩;
+  obtain ⟨ b, hb ⟩ := h_basis;
+  have h_iso : (M →ₗ[ℤ] ℂ) ≃ₗ[ℂ] (Fin (Module.finrank ℤ M) → ℂ) := by
+    exact (b.constr ℂ).symm
+  simpa using LinearEquiv.finrank_eq h_iso
+
 /-- **Frontier identity (sorry).** The descended de Rham comparison map
 is a linear equivalence, at the level of finrank: the closed-mod-exact
 quotient and the cycle-functional space have the same `Module.finrank ℂ`.
 
-Sorry-free assembly *if* one had Mathlib lemmas linking quasi-iso of
-cochain complexes to finrank equality of cohomology groups; for now
-recorded as a single frontier identity. -/
+Proved from the linear equivalence `deRhamH1_linearEquiv` (which uses
+the sorry'd Stokes, surjectivity, and injectivity frontier identities),
+the UCT bridge `realDim_singularH1_eq_finrank_intH1_via_uct`, and the
+pure-algebra identity `finrank_homℤℂ_eq_finrank_of_free`. -/
 theorem deRhamH1Cocycle_finrank_eq_realDim_singularH1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module.finrank ℂ (deRhamH1Cocycle X) = realDimSingularH1 X := by
-  sorry
+  rw [(deRhamH1_linearEquiv X).finrank_eq]
+  rw [realDim_singularH1_eq_finrank_intH1_via_uct X]
+  haveI : Module.Finite ℤ (IntegralOneCycle X) := IntegralOneCycle_finite X
+  haveI : Module.Free ℤ (IntegralOneCycle X) := IntegralOneCycle_torsionFree X
+  exact finrank_homℤℂ_eq_finrank_of_free (IntegralOneCycle X)
 
 /-- **Round-2 sorry-free assembly.** Bridges
 `realDim_deRhamH1_eq_realDim_singularH1` from `DeRhamSingular.lean`
