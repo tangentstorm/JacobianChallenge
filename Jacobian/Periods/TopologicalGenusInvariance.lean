@@ -41,7 +41,7 @@ def singularH1LinearEquivOfHomeo
     (h : M ≃ₜ N) :
     singularH1 M ≃ₗ[ℤ] singularH1 N :=
   (((singularHomologyFunctor (ModuleCat.{0} ℤ) 1).obj
-      (ModuleCat.of ℤ ℤ)).mapIso (TopCat.isoOfHomeo h)).toLinearEquiv
+      (ModuleCat.of ℤ (ULift.{0} ℤ))).mapIso (TopCat.isoOfHomeo h)).toLinearEquiv
 
 /-- **Leaf (homeomorphism invariance of `singularH1` finrank).**
 A homeomorphism `M ≃ₜ N` between topological spaces induces equality
