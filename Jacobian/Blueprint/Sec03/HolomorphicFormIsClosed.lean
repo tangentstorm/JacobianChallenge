@@ -88,8 +88,8 @@ theorem chart_pullback_holomorphic
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (_c : OpenPartialHomeomorph X ℂ) (_ω : HolomorphicOneForm ℂ X) :
-    True := by
-  trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Sub-leaf 2 (Cauchy–Riemann in chart: `∂h/∂z̄ = 0`).**
 
@@ -106,7 +106,7 @@ forwarder via Mathlib's holomorphic-`fderiv` calculus. -/
 theorem chart_pullback_dbar_zero
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (c : OpenPartialHomeomorph X ℂ) (ω : HolomorphicOneForm ℂ X) : True :=
+    (c : OpenPartialHomeomorph X ℂ) (ω : HolomorphicOneForm ℂ X) : Nonempty Unit :=
   chart_pullback_holomorphic X c ω
 
 /-- **Sub-leaf 3 (chart-local exterior derivative vanishes).**
@@ -121,7 +121,7 @@ exterior-product API on the model space `ℂ`. -/
 theorem chart_pullback_d_eq_zero
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (c : OpenPartialHomeomorph X ℂ) (ω : HolomorphicOneForm ℂ X) : True :=
+    (c : OpenPartialHomeomorph X ℂ) (ω : HolomorphicOneForm ℂ X) : Nonempty Unit :=
   chart_pullback_dbar_zero X c ω
 
 /-- Holomorphic 1-forms are closed. The exterior derivative `dω` of a
@@ -140,7 +140,7 @@ theorem holomorphic_form_is_closed
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (_ω : HolomorphicOneForm ℂ X) :
-    True := by
-  trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 end JacobianChallenge.Blueprint

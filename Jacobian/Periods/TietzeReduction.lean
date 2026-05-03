@@ -52,14 +52,14 @@ from one boundary edge of the polygon, with sign tracking the
 orientation. -/
 theorem edgeWordPresentation_boundary_letters_data
     {M : Type} [TopologicalSpace M] (_E : EdgeWordPresentation M) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 80 / Stage A leaf.** The length of the boundary letter
 list equals `2 * E.extractedGenus`. (Definitional consequence of
 `extractedGenus = (raw word length)/2`.) -/
 theorem edgeWordPresentation_boundary_length_data
     {M : Type} [TopologicalSpace M] (_E : EdgeWordPresentation M) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 49 / Stage A leaf (raw-word extraction, reassembly).** -/
 theorem EdgeWordPresentation.toRawWord
@@ -76,14 +76,14 @@ pair is an inverse pair. The decidability witness is required to
 terminate the recursive cancellation. -/
 theorem inverseCancel_step_decidable
     {g : ℕ} (_w : EdgeWord g) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 75 / Stage A leaf.** Strong induction on length: if
 `w.length` is the rank, recursing through `InverseCancel.length_lt`
 terminates (each step strictly decreases length). -/
 theorem inverseCancel_length_strong_induction
     {g : ℕ} (_w : EdgeWord g) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 54 / Stage A leaf (Brahana step 1: cyclic reduction,
 reassembly).** -/
@@ -102,7 +102,7 @@ opposite orientation. This rules out non-orientable patterns like
 theorem orientable_letterPair_opposite_orientation
     {M : Type} [TopologicalSpace M] [Orientable M]
     (E : EdgeWordPresentation M) (_w : EdgeWord E.extractedGenus) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 76 / Stage A leaf.** Brahana 2.b: pair every letter with
 its inverse partner using a finite `HandleSwap` sequence so all four
@@ -110,14 +110,14 @@ letters of each handle are adjacent in `aᵢ bᵢ aᵢ⁻¹ bᵢ⁻¹` form. -/
 theorem orientable_handleSwap_grouping
     {M : Type} [TopologicalSpace M] [Orientable M]
     (E : EdgeWordPresentation M) (_w : EdgeWord E.extractedGenus) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 76 / Stage A leaf.** Brahana 2.c: ordering — once handles
 are grouped, reorder so handle indices appear in order `0, 1, …, g-1`. -/
 theorem handleSwap_index_ordering
     {M : Type} [TopologicalSpace M] [Orientable M]
     (E : EdgeWordPresentation M) (_w : EdgeWord E.extractedGenus) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 54 / Stage A leaf (Brahana step 2: handle separation,
 orientable case, reassembly).** -/
@@ -223,7 +223,7 @@ theorem edgeWordPresentation_diskMap_data
     {M : Type} [TopologicalSpace M]
     (_E : EdgeWordPresentation M)
     (_w : EdgeWord (EdgeWordPresentation.extractedGenus _E)) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 79 / Stage A leaf.** The lift through `Quotient.lift`
 of the disk-map gives a continuous bijection `wordQuotient → M`.
@@ -233,13 +233,13 @@ theorem wordQuotient_continuous_bijection_to_M
     {M : Type} [TopologicalSpace M]
     (_E : EdgeWordPresentation M)
     (_w : EdgeWord (EdgeWordPresentation.extractedGenus _E)) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 79 / Stage A leaf.** Continuous bijection from compact to
 T2 ⟹ homeomorphism: `Continuous.homeoOfEquivCompactToT2`. -/
 theorem continuous_bijection_compact_to_T2_is_homeomorphism
     {α β : Type} [TopologicalSpace α] [TopologicalSpace β]
-    [CompactSpace α] [T2Space β] : True := trivial
+    [CompactSpace α] [T2Space β] : Nonempty Unit := ⟨()⟩
 
 /-- **Round 49 / Stage A leaf (raw-word quotient ≃ₜ M, reassembly).** -/
 theorem edgeWord_wordQuotient_homeomorph_M

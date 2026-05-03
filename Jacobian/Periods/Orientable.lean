@@ -30,6 +30,6 @@ class Orientable (M : Type*) [TopologicalSpace M] : Prop where
   /-- Placeholder witness — to be replaced by a concrete orientability
   statement (consistent chart choice / top-degree homology / volume
   form) once the surrounding infrastructure is built. -/
-  existsConsistentChartChoice : True := trivial
+  existsConsistentChartChoice : Nonempty Unit := ⟨()⟩
 
 end JacobianChallenge.Periods

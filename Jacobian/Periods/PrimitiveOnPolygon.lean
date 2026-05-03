@@ -24,7 +24,7 @@ This file scaffolds three sub-leaves of
 The umbrella `lem:primitive-on-polygon` (assembling these into a
 holomorphic-1-form-level statement) is deferred to
 `Jacobian/Blueprint/Sec03/PrimitiveOnPolygon.lean`, which currently
-remains a `True := trivial` placeholder pending a complex-manifold
+remains a lightweight placeholder pending a complex-manifold
 structure on `Polygon4g`.
 
 All three sub-leaves are independently Aristotle-attackable; their

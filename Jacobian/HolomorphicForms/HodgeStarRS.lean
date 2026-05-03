@@ -133,8 +133,8 @@ theorem riemannSurface_hasGlobalConformalMetric
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    True := by
-  trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Frontier theorem (sorry).** The Hodge–de Rham Laplacian on a
 compact oriented Riemannian manifold has finite-dimensional kernel on

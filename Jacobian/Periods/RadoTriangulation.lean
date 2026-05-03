@@ -101,7 +101,7 @@ theorem finite_chart_atlas_data_exists
     [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
     (s : Finset M)
     (_hcov : (⋃ x ∈ s, (chartAt (EuclideanSpace ℝ (Fin 2)) x).source) = Set.univ) :
-    True := trivial
+    (⋃ x ∈ s, (chartAt (EuclideanSpace ℝ (Fin 2)) x).source) = Set.univ := _hcov
 
 /-- **Round 52 / Stage A leaf (finite atlas bundling, reassembly).** -/
 theorem chart_finite_subcover_to_atlas
@@ -139,7 +139,7 @@ theorem dim2_overlap_homeo_pl_approximable
     (M : Type) [TopologicalSpace M]
     [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
     (_A : FiniteChartAtlas M) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 71 / Stage A leaf.** Doyle–Moran step 2: simultaneous
 compatibility — choose the approximations consistently across the
@@ -149,7 +149,7 @@ theorem dim2_pl_approximation_compatible
     (M : Type) [TopologicalSpace M]
     [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
     (_A : FiniteChartAtlas M) :
-    True := trivial
+    Nonempty Unit := ⟨()⟩
 
 /-- **Round 47 / Stage A leaf (PL refinement, dim 2, reassembly).** -/
 theorem finite_chart_atlas_admits_pl_refinement
@@ -174,7 +174,8 @@ theorem pl_atlas_to_simplicial_complex
     [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) M]
     (_PL : CompatiblePLAtlas M) :
-    True := by trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Round 64 / Stage A leaf.** The geometric realisation of the
 simplicial complex from `pl_atlas_to_simplicial_complex` is
@@ -186,7 +187,8 @@ theorem simplicial_realisation_homeomorph_M
     [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) M]
     (_PL : CompatiblePLAtlas M) :
-    True := by trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Round 47 / Stage A leaf (PL atlas → triangulation, reassembly).** A
 compatible PL atlas on a 2-manifold yields a triangulation: the

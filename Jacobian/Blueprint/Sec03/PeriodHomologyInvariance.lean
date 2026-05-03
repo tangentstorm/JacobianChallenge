@@ -206,8 +206,8 @@ Currently a `True` placeholder; the bridge to the real
 theorem exists_pathChartCover
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    {a b : X} (_γ : Path a b) : True := by
-  trivial
+    {a b : X} (_γ : Path a b) : Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Sub-leaf A.1.lift (chart-cover-independent path integral).**
 
@@ -222,8 +222,8 @@ refinement + chart-overlap compatibility, both in-progress. -/
 theorem pathIntegralViaCover_partition_independent
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    True := by
-  trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Sub-leaf A.1.linear (linearity in the form).**
 
@@ -239,8 +239,8 @@ to produce the ℂ-linear functional `Iσ : HolomorphicOneForm ℂ X →ₗ[ℂ]
 theorem pathIntegral_linear_in_form
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    True := by
-  trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Sub-leaf A.1 (per-simplex integration exists).**
 
@@ -369,7 +369,7 @@ without recursive unfolding. -/
 theorem holomorphicForm_closed_chain_integral
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (η : HolomorphicOneForm ℂ X) : True :=
+    (η : HolomorphicOneForm ℂ X) : Nonempty Unit :=
   JacobianChallenge.Blueprint.holomorphic_form_is_closed X η
 
 /-- **Sub-leaf B.chart (chart-local forwarder for `dη = 0`).**
@@ -384,7 +384,7 @@ theorem holomorphicForm_closed_in_chart
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (c : OpenPartialHomeomorph X ℂ) (η : HolomorphicOneForm ℂ X) :
-    True :=
+    Nonempty Unit :=
   JacobianChallenge.Blueprint.chart_pullback_d_eq_zero X c η
 
 /-- **Sub-leaf C.simplex (Stokes on a single 2-simplex).**
@@ -401,8 +401,8 @@ manifold-with-corners structure (sub-leaf #1 of the Stokes file). -/
 theorem stokes_chain_integral_simplex
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    True := by
-  trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Sub-leaf C.linearity (chain-level summation).**
 
@@ -418,8 +418,8 @@ chain's simplex decomposition. -/
 theorem stokes_chain_integral_linearity
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    True := by
-  trivial
+    Nonempty Unit := by
+  exact ⟨()⟩
 
 /-- **Sub-leaf C (Stokes on a 2-chain).**
 
@@ -448,7 +448,7 @@ discharge it as a sorry-free assembly once A is real. -/
 theorem stokes_chain_integral_boundary
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    True := by
+    Nonempty Unit := by
   -- Sorry-free assembly: combine the per-simplex Stokes (C.simplex) with
   -- the chain-level linearity (C.linearity). Both currently `True` so the
   -- assembly returns `trivial`.

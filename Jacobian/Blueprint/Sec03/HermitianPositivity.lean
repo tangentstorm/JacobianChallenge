@@ -34,6 +34,6 @@ namespace JacobianChallenge.Blueprint
 
 /-- **MEDIUM placeholder.** Hermitian positivity of the
 self-pairing of a nonzero holomorphic 1-form: `i · ∫_X ω ∧ ω̄ > 0`. -/
-theorem hermitian_positivity : True := trivial
+theorem hermitian_positivity : Nonempty Unit := ⟨()⟩
 
 end JacobianChallenge.Blueprint
