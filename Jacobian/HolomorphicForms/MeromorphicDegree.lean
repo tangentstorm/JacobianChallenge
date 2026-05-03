@@ -72,20 +72,26 @@ theorem meromorphicMapToSphere_bijective_of_poleDivisor_degree_one
     (_hcont : Continuous f.toMap)
     (_hdegree : Divisor.degree f.poles = 1) :
     Function.Bijective f.toMap := by
-  -- BLOCKER: same MeromorphicMapToSphere design gap as the continuous-of-pole
-  -- theorem above. `_hdegree : Divisor.degree f.poles = 1` says nothing about
-  -- the map's fibers because there is no axiom linking poleDivisor to the
-  -- preimage of ∞.
+  -- BLOCKER: This theorem is *false* under the current definitions.
   --
-  -- Missing pieces (per Aristotle 4d754005):
-  --   1. An axiom in MeromorphicMapToSphere that the pole divisor faithfully
-  --      records the preimage of ∞ with multiplicities (e.g.,
-  --      `poles_eq_preimage_infty : ∀ x, poleDivisor x = orderAt f x ∞`).
-  --   2. Degree theory for proper holomorphic maps between compact connected
-  --      Riemann surfaces (fiber cardinality = degree, counted with
-  --      multiplicity).
-  --   3. The open mapping theorem for nonconstant holomorphic maps between
-  --      Riemann surfaces (needed for surjectivity via open+closed argument).
+  -- `MeromorphicMapToSphere` (defined in Meromorphic.lean) has `toMap` and
+  -- `poleDivisor` as independent, unconstrained fields.  One can construct a
+  -- constant continuous map with `poleDivisor = Divisor.point P` (degree 1),
+  -- giving `Continuous f.toMap` and `Divisor.degree f.poles = 1` while
+  -- `f.toMap` is trivially non-bijective.
+  --
+  -- Missing declarations needed in `MeromorphicMapToSphere`:
+  --   1. `MeromorphicMapToSphere.toMap_meromorphicAt` — a field/axiom
+  --      ensuring `toMap` is genuinely meromorphic (via Mathlib's
+  --      `MeromorphicAt` or an equivalent local chart condition), replacing
+  --      the bare `locally_meromorphic : Prop`.
+  --   2. `MeromorphicMapToSphere.poleDivisor_eq_preimage_infty` — a
+  --      field/axiom ensuring `poleDivisor` faithfully records the preimage
+  --      of `∞` with multiplicities (e.g.,
+  --      `∀ x, poleDivisor x = orderAt f x ∞`).
+  --   3. Degree theory for proper holomorphic maps (fiber cardinality =
+  --      degree counted with multiplicity) — likely as a standalone theorem
+  --      once (1) and (2) are in place.
   sorry
 
 /-- **Degree-one assembly.** A meromorphic map whose pole divisor is `[P]`

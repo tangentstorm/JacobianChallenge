@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.CanonicalDivisor
+import Jacobian.HolomorphicForms.Serre.H0CanonicalIdentification
 
 /-!
 # Genus identification: analytic ↔ cohomological
@@ -107,7 +108,7 @@ theorem analyticGenus_eq_cohomological_genus_h0_KX
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)] :
     analyticGenus ℂ X = cohomologicalGenusH0KX X := by
-  sorry
+  exact (h0Canonical_isoHolomorphicOneForm X).finrank_eq.symm
 
 /-- **Frontier theorem (sorry).** The cohomological-via-𝒪_X genus
 `RSGenus` equals the analytic genus.
