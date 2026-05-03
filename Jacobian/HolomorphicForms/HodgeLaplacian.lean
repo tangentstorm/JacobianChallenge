@@ -76,10 +76,12 @@ noncomputable opaque dStarOperator2
 
 /-- **Frontier opaque.** The Hodge Laplacian on 1-forms,
 `Δ := d_0 ∘ d^*_1 + d^*_2 ∘ d_1 : Ω¹ → Ω¹`. -/
-noncomputable opaque hodgeLaplacian1
+noncomputable def hodgeLaplacian1
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    SmoothDiffForm 1 X →ₗ[ℂ] SmoothDiffForm 1 X
+    SmoothDiffForm 1 X →ₗ[ℂ] SmoothDiffForm 1 X :=
+  (exteriorDerivative 0 X).comp (dStarOperator1 X)
+    + (dStarOperator2 X).comp (exteriorDerivative 1 X)
 
 /-- **Frontier identity (sorry).** `Δ` is the sum of `d_0 ∘ d^*_1` and
 `d^*_2 ∘ d_1` applied to 1-forms. Definition-shaped frontier theorem. -/
@@ -89,7 +91,7 @@ theorem hodgeLaplacian1_def
     hodgeLaplacian1 X
       = (exteriorDerivative 0 X).comp (dStarOperator1 X)
         + (dStarOperator2 X).comp (exteriorDerivative 1 X) := by
-  sorry
+  rfl
 
 /-- **Frontier identity (sorry).** A 1-form is in the kernel of `Δ` iff
 it is both `d`-closed and `d^*`-closed.
