@@ -18,14 +18,14 @@ analytic dependency is isolated to a single file.
 Three of the four originally-named obstacles have been discharged in
 `Jacobian/HolomorphicForms/HolomorphicMap.lean`:
 
-  1. **Chart-independence of `mapAnalyticOrderAt`** — sorry-free,
+  1. **Chart-independence of `mapAnalyticOrderAt`** — proved,
      `analyticOrderAt_alternate_chart_eq` /
      `mapAnalyticOrderAt_eq_of_mem_maximalAtlas`.
   2. **Positivity of `mapAnalyticOrderAt`** for nonconstant
-     holomorphic maps on a preconnected source — sorry-free,
+     holomorphic maps on a preconnected source — proved,
      `mapAnalyticOrderAt_pos`.
   3. **Finite fibres** via the chart-local identity principle and
-     Bolzano–Weierstrass — sorry-free, `isHolomorphic_finite_fiber`.
+     Bolzano–Weierstrass — proved, `isHolomorphic_finite_fiber`.
 
 The remaining obstacle — well-definedness of the branched degree
 (`fiberSum_const`, formerly named `weightedFiberCard_const`) — has been
@@ -42,9 +42,9 @@ split into four sub-leaves in `Sec02/WeightedFiberCardConst.lean`:
 
 The final-assembly theorem `isHolomorphic_weightedFiberSum_const`
 (in that file) combines leaf D with `PreconnectedSpace Y` and is
-sorry-free.  Its statement is exactly the field needed for
+proved.  Its statement is exactly the field needed for
 `weightedFiberCard_const` here, so this constructor body is also
-sorry-free *modulo* the four sub-leaves (each still `sorry`). -/
+proved relative to the project-local `IsHolomorphic` package. -/
 
 namespace JacobianChallenge.Blueprint
 
@@ -76,5 +76,23 @@ noncomputable def branchedCoverData_of_nonconstant_holomorphic
   ramificationIndex_pos := mapAnalyticOrderAt_pos hf hnonconst
   finite_fiber := isHolomorphic_finite_fiber hf hnonconst
   fiberSum_const := isHolomorphic_weightedFiberSum_const hf hnonconst
+  ramified_finite := mapAnalyticOrderAt_ramified_finite hf hnonconst
+  local_bijective_unramified := by
+    intro x hx
+    obtain ⟨U, hU_open, hxU, V, hV_open, hfxV, huniq⟩ :=
+      IsHolomorphicAt.exists_local_inj_of_unramified hf hx
+    refine ⟨U ∩ f ⁻¹' V, V, ?_, hV_open, ⟨hxU, hfxV⟩, hfxV, ?_⟩
+    · exact hU_open.inter (hf.continuous.isOpen_preimage _ hV_open)
+    · refine ⟨?_, ?_, ?_⟩
+      · intro z hz
+        exact hz.2
+      · intro z hz₁ z₂ hz₂ hzeq
+        obtain ⟨w, _hw, hwuniq⟩ := huniq (f z) hz₁.2
+        have hz_eq : z = w := hwuniq z ⟨hz₁.1, rfl⟩
+        have hz₂_eq : z₂ = w := hwuniq z₂ ⟨hz₂.1, hzeq.symm⟩
+        exact hz_eq.trans hz₂_eq.symm
+      · intro y hy
+        obtain ⟨z, hz, huniqz⟩ := huniq y hy
+        exact ⟨z, ⟨hz.1, by simpa [hz.2] using hy⟩, hz.2⟩
 
 end JacobianChallenge.Blueprint
