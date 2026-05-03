@@ -7,8 +7,7 @@ import Mathlib.Topology.Connected.Basic
 
 Section 2 of `tex/sections/02-holomorphic-forms-and-genus.tex`.
 
-Concrete (proof-bearing where TRIVIAL/SHORT, `sorry`-bearing where
-MEDIUM/HARD) realisations of the eight sub-leaves catalogued in the
+Concrete proof-bearing realisations of the eight sub-leaves catalogued in the
 ChatGPT plan `ref/plans/branched-degree.md`:
 
 * leaf 1 — `ramificationIndexStub` (TRIVIAL, proved)
@@ -77,6 +76,13 @@ structure BranchedCoverData
     ∀ y₁ y₂ : Y,
       ((finite_fiber y₁).toFinset).sum ramificationIndex
         = ((finite_fiber y₂).toFinset).sum ramificationIndex
+  /-- The source-side branch locus is finite. -/
+  ramified_finite : {x : X | ramificationIndex x ≠ 1}.Finite
+  /-- At an unramified point, the cover is locally bijective. -/
+  local_bijective_unramified :
+    ∀ x : X, ramificationIndex x = 1 →
+      ∃ U : Set X, ∃ V : Set Y,
+        IsOpen U ∧ IsOpen V ∧ x ∈ U ∧ f x ∈ V ∧ Set.BijOn f U V
 
 /-- Derived: the weighted cardinality of the fibre over `y`, i.e. the
 sum of ramification indices of all preimages of `y`. -/

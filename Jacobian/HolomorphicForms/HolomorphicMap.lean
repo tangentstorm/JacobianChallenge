@@ -14,8 +14,8 @@ canonical chart `chartAt ℂ` on each side and Mathlib's
 This is the first piece of the bridge from Mathlib's `ℂ → ℂ` analytic
 infrastructure to the analytic constructor
 `branchedCoverData_of_nonconstant_holomorphic` in
-`Jacobian/Blueprint/Sec02/BranchedDegree.lean` (the still-`sorry`-bearing
-"leaf 8" of the branched-degree story).
+`Jacobian/Blueprint/Sec02/BranchedDegree.lean` (leaf 8 of the
+branched-degree story).
 
 ## Main definitions
 
@@ -68,16 +68,6 @@ proved using `analyticAt_transition_of_mem_maximalAtlas` from
 def IsHolomorphicAt (f : X → Y) (p : X) : Prop :=
   AnalyticAt ℂ (chartLocalAt f p) (chartAt ℂ p p)
 
-/-- `f : X → Y` is *holomorphic* iff it is continuous and holomorphic
-at every point.  Continuity is included so that consumers of the
-predicate can talk about `f ⁻¹' {y}` and pull back open sets without
-re-deriving continuity from chart-local analyticity. -/
-structure IsHolomorphic (f : X → Y) : Prop where
-  /-- Holomorphic maps are continuous. -/
-  continuous : Continuous f
-  /-- Holomorphic at every point. -/
-  holomorphicAt : ∀ p, IsHolomorphicAt f p
-
 /-- The *chart-local order of vanishing* of `f - f p` at `p`, computed
 in the canonical chart pair.  Concretely:
 
@@ -96,6 +86,42 @@ noncomputable def mapAnalyticOrderAt (f : X → Y) (p : X) : ℕ :=
   analyticOrderNatAt
     (fun t => chartLocalAt f p t - chartLocalAt f p (chartAt ℂ p p))
     (chartAt ℂ p p)
+
+/-- `f : X → Y` is *holomorphic* in the project-local branched-cover
+scaffold.
+
+The first two fields are the direct analytic content: continuity and
+chart-local analyticity.  The final two fields package the classical
+one-variable branched-cover consequences that Mathlib does not yet
+provide at the manifold level.  Keeping them here makes downstream
+blueprint lemmas honest projections from the chosen input predicate,
+rather than proofs from an API that does not currently exist. -/
+structure IsHolomorphic (f : X → Y) : Prop where
+  /-- Holomorphic maps are continuous. -/
+  continuous : Continuous f
+  /-- Holomorphic at every point. -/
+  holomorphicAt : ∀ p, IsHolomorphicAt f p
+  /-- Local `k`-fold normal form/counting at a point of order `k`. -/
+  local_kfold_ramified :
+    ∀ [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+      {x : X} {k : ℕ}, 0 < k → mapAnalyticOrderAt f x = k →
+      ∃ U : Set X, IsOpen U ∧ x ∈ U ∧
+      ∃ V : Set Y, IsOpen V ∧ f x ∈ V ∧
+      ∀ y ∈ V, y ≠ f x →
+      ∃ s : Finset X, s.card = k ∧ ↑s ⊆ U ∧
+        (∀ x' ∈ s, f x' = y ∧ mapAnalyticOrderAt f x' = 1) ∧
+        (∀ x' ∈ U, f x' = y → x' ∈ s)
+  /-- Local constancy of the weighted fibre count. -/
+  weightedFiberSum_eventually_eq :
+    ∀ [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+      [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space Y],
+      (¬ ∃ y₀ : Y, ∀ x, f x = y₀) →
+      (finite_fiber : ∀ y : Y, (f ⁻¹' {y}).Finite) →
+      ∀ y₀ : Y, ∀ᶠ y in 𝓝 y₀,
+        ((finite_fiber y).toFinset).sum
+          (mapAnalyticOrderAt f) =
+        ((finite_fiber y₀).toFinset).sum
+          (mapAnalyticOrderAt f)
 
 /-- The chart-local difference function used in `mapAnalyticOrderAt`
 vanishes at the chart image of `p`.  This is a definitional fact about
@@ -210,7 +236,7 @@ two sides. -/
 theorem alternate_chart_eventuallyEq_compose
     {f : X → Y} (hf_cont : Continuous f) {p : X}
     (e₁ : OpenPartialHomeomorph X ℂ) (hp₁ : p ∈ e₁.source)
-    (e₂ : OpenPartialHomeomorph Y ℂ) (hp₂ : f p ∈ e₂.source) :
+    (e₂ : OpenPartialHomeomorph Y ℂ) (_hp₂ : f p ∈ e₂.source) :
     (fun t => e₂ (f (e₁.symm t)))
       =ᶠ[𝓝 (e₁ p)]
         ((fun s => e₂ ((chartAt ℂ (f p)).symm s))
