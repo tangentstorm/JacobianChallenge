@@ -37,7 +37,9 @@ namespace JacobianChallenge.Periods
 
 open JacobianChallenge.HolomorphicForms
 
-variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+universe u
+
+variable (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 
