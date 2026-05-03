@@ -37,7 +37,9 @@ open scoped Manifold
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 open JacobianChallenge.ComplexTorus
 
-variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+universe u
+
+variable (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 
@@ -62,7 +64,7 @@ Bottom-up: concretising `val` requires multi-chart path integration
 plus a basis choice; `self_spec` then follows from the fact that the
 integral over a constant path is trivially zero. -/
 structure PathIntegralFunctionalBundle
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
   /-- The path-integral coordinates `(P, Q) ↦ (∫_P^Q ω₁, …, ∫_P^Q ωₘ)`. -/
@@ -230,7 +232,7 @@ theory layer or even a placeholder `Divisor X` / `IsPrincipal d` API
 exists in the project. The docstring already captures the canonical
 proof so future Aristotle/sub-agent jobs can split rather than
 rediscover the structure. -/
-/-- Combined Abel–Riemann-Hurwitz content (TOPDOWN-split via Aristotle 7ceff781):
+/- Combined Abel–Riemann-Hurwitz content (TOPDOWN-split via Aristotle 7ceff781):
 if two distinct points have period-congruent path integrals, then
 `analyticGenus ℂ X = 0`.
 

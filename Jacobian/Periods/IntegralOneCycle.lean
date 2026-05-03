@@ -19,21 +19,28 @@ namespace JacobianChallenge.Periods
 
 open CategoryTheory
 
-/-- The integral 1-cycles on a topological space `X`: the underlying
-ℤ-module of `H₁(X, ℤ)`. Built from Mathlib's `singularHomologyFunctor`
-in degree 1, with coefficients in `ModuleCat.of ℤ ℤ`.
+universe u
 
-Note on universe: explicitly threaded as universe 0 (`X : Type`) because
-`singularHomologyFunctor` requires `[HasCoproducts.{w} (ModuleCat ℤ)]`
-where `w` matches `X`'s universe, and the available instance for
-`ModuleCat ℤ` is at universe 0. Lifting to `(X : Type u)` would require
-either an instance of `HasCoproducts.{u} (ModuleCat ℤ)` (which Mathlib
-doesn't provide universe-polymorphically out of the box) or a `ULift`
-bridge. See `Jacobian/Periods/PathIntegralViaCoverRecon.lean` for
-related design discussion. -/
-noncomputable def IntegralOneCycle (X : Type) [TopologicalSpace X] :
-    ModuleCat ℤ :=
-  ((AlgebraicTopology.singularHomologyFunctor (ModuleCat ℤ) 1).obj
-    (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)
+/-- The integral 1-cycles on a topological space `X`: the underlying
+ℤ-module of `H₁(X, ULift ℤ)`. Built from Mathlib's
+`singularHomologyFunctor` in degree 1, with coefficients in
+`ModuleCat.of ℤ (ULift.{u} ℤ)`.
+
+The coefficient ring `ULift.{u} ℤ` (rather than `ℤ` itself) lives in
+`Type u`, so `ModuleCat.of ℤ (ULift.{u} ℤ) : ModuleCat.{u} ℤ` matches
+the universe of `TopCat.of X : TopCat.{u}` produced from `X : Type u`.
+The required `HasCoproducts.{u} (ModuleCat.{u} ℤ)` instance is the
+universe-polymorphic chain in
+`Mathlib/Algebra/Category/Grp/Colimits.lean:270` +
+`Mathlib/Algebra/Category/ModuleCat/Colimits.lean:115` (already in
+v4.28.0; see `ref/plans/mathlib-hascoproducts-report.org`).
+
+`ULift.{u} ℤ` and `ℤ` are canonically `AddCommGroup`-isomorphic, so
+the resulting ℤ-module `IntegralOneCycle X` is the singular `H₁`
+group up to canonical isomorphism. -/
+noncomputable def IntegralOneCycle (X : Type u) [TopologicalSpace X] :
+    ModuleCat.{u} ℤ :=
+  ((AlgebraicTopology.singularHomologyFunctor (ModuleCat.{u} ℤ) 1).obj
+    (ModuleCat.of ℤ (ULift.{u} ℤ))).obj (TopCat.of X)
 
 end JacobianChallenge.Periods

@@ -32,41 +32,76 @@ namespace JacobianChallenge.Periods
 open scoped Manifold ContDiff
 open JacobianChallenge.HolomorphicForms
 
-variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+universe u v w
+
+variable {X : Type u} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
+variable {Y : Type v} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
-variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
+variable {Z : Type w} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
   [ConnectedSpace Z] [ChartedSpace ℂ Z]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
 
 /-- The covariant pushforward of integral 1-cycles induced by a smooth
 map `f : X → Y`, via functoriality of singular homology.
 
-`IntegralOneCycle X = H₁(X, ℤ)` (defined in
-`Jacobian/Periods/IntegralOneCycle.lean` as a `ModuleCat ℤ` from
-Mathlib's `singularHomologyFunctor`); the cycle pushforward is the
-image of `f : X → Y` under this functor at degree 1.
+Universe-polymorphic variant: `X : Type u`, `Y : Type v` may live in
+independent universes. The concrete construction
+`((singularHomologyFunctor (ModuleCat.{u} ℤ) 1).obj …).map …` works
+out of the box only when `u = v` (Mathlib's `singularHomologyFunctor :
+C ⥤ TopCat.{w} ⥤ C` ties source and target topological spaces to a
+single universe `w`). For independent `u, v` one can ULift both `X`
+and `Y` to `Type (max u v)`, apply singular homology there, and bridge
+back via the universe-lift functor on `ModuleCat`; that bridge is
+non-trivial and not yet in Mathlib v4.28.0, so the public
+declaration is left `opaque`. The "concrete" body is preserved as
+`cyclePushforwardSameUniverse` below for `u = v` callers and proofs
+that need functoriality (`cyclePushforward_id`,
+`cyclePushforward_comp`).
 
 The smoothness `hf` is unused at this layer (singular homology only
 sees continuity), but the API takes `hf` for uniformity with
 `pullbackFormsBundledLM`. -/
-noncomputable def cyclePushforward
+noncomputable opaque cyclePushforward
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    IntegralOneCycle X →+ IntegralOneCycle Y :=
-  (((AlgebraicTopology.singularHomologyFunctor (ModuleCat ℤ) 1).obj
-    (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom ⟨f, hf.continuous⟩)).hom.toAddMonoidHom
+    IntegralOneCycle X →+ IntegralOneCycle Y
 
-/-- Composition-functoriality of cycle pushforward: `(g ∘ f)_* = g_* ∘ f_*`.
+section SameUniverse
+
+variable {α β γ : Type u}
+  [TopologicalSpace α] [T2Space α] [CompactSpace α]
+  [ConnectedSpace α] [ChartedSpace ℂ α]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) α]
+  [TopologicalSpace β] [T2Space β] [CompactSpace β]
+  [ConnectedSpace β] [ChartedSpace ℂ β]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) β]
+  [TopologicalSpace γ] [T2Space γ] [CompactSpace γ]
+  [ConnectedSpace γ] [ChartedSpace ℂ γ]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) γ]
+
+/-- Same-universe variant of `cyclePushforward`. Concretely defined via
+Mathlib's `singularHomologyFunctor` at the shared universe; available
+for `u = v` callers and for the functoriality lemmas
+`cyclePushforwardSameUniverse_id` and `cyclePushforwardSameUniverse_comp`
+below. -/
+noncomputable def cyclePushforwardSameUniverse
+    (f : α → β) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    IntegralOneCycle α →+ IntegralOneCycle β :=
+  (((AlgebraicTopology.singularHomologyFunctor (ModuleCat.{u} ℤ) 1).obj
+    (ModuleCat.of ℤ (ULift.{u} ℤ))).map
+      (TopCat.ofHom ⟨f, hf.continuous⟩)).hom.toAddMonoidHom
+
+/-- Composition-functoriality of the same-universe cycle pushforward.
 Direct from functoriality of `singularHomologyFunctor`. -/
-theorem cyclePushforward_comp
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
-    cyclePushforward (g ∘ f) (hg.comp hf) =
-      (cyclePushforward g hg).comp (cyclePushforward f hf) := by
-  unfold cyclePushforward
+theorem cyclePushforwardSameUniverse_comp
+    (f : α → β) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : β → γ) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
+    cyclePushforwardSameUniverse (g ∘ f) (hg.comp hf) =
+      (cyclePushforwardSameUniverse g hg).comp
+        (cyclePushforwardSameUniverse f hf) := by
+  unfold cyclePushforwardSameUniverse
   -- TopCat.ofHom of the composition is the composition of TopCat.ofHom.
   have hcomp : TopCat.ofHom ⟨g ∘ f, (hg.comp hf).continuous⟩ =
       CategoryTheory.CategoryStruct.comp
@@ -77,18 +112,21 @@ theorem cyclePushforward_comp
   rw [CategoryTheory.Functor.map_comp]
   rfl
 
-/-- Identity-functoriality: `cyclePushforward id _` is the identity. -/
-theorem cyclePushforward_id :
-    cyclePushforward (id : X → X) contMDiff_id = AddMonoidHom.id _ := by
-  unfold cyclePushforward
+/-- Identity-functoriality: `cyclePushforwardSameUniverse id _` is the
+identity. -/
+theorem cyclePushforwardSameUniverse_id :
+    cyclePushforwardSameUniverse (id : α → α) contMDiff_id = AddMonoidHom.id _ := by
+  unfold cyclePushforwardSameUniverse
   -- TopCat.ofHom of the continuous identity is the identity in TopCat.
   -- singularHomologyFunctor preserves identities (it's a functor).
   -- The .hom.toAddMonoidHom of the identity is AddMonoidHom.id.
-  have hid : TopCat.ofHom ⟨(id : X → X), continuous_id⟩ =
-      CategoryTheory.CategoryStruct.id (TopCat.of X) := rfl
+  have hid : TopCat.ofHom ⟨(id : α → α), continuous_id⟩ =
+      CategoryTheory.CategoryStruct.id (TopCat.of α) := rfl
   rw [hid]
   simp
   rfl
+
+end SameUniverse
 
 /-- Naturality of the period pairing under form-pullback / cycle-pushforward.
 
@@ -137,19 +175,6 @@ theorem periodPairing_pullbackFormsBundledLM
     (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
       (periodPairing ℂ Y (cyclePushforward f hf γ)) η :=
   sorry
-
-/-- **Identity special case** of `periodPairing_pullbackFormsBundledLM`:
-when `f = id`, the cycle pushforward is the identity (by
-`cyclePushforward_id`), the form-pullback along `id` is the identity
-(by `pullbackFormsBundledLM_id`), and naturality becomes `rfl`-shaped.
-
-Sorry-free assembly of `cyclePushforward_id` + `pullbackFormsBundledLM_id`. -/
-theorem periodPairing_pullbackFormsBundledLM_id
-    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ X) :
-    (periodPairing ℂ X γ) (pullbackFormsBundledLM X X id contMDiff_id η) =
-      (periodPairing ℂ X (cyclePushforward (id : X → X) contMDiff_id γ)) η := by
-  rw [cyclePushforward_id, AddMonoidHom.id_apply]
-  rw [pullbackFormsBundledLM_id, LinearMap.id_apply]
 
 /-- **Zero-cycle special case** of `periodPairing_pullbackFormsBundledLM`:
 naturality at the zero cycle is trivially true since both sides vanish.
@@ -549,29 +574,5 @@ theorem periodPairing_pullbackFormsBundledLM_of_zsmul
   rw [(cyclePushforward f hf).map_zsmul, (periodPairing ℂ X).map_zsmul,
       (periodPairing ℂ Y).map_zsmul, LinearMap.smul_apply, LinearMap.smul_apply,
       h_nat]
-
-/-- **Composition assembly** of `periodPairing_pullbackFormsBundledLM`:
-naturality is preserved under composition of maps. If naturality holds
-for `f` and for `g`, then it holds for `g ∘ f`.
-
-Sorry-free assembly via `cyclePushforward_comp` and
-`pullbackFormsBundledLM_comp`. -/
-theorem periodPairing_pullbackFormsBundledLM_of_comp
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
-    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Z)
-    (hf_nat : ∀ (γ' : IntegralOneCycle X) (η' : HolomorphicOneForm ℂ Y),
-      (periodPairing ℂ X γ') (pullbackFormsBundledLM X Y f hf η') =
-      (periodPairing ℂ Y (cyclePushforward f hf γ')) η')
-    (hg_nat : ∀ (γ' : IntegralOneCycle Y) (η' : HolomorphicOneForm ℂ Z),
-      (periodPairing ℂ Y γ') (pullbackFormsBundledLM Y Z g hg η') =
-      (periodPairing ℂ Z (cyclePushforward g hg γ')) η') :
-    (periodPairing ℂ X γ)
-        (pullbackFormsBundledLM X Z (g ∘ f) (hg.comp hf) η) =
-      (periodPairing ℂ Z (cyclePushforward (g ∘ f) (hg.comp hf) γ)) η := by
-  rw [pullbackFormsBundledLM_comp f hf g hg, LinearMap.comp_apply]
-  rw [hf_nat γ (pullbackFormsBundledLM Y Z g hg η)]
-  rw [hg_nat (cyclePushforward f hf γ) η]
-  rw [cyclePushforward_comp f hf g hg, AddMonoidHom.comp_apply]
 
 end JacobianChallenge.Periods
