@@ -18,6 +18,145 @@ to match Challenge exactly.
 Toggle each ~[ ]~ to ~[X]~ as work lands. Org-mode users can also flip the
 TODO keyword to DONE. Top-level cookies ~[/]~ summarise child progress.
 
+* MAJOR UPDATE (2026-05-03): cloud-worker push reshapes the landscape
+
+While Aristotle was running on the original W1 P3 frontier sorries
+(2026-05-02 evening through 2026-05-03 morning), a cloud Claude Code
+worker pushed dozens of substantial commits that materially change the
+roadmap state:
+
+** Resolved workstreams
+
+- **W2 universe parity** is **DONE** (commit ~e064b74~). ~Solution.lean~
+  now defines ~Jacobian (X : Type u)~, matching Challenge.lean. The W6
+  ULift fix on IntegralOneCycle's coefficient module landed and threaded
+  through.
+- **W6 mathlib HasCoproducts** is **DONE** (already marked).
+- **W1 P4 Stage A planning round** is effectively **DONE** at the
+  scaffolding level — the cloud worker created ~Jacobian/StageA/~ (7
+  files: ~SpanningTree~, ~SimplicialComplex~, ~RadoTheorem~, ~PrismOperator~,
+  ~Hurewicz~, ~CellularSingular~, ~EdgeWordTietze~) with named-leaf
+  obligations totalling ~180 sorries. The original "needs its own
+  planning round" item is satisfied; the work now is Aristotle-ing
+  the leaves.
+- **Stage B Hodge–de Rham infrastructure**: 8 new files under
+  ~Jacobian/StageB/~ (~CoherentSheaves~, ~LaplaceBeltrami~,
+  ~SerreDuality~, ~KahlerStructure~, ~DeRhamComparison~, ~HarmonicForms~,
+  ~DifferentialForms~, ~DeRhamComplex~), totalling ~190 sorries. Most are
+  still gated on Mathlib-absent infrastructure (elliptic regularity,
+  sheaves of forms) but several leaves are Aristotle-attackable.
+- **Hodge–de Rham TOPDOWN refinement** (commits 1a3832a, 1964379): the
+  original 7 frontier sorries (~hodge_deRham_rank_eq~ etc.) are now a
+  named tree of ~30 leaves across ~HolomorphicForms/HodgeDeRhamRank~,
+  ~HodgeDecomposition~, ~HodgeProjection~, ~RealComplexDeRham~,
+  ~DeRhamSingular~, ~DeRhamComparisonMap~, ~AntiHolomorphicOneForm~.
+- **Serre duality stack** (commits d1a6c88 + earlier): 25 top-down
+  refinement rounds; ~Jacobian/HolomorphicForms/Serre/~ has 18+ leaf
+  files, most sorry-free assemblies, the rest narrowly bounded.
+- **Polygonal-model Stage B**: rounds 26–84 of TOPDOWN refinement on
+  the surface classification → singular H₁ chain.
+
+** Aristotle integration tally (this session)
+
+Out of 14 packets submitted in the original wave + 7 retries +
+saturation top-ups (≈25 total submissions across 2 days):
+
+- **3 real wins integrated** (commit ~0b7b8a5~):
+  - ~b0320551~ ~analyticGenus_eq_h0_KX~ closed (1-line delegation)
+  - ~2d8902e3~ ~RSGenus~ given concrete realisation as
+    ~Module.finrank ℂ (HolomorphicOneForm ℂ X)~
+  - ~cd87634b~ ~periodSubgroup_eq_zspan_of_basis~ closed (real proof
+    using ~h1_basis_of_compact_riemann_surface~ + ~Module.Basis~)
+- **1 doc improvement integrated**: ~dc5a3836~ sharper BLOCKER analysis
+  for ~MeromorphicDegree:89~ (theorem is *false* under current
+  ~MeromorphicMapToSphere~ defs; needs 3 named API additions)
+- **2 no-ops** (~252813c4~ analyticOfCurve_injective just changed
+  ~/--~ to ~/-~; ~d5c5b2ca~ h1_has_even_basis zero diff)
+- **1 cheat** (~bdaae2fc~ closed 1 sorry by adding 2 new ones)
+- **~15 COMPLETE_WITH_ERRORS** = soft BLOCKERs; not integrated per
+  memory rule
+
+** Net sorry inventory (current)
+
+| Layer | Sorry count | Notes |
+|-------+-------------+-------|
+| Challenge.lean | 24 | frozen public spec; do not touch |
+| Jacobian/StageA/ | ~180 | ~surface classification leaves~ |
+| Jacobian/StageB/ | ~190 | ~Hodge–de Rham + Serre stack leaves~ |
+| Jacobian/HolomorphicForms/ | ~50 | most are now-named TOPDOWN leaves |
+| Jacobian/Periods/ | ~25 | mostly Stage-A-delegated |
+| Jacobian/AbelJacobi/ | 1 | analyticOfCurve_injective (still load-bearing) |
+| Jacobian/WorkPackets/StatementBank.lean | 17 | slated for W3 deletion |
+| Jacobian/Blueprint/SecXX/ | ~15 | scaffolds, slated for W4 Phase D deletion |
+
+The remaining work is now overwhelmingly in named, file-scoped, narrowly-
+bounded leaf obligations under StageA/StageB/HolomorphicForms — exactly
+the Aristotle-shaped work the project pipeline is designed for.
+
+** New workstream: Stage A/B leaf-discharge Aristotle wave [/]              :aristotle:
+
+The next bulk Aristotle work is a saturation wave on the most-tractable
+StageA/StageB leaves. Per the cloud worker's docstrings each leaf has
+a proof sketch + named Mathlib lemma references; Aristotle should be
+able to take many of these now that the decomposition is fine-grained.
+
+*** TODO [#A] [ ] StageA: SpanningTree.exists_spanningTree_of_finite_connected :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/StageA/SpanningTree.lean
+:NOTE:        pure SimpleGraph theory, no manifold prereqs; the easiest StageA leaf
+:END:
+
+*** TODO [#A] [ ] StageA: cycle through the 18 sorries in SpanningTree.lean :aristotle:
+:PROPERTIES:
+:FILE:        Jacobian/StageA/SpanningTree.lean
+:STRATEGY:    submit one packet per `theorem ... := sorry`, in declaration order
+:END:
+
+*** TODO [#A] [ ] StageA: SimplicialComplex (28 sorries, geometric topology) :aristotle:
+
+*** TODO [#A] [ ] StageA: RadoTheorem (23 sorries) :aristotle:
+
+*** TODO [#A] [ ] StageA: Hurewicz (23 sorries, π1 ↔ H1) :aristotle:
+
+*** TODO [#A] [ ] StageA: PrismOperator (24 sorries, simplicial/singular bridge) :aristotle:
+
+*** TODO [#A] [ ] StageA: CellularSingular (33 sorries, cellular ↔ singular homology) :aristotle:
+
+*** TODO [#A] [ ] StageA: EdgeWordTietze (27 sorries, polygonal presentation) :aristotle:
+
+*** TODO [#B] [ ] StageB: HarmonicForms (26 sorries, gated on elliptic regularity) :aristotle:cloud:
+:PROPERTIES:
+:NOTE:        likely BLOCKER on Mathlib elliptic-PDE infrastructure; signal-only
+:END:
+
+*** TODO [#B] [ ] StageB: DifferentialForms, DeRhamComplex, etc. :aristotle:
+:PROPERTIES:
+:NOTE:        gated on sheaves of forms in Mathlib; most leaves return BLOCKER
+:END:
+
+** Recommended Aristotle wave protocol going forward
+
+1. Submit Stage A leaves in batches of 5–10 (avoid the upload-timeout
+   problem that hit the MCP tool — use ~aristotle submit~ via Bash
+   directly with longer timeouts).
+2. Inspect every COMPLETE result against the target file BEFORE
+   integrating. Most "COMPLETE" we saw this session were no-ops or
+   cheats; carefully diff each one.
+3. ~lake build~ each module after integration.
+4. Push every tick, even when no-op (per memory rule).
+5. When Aristotle returns COMPLETE_WITH_ERRORS, route to brainstorm
+   (per memory rule), do not integrate.
+
+** Items now obsolete in the original W1 P1/P2/P3 sections below
+
+The original W1 P1/P2/P3 TODOs predate the cloud worker push. Many
+target sorries that no longer exist (renamed/decomposed) or are now
+trivial. Re-derive concrete Aristotle waves from the StageA/StageB
+inventory rather than re-running the old W1 P3 list.
+
+The old TODOs are kept below for historical reference and will be
+DONE-marked / pruned in a future cleanup tick.
+
 * W1 — Discharge ~30 Production Sorries [/]                      :aristotle:
 
 Closure of ~Solution.lean~'s 8 imports. Each TODO names the file and
