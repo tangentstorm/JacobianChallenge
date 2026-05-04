@@ -5855,6 +5855,72 @@ $V_{1} = \ker\Delta\oplus\mathrm{range}\,d_{0}\oplus\mathrm{range}\,d_{1}^{*}$, 
 \paragraph*{Summary.}  Round 11 closes the algebraic skeleton of R5: every claim above is a real Mathlib-content theorem (no \texttt{sorry}, no placeholder).  The remaining gap to the analytic R5 is the reduction from $L^{2}\Omega^{k}$ on a compact manifold to a finite-dimensional inner-product space --- i.e.\ elliptic regularity (\code{R5-sub-B}, ~2500--4000 LOC).  Once that lands, the present file dispatches the entire chain hod.  Lemmas hod.16--hod.50 (rounds 4--10) remain at the Stage B placeholder layer (\code{Omega := PUnit}); lemmas hod.51--hod.57 (round 11) are the real finite-dim version.
 
 % --------------------------------------------------------------
+\subsubsection*{Round 12: real de Rham--harmonic isomorphism (the second half of R5)}
+
+The first half of R5 (orthogonal decomposition $V_{1} = \ker\Delta\oplus\mathrm{range}\,d_{0}\oplus\mathrm{range}\,d_{1}^{*}$) is dispatched in Round 11.  The second half --- ``each de Rham class has a unique harmonic representative'' --- is now also a real Mathlib-content theorem in \code{AbstractHodgeComplex.lean}.
+
+\begin{lemma}[Pass hod.58: $\mathrm{range}\,d_{0}\subseteq\ker d_{1}$ from $d^{2}=0$]
+\label{lem:hod-r58}
+For any $a\in V_{0}$, $d_{1}(d_{0}\,a) = (d_{1}\circ d_{0})(a) = 0$.
+\lean{JacobianChallenge.HodgeAbstract.range_d_0_le_ker_d_1}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.59: harmonic $\subseteq\ker d_{1}$ (every harmonic is closed)]
+\label{lem:hod-r59}
+$\ker\Delta = \ker d_{0}^{*}\cap\ker d_{1}\subseteq\ker d_{1}$ by hod.53.
+\lean{JacobianChallenge.HodgeAbstract.harmonic_le_ker_d_1}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.60: define $H^{1}_{\mathrm{dR}}:=\ker d_{1}/\mathrm{range}\,d_{0}$]
+\label{lem:hod-r60}
+The middle de Rham cohomology, as a real quotient module.
+\lean{JacobianChallenge.HodgeAbstract.deRhamH_1}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.61: define the natural map harmonic $\to H^{1}_{\mathrm{dR}}$]
+\label{lem:hod-r61}
+$h\in\ker\Delta\mapsto[h]\in\ker d_{1}/\mathrm{range}\,d_{0}$, well-defined by hod.59.
+\lean{JacobianChallenge.HodgeAbstract.harmonicToDeRham}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.62: injectivity --- a harmonic exact form is zero]
+\label{lem:hod-r62}
+If $h\in\ker\Delta$ and $h = d_{0}\,a$ for some $a$, then $\langle h,h\rangle = \langle d_{0}\,a,h\rangle = \langle a,d_{0}^{*}h\rangle = \langle a,0\rangle = 0$ (using $d_{0}^{*}h=0$ from harmonicity), so $h=0$.
+\lean{JacobianChallenge.HodgeAbstract.harmonicToDeRham_injective}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.63: surjectivity --- every closed form has a harmonic part]
+\label{lem:hod-r63}
+Given $\omega\in\ker d_{1}$, decompose using Hodge (Round 11):
+$\omega = h + d_{0}\,a + d_{1}^{*}\,b$.  From $d_{1}\omega=0$ and $d_{1}\circ d_{0}=0$:
+$d_{1}d_{1}^{*}b=0$.  Then $\langle d_{1}^{*}b,d_{1}^{*}b\rangle = \langle d_{1}d_{1}^{*}b,b\rangle = 0$, so $d_{1}^{*}b=0$.  Hence $\omega-h = d_{0}\,a\in\mathrm{range}\,d_{0}$, i.e.\ $[\omega]=[h]$.
+\lean{JacobianChallenge.HodgeAbstract.harmonicToDeRham_surjective}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.64: the de Rham--harmonic isomorphism]
+\label{lem:hod-r64}
+$\ker\Delta \cong_{\R} \ker d_{1}/\mathrm{range}\,d_{0}$, with the map $h\mapsto[h]$ a linear isomorphism.  This is the second half of R5: every closed form has a \emph{unique} harmonic representative.
+\lean{JacobianChallenge.HodgeAbstract.harmonicEquivDeRham}
+\leanok\mathlibok
+\end{lemma}
+
+\paragraph*{What R5 means in this project after Round 12.}  The complete algebraic skeleton of R5 is now Mathlib-verified for any finite-dim graded inner-product complex with $d^{2}=0$:
+\begin{itemize}
+\item \emph{Hodge orthogonal decomposition} (Round 11): $V_{1}=\ker\Delta\oplus\mathrm{range}\,d_{0}\oplus\mathrm{range}\,d_{1}^{*}$ orthogonally.
+\item \emph{Harmonic = closed and co-closed} (hod.53): $\ker\Delta = \ker d_{1}\cap\ker d_{0}^{*}$.
+\item \emph{Harmonic kernel finite-dim} (immediate by finite-dim assumption).
+\item \emph{De Rham--harmonic isomorphism} (Round 12): $\ker\Delta\cong_{\R} H^{1}_{\mathrm{dR}}$.
+\end{itemize}
+
+\paragraph*{The genuinely irreducible gap (R5-sub-B).}  What has \emph{not} been dispatched is the reduction from the analytic Hodge theorem on a compact Kähler manifold to this finite-dim algebraic core.  Concretely, Mathlib v4.28.0 has no bundled type of smooth $k$-forms $\Omega^{k}(M)$ on a manifold (R9), no Sobolev spaces of forms on a manifold (R5-sub-B), and no Rellich--Kondrachov compact embedding for forms on a compact manifold (R5-sub-C).  Without these, one cannot prove that the actual $L^{2}\Omega^{k}(M)$ Laplacian has compact resolvent (and hence finite-dim kernel and closed range).  The algebraic core proven here \emph{requires} a finite-dim hypothesis; on the smooth space $\Omega^{k}(M)$ this hypothesis fails until elliptic regularity reduces the relevant subspace to a finite-dim quotient.  No shortcut is known: the spike-solution route (\code{compactSelfAdjoint} for compact symmetric operators) still requires this manifold-level Sobolev / Rellich infrastructure to apply to the actual Laplace--Beltrami operator.
+
+% --------------------------------------------------------------
 \subsubsection*{Round 3: refine hdf-r10 into Mathlib (5 more passes)}
 
 \begin{lemma}[Pass hdf.11: polygonal model gives explicit CW structure]

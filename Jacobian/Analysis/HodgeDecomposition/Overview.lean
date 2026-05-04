@@ -537,4 +537,37 @@ theorem hodge_decomposition_trivial :
         LinearMap.range (LinearMap.adjoint (0 : ℝ →ₗ[ℝ] ℝ))) :=
   (hodge_decomposition_real (0 : ℝ →ₗ[ℝ] ℝ) (0 : ℝ →ₗ[ℝ] ℝ) (by ext; simp)).1
 
+/-! ### The de Rham–harmonic isomorphism (real, finite-dim)
+
+The second half of R5: every closed form has a unique harmonic
+representative.  This is the linear isomorphism
+`ker Δ ≃ₗ[ℝ] (ker d₁ / range d₀)` proved in
+`AbstractHodgeComplex` for any finite-dim graded inner-product
+complex with `d² = 0`.
+-/
+
+/-- **R5 step E (real, finite-dim).**  Each de Rham cohomology class
+has a unique harmonic representative: the natural map
+`harmonic → H¹_dR := ker d₁ / range d₀` is a linear isomorphism. -/
+noncomputable def hodge_deRham_iso_real
+    (d₀ : V₀ →ₗ[ℝ] V₁) (d₁ : V₁ →ₗ[ℝ] V₂)
+    (h_d_sq : d₁ ∘ₗ d₀ = 0) :
+    LinearMap.ker (laplacian d₀ d₁) ≃ₗ[ℝ] deRhamH₁ d₀ d₁ h_d_sq :=
+  harmonicEquivDeRham d₀ d₁ h_d_sq
+
+/-- Injectivity of `harmonic → H¹_dR`: a harmonic exact form is zero. -/
+theorem hodge_harmonic_to_deRham_injective_real
+    (d₀ : V₀ →ₗ[ℝ] V₁) (d₁ : V₁ →ₗ[ℝ] V₂)
+    (h_d_sq : d₁ ∘ₗ d₀ = 0) :
+    Function.Injective (harmonicToDeRham d₀ d₁ h_d_sq) :=
+  harmonicToDeRham_injective d₀ d₁ h_d_sq
+
+/-- Surjectivity of `harmonic → H¹_dR`: every closed form has a
+harmonic representative. -/
+theorem hodge_harmonic_to_deRham_surjective_real
+    (d₀ : V₀ →ₗ[ℝ] V₁) (d₁ : V₁ →ₗ[ℝ] V₂)
+    (h_d_sq : d₁ ∘ₗ d₀ = 0) :
+    Function.Surjective (harmonicToDeRham d₀ d₁ h_d_sq) :=
+  harmonicToDeRham_surjective d₀ d₁ h_d_sq
+
 end JacobianChallenge.Analysis.HodgeDecomposition

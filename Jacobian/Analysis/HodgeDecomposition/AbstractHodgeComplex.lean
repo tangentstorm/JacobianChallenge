@@ -268,4 +268,200 @@ theorem hodge_decomposition_full :
   rw [← range_laplacian_eq d₀ d₁]
   exact hodge_decomposition_finite_dim d₀ d₁
 
+/-! ### De Rham cohomology and the harmonic isomorphism
+
+For a chain complex `V₀ →ᵈ V₁ →ᵈ V₂` with `d² = 0`, the (middle) de
+Rham cohomology is `H¹ := ker d₁ / range d₀`.  The harmonic-form
+representative theorem says every cohomology class has a unique
+harmonic representative — the projection
+`harmonic → ker d₁ → ker d₁ / range d₀` is a linear isomorphism.
+
+This is the second half of R5 (after the orthogonal decomposition).
+-/
+
+/-- Submodule version of `ker d₁` so we can quotient by `range d₀`. -/
+abbrev kerD₁ : Submodule ℝ V₁ := LinearMap.ker d₁
+
+/-- Submodule version of `range d₀` (which lies inside `ker d₁` when
+`d² = 0`). -/
+abbrev rangeD₀ : Submodule ℝ V₁ := LinearMap.range d₀
+
+include h_d_sq in
+/-- `range d₀ ⊆ ker d₁` from `d² = 0`. -/
+theorem range_d₀_le_ker_d₁ : rangeD₀ d₀ ≤ kerD₁ d₁ := by
+  rintro v ⟨a, rfl⟩
+  rw [LinearMap.mem_ker]
+  have := LinearMap.congr_fun h_d_sq a
+  simpa using this
+
+/-- The harmonic submodule is contained in `ker d₁` (every harmonic
+form is closed). -/
+theorem harmonic_le_ker_d₁ :
+    LinearMap.ker (laplacian d₀ d₁) ≤ kerD₁ d₁ := by
+  rw [ker_laplacian_eq d₀ d₁]
+  exact inf_le_right
+
+/-- Range of `d₀`, viewed as a submodule of `ker d₁` (using `d² = 0`). -/
+def rangeD₀_in_kerD₁ (h_d_sq : d₁ ∘ₗ d₀ = 0) : Submodule ℝ (kerD₁ d₁) :=
+  (rangeD₀ d₀).comap (kerD₁ d₁).subtype
+
+/-- The de Rham cohomology in the middle degree:
+`H¹ := ker d₁ / range d₀`. -/
+abbrev deRhamH₁ (h_d_sq : d₁ ∘ₗ d₀ = 0) : Type _ :=
+  (kerD₁ d₁) ⧸ rangeD₀_in_kerD₁ d₀ d₁ h_d_sq
+
+instance (h_d_sq : d₁ ∘ₗ d₀ = 0) : AddCommGroup (deRhamH₁ d₀ d₁ h_d_sq) :=
+  inferInstanceAs (AddCommGroup (_ ⧸ _))
+
+instance (h_d_sq : d₁ ∘ₗ d₀ = 0) : Module ℝ (deRhamH₁ d₀ d₁ h_d_sq) :=
+  inferInstanceAs (Module ℝ (_ ⧸ _))
+
+/-- The inclusion `harmonic → ker d₁`. -/
+noncomputable def harmonicToKerD₁ : LinearMap.ker (laplacian d₀ d₁) →ₗ[ℝ] kerD₁ d₁ :=
+  Submodule.inclusion (harmonic_le_ker_d₁ d₀ d₁)
+
+/-- The projection `ker d₁ → H¹_dR`. -/
+noncomputable def kerD₁ToDeRham (h_d_sq : d₁ ∘ₗ d₀ = 0) :
+    kerD₁ d₁ →ₗ[ℝ] deRhamH₁ d₀ d₁ h_d_sq :=
+  Submodule.mkQ _
+
+/-- The composite `harmonic → H¹_dR`. -/
+noncomputable def harmonicToDeRham (h_d_sq : d₁ ∘ₗ d₀ = 0) :
+    LinearMap.ker (laplacian d₀ d₁) →ₗ[ℝ] deRhamH₁ d₀ d₁ h_d_sq :=
+  (kerD₁ToDeRham d₀ d₁ h_d_sq).comp (harmonicToKerD₁ d₀ d₁)
+
+include h_d_sq in
+/-- **Injectivity of `harmonic → H¹_dR`.**  A harmonic form that is
+exact is zero.  Proof: if `h ∈ ker Δ` and `h = d₀ a`, then
+`⟨h, h⟩ = ⟨d₀ a, h⟩ = ⟨a, d₀.adjoint h⟩ = ⟨a, 0⟩ = 0` (using
+`d₀.adjoint h = 0` from harmonicity), so `h = 0`. -/
+theorem harmonicToDeRham_injective :
+    Function.Injective (harmonicToDeRham d₀ d₁ h_d_sq) := by
+  rw [injective_iff_map_eq_zero]
+  rintro ⟨h_val, hh⟩ hquot
+  -- hh : h_val ∈ ker Δ, hquot : harmonicToDeRham ⟨h_val, hh⟩ = 0.
+  -- Get the codifferential vanishing condition.
+  rw [ker_laplacian_eq] at hh
+  obtain ⟨h_codiff_zero, h_d_zero⟩ := Submodule.mem_inf.mp hh
+  rw [LinearMap.mem_ker] at h_codiff_zero
+  -- Unfold harmonicToDeRham and the quotient-zero condition.
+  unfold harmonicToDeRham kerD₁ToDeRham harmonicToKerD₁ at hquot
+  rw [LinearMap.comp_apply, Submodule.inclusion_apply, Submodule.mkQ_apply,
+      Submodule.Quotient.mk_eq_zero] at hquot
+  -- hquot : ⟨h_val, _⟩ ∈ rangeD₀_in_kerD₁ d₀ d₁ h_d_sq.
+  -- rangeD₀_in_kerD₁ = (range d₀).comap (kerD₁).subtype, so this is h_val ∈ range d₀.
+  have h_val_in_range : h_val ∈ LinearMap.range d₀ := hquot
+  obtain ⟨a, ha⟩ := h_val_in_range
+  -- ⟨h_val, h_val⟩ = ⟨d₀ a, h_val⟩ = ⟨a, d₀.adjoint h_val⟩ = 0.
+  have hnorm : ⟪h_val, h_val⟫_ℝ = 0 := by
+    nth_rewrite 1 [show h_val = d₀ a from ha.symm]
+    rw [← LinearMap.adjoint_inner_right d₀, h_codiff_zero, inner_zero_right]
+  have h_val_eq_zero : h_val = 0 := by
+    have hsq := real_inner_self_eq_norm_sq h_val
+    rw [hnorm] at hsq
+    have hnorm_eq : ‖h_val‖ ^ 2 = 0 := by linarith
+    have : ‖h_val‖ = 0 := by
+      have := pow_eq_zero_iff (n := 2) (by norm_num : (2 : ℕ) ≠ 0) |>.mp hnorm_eq
+      exact this
+    exact norm_eq_zero.mp this
+  apply Subtype.ext
+  exact h_val_eq_zero
+
+include h_d_sq in
+/-- **Surjectivity of `harmonic → H¹_dR`.**  Every closed form has a
+harmonic representative.  Proof: given `ω ∈ ker d₁`, decompose using
+the Hodge orthogonal decomposition `ω = h + d₀ a + d₁.adjoint b`.
+From `d₁ ω = 0` and `d₁ (d₀ a) = 0`, we get `d₁ (d₁.adjoint b) = 0`,
+so `⟨d₁.adjoint b, d₁.adjoint b⟩ = ⟨d₁ d₁.adjoint b, b⟩ = 0`, hence
+`d₁.adjoint b = 0`.  So `ω - h = d₀ a`, i.e.\ `[ω] = [h]` in `H¹_dR`. -/
+theorem harmonicToDeRham_surjective :
+    Function.Surjective (harmonicToDeRham d₀ d₁ h_d_sq) := by
+  intro x
+  -- x : (ker d₁) ⧸ rangeD₀_in_kerD₁
+  obtain ⟨ω_subtype, rfl⟩ := Submodule.Quotient.mk_surjective _ x
+  obtain ⟨ω, hω_closed⟩ := ω_subtype
+  -- Decompose ω using Hodge: ω = h + r, where h ∈ ker Δ, r ∈ range d₀ ⊔ range d₁.adjoint.
+  have hcompl : IsCompl (LinearMap.ker (laplacian d₀ d₁))
+      (LinearMap.range d₀ ⊔ LinearMap.range d₁.adjoint) :=
+    (hodge_decomposition_full d₀ d₁ h_d_sq).1
+  -- Use Submodule.exists_add_of_isCompl: ω = h + r with h ∈ ker Δ, r ∈ range d₀ ⊔ range δ₁.
+  obtain ⟨h, r, hh, hr, hsum⟩ : ∃ h r,
+      h ∈ LinearMap.ker (laplacian d₀ d₁) ∧
+      r ∈ LinearMap.range d₀ ⊔ LinearMap.range d₁.adjoint ∧
+      h + r = ω := by
+    have hcodisj : Codisjoint (LinearMap.ker (laplacian d₀ d₁))
+        (LinearMap.range d₀ ⊔ LinearMap.range d₁.adjoint) := hcompl.codisjoint
+    have hmem : ω ∈ (⊤ : Submodule ℝ V₁) := Submodule.mem_top
+    rw [← hcodisj.eq_top, Submodule.mem_sup] at hmem
+    obtain ⟨h, hh, r, hr, hsum⟩ := hmem
+    exact ⟨h, r, hh, hr, hsum⟩
+  -- Now: from d₁ ω = 0, deduce d₁ r = 0.  Since r ∈ range d₀ ⊔ range δ₁,
+  -- r = d₀ a + d₁.adjoint b.  d₁ (d₀ a) = 0 from h_d_sq, so d₁ (d₁.adjoint b) = 0.
+  -- Then ⟨d₁ (d₁.adjoint b), b⟩ = ⟨d₁.adjoint b, d₁.adjoint b⟩ = 0, so d₁.adjoint b = 0.
+  -- Hence r = d₀ a ∈ range d₀.
+  have hh_closed : d₁ h = 0 := by
+    have := harmonic_le_ker_d₁ d₀ d₁ hh
+    rw [LinearMap.mem_ker] at this
+    exact this
+  have hr_closed : d₁ r = 0 := by
+    have : d₁ (h + r) = 0 := by rw [hsum]; exact hω_closed
+    rw [map_add] at this
+    rw [hh_closed, zero_add] at this
+    exact this
+  -- Decompose r = d₀ a + d₁.adjoint b.
+  rw [Submodule.mem_sup] at hr
+  obtain ⟨da, ⟨a, rfl⟩, db, ⟨b, rfl⟩, rfl⟩ := hr
+  -- d₁ (d₀ a) = 0 from h_d_sq.
+  have h_d₀a_closed : d₁ (d₀ a) = 0 := by
+    have := LinearMap.congr_fun h_d_sq a
+    simpa using this
+  -- So d₁ (d₁.adjoint b) = 0.
+  have h_dadj_b : d₁ (d₁.adjoint b) = 0 := by
+    have hsum' : d₁ (d₀ a) + d₁ (d₁.adjoint b) = 0 := by
+      rw [← map_add]; exact hr_closed
+    rw [h_d₀a_closed, zero_add] at hsum'
+    exact hsum'
+  -- Then ⟨d₁ (d₁.adjoint b), b⟩ = 0 = ⟨d₁.adjoint b, d₁.adjoint b⟩ = ‖d₁.adjoint b‖².
+  have h_dadj_b_zero : d₁.adjoint b = 0 := by
+    have hinner : ⟪d₁ (d₁.adjoint b), b⟫_ℝ = 0 := by rw [h_dadj_b]; exact inner_zero_left _
+    rw [← LinearMap.adjoint_inner_right d₁ (d₁.adjoint b) b] at hinner
+    have hsq := real_inner_self_eq_norm_sq (d₁.adjoint b)
+    rw [hinner] at hsq
+    have hnorm_eq : ‖d₁.adjoint b‖ ^ 2 = 0 := by linarith
+    have : ‖d₁.adjoint b‖ = 0 := by
+      have := pow_eq_zero_iff (n := 2) (by norm_num : (2 : ℕ) ≠ 0) |>.mp hnorm_eq
+      exact this
+    exact norm_eq_zero.mp this
+  -- So r = d₀ a + 0 = d₀ a, i.e. r ∈ range d₀.
+  refine ⟨⟨h, hh⟩, ?_⟩
+  -- Goal: harmonicToDeRham _ ⟨h, hh⟩ = quotient class of ⟨ω, hω_closed⟩.
+  -- After unfolding, this becomes: mkQ ⟨h, _⟩ = mkQ ⟨ω, hω_closed⟩ in (kerD₁) ⧸ (rangeD₀_in_kerD₁).
+  -- Equivalent to: ⟨h, _⟩ - ⟨ω, _⟩ ∈ rangeD₀_in_kerD₁,
+  -- i.e.\ (h - ω) ∈ range d₀ on the underlying V₁.
+  -- We have ω = h + d₀ a + 0 (after h_dadj_b_zero), so h - ω = -d₀ a = d₀ (-a) ∈ range d₀.
+  have hω_eq : ω = h + d₀ a := by
+    have : h + (d₀ a + d₁.adjoint b) = ω := hsum
+    rw [h_dadj_b_zero, add_zero] at this
+    exact this.symm
+  have h_sub : (h : V₁) - ω = d₀ (-a) := by
+    rw [hω_eq, map_neg]; abel
+  unfold harmonicToDeRham kerD₁ToDeRham harmonicToKerD₁
+  rw [LinearMap.comp_apply, Submodule.inclusion_apply, Submodule.mkQ_apply,
+      Submodule.Quotient.eq]
+  -- Goal: ⟨h, _⟩ - ⟨ω, hω_closed⟩ ∈ rangeD₀_in_kerD₁ d₀ d₁ h_d_sq.
+  -- Unpacks to (h - ω) ∈ range d₀ on the underlying V₁.
+  show (h : V₁) - ω ∈ LinearMap.range d₀
+  rw [h_sub]
+  exact ⟨-a, rfl⟩
+
+include h_d_sq in
+/-- **De Rham–harmonic isomorphism (real, finite-dim).**
+The map `harmonic → H¹_dR` is a linear isomorphism: each cohomology
+class has a unique harmonic representative. -/
+noncomputable def harmonicEquivDeRham :
+    LinearMap.ker (laplacian d₀ d₁) ≃ₗ[ℝ] deRhamH₁ d₀ d₁ h_d_sq :=
+  LinearEquiv.ofBijective (harmonicToDeRham d₀ d₁ h_d_sq)
+    ⟨harmonicToDeRham_injective d₀ d₁ h_d_sq,
+     harmonicToDeRham_surjective d₀ d₁ h_d_sq⟩
+
 end JacobianChallenge.HodgeAbstract
