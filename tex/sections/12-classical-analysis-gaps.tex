@@ -1,0 +1,1068 @@
+\section{Classical Analysis Gaps: Full Scope}
+\label{sec:classical-analysis-gaps}
+
+\begin{layman}
+The blueprint dependency graph for this project carries eight nodes
+that show up with a red border: Radó's triangulation theorem, Tietze
+normal form, the polygonal model, the de Rham theorem, Hodge
+decomposition, the Hodge / de Rham rank computation, the Dolbeault
+isomorphism, and Serre duality on a Riemann surface. Each one is a
+\emph{major} classical-analysis result — none of them are a one-week
+formalization, and Mathlib v4.28.0 contains none of them. This
+chapter exists to make the full scope of those eight gaps visible: a
+classical-mathematics walk-through, a Lean realisation plan, a
+plain-English description, and an explicit list of sub-gaps that each
+one in turn surfaces. The chapter is a roadmap, not a catalogue of
+proofs. Every theorem in it is currently \emph{not ready}, and every
+sub-leaf below the headline is a placeholder pinned to a Lean
+declaration in \code{Jacobian/Analysis/} so that future workers
+have a stable name to claim.
+\end{layman}
+
+The eight major analysis gaps in the Jacobian-challenge dep graph are
+listed below.  Each gets its own subsection; each subsection contains
+(i)~the headline classical statement, (ii)~a classical-proof outline,
+(iii)~a Lean-formalization plan with the named sub-leaves, and
+(iv)~a plain-English description for a non-specialist reader.  An
+independent Lean build target lives at
+\code{Jacobian/Analysis/<Node>/Overview.lean} for each node; sub-leaves
+are pinned there as \code{theorem ... : True := trivial} placeholders
+so the dependency graph has resolvable Lean targets even before any
+substantive proof exists.
+
+\begin{center}
+\begin{tabular}{lll}
+\textbf{Code} & \textbf{Headline} & \textbf{Build target} \\\hline
+R1 & Radó's triangulation & \code{Jacobian.Analysis.Rado} \\
+R2 & Tietze normal form & \code{Jacobian.Analysis.Tietze} \\
+R3 & Polygonal-model theorem & \code{Jacobian.Analysis.PolygonalModel} \\
+R4 & De Rham theorem & \code{Jacobian.Analysis.DeRham} \\
+R5 & Hodge decomposition (Kähler) & \code{Jacobian.Analysis.HodgeDecomposition} \\
+R6 & Hodge / de Rham rank & \code{Jacobian.Analysis.HodgeDeRham} \\
+R7 & Dolbeault isomorphism & \code{Jacobian.Analysis.Dolbeault} \\
+R8 & Serre duality on a Riemann surface & \code{Jacobian.Analysis.SerreDuality} \\
+\end{tabular}
+\end{center}
+
+\bigskip
+
+%======================================================================
+\subsection{R1 — Radó's triangulation theorem}
+\label{subsec:gap-R1-rado}
+
+The headline (Theorem~\ref{input:rado-triangulation}) says: every
+compact connected oriented topological 2-manifold admits a finite
+triangulation.  This is the entry-point result of the entire
+polygonal-model chain — without it, ``cut along a spanning tree to lay
+the surface flat'' has no input.  Radó proved this in 1925; Doyle and
+Moran (1968) gave the cleanest modern proof, simplified further by
+Thomassen (1992).
+
+\subsubsection*{Classical proof}
+
+The proof has four phases:
+
+\begin{enumerate}
+\item \emph{Finite chart cover.}  By compactness, finitely many disk
+  charts cover \(M\); each chart's image in \(\R^2\) contains an open
+  Euclidean disk.
+\item \emph{PL approximation.}  This is the dimension-2-specific
+  step.  Any homeomorphism between open subsets of \(\R^2\) is
+  uniformly approximable by a piecewise-linear (PL) homeomorphism
+  (Doyle--Moran).  PL approximation can be carried out
+  \emph{compatibly} across the finite atlas: at the cost of shrinking
+  the atlas slightly, we get a cocycle of PL transition maps.  This
+  is the step that fails in dimensions \(\geq 5\): in those
+  dimensions, smoothable manifolds need not be triangulable
+  (Kirby--Siebenmann).
+\item \emph{Simplicial-complex assembly.}  Triangulate each PL chart
+  by a fine simplicial subdivision of the disk image; take a common
+  refinement across each overlap so adjacent triangulations agree
+  edge-for-edge.  The result is a finite abstract simplicial
+  complex.
+\item \emph{Manifold link verification + homeomorphism.}  Verify the
+  combinatorial 2-manifold conditions (every edge in exactly two
+  triangles; every vertex link is a combinatorial circle).  The
+  chart-by-chart maps glue into a continuous bijection from \(M\) to
+  the geometric realisation; compact source + Hausdorff target +
+  continuous bijection gives a homeomorphism.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Decomposed into 13 sub-leaves under
+\code{Jacobian.Analysis.Rado.Overview}, organized in four phases
+matching the classical proof.
+
+\begin{itemize}
+\item \emph{Phase 1 (already discharged).}
+  \code{rado_finite_disk_atlas} (R1.1.1) is the only sub-leaf with a
+  full Lean realisation: \code{compact_2manifold_has_finite_disk_atlas}
+  in \code{StageA/RadoTheorem.lean}, sorry-free, ${\sim}40$ LOC using
+  \code{IsCompact.elim_finite_subcover}.
+\item \emph{Phase 2 (PL approximation).}  Sub-leaves R1.2.1--R1.2.4.
+  Mathlib has no PL infrastructure; the entire phase needs to be
+  built from scratch.  Estimated 600--900 LOC.
+\item \emph{Phase 3 (simplicial-complex assembly).}  Sub-leaves
+  R1.3.1--R1.3.4.  Depends on Phase 2.  Estimated 500--800 LOC plus
+  the \code{IsCombinatorial2Manifold} predicate (R1-sub-C below).
+\item \emph{Phase 4 (realisation homeomorphism).}  Sub-leaves
+  R1.4.1--R1.4.3.  Phase 4's last step (R1.4.3) reduces to Mathlib's
+  \code{Continuous.homeoOfEquivCompactToT2}; the rest is project-side
+  glue.  Estimated 300--400 LOC.
+\end{itemize}
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R1-sub-A} (abstract simplicial complexes + geometric
+  realisation): Mathlib has \code{SimplicialComplex} over a real
+  vector space but \emph{not} the abstract combinatorial form with
+  realisation as a topological quotient.  Sketch in
+  \code{Jacobian/StageA/SimplicialComplex.lean}.  Estimated
+  ~400 LOC.
+\item \textbf{R1-sub-B} (Schoenflies-type theorem in dim 2 for PL
+  approximation): a discrete topological theorem; classical and
+  bounded, but Mathlib has nothing.  Estimated ~250 LOC.
+\item \textbf{R1-sub-C} (\code{IsCombinatorial2Manifold} predicate):
+  every edge in exactly two triangles, every vertex link a
+  combinatorial circle.  Definition only ~30 LOC, but proving an
+  example complex satisfies it requires assembled Phase~3.
+\end{itemize}
+
+\begin{theorem}[Gap R1: Radó's triangulation theorem (independent placeholder)]
+\label{gap:R1-overview}
+\uses{input:rado-triangulation}
+The Lean target \code{Jacobian.Analysis.Rado.rado_overview} stubs
+the headline; its sub-leaves R1.1.1--R1.4.3 are tracked in
+\code{Jacobian.Analysis.Rado.Overview} and the bottom-up sketch
+under \code{Jacobian/StageA/RadoTheorem.lean}.
+\lean{JacobianChallenge.Analysis.Rado.rado_overview}
+\notready
+\end{theorem}
+
+\begin{layman}
+Radó's theorem says every compact two-dimensional surface — Riemann
+surface or otherwise — can be cut into a finite collection of
+triangles glued along their edges, in a way that respects the
+topology exactly.  For a sphere, four triangles suffice; for a torus,
+two; for higher genus, more, but always finitely many.  The classical
+proof is a four-phase ballet: cover the surface with a finite atlas
+of disks, smooth out the chart overlaps until they're piecewise
+linear, fit the PL pieces together into a finite simplicial complex,
+and verify the result really is a 2-manifold.  The \emph{piecewise
+linear approximation} step is the secret ingredient, and it works
+only in dimension \(\leq 3\).  In dimensions \(\geq 5\), there exist
+manifolds with no triangulation at all (Kirby--Siebenmann's
+counterexamples).  We're lucky that Riemann surfaces are
+two-dimensional.
+
+In Lean, the only piece of Radó that's currently sorry-free is the
+finite chart cover (Phase~1), which is a one-line application of
+compactness.  The other twelve sub-leaves are placeholders, and PL
+approximation in particular is the largest item — Mathlib has no PL
+infrastructure at all.  A full Lean proof of Radó alone is
+estimated at 1500--2000 LOC, plus the abstract-simplicial-complex
+package (R1-sub-A) of another ~400 LOC.
+\end{layman}
+
+%======================================================================
+\subsection{R2 — Tietze normal form for orientable surface words}
+\label{subsec:gap-R2-tietze}
+
+The headline (Theorem~\ref{input:tietze-normal-form}) says: every edge
+word arising from a polygonal presentation of a compact connected
+orientable 2-manifold of genus \(g\) is Tietze-equivalent to the
+standard relator
+\[
+  a_1\,b_1\,a_1^{-1}\,b_1^{-1}\,\cdots\,a_g\,b_g\,a_g^{-1}\,b_g^{-1}.
+\]
+This is the combinatorial heart of the topological-classification
+theorem (Brahana 1921, Seifert--Threlfall 1934, often attributed in
+modern textbooks to Massey).
+
+\subsubsection*{Classical proof}
+
+Reduction proceeds by induction on the length of the edge word:
+
+\begin{enumerate}
+\item \emph{Cyclic reduction.}  Use repeated inverse-pair cancellation
+  to remove every \(\ell\,\ell^{-1}\) adjacency, including across the
+  word's cyclic seam.  The result is a \emph{cyclically reduced}
+  word.
+\item \emph{Orientability constraint.}  In an orientable surface
+  word, every generator letter appears exactly twice, once with each
+  sign (so we never see \(a a\) or \(a^{-1} a^{-1}\) blocks).
+\item \emph{Brahana handle creation.}  Find any pair
+  \((\ell, \ell^{-1})\) and the pair \((m, m^{-1})\) interleaved
+  with it.  By a sequence of cyclic rotations and
+  letter-substitutions, ``slide'' the four letters together into a
+  handle block \(\ell\,m\,\ell^{-1}\,m^{-1}\).
+\item \emph{Strip and recurse.}  Once one handle block is at the
+  start of the word, strip it off; the remainder is a shorter
+  orientable cyclically reduced word, on which the induction
+  hypothesis applies.  Concatenating the stripped handle gives the
+  standard form.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Decomposed into 11 sub-leaves under
+\code{Jacobian.Analysis.Tietze.Overview}, organized in four phases:
+
+\begin{itemize}
+\item \emph{Phase 1 (cyclic reduction).}  Sub-leaves R2.1.1--R2.1.2.
+  Pure list-combinatorial; ~150 LOC of routine \code{List} work
+  building on Mathlib's \code{List.IsRotated}.
+\item \emph{Phase 2 (handle separation).}  Sub-leaves R2.2.1--R2.2.3.
+  The Brahana handle-creation trick (R2.2.3) is the single deepest
+  combinatorial step.  ~250 LOC.
+\item \emph{Phase 3 (orientability flag preservation).}  Sub-leaves
+  R2.3.1--R2.3.2.  Bookkeeping; ~100 LOC.
+\item \emph{Phase 4 (induction on length).}  Sub-leaves
+  R2.4.1--R2.4.3.  Standard structural induction; ~150 LOC.
+\end{itemize}
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R2-sub-A} (free-group surface presentation API on a
+  finite alphabet).  Mathlib has \code{FreeGroup} but not the
+  surface-presentation infrastructure; ~200 LOC.
+\item \textbf{R2-sub-B} (cyclic-word equivalence on \code{List}).
+  Mathlib has \code{List.IsRotated}; the cyclic-cancellation closure
+  needs another ~80 LOC.
+\item \textbf{R2-sub-C} (Brahana--Seifert--Threlfall handle-creation
+  lemma, R2.2.3).  Pure combinatorics on \code{List Letter}; ~150
+  LOC, but tricky.
+\end{itemize}
+
+\begin{theorem}[Gap R2: Tietze normal form (independent placeholder)]
+\label{gap:R2-overview}
+\uses{input:tietze-normal-form}
+The Lean target \code{Jacobian.Analysis.Tietze.tietze_overview}
+stubs the headline; its sub-leaves R2.1.1--R2.4.3 are tracked in
+\code{Jacobian.Analysis.Tietze.Overview} alongside the bottom-up
+sketch in \code{Jacobian/StageA/EdgeWordTietze.lean}.
+\lean{JacobianChallenge.Analysis.Tietze.tietze_overview}
+\notready
+\end{theorem}
+
+\begin{layman}
+Pretend you've cut a doughnut surface open along loops and laid it
+flat as a polygon.  Walking around the polygon's boundary, you see
+each loop twice — once forward, once backward — so the boundary
+traces out a sequence of letters like \(a b a^{-1} b^{-1}\).  Tietze
+normal form says: regardless of which loops you happened to cut
+along, the boundary word always simplifies, by a finite sequence of
+``trivial'' moves, to the canonical pattern
+\(a_1 b_1 a_1^{-1} b_1^{-1} \cdots a_g b_g a_g^{-1} b_g^{-1}\).  The
+trivial moves are: cancel \(\ell \ell^{-1}\) (cutting along a loop
+and immediately gluing it back is a no-op), and permute complete
+handle blocks (relabeling which loop is first doesn't change the
+surface).
+
+The proof is an induction-on-length: cancel until cyclically reduced,
+use orientability to ensure every letter appears with both signs,
+slide one handle block to the front by the Brahana trick, strip it
+off, recurse.  The Lean version mirrors this exactly, with the
+deepest single move being the Brahana trick (R2.2.3).  Mathlib
+has no group-presentation surface infrastructure, so all 11 sub-leaves
+are currently placeholders; total estimated ~650 LOC for the
+combinatorial side, plus ~280 LOC of supporting infrastructure
+(R2-sub-A and R2-sub-B).
+\end{layman}
+
+%======================================================================
+\subsection{R3 — The polygonal-model theorem}
+\label{subsec:gap-R3-polygonal-model}
+
+The headline (Theorem~\ref{thm:polygonal-model}) says: a compact
+connected oriented Riemann surface of analytic genus \(g\) is
+homeomorphic to the standard fundamental \(4g\)-gon.  This is the
+\emph{assembly} gap: it consumes R1 (Radó) and R2 (Tietze) and outputs
+the homeomorphism every period-lattice argument downstream relies on.
+This is also the most-developed of the topology gaps; the project
+already has substantial scaffolding under \code{Jacobian/Periods/}
+and \code{Jacobian/StageA/}.
+
+\subsubsection*{Classical proof}
+
+\begin{enumerate}
+\item \emph{Forget complex structure.}  A complex 1-manifold is
+  automatically a smooth real 2-manifold, hence a topological
+  2-manifold (already discharged sorry-free in Lean).
+\item \emph{Apply Radó (R1).}  Get a finite triangulation of \(X\).
+\item \emph{Cut along a spanning tree.}  Pick any spanning tree of
+  the triangulation's 1-skeleton.  Cutting all non-tree edges
+  produces a topological disk whose boundary is a closed walk of
+  length \(2 \cdot (\text{number of non-tree edges})\) — and since
+  the tree has \(V - 1\) edges out of \(V + F\) total, the
+  Euler-formula constraint \(V - E + F = 2 - 2g\) makes the
+  boundary walk's length exactly \(4g\).
+\item \emph{Read off the edge word.}  Each non-tree edge produces
+  two boundary appearances (one each side); orient by walking
+  direction to get a four-letter alphabet \(a_i, b_i, a_i^{-1},
+  b_i^{-1}\).  The boundary word is an arbitrary cyclically reduced
+  word of length \(4g\) on this alphabet.
+\item \emph{Apply Tietze (R2).}  Reduce the boundary word to the
+  standard relator.
+\item \emph{Lift Tietze moves to homeomorphisms.}  Each Tietze
+  move (cancel an inverse pair; permute handle blocks) corresponds
+  to a homeomorphism of polygons by cut-and-paste.  Compose all the
+  moves to get a homeomorphism between the original cut-open polygon
+  and the standard polygon.
+\item \emph{Descend to the surface.}  Both polygons quotient to
+  topologically the same surface (same gluing pattern post-Tietze);
+  the homeomorphism descends to \(X \cong \mathrm{Polygon4g}(g)\).
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Decomposed into 13 sub-leaves under
+\code{Jacobian.Analysis.PolygonalModel.Overview}, plus 3 Stage-B
+sub-leaves for the \(g_{\mathrm{an}} = g_{\mathrm{top}}\) bridge:
+
+\begin{itemize}
+\item \emph{Phase 1 (real-2-manifold structure).}  R3.1.1 is
+  discharged sorry-free in
+  \code{Jacobian/Periods/ComplexChartedSpaceReal2.lean}.  R3.1.2 is
+  a pure invocation of R1.
+\item \emph{Phase 2 (cut along spanning tree).}  R3.2.1 needs the
+  spanning-tree existence theorem (Mathlib has
+  \code{SimpleGraph.IsTree}; existence missing).  R3.2.2 and R3.2.3
+  are routine combinatorics on the dual graph; project-side at
+  \code{Jacobian/Periods/DualGraphCut.lean}.
+\item \emph{Phase 3 (reduce the edge word).}  R3.3.1 invokes R2.
+  R3.3.2 is the substantive geometric step: lifting Tietze moves to
+  cut-and-paste homeomorphisms.  Estimated ~400 LOC.
+\item \emph{Phase 4 (descend to surface).}  R3.4.1, R3.4.2: routine
+  quotient-topology bookkeeping; ~150 LOC.
+\item \emph{Stage-B bridge.}  R3.5.1 (smooth real 2-structure) is
+  already done.  R3.5.2 (\(H_1\) of the polygon by cellular
+  homology) and R3.5.3 (\(H_1\)-invariance under R3) are tracked at
+  \code{Jacobian/Periods/H1EvenBasisViaSurfaceClassification.lean}
+  and require \code{CellularHomologyRS} which is currently sorry.
+\end{itemize}
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R3-sub-A} (spanning-tree existence on a finite
+  connected simple graph, R3.2.1).  ~80 LOC; sketched at
+  \code{Jacobian/StageA/SpanningTree.lean}.
+\item \textbf{R3-sub-B} (dual-graph + cut-along-tree combinatorics,
+  R3.2.2 / R3.2.3).  ~250 LOC; tracked at
+  \code{Jacobian/Periods/DualGraphCut.lean}.
+\item \textbf{R3-sub-C} (Tietze-move-by-cut-and-paste correspondence,
+  R3.3.2).  No Mathlib analogue; ~400 LOC of routine geometry but
+  needs careful chart-management.
+\end{itemize}
+
+\begin{theorem}[Gap R3: Polygonal-model theorem (independent placeholder)]
+\label{gap:R3-overview}
+\uses{thm:polygonal-model,gap:R1-overview,gap:R2-overview}
+The Lean target
+\code{Jacobian.Analysis.PolygonalModel.polygonal_model_overview}
+stubs the headline; sub-leaves R3.1.1--R3.5.3 are tracked in
+\code{Jacobian.Analysis.PolygonalModel.Overview}.
+\lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_overview}
+\notready
+\end{theorem}
+
+\begin{layman}
+The polygonal model is the bridge between two pictures of a Riemann
+surface.  Picture one: the curved surface in space, hard to
+integrate over because it has holes around which Stokes' theorem
+cannot apply.  Picture two: a flat polygon (a square for a torus, an
+octagon for a genus-2 surface, a \(4g\)-gon for genus \(g\)), with
+its boundary edges glued back together in the canonical pattern.
+The polygon's interior is flat, simply connected, has no loops at
+all — pedestrian for any classical-analysis argument.  All the
+topological complexity has migrated to the boundary, where the
+gluing pattern lives.
+
+The proof is a geometric assembly: triangulate the surface (R1), cut
+along a spanning tree to lay it flat as a polygon, read off the
+boundary word, reduce that word to canonical form (R2).  Each step
+in the reduction corresponds to a cut-and-paste homeomorphism of the
+polygon, so the moves accumulate into a single homeomorphism between
+the original cut-open polygon and the canonical \(4g\)-gon.  Descend
+through the gluing quotient and you've identified the surface with
+the canonical polygon.
+
+In Lean, the polygon side of this story is already extensively
+formalized — the standard \(4g\)-gon, edge words, cyclic reduction,
+and the Tietze equivalence relation are all sorry-free.  What
+remains sorry is the \emph{assembly}: getting the homeomorphism out
+of R1 + R2 (especially R3.3.2, lifting Tietze moves to cut-and-paste
+homeomorphisms).  Once R3 lands, the rest of the period-lattice
+chain (Stokes on the polygon, Riemann bilinear, period-lattice
+fullness) becomes accessible.
+\end{layman}
+
+%======================================================================
+\subsection{R4 — The de Rham theorem}
+\label{subsec:gap-R4-de-rham}
+
+The headline (Theorem~\ref{input:de-rham-theorem}) says: for a smooth
+manifold \(M\), integration of forms over chains gives an isomorphism
+\(H^k_{\mathrm{dR}}(M, \C) \cong H^k_{\mathrm{sing}}(M, \C)\).  This is
+de Rham's 1931 thesis result; the cleanest modern proofs go through
+good covers (Bott--Tu) or sheaf cohomology.
+
+\subsubsection*{Classical proof}
+
+The Bott--Tu route runs as follows:
+
+\begin{enumerate}
+\item \emph{Differential-form package.}  Define \(\Omega^k(M)\) as
+  smooth sections of \(\Lambda^k T^*M\), with exterior derivative
+  \(d\), wedge \(\wedge\), and pullback \(f^*\).  Verify
+  \(d^2 = 0\), Leibniz, and naturality.
+\item \emph{Integration of forms.}  Define a smooth singular
+  \(k\)-simplex \(\sigma : \Delta^k \to M\) (continuous, smooth in
+  every chart).  Integration \(\int_\sigma \omega\) is well-defined
+  on smooth simplices.  Stokes:
+  \(\int_\sigma d\omega = \int_{\partial \sigma} \omega\).  The
+  smooth-singular subcomplex of the singular chain complex is a
+  quasi-isomorphism (smooth approximation of continuous chains).
+\item \emph{Comparison map.}  Integration descends to
+  \(H^k_{\mathrm{dR}} \to H^k_{\mathrm{sing}}\) by Stokes, and is
+  natural and compatible with cup products.
+\item \emph{Isomorphism via good covers.}  A \emph{good cover} is
+  one where every finite intersection is contractible.  Both
+  \(H^*_{\mathrm{dR}}\) and \(H^*_{\mathrm{sing}}\) restrict
+  trivially to contractible opens, and both satisfy
+  Mayer--Vietoris.  Induct on the size of a finite good cover
+  using the five lemma; for general manifolds, take a colimit
+  over all finite good subcovers.  Existence of good covers comes
+  from a Riemannian metric and convex normal-coordinate balls.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Decomposed into 15 sub-leaves under
+\code{Jacobian.Analysis.DeRham.Overview}, in four phases:
+
+\begin{itemize}
+\item \emph{Phase 1 (differential-form package).}  R4.1.1--R4.1.4.
+  The largest single sub-gap; bundled \(\Omega^k\) needs to be built
+  from Mathlib's \code{MFDeriv} primitives.  Estimated 800--1200
+  LOC for a complete API.
+\item \emph{Phase 2 (integration of forms).}  R4.2.1--R4.2.4.
+  Smooth singular simplex (~50 LOC) + integration via measure on
+  \(\Delta^k\) (~150 LOC) + Stokes for one simplex (~250 LOC) +
+  smooth approximation (~200 LOC).
+\item \emph{Phase 3 (cohomology comparison map).}  R4.3.1--R4.3.3.
+  Routine assembly once Phases 1+2 are in hand; ~250 LOC.
+\item \emph{Phase 4 (good-cover argument).}  R4.4.1--R4.4.4.
+  Mayer--Vietoris is doable; the existence of good covers (R4.4.3)
+  needs Riemannian-manifold infrastructure not in Mathlib.  ~600 LOC.
+\end{itemize}
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R4-sub-A} (bundled \(\Omega^k(M)\) as a
+  \(C^\infty(M)\)-module, R4.1).  ~400 LOC; foundational for
+  R5/R6/R7 also.
+\item \textbf{R4-sub-B} (smooth singular chains and Stokes on a
+  smooth \(k\)-simplex, R4.2.3).  ~300 LOC building on Mathlib's
+  measure-theoretic Stokes for boxes.
+\item \textbf{R4-sub-C} (good-cover existence on a smooth manifold,
+  R4.4.3).  ~250 LOC plus prerequisite Riemannian-metric package
+  (~500 LOC of foundational work — see R5).
+\end{itemize}
+
+\begin{theorem}[Gap R4: De Rham theorem (independent placeholder)]
+\label{gap:R4-overview}
+\uses{input:de-rham-theorem}
+The Lean target \code{Jacobian.Analysis.DeRham.deRham_overview}
+stubs the headline; sub-leaves R4.1.1--R4.4.4 are tracked in
+\code{Jacobian.Analysis.DeRham.Overview} and the bottom-up sketch
+in \code{Jacobian/StageB/DeRhamComparison.lean}.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_overview}
+\notready
+\end{theorem}
+
+\begin{layman}
+There are two ways to count holes in a smooth manifold.  The
+\emph{differential-forms} way: a closed form is one with
+\(d\omega = 0\); an exact form is one of the shape \(\omega = d\alpha\);
+the quotient (closed mod exact) is the de Rham cohomology.  The
+\emph{singular-chains} way: a cycle is a formal combination of
+simplices with \(\partial = 0\); a boundary is one of the shape
+\(\partial \beta\); the dual quotient is the singular cohomology.
+De Rham's theorem says these two pictures agree, and the
+isomorphism is integration: pair a closed form against a cycle and
+read off a number.
+
+Why bother?  The de Rham side is the natural language of analysis on
+manifolds (everything is a form, integration is automatic).  The
+singular side is the natural language of topology (cycles are loops,
+boundaries are filled-in regions).  De Rham unites them.  Without
+de Rham, there's no way to compare the analytic genus
+(``how many holomorphic 1-forms?'') with the topological genus
+(``how many independent loops?'').
+
+The Lean version of this proof is large, partly because Mathlib has
+no bundled differential-form package at all — the
+\(\Omega^k\)-module of smooth \(k\)-forms with \(d\), \(\wedge\),
+pullback all simultaneously linear and natural, has to be built from
+scratch (R4-sub-A).  The good-cover argument also pulls in
+Riemannian-metric infrastructure (R4-sub-C, ~500 LOC of
+prerequisite).  Total estimated for R4 + supporting sub-gaps:
+2500--3500 LOC.
+\end{layman}
+
+%======================================================================
+\subsection{R5 — Hodge decomposition on a compact Kähler manifold}
+\label{subsec:gap-R5-hodge}
+
+The headline (Theorem~\ref{input:hodge-decomposition}) says: on a
+compact Kähler manifold (in particular every compact Riemann surface
+with any Hermitian metric), the Laplace--Beltrami operator
+\(\Delta = d\delta + \delta d\) has finite-dimensional kernel, every
+de Rham cohomology class has a unique harmonic representative, and on
+a Kähler manifold harmonic forms split by \((p,q)\)-bidegree.
+
+\subsubsection*{Classical proof}
+
+This is the deepest of the eight gaps and the proof has the most
+moving pieces:
+
+\begin{enumerate}
+\item \emph{Riemannian metric and Hodge \(*\).}  Pick a
+  Riemannian metric \(g\); it induces a metric on cotangent space and
+  hence on \(\Lambda^k T^* M\), plus a volume form.  The Hodge star
+  \(* : \Omega^k \to \Omega^{n-k}\) is the fibrewise duality.
+\item \emph{Codifferential and Laplacian.}  Define \(\delta = (-1)^* * d *\)
+  (formal \(L^2\)-adjoint of \(d\)) and \(\Delta = d\delta + \delta d\).
+  \(\Delta\) is symmetric, non-negative, commutes with \(d\),
+  \(\delta\), \(*\).
+\item \emph{Ellipticity + elliptic regularity.}  \(\Delta\) is an
+  elliptic second-order differential operator.  Its principal
+  symbol is \(|\xi|^2 \cdot \mathrm{id}\), invertible for
+  \(\xi \neq 0\).  Elliptic regularity: every distributional
+  solution of \(\Delta \omega = f\) with smooth \(f\) is itself
+  smooth.  Combined with Rellich--Kondrachov compactness on a
+  compact manifold, this makes \(\Delta : H^s_{k+2} \to H^s_k\) (in
+  Sobolev norms on forms) Fredholm.
+\item \emph{Harmonic decomposition.}  The Fredholm property gives
+  \(\Omega^k(M) = \mathcal{H}^k(M) \oplus d(\Omega^{k-1}) \oplus \delta(\Omega^{k+1})\),
+  an \(L^2\)-orthogonal decomposition, with
+  \(\mathcal{H}^k = \ker \Delta\) the (finite-dimensional) harmonic
+  forms.  Every de Rham class has a unique harmonic representative.
+\item \emph{Kähler bigrading.}  On a Kähler manifold, the metric,
+  complex structure, and Kähler form are mutually compatible.  The
+  Kähler identities \([\Lambda, \partial] = i\bar\partial^*\) (and
+  cousins) imply \(\Delta_d = 2\Delta_{\bar\partial} = 2\Delta_\partial\).
+  Hence \(\Delta\) preserves \((p,q)\)-bidegree, the harmonic
+  decomposition splits as
+  \(\mathcal{H}^k = \bigoplus_{p+q=k} \mathcal{H}^{p,q}\), and Hodge
+  symmetry \(\mathcal{H}^{p,q} = \overline{\mathcal{H}^{q,p}}\)
+  follows from complex conjugation.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Decomposed into 19 sub-leaves under
+\code{Jacobian.Analysis.HodgeDecomposition.Overview}, in six phases.
+The largest single piece is the Sobolev-elliptic-regularity package
+(R5-sub-B); without that, the entire decomposition argument has no
+foundation.
+
+\begin{itemize}
+\item \emph{Phase 1 (Riemannian + Hodge \(*\)).}  R5.1.1--R5.1.4.
+  Needs Riemannian-metric infrastructure (R5-sub-A).  ~400 LOC.
+\item \emph{Phase 2 (codifferential + Laplacian).}  R5.2.1--R5.2.3.
+  ~200 LOC once Phase 1 lands.
+\item \emph{Phase 3 (ellipticity + regularity).}  R5.3.1--R5.3.4.
+  Mathlib has neither distributional Sobolev spaces on a manifold,
+  nor elliptic regularity, nor Rellich--Kondrachov for forms.
+  Estimated 1500--2500 LOC for the package; the largest single
+  obstacle to formalizing R5.
+\item \emph{Phase 4 (harmonic decomposition).}  R5.4.1--R5.4.4.
+  Routine functional analysis once Phase 3 is in hand; ~300 LOC.
+\item \emph{Phase 5 (Kähler bigrading).}  R5.5.1--R5.5.5.  Mostly
+  algebraic; ~400 LOC.
+\item \emph{Phase 6 (Riemann surface specialisation).}  R5.6.1,
+  R5.6.2.  ~150 LOC.
+\end{itemize}
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R5-sub-A} (Riemannian metric on a manifold).
+  Mathlib has none; needs bundle structure on \(T^*M\).  ~500 LOC,
+  shared with R4-sub-C.
+\item \textbf{R5-sub-B} (Sobolev spaces of forms + elliptic regularity
+  for second-order operators).  The single largest sub-gap in the
+  entire eight-node tree; estimated 2500--4000 LOC.  Mathlib has
+  Sobolev spaces on \(\R^n\) (\code{Mathlib.Analysis.Distribution})
+  but not on manifolds, and not for vector-bundle-valued forms.
+\item \textbf{R5-sub-C} (Rellich--Kondrachov compact embedding for
+  forms).  ~400 LOC after R5-sub-B.
+\item \textbf{R5-sub-D} (Fredholm-alternative on a compact manifold).
+  ~300 LOC after R5-sub-B + R5-sub-C.
+\item \textbf{R5-sub-E} (Kähler-identity package).  ~400 LOC of
+  algebraic-geometry-flavored pencils; needs Phase 5 sub-leaves
+  R5.5.1--R5.5.5.
+\end{itemize}
+
+\begin{theorem}[Gap R5: Hodge decomposition (independent placeholder)]
+\label{gap:R5-overview}
+\uses{input:hodge-decomposition}
+The Lean target
+\code{Jacobian.Analysis.HodgeDecomposition.hodge_decomposition_overview}
+stubs the headline; sub-leaves R5.1.1--R5.6.2 are tracked in
+\code{Jacobian.Analysis.HodgeDecomposition.Overview}.
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_decomposition_overview}
+\notready
+\end{theorem}
+
+\begin{layman}
+The Hodge decomposition theorem is the most analytic of the eight
+gaps and the one that pulls in the largest piece of missing
+foundational work in Mathlib.  The headline statement is:
+on a compact Kähler manifold (a Riemann surface with any choice of
+Hermitian metric counts) every cohomology class has a \emph{unique}
+harmonic representative — a form lying in the kernel of the
+Laplace--Beltrami operator \(\Delta = d\delta + \delta d\).  On a
+compact Riemann surface, harmonic 1-forms further split by type:
+holomorphic 1-forms (\((1,0)\)-type) and antiholomorphic 1-forms
+(\((0,1)\)-type), each \(g\)-dimensional, summing to \(2g\).
+
+The proof's deepest layer is elliptic-PDE machinery: ellipticity of
+\(\Delta\) makes it (modulo a finite-dimensional null space) an
+isomorphism on appropriately defined Sobolev spaces of forms.
+That's what gives unique harmonic representatives.  The Kähler
+identities then sharpen the picture by revealing that the Laplacian
+respects the \((p,q)\)-bidegree decomposition, so harmonic forms
+themselves split by type.
+
+For Lean, the sticking point is that Mathlib v4.28.0 has no Sobolev
+spaces of forms on a manifold and no elliptic regularity for
+manifold-level operators.  Building this from scratch is the
+single largest task in the eight-gap tree (R5-sub-B alone:
+2500--4000 LOC).  Once that's in hand, the rest of the decomposition
+(harmonic representatives, Kähler bigrading, Hodge symmetry) is
+routine modern functional analysis.  Total estimated for R5 with all
+sub-gaps: 5500--8500 LOC.
+\end{layman}
+
+%======================================================================
+\subsection{R6 — Hodge / de Rham rank for a Riemann surface}
+\label{subsec:gap-R6-hodge-deRham}
+
+The headline (Theorem~\ref{input:hodge-deRham}) says: for a compact
+connected oriented Riemann surface \(X\) of analytic genus \(g\),
+\(\mathrm{rank}_{\Z}\,H_1(X, \Z) = 2g\).  This is the assembly
+gap that consumes R4 (de Rham), R5 (Hodge decomposition), and R7
+(Dolbeault) and outputs the integer rank used by the
+period-lattice fullness argument.
+
+\subsubsection*{Classical proof}
+
+A three-step assembly:
+
+\begin{enumerate}
+\item \emph{Hodge \(\Rightarrow\)
+  \(\dim_{\C} H^1_{\mathrm{dR}}(X, \C) = 2g\).}  Apply R5 to split
+  \(H^1_{\mathrm{dR}}(X, \C) = H^{1,0}(X) \oplus H^{0,1}(X)\).
+  Apply R7 to identify \(H^{1,0}(X) \cong H^0(X, \Omega^1_X)\), which
+  by definition has dimension \(g\).  Apply Hodge symmetry
+  (R5.5.5) to get \(\dim H^{0,1} = g\).
+\item \emph{De Rham \(\Rightarrow\)
+  \(H^1_{\mathrm{sing}}(X, \R) \cong H^1_{\mathrm{dR}}(X, \R)\).}
+  Apply R4.  Real dimension is \(2g\).
+\item \emph{Universal coefficients \(\Rightarrow\)
+  \(\mathrm{rank}_{\Z} H_1(X, \Z) = \dim_\R H^1_{\mathrm{sing}}(X, \R)\).}
+  In degree 1 on a compact CW manifold, the universal-coefficient
+  theorem gives \(H^1(X, \R) \cong \mathrm{Hom}(H_1(X, \Z), \R)\),
+  whose real dimension equals the integer rank of \(H_1(X, \Z)\).
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Decomposed into 11 sub-leaves under
+\code{Jacobian.Analysis.HodgeDeRham.Overview}, in four phases:
+
+\begin{itemize}
+\item \emph{Phase 1 (real dim of \(H^1_{\mathrm{dR}}\)).}
+  R6.1.1--R6.1.5.  All routine assembly above R5/R7; ~200 LOC.
+\item \emph{Phase 2 (de Rham comparison).}  R6.2.1, R6.2.2.  Pure
+  invocation of R4; ~50 LOC.
+\item \emph{Phase 3 (singular-to-integer-homology).}  R6.3.1--R6.3.4.
+  Universal coefficients and rank-Hom lemmas; Mathlib has the algebra
+  but not the singular variant for manifolds.  ~400 LOC.
+\item \emph{Phase 4 (final).}  R6.4.1.  ~30 LOC.
+\end{itemize}
+
+R6 is small in itself (estimated ~700 LOC) but it depends on three of
+the eight major gaps simultaneously; it cannot be discharged in
+isolation.
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R6-sub-A} (universal-coefficient theorem in degree 1
+  for a CW manifold, R6.3.1).  Algebraic UCT exists in Mathlib
+  (\code{Mathlib.Algebra.Homology.UniversalCoefficient});
+  geometric variant for \(H^*_{\mathrm{sing}}(X, \Z)\) does not.
+  ~250 LOC.
+\item \textbf{R6-sub-B} (\(H_1(X, \Z)\) finitely generated for a
+  compact CW manifold, R6.3.2).  Mathlib has \(H_*\) for chain
+  complexes but not the manifold-level finite-CW theorem.
+  ~150 LOC, after a triangulation is in hand (so this depends on R1).
+\item \textbf{R6-sub-C} (\(\dim_\R \mathrm{Hom}(A, \R) = \mathrm{rank}_\Z A\)
+  for a fg abelian group, R6.3.3).  Routine; ~80 LOC; Mathlib has
+  the building blocks.
+\end{itemize}
+
+\begin{theorem}[Gap R6: Hodge / de Rham rank (independent placeholder)]
+\label{gap:R6-overview}
+\uses{input:hodge-deRham,gap:R4-overview,gap:R5-overview,gap:R7-overview}
+The Lean target \code{Jacobian.Analysis.HodgeDeRham.hodge_deRham_overview}
+stubs the headline; sub-leaves R6.1.1--R6.4.1 are tracked in
+\code{Jacobian.Analysis.HodgeDeRham.Overview}.
+\lean{JacobianChallenge.Analysis.HodgeDeRham.hodge_deRham_overview}
+\notready
+\end{theorem}
+
+\begin{layman}
+R6 is the simplest of the eight in terms of its own work, but it
+sits at the confluence of three other gaps — it can't be done
+without R4, R5, and R7 all in place.  The headline says: on a genus-\(g\)
+Riemann surface, the integer first homology group has rank exactly
+\(2g\).  In words: there are \(2g\) topologically independent loops
+on \(X\), no more, no less.
+
+The proof is a chain of three identifications.  First, Hodge (R5) +
+Dolbeault (R7) say that the complex de Rham cohomology has dimension
+\(2g\) — \(g\) holomorphic 1-forms plus \(g\) antiholomorphic ones.
+Second, de Rham (R4) says singular cohomology over \(\R\) matches
+de Rham cohomology, so the real singular cohomology also has
+dimension \(2g\).  Third, the universal-coefficient theorem
+identifies the real cohomology dimension with the integer homology
+rank, giving \(\mathrm{rank}_\Z H_1(X, \Z) = 2g\).
+
+Why bother?  This is the rank fact every period-lattice argument in
+the project relies on: the symplectic basis \(a_1, b_1, \ldots, a_g,
+b_g\) generates \(H_1(X, \Z)\), so the period vectors compute a full
+rank-\(2g\) lattice in \((H^0(X, \Omega^1))^\vee \cong \C^g\).  No
+fullness, no Jacobian.  R6 is short in itself (~700 LOC) but
+unblockable until R4 + R5 + R7 are in hand, which is the dependency
+shape that makes the whole tree expensive.
+\end{layman}
+
+%======================================================================
+\subsection{R7 — The Dolbeault isomorphism}
+\label{subsec:gap-R7-dolbeault}
+
+The headline (Theorem~\ref{input:dolbeault}) says: for a complex
+manifold \(X\) and a holomorphic vector bundle \(E\),
+\(H^q_{\bar\partial}(X, E) \cong H^q(X, \mathcal{O}(E))\) — Dolbeault
+cohomology agrees with sheaf cohomology.  On a Riemann surface with
+\(E = \mathcal{O}_X\): \(H^{0,1}_{\bar\partial}(X) \cong H^1(X, \mathcal{O}_X)\).
+This is the analytic--algebraic bridge that lets Hodge-theoretic
+content (\(L^2\) inner products, harmonic representatives) be moved
+to sheaf-cohomological content (the natural language of Riemann--Roch
+and Serre duality).
+
+\subsubsection*{Classical proof}
+
+\begin{enumerate}
+\item \emph{Dolbeault complex.}  On a complex manifold, forms split
+  by bidegree, \(\Omega^k(X) = \bigoplus_{p+q=k} \Omega^{p,q}(X)\),
+  and \(d\) splits as \(\partial + \bar\partial\).  Define
+  Dolbeault cohomology \(H^{p,q}_{\bar\partial}(X) :=
+  \ker(\bar\partial : \Omega^{p,q} \to \Omega^{p,q+1}) /
+  \mathrm{im}(\bar\partial : \Omega^{p,q-1} \to \Omega^{p,q})\).
+\item \emph{\(\bar\partial\)-Poincaré on a polydisk.}  On a polydisk
+  \(U \subseteq \C^n\), every \(\bar\partial\)-closed
+  \((p,q)\)-form with \(q \geq 1\) is locally
+  \(\bar\partial\)-exact.  In one variable: solve
+  \(\bar\partial f = g\) by the Cauchy--Pompeiu integral
+  \(f(z) = \frac{1}{2\pi i} \int_U g(w)/(w - z) \, dw \wedge d\bar w\).
+\item \emph{Fine resolution of \(\Omega^p_X\).}  The sheafified
+  Dolbeault complex
+  \(0 \to \Omega^p_X \to \Omega^{p,0} \to \Omega^{p,1} \to \cdots\)
+  is exact (by the Poincaré lemma) and each \(\Omega^{p,q}\) is a
+  fine sheaf (it has smooth partitions of unity).
+\item \emph{Sheaf cohomology via fine resolution.}  Sheaf cohomology
+  can be computed from any fine resolution; therefore
+  \(H^q(X, \Omega^p_X) \cong H^q_{\bar\partial}(X)\).  Same proof
+  works for \(E\)-valued forms with \(E\) holomorphic.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Decomposed into 12 sub-leaves under
+\code{Jacobian.Analysis.Dolbeault.Overview}, in four phases:
+
+\begin{itemize}
+\item \emph{Phase 1 (Dolbeault complex).}  R7.1.1--R7.1.4.  Bigraded
+  forms (R7-sub-A) — Mathlib has nothing.  ~600 LOC.
+\item \emph{Phase 2 (\(\bar\partial\)-Poincaré).}  R7.2.1, R7.2.2.
+  The one-dimensional case reduces to the Cauchy--Pompeiu integral,
+  which Mathlib has via \code{Complex.integral_cauchy_pompeiu}.
+  ~250 LOC.
+\item \emph{Phase 3 (sheaf comparison).}  R7.3.1--R7.3.3.  Needs
+  derived-functor / acyclic-resolution machinery on the abelian
+  category of sheaves.  Mathlib has Čech cohomology
+  (\code{Mathlib.Topology.Sheaves.Cech}); the comparison-via-fine-resolution
+  needs explicit acyclicity.  ~400 LOC.
+\item \emph{Phase 4 (Riemann surface specialisation).}
+  R7.4.1--R7.4.3.  ~150 LOC.
+\end{itemize}
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R7-sub-A} (bigraded forms \(\Omega^{p,q}\) on a complex
+  manifold).  Mathlib has neither bigraded forms nor \(\partial\) /
+  \(\bar\partial\).  ~600 LOC, partially shared with R5.
+\item \textbf{R7-sub-B} (\(\bar\partial\)-Poincaré on a polydisk).
+  The one-variable case is ~80 LOC building on Cauchy--Pompeiu.
+  Multivariable case is induction; ~250 LOC.
+\item \textbf{R7-sub-C} (fine sheaves on a smooth manifold,
+  R7.2.2).  Needs the smooth-partition-of-unity API for sheaves.
+  ~250 LOC.
+\item \textbf{R7-sub-D} (sheaf cohomology agrees with cohomology of a
+  fine resolution, R7.3.1).  Standard derived-functor argument; ~300
+  LOC.
+\end{itemize}
+
+\begin{theorem}[Gap R7: Dolbeault isomorphism (independent placeholder)]
+\label{gap:R7-overview}
+\uses{input:dolbeault}
+The Lean target \code{Jacobian.Analysis.Dolbeault.dolbeault_overview}
+stubs the headline; sub-leaves R7.1.1--R7.4.3 are tracked in
+\code{Jacobian.Analysis.Dolbeault.Overview}.
+\lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_overview}
+\notready
+\end{theorem}
+
+\begin{layman}
+On a complex manifold, differential forms split by bidegree:
+a 1-form is either of type \((1,0)\) — looking like \(f \, dz\) — or
+of type \((0,1)\) — looking like \(g \, d\bar z\) — or a sum of both.
+The \(\bar\partial\) operator sends \((p,q)\)-forms to
+\((p,q+1)\)-forms; its cohomology \(H^{p,q}_{\bar\partial}\) is the
+analytic side of Dolbeault.
+
+The algebraic side, sheaf cohomology \(H^q(X, \Omega^p_X)\), is what
+Riemann--Roch and Serre duality naturally speak.  Dolbeault's theorem
+says these two pictures agree.  On a Riemann surface and \(p=q=0\):
+\(H^0\) is global functions, in both pictures the same.  On a Riemann
+surface and \((p,q) = (0,1)\): \(H^{0,1}_{\bar\partial}\) is
+``\(\bar\partial\)-cohomology of \(\bar z\)-forms,'' and Dolbeault
+identifies it with the structure-sheaf cohomology
+\(H^1(X, \mathcal{O}_X)\) — exactly the sheaf-side input to Serre
+duality.
+
+The proof proceeds by showing the Dolbeault complex is a fine
+resolution of the holomorphic-form sheaf, hence computes its
+cohomology.  The fine-resolution side is locally trivial — the key
+ingredient is the \(\bar\partial\)-Poincaré lemma, which on a
+polydisk reduces to the Cauchy--Pompeiu integral formula.  Mathlib
+has the integral formula, but no bigraded forms (R7-sub-A is shared
+with R5) and no fine-sheaf API on manifolds.  Total estimated for R7:
+~1300 LOC plus shared infrastructure.
+\end{layman}
+
+%======================================================================
+\subsection{R8 — Serre duality on a compact Riemann surface}
+\label{subsec:gap-R8-serre}
+
+The headline (Theorem~\ref{thm:serre-duality-rs}) says: for a compact
+Riemann surface \(X\) and a coherent sheaf \(F\), the cup-product /
+trace pairing \(H^q(X, F) \times H^{1-q}(X, \mathcal{H}om(F, K_X))
+\to H^1(X, K_X) \to \C\) is non-degenerate.  In the case \(F =
+\mathcal{O}_X\), \(q = 1\): \(H^1(X, \mathcal{O}_X) \cong
+H^0(X, K_X)^\vee\), which forces \(\dim H^1(X, \mathcal{O}_X) = g
+= \dim H^0(X, \Omega^1)\).
+
+\subsubsection*{Classical proof}
+
+\begin{enumerate}
+\item \emph{Dualizing sheaf.}  Identify \(K_X = \Omega^1_X\) as the
+  dualizing sheaf — a line bundle.  Define \(\mathcal{H}om(F, K_X)\),
+  the canonical Serre dual of any coherent \(F\).
+\item \emph{Trace map.}  Define a residue map at each point of \(X\)
+  on meromorphic 1-forms; aggregate via Čech representatives to a
+  trace \(\mathrm{tr} : H^1(X, K_X) \to \C\).  The classical
+  \emph{residue theorem} (sum of residues of a global meromorphic
+  1-form is zero) shows \(\mathrm{tr}\) is well-defined and is an
+  isomorphism.
+\item \emph{Cup-product pairing.}  Cup product
+  \(\smile : H^q(X, F) \times H^{1-q}(X, \mathcal{H}om(F, K_X)) \to
+  H^1(X, F \otimes \mathcal{H}om(F, K_X))\), composed with the
+  evaluation \(F \otimes \mathcal{H}om(F, K_X) \to K_X\), gives a
+  pairing into \(H^1(X, K_X)\); composing with \(\mathrm{tr}\) gives
+  the Serre pairing.
+\item \emph{Non-degeneracy via harmonic forms.}  Identify both
+  sides of the pairing with harmonic-form spaces (using R5 + R7).
+  The pairing realises the \(L^2\) inner product on harmonic forms,
+  which is positive-definite, hence non-degenerate.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+R8 is the most-developed of the eight gaps: the project already has
+~32 files under \code{Jacobian/HolomorphicForms/Serre/} that
+decompose \code{serre_duality_rs} into ~80 named sub-leaves.  This
+section's umbrella decomposes those further into 13 phase-named
+sub-leaves under \code{Jacobian.Analysis.SerreDuality.Overview}, in
+five phases:
+
+\begin{itemize}
+\item \emph{Phase 1 (dualizing sheaf).}  R8.1.1--R8.1.3.  Mostly
+  done at the Lean stub level: \code{RSDualizingSheaf} exists,
+  \code{Ω¹_X} as a line bundle is sketched.  ~250 LOC remaining.
+\item \emph{Phase 2 (trace map).}  R8.2.1--R8.2.3.  Needs the
+  residue theorem (R8-sub-C), which is classical complex analysis on
+  a Riemann surface.  ~400 LOC.
+\item \emph{Phase 3 (cup-product pairing).}  R8.3.1--R8.3.3.  Mathlib
+  has the cup product on simplicial cohomology; Čech variant is
+  R8-sub-B.  ~350 LOC.
+\item \emph{Phase 4 (non-degeneracy).}  R8.4.1, R8.4.2.  This is the
+  R5/R7-dependent step.  ~300 LOC modulo R5 + R7.
+\item \emph{Phase 5 (Riemann surface specialisation).}
+  R8.5.1--R8.5.3.  ~150 LOC.
+\end{itemize}
+
+The existing 32-file Serre tree exposes much finer-grained sub-leaves
+than the 13 listed here; the numbering above is the umbrella view.
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R8-sub-A} (sheaf cohomology of an analytic line bundle
+  on a Riemann surface).  Sketched at
+  \code{Jacobian/HolomorphicForms/SheafCohomologyRS.lean}.
+  ~600 LOC.
+\item \textbf{R8-sub-B} (cup product on Čech cohomology).  Mathlib
+  has the cup product on simplicial cohomology and partial Čech
+  apparatus; the cup product on Čech needs porting.  ~300 LOC.
+\item \textbf{R8-sub-C} (residue theorem on a compact Riemann
+  surface, R8.2.3).  Classical: every global meromorphic 1-form has
+  residues summing to zero.  ~250 LOC; assumes Stokes on a Riemann
+  surface with boundary (a sibling project gap).
+\item \textbf{R8-sub-D} (\(L^2\)-realisation of the Serre pairing
+  via harmonic forms, R8.4.2).  Bridges R5 + R7 + R8.  ~200 LOC.
+\end{itemize}
+
+\begin{theorem}[Gap R8: Serre duality (independent placeholder)]
+\label{gap:R8-overview}
+\uses{thm:serre-duality-rs,gap:R5-overview,gap:R7-overview}
+The Lean target
+\code{Jacobian.Analysis.SerreDuality.serre_duality_overview} stubs
+the headline; sub-leaves R8.1.1--R8.5.3 are tracked in
+\code{Jacobian.Analysis.SerreDuality.Overview} and the 32-file
+Serre tree at \code{Jacobian/HolomorphicForms/Serre/}.
+\lean{JacobianChallenge.Analysis.SerreDuality.serre_duality_overview}
+\notready
+\end{theorem}
+
+\begin{layman}
+Serre duality is a magical identity in complex algebraic geometry.
+On a compact Riemann surface, the first sheaf cohomology of the
+structure sheaf, \(H^1(X, \mathcal{O}_X)\), is the dual vector
+space to the global sections of the canonical bundle,
+\(H^0(X, K_X) = \) holomorphic 1-forms.  Dual: not just isomorphic
+in dimension, but explicitly paired by an integration identity on
+\(X\).
+
+In particular: \(\dim H^1(X, \mathcal{O}_X) = \dim H^0(X, K_X) = g\)
+— the genus.  This is the key ingredient in Riemann--Roch (which
+otherwise has only the inequality \(h^0 - h^1 \geq d - g + 1\); Serre
+upgrades it to an equality).  It's also what lets us identify the
+analytic Jacobian (\(H^0(X, \Omega^1)^\vee / H_1(X, \Z)\)) with the
+algebraic Jacobian (\(\mathrm{Pic}^0(X)\)) — the deepest cross-bridge
+in the project.
+
+The proof has four moving parts.  First, define a trace map from the
+top sheaf cohomology to \(\C\), via residues on a Čech cover.
+Second, define a cup-product pairing using the cup product on Čech
+cohomology and the natural evaluation map on sheaves.  Third,
+identify both sides of the pairing with harmonic-form spaces using
+R5 + R7.  Fourth, observe that the pairing realises the
+\(L^2\) inner product on harmonic forms, which is positive-definite
+hence non-degenerate.
+
+R8 is the most-developed Lean gap of the eight: ~32 files already
+sketch the proof tree.  But many leaves remain sorry, and several
+(the \(L^2\)-bridge to R5 + R7, the residue theorem) are themselves
+non-trivial sub-gaps.  Total estimated for R8 alone: ~3000 LOC
+modulo R5 + R7.  The dependency on R5 is what makes R8 expensive —
+R8 doesn't need full Hodge decomposition, but it does need the
+\(L^2\)-pairing-positive-definiteness ingredient that comes from the
+Hodge package.
+\end{layman}
+
+%======================================================================
+\subsection{Summary of recursive sub-gaps}
+\label{subsec:gap-summary}
+
+The eight-node tree, when expanded one level into recursive sub-gaps,
+surfaces a roughly 25-node graph.  Several sub-gaps are shared
+across multiple parent nodes (the bundled \(\Omega^k\) package
+appears under R4, R5, and R7; the Riemannian metric appears under R4
+and R5; the abstract simplicial complex appears under R1 and R3).
+A consolidated estimate of the total Lean-formalisation cost,
+including all shared sub-gaps counted once, is:
+
+\begin{center}
+\begin{tabular}{lr}
+\textbf{Component} & \textbf{Estimated LOC} \\\hline
+R1 + R1-sub-\{A,B,C\} & 2000--2700 \\
+R2 + R2-sub-\{A,B,C\} & 900--1100 \\
+R3 + R3-sub-\{A,B,C\} & 1500--2000 \\
+R4 + R4-sub-\{A,B,C\} & 2500--3500 \\
+R5 + R5-sub-\{A,B,C,D,E\} & 5500--8500 \\
+R6 + R6-sub-\{A,B,C\} & 1100--1400 \\
+R7 + R7-sub-\{A,B,C,D\} & 2200--2900 \\
+R8 + R8-sub-\{A,B,C,D\} & 3300--4300 \\\hline
+\textbf{Total (with shared deduplication)} & \textbf{15000--22000 LOC} \\
+\end{tabular}
+\end{center}
+
+The dominant single sub-gap is R5-sub-B (Sobolev / elliptic
+regularity for forms on a manifold), which alone is estimated at
+2500--4000 LOC and is on the critical path for both R5 and R7.
+
+\bigskip
+
+\begin{layman}
+Adding it all up: the eight major analysis gaps, expanded one level
+into their internal sub-gaps, total around fifteen to twenty-two
+thousand lines of Lean.  That's a substantial fraction of the entire
+project but it's a knowable one — every node is named, every
+dependency is identified, every sub-gap has at least a placeholder
+Lean target.  The single biggest cost driver is \emph{Sobolev spaces
+of forms on a manifold plus elliptic regularity} (R5-sub-B), which
+underpins the Hodge decomposition (R5) and indirectly the Dolbeault
+proof (R7).  Once that's in hand, much of the rest cascades.
+
+The other large cost is \emph{bundled differential forms}
+(R4-sub-A): a \(C^\infty(M)\)-module \(\Omega^k(M)\) with all the
+expected operators (\(d\), \(\wedge\), pullback) simultaneously
+linear, natural, and compatible.  Mathlib has the pieces
+(\code{MFDeriv}, exterior algebra in finite dimensions, manifold
+charts) but no integrated bundled form package; this is shared
+infrastructure across R4, R5, and R7.
+
+Among the eight, R6 is the smallest in itself but the most
+\emph{blocked}: it depends on R4, R5, and R7 simultaneously, so it
+cannot be touched until all three are deep enough to expose their
+output statements.  R3, by contrast, is the most \emph{ready}: its
+Lean infrastructure is already largely in place, blocked mainly on
+R1 (Radó) and R2 (Tietze).  A pragmatic first move would be to
+formalise R1 + R2 + R3 as a topology-only sub-project, in parallel
+with R4-sub-A (bundled \(\Omega^k\)) and R5-sub-A (Riemannian
+metric) as foundational analytic infrastructure.  Both of those
+unblock the rest of the analytic chain.
+\end{layman}

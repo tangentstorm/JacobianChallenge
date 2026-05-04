@@ -158,3 +158,37 @@ Any further trivial work would need the integrator to explicitly direct it (e.g.
 - **Theta-function chain (HARD, in flight)**: `Sec05/RiemannTheta.lean` records the theta-function infrastructure feeding `AbelExistence.existence_of_f`. `Sec05/JacobiInversion.lean` (Worker AE) is its sibling decomposition feeding `aj_Pic0_surjective`. Both are in active development.
 
 - **Genus identification (DONE)**: `Jacobian/HolomorphicForms/GenusEqH0Canonical.lean` (Worker H, post-batch-12) caps the chain `analyticGenus ℂ X = h⁰(X, K_X) = h¹(X, 𝒪_X) = RSGenus X` as a sorry-free assembly above `GenusIdentification.lean`'s frontier sorries.
+
+## Classical-analysis gaps roadmap (R1–R8)
+
+`Jacobian/Analysis/` (post-batch-12 scaffolding on branch
+`claude/document-analysis-gaps-P6gtZ`) packages each of the eight
+red-border umbrellas in the dep graph as an independent build target.
+Each `Jacobian/Analysis/<Node>/Overview.lean` carries a headline
+`<gap>_overview` placeholder + per-phase sub-leaf placeholders + an
+explicit list of recursive sub-gaps; each `Jacobian/Analysis/<Node>/README.md`
+links the classical proof, Lean realisation plan, plain-English
+description, and total-LOC estimate.  Blueprint counterpart:
+`tex/sections/12-classical-analysis-gaps.tex`.  Nothing changes for
+existing `StageA/`, `StageB/`, or `HolomorphicForms/Serre/` scaffolds —
+the new directory parallels them and gives a stable umbrella naming
+for future workers.
+
+| Code | Headline | Build target | Existing scaffold | Estimated LOC |
+|---|---|---|---|---|
+| R1 | Radó's triangulation | `Jacobian.Analysis.Rado` | `StageA/RadoTheorem.lean` (1 sub-leaf sorry-free) | 2000–2700 |
+| R2 | Tietze normal form | `Jacobian.Analysis.Tietze` | `StageA/EdgeWordTietze.lean` | 900–1100 |
+| R3 | Polygonal-model theorem | `Jacobian.Analysis.PolygonalModel` | `Periods/Polygon4g*`, `StageA/*` (polygon side mostly sorry-free) | 1500–2000 |
+| R4 | De Rham theorem | `Jacobian.Analysis.DeRham` | `StageB/DeRhamComparison.lean` | 2500–3500 |
+| R5 | Hodge decomposition (Kähler) | `Jacobian.Analysis.HodgeDecomposition` | `StageB/{LaplaceBeltrami,HarmonicForms,KahlerStructure}.lean` | 5500–8500 |
+| R6 | Hodge / de Rham rank | `Jacobian.Analysis.HodgeDeRham` | `Periods/HodgeDeRham.lean` (~30 named sub-leaves) | 1100–1400 |
+| R7 | Dolbeault isomorphism | `Jacobian.Analysis.Dolbeault` | `Serre/Dolbeault.lean` | 2200–2900 |
+| R8 | Serre duality (Riemann surface) | `Jacobian.Analysis.SerreDuality` | `Serre/*.lean` (32 files, ~80 sub-leaves) | 3300–4300 |
+
+**Total** with shared deduplication: **15000–22000 LOC**.  Dominant
+cost driver: R5-sub-B (Sobolev / elliptic regularity for forms on a
+manifold) at 2500–4000 LOC, on the critical path for both R5 and R7.
+
+The eight umbrellas plus their parallel `gap:R<N>-overview` labels are
+now both in `BIG_UMBRELLAS` (red-border highlight) at
+`blueprint/src/inject-depgraph-extras.py`.
