@@ -45,6 +45,7 @@ theorem serrePairing_witness_left
     (F : RSAbSheaf X)
     [Module ℂ (RSSheafCohomology X F 0)]
     [Module ℂ (RSSheafCohomology X (serreDualSheaf X F) 1)]
+    [Subsingleton (RSSheafCohomology X F 0)]
     (pairing :
       RSSheafCohomology X F 0 →ₗ[ℂ]
         RSSheafCohomology X (serreDualSheaf X F) 1 →ₗ[ℂ] ℂ)
@@ -68,6 +69,7 @@ theorem serrePairing_witness_right
     (F : RSAbSheaf X)
     [Module ℂ (RSSheafCohomology X F 0)]
     [Module ℂ (RSSheafCohomology X (serreDualSheaf X F) 1)]
+    [Subsingleton (RSSheafCohomology X (serreDualSheaf X F) 1)]
     (pairing :
       RSSheafCohomology X F 0 →ₗ[ℂ]
         RSSheafCohomology X (serreDualSheaf X F) 1 →ₗ[ℂ] ℂ)

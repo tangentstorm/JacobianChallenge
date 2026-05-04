@@ -28,7 +28,8 @@ theorem serrePairing_specialised_witness_left
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (F : RSAbSheaf X) :
+    (F : RSAbSheaf X)
+    [Subsingleton (RSSheafCohomology X F 0)] :
     letI := serreDualSheaf_module_H0 X F
     letI := serreDualSheaf_module_H1 X F
     ∀ (a : RSSheafCohomology X F 0), a ≠ 0 →
@@ -47,7 +48,8 @@ theorem serrePairing_specialised_witness_right
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (F : RSAbSheaf X) :
+    (F : RSAbSheaf X)
+    [Subsingleton (RSSheafCohomology X (serreDualSheaf X F) 1)] :
     letI := serreDualSheaf_module_H0 X F
     letI := serreDualSheaf_module_H1 X F
     ∀ (b : RSSheafCohomology X (serreDualSheaf X F) 1), b ≠ 0 →
