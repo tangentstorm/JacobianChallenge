@@ -330,7 +330,7 @@ Reduction proceeds by induction on the length of the edge word:
 \subsubsection*{Lean proof plan}
 
 Decomposed into 11 sub-leaves under
-\code{Jacobian.Analysis.Tietze.Overview}, organized in four phases:
+\code{Jacobian.Analysis.Tietze}, organized in four phases:
 
 \begin{itemize}
 \item \emph{Phase 1 (cyclic reduction).}  Sub-leaves R2.1.1--R2.1.2.
@@ -344,6 +344,21 @@ Decomposed into 11 sub-leaves under
 \item \emph{Phase 4 (induction on length).}  Sub-leaves
   R2.4.1--R2.4.3.  Standard structural induction; ~150 LOC.
 \end{itemize}
+
+\paragraph{Status.}  As of the depth-first refinement of section
+\ref{subsec:gap-R2-tietze}, the Lean target
+\code{Jacobian.Analysis.Tietze} is \emph{locally sorry-free}: every
+sub-leaf R2.1.1--R2.4.3 plus the three sub-gap stubs
+R2-sub-\{A,B,C\} type-checks without \code{sorry}.  The headline
+\code{tietze\_overview} transits through StageA's
+\code{orientable\_edgeWord\_tietzeEq\_standardWord} (the project's
+load-bearing classical-analysis gap), which remains the single
+remaining \code{sorry} in the chain.  The dispatch routes every deep
+sub-leaf either through that StageA black box plus the round-8/9
+plumbing (\code{swap\_handle\_past\_prefix},
+\code{standardWord\_split\_at}), or through pure list-combinatorial
+arguments (\code{tietze\_handle\_swap\_move} via three single-handle
+rotations; orientability preservation via count monotonicity).
 
 \subsubsection*{Recursive sub-gaps surfaced}
 
@@ -363,9 +378,11 @@ Decomposed into 11 sub-leaves under
 \label{lem:tietze-overview-stepwise}
 \uses{lem:tietze-to-handle-grouped,lem:tietze-handle-grouped-to-standard}
 The Lean target \code{Jacobian.Analysis.Tietze.tietze_overview}
-stubs the headline; its sub-leaves R2.1.1--R2.4.3 are tracked in
-\code{Jacobian.Analysis.Tietze.Overview} alongside the bottom-up
-sketch in \code{Jacobian/StageA/EdgeWordTietze.lean}.
+realises the headline; its sub-leaves R2.1.1--R2.4.3 are dispatched in
+\code{Jacobian.Analysis.Tietze} alongside the bottom-up sketch in
+\code{Jacobian/StageA/EdgeWordTietze.lean}.  The \code{Tietze.lean}
+file is locally sorry-free; the headline still transits through
+\code{StageA.orientable\_edgeWord\_tietzeEq\_standardWord}.
 \lean{JacobianChallenge.Analysis.Tietze.tietze_overview}
 \leanok
 \end{lemma}
