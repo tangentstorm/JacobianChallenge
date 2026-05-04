@@ -76,6 +76,9 @@ jobs:
       - name: Rewrite dep-graph legend + tag big-umbrella nodes
         run: python3 blueprint/src/inject-depgraph-extras.py blueprint/web
 
+      - name: Build collapsible dep-graph view
+        run: python3 blueprint/src/build_collapsible_dep_graph.py blueprint/web
+
       # `dawidd6/action-download-artifact@v3` errors out if both `branch` and
       # `run_id` are set, so we have two mutually-exclusive download steps.
       #
@@ -153,6 +156,7 @@ jobs:
                 <h1>Jacobian Challenge</h1>
                 <ul>
                   <li><a href="blueprint/">Lean Blueprint dependency graph</a> — interactive, with Plain-English toggle</li>
+                  <li><a href="blueprint/dep_graph_collapsible.html">Collapsible dep-graph overview</a> — click sections to drill down</li>
                   <li><a href="docs/">Browsable Lean source</a> — syntax-highlighted; identifier links from the blueprint resolve here, with fallback to mathlib4_docs</li>
                   <li><a href="jacobian-informal-proof-with-layman.pdf">Informal proof roadmap with Plain-English companion (PDF)</a></li>
                   <li><a href="jacobian-informal-proof.pdf">Informal proof roadmap, formal only (PDF)</a></li>
