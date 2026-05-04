@@ -38,6 +38,64 @@ from collections import Counter
 
 DEFAULT_DIRS = ("tex/sections", "tex/statements")
 
+# Standard LaTeX / AMS / hyperref command names that the linter trusts
+# without needing them defined in macros.tex.  Pragmatic subset; not
+# exhaustive.  Add to it when a legitimate command is flagged here.
+KNOWN_LATEX = frozenset("""
+documentclass usepackage title author date maketitle tableofcontents
+section subsection subsubsection paragraph subparagraph
+begin end item label ref cite bibliography bibliographystyle pageref
+input include includegraphics newpage clearpage noindent par
+smallskip medskip bigskip vspace hspace quad qquad newline linebreak
+penalty hskip vskip relax futurelet let def edef gdef xdef expandafter
+noexpand protect catcode char endcsname csname meaning string
+escapechar jobname today TeX LaTeX LaTeXe pdfTeX detokenize
+frac sqrt sum prod int iint iiint oint colim cdot cdots ldots dots
+vdots ddots infty partial nabla to mapsto rightarrow leftarrow
+Rightarrow Leftarrow Leftrightarrow Longleftrightarrow longrightarrow
+longmapsto iff implies forall exists in notin ni subset supset
+subseteq supseteq cap cup setminus emptyset aleph
+leq geq neq equiv approx sim simeq cong propto perp parallel
+oplus otimes wedge vee land lor neg lnot star times div pm mp ast
+bullet circ diamond triangle bigoplus bigotimes bigwedge bigvee
+bigcup bigcap bigsqcup bigsum bigprod hookrightarrow leftrightarrow
+mathbb mathbf mathcal mathfrak mathit mathrm mathsf mathtt mathnormal
+boldsymbol bm bar overline underline widehat widetilde vec dot ddot
+hat tilde check overrightarrow overleftarrow xrightarrow xleftarrow
+left right middle big Big bigg Bigg bigl bigr Bigl Bigr
+rangle langle lvert rvert lVert rVert lfloor rfloor lceil rceil
+mathop operatorname log ln exp sin cos tan sec csc cot
+arctan arcsin arccos min max sup inf lim liminf limsup det dim
+gcd lcm ker coker hom Hom End Aut Iso image Image Range span Span
+mod bmod pmod deg ell le ge ne tfrac dfrac smile text textbackslash
+emph textit textbf textsc textsf textsf textsf textsf textnormal textmd
+textup itshape bfseries rmfamily sffamily ttfamily texttt textsubscript
+underline sout enquote large Large LARGE huge Huge small footnotesize
+scriptsize tiny normalsize centering flushleft flushright
+alpha beta gamma delta epsilon varepsilon zeta eta theta vartheta
+iota kappa varkappa lambda mu nu xi omicron pi varpi rho varrho
+sigma varsigma tau upsilon phi varphi chi psi omega
+Alpha Beta Gamma Delta Epsilon Zeta Eta Theta Iota Kappa Lambda
+Mu Nu Xi Omicron Pi Rho Sigma Tau Upsilon Phi Chi Psi Omega
+href url autoref eqref tag nonumber notag intertext
+allowdisplaybreaks centering flushleft flushright
+qed blacksquare square dagger ddagger copyright pounds S P natural
+flat sharp prime dprime tprime complement therefore because
+hline cline multicolumn multirow rowcolor arraystretch arrayrulewidth
+arraybackslash tabularnewline
+fbox framebox parbox makebox newbox setbox box copy wd ht dp
+colorbox fcolorbox hbox vbox vcenter hfill vfill hfil vfil
+expandafter noexpand protect catcode char let def newif newcommand
+renewcommand providecommand DeclareMathOperator DeclareRobustCommand
+newtheorem theoremstyle newcounter setcounter stepcounter addtocounter
+thelemma thetheorem thesection thesubsection thefigure thetable
+thefootnote numberwithin numberless phantom vphantom hphantom smash
+hypersetup phantomsection addcontentsline
+excludecomment includecomment
+thanks address footnote tnote footnotemark footnotetext
+texorpdfstring linewidth setlist newenvironment ignorespaces
+""".split())
+
 THM_ENVS = ("lemma", "theorem", "definition", "proposition",
             "corollary", "classicalinput")
 SECT_CMDS = ("section", "subsection", "subsubsection", "paragraph",
@@ -227,21 +285,70 @@ def lint_file(path: str) -> list[tuple[int, str, str]]:
     return findings
 
 
+def collect_defined_commands() -> set[str]:
+    """Read macros.tex (and blueprint macros) for commands the project
+    declares.  Combined with KNOWN_LATEX this is the trusted set."""
+    defined: set[str] = set(KNOWN_LATEX)
+    for p in ("tex/macros.tex",
+              "blueprint/src/macros/common.tex",
+              "blueprint/src/macros/web.tex",
+              "blueprint/src/macros/print.tex"):
+        if not os.path.exists(p):
+            continue
+        text = open(p).read()
+        for m in re.finditer(
+                r"\\(?:newcommand|renewcommand|providecommand|"
+                r"DeclareMathOperator|DeclareRobustCommand)\*?"
+                r"\{?\\(\w+)\}?", text):
+            defined.add(m.group(1))
+        for m in re.finditer(r"\\newtheorem\*?\{(\w+)\}", text):
+            defined.add(m.group(1))
+        for m in re.finditer(r"\\newif\\if(\w+)", text):
+            defined.add("if" + m.group(1))
+            defined.add(m.group(1) + "true")
+            defined.add(m.group(1) + "false")
+    return defined
+
+
+def lint_undefined_commands(paths: list[str]) -> list[tuple[str, int, str, str]]:
+    """Flag uses of \\someCommand that aren't in the defined+known set."""
+    defined = collect_defined_commands()
+    findings: list[tuple[str, int, str, str]] = []
+    for path in paths:
+        text = open(path).read()
+        # Strip comments
+        text = re.sub(r"(?<!\\)%[^\n]*", "", text)
+        for m in re.finditer(r"\\([a-zA-Z]+)", text):
+            name = m.group(1)
+            if name in defined:
+                continue
+            line_no = text[:m.start()].count("\n") + 1
+            findings.append((path, line_no, "undefined-command",
+                             f"\\{name} on line {line_no}"))
+    return findings
+
+
 def main(argv: list[str]) -> int:
     dirs = argv[1:] or list(DEFAULT_DIRS)
     summary: Counter[str] = Counter()
     total = 0
+    paths: list[str] = []
     for d in dirs:
         for root, _, files in os.walk(d):
             for name in sorted(files):
                 if not name.endswith(".tex"):
                     continue
                 path = os.path.join(root, name)
+                paths.append(path)
                 findings = lint_file(path)
                 for line_no, kind, msg in findings:
                     print(f"{path}:{line_no}: [{kind}] {msg}")
                     summary[kind] += 1
                     total += 1
+    for path, line_no, kind, msg in lint_undefined_commands(paths):
+        print(f"{path}:{line_no}: [{kind}] {msg}")
+        summary[kind] += 1
+        total += 1
     print(f"\nTotal: {total} findings; by kind: {dict(summary)}")
     return 1 if total else 0
 
