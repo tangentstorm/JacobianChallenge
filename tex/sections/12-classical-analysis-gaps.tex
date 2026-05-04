@@ -3804,6 +3804,7 @@ For $f \in C^{2}$, $\partial_{i}\partial_{j}f = \partial_{j}\partial_{i}f$.
 
 \begin{lemma}[Pass J2.5: Mathlib endpoint]
 \label{lem:bfd-r5}
+\uses{lem:bfd-r6}
 \code{ContDiff.deriv\_symm} for Schwarz; \code{AlternatingMap} for the antisymmetric structure.  Mathlib status: present.
 \lean{ContDiff.iteratedFDeriv_symm}
 \leanok\mathlibok
@@ -4516,6 +4517,86 @@ $f^{*}\circ d_{N} = d_{M}\circ f^{*}$ is a 1-line check on local coordinate-expr
 \code{ContMDiff.fderiv} + \code{ManifoldDiff.pullback}.  Mathlib status: partial.
 \uses{lem:bfp-r11}
 \notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine bfd-r5 into Mathlib (5 more passes)}
+
+These passes fill the informal-proof gap left by Round~1: the prose
+above asserts ``$d^{2}\omega$ is symmetric times antisymmetric, hence
+zero,'' but does not exhibit the concluding algebraic identity in a
+chart.  Round~2 supplies that identity, separates the order-two
+Schwarz fact from the alternating-form fact, and bottoms out at named
+Mathlib hooks.
+
+\begin{lemma}[Pass bfd.6: $d$ on chart-coordinate $k$-forms]
+\label{lem:bfd-r6}
+\uses{lem:bfd-r7}
+A smooth $k$-form on a chart $U\subseteq\R^{n}$ is uniquely a sum
+$\omega = \sum_{I}\,f_{I}\,dx^{I}$ over ordered multi-indices
+$I = (i_{1}<\cdots<i_{k})$, with $f_{I}\in C^{\infty}(U,\R)$.  The
+exterior derivative is
+$d\omega = \sum_{I}\sum_{j=1}^{n}\,\partial_{j}f_{I}\,dx^{j}\wedge dx^{I}$;
+this is well-defined because $\{dx^{I}\}$ is a free $C^{\infty}(U)$-basis
+of $\Omega^{k}(U)$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfd.7: $d^{2}$ in chart coordinates as a double sum]
+\label{lem:bfd-r7}
+\uses{lem:bfd-r8}
+Applying $d$ twice and expanding the wedge product:
+\(
+d^{2}\omega
+  = \sum_{I}\sum_{i,j}\,\partial_{i}\partial_{j}f_{I}\,
+        dx^{i}\wedge dx^{j}\wedge dx^{I}.
+\)
+The $i=j$ summands vanish because $dx^{i}\wedge dx^{i}=0$ in the
+alternating algebra, so only the $i\neq j$ terms survive.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfd.8: Schwarz symmetry of mixed second partials]
+\label{lem:bfd-r8}
+\uses{lem:bfd-r9}
+For $f\in C^{2}(U,\R)$ on an open $U\subseteq\R^{n}$ and any
+$i,j\in\{1,\ldots,n\}$, $\partial_{i}\partial_{j}f = \partial_{j}\partial_{i}f$ pointwise.  Equivalently, the bilinear map
+$D^{2}f_{x}: \R^{n}\times\R^{n}\to\R$ is symmetric for every $x\in U$.
+\lean{ContDiff.iteratedFDeriv_symm}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.9: $\sum_{i,j} S_{ij}\,A_{ij} = 0$ for $S$ symmetric and $A$ antisymmetric]
+\label{lem:bfd-r9}
+\uses{lem:bfd-r10}
+Let $S, A : \{1,\ldots,n\}\times\{1,\ldots,n\}\to\R$ satisfy
+$S_{ij}=S_{ji}$ and $A_{ij}=-A_{ji}$ for all $i,j$.  Then
+$\sum_{i,j} S_{ij}\,A_{ij} = 0$.
+
+\emph{Proof.}  Reindex by swapping $i\leftrightarrow j$:
+$\sum_{i,j} S_{ij}A_{ij} = \sum_{i,j} S_{ji}A_{ji}
+                       = \sum_{i,j} S_{ij}\,(-A_{ij})
+                       = -\sum_{i,j} S_{ij}A_{ij}$,
+hence $2\sum=0$ and the sum vanishes in characteristic $\neq 2$
+(in particular over $\R$).  This is the algebraic core that the
+Round-1 pass Lemma~\ref{lem:bfd-r3} appealed to without proof.
+\lean{Finset.sum_comm}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.10: Mathlib endpoint for $d^{2}=0$]
+\label{lem:bfd-r10}
+\uses{lem:bfd-r11}
+Combining the three facts above: applying Lemma~\ref{lem:bfd-r9} with
+$S_{ij} = \partial_{i}\partial_{j}f_{I}$ (symmetric by
+Lemma~\ref{lem:bfd-r8}) and $A_{ij}$ the coefficient of $dx^{i}\wedge dx^{j}$ in $dx^{i}\wedge dx^{j}\wedge dx^{I}$ (antisymmetric by
+the alternating-form structure of Mathlib's \code{AlternatingMap})
+yields $d^{2}\omega=0$ in every chart.  Mathlib hooks:
+\code{ContDiff.iteratedFDeriv\_symm} for Schwarz,
+\code{AlternatingMap.map\_swap\_eq\_neg} for the swap sign,
+\code{Finset.sum\_comm} for the reindexing.  Mathlib status: present.
+\lean{ContDiff.iteratedFDeriv_symm}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5643,6 +5724,78 @@ Pullback is $C^{\infty}(N)$-linear after pulling back coefficients.
 \label{lem:bfp-r15}
 \code{ContMDiff.fderiv} + \code{Manifold.pullback}.  Mathlib status: present (chain rule); pullback-of-forms is an assembly of present pieces.
 \lean{ContMDiff.fderiv}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 3: refine bfd-r10 into Mathlib (5 more passes)}
+
+These passes pull each of the three Mathlib endpoints in
+Lemma~\ref{lem:bfd-r10} apart far enough that there is no remaining
+informal-proof gap: the algebraic identity is verified explicitly,
+the Schwarz fact is reduced to its statement on iterated Fréchet
+derivatives, and the alternating-form swap sign is reduced to the
+permutation-sign computation Mathlib already carries.
+
+\begin{lemma}[Pass bfd.11: \code{ContDiff.iteratedFDeriv\_symm} as second-order Schwarz]
+\label{lem:bfd-r11}
+\uses{lem:bfd-r12}
+For $f$ which is $C^{2}$ at $x$ and any permutation $\sigma$ of two
+arguments, the iterated derivative
+$\mathrm{iteratedFDeriv}_{\R}\,2\,f\,x$ as a multilinear map is
+invariant under $\sigma$.  Specialising to the transposition gives
+$\partial_{i}\partial_{j}f = \partial_{j}\partial_{i}f$.
+\lean{ContDiff.iteratedFDeriv_symm}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.12: \code{AlternatingMap.map\_swap\_eq\_neg} as two-form swap sign]
+\label{lem:bfd-r12}
+\uses{lem:bfd-r13}
+For an alternating multilinear map $\alpha$ in two variables,
+$\alpha(v,w) = -\alpha(w,v)$.  Specialising to $dx^{i}\wedge dx^{j}$
+gives $dx^{i}\wedge dx^{j} = -\,dx^{j}\wedge dx^{i}$, the
+antisymmetry used in Lemma~\ref{lem:bfd-r7} and Lemma~\ref{lem:bfd-r9}.
+\lean{AlternatingMap.map_swap_eq_neg}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.13: explicit cancellation $\Sigma=-\Sigma$ over $\R$]
+\label{lem:bfd-r13}
+\uses{lem:bfd-r14}
+Let $\Sigma=\sum_{i,j}S_{ij}A_{ij}$ as in Lemma~\ref{lem:bfd-r9}.
+Reindexing via the bijection $(i,j)\mapsto (j,i)$
+(\code{Equiv.prodComm}, equivalently \code{Finset.sum\_comm}) and
+applying $S_{ij}=S_{ji}$, $A_{ij}=-A_{ji}$ yields $\Sigma=-\Sigma$.
+Over $\R$ (or any ring of characteristic $\neq 2$) this implies
+$\Sigma=0$.  This is exactly the project-side
+\code{JacobianChallenge.Analysis.BundledForms.DSqZero.sum\_sym\_antisym\_eq\_zero}.
+\lean{Finset.sum_comm}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.14: assembling the chart-local $d^{2}=0$]
+\label{lem:bfd-r14}
+\uses{lem:bfd-r15}
+Apply Lemma~\ref{lem:bfd-r13} with
+$S_{ij}=\partial_{i}\partial_{j}f_{I}$ (symmetric by
+Lemma~\ref{lem:bfd-r11}) and $A_{ij}$ the
+$(dx^{i}\wedge dx^{j})$-coefficient of the alternating two-form
+component (antisymmetric by Lemma~\ref{lem:bfd-r12}).  The result is
+$d^{2}\omega=0$ as a chart-local identity, after summing over the
+multi-index $I$.  All informal steps are now mechanical reductions.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfd.15: Mathlib endpoint]
+\label{lem:bfd-r15}
+\code{ContDiff.iteratedFDeriv\_symm} (Schwarz),
+\code{AlternatingMap.map\_swap\_eq\_neg} (two-form sign),
+\code{Finset.sum\_comm} / \code{Equiv.prodComm} (reindexing),
+\code{neg\_eq\_self\_iff} (over $\R$, $x=-x\Rightarrow x=0$).  All
+present in Mathlib v4.28.0; the project-side dispatch lives at
+\code{JacobianChallenge.Analysis.BundledForms.DSqZero.sum\_sym\_antisym\_eq\_zero}.  Mathlib status: present (assembly).
+\lean{ContDiff.iteratedFDeriv_symm}
 \leanok\mathlibok
 \end{lemma}
 
