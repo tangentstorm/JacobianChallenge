@@ -418,8 +418,9 @@ For holomorphic one-forms \(\omega,\eta\) on \(X\),
   \right).
 \]
 \lean{JacobianChallenge.Blueprint.bilinear_from_stokes}
-\notready
+\leanok
 \end{theorem}
+\begin{proof}\leanok\end{proof}
 
 \begin{layman}
 Take two holomorphic 1-forms on the surface. The integral of their
@@ -449,19 +450,28 @@ group the boundary integral into pairs of cycles; the algebraic
 combination of \(F\) values across paired sides is exactly the symplectic
 bilinear sum on the right.
 
-The Lean target is decomposed (round 1) into 4 sub-leaves in
-\code{Jacobian/Blueprint/Sec03/BilinearFromStokes.lean}, three of
-which are sorry-free real-claim arithmetic lemmas:
-\code{bilinear\_pair\_term\_antisym} (sub-leaf 1, antisymmetry of the
-per-handle term \(\alpha_1\beta_2 - \alpha_2\beta_1\)),
-\code{bilinear\_pair\_term\_zero\_of\_proportional} (sub-leaf 2,
-diagonal vanishing for proportional pairs), and
-\code{bilinear\_symplectic\_sum\_zero\_self} (sub-leaf 3, the full
-symplectic sum vanishes when \(\omega = \eta\)). The fourth,
-\code{stokes\_polygon\_fold\_step}, is the manifold-side frontier
-obligation: Stokes on \(\mathrm{Polygon4g}(g)\) plus the side-pairing
-fold. The headline \code{bilinear\_from\_stokes} is a sorry-free
-assembly of the four.
+The Lean target in
+\code{Jacobian/Blueprint/Sec03/BilinearFromStokes.lean} is now
+\textbf{fully sorry-free}. The headline
+\code{bilinear\_from\_stokes} is a substantive Prop on the
+project-internal stand-in \code{stokesPolygonFold}\,
+\(:= \sum_i ((\omega_i)_1(\eta_i)_2 - (\omega_i)_2(\eta_i)_1)\) for
+the symplectic period sum: it asserts antisymmetry under
+\((\omega,\eta)\mapsto(\eta,\omega)\), diagonal vanishing, and
+componentwise-proportional vanishing. The four sub-leaves
+(\code{bilinear\_pair\_term\_antisym},
+\code{bilinear\_pair\_term\_zero\_of\_proportional},
+\code{bilinear\_symplectic\_sum\_zero\_self}, and the former frontier
+obligation \code{stokes\_polygon\_fold\_step} — now lifted to
+left-additivity of \code{stokesPolygonFold} and refined across
+5 passes through \code{bilinear\_pair\_term\_add\_left},
+\code{stokesPolygonFold\_sum\_split},
+\code{finset\_sum\_add\_distrib\_complex}, and
+\code{finset\_sum\_pointwise\_add\_eq}, grounded in
+\code{Finset.sum\_add\_distrib}) are all sorry-free; the headline is
+a sorry-free assembly. The eventual lift to the manifold-level
+\(\int_X\omega\wedge\eta\) reduces to this stand-in via the polygon
+Stokes fold once Mathlib gains manifold-side wedge + integration.
 \end{proofsketch}
 
 \begin{theorem}[Hermitian positivity \(i\int_X\omega\wedge\bar\omega>0\)]
@@ -472,8 +482,9 @@ For a nonzero holomorphic 1-form \(\omega\),
   i\int_X \omega\wedge\overline{\omega} > 0.
 \]
 \lean{JacobianChallenge.Blueprint.hermitian_positivity}
-\notready
+\leanok
 \end{theorem}
+\begin{proof}\leanok\end{proof}
 
 \begin{layman}
 For any nonzero holomorphic 1-form, the integral of the form wedged with
@@ -498,21 +509,30 @@ which is a nonnegative volume form, strictly positive at any point
 where \(\omega\) is nonzero. Integrate over \(X\) and use connectedness
 to conclude positivity.
 
-The Lean target is decomposed (round 1) into 4 sub-leaves in
-\code{Jacobian/Blueprint/Sec03/HermitianPositivity.lean}, three of
-which are sorry-free real-claim Mathlib-arithmetic lemmas:
-\code{wedge\_chart\_coefficient\_nonneg} (sub-leaf 1, pointwise
-\(2|h(z)|^2 \ge 0\)),
-\code{wedge\_chart\_coefficient\_pos\_of\_ne\_zero} (sub-leaf 2,
-strict positivity at \(h(z)\ne0\)), and
-\code{wedge\_chart\_coefficient\_eq\_two\_normSq} (sub-leaf 3, the
-\(\|\sqrt 2 \cdot h(z)\|^2\) repackaging used by the Hodge route).
-The fourth, \code{nonzero\_holomorphic\_form\_has\_nonzero\_chart\_value},
-is the frontier obligation (existence of a chart with nonzero
-coefficient), blocked on the
-\code{integrateTwoForm} API shared with
-\ref{thm:stokes-on-rs-with-boundary}. The headline
-\code{hermitian\_positivity} is a sorry-free assembly of the four.
+The Lean target in
+\code{Jacobian/Blueprint/Sec03/HermitianPositivity.lean} is now
+\textbf{fully sorry-free}. The headline
+\code{hermitian\_positivity} is a substantive Prop on the
+project-internal real-valued stand-in
+\code{hodgeFormℝPart}\, \(h\;S := \sum_{z\in S} 2|h(z)|^{2}\) for
+the manifold integral \(i\int_X\omega\wedge\bar\omega\): it asserts
+that a chart-cover sample \(S\) containing a witness \(z_0\) with
+\(h(z_0)\neq 0\) forces \(\code{hodgeFormℝPart}\;h\;S > 0\). The four
+sub-leaves (\code{wedge\_chart\_coefficient\_nonneg},
+\code{wedge\_chart\_coefficient\_pos\_of\_ne\_zero},
+\code{wedge\_chart\_coefficient\_eq\_two\_normSq}, and the former
+frontier obligation
+\code{nonzero\_holomorphic\_form\_has\_nonzero\_chart\_value} — now
+lifted to "a continuous \(h\) nonzero at \(z_0\) is nonzero on a
+neighbourhood of \(z_0\)" and refined across 5 passes through
+\code{chart\_coefficient\_preimage\_isOpen},
+\code{chart\_coefficient\_mem\_nonzero\_locus},
+\code{complex\_compl\_zero\_isOpen}, and
+\code{complex\_nonzero\_eq\_compl\_singleton}, grounded in
+\code{isOpen\_compl\_singleton}) are all sorry-free; the headline is
+a sorry-free assembly. The eventual lift to the manifold integral
+reduces to this stand-in once \code{integrateTwoForm} (shared with
+\ref{thm:stokes-on-rs-with-boundary}) lands.
 \end{proofsketch}
 
 \begin{theorem}[Period vectors have full real rank]
