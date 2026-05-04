@@ -923,7 +923,7 @@ five phases:
 \begin{itemize}
 \item \emph{Phase 1 (dualizing sheaf).}  R8.1.1--R8.1.3.  Mostly
   done at the Lean stub level: \code{RSDualizingSheaf} exists,
-  \code{Ω¹_X} as a line bundle is sketched.  ~250 LOC remaining.
+  \(\Omega^{1}_{X}\) as a line bundle is sketched.  ~250 LOC remaining.
 \item \emph{Phase 2 (trace map).}  R8.2.1--R8.2.3.  Needs the
   residue theorem (R8-sub-C), which is classical complex analysis on
   a Riemann surface.  ~400 LOC.
@@ -1029,14 +1029,14 @@ bundled-form package.
 \item \emph{\(\Omega^{k}(M)\) algebra.}  \(\Omega^{k}\) is a
   \(C^{\infty}(M, \R)\)-module; \(\Omega^{0} = C^{\infty}(M, \R)\).
 \item \emph{Exterior derivative.}  \(d : \Omega^{k} \to \Omega^{k+1}\)
-  ℝ-linear, \(d^{2} = 0\), commutes with pullback.
+  \(\R\)-linear, \(d^{2} = 0\), commutes with pullback.
 \item \emph{Wedge product.}  \(\wedge : \Omega^{p} \times \Omega^{q}
   \to \Omega^{p+q}\), graded commutative
   (\(\alpha \wedge \beta = (-1)^{pq} \beta \wedge \alpha\)) and Leibniz
   (\(d(\alpha \wedge \beta) = d\alpha \wedge \beta + (-1)^{p}
   \alpha \wedge d\beta\)).
 \item \emph{Pullback.}  \(f^{*} : \Omega^{k}(N) \to \Omega^{k}(M)\)
-  ℝ-linear, functorial, compatible with \(d\) and \(\wedge\).
+  \(\R\)-linear, functorial, compatible with \(d\) and \(\wedge\).
 \item \emph{Integration.}  \(\int_{M} : \Omega^{n}(M) \to \R\) for
   compact oriented \(n\)-manifolds; Stokes \(\int_{M} d\omega = 0\) on
   closed manifolds.
