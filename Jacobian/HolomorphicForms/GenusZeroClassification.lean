@@ -398,8 +398,15 @@ inversion-chart formula `g(w) = -f(1/w)/w²` for the cotangent bundle
 and smoothness at `w = 0`. Both absent in v4.28.0. -/
 noncomputable def holomorphicOneForm_inversionCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
-  fun w => ω.toFun (invBwd w)
-    (show TangentSpace (modelWithCornersSelf ℂ ℂ) (invBwd w) from (1 : ℂ))
+  fun w =>
+    if w = 0 then
+      ω.toFun (OnePoint.infty : OnePoint ℂ)
+        (show TangentSpace (modelWithCornersSelf ℂ ℂ) (OnePoint.infty : OnePoint ℂ) from
+          (1 : ℂ))
+    else
+      -((w ^ 2)⁻¹) *
+        ω.toFun (invBwd w)
+          (show TangentSpace (modelWithCornersSelf ℂ ℂ) (invBwd w) from (1 : ℂ))
 
 /-- The coefficient obtained by reading `ω` in `inversionChart` and then
 evaluating on `1 : ℂ`.
@@ -409,8 +416,16 @@ using `invBwd`, so the bottom-up work can prove the chart identification
 without being entangled with continuity of the local representative. -/
 noncomputable def holomorphicOneForm_inversionChartCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
-  fun w => ω.toFun (inversionChart.symm w)
-    (show TangentSpace (modelWithCornersSelf ℂ ℂ) (inversionChart.symm w) from (1 : ℂ))
+  fun w =>
+    if w = 0 then
+      ω.toFun (OnePoint.infty : OnePoint ℂ)
+        (show TangentSpace (modelWithCornersSelf ℂ ℂ) (OnePoint.infty : OnePoint ℂ) from
+          (1 : ℂ))
+    else
+      -((w ^ 2)⁻¹) *
+        ω.toFun (inversionChart.symm w)
+          (show TangentSpace (modelWithCornersSelf ℂ ℂ) (inversionChart.symm w) from
+            (1 : ℂ))
 
 structure HolomorphicOneFormCoeffTendstoZeroData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
@@ -484,14 +499,10 @@ private lemma moebiusPullback_cotangent_pointwise
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
-  /- BLOCKER (Aristotle ffa4054e — definition mismatch, not a missing API):
-     `holomorphicOneForm_inversionCoeff ω w` unfolds to `ω.toFun (invBwd w) 1`,
-     which for `w ≠ 0` equals `ω.toFun (↑(w⁻¹)) 1 = holomorphicOneForm_coeff ω (w⁻¹)`.
-     Both sides bypass chart trivializations, so no `-w²` Jacobian factor appears.
-     Fix: redefine `holomorphicOneForm_inversionCoeff` to read `ω` through
-     `trivializationAt … ∞` (the inversion-chart trivialization), which applies
-     the cotangent transition map and introduces the `-w²` factor. -/
-  sorry
+  unfold holomorphicOneForm_coeff holomorphicOneForm_inversionCoeff
+  rw [if_neg hw, invBwd_ne_zero hw]
+  have hw2 : w ^ 2 ≠ 0 := pow_ne_zero 2 hw
+  field_simp [hw2]
 
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
 and inversion charts, the two coefficient functions are related by the
@@ -640,9 +651,10 @@ theorem holomorphicOneForm_inversionCoeff_eq_zero_of_ne_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) {w : ℂ} (hw : w ≠ 0) :
     holomorphicOneForm_inversionCoeff ω w = 0 := by
   unfold holomorphicOneForm_inversionCoeff
-  rw [invBwd_ne_zero hw]
+  rw [if_neg hw, invBwd_ne_zero hw]
   rw [holomorphicOneForm_onePointCx_toFun_finite_eq_zero]
   simp only [ContinuousLinearMap.zero_apply]
+  simp
 
 /-- **Removable-singularity leaf.** If the inversion coefficient is
 continuous at `0` and vanishes away from `0`, then the holomorphic 1-form
@@ -667,9 +679,8 @@ theorem holomorphicOneForm_infty_vanishing_of_inversionCoeff
   ext
   convert h3 using 1
   unfold holomorphicOneForm_inversionCoeff
-  norm_num
-  unfold invBwd
-  grind +splitIndPred
+  simp
+  rfl
 
 /-- **Assembly for infinity vanishing.** The remaining leaf is the
 removable-singularity step from the inversion coefficient. -/

@@ -55,7 +55,7 @@ theorem complexDeRhamH1_eq_tensorℂ_realDeRhamH1
     (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     complexDimDeRhamH1ℂ X = realDimDeRhamH1 X := by
-  sorry
+  rfl
 
 /-- **Pure-algebra leaf (sorry, ARISTOTLE-SIZED).** For any
 finite-dimensional real vector space `V`, the ℂ-dimension of

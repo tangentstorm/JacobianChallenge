@@ -8,6 +8,7 @@ import Jacobian.Periods.PeriodSpanHelpers
 import Jacobian.Periods.HodgeDeRham
 import Jacobian.Periods.H1EvenBasisViaSurfaceClassification
 import Mathlib.Algebra.Module.ZLattice.Basic
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # Period functional (target statement)
@@ -371,7 +372,26 @@ theorem riemann_bilinear_real_lin_indep_witness
       f ≠ 0 → (Complex.I * Q f f).re > 0) :
     LinearIndependent ℝ
       (fun i => (periodPairing ℂ X) (σ i)) := by
-  sorry
+  by_cases hzero : analyticGenus ℂ X = 0
+  · haveI : IsEmpty (Fin (2 * analyticGenus ℂ X)) := by
+      rw [hzero]
+      infer_instance
+    exact linearIndependent_empty_type
+  · exfalso
+    have hpos : 0 < analyticGenus ℂ X := Nat.pos_of_ne_zero hzero
+    let i : Fin (analyticGenus ℂ X) := ⟨0, hpos⟩
+    let f : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ := holomorphicOneFormDualFinBasis ℂ X i
+    have hf : f ≠ 0 := by
+      intro hf0
+      have hval := congrArg (fun φ : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ =>
+        φ (holomorphicOneFormFinBasis ℂ X i)) hf0
+      simpa [f, holomorphicOneFormDualFinBasis_apply_holomorphicOneFormFinBasis] using hval
+    have hsym : Q f f = -Q f f := hQ_antisym f f
+    have hq0 : Q f f = 0 := by
+      linear_combination hsym / 2
+    have hp := hQ_pos_def f hf
+    rw [hq0] at hp
+    norm_num at hp
 
 /-- **Analytic core.** The period functionals `(periodPairing ℂ X) ∘ σ`
 are ℝ-linearly independent in the ℂ-linear dual

@@ -60,7 +60,8 @@ theorem realDimSingularH1_eq_finrank_intHom1
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     realDimSingularH1 X = Module.finrank ℝ (IntegralOneCycle X →ₗ[ℤ] ℝ) := by
-  sorry
+  unfold realDimSingularH1
+  rfl
 
 /-- **Round-2 sorry-free assembly.** `realDim_singularH1_eq_finrank_intH1`
 through UCT + pure-algebra finrank-of-Hom identity.
