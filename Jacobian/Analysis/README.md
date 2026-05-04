@@ -35,9 +35,20 @@ been promoted to top-level dep-graph nodes:
 
 ```
 Jacobian/Analysis.lean                    -- umbrella, imports all ten
-Jacobian/Analysis/<Node>.lean             -- per-node umbrella
+Jacobian/Analysis/<Node>.lean             -- per-node umbrella (or, once a
+                                             gap has been refined to a single
+                                             sorry-free Lean file, the
+                                             headline + sub-leaves directly,
+                                             with the master-plan content
+                                             folded into the file's
+                                             top-of-module docstring; see
+                                             `Tietze.lean`)
 Jacobian/Analysis/<Node>/Overview.lean    -- headline + sub-leaf real-typed sorry theorems
+                                             (omitted once `<Node>.lean` is
+                                             local sorry-free)
 Jacobian/Analysis/<Node>/README.md        -- per-node master plan
+                                             (omitted once `<Node>.lean` is
+                                             local sorry-free)
 ```
 
 ## Independent builds
