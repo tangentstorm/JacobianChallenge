@@ -344,7 +344,9 @@ APP_JS = """\
 
   function renderTree(node, prefix, current) {
     var ul = document.createElement("ul");
-    var entries = Object.keys(node).map(function (k) { return [k, node[k]]; });
+    var entries = Object.keys(node)
+      .filter(function (k) { return k !== "__file"; })
+      .map(function (k) { return [k, node[k]]; });
     entries.sort(function (a, b) {
       var aDir = a[1] !== null, bDir = b[1] !== null;
       if (aDir !== bDir) return aDir ? -1 : 1;
@@ -353,8 +355,14 @@ APP_JS = """\
     for (var i = 0; i < entries.length; i++) {
       var name = entries[i][0], child = entries[i][1];
       var li = document.createElement("li");
-      if (child === null) {
-        var leanRel = prefix + name + ".lean";
+      var leanRel = prefix + name + ".lean";
+      // A node may be: a leaf file (null), a pure directory (object),
+      // or a directory whose same-named .lean file also exists
+      // (object with __file: true) — render the latter as both link
+      // and expandable.
+      var isFile = (child === null) || (child && child.__file === true);
+      var hasChildren = (child !== null) && Object.keys(child).some(function (k) { return k !== "__file"; });
+      if (!hasChildren) {
         var a = document.createElement("a");
         a.href = ROOT + prefix + name + ".html";
         a.textContent = name;
@@ -364,14 +372,28 @@ APP_JS = """\
         li.className = "dir";
         var label = document.createElement("span");
         label.className = "label";
-        label.textContent = name;
+        if (isFile) {
+          var labelLink = document.createElement("a");
+          labelLink.href = ROOT + prefix + name + ".html";
+          labelLink.textContent = name;
+          if (leanRel === current) labelLink.className = "current";
+          label.appendChild(labelLink);
+        } else {
+          label.textContent = name;
+        }
+        // Clicking the disclosure caret toggles; the link itself navigates.
         label.addEventListener("click", function (li_) {
-          return function () { li_.classList.toggle("open"); };
+          return function (ev) {
+            if (ev.target.tagName === "A") return;
+            li_.classList.toggle("open");
+          };
         }(li));
         li.appendChild(label);
         var subPrefix = prefix + name + "/";
         li.appendChild(renderTree(child, subPrefix, current));
-        if (current && current.indexOf(subPrefix) === 0) li.classList.add("open");
+        if (current && (current.indexOf(subPrefix) === 0 || leanRel === current)) {
+          li.classList.add("open");
+        }
       }
       ul.appendChild(li);
     }
@@ -472,14 +494,35 @@ def render_page(src_path: Path, rel: str, formatter: HtmlFormatter,
 
 
 def build_tree(rel_paths_no_ext: list[str]) -> dict:
-    """Return a nested dict: {dir: {...}} with files mapped to None."""
+    """Return a nested dict for the file tree.
+
+    Each entry is one of:
+      - ``None``: a file-only leaf with no same-named subdirectory.
+      - ``{...}``: a directory.
+      - ``{"__file": True, ...}``: both a file (`Foo.lean`) and a directory
+        (`Foo/`) exist at this level — common Mathlib-style "module +
+        sub-modules" pattern (e.g. `Jacobian/AbelJacobi.lean` alongside
+        `Jacobian/AbelJacobi/Defs.lean`). The label should render as
+        both a link to the file and an expandable directory.
+    """
     root: dict = {}
     for p in rel_paths_no_ext:
         parts = p.split("/")
         cur = root
         for part in parts[:-1]:
-            cur = cur.setdefault(part, {})
-        cur[parts[-1]] = None
+            existing = cur.get(part)
+            if existing is None and part in cur:
+                # Was a file-only leaf; upgrade in place to a dir-with-__file.
+                cur[part] = {"__file": True}
+            elif part not in cur:
+                cur[part] = {}
+            cur = cur[part]
+        leaf = parts[-1]
+        if leaf in cur and isinstance(cur[leaf], dict):
+            # Subdirectory already populated; mark that the file also exists.
+            cur[leaf]["__file"] = True
+        else:
+            cur[leaf] = None
     return root
 
 
