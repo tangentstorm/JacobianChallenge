@@ -1,5 +1,6 @@
 import Jacobian.StageB.KahlerStructure
 import Jacobian.StageB.CoherentSheaves
+import Jacobian.Analysis.SobolevElliptic.HeadlinePlugIn
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 
 /-!
@@ -36,6 +37,27 @@ in the special case `(p, q) = (0, 1)`, `F = 𝒪_X`:
 theorem dolbeault_overview :
     True :=
   dolbeault_isomorphism 0 1
+
+/-- **R7 headline (substantive companion).**  The Dolbeault
+isomorphism's downstream finite-dimensionality conclusion routed
+through R10's `HasLaplaceResolvent` framework.  The Dolbeault
+groups `H^{p,q}_∂̄(X)` are eigenspaces of the `∂̄`-Laplacian, and
+once that operator is wired into `HasLaplaceResolvent X μ`, the
+finite-dim conclusion `Module.Finite ℝ (RealHarmonic X μ)` is
+automatic via `SobolevElliptic.moduleFinite_realHarmonic`.
+
+Downstream R7 consumers should declare `[HasLaplaceResolvent X μ]`
+with `μ` the Kähler volume measure, and the framework supplies
+finite-dim harmonic representatives for free. -/
+theorem dolbeault_harmonic_forms_finite_dim_substantive
+    {N : Type} [TopologicalSpace N] [MeasurableSpace N] [BorelSpace N]
+    [CompactSpace N]
+    (μ : MeasureTheory.Measure N)
+    [JacobianChallenge.Analysis.BundledForms.IsManifoldMeasure N μ]
+    [JacobianChallenge.Analysis.SobolevElliptic.HasLaplaceResolvent N μ] :
+    Module.Finite ℝ
+      (JacobianChallenge.Analysis.SobolevElliptic.RealHarmonic N μ) :=
+  JacobianChallenge.Analysis.SobolevElliptic.moduleFinite_realHarmonic N μ
 
 /-! ### Phase 1 — Dolbeault complex -/
 

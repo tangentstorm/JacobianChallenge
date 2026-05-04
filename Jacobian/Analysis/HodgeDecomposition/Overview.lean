@@ -1,6 +1,7 @@
 import Jacobian.StageB.LaplaceBeltrami
 import Jacobian.StageB.HarmonicForms
 import Jacobian.StageB.KahlerStructure
+import Jacobian.Analysis.SobolevElliptic.HeadlinePlugIn
 import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-!
@@ -48,6 +49,28 @@ theorem hodge_decomposition_overview [CompactSpace M] (n k : ℕ) :
     Nonempty (deRhamH (E := E) M k ≃ₗ[ℝ] Harmonic (E := E) M n k) :=
   ⟨laplaceBeltrami_elliptic_regularity (E := E) M n k,
    deRhamH_iso_Harmonic (E := E) M n k⟩
+
+/-- **R5 headline (substantive companion).**  Real
+finite-dimensionality of harmonic forms via the abstract resolvent
+chain (`SobolevElliptic.HeadlinePlugIn.moduleFinite_realHarmonic`):
+given a `HasLaplaceResolvent M μ` analytic input, the spectral
+substitute `RealHarmonic M μ` is finite-dimensional.  This is the
+Phase 4 routing of R10 into R5; downstream R5 consumers (Hodge
+decomposition, harmonic representatives, Kähler bigrading) can
+declare `[HasLaplaceResolvent M μ]` and consume this lemma instead
+of the placeholder `hodge_decomposition_overview` above.  See the
+file-level docstrings of
+`Jacobian/Analysis/SobolevElliptic/{AbstractResolvent,
+AbstractFredholmResolvent,HeadlinePlugIn}.lean`. -/
+theorem hodge_harmonic_forms_finite_dim_substantive
+    {N : Type} [TopologicalSpace N] [MeasurableSpace N] [BorelSpace N]
+    [CompactSpace N]
+    (μ : MeasureTheory.Measure N)
+    [JacobianChallenge.Analysis.BundledForms.IsManifoldMeasure N μ]
+    [JacobianChallenge.Analysis.SobolevElliptic.HasLaplaceResolvent N μ] :
+    Module.Finite ℝ
+      (JacobianChallenge.Analysis.SobolevElliptic.RealHarmonic N μ) :=
+  JacobianChallenge.Analysis.SobolevElliptic.moduleFinite_realHarmonic N μ
 
 /-! ### Phase 1 — Riemannian metric & Hodge `*` -/
 
