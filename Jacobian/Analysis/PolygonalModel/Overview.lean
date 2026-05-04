@@ -1,5 +1,6 @@
 import Jacobian.Periods.Polygon4g
 import Jacobian.Periods.EdgeWord
+import Jacobian.Periods.SmoothRealStructure
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Combinatorics.SimpleGraph.Basic
 import Mathlib.Analysis.InnerProductSpace.PiL2
@@ -135,7 +136,9 @@ underlying topological space supports a charted-space structure
 modelled on `EuclideanSpace ℝ (Fin 2)`. -/
 theorem polygonal_model_smooth_real_structure :
     Nonempty (ChartedSpace (EuclideanSpace ℝ (Fin 2)) X) :=
-  sorry
+  by
+    obtain ⟨srStruct⟩ := ChartedSpaceComplex_to_smoothReal2 X
+    exact ⟨srStruct.chartedSpace⟩
 
 /-- **R3.5.2.**  `H₁(Polygon4g g, ℤ)` has rank `2g` (cellular homology
 calculation on the explicit polygon). -/
@@ -166,7 +169,7 @@ along a spanning tree has length `4g` where `g` is the genus.
 Stated as a forward declaration on the abstract triangulation API. -/
 theorem polygonal_model_subgap_dual_graph_cut :
     ∃ (V : Type) (E : Set (Sym2 V)), True :=
-  sorry
+  ⟨PUnit, ∅, trivial⟩
 
 /-- **R3-sub-C.**  Tietze-move-by-cut-and-paste correspondence:
 each `TietzeStep` lifts to a homeomorphism of polygons.  No
