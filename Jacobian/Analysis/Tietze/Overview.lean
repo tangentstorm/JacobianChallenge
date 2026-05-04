@@ -41,7 +41,7 @@ presentation of a compact connected orientable 2-manifold of genus
 theorem tietze_overview {g : ℕ} (w : EdgeWord g)
     (_h : ArisesFromOrientablePolygonalPresentation w) :
     EdgeWord.TietzeEq w (EdgeWord.standardWord g) :=
-  sorry
+  orientable_edgeWord_tietzeEq_standardWord w _h
 
 /-! ### Phase 1 — cyclic reduction -/
 
@@ -68,7 +68,9 @@ theorem tietze_handle_block_rotation {g : ℕ}
     (xs : List (Letter g)) (ys : List (Letter g))
     (h : List (Letter g)) (_hHandle : ∃ i : Fin g, h = EdgeWord.handleBlock i) :
     EdgeWord.HandleSwap (xs ++ h ++ ys) (ys ++ h ++ xs) :=
-  sorry
+  by
+    rcases _hHandle with ⟨i, rfl⟩
+    exact EdgeWord.HandleSwap.move i xs ys (EdgeWord.handleBlock i) rfl
 
 /-- **R2.2.2.** Two complete handle blocks may be permuted within the
 word: this is the `HandleSwap` Tietze move applied twice. -/
@@ -106,7 +108,7 @@ theorem tietze_orientable_is_handle_concat {g : ℕ} (w : EdgeWord g)
     (_hG : EdgeWord.IsHandleGrouped w) :
     ∃ v : EdgeWord g,
       EdgeWord.TietzeEq w v ∧ v.IsStandardForm :=
-  sorry
+  handleGrouped_swap_to_standardOrder w _hG
 
 /-! ### Phase 4 — induction on length -/
 
@@ -133,7 +135,7 @@ every orientable surface word reduces to the standard relator. -/
 theorem tietze_inductive_assembly {g : ℕ} (w : EdgeWord g)
     (_h : ArisesFromOrientablePolygonalPresentation w) :
     EdgeWord.TietzeEq w (EdgeWord.standardWord g) :=
-  sorry
+  tietze_overview w _h
 
 /-! ### Recursive sub-gaps surfaced -/
 
@@ -142,7 +144,7 @@ theorem tietze_inductive_assembly {g : ℕ} (w : EdgeWord g)
 theorem tietze_subgap_free_group_surface_presentation {g : ℕ}
     (_w : EdgeWord g) :
     ∃ _f : Letter g → FreeGroup (Fin (2 * g)), True :=
-  sorry
+  ⟨fun _ => 1, trivial⟩
 
 /-- **R2-sub-B.**  Cyclic-word equivalence: a rotation of an edge word
 is `TietzeEq` to the original (handle blocks rotate as units; non-handle
