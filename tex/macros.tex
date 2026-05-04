@@ -51,13 +51,7 @@
 \newcommand{\periods}{\Lambda}
 \newcommand{\dd}{\mathrm{d}}
 
-% \code{Mathlib.Analysis.InnerProductSpace.Spectrum} renders in
-% monospace.  Long identifier paths otherwise overflow the right
-% margin (overfull hbox warnings + visibly clipped names in the PDF).
-% The seqsplit package allows breaks anywhere in the rendered string;
-% combined with \detokenize it works for arbitrary identifier text.
-\usepackage{seqsplit}
-\newcommand{\code}[1]{\texttt{\seqsplit{\detokenize{#1}}}}
+\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
 \newcommand{\lean}[1]{\par\smallskip\noindent\textbf{Lean target:} \code{#1}\par\smallskip}
 \newcommand{\depends}[1]{\par\smallskip\noindent\textbf{Depends on:} #1\par\smallskip}
 \newcommand{\todoformal}[1]{\par\smallskip\noindent\textbf{Formalization gap:} #1\par\smallskip}
