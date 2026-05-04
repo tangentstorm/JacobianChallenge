@@ -41,6 +41,8 @@ R5 & Hodge decomposition (Kähler) & \code{Jacobian.Analysis.HodgeDecomposition}
 R6 & Hodge / de Rham rank & \code{Jacobian.Analysis.HodgeDeRham} \\
 R7 & Dolbeault isomorphism & \code{Jacobian.Analysis.Dolbeault} \\
 R8 & Serre duality on a Riemann surface & \code{Jacobian.Analysis.SerreDuality} \\
+R9 & Bundled differential forms \(\Omega^{k}\) & \code{Jacobian.Analysis.BundledForms} \\
+R10 & Sobolev / elliptic regularity & \code{Jacobian.Analysis.SobolevElliptic} \\
 \end{tabular}
 \end{center}
 
@@ -1004,6 +1006,222 @@ Hodge package.
 \end{layman}
 
 %======================================================================
+\subsection{R9 — Bundled differential forms \(\Omega^{k}(M)\)}
+\label{subsec:gap-R9-bundled-forms}
+
+The headline says: for every smooth manifold \(M\) modelled on a real
+Banach space and every \(k \in \N\), there is a bundled \(\R\)-vector
+space \(\Omega^{k}(M)\) of smooth \(k\)-forms, equipped with the
+exterior derivative \(d\), wedge product \(\wedge\), pullback \(f^*\),
+and integration \(\int_M\), all simultaneously linear and natural and
+satisfying the standard identities \(d^{2}=0\), Leibniz, \(f^{*} \circ
+d = d \circ f^{*}\), and Stokes for closed manifolds.
+
+R9 is the \emph{single foundational sub-gap shared} by R4 (de Rham),
+R5 (Hodge decomposition), and R7 (Dolbeault).  It is promoted from
+``R4-sub-A'' in the previous round to its own top-level dep-graph node
+so that downstream consumers can depend on a single, named
+bundled-form package.
+
+\subsubsection*{Classical content}
+
+\begin{enumerate}
+\item \emph{\(\Omega^{k}(M)\) algebra.}  \(\Omega^{k}\) is a
+  \(C^{\infty}(M, \R)\)-module; \(\Omega^{0} = C^{\infty}(M, \R)\).
+\item \emph{Exterior derivative.}  \(d : \Omega^{k} \to \Omega^{k+1}\)
+  ℝ-linear, \(d^{2} = 0\), commutes with pullback.
+\item \emph{Wedge product.}  \(\wedge : \Omega^{p} \times \Omega^{q}
+  \to \Omega^{p+q}\), graded commutative
+  (\(\alpha \wedge \beta = (-1)^{pq} \beta \wedge \alpha\)) and Leibniz
+  (\(d(\alpha \wedge \beta) = d\alpha \wedge \beta + (-1)^{p}
+  \alpha \wedge d\beta\)).
+\item \emph{Pullback.}  \(f^{*} : \Omega^{k}(N) \to \Omega^{k}(M)\)
+  ℝ-linear, functorial, compatible with \(d\) and \(\wedge\).
+\item \emph{Integration.}  \(\int_{M} : \Omega^{n}(M) \to \R\) for
+  compact oriented \(n\)-manifolds; Stokes \(\int_{M} d\omega = 0\) on
+  closed manifolds.
+\end{enumerate}
+
+Plus the \emph{bigraded variant} for complex manifolds:
+\(\Omega^{k}(X) = \bigoplus_{p+q=k} \Omega^{p,q}(X)\) and
+\(d = \partial + \bar\partial\) (the prerequisite for R7).
+
+\subsubsection*{Lean proof plan}
+
+15 sub-leaves under
+\code{Jacobian.Analysis.BundledForms.Overview}.  Mathlib v4.28.0 has
+the underlying machinery — manifold derivative (\code{MFDeriv}),
+alternating multilinear maps, partitions of unity — but \emph{not} the
+integrated bundled-form package.  Estimated 400–600 LOC for a complete
+API.
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R9-sub-A.}  Bundled cotangent bundle infrastructure on a
+  manifold.  Mathlib has \code{TangentBundle}; the alternating-form
+  package on \(T^{*}M\) is missing.
+\item \textbf{R9-sub-B.}  Smooth-section infrastructure for a vector
+  bundle.  \code{Mathlib.Geometry.Manifold.VectorBundle.SmoothSection}
+  exists; the alternating-form variant is not yet packaged.
+\item \textbf{R9-sub-C.}  Chart-local description: in a chart,
+  \(\Omega^{k}(M)\) restricts to alternating \(k\)-multilinear maps on
+  \(\R^{n}\), with \(d\) given by partial derivatives.
+\end{itemize}
+
+\begin{theorem}[Gap R9: Bundled differential forms (independent placeholder)]
+\label{gap:R9-overview}
+\uses{gap:R4-overview,gap:R5-overview,gap:R7-overview}
+The Lean target
+\code{Jacobian.Analysis.BundledForms.bundled\_forms\_overview} states
+the existence of an \(\R\)-vector space \(\Omega^{k}(M)\) with the
+operations \(d\), \(\wedge\), pullback, and integration, all
+simultaneously linear and natural, with sub-leaves R9.1.1–R9.6.2
+tracked in \code{Jacobian/Analysis/BundledForms/Overview.lean}.
+\lean{JacobianChallenge.Analysis.BundledForms.bundled_forms_overview}
+\notready
+\end{theorem}
+
+\begin{layman}
+The simplest object in differential geometry is the smooth function
+on a manifold.  One step up: a smooth 1-form, which at each point
+pairs against tangent vectors to give a number.  Higher \(k\) packs
+alternating-multilinear data.  The whole tower
+\(\Omega^{0} \to \Omega^{1} \to \Omega^{2} \to \cdots\) carries the
+exterior derivative \(d\), the wedge product \(\wedge\), pullback by
+smooth maps, and (in top degree on a compact oriented manifold)
+integration.  These four operations interact via the standard
+identities \(d^{2}=0\), Leibniz, naturality, and Stokes that make
+differential forms the universal language of integration on
+manifolds.
+
+Mathlib has the underlying machinery — manifold derivative,
+alternating multilinear maps, partition-of-unity — but not the
+integrated bundled-form package.  R9 is what you need to state
+precisely ``the de Rham complex of \(M\),'' ``the exterior algebra
+of \(M\),'' ``Stokes' formula on \(M\).''  Without R9, every theorem
+about forms on a manifold has to talk around the missing object.
+About 400–600 LOC for a complete API; \emph{foundational for R4, R5,
+and R7 simultaneously}, which is why it gets its own node.
+\end{layman}
+
+%======================================================================
+\subsection{R10 — Sobolev / elliptic regularity}
+\label{subsec:gap-R10-sobolev-elliptic}
+
+The headline says: for a compact oriented Riemannian manifold \(M\)
+and \(k : \N\), the Sobolev space \(H^{s}(\Omega^{k}(M))\) is
+well-defined for every \(s : \R\), and the Laplace–Beltrami operator
+\(\Delta : H^{s+2}(\Omega^{k}) \to H^{s}(\Omega^{k})\) is
+\emph{Fredholm}.  Furthermore every distributional solution of
+\(\Delta\omega = f\) with smooth \(f\) is itself smooth (elliptic
+regularity).
+
+R10 is the \emph{single largest sub-gap} in the entire eight-node
+tree — estimated 2500–4000 LOC.  It underpins R5 (Hodge decomposition)
+and indirectly R7 (Dolbeault) and R8 (Serre duality via the
+\(L^{2}\)-pairing realised by harmonic representatives).  Promoted
+from ``R5-sub-B'' in the previous round to its own top-level
+dep-graph node because it is both shared and substantial.
+
+\subsubsection*{Classical content}
+
+\begin{enumerate}
+\item \emph{Sobolev framework.}  Define \(H^{s}(\Omega^{k}(M))\) for
+  \(s : \R\) using a partition of unity and chart-local Sobolev norms
+  on \(\R^{n}\).  Density of smooth forms; Sobolev embedding
+  \(H^{s} \hookrightarrow C^{0}\) for \(s > n/2\).
+\item \emph{Ellipticity of \(\Delta\).}  Principal symbol
+  \(\sigma_{\Delta}(\xi) = |\xi|^{2} \cdot \mathrm{id}\), invertible
+  for \(\xi \neq 0\).
+\item \emph{Elliptic regularity.}  Garding inequality:
+  \(\|\omega\|_{s+2} \leq C(\|\Delta\omega\|_{s} + \|\omega\|_{s})\).
+  Smooth forms remain smooth after applying \(\Delta\).
+\item \emph{Rellich--Kondrachov.}  On a compact manifold,
+  \(H^{s'} \hookrightarrow H^{s}\) is compact for \(s' > s\).
+\item \emph{Fredholm.}  Combining 3 + 4:
+  \(\Delta : H^{s+2}(\Omega^{k}) \to H^{s}(\Omega^{k})\) is Fredholm.
+  Hence the Hodge orthogonal decomposition
+  \(\Omega^{k}(M) = \mathcal{H}^{k}(M) \oplus d(\Omega^{k-1}) \oplus
+  \delta(\Omega^{k+1})\), with \(\mathcal{H}^{k}\) finite-dimensional.
+\item \emph{Bochner / Kähler identities.}  On a Kähler manifold the
+  Laplacians for \(d\), \(\partial\), \(\bar\partial\) are
+  proportional, refining R10 into the R5 bigrading.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+15 sub-leaves under
+\code{Jacobian.Analysis.SobolevElliptic.Overview}, in six phases.
+Mathlib v4.28.0 has Sobolev spaces on \(\R^{n}\)
+(\code{Mathlib.Analysis.Distribution.SchwartzSpace}) and the basic
+Cauchy--Schwarz / Bessel apparatus, but \emph{no manifold-level
+Sobolev theory} and \emph{no elliptic regularity for second-order
+operators} on a manifold.  Building this from scratch is a major
+undertaking — comparable in scope to formalising the basics of
+Riemannian geometry.
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R10-sub-A.}  Distribution theory on a smooth manifold
+  (the foundation of Sobolev spaces).  ~600 LOC.
+\item \textbf{R10-sub-B.}  The \(H^{s}\)-norm on \(\Omega^{k}(M)\):
+  chart-local construction + partition of unity.  ~500 LOC.
+\item \textbf{R10-sub-C.}  Garding inequality (Phase 3 prerequisite).
+  ~300 LOC.
+\item \textbf{R10-sub-D.}  Rellich--Kondrachov compactness theorem.
+  ~400 LOC.
+\item \textbf{R10-sub-E.}  Fredholm-alternative theorem on a compact
+  manifold.  ~300 LOC.
+\end{itemize}
+
+\begin{theorem}[Gap R10: Sobolev / elliptic regularity (independent placeholder)]
+\label{gap:R10-overview}
+\uses{gap:R5-overview,gap:R9-overview}
+The Lean target
+\code{Jacobian.Analysis.SobolevElliptic.sobolev\_elliptic\_overview}
+states the Fredholm property of the Laplacian on a compact Riemannian
+manifold; sub-leaves R10.1.1–R10.6.1 are tracked in
+\code{Jacobian/Analysis/SobolevElliptic/Overview.lean}.
+\lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_elliptic_overview}
+\notready
+\end{theorem}
+
+\begin{layman}
+When you ask ``does the equation \(\Delta\omega = f\) have a solution''
+on a compact manifold, you face a problem: smooth forms are not
+enough — the abstract solution operator (the inverse of \(\Delta\)
+modulo its kernel) doesn't act on smooth forms in a closed way.  The
+standard trick is to enlarge the space: replace \(\Omega^{k}(M)\) with
+the Sobolev space \(H^{s}(\Omega^{k}(M))\), where \(s\) measures the
+number of weak derivatives you allow.  In the larger space, \(\Delta :
+H^{s+2} \to H^{s}\) becomes a Fredholm operator — its kernel and
+cokernel are finite-dimensional, its range is closed — which is
+exactly what you need to invert it on the orthogonal complement of the
+kernel.
+
+The deep result is \emph{elliptic regularity}: even though you allowed
+yourself to enlarge the space, the actual solutions of \(\Delta\omega
+= f\) for smooth \(f\) end up being smooth themselves.  So at the end
+of the day you can think of \(\Delta\) as a Fredholm operator on
+smooth forms, with a finite-dimensional kernel (the harmonic forms)
+and a smooth inverse (the \emph{Green operator}) on the orthogonal
+complement.  This is what powers Hodge decomposition (R5), and through
+R5 the analytic-genus-equals-topological-genus identity (R6), and
+through harmonic-form representatives the non-degeneracy of the Serre
+pairing (R8).
+
+Mathlib has Sobolev spaces on \(\R^{n}\) and Schwartz distributions,
+but no manifold-level Sobolev theory and no elliptic regularity for
+second-order operators on a manifold.  Building this from scratch is
+the single largest budget item in the entire eight-gap tree —
+estimated 2500–4000 LOC for the headline package, plus 2000–3000 LOC
+for prerequisites.  It also has the deepest character: this is real
+hard analysis, not algebraic topology bookkeeping.
+\end{layman}
+
+%======================================================================
 \subsection{Summary of recursive sub-gaps}
 \label{subsec:gap-summary}
 
@@ -1021,18 +1239,29 @@ including all shared sub-gaps counted once, is:
 R1 + R1-sub-\{A,B,C\} & 2000--2700 \\
 R2 + R2-sub-\{A,B,C\} & 900--1100 \\
 R3 + R3-sub-\{A,B,C\} & 1500--2000 \\
-R4 + R4-sub-\{A,B,C\} & 2500--3500 \\
-R5 + R5-sub-\{A,B,C,D,E\} & 5500--8500 \\
+R4 (modulo R9) & 1500--2000 \\
+R5 (modulo R9, R10) + R5-sub-\{A,E\} & 1700--2500 \\
 R6 + R6-sub-\{A,B,C\} & 1100--1400 \\
-R7 + R7-sub-\{A,B,C,D\} & 2200--2900 \\
-R8 + R8-sub-\{A,B,C,D\} & 3300--4300 \\\hline
-\textbf{Total (with shared deduplication)} & \textbf{15000--22000 LOC} \\
+R7 (modulo R9, R10) + R7-sub-\{B,C,D\} & 1300--1700 \\
+R8 + R8-sub-\{A,B,C,D\} & 3300--4300 \\
+R9 + R9-sub-\{A,B,C\} & 800--1200 \\
+R10 + R10-sub-\{A,B,C,D,E\} & 4500--6500 \\\hline
+\textbf{Total (with shared deduplication)} & \textbf{18000--25000 LOC} \\
 \end{tabular}
 \end{center}
 
-The dominant single sub-gap is R5-sub-B (Sobolev / elliptic
-regularity for forms on a manifold), which alone is estimated at
-2500--4000 LOC and is on the critical path for both R5 and R7.
+The dominant single component is R10 (Sobolev / elliptic regularity for
+forms on a manifold), now its own dep-graph node, estimated at
+2500--4000 LOC for the headline plus 2000--2500 LOC for sub-gaps.
+R10 is on the critical path for R5 and (transitively) R7 + R8.
+
+R9 (bundled \(\Omega^{k}\)) is the second largest piece of shared
+infrastructure, on the critical path for R4, R5, and R7 simultaneously.
+
+R6 remains the most \emph{blocked}: it depends on R4, R5, and R7
+together, so it cannot land until all three are deep enough to expose
+their output statements.  R3 remains the most \emph{ready}: its Lean
+infrastructure is already largely in place.
 
 \bigskip
 

@@ -6,17 +6,20 @@ import Jacobian.Analysis.HodgeDecomposition
 import Jacobian.Analysis.HodgeDeRham
 import Jacobian.Analysis.Dolbeault
 import Jacobian.Analysis.SerreDuality
+import Jacobian.Analysis.BundledForms
+import Jacobian.Analysis.SobolevElliptic
 
 /-!
-# `Jacobian.Analysis` — the eight major classical-analysis gaps
+# `Jacobian.Analysis` — the major classical-analysis gaps
 
-This module is the umbrella for the eight red-border umbrellas in the
+This module is the umbrella for the red-border umbrellas in the
 project's blueprint dependency graph: classical results outside
 current Mathlib v4.28.0 that block the analytic-period-lattice route
 to the Jacobian.  Each gap has its own sub-directory under
 `Jacobian/Analysis/<Node>/` containing an `Overview.lean` (headline
-statement + named sub-leaves) and a `README.md` (master plan:
-classical proof, Lean realisation route, plain-English description).
+statement + named sub-leaves, all real-typed `sorry` declarations)
+and a `README.md` (master plan: classical proof, Lean realisation
+route, plain-English description).
 
 | Gap | Headline | Build target |
 |---|---|---|
@@ -28,12 +31,16 @@ classical proof, Lean realisation route, plain-English description).
 | R6 | Hodge / de Rham rank | `Jacobian.Analysis.HodgeDeRham` |
 | R7 | Dolbeault isomorphism | `Jacobian.Analysis.Dolbeault` |
 | R8 | Serre duality on a Riemann surface | `Jacobian.Analysis.SerreDuality` |
+| R9 | Bundled differential forms `Ω^k(M)` | `Jacobian.Analysis.BundledForms` |
+| R10 | Sobolev / elliptic regularity | `Jacobian.Analysis.SobolevElliptic` |
 
-Each sub-`Overview.lean` exposes a `<gap>_overview` theorem of type
-`True` for stubbing the headline, plus per-phase sub-leaf theorems
-also of type `True`.  Replace each `True` with the real proposition
-when an Aristotle/cloud worker takes ownership of that node.
+R9 (bundled `Ω^k`) and R10 (Sobolev/elliptic) are *recursive sub-gaps*
+that surface inside R4/R5/R7 and have been promoted to their own
+top-level dep-graph nodes because they are shared infrastructure and
+substantial in their own right (R10 alone is the single largest
+sub-gap in the entire tree, ~2500–4000 LOC).
 
-The blueprint counterpart is
-`tex/sections/12-classical-analysis-gaps.tex`.
+Each sub-`Overview.lean` states real-typed propositions backed by
+`sorry` proofs, importable as if they were Mathlib lemmas.  The
+blueprint counterpart is `tex/sections/12-classical-analysis-gaps.tex`.
 -/

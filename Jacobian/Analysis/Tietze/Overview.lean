@@ -1,101 +1,169 @@
+import Jacobian.Periods.EdgeWord
+import Jacobian.Periods.TietzeReduction
+import Jacobian.StageA.EdgeWordTietze
+
 /-!
 # R2 — Tietze normal form for orientable surface words
 
 Headline statement:
 
 > Every edge word arising from a polygonal presentation of a compact
-> connected orientable 2-manifold of genus `g` is Tietze-equivalent to
-> the standard relator
-> `a₁ b₁ a₁⁻¹ b₁⁻¹ ⋯ a_g b_g a_g⁻¹ b_g⁻¹`.
+> connected orientable 2-manifold of genus `g` is `TietzeEq` to the
+> standard relator `standardWord g`.
 
-This is the combinatorial heart of the topological-classification
-theorem (Brahana 1921, Seifert–Threlfall 1934).  Independent build
-target for the R2 classical-analysis gap.
-
-The pre-existing bottom-up scaffolding lives at
-`Jacobian/StageA/EdgeWordTietze.lean` (sketch) and the project-side
-combinatorial reduction at `Jacobian/Periods/TietzeReduction.lean`.
-
-**Status.** Every name below is a `True` placeholder; the headline
-realisation in `StageA.orientable_edgeWord_tietzeEq_standardWord`
-remains `sorry`.
+Independent build target for the R2 classical-analysis gap.  Real-typed
+`sorry` declarations on top of `Jacobian.Periods.EdgeWord` (which
+provides `EdgeWord`, `Letter`, `InverseCancel`, `HandleSwap`,
+`TietzeStep`, `TietzeEq`, `standardWord`) and
+`Jacobian.StageA.EdgeWordTietze` (algorithmic decomposition).
 -/
 
 namespace JacobianChallenge.Analysis.Tietze
 
-/-! ### Headline -/
+open JacobianChallenge.Periods JacobianChallenge.StageA
 
-/-- **R2 headline (placeholder type).**  Tietze normal form for the
-edge word of a compact connected orientable triangulated 2-manifold. -/
-theorem tietze_overview : True := trivial
+/-! ### Predicates -/
 
-/-! ### Sub-leaves — Phase 1: cyclic reduction -/
+/-- *Forward declaration.*  An edge word `w : EdgeWord g` is said to
+*arise from a polygonal presentation of an orientable surface* if the
+side-pairing quotient of the closed unit disk by `w` is homeomorphic
+to a compact connected oriented topological 2-manifold whose first
+Betti number is `2g`.  This file treats `ArisesFromOrientablePolygonalPresentation`
+as a placeholder predicate; the real content is supplied by R3. -/
+def ArisesFromOrientablePolygonalPresentation {g : ℕ} (_w : EdgeWord g) : Prop :=
+  ¬ EdgeWord.HasNonorientablePair _w
 
-/-- **R2.1.1.** Inverse-pair cancellation is a Tietze move: removing
-`ℓ ℓ⁻¹` from anywhere in a word produces a Tietze-equivalent word. -/
-theorem tietze_inverse_cancel_move : True := trivial
+/-! ### Headline (R2) -/
 
-/-- **R2.1.2.** Iterated inverse-pair cancellation reduces every word to
-a *cyclically reduced* form (no immediate inverse adjacencies, even
-across the cyclic seam). -/
-theorem tietze_cyclic_reduction : True := trivial
+/-- **R2 headline.** Every edge word arising from a polygonal
+presentation of a compact connected orientable 2-manifold of genus
+`g` is `TietzeEq` to the standard relator. -/
+theorem tietze_overview {g : ℕ} (w : EdgeWord g)
+    (_h : ArisesFromOrientablePolygonalPresentation w) :
+    EdgeWord.TietzeEq w (EdgeWord.standardWord g) :=
+  sorry
 
-/-! ### Sub-leaves — Phase 2: handle separation -/
+/-! ### Phase 1 — cyclic reduction -/
 
-/-- **R2.2.1.** A handle pair `a b a⁻¹ b⁻¹` can be cyclically rotated
-to a canonical four-letter block at any position. -/
-theorem tietze_handle_block_rotation : True := trivial
+/-- **R2.1.1.** Inverse-pair cancellation is a Tietze move:
+`InverseCancel` is a `TietzeStep`. -/
+theorem tietze_inverse_cancel_move {g : ℕ} {w v : EdgeWord g}
+    (h : EdgeWord.InverseCancel w v) :
+    EdgeWord.TietzeStep w v :=
+  EdgeWord.TietzeStep.cancel h
+
+/-- **R2.1.2.** Iterated inverse-pair cancellation reduces every word
+to a fully-reduced (no-cancel-applies) form. -/
+theorem tietze_cyclic_reduction {g : ℕ} (w : EdgeWord g) :
+    ∃ v : EdgeWord g,
+      EdgeWord.WordEq w v ∧ EdgeWord.IsFullyReduced v :=
+  exists_fullyReduced_form w
+
+/-! ### Phase 2 — handle separation -/
+
+/-- **R2.2.1.** A complete handle block of four letters can be
+cyclically rotated to any position by a finite sequence of
+`HandleSwap` moves. -/
+theorem tietze_handle_block_rotation {g : ℕ}
+    (xs : List (Letter g)) (ys : List (Letter g))
+    (h : List (Letter g)) (_hHandle : ∃ i : Fin g, h = EdgeWord.handleBlock i) :
+    EdgeWord.HandleSwap (xs ++ h ++ ys) (ys ++ h ++ xs) :=
+  sorry
 
 /-- **R2.2.2.** Two complete handle blocks may be permuted within the
-word (the *handle-swap* Tietze move). -/
-theorem tietze_handle_swap_move : True := trivial
+word: this is the `HandleSwap` Tietze move applied twice. -/
+theorem tietze_handle_swap_move {g : ℕ}
+    (xs ys h₁ h₂ : List (Letter g))
+    (_hH1 : ∃ i : Fin g, h₁ = EdgeWord.handleBlock i)
+    (_hH2 : ∃ i : Fin g, h₂ = EdgeWord.handleBlock i) :
+    EdgeWord.TietzeEq (xs ++ h₁ ++ h₂ ++ ys) (xs ++ h₂ ++ h₁ ++ ys) :=
+  sorry
 
-/-- **R2.2.3.** A pair of generators that occurs in the *non-standard*
-order (e.g. `a a` or `a⁻¹ a⁻¹` adjacent to mixed material) is reduced
-to a handle block by the *Brahana handle-creation* trick. -/
-theorem tietze_brahana_handle_creation : True := trivial
+/-- **R2.2.3 (Brahana handle creation).**  In a fully-reduced
+orientable word, there exists a `TietzeEq`-equivalent word that is in
+handle-grouped form (see `EdgeWord.IsHandleGrouped`). -/
+theorem tietze_brahana_handle_creation {g : ℕ} (w : EdgeWord g)
+    (hRed : EdgeWord.IsFullyReduced w)
+    (hOrient : ¬ EdgeWord.HasNonorientablePair w) :
+    ∃ v : EdgeWord g,
+      EdgeWord.TietzeEq w v ∧ EdgeWord.IsHandleGrouped v :=
+  orientable_word_handleSwap_to_grouped w hRed hOrient
 
-/-! ### Sub-leaves — Phase 3: orientability flag preservation -/
+/-! ### Phase 3 — orientability flag preservation -/
 
-/-- **R2.3.1.** Tietze moves preserve orientability of the underlying
-surface (every move acts on a presentation of the same fundamental
-group up to a controlled HNN extension). -/
-theorem tietze_moves_preserve_orientability : True := trivial
+/-- **R2.3.1.** Tietze moves preserve the absence of nonorientable
+pairs (an orientable word stays orientable under every move). -/
+theorem tietze_moves_preserve_orientability {g : ℕ} {w v : EdgeWord g}
+    (_h : EdgeWord.TietzeEq w v)
+    (hOrient : ¬ EdgeWord.HasNonorientablePair w) :
+    ¬ EdgeWord.HasNonorientablePair v :=
+  sorry
 
-/-- **R2.3.2.** An orientable cyclically reduced word is a concatenation
-of handle blocks (no `a a` blocks, no `a⁻¹ a⁻¹` blocks, all letters
-appear with one positive and one negative occurrence). -/
-theorem tietze_orientable_is_handle_concat : True := trivial
+/-- **R2.3.2.** A handle-grouped word with all four-letter blocks
+following the standard pattern is `IsStandardForm` after appropriate
+re-indexing. -/
+theorem tietze_orientable_is_handle_concat {g : ℕ} (w : EdgeWord g)
+    (_hG : EdgeWord.IsHandleGrouped w) :
+    ∃ v : EdgeWord g,
+      EdgeWord.TietzeEq w v ∧ v.IsStandardForm :=
+  sorry
 
-/-! ### Sub-leaves — Phase 4: induction on length -/
+/-! ### Phase 4 — induction on length -/
 
-/-- **R2.4.1.** A word of length 0 is trivially equal to the genus-0
-standard word (the empty word). -/
-theorem tietze_base_case_length_zero : True := trivial
+/-- **R2.4.1.** Base case: the empty edge word equals the standard
+word for genus 0. -/
+theorem tietze_base_case_length_zero :
+    ([] : EdgeWord 0) = EdgeWord.standardWord 0 := by
+  rfl
 
-/-- **R2.4.2.** A cyclically reduced orientable word of length `4(g+1)`
-strips off one handle block to a length-`4g` word, on which the IH
-applies. -/
-theorem tietze_strip_one_handle : True := trivial
+/-- **R2.4.2.** Strip-one-handle: a cyclically-reduced orientable word
+of length `4 (g + 1)` admits a `TietzeEq`-equivalent decomposition
+`block ++ rest` where `block` is one handle and `rest` has length
+`4 g`. -/
+theorem tietze_strip_one_handle {g : ℕ} (w : EdgeWord (g + 1))
+    (_hRed : EdgeWord.IsFullyReduced w)
+    (_hOrient : ¬ EdgeWord.HasNonorientablePair w)
+    (_hLen : w.length = 4 * (g + 1)) :
+    ∃ (i : Fin (g + 1)) (rest : List (Letter (g + 1))),
+      EdgeWord.TietzeEq w (EdgeWord.handleBlock i ++ rest) :=
+  sorry
 
-/-- **R2.4.3.** Inductive assembly: by R2.1.2 + R2.3.2 + R2.4.2,
+/-- **R2.4.3.** Inductive assembly combining R2.1.2 + R2.3 + R2.4.2:
 every orientable surface word reduces to the standard relator. -/
-theorem tietze_inductive_assembly : True := trivial
+theorem tietze_inductive_assembly {g : ℕ} (w : EdgeWord g)
+    (_h : ArisesFromOrientablePolygonalPresentation w) :
+    EdgeWord.TietzeEq w (EdgeWord.standardWord g) :=
+  sorry
 
-/-! ### Recursive sub-gaps surfaced
+/-! ### Recursive sub-gaps surfaced -/
 
-* **R2-sub-A.** Free-group presentation API on a finite alphabet.
-  Mathlib has `FreeGroup` but not the surface-presentation
-  `Presentation.{Sphere, Torus, Surface}` infrastructure.  Tracked
-  in `Jacobian/Periods/EdgeWord.lean` (project-side).
-* **R2-sub-B.** Cyclic-word equivalence on `List`.  Mathlib has
-  `List.IsRotated`; not the cyclic-cancellation closure.
-* **R2-sub-C.** Brahana–Seifert–Threlfall handle-creation lemma.
-  Pure combinatorics on `List Letter`; ~40 LOC of routine work but
-  needs the cyclic-rotation API of R2-sub-B. -/
+/-- **R2-sub-A.**  Free-group surface presentation API: every
+`EdgeWord` has a corresponding presentation in `FreeGroup`. -/
+theorem tietze_subgap_free_group_surface_presentation {g : ℕ}
+    (_w : EdgeWord g) :
+    ∃ _f : Letter g → FreeGroup (Fin (2 * g)), True :=
+  sorry
 
-theorem tietze_subgap_free_group_surface_presentation : True := trivial
-theorem tietze_subgap_cyclic_word_equivalence : True := trivial
-theorem tietze_subgap_brahana_handle_creation : True := trivial
+/-- **R2-sub-B.**  Cyclic-word equivalence: a rotation of an edge word
+is `TietzeEq` to the original (handle blocks rotate as units; non-handle
+rotations need cancellation moves). -/
+theorem tietze_subgap_cyclic_word_equivalence {g : ℕ}
+    (w : EdgeWord g) (k : ℕ) :
+    EdgeWord.TietzeEq w (w.rotate k) :=
+  sorry
+
+/-- **R2-sub-C.**  Brahana handle-creation lemma: the existence of a
+single Tietze-step decomposition that creates a handle block.
+Algorithmic core of R2.2.3. -/
+theorem tietze_subgap_brahana_handle_creation_step {g : ℕ}
+    (w : EdgeWord g) (i : Fin g)
+    (_hCount :
+      0 < (show List (Letter g) from w).count (Letter.a i) ∧
+      0 < (show List (Letter g) from w).count (Letter.aInv i)) :
+    ∃ v : EdgeWord g,
+      EdgeWord.TietzeEq w v ∧
+      ∃ xs ys : List (Letter g),
+        v = xs ++ EdgeWord.handleBlock i ++ ys :=
+  sorry
 
 end JacobianChallenge.Analysis.Tietze
