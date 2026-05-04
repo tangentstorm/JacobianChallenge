@@ -280,6 +280,7 @@ def lint_file(path: str) -> list[tuple[int, str, str]]:
     def fatal_codepoint(o: int) -> bool:
         return (0x2190 <= o <= 0x21FF or  # arrows
                 0x2200 <= o <= 0x22FF or  # math operators
+                0x2500 <= o <= 0x257F or  # box-drawing (breaks verbatim)
                 0x27F0 <= o <= 0x27FF or  # supplemental arrows-A
                 0x2900 <= o <= 0x297F or  # supplemental arrows-B
                 0x2A00 <= o <= 0x2AFF or  # supplemental math operators
