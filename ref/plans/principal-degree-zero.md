@@ -42,7 +42,7 @@ The residue route remains the canonical mathematical proof and is recorded in §
 | Local normal form `f(z) = a · z^e + …` for analytic `f` | PRESENT | `Mathlib.Analysis.Meromorphic.NormalForm` |
 | Compactness of `f⁻¹{y}` for nonconstant holomorphic `f : X → Y` (`X` compact RS) | ABSENT (consequence of compactness + isolated-zeros, but no library lemma) | — |
 | `BranchedCoverData` scaffold | PRESENT | `Sec02/BranchedDegree.lean` (this project) |
-| `branchedCoverData_of_nonconstant_holomorphic` | PARTIAL (named, `sorry`-bearing) | `Sec02/BranchedDegree.lean` leaf 8 |
+| `branchedCoverData_of_nonconstant_holomorphic` | PRESENT (proved relative to project-local `IsHolomorphic`) | `Sec02/BranchedDegreeFromHolomorphic.lean` leaf 8 |
 | `MeromorphicFunctionType` real germ-sheaf API | ABSENT | `Sec01/MeromorphicFunction.lean` is a `X → OnePoint ℂ` placeholder |
 | `vanishingOrder` chart-independence | PRESENT | `Jacobian/HolomorphicForms/VanishingOrder.lean` (`orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas`) |
 
@@ -53,7 +53,7 @@ Each leaf gets a stable Lean handle in `Sec01/PrincipalDegreeZero.lean`. Leaves 
 | # | Lean handle | Class | Sketch | Deps |
 |---|---|---|---|---|
 | 1 | `principalDivisor_zero_of_underlying_zero` | SHORT | When the projection `underlyingC f` is identically `0`, `principalDivisor X f = 0`, hence its degree is `0`. Direct from the `principalDivisor` `by_cases` branch. | `principalDivisor`, `Divisor.degree` |
-| 2 | `liftToCp1_branchedCoverData` | HARD | For nonzero nonconstant `f`, package `meromorphicToCp1 X f : X → OnePoint ℂ` as a `BranchedCoverData X (OnePoint ℂ) (meromorphicToCp1 X f)`. Reduces to the existing `branchedCoverData_of_nonconstant_holomorphic` (Sec02 leaf 8) once the holomorphicity hypothesis on `meromorphicToCp1` is wired up. | Sec02 leaf 8, `meromorphicToCp1`, `meromorphic_as_cp1_map` |
+| 2 | `liftToCp1_branchedCoverData` | HARD | For nonzero nonconstant `f`, package `meromorphicToCp1 X f : X → OnePoint ℂ` as a `BranchedCoverData X (OnePoint ℂ) (meromorphicToCp1 X f)`. As of R4 this is a proved assembly through `branchedCoverData_of_nonconstant_holomorphic`; the remaining content is the named CP¹-lift holomorphicity obligation. | `liftToCp1_isHolomorphic`, `meromorphicToCp1`, `meromorphic_as_cp1_map` |
 | 3 | `vanishingOrder_eq_ramificationIndex_at_zero` | HARD | For `p ∈ (meromorphicToCp1 X f)⁻¹{(0 : OnePoint ℂ)}`, `(vanishingOrder X p (underlyingC f)).untopD 0 = (h.ramificationIndex p : ℤ)`. Chart-local Laurent normal form: `f(z) = a · z^e + O(z^{e+1})` with `a ≠ 0`, `e = ramificationIndex`. | `meromorphicOrderAt`, `Mathlib.Analysis.Meromorphic.NormalForm` |
 | 4 | `vanishingOrder_eq_neg_ramificationIndex_at_pole` | HARD | Symmetric statement at poles: for `p ∈ (meromorphicToCp1 X f)⁻¹{(∞ : OnePoint ℂ)}`, `(vanishingOrder X p (underlyingC f)).untopD 0 = -(h.ramificationIndex p : ℤ)`. The chart on `OnePoint ℂ` at `∞` is `1/w`, so the normal form for `meromorphicToCp1 X f` near a pole becomes `f(z) = c · z^{−e} + …` with `c ≠ 0`. | `meromorphicOrderAt` (negative branch), chart on `OnePoint ℂ` at `∞` |
 | 5 | `principalDivisor_support_subset_zeros_union_poles` | MEDIUM | The `Finsupp` support of `principalDivisor X f` is contained in `(meromorphicToCp1 X f)⁻¹{0} ∪ (meromorphicToCp1 X f)⁻¹{∞}`. Equivalent to: outside the zero/pole locus, `vanishingOrder = 0` (the function is locally a nonvanishing holomorphic germ, whose Laurent order at every chart point is `0`). | `vanishingOrder` chart-independence, isolated-zeros |
@@ -92,13 +92,16 @@ R3 routes through `thm:stokes-on-rs-with-boundary` (eight sub-leaves) and the re
 - Leaf 6: ~80 LOC.
 - Leaf 7: ~30 LOC.
 
-Total ≈ 530 LOC, plus the transitive Sec02 leaf 8 (`branchedCoverData_of_nonconstant_holomorphic`, ~200–300 LOC) which this plan inherits as a dependency.
+Original estimate: ≈ 530 LOC, plus the then-transitive Sec02 leaf 8
+(`branchedCoverData_of_nonconstant_holomorphic`, ~200–300 LOC).  Sec02
+leaf 8 is now a proved constructor relative to project-local
+`IsHolomorphic`; the live transitive leaf is `liftToCp1_isHolomorphic`.
 
 ## 8. What is genuinely blocked
 
 After the scaffolding lands, the only remaining mathematical sorries on the path to `principal_degree_zero` are:
 
-- `branchedCoverData_of_nonconstant_holomorphic` (Sec02 leaf 8, HARD: open-mapping + isolated-zeros + compactness-of-fibres on a compact RS).
+- `liftToCp1_isHolomorphic` (Sec01 CP¹-lift leaf, HARD: chart-local holomorphicity and local-counting package for the meromorphic lift).
 - Leaves 3 + 4 (HARD: chart-local Laurent normal form + identification with ramification index).
 - Leaves 5 + 6 (MEDIUM: Finsupp / fibre algebra).
 
@@ -112,14 +115,11 @@ Subsequent rounds of TOPDOWN-style recursive refinement on the seven sub-leaves:
 
 ### Round R2
 
-- **Leaf 2 body discharged into a real assembly.** `liftToCp1_branchedCoverData` now reads
-  `branchedCoverData_of_nonconstant_holomorphic (meromorphicToCp1 X f) (liftToCp1_continuous X f hholo) trivial` —
-  the body is sorry-free; the only mathematical content remaining is the existing Sec02 leaf 8
-  (`branchedCoverData_of_nonconstant_holomorphic`) plus a new strictly-smaller named obligation
-  `liftToCp1_continuous` placed in `Sec01/MeromorphicToCp1.lean` ("the CP¹ lift of a
-  meromorphic function is continuous"). The relevant `[ConnectedSpace (OnePoint ℂ)]` instance
-  is provided by Mathlib via `[PreconnectedSpace ℂ] [NoncompactSpace ℂ]`, both already
-  inferable from the existing imports.
+- **Leaf 2 first refinement.** `liftToCp1_branchedCoverData` was moved toward an assembly
+  by isolating `liftToCp1_continuous` in `Sec01/MeromorphicToCp1.lean` ("the CP¹ lift of a
+  meromorphic function is continuous"). R4 supersedes the old constructor call shape: the
+  refined Sec02 constructor now takes the project-local `IsHolomorphic` package, so the live
+  named obligation is `liftToCp1_isHolomorphic`.
 - **Leaf 7 (umbrella) body now case-splits.** The constant-zero case is discharged sorry-free
   via leaf 1 (`principalDivisor_zero_of_underlying_zero`); the nonzero case is delegated to a
   new strictly-smaller named obligation `principal_degree_zero_of_nonzero` (leaf 7a) which
@@ -152,3 +152,87 @@ are now strictly smaller, better-named obligations one layer deeper.
 Net effect: same raw sorry count in `Sec01/PrincipalDegreeZero.lean` (6 → 6 — one of the
 6 is now the much smaller leaf 5a; one of the 6 is now the typeclass-instance `haveI` gap).
 Mathematical content is again strictly smaller and better-named.
+
+### Round R4
+
+- **Leaf 2 body discharged into a real assembly against the refined Sec02 constructor.**
+  `liftToCp1_branchedCoverData` now calls
+  `branchedCoverData_of_nonconstant_holomorphic (liftToCp1_isHolomorphic X f hholo)
+  hf_nonconstant`; the `BranchedCoverData` packaging no longer has its own `sorry`.
+- **New named sub-leaf `liftToCp1_isHolomorphic`.** This lives in
+  `Sec01/MeromorphicToCp1.lean` and isolates the analytic content that the CP¹ lift of a
+  meromorphic function is holomorphic in the project-local `HolomorphicMap.IsHolomorphic`
+  sense. The already-proved continuity theorem `liftToCp1_continuous` is documented as the
+  first field; the remaining chart-local analyticity and local-counting package are the
+  bottom-up content of this new obligation.
+
+Net effect: `Sec01/PrincipalDegreeZero.lean` sorry count drops 3 → 2; one new named
+obligation appears in `Sec01/MeromorphicToCp1.lean`. The total raw count on this branch is
+unchanged, but the former branched-cover packaging sorry is now a precise CP¹-lift
+holomorphicity theorem.
+
+### Round R5
+
+- **`liftToCp1_isHolomorphic` is now a sorry-free structure assembly.** Its continuity
+  field is discharged by `liftToCp1_continuous`, and its other fields delegate to three
+  named sub-obligations in `Sec01/MeromorphicToCp1.lean`.
+- **New CP¹-lift sub-obligations.**
+  `liftToCp1_holomorphicAt` isolates chart-local analyticity of the meromorphic lift;
+  `liftToCp1_local_kfold_ramified` isolates the local `k`-fold normal form/counting
+  theorem; `liftToCp1_weightedFiberSum_eventually_eq` isolates local conservation of
+  weighted fibre counts.
+
+Net effect: `liftToCp1_isHolomorphic` no longer has its own `sorry`; the raw count in
+`MeromorphicToCp1.lean` becomes 1 → 3, but the single bundled analytic package is split
+into three independently actionable theorem leaves. `PrincipalDegreeZero.lean` still has
+only leaves 3 and 4 as active local sorries.
+
+### Round R6
+
+- **Leaves 3 and 4 are now wrapper assemblies.** The public leaf statements still mention
+  `BranchedCoverData.ramificationIndex`, but their bodies unfold the Sec02 constructor and
+  delegate to primitive statements directly about
+  `mapAnalyticOrderAt (meromorphicToCp1 X f) p`.
+- **New primitive analytic leaves.**
+  `vanishingOrder_eq_mapAnalyticOrderAt_at_zero` is the finite-target-chart Laurent
+  normal-form statement at `0`; `vanishingOrder_eq_neg_mapAnalyticOrderAt_at_pole` is the
+  inversion-chart Laurent normal-form statement at `∞`.
+
+Net effect: `PrincipalDegreeZero.lean` still has two raw sorries, but they are no longer
+phrased through the branched-cover bundle. They are the exact local analytic comparisons
+between the divisor coefficient and the map analytic order.
+
+### Round R7
+
+- **`liftToCp1_holomorphicAt` is now a sorry-free case split.** Finite target values
+  delegate to `liftToCp1_holomorphicAt_finite`; pole values delegate to
+  `liftToCp1_holomorphicAt_infty`.
+- **New chart-local holomorphicity leaves.** The finite leaf is the analytic chart
+  statement for the ordinary ℂ-valued local branch of the meromorphic projection. The
+  infinity leaf is the corresponding reciprocal statement in the inversion chart at `∞`.
+
+Net effect: `MeromorphicToCp1.lean` raw sorry count becomes 3 → 4, but the
+holomorphic-at-every-point package is split into the two actual chart cases required by
+the CP¹ geometry.
+
+### Round R8
+
+- **`liftToCp1_local_kfold_ramified` is now a sorry-free case split.** Finite central
+  target values delegate to `liftToCp1_local_kfold_ramified_finite`; the pole case
+  delegates to `liftToCp1_local_kfold_ramified_infty`.
+- **New local mapping leaves.** These are the finite-chart and inversion-chart versions
+  of the local `k`-fold normal form/counting theorem for the meromorphic CP¹ lift.
+
+Net effect: `MeromorphicToCp1.lean` raw sorry count becomes 4 → 5, but the local
+counting package is now split by the same CP¹ chart cases as holomorphicity.
+
+### Round R9
+
+- **`liftToCp1_weightedFiberSum_eventually_eq` is now a sorry-free case split.** Finite
+  centre fibres delegate to `liftToCp1_weightedFiberSum_eventually_eq_finite`; the centre
+  fibre over `∞` delegates to `liftToCp1_weightedFiberSum_eventually_eq_infty`.
+- **New weighted-fibre leaves.** These are the finite-chart and inversion-chart forms of
+  local conservation of weighted fibre count for the meromorphic CP¹ lift.
+
+Net effect: `MeromorphicToCp1.lean` raw sorry count becomes 5 → 6, but every field of
+`liftToCp1_isHolomorphic` is now either proved or split into the two CP¹ chart cases.
