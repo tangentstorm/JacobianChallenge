@@ -132,16 +132,128 @@ matching the classical proof.
   example complex satisfies it requires assembled Phase~3.
 \end{itemize}
 
-\begin{theorem}[Gap R1: Radó's triangulation theorem (independent placeholder)]
-\label{gap:R1-overview}
-\uses{input:rado-triangulation}
+\begin{lemma}[Radó (assembly form): triangulation via PL atlas]
+\label{lem:rado-overview-stepwise}
+\uses{lem:rado-pl-atlas-exists,lem:rado-assembled-simplicial-complex,lem:rado-realisation-homeomorphism}
 The Lean target \code{Jacobian.Analysis.Rado.rado_overview} stubs
 the headline; its sub-leaves R1.1.1--R1.4.3 are tracked in
 \code{Jacobian.Analysis.Rado.Overview} and the bottom-up sketch
 under \code{Jacobian/StageA/RadoTheorem.lean}.
 \lean{JacobianChallenge.Analysis.Rado.rado_overview}
-\notready
-\end{theorem}
+\leanok
+\end{lemma}
+
+
+\subsubsection*{Stepwise refinement of the proof}
+
+Three rounds of top-down refinement decompose the assembly
+lemma above into named sub-leaves.  Each leaf carries a Lean
+declaration (or a Mathlib reference) and is annotated
+\code{\\leanok} when the Lean stub exists,
+\code{\\notready} when the statement is still a forward
+declaration, or \code{\\mathlibok} when it reduces to a
+Mathlib theorem.
+
+\begin{lemma}[Radó step 1: PL atlas exists (Phase 1+2)]
+\label{lem:rado-pl-atlas-exists}
+\uses{lem:rado-finite-disk-atlas,lem:rado-pl-refinement-induction}
+A compact connected oriented topological 2-manifold modelled on $\mathrm{EuclideanSpace}\,\R\,(\mathrm{Fin}\,2)$ admits a piecewise linear atlas: a finite disk atlas whose overlap maps are PL homeomorphisms.
+\lean{JacobianChallenge.Analysis.Rado.rado_pl_atlas_exists}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Finite disk atlas exists (compactness)]
+\label{lem:rado-finite-disk-atlas}
+A compact 2-manifold admits a finite atlas of disk charts in $\R^{2}$.
+\lean{JacobianChallenge.Analysis.Rado.rado_finite_disk_atlas}
+\leanok
+\end{lemma}
+
+\begin{lemma}[PL refinement induction]
+\label{lem:rado-pl-refinement-induction}
+\uses{lem:rado-dim2-pl-approx,lem:rado-pl-cocycle-preservation}
+Every finite disk atlas of a compact 2-manifold admits a PL refinement: a finite atlas with the same indexing whose chart overlaps are PL homeomorphisms.
+\lean{JacobianChallenge.Analysis.Rado.rado_pl_atlas_finite_induction}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Local PL approximation (Doyle–Moran, dim 2)]
+\label{lem:rado-dim2-pl-approx}
+Every homeomorphism between open subsets of $\R^{2}$ is uniformly PL-approximable in the compact-open distance.  This is the dimension-2 specific input.
+\lean{JacobianChallenge.Analysis.Rado.rado_dim2_local_pl_approx}
+\leanok
+\end{lemma}
+
+\begin{lemma}[PL cocycle preservation]
+\label{lem:rado-pl-cocycle-preservation}
+Modifying one chart of a PL atlas via a PL homeomorphism preserves the PL cocycle property of all previously-treated overlaps.
+\lean{JacobianChallenge.Analysis.Rado.rado_pl_cocycle_preservation}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Radó step 2: assembled simplicial complex (Phase 3)]
+\label{lem:rado-assembled-simplicial-complex}
+\uses{lem:rado-triangulate-each-chart,lem:rado-common-subdivision,lem:rado-edges-in-two-triangles,lem:rado-vertex-link-is-circle}
+From a PL atlas, one assembles a finite simplicial complex satisfying the combinatorial 2-manifold conditions.
+\lean{JacobianChallenge.Analysis.Rado.rado_assembled_simplicial_complex}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Triangulate each chart]
+\label{lem:rado-triangulate-each-chart}
+Each PL chart's image admits a triangulation as a pure-2-dimensional finite simplicial complex.
+\lean{JacobianChallenge.Analysis.Rado.rado_triangulate_each_chart}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Common subdivision over overlaps]
+\label{lem:rado-common-subdivision}
+Two chart triangulations admit a common subdivision on each overlap.
+\lean{JacobianChallenge.Analysis.Rado.rado_common_subdivision_overlaps}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Edge condition: each 1-simplex in two 2-simplices]
+\label{lem:rado-edges-in-two-triangles}
+In the assembled complex every 1-simplex is shared by exactly two 2-simplices.
+\lean{JacobianChallenge.Analysis.Rado.rado_assembled_edges_in_two_triangles}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Vertex condition: each link is a combinatorial circle]
+\label{lem:rado-vertex-link-is-circle}
+In the assembled complex every vertex link is a combinatorial circle.
+\lean{JacobianChallenge.Analysis.Rado.rado_assembled_vertex_link_is_circle}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Radó step 3: realisation homeomorphism (Phase 4)]
+\label{lem:rado-realisation-homeomorphism}
+\uses{lem:rado-glue-continuous,lem:rado-glue-bijective,lem:rado-promote-compact-T2}
+Given a compatible PL atlas and assembled combinatorial 2-manifold $K$, the chart-by-chart maps $M \to |K|$ glue into a homeomorphism $M \cong_{\mathrm{homeo}} |K|$.
+\lean{JacobianChallenge.Analysis.Rado.rado_realisation_homeomorphism}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Glued chart map is continuous]
+\label{lem:rado-glue-continuous}
+The chart-by-chart maps from $M$ to chunks of $|K|$ glue into a globally continuous map.
+\lean{JacobianChallenge.Analysis.Rado.rado_chart_homeo_glues_continuous}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Glued chart map is bijective]
+\label{lem:rado-glue-bijective}
+The glued map $M \to |K|$ is a bijection.
+\lean{JacobianChallenge.Analysis.Rado.rado_chart_homeo_glues_bijective}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Continuous bijection from compact to T2 is a homeomorphism]
+\label{lem:rado-promote-compact-T2}
+Mathlib lemma \code{Continuous.homeoOfEquivCompactToT2}: a continuous bijection from a compact space to a Hausdorff space is a homeomorphism.
+\mathlibok
+\end{lemma}
 
 \begin{layman}
 Radó's theorem says every compact two-dimensional surface — Riemann
@@ -239,16 +351,85 @@ Decomposed into 11 sub-leaves under
   LOC, but tricky.
 \end{itemize}
 
-\begin{theorem}[Gap R2: Tietze normal form (independent placeholder)]
-\label{gap:R2-overview}
-\uses{input:tietze-normal-form}
+\begin{lemma}[Tietze (assembly form): normal form via cyclic reduction + Brahana]
+\label{lem:tietze-overview-stepwise}
+\uses{lem:tietze-to-handle-grouped,lem:tietze-handle-grouped-to-standard}
 The Lean target \code{Jacobian.Analysis.Tietze.tietze_overview}
 stubs the headline; its sub-leaves R2.1.1--R2.4.3 are tracked in
 \code{Jacobian.Analysis.Tietze.Overview} alongside the bottom-up
 sketch in \code{Jacobian/StageA/EdgeWordTietze.lean}.
 \lean{JacobianChallenge.Analysis.Tietze.tietze_overview}
-\notready
-\end{theorem}
+\leanok
+\end{lemma}
+
+
+\subsubsection*{Stepwise refinement of the proof}
+
+Three rounds of top-down refinement decompose the assembly
+lemma above into named sub-leaves.  Each leaf carries a Lean
+declaration (or a Mathlib reference) and is annotated
+\code{\\leanok} when the Lean stub exists,
+\code{\\notready} when the statement is still a forward
+declaration, or \code{\\mathlibok} when it reduces to a
+Mathlib theorem.
+
+\begin{lemma}[Tietze step 1: cyclic reduction + Brahana-grouped form]
+\label{lem:tietze-to-handle-grouped}
+\uses{lem:tietze-cyclic-reduction,lem:tietze-brahana,lem:tietze-moves-preserve-orientability}
+Every word arising from an orientable polygonal presentation is `TietzeEq` to a handle-grouped word: a concatenation of four-letter handle blocks.
+\lean{JacobianChallenge.Analysis.Tietze.tietze_to_handle_grouped}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Cyclic reduction to fully-reduced form]
+\label{lem:tietze-cyclic-reduction}
+Every word reduces (via inverse-pair cancellations) to a `WordEq`-equivalent fully-reduced word.
+\lean{JacobianChallenge.Analysis.Tietze.tietze_cyclic_reduction}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Brahana handle creation]
+\label{lem:tietze-brahana}
+Every fully-reduced orientable word is `TietzeEq` to a handle-grouped word.
+\lean{JacobianChallenge.Analysis.Tietze.tietze_brahana_handle_creation}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Tietze moves preserve orientability]
+\label{lem:tietze-moves-preserve-orientability}
+Every Tietze move maps an orientable word (no nonorientable letter pair) to another orientable word.
+\lean{JacobianChallenge.Analysis.Tietze.tietze_moves_preserve_orientability}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Tietze step 2: handle-grouped to standard relator]
+\label{lem:tietze-handle-grouped-to-standard}
+\uses{lem:tietze-orientable-is-handle-concat,lem:tietze-handle-swap,lem:tietze-strip-one-handle}
+Every handle-grouped word is `TietzeEq` to the standard relator $\mathrm{standardWord}\,g$.
+\lean{JacobianChallenge.Analysis.Tietze.tietze_handle_grouped_to_standard}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Handle-grouped is concatenation of standard handle blocks]
+\label{lem:tietze-orientable-is-handle-concat}
+Every handle-grouped orientable word can be Tietze-reduced to one in standard form.
+\lean{JacobianChallenge.Analysis.Tietze.tietze_orientable_is_handle_concat}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Handle blocks may be permuted within a word]
+\label{lem:tietze-handle-swap}
+Two complete handle blocks may be permuted within a word via a `HandleSwap` Tietze step.
+\lean{JacobianChallenge.Analysis.Tietze.tietze_handle_swap_move}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Strip-one-handle (induction)]
+\label{lem:tietze-strip-one-handle}
+A cyclically-reduced orientable word of length $4(g+1)$ admits a `TietzeEq`-equivalent decomposition into a handle block followed by a length-$4g$ remainder.
+\lean{JacobianChallenge.Analysis.Tietze.tietze_strip_one_handle}
+\leanok
+\end{lemma}
 
 \begin{layman}
 Pretend you've cut a doughnut surface open along loops and laid it
@@ -361,16 +542,62 @@ sub-leaves for the \(g_{\mathrm{an}} = g_{\mathrm{top}}\) bridge:
   needs careful chart-management.
 \end{itemize}
 
-\begin{theorem}[Gap R3: Polygonal-model theorem (independent placeholder)]
-\label{gap:R3-overview}
-\uses{thm:polygonal-model,gap:R1-overview,gap:R2-overview}
+\begin{lemma}[Polygonal model (assembly form): via Radó + Tietze]
+\label{lem:polygonal-model-overview-stepwise}
+\uses{lem:polygonal-model-some-polygon-homeomorph,lem:polygonal-model-genus-matches}
 The Lean target
 \code{Jacobian.Analysis.PolygonalModel.polygonal_model_overview}
 stubs the headline; sub-leaves R3.1.1--R3.5.3 are tracked in
 \code{Jacobian.Analysis.PolygonalModel.Overview}.
 \lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_overview}
+\leanok
+\end{lemma}
+
+
+\subsubsection*{Stepwise refinement of the proof}
+
+Three rounds of top-down refinement decompose the assembly
+lemma above into named sub-leaves.  Each leaf carries a Lean
+declaration (or a Mathlib reference) and is annotated
+\code{\\leanok} when the Lean stub exists,
+\code{\\notready} when the statement is still a forward
+declaration, or \code{\\mathlibok} when it reduces to a
+Mathlib theorem.
+
+\begin{lemma}[Polygonal model step 1: existence of a polygonal homeomorphism]
+\label{lem:polygonal-model-some-polygon-homeomorph}
+\uses{input:rado-triangulation,input:tietze-normal-form,lem:polygonal-model-apply-rado,lem:polygonal-model-cut-along-tree,lem:polygonal-model-apply-tietze}
+From a compact connected oriented Riemann surface $Y$, one constructs $g' : \N$ and a homeomorphism $Y \cong_{\mathrm{homeo}} \mathrm{Polygon4g}(g')$.
+\lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_some_polygon_homeomorph}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Apply Radó to obtain a triangulation]
+\label{lem:polygonal-model-apply-rado}
+\uses{input:rado-triangulation}
+The underlying real 2-manifold structure of a Riemann surface admits a finite triangulation (Radó).
 \notready
-\end{theorem}
+\end{lemma}
+
+\begin{lemma}[Cut along a spanning tree of the 1-skeleton]
+\label{lem:polygonal-model-cut-along-tree}
+Cutting the triangulation along a spanning tree of its 1-skeleton produces a topological disk; its boundary walk is a length-$4g$ edge word in a four-letter alphabet.
+\notready
+\end{lemma}
+
+\begin{lemma}[Apply Tietze normal form to the boundary edge word]
+\label{lem:polygonal-model-apply-tietze}
+\uses{input:tietze-normal-form}
+The boundary edge word produced above is `TietzeEq` to the standard relator (Tietze).
+\notready
+\end{lemma}
+
+\begin{lemma}[Polygonal model step 2: genus matching]
+\label{lem:polygonal-model-genus-matches}
+The genus $g'$ produced by step 1 coincides with the analytic genus of $Y$.
+\lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_genus_matches}
+\leanok
+\end{lemma}
 
 \begin{layman}
 The polygonal model is the bridge between two pictures of a Riemann
@@ -477,16 +704,85 @@ Decomposed into 15 sub-leaves under
   (~500 LOC of foundational work — see R5).
 \end{itemize}
 
-\begin{theorem}[Gap R4: De Rham theorem (independent placeholder)]
-\label{gap:R4-overview}
-\uses{input:de-rham-theorem}
+\begin{lemma}[De Rham (assembly form): via good cover + Mayer–Vietoris]
+\label{lem:deRham-overview-stepwise}
+\uses{lem:deRham-integration-descends,lem:deRham-iso-via-good-cover}
 The Lean target \code{Jacobian.Analysis.DeRham.deRham_overview}
 stubs the headline; sub-leaves R4.1.1--R4.4.4 are tracked in
 \code{Jacobian.Analysis.DeRham.Overview} and the bottom-up sketch
 in \code{Jacobian/StageB/DeRhamComparison.lean}.
 \lean{JacobianChallenge.Analysis.DeRham.deRham_overview}
+\leanok
+\end{lemma}
+
+
+\subsubsection*{Stepwise refinement of the proof}
+
+Three rounds of top-down refinement decompose the assembly
+lemma above into named sub-leaves.  Each leaf carries a Lean
+declaration (or a Mathlib reference) and is annotated
+\code{\\leanok} when the Lean stub exists,
+\code{\\notready} when the statement is still a forward
+declaration, or \code{\\mathlibok} when it reduces to a
+Mathlib theorem.
+
+\begin{lemma}[De Rham step 1: integration descends to cohomology]
+\label{lem:deRham-integration-descends}
+\uses{input:bundled-omega-k,lem:deRham-integration-simplex,lem:deRham-stokes-simplex,lem:deRham-smooth-quasi-iso}
+Integration of forms over smooth singular chains gives a $\C$-linear map $H^{k}_{\mathrm{dR}}(M, \C) \to H^{k}_{\mathrm{sing}}(M, \C)$.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_integration_descends}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Integration is well-defined on smooth simplices]
+\label{lem:deRham-integration-simplex}
+Integration $\int_{\sigma} \omega$ is $\R$-linear in $\omega$ for every smooth singular simplex $\sigma$.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_integration_simplex}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Stokes for a simplex: $\int_{\sigma} d\omega = \int_{\partial\sigma} \omega$]
+\label{lem:deRham-stokes-simplex}
+Stokes' theorem on a smooth singular simplex.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_stokes_simplex}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Smooth-singular ↪ singular is a quasi-isomorphism]
+\label{lem:deRham-smooth-quasi-iso}
+The inclusion of smooth singular chains into singular chains is a chain-level quasi-isomorphism on a smooth manifold.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_smooth_singular_quasi_iso}
+\leanok
+\end{lemma}
+
+\begin{lemma}[De Rham step 2: comparison is iso via good covers]
+\label{lem:deRham-iso-via-good-cover}
+\uses{lem:deRham-mayer-vietoris,lem:deRham-good-cover-exists,lem:deRham-mayer-vietoris,lem:deRham-good-cover-exists,lem:deRham-five-lemma-induction}
+On a smooth manifold admitting a good cover, the integration map is an isomorphism on every degree.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_five_lemma_induction}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Mayer–Vietoris exact sequence (both theories)]
+\label{lem:deRham-mayer-vietoris}
+Both $H^{*}_{\mathrm{dR}}$ and $H^{*}_{\mathrm{sing}}$ satisfy the Mayer–Vietoris exact sequence under an open cover $M = U \cup V$.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_mayer_vietoris}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Existence of a good cover]
+\label{lem:deRham-good-cover-exists}
+Every smooth manifold admits a good cover (every finite intersection contractible), constructed from a Riemannian metric and convex normal-coordinate balls.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_good_cover_exists}
 \notready
-\end{theorem}
+\end{lemma}
+
+\begin{lemma}[Five-lemma induction over a finite good cover]
+\label{lem:deRham-five-lemma-induction}
+Over a finite good cover the integration map upgrades from per-chart isomorphisms to a global iso via Mayer–Vietoris and the five lemma.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_five_lemma_induction}
+\leanok
+\end{lemma}
 
 \begin{layman}
 There are two ways to count holes in a smooth manifold.  The
@@ -613,16 +909,85 @@ foundation.
   R5.5.1--R5.5.5.
 \end{itemize}
 
-\begin{theorem}[Gap R5: Hodge decomposition (independent placeholder)]
-\label{gap:R5-overview}
-\uses{input:hodge-decomposition}
+\begin{lemma}[Hodge decomposition (assembly form): via Fredholm Laplacian]
+\label{lem:hodge-decomposition-overview-stepwise}
+\uses{lem:hodge-laplacian-kernel-finite-dim,lem:hodge-deRham-iso-harmonic}
 The Lean target
 \code{Jacobian.Analysis.HodgeDecomposition.hodge_decomposition_overview}
 stubs the headline; sub-leaves R5.1.1--R5.6.2 are tracked in
 \code{Jacobian.Analysis.HodgeDecomposition.Overview}.
 \lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_decomposition_overview}
+\leanok
+\end{lemma}
+
+
+\subsubsection*{Stepwise refinement of the proof}
+
+Three rounds of top-down refinement decompose the assembly
+lemma above into named sub-leaves.  Each leaf carries a Lean
+declaration (or a Mathlib reference) and is annotated
+\code{\\leanok} when the Lean stub exists,
+\code{\\notready} when the statement is still a forward
+declaration, or \code{\\mathlibok} when it reduces to a
+Mathlib theorem.
+
+\begin{lemma}[Hodge step 1: harmonic kernel is finite-dimensional]
+\label{lem:hodge-laplacian-kernel-finite-dim}
+\uses{input:sobolev-elliptic-regularity,lem:hodge-laplacian-elliptic,lem:hodge-elliptic-regularity,lem:hodge-laplacian-fredholm}
+For a compact oriented Riemannian manifold $(M, g)$, the kernel of the Laplace–Beltrami operator on $\Omega^{k}(M)$ is finite-dimensional.
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_laplacian_kernel_finite_dim}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Laplacian is elliptic]
+\label{lem:hodge-laplacian-elliptic}
+The principal symbol of $\Delta = d\delta + \delta d$ is $|\xi|^{2} \cdot \mathrm{id}$, hence invertible for $\xi \neq 0$.
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_laplacian_elliptic}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Elliptic regularity (Sobolev)]
+\label{lem:hodge-elliptic-regularity}
+\uses{input:sobolev-elliptic-regularity}
+Smooth solutions of $\Delta\omega = f$ for smooth $f$ are smooth; the kernel of $\Delta$ over smooth forms equals the kernel over distributions.
 \notready
-\end{theorem}
+\end{lemma}
+
+\begin{lemma}[Fredholm property of $\Delta$]
+\label{lem:hodge-laplacian-fredholm}
+\uses{input:sobolev-elliptic-regularity}
+Combined ellipticity + Rellich–Kondrachov makes $\Delta : H^{s+2}(\Omega^{k}) \to H^{s}(\Omega^{k})$ Fredholm.
+\notready
+\end{lemma}
+
+\begin{lemma}[Hodge step 2: de Rham–harmonic isomorphism]
+\label{lem:hodge-deRham-iso-harmonic}
+\uses{lem:hodge-orthogonal-decomposition,lem:hodge-unique-harmonic-representative,lem:hodge-bigrading-split}
+Each de Rham cohomology class on a compact Riemannian manifold has a unique harmonic representative.
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_deRham_iso_harmonic}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Hodge $L^{2}$-orthogonal decomposition]
+\label{lem:hodge-orthogonal-decomposition}
+$\Omega^{k}(M) = \mathcal{H}^{k}(M) \oplus d(\Omega^{k-1}) \oplus \delta(\Omega^{k+1})$, $L^{2}$-orthogonally.
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_orthogonal_decomposition}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Each de Rham class has a harmonic representative]
+\label{lem:hodge-unique-harmonic-representative}
+The projection $\Omega^{k} \to \mathcal{H}^{k}$ descends to an iso $H^{k}_{\mathrm{dR}}(M) \cong \mathcal{H}^{k}(M)$.
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_unique_harmonic_representative}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Kähler bigrading of harmonic forms]
+\label{lem:hodge-bigrading-split}
+On a Kähler manifold the Laplacians for $d, \partial, \bar\partial$ are proportional, so $\mathcal{H}^{k} = \bigoplus_{p+q=k} \mathcal{H}^{p,q}$ with Hodge symmetry $\mathcal{H}^{p,q} \cong \overline{\mathcal{H}^{q,p}}$.
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_bigrading_split}
+\leanok
+\end{lemma}
 
 \begin{layman}
 The Hodge decomposition theorem is the most analytic of the eight
@@ -723,15 +1088,62 @@ isolation.
   the building blocks.
 \end{itemize}
 
-\begin{theorem}[Gap R6: Hodge / de Rham rank (independent placeholder)]
-\label{gap:R6-overview}
-\uses{input:hodge-deRham,gap:R4-overview,gap:R5-overview,gap:R7-overview}
+\begin{lemma}[Hodge / de Rham rank (assembly form): via classical chain]
+\label{lem:hodge-deRham-overview-stepwise}
+\uses{lem:hodge-deRham-dim-h1-dR,lem:hodge-deRham-rank-eq-dim}
 The Lean target \code{Jacobian.Analysis.HodgeDeRham.hodge_deRham_overview}
 stubs the headline; sub-leaves R6.1.1--R6.4.1 are tracked in
 \code{Jacobian.Analysis.HodgeDeRham.Overview}.
 \lean{JacobianChallenge.Analysis.HodgeDeRham.hodge_deRham_overview}
+\leanok
+\end{lemma}
+
+
+\subsubsection*{Stepwise refinement of the proof}
+
+Three rounds of top-down refinement decompose the assembly
+lemma above into named sub-leaves.  Each leaf carries a Lean
+declaration (or a Mathlib reference) and is annotated
+\code{\\leanok} when the Lean stub exists,
+\code{\\notready} when the statement is still a forward
+declaration, or \code{\\mathlibok} when it reduces to a
+Mathlib theorem.
+
+\begin{lemma}[Hodge / de Rham step 1: $\dim_{\C} H^{1}_{\mathrm{dR}}(X) = 2g$]
+\label{lem:hodge-deRham-dim-h1-dR}
+\uses{input:hodge-decomposition,input:dolbeault}
+Apply Hodge decomposition + Dolbeault: $H^{1}_{\mathrm{dR}}(X, \C) = H^{1,0}(X) \oplus H^{0,1}(X)$, both summands of dimension $g$.
+\lean{JacobianChallenge.Analysis.HodgeDeRham.hodge_deRham_dim_h1_dR}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Hodge / de Rham step 2: rank-via-dim universal coefficients]
+\label{lem:hodge-deRham-rank-eq-dim}
+\uses{input:de-rham-theorem,lem:hodge-deRham-uct-degree-one,lem:hodge-deRham-h1-fg,lem:hodge-deRham-hom-rank}
+Apply de Rham + UCT: $\mathrm{rank}_{\Z}\,H_{1}(X, \Z) = \dim_{\C}\,H^{1}_{\mathrm{dR}}(X)$.
+\lean{JacobianChallenge.Analysis.HodgeDeRham.hodge_deRham_rank_eq_dim}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Universal coefficients in degree 1 for a CW manifold]
+\label{lem:hodge-deRham-uct-degree-one}
+$H^{1}(X, \R) \cong \mathrm{Hom}(H_{1}(X, \Z), \R)$ on a compact CW manifold.
 \notready
-\end{theorem}
+\end{lemma}
+
+\begin{lemma}[$H_{1}(X, \Z)$ is finitely generated]
+\label{lem:hodge-deRham-h1-fg}
+$H_{1}(X, \Z)$ is finitely generated for a compact CW manifold (built from a triangulation, R1).
+\lean{JacobianChallenge.Analysis.HodgeDeRham.hodge_deRham_h1_fg}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Rank-Hom: $\dim_{\R}\,\mathrm{Hom}(A, \R) = \mathrm{rank}_{\Z}\,A$ for $A$ fg]
+\label{lem:hodge-deRham-hom-rank}
+Standard linear algebra over $\Z$: real-Hom dimension equals integer rank for a finitely-generated abelian group.
+\lean{JacobianChallenge.Analysis.HodgeDeRham.hodge_deRham_hom_dim_eq_rank}
+\leanok
+\end{lemma}
 
 \begin{layman}
 R6 is the simplest of the eight in terms of its own work, but it
@@ -837,15 +1249,55 @@ Decomposed into 12 sub-leaves under
   LOC.
 \end{itemize}
 
-\begin{theorem}[Gap R7: Dolbeault isomorphism (independent placeholder)]
-\label{gap:R7-overview}
-\uses{input:dolbeault}
+\begin{lemma}[Dolbeault (assembly form): via fine resolution]
+\label{lem:dolbeault-overview-stepwise}
+\uses{lem:dolbeault-fine-resolution,lem:dolbeault-fine-resolution-cohomology}
 The Lean target \code{Jacobian.Analysis.Dolbeault.dolbeault_overview}
 stubs the headline; sub-leaves R7.1.1--R7.4.3 are tracked in
 \code{Jacobian.Analysis.Dolbeault.Overview}.
 \lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_overview}
+\leanok
+\end{lemma}
+
+
+\subsubsection*{Stepwise refinement of the proof}
+
+Three rounds of top-down refinement decompose the assembly
+lemma above into named sub-leaves.  Each leaf carries a Lean
+declaration (or a Mathlib reference) and is annotated
+\code{\\leanok} when the Lean stub exists,
+\code{\\notready} when the statement is still a forward
+declaration, or \code{\\mathlibok} when it reduces to a
+Mathlib theorem.
+
+\begin{lemma}[Dolbeault step 1: fine resolution of $\Omega^{p}_{X}$]
+\label{lem:dolbeault-fine-resolution}
+\uses{input:bundled-omega-k,lem:dolbeault-dbar-poincare,lem:dolbeault-fine-sheaves}
+The Dolbeault sheaf complex $0 \to \Omega^{p}_{X} \to \Omega^{p,0} \to \Omega^{p,1} \to \cdots$ is a fine resolution of $\Omega^{p}_{X}$.
+\lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_resolution_is_fine}
+\leanok
+\end{lemma}
+
+\begin{lemma}[$\bar\partial$-Poincaré on a polydisk]
+\label{lem:dolbeault-dbar-poincare}
+On a polydisk $U \subseteq \C^{n}$, every $\bar\partial$-closed $(p, q)$-form with $q \geq 1$ is locally $\bar\partial$-exact.  One-variable case via Cauchy–Pompeiu.
+\lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_dbar_poincare}
 \notready
-\end{theorem}
+\end{lemma}
+
+\begin{lemma}[Each $\Omega^{p,q}$ is a fine sheaf]
+\label{lem:dolbeault-fine-sheaves}
+Smooth-form sheaves on a smooth manifold admit smooth partitions of unity, hence are fine.
+\lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_subgap_fine_sheaves}
+\notready
+\end{lemma}
+
+\begin{lemma}[Dolbeault step 2: sheaf cohomology computed via fine resolution]
+\label{lem:dolbeault-fine-resolution-cohomology}
+Sheaf cohomology of $\Omega^{p}_{X}$ agrees with the cohomology of any fine resolution; combined with step 1 this gives $H^{q}(X, \Omega^{p}_{X}) \cong H^{p,q}_{\bar\partial}(X)$.
+\lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_resolution_computes_sheaf_cohomology}
+\leanok
+\end{lemma}
 
 \begin{layman}
 On a complex manifold, differential forms split by bidegree:
@@ -957,17 +1409,72 @@ than the 13 listed here; the numbering above is the umbrella view.
   via harmonic forms, R8.4.2).  Bridges R5 + R7 + R8.  ~200 LOC.
 \end{itemize}
 
-\begin{theorem}[Gap R8: Serre duality (independent placeholder)]
-\label{gap:R8-overview}
-\uses{thm:serre-duality-rs,gap:R5-overview,gap:R7-overview}
+\begin{lemma}[Serre duality (assembly form): via $L^{2}$ harmonic pairing]
+\label{lem:serre-duality-overview-stepwise}
+\uses{lem:serre-pairing-construction,lem:serre-pairing-nondegenerate}
 The Lean target
 \code{Jacobian.Analysis.SerreDuality.serre_duality_overview} stubs
 the headline; sub-leaves R8.1.1--R8.5.3 are tracked in
 \code{Jacobian.Analysis.SerreDuality.Overview} and the 32-file
 Serre tree at \code{Jacobian/HolomorphicForms/Serre/}.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_duality_overview}
+\leanok
+\end{lemma}
+
+
+\subsubsection*{Stepwise refinement of the proof}
+
+Three rounds of top-down refinement decompose the assembly
+lemma above into named sub-leaves.  Each leaf carries a Lean
+declaration (or a Mathlib reference) and is annotated
+\code{\\leanok} when the Lean stub exists,
+\code{\\notready} when the statement is still a forward
+declaration, or \code{\\mathlibok} when it reduces to a
+Mathlib theorem.
+
+\begin{lemma}[Serre step 1: trace + cup-product pairing]
+\label{lem:serre-pairing-construction}
+\uses{lem:serre-trace-iso,lem:serre-cech-cup-product}
+On a compact Riemann surface, the cup-product / trace pairing $H^{q}(X, F) \times H^{1-q}(X, \mathcal{H}om(F, K_{X})) \to H^{1}(X, K_{X}) \xrightarrow{\mathrm{tr}} \C$ is well-defined.
+\lean{JacobianChallenge.Analysis.SerreDuality.serre_pairing_construction}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Trace map: $H^{1}(X, K_{X}) \cong \C$ via residues]
+\label{lem:serre-trace-iso}
+Aggregation of point residues into a Čech cohomology class gives an iso $H^{1}(X, K_{X}) \cong \C$.
+\lean{JacobianChallenge.Analysis.SerreDuality.serre_trace_iso}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Cup product on Čech cohomology]
+\label{lem:serre-cech-cup-product}
+The cup-product pairing $H^{q}(X, F) \otimes H^{1-q}(X, F^{\vee} \otimes K_{X}) \to H^{1}(X, K_{X})$ is well-defined.
+\lean{JacobianChallenge.Analysis.SerreDuality.serre_cup_product_def}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Serre step 2: non-degeneracy via $L^{2}$ harmonic pairing]
+\label{lem:serre-pairing-nondegenerate}
+\uses{input:hodge-decomposition,input:dolbeault,lem:serre-l2-realisation,lem:serre-residue-theorem}
+Identifying both sides of the pairing with harmonic-form spaces (R5 + R7), the pairing realises the $L^{2}$ inner product, which is positive-definite hence non-degenerate.
+\lean{JacobianChallenge.Analysis.SerreDuality.serre_pairing_via_hodge}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Harmonic representatives realise the pairing]
+\label{lem:serre-l2-realisation}
+Replacing both arguments by their harmonic representatives turns the cup product into the $L^{2}$ inner product on $\mathcal{H}^{p,q}$.
+\lean{JacobianChallenge.Analysis.SerreDuality.serre_subgap_l2_realisation}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Residue theorem (sum of residues equals zero)]
+\label{lem:serre-residue-theorem}
+On a compact Riemann surface the sum of residues of a global meromorphic 1-form is zero — the well-definedness lemma for the trace map.
+\lean{JacobianChallenge.Analysis.SerreDuality.serre_subgap_residue_theorem}
 \notready
-\end{theorem}
+\end{lemma}
 
 \begin{layman}
 Serre duality is a magical identity in complex algebraic geometry.
@@ -1069,9 +1576,9 @@ API.
   \(\R^{n}\), with \(d\) given by partial derivatives.
 \end{itemize}
 
-\begin{theorem}[Gap R9: Bundled differential forms (independent placeholder)]
-\label{gap:R9-overview}
-\uses{gap:R4-overview,gap:R5-overview,gap:R7-overview}
+\begin{classicalinput}[Classical input: bundled differential forms $\Omega^{k}(M)$]
+\label{input:bundled-omega-k}
+\uses{lem:bundled-forms-algebra,lem:bundled-forms-operations}
 The Lean target
 \code{Jacobian.Analysis.BundledForms.bundled\_forms\_overview} states
 the existence of an \(\R\)-vector space \(\Omega^{k}(M)\) with the
@@ -1079,8 +1586,47 @@ operations \(d\), \(\wedge\), pullback, and integration, all
 simultaneously linear and natural, with sub-leaves R9.1.1–R9.6.2
 tracked in \code{Jacobian/Analysis/BundledForms/Overview.lean}.
 \lean{JacobianChallenge.Analysis.BundledForms.bundled_forms_overview}
-\notready
-\end{theorem}
+\leanok
+\end{classicalinput}
+
+
+\subsubsection*{Stepwise refinement of the proof}
+
+Three rounds of top-down refinement decompose the assembly
+lemma above into named sub-leaves.  Each leaf carries a Lean
+declaration (or a Mathlib reference) and is annotated
+\code{\\leanok} when the Lean stub exists,
+\code{\\notready} when the statement is still a forward
+declaration, or \code{\\mathlibok} when it reduces to a
+Mathlib theorem.
+
+\begin{lemma}[Bundled forms step 1: $\Omega^{k}(M)$ algebra]
+\label{lem:bundled-forms-algebra}
+$\Omega^{k}(M)$ is an $\R$-vector space and a $C^{\infty}(M, \R)$-module.
+\lean{JacobianChallenge.Analysis.BundledForms.bundled_forms_algebra}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Bundled forms step 2: $d, \wedge$ ℝ-linear with the standard identities]
+\label{lem:bundled-forms-operations}
+\uses{lem:bundled-forms-d-sq-zero,lem:bundled-forms-pullback-compat}
+The exterior derivative $d : \Omega^{k} \to \Omega^{k+1}$ and wedge product $\wedge : \Omega^{p} \otimes \Omega^{q} \to \Omega^{p+q}$ exist as $\R$-linear / bilinear maps with $d^{2} = 0$, graded commutativity, and the Leibniz rule.
+\lean{JacobianChallenge.Analysis.BundledForms.bundled_forms_operations}
+\leanok
+\end{lemma}
+
+\begin{lemma}[$d^{2} = 0$]
+\label{lem:bundled-forms-d-sq-zero}
+\lean{JacobianChallenge.Analysis.BundledForms.bundled_forms_d_sq_zero}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pullback by smooth maps commutes with $d$]
+\label{lem:bundled-forms-pullback-compat}
+$f^{*} \circ d = d \circ f^{*}$ for every smooth map $f : M \to N$.
+\lean{JacobianChallenge.Analysis.BundledForms.bundled_forms_pullback_compat}
+\leanok
+\end{lemma}
 
 \begin{layman}
 The simplest object in differential geometry is the smooth function
@@ -1176,17 +1722,63 @@ Riemannian geometry.
   manifold.  ~300 LOC.
 \end{itemize}
 
-\begin{theorem}[Gap R10: Sobolev / elliptic regularity (independent placeholder)]
-\label{gap:R10-overview}
-\uses{gap:R5-overview,gap:R9-overview}
+\begin{classicalinput}[Classical input: Sobolev spaces and elliptic regularity for $\Delta$]
+\label{input:sobolev-elliptic-regularity}
+\uses{lem:sobolev-elliptic-kernel-finite-dim,lem:sobolev-fredholm-property}
 The Lean target
 \code{Jacobian.Analysis.SobolevElliptic.sobolev\_elliptic\_overview}
 states the Fredholm property of the Laplacian on a compact Riemannian
 manifold; sub-leaves R10.1.1–R10.6.1 are tracked in
 \code{Jacobian/Analysis/SobolevElliptic/Overview.lean}.
 \lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_elliptic_overview}
+\leanok
+\end{classicalinput}
+
+
+\subsubsection*{Stepwise refinement of the proof}
+
+Three rounds of top-down refinement decompose the assembly
+lemma above into named sub-leaves.  Each leaf carries a Lean
+declaration (or a Mathlib reference) and is annotated
+\code{\\leanok} when the Lean stub exists,
+\code{\\notready} when the statement is still a forward
+declaration, or \code{\\mathlibok} when it reduces to a
+Mathlib theorem.
+
+\begin{lemma}[Sobolev step 1: ellipticity + finite-dim kernel]
+\label{lem:sobolev-elliptic-kernel-finite-dim}
+\uses{lem:sobolev-laplacian-elliptic,lem:sobolev-garding,lem:sobolev-rellich-kondrachov}
+For a compact oriented Riemannian manifold, the Laplace–Beltrami operator $\Delta$ is elliptic and has finite-dimensional kernel.
+\lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_elliptic_kernel_finite_dim}
+\leanok
+\end{lemma}
+
+\begin{lemma}[$\Delta$ is elliptic]
+\label{lem:sobolev-laplacian-elliptic}
+\lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_laplacian_elliptic}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Garding inequality]
+\label{lem:sobolev-garding}
+$\|\omega\|_{s+2} \leq C(\|T\omega\|_{s} + \|\omega\|_{s})$ for elliptic $T$.
+\lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_garding}
 \notready
-\end{theorem}
+\end{lemma}
+
+\begin{lemma}[Rellich–Kondrachov compactness]
+\label{lem:sobolev-rellich-kondrachov}
+$H^{s'} \hookrightarrow H^{s}$ is compact for $s' > s$ on a compact manifold.
+\lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_rellich_kondrachov}
+\notready
+\end{lemma}
+
+\begin{lemma}[Sobolev step 2: Fredholm property of $\Delta$]
+\label{lem:sobolev-fredholm-property}
+From step 1 + Rellich–Kondrachov, $\Delta : H^{s+2}(\Omega^{k}) \to H^{s}(\Omega^{k})$ is Fredholm.
+\lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_fredholm_property}
+\leanok
+\end{lemma}
 
 \begin{layman}
 When you ask ``does the equation \(\Delta\omega = f\) have a solution''
