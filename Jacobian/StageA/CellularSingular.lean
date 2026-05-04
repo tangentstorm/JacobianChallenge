@@ -76,16 +76,24 @@ noncomputable instance (K : AbstractSimplicialComplex V) (n : ℕ) :
 
 /-! ### Comparison map -/
 
-/-- A barycentric point supported at a chosen vertex of an `n`-simplex. -/
+/-- A vertex of an `n`-simplex (as an element of `Geometric K = V`).
+
+After the StageA refactor `Geometric K := V`, this is simply a chosen
+vertex of the simplex; previously it returned a `BarycentricPoint K`. -/
 noncomputable def simplexVertexPoint
     (K : AbstractSimplicialComplex V) (n : ℕ)
     (s : K.nSimplices n) :
-    AbstractSimplicialComplex.Geometric K :=
-  AbstractSimplicialComplex.barycentricPointOfSimplex K s s.2.1
+    AbstractSimplicialComplex.Geometric K := by
+  classical
+  exact Classical.choose (K.nonempty_of_mem s.2.1)
 
 /-- The "characteristic singular simplex" of a simplicial `n`-simplex:
-the inclusion `Δⁿ ↪ |K|` realising `s` as a singular `n`-simplex. -/
+the inclusion `Δⁿ ↪ |K|` realising `s` as a singular `n`-simplex.
+
+Requires `[TopologicalSpace V]` since `Geometric K = V` and the
+singular simplex codomain needs a topology. -/
 noncomputable def simplexCharSingular
+    [TopologicalSpace V]
     (K : AbstractSimplicialComplex V) (n : ℕ)
     (_s : K.nSimplices n) :
     SingularSimplex (AbstractSimplicialComplex.Geometric K) n :=
@@ -110,7 +118,8 @@ theorem cellularToSingular_isChainMap
 The proof typically uses an iterated long-exact-sequence argument
 on the skeletal filtration of `|K|`, plus the *singular subdivision*
 operator (CW pair excision). -/
-theorem cellular_iso_singularH (K : AbstractSimplicialComplex V)
+theorem cellular_iso_singularH [TopologicalSpace V]
+    (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ] singularH1 (AbstractSimplicialComplex.Geometric K)) :=
   sorry
