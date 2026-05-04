@@ -1,6 +1,7 @@
 import Jacobian.StageB.LaplaceBeltrami
 import Jacobian.StageB.HarmonicForms
 import Jacobian.StageB.KahlerStructure
+import Jacobian.Analysis.HodgeDecomposition.AbstractHodgeComplex
 import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-!
@@ -15,12 +16,18 @@ Headline statement:
 > harmonic representative.  On a Kähler manifold harmonic forms split
 > by `(p,q)`-bidegree.
 
-Independent build target.  Real-typed `sorry` declarations on top of
-`Jacobian.StageB.LaplaceBeltrami` (`RiemannianMetric`, `hodgeStar`,
-`codifferential`, `laplaceBeltrami`),
-`Jacobian.StageB.HarmonicForms` (`Harmonic`, `greenOperator`,
-`hodge_decomposition`, `deRhamH_iso_Harmonic`), and
-`Jacobian.StageB.KahlerStructure` (`IsKahler`, `DolbeaultH`).
+Independent build target.  Sorry-free.  Two layers:
+
+* The Stage B placeholder layer (`Omega := PUnit`) — theorems hold
+  via subsingleton-collapse on `PUnit`.  These are scaffolding for
+  the eventual non-placeholder build.
+* The real layer (after `### Real-content Hodge decomposition`) —
+  theorems quantify over a generic finite-dim graded inner-product
+  complex `V₀ → V₁ → V₂` and dispatch via
+  `Jacobian.Analysis.HodgeDecomposition.AbstractHodgeComplex`,
+  which contains a Mathlib-backed proof of the finite-dim Hodge
+  decomposition (the algebraic core of R5 once `Δ` has finite-dim
+  kernel).
 -/
 
 namespace JacobianChallenge.Analysis.HodgeDecomposition
@@ -447,5 +454,87 @@ theorem hod_chain_dispatched [CompactSpace M] (n k : ℕ) :
     (∃ _S : Submodule ℝ (Omega (E := E) M k), True) :=
   ⟨laplaceBeltrami_elliptic_regularity (E := E) M n k,
    hodge_orthogonal_decomposition_dispatched (E := E) M n k⟩
+
+/-! ### Real-content Hodge decomposition
+
+The theorems above route through the Stage B placeholder types
+(`Omega := PUnit`), which makes their conclusions vacuous: any claim
+about a `PUnit`-valued type is true via subsingleton-collapse.
+
+The theorems below are **non-vacuous**.  They state the
+finite-dimensional Hodge decomposition (the algebraic core of R5)
+for a generic graded inner-product complex `V₀ → V₁ → V₂` with
+`d² = 0`, and dispatch via the real Mathlib-backed proof in
+`Jacobian.Analysis.HodgeDecomposition.AbstractHodgeComplex`.  This is
+exactly the statement that the analytic R5 reduces to once
+`Δ` has finite-dimensional kernel (elliptic regularity); the proof
+is independent of any placeholder.
+-/
+
+open JacobianChallenge.HodgeAbstract
+
+universe w
+
+variable {V₀ V₁ V₂ : Type w}
+  [NormedAddCommGroup V₀] [InnerProductSpace ℝ V₀] [FiniteDimensional ℝ V₀]
+  [NormedAddCommGroup V₁] [InnerProductSpace ℝ V₁] [FiniteDimensional ℝ V₁]
+  [NormedAddCommGroup V₂] [InnerProductSpace ℝ V₂] [FiniteDimensional ℝ V₂]
+
+/-- **R5 (real, finite-dim form).**  For a graded inner-product
+complex `V₀ → V₁ → V₂` over `ℝ` with `d² = 0`, the middle space
+splits orthogonally as `ker Δ ⊕ range d₀ ⊕ range d₁.adjoint`. -/
+theorem hodge_decomposition_real
+    (d₀ : V₀ →ₗ[ℝ] V₁) (d₁ : V₁ →ₗ[ℝ] V₂)
+    (h_d_sq : d₁ ∘ₗ d₀ = 0) :
+    IsCompl (LinearMap.ker (laplacian d₀ d₁))
+        (LinearMap.range d₀ ⊔ LinearMap.range d₁.adjoint) ∧
+    (LinearMap.range d₀) ⟂ (LinearMap.range d₁.adjoint) :=
+  hodge_decomposition_full d₀ d₁ h_d_sq
+
+/-- **R5 step A (real, finite-dim).**  The harmonic kernel
+`ker Δ = ker d₁ ∩ ker δ₀` is finite-dimensional.  Real proof: kernel
+of a linear map between finite-dim spaces is finite-dim. -/
+theorem hodge_laplacian_kernel_finite_dim_real
+    (d₀ : V₀ →ₗ[ℝ] V₁) (d₁ : V₁ →ₗ[ℝ] V₂) :
+    Module.Finite ℝ (LinearMap.ker (laplacian d₀ d₁)) :=
+  inferInstance
+
+/-- **R5 step B (real, finite-dim).**  The Laplacian is symmetric. -/
+theorem hodge_laplacian_isSymmetric_real
+    (d₀ : V₀ →ₗ[ℝ] V₁) (d₁ : V₁ →ₗ[ℝ] V₂) :
+    (laplacian d₀ d₁).IsSymmetric :=
+  laplacian_isSymmetric d₀ d₁
+
+/-- **R5 step C (real, finite-dim).**  Harmonic forms are closed and
+co-closed: `ker Δ = ker δ₀ ⊓ ker d₁`. -/
+theorem hodge_kernel_eq_real
+    (d₀ : V₀ →ₗ[ℝ] V₁) (d₁ : V₁ →ₗ[ℝ] V₂) :
+    LinearMap.ker (laplacian d₀ d₁) =
+      LinearMap.ker d₀.adjoint ⊓ LinearMap.ker d₁ :=
+  ker_laplacian_eq d₀ d₁
+
+/-- **R5 step D (real, finite-dim).**  `range d` and `range δ` are
+orthogonal whenever `d² = 0`. -/
+theorem hodge_range_orthogonal_real
+    (d₀ : V₀ →ₗ[ℝ] V₁) (d₁ : V₁ →ₗ[ℝ] V₂)
+    (h_d_sq : d₁ ∘ₗ d₀ = 0) :
+    (LinearMap.range d₀) ⟂ (LinearMap.range d₁.adjoint) :=
+  range_d_orthogonal_range_codiff d₀ d₁ h_d_sq
+
+/-! ### A concrete trivial instance
+
+Sanity check: the theorem applies to the trivial chain `ℝ → ℝ → ℝ`
+with all differentials zero.  Decomposition: `ℝ = ℝ ⊕ 0 ⊕ 0`.
+-/
+
+/-- The trivial real chain `ℝ → ℝ → ℝ` with `d₀ = d₁ = 0` is a
+finite-dim Hodge complex.  Its Hodge decomposition is
+`ℝ = ker Δ ⊕ 0`. -/
+theorem hodge_decomposition_trivial :
+    IsCompl
+      (LinearMap.ker (laplacian (0 : ℝ →ₗ[ℝ] ℝ) (0 : ℝ →ₗ[ℝ] ℝ)))
+      (LinearMap.range (0 : ℝ →ₗ[ℝ] ℝ) ⊔
+        LinearMap.range (LinearMap.adjoint (0 : ℝ →ₗ[ℝ] ℝ))) :=
+  (hodge_decomposition_real (0 : ℝ →ₗ[ℝ] ℝ) (0 : ℝ →ₗ[ℝ] ℝ) (by ext; simp)).1
 
 end JacobianChallenge.Analysis.HodgeDecomposition
