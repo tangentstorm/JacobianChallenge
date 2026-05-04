@@ -1,6 +1,7 @@
 import Jacobian.Analysis.BundledForms.Overview
 import Jacobian.Analysis.BundledForms.DSqZero
 import Jacobian.Analysis.BundledForms.Real
+import Jacobian.Analysis.BundledForms.OneForm
 
 /-!
 # R9 — Bundled differential forms (umbrella module)

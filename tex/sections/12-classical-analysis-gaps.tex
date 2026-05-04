@@ -3844,8 +3844,20 @@ R9-sub-A.
 \begin{lemma}[Pass J3.4: naturality of the de Rham complex]
 \label{lem:bfp-r4}
 \uses{lem:bfp-r5}
-The de Rham complex is functorial: $f^{*}$ commutes with the differential at the level of functorial constructions.
-\notready
+The de Rham complex is functorial: $f^{*}$ commutes with the
+differential at the level of functorial constructions.  Project-side
+dispatch for the $0\to 1$-form layer:
+\code{JacobianChallenge.Analysis.BundledForms.OneForm.pullback}
+(chart-local complex 1-forms),
+\code{JacobianChallenge.Analysis.BundledForms.OneForm.pullback\_add}
+and \code{pullback\_smul} ($\C$-linearity), and
+\code{JacobianChallenge.Analysis.BundledForms.OneForm.lineIntegral\_pullback}
+(integral-side substitution rule).  Together with
+\code{exteriorDerivativeZero\_pullbackZero} from Pass J3.3, this
+gives a closed sub-chain on the 0/1-form layer; $k\geq 2$ remains
+pending on R9-sub-A.
+\lean{JacobianChallenge.Analysis.BundledForms.OneForm.pullback}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass J3.5: Mathlib endpoint]
