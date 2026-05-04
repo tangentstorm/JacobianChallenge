@@ -4507,7 +4507,7 @@ $\ker\partial_{1}/\mathrm{im}\,\partial_{2}$ computes to $\Z^{2g}$ (relator is i
 % --------------------------------------------------------------
 \subsubsection*{Round 2: refine hdr-r5 into Mathlib (5 more passes)}
 
-The Lean side of the rank-Hom claim sidesteps the structure-theorem split by working directly on the free part: for the application $A = H_1(X,\Z)$ we already have $A$ free (`IntegralOneCycle\_torsionFree`), so the splitting $A = \Z^r \oplus T$ collapses to $A = \Z^r$.  Round 2 refines the free-case identity $\dim_\R \mathrm{Hom}_\Z(\Z^r, \R) = r$ via the basis-evaluation linear equivalence supplied by \code{Module.Basis.constr}.
+The Lean side of the rank-Hom claim sidesteps the structure-theorem split by working directly on the free part: for the application $A = H_1(X,\Z)$ we already have $A$ free (\code{IntegralOneCycle_torsionFree}), so the splitting $A = \Z^r \oplus T$ collapses to $A = \Z^r$.  Round 2 refines the free-case identity $\dim_\R \mathrm{Hom}_\Z(\Z^r, \R) = r$ via the basis-evaluation linear equivalence supplied by \code{Module.Basis.constr}.
 
 \begin{lemma}[Pass hdr.6: free f.g.\ $\Z$-module has a $\Z$-basis indexed by $\mathrm{Fin}\,r$]
 \label{lem:hdr-r6}
@@ -4520,32 +4520,32 @@ For a $\Z$-module $M$ with $[\,\mathrm{Module.Free}\ \Z\ M\,]$ and $[\,\mathrm{M
 \begin{lemma}[Pass hdr.7: basis-evaluation $\R$-linear equivalence]
 \label{lem:hdr-r7}
 \uses{lem:hdr-r8}
-For a basis $b : \mathrm{Fin}\,r \to M$ over $\Z$, the evaluation map $\mathrm{Hom}_\Z(M,\R) \to (\mathrm{Fin}\,r \to \R)$, $\varphi \mapsto \varphi \circ b$, is an $\R$-linear isomorphism (`(b.constr \R).symm`).  Both sides are $\R$-modules; the source is $\R$-linear because the codomain $\R$ is, and the bijection follows from the universal property of a basis (a $\Z$-linear map out of $M$ is determined by, and freely chosen by, its values on the basis).
-\lean{JacobianChallenge.Periods.homℤℝ\_basis\_evaluation\_isLinearEquivℝ}
+For a basis $b : \mathrm{Fin}\,r \to M$ over $\Z$, the evaluation map $\mathrm{Hom}_\Z(M,\R) \to (\mathrm{Fin}\,r \to \R)$, $\varphi \mapsto \varphi \circ b$, is an $\R$-linear isomorphism (\code{(b.constr ℝ).symm}).  Both sides are $\R$-modules; the source is $\R$-linear because the codomain $\R$ is, and the bijection follows from the universal property of a basis (a $\Z$-linear map out of $M$ is determined by, and freely chosen by, its values on the basis).
+\lean{JacobianChallenge.Periods.homℤℝ_basis_evaluation_isLinearEquivℝ}
 \leanok
 \end{lemma}
 
 \begin{lemma}[Pass hdr.8: $\dim_\R(\mathrm{Fin}\,r \to \R) = r$]
 \label{lem:hdr-r8}
 \uses{lem:hdr-r9}
-The space of functions from a finite index set of cardinality $r$ to $\R$ is $\R^r$, with the canonical basis of indicator functions; its $\R$-dimension is $r$.  Mathlib: \code{Module.finrank\_fin\_fun} (Mathlib v4.28.0, present).
-\lean{Module.finrank\_fin\_fun}
+The space of functions from a finite index set of cardinality $r$ to $\R$ is $\R^r$, with the canonical basis of indicator functions; its $\R$-dimension is $r$.  Mathlib: \code{Module.finrank_fin_fun} (Mathlib v4.28.0, present).
+\lean{Module.finrank_fin_fun}
 \leanok\mathlibok
 \end{lemma}
 
 \begin{lemma}[Pass hdr.9: assembled finrank identity for free f.g.\ $M$]
 \label{lem:hdr-r9}
 \uses{lem:hdr-r10}
-Combine hdr.6 (basis $b$ of cardinality $r = \mathrm{finrank}_\Z M$), hdr.7 (linear equivalence $\mathrm{Hom}_\Z(M,\R) \simeq_{\R} (\mathrm{Fin}\,r \to \R)$), \code{LinearEquiv.finrank\_eq} (linear equivalences preserve $\mathrm{finrank}$), and hdr.8 to obtain $\mathrm{finrank}_\R \mathrm{Hom}_\Z(M,\R) = r = \mathrm{finrank}_\Z M$.
-\lean{JacobianChallenge.Periods.finrank\_homℤℝ\_eq\_finrank\_of\_free\_via\_basis}
+Combine hdr.6 (basis $b$ of cardinality $r = \mathrm{finrank}_\Z M$), hdr.7 (linear equivalence $\mathrm{Hom}_\Z(M,\R) \simeq_{\R} (\mathrm{Fin}\,r \to \R)$), \code{LinearEquiv.finrank_eq} (linear equivalences preserve $\mathrm{finrank}$), and hdr.8 to obtain $\mathrm{finrank}_\R \mathrm{Hom}_\Z(M,\R) = r = \mathrm{finrank}_\Z M$.
+\lean{JacobianChallenge.Periods.finrank_homℤℝ_eq_finrank_of_free_via_basis}
 \leanok
 \end{lemma}
 
 \begin{lemma}[Pass hdr.10: Mathlib endpoint]
 \label{lem:hdr-r10}
-\code{Module.finBasis}, \code{Module.Basis.constr}, \code{LinearEquiv.finrank\_eq}, \code{Module.finrank\_fin\_fun} are all present in Mathlib v4.28.0.  Round 2 of hdr is sorry-free in Lean (cf.\ \code{Jacobian.Periods.FreeModuleHomFinrank}).  Mathlib status: present.
+\code{Module.finBasis}, \code{Module.Basis.constr}, \code{LinearEquiv.finrank_eq}, \code{Module.finrank_fin_fun} are all present in Mathlib v4.28.0.  Round 2 of hdr is sorry-free in Lean (cf.\ \code{Jacobian.Periods.FreeModuleHomFinrank}).  Mathlib status: present.
 \uses{lem:hdr-r11}
-\lean{JacobianChallenge.Periods.finrank\_homℤℝ\_eq\_finrank\_of\_free\_via\_basis}
+\lean{JacobianChallenge.Periods.finrank_homℤℝ_eq_finrank_of_free_via_basis}
 \leanok\mathlibok
 \end{lemma}
 
@@ -5683,7 +5683,7 @@ Round 2 ended at the level ``free f.g.\ $\Z$-module $M$, $\dim_\R \mathrm{Hom}_\
 \begin{lemma}[Pass hdr.11: \code{Module.Free} + \code{Module.Finite} produces an explicit basis]
 \label{lem:hdr-r11}
 \uses{lem:hdr-r12}
-\code{Module.finBasis : (R : Type*) (M : Type*) [Ring R] [AddCommGroup M] [Module R M] [Module.Free R M] [Module.Finite R M] \to Module.Basis (Fin (Module.finrank R M)) R M}.  This is the constructive $\mathrm{Fin}$-indexing of any finite-rank free basis; its existence is the standard ``Module.Free + Module.Finite produces a finite basis'' lemma in Mathlib.
+\code{Module.finBasis} produces a basis indexed by $\mathrm{Fin}\,(\mathrm{Module.finrank}\,R\,M)$ for any $R$-module $M$ that is both \code{Module.Free} and \code{Module.Finite}.  This is the constructive $\mathrm{Fin}$-indexing of any finite-rank free basis; its existence is the standard ``Module.Free + Module.Finite produces a finite basis'' lemma in Mathlib.
 \lean{Module.finBasis}
 \leanok\mathlibok
 \end{lemma}
@@ -5696,26 +5696,26 @@ For a basis $b : \iota \to M$ over $R$ and any $R$-module $N$, \code{Module.Basi
 \leanok\mathlibok
 \end{lemma}
 
-\begin{lemma}[Pass hdr.13: \code{LinearEquiv.finrank\_eq} transfers $\mathrm{finrank}$]
+\begin{lemma}[Pass hdr.13: \code{LinearEquiv.finrank_eq} transfers $\mathrm{finrank}$]
 \label{lem:hdr-r13}
 \uses{lem:hdr-r14}
-A linear equivalence between two $R$-modules forces equal $\mathrm{Module.finrank}$.  Mathlib: \code{LinearEquiv.finrank\_eq} (present).  This is what lets us replace $\mathrm{finrank}_\R(M \to_\Z \R)$ with $\mathrm{finrank}_\R(\mathrm{Fin}\,r \to \R)$ once we have the equivalence from hdr.12.
-\lean{LinearEquiv.finrank\_eq}
+A linear equivalence between two $R$-modules forces equal $\mathrm{Module.finrank}$.  Mathlib: \code{LinearEquiv.finrank_eq} (present).  This is what lets us replace $\mathrm{finrank}_\R(M \to_\Z \R)$ with $\mathrm{finrank}_\R(\mathrm{Fin}\,r \to \R)$ once we have the equivalence from hdr.12.
+\lean{LinearEquiv.finrank_eq}
 \leanok\mathlibok
 \end{lemma}
 
 \begin{lemma}[Pass hdr.14: $\mathrm{finrank}_\R(\mathrm{Fin}\,r \to \R) = r$]
 \label{lem:hdr-r14}
 \uses{lem:hdr-r15}
-For any commutative semiring $R$ and natural $n$, $\mathrm{Module.finrank}\ R\ (\mathrm{Fin}\,n \to R) = n$.  Mathlib: \code{Module.finrank\_fin\_fun} (Mathlib v4.28.0, present); proved as a one-line specialisation of \code{Module.finrank\_pi}.
-\lean{Module.finrank\_fin\_fun}
+For any commutative semiring $R$ and natural $n$, $\mathrm{Module.finrank}\ R\ (\mathrm{Fin}\,n \to R) = n$.  Mathlib: \code{Module.finrank_fin_fun} (Mathlib v4.28.0, present); proved as a one-line specialisation of \code{Module.finrank_pi}.
+\lean{Module.finrank_fin_fun}
 \leanok\mathlibok
 \end{lemma}
 
 \begin{lemma}[Pass hdr.15: Mathlib endpoint]
 \label{lem:hdr-r15}
-All four ingredients (\code{Module.finBasis}, \code{Module.Basis.constr}, \code{LinearEquiv.finrank\_eq}, \code{Module.finrank\_fin\_fun}) are present in Mathlib v4.28.0.  The Lean assembly \code{JacobianChallenge.Periods.finrank\_homℤℝ\_eq\_finrank\_of\_free\_via\_basis} chains them in $\sim 30$ lines and is sorry-free.  Mathlib status: present.
-\lean{JacobianChallenge.Periods.finrank\_homℤℝ\_eq\_finrank\_of\_free\_via\_basis}
+All four ingredients (\code{Module.finBasis}, \code{Module.Basis.constr}, \code{LinearEquiv.finrank_eq}, \code{Module.finrank_fin_fun}) are present in Mathlib v4.28.0.  The Lean assembly \code{JacobianChallenge.Periods.finrank_homℤℝ_eq_finrank_of_free_via_basis} chains them in $\sim 30$ lines and is sorry-free.  Mathlib status: present.
+\lean{JacobianChallenge.Periods.finrank_homℤℝ_eq_finrank_of_free_via_basis}
 \leanok\mathlibok
 \end{lemma}
 
