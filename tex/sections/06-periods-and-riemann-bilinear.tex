@@ -438,6 +438,22 @@ Locally \(\omega = h(z)\,dz\), so
 which is a nonnegative volume form, strictly positive at any point
 where \(\omega\) is nonzero. Integrate over \(X\) and use connectedness
 to conclude positivity.
+
+The Lean target is decomposed (round 1) into 4 sub-leaves in
+\code{Jacobian/Blueprint/Sec03/HermitianPositivity.lean}, three of
+which are sorry-free real-claim Mathlib-arithmetic lemmas:
+\code{wedge\_chart\_coefficient\_nonneg} (sub-leaf 1, pointwise
+\(2|h(z)|^2 \ge 0\)),
+\code{wedge\_chart\_coefficient\_pos\_of\_ne\_zero} (sub-leaf 2,
+strict positivity at \(h(z)\ne0\)), and
+\code{wedge\_chart\_coefficient\_eq\_two\_normSq} (sub-leaf 3, the
+\(\|\sqrt 2 \cdot h(z)\|^2\) repackaging used by the Hodge route).
+The fourth, \code{nonzero\_holomorphic\_form\_has\_nonzero\_chart\_value},
+is the frontier obligation (existence of a chart with nonzero
+coefficient), blocked on the
+\code{integrateTwoForm} API shared with
+\ref{thm:stokes-on-rs-with-boundary}. The headline
+\code{hermitian\_positivity} is a sorry-free assembly of the four.
 \end{proofsketch}
 
 \begin{theorem}[Period vectors have full real rank]
