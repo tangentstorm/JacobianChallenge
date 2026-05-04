@@ -257,6 +257,31 @@ closed (Lemma~\ref{lem:holomorphic-form-is-closed}). Stokes' theorem
 a closed form over a boundary vanishes.
 \end{proof}
 
+\begin{proofsketch}
+The Lean target
+\code{JacobianChallenge.Periods.period\_homology\_invariance\_statement}
+is sorry-free at the typed layer (\code{IntegralOneCycle X = H\textsubscript{1}(X, \Z)} so
+the conclusion is \code{congrArg}). The mathematical content is paid
+in the descent obligation
+\code{period\_homology\_invariance\_descent} in
+\code{Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean}, decomposed
+across rounds 1--12 into a tree of named sub-leaves: sub-leaf~A
+(\code{exists\_singularChain\_integration}) for chain-level
+integration of holomorphic 1-forms, with chart-cover existence and
+partition-independence pieces; sub-leaf~B
+(\code{holomorphicForm\_closed\_chain\_integral}) for ``closed
+forms'' via \code{holomorphic\_form\_is\_closed}; sub-leaf~C
+(\code{stokes\_chain\_integral\_boundary}) for chain-level Stokes,
+forwarding to \code{stokes\_on\_rs\_with\_boundary}; and sub-leaf~D
+(\code{chainIntegral\_kills\_boundary\_of\_closed},
+\code{chain\_integration\_kills\_boundary}) for the
+\(I \circ \partial_2 = 0\) vanishing assembled from B+C. Each
+sub-leaf is independently attackable; the live frontier sorries are
+in the upstream stubs (Stokes-on-RS-with-boundary,
+holomorphic-form-is-closed) which themselves are recursively
+decomposed.
+\end{proofsketch}
+
 \begin{lemma}[Holomorphic 1-forms are closed]
 \label{lem:holomorphic-form-is-closed}
 For \(\omega\in\HX\), \(d\omega=0\).
