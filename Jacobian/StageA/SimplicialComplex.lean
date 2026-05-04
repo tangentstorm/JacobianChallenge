@@ -145,7 +145,12 @@ instance instTopologicalSpace : TopologicalSpace (Geometric K) := by
 barycentric-coordinate "signatures" on at least one vertex. -/
 theorem barycentric_distinct_separates (p q : BarycentricPoint K)
     (_h : p.coords ≠ q.coords) :
-    ∃ v : V, p.coords v ≠ q.coords v := sorry
+    ∃ v : V, p.coords v ≠ q.coords v := by
+  by_contra hnone
+  apply _h
+  funext v
+  by_contra hv
+  exact hnone ⟨v, hv⟩
 
 /-- **Round 2.** *Sub-leaf:* a vertex-coordinate function descends to a
 continuous `BarycentricPoint K → ℝ`. -/
@@ -267,9 +272,10 @@ variable {V : Type u} (K : AbstractSimplicialComplex V)
 /-- **Round 8.** *Sub-leaf:* the simplex set of the barycentric
 subdivision: chains in the face poset of `K`. -/
 def barycentricSubdivision_simplices (K : AbstractSimplicialComplex V) :
-    Set (Finset (Finset V)) := by
-  have _ := K
-  exact sorry
+    Set (Finset (Finset V)) :=
+  {c | c.Nonempty ∧
+    (∀ s ∈ c, s ∈ K.simplices) ∧
+    ∀ s ∈ c, ∀ t ∈ c, s ⊆ t ∨ t ⊆ s}
 
 /-- **Round 8.** *Sub-leaf:* the barycentric subdivision's simplex
 family is non-empty and downward-closed. -/

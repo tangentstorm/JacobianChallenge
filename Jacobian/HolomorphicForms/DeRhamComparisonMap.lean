@@ -145,7 +145,9 @@ theorem deRhamComparisonMap1_descends
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ _ : deRhamH1Cocycle X →ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ), True := by
-  sorry
+  refine ⟨(ExactForm.toClosedSubmodule 0 X).liftQ (deRhamComparisonMap1 X) ?_, trivial⟩
+  intro η hη
+  exact LinearMap.mem_ker.mpr (deRhamComparisonMap1_vanishes_on_exact X η hη)
 
 /-! ### Private helpers for `deRhamH1Cocycle_finrank_eq_realDim_singularH1`
 

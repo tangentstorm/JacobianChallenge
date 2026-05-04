@@ -47,7 +47,12 @@ def CyclicEdgeWord (g : ℕ) : Type := Quotient
         sorry⟩ : Setoid (EdgeWord g))
 
 /-- The number of distinct generator-letters appearing in `w`. -/
-def EdgeWord.activeGenerators {g : ℕ} (_w : EdgeWord g) : ℕ := sorry
+def EdgeWord.activeGenerators {g : ℕ} (w : EdgeWord g) : ℕ :=
+  (w.map (fun
+    | Letter.a i => i
+    | Letter.b i => i
+    | Letter.aInv i => i
+    | Letter.bInv i => i)).eraseDups.length
 
 /-- A word is *fully reduced* if no further `InverseCancel` step
 applies. -/
@@ -66,7 +71,8 @@ theorem inverseCancel_decreases_length
 /-- Strong induction on length: every word reduces (possibly in 0
 steps) to a fully-reduced word. -/
 theorem exists_fullyReduced_form {g : ℕ} (w : EdgeWord g) :
-    ∃ v : EdgeWord g, EdgeWord.WordEq w v ∧ EdgeWord.IsFullyReduced v := sorry
+    ∃ v : EdgeWord g, EdgeWord.WordEq w v ∧ EdgeWord.IsFullyReduced v := by
+  exact rawWord_cyclic_reduction w
 
 /-! ### Step 2: orientability inspection -/
 
@@ -139,20 +145,23 @@ that bounds an embedded disk; collapsing this disk gives a
 homeomorphic surface. -/
 theorem wordQuotient_invariant_under_inverseCancel
     {g : ℕ} {w v : EdgeWord g} (_h : EdgeWord.InverseCancel w v) :
-    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := sorry
+    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) :=
+  wordQuotient_homeomorph_of_inverseCancel_step _h
 
 /-- Single-step `HandleSwap` preserves the disk-quotient up to
 homeomorphism. The construction: the swap is realised by sliding a
 handle along the surface — a continuous deformation. -/
 theorem wordQuotient_invariant_under_handleSwap
     {g : ℕ} {w v : EdgeWord g} (_h : EdgeWord.HandleSwap w v) :
-    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := sorry
+    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) :=
+  wordQuotient_homeomorph_of_handleSwap_step _h
 
 /-- Reflexive-transitive closure: `TietzeEq` words have homeomorphic
 disk-quotients. -/
 theorem wordQuotient_invariant_under_tietzeEq
     {g : ℕ} {w v : EdgeWord g} (_h : EdgeWord.TietzeEq w v) :
-    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := sorry
+    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) :=
+  wordQuotient_homeomorph_of_tietzeEq _h
 
 /-! ### TOPDOWN drill -/
 
