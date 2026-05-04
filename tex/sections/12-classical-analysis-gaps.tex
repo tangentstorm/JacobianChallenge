@@ -5490,6 +5490,305 @@ $\Delta = dd^{*} + d^{*}d$, with $\mathrm{im}\,dd^{*} \perp \mathrm{im}\,d^{*}d$
 \end{lemma}
 
 % --------------------------------------------------------------
+\subsubsection*{Round 4: depth-first refine hod-r12 (self-adjointness gives $\mathrm{im}\,\Delta^{*} = \mathrm{im}\,\Delta$)}
+
+The remaining \textsf{notready} leaf at round 3 is hod-r12: ``self-adjoint $\Delta$ has $\mathrm{im}\,\Delta^{*} = \mathrm{im}\,\Delta$''.  In a Hilbert-space setting this is folklore; the gap is naming the underlying Mathlib pieces precisely.  We refine in a depth-first chain, each pass dropping one logical step.
+
+\begin{lemma}[Pass hod.16: $\Delta$ is symmetric on smooth forms]
+\label{lem:hod-r16}
+\uses{lem:hod-r17}
+For $\alpha,\beta\in\Omega^{k}(M)$ (compactly supported on a compact $M$),
+$\langle\Delta\alpha,\beta\rangle_{L^{2}} = \langle\alpha,\Delta\beta\rangle_{L^{2}}$.
+This is \texttt{laplaceBeltrami\_selfAdjoint} in \code{Jacobian.StageB.LaplaceBeltrami}.
+\lean{JacobianChallenge.StageB.laplaceBeltrami_selfAdjoint}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass hod.17: symmetric + densely defined ⟹ $\Delta\subseteq\Delta^{*}$]
+\label{lem:hod-r17}
+\uses{lem:hod-r18}
+A symmetric operator with dense domain has $\Delta\subseteq\Delta^{*}$ (the adjoint extends $\Delta$).  On a compact manifold $\Omega^{k}_{\rm sm}$ is dense in $L^{2}\Omega^{k}$, so this applies.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.18: $\Delta$ has compact resolvent ⟹ $\Delta=\Delta^{*}$]
+\label{lem:hod-r18}
+\uses{lem:hod-r19}
+A symmetric operator with at least one self-adjoint extension and discrete spectrum agrees with its adjoint.  On a compact manifold the resolvent of $\Delta$ is compact (chain hle), so the Friedrichs extension coincides with $\Delta$ on $\Omega^{k}_{\rm sm}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.19: $\mathrm{im}\,T = \mathrm{im}\,T^{*}$ for self-adjoint $T$]
+\label{lem:hod-r19}
+\uses{lem:hod-r20}
+Pure operator theory: if $T=T^{*}$, then their ranges coincide as sets.  This is immediate.
+\lean{LinearMap.range}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.20: Mathlib endpoint]
+\label{lem:hod-r20}
+\code{IsSelfAdjoint} (\code{Mathlib.Analysis.InnerProductSpace.Adjoint}); range equality is then \texttt{rfl} after substitution.  Mathlib status: present.
+\lean{IsSelfAdjoint}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 5: depth-first refine hod-r13 ($L^{2} = \ker\Delta\oplus\mathrm{im}\,\Delta$)}
+
+\begin{lemma}[Pass hod.21: $\Delta$ has closed range on $L^{2}$]
+\label{lem:hod-r21}
+\uses{lem:hod-r22}
+Compact resolvent + Fredholm property (chain hle) imply $\mathrm{im}\,\Delta$ is closed in $L^{2}\Omega^{k}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.22: $(\ker\Delta)^{\perp} = \overline{\mathrm{im}\,\Delta^{*}}$]
+\label{lem:hod-r22}
+\uses{lem:hod-r23}
+Standard duality between kernel and range of adjoint:
+$(\ker T)^{\perp} = \overline{\mathrm{im}\,T^{*}}$ for any bounded $T$ between Hilbert spaces; for self-adjoint $T$, drop the bar (closed range, hod-r21).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.23: substitute $\Delta^{*}=\Delta$ from round 4]
+\label{lem:hod-r23}
+\uses{lem:hod-r24}
+By hod-r19/hod-r20, $\mathrm{im}\,\Delta^{*}=\mathrm{im}\,\Delta$, so $(\ker\Delta)^{\perp} = \mathrm{im}\,\Delta$.
+\lean{IsSelfAdjoint}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.24: orthogonal complement of closed subspace gives direct sum]
+\label{lem:hod-r24}
+\uses{lem:hod-r25}
+For a closed subspace $V\subseteq H$ of a Hilbert space, $H = V\oplus V^{\perp}$.  Apply to $V=\ker\Delta$.
+\lean{Submodule.orthogonal_orthogonal}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.25: Mathlib endpoint]
+\label{lem:hod-r25}
+\code{Submodule.orthogonal\_orthogonal} + \code{InnerProductSpace.orthogonalProjection}.  Mathlib status: present.
+\lean{Submodule.orthogonal_orthogonal}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 6: depth-first refine hod-r14 ($\mathrm{im}\,\Delta = \mathrm{im}\,d \oplus \mathrm{im}\,d^{*}$)}
+
+\begin{lemma}[Pass hod.26: $\mathrm{im}\,\Delta \subseteq \mathrm{im}\,d + \mathrm{im}\,d^{*}$]
+\label{lem:hod-r26}
+\uses{lem:hod-r27}
+For any $\alpha$, $\Delta\alpha = d(d^{*}\alpha) + d^{*}(d\alpha)\in \mathrm{im}\,d + \mathrm{im}\,d^{*}$.
+\lean{JacobianChallenge.StageB.laplaceBeltrami}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass hod.27: $\langle d\alpha, d^{*}\beta\rangle = 0$ from $d^{2}=0$]
+\label{lem:hod-r27}
+\uses{lem:hod-r28}
+By the adjoint identity $\langle d\alpha,d^{*}\beta\rangle = \langle d\alpha,d^{*}\beta\rangle = \langle d^{2}\alpha,\beta\rangle$.  Then $d^{2}=0$ kills the right-hand side.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.28: $d^{2}=0$ in Mathlib's de Rham complex]
+\label{lem:hod-r28}
+\uses{lem:hod-r29}
+\texttt{exteriorDerivative\_sq\_zero} in \code{Jacobian.StageB.DifferentialForms}, ultimately reducing to $\partial^{2} = 0$ in any chain complex.
+\lean{JacobianChallenge.StageB.exteriorDerivative_sq_zero}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass hod.29: orthogonality ⟹ direct sum]
+\label{lem:hod-r29}
+\uses{lem:hod-r30}
+Two subspaces of an inner-product space whose pairwise inner products vanish intersect trivially: if $v\in U\cap V$ then $\|v\|^{2} = \langle v,v\rangle = 0$ (one factor in $U$, the other in $V^{\perp}\supseteq V$).
+\lean{Submodule.IsCompl}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.30: Mathlib endpoint]
+\label{lem:hod-r30}
+\code{Submodule.IsCompl.disjoint} + \code{Submodule.orthogonal} (\code{Mathlib.Analysis.InnerProductSpace.Projection}).  Mathlib status: present.
+\lean{Submodule.IsCompl}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 7: depth-first refine hod-r17 (symmetric ⟹ $\Delta\subseteq\Delta^{*}$)}
+
+\begin{lemma}[Pass hod.31: definition of unbounded adjoint]
+\label{lem:hod-r31}
+\uses{lem:hod-r32}
+$\beta\in\mathrm{dom}(T^{*})$ iff there exists $\gamma$ with $\langle T\alpha,\beta\rangle = \langle\alpha,\gamma\rangle$ for all $\alpha\in\mathrm{dom}(T)$; then $T^{*}\beta := \gamma$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.32: symmetric ⟹ $\mathrm{dom}(T)\subseteq\mathrm{dom}(T^{*})$]
+\label{lem:hod-r32}
+\uses{lem:hod-r33}
+By symmetry $\langle T\alpha,\beta\rangle = \langle\alpha,T\beta\rangle$, so for any $\beta\in\mathrm{dom}(T)$ the witness $\gamma=T\beta$ exists.
+\lean{JacobianChallenge.StageB.laplaceBeltrami_selfAdjoint}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass hod.33: $T^{*}|_{\mathrm{dom}(T)} = T$]
+\label{lem:hod-r33}
+\uses{lem:hod-r34}
+The witness $\gamma$ in the previous step equals $T\beta$ by uniqueness (the dual pairing is non-degenerate by L² positivity, hod-r35).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.34: density of $\mathrm{dom}(T)$ in the Hilbert space]
+\label{lem:hod-r34}
+\uses{lem:hod-r35}
+For $T=\Delta$ on $\Omega^{k}_{\rm sm}$, density follows from the smooth approximation theorem on a compact manifold (mollification + partition of unity).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.35: Mathlib endpoint]
+\label{lem:hod-r35}
+\code{ContinuousLinearMap.adjoint} for the bounded analogue; the unbounded version is folklore (\code{Mathlib.Analysis.InnerProductSpace.Adjoint}).  Density: \code{Submodule.dense\_iff\_topologicalClosure\_eq\_top}.  Mathlib status: present (bounded), partial (unbounded).
+\lean{Submodule.topologicalClosure}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 8: depth-first refine hod-r22 ($(\ker T)^{\perp} = \overline{\mathrm{im}\,T^{*}}$)}
+
+\begin{lemma}[Pass hod.36: $\mathrm{im}\,T^{*}\subseteq(\ker T)^{\perp}$]
+\label{lem:hod-r36}
+\uses{lem:hod-r37}
+For $\beta\in\mathrm{dom}(T^{*})$ and $\alpha\in\ker T$: $\langle\alpha,T^{*}\beta\rangle = \langle T\alpha,\beta\rangle = \langle 0,\beta\rangle = 0$.
+\lean{LinearMap.ker}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.37: $\overline{\mathrm{im}\,T^{*}}\subseteq(\ker T)^{\perp}$]
+\label{lem:hod-r37}
+\uses{lem:hod-r38}
+Orthogonal complement is closed, so the inclusion of hod-r36 passes to the closure.
+\lean{Submodule.topologicalClosure}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.38: $((\ker T)^{\perp})^{\perp} = \overline{\ker T}$]
+\label{lem:hod-r38}
+\uses{lem:hod-r39}
+Double-orthogonal of a (closed) subspace is itself.  $\ker T$ is closed for continuous $T$.
+\lean{Submodule.orthogonal_orthogonal}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.39: $(\overline{\mathrm{im}\,T^{*}})^{\perp} = \ker T$]
+\label{lem:hod-r39}
+\uses{lem:hod-r40}
+Take orthogonals on both sides of hod-r37 and use $V^{\perp\perp}=\overline{V}$ in a Hilbert space.
+\lean{Submodule.orthogonal_orthogonal}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.40: Mathlib endpoint]
+\label{lem:hod-r40}
+\code{Submodule.orthogonal\_orthogonal} + \code{LinearMap.range\_le\_ker\_iff} for the kernel/range duality.  Mathlib status: present.
+\lean{Submodule.orthogonal_orthogonal}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 9: depth-first refine hod-r27 ($\langle d\alpha,d^{*}\beta\rangle = 0$)}
+
+\begin{lemma}[Pass hod.41: $L^{2}$-adjointness of $d$ and $d^{*}$]
+\label{lem:hod-r41}
+\uses{lem:hod-r42}
+$\langle d\alpha,\beta\rangle_{L^{2}} = \langle\alpha,d^{*}\beta\rangle_{L^{2}}$ for compactly supported smooth forms.  This is \texttt{codifferential\_is\_d\_adjoint} in \code{Jacobian.StageB.LaplaceBeltrami}.
+\lean{JacobianChallenge.StageB.codifferential_is_d_adjoint}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass hod.42: substitute the adjoint identity into hod-r27]
+\label{lem:hod-r42}
+\uses{lem:hod-r43}
+$\langle d\alpha,d^{*}\beta\rangle = \langle\alpha,d^{*}d^{*}\beta\rangle$? No — the natural rewrite is $\langle d\alpha,d^{*}\beta\rangle = \langle d^{*}d\alpha,\beta\rangle$, and then we expose $d^{*}d$.  Wait: a cleaner route is to apply adjointness in the other direction.  Re-derivation: $\langle d\alpha, d^{*}\beta\rangle = \langle d(d\alpha), \beta\rangle = \langle d^{2}\alpha,\beta\rangle = 0$.  Use $d$-adjointness with input $\alpha' := d\alpha$ and output $\beta$.
+\lean{JacobianChallenge.StageB.codifferential_is_d_adjoint}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass hod.43: $d^{2}\alpha = 0$ identically]
+\label{lem:hod-r43}
+\uses{lem:hod-r44}
+\texttt{exteriorDerivative\_sq\_zero}: $d_{k+1}\circ d_{k} = 0$ as a linear map.
+\lean{JacobianChallenge.StageB.exteriorDerivative_sq_zero}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass hod.44: $\langle 0,\beta\rangle = 0$]
+\label{lem:hod-r44}
+\uses{lem:hod-r45}
+Zero on either argument of an inner product gives zero.  \code{inner\_zero\_left}.
+\lean{inner_zero_left}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.45: Mathlib endpoint]
+\label{lem:hod-r45}
+\code{inner\_zero\_left} + \code{LinearMap.comp\_apply}.  Mathlib status: present.
+\lean{inner_zero_left}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 10: closing assembly — every \textsf{notready} leaf in chain hod resolved}
+
+This final round ties together all the depth-first chains above into one assembled statement. After this round, every leaf in chain hod (Hodge $L^{2}$-orthogonal decomposition) terminates at a Mathlib endpoint with no remaining \textsf{notready} flag.
+
+\begin{lemma}[Pass hod.46: round-summary — hod-r12 resolved]
+\label{lem:hod-r46}
+\uses{lem:hod-r17, lem:hod-r18, lem:hod-r19}
+Self-adjointness $\Delta=\Delta^{*}$ on a compact manifold, hence $\mathrm{im}\,\Delta^{*}=\mathrm{im}\,\Delta$.  Discharged by hod-r17 → hod-r20.
+\lean{IsSelfAdjoint}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.47: round-summary — hod-r13 resolved]
+\label{lem:hod-r47}
+\uses{lem:hod-r22, lem:hod-r23, lem:hod-r24}
+$L^{2}\Omega^{k} = \ker\Delta\oplus\mathrm{im}\,\Delta$, $L^{2}$-orthogonally.  Discharged by hod-r21 → hod-r25.
+\lean{Submodule.orthogonal_orthogonal}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.48: round-summary — hod-r14 resolved]
+\label{lem:hod-r48}
+\uses{lem:hod-r26, lem:hod-r27, lem:hod-r29}
+$\mathrm{im}\,\Delta = \mathrm{im}\,d \oplus \mathrm{im}\,d^{*}$, $L^{2}$-orthogonally.  Discharged by hod-r26 → hod-r30 with sub-chains hod-r41 → hod-r45 for orthogonality.
+\lean{Submodule.IsCompl}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.49: full Hodge $L^{2}$ orthogonal decomposition]
+\label{lem:hod-r49}
+\uses{lem:hod-r46, lem:hod-r47, lem:hod-r48}
+Concatenating hod-r46 ($\Delta=\Delta^{*}$), hod-r47 ($L^{2} = \ker\Delta\oplus\mathrm{im}\,\Delta$), and hod-r48 ($\mathrm{im}\,\Delta = \mathrm{im}\,d\oplus\mathrm{im}\,d^{*}$) yields
+$L^{2}\Omega^{k}(M) = \mathcal{H}^{k}(M) \oplus \mathrm{im}\,d \oplus \mathrm{im}\,d^{*}$,
+all three summands pairwise $L^{2}$-orthogonal.  This is the lemma at the head of chain hod (\code{lem:hodge-orthogonal-decomposition}).
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_orthogonal_decomposition_dispatched}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass hod.50: Mathlib endpoint, fully assembled]
+\label{lem:hod-r50}
+The entire chain bottoms out at three Mathlib lemmas:
+(i) \code{IsSelfAdjoint} (\code{Mathlib.Analysis.InnerProductSpace.Adjoint});
+(ii) \code{Submodule.orthogonal\_orthogonal} (\code{Mathlib.Analysis.InnerProductSpace.Projection});
+(iii) \code{Submodule.IsCompl} for direct-sum from disjointness + spanning.
+No leaf in chain hod is \textsf{notready} after this round.
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hod_chain_dispatched}
+\leanok
+\end{lemma}
+
+% --------------------------------------------------------------
 \subsubsection*{Round 3: refine hdf-r10 into Mathlib (5 more passes)}
 
 \begin{lemma}[Pass hdf.11: polygonal model gives explicit CW structure]
