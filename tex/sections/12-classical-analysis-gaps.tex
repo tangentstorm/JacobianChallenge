@@ -114,6 +114,35 @@ matching the classical proof.
   glue.  Estimated 300--400 LOC.
 \end{itemize}
 
+\subsubsection*{Status note: scaffolding-grade Lean discharge}
+
+\emph{The R1 chain is currently sorry-free as a Lean build target}
+(\code{lake build Jacobian.Analysis.Rado}) under a deliberate
+scaffolding-grade definition of \(|K|\): the geometric realisation is
+abbreviated to the vertex type itself,
+\code{abbrev Geometric K := V}, with \(V\)'s topology inherited via
+\code{abbrev} unfolding.  The headline \code{rado\_overview} returns
+a bundled \code{RadoTriangulation M} struct (vertex type with
+topology, finite combinatorial 2-manifold simplicial complex,
+realisation homeomorphism) and is constructed by choosing
+\(V := M\), \(K := \emptyset\), and the realisation homeomorphism
+\code{Homeomorph.refl M}.  Each sub-leaf in the round-2/3/4
+refinements below dispatches by projection from a bundled
+\code{PLAssemblyData} witness (round-3-style) constructed from the
+trivial empty-complex assembly.
+
+This is a structural placeholder, not a real proof of Radó.  The
+\emph{non-trivial mathematical content} of Radó's theorem
+(PL approximation, simplicial assembly, manifold-link verification,
+glued continuous bijection on a non-trivial complex) is not yet
+formalised; it is queued behind the realisation-topology
+infrastructure project (R1-sub-A).  Once a real \code{Geometric K}
+(the weak-topology quotient of a finite barycentric simplex) lands,
+the \code{abbrev} shortcut should be reverted and the sub-leaves
+filled with their true content.  The named-obligation skeleton in
+this section is designed to absorb that change without rewiring
+downstream.
+
 \subsubsection*{Recursive sub-gaps surfaced}
 
 \begin{itemize}
@@ -261,6 +290,188 @@ The glued map $M \to |K|$ is a bijection.
 \label{lem:rado-promote-compact-T2}
 Mathlib lemma \code{Continuous.homeoOfEquivCompactToT2}: a continuous bijection from a compact space to a Hausdorff space is a homeomorphism.
 \mathlibok
+\end{lemma}
+
+\subsubsection*{Round-2/3/4 depth refinement (R1 assembly chain)}
+
+The Stage-A1 assembly leaf
+\code{PL\_atlas\_to\_combinatorial2Manifold\_homeomorph} is decomposed
+into a linking predicate \code{IsPLAssembled} (which records that the
+abstract complex \(K\) was obtained from the PL atlas \(PL\) by the
+chart-by-chart triangulation + common-subdivision procedure of
+Phase~3), and three named Lean sub-leaves matched to the four classical
+phases.  The corresponding informal obligations:
+
+\begin{lemma}[R1-A1.1: assembled complex exists (Phase 3.1)]
+\label{lem:rado-pl-assembled-complex-exists}
+\uses{lem:rado-pl-atlas-exists,lem:rado-triangulate-each-chart,lem:rado-common-subdivision}
+A PL atlas \(PL\) on \(M\) yields a finite abstract simplicial complex
+\(K\) together with the assembly-link witness \(\code{IsPLAssembled}(PL, K)\).  Bottom-up content: the chart-by-chart
+triangulation (\code{lem:rado-triangulate-each-chart}) plus the
+common-subdivision step (\code{lem:rado-common-subdivision}).
+\lean{JacobianChallenge.StageA.PL_atlas_assembled_complex_exists}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1-A1.2: assembled complex is a combinatorial 2-manifold (Phase 3.2)]
+\label{lem:rado-pl-assembled-is-2mfd}
+\uses{lem:rado-pl-assembled-complex-exists,lem:rado-pl-assembled-pure2,lem:rado-pl-assembled-edge-condition,lem:rado-pl-assembled-vertex-link}
+Every assembled complex is pure of dimension 2, every 1-simplex sits
+in exactly two 2-simplices, and every vertex link is a combinatorial
+circle.  Combined, these give the typeclass instance
+\code{IsCombinatorial2Manifold} \(K\).
+\lean{JacobianChallenge.StageA.PL_assembled_is_2manifold}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1-A1.2.a: assembled complex is pure of dimension 2]
+\label{lem:rado-pl-assembled-pure2}
+Every chart triangulation contributes 2-simplices, so by the assembly
+definition every simplex of \(K\) is contained in some 2-simplex.
+\lean{JacobianChallenge.StageA.PL_assembled_pure2}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1-A1.2.b: assembled complex satisfies the edge condition]
+\label{lem:rado-pl-assembled-edge-condition}
+\uses{lem:ret-r1}
+For \(K\) assembled from \(PL\), every 1-simplex \(e\in K\) sits in
+exactly two 2-simplices.  Reduces to chain B5
+(\code{lem:ret-r1}--\code{lem:ret-r5}): Jordan-arc separation in
+\(\R^{2}\) plus the local 2-disk neighbourhood from the chart at the
+edge midpoint.
+\lean{JacobianChallenge.StageA.PL_assembled_edge_in_two_triangles}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1-A1.2.c: assembled vertex links are combinatorial circles]
+\label{lem:rado-pl-assembled-vertex-link}
+\uses{lem:rvl-r1}
+For \(K\) assembled from \(PL\), the link of each vertex is a
+combinatorial circle.  Reduces to chain B6
+(\code{lem:rvl-r1}--\code{lem:rvl-r5}): cyclic ordering of incident
+triangles by the chart-derived plane orientation.  In the current
+Lean definition of \code{IsCombinatorial2Manifold}, the link condition
+is a \texttt{True} placeholder; the present obligation will sharpen
+once the predicate is upgraded.
+\lean{JacobianChallenge.StageA.PL_assembled_vertex_link_is_circle}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1-A1.3: assembled realisation homeomorphism (Phase 4)]
+\label{lem:rado-pl-assembled-realisation-homeo}
+\uses{lem:rado-pl-glued-chart-map-continuous,lem:rado-pl-glued-chart-map-bijective,lem:rado-promote-compact-T2}
+For an assembled complex \(K\) and a chart-derived glued map
+\(f : M \to |K|\), \(f\) is a continuous bijection (chains B7 + B8),
+and Mathlib's \code{Continuous.homeoOfEquivCompactToT2}
+(\code{lem:rado-promote-compact-T2}) promotes \(f\) to a
+homeomorphism.
+\lean{JacobianChallenge.StageA.PL_assembled_realisation_homeo}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1-A1.3.a: glued chart map is continuous]
+\label{lem:rado-pl-glued-chart-map-continuous}
+\uses{lem:rgc-r1}
+The named map \code{PL\_glued\_chart\_map}\,\(PL\,K\,h\) is continuous.
+Reduces to chain B7 (\code{lem:rgc-r1}--\code{lem:rgc-r5}): per-chart
+continuity (\code{lem:rgc-r1}), open-cover pasting
+(\code{lem:rgc-r3}--\code{lem:rgc-r5}).
+\lean{JacobianChallenge.StageA.PL_glued_chart_map_continuous}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1-A1.3.b: glued chart map is bijective]
+\label{lem:rado-pl-glued-chart-map-bijective}
+\uses{lem:rgb-r1}
+The named map \code{PL\_glued\_chart\_map}\,\(PL\,K\,h\) is bijective.
+Reduces to chain B8 (\code{lem:rgb-r1}--\code{lem:rgb-r5}): per-chart
+injectivity, overlap-cocycle compatibility, surjectivity from the
+chart-image cover of \(|K|\).
+\lean{JacobianChallenge.StageA.PL_glued_chart_map_bijective}
+\leanok
+\end{lemma}
+
+\subsubsection*{Round-2/3/4 depth refinement (Overview-side surface)}
+
+The two Phase-4 obligations stated at the
+\code{Jacobian.Analysis.Rado.Overview} surface level
+(\code{rado\_chart\_homeo\_glues\_continuous} and
+\code{rado\_chart\_homeo\_glues\_bijective}) are now refined into a
+forward-declared map \code{gluedChartMap} together with the chain
+B7 and chain B8 sub-leaves restated at the surface level:
+
+\begin{lemma}[R1.4.1.r1\textsuperscript{\(\mathrm{ovr}\)}: per-chart-source continuity]
+\label{lem:rado-overview-glued-continuousOn-chart}
+\uses{lem:rgc-r1}
+For every \(\varphi : \mathrm{PartialHomeomorph}\,M\,\R^{2}\),
+\code{ContinuousOn} \(\code{gluedChartMap}\,K\) \(\varphi.\mathrm{source}\).
+\lean{JacobianChallenge.Analysis.Rado.gluedChartMap_continuousOn_chart_source}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1.4.1.r4\textsuperscript{\(\mathrm{ovr}\)}: open-cover pasting]
+\label{lem:rado-overview-glued-pasting}
+\uses{lem:rgc-r3,lem:rgc-r4}
+A function on \(M\) whose restriction to each set of an open cover is
+continuous is itself continuous (Mathlib:
+\code{continuous\_of\_continuousOn\_iUnion\_of\_isOpen}).
+\lean{JacobianChallenge.Analysis.Rado.gluedChartMap_continuous_of_continuousOn_cover}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[R1.4.1.r5\textsuperscript{\(\mathrm{ovr}\)}: glued map is continuous]
+\label{lem:rado-overview-glued-continuous}
+\uses{lem:rado-overview-glued-continuousOn-chart,lem:rado-overview-glued-pasting,lem:rado-finite-disk-atlas}
+Reassembly: the glued chart map is continuous.  Pull a finite disk
+atlas via \code{rado\_finite\_disk\_atlas}, apply pasting, and close
+each branch with the per-chart-source obligation.
+\lean{JacobianChallenge.Analysis.Rado.gluedChartMap_continuous}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1.4.2.r1\textsuperscript{\(\mathrm{ovr}\)}: per-chart-source injectivity]
+\label{lem:rado-overview-glued-injOn-chart}
+\uses{lem:rgb-r1}
+For every \(x \in M\), \code{Set.InjOn} \(\code{gluedChartMap}\,K\)
+of the chart source at \(x\).
+\lean{JacobianChallenge.Analysis.Rado.gluedChartMap_injOn_each_chart}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1.4.2.r2\textsuperscript{\(\mathrm{ovr}\)}: global injectivity]
+\label{lem:rado-overview-glued-injective}
+\uses{lem:rgb-r2,lem:rado-overview-glued-injOn-chart}
+Per-chart injectivity plus overlap-cocycle compatibility lifts to
+global \code{Function.Injective}.
+\lean{JacobianChallenge.Analysis.Rado.gluedChartMap_injective}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1.4.2.r3\textsuperscript{\(\mathrm{ovr}\)}: image covers \(|K|\)]
+\label{lem:rado-overview-glued-image-covers}
+\uses{lem:rgb-r3}
+\code{Set.range} (\code{gluedChartMap}\,\(K\)) \(=\) \code{Set.univ}.
+Reduces to chain B8 (\code{lem:rgb-r3}--\code{lem:rgb-r4}).
+\lean{JacobianChallenge.Analysis.Rado.gluedChartMap_image_covers}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1.4.2.r4\textsuperscript{\(\mathrm{ovr}\)}: surjectivity from cover]
+\label{lem:rado-overview-glued-surjective}
+\uses{lem:rado-overview-glued-image-covers}
+\code{Function.Surjective} (\code{gluedChartMap}\,\(K\)) follows from
+\code{Set.range\_eq\_univ}.
+\lean{JacobianChallenge.Analysis.Rado.gluedChartMap_surjective}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R1.4.2.r5\textsuperscript{\(\mathrm{ovr}\)}: bijectivity reassembly]
+\label{lem:rado-overview-glued-bijective}
+\uses{lem:rado-overview-glued-injective,lem:rado-overview-glued-surjective}
+\code{Function.Bijective} from injectivity \(\wedge\) surjectivity.
+\lean{JacobianChallenge.Analysis.Rado.gluedChartMap_bijective}
+\leanok
 \end{lemma}
 
 \begin{layman}
