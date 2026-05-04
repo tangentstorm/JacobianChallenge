@@ -52,14 +52,74 @@ noncomputable def branchedDegreeOfMap
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     (_g : X → Y) : ℕ := 0
 
-/-- If `f ∈ Mer(X)^{×}` has principal divisor `(f) = Q₁ - Q₂` with
-`Q₁ ≠ Q₂`, then the associated map `f̂ : X → ℂP¹` is nonconstant of
-branched degree 1.
+/-! ### TOPDOWN decomposition (round 1)
 
-The proof requires the analytic `BranchedCoverData` constructor
-(open-mapping theorem + isolated zeros ⇒ finite fibres and constant
-weighted-fibre count) which is still frontier-bound; accordingly
-the body is `sorry`. -/
+The headline theorem is split into 4 named sub-obligations + a sorry-free
+assembly. Each sub-obligation is individually attackable; the deepest
+(`branchedDegree_eq_one_of_singleton_pole_set`) bottoms out in the
+frontier `BranchedCoverData` constructor, which is the genuine analytic
+gap. The other three are mostly classical bookkeeping. -/
+
+/-- **Sub-leaf 1.** If `(f) = [Q₁] - [Q₂]` with `Q₁ ≠ Q₂`, then `f`
+takes the pole value `∞` at `Q₂`: i.e. `meromorphicToCp1 X f Q₂ = ∞`.
+
+Bottom-up content: the principal-divisor description records the
+Laurent order at every point. Coefficient `-1` at `Q₂` means a simple
+pole, hence `f.toFun Q₂ = ∞`. Should follow from the
+`principalDivisor`-`vanishingOrder` adjunction in
+`Sec01/PrincipalDivisor.lean` plus the fact that
+`MeromorphicFunctionType` records poles by sending them to `∞`. -/
+theorem meromorphicToCp1_at_pole_of_simple_two_point_principal
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
+    meromorphicToCp1 X f Q₂ = OnePoint.infty := by
+  sorry
+
+/-- **Sub-leaf 2.** Symmetric to sub-leaf 1: the simple zero at `Q₁`
+gives `meromorphicToCp1 X f Q₁ = 0`. -/
+theorem meromorphicToCp1_at_zero_of_simple_two_point_principal
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
+    meromorphicToCp1 X f Q₁ = ((0 : ℂ) : OnePoint ℂ) := by
+  sorry
+
+/-- **Sub-leaf 3 (general, sorry-free).** Universal-logic helper: a
+function attaining two distinct values is nonconstant. -/
+theorem nonconstant_of_two_distinct_values
+    {X Y : Type*} (g : X → Y) {a b : X} {c d : Y}
+    (hne_val : c ≠ d) (ha : g a = c) (hb : g b = d) :
+    Nonconstant g := by
+  intro ⟨e, he⟩
+  exact hne_val (by rw [← ha, he a, ← he b, hb])
+
+/-- **Sub-leaf 4.** From `(meromorphicToCp1 X f)⁻¹(∞) = {Q₂}` (a simple
+pole) we get `branchedDegreeOfMap = 1`. This is the deep frontier sub-
+obligation: it requires the `BranchedCoverData` constructor for
+nonconstant holomorphic maps to ℂP¹, plus the constancy-of-weighted-
+fibre-count theorem (Sec02 leaf 8). -/
+theorem branchedDegreeOfMap_eq_one_of_simple_two_point_principal
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
+    branchedDegreeOfMap (meromorphicToCp1 X f) = 1 := by
+  sorry
+
+/-- **Headline theorem (sorry-free assembly).** If `f ∈ Mer(X)^{×}` has
+principal divisor `(f) = Q₁ - Q₂` with `Q₁ ≠ Q₂`, then the associated
+map `f̂ : X → ℂP¹` is nonconstant of branched degree 1.
+
+Assembled from the four sub-leaves above:
+- nonconstancy: sub-leaves 1+2 give distinct values at `Q₁` and `Q₂`,
+  then sub-leaf 3 gives nonconstancy.
+- branched-degree-1: sub-leaf 4 directly. -/
 theorem principal_deg0_simple_support_deg1
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [ChartedSpace ℂ X]
@@ -68,7 +128,15 @@ theorem principal_deg0_simple_support_deg1
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     Nonconstant (meromorphicToCp1 X f) ∧
     branchedDegreeOfMap (meromorphicToCp1 X f) = 1 := by
-  sorry
+  refine ⟨?_, branchedDegreeOfMap_eq_one_of_simple_two_point_principal X f Q₁ Q₂ hne hpd⟩
+  exact nonconstant_of_two_distinct_values
+    (meromorphicToCp1 X f)
+    (a := Q₁) (b := Q₂)
+    (c := ((0 : ℂ) : OnePoint ℂ))
+    (d := OnePoint.infty)
+    (by exact OnePoint.coe_ne_infty 0)
+    (meromorphicToCp1_at_zero_of_simple_two_point_principal X f Q₁ Q₂ hne hpd)
+    (meromorphicToCp1_at_pole_of_simple_two_point_principal X f Q₁ Q₂ hne hpd)
 
 namespace AbelExistence
 namespace PrincipalDeg0SimpleSupportDeg1
