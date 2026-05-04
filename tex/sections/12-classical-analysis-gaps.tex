@@ -3830,8 +3830,15 @@ $d(f^{*}\omega) = d((g\circ f))\wedge d(y_{I}\circ f)$ and $f^{*}(d\omega) = f^{
 \begin{lemma}[Pass J3.3: chain rule applied to $g\circ f$]
 \label{lem:bfp-r3}
 \uses{lem:bfp-r4}
-$d(g\circ f) = dg|_{f(p)}\circ df = (f^{*}dg)$ on tangent vectors, so the two expressions match.
-\notready
+$d(g\circ f) = dg|_{f(p)}\circ df = (f^{*}dg)$ on tangent vectors, so
+the two expressions match.  Project-side dispatch for 0-forms:
+\code{JacobianChallenge.Analysis.BundledForms.exteriorDerivativeZero\_pullbackZero},
+which proves
+$d(\varphi^{*}\omega)\,x\,[v] = d\omega\,(\varphi\,x)\,[D\varphi\,x\,v]$
+via Mathlib's \code{fderiv\_comp}.  $k\geq 1$ remains pending on
+R9-sub-A.
+\lean{JacobianChallenge.Analysis.BundledForms.exteriorDerivativeZero_pullbackZero}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass J3.4: naturality of the de Rham complex]
@@ -4538,8 +4545,14 @@ $I = (i_{1}<\cdots<i_{k})$, with $f_{I}\in C^{\infty}(U,\R)$.  The
 exterior derivative is
 $d\omega = \sum_{I}\sum_{j=1}^{n}\,\partial_{j}f_{I}\,dx^{j}\wedge dx^{I}$;
 this is well-defined because $\{dx^{I}\}$ is a free $C^{\infty}(U)$-basis
-of $\Omega^{k}(U)$.
-\notready
+of $\Omega^{k}(U)$.  For $k=0$ this is exactly the Fréchet
+derivative, packaged via \code{AlternatingMap.ofSubsingleton} into
+the alternating-form slot \code{Fin 1}.  Project-side dispatch:
+\code{JacobianChallenge.Analysis.BundledForms.exteriorDerivativeZero}.
+The bundled $k\geq 1$ case is blocked on the missing alternating-form
+bundle (R9-sub-A).
+\lean{JacobianChallenge.Analysis.BundledForms.exteriorDerivativeZero}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass bfd.7: $d^{2}$ in chart coordinates as a double sum]
@@ -4552,8 +4565,16 @@ d^{2}\omega
         dx^{i}\wedge dx^{j}\wedge dx^{I}.
 \)
 The $i=j$ summands vanish because $dx^{i}\wedge dx^{i}=0$ in the
-alternating algebra, so only the $i\neq j$ terms survive.
-\notready
+alternating algebra, so only the $i\neq j$ terms survive.  For the
+0-form case ($\omega = f$), the project-side dispatch at
+\code{JacobianChallenge.Analysis.BundledForms.dsq\_zero\_form\_alt}
+exhibits the chart-local identity directly via
+\code{ContDiffAt.isSymmSndFDerivAt} (Schwarz at order 2) and
+\code{fderiv\_clm\_apply} (the chain rule of \code{fderiv} on a
+constant linear-map argument); the bundled $k\geq 1$ generalisation
+is blocked on R9-sub-A.
+\lean{JacobianChallenge.Analysis.BundledForms.dsq_zero_form_alt}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass bfd.8: Schwarz symmetry of mixed second partials]
@@ -5783,8 +5804,13 @@ Lemma~\ref{lem:bfd-r11}) and $A_{ij}$ the
 $(dx^{i}\wedge dx^{j})$-coefficient of the alternating two-form
 component (antisymmetric by Lemma~\ref{lem:bfd-r12}).  The result is
 $d^{2}\omega=0$ as a chart-local identity, after summing over the
-multi-index $I$.  All informal steps are now mechanical reductions.
-\notready
+multi-index $I$.  For 0-forms ($\omega = f$) the assembly is
+explicit at
+\code{JacobianChallenge.Analysis.BundledForms.dsq\_zero\_form\_alt}.
+The $k\geq 1$ assembly remains pending on R9-sub-A's bundled
+alternating-form package.
+\lean{JacobianChallenge.Analysis.BundledForms.dsq_zero_form_alt}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass bfd.15: Mathlib endpoint]
