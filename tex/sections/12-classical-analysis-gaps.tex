@@ -1855,6 +1855,114 @@ hard analysis, not algebraic topology bookkeeping.
 \end{layman}
 
 %======================================================================
+\subsection{R10 Phases 1--4 dispatch (M1--M4 milestones)}
+\label{subsec:r10-phase-dispatch}
+
+This subsection summarises the actual Lean dispatch of R10 against
+unmodified Mathlib v4.28.0, following the plan in
+\code{/root/.claude/plans/okay-let-s-plan-out-shimmering-hearth.md}.
+The key pivot is the \emph{spike-solution route}: we bypass the
+classical manifold-Sobolev / Garding / Rellich infrastructure
+(estimated 6--8k LOC, genuinely upstream-Mathlib material) and
+route the headline finite-dim-kernel claim through compactness of
+$(\Delta+1)^{-1}$ on $L^2(M)$ plus the abstract spectral theorem
+``compact $\Rightarrow$ each non-zero eigenvalue has finite-dim
+eigenspace''.
+
+\paragraph{Milestone summary.}
+
+\begin{itemize}
+\item \textbf{M0 (chain K2 dispatch).}  The principal symbol of the
+  scalar Laplacian on a real inner-product space $E$ is invertible
+  for every nonzero covector.  Dispatched at the model-space level
+  in \code{Jacobian/Analysis/SobolevElliptic/ModelSymbol.lean}
+  (\textsf{leanok}, no \code{sorry}, no \code{True}-valued bodies;
+  $\sim 180$ LOC against Mathlib).  Fully closes Round~3 of chain
+  \texttt{sle} (\cref{subsubsec:sle-round-3}).
+
+\item \textbf{M1 (real $L^2$ substrate).}  Real Hilbert space
+  $L^2(M, \mu)$ on a compact manifold $M$ with a finite Borel
+  measure $\mu$.  Files
+  \code{Jacobian/Analysis/BundledForms/\{SmoothFun, Omega0, L2Norm,
+  L2Completion\}.lean} ($\sim 600$ LOC).  Wraps Mathlib
+  \code{ContMDiffMap}, \code{MeasureTheory.Lp}, plus the
+  project-side typeclass \code{IsManifoldMeasure} that takes $\mu$
+  as data (deliberate cheap shortcut bypassing the absent manifold
+  volume form).
+
+\item \textbf{M2 (Riemannian metric + abstract spectral output).}
+  \code{Jacobian/StageB/RiemannianMetricBundled.lean} wraps Mathlib's
+  \code{Bundle.Riemannian} on the tangent bundle, providing a real
+  metric typeclass to replace the previous \code{metric\_data : True}
+  placeholder.
+  \code{Jacobian/Analysis/SobolevElliptic/AbstractFredholmResolvent.lean}
+  proves the irreducible spectral consequence: for any compact
+  operator $T : H \to L[\R] H$ and any nonzero $\lambda$, the
+  eigenspace $\ker(T - \lambda \cdot 1)$ is finite-dimensional.
+  $\sim 290$ LOC total, no \code{sorry}.
+
+\item \textbf{M3 (abstract resolvent).}  Given two real Hilbert
+  spaces $V, H$ and a continuous linear embedding $i : V \to L[\R] H$
+  (the abstract ``$H^1 \hookrightarrow L^2$'' map), the resolvent
+  $T := i \circ i^\dagger : H \to L[\R] H$ is automatically
+  bounded, self-adjoint, and non-negative; if $i$ is compact, so is
+  $T$.  Combined with M2's spectral output, this gives finite-dim
+  eigenspaces.  File:
+  \code{Jacobian/Analysis/SobolevElliptic/AbstractResolvent.lean}
+  ($\sim 150$ LOC).  Mathlib hooks: \code{ContinuousLinearMap.adjoint},
+  \code{IsCompactOperator.comp\_clm}.
+
+\item \textbf{M4 (headline plug-in).}  The typeclass
+  \code{HasLaplaceResolvent M} $\mu$ packages exactly the
+  irreducible analytic input remaining after M0--M3: a Hilbert
+  space \code{Sobolev} (think $H^1(M)$), a continuous embedding
+  into $L^2(M, \mu)$, plus an \code{IsCompactOperator} witness
+  (Rellich--Kondrachov on a compact manifold).  Given this single
+  typeclass instance, the substantive R10 headline
+  $\code{Module.Finite } \R \, (\code{RealHarmonic } M \, \mu)$
+  is automatic, with no further analytic input.  File:
+  \code{Jacobian/Analysis/SobolevElliptic/HeadlinePlugIn.lean}
+  ($\sim 150$ LOC).  Companion theorem
+  \code{sobolev\_elliptic\_overview\_substantive} sits next to the
+  placeholder \code{sobolev\_elliptic\_overview} in
+  \code{Overview.lean}; downstream R5/R7/R8 consume it via parallel
+  companions \code{hodge\_harmonic\_forms\_finite\_dim\_substantive},
+  \code{dolbeault\_harmonic\_forms\_finite\_dim\_substantive},
+  \code{serre\_duality\_harmonic\_finite\_dim\_substantive}.
+
+\item \textbf{Realizability.}  A trivial-but-substantive witness
+  for \code{HasLaplaceResolvent} is supplied in
+  \code{Jacobian/Analysis/SobolevElliptic/RealizabilityWitness.lean}:
+  whenever $L^2(M, \mu)$ is finite-dimensional, the identity
+  embedding is compact (Riesz), and the typeclass is automatic.
+  This proves the framework is non-vacuously realizable.
+\end{itemize}
+
+\paragraph{Residual analytic gap.}  The spectral-output side of R10
+is now fully discharged.  What remains is supplying a
+\emph{non-trivial} \code{HasLaplaceResolvent} instance for an
+infinite-dimensional $L^2(M, \mu)$:
+\begin{itemize}
+\item construct the Hilbert space $H^1(M)$ (manifold Sobolev,
+  R10-sub-A,B);
+\item prove the embedding $H^1(M) \hookrightarrow L^2(M)$ is
+  compact (Rellich--Kondrachov on a compact manifold);
+\item link the resolvent's eigenspace at $1$ to a classical
+  $\ker \Delta$ on smooth forms (spectral correspondence).
+\end{itemize}
+All three are flagged \emph{ABSENT} in Mathlib v4.28.0.  Any future
+work on these pieces plugs into the existing framework with no
+further changes to the spectral-output side.
+
+\paragraph{Downstream consumption.}  R5 (Hodge decomposition), R7
+(Dolbeault), R8 (Serre duality) each carry a substantive companion
+that takes \code{[HasLaplaceResolvent M $\mu$]} as a typeclass
+hypothesis and produces \code{Module.Finite ${\R}$ (RealHarmonic M $\mu$)}.
+The downstream period-lattice / Jacobian construction can therefore
+proceed conditionally on a single typeclass instance, isolating the
+remaining classical-analysis work behind one named obligation.
+
+%======================================================================
 \subsection{Summary of recursive sub-gaps}
 \label{subsec:gap-summary}
 
