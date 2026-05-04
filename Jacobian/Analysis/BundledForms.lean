@@ -1,4 +1,8 @@
 import Jacobian.Analysis.BundledForms.Overview
+import Jacobian.Analysis.BundledForms.SmoothFun
+import Jacobian.Analysis.BundledForms.Omega0
+import Jacobian.Analysis.BundledForms.L2Norm
+import Jacobian.Analysis.BundledForms.L2Completion
 
 /-!
 # R9 — Bundled differential forms (umbrella module)
