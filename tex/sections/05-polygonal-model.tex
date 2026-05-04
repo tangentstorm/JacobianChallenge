@@ -664,6 +664,23 @@ work: ``analytic genus \(=0\) means topological genus \(=0\) means
 \(H_1=0\) means homeomorphic to \(S^2\).''
 \end{layman}
 
+\begin{proofsketch}
+Apply Hodge / de Rham to compute \(\mathrm{rank}_\Z H_1(X,\Z) = 2 g_{\mathrm{an}}(X)\),
+then divide by two. The Lean target
+\code{JacobianChallenge.Periods.analyticGenus\_eq\_topologicalGenus}
+is a sorry-free assembly in
+\code{Jacobian/Periods/PeriodFunctional.lean}, delegating to two
+named sub-obligations: \code{hodge\_deRham\_rank\_eq} (the analytic
+core: \(2g_{\mathrm{an}} = \mathrm{rank}_\Z H_1\)), itself
+decomposed into a multi-file frontier-obligation tree under
+\code{Jacobian/HolomorphicForms/HodgeDeRhamRank.lean} and
+\code{Jacobian/Periods/HodgeDeRham.lean}; and the canonical
+\(\mathrm{rank}_\Z H_1 / 2\) definition of \code{topologicalGenus}
+from \code{Jacobian/Periods/TopologicalGenus.lean}. The two-line
+assembly body is \code{omega} after rewriting through
+\code{hodge\_deRham\_rank\_eq}.
+\end{proofsketch}
+
 \subsection{Analysis on the polygon}
 
 The interior of the standard fundamental polygon is, by construction,
