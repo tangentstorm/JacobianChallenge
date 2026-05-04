@@ -23,3 +23,5 @@ ralph-logs/
 # local debug / scratch artifacts (worker session dumps, screenshots, etc.)
 *.yml
 *.png
+
+__pycache__/
