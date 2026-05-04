@@ -5514,17 +5514,17 @@ This is \texttt{laplaceBeltrami\_selfAdjoint} in \code{Jacobian.StageB.LaplaceBe
 \leanok
 \end{lemma}
 
-\begin{lemma}[Pass hod.17: symmetric + densely defined ⟹ $\Delta\subseteq\Delta^{*}$]
+\begin{lemma}[Pass hod.17: symmetric + densely defined $\Rightarrow$ $\Delta\subseteq\Delta^{*}$]
 \label{lem:hod-r17}
 \uses{lem:hod-r18}
-A symmetric operator with dense domain has $\Delta\subseteq\Delta^{*}$ (the adjoint extends $\Delta$).  On a compact manifold $\Omega^{k}_{\rm sm}$ is dense in $L^{2}\Omega^{k}$, so this applies.
+A symmetric operator with dense domain has $\Delta\subseteq\Delta^{*}$ (the adjoint extends $\Delta$).  On a compact manifold $\Omega^{k}_{\mathrm{sm}}$ is dense in $L^{2}\Omega^{k}$, so this applies.
 \notready
 \end{lemma}
 
-\begin{lemma}[Pass hod.18: $\Delta$ has compact resolvent ⟹ $\Delta=\Delta^{*}$]
+\begin{lemma}[Pass hod.18: $\Delta$ has compact resolvent $\Rightarrow$ $\Delta=\Delta^{*}$]
 \label{lem:hod-r18}
 \uses{lem:hod-r19}
-A symmetric operator with at least one self-adjoint extension and discrete spectrum agrees with its adjoint.  On a compact manifold the resolvent of $\Delta$ is compact (chain hle), so the Friedrichs extension coincides with $\Delta$ on $\Omega^{k}_{\rm sm}$.
+A symmetric operator with at least one self-adjoint extension and discrete spectrum agrees with its adjoint.  On a compact manifold the resolvent of $\Delta$ is compact (chain hle), so the Friedrichs extension coincides with $\Delta$ on $\Omega^{k}_{\mathrm{sm}}$.
 \notready
 \end{lemma}
 
@@ -5610,7 +5610,7 @@ By the adjoint identity $\langle d\alpha,d^{*}\beta\rangle = \langle d\alpha,d^{
 \leanok
 \end{lemma}
 
-\begin{lemma}[Pass hod.29: orthogonality ⟹ direct sum]
+\begin{lemma}[Pass hod.29: orthogonality $\Rightarrow$ direct sum]
 \label{lem:hod-r29}
 \uses{lem:hod-r30}
 Two subspaces of an inner-product space whose pairwise inner products vanish intersect trivially: if $v\in U\cap V$ then $\|v\|^{2} = \langle v,v\rangle = 0$ (one factor in $U$, the other in $V^{\perp}\supseteq V$).
@@ -5626,7 +5626,7 @@ Two subspaces of an inner-product space whose pairwise inner products vanish int
 \end{lemma}
 
 % --------------------------------------------------------------
-\subsubsection*{Round 7: depth-first refine hod-r17 (symmetric ⟹ $\Delta\subseteq\Delta^{*}$)}
+\subsubsection*{Round 7: depth-first refine hod-r17 (symmetric $\Rightarrow$ $\Delta\subseteq\Delta^{*}$)}
 
 \begin{lemma}[Pass hod.31: definition of unbounded adjoint]
 \label{lem:hod-r31}
@@ -5635,7 +5635,7 @@ $\beta\in\mathrm{dom}(T^{*})$ iff there exists $\gamma$ with $\langle T\alpha,\b
 \notready
 \end{lemma}
 
-\begin{lemma}[Pass hod.32: symmetric ⟹ $\mathrm{dom}(T)\subseteq\mathrm{dom}(T^{*})$]
+\begin{lemma}[Pass hod.32: symmetric $\Rightarrow$ $\mathrm{dom}(T)\subseteq\mathrm{dom}(T^{*})$]
 \label{lem:hod-r32}
 \uses{lem:hod-r33}
 By symmetry $\langle T\alpha,\beta\rangle = \langle\alpha,T\beta\rangle$, so for any $\beta\in\mathrm{dom}(T)$ the witness $\gamma=T\beta$ exists.
@@ -5646,14 +5646,14 @@ By symmetry $\langle T\alpha,\beta\rangle = \langle\alpha,T\beta\rangle$, so for
 \begin{lemma}[Pass hod.33: $T^{*}|_{\mathrm{dom}(T)} = T$]
 \label{lem:hod-r33}
 \uses{lem:hod-r34}
-The witness $\gamma$ in the previous step equals $T\beta$ by uniqueness (the dual pairing is non-degenerate by L² positivity, hod-r35).
+The witness $\gamma$ in the previous step equals $T\beta$ by uniqueness (the dual pairing is non-degenerate by $L^2$ positivity, hod-r35).
 \notready
 \end{lemma}
 
 \begin{lemma}[Pass hod.34: density of $\mathrm{dom}(T)$ in the Hilbert space]
 \label{lem:hod-r34}
 \uses{lem:hod-r35}
-For $T=\Delta$ on $\Omega^{k}_{\rm sm}$, density follows from the smooth approximation theorem on a compact manifold (mollification + partition of unity).
+For $T=\Delta$ on $\Omega^{k}_{\mathrm{sm}}$, density follows from the smooth approximation theorem on a compact manifold (mollification + partition of unity).
 \notready
 \end{lemma}
 
@@ -5720,7 +5720,7 @@ $\langle d\alpha,\beta\rangle_{L^{2}} = \langle\alpha,d^{*}\beta\rangle_{L^{2}}$
 \begin{lemma}[Pass hod.42: substitute the adjoint identity into hod-r27]
 \label{lem:hod-r42}
 \uses{lem:hod-r43}
-$\langle d\alpha,d^{*}\beta\rangle = \langle\alpha,d^{*}d^{*}\beta\rangle$? No — the natural rewrite is $\langle d\alpha,d^{*}\beta\rangle = \langle d^{*}d\alpha,\beta\rangle$, and then we expose $d^{*}d$.  Wait: a cleaner route is to apply adjointness in the other direction.  Re-derivation: $\langle d\alpha, d^{*}\beta\rangle = \langle d(d\alpha), \beta\rangle = \langle d^{2}\alpha,\beta\rangle = 0$.  Use $d$-adjointness with input $\alpha' := d\alpha$ and output $\beta$.
+$\langle d\alpha,d^{*}\beta\rangle = \langle\alpha,d^{*}d^{*}\beta\rangle$? No --- the natural rewrite is $\langle d\alpha,d^{*}\beta\rangle = \langle d^{*}d\alpha,\beta\rangle$, and then we expose $d^{*}d$.  Wait: a cleaner route is to apply adjointness in the other direction.  Re-derivation: $\langle d\alpha, d^{*}\beta\rangle = \langle d(d\alpha), \beta\rangle = \langle d^{2}\alpha,\beta\rangle = 0$.  Use $d$-adjointness with input $\alpha' := d\alpha$ and output $\beta$.
 \lean{JacobianChallenge.StageB.codifferential_is_d_adjoint}
 \leanok
 \end{lemma}
@@ -5749,30 +5749,30 @@ Zero on either argument of an inner product gives zero.  \code{inner\_zero\_left
 \end{lemma}
 
 % --------------------------------------------------------------
-\subsubsection*{Round 10: closing assembly — every \textsf{notready} leaf in chain hod resolved}
+\subsubsection*{Round 10: closing assembly --- every \textsf{notready} leaf in chain hod resolved}
 
 This final round ties together all the depth-first chains above into one assembled statement. After this round, every leaf in chain hod (Hodge $L^{2}$-orthogonal decomposition) terminates at a Mathlib endpoint with no remaining \textsf{notready} flag.
 
-\begin{lemma}[Pass hod.46: round-summary — hod-r12 resolved]
+\begin{lemma}[Pass hod.46: round-summary --- hod-r12 resolved]
 \label{lem:hod-r46}
 \uses{lem:hod-r17, lem:hod-r18, lem:hod-r19}
-Self-adjointness $\Delta=\Delta^{*}$ on a compact manifold, hence $\mathrm{im}\,\Delta^{*}=\mathrm{im}\,\Delta$.  Discharged by hod-r17 → hod-r20.
+Self-adjointness $\Delta=\Delta^{*}$ on a compact manifold, hence $\mathrm{im}\,\Delta^{*}=\mathrm{im}\,\Delta$.  Discharged by hod-r17 $\to$ hod-r20.
 \lean{IsSelfAdjoint}
 \leanok\mathlibok
 \end{lemma}
 
-\begin{lemma}[Pass hod.47: round-summary — hod-r13 resolved]
+\begin{lemma}[Pass hod.47: round-summary --- hod-r13 resolved]
 \label{lem:hod-r47}
 \uses{lem:hod-r22, lem:hod-r23, lem:hod-r24}
-$L^{2}\Omega^{k} = \ker\Delta\oplus\mathrm{im}\,\Delta$, $L^{2}$-orthogonally.  Discharged by hod-r21 → hod-r25.
+$L^{2}\Omega^{k} = \ker\Delta\oplus\mathrm{im}\,\Delta$, $L^{2}$-orthogonally.  Discharged by hod-r21 $\to$ hod-r25.
 \lean{Submodule.orthogonal_orthogonal}
 \leanok\mathlibok
 \end{lemma}
 
-\begin{lemma}[Pass hod.48: round-summary — hod-r14 resolved]
+\begin{lemma}[Pass hod.48: round-summary --- hod-r14 resolved]
 \label{lem:hod-r48}
 \uses{lem:hod-r26, lem:hod-r27, lem:hod-r29}
-$\mathrm{im}\,\Delta = \mathrm{im}\,d \oplus \mathrm{im}\,d^{*}$, $L^{2}$-orthogonally.  Discharged by hod-r26 → hod-r30 with sub-chains hod-r41 → hod-r45 for orthogonality.
+$\mathrm{im}\,\Delta = \mathrm{im}\,d \oplus \mathrm{im}\,d^{*}$, $L^{2}$-orthogonally.  Discharged by hod-r26 $\to$ hod-r30 with sub-chains hod-r41 $\to$ hod-r45 for orthogonality.
 \lean{Submodule.IsCompl}
 \leanok\mathlibok
 \end{lemma}
@@ -5838,7 +5838,7 @@ $\langle d_{0}a, d_{1}^{*}b\rangle = \langle d_{1}(d_{0}a),b\rangle = \langle 0,
 \leanok\mathlibok
 \end{lemma}
 
-\begin{lemma}[Pass hod.56: $\mathrm{range}\,\Delta = \mathrm{range}\,d_{0}\sqcup\mathrm{range}\,d_{1}^{*}$]
+\begin{lemma}[Pass hod.56: $\mathrm{range}\,\Delta = \mathrm{range}\,d_{0}\oplus\mathrm{range}\,d_{1}^{*}$]
 \label{lem:hod-r56}
 The forward inclusion is immediate from $\Delta=d_{0}d_{0}^{*}+d_{1}^{*}d_{1}$; the reverse uses $\mathrm{range}\,\Delta = (\ker\Delta)^{\perp}$, $\ker\Delta = \ker d_{1}\cap\ker d_{0}^{*}$, and $\mathrm{range}\,d_{0}\subseteq(\ker d_{0}^{*})^{\perp}$ + $\mathrm{range}\,d_{1}^{*}\subseteq(\ker d_{1})^{\perp}$.
 \lean{JacobianChallenge.HodgeAbstract.range_laplacian_eq}
@@ -5852,7 +5852,7 @@ $V_{1} = \ker\Delta\oplus\mathrm{range}\,d_{0}\oplus\mathrm{range}\,d_{1}^{*}$, 
 \leanok\mathlibok
 \end{lemma}
 
-\paragraph*{Summary.}  Round 11 closes the algebraic skeleton of R5: every claim above is a real Mathlib-content theorem (no \texttt{sorry}, no placeholder).  The remaining gap to the analytic R5 is the reduction from $L^{2}\Omega^{k}$ on a compact manifold to a finite-dimensional inner-product space — i.e.\ elliptic regularity (\code{R5-sub-B}, ~2500--4000 LOC).  Once that lands, the present file dispatches the entire chain hod.  Lemmas hod.16--hod.50 (rounds 4--10) remain at the Stage B placeholder layer (\code{Omega := PUnit}); lemmas hod.51--hod.57 (round 11) are the real finite-dim version.
+\paragraph*{Summary.}  Round 11 closes the algebraic skeleton of R5: every claim above is a real Mathlib-content theorem (no \texttt{sorry}, no placeholder).  The remaining gap to the analytic R5 is the reduction from $L^{2}\Omega^{k}$ on a compact manifold to a finite-dimensional inner-product space --- i.e.\ elliptic regularity (\code{R5-sub-B}, ~2500--4000 LOC).  Once that lands, the present file dispatches the entire chain hod.  Lemmas hod.16--hod.50 (rounds 4--10) remain at the Stage B placeholder layer (\code{Omega := PUnit}); lemmas hod.51--hod.57 (round 11) are the real finite-dim version.
 
 % --------------------------------------------------------------
 \subsubsection*{Round 3: refine hdf-r10 into Mathlib (5 more passes)}
