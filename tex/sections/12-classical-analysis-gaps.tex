@@ -591,15 +591,15 @@ theorem.  The dependency tree of the rounds is
 
 \begin{verbatim}
 polygonal_model_overview                                  -- Round 9
-  └── polygonal_model_overview_via_steps                  -- Round 8
-        ├── polygonal_model_some_polygon_homeomorph       -- Round 5 (Step A)
-        │     ├── polygonal_model_phase12_word_quotient   -- Round 1 (forward)
-        │     ├── polygonal_model_phase3_tietze_normal_form  -- Round 2
-        │     ├── polygonal_model_phase3_quotient_lift    -- Round 3
-        │     ├── polygonal_model_phase4_identify_polygon -- Round 4
-        │     └── polygonal_model_phase4_bridge           -- Round 4'
-        └── polygonal_model_genus_matches                 -- Round 7 (Step B)
-              └── polygonal_model_polygon_genus_invariant -- Round 6 (forward)
+  +-- polygonal_model_overview_via_steps                  -- Round 8
+        +-- polygonal_model_some_polygon_homeomorph       -- Round 5 (Step A)
+        |     +-- polygonal_model_phase12_word_quotient   -- Round 1 (forward)
+        |     +-- polygonal_model_phase3_tietze_normal_form  -- Round 2
+        |     +-- polygonal_model_phase3_quotient_lift    -- Round 3
+        |     +-- polygonal_model_phase4_identify_polygon -- Round 4
+        |     `-- polygonal_model_phase4_bridge           -- Round 4'
+        `-- polygonal_model_genus_matches                 -- Round 7 (Step B)
+              `-- polygonal_model_polygon_genus_invariant -- Round 6 (forward)
 \end{verbatim}
 
 All nine rounds are \emph{sorry-free in Lean}.  The headline
