@@ -203,22 +203,177 @@ theorem rado_assembled_vertex_link_is_circle
       · simp [hxv]
     exact ⟨t.erase v, heraseK, hdisj, by rwa [hunion]⟩
 
-/-! ### Phase 4 — realisation homeomorphism -/
+/-! ### Phase 4 — realisation homeomorphism
+
+The Phase 4 obligation `M ≃ₜ Geometric K` is decomposed into three
+named pieces: the existence of a *glued chart map* `gluedChartMap`,
+its continuity (chain B7 of the blueprint), and its bijectivity
+(chain B8). The compact-to-T2 promotion at the end is a direct
+Mathlib invocation. -/
+
+/-- **R1.4.0** (forward declaration).  *The* glued chart map
+`M → Geometric K`. In a real proof this is built from the chart-by-chart
+realisation maps of a PL atlas of `M` together with a triangulation of
+each chart compatible with the assembled complex `K`. The body is a
+typed `sorry`; see B7/B8 chains below for the substantive obligations
+on this map. -/
+noncomputable def gluedChartMap
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K] : M → Geometric K :=
+  sorry
+
+/-! #### Chain B7 — continuity of the glued chart map (blueprint
+`lem:rgc-r1`–`lem:rgc-r5`).  Each pass localises the continuity
+obligation onto a smaller named sub-leaf, terminating at Mathlib's
+`continuous_iff_continuousOn_iUnion_of_isOpen` (the pasting lemma). -/
+
+/-- **B7 / R1.4.1.r1.**  *Pass rgc-r1.*  For any partial homeomorphism
+`φ : PartialHomeomorph M ℝ²` (e.g. an entry of a finite disk atlas),
+the glued chart map is continuous on `φ.source`.  Bottom-up content:
+the chart map `φ` is a homeomorphism on its source, hence continuous;
+the realisation map of a triangulated disk into `Geometric K` is
+continuous by construction. -/
+theorem gluedChartMap_continuousOn_chart_source
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K]
+    (φ : PartialHomeomorph M (EuclideanSpace ℝ (Fin 2))) :
+    ContinuousOn (gluedChartMap (M := M) K) φ.source :=
+  sorry
+
+/-- **B7 / R1.4.1.r2.**  *Pass rgc-r2.*  On any chart-overlap
+`φ.source ∩ ψ.source`, the two local restrictions of the glued chart
+map agree (refl-trivial because the *single* glued map is a function;
+the substantive content lives in `gluedChartMap_continuousOn_chart_source`,
+which encodes the per-chart triangulation invariance). -/
+theorem gluedChartMap_overlap_compatible
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K]
+    (_φ _ψ : PartialHomeomorph M (EuclideanSpace ℝ (Fin 2)))
+    (z : M)
+    (_hφ : z ∈ _φ.source) (_hψ : z ∈ _ψ.source) :
+    gluedChartMap (M := M) K z = gluedChartMap (M := M) K z :=
+  rfl
+
+/-- **B7 / R1.4.1.r3.**  *Pass rgc-r3.*  The chart sources form a
+finite open cover of `M`. Bottom-up content: this is exactly
+`compact_2manifold_has_finite_disk_atlas`. -/
+theorem gluedChartMap_open_cover :
+    ∃ (ι : Type) (_ : Finite ι) (U : ι → Set M),
+      (∀ i, IsOpen (U i)) ∧ (⋃ i, U i) = Set.univ := by
+  classical
+  obtain ⟨A⟩ := rado_finite_disk_atlas M
+  haveI := A.isFinite
+  exact ⟨A.Idx, A.isFinite, fun i => (A.chart i).source,
+    fun i => (A.chart i).open_source, A.cover⟩
+
+/-- **B7 / R1.4.1.r4.**  *Pass rgc-r4.*  The pasting lemma: a function
+on `M` whose restriction to each set of an open cover is continuous is
+itself continuous. This is the bottom-up Mathlib endpoint
+`continuousOn_iff_continuous` together with cover-by-opens.
+
+Project-internal restatement that mirrors the blueprint's wording but
+keeps the proof local. -/
+theorem gluedChartMap_continuous_of_continuousOn_cover
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K]
+    (ι : Type) (U : ι → Set M)
+    (hopen : ∀ i, IsOpen (U i)) (hcov : (⋃ i, U i) = Set.univ)
+    (hcont : ∀ i, ContinuousOn (gluedChartMap (M := M) K) (U i)) :
+    Continuous (gluedChartMap (M := M) K) :=
+  continuous_of_continuousOn_iUnion_of_isOpen hcont hopen hcov
+
+/-- **B7 / R1.4.1.r5 (Mathlib endpoint).**  The `continuousOn_iUnion`
+combinator is Mathlib-present; the per-source continuity comes from
+`gluedChartMap_continuousOn_chart_source`.  Reassembly: pull a finite
+disk atlas via `rado_finite_disk_atlas`, apply chain-r4, and close
+each branch with chain-r1 instantiated at `A.chart i`. -/
+theorem gluedChartMap_continuous
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K] :
+    Continuous (gluedChartMap (M := M) K) := by
+  classical
+  obtain ⟨A⟩ := rado_finite_disk_atlas M
+  haveI := A.isFinite
+  refine gluedChartMap_continuous_of_continuousOn_cover (M := M) K
+    A.Idx (fun i => (A.chart i).source)
+    (fun i => (A.chart i).open_source) A.cover ?_
+  intro i
+  exact gluedChartMap_continuousOn_chart_source (M := M) K (A.chart i)
 
 /-- **R1.4.1.**  Chart-by-chart maps from `M` to chunks of the geometric
-realisation glue into a continuous map. -/
+realisation glue into a continuous map.  Refined: the existential is
+witnessed by `gluedChartMap`, whose continuity is `gluedChartMap_continuous`. -/
 theorem rado_chart_homeo_glues_continuous
     {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
     [IsCombinatorial2Manifold K] :
     ∃ f : M → Geometric K, Continuous f :=
+  ⟨gluedChartMap (M := M) K, gluedChartMap_continuous (M := M) K⟩
+
+/-! #### Chain B8 — bijectivity of the glued chart map (blueprint
+`lem:rgb-r1`–`lem:rgb-r5`). The bijectivity refines into local
+injectivity per chart, overlap compatibility forcing global
+injectivity, and surjectivity from the chart-image cover of `|K|`. -/
+
+/-- **B8 / R1.4.2.r1.**  *Pass rgb-r1.*  Each chart's restriction of
+the glued chart map is injective on its source. Bottom-up content:
+the chart `(A.chart i)` is a homeomorphism on its source, and the
+chart-by-chart realisation map `chart_image → |K|` is injective on
+the open chart image. -/
+theorem gluedChartMap_injOn_each_chart
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K] (x : M) :
+    Set.InjOn (gluedChartMap (M := M) K)
+      (chartAt (EuclideanSpace ℝ (Fin 2)) x).source :=
   sorry
 
-/-- **R1.4.2.**  The glued continuous map is a bijection. -/
+/-- **B8 / R1.4.2.r2.**  *Pass rgb-r2.*  Two charts agreeing on their
+overlap promote per-chart injectivity to global injectivity.
+Bottom-up content: if `p ≠ q` map to the same `|K|`-point, they cannot
+both lie in a single chart (rgb-r1) and the overlap-cocycle relation
+contradicts the injectivity assumption. -/
+theorem gluedChartMap_injective
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K] :
+    Function.Injective (gluedChartMap (M := M) K) :=
+  sorry
+
+/-- **B8 / R1.4.2.r3.**  *Pass rgb-r3.*  The chart-image union covers
+the geometric realisation `|K|` of the assembled complex. Bottom-up
+content: by construction the assembled complex `K` decomposes into
+chart-by-chart pieces. -/
+theorem gluedChartMap_image_covers
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K] :
+    Set.range (gluedChartMap (M := M) K) = Set.univ :=
+  sorry
+
+/-- **B8 / R1.4.2.r4.**  *Pass rgb-r4.*  Surjectivity from
+`gluedChartMap_image_covers`. Reassembly. -/
+theorem gluedChartMap_surjective
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K] :
+    Function.Surjective (gluedChartMap (M := M) K) :=
+  Set.range_eq_univ.mp (gluedChartMap_image_covers (M := M) K)
+
+/-- **B8 / R1.4.2.r5 (Mathlib endpoint).**  Bijectivity from
+injectivity + surjectivity. -/
+theorem gluedChartMap_bijective
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K] :
+    Function.Bijective (gluedChartMap (M := M) K) :=
+  ⟨gluedChartMap_injective (M := M) K,
+   gluedChartMap_surjective (M := M) K⟩
+
+/-- **R1.4.2.**  The glued continuous map is a bijection.  Refined:
+existential witnessed by `gluedChartMap`, whose continuity and
+bijectivity are the named obligations above. -/
 theorem rado_chart_homeo_glues_bijective
     {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
     [IsCombinatorial2Manifold K] :
     ∃ f : M → Geometric K, Continuous f ∧ Function.Bijective f :=
-  sorry
+  ⟨gluedChartMap (M := M) K,
+   gluedChartMap_continuous (M := M) K,
+   gluedChartMap_bijective (M := M) K⟩
 
 /-- **R1.4.3.**  A continuous bijection from a compact space to a
 Hausdorff space is a homeomorphism (Mathlib:
