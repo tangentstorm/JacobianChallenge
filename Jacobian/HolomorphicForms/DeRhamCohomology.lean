@@ -1,6 +1,9 @@
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Defs
+import Mathlib.SetTheory.Cardinal.Finite
+import Mathlib.Topology.Connected.TotallyDisconnected
+import Jacobian.HolomorphicForms.SmoothDifferentialForm
 
 /-!
 # De Rham cohomology dimensions on a smooth manifold (frontier API)
@@ -18,15 +21,12 @@ construction without disturbing callers.
 
 ## What this file provides (refinement scaffolding)
 
-* `realDimDeRhamH1` — opaque ℕ, the real dimension of the first de Rham
-  cohomology of `X` viewed as a real manifold.
-* `complexDimDeRhamH1ℂ` — opaque ℕ, the complex dimension of the first
-  de Rham cohomology of `X` viewed as a complex manifold (i.e. with
-  ℂ-valued forms).
-* `realDimDeRhamH0` / `complexDimDeRhamH0ℂ` — opaque ℕ, the H⁰
-  counterparts (used for sanity bookkeeping; equal to the number of
-  connected components × 1 over ℝ, and to 1 over ℂ for compact
-  connected `X`).
+* `deRhamH1Cocycle X` — concrete quotient model `closed / exact`.
+* `complexDimDeRhamH1ℂ` — the complex finrank of this quotient model.
+* `realDimDeRhamH1` — current-model real dimension bridge, using the
+  same quotient finrank until a separate real-form complex is available.
+* `realDimDeRhamH0` / `complexDimDeRhamH0ℂ` — concrete component-count
+  surrogates for the H⁰ counterparts; equal to `1` for connected `X`.
 * `realDim_deRhamH1_eq_two_complexDim_deRhamH1ℂ` — frontier theorem
   (sorry): real dim of H¹_dR equals twice the complex dim, since
   ℂ-valued forms are ℝ-valued forms tensored with ℂ.
@@ -52,37 +52,58 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
-/-- **Frontier opaque (ℕ).** Real dimension of the first de Rham
-cohomology group of the smooth manifold `X`, with ℝ-valued differential
-forms. Mathematically `dim_ℝ H¹_dR(X, ℝ)`. Mathlib gap: no de Rham
-complex on manifolds. -/
-noncomputable opaque realDimDeRhamH1
+/-- Concrete model of `H¹_dR(X, ℂ)` as closed 1-forms modulo exact
+1-forms. -/
+noncomputable def deRhamH1Cocycle
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    Type _ :=
+  (ClosedFormSub (Nat.succ 0) X) ⧸ (ExactForm.toClosedSubmodule 0 X)
 
-/-- **Frontier opaque (ℕ).** Complex dimension of the first de Rham
-cohomology group of `X` with ℂ-valued differential forms.
-Mathematically `dim_ℂ H¹_dR(X, ℂ)`. Equal to `realDimDeRhamH1` for the
-real underlying manifold by the universal-coefficient theorem; this
-file states the relation as a frontier theorem rather than a
-definitional identity. -/
-noncomputable opaque complexDimDeRhamH1ℂ
+noncomputable instance deRhamH1Cocycle.instAddCommGroup
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    AddCommGroup (deRhamH1Cocycle X) :=
+  inferInstanceAs (AddCommGroup (_ ⧸ (ExactForm.toClosedSubmodule 0 X)))
 
-/-- **Frontier opaque (ℕ).** Real dimension of the zeroth de Rham
+noncomputable instance deRhamH1Cocycle.instModuleℂ
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    Module ℂ (deRhamH1Cocycle X) :=
+  inferInstanceAs (Module ℂ (_ ⧸ (ExactForm.toClosedSubmodule 0 X)))
+
+/-- Complex dimension of the first de Rham cohomology group of `X` with
+ℂ-valued differential forms, computed from the explicit closed-mod-exact
+quotient model. -/
+noncomputable def complexDimDeRhamH1ℂ
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ :=
+  Module.finrank ℂ (deRhamH1Cocycle X)
+
+/-- Real dimension of the first de Rham cohomology group in the current
+ℂ-valued-form substrate. Since this layer has no separate real-form
+complex, the real/complex extension-of-scalars bridge is represented by
+the same closed-mod-exact quotient finrank. -/
+noncomputable def realDimDeRhamH1
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ :=
+  Module.finrank ℂ (deRhamH1Cocycle X)
+
+/-- Real dimension of the zeroth de Rham
 cohomology group of `X` with ℝ-valued forms. Mathematically equals the
 number of connected components; for a connected manifold this is `1`. -/
-noncomputable opaque realDimDeRhamH0
+noncomputable def realDimDeRhamH0
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ :=
+  Nat.card (ConnectedComponents X)
 
-/-- **Frontier opaque (ℕ).** Complex dimension of the zeroth de Rham
+/-- Complex dimension of the zeroth de Rham
 cohomology group of `X` with ℂ-valued forms. Equals the ℂ-dimension of
 locally constant ℂ-valued functions; for a connected `X` this is `1`. -/
-noncomputable opaque complexDimDeRhamH0ℂ
+noncomputable def complexDimDeRhamH0ℂ
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ :=
+  Nat.card (ConnectedComponents X)
 
 -- The real-of-complex de Rham identity has been moved to
 -- `Jacobian/HolomorphicForms/RealComplexDeRham.lean` and refined into a
@@ -105,7 +126,18 @@ theorem complexDim_deRhamH0ℂ_eq_one_of_compact_connected
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     complexDimDeRhamH0ℂ X = 1 := by
-  sorry
+  rw [complexDimDeRhamH0ℂ, Nat.card_eq_one_iff_unique]
+  constructor
+  · haveI : ConnectedSpace (ConnectedComponents X) :=
+      ConnectedComponents.surjective_coe.connectedSpace ConnectedComponents.continuous_coe
+    constructor
+    intro a b
+    have hsub : (Set.univ : Set (ConnectedComponents X)).Subsingleton :=
+      isPreconnected_univ.subsingleton
+    exact hsub trivial trivial
+  · haveI : Nonempty X := inferInstance
+    let x : X := Classical.arbitrary X
+    exact Nonempty.intro (show ConnectedComponents X from x)
 
 /-- **Frontier theorem (sorry).** Connected compact `X` has
 `dim_ℝ H⁰_dR(X, ℝ) = 1`. The real version of the previous statement;
@@ -116,6 +148,17 @@ theorem realDim_deRhamH0_eq_one_of_compact_connected
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     realDimDeRhamH0 X = 1 := by
-  sorry
+  rw [realDimDeRhamH0, Nat.card_eq_one_iff_unique]
+  constructor
+  · haveI : ConnectedSpace (ConnectedComponents X) :=
+      ConnectedComponents.surjective_coe.connectedSpace ConnectedComponents.continuous_coe
+    constructor
+    intro a b
+    have hsub : (Set.univ : Set (ConnectedComponents X)).Subsingleton :=
+      isPreconnected_univ.subsingleton
+    exact hsub trivial trivial
+  · haveI : Nonempty X := inferInstance
+    let x : X := Classical.arbitrary X
+    exact Nonempty.intro (show ConnectedComponents X from x)
 
 end JacobianChallenge.HolomorphicForms
