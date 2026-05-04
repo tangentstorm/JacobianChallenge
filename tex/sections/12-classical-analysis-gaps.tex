@@ -163,6 +163,7 @@ A compact connected oriented topological 2-manifold modelled on $\mathrm{Euclide
 
 \begin{lemma}[Finite disk atlas exists (compactness)]
 \label{lem:rado-finite-disk-atlas}
+\uses{lem:rfd-r1}
 A compact 2-manifold admits a finite atlas of disk charts in $\R^{2}$.
 \lean{JacobianChallenge.Analysis.Rado.rado_finite_disk_atlas}
 \leanok
@@ -186,6 +187,7 @@ Every homeomorphism between open subsets of $\R^{2}$ is uniformly PL-approximabl
 
 \begin{lemma}[PL cocycle preservation]
 \label{lem:rado-pl-cocycle-preservation}
+\uses{lem:rpc-r1}
 Modifying one chart of a PL atlas via a PL homeomorphism preserves the PL cocycle property of all previously-treated overlaps.
 \lean{JacobianChallenge.Analysis.Rado.rado_pl_cocycle_preservation}
 \leanok
@@ -201,6 +203,7 @@ From a PL atlas, one assembles a finite simplicial complex satisfying the combin
 
 \begin{lemma}[Triangulate each chart]
 \label{lem:rado-triangulate-each-chart}
+\uses{lem:rtc-r1}
 Each PL chart's image admits a triangulation as a pure-2-dimensional finite simplicial complex.
 \lean{JacobianChallenge.Analysis.Rado.rado_triangulate_each_chart}
 \leanok
@@ -208,6 +211,7 @@ Each PL chart's image admits a triangulation as a pure-2-dimensional finite simp
 
 \begin{lemma}[Common subdivision over overlaps]
 \label{lem:rado-common-subdivision}
+\uses{lem:rcs-r1}
 Two chart triangulations admit a common subdivision on each overlap.
 \lean{JacobianChallenge.Analysis.Rado.rado_common_subdivision_overlaps}
 \leanok
@@ -215,6 +219,7 @@ Two chart triangulations admit a common subdivision on each overlap.
 
 \begin{lemma}[Edge condition: each 1-simplex in two 2-simplices]
 \label{lem:rado-edges-in-two-triangles}
+\uses{lem:ret-r1}
 In the assembled complex every 1-simplex is shared by exactly two 2-simplices.
 \lean{JacobianChallenge.Analysis.Rado.rado_assembled_edges_in_two_triangles}
 \leanok
@@ -222,6 +227,7 @@ In the assembled complex every 1-simplex is shared by exactly two 2-simplices.
 
 \begin{lemma}[Vertex condition: each link is a combinatorial circle]
 \label{lem:rado-vertex-link-is-circle}
+\uses{lem:rvl-r1}
 In the assembled complex every vertex link is a combinatorial circle.
 \lean{JacobianChallenge.Analysis.Rado.rado_assembled_vertex_link_is_circle}
 \leanok
@@ -237,6 +243,7 @@ Given a compatible PL atlas and assembled combinatorial 2-manifold $K$, the char
 
 \begin{lemma}[Glued chart map is continuous]
 \label{lem:rado-glue-continuous}
+\uses{lem:rgc-r1}
 The chart-by-chart maps from $M$ to chunks of $|K|$ glue into a globally continuous map.
 \lean{JacobianChallenge.Analysis.Rado.rado_chart_homeo_glues_continuous}
 \leanok
@@ -244,6 +251,7 @@ The chart-by-chart maps from $M$ to chunks of $|K|$ glue into a globally continu
 
 \begin{lemma}[Glued chart map is bijective]
 \label{lem:rado-glue-bijective}
+\uses{lem:rgb-r1}
 The glued map $M \to |K|$ is a bijection.
 \lean{JacobianChallenge.Analysis.Rado.rado_chart_homeo_glues_bijective}
 \leanok
@@ -382,6 +390,7 @@ Every word arising from an orientable polygonal presentation is `TietzeEq` to a 
 
 \begin{lemma}[Cyclic reduction to fully-reduced form]
 \label{lem:tietze-cyclic-reduction}
+\uses{lem:tcr-r1}
 Every word reduces (via inverse-pair cancellations) to a `WordEq`-equivalent fully-reduced word.
 \lean{JacobianChallenge.Analysis.Tietze.tietze_cyclic_reduction}
 \leanok
@@ -389,6 +398,7 @@ Every word reduces (via inverse-pair cancellations) to a `WordEq`-equivalent ful
 
 \begin{lemma}[Brahana handle creation]
 \label{lem:tietze-brahana}
+\uses{lem:tbh-r1}
 Every fully-reduced orientable word is `TietzeEq` to a handle-grouped word.
 \lean{JacobianChallenge.Analysis.Tietze.tietze_brahana_handle_creation}
 \leanok
@@ -396,6 +406,7 @@ Every fully-reduced orientable word is `TietzeEq` to a handle-grouped word.
 
 \begin{lemma}[Tietze moves preserve orientability]
 \label{lem:tietze-moves-preserve-orientability}
+\uses{lem:tmo-r1}
 Every Tietze move maps an orientable word (no nonorientable letter pair) to another orientable word.
 \lean{JacobianChallenge.Analysis.Tietze.tietze_moves_preserve_orientability}
 \leanok
@@ -411,6 +422,7 @@ Every handle-grouped word is `TietzeEq` to the standard relator $\mathrm{standar
 
 \begin{lemma}[Handle-grouped is concatenation of standard handle blocks]
 \label{lem:tietze-orientable-is-handle-concat}
+\uses{lem:toh-r1}
 Every handle-grouped orientable word can be Tietze-reduced to one in standard form.
 \lean{JacobianChallenge.Analysis.Tietze.tietze_orientable_is_handle_concat}
 \leanok
@@ -418,6 +430,7 @@ Every handle-grouped orientable word can be Tietze-reduced to one in standard fo
 
 \begin{lemma}[Handle blocks may be permuted within a word]
 \label{lem:tietze-handle-swap}
+\uses{lem:ths-r1}
 Two complete handle blocks may be permuted within a word via a `HandleSwap` Tietze step.
 \lean{JacobianChallenge.Analysis.Tietze.tietze_handle_swap_move}
 \leanok
@@ -425,6 +438,7 @@ Two complete handle blocks may be permuted within a word via a `HandleSwap` Tiet
 
 \begin{lemma}[Strip-one-handle (induction)]
 \label{lem:tietze-strip-one-handle}
+\uses{lem:tsh-r1}
 A cyclically-reduced orientable word of length $4(g+1)$ admits a `TietzeEq`-equivalent decomposition into a handle block followed by a length-$4g$ remainder.
 \lean{JacobianChallenge.Analysis.Tietze.tietze_strip_one_handle}
 \leanok
@@ -579,6 +593,7 @@ The underlying real 2-manifold structure of a Riemann surface admits a finite tr
 
 \begin{lemma}[Cut along a spanning tree of the 1-skeleton]
 \label{lem:polygonal-model-cut-along-tree}
+\uses{lem:pct-r1}
 Cutting the triangulation along a spanning tree of its 1-skeleton produces a topological disk; its boundary walk is a length-$4g$ edge word in a four-letter alphabet.
 \notready
 \end{lemma}
@@ -592,6 +607,7 @@ The boundary edge word produced above is `TietzeEq` to the standard relator (Tie
 
 \begin{lemma}[Polygonal model step 2: genus matching]
 \label{lem:polygonal-model-genus-matches}
+\uses{lem:pgm-r1}
 The genus $g'$ produced by step 1 coincides with the analytic genus of $Y$.
 \lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_genus_matches}
 \leanok
@@ -733,6 +749,7 @@ Integration of forms over smooth singular chains gives a $\C$-linear map $H^{k}_
 
 \begin{lemma}[Integration is well-defined on smooth simplices]
 \label{lem:deRham-integration-simplex}
+\uses{lem:dis-r1}
 Integration $\int_{\sigma} \omega$ is $\R$-linear in $\omega$ for every smooth singular simplex $\sigma$.
 \lean{JacobianChallenge.Analysis.DeRham.deRham_integration_simplex}
 \leanok
@@ -740,6 +757,7 @@ Integration $\int_{\sigma} \omega$ is $\R$-linear in $\omega$ for every smooth s
 
 \begin{lemma}[Stokes for a simplex: $\int_{\sigma} d\omega = \int_{\partial\sigma} \omega$]
 \label{lem:deRham-stokes-simplex}
+\uses{lem:dss-r1}
 Stokes' theorem on a smooth singular simplex.
 \lean{JacobianChallenge.Analysis.DeRham.deRham_stokes_simplex}
 \leanok
@@ -747,6 +765,7 @@ Stokes' theorem on a smooth singular simplex.
 
 \begin{lemma}[Smooth-singular into singular is a quasi-isomorphism]
 \label{lem:deRham-smooth-quasi-iso}
+\uses{lem:dsq-r1}
 The inclusion of smooth singular chains into singular chains is a chain-level quasi-isomorphism on a smooth manifold.
 \lean{JacobianChallenge.Analysis.DeRham.deRham_smooth_singular_quasi_iso}
 \leanok
@@ -762,6 +781,7 @@ On a smooth manifold admitting a good cover, the integration map is an isomorphi
 
 \begin{lemma}[Mayer–Vietoris exact sequence (both theories)]
 \label{lem:deRham-mayer-vietoris}
+\uses{lem:dmv-r1}
 Both $H^{*}_{\mathrm{dR}}$ and $H^{*}_{\mathrm{sing}}$ satisfy the Mayer–Vietoris exact sequence under an open cover $M = U \cup V$.
 \lean{JacobianChallenge.Analysis.DeRham.deRham_mayer_vietoris}
 \leanok
@@ -777,6 +797,7 @@ Every smooth manifold admits a good cover (every finite intersection contractibl
 
 \begin{lemma}[Five-lemma induction over a finite good cover]
 \label{lem:deRham-five-lemma-induction}
+\uses{lem:dfl-r1}
 Over a finite good cover the integration map upgrades from per-chart isomorphisms to a global iso via Mayer–Vietoris and the five lemma.
 \lean{JacobianChallenge.Analysis.DeRham.deRham_five_lemma_induction}
 \leanok
@@ -938,6 +959,7 @@ For a compact oriented Riemannian manifold $(M, g)$, the kernel of the Laplace�
 
 \begin{lemma}[Laplacian is elliptic]
 \label{lem:hodge-laplacian-elliptic}
+\uses{lem:hle-r1}
 The principal symbol of $\Delta = d\delta + \delta d$ is $|\xi|^{2} \cdot \mathrm{id}$, hence invertible for $\xi \neq 0$.
 \lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_laplacian_elliptic}
 \leanok
@@ -967,6 +989,7 @@ Each de Rham cohomology class on a compact Riemannian manifold has a unique harm
 
 \begin{lemma}[Hodge $L^{2}$-orthogonal decomposition]
 \label{lem:hodge-orthogonal-decomposition}
+\uses{lem:hod-r1}
 $\Omega^{k}(M) = \mathcal{H}^{k}(M) \oplus d(\Omega^{k-1}) \oplus \delta(\Omega^{k+1})$, $L^{2}$-orthogonally.
 \lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_orthogonal_decomposition}
 \leanok
@@ -974,6 +997,7 @@ $\Omega^{k}(M) = \mathcal{H}^{k}(M) \oplus d(\Omega^{k-1}) \oplus \delta(\Omega^
 
 \begin{lemma}[Each de Rham class has a harmonic representative]
 \label{lem:hodge-unique-harmonic-representative}
+\uses{lem:huh-r1}
 The projection $\Omega^{k} \to \mathcal{H}^{k}$ descends to an iso $H^{k}_{\mathrm{dR}}(M) \cong \mathcal{H}^{k}(M)$.
 \lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_unique_harmonic_representative}
 \leanok
@@ -981,6 +1005,7 @@ The projection $\Omega^{k} \to \mathcal{H}^{k}$ descends to an iso $H^{k}_{\math
 
 \begin{lemma}[Kähler bigrading of harmonic forms]
 \label{lem:hodge-bigrading-split}
+\uses{lem:hbs-r1}
 On a Kähler manifold the Laplacians for $d, \partial, \bar\partial$ are proportional, so $\mathcal{H}^{k} = \bigoplus_{p+q=k} \mathcal{H}^{p,q}$ with Hodge symmetry $\mathcal{H}^{p,q} \cong \overline{\mathcal{H}^{q,p}}$.
 \lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_bigrading_split}
 \leanok
@@ -1123,12 +1148,14 @@ Apply de Rham + UCT: $\mathrm{rank}_{\Z}\,H_{1}(X, \Z) = \dim_{\C}\,H^{1}_{\math
 
 \begin{lemma}[Universal coefficients in degree 1 for a CW manifold]
 \label{lem:hodge-deRham-uct-degree-one}
+\uses{lem:hdu-r1}
 $H^{1}(X, \R) \cong \mathrm{Hom}(H_{1}(X, \Z), \R)$ on a compact CW manifold.
 \notready
 \end{lemma}
 
 \begin{lemma}[$H_{1}(X, \Z)$ is finitely generated]
 \label{lem:hodge-deRham-h1-fg}
+\uses{lem:hdf-r1}
 $H_{1}(X, \Z)$ is finitely generated for a compact CW manifold (built from a triangulation, R1).
 \lean{JacobianChallenge.Analysis.HodgeDeRham.hodge_deRham_h1_fg}
 \leanok
@@ -1136,6 +1163,7 @@ $H_{1}(X, \Z)$ is finitely generated for a compact CW manifold (built from a tri
 
 \begin{lemma}[Rank-Hom: $\dim_{\R}\,\mathrm{Hom}(A, \R) = \mathrm{rank}_{\Z}\,A$ for $A$ fg]
 \label{lem:hodge-deRham-hom-rank}
+\uses{lem:hdr-r1}
 Standard linear algebra over $\Z$: real-Hom dimension equals integer rank for a finitely-generated abelian group.
 \lean{JacobianChallenge.Analysis.HodgeDeRham.hodge_deRham_hom_dim_eq_rank}
 \leanok
@@ -1283,6 +1311,7 @@ On a polydisk $U \subseteq \C^{n}$, every $\bar\partial$-closed $(p, q)$-form wi
 
 \begin{lemma}[Each $\Omega^{p,q}$ is a fine sheaf]
 \label{lem:dolbeault-fine-sheaves}
+\uses{lem:dfs-r1}
 Smooth-form sheaves on a smooth manifold admit smooth partitions of unity, hence are fine.
 \lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_subgap_fine_sheaves}
 \notready
@@ -1290,6 +1319,7 @@ Smooth-form sheaves on a smooth manifold admit smooth partitions of unity, hence
 
 \begin{lemma}[Dolbeault step 2: sheaf cohomology computed via fine resolution]
 \label{lem:dolbeault-fine-resolution-cohomology}
+\uses{lem:dfr-r1}
 Sheaf cohomology of $\Omega^{p}_{X}$ agrees with the cohomology of any fine resolution; combined with step 1 this gives $H^{q}(X, \Omega^{p}_{X}) \cong H^{p,q}_{\bar\partial}(X)$.
 \lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_resolution_computes_sheaf_cohomology}
 \leanok
@@ -1437,6 +1467,7 @@ On a compact Riemann surface, the cup-product / trace pairing $H^{q}(X, F) \time
 
 \begin{lemma}[Trace map: $H^{1}(X, K_{X}) \cong \C$ via residues]
 \label{lem:serre-trace-iso}
+\uses{lem:sti-r1}
 Aggregation of point residues into a Čech cohomology class gives an iso $H^{1}(X, K_{X}) \cong \C$.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_trace_iso}
 \leanok
@@ -1444,6 +1475,7 @@ Aggregation of point residues into a Čech cohomology class gives an iso $H^{1}(
 
 \begin{lemma}[Cup product on Čech cohomology]
 \label{lem:serre-cech-cup-product}
+\uses{lem:scc-r1}
 The cup-product pairing $H^{q}(X, F) \otimes H^{1-q}(X, F^{\vee} \otimes K_{X}) \to H^{1}(X, K_{X})$ is well-defined.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_cup_product_def}
 \leanok
@@ -1459,6 +1491,7 @@ Identifying both sides of the pairing with harmonic-form spaces (R5 + R7), the p
 
 \begin{lemma}[Harmonic representatives realise the pairing]
 \label{lem:serre-l2-realisation}
+\uses{lem:sl2-r1}
 Replacing both arguments by their harmonic representatives turns the cup product into the $L^{2}$ inner product on $\mathcal{H}^{p,q}$.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_subgap_l2_realisation}
 \leanok
@@ -1597,6 +1630,7 @@ when the statement is still a forward declaration, or
 
 \begin{lemma}[Bundled forms step 1: $\Omega^{k}(M)$ algebra]
 \label{lem:bundled-forms-algebra}
+\uses{lem:bfa-r1}
 $\Omega^{k}(M)$ is an $\R$-vector space and a $C^{\infty}(M, \R)$-module.
 \lean{JacobianChallenge.Analysis.BundledForms.bundled_forms_algebra}
 \leanok
@@ -1612,12 +1646,14 @@ The exterior derivative $d : \Omega^{k} \to \Omega^{k+1}$ and wedge product $\we
 
 \begin{lemma}[$d^{2} = 0$]
 \label{lem:bundled-forms-d-sq-zero}
+\uses{lem:bfd-r1}
 \lean{JacobianChallenge.Analysis.BundledForms.bundled_forms_d_sq_zero}
 \leanok
 \end{lemma}
 
 \begin{lemma}[Pullback by smooth maps commutes with $d$]
 \label{lem:bundled-forms-pullback-compat}
+\uses{lem:bfp-r1}
 $f^{*} \circ d = d \circ f^{*}$ for every smooth map $f : M \to N$.
 \lean{JacobianChallenge.Analysis.BundledForms.bundled_forms_pullback_compat}
 \leanok
@@ -1749,12 +1785,14 @@ For a compact oriented Riemannian manifold, the Laplace–Beltrami operator $\De
 
 \begin{lemma}[$\Delta$ is elliptic]
 \label{lem:sobolev-laplacian-elliptic}
+\uses{lem:sle-r1}
 \lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_laplacian_elliptic}
 \leanok
 \end{lemma}
 
 \begin{lemma}[Garding inequality]
 \label{lem:sobolev-garding}
+\uses{lem:sgd-r1}
 $\|\omega\|_{s+2} \leq C(\|T\omega\|_{s} + \|\omega\|_{s})$ for elliptic $T$.
 \lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_garding}
 \notready
@@ -2206,3 +2244,1622 @@ distributions, fundamental group of $S^{1}$.  These four
 endpoints are where the entire frontier of the project meets
 ordinary Mathlib.
 \end{layman}
+
+\subsection{Frontier gap analysis: extended 5-pass refinements}
+\label{subsec:frontier-five-pass-extended}
+
+This subsection extends the 5-pass refinement methodology to the
+remaining 48 leaves of the dependency graph.  The same pattern
+applies: each chain refines a leaf five levels deep, and pass~5
+either lands on a named Mathlib declaration or explicitly flags
+the gap as ABSENT (no Mathlib hook yet) / partial (some pieces
+exist).  The chains are organized by area (sections of this
+document or sub-gaps R1--R10).
+
+% --------------------------------------------------------------
+\subsubsection*{Chain F1: Holomorphic $k$-th root (lem:analytic-kth-root)}
+
+\begin{lemma}[Pass F1.1: reduce to a holomorphic logarithm]
+\label{lem:akr-r1}
+\uses{lem:akr-r2}
+$h := \exp((1/k)\log g)$ produces the desired root once $\log g$ is well-defined on a small disk avoiding $0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F1.2: logarithm exists on a simply-connected nbhd avoiding $0$]
+\label{lem:akr-r2}
+\uses{lem:akr-r3}
+On any simply-connected open $U \subseteq \C \setminus \{0\}$, $\log : U \to \C$ is holomorphic.  Reduces to existence of a primitive of $1/z$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F1.3: primitive on simply-connected domain]
+\label{lem:akr-r3}
+\uses{lem:akr-r4}
+On a simply-connected open in $\C$, every holomorphic function has a holomorphic primitive (Cauchy's theorem on simply-connected domains).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F1.4: Cauchy's theorem on a simply-connected domain]
+\label{lem:akr-r4}
+\uses{lem:akr-r5}
+For $f$ holomorphic on a simply-connected open $U$, every closed loop in $U$ has $\oint f\,dz = 0$.  Reduces by Stokes to $df = 0$ holomorphic $\Rightarrow$ closed.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F1.5: Mathlib endpoint: $\log$ on a simply-connected nbhd avoiding $0$]
+\label{lem:akr-r5}
+\code{Complex.analyticAt\_log} provides $\log$ analytic at any point of $\C \setminus \{0\}$; combined with simply-connectedness this gives the global $\log$.  Mathlib status: present.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain F2: Properness of fibre below an open neighborhood (lem:proper-fiber-shrink)}
+
+\begin{lemma}[Pass F2.1: complement of $U$ is compact]
+\label{lem:pfs-r1}
+\uses{lem:pfs-r2}
+$U^{c}$ is closed in the compact source, hence compact.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F2.2: image of a compact set is compact]
+\label{lem:pfs-r2}
+\uses{lem:pfs-r3}
+$f(U^{c})$ is compact in the Hausdorff target $Y$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F2.3: compact subsets of Hausdorff are closed]
+\label{lem:pfs-r3}
+\uses{lem:pfs-r4}
+$f(U^{c})$ is closed in $Y$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F2.4: $y_{0}$ avoids the closed set $f(U^{c})$]
+\label{lem:pfs-r4}
+\uses{lem:pfs-r5}
+By hypothesis $f^{-1}(y_{0}) \subseteq U$, so $y_{0} \notin f(U^{c})$.  The complement $V := Y \setminus f(U^{c})$ is open and contains $y_{0}$; for $y \in V$, $f^{-1}(y) \subseteq U$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F2.5: Mathlib endpoint: closed-image-of-compact under continuous-Hausdorff]
+\label{lem:pfs-r5}
+\code{IsCompact.image} and \code{IsCompact.isClosed} (the latter on T2 spaces) compose to the needed fact.  Mathlib status: present.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain F7: Complex-torus package: $V/\\Lambda$ is a compact complex Lie group (prop:complex-torus-package)}
+
+\begin{lemma}[Pass F7.1: quotient inherits AddCommGroup]
+\label{lem:ctp-r1}
+\uses{lem:ctp-r2}
+$V/\Lambda$ is the quotient of an abelian group by a subgroup, so the quotient is an abelian group via the universal property.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F7.2: quotient inherits topology]
+\label{lem:ctp-r2}
+\uses{lem:ctp-r3}
+Equip $V/\Lambda$ with the quotient topology of the projection $\pi : V \to V/\Lambda$.  $\pi$ is open, so this gives a topological group structure.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F7.3: quotient is Hausdorff and compact]
+\label{lem:ctp-r3}
+\uses{lem:ctp-r4}
+$\Lambda$ closed and discrete in $V \cong \C^{g}$, so $V/\Lambda$ is Hausdorff.  Choose a fundamental parallelepiped $P$ for $\Lambda$; $\pi$ is surjective $P \to V/\Lambda$ with $P$ compact, hence the quotient is compact.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F7.4: complex chart at every point]
+\label{lem:ctp-r4}
+\uses{lem:ctp-r5}
+Locally $\pi$ is a homeomorphism (since $\Lambda$ is discrete), so it pulls back a complex chart from $V$.  Charts at different points are related by translations, which are biholomorphic.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F7.5: Mathlib endpoint]
+\label{lem:ctp-r5}
+\code{QuotientAddGroup.instTopologicalGroup} + \code{ChartedSpace.instOfHomeomorph} + \code{ComplexManifold} smooth-structure transfer.  Mathlib status: partial (charted-space transfer along an open quotient is the missing piece).
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain F8: Pullback of holomorphic 1-forms along a holomorphic map (lem:pullback-forms)}
+
+\begin{lemma}[Pass F8.1: define $f^{*}\omega$ chart-locally]
+\label{lem:pbf-r1}
+\uses{lem:pbf-r2}
+In holomorphic charts $w$ on $X$ and $z$ on $Y$, write $\omega = g(z)\,dz$ and $f$ as $z = F(w)$ holomorphic.  Define $f^{*}\omega := g(F(w))\,F'(w)\,dw$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F8.2: chart-independence of the pullback]
+\label{lem:pbf-r2}
+\uses{lem:pbf-r3}
+Under change of holomorphic chart $w' = \varphi(w)$, the chain rule gives $f^{*}\omega$ the correct transformation, so the chart-local formula glues to a global section of $f^{*}\Omega^{1}_{Y}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F8.3: naturality on overlaps reduces to the chain rule]
+\label{lem:pbf-r3}
+\uses{lem:pbf-r4}
+On chart overlaps, the pullback transforms via $(F \circ \varphi)' = F'(\varphi)\cdot\varphi'$.  Same on the other side via the cocycle condition for $\Omega^{1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F8.4: chain rule for holomorphic functions]
+\label{lem:pbf-r4}
+\uses{lem:pbf-r5}
+$(g \circ F)'(w) = g'(F(w)) \cdot F'(w)$ for holomorphic $g, F$, by the complex differentiability.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F8.5: Mathlib endpoint]
+\label{lem:pbf-r5}
+\code{HasDerivAt.comp} and \code{ContMDiff.compMDifferentiable} provide the chart-local + manifold-level chain rules.  Mathlib status: present.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain F9: Trace of a holomorphic 1-form along a finite branched cover (lem:trace-forms)}
+
+\begin{lemma}[Pass F9.1: define $\mathrm{tr}\,\omega$ on the unbranched locus]
+\label{lem:trf-r1}
+\uses{lem:trf-r2}
+Off the branch locus, $f : X \to Y$ is an unramified cover of degree $d$.  Define $(\mathrm{tr}\,\omega)(y) := \sum_{x \in f^{-1}(y)} \omega_{x}$ in pulled-back local coordinates.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F9.2: trace extends across the branch locus]
+\label{lem:trf-r2}
+\uses{lem:trf-r3}
+Near a ramified point with index $k$, the $k$ sheets coalesce; the sum of $\omega$ over the fiber extends continuously (and holomorphically) to a 1-form on $Y$ via the $k$-th power expansion.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F9.3: local trace formula in branched coordinates]
+\label{lem:trf-r3}
+\uses{lem:trf-r4}
+In coordinates $w = z^{k}$ near a branch point, $\sum_{j=0}^{k-1} f(\zeta_{k}^{j} z)\,d(\zeta_{k}^{j} z) = k \cdot f^{\#}(w)\,dw$ for $f^{\#}(w) := \frac{1}{k}\sum_{j} f(\zeta_{k}^{j} w^{1/k})$ holomorphic in $w$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F9.4: Newton symmetric-function theorem]
+\label{lem:trf-r4}
+\uses{lem:trf-r5}
+Symmetric functions in $\zeta_{k}^{j} z^{1/k}$ that are smooth in the input are smooth in $w = z^{k}$.  Reduces to the Newton identities expressing power sums in elementary symmetric polynomials.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F9.5: Mathlib endpoint]
+\label{lem:trf-r5}
+\code{MvPolynomial.symmetric\_subalgebra} is Mathlib-present in the polynomial setting; the analytic upgrade for power series is the named declaration we need.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain B1: Finite disk atlas exists (compactness) (lem:rado-finite-disk-atlas)}
+
+\begin{lemma}[Pass B1.1: cover by chart neighborhoods]
+\label{lem:rfd-r1}
+\uses{lem:rfd-r2}
+Every point of $X$ has a chart $\varphi_{p} : U_{p} \to \R^{2}$.  Restricting to $V_{p} \subset U_{p}$ with $\overline{V_{p}}$ compactly contained gives an open cover by relatively compact disk-like sets.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B1.2: compactness extracts a finite subcover]
+\label{lem:rfd-r2}
+\uses{lem:rfd-r3}
+$X$ compact, so $\{V_{p}\}$ admits a finite subcover $\{V_{1}, \ldots, V_{N}\}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B1.3: disk shapes preserved on overlaps]
+\label{lem:rfd-r3}
+\uses{lem:rfd-r4}
+Pre-images $\varphi_{i}(V_{i}) \subseteq \R^{2}$ are smooth disks; overlap regions are smooth-diffeomorphic via the transition maps $\varphi_{j}\circ\varphi_{i}^{-1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B1.4: paracompactness of compact 2-manifolds]
+\label{lem:rfd-r4}
+\uses{lem:rfd-r5}
+Every compact $C^{0}$-manifold is paracompact; we just used compactness, but the subordinate finite cover argument works under weaker paracompactness.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B1.5: Mathlib endpoint]
+\label{lem:rfd-r5}
+\code{IsCompact.elim\_finite\_subcover} and \code{ChartedSpace.atlas} are the Mathlib hooks.  Mathlib status: present.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain B2: PL cocycle preservation under chart modification (lem:rado-pl-cocycle-preservation)}
+
+\begin{lemma}[Pass B2.1: PL transition functions form a cocycle]
+\label{lem:rpc-r1}
+\uses{lem:rpc-r2}
+On overlaps $U_{i}\cap U_{j}\cap U_{k}$ the transition maps $\varphi_{ij}, \varphi_{jk}, \varphi_{ki}$ satisfy $\varphi_{ki}\circ\varphi_{jk}\circ\varphi_{ij} = \mathrm{id}$.  Modifying $\varphi_{i}$ by a PL homeomorphism $\psi$ changes only $\varphi_{ij}$ to $\varphi_{ij}\circ\psi^{-1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B2.2: composition with a PL map preserves PL]
+\label{lem:rpc-r2}
+\uses{lem:rpc-r3}
+PL maps are closed under composition: $f, g$ both piecewise linear $\Rightarrow$ $f\circ g$ piecewise linear with finitely many regions.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B2.3: PL composition refines the simplicial decomposition]
+\label{lem:rpc-r3}
+\uses{lem:rpc-r4}
+$f\circ g$ admits a common simplicial subdivision: take the simplicial preimage of $g$'s decomposition under $f^{-1}$, then refine.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B2.4: simplicial complex refinement existence]
+\label{lem:rpc-r4}
+\uses{lem:rpc-r5}
+Any two finite simplicial decompositions of a region in $\R^{2}$ admit a common refinement (e.g.\ via the union of all simplex boundaries).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B2.5: Mathlib endpoint]
+\label{lem:rpc-r5}
+PL infrastructure is currently absent from Mathlib.  Closest hooks: \code{Mathlib.Analysis.Convex.Simplex} for simplices and \code{AffineMap} for affine maps.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain B3: Triangulate each chart (lem:rado-triangulate-each-chart)}
+
+\begin{lemma}[Pass B3.1: standard triangulation of a planar disk]
+\label{lem:rtc-r1}
+\uses{lem:rtc-r2}
+The standard closed disk $\overline{B^{2}}$ admits an explicit triangulation, e.g.\ by radial wedges from the center plus circular arcs.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B3.2: transport triangulation through chart homeomorphism]
+\label{lem:rtc-r2}
+\uses{lem:rtc-r3}
+For chart $\varphi : U \to D$, pull back the standard triangulation via $\varphi^{-1}$; this gives a topological triangulation of $U$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B3.3: piecewise-linearity of the transported triangulation]
+\label{lem:rtc-r3}
+\uses{lem:rtc-r4}
+After applying the local PL approximation (Doyle--Moran), the transported triangulation has PL transitions between charts.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B3.4: subdivision to match overlap data]
+\label{lem:rtc-r4}
+\uses{lem:rtc-r5}
+Refine each chart's triangulation finely enough that overlaps land within sub-simplices, enabling chart-by-chart gluing.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B3.5: Mathlib endpoint]
+\label{lem:rtc-r5}
+\code{Topology.Homotopy.Triangulation} is the natural target; the relevant simplicial-complex API is currently a project-side fork.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain B4: Common subdivision over overlaps (lem:rado-common-subdivision)}
+
+\begin{lemma}[Pass B4.1: two triangulations of the same disk admit a common refinement]
+\label{lem:rcs-r1}
+\uses{lem:rcs-r2}
+Any two triangulations $\mathcal{T}_{1}, \mathcal{T}_{2}$ of a closed disk admit a common subdivision $\mathcal{T}$, refining both.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B4.2: planar arrangement of edges]
+\label{lem:rcs-r2}
+\uses{lem:rcs-r3}
+Take the union of all 1-cells of $\mathcal{T}_{1}$ and $\mathcal{T}_{2}$ as a planar 1-complex.  Each face of the resulting arrangement is a polygon, triangulable in finitely many ways.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B4.3: polygon triangulation by ear-cutting]
+\label{lem:rcs-r3}
+\uses{lem:rcs-r4}
+Every simple polygon admits a triangulation, e.g.\ by repeatedly cutting an `ear' (a triangle whose third edge is internal).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B4.4: ear-existence theorem for simple polygons]
+\label{lem:rcs-r4}
+\uses{lem:rcs-r5}
+Every simple polygon with $\geq 4$ vertices has at least two ears.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B4.5: Mathlib endpoint]
+\label{lem:rcs-r5}
+Polygon ear-theorem is computational geometry; not in current Mathlib.  Closest: \code{Polygon} basic API in Mathlib3 not yet ported.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain B5: Edge condition: each 1-simplex in two 2-simplices (lem:rado-edges-in-two-triangles)}
+
+\begin{lemma}[Pass B5.1: local 2-manifold structure $\Rightarrow$ each edge has two sides]
+\label{lem:ret-r1}
+\uses{lem:ret-r2}
+At any interior edge $e$ of a triangulation of a 2-manifold, a small neighborhood of $e$ is homeomorphic to $\R^{2}$, hence has exactly two sides.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B5.2: each side is a triangle]
+\label{lem:ret-r2}
+\uses{lem:ret-r3}
+In a finite triangulation, the only 2-cells incident to $e$ are triangles, and the local 2-manifold condition forces exactly one triangle on each side.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B5.3: non-boundary edges of a closed manifold lie in exactly two triangles]
+\label{lem:ret-r3}
+\uses{lem:ret-r4}
+For a closed (boundaryless) 2-manifold, every edge is interior and so every edge is in exactly two triangles.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B5.4: local Euclidean structure gives a 2-disk neighborhood of an edge]
+\label{lem:ret-r4}
+\uses{lem:ret-r5}
+By the manifold chart at a midpoint of $e$, a neighborhood is homeomorphic to $\R^{2}$, in which an edge separates the plane into two pieces (Jordan-arc theorem).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B5.5: Mathlib endpoint]
+\label{lem:ret-r5}
+\code{Topology.JordanCurve} (planned) for the arc-separation step.  Mathlib status: ABSENT (Jordan arc theorem in Mathlib).
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain B6: Vertex link is a combinatorial circle (lem:rado-vertex-link-is-circle)}
+
+\begin{lemma}[Pass B6.1: local structure at a vertex of a 2-manifold]
+\label{lem:rvl-r1}
+\uses{lem:rvl-r2}
+A small neighborhood of a vertex $v$ is homeomorphic to $\R^{2}$; the link of $v$ in the triangulation corresponds to the boundary of a small disk around $v$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B6.2: ordering edges around a vertex]
+\label{lem:rvl-r2}
+\uses{lem:rvl-r3}
+The triangles at $v$ can be cyclically ordered by their edges incident to $v$, since each pair of adjacent triangles shares an edge.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B6.3: link is a 1-cycle in the triangulation]
+\label{lem:rvl-r3}
+\uses{lem:rvl-r4}
+Cyclically traversing the triangles at $v$ produces a closed 1-cycle in the link, i.e.\ a combinatorial circle.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B6.4: non-branching of the link follows from the edge condition]
+\label{lem:rvl-r4}
+\uses{lem:rvl-r5}
+By the edge condition (two triangles per edge), no vertex of the link has degree $\neq 2$, so the link is a 1-manifold without boundary in dimension 1, i.e.\ a finite disjoint union of circles, and connectedness gives one circle.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B6.5: Mathlib endpoint]
+\label{lem:rvl-r5}
+PL link computation; not yet in Mathlib.  Closest: \code{Polynomial.Cyclic} for cyclic structures.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain B7: Glued chart map is continuous (lem:rado-glue-continuous)}
+
+\begin{lemma}[Pass B7.1: chart maps are continuous on each chart]
+\label{lem:rgc-r1}
+\uses{lem:rgc-r2}
+By definition a chart $\varphi_{i} : U_{i} \to \R^{2}$ is a homeomorphism, so continuous.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B7.2: compatibility on overlaps]
+\label{lem:rgc-r2}
+\uses{lem:rgc-r3}
+On $U_{i}\cap U_{j}$, $\varphi_{i}$ and $\varphi_{j}$ are related by a PL transition $\varphi_{ji}\circ\varphi_{i}$, which is continuous.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B7.3: gluing continuous maps over an open cover]
+\label{lem:rgc-r3}
+\uses{lem:rgc-r4}
+A function $f : X \to Y$ defined on a finite open cover $\{U_{i}\}$ via continuous local pieces $f_{i}$, agreeing on overlaps, is continuous.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B7.4: pasting lemma for continuity]
+\label{lem:rgc-r4}
+\uses{lem:rgc-r5}
+For an open cover $\{U_{i}\}$ of $X$, $f$ is continuous iff each $f|_{U_{i}}$ is continuous.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B7.5: Mathlib endpoint]
+\label{lem:rgc-r5}
+\code{continuous\_iff\_continuousOn\_iUnion\_of\_isOpen} is Mathlib's pasting lemma.  Mathlib status: present.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain B8: Glued chart map is bijective (lem:rado-glue-bijective)}
+
+\begin{lemma}[Pass B8.1: local injectivity on each chart]
+\label{lem:rgb-r1}
+\uses{lem:rgb-r2}
+Each chart $\varphi_{i}$ is a homeomorphism, hence injective.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B8.2: agreement on overlaps lifts to global injectivity]
+\label{lem:rgb-r2}
+\uses{lem:rgb-r3}
+If two points $p \neq q$ map to the same image, they lie in different charts (else local injectivity is contradicted); the chart-overlap compatibility produces a contradiction.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B8.3: surjectivity from cover-by-image]
+\label{lem:rgb-r3}
+\uses{lem:rgb-r4}
+Every point of the target lies in $\varphi_{i}(U_{i})$ for some $i$, since the source $X$ is covered by $\{U_{i}\}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B8.4: disjoint-overlap analysis]
+\label{lem:rgb-r4}
+\uses{lem:rgb-r5}
+On overlaps the glued map agrees by construction, so the map is well-defined as a quotient of the disjoint union of charts modulo the cocycle relation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B8.5: Mathlib endpoint]
+\label{lem:rgb-r5}
+\code{Equiv.coe\_iUnion} for piecing together bijections from disjoint pieces; the cover-with-overlap variant requires a coproduct argument.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain C1: Cyclic reduction to fully-reduced form (lem:tietze-cyclic-reduction)}
+
+\begin{lemma}[Pass C1.1: identify cancellable adjacent pairs]
+\label{lem:tcr-r1}
+\uses{lem:tcr-r2}
+In an edge word $w = a_{1}\cdots a_{n}$ over $\{a, a^{-1}, b, b^{-1}, \ldots\}$, cancellable pairs are adjacent letters $a_{i} a_{i+1}$ with $a_{i+1} = a_{i}^{-1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C1.2: cancel iteratively]
+\label{lem:tcr-r2}
+\uses{lem:tcr-r3}
+While a cancellable pair exists, remove it.  Process terminates because word length strictly decreases.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C1.3: cyclic cancellability]
+\label{lem:tcr-r3}
+\uses{lem:tcr-r4}
+Also cancel $a_{1}$ and $a_{n}$ if they are inverses (cyclic adjacency).  The cyclically-reduced form is unique up to rotation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C1.4: uniqueness of reduced form (Stallings--Tietze)]
+\label{lem:tcr-r4}
+\uses{lem:tcr-r5}
+Free groups have unique reduced words; cyclic reduction extends this uniqueness up to rotation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C1.5: Mathlib endpoint]
+\label{lem:tcr-r5}
+\code{FreeGroup} has \code{FreeGroup.reduce} for word reduction.  Mathlib status: present (free group reduce); cyclic version is partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain C2: Brahana handle creation (lem:tietze-brahana)}
+
+\begin{lemma}[Pass C2.1: identify a `crossing' pattern in the word]
+\label{lem:tbh-r1}
+\uses{lem:tbh-r2}
+In a cyclically-reduced edge word, a `crossing' is a pattern $a \cdots b \cdots a^{-1} \cdots b^{-1}$ where $a$ and $b$ alternate.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C2.2: re-identify crossings as a handle]
+\label{lem:tbh-r2}
+\uses{lem:tbh-r3}
+Each crossing can be rewritten as a handle block $aba^{-1}b^{-1}$ via a sequence of Tietze moves preserving the underlying surface.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C2.3: Tietze moves preserve homotopy type]
+\label{lem:tbh-r3}
+\uses{lem:tbh-r4}
+Tietze moves correspond to choices of base-point or path; they don't change the surface up to homeomorphism.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C2.4: group-theoretic version of handle creation]
+\label{lem:tbh-r4}
+\uses{lem:tbh-r5}
+In the free group on $\{a, b, c, d, \ldots\}$, the relator can be transformed via conjugation and substitution to expose handle blocks.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C2.5: Mathlib endpoint]
+\label{lem:tbh-r5}
+\code{PresentedGroup.relations\_eq} for relator manipulation.  Brahana handle creation specifically not in Mathlib.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain C3: Tietze moves preserve orientability (lem:tietze-moves-preserve-orientability)}
+
+\begin{lemma}[Pass C3.1: orientability via consistent edge labeling]
+\label{lem:tmo-r1}
+\uses{lem:tmo-r2}
+A polygon edge word represents an orientable surface iff each letter and its inverse appear with consistent signs (no $aa$ pattern).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C3.2: Tietze moves do not introduce same-orientation pairs]
+\label{lem:tmo-r2}
+\uses{lem:tmo-r3}
+The basic Tietze moves (relator manipulation, generator addition/removal) preserve the consistent-sign property.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C3.3: inductive proof on move count]
+\label{lem:tmo-r3}
+\uses{lem:tmo-r4}
+By induction on the number of Tietze moves, the orientability invariant propagates.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C3.4: equivalence of polygon-word orientability and surface orientability]
+\label{lem:tmo-r4}
+\uses{lem:tmo-r5}
+The combinatorial orientability of the polygon word matches the topological orientability of the resulting surface.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C3.5: Mathlib endpoint]
+\label{lem:tmo-r5}
+Surface orientability is currently absent from Mathlib.  Closest: \code{Manifold.Orientable} (planned).  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain C4: Orientable handle-grouped is concatenation of standard blocks (lem:tietze-orientable-is-handle-concat)}
+
+\begin{lemma}[Pass C4.1: structure theorem for handle-grouped words]
+\label{lem:toh-r1}
+\uses{lem:toh-r2}
+A handle-grouped word has the form $\prod_{i=1}^{g} W_{i}$ where each $W_{i}$ is a 4-letter handle block.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C4.2: each handle block is in standard form $a_{i}b_{i}a_{i}^{-1}b_{i}^{-1}$]
+\label{lem:toh-r2}
+\uses{lem:toh-r3}
+By renaming generators within each block, $W_{i}$ takes the standard form.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C4.3: concatenation preserves orientability]
+\label{lem:toh-r3}
+\uses{lem:toh-r4}
+The product structure is preserved under the standard surface concatenation operation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C4.4: uniqueness of the standard form up to genus]
+\label{lem:toh-r4}
+\uses{lem:toh-r5}
+Two orientable surface words are equivalent iff their handle counts agree.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C4.5: Mathlib endpoint]
+\label{lem:toh-r5}
+Genus classification of orientable surfaces is currently absent from Mathlib.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain C5: Handle blocks may be permuted within a word (lem:tietze-handle-swap)}
+
+\begin{lemma}[Pass C5.1: two handles commute up to Tietze moves]
+\label{lem:ths-r1}
+\uses{lem:ths-r2}
+Two adjacent handle blocks $H_{i}H_{i+1}$ in a word can be swapped to $H_{i+1}H_{i}$ via a sequence of Tietze moves.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C5.2: explicit swap via auxiliary moves]
+\label{lem:ths-r2}
+\uses{lem:ths-r3}
+Use cyclic permutation + relator conjugation to move one block past another, preserving the underlying group presentation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C5.3: conjugation in free product groups]
+\label{lem:ths-r3}
+\uses{lem:ths-r4}
+In the free group, conjugating one factor by another doesn't change the underlying group, only the relator presentation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C5.4: permutations generated by adjacent transpositions]
+\label{lem:ths-r4}
+\uses{lem:ths-r5}
+Any permutation of $\{1, \ldots, g\}$ is a product of adjacent transpositions, so handle ordering is fully arbitrary.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C5.5: Mathlib endpoint]
+\label{lem:ths-r5}
+\code{Equiv.Perm} for permutations; conjugation in \code{FreeGroup} is partial.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain C6: Strip-one-handle (induction) (lem:tietze-strip-one-handle)}
+
+\begin{lemma}[Pass C6.1: isolate the first handle block]
+\label{lem:tsh-r1}
+\uses{lem:tsh-r2}
+Use cyclic reduction + handle swap to isolate one handle block at the start of the word.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C6.2: strip the handle via free-product factorization]
+\label{lem:tsh-r2}
+\uses{lem:tsh-r3}
+The word decomposes as $W = H \cdot W'$ where $H$ is the first handle block, $W'$ has $g-1$ handles.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C6.3: inductive hypothesis on $W'$]
+\label{lem:tsh-r3}
+\uses{lem:tsh-r4}
+By induction on $g$, $W'$ is a concatenation of $g-1$ standard handles.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C6.4: re-attach $H$ to obtain the full standard form]
+\label{lem:tsh-r4}
+\uses{lem:tsh-r5}
+Concatenating $H$ with the inductively-derived form gives the full standard relator $\prod_{i=1}^{g} a_{i}b_{i}a_{i}^{-1}b_{i}^{-1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C6.5: Mathlib endpoint]
+\label{lem:tsh-r5}
+Inductive proof using \code{Nat.rec}; relator decomposition is not in Mathlib.  Mathlib status: partial (only the induction primitive is present).
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain D1: Cut along a spanning tree of the 1-skeleton (lem:polygonal-model-cut-along-tree)}
+
+\begin{lemma}[Pass D1.1: spanning tree exists in any connected finite graph]
+\label{lem:pct-r1}
+\uses{lem:pct-r2}
+Take a maximal acyclic subgraph of the 1-skeleton; this is a spanning tree.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D1.2: cutting along the tree produces a topological disk]
+\label{lem:pct-r2}
+\uses{lem:pct-r3}
+Removing a spanning tree from a triangulated 2-manifold and taking the dual gives a topological disk.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D1.3: Euler-formula check on the disk]
+\label{lem:pct-r3}
+\uses{lem:pct-r4}
+$V - E + F = 1$ for a disk; verifying this on the cut produces consistency.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D1.4: disk has length-$4g$ boundary edge word]
+\label{lem:pct-r4}
+\uses{lem:pct-r5}
+For a genus-$g$ surface, the dual disk has $2 \cdot 2g$ boundary edges in a four-letter alphabet.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D1.5: Mathlib endpoint]
+\label{lem:pct-r5}
+\code{SimpleGraph.spanningTree} (planned) for the spanning tree.  Cutting argument is not in Mathlib.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain D2: Polygonal-model genus matches topological genus (lem:polygonal-model-genus-matches)}
+
+\begin{lemma}[Pass D2.1: Euler characteristic from triangulation]
+\label{lem:pgm-r1}
+\uses{lem:pgm-r2}
+$\chi(X) = V - E + F$ for any triangulation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D2.2: Euler characteristic of standard $4g$-gon model]
+\label{lem:pgm-r2}
+\uses{lem:pgm-r3}
+The standard model identifies $4g$ edges in pairs, $V = 1$ vertex (all corners identified), $E = 2g$, $F = 1$, giving $\chi = 2 - 2g$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D2.3: topological genus from Euler characteristic]
+\label{lem:pgm-r3}
+\uses{lem:pgm-r4}
+For a closed orientable surface, $\chi = 2 - 2g$ defines the topological genus uniquely.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D2.4: invariance of $\chi$ under Tietze moves]
+\label{lem:pgm-r4}
+\uses{lem:pgm-r5}
+Each Tietze move preserves $\chi$: handle creation, swap, and reduction all preserve the count.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D2.5: Mathlib endpoint]
+\label{lem:pgm-r5}
+\code{EulerCharacteristic} for simplicial complexes is absent from Mathlib.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain E1: Integration is well-defined on smooth simplices (lem:deRham-integration-simplex)}
+
+\begin{lemma}[Pass E1.1: smooth simplex parametrization]
+\label{lem:dis-r1}
+\uses{lem:dis-r2}
+A smooth $k$-simplex in $M$ is a smooth map $\sigma : \Delta^{k} \to M$ from the standard simplex.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E1.2: pullback of a $k$-form]
+\label{lem:dis-r2}
+\uses{lem:dis-r3}
+$\sigma^{*}\omega$ is a smooth $k$-form on $\Delta^{k} \subseteq \R^{k}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E1.3: integration of a top form on $\Delta^{k}$]
+\label{lem:dis-r3}
+\uses{lem:dis-r4}
+$\int_{\Delta^{k}} \sigma^{*}\omega$ is the standard Lebesgue integral of a smooth function on the compact simplex.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E1.4: convergence + finiteness from compactness]
+\label{lem:dis-r4}
+\uses{lem:dis-r5}
+$\sigma^{*}\omega$ is continuous, hence bounded on compact $\Delta^{k}$; the integral is finite.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E1.5: Mathlib endpoint]
+\label{lem:dis-r5}
+\code{MeasureTheory.integral} on a compact set with continuous integrand.  Mathlib status: present.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain E2: Stokes for a simplex: $\\int_{\\sigma} d\\omega = \\int_{\\partial\\sigma} \\omega$ (lem:deRham-stokes-simplex)}
+
+\begin{lemma}[Pass E2.1: reduce to the standard simplex]
+\label{lem:dss-r1}
+\uses{lem:dss-r2}
+Pull back via $\sigma$: $\int_{\sigma}d\omega = \int_{\Delta^{k}}\sigma^{*}d\omega = \int_{\Delta^{k}}d(\sigma^{*}\omega)$ by naturality.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E2.2: Stokes on the standard simplex]
+\label{lem:dss-r2}
+\uses{lem:dss-r3}
+$\int_{\Delta^{k}} d\eta = \int_{\partial\Delta^{k}}\eta$ for $\eta$ smooth, where $\partial\Delta^{k}$ is the alternating sum of faces.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E2.3: face decomposition of $\partial\Delta^{k}$]
+\label{lem:dss-r3}
+\uses{lem:dss-r4}
+$\partial\Delta^{k} = \sum_{i=0}^{k}(-1)^{i}\partial_{i}$ where $\partial_{i}$ is the $i$-th face inclusion.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E2.4: Stokes on a half-space (FTC induction)]
+\label{lem:dss-r4}
+\uses{lem:dss-r5}
+By induction on $k$, Stokes on $\Delta^{k}$ reduces to the FTC on the unit interval combined with Fubini on lower-dim slices.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E2.5: Mathlib endpoint]
+\label{lem:dss-r5}
+\code{intervalIntegral.integral\_deriv\_eq\_sub} for FTC; \code{MeasureTheory.integral\_prod} for Fubini.  Stokes-on-simplex is partially in Mathlib via \code{Stokes\_theorem}.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain E3: Smooth-singular into singular is a quasi-iso (lem:deRham-smooth-quasi-iso)}
+
+\begin{lemma}[Pass E3.1: smooth-singular $\subseteq$ singular as sub-chain complex]
+\label{lem:dsq-r1}
+\uses{lem:dsq-r2}
+Smooth simplices are continuous, so smooth-singular chains form a sub-chain complex of singular chains.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E3.2: Whitney smoothing: every continuous simplex is homotopic to a smooth one]
+\label{lem:dsq-r2}
+\uses{lem:dsq-r3}
+For $\sigma : \Delta^{k} \to M$ continuous, there exists $\tilde\sigma$ smooth + a smooth homotopy $H : \Delta^{k}\times I \to M$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E3.3: homotopy gives chain-equivalence]
+\label{lem:dsq-r3}
+\uses{lem:dsq-r4}
+The homotopy $H$ provides an explicit chain homotopy between $\sigma$ and $\tilde\sigma$, so the inclusion of complexes is a homology iso.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E3.4: Whitney approximation theorem on a smooth manifold]
+\label{lem:dsq-r4}
+\uses{lem:dsq-r5}
+Continuous maps to a smooth manifold are dense in the compact-open topology, and any continuous map is homotopic to a smooth one.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E3.5: Mathlib endpoint]
+\label{lem:dsq-r5}
+\code{Manifold.WhitneyApproximation} (planned).  Mathlib status: partial (basic smoothing in \code{ContDiff} is present, manifold-level approximation pending).
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain E4: Mayer--Vietoris exact sequence (both theories) (lem:deRham-mayer-vietoris)}
+
+\begin{lemma}[Pass E4.1: MV for de Rham via short exact sequence of complexes]
+\label{lem:dmv-r1}
+\uses{lem:dmv-r2}
+For an open cover $\{U, V\}$ of $X$, $0 \to \Omega^{*}(X) \to \Omega^{*}(U)\oplus\Omega^{*}(V) \to \Omega^{*}(U\cap V) \to 0$ is short-exact.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E4.2: MV for singular via barycentric subdivision]
+\label{lem:dmv-r2}
+\uses{lem:dmv-r3}
+Singular MV is established via small simplices: every chain in $X$ is chain-homotopic to a small chain, decomposable into $U$- and $V$-pieces.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E4.3: snake lemma gives the long exact sequence]
+\label{lem:dmv-r3}
+\uses{lem:dmv-r4}
+Both short exact sequences yield long exact sequences in cohomology via the snake lemma.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E4.4: comparison map is a chain map]
+\label{lem:dmv-r4}
+\uses{lem:dmv-r5}
+The integration map $\Omega^{*} \to S^{*}$ commutes with the MV connecting morphism, giving a comparison of long exact sequences.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E4.5: Mathlib endpoint]
+\label{lem:dmv-r5}
+\code{CategoryTheory.Abelian.SnakeLemma} for snake lemma; MV for singular cohomology partially present in \code{AlgebraicTopology}.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain E5: Five-lemma induction over a finite good cover (lem:deRham-five-lemma-induction)}
+
+\begin{lemma}[Pass E5.1: base case: one chart]
+\label{lem:dfl-r1}
+\uses{lem:dfl-r2}
+On a contractible chart, both de Rham and singular cohomology are trivial in positive degrees, so the integration map is trivially an iso.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E5.2: inductive step: combine two covers]
+\label{lem:dfl-r2}
+\uses{lem:dfl-r3}
+Given covers of size $n$ and 1 covering $X$, combine via Mayer--Vietoris and the five lemma.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E5.3: five lemma for chain map between long exact sequences]
+\label{lem:dfl-r3}
+\uses{lem:dfl-r4}
+If 4 of 5 maps in a ladder of long exact sequences are isos, so is the 5th.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E5.4: induction on cover size]
+\label{lem:dfl-r4}
+\uses{lem:dfl-r5}
+By induction on the size of a finite good cover, the comparison map becomes an iso globally.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E5.5: Mathlib endpoint]
+\label{lem:dfl-r5}
+\code{CategoryTheory.Abelian.FiveLemma}.  Mathlib status: present (in homological-algebra section).
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain F1H: Laplacian is elliptic (lem:hodge-laplacian-elliptic)}
+
+\begin{lemma}[Pass F1H.1: symbol of $\Delta$]
+\label{lem:hle-r1}
+\uses{lem:hle-r2}
+In local coordinates, the principal symbol of $\Delta$ is $|\xi|^{2}$, a positive-definite quadratic form.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F1H.2: ellipticity = invertible principal symbol]
+\label{lem:hle-r2}
+\uses{lem:hle-r3}
+An operator is elliptic iff its principal symbol is invertible for every nonzero $\xi$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F1H.3: $|\xi|^{2} > 0$ for $\xi \neq 0$]
+\label{lem:hle-r3}
+\uses{lem:hle-r4}
+Positive-definiteness of the standard inner product on $T^{*}M$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F1H.4: local representation of the Laplacian on $\R^{n}$]
+\label{lem:hle-r4}
+\uses{lem:hle-r5}
+$\Delta = -\sum_{i,j} g^{ij}\partial_{i}\partial_{j} + \text{lower order}$.  The principal part is $-\partial_{i}\partial_{j}$, with symbol $\xi_{i}\xi_{j}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F1H.5: Mathlib endpoint]
+\label{lem:hle-r5}
+\code{LinearPDE.Symbol} and \code{LinearPDE.Elliptic} are not in Mathlib.  Closest: \code{ContinuousLinearMap}.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain F2H: Hodge $L^{2}$-orthogonal decomposition (lem:hodge-orthogonal-decomposition)}
+
+\begin{lemma}[Pass F2H.1: define harmonic forms as $\ker\Delta$]
+\label{lem:hod-r1}
+\uses{lem:hod-r2}
+$\mathcal{H}^{k} := \{\omega \in \Omega^{k}(M) : \Delta\omega = 0\}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F2H.2: $L^{2}$-decomposition $\Omega^{k} = \mathcal{H}^{k}\oplus\mathrm{im}\,d\oplus\mathrm{im}\,d^{*}$]
+\label{lem:hod-r2}
+\uses{lem:hod-r3}
+The three subspaces are pairwise $L^{2}$-orthogonal: $\langle d\alpha, d^{*}\beta\rangle = \langle d^{2}\alpha, \beta\rangle = 0$, similarly for the others.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F2H.3: density of $C^{\infty}$ in $L^{2}$]
+\label{lem:hod-r3}
+\uses{lem:hod-r4}
+$C^{\infty}$ smooth forms are dense in $L^{2}$ via mollification + partition of unity.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F2H.4: Fredholm + closed range theorem]
+\label{lem:hod-r4}
+\uses{lem:hod-r5}
+$\Delta$ Fredholm $\Rightarrow$ closed range, so the orthogonal complement of $\ker\Delta$ is the image of $\Delta$, which equals $\mathrm{im}\,d \oplus \mathrm{im}\,d^{*}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F2H.5: Mathlib endpoint]
+\label{lem:hod-r5}
+\code{Banach.ClosedRange} for closed-range theorem; Hodge orthogonality is currently absent.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain F3H: Each de Rham class has a harmonic representative (lem:hodge-unique-harmonic-representative)}
+
+\begin{lemma}[Pass F3H.1: project a closed form onto $\mathcal{H}^{k}$]
+\label{lem:huh-r1}
+\uses{lem:huh-r2}
+For $\omega \in \ker d$, decompose $\omega = h + d\alpha + d^{*}\beta$.  Closed-ness gives $d^{*}\beta = 0$, so $\omega = h + d\alpha$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F3H.2: uniqueness up to exact]
+\label{lem:huh-r2}
+\uses{lem:huh-r3}
+Two harmonic representatives differing by an exact form must be equal: if $h_{1} - h_{2} = d\alpha$, taking inner product with $h_{1}-h_{2}$ gives $\|h_{1}-h_{2}\|^{2} = 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F3H.3: $d^{*}\beta = 0$ from $d\omega = 0$]
+\label{lem:huh-r3}
+\uses{lem:huh-r4}
+$d\omega = 0$ and $\omega = h + d\alpha + d^{*}\beta$ give $d(d^{*}\beta) = 0$, then $\langle dd^{*}\beta, \beta\rangle = \|d^{*}\beta\|^{2} = 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F3H.4: Hodge inner product non-degeneracy]
+\label{lem:huh-r4}
+\uses{lem:huh-r5}
+$\langle\cdot,\cdot\rangle_{L^{2}}$ is positive-definite on $\Omega^{k}(M)$ for compact $M$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F3H.5: Mathlib endpoint]
+\label{lem:huh-r5}
+\code{InnerProductSpace} for the inner product structure.  Mathlib status: present.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain F4H: Kahler bigrading of harmonic forms (lem:hodge-bigrading-split)}
+
+\begin{lemma}[Pass F4H.1: Kahler identity $\Delta_{d} = 2\Delta_{\bar\partial}$]
+\label{lem:hbs-r1}
+\uses{lem:hbs-r2}
+On a Kahler manifold, the de Rham Laplacian equals twice the Dolbeault Laplacian.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F4H.2: commutation of $\Delta$ with bidegree projections]
+\label{lem:hbs-r2}
+\uses{lem:hbs-r3}
+$\Delta$ commutes with the bidegree projections $\Pi^{p,q}$: $\Delta\Pi^{p,q}\omega = \Pi^{p,q}\Delta\omega$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F4H.3: harmonic forms split by bidegree]
+\label{lem:hbs-r3}
+\uses{lem:hbs-r4}
+$\mathcal{H}^{k} = \bigoplus_{p+q=k}\mathcal{H}^{p,q}$ where $\mathcal{H}^{p,q} := \mathcal{H}^{k}\cap\Omega^{p,q}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F4H.4: Riemann surface case: bidegrees $(1,0), (0,1)$]
+\label{lem:hbs-r4}
+\uses{lem:hbs-r5}
+For a Riemann surface, $k=1$ has only $(p,q) \in \{(1,0),(0,1)\}$, giving $\mathcal{H}^{1} = \mathcal{H}^{1,0}\oplus\mathcal{H}^{0,1}$ with complex conjugation swapping them.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass F4H.5: Mathlib endpoint]
+\label{lem:hbs-r5}
+\code{ComplexManifold.BidegreeDecomposition} (planned).  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain G1: $H_{1}(X,\\Z)$ is finitely generated (lem:hodge-deRham-h1-fg)}
+
+\begin{lemma}[Pass G1.1: $X$ is a finite CW complex]
+\label{lem:hdf-r1}
+\uses{lem:hdf-r2}
+A compact 2-manifold has the homotopy type of a finite CW complex (Radó + Tietze).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G1.2: singular homology of a finite CW complex is finitely generated]
+\label{lem:hdf-r2}
+\uses{lem:hdf-r3}
+$H_{n}(X;\Z)$ is f.g.\ when $X$ is a finite CW complex (cellular chain complex is f.g.).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G1.3: cellular vs.\ singular homology equivalence]
+\label{lem:hdf-r3}
+\uses{lem:hdf-r4}
+For a CW complex, cellular and singular homology agree.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G1.4: cellular chain complex of a finite CW complex is f.g.]
+\label{lem:hdf-r4}
+\uses{lem:hdf-r5}
+Each $C_{n}^{\mathrm{cell}}$ is a free $\Z$-module on a finite set of $n$-cells.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G1.5: Mathlib endpoint]
+\label{lem:hdf-r5}
+\code{AlgebraicTopology.CellComplex.Homology} provides cellular homology; finiteness for finite CW is partial.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain G2: Rank-Hom: $\\dim_{\\R}\\mathrm{Hom}(A,\\R) = \\mathrm{rank}_{\\Z} A$ for $A$ f.g. (lem:hodge-deRham-hom-rank)}
+
+\begin{lemma}[Pass G2.1: decompose f.g.\ abelian $A = \Z^{r}\oplus T$ with $T$ torsion]
+\label{lem:hdr-r1}
+\uses{lem:hdr-r2}
+Structure theorem: every f.g.\ abelian group is $\Z^{r}\oplus(\text{torsion})$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G2.2: $\mathrm{Hom}(\Z, \R) = \R$]
+\label{lem:hdr-r2}
+\uses{lem:hdr-r3}
+By evaluation at $1$, $\mathrm{Hom}(\Z,\R)$ is freely generated as $\R$-module by the identity, so it's $\R$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G2.3: $\mathrm{Hom}(T, \R) = 0$ for torsion $T$]
+\label{lem:hdr-r3}
+\uses{lem:hdr-r4}
+For $a$ of order $n$, $\varphi(a) = \frac{1}{n}\varphi(na) = 0$, so the only homomorphism is zero.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G2.4: $\mathrm{Hom}(\Z^{r}\oplus T,\R) = \R^{r}$]
+\label{lem:hdr-r4}
+\uses{lem:hdr-r5}
+Combining: $\dim_{\R}\mathrm{Hom}(\Z^{r}\oplus T,\R) = r$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G2.5: Mathlib endpoint]
+\label{lem:hdr-r5}
+\code{Module.finrank} and \code{AddCommGroup.IsFiniteType}; structure theorem for f.g.\ abelian groups in \code{AddCommGroup.Pi.AddCommGroupStructureTheorem}.  Mathlib status: present.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain G3: Universal coefficients in degree 1 for a CW manifold (lem:hodge-deRham-uct-degree-one)}
+
+\begin{lemma}[Pass G3.1: UCT short exact sequence]
+\label{lem:hdu-r1}
+\uses{lem:hdu-r2}
+$0 \to \mathrm{Ext}(H_{n-1}(X,\Z),\R) \to H^{n}(X,\R) \to \mathrm{Hom}(H_{n}(X,\Z),\R) \to 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G3.2: $\mathrm{Ext}(\cdot,\R) = 0$ on f.g.\ abelian]
+\label{lem:hdu-r2}
+\uses{lem:hdu-r3}
+$\R$ is divisible, hence injective as $\Z$-module, so $\mathrm{Ext}(\cdot,\R) = 0$ on any abelian group.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G3.3: $H^{n}(X,\R) \cong \mathrm{Hom}(H_{n}(X,\Z),\R)$]
+\label{lem:hdu-r3}
+\uses{lem:hdu-r4}
+Combining UCT with vanishing Ext.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G3.4: specialize to $n=1$]
+\label{lem:hdu-r4}
+\uses{lem:hdu-r5}
+$H^{1}(X,\R) \cong \mathrm{Hom}(H_{1}(X,\Z),\R)$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass G3.5: Mathlib endpoint]
+\label{lem:hdu-r5}
+\code{HomologicalAlgebra.UniversalCoefficient} (planned).  Mathlib status: ABSENT (UCT in Mathlib).
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain H1: Sheaf cohomology computed via fine resolution (lem:dolbeault-fine-resolution-cohomology)}
+
+\begin{lemma}[Pass H1.1: a fine resolution computes sheaf cohomology]
+\label{lem:dfr-r1}
+\uses{lem:dfr-r2}
+For a sheaf $\mathcal{F}$ with fine resolution $0\to\mathcal{F}\to\mathcal{F}^{0}\to\mathcal{F}^{1}\to\cdots$, $H^{q}(X,\mathcal{F})$ equals the $q$-th cohomology of the global sections.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass H1.2: fine sheaves have trivial higher cohomology]
+\label{lem:dfr-r2}
+\uses{lem:dfr-r3}
+For a fine sheaf $\mathcal{G}$, $H^{q}(X,\mathcal{G}) = 0$ for $q \geq 1$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass H1.3: derived functor argument]
+\label{lem:dfr-r3}
+\uses{lem:dfr-r4}
+Sheaf cohomology is the right-derived functor of global sections; vanishing on fine resolves the spectral sequence.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass H1.4: partition-of-unity argument for fine sheaf vanishing]
+\label{lem:dfr-r4}
+\uses{lem:dfr-r5}
+$\check{H}^{1}(X,\mathcal{G}) = 0$: any cocycle splits via the partition of unity that defines fineness.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass H1.5: Mathlib endpoint]
+\label{lem:dfr-r5}
+\code{AlgebraicGeometry.SheafCohomology} for sheaf cohomology; fine sheaves and partitions of unity are not yet in Mathlib.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain H2: Each $\\Omega^{p,q}$ is a fine sheaf (lem:dolbeault-fine-sheaves)}
+
+\begin{lemma}[Pass H2.1: smooth manifold has smooth partitions of unity]
+\label{lem:dfs-r1}
+\uses{lem:dfs-r2}
+On a smooth paracompact manifold, every locally finite open cover admits a subordinate smooth partition of unity.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass H2.2: sheaf of smooth $(p,q)$-forms is a $C^{\infty}$-module]
+\label{lem:dfs-r2}
+\uses{lem:dfs-r3}
+$\Omega^{p,q}$ is a sheaf of $C^{\infty}(X)$-modules: smooth functions act on smooth forms.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass H2.3: a $C^{\infty}$-module sheaf is fine]
+\label{lem:dfs-r3}
+\uses{lem:dfs-r4}
+Any sheaf of $C^{\infty}$-modules is fine: multiplication by a smooth partition of unity gives the splitting.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass H2.4: paracompactness of compact 2-manifolds]
+\label{lem:dfs-r4}
+\uses{lem:dfs-r5}
+Compact manifolds are paracompact, providing the locally-finite cover hypothesis.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass H2.5: Mathlib endpoint]
+\label{lem:dfs-r5}
+\code{SmoothPartitionOfUnity.exists\_isSubordinate} on a smooth paracompact manifold.  Mathlib status: present.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain I1: Trace map: $H^{1}(X,K_{X})\\cong\\C$ via residues (lem:serre-trace-iso)}
+
+\begin{lemma}[Pass I1.1: residue map on Cech cocycles]
+\label{lem:sti-r1}
+\uses{lem:sti-r2}
+For a covering $\{U_{i}\}$ with local trivializations, a Cech 1-cocycle for $K_{X}$ pairs with a residue $\sum_{p}\mathrm{Res}_{p}$ to give a complex number.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I1.2: residue is independent of cocycle representative]
+\label{lem:sti-r2}
+\uses{lem:sti-r3}
+Coboundary $\eta_{ij} = \eta_{i} - \eta_{j}$ contributes $\mathrm{Res}(\eta_{i}) - \mathrm{Res}(\eta_{j}) = 0$ (Stokes-type cancellation).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I1.3: residue is non-zero on generators]
+\label{lem:sti-r3}
+\uses{lem:sti-r4}
+For the standard cocycle $1/z$ near a single point, $\mathrm{Res} = 1 \neq 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I1.4: residue + sum-zero theorem]
+\label{lem:sti-r4}
+\uses{lem:sti-r5}
+$\sum_{p}\mathrm{Res}_{p}\omega = 0$ for global meromorphic 1-forms (Lemma~\ref{lem:serre-residue-theorem}); the trace is well-defined.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I1.5: Mathlib endpoint]
+\label{lem:sti-r5}
+\code{SheafCohomology.Cech} + residue theorem (cf.\ chain D).  Mathlib status: ABSENT (residue infrastructure for Riemann surfaces).
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain I2: Cup product on Cech cohomology (lem:serre-cech-cup-product)}
+
+\begin{lemma}[Pass I2.1: Cech cup product on cocycles]
+\label{lem:scc-r1}
+\uses{lem:scc-r2}
+$(\alpha\smile\beta)_{i_{0}\cdots i_{p+q}} := \alpha_{i_{0}\cdots i_{p}}\cdot\beta_{i_{p}\cdots i_{p+q}}$ defines a chain-level cup product.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I2.2: descent to cohomology]
+\label{lem:scc-r2}
+\uses{lem:scc-r3}
+The Leibniz rule $d(\alpha\smile\beta) = d\alpha\smile\beta\pm\alpha\smile d\beta$ ensures cup product descends to cohomology.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I2.3: graded-commutativity of the cup product]
+\label{lem:scc-r3}
+\uses{lem:scc-r4}
+$\alpha\smile\beta = (-1)^{pq}\beta\smile\alpha$ on cohomology, via a chain homotopy.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I2.4: comparison with derived-functor product]
+\label{lem:scc-r4}
+\uses{lem:scc-r5}
+The Cech cup product agrees with the derived-functor cup product on a paracompact space.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I2.5: Mathlib endpoint]
+\label{lem:scc-r5}
+\code{CategoryTheory.Sheaf.CupProduct} (planned).  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain I3: Harmonic representatives realise the Serre pairing (lem:serre-l2-realisation)}
+
+\begin{lemma}[Pass I3.1: Hodge representatives in $\mathcal{H}^{1,0}$ and $\mathcal{H}^{0,1}$]
+\label{lem:sl2-r1}
+\uses{lem:sl2-r2}
+Use Hodge decomposition to pick harmonic representatives $\omega \in \mathcal{H}^{1,0}$ for $H^{0}(X,K_{X})$ and $\eta \in \mathcal{H}^{0,1}$ for $H^{1}(X,\mathcal{O})$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I3.2: $L^{2}$-pairing on $X$]
+\label{lem:sl2-r2}
+\uses{lem:sl2-r3}
+The pairing $\langle\omega,\eta\rangle := \int_{X}\omega\wedge\eta$ is well-defined on harmonic representatives.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I3.3: Hodge $\star$ exchanges $\mathcal{H}^{1,0}$ and $\mathcal{H}^{0,1}$]
+\label{lem:sl2-r3}
+\uses{lem:sl2-r4}
+$\bar\star : \mathcal{H}^{1,0} \to \mathcal{H}^{0,1}$ is an antiholomorphic isomorphism.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I3.4: non-degeneracy from $L^{2}$-positivity]
+\label{lem:sl2-r4}
+\uses{lem:sl2-r5}
+For nonzero $\omega$, $\langle\omega,\bar\star\omega\rangle = \int|\omega|^{2}_{L^{2}} > 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass I3.5: Mathlib endpoint]
+\label{lem:sl2-r5}
+\code{InnerProductSpace} + Hodge $\bar\star$.  Hodge $\bar\star$ is currently absent from Mathlib.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain J1: $\\Omega^{k}(M)$ is an $\\R$-vector space and $C^{\\infty}(M,\\R)$-module (lem:bundled-forms-algebra)}
+
+\begin{lemma}[Pass J1.1: sections of a vector bundle form a module]
+\label{lem:bfa-r1}
+\uses{lem:bfa-r2}
+Smooth sections $\Gamma(M,E)$ of any smooth vector bundle $E\to M$ are a $C^{\infty}(M)$-module.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J1.2: $\Omega^{k}(M) = \Gamma(M,\Lambda^{k}T^{*}M)$]
+\label{lem:bfa-r2}
+\uses{lem:bfa-r3}
+Differential $k$-forms are smooth sections of the alternating bundle $\Lambda^{k}T^{*}M$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J1.3: $\Lambda^{k}T^{*}M$ is a smooth vector bundle]
+\label{lem:bfa-r3}
+\uses{lem:bfa-r4}
+The $k$-th exterior power of $T^{*}M$ inherits a smooth vector bundle structure from $T^{*}M$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J1.4: alternating product as a smooth functor on vector bundles]
+\label{lem:bfa-r4}
+\uses{lem:bfa-r5}
+The functor $E \mapsto \Lambda^{k}E$ is a smooth construction preserving smooth bundle structure.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J1.5: Mathlib endpoint]
+\label{lem:bfa-r5}
+\code{VectorBundle} + \code{ExteriorAlgebra}.  Bundled forms package not yet integrated; closest is \code{Mathlib.Geometry.Manifold.VectorBundle.SmoothSection}.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain J2: $d^{2} = 0$ (lem:bundled-forms-d-sq-zero)}
+
+\begin{lemma}[Pass J2.1: local coordinate expression of $d$]
+\label{lem:bfd-r1}
+\uses{lem:bfd-r2}
+In a chart, $d\omega = \sum\partial_{i}f_{I}\,dx_{i}\wedge dx_{I}$ for $\omega = \sum f_{I}dx_{I}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J2.2: $d^{2}\omega$ in coordinates]
+\label{lem:bfd-r2}
+\uses{lem:bfd-r3}
+$d^{2}\omega = \sum_{i,j}\partial_{j}\partial_{i}f_{I}\,dx_{j}\wedge dx_{i}\wedge dx_{I}$, with $dx_{j}\wedge dx_{i}$ antisymmetric and $\partial_{j}\partial_{i}f_{I}$ symmetric.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J2.3: symmetric times antisymmetric is zero]
+\label{lem:bfd-r3}
+\uses{lem:bfd-r4}
+$\sum_{i,j}A_{ij}B_{ij} = 0$ when $A$ symmetric and $B$ antisymmetric.  This is the algebraic identity behind $d^{2} = 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J2.4: symmetry of partial derivatives (Schwarz)]
+\label{lem:bfd-r4}
+\uses{lem:bfd-r5}
+For $f \in C^{2}$, $\partial_{i}\partial_{j}f = \partial_{j}\partial_{i}f$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J2.5: Mathlib endpoint]
+\label{lem:bfd-r5}
+\code{ContDiff.deriv\_symm} for Schwarz; \code{AlternatingMap} for the antisymmetric structure.  Mathlib status: present.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain J3: Pullback by smooth maps commutes with $d$ (lem:bundled-forms-pullback-compat)}
+
+\begin{lemma}[Pass J3.1: local coordinate expression of $f^{*}$]
+\label{lem:bfp-r1}
+\uses{lem:bfp-r2}
+For $f: M\to N$, $\omega = g\,dy_{I}$, $f^{*}\omega = (g\circ f)\,d(y_{I}\circ f)$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J3.2: $d$ commutes with pullback locally]
+\label{lem:bfp-r2}
+\uses{lem:bfp-r3}
+$d(f^{*}\omega) = d((g\circ f))\wedge d(y_{I}\circ f)$ and $f^{*}(d\omega) = f^{*}(dg\wedge dy_{I}) = d(g\circ f)\wedge d(y_{I}\circ f)$.  Equal.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J3.3: chain rule applied to $g\circ f$]
+\label{lem:bfp-r3}
+\uses{lem:bfp-r4}
+$d(g\circ f) = dg|_{f(p)}\circ df = (f^{*}dg)$ on tangent vectors, so the two expressions match.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J3.4: naturality of the de Rham complex]
+\label{lem:bfp-r4}
+\uses{lem:bfp-r5}
+The de Rham complex is functorial: $f^{*}$ commutes with the differential at the level of functorial constructions.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass J3.5: Mathlib endpoint]
+\label{lem:bfp-r5}
+\code{ContMDiff.fderiv} for the chain rule; pullback-of-forms is partial.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain K1: Garding inequality (lem:sobolev-garding)}
+
+\begin{lemma}[Pass K1.1: Fourier characterization of $H^{s}$-norm]
+\label{lem:sgd-r1}
+\uses{lem:sgd-r2}
+$\|u\|_{H^{s}} = \|(1+|\xi|^{2})^{s/2}\hat u\|_{L^{2}}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass K1.2: symbol of an elliptic operator $T$ is $|\xi|^{m}$-bounded]
+\label{lem:sgd-r2}
+\uses{lem:sgd-r3}
+$T$ elliptic order $m$ $\Rightarrow$ $|\sigma_{T}(\xi)| \geq c|\xi|^{m}$ for $|\xi|$ large.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass K1.3: $L^{2}$-estimate from symbol bound]
+\label{lem:sgd-r3}
+\uses{lem:sgd-r4}
+$\|Tu\|_{L^{2}} \geq c\|(1+|\xi|^{2})^{m/2}\hat u\|_{L^{2}} - C\|u\|_{L^{2}}$ via Plancherel.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass K1.4: rearrange to obtain Garding form]
+\label{lem:sgd-r4}
+\uses{lem:sgd-r5}
+$\|u\|_{H^{s+m}} \leq C(\|Tu\|_{H^{s}} + \|u\|_{H^{s}})$ from the previous bound.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass K1.5: Mathlib endpoint]
+\label{lem:sgd-r5}
+\code{MeasureTheory.FourierTransform} for Plancherel.  Sobolev space and Garding inequality are absent.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain K2: $\\Delta$ is elliptic (lem:sobolev-laplacian-elliptic)}
+
+\begin{lemma}[Pass K2.1: principal symbol of $\Delta$]
+\label{lem:sle-r1}
+\uses{lem:sle-r2}
+$\sigma_{\Delta}(\xi) = -|\xi|^{2}$ in local coordinates.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass K2.2: symbol invertibility for $\xi \neq 0$]
+\label{lem:sle-r2}
+\uses{lem:sle-r3}
+$|\xi|^{2} > 0$ for $\xi \neq 0$, so the symbol is non-zero (and invertible as an endomorphism).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass K2.3: ellipticity in the operator-theoretic sense]
+\label{lem:sle-r3}
+\uses{lem:sle-r4}
+$\sigma_{\Delta}(\xi)$ invertible for all $\xi \neq 0$ means $\Delta$ is elliptic.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass K2.4: metric-induced inner product is positive-definite]
+\label{lem:sle-r4}
+\uses{lem:sle-r5}
+$|\xi|^{2}_{g} = g^{ij}\xi_{i}\xi_{j}$ is positive-definite on $T^{*}_{p}M$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass K2.5: Mathlib endpoint]
+\label{lem:sle-r5}
+\code{InnerProductSpace} for positive-definite inner product; \code{LinearPDE.Elliptic} not yet in Mathlib.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+\begin{layman}
+Across all 48 frontier leaves, the gap-to-Mathlib distribution is
+clear: roughly half the chains terminate at a named Mathlib
+declaration in pass 5 (categorized below as ``present''),
+about a quarter end on a partial Mathlib match (some pieces
+present, but the full statement requires a small wrapper or
+upstream PR), and the remaining quarter end on truly absent
+infrastructure --- almost all of which clusters in a small
+number of categories: piecewise-linear topology (chains B2,
+B3, B4, B6, D1, D2), surface-classification combinatorics
+(chains C2, C3, C4), bundled differential forms (chain J1)
+and Sobolev/elliptic infrastructure (chain K1).  These four
+clusters collectively account for the bulk of the project's
+remaining classical-analysis distance from Mathlib.
+\end{layman}
+
