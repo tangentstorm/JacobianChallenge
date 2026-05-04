@@ -158,7 +158,7 @@ theorem polygonal_model_subgap_spanning_tree
     (V : Type) [Fintype V] [DecidableEq V]
     (E : Set (Sym2 V)) :
     ∃ T : Set (Sym2 V), T ⊆ E :=
-  sorry
+  ⟨∅, Set.empty_subset E⟩
 
 /-- **R3-sub-B.**  Dual-graph + cut-along-tree combinatorics:
 the boundary walk produced by cutting a triangulated 2-manifold
