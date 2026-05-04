@@ -266,7 +266,12 @@ def build_dots(dot_text: str, label_to_section, label_to_subsection_r, r_to_name
 
     agg_edges = transitive_reduction(agg_edges)
 
-    # Overview dot
+    # Overview dot.  Pin the apex (`section:10-...`) to sink rank so
+    # `dot -TB` puts it at the bottom; otherwise the cycle that arises
+    # because challenge-statement.tex is both consumed by sections (as
+    # API stubs) and produces from them (in challenge-api's `\uses`)
+    # would cluster §10 mid-graph.
+    APEX = "section:10-main-theorem-assembly"
     o = []
     o.append('strict digraph "" {\n')
     o.append('  graph [bgcolor=transparent, rankdir=TB, nodesep=0.4, ranksep=0.8];\n')
@@ -277,6 +282,8 @@ def build_dots(dot_text: str, label_to_section, label_to_subsection_r, r_to_name
         style = STATE_STYLE[st]
         lbl = vertex_label(v, len(vertex_members[v]), r_to_name)
         o.append(f'  "{v}" [{style}, label="{lbl}"];\n')
+    if APEX in vertex_members:
+        o.append(f'  {{rank=sink; "{APEX}"; }}\n')
     for s, t in agg_edges:
         o.append(f'  "{s}" -> "{t}";\n')
     o.append('}\n')
