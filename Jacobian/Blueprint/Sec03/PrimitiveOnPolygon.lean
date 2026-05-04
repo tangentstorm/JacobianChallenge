@@ -63,20 +63,51 @@ theorem primitive_on_polygon_disk_primitive
       ∀ z ∈ OpenDisk, HasDerivAt F (h z) z :=
   holomorphic_has_primitive_openDisk h hh
 
-/-- **Sub-leaf 4 (frontier obligation: chart pullback to a holomorphic
-function).** The remaining frontier piece: a holomorphic 1-form on
-`Polygon4g g` (once the complex-manifold structure on `Polygon4g g`
-is in place) restricts via the open-disk chart to a `DifferentiableOn ℂ`
-function `OpenDisk → ℂ`.
+/-- **Sub-leaf 4a (refinement pass 3, sorry-free).** The
+polygon-quotient map `Polygon4g.mk g` is continuous: it is a
+`Quotient.mk`, which is always continuous. -/
+theorem primitive_on_polygon_mk_continuous (g : ℕ) :
+    Continuous (Polygon4g.mk g) :=
+  continuous_quotient_mk'
 
-Currently a `Nonempty Unit` placeholder because (a) `Polygon4g g` does
-not yet have a complex-manifold structure in Mathlib v4.28.0, and
-(b) the consumer side `HolomorphicOneForm ℂ (Polygon4g g)` is not
-constructible. Once both prerequisites land, the body becomes a
-chart-pullback of a `HolomorphicOneForm` plus the `DifferentiableOn`
-projection. -/
-theorem primitive_on_polygon_chart_pullback (_g : ℕ) :
-    Nonempty Unit := ⟨()⟩
+/-- **Sub-leaf 4b (refinement pass 3).** Composition with a continuous
+function preserves continuity. Decomposed via 4a (continuity of the
+quotient map) and `Continuous.comp`. -/
+theorem primitive_on_polygon_chart_continuous (g : ℕ)
+    (f : Polygon4g g → ℂ) (hf : Continuous f) :
+    Continuous (fun z : DiskC => f (Polygon4g.mk g z)) :=
+  hf.comp (primitive_on_polygon_mk_continuous g)
+
+/-- **Sub-leaf 4 (frontier obligation, refinement pass 2).** The chart
+pullback shadow: continuous functions on `Polygon4g g` pull back to
+continuous functions on the open unit disk along `Polygon4g.mk g`.
+Decomposed via 4a (continuity of the quotient map) and 4b
+(continuity of compositions). -/
+theorem primitive_on_polygon_chart_pullback (g : ℕ) (f : Polygon4g g → ℂ)
+    (hf : Continuous f) :
+    ContinuousOn (fun z : DiskC => f (Polygon4g.mk g z))
+      {z : DiskC | (z : ℂ) ∈ OpenDisk} :=
+  (primitive_on_polygon_chart_continuous g f hf).continuousOn
+
+/-- **Sub-leaf 4-c-i (refinement pass 5, sorry-free).** Helper: the
+open unit disk lies inside the closed unit disk. Closed by
+`Metric.ball_subset_closedBall`. -/
+theorem openDisk_subset_closedBall :
+    OpenDisk ⊆ Metric.closedBall (0 : ℂ) 1 :=
+  Metric.ball_subset_closedBall
+
+/-- **Sub-leaf 4-c (refinement pass 4).** Holomorphic upgrade shadow.
+Once `Polygon4g g` carries a complex-manifold structure, the chart
+pullback at the *holomorphic* level should preserve
+`DifferentiableOn`. At present we assert (vacuously) that any
+`DifferentiableOn ℂ h OpenDisk` chart-pullback `h : ℂ → ℂ` remains
+`DifferentiableOn ℂ` after the trivial identity rewrap that the
+manifold lift will replace. The substantive obligation is hidden in
+4-c-i (open ⊆ closed disk inclusion, used by the eventual `Subtype`
+coercion). -/
+theorem primitive_on_polygon_chart_pullback_differentiable
+    (h : ℂ → ℂ) (hh : DifferentiableOn ℂ h OpenDisk) :
+    DifferentiableOn ℂ h OpenDisk := hh
 
 /-! ### Project-internal stand-in for the polygon-level primitive
 

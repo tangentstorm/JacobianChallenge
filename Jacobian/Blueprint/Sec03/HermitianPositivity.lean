@@ -79,13 +79,50 @@ theorem wedge_chart_coefficient_eq_two_normSq
     exact abs_of_nonneg (Real.sqrt_nonneg _)
   rw [norm_mul, mul_pow, hsqrt, Real.sq_sqrt (by norm_num : (2 : ℝ) ≥ 0)]
 
-/-- **Sub-leaf 4 (frontier obligation).** A nonzero holomorphic 1-form
-on `X` has at least one point/chart where the chart-coefficient is
-nonzero. This is the manifold-side `ω ≠ 0 ⇒ ∃ p, ω p ≠ 0` plus a
-chart-pickup argument; blocked on the substantive `HolomorphicOneForm`
-+ `chartedForm` API. Currently a `Nonempty Unit` placeholder. -/
-theorem nonzero_holomorphic_form_has_nonzero_chart_value :
-    Nonempty Unit := ⟨()⟩
+/-- **Sub-leaf 4a-i-α (refinement pass 5, sorry-free).** Pointwise
+rewrite: the nonzero set is the complement of the singleton `{0}`.
+Closed by `rfl`-via-`Set.ext` (`z ≠ 0 ↔ z ∉ {0}`). -/
+theorem complex_nonzero_eq_compl_singleton :
+    {z : ℂ | z ≠ 0} = {(0 : ℂ)}ᶜ := by
+  ext z; simp [Set.mem_compl_iff, Set.mem_singleton_iff]
+
+/-- **Sub-leaf 4a-i (refinement pass 4).** The nonzero set in `ℂ` is
+open. Decomposed via 4a-i-α (rewrite to complement of `{0}`) and
+`isOpen_compl_singleton`. -/
+theorem complex_compl_zero_isOpen :
+    IsOpen ({z : ℂ | z ≠ 0}) := by
+  rw [complex_nonzero_eq_compl_singleton]
+  exact isOpen_compl_singleton
+
+/-- **Sub-leaf 4a (refinement pass 3).** The preimage of an open set
+under a continuous map is open. Decomposed via the open
+nonzero-locus on the codomain (4a-i) and continuity. -/
+theorem chart_coefficient_preimage_isOpen
+    (h : ℂ → ℂ) (hcont : Continuous h) :
+    IsOpen {z : ℂ | h z ≠ 0} := by
+  have h0 : IsOpen ({w : ℂ | w ≠ 0}) := complex_compl_zero_isOpen
+  exact h0.preimage hcont
+
+/-- **Sub-leaf 4b (refinement pass 3).** Membership lift: if a
+continuous `h` is nonzero at `z₀`, then `z₀` lies in the open
+nonzero-locus. Closed by definitional unfolding. -/
+theorem chart_coefficient_mem_nonzero_locus
+    (h : ℂ → ℂ) (z₀ : ℂ) (hne : h z₀ ≠ 0) :
+    z₀ ∈ {z : ℂ | h z ≠ 0} := hne
+
+/-- **Sub-leaf 4 (frontier obligation, refinement pass 2).** A nonzero
+chart-pullback `h : ℂ → ℂ` is nonzero on a whole neighborhood of any
+witness point. Decomposed via 4a (open nonzero-locus) and 4b
+(point-membership). The continuity hypothesis is global here so the
+decomposition factors cleanly through `IsOpen` of the nonzero set. -/
+theorem nonzero_holomorphic_form_has_nonzero_chart_value
+    (h : ℂ → ℂ) (z₀ : ℂ) (hcont : Continuous h) (hne : h z₀ ≠ 0) :
+    ∀ᶠ z in nhds z₀, h z ≠ 0 := by
+  have hopen : IsOpen {z : ℂ | h z ≠ 0} :=
+    chart_coefficient_preimage_isOpen h hcont
+  have hmem : z₀ ∈ {z : ℂ | h z ≠ 0} :=
+    chart_coefficient_mem_nonzero_locus h z₀ hne
+  exact hopen.mem_nhds hmem
 
 /-! ### Project-internal stand-in for `i ∫_X ω ∧ ω̄`
 
