@@ -40,7 +40,28 @@ dual of `M`. The analytic content remains in `RSLineBundleDual` and
 the tensor-presheaf sheafification prerequisites. -/
 noncomputable def RSLineBundleSub (X : Type*) [TopologicalSpace X]
     (L M : RSLineBundleSheaf X) : RSLineBundleSheaf X :=
-  RSTensorAbSheaf.{_, 0, 0} X L (RSLineBundleDual.{_, 0, 0} X M)
+  RSTensorAbSheaf.{_, 0, 0} X L (RSLineBundleDual X M)
+
+/-- **Serre rank comparison leaf.** For a line bundle `L`, the first
+cohomology rank equals the zeroth cohomology rank of `K_X - L`.
+
+Bottom-up content: Serre duality for line bundles identifies
+`H¹(X, L)` with the dual of `H⁰(X, K_X ⊗ L⁻¹)`, and finite-dimensional
+duals have the same `finrank`. -/
+theorem serre_h1_finrank_eq_h0_canonical_sub
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
+    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
+    (L : RSLineBundleSheaf X)
+    [Module ℂ (RSSheafCohomology X L 1)]
+    [Module ℂ (RSSheafCohomology X
+      (RSLineBundleSub X (RSDualizingSheaf X) L) 0)] :
+    Module.finrank ℂ (RSSheafCohomology X L 1) =
+      Module.finrank ℂ (RSSheafCohomology X
+        (RSLineBundleSub X (RSDualizingSheaf X) L) 0) := by
+  sorry
 
 /-- **Frontier theorem (sorry).** Classical Riemann-Roch identity for
 a line bundle on a compact Riemann surface, after combining the
@@ -68,6 +89,10 @@ theorem riemann_roch_classical_identity
       - (Module.finrank ℂ (RSSheafCohomology X
           (RSLineBundleSub X (RSDualizingSheaf X) L) 0) : ℤ)
       = RSLineBundleDegree X L + 1 - (RSGenus X : ℤ) := by
-  sorry
+  have hχ := euler_char_line_bundle X L
+  have hSerre := serre_h1_finrank_eq_h0_canonical_sub X L
+  unfold RSEulerCharacteristic at hχ
+  rw [hSerre] at hχ
+  exact hχ
 
 end JacobianChallenge.HolomorphicForms

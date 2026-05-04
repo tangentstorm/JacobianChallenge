@@ -27,6 +27,6 @@ open scoped Manifold
 in degree 1. Used as the intermediate ℕ-valued bridge between
 de Rham (analytic) and integer homology (topological). -/
 noncomputable opaque realDimSingularH1
-    (X : Type) [TopologicalSpace X] : ℕ
+    (X : Type*) [TopologicalSpace X] : ℕ
 
 end JacobianChallenge.HolomorphicForms

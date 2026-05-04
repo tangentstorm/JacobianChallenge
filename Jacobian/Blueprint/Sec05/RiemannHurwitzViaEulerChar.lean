@@ -1,4 +1,5 @@
 import Jacobian.Blueprint.Sec05.RiemannHurwitzDeg1
+import Mathlib.Tactic.Ring
 
 /-! Blueprint stub: Euler-characteristic decomposition of the
 sec05 leaf `riemann_hurwitz_formula`
@@ -134,7 +135,29 @@ theorem riemann_hurwitz_via_euler_char
     (2 : Int) * (genus X : Int) - 2 =
       (f.degree : Int) * (2 * (genus Y : Int) - 2)
         + f.ramificationDivisorDegree := by
-  sorry
+  have hX := euler_char_eq_two_minus_two_genus X
+  have hchi := riemann_hurwitz_chi_form X Y f
+  have hneg :
+      (2 : Int) - 2 * (genus X : Int)
+        = -((2 * (genus X : Int) - 2)) := by
+    ring
+  have hchi' :
+      -((2 * (genus X : Int) - 2)) =
+        (f.degree : Int) * (2 - 2 * (genus Y : Int))
+          - f.ramificationDivisorDegree := by
+    rw [← hneg, ← hX]
+    exact hchi
+  have hmul :
+      (f.degree : Int) * (2 - 2 * (genus Y : Int))
+        = -((f.degree : Int) * (2 * (genus Y : Int) - 2)) := by
+    ring
+  have hmain :
+      -((2 * (genus X : Int) - 2)) =
+        -((f.degree : Int) * (2 * (genus Y : Int) - 2)
+          + f.ramificationDivisorDegree) := by
+    rw [hchi', hmul]
+    ring
+  exact neg_injective hmain
 
 end RiemannHurwitzViaEulerChar
 end AbelExistence

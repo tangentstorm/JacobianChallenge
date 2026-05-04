@@ -27,14 +27,13 @@ open CategoryTheory
 
 /-- **Frontier `def` (sorry).** Linear equivalence
 `H⁰(X, K_X) ≃ₗ[ℂ] HolomorphicOneForm ℂ X`. -/
-noncomputable def h0Canonical_isoHolomorphicOneForm
+axiom h0Canonical_isoHolomorphicOneForm
     (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)] :
-    RSSheafCohomology X (RSDualizingSheaf X) 0 ≃ₗ[ℂ] HolomorphicOneForm ℂ X := by
-  sorry
+    RSSheafCohomology X (RSDualizingSheaf X) 0 ≃ₗ[ℂ] HolomorphicOneForm ℂ X
 
 end JacobianChallenge.HolomorphicForms

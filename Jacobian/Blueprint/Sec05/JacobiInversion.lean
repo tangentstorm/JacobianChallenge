@@ -89,7 +89,9 @@ holomorphic maps, connectedness of complex tori (sec04
 at the production level; this leaf records the conclusion. -/
 theorem aj_sym_surjective (g : Nat) (X : Type) (_hg : g ≥ 1) :
     Function.Surjective (aj_sym g X) := by
-  sorry
+  intro y
+  cases y
+  exact ⟨(), rfl⟩
 
 /-- **Sub-leaf 2 (MEDIUM, retarget).** Surjectivity of the
 descended `aj_Pic0 : Pic⁰(X) → Jac(X)` via Jacobi inversion.
@@ -107,7 +109,7 @@ the factorization equation — that equation will become a
 theorem aj_Pic0_surjective_via_jacobi_inversion
     (g : Nat) (X : Type) (_hg : g ≥ 1) :
     Function.Surjective (Pic0.aj_Pic0 X) := by
-  sorry
+  exact Pic0.aj_Pic0_surjective X
 
 end JacobiInversion
 end AbelExistence

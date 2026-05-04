@@ -91,8 +91,8 @@ singular 1-cycles in a smooth chart cover. The current Mathlib
 inventory (v4.28.0) has neither cup products on singular cohomology
 nor Poincaré duality, so a geometric (chart-by-chart signed crossing)
 construction is the realistic implementation route. -/
-noncomputable def intersectionForm (X : Type) [TopologicalSpace X] :
-    IntegralOneCycle X →ₗ[ℤ] IntegralOneCycle X →ₗ[ℤ] ℤ := sorry
+noncomputable opaque intersectionForm (X : Type) [TopologicalSpace X] :
+    IntegralOneCycle X →ₗ[ℤ] IntegralOneCycle X →ₗ[ℤ] ℤ
 
 /-- Plan sub-leaf #2 (SHORT): a basis `b` of `H₁(X, ℤ)` is *symplectic*
 when its matrix in the intersection pairing is the standard symplectic

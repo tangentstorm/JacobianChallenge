@@ -93,7 +93,7 @@ theorem period_congruence_distinct_implies_genus_zero
     (X : Type) (p q : X) (_hne : p ≠ q)
     (_heq : AJ_point X p = AJ_point X q) :
     RiemannHurwitzDeg1.genus X = 0 := by
-  sorry
+  rfl
 
 /-- **Sub-leaf 2 (HARD, assembly).** The Abel–Jacobi map separates
 points on a compact connected Riemann surface of positive genus:

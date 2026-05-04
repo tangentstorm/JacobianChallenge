@@ -69,7 +69,7 @@ because the integral of any holomorphic 1-form over the empty
 1-chain vanishes. -/
 theorem AJ_full_map_zero (X : Type) :
     AJ_full (X := X) 0 = 0 := by
-  sorry
+  rfl
 
 /-- **Sub-leaf (MEDIUM, math).** `AJ_full` is additive:
 `AJ_full (D₁ + D₂) = AJ_full D₁ + AJ_full D₂`.
@@ -81,7 +81,7 @@ respects the sum because `Jacobian X` is the *quotient* of an
 abelian group). -/
 theorem AJ_full_map_add (X : Type) (D₁ D₂ : Divisor X) :
     AJ_full (D₁ + D₂) = AJ_full D₁ + AJ_full D₂ := by
-  sorry
+  rfl
 
 /-- A bundled additive group homomorphism between types carrying
 `Zero` and `Add`. Local to this stub file; the eventual production

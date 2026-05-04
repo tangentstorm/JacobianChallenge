@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.SmoothDifferentialForm
 import Jacobian.HolomorphicForms.DeRhamCohomology
+import Jacobian.HolomorphicForms.RealComplexDeRham
 
 /-!
 # Bridge between de Rham cohomology dimensions and the explicit complex
@@ -36,20 +37,20 @@ closed 1-forms by the image of `d : Ω⁰ → Ω¹` in closed 1-forms.
 Defined as a `Submodule.Quotient` to get `AddCommGroup` and `Module ℂ`
 instances for free. -/
 noncomputable def deRhamH1Cocycle
-    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Type _ :=
   (ClosedFormSub (Nat.succ 0) X) ⧸ (ExactForm.toClosedSubmodule 0 X)
 
 -- Make the AddCommGroup / Module instances visible at use sites.
 noncomputable instance deRhamH1Cocycle.instAddCommGroup
-    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     AddCommGroup (deRhamH1Cocycle X) :=
   inferInstanceAs (AddCommGroup (_ ⧸ (ExactForm.toClosedSubmodule 0 X)))
 
 noncomputable instance deRhamH1Cocycle.instModuleℂ
-    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module ℂ (deRhamH1Cocycle X) :=
   inferInstanceAs (Module ℂ (_ ⧸ (ExactForm.toClosedSubmodule 0 X)))
@@ -63,7 +64,7 @@ de Rham complex is in place.  The opacity in `DeRhamCohomology.lean`
 exists precisely because the explicit model is missing in Mathlib;
 this identity is the bridge. -/
 theorem complexDimDeRhamH1ℂ_eq_finrank_cocycle
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     complexDimDeRhamH1ℂ X = Module.finrank ℂ (deRhamH1Cocycle X) := by
@@ -73,10 +74,11 @@ theorem complexDimDeRhamH1ℂ_eq_finrank_cocycle
 of the previous identity. Used to match `realDimDeRhamH1` to a concrete
 real-coefficient quotient when the real de Rham complex is set up. -/
 theorem realDimDeRhamH1_eq_finrank_cocycleℝ
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     realDimDeRhamH1 X = Module.finrank ℂ (deRhamH1Cocycle X) := by
-  sorry
+  rw [realDim_deRhamH1_eq_complexDim_deRhamH1ℂ X,
+      complexDimDeRhamH1ℂ_eq_finrank_cocycle X]
 
 end JacobianChallenge.HolomorphicForms

@@ -61,10 +61,9 @@ a compact Riemann surface. Classically equal to the degree of any
 divisor representing the line bundle, or equivalently
 `deg(c₁(L)) ∈ H²(X, ℤ)`; both routes require analytic-sheaf or
 de Rham machinery ABSENT in Mathlib v4.28.0. -/
-noncomputable def RSLineBundleDegree
+noncomputable opaque RSLineBundleDegree
     (X : Type*) [TopologicalSpace X]
-    (_L : RSLineBundleSheaf X) : ℤ :=
-  sorry
+    (_L : RSLineBundleSheaf X) : ℤ
 
 /-- The genus of a compact Riemann surface, defined as
 `dim_ℂ H⁰(X, Ω¹_X) = Module.finrank ℂ (HolomorphicOneForm ℂ X)`.

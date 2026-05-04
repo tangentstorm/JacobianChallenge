@@ -52,7 +52,7 @@ tensoring with ℂ is exact, so cohomology commutes; conclude by
 This is recorded as a single frontier identity in this file with
 `tensorℂ_finrank_eq_real_finrank` extracted as the pure-algebra leaf. -/
 theorem complexDeRhamH1_eq_tensorℂ_realDeRhamH1
-    (X : Type) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     complexDimDeRhamH1ℂ X = realDimDeRhamH1 X := by
   sorry
@@ -80,7 +80,7 @@ pure-algebra `tensor finrank` identity.
 The body is a thin `Eq.symm` — the real refinement work is in
 `complexDeRhamH1_eq_tensorℂ_realDeRhamH1`. -/
 theorem realDim_deRhamH1_eq_complexDim_deRhamH1ℂ
-    (X : Type) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     realDimDeRhamH1 X = complexDimDeRhamH1ℂ X :=
   (complexDeRhamH1_eq_tensorℂ_realDeRhamH1 X).symm

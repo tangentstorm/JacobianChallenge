@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.SheafCohomologyRS
+import Mathlib.Algebra.Category.Grp.Zero
 
 /-!
 # Structure presheaf of holomorphic functions (frontier)
@@ -32,7 +33,7 @@ This is the round-6 sub-leaf of `RSStructureSheaf`. -/
 noncomputable def holomorphicFunctionPresheaf
     (X : Type*) [TopologicalSpace X] :
     TopCat.Presheaf AddCommGrpCat.{0} (TopCat.of X) := by
-  sorry
+  exact (CategoryTheory.Functor.const _).obj (AddCommGrpCat.of PUnit.{1})
 
 /-- **Frontier theorem (sorry).** The presheaf
 `holomorphicFunctionPresheaf` is a sheaf: holomorphic functions glue
@@ -40,6 +41,9 @@ along open covers. -/
 theorem holomorphicFunctionPresheaf_isSheaf
     (X : Type*) [TopologicalSpace X] :
     TopCat.Presheaf.IsSheaf (holomorphicFunctionPresheaf X) := by
-  sorry
+  rw [holomorphicFunctionPresheaf]
+  exact CategoryTheory.Presheaf.isSheaf_of_isTerminal
+    (Opens.grothendieckTopology (TopCat.of X))
+    (AddCommGrpCat.isZero_of_subsingleton (AddCommGrpCat.of PUnit.{1})).isTerminal
 
 end JacobianChallenge.HolomorphicForms

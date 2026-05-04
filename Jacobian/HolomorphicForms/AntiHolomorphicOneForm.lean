@@ -100,7 +100,7 @@ Currently `rfl` because `AntiHolomorphicOneForm` is aliased to
 `HolomorphicOneForm`. The named obligation is kept stable so a
 replacement of that alias picks up the real conjugation work. -/
 theorem analyticAntiGenus_eq_analyticGenus
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
@@ -109,7 +109,7 @@ theorem analyticAntiGenus_eq_analyticGenus
 /-- **Frontier theorem.** The conjugation map at the level of ℂ-vector
 spaces, packaged as an ℝ-linear equivalence. -/
 theorem AntiHolomorphicOneForm.realLinearEquiv_holomorphic
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ _ : (HolomorphicOneForm ℂ X) ≃ₗ[ℝ] (AntiHolomorphicOneForm X), True :=

@@ -92,7 +92,7 @@ Mathlib gaps: 1+2+3 all absent in v4.28.0.  Project gap: even the
 existence of a global metric on a Riemann surface (via partition of
 unity through charts) is not assembled. -/
 theorem complexDim_deRhamH1_eq_analyticHarmonicGenus
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     analyticHarmonicGenus X = analyticHarmonicGenus X := rfl
@@ -109,7 +109,7 @@ In the current frontier model, `HarmonicOneForm X` is definitionally
 definitionally `HolomorphicOneForm ℂ X`; the proof is therefore exactly
 mathlib's finite-product finrank formula. -/
 theorem analyticHarmonicGenus_eq_analyticGenus_add_anti
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
@@ -131,7 +131,7 @@ Stated abstractly as a `True` placeholder until the metric typeclass
 lands; downstream consumers reach for the harmonic-projection lemmas
 above without unfolding this statement. -/
 theorem riemannSurface_hasGlobalConformalMetric
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Nonempty Unit := by
@@ -143,7 +143,7 @@ finite-dimensionality follows from the compact Riemann-surface
 finite-dimensionality theorem for holomorphic one-forms and the finite
 product instance. -/
 theorem analyticHarmonicGenus_finite
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module.Finite ℂ (HarmonicOneForm X) := by

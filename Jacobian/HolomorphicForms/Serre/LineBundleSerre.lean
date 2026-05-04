@@ -47,6 +47,11 @@ theorem serre_duality_lineBundle_exists
           (RSTensorAbSheaf X (RSLineBundleDual X L) (RSDualizingSheaf X)) 1)),
       Nonempty (SerreDualityRSDatum X L
         (RSTensorAbSheaf X (RSLineBundleDual X L) (RSDualizingSheaf X))) := by
-  sorry
+  let m0 := serreDualSheaf_module_H0 X L
+  let m1 := serreDualSheaf_module_H1 X L
+  refine ⟨m0, m1, ?_⟩
+  simpa [m0, m1, RSLineBundleDual, RSDualizingSheaf, serreDualSheaf,
+    RSTensorAbSheaf, tensorAbPresheaf, RSCotangentSheaf, holomorphicOneFormPresheaf]
+    using (serre_datum_for_canonical_dual_exists X L)
 
 end JacobianChallenge.HolomorphicForms
