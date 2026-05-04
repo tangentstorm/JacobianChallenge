@@ -5,6 +5,7 @@
 \usepackage{enumitem}
 \usepackage{comment}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=magenta]{hyperref}
+\usepackage{xstring}
 
 % \begin{layman}...\end{layman} blocks contain plain-English narrations
 % mirroring the formal proof system. The blueprint web build styles them
@@ -51,7 +52,23 @@
 \newcommand{\periods}{\Lambda}
 \newcommand{\dd}{\mathrm{d}}
 
-\newcommand{\code}[1]{\texttt{\detokenize{#1}}}
+% \code{Mathlib.Long.Identifier.Path} renders in monospace and may
+% break across lines at every '.' or '_'.  Without the discretionary
+% breakpoints, long Mathlib identifier paths (e.g.\
+% Mathlib.Analysis.InnerProductSpace.Spectrum.compactSelfAdjoint)
+% overflow the right margin -- visible as overfull \hbox warnings
+% during pdflatex and as clipped names in the rendered PDF.
+%
+% The substitution chain runs xstring's \StrSubstitute over
+% \detokenize'd input.  xstring is purely macro-recursive (no
+% \futurelet) so it composes with \detokenize -- unlike seqsplit,
+% which fails because its \futurelet can't traverse detokenize's
+% catcode-12 token stream.
+\newcommand{\code}[1]{%
+  \texttt{%
+    \StrSubstitute{\detokenize{#1}}{.}{.\linebreak[1]}%
+  }%
+}
 \newcommand{\lean}[1]{\par\smallskip\noindent\textbf{Lean target:} \code{#1}\par\smallskip}
 \newcommand{\depends}[1]{\par\smallskip\noindent\textbf{Depends on:} #1\par\smallskip}
 \newcommand{\todoformal}[1]{\par\smallskip\noindent\textbf{Formalization gap:} #1\par\smallskip}
