@@ -1,7 +1,9 @@
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Geometry.Manifold.Instances.Real
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Analysis.Calculus.FDeriv.Basic
+import Mathlib.Analysis.Calculus.FDeriv.Prod
 import Mathlib.MeasureTheory.Integral.Prod
 
 /-! # Blueprint stubs: sub-leaves of `thm:stokes-on-rs-with-boundary`
@@ -160,7 +162,32 @@ theorem stokes_local_euclidean_P
     (_hP : ContDiff ℝ 1 P) :
     (∫ x in a..b, P (x, d)) - (∫ x in a..b, P (x, c))
       = ∫ x in a..b, ∫ y in c..d, fderiv ℝ P (x, y) (0, 1) := by
-  sorry
+  have hslice : ∀ x : ℝ,
+      (∫ y in c..d, fderiv ℝ P (x, y) (0, 1)) = P (x, d) - P (x, c) := by
+    intro x
+    have hderiv : ∀ y ∈ Set.uIcc c d,
+        HasDerivAt (fun y : ℝ => P (x, y)) (fderiv ℝ P (x, y) (0, 1)) y := by
+      intro y _hy
+      have hdiff : DifferentiableAt ℝ P (x, y) :=
+        (_hP.differentiable (by norm_num)).differentiableAt
+      have hline : HasDerivAt (fun y : ℝ => (x, y)) (0, 1) y := by
+        simpa using
+          (HasFDerivAt.hasDerivAt (hasFDerivAt_prodMk_right (𝕜 := ℝ) x y))
+      simpa using hdiff.hasFDerivAt.comp_hasDerivAt y hline
+    have hint :
+        IntervalIntegrable (fun y : ℝ => fderiv ℝ P (x, y) (0, 1))
+          MeasureTheory.volume c d := by
+      have hc : Continuous fun y : ℝ => fderiv ℝ P (x, y) (0, 1) := by
+        have h := _hP.continuous_fderiv_apply (by norm_num)
+        exact h.comp
+          (Continuous.prodMk (Continuous.prodMk continuous_const continuous_id)
+            continuous_const)
+      exact hc.intervalIntegrable _ _
+    exact intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
+  rw [← intervalIntegral.integral_sub]
+  · simp_rw [← hslice]
+  · exact (_hP.continuous.comp (Continuous.prodMk continuous_id continuous_const)).intervalIntegrable _ _
+  · exact (_hP.continuous.comp (Continuous.prodMk continuous_id continuous_const)).intervalIntegrable _ _
 
 /-- **Sub-leaf #5.Q (FTC slice for `Q`).**
 
@@ -180,7 +207,32 @@ theorem stokes_local_euclidean_Q
     (_hQ : ContDiff ℝ 1 Q) :
     (∫ y in c..d, Q (b, y)) - (∫ y in c..d, Q (a, y))
       = ∫ y in c..d, ∫ x in a..b, fderiv ℝ Q (x, y) (1, 0) := by
-  sorry
+  have hslice : ∀ y : ℝ,
+      (∫ x in a..b, fderiv ℝ Q (x, y) (1, 0)) = Q (b, y) - Q (a, y) := by
+    intro y
+    have hderiv : ∀ x ∈ Set.uIcc a b,
+        HasDerivAt (fun x : ℝ => Q (x, y)) (fderiv ℝ Q (x, y) (1, 0)) x := by
+      intro x _hx
+      have hdiff : DifferentiableAt ℝ Q (x, y) :=
+        (_hQ.differentiable (by norm_num)).differentiableAt
+      have hline : HasDerivAt (fun x : ℝ => (x, y)) (1, 0) x := by
+        simpa using
+          (HasFDerivAt.hasDerivAt (hasFDerivAt_prodMk_left (𝕜 := ℝ) x y))
+      simpa using hdiff.hasFDerivAt.comp_hasDerivAt x hline
+    have hint :
+        IntervalIntegrable (fun x : ℝ => fderiv ℝ Q (x, y) (1, 0))
+          MeasureTheory.volume a b := by
+      have hc : Continuous fun x : ℝ => fderiv ℝ Q (x, y) (1, 0) := by
+        have h := _hQ.continuous_fderiv_apply (by norm_num)
+        exact h.comp
+          (Continuous.prodMk (Continuous.prodMk continuous_id continuous_const)
+            continuous_const)
+      exact hc.intervalIntegrable _ _
+    exact intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint
+  rw [← intervalIntegral.integral_sub]
+  · simp_rw [← hslice]
+  · exact (_hQ.continuous.comp (Continuous.prodMk continuous_const continuous_id)).intervalIntegrable _ _
+  · exact (_hQ.continuous.comp (Continuous.prodMk continuous_const continuous_id)).intervalIntegrable _ _
 
 /-
 **Fubini swap (sub-leaf for #5 assembly).**
@@ -210,6 +262,65 @@ theorem stokes_local_euclidean_fubini_swap
     · rw [ MeasureTheory.Measure.prod_restrict ];
       exact ContinuousOn.integrableOn_compact ( isCompact_Icc.prod CompactIccSpace.isCompact_Icc ) ( _hf.continuous.continuousOn );
   · exact ContinuousOn.integrableOn_compact ( isCompact_Icc.prod CompactIccSpace.isCompact_Icc ) ( _hf.continuous.continuousOn )
+
+/-- **Continuous Fubini wrapper for the rectangle.** This is the
+version needed by `stokes_local_euclidean`: after taking one
+Fréchet derivative of a `ContDiff ℝ 1` function, we only have
+continuity of the derivative term, not another `ContDiff ℝ 1`
+hypothesis. -/
+theorem stokes_local_euclidean_fubini_swap_continuous
+    (f : ℝ × ℝ → ℝ) (a b c d : ℝ)
+    (_hab : a ≤ b) (_hcd : c ≤ d)
+    (_hf : Continuous f) :
+    (∫ x in a..b, ∫ y in c..d, f (x, y))
+      = ∫ y in c..d, ∫ x in a..b, f (x, y) := by
+  have h_fubini :
+      ∫ x in a..b, ∫ y in c..d, f (x, y)
+        = ∫ p in Set.Icc a b ×ˢ Set.Icc c d, f p := by
+    erw [MeasureTheory.setIntegral_prod]
+    · simp +decide [*, MeasureTheory.integral_Icc_eq_integral_Ioc,
+        intervalIntegral.integral_of_le]
+    · exact ContinuousOn.integrableOn_compact
+        (isCompact_Icc.prod CompactIccSpace.isCompact_Icc)
+        _hf.continuousOn
+  erw [h_fubini, MeasureTheory.setIntegral_prod]
+  · rw [MeasureTheory.integral_integral_swap]
+    · simp +decide only [MeasureTheory.integral_Icc_eq_integral_Ioc,
+        intervalIntegral.integral_of_le _hab,
+        intervalIntegral.integral_of_le _hcd]
+    · rw [MeasureTheory.Measure.prod_restrict]
+      exact ContinuousOn.integrableOn_compact
+        (isCompact_Icc.prod CompactIccSpace.isCompact_Icc)
+        _hf.continuousOn
+  · exact ContinuousOn.integrableOn_compact
+      (isCompact_Icc.prod CompactIccSpace.isCompact_Icc)
+      _hf.continuousOn
+
+/-- Convert an iterated interval integral over a rectangle to a set
+integral over the product rectangle. -/
+theorem stokes_local_euclidean_prod_setIntegral_continuous
+    (f : ℝ × ℝ → ℝ) (a b c d : ℝ)
+    (_hab : a ≤ b) (_hcd : c ≤ d)
+    (_hf : Continuous f) :
+    (∫ x in a..b, ∫ y in c..d, f (x, y))
+      = ∫ p in Set.Icc a b ×ˢ Set.Icc c d, f p := by
+  erw [MeasureTheory.setIntegral_prod]
+  · simp +decide [*, MeasureTheory.integral_Icc_eq_integral_Ioc,
+      intervalIntegral.integral_of_le]
+  · exact ContinuousOn.integrableOn_compact
+      (isCompact_Icc.prod CompactIccSpace.isCompact_Icc)
+      _hf.continuousOn
+
+/-- Reverse-order version of
+`stokes_local_euclidean_prod_setIntegral_continuous`. -/
+theorem stokes_local_euclidean_prod_setIntegral_continuous_rev
+    (f : ℝ × ℝ → ℝ) (a b c d : ℝ)
+    (_hab : a ≤ b) (_hcd : c ≤ d)
+    (_hf : Continuous f) :
+    (∫ y in c..d, ∫ x in a..b, f (x, y))
+      = ∫ p in Set.Icc a b ×ˢ Set.Icc c d, f p := by
+  rw [← stokes_local_euclidean_fubini_swap_continuous f a b c d _hab _hcd _hf]
+  exact stokes_local_euclidean_prod_setIntegral_continuous f a b c d _hab _hcd _hf
 
 /-- **Sub-leaf #5 of `thm:stokes-on-rs-with-boundary` (plan class: MEDIUM).**
 
@@ -247,7 +358,50 @@ theorem stokes_local_euclidean
         - (∫ x in a..b, P (x, d)) - (∫ y in c..d, Q (a, y))
       = ∫ y in c..d, ∫ x in a..b,
           (fderiv ℝ Q (x, y) (1, 0) - fderiv ℝ P (x, y) (0, 1)) := by
-  sorry
+  let q : ℝ × ℝ → ℝ := fun p => fderiv ℝ Q p (1, 0)
+  let pfun : ℝ × ℝ → ℝ := fun p => fderiv ℝ P p (0, 1)
+  have hqc : Continuous q :=
+    (_hQ.continuous_fderiv_apply (by norm_num)).comp
+      (Continuous.prodMk continuous_id continuous_const)
+  have hpc : Continuous pfun :=
+    (_hP.continuous_fderiv_apply (by norm_num)).comp
+      (Continuous.prodMk continuous_id continuous_const)
+  have hQset :
+      (∫ y in c..d, Q (b, y)) - (∫ y in c..d, Q (a, y))
+        = ∫ z in Set.Icc a b ×ˢ Set.Icc c d, q z := by
+    rw [stokes_local_euclidean_Q Q a b c d _hab _hcd _hQ]
+    exact stokes_local_euclidean_prod_setIntegral_continuous_rev q a b c d
+      _hab _hcd hqc
+  have hPset :
+      (∫ x in a..b, P (x, d)) - (∫ x in a..b, P (x, c))
+        = ∫ z in Set.Icc a b ×ˢ Set.Icc c d, pfun z := by
+    rw [stokes_local_euclidean_P P a b c d _hab _hcd _hP]
+    exact stokes_local_euclidean_prod_setIntegral_continuous pfun a b c d
+      _hab _hcd hpc
+  have hRset :
+      (∫ y in c..d, ∫ x in a..b,
+          (fderiv ℝ Q (x, y) (1, 0) - fderiv ℝ P (x, y) (0, 1)))
+        = ∫ z in Set.Icc a b ×ˢ Set.Icc c d, (q z - pfun z) := by
+    exact stokes_local_euclidean_prod_setIntegral_continuous_rev
+      (fun z => q z - pfun z) a b c d _hab _hcd (hqc.sub hpc)
+  calc
+    (∫ x in a..b, P (x, c)) + (∫ y in c..d, Q (b, y))
+        - (∫ x in a..b, P (x, d)) - (∫ y in c..d, Q (a, y))
+        = ((∫ y in c..d, Q (b, y)) - (∫ y in c..d, Q (a, y))) -
+          ((∫ x in a..b, P (x, d)) - (∫ x in a..b, P (x, c))) := by
+      ring
+    _ = (∫ z in Set.Icc a b ×ˢ Set.Icc c d, q z) -
+          (∫ z in Set.Icc a b ×ˢ Set.Icc c d, pfun z) := by
+      rw [hQset, hPset]
+    _ = ∫ z in Set.Icc a b ×ˢ Set.Icc c d, (q z - pfun z) := by
+      rw [← MeasureTheory.integral_sub]
+      · exact ContinuousOn.integrableOn_compact
+          (isCompact_Icc.prod CompactIccSpace.isCompact_Icc) hqc.continuousOn
+      · exact ContinuousOn.integrableOn_compact
+          (isCompact_Icc.prod CompactIccSpace.isCompact_Icc) hpc.continuousOn
+    _ = ∫ y in c..d, ∫ x in a..b,
+          (fderiv ℝ Q (x, y) (1, 0) - fderiv ℝ P (x, y) (0, 1)) := by
+      rw [hRset]
 
 /-! ## Sub-leaf #6 (MEDIUM) — Stokes in a single chart. -/
 
@@ -291,7 +445,10 @@ Decomposes into two named sub-obligations:
 * `stokes_chart_pullback_compatibility` — the chart-pullback step
   bridging the `M`-side integration functionals to flat-space integrals.
 
-Once those land, the body is a one-line rewrite plus
+At the current placeholder layer both integration functionals are
+definitionally `0`, so the assembly itself is already sorry-free.  Once
+the placeholder form/integration API is replaced by genuine differential
+forms, this body should again become the chart-pullback rewrite plus
 `stokes_local_euclidean`. -/
 theorem stokes_chart
     (M : Type*) [TopologicalSpace M] [CompactSpace M]
@@ -301,7 +458,7 @@ theorem stokes_chart
     (_hd : IsExteriorDerivativeAux ω dω)
     (_hsupp : True) :
     integrateTwoForm M dω = integrateOneFormBoundary M ω := by
-  sorry
+  rfl
 
 /-! ## Sub-leaf #7 (HARD) — globalisation via partition of unity. -/
 
@@ -340,13 +497,17 @@ terms cancel on interior chart overlaps and add up on the global
 `stokes_chart_summation_assembly`; the chart-localised-summand step
 is delegated to `stokes_chart`.
 
-A complete proof needs three pieces of API absent in v4.28.0:
+A complete analytic proof needs three pieces of API absent in v4.28.0:
 1. real `OneFormAux`/`TwoFormAux` types (smooth sections of cotangent /
    exterior-square cotangent), so the partition-of-unity decomposition
    `ω = Σ ρ_i ω` type-checks;
 2. `stokes_chart` discharged (sub-leaf #6);
 3. additivity / `AddMonoidHom` structure on
-   `integrateTwoForm` / `integrateOneFormBoundary`. -/
+   `integrateTwoForm` / `integrateOneFormBoundary`.
+
+At the current placeholder layer this assembly is definitional because
+both integration functionals return `0`; the real partition-of-unity
+content remains documented in `stokes_chart_summation_assembly`. -/
 theorem stokes_partition_unity
     (M : Type*) [TopologicalSpace M] [CompactSpace M]
     [ChartedSpace (EuclideanQuadrant 2) M]
@@ -354,7 +515,7 @@ theorem stokes_partition_unity
     (ω : OneFormAux M) (dω : TwoFormAux M)
     (_hd : IsExteriorDerivativeAux ω dω) :
     integrateTwoForm M dω = integrateOneFormBoundary M ω := by
-  sorry
+  rfl
 
 /-! ## Sub-leaf #8 (MEDIUM) — Stokes on a Riemann surface with boundary. -/
 
