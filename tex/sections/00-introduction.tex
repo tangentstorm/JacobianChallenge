@@ -1,5 +1,4 @@
-\section{Introduction}
-\label{sec:introduction}
+\label{part:introduction}
 
 \begin{layman}
 \textbf{What is this document?}\par
@@ -57,7 +56,16 @@ challenge property — group structure, manifold structure, every
 anti-hack theorem — falls out of this single construction once
 enough analytic background has been established.
 
-The eleven-section spine of the document mirrors that construction.
+The document opens with two short cataloging parts. Part~1, the
+\emph{Statement of the Jacobian Challenge}, lists the public-API
+obligations (genus, Jacobian, Abel--Jacobi map, degree, pushforward,
+pullback, plus the four anti-hack theorems) one for one with
+\code{Jacobian/Challenge.lean}. Part~2, the \emph{Statement Bank},
+collects the internal helper statements (period pairing, period
+lattice, trace--pullback identity) that the construction leans on
+without exposing them in the public API.
+
+The eleven-section mathematical spine then mirrors the construction.
 Section~1 sets up the algebraic machinery (vanishing orders,
 divisors) shared with the algebraic-geometric route. Section~2
 develops \(H^0(X,\Omega^1_X)\) and its finite dimensionality
@@ -87,6 +95,9 @@ strips these insets; the companion build keeps them.
 The public target is the API in \code{Jacobian/Challenge.lean}. This
 document gives an informal proof that the API is satisfied by the classical
 analytic construction of the Jacobian of a compact connected Riemann surface.
+Part~1 below restates that public target informally; Part~2 collects the
+internal helper statements; the remaining sections build up the supporting
+mathematics.
 
 The construction is:
 \[
