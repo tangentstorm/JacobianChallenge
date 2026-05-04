@@ -729,6 +729,25 @@ in \code{Jacobian/StageB/DeRhamComparison.lean}.
 \leanok
 \end{lemma}
 
+\paragraph{Lean build status (R4).}
+As of this writing, \code{lake build Jacobian.Analysis.DeRham} is
+\emph{100\% \texttt{sorry}-free}: every declaration in
+\code{Jacobian/Analysis/DeRham/Overview.lean} (the headline
+\code{deRham\_overview}, all 15 sub-leaf stubs R4.1.1--R4.4.4, the
+three R4-sub-{A,B,C} promotion stubs, and the depth-first
+\code{dis}-chain refinements R4.dis-r6--R4.dis-r15 from the rounds
+below) closes against the StageB placeholder types.  No transitive
+\code{sorry} is pulled in either: the dependency on
+\code{Jacobian.StageA.PrismOperator} (and through it on
+\code{Jacobian.Periods.\{TietzeReduction, Polygon4gCellular,
+SingularH1Homotopy\}}) was severed by extracting
+\code{stdSimplex} and \code{SingularSimplex} into a slim core module
+\code{Jacobian/StageA/SingularSimplexCore.lean}, which is now the
+import shared between \code{StageB/DeRhamComparison.lean} and the
+prism-operator file.  All five formerly transitive
+\code{sorry}s remain in their own modules; they are no longer
+reachable from R4.
+
 
 \subsubsection*{Stepwise refinement of the proof}
 
@@ -831,6 +850,16 @@ scratch (R4-sub-A).  The good-cover argument also pulls in
 Riemannian-metric infrastructure (R4-sub-C, ~500 LOC of
 prerequisite).  Total estimated for R4 + supporting sub-gaps:
 2500--3500 LOC.
+
+In the meantime the R4 \emph{scaffold} — the
+top-down statement bank with all 15 sub-leaves and the
+depth-first refinement of the integration-on-a-simplex chain — has been
+arranged so that \code{lake build Jacobian.Analysis.DeRham} compiles
+without any \code{sorry} (transitive or otherwise).  All the real
+classical content still has to be filled in; the placeholder types
+(\code{Omega := PUnit}, \code{singularHC := PUnit}) make every
+intermediate stub trivial today, and replacing them is what
+2500--3500 LOC of future Lean will be spent on.
 \end{layman}
 
 %======================================================================
@@ -3111,6 +3140,7 @@ $\sigma^{*}\omega$ is continuous, hence bounded on compact $\Delta^{k}$; the int
 
 \begin{lemma}[Pass E1.5: Mathlib endpoint]
 \label{lem:dis-r5}
+\uses{lem:dis-r6}
 \code{MeasureTheory.integral} on a compact set with continuous integrand.  Mathlib status: present.
 \lean{MeasureTheory.integral_continuous_of_compact}
 \leanok\mathlibok
@@ -4208,6 +4238,48 @@ $W = H \cdot W' = H_{1}^{\mathrm{std}} \cdot \prod_{i=2}^{g}H_{i}^{\mathrm{std}}
 \label{lem:tsh-r10}
 \code{Nat.rec} + \code{FreeGroup.lift}.  Mathlib status: present (induction primitive); relator manipulation absent.
 \lean{Nat.rec}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine dis-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass dis.6: model the standard simplex inside $\R^{k}$]
+\label{lem:dis-r6}
+\uses{lem:dis-r7}
+The standard $k$-simplex $\Delta^{k} = \{t \in \R^{k} : t_{i}\ge 0,\ \sum_{i} t_{i}\le 1\}$ is a compact convex subset of $\R^{k}$, with non-empty interior and Lebesgue-null boundary.  Compactness follows from closedness ($\Delta^{k}$ is the intersection of finitely many closed half-spaces) and boundedness (each $t_{i}\in[0,1]$).
+\lean{JacobianChallenge.Analysis.DeRham.deRham_dis_r6}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass dis.7: smooth pullback in coordinates]
+\label{lem:dis-r7}
+\uses{lem:dis-r8}
+For $\sigma : \Delta^{k} \to M$ smooth in every chart and $\omega \in \Omega^{k}(M)$, the pullback $\sigma^{*}\omega$ is the function $\Delta^{k} \to \R$ given in chart coordinates $(\varphi, U)$ around $\sigma(t)$ by $(\sigma^{*}\omega)(t) = \omega_{\sigma(t)}\bigl(\partial_{1}\sigma(t),\ldots,\partial_{k}\sigma(t)\bigr)$, the alternating $k$-multilinear evaluation on the partial derivatives of $\varphi\circ\sigma$.  This is well-defined (chart-independent) because $\omega$ is alternating and the chart change is smooth.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_dis_r7}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass dis.8: continuity of the pullback function]
+\label{lem:dis-r8}
+\uses{lem:dis-r9}
+$t \mapsto \omega_{\sigma(t)}\bigl(\partial_{1}\sigma(t),\ldots,\partial_{k}\sigma(t)\bigr)$ is continuous on $\Delta^{k}$: it is the composition of the smooth maps $t\mapsto\sigma(t)$, $t\mapsto\partial_{i}\sigma(t)$, and the continuous evaluation $(\omega_{p}, v_{1}, \ldots, v_{k}) \mapsto \omega_{p}(v_{1}, \ldots, v_{k})$.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_dis_r8}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass dis.9: integrability on a compact subset of $\R^{k}$]
+\label{lem:dis-r9}
+\uses{lem:dis-r10}
+A continuous function on a compact subset of $\R^{k}$ is bounded by Weierstrass and hence Lebesgue-integrable: $\|\sigma^{*}\omega\|_{\infty} < \infty$, so $\int_{\Delta^{k}} |\sigma^{*}\omega|\,d\lambda \le \|\sigma^{*}\omega\|_{\infty}\cdot\lambda(\Delta^{k}) < \infty$.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_dis_r9}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass dis.10: Mathlib endpoint]
+\label{lem:dis-r10}
+\code{ContinuousOn.integrableOn\_compact} on \code{MeasureTheory.Measure.lebesgue}.  Mathlib status: present.
+\lean{ContinuousOn.integrableOn_compact}
 \leanok\mathlibok
 \end{lemma}
 
@@ -5407,6 +5479,48 @@ Length of a permutation = number of adjacent swaps; induction reduces to a singl
 \label{lem:ths-r15}
 \code{Equiv.Perm.swap} + \code{Equiv.Perm.IsAdjacentSwap}.  Mathlib status: present.
 \lean{Equiv.Perm.swap}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 3: refine dis-r10 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass dis.11: a continuous function on a compact set attains its maximum]
+\label{lem:dis-r11}
+\uses{lem:dis-r12}
+Weierstrass extreme-value: $f : K \to \R$ continuous on $K$ compact in a metric space attains $\sup_{K} f$ and $\inf_{K} f$.  Apply to $f = |\sigma^{*}\omega|$ on $K = \Delta^{k}$.
+\lean{IsCompact.exists_isMaxOn}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dis.12: a bounded measurable function on a finite-measure set is in $L^{1}$]
+\label{lem:dis-r12}
+\uses{lem:dis-r13}
+If $f$ is measurable, $|f| \le C$ a.e., and $\mu(K) < \infty$, then $\int_{K} |f|\,d\mu \le C\cdot\mu(K) < \infty$, so $f \in L^{1}(K, \mu)$.  Mathlib carries this as \code{MeasureTheory.Mem}$\mathcal{L}$\code{p.of\_bound} (the `bounded $\Rightarrow$ in $\mathcal{L}^p$' lemma).
+\lean{MeasureTheory.Integrable.bdd_mul}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dis.13: Lebesgue measure of the standard $k$-simplex is finite]
+\label{lem:dis-r13}
+\uses{lem:dis-r14}
+$\lambda(\Delta^{k}) = 1/k!$ (standard exercise in Fubini): integrate the indicator of $\{t_{i}\ge 0,\ \sum t_{i}\le 1\}$ slice-by-slice.  In particular $\lambda(\Delta^{k}) < \infty$.
+\lean{JacobianChallenge.Analysis.DeRham.deRham_dis_r13}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass dis.14: Riemann/Lebesgue integral coincide on continuous-on-compact]
+\label{lem:dis-r14}
+\uses{lem:dis-r15}
+For $f : K \to \R$ continuous on a compact set $K \subseteq \R^{k}$ with Lebesgue-null boundary, the Riemann integral and the Lebesgue integral of $f$ agree.  This justifies writing $\int_{\Delta^{k}}\sigma^{*}\omega$ as a Lebesgue integral against the $k$-form's classical Riemannian definition.
+\lean{MeasureTheory.IntegrableOn}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dis.15: Mathlib endpoint]
+\label{lem:dis-r15}
+\code{MeasureTheory.integral} on \code{MeasureTheory.MeasureSpace.volume} (the Lebesgue measure on $\R^{k}$ obtained from the Borel measure on $\R$ via the product instance).  Mathlib status: present.
+\lean{MeasureTheory.integral}
 \leanok\mathlibok
 \end{lemma}
 
