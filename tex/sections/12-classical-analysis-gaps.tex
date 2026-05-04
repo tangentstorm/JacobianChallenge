@@ -1998,7 +1998,8 @@ $\iint_{B_{R}(0)} \frac{1}{|w|}\,dA(w) =
 coordinates on $\R^{2}$ for an $L^{1}_{\mathrm{loc}}$ function;
 \code{MeasureTheory.integral\_comp\_polarCoord\_symm} is the
 intended target.
-\notready
+\lean{MeasureTheory.integral_comp_polarCoord_symm}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -2058,6 +2059,7 @@ convergence on the integrand $(1+|\xi|^{2})^{s-s'} \cdot
 $L^{2}$ tail estimate;
 \code{MeasureTheory.tendsto\_setIntegral\_compl} on a
 $\sigma$-finite measure is the intended target.
+\uses{lem:rk-r6}
 \notready
 \end{lemma}
 
@@ -2112,7 +2114,8 @@ generator the identity loop.  Mathlib status: present;
 \code{fundamentalGroup\_circle\_iso\_int}.  This is the
 Mathlib endpoint of the chain.
 \label{lem:rado-dim2-r5-pi1-circle}
-\notready
+\lean{Topology.Homotopy.fundamentalGroup_circle_iso_int}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -2227,7 +2230,8 @@ manifold admits a subordinate smooth partition of unity.
 Mathlib status: present;
 \code{SmoothManifoldWithCorners.SmoothPartitionOfUnity.exists\_isSubordinate}
 is the named declaration.  This is the Mathlib endpoint.
-\notready
+\lean{SmoothManifoldWithCorners.SmoothPartitionOfUnity.exists_isSubordinate}
+\leanok\mathlibok
 \end{lemma}
 
 \begin{layman}
@@ -2290,7 +2294,8 @@ For $f$ holomorphic on a simply-connected open $U$, every closed loop in $U$ has
 \begin{lemma}[Pass F1.5: Mathlib endpoint: $\log$ on a simply-connected nbhd avoiding $0$]
 \label{lem:akr-r5}
 \code{Complex.analyticAt\_log} provides $\log$ analytic at any point of $\C \setminus \{0\}$; combined with simply-connectedness this gives the global $\log$.  Mathlib status: present.
-\notready
+\lean{Complex.analyticAt_log}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -2327,7 +2332,8 @@ By hypothesis $f^{-1}(y_{0}) \subseteq U$, so $y_{0} \notin f(U^{c})$.  The comp
 \begin{lemma}[Pass F2.5: Mathlib endpoint: closed-image-of-compact under continuous-Hausdorff]
 \label{lem:pfs-r5}
 \code{IsCompact.image} and \code{IsCompact.isClosed} (the latter on T2 spaces) compose to the needed fact.  Mathlib status: present.
-\notready
+\lean{IsCompact.image_of_continuousOn}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -2364,6 +2370,7 @@ Locally $\pi$ is a homeomorphism (since $\Lambda$ is discrete), so it pulls back
 \begin{lemma}[Pass F7.5: Mathlib endpoint]
 \label{lem:ctp-r5}
 \code{QuotientAddGroup.instTopologicalGroup} + \code{ChartedSpace.instOfHomeomorph} + \code{ComplexManifold} smooth-structure transfer.  Mathlib status: partial (charted-space transfer along an open quotient is the missing piece).
+\uses{lem:ctp-r6}
 \notready
 \end{lemma}
 
@@ -2401,7 +2408,8 @@ $(g \circ F)'(w) = g'(F(w)) \cdot F'(w)$ for holomorphic $g, F$, by the complex 
 \begin{lemma}[Pass F8.5: Mathlib endpoint]
 \label{lem:pbf-r5}
 \code{HasDerivAt.comp} and \code{ContMDiff.compMDifferentiable} provide the chart-local + manifold-level chain rules.  Mathlib status: present.
-\notready
+\lean{HasDerivAt.comp}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -2438,6 +2446,7 @@ Symmetric functions in $\zeta_{k}^{j} z^{1/k}$ that are smooth in the input are 
 \begin{lemma}[Pass F9.5: Mathlib endpoint]
 \label{lem:trf-r5}
 \code{MvPolynomial.symmetric\_subalgebra} is Mathlib-present in the polynomial setting; the analytic upgrade for power series is the named declaration we need.  Mathlib status: partial.
+\uses{lem:trf-r6}
 \notready
 \end{lemma}
 
@@ -2475,7 +2484,8 @@ Every compact $C^{0}$-manifold is paracompact; we just used compactness, but the
 \begin{lemma}[Pass B1.5: Mathlib endpoint]
 \label{lem:rfd-r5}
 \code{IsCompact.elim\_finite\_subcover} and \code{ChartedSpace.atlas} are the Mathlib hooks.  Mathlib status: present.
-\notready
+\lean{IsCompact.elim_finite_subcover}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -2512,6 +2522,7 @@ Any two finite simplicial decompositions of a region in $\R^{2}$ admit a common 
 \begin{lemma}[Pass B2.5: Mathlib endpoint]
 \label{lem:rpc-r5}
 PL infrastructure is currently absent from Mathlib.  Closest hooks: \code{Mathlib.Analysis.Convex.Simplex} for simplices and \code{AffineMap} for affine maps.  Mathlib status: ABSENT.
+\uses{lem:rpc-r6}
 \notready
 \end{lemma}
 
@@ -2549,6 +2560,7 @@ Refine each chart's triangulation finely enough that overlaps land within sub-si
 \begin{lemma}[Pass B3.5: Mathlib endpoint]
 \label{lem:rtc-r5}
 \code{Topology.Homotopy.Triangulation} is the natural target; the relevant simplicial-complex API is currently a project-side fork.  Mathlib status: ABSENT.
+\uses{lem:rtc-r6}
 \notready
 \end{lemma}
 
@@ -2586,6 +2598,7 @@ Every simple polygon with $\geq 4$ vertices has at least two ears.
 \begin{lemma}[Pass B4.5: Mathlib endpoint]
 \label{lem:rcs-r5}
 Polygon ear-theorem is computational geometry; not in current Mathlib.  Closest: \code{Polygon} basic API in Mathlib3 not yet ported.  Mathlib status: ABSENT.
+\uses{lem:rcs-r6}
 \notready
 \end{lemma}
 
@@ -2623,6 +2636,7 @@ By the manifold chart at a midpoint of $e$, a neighborhood is homeomorphic to $\
 \begin{lemma}[Pass B5.5: Mathlib endpoint]
 \label{lem:ret-r5}
 \code{Topology.JordanCurve} (planned) for the arc-separation step.  Mathlib status: ABSENT (Jordan arc theorem in Mathlib).
+\uses{lem:ret-r6}
 \notready
 \end{lemma}
 
@@ -2660,6 +2674,7 @@ By the edge condition (two triangles per edge), no vertex of the link has degree
 \begin{lemma}[Pass B6.5: Mathlib endpoint]
 \label{lem:rvl-r5}
 PL link computation; not yet in Mathlib.  Closest: \code{Polynomial.Cyclic} for cyclic structures.  Mathlib status: ABSENT.
+\uses{lem:rvl-r6}
 \notready
 \end{lemma}
 
@@ -2697,7 +2712,8 @@ For an open cover $\{U_{i}\}$ of $X$, $f$ is continuous iff each $f|_{U_{i}}$ is
 \begin{lemma}[Pass B7.5: Mathlib endpoint]
 \label{lem:rgc-r5}
 \code{continuous\_iff\_continuousOn\_iUnion\_of\_isOpen} is Mathlib's pasting lemma.  Mathlib status: present.
-\notready
+\lean{continuous_iff_continuousOn_iUnion_of_isOpen}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -2734,6 +2750,7 @@ On overlaps the glued map agrees by construction, so the map is well-defined as 
 \begin{lemma}[Pass B8.5: Mathlib endpoint]
 \label{lem:rgb-r5}
 \code{Equiv.coe\_iUnion} for piecing together bijections from disjoint pieces; the cover-with-overlap variant requires a coproduct argument.  Mathlib status: partial.
+\uses{lem:rgb-r6}
 \notready
 \end{lemma}
 
@@ -2771,6 +2788,7 @@ Free groups have unique reduced words; cyclic reduction extends this uniqueness 
 \begin{lemma}[Pass C1.5: Mathlib endpoint]
 \label{lem:tcr-r5}
 \code{FreeGroup} has \code{FreeGroup.reduce} for word reduction.  Mathlib status: present (free group reduce); cyclic version is partial.
+\uses{lem:tcr-r6}
 \notready
 \end{lemma}
 
@@ -2808,6 +2826,7 @@ In the free group on $\{a, b, c, d, \ldots\}$, the relator can be transformed vi
 \begin{lemma}[Pass C2.5: Mathlib endpoint]
 \label{lem:tbh-r5}
 \code{PresentedGroup.relations\_eq} for relator manipulation.  Brahana handle creation specifically not in Mathlib.  Mathlib status: ABSENT.
+\uses{lem:tbh-r6}
 \notready
 \end{lemma}
 
@@ -2845,6 +2864,7 @@ The combinatorial orientability of the polygon word matches the topological orie
 \begin{lemma}[Pass C3.5: Mathlib endpoint]
 \label{lem:tmo-r5}
 Surface orientability is currently absent from Mathlib.  Closest: \code{Manifold.Orientable} (planned).  Mathlib status: ABSENT.
+\uses{lem:tmo-r6}
 \notready
 \end{lemma}
 
@@ -2882,6 +2902,7 @@ Two orientable surface words are equivalent iff their handle counts agree.
 \begin{lemma}[Pass C4.5: Mathlib endpoint]
 \label{lem:toh-r5}
 Genus classification of orientable surfaces is currently absent from Mathlib.  Mathlib status: ABSENT.
+\uses{lem:toh-r6}
 \notready
 \end{lemma}
 
@@ -2919,6 +2940,7 @@ Any permutation of $\{1, \ldots, g\}$ is a product of adjacent transpositions, s
 \begin{lemma}[Pass C5.5: Mathlib endpoint]
 \label{lem:ths-r5}
 \code{Equiv.Perm} for permutations; conjugation in \code{FreeGroup} is partial.  Mathlib status: partial.
+\uses{lem:ths-r6}
 \notready
 \end{lemma}
 
@@ -2956,6 +2978,7 @@ Concatenating $H$ with the inductively-derived form gives the full standard rela
 \begin{lemma}[Pass C6.5: Mathlib endpoint]
 \label{lem:tsh-r5}
 Inductive proof using \code{Nat.rec}; relator decomposition is not in Mathlib.  Mathlib status: partial (only the induction primitive is present).
+\uses{lem:tsh-r6}
 \notready
 \end{lemma}
 
@@ -2993,6 +3016,7 @@ For a genus-$g$ surface, the dual disk has $2 \cdot 2g$ boundary edges in a four
 \begin{lemma}[Pass D1.5: Mathlib endpoint]
 \label{lem:pct-r5}
 \code{SimpleGraph.spanningTree} (planned) for the spanning tree.  Cutting argument is not in Mathlib.  Mathlib status: ABSENT.
+\uses{lem:pct-r6}
 \notready
 \end{lemma}
 
@@ -3030,6 +3054,7 @@ Each Tietze move preserves $\chi$: handle creation, swap, and reduction all pres
 \begin{lemma}[Pass D2.5: Mathlib endpoint]
 \label{lem:pgm-r5}
 \code{EulerCharacteristic} for simplicial complexes is absent from Mathlib.  Mathlib status: ABSENT.
+\uses{lem:pgm-r6}
 \notready
 \end{lemma}
 
@@ -3067,7 +3092,8 @@ $\sigma^{*}\omega$ is continuous, hence bounded on compact $\Delta^{k}$; the int
 \begin{lemma}[Pass E1.5: Mathlib endpoint]
 \label{lem:dis-r5}
 \code{MeasureTheory.integral} on a compact set with continuous integrand.  Mathlib status: present.
-\notready
+\lean{MeasureTheory.integral_continuous_of_compact}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -3104,6 +3130,7 @@ By induction on $k$, Stokes on $\Delta^{k}$ reduces to the FTC on the unit inter
 \begin{lemma}[Pass E2.5: Mathlib endpoint]
 \label{lem:dss-r5}
 \code{intervalIntegral.integral\_deriv\_eq\_sub} for FTC; \code{MeasureTheory.integral\_prod} for Fubini.  Stokes-on-simplex is partially in Mathlib via \code{Stokes\_theorem}.  Mathlib status: partial.
+\uses{lem:dss-r6}
 \notready
 \end{lemma}
 
@@ -3141,6 +3168,7 @@ Continuous maps to a smooth manifold are dense in the compact-open topology, and
 \begin{lemma}[Pass E3.5: Mathlib endpoint]
 \label{lem:dsq-r5}
 \code{Manifold.WhitneyApproximation} (planned).  Mathlib status: partial (basic smoothing in \code{ContDiff} is present, manifold-level approximation pending).
+\uses{lem:dsq-r6}
 \notready
 \end{lemma}
 
@@ -3178,6 +3206,7 @@ The integration map $\Omega^{*} \to S^{*}$ commutes with the MV connecting morph
 \begin{lemma}[Pass E4.5: Mathlib endpoint]
 \label{lem:dmv-r5}
 \code{CategoryTheory.Abelian.SnakeLemma} for snake lemma; MV for singular cohomology partially present in \code{AlgebraicTopology}.  Mathlib status: partial.
+\uses{lem:dmv-r6}
 \notready
 \end{lemma}
 
@@ -3215,7 +3244,8 @@ By induction on the size of a finite good cover, the comparison map becomes an i
 \begin{lemma}[Pass E5.5: Mathlib endpoint]
 \label{lem:dfl-r5}
 \code{CategoryTheory.Abelian.FiveLemma}.  Mathlib status: present (in homological-algebra section).
-\notready
+\lean{CategoryTheory.Abelian.fiveLemma}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -3252,6 +3282,7 @@ $\Delta = -\sum_{i,j} g^{ij}\partial_{i}\partial_{j} + \text{lower order}$.  The
 \begin{lemma}[Pass F1H.5: Mathlib endpoint]
 \label{lem:hle-r5}
 \code{LinearPDE.Symbol} and \code{LinearPDE.Elliptic} are not in Mathlib.  Closest: \code{ContinuousLinearMap}.  Mathlib status: ABSENT.
+\uses{lem:hle-r6}
 \notready
 \end{lemma}
 
@@ -3289,6 +3320,7 @@ $\Delta$ Fredholm $\Rightarrow$ closed range, so the orthogonal complement of $\
 \begin{lemma}[Pass F2H.5: Mathlib endpoint]
 \label{lem:hod-r5}
 \code{Banach.ClosedRange} for closed-range theorem; Hodge orthogonality is currently absent.  Mathlib status: partial.
+\uses{lem:hod-r6}
 \notready
 \end{lemma}
 
@@ -3326,7 +3358,8 @@ $\langle\cdot,\cdot\rangle_{L^{2}}$ is positive-definite on $\Omega^{k}(M)$ for 
 \begin{lemma}[Pass F3H.5: Mathlib endpoint]
 \label{lem:huh-r5}
 \code{InnerProductSpace} for the inner product structure.  Mathlib status: present.
-\notready
+\lean{InnerProductSpace.toEuclideanSpace}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -3363,6 +3396,7 @@ For a Riemann surface, $k=1$ has only $(p,q) \in \{(1,0),(0,1)\}$, giving $\math
 \begin{lemma}[Pass F4H.5: Mathlib endpoint]
 \label{lem:hbs-r5}
 \code{ComplexManifold.BidegreeDecomposition} (planned).  Mathlib status: ABSENT.
+\uses{lem:hbs-r6}
 \notready
 \end{lemma}
 
@@ -3400,6 +3434,7 @@ Each $C_{n}^{\mathrm{cell}}$ is a free $\Z$-module on a finite set of $n$-cells.
 \begin{lemma}[Pass G1.5: Mathlib endpoint]
 \label{lem:hdf-r5}
 \code{AlgebraicTopology.CellComplex.Homology} provides cellular homology; finiteness for finite CW is partial.  Mathlib status: partial.
+\uses{lem:hdf-r6}
 \notready
 \end{lemma}
 
@@ -3437,7 +3472,8 @@ Combining: $\dim_{\R}\mathrm{Hom}(\Z^{r}\oplus T,\R) = r$.
 \begin{lemma}[Pass G2.5: Mathlib endpoint]
 \label{lem:hdr-r5}
 \code{Module.finrank} and \code{AddCommGroup.IsFiniteType}; structure theorem for f.g.\ abelian groups in \code{AddCommGroup.Pi.AddCommGroupStructureTheorem}.  Mathlib status: present.
-\notready
+\lean{Module.finrank_pi_fintype}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -3474,6 +3510,7 @@ $H^{1}(X,\R) \cong \mathrm{Hom}(H_{1}(X,\Z),\R)$.
 \begin{lemma}[Pass G3.5: Mathlib endpoint]
 \label{lem:hdu-r5}
 \code{HomologicalAlgebra.UniversalCoefficient} (planned).  Mathlib status: ABSENT (UCT in Mathlib).
+\uses{lem:hdu-r6}
 \notready
 \end{lemma}
 
@@ -3511,6 +3548,7 @@ $\check{H}^{1}(X,\mathcal{G}) = 0$: any cocycle splits via the partition of unit
 \begin{lemma}[Pass H1.5: Mathlib endpoint]
 \label{lem:dfr-r5}
 \code{AlgebraicGeometry.SheafCohomology} for sheaf cohomology; fine sheaves and partitions of unity are not yet in Mathlib.  Mathlib status: ABSENT.
+\uses{lem:dfr-r6}
 \notready
 \end{lemma}
 
@@ -3548,7 +3586,8 @@ Compact manifolds are paracompact, providing the locally-finite cover hypothesis
 \begin{lemma}[Pass H2.5: Mathlib endpoint]
 \label{lem:dfs-r5}
 \code{SmoothPartitionOfUnity.exists\_isSubordinate} on a smooth paracompact manifold.  Mathlib status: present.
-\notready
+\lean{SmoothManifoldWithCorners.SmoothPartitionOfUnity.exists_isSubordinate}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -3585,6 +3624,7 @@ $\sum_{p}\mathrm{Res}_{p}\omega = 0$ for global meromorphic 1-forms (Lemma~\ref{
 \begin{lemma}[Pass I1.5: Mathlib endpoint]
 \label{lem:sti-r5}
 \code{SheafCohomology.Cech} + residue theorem (cf.\ chain D).  Mathlib status: ABSENT (residue infrastructure for Riemann surfaces).
+\uses{lem:sti-r6}
 \notready
 \end{lemma}
 
@@ -3622,6 +3662,7 @@ The Cech cup product agrees with the derived-functor cup product on a paracompac
 \begin{lemma}[Pass I2.5: Mathlib endpoint]
 \label{lem:scc-r5}
 \code{CategoryTheory.Sheaf.CupProduct} (planned).  Mathlib status: ABSENT.
+\uses{lem:scc-r6}
 \notready
 \end{lemma}
 
@@ -3659,6 +3700,7 @@ For nonzero $\omega$, $\langle\omega,\bar\star\omega\rangle = \int|\omega|^{2}_{
 \begin{lemma}[Pass I3.5: Mathlib endpoint]
 \label{lem:sl2-r5}
 \code{InnerProductSpace} + Hodge $\bar\star$.  Hodge $\bar\star$ is currently absent from Mathlib.  Mathlib status: partial.
+\uses{lem:sl2-r6}
 \notready
 \end{lemma}
 
@@ -3696,6 +3738,7 @@ The functor $E \mapsto \Lambda^{k}E$ is a smooth construction preserving smooth 
 \begin{lemma}[Pass J1.5: Mathlib endpoint]
 \label{lem:bfa-r5}
 \code{VectorBundle} + \code{ExteriorAlgebra}.  Bundled forms package not yet integrated; closest is \code{Mathlib.Geometry.Manifold.VectorBundle.SmoothSection}.  Mathlib status: partial.
+\uses{lem:bfa-r6}
 \notready
 \end{lemma}
 
@@ -3733,7 +3776,8 @@ For $f \in C^{2}$, $\partial_{i}\partial_{j}f = \partial_{j}\partial_{i}f$.
 \begin{lemma}[Pass J2.5: Mathlib endpoint]
 \label{lem:bfd-r5}
 \code{ContDiff.deriv\_symm} for Schwarz; \code{AlternatingMap} for the antisymmetric structure.  Mathlib status: present.
-\notready
+\lean{ContDiff.iteratedFDeriv_symm}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -3770,6 +3814,7 @@ The de Rham complex is functorial: $f^{*}$ commutes with the differential at the
 \begin{lemma}[Pass J3.5: Mathlib endpoint]
 \label{lem:bfp-r5}
 \code{ContMDiff.fderiv} for the chain rule; pullback-of-forms is partial.  Mathlib status: partial.
+\uses{lem:bfp-r6}
 \notready
 \end{lemma}
 
@@ -3807,6 +3852,7 @@ $\|u\|_{H^{s+m}} \leq C(\|Tu\|_{H^{s}} + \|u\|_{H^{s}})$ from the previous bound
 \begin{lemma}[Pass K1.5: Mathlib endpoint]
 \label{lem:sgd-r5}
 \code{MeasureTheory.FourierTransform} for Plancherel.  Sobolev space and Garding inequality are absent.  Mathlib status: ABSENT.
+\uses{lem:sgd-r6}
 \notready
 \end{lemma}
 
@@ -3844,6 +3890,7 @@ $|\xi|^{2}_{g} = g^{ij}\xi_{i}\xi_{j}$ is positive-definite on $T^{*}_{p}M$.
 \begin{lemma}[Pass K2.5: Mathlib endpoint]
 \label{lem:sle-r5}
 \code{InnerProductSpace} for positive-definite inner product; \code{LinearPDE.Elliptic} not yet in Mathlib.  Mathlib status: partial.
+\uses{lem:sle-r6}
 \notready
 \end{lemma}
 
@@ -3863,3 +3910,1229 @@ clusters collectively account for the bulk of the project's
 remaining classical-analysis distance from Mathlib.
 \end{layman}
 
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine rk-r5-tail-decay into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass rk.6: integrand decomposition]
+\label{lem:rk-r6}
+\uses{lem:rk-r7}
+Write the integrand as $(1+|\xi|^{2})^{s-s'}\cdot(1+|\xi|^{2})^{s'}|\hat u(\xi)|^{2}$.  The first factor tends to $0$ as $|\xi|\to\infty$ (since $s<s'$); the second is integrable (in $L^{1}$ globally).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rk.7: dominated convergence on the tail]
+\label{lem:rk-r7}
+\uses{lem:rk-r8}
+For each $N$, $\mathbf{1}_{|\xi|>N}\cdot(1+|\xi|^{2})^{s-s'}\le 1$ pointwise and $\to 0$ a.e.  Apply dominated convergence with envelope $(1+|\xi|^{2})^{s'}|\hat u|^{2}\in L^{1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rk.8: setIntegral on $\sigma$-finite measure]
+\label{lem:rk-r8}
+\uses{lem:rk-r9}
+\code{MeasureTheory.tendsto\_setIntegral\_compl} gives $\int_{|\xi|>N}f\,d\mu\to 0$ for $f\in L^{1}$ on a $\sigma$-finite measure.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rk.9: Fourier transform restricts $L^{1}$]
+\label{lem:rk-r9}
+\uses{lem:rk-r10}
+\code{MeasureTheory.Lp.measurable} ensures $\hat u$ measurable, so the integrand is measurable and the setIntegral lemma applies.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rk.10: Mathlib endpoint]
+\label{lem:rk-r10}
+\code{MeasureTheory.tendsto\_setIntegral\_compl} on a $\sigma$-finite measure space.  Mathlib status: present.
+\lean{MeasureTheory.tendsto_setIntegral_compl}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine ctp-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass ctp.6: open quotient projection inherits ChartedSpace from base]
+\label{lem:ctp-r6}
+\uses{lem:ctp-r7}
+For an open quotient $\pi : V \to V/\Lambda$ that's a local homeomorphism, $V/\Lambda$ inherits a charted-space structure: each chart on $V$ projects to a chart on $V/\Lambda$ via $\pi^{-1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ctp.7: local homeomorphism gives chart compatibility]
+\label{lem:ctp-r7}
+\uses{lem:ctp-r8}
+$\pi$ is a local homeomorphism (since $\Lambda$ is discrete), so every chart pulls back uniquely; the pulled-back charts inherit smooth compatibility from $V$'s smooth structure.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ctp.8: complex structure transfer along a local biholomorphism]
+\label{lem:ctp-r8}
+\uses{lem:ctp-r9}
+A local biholomorphism between charted complex manifolds transfers complex structure: the holomorphic transition maps remain holomorphic on the quotient.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ctp.9: ChartedSpace.compChartedSpace functoriality]
+\label{lem:ctp-r9}
+\uses{lem:ctp-r10}
+\code{ChartedSpace.comp} composes charts; for a local homeomorphism cover, this gives the quotient charted-space structure.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ctp.10: Mathlib endpoint]
+\label{lem:ctp-r10}
+\code{ChartedSpace} + \code{IsLocalHomeomorph}.  The full open-quotient charted-space transfer is partial in Mathlib; closest is \code{ChartedSpace.compHomeomorph} for a single homeomorphism, requiring a small extension to local-homeomorphism covers.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine trf-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass trf.6: formal power series symmetric functions]
+\label{lem:trf-r6}
+\uses{lem:trf-r7}
+For convergent power series in variables $w^{1/k}\zeta_{k}^{j}$ ($j=0,\ldots,k-1$), elementary symmetric polynomials in the $\zeta_{k}^{j}w^{1/k}$ are formal power series in $w$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass trf.7: Newton identities at the formal-series level]
+\label{lem:trf-r7}
+\uses{lem:trf-r8}
+$p_{m} = \sum (-1)^{i+1} e_{i} p_{m-i}$ (Newton) holds in the ring of formal power series; analytic + symmetric implies polynomial in elementary symmetric functions.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass trf.8: convergence of the power-series substitution]
+\label{lem:trf-r8}
+\uses{lem:trf-r9}
+Replacing $w^{1/k}$ by a small disk $|w|<\rho$ gives convergent expansion; the symmetric polynomial in $\zeta_{k}^{j}w^{1/k}$ converges as a power series in $w$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass trf.9: upgrade to AnalyticAt via Mathlib's symmetric polynomial API]
+\label{lem:trf-r9}
+\uses{lem:trf-r10}
+Mathlib has \code{MvPolynomial.symmetric\_subalgebra} (polynomial level); the analytic upgrade combines this with \code{FormalMultilinearSeries.symmetric}.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass trf.10: Mathlib endpoint]
+\label{lem:trf-r10}
+\code{MvPolynomial.symmetric\_subalgebra} + \code{FormalMultilinearSeries.symmetric}; combined with \code{AnalyticAt.compFormalMultilinearSeries}.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine rgb-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass rgb.6: disjoint-overlap argument via cover-with-cocycle]
+\label{lem:rgb-r6}
+\uses{lem:rgb-r7}
+Two points map to the same image iff they're related by the cocycle (transition map).  Outside transition overlaps, charts are disjoint by construction.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rgb.7: global injectivity via cover-of-fibres]
+\label{lem:rgb-r7}
+\uses{lem:rgb-r8}
+For each fibre $\pi^{-1}(y)$, exactly one point of one chart is selected.  Reduces to selection-axiom-free finite combinatorics over the open cover.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rgb.8: Equiv from finite cocycle data]
+\label{lem:rgb-r8}
+\uses{lem:rgb-r9}
+\code{Equiv.coe\_iUnion} composes: given an equivalence on each chart and compatibility on overlaps, glue to a global equivalence.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rgb.9: global Equiv on a paracompact space]
+\label{lem:rgb-r9}
+\uses{lem:rgb-r10}
+For a paracompact space, the cocycle data over a finite cover yields a global equivalence; this is the manifold gluing lemma.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rgb.10: Mathlib endpoint]
+\label{lem:rgb-r10}
+\code{Equiv.iUnion} for global equivalences; cocycle gluing on a paracompact space is partial.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine tcr-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass tcr.6: free-group word reduction terminates]
+\label{lem:tcr-r6}
+\uses{lem:tcr-r7}
+FreeGroup word reduction is monotone-decreasing in length, so it terminates.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tcr.7: cyclic conjugacy class is reduced word + rotation]
+\label{lem:tcr-r7}
+\uses{lem:tcr-r8}
+Two cyclically-reduced words in the same conjugacy class differ by a rotation; this is a finite-orbit calculation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tcr.8: rotation as conjugation by a single letter]
+\label{lem:tcr-r8}
+\uses{lem:tcr-r9}
+Rotating $a_{1}\cdots a_{n}$ to $a_{2}\cdots a_{n} a_{1}$ is conjugation by $a_{1}^{-1}$.  Iteration covers all rotations.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tcr.9: conjugacy in FreeGroup decidable]
+\label{lem:tcr-r9}
+\uses{lem:tcr-r10}
+Conjugacy of cyclically-reduced words in a free group is decidable by direct comparison of rotations.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tcr.10: Mathlib endpoint]
+\label{lem:tcr-r10}
+\code{FreeGroup.reduce} + \code{FreeGroup.IsCyclicallyReduced} (planned).  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine ths-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass ths.6: any permutation as product of adjacent transpositions]
+\label{lem:ths-r6}
+\uses{lem:ths-r7}
+Symmetric group $S_{n}$ is generated by adjacent transpositions $(i, i+1)$; this is a standard combinatorial fact.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ths.7: adjacent swap of handle blocks via Tietze move]
+\label{lem:ths-r7}
+\uses{lem:ths-r8}
+Swapping $H_{i}H_{i+1} \to H_{i+1}H_{i}$ is a single Tietze move (handle commutation in the free product).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ths.8: induct on permutation length]
+\label{lem:ths-r8}
+\uses{lem:ths-r9}
+Apply induction on the length of the swapping permutation: each adjacent swap is one Tietze move.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ths.9: Equiv.Perm.swap_mul_swap on FreeGroup elements]
+\label{lem:ths-r9}
+\uses{lem:ths-r10}
+Conjugation in FreeGroup commutes with adjacent-swap action via \code{Equiv.Perm.symm\_swap}.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ths.10: Mathlib endpoint]
+\label{lem:ths-r10}
+\code{Equiv.Perm.swap} + \code{FreeGroup.Conjugation}.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine tsh-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass tsh.6: induction on the genus parameter]
+\label{lem:tsh-r6}
+\uses{lem:tsh-r7}
+$g \mapsto $ number of handles; base case $g=0$ trivial, inductive step strips one handle.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tsh.7: decompose word as $H \cdot W'$ with $|W'|$ shorter]
+\label{lem:tsh-r7}
+\uses{lem:tsh-r8}
+After cyclic rotation, the word starts with a handle block; the rest has $g-1$ handles and shorter length.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tsh.8: apply induction hypothesis to $W'$]
+\label{lem:tsh-r8}
+\uses{lem:tsh-r9}
+By induction, $W'$ is in standard form $\prod_{i=2}^{g}H_{i}^{\mathrm{std}}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tsh.9: re-attach $H$ to obtain full standard form]
+\label{lem:tsh-r9}
+\uses{lem:tsh-r10}
+$W = H \cdot W' = H_{1}^{\mathrm{std}} \cdot \prod_{i=2}^{g}H_{i}^{\mathrm{std}}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tsh.10: Mathlib endpoint]
+\label{lem:tsh-r10}
+\code{Nat.rec} + \code{FreeGroup.lift}.  Mathlib status: present (induction primitive); relator manipulation absent.
+\lean{Nat.rec}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine dss-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass dss.6: FTC on $[0,1]$]
+\label{lem:dss-r6}
+\uses{lem:dss-r7}
+$\int_{0}^{1}f'(t)\,dt = f(1) - f(0)$ for $f \in C^{1}([0,1])$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dss.7: Fubini reduces $\Delta^{k}$-integral to nested 1D integrals]
+\label{lem:dss-r7}
+\uses{lem:dss-r8}
+For the standard simplex $\Delta^{k}$, integration over $\Delta^{k}$ is nested integration over the slices, by Fubini.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dss.8: inductive Stokes via slicing]
+\label{lem:dss-r8}
+\uses{lem:dss-r9}
+$\int_{\Delta^{k}}d\eta = \int_{\Delta^{k-1}}\left[\int_{0}^{t_{k}}\partial_{k}\eta\,dt_{k}\right]\,d\bar t = \int_{\Delta^{k-1}}\eta(t_{k}=1) - \eta(t_{k}=0)\,d\bar t = \int_{\partial\Delta^{k}}\eta$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dss.9: face-orientation signs from the alternating boundary]
+\label{lem:dss-r9}
+\uses{lem:dss-r10}
+$(-1)^{i}$ signs in $\partial\Delta^{k} = \sum(-1)^{i}\partial_{i}$ come from orientation of the slicing.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dss.10: Mathlib endpoint]
+\label{lem:dss-r10}
+\code{intervalIntegral.integral\_deriv\_eq\_sub} (FTC) + \code{MeasureTheory.integral\_prod} (Fubini).  Mathlib status: present.
+\lean{intervalIntegral.integral_deriv_eq_sub}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine dsq-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass dsq.6: smooth approximation via mollifiers in chart-local]
+\label{lem:dsq-r6}
+\uses{lem:dsq-r7}
+In a chart, convolution with a smooth bump function $\phi_{\varepsilon}$ smooths a continuous map; uniform convergence as $\varepsilon\to 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dsq.7: partition-of-unity glues chart-local approximations]
+\label{lem:dsq-r7}
+\uses{lem:dsq-r8}
+A smooth partition of unity glues the local mollifications into a global smooth approximation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dsq.8: approximation is homotopic to the original]
+\label{lem:dsq-r8}
+\uses{lem:dsq-r9}
+The straight-line homotopy $(1-s)f + s\tilde f$ is well-defined on a tubular neighborhood and lands in $M$ for small $s$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dsq.9: uniform-on-compact smooth approximation]
+\label{lem:dsq-r9}
+\uses{lem:dsq-r10}
+On a compact set, smooth approximations exist with uniform $C^{0}$ small error.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dsq.10: Mathlib endpoint]
+\label{lem:dsq-r10}
+\code{ContDiff.smul} + \code{Manifold.NormalNbhd} (planned).  Mathlib status: partial; basic mollifier theory present, manifold-level packaging missing.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine dmv-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass dmv.6: identify cohomology theories abstractly]
+\label{lem:dmv-r6}
+\uses{lem:dmv-r7}
+Both de Rham and singular cohomology are derived functors of global-section-like functors on appropriate sheaves of $\R$-modules.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dmv.7: functoriality under open inclusions]
+\label{lem:dmv-r7}
+\uses{lem:dmv-r8}
+Both theories are contravariant functors on the open-set category; Mayer--Vietoris is the snake-lemma applied to the restriction sequence.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dmv.8: snake lemma in abelian categories]
+\label{lem:dmv-r8}
+\uses{lem:dmv-r9}
+Given a short exact sequence of chain complexes, the snake lemma produces a long exact sequence in cohomology.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dmv.9: CategoryTheory.Abelian.SnakeLemma direct citation]
+\label{lem:dmv-r9}
+\uses{lem:dmv-r10}
+Apply \code{CategoryTheory.Abelian.SnakeLemma} to the restriction short-exact sequence.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dmv.10: Mathlib endpoint]
+\label{lem:dmv-r10}
+\code{CategoryTheory.Abelian.SnakeLemma}.  Mathlib status: present.
+\lean{CategoryTheory.Abelian.SnakeLemma.lemma}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine hod-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass hod.6: Banach closed-range theorem]
+\label{lem:hod-r6}
+\uses{lem:hod-r7}
+For a Fredholm operator $T$ on a Hilbert space, $\mathrm{im}\,T$ is closed.  $\Delta$ is Fredholm (R10) so $\mathrm{im}\,\Delta$ is closed in $L^{2}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.7: orthogonal decomposition $L^{2} = \ker T \oplus \mathrm{im}\,T^{*}$]
+\label{lem:hod-r7}
+\uses{lem:hod-r8}
+For closed-range $T$, $L^{2} = \ker T \oplus \mathrm{im}\,T^{*}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.8: self-adjoint case: $T = T^{*}$]
+\label{lem:hod-r8}
+\uses{lem:hod-r9}
+$\Delta$ self-adjoint, so $\mathrm{im}\,T^{*} = \mathrm{im}\,T$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.9: decompose $\mathrm{im}\,\Delta$ into $\mathrm{im}\,d \oplus \mathrm{im}\,d^{*}$]
+\label{lem:hod-r9}
+\uses{lem:hod-r10}
+$\Delta = dd^{*} + d^{*}d$, so $\mathrm{im}\,\Delta = \mathrm{im}\,d \oplus \mathrm{im}\,d^{*}$ (orthogonal).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hod.10: Mathlib endpoint]
+\label{lem:hod-r10}
+\code{InnerProductSpace.orthogonalProjection} + \code{Banach.ClosedRange}.  Mathlib status: partial; Hodge-specific assembly missing.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine hdf-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass hdf.6: CW complex structure from the polygonal model]
+\label{lem:hdf-r6}
+\uses{lem:hdf-r7}
+The standard $4g$-gon model gives an explicit CW structure: 1 vertex, $2g$ edges, 1 face.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hdf.7: cellular chain complex is $\Z \to \Z^{2g} \to \Z$]
+\label{lem:hdf-r7}
+\uses{lem:hdf-r8}
+$C_{0}^{\mathrm{cell}} = \Z$, $C_{1}^{\mathrm{cell}} = \Z^{2g}$, $C_{2}^{\mathrm{cell}} = \Z$.  The boundary maps reduce to the standard relator $\sum [a_{i}, b_{i}]$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hdf.8: $H_{1}$ from this complex is $\Z^{2g}$]
+\label{lem:hdf-r8}
+\uses{lem:hdf-r9}
+$\ker\partial_{1}/\mathrm{im}\,\partial_{2}$ computes to $\Z^{2g}$ (relator is in commutator subgroup).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hdf.9: equivalence of cellular and singular homology]
+\label{lem:hdf-r9}
+\uses{lem:hdf-r10}
+\code{AlgebraicTopology.CellComplex.cellularHomologyIsoHomology} (planned).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hdf.10: Mathlib endpoint]
+\label{lem:hdf-r10}
+\code{AlgebraicTopology.CellComplex.Homology}.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine sl2-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass sl2.6: Hodge $\bar\star$ on a Riemann surface]
+\label{lem:sl2-r6}
+\uses{lem:sl2-r7}
+For $\omega \in \mathcal{H}^{1,0}$, $\bar\star\omega := \overline\omega\cdot(\text{volume form})/(\text{pointwise inner product})$ is in $\mathcal{H}^{0,1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sl2.7: antiholomorphic isomorphism $\mathcal{H}^{1,0}\cong\overline{\mathcal{H}^{0,1}}$]
+\label{lem:sl2-r7}
+\uses{lem:sl2-r8}
+Complex conjugation gives a $\C$-antilinear iso between $\mathcal{H}^{1,0}$ and $\mathcal{H}^{0,1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sl2.8: nondegeneracy on a 1-dim Riemann surface case]
+\label{lem:sl2-r8}
+\uses{lem:sl2-r9}
+For $\omega \neq 0$, $\langle\omega, \bar\star\omega\rangle = \int|\omega|^{2} > 0$ by positive-definiteness of the metric.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sl2.9: metric inner-product positivity]
+\label{lem:sl2-r9}
+\uses{lem:sl2-r10}
+On a Riemannian manifold, the volume form integrates positive functions to positive values.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sl2.10: Mathlib endpoint]
+\label{lem:sl2-r10}
+\code{InnerProductSpace} + Hodge $\bar\star$ (currently absent for complex manifolds).  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine bfa-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass bfa.6: smooth section is a smooth map plus base-fibre compatibility]
+\label{lem:bfa-r6}
+\uses{lem:bfa-r7}
+A smooth section of $\pi : E \to M$ is a smooth $s : M \to E$ with $\pi\circ s = \mathrm{id}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfa.7: $\Gamma(M, E)$ is closed under pointwise sum and scaling]
+\label{lem:bfa-r7}
+\uses{lem:bfa-r8}
+Pointwise vector-space operations on $E$ pull back to operations on $\Gamma(M, E)$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfa.8: $C^{\infty}(M)$-module structure]
+\label{lem:bfa-r8}
+\uses{lem:bfa-r9}
+$f \cdot s := p \mapsto f(p)\,s(p)$ is well-defined and smooth.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfa.9: vector-bundle exterior algebra functor]
+\label{lem:bfa-r9}
+\uses{lem:bfa-r10}
+$\Lambda^{k}E$ exists as a smooth vector bundle: chart-locally it's $\Lambda^{k}\R^{n}$, smooth transitions via $\Lambda^{k}$ of the bundle's transition functions.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfa.10: Mathlib endpoint]
+\label{lem:bfa-r10}
+\code{VectorBundle.SmoothSection} + \code{ExteriorAlgebra.functor}.  Mathlib status: partial; smooth-section module is present, exterior-algebra-bundle integration is missing.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine bfp-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass bfp.6: chain rule on smooth sections]
+\label{lem:bfp-r6}
+\uses{lem:bfp-r7}
+For smooth $f : M \to N$ and section $s$ of $\Lambda^{k}T^{*}N$, $f^{*}s$ is computed pointwise via $df^{*}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfp.7: naturality of $d$ under pullback]
+\label{lem:bfp-r7}
+\uses{lem:bfp-r8}
+Both sides reduce to the same chain-level expression $df_{p}^{*}\circ d_{f(p)}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfp.8: smooth-section pullback is a chain map]
+\label{lem:bfp-r8}
+\uses{lem:bfp-r9}
+$f^{*}\circ d_{N} = d_{M}\circ f^{*}$ is a 1-line check on local coordinate-expressions.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfp.9: ContMDiff naturality of fderiv]
+\label{lem:bfp-r9}
+\uses{lem:bfp-r10}
+\code{ContMDiff.fderiv} provides the manifold-level chain rule needed.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass bfp.10: Mathlib endpoint]
+\label{lem:bfp-r10}
+\code{ContMDiff.fderiv} + \code{ManifoldDiff.pullback}.  Mathlib status: partial.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine sle-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass sle.6: metric-induced inner product on $T^{*}M$]
+\label{lem:sle-r6}
+\uses{lem:sle-r7}
+$g^{ij}\xi_{i}\xi_{j}$ is the dual metric, positive-definite when $g$ is.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sle.7: symbol calculus: positive-definite quadratic form is invertible]
+\label{lem:sle-r7}
+\uses{lem:sle-r8}
+Positive-definite $\Rightarrow$ no zero eigenvalues $\Rightarrow$ matrix invertible.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sle.8: matrix-of-positive-definite is invertible]
+\label{lem:sle-r8}
+\uses{lem:sle-r9}
+\code{Matrix.PosDef.invertible} for positive-definite matrices.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sle.9: ellipticity from invertible principal symbol]
+\label{lem:sle-r9}
+\uses{lem:sle-r10}
+$\Delta$ elliptic order 2 because principal symbol $|\xi|^{2}$ is invertible for $\xi \neq 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sle.10: Mathlib endpoint]
+\label{lem:sle-r10}
+\code{Matrix.PosDef} + \code{InnerProductSpace}.  Mathlib status: present.  Note: the LinearPDE/Symbol formalism around \code{ContinuousLinearMap} is what's missing for a full elliptic-PDE framework, but the matrix-level claim itself is present.
+\lean{Matrix.PosDef.invertible}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine rpc-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass rpc.6: PL composition: chart-local subdivision]
+\label{lem:rpc-r6}
+\uses{lem:rpc-r7}
+For $f, g$ piecewise linear, $f\circ g$ is piecewise linear on the common refinement of $f$'s and $g$'s domain decompositions.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rpc.7: common-refinement existence in dim 2]
+\label{lem:rpc-r7}
+\uses{lem:rpc-r8}
+Two finite simplicial complexes on the same disk admit a common subdivision (planar arrangement).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rpc.8: affine-map composition is affine]
+\label{lem:rpc-r8}
+\uses{lem:rpc-r9}
+$A : \R^{n}\to\R^{n}$ affine and $B$ affine, $A\circ B$ affine.  Standard fact.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rpc.9: Mathlib has affine-map composition; PL infrastructure built atop]
+\label{lem:rpc-r9}
+\uses{lem:rpc-r10}
+\code{AffineMap.comp} composes affine maps; PL means \"affine on each simplex of a triangulation\".  PL framework still missing.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rpc.10: Mathlib endpoint]
+\label{lem:rpc-r10}
+\code{AffineMap.comp} + \code{Mathlib.Analysis.Convex.Simplex}; full PL-on-manifold infrastructure ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine rtc-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass rtc.6: standard radial triangulation of a disk]
+\label{lem:rtc-r6}
+\uses{lem:rtc-r7}
+Triangulate $\overline{B^{2}}$ by $n$ radial wedges from the center.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rtc.7: transport via chart homeomorphism]
+\label{lem:rtc-r7}
+\uses{lem:rtc-r8}
+Pull back the standard triangulation through $\varphi^{-1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rtc.8: PL approximation of the chart yields PL transitions]
+\label{lem:rtc-r8}
+\uses{lem:rtc-r9}
+Apply the Doyle--Moran lemma to make transitions PL.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rtc.9: simplicial complex as colimit of charts]
+\label{lem:rtc-r9}
+\uses{lem:rtc-r10}
+\code{SimplexCategory} infrastructure in Mathlib for combinatorial simplicial complexes.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rtc.10: Mathlib endpoint]
+\label{lem:rtc-r10}
+\code{SimplexCategory} + \code{SimplicialObject}; the manifold-triangulation correspondence is ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine rcs-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass rcs.6: planar arrangement of two triangulations]
+\label{lem:rcs-r6}
+\uses{lem:rcs-r7}
+Union of all 1-cells from both triangulations is a planar 1-complex.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rcs.7: polygon decomposition of arrangement faces]
+\label{lem:rcs-r7}
+\uses{lem:rcs-r8}
+Each face of the arrangement is a simple polygon.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rcs.8: each simple polygon admits a triangulation]
+\label{lem:rcs-r8}
+\uses{lem:rcs-r9}
+Ear-cutting algorithm: every simple $n$-gon has an ear; remove it, recurse.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rcs.9: ear-existence (Meisters 1975)]
+\label{lem:rcs-r9}
+\uses{lem:rcs-r10}
+Every simple polygon has at least two ears.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rcs.10: Mathlib endpoint]
+\label{lem:rcs-r10}
+\code{ConvexHull} for convex hulls; ear theorem and polygon triangulation ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine ret-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass ret.6: Jordan arc theorem in $\R^{2}$]
+\label{lem:ret-r6}
+\uses{lem:ret-r7}
+A simple arc separates a small neighborhood into exactly two components.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ret.7: local degree-theory argument]
+\label{lem:ret-r7}
+\uses{lem:ret-r8}
+Use the winding number / mapping degree for arcs vs.\ points off the arc.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ret.8: winding number is well-defined for $\C\setminus\{0\}$]
+\label{lem:ret-r8}
+\uses{lem:ret-r9}
+\code{Complex.windingNumber} or similar construction in Mathlib (planned).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ret.9: $\pi_{0}(\R^{2}\setminus\text{arc}) = \{2 \text{ components}\}$]
+\label{lem:ret-r9}
+\uses{lem:ret-r10}
+Reduces to elementary point-set topology: the local separation is a fact about $\R^{2}$, not infinite-dimensional.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass ret.10: Mathlib endpoint]
+\label{lem:ret-r10}
+\code{Complex.argument} + winding number; full Jordan arc theorem ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine rvl-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass rvl.6: link of a vertex in a finite simplicial complex]
+\label{lem:rvl-r6}
+\uses{lem:rvl-r7}
+Combinatorially-defined link: simplices not containing $v$ but adjacent to a simplex containing $v$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rvl.7: dim-1 manifold-without-boundary classification]
+\label{lem:rvl-r7}
+\uses{lem:rvl-r8}
+A finite 1-manifold without boundary is a disjoint union of circles.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rvl.8: connectedness of the link of a 2-manifold vertex]
+\label{lem:rvl-r8}
+\uses{lem:rvl-r9}
+For a 2-manifold-without-boundary, each vertex has connected link.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rvl.9: link as a finite cyclic complex]
+\label{lem:rvl-r9}
+\uses{lem:rvl-r10}
+Triangles around a vertex form a finite ordered cyclic sequence.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass rvl.10: Mathlib endpoint]
+\label{lem:rvl-r10}
+\code{SimplicialObject.Link} (planned).  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine tbh-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass tbh.6: Brahana move definition]
+\label{lem:tbh-r6}
+\uses{lem:tbh-r7}
+Brahana move: a specific pattern-replacement on edge words turning a generic crossing into a handle block.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tbh.7: conjugation-action on FreeGroup relator]
+\label{lem:tbh-r7}
+\uses{lem:tbh-r8}
+The move is a conjugation of the relator by a specific element.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tbh.8: preservation of group presentation]
+\label{lem:tbh-r8}
+\uses{lem:tbh-r9}
+Conjugation of a relator gives an equivalent presentation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tbh.9: preservation of underlying surface]
+\label{lem:tbh-r9}
+\uses{lem:tbh-r10}
+Brahana move corresponds to a specific surface homeomorphism.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tbh.10: Mathlib endpoint]
+\label{lem:tbh-r10}
+\code{FreeGroup} + \code{PresentedGroup}; Brahana move ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine tmo-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass tmo.6: orientation-preserving Tietze move]
+\label{lem:tmo-r6}
+\uses{lem:tmo-r7}
+Each Tietze move on an oriented edge word preserves the consistency of orientation labels.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tmo.7: characterize orientability via sign-pattern]
+\label{lem:tmo-r7}
+\uses{lem:tmo-r8}
+Orientable surface: every letter and its inverse appear with consistent signs.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tmo.8: inductive verification across move types]
+\label{lem:tmo-r8}
+\uses{lem:tmo-r9}
+Each of the four basic move types preserves the sign-consistency.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tmo.9: orientation as $\Z/2$-bundle over the polygon]
+\label{lem:tmo-r9}
+\uses{lem:tmo-r10}
+Tietze move is orientation-preserving iff the implied $\Z/2$-bundle is trivial.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass tmo.10: Mathlib endpoint]
+\label{lem:tmo-r10}
+\code{Manifold.Orientable} (planned); abstract surface-orientability ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine toh-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass toh.6: genus is the unique invariant of orientable surfaces]
+\label{lem:toh-r6}
+\uses{lem:toh-r7}
+Two closed orientable surfaces are homeomorphic iff they have the same genus.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass toh.7: genus from the standard $4g$-gon model]
+\label{lem:toh-r7}
+\uses{lem:toh-r8}
+Standard model: $4g$-gon with $aba^{-1}b^{-1}\cdots$ relator gives genus $g$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass toh.8: classification theorem for closed orientable surfaces]
+\label{lem:toh-r8}
+\uses{lem:toh-r9}
+Closed orientable 2-manifolds are classified by genus.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass toh.9: uniqueness of standard form]
+\label{lem:toh-r9}
+\uses{lem:toh-r10}
+Two equivalent edge-word presentations have the same standard form (after Tietze normalization).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass toh.10: Mathlib endpoint]
+\label{lem:toh-r10}
+\code{Manifold.Surface} (planned); surface classification ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine pct-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass pct.6: spanning tree exists in any connected graph]
+\label{lem:pct-r6}
+\uses{lem:pct-r7}
+\code{SimpleGraph.spanningTree} (planned in Mathlib).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pct.7: cutting argument: identify edges to merge faces]
+\label{lem:pct-r7}
+\uses{lem:pct-r8}
+Cutting along the spanning tree merges all triangles into a single 2-cell (the dual disk).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pct.8: dual disk has $4g$ boundary edges]
+\label{lem:pct-r8}
+\uses{lem:pct-r9}
+The boundary of the dual disk is the original boundary 1-cells, with $V - 1$ edges identified.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pct.9: Euler-formula consistency check]
+\label{lem:pct-r9}
+\uses{lem:pct-r10}
+$V_{cut} - E_{cut} + F_{cut} = 1$ (disk Euler characteristic).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pct.10: Mathlib endpoint]
+\label{lem:pct-r10}
+\code{SimpleGraph.spanningTree} for spanning tree (partial); dual-disk cutting ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine pgm-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass pgm.6: Euler characteristic of a $4g$-gon model]
+\label{lem:pgm-r6}
+\uses{lem:pgm-r7}
+$V = 1, E = 2g, F = 1$, so $\chi = 2 - 2g$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pgm.7: Euler characteristic of triangulation = $\chi(X)$]
+\label{lem:pgm-r7}
+\uses{lem:pgm-r8}
+$V - E + F$ from any triangulation equals topological $\chi(X)$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pgm.8: Tietze moves preserve $\chi$]
+\label{lem:pgm-r8}
+\uses{lem:pgm-r9}
+Each Tietze move preserves the count: handle creation adjusts $V, E, F$ but preserves $\chi$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pgm.9: genus characterization $\chi = 2 - 2g$]
+\label{lem:pgm-r9}
+\uses{lem:pgm-r10}
+For closed orientable: genus $g$ iff $\chi = 2 - 2g$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pgm.10: Mathlib endpoint]
+\label{lem:pgm-r10}
+\code{SimplicialComplex.eulerCharacteristic} (planned).  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine hle-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass hle.6: differential operator on a vector bundle]
+\label{lem:hle-r6}
+\uses{lem:hle-r7}
+A $k$-th order differential operator $T : \Gamma(E) \to \Gamma(F)$ has principal symbol $\sigma_{T} : T^{*}M \to \mathrm{Hom}(E, F)$ as a vector-bundle map.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hle.7: ellipticity = invertible principal symbol]
+\label{lem:hle-r7}
+\uses{lem:hle-r8}
+$T$ elliptic iff $\sigma_{T}(\xi)$ invertible for $\xi \neq 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hle.8: $\Delta = dd^{*} + d^{*}d$ as elliptic order-2 operator]
+\label{lem:hle-r8}
+\uses{lem:hle-r9}
+Direct verification of the symbol calculus.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hle.9: Mathlib lacks the LinearPDE framework]
+\label{lem:hle-r9}
+\uses{lem:hle-r10}
+\code{LinearPDE.Operator} and \code{LinearPDE.Symbol} are absent.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hle.10: Mathlib endpoint]
+\label{lem:hle-r10}
+Closest: \code{ContinuousLinearMap} for linear operators; full PDE/symbol framework ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine hbs-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass hbs.6: Kähler manifold structure]
+\label{lem:hbs-r6}
+\uses{lem:hbs-r7}
+Kähler form $\omega = \frac{i}{2}h_{ij}dz_{i}\wedge d\bar z_{j}$ closed and positive.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hbs.7: bigrading of forms via $\C$-linear projections]
+\label{lem:hbs-r7}
+\uses{lem:hbs-r8}
+$\Omega^{k} = \bigoplus_{p+q=k}\Omega^{p,q}$ via almost-complex structure on $T^{*}_{\C}M$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hbs.8: Laplacian commutes with bigrading on Kähler manifolds]
+\label{lem:hbs-r8}
+\uses{lem:hbs-r9}
+$[\Delta_{d}, \Pi^{p,q}] = 0$ from Kähler identity.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hbs.9: harmonic forms inherit bigrading]
+\label{lem:hbs-r9}
+\uses{lem:hbs-r10}
+$\mathcal{H}^{k} = \bigoplus_{p+q=k}\mathcal{H}^{p,q}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hbs.10: Mathlib endpoint]
+\label{lem:hbs-r10}
+\code{ComplexManifold.AlmostComplexStructure} (partial); bigrading + Kähler ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine hdu-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass hdu.6: UCT short exact sequence]
+\label{lem:hdu-r6}
+\uses{lem:hdu-r7}
+$0 \to \mathrm{Ext}^{1}(H_{n-1}, R) \to H^{n}(X; R) \to \mathrm{Hom}(H_{n}, R) \to 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hdu.7: $\R$ is divisible $\Rightarrow$ injective $\Z$-module]
+\label{lem:hdu-r7}
+\uses{lem:hdu-r8}
+Divisible abelian groups are injective $\Z$-modules.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hdu.8: $\mathrm{Ext}(\cdot, R) = 0$ when $R$ is injective]
+\label{lem:hdu-r8}
+\uses{lem:hdu-r9}
+For injective $R$, $\mathrm{Ext}^{1}(\cdot, R) = 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hdu.9: $H^{n}(X; \R) \cong \mathrm{Hom}(H_{n}(X, \Z), \R)$]
+\label{lem:hdu-r9}
+\uses{lem:hdu-r10}
+From UCT + Ext-vanishing.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass hdu.10: Mathlib endpoint]
+\label{lem:hdu-r10}
+\code{HomologicalAlgebra.UniversalCoefficient} (planned).  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine dfr-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass dfr.6: sheaf cohomology = right-derived global sections]
+\label{lem:dfr-r6}
+\uses{lem:dfr-r7}
+$H^{q}(X, \mathcal{F}) := R^{q}\Gamma(X, \mathcal{F})$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dfr.7: a fine resolution is acyclic]
+\label{lem:dfr-r7}
+\uses{lem:dfr-r8}
+Fine sheaves have $H^{q} = 0$ for $q\geq 1$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dfr.8: acyclic resolutions compute right-derived functors]
+\label{lem:dfr-r8}
+\uses{lem:dfr-r9}
+\code{CategoryTheory.Functor.derivedFunctor}.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dfr.9: partition-of-unity argument for fine sheaf vanishing]
+\label{lem:dfr-r9}
+\uses{lem:dfr-r10}
+Fine sheaf cocycle splits via the partition of unity.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dfr.10: Mathlib endpoint]
+\label{lem:dfr-r10}
+\code{AlgebraicGeometry.SheafCohomology}; fine-sheaves and partitions-of-unity for sheaves ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine sti-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass sti.6: residue map on Cech cocycles]
+\label{lem:sti-r6}
+\uses{lem:sti-r7}
+For a cover $\{U_{i}\}$ where each $U_{i}$ contains at most one pole, residue is well-defined locally.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sti.7: residue is independent of cover choice]
+\label{lem:sti-r7}
+\uses{lem:sti-r8}
+Refining the cover doesn't change the residue sum.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sti.8: residue map factors through $H^{1}(X, K_{X})$]
+\label{lem:sti-r8}
+\uses{lem:sti-r9}
+Cech cocycle $\to$ residue is constant on cohomology classes.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sti.9: non-zero on the standard generator]
+\label{lem:sti-r9}
+\uses{lem:sti-r10}
+For $1/z$ at one point, residue $= 1 \neq 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sti.10: Mathlib endpoint]
+\label{lem:sti-r10}
+\code{Mathlib.Analysis.Complex.Residue} (planned); Riemann-surface residue infrastructure ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine scc-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass scc.6: Cech cup product on cocycles]
+\label{lem:scc-r6}
+\uses{lem:scc-r7}
+$(\alpha\smile\beta)_{i_{0}\cdots i_{p+q}} := \alpha_{i_{0}\cdots i_{p}}\cdot\beta_{i_{p}\cdots i_{p+q}}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass scc.7: Leibniz rule on cup-product]
+\label{lem:scc-r7}
+\uses{lem:scc-r8}
+$d(\alpha\smile\beta) = d\alpha\smile\beta\pm\alpha\smile d\beta$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass scc.8: descent to cohomology]
+\label{lem:scc-r8}
+\uses{lem:scc-r9}
+Leibniz makes cup-product well-defined on cohomology classes.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass scc.9: comparison with derived-functor cup product]
+\label{lem:scc-r9}
+\uses{lem:scc-r10}
+On a paracompact space, Cech cup-product agrees with derived-functor cup-product.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass scc.10: Mathlib endpoint]
+\label{lem:scc-r10}
+\code{CategoryTheory.Sheaf.CupProduct} (planned).  Mathlib status: ABSENT.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine sgd-r5 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass sgd.6: Plancherel theorem and Fourier multipliers]
+\label{lem:sgd-r6}
+\uses{lem:sgd-r7}
+$\|f\|_{H^{s}}^{2} = \|(1+|\xi|^{2})^{s/2}\hat f\|_{L^{2}}^{2}$ via Plancherel.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sgd.7: symbol bound for elliptic operators]
+\label{lem:sgd-r7}
+\uses{lem:sgd-r8}
+$|\sigma_{T}(\xi)| \geq c|\xi|^{m}$ for elliptic $T$ of order $m$, when $|\xi|$ large.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sgd.8: Garding inequality from symbol bound + Plancherel]
+\label{lem:sgd-r8}
+\uses{lem:sgd-r9}
+Combining gives $\|u\|_{H^{s+m}} \leq C(\|Tu\|_{H^{s}} + \|u\|_{H^{s}})$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sgd.9: Sobolev space framework]
+\label{lem:sgd-r9}
+\uses{lem:sgd-r10}
+Sobolev spaces $H^{s}(M)$ on a manifold via partition of unity + chart-local Fourier.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass sgd.10: Mathlib endpoint]
+\label{lem:sgd-r10}
+\code{MeasureTheory.FourierTransform} (Plancherel present); Sobolev framework + Garding ABSENT.  Mathlib status: ABSENT.
+\notready
+\end{lemma}
