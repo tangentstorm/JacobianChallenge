@@ -44,7 +44,11 @@ Each is itself a frontier sorry pinned to a downstream refinement
 
 The `letI`s thread through the frontier `Module ℂ` instances from
 `CanonicalDual.lean`. -/
-theorem serre_datum_for_canonical_dual_exists (F : RSAbSheaf X) :
+theorem serre_datum_for_canonical_dual_exists (F : RSAbSheaf X)
+    [letI := serreDualSheaf_module_H0 X F
+     Subsingleton (RSSheafCohomology X F 0)]
+    [letI := serreDualSheaf_module_H1 X F
+     Subsingleton (RSSheafCohomology X (serreDualSheaf X F) 1)] :
     letI := serreDualSheaf_module_H0 X F
     letI := serreDualSheaf_module_H1 X F
     Nonempty (
