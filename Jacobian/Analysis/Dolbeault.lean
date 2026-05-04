@@ -1,4 +1,5 @@
 import Jacobian.Analysis.Dolbeault.Overview
+import Jacobian.Analysis.Dolbeault.HodgeR5R8Bridge
 
 /-!
 # R7 — Dolbeault isomorphism (umbrella module)

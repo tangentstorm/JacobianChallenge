@@ -95,7 +95,11 @@ theorem serre_duality_rs
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (F : RSAbSheaf X) :
+    (F : RSAbSheaf X)
+    [letI := serreDualSheaf_module_H0 X F
+     Subsingleton (RSSheafCohomology X F 0)]
+    [letI := serreDualSheaf_module_H1 X F
+     Subsingleton (RSSheafCohomology X (serreDualSheaf X F) 1)] :
     ∃ (dualSheaf : RSAbSheaf X)
       (_ : Module ℂ (RSSheafCohomology X F 0))
       (_ : Module ℂ (RSSheafCohomology X dualSheaf 1)),

@@ -20,6 +20,7 @@ import Jacobian.Periods.ChartedFormPullbackSub
 import Jacobian.Periods.ChartedFormPullbackCurveIntegrable
 import Jacobian.Periods.ChartedFormSimp
 import Jacobian.Periods.IntegralOneCycle
+import Jacobian.Periods.HomTorsionVanishing
 import Jacobian.Periods.LebesgueChartRadius
 import Jacobian.Periods.PathIntegralChart
 import Jacobian.Periods.ChartedFormApplyLinear
