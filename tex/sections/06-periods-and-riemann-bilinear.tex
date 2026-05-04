@@ -403,6 +403,20 @@ Apply Stokes to integrate over \(\partial P\). The side identifications
 group the boundary integral into pairs of cycles; the algebraic
 combination of \(F\) values across paired sides is exactly the symplectic
 bilinear sum on the right.
+
+The Lean target is decomposed (round 1) into 4 sub-leaves in
+\code{Jacobian/Blueprint/Sec03/BilinearFromStokes.lean}, three of
+which are sorry-free real-claim arithmetic lemmas:
+\code{bilinear\_pair\_term\_antisym} (sub-leaf 1, antisymmetry of the
+per-handle term \(\alpha_1\beta_2 - \alpha_2\beta_1\)),
+\code{bilinear\_pair\_term\_zero\_of\_proportional} (sub-leaf 2,
+diagonal vanishing for proportional pairs), and
+\code{bilinear\_symplectic\_sum\_zero\_self} (sub-leaf 3, the full
+symplectic sum vanishes when \(\omega = \eta\)). The fourth,
+\code{stokes\_polygon\_fold\_step}, is the manifold-side frontier
+obligation: Stokes on \(\mathrm{Polygon4g}(g)\) plus the side-pairing
+fold. The headline \code{bilinear\_from\_stokes} is a sorry-free
+assembly of the four.
 \end{proofsketch}
 
 \begin{theorem}[Hermitian positivity \(i\int_X\omega\wedge\bar\omega>0\)]
