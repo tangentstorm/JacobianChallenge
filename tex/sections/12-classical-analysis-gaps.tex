@@ -4180,7 +4180,7 @@ $W = H \cdot W' = H_{1}^{\mathrm{std}} \cdot \prod_{i=2}^{g}H_{i}^{\mathrm{std}}
 % --------------------------------------------------------------
 \subsubsection*{Round 2: refine dss-r5 into Mathlib (5 more passes)}
 
-\begin{lemma}[Pass dss.6: FTC on $[0,1]$]
+\begin{lemma}[Pass dss.6: FTC on the unit interval]
 \label{lem:dss-r6}
 \uses{lem:dss-r7}
 $\int_{0}^{1}f'(t)\,dt = f(1) - f(0)$ for $f \in C^{1}([0,1])$.
@@ -5441,7 +5441,7 @@ $2g$-gon model: $V=1, E=2g, F=1$ cells.  CW complex in \code{AlgebraicTopology.C
 \notready
 \end{lemma}
 
-\begin{lemma}[Pass hdf.12: cellular boundary = relator $\prod[a_{i},b_{i}]$]
+\begin{lemma}[Pass hdf.12: cellular boundary equals the standard commutator relator]
 \label{lem:hdf-r12}
 \uses{lem:hdf-r13}
 $\partial_{2}(\text{2-cell}) = \prod[a_{i},b_{i}]$, which lies in the commutator $[F, F]$.
