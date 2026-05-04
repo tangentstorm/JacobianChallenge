@@ -81,10 +81,30 @@ def find_optional_arg(content: str, brace_start: int) -> tuple[int, str]:
     return -1, content[brace_start:]
 
 
+MACRO_BAD_PATTERNS = (
+    # \seqsplit and \detokenize don't compose: seqsplit's \futurelet
+    # internals can't traverse the catcode-12 token sequence that
+    # \detokenize produces.  pdflatex aborts with
+    #   ! Missing { inserted. <to be read again> \futurelet
+    # at the first occurrence of the wrapped \code{...}.
+    (r"\\seqsplit\s*\{\s*\\detokenize\b",
+     "seqsplit-detokenize",
+     "\\seqsplit{\\detokenize{...}} doesn't compose -- "
+     "seqsplit's \\futurelet can't peek inside detokenized output. "
+     "Pick one or the other, or use \\path from the url package."),
+)
+
+
 def lint_file(path: str) -> list[tuple[int, str, str]]:
     findings: list[tuple[int, str, str]] = []
     text = open(path).read()
     lines = text.split("\n")
+
+    # 0. Known-bad macro patterns.
+    for pattern, kind, msg in MACRO_BAD_PATTERNS:
+        for m in re.finditer(pattern, text):
+            line_no = text[:m.start()].count("\n") + 1
+            findings.append((line_no, kind, msg))
 
     # 1. Bare _, ], &, #, % in optional-arg titles of theorem-style envs.
     for env in THM_ENVS:
