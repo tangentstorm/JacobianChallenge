@@ -10,12 +10,16 @@ Do one management-and-progress cycle, then stop. Do not wait or poll in a loop.
 The timer will call you again.
 
 1. Read current state:
-   - `README.md`
    - `plan.md`
    - `Jacobian/WorkPackets/Inventory.md`
    - `aristotle_tasks.md`
    - `Jacobian/WorkPackets/StatementBank.lean`
    - `aristotle_jobs.jsonl` (the project-local Aristotle job log).
+
+   Live proof status is tracked by the blueprint dependency graph
+   (https://tangentstorm.github.io/JacobianChallenge/blueprint/dep_graph_document.html);
+   `README.md` is a static project description and is **not** the place to
+   record per-tick progress.
 
    Treat `plan.md` as the roadmap and `aristotle_tasks.md` as the live
    delegation ledger. Keep both aligned with the actual state of the project.
@@ -44,8 +48,6 @@ The timer will call you again.
      entry with `status` and `integrated` timestamps.
    - If a job failed, record the blocker in `aristotle_jobs.jsonl` and split
      it into smaller helper tasks.
-   - Whenever you integrate Aristotle changes, refresh `README.md` with the
-     current progress report before committing.
 
 3. **Every production sorry has an active Aristotle job at all times.**
    The queue is not capped at 5 — it should mirror the live sorry set.
@@ -142,24 +144,18 @@ The timer will call you again.
 5. Run the narrowest relevant Lake build after any code integration or local
    Lean edit. Prefer targeted builds over whole-project builds.
 
-6. **Always refresh `README.md`'s `## Progress Report` section at the end of
-   the tick**, even if the underlying changes are small. The tick is not done
-   until the README reflects the new state. Use the format described under
-   "Progress Report Format" below — wrap each block in a fenced code block so
-   the shaded bars survive Markdown rendering, and stamp the real local time
-   (e.g. via `date '+%Y-%m-%d %H:%M %Z'`) instead of placeholders like
-   "timer ET".
-
-7. If you submit, retrieve, integrate, split, or abandon any Aristotle task,
+6. If you submit, retrieve, integrate, split, or abandon any Aristotle task,
    update `aristotle_tasks.md` AND `aristotle_jobs.jsonl` with the current
    status, job id, target file, prompt summary, and next action.
 
-8. **Commit and push every tick.** Each tick must end with a commit that
-   bundles `README.md`, `aristotle_tasks.md`, `aristotle_jobs.jsonl`, and any
-   integrated Lean work, followed by `git push origin main`. The tick is not
-   complete until the push lands. Do not mark a "commit and push" task
-   complete unless the push actually succeeded; if the harness blocks the
-   push, surface the blocker and ask, rather than quietly skipping it.
+7. **Commit and push every tick.** Each tick must end with a commit that
+   bundles `aristotle_tasks.md`, `aristotle_jobs.jsonl`, and any integrated
+   Lean work, followed by `git push origin main`. The tick is not complete
+   until the push lands. Do not mark a "commit and push" task complete unless
+   the push actually succeeded; if the harness blocks the push, surface the
+   blocker and ask, rather than quietly skipping it. `README.md` is static —
+   do not edit it during routine ticks; treat changes to it as a deliberate
+   documentation task.
 
 ## Hard Constraints
 
@@ -217,8 +213,6 @@ The timer will call you again.
   detail belongs in `aristotle_jobs.jsonl`.
 - Keep `aristotle_tasks.md` current in GitHub too: whenever a commit records
   Aristotle integration or task-status changes, push it.
-- Every Aristotle integration commit must include a refreshed `README.md`
-  progress report using the shaded progress-bar format below.
 
 ## Source Ownership Boundaries
 
@@ -238,9 +232,10 @@ Keep these boundaries sharp:
 - `aristotle-staging/` is for retrieved Aristotle artifacts. Do not copy broad
   trees from staging into the project. Inspect the targeted patch, then port
   only the intended file-scoped change.
-- `README.md`, `plan.md`, `aristotle_tasks.md`, and `aristotle_jobs.jsonl` are
-  management/reporting files. Keep them synchronized with the code, but do not
-  use progress-report edits to hide design changes in source files.
+- `plan.md`, `aristotle_tasks.md`, and `aristotle_jobs.jsonl` are
+  management/reporting files. Keep them synchronized with the code. `README.md`
+  is a static project description — leave it alone during routine ticks; live
+  proof status belongs in the blueprint dependency graph.
 
 When making a global design refactor, such as changing the fields of
 `FullComplexLattice`, do it as a separate Claude-owned step with a clear
@@ -283,106 +278,17 @@ If blocked: leave theorem statements unchanged and add comments naming the
 missing prerequisite.
 ```
 
-## Progress Report Format
+## Progress Tracking
 
-Every tick must update `README.md` with a section named `## Progress Report`.
-The "Last tick" line should be a real timestamp (e.g.
-`date '+%Y-%m-%d %H:%M %Z'`), not a placeholder. Each subsection (overall
-progress, Aristotle status, build status, next priorities) must be wrapped in
-a fenced code block so the shaded progress bars and aligned columns survive
-Markdown rendering — without fences, the lines collapse into wrapped
-paragraphs on GitHub.
+Live proof status is tracked by the blueprint dependency graph
+(https://tangentstorm.github.io/JacobianChallenge/blueprint/dep_graph_document.html),
+which is regenerated from the `\lean{...}` annotations in `tex/`. Keep those
+annotations honest — flip `\notready` to `\leanok` only when the named
+declaration is actually sorry-free in the pinned Mathlib build. Per-tick
+progress narratives belong in the commit message and (where they describe
+delegation state) `aristotle_tasks.md`, not in `README.md`.
 
-### Accurate measurement rules (read before writing any number)
-
-The progress report describes the actual state of the tree, not aspirational
-status. **Every numeric value, percentage, or progress bar must come from a
-counted source.** If you cannot point to the command that produced the number,
-do not write it down.
-
-Concretely:
-
-- **No hand-picked per-layer percentages.** "Complex torus quotient 20%" with
-  no denominator is a vibe, not a measurement. Do not include rows like that
-  even as a "rough indicator." If a reader cannot verify the number from the
-  tree, it is misinformation.
-- **Every ratio needs a real denominator.** Use `X / Y` with the meaning of
-  `Y` made explicit (e.g. "8 / 20 substantive StatementBank declarations
-  promoted", "368 / 385 production .lean files sorry-free"). Do not collapse
-  to `Z%` without the underlying ratio.
-- **Bars must trace to a ratio.** `████████░░░░ 40%` is allowed only when
-  the same row shows the `X / Y` it came from. A bar without a ratio is
-  hand-picked by definition.
-- **Distinguish counted vs curated metrics.** A count like
-  `grep -rl "\bsorry\b" Jacobian --include="*.lean" | wc -l` is mechanical
-  and recomputable. A "promotion ratio" against a finite list of named
-  declarations is curated — fine, but label it as such and keep the list
-  visible (in the README, in `aristotle_tasks.md`, or in the StatementBank
-  itself). Never blend the two without saying which is which.
-- **Re-derive each tick.** Even ratios you trust drift: files are added,
-  sorrys are filled, declarations are renamed. Recompute counts at the start
-  of each tick rather than copying the previous tick's numbers.
-- **Exclude intentional design files explicitly.** `Challenge.lean`,
-  `Solution.lean`, `StatementBank.lean`, and `*Recon*.lean` carry `sorry` by
-  design. When reporting "sorry-free production files", subtract these and
-  say so on the same line.
-- **When unsure, omit.** If you do not have a clean way to count something,
-  do not estimate. Either compute it properly this tick or leave the row
-  out.
-
-A useful sanity check: if a future-you re-runs the same counting commands
-and gets a different number from what you wrote, the table is wrong — fix
-the table, not the commands.
-
-### Template
-
-Use this template, tailoring the rows and bullets to the actual state. The
-example rows below are illustrative — replace them with whatever ratios you
-actually computed this tick. Do not preserve rows for which you did not
-recompute the count.
-
-````text
-## Progress Report
-
-Last tick: YYYY-MM-DD HH:MM ZONE
-
-```text
-Headline progress markers (each a counted value, not an estimate)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Public spec discharged           X / 24   sorries in Jacobian/Challenge.lean
-StatementBank declarations       X        named decls in Jacobian/WorkPackets/StatementBank.lean
-Aristotle integrations to date   X        committed (count from aristotle_jobs.jsonl)
-Production sorry-free files      X / Y    excludes Challenge/Solution/StatementBank/*Recon*
-```
-
-```text
-Aristotle status
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Active jobs (ours): N/5
-Completed this tick: ...
-Integrated this tick: ...
-Failed/split this tick: ...
-```
-
-```text
-Current build status
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Challenge target          <pass/fail/not run>  lake build Jacobian.Challenge
-Statement bank            <pass/fail/not run>  lake build Jacobian.WorkPackets.StatementBank
-Current target            <pass/fail/not run>  <narrow build command>
-```
-
-```text
-Next tick priorities
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. ...
-2. ...
-3. ...
-```
-````
-
-Use exactly the shaded bar characters `█` and `░`, and the separator `━`.
-Active-jobs counts use `aristotle_jobs.jsonl`, not `aristotle list`, since the
+Active-job counts use `aristotle_jobs.jsonl`, not `aristotle list`, since the
 Aristotle account is shared with other projects.
 
 ## What To Report In Chat
@@ -392,6 +298,6 @@ At the end of each tick, report briefly:
 - Aristotle active job count and ids;
 - jobs retrieved/integrated;
 - files changed;
-- whether `README.md` and `aristotle_tasks.md` were updated;
+- whether `aristotle_tasks.md` was updated;
 - build commands run and whether they passed;
 - next planned tasks.
