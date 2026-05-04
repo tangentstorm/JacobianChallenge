@@ -303,58 +303,23 @@ lemma pullback_comp_apply (P : Jacobian Z) :
 /-- The degree of a holomorphic map between compact Riemann surfaces.
 Equal to zero for constant maps, otherwise equal to the usual degree.
 
-Refinement (Round 4c, post-comparator-alignment): body intentionally
-left `sorry` to match `Challenge.ContMDiff.degree` exactly at the
-kernel-level instance arity. A non-`sorry` body that delegates to
-`JacobianChallenge.TraceDegree.analyticDegree` would auto-include
-`T2Space + CompactSpace + ConnectedSpace + IsManifold` per type
-(via `BasisAnalyticPullbackBundle`'s use of `analyticGenus`,
-`periodFullComplexLattice`, and the global instance
-`compactRiemannSurface_finiteDimensionalHolomorphicOneForms`),
-whereas `Challenge.ContMDiff.degree`'s `:= sorry` body only includes
-the two instances `ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f` syntactically demands —
-`TopologicalSpace` and `ChartedSpace ℂ`. The instance-arity mismatch
-on `ContMDiff.degree` propagates through `pushforward_pullback`'s
-type and breaks the comparator's structural type-equality check.
-
-The matching `JacobianChallenge.TraceDegree.analyticDegree` retains
-its real definition and its trace-pullback identity
-`analyticPushforward_analyticPullback` — those provide the bottom-up
-content. Discharging this top-level `sorry` is the work of a future
-tick that either (a) restructures
-`JacobianChallenge.TraceDegree.basisAnalyticPullbackBundle` so its
-fields don't reference `periodFullComplexLattice X` (taking the
-lattice as an explicit parameter, and `FiniteDimensionalHolomorphicOneForms`
-as an explicit class hypothesis), so the body's auto-included
-instances collapse to only `ChartedSpace + IsManifold`; *or*
-(b) accepts the additional instances by changing
-`Challenge.ContMDiff.degree` upstream — out of scope here. -/
-def _root_.ContMDiff.degree
+Refinement (Round 4c): delegated to the basis-aligned analytic degree
+in `Jacobian.TraceDegree.AnalyticDegree`. -/
+noncomputable def _root_.ContMDiff.degree
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
-  sorry
+  JacobianChallenge.TraceDegree.analyticDegree f hf
 
 /-- Trace–pullback identity (anti-hack #4).
 
-Refinement (Round 4c, post-comparator-alignment): body intentionally
-left `sorry` to match `Challenge.pushforward_pullback`. The previous
-non-`sorry` proof
-```
-show ULift.up (analyticPushforward (analyticPullback P.down)) =
-  (analyticDegree f hf) • P
-rw [analyticPushforward_analyticPullback]; rfl
-```
-relied on `ContMDiff.degree` definitionally unfolding to
-`analyticDegree`, which is no longer the case (above). Discharging
-this `sorry` therefore requires either restructuring along the same
-lines noted on `ContMDiff.degree`, or explicitly bridging the opaque
-to `analyticDegree` (which would itself need a `sorry`).
-
-The bottom-up mathematical content is preserved unchanged in
-`JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback`
-in `Jacobian/TraceDegree/AnalyticDegree.lean` and is sorry-free; the
-identity below is its top-level mirror. -/
+Refinement (Round 4c): wrapper around the basis-aligned
+trace-pullback identity in `Jacobian.TraceDegree.AnalyticDegree`. -/
 lemma pushforward_pullback (P : Jacobian Y) :
     pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P :=
-  sorry
+  by
+    show ULift.up (JacobianChallenge.TraceDegree.analyticPushforward f hf
+        (JacobianChallenge.TraceDegree.analyticPullback f hf P.down)) =
+      (JacobianChallenge.TraceDegree.analyticDegree f hf) • P
+    rw [JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback]
+    rfl
 
 end Jacobian

@@ -130,6 +130,6 @@ theorem RSGenus_eq_analyticGenus
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     RSGenus X = analyticGenus ℂ X := by
-  sorry
+  rfl
 
 end JacobianChallenge.HolomorphicForms

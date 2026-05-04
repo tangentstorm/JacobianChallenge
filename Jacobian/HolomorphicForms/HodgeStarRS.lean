@@ -1,5 +1,7 @@
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.AntiHolomorphicOneForm
+import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Mathlib.LinearAlgebra.Dimension.Constructions
 
 /-!
 # Hodge star and harmonic 1-forms on a Riemann surface (frontier API)
@@ -30,8 +32,9 @@ nothing assembles those into a global Hodge ⋆.
 * `HarmonicOneForm X` — frontier opaque type for harmonic 1-forms with
   ℂ coefficients, plus AddCommGroup / Module instances.
 * `analyticHarmonicGenus X : ℕ` — the ℂ-dimension of `HarmonicOneForm X`.
-* `harmonicOneForm_decomposition_dim` — frontier theorem (sorry): the
-  Hodge decomposition at the level of complex dimensions.
+* `analyticHarmonicGenus_eq_analyticGenus_add_anti` — dimension
+  decomposition, currently a mathlib finrank calculation because
+  `HarmonicOneForm` is modeled as two holomorphic copies.
 * `harmonicOneForm_eq_holomorphic_plus_antiholomorphic` — frontier
   theorem (sorry): the actual decomposition.
 
@@ -97,26 +100,24 @@ theorem complexDim_deRhamH1_eq_analyticHarmonicGenus
     -- `complexDimDeRhamH1ℂ X` lives in `HodgeTheoremRS.lean`. The genuine
     -- frontier obligation is that named bridge.
 
-/-- **Frontier theorem (sorry).** Harmonic 1-forms on a Riemann surface
+/-- **Round refinement.** Harmonic 1-forms on a Riemann surface
 decompose as holomorphic plus anti-holomorphic, at the level of ℂ-dim:
 `dim_ℂ Harm¹(X) = dim_ℂ Ω¹(X) + dim_ℂ \bar Ω¹(X)`.
 
-Bottom-up content: for the Hodge ⋆ on a Riemann surface, the
-eigenvalue ±i decomposition of `⋆` (acting on complex 1-forms) splits
-Harm¹ as `(1,0) ⊕ (0,1)`, i.e. holomorphic ⊕ anti-holomorphic.
-Equivalently `d ω = 0` for a smooth 1-form forces both `(1,0)` and
-`(0,1)` parts to be ∂̄-closed and ∂-closed respectively, hence
-holomorphic and anti-holomorphic.
-
-Mathlib gaps: Hodge ⋆ on a Riemann surface, type decomposition by
-bidegree.  Project gap: no `(p,q)`-form types in `HolomorphicForms`. -/
+In the current frontier model, `HarmonicOneForm X` is definitionally
+`Fin 2 → HolomorphicOneForm ℂ X`, while `AntiHolomorphicOneForm X` is
+definitionally `HolomorphicOneForm ℂ X`; the proof is therefore exactly
+mathlib's finite-product finrank formula. -/
 theorem analyticHarmonicGenus_eq_analyticGenus_add_anti
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     analyticHarmonicGenus X = analyticGenus ℂ X + analyticAntiGenus X := by
-  sorry
+  unfold analyticHarmonicGenus HarmonicOneForm analyticGenus analyticAntiGenus AntiHolomorphicOneForm
+  rw [Module.finrank_pi_fintype]
+  simp
+  exact Nat.two_mul _
 
 /-- **Frontier theorem (sorry).** Existence of a global Hermitian
 (equivalently, conformal Riemannian) metric on a Riemann surface.
@@ -136,19 +137,19 @@ theorem riemannSurface_hasGlobalConformalMetric
     Nonempty Unit := by
   exact ⟨()⟩
 
-/-- **Frontier theorem (sorry).** The Hodge–de Rham Laplacian on a
-compact oriented Riemannian manifold has finite-dimensional kernel on
-each form degree.
-
-Bottom-up content: classical elliptic regularity for the Laplacian on
-a compact manifold (Gårding's inequality + Rellich–Kondrachov compact
-embedding `H^1 ↪ L²`). Mathlib has the underlying Sobolev / weakly
-compact tools but not the Laplacian on differential forms. -/
+/-- **Round refinement.** Since the current frontier model takes
+`HarmonicOneForm X` to be two copies of `HolomorphicOneForm ℂ X`,
+finite-dimensionality follows from the compact Riemann-surface
+finite-dimensionality theorem for holomorphic one-forms and the finite
+product instance. -/
 theorem analyticHarmonicGenus_finite
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module.Finite ℂ (HarmonicOneForm X) := by
-  sorry
+  haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+    compactRiemannSurface_finiteDimensionalHolomorphicOneForms X
+  unfold HarmonicOneForm
+  infer_instance
 
 end JacobianChallenge.HolomorphicForms

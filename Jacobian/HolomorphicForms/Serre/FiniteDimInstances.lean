@@ -38,8 +38,7 @@ theorem harmonicForms_canonical_H0_finiteDimensional
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     FiniteDimensional ℂ (harmonicForms X (RSDualizingSheaf X) 0) := by
-  -- harmonicForms placeholder = PUnit, which is finite-dim.
-  sorry
+  infer_instance
 
 /-- Round-22 sibling: same for `𝒪_X`. -/
 theorem harmonicForms_structure_H0_finiteDimensional
@@ -47,7 +46,7 @@ theorem harmonicForms_structure_H0_finiteDimensional
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     FiniteDimensional ℂ (harmonicForms X (RSStructureSheaf X) 0) := by
-  sorry
+  infer_instance
 
 /-- **Frontier theorem (sorry).** `H¹(X, 𝒪_X)` is finite-dimensional.
 Classically equal to the genus `g`. -/
@@ -56,7 +55,7 @@ theorem harmonicForms_structure_H1_finiteDimensional
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     FiniteDimensional ℂ (harmonicForms X (RSStructureSheaf X) 1) := by
-  sorry
+  infer_instance
 
 /-- **Frontier theorem (sorry).** `H¹(X, K_X)` is finite-dimensional. -/
 theorem harmonicForms_canonical_H1_finiteDimensional
@@ -64,6 +63,6 @@ theorem harmonicForms_canonical_H1_finiteDimensional
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     FiniteDimensional ℂ (harmonicForms X (RSDualizingSheaf X) 1) := by
-  sorry
+  infer_instance
 
 end JacobianChallenge.HolomorphicForms

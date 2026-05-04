@@ -2,6 +2,9 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 import Mathlib.LinearAlgebra.FreeModule.Finite.Basic
 import Mathlib.LinearAlgebra.FreeModule.Basic
 import Mathlib.LinearAlgebra.Dimension.Finrank
+import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.LinearAlgebra.Dimension.Free
+import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
 import Mathlib.LinearAlgebra.Basis.Defs
 import Mathlib.LinearAlgebra.LinearIndependent.Defs
 import Mathlib.Data.Real.Basic
@@ -20,35 +23,33 @@ that closely mirror Mathlib's `Module.Basis` API.
 
 ## What this file provides (round 2 refinement)
 
-* `homℤℝ_basis_evaluation_isLinearEquivℝ` — frontier identity (sorry):
+* `homℤℝ_basis_evaluation_isLinearEquivℝ` — basis-evaluation
+  equivalence:
   given a ℤ-basis `b : Fin n → M`, the evaluation map
   `Hom_ℤ(M, ℝ) → (Fin n → ℝ)` is a ℝ-linear equivalence.
 * `finrank_pi_real_eq_card` — pure-Mathlib fact, sorry-free:
   `dim_ℝ (Fin n → ℝ) = n`.
 * `finrank_homℤℝ_eq_basis_card` — assembled, sorry-free.
-* `finrank_homℤℝ_eq_finrank_of_free_via_basis` — refined, sorry-free
-  modulo the basis-evaluation equivalence + the basis-card identity.
+* `finrank_homℤℝ_eq_finrank_of_free_via_basis` — refined,
+  sorry-free through `Module.finBasis`.
 
-These are each substantially smaller than the original monolithic
-sorry — the basis-evaluation equivalence is roughly 30–40 lines using
-`Module.Basis.constr` and `LinearEquiv.ofBijective`.
+These discharge the original monolithic pure-algebra obligation using
+`Module.Basis.constr`, `LinearEquiv.finrank_eq`, and Mathlib's
+finite-free `Module.finBasis`.
 -/
 
 namespace JacobianChallenge.Periods
 
-/-- **Frontier identity (sorry, ARISTOTLE-SIZED).** For a ℤ-basis
+/-- **Basis-evaluation equivalence.** For a ℤ-basis
 `b : Fin n → M`, the evaluation map `f ↦ (f ∘ b)` from
 `Hom_ℤ(M, ℝ)` to `Fin n → ℝ` is an ℝ-linear equivalence.
 
-Bottom-up content: linearity is direct; bijectivity uses
-`Module.Basis.constr` to extend any function `Fin n → ℝ` to a
-ℤ-linear map and shows uniqueness.  Mathlib has all the necessary
-pieces — this is a clean Aristotle leaf. -/
+This is `Module.Basis.constr` with scalar field `ℝ`, reversed. -/
 theorem homℤℝ_basis_evaluation_isLinearEquivℝ
     {n : ℕ} {M : Type*} [AddCommGroup M] [Module ℤ M]
     (b : Module.Basis (Fin n) ℤ M) :
     ∃ _ : (M →ₗ[ℤ] ℝ) ≃ₗ[ℝ] (Fin n → ℝ), True := by
-  sorry
+  exact ⟨(b.constr ℝ).symm, trivial⟩
 
 /-- **Sorry-free Mathlib fact.** `dim_ℝ (Fin n → ℝ) = n`.
 
@@ -59,7 +60,7 @@ combination); a one-line proof is direct in any current Mathlib
 revision. -/
 theorem finrank_pi_real_eq_card (n : ℕ) :
     Module.finrank ℝ (Fin n → ℝ) = n := by
-  sorry
+  exact Module.finrank_fin_fun ℝ
 
 /-- **Sorry-free assembly.** From the basis-evaluation equivalence,
 `dim_ℝ Hom_ℤ(M, ℝ) = n` whenever `M` has a ℤ-basis indexed by
@@ -72,23 +73,12 @@ theorem finrank_homℤℝ_eq_basis_card
   rw [e.finrank_eq, finrank_pi_real_eq_card]
 
 /-- **Round-2 sorry-free assembly.** `finrank_homℤℝ_eq_finrank_of_free`
-through the named basis-evaluation equivalence.
-
-Given `M` finitely generated free ℤ-module, choose a basis indexed by
-`Fin n` (via `Module.Free.chooseBasis`); then both sides equal `n`.
-The remaining work is **just** the basis-evaluation equivalence sorry
-in this file. -/
+through the named basis-evaluation equivalence and Mathlib's
+finite-rank free basis indexed by `Fin (Module.finrank ℤ M)`. -/
 theorem finrank_homℤℝ_eq_finrank_of_free_via_basis
     (M : Type*) [AddCommGroup M] [Module ℤ M]
     [Module.Free ℤ M] [Module.Finite ℤ M] :
     Module.finrank ℝ (M →ₗ[ℤ] ℝ) = Module.finrank ℤ M := by
-  -- Choose a basis indexed by `Fin (Module.finrank ℤ M)`.
-  have hfin : Module.Finite ℤ M := inferInstance
-  let n := Module.finrank ℤ M
-  -- Mathlib's `Module.Basis.ofFinrankEq` chains through chooseBasis;
-  -- delegated to a frontier `sorry` below for the actual basis
-  -- construction step (which is pure Mathlib API but needs care
-  -- around `Fintype` indexing).
-  sorry
+  exact finrank_homℤℝ_eq_basis_card (Module.finBasis ℤ M)
 
 end JacobianChallenge.Periods

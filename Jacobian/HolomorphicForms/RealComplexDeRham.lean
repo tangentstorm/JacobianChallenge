@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.DeRhamCohomology
+import Mathlib.LinearAlgebra.Dimension.Constructions
 
 /-!
 # Real-of-complex de Rham identity (frontier API)
@@ -68,7 +69,8 @@ in <30 lines. -/
 theorem tensorℂ_finrank_eq_real_finrank
     (V : Type*) [AddCommGroup V] [Module ℝ V] [Module.Finite ℝ V] :
     Module.finrank ℂ (TensorProduct ℝ ℂ V) = Module.finrank ℝ V := by
-  sorry
+  rw [Module.finrank_tensorProduct]
+  simp
 
 /-- **Round-2 sorry-free assembly.** Refines
 `realDim_deRhamH1_eq_complexDim_deRhamH1ℂ` (in `DeRhamCohomology.lean`)

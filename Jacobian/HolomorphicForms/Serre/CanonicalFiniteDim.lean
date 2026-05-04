@@ -41,9 +41,17 @@ theorem finiteDimensionalSheafCohomologyRS_canonical
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
     FiniteDimensionalSheafCohomologyRS X (RSDualizingSheaf X) := by
-  -- Body: build via Module.Finite.of_surjective of harmonicForms_toH{0,1}
-  -- + harmonicForms_canonical_H{0,1}_finiteDimensional.
-  sorry
+  constructor
+  · haveI : FiniteDimensional ℂ (harmonicForms X (RSDualizingSheaf X) 0) :=
+      harmonicForms_canonical_H0_finiteDimensional X
+    exact FiniteDimensional.of_surjective
+      (harmonicForms_toH0 X (RSDualizingSheaf X))
+      (harmonicForms_toH0_surjective X (RSDualizingSheaf X))
+  · haveI : FiniteDimensional ℂ (harmonicForms X (RSDualizingSheaf X) 1) :=
+      harmonicForms_canonical_H1_finiteDimensional X
+    exact FiniteDimensional.of_surjective
+      (harmonicForms_toH1 X (RSDualizingSheaf X))
+      (harmonicForms_toH1_surjective X (RSDualizingSheaf X))
 
 /-- Round 22 discharge: same for the structure sheaf. -/
 theorem finiteDimensionalSheafCohomologyRS_structure
@@ -55,6 +63,16 @@ theorem finiteDimensionalSheafCohomologyRS_structure
     [Module ℂ (RSSheafCohomology X (RSStructureSheaf X) 0)]
     [Module ℂ (RSSheafCohomology X (RSStructureSheaf X) 1)] :
     FiniteDimensionalSheafCohomologyRS X (RSStructureSheaf X) := by
-  sorry
+  constructor
+  · haveI : FiniteDimensional ℂ (harmonicForms X (RSStructureSheaf X) 0) :=
+      harmonicForms_structure_H0_finiteDimensional X
+    exact FiniteDimensional.of_surjective
+      (harmonicForms_toH0 X (RSStructureSheaf X))
+      (harmonicForms_toH0_surjective X (RSStructureSheaf X))
+  · haveI : FiniteDimensional ℂ (harmonicForms X (RSStructureSheaf X) 1) :=
+      harmonicForms_structure_H1_finiteDimensional X
+    exact FiniteDimensional.of_surjective
+      (harmonicForms_toH1 X (RSStructureSheaf X))
+      (harmonicForms_toH1_surjective X (RSStructureSheaf X))
 
 end JacobianChallenge.HolomorphicForms

@@ -35,15 +35,12 @@ open CategoryTheory
 `L ⊖ M = L ⊗ M⁻¹` on a Riemann surface, viewed as the abelian-sheaf
 operation given by tensoring `L` with the dual `M⁻¹`.
 
-The body would be `RSTensorAbSheaf X L (RSLineBundleDual X M)` but
-the underlying universe-parameters of `RSTensorAbSheaf` /
-`RSLineBundleDual` are not pinned (each carries an extra universe
-slot from `AddCommGrpCat`'s parametricity); rather than wire that
-plumbing here we leave the body as a frontier sorry pending the
-universe-cleanup task. -/
+Concrete as the project-side tensor sheaf of `L` with the line-bundle
+dual of `M`. The analytic content remains in `RSLineBundleDual` and
+the tensor-presheaf sheafification prerequisites. -/
 noncomputable def RSLineBundleSub (X : Type*) [TopologicalSpace X]
-    (_L _M : RSLineBundleSheaf X) : RSLineBundleSheaf X := by
-  sorry
+    (L M : RSLineBundleSheaf X) : RSLineBundleSheaf X :=
+  RSTensorAbSheaf.{_, 0, 0} X L (RSLineBundleDual.{_, 0, 0} X M)
 
 /-- **Frontier theorem (sorry).** Classical Riemann-Roch identity for
 a line bundle on a compact Riemann surface, after combining the
