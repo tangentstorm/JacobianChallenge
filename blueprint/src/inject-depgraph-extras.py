@@ -53,6 +53,8 @@ BIG_UMBRELLAS = [
     "gap:R6-overview",
     "gap:R7-overview",
     "gap:R8-overview",
+    "gap:R9-overview",
+    "gap:R10-overview",
 ]
 
 MARKER = "<!-- DEPGRAPH-EXTRAS-INJECTED -->"

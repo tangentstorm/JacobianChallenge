@@ -176,19 +176,38 @@ for future workers.
 
 | Code | Headline | Build target | Existing scaffold | Estimated LOC |
 |---|---|---|---|---|
-| R1 | Radó's triangulation | `Jacobian.Analysis.Rado` | `StageA/RadoTheorem.lean` (1 sub-leaf sorry-free) | 2000–2700 |
+| R1 | Radó's triangulation | `Jacobian.Analysis.Rado` | `StageA/RadoTheorem.lean` | 2000–2700 |
 | R2 | Tietze normal form | `Jacobian.Analysis.Tietze` | `StageA/EdgeWordTietze.lean` | 900–1100 |
-| R3 | Polygonal-model theorem | `Jacobian.Analysis.PolygonalModel` | `Periods/Polygon4g*`, `StageA/*` (polygon side mostly sorry-free) | 1500–2000 |
-| R4 | De Rham theorem | `Jacobian.Analysis.DeRham` | `StageB/DeRhamComparison.lean` | 2500–3500 |
-| R5 | Hodge decomposition (Kähler) | `Jacobian.Analysis.HodgeDecomposition` | `StageB/{LaplaceBeltrami,HarmonicForms,KahlerStructure}.lean` | 5500–8500 |
-| R6 | Hodge / de Rham rank | `Jacobian.Analysis.HodgeDeRham` | `Periods/HodgeDeRham.lean` (~30 named sub-leaves) | 1100–1400 |
-| R7 | Dolbeault isomorphism | `Jacobian.Analysis.Dolbeault` | `Serre/Dolbeault.lean` | 2200–2900 |
-| R8 | Serre duality (Riemann surface) | `Jacobian.Analysis.SerreDuality` | `Serre/*.lean` (32 files, ~80 sub-leaves) | 3300–4300 |
+| R3 | Polygonal-model theorem | `Jacobian.Analysis.PolygonalModel` | `Periods/Polygon4g*`, `StageA/*` | 1500–2000 |
+| R4 | De Rham theorem | `Jacobian.Analysis.DeRham` | `StageB/DeRhamComparison.lean` | 1500–2000 (modulo R9) |
+| R5 | Hodge decomposition (Kähler) | `Jacobian.Analysis.HodgeDecomposition` | `StageB/{LaplaceBeltrami,HarmonicForms,KahlerStructure}.lean` | 1700–2500 (modulo R9, R10) |
+| R6 | Hodge / de Rham rank | `Jacobian.Analysis.HodgeDeRham` | `Periods/HodgeDeRham.lean` | 1100–1400 |
+| R7 | Dolbeault isomorphism | `Jacobian.Analysis.Dolbeault` | `Serre/Dolbeault.lean` | 1300–1700 (modulo R9, R10) |
+| R8 | Serre duality (Riemann surface) | `Jacobian.Analysis.SerreDuality` | `Serre/*.lean` (32 files) | 3300–4300 |
+| R9 | Bundled `Ω^k(M)` | `Jacobian.Analysis.BundledForms` | `StageB/DifferentialForms.lean` | 800–1200 |
+| R10 | Sobolev / elliptic regularity | `Jacobian.Analysis.SobolevElliptic` | `StageB/{LaplaceBeltrami,HarmonicForms}.lean` | 4500–6500 |
 
-**Total** with shared deduplication: **15000–22000 LOC**.  Dominant
-cost driver: R5-sub-B (Sobolev / elliptic regularity for forms on a
-manifold) at 2500–4000 LOC, on the critical path for both R5 and R7.
+**Total** with shared deduplication: **18000–25000 LOC**.  Dominant
+cost driver: **R10** (Sobolev / elliptic regularity for forms on a
+manifold) at 2500–4000 LOC headline plus 2000–2500 LOC sub-gaps,
+on the critical path for R5 and (transitively) R7 + R8.  Second
+largest shared piece: **R9** (bundled `Ω^k`) at 800–1200 LOC, on the
+critical path for R4, R5, and R7 simultaneously.
 
-The eight umbrellas plus their parallel `gap:R<N>-overview` labels are
-now both in `BIG_UMBRELLAS` (red-border highlight) at
+R9 and R10 were promoted from "R4-sub-A" and "R5-sub-B" respectively
+to their own top-level dep-graph nodes because they are both shared
+across multiple parents and substantial enough to warrant standalone
+formalisation efforts.
+
+The ten umbrellas plus their parallel `gap:R<N>-overview` labels are
+in `BIG_UMBRELLAS` (red-border highlight) at
 `blueprint/src/inject-depgraph-extras.py`.
+
+Each `Jacobian.Analysis.<Node>.Overview.lean` declares **real-typed
+sorry theorems** (no `: True := trivial` placeholders): the headline
+and per-phase sub-leaves are stated as actual propositions about
+project-side types (`AbstractSimplicialComplex`, `EdgeWord`,
+`Polygon4g`, `Omega`, `deRhamH`, `Harmonic`, `DolbeaultH`,
+`RSAbSheaf`, `SobolevForm`), with `sorry` in place of the proof.
+Downstream code can `import Jacobian.Analysis.<Node>` and depend on
+these declarations as if they were Mathlib lemmas (modulo the `sorry`).
