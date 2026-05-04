@@ -935,6 +935,16 @@ The Lean target
 \code{Jacobian.Analysis.HodgeDecomposition.hodge_decomposition_overview}
 stubs the headline; sub-leaves R5.1.1--R5.6.2 are tracked in
 \code{Jacobian.Analysis.HodgeDecomposition.Overview}.
+
+\textbf{Status (post round 11).}  The algebraic finite-dim core of
+this assembly is now a real Mathlib-backed theorem: see Round 11
+below (\code{Jacobian/Analysis/HodgeDecomposition/AbstractHodgeComplex.lean}).
+It proves $V_{1} = \ker\Delta\oplus\mathrm{range}\,d_{0}\oplus\mathrm{range}\,d_{1}^{*}$
+for any graded inner-product complex $V_{0}\xrightarrow{d_{0}}V_{1}\xrightarrow{d_{1}}V_{2}$
+over $\R$ with $d^{2}=0$.  The remaining gap to the analytic R5 is
+elliptic regularity (R5-sub-B), which reduces $L^{2}\Omega^{k}$ to a
+finite-dim space; once that lands, the present file is dispatched
+end-to-end.
 \lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_decomposition_overview}
 \leanok
 \end{lemma}
@@ -5787,6 +5797,62 @@ No leaf in chain hod is \textsf{notready} after this round.
 \lean{JacobianChallenge.Analysis.HodgeDecomposition.hod_chain_dispatched}
 \leanok
 \end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 11: real finite-dim core (\code{AbstractHodgeComplex.lean})}
+
+The finite-dimensional algebraic skeleton of the chain $hod$ is now actually proven in Lean against Mathlib.  No \texttt{sorry}s, no \texttt{PUnit} placeholder: the file \code{Jacobian/Analysis/HodgeDecomposition/AbstractHodgeComplex.lean} contains a Mathlib-backed proof for any graded inner-product complex $V_{0}\xrightarrow{d_{0}}V_{1}\xrightarrow{d_{1}}V_{2}$ over $\R$ with $d_{1}\circ d_{0}=0$.  This is exactly the statement to which the analytic R5 reduces once $\Delta$ has finite-dimensional kernel (elliptic regularity).
+
+\begin{lemma}[Pass hod.51: $\Delta$ symmetric (real, finite-dim)]
+\label{lem:hod-r51}
+$\Delta := d_{0}\circ d_{0}^{*} + d_{1}^{*}\circ d_{1}$ is symmetric on a finite-dim real inner product space $V_{1}$.  Proof: direct expansion using the Mathlib adjoint identity $\langle d_{0}x,y\rangle = \langle x,d_{0}^{*}y\rangle$.
+\lean{JacobianChallenge.HodgeAbstract.laplacian_isSymmetric}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.52: Bochner identity (real, finite-dim)]
+\label{lem:hod-r52}
+$\langle\Delta\alpha,\alpha\rangle = \|d_{0}^{*}\alpha\|^{2} + \|d_{1}\alpha\|^{2}$.  Proof: $\langle d_{0}d_{0}^{*}\alpha,\alpha\rangle = \langle d_{0}^{*}\alpha,d_{0}^{*}\alpha\rangle$ (adjoint), similarly for the other term, then $\langle x,x\rangle = \|x\|^{2}$.
+\lean{JacobianChallenge.HodgeAbstract.inner_laplacian_self_eq_norm_sq}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.53: $\ker\Delta = \ker d_{1}\cap\ker d_{0}^{*}$ (real, finite-dim)]
+\label{lem:hod-r53}
+A form is harmonic iff it is closed and co-closed.  Proof: $\Delta\alpha=0 \Rightarrow \langle\Delta\alpha,\alpha\rangle=0 \Rightarrow \|d_{0}^{*}\alpha\|^{2}+\|d_{1}\alpha\|^{2}=0$ (Bochner) $\Rightarrow$ both norms vanish.
+\lean{JacobianChallenge.HodgeAbstract.ker_laplacian_eq}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.54: $V_{1} = \ker\Delta\oplus\mathrm{range}\,\Delta$ (real, finite-dim)]
+\label{lem:hod-r54}
+For any symmetric finite-dim endomorphism $T$, the kernel and range form a complementary orthogonal decomposition.  Proof: \code{IsSymmetric.orthogonal\_range} gives $(\mathrm{range}\,T)^{\perp}=\ker T$; finite-dim implies $\mathrm{range}\,T$ is closed; orthogonal-complement-of-kernel = range; \code{Submodule.isCompl\_orthogonal\_of\_hasOrthogonalProjection} closes.
+\lean{JacobianChallenge.HodgeAbstract.hodge_decomposition_finite_dim}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.55: $\mathrm{range}\,d_{0} \perp \mathrm{range}\,d_{1}^{*}$ (uses $d^{2}=0$)]
+\label{lem:hod-r55}
+$\langle d_{0}a, d_{1}^{*}b\rangle = \langle d_{1}(d_{0}a),b\rangle = \langle 0,b\rangle = 0$.
+\lean{JacobianChallenge.HodgeAbstract.range_d_orthogonal_range_codiff}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.56: $\mathrm{range}\,\Delta = \mathrm{range}\,d_{0}\sqcup\mathrm{range}\,d_{1}^{*}$]
+\label{lem:hod-r56}
+The forward inclusion is immediate from $\Delta=d_{0}d_{0}^{*}+d_{1}^{*}d_{1}$; the reverse uses $\mathrm{range}\,\Delta = (\ker\Delta)^{\perp}$, $\ker\Delta = \ker d_{1}\cap\ker d_{0}^{*}$, and $\mathrm{range}\,d_{0}\subseteq(\ker d_{0}^{*})^{\perp}$ + $\mathrm{range}\,d_{1}^{*}\subseteq(\ker d_{1})^{\perp}$.
+\lean{JacobianChallenge.HodgeAbstract.range_laplacian_eq}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hod.57: full Hodge decomposition (real, finite-dim)]
+\label{lem:hod-r57}
+$V_{1} = \ker\Delta\oplus\mathrm{range}\,d_{0}\oplus\mathrm{range}\,d_{1}^{*}$, all pairwise orthogonal.  This is the algebraic core of R5: once the analytic side reduces $L^{2}\Omega^{k}(M)$ to a finite-dimensional approximation (elliptic regularity), the rest is this lemma.
+\lean{JacobianChallenge.HodgeAbstract.hodge_decomposition_full}
+\leanok\mathlibok
+\end{lemma}
+
+\paragraph*{Summary.}  Round 11 closes the algebraic skeleton of R5: every claim above is a real Mathlib-content theorem (no \texttt{sorry}, no placeholder).  The remaining gap to the analytic R5 is the reduction from $L^{2}\Omega^{k}$ on a compact manifold to a finite-dimensional inner-product space — i.e.\ elliptic regularity (\code{R5-sub-B}, ~2500--4000 LOC).  Once that lands, the present file dispatches the entire chain hod.  Lemmas hod.16--hod.50 (rounds 4--10) remain at the Stage B placeholder layer (\code{Omega := PUnit}); lemmas hod.51--hod.57 (round 11) are the real finite-dim version.
 
 % --------------------------------------------------------------
 \subsubsection*{Round 3: refine hdf-r10 into Mathlib (5 more passes)}
