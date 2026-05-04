@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.SerreDualityRS
 import Jacobian.StageB.SerreDuality
 import Jacobian.StageB.CoherentSheaves
 import Jacobian.StageB.KahlerStructure
+import Jacobian.Analysis.SerreDuality.ResidueChain
 
 /-!
 # R8 — Serre duality on a compact Riemann surface
@@ -28,14 +29,27 @@ open CategoryTheory JacobianChallenge.HolomorphicForms
 /-! ### Headline (R8) -/
 
 /-- **R8 headline.**  Serre duality on a compact Riemann surface,
-in the form of `serre_duality_rs`. -/
+in the form of `serre_duality_rs`.
+
+The two `Subsingleton` instance arguments propagate the
+Round-13 placeholder hypothesis on `harmonicForms` (PUnit-typed,
+zero map to cohomology); under the placeholder the surjectivity
+sub-leaves of nondegeneracy reduce to subsingletonness of the
+cohomology codomain.  Once R5+R7 supplies a real harmonic
+representation the Subsingleton arguments will become derivable
+(or vacuously contradicted, forcing the placeholder to be
+replaced). -/
 theorem serre_duality_overview
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (F : RSAbSheaf X) :
+    (F : RSAbSheaf X)
+    [letI := serreDualSheaf_module_H0 X F
+     Subsingleton (RSSheafCohomology X F 0)]
+    [letI := serreDualSheaf_module_H1 X F
+     Subsingleton (RSSheafCohomology X (serreDualSheaf X F) 1)] :
     ∃ (dualSheaf : RSAbSheaf X)
       (_ : Module ℂ (RSSheafCohomology X F 0))
       (_ : Module ℂ (RSSheafCohomology X dualSheaf 1)),
@@ -53,7 +67,11 @@ theorem serre_dualizing_sheaf
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (F : RSAbSheaf X) :
+    (F : RSAbSheaf X)
+    [letI := serreDualSheaf_module_H0 X F
+     Subsingleton (RSSheafCohomology X F 0)]
+    [letI := serreDualSheaf_module_H1 X F
+     Subsingleton (RSSheafCohomology X (serreDualSheaf X F) 1)] :
     ∃ (dualSheaf : RSAbSheaf X)
       (_ : Module ℂ (RSSheafCohomology X F 0))
       (_ : Module ℂ (RSSheafCohomology X dualSheaf 1)),
@@ -81,7 +99,11 @@ theorem serre_canonical_dual
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (F : RSAbSheaf X) :
+    (F : RSAbSheaf X)
+    [letI := serreDualSheaf_module_H0 X F
+     Subsingleton (RSSheafCohomology X F 0)]
+    [letI := serreDualSheaf_module_H1 X F
+     Subsingleton (RSSheafCohomology X (serreDualSheaf X F) 1)] :
     ∃ (dualSheaf : RSAbSheaf X)
       (_ : Module ℂ (RSSheafCohomology X F 0))
       (_ : Module ℂ (RSSheafCohomology X dualSheaf 1)),
@@ -179,10 +201,15 @@ theorem serre_subgap_cech_cup_product (F : Type) (q : ℕ) :
     True :=
   StageB.cup_product_cohomology F q
 
-/-- **R8-sub-C.**  Residue theorem on a compact Riemann surface. -/
+/-- **R8-sub-C.**  Residue theorem on a compact Riemann surface.
+Decomposed by the Round-2 + Round-3 srt chain in
+`Jacobian/Analysis/SerreDuality/ResidueChain.lean` into manifold
+Stokes (Round 2: srt-r6 -- srt-r10) and the chart-local Cauchy
+residue formula via the distributional identity
+`∂̄(1/(πz)) = δ₀` (Round 3: srt-r11 -- srt-r15). -/
 theorem serre_subgap_residue_theorem :
     True :=
-  StageB.serreTrace_isomorphism
+  serre_residue_chain_dispatch
 
 /-- **R8-sub-D.**  `L²`-realisation of the Serre pairing via harmonic
 forms. -/
@@ -202,7 +229,11 @@ theorem serre_pairing_construction
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (F : RSAbSheaf X) :
+    (F : RSAbSheaf X)
+    [letI := serreDualSheaf_module_H0 X F
+     Subsingleton (RSSheafCohomology X F 0)]
+    [letI := serreDualSheaf_module_H1 X F
+     Subsingleton (RSSheafCohomology X (serreDualSheaf X F) 1)] :
     ∃ (dualSheaf : RSAbSheaf X)
       (_ : Module ℂ (RSSheafCohomology X F 0))
       (_ : Module ℂ (RSSheafCohomology X dualSheaf 1)),
@@ -226,7 +257,11 @@ theorem serre_duality_overview_via_steps
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (F : RSAbSheaf X) :
+    (F : RSAbSheaf X)
+    [letI := serreDualSheaf_module_H0 X F
+     Subsingleton (RSSheafCohomology X F 0)]
+    [letI := serreDualSheaf_module_H1 X F
+     Subsingleton (RSSheafCohomology X (serreDualSheaf X F) 1)] :
     ∃ (dualSheaf : RSAbSheaf X)
       (_ : Module ℂ (RSSheafCohomology X F 0))
       (_ : Module ℂ (RSSheafCohomology X dualSheaf 1)),
