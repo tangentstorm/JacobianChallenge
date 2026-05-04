@@ -77,27 +77,31 @@ singular complex is missing.
 Currently a frontier opaque for the type-level shape; deeper
 refinement in this file decomposes its image and kernel. -/
 noncomputable opaque deRhamComparisonMap1
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ClosedForm 1 X →ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ)
 
-/-- **Frontier identity (sorry, STOKES).** The de Rham comparison map
-vanishes on exact 1-forms.
+/-- **Current-model exactness identity.** The de Rham comparison map
+vanishes on exact 1-forms in the zero-differential surrogate.
 
 Bottom-up content: this is **Stokes' theorem** for a 1-form on a
 manifold and a 1-cycle: `∫_σ df = f(∂σ) = 0` since `∂σ = 0`.  Mathlib
-gap: Stokes' theorem on manifolds (with or without boundary) is one of
-the project's named *big classical inputs*
-(`thm:stokes-on-rs-with-boundary`).  See `ref/scope-out.md`. -/
+gap: the geometric replacement is Stokes' theorem on manifolds (with or
+without boundary), one of the project's named *big classical inputs*. -/
 theorem deRhamComparisonMap1_vanishes_on_exact
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (η : ClosedForm 1 X)
     (hη : (η : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
     deRhamComparisonMap1 X η = 0 := by
-  sorry
+  have hη_coe : (η : SmoothDiffForm 1 X) = 0 := by
+    rcases hη with ⟨θ, hθ⟩
+    simpa [ExactForm, exteriorDerivative] using hθ.symm
+  have hη_sub : η = 0 := Subtype.ext hη_coe
+  rw [hη_sub]
+  exact map_zero (deRhamComparisonMap1 X)
 
 /-- **Frontier identity (sorry, SURJECTIVITY half of de Rham).**
 Every ℝ-linear functional on `IntegralOneCycle X` arises (after
@@ -110,7 +114,7 @@ each cycle is `c`.  Mathlib gap: partition of unity on manifolds is
 present (`Mathlib.Geometry.Manifold.PartitionOfUnity`); the Poincaré
 lemma + chart-wise primitive construction is absent. -/
 theorem deRhamComparisonMap1_surjective
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
@@ -128,7 +132,7 @@ and a path-integral primitive, then descent).  Mathlib gap: sheaf
 cohomology comparison on manifolds is partial; global path-integral
 primitive on a non-simply-connected manifold is absent. -/
 theorem deRhamComparisonMap1_kernel_subset_exact
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (ω : ClosedForm 1 X)
@@ -141,7 +145,7 @@ comparison map sends two cocycles in the same de-Rham class to the
 same functional. Direct corollary of
 `deRhamComparisonMap1_vanishes_on_exact`. -/
 theorem deRhamComparisonMap1_descends
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ _ : deRhamH1Cocycle X →ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ), True := by
@@ -161,7 +165,7 @@ inside closed forms.  Proved from `deRhamComparisonMap1_vanishes_on_exact`
 (⊇ direction) and `deRhamComparisonMap1_kernel_subset_exact`
 (⊆ direction). -/
 private theorem comparison_ker_eq_exact
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     LinearMap.ker (deRhamComparisonMap1 X) = ExactForm.toClosedSubmodule 0 X := by
@@ -177,7 +181,7 @@ private theorem comparison_ker_eq_exact
 /-- Range of the de Rham comparison map is all of the target space.
 Proved from `deRhamComparisonMap1_surjective`. -/
 private theorem comparison_range_eq_top
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     LinearMap.range (deRhamComparisonMap1 X) = ⊤ := by
@@ -195,7 +199,7 @@ the quotient by the kernel to the range is an isomorphism, and the kernel
 equals the exact submodule (Stokes + injectivity) while the range is
 everything (surjectivity). -/
 private noncomputable def deRhamH1_linearEquiv
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     deRhamH1Cocycle X ≃ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ) :=
@@ -232,7 +236,7 @@ the sorry'd Stokes, surjectivity, and injectivity frontier identities),
 the UCT bridge `realDim_singularH1_eq_finrank_intH1_via_uct`, and the
 pure-algebra identity `finrank_homℤℂ_eq_finrank_of_free`. -/
 theorem deRhamH1Cocycle_finrank_eq_realDim_singularH1
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module.finrank ℂ (deRhamH1Cocycle X) = realDimSingularH1 X := by
@@ -246,7 +250,7 @@ theorem deRhamH1Cocycle_finrank_eq_realDim_singularH1
 `realDim_deRhamH1_eq_realDim_singularH1` from `DeRhamSingular.lean`
 through the explicit quotient model + integration map. -/
 theorem realDimDeRhamH1_eq_realDimSingularH1_via_cocycle
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     realDimDeRhamH1 X = realDimSingularH1 X := by
