@@ -67,8 +67,6 @@ LEGEND_HTML = """
     <dd>proof formalized in this project</dd>
   <dt class="legend-swatch legend-darkgreen-fill">Dark-green fill</dt>
     <dd>proof and every ancestor formalized</dd>
-  <dt class="legend-swatch legend-darkgreen-border">Dark-green border</dt>
-    <dd>declaration is in Mathlib</dd>
 </dl>
 """
 
@@ -113,8 +111,7 @@ INJECTED_STYLE = """
 .legend-blue-border::before       { border: 2px solid #1f77b4; background: white; }
 .legend-green-border::before      { border: 2px solid #5cb85c; background: white; }
 .legend-green-fill::before        { border: 2px solid #5cb85c; background: #B0ECA3; }
-.legend-darkgreen-fill::before    { border: 2px solid #1CAC78; background: #9CEC8B; }
-.legend-darkgreen-border::before  { border: 2px solid #1CAC78; background: white; }
+.legend-darkgreen-fill::before    { border: 2px solid #1CAC78; background: #1CAC78; }
 
 /* Big-umbrella highlight — applied via JS to specific nodes after the
    d3-graphviz render finishes. The .big-umbrella class is added to the
