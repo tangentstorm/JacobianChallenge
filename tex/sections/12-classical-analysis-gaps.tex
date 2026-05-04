@@ -1848,6 +1848,279 @@ hard analysis, not algebraic topology bookkeeping.
 \end{layman}
 
 %======================================================================
+\subsection{R9-sub-A — Bundled cotangent bundle and alternating-form bundle}
+\label{subsec:gap-R9subA-cotangent-alternating-bundle}
+
+The headline says: for every smooth manifold \(M\) modelled on a
+real Banach space \(E\) and every \(k\in\N\), the alternating
+exterior-power bundle \(\Lambda^{k}T^{*}M\to M\) exists as a smooth
+vector bundle.  In particular, the cotangent bundle
+\(T^{*}M\to M\) (the case \(k=1\)) is a smooth real vector bundle,
+and the smooth sections \(\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\) are
+exactly the differential \(k\)-forms \(\Omega^{k}(M)\) of R9.
+
+This sub-gap is the foundational dependency on which the entire
+J1 (\(\Omega^{k}(M)\) algebra), J2 ($d^{2}=0$), and J3 (pullback
+naturality) chains rest: every J1-r1\ldots r4 leaf, every
+J3-r1\ldots r5 leaf, and the chart-local description of higher-\(k\)
+forms in J2-r6\ldots r7 reduce, after their own informal-proof
+expansion, to either the existence of \(\Lambda^{k}T^{*}M\) as a
+smooth bundle or the smooth-section module structure on it.
+
+\subsubsection*{Classical content}
+
+\begin{enumerate}
+\item \emph{Cotangent bundle.}  For a smooth manifold \(M\) with
+  tangent bundle \(\pi:TM\to M\), the cotangent bundle is the dual
+  bundle \(T^{*}M\) whose fibre at \(p\) is
+  \((T_{p}M)^{*}=\Hom_{\R}(T_{p}M,\R)\).  Charts on \(M\) induce
+  trivialisations \(T^{*}U\cong U\times E^{*}\); transition functions
+  on overlaps are \((Df_{i\to j})^{-T}\), the inverse transpose of
+  the tangent transition.
+\item \emph{Exterior power bundle.}  \(\Lambda^{k}T^{*}M\) has fibre
+  \(\Lambda^{k}(T_{p}M)^{*}\), the \(k\)-th alternating power of the
+  cotangent space.  Locally trivialised over the same atlas as
+  \(T^{*}M\) with transition functions \(\Lambda^{k}\) of the
+  cotangent transitions, which are smooth because \(\Lambda^{k}\) is
+  a smooth functor.
+\item \emph{Smooth sections.}  A smooth section of
+  \(\Lambda^{k}T^{*}M\) is a smooth map \(s:M\to\Lambda^{k}T^{*}M\)
+  with \(\pi\circ s=\mathrm{id}_{M}\); equivalently, a chart-local
+  description in each \(U_{i}\) is a smooth map
+  \(s_{i}:U_{i}\to\Lambda^{k}E^{*}\) compatible with the cocycle.
+  \(\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\) is naturally a
+  \(C^{\infty}(M,\R)\)-module by pointwise scalar multiplication.
+\item \emph{Identification with \(\Omega^{k}(M)\).}  The
+  bundled-form package R9 is exactly
+  \(\Omega^{k}(M)=\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\); the \(d\),
+  \(\wedge\), and pullback operations of R9 lift to the section
+  level via the corresponding bundle morphisms.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Mathlib v4.28.0 has:
+\begin{itemize}
+\item \code{Mathlib.Geometry.Manifold.VectorBundle.Tangent} — the
+  tangent bundle \(TM\) as a smooth vector bundle.
+\item \code{Mathlib.Geometry.Manifold.VectorBundle.SmoothSection} —
+  smooth sections of an arbitrary smooth vector bundle, with
+  \(C^{\infty}(M)\)-module structure.
+\item \code{Mathlib.LinearAlgebra.ExteriorAlgebra.Basic} and
+  \code{Mathlib.LinearAlgebra.Alternating.Basic} — alternating
+  multilinear maps on a single vector space.
+\end{itemize}
+Mathlib does \emph{not} have:
+\begin{itemize}
+\item The cotangent bundle as a packaged smooth vector bundle
+  (the dual of \code{TangentBundle} is not provided as a
+  \code{VectorBundle}).
+\item The exterior-power functor on smooth vector bundles, i.e.
+  promoting a fibrewise \(\Lambda^{k}\) to a smooth vector bundle.
+\item The identification
+  \(\Omega^{k}(M)=\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\) at the
+  level of definitions.
+\end{itemize}
+Estimated 800–1200 LOC for a complete API; this is the dominant
+cost in R9.
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R9-sub-A.1.}  \(T^{*}M\) as a smooth real vector
+  bundle: dualisation of \code{TangentBundle}.
+\item \textbf{R9-sub-A.2.}  \(\Lambda^{k}E\) as a normed real vector
+  space, functorially in \(E\); this is the algebraic core
+  Mathlib provides via \code{AlternatingMap} but not as a
+  \code{NormedSpace}-aware functor on bundles.
+\item \textbf{R9-sub-A.3.}  Smooth-functor lift: a fibrewise
+  \(\Lambda^{k}\)-functor on a smooth vector bundle is itself a
+  smooth vector bundle.
+\item \textbf{R9-sub-A.4.}  Smooth sections of
+  \(\Lambda^{k}T^{*}M\) as a \(C^{\infty}(M)\)-module: specialise
+  \code{VectorBundle.SmoothSection} to the alternating-power bundle.
+\item \textbf{R9-sub-A.5.}  \(\Omega^{k}(M)=\Gamma^{\infty}(M,
+  \Lambda^{k}T^{*}M)\): the identification between the project's
+  R9 definition and the bundled-section package.
+\end{itemize}
+
+\begin{theorem}[Classical input: cotangent + alternating-form bundle on $M$]
+\label{input:cotangent-alternating-bundle}
+\uses{lem:r9subA-cotangent-bundle,lem:r9subA-exterior-power-bundle,lem:r9subA-smooth-sections-module,lem:r9subA-omega-eq-sections}
+The Lean target
+\code{Jacobian.Analysis.BundledForms.SubA.r9subA\_cotangent\_alternating\_bundle}
+asserts existence of \(T^{*}M\) and \(\Lambda^{k}T^{*}M\) as smooth
+real vector bundles plus the identification of \(\Omega^{k}(M)\)
+with their smooth sections.  Sub-leaves
+\(\textsf{r9subA-r1.1}\)–\(\textsf{r9subA-r5.5}\) are tracked in
+\code{Jacobian/Analysis/BundledForms/SubA.lean}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.r9subA_cotangent_alternating_bundle}
+\notready
+\end{theorem}
+
+\begin{lemma}[R9-sub-A.1 — cotangent bundle]
+\label{lem:r9subA-cotangent-bundle}
+\uses{lem:r9subA-cot-r1}
+There is a smooth real vector bundle structure on
+\(T^{*}M\to M\) whose fibre at \(p\) is \((T_{p}M)^{*}\), with
+chart-local trivialisations dual to those of the tangent bundle.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.cotangentBundle_smooth}
+\notready
+\end{lemma}
+
+\begin{lemma}[R9-sub-A.2 — exterior-power bundle]
+\label{lem:r9subA-exterior-power-bundle}
+\uses{lem:r9subA-exp-r1}
+\(\Lambda^{k}T^{*}M\to M\) is a smooth real vector bundle whose
+fibre at \(p\) is \(\Lambda^{k}(T_{p}M)^{*}\), with chart-local
+trivialisations \(\Lambda^{k}\) of the cotangent trivialisations.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.exteriorPower_bundle_smooth}
+\notready
+\end{lemma}
+
+\begin{lemma}[R9-sub-A.4 — smooth sections module]
+\label{lem:r9subA-smooth-sections-module}
+\uses{lem:r9subA-sec-r1}
+\(\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\) is a real vector space
+and a \(C^{\infty}(M,\R)\)-module under pointwise operations.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.smoothSections_module}
+\notready
+\end{lemma}
+
+\begin{lemma}[R9-sub-A.5 — \(\Omega^{k}(M)\) is the smooth-sections module]
+\label{lem:r9subA-omega-eq-sections}
+\uses{lem:r9subA-omeq-r1}
+There is a canonical \(\R\)-linear isomorphism
+\(\Omega^{k}(M)\cong\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\); this
+is the bridge between R9's headline statement and Mathlib's
+\code{VectorBundle.SmoothSection} machinery.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.omega_eq_smoothSections}
+\notready
+\end{lemma}
+
+\subsubsection*{Stepwise refinement of R9-sub-A}
+
+These ten passes deepen each headline lemma into chart-local
+constructive content.  Each pass is initially a Lean \texttt{sorry}
+and is intended to be peeled off one round at a time.
+
+\begin{lemma}[Pass r9subA.1.1: dual continuous linear maps form a normed space]
+\label{lem:r9subA-cot-r1}
+\uses{lem:r9subA-cot-r2}
+For a real Banach space \(E\), \(E\to_{L,\R}\R\) inherits a normed
+real vector space structure (operator norm).  Mathlib status:
+present in \code{Mathlib.Analysis.NormedSpace.OperatorNorm.Basic}.
+\lean{ContinuousLinearMap.opNormSpace}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.1.2: chart trivialisation of \(T^{*}M\)]
+\label{lem:r9subA-cot-r2}
+\uses{lem:r9subA-cot-r3}
+For each chart \(\varphi:U\subseteq M\to E\), there is a fibre-wise
+isomorphism \(T^{*}U\cong U\times E^{*}\) covering \(\mathrm{id}_{U}\),
+obtained as the dual of the tangent-trivialisation
+\(TU\cong U\times E\).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.1.3: cotangent transition functions are smooth]
+\label{lem:r9subA-cot-r3}
+\uses{lem:r9subA-exp-r1}
+For two charts \(\varphi_{i},\varphi_{j}\) with smooth transition
+\(\tau_{ij}=\varphi_{j}\circ\varphi_{i}^{-1}\), the cotangent
+transition is \((D\tau_{ij})^{-T}\), a smooth map of operator-norm
+endomorphisms.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.2.1: \(\Lambda^{k}\) on a normed space]
+\label{lem:r9subA-exp-r1}
+\uses{lem:r9subA-exp-r2}
+For a real normed space \(E\), \(\Lambda^{k}E^{*}\) (alternating
+\(k\)-multilinear forms on \(E\) valued in \(\R\)) inherits a
+normed real vector space structure as a continuous-multilinear-map
+space.  Mathlib status: present via
+\code{ContinuousAlternatingMap}.
+\lean{ContinuousAlternatingMap}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.2.2: \(\Lambda^{k}\) functorially preserves smoothness]
+\label{lem:r9subA-exp-r2}
+\uses{lem:r9subA-exp-r3}
+A smooth family of invertible cotangent transitions
+\(t\mapsto\sigma(t)\in\mathrm{GL}(E^{*})\) induces a smooth family
+\(t\mapsto\Lambda^{k}\sigma(t)\in\mathrm{GL}(\Lambda^{k}E^{*})\),
+because \(\Lambda^{k}\) is a polynomial functor.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.2.3: smooth-bundle structure from smooth transitions]
+\label{lem:r9subA-exp-r3}
+\uses{lem:r9subA-sec-r1}
+A vector bundle whose chart-local trivialisations have smooth
+GL-valued transition functions (a smooth cocycle) is itself a
+smooth vector bundle.  Mathlib status: present via
+\code{VectorBundle} + \code{SmoothManifoldWithCorners.compatibleAtlas}.
+\lean{VectorBundle}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.4.1: smooth sections as smooth maps with covering identity]
+\label{lem:r9subA-sec-r1}
+\uses{lem:r9subA-sec-r2}
+A smooth section of a smooth vector bundle \(\pi:E\to M\) is a
+smooth map \(s:M\to E\) with \(\pi\circ s=\mathrm{id}\).  Mathlib
+provides this as \code{ContMDiffSection} in
+\code{Mathlib.Geometry.Manifold.VectorBundle.SmoothSection}.
+\lean{ContMDiffSection}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.4.2: pointwise vector-space operations]
+\label{lem:r9subA-sec-r2}
+\uses{lem:r9subA-omeq-r1}
+For \(s_{1},s_{2}:M\to E\) smooth sections and \(c\in\R\),
+\(s_{1}+s_{2}\) and \(c\cdot s_{1}\) are smooth sections by the
+fibrewise vector-space structure plus \code{ContMDiff.add} and
+\code{ContMDiff.smul}.
+\lean{ContMDiff.add}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.5.1: assembly to \(\Omega^{k}(M)\)]
+\label{lem:r9subA-omeq-r1}
+\uses{lem:r9subA-omeq-r2}
+The chart-local sections of \(\Lambda^{k}T^{*}M\), under the
+cotangent cocycle, exactly recover \(\Omega^{k}(M)\) as defined by
+the \emph{trivialised} sliver
+\code{JacobianChallenge.Analysis.BundledForms.BundledForm} when
+restricted to a single chart.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.5.2: gluing chart-local forms across overlaps]
+\label{lem:r9subA-omeq-r2}
+\uses{lem:r9subA-omeq-r3}
+Chart-local trivialised forms \(\{\omega_{i}\}\) glue to a global
+section iff they satisfy
+\(\omega_{j}=\Lambda^{k}(D\tau_{ij})^{-T}(\omega_{i})\) on overlaps.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.5.3: Mathlib endpoint for the assembly]
+\label{lem:r9subA-omeq-r3}
+\code{ContMDiffSection} of \code{VectorBundle} together with
+\code{ContinuousAlternatingMap} provides every fibrewise piece;
+the package-level integration is the missing 800–1200 LOC.  Mathlib
+status: partial.  Project-side dispatch deferred to a future
+implementation round.
+\lean{ContMDiffSection}
+\leanok\mathlibok
+\end{lemma}
+
+%======================================================================
 \subsection{Summary of recursive sub-gaps}
 \label{subsec:gap-summary}
 
