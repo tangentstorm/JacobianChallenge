@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.SerreDualityRS
 import Jacobian.StageB.SerreDuality
 import Jacobian.StageB.CoherentSheaves
 import Jacobian.StageB.KahlerStructure
+import Jacobian.Analysis.SerreDuality.ResidueChain
 
 /-!
 # R8 — Serre duality on a compact Riemann surface
@@ -179,10 +180,15 @@ theorem serre_subgap_cech_cup_product (F : Type) (q : ℕ) :
     True :=
   StageB.cup_product_cohomology F q
 
-/-- **R8-sub-C.**  Residue theorem on a compact Riemann surface. -/
+/-- **R8-sub-C.**  Residue theorem on a compact Riemann surface.
+Decomposed by the Round-2 + Round-3 srt chain in
+`Jacobian/Analysis/SerreDuality/ResidueChain.lean` into manifold
+Stokes (Round 2: srt-r6 -- srt-r10) and the chart-local Cauchy
+residue formula via the distributional identity
+`∂̄(1/(πz)) = δ₀` (Round 3: srt-r11 -- srt-r15). -/
 theorem serre_subgap_residue_theorem :
     True :=
-  StageB.serreTrace_isomorphism
+  serre_residue_chain_dispatch
 
 /-- **R8-sub-D.**  `L²`-realisation of the Serre pairing via harmonic
 forms. -/
