@@ -427,28 +427,113 @@ APP_JS = """\
     root.appendChild(ul);
   }
 
-  // Walk Pygments name spans inside the source block; if the text exactly
-  // matches a key in the global declarations map, replace with a link.
-  // Pygments' Lean4 lexer keeps dotted names as a single `n` token, so a
-  // single pass is sufficient for fully-qualified usages.
+  // Walk the highlighted source and turn identifier tokens into links.
+  //
+  // Pygments' Lean4 lexer splits a dotted name like `Foo.bar.baz` into
+  // separate `n` tokens with `bp` dots between them, so we walk the flat
+  // span sequence and coalesce `name (. name)*` chains. For each chain
+  // we try the longest joined form first, then prefixes, then the bare
+  // leading name — taking the first that resolves.
+  //
+  // Resolution rules:
+  //  - Exact key in the local declarations map → link to local source.
+  //  - But: skip a *bare* token that's also a namespace prefix in the
+  //    local map (e.g. `Jacobian`, which is both the def and the
+  //    namespace holding `Jacobian.ofCurve`); almost always the user
+  //    means the namespace, not the def.
+  //  - Otherwise, if the candidate is dotted and starts with a letter,
+  //    route through `find/` — local hits resolve there too, and
+  //    everything else falls through to the Mathlib docs.
+  //  - Bare unqualified names that aren't in the local map are left
+  //    alone (variables, parameters, `open`-imported names).
   function linkIdentifiers(decls) {
-    var src = document.querySelector(".source");
-    if (!src) return;
-    var spans = src.querySelectorAll("span.n, span.nf, span.nc, span.nv");
-    for (var i = 0; i < spans.length; i++) {
-      var s = spans[i];
-      // Skip our own anchor markers (empty spans with id=).
-      if (!s.firstChild || s.firstChild.nodeType !== 3) continue;
-      var text = s.textContent;
-      if (!Object.prototype.hasOwnProperty.call(decls, text)) continue;
-      var a = document.createElement("a");
-      a.href = ROOT + decls[text];
-      a.className = "id";
-      a.title = text;
-      a.textContent = text;
-      s.textContent = "";
-      s.appendChild(a);
+    var pre = document.querySelector(".source pre");
+    if (!pre) return;
+    var nsPrefixes = collectNamespacePrefixes(decls);
+    var node = pre.firstChild;
+    while (node) {
+      if (isNameSpan(node) && hasTextChild(node)) {
+        // Build the longest `name (. name)*` chain starting here.
+        var spans = [node];
+        var parts = [node.textContent];
+        var probe = node.nextSibling;
+        while (probe && isDotSpan(probe)) {
+          var after = probe.nextSibling;
+          if (after && isNameSpan(after) && hasTextChild(after)) {
+            spans.push(probe, after);
+            parts.push(after.textContent);
+            probe = after.nextSibling;
+          } else {
+            break;
+          }
+        }
+        // Try the longest join first, then progressively shorter prefixes.
+        var matched = null;
+        for (var len = parts.length; len >= 1; len--) {
+          var joined = parts.slice(0, len).join(".");
+          var href = resolveHref(joined, decls, nsPrefixes);
+          if (href) {
+            matched = { href: href, len: len, text: joined };
+            break;
+          }
+        }
+        if (matched) {
+          var endIdx = matched.len * 2 - 2;  // last span index in chain
+          var lastWrapped = spans[endIdx];
+          var afterChain = lastWrapped.nextSibling;  // before mutation
+          var a = document.createElement("a");
+          a.href = matched.href;
+          a.className = "id";
+          a.title = matched.text;
+          var parent = node.parentNode;
+          for (var k = 0; k <= endIdx; k++) a.appendChild(spans[k]);
+          parent.insertBefore(a, afterChain);
+          node = afterChain;
+          continue;
+        }
+      }
+      node = node.nextSibling;
     }
+  }
+
+  function resolveHref(text, decls, nsPrefixes, isJoined) {
+    if (!text) return null;
+    var dotted = text.indexOf(".") >= 0;
+    if (Object.prototype.hasOwnProperty.call(decls, text)) {
+      if (!dotted && nsPrefixes[text]) return null;
+      return ROOT + decls[text];
+    }
+    if (dotted && /^[A-Za-z_]/.test(text)) {
+      return ROOT + "find/#doc/" + encodeURIComponent(text);
+    }
+    return null;
+  }
+
+  function isNameSpan(n) {
+    if (!n || n.nodeType !== 1) return false;
+    var c = " " + (n.className || "") + " ";
+    return c.indexOf(" n ") >= 0 || c.indexOf(" nf ") >= 0
+        || c.indexOf(" nc ") >= 0 || c.indexOf(" nv ") >= 0;
+  }
+  function isDotSpan(n) {
+    if (!n || n.nodeType !== 1) return false;
+    if (n.textContent !== ".") return false;
+    var c = " " + (n.className || "") + " ";
+    return c.indexOf(" bp ") >= 0 || c.indexOf(" o ") >= 0 || c.indexOf(" p ") >= 0;
+  }
+  function hasTextChild(n) {
+    return n.firstChild && n.firstChild.nodeType === 3 && n.textContent;
+  }
+  function collectNamespacePrefixes(decls) {
+    var ns = Object.create(null);
+    for (var k in decls) {
+      var idx = k.indexOf(".");
+      while (idx > 0) {
+        ns[k.substring(0, idx)] = true;
+        idx = k.indexOf(".", idx + 1);
+      }
+    }
+    return ns;
   }
 })();
 """
@@ -477,11 +562,19 @@ def render_page(src_path: Path, rel: str, formatter: HtmlFormatter,
                 depth: int) -> str:
     src = src_path.read_text(encoding="utf-8")
     body = highlight(src, Lean4Lexer(), formatter)
-    anchor_html = "".join(
-        f'<span id="{html.escape(name, quote=True)}"></span>'
-        for name, _, _ in decls
-    )
-    body = anchor_html + body
+    # Place a <span id="<DeclName>"></span> alongside the line marker for
+    # the decl's actual line, so jumping to #<DeclName> from the outline
+    # or from declarations.json lands on the right line. Multiple decls
+    # on the same line share the same line marker.
+    by_line: dict[int, list[str]] = {}
+    for name, line, _ in decls:
+        by_line.setdefault(line, []).append(name)
+    for line, names in by_line.items():
+        marker = f'<span id="L{line}"></span>'
+        injected = "".join(
+            f'<span id="{html.escape(n, quote=True)}"></span>' for n in names
+        )
+        body = body.replace(marker, marker + injected, 1)
     root_rel = "../" * depth
     return PAGE_TPL.format(
         title=rel,
