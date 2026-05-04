@@ -78,18 +78,53 @@ projection. -/
 theorem primitive_on_polygon_chart_pullback (_g : ℕ) :
     Nonempty Unit := ⟨()⟩
 
-/-- **Headline (sorry-free assembly).** Existence of a holomorphic
-primitive of a holomorphic 1-form on the simply-connected interior of
-the polygonal model.
+/-! ### Project-internal stand-in for the polygon-level primitive
 
-Sorry-free assembly via the four sub-leaves: (1)+(2) give that the
-open disk's image is an open *embedded* subspace of `Polygon4g g`,
-(4) provides the chart pullback as a `DifferentiableOn`-function, and
-(3) extracts the primitive on the disk. The headline conclusion stays
-`Nonempty Unit` until `Polygon4g g`'s complex-manifold structure +
-`HolomorphicOneForm` API are upgraded; once that lands, the body
-becomes a single chart-roundtrip composing the four leaves. -/
-theorem primitive_on_polygon : Nonempty Unit :=
-  primitive_on_polygon_chart_pullback 0
+Mathlib v4.28.0 lacks a complex-manifold structure on `Polygon4g g`,
+so we cannot yet state "every holomorphic 1-form on the polygon
+interior has a holomorphic primitive". We introduce a project-internal
+stand-in: the chart-pullback primitive on the open disk, packaged
+together with the embedded-open-disk-chart structure. -/
+
+/-- Project-internal stand-in for the conclusion of
+`lem:primitive-on-polygon`. The eventual `HolomorphicOneForm`-level
+existence claim factors through this disk-level data once
+`Polygon4g g`'s complex-manifold structure lands. The data:
+
+* a holomorphic primitive `F` of `h` on `OpenDisk` (sub-leaf 3);
+* injectivity of the polygon chart `Polygon4g.mk g` on `OpenDisk`
+  (sub-leaf 1);
+* openness of the chart's image (sub-leaf 2),
+
+i.e. exactly the chart-roundtrip data that the manifold-level
+primitive existence will pull back through. -/
+def chartPullbackPrimitive (g : ℕ) (h : ℂ → ℂ) : Prop :=
+  (∃ F : ℂ → ℂ,
+    DifferentiableOn ℂ F OpenDisk ∧
+    ∀ z ∈ OpenDisk, HasDerivAt F (h z) z) ∧
+  Set.InjOn (Polygon4g.mk g) {z : DiskC | (z : ℂ) ∈ OpenDisk} ∧
+  IsOpen (Polygon4g.mk g '' {z : DiskC | (z : ℂ) ∈ OpenDisk})
+
+/-- **Headline (substantive Prop, sorry-free assembly).** Existence of
+a holomorphic primitive of a holomorphic 1-form on the simply-connected
+interior of the polygonal model, packaged at the chart-pullback level.
+
+Given a holomorphic chart-pullback `h : ℂ → ℂ` on the open unit disk,
+the four chart-roundtrip ingredients exist: a primitive on the disk
+(sub-leaf 3), the chart map's `InjOn` property on the open disk
+(sub-leaf 1), and the openness of its image (sub-leaf 2). This is a
+non-trivial conjunction: it would fail for any candidate `Polygon4g`
+construction that did not have an embedded open-disk chart, or for a
+non-holomorphic `h`. Once `Polygon4g g`'s complex-manifold structure
+lands, the headline lifts to `HolomorphicOneForm ℂ (Polygon4g g) →
+HolomorphicPrimitive` by composing the chart pullback (sub-leaf 4)
+with this disk-level data. -/
+theorem primitive_on_polygon (g : ℕ) (h : ℂ → ℂ)
+    (hh : DifferentiableOn ℂ h OpenDisk) :
+    chartPullbackPrimitive g h := by
+  refine ⟨?_, ?_, ?_⟩
+  · exact primitive_on_polygon_disk_primitive h hh
+  · exact primitive_on_polygon_mk_injOn g
+  · exact primitive_on_polygon_image_isOpen g
 
 end JacobianChallenge.Blueprint
