@@ -54,6 +54,8 @@ MARKER = "<!-- DEPGRAPH-EXTRAS-INJECTED -->"
 #   green         = #9CEC8B
 #   dark green    = #1CAC78 (fill) / darkgreen (border)
 LEGEND_HTML = """
+<details class="legend-details">
+<summary>Legend</summary>
 <dl class="legend">
   <dt class="legend-shape legend-box">Boxes</dt><dd>definitions</dd>
   <dt class="legend-shape legend-ellipse">Ellipses</dt><dd>theorems and lemmas</dd>
@@ -68,6 +70,7 @@ LEGEND_HTML = """
   <dt class="legend-swatch legend-darkgreen-fill">Dark-green fill</dt>
     <dd>proof and every ancestor formalized</dd>
 </dl>
+</details>
 """
 
 # Replace the auto-generated <dl class="legend">...</dl> block with ours.
@@ -78,8 +81,26 @@ LEGEND_REPLACE = re.compile(
 INJECTED_STYLE = """
 <style id="depgraph-extras-style">
 /* Compact legend layout — fit the page without scrolling. */
-#Legend { font-size: 0.78em; }
-#Legend #legend_title { font-size: 1.05em; }
+#Legend {
+  font-size: 0.78em;
+  padding: 0.75em 1em;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  background: white;
+}
+/* Upstream heading is replaced by the details/summary below. */
+#Legend #legend_title { display: none; }
+#Legend details.legend-details > summary {
+  cursor: pointer;
+  font-size: 1.05em;
+  font-weight: 600;
+  user-select: none;
+  list-style: revert;
+}
+#Legend details.legend-details[open] > summary {
+  margin-bottom: 0.4em;
+}
 #Legend dl.legend {
   margin-top: 0.4em;
 }
