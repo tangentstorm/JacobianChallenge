@@ -9,6 +9,12 @@ import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Combinatorics.SimpleGraph.Basic
 import Mathlib.Analysis.InnerProductSpace.PiL2
 
+-- The R3 R3.1.x / R3.5.x leaves are intentionally stated with the
+-- full Riemann-surface variable bundle for documentation symmetry,
+-- even when individual leaves do not consume the complex-manifold
+-- portion.
+set_option linter.unusedSectionVars false
+
 /-!
 # R3 — The polygonal-model theorem
 
@@ -246,7 +252,7 @@ theorem polygonal_model_subgap_spanning_tree
 
 /-- **R3-sub-B.**  Dual-graph + cut-along-tree combinatorics. -/
 theorem polygonal_model_subgap_dual_graph_cut :
-    ∃ (V : Type) (E : Set (Sym2 V)), True :=
+    ∃ (V : Type) (_E : Set (Sym2 V)), True :=
   ⟨PUnit, ∅, trivial⟩
 
 /-- **R3-sub-C.**  Tietze-move-by-cut-and-paste correspondence. -/
