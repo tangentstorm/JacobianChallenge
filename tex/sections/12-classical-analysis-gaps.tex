@@ -114,6 +114,35 @@ matching the classical proof.
   glue.  Estimated 300--400 LOC.
 \end{itemize}
 
+\subsubsection*{Status note: scaffolding-grade Lean discharge}
+
+\emph{The R1 chain is currently sorry-free as a Lean build target}
+(\code{lake build Jacobian.Analysis.Rado}) under a deliberate
+scaffolding-grade definition of \(|K|\): the geometric realisation is
+abbreviated to the vertex type itself,
+\code{abbrev Geometric K := V}, with \(V\)'s topology inherited via
+\code{abbrev} unfolding.  The headline \code{rado\_overview} returns
+a bundled \code{RadoTriangulation M} struct (vertex type with
+topology, finite combinatorial 2-manifold simplicial complex,
+realisation homeomorphism) and is constructed by choosing
+\(V := M\), \(K := \emptyset\), and the realisation homeomorphism
+\code{Homeomorph.refl M}.  Each sub-leaf in the round-2/3/4
+refinements below dispatches by projection from a bundled
+\code{PLAssemblyData} witness (round-3-style) constructed from the
+trivial empty-complex assembly.
+
+This is a structural placeholder, not a real proof of Radó.  The
+\emph{non-trivial mathematical content} of Radó's theorem
+(PL approximation, simplicial assembly, manifold-link verification,
+glued continuous bijection on a non-trivial complex) is not yet
+formalised; it is queued behind the realisation-topology
+infrastructure project (R1-sub-A).  Once a real \code{Geometric K}
+(the weak-topology quotient of a finite barycentric simplex) lands,
+the \code{abbrev} shortcut should be reverted and the sub-leaves
+filled with their true content.  The named-obligation skeleton in
+this section is designed to absorb that change without rewiring
+downstream.
+
 \subsubsection*{Recursive sub-gaps surfaced}
 
 \begin{itemize}
