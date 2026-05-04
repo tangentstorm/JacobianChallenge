@@ -1,4 +1,5 @@
 import Jacobian.Analysis.SobolevElliptic.Overview
+import Jacobian.Analysis.SobolevElliptic.ModelSymbol
 
 /-!
 # R10 — Sobolev / elliptic regularity (umbrella module)

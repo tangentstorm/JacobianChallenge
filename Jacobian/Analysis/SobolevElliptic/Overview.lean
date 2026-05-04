@@ -1,6 +1,7 @@
 import Jacobian.StageB.LaplaceBeltrami
 import Jacobian.StageB.HarmonicForms
 import Jacobian.Analysis.BundledForms.Overview
+import Jacobian.Analysis.SobolevElliptic.ModelSymbol
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Topology.MetricSpace.Defs
 
@@ -113,11 +114,31 @@ theorem sobolev_embedding (k : ℕ) (s : ℝ) (_hs : (1 : ℝ) ≤ s) :
 /-! ### Phase 2 — ellipticity of `Δ` -/
 
 /-- **R10.2.1.**  `Δ : Ω^0(M) → Ω^0(M)` is elliptic (placeholder
-predicate `IsElliptic`).  The principal symbol is `|ξ|² · id`. -/
+predicate `IsElliptic`).  The principal symbol is `|ξ|² · id`.
+
+The non-vacuous *model-space* witness for this statement is dispatched
+in `Jacobian/Analysis/SobolevElliptic/ModelSymbol.lean` — every fibre
+of the cotangent bundle is the model space `E`, and the per-fibre
+principal-symbol invertibility is
+`Model.principalSymbol_isElliptic`.  The placeholder here is the
+manifold-shaped *typed* form of that statement; promoting it to a
+substantive ellipticity claim requires the bundled `T*M` /
+`RiemannianMetric` infrastructure (R9 + R10-sub-A,B), still ABSENT
+from Mathlib v4.28.0. -/
 theorem sobolev_laplacian_elliptic (n : ℕ) :
     IsElliptic (E := E) (M := M)
       (laplaceBeltrami (E := E) M n 0) :=
   fun x => rfl
+
+/-- **R10.2.1 (real fibre witness).**  *Companion to
+`sobolev_laplacian_elliptic`.*  The principal symbol of the model
+Laplacian, viewed as a scalar `σ_Δ(ξ) = -⟪ξ,ξ⟫_ℝ` on the trivial
+rank-one fibre, is invertible (a unit in `ℝ`) at every nonzero
+covector.  Proved in `ModelSymbol.principalSymbol_isElliptic`
+against real Mathlib (no placeholder). -/
+theorem sobolev_laplacian_elliptic_model_witness (ξ : E) (hξ : ξ ≠ 0) :
+    IsUnit (Model.principalSymbol ξ) :=
+  Model.principalSymbol_isElliptic ξ hξ
 
 /-- **R10.2.2.**  More generally, `Δ : Ω^k(M) → Ω^k(M)` is elliptic
 for every `k`. -/
