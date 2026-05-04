@@ -23,18 +23,12 @@
 \maketitle
 \tableofcontents
 
-% Front matter is split into three parts (numbered 0, 1, 2). The
-% mathematical spine that follows is left as plain sections.
-\renewcommand{\thepart}{\arabic{part}}
-\setcounter{part}{-1}
-
-\part{Introduction}
+% The Introduction is unnumbered (Section* + addcontentsline). The
+% numbered sections are 1 (Challenge Statement), 2 (Statement Bank),
+% then the eleven-section mathematical spine starting at 3.
 \input{sections/00-introduction}
-\part{Statement of the Jacobian Challenge}
 \input{statements/challenge-statement}
-\part{Statement Bank}
 \input{statements/statement-bank}
-
 \input{sections/01-compact-riemann-surfaces}
 \input{sections/02-holomorphic-forms-finite-dim}
 \input{sections/03-riemann-roch}
