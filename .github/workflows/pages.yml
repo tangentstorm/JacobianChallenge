@@ -11,11 +11,15 @@ on:
       # this workflow concurrently with pdf.yml and we'd deploy a Pages
       # site that's missing the PDF.
       - "blueprint/**"
+      - "Jacobian/**"
+      - "scripts/build-source-pages.py"
       - ".github/workflows/pages.yml"
   pull_request:
     paths:
       - "blueprint/**"
       - "tex/**"
+      - "Jacobian/**"
+      - "scripts/build-source-pages.py"
       - ".github/workflows/pages.yml"
   workflow_run:
     # When the PDF rebuilds, re-deploy Pages so the latest PDF is picked up.
@@ -57,6 +61,12 @@ jobs:
       - name: Install Lean Blueprint
         run: python3 -m pip install leanblueprint
 
+      - name: Install Pygments (for source browser)
+        # Lean4Lexer was added in Pygments 2.16. The runner's system
+        # Pygments is older and shadows fresh `pip install pygments`
+        # unless we force-upgrade past the minimum.
+        run: python3 -m pip install --upgrade 'pygments>=2.16'
+
       - name: Build Lean Blueprint site
         run: python3 -m leanblueprint.client web
 
@@ -93,11 +103,15 @@ jobs:
           path: tex
           if_no_artifact_found: fail
 
+      - name: Build browsable source pages
+        run: python3 scripts/build-source-pages.py --out _src-pages
+
       - name: Prepare Pages site
         if: github.event_name != 'pull_request'
         run: |
-          mkdir -p _site/blueprint
+          mkdir -p _site/blueprint _site/docs
           cp -R blueprint/web/. _site/blueprint/
+          cp -R _src-pages/. _site/docs/
 
           # Diagnostic: list everything the artifact download deposited.
           echo "::group::Artifact contents (tex/ and any subdirs)"
@@ -139,6 +153,7 @@ jobs:
                 <h1>Jacobian Challenge</h1>
                 <ul>
                   <li><a href="blueprint/">Lean Blueprint dependency graph</a> — interactive, with Plain-English toggle</li>
+                  <li><a href="docs/">Browsable Lean source</a> — syntax-highlighted; identifier links from the blueprint resolve here, with fallback to mathlib4_docs</li>
                   <li><a href="jacobian-informal-proof-with-layman.pdf">Informal proof roadmap with Plain-English companion (PDF)</a></li>
                   <li><a href="jacobian-informal-proof.pdf">Informal proof roadmap, formal only (PDF)</a></li>
                 </ul>
