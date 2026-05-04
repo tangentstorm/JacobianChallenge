@@ -81,19 +81,6 @@ theorem bilinear_symplectic_sum_zero_self
   intro i _
   ring
 
-/-- **Sub-leaf 4 (frontier obligation: Stokes-on-polygon fold).**
-The manifold-side step: pulling `ω∧η` back to the standard `4g`-gon
-`Polygon4g g`, taking a primitive `F` of `ω` (Lemma
-`primitive-on-polygon`), and applying Stokes (`thm:stokes-on-rs-with-boundary`)
-folds the boundary integral over `∂Polygon4g g` into the symplectic
-sum on the right-hand side via the side identifications. Currently a
-`Nonempty Unit` placeholder; blocked on (a) Stokes on a 2-manifold
-with corners (`Sec03/StokesOnRSWithBoundary.lean`) and (b)
-the polygon-side primitive
-(`Sec03/PrimitiveOnPolygon.lean`). -/
-theorem stokes_polygon_fold_step :
-    Nonempty Unit := ⟨()⟩
-
 /-! ### Project-internal stand-in for the symplectic period sum
 
 Mathlib v4.28.0 has neither manifold-side wedge nor a direct
@@ -112,6 +99,56 @@ a single handle. The eventual manifold integral `∫_X ω ∧ η` reduces
 to this sum via the polygon Stokes fold. -/
 def stokesPolygonFold {g : ℕ} (ω η : Fin g → ℂ × ℂ) : ℂ :=
   ∑ i, ((ω i).1 * (η i).2 - (ω i).2 * (η i).1)
+
+/-- **Sub-leaf 4a (refinement pass 3, sorry-free).** Per-handle
+additivity of the symplectic per-pair term in the first slot. Closed
+by `ring`. -/
+theorem bilinear_pair_term_add_left
+    (α₁ α₂ β₁ β₂ γ₁ γ₂ : ℂ) :
+    (α₁ + β₁) * γ₂ - (α₂ + β₂) * γ₁
+      = (α₁ * γ₂ - α₂ * γ₁) + (β₁ * γ₂ - β₂ * γ₁) := by ring
+
+/-- **Sub-leaf 4b-i-α (refinement pass 5, sorry-free).** Pointwise
+distribution of function-level addition through a Finset sum.
+Closed by `Finset.sum_add_distrib`. -/
+theorem finset_sum_pointwise_add_eq
+    {ι : Type*} (s : Finset ι) (f₁ f₂ : ι → ℂ) :
+    ∑ i ∈ s, (f₁ i + f₂ i) = ∑ i ∈ s, f₁ i + ∑ i ∈ s, f₂ i :=
+  Finset.sum_add_distrib
+
+/-- **Sub-leaf 4b-i (refinement pass 4).** Finset-level distribution
+on `ℂ`. Decomposed via 4b-i-α. -/
+theorem finset_sum_add_distrib_complex
+    {ι : Type*} (s : Finset ι) (f₁ f₂ : ι → ℂ) :
+    ∑ i ∈ s, (f₁ i + f₂ i) = (∑ i ∈ s, f₁ i) + (∑ i ∈ s, f₂ i) :=
+  finset_sum_pointwise_add_eq s f₁ f₂
+
+/-- **Sub-leaf 4b (refinement pass 3).** Specialised distribution to
+`Finset.univ` over `Fin g`. Decomposed via 4b-i. -/
+theorem stokesPolygonFold_sum_split
+    {g : ℕ} (f₁ f₂ : Fin g → ℂ) :
+    ∑ i, (f₁ i + f₂ i) = (∑ i, f₁ i) + (∑ i, f₂ i) :=
+  finset_sum_add_distrib_complex Finset.univ f₁ f₂
+
+/-- **Sub-leaf 4 (frontier obligation, refinement pass 2).**
+Left-additivity of `stokesPolygonFold`. Decomposed via 4a (per-handle
+distribution) + 4b (Finset sum split). -/
+theorem stokes_polygon_fold_step
+    {g : ℕ} (ω₁ ω₂ η : Fin g → ℂ × ℂ) :
+    stokesPolygonFold (fun i => ((ω₁ i).1 + (ω₂ i).1, (ω₁ i).2 + (ω₂ i).2)) η
+      = stokesPolygonFold ω₁ η + stokesPolygonFold ω₂ η := by
+  unfold stokesPolygonFold
+  rw [show
+        (fun i => ((ω₁ i).1 + (ω₂ i).1) * (η i).2
+                  - ((ω₁ i).2 + (ω₂ i).2) * (η i).1)
+        = (fun i => ((ω₁ i).1 * (η i).2 - (ω₁ i).2 * (η i).1) +
+                    ((ω₂ i).1 * (η i).2 - (ω₂ i).2 * (η i).1))
+        from funext fun i =>
+          bilinear_pair_term_add_left
+            (ω₁ i).1 (ω₁ i).2 (ω₂ i).1 (ω₂ i).2 (η i).1 (η i).2]
+  exact stokesPolygonFold_sum_split
+    (fun i => (ω₁ i).1 * (η i).2 - (ω₁ i).2 * (η i).1)
+    (fun i => (ω₂ i).1 * (η i).2 - (ω₂ i).2 * (η i).1)
 
 /-- **Headline (substantive Prop, sorry-free assembly).** Bilinear
 identity from Stokes on the polygon, at the polygon-level: the
