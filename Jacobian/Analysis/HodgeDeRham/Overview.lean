@@ -1,6 +1,7 @@
 import Jacobian.Periods.HodgeDeRham
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.Periods.IntegralOneCycle
+import Jacobian.Periods.HomTorsionVanishing
 
 /-!
 # R6 — Hodge / de Rham rank for a Riemann surface
@@ -145,6 +146,18 @@ group `A` (Mathlib has all the ingredients). -/
 theorem hodge_deRham_subgap_hom_rank :
     ∃ d : ℕ, Module.finrank ℤ (Periods.IntegralOneCycle X) = d :=
   Periods.singularH1_finrank_finite X
+
+/-- **R6-sub-C, Pass G2.3 (`hdr-r3` of §14.R6 in the blueprint).**
+For a torsion ℤ-module `T`, every ℤ-linear map `T →ₗ[ℤ] ℝ` is zero —
+the algebraic ingredient that lets the structure-theorem split of a
+finitely generated abelian group `A = ℤ^r ⊕ T` collapse to its free
+part on the `Hom(_, ℝ)` side.
+
+Forwards to `Jacobian.Periods.HomTorsionVanishing`. -/
+theorem hodge_deRham_subgap_hom_torsion_vanishing
+    {T : Type} [AddCommGroup T] [Module ℤ T]
+    (hT : ∀ a : T, IsOfFinAddOrder a) (φ : T →ₗ[ℤ] ℝ) : φ = 0 :=
+  Periods.homℤℝ_eq_zero_of_isTorsion hT φ
 
 /-! ### Stepwise refinement of the headline -/
 

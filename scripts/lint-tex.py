@@ -253,6 +253,43 @@ def lint_file(path: str) -> list[tuple[int, str, str]]:
                     break
                 i += 1
 
+    # 5b. \lean{...} arguments are parsed by plastex's blueprint package
+    # as a comma-separated list of declarations.  Backslash escapes
+    # (\_, \&, \%, etc.) make plastex see a `TeXFragment` rather than
+    # a string and crash with
+    #   AttributeError: 'TeXFragment' object has no attribute 'strip'
+    # The right form is the literal Lean name with raw underscores.
+    for m in re.finditer(r"\\lean\{([^{}]*)\}", text):
+        arg = m.group(1)
+        if re.search(r"\\[_&%#$]", arg):
+            line_no = text[:m.start()].count("\n") + 1
+            findings.append((line_no, "lean-arg-escaped-special",
+                             f"\\lean{{...}} contains a backslash-escaped "
+                             f"special char; plastex needs literal forms: "
+                             f"{arg[:80]!r}"))
+
+    # 5c. Backtick-quoted Lean code containing project math macros
+    # like `\R`, `\Z`, `\C`, `\mathbb{...}`.  Backticks are typeset as
+    # text-mode straight characters (LaTeX renders them as opening
+    # single quotes); putting math-only macros inside aborts pdflatex
+    # with
+    #   ! LaTeX Error: \mathbb allowed only in math mode.
+    # Either wrap the snippet in \code{...} (which detokenizes) or
+    # replace the macro with a Unicode literal (`ℝ`, `ℤ`, ...).
+    backtick_math_pat = re.compile(
+        r"`(?P<body>[^`\n]*?)`"  # backtick-delimited inline span
+    )
+    math_only_macro = re.compile(r"\\(?:R|Z|C|N|Q|mathbb|mathcal|mathfrak|"
+                                 r"mathrm|mathsf|mathtt|mathbf|mathit)\b")
+    for m in backtick_math_pat.finditer(text):
+        body = m.group("body")
+        if math_only_macro.search(body):
+            line_no = text[:m.start()].count("\n") + 1
+            findings.append((line_no, "backtick-math-macro",
+                             f"backtick-quoted Lean snippet contains a "
+                             f"math-only macro; use \\code{{...}} or a "
+                             f"Unicode literal: `{body[:80]}`"))
+
     # 6. Stray \\command at start of paragraph (rare but happens)
     for line_no, line in enumerate(lines, 1):
         # Look for \\X where X is letter, outside any math-mode strip
