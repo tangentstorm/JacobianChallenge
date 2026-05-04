@@ -62,7 +62,10 @@ jobs:
         run: python3 -m pip install leanblueprint
 
       - name: Install Pygments (for source browser)
-        run: python3 -m pip install pygments
+        # Lean4Lexer was added in Pygments 2.16. The runner's system
+        # Pygments is older and shadows fresh `pip install pygments`
+        # unless we force-upgrade past the minimum.
+        run: python3 -m pip install --upgrade 'pygments>=2.16'
 
       - name: Build Lean Blueprint site
         run: python3 -m leanblueprint.client web
