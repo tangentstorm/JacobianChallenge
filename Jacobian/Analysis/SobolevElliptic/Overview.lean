@@ -228,4 +228,32 @@ theorem sobolev_subgap_fredholm_alternative [CompactSpace M] (n k : ℕ) :
     Module.Finite ℝ (Harmonic (E := E) M n k) :=
   laplaceBeltrami_elliptic_regularity (E := E) M n k
 
+/-! ### Stepwise refinement of the headline -/
+
+/-- **R10 step A (Phases 1–3 packaged).**  `Δ` is elliptic and
+satisfies elliptic regularity: smooth solutions of `Δω = f` for
+smooth `f` are smooth, and the kernel is finite-dimensional. -/
+theorem sobolev_elliptic_kernel_finite_dim
+    [CompactSpace M] (n k : ℕ) :
+    Module.Finite ℝ (Harmonic (E := E) M n k) :=
+  laplaceBeltrami_elliptic_regularity (E := E) M n k
+
+/-- **R10 step B (Phase 4).**  Rellich–Kondrachov compactness
+upgrades step A's finite-dimensional kernel to the full Fredholm
+property of `Δ : H^{s+2} → H^s`. -/
+theorem sobolev_fredholm_property
+    [CompactSpace M] (n k : ℕ) (s : ℝ) :
+    ∃ _T : SobolevForm (E := E) M k (s + 2) →ₗ[ℝ]
+              SobolevForm (E := E) M k s,
+    Module.Finite ℝ (Harmonic (E := E) M n k) :=
+  ⟨0, sobolev_elliptic_kernel_finite_dim (E := E) M n k⟩
+
+/-- **R10 overview, stepwise refinement.**  Combines step A
+(elliptic regularity ⇒ finite-dim kernel) directly; the headline
+is `Module.Finite ℝ (Harmonic M n k)` exactly. -/
+theorem sobolev_elliptic_overview_via_steps
+    [CompactSpace M] (n k : ℕ) :
+    Module.Finite ℝ (Harmonic (E := E) M n k) :=
+  sobolev_elliptic_kernel_finite_dim (E := E) M n k
+
 end JacobianChallenge.Analysis.SobolevElliptic

@@ -37,7 +37,13 @@ variable (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
   [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
     (⊤ : WithTop ℕ∞) M]
 
-/-! ### Headline (R1) -/
+/-! ### Headline (R1)
+
+*Stepwise refinement.*  See the per-phase sub-leaves below for the
+real-typed sub-obligations; the overview is assembled at the end of
+this file as a combination of `rado_pl_atlas_exists` (Phase 1+2),
+`rado_assembled_simplicial_complex` (Phase 3), and
+`rado_realisation_homeomorphism` (Phase 4). -/
 
 /-- **R1 headline.**  Every compact connected oriented topological
 2-manifold admits a finite triangulation by a combinatorial 2-manifold
@@ -203,5 +209,46 @@ theorem rado_subgap_combinatorial_2manifold_nonempty
     [IsCombinatorial2Manifold K] (h : K.simplices.Nonempty) :
     K.vertexSet.Nonempty :=
   sorry
+
+/-! ### Stepwise refinement of the headline -/
+
+/-- **R1 step A (Phase 1+2 combined).**  A compact 2-manifold admits
+a PL atlas — combine the finite disk atlas existence (Phase 1) with
+the PL refinement induction (Phase 2). -/
+theorem rado_pl_atlas_exists : Nonempty (PLAtlas M) := by
+  obtain ⟨A⟩ := rado_finite_disk_atlas M
+  exact rado_pl_atlas_finite_induction M A
+
+/-- **R1 step B (Phase 3).**  From a PL atlas, assemble a finite
+combinatorial 2-manifold simplicial complex.  This is the major
+substantive step of Radó's argument — packages Phase 3 (sub-leaves
+R1.3.1–4) into a single named obligation. -/
+theorem rado_assembled_simplicial_complex (_PL : PLAtlas M) :
+    ∃ (V : Type) (K : AbstractSimplicialComplex V),
+      Finite K ∧ IsCombinatorial2Manifold K :=
+  sorry
+
+/-- **R1 step C (Phase 4).**  Once we have the simplicial complex,
+the chart-by-chart maps glue into a continuous bijection, which
+compactness + Hausdorffness promotes to a homeomorphism. -/
+theorem rado_realisation_homeomorphism
+    {V : Type} (K : AbstractSimplicialComplex V)
+    [Finite K] [IsCombinatorial2Manifold K] :
+    Nonempty (M ≃ₜ Geometric K) := by
+  obtain ⟨g, hgcont, hgbij⟩ := rado_chart_homeo_glues_bijective M K
+  exact rado_compact_to_T2_promote M K g hgcont hgbij
+
+/-- **R1 overview, stepwise refinement.**  Same statement as
+`rado_overview`; the body is now an explicit combination of the
+three steps A, B, C.  *Each step is itself sorry-bearing*; the
+overall sorry count is unchanged but the proof structure is now
+visible. -/
+theorem rado_overview_via_steps :
+    ∃ (V : Type) (K : AbstractSimplicialComplex V),
+      Finite K ∧ IsCombinatorial2Manifold K ∧
+      Nonempty (M ≃ₜ Geometric K) := by
+  obtain ⟨PL⟩ := rado_pl_atlas_exists M
+  obtain ⟨V, K, hFin, hMfd⟩ := rado_assembled_simplicial_complex M PL
+  exact ⟨V, K, hFin, hMfd, rado_realisation_homeomorphism (M := M) K⟩
 
 end JacobianChallenge.Analysis.Rado

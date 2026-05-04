@@ -215,4 +215,38 @@ theorem deRham_subgap_good_cover_existence :
     ∃ (ι : Type) (U : ι → Set M), IsGoodCover (M := M) U :=
   sorry
 
+/-! ### Stepwise refinement of the headline -/
+
+/-- **R4 step A (Phases 1–3 packaged).**  The integration map descends
+from forms / smooth chains to a `ℂ`-linear map at the level of
+cohomology, `H^k_dR(M, ℂ) →ₗ[ℂ] H^k_sing(M, ℂ)`.  Combines Phase 1
+(differential-form package), Phase 2 (smooth-singular integration +
+Stokes), and Phase 3 (descent). -/
+theorem deRham_integration_descends (k : ℕ) :
+    Nonempty (deRhamHC (E := E) M k →ₗ[ℂ] singularHC M k) :=
+  deRham_integration_cohomology_map M k
+
+/-- **R4 step B (Phase 4 packaged).**  The integration map is an
+isomorphism on every smooth manifold admitting a good cover.
+Combines the Mayer–Vietoris five-lemma induction over a finite
+good cover. -/
+theorem deRham_integration_iso_via_good_cover :
+    Nonempty
+      ((ι : Type) × (Σ' (_U : ι → Set M),
+        ∀ k : ℕ,
+          Nonempty (deRhamHC (E := E) M k ≃ₗ[ℂ] singularHC M k))) :=
+  sorry
+
+/-- **R4 overview, stepwise refinement.**  Same statement as
+`deRham_overview` but with the proof factored through R4-sub-C
+(good cover) + R4 step B (induction over good cover). -/
+theorem deRham_overview_via_steps (k : ℕ) :
+    Nonempty (deRhamHC (E := E) M k ≃ₗ[ℂ] singularHC M k) := by
+  -- Step 1: a good cover exists (R4-sub-C / R4.4.3).
+  obtain ⟨ι, U, hGood⟩ := deRham_good_cover_exists (M := M)
+  -- Step 2: the five-lemma induction over the good cover lifts the
+  -- per-chart de Rham comparison to the global statement.
+  haveI : Fintype ι := sorry
+  exact deRham_five_lemma_induction (M := M) U hGood k
+
 end JacobianChallenge.Analysis.DeRham

@@ -176,4 +176,41 @@ theorem polygonal_model_subgap_tietze_cut_paste {g : ℕ}
     Nonempty (Polygon4g g ≃ₜ Polygon4g g) :=
   ⟨Homeomorph.refl _⟩
 
+/-! ### Stepwise refinement of the headline -/
+
+/-- **R3 step A (Phases 1–3 packaged).**  From a compact Riemann
+surface `Y`, produce a polygon `Polygon4g g'` and a homeomorphism
+`Y ≃ₜ Polygon4g g'` for *some* `g'`.  Packages Radó (R1) +
+spanning-tree cut + edge-word read-off + Tietze reduction (R2). -/
+theorem polygonal_model_some_polygon_homeomorph
+    (Y : Type) [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
+    [ConnectedSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y] :
+    ∃ g' : ℕ, Nonempty (Y ≃ₜ Polygon4g g') :=
+  sorry
+
+/-- **R3 step B (numeric matching).**  The genus produced by
+step A coincides with the analytic genus of `Y`. -/
+theorem polygonal_model_genus_matches
+    (Y : Type) [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
+    [ConnectedSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    {g' : ℕ} (_φ : Y ≃ₜ Polygon4g g') :
+    g' = analyticGenusPlaceholder Y :=
+  sorry
+
+/-- **R3 overview, stepwise refinement.**  Same statement as
+`polygonal_model_overview` (with `Y` in place of `X`); the proof is
+"step A produces some polygon" + "step B identifies the genus". -/
+theorem polygonal_model_overview_via_steps
+    (Y : Type) [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
+    [ConnectedSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y] :
+    Nonempty (Y ≃ₜ Polygon4g (analyticGenusPlaceholder Y)) := by
+  obtain ⟨g', ⟨φ⟩⟩ := polygonal_model_some_polygon_homeomorph Y
+  have hgenus : g' = analyticGenusPlaceholder Y :=
+    polygonal_model_genus_matches Y φ
+  cases hgenus
+  exact ⟨φ⟩
+
 end JacobianChallenge.Analysis.PolygonalModel

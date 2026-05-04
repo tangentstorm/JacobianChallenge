@@ -236,4 +236,32 @@ theorem hodge_subgap_kahler_identities (p q : ℕ) :
     Nonempty (DolbeaultH X p q →ₗ[ℂ] DolbeaultH X p q) :=
   ⟨LinearMap.id⟩
 
+/-! ### Stepwise refinement of the headline -/
+
+/-- **R5 step A (Phases 1–3 packaged).**  On a compact Riemannian
+manifold, `Δ` is elliptic and Fredholm, hence has finite-dimensional
+kernel.  This is the analytic core: combines Phase 1 (metric +
+Hodge star), Phase 2 (codifferential + Laplacian), and Phase 3
+(ellipticity + Sobolev / elliptic regularity). -/
+theorem hodge_laplacian_kernel_finite_dim
+    [CompactSpace M] (n k : ℕ) :
+    Module.Finite ℝ (Harmonic (E := E) M n k) :=
+  laplaceBeltrami_elliptic_regularity (E := E) M n k
+
+/-- **R5 step B (Phase 4).**  Each de Rham class has a unique
+harmonic representative.  Forwards to the StageB witness. -/
+theorem hodge_deRham_iso_harmonic
+    [CompactSpace M] (n k : ℕ) :
+    Nonempty (deRhamH (E := E) M k ≃ₗ[ℝ] Harmonic (E := E) M n k) :=
+  deRhamH_iso_Harmonic (E := E) M n k
+
+/-- **R5 overview, stepwise refinement.**  Combines R5 step A
+(finite-dim harmonic kernel) and R5 step B (de Rham–harmonic iso). -/
+theorem hodge_decomposition_overview_via_steps
+    [CompactSpace M] (n k : ℕ) :
+    Module.Finite ℝ (Harmonic (E := E) M n k) ∧
+    Nonempty (deRhamH (E := E) M k ≃ₗ[ℝ] Harmonic (E := E) M n k) :=
+  ⟨hodge_laplacian_kernel_finite_dim (E := E) M n k,
+   hodge_deRham_iso_harmonic (E := E) M n k⟩
+
 end JacobianChallenge.Analysis.HodgeDecomposition
