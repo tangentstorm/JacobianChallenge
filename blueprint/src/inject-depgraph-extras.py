@@ -33,6 +33,7 @@ from pathlib import Path
 # at least a project-side Lean stub so they get the regular `\leanok` green
 # border, not the red one — even though their *proofs* are still sorry-bound.
 BIG_UMBRELLAS = [
+    # The original eight red-border umbrellas (existing tex labels).
     "input:hodge-deRham",
     "input:rado-triangulation",
     "input:de-rham-theorem",
@@ -41,6 +42,19 @@ BIG_UMBRELLAS = [
     "input:tietze-normal-form",
     "thm:polygonal-model",
     "thm:serre-duality-rs",
+    # Parallel `gap:R<N>-overview` labels introduced by
+    # tex/sections/12-classical-analysis-gaps.tex — each is the
+    # independent-build umbrella under Jacobian/Analysis/<Node>/.
+    "gap:R1-overview",
+    "gap:R2-overview",
+    "gap:R3-overview",
+    "gap:R4-overview",
+    "gap:R5-overview",
+    "gap:R6-overview",
+    "gap:R7-overview",
+    "gap:R8-overview",
+    "gap:R9-overview",
+    "gap:R10-overview",
 ]
 
 MARKER = "<!-- DEPGRAPH-EXTRAS-INJECTED -->"
