@@ -199,9 +199,16 @@ to their own top-level dep-graph nodes because they are both shared
 across multiple parents and substantial enough to warrant standalone
 formalisation efforts.
 
-The ten umbrellas plus their parallel `gap:R<N>-overview` labels are
-in `BIG_UMBRELLAS` (red-border highlight) at
-`blueprint/src/inject-depgraph-extras.py`.
+Only **R9 (`input:bundled-omega-k`)** and **R10 (`input:sobolev-elliptic-regularity`)**
+are in `BIG_UMBRELLAS` (red-border highlight) at
+`blueprint/src/inject-depgraph-extras.py` — the original eight red
+umbrellas are unchanged.  R1–R8's per-stepwise-refinement assembly
+lemmas (`lem:<gap>-overview-stepwise`) and their per-phase sub-leaves
+(`lem:rado-pl-atlas-exists`, `lem:tietze-to-handle-grouped`, etc.)
+are deliberately *non-red* graph nodes — the goal is to break each
+red ellipse into its constituent green-bordered sub-leaves.  See
+`tex/sections/12-classical-analysis-gaps.tex` for the full
+three-round refinement (~75 named sub-leaves).
 
 Each `Jacobian.Analysis.<Node>.Overview.lean` declares **real-typed
 sorry theorems** (no `: True := trivial` placeholders): the headline
