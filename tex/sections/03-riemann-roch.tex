@@ -182,6 +182,19 @@ that lets us count how many independent meromorphic functions fit any
 given budget of zeros and poles.
 \end{layman}
 
+\begin{proofsketch}
+Squeeze the Euler characteristic between the two halves of Riemann--Roch.
+The Lean target is decomposed (round 1) into 4 sub-leaves in
+\code{Jacobian/HolomorphicForms/EulerCharLineBundle.lean}: the lower
+bound \code{h0\_minus\_h1\_ge\_riemann} (Riemann's inequality, 1857), the
+upper bound \code{h0\_minus\_h1\_le\_riemann} (Serre duality applied to
+\(L^{-1}\otimes K_X\)), the sorry-free squeeze
+\code{h0\_minus\_h1\_eq\_riemann\_roch} via \code{Int.le\_antisymm}, and
+the sorry-free unfolding \code{rsEulerCharacteristic\_eq\_h0\_minus\_h1}.
+The headline assembly is sorry-free, composing the four leaves; the
+genuine analytic content is concentrated in the two bound sub-leaves.
+\end{proofsketch}
+
 \begin{theorem}[Riemann's inequality]
 \label{thm:riemann-inequality}
 \uses{thm:euler-char-line-bundle}
