@@ -5,7 +5,6 @@
 \usepackage{enumitem}
 \usepackage{comment}
 \usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=magenta]{hyperref}
-\usepackage{xstring}
 
 % \begin{layman}...\end{layman} blocks contain plain-English narrations
 % mirroring the formal proof system. The blueprint web build styles them
@@ -53,22 +52,39 @@
 \newcommand{\dd}{\mathrm{d}}
 
 % \code{Mathlib.Long.Identifier.Path} renders in monospace and may
-% break across lines at every '.' or '_'.  Without the discretionary
+% break across lines at every '.'.  Without the discretionary
 % breakpoints, long Mathlib identifier paths (e.g.\
 % Mathlib.Analysis.InnerProductSpace.Spectrum.compactSelfAdjoint)
 % overflow the right margin -- visible as overfull \hbox warnings
 % during pdflatex and as clipped names in the rendered PDF.
 %
-% The substitution chain runs xstring's \StrSubstitute over
-% \detokenize'd input.  xstring is purely macro-recursive (no
-% \futurelet) so it composes with \detokenize -- unlike seqsplit,
-% which fails because its \futurelet can't traverse detokenize's
-% catcode-12 token stream.
+% Implementation: a TeX-only walk loop over \detokenize'd input.
+% \code@walk scans one catcode-12 char token at a time, emits it,
+% and inserts \linebreak[1] after every '.'.  Terminates when the
+% \code@end sentinel is reached.
+%
+% Why not seqsplit or xstring (both attempted, both failed):
+%   * seqsplit uses \futurelet to peek at one token; \futurelet
+%     can't traverse the catcode-12 token stream that \detokenize
+%     produces.
+%   * xstring's \StrSubstitute receives \detokenize{#1} as a literal
+%     macro call and doesn't expand it before processing, then trips
+%     its own \reserved@a/\@nil sentinel logic.
+% The TeX-only loop avoids both pitfalls by explicitly \expandafter-
+% expanding \detokenize{...} into the input stream.
+\makeatletter
+\def\code@walk#1{%
+  \ifx\code@end#1%
+  \else
+    #1%
+    \if.#1\linebreak[1]\fi
+    \expandafter\code@walk
+  \fi}
+\let\code@end\relax
 \newcommand{\code}[1]{%
-  \texttt{%
-    \StrSubstitute{\detokenize{#1}}{.}{.\linebreak[1]}%
-  }%
+  \texttt{\expandafter\code@walk\detokenize{#1}\code@end}%
 }
+\makeatother
 \newcommand{\lean}[1]{\par\smallskip\noindent\textbf{Lean target:} \code{#1}\par\smallskip}
 \newcommand{\depends}[1]{\par\smallskip\noindent\textbf{Depends on:} #1\par\smallskip}
 \newcommand{\todoformal}[1]{\par\smallskip\noindent\textbf{Formalization gap:} #1\par\smallskip}
