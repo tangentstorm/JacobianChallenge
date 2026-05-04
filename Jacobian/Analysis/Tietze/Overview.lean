@@ -166,4 +166,45 @@ theorem tietze_subgap_brahana_handle_creation_step {g : ℕ}
         v = xs ++ EdgeWord.handleBlock i ++ ys :=
   sorry
 
+/-! ### Stepwise refinement of the headline -/
+
+/-- **R2 step A (Phases 1+2 combined).**  Every word arising from an
+orientable polygonal presentation is `TietzeEq` to a *handle-grouped*
+word — the first half of the reduction.  Combines cyclic reduction
+(R2.1.2) with Brahana handle creation (R2.2.3). -/
+theorem tietze_to_handle_grouped {g : ℕ} (w : EdgeWord g)
+    (h : ArisesFromOrientablePolygonalPresentation w) :
+    ∃ v : EdgeWord g,
+      EdgeWord.TietzeEq w v ∧ EdgeWord.IsHandleGrouped v := by
+  -- Phase 1: cyclic reduction.
+  obtain ⟨v₁, hwv₁, hRed⟩ := tietze_cyclic_reduction w
+  -- Phase 3: orientability is preserved by `WordEq`-step.
+  have hOrient₁ : ¬ EdgeWord.HasNonorientablePair v₁ :=
+    tietze_moves_preserve_orientability hwv₁.toTietzeEq h
+  -- Phase 2 (Brahana): land at a handle-grouped word.
+  obtain ⟨v₂, hv₁v₂, hG⟩ :=
+    tietze_brahana_handle_creation v₁ hRed hOrient₁
+  exact ⟨v₂, hwv₁.toTietzeEq.trans hv₁v₂, hG⟩
+
+/-- **R2 step B (Phases 3+4 combined).**  A handle-grouped word is
+`TietzeEq` to the standard relator (handle-swap re-orderings + identity
+on each block).  Combines `tietze_orientable_is_handle_concat`
+with the standard-word identification. -/
+theorem tietze_handle_grouped_to_standard {g : ℕ} (v : EdgeWord g)
+    (hG : EdgeWord.IsHandleGrouped v) :
+    EdgeWord.TietzeEq v (EdgeWord.standardWord g) := by
+  obtain ⟨v', hvv', hStd⟩ := tietze_orientable_is_handle_concat v hG
+  -- `IsStandardForm` says `v' = standardWord g`.
+  rw [show v' = EdgeWord.standardWord g from hStd] at hvv'
+  exact hvv'
+
+/-- **R2 overview, stepwise refinement.**  Same as `tietze_overview`
+but with the proof factored through the two intermediate steps
+A and B. -/
+theorem tietze_overview_via_steps {g : ℕ} (w : EdgeWord g)
+    (h : ArisesFromOrientablePolygonalPresentation w) :
+    EdgeWord.TietzeEq w (EdgeWord.standardWord g) := by
+  obtain ⟨v, hwv, hG⟩ := tietze_to_handle_grouped w h
+  exact hwv.trans (tietze_handle_grouped_to_standard v hG)
+
 end JacobianChallenge.Analysis.Tietze

@@ -207,4 +207,35 @@ theorem bundled_forms_subgap_chart_local (k : ℕ) :
     True :=
   exteriorDerivative_in_chart k
 
+/-! ### Stepwise refinement of the headline -/
+
+/-- **R9 step A (algebra).**  `Ω^k(M)` is a real vector space.  This
+combines `bundled_forms_module` (Phase 1) — the foundational
+algebraic structure. -/
+theorem bundled_forms_algebra (k : ℕ) :
+    ∃ _g : AddCommGroup (Omega (E := E) M k),
+    ∃ _m : Module ℝ (Omega (E := E) M k), True :=
+  bundled_forms_module M k
+
+/-- **R9 step B (operations).**  `Ω^k(M)` admits `d` and `∧` as
+ℝ-linear operations.  Combines Phases 2 and 3. -/
+theorem bundled_forms_operations (k : ℕ) :
+    Nonempty (Omega (E := E) M k →ₗ[ℝ] Omega (E := E) M (k + 1)) ∧
+    Nonempty (Omega (E := E) M k →ₗ[ℝ] Omega (E := E) M k →ₗ[ℝ]
+              Omega (E := E) M (k + k)) :=
+  ⟨bundled_forms_d_linear M k, bundled_forms_wedge_bilinear M k k⟩
+
+/-- **R9 overview, stepwise refinement.**  Combines `bundled_forms_algebra`
+(step A) and `bundled_forms_operations` (step B) into the headline
+tuple. -/
+theorem bundled_forms_overview_via_steps (k : ℕ) :
+    ∃ _g : AddCommGroup (Omega (E := E) M k),
+    ∃ _m : Module ℝ (Omega (E := E) M k),
+    ∃ _d : Omega (E := E) M k →ₗ[ℝ] Omega (E := E) M (k + 1),
+    ∃ _w : Omega (E := E) M k →ₗ[ℝ] Omega (E := E) M k →ₗ[ℝ]
+              Omega (E := E) M (k + k), True := by
+  obtain ⟨g, m, _⟩ := bundled_forms_algebra (E := E) M k
+  obtain ⟨⟨d⟩, ⟨w⟩⟩ := bundled_forms_operations (E := E) M k
+  exact ⟨g, m, d, w, trivial⟩
+
 end JacobianChallenge.Analysis.BundledForms

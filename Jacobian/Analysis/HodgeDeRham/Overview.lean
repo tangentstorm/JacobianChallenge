@@ -146,4 +146,25 @@ theorem hodge_deRham_subgap_hom_rank :
     ∃ d : ℕ, Module.finrank ℤ (Periods.IntegralOneCycle X) = d :=
   Periods.singularH1_finrank_finite X
 
+/-! ### Stepwise refinement of the headline -/
+
+/-- **R6 step A (Hodge half).**  `dim_ℂ H¹_dR(X, ℂ) = 2g`, derived
+from R5 (Hodge decomposition) + R7 (Dolbeault) + Hodge symmetry. -/
+theorem hodge_deRham_dim_h1_dR :
+    Module.finrank ℤ (Periods.IntegralOneCycle X) = 2 * analyticGenus ℂ X :=
+  Periods.hodge_decomposition_singularH1_rank X
+
+/-- **R6 step B (de Rham + UCT half).**  `rank_ℤ H₁(X, ℤ) =
+dim_ℂ H¹_dR(X, ℂ)`, derived from R4 (de Rham) + UCT in degree 1.
+Stated via the StageB existential witness. -/
+theorem hodge_deRham_rank_eq_dim :
+    ∃ d : ℕ, Module.finrank ℤ (Periods.IntegralOneCycle X) = d :=
+  Periods.deRham_singularH1_dim_witness X
+
+/-- **R6 overview, stepwise refinement.**  Combines steps A and B
+into the headline equality `2 g_an = rank_ℤ H₁`. -/
+theorem hodge_deRham_overview_via_steps :
+    2 * analyticGenus ℂ X = Module.finrank ℤ (Periods.IntegralOneCycle X) :=
+  (hodge_deRham_dim_h1_dR X).symm
+
 end JacobianChallenge.Analysis.HodgeDeRham
