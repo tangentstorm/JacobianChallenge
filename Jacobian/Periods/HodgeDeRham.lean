@@ -4,6 +4,7 @@ import Jacobian.Periods.IntegralOneCycleRank
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.FiniteDimensional
 import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Jacobian.HolomorphicForms.HodgeDeRhamRank
 import Mathlib.LinearAlgebra.Dimension.Free
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 
@@ -209,11 +210,9 @@ theorem singularH1_rank_eq_two_analyticGenus_via_dimC
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module.finrank ℤ (IntegralOneCycle X) = 2 * analyticGenus ℂ X := by
-  obtain ⟨g_an, hg⟩ := analyticGenus_witness X
-  have _ := hodge_decomposition_dimC_split X
-  have _ := serre_duality_dimC X
-  rw [← hg]
-  sorry
+  haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+    compactRiemannSurface_finiteDimensionalHolomorphicOneForms X
+  exact (JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1 X).symm
 
 /-- **Round 55 / Stage B leaf (Hodge decomposition reassembly).** -/
 theorem hodge_decomposition_singularH1_rank

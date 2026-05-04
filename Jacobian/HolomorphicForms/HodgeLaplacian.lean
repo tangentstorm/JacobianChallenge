@@ -136,6 +136,8 @@ theorem hodgeLaplacian1_kernel_finite
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module.Finite ℂ (LinearMap.ker (hodgeLaplacian1 X)) := by
-  sorry
+  obtain ⟨e, _⟩ := harmonicEquivLaplacianKernel X
+  haveI : Module.Finite ℂ (HarmonicOneForm X) := analyticHarmonicGenus_finite X
+  exact Module.Finite.equiv e
 
 end JacobianChallenge.HolomorphicForms
