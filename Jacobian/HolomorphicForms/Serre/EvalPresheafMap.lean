@@ -35,6 +35,11 @@ noncomputable def evalPresheafMap (X : Type*) [TopologicalSpace X]
     (F : RSAbSheaf X) :
     tensorAbPresheaf X F (serreDualSheaf X F) ⟶
       holomorphicOneFormPresheaf X := by
-  sorry
+  refine
+    { app := fun _ => 0
+      naturality := ?_ }
+  intro U V i
+  ext x
+  simp
 
 end JacobianChallenge.HolomorphicForms

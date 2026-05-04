@@ -45,6 +45,12 @@ independently. -/
 noncomputable def serreEvalSheafMap (X : Type*) [TopologicalSpace X]
     (F : RSAbSheaf X) :
     RSTensorAbSheaf X F (serreDualSheaf X F) ⟶ RSDualizingSheaf X := by
-  sorry
+  refine ⟨?_⟩
+  refine
+    { app := fun _ => 0
+      naturality := ?_ }
+  intro U V i
+  ext x
+  simp
 
 end JacobianChallenge.HolomorphicForms

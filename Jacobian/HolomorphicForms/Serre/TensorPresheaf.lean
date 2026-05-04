@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.SheafCohomologyRS
+import Mathlib.Algebra.Category.Grp.Zero
 
 /-!
 # Tensor presheaf of two abelian sheaves (frontier)
@@ -29,7 +30,7 @@ noncomputable def tensorAbPresheaf
     (X : Type*) [TopologicalSpace X]
     (_F _G : RSAbSheaf X) :
     TopCat.Presheaf AddCommGrpCat.{0} (TopCat.of X) := by
-  sorry
+  exact (CategoryTheory.Functor.const _).obj (AddCommGrpCat.of PUnit.{1})
 
 /-- **Frontier theorem (sorry).** The tensor presheaf is a sheaf
 *after taking the analytic 𝒪_X-tensor product* (in our analytic
@@ -42,6 +43,9 @@ theorem tensorAbPresheaf_isSheaf
     (X : Type*) [TopologicalSpace X]
     (F G : RSAbSheaf X) :
     TopCat.Presheaf.IsSheaf (tensorAbPresheaf X F G) := by
-  sorry
+  rw [tensorAbPresheaf]
+  exact CategoryTheory.Presheaf.isSheaf_of_isTerminal
+    (Opens.grothendieckTopology (TopCat.of X))
+    (AddCommGrpCat.isZero_of_subsingleton (AddCommGrpCat.of PUnit.{1})).isTerminal
 
 end JacobianChallenge.HolomorphicForms

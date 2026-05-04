@@ -53,9 +53,9 @@ theorem serrePairing_witness_left
       pairing a b ≠ 0 := by
   obtain ⟨α, rfl⟩ := harmonicForms_toH0_surjective X F a
   have hα : harmonicForms_toH0 X F α ≠ 0 := ha
-  obtain ⟨β, hβ⟩ := @harmonicL2Pairing_witness_left.{_, 0, 0} _ _ _ _ _ _ _ _ F _ _ α hα
+  obtain ⟨β, hβ⟩ := harmonicL2Pairing_witness_left X F α hα
   exact ⟨harmonicForms_toH1 X (serreDualSheaf X F) β,
-    by rw [@harmonicL2Pairing_compatible.{_, 0, 0} _ _ _ _ _ _ _ _ F _ _ pairing α β]; exact hβ⟩
+    by rw [harmonicL2Pairing_compatible X F pairing α β]; exact hβ⟩
 
 /-- **Refined (round 13).** "Witness" form of Serre nondegeneracy on
 the right, dual to `serrePairing_witness_left`. -/
@@ -80,10 +80,10 @@ theorem serrePairing_witness_right
   have hβ_ne : harmonicForms_toH1 X (serreDualSheaf X F) β ≠ 0 := hβ ▸ hb
   -- Apply L²-pairing nondegeneracy on the right to obtain a harmonic
   -- witness α whose L²-pairing with β is nonzero.
-  obtain ⟨α, hα⟩ := @harmonicL2Pairing_witness_right.{_, 0, 0} X _ _ _ _ _ _ _ F _ _ β hβ_ne
+  obtain ⟨α, hα⟩ := harmonicL2Pairing_witness_right X F β hβ_ne
   -- Push α down to H⁰ and relate pairings via compatibility.
   exact ⟨harmonicForms_toH0 X F α, by
-    rw [← hβ, @harmonicL2Pairing_compatible.{_, 0, 0} X _ _ _ _ _ _ _ F _ _ pairing α β]
+    rw [← hβ, harmonicL2Pairing_compatible X F pairing α β]
     exact hα⟩
 
 end JacobianChallenge.HolomorphicForms

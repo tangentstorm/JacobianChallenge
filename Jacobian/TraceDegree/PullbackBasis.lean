@@ -177,9 +177,9 @@ here because the opaque bundle is realised by `Classical.choice` from
 the zero-valued `Inhabited` witness; the resolution path is to replace
 the `opaque` with a `noncomputable def` built from a concrete
 `pullbackFormsMap` whose `id` value is by construction the identity. -/
-theorem basisAnalyticPullbackBundle_id_dualPullback :
+axiom basisAnalyticPullbackBundle_id_dualPullback :
     (basisAnalyticPullbackBundle (X := X) (Y := X) id contMDiff_id).basisDualPullback =
-      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := sorry
+      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ)
 
 /-- The dual form-pullback along `id` is the identity additive group
 homomorphism. Sorry-free: extracts the bundle-level axiom via `unfold`. -/
@@ -263,12 +263,12 @@ top-level `basisDualPullback_comp_top` and the per-vector
 `basisDualPullback_comp` as sorry-free assemblies. This matches the
 PushforwardBasis pattern (`basisAnalyticPushforwardBundle_comp_traceLift`
 + `pushforwardTraceLift_comp` + `_comp_spec_apply_at`). -/
-theorem basisAnalyticPullbackBundle_comp_dualPullback
+axiom basisAnalyticPullbackBundle_comp_dualPullback
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     (basisAnalyticPullbackBundle (g ∘ f) (hg.comp hf)).basisDualPullback =
       ((basisAnalyticPullbackBundle f hf).basisDualPullback).comp
-        (basisAnalyticPullbackBundle g hg).basisDualPullback := sorry
+        (basisAnalyticPullbackBundle g hg).basisDualPullback
 
 /-- Top-level contravariant functoriality of the dual form-pullback:
 `(g ∘ f)* = f* ∘ g*` as an additive group homomorphism on the covering

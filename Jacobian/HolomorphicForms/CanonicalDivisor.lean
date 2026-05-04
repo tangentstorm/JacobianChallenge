@@ -1,4 +1,7 @@
 import Jacobian.HolomorphicForms.EulerCharLineBundle
+import Jacobian.HolomorphicForms.Serre.H0CanonicalIdentification
+import Jacobian.HolomorphicForms.H1DualizingSheaf
+import Mathlib.Tactic.Linarith
 
 /-!
 # Canonical divisor degree on a compact Riemann surface
@@ -63,6 +66,61 @@ noncomputable def RSCanonicalDegree
     (X : Type*) [TopologicalSpace X] : ℤ :=
   RSLineBundleDegree.{_, 0} X (RSDualizingSheaf X)
 
+/-- **Frontier sheaf-cohomology computation.** The space of global
+sections of the canonical sheaf has dimension `g`.
+
+Bottom-up content: identify `H⁰(X, K_X)` with the project
+`HolomorphicOneForm ℂ X` carrier defining `RSGenus X`. This is the
+canonical sheaf/global holomorphic 1-form comparison. -/
+theorem canonical_h0_finrank_eq_genus
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
+    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
+    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)] :
+    Module.finrank ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0) = RSGenus X := by
+  rw [LinearEquiv.finrank_eq (h0Canonical_isoHolomorphicOneForm X)]
+  rfl
+
+/-- **Frontier sheaf-cohomology computation.** The first cohomology of
+the canonical sheaf has dimension `1`.
+
+Bottom-up content: Serre duality identifies `H¹(X, K_X)` with the dual
+of `H⁰(X, 𝒪_X)`, and compact connected Riemann surfaces have only
+constant holomorphic functions, so `dim H⁰(X, 𝒪_X)=1`. -/
+theorem canonical_h1_finrank_eq_one
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X] [ConnectedSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
+    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
+    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
+    Module.finrank ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1) = 1 := by
+  exact h1_dualizing_sheaf_one_dim X
+
+/-- **Frontier sheaf-cohomology computation.** The Euler characteristic
+of the canonical sheaf is `g - 1`.
+
+Bottom-up content: `h⁰(K_X) = g` by the holomorphic-one-form definition
+of genus, and `h¹(K_X) = 1` by Serre duality against the structure sheaf
+plus the compact-connected maximum-principle computation
+`H⁰(𝒪_X) ≃ ℂ`. -/
+theorem canonical_eulerCharacteristic_eq_genus_minus_one
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X] [ConnectedSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
+    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
+    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)]
+    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
+    RSEulerCharacteristic X (RSDualizingSheaf X) = (RSGenus X : ℤ) - 1 := by
+  have h0 := canonical_h0_finrank_eq_genus X
+  have h1 := canonical_h1_finrank_eq_one X
+  unfold RSEulerCharacteristic
+  rw [h0, h1]
+  norm_num
+
 /-- **Frontier theorem (sorry).** Degree of the canonical divisor on
 a compact Riemann surface of genus `g`:
 
@@ -90,7 +148,7 @@ The hypothesis `[Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) q)]`
 arguments are required by `euler_char_line_bundle`; they are not
 auto-derivable from `Sheaf.H`'s `AddCommGroup`-only structure. -/
 theorem canonical_degree_eq_two_genus_minus_two
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
@@ -98,6 +156,13 @@ theorem canonical_degree_eq_two_genus_minus_two
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
     RSCanonicalDegree X = 2 * (RSGenus X : ℤ) - 2 := by
-  sorry
+  have hχK := canonical_eulerCharacteristic_eq_genus_minus_one X
+  have hRR :
+      RSEulerCharacteristic X (RSDualizingSheaf X) =
+        RSLineBundleDegree X (RSDualizingSheaf X) + 1 - (RSGenus X : ℤ) :=
+    euler_char_line_bundle X (RSDualizingSheaf X)
+  unfold RSCanonicalDegree
+  rw [hχK] at hRR
+  linarith
 
 end JacobianChallenge.HolomorphicForms

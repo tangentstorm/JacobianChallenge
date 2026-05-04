@@ -61,7 +61,7 @@ isomorphism (`complexDim_deRhamH1_eq_analyticHarmonicGenus` in
 `HodgeStarRS.lean` is currently an `rfl` placeholder; the *real* bridge
 lives here). -/
 theorem complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     complexDimDeRhamH1ℂ X = analyticHarmonicGenus X :=
@@ -75,7 +75,7 @@ the Hodge harmonic decomposition,
 Combines `analyticHarmonicGenus_eq_analyticGenus_add_anti` and
 `analyticAntiGenus_eq_analyticGenus`. Pure `omega` after rewriting. -/
 theorem analyticHarmonicGenus_eq_two_analyticGenus
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
@@ -91,7 +91,7 @@ Combines `complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus` (harmonic
 projection) and `analyticHarmonicGenus_eq_two_analyticGenus`
 (harmonic = holo + anti-holo, conjugation). -/
 theorem complexDimDeRhamH1ℂ_eq_two_analyticGenus
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
@@ -109,7 +109,7 @@ Combines:
 * `complexDimDeRhamH1ℂ_eq_two_analyticGenus` (Hodge decomp + conjugation,
   in this file). -/
 theorem realDimDeRhamH1_eq_two_analyticGenus
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :

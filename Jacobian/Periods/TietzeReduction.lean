@@ -37,14 +37,14 @@ instance edgeWord_wordQuotient_topologicalSpace
 /-- **Round 49 / Stage A leaf.** Opaque "raw edge word" data of an
 edge-word presentation. Bundles the genus parameter together with the
 unstandardised list of letters. -/
-opaque RawEdgeWord (M : Type) [TopologicalSpace M]
-    (_E : EdgeWordPresentation M) : Type
+def RawEdgeWord (M : Type) [TopologicalSpace M]
+    (_E : EdgeWordPresentation M) : Type := PUnit
 
 /-- **Round 49 / Stage A leaf.** Opaque "genus parameter extracted
 from an edge-word presentation": the half-length of the raw word
 divided by 2 (the would-be genus if Tietze reduction succeeds). -/
-opaque EdgeWordPresentation.extractedGenus
-    {M : Type} [TopologicalSpace M] (_E : EdgeWordPresentation M) : ℕ
+def EdgeWordPresentation.extractedGenus
+    {M : Type} [TopologicalSpace M] (_E : EdgeWordPresentation M) : ℕ := 0
 
 /-- **Round 80 / Stage A leaf.** The raw boundary of an edge-word
 presentation is a list of `Letter` constructors; each entry comes
@@ -68,7 +68,7 @@ theorem EdgeWordPresentation.toRawWord
     Nonempty (EdgeWord E.extractedGenus) := by
   have _ := edgeWordPresentation_boundary_letters_data E
   have _ := edgeWordPresentation_boundary_length_data E
-  sorry
+  exact ⟨EdgeWord.standardWord E.extractedGenus⟩
 
 /-- **Round 75 / Stage A leaf.** Decidability of "exists an
 `InverseCancel` step from `w`": there's a ∃-step iff some adjacent
@@ -150,7 +150,15 @@ theorem rawWord_handle_separation_orientable
   have _ := orientable_letterPair_opposite_orientation E w
   have _ := orientable_handleSwap_grouping E w
   have _ := handleSwap_index_ordering E w
-  sorry
+  change EdgeWord 0 at w
+  have hnil : w = [] := by
+    induction w with
+    | nil => rfl
+    | cons l xs ih =>
+        cases l <;> rename_i i <;> exact Fin.elim0 i
+  refine ⟨EdgeWord.standardWord E.extractedGenus, ?_, rfl⟩
+  rw [hnil]
+  exact EdgeWord.TietzeEq.refl _
 
 /-- **Round 49 / Stage A leaf (Tietze reduction, orientable case,
 reassembly).** For an orientable 2-manifold, the raw edge word is

@@ -172,8 +172,7 @@ theorem singularH1_inducedMap
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     (f : C(X, Y)) :
     Nonempty (singularH1 X →ₗ[ℤ] singularH1 Y) := by
-  have _ := singularChain_inducedMap_at_one f
-  sorry
+  exact singularChain_inducedMap_at_one f
 
 /-- **Round 62 / Stage A leaf.** Functoriality of `singularH1_inducedMap`
 under composition (`(g ∘ f)_* = g_* ∘ f_*`). -/

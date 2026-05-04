@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.RiemannRochLowDegree
 import Jacobian.HolomorphicForms.SerreDualityRS
 import Jacobian.HolomorphicForms.Serre.RiemannRochHighFromSerre
+import Mathlib.Tactic.Linarith
 
 /-!
 # Vanishing of `H¹(X, L)` for high-degree line bundles (Serre vanishing)
@@ -81,19 +82,19 @@ theorem riemann_roch_high_degree
     [Module ℂ (RSSheafCohomology X L 1)]
     (h_high : RSLineBundleDegree X L > 2 * (RSGenus X : ℤ) - 2) :
     Module.finrank ℂ (RSSheafCohomology X L 1) = 0 := by
-  -- Round 18 refinement: Serre duality identifies
-  -- `H¹(X, L)` with `H⁰(X, L⁻¹ ⊗ K_X)`. The latter vanishes by
-  -- `riemann_roch_low_degree` since
-  -- `deg(L⁻¹ ⊗ K_X) = 2g − 2 − deg L < 0` by `h_high`.
-  -- The named obligations consumed are
-  -- `riemann_roch_high_degree_via_serre`,
-  -- `RSLineBundleDegree_dual_tensor_canonical`,
-  -- `riemann_roch_low_degree` (existing low-degree vanishing), plus the
-  -- frontier `Module ℂ` instance on the dual cohomology.
-  -- Sorry retained pending universe-level cleanup of the dual-tensor
-  -- chain; the assembly is mathematically complete above the named
-  -- (smaller) obligations.
-  sorry
+  let Ldual : RSLineBundleSheaf X :=
+    RSTensorAbSheaf X (RSLineBundleDual X L) (RSDualizingSheaf X)
+  letI : Module ℂ (RSSheafCohomology X Ldual 0) :=
+    serreDualSheaf_module_H0 X Ldual
+  have hdeg :
+      RSLineBundleDegree X Ldual =
+        2 * (RSGenus X : ℤ) - 2 - RSLineBundleDegree X L := by
+    simpa [Ldual] using RSLineBundleDegree_dual_tensor_canonical X L
+  have hneg : RSLineBundleDegree X Ldual < 0 := by
+    rw [hdeg]
+    linarith
+  rw [riemann_roch_high_degree_via_serre X L]
+  simpa [Ldual] using riemann_roch_low_degree X Ldual hneg
 
 /-- **Corollary (sorry-free).** In the high-degree régime
 `deg L > 2g − 2`, the Euler characteristic equals `h⁰(L)`. Combined

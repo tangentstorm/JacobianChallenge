@@ -103,17 +103,16 @@ lemma h1_has_even_basis
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ g : ℕ, Nonempty (Module.Basis (Fin (2 * g)) ℤ (IntegralOneCycle X)) := by
-  -- Universe-lifted signature: `(X : Type u)` rather than `(X : Type)`. The
-  -- delegation to `h1_has_even_basis_via_surface_classification` (which is
-  -- pinned to `Type 0` via the surface-classification → `singularH1` chain in
-  -- `Jacobian.Periods.TopologicalGenus` / `SurfaceClassification`) only fires
-  -- at `u = 0`. For arbitrary `u`, the proof remains a frontier sorry pending
-  -- a `(M : Type u)` lift of the singular-homology-functor stack on which
-  -- `singularH1` rests. The downstream consumers
-  -- (`h1_free_of_compact_surface`, `h1_basis_of_compact_riemann_surface`,
-  -- `symplectic_basis_of_cycles`) inherit the same frontier sorry through
-  -- this lemma.
-  sorry
+  haveI : Module.Finite ℤ (IntegralOneCycle X) := IntegralOneCycle_finite X
+  haveI : Module.Free ℤ (IntegralOneCycle X) := IntegralOneCycle_torsionFree X
+  haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+    compactRiemannSurface_finiteDimensionalHolomorphicOneForms X
+  refine ⟨analyticGenus ℂ X, ?_⟩
+  let b : Module.Basis (Fin (Module.finrank ℤ (IntegralOneCycle X))) ℤ
+      (IntegralOneCycle X) :=
+    Module.finBasis ℤ (IntegralOneCycle X)
+  exact ⟨b.reindex
+    (finCongr (JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1 X).symm)⟩
 
 /-- **Sub-obligation 1b.** `H₁(X, ℤ)` of a compact connected
 Riemann surface of topological genus `g_top` is free of rank
@@ -198,14 +197,9 @@ theorem hodge_deRham_rank_eq
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) := by
-  -- Universe-lifted signature: `(X : Type u)` rather than `(X : Type)`. The
-  -- bottom-up assembly via
-  -- `JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1`
-  -- (which factors through the Hodge / de Rham / Stokes umbrella in
-  -- `Jacobian.HolomorphicForms.HodgeDeRhamRank`) is pinned to `Type 0`
-  -- throughout. For arbitrary `u` the proof remains a frontier sorry pending
-  -- a `(M : Type u)` lift of that stack.
-  sorry
+  haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+    compactRiemannSurface_finiteDimensionalHolomorphicOneForms X
+  exact JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1 X
 
 /-- **Sub-obligation 2.** The analytic genus equals the topological
 genus for a compact connected Riemann surface. Assembly: applies

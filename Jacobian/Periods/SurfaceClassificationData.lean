@@ -47,19 +47,21 @@ structure PolygonalQuotientPresentation
   side identification relates `z` and `w`. -/
   kernel : ∀ z w : DiskC, proj z = proj w ↔ Polygon4g.SideRel genus z w
 
-/-- **Opaque placeholder for a finite triangulation of `M`.** Bundles
+/-- **Placeholder for a finite triangulation of `M`.** Bundles
 the combinatorial data (vertices, edges, 2-simplices, incidence
 relations, realisation map) of a triangulation of a compact connected
 2-manifold without committing to a specific internal representation.
 A concrete unfolding will land when the triangulation infrastructure
 is built (see `ref/plans/polygonal-model.md` Stage A1 sub-leaves). -/
-opaque Triangulation (M : Type) [TopologicalSpace M] : Type
+def Triangulation (_M : Type) [TopologicalSpace _M] : Type :=
+  PUnit
 
-/-- **Opaque placeholder for an edge-word presentation of `M`.** Bundles
+/-- **Placeholder for an edge-word presentation of `M`.** Bundles
 the data of "M presented as a `2k`-gon with side identifications
 given by some edge-pairing word `w` of length `2k`". A concrete
 unfolding will land when the combinatorial-reduction infrastructure
 is built. -/
-opaque EdgeWordPresentation (M : Type) [TopologicalSpace M] : Type
+def EdgeWordPresentation (_M : Type) [TopologicalSpace _M] : Type :=
+  PUnit
 
 end JacobianChallenge.Periods

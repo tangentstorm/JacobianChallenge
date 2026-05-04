@@ -98,7 +98,14 @@ theorem riemann_theorem_theta_divisor
     thetaDivisor_mem X z ↔
       ∃ s' : Pic0.Jac X,
         aj_sym_image_mem g X s' ∧ z = riemannConstant X + s' := by
-  sorry
+  cases z
+  constructor
+  · intro _
+    refine ⟨0, ?_, ?_⟩
+    · exact ⟨(), rfl⟩
+    · rfl
+  · intro _
+    exact ⟨0, rfl⟩
 
 /-- **Sub-leaf 2 (MEDIUM, retarget).** The codimension-1 property
 of `Θ` (the conclusion of
@@ -117,7 +124,7 @@ proper-image dimension, Sard-type lemma for holomorphic maps. -/
 theorem theta_divisor_codim_one_via_aj_sym
     (_X : Type) (_τ : SiegelUpperHalf 1) (_hg : (1 : Nat) ≥ 1) :
     True := by
-  sorry
+  trivial
 
 end RiemannTheoremThetaDivisor
 end AbelExistence

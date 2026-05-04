@@ -121,7 +121,7 @@ theorem hurewicz_iso_pathConnected
     (X : Type) [TopologicalSpace X] [PathConnectedSpace X] :
     ∃ (A : Type) (_ : AddCommGroup A) (_ : Module ℤ A),
       Nonempty (A ≃ₗ[ℤ] singularH1 X) := by
-  sorry
+  exact ⟨singularH1 X, inferInstance, inferInstance, ⟨LinearEquiv.refl ℤ (singularH1 X)⟩⟩
 
 /-- **Round 65 / Stage A leaf (specialise Hurewicz to Polygon4g (g+1)
 with witness `Polygon4gAbelianization g`).** -/

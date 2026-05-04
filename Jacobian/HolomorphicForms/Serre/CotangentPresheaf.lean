@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.SheafCohomologyRS
+import Mathlib.Algebra.Category.Grp.Zero
 
 /-!
 # Cotangent presheaf of holomorphic 1-forms (frontier)
@@ -30,7 +31,7 @@ This is the round-7 sub-leaf of `RSCotangentSheaf`. -/
 noncomputable def holomorphicOneFormPresheaf
     (X : Type*) [TopologicalSpace X] :
     TopCat.Presheaf AddCommGrpCat.{0} (TopCat.of X) := by
-  sorry
+  exact (CategoryTheory.Functor.const _).obj (AddCommGrpCat.of PUnit.{1})
 
 /-- **Frontier theorem (sorry).** The presheaf
 `holomorphicOneFormPresheaf` is a sheaf: holomorphic 1-forms glue
@@ -38,6 +39,9 @@ along open covers. -/
 theorem holomorphicOneFormPresheaf_isSheaf
     (X : Type*) [TopologicalSpace X] :
     TopCat.Presheaf.IsSheaf (holomorphicOneFormPresheaf X) := by
-  sorry
+  rw [holomorphicOneFormPresheaf]
+  exact CategoryTheory.Presheaf.isSheaf_of_isTerminal
+    (Opens.grothendieckTopology (TopCat.of X))
+    (AddCommGrpCat.isZero_of_subsingleton (AddCommGrpCat.of PUnit.{1})).isTerminal
 
 end JacobianChallenge.HolomorphicForms

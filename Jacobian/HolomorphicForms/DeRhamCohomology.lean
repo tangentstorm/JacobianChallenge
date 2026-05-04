@@ -57,7 +57,7 @@ cohomology group of the smooth manifold `X`, with ℝ-valued differential
 forms. Mathematically `dim_ℝ H¹_dR(X, ℝ)`. Mathlib gap: no de Rham
 complex on manifolds. -/
 noncomputable opaque realDimDeRhamH1
-    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ
 
 /-- **Frontier opaque (ℕ).** Complex dimension of the first de Rham
@@ -67,21 +67,21 @@ real underlying manifold by the universal-coefficient theorem; this
 file states the relation as a frontier theorem rather than a
 definitional identity. -/
 noncomputable opaque complexDimDeRhamH1ℂ
-    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ
 
 /-- **Frontier opaque (ℕ).** Real dimension of the zeroth de Rham
 cohomology group of `X` with ℝ-valued forms. Mathematically equals the
 number of connected components; for a connected manifold this is `1`. -/
 noncomputable opaque realDimDeRhamH0
-    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ
 
 /-- **Frontier opaque (ℕ).** Complex dimension of the zeroth de Rham
 cohomology group of `X` with ℂ-valued forms. Equals the ℂ-dimension of
 locally constant ℂ-valued functions; for a connected `X` this is `1`. -/
 noncomputable opaque complexDimDeRhamH0ℂ
-    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ
 
 -- The real-of-complex de Rham identity has been moved to
@@ -101,7 +101,7 @@ constants is one-dimensional over ℂ.  This factors through Mathlib's
 project as `Jacobian.HolomorphicForms.HolomorphicCompactConstant.lean`),
 adapted to smooth ℂ-valued functions. -/
 theorem complexDim_deRhamH0ℂ_eq_one_of_compact_connected
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     complexDimDeRhamH0ℂ X = 1 := by
@@ -112,7 +112,7 @@ theorem complexDim_deRhamH0ℂ_eq_one_of_compact_connected
 needed for the universal-coefficient bridge that links `H⁰_dR` over ℝ
 to `H₀(X, ℤ) ≅ ℤ`. -/
 theorem realDim_deRhamH0_eq_one_of_compact_connected
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     realDimDeRhamH0 X = 1 := by
