@@ -95,28 +95,26 @@ LEGEND_REPLACE = re.compile(
 INJECTED_STYLE = """
 <style id="depgraph-extras-style">
 /* Compact legend layout — fit the page without scrolling. */
-#Legend {
-  font-size: 0.78em;
-  padding: 0.75em 1em;
-  border: 1px solid #d0d0d0;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  background: white;
-}
+#Legend { font-size: 0.78em; }
 /* Upstream heading is replaced by the details/summary below. */
 #Legend #legend_title { display: none; }
 #Legend details.legend-details > summary {
   cursor: pointer;
-  font-size: 1.05em;
-  font-weight: 600;
+  font-size: 1.3em;
+  font-weight: bold;
   user-select: none;
   list-style: revert;
 }
-#Legend details.legend-details[open] > summary {
-  margin-bottom: 0.4em;
-}
+/* The actual popup: upstream CSS gives `#Legend dl` position:absolute
+   with top:6rem; left:1.5rem so it floats over the graph. Style that
+   floating popup as a card. */
 #Legend dl.legend {
   margin-top: 0.4em;
+  padding: 0.75em 1em;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background: white;
 }
 #Legend dl.legend dt {
   margin-top: 0.25em;
