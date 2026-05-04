@@ -85,7 +85,7 @@ groups, and stating it cleanly requires giving them names.
 
 \begin{theorem}[Serre duality on a compact Riemann surface]
 \label{thm:serre-duality-rs}
-\uses{def:sheaf-cohomology-rs,input:dolbeault}
+\uses{def:sheaf-cohomology-rs,input:dolbeault,lem:serre-pairing-construction,lem:serre-pairing-nondegenerate}
 For an invertible sheaf \(\mathcal{L}\) and the canonical sheaf \(K\),
 \[
   H^{1}(X,\mathcal{L})\cong H^{0}(X,K\otimes\mathcal{L}^{-1})^{\vee}.
@@ -121,7 +121,7 @@ for producing meromorphic functions with prescribed zeros and poles.
 
 \begin{theorem}[Classical input: Dolbeault isomorphism]
 \label{input:dolbeault}
-\uses{def:sheaf-cohomology-rs}
+\uses{def:sheaf-cohomology-rs,lem:dolbeault-fine-resolution,lem:dolbeault-fine-resolution-cohomology}
 For a complex manifold \(X\) and integers \(p,q\geq 0\),
 \[
   H^{p,q}_{\bar\partial}(X)\cong H^{q}(X,\Omega^{p}_{X}).

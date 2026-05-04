@@ -42,19 +42,14 @@ BIG_UMBRELLAS = [
     "input:tietze-normal-form",
     "thm:polygonal-model",
     "thm:serre-duality-rs",
-    # Parallel `gap:R<N>-overview` labels introduced by
-    # tex/sections/12-classical-analysis-gaps.tex — each is the
-    # independent-build umbrella under Jacobian/Analysis/<Node>/.
-    "gap:R1-overview",
-    "gap:R2-overview",
-    "gap:R3-overview",
-    "gap:R4-overview",
-    "gap:R5-overview",
-    "gap:R6-overview",
-    "gap:R7-overview",
-    "gap:R8-overview",
-    "gap:R9-overview",
-    "gap:R10-overview",
+    # New red umbrellas introduced by
+    # tex/sections/12-classical-analysis-gaps.tex when the R5/R7 sub-gaps
+    # `bundled Ω^k` and `Sobolev / elliptic regularity` were promoted to
+    # their own dep-graph nodes.  They are themselves multi-month
+    # mathlib-absent infrastructure pieces, so they get red borders just
+    # like the original eight.
+    "input:bundled-omega-k",
+    "input:sobolev-elliptic-regularity",
 ]
 
 MARKER = "<!-- DEPGRAPH-EXTRAS-INJECTED -->"
