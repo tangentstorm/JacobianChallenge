@@ -219,6 +219,25 @@ on a 2-manifold-with-boundary is in Mathlib, the opaque
 declaration in the Lean code becomes a constructed term.
 \end{layman}
 
+\begin{proofsketch}
+The Lean target \code{JacobianChallenge.Periods.periodPairing} is
+currently exposed as an \code{opaque} declaration in
+\code{Jacobian/Periods/PeriodFunctional.lean} with the signature
+\code{IntegralOneCycle X $\to_+$ (HolomorphicOneForm E X $\to_\C$ \C)},
+since the construction needs (a) multi-chart path integration,
+(b) $\Z$-linearity in the cycle, and (c) descent through the
+boundary $\partial_2$  the period-homology-invariance step. The
+construction is decomposed in
+\code{Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean}
+(rounds 1--12) into the same A/B/C/D sub-leaf tree as
+\ref{lem:period-homology-invariance}: sub-leaf~A
+(chain-level integration via chart-cover lifts), sub-leaf~B
+(holomorphic-form-is-closed), sub-leaf~C (chain-level Stokes), and
+sub-leaf~D (assembly $I \circ \partial_2 = 0$). Once the upstream
+Stokes blocker is discharged, the \code{opaque} is replaced by a
+constructed term whose body composes the four sub-leaves.
+\end{proofsketch}
+
 \subsection{Homology invariance of periods}
 
 \begin{lemma}[Homology invariance of periods]
