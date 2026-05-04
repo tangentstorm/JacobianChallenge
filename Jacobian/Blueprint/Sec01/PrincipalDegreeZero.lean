@@ -2,6 +2,7 @@ import Jacobian.Blueprint.Sec01.PrincipalDivisor
 import Jacobian.Blueprint.Sec01.DivisorDegree
 import Jacobian.Blueprint.Sec01.MeromorphicToCp1
 import Jacobian.Blueprint.Sec02.BranchedDegree
+import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 
 /-! # Blueprint: sub-leaves of `thm:principal-degree-zero`
 
@@ -24,19 +25,17 @@ route bottoms out on `Sec02/BranchedDegree.lean`'s already-scaffolded
 Sub-leaves:
 
 * leaf 1 — `principalDivisor_zero_of_underlying_zero` (SHORT, proved)
-* leaf 2 — `liftToCp1_branchedCoverData` (HARD, `sorry`-bearing,
-  reduces to Sec02 leaf 8 once the holomorphicity hypothesis is wired)
-* leaf 3 — `vanishingOrder_eq_ramificationIndex_at_zero` (HARD,
-  `sorry`-bearing, chart-local Laurent normal form)
-* leaf 4 — `vanishingOrder_eq_neg_ramificationIndex_at_pole` (HARD,
-  `sorry`-bearing, chart-on-`OnePoint ℂ`-at-`∞` normal form)
+* leaf 2 — `liftToCp1_branchedCoverData` (HARD assembly, proved
+  relative to the named `liftToCp1_isHolomorphic` obligation)
+* leaf 3 — `vanishingOrder_eq_ramificationIndex_at_zero` (HARD wrapper,
+  proved relative to `vanishingOrder_eq_mapAnalyticOrderAt_at_zero`)
+* leaf 4 — `vanishingOrder_eq_neg_ramificationIndex_at_pole` (HARD
+  wrapper, proved relative to `vanishingOrder_eq_neg_mapAnalyticOrderAt_at_pole`)
 * leaf 5 — `principalDivisor_support_subset_zeros_union_poles`
-  (MEDIUM, `sorry`-bearing)
-* leaf 6 — `degree_principalDivisor_eq_zeros_minus_poles` (MEDIUM,
-  `sorry`-bearing, Finsupp / fibre algebra above leaves 3, 4, 5)
-* leaf 7 — `principal_degree_zero` (the umbrella, SHORT assembly above
-  the previous leaves; remains `sorry`-bearing until leaves 1, 2, 6
-  land)
+  (MEDIUM assembly, proved relative to leaf 5a)
+* leaf 6 — `degree_principalDivisor_eq_zeros_minus_poles` (MEDIUM
+  Finsupp / fibre algebra assembly above leaves 3, 4, 5, proved)
+* leaf 7 — `principal_degree_zero` (SHORT umbrella assembly, proved)
 
 Imports are deliberately narrow per integrator policy. -/
 
@@ -47,6 +46,7 @@ open scoped OnePoint
 open scoped Topology
 open Filter
 open JacobianChallenge.HolomorphicForms.VanishingOrder
+open JacobianChallenge.HolomorphicForms.HolomorphicMap
 
 /-! ## Sub-leaf #1 (SHORT) — constant-zero case. -/
 
@@ -93,9 +93,9 @@ predicate that feeds `Sec02/BranchedDegree.lean` leaf 8
 
 Body is now a real assembly: delegates to
 `branchedCoverData_of_nonconstant_holomorphic` (Sec02 leaf 8) with
-the continuity hypothesis discharged by `liftToCp1_continuous`. The
-remaining mathematical content lives in those two named obligations
-plus the Mathlib instance `ConnectedSpace (OnePoint ℂ)`. -/
+the holomorphicity hypothesis discharged by `liftToCp1_isHolomorphic`.
+The remaining mathematical content lives in that named obligation plus
+the already-refined Sec02 analytic constructor. -/
 noncomputable def liftToCp1_branchedCoverData
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
@@ -104,17 +104,28 @@ noncomputable def liftToCp1_branchedCoverData
     (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
     (_hholo : True) :
     BranchedCoverData X (OnePoint ℂ) (meromorphicToCp1 X f) := by
-  -- Previously this delegated to the `True`-placeholder version of
-  -- `branchedCoverData_of_nonconstant_holomorphic` in `Sec02/BranchedDegree.lean`.
-  -- That declaration has been refined (now in
-  -- `Sec02/BranchedDegreeFromHolomorphic.lean`) to require a real
-  -- `IsHolomorphic` hypothesis on `meromorphicToCp1 X f` plus
-  -- `PreconnectedSpace (OnePoint ℂ)` etc., none of which are currently
-  -- exposed at this call site.  Until those are threaded through from
-  -- the meromorphic-to-CP¹ side, the leaf-2 body is a single `sorry`.
-  sorry
+  exact branchedCoverData_of_nonconstant_holomorphic
+    (liftToCp1_isHolomorphic X f _hholo) _hf_nonconstant
 
 /-! ## Sub-leaf #3 (HARD) — Laurent order at zeros equals ramification. -/
+
+/-- Analytic core of leaf 3: at a finite zero of the CP¹ lift, the
+vanishing order of the underlying ℂ-projection is the chart-local
+analytic order of the lift.
+
+This removes the `BranchedCoverData` wrapper from the statement; the
+remaining proof is the local Laurent normal form in finite target chart. -/
+theorem vanishingOrder_eq_mapAnalyticOrderAt_at_zero
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X)
+    (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
+    (_hholo : True)
+    (p : X) (_hp : meromorphicToCp1 X f p = ((0 : ℂ) : OnePoint ℂ)) :
+    (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0
+      = (mapAnalyticOrderAt (meromorphicToCp1 X f) p : ℤ) := by
+  sorry
 
 /-- **Sub-leaf #3 of `thm:principal-degree-zero` (plan class: HARD).**
 
@@ -140,9 +151,33 @@ theorem vanishingOrder_eq_ramificationIndex_at_zero
     let h := liftToCp1_branchedCoverData X f hf_nonconstant hholo
     (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0
       = (h.ramificationIndex p : ℤ) := by
-  sorry
+  intro h
+  simpa [h, liftToCp1_branchedCoverData,
+    branchedCoverData_of_nonconstant_holomorphic]
+    using
+      vanishingOrder_eq_mapAnalyticOrderAt_at_zero
+        X f hf_nonconstant hholo p _hp
 
 /-! ## Sub-leaf #4 (HARD) — Laurent order at poles equals minus ramification. -/
+
+/-- Analytic core of leaf 4: at a pole of the CP¹ lift, the vanishing
+order of the underlying ℂ-projection is the negative of the chart-local
+analytic order of the lift.
+
+This removes the `BranchedCoverData` wrapper from the statement; the
+remaining proof is the local Laurent normal form in the inversion chart
+at `∞`. -/
+theorem vanishingOrder_eq_neg_mapAnalyticOrderAt_at_pole
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X)
+    (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
+    (_hholo : True)
+    (p : X) (_hp : meromorphicToCp1 X f p = (∞ : OnePoint ℂ)) :
+    (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0
+      = -(mapAnalyticOrderAt (meromorphicToCp1 X f) p : ℤ) := by
+  sorry
 
 /-- **Sub-leaf #4 of `thm:principal-degree-zero` (plan class: HARD).**
 
@@ -164,7 +199,12 @@ theorem vanishingOrder_eq_neg_ramificationIndex_at_pole
     let h := liftToCp1_branchedCoverData X f hf_nonconstant hholo
     (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0
       = -(h.ramificationIndex p : ℤ) := by
-  sorry
+  intro h
+  simpa [h, liftToCp1_branchedCoverData,
+    branchedCoverData_of_nonconstant_holomorphic]
+    using
+      vanishingOrder_eq_neg_mapAnalyticOrderAt_at_pole
+        X f hf_nonconstant hholo p _hp
 
 /-! ## Sub-leaf #5 (MEDIUM) — support of the principal divisor. -/
 

@@ -205,20 +205,21 @@ theorem rado_assembled_vertex_link_is_circle
 
 /-! ### Phase 4 — realisation homeomorphism -/
 
-/-- **R1.4.1.**  Chart-by-chart maps from `M` to chunks of the geometric
-realisation glue into a continuous map. -/
-theorem rado_chart_homeo_glues_continuous
-    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
-    [IsCombinatorial2Manifold K] :
-    ∃ f : M → Geometric K, Continuous f :=
-  sorry
-
 /-- **R1.4.2.**  The glued continuous map is a bijection. -/
 theorem rado_chart_homeo_glues_bijective
     {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
     [IsCombinatorial2Manifold K] :
     ∃ f : M → Geometric K, Continuous f ∧ Function.Bijective f :=
   sorry
+
+/-- **R1.4.1.**  Chart-by-chart maps from `M` to chunks of the geometric
+realisation glue into a continuous map. -/
+theorem rado_chart_homeo_glues_continuous
+    {V : Type} (K : AbstractSimplicialComplex V) [Finite K]
+    [IsCombinatorial2Manifold K] :
+    ∃ f : M → Geometric K, Continuous f := by
+  obtain ⟨f, hfcont, _hbij⟩ := rado_chart_homeo_glues_bijective M K
+  exact ⟨f, hfcont⟩
 
 /-- **R1.4.3.**  A continuous bijection from a compact space to a
 Hausdorff space is a homeomorphism (Mathlib:
