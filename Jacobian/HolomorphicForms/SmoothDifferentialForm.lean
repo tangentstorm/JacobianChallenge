@@ -118,7 +118,8 @@ theorem ExactForm_le_ClosedForm
     (n : ℕ) (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ExactForm n X ≤ ClosedForm n.succ X := by
-  sorry
+  rw [ExactForm, ClosedForm]
+  exact LinearMap.range_le_ker_iff.mpr (exteriorDerivative_squared_eq_zero n X)
 
 /-- Submodule of exact forms inside closed forms — direct from
 `ExactForm_le_ClosedForm`.  Stated as a name for use as the

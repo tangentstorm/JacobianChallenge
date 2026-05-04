@@ -91,9 +91,24 @@ theorem rawWord_cyclic_reduction
     {g : ℕ} (w : EdgeWord g) :
     ∃ v : EdgeWord g, EdgeWord.WordEq w v ∧
       ∀ x : EdgeWord g, ¬ EdgeWord.InverseCancel v x := by
-  have _ := inverseCancel_step_decidable w
-  have _ := inverseCancel_length_strong_induction w
-  sorry
+  classical
+  change (fun w : EdgeWord g =>
+    ∃ v : EdgeWord g, EdgeWord.WordEq w v ∧
+      ∀ x : EdgeWord g, ¬ EdgeWord.InverseCancel v x) w
+  refine @WellFounded.induction (EdgeWord g)
+    (InvImage (fun m n : ℕ => m < n) (fun w : EdgeWord g => w.length))
+    (InvImage.wf (fun w : EdgeWord g => w.length) (Nat.lt_wfRel).2)
+    (fun w => ∃ v : EdgeWord g, EdgeWord.WordEq w v ∧
+      ∀ x : EdgeWord g, ¬ EdgeWord.InverseCancel v x) w ?_
+  intro w ih
+  by_cases hstep : ∃ x : EdgeWord g, EdgeWord.InverseCancel w x
+  · rcases hstep with ⟨x, hwx⟩
+    have hlen : x.length < w.length := by
+      have h := EdgeWord.InverseCancel.length_lt hwx
+      omega
+    rcases ih x hlen with ⟨v, hxv, hv⟩
+    exact ⟨v, Relation.ReflTransGen.head hwx hxv, hv⟩
+  · exact ⟨w, EdgeWord.WordEq.refl w, fun x hx => hstep ⟨x, hx⟩⟩
 
 /-- **Round 76 / Stage A leaf.** Brahana 2.a: in an orientable surface,
 matched letter-pairs (an `aᵢ` and its `aᵢ⁻¹`, etc.) appear with
@@ -173,6 +188,21 @@ theorem wordQuotient_homeomorph_of_handleSwap_step
     Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
   sorry
 
+/-- **Round 49 / Stage A leaf (single Tietze step, reassembly).**
+Each elementary Tietze step preserves the disk-quotient up to
+homeomorphism, by dispatching to the corresponding one-step geometric
+leaf.
+
+This is the last non-geometric part of quotient invariance: after this
+the only remaining obligations are the two one-step homeomorphism
+constructions, one for inverse cancellation and one for handle swap. -/
+theorem wordQuotient_homeomorph_of_tietzeStep
+    {g : ℕ} {w v : EdgeWord g} (h : EdgeWord.TietzeStep w v) :
+    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
+  cases h with
+  | cancel hc => exact wordQuotient_homeomorph_of_inverseCancel_step hc
+  | swap hs => exact wordQuotient_homeomorph_of_handleSwap_step hs
+
 /-- **Round 49 / Stage A leaf (quotient invariance under Tietze moves,
 reassembly).** Reflexive-transitive closure: chain together
 single-step homeomorphisms via `Relation.ReflTransGen.head_induction_on`
@@ -183,10 +213,12 @@ theorem wordQuotient_homeomorph_of_tietzeEq
   -- Each `EdgeWord.TietzeStep` is either a `cancel` or a `swap` step;
   -- the corresponding leaf produces the homeomorphism. Compose along
   -- the reflexive-transitive closure.
-  have _ := @wordQuotient_homeomorph_of_inverseCancel_step
-  have _ := @wordQuotient_homeomorph_of_handleSwap_step
-  have _ := h
-  sorry
+  refine Relation.ReflTransGen.head_induction_on h ?_ ?_
+  · exact ⟨Homeomorph.refl _⟩
+  · intro _a _b hab _hbc ih
+    obtain ⟨eab⟩ := wordQuotient_homeomorph_of_tietzeStep hab
+    obtain ⟨ebv⟩ := ih
+    exact ⟨eab.trans ebv⟩
 
 /-- **Round 78 / Stage A leaf.** Type-level identification: the
 underlying setoid `wordSetoid g (standardWord g)` equals

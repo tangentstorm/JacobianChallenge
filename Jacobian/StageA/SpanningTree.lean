@@ -76,20 +76,29 @@ theorem tree_edge_addition_creates_unique_cycle
     {T : SimpleGraph V} (_hT : T.IsTree) (_e : Sym2 V) :
     True := sorry
 
-/-! ### DFS / BFS construction -/
+/-! ### Chosen spanning tree -/
 
-/-- A *depth-first search* tree from a root vertex. Implementable as
-a recursive procedure on `Fintype V`; produces a spanning tree
-when `G` is connected. -/
+/-- A noncomputable chosen spanning tree, retaining the old `dfsTree`
+name for downstream API compatibility. An executable DFS/BFS
+implementation can later replace this chooser without changing callers. -/
 noncomputable def dfsTree
     [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
-    (_root : V) : SimpleGraph V := sorry
+    (_root : V) : SimpleGraph V := by
+  classical
+  exact if h : G.Connected then
+    Classical.choose (exists_spanningTree_of_finite_connected G h)
+  else
+    ⊥
 
 /-- The DFS tree is a spanning tree. -/
 theorem dfsTree_isSpanningTree
     [Fintype V] [DecidableEq V] [DecidableRel G.Adj]
     (root : V) (_hConn : G.Connected) :
-    IsSpanningTree G (dfsTree G root) := sorry
+    IsSpanningTree G (dfsTree G root) := by
+  classical
+  unfold dfsTree
+  rw [dif_pos _hConn]
+  exact Classical.choose_spec (exists_spanningTree_of_finite_connected G _hConn)
 
 /-! ### TOPDOWN drill — sub-leaves -/
 

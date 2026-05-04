@@ -1,5 +1,6 @@
 import Jacobian.Periods.TopologicalGenus
 import Jacobian.Periods.IntegralOneCycle
+import Jacobian.Periods.IntegralOneCycleRank
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.FiniteDimensional
 import Jacobian.HolomorphicForms.CompactRiemannSurface
@@ -97,7 +98,7 @@ theorem singularH1_finitelyGenerated_of_compact
   have _ := chainOne_finitelyGenerated_of_triangulation X
   have _ := oneCycles_finitelyGenerated_of_triangulation X
   have _ := singularH1_quotient_finitelyGenerated X
-  sorry
+  exact IntegralOneCycle_finite X
 
 /-- **Round 59 / Stage B leaf.** `Module.finrank ℤ` of the f.g. ℤ-module
 `H₁(M, ℤ)` is well-defined and finite. (A finite-rank witness for
