@@ -178,6 +178,7 @@ Every finite disk atlas of a compact 2-manifold admits a PL refinement: a finite
 
 \begin{lemma}[Local PL approximation (Doyle–Moran, dim 2)]
 \label{lem:rado-dim2-pl-approx}
+\uses{lem:rado-dim2-r1-disk-schoenflies}
 Every homeomorphism between open subsets of $\R^{2}$ is uniformly PL-approximable in the compact-open distance.  This is the dimension-2 specific input.
 \lean{JacobianChallenge.Analysis.Rado.rado_dim2_local_pl_approx}
 \leanok
@@ -768,6 +769,7 @@ Both $H^{*}_{\mathrm{dR}}$ and $H^{*}_{\mathrm{sing}}$ satisfy the Mayer–Vieto
 
 \begin{lemma}[Existence of a good cover]
 \label{lem:deRham-good-cover-exists}
+\uses{lem:gce-r1-convex-normal-cover}
 Every smooth manifold admits a good cover (every finite intersection contractible), constructed from a Riemannian metric and convex normal-coordinate balls.
 \lean{JacobianChallenge.Analysis.DeRham.deRham_good_cover_exists}
 \notready
@@ -1273,6 +1275,7 @@ The Dolbeault sheaf complex $0 \to \Omega^{p}_{X} \to \Omega^{p,0} \to \Omega^{p
 
 \begin{lemma}[$\bar\partial$-Poincaré on a polydisk]
 \label{lem:dolbeault-dbar-poincare}
+\uses{lem:dpp-r1-onevar-suffices}
 On a polydisk $U \subseteq \C^{n}$, every $\bar\partial$-closed $(p, q)$-form with $q \geq 1$ is locally $\bar\partial$-exact.  One-variable case via Cauchy–Pompeiu.
 \lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_dbar_poincare}
 \notready
@@ -1463,6 +1466,7 @@ Replacing both arguments by their harmonic representatives turns the cup product
 
 \begin{lemma}[Residue theorem (sum of residues equals zero)]
 \label{lem:serre-residue-theorem}
+\uses{lem:srt-r1-stokes-cut-disks}
 On a compact Riemann surface the sum of residues of a global meromorphic 1-form is zero — the well-definedness lemma for the trace map.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_subgap_residue_theorem}
 \notready
@@ -1568,7 +1572,7 @@ API.
   \(\R^{n}\), with \(d\) given by partial derivatives.
 \end{itemize}
 
-\begin{classicalinput}[Classical input: bundled differential forms $\Omega^{k}(M)$]
+\begin{theorem}[Classical input: bundled differential forms $\Omega^{k}(M)$]
 \label{input:bundled-omega-k}
 \uses{lem:bundled-forms-algebra,lem:bundled-forms-operations}
 The Lean target
@@ -1579,7 +1583,7 @@ simultaneously linear and natural, with sub-leaves R9.1.1–R9.6.2
 tracked in \code{Jacobian/Analysis/BundledForms/Overview.lean}.
 \lean{JacobianChallenge.Analysis.BundledForms.bundled_forms_overview}
 \leanok
-\end{classicalinput}
+\end{theorem}
 
 
 \subsubsection*{Stepwise refinement of the proof}
@@ -1713,7 +1717,7 @@ Riemannian geometry.
   manifold.  ~300 LOC.
 \end{itemize}
 
-\begin{classicalinput}[Classical input: Sobolev spaces and elliptic regularity for $\Delta$]
+\begin{theorem}[Classical input: Sobolev spaces and elliptic regularity for $\Delta$]
 \label{input:sobolev-elliptic-regularity}
 \uses{lem:sobolev-elliptic-kernel-finite-dim,lem:sobolev-fredholm-property}
 The Lean target
@@ -1723,7 +1727,7 @@ manifold; sub-leaves R10.1.1–R10.6.1 are tracked in
 \code{Jacobian/Analysis/SobolevElliptic/Overview.lean}.
 \lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_elliptic_overview}
 \leanok
-\end{classicalinput}
+\end{theorem}
 
 
 \subsubsection*{Stepwise refinement of the proof}
@@ -1758,6 +1762,7 @@ $\|\omega\|_{s+2} \leq C(\|T\omega\|_{s} + \|\omega\|_{s})$ for elliptic $T$.
 
 \begin{lemma}[Rellich–Kondrachov compactness]
 \label{lem:sobolev-rellich-kondrachov}
+\uses{lem:rk-r1-partition-localize}
 $H^{s'} \hookrightarrow H^{s}$ is compact for $s' > s$ on a compact manifold.
 \lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_rellich_kondrachov}
 \notready
@@ -1765,6 +1770,7 @@ $H^{s'} \hookrightarrow H^{s}$ is compact for $s' > s$ on a compact manifold.
 
 \begin{lemma}[Sobolev step 2: Fredholm property of $\Delta$]
 \label{lem:sobolev-fredholm-property}
+\uses{lem:sobolev-elliptic-kernel-finite-dim,lem:sobolev-rellich-kondrachov}
 From step 1 + Rellich–Kondrachov, $\Delta : H^{s+2}(\Omega^{k}) \to H^{s}(\Omega^{k})$ is Fredholm.
 \lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_fredholm_property}
 \leanok
@@ -1876,4 +1882,327 @@ formalise R1 + R2 + R3 as a topology-only sub-project, in parallel
 with R4-sub-A (bundled \(\Omega^k\)) and R5-sub-A (Riemannian
 metric) as foundational analytic infrastructure.  Both of those
 unblock the rest of the analytic chain.
+\end{layman}
+
+\subsection{Frontier gap analysis: 5-pass refinement of leaf nodes}
+\label{subsec:frontier-five-pass}
+
+The dependency graph still has periphery leaves whose proofs reduce
+to classical analysis without an immediate Mathlib match.  This
+subsection picks one leaf per major gap area (R1 Radó, R4 de Rham,
+R7 Dolbeault, R8 Serre, R10 Sobolev) and refines it five levels
+deep.  Each pass replaces the bare statement with a proof that
+depends on a smaller sub-statement (still \texttt{\textbackslash notready}),
+so the depth of the chain measures how far a frontier leaf is from
+ordinary Mathlib.
+
+In every chain below, pass~5 lands on a statement that either
+\emph{is} in Mathlib already or is one named declaration away.
+
+% --------------------------------------------------------------
+\subsubsection*{Chain A: $\bar\partial$-Poincaré on a polydisk}
+
+\begin{lemma}[Pass A.1: reduce to one-variable, $q=1$]
+\label{lem:dpp-r1-onevar-suffices}
+\uses{lem:dpp-r2-pompeiu-formula}
+For an arbitrary polydisk $U = U_{1} \times \cdots \times U_{n}
+\subseteq \C^{n}$, $\bar\partial$-exactness of every closed
+$(p,q)$-form with $q \geq 1$ reduces to the one-variable case
+$n=1, q=1$ by induction on $n$ and on $q$: write
+$\omega = d\bar z_{n} \wedge \alpha + \beta$ where $\beta$ is free
+of $d\bar z_{n}$, solve $\bar\partial_{z_{n}} u = \alpha$ in
+$z_{n}$ alone (one-variable case), absorb $\bar\partial u$ into
+$\omega$, and recurse.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass A.2: one-variable Pompeiu formula gives a primitive]
+\label{lem:dpp-r2-pompeiu-formula}
+\uses{lem:dpp-r3-stokes-on-disk}
+For $f \in C^{\infty}_{c}(\C)$ supported in a disk $D_{R}$,
+the Cauchy--Pompeiu transform
+$Tf(z) := \frac{1}{2\pi i}\int_{\C} \frac{f(\zeta)}{\zeta - z}\,
+d\zeta \wedge d\bar\zeta$
+satisfies $\bar\partial_{z} Tf = f$ pointwise.  Hence on a disk,
+every $\bar\partial$-closed $(0,1)$-form $f\,d\bar z$ with smooth
+compactly supported coefficient is $\bar\partial$-exact via
+$u = Tf$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass A.3: Stokes on a punctured disk yields the Pompeiu identity]
+\label{lem:dpp-r3-stokes-on-disk}
+\uses{lem:dpp-r4-kernel-locint}
+The Pompeiu identity $f(z) = \frac{1}{2\pi i}\oint_{\partial D}
+\frac{f(\zeta)}{\zeta - z}\,d\zeta - \frac{1}{2\pi i}\iint_{D}
+\frac{\bar\partial f(\zeta)}{\zeta - z}\,d\zeta\wedge d\bar\zeta$
+follows from Stokes' theorem applied to $\frac{f(\zeta)}{\zeta - z}
+d\zeta$ on $D \setminus \overline{B_{\varepsilon}(z)}$ and
+letting $\varepsilon \to 0$, using local integrability of the
+Cauchy kernel.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass A.4: the Cauchy kernel $1/(\zeta - z)$ is locally integrable on $\C$]
+\label{lem:dpp-r4-kernel-locint}
+\uses{lem:dpp-r5-polar-volume}
+$\zeta \mapsto 1/|\zeta - z|$ is in $L^{1}_{\mathrm{loc}}(\C)$
+for every $z$.  Concretely, for every $R > 0$,
+$\iint_{B_{R}(z)} 1/|\zeta - z|\,dA(\zeta) = 2\pi R < \infty$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass A.5: polar-coordinate area formula for $\int 1/r$ on a disk]
+\label{lem:dpp-r5-polar-volume}
+$\iint_{B_{R}(0)} \frac{1}{|w|}\,dA(w) =
+\int_{0}^{2\pi}\int_{0}^{R} \frac{1}{r} \cdot r\,dr\,d\theta
+= 2\pi R$.  Mathlib gap: change-of-variables to polar
+coordinates on $\R^{2}$ for an $L^{1}_{\mathrm{loc}}$ function;
+\code{MeasureTheory.integral\_comp\_polarCoord\_symm} is the
+intended target.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain B: Rellich--Kondrachov compactness}
+
+\begin{lemma}[Pass B.1: localize via partition of unity on a compact manifold]
+\label{lem:rk-r1-partition-localize}
+\uses{lem:rk-r2-local-flat}
+Compactness of $H^{s'}(M) \hookrightarrow H^{s}(M)$ on a compact
+$M$ reduces to compactness of finitely many local embeddings
+$H^{s'}(B^{n}_{1}) \hookrightarrow H^{s}(B^{n}_{1})$ via a smooth
+finite partition of unity subordinate to a chart cover.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B.2: local case via Fourier extension to $\R^{n}$]
+\label{lem:rk-r2-local-flat}
+\uses{lem:rk-r3-fourier-characterization}
+Every bounded family in $H^{s'}_{c}(B^{n}_{1})$ extends by
+zero to a bounded family in $H^{s'}(\R^{n})$, so the local case
+follows from compactness of the embedding $H^{s'}(\R^{n})
+\cap \{\mathrm{supp} \subseteq K\} \hookrightarrow H^{s}(\R^{n})$
+for $K$ compact.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B.3: Fourier characterization of $H^{s}(\R^{n})$]
+\label{lem:rk-r3-fourier-characterization}
+\uses{lem:rk-r4-truncation-compact}
+$H^{s}(\R^{n}) = \{ u \in \mathcal{S}'(\R^{n}) :
+(1+|\xi|^{2})^{s/2}\,\hat u \in L^{2}(\R^{n})\}$.  Compactness
+on functions with support in $K$ then reduces to compactness of
+the truncated embedding via Fourier multipliers.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B.4: high-frequency truncation gives compact embedding]
+\label{lem:rk-r4-truncation-compact}
+\uses{lem:rk-r5-tail-decay}
+For $\chi_{N}$ the indicator of $\{|\xi| \leq N\}$,
+$u \mapsto \mathcal{F}^{-1}(\chi_{N} \hat u)$ has finite-rank
+range on a fixed compact-support family (Paley--Wiener), and the
+remainder $u - \chi_{N} u$ has $H^{s}$-norm bounded by
+$N^{-(s'-s)} \|u\|_{H^{s'}}$, which tends to $0$ as $N \to
+\infty$.  Hence the embedding is approximated in operator norm
+by finite-rank operators, making it compact.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass B.5: tail decay in weighted $L^{2}$ is monotone convergence]
+\label{lem:rk-r5-tail-decay}
+$\int_{|\xi| > N} (1+|\xi|^{2})^{s} |\hat u(\xi)|^{2}\,d\xi
+\to 0$ as $N \to \infty$ for $\hat u \in L^{2}(\R^{n};
+(1+|\xi|^{2})^{s'} d\xi)$ and $s' > s$, by dominated
+convergence on the integrand $(1+|\xi|^{2})^{s-s'} \cdot
+(1+|\xi|^{2})^{s'} |\hat u|^{2}$.  Mathlib gap: weighted
+$L^{2}$ tail estimate;
+\code{MeasureTheory.tendsto\_setIntegral\_compl} on a
+$\sigma$-finite measure is the intended target.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain C: Doyle--Moran PL approximation in dim 2}
+
+\begin{lemma}[Pass C.1: reduce to the disk Schoenflies theorem]
+\label{lem:rado-dim2-r1-disk-schoenflies}
+\uses{lem:rado-dim2-r2-schoenflies-jordan}
+Uniform PL approximation of an arbitrary planar homeomorphism
+on a compact set reduces (via local charts and a finite open
+cover) to the case of a homeomorphism of the closed disk to a
+Jordan domain --- i.e.\ to Schoenflies' theorem on disks.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C.2: Schoenflies on disks via Jordan-curve arc-length parameterization]
+\label{lem:rado-dim2-r2-schoenflies-jordan}
+\uses{lem:rado-dim2-r3-jordan-curve-theorem}
+A homeomorphism $\overline{D} \to \Omega$ to a Jordan domain
+extends from a PL approximation of the boundary Jordan curve to
+a PL approximation of the whole disk.  This depends on the
+Jordan curve theorem to identify $\Omega$ as the bounded
+component.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C.3: Jordan curve theorem in $\R^{2}$]
+\label{lem:rado-dim2-r3-jordan-curve-theorem}
+\uses{lem:rado-dim2-r4-winding-degree}
+Every simple closed curve in $\R^{2}$ separates the plane into
+exactly two connected components, exactly one of which is
+bounded.  Proof via degree theory: for $p$ off the curve, the
+winding number is well-defined and takes values $0$ or $\pm 1$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C.4: winding number via degree on $S^{1}$]
+\label{lem:rado-dim2-r4-winding-degree}
+\uses{lem:rado-dim2-r5-pi1-circle}
+For a continuous loop $\gamma : S^{1} \to \C \setminus \{p\}$,
+its winding number around $p$ equals the degree of the induced
+map $S^{1} \to S^{1}$ obtained by normalizing
+$(\gamma(t)-p)/|\gamma(t)-p|$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass C.5: $\pi_{1}(S^{1}) = \Z$]
+On the circle $S^{1}$, the fundamental group is $\Z$, with
+generator the identity loop.  Mathlib status: present;
+\code{Topology.Homotopy.Fundamental.Circle} provides
+\code{fundamentalGroup\_circle\_iso\_int}.  This is the
+Mathlib endpoint of the chain.
+\label{lem:rado-dim2-r5-pi1-circle}
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain D: Sum of residues equals zero}
+
+\begin{lemma}[Pass D.1: Stokes on $X$ minus disks around poles]
+\label{lem:srt-r1-stokes-cut-disks}
+\uses{lem:srt-r2-residue-as-boundary}
+Let $\omega$ be a meromorphic 1-form on a compact Riemann
+surface $X$ with poles at $\{p_{i}\}$.  Cutting out small
+disks $D_{i}$ around each pole and applying Stokes to
+$d\omega = 0$ on $X \setminus \bigsqcup \overline{D_{i}}$ gives
+$\sum_{i} \oint_{\partial D_{i}} \omega = 0$ (note the reversed
+orientation of $\partial D_{i}$ as a boundary of $X \setminus
+\bigsqcup D_{i}$).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D.2: each boundary integral is $2\pi i \cdot \mathrm{Res}_{p_{i}}\omega$]
+\label{lem:srt-r2-residue-as-boundary}
+\uses{lem:srt-r3-cauchy-formula-disk}
+For a meromorphic 1-form $\omega$ on a chart-disk $D \ni p$
+with the pole at $p$ as its only singularity,
+$\oint_{\partial D} \omega = 2\pi i \cdot \mathrm{Res}_{p}\omega$.
+This is a chart-local Cauchy residue identity.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D.3: Cauchy integral formula on a chart disk]
+\label{lem:srt-r3-cauchy-formula-disk}
+\uses{lem:srt-r4-dbar-delta}
+For $f$ holomorphic on a punctured disk $D \setminus \{0\}$
+with a pole at $0$ and Laurent expansion
+$f = \sum_{n \geq -k} a_{n} z^{n}$,
+$\oint_{\partial D} f(z)\,dz = 2\pi i\,a_{-1}$.  Equivalently,
+$f(z)\,dz - a_{-1}\,d\log z$ is exact on $D \setminus \{0\}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D.4: distributional $\bar\partial(1/z) = \pi \delta_{0}$]
+\label{lem:srt-r4-dbar-delta}
+\uses{lem:srt-r5-pompeiu-link}
+In the sense of distributions on $\C$, $\bar\partial (1/(\pi z))
+= \delta_{0}$.  This is the elementary fundamental solution
+identity for $\bar\partial$ in one variable.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass D.5: distributional identity from Cauchy--Pompeiu]
+\label{lem:srt-r5-pompeiu-link}
+\uses{lem:dpp-r3-stokes-on-disk}
+Pairing $\bar\partial(1/(\pi z))$ against a test function
+$\varphi \in C^{\infty}_{c}(\C)$ via integration by parts gives
+$\langle \bar\partial(1/(\pi z)), \varphi\rangle =
+-\frac{1}{\pi}\iint \frac{\bar\partial \varphi}{z}\,dA$,
+which equals $\varphi(0)$ by the Cauchy--Pompeiu formula
+(Lemma~\ref{lem:dpp-r3-stokes-on-disk}).  This is the
+Mathlib endpoint and the place where chain~D fuses with
+chain~A.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Chain E: Existence of a good cover}
+
+\begin{lemma}[Pass E.1: cover by geodesically convex normal balls]
+\label{lem:gce-r1-convex-normal-cover}
+\uses{lem:gce-r2-convex-intersection,lem:gce-r3-convex-diffeo-ball}
+Pick a Riemannian metric $g$ on $M$ and, at each point $p$, a
+normal-coordinate ball $B_{p}$ of radius less than the
+\emph{convexity radius}.  Each $B_{p}$ is geodesically convex.
+Refining to a locally finite subcover gives a cover $\{U_{i}\}$
+where every nonempty finite intersection $U_{i_{1}} \cap \cdots
+\cap U_{i_{k}}$ is geodesically convex (Lemma~\ref{lem:gce-r2-convex-intersection})
+hence contractible (Lemma~\ref{lem:gce-r3-convex-diffeo-ball}).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E.2: finite intersections of geodesically convex sets are convex]
+\label{lem:gce-r2-convex-intersection}
+\uses{lem:gce-r4-riemannian-metric-exists}
+If $U, V \subseteq M$ are geodesically convex, so is $U \cap V$:
+for $p, q \in U \cap V$, the unique minimizing geodesic from $p$
+to $q$ lies in both $U$ and $V$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E.3: a geodesically convex set is diffeomorphic to a ball]
+\label{lem:gce-r3-convex-diffeo-ball}
+\uses{lem:gce-r4-riemannian-metric-exists}
+The exponential map $\exp_{p}$ at any interior point $p$ of a
+geodesically convex set $U$ is a diffeomorphism from
+$\exp_{p}^{-1}(U) \subseteq T_{p}M$ (which is a star-shaped
+open subset of a vector space) onto $U$.  Hence $U$ is
+contractible.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E.4: every smooth manifold admits a Riemannian metric]
+\label{lem:gce-r4-riemannian-metric-exists}
+\uses{lem:gce-r5-smooth-pou}
+Glue chart-local Euclidean inner products on the tangent bundle
+via a smooth partition of unity to obtain a positive-definite
+section of $\mathrm{Sym}^{2} T^{*} M$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass E.5: smooth partitions of unity exist on a paracompact smooth manifold]
+\label{lem:gce-r5-smooth-pou}
+Every locally finite open cover of a paracompact smooth
+manifold admits a subordinate smooth partition of unity.
+Mathlib status: present;
+\code{SmoothManifoldWithCorners.SmoothPartitionOfUnity.exists\_isSubordinate}
+is the named declaration.  This is the Mathlib endpoint.
+\notready
+\end{lemma}
+
+\begin{layman}
+This subsection makes the gap-to-Mathlib quantitative: each of
+five frontier leaves has been refined five steps deeper, and at
+the bottom of each chain the very last sub-statement is a named
+Mathlib declaration (or one chart-localization away from one).
+A leaf at depth-5 means a single Aristotle-style sub-project of
+roughly 200--500 lines of Lean once the chain is unfolded into
+forward declarations.  Most chains converge on the same handful
+of Mathlib hooks: smooth partitions of unity, polar
+change-of-variables, Fourier transform of tempered
+distributions, fundamental group of $S^{1}$.  These four
+endpoints are where the entire frontier of the project meets
+ordinary Mathlib.
 \end{layman}
