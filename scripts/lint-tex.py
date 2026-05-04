@@ -265,18 +265,48 @@ def lint_file(path: str) -> list[tuple[int, str, str]]:
                              f"\\\\{m.group(1)} on line "
                              f"{line.strip()[:80]!r}"))
 
-    # 7. Non-ASCII characters.  Modern LaTeX accepts UTF-8 by default,
-    # but pdflatex with the project's [T1]{fontenc} + lmodern setup
-    # sometimes mis-encodes (`Kahler` rendered as `K^^Ah^^Eler`).
-    # Flag every line with a non-ASCII byte so the author can decide
-    # case-by-case (some are intentional like Rado / Kahler in prose;
-    # some are accidental from clipboard-pastes that shouldn't be in
-    # commands or labels).
+    # 7a. Non-ASCII characters in the Latin-1 / Latin-Extended /
+    # General-Punctuation range.  pdflatex with [T1]{fontenc} +
+    # lmodern handles these (Rado, Kahler, em-dash, en-dash, smart
+    # quotes).  Informational only.
+    #
+    # 7b. Math/arrow/symbol Unicode (U+2190+, U+2200+, U+2900+,
+    # U+27F0+, U+2A00+, U+2100+ Letterlike, U+1D400+ Math Alphanumeric)
+    # is FATAL outside \code{...} / \texttt{\detokenize{...}} context:
+    # pdflatex aborts with "! LaTeX Error: Unicode character X (U+NNNN)
+    # not set up for use with LaTeX."  Inside \code{...} the
+    # \detokenize neutralizes the chars to bytes that the T1 font
+    # silently passes through.
+    def fatal_codepoint(o: int) -> bool:
+        return (0x2190 <= o <= 0x21FF or  # arrows
+                0x2200 <= o <= 0x22FF or  # math operators
+                0x27F0 <= o <= 0x27FF or  # supplemental arrows-A
+                0x2900 <= o <= 0x297F or  # supplemental arrows-B
+                0x2A00 <= o <= 0x2AFF or  # supplemental math operators
+                0x2100 <= o <= 0x214F or  # letterlike symbols
+                0x1D400 <= o <= 0x1D7FF)  # math alphanumeric
+
+    # Strip \code{...} regions so the FATAL scan ignores Lean
+    # identifiers wrapped in detokenize.
+    code_stripped = re.sub(r"\\code\{[^{}]*\}", "", text)
+    code_stripped_lines = code_stripped.split("\n")
+
     for line_no, line in enumerate(lines, 1):
+        # Map line position in original to stripped (best-effort,
+        # by line index, since strip is line-local).
+        stripped_line = (code_stripped_lines[line_no - 1]
+                         if line_no - 1 < len(code_stripped_lines) else line)
+        # Fatal scan
+        for col, ch in enumerate(stripped_line):
+            o = ord(ch)
+            if o > 127 and fatal_codepoint(o):
+                findings.append((line_no, "fatal-unicode",
+                                 f"U+{o:04X} ({ch!r}) outside \\code{{...}}: "
+                                 f"{stripped_line.strip()[:80]!r}"))
+                break
+        # Informational scan (any non-ASCII)
         for col, ch in enumerate(line):
-            if ord(ch) > 127:
-                # Skip lines we know are intentional prose.
-                # (The rule is informational; downstream can grep.)
+            if ord(ch) > 127 and not fatal_codepoint(ord(ch)):
                 findings.append((line_no, "non-ascii",
                                  f"U+{ord(ch):04X} ({ch!r}) at col {col}: "
                                  f"{line.strip()[:80]!r}"))
