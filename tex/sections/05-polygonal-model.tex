@@ -766,6 +766,23 @@ to pick up periods. With it, the entire Riemann bilinear
 identity falls out by an integration by parts.
 \end{layman}
 
+\begin{proofsketch}
+The Lean target is decomposed (round 1) into 4 sub-leaves in
+\code{Jacobian/Blueprint/Sec03/PrimitiveOnPolygon.lean}, three of which
+are sorry-free real-claim forwarders to the substantive lemmas in
+\code{Jacobian/Periods/PrimitiveOnPolygon.lean}:
+\code{primitive\_on\_polygon\_mk\_injOn} (sub-leaf 1, injectivity on
+\(\mathrm{OpenDisk}\)), \code{primitive\_on\_polygon\_image\_isOpen}
+(sub-leaf 2, openness of the image), and
+\code{primitive\_on\_polygon\_disk\_primitive} (sub-leaf 3, holomorphic
+primitive on the convex disk via Mathlib's Cauchy theorem). The
+fourth, \code{primitive\_on\_polygon\_chart\_pullback}, is the frontier
+obligation: pulling \(\omega\) back along the open-disk chart to a
+\code{DifferentiableOn} function, blocked on the complex-manifold
+structure on \(\mathrm{Polygon4g}(g)\). The headline
+\code{primitive\_on\_polygon} is a sorry-free assembly of the four.
+\end{proofsketch}
+
 \begin{formalizationnote}
 The current formalization splits this lemma into three Aristotle-sized
 sub-leaves, all sorry-free
