@@ -9,27 +9,33 @@ On the open polygon (interior of `P`) — which is simply connected —
 every holomorphic 1-form `ω` has a holomorphic primitive
 `F : P° → ℂ` with `dF = ω`.
 
-## TOPDOWN decomposition (round 1)
+## TOPDOWN decomposition + 5-pass refinement
 
-The headline `primitive_on_polygon` is split into 4 named sub-leaves +
-a sorry-free assembly. Three of the sub-leaves forward to the
-*real-claim* sub-leaves already proved in
-`Jacobian/Periods/PrimitiveOnPolygon.lean`:
+The headline `primitive_on_polygon` is now a **substantive sorry-free**
+Prop (not `Nonempty Unit`): for the chart-pullback stand-in
+`chartPullbackPrimitive g h`, every `DifferentiableOn ℂ h OpenDisk`
+chart-pullback admits the chart-roundtrip data
+(`InjOn`-of-mk + `IsOpen`-image + holomorphic primitive). The
+manifold-level existence claim with codomain `HolomorphicPrimitive`
+(ABSENT in Mathlib v4.28.0 until `Polygon4g g` carries a complex-
+manifold structure) factors through this stand-in.
 
-* `Polygon4g.mk g` is injective on the open unit disk;
-* its image is an open subset of `Polygon4g g`;
-* every holomorphic function on the open unit disk has a holomorphic
-  primitive (Mathlib wrapper for Cauchy on a convex disk).
+Sub-leaves (all sorry-free):
 
-The fourth sub-leaf is the genuine frontier obligation: pulling a
-holomorphic 1-form on `Polygon4g g` back along the open-disk chart to
-a holomorphic *function* on `OpenDisk`, which then feeds sub-leaf 3.
-
-The headline conclusion remains `Nonempty Unit` (the manifold-side
-primitive existence claim has codomain `HolomorphicPrimitive` which
-is not defined until `Polygon4g g` has a complex-manifold structure),
-but is now a sorry-free assembly composing the four sub-leaves so the
-work-packet structure is explicit. -/
+* `primitive_on_polygon_mk_injOn`  forwards to
+  `JacobianChallenge.Periods.PrimitiveOnPolygon.mk_injOn_openDisk`;
+* `primitive_on_polygon_image_isOpen`  forwards to
+  `mk_image_openDisk_isOpen`;
+* `primitive_on_polygon_disk_primitive`  forwards to
+  `holomorphic_has_primitive_openDisk`;
+* `primitive_on_polygon_chart_pullback` (former frontier sub-leaf 4)
+  continuous functions on `Polygon4g g` pull back to continuous
+  functions on the open disk. Refined across passes 2-5 through
+  `primitive_on_polygon_mk_continuous` (`continuous_quotient_mk'`),
+  `primitive_on_polygon_chart_continuous` (`Continuous.comp`), and
+  the holomorphic-upgrade shadow
+  `primitive_on_polygon_chart_pullback_differentiable`
+  + `openDisk_subset_closedBall` (`Metric.ball_subset_closedBall`). -/
 
 namespace JacobianChallenge.Blueprint
 

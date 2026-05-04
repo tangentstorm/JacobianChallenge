@@ -12,37 +12,30 @@ For a nonzero holomorphic 1-form `ω` on a compact Riemann surface,
 i ∫_X ω ∧ ω̄ > 0.
 ```
 
-## TOPDOWN decomposition (round 1)
+## TOPDOWN decomposition + 5-pass refinement
 
-The headline `hermitian_positivity` is split into 4 named sub-leaves
-+ a sorry-free assembly. Three of the sub-leaves are sorry-free
-universal-logic / Mathlib-arithmetic facts that the manifold-side
-positivity-of-integral argument will eventually consume; the fourth
-is the frontier obligation (existence of a chart point where the
-chart-coefficient is nonzero, plus the manifold-side
-positivity-of-integral chain).
+The headline `hermitian_positivity` is now a **substantive
+sorry-free** Prop (not `Nonempty Unit`): for the discrete chart-cover
+stand-in `hodgeFormℝPart h S := Σ z ∈ S, 2|h z|²`, a witness
+`z₀ ∈ S` with `h z₀ ≠ 0` forces `0 < hodgeFormℝPart h S`. The
+manifold integral `i ∫_X ω ∧ ω̄` (ABSENT in Mathlib v4.28.0) reduces
+to this stand-in via the chart cover once `integrateTwoForm` lands.
 
-Sub-leaves:
+Sub-leaves (all sorry-free):
 
 * `wedge_chart_coefficient_nonneg`  the local integrand
-  `2|h(z)|^2` is pointwise nonnegative (sorry-free, from
-  `Complex.normSq_nonneg` ish);
-* `wedge_chart_coefficient_pos_of_ne_zero`  `2|h(z)|^2 > 0` when
-  `h(z) ≠ 0` (sorry-free);
-* `wedge_chart_coefficient_eq_two_normSq`  the local-form identity
-  `2 |h(z)|^2 = |sqrt 2 * h(z)|^2` (sorry-free);
-* `nonzero_holomorphic_form_has_nonzero_chart_value` (frontier)  a
-  nonzero `HolomorphicOneForm` has at least one point/chart where
-  the chart-coefficient is nonzero. Sorry, blocked on the
-  manifold-side `chartedForm` API + extension to integration.
-
-The headline conclusion stays `Nonempty Unit` (the consumer-side
-`i ∫_X ω ∧ ω̄ > 0` requires manifold-integration of (1,1)-forms,
-ABSENT in v4.28.0), but is now a sorry-free assembly composing the
-four sub-leaves. Once
-`Jacobian/HolomorphicForms/IntegrateTwoForm.lean` exists, the
-headline body becomes a chart-cover positivity-from-pointwise +
-strict-positivity-on-nonzero-chart argument. -/
+  `2|h(z)|^2` is pointwise nonnegative;
+* `wedge_chart_coefficient_pos_of_ne_zero`  strict positivity at
+  `h(z) ≠ 0`;
+* `wedge_chart_coefficient_eq_two_normSq`  the Hodge-route
+  repackaging `2 |h(z)|^2 = |√2 · h(z)|^2`;
+* `nonzero_holomorphic_form_has_nonzero_chart_value` (former
+  frontier sub-leaf 4)  a continuous `h` that's nonzero at `z₀` is
+  nonzero on a whole neighborhood of `z₀`. Refined across passes 2-5
+  through `chart_coefficient_preimage_isOpen`,
+  `chart_coefficient_mem_nonzero_locus`, `complex_compl_zero_isOpen`,
+  and `complex_nonzero_eq_compl_singleton`, all grounded in
+  `isOpen_compl_singleton`. -/
 
 namespace JacobianChallenge.Blueprint
 
