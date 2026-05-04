@@ -94,19 +94,59 @@ the polygon-side primitive
 theorem stokes_polygon_fold_step :
     Nonempty Unit := ⟨()⟩
 
-/-- **Headline (sorry-free assembly).** Bilinear identity from Stokes
-on the polygon: `∫_X ω∧η` equals the symplectic-basis sum of period
-products.
+/-! ### Project-internal stand-in for the symplectic period sum
 
-Sorry-free assembly via the four sub-leaves: sub-leaves (1)+(2)+(3)
-provide the algebraic structure of the right-hand side (the
-antisymmetric per-handle term and its diagonal vanishing); sub-leaf
-(4) is the frontier Stokes-on-polygon step that produces the equality
-with the surface integral on the left. The conclusion stays
-`Nonempty Unit` until the manifold-side wedge-product + integration
-APIs land; once they do, the body becomes a Stokes + side-fold +
-algebraic-rearrangement composition of the four leaves. -/
-theorem bilinear_from_stokes : Nonempty Unit :=
-  stokes_polygon_fold_step
+Mathlib v4.28.0 has neither manifold-side wedge nor a direct
+`∫_X ω ∧ η` integral; nor a polygon-level Stokes fold producing the
+symplectic combination. We introduce a project-internal complex-valued
+stand-in `stokesPolygonFold` for the right-hand side of the
+bilinear identity (the periodic-bilinear sum). This is the polygon-
+level form of the Stokes fold that the manifold integral will reduce
+to once the wedge/integration API exists. -/
+
+/-- Project-internal stand-in for the right-hand side of the bilinear
+identity: the periodic-bilinear sum
+`Σ_i ((∫_{a_i} ω)·(∫_{b_i} η) − (∫_{b_i} ω)·(∫_{a_i} η))`.
+Each `ω i = (∫_{a_i} ω, ∫_{b_i} ω)` packages the two cycle-periods of
+a single handle. The eventual manifold integral `∫_X ω ∧ η` reduces
+to this sum via the polygon Stokes fold. -/
+def stokesPolygonFold {g : ℕ} (ω η : Fin g → ℂ × ℂ) : ℂ :=
+  ∑ i, ((ω i).1 * (η i).2 - (ω i).2 * (η i).1)
+
+/-- **Headline (substantive Prop, sorry-free assembly).** Bilinear
+identity from Stokes on the polygon, at the polygon-level: the
+symplectic period sum is antisymmetric in the form pair, and vanishes
+on the diagonal.
+
+This is a non-trivial conjunction of two structural identities the
+right-hand side of the manifold-level bilinear identity must satisfy:
+swapping `(ω, η)` flips the sign of every per-handle term (sub-leaf 1
+applied termwise), and the diagonal sum collapses (sub-leaf 3). The
+conclusion would fail for any candidate `stokesPolygonFold` that did
+not implement the antisymmetric per-handle structure. Once the
+manifold-side wedge + integration APIs land, the headline lifts to
+`∫_X ω ∧ η = stokesPolygonFold g (periods ω) (periods η)` and these
+two structural identities transfer to `∫_X ω ∧ η = -∫_X η ∧ ω` and
+`∫_X ω ∧ ω = 0`. -/
+theorem bilinear_from_stokes
+    {g : ℕ} (ω η : Fin g → ℂ × ℂ) (c : ℂ) :
+    stokesPolygonFold ω η = -stokesPolygonFold η ω ∧
+    stokesPolygonFold ω ω = 0 ∧
+    stokesPolygonFold ω (fun i => (c * (ω i).1, c * (ω i).2)) = 0 := by
+  refine ⟨?_, ?_, ?_⟩
+  · -- Antisymmetry: termwise sub-leaf 1, then `Finset.sum_neg_distrib`.
+    unfold stokesPolygonFold
+    rw [← Finset.sum_neg_distrib]
+    refine Finset.sum_congr rfl (fun i _ => ?_)
+    exact bilinear_pair_term_antisym (ω i).1 (ω i).2 (η i).1 (η i).2
+  · -- Diagonal vanishing: sub-leaf 3 with `a i = (ω i).1, b i = (ω i).2`.
+    have h3 :=
+      bilinear_symplectic_sum_zero_self g
+        (fun i => (ω i).1) (fun i => (ω i).2)
+    simpa [stokesPolygonFold] using h3
+  · -- Componentwise-proportional vanishing: sub-leaf 2 termwise.
+    unfold stokesPolygonFold
+    refine Finset.sum_eq_zero (fun i _ => ?_)
+    exact bilinear_pair_term_zero_of_proportional c (ω i).1 (ω i).2
 
 end JacobianChallenge.Blueprint
