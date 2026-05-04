@@ -5,6 +5,7 @@ import Mathlib.Topology.Homotopy.Equiv
 import Mathlib.Topology.Homotopy.Contractible
 import Mathlib.Algebra.Homology.HomotopyCategory
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
+import Jacobian.StageA.SingularSimplexCore
 import Jacobian.Periods.TopologicalGenus
 import Jacobian.Periods.SurfaceClassification
 
@@ -39,14 +40,12 @@ universe u
 
 variable {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
 
-/-! ### Affine simplices and the standard simplex -/
+/-! ### Affine simplices and the standard simplex
 
-/-- The standard topological `n`-simplex `Δⁿ ⊆ ℝ^{n+1}`. -/
-noncomputable abbrev stdSimplex (n : ℕ) : TopCat := SimplexCategory.toTop.obj (.mk n)
-
-/-- A singular `n`-simplex in `X`: a continuous map `Δⁿ → X`. -/
-noncomputable def SingularSimplex (X : Type) [TopologicalSpace X] (n : ℕ) : Type :=
-  C(stdSimplex n, X)
+`stdSimplex` and `SingularSimplex` are now defined in
+`Jacobian.StageA.SingularSimplexCore` (so that `R4 / Analysis.DeRham` can
+import them without dragging in `Periods.*`).  They are re-exported here
+through the `import` above. -/
 
 /-! ### Prism subdivision -/
 
