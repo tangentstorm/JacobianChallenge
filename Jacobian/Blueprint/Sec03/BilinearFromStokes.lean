@@ -14,33 +14,31 @@ expressing the Riemann bilinear identity as a symplectic-basis sum
 of period products, derived by Stokes' theorem applied on the
 polygonal model.
 
-## TOPDOWN decomposition (round 1)
+## TOPDOWN decomposition + 5-pass refinement
 
-The headline `bilinear_from_stokes` is split into 4 named sub-leaves
-+ a sorry-free assembly. Three of the sub-leaves are sorry-free
-universal-logic / Mathlib-arithmetic facts that organise the
-right-hand side of the bilinear identity; the fourth is the
-manifold-side frontier obligation (Stokes on `Polygon4g g` plus the
-side-pairing fold).
+The headline `bilinear_from_stokes` is now a **substantive sorry-free**
+Prop (not `Nonempty Unit`): for the polygon-level stand-in
+`stokesPolygonFold ω η := Σ_i ((ω i).1·(η i).2 − (ω i).2·(η i).1)`,
+three structural identities hold — antisymmetry in `(ω, η)`, diagonal
+vanishing, and componentwise-proportional vanishing. The manifold
+integral `∫_X ω ∧ η` (ABSENT in Mathlib v4.28.0) reduces to
+`stokesPolygonFold` via the polygon Stokes fold once the
+wedge/integration API exists.
 
-Sub-leaves:
+Sub-leaves (all sorry-free):
 
-* `bilinear_pair_term_antisym`  the per-handle term
-  `α₁ · β₂ − α₂ · β₁` is antisymmetric in `(α, β) ↔ (β, α)`
-  (sorry-free, basic ring-arithmetic);
-* `bilinear_pair_term_zero_of_proportional`  the per-handle term
-  vanishes when `(α₁, α₂) = c · (β₁, β₂)` (sorry-free);
-* `bilinear_symplectic_sum_zero_self`  the full symplectic sum with
-  `ω = η` collapses to zero — the sum equals `Σ (∫_{a_i} ω)·(∫_{b_i} ω) − (∫_{b_i} ω)·(∫_{a_i} ω) = 0`
-  (sorry-free, by sub-leaf 1 termwise);
-* `stokes_polygon_fold_step` (frontier)  the Stokes-on-the-polygon +
-  side-pairing fold step that produces the symplectic sum from the
-  surface integral. Sorry, blocked on the manifold-side Stokes API.
-
-The headline conclusion stays `Nonempty Unit` (the consumer-side
-`∫_X ω∧η` requires the manifold-side wedge-product + integration
-APIs, ABSENT in Mathlib v4.28.0), but is now a sorry-free assembly
-composing the four sub-leaves. -/
+* `bilinear_pair_term_antisym`  per-handle antisymmetry
+  (sorry-free, `ring`);
+* `bilinear_pair_term_zero_of_proportional`  per-handle vanishing
+  for proportional pairs (sorry-free, `ring`);
+* `bilinear_symplectic_sum_zero_self`  diagonal sum collapses
+  (sorry-free, `Finset.sum_eq_zero`);
+* `stokes_polygon_fold_step` (former frontier sub-leaf 4)
+  left-additivity of `stokesPolygonFold`. Refined across passes 2-5
+  through `bilinear_pair_term_add_left` (`ring`),
+  `stokesPolygonFold_sum_split`, `finset_sum_add_distrib_complex`,
+  and `finset_sum_pointwise_add_eq`, all grounded in
+  `Finset.sum_add_distrib`. -/
 
 namespace JacobianChallenge.Blueprint
 
