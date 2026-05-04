@@ -2,6 +2,7 @@ import Jacobian.Analysis.SobolevElliptic.Overview
 import Jacobian.Analysis.SobolevElliptic.ModelSymbol
 import Jacobian.Analysis.SobolevElliptic.AbstractFredholmResolvent
 import Jacobian.Analysis.SobolevElliptic.AbstractResolvent
+import Jacobian.Analysis.SobolevElliptic.HeadlinePlugIn
 
 /-!
 # R10 — Sobolev / elliptic regularity (umbrella module)
