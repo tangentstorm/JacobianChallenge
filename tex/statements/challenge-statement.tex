@@ -1,0 +1,286 @@
+% Direct statement of the Jacobian Challenge.
+%
+% The blocks here are the informal counterparts of the public Lean
+% obligations in `Jacobian/Challenge.lean`. They fix the genus, the
+% Jacobian, the Abel-Jacobi map, the degree, pushforward/pullback, and
+% the four anti-hack theorems that the formalization must discharge.
+% Internal helper statements (period pairing, period lattice, trace on
+% one-forms, etc.) live in the Statement Bank that follows.
+
+Throughout, \(X\) is a compact connected Riemann surface, i.e.\ a
+nonempty compact connected Hausdorff space carrying an analytic complex
+manifold atlas (\code{ChartedSpace ℂ X} together with
+\code{IsManifold 𝓘(ℂ) ω X} in the Lean target). The challenge fixes
+six pieces of data and four anti-hack theorems on top of that setup.
+
+\subsection*{Genus}
+
+\begin{definition}[Analytic genus]
+\label{def:analytic-genus}
+For a compact connected Riemann surface \(X\), define
+\[
+  g(X) := \dim_{\C} H^{0}(X,\Omega^{1}_{X}).
+\]
+\lean{JacobianChallenge.HolomorphicForms.analyticGenus}
+\leanok
+\proofplan
+Instantiate finite-dimensionality of \(H^0(X,\Omega_X^1)\) from the Sec02 chain:
+sup norm \(\to\) compact unit ball (Montel) \(\to\) Riesz theorem; then define
+\(g(X)\) by `FiniteDimensional.finrank`.
+\end{definition}
+
+\begin{layman}
+The \emph{analytic genus} of a compact Riemann surface is the complex
+dimension of the space of global holomorphic 1-forms on it. The
+finite-dimensionality theorem (Section 2) makes this an honest natural
+number. By the genus-zero classification below, this number also matches
+the topological genus — the count of handles you'd see if you held the
+surface in your hands. The sphere has analytic genus 0, the donut has 1,
+the two-handled pretzel has 2, and so on. Why bother? Genus is the
+single most important invariant in Riemann surface theory. The whole
+challenge revolves around tying the analytic definition (vector-space
+dimension) to the topological one (number of handles), and the bridge
+between them is forged by Riemann–Roch.
+\end{layman}
+
+\begin{theorem}[Genus-zero classification]
+\label{thm:genus-zero-classification}
+\uses{input:riemann-roch,prop:genus-zero-degree-one-map,input:degree-one-isomorphism,def:analytic-genus,thm:analytic-eq-topological-genus}
+For a compact connected Riemann surface \(X\),
+\[
+  g(X)=0 \quad\Longleftrightarrow\quad X \cong_{\mathrm{homeo}} \Sphere .
+\]
+\lean{genus_eq_zero_iff_homeo}
+\leanok
+\proofplan
+\(\Rightarrow\): use Riemann--Roch at genus \(0\) to build degree-one meromorphic map
+to \(\mathbf{P}^1\), then classify degree-one maps as homeomorphisms.
+\(\Leftarrow\): compute holomorphic one-forms on the sphere as zero.
+\end{theorem}
+
+\begin{layman}
+This is the first anti-hack theorem of the challenge: the analytic
+genus of a compact Riemann surface is zero if and only if the surface
+is homeomorphic to the topological sphere. Forward direction: genus
+zero produces a degree-one meromorphic function, which is a
+biholomorphism onto the Riemann sphere, which is homeomorphic to the
+2-sphere. Reverse direction: a homeomorphism with the sphere makes
+the topological genus zero, and the comparison theorem identifies
+analytic and topological genus, giving analytic genus zero. Why
+bother? It forbids the trivial fake construction
+``\code{genus X := 0}.'' The genus has to actually equal the
+topological genus — ruling out any constant function pretending to be
+genus. Without this anchor, all the challenge's anti-hacks would be
+wide open.
+\end{layman}
+
+\subsection*{The Jacobian}
+
+\begin{definition}[Analytic Jacobian]
+\label{def:analytic-jacobian}
+\uses{thm:period-lattice,prop:complex-torus-package,def:analytic-genus}
+The Jacobian of \(X\) is the complex torus
+\[
+  \Jac(X) := \HdualX / \periods_X ,
+\]
+where \(\periods_X\) is the period lattice of Theorem~\ref{thm:period-lattice}.
+The challenge requires \(\Jac(X)\) to carry, simultaneously, the
+structures of an additive commutative group, a Hausdorff compact
+topological space, a complex manifold of complex dimension \(g(X)\), and
+a complex Lie additive group on that manifold structure.
+\lean{Jacobian}
+\leanok
+\proofplan
+Use period lattice theorem + complex torus quotient package to construct
+\(\HdualX/\periods_X\) with additive, topological, and manifold structures, and
+to install all the \code{AddCommGroup}/\code{TopologicalSpace}/\code{T2Space}/\code{CompactSpace}/\code{ChartedSpace}/\code{IsManifold}/\code{LieAddGroup}
+instances required by \code{Jacobian/Challenge.lean}.
+\end{definition}
+
+\begin{layman}
+The \emph{Jacobian} of a compact Riemann surface is the quotient: take
+the dual of the holomorphic 1-forms (a finite-dimensional complex
+vector space), mod out by the period lattice (a full discrete grid),
+and the result is a compact complex torus — a higher-dimensional
+generalization of an ordinary donut. Why bother? This is the central
+object of the challenge. Every theorem in the public API is about the
+Jacobian or about maps into and out of it. The construction inherits
+all the structural goodness of the complex-torus package — addition,
+compactness, holomorphic atlas, Lie group structure — for free, just
+by plugging in the dual space and the period lattice. The compact
+complex Lie group structure on \(\Jac(X)\) is itself an anti-hack: any
+construction that fails to deliver every layer (group, topology,
+manifold, Lie) is rejected.
+\end{layman}
+
+\subsection*{The Abel--Jacobi map}
+
+\begin{definition}[Abel-Jacobi map]
+\label{def:abel-jacobi}
+\uses{def:analytic-jacobian,lem:aj-path-independence}
+For \(P\in X\), define
+\[
+  \AJ_P(Q) :=
+    \left[ \omega \mapsto \int_{P}^{Q}\omega \right] \in \Jac(X),
+\]
+where the path is arbitrary and the class is taken modulo periods. The
+challenge requires \(\AJ_P\) to be holomorphic and to send \(P\) to the
+identity element of \(\Jac(X)\).
+\lean{Jacobian.ofCurve}
+\leanok
+\proofplan
+Define by integrating forms from \(P\) to \(Q\); prove path-independence modulo
+period lattice, then descend to Jacobian quotient class. Holomorphicity is
+\code{Jacobian.ofCurve_contMDiff}; the identity-at-base-point obligation is
+\code{Jacobian.ofCurve_self}.
+\end{definition}
+
+\begin{layman}
+Pick a base point on the surface. The \emph{Abel–Jacobi} map sends
+any other point to the class in the Jacobian represented by ``integrate
+every holomorphic 1-form along a path from base to here.'' Different
+paths give answers differing by periods, but the period lattice is
+exactly what the Jacobian quotients out, so the class doesn't depend
+on which path you chose. The result is a holomorphic map from the
+surface into its own Jacobian, sending the base point to zero. Why
+bother? This is the central comparison map between the surface and
+its Jacobian. It's holomorphic, and (crucially, on positive-genus
+surfaces) it's injective — so the surface sits inside its Jacobian as a
+genuine curve rather than collapsing to a point.
+\end{layman}
+
+\begin{theorem}[Abel-Jacobi theorem, point-separation form]
+\label{thm:abel-jacobi-injective}
+\uses{def:abel-jacobi,input:abel-theorem}
+If \(g(X)>0\), then \(\AJ_P : X\to \Jac(X)\) is injective.
+\lean{Jacobian.ofCurve_inj}
+\leanok
+\proofplan
+Reduce equality of Jacobian classes to vanishing of all period functionals and
+invoke Abel point-separation (Abel theorem input).
+\end{theorem}
+
+\begin{layman}
+On a compact Riemann surface of positive genus, the Abel–Jacobi map is
+\emph{injective}: distinct points on the surface go to distinct points
+in the Jacobian. This is the second anti-hack theorem of the
+challenge. The proof chain (worked out in detail in Section~8):
+equality of Abel–Jacobi images forces a principal divisor of the form
+``one point minus another,'' which gives a degree-one map to the
+Riemann sphere, which forces the surface to be the sphere — but the
+sphere has genus zero, contradiction. Why bother? Injectivity rules
+out trivial fake Jacobians like ``\code{Jacobian X := PUnit}''
+(which would collapse all points to one) or any other construction
+that fails to actually distinguish the surface's points. The genuine
+compact-complex-Lie-group structure on the Jacobian, plus
+point-separation, forces the construction to be honest.
+\end{layman}
+
+\subsection*{Degree, pushforward, and pullback}
+
+\begin{definition}[Degree and trace]
+\label{def:degree-trace}
+\uses{lem:pullback-forms,lem:trace-forms,def:branched-degree,thm:branched-degree-well-defined}
+For a holomorphic map \(f:X\to Y\), define \(\deg(f)\) to be \(0\) if
+\(f\) is constant and otherwise the topological degree of the associated
+branched covering. For nonconstant \(f\), define the trace on one-forms
+\[
+  \tr_f : H^{0}(X,\Omega^{1}_{X}) \to H^{0}(Y,\Omega^{1}_{Y})
+\]
+by summing local inverse branches away from the branch locus and extending
+holomorphically. Only \(\deg(f)\) is exposed in the public API
+(\code{ContMDiff.degree}); the trace is internal infrastructure used to
+build the pushforward map below.
+\lean{ContMDiff.degree, JacobianChallenge.TraceDegree.pullbackFormsLinearMap}
+\leanok
+\proofplan
+Define degree by constant/nonconstant split; define trace by summing inverse
+branches off branch locus and extending holomorphically across it.
+\end{definition}
+
+\begin{layman}
+Two operations associated to a holomorphic map between compact Riemann
+surfaces. The \emph{degree} counts how many times the map covers its
+target — zero if the map is constant; otherwise the size of a generic
+fiber, with multiplicities at branch points. The \emph{trace on
+1-forms} is the natural way to push a holomorphic 1-form on the source
+down to a holomorphic 1-form on the target, by summing over local
+inverse branches and extending holomorphically across the branch
+locus. Both are core ingredients of the push-pull machinery the
+challenge demands. Why bother? Degree is the ``size'' of a
+holomorphic map; trace is the natural pushforward operation on
+1-forms. Together with pullback, they assemble into the
+pushforward-pullback identity below, which forces the right
+interaction between push, pull, and degree on Jacobians.
+\end{layman}
+
+\begin{theorem}[Functoriality and holomorphicity of induced Jacobian maps]
+\label{thm:push-pull-functoriality}
+\uses{lem:push-pull-descend}
+For every holomorphic map \(f : X \to Y\) of compact connected Riemann
+surfaces, the induced maps
+\[
+  f_{*} : \Jac(X) \to \Jac(Y),\qquad
+  f^{*} : \Jac(Y) \to \Jac(X)
+\]
+are holomorphic continuous group homomorphisms. They satisfy the
+identity and composition laws
+\[
+  (\mathrm{id})_*=\mathrm{id},\qquad (g\circ f)_*=g_*\circ f_*,
+\]
+\[
+  (\mathrm{id})^{*}=\mathrm{id},\qquad (g\circ f)^{*}=f^{*}\circ g^{*}.
+\]
+\lean{Jacobian.pushforward, Jacobian.pullback, Jacobian.pushforward_contMDiff, Jacobian.pushforward_id_apply, Jacobian.pushforward_comp_apply, Jacobian.pullback_contMDiff, Jacobian.pullback_id_apply, Jacobian.pullback_comp_apply}
+\leanok
+\proofplan
+Construct descended maps from linear maps on \(\HdualX\), prove they preserve
+period lattice, then establish holomorphicity and identity/composition laws.
+\end{theorem}
+
+\begin{layman}
+The maps induced on Jacobians by holomorphic maps between Riemann
+surfaces are well-behaved: they are holomorphic group homomorphisms,
+they take the identity map of a surface to the identity map of its
+Jacobian, and they compose correctly under composition of holomorphic
+maps. The pullback reverses arrow direction (target to source); the
+pushforward respects arrow direction (source to target). It's
+``functoriality'' in the categorical sense: the assignment
+``Riemann surface'' \(\mapsto\) ``Jacobian'' is a functor — both
+contravariantly (via pullback) and covariantly (via pushforward).
+Why bother? Without functoriality, the push-pull operations would be
+ad-hoc and could be gamed; with it, they're forced to behave like
+genuine geometric pushforwards and pullbacks. The challenge's API
+requires this exact set of compatibility laws.
+\end{layman}
+
+\begin{theorem}[Pushforward-pullback identity]
+\label{thm:pushforward-pullback}
+\uses{thm:trace-pullback,lem:push-pull-descend}
+For every \(P\in\Jac(Y)\),
+\[
+  f_{*}(f^{*}P)=\deg(f)\,P.
+\]
+\lean{Jacobian.pushforward_pullback}
+\leanok
+\proofplan
+Descend the trace-pullback identity from one-forms to Jacobian quotient classes
+and transport through the pushforward/pullback descent maps.
+\end{theorem}
+
+\begin{layman}
+The fourth anti-hack theorem of the challenge. For any holomorphic
+map between compact Riemann surfaces and any element of the target
+Jacobian, applying pullback (to get an element of the source
+Jacobian) and then pushforward (to get back to the target Jacobian)
+recovers the original element multiplied by the degree of the map.
+Combined with functoriality from the previous theorem, this forces
+push, pull, and degree to interact through the classical trace
+identity, no other interaction allowed. Why bother? This rules out
+any fake construction that defines push and pull as arbitrary
+unrelated homomorphisms. The genuine geometric pullback and
+pushforward must satisfy this identity, so any implementation in Lean
+has to actually compute the trace correctly. Together with the genus
+classification, point separation, and torus structure, these four
+anti-hack theorems make trivial fake Jacobians impossible.
+\end{layman}
