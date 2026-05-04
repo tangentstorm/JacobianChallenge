@@ -1,4 +1,6 @@
-\label{part:introduction}
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+\label{sec:introduction}
 
 \begin{layman}
 \textbf{What is this document?}\par
@@ -56,31 +58,31 @@ challenge property — group structure, manifold structure, every
 anti-hack theorem — falls out of this single construction once
 enough analytic background has been established.
 
-The document opens with two short cataloging parts. Part~1, the
-\emph{Statement of the Jacobian Challenge}, lists the public-API
-obligations (genus, Jacobian, Abel--Jacobi map, degree, pushforward,
-pullback, plus the four anti-hack theorems) one for one with
-\code{Jacobian/Challenge.lean}. Part~2, the \emph{Statement Bank},
-collects the internal helper statements (period pairing, period
+After this introduction, the document opens with two short cataloging
+sections. Section~1, the \emph{Challenge Statement}, lists the
+public-API obligations (genus, Jacobian, Abel--Jacobi map, degree,
+pushforward, pullback, plus the four anti-hack theorems) one for one
+with \code{Jacobian/Challenge.lean}. Section~2, the \emph{Statement
+Bank}, collects the internal helper statements (period pairing, period
 lattice, trace--pullback identity) that the construction leans on
 without exposing them in the public API.
 
 The eleven-section mathematical spine then mirrors the construction.
-Section~1 sets up the algebraic machinery (vanishing orders,
-divisors) shared with the algebraic-geometric route. Section~2
+Section~3 sets up the algebraic machinery (vanishing orders,
+divisors) shared with the algebraic-geometric route. Section~4
 develops \(H^0(X,\Omega^1_X)\) and its finite dimensionality
-through the Montel--Riesz route. Section~3 packages
+through the Montel--Riesz route. Section~5 packages
 Riemann--Roch and the sheaf-cohomology infrastructure feeding it.
-Section~4 develops the branched-cover degree theory and reaches
+Section~6 develops the branched-cover degree theory and reaches
 the genus-zero classification — the first anti-hack theorem.
-Section~5 develops the \emph{polygonal model} — the classical
+Section~7 develops the \emph{polygonal model} — the classical
 unfolding of the surface onto a flat \(4g\)-gon — that underlies
-all later integration arguments. Section~6 builds the period
-pairing and the Riemann bilinear relations. Section~7 constructs
-the Jacobian via the complex-torus package. Section~8 establishes
-the Abel--Jacobi map and its injectivity. Section~9 develops
+all later integration arguments. Section~8 builds the period
+pairing and the Riemann bilinear relations. Section~9 constructs
+the Jacobian via the complex-torus package. Section~10 establishes
+the Abel--Jacobi map and its injectivity. Section~11 develops
 degree, trace, pullback and pushforward, and the trace identity.
-Section~10 assembles the public API. Section~11 maps each Lean
+Section~12 assembles the public API. Section~13 maps each Lean
 declaration in \code{Challenge.lean} back to its informal source.
 
 A reader can approach the document at three levels. Skim only the
@@ -95,8 +97,9 @@ strips these insets; the companion build keeps them.
 The public target is the API in \code{Jacobian/Challenge.lean}. This
 document gives an informal proof that the API is satisfied by the classical
 analytic construction of the Jacobian of a compact connected Riemann surface.
-Part~1 below restates that public target informally; Part~2 collects the
-internal helper statements; the remaining sections build up the supporting
+Section~1 (\emph{Challenge Statement}) below restates that public target
+informally; Section~2 (\emph{Statement Bank}) collects the internal
+helper statements; the remaining sections build up the supporting
 mathematics.
 
 The construction is:

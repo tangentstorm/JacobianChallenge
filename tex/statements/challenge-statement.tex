@@ -7,13 +7,16 @@
 % Internal helper statements (period pairing, period lattice, trace on
 % one-forms, etc.) live in the Statement Bank that follows.
 
+\section{Challenge Statement}
+\label{sec:challenge-statement}
+
 Throughout, \(X\) is a compact connected Riemann surface, i.e.\ a
 nonempty compact connected Hausdorff space carrying an analytic complex
 manifold atlas (\code{ChartedSpace ℂ X} together with
 \code{IsManifold 𝓘(ℂ) ω X} in the Lean target). The challenge fixes
 six pieces of data and four anti-hack theorems on top of that setup.
 
-\subsection*{Genus}
+\subsection{Genus}
 
 \begin{definition}[Analytic genus]
 \label{def:analytic-genus}
@@ -32,8 +35,8 @@ sup norm \(\to\) compact unit ball (Montel) \(\to\) Riesz theorem; then define
 \begin{layman}
 The \emph{analytic genus} of a compact Riemann surface is the complex
 dimension of the space of global holomorphic 1-forms on it. The
-finite-dimensionality theorem (Section 2) makes this an honest natural
-number. By the genus-zero classification below, this number also matches
+finite-dimensionality theorem (proved later, in the holomorphic-forms
+section) makes this an honest natural number. By the genus-zero classification below, this number also matches
 the topological genus — the count of handles you'd see if you held the
 surface in your hands. The sphere has analytic genus 0, the donut has 1,
 the two-handled pretzel has 2, and so on. Why bother? Genus is the
@@ -74,7 +77,7 @@ genus. Without this anchor, all the challenge's anti-hacks would be
 wide open.
 \end{layman}
 
-\subsection*{The Jacobian}
+\subsection{The Jacobian}
 
 \begin{definition}[Analytic Jacobian]
 \label{def:analytic-jacobian}
@@ -113,7 +116,7 @@ construction that fails to deliver every layer (group, topology,
 manifold, Lie) is rejected.
 \end{layman}
 
-\subsection*{The Abel--Jacobi map}
+\subsection{The Abel--Jacobi map}
 
 \begin{definition}[Abel-Jacobi map]
 \label{def:abel-jacobi}
@@ -164,7 +167,8 @@ invoke Abel point-separation (Abel theorem input).
 On a compact Riemann surface of positive genus, the Abel–Jacobi map is
 \emph{injective}: distinct points on the surface go to distinct points
 in the Jacobian. This is the second anti-hack theorem of the
-challenge. The proof chain (worked out in detail in Section~8):
+challenge. The proof chain (worked out in detail in the Abel--Jacobi
+section):
 equality of Abel–Jacobi images forces a principal divisor of the form
 ``one point minus another,'' which gives a degree-one map to the
 Riemann sphere, which forces the surface to be the sphere — but the
@@ -176,7 +180,7 @@ compact-complex-Lie-group structure on the Jacobian, plus
 point-separation, forces the construction to be honest.
 \end{layman}
 
-\subsection*{Degree, pushforward, and pullback}
+\subsection{Degree, pushforward, and pullback}
 
 \begin{definition}[Degree and trace]
 \label{def:degree-trace}
