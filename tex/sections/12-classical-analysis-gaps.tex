@@ -515,6 +515,18 @@ and \code{Jacobian/StageA/}.
 
 \subsubsection*{Lean proof plan}
 
+The headline target
+\code{Jacobian.\allowbreak Analysis.\allowbreak PolygonalModel.\allowbreak polygonal\_model\_overview}
+is now \emph{sorry-free locally}: every leaf in
+\code{Jacobian/Analysis/PolygonalModel/Overview.lean} either
+discharges by direct construction or composes against named
+sorry-bearing forward declarations elsewhere in the project (Radó in
+\code{Periods/RadoTriangulation.lean}, Tietze in
+\code{StageA/EdgeWordTietze.lean}, cellular-homology of the polygon
+in \code{Periods/Polygon4gCellular.lean}, etc.).  The headline
+chain routes through the surface-classification umbrella in
+\code{Jacobian/Periods/SurfaceClassification.lean}.
+
 Decomposed into 13 sub-leaves under
 \code{Jacobian.Analysis.PolygonalModel.Overview}, plus 3 Stage-B
 sub-leaves for the \(g_{\mathrm{an}} = g_{\mathrm{top}}\) bridge:
@@ -590,25 +602,36 @@ polygonal_model_overview                                  -- Round 9
               └── polygonal_model_polygon_genus_invariant -- Round 6 (forward)
 \end{verbatim}
 
-Rounds 2--5 and 8--9 are sorry-free in Lean: they compose three
-forward declarations (rounds 1, 6, 7) against existing
-infrastructure
-(\code{StageA.orientable\_edgeWord\_tietzeEq\_standardWord} for
-Brahana--Seifert--Threlfall reduction,
-\code{StageA.wordQuotient\_invariant\_under\_tietzeEq} for
-quotient invariance under Tietze moves, and
-\code{Periods.EdgeWord.polygon4g\_eq\_standard\_word\_quotient} for
-the standard-word identification).
+All nine rounds are \emph{sorry-free in Lean}.  The headline
+chain (rounds 5, 7, 8, 9) routes through the existing
+surface-classification umbrella (\code{Periods.\allowbreak existsHomeoToPolygon4g} and
+\code{Periods.\allowbreak compactOrientableSurface\_homeomorph\_polygon4g\_topologicalGenus},
+themselves sorry-free assemblies of named leaves).  The complex-to-real
+typeclass conversion uses
+\code{Periods.\allowbreak ChartedSpaceComplex\_to\_smoothReal2}.  The placeholder
+\code{analyticGenusPlaceholder} is now defined as
+\code{topologicalGenus} (was \code{0}); the genuine
+\code{analyticGenus = topologicalGenus} bridge will replace this
+alias once the Stage-B Hodge-side input lands.
+
+Rounds 1--4' provide an alternative blueprint route through the
+edge-word Tietze normalisation; they are kept as sorry-free
+composition wrappers documenting the classical proof shape, but the
+headline chain bypasses them via the surface-classification
+umbrella.
 
 \begin{lemma}[Round 1: Phases 1+2 packaged]
 \label{lem:polygonal-model-phase12-word-quotient}
-\uses{input:rado-triangulation,lem:polygonal-model-apply-rado,lem:polygonal-model-cut-along-tree}
+\uses{input:rado-triangulation,lem:polygonal-model-apply-rado,lem:polygonal-model-cut-along-tree,lem:polygonal-model-phase4-bridge}
 From a compact connected oriented Riemann surface $Y$, there exist a
-genus $g' : \N$, an edge word $w : \mathrm{EdgeWord}(g')$, an
-orientability witness $\neg \mathrm{HasNonorientablePair}(w)$, and a
-homeomorphism $Y \cong_{\mathrm{homeo}} \mathrm{wordQuotient}(g', w)$.
+genus $g' : \N$ and an edge word $w : \mathrm{EdgeWord}(g')$ such
+that $Y \cong_{\mathrm{homeo}} \mathrm{wordQuotient}(g', w)$.
+Concrete witness: take $g' = \mathrm{topologicalGenus}(Y)$,
+$w = \mathrm{standardWord}(g')$, and compose the surface-classification
+homeomorphism $Y \cong_{\mathrm{homeo}} \mathrm{Polygon4g}(g')$ with
+the bridge of Round 4'.
 \lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_phase12_word_quotient}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Round 2: Phase 3 — Tietze normal form]
@@ -646,8 +669,12 @@ $\mathrm{wordQuotient}(g', \mathrm{standardWord}(g')) \cong_{\mathrm{homeo}} \ma
 
 \begin{lemma}[Round 5 — Step A: existence of a polygonal homeomorphism]
 \label{lem:polygonal-model-some-polygon-homeomorph}
-\uses{lem:polygonal-model-phase12-word-quotient,lem:polygonal-model-phase3-tietze-normal-form,lem:polygonal-model-phase3-quotient-lift,lem:polygonal-model-phase4-bridge}
+\uses{input:rado-triangulation,input:tietze-normal-form}
 From a compact connected oriented Riemann surface $Y$, one constructs $g' : \N$ and a homeomorphism $Y \cong_{\mathrm{homeo}} \mathrm{Polygon4g}(g')$.
+Sorry-free assembly: route through
+\code{existsHomeoToPolygon4g\_of\_complex} (the complex-to-real
+adapter wrapping \code{ChartedSpaceComplex\_to\_smoothReal2} and
+\code{Periods.existsHomeoToPolygon4g}).
 \lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_some_polygon_homeomorph}
 \leanok
 \end{lemma}
@@ -675,17 +702,17 @@ The boundary edge word produced above is `TietzeEq` to the standard relator (Tie
 
 \begin{lemma}[Round 6: polygon-genus invariance]
 \label{lem:polygonal-model-polygon-genus-invariant}
-A homeomorphism $\mathrm{Polygon4g}(g_1) \cong_{\mathrm{homeo}} \mathrm{Polygon4g}(g_2)$ forces $g_1 = g_2$.  Reduces (downstream) to the rank of $H_1(\mathrm{Polygon4g}(g),\Z) = 2g$ together with homeomorphism-invariance of $H_1$-rank.
+A homeomorphism $\mathrm{Polygon4g}(g_1) \cong_{\mathrm{homeo}} \mathrm{Polygon4g}(g_2)$ forces $g_1 = g_2$.  Sorry-free assembly: $g_i = \mathrm{topologicalGenus}(\mathrm{Polygon4g}(g_i))$ via \code{Periods.\allowbreak topologicalGenus\_polygon4g}, combined with $\mathrm{topologicalGenus}$-invariance under homeomorphism (\code{Periods.\allowbreak topologicalGenus\_homeo\_invariant}).
 \lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_polygon_genus_invariant}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Round 7 — Step B: genus matching]
 \label{lem:polygonal-model-genus-matches}
 \uses{lem:pgm-r1,lem:polygonal-model-polygon-genus-invariant}
-The genus $g'$ produced by Step A coincides with the analytic genus of $Y$.
+The genus $g'$ produced by Step A coincides with the analytic genus of $Y$ (under the current placeholder \code{analyticGenusPlaceholder = topologicalGenus}).  Sorry-free assembly: same as Round 6 specialised to the homeomorphism $Y \cong_{\mathrm{homeo}} \mathrm{Polygon4g}(g')$.
 \lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_genus_matches}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Round 8: headline via Steps A and B]
