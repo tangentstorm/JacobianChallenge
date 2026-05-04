@@ -1197,6 +1197,77 @@ $\dim_\R H^1_{\mathrm{dR}}(X, \R) = \dim_\C H^1_{\mathrm{dR}}(X, \C)$ on a compa
 \leanok
 \end{lemma}
 
+\subsubsection*{R6 frontier sorry inventory (Mathlib v4.28.0)}
+
+The full R6 chain assembles, in Lean, into the headline equality
+\code{2 * analyticGenus \C\ X = Module.finrank \Z\ (IntegralOneCycle X)}
+through the named Lean target
+\code{JacobianChallenge.Analysis.HodgeDeRham.hodge\_deRham\_overview}.
+The chain is sorry-free \emph{above} the named frontier leaves but
+ultimately bottoms out, on Mathlib v4.28.0, at the following six
+honest classical inputs (all flagged \notready{} in their respective
+chains):
+
+\begin{enumerate}
+\item \emph{Cellular--singular comparison, finite generation.}
+\code{IntegralOneCycle\_finite\_of\_cellular} in
+\code{Jacobian/Periods/CellularHomologyRS.lean}.  Hatcher 2.35 for
+$H_1$.  Blueprint chain: G1 (\ref{lem:hdf-r1}--\ref{lem:hdf-r15}),
+hub R6-sub-A.  Mathlib status: ABSENT (cellular chain complex on a
+topological space is missing, as is its comparison with singular
+homology).
+
+\item \emph{Cellular--singular comparison, torsion-freeness.}
+\code{IntegralOneCycle\_free\_of\_cellular} in the same file.
+\emph{Not} a generic finite-CW fact — torsion can appear (e.g.\
+$H_1(\mathbb{RP}^2) = \mathbb{Z}/2$); the closed-orientable-2-manifold
+case follows from the polygonal model
+$H_1(\Sigma_g) = \mathbb{Z}^{2g}$ or from Poincaré duality.
+Mathlib status: ABSENT (polygonal model identification absent;
+Poincaré duality on manifolds absent).
+
+\item \emph{De Rham theorem, surjectivity.}
+\code{deRhamComparisonMap1\_prescribed\_period\_correct} in
+\code{Jacobian/HolomorphicForms/DeRhamComparisonMap.lean}.  Given a
+$\R$-valued cocycle on $H_1$, build a closed 1-form whose periods
+realise it.  Blueprint chain: \ref{subsec:gap-R4-de-rham}, Chain E
+(\ref{lem:deRham-integration-simplex}--).  Mathlib status: ABSENT
+(no de Rham complex on manifolds; partition-of-unity primitive
+construction absent).
+
+\item \emph{De Rham theorem, injectivity.}
+\code{deRhamComparisonMap1\_zero\_period\_potential} in the same file.
+A closed 1-form integrating to zero on every cycle is exact.  Blueprint
+chain: same as item 3.  Mathlib status: ABSENT (sheaf cohomology
+comparison on manifolds is partial; global path-integral primitive on
+a non-simply-connected manifold absent).
+
+\item \emph{Bundle norm compatibility.}
+\code{holomorphicOneForm\_trivialization\_norm\_compat} in
+\code{Jacobian/HolomorphicForms/CompactRiemannSurface.lean}.  Local
+trivialisations of the cotangent bundle on $X$ preserve the
+section-wise norm.  Mathlib status: ABSENT for the holomorphic
+cotangent bundle; the smooth-real analogue is partial.
+
+\item \emph{Sup-norm completeness of $\Omega^1_{\mathrm{hol}}(X)$.}
+The candidate-tendsto leaf (line 265) plus the Arzelà-Ascoli
+total-boundedness leaf (line 739) of
+\code{Jacobian/HolomorphicForms/CompactRiemannSurface.lean}.
+Underlying classical content: Weierstrass (uniform limit of
+holomorphic functions is holomorphic) plus Montel (a uniformly bounded
+family is sup-norm-precompact).  Both used to show
+$\Omega^1_{\mathrm{hol}}(X)$ is finite-dimensional via Riesz
+(\code{FiniteDimensional.of\_locallyCompactSpace}).  Mathlib status:
+Arzelà-Ascoli present at the abstract level; the Montel/Weierstrass
+specialisation to bundle-section spaces is absent.
+\end{enumerate}
+
+These six obligations are the entire frontier between the current
+sorry-free assembly of R6 and a fully closed proof.  None can be
+discharged \emph{within} R6 — each is a named umbrella with its own
+chain, and each is one of the eight ``classical analysis gaps''
+catalogued in this section (R4, R5/R7, R6-sub-A, R8 (Riesz)).
+
 \begin{layman}
 R6 is the simplest of the eight in terms of its own work, but it
 sits at the confluence of three other gaps — it can't be done
