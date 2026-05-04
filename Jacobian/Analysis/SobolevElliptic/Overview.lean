@@ -1,5 +1,6 @@
 import Jacobian.StageB.LaplaceBeltrami
 import Jacobian.StageB.HarmonicForms
+import Jacobian.StageB.RiemannianMetricBundled
 import Jacobian.Analysis.BundledForms.Overview
 import Jacobian.Analysis.SobolevElliptic.ModelSymbol
 import Mathlib.Analysis.InnerProductSpace.PiL2
