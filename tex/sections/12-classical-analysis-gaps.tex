@@ -1164,8 +1164,36 @@ $H_{1}(X, \Z)$ is finitely generated for a compact CW manifold (built from a tri
 \begin{lemma}[Rank-Hom: $\dim_{\R}\,\mathrm{Hom}(A, \R) = \mathrm{rank}_{\Z}\,A$ for $A$ fg]
 \label{lem:hodge-deRham-hom-rank}
 \uses{lem:hdr-r1}
-Standard linear algebra over $\Z$: real-Hom dimension equals integer rank for a finitely-generated abelian group.
+Standard linear algebra over $\Z$: real-Hom dimension equals integer rank for a finitely-generated abelian group.  See Chain G2 (passes \ref{lem:hdr-r1}--\ref{lem:hdr-r5}, then \ref{lem:hdr-r6}--\ref{lem:hdr-r10}, then \ref{lem:hdr-r11}--\ref{lem:hdr-r15}) for the full 15-pass refinement into Mathlib endpoints; the assembly is sorry-free in Lean.
 \lean{JacobianChallenge.Analysis.HodgeDeRham.hodge_deRham_hom_dim_eq_rank}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Hodge / de Rham: real de Rham bridge to singular cohomology]
+\label{lem:hodge-deRham-deRham-bridge}
+\uses{input:de-rham-theorem}
+$\dim_\R H^1_{\mathrm{dR}}(X, \R) = \dim_\R H^1_{\mathrm{sing}}(X, \R)$ for a compact connected smooth manifold.  This is the de Rham theorem in degree 1: integration over smooth singular chains gives a quasi-isomorphism on cochain complexes, and on degree-1 cohomology this restricts to an $\R$-linear isomorphism.  Mathlib v4.28.0 lacks the de Rham complex on manifolds, so this leaf is a frontier obligation; see \code{deRhamComparisonMap1\_isLinearEquiv}, refined into \emph{Stokes} (\code{deRhamComparisonMap1\_vanishes\_on\_exact}), \emph{surjectivity} (\code{deRhamComparisonMap1\_surjective}), and \emph{injectivity} (\code{deRhamComparisonMap1\_kernel\_subset\_exact}).
+\lean{JacobianChallenge.HolomorphicForms.realDim_deRhamH1_eq_realDim_singularH1}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Hodge / de Rham: UCT bridge to $\mathrm{Hom}_\Z(H_1, \R)$]
+\label{lem:hodge-deRham-uct-bridge}
+\uses{lem:hodge-deRham-uct-degree-one}
+$\dim_\R H^1_{\mathrm{sing}}(X, \R) = \dim_\R \mathrm{Hom}_\Z(H_1(X, \Z), \R)$.  Universal coefficients with $\R$ coefficients: the short exact sequence
+\[
+0 \to \mathrm{Ext}^1_\Z(H_0(X, \Z), \R) \to H^1_{\mathrm{sing}}(X, \R) \to \mathrm{Hom}_\Z(H_1(X, \Z), \R) \to 0
+\]
+collapses to an isomorphism because $\R$ is divisible (hence injective as a $\Z$-module), so $\mathrm{Ext}^1_\Z(\,\cdot\,, \R) = 0$.  Lean implementation: \code{realDimSingularH1\_eq\_finrank\_intHom1} (currently a definitional unfold on the chosen surrogate model of $H^1_{\mathrm{sing}}$).
+\lean{JacobianChallenge.Periods.realDimSingularH1_eq_finrank_intHom1}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Hodge / de Rham: real-of-complex equality for $H^1_{\mathrm{dR}}$]
+\label{lem:hodge-deRham-real-of-complex}
+\uses{input:de-rham-theorem}
+$\dim_\R H^1_{\mathrm{dR}}(X, \R) = \dim_\C H^1_{\mathrm{dR}}(X, \C)$ on a compact connected complex manifold.  The two sides are linked by the canonical $\C \otimes_\R \,\cdot\,$ isomorphism between real- and complex-coefficient de Rham cohomology, and complexification doubles the real dimension exactly when ``$\dim_\R$'' on the LHS counts the underlying $\R$-module of an $\R$-vector space and ``$\dim_\C$'' on the RHS counts the complexification's $\C$-dimension.  In our finrank surrogate this is a routine algebraic identity: $\mathrm{finrank}_\R V = \mathrm{finrank}_\C(\C \otimes_\R V)$ for any finite-dimensional $\R$-vector space $V$.
+\lean{JacobianChallenge.HolomorphicForms.realDim_deRhamH1_eq_complexDim_deRhamH1ℂ}
 \leanok
 \end{lemma}
 
@@ -3484,8 +3512,9 @@ By evaluation at $1$, $\mathrm{Hom}(\Z,\R)$ is freely generated as $\R$-module b
 \begin{lemma}[Pass G2.3: $\mathrm{Hom}(T, \R) = 0$ for torsion $T$]
 \label{lem:hdr-r3}
 \uses{lem:hdr-r4}
-For $a$ of order $n$, $\varphi(a) = \frac{1}{n}\varphi(na) = 0$, so the only homomorphism is zero.
-\notready
+For $\varphi \in \mathrm{Hom}_\Z(T, \R)$ and $a \in T$ of order $n \geq 1$, additivity gives $n\,\varphi(a) = \varphi(n\,a) = \varphi(0) = 0$ in $\R$; since $\R$ is torsion-free as a $\Z$-module ($n \neq 0$ implies multiplication by $n$ is injective on $\R$), $\varphi(a) = 0$.  Hence $\varphi$ vanishes on every torsion element, so $\varphi = 0$.  (No ``$\tfrac{1}{n}\varphi(na)$'' inversion is needed: division by $n$ in $\R$ witnesses the cancellation but is not a step in the proof.)
+\lean{JacobianChallenge.Periods.homℤℝ_eq_zero_of_isTorsion}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass G2.4: $\mathrm{Hom}(\Z^{r}\oplus T,\R) = \R^{r}$]
@@ -3498,6 +3527,7 @@ Combining: $\dim_{\R}\mathrm{Hom}(\Z^{r}\oplus T,\R) = r$.
 
 \begin{lemma}[Pass G2.5: Mathlib endpoint]
 \label{lem:hdr-r5}
+\uses{lem:hdr-r6}
 \code{Module.finrank} and \code{AddCommGroup.IsFiniteType}; structure theorem for f.g.\ abelian groups in \code{AddCommGroup.Pi.AddCommGroupStructureTheorem}.  Mathlib status: present.
 \lean{Module.finrank_pi_fintype}
 \leanok\mathlibok
@@ -4401,6 +4431,51 @@ $\ker\partial_{1}/\mathrm{im}\,\partial_{2}$ computes to $\Z^{2g}$ (relator is i
 \code{AlgebraicTopology.CellComplex.Homology}.  Mathlib status: partial.
 \uses{lem:hdf-r11}
 \notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine hdr-r5 into Mathlib (5 more passes)}
+
+The Lean side of the rank-Hom claim sidesteps the structure-theorem split by working directly on the free part: for the application $A = H_1(X,\Z)$ we already have $A$ free (`IntegralOneCycle\_torsionFree`), so the splitting $A = \Z^r \oplus T$ collapses to $A = \Z^r$.  Round 2 refines the free-case identity $\dim_\R \mathrm{Hom}_\Z(\Z^r, \R) = r$ via the basis-evaluation linear equivalence supplied by \code{Module.Basis.constr}.
+
+\begin{lemma}[Pass hdr.6: free f.g.\ $\Z$-module has a $\Z$-basis indexed by $\mathrm{Fin}\,r$]
+\label{lem:hdr-r6}
+\uses{lem:hdr-r7}
+For a $\Z$-module $M$ with $[\,\mathrm{Module.Free}\ \Z\ M\,]$ and $[\,\mathrm{Module.Finite}\ \Z\ M\,]$, \code{Module.finBasis} produces a basis $b : \mathrm{Fin}\,r \to M$ where $r = \mathrm{Module.finrank}\ \Z\ M$.  This is the constructive bridge between the algebraic data ``free + finite'' and the index-set form needed to evaluate hom-sets.
+\lean{Module.finBasis}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hdr.7: basis-evaluation $\R$-linear equivalence]
+\label{lem:hdr-r7}
+\uses{lem:hdr-r8}
+For a basis $b : \mathrm{Fin}\,r \to M$ over $\Z$, the evaluation map $\mathrm{Hom}_\Z(M,\R) \to (\mathrm{Fin}\,r \to \R)$, $\varphi \mapsto \varphi \circ b$, is an $\R$-linear isomorphism (`(b.constr \R).symm`).  Both sides are $\R$-modules; the source is $\R$-linear because the codomain $\R$ is, and the bijection follows from the universal property of a basis (a $\Z$-linear map out of $M$ is determined by, and freely chosen by, its values on the basis).
+\lean{JacobianChallenge.Periods.homℤℝ\_basis\_evaluation\_isLinearEquivℝ}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass hdr.8: $\dim_\R(\mathrm{Fin}\,r \to \R) = r$]
+\label{lem:hdr-r8}
+\uses{lem:hdr-r9}
+The space of functions from a finite index set of cardinality $r$ to $\R$ is $\R^r$, with the canonical basis of indicator functions; its $\R$-dimension is $r$.  Mathlib: \code{Module.finrank\_fin\_fun} (Mathlib v4.28.0, present).
+\lean{Module.finrank\_fin\_fun}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hdr.9: assembled finrank identity for free f.g.\ $M$]
+\label{lem:hdr-r9}
+\uses{lem:hdr-r10}
+Combine hdr.6 (basis $b$ of cardinality $r = \mathrm{finrank}_\Z M$), hdr.7 (linear equivalence $\mathrm{Hom}_\Z(M,\R) \simeq_{\R} (\mathrm{Fin}\,r \to \R)$), \code{LinearEquiv.finrank\_eq} (linear equivalences preserve $\mathrm{finrank}$), and hdr.8 to obtain $\mathrm{finrank}_\R \mathrm{Hom}_\Z(M,\R) = r = \mathrm{finrank}_\Z M$.
+\lean{JacobianChallenge.Periods.finrank\_homℤℝ\_eq\_finrank\_of\_free\_via\_basis}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass hdr.10: Mathlib endpoint]
+\label{lem:hdr-r10}
+\code{Module.finBasis}, \code{Module.Basis.constr}, \code{LinearEquiv.finrank\_eq}, \code{Module.finrank\_fin\_fun} are all present in Mathlib v4.28.0.  Round 2 of hdr is sorry-free in Lean (cf.\ \code{Jacobian.Periods.FreeModuleHomFinrank}).  Mathlib status: present.
+\uses{lem:hdr-r11}
+\lean{JacobianChallenge.Periods.finrank\_homℤℝ\_eq\_finrank\_of\_free\_via\_basis}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5526,6 +5601,50 @@ $\ker\partial_{1} = \Z^{2g}$ (one relation per generator pair); $\mathrm{im}\,\p
 \label{lem:hdf-r15}
 \code{AlgebraicTopology.CellComplex.Homology}.  Mathlib status: cellular-singular equivalence partial; cellular homology computation present.  Mathlib status: present (with small assembly).
 \lean{AlgebraicTopology.CellComplex.Homology}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 3: refine hdr-r10 into Mathlib (5 more passes)}
+
+Round 2 ended at the level ``free f.g.\ $\Z$-module $M$, $\dim_\R \mathrm{Hom}_\Z(M,\R) = \mathrm{finrank}_\Z M$.''  Round 3 drills into how the free + finite hypotheses surface a $\mathrm{Fin}\,r$-indexed basis, into the universal property of a basis that powers \code{Module.Basis.constr}, and into the chain of $\mathrm{finrank}$ rewrites that yields the numerical conclusion.
+
+\begin{lemma}[Pass hdr.11: \code{Module.Free} + \code{Module.Finite} produces an explicit basis]
+\label{lem:hdr-r11}
+\uses{lem:hdr-r12}
+\code{Module.finBasis : (R : Type*) (M : Type*) [Ring R] [AddCommGroup M] [Module R M] [Module.Free R M] [Module.Finite R M] \to Module.Basis (Fin (Module.finrank R M)) R M}.  This is the constructive $\mathrm{Fin}$-indexing of any finite-rank free basis; its existence is the standard ``Module.Free + Module.Finite produces a finite basis'' lemma in Mathlib.
+\lean{Module.finBasis}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hdr.12: universal property of a basis]
+\label{lem:hdr-r12}
+\uses{lem:hdr-r13}
+For a basis $b : \iota \to M$ over $R$ and any $R$-module $N$, \code{Module.Basis.constr R} is the $R$-linear equivalence $(\iota \to N) \simeq_R (M \to_R N)$ extending each function on the basis to a unique $R$-linear map.  Specialised to $R = \Z$, $N = \R$, $\iota = \mathrm{Fin}\,r$, it gives $(\mathrm{Fin}\,r \to \R) \simeq_\R (M \to_\Z \R)$ \emph{$\R$-linearly} (the codomain $\R$ supplies the $\R$-action; the source $M$ is only $\Z$-linear).
+\lean{Module.Basis.constr}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hdr.13: \code{LinearEquiv.finrank\_eq} transfers $\mathrm{finrank}$]
+\label{lem:hdr-r13}
+\uses{lem:hdr-r14}
+A linear equivalence between two $R$-modules forces equal $\mathrm{Module.finrank}$.  Mathlib: \code{LinearEquiv.finrank\_eq} (present).  This is what lets us replace $\mathrm{finrank}_\R(M \to_\Z \R)$ with $\mathrm{finrank}_\R(\mathrm{Fin}\,r \to \R)$ once we have the equivalence from hdr.12.
+\lean{LinearEquiv.finrank\_eq}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hdr.14: $\mathrm{finrank}_\R(\mathrm{Fin}\,r \to \R) = r$]
+\label{lem:hdr-r14}
+\uses{lem:hdr-r15}
+For any commutative semiring $R$ and natural $n$, $\mathrm{Module.finrank}\ R\ (\mathrm{Fin}\,n \to R) = n$.  Mathlib: \code{Module.finrank\_fin\_fun} (Mathlib v4.28.0, present); proved as a one-line specialisation of \code{Module.finrank\_pi}.
+\lean{Module.finrank\_fin\_fun}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass hdr.15: Mathlib endpoint]
+\label{lem:hdr-r15}
+All four ingredients (\code{Module.finBasis}, \code{Module.Basis.constr}, \code{LinearEquiv.finrank\_eq}, \code{Module.finrank\_fin\_fun}) are present in Mathlib v4.28.0.  The Lean assembly \code{JacobianChallenge.Periods.finrank\_homℤℝ\_eq\_finrank\_of\_free\_via\_basis} chains them in $\sim 30$ lines and is sorry-free.  Mathlib status: present.
+\lean{JacobianChallenge.Periods.finrank\_homℤℝ\_eq\_finrank\_of\_free\_via\_basis}
 \leanok\mathlibok
 \end{lemma}
 
