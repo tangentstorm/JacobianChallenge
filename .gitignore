@@ -12,16 +12,3 @@ blueprint/print/
 blueprint/lean_decls
 blueprint-depgraph-verified.png
 depgraph-with-legend.png
-
-# ralph + codex working artifacts (local-only)
-.ralph-stop
-ralph-progress.txt
-ralph-logs/
-.codex-gitconfig
-.codex-empty-gitconfig
-
-# local debug / scratch artifacts (worker session dumps, screenshots, etc.)
-*.yml
-*.png
-
-__pycache__/

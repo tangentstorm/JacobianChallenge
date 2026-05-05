@@ -1,6 +1,9 @@
 import Jacobian.StageB.LaplaceBeltrami
 import Jacobian.StageB.HarmonicForms
+import Jacobian.StageB.RiemannianMetricBundled
 import Jacobian.Analysis.BundledForms.Overview
+import Jacobian.Analysis.SobolevElliptic.ModelSymbol
+import Jacobian.Analysis.SobolevElliptic.HeadlinePlugIn
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Topology.MetricSpace.Defs
 
@@ -77,10 +80,35 @@ structure IsFredholm
 /-- **R10 headline.**  For a compact oriented Riemannian manifold,
 `Δ : H^{s+2}(Ω^k) → H^s(Ω^k)` is Fredholm.  Stated abstractly:
 `Harmonic^k` is finite-dimensional, which is the headline consequence
-of the Fredholm property. -/
+of the Fredholm property.
+
+This is the *typed-placeholder* form: `Harmonic` here is
+`LinearMap.ker (laplaceBeltrami M n k)` over `Omega M k = PUnit`,
+so the conclusion is vacuous (`PUnit` is trivially finite-dim).
+The *substantive* form, dispatched against real Mathlib v4.28.0
+modulo a single typeclass, is
+`moduleFinite_realHarmonic : Module.Finite ℝ (RealHarmonic M μ)`
+in `HeadlinePlugIn.lean` -- see also the file-level docstrings of
+`AbstractResolvent.lean` and `AbstractFredholmResolvent.lean`. -/
 theorem sobolev_elliptic_overview [CompactSpace M] (n k : ℕ) :
     Module.Finite ℝ (Harmonic (E := E) M n k) :=
   laplaceBeltrami_elliptic_regularity (E := E) M n k
+
+/-- **R10 headline (substantive companion).**  *Real* finite-
+dimensionality of the harmonic-function space, dispatched through
+the abstract resolvent + spectral chain
+(`HeadlinePlugIn.moduleFinite_realHarmonic`).  Requires the
+`HasLaplaceResolvent` analytic input (a Hilbert space `H¹` with a
+compact embedding into `L²(M, μ)`); given that, no further
+analytic hypotheses are needed. -/
+theorem sobolev_elliptic_overview_substantive
+    {N : Type} [TopologicalSpace N] [MeasurableSpace N] [BorelSpace N]
+    [CompactSpace N]
+    (μ : MeasureTheory.Measure N)
+    [JacobianChallenge.Analysis.BundledForms.IsManifoldMeasure N μ]
+    [HasLaplaceResolvent N μ] :
+    Module.Finite ℝ (RealHarmonic N μ) :=
+  moduleFinite_realHarmonic N μ
 
 /-! ### Phase 1 — distributional / Sobolev framework -/
 
@@ -113,11 +141,31 @@ theorem sobolev_embedding (k : ℕ) (s : ℝ) (_hs : (1 : ℝ) ≤ s) :
 /-! ### Phase 2 — ellipticity of `Δ` -/
 
 /-- **R10.2.1.**  `Δ : Ω^0(M) → Ω^0(M)` is elliptic (placeholder
-predicate `IsElliptic`).  The principal symbol is `|ξ|² · id`. -/
+predicate `IsElliptic`).  The principal symbol is `|ξ|² · id`.
+
+The non-vacuous *model-space* witness for this statement is dispatched
+in `Jacobian/Analysis/SobolevElliptic/ModelSymbol.lean` — every fibre
+of the cotangent bundle is the model space `E`, and the per-fibre
+principal-symbol invertibility is
+`Model.principalSymbol_isElliptic`.  The placeholder here is the
+manifold-shaped *typed* form of that statement; promoting it to a
+substantive ellipticity claim requires the bundled `T*M` /
+`RiemannianMetric` infrastructure (R9 + R10-sub-A,B), still ABSENT
+from Mathlib v4.28.0. -/
 theorem sobolev_laplacian_elliptic (n : ℕ) :
     IsElliptic (E := E) (M := M)
       (laplaceBeltrami (E := E) M n 0) :=
   fun x => rfl
+
+/-- **R10.2.1 (real fibre witness).**  *Companion to
+`sobolev_laplacian_elliptic`.*  The principal symbol of the model
+Laplacian, viewed as a scalar `σ_Δ(ξ) = -⟪ξ,ξ⟫_ℝ` on the trivial
+rank-one fibre, is invertible (a unit in `ℝ`) at every nonzero
+covector.  Proved in `ModelSymbol.principalSymbol_isElliptic`
+against real Mathlib (no placeholder). -/
+theorem sobolev_laplacian_elliptic_model_witness (ξ : E) (hξ : ξ ≠ 0) :
+    IsUnit (Model.principalSymbol ξ) :=
+  Model.principalSymbol_isElliptic ξ hξ
 
 /-- **R10.2.2.**  More generally, `Δ : Ω^k(M) → Ω^k(M)` is elliptic
 for every `k`. -/
