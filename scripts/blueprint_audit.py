@@ -345,7 +345,6 @@ def main():
     issues: dict[str, list] = {}
     counts = {
         "total_blocks": 0, "with_lean": 0, "notready": 0, "ok": 0,
-        "external_only": 0,
     }
     external_refs: list[tuple[str, int, str, str]] = []
 
@@ -372,19 +371,16 @@ def main():
                     if cls == "EXTERNAL":
                         external_refs.append((rel, line_no, b["label"] or "", n))
 
-                # If every name is external, we cannot judge — track and
-                # continue.
-                internal = [(n, st) for n, cls, st in statuses
-                            if cls == "INTERNAL"]
-                if not internal:
-                    counts["external_only"] += 1
-                    continue
-
-                missing = [n for n, st in internal if st == "MISSING"]
-                has_sorry = [n for n, st in internal if st == "HAS_SORRY"]
-                sorry_free = [n for n, st in internal if st == "SORRY_FREE"]
+                # Treat external (Mathlib / core Lean) refs as
+                # existing-and-sorry-free. The user's audit instruction:
+                # "for ones referencing Mathlib, assume they are \leanok".
+                missing = [n for n, cls, st in statuses
+                           if cls == "INTERNAL" and st == "MISSING"]
+                has_sorry = [n for n, cls, st in statuses
+                             if cls == "INTERNAL" and st == "HAS_SORRY"]
                 all_exist = not missing
                 all_sorry_free = (not missing) and (not has_sorry)
+                project_or_external_names = [n for n, _cls, _st in statuses]
 
                 # Diagnostics
                 rec_issues = []
@@ -394,7 +390,7 @@ def main():
                                        f"missing: {', '.join(missing)}"))
                 if all_exist and not b["has_stmt_leanok"]:
                     rec_issues.append(("B:decls-exist-but-no-env-leanok",
-                                       f"all decls exist: {', '.join(internal_names_only(internal))}"))
+                                       f"all decls exist: {', '.join(project_or_external_names)}"))
                 if b["proof"] is not None and b["proof"]["has_leanok"]:
                     if not all_sorry_free:
                         msg = []
@@ -407,7 +403,7 @@ def main():
                 if b["proof"] is not None and not b["proof"]["has_leanok"]:
                     if all_exist and all_sorry_free:
                         rec_issues.append(("D:proof-block-sorry-free-but-no-proof-leanok",
-                                           f"all sorry-free: {', '.join(internal_names_only(internal))}"))
+                                           f"all sorry-free: {', '.join(project_or_external_names)}"))
                 if b["proof"] is None and b["env"] in DEFINITIONAL_ENVS:
                     if b["has_stmt_leanok"] and all_exist and not all_sorry_free:
                         rec_issues.append(("E:def-env-leanok-but-body-has-sorry",
@@ -426,9 +422,8 @@ def main():
     print(f"  Total statement-style env blocks: {counts['total_blocks']}")
     print(f"  With \\lean{{...}}: {counts['with_lean']}")
     print(f"  Marked \\notready (skipped): {counts['notready']}")
-    print(f"  External-only (Mathlib refs, not flagged): "
-          f"{counts['external_only']}")
     print(f"  Clean (no issue): {counts['ok']}")
+    print(f"  (Mathlib / core Lean refs are assumed sorry-free.)")
     for k in sorted(issues):
         print(f"  {k}: {len(issues[k])}")
     print()
