@@ -650,7 +650,14 @@ to be \(2 g_{\mathrm{an}}(X)\), so dividing by two gives
 \lean{JacobianChallenge.Periods.analyticGenus_eq_topologicalGenus}
 \leanok
 \end{theorem}
-\begin{proof}\end{proof}
+\begin{proof}\leanok
+The Lean proof is a one-line delegate to
+\code{stageB_analytic_eq_topological}, itself a sorry-free assembly
+of the project's existing
+\code{HolomorphicForms.two_analyticGenus_eq_finrank_intH1} (de Rham +
+Hodge + UCT chain) plus \code{Nat.mul_div_cancel_left} to identify
+\(g_{\mathrm{top}} = \mathrm{rank}_{\Z} H_1 / 2 = (2 g_{\mathrm{an}}) / 2 = g_{\mathrm{an}}\).
+\end{proof}
 
 \begin{layman}
 The two genera agree. Compute the topological genus of \(X\) by
