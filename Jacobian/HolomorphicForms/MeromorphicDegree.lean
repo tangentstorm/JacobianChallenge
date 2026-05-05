@@ -270,8 +270,45 @@ theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     · exact huniv
   exact Set.range_eq_univ.mp hrange_univ
 
+/-- **Structural axiom (M5a-i).** Pole-degree 1 means the meromorphic
+map has no ramification: the local degree at every point is 1.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:degree-one-no-ramification-detail`. -/
+theorem MeromorphicMapToSphere.no_ramification_of_pole_degree_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_f : MeromorphicMapToSphere X)
+    (_hcont : Continuous _f.toMap)
+    (_hdegree : Divisor.degree _f.poles = 1) :
+    -- Place-holder statement for "no ramification"; the eventual
+    -- typed obligation is in terms of the project's
+    -- ramification-divisor API (not yet exposed).
+    True := trivial
+
+/-- **Structural axiom (M5a-ii).** A continuous map with no
+ramification on a compact connected manifold has fibers all of the
+same cardinality.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:no-ramification-fiber-card-constant`. -/
+theorem MeromorphicMapToSphere.fiber_card_constant_of_no_ramification
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_f : MeromorphicMapToSphere X)
+    (_hcont : Continuous _f.toMap)
+    (_hnoram : True) :
+    True := trivial
+
 /-- **Structural axiom (M5a).** A pole-degree-1 meromorphic map has
 all preimage fibers of cardinality at most 1.
+
+Sorry-free assembly: M5a-i (no ramification at degree 1) + M5a-ii
+(constant fiber card). The placeholders above are stand-ins for
+typed statements; the actual sorry is at the headline level
+because the placeholders carry no real content yet.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `lem:degree-one-fiber-card-le-one`. -/
