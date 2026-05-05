@@ -63,44 +63,136 @@ These are documented in `tex/sections/03-riemann-roch.tex` under
 sub-section).
 -/
 
-/-- **Structural axiom (S1).** A meromorphic map to the Riemann sphere
-whose pole divisor is `0` factors through the affine chart `ℂ`: there
-is a smooth (in fact `ContMDiff` of class `⊤`) function `g : X → ℂ`
-such that the original `f.toMap` agrees with `(↑) ∘ g`.
+/-- **Structural axiom (S1a).** When the pole divisor is `0`, the map
+`f.toMap` never takes the value `∞`. This is the *pointwise*
+content of "no poles".
 
-Bottom-up: this is the analytic content of "no poles" — outside the
-pole locus, the map lifts through the embedding `ℂ ↪ OnePoint ℂ`. The
-project's `MeromorphicMapToSphere` structure does not yet expose this
-factorisation; supplying it is a Mathlib-internal task (or a project
-refactor of the structure).
-
-Cross-ref: `tex/sections/03-riemann-roch.tex`, `lem:meromorphic-no-poles-factors`. -/
-theorem MeromorphicMapToSphere.toFiniteFun_of_no_poles
+Cross-ref: `tex/sections/03-riemann-roch.tex`,
+`lem:meromorphic-no-infty-of-no-poles`. -/
+theorem MeromorphicMapToSphere.toMap_ne_infty_of_no_poles
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X) (_hpole : f.poles = 0) :
+    ∀ x : X, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ) := by
+  sorry
+
+/-- **Structural axiom (S1b).** Smoothness of the `ℂ`-valued lift: if
+`f.toMap x ≠ ∞` for every `x`, then the resulting function
+`X → ℂ` (defined by stripping the `OnePoint` wrapper at each point)
+is smooth. This is the manifold-level reason that "avoiding ∞" gives
+a smooth `ℂ`-valued function.
+
+Cross-ref: `tex/sections/03-riemann-roch.tex`,
+`lem:meromorphic-finite-lift-smooth`. -/
+theorem MeromorphicMapToSphere.toFiniteFun_mdiff_of_no_infty
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X)
+    (_hne : ∀ x : X, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)) :
     ∃ g : X → ℂ, MDifferentiable (modelWithCornersSelf ℂ ℂ) 𝓘(ℂ, ℂ) g ∧
       f.toMap = fun x => ((g x : ℂ) : OnePoint ℂ) := by
+  sorry
+
+/-- **Structural axiom (S1).** A meromorphic map to the Riemann sphere
+whose pole divisor is `0` factors through the affine chart `ℂ`: there
+is a smooth function `g : X → ℂ` such that `f.toMap = (↑) ∘ g`.
+
+Sorry-free assembly: combine `toMap_ne_infty_of_no_poles` (S1a) and
+`toFiniteFun_mdiff_of_no_infty` (S1b).
+
+Cross-ref: `tex/sections/03-riemann-roch.tex`,
+`lem:meromorphic-no-poles-factors`. -/
+theorem MeromorphicMapToSphere.toFiniteFun_of_no_poles
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X) (hpole : f.poles = 0) :
+    ∃ g : X → ℂ, MDifferentiable (modelWithCornersSelf ℂ ℂ) 𝓘(ℂ, ℂ) g ∧
+      f.toMap = fun x => ((g x : ℂ) : OnePoint ℂ) :=
+  f.toFiniteFun_mdiff_of_no_infty (f.toMap_ne_infty_of_no_poles hpole)
+
+/-- **Structural axiom (S2a).** Membership in `L([P])` gives a pointwise
+pole bound: at every point `Q`, `f.poles Q ≤ (Divisor.point P) Q`.
+
+Cross-ref: `tex/sections/03-riemann-roch.tex`,
+`lem:mem-L-point-pole-pointwise-bound`. -/
+theorem MeromorphicMapToSphere.poles_le_point_of_mem_L_point
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (_hmem : f.MemRiemannRochSpace (Divisor.point P)) :
+    ∀ Q : X, f.poles Q ≤ (Divisor.point P) Q := by
+  sorry
+
+/-- **Structural axiom (S2b).** A `Divisor.Effective` divisor that is
+pointwise `≤ Divisor.point P` is either `0` or `Divisor.point P`.
+
+Sorry-free proof: case-split on `D P`; off `P` use the bound to
+force `D Q = 0`; at `P` the bound forces `D P ∈ {0, 1}`. Each case
+yields one of the two conclusions via `Finsupp` extensionality.
+
+Cross-ref: `tex/sections/03-riemann-roch.tex`,
+`lem:divisor-effective-le-point-iff`. -/
+theorem Divisor.effective_le_point_iff_zero_or_eq
+    {X : Type*} [DecidableEq X] (D : Divisor X) (P : X)
+    (heff : Divisor.Effective D)
+    (hle : ∀ Q : X, D Q ≤ (Divisor.point P) Q) :
+    D = 0 ∨ D = Divisor.point P := by
+  -- Off P, the bound and effectivity squeeze D Q = 0.
+  have hoff : ∀ Q : X, Q ≠ P → D Q = 0 := by
+    intro Q hQ
+    have h1 := heff Q
+    have h2 := hle Q
+    rw [Divisor.point_apply_ne hQ] at h2
+    omega
+  -- At P, D P ∈ {0, 1}.
+  have hpt_le : D P ≤ 1 := by
+    have h := hle P
+    rw [Divisor.point_apply_self] at h
+    exact h
+  have hpt_ge : 0 ≤ D P := heff P
+  have hpt : D P = 0 ∨ D P = 1 := by omega
+  rcases hpt with hpt0 | hpt1
+  · -- D P = 0; D = 0.
+    left
+    refine Finsupp.ext fun Q => ?_
+    by_cases hQ : Q = P
+    · rw [hQ]; exact hpt0
+    · exact hoff Q hQ
+  · -- D P = 1; D = Divisor.point P.
+    right
+    refine Finsupp.ext fun Q => ?_
+    by_cases hQ : Q = P
+    · rw [hQ, Divisor.point_apply_self]; exact hpt1
+    · rw [Divisor.point_apply_ne hQ]; exact hoff Q hQ
+
+/-- **Structural axiom (S2c).** The pole divisor of a meromorphic map
+is effective.
+
+Cross-ref: `tex/sections/03-riemann-roch.tex`,
+`lem:meromorphic-poles-effective`. -/
+theorem MeromorphicMapToSphere.poles_effective
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X) :
+    Divisor.Effective f.poles := by
   sorry
 
 /-- **Structural axiom (S2).** Membership in `L([P])` implies the pole
 divisor is bounded above by `[P]` pointwise; combined with effectivity
 of `f.poles` this means `f.poles ∈ {0, point P}`.
 
-Bottom-up: from `Divisor.Effective (f.principal + point P)` and
-disjoint zero/pole supports for an actual meromorphic function,
-the bound on `f.poles` follows. Currently captured as a sorry on
-the abstract structure, since support-disjointness is not in the
-fields of `MeromorphicMapToSphere`.
+Sorry-free assembly: combine S2a (pointwise pole bound) with S2c
+(pole effectivity) and the divisor lemma S2b.
 
 Cross-ref: `tex/sections/03-riemann-roch.tex`, `lem:mem-L-point-pole-bound`. -/
 theorem MeromorphicMapToSphere.poles_eq_zero_or_point_of_mem_L_point
-    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {X : Type*} [DecidableEq X] [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (_hmem : f.MemRiemannRochSpace (Divisor.point P)) :
-    f.poles = 0 ∨ f.poles = Divisor.point P := by
-  sorry
+    (hmem : f.MemRiemannRochSpace (Divisor.point P)) :
+    f.poles = 0 ∨ f.poles = Divisor.point P :=
+  Divisor.effective_le_point_iff_zero_or_eq f.poles P f.poles_effective
+    (f.poles_le_point_of_mem_L_point P hmem)
 
 /-- **Structural axiom (S3).** From the genus-zero Riemann-Roch
 identity `ℓ([P]) − ℓ(K − [P]) = 2` plus the negative-degree vanishing
@@ -189,6 +281,7 @@ theorem genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point
     {h : analyticGenus ℂ X = 0}
     (f : GenusZeroPointRiemannRochElement X P h) :
     f.meromorphicMap.poles = Divisor.point P := by
+  classical
   rcases f.meromorphicMap.poles_eq_zero_or_point_of_mem_L_point P f.mem_L_point with
     hzero | hpt
   · -- Pole divisor 0 contradicts nonconstancy via Liouville.
