@@ -33,22 +33,22 @@ namespace JacobianChallenge.Periods
 
 open AlgebraicTopology CategoryTheory
 
-universe u
-
 /-- The first singular homology of `M` with ℤ-coefficients, viewed as a
 ℤ-module type. Defined as the coercion of `IntegralOneCycle M` (a
 `ModuleCat ℤ` object) to its underlying `Type` — this makes
 `singularH1 M = IntegralOneCycle M` reducible by `abbrev`, so the two
 parallel `topologicalGenus` formulations across the project unify
-definitionally. -/
-abbrev singularH1 (M : Type u) [TopologicalSpace M] : Type u :=
+definitionally. The universe is fixed at `Type 0` because
+`IntegralOneCycle` is itself only defined at `Type 0` (Mathlib
+`HasCoproducts (ModuleCat ℤ)` only at universe 0 at this commit). -/
+abbrev singularH1 (M : Type) [TopologicalSpace M] : Type :=
   IntegralOneCycle M
 
-instance singularH1.addCommGroup (M : Type u) [TopologicalSpace M] :
+instance singularH1.addCommGroup (M : Type) [TopologicalSpace M] :
     AddCommGroup (singularH1 M) :=
   ModuleCat.isAddCommGroup _
 
-instance singularH1.module (M : Type u) [TopologicalSpace M] :
+instance singularH1.module (M : Type) [TopologicalSpace M] :
     Module ℤ (singularH1 M) :=
   ModuleCat.isModule _
 
@@ -57,7 +57,7 @@ half the ℤ-rank of singular H₁. The definition is `noncomputable`
 and is intended for compact connected oriented 2-manifolds; for
 non-orientable or non-compact spaces the value is meaningless. -/
 noncomputable def topologicalGenus
-    (M : Type u) [TopologicalSpace M] [CompactSpace M] [ConnectedSpace M] :
+    (M : Type) [TopologicalSpace M] [CompactSpace M] [ConnectedSpace M] :
     ℕ :=
   Module.finrank ℤ (singularH1 M) / 2
 

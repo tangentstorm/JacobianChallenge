@@ -65,6 +65,179 @@ Periods, AbelJacobi) writes elsewhere.
 
 ---
 
+## Curve-analysis frontier delegation packets (2026-05-05, queued; Aristotle blocked)
+
+Stepwise refinement (per `ref/TOPDOWN.md`) is being driven locally
+while the Aristotle queue is unavailable. The packets below are the
+*Aristotle-shaped split* of each frontier sorry in the curve-analysis
+pass — each packet targets one new helper file with a tightly scoped
+named obligation, prefers direct tactics, and includes the Mathlib
+gap that blocks final discharge.
+
+When Aristotle is back, dispatch in the order given (lower numbers
+first; sibling jobs can go in parallel because their write scopes are
+disjoint).
+
+### Packet C1 — `polygon4g_singularH1_basis` (Polygon4gCellular)
+
+**Source sorry:** `hurewicz_singularH1_iso_polygon4g`
+(`Jacobian/Periods/Polygon4gCellular.lean:135`).
+
+Top-down split into three named obligations (each in its own file):
+
+| Sub-job | Target file | Statement | Mathlib gap |
+|---|---|---|---|
+| C1a | `Jacobian/Periods/Polygon4gFundamentalGroupAb.lean` | `polygon4g_succ_fundamentalGroup_abelianization_freeZ` — `π₁(Σ_g)^{ab} ≃ ℤ^{2(g+1)}` | Surface group presentation absent |
+| C1b | `Jacobian/Periods/HurewiczNatTrans.lean` | `hurewicz_iso_natural` — `H₁(X,ℤ) ≃ π₁(X)^{ab}` for path-connected `X` | Hurewicz natural transformation absent |
+| C1c | `Jacobian/Periods/Polygon4gCellular.lean` | `hurewicz_singularH1_iso_polygon4g` — sorry-free assembly composing C1a∘C1b⁻¹ | — |
+
+Each sub-job's allowed write scope is exactly the named file; forbidden
+files always include `Jacobian/Challenge.lean`.
+
+### Packet C2 — `singularH1_iso_of_homotopyEquiv_via_prism` (SingularH1Homotopy)
+
+**Source sorry:** `singularH1_iso_of_homotopyEquiv_via_prism`
+(`Jacobian/Periods/SingularH1Homotopy.lean:208`).
+
+Already split top-down into named leaves (`SingularChainPrism`,
+`singularChain_homotopy_chainHomotopy`, etc.); the residual sorry is the
+*assembly through Mathlib's homology functor*. Sub-split:
+
+| Sub-job | Target file | Statement | Mathlib gap |
+|---|---|---|---|
+| C2a | `Jacobian/Periods/SingularH1FunctorMap.lean` | `singularH1Functor_map` — `C(X,Y) → singularH1 X →ₗ[ℤ] singularH1 Y` honestly via the singular-chain functor | Need to compose `singularChainComplexFunctor` with `Hₙ` extraction |
+| C2b | `Jacobian/Periods/SingularH1FunctorMapId.lean` | `singularH1Functor_map_id` — identity functoriality | — (follows from C2a) |
+| C2c | `Jacobian/Periods/SingularH1FunctorMapComp.lean` | `singularH1Functor_map_comp` — composition functoriality | — |
+| C2d | `Jacobian/Periods/SingularH1FunctorMapHomotopy.lean` | homotopic maps induce equal `H₁` (via prism leaves already in `SingularH1Homotopy.lean`) | descent of chain-homotopy to homology |
+| C2e | `Jacobian/Periods/SingularH1Homotopy.lean` | `singularH1_iso_of_homotopyEquiv_via_prism` — sorry-free `LinearEquiv` from C2a/b/c/d | — |
+
+### Packet C3 — `IntegralOneCycle_finite_of_cellular`, `_free_of_cellular` (CellularHomologyRS)
+
+**Source sorries:** `Jacobian/Periods/CellularHomologyRS.lean:114, 136`.
+
+| Sub-job | Target file | Statement | Mathlib gap |
+|---|---|---|---|
+| C3a | `Jacobian/Periods/CellularChainComplex.lean` | `cellularChainComplex` — finite ℤ-chain complex from `FiniteCWStructure` | cellular chain complex on a topological space |
+| C3b | `Jacobian/Periods/CellularSingularComparison.lean` | `cellular_eq_singular_homology` — Hatcher Theorem 2.35 | comparison theorem |
+| C3c | `Jacobian/Periods/IntegralOneCycleFreeFromPolygon.lean` | `IntegralOneCycle_free_of_cellular` via the polygonal model (route 1) — uses C1c | needs Packet C1 first |
+| C3d | `Jacobian/Periods/IntegralOneCycleFinite.lean` | `IntegralOneCycle_finite_of_cellular` via C3b | — |
+
+C3c blocks on C1; C3a/b are independent.
+
+### Packet C4 — `pathIntegralViaCover_pullbackFormsBundledLM` (PullbackNaturality, path level)
+
+**Source sorry:** `Jacobian/Periods/PullbackNaturality.lean:239`.
+
+This is a chain-rule calculation for path integrals, no Stokes. The
+existing file already discharges the Path-API special cases
+(refl/trans/symm/zero/add/smul/neg/comp). The remaining base case is
+chart-level naturality.
+
+| Sub-job | Target file | Statement |
+|---|---|---|
+| C4a | `Jacobian/Periods/ChartedFormPullbackNaturality.lean` | `chartedFormPullback_pullback_naturality` — at chart level, `pathIntegralInChart c (f^*η) γᵢ = pathIntegralInChart (c ∘ f, ⟨…⟩) η (γᵢ.map hf.continuous)` |
+| C4b | `Jacobian/Periods/PathIntegralViaCoverWithPullbackNaturality.lean` | the `_With` variant on a fixed cover-and-partition |
+| C4c | `Jacobian/Periods/PullbackNaturality.lean` | un-`With` lift: discharges line 239 from C4b via the existing Classical.choose wrapper |
+
+### Packet C5 — `periodPairing_pullbackFormsBundledLM` (PullbackNaturality, cycle level)
+
+**Source sorry:** `Jacobian/Periods/PullbackNaturality.lean:139`.
+
+Cycle-level Stokes / descent. Blocks on C4 + concretisation of
+`opaque periodPairing`.
+
+| Sub-job | Target file | Statement | Mathlib gap |
+|---|---|---|---|
+| C5a | `Jacobian/Periods/PeriodPairingChainLevel.lean` | `chainFormPairing` and `periodPairing_eq_chainFormPairing_descent` | concretise `periodPairing` |
+| C5b | `Jacobian/Periods/CyclePushforwardChainCompat.lean` | `cyclePushforward` agrees with chain-level pushforward | — (functoriality bookkeeping) |
+| C5c | `Jacobian/Periods/PullbackNaturality.lean` | line-139 sorry-free assembly from C4c + C5a + C5b | — |
+
+### Packet C6 — `basisAnalyticPullbackBundle_*_dualPullback` (PullbackBasis HEq diamond)
+
+**Source sorries:** `Jacobian/TraceDegree/PullbackBasis.lean:180, 269`.
+
+Structural fix only. The opaque `basisAnalyticPullbackBundle` is
+realised by `Classical.choice` from the zero-valued `Inhabited`
+witness, so cross-instance identities cannot be proved without a
+concrete construction. The fix is to replace the opaque bundle with
+a definition built from a concrete `pullbackFormsMap`.
+
+| Sub-job | Target file | Statement | Mathlib gap |
+|---|---|---|---|
+| C6a | `Jacobian/HolomorphicForms/PullbackFormsMapConcrete.lean` | `pullbackFormsMap` — concrete `H⁰(Y, Ω¹) →ₗ[ℂ] H⁰(X, Ω¹)` | concrete pullback of holomorphic 1-forms |
+| C6b | `Jacobian/TraceDegree/BasisAnalyticPullbackConcrete.lean` | replacement for `opaque basisAnalyticPullbackBundle` built from C6a | — |
+| C6c | `Jacobian/TraceDegree/PullbackBasis.lean` | discharge lines 180 and 269 via C6b's defining equations | — |
+
+C6 is sibling to the analogous `PushforwardBasis` blocker
+(`pushforwardTraceLift_comp_spec_apply_at`); a real Mathlib
+`pullbackFormsMap` would unblock both.
+
+### Packet C7 — `period_congruence_distinct_implies_genus_zero` (AnalyticOfCurveBasis)
+
+**Source sorry:** `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean:264`.
+
+The file's docstring (lines 187–232) already proposes a 3-way split:
+
+| Sub-job | Target file | Statement | Mathlib gap |
+|---|---|---|---|
+| C7a | `Jacobian/AbelJacobi/AbelTheoremExistence.lean` | `abelJacobi_image_zero_implies_principal` — Abel's theorem (existence) | divisor theory + Pic⁰ |
+| C7b | `Jacobian/AbelJacobi/RiemannHurwitzDegOne.lean` | `degree_one_meromorphic_implies_genus_zero` — Riemann-Hurwitz at degree 1 | degree of holomorphic maps + genus-0 classification |
+| C7c | `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` | line-264 sorry-free assembly from C7a + C7b + `analyticGenus_eq_topologicalGenus` | — |
+
+Per the file's note this split is "worth executing once the divisor
+theory layer or even a placeholder `Divisor X` / `IsPrincipal d` API
+exists in the project." Until then, either keep the consolidated form
+or commit to introducing the placeholder API in C7a's file.
+
+### Packet C8 — RR/Serre cluster (24 sorries / 11 files)
+
+These are all pieces of classical Riemann-Roch / residue / Serre
+duality. The cluster sorries break down as follows; each is its own
+Aristotle packet (one file → one or two declarations) and each is
+blocked on the same upstream Mathlib gap (divisor / line-bundle /
+Čech cohomology / residue machinery).
+
+| Sub-job | File | Decls | Bottom-up content |
+|---|---|---|---|
+| C8a | `Jacobian/HolomorphicForms/Serre/ResidueMap.lean` | `residueMap_left_inv`, `residueMap_right_inv` | residue ↔ integration map iso |
+| C8b | `Jacobian/HolomorphicForms/Serre/RiemannRochHighFromSerre.lean` | (2 decls) | Serre-duality → RR high-degree |
+| C8c | `Jacobian/HolomorphicForms/Serre/RiemannRochUmbrellaPieces.lean` | (1 decl) | RR umbrella |
+| C8d | `Jacobian/HolomorphicForms/RiemannRoch.lean` | `genusZero_exists_nonconstant_mem_L_point`, `_poleDivisor_eq_point_…` | RR `ℓ(P)=2` for genus 0 |
+| C8e | `Jacobian/HolomorphicForms/RiemannRochLowDegree.lean` | (1 decl) | RR low-degree case |
+| C8f | `Jacobian/HolomorphicForms/EulerCharLineBundle.lean` | (2 decls) | Euler char of a line bundle |
+| C8g | `Jacobian/HolomorphicForms/MeromorphicDegree.lean` | (2 decls) | degree of a meromorphic function |
+| C8h | `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` | (2 decls) | de Rham → Dolbeault comparison |
+| C8i | `Jacobian/HolomorphicForms/ChartCoeffExtractionRecon.lean` | (1 decl) | smoothness of chart coefficient extraction |
+| C8j | `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` | (3 decls) | RS-level glue |
+| C8k | `Jacobian/HolomorphicForms/GenusZeroClassification.lean` | (6 decls) | genus-0 ⇒ `≅ ℂℙ¹` |
+
+Total surface area: 24 sorries / 11 files. Most files are 1–2
+sorries each (only `GenusZeroClassification` exceeds with 6).
+
+Each C8x packet's split-into-helpers will be filled in as the cluster
+is iterated; the splits live in the target file's docstring rather
+than this index.
+
+### Iteration cadence (while Aristotle is blocked)
+
+`ref/TOPDOWN.md` defines a "round" as one stepwise refinement that
+either reduces the sorry count *or* keeps it constant while replacing
+one big sorry by smaller, better-named children. The local schedule
+is:
+
+* **C1** — 10 rounds of refinement on Polygon4gCellular before moving on.
+* **C2** — 10 rounds on SingularH1Homotopy.
+* **C3** — 10 rounds on CellularHomologyRS (both leaves).
+* **C4 / C5** — 10 rounds each on PullbackNaturality (path / cycle).
+* **C6** — 10 rounds on PullbackBasis (HEq diamond).
+* **C7** — 10 rounds on AnalyticOfCurveBasis.
+* **C8** — 10 rounds on the RR/Serre cluster (rotating across files).
+
+Each round must end with a passing narrow `lake build` of the touched
+module(s).
+
+---
+
 ## Live Status (2026-05-02, roadmap-driven saturation tick)
 
 Roadmap-driven saturation wave per `ref/plans/roadmap.org`. 14 packets
