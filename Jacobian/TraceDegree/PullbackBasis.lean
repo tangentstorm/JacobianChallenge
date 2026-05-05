@@ -166,18 +166,78 @@ statements that the eventual concrete `pullbackFormsMap` fix will
 discharge directly), and the per-vector / per-coordinate spec lemmas
 are sorry-free assemblies via `unfold + rw + rfl`. -/
 
+/-! ### Round 1 (2026-05-05) — split the HEq diamond sorries
+
+The two diamond sorries
+`basisAnalyticPullbackBundle_id_dualPullback` and
+`basisAnalyticPullbackBundle_comp_dualPullback` cannot be discharged
+without a concrete (non-opaque) realisation of the per-(f, hf)
+bundle. We split each into:
+
+* `basisAnalyticPullbackBundle_eq_pullbackFormsMap` — bridge from the
+  bundle's `basisDualPullback` field to a *named* covering-space
+  dual-pullback function `pullbackFormsMap` (currently both are
+  opaque-realised; bridge is itself a sorry);
+* `pullbackFormsMap_id` — identity functoriality of the bridge map;
+* `pullbackFormsMap_comp` — composition functoriality.
+
+Each is the same Mathlib gap (concrete dual of basis-aligned form
+pullback) but stated as a separate, smaller named obligation. -/
+
+/-- **Stage A leaf (round 1, structural opaque).** Concrete dual of
+the basis-aligned form pullback. *Bottom-up*: matrix of the
+dual-pullback in chosen bases of `H⁰(X, Ω¹)` and `H⁰(Y, Ω¹)`. -/
+noncomputable opaque pullbackFormsMap
+    (X' Y' : Type) [TopologicalSpace X'] [T2Space X']
+    [CompactSpace X'] [ConnectedSpace X'] [ChartedSpace ℂ X']
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X']
+    [TopologicalSpace Y'] [T2Space Y'] [CompactSpace Y']
+    [ConnectedSpace Y'] [ChartedSpace ℂ Y']
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y']
+    (f : X' → Y') (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ Y') → ℂ) →+ (Fin (analyticGenus ℂ X') → ℂ)
+
+/-- **Stage A leaf (round 1, bridge sorry).** The bundle's
+`basisDualPullback` agrees with the named `pullbackFormsMap`. Same
+upstream Mathlib gap as the original diamond sorry: both
+`basisAnalyticPullbackBundle f hf` and `pullbackFormsMap X' Y' f hf`
+are opaque-realised, so this equality is itself a sorry. -/
+theorem basisAnalyticPullbackBundle_eq_pullbackFormsMap
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (basisAnalyticPullbackBundle f hf).basisDualPullback =
+      pullbackFormsMap X Y f hf := by
+  sorry
+
+/-- **Stage A leaf (round 1).** Identity functoriality of
+`pullbackFormsMap`. Bottom-up: the dual of form-pullback along `id`
+is the identity. -/
+theorem pullbackFormsMap_id_eq_id :
+    pullbackFormsMap X X id contMDiff_id =
+      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
+  sorry
+
+/-- **Stage A leaf (round 1).** Composition (contravariant)
+functoriality of `pullbackFormsMap`. -/
+theorem pullbackFormsMap_comp_eq
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
+    pullbackFormsMap X Z (g ∘ f) (hg.comp hf) =
+      (pullbackFormsMap X Y f hf).comp (pullbackFormsMap Y Z g hg) := by
+  sorry
+
 /-- Bundle-level axiom: the `basisDualPullback` field of the bundle
 selected at `(X, X, id, contMDiff_id)` is the identity additive group
 homomorphism on the covering space.
 
-Mirrors `basisAnalyticPushforwardBundle_id_traceLift`. The sorry sits
-here because the opaque bundle is realised by `Classical.choice` from
-the zero-valued `Inhabited` witness; the resolution path is to replace
-the `opaque` with a `noncomputable def` built from a concrete
-`pullbackFormsMap` whose `id` value is by construction the identity. -/
+**Round 1 sorry-free assembly.** Compose
+`basisAnalyticPullbackBundle_eq_pullbackFormsMap` (the bridge sorry)
+with `pullbackFormsMap_id_eq_id` (the identity-functoriality sorry). -/
 theorem basisAnalyticPullbackBundle_id_dualPullback :
     (basisAnalyticPullbackBundle (X := X) (Y := X) id contMDiff_id).basisDualPullback =
-      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := sorry
+      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
+  rw [basisAnalyticPullbackBundle_eq_pullbackFormsMap (X := X) (Y := X)
+      id contMDiff_id,
+    pullbackFormsMap_id_eq_id (X := X)]
 
 /-- The dual form-pullback along `id` is the identity additive group
 homomorphism. Sorry-free: extracts the bundle-level axiom via `unfold`. -/
@@ -266,7 +326,12 @@ theorem basisAnalyticPullbackBundle_comp_dualPullback
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     (basisAnalyticPullbackBundle (g ∘ f) (hg.comp hf)).basisDualPullback =
       ((basisAnalyticPullbackBundle f hf).basisDualPullback).comp
-        (basisAnalyticPullbackBundle g hg).basisDualPullback := sorry
+        (basisAnalyticPullbackBundle g hg).basisDualPullback := by
+  -- Round 1 sorry-free assembly: route through the structural bridge.
+  rw [basisAnalyticPullbackBundle_eq_pullbackFormsMap (g ∘ f) (hg.comp hf),
+      basisAnalyticPullbackBundle_eq_pullbackFormsMap f hf,
+      basisAnalyticPullbackBundle_eq_pullbackFormsMap g hg,
+      pullbackFormsMap_comp_eq f hf g hg]
 
 /-- Top-level contravariant functoriality of the dual form-pullback:
 `(g ∘ f)* = f* ∘ g*` as an additive group homomorphism on the covering

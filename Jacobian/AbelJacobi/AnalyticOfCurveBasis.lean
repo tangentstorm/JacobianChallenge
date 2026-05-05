@@ -3,6 +3,8 @@ import Jacobian.ComplexTorus.Defs
 import Jacobian.ComplexTorus.ChartedSpace
 import Jacobian.ComplexTorus.IsManifold
 import Jacobian.ComplexTorus.MkSmooth
+import Jacobian.HolomorphicForms.Meromorphic
+import Jacobian.HolomorphicForms.MeromorphicDegree
 
 /-!
 # Analytic Abel-Jacobi map (basis-aligned carrier)
@@ -230,7 +232,7 @@ theory layer or even a placeholder `Divisor X` / `IsPrincipal d` API
 exists in the project. The docstring already captures the canonical
 proof so future Aristotle/sub-agent jobs can split rather than
 rediscover the structure. -/
-/-- Combined Abel–Riemann-Hurwitz content (TOPDOWN-split via Aristotle 7ceff781):
+/-! Combined Abel–Riemann-Hurwitz content (TOPDOWN-split via Aristotle 7ceff781):
 if two distinct points have period-congruent path integrals, then
 `analyticGenus ℂ X = 0`.
 
@@ -255,13 +257,70 @@ holomorphic map to `ℂP¹` forces `X ≅ ℂP¹`, hence `genus(X) = 0`.
 - Riemann-Hurwitz formula / degree theory (≈3 000 lines)
 - Bridge `analyticGenus ↔ topologicalGenus` (Hodge/de Rham, delegated to
   `analyticGenus_eq_topologicalGenus` in `PeriodFunctional.lean`) -/
+/-! ### Round 1 (2026-05-05) — implement the documented top-down split
+
+The single sorry `period_congruence_distinct_implies_genus_zero` is
+split into the two named obligations the file's docstring already
+proposed (lines 187–232 above) plus a sorry-free assembly:
+
+* `abelJacobi_image_zero_implies_principal` — Abel's theorem
+  (existence direction): from period congruence with `Q₁ ≠ Q₂`, get a
+  `MeromorphicMapToSphere X` whose principal divisor is
+  `Divisor.point Q₁ - Divisor.point Q₂`.
+* `degree_one_meromorphicMap_implies_analyticGenus_zero` — Riemann-
+  Hurwitz at degree 1: from a `MeromorphicMapToSphere X` whose pole
+  divisor is `Divisor.point Q₂` (i.e. one simple pole), conclude
+  `analyticGenus ℂ X = 0`.
+
+The assembly composes them: from period congruence get the
+meromorphic map (Abel), normalise its pole divisor (it's
+`-poleDivisor + zeroDivisor = principalDivisor`, with
+`principalDivisor = (Q₁) - (Q₂)`, which forces `poleDivisor = (Q₂)`
+up to a normalisation step recorded as a separate auxiliary), then
+apply Riemann-Hurwitz at degree 1. -/
+
+/-- **Stage A leaf (round 1).** Abel's theorem (existence direction)
+in this project's basis-aligned formulation. From the hypothesis that
+two distinct points `Q₁ ≠ Q₂` have period-congruent path integrals,
+produce a meromorphic map `X → ℂ∞` whose principal divisor is
+`(Q₁) - (Q₂)` and whose pole divisor is `(Q₂)`.
+
+Bottom-up: classical Abel's theorem; Mathlib v4.28.0 lacks divisor
+theory on Riemann surfaces, so this leaf is currently a sorry. -/
+theorem abelJacobi_image_zero_implies_principal
+    (P : X) (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
+    (_hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X) :
+    ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
+      f.poles = HolomorphicForms.Divisor.point Q₂ := by
+  sorry
+
+/-- **Stage A leaf (round 1).** Riemann-Hurwitz at degree 1: a
+meromorphic map `X → ℂ∞` with pole divisor a single point gives a
+bijection between `X` and the Riemann sphere, hence `X` has genus 0.
+
+Bottom-up: the existing `meromorphicDegreeOneData_of_poleDivisor_point`
+companion (in `MeromorphicDegree.lean`) plus a still-missing transfer
+from "X is in continuous bijection with ℂ∞" to `analyticGenus ℂ X = 0`. -/
+theorem degree_one_meromorphicMap_implies_analyticGenus_zero
+    (f : HolomorphicForms.MeromorphicMapToSphere X) (Q₂ : X)
+    (_hpole : f.poles = HolomorphicForms.Divisor.point Q₂) :
+    analyticGenus ℂ X = 0 := by
+  sorry
+
+/-- **Round 1 sorry-free assembly.** Combines
+`abelJacobi_image_zero_implies_principal` and
+`degree_one_meromorphicMap_implies_analyticGenus_zero`. -/
 theorem period_congruence_distinct_implies_genus_zero
     (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hperiod :
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
         basisAlignedPeriodSubgroup X) :
     analyticGenus ℂ X = 0 := by
-  sorry
+  obtain ⟨f, hpole⟩ :=
+    abelJacobi_image_zero_implies_principal X P Q₁ Q₂ hne hperiod
+  exact degree_one_meromorphicMap_implies_analyticGenus_zero X f Q₂ hpole
 
 /-- Sorry-free assembly: derives point-separation from
 `period_congruence_distinct_implies_genus_zero` by contradiction with

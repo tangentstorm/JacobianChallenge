@@ -26,35 +26,33 @@ namespace JacobianChallenge.HolomorphicForms
 open scoped Manifold
 open CategoryTheory
 
-/-- **Frontier `def` (sorry).** Residue / integration map
-`H¹(X, K_X) → ℂ` on a compact connected Riemann surface. -/
-noncomputable def residueMap
+/-- **Frontier `def` (round 1, opaque).** Residue / integration map
+`H¹(X, K_X) → ℂ` on a compact connected Riemann surface. Marked
+`opaque` so the round-trip lemmas below are not contradicted by a
+specific `:= 0` placeholder; bottom-up content is the classical
+residue / integration map (Čech model) on `K_X`. -/
+noncomputable opaque residueMap
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
-    RSSheafCohomology X (RSDualizingSheaf X) 1 →ₗ[ℂ] ℂ := by
-  exact 0
+    RSSheafCohomology X (RSDualizingSheaf X) 1 →ₗ[ℂ] ℂ
 
-/-- **Frontier theorem (sorry).** `residueMap` is a `ℂ`-linear
-isomorphism: `H¹(X, K_X) ≃ₗ[ℂ] ℂ`.
-
-Decomposes classically into
-
-* `dim_ℂ H¹(X, K_X) = 1` (handled also by
-  `h1_dualizing_sheaf_one_dim` in `H1DualizingSheaf.lean`),
+/-- **Frontier `def` (round 1, opaque).** Inverse of the residue /
+integration map. Decomposes classically into
+* `dim_ℂ H¹(X, K_X) = 1` (handled also by `h1_dualizing_sheaf_one_dim`
+  in `H1DualizingSheaf.lean`),
 * the residue is nonzero on a chosen generator. -/
-noncomputable def residueMap_inverse
+noncomputable opaque residueMap_inverse
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
-    ℂ →ₗ[ℂ] RSSheafCohomology X (RSDualizingSheaf X) 1 := by
-  exact 0
+    ℂ →ₗ[ℂ] RSSheafCohomology X (RSDualizingSheaf X) 1
 
 /-- **Frontier theorem (sorry).** Round-trip identity 1: `residueMap`
 followed by `residueMap_inverse` is the identity. -/

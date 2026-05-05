@@ -193,18 +193,153 @@ theorem singularH1_inducedMap_eq_of_homotopic
     Nonempty (singularH1 X →ₗ[ℤ] singularH1 Y) := by
   exact ⟨0⟩
 
+/-! ### Round 1 (2026-05-05) — split the homotopy-equivalence iso
+
+The original single sorry is replaced by a body delegating to two
+named obligations:
+
+* `singularH1_inducedMap_pair_of_homotopyEquiv` — produces the pair of
+  maps `(f_*, g_*)` with the *propositional* mutual-inverse data
+  (chain-level prism applied at `g ∘ f ≃ id` and `f ∘ g ≃ id`);
+* `singularH1_iso_assemble_of_inducedMap_pair` — sorry-free assembly
+  packaging an inverse-pair into a `LinearEquiv`.
+
+This isolates the genuine prism-descent content into a single named
+obligation. -/
+
+/-- **Stage A leaf (round 1, 2026-05-05).** Bundle of the two induced
+maps `f_* : H₁ X → H₁ Y` and `g_* : H₁ Y → H₁ X` together with the
+mutual-inverse propositions. Bottom-up: the prism construction
+applied to `g ∘ f ≃ id` and `f ∘ g ≃ id` yields the chain-level
+homotopies whose descent to `H₁` makes the pair mutual inverses. -/
+structure SingularH1InvPair (X Y : Type) [TopologicalSpace X]
+    [TopologicalSpace Y] : Type where
+  /-- Forward map `H₁ X → H₁ Y`. -/
+  fwd : singularH1 X →ₗ[ℤ] singularH1 Y
+  /-- Backward map `H₁ Y → H₁ X`. -/
+  bwd : singularH1 Y →ₗ[ℤ] singularH1 X
+  /-- The composition `bwd ∘ fwd` is the identity on `H₁ X`. -/
+  left_inv : Function.LeftInverse bwd fwd
+  /-- The composition `fwd ∘ bwd` is the identity on `H₁ Y`. -/
+  right_inv : Function.RightInverse bwd fwd
+
+/-! ### Round 2 (2026-05-05) — split inverse-pair into four leaves
+
+The inverse-pair existence is split into four named obligations
+mirroring its four fields:
+
+* forward map `f_*` (genuine sorry: descend `singularChainComplexFunctor.map f`
+  to `H₁`);
+* backward map `g_*` (genuine sorry: same on the inverse direction);
+* left-inverse identity `g_* ∘ f_* = id` (genuine sorry: chain-homotopy
+  for `g ∘ f ≃ id` descends to identity on `H₁`);
+* right-inverse identity `f_* ∘ g_* = id` (genuine sorry: same for the
+  other composition).
+
+The first two are unified into one helper because both go through the
+same induced-map construction. -/
+
+/-! ### Round 3 (2026-05-05) — make the induced-map opaque
+
+The placeholder `singularH1_inducedLinearMap _ := 0` makes the
+`_id`, `_comp`, `_eq_of_homotopic` lemmas *false* on non-trivial
+spaces (since `0 ≠ id` whenever `singularH1 X` is non-zero). To make
+the named obligations consistent with their statements (so that any
+future concrete realisation of the chain functor discharges them
+truthfully), we promote the definition to `noncomputable opaque`. -/
+
+/-- **Stage A leaf (round 3).** The induced map `singularH1 X →ₗ[ℤ] singularH1 Y`
+from a continuous map `f : X → Y`. Bottom-up: composition of
+`singularChainComplexFunctor.map (TopCat.ofHom f)` with the descent
+of degree-1 cycles modulo boundaries. Marked `opaque` so that the
+companion lemmas (`_id`, `_comp`, `_eq_of_homotopic`) are not
+contradicted by any specific placeholder value. -/
+noncomputable opaque singularH1_inducedLinearMap
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    (f : C(X, Y)) : singularH1 X →ₗ[ℤ] singularH1 Y
+
+/-- **Stage A leaf (round 2).** Identity functoriality of
+`singularH1_inducedLinearMap` (sorry since the map is currently `0`,
+hence `id_*` is `0` rather than `id`). -/
+theorem singularH1_inducedLinearMap_id (X : Type) [TopologicalSpace X] :
+    singularH1_inducedLinearMap (X := X) (Y := X) (ContinuousMap.id X) =
+      LinearMap.id := by
+  sorry
+
+/-- **Stage A leaf (round 2).** Composition functoriality of
+`singularH1_inducedLinearMap`. -/
+theorem singularH1_inducedLinearMap_comp
+    {X Y Z : Type} [TopologicalSpace X] [TopologicalSpace Y] [TopologicalSpace Z]
+    (f : C(X, Y)) (g : C(Y, Z)) :
+    singularH1_inducedLinearMap (g.comp f) =
+      (singularH1_inducedLinearMap g).comp (singularH1_inducedLinearMap f) := by
+  sorry
+
+/-- **Stage A leaf (round 2).** Homotopy invariance: homotopic maps
+induce equal `H₁`-maps. Direct consequence of the prism descent
+(captured by `singularH1_map_eq_of_prism` above for the propositional
+form; this version states it as an equation between the linear maps). -/
+theorem singularH1_inducedLinearMap_eq_of_homotopic
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (_H : ContinuousMap.Homotopy f g) :
+    singularH1_inducedLinearMap f = singularH1_inducedLinearMap g := by
+  sorry
+
+/-- **Stage A leaf (round 2, sorry-free assembly).** Existence of the
+inverse-pair from a homotopy equivalence. Assembled via the four
+`singularH1_inducedLinearMap_*` leaves above. -/
+theorem singularH1_inducedMap_pair_of_homotopyEquiv
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    (h : ContinuousMap.HomotopyEquiv X Y) :
+    Nonempty (SingularH1InvPair X Y) := by
+  refine ⟨{
+    fwd := singularH1_inducedLinearMap h.toFun
+    bwd := singularH1_inducedLinearMap h.invFun
+    left_inv := ?_
+    right_inv := ?_ }⟩
+  · -- (g_*) ∘ (f_*) = (g ∘ f)_* = id_* (by homotopy invariance)
+    obtain ⟨H_l⟩ := h.left_inv
+    have h1 := singularH1_inducedLinearMap_comp h.toFun h.invFun
+    have h2 := singularH1_inducedLinearMap_eq_of_homotopic H_l
+    have h3 := singularH1_inducedLinearMap_id X
+    intro x
+    show (singularH1_inducedLinearMap h.invFun ∘ₗ
+            singularH1_inducedLinearMap h.toFun) x = x
+    rw [← h1, h2, h3]; rfl
+  · -- (f_*) ∘ (g_*) = (f ∘ g)_* = id_* (by homotopy invariance)
+    obtain ⟨H_r⟩ := h.right_inv
+    have h1 := singularH1_inducedLinearMap_comp h.invFun h.toFun
+    have h2 := singularH1_inducedLinearMap_eq_of_homotopic H_r
+    have h3 := singularH1_inducedLinearMap_id Y
+    intro y
+    show (singularH1_inducedLinearMap h.toFun ∘ₗ
+            singularH1_inducedLinearMap h.invFun) y = y
+    rw [← h1, h2, h3]; rfl
+
+/-- **Stage A leaf (round 1, sorry-free).** Package an inverse pair
+into a `LinearEquiv`. -/
+def SingularH1InvPair.toLinearEquiv {X Y : Type}
+    [TopologicalSpace X] [TopologicalSpace Y]
+    (p : SingularH1InvPair X Y) : singularH1 X ≃ₗ[ℤ] singularH1 Y where
+  toFun := p.fwd
+  invFun := p.bwd
+  left_inv := p.left_inv
+  right_inv := p.right_inv
+  map_add' := p.fwd.map_add
+  map_smul' := p.fwd.map_smul
+
 /-- **Round 46 / Stage A leaf (homotopy invariance, ℤ-linear iso form,
 reassembly).** A homotopy equivalence `X ≃ₕ Y` induces a ℤ-linear
 isomorphism `singularH1 X ≃ₗ[ℤ] singularH1 Y`.
 
-Body: extract `f, g` and homotopies from the equivalence; apply
-`singularH1_inducedMap` to each direction; use
-`singularH1_inducedMap_comp` and `singularH1_inducedMap_eq_of_homotopic`
-to verify they are mutual inverses; package as `LinearEquiv`. -/
+Sorry-free assembly: extract the inverse-pair from
+`singularH1_inducedMap_pair_of_homotopyEquiv` and package via
+`SingularH1InvPair.toLinearEquiv`. -/
 theorem singularH1_iso_of_homotopyEquiv_via_prism
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
-    (_h : ContinuousMap.HomotopyEquiv X Y) :
+    (h : ContinuousMap.HomotopyEquiv X Y) :
     Nonempty (singularH1 X ≃ₗ[ℤ] singularH1 Y) := by
-  sorry
+  obtain ⟨p⟩ := singularH1_inducedMap_pair_of_homotopyEquiv h
+  exact ⟨p.toLinearEquiv⟩
 
 end JacobianChallenge.Periods
