@@ -110,50 +110,62 @@ three named sub-leaves matching tex blueprint §14 R3-sub-B.B:
 * `handleSwap_grouping_via_mu_induction` — well-founded induction on
   μ to extract the witness chain. -/
 
-/-- **R3-sub-B.B.r1.** Displacement measure on edge words.
-`μ(w) = Σᵢ dᵢ(w)` where `dᵢ` is the cyclic-list distance between
-matched `aᵢ`-letters of `w`, with `bⱼ`-letters (j ≠ i) interpolated.
-Defined as `0` for now; subsequent rounds replace with the
-substantive cyclic-distance formula. -/
-def handleSwap_displacement_measure {g : ℕ} (_w : EdgeWord g) : ℕ := 0
+/-- **R3-sub-B.B.r1 (Round 2 promotion).** Displacement measure on edge
+words: `0` when `w` is already handle-grouped, `1` otherwise. This is
+the *coarse* substantive form of μ — strong enough to make the base
+case of the μ-induction provable (μ = 0 ↔ handle-grouped) without
+committing to the eventual cyclic-distance formula. Subsequent rounds
+refine `μ` to a fine-grained measure that strictly decreases under
+each `HandleSwap` step (then `handleSwap_strictly_decreases_mu` and
+`handleSwap_grouping_inductive_step` become non-trivial). -/
+def handleSwap_displacement_measure {g : ℕ} (w : EdgeWord g) : ℕ :=
+  if w.IsStandardForm then 0 else 1
 
-/-- **R3-sub-B.B.r1.** Characterisation: `μ(w) = 0 ↔ w` is
-handle-grouped. With the placeholder `μ ≡ 0`, this round is
-trivially `True ↔ IsHandleGrouped w`; the substantive form is
-delivered in subsequent rounds. -/
+/-- **R3-sub-B.B.r1 (Round 2, substantive).** Characterisation:
+`μ(w) = 0 ↔ w` is handle-grouped. -/
 theorem handleSwap_displacement_zero_iff_grouped
-    {g : ℕ} (_w : EdgeWord g) : True := by trivial
+    {g : ℕ} (w : EdgeWord g) :
+    handleSwap_displacement_measure w = 0 ↔ EdgeWord.IsHandleGrouped w := by
+  unfold handleSwap_displacement_measure EdgeWord.IsHandleGrouped
+  by_cases h : w.IsStandardForm <;> simp [h]
 
 /-- **R3-sub-B.B.r2.** Strict μ-decrease under HandleSwap when
 applicable. (Round 1 placeholder; no substantive content yet.) -/
 theorem handleSwap_strictly_decreases_mu
     {g : ℕ} (_w : EdgeWord g) : True := by trivial
 
-/-- **R3-sub-B.B.r3.r1 (Round 2).** Base case of the μ-induction:
-`μ(w) = 0` ⇒ `w` is handle-grouped (so `v := w` works). With the
-Round-1 placeholder `μ ≡ 0`, every `w` hits this branch; the
-substantive form needs `handleSwap_displacement_zero_iff_grouped`. -/
+/-- **R3-sub-B.B.r3.r1 (Round 2, substantive).** Base case of the
+μ-induction: `μ(w) = 0` ⇒ `w` is handle-grouped (so `v := w` works).
+With the Round-2 substantive μ, the hypothesis `μ w = 0` directly
+yields `IsHandleGrouped w` via
+`handleSwap_displacement_zero_iff_grouped`. -/
 theorem handleSwap_grouping_base_case
     {g : ℕ} (w : EdgeWord g)
     (_hReduced : EdgeWord.IsFullyReduced w)
     (_hOrient : ¬ EdgeWord.HasNonorientablePair w)
-    (_h0 : handleSwap_displacement_measure w = 0) :
-    ∃ v : EdgeWord g, EdgeWord.TietzeEq w v ∧ EdgeWord.IsHandleGrouped v := by
-  sorry
+    (h0 : handleSwap_displacement_measure w = 0) :
+    ∃ v : EdgeWord g, EdgeWord.TietzeEq w v ∧ EdgeWord.IsHandleGrouped v :=
+  ⟨w, Relation.ReflTransGen.refl,
+    (handleSwap_displacement_zero_iff_grouped w).mp h0⟩
 
 /-- **R3-sub-B.B.r3.r2 (Round 2).** Inductive step of the μ-induction:
 `μ(w) > 0` ⇒ a HandleSwap step lands at `w'` with `μ w' < μ w`;
-recurse. With the Round-1 placeholder `μ ≡ 0`, this branch is
-unreachable; refinement rounds replace this stub with the
-substantive recursion using `handleSwap_strictly_decreases_mu`. -/
+recurse. With the Round-2 coarse μ, `μ w ≠ 0` is equivalent to
+`¬ IsHandleGrouped w` (via `handleSwap_displacement_zero_iff_grouped`),
+so this branch carries the genuine reduction obligation: produce a
+handle-grouped Tietze-equivalent of an orientable, fully-reduced,
+non-handle-grouped word.
+
+Round-3+ refinement supplies the substantive recursion using a
+fine-grained μ together with `handleSwap_strictly_decreases_mu`; the
+present round leaves the obligation explicit. -/
 theorem handleSwap_grouping_inductive_step
     {g : ℕ} (w : EdgeWord g)
     (_hReduced : EdgeWord.IsFullyReduced w)
     (_hOrient : ¬ EdgeWord.HasNonorientablePair w)
     (_hpos : handleSwap_displacement_measure w ≠ 0) :
     ∃ v : EdgeWord g, EdgeWord.TietzeEq w v ∧ EdgeWord.IsHandleGrouped v := by
-  -- With placeholder μ ≡ 0, hpos is unreachable.
-  exact (_hpos rfl).elim
+  sorry
 
 /-- **R3-sub-B.B.r3.** Strong induction on μ extracts the
 HandleSwap-equivalent handle-grouped representative. (Round 1
