@@ -396,3 +396,115 @@ Theorem~\ref{thm:meromorphic-liouville-compact} \(f\) is constant,
 contradicting the hypothesis.  Hence \(\poles(f)=[P]\).
 \end{proof}
 
+\subsection{Structural axioms — iteration 2 decomposition}
+\label{sec:rr-structural-iter2}
+
+The headline lemmas above further decompose into pointwise structural
+axioms. Each is a small, named obligation; complete classical proofs
+(or \code{leanok} markers when discharged) are recorded inline.
+
+\begin{lemma}[No-\(\infty\) on the no-poles locus]
+\label{lem:meromorphic-no-infty-of-no-poles}
+\uses{def:divisors-on-X}
+A meromorphic map with vanishing pole divisor takes only finite
+values: \(\forall x,\ f(x)\neq\infty\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap\_ne\_infty\_of\_no\_poles}
+\end{lemma}
+\begin{proof}
+Direct interpretation of \(\poles(f)=0\): the pole-divisor records
+the locus where \(f\) reaches \(\infty\), and zero divisor means no
+such point.
+\end{proof}
+
+\begin{lemma}[Smooth lift through \(\CC\hookrightarrow\CPone\)]
+\label{lem:meromorphic-finite-lift-smooth}
+\uses{def:divisors-on-X}
+Given a meromorphic map \(f:X\to\CPone\) with \(f(x)\neq\infty\) for
+all \(x\in X\), the function \(g(x):=\iota^{-1}(f(x))\) is well-defined
+on \(X\) and smooth.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun\_mdiff\_of\_no\_infty}
+\end{lemma}
+\begin{proof}
+Well-definedness is the no-\(\infty\) hypothesis. Smoothness inherits
+from the chart-local representations of \(f\) at finite points: in
+each chart the map is given by a holomorphic function on a chart
+disc, which transports through \(\iota^{-1}\) to a smooth
+\(\CC\)-valued function.
+\end{proof}
+
+\begin{lemma}[Pointwise pole bound from \(L([P])\)]
+\label{lem:mem-L-point-pole-pointwise-bound}
+\uses{def:riemann-roch-space}
+If \(f\in L([P])\), then \(\poles(f)(Q)\leq[P](Q)\) for every \(Q\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles\_le\_point\_of\_mem\_L\_point}
+\end{lemma}
+\begin{proof}
+\(L([P])\) membership says \((f)+[P]\geq 0\), i.e.\
+\(\zeros(f)-\poles(f)+[P]\geq 0\). At each \(Q\), use the
+disjoint-support property of an actual meromorphic function's
+zero/pole divisors to extract the displayed pointwise bound.
+\end{proof}
+
+\begin{lemma}[Effectivity of the pole divisor]
+\label{lem:meromorphic-poles-effective}
+\uses{def:divisors-on-X}
+The pole divisor of a meromorphic map is effective.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles\_effective}
+\end{lemma}
+\begin{proof}
+\(\poles(f)\) is by construction non-negative at every point: pole
+orders are non-negative integers.
+\end{proof}
+
+\begin{lemma}[Effective \(\leq[P]\) implies \(0\) or \([P]\)]
+\label{lem:divisor-effective-le-point-iff}
+\uses{def:divisors-on-X}
+An effective divisor \(D\) with \(D(Q)\leq[P](Q)\) for all \(Q\) is
+either \(0\) or \([P]\).
+\lean{JacobianChallenge.HolomorphicForms.Divisor.effective\_le\_point\_iff\_zero\_or\_eq}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Off \(P\): \(0\leq D(Q)\leq 0\), so \(D(Q)=0\). At \(P\):
+\(0\leq D(P)\leq 1\), so \(D(P)\in\{0,1\}\). The two cases give the
+two conclusions via \code{Finsupp} extensionality.
+\end{proof}
+
+\begin{lemma}[Genus-zero RR identity at \([P]\)]
+\label{lem:genus-zero-rr-identity-applied}
+\uses{input:riemann-roch}
+On a compact connected genus-zero Riemann surface, the integers
+\(\ell([P])\) and \(\ell(K-[P])\) satisfy
+\(\ell([P])-\ell(K-[P])=2\).
+\lean{JacobianChallenge.HolomorphicForms.genusZero\_riemannRoch\_difference\_eq\_two}
+\end{lemma}
+\begin{proof}
+RR applied to \(D=[P]\) gives
+\(\ell(P)-\ell(K-P)=\deg(P)+1-g=1+1-0=2\).
+\end{proof}
+
+\begin{lemma}[\(\ell(K-[P])=0\) in genus zero]
+\label{lem:genus-zero-rr-vanish-K-minus-point}
+\uses{input:riemann-roch}
+On a genus-zero compact Riemann surface, \(K-[P]\) has negative
+degree, hence \(\ell(K-[P])=0\).
+\lean{JacobianChallenge.HolomorphicForms.genusZero\_riemannRoch\_K\_minus\_point\_dim\_zero}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+\(\deg(K)=2g-2=-2\) in genus zero, so \(\deg(K-[P])=-3<0\), and any
+divisor of negative degree has trivial Riemann--Roch space.
+\end{proof}
+
+\begin{lemma}[\(\ell(D)\geq 2\) implies a nonconstant element]
+\label{lem:rr-space-dim-ge-two-nonconstant}
+\uses{def:riemann-roch-space}
+If \(\dim_{\CC}L(D)\geq 2\), then \(L(D)\) contains a nonconstant
+element.
+\lean{JacobianChallenge.HolomorphicForms.riemannRochSpace\_dim\_ge\_two\_implies\_nonconstant\_meromorphic}
+\end{lemma}
+\begin{proof}
+The constants form a one-dimensional subspace of \(L(D)\); any
+element outside that line is nonconstant.
+\end{proof}
+
