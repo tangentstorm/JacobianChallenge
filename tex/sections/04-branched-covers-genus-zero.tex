@@ -707,9 +707,86 @@ inversion chart in place of the identity chart. Same chart-
 trivialisation Mathlib gap.
 \end{proof}
 
+\begin{lemma}[No-\(\infty\) off the pole locus]
+\label{lem:meromorphic-no-infty-off-pole}
+\uses{def:divisors-on-X}
+A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) takes
+finite values off \(P\): \(\forall x\neq P,\ f(x)\neq\infty\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap\_ne\_infty\_off\_pole}
+\end{lemma}
+\begin{proof}
+The pole-divisor records the exact \(\infty\)-locus; pole divisor
+\([P]\) means only \(P\) is sent to \(\infty\).
+\end{proof}
+
+\begin{lemma}[Continuity from no-\(\infty\)]
+\label{lem:meromorphic-continuous-on-finite-set}
+\uses{def:divisors-on-X}
+On any subset \(S\subseteq X\) where \(f\) takes only finite values,
+\(f:X\to\CPone\) is continuous on \(S\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.continuousOn\_of\_no\_infty\_on}
+\end{lemma}
+\begin{proof}
+On \(S\), \(f\) factors through \(\iota:\CC\to\CPone\) via a smooth
+\(g:S\to\CC\); both \(g\) and \(\iota\) are continuous, so the
+composition is continuous on \(S\).
+\end{proof}
+
+\begin{lemma}[Modulus diverges at a simple pole]
+\label{lem:simple-pole-modulus-diverges}
+\uses{def:divisors-on-X}
+For a meromorphic map \(f:X\to\CPone\) with \(\poles(f)=[P]\), there
+exists a smooth \(\CC\)-valued lift \(g:X\setminus\{P\}\to\CC\)
+satisfying \(f|_{X\setminus\{P\}}=\iota\circ g\) and
+\(\|g(x)\|\to\infty\) as \(x\to P\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.modulus\_diverges\_at\_simple\_pole}
+\end{lemma}
+\begin{proof}
+Off \(P\), use Lemma~\ref{lem:meromorphic-no-infty-off-pole} to
+construct \(g\). Near \(P\), the local Laurent expansion of \(f\)
+takes the form \(z\mapsto a/(z-z_{0})+\text{holomorphic}\) with
+\(a\neq 0\) (simple pole), so \(\|g(z)\|\sim|a|/|z-z_{0}|\to\infty\).
+\end{proof}
+
+\begin{lemma}[Modulus divergence implies \(\OnePoint\)-tendsto-\(\infty\)]
+\label{lem:onepoint-tendsto-infty-of-modulus-diverges}
+A \(\CC\)-valued function whose modulus diverges along a punctured
+neighbourhood of \(P\), lifted to \(\OnePoint\,\CC\) via the
+canonical inclusion, tends to \(\infty\) at \(P\).
+\lean{JacobianChallenge.HolomorphicForms.OnePoint.tendsto\_infty\_of\_modulus\_diverges}
+\end{lemma}
+\begin{proof}
+The neighbourhood basis of \(\infty\) in \(\OnePoint\,\CC\) consists
+of complements of bounded sets. Modulus divergence means every
+bounded set is eventually avoided, hence the lifted function
+eventually lies in any neighbourhood of \(\infty\).
+\end{proof}
+
+\begin{lemma}[Compact image]
+\label{lem:meromorphic-image-iscompact}
+The image of a continuous map from a compact space is compact.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.image\_isCompact}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Direct from \code{IsCompact.image} on \code{isCompact\_univ}.
+\end{proof}
+
+\begin{lemma}[Open map for degree-one maps]
+\label{lem:degree-one-open-map}
+\uses{def:divisors-on-X}
+A continuous meromorphic map \(f:X\to\CPone\) of pole-degree one is
+an open map.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.isOpenMap\_of\_pole\_degree\_one}
+\end{lemma}
+\begin{proof}
+Holomorphic maps are open at every regular point. Degree one
+excludes ramification entirely, so every point is regular.
+\end{proof}
+
 \begin{lemma}[Cotangent transition formula on the overlap]
 \label{lem:cotangent-transition-formula}
-\uses{def:holomorphic-one-form}
+\uses{def:holomorphic-one-form,lem:onepoint-cx-chart-overlap-derivative,lem:onepoint-cx-chart-overlap-pullback}
 For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), there is a
 punctured neighbourhood of \(0\in\CC\) (in the inversion chart) on
 which the identity-chart coefficient \(f\) and the inversion-chart
@@ -718,16 +795,79 @@ coefficient \(g\) of \(\omega\) are related by
   f(w^{-1})=-w^{2}g(w),\qquad w\neq 0.
 \]
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm\_identityInversionTransition\_eventually}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Pointwise from Lemma~\ref{lem:onepoint-cx-chart-overlap-pullback};
+the eventually-quantifier on the punctured neighbourhood follows
+via \code{filter\_upwards}.
+\end{proof}
+
+\begin{lemma}[Derivative of inverse on the chart overlap]
+\label{lem:onepoint-cx-chart-overlap-derivative}
+For \(w\neq 0\), \(\frac{d}{dw}(w^{-1})=-w^{-2}\).
+\lean{JacobianChallenge.HolomorphicForms.onePointCx\_chart\_overlap\_derivative}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Direct from Mathlib's \code{hasDerivAt\_inv} on \(w\neq 0\).
+\end{proof}
+
+\begin{lemma}[Cotangent pullback on the chart overlap]
+\label{lem:onepoint-cx-chart-overlap-pullback}
+\uses{def:holomorphic-one-form,lem:onepoint-cx-chart-overlap-derivative}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\) and \(w\neq 0\),
+\(f(w^{-1})=-w^{2}g(w)\), where \(f\) and \(g\) are respectively the
+identity-chart and inversion-chart coefficients.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm\_chartOverlap\_pullback}
 \end{lemma}
 \begin{proof}
-The chart transition between the identity chart and the inversion
-chart on \(\OnePoint\,\CC\) is \(z\leftrightarrow w=z^{-1}\). The
-chain rule for cotangent vectors then gives, for a 1-form
-\(\omega=f(z)\,dz=g(w)\,dw\),
-\[
-  f(z)\,dz = f(w^{-1})\,d(w^{-1}) = -f(w^{-1})\,w^{-2}\,dw.
-\]
-Equating with \(g(w)\,dw\) and rearranging gives the displayed
-formula on the overlap \(w\neq 0\).
+Apply the chain rule for cotangent vectors under
+\(z\leftrightarrow w=z^{-1}\):
+\(f(z)\,dz=f(w^{-1})\,d(w^{-1})=-f(w^{-1})\,w^{-2}\,dw\). Equating
+with \(g(w)\,dw\) yields the identity.
 \end{proof}
+
+\subsection{Sup-norm completeness decomposition (CompactRiemannSurface)}
+\label{sec:sup-norm-completeness-decomp}
+
+\begin{lemma}[Pointwise limit exists]
+\label{lem:holomorphic-one-form-pointwise-limit-exists}
+A sup-norm Cauchy sequence of holomorphic 1-forms on a compact
+Riemann surface admits a pointwise limit at every point of \(X\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm\_supNorm\_cauchySeq\_pointwise\_limit\_exists}
+\end{lemma}
+\begin{proof}
+Sup-norm Cauchy implies pointwise Cauchy in each fiber
+\(\mathrm{Cot}_x(X)\), which is a Banach space, so the pointwise limit
+exists.
+\end{proof}
+
+\begin{lemma}[Continuity of the pointwise limit]
+\label{lem:holomorphic-one-form-limit-continuous}
+\uses{lem:holomorphic-one-form-pointwise-limit-exists}
+The pointwise limit of a sup-norm Cauchy sequence of holomorphic
+1-forms is continuous.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm\_supNorm\_cauchySeq\_limit\_continuous}
+\end{lemma}
+\begin{proof}
+Sup-norm Cauchy convergence is uniform; the uniform limit of
+continuous functions is continuous (\code{TendstoUniformly.continuous}).
+\end{proof}
+
+\begin{lemma}[Holomorphicity of the pointwise limit (Weierstrass)]
+\label{lem:holomorphic-one-form-limit-holomorphic}
+\uses{lem:holomorphic-one-form-pointwise-limit-exists}
+The pointwise limit of a sup-norm Cauchy sequence of holomorphic
+1-forms is holomorphic.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm\_supNorm\_cauchySeq\_limit\_holomorphic}
+\end{lemma}
+\begin{proof}
+Classical Weierstrass convergence theorem: a uniform limit of
+holomorphic functions is holomorphic, via Morera's theorem (closed
+contour integrals vanish under uniform convergence) or
+power-series-coefficient convergence (Cauchy estimates pass to the
+limit). \textbf{Mathlib gap}: v4.28.0 lacks a Weierstrass-convergence
+theorem for holomorphic functions or sections.
+\end{proof>
 
