@@ -684,18 +684,17 @@ the residual \texttt{sorry}, and each cleanly maps to a Mathlib gap.
 \item \texttt{stageB_analytic_eq_topological} — Stage B: de~Rham +
   Hodge + conjugate-form-equivalence + rank/finrank comparison gives
   $\mathrm{analyticGenus} = \mathrm{topologicalGenus}$. Consumed by
-  \texttt{analyticGenus_eq_topologicalGenus}. \textbf{Existing wiring
-  available but currently blocked}: the project carries a sorry-free
-  assembly
+  \texttt{analyticGenus_eq_topologicalGenus}. \textbf{Now sorry-free}:
+  wired to the project's existing
   \texttt{HolomorphicForms.two_analyticGenus_eq_finrank_intH1} in
-  \texttt{Jacobian/HolomorphicForms/HodgeDeRhamRank.lean} which gives
-  $2g_{\text{an}} = \mathrm{rank}_{\Z}\,H_1$; combined with the
-  canonical \texttt{topologicalGenus} this is a one-line proof. The
-  delegate is *not* applied here because the upstream chain
-  (\texttt{HodgeDeRhamRank} $\to$ \texttt{DeRhamComparisonMap} $\to$
-  \texttt{RealSingularH1}) carries pre-existing universe and
-  unknown-identifier breakages outside the scope of the present
-  commit.
+  \texttt{Jacobian/HolomorphicForms/HodgeDeRhamRank.lean} (which
+  produces $2g_{\text{an}} = \mathrm{rank}_{\Z}\,H_1$ as a sorry-free
+  assembly of the named Hodge / de Rham / UCT leaves), combined with
+  the canonical \texttt{topologicalGenus} via
+  \texttt{Nat.mul_div_cancel_left}. All Stage-B blockers (de Rham,
+  Hodge decomposition, Dolbeault, Serre duality, UCT) remain
+  *upstream* in \texttt{HodgeDeRhamRank}'s named-leaf scaffolding;
+  the present file's Stage-B leaf is now a one-line delegate.
 \item \texttt{riemann_classical_real_LI_input} — packages the
   Riemann-bilinear + Hermitian-positivity + Stokes-fundamental-polygon
   argument into a single $\R$-linear-independence leaf for the period
@@ -710,15 +709,20 @@ the residual \texttt{sorry}, and each cleanly maps to a Mathlib gap.
   in turn supports
   \texttt{addSubgroup_closure_basis_eq_top} and the integrality
   assembly of \texttt{periodSubgroup_eq_zspan_of_basis}.
+  \textbf{Now sorry-free}: closed via \texttt{convert\,using\,1} of
+  \texttt{AddSubgroup.zsmul_mem} with the cast-equality residual
+  discharged by \texttt{Int.cast_smul_eq_zsmul (R := \Z) n a}.
 \end{itemize}
 
-The first three obligations correspond to the manifold-side classical
-analysis gaps already documented in
-Section~\ref{sec:classical-analysis-gaps}; the fourth is a pure
-\texttt{Module} $\Z$-instance bookkeeping leaf that should reduce to a
-short Mathlib-internal lemma once a clean
-\texttt{Submodule.span_induction'} (using zsmul rather than the
-ambient module smul) is available.
+After successive wiring iterations, only the third obligation
+(\texttt{riemann_classical_real_LI_input}) carries a residual
+\texttt{sorry}. It corresponds to the classical Riemann-bilinear +
+Hermitian-positivity + Stokes-on-fundamental-polygon argument, the
+single largest manifold-side analytic gap on the period-lattice path
+(see Section~\ref{sec:classical-analysis-gaps}). The Stage-A and
+Stage-B leaves are now wired to the project's existing surface
+classification and Hodge / de Rham / UCT chains; the integrality leaf
+is closed by an explicit \texttt{Module}~$\Z$-instance bridge.
 
 \paragraph{Sorry-free assemblies above the four leaves.}
 The six PeriodFunctional theorems
