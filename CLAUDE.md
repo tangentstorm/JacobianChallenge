@@ -12,7 +12,7 @@ This is a multi-month infrastructure project, not a single-file proof exercise. 
 
 ```bash
 lake build Jacobian.Challenge                    # the public target — must keep compiling
-lake build Jacobian.WorkPackets.StatementBank    # the intermediate statement bank
+lake build Jacobian.Solution                     # the assembled solution skeleton
 lake build Jacobian                              # everything (slow)
 ```
 
@@ -25,8 +25,8 @@ Pinned to `leanprover/lean4:v4.28.0` and `mathlib v4.28.0` (commit `8f9d9cff6bd7
 Three load-bearing files define the project's structure:
 
 - **`Jacobian/Challenge.lean`** — the public API target. Treated as a frozen specification: do not edit, weaken, or rename declarations here unless explicitly instructed. Every theorem/definition is a `sorry` to be discharged eventually.
-- **`Jacobian/WorkPackets/StatementBank.lean`** — intermediate statements organized by infrastructure layer, namespaced under `JacobianChallenge.{Inventory, ComplexTorus, HolomorphicForms, Periods, AnalyticJacobian, AbelJacobi, TraceDegree, AntiHack}`. Many definitions are deliberate placeholders (`opaque`, `abbrev ... := ℂ`, `Prop := True`) that expose dependency shape without committing to a final definition. Used to seed Aristotle work packets.
-- **`Jacobian/WorkPackets/Inventory.md`** — Phase 0.5 narrative inventory of the pinned Mathlib commit, marking each prerequisite **PRESENT** / **PARTIAL** / **ABSENT**. The machine-readable pointer is `JacobianChallenge.Inventory.pinnedMathlibInventory` in the statement bank.
+- **`Jacobian/Solution.lean`** — the assembled solution skeleton; `(X : Type u_1)` matches `Challenge.lean`'s universe shape; bodies delegate to production decls under `Jacobian/<Layer>/`.
+- **`ref/Inventory.md`** — Phase 0.5 narrative inventory of the pinned Mathlib commit, marking each prerequisite **PRESENT** / **PARTIAL** / **ABSENT**. (Was `Jacobian/WorkPackets/Inventory.md` before W3 retirement; the machine-readable Lean pointer `JacobianChallenge.Inventory.pinnedMathlibInventory` was retired with `StatementBank.lean`.)
 
 Construction strategy (per `ref/plan.md`): use the analytic period-lattice route, `Jacobian X = H⁰(X, Ω¹)* / H₁(X, ℤ)`, built bottom-up through reusable layers (complex tori → holomorphic forms → periods → Jacobian → Abel-Jacobi → trace/degree). The empty `Jacobian/ComplexTorus/` directory is a placeholder for the first concrete milestone: a standalone proof that a finite-dimensional complex vector space modulo a full lattice is a compact complex Lie additive group.
 

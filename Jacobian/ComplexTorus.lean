@@ -59,8 +59,9 @@ sibling in by hand.
 **Excluded on purpose:**
 - `ZLatticeRecon` — name-discovery scratch with the `fullComplexLatticeOfZLattice`
   bridge; will be promoted into a clean module once the chart layer is in.
-- `ManifoldRecon` — narrative reconnaissance with `sorry` placeholders; not
-  intended as public API.
+- `ManifoldRecon` — was a narrative reconnaissance file with `sorry`
+  placeholders; deleted as part of W5 cleanup once the production
+  `ChartedSpace`/`IsManifold`/`LieAddGroup` instances landed.
 - `DiscretenessRecon` — comment-only Q&A document for the `FullComplexLattice`
   refactor; not API.
 
