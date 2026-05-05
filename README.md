@@ -41,7 +41,7 @@ Pinned to `leanprover/lean4:v4.28.0` and `mathlib v4.28.0`.
 
 ```bash
 lake build Jacobian.Challenge                    # the public target
-lake build Jacobian.WorkPackets.StatementBank    # intermediate statement bank
+lake build Jacobian.Solution                     # the assembled solution skeleton
 lake build Jacobian                              # everything (slow)
 ```
 
@@ -50,8 +50,8 @@ Prefer the narrowest module build after a code change (e.g. `lake build Jacobian
 ## Layout
 
 - `Jacobian/Challenge.lean` — frozen public API; every theorem is a `sorry` to be discharged.
-- `Jacobian/WorkPackets/StatementBank.lean` — intermediate statements organised by infrastructure layer.
-- `Jacobian/WorkPackets/Inventory.md` — narrative inventory of the pinned Mathlib commit (PRESENT / PARTIAL / ABSENT per prerequisite).
+- `Jacobian/Solution.lean` — assembled solution skeleton; bodies delegate to production decls.
+- `ref/Inventory.md` — narrative inventory of the pinned Mathlib commit (PRESENT / PARTIAL / ABSENT per prerequisite).
 - `Jacobian/<Layer>/*.lean` — production infrastructure modules.
 - `tex/` — blueprint LaTeX sources.
 - `ref/plan.md`, `ref/PROMPT.md`, `ref/methodology.md` — project plan and operating notes.
