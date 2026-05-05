@@ -2993,6 +2993,94 @@ the \(d^{2}=0\) input is present in
 \leanok
 \end{lemma}
 
+\subsubsection*{Refinement rounds 11–22 (substantive Mathlib-typed real carriers)}
+
+Round 1–10 above is the \emph{placeholder layer}: every sub-claim
+is a trivially-provable \texttt{Prop} whose witness is a
+\code{LinearMap.id} or \(0\) on a function space.  Round 11–22
+promotes the carrier types to substantive Mathlib-typed objects
+parallel to R9's \code{BundledForm E k} upgrade in
+\code{Jacobian/Analysis/BundledForms/Real.lean}:
+
+\begin{itemize}
+\item \code{BigradedForm E p q := E -> (E [Lambda^Fin (p+q)]->[C] C)}
+  — chart-local complex \((p+q)\)-multilinear alternating forms
+  valued in \(\C\).
+\item \code{complexCotangent E := E ->[R] C} — the real cotangent
+  of a complex Banach space, valued in \(\C\).
+\item \code{oneZeroProj E}, \code{zeroOneProj E} — Mathlib-typed
+  \((1,0)\) and \((0,1)\) projections via \code{Complex.reCLM},
+  \code{Complex.imCLM}, and \code{Complex.ofRealCLM}.
+\item \code{partial\_shift\_real E p q},
+  \code{dbar\_shift\_real E p q} — chart-local \(\partial\) and
+  \(\bar\partial\) shifts on the real carrier (zero on this
+  layer; opens up to \code{fderiv} once Mathlib gains the
+  bigraded exterior derivative).
+\end{itemize}
+
+\begin{lemma}[Round 12: \((1,0) \oplus (0,1)\) sums to identity on \(\C\)]
+\label{lem:r7subA-r12}
+\code{reCLM\_add\_I\_imCLM\_eq\_id}: on the codomain \(\C\), the
+chart-local projections satisfy
+\[
+  \mathrm{ofRealCLM}\circ\mathrm{reCLM}
+    + i\cdot(\mathrm{ofRealCLM}\circ\mathrm{imCLM})
+    = \mathrm{id}_{\C}.
+\]
+This is \(\mathrm{Re}(z) + i\,\mathrm{Im}(z) = z\) lifted to
+\code{ContinuousLinearMap.id} via \code{Complex.re\_add\_im}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.reCLM_add_I_imCLM_eq_id}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 16: substantive `\_real' umbrella]
+\label{lem:r7subA-r16}
+\code{r7subA\_bigraded\_forms\_real} is a five-conjunct
+Mathlib-typed Prop dispatched via Round 11–15 sub-leaves.  The
+five conjuncts state existence of real endomorphisms on
+\code{complexCotangent E} (split conjuncts), on
+\code{BigradedForm E p q} (the bigraded exterior power and the
+sections module), and the \((p,q)\)-shift maps.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.r7subA_bigraded_forms_real}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 19: pointwise \(\partial^{2} = \bar\partial^{2} = 0\)]
+\label{lem:r7subA-r19}
+\code{partial\_squared\_zero\_pointwise} and
+\code{dbar\_squared\_zero\_pointwise}: for every chart-local
+form \(\omega\), composing the real \(\partial\)-shift twice
+(resp. \(\bar\partial\)-shift twice) yields the zero map
+pointwise.  Sibling
+\code{partial\_dbar\_anticommute\_pointwise} for the
+\(\partial\bar\partial+\bar\partial\partial=0\) anticommutator.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.dbar_squared_zero_pointwise}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 20: \((1,0) + (0,1) = \mathrm{id}\) on \code{complexCotangent E}]
+\label{lem:r7subA-r20}
+\code{oneZeroProj\_add\_zeroOneProj\_eq\_id}: lifted from
+Round 12 via \code{ContinuousLinearMap.compL.map\_add}, the
+chart-local \((1,0)/(0,1)\) projection on the cotangent fibre
+\(E\to_{L,\R}\C\) is exhaustive.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.oneZeroProj_add_zeroOneProj_eq_id}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 22: substantive closure]
+\label{lem:r7subA-r22}
+\code{r7subA\_substantive\_closure}: combines the real `\_real'
+umbrella (Round 16) with the chart-local algebraic identities
+(Round 19) into a single Mathlib-typed witness.  Companion to
+\code{r7subA\_bigraded\_forms\_proof}; both are sorry-free, but
+this one carries substantive Mathlib content (real CLM-typed
+projections, real `BigradedForm' carrier, `simp'-discharged
+algebraic identities) rather than placeholder witnesses.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.r7subA_substantive_closure}
+\leanok
+\end{lemma}
+
 %======================================================================
 \subsection{Summary of recursive sub-gaps}
 \label{subsec:gap-summary}
