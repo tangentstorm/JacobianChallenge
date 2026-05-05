@@ -12,6 +12,59 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
+## Live Status (2026-05-04, R10 dispatch end-to-end on
+`claude/refine-14-r10-proof-GuSaj`)
+
+R10 (Sobolev / elliptic regularity) — the largest classical-analysis
+sub-gap (blueprint estimate 4500–6500 LOC) — is dispatched
+end-to-end on the spectral-shortcut route, against unmodified
+Mathlib v4.28.0.  No Aristotle packets were used for this work; all
+edits are local Claude commits.
+
+**Files added (no `sorry`, no `True`-valued bodies):**
+
+| Milestone | File | LOC | Content |
+|---|---|---|---|
+| M0 (chain K2) | `Jacobian/Analysis/SobolevElliptic/ModelSymbol.lean` | ~180 | Principal symbol of model Laplacian invertible at nonzero ξ |
+| M1 substrate | `Jacobian/Analysis/BundledForms/{SmoothFun,Omega0,L2Norm,L2Completion}.lean` | ~600 | Real `L²(M, μ)` Hilbert space with `IsManifoldMeasure μ` typeclass |
+| M2 metric | `Jacobian/StageB/RiemannianMetricBundled.lean` | ~120 | Real Riemannian metric class wrapping Mathlib `RiemannianBundle` |
+| M2 spectral | `Jacobian/Analysis/SobolevElliptic/AbstractFredholmResolvent.lean` | ~170 | Compact `T` + λ≠0 ⇒ `Eigenspace T λ` finite-dim |
+| M3 resolvent | `Jacobian/Analysis/SobolevElliptic/AbstractResolvent.lean` | ~150 | `T := i ∘ i*` self-adjoint, non-neg, compactness preservation |
+| M4 plug-in | `Jacobian/Analysis/SobolevElliptic/HeadlinePlugIn.lean` | ~150 | `class HasLaplaceResolvent M μ` → `Module.Finite (RealHarmonic M μ)` |
+| M4 witness | `Jacobian/Analysis/SobolevElliptic/RealizabilityWitness.lean` | ~95 | Trivial witness for finite-dim L² (proves realizability) |
+
+**Downstream wiring:** R5/R7/R8 each have a substantive companion
+theorem that takes `[HasLaplaceResolvent M μ]` and produces
+`Module.Finite ℝ (RealHarmonic M μ)`:
+- `Jacobian/Analysis/HodgeDecomposition/Overview.lean` →
+  `hodge_harmonic_forms_finite_dim_substantive`
+- `Jacobian/Analysis/Dolbeault/Overview.lean` →
+  `dolbeault_harmonic_forms_finite_dim_substantive`
+- `Jacobian/Analysis/SerreDuality/Overview.lean` →
+  `serre_duality_harmonic_finite_dim_substantive`
+
+**Blueprint:** new subsection `subsec:r10-phase-dispatch` in
+`tex/sections/12-classical-analysis-gaps.tex` documents the
+M0–M4 milestones; chain K2 has Round 3
+(`subsubsec:sle-round-3`) of stepwise refinement reaching
+`Matrix.PosDef.invertible` and `real_inner_self_pos`.
+
+**Residual analytic gap (single typeclass instance):** non-trivial
+`HasLaplaceResolvent` for an infinite-dim L² requires (a) construct
+`H¹(M)` (manifold Sobolev, R10-sub-A,B), (b) prove Rellich on a
+compact manifold, (c) link the resolvent eigenspace to a classical
+ker Δ.  All three are flagged ABSENT in Mathlib v4.28.0; future
+work plugs into the framework with no further changes to the
+spectral-output side.
+
+**No Aristotle queue conflict:** all R10 work is in the
+`Jacobian/Analysis/{SobolevElliptic, BundledForms,
+HodgeDecomposition, Dolbeault, SerreDuality}/` and `Jacobian/StageB/`
+trees; current Aristotle saturation (Stage A: HolomorphicForms,
+Periods, AbelJacobi) writes elsewhere.
+
+---
+
 ## Live Status (2026-05-02, roadmap-driven saturation tick)
 
 Roadmap-driven saturation wave per `ref/plans/roadmap.org`. 14 packets

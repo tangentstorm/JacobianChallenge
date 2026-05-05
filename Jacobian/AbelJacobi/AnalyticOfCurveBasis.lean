@@ -37,9 +37,7 @@ open scoped Manifold
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 open JacobianChallenge.ComplexTorus
 
-universe u
-
-variable (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 
@@ -64,7 +62,7 @@ Bottom-up: concretising `val` requires multi-chart path integration
 plus a basis choice; `self_spec` then follows from the fact that the
 integral over a constant path is trivially zero. -/
 structure PathIntegralFunctionalBundle
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
   /-- The path-integral coordinates `(P, Q) ↦ (∫_P^Q ω₁, …, ∫_P^Q ωₘ)`. -/
@@ -232,7 +230,7 @@ theory layer or even a placeholder `Divisor X` / `IsPrincipal d` API
 exists in the project. The docstring already captures the canonical
 proof so future Aristotle/sub-agent jobs can split rather than
 rediscover the structure. -/
-/- Combined Abel–Riemann-Hurwitz content (TOPDOWN-split via Aristotle 7ceff781):
+/-- Combined Abel–Riemann-Hurwitz content (TOPDOWN-split via Aristotle 7ceff781):
 if two distinct points have period-congruent path integrals, then
 `analyticGenus ℂ X = 0`.
 
@@ -257,67 +255,13 @@ holomorphic map to `ℂP¹` forces `X ≅ ℂP¹`, hence `genus(X) = 0`.
 - Riemann-Hurwitz formula / degree theory (≈3 000 lines)
 - Bridge `analyticGenus ↔ topologicalGenus` (Hodge/de Rham, delegated to
   `analyticGenus_eq_topologicalGenus` in `PeriodFunctional.lean`) -/
-/-- **Abel–Riemann-Hurwitz leaf obligation.** Frontier-helper named-leaf
-extraction (Aristotle c7242a5d). If a compact connected Riemann surface
-of positive analytic genus has two distinct points whose period-congruent
-path integrals differ by a period vector, derive a contradiction.
-
-Classical proof: Abel's existence ⇒ principal divisor of degree 1 ⇒
-Riemann-Hurwitz forces genus 0, contradicting hpos. Mathlib gaps:
-divisor theory + Riemann-Hurwitz (≈8000 lines). -/
-theorem abel_period_congruence_principal_degree_one_data
-    (P : X) (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
-    (_hperiod :
-      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
-        basisAlignedPeriodSubgroup X) :
-    Nonempty Unit := by
-  exact ⟨()⟩
-
-/-- **Abel/Riemann-Hurwitz sub-obligation.** The principal degree-one
-data obtained from Abel's theorem forces genus zero.
-
-Bottom-up content: turn the Abel-principal divisor into a nonconstant
-meromorphic map `X → ℂP¹` of degree one; apply Riemann-Hurwitz to show
-there is no ramification and hence `X` is genus zero. This is the
-remaining Riemann-Hurwitz/divisor-theory frontier after the
-period-congruence-to-principal-divisor step is isolated above. -/
-theorem abel_principal_degree_one_forces_genus_zero
-    (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
-    (hperiod :
-      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
-        basisAlignedPeriodSubgroup X)
-    (_hdata : Nonempty Unit) :
-    analyticGenus ℂ X = 0 := by
-  sorry
-
-/-- **Abel–Riemann-Hurwitz leaf obligation.** Frontier-helper named-leaf
-extraction (Aristotle c7242a5d). If a compact connected Riemann surface
-of positive analytic genus has two distinct points whose period-congruent
-path integrals differ by a period vector, derive a contradiction.
-
-Sorry-free assembly from:
-* Abel period congruence produces principal degree-one data;
-* Riemann-Hurwitz/divisor theory forces genus zero from that data. -/
-theorem abel_existence_witness
-    (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
-    (hperiod :
-      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
-        basisAlignedPeriodSubgroup X)
-    (hpos : 0 < analyticGenus ℂ X) :
-    False := by
-  have hdata := abel_period_congruence_principal_degree_one_data X P Q₁ Q₂ hne hperiod
-  have hzero := abel_principal_degree_one_forces_genus_zero X P Q₁ Q₂ hne hperiod hdata
-  exact (Nat.ne_of_gt hpos) hzero
-
 theorem period_congruence_distinct_implies_genus_zero
     (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hperiod :
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
         basisAlignedPeriodSubgroup X) :
     analyticGenus ℂ X = 0 := by
-  -- Aristotle c7242a5d: sorry-free via abel_existence_witness contradiction.
-  by_contra h
-  exact abel_existence_witness X P Q₁ Q₂ hne hperiod (Nat.pos_of_ne_zero h)
+  sorry
 
 /-- Sorry-free assembly: derives point-separation from
 `period_congruence_distinct_implies_genus_zero` by contradiction with
