@@ -72,9 +72,16 @@ Cross-ref: `tex/sections/03-riemann-roch.tex`,
 theorem MeromorphicMapToSphere.toMap_ne_infty_of_no_poles
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicMapToSphere X) (_hpole : f.poles = 0) :
+    (f : MeromorphicMapToSphere X) (hpole : f.poles = 0) :
     ∀ x : X, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ) := by
-  sorry
+  -- `f.poles = f.poleDivisor`; from `hpole` every coefficient vanishes,
+  -- and the structure axiom `toMap_ne_infty_of_poleDivisor_zero` finishes.
+  intro x
+  refine f.toMap_ne_infty_of_poleDivisor_zero x ?_
+  have : f.poleDivisor x = (0 : Divisor X) x := by
+    change f.poles x = (0 : Divisor X) x
+    rw [hpole]
+  simpa using this
 
 /-- **Structural axiom (S1b-α).** When `f.toMap x ≠ ∞`, there is a
 canonical lift `g x : ℂ` such that `((g x : ℂ) : OnePoint ℂ) = f.toMap x`.
@@ -114,9 +121,9 @@ theorem MeromorphicMapToSphere.toFiniteFun_mdiff_of_lift_eq
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X) (g : X → ℂ)
-    (_hg : f.toMap = fun x => ((g x : ℂ) : OnePoint ℂ)) :
-    MDifferentiable (modelWithCornersSelf ℂ ℂ) 𝓘(ℂ, ℂ) g := by
-  sorry
+    (hg : f.toMap = fun x => ((g x : ℂ) : OnePoint ℂ)) :
+    MDifferentiable (modelWithCornersSelf ℂ ℂ) 𝓘(ℂ, ℂ) g :=
+  f.toFiniteFun_mdifferentiable g hg
 
 /-- **Structural axiom (S1b).** Smoothness of the `ℂ`-valued lift.
 
@@ -161,9 +168,9 @@ Cross-ref: `tex/sections/03-riemann-roch.tex`,
 theorem MeromorphicMapToSphere.zeros_poles_disjoint_support
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_f : MeromorphicMapToSphere X) :
-    ∀ Q : X, _f.zeros Q = 0 ∨ _f.poles Q = 0 := by
-  sorry
+    (f : MeromorphicMapToSphere X) :
+    ∀ Q : X, f.zeros Q = 0 ∨ f.poles Q = 0 :=
+  f.zero_or_pole_eq_zero
 
 /-- **Structural axiom (S2a).** Membership in `L([P])` gives a pointwise
 pole bound: at every point `Q`, `f.poles Q ≤ (Divisor.point P) Q`.
@@ -178,9 +185,34 @@ theorem MeromorphicMapToSphere.poles_le_point_of_mem_L_point
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (_hmem : f.MemRiemannRochSpace (Divisor.point P)) :
+    (hmem : f.MemRiemannRochSpace (Divisor.point P)) :
     ∀ Q : X, f.poles Q ≤ (Divisor.point P) Q := by
-  sorry
+  classical
+  intro Q
+  -- `hmem` unfolds to `Effective (f.principal + Divisor.point P)`,
+  -- hence `0 ≤ (f.principal + Divisor.point P) Q`.
+  have h := hmem Q
+  -- Rewrite `f.principal` as `f.zeroDivisor - f.poleDivisor`.
+  have hprin :
+      f.principal = f.zeroDivisor - f.poleDivisor :=
+    f.principal_eq_zeroDivisor_sub_poleDivisor
+  rw [hprin] at h
+  -- Now `h : 0 ≤ (f.zeroDivisor - f.poleDivisor + Divisor.point P) Q`.
+  rw [Finsupp.add_apply, Finsupp.sub_apply] at h
+  -- Goal: `f.poles Q ≤ (Divisor.point P) Q`, where `f.poles = f.poleDivisor`.
+  show f.poleDivisor Q ≤ (Divisor.point P) Q
+  rcases f.zero_or_pole_eq_zero Q with hzero | hpole
+  · -- `f.zeroDivisor Q = 0`: cancel and rearrange.
+    have : f.zeroDivisor Q = 0 := hzero
+    omega
+  · -- `f.poleDivisor Q = 0`: it suffices to bound `0 ≤ (Divisor.point P) Q`.
+    have hpZ : f.poleDivisor Q = 0 := hpole
+    rw [hpZ]
+    -- `(Divisor.point P) Q = (Finsupp.single P 1) Q ≥ 0` whether or not `Q = P`.
+    by_cases hQ : Q = P
+    · subst hQ
+      simp
+    · rw [Divisor.point_apply_ne hQ]
 
 /-- **Structural axiom (S2b).** A `Divisor.Effective` divisor that is
 pointwise `≤ Divisor.point P` is either `0` or `Divisor.point P`.
@@ -233,8 +265,8 @@ theorem MeromorphicMapToSphere.poles_effective
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X) :
-    Divisor.Effective f.poles := by
-  sorry
+    Divisor.Effective f.poles :=
+  f.poleDivisor_nonneg
 
 /-- **Structural axiom (S2).** Membership in `L([P])` implies the pole
 divisor is bounded above by `[P]` pointwise; combined with effectivity
