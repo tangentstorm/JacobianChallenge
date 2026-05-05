@@ -1715,6 +1715,13 @@ theorem assemble_meromorphicMap
       f.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
   obtain ⟨toMap, _⟩ := _h
+  -- The analytic-content fields below are placeholder `sorry`s: the
+  -- `toMap = fun _ => OnePoint.infty` carrier produced by the upstream
+  -- placeholder `construct_toMap_global` does not agree with the
+  -- prescribed divisor data, so the new structural axioms cannot be
+  -- discharged here.  Once the genuine third-kind glued meromorphic
+  -- function replaces the placeholder, these fields will follow from
+  -- the analytic content of that construction.
   refine ⟨{
     toMap := toMap
     locally_meromorphic := True
@@ -1722,7 +1729,16 @@ theorem assemble_meromorphicMap
     poleDivisor := HolomorphicForms.Divisor.point Q₂
     principalDivisor :=
       HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂
-    principalDivisor_eq := rfl }, rfl⟩
+    principalDivisor_eq := rfl
+    poleDivisor_nonneg := by
+      classical
+      exact HolomorphicForms.Divisor.effective_point Q₂
+    zero_or_pole_eq_zero := by sorry
+    toMap_ne_infty_of_poleDivisor_zero := by sorry
+    continuousOn_ne_infty := by sorry
+    toFiniteFun_mdifferentiable := by sorry
+    toMap_eq_infty_of_poleDivisor_pos := by sorry
+    exists_modulus_atTop_at_pole := by sorry }, rfl⟩
 
 /-- **Round-38 assembly (sorry-free).** -/
 theorem build_meromorphicMap_from_global_extension
@@ -1870,6 +1886,12 @@ theorem meromorphicMapToSphere_package_of_two_point_principal
       f.poles = HolomorphicForms.Divisor.point Q₂ ∧
       f.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
+  -- The analytic-content fields below are placeholder `sorry`s: the
+  -- repackaging reuses `data.meromorphicMap.toMap` but reassigns the
+  -- divisor fields to `(point Q₁, point Q₂)`, which need not match the
+  -- original divisor data of `data.meromorphicMap`.  The new structural
+  -- axioms therefore do not transfer mechanically and require the
+  -- canonical-decomposition lemma documented in the round-3 docstring.
   refine ⟨{
     toMap := data.meromorphicMap.toMap
     locally_meromorphic := data.meromorphicMap.locally_meromorphic
@@ -1877,7 +1899,16 @@ theorem meromorphicMapToSphere_package_of_two_point_principal
     poleDivisor := HolomorphicForms.Divisor.point Q₂
     principalDivisor :=
       HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂
-    principalDivisor_eq := rfl }, rfl, rfl, rfl⟩
+    principalDivisor_eq := rfl
+    poleDivisor_nonneg := by
+      classical
+      exact HolomorphicForms.Divisor.effective_point Q₂
+    zero_or_pole_eq_zero := by sorry
+    toMap_ne_infty_of_poleDivisor_zero := by sorry
+    continuousOn_ne_infty := by sorry
+    toFiniteFun_mdifferentiable := by sorry
+    toMap_eq_infty_of_poleDivisor_pos := by sorry
+    exists_modulus_atTop_at_pole := by sorry }, rfl, rfl, rfl⟩
 
 /-- **Round-3 Abel-existence assembly (sorry-free).** Pure assembly
 of `abel_meromorphicFunction_of_zero_aj_two_point` and
