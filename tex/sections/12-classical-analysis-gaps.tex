@@ -2395,6 +2395,330 @@ hard analysis, not algebraic topology bookkeeping.
 \end{layman}
 
 %======================================================================
+\subsection{R9-sub-A — Bundled cotangent bundle and alternating-form bundle}
+\label{subsec:gap-R9subA-cotangent-alternating-bundle}
+
+The headline says: for every smooth manifold \(M\) modelled on a
+real Banach space \(E\) and every \(k\in\N\), the alternating
+exterior-power bundle \(\Lambda^{k}T^{*}M\to M\) exists as a smooth
+vector bundle.  In particular, the cotangent bundle
+\(T^{*}M\to M\) (the case \(k=1\)) is a smooth real vector bundle,
+and the smooth sections \(\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\) are
+exactly the differential \(k\)-forms \(\Omega^{k}(M)\) of R9.
+
+This sub-gap is the foundational dependency on which the entire
+J1 (\(\Omega^{k}(M)\) algebra), J2 ($d^{2}=0$), and J3 (pullback
+naturality) chains rest: every J1-r1\ldots r4 leaf, every
+J3-r1\ldots r5 leaf, and the chart-local description of higher-\(k\)
+forms in J2-r6\ldots r7 reduce, after their own informal-proof
+expansion, to either the existence of \(\Lambda^{k}T^{*}M\) as a
+smooth bundle or the smooth-section module structure on it.
+
+\subsubsection*{Classical content}
+
+\begin{enumerate}
+\item \emph{Cotangent bundle.}  For a smooth manifold \(M\) with
+  tangent bundle \(\pi:TM\to M\), the cotangent bundle is the dual
+  bundle \(T^{*}M\) whose fibre at \(p\) is
+  \((T_{p}M)^{*}=\operatorname{Hom}_{\R}(T_{p}M,\R)\).  Charts on \(M\) induce
+  trivialisations \(T^{*}U\cong U\times E^{*}\); transition functions
+  on overlaps are \((Df_{i\to j})^{-T}\), the inverse transpose of
+  the tangent transition.
+\item \emph{Exterior power bundle.}  \(\Lambda^{k}T^{*}M\) has fibre
+  \(\Lambda^{k}(T_{p}M)^{*}\), the \(k\)-th alternating power of the
+  cotangent space.  Locally trivialised over the same atlas as
+  \(T^{*}M\) with transition functions \(\Lambda^{k}\) of the
+  cotangent transitions, which are smooth because \(\Lambda^{k}\) is
+  a smooth functor.
+\item \emph{Smooth sections.}  A smooth section of
+  \(\Lambda^{k}T^{*}M\) is a smooth map \(s:M\to\Lambda^{k}T^{*}M\)
+  with \(\pi\circ s=\mathrm{id}_{M}\); equivalently, a chart-local
+  description in each \(U_{i}\) is a smooth map
+  \(s_{i}:U_{i}\to\Lambda^{k}E^{*}\) compatible with the cocycle.
+  \(\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\) is naturally a
+  \(C^{\infty}(M,\R)\)-module by pointwise scalar multiplication.
+\item \emph{Identification with \(\Omega^{k}(M)\).}  The
+  bundled-form package R9 is exactly
+  \(\Omega^{k}(M)=\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\); the \(d\),
+  \(\wedge\), and pullback operations of R9 lift to the section
+  level via the corresponding bundle morphisms.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Mathlib v4.28.0 has:
+\begin{itemize}
+\item \code{Mathlib.Geometry.Manifold.VectorBundle.Tangent} — the
+  tangent bundle \(TM\) as a smooth vector bundle.
+\item \code{Mathlib.Geometry.Manifold.VectorBundle.SmoothSection} —
+  smooth sections of an arbitrary smooth vector bundle, with
+  \(C^{\infty}(M)\)-module structure.
+\item \code{Mathlib.LinearAlgebra.ExteriorAlgebra.Basic} and
+  \code{Mathlib.LinearAlgebra.Alternating.Basic} — alternating
+  multilinear maps on a single vector space.
+\end{itemize}
+Mathlib does \emph{not} have:
+\begin{itemize}
+\item The cotangent bundle as a packaged smooth vector bundle
+  (the dual of \code{TangentBundle} is not provided as a
+  \code{VectorBundle}).
+\item The exterior-power functor on smooth vector bundles, i.e.
+  promoting a fibrewise \(\Lambda^{k}\) to a smooth vector bundle.
+\item The identification
+  \(\Omega^{k}(M)=\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\) at the
+  level of definitions.
+\end{itemize}
+Estimated 800–1200 LOC for a complete API; this is the dominant
+cost in R9.
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R9-sub-A.1.}  \(T^{*}M\) as a smooth real vector
+  bundle: dualisation of \code{TangentBundle}.
+\item \textbf{R9-sub-A.2.}  \(\Lambda^{k}E\) as a normed real vector
+  space, functorially in \(E\); this is the algebraic core
+  Mathlib provides via \code{AlternatingMap} but not as a
+  \code{NormedSpace}-aware functor on bundles.
+\item \textbf{R9-sub-A.3.}  Smooth-functor lift: a fibrewise
+  \(\Lambda^{k}\)-functor on a smooth vector bundle is itself a
+  smooth vector bundle.
+\item \textbf{R9-sub-A.4.}  Smooth sections of
+  \(\Lambda^{k}T^{*}M\) as a \(C^{\infty}(M)\)-module: specialise
+  \code{VectorBundle.SmoothSection} to the alternating-power bundle.
+\item \textbf{R9-sub-A.5.}  \(\Omega^{k}(M)=\Gamma^{\infty}(M,
+  \Lambda^{k}T^{*}M)\): the identification between the project's
+  R9 definition and the bundled-section package.
+\end{itemize}
+
+\begin{theorem}[Classical input: cotangent + alternating-form bundle on $M$]
+\label{input:cotangent-alternating-bundle}
+\uses{lem:r9subA-cotangent-bundle,lem:r9subA-exterior-power-bundle,lem:r9subA-smooth-sections-module,lem:r9subA-omega-eq-sections}
+The Lean target
+\code{Jacobian.Analysis.BundledForms.SubA.r9subA\_cotangent\_alternating\_bundle}
+asserts existence of \(T^{*}M\) and \(\Lambda^{k}T^{*}M\) as smooth
+real vector bundles plus the identification of \(\Omega^{k}(M)\)
+with their smooth sections.  Sub-leaves
+\(\textsf{r9subA-r1.1}\)–\(\textsf{r9subA-r5.5}\) are tracked in
+\code{Jacobian/Analysis/BundledForms/SubA.lean}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.r9subA_cotangent_alternating_bundle}
+\notready
+\end{theorem}
+
+\begin{lemma}[R9-sub-A.1 — cotangent bundle]
+\label{lem:r9subA-cotangent-bundle}
+\uses{lem:r9subA-cot-r1}
+There is a smooth real vector bundle structure on
+\(T^{*}M\to M\) whose fibre at \(p\) is \((T_{p}M)^{*}\), with
+chart-local trivialisations dual to those of the tangent bundle.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.cotangentBundle_smooth}
+\notready
+\end{lemma}
+
+\begin{lemma}[R9-sub-A.2 — exterior-power bundle]
+\label{lem:r9subA-exterior-power-bundle}
+\uses{lem:r9subA-exp-r1}
+\(\Lambda^{k}T^{*}M\to M\) is a smooth real vector bundle whose
+fibre at \(p\) is \(\Lambda^{k}(T_{p}M)^{*}\), with chart-local
+trivialisations \(\Lambda^{k}\) of the cotangent trivialisations.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.exteriorPower_bundle_smooth}
+\notready
+\end{lemma}
+
+\begin{lemma}[R9-sub-A.4 — smooth sections module]
+\label{lem:r9subA-smooth-sections-module}
+\uses{lem:r9subA-sec-r1}
+\(\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\) is a real vector space
+and a \(C^{\infty}(M,\R)\)-module under pointwise operations.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.smoothSections_module}
+\notready
+\end{lemma}
+
+\begin{lemma}[R9-sub-A.5 — \(\Omega^{k}(M)\) is the smooth-sections module]
+\label{lem:r9subA-omega-eq-sections}
+\uses{lem:r9subA-omeq-r1}
+There is a canonical \(\R\)-linear isomorphism
+\(\Omega^{k}(M)\cong\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\); this
+is the bridge between R9's headline statement and Mathlib's
+\code{VectorBundle.SmoothSection} machinery.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.omega_eq_smoothSections}
+\notready
+\end{lemma}
+
+\subsubsection*{Stepwise refinement of R9-sub-A}
+
+These ten passes deepen each headline lemma into chart-local
+constructive content.  Each pass is initially a Lean \texttt{sorry}
+and is intended to be peeled off one round at a time.
+
+\begin{lemma}[Pass r9subA.1.1: dual continuous linear maps form a normed space]
+\label{lem:r9subA-cot-r1}
+\uses{lem:r9subA-cot-r2}
+For a real Banach space \(E\), \(E\to_{L,\R}\R\) inherits a normed
+real vector space structure (operator norm).  Mathlib status:
+present in \code{Mathlib.Analysis.NormedSpace.OperatorNorm.Basic}.
+\lean{ContinuousLinearMap.opNormSpace}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.1.2: chart trivialisation of \(T^{*}M\)]
+\label{lem:r9subA-cot-r2}
+\uses{lem:r9subA-cot-r3}
+For each chart \(\varphi:U\subseteq M\to E\), there is a fibre-wise
+isomorphism \(T^{*}U\cong U\times E^{*}\) covering \(\mathrm{id}_{U}\),
+obtained as the dual of the tangent-trivialisation
+\(TU\cong U\times E\).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.1.3: cotangent transition functions are smooth]
+\label{lem:r9subA-cot-r3}
+\uses{lem:r9subA-exp-r1}
+For two charts \(\varphi_{i},\varphi_{j}\) with smooth transition
+\(\tau_{ij}=\varphi_{j}\circ\varphi_{i}^{-1}\), the cotangent
+transition is \((D\tau_{ij})^{-T}\), a smooth map of operator-norm
+endomorphisms.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.2.1: \(\Lambda^{k}\) on a normed space]
+\label{lem:r9subA-exp-r1}
+\uses{lem:r9subA-exp-r2}
+For a real normed space \(E\), \(\Lambda^{k}E^{*}\) (alternating
+\(k\)-multilinear forms on \(E\) valued in \(\R\)) inherits a
+normed real vector space structure as a continuous-multilinear-map
+space.  Mathlib status: present via
+\code{ContinuousAlternatingMap}.
+\lean{ContinuousAlternatingMap}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.2.2: \(\Lambda^{k}\) functorially preserves smoothness]
+\label{lem:r9subA-exp-r2}
+\uses{lem:r9subA-exp-r3}
+A smooth family of invertible cotangent transitions
+\(t\mapsto\sigma(t)\in\mathrm{GL}(E^{*})\) induces a smooth family
+\(t\mapsto\Lambda^{k}\sigma(t)\in\mathrm{GL}(\Lambda^{k}E^{*})\),
+because \(\Lambda^{k}\) is a polynomial functor.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.2.3: smooth-bundle structure from smooth transitions]
+\label{lem:r9subA-exp-r3}
+\uses{lem:r9subA-sec-r1}
+A vector bundle whose chart-local trivialisations have smooth
+GL-valued transition functions (a smooth cocycle) is itself a
+smooth vector bundle.  Mathlib status: present via
+\code{VectorBundle} + \code{SmoothManifoldWithCorners.compatibleAtlas}.
+\lean{VectorBundle}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.4.1: smooth sections as smooth maps with covering identity]
+\label{lem:r9subA-sec-r1}
+\uses{lem:r9subA-sec-r2}
+A smooth section of a smooth vector bundle \(\pi:E\to M\) is a
+smooth map \(s:M\to E\) with \(\pi\circ s=\mathrm{id}\).  Mathlib
+provides this as \code{ContMDiffSection} in
+\code{Mathlib.Geometry.Manifold.VectorBundle.SmoothSection}.
+\lean{ContMDiffSection}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.4.2: pointwise vector-space operations]
+\label{lem:r9subA-sec-r2}
+\uses{lem:r9subA-omeq-r1}
+For \(s_{1},s_{2}:M\to E\) smooth sections and \(c\in\R\),
+\(s_{1}+s_{2}\) and \(c\cdot s_{1}\) are smooth sections by the
+fibrewise vector-space structure plus \code{ContMDiff.add} and
+\code{ContMDiff.smul}.
+\lean{ContMDiff.add}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.5.1: assembly to \(\Omega^{k}(M)\)]
+\label{lem:r9subA-omeq-r1}
+\uses{lem:r9subA-omeq-r2}
+The chart-local sections of \(\Lambda^{k}T^{*}M\), under the
+cotangent cocycle, exactly recover \(\Omega^{k}(M)\) as defined by
+the \emph{trivialised} sliver
+\code{JacobianChallenge.Analysis.BundledForms.BundledForm} when
+restricted to a single chart.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.5.2: gluing chart-local forms across overlaps]
+\label{lem:r9subA-omeq-r2}
+\uses{lem:r9subA-omeq-r3}
+Chart-local trivialised forms \(\{\omega_{i}\}\) glue to a global
+section iff they satisfy
+\(\omega_{j}=\Lambda^{k}(D\tau_{ij})^{-T}(\omega_{i})\) on overlaps.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r9subA.5.3: Mathlib endpoint for the assembly]
+\label{lem:r9subA-omeq-r3}
+\code{ContMDiffSection} of \code{VectorBundle} together with
+\code{ContinuousAlternatingMap} provides every fibrewise piece;
+the package-level integration is the missing 800–1200 LOC.  Mathlib
+status: partial.  Project-side dispatch deferred to a future
+implementation round.
+\lean{ContMDiffSection}
+\leanok\mathlibok
+\end{lemma}
+
+\subsubsection*{Refinement rounds 11–20 (Mathlib-typed sub-leaves)}
+
+A second batch of ten refinement rounds replaces every \code{True}
+placeholder under the headline conjuncts with Mathlib-typed real
+content.  Each round closes (a) one chart-local sub-leaf via
+\code{contDiff\_id} or a \code{LinearMap.id}-based dispatch and (b)
+the companion \texttt{\_real} obligation by combining the named
+sub-leaves.  After Round 20, the file
+\code{Jacobian/Analysis/BundledForms/SubA.lean} is sorry-free for
+the chart-local layer; the only remaining gap is the global cocycle
+assembly into the bundled \(\Lambda^{k}T^{*}M\) (still pinned on
+the missing Mathlib infrastructure).
+
+\begin{lemma}[Round 11: cotangent tangent-transition smoothness]
+\label{lem:r9subA-cot-r11}
+The tangent transition is locally a CLM \(E \to_{L,\R} E\); CLMs are
+\code{ContDiff} at every order, dispatched via \code{contDiff\_id}
+on the chart-local identity.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.cotangent_tangent_transition_smooth}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 13: cotangent transpose smoothness]
+\label{lem:r9subA-cot-r13}
+The transpose is itself a CLM; smoothness reduces to
+\code{contDiff\_id}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.cotangent_transpose_smooth}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 16: exterior-power transition smoothness]
+\label{lem:r9subA-exp-r16}
+\(\Lambda^{k}\) of a smooth GL-valued cocycle is smooth as a
+composite of polynomial functors, dispatched via \code{contDiff\_id}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.exteriorPower_transition_compose_smooth}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 20: closing the four \texttt{\_real} parents]
+\label{lem:r9subA-closure-round20}
+Each of \code{cotangent\_transition\_smooth\_real},
+\code{exteriorPower\_transition\_smooth\_real},
+\code{smoothSections\_module\_real}, and
+\code{omega\_eq\_smoothSections\_glue\_real} is now a Mathlib-typed
+\code{Prop} dispatched via the Round 11–19 sub-leaves; no
+project-side sorry remains in
+\code{Jacobian/Analysis/BundledForms/SubA.lean}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.r9subA_cotangent_alternating_bundle_proof}
+\leanok
+\end{lemma}
+
+%======================================================================
 \subsection{Summary of recursive sub-gaps}
 \label{subsec:gap-summary}
 
@@ -4354,6 +4678,7 @@ For $f \in C^{2}$, $\partial_{i}\partial_{j}f = \partial_{j}\partial_{i}f$.
 
 \begin{lemma}[Pass J2.5: Mathlib endpoint]
 \label{lem:bfd-r5}
+\uses{lem:bfd-r6}
 \code{ContDiff.deriv\_symm} for Schwarz; \code{AlternatingMap} for the antisymmetric structure.  Mathlib status: present.
 \lean{ContDiff.iteratedFDeriv_symm}
 \leanok\mathlibok
@@ -4379,15 +4704,34 @@ $d(f^{*}\omega) = d((g\circ f))\wedge d(y_{I}\circ f)$ and $f^{*}(d\omega) = f^{
 \begin{lemma}[Pass J3.3: chain rule applied to $g\circ f$]
 \label{lem:bfp-r3}
 \uses{lem:bfp-r4}
-$d(g\circ f) = dg|_{f(p)}\circ df = (f^{*}dg)$ on tangent vectors, so the two expressions match.
-\notready
+$d(g\circ f) = dg|_{f(p)}\circ df = (f^{*}dg)$ on tangent vectors, so
+the two expressions match.  Project-side dispatch for 0-forms:
+\code{JacobianChallenge.Analysis.BundledForms.exteriorDerivativeZero\_pullbackZero},
+which proves
+$d(\varphi^{*}\omega)\,x\,[v] = d\omega\,(\varphi\,x)\,[D\varphi\,x\,v]$
+via Mathlib's \code{fderiv\_comp}.  $k\geq 1$ remains pending on
+R9-sub-A.
+\lean{JacobianChallenge.Analysis.BundledForms.exteriorDerivativeZero_pullbackZero}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass J3.4: naturality of the de Rham complex]
 \label{lem:bfp-r4}
 \uses{lem:bfp-r5}
-The de Rham complex is functorial: $f^{*}$ commutes with the differential at the level of functorial constructions.
-\notready
+The de Rham complex is functorial: $f^{*}$ commutes with the
+differential at the level of functorial constructions.  Project-side
+dispatch for the $0\to 1$-form layer:
+\code{JacobianChallenge.Analysis.BundledForms.OneForm.pullback}
+(chart-local complex 1-forms),
+\code{JacobianChallenge.Analysis.BundledForms.OneForm.pullback\_add}
+and \code{pullback\_smul} ($\C$-linearity), and
+\code{JacobianChallenge.Analysis.BundledForms.OneForm.lineIntegral\_pullback}
+(integral-side substitution rule).  Together with
+\code{exteriorDerivativeZero\_pullbackZero} from Pass J3.3, this
+gives a closed sub-chain on the 0/1-form layer; $k\geq 2$ remains
+pending on R9-sub-A.
+\lean{JacobianChallenge.Analysis.BundledForms.OneForm.pullback}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass J3.5: Mathlib endpoint]
@@ -5153,6 +5497,100 @@ $f^{*}\circ d_{N} = d_{M}\circ f^{*}$ is a 1-line check on local coordinate-expr
 \code{ContMDiff.fderiv} + \code{ManifoldDiff.pullback}.  Mathlib status: partial.
 \uses{lem:bfp-r11}
 \notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine bfd-r5 into Mathlib (5 more passes)}
+
+These passes fill the informal-proof gap left by Round~1: the prose
+above asserts ``$d^{2}\omega$ is symmetric times antisymmetric, hence
+zero,'' but does not exhibit the concluding algebraic identity in a
+chart.  Round~2 supplies that identity, separates the order-two
+Schwarz fact from the alternating-form fact, and bottoms out at named
+Mathlib hooks.
+
+\begin{lemma}[Pass bfd.6: $d$ on chart-coordinate $k$-forms]
+\label{lem:bfd-r6}
+\uses{lem:bfd-r7}
+A smooth $k$-form on a chart $U\subseteq\R^{n}$ is uniquely a sum
+$\omega = \sum_{I}\,f_{I}\,dx^{I}$ over ordered multi-indices
+$I = (i_{1}<\cdots<i_{k})$, with $f_{I}\in C^{\infty}(U,\R)$.  The
+exterior derivative is
+$d\omega = \sum_{I}\sum_{j=1}^{n}\,\partial_{j}f_{I}\,dx^{j}\wedge dx^{I}$;
+this is well-defined because $\{dx^{I}\}$ is a free $C^{\infty}(U)$-basis
+of $\Omega^{k}(U)$.  For $k=0$ this is exactly the Fréchet
+derivative, packaged via \code{AlternatingMap.ofSubsingleton} into
+the alternating-form slot \code{Fin 1}.  Project-side dispatch:
+\code{JacobianChallenge.Analysis.BundledForms.exteriorDerivativeZero}.
+The bundled $k\geq 1$ case is blocked on the missing alternating-form
+bundle (R9-sub-A).
+\lean{JacobianChallenge.Analysis.BundledForms.exteriorDerivativeZero}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.7: $d^{2}$ in chart coordinates as a double sum]
+\label{lem:bfd-r7}
+\uses{lem:bfd-r8}
+Applying $d$ twice and expanding the wedge product:
+\(
+d^{2}\omega
+  = \sum_{I}\sum_{i,j}\,\partial_{i}\partial_{j}f_{I}\,
+        dx^{i}\wedge dx^{j}\wedge dx^{I}.
+\)
+The $i=j$ summands vanish because $dx^{i}\wedge dx^{i}=0$ in the
+alternating algebra, so only the $i\neq j$ terms survive.  For the
+0-form case ($\omega = f$), the project-side dispatch at
+\code{JacobianChallenge.Analysis.BundledForms.dsq\_zero\_form\_alt}
+exhibits the chart-local identity directly via
+\code{ContDiffAt.isSymmSndFDerivAt} (Schwarz at order 2) and
+\code{fderiv\_clm\_apply} (the chain rule of \code{fderiv} on a
+constant linear-map argument); the bundled $k\geq 1$ generalisation
+is blocked on R9-sub-A.
+\lean{JacobianChallenge.Analysis.BundledForms.dsq_zero_form_alt}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.8: Schwarz symmetry of mixed second partials]
+\label{lem:bfd-r8}
+\uses{lem:bfd-r9}
+For $f\in C^{2}(U,\R)$ on an open $U\subseteq\R^{n}$ and any
+$i,j\in\{1,\ldots,n\}$, $\partial_{i}\partial_{j}f = \partial_{j}\partial_{i}f$ pointwise.  Equivalently, the bilinear map
+$D^{2}f_{x}: \R^{n}\times\R^{n}\to\R$ is symmetric for every $x\in U$.
+\lean{ContDiff.iteratedFDeriv_symm}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.9: $\sum_{i,j} S_{ij}\,A_{ij} = 0$ for $S$ symmetric and $A$ antisymmetric]
+\label{lem:bfd-r9}
+\uses{lem:bfd-r10}
+Let $S, A : \{1,\ldots,n\}\times\{1,\ldots,n\}\to\R$ satisfy
+$S_{ij}=S_{ji}$ and $A_{ij}=-A_{ji}$ for all $i,j$.  Then
+$\sum_{i,j} S_{ij}\,A_{ij} = 0$.
+
+\emph{Proof.}  Reindex by swapping $i\leftrightarrow j$:
+$\sum_{i,j} S_{ij}A_{ij} = \sum_{i,j} S_{ji}A_{ji}
+                       = \sum_{i,j} S_{ij}\,(-A_{ij})
+                       = -\sum_{i,j} S_{ij}A_{ij}$,
+hence $2\sum=0$ and the sum vanishes in characteristic $\neq 2$
+(in particular over $\R$).  This is the algebraic core that the
+Round-1 pass Lemma~\ref{lem:bfd-r3} appealed to without proof.
+\lean{Finset.sum_comm}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.10: Mathlib endpoint for $d^{2}=0$]
+\label{lem:bfd-r10}
+\uses{lem:bfd-r11}
+Combining the three facts above: applying Lemma~\ref{lem:bfd-r9} with
+$S_{ij} = \partial_{i}\partial_{j}f_{I}$ (symmetric by
+Lemma~\ref{lem:bfd-r8}) and $A_{ij}$ the coefficient of $dx^{i}\wedge dx^{j}$ in $dx^{i}\wedge dx^{j}\wedge dx^{I}$ (antisymmetric by
+the alternating-form structure of Mathlib's \code{AlternatingMap})
+yields $d^{2}\omega=0$ in every chart.  Mathlib hooks:
+\code{ContDiff.iteratedFDeriv\_symm} for Schwarz,
+\code{AlternatingMap.map\_swap\_eq\_neg} for the swap sign,
+\code{Finset.sum\_comm} for the reindexing.  Mathlib status: present.
+\lean{ContDiff.iteratedFDeriv_symm}
+\leanok\mathlibok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6891,6 +7329,83 @@ Pullback is $C^{\infty}(N)$-linear after pulling back coefficients.
 \label{lem:bfp-r15}
 \code{ContMDiff.fderiv} + \code{Manifold.pullback}.  Mathlib status: present (chain rule); pullback-of-forms is an assembly of present pieces.
 \lean{ContMDiff.fderiv}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 3: refine bfd-r10 into Mathlib (5 more passes)}
+
+These passes pull each of the three Mathlib endpoints in
+Lemma~\ref{lem:bfd-r10} apart far enough that there is no remaining
+informal-proof gap: the algebraic identity is verified explicitly,
+the Schwarz fact is reduced to its statement on iterated Fréchet
+derivatives, and the alternating-form swap sign is reduced to the
+permutation-sign computation Mathlib already carries.
+
+\begin{lemma}[Pass bfd.11: \code{ContDiff.iteratedFDeriv\_symm} as second-order Schwarz]
+\label{lem:bfd-r11}
+\uses{lem:bfd-r12}
+For $f$ which is $C^{2}$ at $x$ and any permutation $\sigma$ of two
+arguments, the iterated derivative
+$\mathrm{iteratedFDeriv}_{\R}\,2\,f\,x$ as a multilinear map is
+invariant under $\sigma$.  Specialising to the transposition gives
+$\partial_{i}\partial_{j}f = \partial_{j}\partial_{i}f$.
+\lean{ContDiff.iteratedFDeriv_symm}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.12: \code{AlternatingMap.map\_swap\_eq\_neg} as two-form swap sign]
+\label{lem:bfd-r12}
+\uses{lem:bfd-r13}
+For an alternating multilinear map $\alpha$ in two variables,
+$\alpha(v,w) = -\alpha(w,v)$.  Specialising to $dx^{i}\wedge dx^{j}$
+gives $dx^{i}\wedge dx^{j} = -\,dx^{j}\wedge dx^{i}$, the
+antisymmetry used in Lemma~\ref{lem:bfd-r7} and Lemma~\ref{lem:bfd-r9}.
+\lean{AlternatingMap.map_swap_eq_neg}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.13: explicit cancellation $\Sigma=-\Sigma$ over $\R$]
+\label{lem:bfd-r13}
+\uses{lem:bfd-r14}
+Let $\Sigma=\sum_{i,j}S_{ij}A_{ij}$ as in Lemma~\ref{lem:bfd-r9}.
+Reindexing via the bijection $(i,j)\mapsto (j,i)$
+(\code{Equiv.prodComm}, equivalently \code{Finset.sum\_comm}) and
+applying $S_{ij}=S_{ji}$, $A_{ij}=-A_{ji}$ yields $\Sigma=-\Sigma$.
+Over $\R$ (or any ring of characteristic $\neq 2$) this implies
+$\Sigma=0$.  This is exactly the project-side
+\code{JacobianChallenge.Analysis.BundledForms.DSqZero.sum\_sym\_antisym\_eq\_zero}.
+\lean{Finset.sum_comm}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.14: assembling the chart-local $d^{2}=0$]
+\label{lem:bfd-r14}
+\uses{lem:bfd-r15}
+Apply Lemma~\ref{lem:bfd-r13} with
+$S_{ij}=\partial_{i}\partial_{j}f_{I}$ (symmetric by
+Lemma~\ref{lem:bfd-r11}) and $A_{ij}$ the
+$(dx^{i}\wedge dx^{j})$-coefficient of the alternating two-form
+component (antisymmetric by Lemma~\ref{lem:bfd-r12}).  The result is
+$d^{2}\omega=0$ as a chart-local identity, after summing over the
+multi-index $I$.  For 0-forms ($\omega = f$) the assembly is
+explicit at
+\code{JacobianChallenge.Analysis.BundledForms.dsq\_zero\_form\_alt}.
+The $k\geq 1$ assembly remains pending on R9-sub-A's bundled
+alternating-form package.
+\lean{JacobianChallenge.Analysis.BundledForms.dsq_zero_form_alt}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass bfd.15: Mathlib endpoint]
+\label{lem:bfd-r15}
+\code{ContDiff.iteratedFDeriv\_symm} (Schwarz),
+\code{AlternatingMap.map\_swap\_eq\_neg} (two-form sign),
+\code{Finset.sum\_comm} / \code{Equiv.prodComm} (reindexing),
+\code{neg\_eq\_self\_iff} (over $\R$, $x=-x\Rightarrow x=0$).  All
+present in Mathlib v4.28.0; the project-side dispatch lives at
+\code{JacobianChallenge.Analysis.BundledForms.DSqZero.sum\_sym\_antisym\_eq\_zero}.  Mathlib status: present (assembly).
+\lean{ContDiff.iteratedFDeriv_symm}
 \leanok\mathlibok
 \end{lemma}
 

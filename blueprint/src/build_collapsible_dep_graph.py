@@ -252,12 +252,22 @@ def build_dots(dot_text: str, label_to_section, label_to_subsection_r, r_to_name
         vertex_states[v][classify_node(attrs)] += 1
 
     # Overview-level edges.
+    APEX = "section:10-main-theorem-assembly"
     seen_e: set[tuple[str, str]] = set()
     agg_edges: list[tuple[str, str]] = []
     for src, tgt, _ in edges_raw:
         sv = label_vertex.get(src)
         tv = label_vertex.get(tgt)
         if sv is None or tv is None or sv == tv:
+            continue
+        # Drop outgoing edges from APEX: these come from §8/§9/§2 etc.
+        # consuming apex API stubs (def:analytic-jacobian, etc.) which
+        # were merged into §10.  Keeping them creates a §10↔X cycle that
+        # both confuses dot's TB layout and breaks transitive reduction
+        # (which then incorrectly drops §X→§10 *and* §X→§Y edges as
+        # "redundant via the cycle").  The semantically correct flow is
+        # toward the apex, not from it.
+        if sv == APEX:
             continue
         if (sv, tv) in seen_e:
             continue
@@ -515,6 +525,28 @@ def main(argv: list[str]) -> int:
     total_kb = sum(len(v) for v in dots.values()) // 1024
     print(f"build_collapsible_dep_graph: wrote {out} "
           f"({len(dots)} dots embedded, {total_kb} KB)")
+
+    # Inject a sibling navigation link on every other page that already
+    # has a "Dependency graph" link, so the collapsible viewer is
+    # discoverable from the blueprint index/section pages.
+    NAV_OLD = '<li ><a href="dep_graph_document.html">Dependency graph</a></li>'
+    NAV_NEW = (
+        NAV_OLD
+        + '<li ><a href="dep_graph_collapsible.html">Collapsible overview</a></li>'
+    )
+    NAV_MARKER = "dep_graph_collapsible.html"  # idempotency check
+    n_patched = 0
+    for path in sorted(web.glob("*.html")):
+        if path.name in {"dep_graph_collapsible.html",
+                         "dep_graph_document.html",
+                         "dep_graph_section.html"}:
+            continue
+        text = path.read_text(encoding="utf-8")
+        if NAV_MARKER in text or NAV_OLD not in text:
+            continue
+        path.write_text(text.replace(NAV_OLD, NAV_NEW), encoding="utf-8")
+        n_patched += 1
+    print(f"build_collapsible_dep_graph: injected nav link on {n_patched} pages")
     return 0
 
 

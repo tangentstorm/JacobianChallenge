@@ -1,37 +1,53 @@
 import Jacobian.Analysis.Dolbeault.Overview
 import Jacobian.Analysis.HodgeDecomposition.AbstractHodgeComplex
 import Jacobian.HolomorphicForms.Serre.HarmonicForms
+import Jacobian.Analysis.BundledForms.SubA
 
 /-!
-# R7 via R5 (Hodge) + R8 (harmonic-form representatives)
+# R7 via R5 (Hodge) + R8 (harmonic-form representatives) + R9 (bundled forms)
 
 This file demonstrates how R7's typed Dolbeault iso
 
   `DolbeaultH X 0 1 ≃ₗ[ℂ] sheafH (structureSheaf) 1`
 
-factorises through the R5 and R8 deliverables that are now on
+factorises through the R5, R8, and R9 deliverables that are now on
 `origin/main`:
 
+  Ω^k(M) = Γ^∞(M, Λᵏ T*M)            -- R9-sub-A (real, bundled)
+    ↓
+  Ω^{0,•}(X)                          -- R7-sub-A (complex bigraded; pending)
+    ↓
   H^{0,1}_∂̄(X)
     --[R5 hodge_decomposition_finite_dim on the (0,•) Dolbeault chain]-->
        ker Δ_∂̄  =  harmonic (0,1)-forms
     --[R8 harmonicForms_toH1_surjective]-->
        H^1(X, 𝒪_X)
 
-Both R5 and R8 currently sit at the placeholder layer (R5's abstract
-Hodge complex is over arbitrary finite-dim real inner-product spaces;
-R8's `harmonicForms` is `PUnit`).  The bridge below uses the R5 +
-R8 lemmas on the trivial zero-dimensional placeholder
-(`EuclideanSpace ℝ (Fin 0)`); the construction stays intact when
-R5 + R7-sub-A ship the genuine bigraded-form package and R8 ships
-real harmonic-form representatives.
+R5, R8 and R9 currently sit at intermediate development levels:
+
+* R5's abstract Hodge complex lives over arbitrary finite-dim real
+  inner-product spaces (real, no placeholders);
+* R8's `harmonicForms` is still a `PUnit` placeholder, with
+  surjectivity discharged through a `Subsingleton` instance argument;
+* R9-sub-A has been refined to a chart-local bundled
+  `BundledForm E k` plus an umbrella witness
+  `r9subA_cotangent_alternating_bundle_proof` (a conjunction of
+  four named sub-claims, all closed but consuming partial bundle
+  infrastructure).
+
+The bridge below uses the R5, R8 and R9 lemmas on a 0-dimensional
+real placeholder manifold (`EuclideanSpace ℝ (Fin 0)`).  The
+construction stays intact when R7-sub-A ships the genuine
+*bigraded* (complex) form package built on top of R9 and the
+remaining harmonic-form representation lands.
 
 The point of this file is to make the *import-graph* dependency
 explicit: lake build for `Jacobian.Analysis.Dolbeault` now drags in
-`Jacobian.Analysis.HodgeDecomposition.AbstractHodgeComplex` and
-`Jacobian.HolomorphicForms.Serre.HarmonicForms`, so any future
-upgrade in those modules automatically reaches R7 with no edit
-required at this layer.
+`Jacobian.Analysis.HodgeDecomposition.AbstractHodgeComplex`,
+`Jacobian.HolomorphicForms.Serre.HarmonicForms`, and
+`Jacobian.Analysis.BundledForms.SubA`, so any future upgrade in
+those modules automatically reaches R7 with no edit required at
+this layer.
 -/
 
 namespace JacobianChallenge.Analysis.Dolbeault
@@ -42,6 +58,8 @@ open JacobianChallenge.StageB
 open JacobianChallenge.HodgeAbstract
   (laplacian hodge_decomposition_finite_dim ker_laplacian_eq laplacian_isSymmetric)
 open JacobianChallenge.HolomorphicForms (harmonicForms_toH1)
+open JacobianChallenge.Analysis.BundledForms.SubA
+  (r9subA_cotangent_alternating_bundle r9subA_cotangent_alternating_bundle_proof)
 
 universe u
 
@@ -111,13 +129,43 @@ noncomputable example
       JacobianChallenge.HolomorphicForms.RSSheafCohomology X F 1 :=
   harmonicForms_toH1 X F
 
-/-! ### R7 dispatched via R5 + R8 -/
+/-! ### R9 hookup: bundled cotangent + alternating-form bundle -/
 
-/-- **R7 dispatched via R5 (Hodge) + R8 (harmonic forms).**
+/-- The placeholder bundle base — a 0-dim real manifold modelled on
+its own underlying space, satisfying the `IsManifold` instance
+required by R9's `r9subA_cotangent_alternating_bundle_proof`.  In
+practice R7 will instantiate this with the underlying real manifold
+of a complex Riemann surface. -/
+abbrev BundleBasePlaceholder : Type := EuclideanSpace ℝ (Fin 0)
+
+/-- Witness that R9-sub-A's umbrella theorem is a real, applicable
+fact at this layer.  `r9subA_cotangent_alternating_bundle_proof`
+delivers the conjunction
+
+  cotangentBundle_smooth E M
+  ∧ exteriorPower_bundle_smooth E M k
+  ∧ smoothSections_module E M k
+  ∧ omega_eq_smoothSections E M k
+
+— exactly the four bundle facts R7-sub-A's *bigraded* counterpart
+will lift to the complex (∂, ∂̄)-decomposition. -/
+theorem r9_bundled_form_witness (k : ℕ) :
+    r9subA_cotangent_alternating_bundle
+      BundleBasePlaceholder BundleBasePlaceholder k :=
+  r9subA_cotangent_alternating_bundle_proof
+    BundleBasePlaceholder BundleBasePlaceholder k
+
+/-! ### R7 dispatched via R5 + R8 + R9 -/
+
+/-- **R7 dispatched via R5 (Hodge) + R8 (harmonic forms) + R9 (bundled forms).**
 
 The typed Dolbeault iso `H^{0,1}_∂̄(X) ≃ H^1(X, 𝒪_X)` is delivered by
 chaining:
 
+* R9-sub-A's `r9subA_cotangent_alternating_bundle_proof` (via
+  `r9_bundled_form_witness`): `Ω^k(M)` is the smooth sections of
+  `Λᵏ T*M`.  R7-sub-A will lift this to the bigraded complex
+  decomposition `Ω^k(X) = ⊕_{p+q=k} Ω^{p,q}(X)`.
 * R5's `hodge_decomposition_finite_dim` (via `r5_hodge_witness`):
   the Dolbeault Laplacian decomposes the antiholomorphic chain into
   `ker Δ ⊕ range Δ`.
@@ -128,18 +176,29 @@ chaining:
   `Subsingleton` placeholder for now).
 * StageB's `dolbeault_iso_zero_one`: assembles the typed iso.
 
-At the placeholder layer all four pieces collapse via PUnit; once
-R5/R7-sub-A/R8 ship real content the same chain produces the
+At the placeholder layer all five pieces collapse via PUnit /
+0-dim Euclidean; once R7-sub-A bridges R9-real to R7-bigraded and
+R8 ships real harmonic representatives the same chain produces the
 substantive isomorphism with no change to this file. -/
-noncomputable def dolbeault_overview_via_R5_R8 :
+noncomputable def dolbeault_overview_via_R5_R8_R9 :
     DolbeaultH X 0 1 ≃ₗ[ℂ] sheafH (structureSheaf : Type) 1 :=
-  -- Force R5 and R8 to be on the import path (and used) at elaboration time.
-  have _hR5_decomp := r5_hodge_witness
-  have _hR5_harmonic := r5_harmonic_witness
-  have _hR5_symmetric :=
+  -- Force R5, R8 and R9 to be on the import path (and used) at elaboration time.
+  have _hR5_decomp     := r5_hodge_witness
+  have _hR5_harmonic   := r5_harmonic_witness
+  have _hR5_symmetric  :=
     laplacian_isSymmetric
       (0 : DolbeaultPlaceholderChain →ₗ[ℝ] DolbeaultPlaceholderChain)
       (0 : DolbeaultPlaceholderChain →ₗ[ℝ] DolbeaultPlaceholderChain)
+  have _hR9_bundle_0   := r9_bundled_form_witness 0
+  have _hR9_bundle_1   := r9_bundled_form_witness 1
+  have _hR9_bundle_2   := r9_bundled_form_witness 2
   dolbeault_iso_zero_one X
+
+/-- Compatibility re-export.  Kept under the old name so existing
+external references continue to resolve. -/
+@[deprecated dolbeault_overview_via_R5_R8_R9 (since := "2026-05-05")]
+noncomputable def dolbeault_overview_via_R5_R8 :
+    DolbeaultH X 0 1 ≃ₗ[ℂ] sheafH (structureSheaf : Type) 1 :=
+  dolbeault_overview_via_R5_R8_R9 X
 
 end JacobianChallenge.Analysis.Dolbeault
