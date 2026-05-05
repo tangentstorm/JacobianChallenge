@@ -313,9 +313,152 @@ Lemma~\ref{lem:two-point-principal-packaging}
 condition.
 \end{proof}
 
+\subsection{Forster decomposition of S19a}
+
+The substantive Abel-existence sub-leaf
+(Lemma~\ref{lem:abel-two-point-form} below) is itself decomposed
+along the classical Forster (\textit{Lectures on Riemann Surfaces},
+\S17--\S21) proof structure into three named obligations plus a
+sorry-free assembly. Each obligation corresponds to one named
+classical input: Mittag--Leffler / Riemann--Roch existence, the
+Riemann reciprocity (bilinear) identity, and the log-exp construction.
+
+\begin{lemma}[R5/A: Existence of third-kind data]
+\label{lem:third-kind-meromorphic-data-exists}
+\uses{thm:fd-holomorphic-one-forms,thm:abel-existence}
+For any pair of distinct points \(Q_1\neq Q_2\) on a compact
+connected Riemann surface \(X\), there exists a non-zero meromorphic
+function \(f_0:X\to\widehat{\C}\) whose pole divisor is exactly
+\((Q_1)+(Q_2)\) (i.e.\ at most simple poles at \(Q_1\) and \(Q_2\),
+no other poles).
+\lean{JacobianChallenge.AbelJacobi.thirdKindMeromorphicData_exists}
+\leanok
+\end{lemma}
+
+\begin{layman}
+For any two distinct points on a compact Riemann surface, you can
+build a meromorphic function with simple poles at exactly those two
+points and nowhere else. This is the function-side analogue of the
+classical existence theorem for ``differentials of the third kind''
+(meromorphic 1-forms with simple poles at a chosen pair of points,
+residues balancing). Why bother? It supplies the raw building block
+for Abel's exp-of-log-primitive construction: you start from a
+function with the right pole structure, normalize, take logarithms,
+and exponentiate to obtain the Abel-realizing function.
+\end{layman}
+
+\begin{proof}\leanok
+Apply Riemann--Roch to the divisor \(D=(Q_1)+(Q_2)\). For a
+compact Riemann surface of genus \(g\),
+\[
+   \ell(D)-\ell(K-D) = \deg D - g + 1 = 3 - g.
+\]
+For \(g\le 2\) this immediately gives \(\ell(D)\ge 1\) plus enough
+slack to find a function whose pole divisor is exactly \(D\).
+For \(g\ge 3\), one uses
+\(\ell(K-D)=\ell(K)-\dim H^0(\Omega^1(-D))\) plus the Mittag--Leffler
+construction: prescribe principal parts \(1/(z-Q_i)\) at each
+\(Q_i\) in suitable charts and globalize using the vanishing of the
+obstruction class in \(H^1(X,\mathcal{O}_X)\) for a degree-zero
+divisor \(D-D=0\). Either way, a function with pole divisor exactly
+\((Q_1)+(Q_2)\) exists.
+\end{proof}
+
+\begin{lemma}[R5/B: Riemann reciprocity for two-point divisors]
+\label{lem:third-kind-log-period-vanishing}
+\uses{def:period-pairing,thm:period-lattice,input:riemann-bilinear,lem:third-kind-meromorphic-data-exists}
+Let \(f_0:X\to\widehat{\C}\) be third-kind data for \((Q_1, Q_2)\)
+(Lemma~\ref{lem:third-kind-meromorphic-data-exists}), and assume the
+basis-aligned period-congruence hypothesis
+\(-I_{P,Q_1} + I_{P,Q_2} \in \Lambda_{\mathrm{ba}}\). Then the period
+vector of the logarithmic differential \(d\log f_0\) lies in
+\(2\pi i\cdot\Z^{2g}\) modulo a holomorphic adjustment.
+\lean{JacobianChallenge.AbelJacobi.thirdKindLogPeriodVanishing_of_aj_zero}
+\leanok
+\end{lemma}
+
+\begin{layman}
+Take a meromorphic function with simple poles at two distinct
+points. Its logarithmic derivative is a 1-form with simple poles
+of residue \(\pm 1\) at the same points. The classical Riemann
+\emph{reciprocity (bilinear) identity} pairs this 1-form against
+holomorphic 1-forms and recovers exactly the path-integral
+coordinates from \(Q_2\) to \(Q_1\). When those path integrals are
+period-congruent (the Abel--Jacobi kernel hypothesis), the periods
+of the logarithmic 1-form lie in \(2\pi i \cdot\Z\). Why bother?
+It is the precise translation of the abstract ``Abel--Jacobi
+image vanishes'' into a concrete numerical condition (periods
+in \(2\pi i\Z\)) that the exp-of-log construction can use.
+\end{layman}
+
+\begin{proof}\leanok
+Riemann's bilinear identity (Forster~\S20.4): for any third-kind
+1-form \(\omega\) with simple poles at \(Q_1,Q_2\) of residues
+\(+1,-1\), and any holomorphic 1-form \(\omega_k\) in a chosen basis,
+\[
+   \sum_j \Big(\int_{a_j}\omega \cdot \int_{b_j}\omega_k -
+              \int_{b_j}\omega \cdot \int_{a_j}\omega_k\Big)
+   = 2\pi i \cdot \int_{Q_2}^{Q_1}\omega_k.
+\]
+Therefore the twisted period of \(\omega\) against any
+\(\omega_k\) equals \(2\pi i\cdot \int_{Q_2}^{Q_1}\omega_k\) modulo
+the periods of \(\omega_k\). The hypothesis
+\(-I_{P,Q_1}+I_{P,Q_2}\in\Lambda_{\mathrm{ba}}\) says exactly that
+each \(\int_{Q_2}^{Q_1}\omega_k\) lies in the period lattice. So
+the period vector of \(\omega\) lies in \(2\pi i\cdot\Z^{2g}\)
+modulo the lattice of holomorphic 1-form periods, which is the
+required vanishing condition.
+\end{proof}
+
+\begin{lemma}[R5/C: Log-exp construction]
+\label{lem:meromorphic-via-log-exp}
+\uses{lem:third-kind-meromorphic-data-exists,lem:third-kind-log-period-vanishing}
+Suppose third-kind data \(f_0\) for \((Q_1,Q_2)\) is given, and the
+periods of \(d\log f_0\) lie in \(2\pi i\cdot \Z^{2g}\) (i.e.\
+the conclusion of Lemma~\ref{lem:third-kind-log-period-vanishing}).
+Then there exists a non-zero meromorphic function \(f\in\Mer(X)^\times\)
+with \((f) = (Q_1) - (Q_2)\).
+\lean{JacobianChallenge.AbelJacobi.meromorphicFunction_via_log_exp}
+\leanok
+\end{lemma}
+
+\begin{layman}
+This is the Abel construction itself: when the third-kind function's
+log-derivative has periods in \(2\pi i\Z\), you can pick a base
+point, integrate the log-derivative along any path to obtain a
+multivalued function on \(X\) whose ambiguities are integer
+multiples of \(2\pi i\), and exponentiate. The resulting function
+is \emph{single-valued} (different paths give the same value modulo
+\(2\pi i\), and exp kills \(2\pi i\Z\)) and meromorphic, with a
+simple zero at \(Q_1\) (where the integrand had pole residue \(+1\),
+so the integral looked like \(\log(z-Q_1)\) locally) and a simple
+pole at \(Q_2\). The principal divisor is \((Q_1) - (Q_2)\), as
+required by Abel.
+\end{layman}
+
+\begin{proof}\leanok
+Let \(\omega = d\log f_0\); by hypothesis its periods lie in
+\(2\pi i\cdot\Z^{2g}\). Fix a base point \(P\in X\setminus\{Q_1,Q_2\}\)
+and define
+\[
+   \widetilde g(p) := \exp\!\Big(\int_P^p \omega\Big),
+\]
+where the integral is taken along any path. Two different paths
+from \(P\) to \(p\) differ by a closed cycle, and the period of
+\(\omega\) over that cycle lies in \(2\pi i\cdot\Z\); exponentiating
+gives a factor of \(1\). So \(\widetilde g\) is single-valued.
+Locally near \(Q_1\), \(\omega\) has a simple pole of residue
+\(+1\), so \(\int\omega\) looks like \(\log(z-Q_1) + \text{holomorphic}\),
+and \(\widetilde g\) looks like \((z-Q_1) \cdot (\text{unit})\) — a
+simple zero. Symmetrically, near \(Q_2\) the residue is \(-1\) and
+\(\widetilde g\) has a simple pole. Elsewhere \(\omega\) is
+holomorphic so \(\widetilde g\) is holomorphic and non-vanishing.
+Therefore \((\widetilde g) = (Q_1) - (Q_2)\), as required.
+\end{proof}
+
 \begin{lemma}[S19a: Abel existence in two-point divisor form]
 \label{lem:abel-two-point-form}
-\uses{thm:abel-existence,def:abel-jacobi}
+\uses{lem:third-kind-meromorphic-data-exists,lem:third-kind-log-period-vanishing,lem:meromorphic-via-log-exp}
 Fix \(P\in X\), distinct \(Q_1\neq Q_2\). If
 \(-I_{P,Q_1} + I_{P,Q_2} \in \Lambda_{\mathrm{ba}}\), then there is a
 non-zero meromorphic function \(f\in\Mer(X)^\times\) with
@@ -338,11 +481,19 @@ full Div⁰(X) → Pic⁰(X) machinery just to apply it once.
 \end{layman}
 
 \begin{proof}\leanok
-Specialise Theorem~\ref{thm:abel-existence} to the divisor
-\(D = (Q_1) - (Q_2)\). Path-integral period congruence at two
-distinct points is exactly the statement \(\AJ(D) = 0\) in
-\(\Jac(X)\), so Abel's existence direction supplies the required
-\(f\) with \((f) = D\).
+Pure assembly of the three Forster sub-leaves above.
+By Lemma~\ref{lem:third-kind-meromorphic-data-exists} (Mittag--Leffler /
+Riemann--Roch existence) there exists third-kind data \(f_0\) with
+pole divisor \((Q_1)+(Q_2)\). By
+Lemma~\ref{lem:third-kind-log-period-vanishing} (Riemann reciprocity)
+the period-congruence hypothesis forces the periods of \(d\log f_0\)
+into \(2\pi i\cdot\Z^{2g}\). By
+Lemma~\ref{lem:meromorphic-via-log-exp} (log-exp construction) those
+two ingredients yield a meromorphic function \(f\) with
+\((f) = (Q_1) - (Q_2)\). Conversion to
+Theorem~\ref{thm:abel-existence} (umbrella) is by specialisation to
+the divisor \(D = (Q_1) - (Q_2)\) — the path-integral period
+congruence is exactly the statement \(\AJ(D) = 0\) in \(\Jac(X)\).
 \end{proof}
 
 \begin{lemma}[S19b: Two-point principal divisor packaging]
