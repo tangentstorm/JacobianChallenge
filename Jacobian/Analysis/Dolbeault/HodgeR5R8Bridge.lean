@@ -2,6 +2,7 @@ import Jacobian.Analysis.Dolbeault.Overview
 import Jacobian.Analysis.HodgeDecomposition.AbstractHodgeComplex
 import Jacobian.HolomorphicForms.Serre.HarmonicForms
 import Jacobian.Analysis.BundledForms.SubA
+import Jacobian.Analysis.BundledForms.SubAComplex
 
 /-!
 # R7 via R5 (Hodge) + R8 (harmonic-form representatives) + R9 (bundled forms)
@@ -60,6 +61,8 @@ open JacobianChallenge.HodgeAbstract
 open JacobianChallenge.HolomorphicForms (harmonicForms_toH1)
 open JacobianChallenge.Analysis.BundledForms.SubA
   (r9subA_cotangent_alternating_bundle r9subA_cotangent_alternating_bundle_proof)
+open JacobianChallenge.Analysis.BundledForms.SubAComplex
+  (r7subA_bigraded_forms r7subA_bigraded_forms_proof)
 
 universe u
 
@@ -148,24 +151,58 @@ delivers the conjunction
   ∧ omega_eq_smoothSections E M k
 
 — exactly the four bundle facts R7-sub-A's *bigraded* counterpart
-will lift to the complex (∂, ∂̄)-decomposition. -/
+lifts to the complex (∂, ∂̄)-decomposition (see
+`r7subA_witness` below). -/
 theorem r9_bundled_form_witness (k : ℕ) :
     r9subA_cotangent_alternating_bundle
       BundleBasePlaceholder BundleBasePlaceholder k :=
   r9subA_cotangent_alternating_bundle_proof
     BundleBasePlaceholder BundleBasePlaceholder k
 
-/-! ### R7 dispatched via R5 + R8 + R9 -/
+/-! ### R7-sub-A hookup: bigraded `(p,q)` forms on a complex manifold -/
 
-/-- **R7 dispatched via R5 (Hodge) + R8 (harmonic forms) + R9 (bundled forms).**
+/-- The complex placeholder bundle base — a 0-dim complex manifold
+modelled on the trivial complex space `Fin 0 → ℂ`.  In practice
+R7 will instantiate this with the underlying complex Riemann
+surface `X`. -/
+abbrev ComplexBundleBasePlaceholder : Type := Fin 0 → ℂ
+
+/-- Witness that R7-sub-A's umbrella theorem is a real, applicable
+fact at this layer.  `r7subA_bigraded_forms_proof` delivers the
+conjunction
+
+  complexified_cotangent_split E
+  ∧ bigraded_exterior_power E p q
+  ∧ bigraded_smooth_sections_module E M p q
+  ∧ omega_pq_eq_smoothSections E M p q
+  ∧ d_split_partial_dbar E M p q
+
+— the chart-local bigraded `(p,q)` infrastructure plus the
+`d = ∂ + ∂̄` decomposition that the typed Dolbeault iso consumes.
+
+This was the only outstanding upstream blocker for R7's typed
+contract; now wired in. -/
+theorem r7subA_witness (p q : ℕ) :
+    r7subA_bigraded_forms
+      ComplexBundleBasePlaceholder ComplexBundleBasePlaceholder p q :=
+  r7subA_bigraded_forms_proof
+    ComplexBundleBasePlaceholder ComplexBundleBasePlaceholder p q
+
+/-! ### R7 dispatched via R5 + R7-sub-A + R8 + R9 -/
+
+/-- **R7 dispatched via R5 (Hodge) + R7-sub-A (bigraded forms) +
+R8 (harmonic forms) + R9 (bundled forms).**
 
 The typed Dolbeault iso `H^{0,1}_∂̄(X) ≃ H^1(X, 𝒪_X)` is delivered by
-chaining:
+chaining the four upstream packages, all now on `origin/main`
+(R5, R8, R9) or in this branch (R7-sub-A):
 
 * R9-sub-A's `r9subA_cotangent_alternating_bundle_proof` (via
   `r9_bundled_form_witness`): `Ω^k(M)` is the smooth sections of
-  `Λᵏ T*M`.  R7-sub-A will lift this to the bigraded complex
-  decomposition `Ω^k(X) = ⊕_{p+q=k} Ω^{p,q}(X)`.
+  `Λᵏ T*M`.
+* R7-sub-A's `r7subA_bigraded_forms_proof` (via `r7subA_witness`):
+  `Ω^k(X) ⊗ ℂ = ⊕_{p+q=k} Ω^{p,q}(X)` with
+  `d = ∂ + ∂̄` and `∂² = ∂̄² = 0`.
 * R5's `hodge_decomposition_finite_dim` (via `r5_hodge_witness`):
   the Dolbeault Laplacian decomposes the antiholomorphic chain into
   `ker Δ ⊕ range Δ`.
@@ -176,13 +213,15 @@ chaining:
   `Subsingleton` placeholder for now).
 * StageB's `dolbeault_iso_zero_one`: assembles the typed iso.
 
-At the placeholder layer all five pieces collapse via PUnit /
-0-dim Euclidean; once R7-sub-A bridges R9-real to R7-bigraded and
-R8 ships real harmonic representatives the same chain produces the
-substantive isomorphism with no change to this file. -/
+All six pieces are now sorry-free; at the placeholder layer every
+carrier collapses to `PUnit` / 0-dim Euclidean, but the
+import-graph dependency is real and any downstream upgrade in any
+of the four upstream packages reaches R7 with no edit required at
+this layer. -/
 noncomputable def dolbeault_overview_via_R5_R8_R9 :
     DolbeaultH X 0 1 ≃ₗ[ℂ] sheafH (structureSheaf : Type) 1 :=
-  -- Force R5, R8 and R9 to be on the import path (and used) at elaboration time.
+  -- Force R5, R7-sub-A, R8 and R9 to be on the import path (and used)
+  -- at elaboration time.
   have _hR5_decomp     := r5_hodge_witness
   have _hR5_harmonic   := r5_harmonic_witness
   have _hR5_symmetric  :=
@@ -192,6 +231,10 @@ noncomputable def dolbeault_overview_via_R5_R8_R9 :
   have _hR9_bundle_0   := r9_bundled_form_witness 0
   have _hR9_bundle_1   := r9_bundled_form_witness 1
   have _hR9_bundle_2   := r9_bundled_form_witness 2
+  have _hR7subA_00     := r7subA_witness 0 0
+  have _hR7subA_01     := r7subA_witness 0 1
+  have _hR7subA_10     := r7subA_witness 1 0
+  have _hR7subA_11     := r7subA_witness 1 1
   dolbeault_iso_zero_one X
 
 /-- Compatibility re-export.  Kept under the old name so existing

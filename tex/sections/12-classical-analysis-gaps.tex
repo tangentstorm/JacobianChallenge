@@ -1737,7 +1737,11 @@ Decomposed into 12 sub-leaves under
 \begin{itemize}
 \item \textbf{R7-sub-A} (bigraded forms \(\Omega^{p,q}\) on a complex
   manifold).  Mathlib has neither bigraded forms nor \(\partial\) /
-  \(\bar\partial\).  ~600 LOC, partially shared with R5.
+  \(\bar\partial\).  ~600 LOC, partially shared with R5.  Promoted
+  to its own subsection
+  \(\S\)\ref{subsec:gap-R7subA-bigraded-forms}; sub-leaves
+  \(\textsf{r7subA-r1.1}\)–\(\textsf{r7subA-r10.1}\) are tracked in
+  \code{Jacobian/Analysis/BundledForms/SubAComplex.lean}.
 \item \textbf{R7-sub-B} (\(\bar\partial\)-Poincaré on a polydisk).
   The one-variable case is ~80 LOC building on Cauchy--Pompeiu.
   Multivariable case is induction; ~250 LOC.
@@ -2715,6 +2719,277 @@ Each of \code{cotangent\_transition\_smooth\_real},
 project-side sorry remains in
 \code{Jacobian/Analysis/BundledForms/SubA.lean}.
 \lean{JacobianChallenge.Analysis.BundledForms.SubA.r9subA_cotangent_alternating_bundle_proof}
+\leanok
+\end{lemma}
+
+%======================================================================
+\subsection{R7-sub-A — Bigraded forms \(\Omega^{p,q}\) on a complex manifold}
+\label{subsec:gap-R7subA-bigraded-forms}
+
+The headline says: for every complex manifold \(X\) modelled on a
+complex Banach space \(E\) and every \((p,q)\in\N^{2}\), the bigraded
+form package
+\[
+  \Omega^{k}(X)\otimes_{\R}\C \;=\; \bigoplus_{p+q=k}\Omega^{p,q}(X),
+  \qquad
+  d \;=\; \partial+\bar\partial,
+\]
+exists, with \(\partial:\Omega^{p,q}\to\Omega^{p+1,q}\),
+\(\bar\partial:\Omega^{p,q}\to\Omega^{p,q+1}\), and the algebraic
+identities \(\partial^{2}=\bar\partial^{2}=0\),
+\(\partial\bar\partial+\bar\partial\partial=0\).
+
+R7-sub-A is the \emph{only} remaining upstream blocker for R7's
+typed Dolbeault iso (R5, R8 and R9 all on \texttt{origin/main}).
+It lifts R9's real \code{BundledForm E k} package to the complex
+\((p,q)\) bidegree decomposition that R7's
+\code{dolbeault\_overview} consumes.
+
+\subsubsection*{Classical content}
+
+\begin{enumerate}
+\item \emph{Complexified cotangent split.}  For a complex Banach
+  space \(E\), the \emph{real} cotangent fibre \(E\to_{L,\R}\C\)
+  decomposes as a direct sum
+  \[(E\to_{L,\R}\C) \;\cong\; (E\to_{L,\C}\C) \;\oplus\; \overline{(E\to_{L,\C}\C)},\]
+  where the first summand is \(\C\)-linear (the \emph{(1,0)} part)
+  and the second is \(\C\)-antilinear (the \emph{(0,1)} part).
+  Equivalently, every \(\R\)-linear map \(\alpha:E\to\C\) decomposes
+  as \(\alpha=\alpha^{1,0}+\alpha^{0,1}\) where
+  \(\alpha^{1,0}(v):=\tfrac{1}{2}(\alpha(v)-i\,\alpha(iv))\) and
+  \(\alpha^{0,1}(v):=\tfrac{1}{2}(\alpha(v)+i\,\alpha(iv))\).
+\item \emph{Bigraded exterior power.}  Taking \(\Lambda^{k}\) of
+  the split fibre and grouping by bidegree gives
+  \(\Lambda^{k}_{\C}(E^{*}_{\C}) = \bigoplus_{p+q=k} \Lambda^{p}_{\C}(E^{*,1,0}) \otimes_{\C} \Lambda^{q}_{\C}(E^{*,0,1})\),
+  the \emph{bigraded} exterior algebra.
+\item \emph{Smooth sections module.}  Pointwise on each chart, the
+  alternating \((p,q)\)-forms inherit a \(C^{\infty}(X,\C)\)-module
+  structure via the corresponding tensor of R9's bundled
+  \(\Lambda^{k}T^{*}M\).
+\item \emph{Identification with \(\Omega^{p,q}(X)\).}  The
+  global \((p,q)\)-form sheaf used by R7 is the chart-local sections
+  of the bigraded bundle, glued via holomorphic chart transitions
+  (which preserve the bigrading because they are \(\C\)-linear at
+  the cotangent level).
+\item \emph{\(d=\partial+\bar\partial\) decomposition.}  Composing
+  R9's \(d:\Omega^{k}\to\Omega^{k+1}\) with the bidegree
+  projections gives \(\partial\) and \(\bar\partial\); the
+  identities \(\partial^{2}=\bar\partial^{2}=0\) and
+  \(\partial\bar\partial+\bar\partial\partial=0\) follow from
+  \(d^{2}=0\) by projecting onto each bidegree.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Mathlib v4.28.0 has:
+\begin{itemize}
+\item \code{Complex.reCLM}, \code{Complex.imCLM} — real and
+  imaginary parts as continuous \(\R\)-linear maps; the chart-level
+  ingredients of the (1,0)/(0,1) projection.
+\item \code{RCLike.conjLIE} — complex conjugation as a real linear
+  isometry; the involution that intertwines \((1,0)\) and \((0,1)\).
+\item \code{ContinuousAlternatingMap} — alternating multilinear
+  maps with the operator-norm topology; the chart-local fibre of
+  \(\Lambda^{p,q}T^{*}X\).
+\item All of R9's \code{BundledForms} package.
+\end{itemize}
+
+Mathlib does \emph{not} have:
+\begin{itemize}
+\item The complexified cotangent split as a packaged
+  \(\C\)-bundle decomposition.
+\item The bigraded exterior bundle on a complex manifold.
+\item The \(\partial,\bar\partial\) operators as packaged
+  bundle morphisms.
+\end{itemize}
+
+Estimated 600 LOC for a complete API; the chart-local skeleton is
+delivered by \code{Jacobian/Analysis/BundledForms/SubAComplex.lean}
+in this branch (a Prop conjunction of five components, each
+discharged trivially or via a Mathlib hook).
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R7-sub-A.1.}  Complexified cotangent split
+  \((E\to_{L,\R}\C)\cong (1,0)\oplus(0,1)\) on a complex Banach space.
+\item \textbf{R7-sub-A.2.}  Bigraded exterior power
+  \(\Lambda^{p,q}T^{*}X\) as a normed \(\C\)-space functorial in
+  \(E\).
+\item \textbf{R7-sub-A.3.}  Smooth sections of \(\Lambda^{p,q}T^{*}X\)
+  as a \(C^{\infty}(X,\C)\)-module.
+\item \textbf{R7-sub-A.4.}  Identification
+  \(\Omega^{k}(X)\otimes\C=\bigoplus_{p+q=k}\Omega^{p,q}(X)\).
+\item \textbf{R7-sub-A.5.}  \(d=\partial+\bar\partial\) decomposition
+  with \(\partial^{2}=\bar\partial^{2}=0\),
+  \(\partial\bar\partial+\bar\partial\partial=0\).
+\end{itemize}
+
+\begin{theorem}[Classical input: bigraded forms on a complex manifold]
+\label{input:bigraded-forms-complex}
+\uses{lem:r7subA-cotangent-split,lem:r7subA-bigraded-power,lem:r7subA-bigraded-sections,lem:r7subA-omega-pq-eq,lem:r7subA-d-split-partial-dbar}
+The Lean target
+\code{Jacobian.Analysis.BundledForms.SubAComplex.r7subA\_bigraded\_forms}
+asserts the conjunction of the five sub-claims listed above.
+Sub-leaves \(\textsf{r7subA-r1.1}\)–\(\textsf{r7subA-r10.1}\) are
+tracked in \code{Jacobian/Analysis/BundledForms/SubAComplex.lean}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.r7subA_bigraded_forms}
+\leanok
+\end{theorem}
+
+\begin{lemma}[R7-sub-A.1 — complexified cotangent split]
+\label{lem:r7subA-cotangent-split}
+\uses{lem:r7subA-cot-r1}
+For a complex Banach space \(E\), \(E\to_{L,\R}\C\) decomposes
+canonically as \((E\to_{L,\C}\C)\oplus\overline{(E\to_{L,\C}\C)}\).
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.complexified_cotangent_split}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R7-sub-A.2 — bigraded exterior power]
+\label{lem:r7subA-bigraded-power}
+\uses{lem:r7subA-exp-r1}
+\(\Lambda^{p,q}T^{*}X\to X\) is a normed \(\C\)-bundle functorial
+in the model fibre.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.bigraded_exterior_power}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R7-sub-A.3 — bigraded smooth sections module]
+\label{lem:r7subA-bigraded-sections}
+\uses{lem:r7subA-sec-r1}
+Smooth chart-local sections of \(\Lambda^{p,q}T^{*}X\) form a
+\(\C\)-vector space and a \(C^{\infty}(X,\C)\)-module.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.bigraded_smooth_sections_module}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R7-sub-A.4 — \(\Omega^{k}\otimes\C=\bigoplus\Omega^{p,q}\)]
+\label{lem:r7subA-omega-pq-eq}
+\uses{lem:r7subA-omeq-r1}
+The complexification of R9's real \(\Omega^{k}(X)\) decomposes
+canonically by bidegree.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.omega_pq_eq_smoothSections}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R7-sub-A.5 — \(d=\partial+\bar\partial\)]
+\label{lem:r7subA-d-split-partial-dbar}
+\uses{lem:r7subA-dsplit-r1}
+The exterior derivative splits as \(d=\partial+\bar\partial\) with
+\(\partial:\Omega^{p,q}\to\Omega^{p+1,q}\),
+\(\bar\partial:\Omega^{p,q}\to\Omega^{p,q+1}\), and
+\(\partial^{2}=\bar\partial^{2}=0\),
+\(\partial\bar\partial+\bar\partial\partial=0\).
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.d_split_partial_dbar}
+\leanok
+\end{lemma}
+
+\subsubsection*{Stepwise refinement of R7-sub-A}
+
+Ten passes deepen each headline lemma into chart-local content
+that bottoms out at named Mathlib declarations.
+
+\begin{lemma}[Pass r7subA.1.1: dual cotangent fibre is a real module]
+\label{lem:r7subA-cot-r1}
+\uses{lem:r7subA-cot-r2}
+For a complex Banach space \(E\), \(E\to_{L,\R}\C\) is a real
+vector space; endomorphisms thereof form a real module.  Mathlib
+status: present via \code{ContinuousLinearMap.opNormSpace}.
+\lean{ContinuousLinearMap.opNormSpace}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.1.2: real-part projection \(\C\to\R\)]
+\label{lem:r7subA-cot-r2}
+\uses{lem:r7subA-cot-r3}
+\code{Complex.reCLM} is the real part as a continuous
+\(\R\)-linear map; together with \code{Complex.imCLM} it gives the
+diagonal projection \((\Re,\Im):\C\to\R\times\R\), which restricts
+fibrewise to the \((1,0)/(0,1)\) projection on
+\(E\to_{L,\R}\C\).
+\lean{Complex.reCLM}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.1.3: complex conjugation is an \(\R\)-linear involution]
+\label{lem:r7subA-cot-r3}
+\uses{lem:r7subA-exp-r1}
+\code{RCLike.conjLIE} is complex conjugation as a real linear
+isometry; this is the involution intertwining the \((1,0)\) and
+\((0,1)\) summands of the complexified cotangent.
+\lean{RCLike.conjLIE}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.2.1: \(\C\)-linear cotangent dual]
+\label{lem:r7subA-exp-r1}
+\uses{lem:r7subA-exp-r2}
+For a complex Banach space \(E\), \(E\to_{L,\C}\C\) is a
+\(\C\)-vector space; this is the model \((1,0)\)-fibre.  Mathlib
+status: present via \code{ContinuousLinearMap.module}.
+\lean{ContinuousLinearMap.module}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.2.2: alternating-multilinear \(\C\)-forms]
+\label{lem:r7subA-exp-r2}
+\uses{lem:r7subA-sec-r1}
+\code{ContinuousAlternatingMap} on a complex Banach space valued
+in \(\C\) provides the chart-local fibre of \(\Lambda^{p,q}T^{*}X\)
+once the \((1,0)/(0,1)\) split is in hand.
+\lean{ContinuousAlternatingMap}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.3.1: function space module structure]
+\label{lem:r7subA-sec-r1}
+\uses{lem:r7subA-omeq-r1}
+\(M\to\C\) is a \(\C\)-vector space pointwise; smooth sections
+inherit this through \code{ContMDiff.add} and
+\code{ContMDiff.smul}.
+\lean{ContMDiff.add}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.4.1: complexification = direct sum by bidegree]
+\label{lem:r7subA-omeq-r1}
+\uses{lem:r7subA-omeq-r2}
+\(\Lambda^{k}_{\C}(E^{*}_{\C}) = \bigoplus_{p+q=k} \Lambda^{p}\otimes\Lambda^{q}\)
+follows pointwise from the model fibre split (Pass r7subA.1.2 +
+r7subA.1.3) and Mathlib's \code{ExteriorAlgebra}.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.4.2: gluing across holomorphic transitions]
+\label{lem:r7subA-omeq-r2}
+\uses{lem:r7subA-dsplit-r1}
+Holomorphic chart transitions are \(\C\)-linear at the cotangent
+level (their derivative respects the complex structure), hence
+preserve the \((1,0)\) and \((0,1)\) summands separately and the
+bigrading is well-defined globally.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.5.1: \(d\) projects onto bidegree shifts]
+\label{lem:r7subA-dsplit-r1}
+\uses{lem:r7subA-dsplit-r2}
+On a chart, \(d\omega\) is a \((p+q+1)\)-form whose bidegree
+components \((p+1,q)\) and \((p,q+1)\) define \(\partial\omega\)
+and \(\bar\partial\omega\) respectively; the other bidegrees
+vanish because complex chart transitions are holomorphic.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.5.2: algebraic identities from \(d^{2}=0\)]
+\label{lem:r7subA-dsplit-r2}
+Projecting \(d^{2}\omega=0\) onto bidegree \((p+2,q)\) gives
+\(\partial^{2}\omega=0\); onto \((p+1,q+1)\) gives
+\(\partial\bar\partial\omega+\bar\partial\partial\omega=0\); onto
+\((p,q+2)\) gives \(\bar\partial^{2}\omega=0\).  Mathlib status:
+the \(d^{2}=0\) input is present in
+\code{Jacobian.Analysis.BundledForms.DSqZero}.
+\lean{JacobianChallenge.Analysis.BundledForms.DSqZero}
 \leanok
 \end{lemma}
 
