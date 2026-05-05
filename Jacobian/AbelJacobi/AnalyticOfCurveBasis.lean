@@ -5,6 +5,7 @@ import Jacobian.ComplexTorus.IsManifold
 import Jacobian.ComplexTorus.MkSmooth
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.MeromorphicDegree
+import Jacobian.HolomorphicForms.GenusZeroClassification
 
 /-!
 # Analytic Abel-Jacobi map (basis-aligned carrier)
@@ -279,35 +280,310 @@ meromorphic map (Abel), normalise its pole divisor (it's
 up to a normalisation step recorded as a separate auxiliary), then
 apply Riemann-Hurwitz at degree 1. -/
 
-/-- **Stage A leaf (round 1).** Abel's theorem (existence direction)
-in this project's basis-aligned formulation. From the hypothesis that
-two distinct points `Q₁ ≠ Q₂` have period-congruent path integrals,
-produce a meromorphic map `X → ℂ∞` whose principal divisor is
-`(Q₁) - (Q₂)` and whose pole divisor is `(Q₂)`.
+/-! ### Round 2 (2026-05-05) — discharge S19/S20 via further decomposition
 
-Bottom-up: classical Abel's theorem; Mathlib v4.28.0 lacks divisor
-theory on Riemann surfaces, so this leaf is currently a sorry. -/
-theorem abelJacobi_image_zero_implies_principal
+Both leaves are now sorry-free *assemblies*. Their bottom-up content has
+been pushed into a smaller named obligation each; for S20 the entire
+chain reduces to leaves that already exist elsewhere in the project
+(`meromorphicDegreeOneData_of_poleDivisor_point` and
+`analyticGenus_eq_zero_of_homeomorphic_sphere`), so no new sorry is
+introduced. For S19 the substantive Abel content is isolated in the
+new sorry leaf `abelExistence_simplePole_meromorphicMap_of_periodCongruent`.
+
+#### S20 decomposition tree (no new sorry)
+
+```
+degree_one_meromorphicMap_implies_analyticGenus_zero  [S20, ASSEMBLY]
+  ├─► meromorphicDegreeOneData_of_poleDivisor_point     [existing]
+  │     ├─► meromorphicMapToSphere_continuous_of_poleDivisor_point  [pre-existing sorry]
+  │     ├─► meromorphicMapToSphere_poleDivisor_degree_eq_one_of_point [proved]
+  │     └─► meromorphicMapToSphere_bijective_of_poleDivisor_degree_one [pre-existing sorry]
+  ├─► Continuous.homeoOfEquivCompactToT2  [Mathlib]
+  ├─► onePointCx_homeomorph_sphere        [existing, sorry-free]
+  └─► analyticGenus_eq_zero_of_homeomorphic_sphere  [existing, downstream sorry]
+        ├─► analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx [pre-existing sorry-bearing chain]
+        └─► analyticGenus_onePointCx_eq_zero        [proved]
+```
+
+#### S19 decomposition tree (one new sorry)
+
+```
+abelJacobi_image_zero_implies_principal  [S19, ASSEMBLY]
+  └─► abelExistence_simplePole_meromorphicMap_of_periodCongruent  [NEW SORRY]
+        (= Abel's existence theorem in two-point divisor form)
+```
+-/
+
+/-! ### Round-2 docstring (retained for context)
+
+The round-2 obligation
+`abelExistence_simplePole_meromorphicMap_of_periodCongruent` was the
+single S19 sorry leaf. In round 3 (below) it has itself been broken
+into two strictly smaller sub-leaves, so the round-2 leaf is now a
+sorry-free assembly. The classical proof sketch and Mathlib gap survey
+below applies to the *aggregate* content; the individual sub-leaves
+each track a narrower fragment.
+
+**Sub-leaf for S19 (round 2, now a sorry-free assembly).** Abel's
+existence theorem, packaged in the basis-aligned two-point divisor
+form actually needed by the Jacobian challenge.
+
+Given a base point `P`, two distinct endpoints `Q₁ ≠ Q₂`, and the
+hypothesis that the path-integral coordinate vectors at `Q₁` and `Q₂`
+differ by an element of the basis-aligned period subgroup (i.e. the
+analytic Abel-Jacobi class of the divisor `(Q₁) - (Q₂)` is zero in the
+basis-aligned analytic Jacobian), produce a meromorphic map
+`f : X → OnePoint ℂ` whose pole divisor is exactly the single point
+`(Q₂)` (and, packaged together, whose zero divisor is `(Q₁)` and whose
+principal divisor is `(Q₁) - (Q₂)`).
+
+#### Mathematical content (Abel's theorem, existence direction)
+
+This is the existence half of the classical Abel theorem
+(Forster, *Lectures on Riemann Surfaces*, Thm 21.7; Farkas–Kra, *Riemann
+Surfaces*, III.6.3). For every degree-zero divisor `D` on a compact
+Riemann surface `X` of genus `g ≥ 1`,
+```
+   AJ(D) = 0 in Jac(X)  ⇒  D is principal,
+```
+i.e. `D = (f)` for some non-zero meromorphic function `f`. The classical
+proof either:
+
+* (theta-function route) constructs `f` via
+  `f(p) := θ(AJ([p] - [p₀]) - e)` for a suitable vector `e` depending
+  on `D`, then verifies `(f) = D` using the Riemann vanishing theorem
+  for `θ`; or
+* (period-lattice route) cuts `X` along a symplectic homology basis to
+  obtain a fundamental polygon, defines a multivalued logarithmic
+  primitive, exponentiates, and checks well-definedness from
+  `AJ(D) = 0` (the period lattice obstruction vanishes).
+
+In both routes the function constructed has prescribed simple zero at
+`Q₁` and prescribed simple pole at `Q₂` (and no others) when
+`D = (Q₁) - (Q₂)`.
+
+#### Mathlib v4.28.0 status
+
+ABSENT. Mathlib has no Abel theorem, no global meromorphic functions
+on manifolds, no divisor theory for Riemann surfaces, no Riemann theta
+function on `ℂᵍ`, no period-lattice-as-kernel API. This is the load-
+bearing classical input for the Jacobian challenge's anti-hack
+injectivity statement; once it lands, every downstream consumer in the
+S19/S20 chain becomes sorry-free assembly. -/
+
+/-! ### Round 3 (2026-05-05) — further decomposition of the Abel
+existence sorry
+
+The Abel-existence leaf
+`abelExistence_simplePole_meromorphicMap_of_periodCongruent` is now
+itself a sorry-free assembly of two strictly smaller named
+obligations, each of which is a separate sorry tracking a distinct
+piece of classical mathematics:
+
+```
+abelExistence_simplePole_meromorphicMap_of_periodCongruent  [ASSEMBLY]
+  ├─► abel_meromorphicFunction_of_zero_aj_two_point  [NEW SORRY, R3]
+  │     (= Abel existence in two-point divisor form: a meromorphic
+  │      function with principal divisor (Q₁) - (Q₂) when the AJ
+  │      image is zero)
+  └─► meromorphicMapToSphere_package_of_two_point_principal  [NEW SORRY, R3]
+        (= bookkeeping repackaging: from a meromorphic function with
+         principal divisor (Q₁) - (Q₂) and Q₁ ≠ Q₂, produce a
+         MeromorphicMapToSphere bundle whose zero divisor is (Q₁)
+         and pole divisor is (Q₂))
+```
+
+The first leaf is the substantive Abel-theorem content (theta-function
+construction or the period-lattice / fundamental-polygon route);
+the second is a structural repackaging step that becomes sorry-free
+once a `MeromorphicFunction X` ↔ `MeromorphicMapToSphere X` bridge is
+in place. -/
+
+/-- Auxiliary structure: a "raw" meromorphic function on `X` together
+with its principal divisor, packaged as a sigma-type so we can refer
+to it abstractly without committing to a concrete representation
+class.
+
+The carrier `meromorphicMap : MeromorphicMapToSphere X` is reused
+because it is the only meromorphic-function-on-manifold type the
+project currently has; the `principalDivisor_eq` field re-exposes the
+`MeromorphicMapToSphere`'s `principalDivisor_eq` axiom.
+
+This is a *bridge* type only — it lets us state the Abel sub-leaf
+without asking the bottom-up Abel proof to also prove the
+`zeros / poles` decomposition (that is recorded as a separate
+sub-leaf). -/
+structure RawMeromorphicWithPrincipal
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
+  meromorphicMap : HolomorphicForms.MeromorphicMapToSphere X
+  /-- The principal divisor of `meromorphicMap`. By definition this is
+  `zeroDivisor - poleDivisor`. -/
+  principal : HolomorphicForms.Divisor X
+  principal_eq : meromorphicMap.principal = principal
+
+/-- **Sub-leaf for round-3 Abel decomposition (NEW SORRY).** Abel's
+existence theorem in two-point divisor form.
+
+Given a base point `P`, two distinct points `Q₁ ≠ Q₂`, and a
+period-congruence hypothesis at the level of basis-aligned path
+integrals (which under the basis-aligned dual identification is
+`AJ((Q₁) - (Q₂)) = 0` in the analytic Jacobian), produce a
+`RawMeromorphicWithPrincipal` whose principal divisor is exactly
+`(Q₁) - (Q₂)`.
+
+#### Mathematical content
+
+This is the content of Abel's existence theorem
+(Forster, *Lectures on Riemann Surfaces*, §21.7) restricted to the
+two-point divisor case, which is the only case the Jacobian challenge
+currently consumes:
+
+> If `D = (Q₁) - (Q₂)` is a degree-zero divisor on a compact Riemann
+> surface `X` and `AJ(D) = 0` in `Jac(X)`, then `D` is principal.
+
+The classical proof routes are unchanged from
+`abelExistence_simplePole_meromorphicMap_of_periodCongruent` (theta or
+period-lattice). Stating Abel in this restricted form is enough for
+the anti-hack injectivity statement and avoids needing to define
+`Div⁰(X)` as a subtype. -/
+theorem abel_meromorphicFunction_of_zero_aj_two_point
     (P : X) (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
     (_hperiod :
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
         basisAlignedPeriodSubgroup X) :
+    ∃ (data : RawMeromorphicWithPrincipal X),
+      data.principal =
+        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
+  sorry
+
+/-- **Sub-leaf for round-3 Abel decomposition (NEW SORRY).** Repackage
+a meromorphic-function bundle whose principal divisor is
+`(Q₁) - (Q₂)` (with `Q₁ ≠ Q₂`) into a `MeromorphicMapToSphere` whose
+*zero divisor is exactly `(Q₁)`* and *pole divisor is exactly
+`(Q₂)`*.
+
+Why this is a sorry rather than pure repackaging: the
+`MeromorphicMapToSphere` structure carries `zeroDivisor` and
+`poleDivisor` as independent fields constrained only by
+`principalDivisor = zeroDivisor - poleDivisor`. From the abstract
+identity `(Q₁) - (Q₂) = zeroDivisor - poleDivisor` it does *not*
+follow that `zeroDivisor = (Q₁)` and `poleDivisor = (Q₂)` — one could
+in principle pick `zeroDivisor = (Q₁) + D` and
+`poleDivisor = (Q₂) + D` for any effective `D`. To pin down the
+canonical decomposition, one needs the analytic content that the
+underlying meromorphic function `f` actually has order +1 at `Q₁`,
+order −1 at `Q₂`, and order 0 elsewhere — i.e. the order data of `f`
+matches the formal divisor.
+
+This is the bridge between the *formal* divisor `(Q₁) - (Q₂)` and the
+*ord-of-`f`* divisor; it becomes sorry-free once the
+`MeromorphicMapToSphere` bundle is refined to record the order
+function (e.g. via `MeromorphicAt.order` from
+`Mathlib.Analysis.Meromorphic.Order`) and a coherence lemma is added.
+
+#### Bottom-up plan
+
+1. Strengthen `MeromorphicMapToSphere` (or introduce a sibling type
+   `MeromorphicMapToSphereWithOrder`) carrying a per-point order
+   function `ord : X → ℤ` together with the axiom
+   `(zeroDivisor - poleDivisor) p = ord p` for every `p ∈ X`.
+2. Define `Divisor.IsCanonicalZeroPoleDecomp`: a divisor `D` *is* its
+   own canonical zero/pole decomposition iff its support is partitioned
+   by `{p : ord p > 0}` and `{p : ord p < 0}`.
+3. For `(Q₁) - (Q₂)` with `Q₁ ≠ Q₂`, the only canonical decomposition
+   is `(Q₁) - (Q₂)` itself.
+4. Use the canonical decomposition on the strengthened bundle. -/
+theorem meromorphicMapToSphere_package_of_two_point_principal
+    (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
+    (data : RawMeromorphicWithPrincipal X)
+    (_hprincipal :
+      data.principal =
+        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂) :
+    ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
+      f.zeros = HolomorphicForms.Divisor.point Q₁ ∧
+      f.poles = HolomorphicForms.Divisor.point Q₂ ∧
+      f.principal =
+        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
+  sorry
+
+/-- **Round-3 Abel-existence assembly (sorry-free).** Pure assembly
+of `abel_meromorphicFunction_of_zero_aj_two_point` and
+`meromorphicMapToSphere_package_of_two_point_principal`. -/
+theorem abelExistence_simplePole_meromorphicMap_of_periodCongruent
+    (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X) :
+    ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
+      f.zeros = HolomorphicForms.Divisor.point Q₁ ∧
+      f.poles = HolomorphicForms.Divisor.point Q₂ ∧
+      f.principal =
+        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
+  obtain ⟨data, hprincipal⟩ :=
+    abel_meromorphicFunction_of_zero_aj_two_point X P Q₁ Q₂ hne hperiod
+  exact meromorphicMapToSphere_package_of_two_point_principal X Q₁ Q₂ hne data hprincipal
+
+/-- **S19 (sorry-free assembly, round 2).** Abel's theorem (existence
+direction) in this project's basis-aligned formulation. From the
+hypothesis that two distinct points `Q₁ ≠ Q₂` have period-congruent
+path integrals, produce a meromorphic map `X → ℂ∞` whose pole divisor
+is `(Q₂)`.
+
+Pure assembly of `abelExistence_simplePole_meromorphicMap_of_periodCongruent`. -/
+theorem abelJacobi_image_zero_implies_principal
+    (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X) :
     ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
       f.poles = HolomorphicForms.Divisor.point Q₂ := by
-  sorry
+  obtain ⟨f, _hzeros, hpoles, _hprincipal⟩ :=
+    abelExistence_simplePole_meromorphicMap_of_periodCongruent X P Q₁ Q₂ hne hperiod
+  exact ⟨f, hpoles⟩
 
-/-- **Stage A leaf (round 1).** Riemann-Hurwitz at degree 1: a
-meromorphic map `X → ℂ∞` with pole divisor a single point gives a
-bijection between `X` and the Riemann sphere, hence `X` has genus 0.
+/-- **S20 (sorry-free assembly, round 2).** Riemann-Hurwitz at
+degree 1 in this project's basis-aligned formulation: a meromorphic
+map `X → ℂ∞` with pole divisor a single point gives a continuous
+bijection between `X` and the Riemann sphere, hence `X` has analytic
+genus 0.
 
-Bottom-up: the existing `meromorphicDegreeOneData_of_poleDivisor_point`
-companion (in `MeromorphicDegree.lean`) plus a still-missing transfer
-from "X is in continuous bijection with ℂ∞" to `analyticGenus ℂ X = 0`. -/
+#### Proof structure (no new sorry)
+
+This assembly chains four already-named obligations:
+
+1. `meromorphicDegreeOneData_of_poleDivisor_point` (in
+   `MeromorphicDegree.lean`) extracts continuity and bijectivity of
+   `f.toMap` from the simple-pole hypothesis.
+2. `Continuous.homeoOfEquivCompactToT2` (Mathlib) promotes a
+   continuous bijection between a compact space and a T₂ space to a
+   homeomorphism, giving `X ≃ₜ OnePoint ℂ`.
+3. `onePointCx_homeomorph_sphere` (in `GenusZeroClassification.lean`)
+   composes with the standard homeomorphism `OnePoint ℂ ≃ₜ S²` (via
+   inverse stereographic projection / `onePointEquivSphereOfFinrankEq`
+   from Mathlib).
+4. `analyticGenus_eq_zero_of_homeomorphic_sphere` (in
+   `GenusZeroClassification.lean`) concludes
+   `analyticGenus ℂ X = 0`.
+
+Steps 1, 3, 4 each have downstream sorries inside their own files;
+no new sorry is introduced here. -/
 theorem degree_one_meromorphicMap_implies_analyticGenus_zero
     (f : HolomorphicForms.MeromorphicMapToSphere X) (Q₂ : X)
-    (_hpole : f.poles = HolomorphicForms.Divisor.point Q₂) :
+    (hpole : f.poles = HolomorphicForms.Divisor.point Q₂) :
     analyticGenus ℂ X = 0 := by
-  sorry
+  -- Step 1: simple pole gives continuity + bijectivity of `f.toMap`.
+  obtain ⟨data⟩ :=
+    HolomorphicForms.meromorphicDegreeOneData_of_poleDivisor_point X f Q₂ hpole
+  -- Step 2: package the continuous bijection as a homeomorphism `X ≃ₜ OnePoint ℂ`.
+  let equiv : X ≃ OnePoint ℂ := Equiv.ofBijective f.toMap data.bijective_toMap
+  have hcont : Continuous equiv := by simpa [equiv] using data.continuous_toMap
+  let h₁ : X ≃ₜ OnePoint ℂ := hcont.homeoOfEquivCompactToT2
+  -- Step 3: compose with `OnePoint ℂ ≃ₜ S²`.
+  let h₂ : X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1 :=
+    h₁.trans HolomorphicForms.onePointCx_homeomorph_sphere
+  -- Step 4: easy direction of the genus-zero classification.
+  exact HolomorphicForms.analyticGenus_eq_zero_of_homeomorphic_sphere X ⟨h₂⟩
 
 /-- **Round 1 sorry-free assembly.** Combines
 `abelJacobi_image_zero_implies_principal` and

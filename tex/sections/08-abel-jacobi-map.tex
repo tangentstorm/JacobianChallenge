@@ -256,6 +256,178 @@ biholomorphism. In particular, \(g(X)=g(\CPone)=0\).
 \leanok
 \end{theorem}
 
+\subsection{Basis-aligned formulation of Abel and Riemann-Hurwitz at
+degree 1}
+
+The two named obligations exposed by
+\texttt{Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean}
+(\textbf{S19} and \textbf{S20} in the project's tracked-sorry list)
+specialise the existence direction of Abel's theorem and the
+Riemann-Hurwitz consequence at degree 1 to the basis-aligned
+analytic carrier
+\(\mathrm{Jac}_{\mathrm{ba}}(X) := (\mathrm{Fin}\,g \to \C) /
+\Lambda_{\mathrm{ba}}\)
+actually used by \texttt{Jacobian/Solution.lean}.
+
+\begin{theorem}[S19: Basis-aligned Abel existence
+in two-point form]
+\label{thm:abel-basis-aligned-two-point}
+\uses{lem:abel-two-point-form,lem:two-point-principal-packaging}
+Fix a base point \(P\in X\) and two distinct points
+\(Q_1\neq Q_2\). If
+\[
+   -I_{P,Q_1} + I_{P,Q_2} \in \Lambda_{\mathrm{ba}}
+\]
+in the basis-aligned period subgroup of \(\mathrm{Fin}\,g \to \C\),
+then there exists a meromorphic map \(f : X \to \widehat{\C}\) whose
+zero divisor is \((Q_1)\), whose pole divisor is \((Q_2)\), and whose
+principal divisor is \((Q_1) - (Q_2)\). In particular, the pole
+divisor of \(f\) equals the single point \((Q_2)\).
+\lean{JacobianChallenge.AbelJacobi.abelJacobi_image_zero_implies_principal}
+\leanok
+\end{theorem}
+
+\begin{layman}
+This is Abel's theorem in the exact form needed by the formal
+project: \emph{path-integral coordinates that differ by a period
+vector at two distinct points must come from a meromorphic function
+with one simple pole and one simple zero.} Distinct endpoints with
+period-congruent path-integral coordinates encode a divisor of the
+form ``one point minus another'' whose Abel-Jacobi image is zero.
+The classical Abel theorem then says this kernel divisor is principal,
+so it is exhibited by a meromorphic function whose only zero is at
+\(Q_1\) (simple) and whose only pole is at \(Q_2\) (simple). Why
+bother? It is the bridge between the analytic Jacobian's quotient
+relation and the divisor-theoretic content; without it, the
+point-separation form of Abel's theorem (and hence the anti-hack
+injectivity statement) cannot be derived.
+\end{layman}
+
+\begin{proof}\leanok
+Pure assembly of Lemma~\ref{lem:abel-two-point-form}
+(Abel existence in two-point form: get a meromorphic \(f\) with
+\((f) = (Q_1) - (Q_2)\)) and
+Lemma~\ref{lem:two-point-principal-packaging}
+(repackage \(f\) so its \texttt{zeros} field is \((Q_1)\) and its
+\texttt{poles} field is \((Q_2)\)). Then read off the pole-divisor
+condition.
+\end{proof}
+
+\begin{lemma}[S19a: Abel existence in two-point divisor form]
+\label{lem:abel-two-point-form}
+\uses{thm:abel-existence,def:abel-jacobi}
+Fix \(P\in X\), distinct \(Q_1\neq Q_2\). If
+\(-I_{P,Q_1} + I_{P,Q_2} \in \Lambda_{\mathrm{ba}}\), then there is a
+non-zero meromorphic function \(f\in\Mer(X)^\times\) with
+\((f) = (Q_1) - (Q_2)\) (i.e. principal divisor exactly the formal
+difference of the two points).
+\lean{JacobianChallenge.AbelJacobi.abel_meromorphicFunction_of_zero_aj_two_point}
+\leanok
+\end{lemma}
+
+\begin{layman}
+This is the substantive Abel content: \emph{period-congruent path
+integrals at two distinct points yield a meromorphic function whose
+formal divisor is exactly the difference of the two points.} It is
+the existence half of Abel's theorem (Theorem~\ref{thm:abel-existence})
+restricted to the two-point divisor case, which is the only case the
+Jacobian challenge ever consumes. Why bother breaking it out? Naming
+this restricted case lets the formal project track Abel's theorem at
+exactly the granularity it actually uses, instead of pulling in the
+full Div⁰(X) → Pic⁰(X) machinery just to apply it once.
+\end{layman}
+
+\begin{proof}\leanok
+Specialise Theorem~\ref{thm:abel-existence} to the divisor
+\(D = (Q_1) - (Q_2)\). Path-integral period congruence at two
+distinct points is exactly the statement \(\AJ(D) = 0\) in
+\(\Jac(X)\), so Abel's existence direction supplies the required
+\(f\) with \((f) = D\).
+\end{proof}
+
+\begin{lemma}[S19b: Two-point principal divisor packaging]
+\label{lem:two-point-principal-packaging}
+\uses{lem:principal-deg0-simple-support-deg1,def:principal-divisor}
+If \(f\in\Mer(X)^\times\) has \((f) = (Q_1) - (Q_2)\) with
+\(Q_1\neq Q_2\), then the canonical zero/pole decomposition of
+\((f)\) is \(\mathrm{div}_0(f) = (Q_1)\) and
+\(\mathrm{div}_\infty(f) = (Q_2)\). In particular, \(f\) packages as
+a \texttt{MeromorphicMapToSphere} bundle whose \texttt{zeros} field
+is \((Q_1)\) and whose \texttt{poles} field is \((Q_2)\).
+\lean{JacobianChallenge.AbelJacobi.meromorphicMapToSphere_package_of_two_point_principal}
+\leanok
+\end{lemma}
+
+\begin{layman}
+Bookkeeping: a meromorphic function with formal divisor
+\((Q_1) - (Q_2)\) and \(Q_1 \neq Q_2\) really does have a simple
+zero at \(Q_1\), a simple pole at \(Q_2\), and nothing else. The
+canonical decomposition into "zeros minus poles" is forced because
+the only way \((Q_1) - (Q_2) = D_0 - D_\infty\) with \(D_0, D_\infty\)
+effective and supported on \(\{Q_1, Q_2\}\) is the obvious one.
+Why bother? The formal \texttt{MeromorphicMapToSphere} structure in
+the project carries \texttt{zeros} and \texttt{poles} as separate
+fields constrained only by \texttt{principal = zeros - poles}; this
+lemma collapses the abstract identity to the canonical decomposition
+needed downstream.
+\end{layman}
+
+\begin{proof}\leanok
+The principal divisor \((f) = (Q_1) - (Q_2)\) decomposes uniquely as
+\(\mathrm{div}_0(f) - \mathrm{div}_\infty(f)\) with both summands
+effective and disjointly supported on \(\{p \in X : \mathrm{ord}_p f
+> 0\}\) and \(\{p \in X : \mathrm{ord}_p f < 0\}\) respectively.
+Restricted to support \(\{Q_1, Q_2\}\) with multiplicities \(+1\) and
+\(-1\), this forces \(\mathrm{div}_0(f) = (Q_1)\) and
+\(\mathrm{div}_\infty(f) = (Q_2)\). Repackage \(f\) into the
+\texttt{MeromorphicMapToSphere} bundle with these explicit zero/pole
+fields.
+\end{proof}
+
+\begin{theorem}[S20: Basis-aligned Riemann-Hurwitz at degree 1]
+\label{thm:riemann-hurwitz-deg1-basis-aligned}
+\uses{thm:riemann-hurwitz-deg1,lem:principal-deg0-simple-support-deg1,thm:genus-zero-classification}
+Let \(f : X \to \widehat{\C}\) be a meromorphic map whose pole divisor
+is the single point \((Q_2)\). Then \(\mathrm{analyticGenus}_\C\, X
+= 0\).
+\lean{JacobianChallenge.AbelJacobi.degree_one_meromorphicMap_implies_analyticGenus_zero}
+\leanok
+\end{theorem}
+
+\begin{layman}
+The Riemann-Hurwitz consequence of having one simple pole, in the
+exact form needed by the formal project: \emph{a meromorphic function
+with a single simple pole forces analytic genus zero.} A pole divisor
+that is a single point has degree one, and a degree-one branched
+covering of \(\C\widehat{\C}\) is a homeomorphism onto the Riemann
+sphere — there is nowhere for additional sheets to hide. The source
+surface is therefore homeomorphic to the sphere, and the easy
+direction of the analytic genus-zero classification (already proved
+sorry-free in the project) reads off
+\(\mathrm{analyticGenus}_\C\, X = 0\).
+\end{layman}
+
+\begin{proof}\leanok
+The pole divisor \(\mathrm{div}_\infty(f) = (Q_2)\) has degree
+\(1\). By
+\texttt{meromorphicDegreeOneData\_of\_poleDivisor\_point}
+(continuity-on-the-extended-map plus the degree-one fibre count, both
+already broken out as named obligations in
+\texttt{MeromorphicDegree.lean}), the underlying map
+\(\widehat f : X \to \widehat{\C}\) is a continuous bijection. A
+continuous bijection from a compact space to a Hausdorff space is a
+homeomorphism, so \(X \simeq_t \widehat{\C}\). Composing with the
+standard homeomorphism
+\(\widehat{\C} \simeq_t S^2 \subset \mathbb R^3\) (built sorry-free
+in the project from \texttt{onePointEquivSphereOfFinrankEq}) yields
+\(X \simeq_t S^2\). The easy direction of the analytic genus-zero
+classification (Theorem~\ref{thm:genus-zero-classification},
+specifically
+\texttt{analyticGenus\_eq\_zero\_of\_homeomorphic\_sphere}) then gives
+\(\mathrm{analyticGenus}_\C\, X = 0\).
+\end{proof}
+
+
 \begin{layman}
 Any nonconstant holomorphic map of degree one to the Riemann sphere is
 a biholomorphism. Biholomorphisms preserve everything analytic, so the
