@@ -158,8 +158,38 @@ weak-topology quotient `(⨆ s ∈ K.simplices, Δˢⁱᵐᵖˡᵉˣ s)/∼`.  F
 scaffolding we set `Geometric K := V` (the vertex type), inheriting
 whatever topological structure `V` carries.  Selecting `V = M` at the
 assembly headline (e.g. in `rado_overview`) gives `Geometric K ≃ₜ M`
-literally as `Homeomorph.refl M`. -/
+literally as `Homeomorph.refl M`.
+
+The substantive realisation type — a subspace of `V → ℝ` carved out
+by the barycentric-coordinate constraints — is `BarycentricPoint K`
+(declared above). Its topology, declared below as
+`barycentricPointTopology`, makes it a real geometric realisation
+candidate; the upstream promotion swaps `Geometric K`'s body to
+`BarycentricPoint K` once the rest of the consumers are ready to
+relinquish the `Geometric K = V = M` refl shortcut. -/
 abbrev Geometric (_K : AbstractSimplicialComplex V) : Type u := V
+
+/-- **Substantive realisation.**  Subspace topology on
+`BarycentricPoint K`, induced from the product topology on `V → ℝ`
+via the `coords` projection.
+
+This is the genuine geometric-realisation topology candidate —
+contrast with the placeholder `Geometric K := V`, which inherits the
+ambient topology of `V` rather than the convex-combination topology
+that the classical realisation carries. -/
+instance barycentricPointTopology
+    [TopologicalSpace V] : TopologicalSpace (BarycentricPoint K) :=
+  TopologicalSpace.induced (fun p : BarycentricPoint K => p.coords) Pi.topologicalSpace
+
+/-- **Substantive realisation type alias.**  The genuine
+geometric-realisation candidate `|K|` for the simplicial complex `K`,
+carrying the barycentric-coordinate topology. Distinct from the
+placeholder `Geometric K := V`; the iso headline
+`cellular_iso_singularH_via_five_lemma` is gated on swapping
+`Geometric K`'s body to this type once consumers (notably the
+`Rado/Overview.lean` chain `M ≃ₜ Geometric K`) migrate. -/
+abbrev BarycentricRealisation (K : AbstractSimplicialComplex V) : Type u :=
+  BarycentricPoint K
 
 /-! ### Round 1 — topology drill -/
 
