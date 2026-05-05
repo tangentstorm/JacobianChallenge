@@ -30,7 +30,7 @@ open JacobianChallenge.Periods
 in degree 1. Used as the intermediate ℕ-valued bridge between
 de Rham (analytic) and integer homology (topological). -/
 noncomputable def realDimSingularH1
-    (X : Type*) [TopologicalSpace X] : ℕ :=
+    (X : Type) [TopologicalSpace X] : ℕ :=
   Module.finrank ℝ (IntegralOneCycle X →ₗ[ℤ] ℝ)
 
 end JacobianChallenge.HolomorphicForms

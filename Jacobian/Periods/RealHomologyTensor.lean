@@ -56,7 +56,7 @@ short exact sequence collapses to an isomorphism:
 Mathlib gap: singular cohomology functor, UCT comparison theorem; both
 absent in v4.28.0. -/
 theorem realDimSingularH1_eq_finrank_intHom1
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     realDimSingularH1 X = Module.finrank ℝ (IntegralOneCycle X →ₗ[ℤ] ℝ) := by
@@ -73,7 +73,7 @@ ingredients:
    `IntegralOneCycle_torsionFree`),
 3. pure algebra (`finrank_homℤℝ_eq_finrank_of_free`). -/
 theorem realDim_singularH1_eq_finrank_intH1_via_uct
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     realDimSingularH1 X = Module.finrank ℤ (IntegralOneCycle X) := by

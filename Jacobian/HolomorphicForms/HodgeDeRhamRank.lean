@@ -65,7 +65,7 @@ Combines:
 
 The chain is `2g = realDim H¹_dR = rank ℤ H₁`. -/
 theorem two_analyticGenus_eq_finrank_intH1
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
