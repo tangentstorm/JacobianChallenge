@@ -11,8 +11,8 @@ nodes identified by the user. The reference template is commit
 - **tex**: `tex/sections/03-riemann-roch.tex:160` (`thm:euler-char-line-bundle`)
 - **Lean target**: `JacobianChallenge.HolomorphicForms.euler_char_line_bundle` in `Jacobian/HolomorphicForms/EulerCharLineBundle.lean`
 - **Sub-leaves added** (4):
-  1. `h0_minus_h1_ge_riemann` — Riemann inequality (lower bound). Sorry; classical Mittag-Leffler global section construction.
-  2. `h0_minus_h1_le_riemann` — Serre duality direction (upper bound). Sorry; Riemann inequality applied to L⁻¹⊗K then traded via Serre duality.
+  1. `h0_minus_h1_ge_riemann` — Riemann inequality (lower bound). Explicit frontier axiom; classical Mittag-Leffler global section construction.
+  2. `h0_minus_h1_le_riemann` — Serre duality direction (upper bound). Explicit frontier axiom; Riemann inequality applied to L⁻¹⊗K then traded via Serre duality.
   3. `h0_minus_h1_eq_riemann_roch` — squeeze via `Int.le_antisymm`. **Sorry-free.**
   4. `rsEulerCharacteristic_eq_h0_minus_h1` — `rfl` unfolding of `RSEulerCharacteristic`. **Sorry-free.**
 - Headline `euler_char_line_bundle` is now a **sorry-free assembly**: rewrite χ as h⁰−h¹ via (4), then apply (3).
