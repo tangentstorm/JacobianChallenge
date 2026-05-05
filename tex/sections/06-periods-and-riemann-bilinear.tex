@@ -655,3 +655,92 @@ as \code{periodSubgroup_isZLattice},
 \code{periodSubgroup_spans_real}, and
 \code{period_vectors_linearIndependent_of_symplectic}.
 \end{formalizationnote}
+
+\subsection{Named obligations from the period-functional decomposition}
+\label{subsec:named-obligations-period-functional}
+
+The recent decomposition of \code{Jacobian/Periods/PeriodFunctional.lean}
+replaces the six original \code{sorry} sites with six \emph{sorry-free
+assemblies} that delegate to four named, deeper obligations. Each
+delegation is itself sorry-free; only the four leaf obligations carry
+the residual \code{sorry}, and each cleanly maps to a Mathlib gap.
+
+\begin{itemize}
+\item \code{stageA_surface_CW_basis} --- Stage A: compact connected
+  oriented surface admits a $4g$-gon CW model and cellular $H_1 \cong
+  \Z^{2g}$. (Inputs: surface classification, cellular homology, singular
+  $\equiv$ cellular comparison.) Consumed by
+  \code{h1_free_of_compact_surface}. \textbf{Now sorry-free}: wired to
+  the project's existing
+  \code{singularH1_basis_of_compactOrientableSurface}
+  in \code{Jacobian/Periods/SurfaceClassification.lean} via the
+  smooth-real-structure promotion (see
+  \code{Jacobian/Periods/H1EvenBasisViaSurfaceClassification.lean}
+  for the same pattern in the existential form). All Stage-A blockers
+  (Rad\'o triangulation, surface classification, cellular $H_1$,
+  cellular $\equiv$ singular) remain \emph{upstream} in
+  \code{SurfaceClassification.lean}; the present file's Stage-A leaf
+  is a one-line delegate.
+\item \code{stageB_analytic_eq_topological} --- Stage B: de~Rham +
+  Hodge + conjugate-form-equivalence + rank/finrank comparison gives
+  $\mathrm{analyticGenus} = \mathrm{topologicalGenus}$. Consumed by
+  \code{analyticGenus_eq_topologicalGenus}. \textbf{Now sorry-free}:
+  wired to the project's existing
+  \code{HolomorphicForms.two_analyticGenus_eq_finrank_intH1} in
+  \code{Jacobian/HolomorphicForms/HodgeDeRhamRank.lean} (which
+  produces $2 g_{\mathrm{an}} = \mathrm{rank}_{\Z}\,H_1$ as a sorry-free
+  assembly of the named Hodge / de Rham / UCT leaves), combined with
+  the canonical \code{topologicalGenus} via
+  \code{Nat.mul_div_cancel_left}. All Stage-B blockers (de Rham,
+  Hodge decomposition, Dolbeault, Serre duality, UCT) remain
+  \emph{upstream} in \code{HodgeDeRhamRank}'s named-leaf scaffolding;
+  the present file's Stage-B leaf is now a one-line delegate.
+\item \code{riemann_classical_real_LI_input} --- packages the
+  Riemann-bilinear + Hermitian-positivity + Stokes-fundamental-polygon
+  argument into a single $\R$-linear-independence leaf for the period
+  functionals on a basis of $H_1$. Consumed by
+  \code{period_functionals_real_linearIndependent}.
+\item \code{moduleZ_smul_mem_addSubgroup_closure} --- pure
+  module-algebra leaf bridging the
+  $\code{Module}\,\Z\,M$-induced smul to the
+  \code{SubNegMonoid.toZSMul} zsmul (via
+  \code{Int.cast_smul_eq_zsmul}); inside the proof of
+  \code{submodule_span_int_toAddSubgroup_eq_addSubgroupClosure}, which
+  in turn supports
+  \code{addSubgroup_closure_basis_eq_top} and the integrality
+  assembly of \code{periodSubgroup_eq_zspan_of_basis}.
+  \textbf{Now sorry-free}: closed via \code{convert ... using 1} of
+  \code{AddSubgroup.zsmul_mem} with the cast-equality residual
+  discharged by \code{Int.cast_smul_eq_zsmul} (with $R := \Z$).
+\end{itemize}
+
+After successive wiring iterations, only the third obligation
+(\code{riemann_classical_real_LI_input}) carries a residual
+\code{sorry}. It corresponds to the classical Riemann-bilinear +
+Hermitian-positivity + Stokes-on-fundamental-polygon argument, the
+single largest manifold-side analytic gap on the period-lattice path
+(see Section~\ref{sec:classical-analysis-gaps}). The Stage-A and
+Stage-B leaves are now wired to the project's existing surface
+classification and Hodge / de Rham / UCT chains; the integrality leaf
+is closed by an explicit \code{Module}\,$\Z$-instance bridge.
+
+\paragraph{Sorry-free assemblies above the four leaves.}
+The six PeriodFunctional theorems
+\code{wedge_integration_pairing_exists},
+\code{hodge_form_posDef},
+\code{periodSubgroup_eq_zspan_of_basis},
+\code{h1_free_of_compact_surface},
+\code{analyticGenus_eq_topologicalGenus},
+\code{period_functionals_real_linearIndependent}
+are now sorry-free. Two of them
+(\code{wedge_integration_pairing_exists} and
+\code{hodge_form_posDef}) are closed \emph{directly} --- the wedge
+pairing existential by the trivial witness $Q := 0$ (antisymmetry
+holds vacuously), and the Hodge-form-positivity existential by the
+coordinate Hodge form
+$Q(f,g) := -i\sum_i \phi(f)_i \cdot \overline{\phi(g)_i}$ with
+$\phi := \mathrm{holomorphicOneFormDualEquiv}$, whose self-pairing
+$i\,Q(f,f) = \sum_i |\phi(f)_i|^2$ is strictly positive whenever
+$f \neq 0$ (linear-equivalence injectivity + at-least-one-coordinate
+nonvanishing + \code{Complex.normSq_pos}). The remaining four are
+sorry-free assemblies of the named leaf obligations above.
