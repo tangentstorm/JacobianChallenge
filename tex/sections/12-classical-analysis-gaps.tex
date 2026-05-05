@@ -9977,6 +9977,22 @@ $\gamma$, the cycle-level identity
 $\langle\gamma, f^{*}\eta\rangle = \langle f_{*}\gamma, \eta\rangle$
 follows by descending the chain-level integral to singular homology.
 
+\begin{lemma}[S21: cycle-level naturality assembly]
+\label{lem:pn-r0}
+\uses{lem:pn-r1, lem:pn-r7, lem:pn-r10}
+For $f:X\to Y$ smooth, $\gamma\in H_{1}(X,\Z)$, $\eta\in
+H^{0}(Y,\Omega^{1})$, given path-level naturality
+$\int_{\gamma'}f^{*}\eta=\int_{f\circ\gamma'}\eta$ for every smooth
+path $\gamma'$ on $X$, the cycle-level identity
+$\langle\gamma,f^{*}\eta\rangle=\langle f_{*}\gamma,\eta\rangle$
+holds.  Sorry-free assembly: combine the chain-level representative
+of $\gamma$ (\ref{lem:pn-r1}) with the chain-pushforward identification
+(\ref{lem:pn-r7}) and the path-level naturality hypothesis
+(\ref{lem:pn-r10}).
+\lean{JacobianChallenge.Periods.periodPairing_pullbackFormsBundledLM_via_pathLevel}
+\leanok
+\end{lemma}
+
 \begin{lemma}[Pass pn.1: chain-level realisation of \code{periodPairing}]
 \label{lem:pn-r1}
 \uses{lem:pn-r2}
@@ -10073,13 +10089,14 @@ integral.
 
 \begin{lemma}[Pass pn.10: Path-level chain rule in this project]
 \label{lem:pn-r10}
-\uses{lem:pn-r11}
+\uses{lem:pcr-r0, lem:pn-r11}
 The path-level naturality $\int_{\gamma}f^{*}\eta=\int_{f\circ\gamma}\eta$
 is the hypothesis \code{\_h\_path} of S21 in the project.  Inside the
 project it is supplied by \code{pathIntegralViaCover\_pullbackFormsBundledLM},
-which itself reduces to the S22 chain (\code{pcr}).
+which is a sorry-free assembly delegating to the S22 chain
+(\ref{lem:pcr-r0}).
 \lean{JacobianChallenge.Periods.pathIntegralViaCover_pullbackFormsBundledLM}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass pn.11: descend the chain pairing to homology]
@@ -10167,6 +10184,21 @@ $\gamma:[0,1]\to X$,
 $\int_{\gamma}f^{*}\eta = \int_{f\circ\gamma}\eta$, where both
 sides are evaluated through the project's multi-chart sum
 $\code{pathIntegralViaCover}$.
+
+\begin{lemma}[S22: path-level chart-cover chain-rule assembly]
+\label{lem:pcr-r0}
+\uses{lem:pcr-r1, lem:pcr-r11, lem:pcr-r13}
+For $f:X\to Y$ smooth and $\eta$ a holomorphic 1-form on $Y$,
+$\code{pathIntegralViaCover}\,(f^{*}\eta)\,\gamma=
+\code{pathIntegralViaCover}\,\eta\,(f\circ\gamma)$ for every path
+$\gamma$ on $X$.  Sorry-free assembly: extract a common-grain chart
+partition (\ref{lem:pcr-r13}), descend through refinement-invariance
+(\ref{lem:pcr-r11}) to the parameterised \code{\_With} form on the
+common partition, and apply per-segment naturality
+(\ref{lem:pcr-r1}).
+\lean{JacobianChallenge.Periods.pathIntegralViaCoverWith_pullbackFormsBundledLM}
+\leanok
+\end{lemma}
 
 \begin{lemma}[Pass pcr.1: cover-sum formulation of both sides]
 \label{lem:pcr-r1}
@@ -10348,6 +10380,21 @@ The Lean target is
 opaque-realised \code{pullbackFormsMap X Y f hf}. Both sides are
 covering-space additive group homomorphisms and the equality is the
 ``one and only correct'' covering-space lift.
+
+\begin{lemma}[S23: bundle-dual-pullback bridge assembly]
+\label{lem:pdp-r0}
+\uses{lem:pdp-r3, lem:pdp-r4}
+The \code{basisDualPullback} field of \code{basisAnalyticPullbackBundle\,f\,hf}
+agrees with \code{pullbackFormsMap\,X\,Y\,f\,hf} as additive group
+homomorphisms on the covering space.  Sorry-free assembly: both sides
+equal the underlying \code{AddMonoidHom} of
+\code{basisAlignedFormPullbackMatrix\,f\,hf} via
+\ref{lem:pdp-r4} (bundle descent) and \ref{lem:pdp-r3}
+(\code{pullbackFormsMap} as transposed matrix), so they equal each
+other.
+\lean{JacobianChallenge.TraceDegree.basisAnalyticPullbackBundle_eq_pullbackFormsMap}
+\leanok
+\end{lemma}
 
 \begin{lemma}[Pass pdp.1: concrete dual of basis-aligned form-pullback]
 \label{lem:pdp-r1}
