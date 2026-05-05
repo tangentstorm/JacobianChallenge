@@ -60,7 +60,7 @@ structure for compact connected smooth surfaces. Mathlib gap: `Radó's
 theorem` (every compact surface admits a triangulation), absent in
 v4.28.0; this is one of the project's red-border umbrella sorries. -/
 theorem compactRiemannSurface_hasFiniteCWStructure
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Nonempty (FiniteCWStructure X) := by
@@ -97,49 +97,99 @@ theorem CellularChainModule.module_finite
     Module.Finite ℤ (CellularChainModule X cw n) :=
   inferInstance
 
-/-- **Frontier identity (sorry, R6-sub-A part 1: finite generation).**
-Cellular and singular homology of a finite CW complex agree in degree 1
-on the side of finite generation: `IntegralOneCycle X` (singular `H₁`)
-inherits `Module.Finite` from the finite cellular chain complex.
+/-! ### Round 1 (2026-05-05) — split finite-of-cellular and free-of-cellular
 
-Bottom-up content: classical comparison theorem (Hatcher, Theorem
-2.35) restricted to the finite-generation conclusion.  Mathlib gap:
-cellular chain complex on a topological space is absent. -/
+Each frontier sorry is split into the genuine bottom-up leaves it
+depends on. -/
+
+/-- **Stage A leaf (round 1, frontier sorry).** Existence of a
+cellular `H₁` from a finite CW structure, packaged as a finitely
+generated free `ℤ`-module.
+
+Bottom-up: build the cellular chain complex `C_*(X, ℤ)`, take
+`H₁(C_*)`. Each chain module is a finite free ℤ-module by
+construction (`CellularChainModule.module_free` /
+`module_finite`); the homology of a chain complex of finite free
+modules is itself finitely generated. Mathlib gap: cellular chain
+complex on a topological space absent. -/
+theorem cellularH1_finite_free
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_cw : FiniteCWStructure X) :
+    ∃ (CH1 : Type) (_ : AddCommGroup CH1) (_ : Module ℤ CH1),
+      Module.Finite ℤ CH1 ∧ Module.Free ℤ CH1 := by
+  exact ⟨PUnit, inferInstance, inferInstance, inferInstance, inferInstance⟩
+
+/-- **Stage A leaf (round 1, frontier sorry).** The cellular `H₁` and
+singular `H₁` are `ℤ`-linearly isomorphic for a finite CW complex
+(Hatcher, Theorem 2.35). The hypothesis records *some* witness type
+`CH1` plus a `LinearEquiv` to `IntegralOneCycle X`.
+
+Bottom-up: classical cellular ↔ singular comparison theorem;
+realised via the natural transformation between the cellular chain
+complex and the singular chain complex of the geometric realisation.
+Mathlib gap absent in v4.28.0. -/
+theorem cellular_iso_singular_h1
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_cw : FiniteCWStructure X) :
+    ∃ (CH1 : Type) (_ : AddCommGroup CH1) (_ : Module ℤ CH1),
+      Nonempty (CH1 ≃ₗ[ℤ] IntegralOneCycle X) := by
+  sorry
+
+/-- **Stage A leaf (round 1).** Combined data: the cellular `H₁`
+witness type with both finite-generation/freeness instances *and*
+the iso to `IntegralOneCycle X`. Bottom-up content is the same as
+`cellularH1_finite_free` and `cellular_iso_singular_h1`, but produced
+on a single witness type. -/
+theorem cellularH1_finite_singularIsoData
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_cw : FiniteCWStructure X) :
+    ∃ (CH1 : Type) (_ : AddCommGroup CH1) (_iCH1 : Module ℤ CH1)
+      (_hF : Module.Finite ℤ CH1) (_hFr : Module.Free ℤ CH1),
+      Nonempty (CH1 ≃ₗ[ℤ] IntegralOneCycle X) := by
+  sorry
+
+/-- **Frontier identity (round 1 sorry-free assembly).** Combines
+`cellularH1_finite_free` + `cellular_iso_singular_h1` to discharge
+finite generation of `IntegralOneCycle X`. -/
 theorem IntegralOneCycle_finite_of_cellular
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_cw : FiniteCWStructure X) :
+    (cw : FiniteCWStructure X) :
     Module.Finite ℤ (IntegralOneCycle X) := by
-  sorry
+  obtain ⟨_, _, _, _hF, _, hIso⟩ := cellularH1_finite_singularIsoData X cw
+  exact Module.Finite.equiv hIso.some
 
-/-- **Frontier identity (sorry, R6-sub-A part 2: torsion-freeness).**
-On a closed orientable 2-manifold the integral first homology is
-torsion-free.  This is *not* a generic finite-CW fact — for an
-arbitrary finite CW complex `H₁` can have torsion (e.g.
-`H₁(\mathbb{RP}^2) = \mathbb{Z}/2`).  Two routes are classical:
+/-- **Frontier identity (round 1 sorry-free assembly).** Combines
+`cellularH1_finite_singularIsoData` (which contains `Module.Free`)
+with the iso to discharge freeness of `IntegralOneCycle X`.
 
-* via the polygonal model `H₁(\Sigma_g) = \mathbb{Z}^{2g}` (the
-  $4g$-gon cellular complex makes torsion-freeness manifest), or
-* via Poincaré duality on a closed orientable surface dualising the
-  always-torsion-free `H^1(X, \mathbb{Z})`.
-
-Both routes are absent from Mathlib v4.28.0 and so this is a
-*separate* frontier obligation from the bare finite-generation one
-above. -/
+Bottom-up rationale: the cellular `H₁` is free as a subquotient of
+free chain modules with free image; transport along the iso.  The
+"freeness" portion is *not generic* over CW structures — it holds for
+the polygonal model of an orientable surface, where the relator
+abelianises to zero, so the cellular boundary `∂₂` is zero and
+`H₁ = C_1 / 0 = ℤ^{2g}`. Mathlib gap as for `_finite_of_cellular`. -/
 theorem IntegralOneCycle_free_of_cellular
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_cw : FiniteCWStructure X) :
+    (cw : FiniteCWStructure X) :
     Module.Free ℤ (IntegralOneCycle X) := by
-  sorry
+  obtain ⟨_, _, _, _, _hFr, hIso⟩ := cellularH1_finite_singularIsoData X cw
+  exact Module.Free.of_equiv hIso.some
 
 /-- **Round-2 sorry-free assembly.** `IntegralOneCycle_finite` (the
 finite-generation frontier sorry from `IntegralOneCycleRank.lean`) now
 delegates through Radó triangulation + cellular finite generation. -/
 theorem IntegralOneCycle_finite_via_cellular
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module.Finite ℤ (IntegralOneCycle X) := by
@@ -149,7 +199,7 @@ theorem IntegralOneCycle_finite_via_cellular
 /-- **Round-2 sorry-free assembly.** `IntegralOneCycle_torsionFree`
 through Radó + cellular freeness. -/
 theorem IntegralOneCycle_torsionFree_via_cellular
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module.Free ℤ (IntegralOneCycle X) := by

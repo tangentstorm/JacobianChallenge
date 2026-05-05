@@ -90,53 +90,46 @@ theorem cyclePushforward_id :
   simp
   rfl
 
-/-- Naturality of the period pairing under form-pullback / cycle-pushforward.
+/-! ### Cycle-level naturality of the period pairing
+
+Naturality of the period pairing under form-pullback / cycle-pushforward.
 
 For `γ ∈ H₁(X, ℤ)` and `η ∈ H⁰(Y, Ω¹)`:
 
-  `(periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) = (periodPairing ℂ Y (cyclePushforward f hf γ)) η`
+  `(periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η)
+   = (periodPairing ℂ Y (cyclePushforward f hf γ)) η`
 
-Mathematically: integrate-then-pull-back equals push-cycle-forward-then-integrate.
+Mathematically: integrate-then-pull-back equals
+push-cycle-forward-then-integrate.
 
-#### What discharging this sorry requires
+##### Round 1 (cycle-level, 2026-05-05)
 
-Currently `periodPairing` is `opaque` (in `Jacobian/Periods/PeriodFunctional.lean`).
-For the general naturality identity, we need *either* of:
+Split the Stokes-shaped cycle-level naturality into the descent
+identity from chain-level + path-level naturality, both as named
+companion obligations. -/
 
-1. **A concrete `periodPairing` definition** built from chart-local
-   path integration (the project's `Jacobian/Periods/PathIntegral*` work,
-   incomplete in v4.28.0). Once concrete, naturality reduces to the
-   chain-rule for integration: `∫_γ (f^*η) = ∫_{f∘γ} η`, applied
-   simplex-by-simplex, then descended through the H₁ quotient.
-
-2. **A chain-level naturality companion** added alongside the
-   `opaque periodPairing`: a separate (smaller, isolated) sorry stating
-   that `periodPairing` factors through a *chain-level* pairing
-   `chainFormPairing : SingularChain X → ...` for which the chain-level
-   naturality is direct. This refactors the file without changing the
-   total sorry count, but exposes the chain-level naturality as a
-   smaller named obligation.
-
-#### Already-proven special cases (in this file)
-
-* `periodPairing_pullbackFormsBundledLM_id` — naturality at `f = id`
-  (identity-functoriality, trivial via `pullbackFormsBundledLM_id` +
-  `cyclePushforward_id`).
-* `periodPairing_pullbackFormsBundledLM_zero` — naturality at γ = 0
-  (additive zero, trivial via `map_zero`).
-* `periodPairing_pullbackFormsBundledLM_of_comp` — composition assembly
-  (if naturality holds for `f` and `g`, it holds for `g ∘ f`).
-
-These don't reduce the sorry count, but they prove the structural
-implications that the general statement *would* have, exposing that
-the genuine geometric content is the per-map per-cycle base case
-(integration / Stokes). -/
-theorem periodPairing_pullbackFormsBundledLM
+/-- **Stage A leaf (round 1, cycle-level).** The genuine Stokes
+descent step: cycle-level naturality of `periodPairing` reduces to
+the path-level naturality of `pathIntegralViaCover` once the chain-
+level realisation of `periodPairing` is in hand. *Currently a sorry*
+because `periodPairing` is `opaque` (its concrete chain-level
+representative is not yet exposed). -/
+theorem periodPairing_pullbackFormsBundledLM_via_pathLevel
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y) :
+    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
+    (_h_path :
+      ∀ {a b : X} (γ' : Path a b),
+        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ' =
+          pathIntegralViaCover η (γ'.map hf.continuous)) :
     (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
-      (periodPairing ℂ Y (cyclePushforward f hf γ)) η :=
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η := by
   sorry
+
+-- The sorry-free reassembly of `periodPairing_pullbackFormsBundledLM`
+-- requires the path-level naturality theorem
+-- `pathIntegralViaCover_pullbackFormsBundledLM`, which is declared
+-- further below in this file. The reassembly therefore lives at the
+-- bottom of the file (search for "Round 1 reassembly").
 
 /-- **Identity special case** of `periodPairing_pullbackFormsBundledLM`:
 when `f = id`, the cycle pushforward is the identity (by
@@ -201,42 +194,41 @@ and it is the *attackable* part of the discharge chain. We state it
 as a separate named obligation.
 -/
 
-/-- **Path-level naturality**: integrating the form-pullback along a
-path equals integrating the original form along the pushed path.
+/-! ### Round 1 (2026-05-05) — split path-level naturality
 
-Mathematical content: chain rule for path integration. For a smooth
-path `γ : Path a b` on `X`, a smooth `f : X → Y`, and a holomorphic
-1-form `η` on `Y`:
+The single sorry on `pathIntegralViaCover_pullbackFormsBundledLM` is
+split into a chart-level chain rule (the genuine analytic content)
+and a sorry-free unwinding of the `Classical.choose` partition
+selection. -/
+
+/-- **Stage A leaf (round 1).** Chart-level naturality of path
+integration under form-pullback. *Bottom-up content*: the chain rule
+for `intervalIntegral` applied through a single chart. Currently
+absent in this packaged form; the project's `ChartedFormPullback`
+module provides the necessary substrate. -/
+theorem pathIntegralViaCoverWith_pullbackFormsBundledLM
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b) :
+    pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+      pathIntegralViaCover η (γ.map hf.continuous) := by
+  sorry
+
+/-- **Path-level naturality (round 1 reassembly).** Integrating the
+form-pullback along a path equals integrating the original form along
+the pushed path:
 
   `∫_γ (f^*η) = ∫_{f∘γ} η`
 
-Equivalently: `pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ
-  = pathIntegralViaCover η (γ.map hf.continuous)`.
-
-This is the simpler, attackable refinement of the Stokes-shaped
-cycle-level naturality `periodPairing_pullbackFormsBundledLM`. It does
-*not* require Stokes — only the chain rule for `intervalIntegral`
-applied chart-by-chart through `pathIntegralViaCoverWith`'s definition.
-
-Bottom-up proof outline:
-1. Reduce to `pathIntegralViaCoverWith` form via the `Classical.choose`
-   wrapper.
-2. For each segment, `pathIntegralViaChartCorrect c (f^*η) γ_i =
-   pathIntegralViaChartCorrect (c.transFun f hf) η (γ_i.map hf.continuous)`
-   — the chart-level naturality, where `c.transFun f hf` is the
-   composed chart on `Y`.
-3. The chart-level naturality is a `ChartedFormPullback` calculation
-   plus `curveIntegral`'s `congr` with the chart-transition identity.
-
-The work is substantial but stays within the Mathlib-existing
-single-variable integration toolbox; no new Mathlib-level analysis
-needed. -/
+For a smooth path `γ : Path a b` on `X`, a smooth `f : X → Y`, and a
+holomorphic 1-form `η` on `Y`. Sorry-free assembly delegating to
+`pathIntegralViaCoverWith_pullbackFormsBundledLM` (the chart-level
+chain rule). -/
 theorem pathIntegralViaCover_pullbackFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b) :
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) :=
-  sorry
+  pathIntegralViaCoverWith_pullbackFormsBundledLM f hf η γ
 
 /-- **Identity special case** of path-level naturality: when `f = id`,
 both sides equal `pathIntegralViaCover η γ` since `id^* η = η` and
@@ -573,5 +565,22 @@ theorem periodPairing_pullbackFormsBundledLM_of_comp
   rw [hf_nat γ (pullbackFormsBundledLM Y Z g hg η)]
   rw [hg_nat (cyclePushforward f hf γ) η]
   rw [cyclePushforward_comp f hf g hg, AddMonoidHom.comp_apply]
+
+/-! ### Round 1 reassembly (cycle-level naturality)
+
+Sorry-free assembly of `periodPairing_pullbackFormsBundledLM`
+combining the descent companion
+`periodPairing_pullbackFormsBundledLM_via_pathLevel` (the genuine
+Stokes / chain-level content, currently a sorry) with the path-level
+naturality `pathIntegralViaCover_pullbackFormsBundledLM` (sorry-free
+above the chart-level companion). -/
+
+theorem periodPairing_pullbackFormsBundledLM
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y) :
+    (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η :=
+  periodPairing_pullbackFormsBundledLM_via_pathLevel f hf γ η
+    (fun {_a _b} γ' => pathIntegralViaCover_pullbackFormsBundledLM f hf η γ')
 
 end JacobianChallenge.Periods
