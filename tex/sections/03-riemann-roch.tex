@@ -416,9 +416,46 @@ the locus where \(f\) reaches \(\infty\), and zero divisor means no
 such point.
 \end{proof}
 
+\begin{lemma}[Pointwise lift through \(\CC\hookrightarrow\CPone\)]
+\label{lem:onepoint-lift-of-no-infty}
+Given a map \(f:X\to\CPone\) with \(f(x)\neq\infty\) for every
+\(x\in X\), there is a function \(g:X\to\CC\) such that
+\(f(x)=\iota(g(x))\) for all \(x\), where \(\iota:\CC\to\CPone\) is
+the canonical inclusion.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun\_pointwise\_lift\_exists}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+\(\CPone=\OnePoint\,\CC=\Option\,\CC\). The hypothesis
+\(f(x)\neq\Option.\None\) lets us define \(g(x):=(f(x)).\getD\,0\),
+i.e. the \(\some\) payload (or default at unreachable \(\None\)). At
+each \(x\), case-splitting on \(f(x)\): the \(\None\) branch is
+excluded by hypothesis; the \(\some\,y\) branch gives
+\(g(x)=y\) and \(\iota(g(x))=\some\,y=f(x)\).
+\end{proof}
+
+\begin{lemma}[Smoothness of the no-\(\infty\) lift]
+\label{lem:onepoint-lift-smoothness-inherits}
+\uses{def:divisors-on-X}
+If a meromorphic map \(f:X\to\CPone\) factors as
+\(f=\iota\circ g\) for some \(g:X\to\CC\), then \(g\) is smooth
+(\code{MDifferentiable}).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun\_mdiff\_of\_lift\_eq}
+\end{lemma}
+\begin{proof}
+At every point \(x\in X\) the map \(f\) lives in the identity chart
+of \(\CPone\) (since \(f(x)=\iota(g(x))\neq\infty\)). The chart-local
+representative of \(f\) is then the chart-pulled-back \(g\); since
+\(f\) is smooth as a manifold map (this is the structural smoothness
+field of \code{MeromorphicMapToSphere}), \(g\) inherits smoothness.
+The genuine Mathlib gap is the chart-trivialisation API for
+\code{MeromorphicMapToSphere} smoothness, which is not built into
+the abstract structure.
+\end{proof}
+
 \begin{lemma}[Smooth lift through \(\CC\hookrightarrow\CPone\)]
 \label{lem:meromorphic-finite-lift-smooth}
-\uses{def:divisors-on-X}
+\uses{lem:onepoint-lift-of-no-infty,lem:onepoint-lift-smoothness-inherits}
 Given a meromorphic map \(f:X\to\CPone\) with \(f(x)\neq\infty\) for
 all \(x\in X\), the function \(g(x):=\iota^{-1}(f(x))\) is well-defined
 on \(X\) and smooth.
@@ -432,17 +469,34 @@ disc, which transports through \(\iota^{-1}\) to a smooth
 \(\CC\)-valued function.
 \end{proof}
 
+\begin{lemma}[Disjoint zero/pole supports]
+\label{lem:meromorphic-zeros-poles-disjoint}
+For an actual meromorphic function \(f\), the zero and pole divisors
+have disjoint support: at every \(Q\), \(\zeros(f)(Q)=0\) or
+\(\poles(f)(Q)=0\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.zeros\_poles\_disjoint\_support}
+\end{lemma}
+\begin{proof}
+At \(Q\), \(f\) is locally given by a Laurent series with a single
+order \(n\in\Z\). If \(n\geq 0\), \(f\) is holomorphic at \(Q\) with
+zero of order \(n\) (so \(\poles(f)(Q)=0\)). If \(n<0\), \(f\) has a
+pole of order \(-n\) at \(Q\) (so \(\zeros(f)(Q)=0\)). The two cases
+are exclusive.
+\end{proof}
+
 \begin{lemma}[Pointwise pole bound from \(L([P])\)]
 \label{lem:mem-L-point-pole-pointwise-bound}
-\uses{def:riemann-roch-space}
+\uses{def:riemann-roch-space,lem:meromorphic-zeros-poles-disjoint}
 If \(f\in L([P])\), then \(\poles(f)(Q)\leq[P](Q)\) for every \(Q\).
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles\_le\_point\_of\_mem\_L\_point}
 \end{lemma}
 \begin{proof}
 \(L([P])\) membership says \((f)+[P]\geq 0\), i.e.\
-\(\zeros(f)-\poles(f)+[P]\geq 0\). At each \(Q\), use the
-disjoint-support property of an actual meromorphic function's
-zero/pole divisors to extract the displayed pointwise bound.
+\(\zeros(f)-\poles(f)+[P]\geq 0\). At each \(Q\), use
+Lemma~\ref{lem:meromorphic-zeros-poles-disjoint} (disjoint zero/pole
+supports) to split: if \(\poles(f)(Q)>0\) then \(\zeros(f)(Q)=0\),
+and the inequality reduces to \(-\poles(f)(Q)+[P](Q)\geq 0\), giving
+\(\poles(f)(Q)\leq[P](Q)\). Otherwise \(\poles(f)(Q)=0\leq[P](Q)\).
 \end{proof}
 
 \begin{lemma}[Effectivity of the pole divisor]

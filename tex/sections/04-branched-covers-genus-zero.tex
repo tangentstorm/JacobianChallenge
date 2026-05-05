@@ -748,12 +748,18 @@ A \(\CC\)-valued function whose modulus diverges along a punctured
 neighbourhood of \(P\), lifted to \(\OnePoint\,\CC\) via the
 canonical inclusion, tends to \(\infty\) at \(P\).
 \lean{JacobianChallenge.HolomorphicForms.OnePoint.tendsto\_infty\_of\_modulus\_diverges}
+\leanok
 \end{lemma}
-\begin{proof}
-The neighbourhood basis of \(\infty\) in \(\OnePoint\,\CC\) consists
-of complements of bounded sets. Modulus divergence means every
-bounded set is eventually avoided, hence the lifted function
-eventually lies in any neighbourhood of \(\infty\).
+\begin{proof}\leanok
+\(\|g\|\to\infty\) along the punctured filter means
+\(\Tendsto\,g\) lands in \(\Bornology.cobounded\,\CC\) by
+\code{Metric.tendsto\_dist\_right\_atTop\_iff} (with base point
+\(0\)). On the proper Hausdorff space \(\CC\),
+\(\cobounded=\cocompact=\coclosedCompact\) by
+\code{Metric.cobounded\_eq\_cocompact} and
+\code{Filter.coclosedCompact\_eq\_cocompact}. Compose with
+\code{OnePoint.tendsto\_coe\_infty} to obtain
+\(\iota\circ g\to\infty\) in \(\OnePoint\,\CC\).
 \end{proof}
 
 % NOTE (audit): lem:degree-one-no-ramification-detail and
