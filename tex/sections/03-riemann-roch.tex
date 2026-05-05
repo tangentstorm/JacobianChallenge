@@ -402,7 +402,7 @@ values: \(\forall x,\ f(x)\neq\infty\).
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap_ne_infty_of_no_poles}
 \leanok
 \end{lemma}
-\begin{proof}
+\begin{proof}\leanok
 Direct interpretation of \(\operatorname{poles}(f)=0\): the pole-divisor records
 the locus where \(f\) reaches \(\infty\), and zero divisor means no
 such point.
@@ -435,7 +435,7 @@ If a meromorphic map \(f:X\to\CPone\) factors as
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_mdiff_of_lift_eq}
 \leanok
 \end{lemma}
-\begin{proof}
+\begin{proof}\leanok
 At every point \(x\in X\) the map \(f\) lives in the identity chart
 of \(\CPone\) (since \(f(x)=\iota(g(x))\neq\infty\)). The chart-local
 representative of \(f\) is then the chart-pulled-back \(g\); since
@@ -471,7 +471,7 @@ have disjoint support: at every \(Q\), \(\operatorname{zeros}(f)(Q)=0\) or
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.zeros_poles_disjoint_support}
 \leanok
 \end{lemma}
-\begin{proof}
+\begin{proof}\leanok
 At \(Q\), \(f\) is locally given by a Laurent series with a single
 order \(n\in\Z\). If \(n\geq 0\), \(f\) is holomorphic at \(Q\) with
 zero of order \(n\) (so \(\operatorname{poles}(f)(Q)=0\)). If \(n<0\), \(f\) has a
@@ -486,7 +486,7 @@ If \(f\in L([P])\), then \(\operatorname{poles}(f)(Q)\leq[P](Q)\) for every \(Q\
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles_le_point_of_mem_L_point}
 \leanok
 \end{lemma}
-\begin{proof}
+\begin{proof}\leanok
 \(L([P])\) membership says \((f)+[P]\geq 0\), i.e.\
 \(\operatorname{zeros}(f)-\operatorname{poles}(f)+[P]\geq 0\). At each \(Q\), use
 Lemma~\ref{lem:meromorphic-zeros-poles-disjoint} (disjoint zero/pole
@@ -502,7 +502,7 @@ The pole divisor of a meromorphic map is effective.
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles_effective}
 \leanok
 \end{lemma}
-\begin{proof}
+\begin{proof}\leanok
 \(\operatorname{poles}(f)\) is by construction non-negative at every point: pole
 orders are non-negative integers.
 \end{proof}
