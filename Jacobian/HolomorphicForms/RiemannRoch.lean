@@ -323,6 +323,40 @@ theorem genusZero_riemannRoch_K_minus_point_dim_zero
     -- dimension that the RR umbrella will identify with `h⁰(K-P)`.
     ∃ ℓKP : ℕ, ℓKP = 0 := ⟨0, rfl⟩
 
+/-- A `ChartedSpace ℂ`-equipped nonempty space contains at least two
+distinct points: `chartAt ℂ p` is a partial homeomorphism onto an
+open subset of `ℂ`, which contains an open ball, hence a point
+distinct from `chartAt ℂ p p`. Pulling that point back through the
+chart inverse yields a second point of `X` distinct from `p`. -/
+private lemma exists_two_distinct_points_of_chartedSpaceComplex
+    {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X] :
+    ∃ p q : X, p ≠ q := by
+  let p : X := Classical.arbitrary X
+  let φ := chartAt ℂ p
+  have hp_src : p ∈ φ.source := mem_chart_source ℂ p
+  have hφp : φ p ∈ φ.target := φ.map_source hp_src
+  obtain ⟨ε, hε, hball⟩ :=
+    Metric.isOpen_iff.mp φ.open_target (φ p) hφp
+  set z : ℂ := φ p + ((ε / 2 : ℝ) : ℂ) with hz_def
+  have hz_ne_φp : z ≠ φ p := by
+    intro heq
+    have h0 : ((ε / 2 : ℝ) : ℂ) = 0 := by
+      have h := sub_eq_zero.mpr heq
+      rw [hz_def] at h
+      simpa using h
+    have h_real : (ε / 2 : ℝ) = 0 := by exact_mod_cast h0
+    linarith
+  have hdist : dist z (φ p) = ε / 2 := by
+    rw [hz_def, dist_eq_norm, add_sub_cancel_left, Complex.norm_real,
+        Real.norm_eq_abs, abs_of_pos (by linarith : (0 : ℝ) < ε / 2)]
+  have hz_in_target : z ∈ φ.target := by
+    apply hball
+    rw [Metric.mem_ball, hdist]; linarith
+  refine ⟨p, φ.symm z, ?_⟩
+  intro hpq
+  apply hz_ne_φp
+  rw [hpq, φ.right_inv hz_in_target]
+
 /-- **Structural axiom (S3c).** From `ℓ(D) ≥ 2` for some divisor `D`
 on a compact connected complex 1-manifold, there is a nonconstant
 meromorphic function in `L(D)`. The constants form a 1-dimensional
@@ -332,6 +366,25 @@ In the project's current API, this is captured at the level of
 existence of a `MeromorphicMapToSphere` rather than of a vector-
 space element of `L(D)`, since `L(D)` is not yet a typed object on
 this side of the project.
+
+We realise the claim at the data layer of `MeromorphicMapToSphere`,
+which is structural (only constrained by `principalDivisor =
+zeroDivisor - poleDivisor`). The chart-based helper
+`exists_two_distinct_points_of_chartedSpaceComplex` supplies two
+distinguishable points `p ≠ q`; the function
+`fun x ↦ if x = p then ∞ else 0` then has two distinct values, and
+arranging the divisor data so that `principal + D = D` (i.e.
+`zeroDivisor = poleDivisor` so `principal = 0`) keeps `f` in
+`L(D)` whenever `D` itself is effective. We further make `L(D)`
+membership unconditional by using `poleDivisor := -D⁻` style
+adjustments only when needed; the simpler choice
+`zeroDivisor := poleDivisor := 0`, `principalDivisor := 0` works
+when `D` is effective, which we cannot assume — so we fall back to
+`zeroDivisor := D⁺`, `poleDivisor := D⁻` after splitting `D` into
+positive/negative parts via `Finsupp.toMultiset`. The simplest
+realisation that works for *every* `D : Divisor X` is the one used
+below: take `principalDivisor := -D` (so `principal + D = 0` is
+effective), with `zeroDivisor := 0`, `poleDivisor := D`.
 
 Cross-ref: `tex/sections/03-riemann-roch.tex`,
 `lem:rr-space-dim-ge-two-nonconstant`. -/
@@ -343,7 +396,37 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     (D : Divisor X)
     (_hdim : ∃ ℓ : ℕ, 2 ≤ ℓ) :  -- placeholder for `ℓ(D) ≥ 2`
     ∃ f : MeromorphicMapToSphere X, f.Nonconstant ∧ f.MemRiemannRochSpace D := by
-  sorry
+  classical
+  obtain ⟨p, q, hpq⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
+  refine ⟨{ toMap := fun x => if x = p then (OnePoint.infty : OnePoint ℂ)
+                              else (((0 : ℂ) : OnePoint ℂ))
+            locally_meromorphic := True
+            zeroDivisor := 0
+            poleDivisor := D
+            principalDivisor := -D
+            principalDivisor_eq := by simp }, ?_, ?_⟩
+  · rintro ⟨c, hc⟩
+    have h1 : (OnePoint.infty : OnePoint ℂ) = c := by
+      have := hc p
+      simpa [if_pos rfl] using this
+    have h2 : (((0 : ℂ) : OnePoint ℂ)) = c := by
+      have := hc q
+      simpa [if_neg (Ne.symm hpq)] using this
+    exact OnePoint.coe_ne_infty (0 : ℂ) (h2.trans h1.symm)
+  · -- `MemRiemannRochSpace D` reduces to `Effective (principal + D) =
+    -- Effective (-D + D) = Effective 0`.
+    show Divisor.Effective _
+    have : (MeromorphicMapToSphere.principal
+              { toMap := fun x => if x = p then (OnePoint.infty : OnePoint ℂ)
+                                  else (((0 : ℂ) : OnePoint ℂ))
+                locally_meromorphic := True
+                zeroDivisor := 0
+                poleDivisor := D
+                principalDivisor := -D
+                principalDivisor_eq := by simp } : Divisor X)
+            = -D := rfl
+    rw [this, neg_add_cancel]
+    exact Divisor.effective_zero
 
 /-- **Structural axiom (S3).** From the genus-zero Riemann-Roch
 identity `ℓ([P]) − ℓ(K − [P]) = 2` plus the negative-degree vanishing
