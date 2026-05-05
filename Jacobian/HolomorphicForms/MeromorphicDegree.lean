@@ -292,45 +292,32 @@ theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
   exact (JacobianChallenge.Blueprint.degree_one_bijective h hd).2
 
-/-- **Structural axiom (M5a-i).** Pole-degree 1 means the meromorphic
-map has no ramification: the local degree at every point is 1.
+/-! ### Dead-code note: M5a/M5a-i/M5a-ii superseded by M-bridge.
 
-Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:degree-one-no-ramification-detail`. -/
-theorem MeromorphicMapToSphere.no_ramification_of_pole_degree_one
-    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_f : MeromorphicMapToSphere X)
-    (_hcont : Continuous _f.toMap)
-    (_hdegree : Divisor.degree _f.poles = 1) :
-    -- Place-holder statement for "no ramification"; the eventual
-    -- typed obligation is in terms of the project's
-    -- ramification-divisor API (not yet exposed).
-    True := trivial
+Earlier iterations introduced project-level "no ramification at
+degree 1" + "fiber-card constant under no ramification" as named
+structural sub-axioms. After the audit pass that found
+`Jacobian/Blueprint/Sec02/DegreeOneNoRamification.lean` already
+proves `degree_one_no_ramification` *sorry-free* at the
+`BranchedCoverData` level (and `degree_one_bijective` likewise),
+the M5 headline now routes through the M-bridge directly. The
+sub-axioms M5a-i and M5a-ii would re-prove the same content at the
+`MeromorphicMapToSphere` level and are therefore redundant once
+the M-bridge is in place; they are removed below.
 
-/-- **Structural axiom (M5a-ii).** A continuous map with no
-ramification on a compact connected manifold has fibers all of the
-same cardinality.
-
-Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:no-ramification-fiber-card-constant`. -/
-theorem MeromorphicMapToSphere.fiber_card_constant_of_no_ramification
-    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_f : MeromorphicMapToSphere X)
-    (_hcont : Continuous _f.toMap)
-    (_hnoram : True) :
-    True := trivial
+The original axiom M5a (`fiber_card_le_one_of_pole_degree_one`) is
+also superseded by the M5 routing through the M-bridge; it is kept
+in place but the headline no longer depends on it. Re-using the
+existing `Blueprint.degree_one_bijective` is the right choice;
+maintaining the parallel `MeromorphicMapToSphere`-level chain is
+not. -/
 
 /-- **Structural axiom (M5a).** A pole-degree-1 meromorphic map has
 all preimage fibers of cardinality at most 1.
 
-Sorry-free assembly: M5a-i (no ramification at degree 1) + M5a-ii
-(constant fiber card). The placeholders above are stand-ins for
-typed statements; the actual sorry is at the headline level
-because the placeholders carry no real content yet.
+This is now an *unused* parallel obligation; the headline M5
+(`injective_of_continuous_and_pole_degree_one`) routes through the
+M-bridge to `Blueprint.degree_one_bijective` instead.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `lem:degree-one-fiber-card-le-one`. -/
