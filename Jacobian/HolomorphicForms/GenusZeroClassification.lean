@@ -694,21 +694,57 @@ structure HomeoSphereHolomorphicOneFormVanishing
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
   subsingleton : Subsingleton (HolomorphicOneForm ℂ X)
 
-/-- **Opaque data obligation (uniformization-lite core).** A compact
-connected Riemann surface homeomorphic to S² has no nonzero holomorphic
-1-forms.
+/-! ### Structural companions for the uniformization-lite core
 
-Bottom-up content: uniqueness of the complex structure on the topological
-2-sphere, transport of holomorphic 1-forms along the resulting
-biholomorphism to `OnePoint ℂ`, and the `H⁰(ℂℙ¹, Ω¹) = 0` computation. -/
-theorem homeoSphereHolomorphicOneFormVanishing
+The classical genus-zero classification step (uniformization at
+genus 0) says: any complex structure on the topological 2-sphere
+is biholomorphic to `ℂℙ¹` (= `OnePoint ℂ`). We expose this content
+as two named structural companions plus a sorry-free assembly.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`§Uniformization-lite`. -/
+
+/-- **Structural axiom (G1).** A topological homeomorphism from a
+compact connected complex 1-manifold `X` to the standard 2-sphere
+upgrades to a `ℂ`-linear isomorphism between the spaces of holomorphic
+1-forms on `X` and `OnePoint ℂ`.
+
+Bottom-up content (the deep classical input — *Uniformization at
+genus 0*): the complex structure on `X` is biholomorphic to that on
+`OnePoint ℂ`; the resulting `≃ₘ` induces a pullback `≃ₗ[ℂ]` on
+holomorphic 1-form spaces.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:holomorphic-one-form-equiv-of-homeo-sphere`. -/
+theorem holomorphicOneForm_linearEquiv_of_homeoSphere_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
-    Subsingleton (HolomorphicOneForm ℂ X) := by
+    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
   sorry
+
+/-- **Opaque data obligation (uniformization-lite core).** A compact
+connected Riemann surface homeomorphic to S² has no nonzero holomorphic
+1-forms.
+
+Sorry-free assembly: the linear equivalence
+`holomorphicOneForm_linearEquiv_of_homeoSphere_exists` (G1) plus
+`holomorphicOneForm_onePointCx_subsingleton` (sorry-free, in this
+file) plus the standard fact that subsingletons transport through
+linear equivalences. -/
+theorem homeoSphereHolomorphicOneFormVanishing
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
+    Subsingleton (HolomorphicOneForm ℂ X) := by
+  obtain ⟨e⟩ := holomorphicOneForm_linearEquiv_of_homeoSphere_exists X h
+  haveI : Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=
+    holomorphicOneForm_onePointCx_subsingleton
+  exact e.toEquiv.subsingleton
 
 /-- **Sub-obligation wrapper (sorry-free).** Extracts the subsingleton
 consequence from `homeoSphereHolomorphicOneFormVanishing`. -/
