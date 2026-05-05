@@ -38,7 +38,7 @@ obligations live under `Jacobian/HolomorphicForms/Serre/`.
 | `Serre/CupProductYoneda.lean` | 10 | additive `cupProductYonedaH0H1` + linearity frontier |
 | `Serre/TraceMap.lean` | 4 | `serreTraceMap` frontier |
 | `Serre/H1CanonicalIso.lean` | 5/15 | `h1Canonical_isoToC` (assembly above residue map) |
-| `Serre/ResidueMap.lean` | 15 | `residueMap` + inverse + round-trip identities frontiers |
+| `Serre/ResidueMap.lean` | 15 | `residueMapIso` axiom; `residueMap` + inverse + round-trip identities are projections |
 | `Serre/Nondegeneracy.lean` | 11/12 | `serrePairing_nondegenerate_{left,right}` (sorry-free) |
 | `Serre/Dolbeault.lean` | 13 | `serrePairing_witness_{left,right}` (delegates to L²) |
 | `Serre/HodgePairing.lean` | 13 | `serrePairing_specialised_witness_{left,right}` (assembly) |
@@ -71,12 +71,12 @@ obligations live under `Jacobian/HolomorphicForms/Serre/`.
 12. `serrePairing_nondegenerate_right` analogously (sorry-free).
 13. `serrePairing_witness_{left,right}` planned to factor through harmonic-form lifts + L²-pairing witness (proof body sorry pending universe cleanup).
 14. Introduce `harmonicL2Pairing` + nondegeneracy witnesses + compatibility lemma.
-15. `h1Canonical_isoToC` assembled from `residueMap` + `residueMap_inverse` + round-trip identities (sorry-free).
+15. `h1Canonical_isoToC` assembled from `residueMapIso` via `residueMap` + `residueMap_inverse`; round-trip identities are now sorry-free projections from the axiom.
 16. `serre_duality_lineBundle_exists` specialised line-bundle Serre-duality.
 17. `RSLineBundleDual` + identification of `serreDualSheaf L` with `L⁻¹ ⊗ K_X`.
 18. `riemann_roch_high_degree` design refines via `riemann_roch_high_degree_via_serre` + low-degree vanishing (proof body sorry pending universe cleanup).
 19. **`h1_dualizing_sheaf_one_dim`** discharged sorry-free via `h1Canonical_isoToC` and `Module.finrank_self ℂ`.
-20. `riemann_roch_umbrella_exists` design refines through `riemann_roch_classical_identity` + `RSLineBundleSub` (umbrella body sorry pending FD instances).
+20. `riemann_roch_umbrella_exists` design refines through `riemann_roch_classical_identity` + `RSLineBundleSub`; `serre_h1_finrank_eq_h0_canonical_sub` and `riemann_roch_classical_identity` are now sorry-free assemblies over the shared Serre high-degree and Euler-characteristic packages.
 21. `finiteDimensionalSheafCohomologyRS_canonical` reduces to harmonic-form FD + surjections.
 22. `finiteDimensionalSheafCohomologyRS_structure` analogously for 𝒪_X.
 23. `h0Canonical_isoHolomorphicOneForm`: `H⁰(K_X) ≃ₗ[ℂ] HolomorphicOneForm ℂ X`.

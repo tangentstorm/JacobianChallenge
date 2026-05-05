@@ -109,6 +109,87 @@ noncomputable def liftToCp1_branchedCoverData
 
 /-! ## Sub-leaf #3 (HARD) — Laurent order at zeros equals ramification. -/
 
+/-- Primitive finite-chart order comparison for leaf 3.
+
+After unfolding both definitions, this is the local statement that the
+meromorphic order of the ℂ-projection at a finite zero agrees with the
+analytic order of the CP¹ lift in the finite target chart. -/
+theorem vanishingOrder_untopD_eq_mapAnalyticOrderAt_finiteChart
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X)
+    (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
+    (_hholo : True)
+    (p : X) (_hp : meromorphicToCp1 X f p = ((0 : ℂ) : OnePoint ℂ)) :
+    (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0
+      = (mapAnalyticOrderAt (meromorphicToCp1 X f) p : ℤ) := by
+  classical
+  set c : ℂ := chartAt ℂ p p with hc
+  set g : ℂ → ℂ :=
+    (fun q : X => (f q).getD 0) ∘ (chartAt ℂ p).symm with hg
+  set F : X → OnePoint ℂ := meromorphicToCp1 X f with hF
+  have hg_an : AnalyticAt ℂ g c := by
+    rw [hg, hc]
+    exact liftToCp1_finite_projection_analytic X f _hholo p _hp
+  have hchart_eq :
+      g =ᶠ[𝓝 c]
+        ((Function.invFunOn (fun x : ℂ => (x : OnePoint ℂ)) Set.univ) ∘
+          (f.toFun ∘ (chartAt ℂ p).symm)) := by
+    rw [hg, hc]
+    exact liftToCp1_finite_chartLocal_eventuallyEq_projection X f _hholo p _hp
+  have htarget_center :
+      ((Function.invFunOn (fun x : ℂ => (x : OnePoint ℂ)) Set.univ) ∘
+          (f.toFun ∘ (chartAt ℂ p).symm)) c = 0 := by
+    rw [hc, Function.comp_apply, Function.comp_apply]
+    have hsymm :
+        (chartAt ℂ p).symm (chartAt ℂ p p) = p :=
+      (chartAt ℂ p).left_inv (mem_chart_source ℂ p)
+    rw [hsymm]
+    have hp' : f.toFun p = ((0 : ℂ) : OnePoint ℂ) := by
+      simpa [meromorphicToCp1] using _hp
+    rw [hp']
+    change Function.invFunOn (fun x : ℂ => (x : OnePoint ℂ)) Set.univ
+        ((0 : ℂ) : OnePoint ℂ) = 0
+    simp +decide [Function.invFunOn]
+  have hchart_sub_eq :
+      (fun t : ℂ =>
+          ((Function.invFunOn (fun x : ℂ => (x : OnePoint ℂ)) Set.univ) ∘
+            (f.toFun ∘ (chartAt ℂ p).symm)) t
+            - ((Function.invFunOn (fun x : ℂ => (x : OnePoint ℂ)) Set.univ) ∘
+                (f.toFun ∘ (chartAt ℂ p).symm)) c)
+        =ᶠ[𝓝 c] g := by
+    filter_upwards [hchart_eq.symm] with t ht
+    rw [ht, htarget_center, sub_zero]
+  have hmap_order :
+      mapAnalyticOrderAt F p = analyticOrderNatAt g c := by
+    have hp' : meromorphicToCp1 X f p = ((0 : ℂ) : OnePoint ℂ) := by
+      rw [← hF]
+      exact _hp
+    rw [hF]
+    unfold mapAnalyticOrderAt chartLocalAt
+    rw [hp', hc]
+    change analyticOrderNatAt
+        (fun t : ℂ =>
+          ((Function.invFunOn (fun x : ℂ => (x : OnePoint ℂ)) Set.univ) ∘
+            (f.toFun ∘ (chartAt ℂ p).symm)) t -
+          ((Function.invFunOn (fun x : ℂ => (x : OnePoint ℂ)) Set.univ) ∘
+            (f.toFun ∘ (chartAt ℂ p).symm)) c)
+        c = analyticOrderNatAt g c
+    unfold analyticOrderNatAt
+    rw [analyticOrderAt_congr hchart_sub_eq]
+  have hmero_order :
+      meromorphicOrderAt g c = (analyticOrderAt g c).map (↑) :=
+    hg_an.meromorphicOrderAt_eq
+  unfold vanishingOrder
+  rw [JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt]
+  rw [← hg, ← hc, hmero_order, hmap_order]
+  cases horder : analyticOrderAt g c
+  · simp [analyticOrderNatAt, horder]
+  · rename_i n
+    rw [ENat.map_coe, WithTop.untopD_coe]
+    simp [analyticOrderNatAt, horder]
+
 /-- Analytic core of leaf 3: at a finite zero of the CP¹ lift, the
 vanishing order of the underlying ℂ-projection is the chart-local
 analytic order of the lift.
@@ -125,7 +206,9 @@ theorem vanishingOrder_eq_mapAnalyticOrderAt_at_zero
     (p : X) (_hp : meromorphicToCp1 X f p = ((0 : ℂ) : OnePoint ℂ)) :
     (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0
       = (mapAnalyticOrderAt (meromorphicToCp1 X f) p : ℤ) := by
-  sorry
+  exact
+    vanishingOrder_untopD_eq_mapAnalyticOrderAt_finiteChart
+      X f _hf_nonconstant _hholo p _hp
 
 /-- **Sub-leaf #3 of `thm:principal-degree-zero` (plan class: HARD).**
 
@@ -160,6 +243,116 @@ theorem vanishingOrder_eq_ramificationIndex_at_zero
 
 /-! ## Sub-leaf #4 (HARD) — Laurent order at poles equals minus ramification. -/
 
+/-- Primitive inversion-chart order comparison for leaf 4.
+
+At a pole, the CP¹ lift is read in the inversion chart.  This local
+statement says the integer Laurent order of the ℂ-projection is the
+negative of the analytic order of that inversion-chart map. -/
+theorem vanishingOrder_untopD_eq_neg_mapAnalyticOrderAt_inftyChart
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X)
+    (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
+    (_hholo : True)
+    (p : X) (_hp : meromorphicToCp1 X f p = (∞ : OnePoint ℂ)) :
+    (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0
+      = -(mapAnalyticOrderAt (meromorphicToCp1 X f) p : ℤ) := by
+  classical
+  set c : ℂ := chartAt ℂ p p with hc
+  set g : ℂ → ℂ :=
+    (fun q : X => (f q).getD 0) ∘ (chartAt ℂ p).symm with hg
+  set F : X → OnePoint ℂ := meromorphicToCp1 X f with hF
+  have hmero : MeromorphicAt g c := by
+    rw [hg, hc]
+    have h := f.isMeromorphic p
+    unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX at h
+    rwa [JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt] at h
+  have htarget_an :
+      AnalyticAt ℂ
+        (JacobianChallenge.HolomorphicForms.invFwd ∘
+          (f.toFun ∘ (chartAt ℂ p).symm)) c := by
+    rw [hc]
+    exact liftToCp1_infty_chartLocal_analytic X f _hholo p _hp
+  have heq_inv :
+      g⁻¹ =ᶠ[𝓝 c]
+        (JacobianChallenge.HolomorphicForms.invFwd ∘
+          (f.toFun ∘ (chartAt ℂ p).symm)) := by
+    rw [hg, hc]
+    filter_upwards with t
+    cases hval : f.toFun ((chartAt ℂ p).symm t) with
+    | infty =>
+        simp [Pi.inv_apply, Function.comp_apply, hval,
+          JacobianChallenge.HolomorphicForms.invFwd]
+        change (0 : ℂ) = 0
+        rfl
+    | coe z =>
+        simp [Pi.inv_apply, Function.comp_apply, hval,
+          JacobianChallenge.HolomorphicForms.invFwd]
+        change z = z
+        rfl
+  have hginv_an : AnalyticAt ℂ g⁻¹ c :=
+    htarget_an.congr heq_inv.symm
+  have hmap_order :
+      mapAnalyticOrderAt F p = analyticOrderNatAt g⁻¹ c := by
+    have hp' : meromorphicToCp1 X f p = (∞ : OnePoint ℂ) := by
+      rw [← hF]
+      exact _hp
+    rw [hF]
+    unfold mapAnalyticOrderAt chartLocalAt
+    rw [hp', hc]
+    change analyticOrderNatAt
+        (fun t : ℂ =>
+          (JacobianChallenge.HolomorphicForms.invFwd ∘
+            (f.toFun ∘ (chartAt ℂ p).symm)) t -
+          (JacobianChallenge.HolomorphicForms.invFwd ∘
+            (f.toFun ∘ (chartAt ℂ p).symm)) c)
+        c = analyticOrderNatAt g⁻¹ c
+    have hcenter :
+        (JacobianChallenge.HolomorphicForms.invFwd ∘
+            (f.toFun ∘ (chartAt ℂ p).symm)) c = 0 := by
+      rw [hc, Function.comp_apply, Function.comp_apply]
+      have hsymm :
+          (chartAt ℂ p).symm (chartAt ℂ p p) = p :=
+        (chartAt ℂ p).left_inv (mem_chart_source ℂ p)
+      rw [hsymm]
+      have hp'' : f.toFun p = (∞ : OnePoint ℂ) := by
+        simpa [meromorphicToCp1] using _hp
+      rw [hp'']
+      simp [JacobianChallenge.HolomorphicForms.invFwd]
+    have hsub_eq :
+        (fun t : ℂ =>
+          (JacobianChallenge.HolomorphicForms.invFwd ∘
+            (f.toFun ∘ (chartAt ℂ p).symm)) t -
+          (JacobianChallenge.HolomorphicForms.invFwd ∘
+            (f.toFun ∘ (chartAt ℂ p).symm)) c)
+          =ᶠ[𝓝 c] g⁻¹ := by
+      filter_upwards [heq_inv.symm] with t ht
+      rw [ht, hcenter, sub_zero]
+    unfold analyticOrderNatAt
+    rw [analyticOrderAt_congr hsub_eq]
+  have hginv_order :
+      meromorphicOrderAt g⁻¹ c = (analyticOrderAt g⁻¹ c).map (↑) :=
+    hginv_an.meromorphicOrderAt_eq
+  have hg_order :
+      meromorphicOrderAt g c = -((analyticOrderAt g⁻¹ c).map (↑) : WithTop ℤ) := by
+    have h := meromorphicOrderAt_inv (f := g) (x := c)
+    rw [hginv_order] at h
+    simpa using congrArg Neg.neg h.symm
+  unfold vanishingOrder
+  rw [JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt]
+  rw [← hg, ← hc, hg_order, hmap_order]
+  cases horder : analyticOrderAt g⁻¹ c
+  · simp [analyticOrderNatAt, horder]
+  · rename_i n
+    rw [ENat.map_coe]
+    have hn : analyticOrderNatAt g⁻¹ c = n := by
+      simp [analyticOrderNatAt, horder]
+    have hneg :
+        (-(↑(n : ℤ) : WithTop ℤ)) = ((-(n : ℤ) : ℤ) : WithTop ℤ) := rfl
+    rw [hn, hneg, WithTop.untopD_coe]
+
 /-- Analytic core of leaf 4: at a pole of the CP¹ lift, the vanishing
 order of the underlying ℂ-projection is the negative of the chart-local
 analytic order of the lift.
@@ -177,7 +370,9 @@ theorem vanishingOrder_eq_neg_mapAnalyticOrderAt_at_pole
     (p : X) (_hp : meromorphicToCp1 X f p = (∞ : OnePoint ℂ)) :
     (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0
       = -(mapAnalyticOrderAt (meromorphicToCp1 X f) p : ℤ) := by
-  sorry
+  exact
+    vanishingOrder_untopD_eq_neg_mapAnalyticOrderAt_inftyChart
+      X f _hf_nonconstant _hholo p _hp
 
 /-- **Sub-leaf #4 of `thm:principal-degree-zero` (plan class: HARD).**
 

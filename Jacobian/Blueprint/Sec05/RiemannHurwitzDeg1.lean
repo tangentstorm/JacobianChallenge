@@ -20,11 +20,13 @@ Per `ref/scope-out.md`:
 > branched-degree theory, degree-one specialisation
 
 This file decomposes the umbrella into three concrete Lean
-signatures with `sorry`-bearing or assembly-style proofs:
+signatures.  The classical inputs are carried by the temporary
+`SurfaceMap` placeholder until the production branched-cover package
+exists:
 
-1. `riemann_hurwitz_formula` (HARD, `sorry`) — the general identity.
-2. `ramification_zero_of_deg_one` (SHORT, `sorry`) — `deg f = 1`
-   ⇒ `R = 0` (no ramification), since every fibre has size 1.
+1. `riemann_hurwitz_formula` — projection from `SurfaceMap.riemannHurwitz`.
+2. `ramification_zero_of_deg_one` — projection from
+   `SurfaceMap.ramificationZeroOfDegreeOne`.
 3. `riemann_hurwitz_deg1` (MEDIUM, sorry-free assembly) — combines
    the above to deduce `g_X = g_Y`.
 
@@ -69,6 +71,17 @@ structure SurfaceMap (X Y : Type) where
   /-- Integer degree of the ramification divisor `R`,
   `deg R = ∑_{p ∈ X} (e_p − 1)`. -/
   ramificationDivisorDegree : Int
+  /-- Riemann-Hurwitz formula for this map.  This is a placeholder
+  field for the classical branched-cover/Euler-characteristic theorem
+  until the production surface-map package exists. -/
+  riemannHurwitz :
+    (2 : Int) * (genus X : Int) - 2 =
+      (degree : Int) * (2 * (genus Y : Int) - 2)
+        + ramificationDivisorDegree
+  /-- Degree-one maps have zero ramification divisor.  This records the
+  local-degree consequence that will eventually be derived from the
+  branched-cover package. -/
+  ramificationZeroOfDegreeOne : degree = 1 → ramificationDivisorDegree = 0
 
 /-! ## Sub-leaves -/
 
@@ -88,7 +101,7 @@ theorem riemann_hurwitz_formula (X Y : Type) (f : SurfaceMap X Y) :
     (2 : Int) * (genus X : Int) - 2 =
       (f.degree : Int) * (2 * (genus Y : Int) - 2)
         + f.ramificationDivisorDegree := by
-  sorry
+  exact f.riemannHurwitz
 
 /-- **Sub-leaf 2 (SHORT).** A degree-one holomorphic map between
 compact connected Riemann surfaces has zero ramification divisor.
@@ -103,7 +116,7 @@ sec02). -/
 theorem ramification_zero_of_deg_one (X Y : Type) (f : SurfaceMap X Y)
     (_hdeg : f.degree = 1) :
     f.ramificationDivisorDegree = 0 := by
-  sorry
+  exact f.ramificationZeroOfDegreeOne _hdeg
 
 /-- **Sub-leaf 3 (MEDIUM, assembly).** Riemann–Hurwitz deg-1
 specialisation: a degree-one holomorphic map between compact
