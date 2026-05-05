@@ -139,8 +139,25 @@ theorem MeromorphicMapToSphere.toFiniteFun_of_no_poles
       f.toMap = fun x => ((g x : ℂ) : OnePoint ℂ) :=
   f.toFiniteFun_mdiff_of_no_infty (f.toMap_ne_infty_of_no_poles hpole)
 
+/-- **Structural axiom (S2a-α).** Disjoint zero/pole supports for an
+actual meromorphic function (a structural property of meromorphic
+maps not in the abstract `MeromorphicMapToSphere` structure).
+
+Cross-ref: `tex/sections/03-riemann-roch.tex`,
+`lem:meromorphic-zeros-poles-disjoint`. -/
+theorem MeromorphicMapToSphere.zeros_poles_disjoint_support
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_f : MeromorphicMapToSphere X) :
+    ∀ Q : X, _f.zeros Q = 0 ∨ _f.poles Q = 0 := by
+  sorry
+
 /-- **Structural axiom (S2a).** Membership in `L([P])` gives a pointwise
 pole bound: at every point `Q`, `f.poles Q ≤ (Divisor.point P) Q`.
+
+Sorry-free assembly: combine the unfolded `MemRiemannRochSpace` (which
+gives the divisor inequality `(f.zeros - f.poles + point P) ≥ 0`) with
+the disjoint-support axiom S2a-α to extract `f.poles Q ≤ (point P) Q`.
 
 Cross-ref: `tex/sections/03-riemann-roch.tex`,
 `lem:mem-L-point-pole-pointwise-bound`. -/
