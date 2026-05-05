@@ -1366,7 +1366,7 @@ Each de Rham cohomology class on a compact Riemannian manifold has a unique harm
 
 \begin{lemma}[Hodge $L^{2}$-orthogonal decomposition]
 \label{lem:hodge-orthogonal-decomposition}
-\uses{lem:hod-r1}
+\uses{lem:hod-r1,lem:hod-r49,lem:hod-r50,lem:hod-r51}
 $\Omega^{k}(M) = \mathcal{H}^{k}(M) \oplus d(\Omega^{k-1}) \oplus \delta(\Omega^{k+1})$, $L^{2}$-orthogonally.
 \lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_orthogonal_decomposition}
 \leanok
@@ -2196,7 +2196,7 @@ API.
 
 \begin{theorem}[Classical input: bundled differential forms $\Omega^{k}(M)$]
 \label{input:bundled-omega-k}
-\uses{lem:bundled-forms-algebra,lem:bundled-forms-operations}
+\uses{lem:bundled-forms-algebra,lem:bundled-forms-operations,input:cotangent-alternating-bundle}
 The Lean target
 \code{Jacobian.Analysis.BundledForms.bundled\_forms\_overview} states
 the existence of an \(\R\)-vector space \(\Omega^{k}(M)\) with the
@@ -2344,7 +2344,7 @@ Riemannian geometry.
 
 \begin{theorem}[Classical input: Sobolev spaces and elliptic regularity for $\Delta$]
 \label{input:sobolev-elliptic-regularity}
-\uses{lem:sobolev-elliptic-kernel-finite-dim,lem:sobolev-fredholm-property}
+\uses{lem:sobolev-elliptic-kernel-finite-dim,lem:sobolev-fredholm-property,lem:real-harmonic-def,lem:abstract-resolvent-self-adjoint,lem:has-laplace-resolvent-finiteDim,lem:model-symbol-isElliptic,lem:smoothfun-def,lem:l2fun-def,lem:hodge-harmonic-finite-dim-substantive,lem:dolbeault-harmonic-finite-dim-substantive,lem:serre-harmonic-finite-dim-substantive}
 The Lean target
 \code{Jacobian.Analysis.SobolevElliptic.sobolev\_elliptic\_overview}
 states the Fredholm property of the Laplacian on a compact Riemannian
@@ -2848,7 +2848,7 @@ cost in R9.
 
 \begin{theorem}[Classical input: cotangent + alternating-form bundle on $M$]
 \label{input:cotangent-alternating-bundle}
-\uses{lem:r9subA-cotangent-bundle,lem:r9subA-exterior-power-bundle,lem:r9subA-smooth-sections-module,lem:r9subA-omega-eq-sections}
+\uses{lem:r9subA-cotangent-bundle,lem:r9subA-exterior-power-bundle,lem:r9subA-smooth-sections-module,lem:r9subA-omega-eq-sections,lem:r9subA-cot-r11,lem:r9subA-cot-r13,lem:r9subA-exp-r16,lem:r9subA-closure-round20}
 The Lean target
 \code{Jacobian.Analysis.BundledForms.SubA.r9subA\_cotangent\_alternating\_bundle}
 asserts existence of \(T^{*}M\) and \(\Lambda^{k}T^{*}M\) as smooth
@@ -3037,6 +3037,7 @@ the missing Mathlib infrastructure).
 
 \begin{lemma}[Round 11: cotangent tangent-transition smoothness]
 \label{lem:r9subA-cot-r11}
+\uses{lem:r9subA-cot-r13}
 The tangent transition is locally a CLM \(E \to_{L,\R} E\); CLMs are
 \code{ContDiff} at every order, dispatched via \code{contDiff\_id}
 on the chart-local identity.
@@ -3226,7 +3227,7 @@ canonically by bidegree.
 
 \begin{lemma}[R7-sub-A.5 — \(d=\partial+\bar\partial\)]
 \label{lem:r7subA-d-split-partial-dbar}
-\uses{lem:r7subA-dsplit-r1}
+\uses{lem:r7subA-dsplit-r1,lem:r7subA-r12,lem:r7subA-r16,lem:r7subA-r19,lem:r7subA-r20,lem:r7subA-r22,lem:r7subA-r23,lem:r7subA-r24,lem:r7subA-r25,lem:r7subA-r28,lem:r7subA-r30}
 The exterior derivative splits as \(d=\partial+\bar\partial\) with
 \(\partial:\Omega^{p,q}\to\Omega^{p+1,q}\),
 \(\bar\partial:\Omega^{p,q}\to\Omega^{p,q+1}\), and
@@ -4503,7 +4504,7 @@ Mathlib endpoint of the chain.
 
 \begin{lemma}[Pass D.1: Stokes on $X$ minus disks around poles]
 \label{lem:srt-r1-stokes-cut-disks}
-\uses{lem:srt-r2-residue-as-boundary}
+\uses{lem:srt-r2-residue-as-boundary,lem:srt-r6}
 Let $\omega$ be a meromorphic 1-form on a compact Riemann
 surface $X$ with poles at $\{p_{i}\}$.  Cutting out small
 disks $D_{i}$ around each pole and applying Stokes to
@@ -6649,6 +6650,7 @@ A continuous function on a compact subset of $\R^{k}$ is bounded by Weierstrass 
 
 \begin{lemma}[Pass dis.10: Mathlib endpoint]
 \label{lem:dis-r10}
+\uses{lem:dis-r11}
 \code{ContinuousOn.integrableOn\_compact} on \code{MeasureTheory.Measure.lebesgue}.  Mathlib status: present.
 \lean{ContinuousOn.integrableOn_compact}
 \leanok\mathlibok
@@ -8258,21 +8260,21 @@ For a Fredholm operator on a Hilbert space, the image is closed (\code{Mathlib.A
 
 \begin{lemma}[Pass hod.12: self-adjoint $\Delta$ has $\mathrm{im}\,\Delta^{*} = \mathrm{im}\,\Delta$]
 \label{lem:hod-r12}
-\uses{lem:hod-r13}
+\uses{lem:hod-r13,lem:hod-r16}
 Self-adjointness gives $\Delta = \Delta^{*}$, so $\mathrm{im}\,\Delta^{*} = \mathrm{im}\,\Delta$.
 \notready
 \end{lemma}
 
 \begin{lemma}[Pass hod.13: $L^{2} = \ker\Delta\oplus\mathrm{im}\,\Delta$]
 \label{lem:hod-r13}
-\uses{lem:hod-r14}
+\uses{lem:hod-r14,lem:hod-r21}
 For a self-adjoint operator with closed range, this is the standard orthogonal decomposition.
 \notready
 \end{lemma}
 
 \begin{lemma}[Pass hod.14: $\mathrm{im}\,\Delta = \mathrm{im}\,d\oplus\mathrm{im}\,d^{*}$]
 \label{lem:hod-r14}
-\uses{lem:hod-r15}
+\uses{lem:hod-r15,lem:hod-r26}
 $\Delta = dd^{*} + d^{*}d$, with $\mathrm{im}\,dd^{*} \perp \mathrm{im}\,d^{*}d$ from $d^{2}=0$.
 \notready
 \end{lemma}
@@ -8301,7 +8303,7 @@ This is \texttt{laplaceBeltrami\_selfAdjoint} in \code{Jacobian.StageB.LaplaceBe
 
 \begin{lemma}[Pass hod.17: symmetric + densely defined $\Rightarrow$ $\Delta\subseteq\Delta^{*}$]
 \label{lem:hod-r17}
-\uses{lem:hod-r18}
+\uses{lem:hod-r18,lem:hod-r31}
 A symmetric operator with dense domain has $\Delta\subseteq\Delta^{*}$ (the adjoint extends $\Delta$).  On a compact manifold $\Omega^{k}_{\mathrm{sm}}$ is dense in $L^{2}\Omega^{k}$, so this applies.
 \notready
 \end{lemma}
@@ -8340,7 +8342,7 @@ Compact resolvent + Fredholm property (chain hle) imply $\mathrm{im}\,\Delta$ is
 
 \begin{lemma}[Pass hod.22: $(\ker\Delta)^{\perp} = \overline{\mathrm{im}\,\Delta^{*}}$]
 \label{lem:hod-r22}
-\uses{lem:hod-r23}
+\uses{lem:hod-r23,lem:hod-r36}
 Standard duality between kernel and range of adjoint:
 $(\ker T)^{\perp} = \overline{\mathrm{im}\,T^{*}}$ for any bounded $T$ between Hilbert spaces; for self-adjoint $T$, drop the bar (closed range, hod-r21).
 \notready
@@ -8382,7 +8384,7 @@ For any $\alpha$, $\Delta\alpha = d(d^{*}\alpha) + d^{*}(d\alpha)\in \mathrm{im}
 
 \begin{lemma}[Pass hod.27: $\langle d\alpha, d^{*}\beta\rangle = 0$ from $d^{2}=0$]
 \label{lem:hod-r27}
-\uses{lem:hod-r28}
+\uses{lem:hod-r28,lem:hod-r41}
 By the adjoint identity $\langle d\alpha,d^{*}\beta\rangle = \langle d\alpha,d^{*}\beta\rangle = \langle d^{2}\alpha,\beta\rangle$.  Then $d^{2}=0$ kills the right-hand side.
 \notready
 \end{lemma}
@@ -8574,6 +8576,7 @@ all three summands pairwise $L^{2}$-orthogonal.  This is the lemma at the head o
 
 \begin{lemma}[Pass hod.50: Mathlib endpoint, fully assembled]
 \label{lem:hod-r50}
+\uses{lem:hod-r51}
 The entire chain bottoms out at three Mathlib lemmas:
 (i) \code{IsSelfAdjoint} (\code{Mathlib.Analysis.InnerProductSpace.Adjoint});
 (ii) \code{Submodule.orthogonal\_orthogonal} (\code{Mathlib.Analysis.InnerProductSpace.Projection});
@@ -8590,6 +8593,7 @@ The finite-dimensional algebraic skeleton of the chain $hod$ is now actually pro
 
 \begin{lemma}[Pass hod.51: $\Delta$ symmetric (real, finite-dim)]
 \label{lem:hod-r51}
+\uses{lem:hod-r52}
 $\Delta := d_{0}\circ d_{0}^{*} + d_{1}^{*}\circ d_{1}$ is symmetric on a finite-dim real inner product space $V_{1}$.  Proof: direct expansion using the Mathlib adjoint identity $\langle d_{0}x,y\rangle = \langle x,d_{0}^{*}y\rangle$.
 \lean{JacobianChallenge.HodgeAbstract.laplacian_isSymmetric}
 \leanok\mathlibok
@@ -8597,6 +8601,7 @@ $\Delta := d_{0}\circ d_{0}^{*} + d_{1}^{*}\circ d_{1}$ is symmetric on a finite
 
 \begin{lemma}[Pass hod.52: Bochner identity (real, finite-dim)]
 \label{lem:hod-r52}
+\uses{lem:hod-r53}
 $\langle\Delta\alpha,\alpha\rangle = \|d_{0}^{*}\alpha\|^{2} + \|d_{1}\alpha\|^{2}$.  Proof: $\langle d_{0}d_{0}^{*}\alpha,\alpha\rangle = \langle d_{0}^{*}\alpha,d_{0}^{*}\alpha\rangle$ (adjoint), similarly for the other term, then $\langle x,x\rangle = \|x\|^{2}$.
 \lean{JacobianChallenge.HodgeAbstract.inner_laplacian_self_eq_norm_sq}
 \leanok\mathlibok
@@ -8604,6 +8609,7 @@ $\langle\Delta\alpha,\alpha\rangle = \|d_{0}^{*}\alpha\|^{2} + \|d_{1}\alpha\|^{
 
 \begin{lemma}[Pass hod.53: $\ker\Delta = \ker d_{1}\cap\ker d_{0}^{*}$ (real, finite-dim)]
 \label{lem:hod-r53}
+\uses{lem:hod-r54}
 A form is harmonic iff it is closed and co-closed.  Proof: $\Delta\alpha=0 \Rightarrow \langle\Delta\alpha,\alpha\rangle=0 \Rightarrow \|d_{0}^{*}\alpha\|^{2}+\|d_{1}\alpha\|^{2}=0$ (Bochner) $\Rightarrow$ both norms vanish.
 \lean{JacobianChallenge.HodgeAbstract.ker_laplacian_eq}
 \leanok\mathlibok
@@ -8611,6 +8617,7 @@ A form is harmonic iff it is closed and co-closed.  Proof: $\Delta\alpha=0 \Righ
 
 \begin{lemma}[Pass hod.54: $V_{1} = \ker\Delta\oplus\mathrm{range}\,\Delta$ (real, finite-dim)]
 \label{lem:hod-r54}
+\uses{lem:hod-r55}
 For any symmetric finite-dim endomorphism $T$, the kernel and range form a complementary orthogonal decomposition.  Proof: \code{IsSymmetric.orthogonal\_range} gives $(\mathrm{range}\,T)^{\perp}=\ker T$; finite-dim implies $\mathrm{range}\,T$ is closed; orthogonal-complement-of-kernel = range; \code{Submodule.isCompl\_orthogonal\_of\_hasOrthogonalProjection} closes.
 \lean{JacobianChallenge.HodgeAbstract.hodge_decomposition_finite_dim}
 \leanok\mathlibok
@@ -8618,6 +8625,7 @@ For any symmetric finite-dim endomorphism $T$, the kernel and range form a compl
 
 \begin{lemma}[Pass hod.55: $\mathrm{range}\,d_{0} \perp \mathrm{range}\,d_{1}^{*}$ (uses $d^{2}=0$)]
 \label{lem:hod-r55}
+\uses{lem:hod-r56}
 $\langle d_{0}a, d_{1}^{*}b\rangle = \langle d_{1}(d_{0}a),b\rangle = \langle 0,b\rangle = 0$.
 \lean{JacobianChallenge.HodgeAbstract.range_d_orthogonal_range_codiff}
 \leanok\mathlibok
@@ -8625,6 +8633,7 @@ $\langle d_{0}a, d_{1}^{*}b\rangle = \langle d_{1}(d_{0}a),b\rangle = \langle 0,
 
 \begin{lemma}[Pass hod.56: $\mathrm{range}\,\Delta = \mathrm{range}\,d_{0}\oplus\mathrm{range}\,d_{1}^{*}$]
 \label{lem:hod-r56}
+\uses{lem:hod-r57}
 The forward inclusion is immediate from $\Delta=d_{0}d_{0}^{*}+d_{1}^{*}d_{1}$; the reverse uses $\mathrm{range}\,\Delta = (\ker\Delta)^{\perp}$, $\ker\Delta = \ker d_{1}\cap\ker d_{0}^{*}$, and $\mathrm{range}\,d_{0}\subseteq(\ker d_{0}^{*})^{\perp}$ + $\mathrm{range}\,d_{1}^{*}\subseteq(\ker d_{1})^{\perp}$.
 \lean{JacobianChallenge.HodgeAbstract.range_laplacian_eq}
 \leanok\mathlibok
