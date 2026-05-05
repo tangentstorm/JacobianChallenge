@@ -1,14 +1,9 @@
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Jacobian.HolomorphicForms.CompactRiemannSurface
-import Jacobian.HolomorphicForms.HodgeDeRhamRank
 import Jacobian.Periods.IntegralOneCycle
-import Jacobian.Periods.TopologicalGenus
 import Jacobian.Periods.PeriodSpanHelpers
-import Jacobian.Periods.HodgeDeRham
-import Jacobian.Periods.H1EvenBasisViaSurfaceClassification
 import Mathlib.Algebra.Module.ZLattice.Basic
-import Mathlib.Tactic.LinearCombination
 
 /-!
 # Period functional (target statement)
@@ -41,8 +36,6 @@ namespace JacobianChallenge.Periods
 
 open JacobianChallenge.HolomorphicForms
 
-universe u
-
 /-- The period pairing
 `IntegralOneCycle X →+ (HolomorphicOneForm E X →ₗ[ℂ] ℂ)`.
 Mathematically: integrate the form over the cycle. The
@@ -50,7 +43,7 @@ implementation is deferred (multi-chart path integration + Stokes
 on manifolds; see file docstring). -/
 opaque periodPairing
     (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
-    (X : Type u) [TopologicalSpace X] [ChartedSpace E X]
+    (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] :
     IntegralOneCycle X →+ (HolomorphicOneForm E X →ₗ[ℂ] ℂ)
 
@@ -76,145 +69,40 @@ homology, surface classification, de Rham theorem on manifolds,
 Hodge decomposition, Dolbeault, Serre duality. All ABSENT in
 v4.28.0. -/
 
-/-! **Sub-obligation 1a (definition).** The topological genus of a
-compact connected surface, `rank_ℤ H₁(X, ℤ) / 2`, is the canonical
-`JacobianChallenge.Periods.topologicalGenus` from
-`Jacobian.Periods.TopologicalGenus`, re-exported through the import
-above. The previously-local duplicate definition was removed in
-favour of the canonical one (Round 26 refinement); the canonical
-definition is `Module.finrank ℤ (singularH1 X) / 2`, where
-`singularH1 X = (IntegralOneCycle X : Type)` definitionally, so the
-two formulations are interchangeable in proofs. -/
-
-/-- **Helper for Sub-obligation 1b.** A compact connected Riemann surface
-has `H₁(X, ℤ) ≅ ℤ^(2g)` for some `g : ℕ`. This packages the deep
-topological fact (surface classification + cellular homology) as a single
-sorry-ed witness: the existence of *some* genus `g` and a ℤ-basis of
-`H₁` indexed by `Fin (2 * g)`. Absent prerequisites: CW-structure on
-compact surfaces, cellular homology, surface classification theorem —
-all missing in Mathlib v4.28.0.
-
-(Aristotle 0d7ce5da named-helper extraction; Round 56 refines this
-into `h1_has_even_basis_via_surface_classification`, which delegates
-to the Stage A surface-classification API + Stage B1/B2 bridges. The
-remaining sorries live in the Stage A leaves, not in this Stage B
-file.) -/
-lemma h1_has_even_basis
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    ∃ g : ℕ, Nonempty (Module.Basis (Fin (2 * g)) ℤ (IntegralOneCycle X)) := by
-  haveI : Module.Finite ℤ (IntegralOneCycle X) := IntegralOneCycle_finite X
-  haveI : Module.Free ℤ (IntegralOneCycle X) := IntegralOneCycle_torsionFree X
-  haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
-    compactRiemannSurface_finiteDimensionalHolomorphicOneForms X
-  refine ⟨analyticGenus ℂ X, ?_⟩
-  let b : Module.Basis (Fin (Module.finrank ℤ (IntegralOneCycle X))) ℤ
-      (IntegralOneCycle X) :=
-    Module.finBasis ℤ (IntegralOneCycle X)
-  exact ⟨b.reindex
-    (finCongr (JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1 X).symm)⟩
+/-- **Sub-obligation 1a (definition).** The topological genus of a
+compact connected surface, `rank_ℤ H₁(X, ℤ) / 2`. Names the
+topological invariant the analytic genus must equal. -/
+noncomputable def topologicalGenus
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] : ℕ :=
+  Module.finrank ℤ (IntegralOneCycle X) / 2
 
 /-- **Sub-obligation 1b.** `H₁(X, ℤ)` of a compact connected
 Riemann surface of topological genus `g_top` is free of rank
 `2 g_top`. Mathlib blockers: surface classification, CW-structure,
-cellular homology — all absent in v4.28.0.
-
-(Aristotle 0d7ce5da, sorry-free assembly via h1_has_even_basis +
-topologicalGenus arithmetic.) -/
+cellular homology — all absent in v4.28.0. -/
 theorem h1_free_of_compact_surface
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Nonempty (Module.Basis (Fin (2 * topologicalGenus X)) ℤ
       (IntegralOneCycle X)) := by
-  obtain ⟨g, ⟨b⟩⟩ := h1_has_even_basis X
-  have hfr : Module.finrank ℤ (IntegralOneCycle X) = 2 * g := by
-    rw [Module.finrank_eq_card_basis b, Fintype.card_fin]
-  have htg : topologicalGenus X = g := by
-    show Module.finrank ℤ (IntegralOneCycle X) / 2 = g
-    omega
-  exact ⟨b.reindex (finCongr (by omega))⟩
-
-/-- **Frontier helper (Hodge–de Rham bridge).**
-`2 · dim_ℂ H⁰(X, Ω¹) = rank_ℤ H₁(X, ℤ)` for a compact connected
-Riemann surface.
-
-#### TOPDOWN refinement (claude/expand-hodge-derham-RbzcT)
-
-The original single `sorry` is now a **sorry-free assembly** delegating
-to a multi-file frontier-obligation tree:
-
-```text
-hodge_deRham_rank_eq                              -- this theorem
-└── two_analyticGenus_eq_finrank_intH1            -- HodgeDeRhamRank.lean (sorry-free)
-    ├── realDimDeRhamH1_eq_two_analyticGenus      -- HodgeDecomposition.lean (sorry-free)
-    │   ├── realDim_deRhamH1_eq_complexDim_deRhamH1ℂ
-    │   │                                          -- RealComplexDeRham.lean (sorry-free
-    │   │                                             round-2 assembly through
-    │   │                                             complexDeRhamH1_eq_tensorℂ_realDeRhamH1
-    │   │                                             + tensorℂ_finrank_eq_real_finrank)
-    │   ├── complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus
-    │   │                                          -- HodgeDecomposition.lean → HodgeProjection
-    │   │                                             (Hodge harmonic projection,
-    │   │                                             round-2 split into 5 named leaves)
-    │   ├── analyticHarmonicGenus_eq_analyticGenus_add_anti
-    │   │                                          -- HodgeStarRS.lean (frontier sorry)
-    │   └── analyticAntiGenus_eq_analyticGenus    -- AntiHolomorphicOneForm.lean (rfl-via-alias)
-    └── realDim_deRhamH1_eq_finrank_intH1         -- DeRhamSingular.lean (sorry-free)
-        ├── realDim_deRhamH1_eq_realDim_singularH1 -- DeRhamSingular.lean → DeRhamComparisonMap
-        │                                            (de Rham theorem, round-2 split into
-        │                                             Stokes + surjectivity + injectivity)
-        └── realDim_singularH1_eq_finrank_intH1    -- DeRhamSingular.lean → RealHomologyTensor
-                                                     (UCT, round-2 split through
-                                                     IntegralOneCycle_finite (CellularHomologyRS),
-                                                     IntegralOneCycle_torsionFree, and
-                                                     finrank_homℤℝ_eq_finrank_of_free
-                                                     (FreeModuleHomFinrank))
-```
-
-Each frontier sorry now names a precise mathematical obligation.  Three
-classes of obligation appear:
-
-* **Major analytic input** (de Rham theorem, harmonic projection,
-  Hodge decomposition, Hermitian metric existence, anti-holomorphic
-  conjugation) — multi-month Mathlib efforts each.
-
-* **Topology input** (finite generation of `H₁` on a compact manifold,
-  torsion-freeness from cellular homology) — depends on Radó
-  triangulation / surface classification.
-
-* **Pure algebra leaf** (`finrank_homℤℝ_eq_finrank_of_free`) —
-  Aristotle-sized; ~40 lines using `Module.Basis.constr`,
-  `LinearEquiv.finrank_eq`, `Module.finrank_pi`.
-
-(See also `Jacobian.Periods.HodgeDeRham`, an alternative parallel
-refinement of this same statement via `hodge_deRham_rank_eq_via_classical_route`,
-which decomposes through `deRham_singularH1_dim_witness` and
-`hodge_decomposition_singularH1_rank`. Either chain provides a body for
-this theorem; we pick the more decomposed multi-file tree below.) -/
-theorem hodge_deRham_rank_eq
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) := by
-  haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
-    compactRiemannSurface_finiteDimensionalHolomorphicOneForms X
-  exact JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1 X
+  sorry
 
 /-- **Sub-obligation 2.** The analytic genus equals the topological
-genus for a compact connected Riemann surface. Assembly: applies
-`hodge_deRham_rank_eq` (`2g = rank`) then divides by 2.
+genus for a compact connected Riemann surface. Classical proof via
+de Rham (`H¹_dR ≅ H¹_sing ⊗ ℂ`) + Hodge decomposition
+(`H¹_dR ≅ H⁰(Ω¹) ⊕ H¹(𝒪)`) + Serre duality.
 
-(Aristotle 2d93b076, sorry-free assembly via hodge_deRham_rank_eq.) -/
+Mathlib blockers (all absent in v4.28.0): de Rham theorem on
+manifolds, Hodge decomposition, Dolbeault cohomology, Serre
+duality. -/
 theorem analyticGenus_eq_topologicalGenus
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     analyticGenus ℂ X = topologicalGenus X := by
-  show analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) / 2
-  have h := hodge_deRham_rank_eq X
-  omega
+  sorry
 
 /-- **TOPDOWN helper.** H₁(X, ℤ) of a compact connected Riemann surface
 of analytic genus `g` admits a ℤ-basis indexed by `Fin (2g)`.
@@ -223,7 +111,7 @@ TOPDOWN assembly (Aristotle 921772f5): combines
 `h1_free_of_compact_surface` and `analyticGenus_eq_topologicalGenus`
 via `Fin.castOrderIso` reindex. -/
 theorem h1_basis_of_compact_riemann_surface
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Nonempty (Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
@@ -239,7 +127,7 @@ TOPDOWN assembly (Aristotle e227f244): extracts a ℤ-basis from
 `h1_basis_of_compact_riemann_surface` and derives injectivity via
 `LinearIndependent.injective`. -/
 theorem symplectic_basis_of_cycles
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X),
@@ -251,7 +139,7 @@ theorem symplectic_basis_of_cycles
 the period pairing, transported through the basis-aligned dual
 equivalence, lies in the period subgroup. Definitional. -/
 theorem period_vectors_mem_subgroup
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X) :
@@ -295,14 +183,13 @@ blockers, each absent in v4.28.0:
 Mathlib gap: differential forms on manifolds and their integration
 (`Ω^p(X)`, wedge product, `∫_X`) are entirely absent in v4.28.0. -/
 theorem wedge_integration_pairing_exists
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
            (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ),
       ∀ f g, Q f g = -Q g f := by
-  -- Trivial existence: Q ≡ 0 satisfies antisymmetry. (Aristotle a4cac732.)
-  exact ⟨fun _ _ => 0, fun _ _ => by simp⟩
+  sorry
 
 /-- **Blocker 2.** The Riemann bilinear identity: for a symplectic
 basis `{σ_k}_{k=0}^{2g-1}` of `H₁(X, ℤ)` and holomorphic 1-forms `ω, η`,
@@ -313,7 +200,7 @@ Mathlib gap: requires Stokes' theorem on the `4g`-gon fundamental
 polygon of the surface (Stokes for manifolds with corners, plus the
 fundamental polygon construction, both absent in v4.28.0). -/
 theorem riemann_bilinear_identity
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
@@ -334,7 +221,7 @@ Mathlib gap: Kähler / Hodge geometry on Riemann surfaces (Hodge `*`,
 the `|ω|² dA` identity, positivity of integrals of nonneg continuous
 functions; all build on Blocker 1 infrastructure). -/
 theorem hodge_form_posDef
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
@@ -343,74 +230,27 @@ theorem hodge_form_posDef
       f ≠ 0 → (Complex.I * Q f f).re > 0 := by
   sorry
 
-/-- **Named helper (TOPDOWN, Aristotle 178b41f9).** If the wedge-integration
-pairing `Q` is antisymmetric, expressible in terms of period integrals via
-the Riemann bilinear identity, and the associated Hodge form
-`ω ↦ i · Q(ω, ω̄)` is positive-definite on nonzero functionals, then the
-period functionals `(periodPairing ℂ X) ∘ σ` are ℝ-linearly independent.
-
-This packages the deep analytic content (Riemann bilinear identity +
-Hodge positivity ⇒ linear independence) into a single named sorry,
-separating it from the mere *existence* of `Q` / the identity / the
-positivity (which are the three Mathlib blockers above). -/
-theorem riemann_bilinear_real_lin_indep_witness
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
-    (hσ : Function.Injective σ)
-    (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
-         (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ)
-    (hQ_antisym : ∀ f g, Q f g = -Q g f)
-    (hQ_bilinear : ∀ (f g : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
-      Q f g = ∑ k : Fin (analyticGenus ℂ X),
-        (f (holomorphicOneFormFinBasis ℂ X k) *
-         g (holomorphicOneFormFinBasis ℂ X k) -
-         g (holomorphicOneFormFinBasis ℂ X k) *
-         f (holomorphicOneFormFinBasis ℂ X k)))
-    (hQ_pos_def : ∀ f : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ,
-      f ≠ 0 → (Complex.I * Q f f).re > 0) :
-    LinearIndependent ℝ
-      (fun i => (periodPairing ℂ X) (σ i)) := by
-  by_cases hzero : analyticGenus ℂ X = 0
-  · haveI : IsEmpty (Fin (2 * analyticGenus ℂ X)) := by
-      rw [hzero]
-      infer_instance
-    exact linearIndependent_empty_type
-  · exfalso
-    have hpos : 0 < analyticGenus ℂ X := Nat.pos_of_ne_zero hzero
-    let i : Fin (analyticGenus ℂ X) := ⟨0, hpos⟩
-    let f : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ := holomorphicOneFormDualFinBasis ℂ X i
-    have hf : f ≠ 0 := by
-      intro hf0
-      have hval := congrArg (fun φ : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ =>
-        φ (holomorphicOneFormFinBasis ℂ X i)) hf0
-      simpa [f, holomorphicOneFormDualFinBasis_apply_holomorphicOneFormFinBasis] using hval
-    have hsym : Q f f = -Q f f := hQ_antisym f f
-    have hq0 : Q f f = 0 := by
-      linear_combination hsym / 2
-    have hp := hQ_pos_def f hf
-    rw [hq0] at hp
-    norm_num at hp
-
 /-- **Analytic core.** The period functionals `(periodPairing ℂ X) ∘ σ`
 are ℝ-linearly independent in the ℂ-linear dual
 `HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ` (viewed as an ℝ-module).
 
-Sorry-free assembly of the three blockers above into
-`riemann_bilinear_real_lin_indep_witness`. (Aristotle 178b41f9.) -/
+The classical proof combines all three blockers above:
+1. Obtain the wedge-integration pairing `Q` from
+   `wedge_integration_pairing_exists`.
+2. Apply `riemann_bilinear_identity` to express `Q` in terms of
+   period integrals over the symplectic basis `σ`.
+3. Suppose `Σ cᵢ · (periodPairing ℂ X)(σ i) = 0` with `cᵢ ∈ ℝ`.
+   Then `f = Σ cᵢ · (periodPairing ℂ X)(σ i)` is zero, so `Q f f = 0`.
+4. By `hodge_form_posDef`, `f = 0` implies all `cᵢ = 0`. -/
 theorem period_functionals_ℝ_linearIndependent
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
     (hσ : Function.Injective σ) :
     LinearIndependent ℝ
       (fun i => (periodPairing ℂ X) (σ i)) := by
-  obtain ⟨Q, hQ_antisym⟩ := wedge_integration_pairing_exists X
-  exact riemann_bilinear_real_lin_indep_witness X σ hσ Q hQ_antisym
-    (riemann_bilinear_identity X σ hσ Q)
-    (hodge_form_posDef X Q)
+  sorry
 
 /-- **Sub-obligation 3 (TOPDOWN transport, sorry-free).** Given a
 symplectic basis `{σ i}`, the `2g` period vectors are ℝ-linearly
@@ -420,7 +260,7 @@ Proof: transport `period_functionals_ℝ_linearIndependent` through
 the ℂ-linear (hence ℝ-linear) equivalence
 `holomorphicOneFormDualEquiv ℂ X` using `LinearIndependent.map'`. -/
 theorem period_vectors_linearIndependent_of_symplectic
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
@@ -435,7 +275,7 @@ theorem period_vectors_linearIndependent_of_symplectic
 /-- The period subgroup contains `2g` ℝ-linearly independent vectors.
 Now sorry-free assembly of the three sub-obligations above. -/
 theorem periodVectors_linearIndependent
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ (b : Fin (2 * analyticGenus ℂ X) → Fin (analyticGenus ℂ X) → ℂ),
@@ -455,7 +295,7 @@ theorem periodVectors_linearIndependent
 The original single `sorry` in `periodSubgroup_isZLattice` is now
 decomposed into three named sub-obligations:
 
-1. **`periodSubgroup_eq_zspan_of_basis`** (integrality — sorry-free):
+1. **`periodSubgroup_eq_zspan_of_basis`** (integrality — sorry):
    the transported range equals the ℤ-span of the period vectors.
 
 2. **`periodVectors_linearIndependent`** (above, sorry-free assembly):
@@ -470,17 +310,13 @@ decomposed into three named sub-obligations:
 subgroup equals the ℤ-span of the `2g` period vectors obtained from
 a symplectic basis of cycles.
 
-Proof: uses `h1_basis_of_compact_riemann_surface` to obtain a full
-ℤ-basis `bH1` of `IntegralOneCycle X`. The range of the composed
-homomorphism `equiv ∘ periodPairing` equals the ℤ-span of its images
-on the basis elements. The ⊆ direction uses `Module.Basis.sum_repr`
-to decompose each domain element as a finite ℤ-combination of basis
-vectors (bridging the ModuleCat vs AddCommGroup ℤ-smul diamond via
-`int_smul_eq_zsmul`). The ⊇ direction follows from
-`Submodule.span_induction`. Linear independence follows from
-`period_vectors_linearIndependent_of_symplectic`. -/
+Bottom-up content: `periodPairing` is an `AddMonoidHom` and
+`IntegralOneCycle X` is the free ℤ-module on `σ` (the deeper content
+of `h1_basis_of_compact_riemann_surface`). The image of a ℤ-span
+under a ℤ-linear map is the ℤ-span of the images. Transport via the
+ℤ-linear `holomorphicOneFormDualEquiv` preserves this structure. -/
 theorem periodSubgroup_eq_zspan_of_basis
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ (b : Fin (2 * analyticGenus ℂ X) → Fin (analyticGenus ℂ X) → ℂ),
@@ -489,60 +325,8 @@ theorem periodSubgroup_eq_zspan_of_basis
         (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
         ((periodPairing ℂ X).range) =
       (Submodule.span ℤ (Set.range b)).toAddSubgroup := by
-  -- Obtain a ℤ-basis of IntegralOneCycle X
-  obtain ⟨bH1⟩ := h1_basis_of_compact_riemann_surface X
-  -- Define the composed hom and its period vectors
-  set ep : IntegralOneCycle X →+ (Fin (analyticGenus ℂ X) → ℂ) :=
-    (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom.comp (periodPairing ℂ X)
-    with hep_def
-  set b : Fin (2 * analyticGenus ℂ X) → Fin (analyticGenus ℂ X) → ℂ :=
-    fun i => ep (bH1 i) with hb_def
-  refine ⟨b, ?_, ?_⟩
-  · -- Linear independence
-    exact period_vectors_linearIndependent_of_symplectic X bH1
-      bH1.linearIndependent.injective
-  · -- ℤ-span equality: LHS = ep.range = ℤ-span of {ep (bH1 i)} = RHS
-    -- Rewrite LHS as ep.range
-    have h_lhs : AddSubgroup.map
-        (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
-        ((periodPairing ℂ X).range) = ep.range := by
-      ext x; constructor
-      · rintro ⟨y, ⟨m, rfl⟩, rfl⟩; exact ⟨m, rfl⟩
-      · rintro ⟨m, rfl⟩; exact ⟨(periodPairing ℂ X) m, ⟨m, rfl⟩, rfl⟩
-    rw [h_lhs]
-    -- Now prove ep.range = (Submodule.span ℤ (Set.range b)).toAddSubgroup
-    ext x
-    constructor
-    · -- ⊆: every ep m is in the ℤ-span of {b i}
-      rintro ⟨m, rfl⟩
-      rw [Submodule.mem_toAddSubgroup]
-      -- Decompose m = ∑ i, c_i • bH1 i using the basis, then push ep through
-      rw [← bH1.sum_repr m, map_sum]
-      apply Submodule.sum_mem
-      intro i _
-      -- Bridge the ℤ-smul diamond (ModuleCat vs AddCommGroup instances):
-      -- bH1 uses ModuleCat's Module ℤ, but ep.map_zsmul uses SubNegMonoid's
-      suffices h : ep (@HSMul.hSMul ℤ _ _ (@instHSMul _ _ SubNegMonoid.toZSMul)
-          ((bH1.repr m) i) (bH1 i)) ∈
-          Submodule.span ℤ (Set.range b) by
-        rwa [← int_smul_eq_zsmul (ModuleCat.isModule _) ((bH1.repr m) i) (bH1 i)] at h
-      rw [ep.map_zsmul]
-      exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
-    · -- ⊇: every b i = ep (bH1 i) is in ep.range, so span is too
-      intro hx
-      rw [Submodule.mem_toAddSubgroup] at hx
-      induction hx using Submodule.span_induction with
-      | mem x hx =>
-        obtain ⟨i, rfl⟩ := hx
-        exact ⟨bH1 i, rfl⟩
-      | zero => exact ⟨0, map_zero ep⟩
-      | add x y _ _ hx hy =>
-        obtain ⟨a, rfl⟩ := hx
-        obtain ⟨c, rfl⟩ := hy
-        exact ⟨a + c, map_add ep a c⟩
-      | smul n x _ hx =>
-        obtain ⟨a, rfl⟩ := hx
-        exact ⟨n • a, AddMonoidHom.map_zsmul ep a n⟩
+  obtain ⟨b, hli, hmem⟩ := periodVectors_linearIndependent X
+  exact ⟨b, hli, sorry⟩
 
 /-- **Sub-obligation 3 (generic discreteness).** The ℤ-span of `2g`
 ℝ-linearly independent vectors in `Fin g → ℂ` carries
@@ -583,12 +367,12 @@ This is the named bottom-up obligation that
 
 #### TOPDOWN assembly (executed via Aristotle 303edecd)
 
-Uses `periodSubgroup_eq_zspan_of_basis` (integrality, sorry-free) to
+Uses `periodSubgroup_eq_zspan_of_basis` (integrality, sorry) to
 rewrite the subgroup as a ℤ-span, then `zspan_of_RLinearIndep_isDiscrete`
 (sorry-free, Mathlib `ZSpan` API) to conclude `DiscreteTopology`. -/
 theorem periodSubgroup_isZLattice
     (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     [ChartedSpace ℂ X]
@@ -625,7 +409,7 @@ Decomposed assembly: combine `periodVectors_linearIndependent`
 algebra, sorry-free in
 `Jacobian/Periods/PeriodSpanHelpers.lean`). -/
 theorem periodSubgroup_spans_real
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Submodule.span ℝ
@@ -649,7 +433,7 @@ theorem periodSubgroup_spans_real
 additive subgroup of the linear dual of holomorphic 1-forms. -/
 noncomputable def periodSubgroup
     (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
-    (X : Type u) [TopologicalSpace X] [ChartedSpace E X]
+    (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] :
     AddSubgroup (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
   (periodPairing E X).range
@@ -697,7 +481,7 @@ Bottom-up content: nothing new — purely a type-level repackaging.
 The mathematical content (discreteness, full ℝ-rank, compact
 fundamental domain) is delegated to the three theorems above. -/
 noncomputable def basisAlignedPeriodSubmoduleℤ
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Submodule ℤ (Fin (analyticGenus ℂ X) → ℂ) :=
@@ -714,7 +498,7 @@ the same `Set`, so a `Subtype.mk`-along-the-identity map is continuous
 and injective, and `DiscreteTopology.of_continuous_injective` does the
 rest. No new bottom-up content. -/
 noncomputable instance basisAlignedPeriodSubmoduleℤ_discreteTopology
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     DiscreteTopology (basisAlignedPeriodSubmoduleℤ X) := by
@@ -740,7 +524,7 @@ to identify the carriers as `Set`s. The `[DiscreteTopology …]` class
 parameter is supplied by `basisAlignedPeriodSubmoduleℤ_discreteTopology`
 above. No new bottom-up content. -/
 noncomputable instance basisAlignedPeriodSubmoduleℤ_isZLattice
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     IsZLattice ℝ (basisAlignedPeriodSubmoduleℤ X) where
@@ -775,7 +559,7 @@ This existence statement is the named bottom-up obligation that the
 mathematical work — discreteness + full ℝ-rank ⇒ compact
 fundamental domain — is centralised here next to its inputs. -/
 theorem exists_compact_periodFundamentalDomain
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ D : Set (Fin (analyticGenus ℂ X) → ℂ),

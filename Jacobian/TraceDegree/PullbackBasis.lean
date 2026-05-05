@@ -37,15 +37,13 @@ open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 open JacobianChallenge.AbelJacobi
 open JacobianChallenge.ComplexTorus
 
-universe u v w
-
-variable {X : Type u} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-variable {Y : Type v} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
+variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
-variable {Z : Type w} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
+variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
   [ConnectedSpace Z] [ChartedSpace ℂ Z]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
 
@@ -63,10 +61,10 @@ basis-aligned form-pullback; `analyticPullback` is then its descent
 through the period quotient (using period-preservation), and `mk_eq`
 is automatic from the descent. -/
 structure BasisAnalyticPullbackBundle
-    (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (Y : Type v) [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
+    (Y : Type) [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
     [ConnectedSpace Y] [ChartedSpace ℂ Y]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
     (_f : X → Y) (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω _f) where
@@ -177,9 +175,9 @@ here because the opaque bundle is realised by `Classical.choice` from
 the zero-valued `Inhabited` witness; the resolution path is to replace
 the `opaque` with a `noncomputable def` built from a concrete
 `pullbackFormsMap` whose `id` value is by construction the identity. -/
-axiom basisAnalyticPullbackBundle_id_dualPullback :
+theorem basisAnalyticPullbackBundle_id_dualPullback :
     (basisAnalyticPullbackBundle (X := X) (Y := X) id contMDiff_id).basisDualPullback =
-      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ)
+      AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := sorry
 
 /-- The dual form-pullback along `id` is the identity additive group
 homomorphism. Sorry-free: extracts the bundle-level axiom via `unfold`. -/
@@ -263,12 +261,12 @@ top-level `basisDualPullback_comp_top` and the per-vector
 `basisDualPullback_comp` as sorry-free assemblies. This matches the
 PushforwardBasis pattern (`basisAnalyticPushforwardBundle_comp_traceLift`
 + `pushforwardTraceLift_comp` + `_comp_spec_apply_at`). -/
-axiom basisAnalyticPullbackBundle_comp_dualPullback
+theorem basisAnalyticPullbackBundle_comp_dualPullback
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     (basisAnalyticPullbackBundle (g ∘ f) (hg.comp hf)).basisDualPullback =
       ((basisAnalyticPullbackBundle f hf).basisDualPullback).comp
-        (basisAnalyticPullbackBundle g hg).basisDualPullback
+        (basisAnalyticPullbackBundle g hg).basisDualPullback := sorry
 
 /-- Top-level contravariant functoriality of the dual form-pullback:
 `(g ∘ f)* = f* ∘ g*` as an additive group homomorphism on the covering

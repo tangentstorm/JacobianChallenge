@@ -73,6 +73,9 @@ jobs:
       - name: Inject Plain-English toggle into blueprint HTML
         run: python3 blueprint/src/inject-layman-toggle.py blueprint/web
 
+      - name: Inject light/dark/system theme toggle
+        run: python3 blueprint/src/inject-theme-toggle.py blueprint/web
+
       - name: Rewrite dep-graph legend + tag big-umbrella nodes
         run: python3 blueprint/src/inject-depgraph-extras.py blueprint/web
 
