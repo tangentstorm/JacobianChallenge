@@ -39,23 +39,50 @@ the pole-locus complement carries a smooth `ℂ`-valued function, and
 the limit at the pole equals `∞ : OnePoint ℂ`.
 -/
 
+/-- **Structural axiom (M1a).** Off the single pole `P`, the map
+takes finite values: `∀ x ≠ P, f.toMap x ≠ ∞`.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:meromorphic-no-infty-off-pole`. -/
+theorem MeromorphicMapToSphere.toMap_ne_infty_off_pole
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (_hpole : f.poles = Divisor.point P) :
+    ∀ x : X, x ≠ P → f.toMap x ≠ (OnePoint.infty : OnePoint ℂ) := by
+  sorry
+
+/-- **Structural axiom (M1b).** Off any locus where `f.toMap` is
+finite, the map is continuous: in any chart at a finite point,
+`f.toMap` agrees (via `OnePoint.some`) with a smooth `ℂ`-valued
+function, which is continuous.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:meromorphic-continuous-on-finite-set`. -/
+theorem MeromorphicMapToSphere.continuousOn_of_no_infty_on
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X) (S : Set X)
+    (_hne : ∀ x ∈ S, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)) :
+    ContinuousOn f.toMap S := by
+  sorry
+
 /-- **Structural axiom (M1).** Restricted to the complement of the
-single-pole locus `{P}`, the meromorphic map agrees with a smooth
-`X \ {P} → ℂ` that is continuous (in fact `ContMDiff`) and lifts
-through `OnePoint.some`.
+single-pole locus `{P}`, the meromorphic map is continuous.
 
-Bottom-up: `f.toMap x ≠ ∞` for `x ≠ P`; this lift is then the
-chart expression of `f` away from the pole.
+Sorry-free assembly: combine M1a (no-∞ off pole) with M1b
+(continuity from no-∞).
 
-Cross-ref: `tex/sections/03-riemann-roch.tex`,
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `lem:meromorphic-continuous-off-pole`. -/
 theorem MeromorphicMapToSphere.continuousOn_compl_pole_of_poleDivisor_point
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (_hpole : f.poles = Divisor.point P) :
-    ContinuousOn f.toMap {P}ᶜ := by
-  sorry
+    (hpole : f.poles = Divisor.point P) :
+    ContinuousOn f.toMap {P}ᶜ :=
+  f.continuousOn_of_no_infty_on {P}ᶜ
+    (fun x hx => f.toMap_ne_infty_off_pole P hpole x hx)
 
 /-- **Structural axiom (M2).** Near a simple pole `P`, the meromorphic
 map tends to `∞ : OnePoint ℂ`. This is the local-Laurent / one-point
