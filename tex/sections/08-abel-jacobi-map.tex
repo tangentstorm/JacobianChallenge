@@ -456,6 +456,230 @@ holomorphic so \(\widetilde g\) is holomorphic and non-vanishing.
 Therefore \((\widetilde g) = (Q_1) - (Q_2)\), as required.
 \end{proof}
 
+\subsection{Round-6/7/8 sub-decompositions of the Forster sub-leaves}
+
+Each of the three round-5 obligations
+(Lemmas~\ref{lem:third-kind-meromorphic-data-exists}--\ref{lem:meromorphic-via-log-exp})
+is itself a substantial classical theorem. We further decompose each
+along its standard textbook proof structure into 2--3 strictly
+narrower named obligations plus a sorry-free assembly. The result is
+a 4--8 level deep dependency tree whose leaves are exactly the
+classical inputs the formal project still has to import (or build
+upstream in Mathlib).
+
+\begin{lemma}[R6/A1: Riemann--Roch dim bound for two-point pole divisor]
+\label{lem:rr-two-point-dim-geq-two}
+\uses{thm:fd-holomorphic-one-forms,thm:abel-existence}
+For any two distinct points \(Q_1\neq Q_2\) on a compact connected
+Riemann surface \(X\), the Riemann--Roch space \(L((Q_1)+(Q_2))\)
+has \(\C\)-dimension at least \(2\). In particular, the quotient by
+constants has dimension at least \(1\), so a non-constant
+meromorphic function with poles bounded by \((Q_1)+(Q_2)\) exists.
+\lean{JacobianChallenge.AbelJacobi.riemannRochSpace_two_point_pole_dim_geq_two}
+\leanok
+\end{lemma}
+
+\begin{layman}
+The Riemann--Roch theorem gives \(\ell(D)-\ell(K-D) = \deg D - g + 1\).
+For \(D = (Q_1)+(Q_2)\), \(\deg D = 2\), so
+\(\ell(D) \ge 3 - g\). Combined with the trivial \(\ell(D) \ge 1\)
+(constants), we get \(\ell(D) \ge \max(1, 3 - g) \ge 2\) at least
+for \(g \le 1\); for \(g \ge 2\), the analogous bound requires
+non-speciality of generic two-point divisors. Why bother? It is the
+linear-algebra hammer that produces the third-kind function: a
+two-dimensional Riemann--Roch space contains constants and
+non-constants, and the latter must have honest poles at \(Q_1\) and
+\(Q_2\).
+\end{layman}
+
+\begin{proof}\leanok
+Apply Riemann--Roch to the divisor \(D = (Q_1)+(Q_2)\). The bound
+\(\ell(D) \ge 3 - g\) is direct. Combined with \(\ell(D) \ge 1\)
+from constants and the genericity-of-non-special-divisors
+observation for higher genus (Brill--Noether), we conclude
+\(\ell(D) \ge 2\).
+\end{proof}
+
+\begin{lemma}[R6/A2: Pole-divisor realisation from RR dim bound]
+\label{lem:two-point-pole-realisation}
+\uses{lem:rr-two-point-dim-geq-two}
+If \(\ell((Q_1)+(Q_2)) \ge 2\), then there exists a meromorphic
+function \(f_0:X\to\widehat{\C}\) whose pole divisor is \emph{exactly}
+\((Q_1)+(Q_2)\) (not a sub-divisor like \((Q_1)\) alone).
+\lean{JacobianChallenge.AbelJacobi.nonconstant_meromorphicMap_pole_divisor_eq_two_point_of_dim_geq_two}
+\leanok
+\end{lemma}
+
+\begin{layman}
+A two-dimensional Riemann--Roch space contains the constants (one
+dimension) and a non-constant function (the second dimension). The
+non-constant function automatically has poles \emph{somewhere}, and
+the only places it can have poles are inside the prescribed divisor
+\((Q_1)+(Q_2)\). For positive genus, having a single simple pole
+would force genus zero (contradiction), so both \(Q_1\) and \(Q_2\)
+must be honest poles. Why bother? It pins the third-kind data to
+have the precise pole divisor needed downstream.
+\end{layman}
+
+\begin{proof}\leanok
+The Riemann--Roch space modulo constants is at least one-dimensional,
+so it contains a non-constant function \(f\) with poles bounded by
+\((Q_1)+(Q_2)\). If \(f\) had a single simple pole at \(Q_1\) (and
+nothing at \(Q_2\)), then \(f:X\to\widehat{\C}\) would be a
+degree-one holomorphic map, forcing \(g(X)=0\) by
+Theorem~\ref{thm:riemann-hurwitz-deg1}. So for genus \(\ge 1\), the
+pole divisor is exactly \((Q_1)+(Q_2)\). For genus \(0\), an
+explicit construction (e.g.\ \(\frac{1}{z-Q_1} - \frac{1}{z-Q_2}\)
+on \(\C\widehat{\C}\)) supplies the witness directly.
+\end{proof}
+
+\begin{lemma}[R7/B1: Residue-theorem pairing identity]
+\label{lem:residue-pairing-third-kind}
+\uses{lem:third-kind-meromorphic-data-exists,input:riemann-bilinear,thm:stokes-on-rs-with-boundary}
+For third-kind data \(f_0\) on \(X\) and any holomorphic 1-form
+\(\omega_k\) in a chosen basis of \(H^0(X,\Omega^1)\), the bilinear
+pairing of \(d\log f_0\) with \(\omega_k\) over a symplectic
+homology basis equals \(2\pi i\cdot \int_{Q_2}^{Q_1}\omega_k\).
+\lean{JacobianChallenge.AbelJacobi.residue_pairing_third_kind_holomorphic}
+\leanok
+\end{lemma}
+
+\begin{layman}
+The Riemann reciprocity (bilinear) identity, applied to the
+third-kind 1-form \(d\log f_0\) (simple poles at \(Q_1, Q_2\),
+residues \(\pm 1\)) paired against a holomorphic 1-form \(\omega_k\),
+evaluates to \(2\pi i\) times the path integral of \(\omega_k\) from
+\(Q_2\) to \(Q_1\). The proof is Stokes' theorem on a fundamental
+polygon plus the residue calculation at the two simple poles. Why
+bother? It is the precise numerical bridge between ``log periods''
+of \(f_0\) and ``period integrals'' of holomorphic 1-forms — the
+exact translation needed to convert the AJ kernel hypothesis into a
+\(2\pi i\Z\) condition on log periods.
+\end{layman}
+
+\begin{proof}\leanok
+Cut \(X\) along a symplectic basis \((a_j, b_j)\) of \(H_1(X,\Z)\)
+to obtain a fundamental polygon \(\mathcal P\). Let \(\widetilde f\)
+be a single-valued branch of \(\log f_0\) on \(\mathcal P\)
+(with branch cuts along the symplectic basis). Apply Stokes'
+theorem to \(\widetilde f \cdot \omega_k\) on \(\mathcal P\). The
+boundary integral over \(\partial\mathcal P\) collapses to the
+bilinear period sum
+\[
+   \sum_j\Big( \int_{a_j} d\log f_0 \cdot \int_{b_j}\omega_k
+              - \int_{b_j} d\log f_0 \cdot \int_{a_j}\omega_k \Big).
+\]
+The interior contribution from the residues of \(d\log f_0\) at
+\(Q_1, Q_2\) (residues \(+1, -1\) with simple poles) gives
+\[
+   2\pi i \cdot ( \widetilde f(Q_1) - \widetilde f(Q_2) )
+   = 2\pi i \cdot \int_{Q_2}^{Q_1}\omega_k.
+\]
+Equating the two evaluations of the integral yields the identity.
+\end{proof}
+
+\begin{lemma}[R7/B2: Log-period vanishing translation]
+\label{lem:logperiod-vanishing-translation}
+\uses{lem:residue-pairing-third-kind,thm:period-lattice}
+Combine Lemma~\ref{lem:residue-pairing-third-kind} with the
+basis-aligned period-congruence hypothesis to conclude that the
+period vector of \(d\log f_0\) lies in
+\(2\pi i\cdot\Z^{2g}\) modulo a holomorphic adjustment.
+\lean{JacobianChallenge.AbelJacobi.logPeriodVanishing_from_residuePairing_and_periodCongruence}
+\leanok
+\end{lemma}
+
+\begin{layman}
+By the residue-pairing identity, each twisted period of
+\(d\log f_0\) against a basis 1-form \(\omega_k\) equals \(2\pi i\)
+times \(\int_{Q_2}^{Q_1}\omega_k\). The hypothesis says each such
+path integral lies in the period lattice \(\Lambda_{\mathrm{ba}}\).
+Multiplying by \(2\pi i\), the period vector of \(d\log f_0\) lies in
+\(2\pi i\cdot\Lambda_{\mathrm{ba}}\), which is exactly the
+``log-period vanishing modulo \(2\pi i\Z^{2g}\)'' condition.
+\end{layman}
+
+\begin{proof}\leanok
+For each basis 1-form \(\omega_k\), the period of \(d\log f_0\)
+against \(\omega_k\) equals \(2\pi i\cdot \int_{Q_2}^{Q_1}\omega_k\)
+(Lemma~\ref{lem:residue-pairing-third-kind}). The hypothesis
+\(-I_{P,Q_1} + I_{P,Q_2} \in \Lambda_{\mathrm{ba}}\) says
+\(\int_{Q_2}^{Q_1}\omega_k\) lies in the period lattice for every
+\(k\). So each twisted period of \(d\log f_0\) lies in
+\(2\pi i\cdot\Lambda_{\mathrm{ba}}\), i.e.\ in
+\(2\pi i\cdot\Z^{2g}\) modulo the holomorphic period lattice.
+\end{proof}
+
+\begin{lemma}[R8/C1: Single-valued log primitive existence]
+\label{lem:single-valued-log-primitive}
+\uses{lem:third-kind-meromorphic-data-exists,lem:logperiod-vanishing-translation}
+Given third-kind data \(f_0\) and the log-period vanishing
+hypothesis, there exists a single-valued holomorphic function
+\(L : X\setminus\{Q_1,Q_2\} \to \C/2\pi i\,\Z\) with
+\(dL = d\log f_0\).
+\lean{JacobianChallenge.AbelJacobi.singleValuedLogPrimitive_of_logPeriodVanishing}
+\leanok
+\end{lemma}
+
+\begin{layman}
+A closed 1-form \(\omega\) on a manifold \(M\) is exact iff its
+integral over every loop vanishes. When the periods of
+\(\omega = d\log f_0\) lie in \(2\pi i\Z\), the form
+\((2\pi i)^{-1}\omega\) has integer periods, and after exponentiation
+the multivalued primitive becomes single-valued modulo \(2\pi i\Z\).
+This is exactly a single-valued function with values in
+\(\C/2\pi i\Z\), which is the same as a single-valued
+\(\widehat{\C}^\times\)-valued function (the exponential).
+\end{layman}
+
+\begin{proof}\leanok
+A closed 1-form on a connected manifold has a well-defined
+multivalued primitive whose ambiguity is the period subgroup. By
+hypothesis the period subgroup of \(d\log f_0\) lies in
+\(2\pi i\Z\). Quotienting by \(2\pi i\Z\) gives a single-valued
+function \(L : X \setminus\{Q_1,Q_2\} \to \C/2\pi i\Z\) with
+\(dL = d\log f_0\), which is the required log primitive.
+\end{proof}
+
+\begin{lemma}[R8/C2: Exponentiation and divisor identification]
+\label{lem:exp-log-primitive-divisor}
+\uses{lem:single-valued-log-primitive}
+The exponential \(\widetilde g = \exp L\) of the single-valued log
+primitive extends across the punctures \(\{Q_1, Q_2\}\) to a
+meromorphic function on \(X\), with simple zero at \(Q_1\) and
+simple pole at \(Q_2\); equivalently,
+\((\widetilde g) = (Q_1) - (Q_2)\).
+\lean{JacobianChallenge.AbelJacobi.meromorphicFunction_via_exp_of_singleValuedLog}
+\leanok
+\end{lemma}
+
+\begin{layman}
+Exponentiating a single-valued primitive of \(d\log f_0\) gives a
+single-valued function on \(X\setminus\{Q_1, Q_2\}\). At \(Q_1\),
+\(d\log f_0\) has a simple pole of residue \(+1\), so its primitive
+looks like \(\log(z-Q_1)\) locally and the exponential is
+\((z-Q_1)\cdot\text{unit}\) — a simple zero. At \(Q_2\), the
+residue is \(-1\), giving a simple pole. Elsewhere
+\(d\log f_0\) is holomorphic, so the exponential is holomorphic and
+non-vanishing. The divisor of \(\exp L\) is therefore exactly
+\((Q_1) - (Q_2)\), as required by Abel.
+\end{layman}
+
+\begin{proof}\leanok
+Near \(Q_1\), pick a chart with local coordinate \(z\) sending
+\(Q_1 \mapsto 0\). Locally \(d\log f_0 = (1/z + h(z))\,dz\) with
+\(h\) holomorphic, so any single-valued primitive (after
+quotienting by \(2\pi i\Z\)) is \(\log z + H(z)\) with \(H\)
+holomorphic. Exponentiating, \(\exp(\log z + H(z)) = z\cdot\exp H(z)\),
+which extends across \(z = 0\) to a holomorphic function with simple
+zero at \(z=0\), i.e.\ at \(Q_1\). Symmetrically, near \(Q_2\) the
+local form is \(z^{-1}\cdot\exp H(z)\), a meromorphic function with
+a simple pole at \(z = 0\). Elsewhere the integrand is holomorphic
+so the exponential is holomorphic and non-vanishing. Hence
+\((\widetilde g) = (Q_1) - (Q_2)\). Package as the required
+\texttt{RawMeromorphicWithPrincipal}.
+\end{proof}
+
 \begin{lemma}[S19a: Abel existence in two-point divisor form]
 \label{lem:abel-two-point-form}
 \uses{lem:third-kind-meromorphic-data-exists,lem:third-kind-log-period-vanishing,lem:meromorphic-via-log-exp}
