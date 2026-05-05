@@ -240,118 +240,16 @@ structure HolomorphicOneFormCoeffEntireData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
   differentiable_coeff : Differentiable ℂ (holomorphicOneForm_coeff ω)
 
-private lemma chartAt_coe_eq_identityChart (z : ℂ) :
-    chartAt ℂ (↑z : OnePoint ℂ) = identityChart := rfl
-
-/-
-The cotangent-bundle trivialization at a finite point `↑z₀` acts as the
-identity on fibers at any finite point `↑w`.  This holds because both
-`↑z₀` and `↑w` sit in the same chart (`identityChart`), so the tangent-bundle
-coordinate change is the identity.
--/
-private lemma cotangent_trivializationAt_coe_snd_eq (z₀ w : ℂ)
-    (L : CotangentSpace ℂ (OnePoint ℂ) (↑w)) :
-    (trivializationAt (CotangentModelFiber ℂ) (CotangentSpace ℂ (OnePoint ℂ)) (↑z₀)
-      ⟨↑w, L⟩).2 = L := by
-  erw [ hom_trivializationAt_apply ];
-  simp [ContinuousLinearMap.inCoordinates];
-  rw [ TangentBundle.symmL_trivializationAt_eq_core ];
-  · rw [ tangentBundleCore_coordChange_achart ];
-    rw [ fderivWithin_eq_fderiv ] <;> norm_num [ extChartAt ];
-    · rw [ show ( chartAt ℂ ( ↑w ) : OnePoint ℂ → ℂ ) ∘ ( chartAt ℂ ( ↑z₀ ) ).symm = id from ?_ ] ; norm_num;
-      ext; simp [chartAt];
-      simp +decide [ ChartedSpace.chartAt, identityChart ];
-      grind +suggestions;
-    · rw [ chartAt_coe_eq_identityChart, chartAt_coe_eq_identityChart ];
-      simp +decide [ identityChart ];
-      simp +decide [ Topology.IsOpenEmbedding.toOpenPartialHomeomorph ];
-      refine' DifferentiableAt.congr_of_eventuallyEq _ _;
-      exact fun x => x;
-      · exact differentiableAt_id;
-      · filter_upwards [ ] with x using by simp +decide [ Function.invFunOn ] ;
-  · rw [ chartAt_coe_eq_identityChart ] ; simp +decide [ identityChart ]
-
-/-
-The embedding `↑· : ℂ → OnePoint ℂ` is `ContMDiff` (smooth between manifolds).
--/
-private lemma coe_contMDiff :
-    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ⊤
-      (fun z : ℂ => (↑z : OnePoint ℂ)) := by
-  have h_cont_diff : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) ⊤ (fun z : ℂ => (identityChart.symm z : OnePoint ℂ)) := by
-    rw [ contMDiff_iff ];
-    refine' ⟨ _, _ ⟩;
-    · -- The inclusion map from ℂ to OnePoint ℂ is continuous by definition of the one-point compactification.
-      apply OnePoint.continuous_coe;
-    · intro x y;
-      cases y <;> simp +decide [ extChartAt ];
-      · refine' ContDiffOn.congr _ _;
-        exact fun z => z⁻¹;
-        · exact ContDiffOn.inv contDiffOn_id fun z hz => by aesop;
-        · simp +decide [ chartAt, identityChart ];
-          simp +decide [ ChartedSpace.chartAt ];
-          simp +decide [ inversionChart ];
-      · simp +decide [ chartAt_coe_eq_identityChart ];
-        simp +decide [ identityChart ];
-        simp +decide [ Topology.IsOpenEmbedding.toOpenPartialHomeomorph ];
-        refine' ContDiffOn.congr _ _;
-        exact fun x => x;
-        · exact contDiffOn_id;
-        · simp +decide [ Function.invFunOn ];
-  convert h_cont_diff using 1
-
-/-
-The trivialized and direct section functions agree on `{∞}ᶜ`.
--/
-private lemma section_triv_eventuallyEq
-    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (z : ℂ) :
-    (fun x : OnePoint ℂ => (trivializationAt (CotangentModelFiber ℂ)
-        (CotangentSpace ℂ (OnePoint ℂ)) (↑z) ⟨x, ω x⟩).2) =ᶠ[nhds (↑z : OnePoint ℂ)]
-    (fun x : OnePoint ℂ => (show CotangentModelFiber ℂ from ω x)) := by
-  refine' Filter.eventuallyEq_of_mem _ _;
-  exact ( Set.range ( ( ↑ ) : ℂ → OnePoint ℂ ) );
-  · simp +decide [ OnePoint.nhds_coe_eq ];
-  · intro x hx; obtain ⟨ w, rfl ⟩ := hx; simp +decide [ cotangent_trivializationAt_coe_snd_eq ] ;
-
-/-- At each finite point `↑z`, the direct section function `fun x ↦ ω x` (viewed as
-a function from `OnePoint ℂ` to `CotangentModelFiber ℂ`) is `ContMDiffAt`. This
-follows from `contMDiffAt_section` + `cotangent_trivializationAt_coe_snd_eq`. -/
-private lemma omega_contMDiffAt_fiber
-    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (z : ℂ) :
-    ContMDiffAt (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ (CotangentModelFiber ℂ)) ⊤
-      (fun x : OnePoint ℂ => (show CotangentModelFiber ℂ from ω x)) (↑z) := by
-  have h_triv := (Bundle.contMDiffAt_section (↑z : OnePoint ℂ)
-    (s := fun x => ω x) (F := CotangentModelFiber ℂ) (E := CotangentSpace ℂ (OnePoint ℂ))).mp
-    ω.contMDiff_toFun.contMDiffAt
-  exact h_triv.congr_of_eventuallyEq (section_triv_eventuallyEq ω z).symm
-
-/-- A smooth section of the cotangent bundle on `OnePoint ℂ`, precomposed with the
-identity-chart embedding `↑· : ℂ → OnePoint ℂ`, yields a `ContDiff` function
-into the model fiber `ℂ →L[ℂ] ℂ`. -/
-private lemma section_comp_coe_contDiff
-    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
-    ContDiff ℂ (⊤ : WithTop ℕ∞)
-      (fun z : ℂ => (show CotangentModelFiber ℂ from ω (↑z : OnePoint ℂ))) := by
-  rw [contDiff_iff_contDiffAt]
-  intro z
-  rw [← contMDiffAt_iff_contDiffAt]
-  exact (omega_contMDiffAt_fiber ω z).comp z coe_contMDiff.contMDiffAt
-
 /-- **Identity-chart extraction leaf.** The coefficient read directly from
 the identity-chart local representative is `C^∞`.
 
 Bottom-up content: expose a chart-trivialization API for `ContMDiffSection`
 on the cotangent bundle, specialized to `identityChart`, and compose the
-local representative with evaluation at `1 : ℂ`.
-
-(Aristotle b720818b: substantive proof via cotangent-bundle trivialization
-at finite points, composed with evaluation at `1 : ℂ`.) -/
+local representative with evaluation at `1 : ℂ`. -/
 theorem holomorphicOneFormIdentityChartCoeffContDiff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContDiff ℂ (⊤ : WithTop ℕ∞) (holomorphicOneForm_identityChartCoeff ω) := by
-  have hsc := section_comp_coe_contDiff ω
-  have : ContDiff ℂ ⊤ (fun z : ℂ => (show CotangentModelFiber ℂ from ω (↑z : OnePoint ℂ)) (1 : ℂ)) :=
-    hsc.clm_apply contDiff_const
-  convert this using 1
+  sorry
 
 /-- **Identity-chart identification leaf.** The chart-local coefficient
 agrees with the direct finite-point formula used by the Liouville assembly.
@@ -398,15 +296,8 @@ inversion-chart formula `g(w) = -f(1/w)/w²` for the cotangent bundle
 and smoothness at `w = 0`. Both absent in v4.28.0. -/
 noncomputable def holomorphicOneForm_inversionCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
-  fun w =>
-    if w = 0 then
-      ω.toFun (OnePoint.infty : OnePoint ℂ)
-        (show TangentSpace (modelWithCornersSelf ℂ ℂ) (OnePoint.infty : OnePoint ℂ) from
-          (1 : ℂ))
-    else
-      -((w ^ 2)⁻¹) *
-        ω.toFun (invBwd w)
-          (show TangentSpace (modelWithCornersSelf ℂ ℂ) (invBwd w) from (1 : ℂ))
+  fun w => ω.toFun (invBwd w)
+    (show TangentSpace (modelWithCornersSelf ℂ ℂ) (invBwd w) from (1 : ℂ))
 
 /-- The coefficient obtained by reading `ω` in `inversionChart` and then
 evaluating on `1 : ℂ`.
@@ -416,16 +307,8 @@ using `invBwd`, so the bottom-up work can prove the chart identification
 without being entangled with continuity of the local representative. -/
 noncomputable def holomorphicOneForm_inversionChartCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
-  fun w =>
-    if w = 0 then
-      ω.toFun (OnePoint.infty : OnePoint ℂ)
-        (show TangentSpace (modelWithCornersSelf ℂ ℂ) (OnePoint.infty : OnePoint ℂ) from
-          (1 : ℂ))
-    else
-      -((w ^ 2)⁻¹) *
-        ω.toFun (inversionChart.symm w)
-          (show TangentSpace (modelWithCornersSelf ℂ ℂ) (inversionChart.symm w) from
-            (1 : ℂ))
+  fun w => ω.toFun (inversionChart.symm w)
+    (show TangentSpace (modelWithCornersSelf ℂ ℂ) (inversionChart.symm w) from (1 : ℂ))
 
 structure HolomorphicOneFormCoeffTendstoZeroData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
@@ -443,17 +326,6 @@ evaluation at `1 : ℂ`. -/
 theorem holomorphicOneFormInversionChartCoeffContinuousAtZero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (holomorphicOneForm_inversionChartCoeff ω) 0 := by
-  /- BLOCKER (Aristotle 6b7b944f): Unlike the identity-chart case
-     (closed by b720818b), the cotangent trivialization at ∞ does NOT act as
-     the identity on nearby fibers. By `hom_trivializationAt_apply` +
-     `symmL_trivializationAt_eq_core`, the trivialized section at ↑(w⁻¹) is
-     `ω(↑(w⁻¹)) ∘ symmL` where `symmL = -w⁻²`, giving trivialized value
-     `-w⁻² f(w⁻¹)` ≠ `f(w⁻¹)`. The theorem is true but its proof requires
-     showing `f = 0` (via Liouville on `-w⁻² f(w⁻¹)` being holomorphic at 0),
-     making it logically equivalent to the main `ω = 0` result, not a stepping
-     stone toward it. The proof plan's transition formula
-     `moebiusPullback_cotangent_pointwise` is also false as stated (both sides
-     evaluate `ω` at `1 = ∂/∂z`, not at the inversion-chart tangent vector). -/
   sorry
 
 /-- **Inversion-chart identification leaf.** The chart-local inversion
@@ -484,39 +356,17 @@ def holomorphicOneForm_identityInversionTransition
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w
 
-/-- **Möbius-pullback step (pointwise).** For `w ≠ 0`, the identity-chart
-and inversion-chart coefficient functions are related by the Jacobian
-factor of the chart transition `z = w⁻¹`: `d(w⁻¹) = -w⁻² dw`.
-
-This is the chart-pullback computation on the cotangent bundle; it requires
-showing that the `ContMDiffSection` local representatives in the identity
-and inversion charts are related by the cotangent bundle transition
-function, then extracting the `-w²` Jacobian factor via evaluation at
-`1 : ℂ`.
-
-(Aristotle a577e2ce named-helper extraction.) -/
-private lemma moebiusPullback_cotangent_pointwise
-    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
-    holomorphicOneForm_coeff ω (w⁻¹) =
-      -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
-  unfold holomorphicOneForm_coeff holomorphicOneForm_inversionCoeff
-  rw [if_neg hw, invBwd_ne_zero hw]
-  have hw2 : w ^ 2 ≠ 0 := pow_ne_zero 2 hw
-  field_simp [hw2]
-
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
 and inversion charts, the two coefficient functions are related by the
 Jacobian factor of `z = w⁻¹`.
 
-(Aristotle a577e2ce, sorry-free assembly via moebiusPullback_cotangent_pointwise
-+ eventually_nhdsWithin_of_forall.) -/
+Bottom-up content: prove the explicit cotangent transition formula between
+`identityChart` and `inversionChart`, including the derivative factor
+`d(w⁻¹) = -w⁻² dw`, and rewrite it in the displayed `f(w⁻¹)` form. -/
 theorem holomorphicOneForm_identityInversionTransition_eventually
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     holomorphicOneForm_identityInversionTransition ω := by
-  unfold holomorphicOneForm_identityInversionTransition
-  exact eventually_nhdsWithin_of_forall fun w hw => by
-    simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hw
-    exact moebiusPullback_cotangent_pointwise ω w hw
+  sorry
 
 /-- **Analytic decay leaf.** A continuous inversion coefficient at `0`,
 together with the punctured cotangent-transition formula, forces the
@@ -532,51 +382,7 @@ theorem holomorphicOneFormCoeffTendstoZeroOfTransition
     holomorphicOneForm_identityInversionTransition ω →
     Filter.Tendsto (holomorphicOneForm_coeff ω)
       (Filter.cocompact ℂ) (nhds 0) := by
-  -- Aristotle 1e424cc3: re-derived b19e41ad with explicit type annotations.
-  intro hcont htrans
-  -- Step 1: Tendsto (·⁻¹) (cocompact ℂ) (nhdsWithin 0 {0}ᶜ)
-  have h_inv : Filter.Tendsto (Inv.inv : ℂ → ℂ) (Filter.cocompact ℂ)
-      (nhdsWithin (0 : ℂ) ({0}ᶜ)) := by
-    apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
-    · rw [Metric.tendsto_nhds]
-      intro ε hε
-      apply Filter.Eventually.mono
-        (show ∀ᶠ z in Filter.cocompact ℂ, z ∈ (Metric.closedBall (0 : ℂ) ε⁻¹)ᶜ from
-          IsCompact.compl_mem_cocompact (isCompact_closedBall (0 : ℂ) ε⁻¹))
-      intro z hz
-      simp only [Metric.mem_closedBall, dist_zero_right, not_le, Set.mem_compl_iff] at hz ⊢
-      rw [norm_inv]; exact inv_lt_of_inv_lt₀ hε hz
-    · apply Filter.Eventually.mono
-        (show ∀ᶠ z in Filter.cocompact ℂ, z ∈ ({0} : Set ℂ)ᶜ from
-          IsCompact.compl_mem_cocompact (isCompact_singleton (x := (0 : ℂ))))
-      intro z hz hinv
-      simp only [Set.mem_compl_iff, Set.mem_singleton_iff] at hz
-      exact hz (inv_eq_zero.mp hinv)
-  -- Step 2: -w^2 → 0 as w → 0
-  have h_neg_sq : Filter.Tendsto (fun w : ℂ => -w ^ 2)
-      (nhdsWithin (0 : ℂ) ({0}ᶜ)) (nhds 0) := by
-    apply Filter.Tendsto.mono_left _ nhdsWithin_le_nhds
-    have h1 : Filter.Tendsto (fun w : ℂ => w ^ 2) (nhds 0) (nhds 0) := by
-      have := (continuous_pow 2).continuousAt (x := (0 : ℂ))
-      simp [ContinuousAt] at this; exact this
-    have h2 := h1.neg; rwa [neg_zero] at h2
-  -- Step 3: invCoeff ω bounded near 0
-  have h_bdd : Filter.IsBoundedUnder (· ≤ ·) (nhdsWithin (0 : ℂ) ({0}ᶜ))
-      ((fun x => ‖x‖) ∘ (holomorphicOneForm_inversionCoeff ω)) :=
-    (continuous_norm.continuousAt.tendsto.comp hcont.tendsto).isBoundedUnder_le.mono
-      nhdsWithin_le_nhds
-  -- Step 4: product → 0 via zero_mul_isBoundedUnder
-  have h_prod : Filter.Tendsto
-      (fun w => (-w ^ 2) * holomorphicOneForm_inversionCoeff ω w)
-      (nhdsWithin (0 : ℂ) ({0}ᶜ)) (nhds 0) :=
-    h_neg_sq.zero_mul_isBoundedUnder_le h_bdd
-  -- Step 5: coeff ω (w⁻¹) → 0 by transition formula (eventually equal)
-  have h_comp : Filter.Tendsto (fun w => holomorphicOneForm_coeff ω (w⁻¹))
-      (nhdsWithin (0 : ℂ) ({0}ᶜ)) (nhds 0) := by
-    rw [Filter.Tendsto]
-    exact le_trans (le_of_eq (Filter.map_congr htrans)) h_prod
-  -- Step 6: compose inversion on cocompact with (·⁻¹)⁻¹ = id
-  exact (h_comp.comp h_inv).congr (fun z => by simp [Function.comp, inv_inv])
+  sorry
 
 /-- **Chart-transition assembly.** Continuity and the explicit transition
 formula are the remaining leaves; the old broad decay obligation is no
@@ -651,10 +457,9 @@ theorem holomorphicOneForm_inversionCoeff_eq_zero_of_ne_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) {w : ℂ} (hw : w ≠ 0) :
     holomorphicOneForm_inversionCoeff ω w = 0 := by
   unfold holomorphicOneForm_inversionCoeff
-  rw [if_neg hw, invBwd_ne_zero hw]
+  rw [invBwd_ne_zero hw]
   rw [holomorphicOneForm_onePointCx_toFun_finite_eq_zero]
   simp only [ContinuousLinearMap.zero_apply]
-  simp
 
 /-- **Removable-singularity leaf.** If the inversion coefficient is
 continuous at `0` and vanishes away from `0`, then the holomorphic 1-form
@@ -668,19 +473,7 @@ theorem holomorphicOneForm_infty_vanishing_of_inversionCoeff
     ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
     (∀ {w : ℂ}, w ≠ 0 → holomorphicOneForm_inversionCoeff ω w = 0) →
     ω.toFun (OnePoint.infty : OnePoint ℂ) = 0 := by
-  -- Aristotle 0f24ef1b: continuity + punctured-vanishing → inversionCoeff 0 = 0.
-  intro h1 h2
-  have h3 : holomorphicOneForm_inversionCoeff ω 0 = 0 := by
-    have h_punct : Filter.Tendsto (fun w : ℂ => holomorphicOneForm_inversionCoeff ω w)
-        (nhdsWithin 0 {0}ᶜ) (nhds 0) := by
-      exact tendsto_const_nhds.congr'
-        (Filter.eventuallyEq_of_mem self_mem_nhdsWithin fun x hx => by aesop)
-    exact tendsto_nhds_unique (h1.mono_left nhdsWithin_le_nhds) h_punct
-  ext
-  convert h3 using 1
-  unfold holomorphicOneForm_inversionCoeff
-  simp
-  rfl
+  sorry
 
 /-- **Assembly for infinity vanishing.** The remaining leaf is the
 removable-singularity step from the inversion coefficient. -/
@@ -821,88 +614,13 @@ structure HomeoSphereHolomorphicOneFormVanishing
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
   subsingleton : Subsingleton (HolomorphicOneForm ℂ X)
 
-/-- **Uniformization-lite helper.** A compact connected Riemann surface
-topologically homeomorphic to `OnePoint ℂ` has subsingleton holomorphic
-1-forms. This encapsulates the deep content: the uniqueness of the
-complex structure on the topological 2-sphere forces X to be
-biholomorphic to `OnePoint ℂ ≃ ℂℙ¹`, whose canonical bundle has
-negative degree, yielding `H⁰(Ω¹) = 0`.
-
-Mathlib gaps: uniqueness of smooth/complex structure on S², pullback of
-holomorphic 1-forms along biholomorphisms.
-
-(Aristotle 22577167 named-helper extraction.) -/
-theorem subsingleton_holomorphicOneForm_of_homeo_onePointCx
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (_e : Nonempty (X ≃ₜ OnePoint ℂ)) :
-    Subsingleton (HolomorphicOneForm ℂ X) := by
-  -- BLOCKER: A topological homeomorphism X ≃ₜ OnePoint ℂ does NOT
-  -- lift to a biholomorphism without the uniqueness of complex
-  -- structure on S² (uniformization at genus 0).
-  --
-  -- ══════════════════════════════════════════════════════════════
-  -- Mathlib v4.28.0 gaps — searched and confirmed absent
-  -- (Aristotle a16b84f1)
-  -- ══════════════════════════════════════════════════════════════
-  --
-  -- 1. UNIFORMIZATION THEOREM (absent).
-  --    No `uniformization`, `RiemannSurface`, or
-  --    `SimplyConnectedRiemannSurface.biholo_equiv` in Mathlib.
-  --    Mathlib has `SimplyConnectedSpace` but no connection to
-  --    complex-analytic classification.
-  --
-  -- 2. UNIQUENESS OF COMPLEX STRUCTURE ON S² (absent).
-  --    No `complex_structure_unique_sphere` or equivalent.
-  --
-  -- 3. BIHOLOMORPHISM / HOLOMORPHIC EQUIVALENCE TYPE (absent).
-  --    No `Biholomorph` or `HolomorphicEquiv` type for complex
-  --    manifolds. `Diffeomorph` is smooth (not holomorphic).
-  --
-  -- 4. PULLBACK OF COTANGENT SECTIONS (absent).
-  --    No `ContMDiffSection.pullback` or `pullbackCotangent` for
-  --    transporting holomorphic 1-forms along a biholomorphism.
-  --
-  -- 5. `Homeomorph.chartedSpace` / `Homeomorph.isManifold` (absent).
-  --    No API to transfer `ChartedSpace` or `IsManifold` along a
-  --    `Homeomorph`.
-  --
-  -- ══════════════════════════════════════════════════════════════
-  -- Attempted alternative routes
-  -- ══════════════════════════════════════════════════════════════
-  -- Route A: Transport Subsingleton via topological homeo directly.
-  --   FAILS: HolomorphicOneForm ℂ X and HolomorphicOneForm ℂ
-  --   (OnePoint ℂ) are sections of *different* cotangent bundles.
-  -- Route B: Use FiniteDimensionalHolomorphicOneForms + topology.
-  --   FAILS: gives finite-dim, not vanishing.
-  -- Route C: Prove on OnePoint ℂ directly + transfer.
-  --   PARTIAL: holomorphicOneForm_onePointCx_subsingleton works,
-  --   but transfer needs biholomorphism (gaps 3-4).
-  -- Route D: Liouville's theorem on X directly.
-  --   FAILS: cannot extract entire function from abstract chart
-  --   structure without knowing it matches OnePoint ℂ.
-  --
-  -- ══════════════════════════════════════════════════════════════
-  -- Minimal unblocking API (any one suffices)
-  -- ══════════════════════════════════════════════════════════════
-  -- (a) Homeomorph.chartedSpace + Homeomorph.isManifold +
-  --     uniqueComplexStructureSphere + cotangent pullback.
-  -- (b) Direct uniformizationGenusZero : CompactSpace X →
-  --     ConnectedSpace X → (X ≃ₜ OnePoint ℂ) →
-  --     Subsingleton (HolomorphicOneForm ℂ X).
-  -- (c) Hodge theory: analyticGenus = topologicalGenus +
-  --     topologicalGenus_of_homeo_sphere = 0.
-  sorry
-
 /-- **Opaque data obligation (uniformization-lite core).** A compact
 connected Riemann surface homeomorphic to S² has no nonzero holomorphic
 1-forms.
 
-Reduced to `subsingleton_holomorphicOneForm_of_homeo_onePointCx` by
-composing the given homeomorphism `X ≃ₜ S²` with the inverse of
-`onePointEquivSphereOfFinrankEq`. (Aristotle 22577167.) -/
+Bottom-up content: uniqueness of the complex structure on the topological
+2-sphere, transport of holomorphic 1-forms along the resulting
+biholomorphism to `OnePoint ℂ`, and the `H⁰(ℂℙ¹, Ω¹) = 0` computation. -/
 theorem homeoSphereHolomorphicOneFormVanishing
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -910,10 +628,7 @@ theorem homeoSphereHolomorphicOneFormVanishing
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     Subsingleton (HolomorphicOneForm ℂ X) := by
-  exact subsingleton_holomorphicOneForm_of_homeo_onePointCx X
-    (_h.map (fun e => e.trans
-      (onePointEquivSphereOfFinrankEq
-        (by simp [Complex.finrank_real_complex])).symm))
+  sorry
 
 /-- **Sub-obligation wrapper (sorry-free).** Extracts the subsingleton
 consequence from `homeoSphereHolomorphicOneFormVanishing`. -/

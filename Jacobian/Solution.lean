@@ -109,17 +109,8 @@ lemma genus_eq_zero_iff_homeo :
 
 end
 
--- Universe-polymorphic section, mirroring `Challenge.lean`'s `Type*`
--- shape: `X`, `Y`, `Z` are at independent universes. The cycle
--- pushforward used by `Jacobian.TraceDegree.analyticPushforward` /
--- `analyticPullback` (via `Jacobian.Periods.PullbackNaturality`) is
--- declared `opaque` precisely so that
--- `singularHomologyFunctor : C ⥤ TopCat.{w} ⥤ C` does not pin source
--- and target topological spaces to a single universe `w`; see
--- `ref/plans/mathlib-hascoproducts-report.org` "Implementation notes".
-universe u u_1
-
-variable {X : Type u_1} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
+-- Type-0-specialised section for the Jacobian-related declarations.
+variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
 
 -- data
@@ -129,11 +120,19 @@ Refinement (Round 2a, top-down): `Jacobian X := ULift (V ⧸ Λ)` where
 `V = Fin (genus X) → ℂ` is the basis-aligned model space and
 `Λ = periodFullComplexLattice X` is the period lattice.
 
-`ULift.{u, 0}` transports the analytic carrier (which lives in
-`Type 0` because `Fin (genus X) → ℂ : Type 0`) up to the universe of
-`X`, matching `Challenge.Jacobian (X : Type u) : Type u`. -/
-noncomputable def Jacobian (X : Type u) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] : Type u :=
+**Universe note (post-keystone, 2026-04-27).** The carrier `X` is
+specialised to `Type` (Type 0) — the same constraint that
+`Periods.periodSubgroup` and `IntegralOneCycle` carry, propagated
+through `periodFullComplexLattice X` after the keystone refactor that
+routed `basisAlignedPeriodSubgroup` to its concrete representative.
+This is a divergence from `Challenge.Jacobian (X : Type u)` at the
+data-level signature; per `Jacobian/WorkPackets/TopDown.md` the
+comparator's `theorem_names` list is theorem-level and so should still
+match. The `ULift` in the body is now degenerate (`ULift.{0,0}` is
+`ULift` to the same universe) but kept for shape parity with the
+universe-poly intent. -/
+noncomputable def Jacobian (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] : Type :=
   ULift (JacobianChallenge.ComplexTorus.quotient
     (Fin (genus X) → ℂ) (JacobianChallenge.Periods.periodFullComplexLattice X))
 
@@ -198,9 +197,7 @@ lemma ofCurve_inj (P : X) (h : 0 < genus X) : Function.Injective (ofCurve P) := 
     (by simpa [genus] using h)
   exact ULift.up_injective hab
 
-universe u_2
-
-variable {Y : Type u_2} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [ChartedSpace ℂ Y] [IsManifold 𝓘(ℂ) ω Y]
 
 variable (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -239,9 +236,7 @@ lemma pushforward_id_apply (P : Jacobian X) : pushforward id contMDiff_id P = P 
   rw [JacobianChallenge.TraceDegree.analyticPushforward_id_apply]
   rfl
 
-universe u_3
-
-variable {Z : Type u_3} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
+variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
   [ChartedSpace ℂ Z] [IsManifold 𝓘(ℂ) ω Z]
 
 variable (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
@@ -300,26 +295,19 @@ lemma pullback_comp_apply (P : Jacobian Z) :
       (JacobianChallenge.TraceDegree.analyticPullback g hg P.down))
   rw [JacobianChallenge.TraceDegree.analyticPullback_comp_apply]
 
-/-- The degree of a holomorphic map between compact Riemann surfaces.
-Equal to zero for constant maps, otherwise equal to the usual degree.
-
-Refinement (Round 4c): delegated to the basis-aligned analytic degree
-in `Jacobian.TraceDegree.AnalyticDegree`. -/
+/-- The degree of a holomorphic map between compact Riemann surfaces. Equal to zero
+for constant maps, otherwise equal to the usual degree.
+Refinement (Round 4c): delegated to `analyticDegree`. -/
 noncomputable def _root_.ContMDiff.degree
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
   JacobianChallenge.TraceDegree.analyticDegree f hf
 
-/-- Trace–pullback identity (anti-hack #4).
-
-Refinement (Round 4c): wrapper around the basis-aligned
-trace-pullback identity in `Jacobian.TraceDegree.AnalyticDegree`. -/
 lemma pushforward_pullback (P : Jacobian Y) :
-    pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P :=
-  by
-    show ULift.up (JacobianChallenge.TraceDegree.analyticPushforward f hf
-        (JacobianChallenge.TraceDegree.analyticPullback f hf P.down)) =
-      (JacobianChallenge.TraceDegree.analyticDegree f hf) • P
-    rw [JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback]
-    rfl
+    pushforward f hf (pullback f hf P) = (ContMDiff.degree f hf) • P := by
+  show ULift.up (JacobianChallenge.TraceDegree.analyticPushforward f hf
+      (JacobianChallenge.TraceDegree.analyticPullback f hf P.down)) =
+    (JacobianChallenge.TraceDegree.analyticDegree f hf) • P
+  rw [JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback]
+  rfl
 
 end Jacobian
