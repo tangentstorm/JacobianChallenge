@@ -261,7 +261,76 @@ theorem pathIntegralViaCover_partition_compat_under_smooth
       (∀ (i : Fin n) (t : unitInterval),
         (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
         (γ.map hf.continuous) t ∈ (chartAt ℂ (pickY i)).source) := by
-  sorry
+  -- Apply `exists_uniform_chart_partition` to γ on X and to γ.map hf on Y,
+  -- then refine to the common partition of size nX * nY.
+  obtain ⟨nX, hnX, pickXraw, hcovXraw⟩ :=
+    exists_uniform_chart_partition ℂ γ.toContinuousMap
+  obtain ⟨nY, hnY, pickYraw, hcovYraw⟩ :=
+    exists_uniform_chart_partition ℂ (γ.map hf.continuous).toContinuousMap
+  have hnX_pos : (0 : ℝ) < (nX : ℝ) := by exact_mod_cast hnX
+  have hnY_pos : (0 : ℝ) < (nY : ℝ) := by exact_mod_cast hnY
+  have hnXY_pos : (0 : ℝ) < (nX : ℝ) * (nY : ℝ) := mul_pos hnX_pos hnY_pos
+  have hcast : ((nX * nY : ℕ) : ℝ) = (nX : ℝ) * (nY : ℝ) := by push_cast; ring
+  -- Bound i.val / nY < nX from i.val < nX * nY.
+  have hidiv_X : ∀ i : Fin (nX * nY), i.val / nY < nX := fun i =>
+    (Nat.div_lt_iff_lt_mul hnY).mpr i.isLt
+  -- Bound i.val / nX < nY from i.val < nX * nY = nY * nX.
+  have hidiv_Y : ∀ i : Fin (nX * nY), i.val / nX < nY := fun i =>
+    (Nat.div_lt_iff_lt_mul hnX).mpr (Nat.mul_comm nX nY ▸ i.isLt)
+  refine ⟨nX * nY, Nat.mul_pos hnX hnY,
+    fun i => pickXraw ⟨i.val / nY, hidiv_X i⟩,
+    fun i => pickYraw ⟨i.val / nX, hidiv_Y i⟩, ?_, ?_⟩
+  · -- X-cover: γ t lies in the chart for pickXraw ⟨i.val / nY, _⟩.
+    intro i t ht1 ht2
+    refine hcovXraw ⟨i.val / nY, hidiv_X i⟩ t ?_ ?_
+    · -- ((i.val / nY : ℕ) : ℝ) / nX ≤ (t : ℝ)
+      have hmul : ((i.val / nY : ℕ) : ℝ) * (nY : ℝ) ≤ (i.val : ℝ) := by
+        exact_mod_cast Nat.div_mul_le_self i.val nY
+      have hstep : ((i.val / nY : ℕ) : ℝ) / (nX : ℝ) ≤ (i.val : ℝ) / ((nX * nY : ℕ) : ℝ) := by
+        rw [hcast, div_le_div_iff₀ hnX_pos hnXY_pos]
+        nlinarith [hmul, hnX_pos, hnY_pos]
+      exact hstep.trans ht1
+    · -- (t : ℝ) ≤ ((i.val / nY : ℕ) + 1 : ℝ) / nX
+      have h_nat : i.val + 1 ≤ ((i.val / nY) + 1) * nY := by
+        have h_lt : i.val / nY < (i.val / nY) + 1 := Nat.lt_succ_self _
+        have := (Nat.div_lt_iff_lt_mul hnY).mp h_lt
+        omega
+      have h_real : (i.val : ℝ) + 1 ≤ (((i.val / nY) + 1 : ℕ) : ℝ) * (nY : ℝ) := by
+        have := h_nat
+        push_cast
+        exact_mod_cast this
+      have hstep : ((i.val : ℝ) + 1) / ((nX * nY : ℕ) : ℝ) ≤
+          (((i.val / nY : ℕ) + 1 : ℕ) : ℝ) / (nX : ℝ) := by
+        rw [hcast, div_le_div_iff₀ hnXY_pos hnX_pos]
+        nlinarith [h_real, hnX_pos, hnY_pos]
+      have hcast_succ :
+          (((i.val / nY : ℕ) + 1 : ℕ) : ℝ) = ((i.val / nY : ℕ) : ℝ) + 1 := by push_cast; ring
+      rw [hcast_succ] at hstep
+      exact ht2.trans hstep
+  · -- Y-cover: (γ.map hf.continuous) t lies in chart for pickYraw ⟨i.val / nX, _⟩.
+    intro i t ht1 ht2
+    refine hcovYraw ⟨i.val / nX, hidiv_Y i⟩ t ?_ ?_
+    · have hmul : ((i.val / nX : ℕ) : ℝ) * (nX : ℝ) ≤ (i.val : ℝ) := by
+        exact_mod_cast Nat.div_mul_le_self i.val nX
+      have hstep : ((i.val / nX : ℕ) : ℝ) / (nY : ℝ) ≤ (i.val : ℝ) / ((nX * nY : ℕ) : ℝ) := by
+        rw [hcast, div_le_div_iff₀ hnY_pos hnXY_pos]
+        nlinarith [hmul, hnX_pos, hnY_pos]
+      exact hstep.trans ht1
+    · have h_nat : i.val + 1 ≤ ((i.val / nX) + 1) * nX := by
+        have h_lt : i.val / nX < (i.val / nX) + 1 := Nat.lt_succ_self _
+        have := (Nat.div_lt_iff_lt_mul hnX).mp h_lt
+        omega
+      have h_real : (i.val : ℝ) + 1 ≤ (((i.val / nX) + 1 : ℕ) : ℝ) * (nX : ℝ) := by
+        push_cast
+        exact_mod_cast h_nat
+      have hstep : ((i.val : ℝ) + 1) / ((nX * nY : ℕ) : ℝ) ≤
+          (((i.val / nX : ℕ) + 1 : ℕ) : ℝ) / (nY : ℝ) := by
+        rw [hcast, div_le_div_iff₀ hnXY_pos hnY_pos]
+        nlinarith [h_real, hnX_pos, hnY_pos]
+      have hcast_succ :
+          (((i.val / nX : ℕ) + 1 : ℕ) : ℝ) = ((i.val / nX : ℕ) : ℝ) + 1 := by push_cast; ring
+      rw [hcast_succ] at hstep
+      exact ht2.trans hstep
 
 /-- **Pass pcr.11 (refinement-invariance of the cover sum).** The
 multi-chart path integral is invariant under refinement of the chart
