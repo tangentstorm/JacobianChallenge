@@ -65,7 +65,11 @@ open JacobianChallenge.Analysis.BundledForms.SubAComplex
   (r7subA_bigraded_forms r7subA_bigraded_forms_proof
    r7subA_bigraded_forms_real r7subA_bigraded_forms_real_proof
    r7subA_substantive_closure
-   reCLM_add_I_imCLM_eq_id oneZeroProj_add_zeroOneProj_eq_id)
+   r7subA_zero_zero_substantive_closure
+   reCLM_add_I_imCLM_eq_id oneZeroProj_add_zeroOneProj_eq_id
+   complex_fderiv_split fderiv_eq_partial_add_dbar
+   dsq_zero_zero_zero dsq_zero_zero_zero_swap
+   zeroZeroFormEquiv)
 
 universe u
 
@@ -240,6 +244,22 @@ theorem r7subA_cotangent_split_id :
           (JacobianChallenge.Analysis.BundledForms.SubAComplex.complexCotangent ℂ) :=
   oneZeroProj_add_zeroOneProj_eq_id ℂ
 
+/-- Substantive Round-23–30 witness: the chart-local Fréchet-
+derivative-based `d = ∂ + ∂̄` decomposition of a ℂ-valued
+`(0,0)`-form, plus the Schwarz-driven `D²f` antisymmetric
+vanishing.  Routes through Mathlib's
+`ContDiffAt.isSymmSndFDerivAt` (the same hook R9 uses for
+`d²f = 0` on real `(0)`-forms). -/
+theorem r7subA_fderiv_witness
+    (f : ℂ → ℂ) (x : ℂ) (hf : ContDiffAt ℝ 2 f x) (v w : ℂ) :
+    fderiv ℝ f x =
+        JacobianChallenge.Analysis.BundledForms.SubAComplex.partialOnZeroZero
+            ℂ f x
+          + JacobianChallenge.Analysis.BundledForms.SubAComplex.dbarOnZeroZero
+              ℂ f x ∧
+    fderiv ℝ (fderiv ℝ f) x v w = fderiv ℝ (fderiv ℝ f) x w v :=
+  r7subA_zero_zero_substantive_closure ℂ f x hf v w
+
 /-! ### R7 dispatched via R5 + R7-sub-A + R8 + R9 -/
 
 /-- **R7 dispatched via R5 (Hodge) + R7-sub-A (bigraded forms) +
@@ -298,6 +318,11 @@ noncomputable def dolbeault_overview_via_R5_R8_R9 :
   have _hR7subA_subst_00 := r7subA_substantive_witness 0 0
   have _hR7subA_subst_01 := r7subA_substantive_witness 0 1
   have _hR7subA_split_id := r7subA_cotangent_split_id
+  -- Substantive Round-23–30 witnesses: chart-local Fréchet-based
+  -- `d = ∂ + ∂̄` and Schwarz `D²f` antisymmetric vanishing on
+  -- `(0,0)`-forms (the analogue of R9's `dsq_zero_form_alt`).
+  have _hR7subA_fderiv := r7subA_fderiv_witness
+                            (fun z => z) 0 (contDiffAt_id) 0 0
   dolbeault_iso_zero_one X
 
 /-- Compatibility re-export.  Kept under the old name so existing
