@@ -189,18 +189,30 @@ theorem relative_hurewicz_skeletal_pair
 filtration glues the `Φ_n`-iso on relative `H_n`-pieces into a
 global `Φ_*`-iso.
 
-On `H_1` specifically (the only level the project consumes), the
-proof simplifies dramatically:
-* `cellularH K 1 := cellularChain K 1 = K.nSimplices 1 →₀ ℤ`
-  (no quotient because `cellularBoundary` is currently `0`).
-* `singularH1 V` is the standard singular-`H_1`.
-* The map `Φ_1` is the chain-map on cellular `1`-chains.
+**Gating status.** This sorry depends on three pieces of substantive
+infrastructure none of which has been promoted yet:
 
-For the polygon-star structure used downstream, this iso is built
-explicitly in `polygonStarCellularH1Equiv` (sorry-free, in this
-file). The general-`K` case is delegated to a Round-4 induction that
-splits by skeletal level and applies the five-lemma; the present
-Round-1 stub returns the equivalence as a `Nonempty` witness. -/
+1. `cellularBoundary K n` is currently the zero map (line ~58),
+   so `cellularH K 1 = K.nSimplices 1 →₀ ℤ` (the full chain group,
+   without quotienting by `im ∂_2`).
+2. `cellularToSingularChain` (line ~106) is currently `True`, so the
+   comparison map carrying `cellular → singular` is not yet defined.
+3. `cellularToSingular_isChainMap_substantive`,
+   `skeletal_pair_les_relative`, and the relative-Hurewicz machinery
+   are still `True := by trivial` leaves.
+
+With (1) in placeholder form, the statement is *not* even true for
+arbitrary `K`: a single 1-simplex gives `cellularH = ℤ` while
+`singularH1` of its (contractible) realisation is `0`. The headline
+becomes provable only after `cellularBoundary` is promoted to the
+classical signed-face operator (so that `cellularH K 1` becomes the
+genuine cellular `H_1`) and pieces (2), (3) are filled in.
+
+For the polygon-star structure used downstream, the analogous
+identification `cellularH (polygonStarComplex n) 1 ≃ₗ[ℤ] (Fin n → ℤ)`
+is built explicitly in `polygonStarCellularH1Equiv` (sorry-free, in
+this file) — that route bypasses the general comparison theorem
+entirely. -/
 theorem cellular_iso_singularH_via_five_lemma
     [TopologicalSpace V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
