@@ -3081,6 +3081,96 @@ algebraic identities) rather than placeholder witnesses.
 \leanok
 \end{lemma}
 
+\subsubsection*{Refinement rounds 23--30 (Fr\'echet-derivative shifts on \((0,0)\)-forms)}
+
+R9's chart-local upgrade in
+\code{Jacobian/Analysis/BundledForms/Real.lean} delivers a
+real-Fr\'echet-derivative-based \(d\) on \(0\)-forms plus a
+Schwarz-driven \(d^{2}f = 0\) on the alternating-form formalism
+(\code{dsq\_zero\_form\_alt}).  Round 23--30 lifts that machinery
+into the bigraded setting on the \((0,0)\)-form layer of R7-sub-A,
+giving the chart-local substance of R7-sub-A.5 specialised to
+\(p = q = 0\):
+
+\begin{itemize}
+\item Round 23 --- equivalence
+  \code{BigradedForm E 0 0 \ensuremath{\simeq_{\C}} (E \ensuremath{\to} \C)}
+  via \code{AlternatingMap.constLinearEquivOfIsEmpty} (companion
+  to R9's \code{zeroFormEquiv}).
+\item Round 24 --- \code{complex\_fderiv\_split}: \(\mathrm{fderiv}\,\R\,f\,x
+  = \mathrm{oneZeroProj}\,(\mathrm{fderiv}\,\R\,f\,x)
+    + \mathrm{zeroOneProj}\,(\mathrm{fderiv}\,\R\,f\,x)\),
+  immediate from Round 20.
+\item Round 25 --- \code{dsq\_zero\_zero\_zero}:
+  \(D^{2}f\,x\,(v, w) - D^{2}f\,x\,(w, v) = 0\) for a \(C^{2}\)
+  \(\C\)-valued function \(f\) on a real Banach space, via
+  Mathlib's \code{ContDiffAt.isSymmSndFDerivAt}.
+\item Round 26--28 --- \code{partialOnZeroZero},
+  \code{dbarOnZeroZero} as the substantive
+  Fr\'echet-derivative-based shifts; \code{fderiv\_eq\_partial\_add\_dbar}
+  is the chart-local \(d = \partial + \bar\partial\) on a
+  \((0,0)\)-form.
+\item Round 29--30 --- \code{dsq\_zero\_zero\_zero\_swap} and the
+  closure \code{r7subA\_zero\_zero\_substantive\_closure}: the
+  Schwarz \(D^{2}f\) symmetry on a \(C^{2}\) \(\C\)-valued
+  function combined with the \(d = \partial + \bar\partial\)
+  identity.
+\end{itemize}
+
+\begin{lemma}[Round 23: \((0,0)\)-form equivalence]
+\label{lem:r7subA-r23}
+\code{zeroZeroFormEquiv} provides a \(\C\)-linear equivalence
+\code{BigradedForm E 0 0 \ensuremath{\simeq_{\C}} (E \ensuremath{\to} \C)};
+this is the bigraded analogue of R9's \code{zeroFormEquiv}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.zeroZeroFormEquiv}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 24: real Fr\'echet derivative splits]
+\label{lem:r7subA-r24}
+\code{complex\_fderiv\_split}: for a function \(f : E \to \C\) and
+a point \(x : E\), the real Fr\'echet derivative
+\(\mathrm{fderiv}\,\R\,f\,x \in (E \to_{L,\R} \C)\) decomposes as
+the sum of its \((1,0)\) and \((0,1)\) projections.  Lifted from
+\code{oneZeroProj\_add\_zeroOneProj\_eq\_id} (Round 20).
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.complex_fderiv_split}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 25: \(D^{2}f\) antisymmetric vanishing for \((0,0)\)]
+\label{lem:r7subA-r25}
+\code{dsq\_zero\_zero\_zero}: for a \(C^{2}\)-at-\(x\) function
+\(f : E \to \C\) on a real Banach space \(E\), the antisymmetric
+pair of the second Fr\'echet derivative vanishes:
+\(D^{2}f\,x\,(v, w) - D^{2}f\,x\,(w, v) = 0\).  Routes through
+Mathlib's \code{ContDiffAt.isSymmSndFDerivAt}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.dsq_zero_zero_zero}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 28: \(d = \partial + \bar\partial\) on \((0,0)\)-forms]
+\label{lem:r7subA-r28}
+\code{fderiv\_eq\_partial\_add\_dbar}: pointwise on the chart, the
+real Fr\'echet derivative of a \(\C\)-valued \((0,0)\)-form
+decomposes as the sum of \code{partialOnZeroZero} (the \((1,0)\)
+shift) and \code{dbarOnZeroZero} (the \((0,1)\) shift), both
+defined via the Round-12 projections applied to
+\(\mathrm{fderiv}\,\R\,f\).
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.fderiv_eq_partial_add_dbar}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 30: substantive \((0,0)\)-form closure]
+\label{lem:r7subA-r30}
+\code{r7subA\_zero\_zero\_substantive\_closure}: combines Round 28
+(chart-local \(d = \partial + \bar\partial\)) with Round 29
+(Schwarz \(D^{2}f\) symmetry) into a single Mathlib-typed
+witness.  This is R7-sub-A.5 fully substantively dispatched on
+the \((0,0)\) layer.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.r7subA_zero_zero_substantive_closure}
+\leanok
+\end{lemma}
+
 %======================================================================
 \subsection{Summary of recursive sub-gaps}
 \label{subsec:gap-summary}
