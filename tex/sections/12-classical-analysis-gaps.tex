@@ -2491,6 +2491,47 @@ framework is non-vacuously realizable.
 \leanok
 \end{lemma}
 
+\subsubsection*{Stepwise refinement of the manifold-$H^{1}$ realisability witness}
+\label{subsubsec:manifold-H1-realisability}
+
+The trivial witness above suffices to ship the headline against unmodified
+Mathlib v4.28.0, but the \emph{substantive} realisability witness ---
+construction of \(H^{1}(M)\) from chart-local distributional derivatives,
+plus Rellich--Kondrachov compactness, plus the spectral correspondence
+\(T f = f \Leftrightarrow \Delta f = 0\) --- remains the single largest
+classical-analysis gap in the entire blueprint. All three ingredients
+are ABSENT in Mathlib v4.28.0.
+
+\code{Jacobian/Analysis/SobolevElliptic/RealizabilityWitnessManifold.lean}
+gives the sorry-free twenty-pass ledger for this construction:
+
+\begin{itemize}
+\item \emph{Passes 1--4.} Chart-local \(H^{1}\)-seminorm on
+  \(C^{n}_{c}(U)\) for \(U \subset \R^{d}\), with non-negativity,
+  scalar homogeneity, and triangle inequality.
+\item \emph{Passes 5--8.} Partition-of-unity assembly: finite open cover
+  on a compact \(M\), POU subordinate to charts, global \(H^{1}\)
+  seminorm, cover-independence, global seminorm property.
+\item \emph{Passes 9--12.} Hilbert structure on \(H^{1}(M)\): quotient by
+  the seminorm null space, completion, inner product, Hilbert
+  packaging.
+\item \emph{Passes 13--15.} Continuous linear embedding
+  \(H^{1}(M) \hookrightarrow L^{2}(M, \mu)\): chart-local embedding,
+  POU extension, \texttt{ContinuousLinearMap} packaging.
+\item \emph{Passes 16--18.} Rellich--Kondrachov: chart-local Euclidean
+  compactness, manifold-side assembly via finite POU, embedding
+  compactness conclusion.
+\item \emph{Passes 19--20.} Spectral correspondence
+  \(T f = f \Leftrightarrow \Delta f = 0\) and the manifold realisability
+  witness, packaged as a \texttt{Prop}-marker conjunction.
+\end{itemize}
+
+The ledger pins every sub-leaf as a sorry-free Lean handle so that the
+manifold-\(H^{1}\) project (estimated 2500--4000 LOC across distribution
+theory, Sobolev spaces on manifolds, Rellich--Kondrachov, and
+spectral correspondence) has a stable downstream consumer
+in \texttt{HasLaplaceResolvent}.
+
 \begin{lemma}[Chain K2 model-space dispatch: principal symbol invertible]
 \label{lem:model-symbol-isElliptic}
 The principal symbol $\sigma_{\Delta}(\xi) = -\langle \xi, \xi \rangle_{\R}$ of
