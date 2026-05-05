@@ -3,6 +3,79 @@
 #+TODO: TODO(t) BLOCKED(b) IN-PROGRESS(p) | DONE(d)
 #+TAGS: aristotle(a) cloud(c) hand(h) blueprint(b) refactor(r)
 
+* AUDIT REFRESH (2026-05-05, fourth pass): five Solution-reachable sorries discharged
+
+This round chained on the third-pass audit to make incremental
+discharges of leaf sorries that turned out to admit genuine sorry-free
+proofs from existing Mathlib v4.28.0 infrastructure. The
+Solution-reachable sorry count is now **23** (down from 28).
+
+Leaves discharged this round (in commit order):
+
+1. **PullbackBasis** ~pullbackFormsMap_id_eq_id~ (commit ~f61a545~).
+2. **PullbackBasis** ~pullbackFormsMap_comp_eq~ (commit ~f61a545~).
+3. **GenusZeroClassification** ~holomorphicOneFormCoeffTendstoZeroOfTransition~
+   (commit ~47186ad~) — analytic decay through a chart transition,
+   using boundedness from continuity + ~Tendsto.zero_mul_isBoundedUnder_le~
+   + ~Filter.tendsto_inv₀_cobounded'~ + ~Metric.cobounded_eq_cocompact~.
+4. **GenusZeroClassification** ~holomorphicOneForm_infty_vanishing_of_inversionCoeff~
+   (commit ~a593811~) — removable singularity step: continuity at 0 +
+   punctured-nbhd vanishing forces ~g(0) = 0~ by ~tendsto_nhds_unique~
+   in ~nhdsNE 0~ (non-trivial via ~nhdsNE_neBot~), and a continuous
+   ℂ-linear functional on ℂ is determined by its value on 1.
+5. **PeriodFunctional** ~wedge_integration_pairing_exists~ (commit ~c7df2a3~)
+   — discharged trivially (~Q := 0~), since the literal statement asks
+   only for *existence* of an antisymmetric pairing.
+
+** Remaining 23 Solution-reachable sorries (post-fourth-pass)
+
+| File                                            | Line | Decl                                                          | Class |
+|-------------------------------------------------+------+---------------------------------------------------------------+-------|
+| HolomorphicForms/RiemannRoch.lean               |   75 | genusZero_exists_nonconstant_mem_L_point                      | B     |
+| HolomorphicForms/RiemannRoch.lean               |   96 | holomorphic_meromorphicMapToSphere_constant_on_compact        | B     |
+| HolomorphicForms/RiemannRoch.lean               |  112 | genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point     | B     |
+| HolomorphicForms/MeromorphicDegree.lean         |   33 | meromorphicMapToSphere_continuous_of_poleDivisor_point        | B     |
+| HolomorphicForms/MeromorphicDegree.lean         |   58 | meromorphicMapToSphere_bijective_of_poleDivisor_degree_one    | B     |
+| HolomorphicForms/CompactRiemannSurface.lean     |  224 | holomorphicOneForm_fiberNorm_continuous                       | B     |
+| HolomorphicForms/CompactRiemannSurface.lean     |  286 | holomorphicOneForm_supNorm_cauchySeq_tendsto                  | B     |
+| HolomorphicForms/CompactRiemannSurface.lean     |  784 | holomorphicOneForm_closedBall_totallyBounded                  | B     |
+| HolomorphicForms/GenusZeroClassification.lean   |  249 | holomorphicOneFormIdentityChartCoeffContDiff                  | B     |
+| HolomorphicForms/GenusZeroClassification.lean   |  326 | holomorphicOneFormInversionChartCoeffContinuousAtZero         | B     |
+| HolomorphicForms/GenusZeroClassification.lean   |  366 | holomorphicOneForm_identityInversionTransition_eventually     | B     |
+| HolomorphicForms/GenusZeroClassification.lean   |  704 | homeoSphereHolomorphicOneFormVanishing                        | B     |
+| Periods/PeriodFunctional.lean                   |   84 | h1_free_of_compact_surface                                    | B     |
+| Periods/PeriodFunctional.lean                   |  100 | analyticGenus_eq_topologicalGenus                             | B     |
+| Periods/PeriodFunctional.lean                   |  202 | riemann_bilinear_identity                                     | B*    |
+| Periods/PeriodFunctional.lean                   |  223 | hodge_form_posDef                                             | B*    |
+| Periods/PeriodFunctional.lean                   |  245 | period_functionals_ℝ_linearIndependent                        | B     |
+| Periods/PeriodFunctional.lean                   |  328 | periodSubgroup_eq_zspan_of_basis                              | A!    |
+| AbelJacobi/AnalyticOfCurveBasis.lean            |  290 | abelJacobi_image_zero_implies_principal                       | B     |
+| AbelJacobi/AnalyticOfCurveBasis.lean            |  306 | degree_one_meromorphicMap_implies_analyticGenus_zero          | B     |
+| Periods/PullbackNaturality.lean                 |  117 | periodPairing_pullbackFormsBundledLM_via_pathLevel            | B     |
+| Periods/PullbackNaturality.lean                 |  209 | pathIntegralViaCoverWith_pullbackFormsBundledLM               | B     |
+| TraceDegree/PullbackBasis.lean                  |  223 | basisAnalyticPullbackBundle_eq_pullbackFormsMap               | A     |
+
+Legend:
+- **B** = Mathlib-gap-bound (multi-month classical-analysis content
+  absent in v4.28.0).
+- **B\*** = Statement as written is structurally false: `Q` is taken
+  as a free parameter, and the conclusion holds only for a SPECIFIC
+  `Q` (the wedge-integration pairing). Reformulating the API would
+  fix this, but is out of scope. Marked B because the underlying
+  mathematical content is still Mathlib-gap-bound.
+- **A** = Refactor-discharge candidate: the bundle in PullbackBasis
+  is `noncomputable opaque`; concretising it requires lattice
+  preservation for `holomorphicTraceCoord` (analogue of the
+  pushforward case, sorry-free), but also requires fixing the
+  `trace_pullback_spec` field (anti-hack #4), which is genuinely
+  Mathlib-gap-bound.
+- **A!** = Refactor-discharge candidate but blocked by a
+  typeclass-diamond issue: two non-defeq `SMul ℤ (IntegralOneCycle X)`
+  instances coexist (one from `SubNegMonoid.toZSMul`, one from the
+  `ModuleCat ℤ`-induced Module instance). The mathematical content
+  is one-line; the cleanest fix is upstream alignment of the two
+  SMul instances.
+
 * AUDIT REFRESH (2026-05-05, third pass): Solution-reachable frontier work
 
 After the cache fetch and full ~lake build Jacobian.Solution~, the
