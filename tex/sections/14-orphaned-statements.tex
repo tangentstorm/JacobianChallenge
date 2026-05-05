@@ -1,0 +1,57 @@
+\section{Orphaned statements}
+\label{sec:orphaned-statements}
+
+The blueprint's spine — every statement that flows into the challenge API
+at \ref{thm:challenge-api} — does not require these results. They are
+classical facts that the formalisation infrastructure happens to be able
+to support, but they are not on the path to discharging the
+\code{Jacobian/Challenge.lean} obligations. They live here so that (a)
+the work that has gone into them is preserved, and (b) the connectivity
+auditor (\code{scripts/blueprint\_graph\_audit.py}) can ignore them by
+recognising the \code{sec:orphaned-statements} marker.
+
+If a statement in this section is later needed by the spine, move it back
+into the appropriate numbered section and add the \code{\textbackslash uses}
+edge that brings it in. The goal is to prove exactly what the challenge
+API requires; nothing here counts toward that goal.
+
+\subsection{Riemann's inequality}
+
+\begin{theorem}[Riemann's inequality]
+\label{thm:riemann-inequality}
+\uses{thm:euler-char-line-bundle}
+For any line bundle \(\mathcal{L}\) on a compact Riemann surface of
+genus \(g\),
+\[
+  h^{0}(\mathcal{L}) \ge \deg(\mathcal{L}) + 1 - g .
+\]
+The ``weaker half'' of Riemann-Roch (1857), preceding Roch's identification
+of the \(h^{1}\) correction term: the inequality drops the non-negative
+\(h^{1}(\mathcal{L})\) summand from the Euler characteristic identity.
+The challenge API uses the full Riemann-Roch identity
+(\ref{input:riemann-roch}), which already implies this inequality, so
+this weaker statement is redundant on the spine.
+\lean{JacobianChallenge.HolomorphicForms.riemann_inequality_h0}
+\leanok
+\end{theorem}
+\begin{proof}\leanok\end{proof}
+
+\subsection{Riemann's theorem on the theta divisor}
+
+\begin{theorem}[Riemann's theorem on the theta divisor]
+\label{thm:riemann-theorem-theta-divisor}
+\uses{def:analytic-jacobian,input:riemann-roch}
+For \(g\ge 1\), a point \(z\in\Jac(X)\) lies on the theta divisor
+\(\Theta\) if and only if \(z = \kappa + \AJ_{g-1}(s)\) for some
+\(s\in\operatorname{Sym}^{g-1}(X)\), where \(\kappa\) is the Riemann
+constant and \(\AJ_{g-1}\) is the Abel-Jacobi map on symmetric
+\((g-1)\)-fold products.
+\depends{Mumford, Tata Lectures on Theta II, \S3. Mathlib hooks: theta
+function on Siegel upper half space, Riemann-Roch for line bundles
+attached to divisors on \(X\).}
+The challenge API does not mention the theta divisor, so this theorem
+is off-spine.
+\lean{JacobianChallenge.Blueprint.AbelExistence.RiemannTheoremThetaDivisor.riemann_theorem_theta_divisor}
+\leanok
+\end{theorem}
+\begin{proof}\leanok\end{proof}
