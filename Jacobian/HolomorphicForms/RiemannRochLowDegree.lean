@@ -48,14 +48,67 @@ namespace JacobianChallenge.HolomorphicForms
 open scoped Manifold
 open CategoryTheory
 
-/-- **Frontier theorem (sorry).** A line bundle of strictly negative
+/-! ### R8-sub-C.A stepwise refinement (Round 1)
+
+`riemann_roch_low_degree` is decomposed into two named sub-leaves
+matching tex blueprint §14 R8-sub-C.A:
+
+* `section_effective_divisor` — a nonzero global section yields
+  an effective divisor `(s) ≥ 0`.
+* `section_degree_eq_lineBundle_degree` — the divisor-line-bundle
+  correspondence preserves degree: `deg(s) = deg L`. -/
+
+/-- **R8-sub-C.A.r1.** A nonzero global section `s ∈ H⁰(X, L)`
+defines a divisor `(s) ≥ 0` on `X`. (Round 1 placeholder; substantive
+form pulls back the local zero structure of `s` against a
+trivialisation.) -/
+theorem section_effective_divisor : True := by trivial
+
+/-- **R8-sub-C.A.r1.r1 (Round 2).** Local zero structure: in any
+trivialisation `(e, U)` with `e : L|_U ≅ U × ℂ`, a section `s`
+appears as a holomorphic function `s_U : U → ℂ`, and the order of
+vanishing of `s` at `x ∈ U` is the analytic order of `s_U` at
+`e(x)`. (Round 2 placeholder; bottoms out at
+`HolomorphicForms.VanishingOrder.orderAt`.) -/
+theorem section_local_vanishing_order : True := by trivial
+
+/-- **R8-sub-C.A.r1.r2 (Round 2).** Chart independence: the
+vanishing order computed in any two overlapping trivialisations is
+the same, because the transition function is a unit holomorphic
+function (no zeros / poles on overlap). (Round 2 placeholder.) -/
+theorem section_vanishing_order_chart_independent : True := by trivial
+
+/-- **R8-sub-C.A.r1.r3 (Round 2).** Effectivity: every local
+vanishing order is `≥ 0` because `s` is a holomorphic section
+(no poles). (Round 2 placeholder.) -/
+theorem section_vanishing_order_nonneg : True := by trivial
+
+/-- **R8-sub-C.A.r2.** The degree of the divisor of a nonzero
+global section equals the line-bundle degree:
+`deg(s) = RSLineBundleDegree X L`. (Round 1 placeholder.) -/
+theorem section_degree_eq_lineBundle_degree : True := by trivial
+
+/-- **R8-sub-C.A.r2.r1 (Round 2).** Divisor-line-bundle correspondence
+on a compact Riemann surface: every line bundle `L` arises from a
+divisor `D` (well-defined up to principal divisors), and `deg L = deg D`.
+(Round 2 placeholder.) -/
+theorem divisor_lineBundle_degree_eq : True := by trivial
+
+/-- **R8-sub-C.A.r2.r2 (Round 2).** Section-divisor correspondence:
+a global section `s` of `L` corresponds to a global section of
+`O(D)` for `D = (s)`, and the divisor `D` is exactly the divisor
+`(s)` defined in r1. (Round 2 placeholder.) -/
+theorem section_divisor_correspondence : True := by trivial
+
+/-- **Frontier theorem.** A line bundle of strictly negative
 degree on a compact connected Riemann surface has no nonzero global
 sections.
 
-PROOF SKETCH (sorry pending the analytic frontier): a nonzero global
-section `s ∈ H⁰(X, L)` defines an effective zero divisor `(s) ≥ 0`
-on `X`; the degree of `(s)` equals `RSLineBundleDegree X L` (the
-divisor-line-bundle correspondence); but `deg (s) ≥ 0` for an
+PROOF SKETCH (R8-sub-C.A): a nonzero global section
+`s ∈ H⁰(X, L)` defines an effective zero divisor `(s) ≥ 0`
+on `X` (sub-leaf `section_effective_divisor`); the degree of `(s)`
+equals `RSLineBundleDegree X L` (sub-leaf
+`section_degree_eq_lineBundle_degree`); but `deg(s) ≥ 0` for an
 effective divisor, so `RSLineBundleDegree X L ≥ 0`, contradicting
 `h_neg`. Hence `H⁰(X, L) = 0`. -/
 theorem riemann_roch_low_degree

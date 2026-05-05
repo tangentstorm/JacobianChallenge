@@ -3482,6 +3482,709 @@ the \((0,0)\) layer.
 \end{lemma}
 
 %======================================================================
+\subsection{R3-sub-B --- StageA close-out (cellular \(\leftrightarrow\) singular and Brahana reduction)}
+\label{subsec:gap-R3subB-stageA-closeout}
+
+The headline says: the three remaining \code{Jacobian/StageA/} sorries
+--- \code{cellular\_iso\_singularH} (one), \code{orientable\_word\_handleSwap\_to\_grouped} (two)
+--- bottom out at named Mathlib hooks.  These are the two combinatorial-topology
+sub-leaves of the R3 polygonal-model dispatch
+(\S\ref{subsec:gap-R3-polygonal-model}) that survived the StageA
+refactor; the rest of StageA is sorry-free.
+
+R3-sub-B is consumed by R3 via
+\code{Jacobian.Periods.SurfaceClassification.surface\_polygonal\_model}
+(through \code{H1EvenBasisViaSurfaceClassification.lean}) and by
+\code{Periods.PeriodFunctional.h1\_free\_of\_compact\_surface}.
+
+\subsubsection*{Classical content}
+
+\begin{enumerate}
+\item \emph{Cellular vs singular comparison.}  For a finite simplicial
+  complex \(K\) with geometric realisation \(|K|\), the chain map
+  \(\Phi:C^{\mathrm{cell}}_{*}(K,\Z)\to C^{\mathrm{sing}}_{*}(|K|,\Z)\)
+  sending an \(n\)-simplex to its characteristic singular simplex
+  \(\Delta^{n}\to|K|\) is a quasi-isomorphism.  The standard proof uses
+  the skeletal filtration \(K^{(0)}\subseteq K^{(1)}\subseteq\dotsb\)
+  of \(|K|\), the long exact sequence of each pair \((K^{(n)},K^{(n-1)})\),
+  and the identification \(H_{n}(K^{(n)},K^{(n-1)})\cong\bigoplus_{\sigma\in K_{n}}\Z\)
+  from excision plus the relative Hurewicz theorem on a wedge of
+  \(n\)-spheres.  Five-lemma induction over \(n\) closes the
+  comparison map levelwise; in particular, on \(H_{1}\),
+  \(C^{\mathrm{cell}}_{1}(K)/\mathrm{im}\,\partial_{2}\cong H^{\mathrm{sing}}_{1}(|K|,\Z)\).
+\item \emph{Brahana handle pairing (orientable case).}  Given a fully
+  reduced edge word \(w\) with no nonorientable pairs, every generator
+  pair \((a_{i},a_{i}^{-1})\) and \((b_{i},b_{i}^{-1})\) appears in
+  \(w\).  If \(w\) is not yet handle-grouped (i.e.\ some block
+  \(a_{i}\dotsm a_{i}^{-1}\) does not contain \(b_{i}\) and \(b_{i}^{-1}\)
+  in the right pattern), one applies HandleSwap to bring the four
+  letters \(a_{i},b_{i},a_{i}^{-1},b_{i}^{-1}\) adjacent.  Termination
+  is via a well-founded ``displacement'' measure
+  \(\mu(w)=\sum_{i}d_{i}(w)\) where \(d_{i}\) is the index distance
+  between the matched pair of \(b_{i}\)'s in the cyclic order; each
+  HandleSwap strictly decreases \(\mu\).
+\item \emph{Brahana standardisation.}  Once \(w\) is handle-grouped,
+  HandleSwap permutes handles arbitrarily; choose the permutation
+  \(\sigma\in S_{g}\) that re-orders the handle indices to
+  \(0,1,\dotsc,g-1\).  Within each block the four letters
+  \(a_{i},b_{i},a_{i}^{-1},b_{i}^{-1}\) are already in the standard
+  order (the orientability hypothesis pins the orientation pattern).
+  The final word equals \(\code{standardWord}\, g
+  =a_{0}b_{0}a_{0}^{-1}b_{0}^{-1}\dotsm a_{g-1}b_{g-1}a_{g-1}^{-1}b_{g-1}^{-1}\).
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Mathlib v4.28.0 has:
+\begin{itemize}
+\item \code{Mathlib.AlgebraicTopology.SingularHomology.Basic} ---
+  the singular chain complex \(C^{\mathrm{sing}}_{*}(|K|,\Z)\) and
+  its homology, used as the codomain of the comparison chain map.
+\item \code{Mathlib.AlgebraicTopology.SimplicialSet.*} ---
+  simplicial sets and their geometric realisations; the simplicial
+  complex \(K\) embeds into a simplicial set via its set of
+  monotone-simplex maps.
+\item \code{Mathlib.Topology.Homotopy.HSpace} and
+  \code{Mathlib.Topology.MetricSpace.Polish} --- the topological
+  preliminaries on \(|K|\) and on the standard simplex \(\Delta^{n}\).
+\item \code{Mathlib.CategoryTheory.Limits.Shapes.RegularEpi} ---
+  the five-lemma in module categories; used to glue the comparison
+  iso across the skeletal filtration.
+\item \code{Mathlib.Combinatorics.SimpleGraph.IsTree} ---
+  spanning-tree existence used by R3-sub-B.B (already discharged
+  in StageA's \code{SpanningTree.lean}).
+\item \code{Mathlib.Data.List.Rotate}, \code{Mathlib.Data.List.Count} ---
+  cyclic rotation and counting on edge-word lists.
+\end{itemize}
+
+Mathlib does \emph{not} have:
+\begin{itemize}
+\item The cellular-vs-singular comparison map at the chain level
+  for an arbitrary abstract simplicial complex.  (Mathlib has the
+  comparison for a CW complex via simplicial sets and the
+  Dold--Kan correspondence, but the bridge from
+  \code{AbstractSimplicialComplex} into a simplicial set requires
+  150--300 LOC.)
+\item The relative-Hurewicz theorem on a wedge of \(n\)-spheres.
+\item The Brahana handle pairing or its termination via the
+  displacement measure (the StageA file is the project's only
+  formal record).
+\end{itemize}
+
+Estimated 800--1100 LOC for a complete API; the key chart-local
+skeleton is delivered by \code{Jacobian/StageA/CellularSingular.lean}
+and \code{Jacobian/StageA/EdgeWordTietze.lean}.
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R3-sub-B.A (cellular \(\leftrightarrow\) singular).}
+  The chain map \(\Phi\) is a quasi-isomorphism on a finite
+  abstract simplicial complex; equivalently, every cellular
+  \(H_{1}\)-class has a unique singular representative and vice versa.
+\item \textbf{R3-sub-B.B (Brahana handle pairing).}  Every fully
+  reduced orientable edge word is HandleSwap-equivalent to a
+  handle-grouped word, with termination via a strictly-decreasing
+  displacement measure.
+\item \textbf{R3-sub-B.C (Brahana standardisation).}  Every
+  handle-grouped word is HandleSwap-equivalent to
+  \code{standardWord}\(\,g\); the orientability hypothesis pins
+  the orientation pattern within each block.
+\end{itemize}
+
+\begin{theorem}[Classical input: StageA close-out]
+\label{input:stage-a-closeout}
+\uses{lem:r3subB-cellular-iso,lem:r3subB-handle-pairing,lem:r3subB-standardisation}
+The three Lean targets
+\code{cellular\_iso\_singularH}, \code{orientable\_word\_handleSwap\_to\_grouped},
+and \code{orientable\_edgeWord\_tietzeEq\_standardWord} bottom out
+at the three sub-leaves below.  Sub-leaves
+\(\textsf{r3subB-A.r1}\)--\(\textsf{r3subB-C.r5}\) are tracked in
+\code{Jacobian/StageA/CellularSingular.lean} and
+\code{Jacobian/StageA/EdgeWordTietze.lean}.
+\notready
+\end{theorem}
+
+\begin{lemma}[R3-sub-B.A --- cellular \(\leftrightarrow\) singular comparison]
+\label{lem:r3subB-cellular-iso}
+\uses{lem:r3subB-A-r1,lem:r3subB-A-r2,lem:r3subB-A-r3}
+On a finite abstract simplicial complex \(K\) with topologized
+realisation \(V\), the comparison chain map
+\(\Phi_{1}:C^{\mathrm{cell}}_{1}(K)\to C^{\mathrm{sing}}_{1}(V)\)
+descends to a \(\Z\)-module isomorphism
+\(H_{1}^{\mathrm{cell}}(K)\cong H_{1}^{\mathrm{sing}}(V)\).
+\lean{JacobianChallenge.StageA.cellular_iso_singularH}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.A.r1 --- chain map from skeletal filtration]
+\label{lem:r3subB-A-r1}
+The chain map \(\Phi_{n}\) preserves boundary: for every
+\(n\)-simplex \(\sigma\in K_{n}\),
+\(\partial^{\mathrm{sing}}(\Phi_{n}(\sigma))
+=\Phi_{n-1}(\partial^{\mathrm{cell}}\sigma)\).
+At chain-level this is the identity
+\(\Phi_{n-1}\circ\partial^{\mathrm{cell}}=\partial^{\mathrm{sing}}\circ\Phi_{n}\)
+checked on the basis of \(K_{n}\) by computing the signed face
+operator on each side.
+\lean{JacobianChallenge.StageA.cellularToSingular_isChainMap_substantive}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.A.r2 --- skeletal-pair LES]
+\label{lem:r3subB-A-r2}
+For each pair \((K^{(n)},K^{(n-1)})\) of skeleta of \(K\),
+the long exact sequence of the pair gives
+\(H_{n}(K^{(n)},K^{(n-1)})\cong\bigoplus_{\sigma\in K_{n}}\Z\),
+the cellular chain group.
+\lean{JacobianChallenge.StageA.skeletal_pair_les_relative}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.A.r3 --- five-lemma assembly]
+\label{lem:r3subB-A-r3}
+Five-lemma induction over the skeletal filtration glues the
+\(\Phi_{n}\)-iso on relative \(H_{n}\)-pieces into a global
+\(\Phi_{*}\)-iso.  Concretely, on \(H_{1}\): \(\partial_{2}=0\) on
+the simplicial side (cellular) and on the topological side, plus
+\(\ker\Phi_{0}=0\) (every vertex is a vertex), give an iso on
+\(H_{1}\) by exactness chasing.
+\lean{JacobianChallenge.StageA.cellular_iso_singularH_via_five_lemma}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.B --- Brahana handle pairing]
+\label{lem:r3subB-handle-pairing}
+\uses{lem:r3subB-B-r1,lem:r3subB-B-r2,lem:r3subB-B-r3}
+Every fully reduced orientable edge word \(w\) is HandleSwap-equivalent
+to a handle-grouped word: there exists \(v\) with
+\(\code{TietzeEq}\,w\,v\) and \(v\) handle-grouped.
+\lean{JacobianChallenge.StageA.orientable_word_handleSwap_to_grouped}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.B.r1 --- displacement measure]
+\label{lem:r3subB-B-r1}
+For each generator pair \((a_{i},b_{i})\) define
+\(d_{i}(w)\) = the absolute difference between the cyclic-list
+positions of the two \(a_{i}\)-letters with \(b_{j}\)-letters
+\((j\neq i)\) interpolated between them.  Define the total
+displacement \(\mu(w)=\sum_{i}d_{i}(w)\).  Then \(\mu(w)\geq 0\),
+and \(\mu(w)=0\) iff \(w\) is handle-grouped.
+\lean{JacobianChallenge.StageA.handleSwap_displacement_measure}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.B.r2 --- HandleSwap decreases \(\mu\)]
+\label{lem:r3subB-B-r2}
+If \(\mu(w)>0\) then there exists a HandleSwap step
+\(w\rightsquigarrow_{\mathrm{HS}} v\) with \(\mu(v)<\mu(w)\).
+\lean{JacobianChallenge.StageA.handleSwap_strictly_decreases_mu}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.B.r3 --- well-founded recursion on \(\mu\)]
+\label{lem:r3subB-B-r3}
+Strong induction on \(\mu(w)\): the base case \(\mu(w)=0\)
+identifies \(w\) as handle-grouped; the inductive step uses
+\(\mu\)-decrease (r2) plus transitivity of \code{TietzeEq} to
+extend the witness chain.
+\lean{JacobianChallenge.StageA.handleSwap_grouping_via_mu_induction}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.C --- Brahana standardisation]
+\label{lem:r3subB-standardisation}
+\uses{lem:r3subB-C-r1,lem:r3subB-C-r2,lem:r3subB-C-r3,lem:r3subB-C-r4}
+Every handle-grouped orientable edge word \(w\) (no nonorientable
+pairs) is HandleSwap-equivalent to \code{standardWord}\(\,g\).  Combined
+with R3-sub-B.B and the existing cyclic-reduction theorem
+\code{rawWord\_cyclic\_reduction}, this gives the headline
+\code{orientable\_edgeWord\_tietzeEq\_standardWord}.
+\lean{JacobianChallenge.StageA.orientable_edgeWord_tietzeEq_standardWord}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.C.r1 --- index permutation by HandleSwap]
+\label{lem:r3subB-C-r1}
+For every \(\sigma\in S_{g}\) and every handle-grouped word \(w\),
+there exists a handle-grouped word \(v\) with the handles permuted
+by \(\sigma\) and \(\code{TietzeEq}\,w\,v\).
+\lean{JacobianChallenge.StageA.handleSwap_permutation_realises}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.C.r2 --- canonical handle-block letter order]
+\label{lem:r3subB-C-r2}
+Within a single handle block \(a_{i}^{\pm}b_{i}^{\pm}a_{i}^{\pm}b_{i}^{\pm}\),
+the orientability hypothesis (no nonorientable pairs) forces the
+orientation pattern to be \((+,+,-,-)\) up to cyclic rotation; this
+is the \code{standardWord}\(\,g\) block letter pattern.
+\lean{JacobianChallenge.StageA.orientable_handle_block_canonical}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.C.r3 --- canonical block ordering of handles]
+\label{lem:r3subB-C-r3}
+Combining r1 (permutation realisation) with r2 (canonical block
+pattern), every orientable handle-grouped word is HandleSwap-equivalent
+to the word with handles in index order \(0,1,\dotsc,g-1\) and
+each block in the canonical \((+,+,-,-)\) letter pattern.
+\lean{JacobianChallenge.StageA.handleGrouped_canonical_form}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-B.C.r4 --- canonical form equals \code{standardWord}]
+\label{lem:r3subB-C-r4}
+The canonical form from r3 is definitionally
+\(\code{standardWord}\,g
+=a_{0}b_{0}a_{0}^{-1}b_{0}^{-1}\dotsm a_{g-1}b_{g-1}a_{g-1}^{-1}b_{g-1}^{-1}\).
+\lean{JacobianChallenge.StageA.canonical_form_eq_standardWord}
+\notready
+\end{lemma}
+
+%======================================================================
+\subsection{R8-sub-B --- Banach-data closure for \(\mathrm{Hone}(X)\) (sup-norm + Montel)}
+\label{subsec:gap-R8subB-banach-closure}
+
+The headline says: the three frontier sorries in
+\code{Jacobian/HolomorphicForms/CompactRiemannSurface.lean}
+(\code{holomorphicOneForm\_fiberNorm\_continuous} line 161,
+\code{holomorphicOneForm\_supNorm\_cauchySeq\_tendsto} line 229, and
+\code{holomorphicOneForm\_closedBall\_totallyBounded} line 656) bottom
+out at named Mathlib hooks.  These three feed into the existing
+sorry-free assembly that produces a \code{HolomorphicOneFormBanachData
+X} witness, which in turn produces the
+\code{FiniteDimensional} instance for \code{HolomorphicOneForm}\,\C\,\(X\)
+via Riesz on a compact closed unit ball.
+
+R8-sub-B is consumed by R8 via
+\code{HolomorphicForms.CompactRiemannSurface.compactRiemannSurface\_finiteDimensionalHolomorphicOneForms}
+and underwrites the headline finite-dimensionality theorem
+\code{thm:fd-holomorphic-one-forms} of \S2.
+
+\subsubsection*{Classical content}
+
+\begin{enumerate}
+\item \emph{Fiberwise norm continuity.}  For a smooth section
+  \(\sigma\) of a Hermitian vector bundle \(V\to M\), the function
+  \(x\mapsto\|\sigma(x)\|\) is continuous: in any local trivialisation
+  \(V|_{U}\cong U\times F\), the section reads as a smooth
+  \(F\)-valued map and the norm \(F\to\R\) is continuous.  For the
+  cotangent bundle on a one-dimensional complex manifold, every
+  fibre is canonically isometric to \(\C\to_{\C}\C\cong\C\) via
+  evaluation at \(1\).
+\item \emph{Sup-norm completeness.}  Let \(\sigma_{n}\) be a sup-norm
+  Cauchy sequence in \(\mathrm{Hone}(X)\).  Pointwise it is
+  Cauchy in each fibre (a Banach space), so a pointwise limit
+  \(\sigma_{\infty}(x)\) exists.  Uniform Cauchy + compactness gives
+  uniform convergence \(\sigma_{n}\to\sigma_{\infty}\); the
+  limit is continuous.  For \emph{holomorphicity}, Weierstrass's
+  uniform-limit-of-holomorphic-is-holomorphic applies in each chart
+  via the equivalence with power-series-coefficient convergence.
+\item \emph{Closed-ball total boundedness.}  Let \(B\) be the closed
+  unit ball in the sup norm.  In every chart \(U_{i}\), the
+  family of chart-restricted forms is uniformly bounded, hence
+  Cauchy first-derivative estimates make them uniformly Lipschitz,
+  hence equicontinuous.  Arzel\`a--Ascoli on the compact base \(X\)
+  with a finite chart cover gives: every sequence in \(B\) has a
+  uniformly convergent subsequence on \(X\), and that convergent
+  subsequence is sup-norm Cauchy.  Equivalently: \(B\) is totally
+  bounded in the sup-norm metric.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Mathlib v4.28.0 has:
+\begin{itemize}
+\item \code{ContMDiffSection.continuous\_fiberNorm} (in
+  \code{Jacobian/HolomorphicForms/SectionFiberNorm.lean}) --- the
+  fiberwise norm of a smooth section is continuous given an
+  \code{hcompat} witness on the trivialisation.  R8-sub-B.A
+  constructs the \code{hcompat} witness for the cotangent
+  trivialisation.
+\item \code{Mathlib.Topology.UniformSpace.UniformConvergenceTopology}
+  --- uniform Cauchy + complete pointwise fibres ⇒ uniform limit
+  exists and is continuous.
+\item \code{TendstoUniformly.continuous},
+  \code{Metric.complete\_of\_cauchySeq\_tendsto}.
+\item \code{Mathlib.Analysis.Analytic.IsolatedZeros} and
+  \code{Mathlib.Analysis.Analytic.Linear} --- the local theory of
+  holomorphic functions used by the Weierstrass step.
+\item \code{circleIntegral.norm\_integral\_le\_of\_norm\_le\_const} +
+  \code{DiffContOnCl.circleIntegral\_sub\_inv\_smul} --- the Cauchy
+  integral form used for chart-derivative estimates.
+\item \code{Metric.totallyBounded\_iff} and
+  \code{Bornology.IsBounded.totallyBounded} --- the abstract
+  total-boundedness API.
+\end{itemize}
+
+Mathlib does \emph{not} have:
+\begin{itemize}
+\item A packaged Weierstrass theorem ``uniform limit of holomorphic
+  functions is holomorphic.''  The proof is reduced here to the
+  power-series-coefficient convergence form.
+\item An Arzel\`a--Ascoli statement specialised to a section bundle
+  on a compact manifold.  The proof is reduced here to the chart-local
+  Arzel\`a--Ascoli on a compact disc plus a finite chart cover.
+\item A direct ``cotangent bundle is fiber-isometrically trivialisable''
+  fact.  The proof is reduced here to the chart-induced trivialisation
+  pulling back the canonical \(\C\to_{\C}\C\cong\C\) isometry.
+\end{itemize}
+
+Estimated 600--900 LOC for a complete API.
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R8-sub-B.A (fiber-isometric trivialisation).}  The
+  cotangent trivialisation of a 1D complex manifold is a fibrewise
+  \(\C\)-linear isometry.
+\item \textbf{R8-sub-B.B (sup-norm Cauchy converges to a holomorphic
+  form).}  Pointwise limit + uniform-Cauchy + Weierstrass ⇒ the
+  limit is a holomorphic 1-form, and \(\sigma_{n}\) sup-norm
+  converges to it.
+\item \textbf{R8-sub-B.C (closed ball is totally bounded).}  Cauchy
+  estimates on a finite chart cover give equicontinuity; equibounded
+  + equicontinuous ⇒ Arzel\`a--Ascoli relatively compact ⇒ totally
+  bounded in the sup-norm.
+\end{itemize}
+
+\begin{theorem}[Classical input: Banach data for \(\mathrm{Hone}(X)\)]
+\label{input:banach-data-hone}
+\uses{lem:r8subB-fiber-iso-triv,lem:r8subB-supnorm-cauchy,lem:r8subB-totally-bounded}
+The three Lean targets
+\code{holomorphicOneForm\_fiberNorm\_continuous},
+\code{holomorphicOneForm\_supNorm\_cauchySeq\_tendsto}, and
+\code{holomorphicOneForm\_closedBall\_totallyBounded} bottom out
+at the three sub-leaves below.  Sub-leaves
+\(\textsf{r8subB-A.r1}\)--\(\textsf{r8subB-C.r5}\) are tracked in
+\code{Jacobian/HolomorphicForms/CompactRiemannSurface.lean}.
+\notready
+\end{theorem}
+
+\begin{lemma}[R8-sub-B.A --- fiber-isometric cotangent trivialisation]
+\label{lem:r8subB-fiber-iso-triv}
+\uses{lem:r8subB-A-r1,lem:r8subB-A-r2}
+For the cotangent bundle of a 1D complex manifold modelled on
+\(\C\), every chart-induced trivialisation is a fibrewise
+\(\C\)-linear isometry, and the fiber norm of any smooth section
+factors through the trivialised norm continuously.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_fiberNorm_continuous}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.A.r1 --- chart-local fiber identification]
+\label{lem:r8subB-A-r1}
+For every \(x\in X\), the cotangent fibre \((T_{x}^{*}X)_{\C}\) is
+canonically isometric to \(\C\to_{\C}\C\cong\C\) via evaluation
+at the chart-local \(z\)-coordinate basis vector \(\partial_{z}\).
+\lean{JacobianChallenge.HolomorphicForms.cotangent_fiber_eval_isometry}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.A.r2 --- trivialisation \code{hcompat} witness]
+\label{lem:r8subB-A-r2}
+The trivialisation map of the cotangent bundle in any chart commutes
+with the canonical fiber isometry of r1; equivalently, for every
+section \(\sigma\) and every chart \((e,U)\) with \(x\in U\),
+\(\|\sigma(x)\| = \|(e\langle x,\sigma(x)\rangle)_{2}\|\).
+\lean{JacobianChallenge.HolomorphicForms.cotangent_trivialisation_hcompat}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.B --- sup-norm Cauchy converges]
+\label{lem:r8subB-supnorm-cauchy}
+\uses{lem:r8subB-B-r1,lem:r8subB-B-r2,lem:r8subB-B-r3,lem:r8subB-B-r4}
+Every sup-norm Cauchy sequence in \(\mathrm{Hone}(X)\) converges
+to a holomorphic 1-form.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_supNorm_cauchySeq_tendsto}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.B.r1 --- pointwise Banach limit]
+\label{lem:r8subB-B-r1}
+A sup-norm Cauchy sequence in \(\mathrm{Hone}(X)\) is pointwise
+Cauchy in each Banach fibre; the pointwise limit
+\(\sigma_{\infty}(x):=\lim_{n}\sigma_{n}(x)\) exists.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_pointwise_limit}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.B.r2 --- uniform convergence]
+\label{lem:r8subB-B-r2}
+Sup-norm Cauchy ⇒ uniform Cauchy on \(X\) (compact); combined
+with r1, \(\sigma_{n}\to\sigma_{\infty}\) uniformly.  Hence
+\(\sigma_{\infty}\) is continuous (\code{TendstoUniformly.continuous}).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_tendstoUniformly_continuous}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.B.r3 --- chart-local Weierstrass]
+\label{lem:r8subB-B-r3}
+In every chart \(U\) (a domain in \(\C\)), the chart-pulled-back
+sequence \(f_{n}:U\to\C\) is uniformly Cauchy and each \(f_{n}\) is
+holomorphic.  Power-series coefficient convergence gives that the
+uniform limit \(f_{\infty}\) has a power series at each point, hence
+is holomorphic on \(U\).
+\lean{JacobianChallenge.HolomorphicForms.chart_local_weierstrass}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.B.r4 --- holomorphicity of the global limit]
+\label{lem:r8subB-B-r4}
+Apply r3 in every chart of a finite atlas of \(X\); chart
+compatibility (preserved under uniform limits) glues to a global
+\code{HolomorphicOneForm}\,\C\,\(X\) with \(\sigma_{\infty}\) as
+its underlying section.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_uniform_limit}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.C --- closed unit ball totally bounded]
+\label{lem:r8subB-totally-bounded}
+\uses{lem:r8subB-C-r1,lem:r8subB-C-r2,lem:r8subB-C-r3,lem:r8subB-C-r4,lem:r8subB-C-r5}
+The closed unit ball
+\(\overline{B}_{1}\subseteq\mathrm{Hone}(X)\) is totally bounded
+in the sup-norm metric.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_closedBall_totallyBounded}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.C.r1 --- chart-local pointwise bound]
+\label{lem:r8subB-C-r1}
+Sup-norm \(\leq 1\) ⇒ \(\|\sigma(x)\|\leq 1\) for every \(x\); in
+particular every chart-local representative \(f_{n}=\sigma_{n}\circ\phi^{-1}\)
+satisfies \(|f_{n}(z)|\leq 1\) on the chart disc.
+\lean{JacobianChallenge.HolomorphicForms.chart_local_pointwise_bound}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.C.r2 --- Cauchy first-derivative estimate]
+\label{lem:r8subB-C-r2}
+On a chart disc \(D_{r}(z_{0})\subseteq U\subseteq\C\), the
+Cauchy formula gives \(|f_{n}'(z_{0})|\leq M/r\) where
+\(M=\sup_{|w-z_{0}|=r}|f_{n}(w)|\).  Combined with r1's pointwise
+bound, this gives \(|f_{n}'(z_{0})|\leq 1/r\), uniform in \(n\).
+\lean{JacobianChallenge.HolomorphicForms.chart_local_cauchy_derivative_estimate}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.C.r3 --- chart-local equicontinuity]
+\label{lem:r8subB-C-r3}
+A uniform first-derivative bound on a disc gives uniform Lipschitz
+constant via the mean-value theorem; equivalently, the family
+\(\{f_{n}\}\) is equicontinuous on every closed sub-disc.
+\lean{JacobianChallenge.HolomorphicForms.chart_local_equicontinuous}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.C.r4 --- chart-local Arzel\`a--Ascoli]
+\label{lem:r8subB-C-r4}
+Equibounded + equicontinuous on a compact subset of \(\C\) ⇒
+relatively compact in the sup-norm topology (Arzel\`a--Ascoli).
+\lean{JacobianChallenge.HolomorphicForms.chart_local_arzela_ascoli}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-B.C.r5 --- finite-cover assembly]
+\label{lem:r8subB-C-r5}
+A finite chart cover of compact \(X\) plus chart-local Arzel\`a--Ascoli
+(r4) glue to global total boundedness in the sup-norm metric.
+The gluing uses the Lebesgue number of the open cover plus a
+diagonal extraction to upgrade chart-by-chart subseq-convergence
+to a single subsequence convergent on all of \(X\).
+\lean{JacobianChallenge.HolomorphicForms.global_totally_bounded_via_chart_cover}
+\notready
+\end{lemma}
+
+%======================================================================
+\subsection{R8-sub-C --- Riemann--Roch low/high-degree squeeze}
+\label{subsec:gap-R8subC-rr-squeeze}
+
+The headline says: the four frontier sorries in
+\code{Jacobian/HolomorphicForms/RiemannRoch.lean},
+\code{RiemannRochLowDegree.lean}, and
+\code{EulerCharLineBundle.lean} bottom out at the named
+\(\geq\) and \(\leq\) directions of Riemann's inequality, with the
+final theorem the squeeze \(=\).  This is the \emph{abstract} squeeze
+shape; concrete content (effective-divisor positivity, Riemann's
+inequality, Serre duality on \(L^{-1}\otimes K_{X}\)) is delegated to
+existing R8 sub-files.
+
+\subsubsection*{Classical content}
+
+\begin{enumerate}
+\item \emph{Negative-degree vanishing.}  A line bundle \(L\) of
+  strictly negative degree on a compact connected Riemann surface
+  has no nonzero global sections: a nonzero \(s\in H^{0}(X,L)\)
+  defines an effective zero divisor \((s)\geq 0\) with
+  \(\deg(s)=\deg L<0\), contradicting effectivity.
+\item \emph{Riemann's inequality (\(\geq\) direction).}  For every
+  line bundle \(L\), \(h^{0}(L)-h^{1}(L)\geq\deg L+1-g\).
+  Classical proof: induct on \(\deg L\).  Base case
+  \(\deg L=0\): the trivial bundle has \(h^{0}=1,h^{1}=g\) by
+  Hodge \(\Rightarrow\) \(h^{0}-h^{1}=1-g\); inductive step uses
+  the short exact sequence
+  \(0\to L\to L(p)\to\C_{p}\to 0\) and the Euler-characteristic
+  additive law to step \(\deg\) up or down by 1.
+\item \emph{Serre-duality direction (\(\leq\)).}  Apply Riemann's
+  inequality to the dual bundle \(L^{-1}\otimes K_{X}\) (degree
+  \(2g-2-\deg L\)), then trade \(h^{0}(L^{-1}\otimes K_{X})=h^{1}(L)\)
+  and \(h^{1}(L^{-1}\otimes K_{X})=h^{0}(L)\) via Serre duality.
+\item \emph{Squeeze.}  \(\geq\) and \(\leq\) on the same integer
+  combine via \code{Int.le\_antisymm} to the Riemann--Roch equality.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Mathlib v4.28.0 has:
+\begin{itemize}
+\item \code{Mathlib.AlgebraicGeometry.Sites.*} --- the abstract
+  sheaf-cohomology API used in
+  \code{RSSheafCohomology}.
+\item \code{Mathlib.LinearAlgebra.Dimension.Finrank} ---
+  \code{Module.finrank} on \C-vector spaces.
+\item \code{Int.le\_antisymm} --- the literal squeeze.
+\end{itemize}
+
+Mathlib does \emph{not} have:
+\begin{itemize}
+\item Effective-divisor positivity for global sections of a line
+  bundle (\code{globalSection\_yields\_effective\_divisor}).
+\item Serre duality in the form
+  \(H^{1}(X,L)\cong H^{0}(X,L^{-1}\otimes K_{X})^{*}\) ---
+  delegated to the project's
+  \code{Jacobian/HolomorphicForms/SerreDualityRS.lean}.
+\item The short-exact-sequence argument for Riemann's inequality
+  (the \(L\to L(p)\to\C_{p}\) induction).
+\end{itemize}
+
+The four frontier sorries are split into named \(\geq\)/\(\leq\)
+sub-leaves matching the textbook proof; squeeze is sorry-free in
+the \code{h0\_minus\_h1\_eq\_riemann\_roch} assembly.
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R8-sub-C.A (effective-divisor positivity).}  A nonzero
+  global section of \(L\) has nonneg divisor; combined with
+  \(\deg L<0\), gives \code{riemann\_roch\_low\_degree}.
+\item \textbf{R8-sub-C.B (Riemann's \(\geq\) inequality).}  The
+  Mittag-Leffler / short-exact-sequence ladder,
+  \code{h0\_minus\_h1\_ge\_riemann}.
+\item \textbf{R8-sub-C.C (Serre-duality \(\leq\)).}  Dualisation
+  via \(L^{-1}\otimes K_{X}\),
+  \code{h0\_minus\_h1\_le\_riemann}.
+\end{itemize}
+
+\begin{theorem}[Classical input: Riemann--Roch squeeze]
+\label{input:rr-squeeze}
+\uses{lem:r8subC-low-degree,lem:r8subC-ge,lem:r8subC-le}
+The four Lean targets
+\code{riemann\_roch\_low\_degree},
+\code{h0\_minus\_h1\_ge\_riemann}, and
+\code{h0\_minus\_h1\_le\_riemann} bottom out at the three sub-leaves
+below; the final
+\code{h0\_minus\_h1\_eq\_riemann\_roch} is sorry-free squeeze.
+\notready
+\end{theorem}
+
+\begin{lemma}[R8-sub-C.A --- low-degree vanishing via effective-divisor positivity]
+\label{lem:r8subC-low-degree}
+\uses{lem:r8subC-A-r1,lem:r8subC-A-r2}
+A line bundle of strictly negative degree on a compact connected
+Riemann surface has no nonzero global sections.
+\lean{JacobianChallenge.HolomorphicForms.riemann_roch_low_degree}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-C.A.r1 --- nonzero section yields effective divisor]
+\label{lem:r8subC-A-r1}
+A nonzero \(s\in H^{0}(X,L)\) defines a divisor \((s)\geq 0\) on \(X\).
+\lean{JacobianChallenge.HolomorphicForms.section_effective_divisor}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-C.A.r2 --- divisor degree equals line-bundle degree]
+\label{lem:r8subC-A-r2}
+\(\deg(s)=\deg L\) for any nonzero \(s\in H^{0}(X,L)\); the
+divisor-line-bundle correspondence preserves degree.
+\lean{JacobianChallenge.HolomorphicForms.section_degree_eq_lineBundle_degree}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-C.B --- Riemann's inequality (\(\geq\))]
+\label{lem:r8subC-ge}
+\uses{lem:r8subC-B-r1,lem:r8subC-B-r2,lem:r8subC-B-r3}
+\((h^{0}(L):\Z)-(h^{1}(L):\Z)\geq\deg L+1-g\) for every line bundle
+\(L\) on \(X\).
+\lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_ge_riemann}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-C.B.r1 --- base case \(\deg L=0\)]
+\label{lem:r8subC-B-r1}
+For the trivial bundle, \(h^{0}=1,h^{1}=g\); both are computed
+from Hodge \(H^{1}(\mathcal{O}_{X})\cong H^{0}(K_{X})^{*}\) and
+\(\dim H^{0}(\mathcal{O}_{X})=1\) on a connected compact RS.
+\lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_trivial_bundle}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-C.B.r2 --- Euler-char additivity SES]
+\label{lem:r8subC-B-r2}
+The short exact sequence \(0\to L\to L(p)\to\C_{p}\to 0\) gives
+\(\chi(L(p))=\chi(L)+1\) (the skyscraper sheaf \(\C_{p}\) has
+\(\chi=1\)).
+\lean{JacobianChallenge.HolomorphicForms.eulerChar_additive_ses_point}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-C.B.r3 --- induction on \(\deg L\)]
+\label{lem:r8subC-B-r3}
+Strong induction on \(|\deg L|\) using r1 (base) and r2 (inductive
+step) gives \(\chi(L)=\deg L+1-g\), i.e.\
+\(h^{0}(L)-h^{1}(L)=\deg L+1-g\); the \(\geq\) direction follows.
+\lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_ge_via_induction}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-C.C --- Serre-duality squeeze (\(\leq\))]
+\label{lem:r8subC-le}
+\uses{lem:r8subC-C-r1,lem:r8subC-C-r2,lem:r8subC-C-r3}
+\((h^{0}(L):\Z)-(h^{1}(L):\Z)\leq\deg L+1-g\) for every line bundle
+\(L\) on \(X\).
+\lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_le_riemann}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-C.C.r1 --- dual bundle degree]
+\label{lem:r8subC-C-r1}
+\(\deg(L^{-1}\otimes K_{X})=2g-2-\deg L\).
+\lean{JacobianChallenge.HolomorphicForms.dual_bundle_degree}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-C.C.r2 --- Serre-duality identification]
+\label{lem:r8subC-C-r2}
+\(h^{0}(L^{-1}\otimes K_{X})=h^{1}(L)\) and
+\(h^{1}(L^{-1}\otimes K_{X})=h^{0}(L)\) via the Serre pairing
+non-degeneracy.
+\lean{JacobianChallenge.HolomorphicForms.serre_duality_h0_h1_swap}
+\notready
+\end{lemma}
+
+\begin{lemma}[R8-sub-C.C.r3 --- application of (\(\geq\)) to the dual bundle]
+\label{lem:r8subC-C-r3}
+Apply r-r3 of R8-sub-C.B to \(L^{-1}\otimes K_{X}\); rewrite via
+r1 (degree) and r2 (Serre swap) to land at the \(\leq\) statement
+on \(L\).
+\lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_le_via_dual}
+\notready
+\end{lemma}
+
+%======================================================================
 \subsection{Summary of recursive sub-gaps}
 \label{subsec:gap-summary}
 
