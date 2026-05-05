@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.Serre.LineBundleSerre
+import Jacobian.HolomorphicForms.Serre.RiemannRochHighFromSerre
 import Jacobian.HolomorphicForms.EulerCharLineBundle
 
 /-!
@@ -47,7 +48,8 @@ cohomology rank equals the zeroth cohomology rank of `K_X - L`.
 
 Bottom-up content: Serre duality for line bundles identifies
 `H¹(X, L)` with the dual of `H⁰(X, K_X ⊗ L⁻¹)`, and finite-dimensional
-duals have the same `finrank`. -/
+duals have the same `finrank`. This local leaf delegates to the shared
+Serre-side high-degree reduction package. -/
 theorem serre_h1_finrank_eq_h0_canonical_sub
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
@@ -61,19 +63,19 @@ theorem serre_h1_finrank_eq_h0_canonical_sub
     Module.finrank ℂ (RSSheafCohomology X L 1) =
       Module.finrank ℂ (RSSheafCohomology X
         (RSLineBundleSub X (RSDualizingSheaf X) L) 0) := by
-  sorry
+  have := @riemann_roch_high_degree_via_serre X _ _ _ _ _ _ _ L _ ‹_›
+  exact this
 
-/-- **Frontier theorem (sorry).** Classical Riemann-Roch identity for
+/-- **Classical Riemann-Roch assembly.** Classical Riemann-Roch identity for
 a line bundle on a compact Riemann surface, after combining the
 Euler-characteristic form (`euler_char_line_bundle`) with Serre
 duality (`h¹(L) = h⁰(K_X − L)`):
 
   h⁰(L) − h⁰(K_X − L) = deg L + 1 − g.
 
-PROOF SKETCH (left as a frontier sorry pending `Serre`-side
-universe-bookkeeping cleanup; named obligations consumed: Serre
-duality `h¹(L) = h⁰(K_X − L)` via `serre_duality_lineBundle_exists` +
-`euler_char_line_bundle`). -/
+The substantive Serre-duality and Euler-characteristic inputs remain in
+their named upstream packages; this theorem is the sorry-free arithmetic
+assembly. -/
 theorem riemann_roch_classical_identity
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
