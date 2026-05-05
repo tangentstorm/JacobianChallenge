@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Jacobian.HolomorphicForms.HodgeDeRhamRank
 import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.PeriodSpanHelpers
 import Jacobian.Periods.SurfaceClassification
@@ -171,32 +172,35 @@ The combined assembly, packaged into the single Stage-B leaf
 
 /-- **Sub-obligation 2 (Stage-B Hodge bridge).** The analytic and
 topological genera coincide on a compact connected Riemann surface.
-Mathlib gap: de Rham theorem on manifolds, Hodge decomposition,
-Dolbeault cohomology, Serre duality. All ABSENT in v4.28.0.
 
-**Existing wiring (currently blocked).** The project already carries
+**Sorry-free assembly** delegating to the project's existing Stage-B
+classical chain
 `JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1`
-in `Jacobian/HolomorphicForms/HodgeDeRhamRank.lean`, a sorry-free
-assembly producing
-`2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X)`.
-Combined with the canonical
-`topologicalGenus X = Module.finrank ℤ (IntegralOneCycle X) / 2`
-from `Jacobian/Periods/TopologicalGenus.lean`, this gives
-`analyticGenus ℂ X = topologicalGenus X` directly via
-`Nat.mul_div_cancel_left`. The wiring is currently *not* applied here
-because the transitive build chain
-(`HodgeDeRhamRank` → `HolomorphicForms.DeRhamComparisonMap` →
-`HolomorphicForms.RealSingularH1` and friends) carries pre-existing
-universe / unknown-identifier breakages that are out of scope to fix
-in this commit. Once those are fixed, this body can be replaced by
-`exact stageB_analytic_eq_topological_via_hodge_deRham X` (a one-line
-delegate). -/
+(in `Jacobian/HolomorphicForms/HodgeDeRhamRank.lean`), which produces
+`2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X)` from
+the named Hodge / de Rham / UCT leaves. Combined with the canonical
+`topologicalGenus X = Module.finrank ℤ (IntegralOneCycle X) / 2`, this
+gives `analyticGenus ℂ X = topologicalGenus X` directly via
+`Nat.mul_div_cancel_left`.
+
+All Stage-B blockers (de Rham theorem on manifolds, Hodge decomposition,
+Dolbeault cohomology, Serre duality, UCT) remain *upstream* in
+`HodgeDeRhamRank`'s named-leaf scaffolding; the present file's Stage-B
+leaf is now a one-line delegate. -/
 theorem stageB_analytic_eq_topological
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     analyticGenus ℂ X = topologicalGenus X := by
-  sorry
+  haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
+    compactRiemannSurface_finiteDimensionalHolomorphicOneForms X
+  have h := JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1 X
+  -- h : 2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X)
+  -- topologicalGenus X = Module.finrank ℤ (singularH1 X) / 2
+  --                    = Module.finrank ℤ (IntegralOneCycle X) / 2  (abbrev)
+  unfold topologicalGenus
+  show analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) / 2
+  rw [← h, Nat.mul_div_cancel_left _ (by norm_num : (0 : ℕ) < 2)]
 
 /-- **Sub-obligation 2.** The analytic genus equals the topological
 genus for a compact connected Riemann surface. Classical proof via
@@ -613,7 +617,13 @@ theorem moduleZ_smul_mem_addSubgroup_closure
   -- `n • a` here uses the `[Module ℤ M]`-induced smul. Bridge to zsmul
   -- via `Int.cast_smul_eq_zsmul (R := ℤ) n a` and close with
   -- `AddSubgroup.zsmul_mem`.
-  sorry
+  -- The two SMul ℤ M instances (`Module ℤ`-induced vs
+  -- `SubNegMonoid.toZSMul`) agree on every argument by
+  -- `Int.cast_smul_eq_zsmul`. Convert at depth 1 (compare the
+  -- `_ ∈ AddSubgroup.closure s` membership) and close the smul
+  -- equality with the cast identity.
+  convert AddSubgroup.zsmul_mem _ ha n using 1
+  exact Int.cast_smul_eq_zsmul (R := ℤ) n a
 
 theorem submodule_span_int_toAddSubgroup_eq_addSubgroupClosure
     {M : Type*} [AddCommGroup M] [Module ℤ M] (s : Set M) :
