@@ -1,16 +1,19 @@
 # Sorry inventory for `Jacobian/Solution.lean`
 
 **Generated:** 2026-05-05 via static analysis of the full import closure,
-confirmed by `lake build Jacobian.Solution` (exit 0, 25 sorry warnings).
-**Comparator binary:** not installed; staged-config smoke-test deferred.
+confirmed by `lake build Jacobian.Solution` (exit 0, 59 sorry warnings).
+**Post-rebase update:** Branch was rebased onto `origin/main` (+680 commits).
+The import chain is significantly larger than the original 25-sorry baseline.
 
-The compiler emits `declaration uses 'sorry'` for every sorry-bearing
-declaration in every compiled module, regardless of whether that
-declaration is actually *used* by `Solution.lean`. A secondary usage
-audit (grep + proof-term tracing) identified 4 declarations that are
-declared with `sorry` but never called from any live proof chain:
-items 16, 17, 18, and 22 below (marked **DEAD**). The remaining 21 are
-in the live chain.
+The previous 4 "dead" sorry declarations (#16–18 in old inventory:
+`wedge_integration_pairing_exists`, `riemann_bilinear_identity`,
+`hodge_form_posDef`; and `pathIntegralViaCover_pullbackFormsBundledLM`
+in PullbackNaturality) are **gone** — the 680 commits either discharged
+them or refactored the sorry into new named obligations.
+
+No dead-code audit has been performed on the new files from the rebase.
+All 59 sorry-bearing declarations below are in files that are transitively
+imported by `Solution.lean`.
 
 ---
 
@@ -19,43 +22,36 @@ in the live chain.
 ```
 Solution.lean
   ├── Jacobian.HolomorphicForms.CompactRiemannSurface
-  │     └── Jacobian.HolomorphicForms.FiniteDimensional
-  │     └── Jacobian.HolomorphicForms.SectionMetric  (sorry-free)
+  │     └── (see below)
   ├── Jacobian.HolomorphicForms.GenusZeroClassification
-  │     ├── Jacobian.HolomorphicForms.AnalyticGenus  (sorry-free)
   │     ├── Jacobian.HolomorphicForms.MeromorphicDegree
   │     │     └── Jacobian.HolomorphicForms.RiemannRoch
-  │     ├── Jacobian.HolomorphicForms.OnePointCxIsManifold  (sorry-free)
-  │     ├── Jacobian.HolomorphicForms.Ext  (sorry-free)
-  │     └── Jacobian.HolomorphicForms.EntireZero  (sorry-free)
+  │     └── (others sorry-free)
   ├── Jacobian.Periods.PeriodLattice
-  │     ├── Jacobian.ComplexTorus.Defs  (sorry-free)
-  │     ├── Jacobian.HolomorphicForms.AnalyticGenus  (sorry-free)
   │     └── Jacobian.Periods.BasisAlignedPeriodSubgroup
-  │           ├── Jacobian.HolomorphicForms.BasisAlignedDualEquiv  (sorry-free)
   │           └── Jacobian.Periods.PeriodFunctional
-  │                 ├── Jacobian.HolomorphicForms.CompactRiemannSurface
-  │                 └── Jacobian.Periods.IntegralOneCycle  (sorry-free)
-  ├── Jacobian.ComplexTorus.ULiftTransport
-  │     ├── Jacobian.ComplexTorus.ChartedSpace  (sorry-free)
-  │     ├── Jacobian.ComplexTorus.IsManifold    (sorry-free)
-  │     └── Jacobian.ComplexTorus.LieAddGroup   (sorry-free)
-  ├── Jacobian.AbelJacobi.AnalyticOfCurveBasis
-  │     └── Jacobian.Periods.PeriodLattice
-  ├── Jacobian.TraceDegree.PullbackBasis
-  │     └── Jacobian.TraceDegree.PushforwardBasis
-  │           ├── Jacobian.HolomorphicForms.PullbackBundled  (sorry-free)
-  │           ├── Jacobian.HolomorphicForms.BasisAlignedDualEquiv  (sorry-free)
-  │           └── Jacobian.Periods.PullbackNaturality
-  │                 └── Jacobian.Periods.PeriodFunctional
-  ├── Jacobian.TraceDegree.PushforwardBasis  (see above)
-  └── Jacobian.TraceDegree.AnalyticDegree  (sorry-free assembly)
+  │                 ├── Jacobian.HolomorphicForms.CompactRiemannSurface (sorry-bearing)
+  │                 ├── Jacobian.Periods.IntegralOneCycle
+  │                 │     ├── Jacobian.Periods.IntegralOneCycleRank
+  │                 │     │     └── Jacobian.Periods.CellularHomologyRS  ← NEW
+  │                 │     └── Jacobian.HolomorphicForms.DeRhamSingular
+  │                 │           └── Jacobian.HolomorphicForms.DeRhamComparisonMap  ← NEW
+  │                 ├── Jacobian.Periods.SurfaceClassification
+  │                 │     ├── Jacobian.Periods.TietzeReduction  ← NEW
+  │                 │     ├── Jacobian.Periods.Polygon4gCellular  ← NEW
+  │                 │     └── Jacobian.Periods.SingularH1Homotopy  ← NEW
+  │                 └── Jacobian.HolomorphicForms.HodgeDeRhamRank
+  │                       └── Jacobian.HolomorphicForms.DeRhamSingular (see above)
+  ├── Jacobian.ComplexTorus.ULiftTransport  (sorry-free)
+  ├── Jacobian.AbelJacobi.AnalyticOfCurveBasis  (sorry-bearing, see below)
+  ├── Jacobian.TraceDegree.PullbackBasis  (sorry-bearing, see below)
+  ├── Jacobian.TraceDegree.PushforwardBasis  (sorry-free)
+  └── Jacobian.TraceDegree.AnalyticDegree  (sorry-free)
 ```
 
-Files that have `sorry` comments but are **not** in the import chain
-and are therefore irrelevant: `ComplexTorus/ManifoldRecon.lean`,
-`HolomorphicForms/ChartCoeffExtractionRecon.lean`,
-`HolomorphicForms/SectionTopologyConstructionRecon.lean`.
+Five files added to the import chain by the +680-commit rebase:
+`CellularHomologyRS`, `DeRhamComparisonMap`, `TietzeReduction`,
+`Polygon4gCellular`, `SingularH1Homotopy`.
 
 ---
 
@@ -66,8 +62,12 @@ and are therefore irrelevant: `ComplexTorus/ManifoldRecon.lean`,
 
 | # | Declaration | Line | Mathematical content |
 |---|---|---|---|
-| 1 | `genusZero_exists_nonconstant_mem_L_point` | 54 | Riemann-Roch: on a genus-0 compact Riemann surface, L([P]) contains a nonconstant meromorphic function |
-| 2 | `genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point` | 71 | Pole divisor of a nonconstant element of L([P]) is exactly [P] |
+| 1 | `MeromorphicMapToSphere.toMap_ne_infty_of_no_poles` | 72 | A meromorphic map with empty pole divisor takes finite values everywhere |
+| 2 | `MeromorphicMapToSphere.toFiniteFun_mdiff_of_lift_eq` | 113 | The finite-value function inherits smoothness from the meromorphic map when a smooth lift exists |
+| 3 | `MeromorphicMapToSphere.zeros_poles_disjoint_support` | 161 | Zero and pole divisors of a meromorphic map have disjoint support |
+| 4 | `MeromorphicMapToSphere.poles_le_point_of_mem_L_point` | 177 | Membership in the Riemann-Roch space L([P]) implies pole divisor ≤ [P] |
+| 5 | `MeromorphicMapToSphere.poles_effective` | 232 | The pole divisor of a meromorphic map is effective |
+| 6 | `riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic` | 306 | Riemann-Roch space dimension ≥ 2 implies existence of a nonconstant meromorphic function |
 
 **Mathlib blocker:** no Riemann-Roch theorem, no divisor theory for
 compact Riemann surfaces.
@@ -78,29 +78,82 @@ compact Riemann surfaces.
 
 | # | Declaration | Line | Mathematical content |
 |---|---|---|---|
-| 3 | `meromorphicMapToSphere_continuous_of_poleDivisor_point` | 40 | A meromorphic map with pole divisor [P] extends continuously to the Riemann sphere |
-| 4 | `meromorphicMapToSphere_bijective_of_poleDivisor_degree_one` | 66 | A continuous meromorphic map to `OnePoint ℂ` with degree-1 pole divisor is bijective |
+| 7 | `MeromorphicMapToSphere.toMap_ne_infty_off_pole` | 48 | A meromorphic map is finite outside its pole divisor support |
+| 8 | `MeromorphicMapToSphere.continuousOn_of_no_infty_on` | 63 | Continuity on a set where the map is finite |
+| 9 | `MeromorphicMapToSphere.toMap_pole_eq_infty_of_poleDivisor_point` | 93 | Value at a simple-pole point is ∞ |
+| 10 | `MeromorphicMapToSphere.modulus_diverges_at_simple_pole` | 110 | Modulus diverges to infinity at a simple pole |
+| 11 | `MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one` | 251 | Degree-1 pole divisor implies existence of branched-cover data |
 
 **Mathlib blocker:** no degree/ramification theory for maps between
 compact Riemann surfaces.
 
 ---
 
-### `Jacobian/HolomorphicForms/GenusZeroClassification.lean`
+### `Jacobian/Periods/CellularHomologyRS.lean` *(new in chain)*
+*(imported via IntegralOneCycle → IntegralOneCycleRank)*
 
 | # | Declaration | Line | Mathematical content |
 |---|---|---|---|
-| 5 | `holomorphicOneFormIdentityChartCoeffContDiff` | 252 | The identity-chart coefficient of a holomorphic 1-form on `OnePoint ℂ` is C^∞ |
-| 6 | `holomorphicOneFormInversionChartCoeffContinuousAtZero` | 329 | The inversion-chart coefficient is continuous at 0 (i.e. at ∞) |
-| 7 | `holomorphicOneForm_identityInversionTransition_eventually` | 369 | Cotangent transition formula between identity and inversion charts: `f(w⁻¹) = −w² · g(w)` |
-| 8 | `holomorphicOneFormCoeffTendstoZeroOfTransition` | 385 | Identity-chart coefficient tends to 0 at infinity, given continuity + transition formula |
-| 9 | `holomorphicOneForm_infty_vanishing_of_inversionCoeff` | 476 | If the inversion coefficient is continuous at 0 and vanishes away from 0, the form vanishes at ∞ |
-| 10 | `homeoSphereHolomorphicOneFormVanishing` | 631 | A compact Riemann surface homeomorphic to S² has no nonzero holomorphic 1-forms (uniformization-lite) |
+| 12 | `cellular_iso_singular_h1` | 133 | CW cellular chain complex is quasi-isomorphic to singular chain complex (Mathlib gap: cellular chain complex vs singular chain complex comparison) |
+| 13 | `cellularH1_finite_singularIsoData` | 147 | Packages cellular H₁ finiteness + singular H₁ isomorphism data into a single witness |
 
-**Mathlib blocker for 5–9:** cotangent-bundle chart trivialization API for
-`ContMDiffSection` (`ContMDiffSection.contDiff_localRepr`) absent in v4.28.0.
-**Blocker for 10:** uniqueness of complex structure on the topological 2-sphere,
-transport of holomorphic 1-forms along the resulting biholomorphism.
+**Mathlib blocker:** cellular chain complex / singular chain complex
+comparison absent in v4.28.0.
+
+---
+
+### `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` *(new in chain)*
+*(imported via IntegralOneCycle → DeRhamSingular)*
+
+| # | Declaration | Line | Mathematical content |
+|---|---|---|---|
+| 14 | `deRhamComparisonMap1_prescribed_period_correct` | 131 | Integration of the de Rham-comparison-constructed closed form agrees with the input singular cocycle |
+| 15 | `deRhamComparisonMap1_zero_period_potential` | 168 | A form with zero de Rham periods has a global potential function |
+
+**Mathlib blocker:** chart-wise primitive construction; de Rham / singular
+comparison map absent in v4.28.0.
+
+---
+
+### `Jacobian/Periods/TietzeReduction.lean` *(new in chain)*
+*(imported via SurfaceClassification)*
+
+| # | Declaration | Line | Mathematical content |
+|---|---|---|---|
+| 16 | `wordQuotient_homeomorph_of_inverseCancel_step` | 187 | InverseCancel Tietze step preserves the disk-quotient up to homeomorphism |
+| 17 | `wordQuotient_homeomorph_of_handleSwap_step` | 194 | HandleSwap Tietze step preserves the disk-quotient up to homeomorphism |
+| 18 | `edgeWord_wordQuotient_homeomorph_M` | 285 | The raw-word quotient of a surface's edge-word presentation is homeomorphic to the surface |
+
+**Mathlib blocker:** no surface classification / Tietze equivalence
+formalization in v4.28.0; requires triangulation and CW-structure results.
+
+---
+
+### `Jacobian/Periods/Polygon4gCellular.lean` *(new in chain)*
+*(imported via SurfaceClassification)*
+
+| # | Declaration | Line | Mathematical content |
+|---|---|---|---|
+| 19 | `polygon4g_succ_singularH1_free` | 232 | H₁(Polygon4g(g+1), ℤ) is a free ℤ-module (via UCT / Hurewicz, absent in Mathlib) |
+| 20 | `polygon4g_succ_singularH1_finrank_eq` | 243 | H₁(Polygon4g(g+1), ℤ) has rank 2(g+1) |
+
+**Mathlib blocker:** no packaged surface-genus rank computation for
+`singularH1` in v4.28.0.
+
+---
+
+### `Jacobian/Periods/SingularH1Homotopy.lean` *(new in chain)*
+*(imported via SurfaceClassification)*
+
+| # | Declaration | Line | Mathematical content |
+|---|---|---|---|
+| 21 | `singularH1_inducedLinearMap_id` | 264 | The identity map induces the identity on H₁(X, ℤ) |
+| 22 | `singularH1_inducedLinearMap_comp` | 271 | H₁(−, ℤ) is compositionally functorial as a linear map |
+| 23 | `singularH1_inducedLinearMap_eq_of_homotopic` | 282 | Homotopic maps induce the same linear map on H₁(X, ℤ) |
+
+**Mathlib blocker:** `singularH1_inducedLinearMap` is currently defined
+as the zero map (sorry placeholder); the functoriality sorries are blocked
+on providing the actual induced-map construction.
 
 ---
 
@@ -108,13 +161,29 @@ transport of holomorphic 1-forms along the resulting biholomorphism.
 
 | # | Declaration | Line | Mathematical content |
 |---|---|---|---|
-| 11 | `holomorphicOneForm_fiberNorm_continuous` | 161 | Fiberwise norm `x ↦ ‖σ(x)‖` of a holomorphic 1-form is continuous |
-| 12 | `holomorphicOneForm_supNorm_cauchySeq_tendsto` | 229 | Every Cauchy sequence of holomorphic 1-forms in the sup-norm converges (Weierstrass convergence theorem for holomorphic sections) |
-| 13 | `holomorphicOneForm_closedBall_totallyBounded` | 656 | The closed unit ball in holomorphic 1-forms is totally bounded (core of Montel's theorem: equibounded + equicontinuous → Arzelà–Ascoli) |
+| 24 | `holomorphicOneForm_fiberNorm_continuous_via_eval_at_one` | 251 | Fiberwise norm `x ↦ ‖σ(x)‖` of a holomorphic 1-form is continuous (chart trivialization argument) |
+| 25 | `holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps` | 350 | Sup-norm convergence to the pointwise/holomorphic limit (Weierstrass convergence) |
+| 26 | `holomorphicOneForm_arzela_ascoli` | 923 | Equibounded + equicontinuous family of holomorphic 1-forms is relatively compact in sup-norm (Arzelà–Ascoli) |
 
-**Mathlib blocker for 12–13:** no Weierstrass convergence theorem for
-holomorphic functions (limits of uniform sequences of holomorphic
-functions are holomorphic) in Mathlib v4.28.0.
+**Mathlib blocker for 25–26:** no Weierstrass convergence theorem for
+holomorphic functions in Mathlib v4.28.0.
+
+---
+
+### `Jacobian/HolomorphicForms/GenusZeroClassification.lean`
+
+| # | Declaration | Line | Mathematical content |
+|---|---|---|---|
+| 27 | `ContMDiffSection_localRepr_identityChart_contDiff` | 252 | Identity-chart local representation of a holomorphic 1-form on `OnePoint ℂ` is C^∞ |
+| 28 | `ContMDiffSection_localRepr_inversionChart_continuousAt_zero` | 346 | Inversion-chart local representation is continuous at 0 (i.e. at ∞) |
+| 29 | `holomorphicOneForm_chartOverlap_pullback` | 415 | Cotangent transition formula between identity and inversion charts: `f(w⁻¹) = −w² · g(w)` |
+| 30 | `exists_biholomorphism_to_OnePointCx_of_homeoSphere` | 782 | A compact Riemann surface homeomorphic to S² is biholomorphic to `OnePoint ℂ` (uniformization) |
+| 31 | `holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx` | 803 | A biholomorphism to `OnePoint ℂ` induces a linear equivalence on holomorphic 1-forms |
+
+**Mathlib blocker for 27–29:** cotangent-bundle chart trivialization API
+(`ContMDiffSection.contDiff_localRepr`) absent in v4.28.0.
+**Blocker for 30:** uniqueness of complex structure on the topological
+2-sphere.
 
 ---
 
@@ -122,17 +191,45 @@ functions are holomorphic) in Mathlib v4.28.0.
 
 | # | Declaration | Line | Mathematical content |
 |---|---|---|---|
-| 14 | `h1_free_of_compact_surface` | 90 | H₁(X, ℤ) of a compact Riemann surface is free ℤ-module of rank 2g (requires surface classification and CW structure) |
-| 15 | `analyticGenus_eq_topologicalGenus` | 105 | Analytic genus = topological genus (Hodge decomposition, de Rham theorem, Serre duality) |
-| 16 | `wedge_integration_pairing_exists` (**DEAD**) | 192 | Declared as a blocker for `period_functionals_ℝ_linearIndependent`, but that theorem is itself a bare `sorry` and never calls this declaration |
-| 17 | `riemann_bilinear_identity` (**DEAD**) | 216 | Same situation as #16 — only in proof-sketch comments, never called |
-| 18 | `hodge_form_posDef` (**DEAD**) | 231 | Same situation as #16 — only in proof-sketch comments, never called |
-| 19 | `period_functionals_ℝ_linearIndependent` | 253 | The period functionals `γ ↦ ∫_γ ωᵢ` are ℝ-linearly independent (analytic core of Riemann bilinear relations) |
-| 20 | `periodSubgroup_eq_zspan_of_basis` | 329 | The period subgroup is the ℤ-span of 2g ℝ-linearly independent vectors (via `exact ⟨b, hli, sorry⟩`) |
+| 32 | `riemann_classical_real_LI_input` | 487 | The Riemann bilinear relations imply that the period vectors are ℝ-linearly independent (requires differential forms on manifolds, wedge product, Stokes on the polygon model) |
 
-**Mathlib blockers:** differential forms on manifolds (`Ω^p(X)`, wedge
-product, integration), Stokes' theorem on fundamental polygons, Hodge
-decomposition, de Rham theorem — all absent in v4.28.0.
+**Note:** This is the sole surviving sorry in this file. The former dead
+sorries (`wedge_integration_pairing_exists`, `riemann_bilinear_identity`,
+`hodge_form_posDef`) were discharged or restructured by the +680 commits.
+
+**Mathlib blockers:** differential forms on manifolds (`Ω^p(X)`), wedge
+product, integration, Stokes' theorem — absent in v4.28.0.
+
+---
+
+### `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean`
+
+*(This file expanded greatly. The 18 sorries are sub-goals in the proof of
+Abel's theorem / period-congruence direction.)*
+
+| # | Declaration | Line | Mathematical content |
+|---|---|---|---|
+| 33 | `serre_vanishing_high_degree` | 626 | Serre vanishing for high-degree divisors: `h¹(D) = 0` when `deg D > 2g - 2` |
+| 34 | `rr_collapses_in_high_degree` | 633 | Apply Serre vanishing to get `ℓ(D) = d - g + 1` in high degree |
+| 35 | `serre_duality_h1_eq_ℓKD` | 657 | Serre duality: `h¹(D) = ℓ(K − D)` |
+| 36 | `euler_char_identity_low_degree` | 664 | Euler characteristic identity `χ(𝒪(D)) = ℓ(D) - h¹(D) = d - g + 1` in low degree |
+| 37 | `extract_triple_from_RR` | 714 | Extract (ℓD, ℓKD, g) triple from the Riemann-Roch existence hypothesis |
+| 38 | `rewrite_arithmetic_rr` | 720 | Rewrite the arithmetic RR relation for downstream use |
+| 39 | `dim_geq_two_genus_zero` | 769 | Genus-0 case of dim ≥ 2: `3 - 0 = 3 ≥ 2` |
+| 40 | `dim_geq_two_genus_one` | 775 | Genus-1 case of dim ≥ 2: `3 - 1 = 2 ≥ 2` |
+| 41 | `dim_geq_two_high_genus` | 792 | High-genus case (g ≥ 2) of dim ≥ 2 via Brill-Noether / Mittag-Leffler |
+| 42 | `two_point_divisor_degree` | 801 | Degree of `[Q₁] + [Q₂]` equals 2 |
+| 43 | `pick_n_geq_two` | 808 | Extract a concrete witness `n ≥ 2` from an existence hypothesis |
+| 44 | `build_constant_meromorphicMap` | 886 | Construct a constant meromorphic map to `OnePoint ℂ` with zero divisors |
+| 45 | `two_point_effective` | 892 | The divisor `[Q₁] + [Q₂]` is effective |
+| 46 | `constant_in_RR_space_for_effective` | 899 | The constant map lies in the two-point Riemann-Roch space |
+| 47 | `nonconstant_extracted_from_dim_quotient` | 918 | Dimension ≥ 2 implies existence of a nonconstant element in the Riemann-Roch space |
+| 48 | `thirdKindData_from_genus_zero` | 1052 | On a genus-0 surface, construct third-kind meromorphic data (simple poles at Q₁, Q₂) |
+| 49 | `wrap_two_pole_into_raw` | 1063 | Package a meromorphic map as `RawMeromorphicWithPrincipal` data |
+| 50 | `pole_full_two_point_of_nonconstant_in_RR_space_aux` | 1096 | A nonconstant element of the two-point Riemann-Roch space has full pole at both Q₁ and Q₂ |
+
+**Mathlib blockers:** no Riemann-Roch theorem, no Serre duality, no
+divisor theory, no Abel's theorem, no Riemann-Hurwitz in v4.28.0.
 
 ---
 
@@ -140,22 +237,24 @@ decomposition, de Rham theorem — all absent in v4.28.0.
 
 | # | Declaration | Line | Mathematical content |
 |---|---|---|---|
-| 21 | `periodPairing_pullbackFormsBundledLM` | 139 | Naturality: `∫_γ (f*η) = ∫_{f_* γ} η` (Stokes theorem / integration naturality) — called at `PushforwardBasis.lean:326` |
-| 22 | `pathIntegralViaCover_pullbackFormsBundledLM` (**DEAD**) | 239 | Path integral of pulled-back form equals integral along pushed-forward path — declared as a sub-goal for #21 but `#21` is itself a `sorry`; this declaration is never called from any proof |
+| 51 | `periodPairing_chainLevel_repr` | 125 | Any `IntegralOneCycle` can be represented as a finite ℤ-linear combination of paths |
+| 52 | `cyclePushforward_chainLevel_repr` | 138 | The chain-level representation is compatible with `cyclePushforward` (path-mapping) |
+| 53 | `pathIntegralViaCover_trans_eq_add` | 294 | Integration is additive under path concatenation |
+| 54 | `pathIntegralViaCover_pullback_chart_segment` | 311 | Chart-level chain rule: pullback of form integrates as integral of original form along pushed path |
+| 55 | `pathIntegralViaCover_partition_compat_under_smooth` | 327 | A chart partition of γ on X admits a compatible refinement as partition of f∘γ on Y |
+| 56 | `pathIntegralViaCoverWith_refinement_invariant` | 344 | The `pathIntegralViaCoverWith` value is invariant under chart-partition refinement |
+| 57 | `pathIntegralViaCoverWith_pullback_via_common_partition` | 363 | Segment-by-segment chart rule: pullback-integral equals original integral along pushed path |
+
+**Note:** The top-level `periodPairing_pullbackFormsBundledLM` (line 780)
+is now **sorry-free**, assembling from `periodPairing_pullbackFormsBundledLM_via_pathLevel`
+(itself sorry-free, but calling #51 and #52) and
+`pathIntegralViaCover_pullbackFormsBundledLM` (sorry-free, calling #57
+via `pathIntegralViaCoverWith_pullbackFormsBundledLM`). All 7 sorries are
+in the live proof chain.
 
 **Mathlib blocker:** Stokes' theorem for path integrals / integration
-naturality for pullback of differential forms.
-
----
-
-### `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean`
-
-| # | Declaration | Line | Mathematical content |
-|---|---|---|---|
-| 23 | `period_congruence_distinct_implies_genus_zero` | 264 | Abel's theorem (genus-0 direction): if J(Q₁) = J(Q₂) and Q₁ ≠ Q₂ then genus(X) = 0 |
-
-**Mathlib blocker:** no Abel's theorem, no divisor theory, no
-Riemann-Hurwitz formula. Uses `pathIntegralFunctionalBundle` (opaque).
+naturality for pullback of differential forms; chain-level representation
+of `singularH1`-valued cycles.
 
 ---
 
@@ -163,22 +262,21 @@ Riemann-Hurwitz formula. Uses `pathIntegralFunctionalBundle` (opaque).
 
 | # | Declaration | Line | Mathematical content |
 |---|---|---|---|
-| 24 | `basisAnalyticPullbackBundle_id_dualPullback` | 180 | The dual form-pullback along `id` is the identity `AddMonoidHom` (pure linear algebra via concrete `pullbackFormsMap`) |
-| 25 | `basisAnalyticPullbackBundle_comp_dualPullback` | 269 | The dual form-pullback is contravariant: `(g ∘ f)* = f* ∘ g*` as `AddMonoidHom` |
+| 58 | `pullbackFormsMap_eq_matrix_AddHom` | 237 | `pullbackFormsMap` equals the matrix `AddMonoidHom` given by `basisAlignedFormPullbackMatrix` |
+| 59 | `basisAnalyticPullbackBundle_dualPullback_eq_matrix_AddHom` | 251 | The basis-aligned form-pullback from `basisAnalyticPullbackBundle` equals the same matrix `AddMonoidHom` |
 
-**Blocker:** the `basisAnalyticPullbackBundle` opaque uses `Classical.choice`
-from its `Inhabited` instance (zero pullback); these sorries are the named
-proof obligations that the *actual* geometric pullback satisfies
-`id`-functoriality and composition-functoriality. Pure linear algebra once the
-concrete `pullbackFormsMap` is supplied.
+**Blocker:** `basisAnalyticPullbackBundle` is an opaque using
+`Classical.choice` from its `Inhabited` instance; these sorries are the
+proof obligations that the concrete `pullbackFormsMap` matches the opaque
+bundle's spec. Pure linear algebra once the concrete map is supplied.
 
 ---
 
 ## Opaque declarations (not `sorry` but load-bearing named obligations)
 
 These contribute no `sorryAx` to the axiom set; they use `Classical.choice`
-via their `Inhabited` witness (zero/trivial value). They are mathematically
-hollow until replaced by a concrete construction.
+via their `Inhabited` witness (zero/trivial value). Mathematically hollow
+until replaced by a concrete construction.
 
 | Declaration | File | Content |
 |---|---|---|
@@ -189,45 +287,53 @@ hollow until replaced by a concrete construction.
 
 ## Summary
 
-**Total sorry obligations: 25** across 7 files (compiler count).
-**Actually live (in chain): 21. Dead (declared but uncalled): 4.**
+**Total sorry obligations: 59** across 13 files (compiler count, post-rebase).
 
-| File | Total | Live | Dead |
-|---|---|---|---|
-| `HolomorphicForms/RiemannRoch.lean` | 2 | 2 | — |
-| `HolomorphicForms/MeromorphicDegree.lean` | 2 | 2 | — |
-| `HolomorphicForms/GenusZeroClassification.lean` | 6 | 6 | — |
-| `HolomorphicForms/CompactRiemannSurface.lean` | 3 | 3 | — |
-| `Periods/PeriodFunctional.lean` | 7 | 4 | 3 (#16,17,18) |
-| `Periods/PullbackNaturality.lean` | 2 | 1 | 1 (#22) |
-| `AbelJacobi/AnalyticOfCurveBasis.lean` | 1 | 1 | — |
-| `TraceDegree/PullbackBasis.lean` | 2 | 2 | — |
-| **Total** | **25** | **21** | **4** |
+| File | Sorries | Notes |
+|---|---|---|
+| `HolomorphicForms/RiemannRoch.lean` | 6 | Riemann-Roch / divisor theory |
+| `HolomorphicForms/MeromorphicDegree.lean` | 5 | Degree / ramification theory |
+| `Periods/CellularHomologyRS.lean` | 2 | **NEW** — cellular vs. singular H₁ |
+| `HolomorphicForms/DeRhamComparisonMap.lean` | 2 | **NEW** — de Rham / singular comparison |
+| `Periods/TietzeReduction.lean` | 3 | **NEW** — surface classification (Tietze) |
+| `Periods/Polygon4gCellular.lean` | 2 | **NEW** — polygon H₁ rank |
+| `Periods/SingularH1Homotopy.lean` | 3 | **NEW** — H₁ functoriality |
+| `HolomorphicForms/CompactRiemannSurface.lean` | 3 | Weierstrass / Montel |
+| `HolomorphicForms/GenusZeroClassification.lean` | 5 | Uniformization / cotangent API |
+| `Periods/PeriodFunctional.lean` | 1 | Riemann bilinear relations (down from 7) |
+| `AbelJacobi/AnalyticOfCurveBasis.lean` | 18 | Abel's theorem sub-goals (up from 1) |
+| `Periods/PullbackNaturality.lean` | 7 | Path integral naturality (up from 2) |
+| `TraceDegree/PullbackBasis.lean` | 2 | Pullback bundle spec matching |
+| **Total** | **59** | |
 
-The 4 dead declarations (#16 `wedge_integration_pairing_exists`,
-#17 `riemann_bilinear_identity`, #18 `hodge_form_posDef`,
-#22 `pathIntegralViaCover_pullbackFormsBundledLM`) are scaffolding
-stubs that document what a proof *would* need but are never called
-because the proof they would support (#19 and #21 respectively) is
-itself a bare `sorry` that doesn't invoke them.
+### Change summary relative to previous inventory (25 sorries)
 
-### Highest-priority / deepest blockers
+- **Discharged / refactored away (−5):** `wedge_integration_pairing_exists`,
+  `riemann_bilinear_identity`, `hodge_form_posDef` (dead scaffolding removed),
+  `pathIntegralViaCover_pullbackFormsBundledLM` (old dead sorry),
+  `genusZero_exists_nonconstant_mem_L_point` / `genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point`
+  (refactored into a longer chain in RiemannRoch + AbelJacobi).
+- **New files in import chain (+5 files, +15 sorries):** CellularHomologyRS,
+  DeRhamComparisonMap, TietzeReduction, Polygon4gCellular, SingularH1Homotopy.
+- **Expanded proof chains in existing files (+24 sorries):**
+  AnalyticOfCurveBasis (1→18) and PullbackNaturality (2→7) had their top-level
+  sorry replaced by detailed sub-goal scaffolding.
 
-The following sorries have no path to discharge without substantial new
-Mathlib infrastructure:
+### Deepest blockers (no path without new Mathlib infrastructure)
 
-- **#15** `analyticGenus_eq_topologicalGenus` (Hodge + de Rham)
-- **#16–19** Riemann bilinear / Hodge theory cluster in `PeriodFunctional.lean`
-- **#12** `holomorphicOneForm_supNorm_cauchySeq_tendsto` (Weierstrass convergence)
-- **#23** `period_congruence_distinct_implies_genus_zero` (Abel's theorem)
-- **#21–22** `PullbackNaturality` (Stokes naturality for path integrals)
+- **#32** `riemann_classical_real_LI_input` (Riemann bilinear / differential forms)
+- **#30** `exists_biholomorphism_to_OnePointCx_of_homeoSphere` (uniformization)
+- **#33–50** Abel's theorem cluster in `AnalyticOfCurveBasis`
+  (Riemann-Roch, Serre duality, divisor theory)
+- **#51–57** Path integral naturality cluster in `PullbackNaturality`
+  (Stokes / chain-level representation)
+- **#12–23** New topology/homology cluster
+  (cellular H₁, de Rham comparison, surface classification, H₁ functoriality)
 
-The following sorries are pure linear algebra / continuity assembly that
-should be provable without new Mathlib:
+### Sorries most tractable without new Mathlib
 
-- **#24–25** `basisAnalyticPullbackBundle_{id,comp}_dualPullback`
-  (once a concrete `pullbackFormsMap` is defined)
-- **#11** `holomorphicOneForm_fiberNorm_continuous`
+- **#58–59** `PullbackBasis` (pure linear algebra once concrete pullbackFormsMap supplied)
+- **#24** `holomorphicOneForm_fiberNorm_continuous_via_eval_at_one`
   (chart trivialization argument, ~20 lines)
-- **#5–9** `GenusZeroClassification` leaf sorries
+- **#27–29** `GenusZeroClassification` leaf sorries
   (pending `ContMDiffSection.contDiff_localRepr` or equivalent)
