@@ -270,24 +270,37 @@ theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     · exact huniv
   exact Set.range_eq_univ.mp hrange_univ
 
-/-- **Structural axiom (M5).** A continuous meromorphic map of degree 1
-between compact connected complex 1-manifolds is **injective**.
-
-Bottom-up: degree 1 means the generic fiber has cardinality 1; with
-no ramification (degree 1 cannot have ramification), this extends
-to global injectivity.
+/-- **Structural axiom (M5a).** A pole-degree-1 meromorphic map has
+all preimage fibers of cardinality at most 1.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:degree-one-injective`. -/
-theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
+`lem:degree-one-fiber-card-le-one`. -/
+theorem MeromorphicMapToSphere.fiber_card_le_one_of_pole_degree_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X)
     (_hcont : Continuous f.toMap)
     (_hdegree : Divisor.degree f.poles = 1) :
-    Function.Injective f.toMap := by
+    ∀ y : OnePoint ℂ, ∀ x₁ x₂ : X,
+      f.toMap x₁ = y → f.toMap x₂ = y → x₁ = x₂ := by
   sorry
+
+/-- **Structural axiom (M5).** A continuous meromorphic map of degree 1
+between compact connected complex 1-manifolds is **injective**.
+
+Sorry-free assembly: directly from M5a. -/
+theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X)
+    (hcont : Continuous f.toMap)
+    (hdegree : Divisor.degree f.poles = 1) :
+    Function.Injective f.toMap := by
+  intro x₁ x₂ hxx
+  exact f.fiber_card_le_one_of_pole_degree_one hcont hdegree
+    (f.toMap x₁) x₁ x₂ rfl hxx.symm
 
 /-- **Degree-one bijectivity leaf.** A continuous meromorphic map to
 `OnePoint ℂ` whose pole divisor has degree one is bijective.
