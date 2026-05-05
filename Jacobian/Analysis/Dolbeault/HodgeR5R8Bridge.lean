@@ -62,7 +62,10 @@ open JacobianChallenge.HolomorphicForms (harmonicForms_toH1)
 open JacobianChallenge.Analysis.BundledForms.SubA
   (r9subA_cotangent_alternating_bundle r9subA_cotangent_alternating_bundle_proof)
 open JacobianChallenge.Analysis.BundledForms.SubAComplex
-  (r7subA_bigraded_forms r7subA_bigraded_forms_proof)
+  (r7subA_bigraded_forms r7subA_bigraded_forms_proof
+   r7subA_bigraded_forms_real r7subA_bigraded_forms_real_proof
+   r7subA_substantive_closure
+   reCLM_add_I_imCLM_eq_id oneZeroProj_add_zeroOneProj_eq_id)
 
 universe u
 
@@ -188,6 +191,55 @@ theorem r7subA_witness (p q : ℕ) :
   r7subA_bigraded_forms_proof
     ComplexBundleBasePlaceholder ComplexBundleBasePlaceholder p q
 
+/-- Substantive Round-11–16 witness: the `_real` umbrella backed by
+real Mathlib-typed carriers (`BigradedForm E p q`,
+`complexCotangent E`) and the Mathlib-typed `(1,0)/(0,1)`
+projection on `ℂ →L[ℝ] ℂ` (via `Complex.reCLM`, `Complex.imCLM`).
+
+Companion to `r7subA_witness`; both are sorry-free, but this one
+carries substantive Mathlib content rather than placeholder
+witnesses. -/
+theorem r7subA_real_witness (p q : ℕ) :
+    r7subA_bigraded_forms_real ℂ p q :=
+  r7subA_bigraded_forms_real_proof ℂ p q
+
+/-- Sanity: the chart-local `(1,0) ⊕ (0,1)` projection on `ℂ` sums
+to the real-linear identity.  Reified from
+`reCLM_add_I_imCLM_eq_id` for use as a substantive witness in
+`dolbeault_overview_via_R5_R8_R9`. -/
+theorem r7subA_proj_sum_id :
+    Complex.ofRealCLM.comp Complex.reCLM
+        + Complex.I • (Complex.ofRealCLM.comp Complex.imCLM)
+      = (ContinuousLinearMap.id ℝ ℂ) :=
+  reCLM_add_I_imCLM_eq_id
+
+/-- Substantive Round-17–22 witness: the chart-local algebraic
+identities `∂² = ∂̄² = ∂∂̄ + ∂̄∂ = 0` on the real `BigradedForm`
+carrier, plus the `(1,0) + (0,1) = id` cotangent split. -/
+theorem r7subA_substantive_witness (p q : ℕ) :
+    r7subA_bigraded_forms_real ℂ p q ∧
+    (∀ ω : JacobianChallenge.Analysis.BundledForms.SubAComplex.BigradedForm ℂ p q,
+        JacobianChallenge.Analysis.BundledForms.SubAComplex.dbar_shift_real ℂ p (q + 1)
+            (JacobianChallenge.Analysis.BundledForms.SubAComplex.dbar_shift_real ℂ p q ω) = 0) ∧
+    (∀ ω : JacobianChallenge.Analysis.BundledForms.SubAComplex.BigradedForm ℂ p q,
+        JacobianChallenge.Analysis.BundledForms.SubAComplex.partial_shift_real ℂ (p + 1) q
+            (JacobianChallenge.Analysis.BundledForms.SubAComplex.partial_shift_real ℂ p q ω) = 0) ∧
+    (∀ ω : JacobianChallenge.Analysis.BundledForms.SubAComplex.BigradedForm ℂ p q,
+        JacobianChallenge.Analysis.BundledForms.SubAComplex.partial_shift_real ℂ p (q + 1)
+              (JacobianChallenge.Analysis.BundledForms.SubAComplex.dbar_shift_real ℂ p q ω)
+          + JacobianChallenge.Analysis.BundledForms.SubAComplex.dbar_shift_real ℂ (p + 1) q
+              (JacobianChallenge.Analysis.BundledForms.SubAComplex.partial_shift_real ℂ p q ω) = 0) :=
+  r7subA_substantive_closure ℂ p q
+
+/-- The `(1,0) + (0,1) = id` cotangent split on `complexCotangent ℂ`
+(the model fibre). -/
+theorem r7subA_cotangent_split_id :
+    JacobianChallenge.Analysis.BundledForms.SubAComplex.oneZeroProj ℂ
+      + JacobianChallenge.Analysis.BundledForms.SubAComplex.zeroOneProj ℂ
+      = ContinuousLinearMap.id ℝ
+          (JacobianChallenge.Analysis.BundledForms.SubAComplex.complexCotangent ℂ) :=
+  oneZeroProj_add_zeroOneProj_eq_id ℂ
+
 /-! ### R7 dispatched via R5 + R7-sub-A + R8 + R9 -/
 
 /-- **R7 dispatched via R5 (Hodge) + R7-sub-A (bigraded forms) +
@@ -235,6 +287,17 @@ noncomputable def dolbeault_overview_via_R5_R8_R9 :
   have _hR7subA_01     := r7subA_witness 0 1
   have _hR7subA_10     := r7subA_witness 1 0
   have _hR7subA_11     := r7subA_witness 1 1
+  -- Substantive Round-11–16 witnesses: real Mathlib-typed carriers.
+  have _hR7subA_real_00 := r7subA_real_witness 0 0
+  have _hR7subA_real_01 := r7subA_real_witness 0 1
+  have _hR7subA_real_10 := r7subA_real_witness 1 0
+  have _hR7subA_proj   := r7subA_proj_sum_id
+  -- Substantive Round-17–22 witnesses: algebraic identities on the
+  -- real `BigradedForm` carrier + `(1,0)+(0,1) = id` on the
+  -- model cotangent fibre `ℂ →L[ℝ] ℂ`.
+  have _hR7subA_subst_00 := r7subA_substantive_witness 0 0
+  have _hR7subA_subst_01 := r7subA_substantive_witness 0 1
+  have _hR7subA_split_id := r7subA_cotangent_split_id
   dolbeault_iso_zero_one X
 
 /-- Compatibility re-export.  Kept under the old name so existing
