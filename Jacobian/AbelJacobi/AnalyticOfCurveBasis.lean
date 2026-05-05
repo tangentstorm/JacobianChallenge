@@ -827,7 +827,11 @@ theorem two_point_divisor_degree
     (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂) :
     (HolomorphicForms.Divisor.point Q₁ +
       HolomorphicForms.Divisor.point Q₂).degree.toNat = 2 := by
-  sorry
+  have h : (HolomorphicForms.Divisor.point Q₁ +
+      HolomorphicForms.Divisor.point Q₂).degree = 2 := by
+    rw [map_add, HolomorphicForms.Divisor.degree_point,
+        HolomorphicForms.Divisor.degree_point]; norm_num
+  simp [h]
 
 /-- **Round-33 sub-leaf.** Pick a witness `n` with `n ≥ 2`. -/
 theorem pick_n_geq_two
@@ -910,15 +914,25 @@ condition. -/
 (value `0 : OnePoint ℂ`, both divisors zero). -/
 theorem build_constant_meromorphicMap :
     ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
-      f.poles = 0 ∧ f.zeros = 0 := by
-  sorry
+      f.poles = 0 ∧ f.zeros = 0 :=
+  ⟨{ toMap := fun _ => ((0 : ℂ) : OnePoint ℂ)
+     locally_meromorphic := True
+     zeroDivisor := 0
+     poleDivisor := 0
+     principalDivisor := 0
+     principalDivisor_eq := by simp }, rfl, rfl⟩
 
 /-- **Round-34 sub-leaf.** Effectivity of `(Q₁) + (Q₂)`. -/
 theorem two_point_effective
     (Q₁ Q₂ : X) :
     HolomorphicForms.Divisor.Effective
       (HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂) := by
-  sorry
+  intro P
+  haveI : DecidableEq X := Classical.decEq X
+  have h1 := HolomorphicForms.Divisor.effective_point Q₁ P
+  have h2 := HolomorphicForms.Divisor.effective_point Q₂ P
+  simp [Finsupp.add_apply] at *
+  linarith
 
 /-- **Round-34 assembly (sorry-free).** -/
 theorem constant_in_RR_space_for_effective
@@ -926,12 +940,18 @@ theorem constant_in_RR_space_for_effective
     ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
       f.MemRiemannRochSpace
         (HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂) := by
-  obtain ⟨f, _, _⟩ := build_constant_meromorphicMap (X := X)
+  obtain ⟨f, hpoles, hzeros⟩ := build_constant_meromorphicMap (X := X)
   refine ⟨f, ?_⟩
-  -- Mem.RiemannRochSpace D unfolds to `Effective (f.principal + D)`.
-  -- For the constant `f`, `f.principal = 0`, so this reduces to
-  -- `Effective D`, which we know from `two_point_effective`.
-  sorry
+  show HolomorphicForms.Divisor.Effective
+    (f.principal + (HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂))
+  have hprincipal : f.principal = 0 := by
+    simp only [HolomorphicForms.MeromorphicMapToSphere.principal,
+               HolomorphicForms.MeromorphicMapToSphere.poles] at *
+    rw [f.principalDivisor_eq]
+    simp [HolomorphicForms.MeromorphicMapToSphere.zeros] at hzeros
+    rw [hzeros, hpoles, sub_self]
+  rw [hprincipal, zero_add]
+  exact two_point_effective X Q₁ Q₂
 
 /-! **Round-24 sub-leaf for R10/1 (NEW SORRY).** Existence of a
 non-constant element in a vector space of dimension ≥ 2 modulo a
