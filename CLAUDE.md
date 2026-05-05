@@ -10,7 +10,10 @@ This is a multi-month infrastructure project, not a single-file proof exercise. 
 
 ## Build commands
 
+At the start of a fresh session — or any time `.lake/packages/mathlib/.lake/build/` is missing — run `lake exe cache get` first to pull the prebuilt Mathlib oleans. Without the cache, the first `lake build` will rebuild Mathlib from source (hours) instead of downloading the pinned binaries (minutes).
+
 ```bash
+lake exe cache get                               # pull prebuilt Mathlib oleans (run once per fresh checkout)
 lake build Jacobian.Challenge                    # the public target — must keep compiling
 lake build Jacobian.Solution                     # the assembled solution skeleton
 lake build Jacobian                              # everything (slow)
