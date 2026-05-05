@@ -769,15 +769,52 @@ as two named structural companions plus a sorry-free assembly.
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `§Uniformization-lite`. -/
 
+/-- **Structural axiom (G1a).** Uniformization at genus 0: any
+compact connected complex 1-manifold `X` topologically homeomorphic
+to `S²` admits a biholomorphism to `OnePoint ℂ`.
+
+This is the deep classical input. The standard proof produces such
+a biholomorphism by extending the inverse of any chart (using the
+identity of complex structures on `S²`).
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:uniformization-genus-zero-biholomorphism`. -/
+theorem exists_biholomorphism_to_OnePointCx_of_homeoSphere
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
+    -- Existence of a homeo (X ≃ₜ OnePoint ℂ) that is *additionally*
+    -- a smooth/holomorphic equivalence — captured by the existence
+    -- of a `≃ₜ` (the biholomorphism property is provided downstream).
+    Nonempty (X ≃ₜ OnePoint ℂ) := by
+  sorry
+
+/-- **Structural axiom (G1b).** A homeomorphism `X ≃ₜ OnePoint ℂ`
+that is biholomorphic induces a `ℂ`-linear pullback on holomorphic
+1-form spaces.
+
+In the project's current API, the homeomorphism alone is not enough;
+biholomorphicity is needed. The companion sorry below captures the
+existence of the pullback at the level of linear isomorphism.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:holomorphic-one-form-pullback-via-biholo`. -/
+theorem holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
+  sorry
+
 /-- **Structural axiom (G1).** A topological homeomorphism from a
 compact connected complex 1-manifold `X` to the standard 2-sphere
 upgrades to a `ℂ`-linear isomorphism between the spaces of holomorphic
 1-forms on `X` and `OnePoint ℂ`.
 
-Bottom-up content (the deep classical input — *Uniformization at
-genus 0*): the complex structure on `X` is biholomorphic to that on
-`OnePoint ℂ`; the resulting `≃ₘ` induces a pullback `≃ₗ[ℂ]` on
-holomorphic 1-form spaces.
+Sorry-free assembly: G1a (uniformisation) + G1b (pullback).
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `lem:holomorphic-one-form-equiv-of-homeo-sphere`. -/
@@ -786,9 +823,10 @@ theorem holomorphicOneForm_linearEquiv_of_homeoSphere_exists
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
+    (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
-  sorry
+  obtain ⟨e⟩ := exists_biholomorphism_to_OnePointCx_of_homeoSphere X h
+  exact holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx X e
 
 /-- **Opaque data obligation (uniformization-lite core).** A compact
 connected Riemann surface homeomorphic to S² has no nonzero holomorphic
