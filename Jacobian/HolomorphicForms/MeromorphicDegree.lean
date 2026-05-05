@@ -84,28 +84,10 @@ theorem MeromorphicMapToSphere.continuousOn_compl_pole_of_poleDivisor_point
   f.continuousOn_of_no_infty_on {P}ᶜ
     (fun x hx => f.toMap_ne_infty_off_pole P hpole x hx)
 
-/-- **Structural axiom (M2).** Near a simple pole `P`, the meromorphic
-map tends to `∞ : OnePoint ℂ`. This is the local-Laurent / one-point
-extension statement: in any chart at `P`, the map locally looks like
-`z ↦ a/z + (holomorphic)` with `a ≠ 0`, hence diverges; the
-`OnePoint` topology converts divergence to `∞`-convergence.
-
-Cross-ref: `tex/sections/03-riemann-roch.tex`,
-`lem:meromorphic-tends-to-infty-at-simple-pole`. -/
-theorem MeromorphicMapToSphere.tendsto_infty_at_pole_of_poleDivisor_point
-    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicMapToSphere X) (P : X)
-    (_hpole : f.poles = Divisor.point P) :
-    Filter.Tendsto f.toMap (nhds P) (nhds (OnePoint.infty : OnePoint ℂ)) := by
-  sorry
-
 /-- **Structural axiom (M3).** A meromorphic map whose only pole is at
-`P` actually evaluates to `∞ : OnePoint ℂ` at `P`. This is the
-"value-at-pole" axiom — the structural data linking the abstract
-`poleDivisor` to the concrete `toMap` at the pole.
+`P` actually evaluates to `∞ : OnePoint ℂ` at `P`.
 
-Cross-ref: `tex/sections/03-riemann-roch.tex`,
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `lem:meromorphic-value-at-pole`. -/
 theorem MeromorphicMapToSphere.toMap_pole_eq_infty_of_poleDivisor_point
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -114,6 +96,76 @@ theorem MeromorphicMapToSphere.toMap_pole_eq_infty_of_poleDivisor_point
     (_hpole : f.poles = Divisor.point P) :
     f.toMap P = (OnePoint.infty : OnePoint ℂ) := by
   sorry
+
+/-- **Structural axiom (M2a).** A meromorphic map with a simple pole
+at `P` has a *finite-pre-image lift* `g : X \ {P} → ℂ` such that
+`f.toMap = OnePoint.some ∘ g` on `{P}ᶜ`, and `‖g x‖ → ∞` as
+`x → P`.
+
+This is the local-Laurent diverging-modulus content.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:simple-pole-modulus-diverges`. -/
+theorem MeromorphicMapToSphere.modulus_diverges_at_simple_pole
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (_hpole : f.poles = Divisor.point P) :
+    ∃ g : X → ℂ,
+      (∀ x : X, x ≠ P → f.toMap x = ((g x : ℂ) : OnePoint ℂ)) ∧
+      Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop := by
+  sorry
+
+/-- **Structural axiom (M2b).** A `ℂ`-valued function whose modulus
+diverges at a punctured nhd of `P`, lifted to `OnePoint ℂ` via
+`some`, tends to `∞` at `P`.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:onepoint-tendsto-infty-of-modulus-diverges`. -/
+theorem OnePoint.tendsto_infty_of_modulus_diverges
+    {X : Type*} [TopologicalSpace X] (P : X)
+    (g : X → ℂ)
+    (_hdiv : Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop) :
+    Filter.Tendsto (fun x => ((g x : ℂ) : OnePoint ℂ))
+      (nhdsWithin P {P}ᶜ) (nhds (OnePoint.infty : OnePoint ℂ)) := by
+  sorry
+
+/-- **Structural axiom (M2).** Near a simple pole `P`, the meromorphic
+map tends to `∞ : OnePoint ℂ`. Sorry-free assembly: combine M2a
+(modulus divergence on the punctured nhd) with M2b (modulus → `∞`
+in `OnePoint`), plus M3 (value at the pole) via the
+`nhds = nhdsWithin {P} ⊔ nhdsWithin {P}ᶜ` decomposition.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:meromorphic-tends-to-infty-at-simple-pole`. -/
+theorem MeromorphicMapToSphere.tendsto_infty_at_pole_of_poleDivisor_point
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    Filter.Tendsto f.toMap (nhds P) (nhds (OnePoint.infty : OnePoint ℂ)) := by
+  -- Step 1: punctured-nhd version via M2a + M2b.
+  obtain ⟨g, hgeq, hdiv⟩ := f.modulus_diverges_at_simple_pole P hpole
+  have hp_lim : Filter.Tendsto f.toMap (nhdsWithin P {P}ᶜ)
+      (nhds (OnePoint.infty : OnePoint ℂ)) := by
+    refine (OnePoint.tendsto_infty_of_modulus_diverges P g hdiv).congr' ?_
+    filter_upwards [self_mem_nhdsWithin] with x hx
+    exact (hgeq x hx).symm
+  -- Step 2: at P, f.toMap P = ∞ (M3).
+  have h_at : f.toMap P = (OnePoint.infty : OnePoint ℂ) :=
+    f.toMap_pole_eq_infty_of_poleDivisor_point P hpole
+  -- Step 3: combine via `nhds = pure ⊔ punctured`.
+  have h_decomp : nhds P = nhdsWithin P {P} ⊔ nhdsWithin P {P}ᶜ :=
+    nhds_eq_nhdsWithin_sup_nhdsWithin P (by simp)
+  rw [h_decomp, Filter.tendsto_sup]
+  refine ⟨?_, hp_lim⟩
+  -- On `nhdsWithin P {P} = pure P`, tendsto follows from f P = ∞.
+  rw [nhdsWithin_singleton]
+  -- `Tendsto f (pure P) (nhds ∞)` reduces to `f P ∈ nhds ∞`, which holds since f P = ∞.
+  -- `f P = ∞` gives `Tendsto f (pure P) (nhds ∞)` after substituting f P.
+  have := tendsto_pure_nhds f.toMap P
+  rw [h_at] at this
+  exact this
 
 /-- **Extension-continuity leaf.** A meromorphic map to the Riemann sphere
 with pole divisor `[P]` extends continuously over the pole.
@@ -158,26 +210,65 @@ theorem meromorphicMapToSphere_poleDivisor_degree_eq_one_of_point
 
 /-! ### Structural companions for the bijectivity step -/
 
-/-- **Structural axiom (M4).** A continuous meromorphic map of degree 1
-between compact connected complex 1-manifolds is **surjective**.
+/-- **Structural axiom (M4a).** The image of a continuous map from a
+compact space is compact (purely topological; routes through Mathlib's
+`IsCompact.image`). -/
+theorem MeromorphicMapToSphere.image_isCompact
+    {X : Type*} [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X)
+    (hcont : Continuous f.toMap) :
+    IsCompact (Set.range f.toMap) :=
+  isCompact_range hcont
 
-Bottom-up: the image is compact (continuous image of compact), and
-has nonempty interior (since the map is open on the complement of
-the ramification locus, which has measure zero in degree 1 — in
-fact, no ramification at all in degree 1). A nonempty compact set
-with nonempty interior is everything.
+/-- **Structural axiom (M4b).** A meromorphic map of degree 1 is open
+(no ramification at degree 1).
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:degree-one-surjective`. -/
-theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
+`lem:degree-one-open-map`. -/
+theorem MeromorphicMapToSphere.isOpenMap_of_pole_degree_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X)
     (_hcont : Continuous f.toMap)
     (_hdegree : Divisor.degree f.poles = 1) :
-    Function.Surjective f.toMap := by
+    IsOpenMap f.toMap := by
   sorry
+
+/-- **Structural axiom (M4).** A continuous meromorphic map of degree 1
+between compact connected complex 1-manifolds is **surjective**.
+
+Sorry-free assembly: the image is compact (M4a) and open (M4b);
+since `OnePoint ℂ` is connected, a nonempty clopen set is the whole
+space.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:degree-one-surjective`. -/
+theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Nonempty X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X)
+    (hcont : Continuous f.toMap)
+    (hdegree : Divisor.degree f.poles = 1) :
+    Function.Surjective f.toMap := by
+  -- range f is nonempty, compact (M4a), open (M4b's image of univ).
+  have hopenmap : IsOpenMap f.toMap :=
+    f.isOpenMap_of_pole_degree_one hcont hdegree
+  have hrange_open : IsOpen (Set.range f.toMap) := by
+    rw [← Set.image_univ]
+    exact hopenmap _ isOpen_univ
+  have hrange_compact : IsCompact (Set.range f.toMap) := f.image_isCompact hcont
+  have hrange_closed : IsClosed (Set.range f.toMap) := hrange_compact.isClosed
+  have hrange_nonempty : (Set.range f.toMap).Nonempty := Set.range_nonempty _
+  -- In a connected space, any nonempty clopen is univ.
+  have hclopen : IsClopen (Set.range f.toMap) := ⟨hrange_closed, hrange_open⟩
+  have hrange_univ : Set.range f.toMap = Set.univ := by
+    rcases isClopen_iff.mp hclopen with hempty | huniv
+    · exact (hrange_nonempty.ne_empty hempty).elim
+    · exact huniv
+  exact Set.range_eq_univ.mp hrange_univ
 
 /-- **Structural axiom (M5).** A continuous meromorphic map of degree 1
 between compact connected complex 1-manifolds is **injective**.
