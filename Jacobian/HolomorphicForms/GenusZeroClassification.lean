@@ -512,15 +512,48 @@ theorem holomorphicOneForm_inversionCoeff_eq_zero_of_ne_zero
 continuous at `0` and vanishes away from `0`, then the holomorphic 1-form
 vanishes at infinity.
 
-Bottom-up content: convert punctured-neighborhood vanishing plus continuity
-of the inversion-chart coefficient into `g(0) = 0`, then use that a
-continuous linear map `ℂ →L[ℂ] ℂ` is determined by its value on `1`. -/
+Sorry-free assembly: continuity at 0 plus punctured-nbhd vanishing
+forces `g(0) = 0` (uniqueness of limits, using `nhdsNE_neBot`). Since
+`g(w) = ω.toFun (invBwd w) 1` and `invBwd 0 = ∞`, we conclude
+`ω.toFun ∞ 1 = 0`. A continuous ℂ-linear map `ℂ →L[ℂ] ℂ` is
+determined by its value on `1` (via `map_smul` and `mul_one`),
+hence the form-value at `∞` is the zero map. -/
 theorem holomorphicOneForm_infty_vanishing_of_inversionCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
     (∀ {w : ℂ}, w ≠ 0 → holomorphicOneForm_inversionCoeff ω w = 0) →
     ω.toFun (OnePoint.infty : OnePoint ℂ) = 0 := by
-  sorry
+  intro hcont hzero
+  -- Step 1: g(0) = 0 by continuity + punctured-nbhd vanishing.
+  haveI : (nhdsWithin (0 : ℂ) {0}ᶜ).NeBot := inferInstance
+  have hg0 : holomorphicOneForm_inversionCoeff ω 0 = 0 := by
+    have h1 : Filter.Tendsto (holomorphicOneForm_inversionCoeff ω)
+        (nhdsWithin (0 : ℂ) {0}ᶜ)
+        (nhds (holomorphicOneForm_inversionCoeff ω 0)) :=
+      hcont.tendsto.mono_left nhdsWithin_le_nhds
+    have h2 : Filter.Tendsto (holomorphicOneForm_inversionCoeff ω)
+        (nhdsWithin (0 : ℂ) {0}ᶜ) (nhds 0) := by
+      refine (tendsto_const_nhds (x := (0 : ℂ))).congr' ?_
+      filter_upwards [self_mem_nhdsWithin] with w hw using (hzero hw).symm
+    exact tendsto_nhds_unique h1 h2
+  -- Step 2: extract `ω.toFun ∞ 1 = 0` from g(0) = 0 via invBwd_zero.
+  have h_eval_one : (ω.toFun (OnePoint.infty : OnePoint ℂ)) (1 : ℂ) = 0 := by
+    have heq : holomorphicOneForm_inversionCoeff ω 0 =
+        (ω.toFun (OnePoint.infty : OnePoint ℂ)) (1 : ℂ) := by
+      unfold holomorphicOneForm_inversionCoeff
+      rw [invBwd_zero]
+    rw [← heq, hg0]
+  -- Step 3: a continuous ℂ-linear functional on ℂ is determined by its value on 1.
+  -- TangentSpace (modelWithCornersSelf ℂ ℂ) ∞ unfolds definitionally to ℂ;
+  -- view z as `(z : ℂ)` and write z = z • 1.
+  refine ContinuousLinearMap.ext fun z => ?_
+  let zℂ : ℂ := (z : TangentSpace (modelWithCornersSelf ℂ ℂ) (OnePoint.infty : OnePoint ℂ))
+  show (ω.toFun (OnePoint.infty : OnePoint ℂ)) zℂ = (0 : ℂ →L[ℂ] ℂ) zℂ
+  have hz : zℂ = zℂ • (1 : ℂ) := by
+    show zℂ = zℂ * 1
+    exact (mul_one zℂ).symm
+  rw [hz, ContinuousLinearMap.map_smul, h_eval_one, smul_zero]
+  rfl
 
 /-- **Assembly for infinity vanishing.** The remaining leaf is the
 removable-singularity step from the inversion coefficient. -/
