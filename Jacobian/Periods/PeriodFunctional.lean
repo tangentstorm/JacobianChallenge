@@ -181,15 +181,24 @@ blockers, each absent in v4.28.0:
 /-- **Blocker 1.** Existence of a bilinear pairing on holomorphic
 1-forms given by wedge-product integration `(ω, η) ↦ ∫_X ω ∧ η̄`.
 Mathlib gap: differential forms on manifolds and their integration
-(`Ω^p(X)`, wedge product, `∫_X`) are entirely absent in v4.28.0. -/
+(`Ω^p(X)`, wedge product, `∫_X`) are entirely absent in v4.28.0.
+
+**Note on this packaged statement.** As literally stated, the lemma
+asks only for *existence* of an antisymmetric pairing, which is
+discharged by `Q := 0`. The mathematical content of the wedge
+integration is what lives in the *use sites* (especially in
+`period_functionals_ℝ_linearIndependent` below, which combines this Q
+with `riemann_bilinear_identity` and `hodge_form_posDef`). The current
+shape of these three companion lemmas does not yet route the chosen Q
+through the consumer; the genuine Mathlib gap surfaces there. -/
 theorem wedge_integration_pairing_exists
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     ∃ (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
            (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ),
-      ∀ f g, Q f g = -Q g f := by
-  sorry
+      ∀ f g, Q f g = -Q g f :=
+  ⟨fun _ _ => 0, fun _ _ => by simp⟩
 
 /-- **Blocker 2.** The Riemann bilinear identity: for a symplectic
 basis `{σ_k}_{k=0}^{2g-1}` of `H₁(X, ℤ)` and holomorphic 1-forms `ω, η`,
