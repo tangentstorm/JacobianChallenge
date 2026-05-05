@@ -3804,7 +3804,7 @@ Mathlib v4.28.0 has:
   constructs the \code{hcompat} witness for the cotangent
   trivialisation.
 \item \code{Mathlib.Topology.UniformSpace.UniformConvergenceTopology}
-  --- uniform Cauchy + complete pointwise fibres ⇒ uniform limit
+  --- uniform Cauchy + complete pointwise fibres \(\Rightarrow\) uniform limit
   exists and is continuous.
 \item \code{TendstoUniformly.continuous},
   \code{Metric.complete\_of\_cauchySeq\_tendsto}.
@@ -3841,12 +3841,12 @@ Estimated 600--900 LOC for a complete API.
   cotangent trivialisation of a 1D complex manifold is a fibrewise
   \(\C\)-linear isometry.
 \item \textbf{R8-sub-B.B (sup-norm Cauchy converges to a holomorphic
-  form).}  Pointwise limit + uniform-Cauchy + Weierstrass ⇒ the
+  form).}  Pointwise limit + uniform-Cauchy + Weierstrass \(\Rightarrow\) the
   limit is a holomorphic 1-form, and \(\sigma_{n}\) sup-norm
   converges to it.
 \item \textbf{R8-sub-B.C (closed ball is totally bounded).}  Cauchy
   estimates on a finite chart cover give equicontinuity; equibounded
-  + equicontinuous ⇒ Arzel\`a--Ascoli relatively compact ⇒ totally
+  + equicontinuous \(\Rightarrow\) Arzel\`a--Ascoli relatively compact \(\Rightarrow\) totally
   bounded in the sup-norm.
 \end{itemize}
 
@@ -3913,7 +3913,7 @@ Cauchy in each Banach fibre; the pointwise limit
 
 \begin{lemma}[R8-sub-B.B.r2 --- uniform convergence]
 \label{lem:r8subB-B-r2}
-Sup-norm Cauchy ⇒ uniform Cauchy on \(X\) (compact); combined
+Sup-norm Cauchy \(\Rightarrow\) uniform Cauchy on \(X\) (compact); combined
 with r1, \(\sigma_{n}\to\sigma_{\infty}\) uniformly.  Hence
 \(\sigma_{\infty}\) is continuous (\code{TendstoUniformly.continuous}).
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_tendstoUniformly_continuous}
@@ -3953,7 +3953,7 @@ in the sup-norm metric.
 
 \begin{lemma}[R8-sub-B.C.r1 --- chart-local pointwise bound]
 \label{lem:r8subB-C-r1}
-Sup-norm \(\leq 1\) ⇒ \(\|\sigma(x)\|\leq 1\) for every \(x\); in
+Sup-norm \(\leq 1\) \(\Rightarrow\) \(\|\sigma(x)\|\leq 1\) for every \(x\); in
 particular every chart-local representative \(f_{n}=\sigma_{n}\circ\phi^{-1}\)
 satisfies \(|f_{n}(z)|\leq 1\) on the chart disc.
 \lean{JacobianChallenge.HolomorphicForms.chart_local_pointwise_bound}
@@ -3981,7 +3981,7 @@ constant via the mean-value theorem; equivalently, the family
 
 \begin{lemma}[R8-sub-B.C.r4 --- chart-local Arzel\`a--Ascoli]
 \label{lem:r8subB-C-r4}
-Equibounded + equicontinuous on a compact subset of \(\C\) ⇒
+Equibounded + equicontinuous on a compact subset of \(\C\) \(\Rightarrow\)
 relatively compact in the sup-norm topology (Arzel\`a--Ascoli).
 \lean{JacobianChallenge.HolomorphicForms.chart_local_arzela_ascoli}
 \notready
