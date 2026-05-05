@@ -5,13 +5,21 @@ on:
     branches:
       - main
     paths:
+      # NOTE: deliberately omit `tex/**` here — tex changes trigger pdf.yml,
+      # which then triggers this workflow via `workflow_run` AFTER the PDF
+      # artifact exists. If `tex/**` were listed here, the push would fire
+      # this workflow concurrently with pdf.yml and we'd deploy a Pages
+      # site that's missing the PDF.
       - "blueprint/**"
-      - "tex/**"
+      - "Jacobian/**"
+      - "scripts/build-source-pages.py"
       - ".github/workflows/pages.yml"
   pull_request:
     paths:
       - "blueprint/**"
       - "tex/**"
+      - "Jacobian/**"
+      - "scripts/build-source-pages.py"
       - ".github/workflows/pages.yml"
   workflow_run:
     # When the PDF rebuilds, re-deploy Pages so the latest PDF is picked up.
@@ -38,40 +46,101 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Install graphviz dependencies
+      - name: Install graphviz + minimal TeX
+        # texlive-binaries provides `kpsewhich`, which plastex needs to
+        # resolve relative paths in `\input{...}` (without it, every
+        # cross-directory input is reported as "File not found"). The PDF
+        # build's heavy texlive-* packages live in pdf.yml; here we just
+        # need the path resolver. Cheap to install.
         run: |
           sudo apt-get update
-          sudo apt-get install -y graphviz libgraphviz-dev
+          sudo apt-get install -y graphviz libgraphviz-dev texlive-binaries
 
       - name: Install Lean Blueprint
         run: python3 -m pip install leanblueprint
 
+      - name: Install Pygments (for source browser)
+        # Lean4Lexer was added in Pygments 2.16. The runner's system
+        # Pygments is older and shadows fresh `pip install pygments`
+        # unless we force-upgrade past the minimum.
+        run: python3 -m pip install --upgrade 'pygments>=2.16'
+
       - name: Build Lean Blueprint site
         run: python3 -m leanblueprint.client web
 
-      - name: Download latest PDF artifact
-        if: github.event_name != 'pull_request'
+      - name: Inject Plain-English toggle into blueprint HTML
+        run: python3 blueprint/src/inject-layman-toggle.py blueprint/web
+
+      - name: Rewrite dep-graph legend + tag big-umbrella nodes
+        run: python3 blueprint/src/inject-depgraph-extras.py blueprint/web
+
+      - name: Build collapsible dep-graph view
+        run: python3 blueprint/src/build_collapsible_dep_graph.py blueprint/web
+
+      # `dawidd6/action-download-artifact@v3` errors out if both `branch` and
+      # `run_id` are set, so we have two mutually-exclusive download steps.
+      #
+      # workflow_run path: pin to the exact pdf.yml run that just succeeded.
+      # We don't pass `branch` because the `branches: [main]` filter on the
+      # workflow_run trigger already restricts what fires this.
+      - name: Download PDF artifact (from triggering pdf.yml run)
+        if: github.event_name == 'workflow_run'
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: pdf.yml
+          name: jacobian-informal-proof
+          run_id: ${{ github.event.workflow_run.id }}
+          path: tex
+          if_no_artifact_found: fail
+      # Other triggers (manual dispatch, blueprint-only push): grab the
+      # latest successful pdf.yml run on main. No run_id, just `branch`.
+      - name: Download PDF artifact (latest successful on main)
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_run'
         uses: dawidd6/action-download-artifact@v3
         with:
           workflow: pdf.yml
           name: jacobian-informal-proof
           branch: main
           path: tex
-          if_no_artifact_found: warn
+          if_no_artifact_found: fail
+
+      - name: Build browsable source pages
+        run: python3 scripts/build-source-pages.py --out _src-pages
 
       - name: Prepare Pages site
         if: github.event_name != 'pull_request'
         run: |
-          mkdir -p _site/blueprint
+          mkdir -p _site/blueprint _site/docs
           cp -R blueprint/web/. _site/blueprint/
+          cp -R _src-pages/. _site/docs/
 
-          if [ -f tex/main.pdf ]; then
-            cp tex/main.pdf _site/jacobian-informal-proof.pdf
-            echo "PDF included from pdf.yml artifact"
+          # Diagnostic: list everything the artifact download deposited.
+          echo "::group::Artifact contents (tex/ and any subdirs)"
+          ls -laR tex/ || true
+          find tex -type f -name '*.pdf' -print -exec wc -c {} \; || true
+          echo "::endgroup::"
+
+          # Be flexible about where the artifact landed — earlier upload-artifact
+          # quirks staged into _pdfs/, and dawidd6 sometimes nests subdirs.
+          # Search for both PDFs anywhere under tex/ and copy whichever name
+          # we find.
+          FORMAL=$(find tex -type f -name 'main.pdf' | head -1)
+          LAYMAN=$(find tex -type f -name 'main-with-layman.pdf' | head -1)
+
+          if [ -n "$FORMAL" ] && [ -f "$FORMAL" ]; then
+            cp "$FORMAL" _site/jacobian-informal-proof.pdf
+            echo "Formal PDF included from $FORMAL"
           else
-            echo "No PDF artifact available — site will deploy without PDF"
+            echo "No formal PDF available — site will deploy without it"
+          fi
+
+          if [ -n "$LAYMAN" ] && [ -f "$LAYMAN" ]; then
+            cp "$LAYMAN" _site/jacobian-informal-proof-with-layman.pdf
+            echo "Plain-English companion PDF included from $LAYMAN"
+          else
+            echo "No companion PDF available — site will deploy without it"
           fi
 
           cat > _site/index.html <<'EOF'
@@ -86,8 +155,11 @@ jobs:
               <main>
                 <h1>Jacobian Challenge</h1>
                 <ul>
-                  <li><a href="jacobian-informal-proof.pdf">Informal proof roadmap (PDF)</a></li>
-                  <li><a href="blueprint/">Lean Blueprint dependency graph</a></li>
+                  <li><a href="blueprint/">Lean Blueprint dependency graph</a> — interactive, with Plain-English toggle</li>
+                  <li><a href="blueprint/dep_graph_collapsible.html">Collapsible dep-graph overview</a> — click sections to drill down</li>
+                  <li><a href="docs/">Browsable Lean source</a> — syntax-highlighted; identifier links from the blueprint resolve here, with fallback to mathlib4_docs</li>
+                  <li><a href="jacobian-informal-proof-with-layman.pdf">Informal proof roadmap with Plain-English companion (PDF)</a></li>
+                  <li><a href="jacobian-informal-proof.pdf">Informal proof roadmap, formal only (PDF)</a></li>
                 </ul>
               </main>
             </body>

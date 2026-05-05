@@ -1,8 +1,14 @@
 import Jacobian.Analysis.BundledForms.Overview
+-- Phase 1 substrate (R10 spectral shortcut)
 import Jacobian.Analysis.BundledForms.SmoothFun
 import Jacobian.Analysis.BundledForms.Omega0
 import Jacobian.Analysis.BundledForms.L2Norm
 import Jacobian.Analysis.BundledForms.L2Completion
+-- R9 dispatch (from main)
+import Jacobian.Analysis.BundledForms.DSqZero
+import Jacobian.Analysis.BundledForms.Real
+import Jacobian.Analysis.BundledForms.OneForm
+import Jacobian.Analysis.BundledForms.SubA
 
 /-!
 # R9 — Bundled differential forms (umbrella module)

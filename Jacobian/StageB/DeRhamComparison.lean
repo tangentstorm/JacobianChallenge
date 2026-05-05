@@ -1,5 +1,5 @@
 import Jacobian.StageB.DeRhamComplex
-import Jacobian.StageA.PrismOperator
+import Jacobian.StageA.SingularSimplexCore
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 
 /-!
