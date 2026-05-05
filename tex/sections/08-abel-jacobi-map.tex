@@ -325,7 +325,7 @@ Riemann reciprocity (bilinear) identity, and the log-exp construction.
 
 \begin{lemma}[R5/A: Existence of third-kind data]
 \label{lem:third-kind-meromorphic-data-exists}
-\uses{thm:fd-holomorphic-one-forms,thm:abel-existence}
+\uses{thm:fd-holomorphic-one-forms,thm:abel-existence,lem:rr-two-point-dim-geq-two,lem:two-point-pole-realisation}
 For any pair of distinct points \(Q_1\neq Q_2\) on a compact
 connected Riemann surface \(X\), there exists a non-zero meromorphic
 function \(f_0:X\to\widehat{\C}\) whose pole divisor is exactly
@@ -366,7 +366,7 @@ divisor \(D-D=0\). Either way, a function with pole divisor exactly
 
 \begin{lemma}[R5/B: Riemann reciprocity for two-point divisors]
 \label{lem:third-kind-log-period-vanishing}
-\uses{def:period-pairing,thm:period-lattice,input:riemann-bilinear,lem:third-kind-meromorphic-data-exists}
+\uses{def:period-pairing,thm:period-lattice,input:riemann-bilinear,lem:third-kind-meromorphic-data-exists,lem:residue-pairing-third-kind,lem:logperiod-vanishing-translation}
 Let \(f_0:X\to\widehat{\C}\) be third-kind data for \((Q_1, Q_2)\)
 (Lemma~\ref{lem:third-kind-meromorphic-data-exists}), and assume the
 basis-aligned period-congruence hypothesis
@@ -412,7 +412,7 @@ required vanishing condition.
 
 \begin{lemma}[R5/C: Log-exp construction]
 \label{lem:meromorphic-via-log-exp}
-\uses{lem:third-kind-meromorphic-data-exists,lem:third-kind-log-period-vanishing}
+\uses{lem:third-kind-meromorphic-data-exists,lem:third-kind-log-period-vanishing,lem:single-valued-log-primitive,lem:exp-log-primitive-divisor}
 Suppose third-kind data \(f_0\) for \((Q_1,Q_2)\) is given, and the
 periods of \(d\log f_0\) lie in \(2\pi i\cdot \Z^{2g}\) (i.e.\
 the conclusion of Lemma~\ref{lem:third-kind-log-period-vanishing}).
@@ -469,7 +469,7 @@ upstream in Mathlib).
 
 \begin{lemma}[R6/A1: Riemann--Roch dim bound for two-point pole divisor]
 \label{lem:rr-two-point-dim-geq-two}
-\uses{thm:fd-holomorphic-one-forms,thm:abel-existence}
+\uses{thm:fd-holomorphic-one-forms,thm:abel-existence,lem:rr-formula-two-point,lem:rr-formula-combine}
 For any two distinct points \(Q_1\neq Q_2\) on a compact connected
 Riemann surface \(X\), the Riemann--Roch space \(L((Q_1)+(Q_2))\)
 has \(\C\)-dimension at least \(2\). In particular, the quotient by
@@ -502,7 +502,7 @@ observation for higher genus (Brill--Noether), we conclude
 
 \begin{lemma}[R6/A2: Pole-divisor realisation from RR dim bound]
 \label{lem:two-point-pole-realisation}
-\uses{lem:rr-two-point-dim-geq-two}
+\uses{lem:rr-two-point-dim-geq-two,lem:nonconstant-in-rr,lem:pole-maximality-two-point}
 If \(\ell((Q_1)+(Q_2)) \ge 2\), then there exists a meromorphic
 function \(f_0:X\to\widehat{\C}\) whose pole divisor is \emph{exactly}
 \((Q_1)+(Q_2)\) (not a sub-divisor like \((Q_1)\) alone).
@@ -580,7 +580,7 @@ Equating the two evaluations of the integral yields the identity.
 
 \begin{lemma}[R7/B2: Log-period vanishing translation]
 \label{lem:logperiod-vanishing-translation}
-\uses{lem:residue-pairing-third-kind,thm:period-lattice}
+\uses{lem:residue-pairing-third-kind,thm:period-lattice,lem:pathintegrals-in-lattice,lem:scale-2pii}
 Combine Lemma~\ref{lem:residue-pairing-third-kind} with the
 basis-aligned period-congruence hypothesis to conclude that the
 period vector of \(d\log f_0\) lies in
@@ -612,7 +612,7 @@ against \(\omega_k\) equals \(2\pi i\cdot \int_{Q_2}^{Q_1}\omega_k\)
 
 \begin{lemma}[R8/C1: Single-valued log primitive existence]
 \label{lem:single-valued-log-primitive}
-\uses{lem:third-kind-meromorphic-data-exists,lem:logperiod-vanishing-translation}
+\uses{lem:third-kind-meromorphic-data-exists,lem:logperiod-vanishing-translation,lem:dlog-closed,lem:closed-int-periods-primitive}
 Given third-kind data \(f_0\) and the log-period vanishing
 hypothesis, there exists a single-valued holomorphic function
 \(L : X\setminus\{Q_1,Q_2\} \to \C/2\pi i\,\Z\) with
@@ -643,7 +643,7 @@ function \(L : X \setminus\{Q_1,Q_2\} \to \C/2\pi i\Z\) with
 
 \begin{lemma}[R8/C2: Exponentiation and divisor identification]
 \label{lem:exp-log-primitive-divisor}
-\uses{lem:single-valued-log-primitive}
+\uses{lem:single-valued-log-primitive,lem:explog-holomorphic-off,lem:explog-zero-extend,lem:explog-pole-extend,lem:glue-package}
 The exponential \(\widetilde g = \exp L\) of the single-valued log
 primitive extends across the punctures \(\{Q_1, Q_2\}\) to a
 meromorphic function on \(X\), with simple zero at \(Q_1\) and
@@ -690,7 +690,7 @@ leaves are exactly the classical inputs Mathlib v4.28.0 lacks.
 \paragraph{Round 9 (R6/A1 split).}
 \begin{lemma}[R9/1: Bare RR formula for two-point divisor]
 \label{lem:rr-formula-two-point}
-\uses{thm:input-rr,thm:fd-holomorphic-one-forms}
+\uses{lem:rr-formula-general,thm:fd-holomorphic-one-forms,lem:rr-specialise-two-point}
 For \(D = (Q_1) + (Q_2)\) with \(Q_1\neq Q_2\), the Riemann--Roch
 formula gives
 \(\ell(D) - \ell(K-D) = 3 - g\).
@@ -751,7 +751,7 @@ representative of the quotient.
 
 \begin{lemma}[R10/2: Pole maximality for non-constants]
 \label{lem:pole-maximality-two-point}
-\uses{lem:nonconstant-in-rr,thm:riemann-hurwitz-deg1-basis-aligned}
+\uses{lem:nonconstant-in-rr,thm:riemann-hurwitz-deg1-basis-aligned,lem:nonconst-poles-nonzero,lem:single-pole-genus-zero,lem:pole-equality-aux}
 For \(g \ge 1\), a non-constant element of \(L((Q_1) + (Q_2))\) has
 pole divisor exactly \((Q_1) + (Q_2)\).
 \lean{JacobianChallenge.AbelJacobi.pole_eq_full_for_nonconstant_in_two_point_RR_space}
@@ -780,7 +780,7 @@ basis-aligned period lattice.
 
 \begin{lemma}[R11/2: Scale by \(2\pi i\) and package]
 \label{lem:scale-2pii}
-\uses{lem:pathintegrals-in-lattice,lem:residue-pairing-third-kind}
+\uses{lem:pathintegrals-in-lattice,lem:residue-pairing-third-kind,lem:scale-lattice-by-2pii,lem:logperiod-package}
 Multiplying \(\int_{Q_2}^{Q_1}\omega_k \in \Lambda\) by \(2\pi i\)
 combined with the residue-pairing identity gives the log-period
 vanishing.
@@ -799,7 +799,7 @@ The 1-form \(d\log f_0\) is holomorphic (hence closed) on
 
 \begin{lemma}[R12/2: Closed 1-form with integer periods has primitive]
 \label{lem:closed-int-periods-primitive}
-\uses{lem:dlog-closed}
+\uses{lem:dlog-closed,lem:univ-cover-primitive,lem:descend-via-quotient}
 A closed 1-form with periods in a discrete subgroup \(\Lambda\)
 admits a single-valued primitive \(F : M \to \C/\Lambda\).
 \lean{JacobianChallenge.AbelJacobi.closed_oneForm_with_integer_periods_has_primitive}
@@ -827,7 +827,7 @@ admits a single-valued primitive \(F : M \to \C/\Lambda\).
 
 \begin{lemma}[R13/4: Glue + package the local extensions]
 \label{lem:glue-package}
-\uses{lem:explog-holomorphic-off,lem:explog-zero-extend,lem:explog-pole-extend}
+\uses{lem:explog-holomorphic-off,lem:explog-zero-extend,lem:explog-pole-extend,lem:glue-local-extensions,lem:package-global-extension}
 Combining the three local-extension properties gives a global
 \texttt{RawMeromorphicWithPrincipal} with principal divisor
 \((Q_1) - (Q_2)\).
@@ -838,7 +838,7 @@ Combining the three local-extension properties gives a global
 \paragraph{Round 14 (R9/1 split): general RR + specialisation.}
 \begin{lemma}[R14/1: General Riemann--Roch]
 \label{lem:rr-formula-general}
-\uses{input:divisors,thm:fd-holomorphic-one-forms}
+\uses{input:divisors,thm:fd-holomorphic-one-forms,input:riemann-roch}
 For any divisor \(D\) of degree \(d\) on a compact connected Riemann
 surface of genus \(g\), \(\ell(D) - \ell(K - D) = d - g + 1\). Cf.\
 \texttt{riemann\_roch\_strong\_h0} in \texttt{RiemannRochStrong.lean}
@@ -1114,7 +1114,7 @@ genus, and \(g(\CPone)=0\) is a separate well-known computation
 
 \begin{theorem}[Point-separation form of Abel's theorem]
 \label{thm:abel-point-separation}
-\uses{thm:aj-divisor-hom,thm:abel-existence,lem:principal-deg0-simple-support-deg1,thm:riemann-hurwitz-deg1}
+\uses{thm:aj-divisor-hom,thm:abel-existence,lem:principal-deg0-simple-support-deg1,thm:riemann-hurwitz-deg1,thm:abel-basis-aligned-two-point,thm:riemann-hurwitz-deg1-basis-aligned}
 If \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
 \lean{JacobianChallenge.AbelJacobi.pathIntegralFunctional_separates_points}
 \leanok
