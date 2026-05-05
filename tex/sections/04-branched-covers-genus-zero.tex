@@ -87,8 +87,7 @@ the trace, push-pull) runs on this number.
 
 \begin{lemma}[Branch locus is finite]
 \label{lem:branch-locus-finite}
-\uses{def:branched-degree, lem:order-eq-one-iff-deriv-ne-zero,
-lem:unramified-set-open, lem:ramified-isolated}
+\uses{def:branched-degree,lem:order-eq-one-iff-deriv-ne-zero,lem:unramified-set-open,lem:ramified-isolated}
 The set \(\{p\in X : e_p(f)\ge 2\}\) is finite.
 \depends{Sub-sub-leaves: \texttt{lem:unramified-set-open} (the
 unramified set is open) and \texttt{lem:ramified-isolated} (every
@@ -146,7 +145,7 @@ identity theorem, and finite by compactness.
 
 \begin{lemma}[Local injectivity at an unramified point]
 \label{lem:local-inj-unramified}
-\uses{def:branched-degree, lem:order-eq-one-iff-deriv-ne-zero, lem:chart-local-inverse-unramified}
+\uses{def:branched-degree,lem:order-eq-one-iff-deriv-ne-zero,lem:chart-local-inverse-unramified}
 If \(e_x(f)=1\) at a point \(x\in X\), there is an open neighborhood
 \(U\ni x\) and an open neighborhood \(V\ni f(x)\) such that for every
 \(y\in V\), the set \(U\cap f^{-1}(y)\) is a singleton.
@@ -161,7 +160,7 @@ transport.}
 
 \begin{lemma}[Order one iff chart-local derivative nonzero]
 \label{lem:order-eq-one-iff-deriv-ne-zero}
-\uses{def:branched-degree, def:vanishing-order}
+\uses{def:branched-degree,def:vanishing-order}
 The chart-local order \(e_x(f)=1\) iff the derivative
 \((\chi\circ f\circ\varphi^{-1})'(\varphi(x))\ne 0\), where
 \((\varphi,\chi)\) are the canonical charts at \(x\) and \(f(x)\).
@@ -210,7 +209,7 @@ and \(Y\).
 
 \begin{lemma}[Local power-series form at order \texorpdfstring{\(k\)}{k}]
 \label{lem:chart-local-pow-mul}
-\uses{def:branched-degree, def:vanishing-order}
+\uses{def:branched-degree,def:vanishing-order}
 If \(e_x(f)=k\ge 1\), the centred chart-local difference factors as
 \((t-z_0)^k\cdot g(t)\) for some analytic \(g\) with \(g(z_0)\ne 0\),
 where \(z_0\) is the chart image of \(x\).
@@ -237,8 +236,7 @@ there is an analytic \(h\) near \(z_0\) with \(h(z)^k=g(z)\) locally.
 
 \begin{lemma}[Local \texorpdfstring{\(k\)}{k}-fold structure at a ramified point]
 \label{lem:local-kfold-ramified}
-\uses{def:branched-degree, def:vanishing-order,
-lem:chart-local-pow-mul, lem:analytic-kth-root}
+\uses{def:branched-degree,def:vanishing-order,lem:chart-local-pow-mul,lem:analytic-kth-root}
 If \(e_x(f)=k\ge 1\), there is an open neighborhood \(U\ni x\) and an
 open neighborhood \(V\ni f(x)\) such that for every \(y\in V\) with
 \(y\ne f(x)\), the set \(U\cap f^{-1}(y)\) consists of exactly \(k\)
@@ -289,7 +287,7 @@ compact \(\Rightarrow\) closed in \(T_2\); \(y_0\notin f(U^c)\); take
 
 \begin{lemma}[Weighted fibre count locally constant at a single point]
 \label{lem:weighted-fiber-eventually-eq}
-\uses{lem:local-inj-unramified, lem:local-kfold-ramified, lem:proper-fiber-shrink}
+\uses{lem:local-inj-unramified,lem:local-kfold-ramified,lem:proper-fiber-shrink}
 At every \(y_0\in Y\), there is a neighborhood \(V\ni y_0\) on which
 the weighted fibre sum is constant equal to its value at \(y_0\).
 \depends{Choose pairwise-disjoint open nbhds \(U_x\) around each
@@ -523,7 +521,7 @@ linking the abstract \code{poleDivisor} to the concrete \code{toMap}.
 
 \begin{lemma}[Continuity off the pole]
 \label{lem:meromorphic-continuous-off-pole}
-\uses{def:divisors-on-X,lem:meromorphic-no-infty-off-pole,lem:meromorphic-continuous-on-finite-set}
+\uses{def:divisor,lem:meromorphic-no-infty-off-pole,lem:meromorphic-continuous-on-finite-set}
 A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) is
 continuous on \(X\setminus\{P\}\).
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.continuousOn_compl_pole_of_poleDivisor_point}
@@ -540,7 +538,7 @@ continuous. Hence \(f\) is continuous at every point of
 
 \begin{lemma}[Tendency to \(\infty\) at a simple pole]
 \label{lem:meromorphic-tends-to-infty-at-simple-pole}
-\uses{def:divisors-on-X,lem:simple-pole-modulus-diverges,lem:onepoint-tendsto-infty-of-modulus-diverges,lem:meromorphic-value-at-pole}
+\uses{def:divisor,lem:simple-pole-modulus-diverges,lem:onepoint-tendsto-infty-of-modulus-diverges,lem:meromorphic-value-at-pole}
 A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) tends
 to \(\infty\in\CPone\) along the neighbourhood filter at \(P\).
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.tendsto_infty_at_pole_of_poleDivisor_point}
@@ -558,7 +556,7 @@ diverges in modulus as \(z\to z_{0}\). The one-point topology on
 
 \begin{lemma}[Value at a simple pole is \(\infty\)]
 \label{lem:meromorphic-value-at-pole}
-\uses{def:divisors-on-X}
+\uses{def:divisor}
 A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) has
 \(f(P)=\infty\).
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap_pole_eq_infty_of_poleDivisor_point}
@@ -591,7 +589,7 @@ with Lemma~\ref{lem:meromorphic-value-at-pole}.
 
 \begin{lemma}[Bridge: meromorphic-to-branched-cover-data]
 \label{lem:meromorphic-to-branched-cover-data}
-\uses{def:branched-degree,def:divisors-on-X}
+\uses{def:branched-degree,def:divisor}
 A meromorphic map \(f:X\to\CPone\) with \(\deg(\operatorname{poles}(f))=1\) admits a
 \code{BranchedCoverData} of branched degree 1.
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one}
@@ -632,7 +630,7 @@ Theorem~\ref{thm:degree-one-bijective} (Sec02, already \(\leanok\)).
 
 \begin{lemma}[Holomorphic 1-form equivalence under sphere homeomorphism]
 \label{lem:holomorphic-one-form-equiv-of-homeo-sphere}
-\uses{def:holomorphic-one-form,lem:uniformization-genus-zero-biholomorphism,lem:holomorphic-one-form-pullback-via-biholo}
+\uses{lem:uniformization-genus-zero-biholomorphism,lem:holomorphic-one-form-pullback-via-biholo}
 If a compact connected complex 1-manifold \(X\) is homeomorphic
 (as a topological space) to the standard \(2\)-sphere, then there
 is a \(\C\)-linear equivalence
@@ -673,7 +671,7 @@ itself a subsingleton.
 
 \begin{lemma}[Identity-chart coefficient is \(C^{\infty}\)]
 \label{lem:identity-chart-coeff-contdiff}
-\uses{def:holomorphic-one-form,lem:section-localRepr-identity-chart-contdiff}
+\uses{lem:section-localRepr-identity-chart-contdiff}
 For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), the function
 \(\C\to\C\) obtained by reading \(\omega\) in the identity chart
 of \(\CPone\) and evaluating on \(1\in\C\) is \(C^{\infty}\).
@@ -693,7 +691,7 @@ in v4.28.0 — once supplied, the proof is immediate.
 
 \begin{lemma}[Inversion-chart coefficient is continuous at \(0\)]
 \label{lem:inversion-chart-coeff-continuous-at-zero}
-\uses{def:holomorphic-one-form,lem:section-localRepr-inversion-chart-continuous-at-zero}
+\uses{lem:section-localRepr-inversion-chart-continuous-at-zero}
 For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), the function
 \(\C\to\C\) obtained by reading \(\omega\) in the inversion chart
 of \(\CPone\) and evaluating on \(1\in\C\) is continuous at
@@ -710,7 +708,7 @@ trivialisation Mathlib gap.
 
 \begin{lemma}[No-\(\infty\) off the pole locus]
 \label{lem:meromorphic-no-infty-off-pole}
-\uses{def:divisors-on-X}
+\uses{def:divisor}
 A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) takes
 finite values off \(P\): \(\forall x\neq P,\ f(x)\neq\infty\).
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap_ne_infty_off_pole}
@@ -723,7 +721,7 @@ The pole-divisor records the exact \(\infty\)-locus; pole divisor
 
 \begin{lemma}[Continuity from no-\(\infty\)]
 \label{lem:meromorphic-continuous-on-finite-set}
-\uses{def:divisors-on-X}
+\uses{def:divisor}
 On any subset \(S\subseteq X\) where \(f\) takes only finite values,
 \(f:X\to\CPone\) is continuous on \(S\).
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.continuousOn_of_no_infty_on}
@@ -737,7 +735,7 @@ composition is continuous on \(S\).
 
 \begin{lemma}[Modulus diverges at a simple pole]
 \label{lem:simple-pole-modulus-diverges}
-\uses{def:divisors-on-X}
+\uses{def:divisor}
 For a meromorphic map \(f:X\to\CPone\) with \(\operatorname{poles}(f)=[P]\), there
 exists a smooth \(\C\)-valued lift \(g:X\setminus\{P\}\to\C\)
 satisfying \(f|_{X\setminus\{P\}}=\iota\circ g\) and
@@ -796,7 +794,7 @@ canonical inclusion, tends to \(\infty\) at \(P\).
 
 \begin{lemma}[Cotangent transition formula on the overlap]
 \label{lem:cotangent-transition-formula}
-\uses{def:holomorphic-one-form,lem:onepoint-cx-chart-overlap-derivative,lem:onepoint-cx-chart-overlap-pullback,lem:holomorphic-one-form-pointwise-limit-exists,lem:holomorphic-one-form-limit-continuous,lem:holomorphic-one-form-limit-holomorphic}
+\uses{lem:onepoint-cx-chart-overlap-derivative,lem:onepoint-cx-chart-overlap-pullback,lem:holomorphic-one-form-pointwise-limit-exists,lem:holomorphic-one-form-limit-continuous,lem:holomorphic-one-form-limit-holomorphic}
 For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), there is a
 punctured neighbourhood of \(0\in\C\) (in the inversion chart) on
 which the identity-chart coefficient \(f\) and the inversion-chart
@@ -825,7 +823,7 @@ Direct from Mathlib's \code{hasDerivAt\_inv} on \(w\neq 0\).
 
 \begin{lemma}[Cotangent pullback on the chart overlap]
 \label{lem:onepoint-cx-chart-overlap-pullback}
-\uses{def:holomorphic-one-form,lem:onepoint-cx-chart-overlap-derivative}
+\uses{lem:onepoint-cx-chart-overlap-derivative}
 For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\) and \(w\neq 0\),
 \(f(w^{-1})=-w^{2}g(w)\), where \(f\) and \(g\) are respectively the
 identity-chart and inversion-chart coefficients.
