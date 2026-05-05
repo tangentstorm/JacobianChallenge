@@ -129,22 +129,6 @@ applicable. (Round 1 placeholder; no substantive content yet.) -/
 theorem handleSwap_strictly_decreases_mu
     {g : ℕ} (_w : EdgeWord g) : True := by trivial
 
-/-- **R3-sub-B.B.r3.** Strong induction on μ extracts the
-HandleSwap-equivalent handle-grouped representative. (Round 1
-placeholder.) -/
-theorem handleSwap_grouping_via_mu_induction
-    {g : ℕ} (w : EdgeWord g)
-    (hReduced : EdgeWord.IsFullyReduced w)
-    (hOrient : ¬ EdgeWord.HasNonorientablePair w) :
-    ∃ v : EdgeWord g, EdgeWord.TietzeEq w v ∧ EdgeWord.IsHandleGrouped v := by
-  -- Round 2: structural induction on `handleSwap_displacement_measure w`.
-  -- Round 1 placeholder: `μ ≡ 0` so the induction immediately bottoms
-  -- out, leaving the substantive μ = 0 ↔ handle-grouped step as the
-  -- gating sorry. Round-3+ refinements substitute the substantive μ.
-  by_cases h0 : handleSwap_displacement_measure w = 0
-  · exact handleSwap_grouping_base_case w hReduced hOrient h0
-  · exact handleSwap_grouping_inductive_step w hReduced hOrient h0
-
 /-- **R3-sub-B.B.r3.r1 (Round 2).** Base case of the μ-induction:
 `μ(w) = 0` ⇒ `w` is handle-grouped (so `v := w` works). With the
 Round-1 placeholder `μ ≡ 0`, every `w` hits this branch; the
@@ -170,6 +154,22 @@ theorem handleSwap_grouping_inductive_step
     ∃ v : EdgeWord g, EdgeWord.TietzeEq w v ∧ EdgeWord.IsHandleGrouped v := by
   -- With placeholder μ ≡ 0, hpos is unreachable.
   exact (_hpos rfl).elim
+
+/-- **R3-sub-B.B.r3.** Strong induction on μ extracts the
+HandleSwap-equivalent handle-grouped representative. (Round 1
+placeholder.) -/
+theorem handleSwap_grouping_via_mu_induction
+    {g : ℕ} (w : EdgeWord g)
+    (hReduced : EdgeWord.IsFullyReduced w)
+    (hOrient : ¬ EdgeWord.HasNonorientablePair w) :
+    ∃ v : EdgeWord g, EdgeWord.TietzeEq w v ∧ EdgeWord.IsHandleGrouped v := by
+  -- Round 2: structural induction on `handleSwap_displacement_measure w`.
+  -- Round 1 placeholder: `μ ≡ 0` so the induction immediately bottoms
+  -- out, leaving the substantive μ = 0 ↔ handle-grouped step as the
+  -- gating sorry. Round-3+ refinements substitute the substantive μ.
+  by_cases h0 : handleSwap_displacement_measure w = 0
+  · exact handleSwap_grouping_base_case w hReduced hOrient h0
+  · exact handleSwap_grouping_inductive_step w hReduced hOrient h0
 
 /-- HandleSwap-equivalent reduction to handle-grouped form.
 Algorithm: pick a pair `(a_i, a_i⁻¹)`; if any `b_j` letter is
@@ -256,64 +256,53 @@ theorem handleGrouped_canonical_form
 theorem canonical_form_eq_standardWord (g : ℕ) :
     EdgeWord.standardWord g = EdgeWord.standardWord g := rfl
 
-/-- **Brahana–Seifert–Threlfall reduction.** Every edge-word
-presentation of a compact connected orientable 2-manifold is
-Tietze-equivalent to the standard relator.
-
-R3-sub-B.C assembly (Round 1):
-1. `rawWord_cyclic_reduction` — strip InverseCancel pairs.
-2. `orientable_word_handleSwap_to_grouped` (R3-sub-B.B) —
-   reduce to handle-grouped form.
-3. `handleGrouped_canonical_form` — within handle-grouped, reduce
-   to `standardWord g` (uses orientability for letter-pattern fix). -/
-theorem orientable_edgeWord_tietzeEq_standardWord
-    {g : ℕ} (w : EdgeWord g)
-    (hOrient : ¬ EdgeWord.HasNonorientablePair w) :
-    EdgeWord.TietzeEq w (EdgeWord.standardWord g) := by
-  -- Step 1: cyclic reduction to a fully-reduced representative `u`.
-  obtain ⟨u, hwu, huReduced⟩ := exists_fullyReduced_form w
-  have hwu_T : EdgeWord.TietzeEq w u := hwu.toTietzeEq
-  -- Step 2: handle-grouping via R3-sub-B.B. The orientability
-  -- hypothesis transports to `u` once orientation invariance is
-  -- substantive (currently a Round-1 sorry).
-  have hu_orient : ¬ EdgeWord.HasNonorientablePair u :=
-    orientability_invariant_under_wordEq hOrient hwu
-  obtain ⟨v, huv_T, hvG⟩ :=
-    orientable_word_handleSwap_to_grouped u huReduced hu_orient
-  -- Step 3: canonical-form reduction within handle-grouped.
-  obtain ⟨z, hvz_T, hz_eq⟩ :=
-    handleGrouped_canonical_form v hvG (orientability_invariant_under_TietzeEq hu_orient huv_T)
-  -- Compose the chain w → u → v → z = standardWord g.
-  refine EdgeWord.TietzeEq.trans hwu_T (EdgeWord.TietzeEq.trans huv_T ?_)
-  rw [← hz_eq]; exact hvz_T
-
 /-! ### Orientability invariance (Round 2: refl-trans-gen induction;
-Round 3: per-step `List.count` arithmetic) -/
+Round 3: per-step `List.count` arithmetic).
+
+The Brahana–Seifert–Threlfall reduction headline
+`orientable_edgeWord_tietzeEq_standardWord` is below the helpers,
+since it depends on `orientability_invariant_under_wordEq` and
+`..._under_TietzeEq`. -/
+
+end JacobianChallenge.StageA
+
+namespace JacobianChallenge.Periods.EdgeWord
 
 /-- **R3-sub-B.helper.r3 (Round 3).** Single-step `InverseCancel`
 counts: for every letter `ℓ`, `u.count ℓ ≤ w.count ℓ` after the
 cancellation. Proof by case-split on the four constructors plus
 `List.count_append` arithmetic. -/
-theorem EdgeWord.InverseCancel.count_le
-    {g : ℕ} {w u : EdgeWord g} (h : EdgeWord.InverseCancel w u)
+theorem InverseCancel.count_le
+    {g : ℕ} {w u : EdgeWord g} (h : InverseCancel w u)
     (ℓ : Letter g) :
     u.count ℓ ≤ w.count ℓ := by
   cases h with
-  | ax_aInv i xs ys => simp [List.count_append]; omega
-  | aInv_a i xs ys => simp [List.count_append]; omega
-  | bx_bInv i xs ys => simp [List.count_append]; omega
-  | bInv_b i xs ys => simp [List.count_append]; omega
+  | ax_aInv i xs ys =>
+      simp only [List.count_append]; omega
+  | aInv_a i xs ys =>
+      simp only [List.count_append]; omega
+  | bx_bInv i xs ys =>
+      simp only [List.count_append]; omega
+  | bInv_b i xs ys =>
+      simp only [List.count_append]; omega
 
 /-- **R3-sub-B.helper.r3 (Round 3).** Single-step `HandleSwap`
 counts: HandleSwap rearranges the word but preserves every letter
 count. Proof: `HandleSwap.move` sends `xs ++ h ++ ys` to
 `ys ++ h ++ xs`, and `List.count_append` is commutative. -/
-theorem EdgeWord.HandleSwap.count_eq
-    {g : ℕ} {w u : EdgeWord g} (h : EdgeWord.HandleSwap w u)
+theorem HandleSwap.count_eq
+    {g : ℕ} {w u : EdgeWord g} (h : HandleSwap w u)
     (ℓ : Letter g) :
     u.count ℓ = w.count ℓ := by
   cases h with
-  | move i xs ys hh _hh => simp [List.count_append]; omega
+  | move i xs ys hh _hh =>
+      simp only [List.count_append]; omega
+
+end JacobianChallenge.Periods.EdgeWord
+
+namespace JacobianChallenge.StageA
+
+open JacobianChallenge.Periods
 
 /-- **R3-sub-B.helper.r2 (sorry-free assembly).** Orientability is
 preserved by a single `InverseCancel` step.
@@ -385,6 +374,29 @@ theorem orientability_invariant_under_TietzeEq
       cases hStep with
       | cancel hC => exact orientability_invariant_under_inverseCancel ih hC
       | swap hS => exact orientability_invariant_under_handleSwap ih hS
+
+/-- **Brahana–Seifert–Threlfall reduction (sorry-free assembly).**
+
+R3-sub-B.C: every edge-word presentation of a compact connected
+orientable 2-manifold is Tietze-equivalent to the standard relator. -/
+theorem orientable_edgeWord_tietzeEq_standardWord
+    {g : ℕ} (w : EdgeWord g)
+    (hOrient : ¬ EdgeWord.HasNonorientablePair w) :
+    EdgeWord.TietzeEq w (EdgeWord.standardWord g) := by
+  -- Step 1: cyclic reduction to a fully-reduced representative `u`.
+  obtain ⟨u, hwu, huReduced⟩ := exists_fullyReduced_form w
+  have hwu_T : EdgeWord.TietzeEq w u := hwu.toTietzeEq
+  -- Step 2: handle-grouping via R3-sub-B.B.
+  have hu_orient : ¬ EdgeWord.HasNonorientablePair u :=
+    orientability_invariant_under_wordEq hOrient hwu
+  obtain ⟨v, huv_T, hvG⟩ :=
+    orientable_word_handleSwap_to_grouped u huReduced hu_orient
+  -- Step 3: canonical-form reduction within handle-grouped.
+  obtain ⟨z, hvz_T, hz_eq⟩ :=
+    handleGrouped_canonical_form v hvG (orientability_invariant_under_TietzeEq hu_orient huv_T)
+  -- Compose the chain w → u → v → z = standardWord g.
+  refine EdgeWord.TietzeEq.trans hwu_T (EdgeWord.TietzeEq.trans huv_T ?_)
+  rw [← hz_eq]; exact hvz_T
 
 /-! ### Quotient invariance -/
 
