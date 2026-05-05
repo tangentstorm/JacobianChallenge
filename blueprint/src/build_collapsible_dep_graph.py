@@ -408,6 +408,18 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     stroke-width: 3 !important;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
   }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0d1117; color: #c9d1d9; }
+    header { background: #161b22; border-bottom-color: #30363d; }
+    header button { background: #21262d; color: #c9d1d9; border-color: #30363d; }
+    header button:hover { background: #30363d; }
+    header a { color: #58a6ff; }
+    #breadcrumb { color: #c9d1d9; }
+    #graph svg text { fill: #c9d1d9 !important; }
+    .clickable:hover > polygon, .clickable:hover > ellipse, .clickable:hover > path {
+      filter: drop-shadow(0 1px 3px rgba(255,255,255,0.15));
+    }
+  }
 </style>
 </head>
 <body>
