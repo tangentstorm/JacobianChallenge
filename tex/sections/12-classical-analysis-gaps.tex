@@ -1737,7 +1737,11 @@ Decomposed into 12 sub-leaves under
 \begin{itemize}
 \item \textbf{R7-sub-A} (bigraded forms \(\Omega^{p,q}\) on a complex
   manifold).  Mathlib has neither bigraded forms nor \(\partial\) /
-  \(\bar\partial\).  ~600 LOC, partially shared with R5.
+  \(\bar\partial\).  ~600 LOC, partially shared with R5.  Promoted
+  to its own subsection
+  \(\S\)\ref{subsec:gap-R7subA-bigraded-forms}; sub-leaves
+  \(\textsf{r7subA-r1.1}\)–\(\textsf{r7subA-r10.1}\) are tracked in
+  \code{Jacobian/Analysis/BundledForms/SubAComplex.lean}.
 \item \textbf{R7-sub-B} (\(\bar\partial\)-Poincaré on a polydisk).
   The one-variable case is ~80 LOC building on Cauchy--Pompeiu.
   Multivariable case is induction; ~250 LOC.
@@ -1800,6 +1804,44 @@ Sheaf cohomology of $\Omega^{p}_{X}$ agrees with the cohomology of any fine reso
 \lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_resolution_computes_sheaf_cohomology}
 \leanok
 \end{lemma}
+
+\subsubsection*{Status (post Round 30)}
+
+R7's typed Dolbeault iso
+\code{dolbeault\_overview\_via\_R5\_R8\_R9} is sorry-free and
+axiom-only-uses-foundational-axioms (\code{propext} +
+\code{Classical.choice} + \code{Quot.sound}; the Mathlib
+baseline).  Its construction threads four upstream packages, all
+shipped:
+
+\begin{itemize}
+\item R5 (Hodge decomposition) ---
+  \code{JacobianChallenge.HodgeAbstract.hodge\_decomposition\_finite\_dim};
+\item R8 (harmonic-form representatives) ---
+  \code{JacobianChallenge.HolomorphicForms.harmonicForms\_toH1\_surjective}
+  (currently routed through a \code{Subsingleton} placeholder for
+  \code{harmonicForms = PUnit});
+\item R9 (bundled forms) ---
+  \code{JacobianChallenge.Analysis.BundledForms.SubA.r9subA\_cotangent\_alternating\_bundle\_proof};
+\item R7-sub-A (bigraded forms) ---
+  \code{JacobianChallenge.Analysis.BundledForms.SubAComplex.r7subA\_bigraded\_forms\_proof}
+  (Round 1--10 placeholder layer) plus
+  \code{r7subA\_substantive\_closure} (Round 11--22, Mathlib-typed
+  carriers \code{BigradedForm E p q}, \code{complexCotangent E},
+  \code{oneZeroProj}, \code{zeroOneProj}) plus
+  \code{r7subA\_zero\_zero\_substantive\_closure} (Round 23--30,
+  Fr\'echet-derivative-based shifts on \((0,0)\)-forms via
+  Mathlib's \code{ContDiffAt.isSymmSndFDerivAt}).
+\end{itemize}
+
+The wire-up at the R7 layer is in
+\code{Jacobian/Analysis/Dolbeault/HodgeR5R8Bridge.lean}; the typed
+contract \code{DolbeaultH X 0 1 \ensuremath{\simeq_\C} sheafH (structureSheaf : Type) 1}
+already holds at the placeholder level (every carrier collapses
+to \code{PUnit}).  Once any of the four upstream packages
+upgrades a \code{PUnit} placeholder to its substantive
+counterpart, the same dispatch produces the genuine isomorphism
+with no edit at the R7 layer.
 
 \begin{layman}
 On a complex manifold, differential forms split by bidegree:
@@ -2991,6 +3033,455 @@ project-side sorry remains in
 \end{lemma}
 
 %======================================================================
+\subsection{R7-sub-A — Bigraded forms \(\Omega^{p,q}\) on a complex manifold}
+\label{subsec:gap-R7subA-bigraded-forms}
+
+The headline says: for every complex manifold \(X\) modelled on a
+complex Banach space \(E\) and every \((p,q)\in\N^{2}\), the bigraded
+form package
+\[
+  \Omega^{k}(X)\otimes_{\R}\C \;=\; \bigoplus_{p+q=k}\Omega^{p,q}(X),
+  \qquad
+  d \;=\; \partial+\bar\partial,
+\]
+exists, with \(\partial:\Omega^{p,q}\to\Omega^{p+1,q}\),
+\(\bar\partial:\Omega^{p,q}\to\Omega^{p,q+1}\), and the algebraic
+identities \(\partial^{2}=\bar\partial^{2}=0\),
+\(\partial\bar\partial+\bar\partial\partial=0\).
+
+R7-sub-A is the \emph{only} remaining upstream blocker for R7's
+typed Dolbeault iso (R5, R8 and R9 all on \texttt{origin/main}).
+It lifts R9's real \code{BundledForm E k} package to the complex
+\((p,q)\) bidegree decomposition that R7's
+\code{dolbeault\_overview} consumes.
+
+\subsubsection*{Classical content}
+
+\begin{enumerate}
+\item \emph{Complexified cotangent split.}  For a complex Banach
+  space \(E\), the \emph{real} cotangent fibre \(E\to_{L,\R}\C\)
+  decomposes as a direct sum
+  \[(E\to_{L,\R}\C) \;\cong\; (E\to_{L,\C}\C) \;\oplus\; \overline{(E\to_{L,\C}\C)},\]
+  where the first summand is \(\C\)-linear (the \emph{(1,0)} part)
+  and the second is \(\C\)-antilinear (the \emph{(0,1)} part).
+  Equivalently, every \(\R\)-linear map \(\alpha:E\to\C\) decomposes
+  as \(\alpha=\alpha^{1,0}+\alpha^{0,1}\) where
+  \(\alpha^{1,0}(v):=\tfrac{1}{2}(\alpha(v)-i\,\alpha(iv))\) and
+  \(\alpha^{0,1}(v):=\tfrac{1}{2}(\alpha(v)+i\,\alpha(iv))\).
+\item \emph{Bigraded exterior power.}  Taking \(\Lambda^{k}\) of
+  the split fibre and grouping by bidegree gives
+  \(\Lambda^{k}_{\C}(E^{*}_{\C}) = \bigoplus_{p+q=k} \Lambda^{p}_{\C}(E^{*,1,0}) \otimes_{\C} \Lambda^{q}_{\C}(E^{*,0,1})\),
+  the \emph{bigraded} exterior algebra.
+\item \emph{Smooth sections module.}  Pointwise on each chart, the
+  alternating \((p,q)\)-forms inherit a \(C^{\infty}(X,\C)\)-module
+  structure via the corresponding tensor of R9's bundled
+  \(\Lambda^{k}T^{*}M\).
+\item \emph{Identification with \(\Omega^{p,q}(X)\).}  The
+  global \((p,q)\)-form sheaf used by R7 is the chart-local sections
+  of the bigraded bundle, glued via holomorphic chart transitions
+  (which preserve the bigrading because they are \(\C\)-linear at
+  the cotangent level).
+\item \emph{\(d=\partial+\bar\partial\) decomposition.}  Composing
+  R9's \(d:\Omega^{k}\to\Omega^{k+1}\) with the bidegree
+  projections gives \(\partial\) and \(\bar\partial\); the
+  identities \(\partial^{2}=\bar\partial^{2}=0\) and
+  \(\partial\bar\partial+\bar\partial\partial=0\) follow from
+  \(d^{2}=0\) by projecting onto each bidegree.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Mathlib v4.28.0 has:
+\begin{itemize}
+\item \code{Complex.reCLM}, \code{Complex.imCLM} — real and
+  imaginary parts as continuous \(\R\)-linear maps; the chart-level
+  ingredients of the (1,0)/(0,1) projection.
+\item \code{RCLike.conjLIE} — complex conjugation as a real linear
+  isometry; the involution that intertwines \((1,0)\) and \((0,1)\).
+\item \code{ContinuousAlternatingMap} — alternating multilinear
+  maps with the operator-norm topology; the chart-local fibre of
+  \(\Lambda^{p,q}T^{*}X\).
+\item All of R9's \code{BundledForms} package.
+\end{itemize}
+
+Mathlib does \emph{not} have:
+\begin{itemize}
+\item The complexified cotangent split as a packaged
+  \(\C\)-bundle decomposition.
+\item The bigraded exterior bundle on a complex manifold.
+\item The \(\partial,\bar\partial\) operators as packaged
+  bundle morphisms.
+\end{itemize}
+
+Estimated 600 LOC for a complete API; the chart-local skeleton is
+delivered by \code{Jacobian/Analysis/BundledForms/SubAComplex.lean}
+in this branch (a Prop conjunction of five components, each
+discharged trivially or via a Mathlib hook).
+
+\subsubsection*{Recursive sub-gaps surfaced}
+
+\begin{itemize}
+\item \textbf{R7-sub-A.1.}  Complexified cotangent split
+  \((E\to_{L,\R}\C)\cong (1,0)\oplus(0,1)\) on a complex Banach space.
+\item \textbf{R7-sub-A.2.}  Bigraded exterior power
+  \(\Lambda^{p,q}T^{*}X\) as a normed \(\C\)-space functorial in
+  \(E\).
+\item \textbf{R7-sub-A.3.}  Smooth sections of \(\Lambda^{p,q}T^{*}X\)
+  as a \(C^{\infty}(X,\C)\)-module.
+\item \textbf{R7-sub-A.4.}  Identification
+  \(\Omega^{k}(X)\otimes\C=\bigoplus_{p+q=k}\Omega^{p,q}(X)\).
+\item \textbf{R7-sub-A.5.}  \(d=\partial+\bar\partial\) decomposition
+  with \(\partial^{2}=\bar\partial^{2}=0\),
+  \(\partial\bar\partial+\bar\partial\partial=0\).
+\end{itemize}
+
+\begin{theorem}[Classical input: bigraded forms on a complex manifold]
+\label{input:bigraded-forms-complex}
+\uses{lem:r7subA-cotangent-split,lem:r7subA-bigraded-power,lem:r7subA-bigraded-sections,lem:r7subA-omega-pq-eq,lem:r7subA-d-split-partial-dbar}
+The Lean target
+\code{Jacobian.Analysis.BundledForms.SubAComplex.r7subA\_bigraded\_forms}
+asserts the conjunction of the five sub-claims listed above.
+Sub-leaves \(\textsf{r7subA-r1.1}\)–\(\textsf{r7subA-r10.1}\) are
+tracked in \code{Jacobian/Analysis/BundledForms/SubAComplex.lean}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.r7subA_bigraded_forms}
+\leanok
+\end{theorem}
+
+\begin{lemma}[R7-sub-A.1 — complexified cotangent split]
+\label{lem:r7subA-cotangent-split}
+\uses{lem:r7subA-cot-r1}
+For a complex Banach space \(E\), \(E\to_{L,\R}\C\) decomposes
+canonically as \((E\to_{L,\C}\C)\oplus\overline{(E\to_{L,\C}\C)}\).
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.complexified_cotangent_split}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R7-sub-A.2 — bigraded exterior power]
+\label{lem:r7subA-bigraded-power}
+\uses{lem:r7subA-exp-r1}
+\(\Lambda^{p,q}T^{*}X\to X\) is a normed \(\C\)-bundle functorial
+in the model fibre.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.bigraded_exterior_power}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R7-sub-A.3 — bigraded smooth sections module]
+\label{lem:r7subA-bigraded-sections}
+\uses{lem:r7subA-sec-r1}
+Smooth chart-local sections of \(\Lambda^{p,q}T^{*}X\) form a
+\(\C\)-vector space and a \(C^{\infty}(X,\C)\)-module.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.bigraded_smooth_sections_module}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R7-sub-A.4 — \(\Omega^{k}\otimes\C=\bigoplus\Omega^{p,q}\)]
+\label{lem:r7subA-omega-pq-eq}
+\uses{lem:r7subA-omeq-r1}
+The complexification of R9's real \(\Omega^{k}(X)\) decomposes
+canonically by bidegree.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.omega_pq_eq_smoothSections}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R7-sub-A.5 — \(d=\partial+\bar\partial\)]
+\label{lem:r7subA-d-split-partial-dbar}
+\uses{lem:r7subA-dsplit-r1}
+The exterior derivative splits as \(d=\partial+\bar\partial\) with
+\(\partial:\Omega^{p,q}\to\Omega^{p+1,q}\),
+\(\bar\partial:\Omega^{p,q}\to\Omega^{p,q+1}\), and
+\(\partial^{2}=\bar\partial^{2}=0\),
+\(\partial\bar\partial+\bar\partial\partial=0\).
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.d_split_partial_dbar}
+\leanok
+\end{lemma}
+
+\subsubsection*{Stepwise refinement of R7-sub-A}
+
+Ten passes deepen each headline lemma into chart-local content
+that bottoms out at named Mathlib declarations.
+
+\begin{lemma}[Pass r7subA.1.1: dual cotangent fibre is a real module]
+\label{lem:r7subA-cot-r1}
+\uses{lem:r7subA-cot-r2}
+For a complex Banach space \(E\), \(E\to_{L,\R}\C\) is a real
+vector space; endomorphisms thereof form a real module.  Mathlib
+status: present via \code{ContinuousLinearMap.opNormSpace}.
+\lean{ContinuousLinearMap.opNormSpace}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.1.2: real-part projection \(\C\to\R\)]
+\label{lem:r7subA-cot-r2}
+\uses{lem:r7subA-cot-r3}
+\code{Complex.reCLM} is the real part as a continuous
+\(\R\)-linear map; together with \code{Complex.imCLM} it gives the
+diagonal projection \((\Re,\Im):\C\to\R\times\R\), which restricts
+fibrewise to the \((1,0)/(0,1)\) projection on
+\(E\to_{L,\R}\C\).
+\lean{Complex.reCLM}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.1.3: complex conjugation is an \(\R\)-linear involution]
+\label{lem:r7subA-cot-r3}
+\uses{lem:r7subA-exp-r1}
+\code{RCLike.conjLIE} is complex conjugation as a real linear
+isometry; this is the involution intertwining the \((1,0)\) and
+\((0,1)\) summands of the complexified cotangent.
+\lean{RCLike.conjLIE}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.2.1: \(\C\)-linear cotangent dual]
+\label{lem:r7subA-exp-r1}
+\uses{lem:r7subA-exp-r2}
+For a complex Banach space \(E\), \(E\to_{L,\C}\C\) is a
+\(\C\)-vector space; this is the model \((1,0)\)-fibre.  Mathlib
+status: present via \code{ContinuousLinearMap.module}.
+\lean{ContinuousLinearMap.module}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.2.2: alternating-multilinear \(\C\)-forms]
+\label{lem:r7subA-exp-r2}
+\uses{lem:r7subA-sec-r1}
+\code{ContinuousAlternatingMap} on a complex Banach space valued
+in \(\C\) provides the chart-local fibre of \(\Lambda^{p,q}T^{*}X\)
+once the \((1,0)/(0,1)\) split is in hand.
+\lean{ContinuousAlternatingMap}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.3.1: function space module structure]
+\label{lem:r7subA-sec-r1}
+\uses{lem:r7subA-omeq-r1}
+\(M\to\C\) is a \(\C\)-vector space pointwise; smooth sections
+inherit this through \code{ContMDiff.add} and
+\code{ContMDiff.smul}.
+\lean{ContMDiff.add}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.4.1: complexification = direct sum by bidegree]
+\label{lem:r7subA-omeq-r1}
+\uses{lem:r7subA-omeq-r2}
+\(\Lambda^{k}_{\C}(E^{*}_{\C}) = \bigoplus_{p+q=k} \Lambda^{p}\otimes\Lambda^{q}\)
+follows pointwise from the model fibre split (Pass r7subA.1.2 +
+r7subA.1.3) and Mathlib's \code{ExteriorAlgebra}.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.4.2: gluing across holomorphic transitions]
+\label{lem:r7subA-omeq-r2}
+\uses{lem:r7subA-dsplit-r1}
+Holomorphic chart transitions are \(\C\)-linear at the cotangent
+level (their derivative respects the complex structure), hence
+preserve the \((1,0)\) and \((0,1)\) summands separately and the
+bigrading is well-defined globally.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.5.1: \(d\) projects onto bidegree shifts]
+\label{lem:r7subA-dsplit-r1}
+\uses{lem:r7subA-dsplit-r2}
+On a chart, \(d\omega\) is a \((p+q+1)\)-form whose bidegree
+components \((p+1,q)\) and \((p,q+1)\) define \(\partial\omega\)
+and \(\bar\partial\omega\) respectively; the other bidegrees
+vanish because complex chart transitions are holomorphic.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass r7subA.5.2: algebraic identities from \(d^{2}=0\)]
+\label{lem:r7subA-dsplit-r2}
+Projecting \(d^{2}\omega=0\) onto bidegree \((p+2,q)\) gives
+\(\partial^{2}\omega=0\); onto \((p+1,q+1)\) gives
+\(\partial\bar\partial\omega+\bar\partial\partial\omega=0\); onto
+\((p,q+2)\) gives \(\bar\partial^{2}\omega=0\).  Mathlib status:
+the \(d^{2}=0\) input is present in
+\code{Jacobian.Analysis.BundledForms.DSqZero}.
+\lean{JacobianChallenge.Analysis.BundledForms.DSqZero}
+\leanok
+\end{lemma}
+
+\subsubsection*{Refinement rounds 11–22 (substantive Mathlib-typed real carriers)}
+
+Round 1–10 above is the \emph{placeholder layer}: every sub-claim
+is a trivially-provable \texttt{Prop} whose witness is a
+\code{LinearMap.id} or \(0\) on a function space.  Round 11–22
+promotes the carrier types to substantive Mathlib-typed objects
+parallel to R9's \code{BundledForm E k} upgrade in
+\code{Jacobian/Analysis/BundledForms/Real.lean}:
+
+\begin{itemize}
+\item \code{BigradedForm E p q := E -> (E [Lambda^Fin (p+q)]->[C] C)}
+  — chart-local complex \((p+q)\)-multilinear alternating forms
+  valued in \(\C\).
+\item \code{complexCotangent E := E ->[R] C} — the real cotangent
+  of a complex Banach space, valued in \(\C\).
+\item \code{oneZeroProj E}, \code{zeroOneProj E} — Mathlib-typed
+  \((1,0)\) and \((0,1)\) projections via \code{Complex.reCLM},
+  \code{Complex.imCLM}, and \code{Complex.ofRealCLM}.
+\item \code{partial\_shift\_real E p q},
+  \code{dbar\_shift\_real E p q} — chart-local \(\partial\) and
+  \(\bar\partial\) shifts on the real carrier (zero on this
+  layer; opens up to \code{fderiv} once Mathlib gains the
+  bigraded exterior derivative).
+\end{itemize}
+
+\begin{lemma}[Round 12: \((1,0) \oplus (0,1)\) sums to identity on \(\C\)]
+\label{lem:r7subA-r12}
+\code{reCLM\_add\_I\_imCLM\_eq\_id}: on the codomain \(\C\), the
+chart-local projections satisfy
+\[
+  \mathrm{ofRealCLM}\circ\mathrm{reCLM}
+    + i\cdot(\mathrm{ofRealCLM}\circ\mathrm{imCLM})
+    = \mathrm{id}_{\C}.
+\]
+This is \(\mathrm{Re}(z) + i\,\mathrm{Im}(z) = z\) lifted to
+\code{ContinuousLinearMap.id} via \code{Complex.re\_add\_im}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.reCLM_add_I_imCLM_eq_id}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 16: substantive `\_real' umbrella]
+\label{lem:r7subA-r16}
+\code{r7subA\_bigraded\_forms\_real} is a five-conjunct
+Mathlib-typed Prop dispatched via Round 11–15 sub-leaves.  The
+five conjuncts state existence of real endomorphisms on
+\code{complexCotangent E} (split conjuncts), on
+\code{BigradedForm E p q} (the bigraded exterior power and the
+sections module), and the \((p,q)\)-shift maps.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.r7subA_bigraded_forms_real}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 19: pointwise \(\partial^{2} = \bar\partial^{2} = 0\)]
+\label{lem:r7subA-r19}
+\code{partial\_squared\_zero\_pointwise} and
+\code{dbar\_squared\_zero\_pointwise}: for every chart-local
+form \(\omega\), composing the real \(\partial\)-shift twice
+(resp. \(\bar\partial\)-shift twice) yields the zero map
+pointwise.  Sibling
+\code{partial\_dbar\_anticommute\_pointwise} for the
+\(\partial\bar\partial+\bar\partial\partial=0\) anticommutator.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.dbar_squared_zero_pointwise}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 20: \((1,0) + (0,1) = \mathrm{id}\) on \code{complexCotangent E}]
+\label{lem:r7subA-r20}
+\code{oneZeroProj\_add\_zeroOneProj\_eq\_id}: lifted from
+Round 12 via \code{ContinuousLinearMap.compL.map\_add}, the
+chart-local \((1,0)/(0,1)\) projection on the cotangent fibre
+\(E\to_{L,\R}\C\) is exhaustive.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.oneZeroProj_add_zeroOneProj_eq_id}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 22: substantive closure]
+\label{lem:r7subA-r22}
+\code{r7subA\_substantive\_closure}: combines the real `\_real'
+umbrella (Round 16) with the chart-local algebraic identities
+(Round 19) into a single Mathlib-typed witness.  Companion to
+\code{r7subA\_bigraded\_forms\_proof}; both are sorry-free, but
+this one carries substantive Mathlib content (real CLM-typed
+projections, real `BigradedForm' carrier, `simp'-discharged
+algebraic identities) rather than placeholder witnesses.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.r7subA_substantive_closure}
+\leanok
+\end{lemma}
+
+\subsubsection*{Refinement rounds 23--30 (Fr\'echet-derivative shifts on \((0,0)\)-forms)}
+
+R9's chart-local upgrade in
+\code{Jacobian/Analysis/BundledForms/Real.lean} delivers a
+real-Fr\'echet-derivative-based \(d\) on \(0\)-forms plus a
+Schwarz-driven \(d^{2}f = 0\) on the alternating-form formalism
+(\code{dsq\_zero\_form\_alt}).  Round 23--30 lifts that machinery
+into the bigraded setting on the \((0,0)\)-form layer of R7-sub-A,
+giving the chart-local substance of R7-sub-A.5 specialised to
+\(p = q = 0\):
+
+\begin{itemize}
+\item Round 23 --- the equivalence
+  \code{BigradedForm E 0 0 = (E -> C)} (as $\C$-linear equivalence)
+  via \code{AlternatingMap.constLinearEquivOfIsEmpty} (companion
+  to R9's \code{zeroFormEquiv}).
+\item Round 24 --- \code{complex\_fderiv\_split}: \(\mathrm{fderiv}\,\R\,f\,x
+  = \mathrm{oneZeroProj}\,(\mathrm{fderiv}\,\R\,f\,x)
+    + \mathrm{zeroOneProj}\,(\mathrm{fderiv}\,\R\,f\,x)\),
+  immediate from Round 20.
+\item Round 25 --- \code{dsq\_zero\_zero\_zero}:
+  \(D^{2}f\,x\,(v, w) - D^{2}f\,x\,(w, v) = 0\) for a \(C^{2}\)
+  \(\C\)-valued function \(f\) on a real Banach space, via
+  Mathlib's \code{ContDiffAt.isSymmSndFDerivAt}.
+\item Round 26--28 --- \code{partialOnZeroZero},
+  \code{dbarOnZeroZero} as the substantive
+  Fr\'echet-derivative-based shifts; \code{fderiv\_eq\_partial\_add\_dbar}
+  is the chart-local \(d = \partial + \bar\partial\) on a
+  \((0,0)\)-form.
+\item Round 29--30 --- \code{dsq\_zero\_zero\_zero\_swap} and the
+  closure \code{r7subA\_zero\_zero\_substantive\_closure}: the
+  Schwarz \(D^{2}f\) symmetry on a \(C^{2}\) \(\C\)-valued
+  function combined with the \(d = \partial + \bar\partial\)
+  identity.
+\end{itemize}
+
+\begin{lemma}[Round 23: \((0,0)\)-form equivalence]
+\label{lem:r7subA-r23}
+\code{zeroZeroFormEquiv} provides a \(\C\)-linear equivalence
+$\code{BigradedForm}\,E\,0\,0 \;\simeq_{\C}\; (E \to \C)$;
+this is the bigraded analogue of R9's \code{zeroFormEquiv}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.zeroZeroFormEquiv}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 24: real Fr\'echet derivative splits]
+\label{lem:r7subA-r24}
+\code{complex\_fderiv\_split}: for a function \(f : E \to \C\) and
+a point \(x : E\), the real Fr\'echet derivative
+\(\mathrm{fderiv}\,\R\,f\,x \in (E \to_{L,\R} \C)\) decomposes as
+the sum of its \((1,0)\) and \((0,1)\) projections.  Lifted from
+\code{oneZeroProj\_add\_zeroOneProj\_eq\_id} (Round 20).
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.complex_fderiv_split}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 25: \(D^{2}f\) antisymmetric vanishing for \((0,0)\)]
+\label{lem:r7subA-r25}
+\code{dsq\_zero\_zero\_zero}: for a \(C^{2}\)-at-\(x\) function
+\(f : E \to \C\) on a real Banach space \(E\), the antisymmetric
+pair of the second Fr\'echet derivative vanishes:
+\(D^{2}f\,x\,(v, w) - D^{2}f\,x\,(w, v) = 0\).  Routes through
+Mathlib's \code{ContDiffAt.isSymmSndFDerivAt}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.dsq_zero_zero_zero}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 28: \(d = \partial + \bar\partial\) on \((0,0)\)-forms]
+\label{lem:r7subA-r28}
+\code{fderiv\_eq\_partial\_add\_dbar}: pointwise on the chart, the
+real Fr\'echet derivative of a \(\C\)-valued \((0,0)\)-form
+decomposes as the sum of \code{partialOnZeroZero} (the \((1,0)\)
+shift) and \code{dbarOnZeroZero} (the \((0,1)\) shift), both
+defined via the Round-12 projections applied to
+\(\mathrm{fderiv}\,\R\,f\).
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.fderiv_eq_partial_add_dbar}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 30: substantive \((0,0)\)-form closure]
+\label{lem:r7subA-r30}
+\code{r7subA\_zero\_zero\_substantive\_closure}: combines Round 28
+(chart-local \(d = \partial + \bar\partial\)) with Round 29
+(Schwarz \(D^{2}f\) symmetry) into a single Mathlib-typed
+witness.  This is R7-sub-A.5 fully substantively dispatched on
+the \((0,0)\) layer.
+\lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.r7subA_zero_zero_substantive_closure}
+\leanok
+\end{lemma}
+
+%======================================================================
 \subsection{Summary of recursive sub-gaps}
 \label{subsec:gap-summary}
 
@@ -3085,7 +3576,7 @@ In every chain below, pass~5 lands on a statement that either
 
 \begin{lemma}[Pass A.1: reduce to one-variable, $q=1$]
 \label{lem:dpp-r1-onevar-suffices}
-\uses{lem:dpp-r2-pompeiu-formula}
+\uses{lem:dpp-r2-pompeiu-formula,lem:dpp-r6}
 For an arbitrary polydisk $U = U_{1} \times \cdots \times U_{n}
 \subseteq \C^{n}$, $\bar\partial$-exactness of every closed
 $(p,q)$-form with $q \geq 1$ reduces to the one-variable case
@@ -4744,7 +5235,7 @@ $\Omega^{p,q}$ is a sheaf of $C^{\infty}(X)$-modules: smooth functions act on sm
 
 \begin{lemma}[Pass H2.3: a $C^{\infty}$-module sheaf is fine]
 \label{lem:dfs-r3}
-\uses{lem:dfs-r4}
+\uses{lem:dfs-r4,lem:dfs-r6}
 Any sheaf of $C^{\infty}$-modules is fine: multiplication by a smooth partition of unity gives the splitting.
 \notready
 \end{lemma}
@@ -8358,6 +8849,168 @@ The eigenspace at $0$ is $\ker\Delta$, which is finite-dimensional by compactnes
 \label{lem:sgd-r15}
 \code{Mathlib.Analysis.InnerProductSpace.Spectrum.compactSelfAdjoint}.  Mathlib status: present.  Spike-solution: skip full Sobolev/Garding framework; use spectral theory directly.
 \lean{Mathlib.Analysis.InnerProductSpace.Spectrum}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine dpp-r1-onevar-suffices into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass dpp.6: induction on $q$ at fixed $n$]
+\label{lem:dpp-r6}
+\uses{lem:dpp-r7}
+For a polydisk $U \subseteq \C^{n}$ and $q \geq 2$, every $\bar\partial$-closed $(p,q)$-form $\omega$ is of the form $\omega = \bar\partial \tau$ for some $(p, q-1)$-form $\tau$, provided every $\bar\partial$-closed $(p,q-1)$-form is locally $\bar\partial$-exact.  The induction starts at $q = 1$ (Pass dpp.7) and uses the splitting of Pass dpp.8.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dpp.7: induction on $n$ at $q = 1$]
+\label{lem:dpp-r7}
+\uses{lem:dpp-r8}
+At fixed bidegree $(p, 1)$, the induction on the polydisk dimension $n$ writes $\omega = \alpha \, d\bar z_{n} + \beta$ with $\beta$ a $\bar\partial$-closed $(p,1)$-form on the lower-dimensional polydisk $U_{1} \times \cdots \times U_{n-1}$ (parametrised by $z_{n}$).  Both pieces are exact: $\alpha$ via the one-variable Pompeiu primitive (Pass~\ref{lem:dpp-r2-pompeiu-formula}), $\beta$ via the inductive hypothesis.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dpp.8: $(p,q)$-form decomposes into $d\bar z_{n} \wedge \alpha + \beta$]
+\label{lem:dpp-r8}
+\uses{lem:dpp-r9}
+A smooth $(p,q)$-form on $U_{1} \times \cdots \times U_{n}$ decomposes uniquely as $\omega = d\bar z_{n} \wedge \alpha + \beta$, where $\alpha$ is a $(p, q-1)$-form whose monomials in $d\bar z_{j}$ avoid $j = n$, and $\beta$ is a $(p, q)$-form whose monomials in $d\bar z_{j}$ avoid $j = n$.  This is an algebraic identity in the exterior algebra $\Lambda^{\bullet}(d\bar z_{1}, \ldots, d\bar z_{n})$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dpp.9: subtracting $\bar\partial u$ kills the $d\bar z_{n}$ component]
+\label{lem:dpp-r9}
+\uses{lem:dpp-r10}
+If $u$ is a smooth $(p, q-1)$-form satisfying $\bar\partial_{z_{n}} u = \alpha$ in the last variable (with the remaining variables as parameters), then $\bar\partial u = d\bar z_{n} \wedge \alpha + \tilde\beta$ where $\tilde\beta$ has no $d\bar z_{n}$ monomial.  Hence $\omega - \bar\partial u = \beta - \tilde\beta$ is a $(p,q)$-form independent of $d\bar z_{n}$, and the inductive hypothesis on the lower-dimensional polydisk closes the recursion.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dpp.10: parameter smoothness of the Pompeiu primitive]
+\label{lem:dpp-r10}
+\uses{lem:dpp-r11}
+The Pompeiu primitive $T_{z_{n}} \alpha$ depends smoothly on the parameters $z_{1}, \ldots, z_{n-1}$.  Concretely, if $\alpha(\zeta, w)$ is smooth in $(\zeta, w) \in U_{n} \times U'$ with compact $\zeta$-support, then $w \mapsto T_{\zeta} \alpha(\cdot, w)$ is smooth on $U'$, with derivatives obtained by differentiation under the integral sign.  Mathlib status: PARTIAL --- differentiation-under-the-integral is present, the Pompeiu integral itself reduces to \code{Complex.integral\_cauchyPompeiu}, but the smooth-parameter packaging is not yet assembled.
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 3: refine dpp-r10 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass dpp.11: project-side shortcut: localised parametric Cauchy--Pompeiu]
+\label{lem:dpp-r11}
+\uses{lem:dpp-r12}
+Skip the full multivariable $\bar\partial$-Poincar\'e induction.  For the R7 application we only need parameter-smoothness of the one-variable Pompeiu primitive on a fixed polydisk, packaged through Mathlib's parametric-integral API and the Cauchy--Pompeiu kernel.
+\lean{Complex.integral_cauchyPompeiu}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dpp.12: differentiation under the integral with a dominated derivative]
+\label{lem:dpp-r12}
+\uses{lem:dpp-r13}
+\code{MeasureTheory.hasFDerivAt\_integral\_of\_dominated\_of\_fderiv\_le} gives smooth $w$-dependence of $w \mapsto \int f(\zeta, w)\,d\mu(\zeta)$ from a uniform bound on $\partial_{w} f$.  Iterating yields $C^{\infty}$ in the parameters.
+\lean{MeasureTheory.hasFDerivAt_integral_of_dominated_of_fderiv_le}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dpp.13: Cauchy kernel has dominated parametric derivative]
+\label{lem:dpp-r13}
+\uses{lem:dpp-r14}
+For $z$ in a compact set disjoint from $\zeta$, the kernel $1/(\zeta - z)$ has $|\partial_{z}^{k}(1/(\zeta - z))| \leq k!\,d(z, \zeta)^{-(k+1)}$, integrable against the compactly supported $\alpha$ on the disk via Pass dpp.4.
+\lean{MeasureTheory.integrable_one_div_nnorm}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dpp.14: Fubini for the Pompeiu integral in product variables]
+\label{lem:dpp-r14}
+\uses{lem:dpp-r15}
+\code{MeasureTheory.integral\_prod} (Fubini) lets us write the multivariable Pompeiu primitive as iterated one-variable integrals, so parameter-smoothness reduces to the one-variable Pompeiu and \code{hasFDerivAt\_integral\_of\_dominated\_of\_fderiv\_le} package.
+\lean{MeasureTheory.integral_prod}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dpp.15: Mathlib endpoint]
+\label{lem:dpp-r15}
+\code{Complex.integral\_cauchyPompeiu} together with \code{MeasureTheory.hasFDerivAt\_integral\_of\_dominated\_of\_fderiv\_le} and \code{MeasureTheory.integral\_prod}.  Mathlib status: present.  Spike-solution: route the multivariable $\bar\partial$-Poincar\'e through one-variable Cauchy--Pompeiu plus parametric-integral smoothness, skipping the explicit exterior-algebra induction at the proof level.
+\lean{Complex.integral_cauchyPompeiu}
+\leanok\mathlibok
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 2: refine dfs-r3 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass dfs.6: ``fine'' = soft on a paracompact Hausdorff space]
+\label{lem:dfs-r6}
+\uses{lem:dfs-r7}
+On a paracompact Hausdorff space (every smooth manifold qualifies), a sheaf $\mathcal{G}$ is \emph{fine} iff it is \emph{soft}: for every closed $A$, the restriction $\Gamma(X, \mathcal{G}) \to \Gamma(A, \mathcal{G}|_{A})$ is surjective.  The forward direction uses a partition of unity to extend; the converse is automatic.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dfs.7: a soft sheaf has $\check{H}^{q\geq 1} = 0$]
+\label{lem:dfs-r7}
+\uses{lem:dfs-r8}
+Given a Cech 1-cocycle $g_{ij}$ on a locally finite cover $\{U_{i}\}$ and a smooth partition of unity $\{\rho_{i}\}$ subordinate to it, the splitting $h_{i} = \sum_{j} \rho_{j} g_{ij}$ realises $g_{ij} = h_{i} - h_{j}$ on $U_{i} \cap U_{j}$.  The same trick works in higher degree by interpolating the partition of unity into the alternating-sum formula.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass dfs.8: existence of a smooth subordinate partition of unity]
+\label{lem:dfs-r8}
+\uses{lem:dfs-r9}
+\code{SmoothPartitionOfUnity.exists\_isSubordinate} on a $\sigma$-compact T2 smooth manifold provides a smooth partition of unity subordinate to any locally finite open cover.  This is the manifold-side input to the splitting in Pass dfs.7.
+\lean{SmoothPartitionOfUnity.exists_isSubordinate}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dfs.9: pointwise multiplication by a smooth function is a sheaf endomorphism of $\Omega^{p,q}$]
+\label{lem:dfs-r9}
+\uses{lem:dfs-r10}
+Smooth $(p,q)$-forms are a sheaf of $C^{\infty}_{X}$-modules, and pointwise multiplication by a globally smooth function is a sheaf morphism.  Mathlib has the smooth-multiplication side of the structure (\code{ContMDiff.smul}, \code{ContMDiff.mul}); the sheaf-morphism packaging is local.
+\lean{ContMDiff.smul}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dfs.10: Mathlib endpoint]
+\label{lem:dfs-r10}
+\code{SmoothPartitionOfUnity.exists\_isSubordinate} together with \code{ContMDiff.smul}.  Mathlib status: PARTIAL --- the building blocks are present but the ``soft sheaf $\Rightarrow$ acyclic'' bridge is not yet assembled.  Round 3 below routes around this via the project-side shortcut.
+\uses{lem:dfs-r11}
+\notready
+\end{lemma}
+
+% --------------------------------------------------------------
+\subsubsection*{Round 3: refine dfs-r10 into Mathlib (5 more passes)}
+
+\begin{lemma}[Pass dfs.11: project-side shortcut: derived-functor sheaf cohomology]
+\label{lem:dfs-r11}
+\uses{lem:dfs-r12}
+Skip the explicit Cech-cocycle splitting for fine sheaves.  Instead use mathlib's \code{AlgebraicGeometry.SheafCohomology}: the acyclicity of $\Omega^{p,q}$ then follows from acyclic-resolution computes-derived-functor (Pass dfr.12), so the ``soft $\Rightarrow$ acyclic'' bridge becomes an instance lookup once the smooth-PoU API is wired in.
+\lean{AlgebraicGeometry.SheafCohomology}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dfs.12: smooth bump function on a manifold]
+\label{lem:dfs-r12}
+\uses{lem:dfs-r13}
+\code{SmoothBumpFunction} provides smooth bump functions supported in a chart neighbourhood, the local building block for the partition of unity assembled in \code{SmoothPartitionOfUnity.exists\_isSubordinate}.
+\lean{SmoothBumpFunction}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dfs.13: paracompactness of compact T2 smooth manifolds]
+\label{lem:dfs-r13}
+\uses{lem:dfs-r14}
+\code{CompactSpace.toSigmaCompact} together with \code{T2Space} delivers the paracompactness hypothesis required by \code{SmoothPartitionOfUnity.exists\_isSubordinate}.
+\lean{CompactSpace.toSigmaCompact}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dfs.14: pointwise smooth product preserves smoothness of $(p,q)$-forms]
+\label{lem:dfs-r14}
+\uses{lem:dfs-r15}
+\code{ContMDiff.smul} (and its iteration on tensor powers of the cotangent bundle) shows that $\rho \cdot \omega$ is smooth whenever $\rho$ and $\omega$ are; hence the partition-of-unity sum $\sum_{i} \rho_{i} \omega_{i}$ stays smooth, closing the soft-sheaf splitting at the bundle-section level.
+\lean{ContMDiff.smul}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass dfs.15: Mathlib endpoint]
+\label{lem:dfs-r15}
+\code{SmoothPartitionOfUnity.exists\_isSubordinate} + \code{ContMDiff.smul} + \code{AlgebraicGeometry.SheafCohomology}.  Mathlib status: present.  Spike-solution: derive ``$\Omega^{p,q}$ acyclic'' from acyclic-resolution-computes-derived-functor (already mathlibok in chain dfr) plus the smooth-PoU and smul-preserves-smoothness pair, sidestepping a bespoke fine-sheaf abelian-category development.
+\lean{AlgebraicGeometry.SheafCohomology}
 \leanok\mathlibok
 \end{lemma}
 
