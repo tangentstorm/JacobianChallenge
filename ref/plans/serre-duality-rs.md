@@ -48,7 +48,7 @@ obligations live under `Jacobian/HolomorphicForms/Serre/`.
 | `Serre/CotangentPresheaf.lean` | 7 | holomorphic-1-form presheaf frontier + sheaf-condition |
 | `Serre/LineBundleDual.lean` | 17 | `RSLineBundleDual` + iso-of-canonical-dual frontiers |
 | `Serre/LineBundleSerre.lean` | 16 | `serre_duality_lineBundle_exists` (specialised) |
-| `Serre/RiemannRochHighFromSerre.lean` | 18 | Serre-vanishing reduction lemmas |
+| `Serre/RiemannRochHighFromSerre.lean` | 18 | Serre-vanishing reduction axioms |
 | `Serre/RiemannRochUmbrellaPieces.lean` | 20 | umbrella package pieces |
 | `Serre/CanonicalFiniteDim.lean` | 21/22 | FiniteDimensional discharge frontiers |
 | `Serre/FiniteDimInstances.lean` | 21/22 | harmonic-form FD frontiers |
@@ -74,7 +74,7 @@ obligations live under `Jacobian/HolomorphicForms/Serre/`.
 15. `h1Canonical_isoToC` assembled from `residueMapIso` via `residueMap` + `residueMap_inverse`; round-trip identities are now sorry-free projections from the axiom.
 16. `serre_duality_lineBundle_exists` specialised line-bundle Serre-duality.
 17. `RSLineBundleDual` + identification of `serreDualSheaf L` with `L⁻¹ ⊗ K_X`.
-18. `riemann_roch_high_degree` design refines via `riemann_roch_high_degree_via_serre` + low-degree vanishing (proof body sorry pending universe cleanup).
+18. `riemann_roch_high_degree` design refines via the explicit frontier axioms `riemann_roch_high_degree_via_serre` and `RSLineBundleDegree_dual_tensor_canonical` plus low-degree vanishing.
 19. **`h1_dualizing_sheaf_one_dim`** discharged sorry-free via `h1Canonical_isoToC` and `Module.finrank_self ℂ`.
 20. `riemann_roch_umbrella_exists` design refines through `riemann_roch_classical_identity` + `RSLineBundleSub`; `serre_h1_finrank_eq_h0_canonical_sub` and `riemann_roch_classical_identity` are now sorry-free assemblies over the shared Serre high-degree and Euler-characteristic packages.
 21. `finiteDimensionalSheafCohomologyRS_canonical` reduces to harmonic-form FD + surjections.

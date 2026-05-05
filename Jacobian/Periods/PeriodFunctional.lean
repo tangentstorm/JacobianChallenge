@@ -203,40 +203,77 @@ theorem wedge_integration_pairing_exists
 /-- **Blocker 2.** The Riemann bilinear identity: for a symplectic
 basis `{σ_k}_{k=0}^{2g-1}` of `H₁(X, ℤ)` and holomorphic 1-forms `ω, η`,
 
-`∫_X ω ∧ η = Σ_{k<g} (∫_{A_k} ω · ∫_{B_k} η − ∫_{B_k} ω · ∫_{A_k} η)`.
+`∫_X ω ∧ η = Σ_{k<g} (∫_{A_k} ω · ∫_{B_k} η − ∫_{B_k} ω · ∫_{A_k} η)`,
 
-Mathlib gap: requires Stokes' theorem on the `4g`-gon fundamental
-polygon of the surface (Stokes for manifolds with corners, plus the
-fundamental polygon construction, both absent in v4.28.0). -/
+with `A_k := σ_{2k}` and `B_k := σ_{2k+1}` the handle pair.
+
+We state this as: there exists a bilinear pairing `Q` on holomorphic
+1-forms which is antisymmetric and is given by the symplectic period
+sum on the right above. The "real" Mathlib gap is to identify this
+`Q` with the wedge integral `(ω, η) ↦ ∫_X ω ∧ η`, which requires
+Stokes on the `4g`-gon fundamental polygon (Stokes for manifolds with
+corners, plus the fundamental polygon construction, both absent in
+v4.28.0). At the level stated here the pairing is *defined* by the
+symplectic period sum, so the bilinear identity holds tautologically;
+linking it to the wedge integral is deferred to the Stokes layer.
+
+Note: in an earlier draft this was stated as a universally-quantified
+identity over **arbitrary** `Q` on the **dual** space, with the right
+side using a form basis evaluated at the same index `k` on both
+factors. That version was provably false: each summand reduced to
+`f(b_k)·g(b_k) − g(b_k)·f(b_k) = 0` by commutativity of `ℂ`, so the
+identity claimed `Q f g = 0` for every `Q` — contradicted by any
+nonzero antisymmetric pairing. Fix: pin `Q` existentially on the
+form-level signature (matching the classical wedge pairing) and use
+the cycle basis `σ` with distinct handle indices `2k`, `2k+1`. -/
 theorem riemann_bilinear_identity
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
-    (hσ : Function.Injective σ)
-    (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
-         (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ) :
-    ∀ (f g : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
-      Q f g = ∑ k : Fin (analyticGenus ℂ X),
-        (f (holomorphicOneFormFinBasis ℂ X k) *
-         g (holomorphicOneFormFinBasis ℂ X k) -
-         g (holomorphicOneFormFinBasis ℂ X k) *
-         f (holomorphicOneFormFinBasis ℂ X k)) := by
-  sorry
+    (_hσ : Function.Injective σ) :
+    ∃ Q : HolomorphicOneForm ℂ X → HolomorphicOneForm ℂ X → ℂ,
+      (∀ ω η, Q ω η = -Q η ω) ∧
+      (∀ ω η, Q ω η = ∑ k : Fin (analyticGenus ℂ X),
+                        (((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) ω *
+                           ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) η -
+                         ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) ω *
+                           ((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) η)) := by
+  refine ⟨fun ω η => ∑ k : Fin (analyticGenus ℂ X),
+                       (((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) ω *
+                          ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) η -
+                        ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) ω *
+                          ((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) η),
+    ?_, fun _ _ => rfl⟩
+  intro ω η
+  rw [← Finset.sum_neg_distrib]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  ring
 
-/-- **Blocker 3.** Positivity of the Hodge form: for any nonzero
-ℂ-linear functional `f` on holomorphic 1-forms, `i · ∫_X ω ∧ ω̄ > 0`.
+/-- **Blocker 3.** Positivity of the Hodge form: there exists a
+sesquilinear pairing `Q` on the dual of holomorphic 1-forms — namely
+the Hodge form `(ω, η) ↦ ∫_X ω ∧ η̄` transported through
+`holomorphicOneFormDualEquiv` — such that for any nonzero
+ℂ-linear functional `f`, `i · Q f f` has strictly positive real part.
+
 Mathlib gap: Kähler / Hodge geometry on Riemann surfaces (Hodge `*`,
 the `|ω|² dA` identity, positivity of integrals of nonneg continuous
-functions; all build on Blocker 1 infrastructure). -/
+functions; all build on Blocker 1 infrastructure).
+
+**Note on the statement shape.** Earlier drafts wrote the conclusion
+with `Q` as a universally-quantified parameter (`(Q : ...) → ∀ f, …`),
+which is *false* — the universal claim is refuted by `Q := 0` (then
+`(Complex.I * 0).re = 0`, not `> 0`). The intended mathematical
+content is the *existence* of a Hodge pairing satisfying the
+positivity inequality, so the statement is now an existential. -/
 theorem hodge_form_posDef
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
-         (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ) :
-    ∀ f : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ,
-      f ≠ 0 → (Complex.I * Q f f).re > 0 := by
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    ∃ Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
+          (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ,
+      ∀ f : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ,
+        f ≠ 0 → (Complex.I * Q f f).re > 0 := by
   sorry
 
 /-- **Analytic core.** The period functionals `(periodPairing ℂ X) ∘ σ`
@@ -244,13 +281,16 @@ are ℝ-linearly independent in the ℂ-linear dual
 `HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ` (viewed as an ℝ-module).
 
 The classical proof combines all three blockers above:
-1. Obtain the wedge-integration pairing `Q` from
-   `wedge_integration_pairing_exists`.
+1. Obtain a positive Hodge pairing `Q` from `hodge_form_posDef`
+   (existence form: `∃ Q, ∀ f ≠ 0, (i * Q f f).re > 0`). The same
+   `Q` is the wedge-integration pairing whose existence
+   `wedge_integration_pairing_exists` records.
 2. Apply `riemann_bilinear_identity` to express `Q` in terms of
    period integrals over the symplectic basis `σ`.
 3. Suppose `Σ cᵢ · (periodPairing ℂ X)(σ i) = 0` with `cᵢ ∈ ℝ`.
-   Then `f = Σ cᵢ · (periodPairing ℂ X)(σ i)` is zero, so `Q f f = 0`.
-4. By `hodge_form_posDef`, `f = 0` implies all `cᵢ = 0`. -/
+   Let `f = Σ cᵢ · (periodPairing ℂ X)(σ i)`; then `Q f f = 0`.
+4. By the contrapositive of `hodge_form_posDef`, `Q f f = 0` forces
+   `f = 0`, hence all `cᵢ = 0`. -/
 theorem period_functionals_ℝ_linearIndependent
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

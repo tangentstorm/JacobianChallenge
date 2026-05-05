@@ -1,0 +1,62 @@
+name: Blueprint audits
+
+# Two read-only checks that run on every push / PR to flag drift between
+# `tex/` and the Lean code:
+#
+#   1. blueprint_audit.py        — every \lean{...} reference resolves to a
+#                                  real Lean decl, every \leanok claim
+#                                  matches the implementation's sorry-state.
+#   2. blueprint_graph_audit.py  — every statement in the blueprint flows
+#                                  into the challenge API root
+#                                  (thm:challenge-api) or lives in the
+#                                  Orphaned-statements section.
+#
+# Both scripts exit non-zero on any mismatch; CI fails the job in that case.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tex/**"
+      - "Jacobian/**"
+      - "scripts/blueprint_audit.py"
+      - "scripts/blueprint_graph_audit.py"
+      - "scripts/proof_leanok.py"
+      - ".github/workflows/blueprint-audit.yml"
+  pull_request:
+    paths:
+      - "tex/**"
+      - "Jacobian/**"
+      - "scripts/blueprint_audit.py"
+      - "scripts/blueprint_graph_audit.py"
+      - "scripts/proof_leanok.py"
+      - ".github/workflows/blueprint-audit.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  leanok-audit:
+    name: \leanok ↔ Lean cross-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run leanok audit
+        run: python3 scripts/blueprint_audit.py
+
+  graph-audit:
+    name: Dependency-graph connectivity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run graph audit
+        run: python3 scripts/blueprint_graph_audit.py

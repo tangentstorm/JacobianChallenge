@@ -108,22 +108,92 @@ Split the Stokes-shaped cycle-level naturality into the descent
 identity from chain-level + path-level naturality, both as named
 companion obligations. -/
 
-/-- **Stage A leaf (round 1, cycle-level).** The genuine Stokes
-descent step: cycle-level naturality of `periodPairing` reduces to
-the path-level naturality of `pathIntegralViaCover` once the chain-
-level realisation of `periodPairing` is in hand. *Currently a sorry*
-because `periodPairing` is `opaque` (its concrete chain-level
-representative is not yet exposed). -/
+/-! #### Pn-chain decomposition (Round 2, 2026-05-05)
+
+The single sorry on `periodPairing_pullbackFormsBundledLM_via_pathLevel`
+is decomposed via the `pn-r1 … pn-r18` chain documented in
+`tex/sections/12-classical-analysis-gaps.tex`. Each helper below is
+the Lean shadow of a chain step. -/
+
+/-- **Pass pn.1 + pn.11 + pn.12 (chain-level integral, uniform in η).**
+Every cycle `γ : IntegralOneCycle X` admits a chain representative
+(a finite formal `ℤ`-sum of smooth singular 1-simplices, i.e. paths)
+that realises `periodPairing ℂ X γ` as a `pathIntegralViaCover`-based
+sum, *uniformly* in the form `η`. Bottom-up: the chain-level
+realisation of the period pairing. See TeX labels `lem:pn-r1`,
+`lem:pn-r11`, `lem:pn-r12`. -/
+theorem periodPairing_chainLevel_repr
+    (γ : IntegralOneCycle X) :
+    ∃ (m : ℕ) (a b : Fin m → X) (n : Fin m → ℤ)
+      (γs : ∀ i : Fin m, Path (a i) (b i)),
+      ∀ η : HolomorphicOneForm ℂ X,
+        (periodPairing ℂ X γ) η =
+          ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i) := by
+  sorry
+
+/-- **Pass pn.7 + pn.15 (cyclePushforward agrees with path-mapping).**
+The Lean-level `cyclePushforward f hf` corresponds, on chain
+representatives, to the path-mapping `γ ↦ γ.map hf.continuous`. See
+TeX labels `lem:pn-r7`, `lem:pn-r15`. -/
+theorem cyclePushforward_chainLevel_repr
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X)
+    (m : ℕ) (a b : Fin m → X) (n : Fin m → ℤ)
+    (γs : ∀ i : Fin m, Path (a i) (b i))
+    (hrepr : ∀ η : HolomorphicOneForm ℂ X,
+      (periodPairing ℂ X γ) η =
+        ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i)) :
+    ∀ η : HolomorphicOneForm ℂ Y,
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η =
+        ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η
+          ((γs i).map hf.continuous) := by
+  sorry
+
+/-- **Stage A leaf (round 2, cycle-level).** Cycle-level naturality of
+`periodPairing` reduces to the path-level naturality assumption
+`_h_path`.
+
+**Sorry-free assembly via the pn chain (round 2):**
+1. Use `periodPairing_eq_chainLevel_repr` to obtain a chain
+   representative of `γ` and its `pathIntegralViaCover` realisation
+   for the form `pullbackFormsBundledLM X Y f hf η` on `X`.
+2. Apply the path-level naturality hypothesis `_h_path` to each
+   simplex of the representative: this rewrites
+   `pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i)`
+   to `pathIntegralViaCover η ((γs i).map hf.continuous)`.
+3. Use `cyclePushforward_chainLevel_repr` to identify the resulting
+   sum on `Y` with `(periodPairing ℂ Y (cyclePushforward f hf γ)) η`. -/
 theorem periodPairing_pullbackFormsBundledLM_via_pathLevel
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
-    (_h_path :
+    (h_path :
       ∀ {a b : X} (γ' : Path a b),
         pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ' =
           pathIntegralViaCover η (γ'.map hf.continuous)) :
     (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
       (periodPairing ℂ Y (cyclePushforward f hf γ)) η := by
-  sorry
+  -- Step 1: extract a uniform chain representative of γ on X.
+  obtain ⟨m, a, b, n, γs, hreprX⟩ := periodPairing_chainLevel_repr γ
+  -- Step 1a: rewrite the X-side via the chain representative,
+  -- specialised to the form `pullbackFormsBundledLM X Y f hf η`.
+  have hsumX : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      ∑ i : Fin m, (n i : ℂ) *
+        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i) :=
+    hreprX (pullbackFormsBundledLM X Y f hf η)
+  -- Step 2: apply path-level naturality simplex-by-simplex.
+  have hsumXY : ∑ i : Fin m, (n i : ℂ) *
+        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i) =
+      ∑ i : Fin m, (n i : ℂ) *
+        pathIntegralViaCover η ((γs i).map hf.continuous) := by
+    refine Finset.sum_congr rfl (fun i _ => ?_)
+    rw [h_path (γs i)]
+  -- Step 3: identify the resulting sum on Y with periodPairing on
+  -- the pushforward.
+  have hsumY : ∑ i : Fin m, (n i : ℂ) *
+        pathIntegralViaCover η ((γs i).map hf.continuous) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η :=
+    (cyclePushforward_chainLevel_repr f hf γ m a b n γs hreprX η).symm
+  rw [hsumX, hsumXY, hsumY]
 
 -- The sorry-free reassembly of `periodPairing_pullbackFormsBundledLM`
 -- requires the path-level naturality theorem
@@ -201,17 +271,149 @@ split into a chart-level chain rule (the genuine analytic content)
 and a sorry-free unwinding of the `Classical.choose` partition
 selection. -/
 
-/-- **Stage A leaf (round 1).** Chart-level naturality of path
-integration under form-pullback. *Bottom-up content*: the chain rule
-for `intervalIntegral` applied through a single chart. Currently
-absent in this packaged form; the project's `ChartedFormPullback`
-module provides the necessary substrate. -/
+/-! #### Pcr-chain decomposition (Round 2, 2026-05-05)
+
+The single sorry on `pathIntegralViaCoverWith_pullbackFormsBundledLM`
+is decomposed via the `pcr-r1 … pcr-r18` chain documented in
+`tex/sections/12-classical-analysis-gaps.tex` into named
+sub-obligations. Each sub-lemma below is the Lean shadow of a chain
+step; its `sorry` is justified by the matching natural-language
+proof in the TeX file. The top-level theorem becomes a sorry-free
+assembly of these helpers. -/
+
+/-- **Pass pcr.10 (path-additivity at cover level).** The cover-level
+path integral is additive under path concatenation: for any holomorphic
+form `ω` on `X` and concatenable paths `γ : Path a b`, `γ' : Path b c`,
+`pathIntegralViaCover ω (γ.trans γ') =
+  pathIntegralViaCover ω γ + pathIntegralViaCover ω γ'`.
+
+This is the un-`With` lift of `pathIntegralViaCoverWith_trans` to the
+ambient choice of partition (which `pathIntegralViaCover` makes via
+`Classical.choose`). Currently absent at the un-`With` level; see
+TeX label `lem:pcr-r10` for the chain-level argument. -/
+theorem pathIntegralViaCover_trans_eq_add
+    (η : HolomorphicOneForm ℂ X) {a b c : X}
+    (γ : Path a b) (γ' : Path b c) :
+    pathIntegralViaCover η (γ.trans γ') =
+      pathIntegralViaCover η γ + pathIntegralViaCover η γ' := by
+  sorry
+
+/-- **Pass pcr.4 (chart-level chain rule).** On a single chart segment
+where `γ : Path a b` has range in `(chartAt ℂ p).source` on `X` and
+`f ∘ γ` has range in `(chartAt ℂ q).source` on `Y` for some pair of
+chart centres `p, q`, the chart-corrected segment integrals satisfy:
+
+`pathIntegralViaChartCorrect (chartAt ℂ p) (pullbackFormsBundledLM X Y f hf η) γ =
+  pathIntegralViaChartCorrect (chartAt ℂ q) η (γ.map hf.continuous)`.
+
+Bottom-up content: the chain rule for `intervalIntegral` applied to
+the chart pull-back of `f`. See TeX label `lem:pcr-r4`. -/
+theorem pathIntegralViaCover_pullback_chart_segment
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (h_singleChart_X : ∃ p : X, ∀ t : unitInterval,
+      γ t ∈ (chartAt ℂ p).source)
+    (h_singleChart_Y : ∃ q : Y, ∀ t : unitInterval,
+      (γ.map hf.continuous) t ∈ (chartAt ℂ q).source) :
+    pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+      pathIntegralViaCover η (γ.map hf.continuous) := by
+  sorry
+
+/-- **Pass pcr.13 (chart-source compatibility under f).** If `γ`
+factors through a chart on `X` then `f ∘ γ` factors through some chart
+on `Y` after refinement; in particular every uniform chart partition
+of `γ` on `X` admits a refinement that is also a uniform chart
+partition of `f ∘ γ` on `Y`. See TeX label `lem:pcr-r13`. -/
+theorem pathIntegralViaCover_partition_compat_under_smooth
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b) :
+    ∃ (n : ℕ) (hn : 0 < n) (pickX : Fin n → X) (pickY : Fin n → Y),
+      (∀ (i : Fin n) (t : unitInterval),
+        (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+        γ t ∈ (chartAt ℂ (pickX i)).source) ∧
+      (∀ (i : Fin n) (t : unitInterval),
+        (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+        (γ.map hf.continuous) t ∈ (chartAt ℂ (pickY i)).source) := by
+  sorry
+
+/-- **Pass pcr.11 (refinement-invariance of the cover sum).** The
+multi-chart path integral is invariant under refinement of the chart
+partition. Formally: for any two uniform chart partitions
+`(n, pickChart, hcov)` and `(n', pickChart', hcov')` of the same path
+`γ`, the two values of `pathIntegralViaCoverWith` agree. See TeX
+label `lem:pcr-r11`. -/
+theorem pathIntegralViaCoverWith_refinement_invariant
+    (η : HolomorphicOneForm ℂ X) {a b : X} (γ : Path a b)
+    (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
+    (hcov : ∀ (i : Fin n) (t : unitInterval),
+      (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+      γ t ∈ (chartAt ℂ (pickChart i)).source)
+    (n' : ℕ) (hn' : 0 < n') (pickChart' : Fin n' → X)
+    (hcov' : ∀ (i : Fin n') (t : unitInterval),
+      (i : ℝ) / n' ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n' →
+      γ t ∈ (chartAt ℂ (pickChart' i)).source) :
+    pathIntegralViaCoverWith η γ n hn pickChart hcov =
+      pathIntegralViaCoverWith η γ n' hn' pickChart' hcov' := by
+  sorry
+
+/-- **Pass pcr.1 (cover-sum equality on a common partition).** If `γ`
+on `X` and `f ∘ γ` on `Y` admit a common-grain partition (witnessed by
+`pcr-r13`), then the two `pathIntegralViaCoverWith` sums agree
+segment-by-segment, by the chart-level chain rule `pcr-r4`. See TeX
+label `lem:pcr-r1`. -/
+theorem pathIntegralViaCoverWith_pullback_via_common_partition
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (n : ℕ) (hn : 0 < n) (pickX : Fin n → X) (pickY : Fin n → Y)
+    (hcovX : ∀ (i : Fin n) (t : unitInterval),
+      (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+      γ t ∈ (chartAt ℂ (pickX i)).source)
+    (hcovY : ∀ (i : Fin n) (t : unitInterval),
+      (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
+      (γ.map hf.continuous) t ∈ (chartAt ℂ (pickY i)).source) :
+    pathIntegralViaCoverWith (pullbackFormsBundledLM X Y f hf η) γ
+        n hn pickX hcovX =
+      pathIntegralViaCoverWith η (γ.map hf.continuous) n hn pickY hcovY := by
+  sorry
+
+/-- **Stage A leaf (round 2).** Chart-level naturality of path
+integration under form-pullback.
+
+**Round 2 sorry-free assembly via the pcr chain.** Combine the
+common-partition existence (`pcr-r13`,
+`pathIntegralViaCover_partition_compat_under_smooth`), the
+common-partition equality (`pcr-r1`,
+`pathIntegralViaCoverWith_pullback_via_common_partition`), and the
+refinement-invariance lemma (`pcr-r11`,
+`pathIntegralViaCoverWith_refinement_invariant`) to descend from the
+parameterised `_With` form to the un-`With` `pathIntegralViaCover`. -/
 theorem pathIntegralViaCoverWith_pullbackFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b) :
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) := by
-  sorry
+  -- Extract a common-grain chart partition for `γ` on `X` and
+  -- `γ.map hf.continuous` on `Y`.
+  obtain ⟨n, hn, pickX, pickY, hcovX, hcovY⟩ :=
+    pathIntegralViaCover_partition_compat_under_smooth f hf γ
+  -- Move both sides to the parameterised `_With` form on this
+  -- common partition via the refinement-invariance lemma.
+  have hX :
+      pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+        pathIntegralViaCoverWith
+          (pullbackFormsBundledLM X Y f hf η) γ n hn pickX hcovX := by
+    unfold pathIntegralViaCover
+    exact pathIntegralViaCoverWith_refinement_invariant
+      (pullbackFormsBundledLM X Y f hf η) γ _ _ _ _ n hn pickX hcovX
+  have hY :
+      pathIntegralViaCover η (γ.map hf.continuous) =
+        pathIntegralViaCoverWith
+          η (γ.map hf.continuous) n hn pickY hcovY := by
+    unfold pathIntegralViaCover
+    exact pathIntegralViaCoverWith_refinement_invariant
+      η (γ.map hf.continuous) _ _ _ _ n hn pickY hcovY
+  rw [hX, hY]
+  exact pathIntegralViaCoverWith_pullback_via_common_partition
+    f hf η γ n hn pickX pickY hcovX hcovY
 
 /-- **Path-level naturality (round 1 reassembly).** Integrating the
 form-pullback along a path equals integrating the original form along

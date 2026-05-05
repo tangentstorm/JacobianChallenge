@@ -121,7 +121,7 @@ for producing meromorphic functions with prescribed zeros and poles.
 
 \begin{theorem}[Classical input: Dolbeault isomorphism]
 \label{input:dolbeault}
-\uses{def:sheaf-cohomology-rs,lem:dolbeault-fine-resolution,lem:dolbeault-fine-resolution-cohomology}
+\uses{def:sheaf-cohomology-rs,lem:dolbeault-fine-resolution,lem:dolbeault-fine-resolution-cohomology,input:bigraded-forms-complex,lem:dolbeault-overview-stepwise}
 For a complex manifold \(X\) and integers \(p,q\geq 0\),
 \[
   H^{p,q}_{\bar\partial}(X)\cong H^{q}(X,\Omega^{p}_{X}).
@@ -196,25 +196,13 @@ The headline assembly is sorry-free, composing the four leaves; the
 genuine analytic content is concentrated in the two bound sub-leaves.
 \end{proofsketch}
 
-\begin{theorem}[Riemann's inequality]
-\label{thm:riemann-inequality}
-\uses{thm:euler-char-line-bundle}
-For any line bundle \(\mathcal{L}\) on a compact Riemann surface of
-genus \(g\),
-\[
-  h^{0}(\mathcal{L}) \ge \deg(\mathcal{L}) + 1 - g .
-\]
-The ``weaker half'' of Riemann-Roch (1857), preceding Roch's identification
-of the \(h^{1}\) correction term: the inequality drops the non-negative
-\(h^{1}(\mathcal{L})\) summand from the Euler characteristic identity.
-\lean{JacobianChallenge.HolomorphicForms.riemann_inequality_h0}
-\leanok
-\end{theorem}
-\begin{proof}\leanok\end{proof}
+% Riemann's inequality (the weaker half of Riemann-Roch) is off the
+% challenge-API spine — \ref{input:riemann-roch} already implies it.
+% Moved to \ref{sec:orphaned-statements}.
 
 \begin{theorem}[Classical input: Riemann-Roch (umbrella)]
 \label{input:riemann-roch}
-\uses{input:divisors,thm:serre-duality-rs,thm:euler-char-line-bundle}
+\uses{input:divisors,thm:serre-duality-rs,thm:euler-char-line-bundle,lem:serre-duality-overview-stepwise,input:rr-squeeze,input:stage-a-closeout,input:banach-data-hone}
 \lean{JacobianChallenge.Blueprint.input_riemann_roch}
 \leanok
 For every divisor \(D\) on \(X\),
