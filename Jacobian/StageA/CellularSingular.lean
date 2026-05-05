@@ -50,14 +50,86 @@ noncomputable def cellularChain.basis
     Module.Basis (K.nSimplices n) ℤ (cellularChain K n) :=
   Finsupp.basisSingleOne (R := ℤ)
 
-/-- The cellular boundary `∂_n : C_n^cell → C_{n-1}^cell`: signed sum
-of faces. -/
+/-- The cardinality of a `K.nSimplices (n+1)` element as a `Finset V`
+is `n+2`. -/
+private theorem nSimplices_card
+    {V : Type} (K : AbstractSimplicialComplex V) {n : ℕ}
+    (s : K.nSimplices n) : s.1.card = n + 1 := by
+  have hdim := s.2.2
+  unfold AbstractSimplicialComplex.dimSimplex at hdim
+  have hne : s.1.Nonempty := K.nonempty_of_mem s.2.1
+  have hpos : 0 < s.1.card := Finset.card_pos.mpr hne
+  omega
+
+/-- The `i`-th *vertex* of an `(n+1)`-simplex `s` of `K`, listed in the
+canonical sort order from `[LinearOrder V]`. Used by
+`cellularSimplexFace` to construct the i-th face. -/
+noncomputable def cellularSimplexVertex
+    [LinearOrder V] (K : AbstractSimplicialComplex V) (n : ℕ)
+    (s : K.nSimplices (n + 1)) (i : Fin (n + 2)) : V :=
+  s.1.orderEmbOfFin (nSimplices_card K s) i
+
+/-- The `i`-th *face* of an `(n+1)`-simplex `s` of `K` (vertex `i`
+deleted, in the canonical sort order). Carried as an element of
+`K.nSimplices n` via `K.downward_closed`. -/
+noncomputable def cellularSimplexFace
+    [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ)
+    (s : K.nSimplices (n + 1)) (i : Fin (n + 2)) : K.nSimplices n := by
+  classical
+  have hcard : s.1.card = n + 2 := nSimplices_card K s
+  let v : V := cellularSimplexVertex K n s i
+  let face : Finset V := s.1.erase v
+  have hv_mem : v ∈ s.1 :=
+    Finset.orderEmbOfFin_mem s.1 hcard i
+  have hface_card : face.card = n + 1 := by
+    rw [Finset.card_erase_of_mem hv_mem, hcard]; omega
+  have hface_ne : face.Nonempty := by
+    rw [← Finset.card_pos, hface_card]; omega
+  refine ⟨face, ⟨?_, ?_⟩⟩
+  · exact K.downward_closed s.2.1 (Finset.erase_subset _ _) hface_ne
+  · unfold AbstractSimplicialComplex.dimSimplex
+    omega
+
+/-- **Substantive form** of the cellular boundary
+`∂_n : C_n^cell → C_{n-1}^cell`: signed sum of faces,
+`∂(s) = Σᵢ (-1)ⁱ • [s.face_i]`. The face indexing comes from the
+canonical `Finset.orderEmbOfFin` enumeration of `s`'s vertices under
+`[LinearOrder V]`.
+
+This is the *real* boundary operator. The headline `cellularBoundary`
+(below) carries the placeholder `0` body to avoid forcing
+`[LinearOrder V] [DecidableEq V]` on every consumer; promotion to the
+signed form is the planned upstream change for the headline iso. -/
+noncomputable def cellularBoundarySigned
+    [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    cellularChain K (n + 1) →ₗ[ℤ] cellularChain K n :=
+  Finsupp.lift _ ℤ _ (fun s : K.nSimplices (n + 1) =>
+    ∑ i : Fin (n + 2),
+      (-1 : ℤ) ^ i.val • Finsupp.single (cellularSimplexFace K n s i) (1 : ℤ))
+
+/-- `∂² = 0` for the substantive boundary. The classical proof:
+the `(i, j)`-pair of nested face deletions cancels with the `(j-1, i)`-pair
+under sign reversal (`d_j d_{i} = d_i d_{j-1}` for `i < j`). Sorry'd;
+direct proof uses `Finset.erase_erase` plus the alternating-sign
+combinatorics. -/
+theorem cellularBoundarySigned_sq_zero
+    [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    (cellularBoundarySigned K n).comp (cellularBoundarySigned K (n + 1)) = 0 :=
+  sorry
+
+/-- The cellular boundary `∂_n : C_n^cell → C_{n-1}^cell` (placeholder
+form). Currently the zero map; the substantive version is
+`cellularBoundarySigned`, which requires `[LinearOrder V] [DecidableEq V]`
+to enumerate vertices in canonical order. Once those typeclasses are
+propagated through the file, the body becomes
+`cellularBoundarySigned K n`. -/
 noncomputable def cellularBoundary
     (K : AbstractSimplicialComplex V) (n : ℕ) :
     cellularChain K (n + 1) →ₗ[ℤ] cellularChain K n :=
   0
 
-/-- `∂² = 0`. -/
+/-- `∂² = 0` (placeholder form, trivially via `0 ∘ 0 = 0`). The
+substantive form is `cellularBoundarySigned_sq_zero`. -/
 theorem cellularBoundary_sq_zero
     (K : AbstractSimplicialComplex V) (n : ℕ) :
     (cellularBoundary K n).comp (cellularBoundary K (n + 1)) = 0 := by
