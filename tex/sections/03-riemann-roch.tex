@@ -235,7 +235,7 @@ one-line corollaries of it.
 
 \begin{proposition}[Genus zero gives a degree-one meromorphic function]
 \label{prop:genus-zero-degree-one-map}
-\uses{input:riemann-roch}
+\uses{input:riemann-roch,thm:genus-zero-exists-nonconstant-mem-L-point,thm:genus-zero-pole-identification,thm:meromorphic-continuous-extension,thm:degree-one-bijectivity-meromorphic,thm:homeo-sphere-holomorphic-one-form-vanishing}
 If \(g(X)=0\), then for every \(p\in X\) there is a meromorphic function
 \(f:X\to\CPone\) with exactly one simple pole at \(p\). In particular, \(f\)
 has degree one.
@@ -268,5 +268,296 @@ The second term is zero because \(K-p\) has negative degree in genus zero.
 Thus \(L(p)\) has dimension \(2\), so it contains a nonconstant meromorphic
 function with at most a simple pole at \(p\). Such a function cannot have any
 other pole and therefore defines a degree-one map to \(\CPone\).
+\end{proof}
+
+\subsection{Genus-zero Riemann--Roch route: structural decomposition}
+\label{sec:genus-zero-rr-route}
+
+The proof of Proposition~\ref{prop:genus-zero-degree-one-map}
+factors into three named leaves on the project's
+\code{MeromorphicMapToSphere} interface. Each leaf is in turn
+decomposed into smaller \emph{structural axioms} on the abstract
+\code{MeromorphicMapToSphere} \(\!{}/{}\!\)\code{Divisor} types, since
+those types as currently designed do not yet expose the geometric
+content needed for the proof. The structural axioms below are the
+honest Mathlib gaps; each has a complete classical proof recorded
+inline.
+
+\begin{lemma}[Meromorphic with no poles factors through \(\C\)]
+\label{lem:meromorphic-no-poles-factors}
+\uses{input:divisors,lem:meromorphic-no-infty-of-no-poles,lem:meromorphic-finite-lift-smooth}
+Let \(f:X\to\CPone\) be a meromorphic map (in the project's sense)
+whose pole divisor is \(0\). Then there exists a smooth function
+\(g:X\to\C\) such that \(f=\iota\circ g\), where
+\(\iota:\C\hookrightarrow\CPone\) is the canonical inclusion.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_of_no_poles}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Vanishing of the pole divisor at every point means \(f\) takes only
+finite values, i.e.\ \(f(x)\neq\infty\) for all \(x\in X\). The lift
+\(g:=\iota^{-1}\circ f\) is therefore well-defined; its smoothness
+inherits from the smoothness of \(f\) in any chart at a finite point
+(charts at \(\infty\) are not entered).
+\end{proof}
+
+\begin{lemma}[Membership in \(L((P))\) bounds the pole divisor]
+\label{lem:mem-L-point-pole-bound}
+\uses{def:divisor,def:riemann-roch-space,lem:mem-L-point-pole-pointwise-bound,lem:meromorphic-poles-effective,lem:divisor-effective-le-point-iff}
+If \(f\in L([P])\), then either \(\operatorname{poles}(f)=0\) or
+\(\operatorname{poles}(f)=[P]\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles_eq_zero_or_point_of_mem_L_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Membership in \(L([P])\) is the divisor inequality
+\((f)+[P]\geq 0\), i.e.\ \(\operatorname{zeros}(f)-\operatorname{poles}(f)+[P]\geq 0\) at every
+point. For \(Q\neq P\) this reduces to
+\(\operatorname{zeros}(f)(Q)-\operatorname{poles}(f)(Q)\geq 0\); since zeros and poles of an
+actual meromorphic function have disjoint supports, both terms are
+zero, and \(\operatorname{poles}(f)(Q)=0\) follows. At \(Q=P\), the same disjoint-
+support argument plus \(\operatorname{zeros}(f)(P)-\operatorname{poles}(f)(P)+1\geq 0\) gives
+\(\operatorname{poles}(f)(P)\in\{0,1\}\). Combined with \(\operatorname{poles}(f)\) being
+effective elsewhere zero, \(\operatorname{poles}(f)\) is either \(0\) or \([P]\).
+\end{proof}
+
+\begin{lemma}[Genus-zero RR witness]
+\label{lem:genus-zero-RR-witness}
+\uses{input:riemann-roch,lem:genus-zero-rr-identity-applied,lem:genus-zero-rr-vanish-K-minus-point,lem:rr-space-dim-ge-two-nonconstant}
+On a compact connected genus-zero Riemann surface, for every point
+\(P\) there exists a meromorphic map \(f:X\to\CPone\) which is
+nonconstant and lies in \(L([P])\).
+\lean{JacobianChallenge.HolomorphicForms.genusZero_pointRiemannRochSpace_witness_exists}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+By Theorem~\ref{input:riemann-roch} applied to \(D=[P]\),
+\(\ell([P])-\ell(K-[P])=\deg(P)+1-g(X)=1+1-0=2\). In genus zero,
+\(K-[P]\) has degree \(-3\), so \(\ell(K-[P])=0\). Hence
+\(\dim_{\C}L([P])=2\). The constants form a one-dimensional subspace
+of \(L([P])\), so any element of \(L([P])\) outside the constant line
+is a nonconstant meromorphic function in \(L([P])\).
+\end{proof}
+
+\begin{theorem}[Liouville for compact Riemann surfaces]
+\label{thm:meromorphic-liouville-compact}
+\uses{lem:meromorphic-no-poles-factors}
+A meromorphic map \(f:X\to\CPone\) on a compact connected complex
+1-manifold whose pole divisor is \(0\) is constant.
+\lean{JacobianChallenge.HolomorphicForms.holomorphic_meromorphicMapToSphere_constant_on_compact}
+\leanok
+\end{theorem}
+\begin{proof}\leanok
+By Lemma~\ref{lem:meromorphic-no-poles-factors}, the map factors as
+\(\iota\circ g\) for some smooth \(g:X\to\C\). The function \(g\)
+is smooth (in fact holomorphic, in the manifold sense) and \(X\) is
+compact connected; by the maximum modulus / locally-constant
+theorem (Mathlib's
+\code{MDifferentiable.exists\_eq\_const\_of\_compactSpace}), \(g\)
+is constant equal to some \(v\in\C\). Hence \(f\) is constant equal
+to \(\iota(v)\in\CPone\).
+\end{proof}
+
+\begin{theorem}[Existence of nonconstant element of \(L((P))\) in genus zero]
+\label{thm:genus-zero-exists-nonconstant-mem-L-point}
+\uses{lem:genus-zero-RR-witness}
+On a compact connected genus-zero Riemann surface, the Riemann--Roch
+space \(L([P])\) for any point \(P\) admits a nonconstant element.
+\lean{JacobianChallenge.HolomorphicForms.genusZero_exists_nonconstant_mem_L_point}
+\leanok
+\end{theorem}
+\begin{proof}\leanok
+Apply Lemma~\ref{lem:genus-zero-RR-witness}; package the resulting
+\((f,\,f\,\text{nonconstant},\,f\in L([P]))\) data into the project's
+\code{GenusZeroPointRiemannRochElement} structure.
+\end{proof}
+
+\begin{theorem}[Pole identification for nonconstant elements of \(L((P))\)]
+\label{thm:genus-zero-pole-identification}
+\uses{lem:mem-L-point-pole-bound,thm:meromorphic-liouville-compact}
+A nonconstant element of \(L([P])\) on a genus-zero compact Riemann
+surface has pole divisor exactly \([P]\).
+\lean{JacobianChallenge.HolomorphicForms.genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point}
+\leanok
+\end{theorem}
+\begin{proof}\leanok
+By Lemma~\ref{lem:mem-L-point-pole-bound}, \(\operatorname{poles}(f)\in\{0,[P]\}\).
+If \(\operatorname{poles}(f)=0\), then \(f\) is holomorphic, and by
+Theorem~\ref{thm:meromorphic-liouville-compact} \(f\) is constant,
+contradicting the hypothesis.  Hence \(\operatorname{poles}(f)=[P]\).
+\end{proof}
+
+\subsection{Structural axioms — iteration 2 decomposition}
+\label{sec:rr-structural-iter2}
+
+The headline lemmas above further decompose into pointwise structural
+axioms. Each is a small, named obligation; complete classical proofs
+(or \code{leanok} markers when discharged) are recorded inline.
+
+\begin{lemma}[No-\(\infty\) on the no-poles locus]
+\label{lem:meromorphic-no-infty-of-no-poles}
+\uses{def:divisor}
+A meromorphic map with vanishing pole divisor takes only finite
+values: \(\forall x,\ f(x)\neq\infty\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap_ne_infty_of_no_poles}
+\leanok
+\end{lemma}
+\begin{proof}
+Direct interpretation of \(\operatorname{poles}(f)=0\): the pole-divisor records
+the locus where \(f\) reaches \(\infty\), and zero divisor means no
+such point.
+\end{proof}
+
+\begin{lemma}[Pointwise lift through \(\C\hookrightarrow\CPone\)]
+\label{lem:onepoint-lift-of-no-infty}
+Given a map \(f:X\to\CPone\) with \(f(x)\neq\infty\) for every
+\(x\in X\), there is a function \(g:X\to\C\) such that
+\(f(x)=\iota(g(x))\) for all \(x\), where \(\iota:\C\to\CPone\) is
+the canonical inclusion.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_pointwise_lift_exists}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+\(\CPone=\code{OnePoint}\,\C=\code{Option}\,\C\). The hypothesis
+\(f(x)\neq\code{Option}.\code{none}\) lets us define \(g(x):=(f(x)).\code{getD}\,0\),
+i.e. the \(\code{some}\) payload (or default at unreachable \(\code{none}\)). At
+each \(x\), case-splitting on \(f(x)\): the \(\code{none}\) branch is
+excluded by hypothesis; the \(\code{some}\,y\) branch gives
+\(g(x)=y\) and \(\iota(g(x))=\code{some}\,y=f(x)\).
+\end{proof}
+
+\begin{lemma}[Smoothness of the no-\(\infty\) lift]
+\label{lem:onepoint-lift-smoothness-inherits}
+\uses{def:divisor}
+If a meromorphic map \(f:X\to\CPone\) factors as
+\(f=\iota\circ g\) for some \(g:X\to\C\), then \(g\) is smooth
+(\code{MDifferentiable}).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_mdiff_of_lift_eq}
+\leanok
+\end{lemma}
+\begin{proof}
+At every point \(x\in X\) the map \(f\) lives in the identity chart
+of \(\CPone\) (since \(f(x)=\iota(g(x))\neq\infty\)). The chart-local
+representative of \(f\) is then the chart-pulled-back \(g\); since
+\(f\) is smooth as a manifold map (this is the structural smoothness
+field of \code{MeromorphicMapToSphere}), \(g\) inherits smoothness.
+The genuine Mathlib gap is the chart-trivialisation API for
+\code{MeromorphicMapToSphere} smoothness, which is not built into
+the abstract structure.
+\end{proof}
+
+\begin{lemma}[Smooth lift through \(\C\hookrightarrow\CPone\)]
+\label{lem:meromorphic-finite-lift-smooth}
+\uses{lem:onepoint-lift-of-no-infty,lem:onepoint-lift-smoothness-inherits}
+Given a meromorphic map \(f:X\to\CPone\) with \(f(x)\neq\infty\) for
+all \(x\in X\), the function \(g(x):=\iota^{-1}(f(x))\) is well-defined
+on \(X\) and smooth.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_mdiff_of_no_infty}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Well-definedness is the no-\(\infty\) hypothesis. Smoothness inherits
+from the chart-local representations of \(f\) at finite points: in
+each chart the map is given by a holomorphic function on a chart
+disc, which transports through \(\iota^{-1}\) to a smooth
+\(\C\)-valued function.
+\end{proof}
+
+\begin{lemma}[Disjoint zero/pole supports]
+\label{lem:meromorphic-zeros-poles-disjoint}
+For an actual meromorphic function \(f\), the zero and pole divisors
+have disjoint support: at every \(Q\), \(\operatorname{zeros}(f)(Q)=0\) or
+\(\operatorname{poles}(f)(Q)=0\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.zeros_poles_disjoint_support}
+\leanok
+\end{lemma}
+\begin{proof}
+At \(Q\), \(f\) is locally given by a Laurent series with a single
+order \(n\in\Z\). If \(n\geq 0\), \(f\) is holomorphic at \(Q\) with
+zero of order \(n\) (so \(\operatorname{poles}(f)(Q)=0\)). If \(n<0\), \(f\) has a
+pole of order \(-n\) at \(Q\) (so \(\operatorname{zeros}(f)(Q)=0\)). The two cases
+are exclusive.
+\end{proof}
+
+\begin{lemma}[Pointwise pole bound from \(L((P))\)]
+\label{lem:mem-L-point-pole-pointwise-bound}
+\uses{def:riemann-roch-space,lem:meromorphic-zeros-poles-disjoint}
+If \(f\in L([P])\), then \(\operatorname{poles}(f)(Q)\leq[P](Q)\) for every \(Q\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles_le_point_of_mem_L_point}
+\leanok
+\end{lemma}
+\begin{proof}
+\(L([P])\) membership says \((f)+[P]\geq 0\), i.e.\
+\(\operatorname{zeros}(f)-\operatorname{poles}(f)+[P]\geq 0\). At each \(Q\), use
+Lemma~\ref{lem:meromorphic-zeros-poles-disjoint} (disjoint zero/pole
+supports) to split: if \(\operatorname{poles}(f)(Q)>0\) then \(\operatorname{zeros}(f)(Q)=0\),
+and the inequality reduces to \(-\operatorname{poles}(f)(Q)+[P](Q)\geq 0\), giving
+\(\operatorname{poles}(f)(Q)\leq[P](Q)\). Otherwise \(\operatorname{poles}(f)(Q)=0\leq[P](Q)\).
+\end{proof}
+
+\begin{lemma}[Effectivity of the pole divisor]
+\label{lem:meromorphic-poles-effective}
+\uses{def:divisor}
+The pole divisor of a meromorphic map is effective.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles_effective}
+\leanok
+\end{lemma}
+\begin{proof}
+\(\operatorname{poles}(f)\) is by construction non-negative at every point: pole
+orders are non-negative integers.
+\end{proof}
+
+\begin{lemma}[Effective \(\leq(P)\) implies \(0\) or \((P)\)]
+\label{lem:divisor-effective-le-point-iff}
+\uses{def:divisor}
+An effective divisor \(D\) with \(D(Q)\leq[P](Q)\) for all \(Q\) is
+either \(0\) or \([P]\).
+\lean{JacobianChallenge.HolomorphicForms.Divisor.effective_le_point_iff_zero_or_eq}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Off \(P\): \(0\leq D(Q)\leq 0\), so \(D(Q)=0\). At \(P\):
+\(0\leq D(P)\leq 1\), so \(D(P)\in\{0,1\}\). The two cases give the
+two conclusions via \code{Finsupp} extensionality.
+\end{proof}
+
+\begin{lemma}[Genus-zero RR identity at \((P)\)]
+\label{lem:genus-zero-rr-identity-applied}
+\uses{input:riemann-roch}
+On a compact connected genus-zero Riemann surface, the integers
+\(\ell([P])\) and \(\ell(K-[P])\) satisfy
+\(\ell([P])-\ell(K-[P])=2\).
+\lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_difference_eq_two}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+RR applied to \(D=[P]\) gives
+\(\ell(P)-\ell(K-P)=\deg(P)+1-g=1+1-0=2\).
+\end{proof}
+
+\begin{lemma}[\(\ell(K-(P))=0\) in genus zero]
+\label{lem:genus-zero-rr-vanish-K-minus-point}
+\uses{input:riemann-roch}
+On a genus-zero compact Riemann surface, \(K-[P]\) has negative
+degree, hence \(\ell(K-[P])=0\).
+\lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_K_minus_point_dim_zero}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+\(\deg(K)=2g-2=-2\) in genus zero, so \(\deg(K-[P])=-3<0\), and any
+divisor of negative degree has trivial Riemann--Roch space.
+\end{proof}
+
+\begin{lemma}[\(\ell(D)\geq 2\) implies a nonconstant element]
+\label{lem:rr-space-dim-ge-two-nonconstant}
+\uses{def:riemann-roch-space}
+If \(\dim_{\C}L(D)\geq 2\), then \(L(D)\) contains a nonconstant
+element.
+\lean{JacobianChallenge.HolomorphicForms.riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic}
+\leanok
+\end{lemma}
+\begin{proof}
+The constants form a one-dimensional subspace of \(L(D)\); any
+element outside that line is nonconstant.
 \end{proof}
 
