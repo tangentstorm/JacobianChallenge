@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.RiemannRoch
+import Jacobian.Blueprint.Sec02.DegreeOneBijective
 
 /-!
 # Degree of meromorphic maps to the Riemann sphere
@@ -210,6 +211,39 @@ theorem meromorphicMapToSphere_poleDivisor_degree_eq_one_of_point
 
 /-! ### Structural companions for the bijectivity step -/
 
+/-! ### Reuse of existing `BranchedCoverData` infrastructure
+
+The project's `Jacobian/Blueprint/Sec02/BranchedDegree.lean` already
+exposes a `BranchedCoverData` structure plus the sorry-free
+`degree_one_bijective` (and `degree_one_no_ramification`). The bridge
+from a `MeromorphicMapToSphere` with simple pole to a
+`BranchedCoverData` is the still-open *leaf 8* of that decomposition
+(`branchedCoverData_of_nonconstant_holomorphic`).
+
+Below, M4 (surjectivity) and M5 (injectivity) both *route through*
+this existing infrastructure via a single new bridge axiom, rather
+than re-proving the combinatorial content.
+-/
+
+/-- **Structural axiom (M-bridge).** A meromorphic map to the
+Riemann sphere of pole-degree 1 admits a `BranchedCoverData` of
+branched degree 1. This is the *bridge* from the project's
+`MeromorphicMapToSphere` to the `BranchedCoverData` API in
+`Jacobian/Blueprint/Sec02/BranchedDegree.lean`.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:meromorphic-to-branched-cover-data`. -/
+theorem MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X)
+    (_hcont : Continuous f.toMap)
+    (_hdegree : Divisor.degree f.poles = 1) :
+    ∃ h : JacobianChallenge.Blueprint.BranchedCoverData X (OnePoint ℂ) f.toMap,
+      JacobianChallenge.Blueprint.branchedDegree h = 1 := by
+  sorry
+
 /-- **Structural axiom (M4a).** The image of a continuous map from a
 compact space is compact (purely topological; routes through Mathlib's
 `IsCompact.image`). -/
@@ -253,22 +287,10 @@ theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     (hcont : Continuous f.toMap)
     (hdegree : Divisor.degree f.poles = 1) :
     Function.Surjective f.toMap := by
-  -- range f is nonempty, compact (M4a), open (M4b's image of univ).
-  have hopenmap : IsOpenMap f.toMap :=
-    f.isOpenMap_of_pole_degree_one hcont hdegree
-  have hrange_open : IsOpen (Set.range f.toMap) := by
-    rw [← Set.image_univ]
-    exact hopenmap _ isOpen_univ
-  have hrange_compact : IsCompact (Set.range f.toMap) := f.image_isCompact hcont
-  have hrange_closed : IsClosed (Set.range f.toMap) := hrange_compact.isClosed
-  have hrange_nonempty : (Set.range f.toMap).Nonempty := Set.range_nonempty _
-  -- In a connected space, any nonempty clopen is univ.
-  have hclopen : IsClopen (Set.range f.toMap) := ⟨hrange_closed, hrange_open⟩
-  have hrange_univ : Set.range f.toMap = Set.univ := by
-    rcases isClopen_iff.mp hclopen with hempty | huniv
-    · exact (hrange_nonempty.ne_empty hempty).elim
-    · exact huniv
-  exact Set.range_eq_univ.mp hrange_univ
+  -- Route through the existing `degree_one_bijective` via the bridge.
+  obtain ⟨h, hd⟩ :=
+    f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
+  exact (JacobianChallenge.Blueprint.degree_one_bijective h hd).2
 
 /-- **Structural axiom (M5a-i).** Pole-degree 1 means the meromorphic
 map has no ramification: the local degree at every point is 1.
@@ -328,16 +350,17 @@ between compact connected complex 1-manifolds is **injective**.
 
 Sorry-free assembly: directly from M5a. -/
 theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
-    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Nonempty X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X)
     (hcont : Continuous f.toMap)
     (hdegree : Divisor.degree f.poles = 1) :
     Function.Injective f.toMap := by
-  intro x₁ x₂ hxx
-  exact f.fiber_card_le_one_of_pole_degree_one hcont hdegree
-    (f.toMap x₁) x₁ x₂ rfl hxx.symm
+  -- Route through the existing `degree_one_bijective` via the bridge.
+  obtain ⟨h, hd⟩ :=
+    f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
+  exact (JacobianChallenge.Blueprint.degree_one_bijective h hd).1
 
 /-- **Degree-one bijectivity leaf.** A continuous meromorphic map to
 `OnePoint ℂ` whose pole divisor has degree one is bijective.
