@@ -301,9 +301,9 @@ inherits from the smoothness of \(f\) in any chart at a finite point
 (charts at \(\infty\) are not entered).
 \end{proof}
 
-\begin{lemma}[Membership in \(L([P])\) bounds the pole divisor]
+\begin{lemma}[Membership in \(L((P))\) bounds the pole divisor]
 \label{lem:mem-L-point-pole-bound}
-\uses{def:divisors-on-X,def:riemann-roch-space,lem:mem-L-point-pole-pointwise-bound,lem:meromorphic-poles-effective,lem:divisor-effective-le-point-iff}
+\uses{def:divisor,def:riemann-roch-space,lem:mem-L-point-pole-pointwise-bound,lem:meromorphic-poles-effective,lem:divisor-effective-le-point-iff}
 If \(f\in L([P])\), then either \(\operatorname{poles}(f)=0\) or
 \(\operatorname{poles}(f)=[P]\).
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles_eq_zero_or_point_of_mem_L_point}
@@ -358,7 +358,7 @@ is constant equal to some \(v\in\C\). Hence \(f\) is constant equal
 to \(\iota(v)\in\CPone\).
 \end{proof}
 
-\begin{theorem}[Existence of nonconstant element of \(L([P])\) in genus zero]
+\begin{theorem}[Existence of nonconstant element of \(L((P))\) in genus zero]
 \label{thm:genus-zero-exists-nonconstant-mem-L-point}
 \uses{lem:genus-zero-RR-witness}
 On a compact connected genus-zero Riemann surface, the Riemann--Roch
@@ -372,7 +372,7 @@ Apply Lemma~\ref{lem:genus-zero-RR-witness}; package the resulting
 \code{GenusZeroPointRiemannRochElement} structure.
 \end{proof}
 
-\begin{theorem}[Pole identification for nonconstant elements of \(L([P])\)]
+\begin{theorem}[Pole identification for nonconstant elements of \(L((P))\)]
 \label{thm:genus-zero-pole-identification}
 \uses{lem:mem-L-point-pole-bound,thm:meromorphic-liouville-compact}
 A nonconstant element of \(L([P])\) on a genus-zero compact Riemann
@@ -396,7 +396,7 @@ axioms. Each is a small, named obligation; complete classical proofs
 
 \begin{lemma}[No-\(\infty\) on the no-poles locus]
 \label{lem:meromorphic-no-infty-of-no-poles}
-\uses{def:divisors-on-X}
+\uses{def:divisor}
 A meromorphic map with vanishing pole divisor takes only finite
 values: \(\forall x,\ f(x)\neq\infty\).
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap_ne_infty_of_no_poles}
@@ -428,7 +428,7 @@ excluded by hypothesis; the \(\code{some}\,y\) branch gives
 
 \begin{lemma}[Smoothness of the no-\(\infty\) lift]
 \label{lem:onepoint-lift-smoothness-inherits}
-\uses{def:divisors-on-X}
+\uses{def:divisor}
 If a meromorphic map \(f:X\to\CPone\) factors as
 \(f=\iota\circ g\) for some \(g:X\to\C\), then \(g\) is smooth
 (\code{MDifferentiable}).
@@ -479,7 +479,7 @@ pole of order \(-n\) at \(Q\) (so \(\operatorname{zeros}(f)(Q)=0\)). The two cas
 are exclusive.
 \end{proof}
 
-\begin{lemma}[Pointwise pole bound from \(L([P])\)]
+\begin{lemma}[Pointwise pole bound from \(L((P))\)]
 \label{lem:mem-L-point-pole-pointwise-bound}
 \uses{def:riemann-roch-space,lem:meromorphic-zeros-poles-disjoint}
 If \(f\in L([P])\), then \(\operatorname{poles}(f)(Q)\leq[P](Q)\) for every \(Q\).
@@ -497,7 +497,7 @@ and the inequality reduces to \(-\operatorname{poles}(f)(Q)+[P](Q)\geq 0\), givi
 
 \begin{lemma}[Effectivity of the pole divisor]
 \label{lem:meromorphic-poles-effective}
-\uses{def:divisors-on-X}
+\uses{def:divisor}
 The pole divisor of a meromorphic map is effective.
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles_effective}
 \leanok
@@ -507,9 +507,9 @@ The pole divisor of a meromorphic map is effective.
 orders are non-negative integers.
 \end{proof}
 
-\begin{lemma}[Effective \(\leq[P]\) implies \(0\) or \([P]\)]
+\begin{lemma}[Effective \(\leq(P)\) implies \(0\) or \((P)\)]
 \label{lem:divisor-effective-le-point-iff}
-\uses{def:divisors-on-X}
+\uses{def:divisor}
 An effective divisor \(D\) with \(D(Q)\leq[P](Q)\) for all \(Q\) is
 either \(0\) or \([P]\).
 \lean{JacobianChallenge.HolomorphicForms.Divisor.effective_le_point_iff_zero_or_eq}
@@ -521,7 +521,7 @@ Off \(P\): \(0\leq D(Q)\leq 0\), so \(D(Q)=0\). At \(P\):
 two conclusions via \code{Finsupp} extensionality.
 \end{proof}
 
-\begin{lemma}[Genus-zero RR identity at \([P]\)]
+\begin{lemma}[Genus-zero RR identity at \((P)\)]
 \label{lem:genus-zero-rr-identity-applied}
 \uses{input:riemann-roch}
 On a compact connected genus-zero Riemann surface, the integers
@@ -535,7 +535,7 @@ RR applied to \(D=[P]\) gives
 \(\ell(P)-\ell(K-P)=\deg(P)+1-g=1+1-0=2\).
 \end{proof}
 
-\begin{lemma}[\(\ell(K-[P])=0\) in genus zero]
+\begin{lemma}[\(\ell(K-(P))=0\) in genus zero]
 \label{lem:genus-zero-rr-vanish-K-minus-point}
 \uses{input:riemann-roch}
 On a genus-zero compact Riemann surface, \(K-[P]\) has negative
