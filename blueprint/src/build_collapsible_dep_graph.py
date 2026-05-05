@@ -377,6 +377,10 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <title>Dep Graph — Collapsible</title>
+<script>
+(function(){var v=localStorage.getItem("jc-blueprint-theme")||"system";
+if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v);})();
+</script>
 <script src="js/jquery.min.js"></script>
 <script src="js/d3.min.js"></script>
 <script src="js/hpcc.min.js"></script>
@@ -408,26 +412,68 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     stroke-width: 3 !important;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
   }
+  /* System dark (no explicit toggle override) */
   @media (prefers-color-scheme: dark) {
-    body { background: #0d1117; color: #c9d1d9; }
-    header { background: #161b22; border-bottom-color: #30363d; }
-    header button { background: #21262d; color: #c9d1d9; border-color: #30363d; }
-    header button:hover { background: #30363d; }
-    header a { color: #58a6ff; }
-    #breadcrumb { color: #c9d1d9; }
-    #graph svg text { fill: #c9d1d9 !important; }
-    .clickable:hover > polygon, .clickable:hover > ellipse, .clickable:hover > path {
+    html:not([data-theme="light"]) body { background: #0d1117; color: #c9d1d9; }
+    html:not([data-theme="light"]) header { background: #161b22; border-bottom-color: #30363d; }
+    html:not([data-theme="light"]) header button { background: #21262d; color: #c9d1d9; border-color: #30363d; }
+    html:not([data-theme="light"]) header button:hover { background: #30363d; }
+    html:not([data-theme="light"]) header a { color: #58a6ff; }
+    html:not([data-theme="light"]) #breadcrumb { color: #c9d1d9; }
+    /* Light-fill boxes (green-fill #b0eca3, orange-bg #fff5e6, mid-green #9cec8b)
+       keep dark text since their background stays light even in dark mode. */
+    html:not([data-theme="light"]) #graph svg text { fill: #c9d1d9 !important; }
+    html:not([data-theme="light"]) #graph svg .node:has([fill="#b0eca3"]) > text,
+    html:not([data-theme="light"]) #graph svg .node:has([fill="#fff5e6"]) > text,
+    html:not([data-theme="light"]) #graph svg .node:has([fill="#9cec8b"]) > text {
+      fill: #1a1a1a !important;
+    }
+    html:not([data-theme="light"]) #graph svg .node polygon[fill="white"],
+    html:not([data-theme="light"]) #graph svg .node ellipse[fill="white"],
+    html:not([data-theme="light"]) #graph svg .node path[fill="white"] {
+      fill: #161b22 !important;
+    }
+    html:not([data-theme="light"]) .clickable:hover > polygon,
+    html:not([data-theme="light"]) .clickable:hover > ellipse,
+    html:not([data-theme="light"]) .clickable:hover > path {
       filter: drop-shadow(0 1px 3px rgba(255,255,255,0.15));
     }
   }
+  /* Explicit dark via toggle */
+  html[data-theme="dark"] body { background: #0d1117; color: #c9d1d9; }
+  html[data-theme="dark"] header { background: #161b22; border-bottom-color: #30363d; }
+  html[data-theme="dark"] header button { background: #21262d; color: #c9d1d9; border-color: #30363d; }
+  html[data-theme="dark"] header button:hover { background: #30363d; }
+  html[data-theme="dark"] header a { color: #58a6ff; }
+  html[data-theme="dark"] #breadcrumb { color: #c9d1d9; }
+  html[data-theme="dark"] #graph svg text { fill: #c9d1d9 !important; }
+  html[data-theme="dark"] #graph svg .node:has([fill="#b0eca3"]) > text,
+  html[data-theme="dark"] #graph svg .node:has([fill="#fff5e6"]) > text,
+  html[data-theme="dark"] #graph svg .node:has([fill="#9cec8b"]) > text {
+    fill: #1a1a1a !important;
+  }
+  html[data-theme="dark"] #graph svg .node polygon[fill="white"],
+  html[data-theme="dark"] #graph svg .node ellipse[fill="white"],
+  html[data-theme="dark"] #graph svg .node path[fill="white"] {
+    fill: #161b22 !important;
+  }
+  html[data-theme="dark"] .clickable:hover > polygon,
+  html[data-theme="dark"] .clickable:hover > ellipse,
+  html[data-theme="dark"] .clickable:hover > path {
+    filter: drop-shadow(0 1px 3px rgba(255,255,255,0.15));
+  }
+  /* Theme toggle button in the header */
+  #theme-toggle-btn { min-width: 5em; margin-right: 0.5em; }
 </style>
 </head>
 <body>
+
 <header>
   <button id="back" disabled>← Back</button>
   <button id="overview">Overview</button>
   <span id="breadcrumb">Overview</span>
   <span id="spacer"></span>
+  <button id="theme-toggle-btn" type="button" title="Theme: cycle light / dark / system">◐ System</button>
   <a href="dep_graph_document.html">Full graph →</a>
 </header>
 <div id="graph"></div>
@@ -488,6 +534,28 @@ document.getElementById('back').addEventListener('click', () => {
 document.getElementById('overview').addEventListener('click', () => {
   navigate("overview");
 });
+
+// Theme toggle (matches blueprint inject-theme-toggle.py logic)
+(function () {
+  var KEY = "jc-blueprint-theme";
+  var NEXT = { system: "light", light: "dark", dark: "system" };
+  var LABEL = { system: "◐ System", light: "☀ Light", dark: "☾ Dark" };
+  function get() { return localStorage.getItem(KEY) || "system"; }
+  function apply(v) {
+    if (v === "light" || v === "dark") document.documentElement.setAttribute("data-theme", v);
+    else document.documentElement.removeAttribute("data-theme");
+  }
+  function update() {
+    var b = document.getElementById("theme-toggle-btn");
+    if (!b) return;
+    var v = get();
+    b.textContent = LABEL[v] || LABEL.system;
+    b.title = "Theme: " + v + " — click to cycle";
+  }
+  function setT(v) { localStorage.setItem(KEY, v); apply(v); update(); }
+  apply(get()); update();
+  document.getElementById("theme-toggle-btn").addEventListener("click", function () { setT(NEXT[get()]); });
+})();
 
 render();
 </script>

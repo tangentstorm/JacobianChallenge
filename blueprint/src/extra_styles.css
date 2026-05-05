@@ -81,70 +81,140 @@ body.hide-layman #layman-toggle button {
 }
 
 /* ----------------------------------------------------------------------
-   Dark-mode overrides.  The leanblueprint white theme hard-codes most of
-   its colors (no CSS custom properties to override), so we re-declare the
-   high-level palette under `@media (prefers-color-scheme: dark)`.  Goal:
-   readable on a dark background without reskinning the whole stylesheet.
-   The dep-graph SVG node colors (#1CAC78, #B0ECA3, #FFAA33, etc.) stay
-   as-is — they already render fine on dark.
+   Dark-mode rules.  Three-way toggle (light/dark/system) is wired via
+   `inject-theme-toggle.py`, which sets `<html data-theme="dark"|"light">`
+   from localStorage, defaulting to `system` (no attribute → defer to
+   `prefers-color-scheme`).  All dark rules below appear twice with the
+   `__DARK__` placeholder selector; build_extra_styles.py expands them
+   into the system-dark + explicit-dark variants.
+
+   The leanblueprint white theme hard-codes most of its colors (no CSS
+   custom properties to override), so we re-declare the high-level
+   palette here.  Goal: readable on dark without reskinning the whole
+   stylesheet.  The dep-graph SVG node colors (#1CAC78, #B0ECA3,
+   #FFAA33, etc.) stay as-is — they already render fine on dark.
 */
+
+/* System-preference dark (no explicit toggle override) */
 @media (prefers-color-scheme: dark) {
-  body { background-color: #0d1117 !important; color: #c9d1d9 !important; }
-  body > header,
-  nav.prev_up_next { background: #161b22 !important; color: #c9d1d9 !important; }
-  h1, h2, h3, h4, h1#doc_title { color: #f0f6fc !important; }
-  #doc_title a, #doc_title a:visited { color: #f0f6fc !important; }
-  nav.prev_up_next a { color: #c9d1d9 !important; }
-  a { color: #58a6ff; }
-  a:visited { color: #b189f5; }
-  ul.breadcrumbs a { color: #8b949e !important; }
-  /* Sidebar / TOC */
-  nav.toc { background-color: #0d1117 !important; border-right-color: #30363d !important; }
-  .toc ul li { background-color: #0d1117 !important; }
-  .toc ul li.current { background-color: #161b22 !important; }
-  .toc ul a { color: #c9d1d9 !important; }
-  .toc ul a:hover { background: #21262d !important; }
-  .local_toc ul a { color: #c9d1d9 !important; }
-  span.expand-toc, svg.close-toc { color: #8b949e !important; }
-  /* Content surfaces (tables, theorem boxes, modals, code blocks) */
-  table { background: #161b22 !important; }
-  .tabular { background-color: #161b22 !important; color: #c9d1d9 !important; }
-  pre.verbatim { background-color: #161b22 !important; color: #c9d1d9 !important; }
-  div.modal-content { background-color: #161b22 !important; border-color: #30363d !important; color: #c9d1d9 !important; }
-  div.modal-content header { background: #21262d !important; color: #c9d1d9 !important; }
-  div.modal-content header h1 { color: #c9d1d9 !important; }
-  div.modal-content header button.closebtn { color: #c9d1d9 !important; }
-  a.icon { color: #c9d1d9 !important; }
-  /* Theorem-box highlight animation flashes white on hash-jump; mute it */
-  @keyframes a {
-    0%   { background-color: #21262d; }
-    100% { background-color: transparent; }
+  html:not([data-theme="light"]) body { background-color: #0d1117 !important; color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) body > header,
+  html:not([data-theme="light"]) nav.prev_up_next { background: #161b22 !important; color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) h1, html:not([data-theme="light"]) h2, html:not([data-theme="light"]) h3, html:not([data-theme="light"]) h4, html:not([data-theme="light"]) h1#doc_title { color: #f0f6fc !important; }
+  html:not([data-theme="light"]) #doc_title a, html:not([data-theme="light"]) #doc_title a:visited { color: #f0f6fc !important; }
+  html:not([data-theme="light"]) nav.prev_up_next a { color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) a { color: #58a6ff; }
+  html:not([data-theme="light"]) a:visited { color: #b189f5; }
+  html:not([data-theme="light"]) ul.breadcrumbs a { color: #8b949e !important; }
+  html:not([data-theme="light"]) nav.toc { background-color: #0d1117 !important; border-right-color: #30363d !important; }
+  html:not([data-theme="light"]) .toc ul li { background-color: #0d1117 !important; }
+  html:not([data-theme="light"]) .toc ul li.current { background-color: #161b22 !important; }
+  html:not([data-theme="light"]) .toc ul a { color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) .toc ul a:hover { background: #21262d !important; }
+  html:not([data-theme="light"]) .local_toc ul a { color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) span.expand-toc, html:not([data-theme="light"]) svg.close-toc { color: #8b949e !important; }
+  html:not([data-theme="light"]) table { background: #161b22 !important; }
+  html:not([data-theme="light"]) .tabular { background-color: #161b22 !important; color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) pre.verbatim { background-color: #161b22 !important; color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) div.modal-content { background-color: #161b22 !important; border-color: #30363d !important; color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) div.modal-content header { background: #21262d !important; color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) div.modal-content header h1 { color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) div.modal-content header button.closebtn { color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) a.icon { color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) ::selection { color: #0d1117 !important; background: #58a6ff !important; }
+  html:not([data-theme="light"]) .layman_thmwrapper { background: #2a2110 !important; border-left-color: #d4a017 !important; color: #f0d790 !important; }
+  html:not([data-theme="light"]) .layman_thmwrapper .thm_header { color: #f5d27a !important; }
+  html:not([data-theme="light"]) #layman-toggle button { background: #2a2110 !important; color: #f0d790 !important; border-color: #d4a017 !important; }
+  html:not([data-theme="light"]) #layman-toggle button:hover { background: #3a2e16 !important; }
+  html:not([data-theme="light"]) body.hide-layman #layman-toggle button { background: #21262d !important; border-color: #30363d !important; color: #8b949e !important; }
+  html:not([data-theme="light"]) #Legend dl.legend { background: #161b22 !important; border-color: #30363d !important; color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) #Legend dl.legend dd { color: #c9d1d9 !important; }
+  html:not([data-theme="light"]) code, html:not([data-theme="light"]) code.verb, html:not([data-theme="light"]) kbd, html:not([data-theme="light"]) samp { color: #79c0ff; }
+  /* Dep-graph SVG: graphviz writes black text into the SVG; flip it. */
+  html:not([data-theme="light"]) #graph svg text { fill: #c9d1d9 !important; }
+  /* Light-fill boxes keep dark text since their bg stays light. */
+  html:not([data-theme="light"]) #graph svg .node:has([fill="#b0eca3"]) > text,
+  html:not([data-theme="light"]) #graph svg .node:has([fill="#fff5e6"]) > text,
+  html:not([data-theme="light"]) #graph svg .node:has([fill="#9cec8b"]) > text {
+    fill: #1a1a1a !important;
   }
-  /* Selection */
-  ::selection { color: #0d1117 !important; background: #58a6ff !important; }
-  /* Layman boxes: keep warm but dim */
-  .layman_thmwrapper {
-    background: #2a2110 !important;
-    border-left-color: #d4a017 !important;
-    color: #f0d790 !important;
+  /* White-fill nodes (green-bordered "stated") need a dark fill in dark mode */
+  html:not([data-theme="light"]) #graph svg .node polygon[fill="white"],
+  html:not([data-theme="light"]) #graph svg .node ellipse[fill="white"],
+  html:not([data-theme="light"]) #graph svg .node path[fill="white"] {
+    fill: #161b22 !important;
   }
-  .layman_thmwrapper .thm_header { color: #f5d27a !important; }
-  #layman-toggle button {
-    background: #2a2110 !important;
-    color: #f0d790 !important;
-    border-color: #d4a017 !important;
-  }
-  #layman-toggle button:hover { background: #3a2e16 !important; }
-  body.hide-layman #layman-toggle button {
-    background: #21262d !important; border-color: #30363d !important; color: #8b949e !important;
-  }
-  /* Dep-graph legend popup card (background was white) */
-  #Legend dl.legend {
-    background: #161b22 !important;
-    border-color: #30363d !important;
-    color: #c9d1d9 !important;
-  }
-  #Legend dl.legend dd { color: #c9d1d9 !important; }
-  /* Inline `code` and `code.verb` */
-  code, code.verb, kbd, samp { color: #79c0ff; }
 }
+
+/* Explicit dark via toggle (any system) */
+html[data-theme="dark"] body { background-color: #0d1117 !important; color: #c9d1d9 !important; }
+html[data-theme="dark"] body > header,
+html[data-theme="dark"] nav.prev_up_next { background: #161b22 !important; color: #c9d1d9 !important; }
+html[data-theme="dark"] h1, html[data-theme="dark"] h2, html[data-theme="dark"] h3, html[data-theme="dark"] h4, html[data-theme="dark"] h1#doc_title { color: #f0f6fc !important; }
+html[data-theme="dark"] #doc_title a, html[data-theme="dark"] #doc_title a:visited { color: #f0f6fc !important; }
+html[data-theme="dark"] nav.prev_up_next a { color: #c9d1d9 !important; }
+html[data-theme="dark"] a { color: #58a6ff; }
+html[data-theme="dark"] a:visited { color: #b189f5; }
+html[data-theme="dark"] ul.breadcrumbs a { color: #8b949e !important; }
+html[data-theme="dark"] nav.toc { background-color: #0d1117 !important; border-right-color: #30363d !important; }
+html[data-theme="dark"] .toc ul li { background-color: #0d1117 !important; }
+html[data-theme="dark"] .toc ul li.current { background-color: #161b22 !important; }
+html[data-theme="dark"] .toc ul a { color: #c9d1d9 !important; }
+html[data-theme="dark"] .toc ul a:hover { background: #21262d !important; }
+html[data-theme="dark"] .local_toc ul a { color: #c9d1d9 !important; }
+html[data-theme="dark"] span.expand-toc, html[data-theme="dark"] svg.close-toc { color: #8b949e !important; }
+html[data-theme="dark"] table { background: #161b22 !important; }
+html[data-theme="dark"] .tabular { background-color: #161b22 !important; color: #c9d1d9 !important; }
+html[data-theme="dark"] pre.verbatim { background-color: #161b22 !important; color: #c9d1d9 !important; }
+html[data-theme="dark"] div.modal-content { background-color: #161b22 !important; border-color: #30363d !important; color: #c9d1d9 !important; }
+html[data-theme="dark"] div.modal-content header { background: #21262d !important; color: #c9d1d9 !important; }
+html[data-theme="dark"] div.modal-content header h1 { color: #c9d1d9 !important; }
+html[data-theme="dark"] div.modal-content header button.closebtn { color: #c9d1d9 !important; }
+html[data-theme="dark"] a.icon { color: #c9d1d9 !important; }
+html[data-theme="dark"] ::selection { color: #0d1117 !important; background: #58a6ff !important; }
+html[data-theme="dark"] .layman_thmwrapper { background: #2a2110 !important; border-left-color: #d4a017 !important; color: #f0d790 !important; }
+html[data-theme="dark"] .layman_thmwrapper .thm_header { color: #f5d27a !important; }
+html[data-theme="dark"] #layman-toggle button { background: #2a2110 !important; color: #f0d790 !important; border-color: #d4a017 !important; }
+html[data-theme="dark"] #layman-toggle button:hover { background: #3a2e16 !important; }
+html[data-theme="dark"] body.hide-layman #layman-toggle button { background: #21262d !important; border-color: #30363d !important; color: #8b949e !important; }
+html[data-theme="dark"] #Legend dl.legend { background: #161b22 !important; border-color: #30363d !important; color: #c9d1d9 !important; }
+html[data-theme="dark"] #Legend dl.legend dd { color: #c9d1d9 !important; }
+html[data-theme="dark"] code, html[data-theme="dark"] code.verb, html[data-theme="dark"] kbd, html[data-theme="dark"] samp { color: #79c0ff; }
+html[data-theme="dark"] #graph svg text { fill: #c9d1d9 !important; }
+html[data-theme="dark"] #graph svg .node:has([fill="#b0eca3"]) > text,
+html[data-theme="dark"] #graph svg .node:has([fill="#fff5e6"]) > text,
+html[data-theme="dark"] #graph svg .node:has([fill="#9cec8b"]) > text {
+  fill: #1a1a1a !important;
+}
+html[data-theme="dark"] #graph svg .node polygon[fill="white"],
+html[data-theme="dark"] #graph svg .node ellipse[fill="white"],
+html[data-theme="dark"] #graph svg .node path[fill="white"] {
+  fill: #161b22 !important;
+}
+
+/* Theme toggle widget (positioned next to layman toggle).  See
+   `inject-theme-toggle.py` for the injected HTML/JS. */
+#theme-toggle {
+  position: fixed;
+  top: 0.6em;
+  right: 6.6em; /* leave room for #layman-toggle */
+  z-index: 1000;
+}
+#theme-toggle button {
+  font-size: 0.85em;
+  padding: 0.4em 0.7em;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background: #f0f0f0;
+  color: #333;
+  cursor: pointer;
+  font-family: system-ui, -apple-system, sans-serif;
+  min-width: 5em;
+}
+#theme-toggle button:hover { background: #e6e6e6; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) #theme-toggle button { background: #21262d; color: #c9d1d9; border-color: #30363d; }
+  html:not([data-theme="light"]) #theme-toggle button:hover { background: #30363d; }
+}
+html[data-theme="dark"] #theme-toggle button { background: #21262d; color: #c9d1d9; border-color: #30363d; }
+html[data-theme="dark"] #theme-toggle button:hover { background: #30363d; }
