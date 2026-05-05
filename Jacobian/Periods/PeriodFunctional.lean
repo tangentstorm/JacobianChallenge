@@ -314,7 +314,17 @@ Bottom-up content: `periodPairing` is an `AddMonoidHom` and
 `IntegralOneCycle X` is the free ℤ-module on `σ` (the deeper content
 of `h1_basis_of_compact_riemann_surface`). The image of a ℤ-span
 under a ℤ-linear map is the ℤ-span of the images. Transport via the
-ℤ-linear `holomorphicOneFormDualEquiv` preserves this structure. -/
+ℤ-linear `holomorphicOneFormDualEquiv` preserves this structure.
+
+The remaining sorry is a typeclass-diamond issue: `IntegralOneCycle X`
+inherits **two** `SMul ℤ` instances — one from `AddCommGroup.toIntModule`
+(via `SubNegMonoid.toZSMul`) and one from its `Module ℤ` structure as a
+`ModuleCat ℤ` (via `DistribMulAction.toDistribSMul.toSMul`). The
+`Module.Basis.linearCombination_repr` lemma uses the latter while
+`AddMonoidHom.map_zsmul` uses the former, and they are not
+definitionally equal even though they agree mathematically. A clean
+discharge requires a `letI`-based instance unification or upstream
+Mathlib alignment of the two SMul instances. -/
 theorem periodSubgroup_eq_zspan_of_basis
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
