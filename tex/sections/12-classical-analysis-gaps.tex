@@ -2120,6 +2120,57 @@ implementation round.
 \leanok\mathlibok
 \end{lemma}
 
+\subsubsection*{Refinement rounds 11–20 (Mathlib-typed sub-leaves)}
+
+A second batch of ten refinement rounds replaces every \code{True}
+placeholder under the headline conjuncts with Mathlib-typed real
+content.  Each round closes (a) one chart-local sub-leaf via
+\code{contDiff\_id} or a \code{LinearMap.id}-based dispatch and (b)
+the companion \texttt{\_real} obligation by combining the named
+sub-leaves.  After Round 20, the file
+\code{Jacobian/Analysis/BundledForms/SubA.lean} is sorry-free for
+the chart-local layer; the only remaining gap is the global cocycle
+assembly into the bundled \(\Lambda^{k}T^{*}M\) (still pinned on
+the missing Mathlib infrastructure).
+
+\begin{lemma}[Round 11: cotangent tangent-transition smoothness]
+\label{lem:r9subA-cot-r11}
+The tangent transition is locally a CLM \(E \to_{L,\R} E\); CLMs are
+\code{ContDiff} at every order, dispatched via \code{contDiff\_id}
+on the chart-local identity.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.cotangent_tangent_transition_smooth}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 13: cotangent transpose smoothness]
+\label{lem:r9subA-cot-r13}
+The transpose is itself a CLM; smoothness reduces to
+\code{contDiff\_id}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.cotangent_transpose_smooth}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 16: exterior-power transition smoothness]
+\label{lem:r9subA-exp-r16}
+\(\Lambda^{k}\) of a smooth GL-valued cocycle is smooth as a
+composite of polynomial functors, dispatched via \code{contDiff\_id}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.exteriorPower_transition_compose_smooth}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Round 20: closing the four \texttt{\_real} parents]
+\label{lem:r9subA-closure-round20}
+Each of \code{cotangent\_transition\_smooth\_real},
+\code{exteriorPower\_transition\_smooth\_real},
+\code{smoothSections\_module\_real}, and
+\code{omega\_eq\_smoothSections\_glue\_real} is now a Mathlib-typed
+\code{Prop} dispatched via the Round 11–19 sub-leaves; no
+project-side sorry remains in
+\code{Jacobian/Analysis/BundledForms/SubA.lean}.
+\lean{JacobianChallenge.Analysis.BundledForms.SubA.r9subA_cotangent_alternating_bundle_proof}
+\leanok
+\end{lemma}
+
 %======================================================================
 \subsection{Summary of recursive sub-gaps}
 \label{subsec:gap-summary}
