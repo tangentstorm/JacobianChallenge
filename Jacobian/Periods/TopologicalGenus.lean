@@ -38,13 +38,7 @@ open AlgebraicTopology CategoryTheory
 `ModuleCat ℤ` object) to its underlying `Type` — this makes
 `singularH1 M = IntegralOneCycle M` reducible by `abbrev`, so the two
 parallel `topologicalGenus` formulations across the project unify
-definitionally.
-
-Universe lock: `(M : Type)` (Type 0) matching `IntegralOneCycle`'s
-binder.  See `Jacobian/Periods/IntegralOneCycle.lean` for the
-upstream universe rationale (`singularHomologyFunctor`'s
-`HasCoproducts.{w} (ModuleCat ℤ)` instance is at `w = 0` for the
-inlined `ModuleCat.of ℤ ℤ` coefficient module). -/
+definitionally. -/
 abbrev singularH1 (M : Type) [TopologicalSpace M] : Type :=
   IntegralOneCycle M
 
