@@ -1,10 +1,16 @@
 # Sorry inventory for `Jacobian/Solution.lean`
 
-**Generated:** 2026-05-05 via static analysis of the full import closure.
-**Comparator binary:** not installed; `lake build Jacobian.Solution` was
-started but the Mathlib compile had not finished at analysis time.
-The list below is produced by grepping every file in the transitive
-import graph for actual `sorry` tactic / term usage (not comments).
+**Generated:** 2026-05-05 via static analysis of the full import closure,
+confirmed by `lake build Jacobian.Solution` (exit 0, 25 sorry warnings).
+**Comparator binary:** not installed; staged-config smoke-test deferred.
+
+The compiler emits `declaration uses 'sorry'` for every sorry-bearing
+declaration in every compiled module, regardless of whether that
+declaration is actually *used* by `Solution.lean`. A secondary usage
+audit (grep + proof-term tracing) identified 4 declarations that are
+declared with `sorry` but never called from any live proof chain:
+items 16, 17, 18, and 22 below (marked **DEAD**). The remaining 21 are
+in the live chain.
 
 ---
 
@@ -118,9 +124,9 @@ functions are holomorphic) in Mathlib v4.28.0.
 |---|---|---|---|
 | 14 | `h1_free_of_compact_surface` | 90 | H₁(X, ℤ) of a compact Riemann surface is free ℤ-module of rank 2g (requires surface classification and CW structure) |
 | 15 | `analyticGenus_eq_topologicalGenus` | 105 | Analytic genus = topological genus (Hodge decomposition, de Rham theorem, Serre duality) |
-| 16 | `wedge_integration_pairing_exists` | 192 | A bilinear pairing on holomorphic 1-forms via wedge-product integration `(ω, η) ↦ ∫_X ω ∧ η̄` |
-| 17 | `riemann_bilinear_identity` | 216 | Riemann bilinear identity: `∫_X ω ∧ η = Σ_k (A_k-period)(B_k-period) - ...` for a symplectic basis |
-| 18 | `hodge_form_posDef` | 231 | Positivity of the Hodge form `ω ↦ i · ∫_X ω ∧ ω̄ > 0` for ω ≠ 0 |
+| 16 | `wedge_integration_pairing_exists` (**DEAD**) | 192 | Declared as a blocker for `period_functionals_ℝ_linearIndependent`, but that theorem is itself a bare `sorry` and never calls this declaration |
+| 17 | `riemann_bilinear_identity` (**DEAD**) | 216 | Same situation as #16 — only in proof-sketch comments, never called |
+| 18 | `hodge_form_posDef` (**DEAD**) | 231 | Same situation as #16 — only in proof-sketch comments, never called |
 | 19 | `period_functionals_ℝ_linearIndependent` | 253 | The period functionals `γ ↦ ∫_γ ωᵢ` are ℝ-linearly independent (analytic core of Riemann bilinear relations) |
 | 20 | `periodSubgroup_eq_zspan_of_basis` | 329 | The period subgroup is the ℤ-span of 2g ℝ-linearly independent vectors (via `exact ⟨b, hli, sorry⟩`) |
 
@@ -134,8 +140,8 @@ decomposition, de Rham theorem — all absent in v4.28.0.
 
 | # | Declaration | Line | Mathematical content |
 |---|---|---|---|
-| 21 | `periodPairing_pullbackFormsBundledLM` | 139 | Naturality: `∫_γ (f*η) = ∫_{f_* γ} η` (Stokes theorem / integration naturality) |
-| 22 | `pathIntegralViaCover_pullbackFormsBundledLM` | 239 | Path integral of pulled-back form equals integral of form along pushed-forward path |
+| 21 | `periodPairing_pullbackFormsBundledLM` | 139 | Naturality: `∫_γ (f*η) = ∫_{f_* γ} η` (Stokes theorem / integration naturality) — called at `PushforwardBasis.lean:326` |
+| 22 | `pathIntegralViaCover_pullbackFormsBundledLM` (**DEAD**) | 239 | Path integral of pulled-back form equals integral along pushed-forward path — declared as a sub-goal for #21 but `#21` is itself a `sorry`; this declaration is never called from any proof |
 
 **Mathlib blocker:** Stokes' theorem for path integrals / integration
 naturality for pullback of differential forms.
@@ -183,19 +189,27 @@ hollow until replaced by a concrete construction.
 
 ## Summary
 
-**Total sorry obligations: 25** across 7 files.
+**Total sorry obligations: 25** across 7 files (compiler count).
+**Actually live (in chain): 21. Dead (declared but uncalled): 4.**
 
-| File | Count |
-|---|---|
-| `HolomorphicForms/RiemannRoch.lean` | 2 |
-| `HolomorphicForms/MeromorphicDegree.lean` | 2 |
-| `HolomorphicForms/GenusZeroClassification.lean` | 6 |
-| `HolomorphicForms/CompactRiemannSurface.lean` | 3 |
-| `Periods/PeriodFunctional.lean` | 7 |
-| `Periods/PullbackNaturality.lean` | 2 |
-| `AbelJacobi/AnalyticOfCurveBasis.lean` | 1 |
-| `TraceDegree/PullbackBasis.lean` | 2 |
-| **Total** | **25** |
+| File | Total | Live | Dead |
+|---|---|---|---|
+| `HolomorphicForms/RiemannRoch.lean` | 2 | 2 | — |
+| `HolomorphicForms/MeromorphicDegree.lean` | 2 | 2 | — |
+| `HolomorphicForms/GenusZeroClassification.lean` | 6 | 6 | — |
+| `HolomorphicForms/CompactRiemannSurface.lean` | 3 | 3 | — |
+| `Periods/PeriodFunctional.lean` | 7 | 4 | 3 (#16,17,18) |
+| `Periods/PullbackNaturality.lean` | 2 | 1 | 1 (#22) |
+| `AbelJacobi/AnalyticOfCurveBasis.lean` | 1 | 1 | — |
+| `TraceDegree/PullbackBasis.lean` | 2 | 2 | — |
+| **Total** | **25** | **21** | **4** |
+
+The 4 dead declarations (#16 `wedge_integration_pairing_exists`,
+#17 `riemann_bilinear_identity`, #18 `hodge_form_posDef`,
+#22 `pathIntegralViaCover_pullbackFormsBundledLM`) are scaffolding
+stubs that document what a proof *would* need but are never called
+because the proof they would support (#19 and #21 respectively) is
+itself a bare `sorry` that doesn't invoke them.
 
 ### Highest-priority / deepest blockers
 
