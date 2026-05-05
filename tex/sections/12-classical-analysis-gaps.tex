@@ -1805,6 +1805,44 @@ Sheaf cohomology of $\Omega^{p}_{X}$ agrees with the cohomology of any fine reso
 \leanok
 \end{lemma}
 
+\subsubsection*{Status (post Round 30)}
+
+R7's typed Dolbeault iso
+\code{dolbeault\_overview\_via\_R5\_R8\_R9} is sorry-free and
+axiom-only-uses-foundational-axioms (\code{propext} +
+\code{Classical.choice} + \code{Quot.sound}; the Mathlib
+baseline).  Its construction threads four upstream packages, all
+shipped:
+
+\begin{itemize}
+\item R5 (Hodge decomposition) ---
+  \code{JacobianChallenge.HodgeAbstract.hodge\_decomposition\_finite\_dim};
+\item R8 (harmonic-form representatives) ---
+  \code{JacobianChallenge.HolomorphicForms.harmonicForms\_toH1\_surjective}
+  (currently routed through a \code{Subsingleton} placeholder for
+  \code{harmonicForms = PUnit});
+\item R9 (bundled forms) ---
+  \code{JacobianChallenge.Analysis.BundledForms.SubA.r9subA\_cotangent\_alternating\_bundle\_proof};
+\item R7-sub-A (bigraded forms) ---
+  \code{JacobianChallenge.Analysis.BundledForms.SubAComplex.r7subA\_bigraded\_forms\_proof}
+  (Round 1--10 placeholder layer) plus
+  \code{r7subA\_substantive\_closure} (Round 11--22, Mathlib-typed
+  carriers \code{BigradedForm E p q}, \code{complexCotangent E},
+  \code{oneZeroProj}, \code{zeroOneProj}) plus
+  \code{r7subA\_zero\_zero\_substantive\_closure} (Round 23--30,
+  Fr\'echet-derivative-based shifts on \((0,0)\)-forms via
+  Mathlib's \code{ContDiffAt.isSymmSndFDerivAt}).
+\end{itemize}
+
+The wire-up at the R7 layer is in
+\code{Jacobian/Analysis/Dolbeault/HodgeR5R8Bridge.lean}; the typed
+contract \code{DolbeaultH X 0 1 \ensuremath{\simeq_\C} sheafH (structureSheaf : Type) 1}
+already holds at the placeholder level (every carrier collapses
+to \code{PUnit}).  Once any of the four upstream packages
+upgrades a \code{PUnit} placeholder to its substantive
+counterpart, the same dispatch produces the genuine isomorphism
+with no edit at the R7 layer.
+
 \begin{layman}
 On a complex manifold, differential forms split by bidegree:
 a 1-form is either of type \((1,0)\) — looking like \(f \, dz\) — or
@@ -3093,8 +3131,8 @@ giving the chart-local substance of R7-sub-A.5 specialised to
 \(p = q = 0\):
 
 \begin{itemize}
-\item Round 23 --- equivalence
-  \code{BigradedForm E 0 0 \ensuremath{\simeq_{\C}} (E \ensuremath{\to} \C)}
+\item Round 23 --- the equivalence
+  \code{BigradedForm E 0 0 = (E -> C)} (as $\C$-linear equivalence)
   via \code{AlternatingMap.constLinearEquivOfIsEmpty} (companion
   to R9's \code{zeroFormEquiv}).
 \item Round 24 --- \code{complex\_fderiv\_split}: \(\mathrm{fderiv}\,\R\,f\,x
@@ -3120,7 +3158,7 @@ giving the chart-local substance of R7-sub-A.5 specialised to
 \begin{lemma}[Round 23: \((0,0)\)-form equivalence]
 \label{lem:r7subA-r23}
 \code{zeroZeroFormEquiv} provides a \(\C\)-linear equivalence
-\code{BigradedForm E 0 0 \ensuremath{\simeq_{\C}} (E \ensuremath{\to} \C)};
+$\code{BigradedForm}\,E\,0\,0 \;\simeq_{\C}\; (E \to \C)$;
 this is the bigraded analogue of R9's \code{zeroFormEquiv}.
 \lean{JacobianChallenge.Analysis.BundledForms.SubAComplex.zeroZeroFormEquiv}
 \leanok
