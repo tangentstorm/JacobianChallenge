@@ -670,11 +670,32 @@ the residual \texttt{sorry}, and each cleanly maps to a Mathlib gap.
   oriented surface admits a $4g$-gon CW model and cellular $H_1 \cong
   \Z^{2g}$. (Inputs: surface classification, cellular homology, singular
   $\equiv$ cellular comparison.) Consumed by
-  \texttt{h1_free_of_compact_surface}.
+  \texttt{h1_free_of_compact_surface}. \textbf{Now sorry-free}: wired to
+  the project's existing
+  \texttt{singularH1_basis_of_compactOrientableSurface}
+  in \texttt{Jacobian/Periods/SurfaceClassification.lean} via the
+  smooth-real-structure promotion (see
+  \texttt{Jacobian/Periods/H1EvenBasisViaSurfaceClassification.lean}
+  for the same pattern in the existential form). All Stage-A blockers
+  (Radó triangulation, surface classification, cellular $H_1$,
+  cellular $\equiv$ singular) remain *upstream* in
+  \texttt{SurfaceClassification.lean}; the present file's Stage-A leaf
+  is a one-line delegate.
 \item \texttt{stageB_analytic_eq_topological} — Stage B: de~Rham +
   Hodge + conjugate-form-equivalence + rank/finrank comparison gives
   $\mathrm{analyticGenus} = \mathrm{topologicalGenus}$. Consumed by
-  \texttt{analyticGenus_eq_topologicalGenus}.
+  \texttt{analyticGenus_eq_topologicalGenus}. \textbf{Existing wiring
+  available but currently blocked}: the project carries a sorry-free
+  assembly
+  \texttt{HolomorphicForms.two_analyticGenus_eq_finrank_intH1} in
+  \texttt{Jacobian/HolomorphicForms/HodgeDeRhamRank.lean} which gives
+  $2g_{\text{an}} = \mathrm{rank}_{\Z}\,H_1$; combined with the
+  canonical \texttt{topologicalGenus} this is a one-line proof. The
+  delegate is *not* applied here because the upstream chain
+  (\texttt{HodgeDeRhamRank} $\to$ \texttt{DeRhamComparisonMap} $\to$
+  \texttt{RealSingularH1}) carries pre-existing universe and
+  unknown-identifier breakages outside the scope of the present
+  commit.
 \item \texttt{riemann_classical_real_LI_input} — packages the
   Riemann-bilinear + Hermitian-positivity + Stokes-fundamental-polygon
   argument into a single $\R$-linear-independence leaf for the period

@@ -50,7 +50,7 @@ This is the *finite-generation* ingredient. The companion freeness
 ingredient is `IntegralOneCycle_torsionFree` below; together they imply
 `Module.Free ℤ (IntegralOneCycle X)`. -/
 theorem IntegralOneCycle_finite
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module.Finite ℤ (IntegralOneCycle X) :=
@@ -70,7 +70,7 @@ For the Riemann-surface application this is downstream of the polygonal
 model: `H₁(Polygon4g) = ℤ^{2g}` is manifestly free.  Mathlib gap: no
 polygonal-model identification in v4.28.0. -/
 theorem IntegralOneCycle_torsionFree
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Module.Free ℤ (IntegralOneCycle X) :=

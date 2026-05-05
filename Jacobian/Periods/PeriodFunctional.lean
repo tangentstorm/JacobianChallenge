@@ -3,6 +3,9 @@ import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.PeriodSpanHelpers
+import Jacobian.Periods.SurfaceClassification
+import Jacobian.Periods.SmoothRealStructure
+import Jacobian.Periods.ComplexManifoldOrientable
 import Mathlib.Algebra.Module.ZLattice.Basic
 
 /-!
@@ -69,13 +72,12 @@ homology, surface classification, de Rham theorem on manifolds,
 Hodge decomposition, Dolbeault, Serre duality. All ABSENT in
 v4.28.0. -/
 
-/-- **Sub-obligation 1a (definition).** The topological genus of a
-compact connected surface, `rank_ℤ H₁(X, ℤ) / 2`. Names the
-topological invariant the analytic genus must equal. -/
-noncomputable def topologicalGenus
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] : ℕ :=
-  Module.finrank ℤ (IntegralOneCycle X) / 2
+/-! **Sub-obligation 1a (definition).** The topological genus of a
+compact connected surface, `rank_ℤ H₁(X, ℤ) / 2`, is the canonical
+declaration in `Jacobian/Periods/TopologicalGenus.lean`, re-exported
+here through the `SurfaceClassification` import. The previous local
+duplicate has been removed in favour of the canonical declaration to
+match the project's convergence point (Round 26 unification). -/
 
 /-! #### Stage-A delegation skeleton for `h1_free_of_compact_surface`
 (decomposes the single sorry into three named sub-obligations
@@ -98,17 +100,36 @@ All three are MASSIVE Mathlib formalisation efforts and are kept as
 named delegation sorries here. -/
 
 /-- **Sub-obligation 1b.1 (Stage-A surface classification + CW).**
-A compact connected oriented surface `X` is homeomorphic to the
-standard `4g`-gon CW-complex, where `g = topologicalGenus X`.
-Mathlib gap: surface classification (Radó, Kerékjártó), CW structures
-on Riemann surfaces; ABSENT in v4.28.0. -/
+A compact connected oriented Riemann surface `X` admits a `ℤ`-basis
+of `H₁(X, ℤ)` indexed by `Fin (2 * topologicalGenus X)`.
+
+**Sorry-free assembly** following the Stage-A pattern from
+`Jacobian/Periods/H1EvenBasisViaSurfaceClassification.lean`:
+
+1. Promote the complex 1-manifold structure to a smooth real
+   2-manifold via `ChartedSpaceComplex_to_smoothReal2`.
+2. Register `Orientable X` via the `complexManifold_orientable`
+   instance (every complex manifold is orientable).
+3. Apply `singularH1_basis_of_compactOrientableSurface` (the Round
+   43 Stage-A corollary, in `Jacobian/Periods/SurfaceClassification.lean`)
+   to obtain the basis indexed by `Fin (2 * topologicalGenus X)`.
+
+The Stage-A blockers (Radó triangulation, surface classification,
+cellular `H₁` computation, and the singular ≅ cellular comparison) are
+encapsulated *upstream* in `Jacobian/Periods/SurfaceClassification.lean`'s
+named-leaf scaffolding, *not* re-introduced here. -/
 theorem stageA_surface_CW_basis
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Nonempty (Module.Basis (Fin (2 * topologicalGenus X)) ℤ
       (IntegralOneCycle X)) := by
-  sorry
+  obtain ⟨srStruct⟩ := ChartedSpaceComplex_to_smoothReal2 X
+  letI : ChartedSpace (EuclideanSpace ℝ (Fin 2)) X := srStruct.chartedSpace
+  letI : IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) X := srStruct.isManifold
+  haveI : Orientable X := complexManifold_orientable X
+  exact singularH1_basis_of_compactOrientableSurface X
 
 /-- **Sub-obligation 1b.** `H₁(X, ℤ)` of a compact connected
 Riemann surface of topological genus `g_top` is free of rank
@@ -151,7 +172,25 @@ The combined assembly, packaged into the single Stage-B leaf
 /-- **Sub-obligation 2 (Stage-B Hodge bridge).** The analytic and
 topological genera coincide on a compact connected Riemann surface.
 Mathlib gap: de Rham theorem on manifolds, Hodge decomposition,
-Dolbeault cohomology, Serre duality. All ABSENT in v4.28.0. -/
+Dolbeault cohomology, Serre duality. All ABSENT in v4.28.0.
+
+**Existing wiring (currently blocked).** The project already carries
+`JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1`
+in `Jacobian/HolomorphicForms/HodgeDeRhamRank.lean`, a sorry-free
+assembly producing
+`2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X)`.
+Combined with the canonical
+`topologicalGenus X = Module.finrank ℤ (IntegralOneCycle X) / 2`
+from `Jacobian/Periods/TopologicalGenus.lean`, this gives
+`analyticGenus ℂ X = topologicalGenus X` directly via
+`Nat.mul_div_cancel_left`. The wiring is currently *not* applied here
+because the transitive build chain
+(`HodgeDeRhamRank` → `HolomorphicForms.DeRhamComparisonMap` →
+`HolomorphicForms.RealSingularH1` and friends) carries pre-existing
+universe / unknown-identifier breakages that are out of scope to fix
+in this commit. Once those are fixed, this body can be replaced by
+`exact stageB_analytic_eq_topological_via_hodge_deRham X` (a one-line
+delegate). -/
 theorem stageB_analytic_eq_topological
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
