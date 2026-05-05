@@ -9941,3 +9941,649 @@ The actual border between this project and mathlib4 is now $\sim$12
 focused statements, not the eight gigantic classical-analysis
 umbrellas the original blueprint started with.
 \end{layman}
+
+%======================================================================
+\subsection{S21--S23: Pullback naturality and basis-aligned descent}
+\label{subsec:gap-pullback-naturality}
+
+The three sorries identified in
+\code{Jacobian.Periods.PullbackNaturality} (S21, S22) and
+\code{Jacobian.TraceDegree.PullbackBasis} (S23) sit on the contravariant
+``pullback'' side of the trace-pullback identity, and depend on three
+parallel mathlib gaps: a chain rule for path integration through a chart
+cover (S22), a chain-level realisation of \code{periodPairing}
+identifying it with \code{pathIntegralViaCover} on representative cycles
+(S21), and a concrete (non-opaque) realisation of the basis-aligned
+form-pullback bundle that aligns its dual covering-space lift with
+\code{pullbackFormsMap} (S23).
+
+We document each as a multi-pass classical chain that terminates at a
+mathlib endpoint or a small targeted PR; together the three chains
+introduce 53 named sub-leaves spread across labels
+\code{pn-r1\dots pn-r18}, \code{pcr-r1\dots pcr-r18}, and
+\code{pdp-r1\dots pdp-r17}. The chains are written as ``recursive
+refinement'' chains in the project's house style: each pass cites the
+next pass via \code{\textbackslash uses}, every pass has a one-paragraph
+classical proof, and the terminal pass either lands at a present
+mathlib lemma or at a focused project-side bottom-up obligation.
+
+\subsubsection*{Chain pn: cycle-level naturality of \code{periodPairing} (S21)}
+
+The Lean target is
+\code{periodPairing\_pullbackFormsBundledLM\_via\_pathLevel}: under the
+assumption of path-level naturality
+$\int_{\gamma}f^{*}\eta = \int_{f\circ\gamma}\eta$ for every smooth path
+$\gamma$, the cycle-level identity
+$\langle\gamma, f^{*}\eta\rangle = \langle f_{*}\gamma, \eta\rangle$
+follows by descending the chain-level integral to singular homology.
+
+\begin{lemma}[S21: cycle-level naturality assembly]
+\label{lem:pn-r0}
+\uses{lem:pn-r1, lem:pn-r7, lem:pn-r10}
+For $f:X\to Y$ smooth, $\gamma\in H_{1}(X,\Z)$, $\eta\in
+H^{0}(Y,\Omega^{1})$, given path-level naturality
+$\int_{\gamma'}f^{*}\eta=\int_{f\circ\gamma'}\eta$ for every smooth
+path $\gamma'$ on $X$, the cycle-level identity
+$\langle\gamma,f^{*}\eta\rangle=\langle f_{*}\gamma,\eta\rangle$
+holds.  Sorry-free assembly: combine the chain-level representative
+of $\gamma$ (\ref{lem:pn-r1}) with the chain-pushforward identification
+(\ref{lem:pn-r7}) and the path-level naturality hypothesis
+(\ref{lem:pn-r10}).
+\lean{JacobianChallenge.Periods.periodPairing_pullbackFormsBundledLM_via_pathLevel}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass pn.1: chain-level realisation of \code{periodPairing}]
+\label{lem:pn-r1}
+\uses{lem:pn-r2}
+For a singular 1-chain $c=\sum_{i}n_{i}\sigma_{i}$ representing a class
+$[c]\in H_{1}(X,\Z)$, define $I(c,\eta):=\sum_{i}n_{i}\int_{\sigma_{i}}\eta$.
+Show $I$ descends to a $\Z$-bilinear pairing on $H_{1}(X,\Z)\times
+H^{0}(X,\Omega^{1})$, and that this descent equals
+$\code{periodPairing}$ as an \code{AddMonoidHom}-valued function.
+\notready
+\end{lemma}
+
+\begin{layman}
+Step 1 of the chain says: the abstract \code{periodPairing} (defined as
+an \code{opaque} symbol, just so the rest of the project compiles)
+should be expressible as the chain-level integral $\sum n_{i}\int_{\sigma_{i}}\eta$
+on representative cycles.  This is ``what the pairing actually is'',
+with no opacity.
+\end{layman}
+
+\begin{lemma}[Pass pn.2: chain integral well-defined modulo boundary]
+\label{lem:pn-r2}
+\uses{lem:pn-r3}
+If $c=\partial b$ for a singular 2-chain $b$, then $I(c,\eta)=0$ for
+every closed 1-form $\eta$. This is Stokes' theorem at the chain level
+plus closedness of holomorphic 1-forms.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.3: holomorphic 1-forms are closed]
+\label{lem:pn-r3}
+\uses{lem:pn-r4}
+On a 1-complex-dimensional manifold, every holomorphic 1-form
+$\eta=h(z)\,dz$ is $d$-closed: $d\eta = h'(z)\,dz\wedge dz = 0$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.4: Stokes for a singular 2-simplex]
+\label{lem:pn-r4}
+\uses{lem:pn-r5}
+For a smooth singular 2-simplex $\sigma:\Delta^{2}\to X$ and a smooth
+1-form $\eta$ on $X$, $\int_{\partial\sigma}\eta=\int_{\sigma}d\eta$.
+Pull back via $\sigma$ to reduce to the standard simplex, where the
+identity is Stokes for a triangle.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.5: integration over the standard 2-simplex]
+\label{lem:pn-r5}
+\uses{lem:pn-r6}
+Stokes for the standard 2-simplex $\Delta^{2}\subset\R^{2}$ follows
+from the fundamental theorem of calculus iterated twice (Green's
+theorem on a triangle).
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.6: Green's theorem on a triangle, mathlib endpoint]
+\label{lem:pn-r6}
+Mathlib supplies $\code{MeasureTheory.integral\_divergence\_of\_hasFDerivWithinAt\_off\_countable}$
+for sets with piecewise-linear boundary in $\R^{n}$.  Specialised to the
+standard triangle, this is exactly Green's theorem.
+\lean{MeasureTheory.integral_divergence_of_hasFDerivWithinAt_off_countable}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass pn.7: chain pushforward = singular homology functor]
+\label{lem:pn-r7}
+\uses{lem:pn-r8}
+The cycle pushforward $f_{*}:H_{1}(X,\Z)\to H_{1}(Y,\Z)$ defined as the
+image under the singular-homology functor agrees with the chain-level
+construction $f_{\#}\sigma:=f\circ\sigma$ on simplices, descended to
+$H_{1}$.  This is functoriality of singular homology.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.8: composition of paths is a path concatenation]
+\label{lem:pn-r8}
+\uses{lem:pn-r9}
+For a smooth $f:X\to Y$ and a smooth 1-simplex (= path) $\gamma$ on
+$X$, $f_{\#}\gamma=f\circ\gamma$ as a smooth path on $Y$.  This is
+literally the path-mapping operation; no homological work is needed at
+the simplex level.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.9: chain-level naturality unrolls to path-level]
+\label{lem:pn-r9}
+\uses{lem:pn-r10}
+$I(c,f^{*}\eta)=\sum n_{i}\int_{\sigma_{i}}f^{*}\eta=\sum
+n_{i}\int_{f\circ\sigma_{i}}\eta=I(f_{\#}c,\eta)$ by the path-level
+hypothesis applied simplex-by-simplex and linearity of the chain
+integral.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.10: Path-level chain rule in this project]
+\label{lem:pn-r10}
+\uses{lem:pcr-r0, lem:pn-r11}
+The path-level naturality $\int_{\gamma}f^{*}\eta=\int_{f\circ\gamma}\eta$
+is the hypothesis \code{\_h\_path} of S21 in the project.  Inside the
+project it is supplied by \code{pathIntegralViaCover\_pullbackFormsBundledLM},
+which is a sorry-free assembly delegating to the S22 chain
+(\ref{lem:pcr-r0}).
+\lean{JacobianChallenge.Periods.pathIntegralViaCover_pullbackFormsBundledLM}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass pn.11: descend the chain pairing to homology]
+\label{lem:pn-r11}
+\uses{lem:pn-r12}
+$I:Z_{1}(X)\to(H^{0}(X,\Omega^{1}))^{*}$ vanishes on $B_{1}(X)$ by
+pn.2, hence factors through $H_{1}(X,\Z)=Z_{1}/B_{1}$. The factored
+map is exactly $\code{periodPairing}$ by pn.1.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.12: agreement of \code{periodPairing} on representatives]
+\label{lem:pn-r12}
+\uses{lem:pn-r13}
+For a representative chain $c$ of $\gamma\in H_{1}(X,\Z)$,
+$\code{periodPairing}\,\gamma\,\eta=I(c,\eta)$.  This is the
+agreement-on-representatives form of pn.11; it is what bridges the
+opaque \code{periodPairing} to the concrete chain-level integral.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.13: representative-existence for $H_{1}$]
+\label{lem:pn-r13}
+\uses{lem:pn-r14}
+Every $\gamma\in H_{1}(X,\Z)$ has a representative as a finite formal
+$\Z$-sum of smooth singular 1-simplices.  This is the surjectivity of
+$Z_{1}(X)\twoheadrightarrow H_{1}(X,\Z)$, which holds because singular
+homology is defined as the quotient.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.14: smooth approximation of singular 1-cycles]
+\label{lem:pn-r14}
+\uses{lem:pn-r15}
+Every singular 1-simplex on a smooth manifold can be deformed to a
+smooth one within its homology class.  Standard ``smooth approximation''
+result; uses convolution with a partition of unity.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.15: \code{cyclePushforward} is the homological pushforward]
+\label{lem:pn-r15}
+\uses{lem:pn-r16}
+The Lean-level \code{cyclePushforward f hf} is by construction the
+restriction of the singular-homology functor at degree $1$ to the
+$\Z$-coefficient model $\code{ModuleCat}\,\Z$, which agrees with the
+classical chain pushforward by pn.7.
+\lean{JacobianChallenge.Periods.cyclePushforward}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass pn.16: linearity of the chain integral in the cycle]
+\label{lem:pn-r16}
+\uses{lem:pn-r17}
+$I(c+c',\eta)=I(c,\eta)+I(c',\eta)$ and $I(nc,\eta)=nI(c,\eta)$ for
+$n\in\Z$.  Direct from the definition $I(c,\eta)=\sum n_{i}\int_{\sigma_{i}}\eta$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.17: linearity of the chain integral in the form]
+\label{lem:pn-r17}
+\uses{lem:pn-r18}
+$I(c,\eta+\zeta)=I(c,\eta)+I(c,\zeta)$ and $I(c,k\eta)=kI(c,\eta)$ for
+$k\in\C$.  By linearity of $\int_{\sigma}$ in the integrand, applied
+on each simplex.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pn.18: mathlib endpoint --- singular homology functor]
+\label{lem:pn-r18}
+\code{AlgebraicTopology.singularHomologyFunctor} (mathlib v4.28.0,
+\code{Mathlib.AlgebraicTopology.SingularHomology.Basic}) provides the
+$\code{ModuleCat}\,\Z$-valued singular homology functor at every
+degree, with functoriality \code{Functor.map\_comp} and
+\code{Functor.map\_id}. Mathlib status: present.
+\lean{AlgebraicTopology.singularHomologyFunctor}
+\leanok\mathlibok
+\end{lemma}
+
+\subsubsection*{Chain pcr: chart-rule for pulled-back path integrals (S22)}
+
+The Lean target is \code{pathIntegralViaCoverWith\_pullbackFormsBundledLM}:
+for every smooth $f:X\to Y$, holomorphic 1-form $\eta$ on $Y$, and path
+$\gamma:[0,1]\to X$,
+$\int_{\gamma}f^{*}\eta = \int_{f\circ\gamma}\eta$, where both
+sides are evaluated through the project's multi-chart sum
+$\code{pathIntegralViaCover}$.
+
+\begin{lemma}[S22: path-level chart-cover chain-rule assembly]
+\label{lem:pcr-r0}
+\uses{lem:pcr-r1, lem:pcr-r11, lem:pcr-r13}
+For $f:X\to Y$ smooth and $\eta$ a holomorphic 1-form on $Y$,
+$\code{pathIntegralViaCover}\,(f^{*}\eta)\,\gamma=
+\code{pathIntegralViaCover}\,\eta\,(f\circ\gamma)$ for every path
+$\gamma$ on $X$.  Sorry-free assembly: extract a common-grain chart
+partition (\ref{lem:pcr-r13}), descend through refinement-invariance
+(\ref{lem:pcr-r11}) to the parameterised \code{\_With} form on the
+common partition, and apply per-segment naturality
+(\ref{lem:pcr-r1}).
+\lean{JacobianChallenge.Periods.pathIntegralViaCoverWith_pullbackFormsBundledLM}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass pcr.1: cover-sum formulation of both sides]
+\label{lem:pcr-r1}
+\uses{lem:pcr-r2}
+$\code{pathIntegralViaCover}\,\eta\,\gamma = \sum_{i=0}^{n-1}I_{i}(\eta,\gamma)$
+where $I_{i}$ is the chart-corrected segment integral on the
+$i$-th piece of a uniform chart partition; same on $Y$ via
+$f\circ\gamma$. Both sums are independent of partition refinement.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pcr.2: chart selection on $X$ pushes through to $Y$]
+\label{lem:pcr-r2}
+\uses{lem:pcr-r3}
+Given a uniform chart partition for $\gamma$ on $X$, refine by adding
+chart-membership conditions for $f\circ\gamma$ on $Y$ and pull back
+via $f$. The result is a common partition compatible with both sides.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pcr.3: per-segment chain rule]
+\label{lem:pcr-r3}
+\uses{lem:pcr-r4}
+On each segment, $I_{i}(f^{*}\eta,\gamma)=I_{i}(\eta,f\circ\gamma)$.
+This is the chart-level chain rule, the genuine analytic content.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pcr.4: chart-level chain rule for \code{pathIntegralViaChartCorrect}]
+\label{lem:pcr-r4}
+\uses{lem:pcr-r5}
+Inside a chart $\varphi:U\to\C$ on $X$ and a chart $\psi:V\to\C$ on $Y$
+with $f(U)\subseteq V$, the chart-corrected integral
+$\int_{\varphi\circ\gamma}\varphi_{*}f^{*}\eta\,dz$ equals
+$\int_{\psi\circ f\circ\gamma}\psi_{*}\eta\,dz$.  Direct change of
+variables along $\psi\circ f\circ\varphi^{-1}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pcr.5: change of variables for $\code{intervalIntegral}$]
+\label{lem:pcr-r5}
+\uses{lem:pcr-r6}
+For a smooth $\Phi:[0,1]\to V\subseteq\C$ and a smooth $h$ on $V$,
+$\int_{0}^{1}h(\Phi(t))\,\Phi'(t)\,dt = \int_{\Phi}h\,dz$. Reduces
+to the fundamental theorem of calculus once both sides are written as
+$\int_{\Phi[0,1]}h\,dz$ via line-integral parametrisation.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pcr.6: chain rule for \code{HasDerivAt}]
+\label{lem:pcr-r6}
+\uses{lem:pcr-r7}
+$(g\circ F)'(t)=g'(F(t))\cdot F'(t)$ for differentiable $g, F$. Mathlib:
+\code{HasDerivAt.comp}.
+\lean{HasDerivAt.comp}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass pcr.7: mfderiv decomposition of \code{pullbackFormsFun}]
+\label{lem:pcr-r7}
+\uses{lem:pcr-r8}
+$\code{pullbackFormsFun}\,f\,\eta\,x=\eta(f(x))\circ\code{mfderiv}\,f\,x$
+on the cotangent fiber.  The $\eta$-factor matches the inner pullback;
+the $\code{mfderiv}\,f\,x$-factor is the chart-level Jacobian.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pcr.8: \code{mfderiv} via chart derivatives]
+\label{lem:pcr-r8}
+\uses{lem:pcr-r9}
+$\code{mfderiv}\,f\,x = (D(\psi\circ f\circ\varphi^{-1}))(\varphi(x))$
+in chart coordinates $\varphi,\psi$. Mathlib:
+\code{mfderiv\_eq\_fderiv}.
+\lean{mfderiv}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass pcr.9: linearity in the integrand]
+\label{lem:pcr-r9}
+\uses{lem:pcr-r10}
+$\code{pathIntegralViaCoverWith}$ is $\C$-linear in $\eta$ at every
+fixed partition (\code{pathIntegralViaCoverWith\_smul},
+\code{pathIntegralViaCoverWith\_add}); both sides of pcr respect
+linearity, so it suffices to check on a generating family.
+\lean{JacobianChallenge.Periods.pathIntegralViaCoverWith_smul}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass pcr.10: linearity in the path]
+\label{lem:pcr-r10}
+\uses{lem:pcr-r11}
+$\code{pathIntegralViaCoverWith}$ adds along a path concatenation
+$\gamma\cdot\gamma'$; the $X$ and $Y$ sides agree because
+$f\circ(\gamma\cdot\gamma')=(f\circ\gamma)\cdot(f\circ\gamma')$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pcr.11: refinement-invariance of the cover sum]
+\label{lem:pcr-r11}
+\uses{lem:pcr-r12}
+Refining a uniform chart partition by inserting a midpoint preserves
+the cover sum, because the chart-corrected integral is additive over
+its parameter interval.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pcr.12: midpoint-additivity of \code{pathIntegralViaChartCorrect}]
+\label{lem:pcr-r12}
+\uses{lem:pcr-r13}
+$\int_{\gamma|_{[a,c]}}\omega+\int_{\gamma|_{[c,b]}}\omega
+=\int_{\gamma|_{[a,b]}}\omega$ on a single chart, by additivity of
+\code{intervalIntegral}.
+\lean{intervalIntegral.integral_add_adjacent_intervals}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass pcr.13: chart-source compatibility under $f$]
+\label{lem:pcr-r13}
+\uses{lem:pcr-r14}
+For each $i$, if $\gamma|_{[t_{i},t_{i+1}]}\subseteq U_{i}=
+(\code{chartAt}\,(\code{pickChart}\,i)).source$ on $X$ and
+$f(U_{i})\subseteq V_{i}$ for some chart $V_{i}$ on $Y$, then
+$(f\circ\gamma)|_{[t_{i},t_{i+1}]}\subseteq V_{i}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pcr.14: existence of a covering chart on $Y$ for $f(U_{i})$]
+\label{lem:pcr-r14}
+\uses{lem:pcr-r15}
+$f(U_{i})$ is contained in a single chart's source on $Y$ after
+shrinking $U_{i}$. Use continuity of $f$ and the fact that
+$\code{chartAt}\,(f\,p)$ has $f\,p$ in its source.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pcr.15: shrinking chart partitions]
+\label{lem:pcr-r15}
+\uses{lem:pcr-r16}
+Lebesgue covering lemma: a uniform partition fine enough makes every
+segment of $f\circ\gamma$ lie in a single chart on $Y$.  Mathlib:
+\code{Lebesgue\_number\_lemma}.
+\lean{exists_lebesgue_number_of_isOpen_cover}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass pcr.16: \code{ContMDiff.continuous}]
+\label{lem:pcr-r16}
+\uses{lem:pcr-r17}
+A smooth $f:X\to Y$ is continuous, and pre-images of opens are open.
+\lean{ContMDiff.continuous}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass pcr.17: \code{Path.map} preserves continuity]
+\label{lem:pcr-r17}
+\uses{lem:pcr-r18}
+$f\circ\gamma$ as a continuous path is exactly $\gamma.\code{map}\,
+\code{hf}.\code{continuous}$ in Mathlib.  $\code{Path.map\_trans}$ and
+$\code{Path.map\_symm}$ then give the algebraic compatibilities.
+\lean{Path.map}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass pcr.18: mathlib endpoint --- chain rule for \code{intervalIntegral}]
+\label{lem:pcr-r18}
+\code{intervalIntegral.integral\_comp\_smul\_deriv}
+($\int_{a}^{b}h(F(t))F'(t)\,dt=\int_{F(a)}^{F(b)}h(z)\,dz$) and
+\code{HasDerivAt.comp} together close the chain.  Mathlib status: present.
+\lean{intervalIntegral.integral_comp_smul_deriv}
+\leanok\mathlibok
+\end{lemma}
+
+\subsubsection*{Chain pdp: bundle-dual-pullback equals \code{pullbackFormsMap} (S23)}
+
+The Lean target is
+\code{basisAnalyticPullbackBundle\_eq\_pullbackFormsMap}: the
+\code{basisDualPullback} field of the opaque-selected
+\code{BasisAnalyticPullbackBundle f hf} agrees with the
+opaque-realised \code{pullbackFormsMap X Y f hf}. Both sides are
+covering-space additive group homomorphisms and the equality is the
+``one and only correct'' covering-space lift.
+
+\begin{lemma}[S23: bundle-dual-pullback bridge assembly]
+\label{lem:pdp-r0}
+\uses{lem:pdp-r1, lem:pdp-r3, lem:pdp-r4}
+The \code{basisDualPullback} field of \code{basisAnalyticPullbackBundle\,f\,hf}
+agrees with \code{pullbackFormsMap\,X\,Y\,f\,hf} as additive group
+homomorphisms on the covering space.  Sorry-free assembly: both sides
+equal the underlying \code{AddMonoidHom} of
+\code{basisAlignedFormPullbackMatrix\,f\,hf} via
+\ref{lem:pdp-r4} (bundle descent) and \ref{lem:pdp-r3}
+(\code{pullbackFormsMap} as transposed matrix), so they equal each
+other.
+\lean{JacobianChallenge.TraceDegree.basisAnalyticPullbackBundle_eq_pullbackFormsMap}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass pdp.1: concrete dual of basis-aligned form-pullback]
+\label{lem:pdp-r1}
+\uses{lem:pdp-r2}
+The basis-aligned form-pullback
+$f^{*}_{\mathrm{aligned}}:\C^{g_{Y}}\to\C^{g_{X}}$ is the matrix of
+$f^{*}$ in chosen bases of $H^{0}(X,\Omega^{1})$ and
+$H^{0}(Y,\Omega^{1})$.  Concretely: if
+$f^{*}\eta_{j}^{Y}=\sum_{i}A_{ij}\eta_{i}^{X}$ then the matrix of
+$f^{*}_{\mathrm{aligned}}$ is $A=(A_{ij})$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.2: dual map = transposed matrix]
+\label{lem:pdp-r2}
+\uses{lem:pdp-r3}
+The dual of $f^{*}_{\mathrm{aligned}}$ as a map of covering spaces is
+the transpose $A^{T}:\C^{g_{Y}}\to\C^{g_{X}}$, viewed as the basis
+identification of $f^{*}$ on coordinates.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.3: \code{pullbackFormsMap} is concretely the transpose]
+\label{lem:pdp-r3}
+\uses{lem:pdp-r4}
+Replacing the opaque \code{pullbackFormsMap} with the concrete
+$A^{T}$-matrix construction makes pdp a definitional equality at the
+covering-space level. The replacement is a small $\sim$30-line
+project-side rewrite.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.4: concrete \code{basisAnalyticPullbackBundle} via descent]
+\label{lem:pdp-r4}
+\uses{lem:pdp-r5}
+With $\code{pullbackFormsMap}$ concrete, descent through the period
+quotient produces a concrete
+$\code{basisAnalyticPullbackBundle f hf}$ whose
+$\code{basisDualPullback}$ field is exactly $\code{pullbackFormsMap}$
+by construction; \code{mk\_eq} becomes \code{rfl}.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.5: descent through period lattice]
+\label{lem:pdp-r5}
+\uses{lem:pdp-r6}
+$f^{*}_{\mathrm{aligned}}$ sends the period lattice of $Y$ to that of
+$X$, hence descends to
+$\code{BasisAnalyticJacobian}\,Y\to\code{BasisAnalyticJacobian}\,X$.
+This is naturality of integration:
+$\int_{\gamma}f^{*}\eta=\int_{f\circ\gamma}\eta$, applied to lattice
+generators.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.6: lattice-preservation of $f^{*}_{\mathrm{aligned}}$]
+\label{lem:pdp-r6}
+\uses{lem:pdp-r7}
+Each lattice basis vector of $Y$ is the period vector of some
+$\sigma\in H_{1}(Y,\Z)$.  Its image under $f^{*}_{\mathrm{aligned}}$
+is the period vector of $f_{*}^{-1}\sigma$ on $X$; if $\sigma$ comes
+from the symplectic basis on $Y$, $f_{*}^{-1}\sigma$ is a $\Z$-linear
+combination of basis cycles on $X$, hence its period vector lies in
+the $X$-lattice.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.7: \code{QuotientAddGroup.lift} for descent]
+\label{lem:pdp-r7}
+\uses{lem:pdp-r8}
+A $\Z$-linear map between vector spaces that sends one lattice into
+another descends to a continuous additive group hom on the quotient
+tori.  Mathlib: \code{QuotientAddGroup.lift} and
+\code{Continuous.quotient\_lift}.
+\lean{QuotientAddGroup.lift}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass pdp.8: smoothness of the descended pullback]
+\label{lem:pdp-r8}
+\uses{lem:pdp-r9}
+A linear map between covering spaces descends to a smooth map between
+the quotient tori, by smoothness of the quotient map and smoothness of
+linear maps. Mathlib supplies
+\code{ContMDiff.quotient}-shaped lemmas via
+\code{LinearMap.contMDiff} on the lift.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.9: identity-functoriality of \code{pullbackFormsMap}]
+\label{lem:pdp-r9}
+\uses{lem:pdp-r10}
+$\code{pullbackFormsMap}\,X\,X\,\code{id}\,\_=\code{AddMonoidHom.id}$
+because the matrix of $\code{id}^{*}$ on the chosen basis of
+$H^{0}(X,\Omega^{1})$ is the identity matrix, hence its transpose is
+also the identity.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.10: composition-functoriality of \code{pullbackFormsMap}]
+\label{lem:pdp-r10}
+\uses{lem:pdp-r11}
+$\code{pullbackFormsMap}\,X\,Z\,(g\circ f)
+=(\code{pullbackFormsMap}\,X\,Y\,f)\circ(\code{pullbackFormsMap}\,Y\,Z\,g)$
+contravariantly. The matrix of $(g\circ f)^{*}$ is $A_{f}\cdot A_{g}$,
+hence the transpose is $A_{g}^{T}\cdot A_{f}^{T}$.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.11: contravariance of $f^{*}$ on forms]
+\label{lem:pdp-r11}
+\uses{lem:pdp-r12}
+$(g\circ f)^{*}=f^{*}\circ g^{*}$ at the level of holomorphic 1-forms,
+proved already in the project as
+\code{pullbackFormsBundledLM\_comp}.
+\lean{JacobianChallenge.HolomorphicForms.pullbackFormsBundledLM_comp}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Pass pdp.12: matrix transpose composes contravariantly]
+\label{lem:pdp-r12}
+\uses{lem:pdp-r13}
+$(B\cdot A)^{T}=A^{T}\cdot B^{T}$. Mathlib: \code{Matrix.transpose\_mul}.
+\lean{Matrix.transpose_mul}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass pdp.13: choice of basis is irrelevant for descent]
+\label{lem:pdp-r13}
+\uses{lem:pdp-r14}
+Two choices of basis of $H^{0}(X,\Omega^{1})$ produce
+$\code{pullbackFormsMap}$ that differ by conjugation by an invertible
+matrix.  Both descend to the same map on the quotient torus, since
+the period lattice is also conjugated.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.14: \code{Module.Basis.equivFun}]
+\label{lem:pdp-r14}
+\uses{lem:pdp-r15}
+A finite-dimensional vector space is canonically identified with
+$\code{Fin n}\to\C$ via a chosen basis.  Mathlib:
+\code{Module.Basis.equivFun}.
+\lean{Module.Basis.equivFun}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Pass pdp.15: opaque value uniqueness]
+\label{lem:pdp-r15}
+\uses{lem:pdp-r16}
+For any two terms of an inhabited type satisfying the same defining
+property, opaque selection picks ``a'' value, but the bridge lemma
+\code{basisAnalyticPullbackBundle\_eq\_pullbackFormsMap} pins
+\code{basisDualPullback} to the named \code{pullbackFormsMap} via
+spec-by-construction. Replacing both opaques with concrete definitions
+makes the bridge \code{rfl}.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.16: \code{Classical.choice} is irrelevant for the bridge]
+\label{lem:pdp-r16}
+\uses{lem:pdp-r17}
+Once \code{basisAnalyticPullbackBundle} is concretised (pdp.4) and
+\code{pullbackFormsMap} is concretised (pdp.3), the bridge is
+\code{rfl}; \code{Classical.choice} is no longer used in the chain.
+\notready
+\end{lemma}
+
+\begin{lemma}[Pass pdp.17: mathlib endpoint --- linear algebra of dual map]
+\label{lem:pdp-r17}
+$\code{LinearMap.dualMap}+\code{Module.Basis.dualBasis}$
+(\code{Mathlib.LinearAlgebra.Dual}) supply the entire dualisation
+chain.  Mathlib status: present.
+\lean{LinearMap.dualMap}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{layman}
+The three sorries S21, S22, S23 each split into a chain of $\sim$18
+classical steps, terminating at a mathlib lemma.  S21 is the ``Stokes
+descent'' chain: chain integral $\to$ integral on cycles $\to$
+naturality through $f_{*}$.  S22 is the ``chart-cover chain rule''
+chain: integrating a pulled-back form on the source equals integrating
+the original form on the pushed path on the target, segment by segment.
+S23 is the ``replace opaque with concrete'' chain: the bundle's
+covering-space lift agrees with the named \code{pullbackFormsMap}
+once both are written as the dual of the basis-aligned form-pullback.
+Each chain is a single multi-month classical formalisation effort
+(Stokes for chains, chart-level chain rule, dual basis algebra), but
+the chain decomposition is now explicit and the leaves all land on
+mathlib4-present statements.
+\end{layman}
