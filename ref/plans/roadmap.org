@@ -18,6 +18,46 @@ to match Challenge exactly.
 Toggle each ~[ ]~ to ~[X]~ as work lands. Org-mode users can also flip the
 TODO keyword to DONE. Top-level cookies ~[/]~ summarise child progress.
 
+* AUDIT REFRESH (2026-05-05, second pass): R7 merged + R3/R8 stepwise refinement landed
+
+Update post-r7-merge: branch ~claude/refine-14r7-proof-Os7ny~ landed
+on main as commits ~b8b22a7~/~e099643~/~30ae49b~/~0cbdd90~ (rounds
+23–30 add Fréchet-derivative shifts on (0,0)-forms beyond the original
+1–22 rounds). R7's typed Dolbeault iso is now sorry-free on main;
+~Jacobian/Analysis/Dolbeault~ joins R1/R2/R3/R4/R5/R6/R8/R9/R10 in the
+sorry-free Analysis/* tree.
+
+Stepwise-refinement work landed in the same tick on
+~claude/audit-and-roadmap-update-ydyLT~:
+
+- **R3-sub-B (StageA close-out)** added to ~tex/§14~ + Lean stubs.
+  ~Jacobian/StageA/EdgeWordTietze.lean~ orientability-invariance
+  Round-3 closures (~InverseCancel.count_le~ + ~HandleSwap.count_eq~
+  via ~List.count_append + omega~) make the two headline assemblies
+  sorry-free (1 base-case sorry remains).
+  ~Jacobian/StageA/CellularSingular.lean~ headline rerouted via
+  ~cellular_iso_singularH_via_five_lemma~ (single named sorry).
+  Net StageA: 3 → 2 sorries.
+- **R8-sub-B (Banach-data closure for Hone(X))** added to ~tex/§14~ +
+  Lean stubs. The 3 ~CompactRiemannSurface.lean~ frontier sorries are
+  decomposed into ~12 Round-1/2 named sub-leaves with proof-route
+  docstrings.
+- **R8-sub-C (Riemann-Roch low/high-degree squeeze)** added. The 4
+  frontier sorries in ~RiemannRochLowDegree.lean~ +
+  ~EulerCharLineBundle.lean~ are decomposed into ~10 Round-1/2 named
+  sub-leaves; the squeeze ~h0_minus_h1_eq_riemann_roch~ remains
+  sorry-free.
+
+Pattern follows R7-sub-A / R9-sub-A: classical content + Lean proof
+plan + recursive sub-gaps + named lemmas in tex; matching ~theorem
+... := True := by trivial~ Round-1 stubs in Lean, refined toward
+Mathlib hooks in subsequent rounds.
+
+The Round-2/3 sub-leaves are sorry-free at the type level
+(~True := by trivial~ placeholders); they will be promoted to
+substantive Mathlib-typed forms in subsequent ticks once the
+elementary Mathlib closures are checked.
+
 * AUDIT REFRESH (2026-05-05): tex/, blueprint/, R-section dispatch
 
 Re-audit after the cloud-worker push that ran 2026-05-03 → 2026-05-05. The
