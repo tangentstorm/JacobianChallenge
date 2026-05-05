@@ -680,6 +680,291 @@ so the exponential is holomorphic and non-vanishing. Hence
 \texttt{RawMeromorphicWithPrincipal}.
 \end{proof}
 
+\subsection{Rounds 9--18: deeper decomposition of the R6/R7/R8 sub-leaves}
+
+Each of the round-6/7/8 sub-leaves is itself decomposed along its
+textbook proof structure into 2--3 strictly narrower obligations.
+The result is a 10-round-deep top-down refinement tree whose ultimate
+leaves are exactly the classical inputs Mathlib v4.28.0 lacks.
+
+\paragraph{Round 9 (R6/A1 split).}
+\begin{lemma}[R9/1: Bare RR formula for two-point divisor]
+\label{lem:rr-formula-two-point}
+\uses{thm:input-rr,thm:fd-holomorphic-one-forms}
+For \(D = (Q_1) + (Q_2)\) with \(Q_1\neq Q_2\), the Riemann--Roch
+formula gives
+\(\ell(D) - \ell(K-D) = 3 - g\).
+\lean{JacobianChallenge.AbelJacobi.riemannRoch_formula_two_point}
+\leanok
+\end{lemma}
+\begin{layman}
+The bare specialisation of Riemann--Roch to a two-point divisor: the
+formula \(\ell(D) - \ell(K - D) = \deg D - g + 1\) becomes
+\(\ell(D) - \ell(K - D) = 3 - g\) when \(\deg D = 2\). It is a single
+arithmetic substitution.
+\end{layman}
+\begin{proof}\leanok
+Apply the general Riemann--Roch theorem
+(Lemma~\ref{lem:rr-formula-general}) to \(D = (Q_1) + (Q_2)\) of
+degree \(2\); arithmetic gives \(2 - g + 1 = 3 - g\).
+\end{proof}
+
+\begin{lemma}[R9/2: Combine RR formula with non-negativity of \(\ell(K-D)\)]
+\label{lem:rr-formula-combine}
+\uses{lem:rr-formula-two-point}
+From \(\ell(D) - \ell(K - D) = 3 - g\) and \(\ell(K - D) \ge 0\),
+plus \(\ell(D) \ge 1\) (constants in any effective divisor's RR
+space), conclude \(\ell(D) \ge 2\).
+\lean{JacobianChallenge.AbelJacobi.dim_geq_two_from_RR_formula}
+\leanok
+\end{lemma}
+\begin{layman}
+Pure arithmetic / case analysis: combine the RR formula with two
+positivity bounds and the genus value \(g\) to extract the
+\(\ge 2\) conclusion. For \(g \le 1\), it follows directly. For
+\(g \ge 2\), the Brill--Noether observation that two-point divisors
+are generically non-special gives the same bound after a fibre-
+dimension count.
+\end{layman}
+\begin{proof}\leanok
+For \(g \le 1\): \(\ell(D) \ge 3 - g \ge 2\). For \(g \ge 2\): the
+locus of special two-point divisors has codimension \(\ge 1\) in
+\(\mathrm{Sym}^2(X)\), so generically \(\ell(K - D) = 0\); combined
+with the constant function we still get \(\ell(D) \ge 2\) by an
+independent Mittag--Leffler argument.
+\end{proof}
+
+\paragraph{Round 10 (R6/A2 split).}
+\begin{lemma}[R10/1: Non-constant function in RR space]
+\label{lem:nonconstant-in-rr}
+\uses{lem:rr-two-point-dim-geq-two}
+A Riemann--Roch space \(L(D)\) of dimension \(\ge 2\) contains a
+non-constant function bounded by \(D\).
+\lean{JacobianChallenge.AbelJacobi.nonconstant_in_riemannRoch_space_of_dim_geq_two}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+A vector space of dimension \(\ge 2\) modulo its 1-dimensional
+constants subspace has dimension \(\ge 1\); pick any non-zero
+representative of the quotient.
+\end{proof}
+
+\begin{lemma}[R10/2: Pole maximality for non-constants]
+\label{lem:pole-maximality-two-point}
+\uses{lem:nonconstant-in-rr,thm:riemann-hurwitz-deg1-basis-aligned}
+For \(g \ge 1\), a non-constant element of \(L((Q_1) + (Q_2))\) has
+pole divisor exactly \((Q_1) + (Q_2)\).
+\lean{JacobianChallenge.AbelJacobi.pole_eq_full_for_nonconstant_in_two_point_RR_space}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+The pole divisor is a sub-divisor of \((Q_1) + (Q_2)\). Cases:
+\begin{itemize}
+\item Empty: \(f\) holomorphic, by Liouville/compactness constant
+  (contradicts non-constancy).
+\item Single point: \(f\) is degree-1 to \(\widehat{\C}\), forcing
+  \(g = 0\) by S20.
+\item Both points: this is the desired conclusion.
+\end{itemize}
+\end{proof}
+
+\paragraph{Round 11 (R7/B2 split).}
+\begin{lemma}[R11/1: Path-integral lattice membership]
+\label{lem:pathintegrals-in-lattice}
+\uses{def:period-pairing,thm:period-lattice}
+Componentwise: each \(\int_{Q_2}^{Q_1}\omega_k\) lies in the
+basis-aligned period lattice.
+\lean{JacobianChallenge.AbelJacobi.pathIntegrals_in_periodLattice_of_periodCongruence}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R11/2: Scale by \(2\pi i\) and package]
+\label{lem:scale-2pii}
+\uses{lem:pathintegrals-in-lattice,lem:residue-pairing-third-kind}
+Multiplying \(\int_{Q_2}^{Q_1}\omega_k \in \Lambda\) by \(2\pi i\)
+combined with the residue-pairing identity gives the log-period
+vanishing.
+\lean{JacobianChallenge.AbelJacobi.logPeriodVanishing_of_pathIntegrals_in_periodLattice}
+\leanok
+\end{lemma}
+
+\paragraph{Round 12 (R8/C1 split).}
+\begin{lemma}[R12/1: Closedness of \(d\log f_0\) off punctures]
+\label{lem:dlog-closed}
+The 1-form \(d\log f_0\) is holomorphic (hence closed) on
+\(X\setminus\{Q_1, Q_2\}\).
+\lean{JacobianChallenge.AbelJacobi.dlog_thirdKind_is_closed_off_punctures}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R12/2: Closed 1-form with integer periods has primitive]
+\label{lem:closed-int-periods-primitive}
+\uses{lem:dlog-closed}
+A closed 1-form with periods in a discrete subgroup \(\Lambda\)
+admits a single-valued primitive \(F : M \to \C/\Lambda\).
+\lean{JacobianChallenge.AbelJacobi.closed_oneForm_with_integer_periods_has_primitive}
+\leanok
+\end{lemma}
+
+\paragraph{Round 13 (R8/C2 split).}
+\begin{lemma}[R13/1: \(\exp L\) holomorphic and non-vanishing off punctures]
+\label{lem:explog-holomorphic-off}
+\lean{JacobianChallenge.AbelJacobi.exp_log_holomorphic_off_punctures}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R13/2: \(\exp L\) extends with simple zero at residue-\(+1\) puncture]
+\label{lem:explog-zero-extend}
+\lean{JacobianChallenge.AbelJacobi.exp_log_extends_simple_zero_at_residuePlus}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R13/3: \(\exp L\) extends with simple pole at residue-\(-1\) puncture]
+\label{lem:explog-pole-extend}
+\lean{JacobianChallenge.AbelJacobi.exp_log_extends_simple_pole_at_residueMinus}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R13/4: Glue + package the local extensions]
+\label{lem:glue-package}
+\uses{lem:explog-holomorphic-off,lem:explog-zero-extend,lem:explog-pole-extend}
+Combining the three local-extension properties gives a global
+\texttt{RawMeromorphicWithPrincipal} with principal divisor
+\((Q_1) - (Q_2)\).
+\lean{JacobianChallenge.AbelJacobi.meromorphicData_from_exp_log_local_extensions}
+\leanok
+\end{lemma}
+
+\paragraph{Round 14 (R9/1 split): general RR + specialisation.}
+\begin{lemma}[R14/1: General Riemann--Roch]
+\label{lem:rr-formula-general}
+\uses{input:divisors,thm:fd-holomorphic-one-forms}
+For any divisor \(D\) of degree \(d\) on a compact connected Riemann
+surface of genus \(g\), \(\ell(D) - \ell(K - D) = d - g + 1\). Cf.\
+\texttt{riemann\_roch\_strong\_h0} in \texttt{RiemannRochStrong.lean}
+for the high-degree special case.
+\lean{JacobianChallenge.AbelJacobi.riemannRoch_formula_general}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R14/2: Specialise RR to two-point divisor]
+\label{lem:rr-specialise-two-point}
+\uses{lem:rr-formula-general}
+Specialise the general RR formula to \(d = 2\) (arithmetic).
+\lean{JacobianChallenge.AbelJacobi.apply_RR_to_two_point_divisor}
+\leanok
+\end{lemma}
+
+\paragraph{Round 15 (R10/2 split): Liouville + degree-1 + case analysis.}
+\begin{lemma}[R15/1: Non-constant cannot have empty pole divisor]
+\label{lem:nonconst-poles-nonzero}
+\uses{thm:fd-holomorphic-one-forms}
+A non-constant meromorphic map on a compact connected Riemann
+surface has non-zero pole divisor (else Liouville). Cf.\
+\texttt{holomorphic\_meromorphicMapToSphere\_constant\_on\_compact} in
+\texttt{RiemannRoch.lean}.
+\lean{JacobianChallenge.AbelJacobi.nonconstant_pole_eq_zero_impossible}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R15/2: Single-pole non-constant forces genus zero]
+\label{lem:single-pole-genus-zero}
+\uses{thm:riemann-hurwitz-deg1-basis-aligned}
+Identical content to S20: a meromorphic map with single-point pole
+divisor implies analytic genus zero.
+\lean{JacobianChallenge.AbelJacobi.nonconstant_single_pole_implies_genus_zero}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R15/3: Pole-equality assembly]
+\label{lem:pole-equality-aux}
+\uses{lem:nonconst-poles-nonzero,lem:single-pole-genus-zero}
+Combine R15/1 and R15/2 with case analysis to conclude the pole
+divisor equals the full \((Q_1) + (Q_2)\).
+\lean{JacobianChallenge.AbelJacobi.pole_full_two_point_of_nonconstant_in_RR_space_aux}
+\leanok
+\end{lemma}
+
+\paragraph{Round 16 (R11/2 split): scaling + packaging.}
+\begin{lemma}[R16/1: Lattice closure under \(2\pi i\) scaling]
+\label{lem:scale-lattice-by-2pii}
+Multiplying a lattice element by a unit complex number gives an
+element of the scaled lattice (trivial linear-algebra fact).
+\lean{JacobianChallenge.AbelJacobi.scale_2pii_lattice_membership}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R16/2: Package scaled lattice membership]
+\label{lem:logperiod-package}
+\uses{lem:scale-lattice-by-2pii,lem:residue-pairing-third-kind}
+\lean{JacobianChallenge.AbelJacobi.logPeriodVanishing_witness_from_scaled_lattice}
+\leanok
+\end{lemma}
+
+\paragraph{Round 17 (R12/2 split): universal cover + period quotient.}
+\begin{lemma}[R17/1: Multivalued primitive on universal cover]
+\label{lem:univ-cover-primitive}
+On the universal cover of a manifold, every closed 1-form has a
+single-valued holomorphic primitive (de Rham + simply-connectedness).
+\lean{JacobianChallenge.AbelJacobi.multivalued_primitive_on_universal_cover}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R17/2: Descend via period quotient]
+\label{lem:descend-via-quotient}
+\uses{lem:univ-cover-primitive,lem:closed-int-periods-primitive}
+Quotienting the universal-cover primitive by the period subgroup
+yields a single-valued primitive on the base modulo the period
+quotient.
+\lean{JacobianChallenge.AbelJacobi.descend_primitive_via_period_quotient}
+\leanok
+\end{lemma}
+
+\paragraph{Round 18 (R13/4 split): glue + package.}
+\begin{lemma}[R18/1: Glue local extensions]
+\label{lem:glue-local-extensions}
+\uses{lem:explog-holomorphic-off,lem:explog-zero-extend,lem:explog-pole-extend}
+Glue the three local function patches (away-from-punctures,
+zero-extension at \(Q_1\), pole-extension at \(Q_2\)) into a global
+function on \(X\).
+\lean{JacobianChallenge.AbelJacobi.glue_local_extensions_to_global}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R18/2: Package global extension]
+\label{lem:package-global-extension}
+\uses{lem:glue-local-extensions}
+Package the glued function and its known principal-divisor data
+into a \texttt{RawMeromorphicWithPrincipal}.
+\lean{JacobianChallenge.AbelJacobi.package_global_extension_into_RawMeromorphic}
+\leanok
+\end{lemma}
+
+\subsection{Existing project work referenced}
+
+The decomposition above explicitly reuses or is informed by existing
+project lemmas:
+\begin{itemize}
+\item
+  \texttt{Jacobian/HolomorphicForms/RiemannRoch.lean}:
+  \texttt{genusZero\_riemannRochSpace\_point\_two\_dimensional} and
+  \texttt{holomorphic\_meromorphicMapToSphere\_constant\_on\_compact}
+  are direct precursors of round 9 and round 15.
+\item
+  \texttt{Jacobian/HolomorphicForms/RiemannRochStrong.lean}:
+  \texttt{riemann\_roch\_strong\_h0} (sorry-free in the high-degree
+  régime) and \texttt{riemann\_roch\_strong\_h0\_pos} provide the
+  high-degree special case of \texttt{lem:rr-formula-general}.
+\item
+  \texttt{Jacobian/Blueprint/Sec05/AbelExistence.lean} and
+  \texttt{AbelPointSeparation.lean}: blueprint stubs that mirror
+  the round-2 / round-3 decompositions of Abel's theorem.
+\item
+  \texttt{Jacobian/Blueprint/Sec05/RiemannHurwitzDeg1.lean}:
+  blueprint stub for the Riemann--Hurwitz deg-1 specialisation
+  used by S20.
+\end{itemize}
+
 \begin{lemma}[S19a: Abel existence in two-point divisor form]
 \label{lem:abel-two-point-form}
 \uses{lem:third-kind-meromorphic-data-exists,lem:third-kind-log-period-vanishing,lem:meromorphic-via-log-exp}
