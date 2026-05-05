@@ -120,14 +120,46 @@ goes back to Riemann (1857); the matching `h⁰ - h¹ ≤ deg + 1 - g`
 follows from Serre duality applied to `L⁻¹ ⊗ K_X`. Squeezing them
 together gives Riemann-Roch as an equality (Roch, 1865). -/
 
+/-! ### R8-sub-C.B / R8-sub-C.C stepwise refinement (Round 1)
+
+The two sub-leaves `h0_minus_h1_ge_riemann` and `h0_minus_h1_le_riemann`
+are decomposed into named sub-sub-leaves matching tex blueprint §14
+R8-sub-C.B and R8-sub-C.C:
+
+* R8-sub-C.B (≥ direction):
+  - `h0_minus_h1_trivial_bundle` — base case `deg L = 0`: `h⁰=1, h¹=g`.
+  - `eulerChar_additive_ses_point` — short exact sequence
+    `0 → L → L(p) → ℂ_p → 0` gives `χ(L(p)) = χ(L) + 1`.
+  - `h0_minus_h1_ge_via_induction` — induction on `|deg L|`.
+* R8-sub-C.C (≤ direction):
+  - `dual_bundle_degree` — `deg(L⁻¹ ⊗ K_X) = 2g - 2 - deg L`.
+  - `serre_duality_h0_h1_swap` — `h⁰(L⁻¹ ⊗ K_X) = h¹(L)` etc.
+  - `h0_minus_h1_le_via_dual` — apply ≥ direction to dual bundle. -/
+
+/-- **R8-sub-C.B.r1.** Base case of the inductive proof of Riemann's
+inequality: for the trivial bundle, `h⁰ = 1` and `h¹ = g` (via
+Hodge `H¹(O_X) ≅ H⁰(K_X)*` and `dim H⁰(O_X) = 1` on a connected
+compact RS). (Round 1 placeholder.) -/
+theorem h0_minus_h1_trivial_bundle : True := by trivial
+
+/-- **R8-sub-C.B.r2.** Euler-characteristic additivity along the
+short exact sequence `0 → L → L(p) → ℂ_p → 0`: `χ(L(p)) = χ(L) + 1`.
+The skyscraper sheaf `ℂ_p` has `h⁰ = 1, h¹ = 0`.
+(Round 1 placeholder.) -/
+theorem eulerChar_additive_ses_point : True := by trivial
+
+/-- **R8-sub-C.B.r3.** Strong induction on `|deg L|` using r1 (base)
+and r2 (inductive step) gives `χ(L) = deg L + 1 - g`, i.e.\
+`h⁰(L) - h¹(L) = deg L + 1 - g`; the `≥` direction follows.
+(Round 1 placeholder.) -/
+theorem h0_minus_h1_ge_via_induction : True := by trivial
+
 /-- **Sub-leaf 1 (Riemann's inequality, `≥` direction).** The integer
 difference `(h⁰(L) : ℤ) - (h¹(L) : ℤ)` is at least `deg L + 1 - g`.
 
-Bottom-up content: the classical Riemann inequality
-(`Jacobian/HolomorphicForms/RiemannInequality.lean`); equivalent to
-the existence of "many" global sections of any high-degree line
-bundle (Mittag-Leffler). Frontier-bound on the divisor-line-bundle
-correspondence + finite-dimensional cohomology. -/
+R8-sub-C.B assembly: forwards to `h0_minus_h1_ge_via_induction`
+once the substantive induction is supplied. Currently a Round-1
+sorry. -/
 theorem h0_minus_h1_ge_riemann
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
@@ -142,15 +174,29 @@ theorem h0_minus_h1_ge_riemann
       RSLineBundleDegree X L + 1 - (RSGenus X : ℤ) := by
   sorry
 
+/-- **R8-sub-C.C.r1.** Dual bundle degree:
+`deg(L⁻¹ ⊗ K_X) = 2g - 2 - deg L`. The canonical bundle `K_X`
+has `deg K_X = 2g - 2`; tensor + inverse degrees subtract.
+(Round 1 placeholder.) -/
+theorem dual_bundle_degree : True := by trivial
+
+/-- **R8-sub-C.C.r2.** Serre-duality identification of cohomology
+groups: `h⁰(L⁻¹ ⊗ K_X) = h¹(L)` and `h¹(L⁻¹ ⊗ K_X) = h⁰(L)` via
+non-degeneracy of the Serre pairing.
+(Round 1 placeholder; consumes `Jacobian/HolomorphicForms/SerreDualityRS.lean`.) -/
+theorem serre_duality_h0_h1_swap : True := by trivial
+
+/-- **R8-sub-C.C.r3.** Apply r-r3 of R8-sub-C.B (the `≥` direction)
+to `L⁻¹ ⊗ K_X`; rewrite via r1 (degree) and r2 (Serre swap) to land
+at the `≤` statement on `L`. (Round 1 placeholder.) -/
+theorem h0_minus_h1_le_via_dual : True := by trivial
+
 /-- **Sub-leaf 2 (Serre-duality direction, `≤`).** The integer
 difference `(h⁰(L) : ℤ) - (h¹(L) : ℤ)` is at most `deg L + 1 - g`.
 
-Bottom-up content: apply Riemann's inequality to the dual line bundle
-`L⁻¹ ⊗ K_X` (whose degree is `2g - 2 - deg L`), then trade
-`h⁰(L⁻¹ ⊗ K_X) = h¹(L)` and `h¹(L⁻¹ ⊗ K_X) = h⁰(L)` via Serre
-duality. Frontier-bound on the canonical bundle, the line-bundle
-duality + tensor product, and Serre duality
-(`Jacobian/HolomorphicForms/SerreDualityRS.lean`). -/
+R8-sub-C.C assembly: forwards to `h0_minus_h1_le_via_dual` once
+the substantive Serre-duality squeeze is supplied. Currently a
+Round-1 sorry. -/
 theorem h0_minus_h1_le_riemann
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]

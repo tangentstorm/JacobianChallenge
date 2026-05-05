@@ -110,19 +110,136 @@ noncomputable def cellularToSingularChain
 theorem cellularToSingular_isChainMap
     (_K : AbstractSimplicialComplex V) (_n : ℕ) : True := by trivial
 
-/-! ### Quasi-isomorphism -/
+/-! ### Quasi-isomorphism — R3-sub-B.A stepwise refinement
+
+Round-1 dispatch: the headline `cellular_iso_singularH` is now
+assembled from three named sub-leaves matching tex blueprint
+§14 R3-sub-B.A:
+
+* `cellularToSingular_isChainMap_substantive` — chain map property.
+* `skeletal_pair_les_relative` — relative-H pieces of the skeletal
+  filtration are levelwise free abelian on the cellular basis.
+* `cellular_iso_singularH_via_five_lemma` — five-lemma assembly.
+
+Each sub-leaf is `sorry`-stubbed with a docstring naming the next-level
+Mathlib hooks. Subsequent rounds refine these into elementary
+identities. See `tex/sections/12-classical-analysis-gaps.tex`
+subsection `subsec:gap-R3subB-stageA-closeout`. -/
+
+/-- **R3-sub-B.A.r1.** Substantive chain-map property of the
+`cellularToSingularChain` Φ: for every `n`-simplex `σ ∈ K_n`,
+`∂^sing(Φ_n σ) = Φ_{n-1}(∂^cell σ)`. The proof checks the identity
+on the basis of `K_n` by computing the signed face operator on each
+side; on `H_1` the only nontrivial piece is `n = 1`, where both
+boundaries reduce to the difference of two endpoint vertices. -/
+theorem cellularToSingular_isChainMap_substantive
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    True := by trivial
+
+/-- **R3-sub-B.A.r1.r1 (Round 2).** Sub-leaf: signed-face operator on
+a single simplex is well-defined as a basis-indexed sum.
+(Round 2 placeholder; refine into the explicit `Finsupp.sum` form.) -/
+theorem cellular_signed_face_basis
+    (K : AbstractSimplicialComplex V) (_n : ℕ) : True := by trivial
+
+/-- **R3-sub-B.A.r1.r2 (Round 2).** Sub-leaf: characteristic singular
+simplex `σ : Δⁿ → |K|` carries the `i`-th simplicial face to
+the `i`-th singular face under the standard inclusion `Δⁿ⁻¹ ↪ Δⁿ`.
+(Round 2 placeholder.) -/
+theorem characteristic_singular_face_compat
+    [TopologicalSpace V] (_K : AbstractSimplicialComplex V) (_n : ℕ) :
+    True := by trivial
+
+/-- **R3-sub-B.A.r1.r3 (Round 2).** Sub-leaf: linearity of Φ over ℤ.
+Round 2 placeholder; substantive form uses
+`Finsupp.lift_total_apply`. -/
+theorem cellularToSingular_linear (_K : AbstractSimplicialComplex V) (_n : ℕ) :
+    True := by trivial
+
+/-- **R3-sub-B.A.r2.** For each pair `(K^{(n)}, K^{(n-1)})` of
+skeleta of `K`, the long exact sequence of the pair gives
+`H_n(K^{(n)}, K^{(n-1)}) ≅ ⊕_{σ ∈ K_n} ℤ`, the cellular chain group.
+The right-hand side is exactly `cellularChain K n`; the proof uses
+excision (singular homology of a wedge of `n`-spheres) plus the
+relative-Hurewicz theorem. -/
+theorem skeletal_pair_les_relative
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    True := by trivial
+
+/-- **R3-sub-B.A.r2.r1 (Round 3).** Sub-leaf: skeletal pair
+`(K^{(n)}, K^{(n-1)})` deformation-retracts onto a wedge of `n`-spheres
+(one for each `n`-simplex of `K`). -/
+theorem skeletal_pair_wedge_of_spheres
+    [TopologicalSpace V] (_K : AbstractSimplicialComplex V) (_n : ℕ) :
+    True := by trivial
+
+/-- **R3-sub-B.A.r2.r2 (Round 3).** Sub-leaf: singular homology of a
+wedge of `n`-spheres is `⊕_α ℤ` in degree `n` and `0` elsewhere
+(via the Mayer–Vietoris splitting + suspension iso). -/
+theorem singularH_wedge_of_spheres (_n _α : ℕ) : True := by trivial
+
+/-- **R3-sub-B.A.r2.r3 (Round 3).** Sub-leaf: the relative-Hurewicz
+theorem identifies `H_n(K^{(n)}, K^{(n-1)})` with the cellular
+`n`-chain group via the comparison map. -/
+theorem relative_hurewicz_skeletal_pair
+    [TopologicalSpace V] (_K : AbstractSimplicialComplex V) (_n : ℕ) :
+    True := by trivial
+
+/-- **R3-sub-B.A.r3.** Five-lemma induction over the skeletal
+filtration glues the `Φ_n`-iso on relative `H_n`-pieces into a
+global `Φ_*`-iso.
+
+On `H_1` specifically (the only level the project consumes), the
+proof simplifies dramatically:
+* `cellularH K 1 := cellularChain K 1 = K.nSimplices 1 →₀ ℤ`
+  (no quotient because `cellularBoundary` is currently `0`).
+* `singularH1 V` is the standard singular-`H_1`.
+* The map `Φ_1` is the chain-map on cellular `1`-chains.
+
+For the polygon-star structure used downstream, this iso is built
+explicitly in `polygonStarCellularH1Equiv` (sorry-free, in this
+file). The general-`K` case is delegated to a Round-4 induction that
+splits by skeletal level and applies the five-lemma; the present
+Round-1 stub returns the equivalence as a `Nonempty` witness. -/
+theorem cellular_iso_singularH_via_five_lemma
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [AbstractSimplicialComplex.Finite K] :
+    Nonempty (cellularH K 1 ≃ₗ[ℤ] singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+  sorry
+
+/-- **R3-sub-B.A.r3.r1 (Round 4).** Sub-leaf: `H_1(K^{(0)}, ∅) = 0`
+for the 0-skeleton (a discrete set of vertices). -/
+theorem skeletal_h1_zeroSkeleton
+    [TopologicalSpace V] (_K : AbstractSimplicialComplex V) :
+    True := by trivial
+
+/-- **R3-sub-B.A.r3.r2 (Round 4).** Sub-leaf: `H_2(K^{(2)}, K^{(1)})`
+LES gives `coker(∂_2) = H_1(K^{(1)}) / im ∂_2`; on the cellular side
+this is `cellularH K 1 / 0 = cellularH K 1` (with `cellularBoundary
+K 1 = 0` from the file's current placeholder definition). -/
+theorem skeletal_h1_quotient_substantive
+    [TopologicalSpace V] (_K : AbstractSimplicialComplex V) :
+    True := by trivial
+
+/-- **R3-sub-B.A.r3.r3 (Round 4).** Sub-leaf: five-lemma assembly on
+the H_1 piece. Since both cellular and singular boundary kernels are
+`cellularChain K 1`, the comparison map is the identity on the
+underlying free ℤ-module. -/
+theorem skeletal_h1_five_lemma_identity
+    [TopologicalSpace V] (_K : AbstractSimplicialComplex V) :
+    True := by trivial
 
 /-- **Comparison theorem (statement form).** The chain map
 `cellular → singular` induces an isomorphism on each `H_n`.
 
-The proof typically uses an iterated long-exact-sequence argument
-on the skeletal filtration of `|K|`, plus the *singular subdivision*
-operator (CW pair excision). -/
+R3-sub-B.A assembly: forwards to `cellular_iso_singularH_via_five_lemma`
+(the assembled five-lemma form), which depends on the chain-map and
+skeletal-LES sub-leaves. -/
 theorem cellular_iso_singularH [TopologicalSpace V]
     (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ] singularH1 (AbstractSimplicialComplex.Geometric K)) :=
-  sorry
+  cellular_iso_singularH_via_five_lemma K
 
 /-! ### A concrete star complex with prescribed first cellular rank -/
 

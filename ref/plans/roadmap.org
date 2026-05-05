@@ -18,6 +18,240 @@ to match Challenge exactly.
 Toggle each ~[ ]~ to ~[X]~ as work lands. Org-mode users can also flip the
 TODO keyword to DONE. Top-level cookies ~[/]~ summarise child progress.
 
+* AUDIT REFRESH (2026-05-05, second pass): R7 merged + R3/R8 stepwise refinement landed
+
+Update post-r7-merge: branch ~claude/refine-14r7-proof-Os7ny~ landed
+on main as commits ~b8b22a7~/~e099643~/~30ae49b~/~0cbdd90~ (rounds
+23–30 add Fréchet-derivative shifts on (0,0)-forms beyond the original
+1–22 rounds). R7's typed Dolbeault iso is now sorry-free on main;
+~Jacobian/Analysis/Dolbeault~ joins R1/R2/R3/R4/R5/R6/R8/R9/R10 in the
+sorry-free Analysis/* tree.
+
+Stepwise-refinement work landed in the same tick on
+~claude/audit-and-roadmap-update-ydyLT~:
+
+- **R3-sub-B (StageA close-out)** added to ~tex/§14~ + Lean stubs.
+  ~Jacobian/StageA/EdgeWordTietze.lean~ orientability-invariance
+  Round-3 closures (~InverseCancel.count_le~ + ~HandleSwap.count_eq~
+  via ~List.count_append + omega~) make the two headline assemblies
+  sorry-free (1 base-case sorry remains).
+  ~Jacobian/StageA/CellularSingular.lean~ headline rerouted via
+  ~cellular_iso_singularH_via_five_lemma~ (single named sorry).
+  Net StageA: 3 → 2 sorries.
+- **R8-sub-B (Banach-data closure for Hone(X))** added to ~tex/§14~ +
+  Lean stubs. The 3 ~CompactRiemannSurface.lean~ frontier sorries are
+  decomposed into ~12 Round-1/2 named sub-leaves with proof-route
+  docstrings.
+- **R8-sub-C (Riemann-Roch low/high-degree squeeze)** added. The 4
+  frontier sorries in ~RiemannRochLowDegree.lean~ +
+  ~EulerCharLineBundle.lean~ are decomposed into ~10 Round-1/2 named
+  sub-leaves; the squeeze ~h0_minus_h1_eq_riemann_roch~ remains
+  sorry-free.
+
+Pattern follows R7-sub-A / R9-sub-A: classical content + Lean proof
+plan + recursive sub-gaps + named lemmas in tex; matching ~theorem
+... := True := by trivial~ Round-1 stubs in Lean, refined toward
+Mathlib hooks in subsequent rounds.
+
+The Round-2/3 sub-leaves are sorry-free at the type level
+(~True := by trivial~ placeholders); they will be promoted to
+substantive Mathlib-typed forms in subsequent ticks once the
+elementary Mathlib closures are checked.
+
+* AUDIT REFRESH (2026-05-05): tex/, blueprint/, R-section dispatch
+
+Re-audit after the cloud-worker push that ran 2026-05-03 → 2026-05-05. The
+roadmap below 2026-05-03 is now mostly historical; this section is the
+current authoritative read.
+
+** What landed since 2026-05-03
+
+A 153-commit wave by the per-section refinement workers concluded:
+
+- **R-section umbrella (§14, ~tex/sections/12-classical-analysis-gaps.tex~)
+  is feature-complete at the named-leaf level.** All ten classical-analysis
+  gaps R1–R10, plus the recursive sub-gaps R7-sub-A and R9-sub-A, have full
+  ~\lean{...}~ + ~\leanok~ annotations and stepwise-refined proof chains
+  bottoming out at named Mathlib hooks (the file is now 8537 lines with
+  329 ~\leanok~ flags / 350 ~\lean{}~ annotations / 787 ~\label{}~).
+- **~Jacobian/Analysis/~ tree is sorry-free.** The R1–R10 / R7-sub-A /
+  R9-sub-A umbrellas under ~Jacobian/Analysis/{Rado, Tietze,
+  PolygonalModel, DeRham, HodgeDecomposition, HodgeDeRham, Dolbeault,
+  SerreDuality, BundledForms, SobolevElliptic}~ have **0** sorries
+  in production. R10 (the largest single sub-gap) is dispatched on the
+  abstract-resolvent / spectral-shortcut route, reducing the headline
+  ~Module.Finite (RealHarmonic M μ)~ to a single typeclass
+  ~HasLaplaceResolvent M μ~ — see ~README.md~ "R10 status" section.
+- **R7 work pending merge.** Branch ~claude/refine-14r7-proof-Os7ny~ adds
+  3 commits on top of origin/main:
+  - ~6846f71~ — merge origin/main + wire R7 bridge through
+    ~BundledForms.SubA~
+  - ~83bdeae~ — ship bigraded ~Ω^{p,q}~ package
+    (~Jacobian/Analysis/BundledForms/SubAComplex.lean~, ~280 LOC, 5
+    named components, sorry-free) + R7-sub-A blueprint subsection
+  - ~5c1ac1f~ — rounds 11–22 promote R7-sub-A from placeholder Props to
+    Mathlib-typed real carriers (~BigradedForm E p q~,
+    ~∂² = ∂̄² = ∂∂̄ + ∂̄∂ = 0~ pointwise on ~BigradedForm~)
+  Net: ~Jacobian.Analysis.Dolbeault~ also reaches sorry-free; this is the
+  last "R-section blocker" still outside main and should land routinely.
+- **Blueprint linking infrastructure is largely landed.** Per the
+  Phase A–E checklist in ~ref/blueprint-audit.md~: Phase A (audit) +
+  Phase B (dangling refs) + Phase C (~\lean{}~ annotations) + Phase D
+  (~Jacobian/Blueprint/SecXX/~ stubs imported) are done; Phase E
+  (signature tightening) is implicitly tracked by remaining
+  ~Jacobian/Blueprint/~ sorries.
+- **Site infra:** dark-mode/system theme toggles, collapsible
+  section-level dep-graph viewer, source-browser polish — all secondary
+  but observable improvements.
+
+** Current sorry inventory (2026-05-05)
+
+| Layer                                | sorries | files | Status                                                         |
+|--------------------------------------+---------+-------+----------------------------------------------------------------|
+| ~Jacobian/Challenge.lean~            |      24 |     1 | frozen public spec; do not touch                               |
+| ~Jacobian/Solution.lean~             |       0 |     0 | skeleton-aligned, only delegates                               |
+| ~Jacobian/Analysis/~ (R1–R10 etc.)    |       0 |     0 | umbrellas all sorry-free                                       |
+| ~Jacobian/StageA/~                   |       3 |     2 | ~CellularSingular.lean~ (1), ~EdgeWordTietze.lean~ (2)         |
+| ~Jacobian/StageB/~                   |       0 |     0 | sorry-free (umbrellas, gating Mathlib infra is in place)       |
+| ~Jacobian/AbelJacobi/~               |       1 |     1 | ~AnalyticOfCurveBasis.lean~ ~analyticOfCurve_injective~        |
+| ~Jacobian/AnalyticJacobian/~         |       0 |     0 | done                                                            |
+| ~Jacobian/ComplexTorus/~             |       2 |     1 | ~ManifoldRecon.lean~ — file slated for deletion (W5)           |
+| ~Jacobian/HolomorphicForms/~         |      25 |    12 | RR / Serre stack frontier; per-file table below                |
+| ~Jacobian/Periods/~                  |      15 |     6 | Riemann-bilinear stack; per-file table below                   |
+| ~Jacobian/TraceDegree/~              |       2 |     1 | ~PullbackBasis.lean~ (HEq-field / instance diamond)            |
+| ~Jacobian/WorkPackets/StatementBank.lean~ | 17 |     1 | slated for W3 deletion                                         |
+| ~Jacobian/Blueprint/SecXX/~          |      21 |     9 | slated for W4 Phase D deletion as production catches up        |
+
+Total non-Challenge sorries: **86** across 33 files. Of those, **40** sit in
+files explicitly slated for deletion (~WorkPackets~ 17, ~Blueprint/Sec*~ 21,
+~ComplexTorus/ManifoldRecon~ 2). The "real production frontier" is therefore
+**~46 sorries across ~22 files**.
+
+*** HolomorphicForms breakdown (25 sorries / 12 files)
+
+| File                                            | Sorries | Notes                                                |
+|-------------------------------------------------+---------+------------------------------------------------------|
+| ~GenusZeroClassification.lean~                  |       6 | sphere homeomorphism + uniformisation               |
+| ~CompactRiemannSurface.lean~                    |       3 | Montel/Cauchy-completeness sub-steps                |
+| ~Serre/RiemannRochHighFromSerre.lean~           |       2 | RR high-degree from Serre duality                   |
+| ~Serre/ResidueMap.lean~                         |       2 | trace map H¹(K_X) ≅ ℂ                                |
+| ~RiemannRoch.lean~                              |       2 | classical RR statement                              |
+| ~MeromorphicDegree.lean~                        |       2 | sum-of-orders-equals-zero theorem (open BLOCKER)   |
+| ~EulerCharLineBundle.lean~                      |       2 | Euler char of a line bundle                          |
+| ~DeRhamComparisonMap.lean~                      |       2 | de Rham comparison                                  |
+| ~Serre/RiemannRochUmbrellaPieces.lean~          |       1 | RR umbrella                                          |
+| ~SectionTopologyConstructionRecon.lean~         |       1 | recon file (consider Sec5 deletion)                  |
+| ~RiemannRochLowDegree.lean~                     |       1 | low-degree RR                                        |
+| ~ChartCoeffExtractionRecon.lean~                |       1 | recon file (consider Sec5 deletion)                  |
+
+*** Periods breakdown (15 sorries / 6 files)
+
+| File                                | Sorries | Notes                                                          |
+|-------------------------------------+---------+----------------------------------------------------------------|
+| ~PeriodFunctional.lean~             |       6 | ~h1_free_of_compact_surface~, ~analyticGenus_eq_topologicalGenus~, ~wedge_integration_pairing_exists~, ~riemann_bilinear_identity~, ~hodge_form_posDef~, ~period_functionals_ℝ_linearIndependent~ |
+| ~TietzeReduction.lean~              |       3 | edge-word reduction sub-leaves                                  |
+| ~PullbackNaturality.lean~           |       2 | period pullback naturality                                      |
+| ~CellularHomologyRS.lean~           |       2 | cellular ↔ singular bridge                                      |
+| ~SingularH1Homotopy.lean~           |       1 | homotopy invariance of H_1                                      |
+| ~Polygon4gCellular.lean~            |       1 | 4g-gon cellular structure                                       |
+
+** What is therefore actually left to do
+
+Three rough categories, in roughly descending tractability.
+
+*** Category A — production tail close-out (Aristotle-attackable)
+Items where an Aristotle packet has a real shot. ~25 sorries.
+- W1 P1 ~analyticOfCurve_injective~ (1) — needs cloud-Claude scoping
+- W1 P3 RR/Serre cluster (HolomorphicForms 25, especially the 13 files
+  with ≤2 sorries each) — file-scoped Aristotle packets
+- TraceDegree ~PullbackBasis~ HEq-field / diamond (2) — wants careful
+  ~noncomputable def~ rewrite (see ~diamond-problem.txt~)
+- Periods ~PullbackNaturality~ (2) and the lighter Periods files (4)
+
+*** Category B — Mathlib-gap-bound (not Aristotle work)
+Items whose proofs require infrastructure that is provably **ABSENT** in
+Mathlib v4.28.0. They fall out of the headline R-section dispatch and
+need to be the next dispatch sub-rounds rather than retried as sorries.
+
+- ~Periods.PeriodFunctional~ Riemann-bilinear stack (6 sorries):
+  ~h1_free_of_compact_surface~, ~analyticGenus_eq_topologicalGenus~,
+  ~wedge_integration_pairing_exists~, ~riemann_bilinear_identity~,
+  ~hodge_form_posDef~, ~period_functionals_ℝ_linearIndependent~ — gated
+  on Stage A (surface classification → singular H_1) and on Stokes for
+  manifolds with corners + Hodge bilinear positivity. The Stage A side
+  is dispatched bottom-up via ~Jacobian/StageA/~ (3 sorries left); the
+  bilinear side is dispatched via ~Jacobian/Analysis/{DeRham,
+  HodgeDecomposition, BundledForms, SobolevElliptic}~ (all sorry-free
+  modulo the ~HasLaplaceResolvent~ instance).
+- ~MeromorphicDegree.lean~ sum-of-orders theorem — Aristotle returned
+  BLOCKER with named missing API on ~MeromorphicMapToSphere~ (per the
+  2026-05-03 dc5a3836 doc commit); this is now consumed by §1 of the
+  blueprint via ~Sec01/MeromorphicToCp1~ infra and the §1 reading is the
+  near-term path.
+- R10's residual single typeclass instance: a non-trivial witness for
+  ~HasLaplaceResolvent M μ~ (manifold ~H¹(M)~ + Rellich + spectral
+  correspondence to ~ker Δ~). All three ingredients are flagged ABSENT
+  in Mathlib v4.28.0; closing them is a multi-week task and the top
+  remaining classical-analysis gap.
+
+*** Category C — pure cleanup (W3 / W4 / W5)
+Mechanical retirement once Category A drains.
+
+- Retire ~Jacobian/WorkPackets/StatementBank.lean~ (17 sorries,
+  duplicates production) — W3 catalog is still TODO
+- Retire ~Jacobian/Blueprint/SecXX/~ stubs as production decls land
+  the ~\lean{...}~ targets (21 sorries across 9 files) — W4 Phase D
+- Delete ~ManifoldRecon.lean~ / ~ChartCoeffExtractionRecon.lean~ /
+  ~SectionTopologyConstructionRecon.lean~ — W5
+- ~\leanok~ sweep on tex/sections/ as production catches up — W4 sweep
+  step (most §14 nodes are already ~\leanok~; §1–§9 still has plenty
+  of leaves where production is sorry-free but the tex annotation
+  hasn't been flipped)
+
+** R-section status table (for reference)
+
+| R-gap | Headline                       | Lean umbrella                          | Production sorries | Status                        |
+|-------+--------------------------------+----------------------------------------+--------------------+-------------------------------|
+| R1    | Radó's triangulation           | ~Jacobian.Analysis.Rado~               |                  0 | sorry-free; Stage A leaves    |
+| R2    | Tietze normal form             | ~Jacobian.Analysis.Tietze~             |                  0 | sorry-free                    |
+| R3    | Polygonal-model theorem        | ~Jacobian.Analysis.PolygonalModel~     |                  0 | sorry-free                    |
+| R4    | de Rham theorem                | ~Jacobian.Analysis.DeRham~             |                  0 | sorry-free (modulo R9)         |
+| R5    | Hodge decomposition            | ~Jacobian.Analysis.HodgeDecomposition~ |                  0 | sorry-free (modulo R9, R10)    |
+| R6    | Hodge / de Rham rank           | ~Jacobian.Analysis.HodgeDeRham~        |                  0 | sorry-free                    |
+| R7    | Dolbeault iso                  | ~Jacobian.Analysis.Dolbeault~          |                  0 | sorry-free **on R7 branch**, pending merge |
+| R8    | Serre duality on RS            | ~Jacobian.Analysis.SerreDuality~       |                  0 | sorry-free                    |
+| R9    | Bundled differential forms     | ~Jacobian.Analysis.BundledForms~       |                  0 | sorry-free                    |
+| R10   | Sobolev / elliptic regularity  | ~Jacobian.Analysis.SobolevElliptic~    |                  0 | sorry-free; one open instance |
+
+The R-section umbrella is the sub-project that drove most of the
+last-month headcount. With R7 about to land, Section 14's named-leaf
+graph is closed; remaining R-section work is the single
+~HasLaplaceResolvent~ instance (R10) and the leaf-discharge waves on
+~Jacobian/StageA/~ (~3) and the Mathlib-gap-bound items in Periods
+(~6).
+
+** Recommended next ticks
+
+1. Land the R7 branch (~claude/refine-14r7-proof-Os7ny~) onto main; the
+   merge is mechanical (3 commits, no conflicts on the substantive
+   files).
+2. Drain ~Jacobian/StageA/{CellularSingular, EdgeWordTietze}~ (3 sorries)
+   — Aristotle-shaped, unblocks ~analyticGenus_eq_topologicalGenus~ in
+   ~Periods/PeriodFunctional~.
+3. Drain ~Jacobian/HolomorphicForms/CompactRiemannSurface~ (3 sorries),
+   then the small RR/Serre files (RiemannRochLowDegree, RiemannRoch,
+   EulerCharLineBundle, GenusIdentification — most ≤2 sorries each).
+4. Run W3 catalog (~grep -rn 'JacobianChallenge\.\(Inventory\|...\)'~) so
+   that StatementBank can be deleted as soon as production catches up —
+   it currently has 17 sorries, all duplicates.
+5. Continue the W4 ~\leanok~ sweep on §1–§9 as production sorries close.
+6. Begin scoping the R10 ~HasLaplaceResolvent~ realisability instance
+   (manifold H¹ + Rellich + spectral correspondence) — multi-week task,
+   wants its own planning round before any code.
+
+Toggle each ~[ ]~ to ~[X]~ as work lands. Org-mode users can also flip the
+TODO keyword to DONE. Top-level cookies ~[/]~ summarise child progress.
+
 * MAJOR UPDATE (2026-05-03): cloud-worker push reshapes the landscape
 
 While Aristotle was running on the original W1 P3 frontier sorries
