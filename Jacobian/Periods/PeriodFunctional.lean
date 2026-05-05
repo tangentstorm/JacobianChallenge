@@ -241,19 +241,30 @@ theorem riemann_bilinear_identity
   refine Finset.sum_congr rfl fun k _ => ?_
   ring
 
-/-- **Blocker 3.** Positivity of the Hodge form: for any nonzero
-ℂ-linear functional `f` on holomorphic 1-forms, `i · ∫_X ω ∧ ω̄ > 0`.
+/-- **Blocker 3.** Positivity of the Hodge form: there exists a
+sesquilinear pairing `Q` on the dual of holomorphic 1-forms — namely
+the Hodge form `(ω, η) ↦ ∫_X ω ∧ η̄` transported through
+`holomorphicOneFormDualEquiv` — such that for any nonzero
+ℂ-linear functional `f`, `i · Q f f` has strictly positive real part.
+
 Mathlib gap: Kähler / Hodge geometry on Riemann surfaces (Hodge `*`,
 the `|ω|² dA` identity, positivity of integrals of nonneg continuous
-functions; all build on Blocker 1 infrastructure). -/
+functions; all build on Blocker 1 infrastructure).
+
+**Note on the statement shape.** Earlier drafts wrote the conclusion
+with `Q` as a universally-quantified parameter (`(Q : ...) → ∀ f, …`),
+which is *false* — the universal claim is refuted by `Q := 0` (then
+`(Complex.I * 0).re = 0`, not `> 0`). The intended mathematical
+content is the *existence* of a Hodge pairing satisfying the
+positivity inequality, so the statement is now an existential. -/
 theorem hodge_form_posDef
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
-         (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ) :
-    ∀ f : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ,
-      f ≠ 0 → (Complex.I * Q f f).re > 0 := by
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    ∃ Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
+          (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ,
+      ∀ f : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ,
+        f ≠ 0 → (Complex.I * Q f f).re > 0 := by
   sorry
 
 /-- **Analytic core.** The period functionals `(periodPairing ℂ X) ∘ σ`
@@ -261,19 +272,16 @@ are ℝ-linearly independent in the ℂ-linear dual
 `HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ` (viewed as an ℝ-module).
 
 The classical proof combines all three blockers above:
-1. Suppose for contradiction `a : Fin (2g) → ℝ` not all zero with
-   `Σ_i a_i · (periodPairing ℂ X)(σ i) = 0` as a functional on
-   holomorphic 1-forms.
-2. Build a holomorphic 1-form `α` whose periods `Π'_i := ∫_{σ_i} α`
-   satisfy `2 Re(Π'_i) = a_i` (existence of `α` via Hodge / de Rham
-   decomposition of a real harmonic form with prescribed integer
-   periods — `analyticGenus_eq_topologicalGenus`).
-3. Apply `riemann_bilinear_identity` to express the wedge pairing
-   `Q(α, ᾱ) = Σ_k (Π'_{2k} · conj Π'_{2k+1} − Π'_{2k+1} · conj Π'_{2k})`
-   in terms of the symplectic-basis periods.
-4. By `hodge_form_posDef`, `(i · Q(α, ᾱ)).re > 0` whenever `α ≠ 0`.
-   Combined with the hypothesis `Σ_i a_i · Π'_i = 0`, this forces
-   `a = 0`, contradicting (1). -/
+1. Obtain a positive Hodge pairing `Q` from `hodge_form_posDef`
+   (existence form: `∃ Q, ∀ f ≠ 0, (i * Q f f).re > 0`). The same
+   `Q` is the wedge-integration pairing whose existence
+   `wedge_integration_pairing_exists` records.
+2. Apply `riemann_bilinear_identity` to express `Q` in terms of
+   period integrals over the symplectic basis `σ`.
+3. Suppose `Σ cᵢ · (periodPairing ℂ X)(σ i) = 0` with `cᵢ ∈ ℝ`.
+   Let `f = Σ cᵢ · (periodPairing ℂ X)(σ i)`; then `Q f f = 0`.
+4. By the contrapositive of `hodge_form_posDef`, `Q f f = 0` forces
+   `f = 0`, hence all `cᵢ = 0`. -/
 theorem period_functionals_ℝ_linearIndependent
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
