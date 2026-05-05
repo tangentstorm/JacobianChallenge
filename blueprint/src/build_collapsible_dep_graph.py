@@ -525,6 +525,28 @@ def main(argv: list[str]) -> int:
     total_kb = sum(len(v) for v in dots.values()) // 1024
     print(f"build_collapsible_dep_graph: wrote {out} "
           f"({len(dots)} dots embedded, {total_kb} KB)")
+
+    # Inject a sibling navigation link on every other page that already
+    # has a "Dependency graph" link, so the collapsible viewer is
+    # discoverable from the blueprint index/section pages.
+    NAV_OLD = '<li ><a href="dep_graph_document.html">Dependency graph</a></li>'
+    NAV_NEW = (
+        NAV_OLD
+        + '<li ><a href="dep_graph_collapsible.html">Collapsible overview</a></li>'
+    )
+    NAV_MARKER = "dep_graph_collapsible.html"  # idempotency check
+    n_patched = 0
+    for path in sorted(web.glob("*.html")):
+        if path.name in {"dep_graph_collapsible.html",
+                         "dep_graph_document.html",
+                         "dep_graph_section.html"}:
+            continue
+        text = path.read_text(encoding="utf-8")
+        if NAV_MARKER in text or NAV_OLD not in text:
+            continue
+        path.write_text(text.replace(NAV_OLD, NAV_NEW), encoding="utf-8")
+        n_patched += 1
+    print(f"build_collapsible_dep_graph: injected nav link on {n_patched} pages")
     return 0
 
 
