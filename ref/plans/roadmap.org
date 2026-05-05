@@ -3,6 +3,83 @@
 #+TODO: TODO(t) BLOCKED(b) IN-PROGRESS(p) | DONE(d)
 #+TAGS: aristotle(a) cloud(c) hand(h) blueprint(b) refactor(r)
 
+* AUDIT REFRESH (2026-05-05, third pass): Solution-reachable frontier work
+
+After the cache fetch and full ~lake build Jacobian.Solution~, the
+production-frontier sorry list (declarations that ~lake~ flags as
+"declaration uses sorry" while building Solution) now stands at:
+
+| File                                        | Lines (start)                | Count |
+|---------------------------------------------+------------------------------+-------|
+| ~HolomorphicForms/RiemannRoch.lean~         | 75, 96, 112                  |     3 |
+| ~HolomorphicForms/MeromorphicDegree.lean~   | 33, 58                       |     2 |
+| ~HolomorphicForms/CompactRiemannSurface.lean~ | 224, 286, 784             |     3 |
+| ~HolomorphicForms/GenusZeroClassification.lean~ | 249, 326, 366, 379, 471, 624 | 6 |
+| ~Periods/PeriodFunctional.lean~             | 84, 100, 185, 202, 223, 245, 318 | 7 |
+| ~AbelJacobi/AnalyticOfCurveBasis.lean~      | 290, 306                     |     2 |
+| ~Periods/PullbackNaturality.lean~           | 117, 209                     |     2 |
+| ~TraceDegree/PullbackBasis.lean~            | 223                          |     1 |
+| **TOTAL**                                   |                              |  **26** |
+
+(Down from 28 — two PullbackBasis sorries discharged this round.)
+
+** Progress this round (commits ~f61a545~, ~aa7dff5~)
+
+- **PullbackBasis** ~pullbackFormsMap~ refactored from
+  ~noncomputable opaque~ to a concrete ~noncomputable def~ that routes
+  through ~holomorphicTraceCoord f hf~. The two sorried functoriality
+  leaves (~pullbackFormsMap_id_eq_id~, ~pullbackFormsMap_comp_eq~) are
+  now sorry-free assemblies via the existing sorry-free
+  ~holomorphicTraceCoord_id~ / ~holomorphicTraceCoord_comp~ in
+  PushforwardBasis.lean.
+
+- **PeriodFunctional** ~periodSubgroup_eq_zspan_of_basis~ docstring
+  now records the ~SMul ℤ (IntegralOneCycle X)~ typeclass-diamond
+  blocker explicitly: two non-defeq ~SMul ℤ~ instances coexist (one
+  from ~SubNegMonoid.toZSMul~, one from the ~ModuleCat ℤ~-induced
+  Module instance) and proofs spanning both sides via
+  ~Module.Basis.linearCombination_repr~ and ~AddMonoidHom.map_zsmul~
+  fail by definitional mismatch. The mathematical content is
+  one-line; the cleanest fix is upstream alignment of the two SMul
+  instances at the ~ModuleCat~-to-AddCommGroup-base layer.
+
+** Remaining frontier sorries by category
+
+*** Category A — refactor-discharge candidates (1 sorry)
+
+- **PullbackBasis** ~basisAnalyticPullbackBundle_eq_pullbackFormsMap~
+  (line 223). The bundle is still ~noncomputable opaque~, so its
+  ~basisDualPullback~ field cannot be equated with the concrete
+  ~holomorphicTraceCoord f hf~ without further work. Concretising
+  the bundle requires a lattice-preservation analogue
+  ~holomorphicTraceCoord_preserves_lattice~ (parallel to the
+  pushforward case), which itself routes through
+  ~periodPairing_pullbackFormsBundledLM~ — already sorry-free at
+  the umbrella level (the 2 internal sorries in PullbackNaturality
+  shield via the assembly layer). Net: this can be made a
+  pure refactor with no new sorries, but the refactor is involved
+  (the bundle has 6 fields, including the `trace_pullback_spec`
+  anti-hack identity, which is genuinely Mathlib-gap-bound).
+
+*** Category B — Mathlib-gap-bound (25 sorries, all classical)
+
+These represent multi-month classical-analysis content absent in
+Mathlib v4.28.0:
+
+- Riemann-Roch theorem + L([P]) dimension for genus 0 (RiemannRoch.lean: 3)
+- Removable-singularity / Liouville for sphere maps (MeromorphicDegree.lean: 2)
+- Continuity / completeness of holomorphic 1-form sections (CompactRiemannSurface.lean: 3)
+- Uniformisation / sphere-classification + ℂP¹ has H⁰(Ω¹) = 0 (GenusZeroClassification.lean: 6)
+- Free homology of compact surfaces, de Rham + Hodge theorem,
+  wedge integration, Riemann bilinear identity, Hodge positivity
+  (PeriodFunctional.lean: 7)
+- Abel's theorem (existence direction) + Riemann-Hurwitz at degree 1
+  (AnalyticOfCurveBasis.lean: 2)
+- Stokes-naturality of period pairing under form pullback / cycle
+  pushforward (PullbackNaturality.lean: 2)
+
+The roadmap below treats each as a named bottom-up obligation.
+
 * Audit Summary (2026-05-02)
 
 ~Jacobian/Solution.lean~ is already skeleton-aligned with
