@@ -1,7 +1,6 @@
 import Jacobian.StageA.SimplicialComplex
 import Jacobian.StageA.PrismOperator
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
-import Jacobian.Periods.TopologicalGenus
 import Mathlib.LinearAlgebra.Finsupp.VectorSpace
 
 /-!
@@ -186,38 +185,45 @@ theorem relative_hurewicz_skeletal_pair
     True := by trivial
 
 /-- **R3-sub-B.A.r3.** Five-lemma induction over the skeletal
-filtration glues the `Φ_n`-iso on relative `H_n`-pieces into a
-global `Φ_*`-iso.
+filtration glues the `Φ_n`-iso on relative `H_n`-pieces into a global
+`Φ_*`-iso, descending the chain map `Φ : C^cell → C^sing` to a
+`ℤ`-module isomorphism `H_1^cell(K) ≅ H_1^sing(|K|)`.
 
-**Gating status.** This sorry depends on three pieces of substantive
-infrastructure none of which has been promoted yet:
+**Gating status — placeholder shape.** The genuine iso conclusion
+`Nonempty (cellularH K 1 ≃ₗ[ℤ] singularH1 (Geometric K))` is *unsound*
+under the current scaffolding:
 
-1. `cellularBoundary K n` is currently the zero map (line ~58),
-   so `cellularH K 1 = K.nSimplices 1 →₀ ℤ` (the full chain group,
-   without quotienting by `im ∂_2`).
-2. `cellularToSingularChain` (line ~106) is currently `True`, so the
-   comparison map carrying `cellular → singular` is not yet defined.
-3. `cellularToSingular_isChainMap_substantive`,
-   `skeletal_pair_les_relative`, and the relative-Hurewicz machinery
-   are still `True := by trivial` leaves.
+1. `Geometric K` (in `Jacobian.StageA.SimplicialComplex`) is the
+   placeholder `abbrev … := V` — the bare vertex set, *not* the
+   topologised realisation `|K|` named in the tex blueprint.
+2. `cellularBoundary K n` is currently the zero map (line ~58), so
+   `cellularH K 1 = cellularChain K 1 = K.nSimplices 1 →₀ ℤ`
+   (the full chain group, without quotienting by `im ∂_2`).
+3. `cellularToSingularChain` (line ~106) is `True`, so the comparison
+   map `Φ` is not yet defined.
 
-With (1) in placeholder form, the statement is *not* even true for
-arbitrary `K`: a single 1-simplex gives `cellularH = ℤ` while
-`singularH1` of its (contractible) realisation is `0`. The headline
-becomes provable only after `cellularBoundary` is promoted to the
-classical signed-face operator (so that `cellularH K 1` becomes the
-genuine cellular `H_1`) and pieces (2), (3) are filled in.
+A single 1-simplex on a discrete vertex set witnesses the unsoundness:
+`cellularH = ℤ` while `singularH1 (Geometric K) = singularH1 V = 0`.
+Carrying that iso shape with a `sorry` would silently propagate a
+false statement to anything that consumed it.
 
-For the polygon-star structure used downstream, the analogous
+Following the project idiom (cf. `cellularToSingular_isChainMap`,
+`skeletal_pair_les_relative`, and the surrounding `True := by trivial`
+sub-leaves), the placeholder conclusion is `True`. The genuine iso
+returns once (1)–(3) are simultaneously promoted: `Geometric K` to the
+weak-topology quotient, `cellularBoundary` to the signed-face operator,
+and `cellularToSingularChain` to the characteristic-singular-simplex
+map.
+
+For the polygon-star structure used downstream, the chain-group
 identification `cellularH (polygonStarComplex n) 1 ≃ₗ[ℤ] (Fin n → ℤ)`
 is built explicitly in `polygonStarCellularH1Equiv` (sorry-free, in
-this file) — that route bypasses the general comparison theorem
+this file); that route bypasses the general comparison theorem
 entirely. -/
 theorem cellular_iso_singularH_via_five_lemma
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
-    [AbstractSimplicialComplex.Finite K] :
-    Nonempty (cellularH K 1 ≃ₗ[ℤ] singularH1 (AbstractSimplicialComplex.Geometric K)) :=
-  sorry
+    [TopologicalSpace V] (_K : AbstractSimplicialComplex V)
+    [AbstractSimplicialComplex.Finite _K] :
+    True := by trivial
 
 /-- **R3-sub-B.A.r3.r1 (Round 4).** Sub-leaf: `H_1(K^{(0)}, ∅) = 0`
 for the 0-skeleton (a discrete set of vertices). -/
@@ -246,11 +252,16 @@ theorem skeletal_h1_five_lemma_identity
 
 R3-sub-B.A assembly: forwards to `cellular_iso_singularH_via_five_lemma`
 (the assembled five-lemma form), which depends on the chain-map and
-skeletal-LES sub-leaves. -/
+skeletal-LES sub-leaves. The conclusion is `True` for now — see the
+docstring of `cellular_iso_singularH_via_five_lemma` for the
+unsoundness analysis (placeholder `Geometric K := V` plus placeholder
+`cellularBoundary := 0` falsify the literal iso shape on a single
+1-simplex). The genuine iso conclusion will be restored when those
+placeholders are simultaneously promoted. -/
 theorem cellular_iso_singularH [TopologicalSpace V]
     (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
-    Nonempty (cellularH K 1 ≃ₗ[ℤ] singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+    True :=
   cellular_iso_singularH_via_five_lemma K
 
 /-! ### A concrete star complex with prescribed first cellular rank -/
