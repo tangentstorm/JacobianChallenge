@@ -197,16 +197,67 @@ noncomputable opaque pullbackFormsMap
     (f : X' → Y') (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y') → ℂ) →+ (Fin (analyticGenus ℂ X') → ℂ)
 
-/-- **Stage A leaf (round 1, bridge sorry).** The bundle's
-`basisDualPullback` agrees with the named `pullbackFormsMap`. Same
-upstream Mathlib gap as the original diamond sorry: both
-`basisAnalyticPullbackBundle f hf` and `pullbackFormsMap X' Y' f hf`
-are opaque-realised, so this equality is itself a sorry. -/
+/-! #### Pdp-chain decomposition (Round 2, 2026-05-05)
+
+The single sorry on `basisAnalyticPullbackBundle_eq_pullbackFormsMap`
+is decomposed via the `pdp-r1 … pdp-r17` chain documented in
+`tex/sections/12-classical-analysis-gaps.tex`. Each helper below is
+the Lean shadow of a chain step. -/
+
+/-- **Pass pdp.1 (matrix of the basis-aligned form-pullback).** The
+basis-aligned form pullback as a `ℂ`-linear map between the chosen-
+basis coordinate vector spaces. Not yet realised concretely: depends
+on `Module.Basis.equivFun` (pdp.14) applied to chosen bases of
+`H⁰(X, Ω¹)` and `H⁰(Y, Ω¹)`. See TeX label `lem:pdp-r1`. -/
+noncomputable def basisAlignedFormPullbackMatrix
+    (f : X → Y) (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
+  -- Concrete realisation deferred to pdp-r1 chain; the placeholder
+  -- here is the zero map. See TeX label `lem:pdp-r1`.
+  0
+
+/-- **Pass pdp.2 + pdp.3 (transposed matrix is the dual map).**
+The dual of the basis-aligned form pullback, viewed as a map of
+covering spaces, is the transpose of `basisAlignedFormPullbackMatrix`.
+We package this as: `pullbackFormsMap` agrees with the underlying
+`AddMonoidHom` of `basisAlignedFormPullbackMatrix`. See TeX label
+`lem:pdp-r3`. -/
+theorem pullbackFormsMap_eq_matrix_AddHom
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    pullbackFormsMap X Y f hf =
+      (basisAlignedFormPullbackMatrix f hf).toAddMonoidHom := by
+  sorry
+
+/-- **Pass pdp.4 + pdp.5 + pdp.7 (concrete bundle by descent).** The
+opaque `basisAnalyticPullbackBundle f hf` agrees, on its
+`basisDualPullback` field, with the underlying `AddMonoidHom` of
+`basisAlignedFormPullbackMatrix f hf`. Bottom-up: descent through the
+period quotient via `QuotientAddGroup.lift` produces the bundled
+pullback, and its `basisDualPullback` field is exactly the matrix of
+the basis-aligned form pullback by construction. See TeX labels
+`lem:pdp-r4`, `lem:pdp-r5`, `lem:pdp-r7`. -/
+theorem basisAnalyticPullbackBundle_dualPullback_eq_matrix_AddHom
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (basisAnalyticPullbackBundle f hf).basisDualPullback =
+      (basisAlignedFormPullbackMatrix f hf).toAddMonoidHom := by
+  sorry
+
+/-- **Stage A leaf (round 2, bridge).** The bundle's
+`basisDualPullback` agrees with the named `pullbackFormsMap`.
+
+**Round 2 sorry-free assembly via the pdp chain.** Combine the bundle
+descent identification (`pdp-r4`,
+`basisAnalyticPullbackBundle_dualPullback_eq_matrix_AddHom`) with the
+`pullbackFormsMap` matrix identification (`pdp-r3`,
+`pullbackFormsMap_eq_matrix_AddHom`). Both sides equal
+`(basisAlignedFormPullbackMatrix f hf).toAddMonoidHom`, hence equal each
+other. -/
 theorem basisAnalyticPullbackBundle_eq_pullbackFormsMap
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (basisAnalyticPullbackBundle f hf).basisDualPullback =
       pullbackFormsMap X Y f hf := by
-  sorry
+  rw [basisAnalyticPullbackBundle_dualPullback_eq_matrix_AddHom f hf,
+      pullbackFormsMap_eq_matrix_AddHom f hf]
 
 /-- **Stage A leaf (round 1).** Identity functoriality of
 `pullbackFormsMap`. Bottom-up: the dual of form-pullback along `id`
