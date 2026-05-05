@@ -1,3 +1,4 @@
+import Jacobian.StageB.KahlerStructure
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.CategoryTheory.Sites.Sheaf
@@ -52,6 +53,24 @@ def canonicalSheaf : Type := PUnit
 holomorphic 1-forms on `U`. -/
 theorem canonicalSheaf_sections (_U : Set X) : True := by trivial
 
+/-! ### Sheaf of holomorphic `p`-forms -/
+
+/-- The sheaf `Ω^p_X` of holomorphic `p`-forms on a complex manifold.
+At `p = 0` it agrees with `structureSheaf`; at `p = 1` it agrees with
+`canonicalSheaf`.  All three are stubbed as `PUnit` at this layer. -/
+def holomorphicFormSheaf (_X : Type) [TopologicalSpace _X] [ChartedSpace ℂ _X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) _X]
+    (_p : ℕ) : Type := PUnit
+
+instance (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (p : ℕ) : AddCommGroup (holomorphicFormSheaf X p) := by
+  unfold holomorphicFormSheaf; infer_instance
+instance (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (p : ℕ) : Module ℂ (holomorphicFormSheaf X p) := by
+  unfold holomorphicFormSheaf; infer_instance
+
 /-! ### Sheaf cohomology -/
 
 /-- Sheaf cohomology `H^q(X, F)` for a coherent sheaf `F` on `X`. -/
@@ -102,16 +121,30 @@ theorem coherent_sheaf_cohomology_vanishing_high_degree
 
 /-! ### Dolbeault isomorphism -/
 
-/-- **Dolbeault isomorphism.** `H^q(X, Ω^p) ≅ H^{p,q}_{∂̄}(X)`
-(Dolbeault cohomology). -/
-theorem dolbeault_isomorphism (p q : ℕ) :
-    True := by trivial
+/-- **Dolbeault isomorphism (typed contract).**  The `(p,q)`-bidegree
+form of Dolbeault: `H^{p,q}_{∂̄}(X) ≃ₗ[ℂ] H^q(X, Ω^p_X)`.
+
+The typed contract is what consumers (R7's `dolbeault_overview`, the
+analytic-to-algebraic bridge in Serre duality) actually need.  At
+this layer both sides are still placeholder `PUnit`s, so the
+equivalence is `LinearEquiv.refl`; once the analytic side
+(`DolbeaultH`, owned by R5/R7-sub-A in the blueprint, see
+`Jacobian/StageB/KahlerStructure.lean`) and the sheaf side
+(`sheafH`, owned by R8/R7-sub-D, this file) are realised, the
+contract — but not its callers — is what flips from trivial to
+substantive. -/
+noncomputable def dolbeault_isomorphism (p q : ℕ) :
+    DolbeaultH X p q ≃ₗ[ℂ] sheafH (holomorphicFormSheaf X p) q := by
+  unfold DolbeaultH sheafH
+  exact LinearEquiv.refl ℂ PUnit
 
 /-- For `p = 0` (the case used in Serre duality):
-`H¹(X, 𝒪) ≅ H^{0,1}_{∂̄}(X)`. -/
-theorem dolbeault_iso_zero_one
+`H^{0,1}_{∂̄}(X) ≃ₗ[ℂ] H¹(X, 𝒪_X)`. -/
+noncomputable def dolbeault_iso_zero_one
     [CompactSpace X] :
-    True := by trivial
+    DolbeaultH X 0 1 ≃ₗ[ℂ] sheafH (structureSheaf : Type) 1 := by
+  unfold DolbeaultH sheafH
+  exact LinearEquiv.refl ℂ PUnit
 
 /-! ### TOPDOWN drill -/
 
