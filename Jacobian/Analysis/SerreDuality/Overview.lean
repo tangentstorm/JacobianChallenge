@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.SerreDualityRS
 import Jacobian.StageB.SerreDuality
 import Jacobian.StageB.CoherentSheaves
 import Jacobian.StageB.KahlerStructure
+import Jacobian.Analysis.SobolevElliptic.HeadlinePlugIn
 import Jacobian.Analysis.SerreDuality.ResidueChain
 
 /-!
@@ -55,6 +56,25 @@ theorem serre_duality_overview
       (_ : Module ℂ (RSSheafCohomology X dualSheaf 1)),
       Nonempty (SerreDualityRSDatum X F dualSheaf) :=
   serre_duality_rs X F
+
+/-- **R8 headline (substantive companion).**  The harmonic-form
+finite-dimensionality input to Serre duality, routed through R10's
+`HasLaplaceResolvent` framework.  Serre duality on a compact
+Riemann surface uses the harmonic representative of each cohomology
+class to realize the trace pairing as the `L²`-pairing on
+harmonic forms; finite-dimensionality of `H^1(X, 𝒪_X)` reduces to
+`Module.Finite ℝ (RealHarmonic X μ)` for the Kähler volume measure
+`μ`.  Once `HasLaplaceResolvent X μ` is supplied (model-specific
+or from manifold-Sobolev infrastructure), this lemma is automatic. -/
+theorem serre_duality_harmonic_finite_dim_substantive
+    {N : Type} [TopologicalSpace N] [MeasurableSpace N] [BorelSpace N]
+    [CompactSpace N]
+    (μ : MeasureTheory.Measure N)
+    [JacobianChallenge.Analysis.BundledForms.IsManifoldMeasure N μ]
+    [JacobianChallenge.Analysis.SobolevElliptic.HasLaplaceResolvent N μ] :
+    Module.Finite ℝ
+      (JacobianChallenge.Analysis.SobolevElliptic.RealHarmonic N μ) :=
+  JacobianChallenge.Analysis.SobolevElliptic.moduleFinite_realHarmonic N μ
 
 /-! ### Phase 1 — dualizing sheaf -/
 

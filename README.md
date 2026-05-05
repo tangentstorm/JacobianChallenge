@@ -56,6 +56,21 @@ Prefer the narrowest module build after a code change (e.g. `lake build Jacobian
 - `tex/` — blueprint LaTeX sources.
 - `ref/plan.md`, `ref/PROMPT.md`, `ref/methodology.md` — project plan and operating notes.
 
+## R10 (Sobolev / elliptic regularity) status
+
+R10, the largest classical-analysis sub-gap (blueprint estimate 4500–6500 LOC), is dispatched end-to-end on the spectral-shortcut route against unmodified Mathlib v4.28.0. The framework reduces the headline `Module.Finite ℝ (RealHarmonic M μ)` to a single typeclass `HasLaplaceResolvent M μ`. Downstream R5 (Hodge decomposition), R7 (Dolbeault), and R8 (Serre duality) consume the framework via parallel substantive companion theorems.
+
+Files:
+
+- `Jacobian/Analysis/SobolevElliptic/ModelSymbol.lean` — model-space ellipticity (chain K2)
+- `Jacobian/Analysis/BundledForms/{SmoothFun,Omega0,L2Norm,L2Completion}.lean` — real `L²(M, μ)`
+- `Jacobian/StageB/RiemannianMetricBundled.lean` — real Riemannian metric typeclass
+- `Jacobian/Analysis/SobolevElliptic/{AbstractFredholmResolvent,AbstractResolvent,HeadlinePlugIn,RealizabilityWitness}.lean` — abstract spectral chain + headline plug-in + finite-dim witness
+
+The residual analytic gap is exactly the construction of a non-trivial `HasLaplaceResolvent` instance: `H¹(M)` (manifold Sobolev) + Rellich–Kondrachov + spectral correspondence to a classical `ker Δ`. All three are `ABSENT` in Mathlib v4.28.0; future work plugs into the framework without changing the spectral-output side.
+
+See `tex/sections/12-classical-analysis-gaps.tex` (subsection `R10 Phases 1–4 dispatch`) for the milestone narrative and `aristotle_tasks.md` for the file-level breakdown.
+
 ## License
 
 MIT — see `LICENSE`.
