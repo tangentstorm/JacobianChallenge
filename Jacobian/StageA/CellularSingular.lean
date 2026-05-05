@@ -76,6 +76,17 @@ noncomputable instance (K : AbstractSimplicialComplex V) (n : ℕ) :
 
 /-! ### Comparison map -/
 
+/-- The standard `i`-th face inclusion `Δⁿ ↪ Δⁿ⁺¹` as a `ContinuousMap`,
+extracted from `SimplexCategory.toTop.map (SimplexCategory.δ i)` via
+the TopCat-morphism's underlying `ContinuousMap` (`Hom.hom`).
+
+Used by `rawSingularBoundary` (the alternating face sum on singular
+chains). The TOPDOWN-drill alias `stdSimplex_face_inclusion` (Round 11)
+forwards to this. -/
+noncomputable def stdSimplexFaceInclusion (n : ℕ) (i : Fin (n + 2)) :
+    C(stdSimplex n, stdSimplex (n + 1)) :=
+  (SimplexCategory.toTop.map (SimplexCategory.δ i)).hom
+
 /-- A vertex of an `n`-simplex (as an element of `Geometric K = V`).
 
 After the StageA refactor `Geometric K := V`, this is simply a chosen
@@ -115,15 +126,21 @@ noncomputable def cellularToSingularChain
 
 /-- The "raw" singular boundary `∂_n : C_n^sing → C_{n-1}^sing`: signed
 sum of face composites
-`(σ : Δⁿ → X) ↦ Σᵢ (-1)ⁱ (σ ∘ d_i)`, where `d_i : Δ^{n-1} → Δⁿ` is the
-`i`-th face inclusion (`SimplexCategory.toTop.map` of the standard
-face map). Sorry'd at this round; substantive form uses
-`SimplexCategory.δ` for the face inclusions and `Finsupp.lift` for the
-linear extension. -/
+`(σ : Δⁿ → X) ↦ Σᵢ (-1)ⁱ (σ ∘ δ_i)`, where `δ_i : Δⁿ → Δⁿ⁺¹` is the
+`i`-th face inclusion (`stdSimplexFaceInclusion`).
+
+Substantive form: linear extension via `Finsupp.lift` of the
+basis-level alternating sum; both `stdSimplexFaceInclusion`
+(`SimplexCategory.toTop.map (SimplexCategory.δ i)`) and `Finsupp.lift`
+are direct Mathlib hooks. -/
 noncomputable def rawSingularBoundary
     (X : Type) [TopologicalSpace X] (n : ℕ) :
     (SingularSimplex X (n + 1) →₀ ℤ) →ₗ[ℤ] (SingularSimplex X n →₀ ℤ) :=
-  sorry
+  Finsupp.lift _ ℤ _ (fun σ : SingularSimplex X (n + 1) =>
+    ∑ i : Fin (n + 2),
+      (-1 : ℤ) ^ i.val •
+        Finsupp.single (ContinuousMap.comp σ (stdSimplexFaceInclusion n i))
+          (1 : ℤ))
 
 /-- The comparison map is a chain map (commutes with boundary):
 `∂^sing ∘ Φ_{n+1} = Φ_n ∘ ∂^cell`. Sorry'd; the substantive version is
@@ -672,14 +689,15 @@ noncomputable def cellular_face_sign
     (_s : K.nSimplices (n + 1)) (_t : K.nSimplices n) : ℤ :=
   sorry
 
-/-- **Round 11.** *Sub-leaf of `characteristic_singular_face_compat`.*
-The standard `i`-th face inclusion `Δⁿ ↪ Δⁿ⁺¹` as a `ContinuousMap`.
-Direct Mathlib hook: `SimplexCategory.toTop.map (SimplexCategory.δ i)`,
-coerced from a `TopCat` morphism to `C(_, _)`. Sorry'd at this round
-pending the precise coercion. -/
-noncomputable def stdSimplex_face_inclusion (n : ℕ) (_i : Fin (n + 2)) :
+/-- **Round 11 — substantive.** Sub-leaf of
+`characteristic_singular_face_compat`: the standard `i`-th face
+inclusion `Δⁿ ↪ Δⁿ⁺¹` as a `ContinuousMap`. Forwards to the
+file-scope `stdSimplexFaceInclusion`, which is the
+`SimplexCategory.toTop.map (SimplexCategory.δ i)`-via-`Hom.hom` form
+used to define `rawSingularBoundary`. -/
+noncomputable def stdSimplex_face_inclusion (n : ℕ) (i : Fin (n + 2)) :
     C(stdSimplex n, stdSimplex (n + 1)) :=
-  sorry
+  stdSimplexFaceInclusion n i
 
 /-- **Round 11.** *Sub-leaf:* the `i`-th simplicial face of an
 `(n+1)`-simplex `s ∈ K_{n+1}`, returning the corresponding `n`-simplex.
@@ -701,15 +719,16 @@ noncomputable def rawSingularBoundary_basis
       Finsupp.single
         (ContinuousMap.comp σ (stdSimplex_face_inclusion n i)) (1 : ℤ)
 
-/-- **Round 12.** *Sub-leaf:* `rawSingularBoundary` agrees with
-`rawSingularBoundary_basis` on basis elements (factoring through
-`Finsupp.lift`). Sorry'd; will become `rfl` once `rawSingularBoundary`
-is filled in via `Finsupp.lift`. -/
+/-- **Round 12 — substantive.** `rawSingularBoundary` agrees with
+`rawSingularBoundary_basis` on basis elements: dispatches via
+`Finsupp.lift_apply_single`/`Finsupp.lift_apply` and unfolds the
+`stdSimplex_face_inclusion`/`stdSimplexFaceInclusion` alias. -/
 theorem rawSingularBoundary_apply_single
     (X : Type) [TopologicalSpace X] (n : ℕ) (σ : SingularSimplex X (n + 1)) :
     (rawSingularBoundary X n) (Finsupp.single σ 1) =
-      rawSingularBoundary_basis X n σ :=
-  sorry
+      rawSingularBoundary_basis X n σ := by
+  unfold rawSingularBoundary rawSingularBoundary_basis stdSimplex_face_inclusion
+  simp [Finsupp.lift_apply, Finsupp.sum_single_index]
 
 /-- **Round 13.** *Sub-leaf of `cellular_pair_exact`.* Algebraic
 exactness at the `n`-degree of the cellular chain complex (rephrased
