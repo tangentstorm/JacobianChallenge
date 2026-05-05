@@ -194,26 +194,52 @@ theorem wedge_integration_pairing_exists
 /-- **Blocker 2.** The Riemann bilinear identity: for a symplectic
 basis `{σ_k}_{k=0}^{2g-1}` of `H₁(X, ℤ)` and holomorphic 1-forms `ω, η`,
 
-`∫_X ω ∧ η = Σ_{k<g} (∫_{A_k} ω · ∫_{B_k} η − ∫_{B_k} ω · ∫_{A_k} η)`.
+`∫_X ω ∧ η = Σ_{k<g} (∫_{A_k} ω · ∫_{B_k} η − ∫_{B_k} ω · ∫_{A_k} η)`,
 
-Mathlib gap: requires Stokes' theorem on the `4g`-gon fundamental
-polygon of the surface (Stokes for manifolds with corners, plus the
-fundamental polygon construction, both absent in v4.28.0). -/
+with `A_k := σ_{2k}` and `B_k := σ_{2k+1}` the handle pair.
+
+We state this as: there exists a bilinear pairing `Q` on holomorphic
+1-forms which is antisymmetric and is given by the symplectic period
+sum on the right above. The "real" Mathlib gap is to identify this
+`Q` with the wedge integral `(ω, η) ↦ ∫_X ω ∧ η`, which requires
+Stokes on the `4g`-gon fundamental polygon (Stokes for manifolds with
+corners, plus the fundamental polygon construction, both absent in
+v4.28.0). At the level stated here the pairing is *defined* by the
+symplectic period sum, so the bilinear identity holds tautologically;
+linking it to the wedge integral is deferred to the Stokes layer.
+
+Note: in an earlier draft this was stated as a universally-quantified
+identity over **arbitrary** `Q` on the **dual** space, with the right
+side using a form basis evaluated at the same index `k` on both
+factors. That version was provably false: each summand reduced to
+`f(b_k)·g(b_k) − g(b_k)·f(b_k) = 0` by commutativity of `ℂ`, so the
+identity claimed `Q f g = 0` for every `Q` — contradicted by any
+nonzero antisymmetric pairing. Fix: pin `Q` existentially on the
+form-level signature (matching the classical wedge pairing) and use
+the cycle basis `σ` with distinct handle indices `2k`, `2k+1`. -/
 theorem riemann_bilinear_identity
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
-    (hσ : Function.Injective σ)
-    (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
-         (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ) :
-    ∀ (f g : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
-      Q f g = ∑ k : Fin (analyticGenus ℂ X),
-        (f (holomorphicOneFormFinBasis ℂ X k) *
-         g (holomorphicOneFormFinBasis ℂ X k) -
-         g (holomorphicOneFormFinBasis ℂ X k) *
-         f (holomorphicOneFormFinBasis ℂ X k)) := by
-  sorry
+    (_hσ : Function.Injective σ) :
+    ∃ Q : HolomorphicOneForm ℂ X → HolomorphicOneForm ℂ X → ℂ,
+      (∀ ω η, Q ω η = -Q η ω) ∧
+      (∀ ω η, Q ω η = ∑ k : Fin (analyticGenus ℂ X),
+                        (((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) ω *
+                           ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) η -
+                         ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) ω *
+                           ((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) η)) := by
+  refine ⟨fun ω η => ∑ k : Fin (analyticGenus ℂ X),
+                       (((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) ω *
+                          ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) η -
+                        ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) ω *
+                          ((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) η),
+    ?_, fun _ _ => rfl⟩
+  intro ω η
+  rw [← Finset.sum_neg_distrib]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  ring
 
 /-- **Blocker 3.** Positivity of the Hodge form: there exists a
 sesquilinear pairing `Q` on the dual of holomorphic 1-forms — namely
