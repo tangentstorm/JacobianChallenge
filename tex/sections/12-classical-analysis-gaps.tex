@@ -1789,7 +1789,7 @@ For a compact oriented Riemannian manifold, the Laplace–Beltrami operator $\De
 The Lean stub \code{sobolev\_laplacian\_elliptic} in
 \code{Overview.lean} is a typed placeholder
 (\code{IsElliptic := True}); the \emph{model-space} fibre witness
-(see Round~3, \cref{subsubsec:sle-round-3}, sle.r11--sle.r15) is
+(see Round~3, \ref{subsubsec:sle-round-3}, sle.r11--sle.r15) is
 discharged in \code{Jacobian/Analysis/SobolevElliptic/ModelSymbol.lean}
 as \code{Model.principalSymbol\_isElliptic}, with no \code{sorry} and
 no placeholder, against unmodified Mathlib v4.28.0.
@@ -1826,15 +1826,15 @@ From step 1 + Rellich–Kondrachov, $\Delta : H^{s+2}(\Omega^{k}) \to H^{s}(\Ome
 \begin{lemma}[Substantive headline: $\ker \Delta$ finite-dim via spectral shortcut]
 \label{lem:sobolev-elliptic-overview-substantive}
 \uses{lem:abstract-resolvent-eigenspace-finite-dim,lem:has-laplace-resolvent-class}
-Substantive replacement for \cref{lem:sobolev-elliptic-kernel-finite-dim}: given a
+Substantive replacement for \ref{lem:sobolev-elliptic-kernel-finite-dim}: given a
 \code{HasLaplaceResolvent} $M$ $\mu$ analytic input (a Hilbert space
 \code{Sobolev} with a compact embedding into $L^{2}(M, \mu)$), the
 spectral substitute \code{RealHarmonic} $M$ $\mu$ is
 finite-dimensional.  Discharged against unmodified Mathlib v4.28.0
 through the abstract-resolvent chain
-(\cref{lem:abstract-resolvent-self-adjoint},
-\cref{lem:abstract-resolvent-compact},
-\cref{lem:abstract-resolvent-eigenspace-finite-dim}).  No
+(\ref{lem:abstract-resolvent-self-adjoint},
+\ref{lem:abstract-resolvent-compact},
+\ref{lem:abstract-resolvent-eigenspace-finite-dim}).  No
 \code{sorry}, no \code{True}-valued bodies.
 \lean{JacobianChallenge.Analysis.SobolevElliptic.moduleFinite_realHarmonic}
 \leanok
@@ -1909,7 +1909,7 @@ the scalar Laplacian on a real inner-product space $E$ is
 invertible (a unit in $\R$) for every nonzero covector $\xi$.
 Dispatched fully against Mathlib via \code{real\_inner\_self\_pos}
 + \code{isUnit\_iff\_ne\_zero}; see
-\cref{subsubsec:sle-round-3} for the per-pass refinement.
+\ref{subsubsec:sle-round-3} for the per-pass refinement.
 \lean{JacobianChallenge.Analysis.SobolevElliptic.Model.principalSymbol_isElliptic}
 \leanok\mathlibok
 \end{lemma}
@@ -1951,7 +1951,7 @@ The Hilbert space $L^{2}(M, \mu)$ via
 \label{lem:hodge-harmonic-finite-dim-substantive}
 \uses{lem:sobolev-elliptic-overview-substantive}
 The R5 finite-dim conclusion routed through the R10 abstract
-resolvent chain.  Companion to \cref{lem:hodge-laplacian-kernel-finite-dim}
+resolvent chain.  Companion to \ref{lem:hodge-laplacian-kernel-finite-dim}
 that takes \code{[HasLaplaceResolvent N $\mu$]} as a typeclass
 hypothesis.
 \lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_harmonic_forms_finite_dim_substantive}
@@ -2035,7 +2035,7 @@ eigenspace''.
   in \code{Jacobian/Analysis/SobolevElliptic/ModelSymbol.lean}
   (\textsf{leanok}, no \code{sorry}, no \code{True}-valued bodies;
   $\sim 180$ LOC against Mathlib).  Fully closes Round~3 of chain
-  \texttt{sle} (\cref{subsubsec:sle-round-3}).
+  \texttt{sle} (\ref{subsubsec:sle-round-3}).
 
 \item \textbf{M1 (real $L^2$ substrate).}  Real Hilbert space
   $L^2(M, \mu)$ on a compact manifold $M$ with a finite Borel
@@ -4825,7 +4825,7 @@ $\Delta$ elliptic order 2 because principal symbol $|\xi|^{2}$ is invertible for
 \begin{lemma}[Pass sle.10: Mathlib endpoint]
 \label{lem:sle-r10}
 \uses{lem:sle-r11}
-\code{Matrix.PosDef} + \code{InnerProductSpace}.  Mathlib status: present.  Note: the LinearPDE/Symbol formalism around \code{ContinuousLinearMap} is what's missing for a full elliptic-PDE framework, but the matrix-level claim itself is present.  Round 3 (\cref{subsubsec:sle-round-3}) drills past this leaf into a fully dispatched model-space chain.
+\code{Matrix.PosDef} + \code{InnerProductSpace}.  Mathlib status: present.  Note: the LinearPDE/Symbol formalism around \code{ContinuousLinearMap} is what's missing for a full elliptic-PDE framework, but the matrix-level claim itself is present.  Round 3 (\ref{subsubsec:sle-round-3}) drills past this leaf into a fully dispatched model-space chain.
 \lean{Matrix.PosDef.invertible}
 \leanok\mathlibok
 \end{lemma}
