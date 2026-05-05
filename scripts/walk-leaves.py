@@ -73,7 +73,9 @@ for l in gap_inputs:
     print(f'  {l}')
     print(f'    file:   {n["file"]}')
     print(f'    target: {target}')
-    print(f'    flag:   {"\\notready" if n["notready"] else ("\\leanok" if n["leanok"] else "(none)")}')
+    flag = ('\\notready' if n['notready']
+            else ('\\leanok' if n['leanok'] else '(none)'))
+    print(f'    flag:   {flag}')
 
 print()
 print(f'## Other \\notready leaves: {len(gap_notready)}')

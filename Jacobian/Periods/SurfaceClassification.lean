@@ -298,7 +298,7 @@ theorem singularH1_unit_subsingleton :
     Subsingleton (singularH1 Unit) :=
   ModuleCat.subsingleton_of_isZero <|
     AlgebraicTopology.isZero_singularHomologyFunctor_of_totallyDisconnectedSpace
-      (ModuleCat.{0} ℤ) 1 (ModuleCat.of ℤ (ULift.{0} ℤ)) (TopCat.of Unit) one_ne_zero
+      (ModuleCat.{0} ℤ) 1 (ModuleCat.of ℤ ℤ) (TopCat.of Unit) one_ne_zero
 
 /-- **Frontier leaf (homotopy invariance of singular `H₁`).** A
 homotopy equivalence `X ≃ₕ Y` induces a ℤ-linear isomorphism on
