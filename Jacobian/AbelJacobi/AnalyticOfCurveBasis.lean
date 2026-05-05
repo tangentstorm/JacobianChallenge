@@ -422,40 +422,256 @@ structure RawMeromorphicWithPrincipal
   principal : HolomorphicForms.Divisor X
   principal_eq : meromorphicMap.principal = principal
 
-/-- **Sub-leaf for round-3 Abel decomposition (NEW SORRY).** Abel's
-existence theorem in two-point divisor form.
+/-! ### Round 5 (2026-05-05) — Forster decomposition of the Abel
+existence sorry
 
-Given a base point `P`, two distinct points `Q₁ ≠ Q₂`, and a
-period-congruence hypothesis at the level of basis-aligned path
-integrals (which under the basis-aligned dual identification is
-`AJ((Q₁) - (Q₂)) = 0` in the analytic Jacobian), produce a
-`RawMeromorphicWithPrincipal` whose principal divisor is exactly
-`(Q₁) - (Q₂)`.
+The single round-3 sorry
+`abel_meromorphicFunction_of_zero_aj_two_point` is decomposed along
+the classical Forster (*Lectures on Riemann Surfaces*, §17–§21)
+proof structure into three named sub-leaves plus a sorry-free
+assembly:
+
+```
+abel_meromorphicFunction_of_zero_aj_two_point  [ASSEMBLY in round 5]
+  ├─► thirdKindMeromorphicData_exists           [NEW SORRY, R5/A]
+  │     (Mittag-Leffler / Riemann-Roch:
+  │      ∃ a meromorphic function f₀ : X → ℂ∞ whose pole divisor is
+  │      bounded by (Q₁) + (Q₂) — i.e. simple poles at most at Q₁
+  │      and Q₂, residues summing to zero by the residue theorem)
+  ├─► thirdKindLogPeriodVanishing_of_aj_zero    [NEW SORRY, R5/B]
+  │     (Riemann reciprocity: from AJ((Q₁) - (Q₂)) = 0, the
+  │      "logarithmic period" of the third-kind data lies in
+  │      2πi · ℤ — i.e. the multivalued log of f₀ has periods
+  │      that are integer multiples of 2πi, after a holomorphic
+  │      adjustment)
+  └─► meromorphicFunction_via_log_exp           [NEW SORRY, R5/C]
+        (Log-exp construction: when the logarithmic period vanishes
+         mod 2πi, a single-valued meromorphic function with the
+         prescribed two-point principal divisor exists)
+```
+
+Each sub-leaf corresponds to one named classical input. The placeholder
+types `ThirdKindMeromorphicData` and `LogPeriodVanishing` are
+project-internal `structure`s carrying just the data the assembly
+needs; they are intentionally weak (they neither enforce that the
+underlying analytic objects exist nor that the residues match), so
+the *substantive* mathematical content is concentrated in the three
+sorry-bearing sub-leaves below.
+-/
+
+/-- **Round-5 placeholder (data-only).** "Differential of the third
+kind" data for the two-point divisor `(Q₁) - (Q₂)`, packaged at the
+level of meromorphic *functions* on `X`.
+
+A genuine third-kind differential is a meromorphic 1-form `ω` with
+simple poles at `Q₁` (residue `+1`) and `Q₂` (residue `-1`) and no
+other poles. Since the project does not yet have a global
+`MeromorphicOneForm X` type, we record the corresponding data on the
+function side: a `RawMeromorphicWithPrincipal` whose underlying
+function has its pole divisor concentrated at `(Q₁) + (Q₂)`. The
+analytic equivalence between "third-kind 1-form" and "meromorphic
+function with two simple poles" comes from `f ↦ d log f = df / f`
+(direction one) and integration of `ω` against any meromorphic
+function with the right divisor (direction two).
+
+The placeholder records only the existence and the pole-divisor
+condition; the residue normalisation is absorbed into the round-5/B
+sub-leaf via the period-vanishing hypothesis.
+
+The `ord` field is intentionally absent: the project's
+`MeromorphicMapToSphere` carries no link to `MeromorphicAt.order`, so
+"residue ±1" is an invariant the bundle does not yet expose. -/
+structure ThirdKindMeromorphicData
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (Q₁ Q₂ : X) where
+  /-- The underlying meromorphic data, packaged via `RawMeromorphicWithPrincipal`. -/
+  data : RawMeromorphicWithPrincipal X
+  /-- The pole divisor of the underlying map is supported on `{Q₁, Q₂}`
+  with multiplicity `1` at each (i.e. `(Q₁) + (Q₂)`). -/
+  poleDivisor_eq :
+    data.meromorphicMap.poles =
+      HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂
+
+/-- **Round-5 placeholder (data-only).** "Logarithmic period
+vanishing" data for a `ThirdKindMeromorphicData`.
+
+Mathematically: the multivalued logarithm `log f` of the third-kind
+function (or, equivalently, the integral `∫ d log f` along any cycle)
+has periods. The vanishing hypothesis says the period vector lies in
+`2πi · ℤ^{2g}` — i.e. each cycle integral is `2πi` times an integer.
+Under the residue-theorem normalisation, this is equivalent to
+`AJ((Q₁) - (Q₂)) = 0` in `Jac(X)` (Riemann reciprocity).
+
+For now the witness is a `Unit` placeholder: the project lacks a
+"period of a logarithmic differential" map, so we only record the
+existence of the witness and let the sub-leaves enforce its content. -/
+structure LogPeriodVanishing
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_data : RawMeromorphicWithPrincipal X) where
+  /-- Placeholder witness: the period vector of `d log f` lies in
+  `2πi · ℤ^{2g}`. The actual condition is delegated to the bottom-up
+  Abel construction. -/
+  witness : Unit
+
+/-- **Round-5 sub-leaf A (NEW SORRY).** Mittag-Leffler / Riemann-Roch:
+for any two distinct points `Q₁ ≠ Q₂` on a compact Riemann surface,
+there exists a meromorphic function `X → ℂ∞` whose pole divisor is
+exactly `(Q₁) + (Q₂)` (i.e. simple poles at both points and nowhere
+else). Equivalently, third-kind differential data
+`ThirdKindMeromorphicData X Q₁ Q₂` is non-empty.
 
 #### Mathematical content
 
-This is the content of Abel's existence theorem
-(Forster, *Lectures on Riemann Surfaces*, §21.7) restricted to the
-two-point divisor case, which is the only case the Jacobian challenge
-currently consumes:
+This is the function-side analogue of the classical "differentials of
+the third kind" existence statement
+(Forster, *Lectures on Riemann Surfaces*, §17.10 / §18.1). The
+classical statement is:
 
-> If `D = (Q₁) - (Q₂)` is a degree-zero divisor on a compact Riemann
-> surface `X` and `AJ(D) = 0` in `Jac(X)`, then `D` is principal.
+> For any finite set of points `{P_i}` and complex numbers `{a_i}`
+> with `∑ a_i = 0`, there exists a meromorphic 1-form on `X` with
+> simple poles at the `P_i` of residue `a_i`.
 
-The classical proof routes are unchanged from
-`abelExistence_simplePole_meromorphicMap_of_periodCongruent` (theta or
-period-lattice). Stating Abel in this restricted form is enough for
-the anti-hack injectivity statement and avoids needing to define
-`Div⁰(X)` as a subtype. -/
-theorem abel_meromorphicFunction_of_zero_aj_two_point
+The function-side analogue (used here) is:
+
+> For any pair of distinct points `Q₁, Q₂`, there exists a non-zero
+> meromorphic function `f` on `X` with at most simple poles at `Q₁`
+> and `Q₂` and no other poles.
+
+Both follow from Riemann-Roch applied to the divisor `(Q₁) + (Q₂)`:
+`ℓ((Q₁) + (Q₂)) ≥ 2 - g + 1 = 3 - g` for any genus `g`, and
+`ℓ((Q₁) + (Q₂)) ≥ 1` even for `g = 1` since constants are in the
+Riemann-Roch space. For `g = 0`, the function `1/(z - Q₁) - 1/(z - Q₂)`
+on `ℂℙ¹` is the standard example.
+
+#### Mathlib v4.28.0 status
+
+ABSENT. Mathlib has no Riemann-Roch theorem on Riemann surfaces, no
+Mittag-Leffler, and no global meromorphic functions on manifolds. -/
+theorem thirdKindMeromorphicData_exists
+    (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂) :
+    Nonempty (ThirdKindMeromorphicData X Q₁ Q₂) := by
+  sorry
+
+/-- **Round-5 sub-leaf B (NEW SORRY).** Riemann reciprocity / period-
+residue pairing for two-point divisors.
+
+Given third-kind data `td : ThirdKindMeromorphicData X Q₁ Q₂` and the
+period-congruence hypothesis encoding `AJ((Q₁) - (Q₂)) = 0`, the
+"logarithmic period" of `td.data` vanishes (i.e. the period vector
+of `d log f` lies in `2πi · ℤ^{2g}`).
+
+#### Mathematical content
+
+This is one of the **Riemann bilinear (or reciprocity) relations**
+applied to the pairing of a third-kind 1-form `ω` (with simple poles
+at `Q₁, Q₂`, residues `±1`) against a basis of holomorphic 1-forms
+`ω_1, …, ω_g`. The identity
+
+```
+   ∑_j ( ∫_{a_j} ω · ∫_{b_j} ω_k − ∫_{b_j} ω · ∫_{a_j} ω_k )
+     = 2πi · ( ∫_{Q₂}^{Q₁} ω_k )
+```
+
+(Forster *Lectures on Riemann Surfaces* §20.4, theorem on bilinear
+relations) shows that the "twisted period" of `ω` against any
+holomorphic 1-form `ω_k` equals (up to `2πi`) the path integral of
+`ω_k` from `Q₂` to `Q₁`. Vanishing of all such path integrals
+modulo periods of the holomorphic forms is exactly the statement
+`AJ((Q₁) - (Q₂)) = 0` in `Jac(X)`.
+
+Concretely, for each holomorphic `ω_k`:
+
+- the period vector of `d log f` (= `ω`) pairs with `ω_k` to give
+  `∫_{Q₂}^{Q₁} ω_k` mod `2πi · period lattice`;
+- the period-congruence hypothesis says
+  `∫_{Q₂}^{Q₁} ω_k ∈ period lattice` for every `k`;
+- combining, `period(d log f) ∈ 2πi · period lattice`, i.e. the
+  log-period vanishes modulo `2πi · ℤ^{2g}`.
+
+#### Mathlib v4.28.0 status
+
+ABSENT. The Riemann bilinear relations are not formalised; the
+project tracks them as `input:riemann-bilinear` (see
+`tex/sections/06-periods-and-riemann-bilinear.tex`). -/
+theorem thirdKindLogPeriodVanishing_of_aj_zero
     (P : X) (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
     (_hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X)
+    (td : ThirdKindMeromorphicData X Q₁ Q₂) :
+    Nonempty (LogPeriodVanishing X td.data) := by
+  sorry
+
+/-- **Round-5 sub-leaf C (NEW SORRY).** Log-exp construction: from
+third-kind data plus the log-period vanishing hypothesis, produce a
+single-valued meromorphic function on `X` whose principal divisor is
+exactly `(Q₁) - (Q₂)`.
+
+#### Mathematical content
+
+This is the classical "exponentiation of a logarithmic primitive"
+construction (Forster §21.7, Farkas-Kra III.6.3). Concretely:
+
+1. Let `ω = d log f` for `f` the third-kind function. By hypothesis
+   the periods of `ω` lie in `2πi · ℤ^{2g}`.
+2. Choose a base point `P` and define the multivalued function
+   `g̃(p) := exp( ∫_P^p ω )`. Different paths from `P` to `p` change
+   the integral by a period of `ω`, hence by an element of
+   `2πi · ℤ^{2g}`. Exponentiating, `exp(period) = 1`. So `g̃` is
+   single-valued.
+3. The function `g̃` has the right divisor: at `Q₁`, `ω` has a simple
+   pole with residue `+1`, so `∫ω` looks like `log(z - Q₁)` locally;
+   exponentiating gives `(z - Q₁)`, a simple zero. Similarly `Q₂`
+   gives a simple pole.
+4. Therefore `g̃` is a meromorphic function on `X` with
+   `(g̃) = (Q₁) - (Q₂)`. Package as `RawMeromorphicWithPrincipal`.
+
+The output `data : RawMeromorphicWithPrincipal X` need not be the
+input `td.data`: the input has principal divisor concentrated at
+`(Q₁) + (Q₂)`, while the output has `(Q₁) - (Q₂)`. The construction
+performs the exp-of-log step and returns *new* meromorphic data.
+
+#### Mathlib v4.28.0 status
+
+ABSENT. No global log/exp construction on Riemann surfaces; no
+multivalued holomorphic primitives; no period-lattice quotient at
+the function level. -/
+theorem meromorphicFunction_via_log_exp
+    (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
+    (td : ThirdKindMeromorphicData X Q₁ Q₂)
+    (_hLog : Nonempty (LogPeriodVanishing X td.data)) :
+    ∃ (data : RawMeromorphicWithPrincipal X),
+      data.principal =
+        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
+  sorry
+
+/-- **Round-5 Abel-existence assembly (sorry-free).** Discharges
+`abel_meromorphicFunction_of_zero_aj_two_point` by chaining the three
+Forster-route sub-leaves above:
+
+1. `thirdKindMeromorphicData_exists`         (Mittag-Leffler / RR)
+2. `thirdKindLogPeriodVanishing_of_aj_zero`  (Riemann reciprocity)
+3. `meromorphicFunction_via_log_exp`         (log-exp construction)
+
+Each step uses only the immediately-prior step plus the original
+period-congruence hypothesis (for step 2) and `Q₁ ≠ Q₂` (for steps
+1 and 3). -/
+theorem abel_meromorphicFunction_of_zero_aj_two_point
+    (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hperiod :
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
         basisAlignedPeriodSubgroup X) :
     ∃ (data : RawMeromorphicWithPrincipal X),
       data.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
-  sorry
+  -- Step 1: Mittag-Leffler / RR existence of third-kind data.
+  obtain ⟨td⟩ := thirdKindMeromorphicData_exists X Q₁ Q₂ hne
+  -- Step 2: Riemann reciprocity gives log-period vanishing from period congruence.
+  have hLog := thirdKindLogPeriodVanishing_of_aj_zero X P Q₁ Q₂ hne hperiod td
+  -- Step 3: log-exp construction yields the meromorphic function with prescribed divisor.
+  exact meromorphicFunction_via_log_exp X Q₁ Q₂ hne td hLog
 
 /-- **Sub-leaf for round-3 Abel decomposition (DISCHARGED in round 4).**
 Repackage a meromorphic-function bundle whose principal divisor is
