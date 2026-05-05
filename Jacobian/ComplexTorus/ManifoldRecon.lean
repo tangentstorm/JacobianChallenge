@@ -111,7 +111,8 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 Aristotle: try to construct this. Even a partial construction with
 named sorries is valuable. Likely the construction needs local
 sections of `mk` over a fundamental domain — name what's missing. -/
-axiom quotientChartedSpace : ChartedSpace V (quotient V Λ)
+def quotientChartedSpace : ChartedSpace V (quotient V Λ) := by
+  sorry
   -- ════════════════════════════════════════════════════════════
   -- RECONNAISSANCE NOTES for `quotientChartedSpace`
   -- ════════════════════════════════════════════════════════════
@@ -184,9 +185,10 @@ axiom quotientChartedSpace : ChartedSpace V (quotient V Λ)
 
 Depends on `quotientChartedSpace`. Document the smoothness obligation
 and which Mathlib lemma would be expected to discharge it. -/
-axiom quotientIsManifold :
+def quotientIsManifold :
     haveI := quotientChartedSpace Λ
-    IsManifold (modelWithCornersSelf ℂ V) ω (quotient V Λ)
+    IsManifold (modelWithCornersSelf ℂ V) ω (quotient V Λ) := by
+  sorry
   -- ════════════════════════════════════════════════════════════
   -- RECONNAISSANCE NOTES for `quotientIsManifold`
   -- ════════════════════════════════════════════════════════════

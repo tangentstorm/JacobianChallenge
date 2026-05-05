@@ -144,7 +144,7 @@ by 2 named sub-obligations + a sorry-free assembly. -/
 
 section SupNormAssembly
 
-open Bundle SectionFiberNorm SectionSupNorm SectionMetric
+open SectionFiberNorm SectionSupNorm SectionMetric
 
 /-- **Prerequisite 1 (sorry).** Fiberwise norm of a holomorphic 1-form is
 continuous.
@@ -153,30 +153,12 @@ For the `E = ℂ` specialisation the fibers `CotangentSpace ℂ X x` are
 `ℂ →L[ℂ] ℂ ≃ₗᵢ[ℂ] ℂ`, so `‖σ x‖ = |(σ x) 1|`. Since `σ` is smooth
 (hence continuous into the total space) and evaluation at `1` is a
 continuous linear map, `x ↦ |(σ x) 1|` is continuous. -/
-theorem holomorphicOneForm_trivialization_norm_compat
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (σ : HolomorphicOneForm ℂ X) :
-    ∀ (e : Trivialization (CotangentModelFiber ℂ)
-          (π (CotangentModelFiber ℂ) (CotangentSpace ℂ X))) (x : X),
-      x ∈ e.baseSet →
-        ‖σ.toFun x‖ =
-          ‖(e (TotalSpace.mk' (CotangentModelFiber ℂ) x (σ.toFun x))).2‖ := by
-  sorry
-
-/-- **Prerequisite 1 (assembly).** Fiberwise norm of a holomorphic
-1-form is continuous.  The general bundle-section theorem in
-`SectionFiberNorm` reduces this to the cotangent-bundle norm
-compatibility of local trivializations. -/
 theorem holomorphicOneForm_fiberNorm_continuous
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : HolomorphicOneForm ℂ X) :
-    Continuous (ContMDiffSection.fiberNorm σ) := by
-  exact ContMDiffSection.continuous_fiberNorm σ
-    (holomorphicOneForm_trivialization_norm_compat X σ)
+    Continuous (ContMDiffSection.fiberNorm σ) := by sorry
 
 /-- Package the fiberwise-norm-continuity into the `hcompat` form
 used by `SectionSupNorm` and `SectionMetric`. -/
@@ -233,39 +215,6 @@ Concentrates the genuine Mathlib gaps:
    (1)–(3) hold.
 
 (Integrated from subagent a8db8a8f8315e0535's TOPDOWN split.) -/
-theorem holomorphicOneForm_supNorm_cauchySeq_limit_candidate
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (σ : ℕ → HolomorphicOneForm ℂ X)
-    (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
-      (holomorphicOneForm_metricSpace X).toUniformSpace _ σ) :
-    ∃ _a : HolomorphicOneForm ℂ X, True := by
-  exact ⟨0, trivial⟩
-
-/-- **Completeness sub-obligation.** The candidate limit of a sup-norm
-Cauchy sequence is the actual sup-norm limit.
-
-Bottom-up content: construct the pointwise fiberwise limit, prove it is
-continuous and holomorphic by Weierstrass convergence for holomorphic
-sections, then upgrade uniform Cauchy convergence to convergence in
-`holomorphicOneForm_metricSpace`. -/
-theorem holomorphicOneForm_supNorm_cauchySeq_tendsto_candidate
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (σ : ℕ → HolomorphicOneForm ℂ X)
-    (hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
-      (holomorphicOneForm_metricSpace X).toUniformSpace _ σ) :
-    @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
-      (@nhds (HolomorphicOneForm ℂ X)
-        (holomorphicOneForm_metricSpace X).toUniformSpace.toTopologicalSpace
-        (Classical.choose
-          (holomorphicOneForm_supNorm_cauchySeq_limit_candidate X σ hCauchy))) := by
-  sorry
-
-/-- **Prerequisite 2a (assembly).** Every sup-norm Cauchy sequence of
-holomorphic 1-forms converges to a holomorphic 1-form. -/
 theorem holomorphicOneForm_supNorm_cauchySeq_tendsto
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -277,9 +226,7 @@ theorem holomorphicOneForm_supNorm_cauchySeq_tendsto
       @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
         (@nhds (HolomorphicOneForm ℂ X)
           (holomorphicOneForm_metricSpace X).toUniformSpace.toTopologicalSpace a) := by
-  refine ⟨Classical.choose
-    (holomorphicOneForm_supNorm_cauchySeq_limit_candidate X σ _hCauchy), ?_⟩
-  exact holomorphicOneForm_supNorm_cauchySeq_tendsto_candidate X σ _hCauchy
+  sorry
 
 /-- **Prerequisite 2 (sorry-free assembly).** Completeness of the
 sup-norm metric on `HolomorphicOneForm ℂ X`.
@@ -697,51 +644,6 @@ Mathlib gaps: Cauchy derivative estimate must be composed from
 `DiffContOnCl.circleIntegral_sub_inv_smul` +
 `circleIntegral.norm_integral_le_of_norm_le_const`; Weierstrass
 convergence theorem absent in v4.28.0. -/
-theorem holomorphicOneForm_montel_finite_chart_data
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    Nonempty Unit := by
-  exact ⟨()⟩
-
-/-- **Montel analytic ingredient.** The unit ball is chartwise
-equibounded and equicontinuous after extracting a finite chart cover.
-
-Bottom-up content: use `B.norm_le` to turn the abstract unit-ball bound
-into pointwise fiber bounds, express each form in local chart
-coordinates, then apply Cauchy derivative estimates on slightly smaller
-discs to obtain uniform Lipschitz estimates. -/
-theorem holomorphicOneForm_montel_chartwise_equicontinuous
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_B : HolomorphicOneFormBanachData X) :
-    Nonempty Unit := by
-  exact ⟨()⟩
-
-/-- **Montel analytic ingredient.** Chartwise equicontinuity and
-equiboundedness give a totally bounded closed unit ball.
-
-Bottom-up content: apply Arzela-Ascoli on each member of the finite
-chart cover, diagonalize across the finite cover, and use Weierstrass
-closure to keep the limit inside `HolomorphicOneForm ℂ X`. -/
-theorem holomorphicOneForm_closedBall_totallyBounded_from_arzela
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (B : HolomorphicOneFormBanachData X)
-    (_hcharts : Nonempty Unit)
-    (_hequicont : Nonempty Unit) :
-    @TotallyBounded (HolomorphicOneForm ℂ X)
-      B.toMetricSpace.toUniformSpace
-      (@Metric.closedBall (HolomorphicOneForm ℂ X)
-        B.toMetricSpace.toPseudoMetricSpace 0 1) := by
-  sorry
-
-/-- **Sub-obligation: total boundedness of the closed unit ball.**
-Sorry-free assembly from the finite-chart data, chartwise
-equicontinuity, and the Arzela-Ascoli/Weierstrass total-boundedness
-step. -/
 theorem holomorphicOneForm_closedBall_totallyBounded
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -751,9 +653,7 @@ theorem holomorphicOneForm_closedBall_totallyBounded
       B.toMetricSpace.toUniformSpace
       (@Metric.closedBall (HolomorphicOneForm ℂ X)
         B.toMetricSpace.toPseudoMetricSpace 0 1) := by
-  exact holomorphicOneForm_closedBall_totallyBounded_from_arzela X B
-    (holomorphicOneForm_montel_finite_chart_data X)
-    (holomorphicOneForm_montel_chartwise_equicontinuous X B)
+  sorry
 
 theorem holomorphicOneForm_montel_subseq_isCauchy
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
