@@ -290,6 +290,87 @@ def lint_file(path: str) -> list[tuple[int, str, str]]:
                              f"math-only macro; use \\code{{...}} or a "
                              f"Unicode literal: `{body[:80]}`"))
 
+    # 5d. Math-only macros (\C, \R, \Z, \N, \Q, \mathbb{...}, etc.) in
+    # plain text outside math mode.  pdflatex aborts with
+    #   ! LaTeX Error: \mathbb allowed only in math mode.
+    # Wrap the macro in \(...\) or use \ensuremath{\C}.
+    #
+    # Strategy: replace whole-file math regions (which may span lines)
+    # with newline-preserving padding, so leftover macros surface in
+    # the right line.  Then scan the residue for math-only macros.
+    math_only_in_text = re.compile(r"\\(?:R|Z|C|N|Q|mathbb|mathcal|mathfrak|"
+                                   r"mathrm|mathsf|mathtt|mathbf|mathit)\b")
+
+    def _blank_keep_lines(s: str) -> str:
+        """Replace a substring with newlines-only of the same line count,
+        so subsequent line-based scans see the right line numbers."""
+        return "\n" * s.count("\n")
+
+    text_no_math = text
+    # Display math \[...\]
+    text_no_math = re.sub(r"\\\[[\s\S]*?\\\]",
+                          lambda m: _blank_keep_lines(m.group(0)),
+                          text_no_math)
+    # Inline math \(...\)
+    text_no_math = re.sub(r"\\\([\s\S]*?\\\)",
+                          lambda m: _blank_keep_lines(m.group(0)),
+                          text_no_math)
+    # $...$ inline (allow multi-line, but bail at blank line which would
+    # have terminated the paragraph anyway).  Use newline-preserving
+    # padding so line numbers stay consistent.
+    text_no_math = re.sub(r"\$(?:[^$\\\n]|\\.|\n(?!\n))*?\$",
+                          lambda m: _blank_keep_lines(m.group(0)),
+                          text_no_math)
+    # Argument-only macros (\code{...}, \texttt{...}, \label{...}, etc.)
+    # These are detokenised or never typeset; their bodies are not
+    # math-mode but neither do they require math escaping.
+    # Use brace-balanced stripping (the bodies legitimately nest:
+    # \code{...\ensuremath{...}...}, \code{...\textsubscript{1}...}).
+    def _strip_brace_balanced(s: str, cmd: str) -> str:
+        out_parts: list[str] = []
+        i = 0
+        prefix = "\\" + cmd + "{"
+        while i < len(s):
+            j = s.find(prefix, i)
+            if j == -1:
+                out_parts.append(s[i:])
+                break
+            out_parts.append(s[i:j])
+            depth = 1
+            k = j + len(prefix)
+            while k < len(s) and depth > 0:
+                c = s[k]
+                if c == "{":
+                    depth += 1
+                elif c == "}":
+                    depth -= 1
+                    if depth == 0:
+                        k += 1
+                        break
+                k += 1
+            # Replace the whole \cmd{...} span with newline-preserving padding.
+            out_parts.append(_blank_keep_lines(s[j:k]))
+            i = k
+        return "".join(out_parts)
+
+    for cmd in ("code", "texttt", "verb", "label", "uses", "ref",
+                "lean", "leanok", "notready", "proves", "input",
+                "include", "fileurl"):
+        text_no_math = _strip_brace_balanced(text_no_math, cmd)
+    # \verb|...| (rare here)
+    text_no_math = re.sub(r"\\verb\|[^|\n]*\|", "", text_no_math)
+    # Remove comment lines so a `%` doesn't hide a real issue from
+    # split-by-line.
+    for ln_no, ln in enumerate(text_no_math.split("\n"), 1):
+        if ln.lstrip().startswith("%"):
+            continue
+        m = math_only_in_text.search(ln)
+        if m:
+            findings.append((ln_no, "math-macro-outside-math",
+                             f"math-only macro {m.group(0)!r} outside "
+                             f"math mode; wrap in \\(...\\) or use "
+                             f"\\ensuremath: {ln.strip()[:80]!r}"))
+
     # 6. Stray \\command at start of paragraph (rare but happens)
     for line_no, line in enumerate(lines, 1):
         # Look for \\X where X is letter, outside any math-mode strip
