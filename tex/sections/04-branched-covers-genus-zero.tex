@@ -762,6 +762,33 @@ bounded set is eventually avoided, hence the lifted function
 eventually lies in any neighbourhood of \(\infty\).
 \end{proof}
 
+\begin{lemma}[No ramification at degree 1]
+\label{lem:degree-one-no-ramification-detail}
+\uses{def:divisors-on-X}
+A pole-degree-1 meromorphic map has trivial ramification divisor:
+the local degree at every point is exactly 1.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.no\_ramification\_of\_pole\_degree\_one}
+\end{lemma}
+\begin{proof}
+Riemann--Hurwitz: \(2g(X)-2=\deg(f)(2g(\CPone)-2)+\deg(R)\), so
+\(\deg(R)=2g(X)+2(\deg(f))(g(\CPone)-1)\). With \(\deg(f)=1\) and
+\(g(\CPone)=0\), this gives \(\deg(R)=2g(X)-2\geq 0\), and with
+\(\deg(f)=1\) every fibre is a single (unramified) point, so
+\(\deg(R)=0\) and there is no ramification.
+\end{proof}
+
+\begin{lemma}[No ramification implies constant fibre cardinality]
+\label{lem:no-ramification-fiber-card-constant}
+A continuous meromorphic map without ramification on a compact
+connected manifold has fibres all of the same cardinality.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.fiber\_card\_constant\_of\_no\_ramification}
+\end{lemma}
+\begin{proof}
+Without ramification, the map is locally a covering map. On a
+compact connected base, the covering map has a constant degree
+(this is the standard local-global property of unbranched covers).
+\end{proof}
+
 \begin{lemma}[Compact image]
 \label{lem:meromorphic-image-iscompact}
 The image of a continuous map from a compact space is compact.
