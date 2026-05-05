@@ -87,8 +87,7 @@ the trace, push-pull) runs on this number.
 
 \begin{lemma}[Branch locus is finite]
 \label{lem:branch-locus-finite}
-\uses{def:branched-degree, lem:order-eq-one-iff-deriv-ne-zero,
-lem:unramified-set-open, lem:ramified-isolated}
+\uses{def:branched-degree,lem:order-eq-one-iff-deriv-ne-zero,lem:unramified-set-open,lem:ramified-isolated}
 The set \(\{p\in X : e_p(f)\ge 2\}\) is finite.
 \depends{Sub-sub-leaves: \texttt{lem:unramified-set-open} (the
 unramified set is open) and \texttt{lem:ramified-isolated} (every
@@ -146,7 +145,7 @@ identity theorem, and finite by compactness.
 
 \begin{lemma}[Local injectivity at an unramified point]
 \label{lem:local-inj-unramified}
-\uses{def:branched-degree, lem:order-eq-one-iff-deriv-ne-zero, lem:chart-local-inverse-unramified}
+\uses{def:branched-degree,lem:order-eq-one-iff-deriv-ne-zero,lem:chart-local-inverse-unramified}
 If \(e_x(f)=1\) at a point \(x\in X\), there is an open neighborhood
 \(U\ni x\) and an open neighborhood \(V\ni f(x)\) such that for every
 \(y\in V\), the set \(U\cap f^{-1}(y)\) is a singleton.
@@ -161,7 +160,7 @@ transport.}
 
 \begin{lemma}[Order one iff chart-local derivative nonzero]
 \label{lem:order-eq-one-iff-deriv-ne-zero}
-\uses{def:branched-degree, def:vanishing-order}
+\uses{def:branched-degree,def:vanishing-order}
 The chart-local order \(e_x(f)=1\) iff the derivative
 \((\chi\circ f\circ\varphi^{-1})'(\varphi(x))\ne 0\), where
 \((\varphi,\chi)\) are the canonical charts at \(x\) and \(f(x)\).
@@ -210,7 +209,7 @@ and \(Y\).
 
 \begin{lemma}[Local power-series form at order \texorpdfstring{\(k\)}{k}]
 \label{lem:chart-local-pow-mul}
-\uses{def:branched-degree, def:vanishing-order}
+\uses{def:branched-degree,def:vanishing-order}
 If \(e_x(f)=k\ge 1\), the centred chart-local difference factors as
 \((t-z_0)^k\cdot g(t)\) for some analytic \(g\) with \(g(z_0)\ne 0\),
 where \(z_0\) is the chart image of \(x\).
@@ -237,8 +236,7 @@ there is an analytic \(h\) near \(z_0\) with \(h(z)^k=g(z)\) locally.
 
 \begin{lemma}[Local \texorpdfstring{\(k\)}{k}-fold structure at a ramified point]
 \label{lem:local-kfold-ramified}
-\uses{def:branched-degree, def:vanishing-order,
-lem:chart-local-pow-mul, lem:analytic-kth-root}
+\uses{def:branched-degree,def:vanishing-order,lem:chart-local-pow-mul,lem:analytic-kth-root}
 If \(e_x(f)=k\ge 1\), there is an open neighborhood \(U\ni x\) and an
 open neighborhood \(V\ni f(x)\) such that for every \(y\in V\) with
 \(y\ne f(x)\), the set \(U\cap f^{-1}(y)\) consists of exactly \(k\)
@@ -289,7 +287,7 @@ compact \(\Rightarrow\) closed in \(T_2\); \(y_0\notin f(U^c)\); take
 
 \begin{lemma}[Weighted fibre count locally constant at a single point]
 \label{lem:weighted-fiber-eventually-eq}
-\uses{lem:local-inj-unramified, lem:local-kfold-ramified, lem:proper-fiber-shrink}
+\uses{lem:local-inj-unramified,lem:local-kfold-ramified,lem:proper-fiber-shrink}
 At every \(y_0\in Y\), there is a neighborhood \(V\ni y_0\) on which
 the weighted fibre sum is constant equal to its value at \(y_0\).
 \depends{Choose pairwise-disjoint open nbhds \(U_x\) around each
@@ -511,3 +509,445 @@ direction needs Riemann-Roch, meromorphic functions, and degree-one map
 classification. The reverse direction needs comparison of analytic and
 topological genus.
 \end{formalizationnote}
+
+\subsection{Degree-one meromorphic-to-sphere classification: structural decomposition}
+\label{sec:degree-one-mer-decomp}
+
+The chain ``meromorphic map with pole divisor \([P]\) \(\Rightarrow\)
+continuous \(\Rightarrow\) bijective'' factors into structural axioms
+on the project's abstract \code{MeromorphicMapToSphere} interface,
+since this interface does not yet expose the geometric content
+linking the abstract \code{poleDivisor} to the concrete \code{toMap}.
+
+\begin{lemma}[Continuity off the pole]
+\label{lem:meromorphic-continuous-off-pole}
+\uses{def:divisor,lem:meromorphic-no-infty-off-pole,lem:meromorphic-continuous-on-finite-set}
+A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) is
+continuous on \(X\setminus\{P\}\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.continuousOn_compl_pole_of_poleDivisor_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Off the pole locus, \(f\) takes only finite values. In any chart at
+a finite point, \(f\) coincides with a smooth \(\C\)-valued
+function (the chart-local representative). Smoothness implies
+continuity in the chart, and the inclusion \(\iota:\C\to\CPone\) is
+continuous. Hence \(f\) is continuous at every point of
+\(X\setminus\{P\}\).
+\end{proof}
+
+\begin{lemma}[Tendency to \(\infty\) at a simple pole]
+\label{lem:meromorphic-tends-to-infty-at-simple-pole}
+\uses{def:divisor,lem:simple-pole-modulus-diverges,lem:onepoint-tendsto-infty-of-modulus-diverges,lem:meromorphic-value-at-pole}
+A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) tends
+to \(\infty\in\CPone\) along the neighbourhood filter at \(P\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.tendsto_infty_at_pole_of_poleDivisor_point}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+In a chart at \(P\), the local representative of \(f\) is a
+meromorphic function with a simple pole at the chart image of \(P\).
+The local Laurent expansion takes the form
+\(z\mapsto a/(z-z_{0})+\text{holomorphic}\) with \(a\neq 0\), which
+diverges in modulus as \(z\to z_{0}\). The one-point topology on
+\(\CPone\) translates modulus-divergence into convergence to
+\(\infty\).
+\end{proof}
+
+\begin{lemma}[Value at a simple pole is \(\infty\)]
+\label{lem:meromorphic-value-at-pole}
+\uses{def:divisor}
+A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) has
+\(f(P)=\infty\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap_pole_eq_infty_of_poleDivisor_point}
+\leanok
+\end{lemma}
+\begin{proof}
+The data of a meromorphic map records both the divisor and the
+extended map. By construction, the extension assigns the value
+\(\infty\) at every pole point. (At the project's interface level,
+this is an axiomatic structural field that the eventual concrete
+construction will discharge.)
+\end{proof}
+
+\begin{theorem}[Continuous extension over a simple pole]
+\label{thm:meromorphic-continuous-extension}
+\uses{lem:meromorphic-continuous-off-pole,lem:meromorphic-tends-to-infty-at-simple-pole,lem:meromorphic-value-at-pole}
+A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) on a
+compact Riemann surface is continuous as a map \(X\to\CPone\).
+\lean{JacobianChallenge.HolomorphicForms.meromorphicMapToSphere_continuous_of_poleDivisor_point}
+\leanok
+\end{theorem}
+\begin{proof}\leanok
+Continuity is local. At any point \(x\neq P\) use
+Lemma~\ref{lem:meromorphic-continuous-off-pole}. At \(x=P\), the
+limit characterisation of continuity reduces to
+\(\lim_{x\to P}f(x)=f(P)\), which is
+Lemma~\ref{lem:meromorphic-tends-to-infty-at-simple-pole} together
+with Lemma~\ref{lem:meromorphic-value-at-pole}.
+\end{proof}
+
+\begin{lemma}[Bridge: meromorphic-to-branched-cover-data]
+\label{lem:meromorphic-to-branched-cover-data}
+\uses{def:branched-degree,def:divisor}
+A meromorphic map \(f:X\to\CPone\) with \(\deg(\operatorname{poles}(f))=1\) admits a
+\code{BranchedCoverData} of branched degree 1.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one}
+\leanok
+\end{lemma}
+\begin{proof}
+Take the project's analytic constructor (the still-open Sec02 leaf 8
+\code{branchedCoverData\_of\_nonconstant\_holomorphic}) applied to the
+nonconstant holomorphic map \(f:X\to\CPone\); the branched degree
+matches the pole degree.
+\end{proof}
+
+% NOTE (audit): Earlier iterations introduced
+% lem:degree-one-surjective + lem:degree-one-injective at the
+% MeromorphicMapToSphere level. After cross-section audit, the existing
+% Sec02 thm:degree-one-bijective (already \leanok) covers the same
+% mathematical content at the BranchedCoverData level. The
+% MeromorphicDegree.lean Lean is now refactored to route M4/M5 through
+% the bridge `lem:meromorphic-to-branched-cover-data` above into
+% `Blueprint.degree_one_bijective`, eliminating the parallel chain.
+
+\begin{theorem}[Degree-one bijectivity (meromorphic level)]
+\label{thm:degree-one-bijectivity-meromorphic}
+\uses{lem:meromorphic-to-branched-cover-data,thm:degree-one-bijective}
+A continuous meromorphic map \(f:X\to\CPone\) of pole-degree one is
+bijective.
+\lean{JacobianChallenge.HolomorphicForms.meromorphicMapToSphere_bijective_of_poleDivisor_degree_one}
+\leanok
+\end{theorem}
+\begin{proof}\leanok
+Bridge through Lemma~\ref{lem:meromorphic-to-branched-cover-data} to a
+\code{BranchedCoverData} of branched degree 1, then apply
+Theorem~\ref{thm:degree-one-bijective} (Sec02, already \(\leanok\)).
+\end{proof}
+
+\subsection{Uniformization-lite: holomorphic 1-forms vanish on the topological sphere}
+\label{sec:uniformization-lite}
+
+\begin{lemma}[Holomorphic 1-form equivalence under sphere homeomorphism]
+\label{lem:holomorphic-one-form-equiv-of-homeo-sphere}
+\uses{lem:uniformization-genus-zero-biholomorphism,lem:holomorphic-one-form-pullback-via-biholo}
+If a compact connected complex 1-manifold \(X\) is homeomorphic
+(as a topological space) to the standard \(2\)-sphere, then there
+is a \(\C\)-linear equivalence
+\(H^{0}(X,\Omega^{1}_{X})\cong H^{0}(\CPone,\Omega^{1}_{\CPone})\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_linearEquiv_of_homeoSphere_exists}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+This is the genus-zero case of the uniformization theorem. Any
+complex structure on the topological 2-sphere is biholomorphic to
+the standard structure on \(\CPone=\code{OnePoint}\,\C\); the resulting
+biholomorphism \(\psi:X\xrightarrow{\sim}\CPone\) pulls back
+holomorphic 1-forms to holomorphic 1-forms, yielding the
+\(\C\)-linear isomorphism
+\(\psi^{*}:H^{0}(\CPone,\Omega^{1}_{\CPone})\to H^{0}(X,\Omega^{1}_{X})\).
+\end{proof}
+
+\begin{theorem}[Holomorphic 1-forms vanish on the topological sphere]
+\label{thm:homeo-sphere-holomorphic-one-form-vanishing}
+\uses{lem:holomorphic-one-form-equiv-of-homeo-sphere,lem:identity-chart-coeff-contdiff,lem:inversion-chart-coeff-continuous-at-zero,lem:cotangent-transition-formula}
+A compact connected Riemann surface homeomorphic to the standard
+\(2\)-sphere has \(\dim_{\C}H^{0}(X,\Omega^{1}_{X})=0\); equivalently,
+the space of holomorphic 1-forms is a subsingleton.
+\lean{JacobianChallenge.HolomorphicForms.homeoSphereHolomorphicOneFormVanishing}
+\leanok
+\end{theorem}
+\begin{proof}\leanok
+By Lemma~\ref{lem:holomorphic-one-form-equiv-of-homeo-sphere}, the
+holomorphic 1-form space on \(X\) is \(\C\)-linearly isomorphic to
+that on \(\CPone\). The latter is a subsingleton (it is in fact
+zero, since \(\CPone\) has genus 0). Subsingleton transports
+through linear equivalences, so \(H^{0}(X,\Omega^{1}_{X})\) is
+itself a subsingleton.
+\end{proof}
+
+\subsection{Identity- and inversion-chart coefficient extraction}
+\label{sec:chart-coeff-extraction}
+
+\begin{lemma}[Identity-chart coefficient is \(C^{\infty}\)]
+\label{lem:identity-chart-coeff-contdiff}
+\uses{lem:section-localRepr-identity-chart-contdiff}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), the function
+\(\C\to\C\) obtained by reading \(\omega\) in the identity chart
+of \(\CPone\) and evaluating on \(1\in\C\) is \(C^{\infty}\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneFormIdentityChartCoeffContDiff}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+The cotangent-bundle section \(\omega\) is smooth in any chart of
+\(\CPone\). In the identity chart, the local representative is a
+smooth section of the trivial cotangent bundle on \(\C\), i.e.\ a
+smooth covector field. Evaluating a smooth covector field on a
+constant tangent vector yields a smooth scalar function. The
+specific Mathlib gap is the \emph{chart-trivialisation API for
+\code{ContMDiffSection}} on the cotangent bundle, which is absent
+in v4.28.0 — once supplied, the proof is immediate.
+\end{proof}
+
+\begin{lemma}[Inversion-chart coefficient is continuous at \(0\)]
+\label{lem:inversion-chart-coeff-continuous-at-zero}
+\uses{lem:section-localRepr-inversion-chart-continuous-at-zero}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), the function
+\(\C\to\C\) obtained by reading \(\omega\) in the inversion chart
+of \(\CPone\) and evaluating on \(1\in\C\) is continuous at
+\(0\in\C\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneFormInversionChartCoeffContinuousAtZero}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Identical to the proof of
+Lemma~\ref{lem:identity-chart-coeff-contdiff}, applied in the
+inversion chart in place of the identity chart. Same chart-
+trivialisation Mathlib gap.
+\end{proof}
+
+\begin{lemma}[No-\(\infty\) off the pole locus]
+\label{lem:meromorphic-no-infty-off-pole}
+\uses{def:divisor}
+A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) takes
+finite values off \(P\): \(\forall x\neq P,\ f(x)\neq\infty\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap_ne_infty_off_pole}
+\leanok
+\end{lemma}
+\begin{proof}
+The pole-divisor records the exact \(\infty\)-locus; pole divisor
+\([P]\) means only \(P\) is sent to \(\infty\).
+\end{proof}
+
+\begin{lemma}[Continuity from no-\(\infty\)]
+\label{lem:meromorphic-continuous-on-finite-set}
+\uses{def:divisor}
+On any subset \(S\subseteq X\) where \(f\) takes only finite values,
+\(f:X\to\CPone\) is continuous on \(S\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.continuousOn_of_no_infty_on}
+\leanok
+\end{lemma}
+\begin{proof}
+On \(S\), \(f\) factors through \(\iota:\C\to\CPone\) via a smooth
+\(g:S\to\C\); both \(g\) and \(\iota\) are continuous, so the
+composition is continuous on \(S\).
+\end{proof}
+
+\begin{lemma}[Modulus diverges at a simple pole]
+\label{lem:simple-pole-modulus-diverges}
+\uses{def:divisor}
+For a meromorphic map \(f:X\to\CPone\) with \(\operatorname{poles}(f)=[P]\), there
+exists a smooth \(\C\)-valued lift \(g:X\setminus\{P\}\to\C\)
+satisfying \(f|_{X\setminus\{P\}}=\iota\circ g\) and
+\(\|g(x)\|\to\infty\) as \(x\to P\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.modulus_diverges_at_simple_pole}
+\leanok
+\end{lemma}
+\begin{proof}
+Off \(P\), use Lemma~\ref{lem:meromorphic-no-infty-off-pole} to
+construct \(g\). Near \(P\), the local Laurent expansion of \(f\)
+takes the form \(z\mapsto a/(z-z_{0})+\text{holomorphic}\) with
+\(a\neq 0\) (simple pole), so \(\|g(z)\|\sim|a|/|z-z_{0}|\to\infty\).
+\end{proof}
+
+\begin{lemma}[Modulus divergence implies \(\code{OnePoint}\)-tendsto-\(\infty\)]
+\label{lem:onepoint-tendsto-infty-of-modulus-diverges}
+A \(\C\)-valued function whose modulus diverges along a punctured
+neighbourhood of \(P\), lifted to \(\code{OnePoint}\,\C\) via the
+canonical inclusion, tends to \(\infty\) at \(P\).
+\lean{JacobianChallenge.HolomorphicForms.OnePoint.tendsto_infty_of_modulus_diverges}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+\(\|g\|\to\infty\) along the punctured filter means
+\(\code{Tendsto}\,g\) lands in \(\code{Bornology.cobounded}\,\C\) by
+\code{Metric.tendsto\_dist\_right\_atTop\_iff} (with base point
+\(0\)). On the proper Hausdorff space \(\C\),
+\(\code{cobounded}=\code{cocompact}=\code{coclosedCompact}\) by
+\code{Metric.cobounded\_eq\_cocompact} and
+\code{Filter.coclosedCompact\_eq\_cocompact}. Compose with
+\code{OnePoint.tendsto\_coe\_infty} to obtain
+\(\iota\circ g\to\infty\) in \(\code{OnePoint}\,\C\).
+\end{proof}
+
+% NOTE (audit): lem:degree-one-no-ramification-detail and
+% lem:no-ramification-fiber-card-constant entries were removed from
+% this section after a cross-section audit found that the existing
+% lem:degree-one-no-ramification (Sec02 Blueprint) covers the same
+% mathematical content sorry-free at the BranchedCoverData level. The
+% MeromorphicDegree.lean route was refactored to use the M-bridge
+% (`exists_branchedCoverData_of_pole_degree_one`) and route through
+% Blueprint.degree_one_bijective + Blueprint.degree_one_no_ramification
+% instead of re-proving the content at the MeromorphicMapToSphere level.
+
+% NOTE (audit): `lem:meromorphic-image-iscompact` and
+% `lem:degree-one-open-map` entries were removed from this section
+% after the cross-section duplicate audit. They were lemmas in the
+% parallel `MeromorphicMapToSphere`-level surjectivity chain
+% (M4a + M4b in the project's internal labelling). After M4 was
+% refactored to route through the M-bridge to
+% `Blueprint.degree_one_bijective`, both lemmas became dead code:
+% no reachable node `\uses{}` either of them. The corresponding Lean
+% obligation `image_isCompact` is sorry-free as a one-line wrapper
+% around `IsCompact.image`; `isOpenMap_of_pole_degree_one` has been
+% removed from `Jacobian/HolomorphicForms/MeromorphicDegree.lean`.
+
+\begin{lemma}[Cotangent transition formula on the overlap]
+\label{lem:cotangent-transition-formula}
+\uses{lem:onepoint-cx-chart-overlap-derivative,lem:onepoint-cx-chart-overlap-pullback,lem:holomorphic-one-form-pointwise-limit-exists,lem:holomorphic-one-form-limit-continuous,lem:holomorphic-one-form-limit-holomorphic}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), there is a
+punctured neighbourhood of \(0\in\C\) (in the inversion chart) on
+which the identity-chart coefficient \(f\) and the inversion-chart
+coefficient \(g\) of \(\omega\) are related by
+\[
+  f(w^{-1})=-w^{2}g(w),\qquad w\neq 0.
+\]
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_identityInversionTransition_eventually}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Pointwise from Lemma~\ref{lem:onepoint-cx-chart-overlap-pullback};
+the eventually-quantifier on the punctured neighbourhood follows
+via \code{filter\_upwards}.
+\end{proof}
+
+\begin{lemma}[Derivative of inverse on the chart overlap]
+\label{lem:onepoint-cx-chart-overlap-derivative}
+For \(w\neq 0\), \(\frac{d}{dw}(w^{-1})=-w^{-2}\).
+\lean{JacobianChallenge.HolomorphicForms.onePointCx_chart_overlap_derivative}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Direct from Mathlib's \code{hasDerivAt\_inv} on \(w\neq 0\).
+\end{proof}
+
+\begin{lemma}[Cotangent pullback on the chart overlap]
+\label{lem:onepoint-cx-chart-overlap-pullback}
+\uses{lem:onepoint-cx-chart-overlap-derivative}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\) and \(w\neq 0\),
+\(f(w^{-1})=-w^{2}g(w)\), where \(f\) and \(g\) are respectively the
+identity-chart and inversion-chart coefficients.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_chartOverlap_pullback}
+\leanok
+\end{lemma}
+\begin{proof}
+Apply the chain rule for cotangent vectors under
+\(z\leftrightarrow w=z^{-1}\):
+\(f(z)\,dz=f(w^{-1})\,d(w^{-1})=-f(w^{-1})\,w^{-2}\,dw\). Equating
+with \(g(w)\,dw\) yields the identity.
+\end{proof}
+
+\subsection{Sup-norm completeness decomposition (CompactRiemannSurface)}
+\label{sec:sup-norm-completeness-decomp}
+
+\begin{lemma}[Pointwise limit exists]
+\label{lem:holomorphic-one-form-pointwise-limit-exists}
+A sup-norm Cauchy sequence of holomorphic 1-forms on a compact
+Riemann surface admits a pointwise limit at every point of \(X\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_supNorm_cauchySeq_pointwise_limit_exists}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Sup-norm Cauchy implies pointwise Cauchy in each fiber
+\(\mathrm{Cot}_x(X)\), which is a Banach space, so the pointwise limit
+exists.
+\end{proof}
+
+\begin{lemma}[Continuity of the pointwise limit]
+\label{lem:holomorphic-one-form-limit-continuous}
+\uses{lem:holomorphic-one-form-pointwise-limit-exists}
+The pointwise limit of a sup-norm Cauchy sequence of holomorphic
+1-forms is continuous.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_supNorm_cauchySeq_limit_continuous}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Sup-norm Cauchy convergence is uniform; the uniform limit of
+continuous functions is continuous (\code{TendstoUniformly.continuous}).
+\end{proof}
+
+\begin{lemma}[Holomorphicity of the pointwise limit (Weierstrass)]
+\label{lem:holomorphic-one-form-limit-holomorphic}
+\uses{lem:holomorphic-one-form-pointwise-limit-exists}
+The pointwise limit of a sup-norm Cauchy sequence of holomorphic
+1-forms is holomorphic.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_supNorm_cauchySeq_limit_holomorphic}
+\leanok
+\end{lemma}
+\begin{proof}\leanok
+Classical Weierstrass convergence theorem: a uniform limit of
+holomorphic functions is holomorphic, via Morera's theorem (closed
+contour integrals vanish under uniform convergence) or
+power-series-coefficient convergence (Cauchy estimates pass to the
+limit). \textbf{Mathlib gap}: v4.28.0 lacks a Weierstrass-convergence
+theorem for holomorphic functions or sections.
+\end{proof}
+
+\subsection{Uniformization-lite further decomposition}
+\label{sec:uniformization-lite-iter3}
+
+\begin{lemma}[Biholomorphism from sphere homeomorphism]
+\label{lem:uniformization-genus-zero-biholomorphism}
+A compact connected complex 1-manifold homeomorphic to \(S^2\) admits
+a biholomorphism to \(\code{OnePoint}\,\C\).
+\lean{JacobianChallenge.HolomorphicForms.exists_biholomorphism_to_OnePointCx_of_homeoSphere}
+\leanok
+\end{lemma}
+\begin{proof}
+Classical uniformisation at genus 0: any complex structure on the
+topological 2-sphere is biholomorphically equivalent to the standard
+one on \(\code{OnePoint}\,\C\). One way to see this is to combine the
+Riemann mapping theorem with a removable-singularities argument: a
+biholomorphism between a chart and a disc in \(\C\) extends across
+\(\infty\) to a global biholomorphism with \(\code{OnePoint}\,\C\).
+\end{proof}
+
+\begin{lemma}[Pullback of holomorphic 1-forms via biholomorphism]
+\label{lem:holomorphic-one-form-pullback-via-biholo}
+A homeomorphism \(e:X\to\code{OnePoint}\,\C\) that is biholomorphic
+induces a \(\C\)-linear isomorphism of holomorphic 1-form spaces,
+\(e^{*}:H^{0}(\code{OnePoint}\,\C,\Omega^{1})\to H^{0}(X,\Omega^{1})\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx}
+\leanok
+\end{lemma}
+\begin{proof}
+Standard pullback of forms via biholomorphism: \(e^*\omega(v):=\omega(de\cdot v)\)
+is a cotangent-space pullback, \(\C\)-linear in \(\omega\), and an
+isomorphism because \(de\) is invertible at every point.
+\end{proof}
+
+\subsection{Chart-trivialisation API for ContMDiffSection}
+\label{sec:chart-trivialisation-API}
+
+\begin{lemma}[Identity-chart local representative is smooth]
+\label{lem:section-localRepr-identity-chart-contdiff}
+The cotangent-bundle section \(\omega.\code{toFun}\) pulled back through
+\(\code{identityChart}.\code{symm}\) and evaluated at \(1:\C\) gives a
+\(C^{\infty}\) function on \(\C\).
+\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection_localRepr_identityChart_contDiff}
+\leanok
+\end{lemma}
+\begin{proof}
+A \(\code{ContMDiffSection}\) is by definition smooth in any chart of
+the bundle's base. In the identity chart of \(\code{OnePoint}\,\C\), the
+local representative is a smooth section of the trivial cotangent
+bundle on \(\C\); evaluating on the constant tangent vector \(1\) is
+a smooth (in fact \(\C\)-linear) operation. \textbf{Mathlib gap}: a
+chart-trivialisation API for \code{ContMDiffSection} on the cotangent
+bundle is not in v4.28.0.
+\end{proof}
+
+\begin{lemma}[Inversion-chart local representative is continuous at zero]
+\label{lem:section-localRepr-inversion-chart-continuous-at-zero}
+The cotangent-bundle section pulled back through
+\(\code{inversionChart}.\code{symm}\) and evaluated at \(1:\C\) is
+continuous at \(w=0\).
+\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection_localRepr_inversionChart_continuousAt_zero}
+\leanok
+\end{lemma}
+\begin{proof}
+Same chart-trivialisation argument as
+Lemma~\ref{lem:section-localRepr-identity-chart-contdiff}, applied
+in the inversion chart instead.
+\end{proof}
+
