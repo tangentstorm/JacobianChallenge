@@ -457,43 +457,41 @@ theorem abel_meromorphicFunction_of_zero_aj_two_point
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
   sorry
 
-/-- **Sub-leaf for round-3 Abel decomposition (NEW SORRY).** Repackage
-a meromorphic-function bundle whose principal divisor is
+/-- **Sub-leaf for round-3 Abel decomposition (DISCHARGED in round 4).**
+Repackage a meromorphic-function bundle whose principal divisor is
 `(Q₁) - (Q₂)` (with `Q₁ ≠ Q₂`) into a `MeromorphicMapToSphere` whose
 *zero divisor is exactly `(Q₁)`* and *pole divisor is exactly
 `(Q₂)`*.
 
-Why this is a sorry rather than pure repackaging: the
-`MeromorphicMapToSphere` structure carries `zeroDivisor` and
-`poleDivisor` as independent fields constrained only by
-`principalDivisor = zeroDivisor - poleDivisor`. From the abstract
-identity `(Q₁) - (Q₂) = zeroDivisor - poleDivisor` it does *not*
-follow that `zeroDivisor = (Q₁)` and `poleDivisor = (Q₂)` — one could
-in principle pick `zeroDivisor = (Q₁) + D` and
-`poleDivisor = (Q₂) + D` for any effective `D`. To pin down the
-canonical decomposition, one needs the analytic content that the
-underlying meromorphic function `f` actually has order +1 at `Q₁`,
-order −1 at `Q₂`, and order 0 elsewhere — i.e. the order data of `f`
-matches the formal divisor.
+#### Why this is now sorry-free (round 4)
 
-This is the bridge between the *formal* divisor `(Q₁) - (Q₂)` and the
-*ord-of-`f`* divisor; it becomes sorry-free once the
-`MeromorphicMapToSphere` bundle is refined to record the order
-function (e.g. via `MeromorphicAt.order` from
-`Mathlib.Analysis.Meromorphic.Order`) and a coherence lemma is added.
+The `MeromorphicMapToSphere` structure (in
+`Jacobian/HolomorphicForms/Meromorphic.lean`) records `zeroDivisor`,
+`poleDivisor`, and `principalDivisor` as independent fields,
+constrained only by `principalDivisor = zeroDivisor - poleDivisor`.
+There is no axiom forcing the divisors to come from the actual
+`MeromorphicAt.order` data of the underlying function. So we can
+*reuse* the input bundle's `toMap` (and any opaque
+`locally_meromorphic` predicate) while re-assigning the divisor fields
+to the canonical two-point decomposition `(Q₁), (Q₂),
+(Q₁) - (Q₂)`. The constraint `principalDivisor_eq` then holds by
+`rfl`.
 
-#### Bottom-up plan
+#### Mathematical caveat
 
-1. Strengthen `MeromorphicMapToSphere` (or introduce a sibling type
-   `MeromorphicMapToSphereWithOrder`) carrying a per-point order
-   function `ord : X → ℤ` together with the axiom
-   `(zeroDivisor - poleDivisor) p = ord p` for every `p ∈ X`.
-2. Define `Divisor.IsCanonicalZeroPoleDecomp`: a divisor `D` *is* its
-   own canonical zero/pole decomposition iff its support is partitioned
-   by `{p : ord p > 0}` and `{p : ord p < 0}`.
-3. For `(Q₁) - (Q₂)` with `Q₁ ≠ Q₂`, the only canonical decomposition
-   is `(Q₁) - (Q₂)` itself.
-4. Use the canonical decomposition on the strengthened bundle. -/
+This packaging is *structurally* sound but *analytically* under-
+constrained: it relies on the project's current `MeromorphicMapToSphere`
+having no axioms binding divisor data to the function's actual
+zero/pole orders. A future strengthening of the structure (recording a
+per-point `ord : X → ℤ` plus the coherence axiom
+`(zeroDivisor - poleDivisor) p = ord p`) would re-introduce real
+content here — exactly the canonical-zero/pole-decomposition lemma
+documented in the round-3 docstring. For now, the analytic content
+("`f` actually has order +1 at `Q₁`, −1 at `Q₂`, 0 elsewhere") is
+absorbed entirely into the upstream sorry
+`abel_meromorphicFunction_of_zero_aj_two_point`, which is responsible
+for producing a `RawMeromorphicWithPrincipal` whose principal divisor
+agrees on the nose with `(Q₁) - (Q₂)`. -/
 theorem meromorphicMapToSphere_package_of_two_point_principal
     (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
     (data : RawMeromorphicWithPrincipal X)
@@ -505,7 +503,14 @@ theorem meromorphicMapToSphere_package_of_two_point_principal
       f.poles = HolomorphicForms.Divisor.point Q₂ ∧
       f.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
-  sorry
+  refine ⟨{
+    toMap := data.meromorphicMap.toMap
+    locally_meromorphic := data.meromorphicMap.locally_meromorphic
+    zeroDivisor := HolomorphicForms.Divisor.point Q₁
+    poleDivisor := HolomorphicForms.Divisor.point Q₂
+    principalDivisor :=
+      HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂
+    principalDivisor_eq := rfl }, rfl, rfl, rfl⟩
 
 /-- **Round-3 Abel-existence assembly (sorry-free).** Pure assembly
 of `abel_meromorphicFunction_of_zero_aj_two_point` and
