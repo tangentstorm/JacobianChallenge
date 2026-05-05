@@ -629,4 +629,192 @@ theorem polygon4g_cellular_h1_explicit (g : ℕ) :
       (Fin (2 * (g + 1)) → ℤ)) :=
   ⟨polygonStarCellularH1Equiv (2 * (g + 1))⟩
 
+/-! ### TOPDOWN drill — Mathlib-near hooks (Rounds 9–20)
+
+These rounds break the remaining sorries into obligations that map
+directly onto Mathlib lemmas or onto the three upstream-promotion
+gates documented on `cellular_iso_singularH_via_five_lemma`. Each
+sub-leaf names the next-level lemma it would dispatch to. -/
+
+/-- **Round 9.** *Sub-leaf of `cellular_iso_singularH_via_five_lemma`.*
+The five-lemma assembly: given the chain-map iso, the relative-pair
+LES iso, and the vanishing of relative `H_1` on the 0-skeleton, the
+five-lemma produces the headline iso. Stated as a Hom of the input
+data into the conclusion (sorry'd). -/
+theorem five_lemma_glue_to_global_iso
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [AbstractSimplicialComplex.Finite K]
+    (_hChain : ∀ (n : ℕ) (s : K.nSimplices (n + 1)),
+      rawSingularBoundary _ n
+        ((cellularToSingularChain K (n + 1)) (Finsupp.single s 1)) =
+      (cellularToSingularChain K n)
+        ((cellularBoundary K n) (Finsupp.single s 1)))
+    (_hLES : ∀ (n : ℕ),
+      Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] cellularChain K n)) :
+    Nonempty (cellularH K 1 ≃ₗ[ℤ]
+      singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+  sorry
+
+/-- **Round 10.** *Sub-leaf of `cellular_signed_face_basis`.*
+The face-list `Finset (K.nSimplices n)` of an `(n+1)`-simplex `s`:
+the `n+2` codimension-1 faces obtained by removing one vertex.
+Sorry'd; substantive form uses `Finset.image (fun i => s.1.erase i) s.1`. -/
+noncomputable def cellular_face_finset
+    (K : AbstractSimplicialComplex V) (n : ℕ) (_s : K.nSimplices (n + 1)) :
+    Finset (K.nSimplices n) :=
+  sorry
+
+/-- **Round 10.** *Sub-leaf:* the sign function on faces, alternating
+`(-1)^i` over the vertex indexing of `s`. Sorry'd; substantive form
+requires a vertex order. -/
+noncomputable def cellular_face_sign
+    (K : AbstractSimplicialComplex V) (n : ℕ)
+    (_s : K.nSimplices (n + 1)) (_t : K.nSimplices n) : ℤ :=
+  sorry
+
+/-- **Round 11.** *Sub-leaf of `characteristic_singular_face_compat`.*
+The standard `i`-th face inclusion `Δⁿ ↪ Δⁿ⁺¹` as a `ContinuousMap`.
+Direct Mathlib hook: `SimplexCategory.toTop.map (SimplexCategory.δ i)`,
+coerced from a `TopCat` morphism to `C(_, _)`. Sorry'd at this round
+pending the precise coercion. -/
+noncomputable def stdSimplex_face_inclusion (n : ℕ) (_i : Fin (n + 2)) :
+    C(stdSimplex n, stdSimplex (n + 1)) :=
+  sorry
+
+/-- **Round 11.** *Sub-leaf:* the `i`-th simplicial face of an
+`(n+1)`-simplex `s ∈ K_{n+1}`, returning the corresponding `n`-simplex.
+Sorry'd; substantive form requires a vertex order on `s`. -/
+noncomputable def cellular_face_index
+    (K : AbstractSimplicialComplex V) (n : ℕ)
+    (_s : K.nSimplices (n + 1)) (_i : Fin (n + 2)) :
+    K.nSimplices n :=
+  sorry
+
+/-- **Round 12.** *Sub-leaf of `rawSingularBoundary`.* Singular boundary
+on a single basis simplex: `∂σ = Σᵢ (-1)ⁱ • [σ ∘ δ_i]`. Substantive
+form uses `Finset.univ.sum` over `Fin (n+2)` with sign `(-1)^i.val`. -/
+noncomputable def rawSingularBoundary_basis
+    (X : Type) [TopologicalSpace X] (n : ℕ) (σ : SingularSimplex X (n + 1)) :
+    SingularSimplex X n →₀ ℤ :=
+  ∑ i : Fin (n + 2),
+    (-1 : ℤ) ^ i.val •
+      Finsupp.single
+        (ContinuousMap.comp σ (stdSimplex_face_inclusion n i)) (1 : ℤ)
+
+/-- **Round 12.** *Sub-leaf:* `rawSingularBoundary` agrees with
+`rawSingularBoundary_basis` on basis elements (factoring through
+`Finsupp.lift`). Sorry'd; will become `rfl` once `rawSingularBoundary`
+is filled in via `Finsupp.lift`. -/
+theorem rawSingularBoundary_apply_single
+    (X : Type) [TopologicalSpace X] (n : ℕ) (σ : SingularSimplex X (n + 1)) :
+    (rawSingularBoundary X n) (Finsupp.single σ 1) =
+      rawSingularBoundary_basis X n σ :=
+  sorry
+
+/-- **Round 13.** *Sub-leaf of `cellular_pair_exact`.* Algebraic
+exactness at the `n`-degree of the cellular chain complex (rephrased
+as `range ⊆ ker`, the easy half of `range = ker`). Sorry-free via
+`cellularBoundary_sq_zero`. -/
+theorem cellular_chain_exact_range_le_ker
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    LinearMap.range (cellularBoundary K (n + 1)) ≤
+      LinearMap.ker (cellularBoundary K n) := by
+  intro x ⟨y, hy⟩
+  simp [LinearMap.mem_ker, ← hy, ← LinearMap.comp_apply, cellularBoundary_sq_zero]
+
+/-- **Round 13.** *Sub-leaf:* the previous quotient identity is
+equivalent to `range = ker`, the conclusion of `cellular_pair_exact`. -/
+theorem cellular_chain_exact_iff_range_eq_ker
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    LinearMap.range (cellularBoundary K (n + 1)) =
+      LinearMap.ker (cellularBoundary K n) ↔
+    LinearMap.ker (cellularBoundary K n) ≤
+      LinearMap.range (cellularBoundary K (n + 1)) := by
+  refine ⟨fun h => h ▸ le_refl _, fun h => ?_⟩
+  apply le_antisymm _ h
+  intro x ⟨y, hy⟩
+  simp [LinearMap.mem_ker, ← hy, ← LinearMap.comp_apply, cellularBoundary_sq_zero]
+
+/-- **Round 14.** *Sub-leaf of `skeletal_h1_quotient_substantive`.*
+Universal property of the `cellularH K 1` quotient: factor any linear
+map that vanishes on `range (cellularBoundary K 1)` through the
+quotient. Direct Mathlib hook: `Submodule.liftQ`. -/
+noncomputable def cellularH1_lift
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    (M : Type) [AddCommGroup M] [Module ℤ M]
+    (f : cellularChain K 1 →ₗ[ℤ] M)
+    (_h : LinearMap.range (cellularBoundary K 1) ≤ LinearMap.ker f) :
+    cellularChain K 1 ⧸ (LinearMap.range (cellularBoundary K 1)) →ₗ[ℤ] M :=
+  Submodule.liftQ _ f _h
+
+/-- **Round 15.** *Sub-leaf of `simplex_affine_map`.* The barycentric
+coordinates of a point in `stdSimplex n` extend to a continuous map
+to ℝ. Sorry'd; substantive form pulls out the `i`-th coordinate of
+the standard simplex's `Fin (n+1) → ℝ` representation. -/
+theorem simplex_affine_extension_existence
+    (n : ℕ) (_vs : Fin (n + 1) → ℝ) :
+    ∃ (f : stdSimplex n → ℝ), Continuous f :=
+  sorry
+
+/-- **Round 16.** *Sub-leaf of `singularH1_wedge_of_spheres`.* For a
+discrete vertex set `V`, `singularH1 V = 0`. (Provable from
+`AlgebraicTopology.isZero_singularHomologyFunctor_of_totallyDisconnectedSpace`.) -/
+theorem singularH1_discrete_eq_zero
+    (V : Type) [TopologicalSpace V] [TotallyDisconnectedSpace V] :
+    Subsingleton (singularH1 V) :=
+  ModuleCat.subsingleton_of_isZero <|
+    AlgebraicTopology.isZero_singularHomologyFunctor_of_totallyDisconnectedSpace
+      (ModuleCat ℤ) 1 (ModuleCat.of ℤ ℤ) (TopCat.of V) one_ne_zero
+
+/-- **Round 17.** *Sub-leaf of `relative_hurewicz_skeletal_pair`.* The
+identity map gives the skeletal pair iso under the placeholder
+`relativeSkeletalH := cellularChain` definition. (A `noncomputable def`,
+since the underlying `Module` instance on `cellularChain` is
+noncomputable.) -/
+noncomputable def relative_hurewicz_identity_under_placeholder
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    relativeSkeletalH K n ≃ₗ[ℤ] cellularChain K n :=
+  LinearEquiv.refl ℤ _
+
+/-- **Round 18.** *Sub-leaf of `cellularToSingular_isChainMap`.* The
+chain-map equation reduces to the basis-pointwise statement
+(`cellularToSingular_isChainMap_substantive`) by `Finsupp.lhom_ext` /
+`LinearMap.ext_basis`. Sorry'd. -/
+theorem cellularToSingular_isChainMap_basis_extension
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ)
+    (h_basis : ∀ s : K.nSimplices (n + 1),
+      rawSingularBoundary _ n
+        ((cellularToSingularChain K (n + 1)) (Finsupp.single s 1)) =
+      (cellularToSingularChain K n)
+        ((cellularBoundary K n) (Finsupp.single s 1))) :
+    (rawSingularBoundary _ n).comp (cellularToSingularChain K (n + 1)) =
+      (cellularToSingularChain K n).comp (cellularBoundary K n) := by
+  let _ := h_basis
+  sorry
+
+/-- **Round 19.** *Sub-leaf:* with all four upstream promotions in
+hand, the headline `cellular_iso_singularH_via_five_lemma` follows by
+chaining `cellularToSingular_isChainMap_basis_extension` (Round 18),
+`cellular_pair_exact` (Round 13), `relative_hurewicz_skeletal_pair`
+(Round 17), and `five_lemma_glue_to_global_iso` (Round 9). The body is
+a `Nonempty.intro` over the chained `LinearEquiv.trans`s. Sorry'd
+until the upstream promotions land. -/
+theorem cellular_iso_singularH_assembly_skeleton
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [AbstractSimplicialComplex.Finite K] :
+    Nonempty (cellularH K 1 ≃ₗ[ℤ]
+      singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+  five_lemma_glue_to_global_iso K
+    (fun n s => cellularToSingular_isChainMap_substantive K n s)
+    (fun n => ⟨relative_hurewicz_identity_under_placeholder K n⟩)
+
+/-- **Round 20.** *Sub-leaf:* the headline forwards to the assembly
+skeleton; once Rounds 9–19 land, this becomes the proof. -/
+theorem cellular_iso_singularH_via_assembly
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [AbstractSimplicialComplex.Finite K] :
+    Nonempty (cellularH K 1 ≃ₗ[ℤ]
+      singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+  cellular_iso_singularH_assembly_skeleton K
+
 end JacobianChallenge.StageA
