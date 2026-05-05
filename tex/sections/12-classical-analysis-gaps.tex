@@ -1149,7 +1149,7 @@ Both $H^{*}_{\mathrm{dR}}$ and $H^{*}_{\mathrm{sing}}$ satisfy the Mayer–Vieto
 \uses{lem:gce-r1-convex-normal-cover}
 Every smooth manifold admits a good cover (every finite intersection contractible), constructed from a Riemannian metric and convex normal-coordinate balls.
 \lean{JacobianChallenge.Analysis.DeRham.deRham_good_cover_exists}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Five-lemma induction over a finite good cover]
@@ -1786,7 +1786,7 @@ The Dolbeault sheaf complex $0 \to \Omega^{p}_{X} \to \Omega^{p,0} \to \Omega^{p
 \uses{lem:dpp-r1-onevar-suffices}
 On a polydisk $U \subseteq \C^{n}$, every $\bar\partial$-closed $(p, q)$-form with $q \geq 1$ is locally $\bar\partial$-exact.  One-variable case via Cauchy–Pompeiu.
 \lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_dbar_poincare}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Each $\Omega^{p,q}$ is a fine sheaf]
@@ -1794,7 +1794,7 @@ On a polydisk $U \subseteq \C^{n}$, every $\bar\partial$-closed $(p, q)$-form wi
 \uses{lem:dfs-r1}
 Smooth-form sheaves on a smooth manifold admit smooth partitions of unity, hence are fine.
 \lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_subgap_fine_sheaves}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Dolbeault step 2: sheaf cohomology computed via fine resolution]
@@ -2091,7 +2091,7 @@ Replacing both arguments by their harmonic representatives turns the cup product
 \uses{lem:srt-r1-stokes-cut-disks}
 On a compact Riemann surface the sum of residues of a global meromorphic 1-form is zero — the well-definedness lemma for the trace map.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_subgap_residue_theorem}
-\notready
+\leanok
 \end{lemma}
 
 \begin{layman}
@@ -2391,7 +2391,7 @@ no placeholder, against unmodified Mathlib v4.28.0.
 \uses{lem:sgd-r1}
 $\|\omega\|_{s+2} \leq C(\|T\omega\|_{s} + \|\omega\|_{s})$ for elliptic $T$.
 \lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_garding}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Rellich–Kondrachov compactness]
@@ -2399,7 +2399,7 @@ $\|\omega\|_{s+2} \leq C(\|T\omega\|_{s} + \|\omega\|_{s})$ for elliptic $T$.
 \uses{lem:rk-r1-partition-localize}
 $H^{s'} \hookrightarrow H^{s}$ is compact for $s' > s$ on a compact manifold.
 \lean{JacobianChallenge.Analysis.SobolevElliptic.sobolev_rellich_kondrachov}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Sobolev step 2: Fredholm property of $\Delta$]
@@ -2816,7 +2816,7 @@ with their smooth sections.  Sub-leaves
 \(\textsf{r9subA-r1.1}\)–\(\textsf{r9subA-r5.5}\) are tracked in
 \code{Jacobian/Analysis/BundledForms/SubA.lean}.
 \lean{JacobianChallenge.Analysis.BundledForms.SubA.r9subA_cotangent_alternating_bundle}
-\notready
+\leanok
 \end{theorem}
 
 \begin{lemma}[R9-sub-A.1 — cotangent bundle]
@@ -2826,7 +2826,7 @@ There is a smooth real vector bundle structure on
 \(T^{*}M\to M\) whose fibre at \(p\) is \((T_{p}M)^{*}\), with
 chart-local trivialisations dual to those of the tangent bundle.
 \lean{JacobianChallenge.Analysis.BundledForms.SubA.cotangentBundle_smooth}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R9-sub-A.2 — exterior-power bundle]
@@ -2836,7 +2836,7 @@ chart-local trivialisations dual to those of the tangent bundle.
 fibre at \(p\) is \(\Lambda^{k}(T_{p}M)^{*}\), with chart-local
 trivialisations \(\Lambda^{k}\) of the cotangent trivialisations.
 \lean{JacobianChallenge.Analysis.BundledForms.SubA.exteriorPower_bundle_smooth}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R9-sub-A.4 — smooth sections module]
@@ -2845,7 +2845,7 @@ trivialisations \(\Lambda^{k}\) of the cotangent trivialisations.
 \(\Gamma^{\infty}(M,\Lambda^{k}T^{*}M)\) is a real vector space
 and a \(C^{\infty}(M,\R)\)-module under pointwise operations.
 \lean{JacobianChallenge.Analysis.BundledForms.SubA.smoothSections_module}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R9-sub-A.5 — \(\Omega^{k}(M)\) is the smooth-sections module]
@@ -2856,7 +2856,7 @@ There is a canonical \(\R\)-linear isomorphism
 is the bridge between R9's headline statement and Mathlib's
 \code{VectorBundle.SmoothSection} machinery.
 \lean{JacobianChallenge.Analysis.BundledForms.SubA.omega_eq_smoothSections}
-\notready
+\leanok
 \end{lemma}
 
 \subsubsection*{Stepwise refinement of R9-sub-A}
@@ -3614,7 +3614,7 @@ realisation \(V\), the comparison chain map
 descends to a \(\Z\)-module isomorphism
 \(H_{1}^{\mathrm{cell}}(K)\cong H_{1}^{\mathrm{sing}}(V)\).
 \lean{JacobianChallenge.StageA.cellular_iso_singularH}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.A.r1 --- chain map from skeletal filtration]
@@ -3628,7 +3628,7 @@ At chain-level this is the identity
 checked on the basis of \(K_{n}\) by computing the signed face
 operator on each side.
 \lean{JacobianChallenge.StageA.cellularToSingular_isChainMap_substantive}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.A.r2 --- skeletal-pair LES]
@@ -3638,7 +3638,7 @@ the long exact sequence of the pair gives
 \(H_{n}(K^{(n)},K^{(n-1)})\cong\bigoplus_{\sigma\in K_{n}}\Z\),
 the cellular chain group.
 \lean{JacobianChallenge.StageA.skeletal_pair_les_relative}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.A.r3 --- five-lemma assembly]
@@ -3660,7 +3660,7 @@ Every fully reduced orientable edge word \(w\) is HandleSwap-equivalent
 to a handle-grouped word: there exists \(v\) with
 \(\code{TietzeEq}\,w\,v\) and \(v\) handle-grouped.
 \lean{JacobianChallenge.StageA.orientable_word_handleSwap_to_grouped}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.B.r1 --- displacement measure]
@@ -3672,7 +3672,7 @@ positions of the two \(a_{i}\)-letters with \(b_{j}\)-letters
 displacement \(\mu(w)=\sum_{i}d_{i}(w)\).  Then \(\mu(w)\geq 0\),
 and \(\mu(w)=0\) iff \(w\) is handle-grouped.
 \lean{JacobianChallenge.StageA.handleSwap_displacement_measure}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.B.r2 --- HandleSwap decreases \(\mu\)]
@@ -3680,7 +3680,7 @@ and \(\mu(w)=0\) iff \(w\) is handle-grouped.
 If \(\mu(w)>0\) then there exists a HandleSwap step
 \(w\rightsquigarrow_{\mathrm{HS}} v\) with \(\mu(v)<\mu(w)\).
 \lean{JacobianChallenge.StageA.handleSwap_strictly_decreases_mu}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.B.r3 --- well-founded recursion on \(\mu\)]
@@ -3690,7 +3690,7 @@ identifies \(w\) as handle-grouped; the inductive step uses
 \(\mu\)-decrease (r2) plus transitivity of \code{TietzeEq} to
 extend the witness chain.
 \lean{JacobianChallenge.StageA.handleSwap_grouping_via_mu_induction}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.C --- Brahana standardisation]
@@ -3702,7 +3702,7 @@ with R3-sub-B.B and the existing cyclic-reduction theorem
 \code{rawWord\_cyclic\_reduction}, this gives the headline
 \code{orientable\_edgeWord\_tietzeEq\_standardWord}.
 \lean{JacobianChallenge.StageA.orientable_edgeWord_tietzeEq_standardWord}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.C.r1 --- index permutation by HandleSwap]
@@ -3711,7 +3711,7 @@ For every \(\sigma\in S_{g}\) and every handle-grouped word \(w\),
 there exists a handle-grouped word \(v\) with the handles permuted
 by \(\sigma\) and \(\code{TietzeEq}\,w\,v\).
 \lean{JacobianChallenge.StageA.handleSwap_permutation_realises}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.C.r2 --- canonical handle-block letter order]
@@ -3721,7 +3721,7 @@ the orientability hypothesis (no nonorientable pairs) forces the
 orientation pattern to be \((+,+,-,-)\) up to cyclic rotation; this
 is the \code{standardWord}\(\,g\) block letter pattern.
 \lean{JacobianChallenge.StageA.orientable_handle_block_canonical}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.C.r3 --- canonical block ordering of handles]
@@ -3731,7 +3731,7 @@ pattern), every orientable handle-grouped word is HandleSwap-equivalent
 to the word with handles in index order \(0,1,\dotsc,g-1\) and
 each block in the canonical \((+,+,-,-)\) letter pattern.
 \lean{JacobianChallenge.StageA.handleGrouped_canonical_form}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.C.r4 --- canonical form equals \code{standardWord}]
@@ -3740,7 +3740,7 @@ The canonical form from r3 is definitionally
 \(\code{standardWord}\,g
 =a_{0}b_{0}a_{0}^{-1}b_{0}^{-1}\dotsm a_{g-1}b_{g-1}a_{g-1}^{-1}b_{g-1}^{-1}\).
 \lean{JacobianChallenge.StageA.canonical_form_eq_standardWord}
-\notready
+\leanok
 \end{lemma}
 
 %======================================================================
@@ -3880,7 +3880,7 @@ For every \(x\in X\), the cotangent fibre \((T_{x}^{*}X)_{\C}\) is
 canonically isometric to \(\C\to_{\C}\C\cong\C\) via evaluation
 at the chart-local \(z\)-coordinate basis vector \(\partial_{z}\).
 \lean{JacobianChallenge.HolomorphicForms.cotangent_fiber_eval_isometry}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.A.r2 --- trivialisation \code{hcompat} witness]
@@ -3890,7 +3890,7 @@ with the canonical fiber isometry of r1; equivalently, for every
 section \(\sigma\) and every chart \((e,U)\) with \(x\in U\),
 \(\|\sigma(x)\| = \|(e\langle x,\sigma(x)\rangle)_{2}\|\).
 \lean{JacobianChallenge.HolomorphicForms.cotangent_trivialisation_hcompat}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.B --- sup-norm Cauchy converges]
@@ -3908,7 +3908,7 @@ A sup-norm Cauchy sequence in \(\mathrm{Hone}(X)\) is pointwise
 Cauchy in each Banach fibre; the pointwise limit
 \(\sigma_{\infty}(x):=\lim_{n}\sigma_{n}(x)\) exists.
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_pointwise_limit}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.B.r2 --- uniform convergence]
@@ -3917,7 +3917,7 @@ Sup-norm Cauchy \(\Rightarrow\) uniform Cauchy on \(X\) (compact); combined
 with r1, \(\sigma_{n}\to\sigma_{\infty}\) uniformly.  Hence
 \(\sigma_{\infty}\) is continuous (\code{TendstoUniformly.continuous}).
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_tendstoUniformly_continuous}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.B.r3 --- chart-local Weierstrass]
@@ -3928,7 +3928,7 @@ holomorphic.  Power-series coefficient convergence gives that the
 uniform limit \(f_{\infty}\) has a power series at each point, hence
 is holomorphic on \(U\).
 \lean{JacobianChallenge.HolomorphicForms.chart_local_weierstrass}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.B.r4 --- holomorphicity of the global limit]
@@ -3938,7 +3938,7 @@ compatibility (preserved under uniform limits) glues to a global
 \code{HolomorphicOneForm}\(\,\C\,X\) with \(\sigma_{\infty}\) as
 its underlying section.
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_uniform_limit}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.C --- closed unit ball totally bounded]
@@ -3957,7 +3957,7 @@ Sup-norm \(\leq 1\) \(\Rightarrow\) \(\|\sigma(x)\|\leq 1\) for every \(x\); in
 particular every chart-local representative \(f_{n}=\sigma_{n}\circ\phi^{-1}\)
 satisfies \(|f_{n}(z)|\leq 1\) on the chart disc.
 \lean{JacobianChallenge.HolomorphicForms.chart_local_pointwise_bound}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.C.r2 --- Cauchy first-derivative estimate]
@@ -3967,7 +3967,7 @@ Cauchy formula gives \(|f_{n}'(z_{0})|\leq M/r\) where
 \(M=\sup_{|w-z_{0}|=r}|f_{n}(w)|\).  Combined with r1's pointwise
 bound, this gives \(|f_{n}'(z_{0})|\leq 1/r\), uniform in \(n\).
 \lean{JacobianChallenge.HolomorphicForms.chart_local_cauchy_derivative_estimate}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.C.r3 --- chart-local equicontinuity]
@@ -3976,7 +3976,7 @@ A uniform first-derivative bound on a disc gives uniform Lipschitz
 constant via the mean-value theorem; equivalently, the family
 \(\{f_{n}\}\) is equicontinuous on every closed sub-disc.
 \lean{JacobianChallenge.HolomorphicForms.chart_local_equicontinuous}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.C.r4 --- chart-local Arzel\`a--Ascoli]
@@ -3984,7 +3984,7 @@ constant via the mean-value theorem; equivalently, the family
 Equibounded + equicontinuous on a compact subset of \(\C\) \(\Rightarrow\)
 relatively compact in the sup-norm topology (Arzel\`a--Ascoli).
 \lean{JacobianChallenge.HolomorphicForms.chart_local_arzela_ascoli}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.C.r5 --- finite-cover assembly]
@@ -3995,7 +3995,7 @@ The gluing uses the Lebesgue number of the open cover plus a
 diagonal extraction to upgrade chart-by-chart subseq-convergence
 to a single subsequence convergent on all of \(X\).
 \lean{JacobianChallenge.HolomorphicForms.global_totally_bounded_via_chart_cover}
-\notready
+\leanok
 \end{lemma}
 
 %======================================================================
@@ -4103,7 +4103,7 @@ Riemann surface has no nonzero global sections.
 \label{lem:r8subC-A-r1}
 A nonzero \(s\in H^{0}(X,L)\) defines a divisor \((s)\geq 0\) on \(X\).
 \lean{JacobianChallenge.HolomorphicForms.section_effective_divisor}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-C.A.r2 --- divisor degree equals line-bundle degree]
@@ -4111,7 +4111,7 @@ A nonzero \(s\in H^{0}(X,L)\) defines a divisor \((s)\geq 0\) on \(X\).
 \(\deg(s)=\deg L\) for any nonzero \(s\in H^{0}(X,L)\); the
 divisor-line-bundle correspondence preserves degree.
 \lean{JacobianChallenge.HolomorphicForms.section_degree_eq_lineBundle_degree}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-C.B --- Riemann's inequality (\(\geq\))]
@@ -4129,7 +4129,7 @@ For the trivial bundle, \(h^{0}=1,h^{1}=g\); both are computed
 from Hodge \(H^{1}(\mathcal{O}_{X})\cong H^{0}(K_{X})^{*}\) and
 \(\dim H^{0}(\mathcal{O}_{X})=1\) on a connected compact RS.
 \lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_trivial_bundle}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-C.B.r2 --- Euler-char additivity SES]
@@ -4138,7 +4138,7 @@ The short exact sequence \(0\to L\to L(p)\to\C_{p}\to 0\) gives
 \(\chi(L(p))=\chi(L)+1\) (the skyscraper sheaf \(\C_{p}\) has
 \(\chi=1\)).
 \lean{JacobianChallenge.HolomorphicForms.eulerChar_additive_ses_point}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-C.B.r3 --- induction on \(\deg L\)]
@@ -4147,7 +4147,7 @@ Strong induction on \(|\deg L|\) using r1 (base) and r2 (inductive
 step) gives \(\chi(L)=\deg L+1-g\), i.e.\
 \(h^{0}(L)-h^{1}(L)=\deg L+1-g\); the \(\geq\) direction follows.
 \lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_ge_via_induction}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-C.C --- Serre-duality squeeze (\(\leq\))]
@@ -4163,7 +4163,7 @@ step) gives \(\chi(L)=\deg L+1-g\), i.e.\
 \label{lem:r8subC-C-r1}
 \(\deg(L^{-1}\otimes K_{X})=2g-2-\deg L\).
 \lean{JacobianChallenge.HolomorphicForms.dual_bundle_degree}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-C.C.r2 --- Serre-duality identification]
@@ -4172,7 +4172,7 @@ step) gives \(\chi(L)=\deg L+1-g\), i.e.\
 \(h^{1}(L^{-1}\otimes K_{X})=h^{0}(L)\) via the Serre pairing
 non-degeneracy.
 \lean{JacobianChallenge.HolomorphicForms.serre_duality_h0_h1_swap}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-C.C.r3 --- application of (\(\geq\)) to the dual bundle]
@@ -4181,7 +4181,7 @@ Apply r-r3 of R8-sub-C.B to \(L^{-1}\otimes K_{X}\); rewrite via
 r1 (degree) and r2 (Serre swap) to land at the \(\leq\) statement
 on \(L\).
 \lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_le_via_dual}
-\notready
+\leanok
 \end{lemma}
 
 %======================================================================
@@ -7775,7 +7775,7 @@ $2$-manifold with boundary $\partial Y = \bigsqcup_{i} (-\partial D_{i})$
 (with the orientation inherited from $X$, the boundary circles
 appear with reversed orientation).
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_residue_cutDisk_manifold}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass srt.7: meromorphic 1-form is closed away from its poles]
@@ -7788,7 +7788,7 @@ holomorphic, hence $d\omega = (\partial_{\bar z} f)\,d\bar z \wedge dz
 = 0$ by the Cauchy--Riemann equations.  In particular $\omega$ is
 closed on the cut-disk region $Y$ of Lemma~\ref{lem:srt-r6}.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_residue_meromorphic_closed}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass srt.8: Stokes on a smooth oriented 2-manifold with boundary]
@@ -7800,7 +7800,7 @@ of $Y$, $\int_{Y} d\omega = \int_{\partial Y} \omega$.  Specialised
 to $d\omega = 0$ this gives $\int_{\partial Y} \omega = 0$, which is
 exactly the boundary identity needed for $\textsc{lem:srt-r1}$.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_residue_stokes_manifold}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass srt.9: chart-local Green's theorem on a planar disk]
@@ -7814,7 +7814,7 @@ A partition-of-unity decomposition assembles the chart-local
 identities into the global Stokes identity of
 Lemma~\ref{lem:srt-r8}.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_residue_green_chartlocal}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass srt.10: Mathlib endpoint for chart-local Green's theorem]
@@ -7854,7 +7854,7 @@ $\langle \bar\partial u, \varphi\rangle = -\iint_{\C} u(z)\,
 supported).  This is the Mathlib-friendly definition the rest of
 chain~D consumes.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_residue_dbar_pairing_def}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass srt.12: pairing $\bar\partial(1/(\pi z))$ against $\varphi$]
@@ -7866,7 +7866,7 @@ Lemma~\ref{lem:srt-r11} gives
 $\langle \bar\partial(1/(\pi z)), \varphi\rangle =
 -\frac{1}{\pi}\iint_{\C} \frac{\bar\partial \varphi(z)}{z}\,dA(z)$.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_residue_dbar_pairing_kernel}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass srt.13: Cauchy--Pompeiu evaluation at the origin]
@@ -7885,7 +7885,7 @@ $\langle \bar\partial(1/(\pi z)), \varphi\rangle = \varphi(0) =
 \langle \delta_{0}, \varphi\rangle$, hence the distributional identity
 $\bar\partial(1/(\pi z)) = \delta_{0}$ (= $\textsc{lem:srt-r4}$).
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_residue_dbar_eq_delta}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass srt.14: chart-local Cauchy residue formula]
@@ -7901,7 +7901,7 @@ $\oint_{\partial D} \omega = \oint_{\partial D} a_{-1}\,d\log z =
 $\textsc{lem:srt-r2}$ once Stokes ($\textsc{lem:srt-r8}$) packages
 exactness into vanishing of the boundary integral.
 \lean{JacobianChallenge.Analysis.SerreDuality.serre_residue_chartlocal_residue}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass srt.15: Mathlib endpoint for the Cauchy residue computation]
