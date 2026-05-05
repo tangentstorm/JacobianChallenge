@@ -49,9 +49,17 @@ theorem MeromorphicMapToSphere.toMap_ne_infty_off_pole
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (_hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P) :
     ∀ x : X, x ≠ P → f.toMap x ≠ (OnePoint.infty : OnePoint ℂ) := by
-  sorry
+  classical
+  intro x hx
+  -- Off `P`, `f.poleDivisor x = (Divisor.point P) x = 0`; then the
+  -- structure's `toMap_ne_infty_of_poleDivisor_zero` axiom finishes.
+  refine f.toMap_ne_infty_of_poleDivisor_zero x ?_
+  have h : f.poleDivisor x = (Divisor.point P) x := by
+    change f.poles x = (Divisor.point P) x
+    rw [hpole]
+  rw [h, Divisor.point_apply_ne hx]
 
 /-- **Structural axiom (M1b).** Off any locus where `f.toMap` is
 finite, the map is continuous: in any chart at a finite point,
@@ -64,9 +72,11 @@ theorem MeromorphicMapToSphere.continuousOn_of_no_infty_on
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X) (S : Set X)
-    (_hne : ∀ x ∈ S, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)) :
-    ContinuousOn f.toMap S := by
-  sorry
+    (hne : ∀ x ∈ S, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)) :
+    ContinuousOn f.toMap S :=
+  -- `S ⊆ {x | f.toMap x ≠ ∞}`, and the structure axiom
+  -- `continuousOn_ne_infty` already supplies continuity on that locus.
+  f.continuousOn_ne_infty.mono (fun x hx => hne x hx)
 
 /-- **Structural axiom (M1).** Restricted to the complement of the
 single-pole locus `{P}`, the meromorphic map is continuous.
@@ -94,9 +104,17 @@ theorem MeromorphicMapToSphere.toMap_pole_eq_infty_of_poleDivisor_point
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (_hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P) :
     f.toMap P = (OnePoint.infty : OnePoint ℂ) := by
-  sorry
+  classical
+  -- At `P`, `f.poleDivisor P = (point P) P = 1 > 0`, so the structure
+  -- axiom `toMap_eq_infty_of_poleDivisor_pos` applies.
+  refine f.toMap_eq_infty_of_poleDivisor_pos P ?_
+  have h : f.poleDivisor P = (Divisor.point P) P := by
+    change f.poles P = (Divisor.point P) P
+    rw [hpole]
+  rw [h, Divisor.point_apply_self]
+  decide
 
 /-- **Structural axiom (M2a).** A meromorphic map with a simple pole
 at `P` has a *finite-pre-image lift* `g : X \ {P} → ℂ` such that
@@ -111,11 +129,28 @@ theorem MeromorphicMapToSphere.modulus_diverges_at_simple_pole
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (_hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P) :
     ∃ g : X → ℂ,
       (∀ x : X, x ≠ P → f.toMap x = ((g x : ℂ) : OnePoint ℂ)) ∧
       Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop := by
-  sorry
+  classical
+  -- `f.poleDivisor P = (point P) P = 1 > 0`, so the structure axiom
+  -- `exists_modulus_atTop_at_pole` supplies the lift.
+  have hposP : 0 < f.poleDivisor P := by
+    have h : f.poleDivisor P = (Divisor.point P) P := by
+      change f.poles P = (Divisor.point P) P
+      rw [hpole]
+    rw [h, Divisor.point_apply_self]
+    decide
+  obtain ⟨g, hg_eq, hg_div⟩ := f.exists_modulus_atTop_at_pole P hposP
+  refine ⟨g, ?_, hg_div⟩
+  intro x hx
+  -- For `x ≠ P`, `f.poleDivisor x = (point P) x = 0` from `hpole`.
+  refine hg_eq x ?_
+  have h : f.poleDivisor x = (Divisor.point P) x := by
+    change f.poles x = (Divisor.point P) x
+    rw [hpole]
+  rw [h, Divisor.point_apply_ne hx]
 
 /-- **Structural axiom (M2b).** A `ℂ`-valued function whose modulus
 diverges at a punctured nhd of `P`, lifted to `OnePoint ℂ` via
