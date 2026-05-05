@@ -871,3 +871,67 @@ limit). \textbf{Mathlib gap}: v4.28.0 lacks a Weierstrass-convergence
 theorem for holomorphic functions or sections.
 \end{proof>
 
+\subsection{Uniformization-lite further decomposition}
+\label{sec:uniformization-lite-iter3}
+
+\begin{lemma}[Biholomorphism from sphere homeomorphism]
+\label{lem:uniformization-genus-zero-biholomorphism}
+A compact connected complex 1-manifold homeomorphic to \(S^2\) admits
+a biholomorphism to \(\OnePoint\,\CC\).
+\lean{JacobianChallenge.HolomorphicForms.exists\_biholomorphism\_to\_OnePointCx\_of\_homeoSphere}
+\end{lemma}
+\begin{proof}
+Classical uniformisation at genus 0: any complex structure on the
+topological 2-sphere is biholomorphically equivalent to the standard
+one on \(\OnePoint\,\CC\). One way to see this is to combine the
+Riemann mapping theorem with a removable-singularities argument: a
+biholomorphism between a chart and a disc in \(\CC\) extends across
+\(\infty\) to a global biholomorphism with \(\OnePoint\,\CC\).
+\end{proof}
+
+\begin{lemma}[Pullback of holomorphic 1-forms via biholomorphism]
+\label{lem:holomorphic-one-form-pullback-via-biholo}
+A homeomorphism \(e:X\to\OnePoint\,\CC\) that is biholomorphic
+induces a \(\CC\)-linear isomorphism of holomorphic 1-form spaces,
+\(e^{*}:H^{0}(\OnePoint\,\CC,\Omega^{1})\to H^{0}(X,\Omega^{1})\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm\_linearEquiv\_of\_biholo\_to\_OnePointCx}
+\end{lemma>
+\begin{proof}
+Standard pullback of forms via biholomorphism: \(e^*\omega(v):=\omega(de\cdot v)\)
+is a cotangent-space pullback, \(\CC\)-linear in \(\omega\), and an
+isomorphism because \(de\) is invertible at every point.
+\end{proof}
+
+\subsection{Chart-trivialisation API for ContMDiffSection}
+\label{sec:chart-trivialisation-API}
+
+\begin{lemma}[Identity-chart local representative is smooth]
+\label{lem:section-localRepr-identity-chart-contdiff}
+The cotangent-bundle section \(\omega.\code{toFun}\) pulled back through
+\(\code{identityChart}.\code{symm}\) and evaluated at \(1:\CC\) gives a
+\(C^{\infty}\) function on \(\CC\).
+\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection\_localRepr\_identityChart\_contDiff}
+\end{lemma}
+\begin{proof}
+A \(\code{ContMDiffSection}\) is by definition smooth in any chart of
+the bundle's base. In the identity chart of \(\OnePoint\,\CC\), the
+local representative is a smooth section of the trivial cotangent
+bundle on \(\CC\); evaluating on the constant tangent vector \(1\) is
+a smooth (in fact \(\CC\)-linear) operation. \textbf{Mathlib gap}: a
+chart-trivialisation API for \code{ContMDiffSection} on the cotangent
+bundle is not in v4.28.0.
+\end{proof}
+
+\begin{lemma}[Inversion-chart local representative is continuous at zero]
+\label{lem:section-localRepr-inversion-chart-continuous-at-zero}
+The cotangent-bundle section pulled back through
+\(\code{inversionChart}.\code{symm}\) and evaluated at \(1:\CC\) is
+continuous at \(w=0\).
+\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection\_localRepr\_inversionChart\_continuousAt\_zero}
+\end{lemma>
+\begin{proof}
+Same chart-trivialisation argument as
+Lemma~\ref{lem:section-localRepr-identity-chart-contdiff}, applied
+in the inversion chart instead.
+\end{proof>
+
