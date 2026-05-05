@@ -10,10 +10,11 @@ surface is the **residue map** (Čech model) or the **integration map**
 
 Round 15 names two pieces:
 
-1. `residueMapIso X` — the linear isomorphism `H¹(X, K_X) ≃ₗ[ℂ] ℂ`
-   itself (frontier);
-2. `residueMap X` and `residueMap_inverse X` — the two linear maps
-   extracted from that opaque isomorphism.
+1. `residueMap X` — the linear map `H¹(X, K_X) → ℂ` itself
+   (frontier);
+2. `residueMap_isIso` — the fact that this map is a `ℂ`-linear
+   isomorphism (frontier; equivalent to `dim H¹(K_X) = 1` plus
+   nontrivial residue).
 
 `h1Canonical_isoToC X` (round 5) is then the bundled form of
 `residueMap` with its inverse, and gives `serreTraceMap` its concrete
@@ -25,49 +26,36 @@ namespace JacobianChallenge.HolomorphicForms
 open scoped Manifold
 open CategoryTheory
 
-/-- **Frontier opaque construction.** Residue / integration
-isomorphism `H¹(X, K_X) ≃ₗ[ℂ] ℂ` on a compact connected Riemann
-surface.
-
-The analytic content is the classical one-dimensionality of
-`H¹(X, K_X)` plus a nonzero residue/integration functional.  Keeping
-this as one opaque construction makes the round-trip lemmas below
-ordinary projections rather than theorem-level sorries. -/
-axiom residueMapIso
+/-- **Frontier `def` (round 1, opaque).** Residue / integration map
+`H¹(X, K_X) → ℂ` on a compact connected Riemann surface. Marked
+`opaque` so the round-trip lemmas below are not contradicted by a
+specific `:= 0` placeholder; bottom-up content is the classical
+residue / integration map (Čech model) on `K_X`. -/
+noncomputable opaque residueMap
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
-    RSSheafCohomology X (RSDualizingSheaf X) 1 ≃ₗ[ℂ] ℂ
+    RSSheafCohomology X (RSDualizingSheaf X) 1 →ₗ[ℂ] ℂ
 
-/-- Residue / integration map `H¹(X, K_X) → ℂ` on a compact connected
-Riemann surface, extracted from the opaque residue isomorphism. -/
-noncomputable def residueMap
+/-- **Frontier `def` (round 1, opaque).** Inverse of the residue /
+integration map. Decomposes classically into
+* `dim_ℂ H¹(X, K_X) = 1` (handled also by `h1_dualizing_sheaf_one_dim`
+  in `H1DualizingSheaf.lean`),
+* the residue is nonzero on a chosen generator. -/
+noncomputable opaque residueMap_inverse
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
-    RSSheafCohomology X (RSDualizingSheaf X) 1 →ₗ[ℂ] ℂ :=
-  (residueMapIso X).toLinearMap
+    ℂ →ₗ[ℂ] RSSheafCohomology X (RSDualizingSheaf X) 1
 
-/-- Inverse residue map, extracted from the opaque residue
-isomorphism. -/
-noncomputable def residueMap_inverse
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
-    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
-    ℂ →ₗ[ℂ] RSSheafCohomology X (RSDualizingSheaf X) 1 :=
-  (residueMapIso X).symm.toLinearMap
-
-/-- Round-trip identity 1: `residueMap` followed by
-`residueMap_inverse` is the identity. -/
+/-- **Frontier theorem (sorry).** Round-trip identity 1: `residueMap`
+followed by `residueMap_inverse` is the identity. -/
 theorem residueMap_left_inv
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
@@ -76,10 +64,10 @@ theorem residueMap_left_inv
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
     Function.LeftInverse (residueMap_inverse X) (residueMap X) := by
-  simpa [residueMap, residueMap_inverse] using (residueMapIso X).left_inv
+  sorry
 
-/-- Round-trip identity 2: `residueMap_inverse` followed by
-`residueMap` is the identity. -/
+/-- **Frontier theorem (sorry).** Round-trip identity 2: `residueMap_inverse`
+followed by `residueMap` is the identity. -/
 theorem residueMap_right_inv
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
@@ -88,6 +76,6 @@ theorem residueMap_right_inv
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
     Function.RightInverse (residueMap_inverse X) (residueMap X) := by
-  simpa [residueMap, residueMap_inverse] using (residueMapIso X).right_inv
+  sorry
 
 end JacobianChallenge.HolomorphicForms

@@ -28,7 +28,7 @@ is split TOPDOWN into:
   norm `‖(ω - μ).1 x‖` is bounded by `r ≥ 0`, then so is
   `holomorphicSupNorm X (ω - μ)`. Standard `Real.iSup_le` after
   unfolding the definition through `cotangentFiberNorm`.
-* `montel_pointwise_extraction` (**frontier axiom**): the analytic core —
+* `montel_pointwise_extraction` (**TODO leaf**): the analytic core —
   given a sup-norm-bounded sequence of holomorphic 1-forms, extract a
   subsequence `φ` and a limit `ωlim` together with the **pointwise
   uniform** ε-N condition on `‖(ω (φ n) - ωlim).1 x‖`, plus the
@@ -114,7 +114,7 @@ substantial and the underlying infrastructure (Cauchy API for
 sections, Arzelà–Ascoli for `OpenPartialHomeomorph`-domain functions,
 manifold-Weierstrass) is not yet in place. Downstream workers can
 sub-split when they have the supporting Mathlib lemmas. -/
-axiom montel_pointwise_extraction
+private theorem montel_pointwise_extraction
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (ω : ℕ → HolomorphicOneForm ℂ X)
@@ -123,7 +123,8 @@ axiom montel_pointwise_extraction
       ∃ ωlim : HolomorphicOneForm ℂ X,
         holomorphicSupNorm X ωlim ≤ 1 ∧
         ∀ ε > (0 : ℝ), ∃ N, ∀ n ≥ N, ∀ x : X,
-          ‖(ω (φ n) - ωlim).1 x‖ ≤ ε
+          ‖(ω (φ n) - ωlim).1 x‖ ≤ ε := by
+  sorry
 
 /-- Montel compactness (sequential form): the closed unit ball of
 `H⁰(X, Ω¹)` is sequentially compact in the sup-norm sense.

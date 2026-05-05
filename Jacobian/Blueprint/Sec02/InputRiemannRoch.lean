@@ -18,9 +18,10 @@ bundles, the canonical bundle, the `H⁰` dimension, the degree, the
 genus, the line-bundle subtraction, and the classical RR identity as
 an axiomatic field — into a single `RiemannRochUmbrella` structure.
 The theorem `input_riemann_roch` then follows definitionally; the
-deep content moves into the explicit existence axiom
-`riemann_roch_umbrella_exists_axiom`, pending the analytic frontier
-(line-bundle theory, sheaf cohomology, Serre duality nondegeneracy). -/
+deep content moves into the existence axiom
+`riemann_roch_umbrella_exists`, which is `sorry`-bearing pending the
+analytic frontier (line-bundle theory, sheaf cohomology, Serre
+duality nondegeneracy). -/
 
 namespace JacobianChallenge.Blueprint
 
@@ -85,18 +86,21 @@ constructions; the χ-identity gives
 `Jacobian/HolomorphicForms/EulerCharLineBundle.lean` once it lands)
 and `thm:serre-duality-rs` (covered by
 `Jacobian/HolomorphicForms/SerreDualityRS.lean`). -/
-axiom riemann_roch_umbrella_exists_axiom
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    Nonempty (RiemannRochUmbrella X)
-
-/-- Existence of a `RiemannRochUmbrella` package for any compact
-Riemann surface. This theorem is a named projection from the explicit
-frontier axiom `riemann_roch_umbrella_exists_axiom`. -/
 theorem riemann_roch_umbrella_exists
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    Nonempty (RiemannRochUmbrella X) :=
-  riemann_roch_umbrella_exists_axiom X
+    Nonempty (RiemannRochUmbrella X) := by
+  -- Round 20 design: assemble the umbrella from
+  -- `RSLineBundleSheaf X`, `RSDualizingSheaf X`,
+  -- `RSLineBundleSub`, `RSLineBundleDegree`,
+  -- `RSGenus`, and `riemann_roch_classical_identity`.
+  -- The actual assembly requires per-bundle `Module ℂ` instances on
+  -- the cohomology groups, which are still frontier sorries (rounds
+  -- 21–22), so the umbrella body itself remains a frontier sorry
+  -- at this stage. Named obligations now consumed:
+  -- `riemann_roch_classical_identity`,
+  -- `RSLineBundleDegree_dual_tensor_canonical`,
+  -- finite-dim instances on `H^q(L)`.
+  sorry
 
 end JacobianChallenge.Blueprint
