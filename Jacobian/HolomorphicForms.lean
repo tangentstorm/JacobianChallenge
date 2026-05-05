@@ -24,6 +24,7 @@ import Jacobian.HolomorphicForms.EvalLinearMapVecExtra
 import Jacobian.HolomorphicForms.CotangentBundle
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.FiniteDimensional
+import Jacobian.HolomorphicForms.MeromorphicDegreeRefinement
 
 /-!
 # Holomorphic forms infrastructure
