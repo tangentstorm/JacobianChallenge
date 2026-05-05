@@ -76,7 +76,17 @@ theorem meromorphicToCp1_at_pole_of_simple_two_point_principal
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     meromorphicToCp1 X f Q₂ = OnePoint.infty := by
-  sorry
+  classical
+  have hcoeff : principalDivisor X f Q₂ = (-1 : ℤ) := by
+    have h := congrArg (fun D : Divisor X => D Q₂) hpd
+    simpa [Divisor.point, hne] using h
+  have horder :
+      (vanishingOrder X Q₂ (fun q => (f q).getD 0)).untopD 0 = (-1 : ℤ) := by
+    unfold principalDivisor at hcoeff
+    split_ifs at hcoeff with h
+    rw [Finsupp.onFinset_apply] at hcoeff
+    simpa using hcoeff
+  exact f.value_eq_infty_of_neg_order Q₂ (by rw [horder]; omega)
 
 /-- **Sub-leaf 2.** Symmetric to sub-leaf 1: the simple zero at `Q₁`
 gives `meromorphicToCp1 X f Q₁ = 0`. -/
@@ -87,7 +97,19 @@ theorem meromorphicToCp1_at_zero_of_simple_two_point_principal
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     meromorphicToCp1 X f Q₁ = ((0 : ℂ) : OnePoint ℂ) := by
-  sorry
+  classical
+  have hcoeff : principalDivisor X f Q₁ = (1 : ℤ) := by
+    have h := congrArg (fun D : Divisor X => D Q₁) hpd
+    simpa [Divisor.point, hne, hne.symm] using h
+  have horder :
+      (vanishingOrder X Q₁ (fun q => (f q).getD 0)).untopD 0 = (1 : ℤ) := by
+    unfold principalDivisor at hcoeff
+    split_ifs at hcoeff with h
+    · rw [Finsupp.onFinset_apply] at hcoeff
+      simpa using hcoeff
+    · have hbad : (0 : ℤ) = 1 := by simpa using hcoeff
+      omega
+  exact f.value_eq_zero_of_pos_order Q₁ (by rw [horder]; omega)
 
 /-- **Sub-leaf 3 (general, sorry-free).** Universal-logic helper: a
 function attaining two distinct values is nonconstant. -/

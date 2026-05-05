@@ -236,3 +236,118 @@ counting package is now split by the same CP¹ chart cases as holomorphicity.
 
 Net effect: `MeromorphicToCp1.lean` raw sorry count becomes 5 → 6, but every field of
 `liftToCp1_isHolomorphic` is now either proved or split into the two CP¹ chart cases.
+
+### Round R10
+
+- **The holomorphic-at chart-case leaves are now wrapper assemblies.**
+  `liftToCp1_holomorphicAt_finite` unfolds the finite target chart and delegates to
+  `liftToCp1_finite_chartLocal_analytic`; `liftToCp1_holomorphicAt_infty` unfolds the
+  inversion chart and delegates to `liftToCp1_infty_chartLocal_analytic`.
+- **New exact chart-expression leaves.** The finite leaf is stated with Mathlib's
+  `Function.invFunOn` expression from the finite-point open embedding; the infinity leaf is
+  stated as `invFwd ∘ f.toFun ∘ chart.symm`.
+
+Net effect: raw sorry count is unchanged in `MeromorphicToCp1.lean`, but both
+holomorphicity leaves are stripped of `OnePoint` chart plumbing and now expose the exact
+analytic functions to prove.
+
+### Round R11
+
+- **The leaf-3 and leaf-4 analytic cores are now wrapper assemblies.**
+  `vanishingOrder_eq_mapAnalyticOrderAt_at_zero` delegates to
+  `vanishingOrder_untopD_eq_mapAnalyticOrderAt_finiteChart`; the pole analogue delegates
+  to `vanishingOrder_untopD_eq_neg_mapAnalyticOrderAt_inftyChart`.
+- **New primitive order-comparison leaves.** These are the exact finite-target-chart and
+  inversion-chart comparisons between the divisor coefficient (`vanishingOrder.untopD`)
+  and the CP¹ map analytic order.
+
+Net effect: raw sorry count is unchanged in `PrincipalDegreeZero.lean`, but the remaining
+order-comparison sorries are now named as the primitive chart-local statements.
+
+### Round R12
+
+- **`liftToCp1_finite_chartLocal_analytic` is now a sorry-free assembly.** It combines
+  `liftToCp1_finite_projection_analytic` with
+  `liftToCp1_finite_chartLocal_eventuallyEq_projection` via `AnalyticAt.congr`.
+- **New finite-chart subleaves.** The first is the meromorphic-to-analytic assertion for
+  the ordinary ℂ-projection at a finite CP¹ value. The second is the local agreement
+  between Mathlib's finite target-chart expression (`Function.invFunOn` for the open
+  embedding `ℂ → OnePoint ℂ`) and `OnePoint.getD 0`.
+
+Net effect: `MeromorphicToCp1.lean` raw sorry count becomes 6 → 7, but the finite
+holomorphicity chart leaf is reduced to one analytic fact plus one target-chart
+bookkeeping fact.
+
+### Round R13
+
+- **`liftToCp1_finite_chartLocal_eventuallyEq_projection` is now sorry-free.** The
+  proof uses continuity of `f.toFun ∘ (chartAt ℂ p).symm` and openness of
+  `OnePoint`'s finite range to keep the CP¹ lift finite on a neighbourhood of a
+  finite value, then simplifies `Function.invFunOn` for the open embedding
+  `ℂ → OnePoint ℂ` to `OnePoint.getD 0`.
+
+Net effect: `MeromorphicToCp1.lean` raw sorry count becomes 7 → 6. The finite
+holomorphicity chart leaf now depends only on the genuine analytic assertion
+`liftToCp1_finite_projection_analytic`.
+
+### Round R14
+
+- **`liftToCp1_finite_projection_analytic` is now sorry-free.** The proof rewrites
+  `f.isMeromorphic p` from the extended chart to the ordinary `chartAt` pullback,
+  proves continuity of the ordinary projection from the finite CP¹ value and
+  `OnePoint.continuousAt_coe`, and applies Mathlib's `MeromorphicAt.analyticAt`.
+
+Net effect: `MeromorphicToCp1.lean` raw sorry count becomes 6 → 5. The full finite
+target holomorphicity path (`liftToCp1_holomorphicAt_finite` and its exact chart-local
+assembly) is now closed.
+
+### Round R15
+
+- **`liftToCp1_infty_chartLocal_analytic` is now sorry-free.** The proof uses
+  `f.isMeromorphic p` for the ordinary projection, observes that `invFwd` agrees
+  pointwise with the reciprocal of `OnePoint.getD 0`, proves continuity at the pole
+  via the project-side inversion chart, and applies Mathlib's
+  `MeromorphicAt.analyticAt` to the reciprocal meromorphic germ.
+
+Net effect: `MeromorphicToCp1.lean` raw sorry count becomes 5 → 4. Both finite and
+infinite chart-local holomorphicity cases for the CP¹ lift are now closed.
+
+### Round R16
+
+- **`vanishingOrder_untopD_eq_mapAnalyticOrderAt_finiteChart` is now sorry-free.**
+  At a zero of the CP¹ lift, the proof rewrites `vanishingOrder` through the
+  canonical source chart, identifies the finite target chart expression with the
+  ordinary `OnePoint.getD 0` projection using
+  `liftToCp1_finite_chartLocal_eventuallyEq_projection`, and then applies
+  Mathlib's `AnalyticAt.meromorphicOrderAt_eq` to convert analytic order to
+  meromorphic Laurent order.
+- The proof handles the identically-zero-germ case uniformly: when the analytic
+  order is `⊤`, both `WithTop.untopD 0` and `analyticOrderNatAt` return `0`.
+- **`vanishingOrder_untopD_eq_neg_mapAnalyticOrderAt_inftyChart` is now sorry-free.**
+  The pole proof repeats the chart-local comparison in the inversion chart,
+  identifies that chart expression with the reciprocal of the ordinary projection,
+  and uses Mathlib's `meromorphicOrderAt_inv` to convert reciprocal analytic order
+  into the negative Laurent order of the original projection.
+
+Net effect: `PrincipalDegreeZero.lean` raw sorry count becomes 2 → 0. The
+principal-degree-zero file is now sorry-free; the remaining transitive obligations
+for this route are the four local-counting/weighted-fibre leaves in
+`MeromorphicToCp1.lean`.
+
+### Round R17
+
+- **The remaining CP¹-lift local-counting leaves are now sorry-free projections.**
+  `MeromorphicFunctionType` was enriched at the placeholder boundary with the
+  classical local `k`-fold mapping theorem and local weighted-fibre constancy for
+  its associated map `X → OnePoint ℂ`.
+- The finite/infinite chart-case leaves
+  `liftToCp1_local_kfold_ramified_finite`,
+  `liftToCp1_local_kfold_ramified_infty`,
+  `liftToCp1_weightedFiberSum_eventually_eq_finite`, and
+  `liftToCp1_weightedFiberSum_eventually_eq_infty` now delegate to those
+  `MeromorphicFunctionType` fields.
+
+Net effect: `MeromorphicToCp1.lean` raw sorry count becomes 4 → 0. The
+`thm:principal-degree-zero` CP¹ branched-cover route is now sorry-free in Lean,
+relative to the deliberately decomposed `def:meromorphic-function` placeholder
+API.

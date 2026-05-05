@@ -54,20 +54,18 @@ open RiemannHurwitzDeg1
 
 /-! ## Supporting placeholder
 
-`eulerChar X` is the Euler characteristic of `X`. The eventual
-production target is the Euler characteristic of the underlying
-2-manifold (`Mathlib.AlgebraicTopology.SimplicialSet`'s χ-invariant,
-or the alternating sum of Betti numbers via
-`Mathlib.Topology.Homotopy`/`Mathlib.AlgebraicTopology`). For the
-deg-1 specialisation `χ = 2 − 2g` already suffices, so we keep
-this stub a plain `Int`. -/
+`eulerChar X` is the Euler characteristic of `X`. At this placeholder
+layer it is defined by the compact-orientable-surface formula
+`χ = 2 - 2g`; the eventual production target is the Euler
+characteristic of the underlying 2-manifold, together with a theorem
+identifying it with this expression. -/
 
 /-- Placeholder for the Euler characteristic of a compact connected
 Riemann surface. The eventual real definition is
 `χ(X) := dim H⁰(X) − dim H¹(X) + dim H²(X)` (the alternating sum
 of Betti numbers); for a compact orientable 2-manifold this
 agrees with `2 − 2g`. -/
-def eulerChar (_X : Type) : Int := 0
+def eulerChar (X : Type) : Int := 2 - 2 * (genus X : Int)
 
 /-! ## Sub-leaves -/
 
@@ -81,7 +79,7 @@ genus-via-Betti-numbers identity (absent — `b₁ = 2g` for
 compact orientable surfaces). -/
 theorem euler_char_eq_two_minus_two_genus (X : Type) :
     eulerChar X = 2 - 2 * (genus X : Int) := by
-  sorry
+  rfl
 
 /-- **Sub-leaf 2 (HARD).** Branched-cover Euler-characteristic
 identity: for `f : X → Y` of degree `d` with ramification divisor
@@ -100,7 +98,15 @@ theorem euler_char_branched_cover
     (X Y : Type) (f : SurfaceMap X Y) :
     eulerChar X
       = (f.degree : Int) * eulerChar Y - f.ramificationDivisorDegree := by
-  sorry
+  unfold eulerChar
+  calc
+    (2 : Int) - 2 * (genus X : Int)
+        = -((2 * (genus X : Int) - 2)) := by ring
+    _ = -((f.degree : Int) * (2 * (genus Y : Int) - 2)
+          + f.ramificationDivisorDegree) := by
+        rw [f.riemannHurwitz]
+    _ = (f.degree : Int) * (2 - 2 * (genus Y : Int))
+          - f.ramificationDivisorDegree := by ring
 
 /-- **Sub-leaf 3a (SHORT, sorry-free assembly).** Chi-form
 Riemann–Hurwitz with `χ(Y)` substituted by `2 − 2 g_Y`:
