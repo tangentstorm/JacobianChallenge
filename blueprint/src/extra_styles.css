@@ -79,3 +79,72 @@ body.hide-layman #layman-toggle button {
   border-color: #999;
   color: #555;
 }
+
+/* ----------------------------------------------------------------------
+   Dark-mode overrides.  The leanblueprint white theme hard-codes most of
+   its colors (no CSS custom properties to override), so we re-declare the
+   high-level palette under `@media (prefers-color-scheme: dark)`.  Goal:
+   readable on a dark background without reskinning the whole stylesheet.
+   The dep-graph SVG node colors (#1CAC78, #B0ECA3, #FFAA33, etc.) stay
+   as-is — they already render fine on dark.
+*/
+@media (prefers-color-scheme: dark) {
+  body { background-color: #0d1117 !important; color: #c9d1d9 !important; }
+  body > header,
+  nav.prev_up_next { background: #161b22 !important; color: #c9d1d9 !important; }
+  h1, h2, h3, h4, h1#doc_title { color: #f0f6fc !important; }
+  #doc_title a, #doc_title a:visited { color: #f0f6fc !important; }
+  nav.prev_up_next a { color: #c9d1d9 !important; }
+  a { color: #58a6ff; }
+  a:visited { color: #b189f5; }
+  ul.breadcrumbs a { color: #8b949e !important; }
+  /* Sidebar / TOC */
+  nav.toc { background-color: #0d1117 !important; border-right-color: #30363d !important; }
+  .toc ul li { background-color: #0d1117 !important; }
+  .toc ul li.current { background-color: #161b22 !important; }
+  .toc ul a { color: #c9d1d9 !important; }
+  .toc ul a:hover { background: #21262d !important; }
+  .local_toc ul a { color: #c9d1d9 !important; }
+  span.expand-toc, svg.close-toc { color: #8b949e !important; }
+  /* Content surfaces (tables, theorem boxes, modals, code blocks) */
+  table { background: #161b22 !important; }
+  .tabular { background-color: #161b22 !important; color: #c9d1d9 !important; }
+  pre.verbatim { background-color: #161b22 !important; color: #c9d1d9 !important; }
+  div.modal-content { background-color: #161b22 !important; border-color: #30363d !important; color: #c9d1d9 !important; }
+  div.modal-content header { background: #21262d !important; color: #c9d1d9 !important; }
+  div.modal-content header h1 { color: #c9d1d9 !important; }
+  div.modal-content header button.closebtn { color: #c9d1d9 !important; }
+  a.icon { color: #c9d1d9 !important; }
+  /* Theorem-box highlight animation flashes white on hash-jump; mute it */
+  @keyframes a {
+    0%   { background-color: #21262d; }
+    100% { background-color: transparent; }
+  }
+  /* Selection */
+  ::selection { color: #0d1117 !important; background: #58a6ff !important; }
+  /* Layman boxes: keep warm but dim */
+  .layman_thmwrapper {
+    background: #2a2110 !important;
+    border-left-color: #d4a017 !important;
+    color: #f0d790 !important;
+  }
+  .layman_thmwrapper .thm_header { color: #f5d27a !important; }
+  #layman-toggle button {
+    background: #2a2110 !important;
+    color: #f0d790 !important;
+    border-color: #d4a017 !important;
+  }
+  #layman-toggle button:hover { background: #3a2e16 !important; }
+  body.hide-layman #layman-toggle button {
+    background: #21262d !important; border-color: #30363d !important; color: #8b949e !important;
+  }
+  /* Dep-graph legend popup card (background was white) */
+  #Legend dl.legend {
+    background: #161b22 !important;
+    border-color: #30363d !important;
+    color: #c9d1d9 !important;
+  }
+  #Legend dl.legend dd { color: #c9d1d9 !important; }
+  /* Inline `code` and `code.verb` */
+  code, code.verb, kbd, samp { color: #79c0ff; }
+}

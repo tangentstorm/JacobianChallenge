@@ -231,13 +231,28 @@ FIND_TPL = """<!doctype html>
 SITE_CSS = """\
 :root {
   --sidebar-w: 290px;
+  --bg: #ffffff;
   --fg: #24292e;
   --muted: #6a737d;
   --link: #0366d6;
   --hl: #fff3b0;
   --border: #e1e4e8;
   --bg-alt: #fafbfc;
+  --hl-dot: #b8d8ff;
 }
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1117;
+    --fg: #c9d1d9;
+    --muted: #8b949e;
+    --link: #58a6ff;
+    --hl: #574a14;
+    --border: #30363d;
+    --bg-alt: #161b22;
+    --hl-dot: #1f6feb;
+  }
+}
+html, body { background: var(--bg); }
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 body {
@@ -303,7 +318,7 @@ main code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-si
 .source pre { font-size: 12.5px; line-height: 1.5; margin: 0; }
 .highlight :target { background: var(--hl); }
 .highlight .lineno { color: var(--muted); padding-right: 0.8em; user-select: none; }
-.source a.id { color: inherit; text-decoration: none; border-bottom: 1px dotted #b8d8ff; }
+.source a.id { color: inherit; text-decoration: none; border-bottom: 1px dotted var(--hl-dot); }
 .source a.id:hover { color: var(--link); border-bottom-style: solid; }
 
 @media (max-width: 800px) {
@@ -638,7 +653,17 @@ def main() -> int:
         lineanchors="L",
         nobackground=True,
     )
-    (out_dir / "pygments.css").write_text(formatter.get_style_defs(".highlight"), encoding="utf-8")
+    # Dark-mode pygments rules wrapped in a `prefers-color-scheme: dark`
+    # media query, so the page picks the right palette automatically.
+    dark_formatter = AnchoredHtmlFormatter(
+        style="github-dark", linenos="inline", lineanchors="L", nobackground=True,
+    )
+    pygments_css = formatter.get_style_defs(".highlight") + (
+        "\n@media (prefers-color-scheme: dark) {\n"
+        + dark_formatter.get_style_defs(".highlight")
+        + "\n}\n"
+    )
+    (out_dir / "pygments.css").write_text(pygments_css, encoding="utf-8")
     (out_dir / "site.css").write_text(SITE_CSS, encoding="utf-8")
     (out_dir / "app.js").write_text(APP_JS, encoding="utf-8")
 
