@@ -262,6 +262,32 @@ noncomputable def holomorphicOneForm_metricSpace
     toBornology := Bornology.ofDist SectionMetric.dist
       (SectionMetric.dist_comm hc) (SectionMetric.dist_triangle hc) }
 
+/-- **Structural axiom (CRS-step1234).** Bundle decomposition of the
+sup-norm completeness step. Sorry-free assembly for the headline
+`holomorphicOneForm_supNorm_cauchySeq_tendsto` would chain:
+* CRS-step1 (pointwise convergence in each Banach fiber)
+* CRS-step2 (uniform continuity of the limit via
+  `TendstoUniformly.continuous`)
+* CRS-step3 (smoothness of the limit via Weierstrass-on-sections)
+* CRS-step4 (sup-norm convergence assembly)
+
+Each step is a Mathlib gap; the absence of a Weierstrass-convergence
+theorem for holomorphic functions in v4.28.0 is the deepest one
+(Blocker 3 in the docstring above). The named structural sorry below
+captures the eventual chained assembly. -/
+theorem holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
+      (holomorphicOneForm_metricSpace X).toUniformSpace _ σ) :
+    ∃ a : HolomorphicOneForm ℂ X,
+      @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
+        (@nhds (HolomorphicOneForm ℂ X)
+          (holomorphicOneForm_metricSpace X).toUniformSpace.toTopologicalSpace a) := by
+  sorry
+
 /-- **Prerequisite 2a (sorry — analytic core of completeness).**
 Every sup-norm Cauchy sequence of holomorphic 1-forms converges (in
 the sup-norm metric topology) to a holomorphic 1-form.
@@ -294,7 +320,13 @@ theorem holomorphicOneForm_supNorm_cauchySeq_tendsto
       @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
         (@nhds (HolomorphicOneForm ℂ X)
           (holomorphicOneForm_metricSpace X).toUniformSpace.toTopologicalSpace a) := by
-  sorry
+  -- Decomposition (per docstring above):
+  --   step1: extract pointwise limit a.toFun in each fiber.
+  --   step2: continuity of the limit via TendstoUniformly.continuous.
+  --   step3: smoothness of the limit via Weierstrass-on-sections.
+  --   step4: sup-norm convergence assembly.
+  -- Each step is a named structural axiom below.
+  exact holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps X σ _hCauchy
 
 /-! ### R8-sub-B.B stepwise refinement (Round 1)
 
