@@ -530,3 +530,42 @@ Mathlib infrastructure (\texttt{FreeAbelianGroup}). Others
 require sheaf-of-meromorphic-germs gluing or argument-principle work
 that is not yet in Mathlib.
 \end{formalizationnote}
+
+\subsection{Stepwise refinement of \texttt{MeromorphicDegree.lean}
+(sum-of-orders)}
+\label{subsec:meromorphic-degree-refinement}
+
+\code{Jacobian/HolomorphicForms/MeromorphicDegree.lean} carries two
+\texttt{sorry}s --- continuity of the meromorphic lift over a unique
+simple pole, and bijectivity of the lift from pole-divisor degree~one ---
+that classify as \emph{Aristotle-BLOCKER} pending the four \texttt{sorry}s
+in \code{Jacobian/Blueprint/Sec01/MeromorphicToCp1.lean}: the
+chart-local holomorphicity at a finite or pole value, the chart-local
+\(k\)-fold normal form, and the local conservation of the weighted
+fibre count under \(k\)-fold ramification.
+
+The intermediate file
+\code{Jacobian/HolomorphicForms/MeromorphicDegreeRefinement.lean}
+gives a sorry-free twenty-pass ledger for the reduction:
+
+\begin{itemize}
+\item \emph{Passes 1--4.} Continuity decomposition: continuity off the
+  pole locus, continuity at the unique pole through the \(\CPone\)
+  inversion chart, continuity glue from \texttt{open-cover continuity}.
+\item \emph{Passes 5--12.} Bijectivity from sum-of-orders: weighted fibre
+  count over \(\infty\) equals \(\deg(\text{poles})\), local constancy of
+  the weighted sum (eventually-eq pivot from
+  \texttt{Sec01.liftToCp1\_weightedFiberSum\_eventually\_eq}), global
+  constancy on a connected target, surjectivity from positivity,
+  injectivity from the count-equals-card identity.
+\item \emph{Passes 13--17.} Bridging structure between
+  \texttt{MeromorphicMapToSphere} and the §1
+  \texttt{liftToCp1\_isHolomorphic} record, plus the
+  finite-fibre-from-compact-source lemma.
+\item \emph{Passes 18--20.} Final assembly markers showing both
+  \texttt{MeromorphicDegree} sorries reduce to four named §1
+  obligations.
+\end{itemize}
+
+Every pass is sorry-free; the ledger pins the dependency graph at the
+type level so Aristotle work on §1 has a stable downstream consumer.

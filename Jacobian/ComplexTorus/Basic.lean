@@ -7,8 +7,8 @@ import Jacobian.ComplexTorus.Defs
 
 This file is the first narrow Queue B target. It collects bounded, file-scoped
 lemmas about the quotient projection `mk : V → V ⧸ Λ.subgroup` for a
-`FullComplexLattice Λ`, building on the algebraic API already in
-`Jacobian/WorkPackets/StatementBank.lean`.
+`FullComplexLattice Λ`, building on the algebraic API in
+`Jacobian/ComplexTorus/Defs.lean`.
 -/
 
 namespace JacobianChallenge.ComplexTorus

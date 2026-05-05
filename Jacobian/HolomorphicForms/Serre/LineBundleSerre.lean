@@ -40,7 +40,11 @@ theorem serre_duality_lineBundle_exists
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (L : RSLineBundleSheaf X) :
+    (L : RSLineBundleSheaf X)
+    [letI := serreDualSheaf_module_H0 X L
+     Subsingleton (RSSheafCohomology X L 0)]
+    [letI := serreDualSheaf_module_H1 X L
+     Subsingleton (RSSheafCohomology X (serreDualSheaf X L) 1)] :
     ∃ (_ : Module ℂ (RSSheafCohomology X L 0))
       (_ : Module ℂ
         (RSSheafCohomology X
