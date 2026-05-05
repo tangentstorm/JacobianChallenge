@@ -76,11 +76,39 @@ theorem MeromorphicMapToSphere.toMap_ne_infty_of_no_poles
     ∀ x : X, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ) := by
   sorry
 
-/-- **Structural axiom (S1b).** Smoothness of the `ℂ`-valued lift: if
-`f.toMap x ≠ ∞` for every `x`, then the resulting function
-`X → ℂ` (defined by stripping the `OnePoint` wrapper at each point)
-is smooth. This is the manifold-level reason that "avoiding ∞" gives
-a smooth `ℂ`-valued function.
+/-- **Structural axiom (S1b-α).** When `f.toMap x ≠ ∞`, there is a
+canonical lift `g x : ℂ` such that `((g x : ℂ) : OnePoint ℂ) = f.toMap x`.
+Pure algebraic: `OnePoint` strips off `some/none`.
+
+Cross-ref: `tex/sections/03-riemann-roch.tex`,
+`lem:onepoint-lift-of-no-infty`. -/
+theorem MeromorphicMapToSphere.toFiniteFun_pointwise_lift_exists
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X)
+    (_hne : ∀ x : X, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)) :
+    ∃ g : X → ℂ, f.toMap = fun x => ((g x : ℂ) : OnePoint ℂ) := by
+  sorry
+
+/-- **Structural axiom (S1b-β).** If a meromorphic-map's `toMap`
+factors as `((·) : ℂ → OnePoint ℂ) ∘ g`, then `g` inherits the
+smoothness of `toMap` (in any chart at a finite point, the local
+representatives coincide).
+
+Cross-ref: `tex/sections/03-riemann-roch.tex`,
+`lem:onepoint-lift-smoothness-inherits`. -/
+theorem MeromorphicMapToSphere.toFiniteFun_mdiff_of_lift_eq
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicMapToSphere X) (g : X → ℂ)
+    (_hg : f.toMap = fun x => ((g x : ℂ) : OnePoint ℂ)) :
+    MDifferentiable (modelWithCornersSelf ℂ ℂ) 𝓘(ℂ, ℂ) g := by
+  sorry
+
+/-- **Structural axiom (S1b).** Smoothness of the `ℂ`-valued lift.
+
+Sorry-free assembly: combine S1b-α (existence of pointwise lift) with
+S1b-β (smoothness of any such lift).
 
 Cross-ref: `tex/sections/03-riemann-roch.tex`,
 `lem:meromorphic-finite-lift-smooth`. -/
@@ -88,10 +116,11 @@ theorem MeromorphicMapToSphere.toFiniteFun_mdiff_of_no_infty
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X)
-    (_hne : ∀ x : X, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)) :
+    (hne : ∀ x : X, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)) :
     ∃ g : X → ℂ, MDifferentiable (modelWithCornersSelf ℂ ℂ) 𝓘(ℂ, ℂ) g ∧
       f.toMap = fun x => ((g x : ℂ) : OnePoint ℂ) := by
-  sorry
+  obtain ⟨g, hg⟩ := f.toFiniteFun_pointwise_lift_exists hne
+  exact ⟨g, f.toFiniteFun_mdiff_of_lift_eq g hg, hg⟩
 
 /-- **Structural axiom (S1).** A meromorphic map to the Riemann sphere
 whose pole divisor is `0` factors through the affine chart `ℂ`: there
