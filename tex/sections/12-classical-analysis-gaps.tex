@@ -1821,6 +1821,163 @@ From step 1 + Rellich–Kondrachov, $\Delta : H^{s+2}(\Omega^{k}) \to H^{s}(\Ome
 \leanok
 \end{lemma}
 
+% ----- Substantive companions (Phase 1--4 dispatch) -----
+
+\begin{lemma}[Substantive headline: $\ker \Delta$ finite-dim via spectral shortcut]
+\label{lem:sobolev-elliptic-overview-substantive}
+\uses{lem:abstract-resolvent-eigenspace-finite-dim,lem:has-laplace-resolvent-class}
+Substantive replacement for \cref{lem:sobolev-elliptic-kernel-finite-dim}: given a
+\code{HasLaplaceResolvent} $M$ $\mu$ analytic input (a Hilbert space
+\code{Sobolev} with a compact embedding into $L^{2}(M, \mu)$), the
+spectral substitute \code{RealHarmonic} $M$ $\mu$ is
+finite-dimensional.  Discharged against unmodified Mathlib v4.28.0
+through the abstract-resolvent chain
+(\cref{lem:abstract-resolvent-self-adjoint},
+\cref{lem:abstract-resolvent-compact},
+\cref{lem:abstract-resolvent-eigenspace-finite-dim}).  No
+\code{sorry}, no \code{True}-valued bodies.
+\lean{JacobianChallenge.Analysis.SobolevElliptic.moduleFinite_realHarmonic}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Phase 4 typeclass: \code{HasLaplaceResolvent}]
+\label{lem:has-laplace-resolvent-class}
+The irreducible analytic input remaining after Phases~1--3:
+a Hilbert space \code{Sobolev} with a continuous embedding into
+$L^{2}(M, \mu)$ that is moreover compact (Rellich--Kondrachov on a
+compact manifold).
+\lean{JacobianChallenge.Analysis.SobolevElliptic.HasLaplaceResolvent}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Phase 4 spectral substitute: \code{RealHarmonic}]
+\label{lem:real-harmonic-def}
+\uses{lem:has-laplace-resolvent-class}
+Eigenspace at $1$ of the abstract resolvent
+$T := i \circ i^{\dagger} : L^{2}(M, \mu) \to L^{2}(M, \mu)$.
+The substantive replacement for the project's placeholder
+\code{Harmonic} (which is \code{LinearMap.ker 0} over
+\code{Omega M k = PUnit}, vacuously finite).
+\lean{JacobianChallenge.Analysis.SobolevElliptic.RealHarmonic}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Phase 3.1 abstract resolvent: $T = i \circ i^{\dagger}$ is self-adjoint]
+\label{lem:abstract-resolvent-self-adjoint}
+For real Hilbert spaces $V, H$ and a continuous linear map
+$i : V \to_{L[\R]} H$, the operator
+$T := i \circ i^{\dagger} : H \to_{L[\R]} H$ is self-adjoint.
+\lean{JacobianChallenge.Analysis.SobolevElliptic.isSelfAdjoint_resolventOfEmbedding}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Phase 3.1 abstract resolvent: $T$ is compact when $i$ is compact]
+\label{lem:abstract-resolvent-compact}
+Same setup; if $i$ is compact then so is $T$.  Proof: composition
+of compact with continuous (\code{IsCompactOperator.comp\_clm}).
+\lean{JacobianChallenge.Analysis.SobolevElliptic.isCompactOperator_resolventOfEmbedding}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Phase 2.2 abstract Fredholm: compact $T$ + $\lambda \neq 0$ $\Rightarrow$ eigenspace finite-dim]
+\label{lem:abstract-resolvent-eigenspace-finite-dim}
+\uses{lem:abstract-resolvent-compact}
+Riesz-style argument: closed unit ball of the eigenspace sits
+inside the precompact image $T(B_{H})$ scaled by $\lambda^{-1}$;
+intersect with the closed eigenspace; conclude compact, then
+finite-dim by
+\code{FiniteDimensional.of\_isCompact\_closedBall\textsubscript{0}}.
+\lean{JacobianChallenge.Analysis.SobolevElliptic.finiteDimensional_eigenspace_of_compact}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Phase 4 realizability: trivial witness for finite-dim $L^{2}$]
+\label{lem:has-laplace-resolvent-finiteDim}
+\uses{lem:has-laplace-resolvent-class}
+When $L^{2}(M, \mu)$ is finite-dimensional, the identity embedding
+is compact (Riesz, via \code{FiniteDimensional.proper}), so
+\code{HasLaplaceResolvent M $\mu$} is automatic.  Proves the
+framework is non-vacuously realizable.
+\lean{JacobianChallenge.Analysis.SobolevElliptic.hasLaplaceResolvent_of_finiteDim}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Chain K2 model-space dispatch: principal symbol invertible]
+\label{lem:model-symbol-isElliptic}
+The principal symbol $\sigma_{\Delta}(\xi) = -\langle \xi, \xi \rangle_{\R}$ of
+the scalar Laplacian on a real inner-product space $E$ is
+invertible (a unit in $\R$) for every nonzero covector $\xi$.
+Dispatched fully against Mathlib via \code{real\_inner\_self\_pos}
++ \code{isUnit\_iff\_ne\_zero}; see
+\cref{subsubsec:sle-round-3} for the per-pass refinement.
+\lean{JacobianChallenge.Analysis.SobolevElliptic.Model.principalSymbol_isElliptic}
+\leanok\mathlibok
+\end{lemma}
+
+% ----- Phase 1 substrate: real L^2(M, mu) -----
+
+\begin{lemma}[Phase 1 substrate: \code{SmoothFun M}]
+\label{lem:smoothfun-def}
+The $\R$-vector space of $C^{\infty}$ real-valued functions on $M$,
+wrapping Mathlib's \code{ContMDiffMap} with the algebra
+instances from
+\code{Mathlib/Geometry/Manifold/Algebra/SmoothFunctions.lean}.
+\lean{JacobianChallenge.Analysis.BundledForms.SmoothFun}
+\leanok\mathlibok
+\end{lemma}
+
+\begin{lemma}[Phase 1 substrate: \code{IsManifoldMeasure}]
+\label{lem:is-manifold-measure-class}
+A finite Borel measure on a manifold $M$, taken as data via a
+typeclass.  Deliberate cheap shortcut bypassing the absent manifold
+volume form.
+\lean{JacobianChallenge.Analysis.BundledForms.IsManifoldMeasure}
+\leanok
+\end{lemma}
+
+\begin{lemma}[Phase 1 substrate: \code{L2Fun M $\mu$}]
+\label{lem:l2fun-def}
+\uses{lem:is-manifold-measure-class}
+The Hilbert space $L^{2}(M, \mu)$ via
+\code{MeasureTheory.Lp $\R$ 2 $\mu$}, with re-derived
+\code{InnerProductSpace $\R$} and \code{CompleteSpace} instances.
+\lean{JacobianChallenge.Analysis.BundledForms.L2Fun}
+\leanok\mathlibok
+\end{lemma}
+
+% ----- Downstream consumption (R5/R7/R8 substantive companions) -----
+
+\begin{lemma}[R5 substantive consumption: harmonic forms finite-dim via R10]
+\label{lem:hodge-harmonic-finite-dim-substantive}
+\uses{lem:sobolev-elliptic-overview-substantive}
+The R5 finite-dim conclusion routed through the R10 abstract
+resolvent chain.  Companion to \cref{lem:hodge-laplacian-kernel-finite-dim}
+that takes \code{[HasLaplaceResolvent N $\mu$]} as a typeclass
+hypothesis.
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_harmonic_forms_finite_dim_substantive}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R7 substantive consumption: Dolbeault harmonic finite-dim via R10]
+\label{lem:dolbeault-harmonic-finite-dim-substantive}
+\uses{lem:sobolev-elliptic-overview-substantive}
+Same pattern for Dolbeault: harmonic forms in the
+$\partial$-$\bar\partial$ bigrading inherit finite-dimensionality
+from \code{HasLaplaceResolvent}.
+\lean{JacobianChallenge.Analysis.Dolbeault.dolbeault_harmonic_forms_finite_dim_substantive}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R8 substantive consumption: Serre duality harmonic input]
+\label{lem:serre-harmonic-finite-dim-substantive}
+\uses{lem:sobolev-elliptic-overview-substantive}
+Harmonic-form finite-dim input to Serre duality on a compact
+Riemann surface: $H^{1}(X, \mathcal{O}_{X})$ finite-dim once
+\code{HasLaplaceResolvent} supplies the analytic data.
+\lean{JacobianChallenge.Analysis.SerreDuality.serre_duality_harmonic_finite_dim_substantive}
+\leanok
+\end{lemma}
+
 \begin{layman}
 When you ask ``does the equation \(\Delta\omega = f\) have a solution''
 on a compact manifold, you face a problem: smooth forms are not
@@ -4671,7 +4828,7 @@ $\Delta$ elliptic order 2 because principal symbol $|\xi|^{2}$ is invertible for
 \code{Matrix.PosDef} + \code{InnerProductSpace}.  Mathlib status: present.  Note: the LinearPDE/Symbol formalism around \code{ContinuousLinearMap} is what's missing for a full elliptic-PDE framework, but the matrix-level claim itself is present.  Round 3 (\cref{subsubsec:sle-round-3}) drills past this leaf into a fully dispatched model-space chain.
 \lean{Matrix.PosDef.invertible}
 \leanok\mathlibok
-\end{lemma>
+\end{lemma}
 
 % --------------------------------------------------------------
 \subsubsection*{Round 2: refine rpc-r5 into Mathlib (5 more passes)}
