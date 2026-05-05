@@ -511,3 +511,223 @@ direction needs Riemann-Roch, meromorphic functions, and degree-one map
 classification. The reverse direction needs comparison of analytic and
 topological genus.
 \end{formalizationnote}
+
+\subsection{Degree-one meromorphic-to-sphere classification: structural decomposition}
+\label{sec:degree-one-mer-decomp}
+
+The chain ``meromorphic map with pole divisor \([P]\) \(\Rightarrow\)
+continuous \(\Rightarrow\) bijective'' factors into structural axioms
+on the project's abstract \code{MeromorphicMapToSphere} interface,
+since this interface does not yet expose the geometric content
+linking the abstract \code{poleDivisor} to the concrete \code{toMap}.
+
+\begin{lemma}[Continuity off the pole]
+\label{lem:meromorphic-continuous-off-pole}
+\uses{def:divisors-on-X}
+A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) is
+continuous on \(X\setminus\{P\}\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.continuousOn_compl_pole_of_poleDivisor_point}
+\end{lemma}
+\begin{proof}
+Off the pole locus, \(f\) takes only finite values. In any chart at
+a finite point, \(f\) coincides with a smooth \(\CC\)-valued
+function (the chart-local representative). Smoothness implies
+continuity in the chart, and the inclusion \(\iota:\CC\to\CPone\) is
+continuous. Hence \(f\) is continuous at every point of
+\(X\setminus\{P\}\).
+\end{proof}
+
+\begin{lemma}[Tendency to \(\infty\) at a simple pole]
+\label{lem:meromorphic-tends-to-infty-at-simple-pole}
+\uses{def:divisors-on-X}
+A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) tends
+to \(\infty\in\CPone\) along the neighbourhood filter at \(P\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.tendsto_infty_at_pole_of_poleDivisor_point}
+\end{lemma}
+\begin{proof}
+In a chart at \(P\), the local representative of \(f\) is a
+meromorphic function with a simple pole at the chart image of \(P\).
+The local Laurent expansion takes the form
+\(z\mapsto a/(z-z_{0})+\text{holomorphic}\) with \(a\neq 0\), which
+diverges in modulus as \(z\to z_{0}\). The one-point topology on
+\(\CPone\) translates modulus-divergence into convergence to
+\(\infty\).
+\end{proof}
+
+\begin{lemma}[Value at a simple pole is \(\infty\)]
+\label{lem:meromorphic-value-at-pole}
+\uses{def:divisors-on-X}
+A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) has
+\(f(P)=\infty\).
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap\_pole\_eq\_infty\_of\_poleDivisor\_point}
+\end{lemma}
+\begin{proof}
+The data of a meromorphic map records both the divisor and the
+extended map. By construction, the extension assigns the value
+\(\infty\) at every pole point. (At the project's interface level,
+this is an axiomatic structural field that the eventual concrete
+construction will discharge.)
+\end{proof}
+
+\begin{theorem}[Continuous extension over a simple pole]
+\label{thm:meromorphic-continuous-extension}
+\uses{lem:meromorphic-continuous-off-pole,lem:meromorphic-tends-to-infty-at-simple-pole,lem:meromorphic-value-at-pole}
+A meromorphic map \(f:X\to\CPone\) with pole divisor \([P]\) on a
+compact Riemann surface is continuous as a map \(X\to\CPone\).
+\lean{JacobianChallenge.HolomorphicForms.meromorphicMapToSphere_continuous_of_poleDivisor_point}
+\leanok
+\end{theorem}
+\begin{proof}\leanok
+Continuity is local. At any point \(x\neq P\) use
+Lemma~\ref{lem:meromorphic-continuous-off-pole}. At \(x=P\), the
+limit characterisation of continuity reduces to
+\(\lim_{x\to P}f(x)=f(P)\), which is
+Lemma~\ref{lem:meromorphic-tends-to-infty-at-simple-pole} together
+with Lemma~\ref{lem:meromorphic-value-at-pole}.
+\end{proof}
+
+\begin{lemma}[Surjectivity for degree-one continuous]
+\label{lem:degree-one-surjective}
+\uses{def:divisors-on-X}
+A continuous meromorphic map \(f:X\to\CPone\) of pole-degree one is
+surjective.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one}
+\end{lemma}
+\begin{proof}
+The image is compact (continuous image of a compact space) and
+connected (continuous image of a connected space). Holomorphic maps
+are open at every regular point; degree-one excludes ramification
+entirely, so the map is open. The image is therefore a nonempty open
+compact subset of the connected sphere, hence the whole sphere.
+\end{proof}
+
+\begin{lemma}[Injectivity for degree-one continuous]
+\label{lem:degree-one-injective}
+\uses{def:divisors-on-X}
+A continuous meromorphic map \(f:X\to\CPone\) of pole-degree one is
+injective.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one}
+\end{lemma}
+\begin{proof}
+Pole-degree one means the map has degree one in the sense of
+branched coverings. A degree-one map between compact connected
+Riemann surfaces has a generic fiber of cardinality one; combined
+with the no-ramification consequence of degree one, the fiber over
+every point has cardinality one. Hence injectivity.
+\end{proof}
+
+\begin{theorem}[Degree-one bijectivity]
+\label{thm:degree-one-bijectivity-meromorphic}
+\uses{lem:degree-one-surjective,lem:degree-one-injective}
+A continuous meromorphic map \(f:X\to\CPone\) of pole-degree one is
+bijective.
+\lean{JacobianChallenge.HolomorphicForms.meromorphicMapToSphere_bijective_of_poleDivisor_degree_one}
+\leanok
+\end{theorem}
+\begin{proof}\leanok
+Combine surjectivity (Lemma~\ref{lem:degree-one-surjective}) and
+injectivity (Lemma~\ref{lem:degree-one-injective}).
+\end{proof}
+
+\subsection{Uniformization-lite: holomorphic 1-forms vanish on the topological sphere}
+\label{sec:uniformization-lite}
+
+\begin{lemma}[Holomorphic 1-form equivalence under sphere homeomorphism]
+\label{lem:holomorphic-one-form-equiv-of-homeo-sphere}
+\uses{def:holomorphic-one-form}
+If a compact connected complex 1-manifold \(X\) is homeomorphic
+(as a topological space) to the standard \(2\)-sphere, then there
+is a \(\CC\)-linear equivalence
+\(H^{0}(X,\Omega^{1}_{X})\cong H^{0}(\CPone,\Omega^{1}_{\CPone})\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_linearEquiv_of_homeoSphere_exists}
+\end{lemma}
+\begin{proof}
+This is the genus-zero case of the uniformization theorem. Any
+complex structure on the topological 2-sphere is biholomorphic to
+the standard structure on \(\CPone=\OnePoint\,\CC\); the resulting
+biholomorphism \(\psi:X\xrightarrow{\sim}\CPone\) pulls back
+holomorphic 1-forms to holomorphic 1-forms, yielding the
+\(\CC\)-linear isomorphism
+\(\psi^{*}:H^{0}(\CPone,\Omega^{1}_{\CPone})\to H^{0}(X,\Omega^{1}_{X})\).
+\end{proof}
+
+\begin{theorem}[Holomorphic 1-forms vanish on the topological sphere]
+\label{thm:homeo-sphere-holomorphic-one-form-vanishing}
+\uses{lem:holomorphic-one-form-equiv-of-homeo-sphere}
+A compact connected Riemann surface homeomorphic to the standard
+\(2\)-sphere has \(\dim_{\CC}H^{0}(X,\Omega^{1}_{X})=0\); equivalently,
+the space of holomorphic 1-forms is a subsingleton.
+\lean{JacobianChallenge.HolomorphicForms.homeoSphereHolomorphicOneFormVanishing}
+\leanok
+\end{theorem}
+\begin{proof}\leanok
+By Lemma~\ref{lem:holomorphic-one-form-equiv-of-homeo-sphere}, the
+holomorphic 1-form space on \(X\) is \(\CC\)-linearly isomorphic to
+that on \(\CPone\). The latter is a subsingleton (it is in fact
+zero, since \(\CPone\) has genus 0). Subsingleton transports
+through linear equivalences, so \(H^{0}(X,\Omega^{1}_{X})\) is
+itself a subsingleton.
+\end{proof}
+
+\subsection{Identity- and inversion-chart coefficient extraction}
+\label{sec:chart-coeff-extraction}
+
+\begin{lemma}[Identity-chart coefficient is \(C^{\infty}\)]
+\label{lem:identity-chart-coeff-contdiff}
+\uses{def:holomorphic-one-form}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), the function
+\(\CC\to\CC\) obtained by reading \(\omega\) in the identity chart
+of \(\CPone\) and evaluating on \(1\in\CC\) is \(C^{\infty}\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneFormIdentityChartCoeffContDiff}
+\end{lemma}
+\begin{proof}
+The cotangent-bundle section \(\omega\) is smooth in any chart of
+\(\CPone\). In the identity chart, the local representative is a
+smooth section of the trivial cotangent bundle on \(\CC\), i.e.\ a
+smooth covector field. Evaluating a smooth covector field on a
+constant tangent vector yields a smooth scalar function. The
+specific Mathlib gap is the \emph{chart-trivialisation API for
+\code{ContMDiffSection}} on the cotangent bundle, which is absent
+in v4.28.0 — once supplied, the proof is immediate.
+\end{proof}
+
+\begin{lemma}[Inversion-chart coefficient is continuous at \(0\)]
+\label{lem:inversion-chart-coeff-continuous-at-zero}
+\uses{def:holomorphic-one-form}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), the function
+\(\CC\to\CC\) obtained by reading \(\omega\) in the inversion chart
+of \(\CPone\) and evaluating on \(1\in\CC\) is continuous at
+\(0\in\CC\).
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneFormInversionChartCoeffContinuousAtZero}
+\end{lemma}
+\begin{proof}
+Identical to the proof of
+Lemma~\ref{lem:identity-chart-coeff-contdiff}, applied in the
+inversion chart in place of the identity chart. Same chart-
+trivialisation Mathlib gap.
+\end{proof}
+
+\begin{lemma}[Cotangent transition formula on the overlap]
+\label{lem:cotangent-transition-formula}
+\uses{def:holomorphic-one-form}
+For \(\omega\in H^{0}(\CPone,\Omega^{1}_{\CPone})\), there is a
+punctured neighbourhood of \(0\in\CC\) (in the inversion chart) on
+which the identity-chart coefficient \(f\) and the inversion-chart
+coefficient \(g\) of \(\omega\) are related by
+\[
+  f(w^{-1})=-w^{2}g(w),\qquad w\neq 0.
+\]
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm\_identityInversionTransition\_eventually}
+\end{lemma}
+\begin{proof}
+The chart transition between the identity chart and the inversion
+chart on \(\OnePoint\,\CC\) is \(z\leftrightarrow w=z^{-1}\). The
+chain rule for cotangent vectors then gives, for a 1-form
+\(\omega=f(z)\,dz=g(w)\,dw\),
+\[
+  f(z)\,dz = f(w^{-1})\,d(w^{-1}) = -f(w^{-1})\,w^{-2}\,dw.
+\]
+Equating with \(g(w)\,dw\) and rearranging gives the displayed
+formula on the overlap \(w\neq 0\).
+\end{proof}
+

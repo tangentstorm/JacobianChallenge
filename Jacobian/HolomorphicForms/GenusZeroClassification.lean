@@ -245,7 +245,10 @@ the identity-chart local representative is `C^∞`.
 
 Bottom-up content: expose a chart-trivialization API for `ContMDiffSection`
 on the cotangent bundle, specialized to `identityChart`, and compose the
-local representative with evaluation at `1 : ℂ`. -/
+local representative with evaluation at `1 : ℂ`.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:identity-chart-coeff-contdiff` (added in this round). -/
 theorem holomorphicOneFormIdentityChartCoeffContDiff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContDiff ℂ (⊤ : WithTop ℕ∞) (holomorphicOneForm_identityChartCoeff ω) := by
