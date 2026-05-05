@@ -313,8 +313,9 @@ theorem MeromorphicMapToSphere.image_isCompact
 /-- **Structural axiom (M4).** A continuous meromorphic map of degree 1
 between compact connected complex 1-manifolds is **surjective**.
 
-Sorry-free assembly: route through the M-bridge to
-`Blueprint.degree_one_bijective`. -/
+Routes through the M-bridge `exists_branchedCoverData_of_pole_degree_one`,
+whose strengthened bijective hypothesis is the analytic content the
+caller must supply. -/
 theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Nonempty X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -323,7 +324,6 @@ theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     (hcont : Continuous f.toMap)
     (hdegree : Divisor.degree f.poles = 1) :
     Function.Surjective f.toMap := by
-  -- Route through the existing `degree_one_bijective` via the bridge.
   obtain ⟨h, hd⟩ :=
     f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
   exact (JacobianChallenge.Blueprint.degree_one_bijective h hd).2
@@ -355,7 +355,8 @@ not. -/
 /-- **Structural axiom (M5).** A continuous meromorphic map of degree 1
 between compact connected complex 1-manifolds is **injective**.
 
-Sorry-free assembly: directly from M5a. -/
+Routes through the M-bridge with the strengthened bijective
+hypothesis. -/
 theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Nonempty X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -364,7 +365,6 @@ theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
     (hcont : Continuous f.toMap)
     (hdegree : Divisor.degree f.poles = 1) :
     Function.Injective f.toMap := by
-  -- Route through the existing `degree_one_bijective` via the bridge.
   obtain ⟨h, hd⟩ :=
     f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
   exact (JacobianChallenge.Blueprint.degree_one_bijective h hd).1
