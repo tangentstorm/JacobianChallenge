@@ -126,10 +126,25 @@ Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 theorem OnePoint.tendsto_infty_of_modulus_diverges
     {X : Type*} [TopologicalSpace X] (P : X)
     (g : X → ℂ)
-    (_hdiv : Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop) :
+    (hdiv : Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop) :
     Filter.Tendsto (fun x => ((g x : ℂ) : OnePoint ℂ))
       (nhdsWithin P {P}ᶜ) (nhds (OnePoint.infty : OnePoint ℂ)) := by
-  sorry
+  -- From `‖g x‖ → ∞`, get `g x → cobounded ℂ`, then via
+  -- `cobounded = cocompact = coclosedCompact` (ℂ is proper Hausdorff)
+  -- and Mathlib's `OnePoint.tendsto_coe_infty`, conclude.
+  have hg_cobd : Filter.Tendsto g (nhdsWithin P {P}ᶜ) (Bornology.cobounded ℂ) := by
+    -- `‖g x‖ = dist (g x) 0`; convert.
+    rw [← Metric.tendsto_dist_right_atTop_iff (c := (0 : ℂ))]
+    simpa [dist_zero_right] using hdiv
+  have hcoc : (Bornology.cobounded ℂ : Filter ℂ) = Filter.cocompact ℂ :=
+    Metric.cobounded_eq_cocompact
+  have hcc : Filter.cocompact ℂ = Filter.coclosedCompact ℂ :=
+    Filter.coclosedCompact_eq_cocompact.symm
+  have hg_clcc :
+      Filter.Tendsto g (nhdsWithin P {P}ᶜ) (Filter.coclosedCompact ℂ) := by
+    rw [← hcc, ← hcoc]; exact hg_cobd
+  -- Compose with `OnePoint.tendsto_coe_infty`.
+  exact OnePoint.tendsto_coe_infty.comp hg_clcc
 
 /-- **Structural axiom (M2).** Near a simple pole `P`, the meromorphic
 map tends to `∞ : OnePoint ℂ`. Sorry-free assembly: combine M2a
@@ -255,30 +270,16 @@ theorem MeromorphicMapToSphere.image_isCompact
     IsCompact (Set.range f.toMap) :=
   isCompact_range hcont
 
-/-- **Structural axiom (M4b).** A meromorphic map of degree 1 is open
-(no ramification at degree 1).
-
-Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:degree-one-open-map`. -/
-theorem MeromorphicMapToSphere.isOpenMap_of_pole_degree_one
-    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicMapToSphere X)
-    (_hcont : Continuous f.toMap)
-    (_hdegree : Divisor.degree f.poles = 1) :
-    IsOpenMap f.toMap := by
-  sorry
+-- M4b (`isOpenMap_of_pole_degree_one`) was previously declared here as
+-- a structural sorry. After the audit pass routing M4 through the
+-- M-bridge to `Blueprint.degree_one_bijective`, M4b is dead code and
+-- has been removed.
 
 /-- **Structural axiom (M4).** A continuous meromorphic map of degree 1
 between compact connected complex 1-manifolds is **surjective**.
 
-Sorry-free assembly: the image is compact (M4a) and open (M4b);
-since `OnePoint ℂ` is connected, a nonempty clopen set is the whole
-space.
-
-Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:degree-one-surjective`. -/
+Sorry-free assembly: route through the M-bridge to
+`Blueprint.degree_one_bijective`. -/
 theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Nonempty X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -312,25 +313,9 @@ existing `Blueprint.degree_one_bijective` is the right choice;
 maintaining the parallel `MeromorphicMapToSphere`-level chain is
 not. -/
 
-/-- **Structural axiom (M5a).** A pole-degree-1 meromorphic map has
-all preimage fibers of cardinality at most 1.
-
-This is now an *unused* parallel obligation; the headline M5
-(`injective_of_continuous_and_pole_degree_one`) routes through the
-M-bridge to `Blueprint.degree_one_bijective` instead.
-
-Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:degree-one-fiber-card-le-one`. -/
-theorem MeromorphicMapToSphere.fiber_card_le_one_of_pole_degree_one
-    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicMapToSphere X)
-    (_hcont : Continuous f.toMap)
-    (_hdegree : Divisor.degree f.poles = 1) :
-    ∀ y : OnePoint ℂ, ∀ x₁ x₂ : X,
-      f.toMap x₁ = y → f.toMap x₂ = y → x₁ = x₂ := by
-  sorry
+-- M5a (`fiber_card_le_one_of_pole_degree_one`) was previously declared
+-- here as a structural sorry. After the audit pass, M5a is dead code
+-- and has been removed.
 
 /-- **Structural axiom (M5).** A continuous meromorphic map of degree 1
 between compact connected complex 1-manifolds is **injective**.

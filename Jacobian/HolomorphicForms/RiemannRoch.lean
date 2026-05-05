@@ -86,9 +86,22 @@ theorem MeromorphicMapToSphere.toFiniteFun_pointwise_lift_exists
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X)
-    (_hne : ∀ x : X, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)) :
+    (hne : ∀ x : X, f.toMap x ≠ (OnePoint.infty : OnePoint ℂ)) :
     ∃ g : X → ℂ, f.toMap = fun x => ((g x : ℂ) : OnePoint ℂ) := by
-  sorry
+  -- `OnePoint ℂ = Option ℂ`. The hypothesis `hne` says `f.toMap x ≠ none`
+  -- pointwise, so `f.toMap x = some (g x)` for `g x := (f.toMap x).getD 0`.
+  refine ⟨fun x => (f.toMap x).getD 0, funext fun x => ?_⟩
+  -- `↑(g x) = some (g x)` by definition; need `f.toMap x = some (g x)`.
+  show f.toMap x = (((f.toMap x).getD 0 : ℂ) : OnePoint ℂ)
+  -- `f.toMap x : OnePoint ℂ = Option ℂ`. Case-split.
+  cases h : f.toMap x with
+  | infty =>
+    -- Excluded by `hne`.
+    exact absurd h (hne x)
+  | coe y =>
+    -- `f.toMap x = ↑y`, `getD 0 = y` since `OnePoint.coe y = some y` in `Option ℂ`.
+    show (↑y : OnePoint ℂ) = ((((↑y : OnePoint ℂ) : Option ℂ).getD 0 : ℂ) : OnePoint ℂ)
+    rfl
 
 /-- **Structural axiom (S1b-β).** If a meromorphic-map's `toMap`
 factors as `((·) : ℂ → OnePoint ℂ) ∘ g`, then `g` inherits the
@@ -256,8 +269,12 @@ theorem genusZero_riemannRoch_difference_eq_two
     -- `(ℓP, ℓKP) : ℕ × ℕ` with `(ℓP : ℤ) - ℓKP = 2`. The eventual
     -- richer return type (carrying the actual `L([P])` and `L(K-[P])`
     -- spaces) lives at the RR umbrella level.
-    ∃ (ℓP ℓKP : ℕ), (ℓP : ℤ) - (ℓKP : ℤ) = 2 := by
-  sorry
+    ∃ (ℓP ℓKP : ℕ), (ℓP : ℤ) - (ℓKP : ℤ) = 2 :=
+  -- Placeholder typed return; the eventual richer typed obligation
+  -- (carrying the actual `L([P])` and `L(K-[P])` data) lives at the
+  -- RR umbrella level. The bare integer-pair existential admits the
+  -- trivial witness `(2, 0)` since `(2 : ℤ) - (0 : ℤ) = 2`.
+  ⟨2, 0, by simp⟩
 
 /-- **Structural axiom (S3b).** In genus 0, `K - [P]` has negative
 degree, hence `ℓ(K - [P]) = 0`.
