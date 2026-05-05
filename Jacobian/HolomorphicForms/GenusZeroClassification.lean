@@ -372,17 +372,64 @@ theorem holomorphicOneForm_identityInversionTransition_eventually
 together with the punctured cotangent-transition formula, forces the
 identity-chart coefficient to tend to zero at infinity.
 
-Bottom-up content: use continuity to make `g(w)` bounded near `0`, multiply
-by `w² → 0`, and transfer the resulting `f(w⁻¹) → 0` statement through
-the inversion homeomorphism between punctured neighborhoods of zero and
-the cocompact filter on `ℂ`. -/
+Sorry-free assembly: use continuity to bound `g(w)` near `0`, multiply
+by `w² → 0` to get `Tendsto (-w² · g(w)) (𝓝[≠] 0) (nhds 0)`. By the
+transition formula, `f(w⁻¹) = -w² · g(w)` eventually, hence
+`Tendsto (f ∘ inv) (𝓝[≠] 0) (nhds 0)`. Then convert through
+`tendsto_inv₀_cobounded'` (which gives `Tendsto inv cobounded (𝓝[≠] 0)`)
+and `Metric.cobounded_eq_cocompact` (which lifts `cocompact = cobounded`
+on the proper space `ℂ`); the involutivity `inv_inv` lets us identify
+`f` with `f ∘ inv ∘ inv` eventually on `cobounded`. -/
 theorem holomorphicOneFormCoeffTendstoZeroOfTransition
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
     holomorphicOneForm_identityInversionTransition ω →
     Filter.Tendsto (holomorphicOneForm_coeff ω)
       (Filter.cocompact ℂ) (nhds 0) := by
-  sorry
+  intro hcont htrans
+  -- Notation.
+  set f : ℂ → ℂ := holomorphicOneForm_coeff ω with f_def
+  set g : ℂ → ℂ := holomorphicOneForm_inversionCoeff ω with g_def
+  -- Step 1: `g` is bounded near 0 by continuity.
+  obtain ⟨M, hM⟩ : ∃ M, ∀ᶠ w in nhds (0 : ℂ), ‖g w‖ ≤ M := by
+    have hg : Filter.Tendsto (fun w => ‖g w‖) (nhds (0 : ℂ)) (nhds ‖g 0‖) :=
+      (continuous_norm.continuousAt).comp hcont
+    refine ⟨‖g 0‖ + 1, ?_⟩
+    have : ∀ᶠ w in nhds (0 : ℂ), ‖g w‖ < ‖g 0‖ + 1 :=
+      hg.eventually (eventually_lt_nhds (by linarith))
+    filter_upwards [this] with w hw using hw.le
+  -- Step 2: `Tendsto (fun w => -w^2 * g w) (𝓝[≠] 0) (nhds 0)`.
+  -- The product of `w^2 → 0` and `g` bounded.
+  have hw2 : Filter.Tendsto (fun w : ℂ => -w^2 * g w) (nhds (0 : ℂ)) (nhds 0) := by
+    have hsq : Filter.Tendsto (fun w : ℂ => -w^2) (nhds (0 : ℂ)) (nhds 0) := by
+      simpa using (continuous_neg.comp (continuous_pow 2)).tendsto (0 : ℂ)
+    -- product of `→ 0` with bounded gives `→ 0`.
+    refine Filter.Tendsto.zero_mul_isBoundedUnder_le hsq ?_
+    refine ⟨M, Filter.eventually_map.mpr ?_⟩
+    filter_upwards [hM] with w hw using hw
+  have hw2' : Filter.Tendsto (fun w : ℂ => -w^2 * g w) (nhdsWithin (0 : ℂ) {0}ᶜ)
+      (nhds 0) := hw2.mono_left nhdsWithin_le_nhds
+  -- Step 3: `Tendsto (fun w => f w⁻¹) (𝓝[≠] 0) (nhds 0)` via the transition formula.
+  have hf_inv_tendsto :
+      Filter.Tendsto (fun w : ℂ => f (w⁻¹)) (nhdsWithin (0 : ℂ) {0}ᶜ) (nhds 0) := by
+    refine hw2'.congr' ?_
+    filter_upwards [htrans] with w hw using hw.symm
+  -- Step 4: convert via `Tendsto inv cobounded (𝓝[≠] 0)` plus `inv_inv`.
+  -- `Tendsto Inv.inv cobounded (𝓝[≠] 0)` from Mathlib.
+  have hinv : Filter.Tendsto (Inv.inv : ℂ → ℂ) (Bornology.cobounded ℂ) (nhdsWithin 0 {0}ᶜ) :=
+    Filter.tendsto_inv₀_cobounded'
+  -- Compose: `Tendsto (f ∘ inv) cobounded (nhds 0)` via `hf_inv_tendsto.comp hinv`.
+  have hf_comp_inv :
+      Filter.Tendsto ((fun w : ℂ => f w⁻¹) ∘ Inv.inv) (Bornology.cobounded ℂ) (nhds 0) :=
+    hf_inv_tendsto.comp hinv
+  -- `(fun w => f w⁻¹) ∘ inv = f ∘ inv ∘ inv = f` (using `inv_inv`).
+  have h_eq_f : (fun w : ℂ => f w⁻¹) ∘ Inv.inv = f := by
+    funext w
+    simp [Function.comp, inv_inv]
+  rw [h_eq_f] at hf_comp_inv
+  -- Lift cobounded to cocompact via Metric.cobounded_eq_cocompact (ℂ is proper).
+  rw [Metric.cobounded_eq_cocompact] at hf_comp_inv
+  exact hf_comp_inv
 
 /-- **Chart-transition assembly.** Continuity and the explicit transition
 formula are the remaining leaves; the old broad decay obligation is no
