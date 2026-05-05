@@ -7,7 +7,7 @@ A Lean 4 / Mathlib formalization of Kevin Buzzard's Jacobian challenge: the Jaco
 The classical mathematical source-of-truth lives in the Lean blueprint, which annotates each node with `\lean{...}` references to the corresponding Lean declarations.
 
 - 📘 [Blueprint web build](https://tangentstorm.github.io/JacobianChallenge/blueprint/) — has a Plain-English toggle so every node reads cleanly to a non-mathematician.
-- 🕸️ [Dependency graph](https://tangentstorm.github.io/JacobianChallenge/blueprint/dep_graph_document.html) — current proof status at a glance (this is also the live progress tracker).
+- 🕸️ [Dependency graph](https://tangentstorm.github.io/JacobianChallenge/blueprint/dep_graph_collapsible.html) — section-collapsed overview, click any box to drill in (this is also the live progress tracker). The flat [full graph](https://tangentstorm.github.io/JacobianChallenge/blueprint/dep_graph_document.html) is also linked from the header.
 - 📄 PDFs: [formal only](https://tangentstorm.github.io/JacobianChallenge/jacobian-informal-proof.pdf) · [with Plain-English companion](https://tangentstorm.github.io/JacobianChallenge/jacobian-informal-proof-with-layman.pdf).
 
 ## What the project asks for

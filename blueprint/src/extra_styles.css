@@ -144,6 +144,23 @@ body.hide-layman #layman-toggle button {
   html:not([data-theme="light"]) #graph svg .node path[fill="white"] {
     fill: #161b22 !important;
   }
+  /* Graphviz writes edge lines and arrowhead polygons as stroke="black"
+     / fill="black" inline on the SVG.  On the dark background those are
+     invisible, so retint them to the body text color. */
+  html:not([data-theme="light"]) #graph svg .edge path[stroke="black"],
+  html:not([data-theme="light"]) #graph svg .edge polygon[stroke="black"] {
+    stroke: #c9d1d9 !important;
+  }
+  html:not([data-theme="light"]) #graph svg .edge polygon[fill="black"] {
+    fill: #c9d1d9 !important;
+  }
+  /* Default-colored node borders (no explicit color= in the dot source)
+     also come out black; lift them to a visible gray. */
+  html:not([data-theme="light"]) #graph svg .node polygon[stroke="black"],
+  html:not([data-theme="light"]) #graph svg .node ellipse[stroke="black"],
+  html:not([data-theme="light"]) #graph svg .node path[stroke="black"] {
+    stroke: #8b949e !important;
+  }
 }
 
 /* Explicit dark via toggle (any system) */
@@ -190,6 +207,18 @@ html[data-theme="dark"] #graph svg .node polygon[fill="white"],
 html[data-theme="dark"] #graph svg .node ellipse[fill="white"],
 html[data-theme="dark"] #graph svg .node path[fill="white"] {
   fill: #161b22 !important;
+}
+html[data-theme="dark"] #graph svg .edge path[stroke="black"],
+html[data-theme="dark"] #graph svg .edge polygon[stroke="black"] {
+  stroke: #c9d1d9 !important;
+}
+html[data-theme="dark"] #graph svg .edge polygon[fill="black"] {
+  fill: #c9d1d9 !important;
+}
+html[data-theme="dark"] #graph svg .node polygon[stroke="black"],
+html[data-theme="dark"] #graph svg .node ellipse[stroke="black"],
+html[data-theme="dark"] #graph svg .node path[stroke="black"] {
+  stroke: #8b949e !important;
 }
 
 /* Theme toggle widget (positioned next to layman toggle).  See

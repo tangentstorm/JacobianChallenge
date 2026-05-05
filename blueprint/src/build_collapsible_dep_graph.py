@@ -433,6 +433,21 @@ if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)
     html:not([data-theme="light"]) #graph svg .node path[fill="white"] {
       fill: #161b22 !important;
     }
+    /* Graphviz writes edge lines and arrowhead polygons as stroke="black"
+       / fill="black" inline on the SVG; retint so they're visible against
+       the dark background. */
+    html:not([data-theme="light"]) #graph svg .edge path[stroke="black"],
+    html:not([data-theme="light"]) #graph svg .edge polygon[stroke="black"] {
+      stroke: #c9d1d9 !important;
+    }
+    html:not([data-theme="light"]) #graph svg .edge polygon[fill="black"] {
+      fill: #c9d1d9 !important;
+    }
+    html:not([data-theme="light"]) #graph svg .node polygon[stroke="black"],
+    html:not([data-theme="light"]) #graph svg .node ellipse[stroke="black"],
+    html:not([data-theme="light"]) #graph svg .node path[stroke="black"] {
+      stroke: #8b949e !important;
+    }
     html:not([data-theme="light"]) .clickable:hover > polygon,
     html:not([data-theme="light"]) .clickable:hover > ellipse,
     html:not([data-theme="light"]) .clickable:hover > path {
@@ -456,6 +471,18 @@ if(v==="light"||v==="dark")document.documentElement.setAttribute("data-theme",v)
   html[data-theme="dark"] #graph svg .node ellipse[fill="white"],
   html[data-theme="dark"] #graph svg .node path[fill="white"] {
     fill: #161b22 !important;
+  }
+  html[data-theme="dark"] #graph svg .edge path[stroke="black"],
+  html[data-theme="dark"] #graph svg .edge polygon[stroke="black"] {
+    stroke: #c9d1d9 !important;
+  }
+  html[data-theme="dark"] #graph svg .edge polygon[fill="black"] {
+    fill: #c9d1d9 !important;
+  }
+  html[data-theme="dark"] #graph svg .node polygon[stroke="black"],
+  html[data-theme="dark"] #graph svg .node ellipse[stroke="black"],
+  html[data-theme="dark"] #graph svg .node path[stroke="black"] {
+    stroke: #8b949e !important;
   }
   html[data-theme="dark"] .clickable:hover > polygon,
   html[data-theme="dark"] .clickable:hover > ellipse,
