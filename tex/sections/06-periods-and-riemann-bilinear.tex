@@ -606,6 +606,48 @@ are linearly independent over \(\R\). Since \(\HdualX\) has real
 dimension \(2g\), their \(\Z\)-span is a full lattice.
 \end{proof}
 
+\subsection{Stepwise refinement of the Riemann-bilinear stack}
+\label{subsec:riemann-bilinear-refinement}
+
+The Riemann-bilinear sub-stack of \code{Jacobian/Periods/PeriodFunctional.lean}
+carries six surviving \texttt{sorry}s, all gated on three external blockers:
+(i)~Stage~A (cellular homology + surface classification of compact surfaces),
+(ii)~Stokes-with-corners on the polygonal model, and (iii)~Hodge bilinear
+positivity. Until those land we expose the algebraic and topological skeleton
+of the proof so that the sorries reduce to named, sorry-free leaves on the
+project side. The full ledger lives in
+\code{Jacobian/Periods/RiemannBilinearRefinement.lean}; it gives twenty
+named passes, organised as follows.
+
+\begin{itemize}
+\item \emph{Passes 1--6.} Dual-space antisymmetric bilinear stand-in
+  \code{Q\_skeleton}, with antisymmetry, diagonal-vanishing, and bilinearity
+  closed by \texttt{ring}.
+\item \emph{Passes 7--10.} Per-handle expansion of the Riemann bilinear
+  identity at the skeleton level; the manifold integral
+  \(\int_X\omega\wedge\eta\) reduces to this once Mathlib gains
+  manifold-side wedge and integration.
+\item \emph{Passes 11--13.} Hermitian-positivity skeleton through the
+  diagonal quadratic form \code{quadraticSkeleton}; non-negativity is
+  closed by \texttt{Finset.sum\_nonneg}, and the vanish-iff-zero
+  characterisation is closed via \texttt{Complex.normSq\_eq\_zero}.
+\item \emph{Passes 14--16.} Real-linear independence \(\Leftrightarrow\)
+  positive-definiteness on the quadratic skeleton --- the Cramér-style
+  fact that turns positivity into linear independence.
+\item \emph{Passes 17--18.} Integrality skeleton:
+  \texttt{Submodule.map\_span} reduces the residual sorry inside
+  \texttt{periodSubgroup\_eq\_zspan\_of\_basis} to a one-line application.
+\item \emph{Passes 19--20.} Stage-A and Stage-B delegation markers for
+  \texttt{h1\_free\_of\_compact\_surface} and
+  \texttt{analyticGenus\_eq\_topologicalGenus}.
+\end{itemize}
+
+The refinement file is \emph{sorry-free}; every leaf is either proved
+directly (passes 1--16, 17--18) or pinned as a \texttt{Prop}-marker for a
+named external blocker (passes 19--20). Once the wedge/integration/
+positivity APIs land, the six \texttt{PeriodFunctional} sorries become
+one-line consumers of the ledger.
+
 \begin{formalizationnote}
 The current project has basis-aligned period subgroup files. The deepest
 remaining content is the full-rank statement, routed through declarations such
