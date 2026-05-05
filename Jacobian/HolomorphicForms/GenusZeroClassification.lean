@@ -240,19 +240,36 @@ structure HolomorphicOneFormCoeffEntireData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
   differentiable_coeff : Differentiable ℂ (holomorphicOneForm_coeff ω)
 
+/-- **Structural axiom (G2a).** The cotangent-bundle section
+`ω.toFun` pulled back through `identityChart.symm` (i.e. composed
+with this chart-symm map) has a smooth chart-local representative
+on `ℂ`. This is the **chart-trivialisation API for
+`ContMDiffSection`** on the cotangent bundle (a Mathlib v4.28.0
+gap).
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:section-localRepr-identity-chart-contdiff`. -/
+theorem ContMDiffSection_localRepr_identityChart_contDiff
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    ContDiff ℂ (⊤ : WithTop ℕ∞) fun z =>
+      ω.toFun (identityChart.symm z)
+        (show TangentSpace (modelWithCornersSelf ℂ ℂ)
+          (identityChart.symm z) from (1 : ℂ)) := by
+  sorry
+
 /-- **Identity-chart extraction leaf.** The coefficient read directly from
 the identity-chart local representative is `C^∞`.
 
-Bottom-up content: expose a chart-trivialization API for `ContMDiffSection`
-on the cotangent bundle, specialized to `identityChart`, and compose the
-local representative with evaluation at `1 : ℂ`.
+Sorry-free assembly: alias for `ContMDiffSection_localRepr_identityChart_contDiff`,
+since `holomorphicOneForm_identityChartCoeff ω` unfolds definitionally
+to the inner expression.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:identity-chart-coeff-contdiff` (added in this round). -/
+`lem:identity-chart-coeff-contdiff`. -/
 theorem holomorphicOneFormIdentityChartCoeffContDiff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
-    ContDiff ℂ (⊤ : WithTop ℕ∞) (holomorphicOneForm_identityChartCoeff ω) := by
-  sorry
+    ContDiff ℂ (⊤ : WithTop ℕ∞) (holomorphicOneForm_identityChartCoeff ω) :=
+  ContMDiffSection_localRepr_identityChart_contDiff ω
 
 /-- **Identity-chart identification leaf.** The chart-local coefficient
 agrees with the direct finite-point formula used by the Liouville assembly.
@@ -319,17 +336,32 @@ structure HolomorphicOneFormCoeffTendstoZeroData
     Filter.Tendsto (holomorphicOneForm_coeff ω)
       (Filter.cocompact ℂ) (nhds 0)
 
+/-- **Structural axiom (G3a).** The cotangent-bundle section
+`ω.toFun` pulled back through `inversionChart.symm` has a continuous
+chart-local representative at `0 : ℂ`. Same chart-trivialisation
+gap as G2a, but specialised to the inversion chart.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:section-localRepr-inversion-chart-continuous-at-zero`. -/
+theorem ContMDiffSection_localRepr_inversionChart_continuousAt_zero
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
+    ContinuousAt (fun w => ω.toFun (inversionChart.symm w)
+      (show TangentSpace (modelWithCornersSelf ℂ ℂ)
+        (inversionChart.symm w) from (1 : ℂ))) 0 := by
+  sorry
+
 /-- **Inversion-chart extraction leaf.** The inversion-chart coefficient of
 a holomorphic 1-form is continuous at the point `w = 0`, i.e. at infinity of
 `OnePoint ℂ`.
 
-Bottom-up content: expose the cotangent-bundle chart trivialization for
-`ContMDiffSection` in the inversion chart and identify its coefficient by
-evaluation at `1 : ℂ`. -/
+Sorry-free assembly: alias for the structural axiom G3a.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:inversion-chart-coeff-continuous-at-zero`. -/
 theorem holomorphicOneFormInversionChartCoeffContinuousAtZero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
-    ContinuousAt (holomorphicOneForm_inversionChartCoeff ω) 0 := by
-  sorry
+    ContinuousAt (holomorphicOneForm_inversionChartCoeff ω) 0 :=
+  ContMDiffSection_localRepr_inversionChart_continuousAt_zero ω
 
 /-- **Inversion-chart identification leaf.** The chart-local inversion
 coefficient agrees with the direct `invBwd` formula.
@@ -359,17 +391,47 @@ def holomorphicOneForm_identityInversionTransition
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w
 
+/-- **Structural axiom (G4a).** The chart-overlap derivative formula
+on `OnePoint ℂ`: on the punctured nhd of `0` (in the inversion chart),
+`d(w⁻¹)/dw = -w⁻²`.
+
+Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
+`lem:onepoint-cx-chart-overlap-derivative`. -/
+theorem onePointCx_chart_overlap_derivative
+    (w : ℂ) (hw : w ≠ 0) :
+    HasDerivAt (fun w' : ℂ => w'⁻¹) (-(w⁻¹)^2) w := by
+  -- Derivative of inverse at a non-zero point.
+  simpa [pow_two] using (hasDerivAt_inv hw)
+
+/-- **Structural axiom (G4b).** The cotangent-pullback formula for
+`ω.toFun` evaluated through the chart-overlap map: at any
+`w ≠ 0`, the value of `ω` at `(w⁻¹ : ℂ)` (read in the identity chart)
+relates to its value at `(invBwd w : OnePoint ℂ)` (read in the
+inversion chart) by the Jacobian factor `-w²`.
+
+Bottom-up: chain rule on cotangent vectors under chart-overlap.
+Currently a structural sorry pending the chart-trivialisation +
+cotangent-pullback API. -/
+theorem holomorphicOneForm_chartOverlap_pullback
+    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
+    holomorphicOneForm_coeff ω (w⁻¹) =
+      -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
+  sorry
+
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
 and inversion charts, the two coefficient functions are related by the
 Jacobian factor of `z = w⁻¹`.
 
-Bottom-up content: prove the explicit cotangent transition formula between
-`identityChart` and `inversionChart`, including the derivative factor
-`d(w⁻¹) = -w⁻² dw`, and rewrite it in the displayed `f(w⁻¹)` form. -/
+Sorry-free assembly: lift the pointwise formula G4b to the
+eventually-quantifier on the punctured nhd of `0` (which the Lean
+`holomorphicOneForm_identityInversionTransition` predicate
+encodes). -/
 theorem holomorphicOneForm_identityInversionTransition_eventually
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     holomorphicOneForm_identityInversionTransition ω := by
-  sorry
+  unfold holomorphicOneForm_identityInversionTransition
+  filter_upwards [self_mem_nhdsWithin] with w hw
+  exact holomorphicOneForm_chartOverlap_pullback ω w hw
 
 /-- **Analytic decay leaf.** A continuous inversion coefficient at `0`,
 together with the punctured cotangent-transition formula, forces the
