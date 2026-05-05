@@ -184,46 +184,68 @@ bundle. We split each into:
 Each is the same Mathlib gap (concrete dual of basis-aligned form
 pullback) but stated as a separate, smaller named obligation. -/
 
-/-- **Stage A leaf (round 1, structural opaque).** Concrete dual of
-the basis-aligned form pullback. *Bottom-up*: matrix of the
-dual-pullback in chosen bases of `H⁰(X, Ω¹)` and `H⁰(Y, Ω¹)`. -/
-noncomputable opaque pullbackFormsMap
+/-- **Stage A leaf (round 2, concretised).** Concrete dual of the
+basis-aligned form pullback, defined as `holomorphicTraceCoord f hf`
+(the basis-coordinate representation of the holomorphic-1-form
+pullback `f^* : H⁰(Y, Ω¹) → H⁰(X, Ω¹)`) coerced to a `→+`.
+
+This concretisation collapses both `pullbackFormsMap_id_eq_id` and
+`pullbackFormsMap_comp_eq` to sorry-free assemblies, riding on the
+sorry-free `holomorphicTraceCoord_id` and `holomorphicTraceCoord_comp`
+in `PushforwardBasis.lean`. The `basisAnalyticPullbackBundle_eq_pullbackFormsMap`
+bridge remains a (single) sorry because `basisAnalyticPullbackBundle`
+itself is still `noncomputable opaque` — concretising the bundle
+requires lattice preservation for `holomorphicTraceCoord`, which is
+genuinely Mathlib-gap-bound (Stokes naturality on the pullback side,
+analogous to the pushforward-side `pushforwardTraceLift_preserves_lattice_raw`). -/
+noncomputable def pullbackFormsMap
     (X' Y' : Type) [TopologicalSpace X'] [T2Space X']
     [CompactSpace X'] [ConnectedSpace X'] [ChartedSpace ℂ X']
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X']
     [TopologicalSpace Y'] [T2Space Y'] [CompactSpace Y']
     [ConnectedSpace Y'] [ChartedSpace ℂ Y']
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y']
-    (f : X' → Y') (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    (Fin (analyticGenus ℂ Y') → ℂ) →+ (Fin (analyticGenus ℂ X') → ℂ)
+    (f : X' → Y') (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ Y') → ℂ) →+ (Fin (analyticGenus ℂ X') → ℂ) :=
+  (holomorphicTraceCoord f hf).toAddMonoidHom
 
 /-- **Stage A leaf (round 1, bridge sorry).** The bundle's
 `basisDualPullback` agrees with the named `pullbackFormsMap`. Same
-upstream Mathlib gap as the original diamond sorry: both
-`basisAnalyticPullbackBundle f hf` and `pullbackFormsMap X' Y' f hf`
-are opaque-realised, so this equality is itself a sorry. -/
+upstream Mathlib gap as the original diamond sorry:
+`basisAnalyticPullbackBundle f hf` is `noncomputable opaque`
+(arbitrary witness from `Inhabited`), so its `basisDualPullback`
+field is not provably equal to the concrete
+`(holomorphicTraceCoord f hf).toAddMonoidHom`. Concretising the
+bundle requires the lattice-preservation analogue
+`holomorphicTraceCoord_preserves_lattice` (Mathlib-gap-bound:
+Stokes-naturality of `periodPairing` on the contravariant side,
+parallel to `pushforwardTraceLift_preserves_lattice_raw`). -/
 theorem basisAnalyticPullbackBundle_eq_pullbackFormsMap
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (basisAnalyticPullbackBundle f hf).basisDualPullback =
       pullbackFormsMap X Y f hf := by
   sorry
 
-/-- **Stage A leaf (round 1).** Identity functoriality of
-`pullbackFormsMap`. Bottom-up: the dual of form-pullback along `id`
-is the identity. -/
+/-- Identity functoriality of `pullbackFormsMap`: the dual of form-pullback
+along `id` is the identity additive group homomorphism on the basis-aligned
+covering space. Sorry-free via `holomorphicTraceCoord_id`. -/
 theorem pullbackFormsMap_id_eq_id :
     pullbackFormsMap X X id contMDiff_id =
       AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
-  sorry
+  unfold pullbackFormsMap
+  rw [holomorphicTraceCoord_id]
+  rfl
 
-/-- **Stage A leaf (round 1).** Composition (contravariant)
-functoriality of `pullbackFormsMap`. -/
+/-- Composition (contravariant) functoriality of `pullbackFormsMap`.
+Sorry-free via `holomorphicTraceCoord_comp`. -/
 theorem pullbackFormsMap_comp_eq
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     pullbackFormsMap X Z (g ∘ f) (hg.comp hf) =
       (pullbackFormsMap X Y f hf).comp (pullbackFormsMap Y Z g hg) := by
-  sorry
+  unfold pullbackFormsMap
+  rw [holomorphicTraceCoord_comp f hf g hg]
+  rfl
 
 /-- Bundle-level axiom: the `basisDualPullback` field of the bundle
 selected at `(X, X, id, contMDiff_id)` is the identity additive group
