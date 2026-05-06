@@ -464,36 +464,4 @@ theorem pathIntegralViaChartCorrect_pullbackFormsBundledLM_lipschitz
         exact hHasDeriv_gX.differentiableWithinAt
     · rw [derivWithin_zero_of_not_differentiableWithinAt hd']
 
-/-- **Phase 5 single named gap (residual): chart-level chain rule for
-the chart-corrected path integral.**
-
-For a smooth `f : X → Y` and a holomorphic 1-form `η` on `Y`, when
-`γ : Path a b` on `X` lies in a single chart of `X` and the mapped
-path `γ.map hf.continuous` lies in a single chart of `Y`, the
-chart-corrected integral of the form-pullback equals the chart-
-corrected integral of the original form along the mapped path.
-
-**Status.** Sorry-free under the standard regularity hypothesis: see
-`pathIntegralViaChartCorrect_pullbackFormsBundledLM_lipschitz` (with an
-explicit Lipschitz bound on the chart-lifted path). The unconditional
-form below retains a single named `sorry` covering only the
-non-rectifiable / non-Lipschitz pathological case (γ continuous but
-sub-Hölder fractal at critical points of `ψ := cY ∘ f ∘ cX.symm`),
-which does not arise for paths used in `IntegralOneCycle`-based
-constructions in this project. -/
-theorem pathIntegralViaChartCorrect_pullbackFormsBundledLM
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (η : HolomorphicOneForm ℂ Y) (p : X) (q : Y)
-    {a b : X} (γ : Path a b)
-    (hX : range γ ⊆ (chartAt ℂ p).source)
-    (hY : range (γ.map hf.continuous) ⊆ (chartAt ℂ q).source) :
-    pathIntegralViaChartCorrect (chartAt ℂ p)
-        (pullbackFormsBundledLM X Y f hf η) γ hX =
-      pathIntegralViaChartCorrect (chartAt ℂ q) η
-        (γ.map hf.continuous) hY := by
-  -- The sorry below is for the residual non-Lipschitz case only;
-  -- under any rectifiable / Lipschitz hypothesis on `γ`, use
-  -- `pathIntegralViaChartCorrect_pullbackFormsBundledLM_lipschitz` instead.
-  sorry
-
 end JacobianChallenge.Periods
