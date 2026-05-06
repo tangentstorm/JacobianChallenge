@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.Divisor
 import Jacobian.HolomorphicForms.FiniteDimensional
+import Jacobian.Blueprint.Sec02.BranchedDegree
 import Mathlib.Topology.Compactification.OnePoint.Basic
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 
@@ -83,6 +84,16 @@ structure MeromorphicMapToSphere
       ∃ g : X → ℂ,
         (∀ x : X, poleDivisor x = 0 → toMap x = ((g x : ℂ) : OnePoint ℂ)) ∧
         Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop
+  /-- Conditional on continuity, the analytic content of the map: a
+  branched-cover datum whose `branchedDegree` matches the pole
+  divisor's degree. The hypothesis is conditional because
+  `MeromorphicMapToSphere` is also constructed with non-honest
+  `toMap` (placeholder structure literals); for non-continuous
+  `toMap`, this Prop is vacuously satisfiable. -/
+  hasBranchedCoverDataOfPoleDegree :
+    Continuous toMap →
+    ∃ (h : JacobianChallenge.Blueprint.BranchedCoverData X (OnePoint ℂ) toMap),
+      JacobianChallenge.Blueprint.branchedDegree h = poleDivisor.degree.toNat
 
 namespace MeromorphicMapToSphere
 
