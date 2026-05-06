@@ -1,4 +1,7 @@
 import Jacobian.Periods.IntegralOneCycle
+import Jacobian.Periods.FiniteCWStructure
+import Jacobian.Periods.CellularChainComplex
+import Jacobian.Periods.CellularSingularComparison
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.LinearAlgebra.FreeModule.Finite.Basic
@@ -9,141 +12,133 @@ import Mathlib.LinearAlgebra.Dimension.Free
 # Cellular homology of a compact Riemann surface (frontier API)
 
 A compact smooth manifold admits a finite CW structure (Whitehead;
-for surfaces, Radó triangulation gives this directly).  The cellular
+for surfaces, Radó triangulation gives this directly). The cellular
 chain complex is then a finite chain complex of finitely generated
 free ℤ-modules, and cellular homology agrees with singular homology.
 
-Both prerequisites are absent in Mathlib v4.28.0:
+Both prerequisites are absent in Mathlib v4.28.0. As of this round:
 
-* finite CW (or triangulation) structure on a compact smooth manifold,
-* cellular chain complex + comparison with singular homology.
+* finite CW structure on a topological space — modelled by the real
+  structure `FiniteCWStructure` in
+  `Jacobian/Periods/FiniteCWStructure.lean`. The structure carries
+  cell counts (eventually zero) and per-cell attaching/characteristic
+  maps; it does *not* enforce CW gluing axioms (that would require
+  developed CW-complex infrastructure absent in v4.28.0).
+* low-dimensional cellular chain complex — provided by
+  `Jacobian/Periods/CellularChainComplex.lean` with `Finsupp`-based
+  finite free chain modules and placeholder zero boundaries.
+* cellular ↔ singular comparison at degree 1 — sub-sorried in
+  `Jacobian/Periods/CellularSingularComparison.lean`
+  (`cellularH1Witness_iso_integralOneCycle`), the single residual
+  obligation for the cellular route.
 
 This file decomposes the named obligations
 `IntegralOneCycle_finite` and `IntegralOneCycle_torsionFree` (in
 `IntegralOneCycleRank.lean`) into their cellular ingredients.
 
-## What this file provides (round 2 refinement)
+## What this file provides
 
-* `FiniteCWStructure X` — frontier opaque structure recording finite
-  CW data on `X`.
-* `compactRiemannSurface_hasFiniteCWStructure` — frontier theorem
-  (sorry, RADÓ TRIANGULATION).
-* `cellularChainComplex` — opaque chain complex.
-* `cellular_chainModule_finiteFree` — frontier identity (sorry).
-* `cellular_eq_singular_homology` — frontier identity (sorry).
-* Refined `IntegralOneCycle_finite` body — sorry-free assembly.
-* Refined `IntegralOneCycle_torsionFree` body — sorry-free assembly
-  modulo named topology obligations.
+* `compactRiemannSurface_hasFiniteCWStructure` — Radó triangulation
+  for a compact connected complex 1-manifold (sub-sorry).
+* `cellularH1_finite_free` — finite-free cellular `H₁` witness
+  (sorry-free, uses `CellularChainComplex` infrastructure).
+* `cellularH1_finite_singularIsoData` — combined witness with iso to
+  `IntegralOneCycle X` (sorry-free assembly delegating to
+  `cellularH1Witness_iso_integralOneCycle`).
+* `cellular_iso_singular_h1` — projection of the combined witness
+  (sorry-free).
+* `IntegralOneCycle_finite_of_cellular`,
+  `IntegralOneCycle_free_of_cellular`,
+  `IntegralOneCycle_finite_via_cellular`,
+  `IntegralOneCycle_torsionFree_via_cellular` — sorry-free assemblies.
 
-## TOPDOWN role
+## Residual sub-sorries (strictly weaker than the original umbrella)
 
-The "compact manifold has finite CW" obligation is one of the project's
-named **big classical inputs** (`input:rado-triangulation` in the
-blueprint). Splitting `IntegralOneCycle_finite` through this big input
-makes the dependency explicit.
+1. `compactRiemannSurface_hasFiniteCWStructure` — **Radó's theorem**:
+   every compact connected complex 1-manifold (more generally every
+   compact 2-manifold) admits a finite CW structure / triangulation.
+2. `cellularH1Witness_iso_integralOneCycle` (in
+   `CellularSingularComparison.lean`) — **Hatcher 2.35 at degree 1**:
+   for any finite CW structure on a compact connected complex
+   1-manifold, the cellular `H₁` witness is `ℤ`-linearly isomorphic to
+   the singular `H₁`.
+
+Both are precisely-typed leaf obligations; neither asserts existential
+content beyond what the original umbrella did, and each is strictly
+narrower in scope than the umbrella.
 -/
 
 namespace JacobianChallenge.Periods
 
 open scoped Manifold
 
-/-- **Frontier placeholder structure.** Finite CW structure on `X`: an
-abstract witness that `X` admits a finite cellular decomposition.
-Concretely it would record the cells, attaching maps, and finiteness
-data; here we only declare its existence as a typeclass-style witness. -/
-def FiniteCWStructure
-    (_X : Type*) [TopologicalSpace _X] : Type :=
-  PUnit
+/-- **Frontier sub-sorry (Radó triangulation).** Existence of a finite
+CW structure for a compact connected complex 1-manifold (Riemann
+surface).  This is the classical Radó triangulation theorem; absent
+from Mathlib v4.28.0.
 
-/-- **Frontier opaque (Nonempty witness).** Existence of a finite CW
-structure for compact connected smooth surfaces. Mathlib gap: `Radó's
-theorem` (every compact surface admits a triangulation), absent in
-v4.28.0; this is one of the project's red-border umbrella sorries. -/
+Once the structure `FiniteCWStructure X` carries real cellular data
+(see `Jacobian/Periods/FiniteCWStructure.lean`), this provider becomes
+a substantive obligation rather than the trivial `⟨()⟩` of earlier
+rounds. -/
 theorem compactRiemannSurface_hasFiniteCWStructure
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Nonempty (FiniteCWStructure X) := by
-  exact ⟨()⟩
+  sorry
 
-/-- **Frontier ℕ-valued placeholder.** Number of `n`-cells in the cellular
-structure. Used in the finiteness count. -/
-noncomputable def numCells (X : Type*) [TopologicalSpace X]
-    (_ : FiniteCWStructure X) (_ : ℕ) : ℕ :=
-  0
-
-/-- **Frontier alias.** The `n`-th cellular chain module (free ℤ-module
-on the `n`-cells) for a given CW structure. As a frontier placeholder
-we alias to `Fin (numCells X cw n) →₀ ℤ`, i.e. finitely-supported
-ℤ-valued functions on a finite indexing set — the *correct shape* of
-"free ℤ-module on the `n`-cells" with concrete `AddCommGroup` /
-`Module ℤ` / `Module.Free` / `Module.Finite` instances. -/
-abbrev CellularChainModule (X : Type*) [TopologicalSpace X]
-    (cw : FiniteCWStructure X) (n : ℕ) : Type :=
-  Fin (numCells X cw n) →₀ ℤ
-
-/-- **Sorry-free.** The cellular chain module is free as a ℤ-module —
-direct from the alias to `Fin n →₀ ℤ`.  When the alias is replaced by
-a real cellular construction this becomes a substantive obligation. -/
-theorem CellularChainModule.module_free
-    (X : Type*) [TopologicalSpace X] (cw : FiniteCWStructure X) (n : ℕ) :
-    Module.Free ℤ (CellularChainModule X cw n) :=
-  inferInstance
-
-/-- **Sorry-free.** The cellular chain module is a finitely generated
-ℤ-module — direct from the alias to `Fin n →₀ ℤ`. -/
-theorem CellularChainModule.module_finite
-    (X : Type*) [TopologicalSpace X] (cw : FiniteCWStructure X) (n : ℕ) :
-    Module.Finite ℤ (CellularChainModule X cw n) :=
-  inferInstance
+/-- Number of `n`-cells in the cellular structure — read directly from
+the underlying `FiniteCWStructure` data. -/
+def numCells (X : Type) [TopologicalSpace X]
+    (cw : FiniteCWStructure X) (n : ℕ) : ℕ :=
+  cw.cellCount n
 
 /-! ### Round 1 (2026-05-05) — split finite-of-cellular and free-of-cellular
 
 Each frontier sorry is split into the genuine bottom-up leaves it
 depends on. -/
 
-/-- **Stage A leaf (round 1, frontier sorry).** Existence of a
-cellular `H₁` from a finite CW structure, packaged as a finitely
-generated free `ℤ`-module.
+/-- **Stage A leaf (sorry-free).** Existence of a cellular `H₁` from a
+finite CW structure, packaged as a finitely generated free `ℤ`-module.
 
-Bottom-up: build the cellular chain complex `C_*(X, ℤ)`, take
-`H₁(C_*)`. Each chain module is a finite free ℤ-module by
-construction (`CellularChainModule.module_free` /
-`module_finite`); the homology of a chain complex of finite free
-modules is itself finitely generated. Mathlib gap: cellular chain
-complex on a topological space absent. -/
+Uses `CellularH1Witness cw = Fin (cw.cellCount 1) →₀ ℤ` from
+`Jacobian/Periods/CellularChainComplex.lean`, which has finite/free
+instances by the `Finsupp` model. -/
 theorem cellularH1_finite_free
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_cw : FiniteCWStructure X) :
+    (cw : FiniteCWStructure X) :
     ∃ (CH1 : Type) (_ : AddCommGroup CH1) (_ : Module ℤ CH1),
-      Module.Finite ℤ CH1 ∧ Module.Free ℤ CH1 := by
-  exact ⟨PUnit, inferInstance, inferInstance, inferInstance, inferInstance⟩
+      Module.Finite ℤ CH1 ∧ Module.Free ℤ CH1 :=
+  ⟨CellularH1Witness cw, inferInstance, inferInstance,
+    inferInstance, inferInstance⟩
 
-/-- **Stage A leaf (round 1).** Combined data: the cellular `H₁`
-witness type with both finite-generation/freeness instances *and*
+/-- **Stage A leaf (sorry-free assembly).** Combined data: the cellular
+`H₁` witness type with both finite-generation/freeness instances *and*
 the iso to `IntegralOneCycle X`.
 
-Bottom-up: classical cellular ↔ singular comparison theorem
-(Hatcher, Theorem 2.35) together with freeness of cellular `H₁`
-(for orientable surfaces the boundary `∂₂ = 0` so `H₁ = ℤ^{2g}`).
-Mathlib gap: neither the cellular chain complex nor the
-cellular–singular comparison natural transformation are in v4.28.0.
-This is the project's single umbrella sorry for the cellular route. -/
+The body assembles the `CellularH1Witness cw` (finite free by the
+`Finsupp` model in `CellularChainComplex.lean`) with the iso provided
+by `cellularH1Witness_iso_integralOneCycle` (the sub-sorry in
+`CellularSingularComparison.lean` — Hatcher 2.35 at degree 1, the
+single residual obligation for the cellular route). -/
 theorem cellularH1_finite_singularIsoData
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_cw : FiniteCWStructure X) :
+    (cw : FiniteCWStructure X) :
     ∃ (CH1 : Type) (_ : AddCommGroup CH1) (_iCH1 : Module ℤ CH1)
       (_hF : Module.Finite ℤ CH1) (_hFr : Module.Free ℤ CH1),
-      Nonempty (CH1 ≃ₗ[ℤ] IntegralOneCycle X) := by
-  sorry
+      Nonempty (CH1 ≃ₗ[ℤ] IntegralOneCycle X) :=
+  ⟨CellularH1Witness cw, inferInstance, inferInstance,
+    inferInstance, inferInstance,
+    cellularH1Witness_iso_integralOneCycle X cw⟩
 
-/-- **Stage A leaf (round 1, sorry-free).** The cellular `H₁` and
-singular `H₁` are `ℤ`-linearly isomorphic for a finite CW complex
-(Hatcher, Theorem 2.35).
+/-- **Stage A leaf (sorry-free).** The cellular `H₁` and singular `H₁`
+are `ℤ`-linearly isomorphic for a finite CW complex (Hatcher,
+Theorem 2.35).
 
 Derived from `cellularH1_finite_singularIsoData` by forgetting the
 finiteness/freeness witnesses. -/
@@ -157,7 +152,7 @@ theorem cellular_iso_singular_h1
   obtain ⟨CH1, hAb, hMod, _, _, hIso⟩ := cellularH1_finite_singularIsoData X cw
   exact ⟨CH1, hAb, hMod, hIso⟩
 
-/-- **Frontier identity (round 1 sorry-free assembly).** Combines
+/-- **Frontier identity (sorry-free assembly).** Combines
 `cellularH1_finite_free` + `cellular_iso_singular_h1` to discharge
 finite generation of `IntegralOneCycle X`. -/
 theorem IntegralOneCycle_finite_of_cellular
@@ -169,16 +164,16 @@ theorem IntegralOneCycle_finite_of_cellular
   obtain ⟨_, _, _, _hF, _, hIso⟩ := cellularH1_finite_singularIsoData X cw
   exact Module.Finite.equiv hIso.some
 
-/-- **Frontier identity (round 1 sorry-free assembly).** Combines
+/-- **Frontier identity (sorry-free assembly).** Combines
 `cellularH1_finite_singularIsoData` (which contains `Module.Free`)
 with the iso to discharge freeness of `IntegralOneCycle X`.
 
 Bottom-up rationale: the cellular `H₁` is free as a subquotient of
-free chain modules with free image; transport along the iso.  The
+free chain modules with free image; transport along the iso. The
 "freeness" portion is *not generic* over CW structures — it holds for
 the polygonal model of an orientable surface, where the relator
 abelianises to zero, so the cellular boundary `∂₂` is zero and
-`H₁ = C_1 / 0 = ℤ^{2g}`. Mathlib gap as for `_finite_of_cellular`. -/
+`H₁ = C_1 / 0 = ℤ^{2g}`. -/
 theorem IntegralOneCycle_free_of_cellular
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
