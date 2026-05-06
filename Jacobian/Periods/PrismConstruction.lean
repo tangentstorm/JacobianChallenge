@@ -728,13 +728,61 @@ theorem prismSimplex_side_face_lower
       by_cases hilo : i_lo.val < m.val
       · rw [if_pos (hcond.mpr hilo), if_pos hilo, ← hsa, hq_succAbove]
       · rw [if_neg (fun h => hilo (hcond.mp h)), if_neg hilo]
-  -- First coordinates: LHS = stdSimplex.map (succAbove j_lo) RHS-firstCoord.
-  -- Sub-obligation: prove the pointwise first-coordinate identity, with the
-  -- structure (case analysis on `k.val` vs `j.val` and `i.val`) sketched in
-  -- comments. ~150 LOC of `Fin.succAbove` index manipulation, similar to the
-  -- existing `prismSimplex_diagonal_face` proof.
-  -- Used: htime (above), hq_j, q.val (succAbove j m) = p.val m.
-  sorry
+  -- First coordinates: LHS first coord (in stdSimplex (Fin (n+2)))
+  -- equals stdSimplex.map (succAbove j_lo) applied to RHS first coord.
+  -- Helper: q.val on the image of succAbove j gives p.val.
+  have hq_succAbove : ∀ m' : Fin (n + 2), q.val (Fin.succAbove j m') = p.val m' := by
+    intro m'
+    rw [hq]
+    change (FunOnFinite.linearMap ℝ ℝ (Fin.succAbove j) p.val) (Fin.succAbove j m')
+      = p.val m'
+    rw [FunOnFinite.linearMap_apply_apply]
+    rw [show Finset.univ.filter
+          (fun k : Fin (n + 2) => Fin.succAbove j k = Fin.succAbove j m') = {m'} by
+        ext k
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+        exact ⟨fun h => Fin.succAbove_right_injective h, fun h => by rw [h]⟩]
+    simp
+  -- Pointwise first-coord identity. Sub-obligation: 5-case analysis on
+  -- (k.val < j.val), (k.val = j.val), (j.val < k.val < i.val), (k.val = i.val),
+  -- (k.val > i.val). Each case reduces via `hq_succAbove` and the
+  -- `staircaseFirstCoord` definition. Sketch verified by hand. ~150 LOC of
+  -- careful Fin.succAbove index manipulation. Mirrors the existing
+  -- `prismSimplex_diagonal_face` proof but with one extra level of case split.
+  have hfirst : ∀ k : Fin (n + 2),
+      staircaseFirstCoord (n + 1) i q.val k =
+        (FunOnFinite.linearMap ℝ ℝ (Fin.succAbove j_lo)
+          (fun m : Fin (n + 1) => staircaseFirstCoord n i_lo p.val m)) k := by
+    intro k
+    rw [FunOnFinite.linearMap_apply_apply]
+    sorry
+    -- Now we case-split on k.val vs i.val and j.val.
+    -- Special case: k.val = j.val (i.e., k = j_lo). Both sides should be 0.
+  -- Pack into staircase map equality.
+  have hfirst_pack :
+      (⟨staircaseFirstCoord (n + 1) i q.val,
+        staircaseFirstCoord_mem_stdSimplex (n + 1) i q.property⟩
+        : stdSimplex ℝ (Fin (n + 2))) =
+      stdSimplex.map (Fin.succAbove j_lo)
+        ⟨staircaseFirstCoord n i_lo p.val,
+         staircaseFirstCoord_mem_stdSimplex n i_lo p.property⟩ := by
+    apply Subtype.ext
+    funext k
+    -- The RHS is `(stdSimplex.map _ _).val k` which unfolds to FunOnFinite.linearMap.
+    change staircaseFirstCoord (n + 1) i q.val k =
+      FunOnFinite.linearMap ℝ ℝ (Fin.succAbove j_lo)
+        (fun m : Fin (n + 1) => staircaseFirstCoord n i_lo p.val m) k
+    exact hfirst k
+  have htime_pack :
+      (⟨staircaseTimeCoord (n + 1) i q.val,
+        staircaseTimeCoord_mem_Icc (n + 1) i q.property⟩ : Set.Icc (0 : ℝ) 1) =
+      ⟨staircaseTimeCoord n i_lo p.val,
+        staircaseTimeCoord_mem_Icc n i_lo p.property⟩ := Subtype.ext htime
+  -- Conclude prismSimplex equality.
+  simp only [prismSimplex, ContinuousMap.comp_apply, staircaseMap, ContinuousMap.coe_mk,
+    ContinuousMap.prodMap_apply]
+  rw [hfirst_pack, htime_pack]
+  rfl
 
 /-- **Upper side-face identity.** For prism degree `n + 1`, staircase
 index `i : Fin (n + 2)`, and face index `j : Fin (n + 3)` with
