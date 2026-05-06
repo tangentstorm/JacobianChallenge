@@ -121,29 +121,16 @@ theorem cellularH1_finite_free
       Module.Finite ℤ CH1 ∧ Module.Free ℤ CH1 := by
   exact ⟨PUnit, inferInstance, inferInstance, inferInstance, inferInstance⟩
 
-/-- **Stage A leaf (round 1, frontier sorry).** The cellular `H₁` and
-singular `H₁` are `ℤ`-linearly isomorphic for a finite CW complex
-(Hatcher, Theorem 2.35). The hypothesis records *some* witness type
-`CH1` plus a `LinearEquiv` to `IntegralOneCycle X`.
-
-Bottom-up: classical cellular ↔ singular comparison theorem;
-realised via the natural transformation between the cellular chain
-complex and the singular chain complex of the geometric realisation.
-Mathlib gap absent in v4.28.0. -/
-theorem cellular_iso_singular_h1
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_cw : FiniteCWStructure X) :
-    ∃ (CH1 : Type) (_ : AddCommGroup CH1) (_ : Module ℤ CH1),
-      Nonempty (CH1 ≃ₗ[ℤ] IntegralOneCycle X) := by
-  sorry
-
 /-- **Stage A leaf (round 1).** Combined data: the cellular `H₁`
 witness type with both finite-generation/freeness instances *and*
-the iso to `IntegralOneCycle X`. Bottom-up content is the same as
-`cellularH1_finite_free` and `cellular_iso_singular_h1`, but produced
-on a single witness type. -/
+the iso to `IntegralOneCycle X`.
+
+Bottom-up: classical cellular ↔ singular comparison theorem
+(Hatcher, Theorem 2.35) together with freeness of cellular `H₁`
+(for orientable surfaces the boundary `∂₂ = 0` so `H₁ = ℤ^{2g}`).
+Mathlib gap: neither the cellular chain complex nor the
+cellular–singular comparison natural transformation are in v4.28.0.
+This is the project's single umbrella sorry for the cellular route. -/
 theorem cellularH1_finite_singularIsoData
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -153,6 +140,22 @@ theorem cellularH1_finite_singularIsoData
       (_hF : Module.Finite ℤ CH1) (_hFr : Module.Free ℤ CH1),
       Nonempty (CH1 ≃ₗ[ℤ] IntegralOneCycle X) := by
   sorry
+
+/-- **Stage A leaf (round 1, sorry-free).** The cellular `H₁` and
+singular `H₁` are `ℤ`-linearly isomorphic for a finite CW complex
+(Hatcher, Theorem 2.35).
+
+Derived from `cellularH1_finite_singularIsoData` by forgetting the
+finiteness/freeness witnesses. -/
+theorem cellular_iso_singular_h1
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (cw : FiniteCWStructure X) :
+    ∃ (CH1 : Type) (_ : AddCommGroup CH1) (_ : Module ℤ CH1),
+      Nonempty (CH1 ≃ₗ[ℤ] IntegralOneCycle X) := by
+  obtain ⟨CH1, hAb, hMod, _, _, hIso⟩ := cellularH1_finite_singularIsoData X cw
+  exact ⟨CH1, hAb, hMod, hIso⟩
 
 /-- **Frontier identity (round 1 sorry-free assembly).** Combines
 `cellularH1_finite_free` + `cellular_iso_singular_h1` to discharge

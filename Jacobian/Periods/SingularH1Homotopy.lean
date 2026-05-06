@@ -1,9 +1,13 @@
 import Jacobian.Periods.TopologicalGenus
 import Mathlib.AlgebraicTopology.SingularSet
+import Mathlib.AlgebraicTopology.SingularHomology.Basic
+import Mathlib.Algebra.Homology.Homotopy
 import Mathlib.Topology.Homotopy.Basic
 import Mathlib.Topology.Homotopy.Equiv
 import Mathlib.LinearAlgebra.LinearIndependent.Defs
 import Mathlib.CategoryTheory.Iso
+import Mathlib.Algebra.Category.ModuleCat.Basic
+import Mathlib.Topology.Category.TopCat.Basic
 
 /-!
 # Round 46 — Homotopy invariance of singular `H₁`
@@ -248,41 +252,63 @@ the named obligations consistent with their statements (so that any
 future concrete realisation of the chain functor discharges them
 truthfully), we promote the definition to `noncomputable opaque`. -/
 
-/-- **Stage A leaf (round 3).** The induced map `singularH1 X →ₗ[ℤ] singularH1 Y`
-from a continuous map `f : X → Y`. Bottom-up: composition of
-`singularChainComplexFunctor.map (TopCat.ofHom f)` with the descent
-of degree-1 cycles modulo boundaries. Marked `opaque` so that the
-companion lemmas (`_id`, `_comp`, `_eq_of_homotopic`) are not
-contradicted by any specific placeholder value. -/
-noncomputable opaque singularH1_inducedLinearMap
+/-- **Concrete definition (round 3 fix).** The induced ℤ-linear map
+`singularH1 X →ₗ[ℤ] singularH1 Y` from a continuous map `f : X → Y`,
+defined as the degree-1 homology component of the singular chain complex
+functor applied to `f`.  Concretely: the functor
+`(singularHomologyFunctor (ModuleCat ℤ) 1).obj (ModuleCat.of ℤ ℤ) : TopCat ⥤ ModuleCat ℤ`
+maps `TopCat.ofHom f` to a morphism in `ModuleCat ℤ`; extracting `.hom`
+gives the ℤ-linear map. -/
+noncomputable def singularH1_inducedLinearMap
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
-    (f : C(X, Y)) : singularH1 X →ₗ[ℤ] singularH1 Y
+    (f : C(X, Y)) : singularH1 X →ₗ[ℤ] singularH1 Y :=
+  (((AlgebraicTopology.singularHomologyFunctor (ModuleCat ℤ) 1).obj
+      (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).hom
 
-/-- **Stage A leaf (round 2).** Identity functoriality of
-`singularH1_inducedLinearMap` (sorry since the map is currently `0`,
-hence `id_*` is `0` rather than `id`). -/
+/-- **Proved (round 3 fix).** Identity functoriality of
+`singularH1_inducedLinearMap`: direct from `Functor.map_id` and
+`ModuleCat.hom_id`. -/
 theorem singularH1_inducedLinearMap_id (X : Type) [TopologicalSpace X] :
     singularH1_inducedLinearMap (X := X) (Y := X) (ContinuousMap.id X) =
       LinearMap.id := by
-  sorry
+  simp [singularH1_inducedLinearMap, TopCat.ofHom_id, ModuleCat.hom_id]
 
-/-- **Stage A leaf (round 2).** Composition functoriality of
-`singularH1_inducedLinearMap`. -/
+/-- **Proved (round 3 fix).** Composition functoriality of
+`singularH1_inducedLinearMap`: direct from `Functor.map_comp` and
+`ModuleCat.hom_comp`. -/
 theorem singularH1_inducedLinearMap_comp
     {X Y Z : Type} [TopologicalSpace X] [TopologicalSpace Y] [TopologicalSpace Z]
     (f : C(X, Y)) (g : C(Y, Z)) :
     singularH1_inducedLinearMap (g.comp f) =
       (singularH1_inducedLinearMap g).comp (singularH1_inducedLinearMap f) := by
-  sorry
+  simp [singularH1_inducedLinearMap, TopCat.ofHom_comp, ModuleCat.hom_comp]
 
-/-- **Stage A leaf (round 2).** Homotopy invariance: homotopic maps
-induce equal `H₁`-maps. Direct consequence of the prism descent
-(captured by `singularH1_map_eq_of_prism` above for the propositional
-form; this version states it as an equation between the linear maps). -/
+/-- **Stage A leaf (prism construction).** Homotopy invariance of
+`singularH1_inducedLinearMap`: homotopic maps induce equal `H₁`-maps.
+
+**Proof route (to contribute to Mathlib):**
+The prism construction (Hatcher, *Algebraic Topology*, §2.1, Lemma 2.10)
+assigns to each homotopy `H : f ≃ g` a degree-1 chain homotopy
+`P : HomologicalComplex.Homotopy C_*(f) C_*(g)` at the level of singular
+chain complexes, satisfying `∂ ∘ P + P ∘ ∂ = C_*(g) - C_*(f)`.
+Applying `HomologicalComplex.Homotopy.homologyMap_eq` at degree 1 then
+gives `H₁(f) = H₁(g)`.
+
+The sorry below isolates exactly the prism construction. -/
 theorem singularH1_inducedLinearMap_eq_of_homotopic
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (_H : ContinuousMap.Homotopy f g) :
     singularH1_inducedLinearMap f = singularH1_inducedLinearMap g := by
+  simp only [singularH1_inducedLinearMap]
+  -- Isolate the prism construction: produce a chain homotopy C_*(f) ≃ C_*(g).
+  -- Applying Homotopy.homologyMap_eq at degree 1 then closes the goal.
+  suffices h : Homotopy
+      (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+          (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f))
+      (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+          (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom g)) by
+    exact congrArg ModuleCat.Hom.hom (h.homologyMap_eq 1)
+  -- Prism construction (Hatcher §2.1 Lemma 2.10): to be contributed to Mathlib.
   sorry
 
 /-- **Stage A leaf (round 2, sorry-free assembly).** Existence of the

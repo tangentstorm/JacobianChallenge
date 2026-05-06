@@ -3636,14 +3636,17 @@ and \code{Jacobian/StageA/EdgeWordTietze.lean}.
 
 \begin{theorem}[Classical input: StageA close-out]
 \label{input:stage-a-closeout}
-\uses{lem:r3subB-cellular-iso,lem:r3subB-handle-pairing,lem:r3subB-standardisation}
+\uses{lem:r3subB-cellular-iso,lem:r3subB-handle-pairing,lem:r3subB-standardisation,input:prism-and-surface-h1}
 The three Lean targets
 \code{cellular\_iso\_singularH}, \code{orientable\_word\_handleSwap\_to\_grouped},
 and \code{orientable\_edgeWord\_tietzeEq\_standardWord} bottom out
 at the three sub-leaves below.  Sub-leaves
 \(\textsf{r3subB-A.r1}\)--\(\textsf{r3subB-C.r5}\) are tracked in
 \code{Jacobian/StageA/CellularSingular.lean} and
-\code{Jacobian/StageA/EdgeWordTietze.lean}.
+\code{Jacobian/StageA/EdgeWordTietze.lean}.  Homotopy invariance of
+singular \(H_1\) on the polygonal model and the cellular finite-free
+witness for a compact Riemann surface are routed through the
+sibling input \ref{input:prism-and-surface-h1}.
 \notready
 \end{theorem}
 
@@ -3783,6 +3786,179 @@ The canonical form from r3 is definitionally
 =a_{0}b_{0}a_{0}^{-1}b_{0}^{-1}\dotsm a_{g-1}b_{g-1}a_{g-1}^{-1}b_{g-1}^{-1}\).
 \lean{JacobianChallenge.StageA.canonical_form_eq_standardWord}
 \leanok
+\end{lemma}
+
+%======================================================================
+\subsection{R3-sub-D --- Homotopy invariance of singular \(H_1\) (prism construction)}
+\label{subsec:gap-R3subD-prism}
+
+The headline says: the three remaining
+\code{Jacobian/Periods/\{SingularH1Homotopy,Polygon4gCellular,
+CellularHomologyRS\}.lean} \code{sorry}s collapse onto a single
+classical input --- Hatcher~\S2.1 Lemma~2.10, the
+\emph{prism construction} for singular chains --- plus two surface-specific
+specialisations of the classical cellular-vs-singular comparison
+of \S\ref{subsec:gap-R3subB-stageA-closeout}.  These are the
+``functoriality + homotopy invariance'' obligations of the period
+pairing dispatch and are upstream of the full surface-classification
+chain.
+
+\subsubsection*{Classical content}
+
+\begin{enumerate}
+\item \emph{Prism / chain homotopy from a continuous homotopy
+(Hatcher \S2.1 Lemma~2.10).}  Given continuous \(f, g : X \to Y\) and a
+homotopy \(H : f \simeq g\), build a chain homotopy
+\(P : C^{\mathrm{sing}}_{*}(X)\to C^{\mathrm{sing}}_{*+1}(Y)\)
+satisfying \(\partial P + P \partial = g_{*} - f_{*}\).  The construction
+subdivides \(\Delta^{n} \times I\) into \(n+1\) ordered \((n+1)\)-simplices
+via the staircase \([v_{0},\dotsc,v_{i},w_{i},\dotsc,w_{n}]\)
+(lower vertices \(v_{j} = (e_{j}, 0)\), upper vertices \(w_{j} = (e_{j}, 1)\)),
+then sums \((-1)^{i}\) of the prism \((n+1)\)-simplices through \(H\).
+\item \emph{Hurewicz iso for the polygonal model.}  For path-connected
+\(X = \mathrm{Polygon4g}(g+1)\), the Hurewicz map
+\(\pi_{1}(X)^{\mathrm{ab}}\to H_{1}(X,\Z)\) is an iso.  Combined with
+the surface-group-abelianisation calculation, this gives
+\(H_{1}(\mathrm{Polygon4g}(g+1),\Z)\cong\Z^{2(g+1)}\).
+\item \emph{Cellular-vs-singular comparison for a compact Riemann
+surface.}  Hatcher Theorem~2.35: for any finite CW complex
+the cellular and singular chain complexes are quasi-isomorphic.
+For a compact connected complex 1-manifold this transports the
+finite-free property of cellular \(H_{1}\) to
+\code{IntegralOneCycle X}.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Mathlib v4.28.0 has:
+\begin{itemize}
+\item \code{Mathlib.AlgebraicTopology.SingularHomology.Basic} ---
+  the singular chain complex / homology functors
+  \code{singularChainComplexFunctor} and \code{singularHomologyFunctor}.
+\item \code{Mathlib.Algebra.Homology.Homotopy} ---
+  the abstract chain-complex homotopy structure and
+  \code{Homotopy.homologyMap\_eq} (chain-homotopic morphisms
+  induce equal maps on homology).
+\item \code{Mathlib.Analysis.Convex.StdSimplex} +
+  \code{Mathlib.AlgebraicTopology.TopologicalSimplex} ---
+  the standard simplex and its barycentric coordinates.
+\end{itemize}
+
+Mathlib does \emph{not} have:
+\begin{itemize}
+\item Any bridge \(\code{ContinuousMap.Homotopy}\,f\,g
+  \to \code{HomologicalComplex.Homotopy}\,(C_{*}f)\,(C_{*}g)\) on the
+  singular chain complex.  This is exactly the prism construction.
+\item The Hurewicz natural transformation \(\pi_{1}^{\mathrm{ab}}\to H_{1}\),
+  even abstractly.
+\item The cellular--singular comparison theorem (Hatcher~2.35) for
+  CW complexes; the project's only formal record is the
+  R3-sub-B chain (\S\ref{subsec:gap-R3subB-stageA-closeout}).
+\end{itemize}
+
+\subsubsection*{Status: 7 sorries consolidated to 3 leaves}
+
+The original frontier in
+\code{Jacobian/Periods/\{SingularH1Homotopy,Polygon4gCellular,
+CellularHomologyRS\}.lean} carried \emph{seven} \code{sorry}s
+across five declarations.  After replacing the placeholder
+opaque \code{singularH1\_inducedLinearMap} with a concrete
+definition routed through \code{singularHomologyFunctor (ModuleCat \Z) 1},
+four of the seven discharged via direct functor laws (\code{Functor.map\_id},
+\code{Functor.map\_comp}, \code{ModuleCat.hom\_id}/\code{hom\_comp})
+and the rest by transport along an iso.  The residue is exactly the three
+classical inputs above.  The substantive new sorry-free building blocks
+live in
+\code{Jacobian/Periods/PrismConstruction.lean}
+(\(\sim\)511 LOC, fully sorry-free): staircase coordinates, the
+continuous staircase map
+\code{staircaseMap : C(\(\Delta^{n+1}\),\(\Delta^{n}\)\(\times\)I)},
+the prism singular simplex \code{prismSimplex}, plus the top/bottom
+face identities \code{prismSimplex\_top\_face} and
+\code{prismSimplex\_bottom\_face}.
+
+\begin{theorem}[Classical input: prism + surface-\(H_{1}\) closure]
+\label{input:prism-and-surface-h1}
+\uses{lem:r3subD-prism-chain-homotopy,lem:r3subD-polygon-hurewicz,lem:r3subD-cellular-singular-surface}
+The three Lean targets
+\code{singularH1\_inducedLinearMap\_eq\_of\_homotopic},
+\code{polygon4g\_succ\_singularH1\_hurewiczIso}, and
+\code{cellularH1\_finite\_singularIsoData} bottom out at the three
+sub-leaves below.  Sub-leaves
+\(\textsf{r3subD-A.r1}\)--\(\textsf{r3subD-A.r3}\) are tracked in
+\code{Jacobian/Periods/PrismConstruction.lean}.
+\notready
+\end{theorem}
+
+\begin{lemma}[R3-sub-D.A --- prism construction at the chain level]
+\label{lem:r3subD-prism-chain-homotopy}
+\uses{lem:r3subD-A-r1,lem:r3subD-A-r2,lem:r3subD-A-r3}
+For \(f,g:X\to Y\) and a continuous homotopy \(H:f\simeq g\), the
+chain map \((C_{*}f)\) and \((C_{*}g)\) on the singular chain complex
+are chain-homotopic via the alternating-sum prism operator
+\(P_{n}\sigma=\sum_{i=0}^{n}(-1)^{i}\,\code{prismSimplex}\,n\,i\,H\,\sigma\).
+Applying \code{Homotopy.homologyMap\_eq} at degree~1 closes
+\code{singularH1\_inducedLinearMap\_eq\_of\_homotopic}.
+\lean{JacobianChallenge.Periods.singularH1_inducedLinearMap_eq_of_homotopic}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-D.A.r1 --- continuous staircase map]
+\label{lem:r3subD-A-r1}
+For each \(i\in\{0,\dotsc,n\}\), the affine staircase map
+\(\alpha_{i}:\Delta^{n+1}\to\Delta^{n}\times[0,1]\) is continuous,
+preserves convex constraints, and corresponds to the staircase simplex
+\([v_{0},\dotsc,v_{i},w_{i},\dotsc,w_{n}]\).
+\lean{JacobianChallenge.Periods.staircaseMap}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R3-sub-D.A.r2 --- top and bottom face of the prism simplex]
+\label{lem:r3subD-A-r2}
+The 0-th face of the \(i=0\) prism simplex equals \(g\circ\sigma\),
+and the \((n+1)\)-th face of the \(i=n\) prism simplex equals \(f\circ\sigma\).
+These are the boundary contributions of \(\partial P\) that become
+\(g_{*}-f_{*}\) after telescoping.
+\lean{JacobianChallenge.Periods.prismSimplex_top_face}
+\leanok
+\end{lemma}
+
+\begin{lemma}[R3-sub-D.A.r3 --- chain operator and boundary identity]
+\label{lem:r3subD-A-r3}
+Lift \code{prismSimplex} to a \(\Z\)-linear chain operator
+\(P_{n}:C^{\mathrm{sing}}_{n}(X)\to C^{\mathrm{sing}}_{n+1}(Y)\)
+on the free \(\Z\)-module of singular \(n\)-simplices, and verify the
+boundary identity \(\partial P + P\partial = (C_{*}g)-(C_{*}f)\) by
+the standard interior-face cancellation
+(Hatcher \S2.1 p.\,112).  Wrap as
+\code{HomologicalComplex.Homotopy}.
+\lean{JacobianChallenge.Periods.PrismChainHomotopy.prism_homotopy}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-D.B --- Hurewicz iso for the genus-(g+1) polygon]
+\label{lem:r3subD-polygon-hurewicz}
+\uses{def:polygon4g,lem:r3subB-cellular-iso}
+For every \(g\in\N\), the Hurewicz map gives a \(\Z\)-linear iso
+\(\Z^{2(g+1)}\cong H_{1}(\mathrm{Polygon4g}(g+1),\Z)\).  Two routes are
+available: a direct cellular calculation (3-step chain complex
+\(0\to\Z\to\Z^{2(g+1)}\to\Z\to0\) with both differentials zero, then
+transport via R3-sub-B) or a Hurewicz / surface-group-abelianisation
+argument.  The current Lean target is the cellular route.
+\lean{JacobianChallenge.Periods.polygon4g_succ_singularH1_hurewiczIso}
+\notready
+\end{lemma}
+
+\begin{lemma}[R3-sub-D.C --- cellular finite-free witness for a compact Riemann surface]
+\label{lem:r3subD-cellular-singular-surface}
+\uses{input:rado-triangulation,lem:r3subB-cellular-iso}
+For a compact connected complex 1-manifold \(X\) with a finite CW
+structure, there exists a finite-rank free \(\Z\)-module \(C\) and a
+\(\Z\)-linear iso \(C\cong H_{1}(X,\Z)\).  The witness is the cellular
+\(H_{1}\) of the CW structure; the iso is the cellular-vs-singular
+comparison of R3-sub-B applied at degree 1.
+\lean{JacobianChallenge.Periods.cellularH1_finite_singularIsoData}
+\notready
 \end{lemma}
 
 %======================================================================
