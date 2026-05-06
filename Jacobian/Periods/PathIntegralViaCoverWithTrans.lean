@@ -1,4 +1,5 @@
 import Jacobian.Periods.PathIntegralViaCoverWithRefinementInvariant
+import Jacobian.Periods.PathIntegralCongr
 
 /-!
 # Path-additivity (`_trans`) for `pathIntegralViaCoverWith` (aligned partition)
@@ -17,23 +18,16 @@ segments cover `γ'` (with `pickB`), the cover-with sum splits:
 ## Strategy
 
 `pathIntegralViaCoverWith ω (γ.trans γ') (2*n) _ pickT hcovT` unfolds
-to a `Finset.sum` over `Fin (2*n)`. Reindex via `Fin (2*n) ≃
-Fin n ⊕ Fin n` (`Fin.sumFinAddFin`). The first-half summands
-correspond to subpaths of `γ.trans γ'` on `[0, 1/2]`, which by
-`Path.extend_trans_of_le_half` are reparameterisations of subpaths of
-`γ` on `[0, 1]`. The second-half summands correspond to subpaths on
-`[1/2, 1]`, reparameterisations of subpaths of `γ'` on `[0, 1]`.
+to a `Finset.sum` over `Fin (2*n)`. Reindex via `Fin n ⊕ Fin n ≃
+Fin (n + n) ≃ Fin (2*n)` (`finSumFinEquiv` composed with `finCongr`).
+The first-half summands correspond to subpaths of `γ.trans γ'` on
+`[0, 1/2]`, which by `Path.extend_trans_of_le_half` are pointwise equal
+to subpaths of `γ` on `[0, 1]`. The second-half summands correspond to
+subpaths on `[1/2, 1]`, pointwise equal to subpaths of `γ'`.
 
-The reparameterisation is the key step — same flavour as
-`curveIntegral_subpath_of_le` in `CurveIntegralSubpath.lean`, but
-specialised to the half-affine maps `s ↦ s/2` and `s ↦ (s+1)/2`.
-
-## Status
-
-A single named sorry. Proof is mechanical Fin-bookkeeping plus the
-half-affine reparameterisation invariance for
-`pathIntegralViaChartCorrect` (which itself needs the curve-integral
-reparameterisation lemma).
+Path equality across different endpoint types is bridged via the
+`pathIntegralViaChartCorrect_eq_of_heq` congruence lemma, which only
+needs HEq of the underlying paths plus the endpoint equalities.
 -/
 
 namespace JacobianChallenge.Periods
@@ -50,6 +44,241 @@ noncomputable def alignedPickT
     (n : ℕ) (pickA pickB : Fin n → X) (j : Fin (2 * n)) : X :=
   if hlt : j.val < n then pickA ⟨j.val, hlt⟩
   else pickB ⟨j.val - n, by have h := j.isLt; omega⟩
+
+/-- Heterogeneous path equality from pointwise function equality. -/
+private lemma path_heq_of_pointwise
+    {Y : Type*} [TopologicalSpace Y]
+    {a b a' b' : Y} {γ : Path a b} {γ' : Path a' b'}
+    (h_eq : ∀ s : unitInterval, γ s = γ' s) :
+    HEq γ γ' := by
+  have ha : a = a' := γ.source.symm.trans ((h_eq 0).trans γ'.source)
+  have hb : b = b' := γ.target.symm.trans ((h_eq 1).trans γ'.target)
+  subst ha
+  subst hb
+  exact heq_of_eq (Path.ext (funext h_eq))
+
+/-- Combined congruence: `pathIntegralViaChartCorrect` is invariant under
+heterogeneous path equality and chart-pick equality. -/
+private lemma pathIntegralViaChartCorrect_eq_of_heq_charts
+    (ω : HolomorphicOneForm E X)
+    {a b a' b' : X} {γ : Path a b} {γ' : Path a' b'}
+    {p p' : X} (hp : p = p')
+    (ha : a = a') (hb : b = b')
+    (hγ : HEq γ γ')
+    (h : range γ ⊆ (chartAt E p).source)
+    (h' : range γ' ⊆ (chartAt E p').source) :
+    pathIntegralViaChartCorrect (chartAt E p) ω γ h =
+      pathIntegralViaChartCorrect (chartAt E p') ω γ' h' := by
+  subst hp
+  exact pathIntegralViaChartCorrect_eq_of_heq _ _ ha hb hγ h h'
+
+/-- A `Fin (2 * n)` sum splits into two `Fin n` sums via the standard
+`Fin n ⊕ Fin n ≃ Fin (2 * n)` equivalence: first half indices are
+`⟨i.val, _⟩`, second half are `⟨n + k.val, _⟩`. -/
+private lemma sum_aligned_split
+    {α : Type*} [AddCommMonoid α] (n : ℕ) (f : Fin (2 * n) → α) :
+    ∑ j : Fin (2 * n), f j =
+      (∑ i : Fin n, f ⟨i.val, by have := i.isLt; omega⟩) +
+      (∑ k : Fin n, f ⟨n + k.val, by have := k.isLt; omega⟩) := by
+  let e : Fin n ⊕ Fin n ≃ Fin (2 * n) := finSumFinEquiv.trans (finCongr (two_mul n).symm)
+  rw [← e.sum_comp f, Fintype.sum_sum_type]
+  rfl
+
+/-- Pointwise: For j ≤ n, `(γ.trans γ') (divFinIcc (2n) j) = γ (divFinIcc n j)`. -/
+private lemma trans_at_first_half_endpt
+    {a b c : X} (γ : Path a b) (γ' : Path b c)
+    (n : ℕ) (hn : 0 < n) (j : ℕ) (hj : j ≤ n)
+    (h_2n_pos : (0 : ℕ) < 2 * n) (h_jle : j ≤ 2 * n) :
+    (γ.trans γ') (divFinIcc (2 * n) h_2n_pos j h_jle) =
+      γ (divFinIcc n hn j hj) := by
+  have h_n_R_pos : (0 : ℝ) < n := by exact_mod_cast hn
+  have h_2n_R_pos : (0 : ℝ) < ((2 * n : ℕ) : ℝ) := by exact_mod_cast h_2n_pos
+  have h_2n_eq : ((2 * n : ℕ) : ℝ) = 2 * n := by push_cast; ring
+  have h_v_le_half : ((j : ℝ) / ((2 * n : ℕ) : ℝ)) ≤ 1/2 := by
+    rw [div_le_iff₀ h_2n_R_pos, h_2n_eq]
+    have h1 : (j : ℝ) ≤ n := by exact_mod_cast hj
+    linarith
+  have h_jn_in : ((j : ℝ) / n) ∈ Set.Icc (0 : ℝ) 1 := by
+    refine ⟨by positivity, ?_⟩
+    rw [div_le_one h_n_R_pos]
+    exact_mod_cast hj
+  calc (γ.trans γ') (divFinIcc (2 * n) h_2n_pos j h_jle)
+      = (γ.trans γ').extend (divFinIcc (2 * n) h_2n_pos j h_jle : ℝ) :=
+        (Path.extend_apply _ (divFinIcc (2 * n) h_2n_pos j h_jle).2).symm
+    _ = γ.extend (2 * ((j : ℝ) / ((2 * n : ℕ) : ℝ))) := by
+        rw [show (divFinIcc (2 * n) h_2n_pos j h_jle : ℝ) = (j : ℝ) / ((2 * n : ℕ) : ℝ) from rfl]
+        exact Path.extend_trans_of_le_half γ γ' h_v_le_half
+    _ = γ.extend ((j : ℝ) / n) := by
+        congr 1
+        rw [h_2n_eq]
+        field_simp
+    _ = γ (divFinIcc n hn j hj) := by
+        rw [show ((j : ℝ) / n) = (divFinIcc n hn j hj : ℝ) from rfl]
+        exact Path.extend_apply _ (divFinIcc n hn j hj).2
+
+/-- Pointwise: For k ≤ n, `(γ.trans γ') (divFinIcc (2n) (n+k)) = γ' (divFinIcc n k)`. -/
+private lemma trans_at_second_half_endpt
+    {a b c : X} (γ : Path a b) (γ' : Path b c)
+    (n : ℕ) (hn : 0 < n) (k : ℕ) (hk : k ≤ n)
+    (h_2n_pos : (0 : ℕ) < 2 * n) (h_nkle : n + k ≤ 2 * n) :
+    (γ.trans γ') (divFinIcc (2 * n) h_2n_pos (n + k) h_nkle) =
+      γ' (divFinIcc n hn k hk) := by
+  have h_n_R_pos : (0 : ℝ) < n := by exact_mod_cast hn
+  have h_2n_R_pos : (0 : ℝ) < ((2 * n : ℕ) : ℝ) := by exact_mod_cast h_2n_pos
+  have h_2n_eq : ((2 * n : ℕ) : ℝ) = 2 * n := by push_cast; ring
+  have h_v_ge_half : (1 : ℝ) / 2 ≤ ((n + k : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ) := by
+    rw [le_div_iff₀ h_2n_R_pos, h_2n_eq]
+    push_cast
+    linarith
+  have h_kn_in : ((k : ℝ) / n) ∈ Set.Icc (0 : ℝ) 1 := by
+    refine ⟨by positivity, ?_⟩
+    rw [div_le_one h_n_R_pos]
+    exact_mod_cast hk
+  calc (γ.trans γ') (divFinIcc (2 * n) h_2n_pos (n + k) h_nkle)
+      = (γ.trans γ').extend (divFinIcc (2 * n) h_2n_pos (n + k) h_nkle : ℝ) :=
+        (Path.extend_apply _ (divFinIcc (2 * n) h_2n_pos (n + k) h_nkle).2).symm
+    _ = γ'.extend (2 * (((n + k : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) - 1) := by
+        rw [show (divFinIcc (2 * n) h_2n_pos (n + k) h_nkle : ℝ) =
+              ((n + k : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ) from rfl]
+        exact Path.extend_trans_of_half_le γ γ' h_v_ge_half
+    _ = γ'.extend ((k : ℝ) / n) := by
+        congr 1
+        rw [h_2n_eq]
+        push_cast
+        field_simp
+        ring
+    _ = γ' (divFinIcc n hn k hk) := by
+        rw [show ((k : ℝ) / n) = (divFinIcc n hn k hk : ℝ) from rfl]
+        exact Path.extend_apply _ (divFinIcc n hn k hk).2
+
+/-- Pointwise equality: for `j < n`, the j-th aligned-2n subpath of `γ.trans γ'`
+agrees pointwise with the j-th aligned-n subpath of `γ`. -/
+private lemma trans_subpath_first_half_pointwise
+    {a b c : X} (γ : Path a b) (γ' : Path b c)
+    (n : ℕ) (hn : 0 < n) (j : ℕ) (hj : j + 1 ≤ n)
+    (h_2n_pos : (0 : ℕ) < 2 * n)
+    (s : unitInterval) :
+    ((γ.trans γ').subpath
+        (divFinIcc (2 * n) h_2n_pos j (by omega))
+        (divFinIcc (2 * n) h_2n_pos (j + 1) (by omega))) s =
+      (γ.subpath
+        (divFinIcc n hn j (Nat.le_of_succ_le hj))
+        (divFinIcc n hn (j + 1) hj)) s := by
+  have h_n_R_pos : (0 : ℝ) < n := by exact_mod_cast hn
+  have h_2n_R_pos : (0 : ℝ) < ((2 * n : ℕ) : ℝ) := by exact_mod_cast h_2n_pos
+  have h_2n_eq : ((2 * n : ℕ) : ℝ) = 2 * n := by push_cast; ring
+  show (γ.trans γ') (Path.subpathAux _ _ s) = γ (Path.subpathAux _ _ s)
+  have h_s_nn : (0 : ℝ) ≤ s := s.2.1
+  have h_s_le : (s : ℝ) ≤ 1 := s.2.2
+  have h_1ms_nn : (0 : ℝ) ≤ 1 - s := by linarith
+  have h_j_le : (j : ℝ) ≤ n := by exact_mod_cast Nat.le_of_succ_le hj
+  have h_j1_le : ((j + 1 : ℕ) : ℝ) ≤ n := by exact_mod_cast hj
+  have h_div_lo : (((j : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) ≤ 1/2 := by
+    rw [div_le_iff₀ h_2n_R_pos, h_2n_eq]; linarith
+  have h_div_hi : ((((j + 1) : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) ≤ 1/2 := by
+    rw [div_le_iff₀ h_2n_R_pos, h_2n_eq]; push_cast at h_j1_le ⊢; linarith
+  set u_path : unitInterval :=
+    Path.subpathAux (divFinIcc (2 * n) h_2n_pos j (by omega))
+                    (divFinIcc (2 * n) h_2n_pos (j + 1) (by omega)) s with hu_def
+  have hu_le : (u_path : ℝ) ≤ 1/2 := by
+    rw [hu_def]
+    show ((1 - s) * (divFinIcc (2 * n) h_2n_pos j _ : ℝ) +
+          s * (divFinIcc (2 * n) h_2n_pos (j + 1) _ : ℝ)) ≤ 1/2
+    show ((1 - s) * ((j : ℝ) / ((2 * n : ℕ) : ℝ)) +
+          s * (((j + 1 : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ))) ≤ 1/2
+    calc (1 - s) * ((j : ℝ) / ((2 * n : ℕ) : ℝ)) +
+          s * ((((j + 1) : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ))
+        ≤ (1 - s) * (1/2) + s * (1/2) := by
+          apply add_le_add
+          · exact mul_le_mul_of_nonneg_left h_div_lo h_1ms_nn
+          · exact mul_le_mul_of_nonneg_left h_div_hi h_s_nn
+      _ = 1/2 := by ring
+  have h_u_in : (u_path : ℝ) ∈ Set.Icc (0 : ℝ) 1 := u_path.2
+  rw [show (γ.trans γ') u_path = (γ.trans γ').extend u_path from
+        (Path.extend_apply _ h_u_in).symm]
+  rw [Path.extend_trans_of_le_half γ γ' hu_le]
+  have h_2u_in : (2 * (u_path : ℝ)) ∈ Set.Icc (0 : ℝ) 1 := by
+    have h_u_nn : (0 : ℝ) ≤ u_path := u_path.2.1
+    refine ⟨by linarith, by linarith⟩
+  rw [Path.extend_apply γ h_2u_in]
+  congr 1
+  apply Subtype.ext
+  show (2 : ℝ) * (u_path : ℝ) =
+       (Path.subpathAux (divFinIcc n hn j _) (divFinIcc n hn (j + 1) _) s : ℝ)
+  rw [hu_def]
+  show (2 : ℝ) * ((1 - s) * ((j : ℝ) / ((2 * n : ℕ) : ℝ)) +
+                  s * (((j + 1 : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ))) =
+       ((1 - s) * ((j : ℝ) / n) + s * (((j + 1 : ℕ) : ℝ) / n))
+  rw [h_2n_eq]
+  push_cast
+  field_simp
+
+/-- Pointwise equality: for `k < n`, the (n+k)-th aligned-2n subpath of `γ.trans γ'`
+agrees pointwise with the k-th aligned-n subpath of `γ'`. -/
+private lemma trans_subpath_second_half_pointwise
+    {a b c : X} (γ : Path a b) (γ' : Path b c)
+    (n : ℕ) (hn : 0 < n) (k : ℕ) (hk : k + 1 ≤ n)
+    (h_2n_pos : (0 : ℕ) < 2 * n)
+    (s : unitInterval) :
+    ((γ.trans γ').subpath
+        (divFinIcc (2 * n) h_2n_pos (n + k) (by omega))
+        (divFinIcc (2 * n) h_2n_pos (n + k + 1) (by omega))) s =
+      (γ'.subpath
+        (divFinIcc n hn k (Nat.le_of_succ_le hk))
+        (divFinIcc n hn (k + 1) hk)) s := by
+  have h_n_R_pos : (0 : ℝ) < n := by exact_mod_cast hn
+  have h_2n_R_pos : (0 : ℝ) < ((2 * n : ℕ) : ℝ) := by exact_mod_cast h_2n_pos
+  have h_2n_eq : ((2 * n : ℕ) : ℝ) = 2 * n := by push_cast; ring
+  show (γ.trans γ') (Path.subpathAux _ _ s) = γ' (Path.subpathAux _ _ s)
+  have h_s_nn : (0 : ℝ) ≤ s := s.2.1
+  have h_s_le : (s : ℝ) ≤ 1 := s.2.2
+  have h_1ms_nn : (0 : ℝ) ≤ 1 - s := by linarith
+  have h_k_le : (k : ℝ) ≤ n := by exact_mod_cast Nat.le_of_succ_le hk
+  have h_k1_le : ((k + 1 : ℕ) : ℝ) ≤ n := by exact_mod_cast hk
+  have h_div_lo : (1 : ℝ) / 2 ≤ (((n + k : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) := by
+    rw [le_div_iff₀ h_2n_R_pos, h_2n_eq]
+    push_cast
+    linarith
+  have h_div_hi : (1 : ℝ) / 2 ≤ (((n + k + 1 : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) := by
+    rw [le_div_iff₀ h_2n_R_pos, h_2n_eq]
+    push_cast
+    linarith
+  set u_path : unitInterval :=
+    Path.subpathAux (divFinIcc (2 * n) h_2n_pos (n + k) (by omega))
+                    (divFinIcc (2 * n) h_2n_pos (n + k + 1) (by omega)) s with hu_def
+  have hu_ge : (1 : ℝ) / 2 ≤ (u_path : ℝ) := by
+    rw [hu_def]
+    show (1 : ℝ) / 2 ≤ ((1 - s) * (divFinIcc (2 * n) h_2n_pos (n + k) _ : ℝ) +
+                       s * (divFinIcc (2 * n) h_2n_pos (n + k + 1) _ : ℝ))
+    show (1 : ℝ) / 2 ≤ ((1 - s) * (((n + k : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) +
+                       s * (((n + k + 1 : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)))
+    calc (1 : ℝ) / 2
+        = (1 - s) * (1/2) + s * (1/2) := by ring
+      _ ≤ (1 - s) * (((n + k : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) +
+          s * (((n + k + 1 : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) := by
+          apply add_le_add
+          · exact mul_le_mul_of_nonneg_left h_div_lo h_1ms_nn
+          · exact mul_le_mul_of_nonneg_left h_div_hi h_s_nn
+  have h_u_in : (u_path : ℝ) ∈ Set.Icc (0 : ℝ) 1 := u_path.2
+  rw [show (γ.trans γ') u_path = (γ.trans γ').extend u_path from
+        (Path.extend_apply _ h_u_in).symm]
+  rw [Path.extend_trans_of_half_le γ γ' hu_ge]
+  have h_u_le : (u_path : ℝ) ≤ 1 := u_path.2.2
+  have h_2u_in : (2 * (u_path : ℝ) - 1) ∈ Set.Icc (0 : ℝ) 1 := by
+    refine ⟨by linarith, by linarith⟩
+  rw [Path.extend_apply γ' h_2u_in]
+  congr 1
+  apply Subtype.ext
+  show (2 : ℝ) * (u_path : ℝ) - 1 =
+       (Path.subpathAux (divFinIcc n hn k _) (divFinIcc n hn (k + 1) _) s : ℝ)
+  rw [hu_def]
+  show (2 : ℝ) * ((1 - s) * (((n + k : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ)) +
+                  s * (((n + k + 1 : ℕ) : ℝ) / ((2 * n : ℕ) : ℝ))) - 1 =
+       ((1 - s) * ((k : ℝ) / n) + s * (((k + 1 : ℕ) : ℝ) / n))
+  rw [h_2n_eq]
+  push_cast
+  field_simp
+  ring
 
 /-- **Phase 6 (single named gap): With-level path additivity on aligned partition.**
 
@@ -80,7 +309,50 @@ theorem pathIntegralViaCoverWith_aligned_trans
         (alignedPickT n pickA pickB) hcovT =
       pathIntegralViaCoverWith ω γ n hn pickA hcovA +
       pathIntegralViaCoverWith ω γ' n hn pickB hcovB := by
-  sorry
+  have h_2n_pos : (0 : ℕ) < 2 * n := Nat.mul_pos (by omega) hn
+  unfold pathIntegralViaCoverWith
+  -- Split the LHS Fin (2*n) sum into two Fin n sums.
+  rw [sum_aligned_split n]
+  congr 1
+  · -- First half: ∑ i : Fin n, F ⟨i.val, _⟩ = ∑ i : Fin n, G(i)
+    apply Finset.sum_congr rfl
+    rintro i -
+    -- For the LHS index ⟨i.val, _⟩ in Fin (2 * n), .val = i.val < n.
+    -- alignedPickT picks pickA i.
+    have h_idx_lt : i.val < n := i.isLt
+    have h_pick : alignedPickT n pickA pickB ⟨i.val, by omega⟩ = pickA i := by
+      unfold alignedPickT
+      rw [dif_pos h_idx_lt]
+    have hi_succ : i.val + 1 ≤ n := i.isLt
+    have hi_le : i.val ≤ n := Nat.le_of_succ_le hi_succ
+    refine pathIntegralViaChartCorrect_eq_of_heq_charts ω h_pick ?_ ?_ ?_ _ _
+    · exact trans_at_first_half_endpt γ γ' n hn i.val hi_le h_2n_pos (by omega)
+    · exact trans_at_first_half_endpt γ γ' n hn (i.val + 1) hi_succ h_2n_pos (by omega)
+    · apply path_heq_of_pointwise
+      intro s
+      exact trans_subpath_first_half_pointwise γ γ' n hn i.val hi_succ h_2n_pos s
+  · -- Second half: ∑ k : Fin n, F ⟨n + k.val, _⟩ = ∑ k : Fin n, H(k)
+    apply Finset.sum_congr rfl
+    rintro k -
+    have h_idx_ge : ¬ (n + k.val) < n := by omega
+    have h_pick : alignedPickT n pickA pickB ⟨n + k.val, by have := k.isLt; omega⟩ = pickB k := by
+      unfold alignedPickT
+      rw [dif_neg h_idx_ge]
+      apply congr_arg
+      apply Fin.ext
+      show n + k.val - n = k.val
+      omega
+    have hk_succ : k.val + 1 ≤ n := k.isLt
+    have hk_le : k.val ≤ n := Nat.le_of_succ_le hk_succ
+    refine pathIntegralViaChartCorrect_eq_of_heq_charts ω h_pick ?_ ?_ ?_ _ _
+    · exact trans_at_second_half_endpt γ γ' n hn k.val hk_le h_2n_pos (by omega)
+    · -- Goal: (γ.trans γ') (divFinIcc (2*n) h_2n_pos (⟨n+k.val,_⟩.val + 1) _) = γ' (divFinIcc n hn (k.val + 1) hk_succ)
+      -- Note ⟨n+k.val,_⟩.val + 1 = n + k.val + 1 = n + (k.val + 1) (defeq via Nat.add_succ)
+      exact trans_at_second_half_endpt γ γ' n hn (k.val + 1) hk_succ h_2n_pos (by omega)
+    · -- HEq path equality
+      apply path_heq_of_pointwise
+      intro s
+      exact trans_subpath_second_half_pointwise γ γ' n hn k.val hk_succ h_2n_pos s
 
 /-! ### Existence of aligned partition for `γ.trans γ'`
 
