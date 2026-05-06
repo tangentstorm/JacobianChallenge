@@ -302,7 +302,64 @@ theorem prismChain_hom_comm
         (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom g)).f i := by
   cases i with
   | zero => exact prismChain_hom_comm_zero H
-  | succ i' => sorry
+  | succ i' =>
+    apply singChain_hom_ext
+    intro s
+    rw [singChain_map_basis]
+    rw [Preadditive.comp_add, Preadditive.comp_add]
+    rw [singChain_map_basis]
+    -- Goal: basis (f.comp s) = (basis s ≫ dNext) + (basis s ≫ prevD) + basis (g.comp s)
+    -- where dNext, prevD are at degree (i' + 1).
+    -- Step 1: Unfold dNext (i' + 1) (prismChain_hom H).
+    rw [show dNext (i' + 1) (prismChain_hom H)
+          = (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+              (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).d (i' + 1) i'
+            ≫ prismChain_op H i' from by
+        rw [dNext_nat]
+        show (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+            (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).d (i' + 1) (i' + 1 - 1) ≫
+            prismChain_hom H (i' + 1 - 1) (i' + 1) = _
+        rw [show (i' + 1 - 1 : ℕ) = i' from rfl, prismChain_hom_succ]]
+    -- Step 2: Unfold prevD (i' + 1) (prismChain_hom H).
+    rw [show prevD (i' + 1) (prismChain_hom H)
+          = prismChain_op H (i' + 1)
+            ≫ (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+              (ModuleCat.of ℤ ℤ)).obj (TopCat.of Y)).d (i' + 2) (i' + 1) from by
+        rw [prevD_eq _ (j := i' + 1) (j' := i' + 2)
+            (by simp [ComplexShape.down_Rel])]
+        rw [prismChain_hom_succ]]
+    -- Step 3: Reassociate compositions.
+    rw [← Category.assoc, ← Category.assoc]
+    -- Step 4: Apply singChain_d_basis to expand differentials, prismChain_op_basis
+    -- to expand the prism operators. After this, the goal has double sums on each side.
+    rw [singChain_d_basis i' s]
+    rw [show ((∑ j : Fin (i' + 2), ((-1 : ℤ) ^ j.val) •
+            singChain_basis (s.comp (stdSimplexFaceInclusion i' j)))
+          ≫ prismChain_op H i') =
+          ∑ j : Fin (i' + 2), ((-1 : ℤ) ^ j.val) •
+            (singChain_basis (s.comp (stdSimplexFaceInclusion i' j))
+            ≫ prismChain_op H i') from by
+        rw [Preadditive.sum_comp]
+        simp [Preadditive.zsmul_comp]]
+    rw [prismChain_op_basis H (i' + 1) s]
+    rw [show ((∑ l : Fin (i' + 2), prismChain_summand H (i' + 1) l s)
+          ≫ (((singularChainComplexFunctor (ModuleCat ℤ)).obj (ModuleCat.of ℤ ℤ)).obj
+              (TopCat.of Y)).d (i' + 2) (i' + 1)) =
+          ∑ l : Fin (i' + 2), prismChain_summand H (i' + 1) l s
+            ≫ (((singularChainComplexFunctor (ModuleCat ℤ)).obj (ModuleCat.of ℤ ℤ)).obj
+              (TopCat.of Y)).d (i' + 2) (i' + 1) from by
+        rw [Preadditive.sum_comp]]
+    -- The remaining bookkeeping (face identity case analysis + Finset.sum
+    -- re-indexing for diagonal cancellation, lower side-face matching dNext,
+    -- upper side-face matching dNext) is substantial.
+    -- Sketch:
+    --   • prevD sum = top contribution (-basis(g.comp s)) + bottom (+basis(f.comp s))
+    --                + diagonal pairs (sum to 0) + side-faces (cancel with dNext).
+    --   • Combined: dNext + prevD = basis(f.comp s) - basis(g.comp s).
+    -- This residual sorry isolates exactly the alternating-sign Finset.sum
+    -- bookkeeping; all face identities (top, bottom, diagonal, side_lower,
+    -- side_upper) are sorry-free in PrismConstruction.lean.
+    sorry
 
 /-! ### Assembly into a `Homotopy` -/
 
