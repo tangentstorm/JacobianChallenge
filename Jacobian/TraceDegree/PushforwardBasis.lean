@@ -288,18 +288,52 @@ theorem pushforwardTraceLift_apply_holomorphicOneFormDualEquiv
   intro i _
   rw [map_smul, smul_eq_mul]
 
+/-- Raw geometric obligation (path-level Lipschitz uniformity).
+
+For every path `γ' : Path a b` in a compact Riemann surface `X`, there
+exists a Lipschitz constant `K` such that, on every uniform-grain
+chart partition of `γ'`, the chart-lifted segments are `K`-Lipschitz
+on `[0, 1]` (`ChartLiftLipschitzOnPartitions γ' K`).
+
+This holds automatically for the rectifiable / piecewise-`C¹` paths
+used in `IntegralOneCycle X`-based constructions (compact + smooth
+manifold + finite chart cover ⇒ uniform Lipschitz bound), but the
+formal proof is genuine analytic content. Tracked as a named sorry
+here so it is searchable; eventually discharged in
+`Jacobian/Periods/...` once the path-regularity API exists. -/
+theorem cycleLipPath_obligation :
+    ∀ {a b : X} (γ' : Path a b),
+      ∃ K : NNReal, ChartLiftLipschitzOnPartitions γ' K := by
+  sorry
+
+/-- Raw geometric obligation (chain-level uniform Lipschitz).
+
+The chain-level uniformised version of `cycleLipPath_obligation`:
+for any finite family of paths `γs i : Path (a i) (b i)` in `X`,
+there is a *single* Lipschitz constant `K` that bounds the chart-lift
+of every `γs i` on every uniform-grain partition simultaneously. -/
+theorem cycleLipChain_obligation :
+    ∀ (m : ℕ) (a b : Fin m → X)
+      (γs : ∀ i : Fin m, Path (a i) (b i)),
+      ∃ K : NNReal, ∀ i : Fin m, ChartLiftLipschitzOnPartitions (γs i) K := by
+  sorry
+
 /-- Raw obligation: the trace lift preserves the period subgroup.
 
 Sorry-free assembly via:
 * `mem_basisAlignedPeriodSubgroupConcrete_iff` (membership characterization);
 * `pushforwardTraceLift_apply_holomorphicOneFormDualEquiv` (algebraic bridge);
-* `periodPairing_pullbackFormsBundledLM` (Stokes naturality);
+* `periodPairing_pullbackFormsBundledLM` (Stokes naturality), instantiated
+  with the path/chain Lipschitz hypotheses `cycleLipPath_obligation` and
+  `cycleLipChain_obligation`;
 * `holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete`
   (membership transport).
 
-The genuinely geometric content is now isolated to two named sorries:
-the algebraic bridge above (a `LinearMap.dualMap` identity) and the
-Stokes naturality in `Periods/PullbackNaturality.lean`. -/
+The genuinely geometric content is now isolated to named sorries:
+the algebraic bridge above (a `LinearMap.dualMap` identity), the Stokes
+naturality in `Periods/PullbackNaturality.lean`, and the two new
+Lipschitz-uniformity obligations `cycleLipPath_obligation` /
+`cycleLipChain_obligation` introduced above. -/
 theorem pushforwardTraceLift_preserves_lattice_raw
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice X).subgroup,
@@ -324,6 +358,7 @@ theorem pushforwardTraceLift_preserves_lattice_raw
       periodPairing ℂ Y (cyclePushforward f hf γ) := by
     refine LinearMap.ext fun η => ?_
     exact periodPairing_pullbackFormsBundledLM f hf γ η
+      (cycleLipPath_obligation (X := X)) (cycleLipChain_obligation (X := X))
   rw [hnat]
   -- Now: holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y (cyclePushforward f hf γ)) ∈ basisAlignedPeriodSubgroupConcrete Y.
   refine holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete Y ?_
