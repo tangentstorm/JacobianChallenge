@@ -3,6 +3,7 @@ import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverPickRefl
 import Jacobian.Periods.PathIntegralViaCoverWithRefinementInvariant
+import Jacobian.Periods.PathIntegralViaCoverWithTrans
 import Jacobian.Periods.PathIntegralViaChartCorrectPullback
 import Jacobian.Periods.PathIntegralCongr
 import Jacobian.HolomorphicForms.PullbackBundled
@@ -227,7 +228,34 @@ theorem pathIntegralViaCover_trans_eq_add
     (γ : Path a b) (γ' : Path b c) :
     pathIntegralViaCover η (γ.trans γ') =
       pathIntegralViaCover η γ + pathIntegralViaCover η γ' := by
-  sorry
+  -- Extract a common-multiple aligned chart partition for γ.trans γ'
+  -- whose first half covers γ and second half covers γ'.
+  obtain ⟨n, hn, pickA, pickB, hcovA, hcovB, hcovT⟩ :=
+    exists_aligned_partition_for_trans (E := ℂ) X γ γ'
+  -- Bridge each `pathIntegralViaCover` to its `pathIntegralViaCoverWith`
+  -- form on the chosen partition via refinement invariance.
+  have hT : pathIntegralViaCover η (γ.trans γ') =
+      pathIntegralViaCoverWith η (γ.trans γ') (2 * n)
+        (Nat.mul_pos (by omega) hn)
+        (alignedPickT n pickA pickB) hcovT := by
+    unfold pathIntegralViaCover
+    exact pathIntegralViaCoverWith_refinement_invariant'
+      η (γ.trans γ') _ _ _ _ (2 * n) (Nat.mul_pos (by omega) hn)
+      (alignedPickT n pickA pickB) hcovT
+  have hA : pathIntegralViaCover η γ =
+      pathIntegralViaCoverWith η γ n hn pickA hcovA := by
+    unfold pathIntegralViaCover
+    exact pathIntegralViaCoverWith_refinement_invariant'
+      η γ _ _ _ _ n hn pickA hcovA
+  have hB : pathIntegralViaCover η γ' =
+      pathIntegralViaCoverWith η γ' n hn pickB hcovB := by
+    unfold pathIntegralViaCover
+    exact pathIntegralViaCoverWith_refinement_invariant'
+      η γ' _ _ _ _ n hn pickB hcovB
+  rw [hT, hA, hB]
+  -- Apply the With-level aligned trans split (Phase 6).
+  exact pathIntegralViaCoverWith_aligned_trans
+    η γ γ' n hn pickA pickB hcovA hcovB hcovT
 
 /-- **Pass pcr.13 (chart-source compatibility under f).** If `γ`
 factors through a chart on `X` then `f ∘ γ` factors through some chart
