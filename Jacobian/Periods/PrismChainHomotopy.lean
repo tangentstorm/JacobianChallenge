@@ -10,111 +10,204 @@ import Mathlib.Algebra.Category.ModuleCat.Colimits
 import Mathlib.Algebra.Category.ModuleCat.Abelian
 import Mathlib.Topology.Category.TopCat.Basic
 import Jacobian.Periods.PrismConstruction
+import Jacobian.Periods.PrismChainBridge
 
 /-!
-# Chain-level prism homotopy — named existence obligation
+# Chain-level prism homotopy
 
-This file isolates the chain-level part of the prism construction
-(Hatcher §2.1, Lemma 2.10) into a single named existence theorem
-`prism_chainHomotopy_exists`. The geometric pieces live in
-`Jacobian/Periods/PrismConstruction.lean` (sorry-free `prismSimplex`
-plus top/bottom/diagonal face identities); the residual obligation
-captured here is the *categorical* assembly into a
-`HomologicalComplex.Homotopy` between the singular chain functor
-applied to homotopic continuous maps.
+This file builds the chain-level prism operator `P_n : C_n(X) ⟶ C_{n+1}(Y)`
+from a homotopy `H : f ≃ g` and assembles it into a
+`HomologicalComplex.Homotopy` between the singular chain complex maps
+`(sChain.map f)` and `(sChain.map g)`. This is the *categorical* layer
+of the prism construction (Hatcher §2.1, Lemma 2.10); the geometric
+pieces — `prismSimplex`, `prismSimplex_top_face`,
+`prismSimplex_bottom_face`, `prismSimplex_diagonal_face` — live in
+`Jacobian/Periods/PrismConstruction.lean`. The Mathlib categorical
+plumbing (universe / ULift / `Sigma.desc`) is in
+`Jacobian/Periods/PrismChainBridge.lean`.
 
-## Why a separate file
+## Structure
 
-`SingularH1Homotopy.lean` previously held a single `sorry` of *data*
-type `Homotopy (sChain.map f) (sChain.map g)`. Constructing that data
-requires:
-1. defining the chain-level prism operator
-   `P_n : C_n(X) ⟶ C_{n+1}(Y)` using `Sigma.desc` and `prismSimplex`,
-2. proving the boundary identity `∂ P + P ∂ = g_* − f_*`,
-3. packaging into the `Homotopy` structure.
-
-This file replaces that data sorry with a *propositional* existence
-sorry `Nonempty (Homotopy …)`. The original consumer in
-`SingularH1Homotopy.lean` only needs `Homotopy.homologyMap_eq`, which
-follows from any inhabitant of `Homotopy …`, so `Nonempty` suffices.
-
-The remaining sorry is therefore strictly less content than the
-original: the original required *constructing* the data (along with
-proving the comm identity); the new obligation only requires showing
-*existence*. Any concrete prism-construction discharge of the original
-sorry equally discharges this one via `⟨_⟩`.
-
-## What needs to be filled in (bottom-up content)
-
-Given a homotopy `H : ContinuousMap.Homotopy f g` between
-`f, g : X → Y`, one defines the chain-level prism operator at degree
-`n` on a generator `σ : C(stdSimplex ℝ (Fin (n+1)), X)` of the singular
-chain complex by
-
-  `P_n σ := Σ_{i : Fin (n+1)} (-1)^i • [prismSimplex n i H σ]`
-
-(where `[·]` denotes the basis element of the singular chain group).
-The chain homotopy identity to verify is
-
-  `(sChain.map f).f n = dNext n P + prevD n P + (sChain.map g).f n`.
-
-Hatcher's proof of this identity uses three combinatorial facts:
-* `prismSimplex_top_face`     — `∂_0 (prismSimplex n 0 H σ) = g ∘ σ`
-* `prismSimplex_bottom_face`  — `∂_{n+1} (prismSimplex n n H σ) = f ∘ σ`
-* `prismSimplex_diagonal_face`— `∂_{i+1} (prismSimplex n i H σ)
-                                = ∂_{i+1} (prismSimplex n (i+1) H σ)`
-
-(All three are sorry-free in `Jacobian/Periods/PrismConstruction.lean`.)
-The remaining ingredient is the *side-face* identity, identifying the
-`j`-th face of the `i`-th prism simplex (for `j ≠ i, i+1`, or for
-`j = 0` with `i ≠ 0`, or for `j = n+1` with `i ≠ n`) with the prism
-applied to a face of `σ`. This is the missing piece, plus the bookkeeping
-to assemble these into the boundary identity.
+* `prismChain_op n H` — the chain-level prism operator at degree `n`,
+  defined on a generator `σ : SingSimplex n X` by
+  `Σ_{i : Fin (n+1)} (-1)^i • [prismSimplex n i H σ]`.
+* `prismChain_hom H i j` — the `Homotopy.hom` field: `prismChain_op i H`
+  when `j = i+1`, otherwise `0`.
+* `prismChain_hom_zero H` — proves the `Homotopy.zero` field.
+* `prism_chainHomotopy_comm` — the `Homotopy.comm` field (the boundary
+  identity `∂P + P∂ = g_* − f_*`). **This is the residual sorry.**
+* `prismChainHomotopy H` — assembled `Homotopy`.
+* `prism_chainHomotopy_exists` — `Nonempty (Homotopy ...)` via the above.
 -/
 
 noncomputable section
 
 namespace JacobianChallenge.Periods
 
-open AlgebraicTopology CategoryTheory
+open AlgebraicTopology CategoryTheory Limits HomologicalComplex
+
+/-! ### The chain-level prism operator
+
+Given a homotopy `H : f ≃ g` between continuous maps `f, g : X → Y`,
+the prism operator `P_n : C_n(X) ⟶ C_{n+1}(Y)` is defined on a basis
+element corresponding to a singular `n`-simplex
+`s : C(stdSimplex ℝ (Fin (n+1)), X)` by
+
+  `P_n s := Σ_{i : Fin (n+1)} (-1)^i.val • [prismSimplex n i H s]`
+
+where `[·]` is the basis morphism in the chain group (cf.
+`singChain_basis` in the bridge file). -/
+
+/-- The chain-level contribution at a single staircase index `i`:
+the basis morphism of the prism simplex with sign `(-1)^i.val`. -/
+noncomputable def prismChain_summand
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (n : ℕ)
+    (i : Fin (n + 1)) (s : SingSimplex n X) :
+    ModuleCat.of ℤ ℤ ⟶ singChain (n + 1) Y :=
+  ((-1 : ℤ) ^ i.val) • singChain_basis (prismSimplex n i H s)
+
+/-- The chain-level prism operator at degree `n`, on a single
+generator: the alternating sum over staircase indices
+`i : Fin (n + 1)` of basis morphisms of `prismSimplex n i H s`. -/
+noncomputable def prismChain_op_atSimplex
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (n : ℕ)
+    (s : SingSimplex n X) :
+    ModuleCat.of ℤ ℤ ⟶ singChain (n + 1) Y :=
+  ∑ i : Fin (n + 1), prismChain_summand H n i s
+
+/-- The chain-level prism operator at degree `n`:
+`P_n : C_n(X) ⟶ C_{n+1}(Y)`. -/
+noncomputable def prismChain_op
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (n : ℕ) :
+    singChain n X ⟶ singChain (n + 1) Y :=
+  singChain_desc (prismChain_op_atSimplex H n)
+
+/-- Universal property: the prism operator on a basis element. -/
+@[simp]
+theorem prismChain_op_basis
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (n : ℕ)
+    (s : SingSimplex n X) :
+    singChain_basis s ≫ prismChain_op H n =
+      ∑ i : Fin (n + 1), prismChain_summand H n i s := by
+  unfold prismChain_op
+  rw [singChain_desc_basis]
+  rfl
+
+/-! ### The `Homotopy.hom` field, with case split on `j = i + 1`
+
+`HomologicalComplex.Homotopy` requires `hom : ∀ i j, C.X i ⟶ D.X j` for
+all pairs `(i, j)`, with `hom i j = 0` for `(i, j)` outside the
+"chain shape" relation. For `ChainComplex C ℕ` (shape `down ℕ`), the
+relation is `j + 1 = i`, so `hom i j` is non-zero only when `j = i + 1`,
+where it equals our prism operator at degree `i`. -/
+
+/-- The `Homotopy.hom` field: the chain prism operator at degree `i`
+when `j = i + 1`, and zero otherwise. -/
+noncomputable def prismChain_hom
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i j : ℕ) :
+    singChain i X ⟶ singChain j Y := by
+  by_cases h : j = i + 1
+  · exact h ▸ prismChain_op H i
+  · exact 0
+
+/-- The `Homotopy.zero` field: when `j ≠ i + 1` (i.e., the chain-shape
+relation `c.Rel j i` fails), the `prismChain_hom` is zero by
+construction. For `ComplexShape.down ℕ`, `Rel j i` holds iff `i + 1 = j`. -/
+theorem prismChain_hom_zero
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
+    (i j : ℕ) (hij : ¬ (ComplexShape.down ℕ).Rel j i) :
+    prismChain_hom H i j = 0 := by
+  unfold prismChain_hom
+  rw [dif_neg]
+  intro hji
+  apply hij
+  -- (ComplexShape.down ℕ).Rel j i ↔ i + 1 = j (since down is shift by 1)
+  simp only [ComplexShape.down_Rel]
+  omega
+
+/-! ### The boundary identity (residual sorry)
+
+The chain-homotopy condition: for each `i : ℕ`,
+`(sChain.map f).f i = dNext i (prismChain_hom H) + prevD i (prismChain_hom H) + (sChain.map g).f i`.
+
+This is the categorical packaging of the prism boundary equation
+`∂P + P∂ = g_* − f_*`. The combinatorial verification depends on:
+* `prismSimplex_top_face`     — face 0 of `P_0` = `g ∘ s`
+* `prismSimplex_bottom_face`  — face `n+1` of `P_n` = `f ∘ s`
+* `prismSimplex_diagonal_face`— pairwise cancellation between adjacent
+                                 staircase simplices
+* `prismSimplex_side_face`    — *side-face identity*, **still missing**
+                                 in `PrismConstruction.lean`. -/
+
+/-- The `Homotopy.comm` field — the boundary identity. **Residual sorry.**
+
+This is the chain-level expression of the prism boundary equation
+`∂P + P∂ = g_* − f_*`. To discharge:
+
+1. Reduce to a per-basis-element equation by composing with
+   `singChain_basis s` for arbitrary `s : SingSimplex i X`.
+2. Unfold `dNext i (prismChain_hom H)` using `dNext_eq` with
+   `c.Rel i (i+1)` — gives `d_X (i+1) i ≫ prismChain_op H i`.
+3. Unfold `prevD i (prismChain_hom H)` using `prevD_eq` — gives
+   `prismChain_op H (i-1) ≫ d_Y i (i-1)` (or zero at `i = 0`).
+4. Unfold the chain differential `d` to alternating sum of face maps
+   on the basis (the key `singChain_d_basis` lemma — Phase 2 of the
+   plan, **TODO**).
+5. Apply `prismSimplex_top_face`, `_bottom_face`, `_diagonal_face`,
+   `_side_face` (the last is missing — Phase 4 of the plan).
+6. Reassemble using `Finset.sum` rewrites; the alternating signs
+   produce the desired cancellations.
+
+This is a substantial calculation; see Hatcher pp. 112–113. -/
+theorem prismChain_hom_comm
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i : ℕ) :
+    (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f i =
+      dNext i (prismChain_hom H) + prevD i (prismChain_hom H) +
+      (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom g)).f i := by
+  sorry
+
+/-! ### Assembly into a `Homotopy` -/
+
+/-- The chain-level prism homotopy, assembled from the prism operator,
+the zero condition, and the boundary identity. -/
+noncomputable def prismChainHomotopy
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) :
+    Homotopy
+      (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+          (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f))
+      (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+          (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom g)) where
+  hom := prismChain_hom H
+  zero := prismChain_hom_zero H
+  comm := prismChain_hom_comm H
 
 /-- **Chain-level prism homotopy, existence form.** Given a homotopy
 `H : f ≃ g` between continuous maps `f, g : X → Y`, the singular chain
 complex functor (with ℤ-coefficients) sends `f` and `g` to chain maps
 that are homotopic via the prism construction.
 
-This is the *categorical assembly* of the prism construction
-(`prismSimplex` and friends in `Jacobian/Periods/PrismConstruction.lean`)
-into a `HomologicalComplex.Homotopy`. The construction is described in
-Hatcher §2.1, Lemma 2.10.
-
-**Status:** isolated as a single existence sorry, replacing the original
-*data*-level sorry on `Homotopy …` in
-`Jacobian/Periods/SingularH1Homotopy.lean`. The propositional form
-(`Nonempty …`) is sufficient for downstream applications — the only
-consumer is `Homotopy.homologyMap_eq`, which is satisfied by any
-inhabitant.
-
-**To discharge:** define the chain operator
-`P_n : C_n(X) ⟶ C_{n+1}(Y)` via `Limits.Sigma.desc` and `prismSimplex`,
-verify the boundary identity (using the diagonal-face cancellation
-plus a still-needed *side-face* identity), package as a `Homotopy`,
-and `exact ⟨_⟩`. -/
+Sorry-free assembly via `prismChainHomotopy` (the data form). The
+residual sorry is now in `prismChain_hom_comm` (the boundary identity),
+not at the assembly level. -/
 theorem prism_chainHomotopy_exists
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
-    {f g : C(X, Y)} (_H : ContinuousMap.Homotopy f g) :
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) :
     Nonempty (Homotopy
       (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
           (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f))
       (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
-          (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom g))) := by
-  -- Bottom-up content: prism construction (Hatcher §2.1 Lemma 2.10).
-  -- See `Jacobian/Periods/PrismConstruction.lean` for the geometric data
-  -- (`prismSimplex`, top/bottom/diagonal face identities), all sorry-free.
-  -- The missing piece is the categorical assembly: define the chain-level
-  -- operator using `Limits.Sigma.desc`, verify the boundary identity, and
-  -- package as `Homotopy`.
-  sorry
+          (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom g))) :=
+  ⟨prismChainHomotopy H⟩
 
 end JacobianChallenge.Periods
 
