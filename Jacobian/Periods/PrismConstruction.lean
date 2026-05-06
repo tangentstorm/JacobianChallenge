@@ -609,4 +609,86 @@ theorem prismSimplex_diagonal_face
   simp only [prismSimplex, ContinuousMap.comp_apply, staircaseMap, ContinuousMap.coe_mk,
              ContinuousMap.prodMap_apply, htime_eq, hfirst_eq]
 
+/-! ### Side-face identities (Phase 4 of the prism chain-homotopy plan)
+
+For non-special pairs `(i, j)` (i.e., not top/bottom/diagonal), the
+`j`-th face of the `i`-th prism `(n+1)`-simplex equals a prism over
+some `(n-1)`-face of `σ`.
+
+There are two cases:
+
+* **Lower side-face** (`j ≤ ι`, with `n = ι' + 1`): the `j`-th face
+  of `prismSimplex (ι' + 1) i.castSucc H s` for `i = ι.castSucc` and
+  `j ≤ ι.castSucc.val` factors through the prism construction at
+  degree `ι'`. Specifically, dropping the `j`-th lower vertex
+  corresponds to `s ∘ δ_j` paired with the `(i-1)`-staircase pattern
+  (one fewer lower step).
+
+* **Upper side-face** (`j > i + 1`): the `j`-th face for `j` exceeding
+  the diagonal corresponds to dropping an upper vertex. By the
+  staircase symmetry, this equals the prism over `s ∘ δ_{j-1}` at the
+  same staircase index `i`.
+
+These two identities — together with `prismSimplex_top_face`,
+`_bottom_face`, `_diagonal_face` — are exactly what's needed to close
+the boundary identity `∂P + P∂ = f_* − g_*` in
+`Jacobian/Periods/PrismChainHomotopy.lean`.
+
+The proofs are direct staircase-coordinate computations modeled on
+`prismSimplex_diagonal_face` above (~80 LOC each, with similar
+case-by-case `Fin.succAbove` analysis).
+
+**Status:** stated as named obligations with `sorry` bodies. The body
+of `prismChain_hom_comm` for `i ≥ 1` will consume these. -/
+
+/-- **Lower side-face identity.** For prism degree `n + 1` (input `s`
+of degree `n + 1`, staircase index `i : Fin (n + 2)`), and a face
+index `j : Fin (n + 3)` with `0 < j.val ≤ i.val`, the `j`-th face of
+the prism simplex `prismSimplex (n + 1) i H s` equals the prism
+simplex at degree `n` with staircase index `i - 1` applied to
+`s ∘ δ_j`.
+
+Hatcher §2.1, p. 112: dropping the `j`-th lower vertex `v_j`
+(`0 < j ≤ i`) leaves `[v_0, ..., v̂_j, ..., v_i, w_i, ..., w_{n+1}]`,
+which is the `(i - 1)`-th staircase simplex over `s ∘ δ_j`. -/
+theorem prismSimplex_side_face_lower
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
+    (n : ℕ) (i : Fin (n + 2)) (j : Fin (n + 3))
+    (hj_pos : 0 < j.val) (hj_le : j.val ≤ i.val)
+    (s : C(stdSimplex ℝ (Fin (n + 2)), X)) :
+    ∀ p : stdSimplex ℝ (Fin (n + 2)),
+    prismSimplex (n + 1) i H s
+        (stdSimplex.map (Fin.succAbove j) p) =
+    prismSimplex n
+        ⟨i.val - 1, by omega⟩ H
+        (s.comp ⟨stdSimplex.map
+            (Fin.succAbove ⟨j.val, by omega⟩),
+          stdSimplex.continuous_map _⟩) p := by
+  sorry
+
+/-- **Upper side-face identity.** For prism degree `n + 1`, staircase
+index `i : Fin (n + 2)`, and face index `j : Fin (n + 3)` with
+`i.val + 1 < j.val`, the `j`-th face of `prismSimplex (n + 1) i H s`
+equals the `i`-th prism simplex (at degree `n`) over `s ∘ δ_{j-1}`.
+
+Dropping the upper vertex `w_{j-1}` (`j > i + 1`) leaves
+`[v_0, ..., v_i, w_i, ..., ŵ_{j-1}, ..., w_{n+1}]`, the `i`-th
+staircase simplex over `s ∘ δ_{j-1}`. -/
+theorem prismSimplex_side_face_upper
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
+    (n : ℕ) (i : Fin (n + 2)) (j : Fin (n + 3))
+    (hj : i.val + 1 < j.val)
+    (s : C(stdSimplex ℝ (Fin (n + 2)), X)) :
+    ∀ p : stdSimplex ℝ (Fin (n + 2)),
+    prismSimplex (n + 1) i H s
+        (stdSimplex.map (Fin.succAbove j) p) =
+    prismSimplex n
+        ⟨i.val, by omega⟩ H
+        (s.comp ⟨stdSimplex.map
+            (Fin.succAbove ⟨j.val - 1, by omega⟩),
+          stdSimplex.continuous_map _⟩) p := by
+  sorry
+
 end JacobianChallenge.Periods

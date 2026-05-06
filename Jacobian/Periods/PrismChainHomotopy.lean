@@ -260,11 +260,21 @@ This is the chain-level expression of the prism boundary equation
 `∂P + P∂ = f_* − g_*` (matching Mathlib's homotopy convention).
 
 For `i = 0` it is fully proven (`prismChain_hom_comm_zero`) using only
-top/bottom face identities. For `i ≥ 1`, the residual obligation needs
-the side-face identity (Phase 4) and the alternating-sign cancellation
-bookkeeping (Phase 5).
+top/bottom face identities.
 
-To discharge for general `i`:
+For `i ≥ 1`, the residual obligation needs the side-face identities
+(stated as named theorems in `PrismConstruction.lean`):
+* `prismSimplex_side_face_lower` — for `0 < j ≤ i` (sorry, Phase 4)
+* `prismSimplex_side_face_upper` — for `j > i + 1` (sorry, Phase 4)
+
+Together with the existing
+* `prismSimplex_top_face`     (j = 0, i = 0)
+* `prismSimplex_bottom_face`  (j = n + 1, i = n)
+* `prismSimplex_diagonal_face` (j = i + 1, paired with j = i + 1 of P_{i+1})
+
+these cover ALL face combinations.
+
+To discharge for `i = i' + 1`:
 
 1. Reduce to a per-basis-element equation by `singChain_hom_ext`.
 2. Unfold `dNext i (prismChain_hom H)` via `dNext_nat` —
@@ -275,11 +285,13 @@ To discharge for general `i`:
    sums of face precompositions.
 5. Apply `prismChain_op_basis` to expand prism operator to sum over
    staircase indices.
-6. Apply `prismSimplex_top_face`, `_bottom_face`, `_diagonal_face`,
-   and the still-missing `_side_face` (Phase 4) identities to identify
-   each face combination.
-7. Reassemble using `Finset.sum` rewrites; the alternating signs and
-   diagonal-face cancellations produce the desired identity. -/
+6. Apply each face identity case-by-case:
+   * Outer-pair: top/bottom give `g_* σ` and `f_* σ` (with signs).
+   * Diagonal pairs: `_diagonal_face` produces telescoping cancellation.
+   * Lower side-faces: `_side_face_lower` matches `P_{n-1}(σ ∘ δ_j)`.
+   * Upper side-faces: `_side_face_upper` matches `P_{n-1}(σ ∘ δ_{j-1})`.
+7. The two side-face contributions reassemble into `P ∂ σ`, while the
+   outer pair and diagonal cancellations leave `f_* σ - g_* σ`. -/
 theorem prismChain_hom_comm
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i : ℕ) :
