@@ -146,6 +146,25 @@ theorem singularChainElement_boundary_decomposition
         fun i => ((-1 : ℤ) ^ (i : ℕ)) •
           (singularChainElement (singularSimplexFace σ i) :
             SingularChainCoproduct X n)) := by
+  -- The chain complex differential d (n+1) n equals the alternating
+  -- sum of face maps δ_i. Each δ_i, applied to the chain-element
+  -- generator Sigma.ι _ s ⋅ 1, yields Sigma.ι _ (face_i s) ⋅ 1
+  -- (by sigmaConst_obj_map_ι naturality). Summing with signs gives
+  -- the result.
+  --
+  -- The proof requires unfolding:
+  --   singularChainComplexFunctor → alternatingFaceMapComplex → objD →
+  --   ∑ (-1)^i • δ_i, then evaluating on the chain element.
+  --
+  -- The categorical bookkeeping is intricate. The deep unfolding
+  -- through `whiskeringLeft`, `postcompose₂`, `sigmaConst`,
+  -- `SimplicialObject.whiskering` produces a chain of definitionally-
+  -- equal but syntactically-distinct expressions that resist direct
+  -- `rw`/`simp` automation in v4.28.0.
+  --
+  -- Status: typed equation in place; proof remains a single named
+  -- sub-sorry. See `ref/plans/cellular-hurewicz-bridge.md` for the
+  -- exact unfolding chain that closes this.
   sorry
 
 /-- **Phase 2 leaf.** Linear independence of distinct chain-element
