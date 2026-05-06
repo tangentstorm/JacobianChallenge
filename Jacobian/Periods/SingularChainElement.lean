@@ -141,17 +141,11 @@ theorem singularChainElement_boundary_decomposition
     (σ : C(stdSimplex ℝ (Fin (n + 2)), X)) :
     (((singularChainComplexFunctor (ModuleCat ℤ)).obj
         (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).d (n + 1) n
-        ((show SingularChainCoproduct X (n + 1) =
-            (((singularChainComplexFunctor (ModuleCat ℤ)).obj
-              (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).X (n + 1) from rfl) ▸
-          singularChainElement σ) =
-      (show (((singularChainComplexFunctor (ModuleCat ℤ)).obj
-          (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).X n =
-          SingularChainCoproduct X n from rfl) ▸
-        ((Finset.univ : Finset (Fin (n + 2))).sum
-          fun i => ((-1 : ℤ) ^ (i : ℕ)) •
-            (singularChainElement (singularSimplexFace σ i) :
-              SingularChainCoproduct X n)) := by
+        (singularChainElement σ : SingularChainCoproduct X (n + 1)) =
+      ((Finset.univ : Finset (Fin (n + 2))).sum
+        fun i => ((-1 : ℤ) ^ (i : ℕ)) •
+          (singularChainElement (singularSimplexFace σ i) :
+            SingularChainCoproduct X n)) := by
   sorry
 
 /-- **Phase 2 leaf.** Linear independence of distinct chain-element
