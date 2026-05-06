@@ -920,7 +920,16 @@ theorem build_constant_meromorphicMap :
      zeroDivisor := 0
      poleDivisor := 0
      principalDivisor := 0
-     principalDivisor_eq := by simp }, rfl, rfl⟩
+     principalDivisor_eq := by simp
+     poleDivisor_nonneg := fun _ => le_refl 0
+     zero_or_pole_eq_zero := fun _ => Or.inl rfl
+     toMap_ne_infty_of_poleDivisor_zero := fun _ _ => by
+       exact OnePoint.coe_ne_infty (0 : ℂ)
+     continuousOn_ne_infty := continuousOn_const.mono (Set.subset_univ _)
+     toFiniteFun_mdifferentiable := by sorry
+     toMap_eq_infty_of_poleDivisor_pos := fun P h => absurd h (lt_irrefl 0)
+     exists_modulus_atTop_at_pole := fun P h => absurd h (lt_irrefl 0)
+     hasBranchedCoverDataOfPoleDegree := by sorry }, rfl, rfl⟩
 
 /-- **Round-34 sub-leaf.** Effectivity of `(Q₁) + (Q₂)`. -/
 theorem two_point_effective
