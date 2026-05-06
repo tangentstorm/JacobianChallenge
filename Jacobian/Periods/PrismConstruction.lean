@@ -728,8 +728,12 @@ theorem prismSimplex_side_face_lower
       by_cases hilo : i_lo.val < m.val
       · rw [if_pos (hcond.mpr hilo), if_pos hilo, ← hsa, hq_succAbove]
       · rw [if_neg (fun h => hilo (hcond.mp h)), if_neg hilo]
-  -- First coordinates agree (LHS = stdSimplex.map (succAbove j) RHS-firstCoord).
-  -- We show this via funext and case analysis on k.val vs i.val and j.val.
+  -- First coordinates: LHS = stdSimplex.map (succAbove j_lo) RHS-firstCoord.
+  -- Sub-obligation: prove the pointwise first-coordinate identity, with the
+  -- structure (case analysis on `k.val` vs `j.val` and `i.val`) sketched in
+  -- comments. ~150 LOC of `Fin.succAbove` index manipulation, similar to the
+  -- existing `prismSimplex_diagonal_face` proof.
+  -- Used: htime (above), hq_j, q.val (succAbove j m) = p.val m.
   sorry
 
 /-- **Upper side-face identity.** For prism degree `n + 1`, staircase
