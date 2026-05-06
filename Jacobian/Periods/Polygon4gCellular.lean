@@ -221,29 +221,40 @@ separate facts:
 * `polygon4g_succ_singularH1_finrank_eq` — its `ℤ`-finrank equals
   `2(g+1)` (rank computation, distinct content). -/
 
+/-- **Consolidated sorry (C1b).** A `ℤ`-linear isomorphism
+`Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g+1))`.
+
+This is the genuine topological content: the Hurewicz theorem for the
+polygonal model identifies `H₁(\Sigma_{g+1}; ℤ)` with the
+abelianisation of the surface group `π₁ = ⟨a_i,b_i | Π[a_i,b_i]⟩`,
+which is `ℤ^{2(g+1)}`. Freeness and the finrank formula follow by
+transport (see the two theorems below). -/
+theorem polygon4g_succ_singularH1_hurewiczIso (g : ℕ) :
+    Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) := by
+  sorry
+
 /-- **Stage A leaf (C1b, round 4 sub-leaf).** `singularH1 (Polygon4g (g+1))`
 is `ℤ`-free.
 
-Bottom-up: torsion-freeness of `H₁` of a closed orientable surface,
-classically via either the polygonal model (the relator is a product
-of commutators, so its abelianisation is zero) or Poincaré duality
-dualising the always-torsion-free `H¹(X, ℤ)`. Mathlib v4.28.0 has
-neither route packaged for `singularH1`. -/
+Proof: transport `Module.Free` along the linear iso given by
+`polygon4g_succ_singularH1_hurewiczIso` (the consolidated sorry above). -/
 theorem polygon4g_succ_singularH1_free (g : ℕ) :
     Module.Free ℤ (singularH1 (Polygon4g (g + 1))) := by
-  haveI := polygon4g_succ_pathConnected g
-  sorry
+  obtain ⟨e⟩ := polygon4g_succ_singularH1_hurewiczIso g
+  exact Module.Free.of_equiv e
 
 /-- **Stage A leaf (C1b, round 4 sub-leaf).** The `ℤ`-finrank of
 `singularH1 (Polygon4g (g+1))` equals `2(g+1)`.
 
-Bottom-up: `H₁(\Sigma_g) = ℤ^{2g}` for genus `g` (here `g+1`), the
-classical surface-genus rank computation. Mathlib v4.28.0 does not
-expose this as a packaged finrank lemma. -/
+Proof: transport `Module.finrank` along the linear iso given by
+`polygon4g_succ_singularH1_hurewiczIso` (the consolidated sorry above). -/
 theorem polygon4g_succ_singularH1_finrank_eq (g : ℕ) :
     Module.finrank ℤ (singularH1 (Polygon4g (g + 1))) = 2 * (g + 1) := by
-  haveI := polygon4g_succ_pathConnected g
-  sorry
+  obtain ⟨e⟩ := polygon4g_succ_singularH1_hurewiczIso g
+  have hLeft : Module.finrank ℤ (Polygon4gAbelianization g) = 2 * (g + 1) := by
+    show Module.finrank ℤ (Fin (2 * (g + 1)) → ℤ) = 2 * (g + 1)
+    exact Module.finrank_fin_fun ℤ
+  exact e.finrank_eq.symm.trans hLeft
 
 /-- **Stage A sorry-free assembly.** Bundle the freeness and rank
 computations. -/
