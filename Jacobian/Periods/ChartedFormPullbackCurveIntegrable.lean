@@ -202,22 +202,33 @@ theorem mfderiv_chartSymm_continuousOn
     have hV_e₀ : e₀ ∈ V := ⟨he₀, hp₀_source⟩
     have hV_open : IsOpen V :=
       c.continuousOn_symm.isOpen_inter_preimage c.open_target c'.open_source
-    -- The chain rule: on V, fderiv ((c' ∘ c.symm)) e v = mfderiv c' (c.symm e) (mfderivWithin _ _ c.symm c.target e v).
-    -- Strategy: show via the chain rule that
-    --   mfderivWithin _ _ c.symm c.target e v = (mfderiv c' (c.symm e))⁻¹ (fderiv (c' ∘ c.symm) e v)
-    -- and show both factors are continuous.
+    -- Step 1: c' ∘ c.symm is smooth on V.
+    have hc'_smooth : ContMDiffOn (modelWithCornersSelf ℂ E)
+        (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) c' c'.source :=
+      contMDiffOn_chart
+    have hg_smooth : ContMDiffOn (modelWithCornersSelf ℂ E)
+        (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞)
+        (fun e => c' (c.symm e)) V :=
+      hc'_smooth.comp (hsmoothOn.mono Set.inter_subset_left)
+        (fun e he => he.2)
+    -- Step 2: Reduce ContMDiffOn to ContDiffOn (both source and target are model spaces).
+    have hg_contDiff : ContDiffOn ℂ (⊤ : WithTop ℕ∞)
+        (fun e => c' (c.symm e)) V :=
+      contMDiffOn_iff_contDiffOn.mp hg_smooth
+    -- Step 3: fderiv of g := c' ∘ c.symm is operator-continuous on V.
+    have hg_fderiv_cont : ContinuousOn
+        (fderiv ℂ (fun e => c' (c.symm e))) V :=
+      hg_contDiff.continuousOn_fderiv_of_isOpen hV_open le_top
+    -- The remaining steps:
+    -- 4. Pointwise continuity of e ↦ mfderiv c' (c.symm e) w for each w
+    --    (via tangent map of c' targeting model space E — fiber projection direct).
+    -- 5. Operator continuity of e ↦ mfderiv c' (c.symm e) via continuousOn_clm_apply (FiniteDim).
+    -- 6. mfderiv c' p₀ = id (chart's mfderiv at base point).
+    -- 7. NormedRing.inverse_continuousAt → operator continuity of inverse near e₀.
+    -- 8. mfderivWithin c.symm e v = (mfderiv c' (c.symm e))⁻¹ (fderiv g e v).
     --
-    -- The full argument requires:
-    -- 1. Smoothness of (c' ∘ c.symm) : E → E on V (as composition of charts in maximalAtlas).
-    -- 2. Operator continuity of `e ↦ fderiv (c' ∘ c.symm) e` on V (via ContDiffOn.continuousOn_fderiv).
-    -- 3. Pointwise continuity of `e ↦ mfderiv c' (c.symm e) w` for each w (via tangent map of c' targeting model space E, where the tangent bundle on E is trivial so the fiber projection is direct).
-    -- 4. Operator continuity of `e ↦ mfderiv c' (c.symm e)` via continuousOn_clm_apply (FiniteDim).
-    -- 5. mfderiv c' p₀ = id (chart's mfderiv at base point), so by NormedRing.inverse_continuousAt the inverse is operator-continuous near e₀.
-    -- 6. Composition: mfderivWithin _ _ c.symm c.target e v = (mfderiv c' (c.symm e))⁻¹ (fderiv (c' ∘ c.symm) e v) is continuous in e on a smaller neighborhood of e₀.
-    --
-    -- Steps 1-5 elaborate cleanly via Mathlib but are multi-step;
-    -- this remains a clearly identified packet. The full proof spans
-    -- ~80 lines of Lean and is left for refinement.
+    -- Steps 4-8 require careful bundle bookkeeping; they are
+    -- identified clearly as project-local Mathlib-style packets.
     sorry
   · intro e he
     exact (mfderivWithin_of_isOpen c.open_target he).symm
