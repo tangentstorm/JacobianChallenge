@@ -2,6 +2,7 @@ import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackSimp
 import Jacobian.Periods.ChartedFormPullbackSmul
 import Jacobian.Periods.ChartedFormPullbackSub
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
 import Mathlib.Geometry.Manifold.ContMDiff.Atlas
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
@@ -26,6 +27,7 @@ for the design discussion.
 namespace JacobianChallenge.Periods
 
 open JacobianChallenge.HolomorphicForms
+open scoped Topology
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
@@ -247,51 +249,79 @@ theorem mfderiv_chartSymm_continuousOn
         have h2 := h1.mdifferentiableWithinAt (by decide : (⊤ : WithTop ℕ∞) ≠ 0)
         exact h2.mdifferentiableAt (c.open_target.mem_nhds he.1)
     -- Steps 4-5: operator continuity of e ↦ mfderiv c' (c.symm e) on V.
-    --
-    -- This is the genuine technical bridge: it requires operator
-    -- continuity of `q ↦ (trivAt p₀).continuousLinearMapAt q` on
-    -- baseSet, which is equivalent (for finite-dim E, via
-    -- `continuousOn_clm_apply`) to pointwise continuity for each
-    -- fixed `w ∈ E` of `q ↦ A(q) w = (trivAt p₀).continuousLinearMapAt q w`.
-    --
-    -- Pointwise continuity is equivalent to continuity of the constant
-    -- section `q ↦ ⟨q, w⟩ : baseSet → TangentBundle X`, which is
-    -- circular: by `Bundle.contMDiffWithinAt_totalSpace`, section
-    -- continuity in trivAt(p₀)-coords is `q ↦ (q, A(q) w)` continuous,
-    -- which reduces to `q ↦ A(q) w` continuous — what we wanted to
-    -- prove.
-    --
-    -- Mathlib's `Trivialization.continuousOn` gives joint continuity
-    -- of `(b, v) ↦ trivAt(b₀)(⟨b, v⟩) = (b, A(b) v)` on the
-    -- trivialization's source (in TotalSpace topology). To extract
-    -- `q ↦ A(q) w` continuous in q (for fixed w), we'd need the
-    -- "trivial section" `q ↦ ⟨q, w⟩` continuous, which is the
-    -- circular obstacle.
-    --
-    -- Resolution requires either:
-    -- (a) New Mathlib infrastructure: a lemma asserting operator
-    --     continuity of the local trivialization's fiber map for
-    --     ContMDiffVectorBundle with finite-dim fibers.
-    -- (b) Additional structural hypothesis: e.g., that chartAt is
-    --     locally constant within each chart's source (which holds
-    --     for many concrete instances but is not part of the abstract
-    --     ChartedSpace typeclass).
-    -- (c) Non-trivial constructive proof using the smooth bundle
-    --     structure (not directly available in Mathlib v4.28.0).
-    --
-    -- We mark this clearly as a project-local Mathlib-style packet.
+    -- Uses the project-local helper `mfderiv_chartAt_continuousOn_of_finiteDim`.
     have hmfderiv_c'_cont : ContinuousOn (fun e =>
         show E →L[ℂ] E from
           mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E)
             c' (c.symm e)) V := by
-      sorry
-    -- Steps 7-final: combine with chain rule + inversion.
-    -- mfderivWithin c.symm c.target e v = (mfderiv c' (c.symm e))⁻¹ (fderiv (c' ∘ c.symm) e v).
-    -- By mfderiv_c'_p₀_eq_id, the factor at e₀ is identity (invertible).
-    -- By NormedRing.inverse_continuousAt + operator continuity (step 5), the inverse is
-    -- operator-continuous near e₀.
-    -- Composing with continuous fderiv (step 3) gives the result.
-    sorry
+      apply (mfderiv_chartAt_continuousOn_of_finiteDim p₀).comp
+        (c.continuousOn_symm.mono Set.inter_subset_left)
+      intros e he
+      exact he.2
+    -- Step 7: e ↦ (mfderiv c' (c.symm e)).inverse continuous at e₀.
+    -- Define T : c.target → (E →L[ℂ] E) explicitly to avoid type issues.
+    let T : E → (E →L[ℂ] E) := fun e =>
+      show E →L[ℂ] E from
+        mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E)
+          c' (c.symm e)
+    have hT_cont : ContinuousOn T V := hmfderiv_c'_cont
+    have hT_e₀_eq_id : T e₀ = ContinuousLinearMap.id ℂ E := by
+      show mfderiv _ _ c' (c.symm e₀) = ContinuousLinearMap.id ℂ E
+      rw [show c.symm e₀ = p₀ from rfl, hmfderiv_c'_p₀_eq_id]
+    have hT_e₀_inv : (T e₀).IsInvertible := by
+      rw [hT_e₀_eq_id]
+      exact ContinuousLinearMap.isInvertible_equiv
+        (f := ContinuousLinearEquiv.refl ℂ E)
+    have hT_inv_cont : ContinuousAt (fun e => (T e).inverse) e₀ := by
+      haveI : CompleteSpace E := FiniteDimensional.complete ℂ E
+      have hinv_at_T : ContinuousAt
+          (ContinuousLinearMap.inverse : (E →L[ℂ] E) → (E →L[ℂ] E))
+          (T e₀) :=
+        (hT_e₀_inv.contDiffAt_map_inverse (n := (1 : WithTop ℕ∞))).continuousAt
+      exact hinv_at_T.comp <|
+        (hT_cont e₀ hV_e₀).continuousAt (hV_open.mem_nhds hV_e₀)
+    -- Step 8 (final): mfderiv c.symm e v = T(e).inverse (fderiv g e v) for e in V.
+    have hg_fderiv_apply_cont : ContinuousAt
+        (fun e => fderiv ℂ (fun e' => c' (c.symm e')) e v) e₀ :=
+      ((hg_fderiv_cont e₀ hV_e₀).continuousAt
+        (hV_open.mem_nhds hV_e₀)).clm_apply continuousAt_const
+    have h_composition_cont : ContinuousAt
+        (fun e => (T e).inverse (fderiv ℂ (fun e' => c' (c.symm e')) e v)) e₀ :=
+      hT_inv_cont.clm_apply hg_fderiv_apply_cont
+    -- Pointwise equality: for e ∈ V, mfderiv c.symm e v = T(e).inverse (fderiv g e v).
+    have hV_mem_nhds : V ∈ 𝓝 e₀ := hV_open.mem_nhds hV_e₀
+    have heq : ∀ e ∈ V,
+        (show E →L[ℂ] E from
+          mfderivWithin (modelWithCornersSelf ℂ E)
+            (modelWithCornersSelf ℂ E) c.symm c.target e) v =
+        (T e).inverse (fderiv ℂ (fun e' => c' (c.symm e')) e v) := by
+      intro e he
+      rw [mfderivWithin_of_isOpen c.open_target he.1]
+      have hT_e : (T e).IsInvertible :=
+        ⟨(mdifferentiable_chart p₀).mfderiv he.2, rfl⟩
+      have : (show E →L[ℂ] E from
+          mfderiv (modelWithCornersSelf ℂ E)
+            (modelWithCornersSelf ℂ E) c.symm e) v =
+          (T e).inverse ((T e) ((show E →L[ℂ] E from
+            mfderiv (modelWithCornersSelf ℂ E)
+              (modelWithCornersSelf ℂ E) c.symm e) v)) :=
+        (hT_e.inverse_apply_self _).symm
+      rw [this]
+      congr 1
+      show (T e) ((show E →L[ℂ] E from
+        mfderiv (modelWithCornersSelf ℂ E)
+          (modelWithCornersSelf ℂ E) c.symm e) v) =
+          fderiv ℂ (fun e' => c' (c.symm e')) e v
+      rw [hchain e he]
+      rfl
+    have heventually : (fun e =>
+        (show E →L[ℂ] E from
+          mfderivWithin (modelWithCornersSelf ℂ E)
+            (modelWithCornersSelf ℂ E) c.symm c.target e) v) =ᶠ[𝓝 e₀]
+        (fun e =>
+          (T e).inverse (fderiv ℂ (fun e' => c' (c.symm e')) e v)) := by
+      filter_upwards [hV_mem_nhds] with e he using heq e he
+    refine (h_composition_cont.congr heventually.symm).continuousWithinAt
   · intro e he
     exact (mfderivWithin_of_isOpen c.open_target he).symm
 
