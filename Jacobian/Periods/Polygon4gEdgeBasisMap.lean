@@ -105,15 +105,42 @@ theorem edgeBasisMap_surjective (g : ℕ) :
     Function.Surjective (edgeBasisMap g) := by
   sorry
 
+/-- **Phase 6.a leaf (sub-sorry, strictly weaker than the iso).**
+The edge homology classes are linearly independent in
+`singularH1 (Polygon4g (g+1))`, equivalently `edgeBasisMap` is
+injective.
+
+Bottom-up: chain-level coefficient extraction (the dual of `Sigma.ι`)
+combined with the boundary-decomposition equation (Phase 2.5) to
+descend to homology. Once `edgeHomologyClass` is upgraded from the
+placeholder to the real homology projection, this becomes provable. -/
+theorem edgeBasisMap_injective (g : ℕ) :
+    Function.Injective (edgeBasisMap g) := by
+  sorry
+
 /-- **Phase 5 leaf (sorry-free reassembly via spanning).**
 `singularH1 (Polygon4g (g+1))` is finitely generated as a `ℤ`-module:
 it is the surjective image of the free `ℤ`-module of rank `2(g+1)`
-under `edgeBasisMap`.
-
-Currently depends on `edgeBasisMap_surjective` (Phase 6.b sub-sorry,
-strictly weaker than the iso). -/
+under `edgeBasisMap`. -/
 theorem polygon4g_succ_singularH1_isFinite_via_edgeBasisMap (g : ℕ) :
     Module.Finite ℤ (singularH1 (Polygon4g (g + 1))) :=
   Module.Finite.of_surjective (edgeBasisMap g) (edgeBasisMap_surjective g)
+
+/-- **Phase 7 reassembly (sorry-free given Phase 6.a + 6.b).**
+The bijective `edgeBasisMap` packaged as a `LinearEquiv`. -/
+noncomputable def edgeBasisLinearEquiv (g : ℕ) :
+    Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1)) :=
+  LinearEquiv.ofBijective (edgeBasisMap g)
+    ⟨edgeBasisMap_injective g, edgeBasisMap_surjective g⟩
+
+/-- **Phase 7 reassembly (sorry-free) — the consolidated iso via the
+edge basis.** This gives an alternative discharge for
+`polygon4g_succ_singularH1_hurewiczIso` once the Phase 6 leaves land:
+the iso comes directly from a concrete bijective comparison map
+rather than from the structure-theorem detour. -/
+theorem polygon4g_succ_singularH1_hurewiczIso_via_edgeBasis (g : ℕ) :
+    Nonempty
+      (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) :=
+  ⟨edgeBasisLinearEquiv g⟩
 
 end JacobianChallenge.Periods
