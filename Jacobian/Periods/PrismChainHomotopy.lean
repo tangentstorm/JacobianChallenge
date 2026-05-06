@@ -281,22 +281,18 @@ via face identities:
 
 The combined lower + upper re-indexed sums equal `-dNext_sum` exactly.
 
-**Status (after PR-level decomposition):** This theorem is now a
-**sorry-free assembly** of the partition identity
-`prismChain_LHS_eq_partition` (in
-`Jacobian/Periods/PrismChainCombinatorialIdentity.lean`). The
-single residual sorry in the assembly file decomposes further into
-six named obligations:
+**Status:** Fully discharged (sorry-free). The proof is a
+sorry-free assembly of `prismChain_LHS_eq_partition` (in
+`Jacobian/Periods/PrismChainCombinatorialIdentity.lean`), which
+itself decomposes into six named, individually-discharged
+obligations:
 
-* `prismChain_topContribution` — **proved** (sorry-free).
-* `prismChain_bottomContribution` — **proved** (sorry-free).
-* `prismChain_diagonalCancellation` — **proved** (sorry-free).
-* `prismChain_lowerSideReindex` — sorry (≤ 100 LOC, `Finset.sum_bij`
-  reindexing).
-* `prismChain_upperSideReindex` — sorry (≤ 100 LOC, `Finset.sum_bij`
-  reindexing).
-* `prismChain_LHS_eq_partition` — sorry (≤ 80 LOC, `Finset` partition
-  bookkeeping).
+* `prismChain_topContribution` — proved.
+* `prismChain_bottomContribution` — proved.
+* `prismChain_diagonalCancellation` — proved.
+* `prismChain_lowerSideReindex` — proved via `Finset.sum_nbij'`.
+* `prismChain_upperSideReindex` — proved via `Finset.sum_nbij'`.
+* `prismChain_LHS_eq_partition` — proved via 6-region partition.
 
 All face identities (top, bottom, diagonal, side_lower, side_upper)
 are sorry-free in `PrismConstruction.lean`. -/

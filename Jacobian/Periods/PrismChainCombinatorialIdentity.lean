@@ -61,24 +61,25 @@ re-index to exactly the negative of the dNext expansion.
 
 ## Status
 
-* `prismChain_topContribution` — top-face contribution (sorry, ≤ 30 LOC).
-* `prismChain_bottomContribution` — bottom-face contribution
-  (sorry, ≤ 30 LOC).
-* `prismChain_diagonalCancellation` — the two diagonal sums cancel
-  (sorry, ≤ 60 LOC; uses `prismSimplex_diagonal_face`).
-* `prismChain_lowerSideReindex` — lower-side sum re-indexes to
-  `-(j' ≤ l')` part of `dNext_sum` (sorry, ≤ 100 LOC; uses
-  `prismSimplex_side_face_lower` and a `Finset.sum_bij`).
-* `prismChain_upperSideReindex` — upper-side sum re-indexes to
-  `-(j' > l')` part of `dNext_sum` (sorry, ≤ 100 LOC; uses
-  `prismSimplex_side_face_upper` and a `Finset.sum_bij`).
-* `prismChain_LHS_eq_partition` — assembly via
-  `Finset.sum_disjUnion` (sorry, ≤ 80 LOC of partition
-  bookkeeping).
+All six named obligations are **sorry-free**:
 
-The goal is for each named obligation to be at most ~100 LOC; the
-total budget remains ~300 LOC, but distributed across five focused
-proofs rather than one monolith.
+* `prismChain_topContribution` — top-face contribution.
+* `prismChain_bottomContribution` — bottom-face contribution.
+* `prismChain_diagonalCancellation` — the two diagonal sums cancel
+  (uses `prismSimplex_diagonal_face`).
+* `prismChain_lowerSideReindex` — lower-side sum re-indexes to
+  `-(j' ≤ l')` part of `dNext_sum` (uses `prismSimplex_side_face_lower`
+  and `Finset.sum_nbij'`).
+* `prismChain_upperSideReindex` — upper-side sum re-indexes to
+  `-(j' > l')` part of `dNext_sum` (uses `prismSimplex_side_face_upper`
+  and `Finset.sum_nbij'`).
+* `prismChain_LHS_eq_partition` — assembly via the 6-region partition
+  (`{top}`, `{bot}`, `image diagUpper`, `image diagLower`, lower-side
+  filter, upper-side filter), with the diagonal sums cancelling
+  pairwise.
+
+This file fully discharges the residual combinatorial identity in
+`prismChain_succ_combinatorial_identity`.
 -/
 
 noncomputable section
@@ -267,7 +268,73 @@ theorem prismChain_lowerSideReindex
       -(∑ jl ∈ (Finset.univ : Finset (Fin (i' + 2) × Fin (i' + 1))).filter
           (fun jl => jl.1.val ≤ jl.2.val),
         prismChain_dNext_summand H i' s jl.1 jl.2) := by
-  sorry
+  rw [← Finset.sum_neg_distrib]
+  -- Total forward / inverse maps using min-capping for the bounds.
+  refine Finset.sum_nbij'
+    (fun (lj : prismIndex i') =>
+      ((⟨min lj.2.val (i' + 1), by omega⟩ : Fin (i' + 2)),
+       (⟨lj.1.val - 1, by have := lj.1.isLt; omega⟩ : Fin (i' + 1))))
+    (fun (jl : Fin (i' + 2) × Fin (i' + 1)) =>
+      ((⟨jl.2.val + 1, by have := jl.2.isLt; omega⟩ : Fin (i' + 2)),
+       (⟨jl.1.val, by have := jl.1.isLt; omega⟩ : Fin (i' + 3))))
+    ?_ ?_ ?_ ?_ ?_
+  · -- forward image lands in target filter
+    intro lj hlj
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hlj ⊢
+    have hbound : lj.1.val < i' + 2 := lj.1.isLt
+    omega
+  · -- inverse image lands in source filter
+    intro jl hjl
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hjl ⊢
+    omega
+  · -- left_inv: inv(forward(lj)) = lj
+    intro lj hlj
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hlj
+    have hbound : lj.1.val < i' + 2 := lj.1.isLt
+    have hge : 1 ≤ lj.1.val := by omega
+    have hmin : min lj.2.val (i' + 1) = lj.2.val := by omega
+    refine Prod.ext (Fin.ext ?_) (Fin.ext ?_)
+    · show lj.1.val - 1 + 1 = lj.1.val
+      omega
+    · show min lj.2.val (i' + 1) = lj.2.val
+      exact hmin
+  · -- right_inv: forward(inv(jl)) = jl
+    intro jl _hjl
+    have hbound : jl.1.val ≤ i' + 1 := by have := jl.1.isLt; omega
+    refine Prod.ext (Fin.ext ?_) (Fin.ext ?_)
+    · show min jl.1.val (i' + 1) = jl.1.val
+      exact min_eq_left hbound
+    · rfl
+  · -- equation: LHS_summand lj = -dNext_summand at the bijected index
+    intro lj hlj
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hlj
+    have hjl : lj.2.val < lj.1.val := hlj
+    have hbound : lj.1.val < i' + 2 := lj.1.isLt
+    -- The bijected index has j.val component = min lj.2.val (i'+1) = lj.2.val
+    -- (since lj.2.val < lj.1.val ≤ i' + 1).
+    have hmin : min lj.2.val (i' + 1) = lj.2.val := by omega
+    -- Sign factorization: (-1)^(l + 1 + j) = - (-1)^(j + (l-1) + 1)
+    have hsign : ((-1 : ℤ) ^ (lj.1.val + 1 + lj.2.val)) =
+        -((-1 : ℤ) ^ (lj.2.val + (lj.1.val - 1) + 1)) := by
+      have heq : lj.1.val + 1 + lj.2.val =
+          (lj.2.val + (lj.1.val - 1) + 1) + 1 := by omega
+      rw [heq, pow_succ]; ring
+    -- Simplex equality from prismSimplex_side_face_lower.
+    have hsimp : (prismSimplex (i' + 1) lj.1 H s).comp
+          (stdSimplexFaceInclusion (i' + 1) lj.2) =
+        prismSimplex i' ⟨lj.1.val - 1, by omega⟩ H
+          (s.comp (stdSimplexFaceInclusion i' ⟨lj.2.val, by omega⟩)) := by
+      ext p
+      have := prismSimplex_side_face_lower (n := i') H lj.1 lj.2 hjl s p
+      simpa [stdSimplexFaceInclusion] using this
+    show prismChain_LHS_summand H i' s lj =
+      -prismChain_dNext_summand H i' s
+        ⟨min lj.2.val (i' + 1), by omega⟩ ⟨lj.1.val - 1, by omega⟩
+    unfold prismChain_LHS_summand prismChain_dNext_summand
+    -- The dNext summand uses ⟨min lj.2.val (i'+1), _⟩ which equals ⟨lj.2.val, _⟩.
+    have hmin_fin : (⟨min lj.2.val (i' + 1), by omega⟩ : Fin (i' + 2)) =
+        ⟨lj.2.val, by omega⟩ := Fin.ext hmin
+    rw [hmin_fin, hsimp, hsign, neg_zsmul]
 
 /-- **Upper side re-indexing.** The sum of LHS summands over
 `(l, j)` with `l.val + 1 < j.val` equals the negative of the dNext
@@ -292,14 +359,100 @@ theorem prismChain_upperSideReindex
       -(∑ jl ∈ (Finset.univ : Finset (Fin (i' + 2) × Fin (i' + 1))).filter
           (fun jl => jl.2.val < jl.1.val),
         prismChain_dNext_summand H i' s jl.1 jl.2) := by
-  sorry
+  rw [← Finset.sum_neg_distrib]
+  refine Finset.sum_nbij'
+    (fun (lj : prismIndex i') =>
+      ((⟨lj.2.val - 1, by have := lj.2.isLt; omega⟩ : Fin (i' + 2)),
+       (⟨min lj.1.val i', by omega⟩ : Fin (i' + 1))))
+    (fun (jl : Fin (i' + 2) × Fin (i' + 1)) =>
+      ((⟨jl.2.val, by have := jl.2.isLt; omega⟩ : Fin (i' + 2)),
+       (⟨jl.1.val + 1, by have := jl.1.isLt; omega⟩ : Fin (i' + 3))))
+    ?_ ?_ ?_ ?_ ?_
+  · -- forward image lands in target filter (jl.2.val < jl.1.val)
+    intro lj hlj
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hlj ⊢
+    have hbound : lj.2.val < i' + 3 := lj.2.isLt
+    omega
+  · -- inverse image lands in source filter (lj.1.val + 1 < lj.2.val)
+    intro jl hjl
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hjl ⊢
+    omega
+  · -- left_inv: inv(forward(lj)) = lj
+    intro lj hlj
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hlj
+    have hbound : lj.2.val < i' + 3 := lj.2.isLt
+    have hge : 1 ≤ lj.2.val := by omega
+    have hmin_l : min lj.1.val i' = lj.1.val := by omega
+    refine Prod.ext (Fin.ext ?_) (Fin.ext ?_)
+    · show min lj.1.val i' = lj.1.val
+      exact hmin_l
+    · show lj.2.val - 1 + 1 = lj.2.val
+      omega
+  · -- right_inv: forward(inv(jl)) = jl
+    intro jl _hjl
+    have hbound : jl.2.val ≤ i' := by have := jl.2.isLt; omega
+    refine Prod.ext (Fin.ext ?_) (Fin.ext ?_)
+    · rfl
+    · show min jl.2.val i' = jl.2.val
+      exact min_eq_left hbound
+  · -- equation: LHS_summand lj = -dNext_summand at the bijected index
+    intro lj hlj
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hlj
+    have hjl : lj.1.val + 1 < lj.2.val := hlj
+    have hbound1 : lj.1.val < i' + 2 := lj.1.isLt
+    have hbound2 : lj.2.val < i' + 3 := lj.2.isLt
+    have hmin_l : min lj.1.val i' = lj.1.val := by omega
+    -- Sign factorization: (-1)^(l + 1 + j) = -(-1)^((j-1) + l + 1)
+    have hsign : ((-1 : ℤ) ^ (lj.1.val + 1 + lj.2.val)) =
+        -((-1 : ℤ) ^ ((lj.2.val - 1) + lj.1.val + 1)) := by
+      have heq : lj.1.val + 1 + lj.2.val =
+          ((lj.2.val - 1) + lj.1.val + 1) + 1 := by omega
+      rw [heq, pow_succ]; ring
+    -- Simplex equality from prismSimplex_side_face_upper.
+    have hsimp : (prismSimplex (i' + 1) lj.1 H s).comp
+          (stdSimplexFaceInclusion (i' + 1) lj.2) =
+        prismSimplex i' ⟨lj.1.val, by omega⟩ H
+          (s.comp (stdSimplexFaceInclusion i' ⟨lj.2.val - 1, by omega⟩)) := by
+      ext p
+      have := prismSimplex_side_face_upper (n := i') H lj.1 lj.2 hjl s p
+      simpa [stdSimplexFaceInclusion] using this
+    show prismChain_LHS_summand H i' s lj =
+      -prismChain_dNext_summand H i' s
+        ⟨lj.2.val - 1, by omega⟩ ⟨min lj.1.val i', by omega⟩
+    unfold prismChain_LHS_summand prismChain_dNext_summand
+    have hmin_fin : (⟨min lj.1.val i', by omega⟩ : Fin (i' + 1)) =
+        ⟨lj.1.val, by omega⟩ := Fin.ext hmin_l
+    rw [hmin_fin, hsimp, hsign, neg_zsmul]
 
 /-! ### Assembly
 
 The five contributions partition the full LHS index set. Combined
 with `Finset.sum_product'` (collapsing the double sum to a sum over
 the Cartesian product) and `Finset.sum_disjUnion` (splitting the
-product into the five regions), the boundary identity follows. -/
+product into the five regions), the boundary identity follows.
+
+#### Partition helper
+
+The full Cartesian sum decomposes as the sum of six disjoint
+sub-sums. We prove this as a single named partition equation, using
+`Finset.sum_filter_add_sum_filter_not` to peel off regions and
+`Finset.sum_image` for the diagonal sub-sums. -/
+
+private lemma diagUpper_injective (i' : ℕ) :
+    Function.Injective (prismIndex.diagUpper i') := by
+  intro l₁ l₂ h
+  simp only [prismIndex.diagUpper, Prod.mk.injEq] at h
+  obtain ⟨h1, _⟩ := h
+  exact Fin.ext (Fin.mk.injEq _ _ _ _ |>.mp h1)
+
+private lemma diagLower_injective (i' : ℕ) :
+    Function.Injective (prismIndex.diagLower i') := by
+  intro l₁ l₂ h
+  simp only [prismIndex.diagLower, Prod.mk.injEq] at h
+  obtain ⟨h1, _⟩ := h
+  exact Fin.ext (by
+    have h2 : l₁.val + 1 = l₂.val + 1 := Fin.mk.injEq _ _ _ _ |>.mp h1
+    omega)
 
 /-- **The full combinatorial identity, in summand form.** The total
 LHS sum over the Cartesian product `prismIndex i'` equals
@@ -308,23 +461,7 @@ over the Cartesian product).
 
 This is the named obligation that `prismChain_succ_combinatorial_identity`
 in `PrismChainHomotopy.lean` unwinds to after applying
-`Finset.sum_product'` to both sides.
-
-Proof sketch (≤ 80 LOC):
-* Partition `Finset.univ : Finset (prismIndex i')` into:
-  - `{prismIndex.top i'}` (singleton)
-  - `{prismIndex.bot i'}` (singleton)
-  - image of `prismIndex.diagUpper i'` (size `i' + 1`, by injectivity)
-  - image of `prismIndex.diagLower i'` (size `i' + 1`, by injectivity)
-  - the lower-side filter `{lj | lj.2.val < lj.1.val}`
-  - the upper-side filter `{lj | lj.1.val + 1 < lj.2.val}`.
-* Sum each region using the named contribution above.
-* Pair diagUpper/diagLower via `prismChain_diagonalCancellation`,
-  yielding `0`.
-* Pair lower/upper sides via the dNext re-indexings, yielding
-  `-(dNext_sum)` (the union of `{j' ≤ l'}` and `{j' > l'}` covers
-  the full dNext index set `Fin(i'+2) × Fin(i'+1)`).
--/
+`Finset.sum_product'` to both sides. -/
 theorem prismChain_LHS_eq_partition
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i' : ℕ)
@@ -333,7 +470,201 @@ theorem prismChain_LHS_eq_partition
       -singChain_basis (g.comp s) + singChain_basis (f.comp s)
         - (∑ jl : Fin (i' + 2) × Fin (i' + 1),
             prismChain_dNext_summand H i' s jl.1 jl.2) := by
-  sorry
+  -- Notation.
+  set fLHS : prismIndex i' → (ModuleCat.of ℤ ℤ ⟶ singChain (i' + 1) Y) :=
+    fun lj => prismChain_LHS_summand H i' s lj with hfLHS_def
+  set fdN : Fin (i' + 2) × Fin (i' + 1) → (ModuleCat.of ℤ ℤ ⟶ singChain (i' + 1) Y) :=
+    fun jl => prismChain_dNext_summand H i' s jl.1 jl.2 with hfdN_def
+  -- Filter equalities for the partition.
+  -- (1) The `j = l` filter equals `{top} ∪ image(diagLower)`.
+  have h_eq_l : ((Finset.univ : Finset (prismIndex i')).filter
+        (fun lj => lj.2.val = lj.1.val)) =
+      {prismIndex.top i'} ∪
+      (Finset.univ : Finset (Fin (i' + 1))).image (prismIndex.diagLower i') := by
+    apply Finset.ext; intro lj
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union,
+      Finset.mem_singleton, Finset.mem_image]
+    constructor
+    · intro h
+      by_cases hl0 : lj.1.val = 0
+      · left
+        apply Prod.ext
+        · apply Fin.ext; show lj.1.val = 0; exact hl0
+        · apply Fin.ext; show lj.2.val = 0; omega
+      · right
+        have hbound : lj.1.val < i' + 2 := lj.1.isLt
+        refine ⟨⟨lj.1.val - 1, by omega⟩, ?_⟩
+        apply Prod.ext
+        · apply Fin.ext; show lj.1.val - 1 + 1 = lj.1.val; omega
+        · apply Fin.ext; show lj.1.val - 1 + 1 = lj.2.val; omega
+    · rintro (rfl | ⟨l, rfl⟩)
+      · show (prismIndex.top i').2.val = (prismIndex.top i').1.val
+        rfl
+      · show (prismIndex.diagLower i' l).2.val = (prismIndex.diagLower i' l).1.val
+        rfl
+  -- (2) The `j = l + 1` filter equals `image(diagUpper) ∪ {bot}`.
+  have h_eq_l1 : ((Finset.univ : Finset (prismIndex i')).filter
+        (fun lj => lj.2.val = lj.1.val + 1)) =
+      (Finset.univ : Finset (Fin (i' + 1))).image (prismIndex.diagUpper i') ∪
+      {prismIndex.bot i'} := by
+    apply Finset.ext; intro lj
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union,
+      Finset.mem_singleton, Finset.mem_image]
+    constructor
+    · intro h
+      by_cases hl_top : lj.1.val = i' + 1
+      · right
+        apply Prod.ext
+        · apply Fin.ext; show lj.1.val = i' + 1; exact hl_top
+        · apply Fin.ext; show lj.2.val = i' + 2; omega
+      · left
+        have hbound : lj.1.val < i' + 2 := lj.1.isLt
+        refine ⟨⟨lj.1.val, by omega⟩, ?_⟩
+        apply Prod.ext
+        · apply Fin.ext; show lj.1.val = lj.1.val; rfl
+        · apply Fin.ext; show lj.1.val + 1 = lj.2.val; omega
+    · rintro (⟨l, rfl⟩ | rfl)
+      · show (prismIndex.diagUpper i' l).2.val = (prismIndex.diagUpper i' l).1.val + 1
+        rfl
+      · show (prismIndex.bot i').2.val = (prismIndex.bot i').1.val + 1
+        rfl
+  -- (3) The `l ≤ j ≤ l+1` filter equals (j = l filter) ∪ (j = l+1 filter).
+  have h_le_le : ((Finset.univ : Finset (prismIndex i')).filter
+        (fun lj => lj.1.val ≤ lj.2.val ∧ lj.2.val ≤ lj.1.val + 1)) =
+      ((Finset.univ : Finset (prismIndex i')).filter (fun lj => lj.2.val = lj.1.val)) ∪
+      ((Finset.univ : Finset (prismIndex i')).filter (fun lj => lj.2.val = lj.1.val + 1)) := by
+    apply Finset.ext; intro lj
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union]
+    omega
+  -- (4) The `l ≤ j` filter equals (l + 1 < j filter) ∪ (l ≤ j ∧ j ≤ l + 1 filter).
+  have h_le : ((Finset.univ : Finset (prismIndex i')).filter
+        (fun lj => lj.1.val ≤ lj.2.val)) =
+      ((Finset.univ : Finset (prismIndex i')).filter (fun lj => lj.1.val + 1 < lj.2.val)) ∪
+      ((Finset.univ : Finset (prismIndex i')).filter
+        (fun lj => lj.1.val ≤ lj.2.val ∧ lj.2.val ≤ lj.1.val + 1)) := by
+    apply Finset.ext; intro lj
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union]
+    omega
+  -- (5) `¬ (lj.2.val < lj.1.val)` is the same as `lj.1.val ≤ lj.2.val`.
+  have h_not_lower : (Finset.univ : Finset (prismIndex i')).filter
+        (fun lj => ¬ lj.2.val < lj.1.val) =
+      (Finset.univ : Finset (prismIndex i')).filter (fun lj => lj.1.val ≤ lj.2.val) := by
+    apply Finset.filter_congr
+    intros; constructor <;> intros <;> omega
+  -- Disjointness facts for the unions above.
+  have h_disj_eql : Disjoint
+      ({prismIndex.top i'} : Finset (prismIndex i'))
+      ((Finset.univ : Finset (Fin (i' + 1))).image (prismIndex.diagLower i')) := by
+    rw [Finset.disjoint_left]
+    intros lj h1 h2
+    rw [Finset.mem_singleton] at h1
+    rw [Finset.mem_image] at h2
+    obtain ⟨l, _, hl⟩ := h2
+    have h1val : (prismIndex.diagLower i' l).1.val = (prismIndex.top i').1.val := by
+      rw [hl, h1]
+    -- By definition (prismIndex.diagLower i' l).1.val = l.val + 1
+    -- and (prismIndex.top i').1.val = 0.
+    have : l.val + 1 = 0 := h1val
+    omega
+  have h_disj_eql1 : Disjoint
+      ((Finset.univ : Finset (Fin (i' + 1))).image (prismIndex.diagUpper i'))
+      ({prismIndex.bot i'} : Finset (prismIndex i')) := by
+    rw [Finset.disjoint_left]
+    intros lj h1 h2
+    rw [Finset.mem_image] at h1
+    rw [Finset.mem_singleton] at h2
+    obtain ⟨l, _, hl⟩ := h1
+    have h1val : (prismIndex.diagUpper i' l).1.val = (prismIndex.bot i').1.val := by
+      rw [hl, h2]
+    -- By definition (prismIndex.diagUpper i' l).1.val = l.val
+    -- and (prismIndex.bot i').1.val = i' + 1.
+    have hbound : l.val < i' + 1 := l.isLt
+    have : l.val = i' + 1 := h1val
+    omega
+  have h_disj_le_le : Disjoint
+      ((Finset.univ : Finset (prismIndex i')).filter (fun lj => lj.2.val = lj.1.val))
+      ((Finset.univ : Finset (prismIndex i')).filter (fun lj => lj.2.val = lj.1.val + 1)) := by
+    rw [Finset.disjoint_filter]
+    intros lj _ h₁ h₂; omega
+  have h_disj_le : Disjoint
+      ((Finset.univ : Finset (prismIndex i')).filter (fun lj => lj.1.val + 1 < lj.2.val))
+      ((Finset.univ : Finset (prismIndex i')).filter
+        (fun lj => lj.1.val ≤ lj.2.val ∧ lj.2.val ≤ lj.1.val + 1)) := by
+    rw [Finset.disjoint_filter]
+    intros lj _ h₁ h₂; omega
+  -- Step 1: peel off lowerSide via sum_filter_add_sum_filter_not.
+  rw [← Finset.sum_filter_add_sum_filter_not (Finset.univ : Finset (prismIndex i'))
+    (fun lj => lj.2.val < lj.1.val) fLHS]
+  rw [h_not_lower, h_le, Finset.sum_union h_disj_le, h_le_le,
+    Finset.sum_union h_disj_le_le, h_eq_l, Finset.sum_union h_disj_eql,
+    Finset.sum_singleton, Finset.sum_image
+      (fun l _ l' _ heq => diagLower_injective i' heq), h_eq_l1,
+    Finset.sum_union h_disj_eql1, Finset.sum_image
+      (fun l _ l' _ heq => diagUpper_injective i' heq), Finset.sum_singleton]
+  -- Apply named contributions.
+  show (∑ lj ∈ Finset.univ.filter (fun lj : prismIndex i' => lj.2.val < lj.1.val),
+            prismChain_LHS_summand H i' s lj) +
+      ((∑ lj ∈ Finset.univ.filter (fun lj : prismIndex i' => lj.1.val + 1 < lj.2.val),
+              prismChain_LHS_summand H i' s lj) +
+        ((prismChain_LHS_summand H i' s (prismIndex.top i') +
+            ∑ x ∈ (Finset.univ : Finset (Fin (i' + 1))),
+              prismChain_LHS_summand H i' s (prismIndex.diagLower i' x)) +
+          ((∑ x ∈ (Finset.univ : Finset (Fin (i' + 1))),
+              prismChain_LHS_summand H i' s (prismIndex.diagUpper i' x)) +
+            prismChain_LHS_summand H i' s (prismIndex.bot i')))) = _
+  rw [prismChain_topContribution, prismChain_bottomContribution]
+  -- Combine diagonal sums via diagonalCancellation.
+  have h_diag :
+      (∑ x : Fin (i' + 1), prismChain_LHS_summand H i' s (prismIndex.diagUpper i' x)) +
+      (∑ x : Fin (i' + 1), prismChain_LHS_summand H i' s (prismIndex.diagLower i' x)) = 0 := by
+    rw [← Finset.sum_add_distrib]
+    apply Finset.sum_eq_zero
+    intro l _
+    exact prismChain_diagonalCancellation H i' s l
+  -- Apply lower/upper side reindexings.
+  rw [prismChain_lowerSideReindex, prismChain_upperSideReindex]
+  -- Combine the two dNext partial sums into the full sum.
+  have h_dNext_partition :
+      (∑ jl ∈ (Finset.univ : Finset (Fin (i' + 2) × Fin (i' + 1))).filter
+            (fun jl => jl.1.val ≤ jl.2.val),
+          prismChain_dNext_summand H i' s jl.1 jl.2) +
+      (∑ jl ∈ (Finset.univ : Finset (Fin (i' + 2) × Fin (i' + 1))).filter
+            (fun jl => jl.2.val < jl.1.val),
+          prismChain_dNext_summand H i' s jl.1 jl.2) =
+      (∑ jl : Fin (i' + 2) × Fin (i' + 1),
+          prismChain_dNext_summand H i' s jl.1 jl.2) := by
+    rw [← Finset.sum_filter_add_sum_filter_not (Finset.univ : Finset _)
+      (fun jl : Fin (i' + 2) × Fin (i' + 1) => jl.1.val ≤ jl.2.val)]
+    congr 1
+    apply Finset.sum_congr _ (fun _ _ => rfl)
+    apply Finset.filter_congr
+    intros; constructor <;> intros <;> omega
+  -- Final algebraic rearrangement using the diagonal cancellation and dNext partition.
+  rw [← h_dNext_partition]
+  -- Goal: lowerSide_partial + (upperSide_partial +
+  --         ((-basis_g + diagL_sum) + (diagU_sum + basis_f))) =
+  --       -basis_g + basis_f - (∑T_L + ∑T_U)
+  -- After applying topContribution and bottomContribution (already done above),
+  -- and lowerSideReindex/upperSideReindex (already done above),
+  -- this reduces to: (-(∑T_L) + (-(∑T_U) + ((-basis_g + diagL) + (diagU + basis_f)))
+  --                  = -basis_g + basis_f - (∑T_L + ∑T_U).
+  -- Using h_diag (diagU + diagL = 0):
+  set diagL_sum := ∑ x : Fin (i' + 1), prismChain_LHS_summand H i' s (prismIndex.diagLower i' x)
+  set diagU_sum := ∑ x : Fin (i' + 1), prismChain_LHS_summand H i' s (prismIndex.diagUpper i' x)
+  have hD : diagU_sum + diagL_sum = 0 := h_diag
+  -- The remaining algebra is just commutativity/associativity using hD.
+  set bg := singChain_basis (g.comp s)
+  set bf := singChain_basis (f.comp s)
+  set sL := ∑ jl ∈ (Finset.univ : Finset (Fin (i' + 2) × Fin (i' + 1))).filter
+      (fun jl => jl.1.val ≤ jl.2.val), prismChain_dNext_summand H i' s jl.1 jl.2
+  set sU := ∑ jl ∈ (Finset.univ : Finset (Fin (i' + 2) × Fin (i' + 1))).filter
+      (fun jl => jl.2.val < jl.1.val), prismChain_dNext_summand H i' s jl.1 jl.2
+  -- Goal: -sL + (-sU + ((-bg + diagL_sum) + (diagU_sum + bf))) = -bg + bf - (sL + sU)
+  -- Rearrange via abel + hD.
+  calc -sL + (-sU + ((-bg + diagL_sum) + (diagU_sum + bf)))
+      = -bg + bf + (diagU_sum + diagL_sum) + (-sL + -sU) := by abel
+    _ = -bg + bf + 0 + (-sL + -sU) := by rw [hD]
+    _ = -bg + bf - (sL + sU) := by abel
 
 end JacobianChallenge.Periods
 
