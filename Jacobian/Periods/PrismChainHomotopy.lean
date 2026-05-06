@@ -296,12 +296,40 @@ theorem prismChain_succ_combinatorial_identity
         - (∑ j : Fin (i' + 2), ((-1 : ℤ) ^ j.val) •
           (singChain_basis (s.comp (stdSimplexFaceInclusion i' j))
           ≫ prismChain_op H i')) := by
-  -- The bookkeeping: face identity case analysis + Finset.sum re-indexing.
-  -- Top: prismSimplex_top_face. Bottom: prismSimplex_bottom_face.
-  -- Diagonals: prismSimplex_diagonal_face cancels paired (l, l+1) and (l+1, l+1).
-  -- Lower side (j < l): re-index via prismSimplex_side_face_lower.
-  -- Upper side (j > l+1): re-index via prismSimplex_side_face_upper.
-  -- Combined lower + upper = -dNext_sum.
+  -- Step 1: Fully expand the LHS as a 2D sum.
+  have h_lhs_expand :
+      (∑ l : Fin (i' + 2), prismChain_summand H (i' + 1) l s
+        ≫ (((singularChainComplexFunctor (ModuleCat ℤ)).obj (ModuleCat.of ℤ ℤ)).obj
+            (TopCat.of Y)).d (i' + 2) (i' + 1)) =
+      ∑ l : Fin (i' + 2), ∑ j : Fin (i' + 3),
+        ((-1 : ℤ) ^ (l.val + 1 + j.val)) • singChain_basis
+          ((prismSimplex (i' + 1) l H s).comp (stdSimplexFaceInclusion (i' + 1) j)) := by
+    refine Finset.sum_congr rfl (fun l _ => ?_)
+    unfold prismChain_summand
+    rw [Preadditive.zsmul_comp,
+        singChain_d_basis (i' + 1) (prismSimplex (i' + 1) l H s),
+        Finset.smul_sum]
+    refine Finset.sum_congr rfl (fun j _ => ?_)
+    rw [smul_smul, ← pow_add]
+  -- Step 2: Fully expand the dNext part of RHS as a 2D sum.
+  have h_dNext_expand :
+      (∑ j : Fin (i' + 2), ((-1 : ℤ) ^ j.val) •
+        (singChain_basis (s.comp (stdSimplexFaceInclusion i' j))
+          ≫ prismChain_op H i')) =
+      ∑ j : Fin (i' + 2), ∑ l : Fin (i' + 1),
+        ((-1 : ℤ) ^ (j.val + l.val + 1)) • singChain_basis
+          (prismSimplex i' l H (s.comp (stdSimplexFaceInclusion i' j))) := by
+    refine Finset.sum_congr rfl (fun j _ => ?_)
+    rw [prismChain_op_basis H i' (s.comp (stdSimplexFaceInclusion i' j))]
+    rw [Finset.smul_sum]
+    refine Finset.sum_congr rfl (fun l _ => ?_)
+    unfold prismChain_summand
+    rw [smul_smul, ← pow_add, show j.val + (l.val + 1) = j.val + l.val + 1 from by omega]
+  -- Step 3: Rewrite the goal using the expanded forms.
+  rw [h_lhs_expand, h_dNext_expand]
+  -- The goal is now an equation between explicit 2D sums.
+  -- Convert both sides via Finset.sum_product (collapse double sums to product).
+  -- Then partition the LHS index set and apply face identities.
   sorry
 
 /-- The `Homotopy.comm` field — the boundary identity. **Residual sorry**
