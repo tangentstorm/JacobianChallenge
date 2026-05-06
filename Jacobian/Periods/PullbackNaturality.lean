@@ -2,6 +2,7 @@ import Jacobian.Periods.PeriodFunctional
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverPickRefl
+import Jacobian.Periods.PathIntegralViaCoverWithRefinementInvariant
 import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.Algebra.Category.ModuleCat.Basic
@@ -349,8 +350,9 @@ theorem pathIntegralViaCoverWith_refinement_invariant
       (i : ℝ) / n' ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n' →
       γ t ∈ (chartAt ℂ (pickChart' i)).source) :
     pathIntegralViaCoverWith η γ n hn pickChart hcov =
-      pathIntegralViaCoverWith η γ n' hn' pickChart' hcov' := by
-  sorry
+      pathIntegralViaCoverWith η γ n' hn' pickChart' hcov' :=
+  pathIntegralViaCoverWith_refinement_invariant'
+    η γ n hn pickChart hcov n' hn' pickChart' hcov'
 
 /-- **Pass pcr.1 (cover-sum equality on a common partition).** If `γ`
 on `X` and `f ∘ γ` on `Y` admit a common-grain partition (witnessed by
