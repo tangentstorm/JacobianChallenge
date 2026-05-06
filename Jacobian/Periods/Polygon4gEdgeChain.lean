@@ -45,7 +45,7 @@ needed (since the two endpoints of edge `i` lie in the same handle).
 
 namespace JacobianChallenge.Periods
 
-open Complex Set
+open Complex Set AlgebraicTopology
 
 /-- Numerical identity: the angle at the end of arc `k` equals the
 angle at the start of arc `k+1`. -/
@@ -213,29 +213,36 @@ lemma edgeSimplex_faces_eq (g : ℕ) (i : Fin (2 * (g + 1))) :
   rw [edgeSimplex_vertex_one, edgeSimplex_vertex_zero]
   exact (edgeSimplex_endpoints_equal g i).symm
 
-/-- **Phase 3 leaf (sub-sorry).** The chain-complex generator of the
-i-th edge loop is a 1-cycle: its boundary in
+/-- **Phase 3 leaf (sorry-free given Phase 2.5).** The chain-complex
+generator of the i-th edge loop is a 1-cycle: its boundary in
 `SingularChainCoproduct (Polygon4g (g+1)) 0` vanishes.
 
-This depends on:
-* `singularChainElement_boundary_decomposition` (Phase 2 leaf,
-  currently a stub `True` — needs upgrading to the genuine
-  alternating-sum equation);
-* `edgeSimplex_endpoints_equal` (Phase 3 leaf above), which says the
-  two endpoints map to the same polygon vertex.
-
-The two together force the alternating sum
-`singularChainElement (σ ∘ d_0) - singularChainElement (σ ∘ d_1)` to
-be zero, since both terms agree as elements of the singular simplicial
-set (each is the constant 0-simplex at the common vertex).
-
-Stated as `True` here while the dependency leaves are still abstract;
-when Phase 2's boundary decomposition lands as a genuine equation
-this becomes a one-line subst. -/
-theorem edgeChain_isCycle (_g : ℕ) (_i : Fin (2 * (_g + 1))) : True := by
-  -- Will become:
-  --   d_1 (edgeChain g i) = 0
-  -- via singularChainElement_boundary_decomposition + edgeSimplex_endpoints_equal.
-  trivial
+Proof: apply `singularChainElement_boundary_decomposition` at `n = 0`
+to expand `d_1 (edgeChain g i)` as a two-term sum, then use
+`edgeSimplex_faces_eq` to make the two terms cancel. -/
+theorem edgeChain_isCycle (g : ℕ) (i : Fin (2 * (g + 1))) :
+    (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).obj (TopCat.of (Polygon4g (g + 1)))).d 1 0
+        (edgeChain g i : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+      = 0 := by
+  rw [show edgeChain g i = singularChainElement (edgeSimplex g i) from rfl]
+  rw [singularChainElement_boundary_decomposition (Polygon4g (g + 1)) 0
+        (edgeSimplex g i)]
+  -- Sum over Fin 2 expands to two terms:
+  -- (-1)^0 • singularChainElement (face σ 0) + (-1)^1 • singularChainElement (face σ 1)
+  -- = singularChainElement (face σ 0) - singularChainElement (face σ 1)
+  rw [Fin.sum_univ_two]
+  -- The two faces are equal as continuous maps, so they yield the same
+  -- chain element; the sum of the corresponding terms is zero.
+  rw [show singularSimplexFace (edgeSimplex g i) 0
+        = singularSimplexFace (edgeSimplex g i) 1 from
+      edgeSimplex_faces_eq g i]
+  show ((-1 : ℤ) ^ ((0 : Fin 2) : ℕ)) •
+        (singularChainElement (singularSimplexFace (edgeSimplex g i) 1) :
+          SingularChainCoproduct (Polygon4g (g + 1)) 0)
+      + ((-1 : ℤ) ^ ((1 : Fin 2) : ℕ)) •
+        singularChainElement (singularSimplexFace (edgeSimplex g i) 1)
+      = 0
+  simp [pow_zero, pow_one, one_smul, add_neg_cancel]
 
 end JacobianChallenge.Periods
