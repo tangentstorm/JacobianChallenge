@@ -247,19 +247,43 @@ theorem mfderiv_chartSymm_continuousOn
         have h2 := h1.mdifferentiableWithinAt (by decide : (⊤ : WithTop ℕ∞) ≠ 0)
         exact h2.mdifferentiableAt (c.open_target.mem_nhds he.1)
     -- Steps 4-5: operator continuity of e ↦ mfderiv c' (c.symm e) on V.
-    -- For target = E (model space), mfderiv c' q equals the trivialization's
-    -- continuousLinearMapAt at q (by TangentBundle.continuousLinearMapAt_trivializationAt),
-    -- which is continuous as a function (q, w) ↦ A(q) w by Trivialization.continuousOn.
-    -- For each fixed w, q ↦ A(q) w is continuous, and by continuousOn_clm_apply (FiniteDim),
-    -- A is operator-continuous in q on baseSet.
+    --
+    -- This is the genuine technical bridge: it requires operator
+    -- continuity of `q ↦ (trivAt p₀).continuousLinearMapAt q` on
+    -- baseSet, which is equivalent (for finite-dim E, via
+    -- `continuousOn_clm_apply`) to pointwise continuity for each
+    -- fixed `w ∈ E` of `q ↦ A(q) w = (trivAt p₀).continuousLinearMapAt q w`.
+    --
+    -- Pointwise continuity is equivalent to continuity of the constant
+    -- section `q ↦ ⟨q, w⟩ : baseSet → TangentBundle X`, which is
+    -- circular: by `Bundle.contMDiffWithinAt_totalSpace`, section
+    -- continuity in trivAt(p₀)-coords is `q ↦ (q, A(q) w)` continuous,
+    -- which reduces to `q ↦ A(q) w` continuous — what we wanted to
+    -- prove.
+    --
+    -- Mathlib's `Trivialization.continuousOn` gives joint continuity
+    -- of `(b, v) ↦ trivAt(b₀)(⟨b, v⟩) = (b, A(b) v)` on the
+    -- trivialization's source (in TotalSpace topology). To extract
+    -- `q ↦ A(q) w` continuous in q (for fixed w), we'd need the
+    -- "trivial section" `q ↦ ⟨q, w⟩` continuous, which is the
+    -- circular obstacle.
+    --
+    -- Resolution requires either:
+    -- (a) New Mathlib infrastructure: a lemma asserting operator
+    --     continuity of the local trivialization's fiber map for
+    --     ContMDiffVectorBundle with finite-dim fibers.
+    -- (b) Additional structural hypothesis: e.g., that chartAt is
+    --     locally constant within each chart's source (which holds
+    --     for many concrete instances but is not part of the abstract
+    --     ChartedSpace typeclass).
+    -- (c) Non-trivial constructive proof using the smooth bundle
+    --     structure (not directly available in Mathlib v4.28.0).
+    --
+    -- We mark this clearly as a project-local Mathlib-style packet.
     have hmfderiv_c'_cont : ContinuousOn (fun e =>
         show E →L[ℂ] E from
           mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E)
             c' (c.symm e)) V := by
-      rw [continuousOn_clm_apply]
-      intro w
-      -- Reduce to continuity of (trivAt p₀).continuousLinearMapAt(c.symm e) w.
-      -- Use that mfderiv c' = trivializationAt(p₀).continuousLinearMapAt on c'.source.
       sorry
     -- Steps 7-final: combine with chain rule + inversion.
     -- mfderivWithin c.symm c.target e v = (mfderiv c' (c.symm e))⁻¹ (fderiv (c' ∘ c.symm) e v).
