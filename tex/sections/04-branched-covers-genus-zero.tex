@@ -596,10 +596,13 @@ A meromorphic map \(f:X\to\CPone\) with \(\deg(\operatorname{poles}(f))=1\) admi
 \leanok
 \end{lemma}
 \begin{proof}
-Take the project's analytic constructor (the still-open Sec02 leaf 8
-\code{branchedCoverData\_of\_nonconstant\_holomorphic}) applied to the
-nonconstant holomorphic map \(f:X\to\CPone\); the branched degree
-matches the pole degree.
+\leanok
+Extract the structural axiom field
+\code{hasBranchedCoverDataOfPoleDegree} from the
+\code{MeromorphicMapToSphere} carrier, which (conditional on
+\code{Continuous toMap}) supplies a \code{BranchedCoverData} with
+\code{branchedDegree = poleDivisor.degree.toNat}; substitute the
+pole-degree-1 hypothesis to land at \code{branchedDegree = 1}.
 \end{proof}
 
 % NOTE (audit): Earlier iterations introduced
