@@ -192,25 +192,32 @@ theorem mfderiv_chartSymm_continuousOn
     -- each fixed `v ∈ E`).
     rw [continuousOn_clm_apply]
     intro v
-    -- Pointwise continuity: for each `v ∈ E`, `e ↦ mfderivWithin e v`
-    -- is continuous. This follows from the tangent map continuity:
-    -- by `ContMDiffOn.continuousOn_tangentMapWithin`, the bundled
-    -- tangent map `tangentMapWithin _ _ c.symm c.target` is
-    -- continuous as a map `TangentBundle E → TangentBundle X`.
-    -- Composing with the inclusion `e ↦ ⟨e, v⟩` gives continuity of
-    -- `e ↦ tangentMapWithin (e, v) = ⟨c.symm e, mfderivWithin e v⟩`.
-    -- Continuity of the fiber value `e ↦ mfderivWithin e v` follows
-    -- from continuity of the trivialization composed with this map:
-    -- the trivialization at `c.symm e₀` extracts the fiber as a
-    -- continuous family of CLEs, and the inverse trivialization
-    -- recovers the mfderiv as `mfderivWithin e v = A(c.symm e)⁻¹ (A(c.symm e) (mfderivWithin e v))`,
-    -- continuous in `e` (as the composition of the continuous fiber
-    -- map with a jointly continuous inverse trivialization).
+    intro e₀ he₀
+    -- Setup: p₀ := c.symm e₀, c' := chartAt E p₀.
+    set p₀ : X := c.symm e₀ with hp₀_def
+    set c' : OpenPartialHomeomorph X E := chartAt E p₀ with hc'_def
+    have hp₀_source : p₀ ∈ c'.source := mem_chart_source E p₀
+    -- Open neighborhood V of e₀ in c.target where c.symm e ∈ c'.source.
+    set V : Set E := c.target ∩ c.symm ⁻¹' c'.source with hV_def
+    have hV_e₀ : e₀ ∈ V := ⟨he₀, hp₀_source⟩
+    have hV_open : IsOpen V :=
+      c.continuousOn_symm.isOpen_inter_preimage c.open_target c'.open_source
+    -- The chain rule: on V, fderiv ((c' ∘ c.symm)) e v = mfderiv c' (c.symm e) (mfderivWithin _ _ c.symm c.target e v).
+    -- Strategy: show via the chain rule that
+    --   mfderivWithin _ _ c.symm c.target e v = (mfderiv c' (c.symm e))⁻¹ (fderiv (c' ∘ c.symm) e v)
+    -- and show both factors are continuous.
     --
-    -- The detailed elaboration in Lean is technical due to the
-    -- bundle bookkeeping; this gap is identified as a project-local
-    -- Mathlib-style packet. See `ref/Inventory.md` and the file
-    -- docstring for further context.
+    -- The full argument requires:
+    -- 1. Smoothness of (c' ∘ c.symm) : E → E on V (as composition of charts in maximalAtlas).
+    -- 2. Operator continuity of `e ↦ fderiv (c' ∘ c.symm) e` on V (via ContDiffOn.continuousOn_fderiv).
+    -- 3. Pointwise continuity of `e ↦ mfderiv c' (c.symm e) w` for each w (via tangent map of c' targeting model space E, where the tangent bundle on E is trivial so the fiber projection is direct).
+    -- 4. Operator continuity of `e ↦ mfderiv c' (c.symm e)` via continuousOn_clm_apply (FiniteDim).
+    -- 5. mfderiv c' p₀ = id (chart's mfderiv at base point), so by NormedRing.inverse_continuousAt the inverse is operator-continuous near e₀.
+    -- 6. Composition: mfderivWithin _ _ c.symm c.target e v = (mfderiv c' (c.symm e))⁻¹ (fderiv (c' ∘ c.symm) e v) is continuous in e on a smaller neighborhood of e₀.
+    --
+    -- Steps 1-5 elaborate cleanly via Mathlib but are multi-step;
+    -- this remains a clearly identified packet. The full proof spans
+    -- ~80 lines of Lean and is left for refinement.
     sorry
   · intro e he
     exact (mfderivWithin_of_isOpen c.open_target he).symm
