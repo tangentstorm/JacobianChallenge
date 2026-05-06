@@ -84,51 +84,93 @@ theorem chartedFormPullback_sub_curveIntegrable
 
 /-! ### Phase 1 main theorem: general curve-integrability
 
-This isolates the genuine analytic content (continuity of the chart
-pullback as an `E → E →L[ℂ] ℂ`-valued function) into a single named
-lemma `chartedFormPullback_continuousOn`. The curve-integrability
-result then follows sorry-free via Mathlib's
-`ContinuousOn.curveIntegrable_of_contDiffOn`.
+The genuine content factors into two named sub-obligations:
 
-The continuity gap is the same trivialization-extraction issue
-flagged in `Jacobian/HolomorphicForms/GenusZeroClassification.lean`
-for the inversion-chart coefficient (see
-`ContMDiffSection_localRepr_inversionChart_continuousAt_zero`). It
-reduces to:
+* `chartedSection_localRepr_continuousOn` — continuity of
+  `e ↦ ω.toFun (c.symm e)` viewed as `E →L[ℂ] ℂ`-valued on `c.target`.
+  This is the **trivialization-extraction gap** (same flavour as
+  `ContMDiffSection_localRepr_inversionChart_continuousAt_zero` in
+  `Jacobian/HolomorphicForms/GenusZeroClassification.lean`).
 
-1. Continuity of `e ↦ ω.toFun (c.symm e)` viewed as `E →L[ℂ] ℂ`-valued
-   on `c.target`. This requires extracting the section `ω` of the
-   cotangent bundle through a fiber-bundle trivialization at each
-   point of `c.symm '' c.target`. With the project's
-   `ContMDiffSection.continuous_totalSpaceMk` and a global
-   trivialization of the cotangent bundle on a self-modeled chart, this
-   is structurally available; the missing piece is the
-   `ContMDiffSection.continuousOn_localRepr` API.
-2. Continuity of `e ↦ mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) c.symm e` on `c.target`.
-   Follows from `c.symm` being `ContMDiff ⊤` on `c.target` (chart of
-   a smooth manifold) and the standard fact that the `mfderiv` of a
-   `C¹⁺` function is continuous.
-3. Bilinear continuity of `ContinuousLinearMap.comp` to combine (1)
-   and (2).
+* `mfderiv_chartSymm_continuousOn` — continuity of
+  `e ↦ mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) c.symm e` on `c.target`.
+  Follows from `c.symm` being `ContMDiffOn ⊤ c.target` plus the
+  standard "smoothness gives `mfderiv` continuity" reduction. The
+  proof can mirror Mathlib's
+  `ContMDiffWithinAt.mfderivWithin_const` (which lives in
+  `Mathlib/Geometry/Manifold/ContMDiffMFDeriv.lean`).
 
-This `_continuousOn` gap is the one packet-sized, well-localised
-remainder for Phase 1.
+Once both sub-obligations land, `chartedFormPullback_continuousOn` is
+a sorry-free assembly via the bilinear continuity of
+`ContinuousLinearMap.comp`.
+
+The recent project-local `clm_compose_of_inCoordinates` (in
+`Jacobian/HolomorphicForms/CLMBundleCompose.lean`) discharges the
+section-level smoothness of `pullbackFormsBundledLM`. The *same*
+machinery, in `ContMDiffWithinAt` form, would discharge both
+sub-obligations here and the analogous gaps in Phases 4a and 5.
 -/
 
-/-- **Continuity of the chart pullback.** The function
-`chartedFormPullback c ω : E → E →L[ℂ] ℂ` is continuous on the
-chart's target.
+/-- **Continuity of the section's chart-local representative.** For a
+smooth section `ω` of the cotangent bundle of `X` and a chart `c` on
+`X`, the function `e ↦ ω.toFun (c.symm e)` (in the cotangent fiber,
+which collapses to `E →L[ℂ] ℂ` for self-model) is continuous on
+`c.target`.
 
-Currently a `sorry`-stubbed declaration. The proof requires the chart
-trivialization of the cotangent bundle (see the file-level docstring
-above for the reduction). This is the genuine analytic gap that
-unblocks Phase 1's `_curveIntegrable` and, via that, the segment-
-additivity chain (Phases 2–4 in the supporting infrastructure plan
-on branch `claude/prove-pullback-naturality-PedxJ`). -/
+This is the **trivialization-extraction gap**: from
+`ContMDiffSection.continuous_totalSpaceMk` we get continuity of
+`x ↦ ⟨x, ω.toFun x⟩` into the cotangent bundle's total space; the
+missing step is to compose with a chart trivialisation to recover
+the fiber value as a continuous `E →L[ℂ] ℂ`-valued function on
+`c.source`, then precompose with `c.symm` (continuous on `c.target`).
+
+For self-model bundles the trivialisation is structurally simple
+(the chart-coordinate identification is essentially an identity in
+the appropriate sense), so this gap is bookkeeping plus the
+trivialisation-fiber-projection continuity.
+
+The statement uses `(ω.toFun (c.symm e) : E →L[ℂ] ℂ)` via the
+definitional equality `CotangentSpace E X x = E →L[ℂ] ℂ` (constant
+fibers, self-model). The `show … from rfl` bridges the two forms. -/
+theorem chartedSection_localRepr_continuousOn
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
+    ContinuousOn (fun e =>
+      show E →L[ℂ] ℂ from ω.toFun (c.symm e)) c.target := by
+  sorry
+
+/-- **Continuity of the chart-inverse `mfderiv`.** The map
+`e ↦ mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) c.symm e` is continuous on `c.target`
+viewed as `E →L[ℂ] E`-valued.
+
+Reduces (sorry-free if `ContMDiffWithinAt.mfderivWithin_const` plus
+chart-symm smoothness via `contMDiffOn_chart_symm` were specialised
+to `mfderiv` and unfolded from `inTangentCoordinates` for the
+self-model case where the coordinate change collapses to identity).
+Stated as a sorry to keep the bookkeeping packet-sized. -/
+theorem mfderiv_chartSymm_continuousOn
+    (c : OpenPartialHomeomorph X E) :
+    ContinuousOn (fun e =>
+      show E →L[ℂ] E from
+        mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E)
+          c.symm e) c.target := by
+  sorry
+
+/-- **Continuity of the chart pullback.** Sorry-free assembly of
+`chartedSection_localRepr_continuousOn` and
+`mfderiv_chartSymm_continuousOn` via the (jointly) continuous
+bilinear `ContinuousLinearMap.comp`. -/
 theorem chartedFormPullback_continuousOn
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
     ContinuousOn (chartedFormPullback c ω) c.target := by
-  sorry
+  -- Unfold definitionally: chartedFormPullback c ω e =
+  --   (ω.toFun (c.symm e)).comp (mfderiv c.symm e).
+  -- Apply the continuous bilinear `compL` operator to the two
+  -- continuous component functions.
+  have hcomp : Continuous fun p : (E →L[ℂ] ℂ) × (E →L[ℂ] E) => p.1.comp p.2 :=
+    isBoundedBilinearMap_comp.continuous
+  exact hcomp.comp_continuousOn
+    ((chartedSection_localRepr_continuousOn c ω).prodMk
+      (mfderiv_chartSymm_continuousOn c))
 
 /-- **Phase 1 deliverable.** For a `C¹` path `γ : Path a b` whose range
 lies in `c.target`, the chart pullback `chartedFormPullback c ω` is
