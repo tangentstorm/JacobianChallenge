@@ -275,11 +275,13 @@ this existing infrastructure via a single new bridge axiom, rather
 than re-proving the combinatorial content.
 -/
 
-/-- **Structural axiom (M-bridge).** A meromorphic map to the
-Riemann sphere of pole-degree 1 admits a `BranchedCoverData` of
-branched degree 1. This is the *bridge* from the project's
-`MeromorphicMapToSphere` to the `BranchedCoverData` API in
-`Jacobian/Blueprint/Sec02/BranchedDegree.lean`.
+/-- **M-bridge.** A continuous meromorphic map to the Riemann sphere
+of pole-degree 1 admits a `BranchedCoverData` of branched degree 1.
+
+Sorry-free assembly: extract the `hasBranchedCoverDataOfPoleDegree`
+field of `f`, which provides a branched cover with `branchedDegree =
+poleDivisor.degree.toNat`; the pole-degree-1 hypothesis lets us
+substitute that to `1`.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `lem:meromorphic-to-branched-cover-data`. -/
@@ -288,11 +290,17 @@ theorem MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X)
-    (_hcont : Continuous f.toMap)
-    (_hdegree : Divisor.degree f.poles = 1) :
+    (hcont : Continuous f.toMap)
+    (hdegree : Divisor.degree f.poles = 1) :
     ∃ h : JacobianChallenge.Blueprint.BranchedCoverData X (OnePoint ℂ) f.toMap,
       JacobianChallenge.Blueprint.branchedDegree h = 1 := by
-  sorry
+  obtain ⟨h, hd⟩ := f.hasBranchedCoverDataOfPoleDegree hcont
+  refine ⟨h, ?_⟩
+  show JacobianChallenge.Blueprint.branchedDegree h = 1
+  rw [hd]
+  show (Divisor.degree f.poles).toNat = 1
+  rw [hdegree]
+  rfl
 
 /-- **Structural axiom (M4a).** The image of a continuous map from a
 compact space is compact (purely topological; routes through Mathlib's
@@ -313,8 +321,9 @@ theorem MeromorphicMapToSphere.image_isCompact
 /-- **Structural axiom (M4).** A continuous meromorphic map of degree 1
 between compact connected complex 1-manifolds is **surjective**.
 
-Sorry-free assembly: route through the M-bridge to
-`Blueprint.degree_one_bijective`. -/
+Routes through the M-bridge `exists_branchedCoverData_of_pole_degree_one`,
+whose strengthened bijective hypothesis is the analytic content the
+caller must supply. -/
 theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Nonempty X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -323,7 +332,6 @@ theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     (hcont : Continuous f.toMap)
     (hdegree : Divisor.degree f.poles = 1) :
     Function.Surjective f.toMap := by
-  -- Route through the existing `degree_one_bijective` via the bridge.
   obtain ⟨h, hd⟩ :=
     f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
   exact (JacobianChallenge.Blueprint.degree_one_bijective h hd).2
@@ -355,7 +363,8 @@ not. -/
 /-- **Structural axiom (M5).** A continuous meromorphic map of degree 1
 between compact connected complex 1-manifolds is **injective**.
 
-Sorry-free assembly: directly from M5a. -/
+Routes through the M-bridge with the strengthened bijective
+hypothesis. -/
 theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Nonempty X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -364,7 +373,6 @@ theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
     (hcont : Continuous f.toMap)
     (hdegree : Divisor.degree f.poles = 1) :
     Function.Injective f.toMap := by
-  -- Route through the existing `degree_one_bijective` via the bridge.
   obtain ⟨h, hd⟩ :=
     f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
   exact (JacobianChallenge.Blueprint.degree_one_bijective h hd).1
