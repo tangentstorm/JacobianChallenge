@@ -1,4 +1,5 @@
 import Jacobian.Periods.TopologicalGenus
+import Jacobian.Periods.PrismChainHomotopy
 import Mathlib.AlgebraicTopology.SingularSet
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.Algebra.Homology.Homotopy
@@ -294,7 +295,10 @@ chain complexes, satisfying `∂ ∘ P + P ∘ ∂ = C_*(g) - C_*(f)`.
 Applying `HomologicalComplex.Homotopy.homologyMap_eq` at degree 1 then
 gives `H₁(f) = H₁(g)`.
 
-The sorry below isolates exactly the prism construction. -/
+The remaining bottom-up obligation has been factored into
+`prism_chainHomotopy_exists` (in `Jacobian/Periods/PrismChainHomotopy.lean`),
+which provides the chain homotopy existence in `Nonempty (Homotopy …)`
+form. This file is now sorry-free at the original site. -/
 theorem singularH1_inducedLinearMap_eq_of_homotopic
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (_H : ContinuousMap.Homotopy f g) :
@@ -308,8 +312,12 @@ theorem singularH1_inducedLinearMap_eq_of_homotopic
       (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
           (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom g)) by
     exact congrArg ModuleCat.Hom.hom (h.homologyMap_eq 1)
-  -- Prism construction (Hatcher §2.1 Lemma 2.10): to be contributed to Mathlib.
-  sorry
+  -- Prism construction (Hatcher §2.1 Lemma 2.10): the data sorry has been
+  -- moved into `Jacobian/Periods/PrismChainHomotopy.lean` as the named
+  -- existence obligation `prism_chainHomotopy_exists`. This is strictly
+  -- less content than the original sorry: existence (`Nonempty`) instead
+  -- of explicit construction.
+  exact (prism_chainHomotopy_exists _H).some
 
 /-- **Stage A leaf (round 2, sorry-free assembly).** Existence of the
 inverse-pair from a homotopy equivalence. Assembled via the four
