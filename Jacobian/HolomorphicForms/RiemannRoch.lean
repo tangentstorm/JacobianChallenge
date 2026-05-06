@@ -328,7 +328,7 @@ distinct points: `chartAt ℂ p` is a partial homeomorphism onto an
 open subset of `ℂ`, which contains an open ball, hence a point
 distinct from `chartAt ℂ p p`. Pulling that point back through the
 chart inverse yields a second point of `X` distinct from `p`. -/
-private lemma exists_two_distinct_points_of_chartedSpaceComplex
+lemma exists_two_distinct_points_of_chartedSpaceComplex
     {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X] :
     ∃ p q : X, p ≠ q := by
   let p : X := Classical.arbitrary X
@@ -356,6 +356,48 @@ private lemma exists_two_distinct_points_of_chartedSpaceComplex
   intro hpq
   apply hz_ne_φp
   rw [hpq, φ.right_inv hz_in_target]
+
+open Classical in
+/-- An "indicator" function `X → OnePoint ℂ` sending one chosen point
+to `∞` and all others to `0` is *not* continuous on a connected,
+T2, charted-on-`ℂ` space (which has at least two points): the
+preimage of the closed singleton `{(0 : ℂ)}` is `{p}ᶜ`, which would
+force `{p}` to be open, hence clopen, contradicting connectedness. -/
+lemma not_continuous_indicator
+    {X : Type*} [TopologicalSpace X] [T2Space X] [ConnectedSpace X]
+    [ChartedSpace ℂ X] (p : X) :
+    ¬ Continuous (fun x : X => if x = p then (OnePoint.infty : OnePoint ℂ)
+                               else (((0 : ℂ) : OnePoint ℂ))) := by
+  intro hcont
+  -- Preimage of `{(0:ℂ)}` under the indicator is `{p}ᶜ`.
+  have hpre_eq :
+      (fun x : X => if x = p then (OnePoint.infty : OnePoint ℂ)
+                     else (((0 : ℂ) : OnePoint ℂ))) ⁻¹'
+        {((0 : ℂ) : OnePoint ℂ)} = ({p}ᶜ : Set X) := by
+    ext x
+    by_cases hx : x = p
+    · simp [hx, OnePoint.infty_ne_coe (0 : ℂ)]
+    · simp [hx]
+  -- The singleton `{(0:ℂ)}` is closed in `OnePoint ℂ` (T2 space).
+  have hclosed_zero : IsClosed ({((0 : ℂ) : OnePoint ℂ)} : Set (OnePoint ℂ)) :=
+    isClosed_singleton
+  -- Continuity of the indicator forces the preimage to be closed.
+  have hclosed_compl : IsClosed ({p}ᶜ : Set X) :=
+    hpre_eq ▸ hclosed_zero.preimage hcont
+  -- Hence `{p}` is open.
+  have hopen_p : IsOpen ({p} : Set X) := by
+    rw [← compl_compl ({p} : Set X)]
+    exact hclosed_compl.isOpen_compl
+  -- `{p}` is also closed (T2), so it is clopen.
+  have hclopen_p : IsClopen ({p} : Set X) := ⟨isClosed_singleton, hopen_p⟩
+  -- In a connected space, the only clopens are `∅` and `univ`.
+  rcases isClopen_iff.mp hclopen_p with hempty | huniv
+  · exact (Set.notMem_empty p) (hempty ▸ Set.mem_singleton p)
+  · obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
+    have ha : a ∈ ({p} : Set X) := huniv ▸ Set.mem_univ a
+    have hb : b ∈ ({p} : Set X) := huniv ▸ Set.mem_univ b
+    rw [Set.mem_singleton_iff] at ha hb
+    exact hab (ha.trans hb.symm)
 
 /-- **Structural axiom (S3c).** From `ℓ(D) ≥ 2` for some divisor `D`
 on a compact connected complex 1-manifold, there is a nonconstant
@@ -398,13 +440,28 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     ∃ f : MeromorphicMapToSphere X, f.Nonconstant ∧ f.MemRiemannRochSpace D := by
   classical
   obtain ⟨p, q, hpq⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
+  -- The structure-axiom fields below are placeholder `sorry`s following
+  -- the convention used in `assemble_meromorphicMap`: the indicator
+  -- `toMap = fun x => if x = p then ∞ else 0` is not a genuine
+  -- meromorphic map matching the prescribed pole divisor `D`, so the
+  -- analytic axioms cannot be discharged here. Once a real RR-space
+  -- existence is in place these will follow from its analytic content.
   refine ⟨{ toMap := fun x => if x = p then (OnePoint.infty : OnePoint ℂ)
                               else (((0 : ℂ) : OnePoint ℂ))
             locally_meromorphic := True
             zeroDivisor := 0
             poleDivisor := D
             principalDivisor := -D
-            principalDivisor_eq := by simp }, ?_, ?_⟩
+            principalDivisor_eq := by simp
+            poleDivisor_nonneg := by sorry
+            zero_or_pole_eq_zero := fun _ => Or.inl rfl
+            toMap_ne_infty_of_poleDivisor_zero := by sorry
+            continuousOn_ne_infty := by sorry
+            toFiniteFun_mdifferentiable := by sorry
+            toMap_eq_infty_of_poleDivisor_pos := by sorry
+            exists_modulus_atTop_at_pole := by sorry
+            hasBranchedCoverDataOfPoleDegree := fun hcont =>
+              absurd hcont (not_continuous_indicator p) }, ?_, ?_⟩
   · rintro ⟨c, hc⟩
     have h1 : (OnePoint.infty : OnePoint ℂ) = c := by
       have := hc p
@@ -423,7 +480,16 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
                 zeroDivisor := 0
                 poleDivisor := D
                 principalDivisor := -D
-                principalDivisor_eq := by simp } : Divisor X)
+                principalDivisor_eq := by simp
+                poleDivisor_nonneg := by sorry
+                zero_or_pole_eq_zero := fun _ => Or.inl rfl
+                toMap_ne_infty_of_poleDivisor_zero := by sorry
+                continuousOn_ne_infty := by sorry
+                toFiniteFun_mdifferentiable := by sorry
+                toMap_eq_infty_of_poleDivisor_pos := by sorry
+                exists_modulus_atTop_at_pole := by sorry
+                hasBranchedCoverDataOfPoleDegree := fun hcont =>
+                  absurd hcont (not_continuous_indicator p) } : Divisor X)
             = -D := rfl
     rw [this, neg_add_cancel]
     exact Divisor.effective_zero
