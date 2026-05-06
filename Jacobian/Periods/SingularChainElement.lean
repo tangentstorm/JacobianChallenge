@@ -108,6 +108,21 @@ noncomputable def singularSimplexFace
     C(stdSimplex ℝ (Fin (n + 1)), X) :=
   σ.comp (stdSimplexFaceMap n i)
 
+/-- Naturality lemma: the simplicial face map on the singular
+simplicial set composed with `Sigma.ι` equals `Sigma.ι` of the face
+of the simplex.
+
+This is a key intermediate step for the boundary decomposition: it
+says the face action commutes with the coproduct injection. The
+result is stated at the morphism level (compositions in the category
+`ModuleCat ℤ`); it follows directly from `Sigma.ι_comp_map'`. -/
+lemma sigmaConst_obj_map_ι
+    {α β : Type} (f : α → β) (a : α) :
+    (Sigma.ι (fun _ : α => ModuleCat.of ℤ ℤ) a : _ ⟶ _)
+        ≫ (sigmaConst.obj (ModuleCat.of ℤ ℤ)).map f
+      = Sigma.ι (fun _ : β => ModuleCat.of ℤ ℤ) (f a) := by
+  simp [sigmaConst]
+
 /-- **Phase 2 leaf (sub-sorry, strictly weaker than the iso).**
 Boundary of a chain-complex generator decomposes as the alternating
 sum over face inclusions:
