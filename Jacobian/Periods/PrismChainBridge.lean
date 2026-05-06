@@ -134,6 +134,130 @@ theorem singChain_desc_basis {n : ℕ} {X : Type} [TopologicalSpace X]
   simp only [singChain_desc, singChain_basis, singChain_descCat_basisCat,
     Equiv.apply_symm_apply]
 
+/-! ### Chain map on basis (Phase 2)
+
+The functorial chain map `((sChain).obj R).map (TopCat.ofHom f)` at
+degree `n` sends the basis element at `σ : SingSimplexCat n X` to the
+basis element at `(toSSet.map (ofHom f)).app _ σ`. This is the
+categorical functoriality of the chain functor; via the equiv, the
+"pushed simplex" corresponds to the geometric `f.comp s`. -/
+
+/-- The chain map at degree `n` sends a categorical basis to the
+categorical basis at the pushed simplex. -/
+theorem singChain_map_basisCat {X Y : Type} [TopologicalSpace X]
+    [TopologicalSpace Y] (f : C(X, Y)) (n : ℕ) (σ : SingSimplexCat n X) :
+    singChain_basisCat σ ≫
+        (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+            (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f n =
+      singChain_basisCat ((TopCat.toSSet.map (TopCat.ofHom f)).app _ σ) := by
+  simp [singChain_basisCat, singularChainComplexFunctor,
+    SSet.singularChainComplexFunctor]
+
+/-- The action of `TopCat.toSSet.map f` on the categorical simplex
+matches `f.comp s` on the geometric side, via `singSimplexEquiv`. -/
+theorem singSimplexEquiv_toSSet_map {X Y : Type} [TopologicalSpace X]
+    [TopologicalSpace Y] (f : C(X, Y)) (n : ℕ) (σ : SingSimplexCat n X) :
+    (singSimplexEquiv n Y) ((TopCat.toSSet.map (TopCat.ofHom f)).app _ σ) =
+      f.comp ((singSimplexEquiv n X) σ) := by
+  -- This follows from the definition of TopCat.toSSet via restrictedULiftYoneda
+  -- and TopCat.toSSetObjEquiv.  We unfold both sides and use that the
+  -- restricted ULift Yoneda action is just composition.
+  rfl
+
+/-- The chain map at degree `n` on a geometric basis: pushing `s` by
+`f.comp s`. This is the key Phase 2 lemma needed for the boundary
+identity. -/
+theorem singChain_map_basis {X Y : Type} [TopologicalSpace X]
+    [TopologicalSpace Y] (f : C(X, Y)) (n : ℕ) (s : SingSimplex n X) :
+    singChain_basis s ≫
+        (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+            (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f n =
+      singChain_basis (f.comp s) := by
+  unfold singChain_basis
+  rw [singChain_map_basisCat]
+  -- Goal: singChain_basisCat (toSSet.map f σ) = singChain_basisCat (equiv.symm (f.comp s))
+  -- where σ = equiv.symm s.  By singSimplexEquiv_toSSet_map, equiv (toSSet.map f σ) = f.comp (equiv σ)
+  -- and equiv σ = s, so equiv (toSSet.map f σ) = f.comp s, hence
+  -- toSSet.map f σ = equiv.symm (f.comp s).
+  have h := singSimplexEquiv_toSSet_map f n ((singSimplexEquiv n X).symm s)
+  rw [Equiv.apply_symm_apply] at h
+  rw [show (TopCat.toSSet.map (TopCat.ofHom f)).app
+        (Opposite.op (SimplexCategory.mk n)) ((singSimplexEquiv n X).symm s)
+      = (singSimplexEquiv n Y).symm (f.comp s) by
+      apply (singSimplexEquiv n Y).injective
+      rw [Equiv.apply_symm_apply]; exact h]
+
+/-! ### Chain differential on basis (Phase 2 main lemma)
+
+The chain differential `d : C_{n+1}(X) ⟶ C_n(X)` of the singular chain
+complex acts on a basis element `[s]` by the alternating sum of face
+inclusions:
+  `d [s] = Σ_{j : Fin (n+2)} (-1)^j • [s ∘ δ_j]`
+where `δ_j` is the topological face inclusion. This is the key Phase 2
+lemma needed for the boundary identity in the prism construction.
+-/
+
+/-- Chain differential on a categorical basis element: alternating sum
+of face inclusions, in categorical (`SimplexCategory.δ`) form. -/
+theorem singChain_d_basisCat {X : Type} [TopologicalSpace X] (n : ℕ)
+    (σ : SingSimplexCat (n + 1) X) :
+    singChain_basisCat σ ≫
+        (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+            (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).d (n + 1) n =
+      ∑ j : Fin (n + 2), ((-1 : ℤ) ^ j.val) •
+        singChain_basisCat
+          ((TopCat.toSSet.obj (TopCat.of X)).map (SimplexCategory.δ j).op σ) := by
+  simp [singChain_basisCat, singularChainComplexFunctor,
+    SSet.singularChainComplexFunctor, AlternatingFaceMapComplex.objD,
+    SimplicialObject.δ, Preadditive.comp_sum, Sigma.ι_comp_map']
+
+/-- The geometric face inclusion `Δⁿ → Δⁿ⁺¹` corresponding to dropping
+the `j`-th vertex: pulled back from `SimplexCategory.δ j` via
+`stdSimplex.map (Fin.succAbove j)`.
+
+This is exactly `stdSimplex.map (Fin.succAbove j)` (up to ULift, which
+is identity at universe 0 in our setting). -/
+noncomputable def stdSimplexFaceInclusion (n : ℕ) (j : Fin (n + 2)) :
+    C(stdSimplex ℝ (Fin (n + 1)), stdSimplex ℝ (Fin (n + 2))) :=
+  ⟨stdSimplex.map (Fin.succAbove j), stdSimplex.continuous_map _⟩
+
+/-- The simplicial face action on a categorical simplex `σ` corresponds,
+via `singSimplexEquiv`, to geometric precomposition with the face
+inclusion `stdSimplexFaceInclusion`. -/
+theorem singSimplexEquiv_face {X : Type} [TopologicalSpace X] (n : ℕ)
+    (j : Fin (n + 2)) (σ : SingSimplexCat (n + 1) X) :
+    (singSimplexEquiv n X)
+        ((TopCat.toSSet.obj (TopCat.of X)).map (SimplexCategory.δ j).op σ) =
+      ((singSimplexEquiv (n + 1) X) σ).comp (stdSimplexFaceInclusion n j) := by
+  -- The geometric simplex of σ via singSimplexEquiv comes from
+  -- ULift-stripping the underlying continuous map.
+  -- The simplicial face action precomposes with toTop.map (δ j),
+  -- which on stdSimplex is stdSimplex.map (Fin.succAbove j) up to ULift.
+  rfl
+
+/-- Geometric form: the chain differential on a geometric basis element
+is the alternating sum of basis elements at face precompositions. -/
+theorem singChain_d_basis {X : Type} [TopologicalSpace X] (n : ℕ)
+    (s : SingSimplex (n + 1) X) :
+    singChain_basis s ≫
+        (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+            (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).d (n + 1) n =
+      ∑ j : Fin (n + 2), ((-1 : ℤ) ^ j.val) •
+        singChain_basis (s.comp (stdSimplexFaceInclusion n j)) := by
+  -- Reduce to categorical form, then use the fact that toSSet's face action
+  -- corresponds to geometric face-precomposition under singSimplexEquiv.
+  have key : ∀ j : Fin (n + 2),
+      (TopCat.toSSet.obj (TopCat.of X)).map (SimplexCategory.δ j).op
+          ((singSimplexEquiv (n + 1) X).symm s)
+        = (singSimplexEquiv n X).symm (s.comp (stdSimplexFaceInclusion n j)) := by
+    intro j
+    apply (singSimplexEquiv n X).injective
+    rw [Equiv.apply_symm_apply, singSimplexEquiv_face, Equiv.apply_symm_apply]
+  unfold singChain_basis
+  rw [singChain_d_basisCat]
+  refine Finset.sum_congr rfl (fun j _ => ?_)
+  rw [key]
+
 end JacobianChallenge.Periods
 
 end

@@ -59,13 +59,20 @@ where `[·]` is the basis morphism in the chain group (cf.
 `singChain_basis` in the bridge file). -/
 
 /-- The chain-level contribution at a single staircase index `i`:
-the basis morphism of the prism simplex with sign `(-1)^i.val`. -/
+the basis morphism of the prism simplex with sign `(-1)^(i.val + 1)`.
+
+**Sign convention.** The geometric `prismSimplex` in
+`PrismConstruction.lean` has top face = `g ∘ s` and bottom face = `f ∘ s`,
+so the unsigned prism boundary computes `∂P + P∂ = g_* − f_*`. Mathlib's
+`Homotopy.comm` is `f.f i = dNext i hom + prevD i hom + g.f i`, which
+requires `dNext + prevD = f_* − g_*`. To convert, we use sign
+`(-1)^(i + 1)` instead of `(-1)^i` (i.e., negate the entire operator). -/
 noncomputable def prismChain_summand
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (n : ℕ)
     (i : Fin (n + 1)) (s : SingSimplex n X) :
     ModuleCat.of ℤ ℤ ⟶ singChain (n + 1) Y :=
-  ((-1 : ℤ) ^ i.val) • singChain_basis (prismSimplex n i H s)
+  ((-1 : ℤ) ^ (i.val + 1)) • singChain_basis (prismSimplex n i H s)
 
 /-- The chain-level prism operator at degree `n`, on a single
 generator: the alternating sum over staircase indices
