@@ -10202,12 +10202,13 @@ common partition, and apply per-segment naturality
 
 \begin{lemma}[Pass pcr.1: cover-sum formulation of both sides]
 \label{lem:pcr-r1}
-\uses{lem:pcr-r2}
+\uses{lem:pcr-r2, lem:pcr-phase-5}
 $\code{pathIntegralViaCover}\,\eta\,\gamma = \sum_{i=0}^{n-1}I_{i}(\eta,\gamma)$
 where $I_{i}$ is the chart-corrected segment integral on the
 $i$-th piece of a uniform chart partition; same on $Y$ via
 $f\circ\gamma$. Both sums are independent of partition refinement.
-\notready
+\lean{JacobianChallenge.Periods.pathIntegralViaCoverWith_pullback_via_common_partition}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass pcr.2: chart selection on $X$ pushes through to $Y$]
@@ -10289,20 +10290,22 @@ linearity, so it suffices to check on a generating family.
 
 \begin{lemma}[Pass pcr.10: linearity in the path]
 \label{lem:pcr-r10}
-\uses{lem:pcr-r11}
+\uses{lem:pcr-r11, lem:pcr-phase-6a, lem:pcr-phase-6b}
 $\code{pathIntegralViaCoverWith}$ adds along a path concatenation
 $\gamma\cdot\gamma'$; the $X$ and $Y$ sides agree because
 $f\circ(\gamma\cdot\gamma')=(f\circ\gamma)\cdot(f\circ\gamma')$.
-\notready
+\lean{JacobianChallenge.Periods.pathIntegralViaCover_trans_eq_add}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass pcr.11: refinement-invariance of the cover sum]
 \label{lem:pcr-r11}
-\uses{lem:pcr-r12}
+\uses{lem:pcr-r12, lem:pcr-phase-3, lem:pcr-phase-4a}
 Refining a uniform chart partition by inserting a midpoint preserves
 the cover sum, because the chart-corrected integral is additive over
 its parameter interval.
-\notready
+\lean{JacobianChallenge.Periods.pathIntegralViaCoverWith_refinement_invariant}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass pcr.12: midpoint-additivity of \code{pathIntegralViaChartCorrect}]
@@ -10322,7 +10325,8 @@ For each $i$, if $\gamma|_{[t_{i},t_{i+1}]}\subseteq U_{i}=
 (\code{chartAt}\,(\code{pickChart}\,i)).source$ on $X$ and
 $f(U_{i})\subseteq V_{i}$ for some chart $V_{i}$ on $Y$, then
 $(f\circ\gamma)|_{[t_{i},t_{i+1}]}\subseteq V_{i}$.
-\notready
+\lean{JacobianChallenge.Periods.pathIntegralViaCover_partition_compat_under_smooth}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass pcr.14: existence of a covering chart on $Y$ for $f(U_{i})$]
@@ -10369,6 +10373,132 @@ $\code{Path.map\_symm}$ then give the algebraic compatibilities.
 \code{HasDerivAt.comp} together close the chain.  Mathlib status: present.
 \lean{intervalIntegral.integral_comp_smul_deriv}
 \leanok\mathlibok
+\end{lemma}
+
+\subsubsection*{Chain pcr supporting packets (Phases 1--6)}
+
+The pcr chain's body theorems
+(\code{pathIntegralViaCover\_trans\_eq\_add},
+\code{pathIntegralViaCover\_pullback\_chart\_segment},
+\code{pathIntegralViaCover\_partition\_compat\_under\_smooth},
+\code{pathIntegralViaCoverWith\_refinement\_invariant},
+\code{pathIntegralViaCoverWith\_pullback\_via\_common\_partition})
+are now sorry-free in body, with the genuine analytic content
+factored into \emph{seven supporting packets} ranging across
+Phases 1--6 of the path-integral well-definedness chain.  Each
+packet is a single named, file-scoped Lean sorry with a focused
+statement and a strategy documented in its file.  These are the
+remaining gaps that the pcr chain transitively depends on; once
+they land, the entire pcr chain (and its consumer
+\code{periodPairing\_pullbackFormsBundledLM}) becomes
+unconditionally sorry-free.
+
+\begin{lemma}[Phase 1a: chart-pullback continuity (trivialisation extraction)]
+\label{lem:pcr-phase-1a}
+\uses{lem:pcr-r16}
+The function $e \mapsto \omega.\code{toFun}\,(c.\code{symm}\,e)$
+viewed as $E\to\C^{*}$-valued is continuous on $c.\code{target}$.
+The trivialisation-fiber-projection step from
+$\code{ContMDiffSection.continuous\_totalSpaceMk}$ to a continuous
+$E\to\C^{*}$-valued function (after composing with the chart
+trivialisation of the cotangent bundle).
+\lean{JacobianChallenge.Periods.chartedSection_localRepr_continuousOn}
+\notready
+\end{lemma}
+
+\begin{lemma}[Phase 1b: chart-inverse mfderiv continuity]
+\label{lem:pcr-phase-1b}
+\uses{lem:pcr-r16}
+The map $e\mapsto\code{mfderiv}\,c.\code{symm}\,e$ is continuous on
+$c.\code{target}$ (viewed as $E\to E$-valued).  Reduces to
+$\code{contMDiffOn\_chart\_symm}$ plus the continuity-of-mfderiv
+chain via \code{ContMDiffWithinAt.mfderivWithin\_const}.
+Requires either an \code{inTangentCoordinates}-unfolding for the
+self-model + manifold-target case, or a direct
+$\code{continuousOn\_mfderivWithin}$ Mathlib helper.
+\lean{JacobianChallenge.Periods.mfderiv_chartSymm_continuousOn}
+\notready
+\end{lemma}
+
+\begin{lemma}[Phase 2: subpath-reparameterisation for \code{curveIntegral}]
+\label{lem:pcr-phase-2}
+\uses{lem:pcr-r12, lem:pcr-r18}
+For $0\leq t_{0}\leq t_{1}\leq 1$,
+$\int_{\gamma.\code{subpath}\,t_{0}\,t_{1}}\omega
+= \int_{(t_{0}:\R)}^{(t_{1}:\R)}\omega(\gamma.\code{extend}\,t)\,
+(\code{derivWithin}\,\gamma.\code{extend}\,I\,t)\,dt$.
+The change-of-variables identity for \code{Path.subpath}.
+\lean{JacobianChallenge.Periods.curveIntegral_subpath_of_le}
+\notready
+\end{lemma}
+
+\begin{lemma}[Phase 3: refinement-by-multiple at the \code{\_With} level]
+\label{lem:pcr-phase-3}
+\uses{lem:pcr-phase-2, lem:pcr-r12}
+Refining a uniform chart partition of size $n$ by an integer factor
+$k$ to size $n\cdot k$ (with the new pick-chart selector
+$j\mapsto\code{pickChart}\,(j\,/\,k)$) preserves the
+\code{pathIntegralViaCoverWith} sum.  Recursive application of
+Phase 2 (\ref{lem:pcr-phase-2}) plus Fin-reindexing.
+\lean{JacobianChallenge.Periods.pathIntegralViaCoverWith_refine_to_multiple}
+\notready
+\end{lemma}
+
+\begin{lemma}[Phase 4a: chart-change for \code{pathIntegralViaChartCorrect}]
+\label{lem:pcr-phase-4a}
+\uses{lem:pcr-phase-1a, lem:pcr-phase-1b}
+For a path $\gamma$ whose range lies in two chart sources
+$(\code{chartAt}\,p).\code{source}$ and
+$(\code{chartAt}\,q).\code{source}$ simultaneously, the
+chart-corrected integrals via either chart agree.  Genuinely the
+chain rule for \code{mfderiv} applied to the chart transition
+$\code{chartAt}\,q\circ(\code{chartAt}\,p).\code{symm}$.
+\lean{JacobianChallenge.Periods.pathIntegralViaChartCorrect_chart_change}
+\notready
+\end{lemma}
+
+\begin{lemma}[Phase 5: chart-level chain rule for the form-pullback]
+\label{lem:pcr-phase-5}
+\uses{lem:pcr-r12, lem:pcr-r18}
+Inside a chart $(\code{chartAt}\,p).\code{source}$ on $X$ and a
+chart $(\code{chartAt}\,q).\code{source}$ on $Y$ containing
+$\gamma$ and $f\circ\gamma$ respectively,
+$\code{pathIntegralViaChartCorrect}\,(\code{chartAt}\,p)\,
+(\code{pullbackFormsBundledLM}\,X\,Y\,f\,\code{hf}\,\eta)\,\gamma=
+\code{pathIntegralViaChartCorrect}\,(\code{chartAt}\,q)\,\eta\,
+(\gamma.\code{map}\,\code{hf.continuous})$.  The genuine chart-level
+chain rule.
+\lean{JacobianChallenge.Periods.pathIntegralViaChartCorrect_pullbackFormsBundledLM}
+\notready
+\end{lemma}
+
+\begin{lemma}[Phase 6a: \code{\_With}-level path additivity on aligned partition]
+\label{lem:pcr-phase-6a}
+\uses{lem:pcr-phase-2, lem:pcr-phase-3}
+For an aligned $(2n)$-partition of $\gamma\cdot\gamma'$ whose first
+$n$ segments cover $\gamma$ (with \code{pickA}) and last $n$ segments
+cover $\gamma'$ (with \code{pickB}), the
+\code{pathIntegralViaCoverWith} sum splits as the corresponding
+$\gamma$- and $\gamma'$-sums.  Reduces to a Fin-reindexing of the
+$2n$-sum into two $n$-sums plus the half-affine reparameterisation
+invariance (Phase 2 specialised to $s\mapsto s/2$ and
+$s\mapsto(s+1)/2$).
+\lean{JacobianChallenge.Periods.pathIntegralViaCoverWith_aligned_trans}
+\notready
+\end{lemma}
+
+\begin{lemma}[Phase 6b: existence of an aligned partition for $\gamma\cdot\gamma'$]
+\label{lem:pcr-phase-6b}
+\uses{lem:pcr-r15, lem:pcr-r17}
+Given paths $\gamma$ and $\gamma'$, there exists $n>0$ and chart
+picks \code{pickA}, \code{pickB} for $\gamma$ and $\gamma'$
+respectively, plus a combined cover hypothesis on the aligned
+$(2n)$-partition of $\gamma\cdot\gamma'$ (built via
+$j\mapsto$ \code{pickA}\,j if $j<n$ else \code{pickB}\,(j-n)).
+The bookkeeping: extract partitions for $\gamma$, $\gamma'$
+separately, refine to a common multiple, combine.
+\lean{JacobianChallenge.Periods.exists_aligned_partition_for_trans}
+\notready
 \end{lemma}
 
 \subsubsection*{Chain pdp: bundle-dual-pullback equals \code{pullbackFormsMap} (S23)}
