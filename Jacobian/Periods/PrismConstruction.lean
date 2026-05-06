@@ -643,19 +643,25 @@ of `prismChain_hom_comm` for `i ≥ 1` will consume these. -/
 
 /-- **Lower side-face identity.** For prism degree `n + 1` (input `s`
 of degree `n + 1`, staircase index `i : Fin (n + 2)`), and a face
-index `j : Fin (n + 3)` with `0 < j.val ≤ i.val`, the `j`-th face of
+index `j : Fin (n + 3)` with `j.val < i.val`, the `j`-th face of
 the prism simplex `prismSimplex (n + 1) i H s` equals the prism
 simplex at degree `n` with staircase index `i - 1` applied to
 `s ∘ δ_j`.
 
 Hatcher §2.1, p. 112: dropping the `j`-th lower vertex `v_j`
-(`0 < j ≤ i`) leaves `[v_0, ..., v̂_j, ..., v_i, w_i, ..., w_{n+1}]`,
-which is the `(i - 1)`-th staircase simplex over `s ∘ δ_j`. -/
+(`j < i`) leaves `[v_0, ..., v̂_j, ..., v_i, w_i, ..., w_{n+1}]`,
+which is the `(i - 1)`-th staircase simplex over `s ∘ δ_j`.
+
+(For `j = 0` with `i = 0`, this would be the top face — but `j.val < i.val`
+forces `i.val ≥ 1`, so the top-face case is excluded.)
+
+(For `j = i` or `j = i + 1`, this would be the diagonal cancellation —
+also excluded by the strict inequality `j.val < i.val`.) -/
 theorem prismSimplex_side_face_lower
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
     (n : ℕ) (i : Fin (n + 2)) (j : Fin (n + 3))
-    (hj_pos : 0 < j.val) (hj_le : j.val ≤ i.val)
+    (hj_lt : j.val < i.val)
     (s : C(stdSimplex ℝ (Fin (n + 2)), X)) :
     ∀ p : stdSimplex ℝ (Fin (n + 2)),
     prismSimplex (n + 1) i H s
@@ -663,8 +669,67 @@ theorem prismSimplex_side_face_lower
     prismSimplex n
         ⟨i.val - 1, by omega⟩ H
         (s.comp ⟨stdSimplex.map
-            (Fin.succAbove ⟨j.val, by omega⟩),
+            (Fin.succAbove (⟨j.val, by omega⟩ : Fin (n + 2))),
           stdSimplex.continuous_map _⟩) p := by
+  intro p
+  -- Set up: q is the inserted-zero point in Fin (n+3).
+  set j_lo : Fin (n + 2) := ⟨j.val, by omega⟩ with hj_lo
+  set i_lo : Fin (n + 1) := ⟨i.val - 1, by omega⟩ with hi_lo
+  set q : stdSimplex ℝ (Fin (n + 3)) := stdSimplex.map (Fin.succAbove j) p with hq
+  -- Key: q.val j = 0 (the inserted zero).
+  have hq_j : q.val j = 0 := stdSimplex_map_succAbove_coord_eq_zero (n + 1) j p
+  -- Time coordinates agree.
+  have htime : staircaseTimeCoord (n + 1) i q.val =
+      staircaseTimeCoord n i_lo p.val := by
+    simp only [staircaseTimeCoord]
+    -- Convert filter sums to ite sums for easier manipulation.
+    rw [Finset.sum_filter, Finset.sum_filter]
+    -- LHS: ∑ over j' : Fin(n+3), if i.val < j'.val then q.val j' else 0
+    -- Re-index using succAbove j: contributions split as j' = j vs j' = succAbove j m.
+    rw [Fin.sum_univ_succAbove (fun j' : Fin (n + 3) =>
+        if i.val < j'.val then q.val j' else 0) j]
+    -- The j-contribution: q.val j = 0, and j.val < i.val, so the if-condition fails.
+    have h_j_no : ¬ (i.val < j.val) := by omega
+    rw [if_neg h_j_no, zero_add]
+    -- Now: ∑ m : Fin(n+2), if i.val < (succAbove j m).val then q.val (succAbove j m) else 0
+    refine Finset.sum_congr rfl (fun m _ => ?_)
+    -- Helper: q.val (succAbove j m) = p.val m, by FunOnFinite computation.
+    have hq_succAbove : ∀ m' : Fin (n + 2), q.val (Fin.succAbove j m') = p.val m' := by
+      intro m'
+      rw [hq]
+      change (FunOnFinite.linearMap ℝ ℝ (Fin.succAbove j) p.val) (Fin.succAbove j m')
+        = p.val m'
+      rw [FunOnFinite.linearMap_apply_apply]
+      rw [show Finset.univ.filter
+            (fun k : Fin (n + 2) => Fin.succAbove j k = Fin.succAbove j m') = {m'} by
+          ext k
+          simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+          exact ⟨fun h => Fin.succAbove_right_injective h, fun h => by rw [h]⟩]
+      simp
+    by_cases hm : m.val < j.val
+    · -- m.val < j.val ≤ i.val - 1 < i.val. succAbove j m = m.castSucc.
+      have hsa : Fin.succAbove j m = m.castSucc := by
+        rw [Fin.succAbove, if_pos]
+        exact Fin.mk_lt_mk.mpr hm
+      have hcond : (i.val < m.castSucc.val) ↔ (i_lo.val < m.val) := by
+        simp [Fin.val_castSucc, hi_lo]; omega
+      rw [hsa]
+      by_cases hilo : i_lo.val < m.val
+      · rw [if_pos (hcond.mpr hilo), if_pos hilo, ← hsa, hq_succAbove]
+      · rw [if_neg (fun h => hilo (hcond.mp h)), if_neg hilo]
+    · -- m.val ≥ j.val. succAbove j m = m.succ.
+      have hge : j.val ≤ m.val := Nat.le_of_not_lt hm
+      have hsa : Fin.succAbove j m = m.succ := by
+        rw [Fin.succAbove, if_neg]
+        exact Fin.mk_lt_mk.not.mpr (Nat.not_lt.mpr hge)
+      have hcond : (i.val < m.succ.val) ↔ (i_lo.val < m.val) := by
+        simp [Fin.val_succ, hi_lo]; omega
+      rw [hsa]
+      by_cases hilo : i_lo.val < m.val
+      · rw [if_pos (hcond.mpr hilo), if_pos hilo, ← hsa, hq_succAbove]
+      · rw [if_neg (fun h => hilo (hcond.mp h)), if_neg hilo]
+  -- First coordinates agree (LHS = stdSimplex.map (succAbove j) RHS-firstCoord).
+  -- We show this via funext and case analysis on k.val vs i.val and j.val.
   sorry
 
 /-- **Upper side-face identity.** For prism degree `n + 1`, staircase
