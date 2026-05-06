@@ -508,4 +508,105 @@ theorem prismSimplex_bottom_face
              ContinuousMap.prodMap_apply, htime_eq, hfirst_eq]
   exact H.apply_zero (s p)
 
+/-! ### Interior face identities for the prism simplex
+
+The chain homotopy equation `∂P + P∂ = g_* - f_*` requires three types of face identities:
+1. **Top face** (`prismSimplex_top_face`): face 0 of P_0 = g ∘ s. ✓
+2. **Bottom face** (`prismSimplex_bottom_face`): face n+1 of P_n = f ∘ s. ✓
+3. **Diagonal face** (`prismSimplex_diagonal_face`): face i+1 of P_i = face i+1 of P_{i+1}.
+   Adjacent staircase simplices share a common face, giving the boundary cancellation.
+4. **Left side faces** and **right side faces**: face j of P_i relates to P applied to a face of s.
+
+This section proves the diagonal face identity (the critical cancellation).  -/
+
+/-- **Diagonal face (cancellation).** For `ι : Fin n`, the (ι+1)-th face of the
+ι-th prism simplex equals the (ι+1)-th face of the (ι+1)-th prism simplex.
+
+The two adjacent staircase simplices `P_ι` and `P_{ι+1}` share the face at position ι+1
+(the shared internal face of the prism subdivision). The key is that inserting a zero at
+position ι+1 makes both the time and first coordinates agree for both staircase indices. -/
+theorem prismSimplex_diagonal_face
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
+    (s : C(stdSimplex ℝ (Fin (n + 1)), X))
+    (ι : Fin n) :
+    ∀ p : stdSimplex ℝ (Fin (n + 1)),
+    prismSimplex n ⟨ι.val, Nat.lt_trans ι.isLt (Nat.lt_succ_self n)⟩ H s
+        (stdSimplex.map (Fin.succAbove (⟨ι.val + 1, by omega⟩ : Fin (n + 2))) p) =
+    prismSimplex n ⟨ι.val + 1, by omega⟩ H s
+        (stdSimplex.map (Fin.succAbove (⟨ι.val + 1, by omega⟩ : Fin (n + 2))) p) := by
+  intro p
+  set i₀ := (⟨ι.val, Nat.lt_trans ι.isLt (Nat.lt_succ_self n)⟩ : Fin (n + 1)) with hi₀
+  set i₁ := (⟨ι.val + 1, by omega⟩ : Fin (n + 1)) with hi₁
+  set face_idx := (⟨ι.val + 1, by omega⟩ : Fin (n + 2)) with hface_idx
+  set q := stdSimplex.map (Fin.succAbove face_idx) p with hqeq
+  -- The (ι+1)-th coordinate of q is 0 (the inserted zero)
+  have hzero : q.val face_idx = 0 :=
+    stdSimplex_map_succAbove_coord_eq_zero n face_idx p
+  -- Time coordinates agree: ∑_{j.val > ι} = ∑_{j.val > ι+1} since q.val ⟨ι+1,_⟩ = 0
+  have htime : staircaseTimeCoord n i₀ q.val = staircaseTimeCoord n i₁ q.val := by
+    simp only [staircaseTimeCoord, hi₀, hi₁]
+    have heq : Finset.univ.filter (fun j : Fin (n + 2) => ι.val < j.val) =
+               insert face_idx (Finset.univ.filter (fun j : Fin (n + 2) => ι.val + 1 < j.val)) := by
+      ext j
+      simp only [Finset.mem_insert, Finset.mem_filter, Finset.mem_univ, true_and]
+      constructor
+      · intro h
+        by_cases hj : j.val = ι.val + 1
+        · left; exact Fin.ext hj
+        · right; omega
+      · rintro (rfl | h)
+        · simp [hface_idx]
+        · omega
+    have hnotmem : face_idx ∉ Finset.univ.filter (fun j : Fin (n + 2) => ι.val + 1 < j.val) := by
+      simp only [Finset.mem_filter, Finset.mem_univ, true_and, hface_idx]
+      omega
+    rw [heq, Finset.sum_insert hnotmem, hzero, zero_add]
+  -- First coordinates agree in all cases
+  have hfirst : ∀ k : Fin (n + 1),
+      staircaseFirstCoord n i₀ q.val k = staircaseFirstCoord n i₁ q.val k := by
+    intro k
+    have hi₀val : i₀.val = ι.val := rfl
+    have hi₁val : i₁.val = ι.val + 1 := rfl
+    have hfv : face_idx.val = ι.val + 1 := rfl
+    simp only [staircaseFirstCoord]
+    by_cases hk1 : k.val < i₀.val
+    · simp only [if_pos hk1, if_pos (show k.val < i₁.val from by omega)]
+    · by_cases hk2 : k.val = i₀.val
+      · have hk_lt_i₁ : k.val < i₁.val := by omega
+        simp only [if_neg hk1, if_pos hk2, if_pos hk_lt_i₁]
+        have hi0succ : i₀.succ = face_idx := by
+          apply Fin.ext; have h : i₀.succ.val = i₀.val + 1 := rfl; omega
+        have hki₀ : k = i₀ := Fin.ext (by omega)
+        rw [hi0succ, hzero, add_zero, ← hki₀]
+      · by_cases hk3 : k.val = i₁.val
+        · have hk_nlt_i₁ : ¬k.val < i₁.val := by omega
+          simp only [if_neg hk1, if_neg hk2, if_neg hk_nlt_i₁, if_pos hk3]
+          have hi1cs : i₁.castSucc = face_idx := by
+            apply Fin.ext; have h : i₁.castSucc.val = i₁.val := rfl; omega
+          have hki₁ : k = i₁ := Fin.ext (by omega)
+          rw [hi1cs, hzero, zero_add, ← hki₁]
+        · have hk_nlt_i₁ : ¬k.val < i₁.val := by omega
+          simp only [if_neg hk1, if_neg hk2, if_neg hk_nlt_i₁, if_neg hk3]
+  -- Pack the coordinate equalities into a staircase map equality
+  have htime_eq : (⟨staircaseTimeCoord n i₀ q.val,
+      staircaseTimeCoord_mem_Icc n i₀ q.property⟩ : Set.Icc (0 : ℝ) 1) =
+      ⟨staircaseTimeCoord n i₁ q.val,
+      staircaseTimeCoord_mem_Icc n i₁ q.property⟩ := Subtype.ext htime
+  have hfirst_eq : (⟨staircaseFirstCoord n i₀ q.val,
+      staircaseFirstCoord_mem_stdSimplex n i₀ q.property⟩ :
+      stdSimplex ℝ (Fin (n + 1))) =
+      ⟨staircaseFirstCoord n i₁ q.val,
+      staircaseFirstCoord_mem_stdSimplex n i₁ q.property⟩ := Subtype.ext (funext hfirst)
+  -- The staircase maps agree at q: both first and time components match
+  have hstair : (staircaseMap n i₀ : C(stdSimplex ℝ (Fin (n + 2)),
+      stdSimplex ℝ (Fin (n + 1)) × Set.Icc (0 : ℝ) 1)) q =
+      (staircaseMap n i₁ : C(stdSimplex ℝ (Fin (n + 2)),
+      stdSimplex ℝ (Fin (n + 1)) × Set.Icc (0 : ℝ) 1)) q := by
+    simp only [staircaseMap, ContinuousMap.coe_mk]
+    exact Prod.ext hfirst_eq htime_eq
+  -- Both prism simplices compose through the same staircase map value at q:
+  -- unfold the full composition and substitute the coordinate equalities
+  simp only [prismSimplex, ContinuousMap.comp_apply, staircaseMap, ContinuousMap.coe_mk,
+             ContinuousMap.prodMap_apply, htime_eq, hfirst_eq]
+
 end JacobianChallenge.Periods
