@@ -145,34 +145,28 @@ theorem chartedSection_localRepr_continuousOn
   sorry
 
 /-- **Continuity of the chart-inverse `mfderiv`.** For `c` in the
-maximal atlas of `X` and the source manifold being the model space
-`E` (with self-model `𝓘(ℂ, E)`), the map
-`e ↦ mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) c.symm e` is continuous on `c.target`
-viewed as `E →L[ℂ] E`-valued.
+maximal atlas of `X` (a `C^∞` complex manifold modeled on `E` with
+stable `chartAt`), `e ↦ mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) c.symm e` is continuous
+on `c.target` as an `(E →L[ℂ] E)`-valued function.
 
 ## Strategy
 
 For `e₀ ∈ c.target`, set `p₀ := c.symm e₀` and `c' := chartAt E p₀`.
-The chart-change `c' ∘ c.symm` is smooth on a neighborhood of `e₀`.
-The chain rule gives:
+By the chain rule applied to `c' ∘ c.symm` on a neighborhood of `e₀`:
 ```
 fderiv ℂ (c' ∘ c.symm) e = mfderiv c' (c.symm e) ∘L mfderiv c.symm e
 ```
-The first factor is the identity at `e = e₀` (chart's mfderiv at its
-base point), and operator-continuous on a neighborhood (via the
-bundle trivialization continuity for finite-dim fibers). Inverting,
-we extract continuity of `mfderiv c.symm`.
-
-The full proof requires:
-* `ContMDiffWithinAt.mfderivWithin_const` for smoothness in
-  `inTangentCoordinates` form.
-* A bridge from `inTangentCoordinates` back to `mfderiv` using the
-  trivialization's invertibility on its base set.
-* For finite-dim `E`, `Trivialization.continuousOn` plus joint-to-
-  operator continuity of bilinear maps with compact unit ball.
-* `NormedRing.inverse_continuousAt` for the inverse continuity. -/
+Under `[StableChartAt E X]`, `mfderiv c' (c.symm e) = id` for `c.symm e
+∈ c'.source` (i.e., for `e` in a neighborhood `V` of `e₀`). So:
+```
+mfderiv c.symm e = fderiv ℂ (c' ∘ c.symm) e
+```
+on `V`. The right-hand side is operator-continuous on `V` by
+`ContDiffOn.continuousOn_fderiv_of_isOpen` (since `c' ∘ c.symm` is
+`C^∞` between normed spaces). Hence `mfderiv c.symm` is operator-
+continuous on `V`, and in particular at `e₀` within `c.target`. -/
 theorem mfderiv_chartSymm_continuousOn
-    [FiniteDimensional ℂ E]
+    [StableChartAt E X]
     (c : OpenPartialHomeomorph X E)
     (hc : c ∈ IsManifold.maximalAtlas (modelWithCornersSelf ℂ E)
       (⊤ : WithTop ℕ∞) X) :
@@ -189,14 +183,7 @@ theorem mfderiv_chartSymm_continuousOn
       show E →L[ℂ] E from
         mfderivWithin (modelWithCornersSelf ℂ E)
           (modelWithCornersSelf ℂ E) c.symm c.target e) ?_ ?_
-  · -- Continuity of mfderivWithin via `continuousOn_clm_apply`
-    -- (Mathlib's `Mathlib/Analysis/Normed/Module/FiniteDimension.lean`):
-    -- For finite-dim `E`, operator continuity of an `E →L[ℂ] E`-valued
-    -- function on a set is equivalent to pointwise continuity (for
-    -- each fixed `v ∈ E`).
-    rw [continuousOn_clm_apply]
-    intro v
-    intro e₀ he₀
+  · intro e₀ he₀
     -- Setup: p₀ := c.symm e₀, c' := chartAt E p₀.
     set p₀ : X := c.symm e₀ with hp₀_def
     set c' : OpenPartialHomeomorph X E := chartAt E p₀ with hc'_def
@@ -206,7 +193,8 @@ theorem mfderiv_chartSymm_continuousOn
     have hV_e₀ : e₀ ∈ V := ⟨he₀, hp₀_source⟩
     have hV_open : IsOpen V :=
       c.continuousOn_symm.isOpen_inter_preimage c.open_target c'.open_source
-    -- Step 1: c' ∘ c.symm is smooth on V.
+    have hV_mem_nhds : V ∈ 𝓝 e₀ := hV_open.mem_nhds hV_e₀
+    -- Step 1: c' ∘ c.symm is C^∞ on V (composition of charts in maximalAtlas).
     have hc'_smooth : ContMDiffOn (modelWithCornersSelf ℂ E)
         (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) c' c'.source :=
       contMDiffOn_chart
@@ -215,25 +203,15 @@ theorem mfderiv_chartSymm_continuousOn
         (fun e => c' (c.symm e)) V :=
       hc'_smooth.comp (hsmoothOn.mono Set.inter_subset_left)
         (fun e he => he.2)
-    -- Step 2: Reduce ContMDiffOn to ContDiffOn (both source and target are model spaces).
     have hg_contDiff : ContDiffOn ℂ (⊤ : WithTop ℕ∞)
         (fun e => c' (c.symm e)) V :=
       contMDiffOn_iff_contDiffOn.mp hg_smooth
-    -- Step 3: fderiv of g := c' ∘ c.symm is operator-continuous on V.
+    -- Step 2: fderiv of g := c' ∘ c.symm is operator-continuous on V.
     have hg_fderiv_cont : ContinuousOn
         (fderiv ℂ (fun e => c' (c.symm e))) V :=
       hg_contDiff.continuousOn_fderiv_of_isOpen hV_open le_top
-    -- Step 6 (proven first since needed for inversion): mfderiv c' p₀ = id.
-    have hmfderiv_c'_p₀_eq_id :
-        mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E) c' p₀ =
-        ContinuousLinearMap.id ℂ E := by
-      rw [mfderiv_chartAt_eq_tangentCoordChange (I := modelWithCornersSelf ℂ E)
-        (M := X) (y := p₀) (x := p₀) hp₀_source]
-      ext w
-      apply tangentCoordChange_self
-      exact mem_extChartAt_source p₀
-    -- Step 8' (chain rule, applies on V via mfderiv_comp + mfderiv_eq_fderiv):
-    -- For e ∈ V: fderiv ℂ (c' ∘ c.symm) e = mfderiv c' (c.symm e) ∘L mfderiv c.symm e
+    -- Step 3 (chain rule via mfderiv_comp + mfderiv_eq_fderiv): on V,
+    -- fderiv ℂ (c' ∘ c.symm) e = mfderiv c' (c.symm e) ∘L mfderiv c.symm e
     have hchain : ∀ e ∈ V,
         fderiv ℂ (fun e' => c' (c.symm e')) e =
         (mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E) c' (c.symm e)).comp
@@ -241,87 +219,37 @@ theorem mfderiv_chartSymm_continuousOn
       intro e he
       rw [← mfderiv_eq_fderiv]
       apply mfderiv_comp e
-      · -- c' mdifferentiableAt c.symm e
-        exact (mdifferentiable_chart p₀).1.mdifferentiableAt
+      · exact (mdifferentiable_chart p₀).1.mdifferentiableAt
           ((chartAt E p₀).open_source.mem_nhds he.2)
-      · -- c.symm mdifferentiableAt e
-        have h1 := hsmoothOn e he.1
+      · have h1 := hsmoothOn e he.1
         have h2 := h1.mdifferentiableWithinAt (by decide : (⊤ : WithTop ℕ∞) ≠ 0)
         exact h2.mdifferentiableAt (c.open_target.mem_nhds he.1)
-    -- Steps 4-5: operator continuity of e ↦ mfderiv c' (c.symm e) on V.
-    -- Uses the project-local helper `mfderiv_chartAt_continuousOn_of_finiteDim`.
-    have hmfderiv_c'_cont : ContinuousOn (fun e =>
-        show E →L[ℂ] E from
-          mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E)
-            c' (c.symm e)) V := by
-      apply (mfderiv_chartAt_continuousOn_of_finiteDim p₀).comp
-        (c.continuousOn_symm.mono Set.inter_subset_left)
-      intros e he
-      exact he.2
-    -- Step 7: e ↦ (mfderiv c' (c.symm e)).inverse continuous at e₀.
-    -- Define T : c.target → (E →L[ℂ] E) explicitly to avoid type issues.
-    let T : E → (E →L[ℂ] E) := fun e =>
-      show E →L[ℂ] E from
-        mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E)
-          c' (c.symm e)
-    have hT_cont : ContinuousOn T V := hmfderiv_c'_cont
-    have hT_e₀_eq_id : T e₀ = ContinuousLinearMap.id ℂ E := by
-      show mfderiv _ _ c' (c.symm e₀) = ContinuousLinearMap.id ℂ E
-      rw [show c.symm e₀ = p₀ from rfl, hmfderiv_c'_p₀_eq_id]
-    have hT_e₀_inv : (T e₀).IsInvertible := by
-      rw [hT_e₀_eq_id]
-      exact ContinuousLinearMap.isInvertible_equiv
-        (f := ContinuousLinearEquiv.refl ℂ E)
-    have hT_inv_cont : ContinuousAt (fun e => (T e).inverse) e₀ := by
-      haveI : CompleteSpace E := FiniteDimensional.complete ℂ E
-      have hinv_at_T : ContinuousAt
-          (ContinuousLinearMap.inverse : (E →L[ℂ] E) → (E →L[ℂ] E))
-          (T e₀) :=
-        (hT_e₀_inv.contDiffAt_map_inverse (n := (1 : WithTop ℕ∞))).continuousAt
-      exact hinv_at_T.comp <|
-        (hT_cont e₀ hV_e₀).continuousAt (hV_open.mem_nhds hV_e₀)
-    -- Step 8 (final): mfderiv c.symm e v = T(e).inverse (fderiv g e v) for e in V.
-    have hg_fderiv_apply_cont : ContinuousAt
-        (fun e => fderiv ℂ (fun e' => c' (c.symm e')) e v) e₀ :=
-      ((hg_fderiv_cont e₀ hV_e₀).continuousAt
-        (hV_open.mem_nhds hV_e₀)).clm_apply continuousAt_const
-    have h_composition_cont : ContinuousAt
-        (fun e => (T e).inverse (fderiv ℂ (fun e' => c' (c.symm e')) e v)) e₀ :=
-      hT_inv_cont.clm_apply hg_fderiv_apply_cont
-    -- Pointwise equality: for e ∈ V, mfderiv c.symm e v = T(e).inverse (fderiv g e v).
-    have hV_mem_nhds : V ∈ 𝓝 e₀ := hV_open.mem_nhds hV_e₀
-    have heq : ∀ e ∈ V,
-        (show E →L[ℂ] E from
-          mfderivWithin (modelWithCornersSelf ℂ E)
-            (modelWithCornersSelf ℂ E) c.symm c.target e) v =
-        (T e).inverse (fderiv ℂ (fun e' => c' (c.symm e')) e v) := by
+    -- Step 4 (the new key step): under [StableChartAt E X], mfderiv c' (c.symm e) = id
+    -- for e in V. So fderiv ℂ (c' ∘ c.symm) e = mfderiv c.symm e on V.
+    have hsimp : ∀ e ∈ V,
+        fderiv ℂ (fun e' => c' (c.symm e')) e =
+        mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E) c.symm e := by
       intro e he
-      rw [mfderivWithin_of_isOpen c.open_target he.1]
-      have hT_e : (T e).IsInvertible :=
-        ⟨(mdifferentiable_chart p₀).mfderiv he.2, rfl⟩
-      have : (show E →L[ℂ] E from
-          mfderiv (modelWithCornersSelf ℂ E)
-            (modelWithCornersSelf ℂ E) c.symm e) v =
-          (T e).inverse ((T e) ((show E →L[ℂ] E from
-            mfderiv (modelWithCornersSelf ℂ E)
-              (modelWithCornersSelf ℂ E) c.symm e) v)) :=
-        (hT_e.inverse_apply_self _).symm
-      rw [this]
-      congr 1
-      show (T e) ((show E →L[ℂ] E from
-        mfderiv (modelWithCornersSelf ℂ E)
-          (modelWithCornersSelf ℂ E) c.symm e) v) =
-          fderiv ℂ (fun e' => c' (c.symm e')) e v
       rw [hchain e he]
-      rfl
-    have heventually : (fun e =>
-        (show E →L[ℂ] E from
+      have h_id : mfderiv (modelWithCornersSelf ℂ E)
+          (modelWithCornersSelf ℂ E) c' (c.symm e) =
+          ContinuousLinearMap.id ℂ E :=
+        mfderiv_chartAt_eq_id_of_stable
+          (I := modelWithCornersSelf ℂ E) p₀ he.2
+      rw [h_id]
+      exact ContinuousLinearMap.id_comp _
+    -- Step 5: ContinuousWithinAt at e₀ via EventuallyEq with the (continuous) fderiv.
+    have heventually :
+        (fun e => show E →L[ℂ] E from
           mfderivWithin (modelWithCornersSelf ℂ E)
-            (modelWithCornersSelf ℂ E) c.symm c.target e) v) =ᶠ[𝓝 e₀]
-        (fun e =>
-          (T e).inverse (fderiv ℂ (fun e' => c' (c.symm e')) e v)) := by
-      filter_upwards [hV_mem_nhds] with e he using heq e he
-    refine (h_composition_cont.congr heventually.symm).continuousWithinAt
+            (modelWithCornersSelf ℂ E) c.symm c.target e) =ᶠ[𝓝 e₀]
+        (fun e => fderiv ℂ (fun e' => c' (c.symm e')) e) := by
+      filter_upwards [hV_mem_nhds] with e he
+      rw [mfderivWithin_of_isOpen c.open_target he.1, ← hsimp e he]
+    have h_fderiv_cont_at_e₀ :
+        ContinuousAt (fun e => fderiv ℂ (fun e' => c' (c.symm e')) e) e₀ :=
+      (hg_fderiv_cont e₀ hV_e₀).continuousAt hV_mem_nhds
+    exact (h_fderiv_cont_at_e₀.congr heventually.symm).continuousWithinAt
   · intro e he
     exact (mfderivWithin_of_isOpen c.open_target he).symm
 
@@ -330,7 +258,7 @@ theorem mfderiv_chartSymm_continuousOn
 `mfderiv_chartSymm_continuousOn` via the (jointly) continuous
 bilinear `ContinuousLinearMap.comp`. -/
 theorem chartedFormPullback_continuousOn
-    [FiniteDimensional ℂ E]
+    [StableChartAt E X]
     (c : OpenPartialHomeomorph X E)
     (hc : c ∈ IsManifold.maximalAtlas (modelWithCornersSelf ℂ E)
       (⊤ : WithTop ℕ∞) X)
@@ -360,7 +288,7 @@ This unblocks `pathIntegralViaChartCorrect_add` (gated on Packet F
 in `PathIntegralViaCoverRecon.lean`) and downstream segment-
 additivity / refinement lemmas. -/
 theorem chartedFormPullback_curveIntegrable
-    [FiniteDimensional ℂ E]
+    [StableChartAt E X]
     (c : OpenPartialHomeomorph X E)
     (hc : c ∈ IsManifold.maximalAtlas (modelWithCornersSelf ℂ E)
       (⊤ : WithTop ℕ∞) X)
