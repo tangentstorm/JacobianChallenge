@@ -138,6 +138,16 @@ theorem prismChain_hom_zero
   simp only [ComplexShape.down_Rel]
   omega
 
+/-- Unfolding lemma: `prismChain_hom H i (i+1)` equals the prism operator
+at degree `i` (no cast needed since the True branch reduces). -/
+@[simp]
+theorem prismChain_hom_succ
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i : ℕ) :
+    prismChain_hom H i (i + 1) = prismChain_op H i := by
+  unfold prismChain_hom
+  rw [dif_pos rfl]
+
 /-! ### The boundary identity (residual sorry)
 
 The chain-homotopy condition: for each `i : ℕ`,
@@ -152,26 +162,124 @@ This is the categorical packaging of the prism boundary equation
 * `prismSimplex_side_face`    — *side-face identity*, **still missing**
                                  in `PrismConstruction.lean`. -/
 
-/-- The `Homotopy.comm` field — the boundary identity. **Residual sorry.**
+/-! ### Boundary identity at degree 0 (no side-faces needed)
+
+At degree 0 the boundary identity simplifies because:
+* `dNext 0 hom = 0` (no `c.next 0` in `down ℕ`),
+* `prevD 0 hom = prismChain_op H 0 ≫ d_Y 1 0`,
+* The single staircase index `i = 0 : Fin 1` has only top/bottom faces,
+  no interior side-faces.
+
+So we can prove the comm condition at i = 0 using only the existing
+`prismSimplex_top_face` and `prismSimplex_bottom_face`. -/
+
+/-- Boundary identity at degree 0: a self-contained warmup case. -/
+theorem prismChain_hom_comm_zero
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) :
+    (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f 0 =
+      dNext 0 (prismChain_hom H) + prevD 0 (prismChain_hom H) +
+      (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom g)).f 0 := by
+  -- Apply per-basis extensionality to reduce to s : SingSimplex 0 X.
+  apply singChain_hom_ext
+  intro s
+  -- LHS becomes singChain_basis (f.comp s) by singChain_map_basis.
+  rw [singChain_map_basis]
+  -- RHS: distribute composition over sum, simplify dNext 0 = 0,
+  -- evaluate prevD 0 using prismChain_hom_succ, and use singChain_d_basis
+  -- for the differential.
+  rw [Preadditive.comp_add, Preadditive.comp_add]
+  -- dNext 0 hom = 0 because c.next 0 doesn't relate (down ℕ has no Rel 0 j).
+  have hdN : dNext 0 (prismChain_hom H) = 0 := by
+    rw [dNext_nat]
+    show (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).d 0 (0 - 1) ≫
+        prismChain_hom H (0 - 1) 0 = 0
+    rw [show (0 : ℕ) - 1 = 0 from rfl]
+    rw [HomologicalComplex.shape _ 0 0 (by simp [ComplexShape.down_Rel])]
+    simp
+  rw [hdN]
+  simp only [Limits.comp_zero, zero_add]
+  -- prevD 0 hom = hom 0 (c.prev 0) ≫ d_Y (c.prev 0) 0
+  --             = hom 0 1 ≫ d_Y 1 0 = prismChain_op H 0 ≫ d_Y 1 0.
+  rw [show prevD 0 (prismChain_hom H)
+        = prismChain_hom H 0 1 ≫
+          (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+              (ModuleCat.of ℤ ℤ)).obj (TopCat.of Y)).d 1 0 by
+    exact prevD_eq _ (j := 0) (j' := 1) (by simp [ComplexShape.down_Rel])]
+  rw [prismChain_hom_succ]
+  rw [singChain_map_basis]
+  -- Goal now: basis(f ∘ s) = singChain_basis s ≫ (prismChain_op H 0 ≫ d 1 0) + basis(g ∘ s)
+  -- Reassociate then simplify singChain_basis s ≫ prismChain_op H 0
+  rw [← Category.assoc]
+  rw [show singChain_basis s ≫ prismChain_op H 0
+        = ∑ i : Fin 1, prismChain_summand H 0 i s from
+      prismChain_op_basis H 0 s]
+  -- Sum over Fin 1: only one term, i = ⟨0, _⟩.
+  rw [Fin.sum_univ_one]
+  -- Goal: basis(f∘s) = (prismChain_summand H 0 ⟨0,_⟩ s ≫ d 1 0) + basis(g∘s)
+  -- prismChain_summand H 0 ⟨0,_⟩ s = (-1)^1 • basis(prismSimplex 0 ⟨0,_⟩ H s) = -basis(...)
+  unfold prismChain_summand
+  -- (-1)^(0+1) = -1; reduce the smul-of-comp.
+  simp only [Fin.val_zero, zero_add, pow_one, neg_smul, one_smul,
+    Preadditive.neg_comp]
+  -- Apply singChain_d_basis
+  rw [singChain_d_basis]
+  -- Sum over Fin 2: j = 0 (top face) and j = 1 (bottom face)
+  rw [Fin.sum_univ_two]
+  -- j = 0 face: prismSimplex_top_face says prismSimplex 0 ⟨0,_⟩ H s ∘ δ_0 = g ∘ s
+  -- j = 1 face: prismSimplex_bottom_face says prismSimplex 0 ⟨0,_⟩ H s ∘ δ_1 = f ∘ s
+  --   (since for n = 0, ⟨n, _⟩ = ⟨0, _⟩ and the bottom face index is n + 1 = 1).
+  -- htop : prismSimplex 0 0 H s ∘ stdSimplexFaceInclusion 0 0 = g.comp s
+  -- This follows from prismSimplex_top_face (i = 0, face index 0 = δ₀).
+  have htop : (prismSimplex 0 (0 : Fin 1) H s).comp
+        (stdSimplexFaceInclusion 0 0) = g.comp s := by
+    ext p
+    exact prismSimplex_top_face 0 H s p
+  -- hbot : prismSimplex 0 0 H s ∘ stdSimplexFaceInclusion 0 1 = f.comp s
+  -- This follows from prismSimplex_bottom_face (i = n = 0, face index n + 1 = 1).
+  have hbot : (prismSimplex 0 (0 : Fin 1) H s).comp
+        (stdSimplexFaceInclusion 0 1) = f.comp s := by
+    ext p
+    -- bottom face uses Fin.succAbove (Fin.last (n+1)). For n = 0, Fin.last 1 = 1.
+    exact prismSimplex_bottom_face 0 H s p
+  rw [htop, hbot]
+  -- Goal: basis (f ∘ s) = -((-1)^0 • basis(g∘s) + (-1)^1 • basis(f∘s)) + basis(g∘s)
+  --                     = -(basis(g∘s) - basis(f∘s)) + basis(g∘s)
+  --                     = -basis(g∘s) + basis(f∘s) + basis(g∘s) = basis(f∘s).
+  simp only [Fin.val_zero, pow_zero, one_smul, Fin.val_one, pow_one,
+    neg_smul, neg_add_rev, neg_neg]
+  abel
+
+/-- The `Homotopy.comm` field — the boundary identity. **Residual sorry**
+for `i ≥ 1`.
 
 This is the chain-level expression of the prism boundary equation
-`∂P + P∂ = g_* − f_*`. To discharge:
+`∂P + P∂ = f_* − g_*` (matching Mathlib's homotopy convention).
 
-1. Reduce to a per-basis-element equation by composing with
-   `singChain_basis s` for arbitrary `s : SingSimplex i X`.
-2. Unfold `dNext i (prismChain_hom H)` using `dNext_eq` with
-   `c.Rel i (i+1)` — gives `d_X (i+1) i ≫ prismChain_op H i`.
-3. Unfold `prevD i (prismChain_hom H)` using `prevD_eq` — gives
-   `prismChain_op H (i-1) ≫ d_Y i (i-1)` (or zero at `i = 0`).
-4. Unfold the chain differential `d` to alternating sum of face maps
-   on the basis (the key `singChain_d_basis` lemma — Phase 2 of the
-   plan, **TODO**).
-5. Apply `prismSimplex_top_face`, `_bottom_face`, `_diagonal_face`,
-   `_side_face` (the last is missing — Phase 4 of the plan).
-6. Reassemble using `Finset.sum` rewrites; the alternating signs
-   produce the desired cancellations.
+For `i = 0` it is fully proven (`prismChain_hom_comm_zero`) using only
+top/bottom face identities. For `i ≥ 1`, the residual obligation needs
+the side-face identity (Phase 4) and the alternating-sign cancellation
+bookkeeping (Phase 5).
 
-This is a substantial calculation; see Hatcher pp. 112–113. -/
+To discharge for general `i`:
+
+1. Reduce to a per-basis-element equation by `singChain_hom_ext`.
+2. Unfold `dNext i (prismChain_hom H)` via `dNext_nat` —
+   gives `d_X i (i-1) ≫ prismChain_op H (i-1)`.
+3. Unfold `prevD i (prismChain_hom H)` via `prevD_eq` —
+   gives `prismChain_op H i ≫ d_Y (i+1) i`.
+4. Apply `singChain_d_basis` to expand differentials to alternating
+   sums of face precompositions.
+5. Apply `prismChain_op_basis` to expand prism operator to sum over
+   staircase indices.
+6. Apply `prismSimplex_top_face`, `_bottom_face`, `_diagonal_face`,
+   and the still-missing `_side_face` (Phase 4) identities to identify
+   each face combination.
+7. Reassemble using `Finset.sum` rewrites; the alternating signs and
+   diagonal-face cancellations produce the desired identity. -/
 theorem prismChain_hom_comm
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i : ℕ) :
@@ -180,7 +288,9 @@ theorem prismChain_hom_comm
       dNext i (prismChain_hom H) + prevD i (prismChain_hom H) +
       (((singularChainComplexFunctor (ModuleCat ℤ)).obj
         (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom g)).f i := by
-  sorry
+  cases i with
+  | zero => exact prismChain_hom_comm_zero H
+  | succ i' => sorry
 
 /-! ### Assembly into a `Homotopy` -/
 
