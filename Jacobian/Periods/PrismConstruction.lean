@@ -364,4 +364,148 @@ theorem staircaseTimeCoord_i_last_face_last_eq_zero
     omega
   rw [hjlast, hflast]
 
+/-! ### Connecting coordinate lemmas to the prism simplex
+
+The face map `stdSimplex.map (Fin.succAbove j)` sends a point of `stdSimplex ℝ (Fin(n+1))`
+to a point of `stdSimplex ℝ (Fin(n+2))` with coordinate `j` equal to 0.
+These are the key lemmas connecting the coordinate computations to the `ContinuousMap`-level
+prism simplex. -/
+
+/-- The j-th coordinate of `stdSimplex.map (Fin.succAbove j) p` is 0.
+The image of `Fin.succAbove j` misses the value `j`, so the j-th weight is 0. -/
+theorem stdSimplex_map_succAbove_coord_eq_zero (j : Fin (n + 2))
+    (p : stdSimplex ℝ (Fin (n + 1))) :
+    (stdSimplex.map (Fin.succAbove j) p).val j = 0 := by
+  change (FunOnFinite.linearMap ℝ ℝ (Fin.succAbove j) p.val) j = 0
+  rw [FunOnFinite.linearMap_apply_apply]
+  apply Finset.sum_eq_zero
+  intro k hk
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hk
+  exact absurd hk (Fin.succAbove_ne j k)
+
+/-- The `m.succ`-th coordinate of `stdSimplex.map Fin.succ p` equals `p.val m`.
+Key ingredient for the top-face identity: `αᵢ(δ₀(p))` has first-coord `p`. -/
+theorem stdSimplex_map_succ_apply (p : stdSimplex ℝ (Fin (n + 1))) (m : Fin (n + 1)) :
+    (stdSimplex.map Fin.succ p).val m.succ = p.val m := by
+  change (FunOnFinite.linearMap ℝ ℝ Fin.succ p.val) m.succ = p.val m
+  rw [FunOnFinite.linearMap_apply_apply]
+  have hfilt : Finset.univ.filter (fun k : Fin (n + 1) => Fin.succ k = m.succ) = {m} := by
+    ext k; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    exact ⟨fun h => Fin.succ_injective _ h, fun h => by rw [h]⟩
+  rw [hfilt, Finset.sum_singleton]
+
+/-- The `m.castSucc`-th coordinate of `stdSimplex.map Fin.castSucc p` equals `p.val m`.
+Key ingredient for the bottom-face identity. -/
+theorem stdSimplex_map_castSucc_apply (p : stdSimplex ℝ (Fin (n + 1))) (m : Fin (n + 1)) :
+    (stdSimplex.map Fin.castSucc p).val m.castSucc = p.val m := by
+  change (FunOnFinite.linearMap ℝ ℝ Fin.castSucc p.val) m.castSucc = p.val m
+  rw [FunOnFinite.linearMap_apply_apply]
+  have hfilt : Finset.univ.filter (fun k : Fin (n + 1) => Fin.castSucc k = m.castSucc) = {m} := by
+    ext k; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    exact ⟨fun h => Fin.castSucc_injective _ h, fun h => by rw [h]⟩
+  rw [hfilt, Finset.sum_singleton]
+
+/-- **Top face (i=0, δ₀).** For any `p : stdSimplex ℝ (Fin(n+1))`, the 0-th prism simplex
+evaluated at the 0-th face inclusion of `p` equals `g(s p)`.
+Proof route: time coord = 1 (since 0-th coord of δ₀(p) is 0, and sum of rest = 1),
+so H evaluates at 1 giving g; first coord = p (identity) so s evaluates at s p. -/
+theorem prismSimplex_top_face
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
+    (s : C(stdSimplex ℝ (Fin (n + 1)), X)) :
+    ∀ p : stdSimplex ℝ (Fin (n + 1)),
+    prismSimplex n ⟨0, Nat.zero_lt_succ n⟩ H s
+        (stdSimplex.map (Fin.succAbove ⟨0, Nat.zero_lt_succ (n + 1)⟩) p) =
+      g (s p) := by
+  intro p
+  set q := stdSimplex.map (Fin.succAbove (⟨0, Nat.zero_lt_succ (n + 1)⟩ : Fin (n + 2))) p
+  -- Use Fin.succAbove_zero to simplify: Fin.succAbove 0 = Fin.succ
+  have hqeq : q = stdSimplex.map Fin.succ p := by simp only [q]; congr 1
+  -- Time coordinate: q.val ⟨0,_⟩ = 0, so ∑_{j>0} q.val j = ∑_j q.val j = 1
+  have htime : staircaseTimeCoord n ⟨0, Nat.zero_lt_succ n⟩ q.val = 1 :=
+    staircaseTimeCoord_i_zero_face_zero_eq_one n q.property
+      (stdSimplex_map_succAbove_coord_eq_zero n ⟨0, Nat.zero_lt_succ (n + 1)⟩ p)
+  -- First coordinate: staircaseFirstCoord n ⟨0,_⟩ q.val = p.val
+  have hfirst : ∀ k : Fin (n + 1), staircaseFirstCoord n ⟨0, Nat.zero_lt_succ n⟩ q.val k = p.val k := by
+    intro k
+    simp only [staircaseFirstCoord, Nat.not_lt_zero, ite_false]
+    by_cases hk0 : k.val = 0
+    · rw [if_pos hk0, hqeq]
+      -- i = ⟨0,_⟩, so castSucc = 0, succ = ⟨1,_⟩
+      have hcs : (⟨0, Nat.zero_lt_succ n⟩ : Fin (n + 1)).castSucc = (0 : Fin (n + 2)) := rfl
+      have hsc : (⟨0, Nat.zero_lt_succ n⟩ : Fin (n + 1)).succ = ⟨1, by omega⟩ := rfl
+      rw [hcs, hsc]
+      rw [show (stdSimplex.map Fin.succ p).val (0 : Fin (n + 2)) = 0 from by
+            rw [← Fin.succAbove_zero]
+            exact stdSimplex_map_succAbove_coord_eq_zero n (0 : Fin (n + 2)) p,
+          zero_add]
+      rw [show (stdSimplex.map Fin.succ p).val ⟨1, by omega⟩ =
+              p.val ⟨0, Nat.zero_lt_succ n⟩ from by
+            have := stdSimplex_map_succ_apply n p ⟨0, Nat.zero_lt_succ n⟩
+            simpa using this]
+      rw [show k = ⟨0, Nat.zero_lt_succ n⟩ from by ext; omega]
+    · rw [if_neg hk0, hqeq]
+      exact stdSimplex_map_succ_apply n p k
+  -- Pack the subtype equalities
+  have htime_eq : (⟨staircaseTimeCoord n ⟨0, Nat.zero_lt_succ n⟩ q.val,
+      staircaseTimeCoord_mem_Icc n ⟨0, Nat.zero_lt_succ n⟩ q.property⟩ : Set.Icc (0 : ℝ) 1) =
+      ⟨1, by norm_num⟩ := Subtype.ext htime
+  have hfirst_eq : (⟨staircaseFirstCoord n ⟨0, Nat.zero_lt_succ n⟩ q.val,
+      staircaseFirstCoord_mem_stdSimplex n ⟨0, Nat.zero_lt_succ n⟩ q.property⟩ :
+      stdSimplex ℝ (Fin (n + 1))) = p := Subtype.ext (funext hfirst)
+  -- Unfold prismSimplex and apply
+  simp only [prismSimplex, ContinuousMap.comp_apply, staircaseMap, ContinuousMap.coe_mk,
+             ContinuousMap.prodMap_apply, htime_eq, hfirst_eq]
+  exact H.apply_one (s p)
+
+/-- **Bottom face (i=n, δ_{n+1}).** For any `p : stdSimplex ℝ (Fin(n+1))`, the n-th prism
+simplex evaluated at the last face inclusion of `p` equals `f(s p)`.
+Proof route: time coord = 0 (last coord of δ_{n+1}(p) is 0), so H evaluates at 0 giving f. -/
+theorem prismSimplex_bottom_face
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
+    (s : C(stdSimplex ℝ (Fin (n + 1)), X)) :
+    ∀ p : stdSimplex ℝ (Fin (n + 1)),
+    prismSimplex n ⟨n, Nat.lt_succ_self n⟩ H s
+        (stdSimplex.map (Fin.succAbove (Fin.last (n + 1))) p) =
+      f (s p) := by
+  intro p
+  set q := stdSimplex.map (Fin.succAbove (Fin.last (n + 1))) p
+  -- Use Fin.succAbove_last to simplify: Fin.succAbove (Fin.last n) = Fin.castSucc
+  have hqeq : q = stdSimplex.map Fin.castSucc p := by simp only [q, Fin.succAbove_last]
+  -- Time coordinate: q.val (Fin.last (n+1)) = 0, so ∑_{j>n} q.val j = 0
+  have htime : staircaseTimeCoord n ⟨n, Nat.lt_succ_self n⟩ q.val = 0 := by
+    apply staircaseTimeCoord_i_last_face_last_eq_zero
+    rw [hqeq]
+    have h := stdSimplex_map_succAbove_coord_eq_zero n (Fin.last (n + 1)) p
+    rwa [Fin.succAbove_last] at h
+  -- First coordinate: staircaseFirstCoord n ⟨n,_⟩ q.val = p.val
+  have hfirst : ∀ k : Fin (n + 1), staircaseFirstCoord n ⟨n, Nat.lt_succ_self n⟩ q.val k = p.val k := by
+    intro k
+    rw [hqeq]
+    simp only [staircaseFirstCoord]
+    by_cases hk : k.val < n
+    · -- k < n: returns (map castSucc p).val k.castSucc = p.val k
+      simp only [if_pos hk]
+      exact stdSimplex_map_castSucc_apply n p k
+    · have hkn : k.val = n := Nat.le_antisymm (Nat.lt_succ_iff.mp k.isLt) (Nat.le_of_not_lt hk)
+      have hkn_eq : k = ⟨n, Nat.lt_succ_self n⟩ := Fin.ext hkn
+      simp only [if_neg hk, if_pos hkn]
+      -- goal: (map castSucc p).val ⟨n,_⟩.castSucc + (map castSucc p).val ⟨n,_⟩.succ = p.val k
+      rw [show (⟨n, Nat.lt_succ_self n⟩ : Fin (n + 1)).succ = Fin.last (n + 1) from rfl,
+          show (stdSimplex.map Fin.castSucc p).val (Fin.last (n + 1)) = 0 from by
+            have h := stdSimplex_map_succAbove_coord_eq_zero n (Fin.last (n + 1)) p
+            rwa [Fin.succAbove_last] at h,
+          add_zero, hkn_eq]
+      exact stdSimplex_map_castSucc_apply n p ⟨n, Nat.lt_succ_self n⟩
+  -- Pack the subtype equalities
+  have htime_eq : (⟨staircaseTimeCoord n ⟨n, Nat.lt_succ_self n⟩ q.val,
+      staircaseTimeCoord_mem_Icc n ⟨n, Nat.lt_succ_self n⟩ q.property⟩ : Set.Icc (0 : ℝ) 1) =
+      ⟨0, by norm_num⟩ := Subtype.ext htime
+  have hfirst_eq : (⟨staircaseFirstCoord n ⟨n, Nat.lt_succ_self n⟩ q.val,
+      staircaseFirstCoord_mem_stdSimplex n ⟨n, Nat.lt_succ_self n⟩ q.property⟩ :
+      stdSimplex ℝ (Fin (n + 1))) = p := Subtype.ext (funext hfirst)
+  -- Unfold prismSimplex and apply
+  simp only [prismSimplex, ContinuousMap.comp_apply, staircaseMap, ContinuousMap.coe_mk,
+             ContinuousMap.prodMap_apply, htime_eq, hfirst_eq]
+  exact H.apply_zero (s p)
+
 end JacobianChallenge.Periods
