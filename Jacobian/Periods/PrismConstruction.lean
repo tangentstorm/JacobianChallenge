@@ -951,6 +951,228 @@ theorem prismSimplex_side_face_upper
         (s.comp ⟨stdSimplex.map
             (Fin.succAbove ⟨j.val - 1, by omega⟩),
           stdSimplex.continuous_map _⟩) p := by
-  sorry
+  intro p
+  -- Set up.
+  set j_jm1 : Fin (n + 2) := ⟨j.val - 1, by omega⟩ with hj_jm1
+  set i' : Fin (n + 1) := ⟨i.val, by omega⟩ with hi'
+  set q : stdSimplex ℝ (Fin (n + 3)) := stdSimplex.map (Fin.succAbove j) p with hq
+  have hj_jm1val : j_jm1.val = j.val - 1 := rfl
+  have hi'val : i'.val = i.val := rfl
+  have hq_j : q.val j = 0 := stdSimplex_map_succAbove_coord_eq_zero (n + 1) j p
+  have hq_succAbove : ∀ m' : Fin (n + 2), q.val (Fin.succAbove j m') = p.val m' := by
+    intro m'
+    rw [hq]
+    change (FunOnFinite.linearMap ℝ ℝ (Fin.succAbove j) p.val) (Fin.succAbove j m')
+      = p.val m'
+    rw [FunOnFinite.linearMap_apply_apply]
+    rw [show Finset.univ.filter
+          (fun k : Fin (n + 2) => Fin.succAbove j k = Fin.succAbove j m') = {m'} by
+        ext k
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+        exact ⟨fun h => Fin.succAbove_right_injective h, fun h => by rw [h]⟩]
+    simp
+  -- Time coord.
+  have htime : staircaseTimeCoord (n + 1) i q.val =
+      staircaseTimeCoord n i' p.val := by
+    simp only [staircaseTimeCoord]
+    rw [Finset.sum_filter, Finset.sum_filter]
+    rw [Fin.sum_univ_succAbove (fun j' : Fin (n + 3) =>
+        if i.val < j'.val then q.val j' else 0) j]
+    -- The j-contribution: i.val < j.val, so the if-condition is true, but q.val j = 0.
+    have h_j_yes : i.val < j.val := by omega
+    rw [if_pos h_j_yes, hq_j, zero_add]
+    refine Finset.sum_congr rfl (fun m _ => ?_)
+    by_cases hm : m.val < j.val
+    · -- m.val < j.val. succAbove j m = m.castSucc, val = m.val.
+      have hsa : Fin.succAbove j m = m.castSucc := by
+        rw [Fin.succAbove, if_pos (by simp [Fin.lt_def]; omega)]
+      rw [hsa]
+      by_cases hi'lt : i'.val < m.val
+      · have hLHS : i.val < m.castSucc.val := by simp [Fin.val_castSucc]; rw [hi'val] at hi'lt; exact hi'lt
+        rw [if_pos hLHS, if_pos hi'lt, ← hsa, hq_succAbove]
+      · have hLHS : ¬ (i.val < m.castSucc.val) := by
+          simp [Fin.val_castSucc]; rw [hi'val] at hi'lt; omega
+        rw [if_neg hLHS, if_neg hi'lt]
+    · -- m.val ≥ j.val. succAbove j m = m.succ, val = m.val + 1 > j.val > i.val.
+      push_neg at hm
+      have hsa : Fin.succAbove j m = m.succ := by
+        rw [Fin.succAbove, if_neg (by simp [Fin.lt_def]; omega)]
+      rw [hsa]
+      have h_yes : i.val < m.succ.val := by simp [Fin.val_succ]; omega
+      have h_yes' : i'.val < m.val := by rw [hi'val]; omega
+      rw [if_pos h_yes, if_pos h_yes', ← hsa, hq_succAbove]
+  -- Helper filter lemmas (analogous to hfilter_lt/hfilter_gt for j_jm1).
+  have hfilter_empty : ∀ k : Fin (n + 2), k = j_jm1 →
+      (Finset.univ.filter (fun k_1 : Fin (n + 1) => Fin.succAbove j_jm1 k_1 = k)) = ∅ := by
+    intro k hk
+    apply Finset.eq_empty_of_forall_notMem
+    intro m hm
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hm
+    rw [hk] at hm
+    exact Fin.succAbove_ne j_jm1 m hm
+  have hfilter_lt : ∀ (k : Fin (n + 2)) (_h : k.val < j_jm1.val),
+      (Finset.univ.filter (fun k_1 : Fin (n + 1) => Fin.succAbove j_jm1 k_1 = k))
+      = {⟨k.val, by omega⟩} := by
+    intro k hkj
+    ext m
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    constructor
+    · intro h
+      have hval : (Fin.succAbove j_jm1 m).val = k.val := by rw [h]
+      rw [Fin.succAbove] at hval
+      split_ifs at hval with hmj
+      · simp only [Fin.val_castSucc] at hval
+        apply Fin.ext; show m.val = k.val; exact hval
+      · exfalso
+        rw [Fin.lt_def] at hmj
+        push_neg at hmj
+        simp only [Fin.val_succ, Fin.val_castSucc, hj_jm1val] at hval hmj
+        rw [hj_jm1val] at hkj
+        omega
+    · rintro rfl
+      have hlt : Fin.castSucc (⟨k.val, by omega⟩ : Fin (n + 1)) < j_jm1 := by
+        rw [Fin.lt_def]; simp [Fin.val_castSucc]; exact hkj
+      rw [Fin.succAbove, if_pos hlt]
+      apply Fin.ext; simp [Fin.val_castSucc]
+  have hfilter_gt : ∀ (k : Fin (n + 2)) (_h : j_jm1.val < k.val),
+      (Finset.univ.filter (fun k_1 : Fin (n + 1) => Fin.succAbove j_jm1 k_1 = k))
+      = {⟨k.val - 1, by omega⟩} := by
+    intro k hkj
+    ext m
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton]
+    constructor
+    · intro h
+      have hval : (Fin.succAbove j_jm1 m).val = k.val := by rw [h]
+      rw [Fin.succAbove] at hval
+      split_ifs at hval with hmj
+      · exfalso
+        rw [Fin.lt_def] at hmj
+        simp only [Fin.val_castSucc, hj_jm1val] at hval hmj
+        rw [hj_jm1val] at hkj
+        omega
+      · rw [Fin.lt_def] at hmj
+        push_neg at hmj
+        simp only [Fin.val_succ, Fin.val_castSucc] at hval hmj
+        apply Fin.ext; show m.val = k.val - 1; omega
+    · rintro rfl
+      rw [Fin.succAbove, if_neg (by simp [Fin.lt_def, hj_jm1val]; omega)]
+      apply Fin.ext; simp [Fin.val_succ]; omega
+  -- First coord identity.
+  have hfirst : ∀ k : Fin (n + 2),
+      staircaseFirstCoord (n + 1) i q.val k =
+        (FunOnFinite.linearMap ℝ ℝ (Fin.succAbove j_jm1)
+          (fun m : Fin (n + 1) => staircaseFirstCoord n i' p.val m)) k := by
+    intro k
+    rw [FunOnFinite.linearMap_apply_apply]
+    by_cases hk_eq_jm1 : k = j_jm1
+    · -- k = j_jm1 (so k.val = j.val - 1 = j_jm1.val).
+      -- LHS: k.val = j.val - 1. We have i.val + 1 < j.val, so i.val < j.val - 1 = k.val.
+      -- So k.val > i.val, LHS uses k.succ branch. k.succ.val = j.val, so k.succ = j.
+      rw [hfilter_empty k hk_eq_jm1, Finset.sum_empty]
+      have hk_gt_i : i.val < k.val := by
+        rw [show k.val = j_jm1.val from by rw [hk_eq_jm1]]
+        rw [hj_jm1val]; omega
+      have hk_ne_i : k.val ≠ i.val := by omega
+      simp only [staircaseFirstCoord, if_neg (by omega : ¬ k.val < i.val), if_neg hk_ne_i]
+      have hk_su_eq_j : k.succ = j := by
+        apply Fin.ext
+        simp [Fin.val_succ]
+        rw [show k.val = j_jm1.val from by rw [hk_eq_jm1]]
+        rw [hj_jm1val]; omega
+      rw [hk_su_eq_j, hq_j]
+    · have hne_val : k.val ≠ j_jm1.val := fun h => hk_eq_jm1 (Fin.ext h)
+      by_cases hkj : k.val < j_jm1.val
+      · -- Case 1: k.val < j_jm1.val = j.val - 1. Pre-image ⟨k.val, _⟩.
+        rw [hfilter_lt k hkj, Finset.sum_singleton]
+        -- Sub-cases on k.val vs i.val.
+        by_cases hk_lt_i : k.val < i.val
+        · -- k.val < i.val. LHS = q.val k.castSucc.
+          simp only [staircaseFirstCoord, if_pos hk_lt_i]
+          have hk_cs : k.castSucc = Fin.succAbove j ⟨k.val, by omega⟩ := by
+            rw [Fin.succAbove, if_pos (by simp [Fin.lt_def, hj_jm1val] at hkj; simp [Fin.lt_def]; omega)]
+          rw [hk_cs, hq_succAbove]
+          have hcond : (k.val) < i'.val := by rw [hi'val]; exact hk_lt_i
+          simp only [staircaseFirstCoord, if_pos hcond]
+          apply congrArg; apply Fin.ext; simp [Fin.val_castSucc]
+        · push_neg at hk_lt_i
+          by_cases hk_eq_i : k.val = i.val
+          · -- k.val = i.val. LHS = q.val i.castSucc + q.val i.succ.
+            simp only [staircaseFirstCoord, if_neg (by omega : ¬ k.val < i.val),
+              if_pos hk_eq_i]
+            -- i.castSucc.val = i.val < i.val + 1 < j.val. Pre-image ⟨i.val, _⟩.
+            have hi_cs : i.castSucc = Fin.succAbove j ⟨i.val, by omega⟩ := by
+              rw [Fin.succAbove, if_pos (by simp [Fin.lt_def]; omega)]
+            -- i.succ.val = i.val + 1 < j.val. Pre-image ⟨i.val + 1, _⟩.
+            have hi_su : i.succ = Fin.succAbove j ⟨i.val + 1, by omega⟩ := by
+              rw [Fin.succAbove, if_pos (by simp [Fin.lt_def]; omega)]
+              apply Fin.ext; simp [Fin.val_succ, Fin.val_castSucc]
+            rw [hi_cs, hi_su, hq_succAbove, hq_succAbove]
+            -- RHS at ⟨k.val, _⟩ : Fin(n+1). k.val = i.val = i'.val. = case.
+            have hmval : k.val = i'.val := by rw [hi'val]; exact hk_eq_i
+            have hnlt : ¬ k.val < i'.val := by rw [hi'val]; omega
+            simp only [staircaseFirstCoord, if_neg hnlt, if_pos hmval]
+            -- p.val ⟨i.val, _⟩ + p.val ⟨i.val + 1, _⟩ = p.val i'.castSucc + p.val i'.succ
+            congr 1
+            all_goals
+              apply congrArg
+              apply Fin.ext
+              simp [Fin.val_castSucc, Fin.val_succ, hi'val]
+          · -- k.val > i.val. LHS = q.val k.succ.
+            have hk_gt_i : i.val < k.val := lt_of_le_of_ne hk_lt_i (Ne.symm hk_eq_i)
+            simp only [staircaseFirstCoord, if_neg (by omega : ¬ k.val < i.val),
+              if_neg hk_eq_i]
+            -- k.succ.val = k.val + 1. Since k.val < j_jm1.val = j.val - 1, k.val + 1 < j.val.
+            -- Pre-image ⟨k.val + 1, _⟩.
+            have hkj_lt : k.val + 1 < j.val := by rw [hj_jm1val] at hkj; omega
+            have hk_su : k.succ = Fin.succAbove j ⟨k.val + 1, by omega⟩ := by
+              rw [Fin.succAbove, if_pos (by simp [Fin.lt_def, Fin.val_castSucc]; omega)]
+              apply Fin.ext; simp [Fin.val_succ, Fin.val_castSucc]
+            rw [hk_su, hq_succAbove]
+            -- RHS at ⟨k.val, _⟩ : Fin(n+1). k.val > i.val = i'.val.
+            have hcond : ¬ k.val < i'.val := by rw [hi'val]; omega
+            have hcond_ne : k.val ≠ i'.val := by rw [hi'val]; omega
+            simp only [staircaseFirstCoord, if_neg hcond, if_neg hcond_ne]
+            apply congrArg; apply Fin.ext; simp [Fin.val_succ]
+      · -- Case 2: k.val > j_jm1.val = j.val - 1, so k.val ≥ j.val.
+        push_neg at hkj
+        have hkj_gt : j_jm1.val < k.val := lt_of_le_of_ne hkj (Ne.symm hne_val)
+        have hkj_ge : j.val ≤ k.val := by rw [hj_jm1val] at hkj_gt; omega
+        rw [hfilter_gt k hkj_gt, Finset.sum_singleton]
+        -- k.val ≥ j.val > i.val + 1 > i.val. So LHS uses k.succ branch.
+        have hk_gt_i : i.val < k.val := by omega
+        have hk_ne_i : k.val ≠ i.val := by omega
+        simp only [staircaseFirstCoord, if_neg (by omega : ¬ k.val < i.val), if_neg hk_ne_i]
+        -- k.succ.val = k.val + 1 > j.val. Pre-image ⟨k.val + 1 - 1, _⟩ = ⟨k.val, _⟩ (succ branch).
+        have hk_su : k.succ = Fin.succAbove j ⟨k.val, by omega⟩ := by
+          rw [Fin.succAbove, if_neg (by simp [Fin.lt_def, Fin.val_castSucc]; omega)]
+        rw [hk_su, hq_succAbove]
+        -- RHS at ⟨k.val - 1, _⟩ : Fin(n+1). k.val - 1 ≥ j.val - 1 > i.val (since j.val > i.val + 1).
+        have hcond : ¬ (k.val - 1) < i'.val := by rw [hi'val]; omega
+        have hcond_ne : (k.val - 1) ≠ i'.val := by rw [hi'val]; omega
+        simp only [staircaseFirstCoord, if_neg hcond, if_neg hcond_ne]
+        apply congrArg; apply Fin.ext; simp [Fin.val_succ]; omega
+  -- Pack and conclude.
+  have hfirst_pack :
+      (⟨staircaseFirstCoord (n + 1) i q.val,
+        staircaseFirstCoord_mem_stdSimplex (n + 1) i q.property⟩
+        : stdSimplex ℝ (Fin (n + 2))) =
+      stdSimplex.map (Fin.succAbove j_jm1)
+        ⟨staircaseFirstCoord n i' p.val,
+         staircaseFirstCoord_mem_stdSimplex n i' p.property⟩ := by
+    apply Subtype.ext
+    funext k
+    change staircaseFirstCoord (n + 1) i q.val k =
+      FunOnFinite.linearMap ℝ ℝ (Fin.succAbove j_jm1)
+        (fun m : Fin (n + 1) => staircaseFirstCoord n i' p.val m) k
+    exact hfirst k
+  have htime_pack :
+      (⟨staircaseTimeCoord (n + 1) i q.val,
+        staircaseTimeCoord_mem_Icc (n + 1) i q.property⟩ : Set.Icc (0 : ℝ) 1) =
+      ⟨staircaseTimeCoord n i' p.val,
+        staircaseTimeCoord_mem_Icc n i' p.property⟩ := Subtype.ext htime
+  simp only [prismSimplex, ContinuousMap.comp_apply, staircaseMap, ContinuousMap.coe_mk,
+    ContinuousMap.prodMap_apply]
+  rw [hfirst_pack, htime_pack]
+  rfl
 
 end JacobianChallenge.Periods
