@@ -5,6 +5,8 @@ import Jacobian.Periods.ChartedFormPullbackSub
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
 import Mathlib.Geometry.Manifold.ContMDiff.Atlas
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
+import Mathlib.Geometry.Manifold.MFDeriv.Tangent
+import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 /-!
 # Curve integrability of `chartedFormPullback`
@@ -219,16 +221,20 @@ theorem mfderiv_chartSymm_continuousOn
     have hg_fderiv_cont : ContinuousOn
         (fderiv ℂ (fun e => c' (c.symm e))) V :=
       hg_contDiff.continuousOn_fderiv_of_isOpen hV_open le_top
+    -- Step 6 (proven first since needed for inversion): mfderiv c' p₀ = id.
+    have hmfderiv_c'_p₀_eq_id :
+        mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E) c' p₀ =
+        ContinuousLinearMap.id ℂ E := by
+      rw [mfderiv_chartAt_eq_tangentCoordChange (I := modelWithCornersSelf ℂ E)
+        (M := X) (y := p₀) (x := p₀) hp₀_source]
+      ext v
+      apply tangentCoordChange_self
+      exact mem_extChartAt_source p₀
     -- The remaining steps:
-    -- 4. Pointwise continuity of e ↦ mfderiv c' (c.symm e) w for each w
-    --    (via tangent map of c' targeting model space E — fiber projection direct).
-    -- 5. Operator continuity of e ↦ mfderiv c' (c.symm e) via continuousOn_clm_apply (FiniteDim).
-    -- 6. mfderiv c' p₀ = id (chart's mfderiv at base point).
+    -- 4. Pointwise continuity of e ↦ mfderiv c' (c.symm e) w for each w.
+    -- 5. Operator continuity of e ↦ mfderiv c' (c.symm e) via continuousOn_clm_apply.
     -- 7. NormedRing.inverse_continuousAt → operator continuity of inverse near e₀.
     -- 8. mfderivWithin c.symm e v = (mfderiv c' (c.symm e))⁻¹ (fderiv g e v).
-    --
-    -- Steps 4-8 require careful bundle bookkeeping; they are
-    -- identified clearly as project-local Mathlib-style packets.
     sorry
   · intro e he
     exact (mfderivWithin_of_isOpen c.open_target he).symm
