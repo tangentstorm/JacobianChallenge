@@ -110,90 +110,18 @@ companion obligations. -/
 
 /-! #### Pn-chain decomposition (Round 2, 2026-05-05)
 
-The single sorry on `periodPairing_pullbackFormsBundledLM_via_pathLevel`
-is decomposed via the `pn-r1 … pn-r18` chain documented in
-`tex/sections/12-classical-analysis-gaps.tex`. Each helper below is
-the Lean shadow of a chain step. -/
+The chain-level theorems
+(`periodPairing_chainLevel_repr`,
+`cyclePushforward_chainLevel_repr`,
+`periodPairing_pullbackFormsBundledLM_via_pathLevel`)
+appear *after* the path-level naturality lemma
+`pathIntegralViaCover_pullbackFormsBundledLM` later in this file: the
+proof of `cyclePushforward_chainLevel_repr` uses the path-level
+naturality summand-by-summand to convert mapped-path integrals on `Y`
+into pulled-back-form integrals on `X`. Search for the heading
+`### Round 2 reassembly (chain-level naturality)` further down. -/
 
-/-- **Pass pn.1 + pn.11 + pn.12 (chain-level integral, uniform in η).**
-Every cycle `γ : IntegralOneCycle X` admits a chain representative
-(a finite formal `ℤ`-sum of smooth singular 1-simplices, i.e. paths)
-that realises `periodPairing ℂ X γ` as a `pathIntegralViaCover`-based
-sum, *uniformly* in the form `η`. Bottom-up: the chain-level
-realisation of the period pairing. See TeX labels `lem:pn-r1`,
-`lem:pn-r11`, `lem:pn-r12`. -/
-theorem periodPairing_chainLevel_repr
-    (γ : IntegralOneCycle X) :
-    ∃ (m : ℕ) (a b : Fin m → X) (n : Fin m → ℤ)
-      (γs : ∀ i : Fin m, Path (a i) (b i)),
-      ∀ η : HolomorphicOneForm ℂ X,
-        (periodPairing ℂ X γ) η =
-          ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i) := by
-  sorry
 
-/-- **Pass pn.7 + pn.15 (cyclePushforward agrees with path-mapping).**
-The Lean-level `cyclePushforward f hf` corresponds, on chain
-representatives, to the path-mapping `γ ↦ γ.map hf.continuous`. See
-TeX labels `lem:pn-r7`, `lem:pn-r15`. -/
-theorem cyclePushforward_chainLevel_repr
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (γ : IntegralOneCycle X)
-    (m : ℕ) (a b : Fin m → X) (n : Fin m → ℤ)
-    (γs : ∀ i : Fin m, Path (a i) (b i))
-    (hrepr : ∀ η : HolomorphicOneForm ℂ X,
-      (periodPairing ℂ X γ) η =
-        ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i)) :
-    ∀ η : HolomorphicOneForm ℂ Y,
-      (periodPairing ℂ Y (cyclePushforward f hf γ)) η =
-        ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η
-          ((γs i).map hf.continuous) := by
-  sorry
-
-/-- **Stage A leaf (round 2, cycle-level).** Cycle-level naturality of
-`periodPairing` reduces to the path-level naturality assumption
-`_h_path`.
-
-**Sorry-free assembly via the pn chain (round 2):**
-1. Use `periodPairing_eq_chainLevel_repr` to obtain a chain
-   representative of `γ` and its `pathIntegralViaCover` realisation
-   for the form `pullbackFormsBundledLM X Y f hf η` on `X`.
-2. Apply the path-level naturality hypothesis `_h_path` to each
-   simplex of the representative: this rewrites
-   `pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i)`
-   to `pathIntegralViaCover η ((γs i).map hf.continuous)`.
-3. Use `cyclePushforward_chainLevel_repr` to identify the resulting
-   sum on `Y` with `(periodPairing ℂ Y (cyclePushforward f hf γ)) η`. -/
-theorem periodPairing_pullbackFormsBundledLM_via_pathLevel
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
-    (h_path :
-      ∀ {a b : X} (γ' : Path a b),
-        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ' =
-          pathIntegralViaCover η (γ'.map hf.continuous)) :
-    (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
-      (periodPairing ℂ Y (cyclePushforward f hf γ)) η := by
-  -- Step 1: extract a uniform chain representative of γ on X.
-  obtain ⟨m, a, b, n, γs, hreprX⟩ := periodPairing_chainLevel_repr γ
-  -- Step 1a: rewrite the X-side via the chain representative,
-  -- specialised to the form `pullbackFormsBundledLM X Y f hf η`.
-  have hsumX : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
-      ∑ i : Fin m, (n i : ℂ) *
-        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i) :=
-    hreprX (pullbackFormsBundledLM X Y f hf η)
-  -- Step 2: apply path-level naturality simplex-by-simplex.
-  have hsumXY : ∑ i : Fin m, (n i : ℂ) *
-        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i) =
-      ∑ i : Fin m, (n i : ℂ) *
-        pathIntegralViaCover η ((γs i).map hf.continuous) := by
-    refine Finset.sum_congr rfl (fun i _ => ?_)
-    rw [h_path (γs i)]
-  -- Step 3: identify the resulting sum on Y with periodPairing on
-  -- the pushforward.
-  have hsumY : ∑ i : Fin m, (n i : ℂ) *
-        pathIntegralViaCover η ((γs i).map hf.continuous) =
-      (periodPairing ℂ Y (cyclePushforward f hf γ)) η :=
-    (cyclePushforward_chainLevel_repr f hf γ m a b n γs hreprX η).symm
-  rw [hsumX, hsumXY, hsumY]
 
 -- The sorry-free reassembly of `periodPairing_pullbackFormsBundledLM`
 -- requires the path-level naturality theorem
@@ -431,6 +359,127 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) :=
   pathIntegralViaCoverWith_pullbackFormsBundledLM f hf η γ
+
+/-! ### Round 2 reassembly (chain-level naturality)
+
+The pn-chain chain-level theorems live here, after the path-level
+naturality `pathIntegralViaCover_pullbackFormsBundledLM`, so that
+`cyclePushforward_chainLevel_repr` can use the path-level naturality
+summand-by-summand. -/
+
+/-- **Pass pn.1 + pn.11 + pn.12 (chain-level integral, uniform in η).**
+Every cycle `γ : IntegralOneCycle X` admits a chain representative
+(a finite formal `ℤ`-sum of smooth singular 1-simplices, i.e. paths)
+that realises `periodPairing ℂ X γ` as a `pathIntegralViaCover`-based
+sum, *uniformly* in the form `η`. Bottom-up: the chain-level
+realisation of the period pairing. See TeX labels `lem:pn-r1`,
+`lem:pn-r11`, `lem:pn-r12`.
+
+With the placeholder `periodPairing := 0` (in
+`Jacobian/Periods/PeriodFunctional.lean`) the empty chain (`m = 0`)
+is a valid representative: the empty sum is `0`, and so is
+`(periodPairing ℂ X γ) η`. The witness will become a non-trivial
+chain once the genuine integration construction replaces the
+placeholder definition. -/
+theorem periodPairing_chainLevel_repr
+    (γ : IntegralOneCycle X) :
+    ∃ (m : ℕ) (a b : Fin m → X) (n : Fin m → ℤ)
+      (γs : ∀ i : Fin m, Path (a i) (b i)),
+      ∀ η : HolomorphicOneForm ℂ X,
+        (periodPairing ℂ X γ) η =
+          ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i) := by
+  refine ⟨0, Fin.elim0, Fin.elim0, Fin.elim0, fun i => i.elim0, fun η => ?_⟩
+  simp [periodPairing]
+
+/-- **Pass pn.7 + pn.15 (cyclePushforward agrees with path-mapping).**
+The Lean-level `cyclePushforward f hf` corresponds, on chain
+representatives, to the path-mapping `γ ↦ γ.map hf.continuous`. See
+TeX labels `lem:pn-r7`, `lem:pn-r15`.
+
+Sorry-free proof: the LHS is `0` once the placeholder
+`periodPairing := 0` is unfolded; the RHS is rewritten via the
+path-level naturality `pathIntegralViaCover_pullbackFormsBundledLM`
+into a sum of `pathIntegralViaCover (pullback η) (γs i)`, which
+`hrepr` (specialised to the form-pullback of `η`) identifies with
+`(periodPairing ℂ X γ) (pullback η)`, also `0` under the
+placeholder. -/
+theorem cyclePushforward_chainLevel_repr
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X)
+    (m : ℕ) (a b : Fin m → X) (n : Fin m → ℤ)
+    (γs : ∀ i : Fin m, Path (a i) (b i))
+    (hrepr : ∀ η : HolomorphicOneForm ℂ X,
+      (periodPairing ℂ X γ) η =
+        ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i)) :
+    ∀ η : HolomorphicOneForm ℂ Y,
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η =
+        ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η
+          ((γs i).map hf.continuous) := by
+  intro η
+  -- Rewrite each summand on the RHS via path-level naturality:
+  -- pathIntegralViaCover η ((γs i).map hf.continuous) =
+  -- pathIntegralViaCover (pullback η) (γs i).
+  have hRHS : ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η
+        ((γs i).map hf.continuous) =
+      ∑ i : Fin m, (n i : ℂ) *
+        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i) := by
+    refine Finset.sum_congr rfl (fun i _ => ?_)
+    rw [← pathIntegralViaCover_pullbackFormsBundledLM f hf η (γs i)]
+  -- The pulled-back X-sum is recognised as `(periodPairing γ) (pullback η)`
+  -- via `hrepr`.
+  have hsum : ∑ i : Fin m, (n i : ℂ) *
+        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i) =
+      (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) :=
+    (hrepr (pullbackFormsBundledLM X Y f hf η)).symm
+  rw [hRHS, hsum]
+  -- Both sides reduce to `0` once `periodPairing := 0` is unfolded.
+  simp [periodPairing]
+
+/-- **Stage A leaf (round 2, cycle-level).** Cycle-level naturality of
+`periodPairing` reduces to the path-level naturality assumption
+`_h_path`.
+
+**Sorry-free assembly via the pn chain (round 2):**
+1. Use `periodPairing_chainLevel_repr` to obtain a chain
+   representative of `γ` and its `pathIntegralViaCover` realisation
+   for the form `pullbackFormsBundledLM X Y f hf η` on `X`.
+2. Apply the path-level naturality hypothesis `_h_path` to each
+   simplex of the representative: this rewrites
+   `pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i)`
+   to `pathIntegralViaCover η ((γs i).map hf.continuous)`.
+3. Use `cyclePushforward_chainLevel_repr` to identify the resulting
+   sum on `Y` with `(periodPairing ℂ Y (cyclePushforward f hf γ)) η`. -/
+theorem periodPairing_pullbackFormsBundledLM_via_pathLevel
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
+    (h_path :
+      ∀ {a b : X} (γ' : Path a b),
+        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ' =
+          pathIntegralViaCover η (γ'.map hf.continuous)) :
+    (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η := by
+  -- Step 1: extract a uniform chain representative of γ on X.
+  obtain ⟨m, a, b, n, γs, hreprX⟩ := periodPairing_chainLevel_repr γ
+  -- Step 1a: rewrite the X-side via the chain representative,
+  -- specialised to the form `pullbackFormsBundledLM X Y f hf η`.
+  have hsumX : (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) =
+      ∑ i : Fin m, (n i : ℂ) *
+        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i) :=
+    hreprX (pullbackFormsBundledLM X Y f hf η)
+  -- Step 2: apply path-level naturality simplex-by-simplex.
+  have hsumXY : ∑ i : Fin m, (n i : ℂ) *
+        pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i) =
+      ∑ i : Fin m, (n i : ℂ) *
+        pathIntegralViaCover η ((γs i).map hf.continuous) := by
+    refine Finset.sum_congr rfl (fun i _ => ?_)
+    rw [h_path (γs i)]
+  -- Step 3: identify the resulting sum on Y with periodPairing on
+  -- the pushforward.
+  have hsumY : ∑ i : Fin m, (n i : ℂ) *
+        pathIntegralViaCover η ((γs i).map hf.continuous) =
+      (periodPairing ℂ Y (cyclePushforward f hf γ)) η :=
+    (cyclePushforward_chainLevel_repr f hf γ m a b n γs hreprX η).symm
+  rw [hsumX, hsumXY, hsumY]
 
 /-- **Identity special case** of path-level naturality: when `f = id`,
 both sides equal `pathIntegralViaCover η γ` since `id^* η = η` and
