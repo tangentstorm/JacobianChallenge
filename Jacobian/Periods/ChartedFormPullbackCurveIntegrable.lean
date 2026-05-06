@@ -246,10 +246,27 @@ theorem mfderiv_chartSymm_continuousOn
         have h1 := hsmoothOn e he.1
         have h2 := h1.mdifferentiableWithinAt (by decide : (⊤ : WithTop ℕ∞) ≠ 0)
         exact h2.mdifferentiableAt (c.open_target.mem_nhds he.1)
-    -- The remaining steps to discharge:
-    -- 4. Pointwise continuity of e ↦ mfderiv c' (c.symm e) w for each w.
-    -- 5. Operator continuity of e ↦ mfderiv c' (c.symm e) via continuousOn_clm_apply.
-    -- 7. NormedRing.inverse_continuousAt → operator continuity of inverse.
+    -- Steps 4-5: operator continuity of e ↦ mfderiv c' (c.symm e) on V.
+    -- For target = E (model space), mfderiv c' q equals the trivialization's
+    -- continuousLinearMapAt at q (by TangentBundle.continuousLinearMapAt_trivializationAt),
+    -- which is continuous as a function (q, w) ↦ A(q) w by Trivialization.continuousOn.
+    -- For each fixed w, q ↦ A(q) w is continuous, and by continuousOn_clm_apply (FiniteDim),
+    -- A is operator-continuous in q on baseSet.
+    have hmfderiv_c'_cont : ContinuousOn (fun e =>
+        show E →L[ℂ] E from
+          mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E)
+            c' (c.symm e)) V := by
+      rw [continuousOn_clm_apply]
+      intro w
+      -- Reduce to continuity of (trivAt p₀).continuousLinearMapAt(c.symm e) w.
+      -- Use that mfderiv c' = trivializationAt(p₀).continuousLinearMapAt on c'.source.
+      sorry
+    -- Steps 7-final: combine with chain rule + inversion.
+    -- mfderivWithin c.symm c.target e v = (mfderiv c' (c.symm e))⁻¹ (fderiv (c' ∘ c.symm) e v).
+    -- By mfderiv_c'_p₀_eq_id, the factor at e₀ is identity (invertible).
+    -- By NormedRing.inverse_continuousAt + operator continuity (step 5), the inverse is
+    -- operator-continuous near e₀.
+    -- Composing with continuous fderiv (step 3) gives the result.
     sorry
   · intro e he
     exact (mfderivWithin_of_isOpen c.open_target he).symm
