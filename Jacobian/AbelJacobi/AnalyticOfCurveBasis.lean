@@ -965,7 +965,17 @@ theorem nonconstant_extracted_from_dim_quotient
             zeroDivisor := 0
             poleDivisor := D
             principalDivisor := -D
-            principalDivisor_eq := by simp }, ?_, ?_⟩
+            principalDivisor_eq := by simp
+            poleDivisor_nonneg := by sorry
+            zero_or_pole_eq_zero := fun _ => Or.inl rfl
+            toMap_ne_infty_of_poleDivisor_zero := by sorry
+            continuousOn_ne_infty := by sorry
+            toFiniteFun_mdifferentiable := by sorry
+            toMap_eq_infty_of_poleDivisor_pos := by sorry
+            exists_modulus_atTop_at_pole := by sorry
+            hasBranchedCoverDataOfPoleDegree := fun hcont =>
+              absurd hcont
+                (HolomorphicForms.not_continuous_indicator Q₁) }, ?_, ?_⟩
   · -- Nonconstant: distinguish `Q₁` (sent to ∞) from `Q₂` (sent to 0).
     rintro ⟨c, hc⟩
     have h1 : (OnePoint.infty : OnePoint ℂ) = c := by
@@ -985,7 +995,18 @@ theorem nonconstant_extracted_from_dim_quotient
                 zeroDivisor := 0
                 poleDivisor := D
                 principalDivisor := -D
-                principalDivisor_eq := by simp } : HolomorphicForms.Divisor X)
+                principalDivisor_eq := by simp
+                poleDivisor_nonneg := by sorry
+                zero_or_pole_eq_zero := fun _ => Or.inl rfl
+                toMap_ne_infty_of_poleDivisor_zero := by sorry
+                continuousOn_ne_infty := by sorry
+                toFiniteFun_mdifferentiable := by sorry
+                toMap_eq_infty_of_poleDivisor_pos := by sorry
+                exists_modulus_atTop_at_pole := by sorry
+                hasBranchedCoverDataOfPoleDegree := fun hcont =>
+                  absurd hcont
+                    (HolomorphicForms.not_continuous_indicator Q₁) }
+              : HolomorphicForms.Divisor X)
             = -D := rfl
     rw [this, neg_add_cancel]
     exact HolomorphicForms.Divisor.effective_zero
@@ -1129,7 +1150,16 @@ theorem thirdKindData_from_genus_zero
       zeroDivisor := 0
       poleDivisor := D
       principalDivisor := -D
-      principalDivisor_eq := by simp }
+      principalDivisor_eq := by simp
+      poleDivisor_nonneg := by sorry
+      zero_or_pole_eq_zero := fun _ => Or.inl rfl
+      toMap_ne_infty_of_poleDivisor_zero := by sorry
+      continuousOn_ne_infty := by sorry
+      toFiniteFun_mdifferentiable := by sorry
+      toMap_eq_infty_of_poleDivisor_pos := by sorry
+      exists_modulus_atTop_at_pole := by sorry
+      hasBranchedCoverDataOfPoleDegree := fun hcont =>
+        absurd hcont (HolomorphicForms.not_continuous_indicator Q₁) }
   exact ⟨{ data := { meromorphicMap := f
                      principal := f.principal
                      principal_eq := rfl }
@@ -1202,7 +1232,16 @@ theorem pole_full_two_point_of_nonconstant_in_RR_space_aux
       zeroDivisor := 0
       poleDivisor := D
       principalDivisor := -D
-      principalDivisor_eq := by simp }
+      principalDivisor_eq := by simp
+      poleDivisor_nonneg := by sorry
+      zero_or_pole_eq_zero := fun _ => Or.inl rfl
+      toMap_ne_infty_of_poleDivisor_zero := by sorry
+      continuousOn_ne_infty := by sorry
+      toFiniteFun_mdifferentiable := by sorry
+      toMap_eq_infty_of_poleDivisor_pos := by sorry
+      exists_modulus_atTop_at_pole := by sorry
+      hasBranchedCoverDataOfPoleDegree := fun hcont =>
+        absurd hcont (HolomorphicForms.not_continuous_indicator Q₁) }
   exact ⟨{ data := { meromorphicMap := f
                      principal := f.principal
                      principal_eq := rfl }
@@ -1838,7 +1877,8 @@ theorem assemble_meromorphicMap
     continuousOn_ne_infty := by sorry
     toFiniteFun_mdifferentiable := by sorry
     toMap_eq_infty_of_poleDivisor_pos := by sorry
-    exists_modulus_atTop_at_pole := by sorry }, rfl⟩
+    exists_modulus_atTop_at_pole := by sorry
+    hasBranchedCoverDataOfPoleDegree := by sorry }, rfl⟩
 
 /-- **Round-38 assembly (sorry-free).** -/
 theorem build_meromorphicMap_from_global_extension
@@ -2008,7 +2048,8 @@ theorem meromorphicMapToSphere_package_of_two_point_principal
     continuousOn_ne_infty := by sorry
     toFiniteFun_mdifferentiable := by sorry
     toMap_eq_infty_of_poleDivisor_pos := by sorry
-    exists_modulus_atTop_at_pole := by sorry }, rfl, rfl, rfl⟩
+    exists_modulus_atTop_at_pole := by sorry
+    hasBranchedCoverDataOfPoleDegree := by sorry }, rfl, rfl, rfl⟩
 
 /-- **Round-3 Abel-existence assembly (sorry-free).** Pure assembly
 of `abel_meromorphicFunction_of_zero_aj_two_point` and

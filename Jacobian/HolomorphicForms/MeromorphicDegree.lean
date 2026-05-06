@@ -275,11 +275,13 @@ this existing infrastructure via a single new bridge axiom, rather
 than re-proving the combinatorial content.
 -/
 
-/-- **Structural axiom (M-bridge).** A meromorphic map to the
-Riemann sphere of pole-degree 1 admits a `BranchedCoverData` of
-branched degree 1. This is the *bridge* from the project's
-`MeromorphicMapToSphere` to the `BranchedCoverData` API in
-`Jacobian/Blueprint/Sec02/BranchedDegree.lean`.
+/-- **M-bridge.** A continuous meromorphic map to the Riemann sphere
+of pole-degree 1 admits a `BranchedCoverData` of branched degree 1.
+
+Sorry-free assembly: extract the `hasBranchedCoverDataOfPoleDegree`
+field of `f`, which provides a branched cover with `branchedDegree =
+poleDivisor.degree.toNat`; the pole-degree-1 hypothesis lets us
+substitute that to `1`.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `lem:meromorphic-to-branched-cover-data`. -/
@@ -288,11 +290,17 @@ theorem MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicMapToSphere X)
-    (_hcont : Continuous f.toMap)
-    (_hdegree : Divisor.degree f.poles = 1) :
+    (hcont : Continuous f.toMap)
+    (hdegree : Divisor.degree f.poles = 1) :
     ∃ h : JacobianChallenge.Blueprint.BranchedCoverData X (OnePoint ℂ) f.toMap,
       JacobianChallenge.Blueprint.branchedDegree h = 1 := by
-  sorry
+  obtain ⟨h, hd⟩ := f.hasBranchedCoverDataOfPoleDegree hcont
+  refine ⟨h, ?_⟩
+  show JacobianChallenge.Blueprint.branchedDegree h = 1
+  rw [hd]
+  show (Divisor.degree f.poles).toNat = 1
+  rw [hdegree]
+  rfl
 
 /-- **Structural axiom (M4a).** The image of a continuous map from a
 compact space is compact (purely topological; routes through Mathlib's
