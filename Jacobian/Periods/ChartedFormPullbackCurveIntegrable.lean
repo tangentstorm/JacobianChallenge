@@ -2,6 +2,7 @@ import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackSimp
 import Jacobian.Periods.ChartedFormPullbackSmul
 import Jacobian.Periods.ChartedFormPullbackSub
+import Jacobian.Periods.HolomorphicOneFormToFunContinuous
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
 
 /-!
@@ -135,8 +136,8 @@ fibers, self-model). The `show … from rfl` bridges the two forms. -/
 theorem chartedSection_localRepr_continuousOn
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
     ContinuousOn (fun e =>
-      show E →L[ℂ] ℂ from ω.toFun (c.symm e)) c.target := by
-  sorry
+      show E →L[ℂ] ℂ from ω.toFun (c.symm e)) c.target :=
+  (holomorphicOneForm_toFun_continuous ω).comp_continuousOn c.continuousOn_symm
 
 /-- **Continuity of the chart-inverse `mfderiv`.** The map
 `e ↦ mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) c.symm e` is continuous on `c.target`
