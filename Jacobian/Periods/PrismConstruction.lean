@@ -235,4 +235,133 @@ noncomputable def prismSimplex
     ⟨fun p => (p.2, p.1), continuous_snd.prodMk continuous_fst⟩
   H.toContinuousMap.comp (swap.comp (sigmaTimesId.comp stair))
 
+/-! ### Face-map identities for the staircase coordinates
+
+These are the key combinatorial identities needed for the prism boundary formula.
+The j-th face of the standard n-simplex is the inclusion `δⱼ : Δⁿ → Δ^{n+1}`
+corresponding (on index sets) to `Fin.succAbove j : Fin(n+1) → Fin(n+2)`.
+Given `f : Fin(n+2) → ℝ` and `j : Fin(n+2)`, the image of a point
+`g : Fin(n+1) → ℝ` under `δⱼ` is `fun m => FunOnFinite.linearMap ℝ ℝ (Fin.succAbove j) g m`,
+which equals `g (Fin.predAbove j m)` when `j.val ≠ m.val` and `0` when `m = j`.
+
+The critical cases are `j = i.castSucc` (time = 1 - s_0 - ... - s_{i-1})
+and `j = i.succ` (time = 1 - s_0 - ... - s_i), which together with sign
+cancellation give the boundary formula `∂P + P∂ = g_* - f_*`. -/
+
+/-- The time coordinate of `αᵢ ∘ δᵢ` equals `∑_{k ≥ i} f_k`.
+Combinatorial fact: inserting 0 at position i.castSucc in the (n+2)-coordinates
+shifts the tail sum from {>i} to {≥i}. -/
+theorem staircaseTimeCoord_face_self
+    (f : Fin (n + 1) → ℝ) :
+    staircaseTimeCoord n i
+      (fun m : Fin (n + 2) =>
+        Finset.sum Finset.univ (fun k : Fin (n + 1) =>
+          if Fin.succAbove i.castSucc k = m then f k else 0)) =
+      ∑ k ∈ Finset.univ.filter (fun k : Fin (n + 1) => i.val ≤ k.val), f k := by
+  simp only [staircaseTimeCoord]
+  rw [Finset.sum_comm]
+  simp_rw [Finset.sum_ite_eq, Finset.mem_filter, Finset.mem_univ, true_and]
+  -- Goal: ∑ k, if i.val < (succAbove i.castSucc k).val then f k else 0
+  --       = ∑ k ∈ filter (i.val ≤ ·.val), f k
+  rw [← Finset.sum_filter]
+  congr 1
+  ext k
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  by_cases hk : k.val < i.val
+  · have hsa : Fin.succAbove i.castSucc k = k.castSucc := by
+      rw [Fin.succAbove, if_pos]; exact Fin.mk_lt_mk.mpr hk
+    simp only [hsa, Fin.val_castSucc]
+    omega
+  · have hge : i.val ≤ k.val := Nat.le_of_not_lt hk
+    have hsa : Fin.succAbove i.castSucc k = k.succ := by
+      rw [Fin.succAbove, if_neg]; exact Fin.mk_lt_mk.not.mpr (Nat.not_lt.mpr hge)
+    simp only [hsa, Fin.val_succ]
+    omega
+
+/-- The time coordinate of `αᵢ ∘ δ_{i+1}` equals `∑_{k > i} f_k`. -/
+theorem staircaseTimeCoord_face_succ
+    (f : Fin (n + 1) → ℝ) :
+    staircaseTimeCoord n i
+      (fun m : Fin (n + 2) =>
+        Finset.sum Finset.univ (fun k : Fin (n + 1) =>
+          if Fin.succAbove i.succ k = m then f k else 0)) =
+      ∑ k ∈ Finset.univ.filter (fun k : Fin (n + 1) => i.val < k.val), f k := by
+  simp only [staircaseTimeCoord]
+  rw [Finset.sum_comm]
+  simp_rw [Finset.sum_ite_eq, Finset.mem_filter, Finset.mem_univ, true_and]
+  rw [← Finset.sum_filter]
+  congr 1
+  ext k
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  by_cases hk : k.val ≤ i.val
+  · have hsa : Fin.succAbove i.succ k = k.castSucc := by
+      rw [Fin.succAbove, if_pos]; exact Fin.mk_lt_mk.mpr (Nat.lt_succ_of_le hk)
+    simp only [hsa, Fin.val_castSucc]
+  · have hk' : i.val < k.val := Nat.lt_of_not_le hk
+    have hsa : Fin.succAbove i.succ k = k.succ := by
+      rw [Fin.succAbove, if_neg]
+      exact Fin.mk_lt_mk.not.mpr (Nat.not_lt.mpr (Nat.succ_le_of_lt hk'))
+    simp only [hsa, Fin.val_succ]
+    omega
+
+/-- When `f` is in the standard simplex, the sum `∑_{k ≥ 0} f_k = 1` (full sum). -/
+theorem staircaseTimeCoord_face_i_zero_sum_eq_one
+    (f : Fin (n + 1) → ℝ) (hsum : ∑ j, f j = 1) :
+    ∑ k ∈ Finset.univ.filter (fun k : Fin (n + 1) => 0 ≤ k.val), f k = 1 := by
+  simp [Finset.filter_true_of_mem, hsum]
+
+/-- When `f` is in the standard simplex and i = n, the sum `∑_{k > n} f_k = 0` (empty). -/
+theorem staircaseTimeCoord_face_i_last_sum_eq_zero
+    (f : Fin (n + 1) → ℝ) :
+    ∑ k ∈ Finset.univ.filter (fun k : Fin (n + 1) => n < k.val), f k = 0 := by
+  apply Finset.sum_eq_zero
+  intro k hk
+  simp [Finset.mem_filter] at hk
+  exact absurd hk (Nat.not_lt.mpr (Nat.lt_succ_iff.mp k.isLt))
+
+/-! ### Top and bottom face of a prism simplex
+
+The critical boundary identities for the prism construction:
+* The "0th face of the 0th staircase" gives `g ∘ s` (time = 1).
+* The "last face of the last staircase" gives `f ∘ s` (time = 0). -/
+
+/-- **Top boundary.** When `p ∈ Δⁿ`, the time coordinate of
+`staircaseMap n 0 (δ₀ p)` equals 1. This is the boundary condition
+`H(·, 1) = g(·)`. -/
+theorem staircaseTimeCoord_i_zero_face_zero_eq_one
+    {f : Fin (n + 2) → ℝ} (hf : f ∈ stdSimplex ℝ (Fin (n + 2)))
+    (hf0 : f ⟨0, Nat.zero_lt_succ _⟩ = 0) :
+    staircaseTimeCoord n ⟨0, Nat.zero_lt_succ n⟩ f = 1 := by
+  simp only [staircaseTimeCoord]
+  -- ∑_{j>0} f_j = (∑_j f_j) - f_0 = 1 - 0 = 1
+  have key : ∑ j : Fin (n + 2), f j =
+      ∑ j ∈ Finset.univ.filter (fun j : Fin (n + 2) => 0 < j.val), f j +
+      ∑ j ∈ Finset.univ.filter (fun j : Fin (n + 2) => ¬ 0 < j.val), f j :=
+    (Finset.sum_filter_add_sum_filter_not Finset.univ _ f).symm
+  have hcompl : ∑ j ∈ Finset.univ.filter (fun j : Fin (n + 2) => ¬ 0 < j.val), f j = 0 := by
+    apply Finset.sum_eq_zero
+    intro j hj
+    simp only [Finset.mem_filter, Finset.mem_univ, not_lt, Nat.le_zero, true_and] at hj
+    have : j = ⟨0, Nat.zero_lt_succ _⟩ := Fin.ext hj
+    rw [this, hf0]
+  linarith [key.symm.trans hf.2]
+
+/-- **Bottom boundary.** When `p ∈ Δⁿ`, the time coordinate of
+`staircaseMap n n (δ_{n+1} p)` equals 0. This is the boundary condition
+`H(·, 0) = f(·)`. -/
+theorem staircaseTimeCoord_i_last_face_last_eq_zero
+    {f : Fin (n + 2) → ℝ}
+    (hflast : f (Fin.last (n + 1)) = 0) :
+    staircaseTimeCoord n ⟨n, Nat.lt_succ_self n⟩ f = 0 := by
+  -- Time = ∑_{j > n} f_j. The only j with j.val > n in Fin(n+2) is Fin.last.
+  simp only [staircaseTimeCoord]
+  apply Finset.sum_eq_zero
+  intro j hj
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hj
+  -- j.val > n and j : Fin(n+2), so j.val = n+1, meaning j = Fin.last
+  have hjlast : j = Fin.last (n + 1) := by
+    apply Fin.ext; simp only [Fin.val_last]
+    omega
+  rw [hjlast, hflast]
+
 end JacobianChallenge.Periods
