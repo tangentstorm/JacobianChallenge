@@ -185,18 +185,32 @@ theorem mfderiv_chartSymm_continuousOn
       show E →L[ℂ] E from
         mfderivWithin (modelWithCornersSelf ℂ E)
           (modelWithCornersSelf ℂ E) c.symm c.target e) ?_ ?_
-  · -- Continuity of mfderivWithin via tangent map continuity.
-    -- The bundle smoothness gives joint continuity of (e, v) ↦
-    -- mfderivWithin e v in the trivialization-coordinates.
-    -- Combined with finite-dim and the chain rule via a fixed chart
-    -- chartAt E (c.symm e₀), we extract operator continuity.
-    -- The detailed proof is technical; the essential infrastructure
-    -- is `ContMDiffWithinAt.mfderivWithin_const` (smoothness of
-    -- inCoordinates form) plus the bridge via chart-change derivatives
-    -- (`inTangentCoordinates_eq_mfderiv_comp`) plus FiniteDim joint-
-    -- to-operator continuity. For completeness here we use the
-    -- alternative route via `ContDiffOn.continuousOn_fderivWithin`
-    -- applied to the chart-change.
+  · -- Continuity of mfderivWithin via `continuousOn_clm_apply`
+    -- (Mathlib's `Mathlib/Analysis/Normed/Module/FiniteDimension.lean`):
+    -- For finite-dim `E`, operator continuity of an `E →L[ℂ] E`-valued
+    -- function on a set is equivalent to pointwise continuity (for
+    -- each fixed `v ∈ E`).
+    rw [continuousOn_clm_apply]
+    intro v
+    -- Pointwise continuity: for each `v ∈ E`, `e ↦ mfderivWithin e v`
+    -- is continuous. This follows from the tangent map continuity:
+    -- by `ContMDiffOn.continuousOn_tangentMapWithin`, the bundled
+    -- tangent map `tangentMapWithin _ _ c.symm c.target` is
+    -- continuous as a map `TangentBundle E → TangentBundle X`.
+    -- Composing with the inclusion `e ↦ ⟨e, v⟩` gives continuity of
+    -- `e ↦ tangentMapWithin (e, v) = ⟨c.symm e, mfderivWithin e v⟩`.
+    -- Continuity of the fiber value `e ↦ mfderivWithin e v` follows
+    -- from continuity of the trivialization composed with this map:
+    -- the trivialization at `c.symm e₀` extracts the fiber as a
+    -- continuous family of CLEs, and the inverse trivialization
+    -- recovers the mfderiv as `mfderivWithin e v = A(c.symm e)⁻¹ (A(c.symm e) (mfderivWithin e v))`,
+    -- continuous in `e` (as the composition of the continuous fiber
+    -- map with a jointly continuous inverse trivialization).
+    --
+    -- The detailed elaboration in Lean is technical due to the
+    -- bundle bookkeeping; this gap is identified as a project-local
+    -- Mathlib-style packet. See `ref/Inventory.md` and the file
+    -- docstring for further context.
     sorry
   · intro e he
     exact (mfderivWithin_of_isOpen c.open_target he).symm
