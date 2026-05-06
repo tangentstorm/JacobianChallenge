@@ -253,6 +253,57 @@ theorem prismChain_hom_comm_zero
     neg_smul, neg_add_rev, neg_neg]
   abel
 
+/-! ### The core combinatorial identity for the boundary at degree ≥ 1
+
+The boundary equation at degree `i' + 1` reduces (after applying
+`singChain_d_basis` and `prismChain_op_basis`) to the following purely
+combinatorial identity over a 2D index sum:
+
+  prevD_sum = -basis(g.comp s) + basis(f.comp s) - dNext_sum
+
+where:
+* `dNext_sum = ∑_{j, l} (-1)^(j+l+1) • basis(prismSimplex i' l H (s.comp face_j))`
+  is the dNext expansion.
+* `prevD_sum = ∑_{l, j} (-1)^(l+1+j) • basis(prismSimplex (i'+1) l H s ∘ face_j)`
+  is the prevD expansion.
+
+The proof of this identity decomposes the prevD double-sum into 5 parts
+via face identities:
+* `(0, 0)` (top): contributes `-basis(g.comp s)`.
+* `(i'+1, i'+2)` (bottom): contributes `+basis(f.comp s)`.
+* Diagonal pairs `(l, l+1) | (l+1, l+1)`: cancel via
+  `prismSimplex_diagonal_face`.
+* Lower side `j < l`: re-indexes (via `prismSimplex_side_face_lower`)
+  to a partial of `-dNext_sum`.
+* Upper side `j > l+1`: re-indexes (via `prismSimplex_side_face_upper`)
+  to the rest of `-dNext_sum`.
+
+The combined lower + upper re-indexed sums equal `-dNext_sum` exactly.
+
+**Status:** Stated as a named obligation with `sorry` body. All face
+identities (top, bottom, diagonal, side_lower, side_upper) are
+sorry-free in `PrismConstruction.lean`. The remaining work is purely
+`Finset.sum`/`Finset.sum_bij` manipulation: a substantial but
+mechanical bookkeeping calculation (~300-400 LOC). -/
+theorem prismChain_succ_combinatorial_identity
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i' : ℕ)
+    (s : SingSimplex (i' + 1) X) :
+    (∑ l : Fin (i' + 2), prismChain_summand H (i' + 1) l s
+      ≫ (((singularChainComplexFunctor (ModuleCat ℤ)).obj (ModuleCat.of ℤ ℤ)).obj
+          (TopCat.of Y)).d (i' + 2) (i' + 1)) =
+      -singChain_basis (g.comp s) + singChain_basis (f.comp s)
+        - (∑ j : Fin (i' + 2), ((-1 : ℤ) ^ j.val) •
+          (singChain_basis (s.comp (stdSimplexFaceInclusion i' j))
+          ≫ prismChain_op H i')) := by
+  -- The bookkeeping: face identity case analysis + Finset.sum re-indexing.
+  -- Top: prismSimplex_top_face. Bottom: prismSimplex_bottom_face.
+  -- Diagonals: prismSimplex_diagonal_face cancels paired (l, l+1) and (l+1, l+1).
+  -- Lower side (j < l): re-index via prismSimplex_side_face_lower.
+  -- Upper side (j > l+1): re-index via prismSimplex_side_face_upper.
+  -- Combined lower + upper = -dNext_sum.
+  sorry
+
 /-- The `Homotopy.comm` field — the boundary identity. **Residual sorry**
 for `i ≥ 1`.
 
@@ -349,17 +400,12 @@ theorem prismChain_hom_comm
             ≫ (((singularChainComplexFunctor (ModuleCat ℤ)).obj (ModuleCat.of ℤ ℤ)).obj
               (TopCat.of Y)).d (i' + 2) (i' + 1) from by
         rw [Preadditive.sum_comp]]
-    -- The remaining bookkeeping (face identity case analysis + Finset.sum
-    -- re-indexing for diagonal cancellation, lower side-face matching dNext,
-    -- upper side-face matching dNext) is substantial.
-    -- Sketch:
-    --   • prevD sum = top contribution (-basis(g.comp s)) + bottom (+basis(f.comp s))
-    --                + diagonal pairs (sum to 0) + side-faces (cancel with dNext).
-    --   • Combined: dNext + prevD = basis(f.comp s) - basis(g.comp s).
-    -- This residual sorry isolates exactly the alternating-sign Finset.sum
-    -- bookkeeping; all face identities (top, bottom, diagonal, side_lower,
-    -- side_upper) are sorry-free in PrismConstruction.lean.
-    sorry
+    -- At this point the goal is a sum equation. The key combinatorial identity
+    -- is captured by `prismChain_succ_combinatorial_identity` below: the
+    -- prevD double-sum equals -basis(g.comp s) + basis(f.comp s) minus the
+    -- dNext double-sum (i.e., the side-face contributions cancel exactly).
+    rw [prismChain_succ_combinatorial_identity H i' s]
+    abel
 
 /-! ### Assembly into a `Homotopy` -/
 
