@@ -180,6 +180,39 @@ noncomputable def edgeChain (g : ℕ) (i : Fin (2 * (g + 1))) :
     SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
   singularChainElement (edgeSimplex g i)
 
+/-- The two faces of an edge simplex are equal as continuous maps from
+`stdSimplex ℝ (Fin 1)` to the polygon. Both faces are constant maps
+to the (single, identified) polygon vertex, since `stdSimplex ℝ (Fin 1)`
+is a singleton.
+
+Sorry-free: uses `Subsingleton (stdSimplex ℝ (Fin 1))` plus
+`edgeSimplex_endpoints_equal` for the value equality. -/
+lemma edgeSimplex_faces_eq (g : ℕ) (i : Fin (2 * (g + 1))) :
+    singularSimplexFace (edgeSimplex g i) 0
+      = singularSimplexFace (edgeSimplex g i) 1 := by
+  -- Provide the `Subsingleton` instance explicitly (the implicit search
+  -- doesn't unfold `Fin (0 + 1)`).
+  haveI : Subsingleton (stdSimplex ℝ (Fin 1)) := inferInstance
+  haveI : Subsingleton (stdSimplex ℝ (Fin (0 + 1))) := this
+  ext s
+  -- Both sides reduce to evaluating `edgeSimplex g i` at the
+  -- corresponding vertex of `stdSimplex ℝ (Fin 2)`.
+  -- Since `stdSimplex ℝ (Fin 1)` is a singleton, replace `s` by
+  -- `stdSimplex.vertex 0` (the vertex at index 0).
+  have hs : s = stdSimplex.vertex 0 := Subsingleton.elim _ _
+  rw [hs]
+  show edgeSimplex g i (stdSimplex.map (Fin.succAbove 0) (stdSimplex.vertex 0))
+    = edgeSimplex g i (stdSimplex.map (Fin.succAbove 1) (stdSimplex.vertex 0))
+  rw [stdSimplex.map_vertex, stdSimplex.map_vertex]
+  -- `Fin.succAbove 0 0 = 1` and `Fin.succAbove 1 0 = 0`.
+  have h0 : (Fin.succAbove (0 : Fin 2) 0 : Fin 2) = 1 := by decide
+  have h1 : (Fin.succAbove (1 : Fin 2) 0 : Fin 2) = 0 := by decide
+  rw [h0, h1]
+  -- These are exactly `edgeSimplex_vertex_one` and `edgeSimplex_vertex_zero`.
+  show edgeSimplex g i (stdSimplexVertex 1) = edgeSimplex g i (stdSimplexVertex 0)
+  rw [edgeSimplex_vertex_one, edgeSimplex_vertex_zero]
+  exact (edgeSimplex_endpoints_equal g i).symm
+
 /-- **Phase 3 leaf (sub-sorry).** The chain-complex generator of the
 i-th edge loop is a 1-cycle: its boundary in
 `SingularChainCoproduct (Polygon4g (g+1)) 0` vanishes.
