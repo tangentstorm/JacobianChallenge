@@ -11,6 +11,7 @@ import Mathlib.Algebra.Category.ModuleCat.Abelian
 import Mathlib.Topology.Category.TopCat.Basic
 import Jacobian.Periods.PrismConstruction
 import Jacobian.Periods.PrismChainBridge
+import Jacobian.Periods.PrismChainCombinatorialIdentity
 
 /-!
 # Chain-level prism homotopy
@@ -280,11 +281,25 @@ via face identities:
 
 The combined lower + upper re-indexed sums equal `-dNext_sum` exactly.
 
-**Status:** Stated as a named obligation with `sorry` body. All face
-identities (top, bottom, diagonal, side_lower, side_upper) are
-sorry-free in `PrismConstruction.lean`. The remaining work is purely
-`Finset.sum`/`Finset.sum_bij` manipulation: a substantial but
-mechanical bookkeeping calculation (~300-400 LOC). -/
+**Status (after PR-level decomposition):** This theorem is now a
+**sorry-free assembly** of the partition identity
+`prismChain_LHS_eq_partition` (in
+`Jacobian/Periods/PrismChainCombinatorialIdentity.lean`). The
+single residual sorry in the assembly file decomposes further into
+six named obligations:
+
+* `prismChain_topContribution` — **proved** (sorry-free).
+* `prismChain_bottomContribution` — **proved** (sorry-free).
+* `prismChain_diagonalCancellation` — **proved** (sorry-free).
+* `prismChain_lowerSideReindex` — sorry (≤ 100 LOC, `Finset.sum_bij`
+  reindexing).
+* `prismChain_upperSideReindex` — sorry (≤ 100 LOC, `Finset.sum_bij`
+  reindexing).
+* `prismChain_LHS_eq_partition` — sorry (≤ 80 LOC, `Finset` partition
+  bookkeeping).
+
+All face identities (top, bottom, diagonal, side_lower, side_upper)
+are sorry-free in `PrismConstruction.lean`. -/
 theorem prismChain_succ_combinatorial_identity
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i' : ℕ)
@@ -327,10 +342,24 @@ theorem prismChain_succ_combinatorial_identity
     rw [smul_smul, ← pow_add, show j.val + (l.val + 1) = j.val + l.val + 1 from by omega]
   -- Step 3: Rewrite the goal using the expanded forms.
   rw [h_lhs_expand, h_dNext_expand]
-  -- The goal is now an equation between explicit 2D sums.
-  -- Convert both sides via Finset.sum_product (collapse double sums to product).
-  -- Then partition the LHS index set and apply face identities.
-  sorry
+  -- Step 4: Convert nested 2D sums to single sums over Cartesian products,
+  -- so that we can apply `prismChain_LHS_eq_partition` (in
+  -- `Jacobian/Periods/PrismChainCombinatorialIdentity.lean`).
+  rw [show (∑ l : Fin (i' + 2), ∑ j : Fin (i' + 3),
+        ((-1 : ℤ) ^ (l.val + 1 + j.val)) • singChain_basis
+          ((prismSimplex (i' + 1) l H s).comp (stdSimplexFaceInclusion (i' + 1) j))) =
+      ∑ lj : prismIndex i', prismChain_LHS_summand H i' s lj from by
+    rw [← Finset.sum_product']
+    rfl]
+  rw [show (∑ j : Fin (i' + 2), ∑ l : Fin (i' + 1),
+        ((-1 : ℤ) ^ (j.val + l.val + 1)) • singChain_basis
+          (prismSimplex i' l H (s.comp (stdSimplexFaceInclusion i' j)))) =
+      ∑ jl : Fin (i' + 2) × Fin (i' + 1),
+        prismChain_dNext_summand H i' s jl.1 jl.2 from by
+    rw [← Finset.sum_product']
+    rfl]
+  -- Step 5: Apply the partition identity.
+  exact prismChain_LHS_eq_partition H i' s
 
 /-- The `Homotopy.comm` field — the boundary identity. **Residual sorry**
 for `i ≥ 1`.
