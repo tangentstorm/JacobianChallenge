@@ -3,6 +3,8 @@ import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverPickRefl
 import Jacobian.Periods.PathIntegralViaCoverWithRefinementInvariant
+import Jacobian.Periods.PathIntegralViaChartCorrectPullback
+import Jacobian.Periods.PathIntegralCongr
 import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.Algebra.Category.ModuleCat.Basic
@@ -227,27 +229,6 @@ theorem pathIntegralViaCover_trans_eq_add
       pathIntegralViaCover η γ + pathIntegralViaCover η γ' := by
   sorry
 
-/-- **Pass pcr.4 (chart-level chain rule).** On a single chart segment
-where `γ : Path a b` has range in `(chartAt ℂ p).source` on `X` and
-`f ∘ γ` has range in `(chartAt ℂ q).source` on `Y` for some pair of
-chart centres `p, q`, the chart-corrected segment integrals satisfy:
-
-`pathIntegralViaChartCorrect (chartAt ℂ p) (pullbackFormsBundledLM X Y f hf η) γ =
-  pathIntegralViaChartCorrect (chartAt ℂ q) η (γ.map hf.continuous)`.
-
-Bottom-up content: the chain rule for `intervalIntegral` applied to
-the chart pull-back of `f`. See TeX label `lem:pcr-r4`. -/
-theorem pathIntegralViaCover_pullback_chart_segment
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
-    (h_singleChart_X : ∃ p : X, ∀ t : unitInterval,
-      γ t ∈ (chartAt ℂ p).source)
-    (h_singleChart_Y : ∃ q : Y, ∀ t : unitInterval,
-      (γ.map hf.continuous) t ∈ (chartAt ℂ q).source) :
-    pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
-      pathIntegralViaCover η (γ.map hf.continuous) := by
-  sorry
-
 /-- **Pass pcr.13 (chart-source compatibility under f).** If `γ`
 factors through a chart on `X` then `f ∘ γ` factors through some chart
 on `Y` after refinement; in particular every uniform chart partition
@@ -372,7 +353,74 @@ theorem pathIntegralViaCoverWith_pullback_via_common_partition
     pathIntegralViaCoverWith (pullbackFormsBundledLM X Y f hf η) γ
         n hn pickX hcovX =
       pathIntegralViaCoverWith η (γ.map hf.continuous) n hn pickY hcovY := by
-  sorry
+  -- Both sides are sums over `Fin n`. Apply `Finset.sum_congr` and
+  -- prove equality of the i-th summands via the chart-level chain
+  -- rule `pathIntegralViaChartCorrect_pullbackFormsBundledLM` (Phase 5).
+  unfold pathIntegralViaCoverWith
+  refine Finset.sum_congr rfl (fun i _ => ?_)
+  -- The X-side i-th term integrates the form-pullback against
+  --   `γ.subpath (divFinIcc n hn i.val _) (divFinIcc n hn (i.val+1) _)`
+  -- in the chart at `pickX i`.
+  -- The Y-side i-th term integrates `η` against
+  --   `(γ.map hf.continuous).subpath (divFinIcc n hn i.val _) (divFinIcc n hn (i.val+1) _)`
+  -- in the chart at `pickY i`.
+  -- These two subpaths are equal as Path values (`map` commutes with
+  -- `subpath` definitionally on toFun), so we can identify the second
+  -- with `(γ.subpath ...).map hf.continuous`.
+  set γ_sub := γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
+                          (divFinIcc n hn (i.val + 1) i.isLt) with hγ_sub
+  -- Range of γ_sub on X-side: from hcovX, via `Path.range_subpath`.
+  have hX_range : Set.range γ_sub ⊆ (chartAt ℂ (pickX i)).source := by
+    rw [hγ_sub, Path.range_subpath,
+      Set.uIcc_of_le (divFinIcc_le_succ n hn i.val i.isLt)]
+    rintro x ⟨t, ht, rfl⟩
+    rcases Set.mem_Icc.mp ht with ⟨h1, h2⟩
+    have hle1 : ((i.val : ℝ) / n) ≤ (t : ℝ) := h1
+    have hle2 : (t : ℝ) ≤ ((i.val : ℝ) + 1) / n := by
+      have h2' : (t : ℝ) ≤ (divFinIcc n hn (i.val + 1) i.isLt : ℝ) := h2
+      rw [divFinIcc_val] at h2'
+      push_cast at h2'
+      exact h2'
+    exact hcovX i t hle1 hle2
+  -- Range of (γ_sub.map hf.continuous) on Y-side: from hcovY similarly.
+  have hY_range : Set.range (γ_sub.map hf.continuous) ⊆
+      (chartAt ℂ (pickY i)).source := by
+    rw [hγ_sub]
+    -- (γ.subpath _ _).map hf.continuous t = hf.continuous (γ.subpath _ _ t)
+    --                                     = (γ.map hf.continuous).subpath _ _ t
+    rintro x ⟨t, rfl⟩
+    -- Show ((γ.subpath ..).map hf.continuous) t ∈ ...
+    have h_eq : ((γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
+                    (divFinIcc n hn (i.val + 1) i.isLt)).map hf.continuous) t =
+        ((γ.map hf.continuous).subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
+            (divFinIcc n hn (i.val + 1) i.isLt)) t := rfl
+    rw [h_eq]
+    -- Now use hcovY indirectly via Path.range_subpath.
+    have h_in : ((γ.map hf.continuous).subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
+        (divFinIcc n hn (i.val + 1) i.isLt)) t ∈
+        Set.range ((γ.map hf.continuous).subpath
+          (divFinIcc n hn i.val (le_of_lt i.isLt))
+          (divFinIcc n hn (i.val + 1) i.isLt)) := ⟨t, rfl⟩
+    rw [Path.range_subpath, Set.uIcc_of_le (divFinIcc_le_succ n hn i.val i.isLt)] at h_in
+    obtain ⟨t', ht', heq'⟩ := h_in
+    rw [← heq']
+    rcases Set.mem_Icc.mp ht' with ⟨h1, h2⟩
+    have hle1 : ((i.val : ℝ) / n) ≤ (t' : ℝ) := h1
+    have hle2 : (t' : ℝ) ≤ ((i.val : ℝ) + 1) / n := by
+      have h2' : (t' : ℝ) ≤ (divFinIcc n hn (i.val + 1) i.isLt : ℝ) := h2
+      rw [divFinIcc_val] at h2'
+      push_cast at h2'
+      exact h2'
+    exact hcovY i t' hle1 hle2
+  -- Apply Phase 5: chart-level chain rule.
+  rw [pathIntegralViaChartCorrect_pullbackFormsBundledLM
+    f hf η (pickX i) (pickY i) γ_sub hX_range hY_range]
+  -- Now: pathIntegralViaChartCorrect (chartAt ℂ (pickY i)) η
+  --        (γ_sub.map hf.continuous) hY_range
+  --      = pathIntegralViaChartCorrect (chartAt ℂ (pickY i)) η
+  --        ((γ.map hf.continuous).subpath ...) (the auto-built RHS hyp)
+  -- via path congruence (Path.ext).
+  exact pathIntegralViaChartCorrect_eq_of_path_eq _ _ rfl _ _
 
 /-- **Stage A leaf (round 2).** Chart-level naturality of path
 integration under form-pullback.
@@ -430,6 +478,29 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) :=
   pathIntegralViaCoverWith_pullbackFormsBundledLM f hf η γ
+
+/-- **Pass pcr.4 (chart-level chain rule, single-chart version).**
+On a single chart segment where `γ : Path a b` has range in
+`(chartAt ℂ p).source` on `X` and `f ∘ γ` has range in
+`(chartAt ℂ q).source` on `Y` for some pair of chart centres `p, q`,
+the chart-corrected segment integrals satisfy
+`pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+  pathIntegralViaCover η (γ.map hf.continuous)`.
+
+The single-chart hypotheses are now redundant: the general
+`pathIntegralViaCover_pullbackFormsBundledLM` (just above) is
+unconditional. This lemma is preserved as a named API entry so
+existing references compile. See TeX label `lem:pcr-r4`. -/
+theorem pathIntegralViaCover_pullback_chart_segment
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (_h_singleChart_X : ∃ p : X, ∀ t : unitInterval,
+      γ t ∈ (chartAt ℂ p).source)
+    (_h_singleChart_Y : ∃ q : Y, ∀ t : unitInterval,
+      (γ.map hf.continuous) t ∈ (chartAt ℂ q).source) :
+    pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
+      pathIntegralViaCover η (γ.map hf.continuous) :=
+  pathIntegralViaCover_pullbackFormsBundledLM f hf η γ
 
 /-! ### Round 2 reassembly (chain-level naturality)
 
