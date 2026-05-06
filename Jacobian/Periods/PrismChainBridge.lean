@@ -134,6 +134,29 @@ theorem singChain_desc_basis {n : ℕ} {X : Type} [TopologicalSpace X]
   simp only [singChain_desc, singChain_basis, singChain_descCat_basisCat,
     Equiv.apply_symm_apply]
 
+/-- Extensionality: two morphisms out of a singular chain group are
+equal iff they agree on all categorical basis elements. -/
+theorem singChain_hom_extCat {n : ℕ} {X : Type} [TopologicalSpace X]
+    {Y : ModuleCat ℤ} (g₁ g₂ : singChain n X ⟶ Y)
+    (h : ∀ σ : SingSimplexCat n X,
+      singChain_basisCat σ ≫ g₁ = singChain_basisCat σ ≫ g₂) :
+    g₁ = g₂ :=
+  Sigma.hom_ext g₁ g₂ h
+
+/-- Extensionality: two morphisms out of a singular chain group are
+equal iff they agree on all geometric basis elements. -/
+theorem singChain_hom_ext {n : ℕ} {X : Type} [TopologicalSpace X]
+    {Y : ModuleCat ℤ} (g₁ g₂ : singChain n X ⟶ Y)
+    (h : ∀ s : SingSimplex n X,
+      singChain_basis s ≫ g₁ = singChain_basis s ≫ g₂) :
+    g₁ = g₂ := by
+  apply singChain_hom_extCat
+  intro σ
+  have := h ((singSimplexEquiv n X) σ)
+  unfold singChain_basis at this
+  rw [Equiv.symm_apply_apply] at this
+  exact this
+
 /-! ### Chain map on basis (Phase 2)
 
 The functorial chain map `((sChain).obj R).map (TopCat.ofHom f)` at
