@@ -3,7 +3,11 @@ import Jacobian.Periods.ChartedFormPullbackSimp
 import Jacobian.Periods.ChartedFormPullbackSmul
 import Jacobian.Periods.ChartedFormPullbackSub
 import Jacobian.Periods.HolomorphicOneFormToFunContinuous
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
+import Mathlib.Geometry.Manifold.ContMDiff.Atlas
+import Mathlib.Geometry.Manifold.MFDeriv.Basic
+import Mathlib.Geometry.Manifold.MFDeriv.Tangent
 
 /-!
 # Curve integrability of `chartedFormPullback`
@@ -23,6 +27,7 @@ for the design discussion.
 namespace JacobianChallenge.Periods
 
 open JacobianChallenge.HolomorphicForms
+open scoped Topology
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
@@ -139,29 +144,125 @@ theorem chartedSection_localRepr_continuousOn
       show E →L[ℂ] ℂ from ω.toFun (c.symm e)) c.target :=
   (holomorphicOneForm_toFun_continuous ω).comp_continuousOn c.continuousOn_symm
 
-/-- **Continuity of the chart-inverse `mfderiv`.** The map
-`e ↦ mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) c.symm e` is continuous on `c.target`
-viewed as `E →L[ℂ] E`-valued.
+/-- **Continuity of the chart-inverse `mfderiv`.** For `c` in the
+maximal atlas of `X` (a `C^∞` complex manifold modeled on `E` with
+stable `chartAt`), `e ↦ mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) c.symm e` is continuous
+on `c.target` as an `(E →L[ℂ] E)`-valued function.
 
-Reduces (sorry-free if `ContMDiffWithinAt.mfderivWithin_const` plus
-chart-symm smoothness via `contMDiffOn_chart_symm` were specialised
-to `mfderiv` and unfolded from `inTangentCoordinates` for the
-self-model case where the coordinate change collapses to identity).
-Stated as a sorry to keep the bookkeeping packet-sized. -/
+## Strategy
+
+For `e₀ ∈ c.target`, set `p₀ := c.symm e₀` and `c' := chartAt E p₀`.
+By the chain rule applied to `c' ∘ c.symm` on a neighborhood of `e₀`:
+```
+fderiv ℂ (c' ∘ c.symm) e = mfderiv c' (c.symm e) ∘L mfderiv c.symm e
+```
+Under `[StableChartAt E X]`, `mfderiv c' (c.symm e) = id` for `c.symm e
+∈ c'.source` (i.e., for `e` in a neighborhood `V` of `e₀`). So:
+```
+mfderiv c.symm e = fderiv ℂ (c' ∘ c.symm) e
+```
+on `V`. The right-hand side is operator-continuous on `V` by
+`ContDiffOn.continuousOn_fderiv_of_isOpen` (since `c' ∘ c.symm` is
+`C^∞` between normed spaces). Hence `mfderiv c.symm` is operator-
+continuous on `V`, and in particular at `e₀` within `c.target`. -/
 theorem mfderiv_chartSymm_continuousOn
-    (c : OpenPartialHomeomorph X E) :
+    [StableChartAt E X]
+    (c : OpenPartialHomeomorph X E)
+    (hc : c ∈ IsManifold.maximalAtlas (modelWithCornersSelf ℂ E)
+      (⊤ : WithTop ℕ∞) X) :
     ContinuousOn (fun e =>
       show E →L[ℂ] E from
         mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E)
           c.symm e) c.target := by
-  sorry
+  -- Smoothness of c.symm via maximalAtlas membership.
+  have hsmoothOn : ContMDiffOn (modelWithCornersSelf ℂ E)
+      (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) c.symm c.target :=
+    contMDiffOn_symm_of_mem_maximalAtlas hc
+  -- Convert to mfderivWithin (they agree on the open set c.target).
+  refine ContinuousOn.congr (f := fun e =>
+      show E →L[ℂ] E from
+        mfderivWithin (modelWithCornersSelf ℂ E)
+          (modelWithCornersSelf ℂ E) c.symm c.target e) ?_ ?_
+  · intro e₀ he₀
+    -- Setup: p₀ := c.symm e₀, c' := chartAt E p₀.
+    set p₀ : X := c.symm e₀ with hp₀_def
+    set c' : OpenPartialHomeomorph X E := chartAt E p₀ with hc'_def
+    have hp₀_source : p₀ ∈ c'.source := mem_chart_source E p₀
+    -- Open neighborhood V of e₀ in c.target where c.symm e ∈ c'.source.
+    set V : Set E := c.target ∩ c.symm ⁻¹' c'.source with hV_def
+    have hV_e₀ : e₀ ∈ V := ⟨he₀, hp₀_source⟩
+    have hV_open : IsOpen V :=
+      c.continuousOn_symm.isOpen_inter_preimage c.open_target c'.open_source
+    have hV_mem_nhds : V ∈ 𝓝 e₀ := hV_open.mem_nhds hV_e₀
+    -- Step 1: c' ∘ c.symm is C^∞ on V (composition of charts in maximalAtlas).
+    have hc'_smooth : ContMDiffOn (modelWithCornersSelf ℂ E)
+        (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) c' c'.source :=
+      contMDiffOn_chart
+    have hg_smooth : ContMDiffOn (modelWithCornersSelf ℂ E)
+        (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞)
+        (fun e => c' (c.symm e)) V :=
+      hc'_smooth.comp (hsmoothOn.mono Set.inter_subset_left)
+        (fun e he => he.2)
+    have hg_contDiff : ContDiffOn ℂ (⊤ : WithTop ℕ∞)
+        (fun e => c' (c.symm e)) V :=
+      contMDiffOn_iff_contDiffOn.mp hg_smooth
+    -- Step 2: fderiv of g := c' ∘ c.symm is operator-continuous on V.
+    have hg_fderiv_cont : ContinuousOn
+        (fderiv ℂ (fun e => c' (c.symm e))) V :=
+      hg_contDiff.continuousOn_fderiv_of_isOpen hV_open le_top
+    -- Step 3 (chain rule via mfderiv_comp + mfderiv_eq_fderiv): on V,
+    -- fderiv ℂ (c' ∘ c.symm) e = mfderiv c' (c.symm e) ∘L mfderiv c.symm e
+    have hchain : ∀ e ∈ V,
+        fderiv ℂ (fun e' => c' (c.symm e')) e =
+        (mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E) c' (c.symm e)).comp
+          (mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E) c.symm e) := by
+      intro e he
+      rw [← mfderiv_eq_fderiv]
+      apply mfderiv_comp e
+      · exact (mdifferentiable_chart p₀).1.mdifferentiableAt
+          ((chartAt E p₀).open_source.mem_nhds he.2)
+      · have h1 := hsmoothOn e he.1
+        have h2 := h1.mdifferentiableWithinAt (by decide : (⊤ : WithTop ℕ∞) ≠ 0)
+        exact h2.mdifferentiableAt (c.open_target.mem_nhds he.1)
+    -- Step 4 (the new key step): under [StableChartAt E X], mfderiv c' (c.symm e) = id
+    -- for e in V. So fderiv ℂ (c' ∘ c.symm) e = mfderiv c.symm e on V.
+    have hsimp : ∀ e ∈ V,
+        fderiv ℂ (fun e' => c' (c.symm e')) e =
+        mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E) c.symm e := by
+      intro e he
+      rw [hchain e he]
+      have h_id : mfderiv (modelWithCornersSelf ℂ E)
+          (modelWithCornersSelf ℂ E) c' (c.symm e) =
+          ContinuousLinearMap.id ℂ E :=
+        mfderiv_chartAt_eq_id_of_stable
+          (I := modelWithCornersSelf ℂ E) p₀ he.2
+      rw [h_id]
+      exact ContinuousLinearMap.id_comp _
+    -- Step 5: ContinuousWithinAt at e₀ via EventuallyEq with the (continuous) fderiv.
+    have heventually :
+        (fun e => show E →L[ℂ] E from
+          mfderivWithin (modelWithCornersSelf ℂ E)
+            (modelWithCornersSelf ℂ E) c.symm c.target e) =ᶠ[𝓝 e₀]
+        (fun e => fderiv ℂ (fun e' => c' (c.symm e')) e) := by
+      filter_upwards [hV_mem_nhds] with e he
+      rw [mfderivWithin_of_isOpen c.open_target he.1, ← hsimp e he]
+    have h_fderiv_cont_at_e₀ :
+        ContinuousAt (fun e => fderiv ℂ (fun e' => c' (c.symm e')) e) e₀ :=
+      (hg_fderiv_cont e₀ hV_e₀).continuousAt hV_mem_nhds
+    exact (h_fderiv_cont_at_e₀.congr heventually.symm).continuousWithinAt
+  · intro e he
+    exact (mfderivWithin_of_isOpen c.open_target he).symm
 
 /-- **Continuity of the chart pullback.** Sorry-free assembly of
 `chartedSection_localRepr_continuousOn` and
 `mfderiv_chartSymm_continuousOn` via the (jointly) continuous
 bilinear `ContinuousLinearMap.comp`. -/
 theorem chartedFormPullback_continuousOn
-    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
+    [StableChartAt E X]
+    (c : OpenPartialHomeomorph X E)
+    (hc : c ∈ IsManifold.maximalAtlas (modelWithCornersSelf ℂ E)
+      (⊤ : WithTop ℕ∞) X)
+    (ω : HolomorphicOneForm E X) :
     ContinuousOn (chartedFormPullback c ω) c.target := by
   -- Unfold definitionally: chartedFormPullback c ω e =
   --   (ω.toFun (c.symm e)).comp (mfderiv c.symm e).
@@ -171,7 +272,7 @@ theorem chartedFormPullback_continuousOn
     isBoundedBilinearMap_comp.continuous
   exact hcomp.comp_continuousOn
     ((chartedSection_localRepr_continuousOn c ω).prodMk
-      (mfderiv_chartSymm_continuousOn c))
+      (mfderiv_chartSymm_continuousOn c hc))
 
 /-- **Phase 1 deliverable.** For a `C¹` path `γ : Path a b` whose range
 lies in `c.target`, the chart pullback `chartedFormPullback c ω` is
@@ -187,11 +288,15 @@ This unblocks `pathIntegralViaChartCorrect_add` (gated on Packet F
 in `PathIntegralViaCoverRecon.lean`) and downstream segment-
 additivity / refinement lemmas. -/
 theorem chartedFormPullback_curveIntegrable
-    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
+    [StableChartAt E X]
+    (c : OpenPartialHomeomorph X E)
+    (hc : c ∈ IsManifold.maximalAtlas (modelWithCornersSelf ℂ E)
+      (⊤ : WithTop ℕ∞) X)
+    (ω : HolomorphicOneForm E X)
     {a b : E} (γ : Path a b)
     (hγ : ContDiffOn ℝ 1 γ.extend (Set.Icc 0 1))
     (hrange : ∀ t, γ t ∈ c.target) :
     CurveIntegrable (chartedFormPullback c ω) γ :=
-  (chartedFormPullback_continuousOn c ω).curveIntegrable_of_contDiffOn hγ hrange
+  (chartedFormPullback_continuousOn c hc ω).curveIntegrable_of_contDiffOn hγ hrange
 
 end JacobianChallenge.Periods
