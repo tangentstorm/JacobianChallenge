@@ -2,12 +2,12 @@ import Jacobian.Periods.ChartedFormPullback
 import Jacobian.Periods.ChartedFormPullbackSimp
 import Jacobian.Periods.ChartedFormPullbackSmul
 import Jacobian.Periods.ChartedFormPullbackSub
+import Jacobian.Periods.HolomorphicOneFormToFunContinuous
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
 import Mathlib.Geometry.Manifold.ContMDiff.Atlas
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 import Mathlib.Geometry.Manifold.MFDeriv.Tangent
-import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 /-!
 # Curve integrability of `chartedFormPullback`
@@ -141,8 +141,8 @@ fibers, self-model). The `show … from rfl` bridges the two forms. -/
 theorem chartedSection_localRepr_continuousOn
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
     ContinuousOn (fun e =>
-      show E →L[ℂ] ℂ from ω.toFun (c.symm e)) c.target := by
-  sorry
+      show E →L[ℂ] ℂ from ω.toFun (c.symm e)) c.target :=
+  (holomorphicOneForm_toFun_continuous ω).comp_continuousOn c.continuousOn_symm
 
 /-- **Continuity of the chart-inverse `mfderiv`.** For `c` in the
 maximal atlas of `X` (a `C^∞` complex manifold modeled on `E` with
