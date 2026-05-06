@@ -35,10 +35,15 @@ Phase 2 is **partially landed**:
   a re-export of `TopCat.toSSetObjEquiv`).
 * `singularChainElement` — chain-complex generator from a continuous
   simplex (sorry-free, defined via `Sigma.ι` after transporting).
-
-The boundary-decomposition leaf is the next remaining sub-task and
-is sorry'd as a precise statement (much weaker than the original
-iso it ultimately feeds into).
+* `stdSimplexFaceMap` and `singularSimplexFace` — sorry-free
+  geometric-realisation-of-`SimplexCategory.δ` and induced face
+  precomposition operation on continuous singular simplices.
+* `singularChainElement_boundary_decomposition` — Phase 2 leaf
+  (genuine sub-sorry, strictly weaker than the iso): the boundary
+  formula expressing `d_{n+1}` as the alternating sum of face-map
+  generators. Stated as a real equation (not `True`); the proof is
+  a categorical bookkeeping unfolding of `alternatingFaceMapComplex`
+  and `sigmaConst.map`.
 -/
 
 namespace JacobianChallenge.Periods
@@ -86,33 +91,53 @@ noncomputable def singularChainElement
   (Sigma.ι (fun _ : (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋n⦌) =>
     ModuleCat.of ℤ ℤ) s).hom (1 : ℤ)
 
-/-- **Phase 2 leaf.** Bookkeeping that the boundary of a chain-complex
-generator decomposes as the alternating sum over face inclusions of
-the chain-complex generators of the boundary simplices.
+/-- The `i`-th topological face inclusion `stdSimplex ℝ (Fin (n+1)) →
+stdSimplex ℝ (Fin (n+2))` as a continuous map, induced by
+`Fin.succAbove i`. This is the geometric realisation of
+`SimplexCategory.δ i`. -/
+noncomputable def stdSimplexFaceMap
+    (n : ℕ) (i : Fin (n + 2)) :
+    C(stdSimplex ℝ (Fin (n + 1)), stdSimplex ℝ (Fin (n + 2))) :=
+  ⟨stdSimplex.map (Fin.succAbove i), stdSimplex.continuous_map _⟩
 
-For `σ : C(stdSimplex ℝ (Fin (n+2)), X)`,
+/-- The face of a singular `(n+1)`-simplex obtained by precomposition
+with the i-th face inclusion. -/
+noncomputable def singularSimplexFace
+    {X : Type} [TopologicalSpace X] {n : ℕ}
+    (σ : C(stdSimplex ℝ (Fin (n + 2)), X)) (i : Fin (n + 2)) :
+    C(stdSimplex ℝ (Fin (n + 1)), X) :=
+  σ.comp (stdSimplexFaceMap n i)
+
+/-- **Phase 2 leaf (sub-sorry, strictly weaker than the iso).**
+Boundary of a chain-complex generator decomposes as the alternating
+sum over face inclusions:
 
   `d_{n+1} (singularChainElement σ) =
-    ∑_{i : Fin (n+2)} (-1)^i • singularChainElement (σ ∘ f_i)`,
+    ∑_{i : Fin (n+2)} (-1)^i • singularChainElement (singularSimplexFace σ i)`.
 
-where `f_i : stdSimplex ℝ (Fin (n+1)) → stdSimplex ℝ (Fin (n+2))` is
-the i-th face inclusion induced by `SimplexCategory.δ i`.
-
-This is a direct unfolding of the `alternatingFaceMapComplex`
-definition together with the naturality of `Sigma.ι` under the
-`SimplexCategory` action. The equation is **strictly weaker** than the
-final cellular iso it feeds into: it specifies a particular boundary
-identity, not the structure of `H₁`.
-
-Stated as `True` for now; the genuine equation lives in
-`SingularChainCoproduct X n` and requires identifying the chain
-complex `d` with the alternating face-map sum after passing through
-the equivalence. -/
+This unfolds `alternatingFaceMapComplex` (whose `objD = ∑ (-1)^i • δ_i`)
+and uses the naturality of `Sigma.ι` under `Sigma.map'` (i.e.,
+`Sigma.ι_comp_map'`) to commute the simplicial face map past the
+coproduct injection. Each step is mechanical Mathlib bookkeeping;
+the proof is a roughly 30-50 line categorical computation that fits
+inside this file (no new infrastructure required). -/
 theorem singularChainElement_boundary_decomposition
-    (X : Type) [TopologicalSpace X] (_n : ℕ)
-    (_σ : C(stdSimplex ℝ (Fin (_n + 2)), X)) :
-    True := by
-  trivial
+    (X : Type) [TopologicalSpace X] (n : ℕ)
+    (σ : C(stdSimplex ℝ (Fin (n + 2)), X)) :
+    (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).d (n + 1) n
+        ((show SingularChainCoproduct X (n + 1) =
+            (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+              (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).X (n + 1) from rfl) ▸
+          singularChainElement σ) =
+      (show (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+          (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).X n =
+          SingularChainCoproduct X n from rfl) ▸
+        ((Finset.univ : Finset (Fin (n + 2))).sum
+          fun i => ((-1 : ℤ) ^ (i : ℕ)) •
+            (singularChainElement (singularSimplexFace σ i) :
+              SingularChainCoproduct X n)) := by
+  sorry
 
 /-- **Phase 2 leaf.** Linear independence of distinct chain-element
 generators. The coproduct structure of `∐ R` makes the canonical
