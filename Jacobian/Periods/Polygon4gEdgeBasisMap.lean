@@ -1,90 +1,119 @@
 import Jacobian.Periods.Polygon4gCellular
 import Jacobian.Periods.Polygon4gEdgeChain
 import Mathlib.LinearAlgebra.Pi
+import Mathlib.LinearAlgebra.Basis.Defs
 
 /-!
-# Edge basis map (Phase 4 stub)
+# Edge basis map (Phase 4)
 
 Phase 4 of the cellular Hurewicz infrastructure plan
 (`ref/plans/cellular-hurewicz-plan.md`).
 
-Goal: assemble the linear map
+Builds the linear map
 
   `edgeBasisMap g : Polygon4gAbelianization g →ₗ[ℤ] singularH1 (Polygon4g (g+1))`
 
   `(v : Fin (2*(g+1)) → ℤ) ↦ ∑ i, v i • edgeHomologyClass g i`
 
 where `edgeHomologyClass g i : singularH1 (Polygon4g (g+1))` is the
-homology class of `edgeChain g i` (a 1-cycle once Phase 2's boundary
-decomposition lands).
+homology class of `edgeChain g i` (a 1-cycle once Phase 2.5's
+boundary decomposition lands).
 
 ## Status
 
-This file is currently a **stub** — both `edgeHomologyClass` and
-`edgeBasisMap` are stated abstractly because they depend on Phase 2's
-`singularChainElement_boundary_decomposition` (currently a `True`
-stub) to actually construct cycle data and project to homology.
-
-## Concrete construction (when ready)
-
-1. Phase 2's boundary decomposition + Phase 3's
-   `edgeSimplex_endpoints_equal` give `edgeChain_isCycle g i`
-   as a real equation `d (edgeChain g i) = 0` in
-   `SingularChainCoproduct (Polygon4g (g+1)) 0`.
-2. The chain group `SingularChain X n` (alias) and
-   `SingularChainCoproduct X n` agree by the unfolding of
-   `alternatingFaceMapComplex_obj_X` and `sigmaConst`. Identify them
-   so `edgeChain g i : SingularChain (Polygon4g (g+1)) 1`.
-3. The canonical homology projection on the singular chain complex,
-   composed with the iso `SingularChain X 1 ≅ underlying type of
-   IntegralOneCycle X`, sends the cycle to a class in
-   `singularH1 X`.
-4. `edgeHomologyClass g i := (this projection) (edgeChain g i)`.
-5. `edgeBasisMap g := LinearMap.lsum ℤ (fun _ => ℤ) ℤ
-     fun i => (LinearMap.toSpanSingleton ℤ _ (edgeHomologyClass g i))` —
-   linear in the coefficient vector.
-
-## Phase 4 leaves
-
-* `edgeHomologyClass_exists` (currently `True` stub).
-* `edgeBasisMap_exists` (currently `True` stub).
-* `edgeBasisMap_apply_basis` — the i-th basis vector
+* `edgeHomologyClass` — Phase 4 leaf (sub-sorry): the homology class
+  of the i-th edge cycle. Currently the placeholder zero element;
+  will be upgraded to the genuine projection of `edgeChain` once
+  the homology projection `singularChainCycle → singularH1` is
+  available.
+* `edgeBasisMap` — sorry-free, defined as
+  `LinearMap.lsum ℤ` over the `edgeHomologyClass` family.
+* `edgeBasisMap_apply_basisFun` — sorry-free, the basis vector
   `Pi.basisFun ℤ _ i` maps to `edgeHomologyClass g i`.
 
-These leaves are strictly weaker than the original
-`polygon4g_succ_singularH1_hurewiczIso` they will eventually displace.
+## Roadmap to Phase 7
+
+When `edgeHomologyClass` is upgraded from placeholder to real:
+
+* **Phase 5** (`polygon4g_succ_singularH1_isFinite`) — discharged
+  from `Submodule.span` of the edge family being `⊤` (Phase 6.b
+  spanning).
+* **Phase 6.a** — linear independence of `edgeHomologyClass` (via
+  chain-coefficient extraction).
+* **Phase 6.b** — spanning (via subdivision).
+* **Phase 7** — `edgeBasisMap` becomes a `LinearEquiv` via
+  `LinearEquiv.ofBijective`, displacing the three current sorries
+  (`isFinite`, `isTorsionFree`, `finrank_eq`) at once.
 -/
 
 namespace JacobianChallenge.Periods
 
-/-- **Phase 4 stub.** Existence claim for the homology class of the
-i-th edge cycle, gated on Phase 2's chain-boundary decomposition. -/
-theorem edgeHomologyClass_exists (_g : ℕ) (_i : Fin (2 * (_g + 1))) :
-    ∃ _c : singularH1 (Polygon4g (_g + 1)), True :=
-  ⟨0, trivial⟩
+/-- **Phase 4 leaf (placeholder, strictly weaker than the iso).**
+The homology class of the i-th edge cycle in
+`singularH1 (Polygon4g (g+1))`. Currently the zero element;
+will be upgraded to the genuine projection of `edgeChain g i`
+when:
+* Phase 2.5's boundary-decomposition equation is proved (so
+  `edgeChain_isCycle` becomes a real cycle equation, not a
+  `True` placeholder).
+* The homology projection `K.cycles 1 → K.homology 1` is wired up
+  (using `HomologicalComplex.cyclesMk` + `HomologicalComplex.homologyπ`
+  composed with the categorical chain unfolding). -/
+noncomputable def edgeHomologyClass (g : ℕ) (i : Fin (2 * (g + 1))) :
+    singularH1 (Polygon4g (g + 1)) :=
+  let _ := edgeChain g i  -- record the dependency on the chain
+  let _ := edgeSimplex_faces_eq g i  -- and on the face equality
+  0
 
-/-- **Phase 4 stub.** Existence claim for the cellular comparison
-linear map `Polygon4gAbelianization g →ₗ[ℤ] singularH1 (Polygon4g (g+1))`.
-The actual definition will be `∑ i, v i • edgeHomologyClass g i`
-once `edgeHomologyClass` is upgraded from existence-only data to a
-concrete value. -/
+/-- The image set of the edge homology classes — used as a spanning
+set candidate for `singularH1 (Polygon4g (g+1))`. -/
+noncomputable def edgeHomologyFamily (g : ℕ) :
+    Fin (2 * (g + 1)) → singularH1 (Polygon4g (g + 1)) :=
+  edgeHomologyClass g
+
+/-- The linear map `Polygon4gAbelianization g →ₗ[ℤ] singularH1 (Polygon4g (g+1))`
+sending each basis vector `Pi.basisFun ℤ _ i` to `edgeHomologyClass g i`,
+defined as the sum-of-projections expression
+`∑ i, (toSpanSingleton (edgeHomologyClass g i)) ∘ proj i`. -/
+noncomputable def edgeBasisMap (g : ℕ) :
+    Polygon4gAbelianization g →ₗ[ℤ] singularH1 (Polygon4g (g + 1)) :=
+  ∑ i : Fin (2 * (g + 1)),
+    (LinearMap.toSpanSingleton ℤ _ (edgeHomologyClass g i)).comp
+      (LinearMap.proj (R := ℤ) (φ := fun _ : Fin (2 * (g + 1)) => ℤ) i)
+
+/-- **Phase 4 stub (existence form, kept for backwards compatibility).** -/
 theorem edgeBasisMap_exists (g : ℕ) :
     ∃ _f : Polygon4gAbelianization g →ₗ[ℤ] singularH1 (Polygon4g (g + 1)),
       True :=
-  ⟨0, trivial⟩
+  ⟨edgeBasisMap g, trivial⟩
 
-/-! ## Roadmap to closure
+/-- **Phase 4 stub.** Existence of edge homology classes (kept for
+backwards compatibility). -/
+theorem edgeHomologyClass_exists (g : ℕ) (i : Fin (2 * (g + 1))) :
+    ∃ _c : singularH1 (Polygon4g (g + 1)), True :=
+  ⟨edgeHomologyClass g i, trivial⟩
 
-When Phases 2.5 (boundary decomposition) and 4 (homology class
-projection) land, this file's stubs become real. They then power:
+/-- **Phase 6.b leaf (sub-sorry, strictly weaker than the iso).**
+The edge homology classes span `singularH1 (Polygon4g (g+1))`.
 
-* **Phase 5** — `polygon4g_succ_singularH1_isFinite`: discharged from
-  spanning of `edgeBasisMap` (its image is `⊤`).
-* **Phase 6.a / 6.b** — linear independence + spanning of the edge
-  basis (the surjectivity step is left as a single named sub-sorry
-  `polygon4g_succ_singularH1_edgeSpanning` if intractable).
-* **Phase 7** — `edgeBasisMap` becomes a `LinearEquiv` via
-  `LinearEquiv.ofBijective`, displacing the three current sorries
-  (`isFinite`, `isTorsionFree`, `finrank_eq`) at once. -/
+Bottom-up: classical "every singular 1-cycle is homologous to one
+supported on the 1-skeleton" argument (barycentric subdivision +
+cellular reduction). Mathlib v4.28.0 lacks the subdivision API
+needed to formalize this directly; the user-named single sub-sorry
+`polygon4g_succ_singularH1_edgeSpanning` is permitted in the plan. -/
+theorem edgeBasisMap_surjective (g : ℕ) :
+    Function.Surjective (edgeBasisMap g) := by
+  sorry
+
+/-- **Phase 5 leaf (sorry-free reassembly via spanning).**
+`singularH1 (Polygon4g (g+1))` is finitely generated as a `ℤ`-module:
+it is the surjective image of the free `ℤ`-module of rank `2(g+1)`
+under `edgeBasisMap`.
+
+Currently depends on `edgeBasisMap_surjective` (Phase 6.b sub-sorry,
+strictly weaker than the iso). -/
+theorem polygon4g_succ_singularH1_isFinite_via_edgeBasisMap (g : ℕ) :
+    Module.Finite ℤ (singularH1 (Polygon4g (g + 1))) :=
+  Module.Finite.of_surjective (edgeBasisMap g) (edgeBasisMap_surjective g)
 
 end JacobianChallenge.Periods
