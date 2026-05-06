@@ -50,15 +50,24 @@ namespace JacobianChallenge.Periods
 
 /-- **Phase 4 leaf (placeholder, strictly weaker than the iso).**
 The homology class of the i-th edge cycle in
-`singularH1 (Polygon4g (g+1))`. Currently the zero element;
-will be upgraded to the genuine projection of `edgeChain g i`
-when:
+`singularH1 (Polygon4g (g+1))`.
+
+⚠️ **Currently the zero element** (placeholder). With this
+placeholder, `edgeBasisMap g = 0`, which means
+`edgeBasisMap_surjective` and `edgeBasisMap_injective` (below) are
+*false statements* until the placeholder is upgraded.
+
+Will become the real projection once:
 * Phase 2.5's boundary-decomposition equation is proved (so
   `edgeChain_isCycle` becomes a real cycle equation, not a
-  `True` placeholder).
+  `True` placeholder), and
 * The homology projection `K.cycles 1 → K.homology 1` is wired up
   (using `HomologicalComplex.cyclesMk` + `HomologicalComplex.homologyπ`
-  composed with the categorical chain unfolding). -/
+  composed with the categorical chain unfolding).
+
+Sorry-free, but the sub-sorries below are designed to be provable
+only once this is upgraded. The dependency is intentional: it
+documents the closure path through Phase 7. -/
 noncomputable def edgeHomologyClass (g : ℕ) (i : Fin (2 * (g + 1))) :
     singularH1 (Polygon4g (g + 1)) :=
   let _ := edgeChain g i  -- record the dependency on the chain
