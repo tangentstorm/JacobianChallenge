@@ -13,52 +13,67 @@ finite-dimensional normed space `E`, the function
 `b ↦ mfderiv (chartAt E p₀) b` is operator-continuous on
 `(chartAt E p₀).source`.**
 
-This is the natural statement to contribute upstream.
+## Proof attempt and obstruction
 
-## Strategy and the genuine technical bridge
+After substantial analysis, the natural proof attempts hit a fundamental
+circular dependency:
 
-By `mfderiv_chartAt_eq_tangentCoordChange` (Mathlib), for `b ∈ (chartAt E p₀).source`:
-```
-mfderiv (chartAt E p₀) b = tangentCoordChange b p₀ b
-                        = (tangentBundleCore I X).coordChange (achart E b) (achart E p₀) b
-```
+* By `mfderiv_chartAt_eq_tangentCoordChange`,
+  `mfderiv (chartAt E p₀) b = tangentCoordChange b p₀ b`
+  `= (tangentBundleCore I X).coordChange (achart E b) (achart E p₀) b`.
+  The **first chart index varies with `b`** (via `achart E b`).
 
-By `continuousOn_clm_apply` (Mathlib, FiniteDim), operator continuity
-of `b ↦ mfderiv (chartAt E p₀) b` reduces to pointwise continuity for
-each fixed `v ∈ E` of `b ↦ mfderiv (chartAt E p₀) b v ∈ E`.
+* `continuousOn_coordChange i j` (Mathlib) gives operator continuity
+  for **fixed** indices `i, j` on `baseSet i ∩ baseSet j`. The
+  `b`-varying first index breaks this.
 
-The pointwise continuity is equivalent (by `Bundle.contMDiffWithinAt_section`)
-to continuity of the constant section `b ↦ ⟨b, v⟩ : baseSet → TangentBundle X`,
-in trivialization-coordinates of `trivAt p₀`. The trivialization-coord
-of this section at `b` is `(b, A(b) v)` where `A(b) = mfderiv (chartAt E p₀) b`.
+* By `continuousOn_clm_apply` (FiniteDim), operator continuity reduces
+  to pointwise continuity for each `v ∈ E`. By
+  `Bundle.contMDiffWithinAt_section`, pointwise continuity is
+  equivalent to continuity of the constant section
+  `b ↦ ⟨b, v⟩ : baseSet → TangentBundle X`, which in trivialization-
+  coordinates reads `b ↦ (b, A(b) v)` — circular.
 
-Continuity of `b ↦ A(b) v` is exactly the goal — making this a
-**circular reduction** in pure Mathlib.
+* Heine-Cantor on the compact unit ball requires joint continuity of
+  `(b, v) ↦ A(b) v` on `baseSet × E`, which has the same constant
+  section obstruction.
 
-The genuine resolution comes from **smooth-bundle structure
-infrastructure**:
-* `ContMDiffVectorBundle.contMDiffOn_coordChangeL` gives smooth coord
-  change between **fixed** trivializations.
-* For FINITE-DIM fiber, joint continuity of the trivialization map
-  (`Trivialization.continuousOn`) plus **compactness of the unit ball**
-  (Heine-Cantor) yields operator continuity of the trivialization
-  fiber-map on its base set.
+* `coordChange_comp` decompositions via fixed intermediate trivializations
+  isolate the chart-at-varying factor; the residual factor still has
+  the same form.
 
-The Heine-Cantor argument is non-trivial in Lean (requires careful
-bundle bookkeeping with the local trivialization homeomorphism plus
-the finite-dim joint-to-operator continuity bridge).
+## Conclusion
 
-## Status
+The lemma as stated may **require** an additional hypothesis (e.g.,
+that `chartAt E b = chartAt E p₀` for `b` in a neighborhood of `p₀` in
+`(chartAt E p₀).source`, which holds for "natural" charted spaces but
+is not part of the abstract `ChartedSpace` typeclass) **or**
+substantial new bundle infrastructure (a smooth-bundle-local-frame
+construction that pre-empts the chart-at issue).
 
-This lemma is a clearly-identified Mathlib contribution. The proof
-spans approximately 50–100 lines of Lean using `Trivialization.continuousOn`,
-`continuousOn_clm_apply`, `IsCompact.tendstoUniformly_of_continuousOn` (or
-similar), and `tangentBundleCore.IsContMDiff`. We mark it as a packet
-and use it (sorry-stubbed) in the project's downstream
-`mfderiv_chartSymm_continuousOn`.
+For the project, we mark it as a clearly-identified Mathlib gap. The
+project's main theorem (`mfderiv_chartSymm_continuousOn`) is sorry-free
+in body and depends on this single helper. The honest path forward is
+to either:
 
-When this lemma lands in Mathlib, the main project theorem will be
-fully sorry-free (transitively).
+1. Land an upstream Mathlib lemma using the appropriate generalization
+   (likely requiring local-frame infrastructure or chart-compatibility
+   conditions).
+
+2. Restrict the project's scope to manifolds where chartAt is
+   structurally well-behaved (e.g., manifolds built from a fixed atlas
+   with a canonical chart selector — the case in practice for Riemann
+   surfaces).
+
+## Note on pure-mathematical truth
+
+The mathematical statement IS true for all common smooth manifolds in
+practice (smooth chart changes guarantee that the trivialization map's
+fiber portion varies smoothly in any reasonable atlas). The technical
+obstruction is **purely a property of Mathlib's `ChartedSpace`
+abstraction**: `chartAt` is typeclass data with no continuity or
+locality requirement, leaving the "chart-at varying" problem as a
+genuine artifact of the formalization.
 -/
 
 namespace JacobianChallenge.Periods
@@ -67,20 +82,18 @@ open Bundle Set Filter
 open scoped Manifold ContDiff Topology
 
 /-- **Operator continuity of `mfderiv` of a chart on a finite-dim
-complex manifold.** For the chart `chartAt E p₀` on a `C^∞` manifold
-modeled on a finite-dimensional normed space `E`,
-`b ↦ mfderiv (chartAt E p₀) b` is operator-continuous on
-`(chartAt E p₀).source`.
+complex manifold** (Mathlib-style packet, sorry-stubbed pending
+upstream).
 
-**Mathlib contribution status**: This lemma fills a gap in Mathlib
-v4.28.0. The proof requires the bundle's smooth structure
-(`ContMDiffVectorBundle.contMDiffOn_coordChangeL`) plus a
-joint-to-operator continuity argument for finite-dim fibers via
-Heine-Cantor on the compact unit ball.
+For `chartAt E p₀` on a `C^∞` manifold modeled on a finite-dim normed
+space `E`, the function `b ↦ mfderiv (chartAt E p₀) b ∈ E →L[ℂ] E` is
+operator-continuous on `(chartAt E p₀).source`.
 
-For the project, we use this as a clearly-identified packet. The full
-proof spans 50–100 lines of Lean and is the natural Mathlib
-contribution. -/
+**Status**: Identified as a clearly-marked Mathlib gap. The proof
+either requires a chart-at-compatibility hypothesis (which holds for
+all common manifold instances but is not part of the abstract
+`ChartedSpace` typeclass) or significant bundle infrastructure (smooth
+local frames). See module docstring for analysis. -/
 theorem mfderiv_chartAt_continuousOn_of_finiteDim
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     [FiniteDimensional ℂ E]
@@ -92,13 +105,6 @@ theorem mfderiv_chartAt_continuousOn_of_finiteDim
         mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E)
           (chartAt E p₀) b)
       (chartAt E p₀).source := by
-  -- The proof reduces (via `continuousOn_clm_apply` for FiniteDim) to
-  -- pointwise continuity for each fixed `v ∈ E` of `b ↦ mfderiv b v ∈ E`.
-  -- The pointwise continuity follows from joint continuity of the
-  -- bundle's local trivialization (`Trivialization.continuousOn`)
-  -- plus the finite-dim compact-unit-ball argument via Heine-Cantor.
-  -- This is a non-trivial Mathlib contribution; left as a sorry-stubbed
-  -- packet to be filled in upstream.
   sorry
 
 end JacobianChallenge.Periods
