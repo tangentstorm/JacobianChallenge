@@ -230,24 +230,26 @@ theorem mfderiv_chartSymm_continuousOn
       ext w
       apply tangentCoordChange_self
       exact mem_extChartAt_source p₀
-    -- Step 8: chain rule. On V, mfderivWithin c.symm c.target e is determined by
-    -- (mfderiv c' (c.symm e))⁻¹ ∘L (fderiv ℂ (c' ∘ c.symm) e) — provided that
-    -- mfderiv c' (c.symm e) is invertible.
-    -- We use the chain rule mfderiv_comp:
-    --   mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) (c' ∘ c.symm) e
-    --     = mfderiv c' (c.symm e) ∘L mfderiv c.symm e
-    -- For source = target = E, mfderiv = fderiv (mfderiv_eq_fderiv).
-    -- So fderiv (c' ∘ c.symm) e = mfderiv c' (c.symm e) ∘L mfderiv c.symm e.
-    -- Applying to v:
-    --   fderiv (c' ∘ c.symm) e v = (mfderiv c' (c.symm e)) (mfderiv c.symm e v).
-    -- Inverting (when mfderiv c' (c.symm e) is invertible):
-    --   mfderiv c.symm e v = (mfderiv c' (c.symm e))⁻¹ (fderiv (c' ∘ c.symm) e v).
-    --
+    -- Step 8' (chain rule, applies on V via mfderiv_comp + mfderiv_eq_fderiv):
+    -- For e ∈ V: fderiv ℂ (c' ∘ c.symm) e = mfderiv c' (c.symm e) ∘L mfderiv c.symm e
+    have hchain : ∀ e ∈ V,
+        fderiv ℂ (fun e' => c' (c.symm e')) e =
+        (mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E) c' (c.symm e)).comp
+          (mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E) c.symm e) := by
+      intro e he
+      rw [← mfderiv_eq_fderiv]
+      apply mfderiv_comp e
+      · -- c' mdifferentiableAt c.symm e
+        exact (mdifferentiable_chart p₀).1.mdifferentiableAt
+          ((chartAt E p₀).open_source.mem_nhds he.2)
+      · -- c.symm mdifferentiableAt e
+        have h1 := hsmoothOn e he.1
+        have h2 := h1.mdifferentiableWithinAt (by decide : (⊤ : WithTop ℕ∞) ≠ 0)
+        exact h2.mdifferentiableAt (c.open_target.mem_nhds he.1)
     -- The remaining steps to discharge:
     -- 4. Pointwise continuity of e ↦ mfderiv c' (c.symm e) w for each w.
     -- 5. Operator continuity of e ↦ mfderiv c' (c.symm e) via continuousOn_clm_apply.
     -- 7. NormedRing.inverse_continuousAt → operator continuity of inverse.
-    -- 8'. Combine chain rule + step 7 to get the result.
     sorry
   · intro e he
     exact (mfderivWithin_of_isOpen c.open_target he).symm
