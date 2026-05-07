@@ -99,6 +99,19 @@ all sorry-free. Build verified on the file + downstream
 `Polygon4gEdgeBasisMap`. The cellular-Hurewicz obstruction is now
 consolidated onto exactly one named gap.
 
+**Ticks L-O (~+210–+290 min):** `b9fcfdb4` finally finished after
+~5 hours grinding. **Rejected** on integration. The patch builds
+and contains a useful sorry-free `hcov_refined` helper for the
+Nat-arithmetic of refined covers, BUT it also introduces a new
+sorry'd helper `chartPullback_intervalIntegrable_segment` whose
+unconditional statement is FALSE in general (Aristotle's own
+summary acknowledges: "for general continuous paths, this
+derivative may not be integrable"). Sorry-ing a known-false
+statement is worse than no progress. Reverted. The genuine fix is
+a STATEMENT change — add a `CurveIntegrable` / C¹ hypothesis to
+`pathIntegralViaCoverWith_refinement_invariant'` itself — which
+Claude does not make autonomously. Routed to brainstorm.
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 
