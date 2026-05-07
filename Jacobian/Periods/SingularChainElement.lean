@@ -190,13 +190,13 @@ theorem singularChainElement_boundary_decomposition
         (singularChainElement (singularSimplexFace σ i) :
           SingularChainCoproduct X n)
   rw [ModuleCat.hom_sum]
-  rw [LinearMap.coeFn_sum, Finset.sum_apply]
+  rw [LinearMap.coe_sum, Finset.sum_apply]
   refine Finset.sum_congr rfl (fun i _ => ?_)
   rw [ModuleCat.hom_zsmul]
   -- After the rewrites, the goal is:
   --   ((-1)^i • Hom.hom (singChain_basis ...)) 1 = (-1)^i • singularChainElement (...)
-  -- Simplify using LinearMap.smul_apply (coe form via Pi.smul_apply for ℕ→).
-  simp only [Pi.smul_apply]
+  -- The goal is solved by definition or by the default simp set.
+  simp only []
   -- Now: (-1)^i • Hom.hom (singChain_basis ...) 1 = (-1)^i • singularChainElement (...)
   -- The Hom.hom application reduces to singularChainElement by definition.
   rfl
