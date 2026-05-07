@@ -12,7 +12,7 @@ binary addition on `quotient V Λ`.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- The quotient projection commutes with addition. -/
