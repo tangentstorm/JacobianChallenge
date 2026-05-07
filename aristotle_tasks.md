@@ -124,6 +124,18 @@ an explicit anti-cheat clause forbidding the b9fcfdb4-style
 false-statement helper behind sorry. Even a clean BLOCKER triage
 result is useful here.
 
+**Tick Q (~+360 min):** `d94e2fb9` returned the **cleanest BLOCKER
+triage of the session** — no file modifications, no sorry'd
+workaround, just a route-by-route Mathlib API survey. Key findings
+recorded in `aristotle_jobs.jsonl`: Mathlib v4.28.0 has no
+mechanism to *compute* singular H₁ of any non-trivial topological
+space (only `singularHomologyFunctorZeroOfTotallyDisconnectedSpace`
+exists, and it's H₀). `CWComplex` exists but is purely point-set;
+no `cellularChainComplex`. `FundamentalGroup` and
+`singularHomologyFunctor` exist separately with no Hurewicz natural
+transformation. The cellular-Hurewicz iso is genuinely an upstream
+Mathlib infrastructure project. Status: **routed to brainstorm**.
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 
