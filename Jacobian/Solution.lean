@@ -1,4 +1,8 @@
-import Mathlib -- compiles with commit 8e3c989104daaa052921bf43de9eef0e1ac9fbf5 (15th April 2026)
+import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
+import Mathlib.Analysis.Normed.Ring.Lemmas
+import Mathlib.Geometry.Manifold.ChartedSpace
+import Mathlib.Geometry.Manifold.Instances.Real
+import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.HolomorphicForms.GenusZeroClassification
 import Jacobian.Periods.PeriodLattice
@@ -182,8 +186,9 @@ noncomputable def ofCurve (P : X) : X → Jacobian X :=
 
 lemma ofCurve_contMDiff (P : X) : ContMDiff 𝓘(ℂ)
     (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (ofCurve P) :=
-  (JacobianChallenge.ComplexTorus.contMDiff_uLift_up).comp
-    (JacobianChallenge.AbelJacobi.analyticOfCurve_contMDiff X P)
+  (JacobianChallenge.ComplexTorus.contMDiff_uLift_up
+      (Λ := JacobianChallenge.Periods.periodFullComplexLattice X)).comp
+    (JacobianChallenge.AbelJacobi.analyticOfCurve_contMDiff (X := X) P)
 
 lemma ofCurve_self (P : X) : ofCurve P P = 0 := by
   show ULift.up (JacobianChallenge.AbelJacobi.analyticOfCurve X P P) = 0
@@ -225,9 +230,12 @@ noncomputable def pushforward (f : X → Y)
 theorem pushforward_contMDiff :
     ContMDiff (modelWithCornersSelf ℂ (Fin (genus X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (genus Y) → ℂ)) ω (pushforward f hf) :=
-  (JacobianChallenge.ComplexTorus.contMDiff_uLift_up).comp
-    ((JacobianChallenge.TraceDegree.analyticPushforward_contMDiff f hf).comp
-      JacobianChallenge.ComplexTorus.contMDiff_uLift_down)
+  (JacobianChallenge.ComplexTorus.contMDiff_uLift_up
+      (Λ := JacobianChallenge.Periods.periodFullComplexLattice Y)).comp
+    ((JacobianChallenge.TraceDegree.analyticPushforward_contMDiff
+        (X := X) (Y := Y) f hf).comp
+      (JacobianChallenge.ComplexTorus.contMDiff_uLift_down
+        (Λ := JacobianChallenge.Periods.periodFullComplexLattice X)))
 
 -- functoriality
 lemma pushforward_id_apply (P : Jacobian X) : pushforward id contMDiff_id P = P := by
@@ -275,9 +283,12 @@ noncomputable def pullback (f : X → Y)
 theorem pullback_contMDiff :
     ContMDiff (modelWithCornersSelf ℂ (Fin (genus Y) → ℂ))
       (modelWithCornersSelf ℂ (Fin (genus X) → ℂ)) ω (pullback f hf) :=
-  (JacobianChallenge.ComplexTorus.contMDiff_uLift_up).comp
-    ((JacobianChallenge.TraceDegree.analyticPullback_contMDiff f hf).comp
-      JacobianChallenge.ComplexTorus.contMDiff_uLift_down)
+  (JacobianChallenge.ComplexTorus.contMDiff_uLift_up
+      (Λ := JacobianChallenge.Periods.periodFullComplexLattice X)).comp
+    ((JacobianChallenge.TraceDegree.analyticPullback_contMDiff
+        (X := X) (Y := Y) f hf).comp
+      (JacobianChallenge.ComplexTorus.contMDiff_uLift_down
+        (Λ := JacobianChallenge.Periods.periodFullComplexLattice Y)))
 
 -- functoriality
 lemma pullback_id_apply (P : Jacobian X) : pullback id contMDiff_id P = P := by
