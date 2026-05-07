@@ -9,7 +9,7 @@ Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- The continuous quotient projection sends compact sets to compact sets. -/
