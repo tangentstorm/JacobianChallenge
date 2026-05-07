@@ -143,18 +143,7 @@ theorem rawWord_handle_separation_orientable
     (_hReduced : ∀ x : EdgeWord E.extractedGenus, ¬ EdgeWord.InverseCancel w x) :
     ∃ v : EdgeWord E.extractedGenus, EdgeWord.TietzeEq w v ∧
       v = EdgeWord.standardWord E.extractedGenus := by
-  have _ := orientable_letterPair_opposite_orientation E w
-  have _ := orientable_handleSwap_grouping E w
-  have _ := handleSwap_index_ordering E w
-  change EdgeWord 0 at w
-  have hnil : w = [] := by
-    induction w with
-    | nil => rfl
-    | cons l xs ih =>
-        cases l <;> rename_i i <;> exact Fin.elim0 i
-  refine ⟨EdgeWord.standardWord E.extractedGenus, ?_, rfl⟩
-  rw [hnil]
-  exact EdgeWord.TietzeEq.refl _
+  sorry
 
 /-- **Round 49 / Stage A leaf (Tietze reduction, orientable case,
 reassembly).** For an orientable 2-manifold, the raw edge word is
@@ -288,16 +277,7 @@ theorem edgeWord_wordQuotient_homeomorph_M
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     (E : EdgeWordPresentation M) (w : EdgeWord E.extractedGenus) :
     Nonempty (EdgeWord.wordQuotient E.extractedGenus w ≃ₜ M) := by
-  -- For w = E.word, we use the bijection from E.proj. For other w,
-  -- we rely on the fact that any two presentations of the same surface
-  -- are related by Tietze moves (already handled by the assembly).
-  -- Here we only need the witness for the raw word of the presentation.
-  by_cases hw : w = E.word
-  · obtain ⟨f, hf_cts, hf_bij⟩ := wordQuotient_continuous_bijection_to_M E w hw
-    exact ⟨hf_cts.homeoOfEquivCompactToT2 (f := Equiv.ofBijective f hf_bij)⟩
-  · -- This case is not needed for the assembly in toPolygonalQuotient_via_tietze,
-    -- which calls this with w := Classical.choice E.toRawWord = E.word.
-    sorry
+  sorry
 
 /-- **Round 49 / Stage A leaf (sorry-free assembly).** Combine the
 five leaves above into a `PolygonalQuotientPresentation M`.

@@ -69,15 +69,19 @@ theorem standardWord_isStandardForm {g : ℕ} : (standardWord g).IsStandardForm 
 instance {g : ℕ} (w : EdgeWord g) : Decidable w.IsStandardForm :=
   inferInstanceAs (Decidable (w = standardWord g))
 
+end EdgeWord
+
 /-- Inverse of a letter: `a i ↔ aInv i`, `b i ↔ bInv i`. -/
 def Letter.inv {g : ℕ} : Letter g → Letter g
-  | a i => aInv i
-  | b i => bInv i
-  | aInv i => a i
-  | bInv i => b i
+  | Letter.a i => Letter.aInv i
+  | Letter.b i => Letter.bInv i
+  | Letter.aInv i => Letter.a i
+  | Letter.bInv i => Letter.b i
 
 @[simp] lemma Letter.inv_inv {g : ℕ} (ℓ : Letter g) : ℓ.inv.inv = ℓ := by
   cases ℓ <;> rfl
+
+namespace EdgeWord
 
 /-! ### Quotient by side-pairing -/
 
@@ -99,37 +103,13 @@ def sidePairingRel (g : ℕ) (w : EdgeWord g) : DiskC → DiskC → Prop :=
 /-- For the standard word, `sidePairingRel` agrees with `Polygon4g.SideRel`. -/
 theorem sidePairingRel_standardWord (g : ℕ) :
     sidePairingRel g (standardWord g) = Polygon4g.SideRel g := by
-  -- For the standard word, arc 4i is paired with 4i+2 and 4i+1 with 4i+3.
-  -- This is exactly what Polygon4g.SideRel does.
-  apply funext; intro z; apply funext; intro w_
-  unfold sidePairingRel Polygon4g.SideRel
-  congr 1
-  apply funext; intro z'; apply funext; intro w'
-  refine ⟨fun h => ?_, fun h => ?_⟩
-  · cases h with | pair i j t ht hinv =>
-    unfold standardWord at hinv
-    -- Decompose indices into handle block and sub-index.
-    -- (Omitted: heavy combinatorial bookkeeping).
-    sorry
-  · cases h with
-    | a_pair i t ht =>
-        refine SideGen.pair ⟨4 * i.val, ?_⟩ ⟨4 * i.val + 2, ?_⟩ t ht ?_
-        · sorry
-        · sorry
-        · sorry
-    | b_pair i t ht =>
-        refine SideGen.pair ⟨4 * i.val + 1, ?_⟩ ⟨4 * i.val + 3, ?_⟩ t ht ?_
-        · sorry
-        · sorry
-        · sorry
+  sorry
+
 
 /-- `sidePairingRel` is an equivalence relation. -/
 theorem sidePairingRel_equivalence (g : ℕ) (w : EdgeWord g) :
     Equivalence (sidePairingRel g w) := by
-  unfold sidePairingRel
-  by_cases h : w.IsStandardForm
-  · simp [h]; exact Polygon4g.SideRel.equivalence g
-  · simp [h]; exact eq_equivalence
+  exact Relation.EqvGen.is_equivalence _
 
 /-- The quotient of the closed unit disk by the side-pairing relation
 determined by `w`. -/
