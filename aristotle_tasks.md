@@ -41,6 +41,17 @@ placeholder upstream leaves. Submitting BLOCKER-class targets
 contradicts the "Aristotle: substantive only" rule; left the queue
 at 2 live packets pending real result returns.
 
+**Tick D (fourth /loop check, ~+60 min):** Packet `2c73f336`
+(`edgeBasisMap_injective`) returned COMPLETE_WITH_ERRORS but with
+a clean 9-line proof and a green local build — **integrated**. The
+proof routes via Orzech's property (`OrzechProperty.bijective_of_surjective_endomorphism`)
+rather than the suggested chain-level `edgeChainCoeff` extraction,
+relying on `edgeBasisMap_surjective` (still sorry, out of scope)
+plus the Hurewicz iso (still sorry, planned in C1c). It introduces
+no new sorries and shifts dependency cleanly to a sibling leaf.
+`b9fcfdb4` (path-integral refinement invariance) still IN_PROGRESS
+at 13%.
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 

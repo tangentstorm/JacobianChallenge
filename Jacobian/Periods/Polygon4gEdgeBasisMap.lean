@@ -118,13 +118,22 @@ The edge homology classes are linearly independent in
 `singularH1 (Polygon4g (g+1))`, equivalently `edgeBasisMap` is
 injective.
 
-Bottom-up: chain-level coefficient extraction (the dual of `Sigma.ι`)
-combined with the boundary-decomposition equation (Phase 2.5) to
-descend to homology. Once `edgeHomologyClass` is upgraded from the
-placeholder to the real homology projection, this becomes provable. -/
+Proof: `edgeBasisMap` is surjective (Phase 6.b), and the Hurewicz iso
+gives `Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g+1))`.
+Composing `e.symm ∘ edgeBasisMap` gives a surjective endomorphism of
+the finitely generated free ℤ-module `Polygon4gAbelianization g`,
+which is bijective by the Orzech property (Noetherian argument).
+Hence `edgeBasisMap` is injective. -/
 theorem edgeBasisMap_injective (g : ℕ) :
     Function.Injective (edgeBasisMap g) := by
-  sorry
+  have h_surj := edgeBasisMap_surjective g
+  obtain ⟨e⟩ := hurewicz_singularH1_iso_polygon4g g
+  have h_bij : Function.Bijective (e.symm.toLinearMap ∘ₗ edgeBasisMap g) := by
+    have h_surj' : Function.Surjective (e.symm.toLinearMap ∘ₗ edgeBasisMap g) :=
+      fun x => by obtain ⟨y, hy⟩ := h_surj (e x); exact ⟨y, by simp [LinearMap.comp_apply, hy]⟩
+    exact OrzechProperty.bijective_of_surjective_endomorphism
+      (e.symm.toLinearMap ∘ₗ edgeBasisMap g) h_surj'
+  exact Function.Injective.of_comp h_bij.injective
 
 /-- **Phase 5 leaf (sorry-free reassembly via spanning).**
 `singularH1 (Polygon4g (g+1))` is finitely generated as a `ℤ`-module:
