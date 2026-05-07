@@ -1,5 +1,6 @@
 import Jacobian.Periods.Polygon4gCellular
 import Jacobian.Periods.Polygon4gEdgeChain
+import Mathlib.Algebra.Homology.ConcreteCategory
 import Mathlib.LinearAlgebra.Pi
 import Mathlib.LinearAlgebra.Basis.Defs
 
@@ -21,19 +22,14 @@ boundary decomposition lands).
 
 ## Status
 
-* `edgeHomologyClass` — Phase 4 leaf (sub-sorry): the homology class
-  of the i-th edge cycle. Currently the placeholder zero element;
-  will be upgraded to the genuine projection of `edgeChain` once
-  the homology projection `singularChainCycle → singularH1` is
-  available.
-* `edgeBasisMap` — sorry-free, defined as
-  `LinearMap.lsum ℤ` over the `edgeHomologyClass` family.
-* `edgeBasisMap_apply_basisFun` — sorry-free, the basis vector
-  `Pi.basisFun ℤ _ i` maps to `edgeHomologyClass g i`.
+* `edgeHomologyClass` — Phase 4 leaf: the homology class of the i-th
+  edge cycle, defined via `HomologicalComplex.cyclesMk` and
+  `HomologicalComplex.homologyπ`. Sorry-free.
+* `edgeBasisMap` — sorry-free, defined as the sum of
+  `LinearMap.toSpanSingleton ℤ _ (edgeHomologyClass g i) ∘ proj i`
+  over `i : Fin (2 * (g + 1))`.
 
 ## Roadmap to Phase 7
-
-When `edgeHomologyClass` is upgraded from placeholder to real:
 
 * **Phase 5** (`polygon4g_succ_singularH1_isFinite`) — discharged
   from `Submodule.span` of the edge family being `⊤` (Phase 6.b
@@ -48,31 +44,33 @@ When `edgeHomologyClass` is upgraded from placeholder to real:
 
 namespace JacobianChallenge.Periods
 
-/-- **Phase 4 leaf (placeholder, strictly weaker than the iso).**
+open AlgebraicTopology CategoryTheory
+
+/-- The singular chain complex of `Polygon4g (g+1)`. -/
+noncomputable abbrev polygonChainComplex (g : ℕ) : ChainComplex (ModuleCat ℤ) ℕ :=
+  ((singularChainComplexFunctor (ModuleCat ℤ)).obj
+      (ModuleCat.of ℤ ℤ)).obj (TopCat.of (Polygon4g (g + 1)))
+
+/-- The shape relation `(down ℕ).next 1 = 0` used by `cyclesMk`. -/
+private lemma next_one_eq_zero :
+    (ComplexShape.down ℕ).next 1 = 0 :=
+  ComplexShape.next_eq' _ (by simp [ComplexShape.down])
+
+/-- **Phase 4 leaf (real homology projection).**
 The homology class of the i-th edge cycle in
-`singularH1 (Polygon4g (g+1))`.
+`singularH1 (Polygon4g (g+1))`, obtained by:
+* constructing a cycle via `cyclesMk` from `edgeChain g i` and
+  `edgeChain_isCycle g i`,
+* projecting to homology via `homologyπ`.
 
-⚠️ **Currently the zero element** (placeholder). With this
-placeholder, `edgeBasisMap g = 0`, which means
-`edgeBasisMap_surjective` and `edgeBasisMap_injective` (below) are
-*false statements* until the placeholder is upgraded.
-
-Will become the real projection once:
-* Phase 2.5's boundary-decomposition equation is proved (so
-  `edgeChain_isCycle` becomes a real cycle equation, not a
-  `True` placeholder), and
-* The homology projection `K.cycles 1 → K.homology 1` is wired up
-  (using `HomologicalComplex.cyclesMk` + `HomologicalComplex.homologyπ`
-  composed with the categorical chain unfolding).
-
-Sorry-free, but the sub-sorries below are designed to be provable
-only once this is upgraded. The dependency is intentional: it
-documents the closure path through Phase 7. -/
+Sorry-free: both inputs are real (`edgeChain` is sorry-free; the
+boundary equation `edgeChain_isCycle` was discharged once
+`singularChainElement_boundary_decomposition` landed). -/
 noncomputable def edgeHomologyClass (g : ℕ) (i : Fin (2 * (g + 1))) :
     singularH1 (Polygon4g (g + 1)) :=
-  let _ := edgeChain g i  -- record the dependency on the chain
-  let _ := edgeSimplex_faces_eq g i  -- and on the face equality
-  0
+  ((forget₂ (ModuleCat ℤ) Ab).map ((polygonChainComplex g).homologyπ 1))
+    ((polygonChainComplex g).cyclesMk (edgeChain g i) 0 next_one_eq_zero
+      (edgeChain_isCycle g i))
 
 /-- The image set of the edge homology classes — used as a spanning
 set candidate for `singularH1 (Polygon4g (g+1))`. -/
@@ -101,6 +99,7 @@ backwards compatibility). -/
 theorem edgeHomologyClass_exists (g : ℕ) (i : Fin (2 * (g + 1))) :
     ∃ _c : singularH1 (Polygon4g (g + 1)), True :=
   ⟨edgeHomologyClass g i, trivial⟩
+
 
 /-- **Phase 6.b leaf (sub-sorry, strictly weaker than the iso).**
 The edge homology classes span `singularH1 (Polygon4g (g+1))`.
