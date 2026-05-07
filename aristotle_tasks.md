@@ -112,6 +112,18 @@ a STATEMENT change — add a `CurveIntegrable` / C¹ hypothesis to
 `pathIntegralViaCoverWith_refinement_invariant'` itself — which
 Claude does not make autonomously. Routed to brainstorm.
 
+**Tick P (~+310 min):** Per explicit user directive "assign it
+something", dispatched `d94e2fb9` against the consolidated single
+sorry of the entire cellular-Hurewicz architecture
+(`polygon4g_succ_singularH1_linearEquiv_abelianization`). Probable
+BLOCKER given Mathlib v4.28.0 lacks both the cellular chain
+complex on a topological space AND the Hurewicz natural
+transformation, but the prompt enumerates four strategies (cellular,
+Hurewicz, direct-via-edgeBasisMap, Mathlib API survey) and includes
+an explicit anti-cheat clause forbidding the b9fcfdb4-style
+false-statement helper behind sorry. Even a clean BLOCKER triage
+result is useful here.
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 
