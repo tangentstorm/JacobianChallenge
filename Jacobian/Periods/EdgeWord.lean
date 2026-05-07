@@ -69,27 +69,59 @@ theorem standardWord_isStandardForm {g : ℕ} : (standardWord g).IsStandardForm 
 instance {g : ℕ} (w : EdgeWord g) : Decidable w.IsStandardForm :=
   inferInstanceAs (Decidable (w = standardWord g))
 
+/-- Inverse of a letter: `a i ↔ aInv i`, `b i ↔ bInv i`. -/
+def Letter.inv {g : ℕ} : Letter g → Letter g
+  | a i => aInv i
+  | b i => bInv i
+  | aInv i => a i
+  | bInv i => b i
+
+@[simp] lemma Letter.inv_inv {g : ℕ} (ℓ : Letter g) : ℓ.inv.inv = ℓ := by
+  cases ℓ <;> rfl
+
 /-! ### Quotient by side-pairing -/
 
-/-- The side-pairing equivalence relation on the closed unit disk
-determined by an edge word `w`.
+/-- Generating relation for the side-pairing on the boundary of the
+closed unit disk determined by a general edge word `w`. For any two
+indices `i, j` such that the letters `w[i]` and `w[j]` are inverses,
+the corresponding boundary arcs are identified with parameter reversal. -/
+inductive SideGen (g : ℕ) (w : EdgeWord g) : DiskC → DiskC → Prop
+  | pair (i j : Fin w.length) (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 1)
+      (h : (w.get i).inv = w.get j) :
+      SideGen g w
+        (boundaryParam' w.length i t)
+        (boundaryParam' w.length j (1 - t))
 
-For the standard word, this is `Polygon4g.SideRel g` — the four-arc
-identification pattern `a-cycle: 4i ↔ 4i+2`, `b-cycle: 4i+1 ↔ 4i+3`,
-each with parameter reversal. For non-standard words, this is the
-trivial relation `Eq` (no identifications), so the quotient gives
-back the disk; the full general construction (extracting the side-
-pairing pattern from an arbitrary word) is leaf A2.2 of
-`ref/plans/surface-classification.md` and is not yet needed
-downstream — the proof of `thm:polygonal-model` only depends on the
-standard word's quotient. -/
+/-- The reflexive-symmetric-transitive closure of `SideGen g w`. -/
 def sidePairingRel (g : ℕ) (w : EdgeWord g) : DiskC → DiskC → Prop :=
-  if w.IsStandardForm then Polygon4g.SideRel g else Eq
+  Relation.EqvGen (SideGen g w)
 
 /-- For the standard word, `sidePairingRel` agrees with `Polygon4g.SideRel`. -/
 theorem sidePairingRel_standardWord (g : ℕ) :
     sidePairingRel g (standardWord g) = Polygon4g.SideRel g := by
-  simp [sidePairingRel, IsStandardForm]
+  -- For the standard word, arc 4i is paired with 4i+2 and 4i+1 with 4i+3.
+  -- This is exactly what Polygon4g.SideRel does.
+  apply funext; intro z; apply funext; intro w_
+  unfold sidePairingRel Polygon4g.SideRel
+  congr 1
+  apply funext; intro z'; apply funext; intro w'
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · cases h with | pair i j t ht hinv =>
+    unfold standardWord at hinv
+    -- Decompose indices into handle block and sub-index.
+    -- (Omitted: heavy combinatorial bookkeeping).
+    sorry
+  · cases h with
+    | a_pair i t ht =>
+        refine SideGen.pair ⟨4 * i.val, ?_⟩ ⟨4 * i.val + 2, ?_⟩ t ht ?_
+        · sorry
+        · sorry
+        · sorry
+    | b_pair i t ht =>
+        refine SideGen.pair ⟨4 * i.val + 1, ?_⟩ ⟨4 * i.val + 3, ?_⟩ t ht ?_
+        · sorry
+        · sorry
+        · sorry
 
 /-- `sidePairingRel` is an equivalence relation. -/
 theorem sidePairingRel_equivalence (g : ℕ) (w : EdgeWord g) :

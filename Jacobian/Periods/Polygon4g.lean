@@ -65,30 +65,50 @@ open Complex Set
 quotienting. -/
 abbrev DiskC : Type := Metric.closedBall (0 : ℂ) 1
 
-/-- The angle (in radians) corresponding to the `i`-th of `4g`
+/-- The angle (in radians) corresponding to the `i`-th of `L`
 boundary arcs at parameter `t ∈ [0,1]`. Concretely
-`2π·(i + t)/(4g)`, treated as a real number. -/
+`2π·(i + t)/L`, treated as a real number. -/
+noncomputable def boundaryAngle' (L : ℕ) (i : ℕ) (t : ℝ) : ℝ :=
+  2 * Real.pi * ((i : ℝ) + t) / (L : ℝ)
+
+/-- Specialisation to the standard `4g` sides. -/
 noncomputable def boundaryAngle (g : ℕ) (i : ℕ) (t : ℝ) : ℝ :=
-  2 * Real.pi * ((i : ℝ) + t) / (4 * (g : ℝ))
+  boundaryAngle' (4 * g) i t
 
 /-- The boundary parameter as a complex number on the unit circle:
-`exp(I · boundaryAngle g i t)`. For `g = 0` the angle divides by
+`exp(I · boundaryAngle' L i t)`. For `L = 0` the angle divides by
 zero (Lean: `0`), giving `exp(0) = 1`. -/
+noncomputable def boundaryParamC' (L : ℕ) (i : ℕ) (t : ℝ) : ℂ :=
+  exp (((boundaryAngle' L i t : ℂ)) * I)
+
+/-- Specialisation to the standard `4g` sides. -/
 noncomputable def boundaryParamC (g : ℕ) (i : ℕ) (t : ℝ) : ℂ :=
-  exp (((boundaryAngle g i t : ℂ)) * I)
+  boundaryParamC' (4 * g) i t
+
+lemma boundaryParamC'_norm_eq_one (L : ℕ) (i : ℕ) (t : ℝ) :
+    ‖boundaryParamC' L i t‖ = 1 := by
+  unfold boundaryParamC'
+  exact Complex.norm_exp_ofReal_mul_I (boundaryAngle' L i t)
 
 lemma boundaryParamC_norm_eq_one (g : ℕ) (i : ℕ) (t : ℝ) :
-    ‖boundaryParamC g i t‖ = 1 := by
-  unfold boundaryParamC
-  exact Complex.norm_exp_ofReal_mul_I (boundaryAngle g i t)
+    ‖boundaryParamC g i t‖ = 1 :=
+  boundaryParamC'_norm_eq_one (4 * g) i t
+
+lemma boundaryParamC'_mem_disk (L : ℕ) (i : ℕ) (t : ℝ) :
+    boundaryParamC' L i t ∈ Metric.closedBall (0 : ℂ) 1 := by
+  rw [Metric.mem_closedBall, dist_zero_right, boundaryParamC'_norm_eq_one]
 
 lemma boundaryParamC_mem_disk (g : ℕ) (i : ℕ) (t : ℝ) :
-    boundaryParamC g i t ∈ Metric.closedBall (0 : ℂ) 1 := by
-  rw [Metric.mem_closedBall, dist_zero_right, boundaryParamC_norm_eq_one]
+    boundaryParamC g i t ∈ Metric.closedBall (0 : ℂ) 1 :=
+  boundaryParamC'_mem_disk (4 * g) i t
 
 /-- The boundary parameter as an element of the closed disk. -/
+noncomputable def boundaryParam' (L : ℕ) (i : ℕ) (t : ℝ) : DiskC :=
+  ⟨boundaryParamC' L i t, boundaryParamC'_mem_disk L i t⟩
+
+/-- Specialisation to the standard `4g` sides. -/
 noncomputable def boundaryParam (g : ℕ) (i : ℕ) (t : ℝ) : DiskC :=
-  ⟨boundaryParamC g i t, boundaryParamC_mem_disk g i t⟩
+  boundaryParam' (4 * g) i t
 
 namespace Polygon4g
 
