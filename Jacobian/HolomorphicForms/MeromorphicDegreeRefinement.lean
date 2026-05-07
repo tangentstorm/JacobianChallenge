@@ -1,5 +1,5 @@
 import Jacobian.HolomorphicForms.MeromorphicDegree
-import Jacobian.Blueprint.Sec01.MeromorphicToCp1
+import Jacobian.HolomorphicForms.MeromorphicToCp1
 import Mathlib.Topology.Compactification.OnePoint.Basic
 
 /-!
@@ -326,7 +326,7 @@ both `MeromorphicDegree.lean` sorries reduce to the four named §1
 as a `Prop` listing the four §1 dependencies. -/
 def sec01_obligations_remaining : Prop :=
   -- Bullet list of remaining §1 leaves; these are the four `sorry`s in
-  -- `Jacobian/Blueprint/Sec01/MeromorphicToCp1.lean`:
+  -- `Jacobian/HolomorphicForms/MeromorphicToCp1.lean`:
   -- (1) `liftToCp1_holomorphicAt_finite`
   -- (2) `liftToCp1_holomorphicAt_infty`
   -- (3) `liftToCp1_local_kfold_ramified_finite`

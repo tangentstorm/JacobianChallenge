@@ -1,5 +1,5 @@
 import Jacobian.HolomorphicForms.RiemannRoch
-import Jacobian.Blueprint.Sec02.DegreeOneBijective
+import Jacobian.HolomorphicForms.BranchedCover
 
 /-!
 # Degree of meromorphic maps to the Riemann sphere
@@ -263,8 +263,8 @@ theorem meromorphicMapToSphere_poleDivisor_degree_eq_one_of_point
 
 /-! ### Reuse of existing `BranchedCoverData` infrastructure
 
-The project's `Jacobian/Blueprint/Sec02/BranchedDegree.lean` already
-exposes a `BranchedCoverData` structure plus the sorry-free
+The project's `Jacobian/HolomorphicForms/BranchedCover.lean` exposes a
+`BranchedCoverData` structure plus the sorry-free
 `degree_one_bijective` (and `degree_one_no_ramification`). The bridge
 from a `MeromorphicMapToSphere` with simple pole to a
 `BranchedCoverData` is the still-open *leaf 8* of that decomposition
@@ -292,11 +292,11 @@ theorem MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one
     (f : MeromorphicMapToSphere X)
     (hcont : Continuous f.toMap)
     (hdegree : Divisor.degree f.poles = 1) :
-    ∃ h : JacobianChallenge.Blueprint.BranchedCoverData X (OnePoint ℂ) f.toMap,
-      JacobianChallenge.Blueprint.branchedDegree h = 1 := by
+    ∃ h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) f.toMap,
+      JacobianChallenge.HolomorphicForms.branchedDegree h = 1 := by
   obtain ⟨h, hd⟩ := f.hasBranchedCoverDataOfPoleDegree hcont
   refine ⟨h, ?_⟩
-  show JacobianChallenge.Blueprint.branchedDegree h = 1
+  show JacobianChallenge.HolomorphicForms.branchedDegree h = 1
   rw [hd]
   show (Divisor.degree f.poles).toNat = 1
   rw [hdegree]
@@ -315,8 +315,8 @@ theorem MeromorphicMapToSphere.image_isCompact
 
 -- M4b (`isOpenMap_of_pole_degree_one`) was previously declared here as
 -- a structural sorry. After the audit pass routing M4 through the
--- M-bridge to `Blueprint.degree_one_bijective`, M4b is dead code and
--- has been removed.
+-- M-bridge to `degree_one_bijective`, M4b is dead code and has been
+-- removed.
 
 /-- **Structural axiom (M4).** A continuous meromorphic map of degree 1
 between compact connected complex 1-manifolds is **surjective**.
@@ -334,14 +334,14 @@ theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     Function.Surjective f.toMap := by
   obtain ⟨h, hd⟩ :=
     f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
-  exact (JacobianChallenge.Blueprint.degree_one_bijective h hd).2
+  exact (JacobianChallenge.HolomorphicForms.degree_one_bijective h hd).2
 
 /-! ### Dead-code note: M5a/M5a-i/M5a-ii superseded by M-bridge.
 
 Earlier iterations introduced project-level "no ramification at
 degree 1" + "fiber-card constant under no ramification" as named
 structural sub-axioms. After the audit pass that found
-`Jacobian/Blueprint/Sec02/DegreeOneNoRamification.lean` already
+the degree-one branched-cover API already
 proves `degree_one_no_ramification` *sorry-free* at the
 `BranchedCoverData` level (and `degree_one_bijective` likewise),
 the M5 headline now routes through the M-bridge directly. The
@@ -352,7 +352,7 @@ the M-bridge is in place; they are removed below.
 The original axiom M5a (`fiber_card_le_one_of_pole_degree_one`) is
 also superseded by the M5 routing through the M-bridge; it is kept
 in place but the headline no longer depends on it. Re-using the
-existing `Blueprint.degree_one_bijective` is the right choice;
+existing `degree_one_bijective` is the right choice;
 maintaining the parallel `MeromorphicMapToSphere`-level chain is
 not. -/
 
@@ -375,7 +375,7 @@ theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
     Function.Injective f.toMap := by
   obtain ⟨h, hd⟩ :=
     f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
-  exact (JacobianChallenge.Blueprint.degree_one_bijective h hd).1
+  exact (JacobianChallenge.HolomorphicForms.degree_one_bijective h hd).1
 
 /-- **Degree-one bijectivity leaf.** A continuous meromorphic map to
 `OnePoint ℂ` whose pole divisor has degree one is bijective.
