@@ -1,4 +1,5 @@
 import Jacobian.Periods.IntegralOneCycle
+import Jacobian.Periods.PrismChainBridge
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.AlgebraicTopology.SingularSet
 import Mathlib.Algebra.Category.ModuleCat.Colimits
@@ -25,7 +26,7 @@ coproduct injection `Sigma.ι` to the unit `(1 : ℤ)`.
 
 ## Status
 
-Phase 2 is **partially landed**:
+Phase 2 is **fully landed (sorry-free)**:
 
 * `SingularChain X n` — chain group level `n` with `ℤ` coefficients
   (sorry-free abbreviation).
@@ -38,12 +39,13 @@ Phase 2 is **partially landed**:
 * `stdSimplexFaceMap` and `singularSimplexFace` — sorry-free
   geometric-realisation-of-`SimplexCategory.δ` and induced face
   precomposition operation on continuous singular simplices.
-* `singularChainElement_boundary_decomposition` — Phase 2 leaf
-  (genuine sub-sorry, strictly weaker than the iso): the boundary
-  formula expressing `d_{n+1}` as the alternating sum of face-map
-  generators. Stated as a real equation (not `True`); the proof is
-  a categorical bookkeeping unfolding of `alternatingFaceMapComplex`
-  and `sigmaConst.map`.
+* `singularChainElement_boundary_decomposition` — **proved**
+  (sorry-free): the boundary formula expressing `d_{n+1}` as the
+  alternating sum of face-map generators. The proof reduces to the
+  morphism-level identity `singChain_d_basis` (in
+  `Jacobian/Periods/PrismChainBridge.lean`) applied at `(1 : ℤ)`
+  via `ModuleCat.comp_apply`, `ModuleCat.hom_sum`, and
+  `ModuleCat.hom_zsmul`.
 -/
 
 namespace JacobianChallenge.Periods
@@ -146,26 +148,58 @@ theorem singularChainElement_boundary_decomposition
         fun i => ((-1 : ℤ) ^ (i : ℕ)) •
           (singularChainElement (singularSimplexFace σ i) :
             SingularChainCoproduct X n)) := by
-  -- The chain complex differential d (n+1) n equals the alternating
-  -- sum of face maps δ_i. Each δ_i, applied to the chain-element
-  -- generator Sigma.ι _ s ⋅ 1, yields Sigma.ι _ (face_i s) ⋅ 1
-  -- (by sigmaConst_obj_map_ι naturality). Summing with signs gives
-  -- the result.
+  -- The chain differential of `singularChainElement σ` decomposes as
+  -- the alternating sum of face inclusions. We use the morphism-level
+  -- identity `singChain_d_basis` from `PrismChainBridge` and apply
+  -- it at the unit `(1 : ℤ)`.
   --
-  -- The proof requires unfolding:
-  --   singularChainComplexFunctor → alternatingFaceMapComplex → objD →
-  --   ∑ (-1)^i • δ_i, then evaluating on the chain element.
-  --
-  -- The categorical bookkeeping is intricate. The deep unfolding
-  -- through `whiskeringLeft`, `postcompose₂`, `sigmaConst`,
-  -- `SimplicialObject.whiskering` produces a chain of definitionally-
-  -- equal but syntactically-distinct expressions that resist direct
-  -- `rw`/`simp` automation in v4.28.0.
-  --
-  -- Status: typed equation in place; proof remains a single named
-  -- sub-sorry. See `ref/plans/cellular-hurewicz-bridge.md` for the
-  -- exact unfolding chain that closes this.
-  sorry
+  -- Key API:
+  --   * `singChain_d_basis n σ` — the morphism-level identity.
+  --   * `ModuleCat.comp_apply` — `(f ≫ g) x = g (f x)`.
+  --   * `ModuleCat.hom_sum` and `ModuleCat.hom_zsmul` — linearity of
+  --     `.hom` over Finset sums and zsmul.
+  -- The element-level transformation is mechanical from the morphism
+  -- identity.
+  have hMorphism := singChain_d_basis n σ
+  -- Apply both sides at `(1 : ℤ)` via congr_arg using ModuleCat coercion.
+  have hElem :
+      (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+          (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)).d (n + 1) n
+          ((singChain_basis σ : ModuleCat.of ℤ ℤ ⟶ singChain (n + 1) X)
+            (1 : ℤ)) =
+      ((∑ j : Fin (n + 2), ((-1 : ℤ) ^ j.val) •
+          singChain_basis (σ.comp (stdSimplexFaceInclusion n j)))
+            : ModuleCat.of ℤ ℤ ⟶ singChain n X) (1 : ℤ) := by
+    rw [← ModuleCat.comp_apply, hMorphism]
+  -- Recognise `(singChain_basis σ) 1 = singularChainElement σ`.
+  have h_basis_eq :
+      (singChain_basis σ : ModuleCat.of ℤ ℤ ⟶ singChain (n + 1) X) (1 : ℤ) =
+      (singularChainElement σ : SingularChainCoproduct X (n + 1)) := rfl
+  rw [h_basis_eq] at hElem
+  -- Rewrite RHS sum-of-morphisms applied at 1 into a sum of element-level
+  -- terms via `ModuleCat.hom_sum` and `ModuleCat.hom_zsmul`.
+  rw [hElem]
+  -- Now show the RHS shape matches.
+  -- The RHS is `(∑ j, (-1)^j • singChain_basis (σ.comp (stdSimplexFaceInclusion n j))) 1`.
+  -- Via ModuleCat coercion this equals `((∑ ...).hom) 1 = ∑ j, ((-1)^j • singChain_basis ...).hom 1`.
+  -- Then `((-1)^j • -).hom 1 = (-1)^j • (- : ...).hom 1 = (-1)^j • singularChainElement (...)`.
+  show (((∑ j : Fin (n + 2), ((-1 : ℤ) ^ j.val) •
+            singChain_basis (σ.comp (stdSimplexFaceInclusion n j)))
+            : ModuleCat.of ℤ ℤ ⟶ singChain n X).hom (1 : ℤ) : SingularChainCoproduct X n) =
+      ∑ i : Fin (n + 2), ((-1 : ℤ) ^ (i : ℕ)) •
+        (singularChainElement (singularSimplexFace σ i) :
+          SingularChainCoproduct X n)
+  rw [ModuleCat.hom_sum]
+  rw [LinearMap.coeFn_sum, Finset.sum_apply]
+  refine Finset.sum_congr rfl (fun i _ => ?_)
+  rw [ModuleCat.hom_zsmul]
+  -- After the rewrites, the goal is:
+  --   ((-1)^i • Hom.hom (singChain_basis ...)) 1 = (-1)^i • singularChainElement (...)
+  -- Simplify using LinearMap.smul_apply (coe form via Pi.smul_apply for ℕ→).
+  simp only [Pi.smul_apply]
+  -- Now: (-1)^i • Hom.hom (singChain_basis ...) 1 = (-1)^i • singularChainElement (...)
+  -- The Hom.hom application reduces to singularChainElement by definition.
+  rfl
 
 /-- **Phase 2 leaf.** Linear independence of distinct chain-element
 generators. The coproduct structure of `∐ R` makes the canonical
