@@ -1,3 +1,4 @@
+import Jacobian.StageA.FinsetSortErase
 import Jacobian.StageA.SimplicialComplex
 import Jacobian.StageA.PrismOperator
 import Jacobian.Periods.TopologicalGenus
@@ -107,11 +108,123 @@ noncomputable def cellularBoundarySigned
     ∑ i : Fin (n + 2),
       (-1 : ℤ) ^ i.val • Finsupp.single (cellularSimplexFace K n s i) (1 : ℤ))
 
-/-- `∂² = 0` for the substantive boundary. The classical proof:
-the `(i, j)`-pair of nested face deletions cancels with the `(j-1, i)`-pair
-under sign reversal (`d_j d_{i} = d_i d_{j-1}` for `i < j`). Sorry'd;
-direct proof uses `Finset.erase_erase` plus the alternating-sign
-combinatorics. -/
+/-! ### Face-of-face commutation
+
+For the simplicial `∂² = 0` proof: composing two `cellularSimplexFace` operations
+in either order produces the same result, modulo a sign-reversing index shift. -/
+
+/-- For `j.val < i.val`, the `(i, j)`-th iterated face equals the
+`(⟨j, _⟩, ⟨i-1, _⟩)`-th iterated face (up to subtype).
+
+The underlying Finset of both is `s.1.erase v_i.erase v_j` (where `v_x` is
+the `x`-th sorted vertex of `s.1`); they agree by `Finset.erase_comm`. -/
+private theorem cellularSimplexFace_face_eq_lt
+    [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ)
+    (s : K.nSimplices (n + 2)) (i : Fin (n + 3)) (j : Fin (n + 2))
+    (hij : j.val < i.val) :
+    cellularSimplexFace K n (cellularSimplexFace K (n + 1) s i) j =
+      cellularSimplexFace K n
+        (cellularSimplexFace K (n + 1) s ⟨j.val, by have := i.isLt; omega⟩)
+        ⟨i.val - 1, by have := i.isLt; omega⟩ := by
+  apply Subtype.ext
+  -- Reduce to underlying Finset.
+  unfold cellularSimplexFace cellularSimplexVertex
+  -- Both sides are `s.1.erase _ |>.erase _`. Use `orderEmbOfFin_erase_lt` to
+  -- compute the second erase's vertex.
+  have hcard_s : s.1.card = n + 3 := nSimplices_card K s
+  -- LHS: `(s.1.erase v_i).erase ((s.1.erase v_i).orderEmbOfFin _ j)` where
+  -- `(s.1.erase v_i).orderEmbOfFin _ j = s.orderEmbOfFin _ ⟨j.val, _⟩` since `j < i`.
+  have hcard_erase_i : (s.1.erase (s.1.orderEmbOfFin hcard_s i)).card = n + 2 := by
+    rw [Finset.card_erase_of_mem (Finset.orderEmbOfFin_mem _ _ _), hcard_s]; omega
+  have h_LHS_v : (s.1.erase (s.1.orderEmbOfFin hcard_s i)).orderEmbOfFin
+        hcard_erase_i j =
+      s.1.orderEmbOfFin hcard_s ⟨j.val, by have := i.isLt; omega⟩ :=
+    Finset.orderEmbOfFin_erase_lt s.1 hcard_s i j hcard_erase_i hij
+  -- RHS: `(s.1.erase v_j).erase ((s.1.erase v_j).orderEmbOfFin _ ⟨i-1, _⟩)`
+  --      = `(s.1.erase v_j).erase v_i` (since `i-1 ≥ j`).
+  have hcard_erase_j : (s.1.erase (s.1.orderEmbOfFin hcard_s
+        ⟨j.val, by have := i.isLt; omega⟩)).card = n + 2 := by
+    rw [Finset.card_erase_of_mem (Finset.orderEmbOfFin_mem _ _ _), hcard_s]; omega
+  have h_RHS_v : (s.1.erase (s.1.orderEmbOfFin hcard_s
+        ⟨j.val, by have := i.isLt; omega⟩)).orderEmbOfFin hcard_erase_j
+        ⟨i.val - 1, by have := i.isLt; omega⟩ =
+      s.1.orderEmbOfFin hcard_s ⟨(i.val - 1) + 1, by have := i.isLt; omega⟩ :=
+    Finset.orderEmbOfFin_erase_ge s.1 hcard_s
+      ⟨j.val, by have := i.isLt; omega⟩
+      ⟨i.val - 1, by have := i.isLt; omega⟩ hcard_erase_j
+      (by show j.val ≤ i.val - 1; omega)
+  -- Simplify `(i-1) + 1 = i` since i ≥ 1 (from j < i).
+  have h_idx : (⟨(i.val - 1) + 1, by have := i.isLt; omega⟩ : Fin (n + 3)) =
+      ⟨i.val, i.isLt⟩ := by
+    apply Fin.ext
+    show (i.val - 1) + 1 = i.val
+    omega
+  rw [h_idx] at h_RHS_v
+  -- Replace the orderEmbOfFin ⟨i.val, _⟩ with i (proof-irrelevant).
+  have h_idx2 : (⟨i.val, i.isLt⟩ : Fin (n + 3)) = i := Fin.ext rfl
+  rw [h_idx2] at h_RHS_v
+  -- Now both sides are `s.1.erase _ |>.erase _` with the same two vertices.
+  -- Apply `Finset.erase_comm`.
+  show (s.1.erase _).erase _ = (s.1.erase _).erase _
+  rw [h_LHS_v, h_RHS_v]
+  -- Goal: (s.1.erase v_i).erase v_j = (s.1.erase v_j).erase v_i.
+  ext x
+  simp only [Finset.mem_erase, and_assoc]
+  tauto
+
+/-- For `j.val ≥ i.val`, the `(i, j)`-th iterated face equals the
+`(⟨j+1, _⟩, ⟨i, _⟩)`-th iterated face (up to subtype). -/
+private theorem cellularSimplexFace_face_eq_ge
+    [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ)
+    (s : K.nSimplices (n + 2)) (i : Fin (n + 3)) (j : Fin (n + 2))
+    (hij : i.val ≤ j.val) :
+    cellularSimplexFace K n (cellularSimplexFace K (n + 1) s i) j =
+      cellularSimplexFace K n
+        (cellularSimplexFace K (n + 1) s ⟨j.val + 1, by have := j.isLt; omega⟩)
+        ⟨i.val, by have := i.isLt; have := j.isLt; omega⟩ := by
+  apply Subtype.ext
+  unfold cellularSimplexFace cellularSimplexVertex
+  have hcard_s : s.1.card = n + 3 := nSimplices_card K s
+  -- LHS: `(s.1.erase v_i).erase v'_j` where `v'_j = v_{j+1}` (since `j ≥ i`).
+  have hcard_erase_i : (s.1.erase (s.1.orderEmbOfFin hcard_s i)).card = n + 2 := by
+    rw [Finset.card_erase_of_mem (Finset.orderEmbOfFin_mem _ _ _), hcard_s]; omega
+  have h_LHS_v : (s.1.erase (s.1.orderEmbOfFin hcard_s i)).orderEmbOfFin
+        hcard_erase_i j =
+      s.1.orderEmbOfFin hcard_s ⟨j.val + 1, by have := j.isLt; omega⟩ :=
+    Finset.orderEmbOfFin_erase_ge s.1 hcard_s i j hcard_erase_i hij
+  -- RHS: `(s.1.erase v_{j+1}).erase v''_i` where `v''_i = v_i` (since `i < j+1`).
+  have hcard_erase_j1 : (s.1.erase (s.1.orderEmbOfFin hcard_s
+        ⟨j.val + 1, by have := j.isLt; omega⟩)).card = n + 2 := by
+    rw [Finset.card_erase_of_mem (Finset.orderEmbOfFin_mem _ _ _), hcard_s]; omega
+  have h_RHS_v : (s.1.erase (s.1.orderEmbOfFin hcard_s
+        ⟨j.val + 1, by have := j.isLt; omega⟩)).orderEmbOfFin hcard_erase_j1
+        ⟨i.val, by have := i.isLt; have := j.isLt; omega⟩ =
+      s.1.orderEmbOfFin hcard_s ⟨i.val, i.isLt⟩ :=
+    Finset.orderEmbOfFin_erase_lt s.1 hcard_s
+      ⟨j.val + 1, by have := j.isLt; omega⟩
+      ⟨i.val, by have := i.isLt; have := j.isLt; omega⟩
+      hcard_erase_j1
+      (by show i.val < j.val + 1; omega)
+  -- Replace ⟨i.val, _⟩ with i (proof-irrelevant).
+  have h_idx : (⟨i.val, i.isLt⟩ : Fin (n + 3)) = i := Fin.ext rfl
+  rw [h_idx] at h_RHS_v
+  show (s.1.erase _).erase _ = (s.1.erase _).erase _
+  rw [h_LHS_v, h_RHS_v]
+  ext x
+  simp only [Finset.mem_erase, and_assoc]
+  tauto
+
+/-- `∂² = 0` for the substantive boundary.
+
+The face commutation lemmas above (`cellularSimplexFace_face_eq_lt/_ge`)
+provide the simplex equality for each pair `(i, j) ↔ (⟨j, _⟩, ⟨i-1, _⟩)`
+(if `j < i`) or `(⟨j+1, _⟩, ⟨i, _⟩)` (if `j ≥ i`); the alternating-sign
+cancellation `(-1)^(i+j) + (-1)^(i'+j') = 0` then completes the proof
+via `Finset.sum_involution`.
+
+The remaining bookkeeping reduces the composition `(∂_n ∘ ∂_{n+1})` to
+the 2D sum form, applies the involution, and tracks the sign convention
+through `Finsupp.lift`. -/
 theorem cellularBoundarySigned_sq_zero
     [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
     (cellularBoundarySigned K n).comp (cellularBoundarySigned K (n + 1)) = 0 :=
