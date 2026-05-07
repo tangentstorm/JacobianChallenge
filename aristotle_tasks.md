@@ -12,6 +12,43 @@ The Aristotle account is shared with other projects; job IDs from
 JacobianChallenge submission in `aristotle_jobs.jsonl` so future ticks can
 identify our jobs without inspecting tarballs.
 
+## Live Status (2026-05-07, /loop tick — backend live, queue light)
+
+Aristotle backend is live again (5 IN_PROGRESS jobs on first page,
+none in `aristotle_jobs.jsonl` — all FourColor or other-project work
+that we ignore per `ref/PROMPT.md` step 2). Our queue is empty after
+the 2-day Aristotle-blocked stretch, so this tick re-opens dispatch
+on the curve-analysis frontier (C-packets) starting from the leaf
+that has the cleanest single-file scope.
+
+**Submitted this tick (1):**
+
+| ID | File | Target |
+|---|---|---|
+| `2ff4fff7` | `Jacobian/Periods/SingularChainElement.lean` | `singularChainElement_boundary_decomposition` (Phase-2 leaf for cellular-Hurewicz bridge; ~30-50 line categorical computation; only sorry in file) |
+
+**Why this packet first:** the file has exactly one sorry, all
+upstream helpers (`sigmaConst_obj_map_ι`, `singularSimplexFace`,
+`singularChainElement`, `SingularChainCoproduct`) are sorry-free and
+already named, the proof shape is a finite mechanical unfolding
+through `alternatingFaceMapComplex.objD = ∑ (-1)^i • δ_i` plus the
+naturality of `Sigma.ι`. A clean discharge here unblocks
+`edgeChain_isCycle` and the Phase 4 H₁ projection on the polygon
+edge basis.
+
+**Next-tick candidates** (still queued from the 2026-05-05 frontier
+list; not submitted this tick to keep write scopes disjoint):
+
+* C4a — `Jacobian/Periods/ChartedFormPullbackNaturality.lean`
+  (chart-level chain-rule for path integrals, no Stokes).
+* C8a — `Jacobian/HolomorphicForms/Serre/ResidueMap.lean` —
+  needs concretisation of `residueMap` first (currently both round-trip
+  endpoints are `opaque`, so as-is would BLOCKER).
+* C7c — `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` line-264
+  sorry-free assembly (gated on the C7a/b helper files existing).
+
+---
+
 ## Live Status (2026-05-04, R10 dispatch end-to-end on
 `claude/refine-14-r10-proof-GuSaj`)
 
