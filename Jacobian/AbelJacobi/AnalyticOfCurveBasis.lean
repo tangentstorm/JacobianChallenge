@@ -970,6 +970,45 @@ theorem constant_in_RR_space_for_effective
   rw [hprincipal, zero_add]
   exact two_point_effective X Q₁ Q₂
 
+open Classical in
+/-- **Frontier obligation: modulus-divergence at a two-point pole on
+the indicator placeholder.**
+
+The four placeholder constructors below build a `MeromorphicMapToSphere`
+with `toMap = (fun x => if x = Q₁ ∨ x = Q₂ then ∞ else 0)` and pole
+divisor `(Q₁) + (Q₂)`. Each must inhabit
+`exists_modulus_atTop_at_pole`, the structural axiom that demands a
+complex-valued lift `g : X → ℂ` matching `toMap` off the pole locus
+and whose modulus diverges at every pole.
+
+For the indicator, the matching condition forces `g x = 0` for every
+`x ∉ {Q₁, Q₂}`, so within any punctured neighbourhood of `Q₁` (or
+`Q₂`) the lift is constant zero — its modulus cannot tend to `∞`.
+Therefore *no* indicator-only construction satisfies this axiom; a
+genuine local meromorphic function with simple poles at `Q₁, Q₂`
+(e.g. `1/(z - Q)` in chart coordinates) is required. This is the
+analytic content the blueprint flags as the "canonical zero/pole
+decomposition" upgrade to `MeromorphicMapToSphere`.
+
+Until that upgrade lands, the four indicator constructors delegate to
+this single named obligation rather than carrying four independent
+`sorry`s. Discharging this lemma alone simultaneously makes all four
+constructors sorry-free in this field. -/
+theorem twoPointIndicator_exists_modulus_atTop_obligation
+    (Q₁ Q₂ : X) :
+    ∀ P : X,
+      0 < (HolomorphicForms.Divisor.point Q₁ +
+              HolomorphicForms.Divisor.point Q₂) P →
+      ∃ g : X → ℂ,
+        (∀ x : X, (HolomorphicForms.Divisor.point Q₁ +
+                    HolomorphicForms.Divisor.point Q₂) x = 0 →
+          (if x = Q₁ ∨ x = Q₂ then (OnePoint.infty : OnePoint ℂ)
+                              else (((0 : ℂ) : OnePoint ℂ))) =
+          ((g x : ℂ) : OnePoint ℂ)) ∧
+        Filter.Tendsto (fun x => ‖g x‖)
+          (nhdsWithin P {P}ᶜ) Filter.atTop := by
+  sorry
+
 /-! **Round-24 sub-leaf for R10/1 (NEW SORRY).** Existence of a
 non-constant element in a vector space of dimension ≥ 2 modulo a
 1-dim subspace.
@@ -1075,7 +1114,8 @@ theorem nonconstant_extracted_from_dim_quotient
                 rw [hD_P] at hP
                 exact lt_irrefl 0 hP
               exact if_pos hP_in
-            exists_modulus_atTop_at_pole := by sorry
+            exists_modulus_atTop_at_pole :=
+              twoPointIndicator_exists_modulus_atTop_obligation X Q₁ Q₂
             hasBranchedCoverDataOfPoleDegree := fun hcont =>
               absurd hcont
                 (HolomorphicForms.not_continuous_two_point_indicator Q₁ Q₂) }, ?_, ?_⟩
@@ -1306,7 +1346,8 @@ theorem thirdKindData_from_genus_zero
           rw [hD_P] at hP
           exact lt_irrefl 0 hP
         exact if_pos hP_in
-      exists_modulus_atTop_at_pole := by sorry
+      exists_modulus_atTop_at_pole :=
+        twoPointIndicator_exists_modulus_atTop_obligation X Q₁ Q₂
       hasBranchedCoverDataOfPoleDegree := fun hcont =>
         absurd hcont (HolomorphicForms.not_continuous_two_point_indicator Q₁ Q₂) }
   exact ⟨{ data := { meromorphicMap := f
@@ -1450,7 +1491,8 @@ theorem pole_full_two_point_of_nonconstant_in_RR_space_aux
           rw [hD_P] at hP
           exact lt_irrefl 0 hP
         exact if_pos hP_in
-      exists_modulus_atTop_at_pole := by sorry
+      exists_modulus_atTop_at_pole :=
+        twoPointIndicator_exists_modulus_atTop_obligation X Q₁ Q₂
       hasBranchedCoverDataOfPoleDegree := fun hcont =>
         absurd hcont (HolomorphicForms.not_continuous_two_point_indicator Q₁ Q₂) }
   exact ⟨{ data := { meromorphicMap := f
@@ -2254,7 +2296,17 @@ theorem meromorphicMapToSphere_package_of_two_point_principal
     poleDivisor_nonneg := by
       classical
       exact HolomorphicForms.Divisor.effective_point Q₂
-    zero_or_pole_eq_zero := by sorry
+    zero_or_pole_eq_zero := by
+      -- For Q ≠ Q₁: zeroDivisor Q = (point Q₁) Q = 0 (Or.inl).
+      -- For Q = Q₁: poleDivisor Q₁ = (point Q₂) Q₁ = 0, since Q₁ ≠ Q₂ (Or.inr).
+      intro Q
+      haveI : DecidableEq X := Classical.decEq X
+      by_cases hQ : Q = Q₁
+      · subst hQ
+        right
+        exact HolomorphicForms.Divisor.point_apply_ne _hne
+      · left
+        exact HolomorphicForms.Divisor.point_apply_ne hQ
     toMap_ne_infty_of_poleDivisor_zero := by sorry
     continuousOn_ne_infty :=
       -- `continuousOn_ne_infty` depends only on `toMap`; inherit from input.
