@@ -1,4 +1,7 @@
-import Mathlib
+import Mathlib.Order.ConditionallyCompleteLattice.Basic
+import Mathlib.Topology.Order.Compact
+import Mathlib.Analysis.Normed.Module.Basic
+import Mathlib.Topology.Compactness.Compact
 import Jacobian.HolomorphicForms.SectionFiberNorm
 
 /-!

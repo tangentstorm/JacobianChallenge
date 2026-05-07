@@ -1,6 +1,12 @@
 import Jacobian.Periods.LebesgueChartRadius
 import Mathlib.Topology.Path
-import Mathlib
+import Mathlib.Topology.UnitInterval
+import Mathlib.Geometry.Manifold.ChartedSpace
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
+import Mathlib.Data.Real.Basic
+import Mathlib.Algebra.Order.Floor.Defs
 
 namespace JacobianChallenge.Periods
 

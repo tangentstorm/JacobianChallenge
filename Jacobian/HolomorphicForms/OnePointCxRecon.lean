@@ -1,5 +1,3 @@
-import Mathlib
-
 /-!
 # Reconnaissance: `OnePoint ℂ` as a complex manifold (ℂℙ¹)
 
