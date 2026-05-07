@@ -50,7 +50,38 @@ theorem liftToCp1_holomorphicAt_finite
     (f : MeromorphicFunctionType X) (_hholo : True)
     (p : X) {z : ℂ} (_hp : meromorphicToCp1 X f p = (z : OnePoint ℂ)) :
     IsHolomorphicAt (meromorphicToCp1 X f) p := by
-  sorry
+  apply_rules [ MeromorphicAt.analyticAt ];
+  · have h_eq : ∀ᶠ t in nhds (chartAt ℂ p p), chartLocalAt (meromorphicToCp1 X f) p t = (f.toFun (chartAt ℂ p |>.symm t)).getD 0 := by
+      have h_eq : ∀ᶠ t in nhds (chartAt ℂ p p), (chartAt ℂ p).symm t ∈ f.toFun ⁻¹' Set.range (OnePoint.some : ℂ → OnePoint ℂ) := by
+        have h_eq : ContinuousAt (fun t => f.toFun (chartAt ℂ p |>.symm t)) (chartAt ℂ p p) := by
+          refine' ContinuousAt.comp _ _;
+          · exact f.toFun_continuous.continuousAt;
+          · exact ( chartAt ℂ p ).symm.continuousAt ( by simp +decide );
+        have h_eq : ∀ᶠ t in nhds (chartAt ℂ p p), f.toFun (chartAt ℂ p |>.symm t) ≠ OnePoint.infty := by
+          convert h_eq.eventually_ne _;
+          convert _hp.symm ▸ OnePoint.coe_ne_infty z;
+          exact ( chartAt ℂ p ).left_inv ( by simp +decide );
+        filter_upwards [ h_eq ] with t ht using by cases h : f.toFun ( chartAt ℂ p |>.symm t ) <;> tauto;
+      filter_upwards [ h_eq ] with t ht;
+      cases h : f.toFun ( chartAt ℂ p |>.symm t ) <;> simp_all +decide [ chartLocalAt ];
+      simp_all +decide [ meromorphicToCp1 ];
+      simp +decide [ chartAt ];
+      simp +decide [ ChartedSpace.chartAt ];
+      simp +decide [ HolomorphicForms.identityChart ];
+      simp +decide [ Topology.IsOpenEmbedding.toOpenPartialHomeomorph ];
+      simp +decide [ Function.invFunOn ];
+      rfl;
+    apply_rules [ MeromorphicAt.congr ];
+    convert f.isMeromorphic p using 1;
+    any_goals exact eventuallyEq_nhdsWithin_of_eqOn fun ⦃x⦄ => congrFun rfl;
+    filter_upwards [ h_eq.filter_mono nhdsWithin_le_nhds ] with t ht using ht.symm;
+  · apply_rules [ ContinuousAt.comp, continuousAt_id ];
+    any_goals exact continuousAt_id;
+    · convert ( chartAt ℂ ( meromorphicToCp1 X f p ) ).continuousAt _;
+      aesop;
+    · refine' ContinuousAt.comp _ _;
+      · convert f.toFun_continuous.continuousAt using 1;
+      · exact ( chartAt ℂ p ).symm.continuousAt ( by simp +decide )
 
 /-- Chart-local holomorphicity of the CP¹ lift at a pole.
 
