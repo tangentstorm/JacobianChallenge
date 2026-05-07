@@ -62,6 +62,18 @@ non-direct routes. Likely BLOCKER given Mathlib gaps, but the
 previous Orzech result earned the benefit of the doubt — worth one
 shot for both a real attempt and useful triage info either way.
 
+**Tick I (~+150 min):** `cdd76e1a` returned with a partial discharge
+— **integrated**. The original `_finrank_eq` sorry is gone; in its
+place a new sorry'd helper `polygon4g_succ_singularH1_linearEquiv_abelianization`
+asserts the Hurewicz iso directly, bypassing the circular
+`polygon4g_succ_hurewicz_iso_explicit` ↔ `_freeAb_data` ↔
+`_finrank_eq` chain. Net sorry count unchanged but the architectural
+obstruction is now expressed as one clean iso-existence statement
+instead of a tangle of three. Same shifting-the-sorry pattern as the
+2c73f336 Orzech integration. Build green on Polygon4gCellular and
+downstream Polygon4gEdgeBasisMap. `b9fcfdb4` still IN_PROGRESS at
+16%.
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 
