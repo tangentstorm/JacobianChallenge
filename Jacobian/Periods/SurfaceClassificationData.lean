@@ -1,5 +1,6 @@
 import Jacobian.Periods.Polygon4g
 import Jacobian.Periods.Orientable
+import Jacobian.Periods.EdgeWord
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Analysis.InnerProductSpace.PiL2
 
@@ -56,12 +57,26 @@ is built (see `ref/plans/polygonal-model.md` Stage A1 sub-leaves). -/
 def Triangulation (_M : Type) [TopologicalSpace _M] : Type :=
   PUnit
 
-/-- **Placeholder for an edge-word presentation of `M`.** Bundles
-the data of "M presented as a `2k`-gon with side identifications
-given by some edge-pairing word `w` of length `2k`". A concrete
-unfolding will land when the combinatorial-reduction infrastructure
-is built. -/
-def EdgeWordPresentation (_M : Type) [TopologicalSpace _M] : Type :=
-  PUnit
+/-- **Edge-word presentation of `M`.** Bundles the data of "M presented
+as a `2k`-gon with side identifications given by some edge-pairing
+word `w` of length `2k`".
+
+This is the non-standardized generalization of
+`PolygonalQuotientPresentation`. -/
+structure EdgeWordPresentation (M : Type) [TopologicalSpace M] where
+  /-- The genus parameter of the alphabet used by the word. -/
+  g : ℕ
+  /-- The boundary word labelling the 2k-gon. -/
+  word : EdgeWord g
+  /-- The continuous surjection from the closed disk witnessing the
+  presentation. -/
+  proj : DiskC → M
+  /-- Continuity of `proj`. -/
+  cts : Continuous proj
+  /-- Surjectivity of `proj`. -/
+  surj : Function.Surjective proj
+  /-- Kernel: `proj z = proj w` exactly when the word's side
+  pairing relates `z` and `w`. -/
+  kernel : ∀ z w : DiskC, proj z = proj w ↔ EdgeWord.sidePairingRel g word z w
 
 end JacobianChallenge.Periods
