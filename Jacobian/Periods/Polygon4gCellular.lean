@@ -1,5 +1,6 @@
 import Jacobian.Periods.Polygon4g
 import Jacobian.Periods.TopologicalGenus
+import Jacobian.Periods.PolygonCellularHomology
 import Mathlib.Algebra.Module.Torsion.Free
 import Mathlib.LinearAlgebra.Basis.Defs
 import Mathlib.LinearAlgebra.Dimension.Constructions
@@ -277,8 +278,8 @@ Both routes require infrastructure absent from Mathlib v4.28.0
 This file's three Round-5 leaves (`_isFinite`, `_isTorsionFree`,
 `_finrank_eq`) are all derived from this single iso below. -/
 theorem polygon4g_succ_singularH1_linearEquiv_abelianization (g : ℕ) :
-    Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) := by
-  sorry
+    Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) :=
+  polygon4g_cellular_singular_iso (g + 1)
 
 /-- **Stage A leaf (C1b, round 5 sub-leaf).**
 `singularH1 (Polygon4g (g+1))` is finitely generated as a `ℤ`-module.
