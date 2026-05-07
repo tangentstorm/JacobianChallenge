@@ -10579,7 +10579,7 @@ $\code{ContMDiffSection.continuous\_totalSpaceMk}$ to a continuous
 $E\to\C^{*}$-valued function (after composing with the chart
 trivialisation of the cotangent bundle).
 \lean{JacobianChallenge.Periods.chartedSection_localRepr_continuousOn}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Phase 1b: chart-inverse mfderiv continuity]
@@ -10589,11 +10589,11 @@ The map $e\mapsto\code{mfderiv}\,c.\code{symm}\,e$ is continuous on
 $c.\code{target}$ (viewed as $E\to E$-valued).  Reduces to
 $\code{contMDiffOn\_chart\_symm}$ plus the continuity-of-mfderiv
 chain via \code{ContMDiffWithinAt.mfderivWithin\_const}.
-Requires either an \code{inTangentCoordinates}-unfolding for the
-self-model + manifold-target case, or a direct
-$\code{continuousOn\_mfderivWithin}$ Mathlib helper.
+Under \code{[StableChartAt E X]}, \code{mfderiv chartAt = id} on the
+chart source, reducing continuity to \code{ContDiffOn.continuousOn\_fderiv\_of\_isOpen}
+applied to the chart-transition $c'\circ c^{-1}$.
 \lean{JacobianChallenge.Periods.mfderiv_chartSymm_continuousOn}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Phase 2: subpath-reparameterisation for \code{curveIntegral}]
@@ -10617,7 +10617,7 @@ $j\mapsto\code{pickChart}\,(j\,/\,k)$) preserves the
 \code{pathIntegralViaCoverWith} sum.  Recursive application of
 Phase 2 (\ref{lem:pcr-phase-2}) plus Fin-reindexing.
 \lean{JacobianChallenge.Periods.pathIntegralViaCoverWith_refine_to_multiple}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Phase 4a: chart-change for \code{pathIntegralViaChartCorrect}]
@@ -10630,7 +10630,7 @@ chart-corrected integrals via either chart agree.  Genuinely the
 chain rule for \code{mfderiv} applied to the chart transition
 $\code{chartAt}\,q\circ(\code{chartAt}\,p).\code{symm}$.
 \lean{JacobianChallenge.Periods.pathIntegralViaChartCorrect_chart_change}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Phase 5: chart-level chain rule for the form-pullback]
@@ -10660,7 +10660,7 @@ $2n$-sum into two $n$-sums plus the half-affine reparameterisation
 invariance (Phase 2 specialised to $s\mapsto s/2$ and
 $s\mapsto(s+1)/2$).
 \lean{JacobianChallenge.Periods.pathIntegralViaCoverWith_aligned_trans}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Phase 6b: existence of an aligned partition for $\gamma\cdot\gamma'$]
@@ -10674,7 +10674,7 @@ $j\mapsto$ \code{pickA}\,j if $j<n$ else \code{pickB}\,(j-n)).
 The bookkeeping: extract partitions for $\gamma$, $\gamma'$
 separately, refine to a common multiple, combine.
 \lean{JacobianChallenge.Periods.exists_aligned_partition_for_trans}
-\notready
+\leanok
 \end{lemma}
 
 \subsubsection*{Chain pdp: bundle-dual-pullback equals \code{pullbackFormsMap} (S23)}
