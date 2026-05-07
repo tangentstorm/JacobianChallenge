@@ -74,6 +74,16 @@ instead of a tangle of three. Same shifting-the-sorry pattern as the
 downstream Polygon4gEdgeBasisMap. `b9fcfdb4` still IN_PROGRESS at
 16%.
 
+**Tick J (~+170 min):** Dispatched `9bf8be37` exploiting the new
+`_linearEquiv_abelianization` helper to discharge the **other two**
+sorries in `Polygon4gCellular.lean` (`_isFinite` + `_isTorsionFree`).
+This is a genuinely net-2 sorry reduction: both follow trivially
+from the iso (`Module.Finite` transports along `LinearEquiv`;
+`IsTorsionFree` follows from `Module.Free` of the codomain
+`Polygon4gAbelianization g = Fin (2(g+1)) → ℤ`). If it lands, the
+file goes from 3 sorries to 1, consolidating the entire
+cellular-Hurewicz architectural obstruction onto one named gap.
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 
