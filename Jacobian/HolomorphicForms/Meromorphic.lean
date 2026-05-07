@@ -1,6 +1,6 @@
 import Jacobian.HolomorphicForms.Divisor
 import Jacobian.HolomorphicForms.FiniteDimensional
-import Jacobian.Blueprint.Sec02.BranchedDegree
+import Jacobian.HolomorphicForms.BranchedCover
 import Mathlib.Topology.Compactification.OnePoint.Basic
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 
@@ -92,8 +92,8 @@ structure MeromorphicMapToSphere
   `toMap`, this Prop is vacuously satisfiable. -/
   hasBranchedCoverDataOfPoleDegree :
     Continuous toMap →
-    ∃ (h : JacobianChallenge.Blueprint.BranchedCoverData X (OnePoint ℂ) toMap),
-      JacobianChallenge.Blueprint.branchedDegree h = poleDivisor.degree.toNat
+    ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) toMap),
+      JacobianChallenge.HolomorphicForms.branchedDegree h = poleDivisor.degree.toNat
 
 namespace MeromorphicMapToSphere
 
