@@ -1,4 +1,5 @@
-import Mathlib
+import Mathlib.Geometry.Manifold.VectorBundle.SmoothSection
+import Mathlib.Tactic.Abel
 import Jacobian.HolomorphicForms.SectionFiberNorm
 import Jacobian.HolomorphicForms.SectionSupNorm
 

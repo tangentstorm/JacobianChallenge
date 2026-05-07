@@ -536,6 +536,8 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM
   exact pathIntegralViaCoverWith_pullback_via_common_partition
     f hf η γ n hn pickX pickY hcovX hcovY K hLipX
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Path-level naturality (round 1 reassembly).** Integrating the
 form-pullback along a path equals integrating the original form along
 the pushed path:
@@ -554,6 +556,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM
       pathIntegralViaCover η (γ.map hf.continuous) :=
   pathIntegralViaCoverWith_pullbackFormsBundledLM f hf η γ K hLipX
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Pass pcr.4 (chart-level chain rule, single-chart version).**
 On a single chart segment where `γ : Path a b` has range in
 `(chartAt ℂ p).source` on `X` and `f ∘ γ` has range in
@@ -610,6 +614,8 @@ theorem periodPairing_chainLevel_repr
   refine ⟨0, Fin.elim0, Fin.elim0, Fin.elim0, fun i => i.elim0, fun η => ?_⟩
   simp [periodPairing]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Pass pn.7 + pn.15 (cyclePushforward agrees with path-mapping).**
 The Lean-level `cyclePushforward f hf` corresponds, on chain
 representatives, to the path-mapping `γ ↦ γ.map hf.continuous`. See
@@ -656,6 +662,8 @@ theorem cyclePushforward_chainLevel_repr
   -- Both sides reduce to `0` once `periodPairing := 0` is unfolded.
   simp [periodPairing]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Stage A leaf (round 2, cycle-level).** Cycle-level naturality of
 `periodPairing` reduces to the path-level naturality assumption
 `_h_path`.
@@ -1088,6 +1096,8 @@ Stokes / chain-level content, currently a sorry) with the path-level
 naturality `pathIntegralViaCover_pullbackFormsBundledLM` (sorry-free
 above the chart-level companion). -/
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 theorem periodPairing_pullbackFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
