@@ -52,6 +52,16 @@ no new sorries and shifts dependency cleanly to a sibling leaf.
 `b9fcfdb4` (path-integral refinement invariance) still IN_PROGRESS
 at 13%.
 
+**Ticks E/F/G (~+80–+120 min):** `b9fcfdb4` stuck at 15% across
+three checks; per cancel rule (target sorry still exists locally,
+no user instruction) it keeps running. Tick G dispatched a third
+packet `cdd76e1a` against `polygon4g_succ_singularH1_finrank_eq`
+(rank-computation leaf in `Polygon4gCellular.lean`); enumerated
+four strategy hints and flagged the circular dependencies for the
+non-direct routes. Likely BLOCKER given Mathlib gaps, but the
+previous Orzech result earned the benefit of the doubt — worth one
+shot for both a real attempt and useful triage info either way.
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 
