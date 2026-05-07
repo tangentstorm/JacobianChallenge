@@ -278,16 +278,48 @@ theorem polygon4g_succ_singularH1_isTorsionFree (g : ℕ) :
   haveI := polygon4g_succ_pathConnected g
   sorry
 
+/-- **Stage A leaf (C1b, round 6 sub-leaf).** The cellular/Hurewicz
+iso for `Polygon4g (g+1)`: there exists a ℤ-linear isomorphism between
+the free ℤ-module `Polygon4gAbelianization g` (= `Fin (2(g+1)) → ℤ`)
+and `singularH1 (Polygon4g (g+1))`.
+
+This is an **independent** assertion of the isomorphism that does NOT
+go through the `polygon4g_succ_hurewicz_iso_explicit` chain (which
+circularly depends on `polygon4g_succ_singularH1_finrank_eq`). Instead,
+it represents the direct cellular-homology or Hurewicz-isomorphism
+content:
+
+* **Cellular route.** CW structure on `Polygon4g (g+1)` with one 0-cell,
+  `2(g+1)` 1-cells, and one 2-cell. The cellular boundary `∂₂` sends
+  the 2-cell to the abelianised commutator product (= 0), so
+  `H₁^{cell} = ℤ^{2(g+1)} / 0 ≅ ℤ^{2(g+1)}`. Combined with the
+  cellular-to-singular comparison theorem (Hatcher, Thm 2.35), this
+  gives `singularH1 ≅ ℤ^{2(g+1)}`.
+
+* **Hurewicz route.** `π₁(Polygon4g (g+1))` is the surface group
+  `⟨a₀,b₀,…,a_g,b_g | ∏ᵢ[aᵢ,bᵢ]⟩`; its abelianisation is
+  `ℤ^{2(g+1)}` (the relator vanishes); the Hurewicz isomorphism
+  `H₁(X,ℤ) ≅ π₁(X)^{ab}` for path-connected `X` completes.
+
+Both routes require infrastructure absent from Mathlib v4.28.0
+(cellular-singular comparison or Hurewicz natural transformation). -/
+theorem polygon4g_succ_singularH1_linearEquiv_abelianization (g : ℕ) :
+    Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) := by
+  sorry
+
 /-- **Stage A leaf (C1b, round 5 sub-leaf).** The `ℤ`-finrank of
 `singularH1 (Polygon4g (g+1))` equals `2(g+1)`.
 
 Bottom-up: `H₁(\Sigma_g) = ℤ^{2g}` for genus `g` (here `g+1`), the
-classical surface-genus rank computation. Mathlib v4.28.0 does not
-expose this as a packaged finrank lemma. -/
+classical surface-genus rank computation. Discharged via the
+cellular/Hurewicz iso `polygon4g_succ_singularH1_linearEquiv_abelianization`
+plus the computable `Module.finrank_fin_fun`. -/
 theorem polygon4g_succ_singularH1_finrank_eq (g : ℕ) :
     Module.finrank ℤ (singularH1 (Polygon4g (g + 1))) = 2 * (g + 1) := by
-  haveI := polygon4g_succ_pathConnected g
-  sorry
+  obtain ⟨e⟩ := polygon4g_succ_singularH1_linearEquiv_abelianization g
+  rw [← e.finrank_eq]
+  unfold Polygon4gAbelianization
+  exact Module.finrank_fin_fun ℤ
 
 /-- **Round 5 sorry-free reassembly.** The iso
 `Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g+1))` follows
