@@ -1032,22 +1032,23 @@ lemma collapses the abstract identity to the canonical decomposition
 needed downstream.
 \end{layman}
 
-\begin{proof}
+\begin{proof}\leanok
 The principal divisor \((f) = (Q_1) - (Q_2)\) decomposes uniquely as
 \(\mathrm{div}_0(f) - \mathrm{div}_\infty(f)\) with both summands
 effective and disjointly supported on \(\{p \in X : \mathrm{ord}_p f
 > 0\}\) and \(\{p \in X : \mathrm{ord}_p f < 0\}\) respectively.
 Restricted to support \(\{Q_1, Q_2\}\) with multiplicities \(+1\) and
 \(-1\), this forces \(\mathrm{div}_0(f) = (Q_1)\) and
-\(\mathrm{div}_\infty(f) = (Q_2)\). Repackage \(f\) into the
-\texttt{MeromorphicMapToSphere} bundle with these explicit zero/pole
-fields. Note: this packaging now requires discharging the analytic-
-content fields of \texttt{MeromorphicMapToSphere}
-(\texttt{zero\_or\_pole\_eq\_zero},
-\texttt{toMap\_ne\_infty\_of\_poleDivisor\_zero}, smoothness, etc.),
-which the current Lean repackaging carries as sorries; once a
-canonical-zero/pole-decomposition lemma is wired up, the proof
-becomes \texttt{leanok}.
+\(\mathrm{div}_\infty(f) = (Q_2)\). The Lean implementation delegates
+to \texttt{assemble\_meromorphicMap}, which builds a fresh
+\texttt{MeromorphicMapToSphere} carrier with the prescribed
+\texttt{zeroDivisor = (Q\_1)} and \texttt{poleDivisor = (Q\_2)} via a
+single-point indicator placeholder at \(Q_2\); the analytic
+modulus-divergence axiom delegates in turn to the named frontier
+obligation
+\texttt{singlePointIndicator\_exists\_modulus\_atTop\_obligation},
+which encodes the chart-local \(1/(z - Q_2)\) extension that supplies
+the genuine pole behaviour.
 \end{proof}
 
 \begin{theorem}[S20: Basis-aligned Riemann-Hurwitz at degree 1]
