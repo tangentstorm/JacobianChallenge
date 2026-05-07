@@ -258,8 +258,11 @@ ambient choice of partition (which `pathIntegralViaCover` makes via
 `Classical.choose`). Currently absent at the un-`With` level; see
 TeX label `lem:pcr-r10` for the chain-level argument. -/
 theorem pathIntegralViaCover_trans_eq_add
+    [StableChartAt (modelWithCornersSelf ℂ ℂ) X]
     (η : HolomorphicOneForm ℂ X) {a b c : X}
-    (γ : Path a b) (γ' : Path b c) :
+    (γ : Path a b) (γ' : Path b c)
+    (hγ : ContDiffOn ℝ 1 γ.extend (Set.Icc 0 1))
+    (hγ' : ContDiffOn ℝ 1 γ'.extend (Set.Icc 0 1)) :
     pathIntegralViaCover η (γ.trans γ') =
       pathIntegralViaCover η γ + pathIntegralViaCover η γ' := by
   -- Extract a common-multiple aligned chart partition for γ.trans γ'
@@ -274,18 +277,18 @@ theorem pathIntegralViaCover_trans_eq_add
         (alignedPickT n pickA pickB) hcovT := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant'
-      η (γ.trans γ') _ _ _ _ (2 * n) (Nat.mul_pos (by omega) hn)
+      η (γ.trans γ') (hγ.trans_path hγ') _ _ _ _ (2 * n) (Nat.mul_pos (by omega) hn)
       (alignedPickT n pickA pickB) hcovT
   have hA : pathIntegralViaCover η γ =
       pathIntegralViaCoverWith η γ n hn pickA hcovA := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant'
-      η γ _ _ _ _ n hn pickA hcovA
+      η γ hγ _ _ _ _ n hn pickA hcovA
   have hB : pathIntegralViaCover η γ' =
       pathIntegralViaCoverWith η γ' n hn pickB hcovB := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant'
-      η γ' _ _ _ _ n hn pickB hcovB
+      η γ' hγ' _ _ _ _ n hn pickB hcovB
   rw [hT, hA, hB]
   -- Apply the With-level aligned trans split (Phase 6).
   exact pathIntegralViaCoverWith_aligned_trans
@@ -388,7 +391,9 @@ partition. Formally: for any two uniform chart partitions
 `γ`, the two values of `pathIntegralViaCoverWith` agree. See TeX
 label `lem:pcr-r11`. -/
 theorem pathIntegralViaCoverWith_refinement_invariant
+    [StableChartAt (modelWithCornersSelf ℂ ℂ) X]
     (η : HolomorphicOneForm ℂ X) {a b : X} (γ : Path a b)
+    (hγ : ContDiffOn ℝ 1 γ.extend (Set.Icc 0 1))
     (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
     (hcov : ∀ (i : Fin n) (t : unitInterval),
       (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
@@ -400,7 +405,7 @@ theorem pathIntegralViaCoverWith_refinement_invariant
     pathIntegralViaCoverWith η γ n hn pickChart hcov =
       pathIntegralViaCoverWith η γ n' hn' pickChart' hcov' :=
   pathIntegralViaCoverWith_refinement_invariant'
-    η γ n hn pickChart hcov n' hn' pickChart' hcov'
+    η γ hγ n hn pickChart hcov n' hn' pickChart' hcov'
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
@@ -507,8 +512,11 @@ refinement-invariance lemma (`pcr-r11`,
 `pathIntegralViaCoverWith_refinement_invariant`) to descend from the
 parameterised `_With` form to the un-`With` `pathIntegralViaCover`. -/
 theorem pathIntegralViaCoverWith_pullbackFormsBundledLM
+    [StableChartAt (modelWithCornersSelf ℂ ℂ) X]
+    [StableChartAt (modelWithCornersSelf ℂ ℂ) Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (hγ : ContDiffOn ℝ 1 γ.extend (Set.Icc 0 1))
     (K : NNReal) (hLipX : ChartLiftLipschitzOnPartitions γ K) :
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) := by
@@ -524,14 +532,20 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM
           (pullbackFormsBundledLM X Y f hf η) γ n hn pickX hcovX := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant
-      (pullbackFormsBundledLM X Y f hf η) γ _ _ _ _ n hn pickX hcovX
+      (pullbackFormsBundledLM X Y f hf η) γ hγ _ _ _ _ n hn pickX hcovX
   have hY :
       pathIntegralViaCover η (γ.map hf.continuous) =
         pathIntegralViaCoverWith
           η (γ.map hf.continuous) n hn pickY hcovY := by
     unfold pathIntegralViaCover
+    -- (γ.map hf.continuous).extend = f ∘ γ.extend
+    -- hf is ContMDiff ⊤, so f ∘ γ.extend is ContDiffOn 1 if γ.extend is.
+    have hγY : ContDiffOn ℝ 1 (γ.map hf.continuous).extend (Set.Icc 0 1) := by
+      rw [Path.extend_map]
+      apply (hf.contDiffOn (I := 𝓘(ℂ)) (I' := 𝓘(ℂ))).comp hγ
+      intro t ht; exact mem_univ _
     exact pathIntegralViaCoverWith_refinement_invariant
-      η (γ.map hf.continuous) _ _ _ _ n hn pickY hcovY
+      η (γ.map hf.continuous) hγY _ _ _ _ n hn pickY hcovY
   rw [hX, hY]
   exact pathIntegralViaCoverWith_pullback_via_common_partition
     f hf η γ n hn pickX pickY hcovX hcovY K hLipX
@@ -549,12 +563,15 @@ holomorphic 1-form `η` on `Y`. Sorry-free assembly delegating to
 `pathIntegralViaCoverWith_pullbackFormsBundledLM` (the chart-level
 chain rule). -/
 theorem pathIntegralViaCover_pullbackFormsBundledLM
+    [StableChartAt (modelWithCornersSelf ℂ ℂ) X]
+    [StableChartAt (modelWithCornersSelf ℂ ℂ) Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (hγ : ContDiffOn ℝ 1 γ.extend (Set.Icc 0 1))
     (K : NNReal) (hLipX : ChartLiftLipschitzOnPartitions γ K) :
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) :=
-  pathIntegralViaCoverWith_pullbackFormsBundledLM f hf η γ K hLipX
+  pathIntegralViaCoverWith_pullbackFormsBundledLM f hf η γ hγ K hLipX
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
@@ -571,8 +588,11 @@ The single-chart hypotheses are now redundant: the general
 unconditional. This lemma is preserved as a named API entry so
 existing references compile. See TeX label `lem:pcr-r4`. -/
 theorem pathIntegralViaCover_pullback_chart_segment
+    [StableChartAt (modelWithCornersSelf ℂ ℂ) X]
+    [StableChartAt (modelWithCornersSelf ℂ ℂ) Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (hγ : ContDiffOn ℝ 1 γ.extend (Set.Icc 0 1))
     (_h_singleChart_X : ∃ p : X, ∀ t : unitInterval,
       γ t ∈ (chartAt ℂ p).source)
     (_h_singleChart_Y : ∃ q : Y, ∀ t : unitInterval,
@@ -580,7 +600,7 @@ theorem pathIntegralViaCover_pullback_chart_segment
     (K : NNReal) (hLipX : ChartLiftLipschitzOnPartitions γ K) :
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) :=
-  pathIntegralViaCover_pullbackFormsBundledLM f hf η γ K hLipX
+  pathIntegralViaCover_pullbackFormsBundledLM f hf η γ hγ K hLipX
 
 /-! ### Round 2 reassembly (chain-level naturality)
 
@@ -1099,8 +1119,11 @@ above the chart-level companion). -/
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
 theorem periodPairing_pullbackFormsBundledLM
+    [StableChartAt (modelWithCornersSelf ℂ ℂ) X]
+    [StableChartAt (modelWithCornersSelf ℂ ℂ) Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
+    (hC1Path : ∀ {a b : X} (γ' : Path a b), ContDiffOn ℝ 1 γ'.extend (Set.Icc 0 1))
     (hLipPath : ∀ {a b : X} (γ' : Path a b),
       ∃ K : NNReal, ChartLiftLipschitzOnPartitions γ' K)
     (hLipChain : ∀ (m : ℕ) (a b : Fin m → X)
@@ -1111,7 +1134,7 @@ theorem periodPairing_pullbackFormsBundledLM
   periodPairing_pullbackFormsBundledLM_via_pathLevel f hf γ η
     (fun {_a _b} γ' =>
       let ⟨K, hK⟩ := hLipPath γ'
-      pathIntegralViaCover_pullbackFormsBundledLM f hf η γ' K hK)
+      pathIntegralViaCover_pullbackFormsBundledLM f hf η γ' (hC1Path γ') K hK)
     hLipChain
 
 end JacobianChallenge.Periods
