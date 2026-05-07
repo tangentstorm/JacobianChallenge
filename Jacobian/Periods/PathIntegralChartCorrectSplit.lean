@@ -43,6 +43,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
+omit [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] in
 /-- The chart-lift commutes with `Path.subpath`: lifting a subpath
 through the chart equals taking the subpath of the chart-lifted
 path. Proved by `Path.ext`. -/

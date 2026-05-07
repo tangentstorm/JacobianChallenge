@@ -365,6 +365,7 @@ combine into an aligned `(2*n, alignedPickT)` partition for
 
 Discharged Phase 6b: the existence theorem is now sorry-free. -/
 
+omit [NormedSpace ℂ E] [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] in
 variable (X) in
 /-- Existence of a common-multiple aligned chart partition for
 `γ.trans γ'` given partition data for `γ` and `γ'` separately.
@@ -380,12 +381,12 @@ The cover hypotheses for the refined and combined partitions follow
 mechanically from the originals via `Path.trans_apply`'s formula. -/
 theorem exists_aligned_partition_for_trans
     {a b c : X} (γ : Path a b) (γ' : Path b c) :
-    ∃ (n : ℕ) (hn : 0 < n)
+    ∃ (n : ℕ) (_hn : 0 < n)
       (pickA pickB : Fin n → X)
-      (hcovA : ∀ (i : Fin n) (t : unitInterval),
+      (_hcovA : ∀ (i : Fin n) (t : unitInterval),
         (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
         γ t ∈ (chartAt E (pickA i)).source)
-      (hcovB : ∀ (i : Fin n) (t : unitInterval),
+      (_hcovB : ∀ (i : Fin n) (t : unitInterval),
         (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
         γ' t ∈ (chartAt E (pickB i)).source),
       ∀ (j : Fin (2 * n)) (t : unitInterval),

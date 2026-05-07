@@ -63,6 +63,12 @@ noncomputable def cyclePushforward
   (((AlgebraicTopology.singularHomologyFunctor (ModuleCat ℤ) 1).obj
     (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom ⟨f, hf.continuous⟩)).hom.toAddMonoidHom
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+  [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z] in
 /-- Composition-functoriality of cycle pushforward: `(g ∘ f)_* = g_* ∘ f_*`.
 Direct from functoriality of `singularHomologyFunctor`. -/
 theorem cyclePushforward_comp
@@ -81,6 +87,8 @@ theorem cyclePushforward_comp
   rw [CategoryTheory.Functor.map_comp]
   rfl
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] in
 /-- Identity-functoriality: `cyclePushforward id _` is the identity. -/
 theorem cyclePushforward_id :
     cyclePushforward (id : X → X) contMDiff_id = AddMonoidHom.id _ := by
@@ -133,6 +141,7 @@ into pulled-back-form integrals on `X`. Search for the heading
 -- further below in this file. The reassembly therefore lives at the
 -- bottom of the file (search for "Round 1 reassembly").
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Identity special case** of `periodPairing_pullbackFormsBundledLM`:
 when `f = id`, the cycle pushforward is the identity (by
 `cyclePushforward_id`), the form-pullback along `id` is the identity
@@ -146,6 +155,8 @@ theorem periodPairing_pullbackFormsBundledLM_id
   rw [cyclePushforward_id, AddMonoidHom.id_apply]
   rw [pullbackFormsBundledLM_id, LinearMap.id_apply]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Zero-cycle special case** of `periodPairing_pullbackFormsBundledLM`:
 naturality at the zero cycle is trivially true since both sides vanish.
 Sorry-free. -/
@@ -235,6 +246,7 @@ abbrev ChartLiftLipschitzOnPartitions
                   (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
       (Set.Icc (0 : ℝ) 1)
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Pass pcr.10 (path-additivity at cover level).** The cover-level
 path integral is additive under path concatenation: for any holomorphic
 form `ω` on `X` and concatenable paths `γ : Path a b`, `γ' : Path b c`,
@@ -279,6 +291,10 @@ theorem pathIntegralViaCover_trans_eq_add
   exact pathIntegralViaCoverWith_aligned_trans
     η γ γ' n hn pickA pickB hcovA hcovB hcovT
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y] in
 /-- **Pass pcr.13 (chart-source compatibility under f).** If `γ`
 factors through a chart on `X` then `f ∘ γ` factors through some chart
 on `Y` after refinement; in particular every uniform chart partition
@@ -286,7 +302,7 @@ of `γ` on `X` admits a refinement that is also a uniform chart
 partition of `f ∘ γ` on `Y`. See TeX label `lem:pcr-r13`. -/
 theorem pathIntegralViaCover_partition_compat_under_smooth
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b) :
-    ∃ (n : ℕ) (hn : 0 < n) (pickX : Fin n → X) (pickY : Fin n → Y),
+    ∃ (n : ℕ) (_hn : 0 < n) (pickX : Fin n → X) (pickY : Fin n → Y),
       (∀ (i : Fin n) (t : unitInterval),
         (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
         γ t ∈ (chartAt ℂ (pickX i)).source) ∧
@@ -364,6 +380,7 @@ theorem pathIntegralViaCover_partition_compat_under_smooth
       rw [hcast_succ] at hstep
       exact ht2.trans hstep
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Pass pcr.11 (refinement-invariance of the cover sum).** The
 multi-chart path integral is invariant under refinement of the chart
 partition. Formally: for any two uniform chart partitions
@@ -385,6 +402,8 @@ theorem pathIntegralViaCoverWith_refinement_invariant
   pathIntegralViaCoverWith_refinement_invariant'
     η γ n hn pickChart hcov n' hn' pickChart' hcov'
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Pass pcr.1 (cover-sum equality on a common partition).** If `γ`
 on `X` and `f ∘ γ` on `Y` admit a common-grain partition (witnessed by
 `pcr-r13`), then the two `pathIntegralViaCoverWith` sums agree
@@ -474,6 +493,8 @@ theorem pathIntegralViaCoverWith_pullback_via_common_partition
   -- via path congruence (Path.ext).
   exact pathIntegralViaChartCorrect_eq_of_path_eq _ _ rfl _ _
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Stage A leaf (round 2).** Chart-level naturality of path
 integration under form-pullback.
 
@@ -564,6 +585,7 @@ naturality `pathIntegralViaCover_pullbackFormsBundledLM`, so that
 `cyclePushforward_chainLevel_repr` can use the path-level naturality
 summand-by-summand. -/
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Pass pn.1 + pn.11 + pn.12 (chain-level integral, uniform in η).**
 Every cycle `γ : IntegralOneCycle X` admits a chain representative
 (a finite formal `ℤ`-sum of smooth singular 1-simplices, i.e. paths)
@@ -684,6 +706,7 @@ theorem periodPairing_pullbackFormsBundledLM_via_pathLevel
     (cyclePushforward_chainLevel_repr f hf γ m a b n γs hreprX K hLipX η).symm
   rw [hsumX, hsumXY, hsumY]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Identity special case** of path-level naturality: when `f = id`,
 both sides equal `pathIntegralViaCover η γ` since `id^* η = η` and
 `γ.map continuous_id = γ`. Sorry-free. -/
@@ -697,6 +720,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_id
   -- γ.map continuous_id = γ.
   rw [show γ.map continuous_id = γ from Path.ext (by ext t; rfl)]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Refl special case**: path integral over a constant path is zero,
 so naturality at `Path.refl a` is `0 = 0`. Sorry-free. -/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
@@ -711,6 +736,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
   -- Use pathIntegralViaCoverPick_refl on each side.
   rw [pathIntegralViaCover_refl, pathIntegralViaCover_refl]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Zero-form special case** of path-level naturality: at `η = 0`,
 both sides vanish via linearity of `pullbackFormsBundledLM` and
 `pathIntegralViaCover`. Sorry-free, **modulo** the un-`With`
@@ -727,6 +754,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_zero
         (γ.map hf.continuous) := by
   rw [h_zero_X, h_zero_Y]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Form-additivity conditional case**: naturality at `η + ζ` follows
 from naturality at `η` and at `ζ`, via the linearity of
 `pullbackFormsBundledLM` (which is a `ℂ`-linear map). The
@@ -750,6 +779,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_add_form
       pathIntegralViaCover (η + ζ) (γ.map hf.continuous) := by
   rw [h_add_X, h_add_Y, h_η, h_ζ]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Form-smul conditional case**: naturality at `k • η` follows from
 naturality at `η` plus smul-compatibility of `pathIntegralViaCover`.
 The latter exists at `_With` level
@@ -769,6 +800,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_smul_form
       pathIntegralViaCover (k • η) (γ.map hf.continuous) := by
   rw [h_smul_X, h_η, h_smul_Y]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Form-neg case**: naturality at `-η` follows from naturality at
 `η`, since both sides commute with `Neg`. The neg-compatibility is
 unconditionally provable from the additive structure of forms +
@@ -789,6 +822,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_neg_form
       pathIntegralViaCover (-η) (γ.map hf.continuous) := by
   rw [h_neg_X, h_η, h_neg_Y]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Concatenated path conditional special case** of path-level
 naturality: naturality at `γ.trans γ'` follows from naturality at `γ`
 and `γ'` (as hypotheses), via `Path.map_trans` (which states
@@ -821,6 +856,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_trans
   rw [Path.map_trans]
   rw [h_trans_Y]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Symmetric path conditional special case** of path-level
 naturality: naturality at `γ.symm` follows from naturality at `γ`
 (as a hypothesis), via `Path.map_symm` (which states
@@ -851,6 +888,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_symm
     (Path.map_symm γ hf.continuous).symm]
   rw [h_symm_Y]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z] in
 /-- **Composition assembly** of path-level naturality: if naturality
 holds for `f` and for `g`, then it holds for `g ∘ f`.
 
@@ -879,6 +918,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_comp
   -- (γ.map hf.continuous).map hg.continuous = γ.map (hg.comp hf).continuous.
   rfl
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Negation special case** of `periodPairing_pullbackFormsBundledLM`:
 naturality at `-γ` follows from naturality at `γ` (as a hypothesis)
 since both `cyclePushforward` and `periodPairing` are additive (so
@@ -894,6 +935,8 @@ theorem periodPairing_pullbackFormsBundledLM_of_neg
       (periodPairing ℂ Y).map_neg, LinearMap.neg_apply, LinearMap.neg_apply,
       h_nat]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Additivity special case** of `periodPairing_pullbackFormsBundledLM`:
 naturality at `γ + δ` follows from naturality at `γ` and at `δ`
 (as hypotheses) since both `cyclePushforward` and `periodPairing` are
@@ -911,6 +954,8 @@ theorem periodPairing_pullbackFormsBundledLM_of_add
       (periodPairing ℂ Y).map_add, LinearMap.add_apply, LinearMap.add_apply,
       h_γ, h_δ]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Natural-scalar special case** of `periodPairing_pullbackFormsBundledLM`. -/
 theorem periodPairing_pullbackFormsBundledLM_of_nsmul
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -923,6 +968,8 @@ theorem periodPairing_pullbackFormsBundledLM_of_nsmul
       (periodPairing ℂ Y).map_nsmul, LinearMap.smul_apply, LinearMap.smul_apply,
       h_nat]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Form-zero special case**: naturality at η = 0; both sides
 vanish via linearity of `pullbackFormsBundledLM` and the
 linear-map-valuedness of `periodPairing γ`. Sorry-free. -/
@@ -933,6 +980,8 @@ theorem periodPairing_pullbackFormsBundledLM_zero_form
       (periodPairing ℂ Y (cyclePushforward f hf γ)) 0 := by
   rw [LinearMap.map_zero, LinearMap.map_zero, LinearMap.map_zero]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Form-additivity special case**: naturality at η + ζ from
 naturality at η and at ζ separately, via linearity in the form
 argument. Sorry-free. -/
@@ -947,6 +996,8 @@ theorem periodPairing_pullbackFormsBundledLM_of_add_form
       (periodPairing ℂ Y (cyclePushforward f hf γ)) (η + ζ) := by
   rw [LinearMap.map_add, LinearMap.map_add, LinearMap.map_add, h_η, h_ζ]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Form-smul special case**: naturality at k • η follows from
 naturality at η, via ℂ-linearity of `pullbackFormsBundledLM` and
 ℂ-linearity of `periodPairing γ`. Sorry-free. -/
@@ -959,6 +1010,8 @@ theorem periodPairing_pullbackFormsBundledLM_of_smul_form
       (periodPairing ℂ Y (cyclePushforward f hf γ)) (k • η) := by
   rw [LinearMap.map_smul, LinearMap.map_smul, LinearMap.map_smul, h_η]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Form-neg special case**: naturality at -η from naturality at η. -/
 theorem periodPairing_pullbackFormsBundledLM_of_neg_form
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -969,6 +1022,8 @@ theorem periodPairing_pullbackFormsBundledLM_of_neg_form
       (periodPairing ℂ Y (cyclePushforward f hf γ)) (-η) := by
   rw [map_neg, map_neg, map_neg, h_η]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Subtraction special case** of `periodPairing_pullbackFormsBundledLM`. -/
 theorem periodPairing_pullbackFormsBundledLM_of_sub
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -983,6 +1038,8 @@ theorem periodPairing_pullbackFormsBundledLM_of_sub
       (periodPairing ℂ Y).map_sub, LinearMap.sub_apply, LinearMap.sub_apply,
       h_γ, h_δ]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] in
 /-- **Integer-scalar special case** of `periodPairing_pullbackFormsBundledLM`:
 naturality at `n • γ` follows from naturality at `γ` and additivity. -/
 theorem periodPairing_pullbackFormsBundledLM_of_zsmul
@@ -996,6 +1053,8 @@ theorem periodPairing_pullbackFormsBundledLM_of_zsmul
       (periodPairing ℂ Y).map_zsmul, LinearMap.smul_apply, LinearMap.smul_apply,
       h_nat]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z] in
 /-- **Composition assembly** of `periodPairing_pullbackFormsBundledLM`:
 naturality is preserved under composition of maps. If naturality holds
 for `f` and for `g`, then it holds for `g ∘ f`.

@@ -56,6 +56,7 @@ section SubpathExtend
 
 variable {a b : E}
 
+omit [NormedSpace ℝ E] in
 /-- For `s ∈ Icc 0 1`, the extended subpath agrees with the affine
 reparameterisation of `γ.extend`. -/
 lemma subpath_extend_eq_extend_affine
@@ -73,6 +74,7 @@ lemma subpath_extend_eq_extend_affine
   -- and `subpathAux t₀ t₁ ⟨s, hs⟩` has the right val by Subtype proof-irrelevance.
   rfl
 
+omit [NormedSpace ℝ E] in
 /-- For `s ∈ (0, 1)` (strict interior), the extended subpath
 eventually equals the affine reparameterisation of `γ.extend` in a
 neighbourhood of `s` in ℝ. -/

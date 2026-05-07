@@ -20,6 +20,7 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
+omit [NormedSpace ℂ V] in
 /-- The map `x ↦ localSection Λ v₂ r (mk x) - x` is continuous on the
 chart-overlap region. -/
 lemma continuousOn_localSection_mk_sub
