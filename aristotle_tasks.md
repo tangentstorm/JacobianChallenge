@@ -84,6 +84,21 @@ from the iso (`Module.Finite` transports along `LinearEquiv`;
 file goes from 3 sorries to 1, consolidating the entire
 cellular-Hurewicz architectural obstruction onto one named gap.
 
+**Tick K (~+190 min):** `9bf8be37` returned and **integrated** —
+first packet this session producing an actual net sorry-count
+decrease. Aristotle's discharge used `Module.Finite.equiv` and
+`Function.Injective.moduleIsTorsionFree` correctly, but worked
+around declaration ordering by introducing a forward-declared
+`_aux` sorry (since the iso lemma sat at line ~306 after the
+targets at ~260, ~276). On integration this was rewritten to
+**reorder the file**: `_linearEquiv_abelianization` moved upward to
+precede `_isFinite`, the aux deleted, the targets referencing the
+real iso directly. Final state of `Polygon4gCellular.lean`: 1 sorry
+on the iso (line 279), `_isFinite` / `_isTorsionFree` / `_finrank_eq`
+all sorry-free. Build verified on the file + downstream
+`Polygon4gEdgeBasisMap`. The cellular-Hurewicz obstruction is now
+consolidated onto exactly one named gap.
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 

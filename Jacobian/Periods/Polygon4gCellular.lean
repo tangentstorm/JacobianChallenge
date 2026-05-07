@@ -249,35 +249,6 @@ identifies its index cardinality with `2(g+1)` using
 linear equivalence with `Basis.equivFun.symm`. The output is a genuine
 basis-derived iso, not a finrank-driven existence statement. -/
 
-/-- **Stage A leaf (C1b, round 5 sub-leaf).**
-`singularH1 (Polygon4g (g+1))` is finitely generated as a `ℤ`-module.
-
-Bottom-up content: the polygonal model has a finite CW structure
-(one 0-cell, `2(g+1)` 1-cells, one 2-cell) and the singular chain
-complex of a finite CW complex has finite-rank chain modules in each
-degree, so the homology is finitely generated. Mathlib v4.28.0 lacks
-the cellular-vs-singular comparison theorem packaged at this level. -/
-theorem polygon4g_succ_singularH1_isFinite (g : ℕ) :
-    Module.Finite ℤ (singularH1 (Polygon4g (g + 1))) := by
-  haveI := polygon4g_succ_pathConnected g
-  sorry
-
-/-- **Stage A leaf (C1b, round 5 sub-leaf).**
-`singularH1 (Polygon4g (g+1))` is torsion-free as a `ℤ`-module.
-
-Bottom-up content: classical topological fact for closed orientable
-surfaces. Two routes (each non-trivial in Mathlib v4.28.0):
-* Cellular: the relator `∏ᵢ[aᵢ,bᵢ]` of the polygonal CW structure
-  abelianises to zero, so `H₁` of the cellular chain complex is the
-  free `ℤ`-module on the 1-cells and hence torsion-free.
-* Poincaré duality: dualising the always-torsion-free `H¹(X, ℤ)` gives
-  torsion-freeness of `H₁(X, ℤ)`.
--/
-theorem polygon4g_succ_singularH1_isTorsionFree (g : ℕ) :
-    Module.IsTorsionFree ℤ (singularH1 (Polygon4g (g + 1))) := by
-  haveI := polygon4g_succ_pathConnected g
-  sorry
-
 /-- **Stage A leaf (C1b, round 6 sub-leaf).** The cellular/Hurewicz
 iso for `Polygon4g (g+1)`: there exists a ℤ-linear isomorphism between
 the free ℤ-module `Polygon4gAbelianization g` (= `Fin (2(g+1)) → ℤ`)
@@ -302,10 +273,37 @@ content:
   `H₁(X,ℤ) ≅ π₁(X)^{ab}` for path-connected `X` completes.
 
 Both routes require infrastructure absent from Mathlib v4.28.0
-(cellular-singular comparison or Hurewicz natural transformation). -/
+(cellular-singular comparison or Hurewicz natural transformation).
+This file's three Round-5 leaves (`_isFinite`, `_isTorsionFree`,
+`_finrank_eq`) are all derived from this single iso below. -/
 theorem polygon4g_succ_singularH1_linearEquiv_abelianization (g : ℕ) :
     Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) := by
   sorry
+
+/-- **Stage A leaf (C1b, round 5 sub-leaf).**
+`singularH1 (Polygon4g (g+1))` is finitely generated as a `ℤ`-module.
+
+Discharged via the cellular/Hurewicz iso
+`polygon4g_succ_singularH1_linearEquiv_abelianization`: transport the
+finiteness of `Polygon4gAbelianization g = Fin (2(g+1)) → ℤ` along
+the equivalence using `Module.Finite.equiv`. -/
+theorem polygon4g_succ_singularH1_isFinite (g : ℕ) :
+    Module.Finite ℤ (singularH1 (Polygon4g (g + 1))) := by
+  obtain ⟨e⟩ := polygon4g_succ_singularH1_linearEquiv_abelianization g
+  exact Module.Finite.equiv e
+
+/-- **Stage A leaf (C1b, round 5 sub-leaf).**
+`singularH1 (Polygon4g (g+1))` is torsion-free as a `ℤ`-module.
+
+Discharged via the cellular/Hurewicz iso
+`polygon4g_succ_singularH1_linearEquiv_abelianization`: transport the
+torsion-freeness of the free ℤ-module
+`Polygon4gAbelianization g = Fin (2(g+1)) → ℤ` along the inverse
+equivalence using `Function.Injective.moduleIsTorsionFree`. -/
+theorem polygon4g_succ_singularH1_isTorsionFree (g : ℕ) :
+    Module.IsTorsionFree ℤ (singularH1 (Polygon4g (g + 1))) := by
+  obtain ⟨e⟩ := polygon4g_succ_singularH1_linearEquiv_abelianization g
+  exact e.symm.injective.moduleIsTorsionFree e.symm e.symm.map_smul
 
 /-- **Stage A leaf (C1b, round 5 sub-leaf).** The `ℤ`-finrank of
 `singularH1 (Polygon4g (g+1))` equals `2(g+1)`.
