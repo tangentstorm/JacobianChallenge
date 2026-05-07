@@ -149,6 +149,26 @@ left as-is since it builds and is sorry-free. On integration also
 fixed Aristotle's accidental docstring damage (`/-- -/` had been
 changed to `/- -/`, detaching it from the theorem).
 
+**Tick T (~+700 min):** Per user directive to saturate the
+queue, dispatched **14 parallel packets** bringing queue to the
+15-cap (with `14f33171` still IN_PROGRESS from earlier). The
+parallel CLI calls each reported `AristotleAPIError` but all 14
+projects were actually created (verified by `aristotle list`).
+Targets cover the substantive remainder of the production sorry
+set excluding three locks (Polygon4gEdgeBasisMap → codex,
+AnalyticOfCurveBasis → other worker, Polygon4gCellular's
+`_linearEquiv_abelianization` → already-clean BLOCKER triage
+from d94e2fb9). One of the 14 is a **new infrastructure packet**
+that creates `Jacobian/Periods/HurewiczMap.lean` and starts
+implementing the Hurewicz route (foundation step: define the map
+`π₁(X) → singular H₁(X, ℤ)` for path-connected `X`, plus
+homotopy invariance and concatenation), per the user's directive
+to start building one of the missing routes from the d94e2fb9
+triage rather than re-dispatch. Project IDs and target list are
+in `aristotle_jobs.jsonl` under `saturation-batch-2026-05-07T11:30Z`;
+exact ID-to-target mapping resolves at retrieval time (each
+tarball's `ARISTOTLE_SUMMARY.md` names the target).
+
 **Tick S (~+440 min):** `d3ae5b59` (`liftToCp1_holomorphicAt_infty`,
 the pole-case sibling) returned **second consecutive clean COMPLETE**
 — **integrated** for another net-1 sorry reduction (file from 5 to
