@@ -22,12 +22,13 @@ one — `singularChainElement_boundary_decomposition`,
 `PrismChainCombinatorialIdentity`, `cellularBoundarySigned_sq_zero`,
 and the `edgeHomologyClass` upgrade all landed sorry-free.
 
-**Submitted this tick (1, after one cancel-and-re-aim):**
+**Submitted this tick (2 live + 1 cancel-and-re-aim):**
 
 | ID | File | Target |
 |---|---|---|
 | ~~`2ff4fff7`~~ | `Jacobian/Periods/SingularChainElement.lean` | ~~`singularChainElement_boundary_decomposition`~~ — **cancelled**: target already discharged on origin/main (commit `7d141b7`) before this tick's push; cancelled within the same tick per ref/PROMPT.md cancel rule (target sorry no longer exists locally). |
 | `2c73f336` | `Jacobian/Periods/Polygon4gEdgeBasisMap.lean` | `edgeBasisMap_injective` — Phase 6.a leaf of the cellular-Hurewicz bridge. The file's docstring explicitly notes this becomes provable once `edgeHomologyClass` is the real homology projection — that upgrade landed in commit `2fc4812`, so the proof is now unblocked. Strategy: `edgeChainCoeff` (dual of `Sigma.ι` at `edgeSimplex g i`) descending to homology via the just-landed `singularChainElement_boundary_decomposition`. |
+| `b9fcfdb4` | `Jacobian/Periods/PathIntegralViaCoverWithRefinementInvariant.lean` | `pathIntegralViaCoverWith_refinement_invariant'` — only sorry in file; the in-source strategy comment (lines 319-336) lays out a 4-step refine-to-LCM + chart-change-per-summand proof. All helpers (`pathIntegralViaCoverWith_refine_to_multiple`, `pathIntegralViaChartCorrect_chart_change`, `divFinIcc`) already exist and are sorry-free. |
 
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
