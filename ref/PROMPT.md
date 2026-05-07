@@ -279,6 +279,79 @@ If blocked: leave theorem statements unchanged and add comments naming the
 missing prerequisite.
 ```
 
+### When the target is blocked by a placeholder upstream
+
+The default single-file allowed-writes scope is correct when the target
+has all its prerequisites in place and just needs a proof. It is **wrong**
+when the target sorry is gated on an upstream stub — `True := trivial`
+placeholder leaves, `noncomputable opaque` definitions with no axioms
+connecting them to anything, `EdgeWordPresentation := PUnit` style
+data-trivial structures, etc. With a single-file scope, Aristotle
+correctly identifies the upstream stub as the blocker and returns a
+clean BLOCKER triage; this is honest but does not advance the project.
+
+Repeated empirical pattern (2026-05-07 saturation wave): of 14 packets
+dispatched with default single-file scope, 7 returned clean BLOCKER
+triages identifying upstream stubs (`RSLineBundleDegree` opaque,
+`periodPairing := 0`, `sidePairingRel` stub, `basisAnalyticPullbackBundle`
+opaque, `EdgeWordPresentation := PUnit`, `eulerChar_additive_ses_point`
+`True := trivial`, etc.). All ran for ~30 minutes of wall-clock; all
+produced no Lean changes.
+
+**For targets known to be blocked by an upstream stub, prefer the
+implement-the-prerequisite framing**:
+
+- Identify the upstream file containing the stub.
+- Add it to the allowed-writes scope explicitly.
+- Tell Aristotle the goal is to **make the upstream definition real**
+  (replace `True := trivial` with the genuine statement; replace
+  `:= 0` placeholder bodies with the real construction; refine
+  `:= PUnit` data-trivial types into the right structure).
+- Spell out the constraints: existing call sites must still type-check;
+  no existing sorry-free declaration may become sorry; new content
+  must build.
+
+Two valid framings, in order of preference:
+
+1. **Refine the placeholder**: allow writes to both the target file and
+   the upstream-stub file, with the explicit task "give the upstream
+   definition real content so the target's proof goes through".
+2. **Build new infrastructure in a fresh file**: allow creation of a
+   new module (`Jacobian/Periods/HurewiczMap.lean` is the prototype
+   from 2026-05-07) where Aristotle assembles the missing prerequisite
+   from existing primitives. Cleaner write scope, no risk of breaking
+   existing call sites, but only works when the new file does not need
+   to mutate existing types.
+
+Example (placeholder-refinement framing):
+
+```text
+Working directory: C:\ver\JacobianChallenge
+Target file: Jacobian/HolomorphicForms/EulerCharLineBundle.lean
+Target sorry: theorem h0_minus_h1_ge_riemann (line ~163)
+Upstream stub blocking it:
+  Jacobian/HolomorphicForms/Serre/RSLineBundleDegree.lean
+  has `noncomputable opaque RSLineBundleDegree` with no axioms
+  connecting it to sheaf cohomology dimensions.
+Allowed writes: BOTH the target file AND the upstream stub file.
+Forbidden files: Jacobian/Challenge.lean, all other .lean files.
+Task: give `RSLineBundleDegree` real content (e.g. wire it to a
+canonical degree formula via a divisor witness), then close the
+target sorry. Existing sorry-free call sites of `RSLineBundleDegree`
+must still type-check.
+Proof style: direct tactics; no `aesop`/`grind`/broad `simp_all`.
+Expected verification: `lake build Jacobian.HolomorphicForms.EulerCharLineBundle`
+plus a build of the upstream module.
+If still blocked: clean triage with a precise list of additional
+upstream stubs that would need refinement; do NOT introduce
+false-statement helpers behind sorry.
+```
+
+The "if blocked" fallback is preserved as a safety valve against the
+b9fcfdb4 false-statement-helper anti-pattern, but the **primary
+framing pushes Aristotle to implement the missing piece, not triage
+it away**.
+
 ## Progress Tracking
 
 Progress is read from the blueprint dependency graph
