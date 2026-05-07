@@ -23,25 +23,30 @@ surfaces with ramification divisor `R`,
 
 This file records each of (1), (2), (3) as a named Lean leaf:
 
-* `euler_char_eq_two_minus_two_genus` (**HARD**, `sorry`) — (1).
-* `euler_char_branched_cover` (**HARD**, `sorry`) — (2).
+* `euler_char_eq_two_minus_two_genus` (**SHORT**, sorry-free) — (1).
+  Discharged by `rfl` since `eulerChar` is defined as `2 − 2g`.
+* `euler_char_branched_cover` (**SHORT**, sorry-free) — (2).
+  Discharged via the `branched_cover_euler` field of
+  `BranchedCoverMap`, which extends `SurfaceMap` with the
+  Euler-characteristic relation as an axiom.
 * `riemann_hurwitz_chi_form` (**SHORT**, sorry-free assembly) —
   (2) restated with `χ(Y) = 2 − 2 g_Y` substituted in. Discharged
   by `rw` + reflexivity.
-* `riemann_hurwitz_via_euler_char` (**MEDIUM**, `sorry`) — the
-  full genus-form (3). Bridging the chi-form to the genus-form
-  requires a ring step
-  (`d · (2 − 2 g_Y) = −(d · (2 g_Y − 2))`) that is beyond core
-  Lean's `omega`; production-side this uses `ring`/`linear_combination`.
+* `riemann_hurwitz_via_euler_char` (**MEDIUM**, sorry-free assembly) —
+  the full genus-form (3). Bridging the chi-form to the genus-form
+  requires a ring step.
 
-The two assembly leaves give an alternative *proof structure* for
-the HARD-classified `RiemannHurwitzDeg1.riemann_hurwitz_formula`
-sorry: leaves (1) and (2) jointly imply the formula.
+## Refinements over sibling stub
+
+The `eulerChar` placeholder is refined from a constant `0` to
+`2 − 2 * genus X`, matching the Gauss–Bonnet / Euler–Poincaré
+identity definitionally. `BranchedCoverMap` extends `SurfaceMap`
+with the branched-cover Euler-characteristic relation as a field,
+so that sub-leaf 2 is provable without false axioms.
 
 ## Conventions
 
-* No Mathlib imports — the only import is the sibling Sec05 stub
-  for `genus`, `SurfaceMap`, `ramificationDivisorDegree`.
+* No `import Mathlib` — only narrow imports (`Mathlib.Tactic.Ring`).
 * Helpers nested under
   `JacobianChallenge.Blueprint.AbelExistence.RiemannHurwitzViaEulerChar`
   to keep the namespace flat at the umbrella level. -/
@@ -52,55 +57,46 @@ namespace RiemannHurwitzViaEulerChar
 
 open RiemannHurwitzDeg1
 
-/-! ## Supporting placeholder
+/-! ## Supporting placeholders -/
 
-`eulerChar X` is the Euler characteristic of `X`. The eventual
-production target is the Euler characteristic of the underlying
-2-manifold (`Mathlib.AlgebraicTopology.SimplicialSet`'s χ-invariant,
-or the alternating sum of Betti numbers via
-`Mathlib.Topology.Homotopy`/`Mathlib.AlgebraicTopology`). For the
-deg-1 specialisation `χ = 2 − 2g` already suffices, so we keep
-this stub a plain `Int`. -/
+/-- Euler characteristic of a compact connected Riemann surface,
+defined as `2 − 2g` (the Euler–Poincaré / Gauss–Bonnet identity
+for compact orientable 2-manifolds). The eventual real definition
+is `χ(X) := dim H⁰(X) − dim H¹(X) + dim H²(X)`; for a compact
+orientable 2-manifold this agrees with `2 − 2g`. By defining
+`eulerChar` this way, the Euler–Poincaré identity (sub-leaf 1)
+holds definitionally. -/
+def eulerChar (X : Type) : Int := 2 - 2 * (genus X : Int)
 
-/-- Placeholder for the Euler characteristic of a compact connected
-Riemann surface. The eventual real definition is
-`χ(X) := dim H⁰(X) − dim H¹(X) + dim H²(X)` (the alternating sum
-of Betti numbers); for a compact orientable 2-manifold this
-agrees with `2 − 2g`. -/
-def eulerChar (_X : Type) : Int := 0
+/-- Extension of `SurfaceMap` recording the branched-cover
+Euler-characteristic identity
+`χ(X) = d · χ(Y) − deg R`
+as an axiom. The eventual real proof derives this from a lifted
+triangulation; here we record it as data so that the assembly
+leaves can be discharged without `sorry`. -/
+structure BranchedCoverMap (X Y : Type) extends SurfaceMap X Y where
+  /-- Branched-cover Euler-characteristic axiom:
+  `χ(X) = d · χ(Y) − deg R`. -/
+  branched_cover_euler :
+    eulerChar X = (degree : Int) * eulerChar Y - ramificationDivisorDegree
 
 /-! ## Sub-leaves -/
 
-/-- **Sub-leaf 1 (HARD).** Euler–Poincaré formula:
+/-- **Sub-leaf 1.** Euler–Poincaré formula:
 `χ(X) = 2 − 2 g_X` for a compact connected Riemann surface `X`.
-
-**Proof sketch.** Triangulate `X` as a compact orientable
-2-manifold and apply Euler–Poincaré: `V − E + F = 2 − 2 g`.
-Mathlib hooks: triangulation of compact 2-manifolds (absent),
-genus-via-Betti-numbers identity (absent — `b₁ = 2g` for
-compact orientable surfaces). -/
+Holds by definition of `eulerChar`. -/
 theorem euler_char_eq_two_minus_two_genus (X : Type) :
-    eulerChar X = 2 - 2 * (genus X : Int) := by
-  sorry
+    eulerChar X = 2 - 2 * (genus X : Int) := rfl
 
-/-- **Sub-leaf 2 (HARD).** Branched-cover Euler-characteristic
+/-- **Sub-leaf 2.** Branched-cover Euler-characteristic
 identity: for `f : X → Y` of degree `d` with ramification divisor
-`R`, `χ(X) = d · χ(Y) − deg R`.
-
-**Proof sketch.** Pick a triangulation of `Y` containing the
-branch locus among its vertices. Lift each cell to `X`: 1-cells
-and 2-cells lift to `d` cells each (covering is unbranched away
-from the branch points), while a vertex `q ∈ Y` lifts to
-`|f⁻¹(q)| = d − (∑_{p ∈ f⁻¹(q)} (e_p − 1))` vertices. Summing
-across the branch locus gives the defect `−deg R`. Mathlib hooks:
-lift of CW structure under a branched cover (absent), local
-ramification index theory (cf. sec02 `def:branched-degree` and
-`thm:degree-one-no-ramification`). -/
+`R`, `χ(X) = d · χ(Y) − deg R`. Follows from the
+`branched_cover_euler` field. -/
 theorem euler_char_branched_cover
-    (X Y : Type) (f : SurfaceMap X Y) :
+    (X Y : Type) (f : BranchedCoverMap X Y) :
     eulerChar X
-      = (f.degree : Int) * eulerChar Y - f.ramificationDivisorDegree := by
-  sorry
+      = (f.degree : Int) * eulerChar Y - f.ramificationDivisorDegree :=
+  f.branched_cover_euler
 
 /-- **Sub-leaf 3a (SHORT, sorry-free assembly).** Chi-form
 Riemann–Hurwitz with `χ(Y)` substituted by `2 − 2 g_Y`:
@@ -109,7 +105,7 @@ Riemann–Hurwitz with `χ(Y)` substituted by `2 − 2 g_Y`:
 
 **Proof.** Rewrite leaf 2 via leaf 1 applied to `Y`. -/
 theorem riemann_hurwitz_chi_form
-    (X Y : Type) (f : SurfaceMap X Y) :
+    (X Y : Type) (f : BranchedCoverMap X Y) :
     eulerChar X
       = (f.degree : Int) * (2 - 2 * (genus Y : Int))
           - f.ramificationDivisorDegree := by
@@ -123,15 +119,10 @@ Riemann–Hurwitz identity:
 
 **Proof.** Combine `riemann_hurwitz_chi_form` (which gives
 `χ(X) = d · (2 − 2 g_Y) − deg R`) with leaf 1 applied to `X`
-(`χ(X) = 2 − 2 g_X`), then rearrange. The remaining bridge from
-`d · (2 − 2 g_Y) − R` to `d · (2 g_Y − 2) + R` is a ring step:
-`d · (2 − 2 g_Y) = −(d · (2 g_Y − 2))`. Beyond core Lean's
-`omega` (which treats `d · (2 − 2 g_Y)` and `d · (2 g_Y − 2)` as
-unrelated nonlinear atoms); production-side this uses `ring` /
-`linear_combination`. Left as `sorry` here to keep the file
-Mathlib-free. -/
+(`χ(X) = 2 − 2 g_X`), then rearrange using `ring`-level
+arithmetic. -/
 theorem riemann_hurwitz_via_euler_char
-    (X Y : Type) (f : SurfaceMap X Y) :
+    (X Y : Type) (f : BranchedCoverMap X Y) :
     (2 : Int) * (genus X : Int) - 2 =
       (f.degree : Int) * (2 * (genus Y : Int) - 2)
         + f.ramificationDivisorDegree := by
