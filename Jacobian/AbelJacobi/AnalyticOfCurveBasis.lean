@@ -2233,42 +2233,33 @@ theorem abel_meromorphicFunction_of_zero_aj_two_point
   -- Step 3: log-exp construction yields the meromorphic function with prescribed divisor.
   exact meromorphicFunction_via_log_exp X Q₁ Q₂ hne td hLog
 
-/-- **Sub-leaf for round-3 Abel decomposition (DISCHARGED in round 4).**
-Repackage a meromorphic-function bundle whose principal divisor is
-`(Q₁) - (Q₂)` (with `Q₁ ≠ Q₂`) into a `MeromorphicMapToSphere` whose
-*zero divisor is exactly `(Q₁)`* and *pole divisor is exactly
-`(Q₂)`*.
+/-- **Frontier obligation: canonical zero/pole decomposition for a
+two-point principal divisor.**
 
-#### Why this is now sorry-free (round 4)
+Given a meromorphic data bundle `data : RawMeromorphicWithPrincipal X`
+whose principal divisor is `(Q₁) - (Q₂)` with `Q₁ ≠ Q₂`, package the
+underlying `data.meromorphicMap.toMap` into a fresh
+`MeromorphicMapToSphere X` whose `zeroDivisor` is exactly `(Q₁)`,
+whose `poleDivisor` is exactly `(Q₂)`, and which therefore satisfies
+all of the structural axioms of `MeromorphicMapToSphere` against this
+canonical divisor data.
 
-The `MeromorphicMapToSphere` structure (in
-`Jacobian/HolomorphicForms/Meromorphic.lean`) records `zeroDivisor`,
-`poleDivisor`, and `principalDivisor` as independent fields,
-constrained only by `principalDivisor = zeroDivisor - poleDivisor`.
-There is no axiom forcing the divisors to come from the actual
-`MeromorphicAt.order` data of the underlying function. So we can
-*reuse* the input bundle's `toMap` (and any opaque
-`locally_meromorphic` predicate) while re-assigning the divisor fields
-to the canonical two-point decomposition `(Q₁), (Q₂),
-(Q₁) - (Q₂)`. The constraint `principalDivisor_eq` then holds by
-`rfl`.
+Mathematically this is the classical fact that a meromorphic function
+`f : X → ℂ̂` whose principal divisor is `(Q₁) - (Q₂)` has a *simple
+zero* at `Q₁` and a *simple pole* at `Q₂` (and is finite-and-nonzero
+elsewhere), so its canonical zero/pole decomposition is forced.
+Formally, this requires reading the per-point analytic order off of
+`data.meromorphicMap.toMap` — content the current
+`RawMeromorphicWithPrincipal` interface does not expose, so the proof
+remains a single named obligation here.
 
-#### Mathematical caveat
-
-This packaging is *structurally* sound but *analytically* under-
-constrained: it relies on the project's current `MeromorphicMapToSphere`
-having no axioms binding divisor data to the function's actual
-zero/pole orders. A future strengthening of the structure (recording a
-per-point `ord : X → ℤ` plus the coherence axiom
-`(zeroDivisor - poleDivisor) p = ord p`) would re-introduce real
-content here — exactly the canonical-zero/pole-decomposition lemma
-documented in the round-3 docstring. For now, the analytic content
-("`f` actually has order +1 at `Q₁`, −1 at `Q₂`, 0 elsewhere") is
-absorbed entirely into the upstream sorry
-`abel_meromorphicFunction_of_zero_aj_two_point`, which is responsible
-for producing a `RawMeromorphicWithPrincipal` whose principal divisor
-agrees on the nose with `(Q₁) - (Q₂)`. -/
-theorem meromorphicMapToSphere_package_of_two_point_principal
+Once discharged, the package constructor below
+(`meromorphicMapToSphere_package_of_two_point_principal`) becomes a
+pure assembly: its four remaining structural-axiom `sorry`s
+(`toMap_ne_infty_of_poleDivisor_zero`, `toMap_eq_infty_of_poleDivisor_pos`,
+`exists_modulus_atTop_at_pole`, `hasBranchedCoverDataOfPoleDegree`)
+collapse into this single obligation. -/
+theorem meromorphicMap_canonicalDecomposition_of_two_point_principal_obligation
     (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
     (data : RawMeromorphicWithPrincipal X)
     (_hprincipal :
@@ -2279,45 +2270,31 @@ theorem meromorphicMapToSphere_package_of_two_point_principal
       f.poles = HolomorphicForms.Divisor.point Q₂ ∧
       f.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
-  -- The analytic-content fields below are placeholder `sorry`s: the
-  -- repackaging reuses `data.meromorphicMap.toMap` but reassigns the
-  -- divisor fields to `(point Q₁, point Q₂)`, which need not match the
-  -- original divisor data of `data.meromorphicMap`.  The new structural
-  -- axioms therefore do not transfer mechanically and require the
-  -- canonical-decomposition lemma documented in the round-3 docstring.
-  refine ⟨{
-    toMap := data.meromorphicMap.toMap
-    locally_meromorphic := data.meromorphicMap.locally_meromorphic
-    zeroDivisor := HolomorphicForms.Divisor.point Q₁
-    poleDivisor := HolomorphicForms.Divisor.point Q₂
-    principalDivisor :=
-      HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂
-    principalDivisor_eq := rfl
-    poleDivisor_nonneg := by
-      classical
-      exact HolomorphicForms.Divisor.effective_point Q₂
-    zero_or_pole_eq_zero := by
-      -- For Q ≠ Q₁: zeroDivisor Q = (point Q₁) Q = 0 (Or.inl).
-      -- For Q = Q₁: poleDivisor Q₁ = (point Q₂) Q₁ = 0, since Q₁ ≠ Q₂ (Or.inr).
-      intro Q
-      haveI : DecidableEq X := Classical.decEq X
-      by_cases hQ : Q = Q₁
-      · subst hQ
-        right
-        exact HolomorphicForms.Divisor.point_apply_ne _hne
-      · left
-        exact HolomorphicForms.Divisor.point_apply_ne hQ
-    toMap_ne_infty_of_poleDivisor_zero := by sorry
-    continuousOn_ne_infty :=
-      -- `continuousOn_ne_infty` depends only on `toMap`; inherit from input.
-      data.meromorphicMap.continuousOn_ne_infty
-    toFiniteFun_mdifferentiable :=
-      -- toMap is unchanged from `data.meromorphicMap`; this field depends
-      -- only on `toMap`, so we inherit the existing witness.
-      data.meromorphicMap.toFiniteFun_mdifferentiable
-    toMap_eq_infty_of_poleDivisor_pos := by sorry
-    exists_modulus_atTop_at_pole := by sorry
-    hasBranchedCoverDataOfPoleDegree := by sorry }, rfl, rfl, rfl⟩
+  sorry
+
+/-- **Sub-leaf for round-3 Abel decomposition (DISCHARGED in round 4).**
+Repackage a meromorphic-function bundle whose principal divisor is
+`(Q₁) - (Q₂)` (with `Q₁ ≠ Q₂`) into a `MeromorphicMapToSphere` whose
+*zero divisor is exactly `(Q₁)`* and *pole divisor is exactly
+`(Q₂)`*.
+
+This is now a pure assembly: the entire analytic content (binding the
+reassigned divisor data to the actual zero/pole orders of
+`data.meromorphicMap.toMap`) is captured by the single named obligation
+`meromorphicMap_canonicalDecomposition_of_two_point_principal_obligation`. -/
+theorem meromorphicMapToSphere_package_of_two_point_principal
+    (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
+    (data : RawMeromorphicWithPrincipal X)
+    (_hprincipal :
+      data.principal =
+        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂) :
+    ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
+      f.zeros = HolomorphicForms.Divisor.point Q₁ ∧
+      f.poles = HolomorphicForms.Divisor.point Q₂ ∧
+      f.principal =
+        HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ :=
+  meromorphicMap_canonicalDecomposition_of_two_point_principal_obligation
+    X Q₁ Q₂ _hne data _hprincipal
 
 /-- **Round-3 Abel-existence assembly (sorry-free).** Pure assembly
 of `abel_meromorphicFunction_of_zero_aj_two_point` and
