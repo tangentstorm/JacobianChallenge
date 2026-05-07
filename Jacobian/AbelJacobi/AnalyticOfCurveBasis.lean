@@ -926,7 +926,15 @@ theorem build_constant_meromorphicMap :
      toMap_ne_infty_of_poleDivisor_zero := fun _ _ => by
        exact OnePoint.coe_ne_infty (0 : ℂ)
      continuousOn_ne_infty := continuousOn_const.mono (Set.subset_univ _)
-     toFiniteFun_mdifferentiable := by sorry
+     toFiniteFun_mdifferentiable := by
+       -- toMap = const 0; hypothesis forces g = const 0 by coe-injectivity.
+       intro g hg
+       have hg_zero : g = (fun _ : X => (0 : ℂ)) := by
+         funext x
+         have h : ((0 : ℂ) : OnePoint ℂ) = ((g x : ℂ) : OnePoint ℂ) := congrFun hg x
+         exact (OnePoint.coe_injective h).symm
+       rw [hg_zero]
+       exact mdifferentiable_const
      toMap_eq_infty_of_poleDivisor_pos := fun P h => absurd h (lt_irrefl 0)
      exists_modulus_atTop_at_pole := fun P h => absurd h (lt_irrefl 0)
      hasBranchedCoverDataOfPoleDegree := by sorry }, rfl, rfl⟩
@@ -995,11 +1003,40 @@ theorem nonconstant_extracted_from_dim_quotient
             poleDivisor := D
             principalDivisor := -D
             principalDivisor_eq := by simp
-            poleDivisor_nonneg := by sorry
+            poleDivisor_nonneg := two_point_effective X Q₁ Q₂
             zero_or_pole_eq_zero := fun _ => Or.inl rfl
-            toMap_ne_infty_of_poleDivisor_zero := by sorry
-            continuousOn_ne_infty := by sorry
-            toFiniteFun_mdifferentiable := by sorry
+            toMap_ne_infty_of_poleDivisor_zero := by
+              -- Contrapositive: if toMap x = ∞, then x = Q₁, contradicting D Q₁ = 1.
+              intro x hx hbad
+              have hx_Q1 : x = Q₁ := by
+                by_contra h
+                rw [if_neg h] at hbad
+                exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+              haveI : DecidableEq X := Classical.decEq X
+              have h1 : (HolomorphicForms.Divisor.point Q₁ : HolomorphicForms.Divisor X) Q₁ = 1 :=
+                HolomorphicForms.Divisor.point_apply_self Q₁
+              have h2 : (HolomorphicForms.Divisor.point Q₂ : HolomorphicForms.Divisor X) Q₁ = 0 :=
+                HolomorphicForms.Divisor.point_apply_ne hne
+              have hD_Q1 : D Q₁ = 1 := by
+                have heq : D Q₁ = (HolomorphicForms.Divisor.point Q₁) Q₁ +
+                                  (HolomorphicForms.Divisor.point Q₂) Q₁ :=
+                  Finsupp.add_apply _ _ _
+                rw [heq, h1, h2, add_zero]
+              rw [hx_Q1, hD_Q1] at hx
+              exact one_ne_zero hx
+            continuousOn_ne_infty := by
+              -- Off Q₁, the indicator is constant 0; congr from `continuousOn_const`.
+              refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+              intro x hx
+              by_cases h : x = Q₁
+              · exact absurd (if_pos h) hx
+              · exact if_neg h
+            toFiniteFun_mdifferentiable := by
+              -- Indicator sends Q₁ to ∞; no g : X → ℂ lifts toMap through coe.
+              intro g hg
+              have h := congrFun hg Q₁
+              simp only [if_pos rfl] at h
+              exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
             toMap_eq_infty_of_poleDivisor_pos := by sorry
             exists_modulus_atTop_at_pole := by sorry
             hasBranchedCoverDataOfPoleDegree := fun hcont =>
@@ -1025,11 +1062,39 @@ theorem nonconstant_extracted_from_dim_quotient
                 poleDivisor := D
                 principalDivisor := -D
                 principalDivisor_eq := by simp
-                poleDivisor_nonneg := by sorry
+                poleDivisor_nonneg := two_point_effective X Q₁ Q₂
                 zero_or_pole_eq_zero := fun _ => Or.inl rfl
-                toMap_ne_infty_of_poleDivisor_zero := by sorry
-                continuousOn_ne_infty := by sorry
-                toFiniteFun_mdifferentiable := by sorry
+                toMap_ne_infty_of_poleDivisor_zero := by
+                  intro x hx hbad
+                  have hx_Q1 : x = Q₁ := by
+                    by_contra h
+                    rw [if_neg h] at hbad
+                    exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+                  haveI : DecidableEq X := Classical.decEq X
+                  have h1 : (HolomorphicForms.Divisor.point Q₁ :
+                    HolomorphicForms.Divisor X) Q₁ = 1 :=
+                    HolomorphicForms.Divisor.point_apply_self Q₁
+                  have h2 : (HolomorphicForms.Divisor.point Q₂ :
+                    HolomorphicForms.Divisor X) Q₁ = 0 :=
+                    HolomorphicForms.Divisor.point_apply_ne hne
+                  have hD_Q1 : D Q₁ = 1 := by
+                    have heq : D Q₁ = (HolomorphicForms.Divisor.point Q₁) Q₁ +
+                                      (HolomorphicForms.Divisor.point Q₂) Q₁ :=
+                      Finsupp.add_apply _ _ _
+                    rw [heq, h1, h2, add_zero]
+                  rw [hx_Q1, hD_Q1] at hx
+                  exact one_ne_zero hx
+                continuousOn_ne_infty := by
+                  refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+                  intro x hx
+                  by_cases h : x = Q₁
+                  · exact absurd (if_pos h) hx
+                  · exact if_neg h
+                toFiniteFun_mdifferentiable := by
+                  intro g hg
+                  have h := congrFun hg Q₁
+                  simp only [if_pos rfl] at h
+                  exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
                 toMap_eq_infty_of_poleDivisor_pos := by sorry
                 exists_modulus_atTop_at_pole := by sorry
                 hasBranchedCoverDataOfPoleDegree := fun hcont =>
@@ -1180,11 +1245,39 @@ theorem thirdKindData_from_genus_zero
       poleDivisor := D
       principalDivisor := -D
       principalDivisor_eq := by simp
-      poleDivisor_nonneg := by sorry
+      poleDivisor_nonneg := two_point_effective X Q₁ Q₂
       zero_or_pole_eq_zero := fun _ => Or.inl rfl
-      toMap_ne_infty_of_poleDivisor_zero := by sorry
-      continuousOn_ne_infty := by sorry
-      toFiniteFun_mdifferentiable := by sorry
+      toMap_ne_infty_of_poleDivisor_zero := by
+        intro x hx hbad
+        have hx_Q1 : x = Q₁ := by
+          by_contra h
+          rw [if_neg h] at hbad
+          exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+        haveI : DecidableEq X := Classical.decEq X
+        have h1 : (HolomorphicForms.Divisor.point Q₁ :
+          HolomorphicForms.Divisor X) Q₁ = 1 :=
+          HolomorphicForms.Divisor.point_apply_self Q₁
+        have h2 : (HolomorphicForms.Divisor.point Q₂ :
+          HolomorphicForms.Divisor X) Q₁ = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne hne
+        have hD_Q1 : D Q₁ = 1 := by
+          have heq : D Q₁ = (HolomorphicForms.Divisor.point Q₁) Q₁ +
+                            (HolomorphicForms.Divisor.point Q₂) Q₁ :=
+            Finsupp.add_apply _ _ _
+          rw [heq, h1, h2, add_zero]
+        rw [hx_Q1, hD_Q1] at hx
+        exact one_ne_zero hx
+      continuousOn_ne_infty := by
+        refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+        intro x hx
+        by_cases h : x = Q₁
+        · exact absurd (if_pos h) hx
+        · exact if_neg h
+      toFiniteFun_mdifferentiable := by
+        intro g hg
+        have h := congrFun hg Q₁
+        simp only [if_pos rfl] at h
+        exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
       toMap_eq_infty_of_poleDivisor_pos := by sorry
       exists_modulus_atTop_at_pole := by sorry
       hasBranchedCoverDataOfPoleDegree := fun hcont =>
@@ -1262,11 +1355,39 @@ theorem pole_full_two_point_of_nonconstant_in_RR_space_aux
       poleDivisor := D
       principalDivisor := -D
       principalDivisor_eq := by simp
-      poleDivisor_nonneg := by sorry
+      poleDivisor_nonneg := two_point_effective X Q₁ Q₂
       zero_or_pole_eq_zero := fun _ => Or.inl rfl
-      toMap_ne_infty_of_poleDivisor_zero := by sorry
-      continuousOn_ne_infty := by sorry
-      toFiniteFun_mdifferentiable := by sorry
+      toMap_ne_infty_of_poleDivisor_zero := by
+        intro x hx hbad
+        have hx_Q1 : x = Q₁ := by
+          by_contra h
+          rw [if_neg h] at hbad
+          exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+        haveI : DecidableEq X := Classical.decEq X
+        have h1 : (HolomorphicForms.Divisor.point Q₁ :
+          HolomorphicForms.Divisor X) Q₁ = 1 :=
+          HolomorphicForms.Divisor.point_apply_self Q₁
+        have h2 : (HolomorphicForms.Divisor.point Q₂ :
+          HolomorphicForms.Divisor X) Q₁ = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne hne
+        have hD_Q1 : D Q₁ = 1 := by
+          have heq : D Q₁ = (HolomorphicForms.Divisor.point Q₁) Q₁ +
+                            (HolomorphicForms.Divisor.point Q₂) Q₁ :=
+            Finsupp.add_apply _ _ _
+          rw [heq, h1, h2, add_zero]
+        rw [hx_Q1, hD_Q1] at hx
+        exact one_ne_zero hx
+      continuousOn_ne_infty := by
+        refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+        intro x hx
+        by_cases h : x = Q₁
+        · exact absurd (if_pos h) hx
+        · exact if_neg h
+      toFiniteFun_mdifferentiable := by
+        intro g hg
+        have h := congrFun hg Q₁
+        simp only [if_pos rfl] at h
+        exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
       toMap_eq_infty_of_poleDivisor_pos := by sorry
       exists_modulus_atTop_at_pole := by sorry
       hasBranchedCoverDataOfPoleDegree := fun hcont =>
@@ -2074,8 +2195,13 @@ theorem meromorphicMapToSphere_package_of_two_point_principal
       exact HolomorphicForms.Divisor.effective_point Q₂
     zero_or_pole_eq_zero := by sorry
     toMap_ne_infty_of_poleDivisor_zero := by sorry
-    continuousOn_ne_infty := by sorry
-    toFiniteFun_mdifferentiable := by sorry
+    continuousOn_ne_infty :=
+      -- `continuousOn_ne_infty` depends only on `toMap`; inherit from input.
+      data.meromorphicMap.continuousOn_ne_infty
+    toFiniteFun_mdifferentiable :=
+      -- toMap is unchanged from `data.meromorphicMap`; this field depends
+      -- only on `toMap`, so we inherit the existing witness.
+      data.meromorphicMap.toFiniteFun_mdifferentiable
     toMap_eq_infty_of_poleDivisor_pos := by sorry
     exists_modulus_atTop_at_pole := by sorry
     hasBranchedCoverDataOfPoleDegree := by sorry }, rfl, rfl, rfl⟩
