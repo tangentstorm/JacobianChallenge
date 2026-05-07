@@ -30,6 +30,17 @@ and the `edgeHomologyClass` upgrade all landed sorry-free.
 | `2c73f336` | `Jacobian/Periods/Polygon4gEdgeBasisMap.lean` | `edgeBasisMap_injective` — Phase 6.a leaf of the cellular-Hurewicz bridge. The file's docstring explicitly notes this becomes provable once `edgeHomologyClass` is the real homology projection — that upgrade landed in commit `2fc4812`, so the proof is now unblocked. Strategy: `edgeChainCoeff` (dual of `Sigma.ι` at `edgeSimplex g i`) descending to homology via the just-landed `singularChainElement_boundary_decomposition`. |
 | `b9fcfdb4` | `Jacobian/Periods/PathIntegralViaCoverWithRefinementInvariant.lean` | `pathIntegralViaCoverWith_refinement_invariant'` — only sorry in file; the in-source strategy comment (lines 319-336) lays out a 4-step refine-to-LCM + chart-change-per-summand proof. All helpers (`pathIntegralViaCoverWith_refine_to_multiple`, `pathIntegralViaChartCorrect_chart_change`, `divFinIcc`) already exist and are sorry-free. |
 
+**Tick C (third /loop check, ~+40 min):** Both packets still
+IN_PROGRESS (13% / 5%); no completions to integrate, no upstream
+advances. Surveyed remaining production sorries (~80 across 27
+files); the bulk are gated on Mathlib gaps (line-bundle / divisor
+API, sheaf-cohomology comparison, Stokes on manifolds, partition-of-
+unity Poincaré, cellular-vs-singular comparison, branched-cover
+local mapping theorem) or on Round-1 `True := by trivial`
+placeholder upstream leaves. Submitting BLOCKER-class targets
+contradicts the "Aristotle: substantive only" rule; left the queue
+at 2 live packets pending real result returns.
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 
