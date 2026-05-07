@@ -58,6 +58,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
+omit [NormedSpace ℂ E] [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] in
 /-- Range of the i-th uniform partition segment lies in the chart
 source given a uniform-cover hypothesis. -/
 theorem range_segment_subset_source_of_hcov

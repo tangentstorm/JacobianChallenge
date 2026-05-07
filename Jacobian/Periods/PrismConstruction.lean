@@ -811,9 +811,9 @@ theorem prismSimplex_side_face_lower
     · rintro rfl
       rw [Fin.succAbove, if_neg]
       · apply Fin.ext
-        simp [Fin.val_succ]
+        simp
         omega
-      · simp [Fin.lt_def, Fin.val_castSucc, hj_loval]; omega
+      · simp [Fin.lt_def, hj_loval]; omega
   -- Now prove hfirst.
   have hfirst : ∀ k : Fin (n + 2),
       staircaseFirstCoord (n + 1) i q.val k =
@@ -847,11 +847,11 @@ theorem prismSimplex_side_face_lower
         -- RHS: staircaseFirstCoord n i_lo p.val ⟨k.val, _⟩ where ⟨..⟩ : Fin(n+1).
         -- Since k.val < j.val ≤ i.val - 1 = i_lo.val.
         have hcond : k.val < i_lo.val := by rw [hi_loval]; omega
-        simp only [staircaseFirstCoord, if_pos hcond]
+        simp only [if_pos hcond]
         -- Goal: p.val ⟨k.val, _⟩ in Fin(n+2) = p.val ⟨k.val, _⟩.castSucc in Fin(n+2).
         apply congrArg
         apply Fin.ext
-        simp [Fin.val_castSucc]
+        simp
       · push_neg at hkj
         have hkj_gt : j.val < k.val := lt_of_le_of_ne hkj (Ne.symm hne_val)
         have hk_pos : 0 < k.val := by omega
@@ -861,13 +861,13 @@ theorem prismSimplex_side_face_lower
           simp only [staircaseFirstCoord, if_pos hk_lt_i]
           have hk_cs : k.castSucc = Fin.succAbove j ⟨k.val - 1, by omega⟩ := by
             rw [Fin.succAbove, if_neg (by simp [Fin.lt_def]; omega)]
-            apply Fin.ext; simp [Fin.val_castSucc, Fin.val_succ]; omega
+            apply Fin.ext; simp [Fin.val_castSucc]; omega
           rw [hk_cs, hq_succAbove]
           -- RHS: staircaseFirstCoord at ⟨k.val - 1, _⟩ : Fin(n+1) with val < i_lo.val.
           have hcond : (k.val - 1) < i_lo.val := by rw [hi_loval]; omega
-          simp only [staircaseFirstCoord, if_pos hcond]
+          simp only [if_pos hcond]
           apply congrArg; apply Fin.ext
-          simp [Fin.val_castSucc]
+          simp
         · push_neg at hk_lt_i
           by_cases hk_eq_i : k.val = i.val
           · simp only [staircaseFirstCoord, if_neg (by omega : ¬ k.val < i.val),
@@ -875,21 +875,21 @@ theorem prismSimplex_side_face_lower
             -- k.val = i.val, so k.val - 1 = i.val - 1 = i_lo.val.
             have hi_cs : i.castSucc = Fin.succAbove j ⟨i.val - 1, by omega⟩ := by
               rw [Fin.succAbove, if_neg (by simp [Fin.lt_def]; omega)]
-              apply Fin.ext; simp [Fin.val_castSucc, Fin.val_succ]; omega
+              apply Fin.ext; simp [Fin.val_castSucc]; omega
             have hi_su : i.succ = Fin.succAbove j ⟨i.val, by omega⟩ := by
               rw [Fin.succAbove, if_neg (by simp [Fin.lt_def]; omega)]
             rw [hi_cs, hi_su, hq_succAbove, hq_succAbove]
             -- RHS: staircaseFirstCoord at ⟨k.val - 1, _⟩ : Fin(n+1) with val = i_lo.val.
             have hmval : (k.val - 1) = i_lo.val := by rw [hi_loval]; omega
             have hcond_lt : ¬ (k.val - 1) < i_lo.val := by rw [hi_loval]; omega
-            simp only [staircaseFirstCoord, if_neg hcond_lt, if_pos hmval]
+            simp only [if_neg hcond_lt, if_pos hmval]
             -- Match: p.val ⟨i.val - 1, _⟩ + p.val ⟨i.val, _⟩
             -- = p.val i_lo.castSucc + p.val i_lo.succ.
             congr 1
             all_goals
               apply congrArg
               apply Fin.ext
-              simp [Fin.val_castSucc, Fin.val_succ, hi_loval]
+              simp [Fin.val_succ, hi_loval]
               omega
           · have hk_gt_i : i.val < k.val := lt_of_le_of_ne hk_lt_i (Ne.symm hk_eq_i)
             simp only [staircaseFirstCoord, if_neg (by omega : ¬ k.val < i.val),
@@ -900,9 +900,9 @@ theorem prismSimplex_side_face_lower
             -- RHS at ⟨k.val - 1, _⟩ : Fin(n+1) with val > i_lo.val.
             have hcond_lt : ¬ (k.val - 1) < i_lo.val := by rw [hi_loval]; omega
             have hcond_ne : (k.val - 1) ≠ i_lo.val := by rw [hi_loval]; omega
-            simp only [staircaseFirstCoord, if_neg hcond_lt, if_neg hcond_ne]
+            simp only [if_neg hcond_lt, if_neg hcond_ne]
             apply congrArg; apply Fin.ext
-            simp [Fin.val_succ]; omega
+            simp; omega
   -- Pack into staircase map equality.
   have hfirst_pack :
       (⟨staircaseFirstCoord (n + 1) i q.val,
@@ -1031,9 +1031,9 @@ theorem prismSimplex_side_face_upper
         omega
     · rintro rfl
       have hlt : Fin.castSucc (⟨k.val, by omega⟩ : Fin (n + 1)) < j_jm1 := by
-        rw [Fin.lt_def]; simp [Fin.val_castSucc]; exact hkj
+        rw [Fin.lt_def]; simpa using hkj
       rw [Fin.succAbove, if_pos hlt]
-      apply Fin.ext; simp [Fin.val_castSucc]
+      apply Fin.ext; simp
   have hfilter_gt : ∀ (k : Fin (n + 2)) (_h : j_jm1.val < k.val),
       (Finset.univ.filter (fun k_1 : Fin (n + 1) => Fin.succAbove j_jm1 k_1 = k))
       = {⟨k.val - 1, by omega⟩} := by
@@ -1056,7 +1056,7 @@ theorem prismSimplex_side_face_upper
         apply Fin.ext; show m.val = k.val - 1; omega
     · rintro rfl
       rw [Fin.succAbove, if_neg (by simp [Fin.lt_def, hj_jm1val]; omega)]
-      apply Fin.ext; simp [Fin.val_succ]; omega
+      apply Fin.ext; simp; omega
   -- First coord identity.
   have hfirst : ∀ k : Fin (n + 2),
       staircaseFirstCoord (n + 1) i q.val k =
@@ -1089,11 +1089,11 @@ theorem prismSimplex_side_face_upper
         · -- k.val < i.val. LHS = q.val k.castSucc.
           simp only [staircaseFirstCoord, if_pos hk_lt_i]
           have hk_cs : k.castSucc = Fin.succAbove j ⟨k.val, by omega⟩ := by
-            rw [Fin.succAbove, if_pos (by simp [Fin.lt_def, hj_jm1val] at hkj; simp [Fin.lt_def]; omega)]
+            rw [Fin.succAbove, if_pos (by simp [hj_jm1val] at hkj; simp [Fin.lt_def]; omega)]
           rw [hk_cs, hq_succAbove]
           have hcond : (k.val) < i'.val := by rw [hi'val]; exact hk_lt_i
-          simp only [staircaseFirstCoord, if_pos hcond]
-          apply congrArg; apply Fin.ext; simp [Fin.val_castSucc]
+          simp only [if_pos hcond]
+          apply congrArg; apply Fin.ext; simp
         · push_neg at hk_lt_i
           by_cases hk_eq_i : k.val = i.val
           · -- k.val = i.val. LHS = q.val i.castSucc + q.val i.succ.
@@ -1105,18 +1105,14 @@ theorem prismSimplex_side_face_upper
             -- i.succ.val = i.val + 1 < j.val. Pre-image ⟨i.val + 1, _⟩.
             have hi_su : i.succ = Fin.succAbove j ⟨i.val + 1, by omega⟩ := by
               rw [Fin.succAbove, if_pos (by simp [Fin.lt_def]; omega)]
-              apply Fin.ext; simp [Fin.val_succ, Fin.val_castSucc]
+              apply Fin.ext; simp [Fin.val_succ]
             rw [hi_cs, hi_su, hq_succAbove, hq_succAbove]
             -- RHS at ⟨k.val, _⟩ : Fin(n+1). k.val = i.val = i'.val. = case.
             have hmval : k.val = i'.val := by rw [hi'val]; exact hk_eq_i
             have hnlt : ¬ k.val < i'.val := by rw [hi'val]; omega
-            simp only [staircaseFirstCoord, if_neg hnlt, if_pos hmval]
+            simp only [if_neg hnlt, if_pos hmval]
             -- p.val ⟨i.val, _⟩ + p.val ⟨i.val + 1, _⟩ = p.val i'.castSucc + p.val i'.succ
             congr 1
-            all_goals
-              apply congrArg
-              apply Fin.ext
-              simp [Fin.val_castSucc, Fin.val_succ, hi'val]
           · -- k.val > i.val. LHS = q.val k.succ.
             have hk_gt_i : i.val < k.val := lt_of_le_of_ne hk_lt_i (Ne.symm hk_eq_i)
             simp only [staircaseFirstCoord, if_neg (by omega : ¬ k.val < i.val),
@@ -1125,14 +1121,14 @@ theorem prismSimplex_side_face_upper
             -- Pre-image ⟨k.val + 1, _⟩.
             have hkj_lt : k.val + 1 < j.val := by rw [hj_jm1val] at hkj; omega
             have hk_su : k.succ = Fin.succAbove j ⟨k.val + 1, by omega⟩ := by
-              rw [Fin.succAbove, if_pos (by simp [Fin.lt_def, Fin.val_castSucc]; omega)]
-              apply Fin.ext; simp [Fin.val_succ, Fin.val_castSucc]
+              rw [Fin.succAbove, if_pos (by simp [Fin.lt_def]; omega)]
+              apply Fin.ext; simp [Fin.val_succ]
             rw [hk_su, hq_succAbove]
             -- RHS at ⟨k.val, _⟩ : Fin(n+1). k.val > i.val = i'.val.
             have hcond : ¬ k.val < i'.val := by rw [hi'val]; omega
             have hcond_ne : k.val ≠ i'.val := by rw [hi'val]; omega
-            simp only [staircaseFirstCoord, if_neg hcond, if_neg hcond_ne]
-            apply congrArg; apply Fin.ext; simp [Fin.val_succ]
+            simp only [if_neg hcond, if_neg hcond_ne]
+            apply congrArg; apply Fin.ext; simp
       · -- Case 2: k.val > j_jm1.val = j.val - 1, so k.val ≥ j.val.
         push_neg at hkj
         have hkj_gt : j_jm1.val < k.val := lt_of_le_of_ne hkj (Ne.symm hne_val)
@@ -1149,8 +1145,8 @@ theorem prismSimplex_side_face_upper
         -- RHS at ⟨k.val - 1, _⟩ : Fin(n+1). k.val - 1 ≥ j.val - 1 > i.val (since j.val > i.val + 1).
         have hcond : ¬ (k.val - 1) < i'.val := by rw [hi'val]; omega
         have hcond_ne : (k.val - 1) ≠ i'.val := by rw [hi'val]; omega
-        simp only [staircaseFirstCoord, if_neg hcond, if_neg hcond_ne]
-        apply congrArg; apply Fin.ext; simp [Fin.val_succ]; omega
+        simp only [if_neg hcond, if_neg hcond_ne]
+        apply congrArg; apply Fin.ext; simp; omega
   -- Pack and conclude.
   have hfirst_pack :
       (⟨staircaseFirstCoord (n + 1) i q.val,

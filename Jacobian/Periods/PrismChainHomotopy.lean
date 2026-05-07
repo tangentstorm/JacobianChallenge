@@ -444,7 +444,7 @@ theorem prismChain_hom_comm
             (singChain_basis (s.comp (stdSimplexFaceInclusion i' j))
             ≫ prismChain_op H i') from by
         rw [Preadditive.sum_comp]
-        simp [Preadditive.zsmul_comp]]
+        simp]
     rw [prismChain_op_basis H (i' + 1) s]
     rw [show ((∑ l : Fin (i' + 2), prismChain_summand H (i' + 1) l s)
           ≫ (((singularChainComplexFunctor (ModuleCat ℤ)).obj (ModuleCat.of ℤ ℤ)).obj

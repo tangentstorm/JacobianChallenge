@@ -22,6 +22,7 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
+omit [NormedSpace ℂ V] in
 /-- When `r < δ / 2` and δ is an isolation radius for `Λ.subgroup`,
 the local section on `Metric.ball v r` is a left inverse of `mk` on
 that ball. -/

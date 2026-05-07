@@ -126,7 +126,7 @@ between abstract forms and `Fin g → ℂ` coordinates.
 
 Functoriality (`holomorphicTraceCoord_id`, `holomorphicTraceCoord_comp`)
 reduces to the corresponding `pullbackFormsBundledLM` functoriality
-(`pullbackFormsBundledLM_id`, `pullbackFormsBundledLM_comp`), both of
+    (`pullbackFormsBundledLM_id`, `pullbackFormsBundledLM_comp`), both of
 which are sorry-free in `Jacobian/HolomorphicForms/PullbackBundled.lean`. -/
 noncomputable def holomorphicTraceCoord
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -137,6 +137,7 @@ noncomputable def holomorphicTraceCoord
     (pullbackFormsBundledLM X Y f hf) ∘ₗ
     (holomorphicOneFormFinBasis ℂ Y).equivFun.symm.toLinearMap
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Identity functoriality of the trace-coordinate map.
 
 Sorry-free: the `pullbackFormsBundledLM` functoriality
@@ -151,6 +152,8 @@ theorem holomorphicTraceCoord_id
   ext v
   simp
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+  [ConnectedSpace Y] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z] in
 /-- Composition functoriality of the trace-coordinate map.
 
 Sorry-free: the `pullbackFormsBundledLM` contravariant composition

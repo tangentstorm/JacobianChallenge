@@ -40,6 +40,7 @@ noncomputable def chartAtPoint (Λ : FullComplexLattice V)
   let hiso : ∀ g ∈ Λ.subgroup, g ≠ 0 → δ ≤ ‖g‖ := data.choose_spec.2
   chartAtBall Λ v (show (δ : ℝ) / 4 < δ / 2 by linarith) hiso
 
+omit [NormedSpace ℂ V] in
 /-- Membership of a quotient point in its own chart's source. -/
 lemma mem_chartAtPoint_source (Λ : FullComplexLattice V)
     (q : quotient V Λ) :

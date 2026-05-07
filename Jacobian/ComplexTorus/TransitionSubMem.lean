@@ -22,6 +22,7 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
+omit [NormedSpace ℂ V] in
 /-- If `q ∈ mk V Λ '' Metric.ball v r` and `mk x = q`, then
 `localSection Λ v r q - x ∈ Λ.subgroup`. The membership comes from
 `mk (localSection q) = q = mk x`, via `mk_eq_iff`. -/

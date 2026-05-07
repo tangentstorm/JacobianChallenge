@@ -39,6 +39,7 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
+omit [NormedSpace ℂ V] in
 /-- The local section is continuous on the image of the small ball,
 provided the ball radius makes `mk` injective on the ball. -/
 lemma continuousOn_localSection
