@@ -169,7 +169,7 @@ private theorem cellularSimplexFace_face_eq_lt
   rw [h_LHS_v, h_RHS_v]
   -- Goal: (s.1.erase v_i).erase v_j = (s.1.erase v_j).erase v_i.
   ext x
-  simp only [Finset.mem_erase, and_assoc]
+  simp only [Finset.mem_erase]
   tauto
 
 /-- For `j.val ≥ i.val`, the `(i, j)`-th iterated face equals the
@@ -211,24 +211,163 @@ private theorem cellularSimplexFace_face_eq_ge
   show (s.1.erase _).erase _ = (s.1.erase _).erase _
   rw [h_LHS_v, h_RHS_v]
   ext x
-  simp only [Finset.mem_erase, and_assoc]
+  simp only [Finset.mem_erase]
   tauto
 
-/-- `∂² = 0` for the substantive boundary.
+/-! ### `∂² = 0` for the cellular chain complex
 
-The face commutation lemmas above (`cellularSimplexFace_face_eq_lt/_ge`)
-provide the simplex equality for each pair `(i, j) ↔ (⟨j, _⟩, ⟨i-1, _⟩)`
-(if `j < i`) or `(⟨j+1, _⟩, ⟨i, _⟩)` (if `j ≥ i`); the alternating-sign
-cancellation `(-1)^(i+j) + (-1)^(i'+j') = 0` then completes the proof
-via `Finset.sum_involution`.
+Step 1: compute the composition on a basis element `Finsupp.single s 1`.
+Step 2: apply `Finset.sum_involution` with the bijection
+`(i, j) ↔ (⟨j, _⟩, ⟨i-1, _⟩)` (for `j.val < i.val`) or
+`(⟨j+1, _⟩, ⟨i, _⟩)` (for `j.val ≥ i.val`). -/
 
-The remaining bookkeeping reduces the composition `(∂_n ∘ ∂_{n+1})` to
-the 2D sum form, applies the involution, and tracks the sign convention
-through `Finsupp.lift`. -/
+/-- The composition `(∂_n ∘ ∂_{n+1})` applied to `single s 1` expands
+to the 2D sum `∑_{(i, j)} (-1)^(i+j) • single (face2 s i j) 1`. -/
+private lemma cellularBoundarySigned_comp_single
+    [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ)
+    (s : K.nSimplices (n + 2)) :
+    (cellularBoundarySigned K n) ((cellularBoundarySigned K (n + 1))
+      (Finsupp.single s (1 : ℤ))) =
+    ∑ i : Fin (n + 3), ∑ j : Fin (n + 2),
+      ((-1 : ℤ) ^ (i.val + j.val)) •
+        Finsupp.single (cellularSimplexFace K n
+          (cellularSimplexFace K (n + 1) s i) j) (1 : ℤ) := by
+  -- Compute ∂_{n+1} on a single first.
+  have h1 : (cellularBoundarySigned K (n + 1)) (Finsupp.single s 1) =
+      ∑ i : Fin (n + 3), (-1 : ℤ) ^ i.val •
+        Finsupp.single (cellularSimplexFace K (n + 1) s i) (1 : ℤ) := by
+    unfold cellularBoundarySigned
+    rw [Finsupp.lift_apply, Finsupp.sum_single_index]
+    · rw [one_smul]
+    · simp
+  rw [h1, map_sum]
+  refine Finset.sum_congr rfl (fun i _ => ?_)
+  rw [LinearMap.map_smul]
+  -- Compute ∂_n on a single (face s i).
+  rw [show (cellularBoundarySigned K n)
+        (Finsupp.single (cellularSimplexFace K (n + 1) s i) (1 : ℤ)) =
+      ∑ j : Fin (n + 2), (-1 : ℤ) ^ j.val •
+        Finsupp.single (cellularSimplexFace K n
+          (cellularSimplexFace K (n + 1) s i) j) (1 : ℤ) from by
+    unfold cellularBoundarySigned
+    rw [Finsupp.lift_apply, Finsupp.sum_single_index]
+    · rw [one_smul]
+    · simp]
+  -- Pull (-1)^i • into the inner sum and combine signs.
+  rw [Finset.smul_sum]
+  refine Finset.sum_congr rfl (fun j _ => ?_)
+  rw [smul_smul, ← pow_add]
+
+/-- `∂² = 0` for the substantive boundary, via `Finset.sum_involution`. -/
 theorem cellularBoundarySigned_sq_zero
     [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
-    (cellularBoundarySigned K n).comp (cellularBoundarySigned K (n + 1)) = 0 :=
-  sorry
+    (cellularBoundarySigned K n).comp (cellularBoundarySigned K (n + 1)) = 0 := by
+  -- Reduce to the basis element case via `Finsupp.induction_linear`.
+  apply LinearMap.ext
+  intro g
+  simp only [LinearMap.comp_apply, LinearMap.zero_apply]
+  refine g.induction_linear (by simp) ?_ ?_
+  · -- Additivity case
+    intros f₁ f₂ hf₁ hf₂
+    rw [map_add, map_add, hf₁, hf₂, add_zero]
+  · -- Single case: `∂² (single s r) = 0`.
+    intro s r
+    -- single s r = r • single s 1
+    rw [show (Finsupp.single s r : cellularChain K (n + 2)) =
+        r • Finsupp.single s (1 : ℤ) from by
+      ext x; simp [Finsupp.single_apply]]
+    rw [LinearMap.map_smul, LinearMap.map_smul]
+    rw [show ∀ x : cellularChain K n, x = 0 → r • x = 0 from
+      fun x hx => by rw [hx]; simp]
+    -- Suffices: ∂² (single s 1) = 0.
+    rw [cellularBoundarySigned_comp_single]
+    -- Apply Finset.sum_involution on the 2D sum.
+    rw [← Finset.sum_product']
+    classical
+    apply Finset.sum_involution
+      (g := fun (lj : Fin (n + 3) × Fin (n + 2)) (_ : lj ∈ Finset.univ) =>
+        if h : lj.2.val < lj.1.val then
+          ((⟨lj.2.val, by have := lj.1.isLt; omega⟩ : Fin (n + 3)),
+           (⟨lj.1.val - 1, by have := lj.1.isLt; omega⟩ : Fin (n + 2)))
+        else
+          ((⟨lj.2.val + 1, by have := lj.2.isLt; omega⟩ : Fin (n + 3)),
+           (⟨lj.1.val, by
+              have := lj.1.isLt; have := lj.2.isLt
+              push_neg at h; omega⟩ : Fin (n + 2))))
+    · -- f a + f (g a) = 0
+      intro a _
+      rcases a with ⟨i, j⟩
+      simp only
+      by_cases hij : j.val < i.val
+      · rw [dif_pos hij]
+        have h_simp_eq := cellularSimplexFace_face_eq_lt K n s i j hij
+        rw [h_simp_eq]
+        -- Now both summands have the same simplex; signs cancel.
+        have h_sign : ((-1 : ℤ) ^ ((⟨j.val, by have := i.isLt; omega⟩ : Fin (n + 3)).val +
+              (⟨i.val - 1, by have := i.isLt; omega⟩ : Fin (n + 2)).val)) =
+            -((-1 : ℤ) ^ (i.val + j.val)) := by
+          show (-1 : ℤ) ^ (j.val + (i.val - 1)) = -((-1 : ℤ) ^ (i.val + j.val))
+          have h_eq : i.val + j.val = (j.val + (i.val - 1)) + 1 := by omega
+          rw [h_eq, pow_succ]
+          ring
+        rw [h_sign, neg_smul]
+        exact add_neg_cancel _
+      · rw [dif_neg hij]
+        push_neg at hij
+        have h_simp_eq := cellularSimplexFace_face_eq_ge K n s i j hij
+        rw [h_simp_eq]
+        have h_sign : ((-1 : ℤ) ^ ((⟨j.val + 1, by have := j.isLt; omega⟩ :
+              Fin (n + 3)).val +
+            (⟨i.val, by have := i.isLt; have := j.isLt; omega⟩ : Fin (n + 2)).val)) =
+            -((-1 : ℤ) ^ (i.val + j.val)) := by
+          show (-1 : ℤ) ^ ((j.val + 1) + i.val) = -((-1 : ℤ) ^ (i.val + j.val))
+          have h_eq : (j.val + 1) + i.val = (i.val + j.val) + 1 := by omega
+          rw [h_eq, pow_succ]
+          ring
+        rw [h_sign, neg_smul]
+        exact add_neg_cancel _
+    · -- f a ≠ 0 → g a ≠ a (no fixed points where f is non-zero)
+      intro a _ _ heq
+      rcases a with ⟨i, j⟩
+      simp only at heq
+      by_cases hij : j.val < i.val
+      · rw [dif_pos hij] at heq
+        -- (⟨j, _⟩, ⟨i-1, _⟩) = (i, j). First component: j = i. Contradicts j < i.
+        have := congr_arg (fun p => (p.1).val) heq
+        simp only at this
+        omega
+      · rw [dif_neg hij] at heq
+        push_neg at hij
+        -- (⟨j+1, _⟩, ⟨i, _⟩) = (i, j). First component: j+1 = i.
+        have := congr_arg (fun p => (p.1).val) heq
+        simp only at this
+        omega
+    · -- g (g a) = a (involution)
+      intro a _
+      rcases a with ⟨i, j⟩
+      dsimp only
+      by_cases hij : j.val < i.val
+      · simp only [dif_pos hij]
+        have hgg : ¬ ((⟨i.val - 1, by have := i.isLt; omega⟩ : Fin (n + 2)).val <
+            (⟨j.val, by have := i.isLt; omega⟩ : Fin (n + 3)).val) := by
+          show ¬ (i.val - 1 < j.val); omega
+        simp only [dif_neg hgg]
+        ext
+        · show (i.val - 1) + 1 = i.val; omega
+        · show j.val = j.val; rfl
+      · simp only [dif_neg hij]
+        push_neg at hij
+        have hgg : (⟨i.val, by have := i.isLt; have := j.isLt; omega⟩ :
+            Fin (n + 2)).val <
+            (⟨j.val + 1, by have := j.isLt; omega⟩ : Fin (n + 3)).val := by
+          show i.val < j.val + 1; omega
+        simp only [dif_pos hgg]
+        ext
+        · show i.val = i.val; rfl
+        · show (j.val + 1) - 1 = j.val; omega
+    · -- g a ∈ s (always, since s = univ)
+      intros a _
+      exact Finset.mem_univ (α := Fin (n + 3) × Fin (n + 2)) _
 
 /-- The cellular boundary `∂_n : C_n^cell → C_{n-1}^cell` (placeholder
 form). Currently the zero map; the substantive version is
