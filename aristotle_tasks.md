@@ -16,25 +16,21 @@ identify our jobs without inspecting tarballs.
 
 Aristotle backend is live again (5 IN_PROGRESS jobs on first page,
 none in `aristotle_jobs.jsonl` — all FourColor or other-project work
-that we ignore per `ref/PROMPT.md` step 2). Our queue is empty after
-the 2-day Aristotle-blocked stretch, so this tick re-opens dispatch
-on the curve-analysis frontier (C-packets) starting from the leaf
-that has the cleanest single-file scope.
+that we ignore per `ref/PROMPT.md` step 2). Cellular-Hurewicz bridge
+made big strides on origin/main between the previous tick and this
+one — `singularChainElement_boundary_decomposition`,
+`PrismChainCombinatorialIdentity`, `cellularBoundarySigned_sq_zero`,
+and the `edgeHomologyClass` upgrade all landed sorry-free.
 
-**Submitted this tick (1):**
+**Submitted this tick (1, after one cancel-and-re-aim):**
 
 | ID | File | Target |
 |---|---|---|
-| `2ff4fff7` | `Jacobian/Periods/SingularChainElement.lean` | `singularChainElement_boundary_decomposition` (Phase-2 leaf for cellular-Hurewicz bridge; ~30-50 line categorical computation; only sorry in file) |
+| ~~`2ff4fff7`~~ | `Jacobian/Periods/SingularChainElement.lean` | ~~`singularChainElement_boundary_decomposition`~~ — **cancelled**: target already discharged on origin/main (commit `7d141b7`) before this tick's push; cancelled within the same tick per ref/PROMPT.md cancel rule (target sorry no longer exists locally). |
+| `2c73f336` | `Jacobian/Periods/Polygon4gEdgeBasisMap.lean` | `edgeBasisMap_injective` — Phase 6.a leaf of the cellular-Hurewicz bridge. The file's docstring explicitly notes this becomes provable once `edgeHomologyClass` is the real homology projection — that upgrade landed in commit `2fc4812`, so the proof is now unblocked. Strategy: `edgeChainCoeff` (dual of `Sigma.ι` at `edgeSimplex g i`) descending to homology via the just-landed `singularChainElement_boundary_decomposition`. |
 
-**Why this packet first:** the file has exactly one sorry, all
-upstream helpers (`sigmaConst_obj_map_ι`, `singularSimplexFace`,
-`singularChainElement`, `SingularChainCoproduct`) are sorry-free and
-already named, the proof shape is a finite mechanical unfolding
-through `alternatingFaceMapComplex.objD = ∑ (-1)^i • δ_i` plus the
-naturality of `Sigma.ι`. A clean discharge here unblocks
-`edgeChain_isCycle` and the Phase 4 H₁ projection on the polygon
-edge basis.
+The companion `edgeBasisMap_surjective` (line 114) requires barycentric
+subdivision and is explicitly *out of scope* for `2c73f336`.
 
 **Next-tick candidates** (still queued from the 2026-05-05 frontier
 list; not submitted this tick to keep write scopes disjoint):
