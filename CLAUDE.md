@@ -51,6 +51,8 @@ This project runs on a timer (`ref/PROMPT.md`, intended for `/loop 15m`). Each t
 
 Every Aristotle job must specify: working directory `C:\ver\JacobianChallenge`, exact target file, allowed write scope, forbidden files (always including `Jacobian/Challenge.lean`), exact declaration names, expected `lake build` command, and fallback behavior if blocked. Prefer many small file-scoped jobs over one large job. `aristotle_tasks.md` has per-queue templates (Queues A–H) keyed to the namespaces in the statement bank.
 
+**When the target sorry is gated on an upstream placeholder** (`True := trivial` leaves, `noncomputable opaque` defs with no axioms, `:= PUnit` / `:= 0` data-trivial stubs, etc.), default single-file scope produces a clean BLOCKER triage but no progress. Instead, widen the allowed-writes scope to include the upstream stub file and explicitly task Aristotle with making the upstream definition real (existing sorry-free call sites must still type-check; no existing sorry-free decl may become sorry). Or, prefer creating a fresh infrastructure file when the missing prerequisite can be built from existing primitives (`Jacobian/Periods/HurewiczMap.lean` is the 2026-05-07 prototype). See `ref/PROMPT.md` § "When the target is blocked by a placeholder upstream" for the framing.
+
 Tell Aristotle to prefer direct tactics (`simp`, `rw`, `exact`, `refine`, `constructor`, `ext`, `intro`, `apply`) and small helper lemmas. Avoid large `aesop`, `grind`, broad `simp_all`, and fragile automation unless the task explicitly justifies it.
 
 Bad delegation ("solve the Jacobian challenge", "fix all sorries") is explicitly listed in `ref/plan.md` as forbidden — Claude owns global definition choices and statement design; Aristotle owns bounded local proofs.
