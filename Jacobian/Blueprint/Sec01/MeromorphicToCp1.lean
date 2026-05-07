@@ -93,7 +93,20 @@ theorem liftToCp1_holomorphicAt_infty
     (f : MeromorphicFunctionType X) (_hholo : True)
     (p : X) (_hp : meromorphicToCp1 X f p = (∞ : OnePoint ℂ)) :
     IsHolomorphicAt (meromorphicToCp1 X f) p := by
-  sorry
+  apply_rules [ MeromorphicAt.analyticAt ];
+  · have h_meromorphic : MeromorphicAt (fun t => (f.toFun ((chartAt ℂ p).symm t)).getD 0) (chartAt ℂ p p) := by
+      convert f.isMeromorphic p;
+    convert h_meromorphic.inv using 1;
+    ext t; simp [chartLocalAt, meromorphicToCp1];
+    cases h : f.toFun ( ( chartAt ℂ p ).symm t ) <;> simp_all +decide [ meromorphicToCp1 ];
+    · unfold Option.getD; aesop;
+    · exact Complex.ext rfl rfl;
+  · refine' ContinuousAt.comp _ _;
+    · convert ( chartAt ℂ ( meromorphicToCp1 X f p ) ).continuousAt using 1;
+      aesop;
+    · refine' ContinuousAt.comp _ _;
+      · convert f.toFun_continuous.continuousAt using 1;
+      · exact ( chartAt ℂ p ).symm.continuousAt ( by simp +decide )
 
 /-- Chart-local holomorphicity of the CP¹ lift of a meromorphic function.
 

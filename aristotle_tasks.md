@@ -149,6 +149,17 @@ left as-is since it builds and is sorry-free. On integration also
 fixed Aristotle's accidental docstring damage (`/-- -/` had been
 changed to `/- -/`, detaching it from the theorem).
 
+**Tick S (~+440 min):** `d3ae5b59` (`liftToCp1_holomorphicAt_infty`,
+the pole-case sibling) returned **second consecutive clean COMPLETE**
+— **integrated** for another net-1 sorry reduction (file from 5 to
+4 sorries). Aristotle applied the inversion chart at ∞ + Mathlib's
+`MeromorphicAt.inv` + the same `MeromorphicAt.analyticAt` bridge.
+Both halves of `liftToCp1_holomorphicAt` are now sorry-free, and
+the assembled theorem inherits sorry-freeness from them. Two ticks
+of momentum on this file; remaining 4 sorries are deeper (k-fold
+normal form, weighted fibre count) and likely require classical
+local mapping theorem from Mathlib.
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 
