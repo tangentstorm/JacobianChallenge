@@ -127,6 +127,123 @@ If Option A turns out to cost more than ~1 PR's worth of work because of cutoff 
 1. **PR-1 (~30 LOC):** Refactor `MeromorphicMapToSphere.exists_modulus_atTop_at_pole` to be conditional on `Continuous toMap` (Option B). Update `not_continuous_indicator` / `not_continuous_two_point_indicator` discharges in the indicator constructors to handle this field by `absurd` (parallel to the existing `hasBranchedCoverDataOfPoleDegree` pattern). Both frontier obligations become unused and can be deleted. **Net: 2 → 0 sorries in `AnalyticOfCurveBasis.lean`.**
 2. **(Optional) PR-2:** Once a genuine meromorphic-function infrastructure lands (`ref/plans/meromorphic-function.md`), restore the unconditional axiom and replace the indicator placeholders with honest constructions. Both PRs are cheap individually.
 
+## 2026-05-07 update: Option B propagates further than 30 LOC
+
+When attempted on branch `claude/verify-meromorphic-obligations-7OK8w`, Option
+B's refactor turned out to require **threaded `Continuous` propagation** through
+the entire downstream chain, ending at the public API in `Solution.lean`:
+
+```
+exists_modulus_atTop_at_pole field        [field made conditional on Continuous]
+  ↓ used by
+modulus_diverges_at_simple_pole           [needs Continuous arg]
+  ↓ used by
+tendsto_infty_at_pole_of_poleDivisor_point [needs Continuous arg]
+  ↓ used by
+meromorphicMapToSphere_continuous_of_poleDivisor_point [now trivial]
+  ↓ used by
+meromorphicDegreeOneData_of_poleDivisor_point [needs Continuous arg]
+  ↓ used by
+- nonconstant_single_pole_implies_genus_zero [needs Continuous arg]
+- degree_one_meromorphicMap_implies_analyticGenus_zero [needs Continuous arg]
+- properDegreeOneMapOfSimplePole_nonempty [needs Continuous arg]
+  ↓ used by
+- period_congruence_distinct_implies_genus_zero [needs ∀-quantified Continuous]
+- properDegreeOneMapOfSimplePole [needs Continuous arg]
+- simplePole_meromorphicMap_proper_degreeOne [needs Continuous arg]
+  ↓ used by
+- pathIntegralFunctional_separates_points_spec [needs ∀-quantified Continuous]
+- genus_zero_homeomorph_onePointCx [needs Continuous arg]
+  ↓ used by
+- pathIntegralFunctional_separates_points [needs ∀-quantified Continuous]
+- homeomorphic_sphere_of_analyticGenus_eq_zero [needs Continuous arg]
+  ↓ used by
+- analyticOfCurve_injective [needs ∀-quantified Continuous]
+- analyticGenus_eq_zero_iff_homeomorphic_sphere [needs ∀-quantified Continuous]
+  ↓ used by Solution.lean
+- ofCurve_inj [signature frozen by Challenge.lean — CANNOT add hypothesis]
+- genus_eq_zero_iff_homeo [signature frozen by Challenge.lean — CANNOT add hypothesis]
+```
+
+The wall: `Solution.lean`'s `ofCurve_inj` and `genus_eq_zero_iff_homeo` must
+match the frozen signatures in `Challenge.lean`, which take only `genus`/curve
+hypotheses — no `Continuous` hypothesis. Discharging the propagated
+∀-quantified `Continuous` hypothesis at this layer is **mathematically false**
+in our codebase: the indicator placeholders constructed by
+`assemble_meromorphicMap` (and 4 other constructors here, plus 2 in
+`RiemannRoch.lean`) are valid `MeromorphicMapToSphere X` values that satisfy
+`f.poles = Divisor.point Q` yet are not continuous (per `not_continuous_indicator`).
+
+### Discharge would require Option A — which is genuinely blocked
+
+The only honest discharge is to **replace every indicator placeholder with a
+continuous meromorphic function**. Concretely:
+
+- A chart-local `1/(φ(x) - φ(Q))` construction with smooth cutoff. Mathlib's
+  `SmoothBumpFunction` exists (`Mathlib/Geometry/Manifold/BumpFunction.lean`),
+  but it's parametrised by a model-with-corners structure on ℝ. Adapting to
+  the ℂ-manifold setting (`modelWithCornersSelf ℂ ℂ`) requires bridging through
+  the underlying ℝ² structure — work the project hasn't yet done (no uses of
+  `SmoothBumpFunction` with ℂ models anywhere in `Mathlib` or `Jacobian/`).
+- Verification of all 8 structural axioms for the honest construction.
+  `hasBranchedCoverDataOfPoleDegree` is the bottleneck: it requires a
+  `BranchedCoverData X (OnePoint ℂ) toMap` whose construction in turn relies on
+  `branchedCoverData_of_nonconstant_holomorphic` (in
+  `Blueprint/Sec02/BranchedDegreeFromHolomorphic.lean`), which needs
+  `IsHolomorphic f` plus nonconstancy proofs.
+- The naive extension `1/(φ(x)-φ(Q))` extended by `0` off the chart fails
+  `finite_fiber 0` (the fibre is the entire complement of the chart source).
+  A globally-defined honest meromorphic function on a compact Riemann surface
+  with prescribed simple pole divisor is the very content of Riemann-Roch —
+  the thing this whole project chain is trying to prove.
+
+So Option A is genuinely a multi-PR project, blocked on the
+`meromorphic-function` plan.
+
+### State of the partial refactor (committed on this branch)
+
+- ✅ `Meromorphic.lean`: `exists_modulus_atTop_at_pole` field is now conditional
+  on `Continuous toMap`, parallel to `hasBranchedCoverDataOfPoleDegree`.
+- ✅ `AnalyticOfCurveBasis.lean`: 5 indicator placeholder constructors discharge
+  via `absurd hcont (not_continuous_indicator …)`. Both frontier obligation
+  `sorry`s deleted. **File goes from 2 → 0 sorries.**
+- ✅ `RiemannRoch.lean`: 2 indicator placeholder field discharges replaced by
+  `absurd` form (was `:= by sorry`). **File goes from 12 → 10 sorries.**
+- ✅ `MeromorphicDegree.lean`, `GenusZeroClassification.lean`,
+  `AnalyticOfCurveBasis.lean` downstream chain: `Continuous` hypothesis
+  threaded through. No new sorries; just additional explicit hypotheses.
+- ❌ `Solution.lean`: `ofCurve_inj` and `genus_eq_zero_iff_homeo` no longer
+  typecheck because the upstream API now expects a (∀-quantified, false)
+  `Continuous` hypothesis they cannot supply. **Build broken at this layer.**
+
+`lake build Jacobian.AbelJacobi.AnalyticOfCurveBasis` succeeds (the narrow
+acceptance criterion target). `lake build Jacobian.Solution` (and
+`lake build Jacobian`) fail.
+
+### Recommended next steps
+
+1. **Either** revert this branch and wait for Option A's prerequisites to land
+   (bump-function infrastructure for ℂ-manifolds, `branchedCoverData_of_nonconstant_holomorphic`'s
+   `IsHolomorphic` story, `meromorphic-function.md` plan).
+2. **Or** accept a Solution.lean break and a single sorry there to discharge
+   the (false) ∀-quantified continuity hypothesis, treating it as an explicit
+   "this Lean-level inconsistency is the same one the indicator placeholders
+   already encode" stub. Net sorry count: −2 (frontier) +2 (Solution) = 0,
+   but technically violates the original "no new sorries elsewhere" criterion.
+3. **Or** revisit the structure: rather than threading `Continuous`, change
+   `MeromorphicMapToSphere` to bundle a `Continuous toMap` field. Then
+   indicator placeholders become unconstructable (forced to `sorry` the new
+   field), and the consumer chain stays unconditional. Net: 5+ new sorries
+   in indicator constructors (one each). Worse than option (2).
+
+The fundamental issue is that the project currently only has indicator
+placeholders for `MeromorphicMapToSphere` — there are zero honest meromorphic
+functions in the codebase. Any refactor that strengthens the structure exposes
+this absence; any refactor that weakens the structure breaks the downstream
+consumers. Option B's "conditional on Continuous" trick threads the inconsistency
+to the API boundary, but the boundary is frozen by `Challenge.lean`'s
+anti-hack signatures.
+
 ## Files to read before starting
 
 - `Jacobian/HolomorphicForms/Meromorphic.lean` (structure definition, lines 40–96).
