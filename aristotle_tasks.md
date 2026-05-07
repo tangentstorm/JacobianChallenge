@@ -136,6 +136,19 @@ no `cellularChainComplex`. `FundamentalGroup` and
 transformation. The cellular-Hurewicz iso is genuinely an upstream
 Mathlib infrastructure project. Status: **routed to brainstorm**.
 
+**Tick R (~+400 min):** `816b4aa9` (`liftToCp1_holomorphicAt_finite`
+in `Jacobian/Blueprint/Sec01/MeromorphicToCp1.lean`) returned with
+the **first COMPLETE status of the session** (not
+COMPLETE_WITH_ERRORS) — **integrated** for a genuine net-1 sorry
+reduction (file from 6 to 5 sorries). Aristotle found the
+`MeromorphicAt.analyticAt` Mathlib bridge that answers the open
+question from the prompt's risk analysis. The proof uses heavy
+tactics (`apply_rules`, `simp +decide`, `convert`, `aesop`) which
+is borderline against the project's direct-tactics preference;
+left as-is since it builds and is sorry-free. On integration also
+fixed Aristotle's accidental docstring damage (`/-- -/` had been
+changed to `/- -/`, detaching it from the theorem).
+
 The companion `edgeBasisMap_surjective` (line 114) requires barycentric
 subdivision and is explicitly *out of scope* for `2c73f336`.
 
