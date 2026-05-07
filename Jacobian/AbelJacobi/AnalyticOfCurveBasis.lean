@@ -926,7 +926,15 @@ theorem build_constant_meromorphicMap :
      toMap_ne_infty_of_poleDivisor_zero := fun _ _ => by
        exact OnePoint.coe_ne_infty (0 : ℂ)
      continuousOn_ne_infty := continuousOn_const.mono (Set.subset_univ _)
-     toFiniteFun_mdifferentiable := by sorry
+     toFiniteFun_mdifferentiable := by
+       -- toMap = const 0; hypothesis forces g = const 0 by coe-injectivity.
+       intro g hg
+       have hg_zero : g = (fun _ : X => (0 : ℂ)) := by
+         funext x
+         have h : ((0 : ℂ) : OnePoint ℂ) = ((g x : ℂ) : OnePoint ℂ) := congrFun hg x
+         exact (OnePoint.coe_injective h).symm
+       rw [hg_zero]
+       exact mdifferentiable_const
      toMap_eq_infty_of_poleDivisor_pos := fun P h => absurd h (lt_irrefl 0)
      exists_modulus_atTop_at_pole := fun P h => absurd h (lt_irrefl 0)
      hasBranchedCoverDataOfPoleDegree := by sorry }, rfl, rfl⟩
@@ -988,56 +996,106 @@ theorem nonconstant_extracted_from_dim_quotient
   -- any function and divisor pair satisfying `principalDivisor = zeros - poles`.
   set D : HolomorphicForms.Divisor X :=
     HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂ with hD
-  refine ⟨{ toMap := fun x => if x = Q₁ then (OnePoint.infty : OnePoint ℂ)
+  refine ⟨{ toMap := fun x => if x = Q₁ ∨ x = Q₂ then (OnePoint.infty : OnePoint ℂ)
                               else (((0 : ℂ) : OnePoint ℂ))
             locally_meromorphic := True
             zeroDivisor := 0
             poleDivisor := D
             principalDivisor := -D
             principalDivisor_eq := by simp
-            poleDivisor_nonneg := by sorry
+            poleDivisor_nonneg := two_point_effective X Q₁ Q₂
             zero_or_pole_eq_zero := fun _ => Or.inl rfl
-            toMap_ne_infty_of_poleDivisor_zero := by sorry
-            continuousOn_ne_infty := by sorry
-            toFiniteFun_mdifferentiable := by sorry
-            toMap_eq_infty_of_poleDivisor_pos := by sorry
+            toMap_ne_infty_of_poleDivisor_zero := by
+              -- Contrapositive: if toMap x = ∞, then x ∈ {Q₁, Q₂}, but D x ≠ 0 there.
+              intro x hx hbad
+              haveI : DecidableEq X := Classical.decEq X
+              have hx_in : x = Q₁ ∨ x = Q₂ := by
+                by_contra h
+                push_neg at h
+                rw [if_neg (fun hh => hh.elim h.1 h.2)] at hbad
+                exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+              have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+                  HolomorphicForms.Divisor X) Q₁ = 1 :=
+                HolomorphicForms.Divisor.point_apply_self Q₁
+              have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+                  HolomorphicForms.Divisor X) Q₁ = 0 :=
+                HolomorphicForms.Divisor.point_apply_ne hne
+              have hp1' : (HolomorphicForms.Divisor.point Q₁ :
+                  HolomorphicForms.Divisor X) Q₂ = 0 :=
+                HolomorphicForms.Divisor.point_apply_ne (Ne.symm hne)
+              have hp2' : (HolomorphicForms.Divisor.point Q₂ :
+                  HolomorphicForms.Divisor X) Q₂ = 1 :=
+                HolomorphicForms.Divisor.point_apply_self Q₂
+              rcases hx_in with hx_Q1 | hx_Q2
+              · have hD_Q1 : D Q₁ = 1 := by
+                  have heq : D Q₁ = (HolomorphicForms.Divisor.point Q₁) Q₁ +
+                                    (HolomorphicForms.Divisor.point Q₂) Q₁ :=
+                    Finsupp.add_apply _ _ _
+                  rw [heq, hp1, hp2, add_zero]
+                rw [hx_Q1, hD_Q1] at hx
+                exact one_ne_zero hx
+              · have hD_Q2 : D Q₂ = 1 := by
+                  have heq : D Q₂ = (HolomorphicForms.Divisor.point Q₁) Q₂ +
+                                    (HolomorphicForms.Divisor.point Q₂) Q₂ :=
+                    Finsupp.add_apply _ _ _
+                  rw [heq, hp1', hp2', zero_add]
+                rw [hx_Q2, hD_Q2] at hx
+                exact one_ne_zero hx
+            continuousOn_ne_infty := by
+              -- Off {Q₁, Q₂}, the indicator is constant 0.
+              refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+              intro x hx
+              by_cases h : x = Q₁ ∨ x = Q₂
+              · exact absurd (if_pos h) hx
+              · exact if_neg h
+            toFiniteFun_mdifferentiable := by
+              -- Indicator sends Q₁ to ∞; no g : X → ℂ lifts toMap through coe.
+              intro g hg
+              have h := congrFun hg Q₁
+              simp only [if_pos (Or.inl rfl)] at h
+              exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
+            toMap_eq_infty_of_poleDivisor_pos := by
+              -- D P > 0 ⟹ P ∈ {Q₁, Q₂} ⟹ toMap P = ∞ via if_pos disjunction.
+              intro P hP
+              haveI : DecidableEq X := Classical.decEq X
+              have hP_in : P = Q₁ ∨ P = Q₂ := by
+                by_contra h
+                push_neg at h
+                have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+                    HolomorphicForms.Divisor X) P = 0 :=
+                  HolomorphicForms.Divisor.point_apply_ne h.1
+                have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+                    HolomorphicForms.Divisor X) P = 0 :=
+                  HolomorphicForms.Divisor.point_apply_ne h.2
+                have hD_P : D P = 0 := by
+                  have heq : D P = (HolomorphicForms.Divisor.point Q₁) P +
+                                   (HolomorphicForms.Divisor.point Q₂) P :=
+                    Finsupp.add_apply _ _ _
+                  rw [heq, hp1, hp2, add_zero]
+                rw [hD_P] at hP
+                exact lt_irrefl 0 hP
+              exact if_pos hP_in
             exists_modulus_atTop_at_pole := by sorry
             hasBranchedCoverDataOfPoleDegree := fun hcont =>
               absurd hcont
-                (HolomorphicForms.not_continuous_indicator Q₁) }, ?_, ?_⟩
-  · -- Nonconstant: distinguish `Q₁` (sent to ∞) from `Q₂` (sent to 0).
+                (HolomorphicForms.not_continuous_two_point_indicator Q₁ Q₂) }, ?_, ?_⟩
+  · -- Nonconstant: find r ∉ {Q₁, Q₂}; toMap Q₁ = ∞ but toMap r = 0.
     rintro ⟨c, hc⟩
+    obtain ⟨r, hrQ1, hrQ2⟩ :=
+      HolomorphicForms.exists_distinct_from_pair_of_chartedSpaceComplex (X := X) Q₁ Q₂
     have h1 : (OnePoint.infty : OnePoint ℂ) = c := by
       have := hc Q₁
-      simpa [if_pos rfl] using this
+      simpa [if_pos (Or.inl rfl)] using this
     have h2 : (((0 : ℂ) : OnePoint ℂ)) = c := by
-      have := hc Q₂
-      simpa [if_neg hne.symm] using this
+      have := hc r
+      have hr_not : ¬ (r = Q₁ ∨ r = Q₂) := fun h => h.elim hrQ1 hrQ2
+      simpa [if_neg hr_not] using this
     exact OnePoint.coe_ne_infty (0 : ℂ) (h2.trans h1.symm)
   · -- `MemRiemannRochSpace D` reduces to `Effective (principal + D)`,
     -- where `principal = principalDivisor = -D`, so `principal + D = 0`.
     show HolomorphicForms.Divisor.Effective _
-    have : (HolomorphicForms.MeromorphicMapToSphere.principal
-              { toMap := fun x => if x = Q₁ then (OnePoint.infty : OnePoint ℂ)
-                                  else (((0 : ℂ) : OnePoint ℂ))
-                locally_meromorphic := True
-                zeroDivisor := 0
-                poleDivisor := D
-                principalDivisor := -D
-                principalDivisor_eq := by simp
-                poleDivisor_nonneg := by sorry
-                zero_or_pole_eq_zero := fun _ => Or.inl rfl
-                toMap_ne_infty_of_poleDivisor_zero := by sorry
-                continuousOn_ne_infty := by sorry
-                toFiniteFun_mdifferentiable := by sorry
-                toMap_eq_infty_of_poleDivisor_pos := by sorry
-                exists_modulus_atTop_at_pole := by sorry
-                hasBranchedCoverDataOfPoleDegree := fun hcont =>
-                  absurd hcont
-                    (HolomorphicForms.not_continuous_indicator Q₁) }
-              : HolomorphicForms.Divisor X)
-            = -D := rfl
-    rw [this, neg_add_cancel]
+    change HolomorphicForms.Divisor.Effective (-D + D)
+    rw [neg_add_cancel]
     exact HolomorphicForms.Divisor.effective_zero
 
 /-- **Round-24 R10/1 assembly (sorry-free).** -/
@@ -1173,22 +1231,84 @@ theorem thirdKindData_from_genus_zero
   set D : HolomorphicForms.Divisor X :=
     HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂ with hD
   let f : HolomorphicForms.MeromorphicMapToSphere X :=
-    { toMap := fun x => if x = Q₁ then (OnePoint.infty : OnePoint ℂ)
+    { toMap := fun x => if x = Q₁ ∨ x = Q₂ then (OnePoint.infty : OnePoint ℂ)
                         else (((0 : ℂ) : OnePoint ℂ))
       locally_meromorphic := True
       zeroDivisor := 0
       poleDivisor := D
       principalDivisor := -D
       principalDivisor_eq := by simp
-      poleDivisor_nonneg := by sorry
+      poleDivisor_nonneg := two_point_effective X Q₁ Q₂
       zero_or_pole_eq_zero := fun _ => Or.inl rfl
-      toMap_ne_infty_of_poleDivisor_zero := by sorry
-      continuousOn_ne_infty := by sorry
-      toFiniteFun_mdifferentiable := by sorry
-      toMap_eq_infty_of_poleDivisor_pos := by sorry
+      toMap_ne_infty_of_poleDivisor_zero := by
+        intro x hx hbad
+        haveI : DecidableEq X := Classical.decEq X
+        have hx_in : x = Q₁ ∨ x = Q₂ := by
+          by_contra h
+          push_neg at h
+          rw [if_neg (fun hh => hh.elim h.1 h.2)] at hbad
+          exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+        have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+            HolomorphicForms.Divisor X) Q₁ = 1 :=
+          HolomorphicForms.Divisor.point_apply_self Q₁
+        have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+            HolomorphicForms.Divisor X) Q₁ = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne hne
+        have hp1' : (HolomorphicForms.Divisor.point Q₁ :
+            HolomorphicForms.Divisor X) Q₂ = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne (Ne.symm hne)
+        have hp2' : (HolomorphicForms.Divisor.point Q₂ :
+            HolomorphicForms.Divisor X) Q₂ = 1 :=
+          HolomorphicForms.Divisor.point_apply_self Q₂
+        rcases hx_in with hx_Q1 | hx_Q2
+        · have hD_Q1 : D Q₁ = 1 := by
+            have heq : D Q₁ = (HolomorphicForms.Divisor.point Q₁) Q₁ +
+                              (HolomorphicForms.Divisor.point Q₂) Q₁ :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1, hp2, add_zero]
+          rw [hx_Q1, hD_Q1] at hx
+          exact one_ne_zero hx
+        · have hD_Q2 : D Q₂ = 1 := by
+            have heq : D Q₂ = (HolomorphicForms.Divisor.point Q₁) Q₂ +
+                              (HolomorphicForms.Divisor.point Q₂) Q₂ :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1', hp2', zero_add]
+          rw [hx_Q2, hD_Q2] at hx
+          exact one_ne_zero hx
+      continuousOn_ne_infty := by
+        refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+        intro x hx
+        by_cases h : x = Q₁ ∨ x = Q₂
+        · exact absurd (if_pos h) hx
+        · exact if_neg h
+      toFiniteFun_mdifferentiable := by
+        intro g hg
+        have h := congrFun hg Q₁
+        simp only [if_pos (Or.inl rfl)] at h
+        exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
+      toMap_eq_infty_of_poleDivisor_pos := by
+        intro P hP
+        haveI : DecidableEq X := Classical.decEq X
+        have hP_in : P = Q₁ ∨ P = Q₂ := by
+          by_contra h
+          push_neg at h
+          have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+              HolomorphicForms.Divisor X) P = 0 :=
+            HolomorphicForms.Divisor.point_apply_ne h.1
+          have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+              HolomorphicForms.Divisor X) P = 0 :=
+            HolomorphicForms.Divisor.point_apply_ne h.2
+          have hD_P : D P = 0 := by
+            have heq : D P = (HolomorphicForms.Divisor.point Q₁) P +
+                             (HolomorphicForms.Divisor.point Q₂) P :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1, hp2, add_zero]
+          rw [hD_P] at hP
+          exact lt_irrefl 0 hP
+        exact if_pos hP_in
       exists_modulus_atTop_at_pole := by sorry
       hasBranchedCoverDataOfPoleDegree := fun hcont =>
-        absurd hcont (HolomorphicForms.not_continuous_indicator Q₁) }
+        absurd hcont (HolomorphicForms.not_continuous_two_point_indicator Q₁ Q₂) }
   exact ⟨{ data := { meromorphicMap := f
                      principal := f.principal
                      principal_eq := rfl }
@@ -1255,22 +1375,84 @@ theorem pole_full_two_point_of_nonconstant_in_RR_space_aux
   set D : HolomorphicForms.Divisor X :=
     HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂ with hD
   let f : HolomorphicForms.MeromorphicMapToSphere X :=
-    { toMap := fun x => if x = Q₁ then (OnePoint.infty : OnePoint ℂ)
+    { toMap := fun x => if x = Q₁ ∨ x = Q₂ then (OnePoint.infty : OnePoint ℂ)
                         else (((0 : ℂ) : OnePoint ℂ))
       locally_meromorphic := True
       zeroDivisor := 0
       poleDivisor := D
       principalDivisor := -D
       principalDivisor_eq := by simp
-      poleDivisor_nonneg := by sorry
+      poleDivisor_nonneg := two_point_effective X Q₁ Q₂
       zero_or_pole_eq_zero := fun _ => Or.inl rfl
-      toMap_ne_infty_of_poleDivisor_zero := by sorry
-      continuousOn_ne_infty := by sorry
-      toFiniteFun_mdifferentiable := by sorry
-      toMap_eq_infty_of_poleDivisor_pos := by sorry
+      toMap_ne_infty_of_poleDivisor_zero := by
+        intro x hx hbad
+        haveI : DecidableEq X := Classical.decEq X
+        have hx_in : x = Q₁ ∨ x = Q₂ := by
+          by_contra h
+          push_neg at h
+          rw [if_neg (fun hh => hh.elim h.1 h.2)] at hbad
+          exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+        have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+            HolomorphicForms.Divisor X) Q₁ = 1 :=
+          HolomorphicForms.Divisor.point_apply_self Q₁
+        have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+            HolomorphicForms.Divisor X) Q₁ = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne hne
+        have hp1' : (HolomorphicForms.Divisor.point Q₁ :
+            HolomorphicForms.Divisor X) Q₂ = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne (Ne.symm hne)
+        have hp2' : (HolomorphicForms.Divisor.point Q₂ :
+            HolomorphicForms.Divisor X) Q₂ = 1 :=
+          HolomorphicForms.Divisor.point_apply_self Q₂
+        rcases hx_in with hx_Q1 | hx_Q2
+        · have hD_Q1 : D Q₁ = 1 := by
+            have heq : D Q₁ = (HolomorphicForms.Divisor.point Q₁) Q₁ +
+                              (HolomorphicForms.Divisor.point Q₂) Q₁ :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1, hp2, add_zero]
+          rw [hx_Q1, hD_Q1] at hx
+          exact one_ne_zero hx
+        · have hD_Q2 : D Q₂ = 1 := by
+            have heq : D Q₂ = (HolomorphicForms.Divisor.point Q₁) Q₂ +
+                              (HolomorphicForms.Divisor.point Q₂) Q₂ :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1', hp2', zero_add]
+          rw [hx_Q2, hD_Q2] at hx
+          exact one_ne_zero hx
+      continuousOn_ne_infty := by
+        refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+        intro x hx
+        by_cases h : x = Q₁ ∨ x = Q₂
+        · exact absurd (if_pos h) hx
+        · exact if_neg h
+      toFiniteFun_mdifferentiable := by
+        intro g hg
+        have h := congrFun hg Q₁
+        simp only [if_pos (Or.inl rfl)] at h
+        exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
+      toMap_eq_infty_of_poleDivisor_pos := by
+        intro P hP
+        haveI : DecidableEq X := Classical.decEq X
+        have hP_in : P = Q₁ ∨ P = Q₂ := by
+          by_contra h
+          push_neg at h
+          have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+              HolomorphicForms.Divisor X) P = 0 :=
+            HolomorphicForms.Divisor.point_apply_ne h.1
+          have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+              HolomorphicForms.Divisor X) P = 0 :=
+            HolomorphicForms.Divisor.point_apply_ne h.2
+          have hD_P : D P = 0 := by
+            have heq : D P = (HolomorphicForms.Divisor.point Q₁) P +
+                             (HolomorphicForms.Divisor.point Q₂) P :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1, hp2, add_zero]
+          rw [hD_P] at hP
+          exact lt_irrefl 0 hP
+        exact if_pos hP_in
       exists_modulus_atTop_at_pole := by sorry
       hasBranchedCoverDataOfPoleDegree := fun hcont =>
-        absurd hcont (HolomorphicForms.not_continuous_indicator Q₁) }
+        absurd hcont (HolomorphicForms.not_continuous_two_point_indicator Q₁ Q₂) }
   exact ⟨{ data := { meromorphicMap := f
                      principal := f.principal
                      principal_eq := rfl }
@@ -2074,8 +2256,13 @@ theorem meromorphicMapToSphere_package_of_two_point_principal
       exact HolomorphicForms.Divisor.effective_point Q₂
     zero_or_pole_eq_zero := by sorry
     toMap_ne_infty_of_poleDivisor_zero := by sorry
-    continuousOn_ne_infty := by sorry
-    toFiniteFun_mdifferentiable := by sorry
+    continuousOn_ne_infty :=
+      -- `continuousOn_ne_infty` depends only on `toMap`; inherit from input.
+      data.meromorphicMap.continuousOn_ne_infty
+    toFiniteFun_mdifferentiable :=
+      -- toMap is unchanged from `data.meromorphicMap`; this field depends
+      -- only on `toMap`, so we inherit the existing witness.
+      data.meromorphicMap.toFiniteFun_mdifferentiable
     toMap_eq_infty_of_poleDivisor_pos := by sorry
     exists_modulus_atTop_at_pole := by sorry
     hasBranchedCoverDataOfPoleDegree := by sorry }, rfl, rfl, rfl⟩
