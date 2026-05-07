@@ -357,6 +357,89 @@ lemma exists_two_distinct_points_of_chartedSpaceComplex
   apply hz_ne_φp
   rw [hpq, φ.right_inv hz_in_target]
 
+/-- A `ChartedSpace ℂ`-equipped nonempty space contains at least three
+distinct points. The argument is parallel to
+`exists_two_distinct_points_of_chartedSpaceComplex` but picks two
+distinct values inside the open chart-target ball. -/
+lemma exists_three_distinct_points_of_chartedSpaceComplex
+    {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X] :
+    ∃ p q r : X, p ≠ q ∧ p ≠ r ∧ q ≠ r := by
+  let p : X := Classical.arbitrary X
+  let φ := chartAt ℂ p
+  have hp_src : p ∈ φ.source := mem_chart_source ℂ p
+  have hφp : φ p ∈ φ.target := φ.map_source hp_src
+  obtain ⟨ε, hε, hball⟩ :=
+    Metric.isOpen_iff.mp φ.open_target (φ p) hφp
+  set z₁ : ℂ := φ p + ((ε / 2 : ℝ) : ℂ) with hz1_def
+  set z₂ : ℂ := φ p + ((ε / 3 : ℝ) : ℂ) with hz2_def
+  have hz1_ne_φp : z₁ ≠ φ p := by
+    intro heq
+    have h0 : ((ε / 2 : ℝ) : ℂ) = 0 := by
+      have h := sub_eq_zero.mpr heq
+      rw [hz1_def] at h
+      simpa using h
+    have : (ε / 2 : ℝ) = 0 := by exact_mod_cast h0
+    linarith
+  have hz2_ne_φp : z₂ ≠ φ p := by
+    intro heq
+    have h0 : ((ε / 3 : ℝ) : ℂ) = 0 := by
+      have h := sub_eq_zero.mpr heq
+      rw [hz2_def] at h
+      simpa using h
+    have : (ε / 3 : ℝ) = 0 := by exact_mod_cast h0
+    linarith
+  have hz1_ne_z2 : z₁ ≠ z₂ := by
+    intro heq
+    have h_diff : ((ε / 2 : ℝ) : ℂ) = ((ε / 3 : ℝ) : ℂ) := by
+      have h_sub : z₁ - z₂ = 0 := sub_eq_zero.mpr heq
+      have h_eq : z₁ - z₂ = ((ε / 2 : ℝ) : ℂ) - ((ε / 3 : ℝ) : ℂ) := by
+        rw [hz1_def, hz2_def]; ring
+      rw [h_eq] at h_sub
+      exact sub_eq_zero.mp h_sub
+    have : (ε / 2 : ℝ) = (ε / 3 : ℝ) := by exact_mod_cast h_diff
+    linarith
+  have hd1 : dist z₁ (φ p) = ε / 2 := by
+    rw [hz1_def, dist_eq_norm, add_sub_cancel_left, Complex.norm_real,
+        Real.norm_eq_abs, abs_of_pos (by linarith : (0 : ℝ) < ε / 2)]
+  have hd2 : dist z₂ (φ p) = ε / 3 := by
+    rw [hz2_def, dist_eq_norm, add_sub_cancel_left, Complex.norm_real,
+        Real.norm_eq_abs, abs_of_pos (by linarith : (0 : ℝ) < ε / 3)]
+  have hz1_in : z₁ ∈ φ.target := hball (by rw [Metric.mem_ball, hd1]; linarith)
+  have hz2_in : z₂ ∈ φ.target := hball (by rw [Metric.mem_ball, hd2]; linarith)
+  refine ⟨p, φ.symm z₁, φ.symm z₂, ?_, ?_, ?_⟩
+  · intro h
+    apply hz1_ne_φp
+    rw [h, φ.right_inv hz1_in]
+  · intro h
+    apply hz2_ne_φp
+    rw [h, φ.right_inv hz2_in]
+  · intro h
+    apply hz1_ne_z2
+    have := congrArg φ h
+    rw [φ.right_inv hz1_in, φ.right_inv hz2_in] at this
+    exact this
+
+/-- Given `p q : X` in a `ChartedSpace ℂ`-equipped nonempty space,
+there is a third point `r` distinct from both `p` and `q`. -/
+lemma exists_distinct_from_pair_of_chartedSpaceComplex
+    {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X]
+    (p q : X) : ∃ r : X, r ≠ p ∧ r ≠ q := by
+  obtain ⟨a, b, c, hab, hac, hbc⟩ :=
+    exists_three_distinct_points_of_chartedSpaceComplex (X := X)
+  by_cases ha : a = p ∨ a = q
+  · by_cases hb : b = p ∨ b = q
+    · by_cases hc : c = p ∨ c = q
+      · -- All three of a, b, c lie in {p, q}, but they are pairwise distinct: pigeonhole.
+        exfalso
+        rcases ha with rfl | rfl <;> rcases hb with rfl | rfl <;> rcases hc with rfl | rfl <;>
+          first
+            | exact hab rfl
+            | exact hac rfl
+            | exact hbc rfl
+      · exact ⟨c, fun h => hc (Or.inl h), fun h => hc (Or.inr h)⟩
+    · exact ⟨b, fun h => hb (Or.inl h), fun h => hb (Or.inr h)⟩
+  · exact ⟨a, fun h => ha (Or.inl h), fun h => ha (Or.inr h)⟩
+
 open Classical in
 /-- An "indicator" function `X → OnePoint ℂ` sending one chosen point
 to `∞` and all others to `0` is *not* continuous on a connected,
@@ -398,6 +481,60 @@ lemma not_continuous_indicator
     have hb : b ∈ ({p} : Set X) := huniv ▸ Set.mem_univ b
     rw [Set.mem_singleton_iff] at ha hb
     exact hab (ha.trans hb.symm)
+
+open Classical in
+/-- The two-point analog of `not_continuous_indicator`: the indicator
+`X → OnePoint ℂ` sending the chosen pair `{p, q}` to `∞` and all other
+points to `0` is *not* continuous on a connected, T2, charted-on-`ℂ`
+space. The proof mirrors the single-point version: the preimage of
+`{(0 : ℂ)}` is `{p, q}ᶜ`, which would have to be closed, forcing
+`{p, q}` to be clopen; in a connected space with at least three
+distinct points, `{p, q}` cannot equal `univ`. -/
+lemma not_continuous_two_point_indicator
+    {X : Type*} [TopologicalSpace X] [T2Space X] [ConnectedSpace X]
+    [ChartedSpace ℂ X] (p q : X) :
+    ¬ Continuous (fun x : X => if x = p ∨ x = q then (OnePoint.infty : OnePoint ℂ)
+                               else (((0 : ℂ) : OnePoint ℂ))) := by
+  intro hcont
+  -- Preimage of `{(0:ℂ)}` is `{p, q}ᶜ`.
+  have hpre_eq :
+      (fun x : X => if x = p ∨ x = q then (OnePoint.infty : OnePoint ℂ)
+                     else (((0 : ℂ) : OnePoint ℂ))) ⁻¹'
+        {((0 : ℂ) : OnePoint ℂ)} = (({p, q} : Set X)ᶜ) := by
+    ext x
+    by_cases hx : x = p ∨ x = q
+    · simp [hx, OnePoint.infty_ne_coe (0 : ℂ), Set.mem_insert_iff]
+    · push_neg at hx
+      simp [hx.1, hx.2, Set.mem_insert_iff]
+  -- `{(0:ℂ)}` is closed in OnePoint ℂ.
+  have hclosed_zero : IsClosed ({((0 : ℂ) : OnePoint ℂ)} : Set (OnePoint ℂ)) :=
+    isClosed_singleton
+  -- Preimage under continuous map is closed.
+  have hclosed_compl : IsClosed (({p, q} : Set X)ᶜ) :=
+    hpre_eq ▸ hclosed_zero.preimage hcont
+  -- Therefore `{p, q}` is open.
+  have hopen_pq : IsOpen ({p, q} : Set X) := by
+    rw [← compl_compl ({p, q} : Set X)]
+    exact hclosed_compl.isOpen_compl
+  -- `{p, q}` is closed in T2 (finite union of closed singletons).
+  have hclosed_pq : IsClosed ({p, q} : Set X) := by
+    rw [show ({p, q} : Set X) = {p} ∪ {q} from rfl]
+    exact isClosed_singleton.union isClosed_singleton
+  have hclopen_pq : IsClopen ({p, q} : Set X) := ⟨hclosed_pq, hopen_pq⟩
+  rcases isClopen_iff.mp hclopen_pq with hempty | huniv
+  · exact Set.notMem_empty p (hempty ▸ Set.mem_insert p {q})
+  · -- `univ = {p, q}` but X has at least 3 distinct points.
+    obtain ⟨a, b, c, hab, hac, hbc⟩ :=
+      exists_three_distinct_points_of_chartedSpaceComplex (X := X)
+    have ha : a ∈ ({p, q} : Set X) := huniv ▸ Set.mem_univ a
+    have hb : b ∈ ({p, q} : Set X) := huniv ▸ Set.mem_univ b
+    have hc : c ∈ ({p, q} : Set X) := huniv ▸ Set.mem_univ c
+    -- Each of a, b, c equals p or q. By pigeonhole, two are equal.
+    rcases ha with ha | ha <;> rcases hb with hb | hb <;> rcases hc with hc | hc <;>
+      first
+        | (exact hab (ha.trans hb.symm))
+        | (exact hac (ha.trans hc.symm))
+        | (exact hbc (hb.trans hc.symm))
 
 /-- **Structural axiom (S3c).** From `ℓ(D) ≥ 2` for some divisor `D`
 on a compact connected complex 1-manifold, there is a nonconstant
