@@ -23,7 +23,7 @@ Aristotle (the proofs are direct citations of `Function.invFunOn` API).
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
 
 /-- A local section of `mk` on the small ball `Metric.ball v r`. By
 definition it is the canonical `Function.invFunOn` and inherits all

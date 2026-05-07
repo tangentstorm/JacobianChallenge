@@ -12,7 +12,7 @@ the `map_continuous` packet from `Basic.lean`.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- The quotient projection sends `0` to `0`. -/
