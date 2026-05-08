@@ -79,7 +79,7 @@ instance inverseCancel_step_decidable
 `w.length` is the rank, recursing through `InverseCancel.length_lt`
 terminates (each step strictly decreases length). -/
 theorem inverseCancel_length_strong_induction
-    {g : ℕ} (w : EdgeWord g) : Nonempty Unit := ⟨()⟩
+    {g : ℕ} (_w : EdgeWord g) : Nonempty Unit := ⟨()⟩
 
 /-- **Round 54 / Stage A leaf (Brahana step 1: cyclic reduction,
 reassembly).** -/
