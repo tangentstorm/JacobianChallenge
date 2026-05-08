@@ -34,6 +34,10 @@ instance edgeWord_wordQuotient_topologicalSpace
     (g : ℕ) (w : EdgeWord g) : TopologicalSpace (EdgeWord.wordQuotient g w) :=
   inferInstanceAs (TopologicalSpace (Quotient _))
 
+instance edgeWord_wordQuotient_compactSpace
+    (g : ℕ) (w : EdgeWord g) : CompactSpace (EdgeWord.wordQuotient g w) :=
+  inferInstanceAs (CompactSpace (Quotient _))
+
 /-- **Round 49 / Stage A leaf.** Opaque "raw edge word" data of an
 edge-word presentation. Bundles the genus parameter together with the
 unstandardised list of letters. -/
@@ -71,9 +75,9 @@ theorem EdgeWordPresentation.toRawWord
 `InverseCancel` step from `w`": there's a ∃-step iff some adjacent
 pair is an inverse pair. The decidability witness is required to
 terminate the recursive cancellation. -/
-instance inverseCancel_step_decidable
+noncomputable instance inverseCancel_step_decidable
     {g : ℕ} (w : EdgeWord g) : Decidable (∃ v : EdgeWord g, EdgeWord.InverseCancel w v) :=
-  sorry -- Standard list decidability
+  Classical.propDecidable _
 
 /-- **Round 75 / Stage A leaf.** Strong induction on length: if
 `w.length` is the rank, recursing through `InverseCancel.length_lt`
@@ -275,9 +279,11 @@ theorem wordQuotient_continuous_bijection_to_M
 /-- **Round 49 / Stage A leaf (raw-word quotient ≃ₜ M, reassembly).** -/
 theorem edgeWord_wordQuotient_homeomorph_M
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
-    (E : EdgeWordPresentation M) (w : EdgeWord E.extractedGenus) :
+    (E : EdgeWordPresentation M) (w : EdgeWord E.extractedGenus) (hw : w = E.word) :
     Nonempty (EdgeWord.wordQuotient E.extractedGenus w ≃ₜ M) := by
-  sorry
+  -- For w = E.word, we use the bijection from E.proj.
+  obtain ⟨f, hf_cts, hf_bij⟩ := wordQuotient_continuous_bijection_to_M E w hw
+  exact ⟨hf_cts.homeoOfEquivCompactToT2 (f := Equiv.ofBijective f hf_bij)⟩
 
 /-- **Round 49 / Stage A leaf (sorry-free assembly).** Combine the
 five leaves above into a `PolygonalQuotientPresentation M`.
@@ -297,12 +303,12 @@ noncomputable def EdgeWordPresentation.toPolygonalQuotient_via_tietze
       (⊤ : WithTop ℕ∞) M]
     [Orientable M]
     (E : EdgeWordPresentation M) : PolygonalQuotientPresentation M := by
-  let w := Classical.choice E.toRawWord
+  let w := E.word
   have htietze := rawWord_tietzeEq_standardWord_orientable E w
   let homeoWord := Classical.choice (wordQuotient_homeomorph_of_tietzeEq htietze)
   let homeoStd := Classical.choice
     (standardWord_wordQuotient_homeomorph_polygon4g E.extractedGenus)
-  let homeoM := Classical.choice (edgeWord_wordQuotient_homeomorph_M E w)
+  let homeoM := Classical.choice (edgeWord_wordQuotient_homeomorph_M E w rfl)
   -- Compose: Polygon4g g ≃ₜ wordQuotient (standardWord g) ≃ₜ wordQuotient w ≃ₜ M.
   let polyToM : Polygon4g E.extractedGenus ≃ₜ M :=
     homeoStd.symm.trans (homeoWord.symm.trans homeoM)
