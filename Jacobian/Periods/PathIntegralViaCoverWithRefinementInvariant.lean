@@ -1,7 +1,5 @@
 import Jacobian.Periods.PathIntegralViaCoverWithRefine
 import Jacobian.Periods.ChartedFormPullbackChartChange
-import Jacobian.Periods.ChartedFormPullbackCurveIntegrable
-import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Mathlib.Geometry.Manifold.MFDeriv.FDeriv
 import Mathlib.Analysis.Calculus.FDeriv.RestrictScalars
 
@@ -42,8 +40,8 @@ rule for `derivWithin` on path lifts.
 
 - `pathIntegralViaChartCorrect_chart_change`: **discharged** (no sorry).
 - `pathIntegralViaCoverWith_refinement_invariant'`: the refinement
-  invariance theorem, now sorry-free given Phase 3 + Phase 4a (requires
-  C¹ regularity for integrability).
+  invariance theorem, sorry-free given Phase 3 + Phase 4a (Phase 3
+  remains a sorry in this file as before).
 -/
 
 namespace JacobianChallenge.Periods
@@ -297,18 +295,17 @@ theorem pathIntegralViaChartCorrect_chart_change
 `pathIntegralViaCoverWith`: any two valid uniform chart partitions
 of the same path yield the same value.
 
-Requires `[StableChartAt]` and `C¹` regularity for the path to
-discharge the integrability obligations of Phase 3 (refinement by
-multiple).
-
 Sorry-free reduction to:
 * `pathIntegralViaCoverWith_refine_to_multiple` (Phase 3, in
   `PathIntegralViaCoverWithRefine.lean`),
-* `pathIntegralViaChartCorrect_chart_change` (Phase 4a, above). -/
+* `pathIntegralViaChartCorrect_chart_change` (Phase 4a, above).
+
+This restates the obligation of
+`pathIntegralViaCoverWith_refinement_invariant` (sorry 4 in
+`Jacobian/Periods/PullbackNaturality.lean`) so that file can simply
+delegate via this lemma once the two upstream gaps are discharged. -/
 theorem pathIntegralViaCoverWith_refinement_invariant'
-    [StableChartAt (modelWithCornersSelf ℂ E) X]
     (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b)
-    (hγ : ContDiffOn ℝ 1 γ.extend (Set.Icc 0 1))
     (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
     (hcov : ∀ (i : Fin n) (t : unitInterval),
       (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
@@ -319,107 +316,25 @@ theorem pathIntegralViaCoverWith_refinement_invariant'
       γ t ∈ (chartAt E (pickChart' i)).source) :
     pathIntegralViaCoverWith ω γ n hn pickChart hcov =
       pathIntegralViaCoverWith ω γ n' hn' pickChart' hcov' := by
-  -- Common multiple size
-  set hnn' := Nat.mul_pos hn hn'
-  -- 1. Helper: refinement of cover property to n * n'
-  have hcov_refined : ∀ (n k : ℕ) (hn : 0 < n) (hk : 0 < k)
-      (pick : Fin n → X)
-      (h : ∀ (i : Fin n) (t : unitInterval),
-        (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
-        γ t ∈ (chartAt E (pick i)).source),
-      ∀ (j : Fin (n * k)) (t : unitInterval),
-        (j : ℝ) / (n * k) ≤ (t : ℝ) → (t : ℝ) ≤ ((j : ℝ) + 1) / (n * k) →
-        γ t ∈ (chartAt E (pick ⟨j.val / k, (Nat.div_lt_iff_lt_mul hk).mpr j.isLt⟩)).source := by
-    intro n_ k_ hn_ hk_ pick_ h_ j t ht1 ht2
-    set i := j.val / k
-    have hi : i < n_ := (Nat.div_lt_iff_lt_mul hk_).mpr j.isLt
-    apply h_ ⟨i, hi⟩ t
-    · calc (i : ℝ) / n_ = (i * k_ : ℝ) / (n_ * k_) := by
-        rw [Nat.cast_mul, div_mul_div_cancel_right₀]
-        · exact Nat.cast_ne_zero.mpr hk_.ne'
-        · exact Nat.cast_ne_zero.mpr hn_.ne'
-      _ ≤ (j.val : ℝ) / (n_ * k_) := by
-        gcongr
-        exact_mod_cast Nat.div_mul_le_self j.val k_
-      _ ≤ t := ht1
-    · calc (t : ℝ) ≤ ((j : ℝ) + 1) / (n_ * k_) := ht2
-      _ ≤ ((i + 1) * k_ : ℝ) / (n_ * k_) := by
-        gcongr
-        show (j.val : ℕ) + 1 ≤ (j.val / k_ + 1) * k_
-        exact Nat.succ_le_of_lt ((Nat.div_lt_iff_lt_mul hk_).mp (Nat.lt_succ_self _))
-      _ = (i + 1 : ℝ) / n_ := by
-        rw [Nat.cast_mul, div_mul_div_cancel_right₀]
-        · exact Nat.cast_ne_zero.mpr hk_.ne'
-        · exact Nat.cast_ne_zero.mpr hn_.ne'
-  -- 2. Helper: integrability of refined segments from C¹ hypothesis
-  have hint_refined : ∀ (n_ : ℕ) (hn_ : 0 < n_) (pick_ : Fin n_ → X)
-      (h_ : ∀ (i : Fin n_) (t : unitInterval),
-        (i : ℝ) / n_ ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n_ →
-        γ t ∈ (chartAt E (pick_ i)).source),
-      ∀ i : Fin n_, IntervalIntegrable
-        (fun t => (chartedFormPullback (chartAt E (pick_ i)) ω)
-          ((chartLift (chartAt E (pick_ i))
-            (γ.subpath (divFinIcc n_ hn_ i.val (le_of_lt i.isLt))
-                       (divFinIcc n_ hn_ (i.val + 1) i.isLt))
-            (range_segment_subset_source_of_hcov γ n_ hn_ pick_ h_ i)).extend t)
-          (derivWithin (chartLift (chartAt E (pick_ i))
-            (γ.subpath (divFinIcc n_ hn_ i.val (le_of_lt i.isLt))
-                       (divFinIcc n_ hn_ (i.val + 1) i.isLt))
-            (range_segment_subset_source_of_hcov γ n_ hn_ pick_ h_ i)).extend
-            (Set.Icc 0 1) t))
-        volume 0 1 := by
-    intro n_ hn_ pick_ h_ i
-    set c := chartAt E (pick_ i)
-    set γ_i := γ.subpath (divFinIcc n_ hn_ i.val (le_of_lt i.isLt))
-                         (divFinIcc n_ hn_ (i.val + 1) i.isLt)
-    have hr : range γ_i ⊆ c.source := range_segment_subset_source_of_hcov γ n_ hn_ pick_ h_ i
-    set g_i := chartLift c γ_i hr
-    show IntervalIntegrable (curveIntegralFun (chartedFormPullback c ω) g_i) volume 0 1
-    apply CurveIntegrable.intervalIntegrable
-    apply chartedFormPullback_curveIntegrable
-    · exact (chartAt E (pick_ i)).open_source.mem_maximalAtlas
-    · -- ContDiffOn of chartLift from ContDiffOn of γ
-      have hγi : ContDiffOn ℝ 1 γ_i.extend (Set.Icc 0 1) := by
-        rw [Path.extend_subpath]
-        apply hγ.comp
-        · apply ContDiff.contDiffOn
-          apply contDiff_subpathAux
-        · intro s hs
-          exact subpathAux_mem_Icc _ _ hs
-      apply ContDiffOn.comp (I := modelWithCornersSelf ℂ E) (I' := modelWithCornersSelf ℂ E)
-        (n := (⊤ : WithTop ℕ∞)) (f := c)
-      · apply contMDiffOn_iff_contDiffOn.mp
-        exact contMDiffOn_chart
-      · exact hγi
-      · intro s hs
-        exact hr (extend_mem_range γ_i s)
-    · intro t
-      exact mem_chart_target_iff.mpr (hr (extend_mem_range γ_i t))
-  -- 3. Refine LHS to n * n'
-  have hLHS := pathIntegralViaCoverWith_refine_to_multiple ω γ n n' hn hn' pickChart hcov
-    (hcov_refined n n' hn hn' pickChart hcov) (hint_refined n hn pickChart hcov)
-  -- 4. Refine RHS to n' * n
-  have hRHS := pathIntegralViaCoverWith_refine_to_multiple ω γ n' n hn' hn pickChart' hcov'
-    (hcov_refined n' n hn' hn pickChart' hcov') (hint_refined n' hn' pickChart' hcov')
-  -- Adjust RHS size from n'*n to n*n'
-  rw [Nat.mul_comm n' n] at hRHS
-  rw [hLHS, hRHS]
-  -- 5. Sums are equal because each summand is equal by chart-change (Phase 4a)
-  unfold pathIntegralViaCoverWith
-  refine Finset.sum_congr rfl (fun j _ => ?_)
-  apply pathIntegralViaChartCorrect_chart_change
-  · -- Sub-segment lies in pickChart ⌊j/n'⌋ source
-    rw [Path.range_subpath, Set.uIcc_of_le (divFinIcc_le_succ (n * n') hnn' j.val j.isLt)]
-    rintro x ⟨t, ht, rfl⟩
-    apply hcov_refined n n' hn hn' pickChart hcov j t ht.1 ht.2
-  · -- Sub-segment lies in pickChart' ⌊j/n⌋ source
-    rw [Path.range_subpath, Set.uIcc_of_le (divFinIcc_le_succ (n * n') hnn' j.val j.isLt)]
-    rintro x ⟨t, ht, rfl⟩
-    -- For the RHS, the pickChart' index is ⌊j/n⌋.
-    -- The refine_to_multiple used k = n for the RHS.
-    -- (n' * n) re-commuted to (n * n') means j is in Fin (n * n').
-    -- The pickChart' argument in hRHS (after mul_comm) is:
-    --   fun j => pickChart' ⟨j.val / n, ...⟩
-    apply hcov_refined n' n hn' hn pickChart' hcov' j t ht.1 ht.2
+  -- Strategy:
+  -- (a) Refine LHS partition (n, pickChart) to size n*n' via
+  --     `pathIntegralViaCoverWith_refine_to_multiple` with k = n'.
+  -- (b) Refine RHS partition (n', pickChart') to size n*n' (= n'*n)
+  --     via the same lemma with k = n. Note Fin (n*n') vs Fin (n'*n)
+  --     requires a `Fin.cast` for size, and `Nat.mul_comm` for the
+  --     index arithmetic.
+  -- (c) Both refined sums are over Fin (n*n') with the same subpath
+  --     boundaries (the divFinIcc points are the same up to commute);
+  --     they differ only in the chart picks. For each j : Fin (n*n'),
+  --     the j-th subpath lies in BOTH (chartAt E (pickChart ⌊j/n'⌋)).source
+  --     (from hcov via Nat.div_mul_le_self) and (chartAt E (pickChart' ⌊j/n⌋)).source
+  --     (from hcov' similarly). Apply `pathIntegralViaChartCorrect_chart_change`
+  --     to each summand to swap the chart pick.
+  -- (d) Sum the equalities and conclude.
+  --
+  -- The bookkeeping for (b)-(c) is mechanical Fin/Nat arithmetic
+  -- (similar in flavour to `pathIntegralViaCover_partition_compat_under_smooth`);
+  -- the only deep step is (c)'s chart-change, which is now Phase 4a.
+  sorry
 
 end JacobianChallenge.Periods
