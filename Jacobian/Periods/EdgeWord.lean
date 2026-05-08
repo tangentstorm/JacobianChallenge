@@ -100,10 +100,140 @@ inductive SideGen (g : ℕ) (w : EdgeWord g) : DiskC → DiskC → Prop
 def sidePairingRel (g : ℕ) (w : EdgeWord g) : DiskC → DiskC → Prop :=
   Relation.EqvGen (SideGen g w)
 
+/-- Length of the standard word for genus `g`. -/
+lemma standardWord_length (g : ℕ) : (standardWord g).length = 4 * g := by
+  unfold standardWord
+  simp [handleBlock, List.length_flatMap, List.finRange_length]
+
+/-- The letters in `standardWord g` at indices `4i`, `4i+1`, `4i+2`, `4i+3`. -/
+lemma standardWord_get_handle {g : ℕ} (i : Fin g) :
+    (standardWord g).get ⟨4 * i.val, by rw [standardWord_length]; exact Nat.mul_lt_mul_of_pos_left i.is_lt (by omega)⟩ = Letter.a i ∧
+    (standardWord g).get ⟨4 * i.val + 1, by rw [standardWord_length]; omega⟩ = Letter.b i ∧
+    (standardWord g).get ⟨4 * i.val + 2, by rw [standardWord_length]; omega⟩ = Letter.aInv i ∧
+    (standardWord g).get ⟨4 * i.val + 3, by rw [standardWord_length]; omega⟩ = Letter.bInv i := by
+  unfold standardWord handleBlock
+  simp [List.flatMap_get_index (fun _ => 4) (fun _ => rfl)]
+  constructor <;> rfl
+
+/-- Each letter appears exactly once in `standardWord g`. -/
+lemma standardWord_get_unique {g : ℕ} (ℓ : Letter g) :
+    ∃! i : Fin (standardWord g).length, (standardWord g).get i = ℓ := by
+  unfold standardWord
+  have h_flatMap : (List.finRange g).flatMap handleBlock = (standardWord g) := rfl
+  have h_nodup : (standardWord g).Nodup := by
+    rw [← h_flatMap]
+    apply List.nodup_flatMap_of_nodup
+    · exact List.nodup_finRange g
+    · intro i; unfold handleBlock; simp
+    · intro i j hij x hi hj
+      unfold handleBlock at hi hj
+      simp at hi hj; rcases hi with ⟨_|_|_|_⟩ <;> rcases hj with ⟨_|_|_|_⟩ <;> simp_all
+  have h_mem : ℓ ∈ (standardWord g) := by
+    rw [← h_flatMap, List.mem_flatMap]
+    exists (match ℓ with | Letter.a i => i | Letter.b i => i | Letter.aInv i => i | Letter.bInv i => i)
+    constructor
+    · exact List.mem_finRange _
+    · cases ℓ <;> simp [handleBlock]
+  exact List.nodup_iff_exists_unique_get.mp h_nodup ℓ h_mem
+
 /-- For the standard word, `sidePairingRel` agrees with `Polygon4g.SideRel`. -/
 theorem sidePairingRel_standardWord (g : ℕ) :
     sidePairingRel g (standardWord g) = Polygon4g.SideRel g := by
-  sorry
+  ext x y
+  constructor
+  · intro h
+    induction h with
+    | rel x y h =>
+      cases h with
+      | pair i j t ht hinv =>
+        let L := (standardWord g).length
+        have hL : L = 4 * g := standardWord_length g
+        let k : Fin g := ⟨i.val / 4, by
+          have : i.val < 4 * g := by rw [← hL]; exact i.is_lt
+          exact Nat.div_lt_of_lt_mul this⟩
+        let m := i.val % 4
+        have hi : i.val = 4 * k.val + m := Nat.div_add_mod i.val 4
+        have hm : m < 4 := Nat.mod_lt i.val (by omega)
+        have h_get_i : (standardWord g).get i = (standardWord g).get ⟨4 * k.val + m, by rw [hL]; omega⟩ := by
+          congr; exact hi
+        
+        interval_cases m
+        · -- m = 0: w[i] = a k, so w[j] = aInv k, so j = 4k + 2
+          have hi_val : (standardWord g).get i = Letter.a k := by
+            rw [h_get_i]; exact (standardWord_get_handle k).1
+          have hj_val : (standardWord g).get j = Letter.aInv k := by
+            rw [← hinv, hi_val]; rfl
+          have hj : j.val = 4 * k.val + 2 := by
+            let j' : Fin L := ⟨4 * k.val + 2, by rw [hL]; omega⟩
+            have hj' : (standardWord g).get j' = Letter.aInv k := (standardWord_get_handle k).2.2.1
+            exact (standardWord_get_unique (Letter.aInv k)).unique (hj_val) (hj')
+          rw [hi, hj, hL]
+          exact Polygon4g.mk_a_pair g k t ht
+        · -- m = 1: w[i] = b k, so w[j] = bInv k, so j = 4k + 3
+          have hi_val : (standardWord g).get i = Letter.b k := by
+            rw [h_get_i]; exact (standardWord_get_handle k).2.1
+          have hj_val : (standardWord g).get j = Letter.bInv k := by
+            rw [← hinv, hi_val]; rfl
+          have hj : j.val = 4 * k.val + 3 := by
+            let j' : Fin L := ⟨4 * k.val + 3, by rw [hL]; omega⟩
+            have hj' : (standardWord g).get j' = Letter.bInv k := (standardWord_get_handle k).2.2.2
+            exact (standardWord_get_unique (Letter.bInv k)).unique (hj_val) (hj')
+          rw [hi, hj, hL]
+          exact Polygon4g.mk_b_pair g k t ht
+        · -- m = 2: w[i] = aInv k, so w[j] = a k, so j = 4k
+          have hi_val : (standardWord g).get i = Letter.aInv k := by
+            rw [h_get_i]; exact (standardWord_get_handle k).2.2.1
+          have hj_val : (standardWord g).get j = Letter.a k := by
+            rw [← hinv, hi_val]; rfl
+          have hj : j.val = 4 * k.val := by
+            let j' : Fin L := ⟨4 * k.val, by rw [hL]; omega⟩
+            have hj' : (standardWord g).get j' = Letter.a k := (standardWord_get_handle k).1
+            exact (standardWord_get_unique (Letter.a k)).unique (hj_val) (hj')
+          rw [hi, hj, hL]
+          -- Reverse of a_pair
+          have h_rel := Polygon4g.mk_a_pair g k (1 - t) (by simp [ht])
+          simp at h_rel; exact h_rel.symm
+        · -- m = 3: w[i] = bInv k, so w[j] = b k, so j = 4k + 1
+          have hi_val : (standardWord g).get i = Letter.bInv k := by
+            rw [h_get_i]; exact (standardWord_get_handle k).2.2.2
+          have hj_val : (standardWord g).get j = Letter.b k := by
+            rw [← hinv, hi_val]; rfl
+          have hj : j.val = 4 * k.val + 1 := by
+            let j' : Fin L := ⟨4 * k.val + 1, by rw [hL]; omega⟩
+            have hj' : (standardWord g).get j' = Letter.b k := (standardWord_get_handle k).2.1
+            exact (standardWord_get_unique (Letter.b k)).unique (hj_val) (hj')
+          rw [hi, hj, hL]
+          -- Reverse of b_pair
+          have h_rel := Polygon4g.mk_b_pair g k (1 - t) (by simp [ht])
+          simp at h_rel; exact h_rel.symm
+    | refl x => exact Relation.EqvGen.refl x
+    | symm x y h ih => exact Relation.EqvGen.symm x y ih
+    | trans x y z h1 h2 ih1 ih2 => exact Relation.EqvGen.trans x y z ih1 ih2
+  · intro h
+    induction h with
+    | rel x y h =>
+      cases h with
+      | a_pair i t ht =>
+        apply Relation.EqvGen.rel
+        have hL := standardWord_length g
+        let idx_i : Fin (standardWord g).length := ⟨4 * i.val, by rw [hL]; omega⟩
+        let idx_j : Fin (standardWord g).length := ⟨4 * i.val + 2, by rw [hL]; omega⟩
+        have hi : (standardWord g).get idx_i = Letter.a i := (standardWord_get_handle i).1
+        have hj : (standardWord g).get idx_j = Letter.aInv i := (standardWord_get_handle i).2.2.1
+        apply SideGen.pair idx_i idx_j t ht
+        rw [hi, hj]; rfl
+      | b_pair i t ht =>
+        apply Relation.EqvGen.rel
+        have hL := standardWord_length g
+        let idx_i : Fin (standardWord g).length := ⟨4 * i.val + 1, by rw [hL]; omega⟩
+        let idx_j : Fin (standardWord g).length := ⟨4 * i.val + 3, by rw [hL]; omega⟩
+        have hi : (standardWord g).get idx_i = Letter.b i := (standardWord_get_handle i).2.1
+        have hj : (standardWord g).get idx_j = Letter.bInv i := (standardWord_get_handle i).2.2.2
+        apply SideGen.pair idx_i idx_j t ht
+        rw [hi, hj]; rfl
+    | refl x => exact Relation.EqvGen.refl x
+    | symm x y h ih => exact Relation.EqvGen.symm x y ih
+    | trans x y z h1 h2 ih1 ih2 => exact Relation.EqvGen.trans x y z ih1 ih2
 
 
 /-- `sidePairingRel` is an equivalence relation. -/
