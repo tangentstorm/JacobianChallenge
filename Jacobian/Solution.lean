@@ -102,7 +102,7 @@ section
 
 -- let X be a compact Riemann surface
 variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
-  [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
+  [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 -- this proof avoids the hack answer `∀ X, genus X = 0`
 -- Refinement (Round 1, top-down): delegated to the named obligation
@@ -115,7 +115,7 @@ end
 
 -- Type-0-specialised section for the Jacobian-related declarations.
 variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
-  [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
+  [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 -- data
 /-- The Jacobian of a compact Riemann surface.
@@ -136,7 +136,8 @@ match. The `ULift` in the body is now degenerate (`ULift.{0,0}` is
 `ULift` to the same universe) but kept for shape parity with the
 universe-poly intent. -/
 noncomputable def Jacobian (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] : Type :=
+    [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] : Type :=
   ULift (JacobianChallenge.ComplexTorus.quotient
     (Fin (genus X) → ℂ) (JacobianChallenge.Periods.periodFullComplexLattice X))
 
@@ -203,7 +204,7 @@ lemma ofCurve_inj (P : X) (h : 0 < genus X) : Function.Injective (ofCurve P) := 
   exact ULift.up_injective hab
 
 variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
-  [ChartedSpace ℂ Y] [IsManifold 𝓘(ℂ) ω Y]
+  [ChartedSpace ℂ Y] [IsManifold 𝓘(ℂ) ω Y] [JacobianChallenge.Periods.StableChartAt ℂ Y]
 
 variable (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
 
@@ -245,7 +246,7 @@ lemma pushforward_id_apply (P : Jacobian X) : pushforward id contMDiff_id P = P 
   rfl
 
 variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
-  [ChartedSpace ℂ Z] [IsManifold 𝓘(ℂ) ω Z]
+  [ChartedSpace ℂ Z] [IsManifold 𝓘(ℂ) ω Z] [JacobianChallenge.Periods.StableChartAt ℂ Z]
 
 variable (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
 
