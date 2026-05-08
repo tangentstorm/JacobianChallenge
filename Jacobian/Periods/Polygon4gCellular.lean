@@ -250,6 +250,14 @@ identifies its index cardinality with `2(g+1)` using
 linear equivalence with `Basis.equivFun.symm`. The output is a genuine
 basis-derived iso, not a finrank-driven existence statement. -/
 
+/-- **Bridge (Cellular-Singular).** The cellular homology of the
+fundamental polygon is isomorphic to its singular homology.
+Mathlib gap: the general cellular-singular comparison. For the
+polygon we provide this as a named project-side bridge. -/
+theorem polygon4g_cellular_singular_iso (g : ℕ) :
+    Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] singularH1 (Polygon4g g)) :=
+  sorry
+
 /-- **Stage A leaf (C1b, round 6 sub-leaf).** The cellular/Hurewicz
 iso for `Polygon4g (g+1)`: there exists a ℤ-linear isomorphism between
 the free ℤ-module `Polygon4gAbelianization g` (= `Fin (2(g+1)) → ℤ`)
