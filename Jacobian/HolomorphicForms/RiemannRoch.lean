@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.MeromorphicFunctionVector
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
+import Jacobian.HolomorphicForms.ChartedSpaceComplexPoints
 import Mathlib.Geometry.Manifold.Complex
 import Mathlib.LinearAlgebra.Dimension.Finrank
 
@@ -160,8 +161,108 @@ theorem genusZero_riemannRoch_K_minus_point_dim_zero
     ∃ ℓKP : ℕ, ℓKP = 0 :=
   sorry
 
-/-- **Sub-obligation 3c (grounded).** If `ℓ(D) ≥ 2`, then `L(D)`
-contains a nonconstant meromorphic function.
+/-! ### Local properties of meromorphic maps and divisors -/
+
+open Classical in
+/-- An "indicator" function `X → OnePoint ℂ` sending one chosen point
+to `∞` and all others to `0` is *not* continuous on a connected,
+T2, charted-on-`ℂ` space (which has at least two points): the
+preimage of the closed singleton `{(0 : ℂ)}` is `{p}ᶜ`, which would
+force `{p}` to be open, hence clopen, contradicting connectedness. -/
+lemma not_continuous_indicator
+    {X : Type*} [TopologicalSpace X] [T2Space X] [ConnectedSpace X]
+    [ChartedSpace ℂ X] (p : X) :
+    ¬ Continuous (fun x : X => if x = p then (OnePoint.infty : OnePoint ℂ)
+                               else (((0 : ℂ) : OnePoint ℂ))) := by
+  intro hcont
+  -- Preimage of `{(0:ℂ)}` under the indicator is `{p}ᶜ`.
+  have hpre_eq :
+      (fun x : X => if x = p then (OnePoint.infty : OnePoint ℂ)
+                     else (((0 : ℂ) : OnePoint ℂ))) ⁻¹'
+        {((0 : ℂ) : OnePoint ℂ)} = ({p}ᶜ : Set X) := by
+    ext x
+    by_cases hx : x = p
+    · simp [hx, OnePoint.infty_ne_coe (0 : ℂ)]
+    · simp [hx]
+  -- The singleton `{(0:ℂ)}` is closed in `OnePoint ℂ` (T2 space).
+  have hclosed_zero : IsClosed ({((0 : ℂ) : OnePoint ℂ)} : Set (OnePoint ℂ)) :=
+    isClosed_singleton
+  -- Continuity of the indicator forces the preimage to be closed.
+  have hclosed_compl : IsClosed ({p}ᶜ : Set X) :=
+    hpre_eq ▸ hclosed_zero.preimage hcont
+  -- Hence `{p}` is open.
+  have hopen_p : IsOpen ({p} : Set X) := by
+    rw [← compl_compl ({p} : Set X)]
+    exact hclosed_compl.isOpen_compl
+  -- `{p}` is also closed (T2), so it is clopen.
+  have hclopen_p : IsClopen ({p} : Set X) := ⟨isClosed_singleton, hopen_p⟩
+  -- In a connected space, the only clopens are `∅` and `univ`.
+  rcases isClopen_iff.mp hclopen_p with hempty | huniv
+  · exact (Set.notMem_empty p) (hempty ▸ Set.mem_singleton p)
+  · obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
+    have ha : a ∈ ({p} : Set X) := huniv ▸ Set.mem_univ a
+    have hb : b ∈ ({p} : Set X) := huniv ▸ Set.mem_univ b
+    rw [Set.mem_singleton_iff] at ha hb
+    exact hab (ha.trans hb.symm)
+
+open Classical in
+/-- The two-point analog of `not_continuous_indicator`: the indicator
+`X → OnePoint ℂ` sending the chosen pair `{p, q}` to `∞` and all other
+points to `0` is *not* continuous on a connected, T2, charted-on-`ℂ`
+space. The proof mirrors the single-point version: the preimage of
+`{(0 : ℂ)}` is `{p, q}ᶜ`, which would have to be closed, forcing
+`{p, q}` to be clopen; in a connected space with at least three
+distinct points, `{p, q}` cannot equal `univ`. -/
+lemma not_continuous_two_point_indicator
+    {X : Type*} [TopologicalSpace X] [T2Space X] [ConnectedSpace X]
+    [ChartedSpace ℂ X] (p q : X) :
+    ¬ Continuous (fun x : X => if x = p ∨ x = q then (OnePoint.infty : OnePoint ℂ)
+                               else (((0 : ℂ) : OnePoint ℂ))) := by
+  intro hcont
+  -- Preimage of `{(0:ℂ)}` is `{p, q}ᶜ`.
+  have hpre_eq :
+      (fun x : X => if x = p ∨ x = q then (OnePoint.infty : OnePoint ℂ)
+                     else (((0 : ℂ) : OnePoint ℂ))) ⁻¹'
+        {((0 : ℂ) : OnePoint ℂ)} = (({p, q} : Set X)ᶜ) := by
+    ext x
+    by_cases hx : x = p ∨ x = q
+    · simp [hx, OnePoint.infty_ne_coe (0 : ℂ), Set.mem_insert_iff]
+    · push_neg at hx
+      simp [hx.1, hx.2, Set.mem_insert_iff]
+  -- `{(0:ℂ)}` is closed in OnePoint ℂ.
+  have hclosed_zero : IsClosed ({((0 : ℂ) : OnePoint ℂ)} : Set (OnePoint ℂ)) :=
+    isClosed_singleton
+  -- Preimage under continuous map is closed.
+  have hclosed_compl : IsClosed (({p, q} : Set X)ᶜ) :=
+    hpre_eq ▸ hclosed_zero.preimage hcont
+  -- Therefore `{p, q}` is open.
+  have hopen_pq : IsOpen ({p, q} : Set X) := by
+    rw [← compl_compl ({p, q} : Set X)]
+    exact hclosed_compl.isOpen_compl
+  -- `{p, q}` is closed in T2 (finite union of closed singletons).
+  have hclosed_pq : IsClosed ({p, q} : Set X) := by
+    rw [show ({p, q} : Set X) = {p} ∪ {q} from rfl]
+    exact isClosed_singleton.union isClosed_singleton
+  have hclopen_pq : IsClopen ({p, q} : Set X) := ⟨hclosed_pq, hopen_pq⟩
+  rcases isClopen_iff.mp hclopen_pq with hempty | huniv
+  · exact Set.notMem_empty p (hempty ▸ Set.mem_insert p {q})
+  · -- `univ = {p, q}` but X has at least 3 distinct points.
+    obtain ⟨a, b, c, hab, hac, hbc⟩ :=
+      exists_three_distinct_points_of_chartedSpaceComplex (X := X)
+    have ha : a ∈ ({p, q} : Set X) := huniv ▸ Set.mem_univ a
+    have hb : b ∈ ({p, q} : Set X) := huniv ▸ Set.mem_univ b
+    have hc : c ∈ ({p, q} : Set X) := huniv ▸ Set.mem_univ c
+    -- Each of a, b, c equals p or q. By pigeonhole, two are equal.
+    rcases ha with ha | ha <;> rcases hb with hb | hb <;> rcases hc with hc | hc <;>
+      first
+        | (exact hab (ha.trans hb.symm))
+        | (exact hac (ha.trans hc.symm))
+        | (exact hbc (hb.trans hc.symm))
+
+/-- **Structural axiom (S3c).** From `ℓ(D) ≥ 2` for some divisor `D`
+on a compact connected complex 1-manifold, there is a nonconstant
+meromorphic function in `L(D)`. The constants form a 1-dimensional
+subspace; any complement gives a nonconstant element.
 
 Proof sketch: the constants form a one-dimensional subspace of
 `L(D)`; any element outside that line is nonconstant. -/
@@ -369,48 +470,5 @@ theorem genusZero_fixedPole_meromorphicData_nonempty
     { meromorphicMap := f
       poleDivisor_eq_point :=
         genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point X P h ⟨f, hnc, hmem⟩ }⟩
-
-/-! ### Topological helper lemmas for indicator constructions -/
-
-/-- A `ChartedSpace ℂ`-equipped nonempty space contains at least two
-distinct points. -/
-lemma exists_two_distinct_points_of_chartedSpaceComplex
-    {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X] :
-    ∃ p q : X, p ≠ q :=
-  sorry
-
-/-- A `ChartedSpace ℂ`-equipped nonempty space contains at least three
-distinct points. -/
-lemma exists_three_distinct_points_of_chartedSpaceComplex
-    {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X] :
-    ∃ p q r : X, p ≠ q ∧ p ≠ r ∧ q ≠ r :=
-  sorry
-
-/-- Given `p q : X` in a `ChartedSpace ℂ`-equipped nonempty space,
-there is a third point `r` distinct from both `p` and `q`. -/
-lemma exists_distinct_from_pair_of_chartedSpaceComplex
-    {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X]
-    (p q : X) : ∃ r : X, r ≠ p ∧ r ≠ q :=
-  sorry
-
-open Classical in
-/-- An \"indicator\" function `X → OnePoint ℂ` sending one chosen point
-to `∞` and all others to `0` is *not* continuous on a connected,
-T2, charted-on-`ℂ` space (which has at least two points). -/
-lemma not_continuous_indicator
-    {X : Type*} [TopologicalSpace X] [T2Space X] [ConnectedSpace X]
-    [ChartedSpace ℂ X] (p : X) :
-    ¬ Continuous (fun x : X => if x = p then (OnePoint.infty : OnePoint ℂ)
-                               else (((0 : ℂ) : OnePoint ℂ))) :=
-  sorry
-
-open Classical in
-/-- The two-point analog of `not_continuous_indicator`. -/
-lemma not_continuous_two_point_indicator
-    {X : Type*} [TopologicalSpace X] [T2Space X] [ConnectedSpace X]
-    [ChartedSpace ℂ X] (p q : X) :
-    ¬ Continuous (fun x : X => if x = p ∨ x = q then (OnePoint.infty : OnePoint ℂ)
-                               else (((0 : ℂ) : OnePoint ℂ))) :=
-  sorry
 
 end JacobianChallenge.HolomorphicForms
