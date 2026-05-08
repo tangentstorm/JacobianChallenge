@@ -1,4 +1,5 @@
 import Mathlib.Data.Finsupp.Weight
+import Mathlib.Tactic.Linarith
 
 /-!
 # Divisors on compact Riemann surfaces
@@ -20,40 +21,27 @@ abbrev Divisor (X : Type*) : Type _ :=
 
 namespace Divisor
 
-variable {X : Type*}
-
 /-- The degree of a divisor, i.e. the sum of its coefficients. -/
-def degree : Divisor X →+ ℤ :=
+def degree {X : Type*} : Divisor X →+ ℤ :=
   Finsupp.degree
 
 /-- The divisor consisting of the point `P` with coefficient `1`. -/
-def point (P : X) : Divisor X :=
+def point {X : Type*} (P : X) : Divisor X :=
   Finsupp.single P 1
 
-@[simp] theorem degree_zero : degree (0 : Divisor X) = 0 :=
-  rfl
+/-- An effective divisor has nonnegative coefficient at every point. -/
+def Effective {X : Type*} (D : Divisor X) : Prop :=
+  ∀ Q : X, 0 ≤ D Q
 
-@[simp] theorem point_apply_self [DecidableEq X] (P : X) :
+@[simp] theorem point_apply_self {X : Type*} [DecidableEq X] (P : X) :
     point P P = 1 := by
   simp [point]
 
-@[simp] theorem point_apply_ne [DecidableEq X] {P Q : X} (h : Q ≠ P) :
+@[simp] theorem point_apply_ne {X : Type*} [DecidableEq X] {P Q : X} (h : Q ≠ P) :
     point P Q = 0 := by
   simp [point, h]
 
-@[simp] theorem degree_point (P : X) :
-    degree (point P : Divisor X) = 1 := by
-  exact Finsupp.degree_single P 1
-
-/-- An effective divisor has nonnegative coefficient at every point. -/
-def Effective (D : Divisor X) : Prop :=
-  ∀ P, 0 ≤ D P
-
-@[simp] theorem effective_zero : Effective (0 : Divisor X) := by
-  intro P
-  simp
-
-theorem effective_point [DecidableEq X] (P : X) :
+theorem effective_point {X : Type*} [DecidableEq X] (P : X) :
     Effective (point P : Divisor X) := by
   intro Q
   by_cases h : Q = P
@@ -62,6 +50,11 @@ theorem effective_point [DecidableEq X] (P : X) :
   · simp [point, h]
 
 end Divisor
+
+theorem effective_le_point_iff_grounded {X : Type*} [DecidableEq X] (D : Divisor X) (P : X)
+    (heff : Divisor.Effective D) (hle : D ≤ Divisor.point P) (hne : D ≠ 0) :
+    D = Divisor.point P := by
+  sorry
 
 end
 
