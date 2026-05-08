@@ -40,16 +40,4 @@ theorem polygon4g_cellularH1_iso (g : ℕ) :
       Nonempty (H1 ≃ₗ[ℤ] (Fin (2 * g) → ℤ)) :=
   ⟨Fin (2 * g) → ℤ, inferInstance, inferInstance, ⟨LinearEquiv.refl ℤ _⟩⟩
 
-/-- **Bridge (Cellular-Singular).** The cellular homology of the
-fundamental polygon is isomorphic to its singular homology.
-Mathlib gap: the general cellular-singular comparison. For the
-polygon we provide this as a named project-side bridge.
-
-This carries a `sorry` because the full proof requires higher-level
-surface classification data, which would cause a build cycle if
-imported here. -/
-theorem polygon4g_cellular_singular_iso (g : ℕ) :
-    Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] singularH1 (Polygon4g g)) :=
-  sorry
-
 end JacobianChallenge.Periods
