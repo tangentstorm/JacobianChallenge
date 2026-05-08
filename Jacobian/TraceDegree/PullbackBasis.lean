@@ -42,12 +42,15 @@ open JacobianChallenge.ComplexTorus
 variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [StableChartAt ℂ X]
 variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+  [StableChartAt ℂ Y]
 variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
   [ConnectedSpace Z] [ChartedSpace ℂ Z]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
+  [StableChartAt ℂ Z]
 
 /-- The basis-coordinate form pullback as a `ℂ`-linear map.
 Sorry-free: use the `holomorphicTraceCoord` from `PushforwardBasis.lean`. -/
@@ -191,9 +194,11 @@ structure BasisAnalyticPullbackBundle
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [StableChartAt ℂ X]
     (Y : Type) [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
     [ConnectedSpace Y] [ChartedSpace ℂ Y]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    [StableChartAt ℂ Y]
     (_f : X → Y) (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω _f) where
   /-- The pullback as a continuous additive group homomorphism on the
   basis-aligned carrier. -/

@@ -1,5 +1,6 @@
 import Jacobian.TraceDegree.PullbackBasis
 import Jacobian.TraceDegree.PushforwardBasis
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Analytic degree and the trace–pullback identity
@@ -26,14 +27,16 @@ descended through the period quotient.
 namespace JacobianChallenge.TraceDegree
 
 open scoped ContDiff Manifold
-open JacobianChallenge.AbelJacobi
+open JacobianChallenge.AbelJacobi JacobianChallenge.Periods
 
 variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [StableChartAt ℂ X]
 variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+  [StableChartAt ℂ Y]
 
 /-- The (analytic) degree of a holomorphic map `f : X → Y` of compact
 Riemann surfaces. Extracted from `basisAnalyticPullbackBundle.degree`.

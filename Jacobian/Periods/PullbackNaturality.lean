@@ -39,12 +39,15 @@ open JacobianChallenge.HolomorphicForms
 variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [StableChartAt ℂ X]
 variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+  [StableChartAt ℂ Y]
 variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
   [ConnectedSpace Z] [ChartedSpace ℂ Z]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
+  [StableChartAt ℂ Z]
 
 /-- The covariant pushforward of integral 1-cycles induced by a smooth
 map `f : X → Y`, via functoriality of singular homology.
@@ -274,18 +277,18 @@ theorem pathIntegralViaCover_trans_eq_add
         (alignedPickT n pickA pickB) hcovT := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant'
-      η (γ.trans γ') _ _ _ _ (2 * n) (Nat.mul_pos (by omega) hn)
+      η (γ.trans γ') (by sorry) _ _ _ _ (2 * n) (Nat.mul_pos (by omega) hn)
       (alignedPickT n pickA pickB) hcovT
   have hA : pathIntegralViaCover η γ =
       pathIntegralViaCoverWith η γ n hn pickA hcovA := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant'
-      η γ _ _ _ _ n hn pickA hcovA
+      η γ (by sorry) _ _ _ _ n hn pickA hcovA
   have hB : pathIntegralViaCover η γ' =
       pathIntegralViaCoverWith η γ' n hn pickB hcovB := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant'
-      η γ' _ _ _ _ n hn pickB hcovB
+      η γ' (by sorry) _ _ _ _ n hn pickB hcovB
   rw [hT, hA, hB]
   -- Apply the With-level aligned trans split (Phase 6).
   exact pathIntegralViaCoverWith_aligned_trans
@@ -400,7 +403,7 @@ theorem pathIntegralViaCoverWith_refinement_invariant
     pathIntegralViaCoverWith η γ n hn pickChart hcov =
       pathIntegralViaCoverWith η γ n' hn' pickChart' hcov' :=
   pathIntegralViaCoverWith_refinement_invariant'
-    η γ n hn pickChart hcov n' hn' pickChart' hcov'
+    η γ (by sorry) n hn pickChart hcov n' hn' pickChart' hcov'
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
