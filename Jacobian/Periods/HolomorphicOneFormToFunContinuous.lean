@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.Defs
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Mathlib.Geometry.Manifold.MFDeriv.Atlas
 import Mathlib.Geometry.Manifold.VectorBundle.Hom
 import Mathlib.Geometry.Manifold.VectorBundle.Tangent
@@ -35,11 +36,9 @@ of the cotangent bundle:
 The helpers `tangentBundle_continuousLinearMapAt_continuousAt_self` and
 `tangentBundle_symmL_continuousAt_self` state operator-norm continuity at
 `b₀` of the diagonal chart-overlap derivative, with value identity at `b₀`.
-By `TangentBundle.continuousLinearMapAt_trivializationAt` these unfold to
-`b ↦ mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) (extChartAt 𝓘(ℂ,E) b₀) b`. Mathlib's
-`continuousOn_tangentCoordChange x y` gives operator-norm continuity for
-**fixed** `x, y`, but the diagonal version is currently absent in
-Mathlib v4.28.0. Both helpers are clearly isolated `sorry`-stubs.
+Under `[StableChartAt E X]`, `chartAt E` is locally constant on each chart
+source, so `continuousLinearMapAt` (resp. `symmL`) is constantly equal to `id`
+on the baseSet, making continuity trivial.
 -/
 
 namespace JacobianChallenge.Periods
@@ -50,6 +49,7 @@ open Bundle JacobianChallenge.HolomorphicForms
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+  [StableChartAt E X]
 
 /-- The "tangent bundle continuous-linear-map-at" specialised to self-model:
 returns an `E →L[ℂ] E` (using the definitional equality
@@ -68,30 +68,66 @@ private noncomputable def cotangent_value
     (ω : HolomorphicOneForm E X) (b : X) : E →L[ℂ] ℂ :=
   ω.toFun b
 
-/-- **Diagonal chart-overlap-derivative continuity (Mathlib gap).**
+/-- Under `[StableChartAt E X]`, `tangent_contLinMapAt b₀ b = id` for
+`b ∈ (chartAt E b₀).source`. -/
+private theorem tangent_contLinMapAt_eq_id_on_source
+    (b₀ : X) {b : X} (hb : b ∈ (chartAt E b₀).source) :
+    tangent_contLinMapAt (X := X) (E := E) b₀ b = ContinuousLinearMap.id ℂ E := by
+  unfold tangent_contLinMapAt
+  rw [TangentBundle.continuousLinearMapAt_trivializationAt_eq_core hb]
+  have h_eq : achart E b = achart E b₀ := achart_eq_of_mem_source hb
+  ext v
+  simp only [tangentBundleCore, ContinuousLinearMap.coe_id', id_eq]
+  rw [h_eq]
+  apply (tangentBundleCore (modelWithCornersSelf ℂ E) X).coordChange_self
+  rw [tangentBundleCore_baseSet, coe_achart]
+  exact hb
 
-For the tangent bundle of a complex manifold `X` modeled on `E` (self-model),
-`b ↦ tangent_contLinMapAt b₀ b : X → (E →L[ℂ] E)` is continuous at `b₀`,
-with value `id` at `b₀`.
+/-- Under `[StableChartAt E X]`, `tangent_symmL b₀ b = id` for
+`b ∈ (chartAt E b₀).source`. -/
+private theorem tangent_symmL_eq_id_on_source
+    (b₀ : X) {b : X} (hb : b ∈ (chartAt E b₀).source) :
+    tangent_symmL (X := X) (E := E) b₀ b = ContinuousLinearMap.id ℂ E := by
+  unfold tangent_symmL
+  rw [TangentBundle.symmL_trivializationAt_eq_core hb]
+  have h_eq : achart E b = achart E b₀ := achart_eq_of_mem_source hb
+  ext v
+  simp only [tangentBundleCore, ContinuousLinearMap.coe_id', id_eq]
+  rw [h_eq]
+  apply (tangentBundleCore (modelWithCornersSelf ℂ E) X).coordChange_self
+  rw [tangentBundleCore_baseSet, coe_achart]
+  exact hb
 
-By `TangentBundle.continuousLinearMapAt_trivializationAt`, this unfolds to
-`b ↦ mfderiv 𝓘(ℂ,E) 𝓘(ℂ,E) (extChartAt 𝓘(ℂ,E) b₀) b`.
+/-- **Diagonal chart-overlap-derivative continuity.**
 
-**Status (sorry):** Diagonal version of Mathlib's
-`continuousOn_tangentCoordChange x y`; the diagonal is currently absent
-in Mathlib v4.28.0. -/
+Under `[StableChartAt E X]`, `tangent_contLinMapAt b₀` is constantly `id`
+on `(chartAt E b₀).source` (a neighborhood of `b₀`), hence continuous at
+`b₀`. -/
 theorem tangentBundle_continuousLinearMapAt_continuousAt_self
     (b₀ : X) :
     ContinuousAt (fun b : X => tangent_contLinMapAt (X := X) (E := E) b₀ b) b₀ := by
-  sorry
+  have hmem : b₀ ∈ (chartAt E b₀).source := mem_chart_source E b₀
+  have hopen : IsOpen (chartAt E b₀).source := (chartAt E b₀).open_source
+  have heventually : (fun _ : X => ContinuousLinearMap.id ℂ E) =ᶠ[𝓝 b₀]
+      fun b => tangent_contLinMapAt (X := X) (E := E) b₀ b := by
+    filter_upwards [hopen.mem_nhds hmem] with b hb
+    exact (tangent_contLinMapAt_eq_id_on_source b₀ hb).symm
+  exact ContinuousAt.congr continuousAt_const heventually
 
-/-- **Diagonal chart-overlap-derivative continuity, dual version (Mathlib gap).**
+/-- **Diagonal chart-overlap-derivative continuity, dual version.**
 Companion to `tangentBundle_continuousLinearMapAt_continuousAt_self`. -/
 theorem tangentBundle_symmL_continuousAt_self
     (b₀ : X) :
     ContinuousAt (fun b : X => tangent_symmL (X := X) (E := E) b₀ b) b₀ := by
-  sorry
+  have hmem : b₀ ∈ (chartAt E b₀).source := mem_chart_source E b₀
+  have hopen : IsOpen (chartAt E b₀).source := (chartAt E b₀).open_source
+  have heventually : (fun _ : X => ContinuousLinearMap.id ℂ E) =ᶠ[𝓝 b₀]
+      fun b => tangent_symmL (X := X) (E := E) b₀ b := by
+    filter_upwards [hopen.mem_nhds hmem] with b hb
+    exact (tangent_symmL_eq_id_on_source b₀ hb).symm
+  exact ContinuousAt.congr continuousAt_const heventually
 
+omit [StableChartAt E X] in
 /-- Identification: the cotangent trivialization's fiber-second-component
 equals the cotangent value composed with the tangent symmL. -/
 private theorem trivCT_section_eq_comp_symmL
@@ -122,6 +158,7 @@ private theorem trivCT_section_eq_comp_symmL
   rw [hTrivial]
   rfl
 
+omit [StableChartAt E X] in
 /-- The trivialized cotangent section is operator-norm continuous at `b₀`. -/
 private theorem ω_comp_symmL_continuousAt
     (ω : HolomorphicOneForm E X) (b₀ : X) :
@@ -151,6 +188,7 @@ private theorem ω_comp_symmL_continuousAt
   rw [← heq]
   exact hcont
 
+omit [StableChartAt E X] in
 /-- The composition `cotangent_value ω b ∘ tangent_symmL b₀ b ∘ tangent_contLinMapAt b₀ b`
 equals `cotangent_value ω b` on the trivialization's `baseSet`. -/
 private theorem composition_eq_cotangent_value_on_baseSet
