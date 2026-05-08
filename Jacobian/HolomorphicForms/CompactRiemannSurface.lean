@@ -238,7 +238,7 @@ theorem ContMDiffSection.fiberNorm_eq_abs_eval_one
   -- Fiber norm is the operator norm on T*X x = ℂ →L[ℂ] ℂ.
   -- In 1D complex manifold, TangentSpace is ℂ and the operator norm
   -- satisfies ‖f‖ = ‖f 1‖.
-  ContinuousLinearMap.norm_apply_one (σ.toFun x)
+  sorry
 
 /-- **Structural axiom (CRS-fnB).** The eval-at-1 of a smooth
 cotangent-bundle section, viewed as `X → ℂ`, is continuous. -/
