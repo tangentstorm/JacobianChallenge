@@ -33,17 +33,8 @@ def constantFunctions (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     Submodule ℂ (MeromorphicFunctionType X) where
   carrier := { f | ∃ c : ℂ, f.toFun = fun _ => (c : OnePoint ℂ) }
   zero_mem' := ⟨0, rfl⟩
-  add_mem' := by
-    rintro f g ⟨cf, hf⟩ ⟨cg, hg⟩
-    refine ⟨cf + cg, ?_⟩
-    ext x
-    -- addition in MeromorphicFunctionType is axiomatic, but constants are simple.
-    sorry
-  smul_mem' := by
-    rintro c f ⟨cf, hf⟩
-    refine ⟨c * cf, ?_⟩
-    ext x
-    sorry
+  add_mem' := sorry
+  smul_mem' := sorry
 
 /-- The dimension of the constant functions is 1. -/
 axiom finrank_constantFunctions
@@ -87,7 +78,7 @@ structure GenusZeroFixedPoleMeromorphicData
 
 /-- **Structural axiom (S1a).** When the pole divisor is `0`, the map
 `f.toMap` never takes the value `∞`. This is the *pointwise*
-content of "no poles".
+content of \"no poles\".
 
 Cross-ref: `tex/sections/03-riemann-roch.tex`,
 `lem:meromorphic-map-no-pole-not-infty`. -/
@@ -98,8 +89,7 @@ theorem MeromorphicMapToSphere.toMap_ne_infty_of_no_poles
     ∀ x, f.toMap x ≠ OnePoint.infty := by
   intro x
   have h : f.poleDivisor x = 0 := by
-    unfold poles at hpole
-    rw [hpole]
+    rw [← MeromorphicMapToSphere.poles, hpole]
     rfl
   exact f.toMap_ne_infty_of_poleDivisor_zero x h
 
@@ -169,7 +159,6 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
   let LC := L ⊓ C
   have hdim_LC : Module.finrank ℂ LC ≤ 1 := by
     -- LC is a submodule of C, and dim C = 1.
-    -- Grounding this requires finite dimensionality of C.
     sorry
   have hne : L ≠ LC := by
     intro h
@@ -205,7 +194,6 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     -- Map-level constancy implies function-level constancy.
     sorry
   · -- hfL says f ∈ L, but f_map needs MemRiemannRochSpace.
-    -- These are the same by definition of riemannRochSpace.
     sorry
 
 /-- **Structural axiom (S3).** From the genus-zero Riemann-Roch
@@ -296,17 +284,41 @@ theorem genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point
     (P : X) (h : analyticGenus ℂ X = 0)
     (f : GenusZeroPointRiemannRochElement X P h) :
     f.meromorphicMap.poles = Divisor.point P := by
+  classical
+  let m := f.meromorphicMap
   -- 1. mem_L_point says (f) + [P] ≥ 0.
+  have hmem := f.mem_L_point
+  unfold MeromorphicMapToSphere.MemRiemannRochSpace at hmem
   -- 2. Principal divisor (f) = (zeros) - (poles).
-  -- 3. So (zeros) - (poles) + [P] ≥ 0.
-  -- 4. Since (zeros) ≥ 0, this implies [P] - (poles) ≥ 0, i.e. (poles) ≤ [P].
-  -- 5. Since deg(poles) is a non-negative integer (total degree of poles),
-  --    and deg([P]) = 1, we have deg(poles) ∈ {0, 1}.
-  -- 6. If deg(poles) = 0, then poles = 0, so f is constant (Liouville),
-  --    contradicting f.nonconstant.
-  -- 7. So deg(poles) = 1.
-  -- 8. Since 0 ≤ poles ≤ [P] and both have degree 1, poles = [P].
-  sorry
+  rw [MeromorphicMapToSphere.principal_eq_zeroDivisor_sub_poleDivisor] at hmem
+  -- 3. Effective (zeros - poles + point P).
+  -- This implies poles ≤ zeros + point P.
+  -- Since zeros and poles have disjoint support, this implies poles ≤ point P.
+  have hle : m.poles ≤ Divisor.point P := by
+    intro Q
+    have h_disjoint := m.zero_or_pole_eq_zero Q
+    have h_eff := hmem Q
+    simp at h_eff
+    cases h_disjoint with
+    | inl hz =>
+      rw [hz] at h_eff
+      simp at h_eff
+      exact h_eff
+    | inr hp =>
+      have h_pt_Q : m.poles Q = 0 := by
+        rw [MeromorphicMapToSphere.poles]
+        exact hp
+      rw [h_pt_Q]
+      exact Divisor.effective_point P Q
+  -- 4. poles m is effective.
+  have heff : Divisor.Effective m.poles := m.poleDivisor_nonneg
+  -- 5. poles m ≠ 0 (otherwise m would be constant).
+  have hne : m.poles ≠ 0 := by
+    intro hzero
+    have hconst := holomorphic_meromorphicMapToSphere_constant_on_compact X m hzero
+    exact hconst f.nonconstant
+  -- 6. Combine everything via the Divisor lemma.
+  exact effective_le_point_iff_grounded m.poles P heff hle hne
 
 /-- **Headline obligation (final packaging).** Genus zero compact
 connected Riemann surface implies existence of a meromorphic function
