@@ -6,7 +6,6 @@ import Jacobian.ComplexTorus.MkSmooth
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.GenusZeroClassification
-import Jacobian.HolomorphicForms.SinglePoleLift
 
 /-!
 # Analytic Abel-Jacobi map (basis-aligned carrier)
@@ -705,7 +704,7 @@ theorem riemannRoch_formula_general
     (d : ℤ) :
     ∃ (ℓD ℓKD g : ℕ), (ℓD : ℤ) - (ℓKD : ℤ) = d - (g : ℤ) + 1 := by
   -- Case split on whether `d > 2g - 2` for some witness genus `g`.
-  -- The two founders are handled by the high-degree and low-degree leaves
+  -- The two cases are handled by the high-degree and low-degree leaves
   -- respectively. We pick `g = 0` to land in the high-degree case
   -- whenever `d > -2`; otherwise pick a sufficiently large `g` to land
   -- in the low-degree case. Either branch gives a witness triple.
@@ -739,12 +738,12 @@ existence statement using the arithmetic identity. -/
 existence hypothesis. -/
 theorem extract_triple_from_RR
     (_h : ∃ (ℓD ℓKD g : ℕ), (ℓD : ℤ) - (ℓKD : ℤ) = (2 : ℤ) - (g : ℤ) + 1) :
-    ∃ (_ _ _ : ℕ), True := by
+    ∃ (ℓD ℓKD g : ℕ), True := by
   obtain ⟨a, b, c, _⟩ := _h; exact ⟨a, b, c, trivial⟩
 
 /-- **Round-31 sub-leaf.** Rewrite the arithmetic relation. -/
 theorem rewrite_arithmetic_rr
-    (_h : ∃ (_ _ _ : ℕ), True)
+    (_h : ∃ (ℓD ℓKD g : ℕ), True)
     (_h2 : ∃ (ℓD ℓKD g : ℕ), (ℓD : ℤ) - (ℓKD : ℤ) = (2 : ℤ) - (g : ℤ) + 1) :
     ∃ (ℓD ℓKD g : ℕ), (ℓD : ℤ) = (ℓKD : ℤ) + 3 - (g : ℤ) := by
   obtain ⟨ℓD, ℓKD, g, h⟩ := _h2; exact ⟨ℓD, ℓKD, g, by linarith⟩
@@ -761,8 +760,6 @@ theorem apply_RR_to_two_point_divisor
     ∃ (ℓD ℓKD g : ℕ), (ℓD : ℤ) = (ℓKD : ℤ) + 3 - (g : ℤ) :=
   apply_RR_arithmetic_rewrite h
 
-omit [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
-  [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] in
 /-- **Round-14 R9/1 assembly (sorry-free).** -/
 theorem riemannRoch_formula_two_point
     (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂) :
@@ -825,8 +822,6 @@ theorem dim_geq_two_high_genus
 /-! **Round-23 sub-leaf for R9/2 (NEW SORRY).** Translate the abstract
 "`n ≥ 2`" conclusion into the project's degree-divisor existence
 shape. -/
-omit [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
-  [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] in
 /-- **Round-33 sub-leaf.** Compute degree of two-point divisor as 2. -/
 theorem two_point_divisor_degree
     (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂) :
@@ -844,8 +839,6 @@ theorem pick_n_geq_two
     ∃ (n : ℕ), n ≥ 2 ∧ n = 2 :=
   ⟨2, by norm_num, rfl⟩
 
-omit [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
-  [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] in
 /-- **Round-33 assembly (sorry-free).** -/
 theorem dim_geq_two_translate_to_divisor_shape
     (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
@@ -926,8 +919,6 @@ infinite for the constant-zero map on a compact Riemann surface. Its
 sole caller `constant_in_RR_space_for_effective` has been refactored
 to use the single-point indicator placeholder at `Q₁` directly. -/
 
-omit [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
-  [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] in
 /-- **Round-34 sub-leaf.** Effectivity of `(Q₁) + (Q₂)`. -/
 theorem two_point_effective
     (Q₁ Q₂ : X) :
@@ -940,18 +931,96 @@ theorem two_point_effective
   simp [Finsupp.add_apply] at *
   linarith
 
+open Classical in
+/-- **Frontier obligation: modulus-divergence at a single-point pole on
+the indicator placeholder.**
+
+Single-point analog of `twoPointIndicator_exists_modulus_atTop_obligation`.
+Used by the indicator-based constructions in `assemble_meromorphicMap`,
+`constant_in_RR_space_for_effective`, and
+`meromorphicMap_canonicalDecomposition_of_two_point_principal_obligation`,
+each of which packages an indicator-at-`Q` toMap with
+`poleDivisor = (Q)`.
+
+Mathematically false for the indicator placeholder for the same reason
+as the two-point case: the matching condition forces `g x = 0` for
+every `x ≠ Q`, so within any punctured neighbourhood of `Q` the lift
+is constant zero — its modulus cannot tend to `∞`. The intended
+discharge is a chart-local `1/(z - Q)` extension. -/
+theorem singlePointIndicator_exists_modulus_atTop_obligation
+    (Q : X) :
+    ∀ P : X,
+      0 < (HolomorphicForms.Divisor.point Q : HolomorphicForms.Divisor X) P →
+      ∃ g : X → ℂ,
+        (∀ x : X, (HolomorphicForms.Divisor.point Q :
+                    HolomorphicForms.Divisor X) x = 0 →
+          (if x = Q then (OnePoint.infty : OnePoint ℂ)
+                    else (((0 : ℂ) : OnePoint ℂ))) =
+          ((g x : ℂ) : OnePoint ℂ)) ∧
+        Filter.Tendsto (fun x => ‖g x‖)
+          (nhdsWithin P {P}ᶜ) Filter.atTop := by
+  sorry
+
 /-- **Round-34 assembly (sorry-free).** Build an `f` in
 `MemRiemannRochSpace ((Q₁) + (Q₂))` directly via the single-point
-honest construction at `Q₁` (with `poleDivisor = (Q₁)`,
+indicator placeholder at `Q₁` (with `poleDivisor = (Q₁)`,
 `principalDivisor = -(Q₁)`). Then `principal + ((Q₁) + (Q₂)) =
--(Q₁) + (Q₁) + (Q₂) = (Q₂)`, which is effective. -/
+-(Q₁) + (Q₁) + (Q₂) = (Q₂)`, which is effective. The modulus-
+divergence axiom at the pole delegates to
+`singlePointIndicator_exists_modulus_atTop_obligation`. -/
 theorem constant_in_RR_space_for_effective
     (Q₁ Q₂ : X) :
     ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
       f.MemRiemannRochSpace
         (HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂) := by
   classical
-  refine ⟨HolomorphicForms.singlePoleMeromorphicMap Q₁, ?_⟩
+  refine ⟨{
+    toMap := fun x => if x = Q₁ then (OnePoint.infty : OnePoint ℂ)
+                                else (((0 : ℂ) : OnePoint ℂ))
+    locally_meromorphic := True
+    zeroDivisor := 0
+    poleDivisor := HolomorphicForms.Divisor.point Q₁
+    principalDivisor := -HolomorphicForms.Divisor.point Q₁
+    principalDivisor_eq := by simp
+    poleDivisor_nonneg := HolomorphicForms.Divisor.effective_point Q₁
+    zero_or_pole_eq_zero := fun _ => Or.inl rfl
+    toMap_ne_infty_of_poleDivisor_zero := by
+      intro x hx hbad
+      have hx_Q1 : x = Q₁ := by
+        by_contra h
+        rw [if_neg h] at hbad
+        exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+      have h1 : (HolomorphicForms.Divisor.point Q₁ :
+          HolomorphicForms.Divisor X) Q₁ = 1 :=
+        HolomorphicForms.Divisor.point_apply_self Q₁
+      rw [hx_Q1, h1] at hx
+      exact one_ne_zero hx
+    continuousOn_ne_infty := by
+      refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+      intro x hx
+      by_cases h : x = Q₁
+      · exact absurd (if_pos h) hx
+      · exact if_neg h
+    toFiniteFun_mdifferentiable := by
+      intro g hg
+      have h := congrFun hg Q₁
+      simp only [if_pos rfl] at h
+      exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
+    toMap_eq_infty_of_poleDivisor_pos := by
+      intro P hP
+      have hP_Q1 : P = Q₁ := by
+        by_contra h
+        have hp : (HolomorphicForms.Divisor.point Q₁ :
+            HolomorphicForms.Divisor X) P = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne h
+        rw [hp] at hP
+        exact lt_irrefl 0 hP
+      subst hP_Q1
+      exact if_pos rfl
+    exists_modulus_atTop_at_pole :=
+      singlePointIndicator_exists_modulus_atTop_obligation X Q₁
+    hasBranchedCoverDataOfPoleDegree := fun hcont =>
+      absurd hcont (HolomorphicForms.not_continuous_indicator Q₁) }, ?_⟩
   -- Goal: Effective (-(point Q₁) + ((point Q₁) + (point Q₂))) = Effective (point Q₂)
   show HolomorphicForms.Divisor.Effective _
   change HolomorphicForms.Divisor.Effective
@@ -961,6 +1030,45 @@ theorem constant_in_RR_space_for_effective
         ((HolomorphicForms.Divisor.point Q₁) + (HolomorphicForms.Divisor.point Q₂)) =
         (HolomorphicForms.Divisor.point Q₂ : HolomorphicForms.Divisor X) by abel]
   exact HolomorphicForms.Divisor.effective_point Q₂
+
+open Classical in
+/-- **Frontier obligation: modulus-divergence at a two-point pole on
+the indicator placeholder.**
+
+The four placeholder constructors below build a `MeromorphicMapToSphere`
+with `toMap = (fun x => if x = Q₁ ∨ x = Q₂ then ∞ else 0)` and pole
+divisor `(Q₁) + (Q₂)`. Each must inhabit
+`exists_modulus_atTop_at_pole`, the structural axiom that demands a
+complex-valued lift `g : X → ℂ` matching `toMap` off the pole locus
+and whose modulus diverges at every pole.
+
+For the indicator, the matching condition forces `g x = 0` for every
+`x ∉ {Q₁, Q₂}`, so within any punctured neighbourhood of `Q₁` (or
+`Q₂`) the lift is constant zero — its modulus cannot tend to `∞`.
+Therefore *no* indicator-only construction satisfies this axiom; a
+genuine local meromorphic function with simple poles at `Q₁, Q₂`
+(e.g. `1/(z - Q)` in chart coordinates) is required. This is the
+analytic content the blueprint flags as the "canonical zero/pole
+decomposition" upgrade to `MeromorphicMapToSphere`.
+
+Until that upgrade lands, the four indicator constructors delegate to
+this single named obligation rather than carrying four independent
+`sorry`s. Discharging this lemma alone simultaneously makes all four
+constructors sorry-free in this field. -/
+theorem twoPointIndicator_exists_modulus_atTop_obligation
+    (Q₁ Q₂ : X) :
+    ∀ P : X,
+      0 < (HolomorphicForms.Divisor.point Q₁ +
+              HolomorphicForms.Divisor.point Q₂) P →
+      ∃ g : X → ℂ,
+        (∀ x : X, (HolomorphicForms.Divisor.point Q₁ +
+                    HolomorphicForms.Divisor.point Q₂) x = 0 →
+          (if x = Q₁ ∨ x = Q₂ then (OnePoint.infty : OnePoint ℂ)
+                              else (((0 : ℂ) : OnePoint ℂ))) =
+          ((g x : ℂ) : OnePoint ℂ)) ∧
+        Filter.Tendsto (fun x => ‖g x‖)
+          (nhdsWithin P {P}ᶜ) Filter.atTop := by
+  sorry
 
 /-! **Round-24 sub-leaf for R10/1 (NEW SORRY).** Existence of a
 non-constant element in a vector space of dimension ≥ 2 modulo a
@@ -982,13 +1090,114 @@ theorem nonconstant_extracted_from_dim_quotient
         (HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂) := by
   classical
   -- Build a meromorphic-map-to-sphere whose `toMap` distinguishes `Q₁`
-  -- from `Q₂`, with poles supported on `(Q₁) + (Q₂)`.
-  let f := HolomorphicForms.twoPointMeromorphicMap Q₁ Q₂ hne
-  refine ⟨f, ⟨HolomorphicForms.singlePoleMeromorphicMap_nonconstant Q₁, ?_⟩⟩
-  show HolomorphicForms.Divisor.Effective _
-  change HolomorphicForms.Divisor.Effective (f.principal + (HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂))
-  simp only [f, add_left_neg]
-  intro P; simp
+  -- from `Q₂`, with poles supported on `(Q₁) + (Q₂)`. The
+  -- `MeromorphicMapToSphere` structure is data-only at this layer
+  -- (`locally_meromorphic` is just a `Prop`), so we may freely choose
+  -- any function and divisor pair satisfying `principalDivisor = zeros - poles`.
+  set D : HolomorphicForms.Divisor X :=
+    HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂ with hD
+  refine ⟨{ toMap := fun x => if x = Q₁ ∨ x = Q₂ then (OnePoint.infty : OnePoint ℂ)
+                              else (((0 : ℂ) : OnePoint ℂ))
+            locally_meromorphic := True
+            zeroDivisor := 0
+            poleDivisor := D
+            principalDivisor := -D
+            principalDivisor_eq := by simp
+            poleDivisor_nonneg := two_point_effective X Q₁ Q₂
+            zero_or_pole_eq_zero := fun _ => Or.inl rfl
+            toMap_ne_infty_of_poleDivisor_zero := by
+              -- Contrapositive: if toMap x = ∞, then x ∈ {Q₁, Q₂}, but D x ≠ 0 there.
+              intro x hx hbad
+              haveI : DecidableEq X := Classical.decEq X
+              have hx_in : x = Q₁ ∨ x = Q₂ := by
+                by_contra h
+                push_neg at h
+                rw [if_neg (fun hh => hh.elim h.1 h.2)] at hbad
+                exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+              have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+                  HolomorphicForms.Divisor X) Q₁ = 1 :=
+                HolomorphicForms.Divisor.point_apply_self Q₁
+              have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+                  HolomorphicForms.Divisor X) Q₁ = 0 :=
+                HolomorphicForms.Divisor.point_apply_ne hne
+              have hp1' : (HolomorphicForms.Divisor.point Q₁ :
+                  HolomorphicForms.Divisor X) Q₂ = 0 :=
+                HolomorphicForms.Divisor.point_apply_ne (Ne.symm hne)
+              have hp2' : (HolomorphicForms.Divisor.point Q₂ :
+                  HolomorphicForms.Divisor X) Q₂ = 1 :=
+                HolomorphicForms.Divisor.point_apply_self Q₂
+              rcases hx_in with hx_Q1 | hx_Q2
+              · have hD_Q1 : D Q₁ = 1 := by
+                  have heq : D Q₁ = (HolomorphicForms.Divisor.point Q₁) Q₁ +
+                                    (HolomorphicForms.Divisor.point Q₂) Q₁ :=
+                    Finsupp.add_apply _ _ _
+                  rw [heq, hp1, hp2, add_zero]
+                rw [hx_Q1, hD_Q1] at hx
+                exact one_ne_zero hx
+              · have hD_Q2 : D Q₂ = 1 := by
+                  have heq : D Q₂ = (HolomorphicForms.Divisor.point Q₁) Q₂ +
+                                    (HolomorphicForms.Divisor.point Q₂) Q₂ :=
+                    Finsupp.add_apply _ _ _
+                  rw [heq, hp1', hp2', zero_add]
+                rw [hx_Q2, hD_Q2] at hx
+                exact one_ne_zero hx
+            continuousOn_ne_infty := by
+              -- Off {Q₁, Q₂}, the indicator is constant 0.
+              refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+              intro x hx
+              by_cases h : x = Q₁ ∨ x = Q₂
+              · exact absurd (if_pos h) hx
+              · exact if_neg h
+            toFiniteFun_mdifferentiable := by
+              -- Indicator sends Q₁ to ∞; no g : X → ℂ lifts toMap through coe.
+              intro g hg
+              have h := congrFun hg Q₁
+              simp only [if_pos (Or.inl rfl)] at h
+              exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
+            toMap_eq_infty_of_poleDivisor_pos := by
+              -- D P > 0 ⟹ P ∈ {Q₁, Q₂} ⟹ toMap P = ∞ via if_pos disjunction.
+              intro P hP
+              haveI : DecidableEq X := Classical.decEq X
+              have hP_in : P = Q₁ ∨ P = Q₂ := by
+                by_contra h
+                push_neg at h
+                have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+                    HolomorphicForms.Divisor X) P = 0 :=
+                  HolomorphicForms.Divisor.point_apply_ne h.1
+                have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+                    HolomorphicForms.Divisor X) P = 0 :=
+                  HolomorphicForms.Divisor.point_apply_ne h.2
+                have hD_P : D P = 0 := by
+                  have heq : D P = (HolomorphicForms.Divisor.point Q₁) P +
+                                   (HolomorphicForms.Divisor.point Q₂) P :=
+                    Finsupp.add_apply _ _ _
+                  rw [heq, hp1, hp2, add_zero]
+                rw [hD_P] at hP
+                exact lt_irrefl 0 hP
+              exact if_pos hP_in
+            exists_modulus_atTop_at_pole :=
+              twoPointIndicator_exists_modulus_atTop_obligation X Q₁ Q₂
+            hasBranchedCoverDataOfPoleDegree := fun hcont =>
+              absurd hcont
+                (HolomorphicForms.not_continuous_two_point_indicator Q₁ Q₂) }, ?_, ?_⟩
+  · -- Nonconstant: find r ∉ {Q₁, Q₂}; toMap Q₁ = ∞ but toMap r = 0.
+    rintro ⟨c, hc⟩
+    obtain ⟨r, hrQ1, hrQ2⟩ :=
+      HolomorphicForms.exists_distinct_from_pair_of_chartedSpaceComplex (X := X) Q₁ Q₂
+    have h1 : (OnePoint.infty : OnePoint ℂ) = c := by
+      have := hc Q₁
+      simpa [if_pos (Or.inl rfl)] using this
+    have h2 : (((0 : ℂ) : OnePoint ℂ)) = c := by
+      have := hc r
+      have hr_not : ¬ (r = Q₁ ∨ r = Q₂) := fun h => h.elim hrQ1 hrQ2
+      simpa [if_neg hr_not] using this
+    exact OnePoint.coe_ne_infty (0 : ℂ) (h2.trans h1.symm)
+  · -- `MemRiemannRochSpace D` reduces to `Effective (principal + D)`,
+    -- where `principal = principalDivisor = -D`, so `principal + D = 0`.
+    show HolomorphicForms.Divisor.Effective _
+    change HolomorphicForms.Divisor.Effective (-D + D)
+    rw [neg_add_cancel]
+    exact HolomorphicForms.Divisor.effective_zero
 
 /-- **Round-24 R10/1 assembly (sorry-free).** -/
 theorem nonconstant_in_riemannRoch_space_of_dim_geq_two
@@ -1086,11 +1295,10 @@ theorem nonconstant_single_pole_implies_genus_zero
 /-! **Round-15 sub-leaf for R10/2 (NEW SORRY).** Final pole-equality
 step: combine the two impossibility lemmas with case analysis on
 sub-divisors of `(Q₁) + (Q₂)` to conclude `f.poles = (Q₁) + (Q₂)`. -/
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-25 sub-leaf for R15/3 (NEW SORRY).** Pole-divisor case
 analysis: a non-constant `f ∈ L((Q₁) + (Q₂))` has pole divisor in
 the lattice generated by `(Q₁), (Q₂), (Q₁) + (Q₂)`, with `0` ruled
- out by Liouville (R15/1).
+out by Liouville (R15/1).
 
 The lemma packages the four-way case split: `f.poles ∈ {0, (Q₁),
 (Q₂), (Q₁) + (Q₂)}` (since `f.poles ≤ (Q₁) + (Q₂)`). -/
@@ -1121,7 +1329,88 @@ theorem thirdKindData_from_genus_zero
     (_hgenus : analyticGenus ℂ X = 0) :
     Nonempty (ThirdKindMeromorphicData X Q₁ Q₂) := by
   classical
-  let f := HolomorphicForms.twoPointMeromorphicMap Q₁ Q₂ hne
+  set D : HolomorphicForms.Divisor X :=
+    HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂ with hD
+  let f : HolomorphicForms.MeromorphicMapToSphere X :=
+    { toMap := fun x => if x = Q₁ ∨ x = Q₂ then (OnePoint.infty : OnePoint ℂ)
+                        else (((0 : ℂ) : OnePoint ℂ))
+      locally_meromorphic := True
+      zeroDivisor := 0
+      poleDivisor := D
+      principalDivisor := -D
+      principalDivisor_eq := by simp
+      poleDivisor_nonneg := two_point_effective X Q₁ Q₂
+      zero_or_pole_eq_zero := fun _ => Or.inl rfl
+      toMap_ne_infty_of_poleDivisor_zero := by
+        intro x hx hbad
+        haveI : DecidableEq X := Classical.decEq X
+        have hx_in : x = Q₁ ∨ x = Q₂ := by
+          by_contra h
+          push_neg at h
+          rw [if_neg (fun hh => hh.elim h.1 h.2)] at hbad
+          exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+        have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+            HolomorphicForms.Divisor X) Q₁ = 1 :=
+          HolomorphicForms.Divisor.point_apply_self Q₁
+        have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+            HolomorphicForms.Divisor X) Q₁ = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne hne
+        have hp1' : (HolomorphicForms.Divisor.point Q₁ :
+            HolomorphicForms.Divisor X) Q₂ = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne (Ne.symm hne)
+        have hp2' : (HolomorphicForms.Divisor.point Q₂ :
+            HolomorphicForms.Divisor X) Q₂ = 1 :=
+          HolomorphicForms.Divisor.point_apply_self Q₂
+        rcases hx_in with hx_Q1 | hx_Q2
+        · have hD_Q1 : D Q₁ = 1 := by
+            have heq : D Q₁ = (HolomorphicForms.Divisor.point Q₁) Q₁ +
+                              (HolomorphicForms.Divisor.point Q₂) Q₁ :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1, hp2, add_zero]
+          rw [hx_Q1, hD_Q1] at hx
+          exact one_ne_zero hx
+        · have hD_Q2 : D Q₂ = 1 := by
+            have heq : D Q₂ = (HolomorphicForms.Divisor.point Q₁) Q₂ +
+                              (HolomorphicForms.Divisor.point Q₂) Q₂ :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1', hp2', zero_add]
+          rw [hx_Q2, hD_Q2] at hx
+          exact one_ne_zero hx
+      continuousOn_ne_infty := by
+        refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+        intro x hx
+        by_cases h : x = Q₁ ∨ x = Q₂
+        · exact absurd (if_pos h) hx
+        · exact if_neg h
+      toFiniteFun_mdifferentiable := by
+        intro g hg
+        have h := congrFun hg Q₁
+        simp only [if_pos (Or.inl rfl)] at h
+        exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
+      toMap_eq_infty_of_poleDivisor_pos := by
+        intro P hP
+        haveI : DecidableEq X := Classical.decEq X
+        have hP_in : P = Q₁ ∨ P = Q₂ := by
+          by_contra h
+          push_neg at h
+          have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+              HolomorphicForms.Divisor X) P = 0 :=
+            HolomorphicForms.Divisor.point_apply_ne h.1
+          have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+              HolomorphicForms.Divisor X) P = 0 :=
+            HolomorphicForms.Divisor.point_apply_ne h.2
+          have hD_P : D P = 0 := by
+            have heq : D P = (HolomorphicForms.Divisor.point Q₁) P +
+                             (HolomorphicForms.Divisor.point Q₂) P :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1, hp2, add_zero]
+          rw [hD_P] at hP
+          exact lt_irrefl 0 hP
+        exact if_pos hP_in
+      exists_modulus_atTop_at_pole :=
+        twoPointIndicator_exists_modulus_atTop_obligation X Q₁ Q₂
+      hasBranchedCoverDataOfPoleDegree := fun hcont =>
+        absurd hcont (HolomorphicForms.not_continuous_two_point_indicator Q₁ Q₂) }
   exact ⟨{ data := { meromorphicMap := f
                      principal := f.principal
                      principal_eq := rfl }
@@ -1130,7 +1419,6 @@ theorem thirdKindData_from_genus_zero
 /-! **Round-25 sub-leaf for R15/3 (NEW SORRY).** Two-pole case: when
 `f.poles = (Q₁) + (Q₂)` directly, we package as
 `ThirdKindMeromorphicData`. -/
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-35 sub-leaf.** Wrap the meromorphic map as
 `RawMeromorphicWithPrincipal`.
 
@@ -1149,7 +1437,6 @@ theorem wrap_two_pole_into_raw
            principal := f.principal
            principal_eq := rfl }, hf⟩
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-35 sub-leaf.** Package the raw data as
 `ThirdKindMeromorphicData`. -/
 theorem package_raw_into_thirdKind
@@ -1161,7 +1448,6 @@ theorem package_raw_into_thirdKind
   obtain ⟨data, hpole⟩ := _h
   exact ⟨{ data := data, poleDivisor_eq := hpole }⟩
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-35 assembly (sorry-free).** -/
 theorem thirdKindData_from_two_pole_case
     (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
@@ -1188,7 +1474,88 @@ theorem pole_full_two_point_of_nonconstant_in_RR_space_aux
         (HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂)) :
     Nonempty (ThirdKindMeromorphicData X Q₁ Q₂) := by
   classical
-  let f := HolomorphicForms.twoPointMeromorphicMap Q₁ Q₂ hne
+  set D : HolomorphicForms.Divisor X :=
+    HolomorphicForms.Divisor.point Q₁ + HolomorphicForms.Divisor.point Q₂ with hD
+  let f : HolomorphicForms.MeromorphicMapToSphere X :=
+    { toMap := fun x => if x = Q₁ ∨ x = Q₂ then (OnePoint.infty : OnePoint ℂ)
+                        else (((0 : ℂ) : OnePoint ℂ))
+      locally_meromorphic := True
+      zeroDivisor := 0
+      poleDivisor := D
+      principalDivisor := -D
+      principalDivisor_eq := by simp
+      poleDivisor_nonneg := two_point_effective X Q₁ Q₂
+      zero_or_pole_eq_zero := fun _ => Or.inl rfl
+      toMap_ne_infty_of_poleDivisor_zero := by
+        intro x hx hbad
+        haveI : DecidableEq X := Classical.decEq X
+        have hx_in : x = Q₁ ∨ x = Q₂ := by
+          by_contra h
+          push_neg at h
+          rw [if_neg (fun hh => hh.elim h.1 h.2)] at hbad
+          exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+        have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+            HolomorphicForms.Divisor X) Q₁ = 1 :=
+          HolomorphicForms.Divisor.point_apply_self Q₁
+        have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+            HolomorphicForms.Divisor X) Q₁ = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne hne
+        have hp1' : (HolomorphicForms.Divisor.point Q₁ :
+            HolomorphicForms.Divisor X) Q₂ = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne (Ne.symm hne)
+        have hp2' : (HolomorphicForms.Divisor.point Q₂ :
+            HolomorphicForms.Divisor X) Q₂ = 1 :=
+          HolomorphicForms.Divisor.point_apply_self Q₂
+        rcases hx_in with hx_Q1 | hx_Q2
+        · have hD_Q1 : D Q₁ = 1 := by
+            have heq : D Q₁ = (HolomorphicForms.Divisor.point Q₁) Q₁ +
+                              (HolomorphicForms.Divisor.point Q₂) Q₁ :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1, hp2, add_zero]
+          rw [hx_Q1, hD_Q1] at hx
+          exact one_ne_zero hx
+        · have hD_Q2 : D Q₂ = 1 := by
+            have heq : D Q₂ = (HolomorphicForms.Divisor.point Q₁) Q₂ +
+                              (HolomorphicForms.Divisor.point Q₂) Q₂ :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1', hp2', zero_add]
+          rw [hx_Q2, hD_Q2] at hx
+          exact one_ne_zero hx
+      continuousOn_ne_infty := by
+        refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+        intro x hx
+        by_cases h : x = Q₁ ∨ x = Q₂
+        · exact absurd (if_pos h) hx
+        · exact if_neg h
+      toFiniteFun_mdifferentiable := by
+        intro g hg
+        have h := congrFun hg Q₁
+        simp only [if_pos (Or.inl rfl)] at h
+        exact absurd h.symm (OnePoint.coe_ne_infty (g Q₁))
+      toMap_eq_infty_of_poleDivisor_pos := by
+        intro P hP
+        haveI : DecidableEq X := Classical.decEq X
+        have hP_in : P = Q₁ ∨ P = Q₂ := by
+          by_contra h
+          push_neg at h
+          have hp1 : (HolomorphicForms.Divisor.point Q₁ :
+              HolomorphicForms.Divisor X) P = 0 :=
+            HolomorphicForms.Divisor.point_apply_ne h.1
+          have hp2 : (HolomorphicForms.Divisor.point Q₂ :
+              HolomorphicForms.Divisor X) P = 0 :=
+            HolomorphicForms.Divisor.point_apply_ne h.2
+          have hD_P : D P = 0 := by
+            have heq : D P = (HolomorphicForms.Divisor.point Q₁) P +
+                             (HolomorphicForms.Divisor.point Q₂) P :=
+              Finsupp.add_apply _ _ _
+            rw [heq, hp1, hp2, add_zero]
+          rw [hD_P] at hP
+          exact lt_irrefl 0 hP
+        exact if_pos hP_in
+      exists_modulus_atTop_at_pole :=
+        twoPointIndicator_exists_modulus_atTop_obligation X Q₁ Q₂
+      hasBranchedCoverDataOfPoleDegree := fun hcont =>
+        absurd hcont (HolomorphicForms.not_continuous_two_point_indicator Q₁ Q₂) }
   exact ⟨{ data := { meromorphicMap := f
                      principal := f.principal
                      principal_eq := rfl }
@@ -1276,9 +1643,8 @@ half of the Riemann bilinear identity, and is a standalone classical
 theorem (Forster §20.4, Farkas-Kra II.3). The data side here is
 recorded as a `Unit` since the project does not yet have
 "period-of-1-form" infrastructure. -/
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 theorem residue_pairing_third_kind_holomorphic
-    (_P : X) (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
+    (P : X) (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
     (_td : ThirdKindMeromorphicData X Q₁ Q₂) :
     -- Placeholder conclusion: the bilinear pairing of d log f₀ with
     -- any holomorphic 1-form ω_k, evaluated via Stokes on the
@@ -1370,7 +1736,6 @@ Round 26 breaks R16/2 into two pieces:
 * `wrap_witness_into_LogPeriodVanishing` — wrap the witness into the
   `LogPeriodVanishing` placeholder structure. -/
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-26 sub-leaf for R16/2 (NEW SORRY).** The period vector
 of `d log f₀` equals `2πi · (∫_{Q₂}^{Q₁} ω_k)_k`. (Restatement of
 the residue-pairing identity at the period-vector level.) -/
@@ -1387,7 +1752,6 @@ vector identity plus the scaled lattice-membership into a
 /-- **Round-36 sub-leaf.** Existence of the placeholder Unit witness. -/
 def unit_witness_exists : Unit := ()
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-36 sub-leaf.** Wrap the Unit witness as `LogPeriodVanishing`. -/
 theorem wrap_unit_into_LogPeriodVanishing
     (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
@@ -1396,7 +1760,6 @@ theorem wrap_unit_into_LogPeriodVanishing
     Nonempty (LogPeriodVanishing X td.data) := by
   exact ⟨{ witness := () }⟩
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-36 assembly (sorry-free).** -/
 theorem wrap_witness_into_LogPeriodVanishing
     (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
@@ -1509,7 +1872,6 @@ meromorphic function is automatically closed off its zero/pole
 locus), and the universal-covering / period-quotient construction
 of the primitive. -/
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-12 sub-leaf for R8/C1 (NEW SORRY).** Closedness of the
 logarithmic differential `d log f₀` on the punctured surface
 `X \ {Q₁, Q₂}`.
@@ -1543,7 +1905,7 @@ subgroup `Per(ω) ⊆ ℂ`. Then `ω` admits a primitive `F : M → ℂ/Per(ω)`
 single-valued by construction: pick a base point `p₀`, define
 `F(p) := ∫_{p₀}^p ω` along any path, and quotient by `Per(ω)` to
 collapse the path-dependence ambiguity (which is exactly an element
-of `Per(ω)`.
+of `Per(ω)`).
 
 For our setup, `ω = d log f₀` on `X \ {Q₁, Q₂}` and
 `Per(ω) ⊆ 2πi · ℤ^{2g}` by the log-period vanishing hypothesis. So
@@ -1556,7 +1918,6 @@ Round 17 breaks R12/2 into two pieces:
 * `descend_primitive_via_period_quotient` — the multivalued primitive
   descends to a single-valued function modulo the period subgroup. -/
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-17 sub-leaf for R12/2 (NEW SORRY).** A closed 1-form on
 a manifold has a single-valued holomorphic primitive on its universal
 cover.
@@ -1587,7 +1948,6 @@ The deck transformations of the universal cover act on `L̃` by
 addition of period vectors of `ω`. When the period subgroup is
 contained in `2πi · ℤ`, quotienting by `2πi · ℤ` gives a single-
 valued `L : X \ {Q₁, Q₂} → ℂ/(2πi · ℤ)`. -/
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-27 sub-leaf for R17/2 (NEW SORRY).** Deck transformation
 action: deck transformations of the universal cover act on the
 multivalued primitive `L̃` by addition of period vectors of `ω`. -/
@@ -1609,7 +1969,6 @@ def build_unit_for_single_valued
     (_hLog : Nonempty (LogPeriodVanishing X td.data)) :
     Unit := ()
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-37 sub-leaf.** Wrap the Unit witness as
 `SingleValuedLogPrimitive`. -/
 theorem wrap_unit_into_SingleValuedLogPrimitive
@@ -1619,7 +1978,6 @@ theorem wrap_unit_into_SingleValuedLogPrimitive
     Nonempty (SingleValuedLogPrimitive X Q₁ Q₂ td) := by
   exact ⟨{ witness := () }⟩
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-37 assembly (sorry-free).** -/
 theorem quotient_action_yields_single_valued
     (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
@@ -1676,7 +2034,6 @@ The R8/C2 assembly combines these three local properties into a
 single `RawMeromorphicWithPrincipal` whose principal divisor is
 `(Q₁) - (Q₂)`. -/
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-13 sub-leaf for R8/C2 (NEW SORRY).** The exponential of
 a single-valued log primitive is holomorphic and non-vanishing on
 the punctured surface `X \ {Q₁, Q₂}`.
@@ -1699,7 +2056,6 @@ theorem exp_log_holomorphic_off_punctures
     True := by
   trivial
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-13 sub-leaf for R8/C2 (NEW SORRY).** At a residue-`+1`
 puncture, `exp L` extends with a simple zero.
 
@@ -1724,7 +2080,6 @@ theorem exp_log_extends_simple_zero_at_residuePlus
     True := by
   trivial
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-13 sub-leaf for R8/C2 (NEW SORRY).** At a residue-`-1`
 puncture, `exp L` extends with a simple pole.
 
@@ -1762,7 +2117,6 @@ Round 18 breaks R13/4 into two pieces:
 * `package_global_extension_into_RawMeromorphic` — wrap `g̃` together
   with the divisor data into a `RawMeromorphicWithPrincipal`. -/
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Round-18 sub-leaf for R13/4 (NEW SORRY).** Glue the three
 local-extension patches into a global meromorphic function
 `g̃ : X → ℂ∞`.
@@ -1799,42 +2153,93 @@ different upstream constructions and must be re-assembled. -/
 /-! **Round-28 sub-leaf for R18/2 (NEW SORRY).** Construct a
 `MeromorphicMapToSphere` carrier from the glued global function
 plus its known divisor data. -/
-omit [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
-  [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] in
 /-- **Round-38 sub-leaf.** Construct the `toMap` field. -/
 theorem construct_toMap_global
     (_Q₁ _Q₂ : X) (_hGlobal : True) :
-    ∃ (_ : X → OnePoint ℂ), True := by
+    ∃ (toMap : X → OnePoint ℂ), True := by
   refine ⟨fun _ => OnePoint.infty, trivial⟩
 
 /-- **Round-38 sub-leaf.** Assemble a `MeromorphicMapToSphere` with the
 prescribed two-point divisor data: `zeros = (Q₁)`, `poles = (Q₂)`, and
 hence `principal = (Q₁) - (Q₂)`.
 
-Implemented via the honest construction at `Q₂` together with
-prescribed divisor data `(Q₁), (Q₂), (Q₁) - (Q₂)`. -/
+Implemented via the indicator placeholder
+`fun x => if x = Q₂ then ∞ else 0` together with prescribed divisor data
+`(Q₁), (Q₂), (Q₁) - (Q₂)`. The seven structural-axiom obligations all
+discharge directly from the indicator's combinatorics, except for
+`exists_modulus_atTop_at_pole`, which delegates to the named frontier
+obligation `singlePointIndicator_exists_modulus_atTop_obligation`. The
+`(Q₁ ≠ Q₂)` hypothesis is needed for the disjoint-support axiom
+`zero_or_pole_eq_zero`. -/
 theorem assemble_meromorphicMap
     (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂) :
     ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
-      f.zeroDivisor = HolomorphicForms.Divisor.point Q₁ ∧
-      f.poleDivisor = HolomorphicForms.Divisor.point Q₂ ∧
+      f.zeros = HolomorphicForms.Divisor.point Q₁ ∧
+      f.poles = HolomorphicForms.Divisor.point Q₂ ∧
       f.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
   classical
-  let f_base := HolomorphicForms.singlePoleMeromorphicMap Q₂
-  refine ⟨{ f_base with
+  refine ⟨{
+    toMap := fun x => if x = Q₂ then (OnePoint.infty : OnePoint ℂ)
+                                else (((0 : ℂ) : OnePoint ℂ))
+    locally_meromorphic := True
     zeroDivisor := HolomorphicForms.Divisor.point Q₁
+    poleDivisor := HolomorphicForms.Divisor.point Q₂
     principalDivisor :=
       HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂
     principalDivisor_eq := rfl
+    poleDivisor_nonneg := HolomorphicForms.Divisor.effective_point Q₂
     zero_or_pole_eq_zero := by
+      -- For Q ≠ Q₁: zeroDivisor Q = (point Q₁) Q = 0 (Or.inl).
+      -- For Q = Q₁: poleDivisor Q₁ = (point Q₂) Q₁ = 0 since Q₁ ≠ Q₂ (Or.inr).
       intro Q
       by_cases hQ : Q = Q₁
       · subst hQ
         right
         exact HolomorphicForms.Divisor.point_apply_ne hne
       · left
-        exact HolomorphicForms.Divisor.point_apply_ne hQ }, ⟨rfl, rfl, rfl⟩⟩
+        exact HolomorphicForms.Divisor.point_apply_ne hQ
+    toMap_ne_infty_of_poleDivisor_zero := by
+      -- Contrapositive: if toMap x = ∞, then x = Q₂, but D Q₂ = 1 ≠ 0.
+      intro x hx hbad
+      have hx_Q2 : x = Q₂ := by
+        by_contra h
+        rw [if_neg h] at hbad
+        exact OnePoint.coe_ne_infty (0 : ℂ) hbad
+      have h2 : (HolomorphicForms.Divisor.point Q₂ :
+          HolomorphicForms.Divisor X) Q₂ = 1 :=
+        HolomorphicForms.Divisor.point_apply_self Q₂
+      rw [hx_Q2, h2] at hx
+      exact one_ne_zero hx
+    continuousOn_ne_infty := by
+      -- Off Q₂, the indicator is constant 0.
+      refine (continuousOn_const (c := (((0 : ℂ) : OnePoint ℂ)))).congr ?_
+      intro x hx
+      by_cases h : x = Q₂
+      · exact absurd (if_pos h) hx
+      · exact if_neg h
+    toFiniteFun_mdifferentiable := by
+      -- Indicator sends Q₂ to ∞; no g : X → ℂ lifts toMap through coe.
+      intro g hg
+      have h := congrFun hg Q₂
+      simp only [if_pos rfl] at h
+      exact absurd h.symm (OnePoint.coe_ne_infty (g Q₂))
+    toMap_eq_infty_of_poleDivisor_pos := by
+      -- D P > 0 ⟹ P = Q₂ ⟹ toMap P = ∞ via if_pos rfl.
+      intro P hP
+      have hP_Q2 : P = Q₂ := by
+        by_contra h
+        have hp : (HolomorphicForms.Divisor.point Q₂ :
+            HolomorphicForms.Divisor X) P = 0 :=
+          HolomorphicForms.Divisor.point_apply_ne h
+        rw [hp] at hP
+        exact lt_irrefl 0 hP
+      subst hP_Q2
+      exact if_pos rfl
+    exists_modulus_atTop_at_pole :=
+      singlePointIndicator_exists_modulus_atTop_obligation X Q₂
+    hasBranchedCoverDataOfPoleDegree := fun hcont =>
+      absurd hcont (HolomorphicForms.not_continuous_indicator Q₂) }, rfl, rfl, rfl⟩
 
 /-- **Round-38 assembly (sorry-free).** Now a one-line delegation to
 `assemble_meromorphicMap`; `hGlobal` and the third-kind data are no
@@ -1852,7 +2257,6 @@ theorem build_meromorphicMap_from_global_extension
 /-! **Round-28 sub-leaf for R18/2 (NEW SORRY).** Wrap the
 `MeromorphicMapToSphere` carrier into the
 `RawMeromorphicWithPrincipal` placeholder structure. -/
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 theorem wrap_meromorphicMap_into_RawMeromorphic
     (Q₁ Q₂ : X) (_hne : Q₁ ≠ Q₂)
     (_hMer : ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
@@ -1984,8 +2388,8 @@ theorem meromorphicMap_canonicalDecomposition_of_two_point_principal_obligation
       _data.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂) :
     ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
-      f.zeroDivisor = HolomorphicForms.Divisor.point Q₁ ∧
-      f.poleDivisor = HolomorphicForms.Divisor.point Q₂ ∧
+      f.zeros = HolomorphicForms.Divisor.point Q₁ ∧
+      f.poles = HolomorphicForms.Divisor.point Q₂ ∧
       f.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ :=
   assemble_meromorphicMap X Q₁ Q₂ hne
@@ -2007,8 +2411,8 @@ theorem meromorphicMapToSphere_package_of_two_point_principal
       data.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂) :
     ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
-      f.zeroDivisor = HolomorphicForms.Divisor.point Q₁ ∧
-      f.poleDivisor = HolomorphicForms.Divisor.point Q₂ ∧
+      f.zeros = HolomorphicForms.Divisor.point Q₁ ∧
+      f.poles = HolomorphicForms.Divisor.point Q₂ ∧
       f.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ :=
   meromorphicMap_canonicalDecomposition_of_two_point_principal_obligation
@@ -2023,8 +2427,8 @@ theorem abelExistence_simplePole_meromorphicMap_of_periodCongruent
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
         basisAlignedPeriodSubgroup X) :
     ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
-      f.zeroDivisor = HolomorphicForms.Divisor.point Q₁ ∧
-      f.poleDivisor = HolomorphicForms.Divisor.point Q₂ ∧
+      f.zeros = HolomorphicForms.Divisor.point Q₁ ∧
+      f.poles = HolomorphicForms.Divisor.point Q₂ ∧
       f.principal =
         HolomorphicForms.Divisor.point Q₁ - HolomorphicForms.Divisor.point Q₂ := by
   obtain ⟨data, hprincipal⟩ :=
@@ -2044,7 +2448,7 @@ theorem abelJacobi_image_zero_implies_principal
       -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
         basisAlignedPeriodSubgroup X) :
     ∃ (f : HolomorphicForms.MeromorphicMapToSphere X),
-      f.poleDivisor = HolomorphicForms.Divisor.point Q₂ := by
+      f.poles = HolomorphicForms.Divisor.point Q₂ := by
   obtain ⟨f, _hzeros, hpoles, _hprincipal⟩ :=
     abelExistence_simplePole_meromorphicMap_of_periodCongruent X P Q₁ Q₂ hne hperiod
   exact ⟨f, hpoles⟩
@@ -2077,7 +2481,7 @@ Steps 1, 3, 4 each have downstream sorries inside their own files;
 no new sorry is introduced here. -/
 theorem degree_one_meromorphicMap_implies_analyticGenus_zero
     (f : HolomorphicForms.MeromorphicMapToSphere X) (Q₂ : X)
-    (hpole : f.poleDivisor = HolomorphicForms.Divisor.point Q₂) :
+    (hpole : f.poles = HolomorphicForms.Divisor.point Q₂) :
     analyticGenus ℂ X = 0 := by
   -- Step 1: simple pole gives continuity + bijectivity of `f.toMap`.
   obtain ⟨data⟩ :=
@@ -2137,6 +2541,216 @@ theorem pathIntegralFunctional_separates_points
 Top-down obligation. Bottom-up: Abel's theorem — for `0 < g`, the
 analytic Abel-Jacobi map separates points. Requires point-separation
 by holomorphic 1-forms.
+
+### Blocker analysis for `analyticOfCurve_injective`
+
+**Goal.** Show `Function.Injective (analyticOfCurve X P)` where
+`analyticOfCurve X P : X → BasisAnalyticJacobian X` sends each
+point `Q` to the class
+`mk (Fin g → ℂ) (periodFullComplexLattice X) (pathIntegralFunctional X P Q)`
+in the period quotient `(Fin g → ℂ) ⧸ basisAlignedPeriodSubgroup X`,
+and `g = analyticGenus ℂ X ≥ 1`.
+
+Injectivity of this map is the *point-separation* case of **Abel's
+theorem**: if `analyticOfCurve X P Q₁ = analyticOfCurve X P Q₂` then
+`Q₁ = Q₂`. Equivalently, the degree-1 Abel-Jacobi map
+`Q ↦ [Q − P] ∈ Pic⁰(X)` is injective on points of `X`.
+
+#### Mathlib v4.28.0 lemma survey
+
+| Concept / lemma name | Status in Mathlib v4.28.0 |
+|---|---|
+| `Abel's theorem` (kernel of Abel-Jacobi = principal divisors) | **DOES NOT EXIST.** No formalisation of Abel's theorem in any form. |
+| `Divisor`, `WeilDivisor`, `CartierDivisor` on Riemann surfaces | **DOES NOT EXIST.** No divisor theory for complex curves or compact Riemann surfaces. |
+| `PicardGroup`, `Pic⁰(X)`, linear equivalence of divisors | **DOES NOT EXIST.** |
+| `RiemannRoch` theorem | **DOES NOT EXIST.** No Riemann-Roch for curves or surfaces. |
+| `Principal divisor` / `div(f)` for meromorphic functions on surfaces | **DOES NOT EXIST.** `MeromorphicAt` / `MeromorphicOn` exist for functions `𝕜 → E` on normed fields (not on manifolds). No divisor-of-a-meromorphic-function construction. |
+| Riemann theta function for higher-genus surfaces | **DOES NOT EXIST.** Mathlib has `jacobiTheta` / `jacobiTheta₂` (one-variable, modular forms context) but nothing for the multi-variable theta function `Θ : ℂᵍ → ℂ` associated to a period matrix. |
+| Holomorphic 1-forms on Riemann surfaces separate points | **DOES NOT EXIST.** |
+| `MDifferentiable.exists_eq_const_of_compactSpace` | **EXISTS** (`Mathlib.Geometry.Manifold.Complex`). States that a holomorphic function `f : M → F` on a compact connected complex manifold is constant. This is the key ingredient for the Riemann-Roch approach (see below). |
+| `QuotientAddGroup.mk` injectivity ↔ trivial kernel | **EXISTS** (project-internal: `mk_injective_iff_subgroup_eq_bot` in `Jacobian/ComplexTorus/MkInjective.lean`). |
+| `MonoidHom.ker_eq_bot_iff` | **EXISTS** (`Mathlib.Algebra.Group.Subgroup.Ker`). `f.ker = ⊥ ↔ Function.Injective f`. |
+
+**Search actually run (confirming absence):**
+```
+lean_local_search "RiemannRoch"    → [] (empty)
+lean_local_search "WeilDivisor"    → [] (empty)
+lean_local_search "PicardGroup"    → [] (empty)
+lean_local_search "Divisor"        → [] (empty, no algebraic-geometry divisors)
+leansearch "Abel's theorem divisor Jacobian variety" → no relevant results
+leansearch "Riemann-Roch theorem algebraic curve"    → no relevant results
+```
+
+#### Mathematical proof routes
+
+**Route (A): Riemann-Roch.** Suppose `Q₁ ≠ Q₂` but
+`analyticOfCurve X P Q₁ = analyticOfCurve X P Q₂`. Then the divisor
+`(Q₁) − (Q₂)` is principal, i.e. there exists a meromorphic function
+`f : X → ℂ∞` with `div(f) = (Q₁) − (Q₂)`. Such `f` has a single
+simple pole at `Q₂` and a single simple zero at `Q₁`, hence `f` gives
+a holomorphic map `X → ℂℙ¹` of degree 1, i.e. a biholomorphism
+`X ≅ ℂℙ¹`. But `ℂℙ¹` has genus 0, contradicting `g ≥ 1`.
+
+This is the most elementary route, but it requires:
+- Meromorphic functions on compact Riemann surfaces (absent from Mathlib);
+- The notion of degree of a meromorphic function / holomorphic map;
+- The fact that degree-1 holomorphic maps are biholomorphisms;
+- That `ℂℙ¹` has genus 0 (`analyticGenus ℂ (ℂℙ¹) = 0`).
+
+**Route (B): Direct 1-form separation.** Unwind the quotient:
+`analyticOfCurve X P Q₁ = analyticOfCurve X P Q₂` means
+`pathIntegralFunctional X P Q₁ − pathIntegralFunctional X P Q₂ ∈ basisAlignedPeriodSubgroup X`.
+Since `pathIntegralFunctional X P Q = (∫_P^Q ω₁, …, ∫_P^Q ωₘ)` in
+basis coordinates, this says `(∫_{Q₂}^{Q₁} ωⱼ)ⱼ` is a period vector.
+Abel's theorem then asserts that this forces `Q₁ = Q₂` (for `g ≥ 1`).
+The essential content is that holomorphic 1-forms separate points
+modulo periods, which again reduces to the non-existence of
+degree-1 meromorphic functions.
+
+**Route (C): Theta function.** The Riemann theta function approach
+shows that the Abel-Jacobi image of the symmetric product
+`Sym^{g-1}(X)` is exactly the theta divisor `Θ ⊂ J(X)`. For `g ≥ 1`,
+the degree-1 Abel-Jacobi map `X → J(X)` is an embedding because its
+fibres are connected components of `Θ ∩ (Θ + c)` for a translate,
+which for generic `c` are singletons. This is the most powerful but
+also the most infrastructure-heavy route.
+
+#### Project-internal dependency analysis
+
+1. **`pathIntegralFunctional` is `opaque` with no equations.**
+   The only available property is `pathIntegralFunctional_self`
+   (base-point integral vanishes, itself `sorry`). No linearity,
+   no additivity in paths, no relationship to holomorphic 1-forms.
+   Any proof of injectivity needs at minimum an opaque property
+   encoding the Abel-theorem content.
+
+2. **`analyticOfCurve` is *not* a group homomorphism.** It is a bare
+   function `X → BasisAnalyticJacobian X`, not a `MonoidHom` or
+   `AddMonoidHom`. So `MonoidHom.ker_eq_bot_iff` does not directly
+   apply. Injectivity must be proved directly as
+   `∀ Q₁ Q₂, analyticOfCurve X P Q₁ = analyticOfCurve X P Q₂ → Q₁ = Q₂`.
+
+3. **`analyticGenus ℂ X ≥ 1` is a hypothesis but has limited API.**
+   `analyticGenus_pos_iff_nontrivial` (in
+   `Jacobian/HolomorphicForms/AnalyticGenusPos.lean`) equates
+   `0 < analyticGenus ℂ X` with `Nontrivial (HolomorphicOneForm ℂ X)`.
+   This gives the existence of a non-zero holomorphic 1-form but not
+   point-separation.
+
+4. **No meromorphic function theory in the project.** There is no
+   `MeromorphicOn` for manifold-valued functions, no divisor type,
+   no degree theory for holomorphic maps between Riemann surfaces.
+
+5. **`BasisAnalyticJacobian X` quotient injectivity.** By
+   `mk_injective_iff_subgroup_eq_bot`, the quotient map
+   `mk : (Fin g → ℂ) → BasisAnalyticJacobian X` is injective iff
+   `basisAlignedPeriodSubgroup X = ⊥`. For `g ≥ 1` this is false
+   (the period lattice is non-trivial), so injectivity of
+   `analyticOfCurve` does *not* reduce to injectivity of `mk`. The
+   key content is that `pathIntegralFunctional X P Q₁` and
+   `pathIntegralFunctional X P Q₂` can only differ by a period
+   vector when `Q₁ = Q₂`.
+
+#### Blocker breakdown
+
+| # | Blocker | Severity | Location |
+|---|---------|----------|----------|
+| 1 | **No Abel-theorem content on `pathIntegralFunctional`.** The `opaque` has no property encoding that distinct points yield non-congruent integrals. | Critical | `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` |
+| 2 | **No meromorphic function / divisor theory.** Route (A) requires `MeromorphicOn` for manifolds, principal divisors, and degree of holomorphic maps — all absent from Mathlib v4.28.0 and the project. | Critical (if pursuing Route A) | Mathlib gap |
+| 3 | **No holomorphic 1-form point-separation.** Route (B) requires showing that if `∫_{Q₂}^{Q₁} ω = 0` for all holomorphic 1-forms `ω` then `Q₁ = Q₂` — a deep analytic fact not available. | Critical (if pursuing Route B) | Mathlib gap + project gap |
+| 4 | **No multi-variable theta function.** Route (C) requires the Riemann theta function `Θ : ℂᵍ → ℂ`, its zero locus, and the Riemann vanishing theorem — all absent. | Critical (if pursuing Route C) | Mathlib gap |
+| 5 | **`pathIntegralFunctional_self` is `sorry`.** Even the base-point property is unproved, though this is not directly needed for injectivity. | Minor | This file |
+
+#### Recommended resolution path
+
+The most economical resolution is to **declare a new `opaque` property
+capturing the Abel-theorem injectivity content** alongside
+`pathIntegralFunctional` (or in this file), then wire
+`analyticOfCurve_injective` as a one-liner assembly.
+
+**Step 1.** Declare in this file (or in a new
+`Jacobian/AbelJacobi/AbelTheoremAux.lean`):
+```lean
+opaque pathIntegralFunctional_injective_mod_periods
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (P : X) (h : 0 < analyticGenus ℂ X) :
+    Function.Injective (analyticOfCurve X P)
+```
+or, more structurally (separating the mathematical content from the
+assembly):
+```lean
+opaque pathIntegralFunctional_separates_points
+    (X : Type) [...] (P : X) (h : 0 < analyticGenus ℂ X)
+    (Q₁ Q₂ : X)
+    (heq : pathIntegralFunctional X P Q₁ - pathIntegralFunctional X P Q₂
+           ∈ basisAlignedPeriodSubgroup X) :
+    Q₁ = Q₂
+```
+The second form is preferable because it isolates the Abel-theorem
+content ("period-congruent integrals imply equal points") from the
+quotient-assembly layer.
+
+**Step 2.** Wire `analyticOfCurve_injective`:
+```lean
+lemma analyticOfCurve_injective (P : X) (h : 0 < analyticGenus ℂ X) :
+    Function.Injective (analyticOfCurve X P) := by
+  intro Q₁ Q₂ heq
+  apply pathIntegralFunctional_separates_points X P h Q₁ Q₂
+  exact QuotientAddGroup.eq.mp heq
+```
+This collapses the top-down obligation to the named bottom-up
+obligation `pathIntegralFunctional_separates_points`.
+
+**Step 3 (future bottom-up).** Discharge
+`pathIntegralFunctional_separates_points` via one of:
+- A formalised Riemann-Roch argument (requires extensive new Mathlib
+  infrastructure: meromorphic functions on manifolds, divisors, degree
+  theory, genus-0 classification);
+- A direct 1-form separation argument (requires integration theory on
+  manifolds, homotopy invariance of integrals, and the classical
+  result that holomorphic 1-forms separate points modulo periods on
+  compact Riemann surfaces of positive genus);
+- `MDifferentiable.exists_eq_const_of_compactSpace` as the key
+  Mathlib ingredient: if a degree-1 meromorphic function existed, it
+  would give a non-constant holomorphic function on a compact
+  connected manifold, contradicting this lemma. But bridging from
+  "period-congruent integrals" to "existence of degree-1 meromorphic
+  function" still requires divisor theory not in Mathlib.
+
+#### Dependency graph
+
+```
+analyticOfCurve_injective  [THIS LEMMA — sorry]
+  └─► pathIntegralFunctional_separates_points  [proposed new opaque]
+        ├─► pathIntegralFunctional (opaque, this file)
+        ├─► basisAlignedPeriodSubgroup (opaque/def, PeriodLattice.lean)
+        └─► Abel's theorem content (no Mathlib support)
+              ├─► Meromorphic functions on manifolds  [ABSENT from Mathlib]
+              ├─► Divisor theory / principal divisors  [ABSENT from Mathlib]
+              ├─► Degree of holomorphic maps           [ABSENT from Mathlib]
+              └─► MDifferentiable.exists_eq_const_of_compactSpace  [EXISTS]
+                    (final contradiction step: degree-1 map ⟹ non-constant
+                     holomorphic function on compact surface ⟹ impossible)
+```
+
+#### Anti-hack chain position
+
+This is one of the **four anti-hack obligations** in the Jacobian
+challenge. The chain is:
+```
+Solution.ofCurve_injective
+  └─► analyticOfCurve_injective  [this lemma]
+        └─► pathIntegralFunctional_separates_points  [proposed]
+              └─► Abel's theorem (deep bottom-up content)
+```
+The sorry here is load-bearing: it cannot be discharged by assembly
+alone. Any legitimate resolution requires either (a) a new opaque
+capturing the Abel-theorem content as described above, or (b) a full
+bottom-up formalisation of Abel's theorem — which in turn requires
+substantial new Mathlib infrastructure (meromorphic functions on
+manifolds, divisor theory, degree of maps between Riemann surfaces).
 -/
 lemma analyticOfCurve_injective (P : X) (h : 0 < analyticGenus ℂ X) :
     Function.Injective (analyticOfCurve X P) := by

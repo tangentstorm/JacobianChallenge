@@ -32,6 +32,7 @@ open scoped Topology
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+  [StableChartAt E X]
 
 /-- The chart pullback of the zero form is curve-integrable along
 any path. Proved by reducing to `CurveIntegrable.zero` via the

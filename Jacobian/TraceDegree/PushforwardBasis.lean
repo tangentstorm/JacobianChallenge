@@ -309,11 +309,6 @@ theorem cycleLipPath_obligation :
       ∃ K : NNReal, ChartLiftLipschitzOnPartitions γ' K := by
   sorry
 
-/-- Raw geometric obligation (chain-level C¹ regularity). -/
-theorem cycleC1Path_obligation :
-    ∀ {a b : X} (γ' : Path a b), ContDiffOn ℝ 1 γ'.extend (Set.Icc 0 1) := by
-  sorry
-
 /-- Raw geometric obligation (chain-level uniform Lipschitz).
 
 The chain-level uniformised version of `cycleLipPath_obligation`:
@@ -332,18 +327,17 @@ Sorry-free assembly via:
 * `mem_basisAlignedPeriodSubgroupConcrete_iff` (membership characterization);
 * `pushforwardTraceLift_apply_holomorphicOneFormDualEquiv` (algebraic bridge);
 * `periodPairing_pullbackFormsBundledLM` (Stokes naturality), instantiated
-  with the regularity/Lipschitz hypotheses `cycleC1Path_obligation`,
-  `cycleLipPath_obligation` and `cycleLipChain_obligation`;
+  with the path/chain Lipschitz hypotheses `cycleLipPath_obligation` and
+  `cycleLipChain_obligation`;
 * `holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete`
   (membership transport).
 
 The genuinely geometric content is now isolated to named sorries:
 the algebraic bridge above (a `LinearMap.dualMap` identity), the Stokes
-naturality in `Periods/PullbackNaturality.lean`, and the new
-regularity/Lipschitz-uniformity obligations introduced above. -/
+naturality in `Periods/PullbackNaturality.lean`, and the two new
+Lipschitz-uniformity obligations `cycleLipPath_obligation` /
+`cycleLipChain_obligation` introduced above. -/
 theorem pushforwardTraceLift_preserves_lattice_raw
-    [StableChartAt (modelWithCornersSelf ℂ ℂ) X]
-    [StableChartAt (modelWithCornersSelf ℂ ℂ) Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice X).subgroup,
       pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup := by
@@ -367,7 +361,6 @@ theorem pushforwardTraceLift_preserves_lattice_raw
       periodPairing ℂ Y (cyclePushforward f hf γ) := by
     refine LinearMap.ext fun η => ?_
     exact periodPairing_pullbackFormsBundledLM f hf γ η
-      (cycleC1Path_obligation (X := X))
       (cycleLipPath_obligation (X := X)) (cycleLipChain_obligation (X := X))
   rw [hnat]
   -- Now: holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y (cyclePushforward f hf γ)) ∈ basisAlignedPeriodSubgroupConcrete Y.
