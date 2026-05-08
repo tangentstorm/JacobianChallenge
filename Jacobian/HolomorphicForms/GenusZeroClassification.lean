@@ -24,6 +24,14 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
+/-- The one-point compactification of `ℂ` is homeomorphic to the unit
+2-sphere `S² ⊂ ℝ³`.  This uses `onePointEquivSphereOfFinrankEq` from
+`Mathlib.Topology.Compactification.OnePoint.Sphere`, instantiated with
+`V = ℂ` (which has `Module.finrank ℝ ℂ = 2`) and `ι = Fin 3`. -/
+noncomputable def onePointCx_homeomorph_sphere :
+    OnePoint ℂ ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1 :=
+  onePointEquivSphereOfFinrankEq (by simp [Complex.finrank_real_complex])
+
 /-!
 ### Blocker analysis for `analyticGenus_eq_zero_of_homeomorphic_sphere`
 
@@ -525,6 +533,15 @@ theorem holomorphicOneForm_coeff_tendsto_zero
       (Filter.cocompact ℂ) (nhds 0) :=
   (holomorphicOneFormCoeffTendstoZeroData ω).tendsto_coeff_zero
 
+theorem exists_biholomorphism_to_OnePointCx_of_homeoSphere
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
+    Nonempty (X ≃ₜ OnePoint ℂ) := by
+  obtain ⟨e⟩ := h
+  exact ⟨e.trans onePointCx_homeomorph_sphere.symm⟩
+
 theorem holomorphicOneForm_onePointCx_toFun_finite_eq_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (z : ℂ) :
     ω.toFun (↑z : OnePoint ℂ) = 0 := by
@@ -768,25 +785,6 @@ as two named structural companions plus a sorry-free assembly.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `§Uniformization-lite`. -/
-
-/-- **Structural axiom (G1a).** Uniformization at genus 0: any
-compact connected complex 1-manifold `X` topologically homeomorphic
-to `S²` admits a biholomorphism to `OnePoint ℂ`.
-
-This is the deep classical input. The standard proof produces such
-a biholomorphism by extending the inverse of any chart (using the
-identity of complex structures on `S²`).
-
-Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:uniformization-genus-zero-biholomorphism`. -/
-theorem exists_biholomorphism_to_OnePointCx_of_homeoSphere
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
-    Nonempty (X ≃ₜ OnePoint ℂ) := by
-  obtain ⟨e⟩ := h
-  exact ⟨e.trans onePointCx_homeomorph_sphere.symm⟩
 
 /-- **Structural axiom (G1b).** A homeomorphism `X ≃ₜ OnePoint ℂ`
 that is biholomorphic induces a `ℂ`-linear pullback on holomorphic
@@ -1166,14 +1164,6 @@ matures.
 - `IsCoveringMap` + path lifting: covering space theory, relevant if
   pursuing uniformization via universal covers.
 -/
-
-/-- The one-point compactification of `ℂ` is homeomorphic to the unit
-2-sphere `S² ⊂ ℝ³`.  This uses `onePointEquivSphereOfFinrankEq` from
-`Mathlib.Topology.Compactification.OnePoint.Sphere`, instantiated with
-`V = ℂ` (which has `Module.finrank ℝ ℂ = 2`) and `ι = Fin 3`. -/
-noncomputable def onePointCx_homeomorph_sphere :
-    OnePoint ℂ ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1 :=
-  onePointEquivSphereOfFinrankEq (by simp [Complex.finrank_real_complex])
 
 /-- The Riemann-Roch output in genus zero: a meromorphic map to `OnePoint ℂ`
 whose pole divisor is the point divisor `[pole]`. -/
