@@ -29,9 +29,22 @@ def degree {X : Type*} : Divisor X →+ ℤ :=
 def point {X : Type*} (P : X) : Divisor X :=
   Finsupp.single P 1
 
+@[simp] theorem degree_zero {X : Type*} :
+    degree (0 : Divisor X) = 0 :=
+  rfl
+
+@[simp] theorem degree_point {X : Type*} (P : X) :
+    degree (point P : Divisor X) = 1 := by
+  exact Finsupp.degree_single P 1
+
 /-- An effective divisor has nonnegative coefficient at every point. -/
 def Effective {X : Type*} (D : Divisor X) : Prop :=
   ∀ Q : X, 0 ≤ D Q
+
+@[simp] theorem effective_zero {X : Type*} :
+    Effective (0 : Divisor X) := by
+  intro Q
+  simp [Effective]
 
 @[simp] theorem point_apply_self {X : Type*} [DecidableEq X] (P : X) :
     point P P = 1 := by
