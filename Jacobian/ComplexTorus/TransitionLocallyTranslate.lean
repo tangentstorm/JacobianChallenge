@@ -21,7 +21,7 @@ forces `f y - f x = 0`, i.e., `f y = f x` on `U`.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
 
 /-- For each point of the chart overlap, the chart transition agrees
 with a translation by a fixed lattice element on a neighborhood. -/

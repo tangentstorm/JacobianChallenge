@@ -32,7 +32,6 @@ open scoped Topology
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
-  [StableChartAt E X]
 
 /-- The chart pullback of the zero form is curve-integrable along
 any path. Proved by reducing to `CurveIntegrable.zero` via the
@@ -140,6 +139,7 @@ The statement uses `(ω.toFun (c.symm e) : E →L[ℂ] ℂ)` via the
 definitional equality `CotangentSpace E X x = E →L[ℂ] ℂ` (constant
 fibers, self-model). The `show … from rfl` bridges the two forms. -/
 theorem chartedSection_localRepr_continuousOn
+    [StableChartAt E X]
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
     ContinuousOn (fun e =>
       show E →L[ℂ] ℂ from ω.toFun (c.symm e)) c.target :=
