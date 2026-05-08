@@ -208,7 +208,7 @@ theorem unfoldedDisk_to_edgeWordPresentation
     Nonempty (EdgeWordPresentation M) := by
   have _ := unfoldedDisk_boundary_word_data D
   have _ := unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms D
-  sorry
+  exact ⟨sorry⟩
 
 /-- **Round 48 / Stage A leaf (sorry-free assembly).** The classical
 chain "triangulation → dual graph → spanning tree → cut → unfolded
