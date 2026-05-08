@@ -49,10 +49,25 @@ noncomputable axiom add_meromorphic (f g : MeromorphicFunctionType X) : Meromorp
 
 noncomputable instance : Add (MeromorphicFunctionType X) := ⟨add_meromorphic⟩
 
+/-- The toFun of a sum is the pointwise sum (where both are finite). -/
+theorem add_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f g : MeromorphicFunctionType X) :
+    ∀ x, f.toFun x ≠ ∞ → g.toFun x ≠ ∞ →
+      (f + g).toFun x = ((f.toFun x).getD 0 + (g.toFun x).getD 0 : ℂ) :=
+  sorry
+
 /-- Negation of meromorphic functions (axiomatic skeleton). -/
 noncomputable axiom neg_meromorphic (f : MeromorphicFunctionType X) : MeromorphicFunctionType X
 
 noncomputable instance : Neg (MeromorphicFunctionType X) := ⟨neg_meromorphic⟩
+
+/-- The toFun of a negation is the pointwise negation. -/
+theorem neg_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) :
+    ∀ x, f.toFun x ≠ ∞ → (-f).toFun x = (-(f.toFun x).getD 0 : ℂ) :=
+  sorry
 
 /-- Subtraction of meromorphic functions. -/
 noncomputable instance : Sub (MeromorphicFunctionType X) := ⟨fun f g => f + (-g)⟩
@@ -61,6 +76,13 @@ noncomputable instance : Sub (MeromorphicFunctionType X) := ⟨fun f g => f + (-
 noncomputable axiom smul_meromorphic (c : ℂ) (f : MeromorphicFunctionType X) : MeromorphicFunctionType X
 
 noncomputable instance : SMul ℂ (MeromorphicFunctionType X) := ⟨smul_meromorphic⟩
+
+/-- The toFun of a scalar multiplication is the pointwise multiplication. -/
+theorem smul_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (c : ℂ) (f : MeromorphicFunctionType X) :
+    ∀ x, f.toFun x ≠ ∞ → (c • f).toFun x = (c * (f.toFun x).getD 0 : ℂ) :=
+  sorry
 
 /-- Constant meromorphic functions. -/
 def constant (c : ℂ) : MeromorphicFunctionType X :=
@@ -92,13 +114,41 @@ noncomputable instance : Module ℂ (MeromorphicFunctionType X) :=
     add_smul := fun c d f => sorry
     zero_smul := fun f => sorry }
 
-/-- Placeholder for the divisor bound condition. -/
-def MemRiemannRochSpace (f : MeromorphicFunctionType X) (D : Divisor X) : Prop :=
+/-- The zero divisor of a meromorphic function. -/
+noncomputable def zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) : Divisor X :=
   sorry
 
-/-- Placeholder for the pole divisor of a meromorphic function. -/
-def poles (f : MeromorphicFunctionType X) : Divisor X :=
+/-- The pole divisor of a meromorphic function. -/
+noncomputable def poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) : Divisor X :=
   sorry
+
+/-- The principal divisor `(f) = (zeros) - (poles)`. -/
+noncomputable def principal {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) : Divisor X :=
+  f.zeros - f.poles
+
+/-- Constant meromorphic functions have no poles. -/
+theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (c : ℂ) : (constant (X := X) c).poles = 0 :=
+  sorry
+
+/-- Non-zero constant meromorphic functions have no zeros. -/
+theorem constant_zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (c : ℂ) (hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
+  sorry
+
+/-- Membership in the Riemann-Roch space `L(D)`: `(f) + D ≥ 0`. -/
+def MemRiemannRochSpace {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) (D : Divisor X) : Prop :=
+  Divisor.Effective (f.principal + D)
 
 end MeromorphicFunctionType
 
