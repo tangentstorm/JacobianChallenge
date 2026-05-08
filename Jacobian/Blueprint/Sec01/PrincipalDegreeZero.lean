@@ -109,12 +109,14 @@ noncomputable def liftToCp1_branchedCoverData
 
 /-! ## Sub-leaf #3 (HARD) — Laurent order at zeros equals ramification. -/
 
-/-- Analytic core of leaf 3: at a finite zero of the CP¹ lift, the
+/-
+Analytic core of leaf 3: at a finite zero of the CP¹ lift, the
 vanishing order of the underlying ℂ-projection is the chart-local
 analytic order of the lift.
 
 This removes the `BranchedCoverData` wrapper from the statement; the
-remaining proof is the local Laurent normal form in finite target chart. -/
+remaining proof is the local Laurent normal form in finite target chart.
+-/
 theorem vanishingOrder_eq_mapAnalyticOrderAt_at_zero
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
@@ -125,7 +127,39 @@ theorem vanishingOrder_eq_mapAnalyticOrderAt_at_zero
     (p : X) (_hp : meromorphicToCp1 X f p = ((0 : ℂ) : OnePoint ℂ)) :
     (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0
       = (mapAnalyticOrderAt (meromorphicToCp1 X f) p : ℤ) := by
-  sorry
+  unfold meromorphicToCp1 at *;
+  unfold vanishingOrder mapAnalyticOrderAt;
+  rw [ orderAt_eq_chartAt ];
+  have h_eq : ∀ᶠ t in 𝓝 (chartAt ℂ p p), (fun q => (f.toFun q).getD 0) ((chartAt ℂ p).symm t) = chartLocalAt f.toFun p t - chartLocalAt f.toFun p (chartAt ℂ p p) := by
+    have h_eq : ∀ᶠ t in 𝓝 (chartAt ℂ p p), f.toFun ((chartAt ℂ p).symm t) = (f.toFun ((chartAt ℂ p).symm t)).getD 0 := by
+      have h_eq : ∀ᶠ t in 𝓝 (chartAt ℂ p p), f.toFun ((chartAt ℂ p).symm t) ≠ ∞ := by
+        have h_eq : ContinuousAt (fun q => f.toFun q) p := by
+          exact JacobianChallenge.Blueprint.liftToCp1_continuous X f _hholo |> Continuous.continuousAt;
+        have h_eq : ∀ᶠ t in 𝓝 p, f.toFun t ≠ ∞ := by
+          exact h_eq.eventually_ne ( by simp +decide [ _hp ] );
+        rw [ eventually_nhds_iff ] at *;
+        obtain ⟨ t, ht₁, ht₂, ht₃ ⟩ := h_eq;
+        refine' ⟨ ( chartAt ℂ p ).target ∩ ( chartAt ℂ p ).symm ⁻¹' t, _, _, _ ⟩ <;> simp_all +decide;
+        exact OpenPartialHomeomorph.isOpen_inter_preimage_symm (chartAt ℂ p) ht₂;
+      filter_upwards [ h_eq ] with t ht using by cases h : f.toFun ( chartAt ℂ p |>.symm t ) <;> tauto;
+    filter_upwards [ h_eq ] with t ht;
+    simp +decide [ chartLocalAt, _hp ];
+    rw [ ht ];
+    simp +decide [ chartAt ];
+    simp +decide [ ChartedSpace.chartAt ];
+    simp +decide [ HolomorphicForms.identityChart ];
+    simp +decide [ Topology.IsOpenEmbedding.toOpenPartialHomeomorph ];
+    simp +decide [ Function.invFunOn ];
+    grind +splitIndPred;
+  rw [ AnalyticAt.meromorphicOrderAt_eq ];
+  · rw [ analyticOrderAt_congr ];
+    any_goals exact h_eq;
+    unfold analyticOrderNatAt;
+    cases h : analyticOrderAt ( fun t => chartLocalAt f.toFun p t - chartLocalAt f.toFun p ( chartAt ℂ p p ) ) ( chartAt ℂ p p ) <;> aesop;
+  · have h_eq : AnalyticAt ℂ (fun t => chartLocalAt f.toFun p t - chartLocalAt f.toFun p (chartAt ℂ p p)) (chartAt ℂ p p) := by
+      apply_rules [ AnalyticAt.sub, analyticAt_const ];
+      apply_rules [ liftToCp1_holomorphicAt_finite ];
+    exact h_eq.congr ( by filter_upwards [ ‹∀ᶠ t in 𝓝 ( chartAt ℂ p p ), _› ] with t ht; aesop )
 
 /-- **Sub-leaf #3 of `thm:principal-degree-zero` (plan class: HARD).**
 
@@ -160,13 +194,15 @@ theorem vanishingOrder_eq_ramificationIndex_at_zero
 
 /-! ## Sub-leaf #4 (HARD) — Laurent order at poles equals minus ramification. -/
 
-/-- Analytic core of leaf 4: at a pole of the CP¹ lift, the vanishing
+/-
+Analytic core of leaf 4: at a pole of the CP¹ lift, the vanishing
 order of the underlying ℂ-projection is the negative of the chart-local
 analytic order of the lift.
 
 This removes the `BranchedCoverData` wrapper from the statement; the
 remaining proof is the local Laurent normal form in the inversion chart
-at `∞`. -/
+at `∞`.
+-/
 theorem vanishingOrder_eq_neg_mapAnalyticOrderAt_at_pole
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
@@ -177,7 +213,42 @@ theorem vanishingOrder_eq_neg_mapAnalyticOrderAt_at_pole
     (p : X) (_hp : meromorphicToCp1 X f p = (∞ : OnePoint ℂ)) :
     (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0
       = -(mapAnalyticOrderAt (meromorphicToCp1 X f) p : ℤ) := by
-  sorry
+  have := liftToCp1_holomorphicAt_infty X f ( by trivial ) p _hp;
+  have h_eventually_eq : ∀ᶠ t in 𝓝 (chartAt ℂ p p), (f.toFun ((chartAt ℂ p).symm t)).getD 0 = (chartLocalAt (meromorphicToCp1 X f) p t)⁻¹ := by
+    have h_cont : ContinuousAt (fun q => f.toFun q) p := by
+      have h_cont : Continuous (meromorphicToCp1 X f) := by
+        exact liftToCp1_continuous X f (by trivial);
+      convert h_cont.continuousAt using 1;
+    have h_eventually_ne_zero : ∀ᶠ t in 𝓝 (chartAt ℂ p p), f.toFun ((chartAt ℂ p).symm t) ≠ some 0 := by
+      have h_eventually_ne_zero : ∀ᶠ q in nhds p, f.toFun q ≠ some 0 := by
+        have h_eventually_ne_zero : f.toFun p ≠ some 0 := by
+          exact fun h => by rw [ show meromorphicToCp1 X f p = some 0 from h ] at _hp; contradiction;
+        exact h_cont.eventually_ne h_eventually_ne_zero;
+      rw [ eventually_nhds_iff ] at *;
+      obtain ⟨ t, ht₁, ht₂, ht₃ ⟩ := h_eventually_ne_zero;
+      refine' ⟨ ( chartAt ℂ p ).target ∩ ( chartAt ℂ p ).symm ⁻¹' t, _, _, _ ⟩ <;> simp_all +decide;
+      exact OpenPartialHomeomorph.isOpen_inter_preimage_symm (chartAt ℂ p) ht₂;
+    filter_upwards [ h_eventually_ne_zero ] with t ht;
+    unfold chartLocalAt;
+    cases h : f.toFun ( ( chartAt ℂ p ).symm t ) <;> simp_all +decide [ meromorphicToCp1 ];
+    · simp +decide [ Option.getD ];
+      exact Complex.ext rfl rfl;
+    · simp +decide [ Option.getD, chartAt ];
+      exact inv_eq_iff_eq_inv.mp rfl;
+  have h_meromorphicOrderAt_inv : meromorphicOrderAt (fun t => (f.toFun ((chartAt ℂ p).symm t)).getD 0) (chartAt ℂ p p) = -meromorphicOrderAt (chartLocalAt (meromorphicToCp1 X f) p) (chartAt ℂ p p) := by
+    have h_meromorphicOrderAt_inv : meromorphicOrderAt (fun t => (chartLocalAt (meromorphicToCp1 X f) p t)⁻¹) (chartAt ℂ p p) = -meromorphicOrderAt (chartLocalAt (meromorphicToCp1 X f) p) (chartAt ℂ p p) := by
+      apply_rules [ meromorphicOrderAt_inv ];
+    rw [ ← h_meromorphicOrderAt_inv, meromorphicOrderAt_congr ];
+    exact h_eventually_eq.filter_mono nhdsWithin_le_nhds;
+  unfold vanishingOrder mapAnalyticOrderAt;
+  convert congr_arg ( fun x : WithTop ℤ => WithTop.untopD 0 x ) h_meromorphicOrderAt_inv using 1;
+  rw [ AnalyticAt.meromorphicOrderAt_eq ];
+  · rw [ show chartLocalAt ( meromorphicToCp1 X f ) p ( chartAt ℂ p p ) = 0 from ?_ ];
+    · simp +decide [ analyticOrderNatAt ];
+      cases h : analyticOrderAt ( chartLocalAt ( meromorphicToCp1 X f ) p ) ( chartAt ℂ p p ) <;> simp +decide;
+      exact Int.neg_inj.mp rfl;
+    · unfold meromorphicToCp1 at *; aesop;
+  · exact this
 
 /-- **Sub-leaf #4 of `thm:principal-degree-zero` (plan class: HARD).**
 
