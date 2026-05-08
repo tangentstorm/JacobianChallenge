@@ -1,6 +1,5 @@
 import Jacobian.Periods.Polygon4g
 import Jacobian.Periods.TopologicalGenus
-import Jacobian.Periods.SurfaceClassification
 import Mathlib.Algebra.Homology.HomologicalComplex
 import Mathlib.Algebra.Category.ModuleCat.Basic
 import Mathlib.LinearAlgebra.FreeModule.Finite.Basic
@@ -22,13 +21,16 @@ structure PolygonCellularChainComplex (g : ℕ) where
   C2 : Type := ℤ
   /-- Instances for the fields. -/
   instC0 : AddCommGroup C0 := by unfold C0; infer_instance
+  /-- One-cells module (2g edges). -/
   instC1 : AddCommGroup C1 := by unfold C1; infer_instance
+  /-- Two-cells module (one face). -/
   instC2 : AddCommGroup C2 := by unfold C2; infer_instance
   modC0 : Module ℤ C0 := by unfold C0; infer_instance
   modC1 : Module ℤ C1 := by unfold C1; infer_instance
   modC2 : Module ℤ C2 := by unfold C2; infer_instance
   /-- Boundary maps. -/
   d1 : C1 →ₗ[ℤ] C0 := 0
+  /-- Boundary maps. -/
   d2 : C2 →ₗ[ℤ] C1 := 0
 
 /-- **Real Proof (Cellular).** The first cellular homology of the
@@ -41,10 +43,13 @@ theorem polygon4g_cellularH1_iso (g : ℕ) :
 /-- **Bridge (Cellular-Singular).** The cellular homology of the
 fundamental polygon is isomorphic to its singular homology.
 Mathlib gap: the general cellular-singular comparison. For the
-polygon we provide this as a named project-side bridge. -/
+polygon we provide this as a named project-side bridge.
+
+This carries a `sorry` because the full proof requires higher-level
+surface classification data, which would cause a build cycle if
+imported here. -/
 theorem polygon4g_cellular_singular_iso (g : ℕ) :
-    Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
-  obtain ⟨e⟩ := polygon4g_singularH1_iso_freeZ g
-  exact ⟨e.symm⟩
+    Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] singularH1 (Polygon4g g)) :=
+  sorry
 
 end JacobianChallenge.Periods
