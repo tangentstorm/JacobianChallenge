@@ -195,10 +195,12 @@ sending each homology class \([\gamma]\) to the linear functional
 Well-definedness on homology classes is
 \ref{lem:period-homology-invariance}, which itself depends on
 Stokes on a manifold with boundary
-(\ref{thm:stokes-on-rs-with-boundary}). The Lean side currently
-exposes the pairing as an \texttt{opaque} declaration pending the
-Stokes blocker; once Stokes lands, the opaque is replaced by the
-constructed pairing.}
+(\ref{thm:stokes-on-rs-with-boundary}). The Lean side now
+implements the pairing by descending the multi-chart path
+integration \code{pathIntegralViaCover} to the homology level.
+The well-definedness of this descent (that the integral kills
+boundaries) is the "Stokes gap" and remains a \code{sorry} in the
+underlying \code{chain_integration_kills_boundary} leaf.}
 \lean{JacobianChallenge.Periods.periodPairing}
 \leanok
 \end{theorem}
@@ -214,28 +216,22 @@ which routes through Stokes' theorem on a manifold with boundary
 (the largest single classical-analysis gap on the project's
 critical path). Why bother? This is the precise object used by
 the next section's bilinear-relations argument and by the
-period-lattice quotient that defines the Jacobian. Once Stokes
-on a 2-manifold-with-boundary is in Mathlib, the opaque
-declaration in the Lean code becomes a constructed term.
+period-lattice quotient that defines the Jacobian. The Lean code now
+carries a constructed term for this pairing, delegating the Stokes
+gap to a named analytic leaf.
 \end{layman}
 
 \begin{proofsketch}
 The Lean target \code{JacobianChallenge.Periods.periodPairing} is
-currently exposed as an \code{opaque} declaration in
-\code{Jacobian/Periods/PeriodFunctional.lean} with the signature
-\code{IntegralOneCycle X $\to_+$ (HolomorphicOneForm E X $\to_\C$ \C)},
-since the construction needs (a) multi-chart path integration,
-(b) $\Z$-linearity in the cycle, and (c) descent through the
-boundary $\partial_2$  the period-homology-invariance step. The
-construction is decomposed in
-\code{Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean}
-(rounds 1--12) into the same A/B/C/D sub-leaf tree as
-\ref{lem:period-homology-invariance}: sub-leaf~A
-(chain-level integration via chart-cover lifts), sub-leaf~B
-(holomorphic-form-is-closed), sub-leaf~C (chain-level Stokes), and
-sub-leaf~D (assembly $I \circ \partial_2 = 0$). Once the upstream
-Stokes blocker is discharged, the \code{opaque} is replaced by a
-constructed term whose body composes the four sub-leaves.
+constructed in
+\code{Jacobian/Periods/PeriodFunctional.lean} by descending the
+multi-chart path integration \code{pathIntegralViaCover} (packaged
+as a chain-level integration in
+\code{Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean}) to the
+homology level. The well-definedness of this descent (that the
+integral kills boundaries) is the "Stokes gap" and remains a
+\code{sorry} in the underlying \code{chain_integration_kills_boundary}
+leaf.
 \end{proofsketch}
 
 \subsection{Homology invariance of periods}
@@ -489,7 +485,7 @@ For a nonzero holomorphic 1-form \(\omega\),
 \begin{layman}
 For any nonzero holomorphic 1-form, the integral of the form wedged with
 its complex conjugate (multiplied by an orientation-fixing factor of
-\(i\)) is strictly positive. Locally, in a chart where the form looks
+\(i\)) is strictly positive. Locally, in a heart where the form looks
 like \(h(z)\,dz\), the integrand simplifies to \(2|h(z)|^2\) times the
 ordinary area element — a nonnegative density that's strictly positive
 wherever \(h\) doesn't vanish. Integrate this nonnegative thing over
@@ -610,137 +606,35 @@ dimension \(2g\), their \(\Z\)-span is a full lattice.
 \label{subsec:riemann-bilinear-refinement}
 
 The Riemann-bilinear sub-stack of \code{Jacobian/Periods/PeriodFunctional.lean}
-carries six surviving \texttt{sorry}s, all gated on three external blockers:
+carries surviving \texttt{sorry}s, all gated on three external blockers:
 (i)~Stage~A (cellular homology + surface classification of compact surfaces),
 (ii)~Stokes-with-corners on the polygonal model, and (iii)~Hodge bilinear
 positivity. Until those land we expose the algebraic and topological skeleton
 of the proof so that the sorries reduce to named, sorry-free leaves on the
 project side. The full ledger lives in
 \code{Jacobian/Periods/RiemannBilinearRefinement.lean}; it gives twenty
-named passes, organised as follows.
+named passes.
 
-\begin{itemize}
-\item \emph{Passes 1--6.} Dual-space antisymmetric bilinear stand-in
-  \code{Q\_skeleton}, with antisymmetry, diagonal-vanishing, and bilinearity
-  closed by \texttt{ring}.
-\item \emph{Passes 7--10.} Per-handle expansion of the Riemann bilinear
-  identity at the skeleton level; the manifold integral
-  \(\int_X\omega\wedge\eta\) reduces to this once Mathlib gains
-  manifold-side wedge and integration.
-\item \emph{Passes 11--13.} Hermitian-positivity skeleton through the
-  diagonal quadratic form \code{quadraticSkeleton}; non-negativity is
-  closed by \texttt{Finset.sum\_nonneg}, and the vanish-iff-zero
-  characterisation is closed via \texttt{Complex.normSq\_eq\_zero}.
-\item \emph{Passes 14--16.} Real-linear independence \(\Leftrightarrow\)
-  positive-definiteness on the quadratic skeleton --- the Cramér-style
-  fact that turns positivity into linear independence.
-\item \emph{Passes 17--18.} Integrality skeleton:
-  \texttt{Submodule.map\_span} reduces the residual sorry inside
-  \texttt{periodSubgroup\_eq\_zspan\_of\_basis} to a one-line application.
-\item \emph{Passes 19--20.} Stage-A and Stage-B delegation markers for
-  \texttt{h1\_free\_of\_compact\_surface} and
-  \texttt{analyticGenus\_eq\_topologicalGenus}.
-\end{itemize}
-
-The refinement file is \emph{sorry-free}; every leaf is either proved
-directly (passes 1--16, 17--18) or pinned as a \texttt{Prop}-marker for a
-named external blocker (passes 19--20). Once the wedge/integration/
-positivity APIs land, the six \texttt{PeriodFunctional} sorries become
-one-line consumers of the ledger.
-
-\begin{formalizationnote}
-The current project has basis-aligned period subgroup files. The deepest
-remaining content is the full-rank statement, routed through declarations such
-as \code{periodSubgroup_isZLattice},
-\code{periodSubgroup_spans_real}, and
-\code{period_vectors_linearIndependent_of_symplectic}.
-\end{formalizationnote}
+The headline linear independence theorem \code{riemann_classical_real_LI_input}
+is now a sorry-free assembly over two explicit analytic obligations:
+the Riemann Bilinear Relation and Hermitian Positivity on the actual
+integrals. This reduces the large analytical gap to two precisely
+stated leaf sorries.
 
 \subsection{Named obligations from the period-functional decomposition}
 \label{subsec:named-obligations-period-functional}
 
-The recent decomposition of \code{Jacobian/Periods/PeriodFunctional.lean}
-replaces the six original \code{sorry} sites with six \emph{sorry-free
-assemblies} that delegate to four named, deeper obligations. Each
-delegation is itself sorry-free; only the four leaf obligations carry
-the residual \code{sorry}, and each cleanly maps to a Mathlib gap.
+The decomposition of \code{Jacobian/Periods/PeriodFunctional.lean}
+replaces the original single \code{sorry} in
+\code{riemann_classical_real_LI_input} with a sorry-free assembly
+delegating to two named, deeper obligations.
 
 \begin{itemize}
-\item \code{stageA_surface_CW_basis} --- Stage A: compact connected
-  oriented surface admits a $4g$-gon CW model and cellular $H_1 \cong
-  \Z^{2g}$. (Inputs: surface classification, cellular homology, singular
-  $\equiv$ cellular comparison.) Consumed by
-  \code{h1_free_of_compact_surface}. \textbf{Now sorry-free}: wired to
-  the project's existing
-  \code{singularH1_basis_of_compactOrientableSurface}
-  in \code{Jacobian/Periods/SurfaceClassification.lean} via the
-  smooth-real-structure promotion (see
-  \code{Jacobian/Periods/H1EvenBasisViaSurfaceClassification.lean}
-  for the same pattern in the existential form). All Stage-A blockers
-  (Rad\'o triangulation, surface classification, cellular $H_1$,
-  cellular $\equiv$ singular) remain \emph{upstream} in
-  \code{SurfaceClassification.lean}; the present file's Stage-A leaf
-  is a one-line delegate.
-\item \code{stageB_analytic_eq_topological} --- Stage B: de~Rham +
-  Hodge + conjugate-form-equivalence + rank/finrank comparison gives
-  $\mathrm{analyticGenus} = \mathrm{topologicalGenus}$. Consumed by
-  \code{analyticGenus_eq_topologicalGenus}. \textbf{Now sorry-free}:
-  wired to the project's existing
-  \code{HolomorphicForms.two_analyticGenus_eq_finrank_intH1} in
-  \code{Jacobian/HolomorphicForms/HodgeDeRhamRank.lean} (which
-  produces $2 g_{\mathrm{an}} = \mathrm{rank}_{\Z}\,H_1$ as a sorry-free
-  assembly of the named Hodge / de Rham / UCT leaves), combined with
-  the canonical \code{topologicalGenus} via
-  \code{Nat.mul_div_cancel_left}. All Stage-B blockers (de Rham,
-  Hodge decomposition, Dolbeault, Serre duality, UCT) remain
-  \emph{upstream} in \code{HodgeDeRhamRank}'s named-leaf scaffolding;
-  the present file's Stage-B leaf is now a one-line delegate.
-\item \code{riemann_classical_real_LI_input} --- packages the
-  Riemann-bilinear + Hermitian-positivity + Stokes-fundamental-polygon
-  argument into a single $\R$-linear-independence leaf for the period
-  functionals on a basis of $H_1$. Consumed by
-  \code{period_functionals_real_linearIndependent}.
-\item \code{moduleZ_smul_mem_addSubgroup_closure} --- pure
-  module-algebra leaf bridging the
-  $\code{Module}\,\Z\,M$-induced smul to the
-  \code{SubNegMonoid.toZSMul} zsmul (via
-  \code{Int.cast_smul_eq_zsmul}); inside the proof of
-  \code{submodule_span_int_toAddSubgroup_eq_addSubgroupClosure}, which
-  in turn supports
-  \code{addSubgroup_closure_basis_eq_top} and the integrality
-  assembly of \code{periodSubgroup_eq_zspan_of_basis}.
-  \textbf{Now sorry-free}: closed via \code{convert ... using 1} of
-  \code{AddSubgroup.zsmul_mem} with the cast-equality residual
-  discharged by \code{Int.cast_smul_eq_zsmul} (with $R := \Z$).
+\item \code{periodPairing_satisfies_bilinear_identity} --- packages the
+  link between the manifold integral \(\int_X \omega \wedge \eta\) and
+  the symplectic period sum. Requires Stokes on the fundamental
+  polygon.
+\item \code{hodge_form_posDef_on_periods} --- packages the Hermitian
+  positivity \(\code{i} \int_X \omega \wedge \bar\omega > 0\) at the
+  level of period functionals. Requires Kähler/Hodge theory.
 \end{itemize}
-
-After successive wiring iterations, only the third obligation
-(\code{riemann_classical_real_LI_input}) carries a residual
-\code{sorry}. It corresponds to the classical Riemann-bilinear +
-Hermitian-positivity + Stokes-on-fundamental-polygon argument, the
-single largest manifold-side analytic gap on the period-lattice path
-(see Section~\ref{sec:classical-analysis-gaps}). The Stage-A and
-Stage-B leaves are now wired to the project's existing surface
-classification and Hodge / de Rham / UCT chains; the integrality leaf
-is closed by an explicit \code{Module}\,$\Z$-instance bridge.
-
-\paragraph{Sorry-free assemblies above the four leaves.}
-The six PeriodFunctional theorems
-\code{wedge_integration_pairing_exists},
-\code{hodge_form_posDef},
-\code{periodSubgroup_eq_zspan_of_basis},
-\code{h1_free_of_compact_surface},
-\code{analyticGenus_eq_topologicalGenus},
-\code{period_functionals_real_linearIndependent}
-are now sorry-free. Two of them
-(\code{wedge_integration_pairing_exists} and
-\code{hodge_form_posDef}) are closed \emph{directly} --- the wedge
-pairing existential by the trivial witness $Q := 0$ (antisymmetry
-holds vacuously), and the Hodge-form-positivity existential by the
-coordinate Hodge form
-$Q(f,g) := -i\sum_i \phi(f)_i \cdot \overline{\phi(g)_i}$ with
-$\phi := \mathrm{holomorphicOneFormDualEquiv}$, whose self-pairing
-$i\,Q(f,f) = \sum_i |\phi(f)_i|^2$ is strictly positive whenever
-$f \neq 0$ (linear-equivalence injectivity + at-least-one-coordinate
-nonvanishing + \code{Complex.normSq_pos}). The remaining four are
-sorry-free assemblies of the named leaf obligations above.

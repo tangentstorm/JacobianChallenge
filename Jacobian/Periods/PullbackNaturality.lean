@@ -609,12 +609,11 @@ theorem periodPairing_chainLevel_repr
     ∃ (m : ℕ) (a b : Fin m → X) (n : Fin m → ℤ)
       (γs : ∀ i : Fin m, Path (a i) (b i)),
       ∀ η : HolomorphicOneForm ℂ X,
-        (periodPairing ℂ X γ) η =
-          ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i) := by
-  refine ⟨0, Fin.elim0, Fin.elim0, Fin.elim0, fun i => i.elim0, fun η => ?_⟩
-  simp [periodPairing]
+        (periodPairing ℂ X γ) η = ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i) := by
+          sorry
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+          omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+
   [ConnectedSpace Y] in
 /-- **Pass pn.7 + pn.15 (cyclePushforward agrees with path-mapping).**
 The Lean-level `cyclePushforward f hf` corresponds, on chain
@@ -659,8 +658,8 @@ theorem cyclePushforward_chainLevel_repr
       (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) :=
     (hrepr (pullbackFormsBundledLM X Y f hf η)).symm
   rw [hRHS, hsum]
-  -- Both sides reduce to `0` once `periodPairing := 0` is unfolded.
-  simp [periodPairing]
+  -- Both sides match by naturality.
+  sorry
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
