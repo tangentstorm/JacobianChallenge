@@ -244,8 +244,16 @@ theorem exists_singularSimplex_integration
     ∃ Iσ : C(unitInterval, X) → (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ), True := by
   refine ⟨fun σ => {
     toFun := fun η => pathIntegralViaCover η (simplex_to_path X σ),
-    map_add' := fun _ _ => sorry,
-    map_smul' := fun _ _ => sorry
+    map_add' := fun ω η => by
+      -- Multi-chart linearity in the form (addition) is conditional on
+      -- curve integrability (chartedFormPullback_curveIntegrable).
+      -- For the blueprint witness, we assume σ is piecewise-C¹ so that
+      -- integrability is unconditional.
+      sorry,
+    map_smul' := fun k ω => by
+      -- Multi-chart linearity in the form (scalar mult) follows from
+      -- pathIntegralViaCoverPickSmul.lean.
+      sorry
   }, trivial⟩
 
 /-- **Sub-leaf A.2 (free-module assembly).**

@@ -40,7 +40,7 @@ public name without committing to an implementation.
 
 namespace JacobianChallenge.Periods
 
-open JacobianChallenge.HolomorphicForms
+open JacobianChallenge.HolomorphicForms CategoryTheory
 
 /-- The period pairing
 `IntegralOneCycle X →+ (HolomorphicOneForm E X →ₗ[ℂ] ℂ)`.
@@ -58,14 +58,36 @@ By providing a real implementation instead of the zero map, we unblock
 the non-trivial classical-analytic theorems (like
 `riemann_classical_real_LI_input`) which quantify over period values. -/
 noncomputable def periodPairing
-    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     IntegralOneCycle X →+ (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
-  -- Construct the descent from the multi-chart integration I.
-  sorry
+  let D := JacobianChallenge.Blueprint.Sec03.period_homology_invariance_descent X
+  let I : JacobianChallenge.Blueprint.Sec03.SingularOneChain X →ₗ[ℤ]
+            (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) := D.choose
+  let hI := D.choose_spec
+  -- Bridge between HolomorphicOneForm ℂ X and HolomorphicOneForm E X.
+  -- The core analytic construction in the blueprint is for the self-model E = ℂ.
+  -- Since X : Type, any model space E is also in universe 0.
+  let I_E : JacobianChallenge.Blueprint.Sec03.SingularOneChain X →ₗ[ℤ]
+             (HolomorphicOneForm E X →ₗ[ℂ] ℂ) := sorry
+  let K := JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X
+  let S := K.sc 1
+  -- Convert I_E to a morphism in ModuleCat ℤ.
+  let Im : S.X₂ ⟶ ModuleCat.of ℤ (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
+    ModuleCat.ofHom I_E
+  -- Construct the descent map using the universal property of homology
+  -- (homology is the cokernel of the map from boundaries to cycles).
+  -- Since I kills boundaries (hI), it factorises through homology.
+  (S.descHomology (S.iCycles ≫ Im) (by
+    -- hI states I(∂₂ s) η = 0.
+    -- S.toCycles ≫ S.iCycles = S.f = K.d 2 1 = ∂₂.
+    -- Thus (S.toCycles ≫ S.iCycles ≫ Im) = ∂₂ ≫ I = 0.
+    ext s η
+    -- Guided reduction to the hI obligation.
+    sorry)).hom.toAddMonoidHom
 
 /-- **`lem:period-homology-invariance` (typed form).**
 
@@ -525,14 +547,15 @@ symplectic period sum.
 
 Mathlib gap: this is the link between the wedge integral `∫_X ω ∧ η`
 and the period sum, which requires Stokes on the fundamental polygon.
-The existence of *some* such `Q` is already sorry-free in
-`riemann_bilinear_identity`; this theorem asserts that the
-*manifold-level* pairing satisfies it. -/
+The existence of *some* such `Q` (the symplectic sum itself) is
+sorry-free in `riemann_bilinear_identity`; this theorem asserts
+naturality. -/
 theorem periodPairing_satisfies_bilinear_identity
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X) :
+    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
+    (hσ : Function.Injective σ) :
     ∃ Q : HolomorphicOneForm ℂ X → HolomorphicOneForm ℂ X → ℂ,
       (∀ ω η, Q ω η = -Q η ω) ∧
       (∀ ω η, Q ω η = ∑ k : Fin (analyticGenus ℂ X),
@@ -540,7 +563,8 @@ theorem periodPairing_satisfies_bilinear_identity
                            ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) η -
                          ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) ω *
                            ((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) η)) :=
-  riemann_bilinear_identity X σ (sorry) -- Injective is needed
+  riemann_bilinear_identity X σ hσ
+
 
 /-- **Blocker 3.2.** Hermitian positivity on the actual period pairing:
 the quadratic form derived from the Riemann bilinear relations is
@@ -580,8 +604,17 @@ theorem riemann_classical_real_LI_input
     (hσ : Function.Injective σ) :
     LinearIndependent ℝ
       (fun i => (periodPairing ℂ X) (σ i)) := by
-  -- The assembly uses the Cramér-style criterion from RiemannBilinearRefinement
-  -- applied to the coordinate vectors. Deferring the exact wiring.
+  -- Proof strategy (assembly of Blockers 3.1 and 3.2):
+  -- 1. Choose a ℂ-basis {ω_1, ..., ω_g} for HolomorphicOneForm ℂ X.
+  -- 2. Let a_ij = (periodPairing σ_i) ω_j be the (2g x g) period matrix.
+  -- 3. Use riemann_bilinear_identity to show that the symplectic pairing
+  --    on functionals corresponds to the manifold wedge integral.
+  -- 4. Use hodge_form_posDef_on_periods to show that the quadratic form
+  --    Σ_j |Σ_i c_i a_ij|² vanishes only when c = 0.
+  -- 5. Apply RiemannBilinearRefinement.real_linearIndependent_of_quadratic_pos_def
+  --    to conclude the row vectors a_i are ℝ-linearly independent.
+  -- 6. Linear independence of coordinate vectors in a basis implies
+  --    linear independence of the functionals.
   sorry
 
 /-- **Analytic core.** The period functionals `(periodPairing ℂ X) ∘ σ`
@@ -900,7 +933,7 @@ Uses `periodSubgroup_eq_zspan_of_basis` (integrality, sorry) to
 rewrite the subgroup as a ℤ-span, then `zspan_of_RLinearIndep_isDiscrete`
 (sorry-free, Mathlib `ZSpan` API) to conclude `DiscreteTopology`. -/
 theorem periodSubgroup_isZLattice
-    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
@@ -961,7 +994,7 @@ theorem periodSubgroup_spans_real
 /-- The period subgroup: the image of the period pairing, as an
 additive subgroup of the linear dual of holomorphic 1-forms. -/
 noncomputable def periodSubgroup
-    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     [ChartedSpace ℂ X]
