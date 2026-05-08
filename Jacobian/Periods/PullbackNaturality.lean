@@ -610,9 +610,15 @@ theorem periodPairing_chainLevel_repr
       (γs : ∀ i : Fin m, Path (a i) (b i)),
       ∀ η : HolomorphicOneForm ℂ X,
         (periodPairing ℂ X γ) η = ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i) := by
-          sorry
+  -- Every homology class γ has a representative cycle c ∈ ker(∂₁).
+  -- A singular 1-chain c is a finite formal sum of simplices σ_i : Δ¹ → X.
+  -- By definition of periodPairing as the descent of the chain-level integral I:
+  -- periodPairing [c] η = I(c) η.
+  -- Since I is defined as the linear extension of simplex integration,
+  -- and simplex integration matches pathIntegralViaCover, the result follows.
+  sorry
 
-          omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
 
   [ConnectedSpace Y] in
 /-- **Pass pn.7 + pn.15 (cyclePushforward agrees with path-mapping).**
@@ -658,7 +664,13 @@ theorem cyclePushforward_chainLevel_repr
       (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) :=
     (hrepr (pullbackFormsBundledLM X Y f hf η)).symm
   rw [hRHS, hsum]
-  -- Both sides match by naturality.
+  -- The naturality of the period pairing (∫_{f_*γ} η = ∫_γ f^*η) reduces to:
+  -- 1. The definition of cyclePushforward as the induced map on homology,
+  --    which maps a representative cycle c = Σ n_i σ_i to f_*c = Σ n_i (f ∘ σ_i).
+  -- 2. The naturality of the chain-level integral I: I_Y(f_*c) η = I_X(c) f^*η.
+  -- 3. The fact that simplex integration satisfies naturality:
+  --    pathIntegralViaCover η (f ∘ σ) = pathIntegralViaCover (f^*η) σ,
+  --    which is pathIntegralViaCover_pullbackFormsBundledLM.
   sorry
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]

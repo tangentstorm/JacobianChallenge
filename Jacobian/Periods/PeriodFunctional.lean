@@ -64,10 +64,7 @@ noncomputable def periodPairing
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     IntegralOneCycle X →+ (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
-  let I := (JacobianChallenge.Blueprint.Sec03.period_homology_invariance_descent X).choose
-  -- We assume (via sorry) that `I` descends to homology.
-  -- The descent uses the universal property of the homology quotient:
-  -- H₁ = Cycles / Boundaries.
+  -- Construct the descent from the multi-chart integration I.
   sorry
 
 /-- **`lem:period-homology-invariance` (typed form).**
