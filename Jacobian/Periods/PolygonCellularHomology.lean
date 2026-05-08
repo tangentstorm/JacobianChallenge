@@ -1,5 +1,6 @@
 import Jacobian.Periods.Polygon4g
 import Jacobian.Periods.TopologicalGenus
+import Jacobian.Periods.SurfaceClassification
 import Mathlib.Algebra.Homology.HomologicalComplex
 import Mathlib.Algebra.Category.ModuleCat.Basic
 import Mathlib.LinearAlgebra.FreeModule.Finite.Basic
@@ -42,7 +43,8 @@ fundamental polygon is isomorphic to its singular homology.
 Mathlib gap: the general cellular-singular comparison. For the
 polygon we provide this as a named project-side bridge. -/
 theorem polygon4g_cellular_singular_iso (g : ℕ) :
-    Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] singularH1 (Polygon4g g)) :=
-  sorry
+    Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
+  obtain ⟨e⟩ := polygon4g_singularH1_iso_freeZ g
+  exact ⟨e.symm⟩
 
 end JacobianChallenge.Periods
