@@ -179,9 +179,6 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
   let LC := L ⊓ C
   have hdim_LC : Module.finrank ℂ LC ≤ 1 := by
     -- LC is a submodule of C, and dim C = 1.
-    haveI h_nonempty : Nonempty X := inferInstance
-    have h_dim_C := finrank_constantFunctions X
-    -- LC <= C, so rank LC <= rank C = 1.
     sorry
   have hne : L ≠ LC := by
     intro h
@@ -360,17 +357,60 @@ with exactly one simple pole at `P`.
 
 Sorry-free assembly: extract a nonconstant `f ∈ L([P])` and use its
 pole-divisor property. -/
-theorem genusZero_fixedPoleMeromorphicData_exists
+theorem genusZero_fixedPole_meromorphicData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
-    ∃ _ : GenusZeroFixedPoleMeromorphicData X P h, True := by
-  obtain ⟨f⟩ := genusZero_exists_nonconstant_mem_L_point X P h
+    Nonempty (GenusZeroFixedPoleMeromorphicData X P h) := by
+  obtain ⟨f, hnc, hmem⟩ := genusZero_pointRiemannRochSpace_witness_exists X P h
   exact ⟨
-    { meromorphicMap := f.meromorphicMap
+    { meromorphicMap := f
       poleDivisor_eq_point :=
-        genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point X P h f }, trivial ⟩
+        genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point X P h ⟨f, hnc, hmem⟩ }⟩
+
+/-! ### Topological helper lemmas for indicator constructions -/
+
+/-- A `ChartedSpace ℂ`-equipped nonempty space contains at least two
+distinct points. -/
+lemma exists_two_distinct_points_of_chartedSpaceComplex
+    {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X] :
+    ∃ p q : X, p ≠ q :=
+  sorry
+
+/-- A `ChartedSpace ℂ`-equipped nonempty space contains at least three
+distinct points. -/
+lemma exists_three_distinct_points_of_chartedSpaceComplex
+    {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X] :
+    ∃ p q r : X, p ≠ q ∧ p ≠ r ∧ q ≠ r :=
+  sorry
+
+/-- Given `p q : X` in a `ChartedSpace ℂ`-equipped nonempty space,
+there is a third point `r` distinct from both `p` and `q`. -/
+lemma exists_distinct_from_pair_of_chartedSpaceComplex
+    {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X]
+    (p q : X) : ∃ r : X, r ≠ p ∧ r ≠ q :=
+  sorry
+
+open Classical in
+/-- An \"indicator\" function `X → OnePoint ℂ` sending one chosen point
+to `∞` and all others to `0` is *not* continuous on a connected,
+T2, charted-on-`ℂ` space (which has at least two points). -/
+lemma not_continuous_indicator
+    {X : Type*} [TopologicalSpace X] [T2Space X] [ConnectedSpace X]
+    [ChartedSpace ℂ X] (p : X) :
+    ¬ Continuous (fun x : X => if x = p then (OnePoint.infty : OnePoint ℂ)
+                               else (((0 : ℂ) : OnePoint ℂ))) :=
+  sorry
+
+open Classical in
+/-- The two-point analog of `not_continuous_indicator`. -/
+lemma not_continuous_two_point_indicator
+    {X : Type*} [TopologicalSpace X] [T2Space X] [ConnectedSpace X]
+    [ChartedSpace ℂ X] (p q : X) :
+    ¬ Continuous (fun x : X => if x = p ∨ x = q then (OnePoint.infty : OnePoint ℂ)
+                               else (((0 : ℂ) : OnePoint ℂ))) :=
+  sorry
 
 end JacobianChallenge.HolomorphicForms
