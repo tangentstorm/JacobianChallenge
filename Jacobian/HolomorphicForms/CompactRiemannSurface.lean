@@ -233,28 +233,43 @@ Cross-ref: `tex/sections/02-holomorphic-forms-finite-dim.tex`,
 theorem ContMDiffSection.fiberNorm_eq_abs_eval_one
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_σ : HolomorphicOneForm ℂ X) :
-    True := trivial  -- placeholder for typed identity
+    (σ : HolomorphicOneForm ℂ X) (x : X) :
+    ContMDiffSection.fiberNorm σ x = ‖(σ.toFun x) (1 : ℂ)‖ :=
+  -- Fiber norm is the operator norm on T*X x = ℂ →L[ℂ] ℂ.
+  -- In 1D complex manifold, TangentSpace is ℂ and the operator norm
+  -- satisfies ‖f‖ = ‖f 1‖.
+  ContinuousLinearMap.norm_apply_one (σ.toFun x)
 
 /-- **Structural axiom (CRS-fnB).** The eval-at-1 of a smooth
 cotangent-bundle section, viewed as `X → ℂ`, is continuous. -/
 theorem ContMDiffSection.continuous_eval_at_one
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_σ : HolomorphicOneForm ℂ X) :
-    True := trivial  -- placeholder for typed continuity statement
+    (σ : HolomorphicOneForm ℂ X) :
+    Continuous (fun x => (σ.toFun x) (1 : ℂ)) := by
+  -- σ is a smooth section, hence continuous into the cotangent bundle.
+  -- The cotangent bundle is a vector bundle, so evaluation at 1
+  -- is a continuous map if we assume the standard trivialization.
+  -- Mathlib gap: direct Section-to-continuous-map API.
+  sorry
 
 /-- **Structural axiom (CRS-fn).** The fiber-norm of a smooth section
-is continuous. Sorry-free *assembly* (modulo placeholder typings of
-CRS-fnA, CRS-fnB) would chain them with continuity of `‖·‖`; for
-now this remains a single sorry pending typed CRS-fnA, CRS-fnB. -/
+is continuous.
+
+Sorry-free *assembly* via `ContMDiffSection.fiberNorm_eq_abs_eval_one`
+and `ContMDiffSection.continuous_eval_at_one`. -/
 theorem holomorphicOneForm_fiberNorm_continuous_via_eval_at_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : HolomorphicOneForm ℂ X) :
     Continuous (ContMDiffSection.fiberNorm σ) := by
-  sorry
+  -- Continuous on a function is proved by showing it's equal to a continuous one.
+  have h : ContMDiffSection.fiberNorm σ = (fun x => ‖(σ.toFun x) (1 : ℂ)‖) := by
+    funext x
+    exact ContMDiffSection.fiberNorm_eq_abs_eval_one σ x
+  rw [h]
+  exact (ContMDiffSection.continuous_eval_at_one σ).norm
 
 theorem holomorphicOneForm_fiberNorm_continuous
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
