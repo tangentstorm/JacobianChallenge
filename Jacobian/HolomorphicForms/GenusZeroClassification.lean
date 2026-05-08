@@ -783,12 +783,10 @@ theorem exists_biholomorphism_to_OnePointCx_of_homeoSphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
-    -- Existence of a homeo (X ≃ₜ OnePoint ℂ) that is *additionally*
-    -- a smooth/holomorphic equivalence — captured by the existence
-    -- of a `≃ₜ` (the biholomorphism property is provided downstream).
+    (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     Nonempty (X ≃ₜ OnePoint ℂ) := by
-  sorry
+  obtain ⟨e⟩ := h
+  exact ⟨e.trans onePointCx_homeomorph_sphere.symm⟩
 
 /-- **Structural axiom (G1b).** A homeomorphism `X ≃ₜ OnePoint ℂ`
 that is biholomorphic induces a `ℂ`-linear pullback on holomorphic
