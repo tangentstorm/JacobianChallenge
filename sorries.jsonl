@@ -79,9 +79,9 @@
 {"i":78,"f":"Jacobian/Periods/EdgeWord.lean","k":"lemma","s":"standardWord_get_handle","n":1,"o":1,"r":1,"e":4,"u":[],"d":[],"a":"","c":"open","b":"","t":"infrastructure"}
 {"i":79,"f":"Jacobian/Periods/EdgeWord.lean","k":"lemma","s":"standardWord_get_unique","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"","c":"open","b":"","t":"infrastructure"}
 {"i":80,"f":"Jacobian/Periods/PathIntegralViaCoverWithRefinementInvariant.lean","k":"theorem","s":"pathIntegralViaCoverWith_refinement_invariant'","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"","c":"open","b":"","t":"core"}
-{"i":81,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"theorem","s":"hodge_form_posDef_on_periods","n":1,"o":1,"r":1,"e":8,"u":[],"d":[],"a":"","c":"open","b":"thm:hermitian-positivity","t":"core"}
+{"i":81,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"theorem","s":"hodge_form_posDef_on_periods","n":1,"o":1,"r":1,"e":8,"u":[],"d":[83],"a":"","c":"open","b":"thm:hermitian-positivity","t":"core"}
 {"i":82,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"def","s":"periodPairing","n":2,"o":2,"r":1,"e":4,"u":[],"d":[],"a":"","c":"open","b":"def:period-pairing","t":"core"}
-{"i":83,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"theorem","s":"riemann_classical_real_LI_input","n":1,"o":1,"r":1,"e":6,"u":[],"d":[],"a":"","c":"open","b":"thm:period-vectors-full-real-rank","t":"core"}
+{"i":83,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"theorem","s":"riemann_classical_real_LI_input","n":1,"o":1,"r":1,"e":6,"u":[81],"d":[],"a":"","c":"open","b":"thm:period-vectors-full-real-rank","t":"core"}
 {"i":84,"f":"Jacobian/Periods/Polygon4gCellular.lean","k":"theorem","s":"polygon4g_cellular_singular_iso","n":1,"o":1,"r":1,"e":9,"u":[],"d":[],"a":"","c":"open","b":"input:polygonal-model","t":"infrastructure"}
 {"i":85,"f":"Jacobian/Periods/Polygon4gEdgeBasisMap.lean","k":"theorem","s":"edgeBasisMap_surjective","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":86,"f":"Jacobian/Periods/PullbackNaturality.lean","k":"theorem","s":"cyclePushforward_chainLevel_repr","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"","c":"open","b":"","t":"core"}
