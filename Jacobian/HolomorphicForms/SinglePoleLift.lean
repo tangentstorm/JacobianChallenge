@@ -54,12 +54,29 @@ noncomputable def singlePoleMeromorphicMap (Q : X) : MeromorphicMapToSphere X :=
     poleDivisor := Divisor.point Q
     principalDivisor := -Divisor.point Q
     principalDivisor_eq := by simp
-    poleDivisor_nonneg := fun _ => by sorry
+    poleDivisor_nonneg := fun x => by
+      classical
+      exact Divisor.effective_point Q x
     zero_or_pole_eq_zero := fun _ => Or.inl rfl
-    toMap_ne_infty_of_poleDivisor_zero := fun _ _ _ => by sorry
+    toMap_ne_infty_of_poleDivisor_zero := fun x hx => by
+      have hne : x ≠ Q := by
+        intro h
+        rw [h, Divisor.point_apply_self] at hx
+        exact zero_ne_one hx.symm
+      unfold singlePoleSphereLift
+      split_ifs with heq hsrc
+      · contradiction
+      · exact OnePoint.coe_ne_infty _
+      · exact OnePoint.coe_ne_infty _
     continuousOn_ne_infty := by sorry
     toFiniteFun_mdifferentiable := fun _ _ => by sorry
-    toMap_eq_infty_of_poleDivisor_pos := fun _ _ => by sorry
+    toMap_eq_infty_of_poleDivisor_pos := fun x hx => by
+      have heq : x = Q := by
+        by_contra hne
+        rw [Divisor.point_apply_ne hne] at hx
+        exact (lt_irrefl _) hx
+      unfold singlePoleSphereLift
+      rw [if_pos heq]
     exists_modulus_atTop_at_pole := fun _ _ => by sorry
     hasBranchedCoverDataOfPoleDegree := honestMeromorphic_branchedCoverData_obligation _ _ }
 
@@ -86,12 +103,46 @@ noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (hne : Q1 ≠ Q2) : Meromor
     poleDivisor := Divisor.point Q1 + Divisor.point Q2
     principalDivisor := -(Divisor.point Q1 + Divisor.point Q2)
     principalDivisor_eq := by simp
-    poleDivisor_nonneg := fun _ => by sorry
+    poleDivisor_nonneg := fun x => by
+      classical
+      apply add_nonneg
+      · exact Divisor.effective_point Q1 x
+      · exact Divisor.effective_point Q2 x
     zero_or_pole_eq_zero := fun _ => Or.inl rfl
-    toMap_ne_infty_of_poleDivisor_zero := fun _ _ _ => by sorry
+    toMap_ne_infty_of_poleDivisor_zero := fun x hx => by
+      have hne1 : x ≠ Q1 := by
+        intro h
+        have hx' := hx
+        rw [h] at hx'
+        have : (Divisor.point Q1) Q1 + (Divisor.point Q2) Q1 = 0 := hx'
+        rw [Divisor.point_apply_self] at this
+        have h_nonneg := Divisor.effective_point Q2 Q1
+        linarith
+      have hne2 : x ≠ Q2 := by
+        intro h
+        have hx' := hx
+        rw [h] at hx'
+        have : (Divisor.point Q1) Q2 + (Divisor.point Q2) Q2 = 0 := hx'
+        rw [Divisor.point_apply_self] at this
+        have h_nonneg := Divisor.effective_point Q1 Q2
+        linarith
+      split_ifs with heq
+      · rcases heq with heq1 | heq2
+        · contradiction
+        · contradiction
+      · exact OnePoint.coe_ne_infty _
     continuousOn_ne_infty := by sorry
     toFiniteFun_mdifferentiable := fun _ _ => by sorry
-    toMap_eq_infty_of_poleDivisor_pos := fun _ _ => by sorry
+    toMap_eq_infty_of_poleDivisor_pos := fun x hx => by
+      have heq : x = Q1 ∨ x = Q2 := by
+        by_contra h_nor
+        push_neg at h_nor
+        have hx' : 0 < (Divisor.point Q1) x + (Divisor.point Q2) x := hx
+        have hzero : (Divisor.point Q1) x + (Divisor.point Q2) x = 0 := by
+          rw [Divisor.point_apply_ne h_nor.1, Divisor.point_apply_ne h_nor.2, add_zero]
+        rw [hzero] at hx'
+        exact lt_irrefl _ hx'
+      rw [if_pos heq]
     exists_modulus_atTop_at_pole := fun _ _ => by sorry
     hasBranchedCoverDataOfPoleDegree := honestMeromorphic_branchedCoverData_obligation _ _ }
 
