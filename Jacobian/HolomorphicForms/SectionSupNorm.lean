@@ -4,6 +4,8 @@ import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.Topology.Compactness.Compact
 import Jacobian.HolomorphicForms.SectionFiberNorm
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Sup-norm of smooth sections over a compact base
 

@@ -44,7 +44,7 @@ def Effective {X : Type*} (D : Divisor X) : Prop :=
 @[simp] theorem effective_zero {X : Type*} :
     Effective (0 : Divisor X) := by
   intro Q
-  simp [Effective]
+  simp
 
 @[simp] theorem point_apply_self {X : Type*} [DecidableEq X] (P : X) :
     point P P = 1 := by

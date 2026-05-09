@@ -80,6 +80,8 @@ be cleaner; the old names are kept here so the docstrings in
 
 namespace JacobianChallenge.TraceDegree
 
+set_option linter.unusedSectionVars false
+
 open scoped ContDiff Manifold
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 open JacobianChallenge.AbelJacobi

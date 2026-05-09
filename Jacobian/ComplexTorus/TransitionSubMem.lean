@@ -2,6 +2,8 @@ import Jacobian.ComplexTorus.Defs
 import Jacobian.ComplexTorus.Mk
 import Jacobian.ComplexTorus.LocalSection
 
+set_option linter.unusedSectionVars false
+
 /-!
 # The chart transition's "subtract input" lands in the lattice
 

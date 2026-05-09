@@ -2,6 +2,8 @@ import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.Topology.Algebra.Group.Quotient
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Complex torus core definitions
 

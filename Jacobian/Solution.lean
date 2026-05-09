@@ -12,6 +12,8 @@ import Jacobian.TraceDegree.PullbackBasis
 import Jacobian.TraceDegree.PushforwardBasis
 import Jacobian.TraceDegree.AnalyticDegree
 
+set_option linter.unusedSectionVars false
+
 /-!
 
 # Solution mirror of `Jacobian/Challenge.lean`

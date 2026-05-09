@@ -8,6 +8,8 @@ import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.GenusZeroClassification
 import Jacobian.HolomorphicForms.SinglePoleLift
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Analytic Abel-Jacobi map (basis-aligned carrier)
 

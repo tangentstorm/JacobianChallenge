@@ -1,6 +1,8 @@
 import Jacobian.Periods.PathIntegralViaCoverWithRefinementInvariant
 import Jacobian.Periods.PathIntegralCongr
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Path-additivity (`_trans`) for `pathIntegralViaCoverWith` (aligned partition)
 
