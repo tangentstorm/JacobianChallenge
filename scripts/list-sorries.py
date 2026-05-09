@@ -78,19 +78,22 @@ def get_lean_sorries(root_dir):
                     if masked_content[pos] == ' ':
                         continue
                         
+                    keyword_match = re.search(r'\b(' + '|'.join(keywords) + r')\b', m.group(0))
+                    keyword = keyword_match.group(1) if keyword_match else "unknown"
+
                     window = content[pos:pos+300]
                     name_match = name_re.search(window)
                     if name_match:
                         name = name_match.group(1)
                     else:
-                        keyword_match = re.search(r'\b(' + '|'.join(keywords) + r')\b', m.group(0))
-                        name = keyword_match.group(1) if keyword_match else "unknown"
-                    decl_positions.append((pos, name))
+                        name = keyword
+                    decl_positions.append((pos, name, keyword))
                 
                 lines = content.splitlines()
                 masked_lines = masked_content.splitlines()
                 sorries_in_file = []
                 current_decl = "<top-level>"
+                current_keyword = "unknown"
                 current_decl_line = 1
                 decl_idx = 0
                 
@@ -100,10 +103,13 @@ def get_lean_sorries(root_dir):
                     line_starts.append(curr_pos)
                     curr_pos += len(l) + 1
                 
+                structural_re = re.compile(r'^\s*[a-zA-Z0-9_\']+\s*.*?:=.*?\bsorry\b')
+                
                 for i, line in enumerate(masked_lines):
                     line_start_pos = line_starts[i]
                     while decl_idx < len(decl_positions) and decl_positions[decl_idx][0] <= line_start_pos:
                         current_decl = decl_positions[decl_idx][1]
+                        current_keyword = decl_positions[decl_idx][2]
                         # Find the line number corresponding to decl_positions[decl_idx][0]
                         decl_pos = decl_positions[decl_idx][0]
                         # since line_starts is monotonic, we can just use the current line `i` if it's close, but to be exact:
@@ -113,8 +119,9 @@ def get_lean_sorries(root_dir):
                     
                     matches = re.findall(r'\bsorry\b', line)
                     if matches:
+                        is_struct = bool(structural_re.search(line))
                         for _ in matches:
-                            sorries_in_file.append({'decl': current_decl, 'decl_line': current_decl_line, 'line': i + 1})
+                            sorries_in_file.append({'decl': current_decl, 'keyword': current_keyword, 'decl_line': current_decl_line, 'line': i + 1, 'is_struct': is_struct})
                 
                 if sorries_in_file:
                     file_sorries[rel_path] = sorries_in_file
@@ -271,13 +278,17 @@ if __name__ == "__main__":
             for decl_name in sorted(decls.keys()):
                 decl_sorries = decls[decl_name]
                 n = len(decl_sorries)
+                o = sum(1 for s in decl_sorries if not s.get('is_struct', False))
                 decl_line = decl_sorries[0].get('decl_line', 0)
+                keyword = decl_sorries[0].get('keyword', 'unknown')
                 
                 obj = {
                     "f": file_path,
                     "l": decl_line,
+                    "k": keyword,
                     "s": decl_name,
-                    "n": n
+                    "n": n,
+                    "o": o
                 }
                 
                 if do_build:
