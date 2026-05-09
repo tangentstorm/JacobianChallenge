@@ -148,11 +148,11 @@ theorem constant_zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     (c : ℂ) (hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
   sorry
 
-/-- Membership in the Riemann-Roch space `L(D)`: `(f) + D ≥ 0`. -/
+/-- Membership in the Riemann-Roch space `L(D)`: `f = 0` or `(f) + D ≥ 0`. -/
 def MemRiemannRochSpace {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) (D : Divisor X) : Prop :=
-  Divisor.Effective (f.principal + D)
+  f = 0 ∨ Divisor.Effective (f.principal + D)
 
 end MeromorphicFunctionType
 
