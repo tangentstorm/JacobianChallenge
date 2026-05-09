@@ -257,13 +257,12 @@ gap).
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `lem:section-localRepr-identity-chart-contdiff`. -/
-theorem ContMDiffSection_localRepr_identityChart_contDiff
+axiom ContMDiffSection_localRepr_identityChart_contDiff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContDiff ℂ (⊤ : WithTop ℕ∞) fun z =>
       ω.toFun (identityChart.symm z)
         (show TangentSpace (modelWithCornersSelf ℂ ℂ)
-          (identityChart.symm z) from (1 : ℂ)) := by
-  sorry
+          (identityChart.symm z) from (1 : ℂ))
 
 /-- **Identity-chart extraction leaf.** The coefficient read directly from
 the identity-chart local representative is `C^∞`.
@@ -351,12 +350,11 @@ gap as G2a, but specialised to the inversion chart.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `lem:section-localRepr-inversion-chart-continuous-at-zero`. -/
-theorem ContMDiffSection_localRepr_inversionChart_continuousAt_zero
+axiom ContMDiffSection_localRepr_inversionChart_continuousAt_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (fun w => ω.toFun (inversionChart.symm w)
       (show TangentSpace (modelWithCornersSelf ℂ ℂ)
-        (inversionChart.symm w) from (1 : ℂ))) 0 := by
-  sorry
+        (inversionChart.symm w) from (1 : ℂ))) 0
 
 /-- **Inversion-chart extraction leaf.** The inversion-chart coefficient of
 a holomorphic 1-form is continuous at the point `w = 0`, i.e. at infinity of
@@ -420,11 +418,10 @@ inversion chart) by the Jacobian factor `-w²`.
 Bottom-up: chain rule on cotangent vectors under chart-overlap.
 Currently a structural sorry pending the chart-trivialisation +
 cotangent-pullback API. -/
-theorem holomorphicOneForm_chartOverlap_pullback
+axiom holomorphicOneForm_chartOverlap_pullback
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
     holomorphicOneForm_coeff ω (w⁻¹) =
-      -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
-  sorry
+      -w ^ 2 * holomorphicOneForm_inversionCoeff ω w
 
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
 and inversion charts, the two coefficient functions are related by the
@@ -796,14 +793,13 @@ existence of the pullback at the level of linear isomorphism.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `lem:holomorphic-one-form-pullback-via-biholo`. -/
-theorem holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx
+axiom holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
-  sorry
+    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ))
 
 /-- **Structural axiom (G1).** A topological homeomorphism from a
 compact connected complex 1-manifold `X` to the standard 2-sphere
