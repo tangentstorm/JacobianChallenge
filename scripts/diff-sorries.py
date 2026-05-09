@@ -43,7 +43,8 @@ def main():
     db_keys = set(db.keys())
     curr_keys = set(curr.keys())
 
-    removed_keys = db_keys - curr_keys
+    # Only consider it "removed" if it is missing from current codebase AND was "open" in DB
+    removed_keys = {k for k in db_keys - curr_keys if db[k].get("c", "open") == "open"}
     added_keys = curr_keys - db_keys
 
     # Check for changes in 'n' (number of sorries), 'o' (obligations) and 'r' (reachable)
