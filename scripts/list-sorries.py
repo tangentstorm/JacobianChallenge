@@ -4,6 +4,7 @@ import re
 import sys
 import subprocess
 import argparse
+import json
 
 def mask_comments(text):
     res = list(text)
@@ -90,6 +91,7 @@ def get_lean_sorries(root_dir):
                 masked_lines = masked_content.splitlines()
                 sorries_in_file = []
                 current_decl = "<top-level>"
+                current_decl_line = 1
                 decl_idx = 0
                 
                 line_starts = []
@@ -102,12 +104,17 @@ def get_lean_sorries(root_dir):
                     line_start_pos = line_starts[i]
                     while decl_idx < len(decl_positions) and decl_positions[decl_idx][0] <= line_start_pos:
                         current_decl = decl_positions[decl_idx][1]
+                        # Find the line number corresponding to decl_positions[decl_idx][0]
+                        decl_pos = decl_positions[decl_idx][0]
+                        # since line_starts is monotonic, we can just use the current line `i` if it's close, but to be exact:
+                        current_decl_line = next((idx + 1 for idx, start in enumerate(line_starts) if start > decl_pos), len(line_starts)) - 1
+                        if current_decl_line < 1: current_decl_line = 1
                         decl_idx += 1
                     
                     matches = re.findall(r'\bsorry\b', line)
                     if matches:
                         for _ in matches:
-                            sorries_in_file.append({'decl': current_decl, 'line': i + 1})
+                            sorries_in_file.append({'decl': current_decl, 'decl_line': current_decl_line, 'line': i + 1})
                 
                 if sorries_in_file:
                     file_sorries[rel_path] = sorries_in_file
@@ -115,7 +122,8 @@ def get_lean_sorries(root_dir):
     return file_sorries
 
 def get_reachable_sorries():
-    print("Running lake build Jacobian.Solution to identify reachable sorries...")
+    sys.stderr.write("Running lake build Jacobian.Solution to identify reachable sorries...\n")
+    sys.stderr.flush()
     cmd = ["lake", "build", "Jacobian.Solution"]
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     
@@ -137,18 +145,22 @@ def get_reachable_sorries():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="List sorries in Lean files.")
-    parser.add_argument("--build", action="store_true", help="Run lake build to identify reachable sorries.")
+    parser.add_argument("--no-build", action="store_true", help="Do not run lake build to identify reachable sorries.")
+    parser.add_argument("--text", action="store_true", help="Output in plain text format instead of JSONL.")
     parser.add_argument("dir", nargs="?", default="Jacobian", help="Directory to search for sorries.")
     args = parser.parse_args()
+
+    do_build = not args.no_build
 
     results = get_lean_sorries(args.dir)
     
     if not results:
-        print("No sorries found in source.")
+        if args.text:
+            print("No sorries found in source.")
         sys.exit(0)
     
     reachable_data = {}
-    if args.build:
+    if do_build:
         reachable_data = get_reachable_sorries()
     
     total_sorries = 0
@@ -159,9 +171,6 @@ if __name__ == "__main__":
     for (f_path, l_num) in reachable_data.keys():
         # Find which decl in f_path covers l_num
         if f_path in results:
-            # We need to find the declaration that covers this line.
-            # get_lean_sorries doesn't store the full decl range, but we can infer it.
-            # Let's re-parse declaration starts for this file.
             try:
                 with open(f_path, 'r') as f:
                     content = f.read()
@@ -186,7 +195,6 @@ if __name__ == "__main__":
                 best_decl = "<top-level>"
                 for m in decl_start_re.finditer(content):
                     if m.start() <= target_pos:
-                        # Find name
                         window = content[m.start():m.start()+300]
                         name_match = name_re.search(window)
                         if name_match:
@@ -200,54 +208,80 @@ if __name__ == "__main__":
             except Exception:
                 pass
 
-    for file_path in sorted(results.keys()):
-        sorries = results[file_path]
-        file_total = len(sorries)
-        
-        output_lines = []
-        # Group by decl for display
-        decls = {}
-        for s in sorries:
-            d = s['decl']
-            if d not in decls:
-                decls[d] = []
-            decls[d].append(s)
+    if args.text:
+        for file_path in sorted(results.keys()):
+            sorries = results[file_path]
+            file_total = len(sorries)
             
-        file_reachable_count = 0
-        for decl_name in sorted(decls.keys()):
-            decl_sorries = decls[decl_name]
-            is_decl_reachable = (file_path, decl_name) in reachable_decls
-            
-            line_info = []
-            decl_reachable_sorries = 0
-            
-            for s in decl_sorries:
-                # If the whole decl is reachable, we mark all its sorries as reachable.
-                # (Lean 4 typically gives one warning per decl).
-                is_reachable = is_decl_reachable
+            output_lines = []
+            # Group by decl for display
+            decls = {}
+            for s in sorries:
+                d = s['decl']
+                if d not in decls:
+                    decls[d] = []
+                decls[d].append(s)
                 
-                if is_reachable:
-                    decl_reachable_sorries += 1
+            file_reachable_count = 0
+            for decl_name in sorted(decls.keys()):
+                decl_sorries = decls[decl_name]
+                is_decl_reachable = (file_path, decl_name) in reachable_decls
                 
-                mark = "+" if is_reachable else "-" if args.build else ""
-                line_info.append(f"{s['line']}{mark}")
+                line_info = []
+                decl_reachable_sorries = 0
+                
+                for s in decl_sorries:
+                    is_reachable = is_decl_reachable
+                    if is_reachable:
+                        decl_reachable_sorries += 1
+                    
+                    mark = "+" if is_reachable else "-" if do_build else ""
+                    line_info.append(f"{s['line']}{mark}")
+                
+                if is_decl_reachable:
+                    file_reachable_count += len(decl_sorries)
+                
+                lines_str = ", ".join(line_info)
+                count_suffix = f" [{len(decl_sorries)}]" if len(decl_sorries) > 1 else ""
+                reach_suffix = f" (REACHABLE)" if do_build and is_decl_reachable else ""
+                output_lines.append(f"  - {decl_name} (line {lines_str}){count_suffix}{reach_suffix}")
+                
+            total_sorries += file_total
+            total_reachable += file_reachable_count
             
-            if is_decl_reachable:
-                file_reachable_count += len(decl_sorries)
-            
-            lines_str = ", ".join(line_info)
-            count_suffix = f" [{len(decl_sorries)}]" if len(decl_sorries) > 1 else ""
-            reach_suffix = f" (REACHABLE)" if args.build and is_decl_reachable else ""
-            output_lines.append(f"  - {decl_name} (line {lines_str}){count_suffix}{reach_suffix}")
-            
-        total_sorries += file_total
-        total_reachable += file_reachable_count
+            reach_summary = f", {file_reachable_count} reachable" if do_build else ""
+            print(f"{file_path} ({file_total} sorries{reach_summary}):")
+            for line in output_lines:
+                print(line)
+            print()
         
-        reach_summary = f", {file_reachable_count} reachable" if args.build else ""
-        print(f"{file_path} ({file_total} sorries{reach_summary}):")
-        for line in output_lines:
-            print(line)
-        print()
-    
-    reach_total_str = f" ({total_reachable} reachable)" if args.build else ""
-    print(f"Total: {total_sorries} sorries{reach_total_str} across {len(results)} files.")
+        reach_total_str = f" ({total_reachable} reachable)" if do_build else ""
+        print(f"Total: {total_sorries} sorries{reach_total_str} across {len(results)} files.")
+    else:
+        for file_path in sorted(results.keys()):
+            sorries = results[file_path]
+            
+            decls = {}
+            for s in sorries:
+                d = s['decl']
+                if d not in decls:
+                    decls[d] = []
+                decls[d].append(s)
+            
+            for decl_name in sorted(decls.keys()):
+                decl_sorries = decls[decl_name]
+                n = len(decl_sorries)
+                decl_line = decl_sorries[0].get('decl_line', 0)
+                
+                obj = {
+                    "f": file_path,
+                    "l": decl_line,
+                    "s": decl_name,
+                    "n": n
+                }
+                
+                if do_build:
+                    is_decl_reachable = (file_path, decl_name) in reachable_decls
+                    obj["r"] = 1 if is_decl_reachable else 0
+                
+                print(json.dumps(obj))
