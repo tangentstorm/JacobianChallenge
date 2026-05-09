@@ -49,6 +49,7 @@ def main():
 
     # Check for changes in 'n' (number of sorries), 'o' (obligations) and 'r' (reachable)
     common = db_keys & curr_keys
+    resurrected_keys = {k for k in common if db[k].get("c") == "done"}
     changed_n_keys = []
     changed_o_keys = []
     changed_r_keys = []
@@ -69,7 +70,7 @@ def main():
             changed_r_keys.append((k, db_r, curr_r))
 
     if args.text:
-        if not removed_keys and not added_keys and not changed_n_keys and not changed_o_keys and not changed_r_keys:
+        if not removed_keys and not added_keys and not resurrected_keys and not changed_n_keys and not changed_o_keys and not changed_r_keys:
             print("No sorries were added, removed, or changed in count/reachability.")
             return
 
@@ -82,6 +83,13 @@ def main():
         if added_keys:
             print("+++ ADDED SORRIES +++")
             for k in sorted(added_keys):
+                l_str = f"line: {curr[k].get('l', '?')}, "
+                print(f"+ [{(curr[k].get('k') or 'unknown')}] {k[0]} : {k[1]} ({l_str}{curr[k]['n']} sorries ({(curr[k].get('o') or '?')} obligations), reachable: {(curr[k].get('r') or 'unknown')})")
+            print()
+
+        if resurrected_keys:
+            print("+++ RESURRECTED SORRIES +++")
+            for k in sorted(resurrected_keys):
                 l_str = f"line: {curr[k].get('l', '?')}, "
                 print(f"+ [{(curr[k].get('k') or 'unknown')}] {k[0]} : {k[1]} ({l_str}{curr[k]['n']} sorries ({(curr[k].get('o') or '?')} obligations), reachable: {(curr[k].get('r') or 'unknown')})")
             print()
@@ -111,6 +119,7 @@ def main():
         out = {
             "removed": [{"f": k[0], "s": k[1], "n": db[k]["n"]} for k in sorted(removed_keys)],
             "added": [{"f": k[0], "l": curr[k].get("l"), "k": curr[k].get("k"), "s": k[1], "n": curr[k]["n"], "o": curr[k].get("o"), "r": curr[k].get("r")} for k in sorted(added_keys)],
+            "resurrected": [{"f": k[0], "l": curr[k].get("l"), "k": curr[k].get("k"), "s": k[1], "n": curr[k]["n"], "o": curr[k].get("o"), "r": curr[k].get("r")} for k in sorted(resurrected_keys)],
             "changed_n": [{"f": k[0], "l": curr[k].get("l"), "k": curr[k].get("k"), "s": k[1], "old_n": o, "new_n": n} for k, o, n in sorted(changed_n_keys)],
             "changed_o": [{"f": k[0], "l": curr[k].get("l"), "k": curr[k].get("k"), "s": k[1], "old_o": o, "new_o": n} for k, o, n in sorted(changed_o_keys)],
             "changed_r": [{"f": k[0], "l": curr[k].get("l"), "k": curr[k].get("k"), "s": k[1], "old_r": o, "new_r": n} for k, o, n in sorted(changed_r_keys)]
