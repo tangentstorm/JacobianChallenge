@@ -2,6 +2,8 @@ import Jacobian.AbelJacobi.AnalyticOfCurveBasis
 import Jacobian.TraceDegree.PushforwardBasis
 import Jacobian.ComplexTorus.OfClm
 import Jacobian.ComplexTorus.MkSmooth
+import Jacobian.HolomorphicForms.HolomorphicMap
+import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 
 set_option linter.unusedSectionVars false
 
@@ -40,6 +42,9 @@ open scoped ContDiff Manifold
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 open JacobianChallenge.AbelJacobi
 open JacobianChallenge.ComplexTorus
+open JacobianChallenge.HolomorphicForms.HolomorphicMap
+
+open Classical
 
 variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -246,7 +251,13 @@ noncomputable def basisAnalyticPullbackBundle (f : X → Y)
     basisDualPullback := (pullbackTraceLiftLinearMap f hf).toAddMonoidHom
     mk_eq := fun v => rfl
     contMDiff_pull := analyticPullback_contMDiff_raw f hf
-    degree := sorry
+    degree :=
+      if h : ∃ y₀, ∀ x, f x = y₀ then 0
+      else
+        have hf_holo : IsHolomorphic f := isHolomorphic_of_contMDiff hf
+        JacobianChallenge.HolomorphicForms.branchedDegree
+          (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+            hf_holo h)
     trace_pullback_spec := fun _ => sorry }
 
 /-- The analytic pullback is holomorphic.
