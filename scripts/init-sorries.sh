@@ -14,7 +14,7 @@ fi
 echo "Initializing $DB_FILE..."
 
 # Write schema header
-echo '{"i":"ID","f":"File","s":"Statement","n":"Num Sorries","r":"Reachable (0|1)","e":"Effort [1..10]","u":"Upstream IDs","d":"Downstream IDs","a":"Assignee","c":"Status","b":"Blueprint Ref","t":"Type"}' > "$DB_FILE"
+echo '{"i":"ID","f":"File","k":"Keyword","s":"Statement","n":"Num Sorries","o":"Obligations","r":"Reachable (0|1)","e":"Effort [1..10]","u":"Upstream IDs","d":"Downstream IDs","a":"Assignee","c":"Status","b":"Blueprint Ref","t":"Type"}' > "$DB_FILE"
 
 # Run list-sorries.py and enrich the output with jq
 python3 scripts/list-sorries.py | jq -c -s '
@@ -30,8 +30,10 @@ python3 scripts/list-sorries.py | jq -c -s '
   }) | map({
     i: .i,
     f: .f,
+    k: .k,
     s: .s,
     n: .n,
+    o: .o,
     r: .r,
     e: .e,
     u: .u,

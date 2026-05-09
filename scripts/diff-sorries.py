@@ -46,13 +46,20 @@ def main():
     removed_keys = db_keys - curr_keys
     added_keys = curr_keys - db_keys
 
-    # Check for changes in 'n' (number of sorries) and 'r' (reachable)
+    # Check for changes in 'n' (number of sorries), 'o' (obligations) and 'r' (reachable)
     common = db_keys & curr_keys
     changed_n_keys = []
+    changed_o_keys = []
     changed_r_keys = []
     for k in common:
         if db[k]["n"] != curr[k]["n"]:
             changed_n_keys.append((k, db[k]["n"], curr[k]["n"]))
+
+        # 'o' might not be in old db
+        db_o = db[k].get("o")
+        curr_o = curr[k].get("o")
+        if db_o is not None and curr_o is not None and db_o != curr_o:
+            changed_o_keys.append((k, db_o, curr_o))
 
         # db[k].get("r") handles cases where it might be null or missing
         db_r = db[k].get("r")
@@ -61,45 +68,52 @@ def main():
             changed_r_keys.append((k, db_r, curr_r))
 
     if args.text:
-        if not removed_keys and not added_keys and not changed_n_keys and not changed_r_keys:
+        if not removed_keys and not added_keys and not changed_n_keys and not changed_o_keys and not changed_r_keys:
             print("No sorries were added, removed, or changed in count/reachability.")
             return
 
         if removed_keys:
             print("--- REMOVED SORRIES ---")
             for k in sorted(removed_keys):
-                print(f"- {k[0]} : {k[1]} (was {db[k]['n']} sorries)")
+                print(f"- [{db[k].get('k', 'unknown')}] {k[0]} : {k[1]} (was {db[k]['n']} sorries)")
             print()
 
         if added_keys:
             print("+++ ADDED SORRIES +++")
             for k in sorted(added_keys):
                 l_str = f"line: {curr[k].get('l', '?')}, "
-                print(f"+ {k[0]} : {k[1]} ({l_str}{curr[k]['n']} sorries, reachable: {curr[k].get('r', 'unknown')})")
+                print(f"+ [{curr[k].get('k', 'unknown')}] {k[0]} : {k[1]} ({l_str}{curr[k]['n']} sorries ({curr[k].get('o', '?')} obligations), reachable: {curr[k].get('r', 'unknown')})")
             print()
 
         if changed_n_keys:
             print("~~~ CHANGED COUNT ~~~")
             for k, old_n, new_n in sorted(changed_n_keys):
                 l_str = f" (line {curr[k].get('l', '?')})"
-                print(f"~ {k[0]} : {k[1]}{l_str} ({old_n} -> {new_n})")
+                print(f"~ [{curr[k].get('k', 'unknown')}] {k[0]} : {k[1]}{l_str} ({old_n} -> {new_n})")
+            print()
+
+        if changed_o_keys:
+            print("~~~ CHANGED OBLIGATIONS ~~~")
+            for k, old_o, new_o in sorted(changed_o_keys):
+                l_str = f" (line {curr[k].get('l', '?')})"
+                print(f"~ [{curr[k].get('k', 'unknown')}] {k[0]} : {k[1]}{l_str} obligations: ({old_o} -> {new_o})")
             print()
 
         if changed_r_keys:
             print("~~~ CHANGED REACHABILITY ~~~")
             for k, old_r, new_r in sorted(changed_r_keys):
                 l_str = f" (line {curr[k].get('l', '?')})"
-                print(f"~ {k[0]} : {k[1]}{l_str} (reachable: {old_r} -> {new_r})")
+                print(f"~ [{curr[k].get('k', 'unknown')}] {k[0]} : {k[1]}{l_str} (reachable: {old_r} -> {new_r})")
             print()
     else:
         # JSON Output
         out = {
             "removed": [{"f": k[0], "s": k[1], "n": db[k]["n"]} for k in sorted(removed_keys)],
-            "added": [{"f": k[0], "l": curr[k].get("l"), "s": k[1], "n": curr[k]["n"], "r": curr[k].get("r")} for k in sorted(added_keys)],
-            "changed_n": [{"f": k[0], "l": curr[k].get("l"), "s": k[1], "old_n": o, "new_n": n} for k, o, n in sorted(changed_n_keys)],
-            "changed_r": [{"f": k[0], "l": curr[k].get("l"), "s": k[1], "old_r": o, "new_r": n} for k, o, n in sorted(changed_r_keys)]
+            "added": [{"f": k[0], "l": curr[k].get("l"), "k": curr[k].get("k"), "s": k[1], "n": curr[k]["n"], "o": curr[k].get("o"), "r": curr[k].get("r")} for k in sorted(added_keys)],
+            "changed_n": [{"f": k[0], "l": curr[k].get("l"), "k": curr[k].get("k"), "s": k[1], "old_n": o, "new_n": n} for k, o, n in sorted(changed_n_keys)],
+            "changed_o": [{"f": k[0], "l": curr[k].get("l"), "k": curr[k].get("k"), "s": k[1], "old_o": o, "new_o": n} for k, o, n in sorted(changed_o_keys)],
+            "changed_r": [{"f": k[0], "l": curr[k].get("l"), "k": curr[k].get("k"), "s": k[1], "old_r": o, "new_r": n} for k, o, n in sorted(changed_r_keys)]
         }
         print(json.dumps(out, indent=2))
-
 if __name__ == "__main__":
     main()
