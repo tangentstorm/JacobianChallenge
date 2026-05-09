@@ -75,35 +75,35 @@ def main():
         if removed_keys:
             print("--- REMOVED SORRIES ---")
             for k in sorted(removed_keys):
-                print(f"- [{db[k].get('k', 'unknown')}] {k[0]} : {k[1]} (was {db[k]['n']} sorries)")
+                print(f"- [{(db[k].get('k') or 'unknown')}] {k[0]} : {k[1]} (was {db[k]['n']} sorries)")
             print()
 
         if added_keys:
             print("+++ ADDED SORRIES +++")
             for k in sorted(added_keys):
                 l_str = f"line: {curr[k].get('l', '?')}, "
-                print(f"+ [{curr[k].get('k', 'unknown')}] {k[0]} : {k[1]} ({l_str}{curr[k]['n']} sorries ({curr[k].get('o', '?')} obligations), reachable: {curr[k].get('r', 'unknown')})")
+                print(f"+ [{(curr[k].get('k') or 'unknown')}] {k[0]} : {k[1]} ({l_str}{curr[k]['n']} sorries ({(curr[k].get('o') or '?')} obligations), reachable: {(curr[k].get('r') or 'unknown')})")
             print()
 
         if changed_n_keys:
             print("~~~ CHANGED COUNT ~~~")
             for k, old_n, new_n in sorted(changed_n_keys):
                 l_str = f" (line {curr[k].get('l', '?')})"
-                print(f"~ [{curr[k].get('k', 'unknown')}] {k[0]} : {k[1]}{l_str} ({old_n} -> {new_n})")
+                print(f"~ [{(curr[k].get('k') or 'unknown')}] {k[0]} : {k[1]}{l_str} ({old_n} -> {new_n})")
             print()
 
         if changed_o_keys:
             print("~~~ CHANGED OBLIGATIONS ~~~")
             for k, old_o, new_o in sorted(changed_o_keys):
                 l_str = f" (line {curr[k].get('l', '?')})"
-                print(f"~ [{curr[k].get('k', 'unknown')}] {k[0]} : {k[1]}{l_str} obligations: ({old_o} -> {new_o})")
+                print(f"~ [{(curr[k].get('k') or 'unknown')}] {k[0]} : {k[1]}{l_str} obligations: ({old_o} -> {new_o})")
             print()
 
         if changed_r_keys:
             print("~~~ CHANGED REACHABILITY ~~~")
             for k, old_r, new_r in sorted(changed_r_keys):
                 l_str = f" (line {curr[k].get('l', '?')})"
-                print(f"~ [{curr[k].get('k', 'unknown')}] {k[0]} : {k[1]}{l_str} (reachable: {old_r} -> {new_r})")
+                print(f"~ [{(curr[k].get('k') or 'unknown')}] {k[0]} : {k[1]}{l_str} (reachable: {old_r} -> {new_r})")
             print()
     else:
         # JSON Output
