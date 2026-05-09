@@ -55,7 +55,7 @@
 {"i":54,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_local_kfold_ramified_infty","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":55,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_weightedFiberSum_eventually_eq_finite","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":56,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_weightedFiberSum_eventually_eq_infty","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":57,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"MeromorphicMapToSphere.toFiniteFun_of_no_poles","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":57,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"MeromorphicMapToSphere.toFiniteFun_of_no_poles","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":58,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"def","s":"constantFunctions","n":2,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":59,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"instance","s":"finiteDimensional_constantFunctions","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":60,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"finrank_constantFunctions","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
@@ -63,7 +63,7 @@
 {"i":62,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"genusZero_riemannRoch_K_minus_point_dim_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":63,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"genusZero_riemannRoch_difference_eq_two","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":64,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"poles_eq_zero_iff_constant","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":65,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"def","s":"riemannRochSpace","n":3,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":65,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"def","s":"riemannRochSpace","n":2,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":66,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic","n":9,"o":2,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":67,"f":"Jacobian/HolomorphicForms/RiemannRochLowDegree.lean","k":"theorem","s":"riemann_roch_low_degree","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":68,"f":"Jacobian/HolomorphicForms/Serre/ResidueMap.lean","k":"theorem","s":"residueMap_left_inv","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
@@ -71,8 +71,8 @@
 {"i":70,"f":"Jacobian/HolomorphicForms/Serre/RiemannRochHighFromSerre.lean","k":"theorem","s":"RSLineBundleDegree_dual_tensor_canonical","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":71,"f":"Jacobian/HolomorphicForms/Serre/RiemannRochHighFromSerre.lean","k":"theorem","s":"riemann_roch_high_degree_via_serre","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":72,"f":"Jacobian/HolomorphicForms/SinglePoleLift.lean","k":"lemma","s":"honestMeromorphic_branchedCoverData_obligation","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":73,"f":"Jacobian/HolomorphicForms/SinglePoleLift.lean","k":"def","s":"singlePoleMeromorphicMap","n":6,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":74,"f":"Jacobian/HolomorphicForms/SinglePoleLift.lean","k":"def","s":"twoPointMeromorphicMap","n":6,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":73,"f":"Jacobian/HolomorphicForms/SinglePoleLift.lean","k":"def","s":"singlePoleMeromorphicMap","n":3,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":74,"f":"Jacobian/HolomorphicForms/SinglePoleLift.lean","k":"def","s":"twoPointMeromorphicMap","n":3,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":75,"f":"Jacobian/Periods/CellularHomologyRS.lean","k":"theorem","s":"compactRiemannSurface_hasFiniteCWStructure","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":76,"f":"Jacobian/Periods/DualGraphCut.lean","k":"theorem","s":"unfoldedDisk_to_edgeWordPresentation","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":77,"f":"Jacobian/Periods/EdgeWord.lean","k":"theorem","s":"sidePairingRel_standardWord","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
