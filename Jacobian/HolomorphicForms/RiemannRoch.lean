@@ -16,7 +16,7 @@ prescribed simple pole.
 
 namespace JacobianChallenge.HolomorphicForms
 
-open scoped Manifold
+open scoped Manifold OnePoint
 
 /-- The Riemann-Roch space `L(D)` as a `ℂ`-vector subspace of `Mer(X)`. -/
 def riemannRochSpace
@@ -34,24 +34,86 @@ def constantFunctions (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     Submodule ℂ (MeromorphicFunctionType X) where
   carrier := { f | ∃ c : ℂ, f.toFun = fun _ => (c : OnePoint ℂ) }
   zero_mem' := ⟨0, rfl⟩
-  add_mem' := sorry
-  smul_mem' := sorry
+  add_mem' := by
+    intro f g hf hg
+    rcases hf with ⟨c, hc⟩
+    rcases hg with ⟨d, hd⟩
+    use c + d
+    ext x
+    have hfx_ne : f.toFun x ≠ ∞ := by
+      rw [hc]
+      exact OnePoint.coe_ne_infty c
+    have hgx_ne : g.toFun x ≠ ∞ := by
+      rw [hd]
+      exact OnePoint.coe_ne_infty d
+    have h_add := MeromorphicFunctionType.add_toFun f g x hfx_ne hgx_ne
+    rw [hc] at h_add
+    rw [hd] at h_add
+    rw [h_add]
+    rfl
+  smul_mem' := by
+    intro a f hf
+    rcases hf with ⟨c, hc⟩
+    use a * c
+    ext x
+    have hfx_ne : f.toFun x ≠ ∞ := by
+      rw [hc]
+      exact OnePoint.coe_ne_infty c
+    have h_smul := MeromorphicFunctionType.smul_toFun a f x hfx_ne
+    rw [hc] at h_smul
+    rw [h_smul]
+    rfl
+
+/-- The equivalence between ℂ and the subspace of constant functions. -/
+noncomputable def constantFunctionsEquiv (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [Nonempty X] :
+    ℂ ≃ₗ[ℂ] constantFunctions X where
+  toFun c := ⟨MeromorphicFunctionType.constant c, ⟨c, rfl⟩⟩
+  invFun f := (Classical.choose f.2)
+  left_inv c := by
+    dsimp
+    have hc := Classical.choose_spec (show ∃ c' : ℂ, (MeromorphicFunctionType.constant (X := X) c).toFun = fun _ => (c' : OnePoint ℂ) from ⟨c, rfl⟩)
+    have h3 := congr_fun hc (Classical.arbitrary X)
+    exact (OnePoint.coe_injective h3).symm
+  right_inv f := by
+    ext x
+    dsimp
+    have hc := Classical.choose_spec f.2
+    have hx := congr_fun hc x
+    exact hx.symm
+  map_add' x y := Subtype.ext (by
+    ext p
+    dsimp
+    have h_add := MeromorphicFunctionType.add_toFun (MeromorphicFunctionType.constant (X := X) x) (MeromorphicFunctionType.constant (X := X) y) p (OnePoint.coe_ne_infty _) (OnePoint.coe_ne_infty _)
+    rw [h_add]
+    rfl
+  )
+  map_smul' c x := Subtype.ext (by
+    ext p
+    dsimp
+    have h_smul := MeromorphicFunctionType.smul_toFun c (MeromorphicFunctionType.constant (X := X) x) p (OnePoint.coe_ne_infty _)
+    rw [h_smul]
+    rfl
+  )
 
 /-- The dimension of the constant functions is 1. -/
 theorem finrank_constantFunctions
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [Nonempty X] :
-    Module.finrank ℂ (constantFunctions X) = 1 :=
-  sorry
+    Module.finrank ℂ (constantFunctions X) = 1 := by
+  rw [LinearEquiv.finrank_eq (constantFunctionsEquiv X).symm]
+  exact Module.finrank_self ℂ
 
 /-- Constant functions are finite dimensional. -/
 instance finiteDimensional_constantFunctions
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [Nonempty X] :
-    FiniteDimensional ℂ (constantFunctions X) :=
-  sorry
+    FiniteDimensional ℂ (constantFunctions X) := by
+  apply FiniteDimensional.of_finrank_pos
+  rw [finrank_constantFunctions X]
+  exact zero_lt_one
 
 /-- Global meromorphic functions with no poles are constant. -/
 theorem poles_eq_zero_iff_constant
