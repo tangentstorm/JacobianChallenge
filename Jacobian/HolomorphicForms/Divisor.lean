@@ -67,7 +67,25 @@ end Divisor
 theorem effective_le_point_iff_grounded {X : Type*} [DecidableEq X] (D : Divisor X) (P : X)
     (heff : Divisor.Effective D) (hle : D ≤ Divisor.point P) (hne : D ≠ 0) :
     D = Divisor.point P := by
-  sorry
+  ext Q
+  have h_zero_of_ne : ∀ Q, Q ≠ P → D Q = 0 := fun Q hQ =>
+    le_antisymm (by simpa [Divisor.point_apply_ne hQ] using hle Q) (heff Q)
+  by_cases h : Q = P
+  · rw [h]
+    have h_le := hle P
+    have h_eff := heff P
+    rw [Divisor.point_apply_self] at h_le
+    have hDP : D P = 1 := by
+      by_contra h_ne_one
+      have hDP_zero : D P = 0 := by omega
+      have hD_zero : D = 0 := by
+        ext R
+        by_cases hR : R = P
+        · rw [hR]; exact hDP_zero
+        · exact h_zero_of_ne R hR
+      exact hne hD_zero
+    rw [hDP, Divisor.point_apply_self]
+  · rw [h_zero_of_ne Q h, Divisor.point_apply_ne h]
 
 end
 

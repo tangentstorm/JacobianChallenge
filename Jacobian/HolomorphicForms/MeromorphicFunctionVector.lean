@@ -40,7 +40,11 @@ def zero (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     toFun_continuous := continuous_const
     isMeromorphic := fun p => by
       unfold MeromorphicAtX
-      sorry }
+      have : (fun _ : ℂ => (0 : ℂ)) = (fun q : X => (((0 : ℂ) : OnePoint ℂ).getD 0)) ∘ (extChartAt 𝓘(ℂ) p).symm := by
+        ext
+        rfl
+      rw [← this]
+      exact AnalyticAt.meromorphicAt analyticAt_const }
 
 instance : Zero (MeromorphicFunctionType X) := ⟨zero X⟩
 
