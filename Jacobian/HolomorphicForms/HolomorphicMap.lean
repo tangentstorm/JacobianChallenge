@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.VanishingOrder
 import Mathlib.Analysis.Analytic.Order
+import Mathlib.Geometry.Manifold.ContMDiff.Defs
 
 /-!
 # Holomorphic maps between charted-on-`ℂ` spaces
@@ -563,5 +564,26 @@ theorem isHolomorphic_finite_fiber
   exact hnonconst ⟨y, h_global⟩
 
 end FiniteFiber
+
+/-- **Holomorphic-smooth bridge.** Every `ContMDiff` map between complex
+manifolds is `IsHolomorphic`.
+
+This is the load-bearing analytic bridge: Mathlib's `ContMDiff` (at `⊤`)
+is equivalent to holomorphicity for complex manifolds. The first two
+fields (continuity and local analyticity) are definitional; the latter
+two (local k-fold form and weighted-fiber constancy) are the deep
+classical theorems that follow from analyticity on a compact Riemann
+surface.
+
+Bottom-up: the local k-fold form comes from the isolated-zeros /
+power-series expansion of analytic maps; the weighted-fiber count
+conservation is the topological degree theory for branched covers. -/
+theorem isHolomorphic_of_contMDiff
+    {X Y : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [TopologicalSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
+    IsHolomorphic f :=
+  sorry
 
 end JacobianChallenge.HolomorphicForms.HolomorphicMap
