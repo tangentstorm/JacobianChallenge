@@ -3,6 +3,14 @@ set -e
 
 DB_FILE="sorries.jsonl"
 
+if [ -f "$DB_FILE" ]; then
+  echo "WARNING: $DB_FILE already exists!"
+  echo "This database contains manual tracking data (effort, assignees, notes) that took time to gather."
+  echo "Running this script will completely wipe it out. You probably do not want to run this more than once ever."
+  echo "If you are absolutely sure you want to reset the database, delete $DB_FILE first."
+  exit 1
+fi
+
 echo "Initializing $DB_FILE..."
 
 # Write schema header
