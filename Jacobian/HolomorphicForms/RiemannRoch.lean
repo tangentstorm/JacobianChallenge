@@ -24,7 +24,7 @@ def riemannRochSpace
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (D : Divisor X) : Submodule ℂ (MeromorphicFunctionType X) where
   carrier := { f | f.MemRiemannRochSpace D }
-  zero_mem' := sorry
+  zero_mem' := Or.inl rfl
   add_mem' := sorry
   smul_mem' := sorry
 
@@ -191,7 +191,18 @@ theorem MeromorphicMapToSphere.toFiniteFun_of_no_poles
   refine ⟨g, ?_, ?_⟩
   · -- Differentiability follows from toFiniteFun_mdifferentiable
     -- once we know there are no poles.
-    sorry
+    have heq : f.toMap = fun x => ((g x : ℂ) : OnePoint ℂ) := by
+      ext x
+      have h_pole : f.poleDivisor x = 0 := by
+        have h : f.poleDivisor = 0 := hpole
+        rw [h]
+        rfl
+      have hne := f.toMap_ne_infty_of_poleDivisor_zero x h_pole
+      dsimp [g]
+      cases hf_x : f.toMap x
+      · exact absurd hf_x hne
+      · rfl
+    exact f.toFiniteFun_mdifferentiable g heq
   · ext x
     have hne := f.toMap_ne_infty_of_no_poles hpole x
     dsimp [g]
