@@ -2,6 +2,8 @@ import Jacobian.ComplexTorus.Defs
 import Jacobian.ComplexTorus.LocalSection
 import Jacobian.ComplexTorus.MkInjOnSmallBall
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Right-inverse property of `localSection` on the small ball
 

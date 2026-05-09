@@ -3,6 +3,8 @@ import Jacobian.Periods.CurveIntegralSubpath
 import Jacobian.Periods.ChartedFormPullbackCurveIntegrable
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Segment-additivity of `pathIntegralViaChartCorrect`
 

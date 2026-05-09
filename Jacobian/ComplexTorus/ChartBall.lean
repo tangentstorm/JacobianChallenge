@@ -3,6 +3,8 @@ import Jacobian.ComplexTorus.IsolationAtZero
 import Jacobian.ComplexTorus.MkInjOnSmallBall
 import Jacobian.ComplexTorus.MkImage
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Existence of a chart-prep ball around any point of `V`
 

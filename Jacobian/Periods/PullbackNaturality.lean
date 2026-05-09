@@ -33,6 +33,8 @@ content the next round can attack.
 
 namespace JacobianChallenge.Periods
 
+set_option linter.unusedSectionVars false
+
 open scoped Manifold ContDiff
 open JacobianChallenge.HolomorphicForms
 

@@ -275,7 +275,7 @@ theorem singularChain_integration_from_simplex
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (_Iσ : C(unitInterval, X) → (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ)) :
-    ∃ I : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
+    ∃ _ : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
       True :=
   ⟨0, trivial⟩
 
@@ -314,7 +314,7 @@ information for a fixed chain. -/
 theorem exists_singularChain_integration
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    ∃ I : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
+    ∃ _ : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
       True := by
   obtain ⟨Iσ, _⟩ := exists_singularSimplex_integration X
   exact singularChain_integration_from_simplex X Iσ
@@ -441,7 +441,7 @@ argument. -/
 theorem chain_integration_choice
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    ∃ I : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
+    ∃ _ : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
       True :=
   exists_singularChain_integration X
 

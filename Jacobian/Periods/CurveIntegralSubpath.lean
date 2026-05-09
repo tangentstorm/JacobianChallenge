@@ -3,6 +3,8 @@ import Mathlib.Topology.Subpath
 import Mathlib.Analysis.Calculus.Deriv.Shift
 import Mathlib.Analysis.Calculus.Deriv.CompMul
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Reparameterisation: `curveIntegral` of a `Path.subpath`
 

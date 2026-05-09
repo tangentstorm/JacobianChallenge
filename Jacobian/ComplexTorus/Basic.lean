@@ -2,6 +2,8 @@ import Mathlib.Topology.Algebra.Group.Quotient
 import Mathlib.Topology.Defs.Induced
 import Jacobian.ComplexTorus.Defs
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Topological API for full complex lattice quotients
 

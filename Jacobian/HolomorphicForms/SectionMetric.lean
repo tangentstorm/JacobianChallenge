@@ -36,6 +36,8 @@ separate field alongside the norm.
 
 namespace JacobianChallenge.HolomorphicForms.SectionMetric
 
+set_option linter.unusedSectionVars false
+
 open Bundle JacobianChallenge.HolomorphicForms.SectionFiberNorm
      JacobianChallenge.HolomorphicForms.SectionSupNorm
 

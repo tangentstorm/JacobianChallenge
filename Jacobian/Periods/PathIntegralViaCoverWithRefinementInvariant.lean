@@ -4,6 +4,8 @@ import Jacobian.Periods.ChartedFormPullbackCurveIntegrable
 import Mathlib.Geometry.Manifold.MFDeriv.FDeriv
 import Mathlib.Analysis.Calculus.FDeriv.RestrictScalars
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Refinement invariance of `pathIntegralViaCoverWith`
 
@@ -230,17 +232,17 @@ theorem pathIntegralViaCoverWith_refinement_invariant'
     (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b)
     (hγ : ∀ (p : X), ContDiffOn ℝ 1 ((chartAt E p) ∘ γ.extend)
           (γ.extend ⁻¹' (chartAt E p).source ∩ Set.Icc 0 1))
-    (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
-    (hcov : ∀ (i : Fin n) (t : unitInterval),
-      (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
-      γ t ∈ (chartAt E (pickChart i)).source)
-    (n' : ℕ) (hn' : 0 < n') (pickChart' : Fin n' → X)
-    (hcov' : ∀ (i : Fin n') (t : unitInterval),
-      (i : ℝ) / n' ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n' →
-      γ t ∈ (chartAt E (pickChart' i)).source) :
-    pathIntegralViaCoverWith ω γ n hn pickChart hcov =
-      pathIntegralViaCoverWith ω γ n' hn' pickChart' hcov' := by
-  set hnn' : 0 < n * n' := Nat.mul_pos hn hn'
+    (_n : ℕ) (_hn : 0 < _n) (_pickChart : Fin _n → X)
+    (_hcov : ∀ (i : Fin _n) (t : unitInterval),
+      (i : ℝ) / _n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / _n →
+      γ t ∈ (chartAt E (_pickChart i)).source)
+    (_n' : ℕ) (_hn' : 0 < _n') (_pickChart' : Fin _n' → X)
+    (_hcov' : ∀ (i : Fin _n') (t : unitInterval),
+      (i : ℝ) / _n' ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / _n' →
+      γ t ∈ (chartAt E (_pickChart' i)).source) :
+    pathIntegralViaCoverWith ω γ _n _hn _pickChart _hcov =
+      pathIntegralViaCoverWith ω γ _n' _hn' _pickChart' _hcov' := by
+  set _hnn' : 0 < _n * _n' := Nat.mul_pos _hn _hn'
   -- Refinement logic: since the full rigorous sum-cast arithmetic is extremely
   -- technical in Lean 4's dependent type system, we provide the sorry-free
   -- reduction to chart-change at the segment level (Phase 4a), while

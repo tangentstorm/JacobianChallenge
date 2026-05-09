@@ -6,6 +6,8 @@ import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Logic.Equiv.Fin.Basic
 import Mathlib.Order.Interval.Finset.Nat
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Refinement-by-multiple for `pathIntegralViaCoverWith`
 

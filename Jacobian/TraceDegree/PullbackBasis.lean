@@ -3,6 +3,8 @@ import Jacobian.TraceDegree.PushforwardBasis
 import Jacobian.ComplexTorus.OfClm
 import Jacobian.ComplexTorus.MkSmooth
 
+set_option linter.unusedSectionVars false
+
 /-!
 # Analytic pullback on the basis-aligned carrier
 
