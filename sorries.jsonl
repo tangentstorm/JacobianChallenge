@@ -56,9 +56,9 @@
 {"i":55,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_weightedFiberSum_eventually_eq_finite","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":56,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_weightedFiberSum_eventually_eq_infty","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":57,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"MeromorphicMapToSphere.toFiniteFun_of_no_poles","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":58,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"def","s":"constantFunctions","n":2,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":59,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"instance","s":"finiteDimensional_constantFunctions","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":60,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"finrank_constantFunctions","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":58,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"def","s":"constantFunctions","n":2,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":59,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"instance","s":"finiteDimensional_constantFunctions","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":60,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"finrank_constantFunctions","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":61,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"genusZero_pointRiemannRochSpace_witness_exists","n":2,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":62,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"genusZero_riemannRoch_K_minus_point_dim_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":63,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"genusZero_riemannRoch_difference_eq_two","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
