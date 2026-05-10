@@ -122,8 +122,28 @@ theorem poles_eq_zero_iff_constant
     (f : MeromorphicFunctionType X) :
     f.poles = 0 ↔ f ∈ constantFunctions X := by
   constructor
-  · -- Liouville theorem for meromorphic functions.
-    sorry
+  · -- Forward: no poles ⟹ constant (Liouville on compact surface)
+    intro hpoles
+    -- Step 1: f.toFun never takes the value ∞
+    have hne : ∀ x, f.toFun x ≠ ∞ :=
+      MeromorphicFunctionType.toFun_ne_infty_of_poles_eq_zero f hpoles
+    -- Step 2: f.toFiniteFun is MDifferentiable
+    have hmd : MDifferentiable (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f.toFiniteFun :=
+      MeromorphicFunctionType.mdifferentiable_toFiniteFun_of_no_infty f hne
+    -- Step 3: compact Liouville ⟹ constant
+    obtain ⟨c, hc⟩ := hmd.exists_eq_const_of_compactSpace
+    -- Step 4: convert back to constantFunctions membership
+    refine ⟨c, ?_⟩
+    ext x
+    have hx := congr_fun hc x
+    -- f.toFiniteFun x = c, and f.toFun x ≠ ∞, so f.toFun x = ↑(f.toFiniteFun x) = ↑c
+    have hfin : f.toFun x = ((f.toFiniteFun x : ℂ) : OnePoint ℂ) := by
+      unfold MeromorphicFunctionType.toFiniteFun
+      cases hval : f.toFun x with
+      | infty => exact absurd hval (hne x)
+      | coe v => rfl
+    rw [hfin, hx]
+    rfl
   · rintro ⟨c, hc⟩
     -- f.toFun = fun _ => c.
     -- Since f is in constantFunctions, it equals the constant c.

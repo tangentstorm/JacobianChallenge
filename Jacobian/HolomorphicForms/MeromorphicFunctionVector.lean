@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.MeromorphicFunction
 import Jacobian.HolomorphicForms.VanishingOrder
 import Jacobian.HolomorphicForms.Divisor
+import Mathlib.Geometry.Manifold.MFDeriv.Basic
 
 /-!
 # Meromorphic functions on a complex 1-manifold form a ℂ-vector space
@@ -135,6 +136,22 @@ noncomputable def principal {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) : Divisor X :=
   f.zeros - f.poles
+
+/-- Structural bridge: if `f.poles = 0`, then `f.toFun` never takes the value `∞`.
+This encodes the semantic content of "no poles means no infinities". -/
+theorem toFun_ne_infty_of_poles_eq_zero {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) (h : f.poles = 0) :
+    ∀ x, f.toFun x ≠ ∞ :=
+  sorry
+
+/-- Structural bridge: if `f.toFun` never takes the value `∞`, then
+`f.toFiniteFun` is `MDifferentiable`. -/
+theorem mdifferentiable_toFiniteFun_of_no_infty {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) (h : ∀ x, f.toFun x ≠ ∞) :
+    MDifferentiable (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f.toFiniteFun :=
+  sorry
 
 /-- Constant meromorphic functions have no poles. -/
 theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
