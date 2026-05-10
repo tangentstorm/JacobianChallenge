@@ -28,27 +28,106 @@ instance polygon4gCellularH1_module (g : ℕ) :
   unfold Polygon4gCellularH1
   infer_instance
 
+/-- The closed-disk source for the standard polygonal cell datum. -/
+opaque Polygon4gClosedDiskCellSource (g : ℕ) : Type
+
+/-- **Cellular leaf 1a(i).** Construct the closed disk source used by
+the standard `4g`-gon model. -/
+theorem polygon4g_closed_disk_cell_source (g : ℕ) :
+    Nonempty (Polygon4gClosedDiskCellSource g) := by
+  sorry
+
+/-- The subdivision of the boundary circle into the oriented sides of
+the standard `4g`-gon. -/
+opaque Polygon4gBoundarySideSubdivision
+    (g : ℕ) (_diskSource : Polygon4gClosedDiskCellSource g) : Type
+
+/-- **Cellular leaf 1a(ii).** Construct the boundary side subdivision
+of the closed disk source. -/
+theorem polygon4g_boundary_side_subdivision
+    (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g) :
+    Nonempty (Polygon4gBoundarySideSubdivision g diskSource) := by
+  sorry
+
+/-- The quotient relation that identifies the polygon sides according
+to the surface word. -/
+opaque Polygon4gBoundaryQuotientRelation
+    (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g)
+    (_subdivision : Polygon4gBoundarySideSubdivision g diskSource) : Type
+
+/-- **Cellular leaf 1a(iii).** Construct the boundary quotient
+relation for the standard side identifications. -/
+theorem polygon4g_boundary_quotient_relation
+    (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g)
+    (subdivision : Polygon4gBoundarySideSubdivision g diskSource) :
+    Nonempty (Polygon4gBoundaryQuotientRelation g diskSource subdivision) := by
+  sorry
+
 /-- The quotient-disk cell datum underlying the standard polygonal
 model: the closed disk with boundary side identifications. -/
-opaque Polygon4gQuotientDiskCellData (g : ℕ) : Type
+structure Polygon4gQuotientDiskCellData (g : ℕ) where
+  diskSource : Polygon4gClosedDiskCellSource g
+  subdivision : Polygon4gBoundarySideSubdivision g diskSource
+  quotientRelation : Polygon4gBoundaryQuotientRelation g diskSource subdivision
 
-/-- **Cellular leaf 1a.** Construct the quotient-disk cell datum for
-the standard `4g`-gon. -/
+/-- **Cellular assembly 1a.** Construct the quotient-disk cell datum for
+the standard `4g`-gon from disk, subdivision, and quotient-relation
+leaves. -/
 theorem polygon4g_quotient_disk_cell_data (g : ℕ) :
-    Nonempty (Polygon4gQuotientDiskCellData g) := by
+    Nonempty (Polygon4gQuotientDiskCellData g) :=
+by
+  obtain ⟨diskSource⟩ := polygon4g_closed_disk_cell_source g
+  obtain ⟨subdivision⟩ := polygon4g_boundary_side_subdivision g diskSource
+  obtain ⟨quotientRelation⟩ :=
+    polygon4g_boundary_quotient_relation g diskSource subdivision
+  exact ⟨{ diskSource, subdivision, quotientRelation }⟩
+
+/-- The combinatorial pairing of the `4g` oriented boundary sides of
+the standard polygon. -/
+opaque Polygon4gBoundarySidePairingCombinatorics
+    (g : ℕ) (_disk : Polygon4gQuotientDiskCellData g) : Type
+
+/-- **Cellular leaf 1b(i).** Construct the side-pairing combinatorics
+for the standard polygon. -/
+theorem polygon4g_boundary_side_pairing_combinatorics
+    (g : ℕ) (disk : Polygon4gQuotientDiskCellData g) :
+    Nonempty (Polygon4gBoundarySidePairingCombinatorics g disk) := by
+  sorry
+
+/-- Compatibility between the side pairing and the standard generator
+labels/orientations `aᵢ,bᵢ,aᵢ⁻¹,bᵢ⁻¹`. -/
+opaque Polygon4gBoundarySidePairingLabelCompatible
+    (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
+    (_pairing : Polygon4gBoundarySidePairingCombinatorics g disk) : Prop
+
+/-- **Cellular leaf 1b(ii).** The side-pairing combinatorics has the
+standard orientation and generator-label compatibility. -/
+theorem polygon4g_boundary_side_pairing_label_compatible
+    (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
+    (pairing : Polygon4gBoundarySidePairingCombinatorics g disk) :
+    Polygon4gBoundarySidePairingLabelCompatible g disk pairing := by
   sorry
 
 /-- The edge-pairing datum for the standard polygon: paired boundary
 arcs labelled by the `aᵢ,bᵢ` generators. -/
-opaque Polygon4gEdgePairingCellData
-    (g : ℕ) (_disk : Polygon4gQuotientDiskCellData g) : Type
+structure Polygon4gEdgePairingCellData
+    (g : ℕ) (disk : Polygon4gQuotientDiskCellData g) where
+  pairing : Polygon4gBoundarySidePairingCombinatorics g disk
+  labelCompatible : Polygon4gBoundarySidePairingLabelCompatible g disk pairing
 
-/-- **Cellular leaf 1b.** Construct the edge-pairing datum on the
-quotient disk. -/
+/-- **Cellular assembly 1b.** Construct the edge-pairing datum on the
+quotient disk from side-pairing and label-compatibility leaves. -/
 theorem polygon4g_edge_pairing_cell_data
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g) :
-    Nonempty (Polygon4gEdgePairingCellData g disk) := by
-  sorry
+    Nonempty (Polygon4gEdgePairingCellData g disk) :=
+by
+  obtain ⟨pairing⟩ :=
+    polygon4g_boundary_side_pairing_combinatorics g disk
+  exact ⟨{
+    pairing
+    labelCompatible :=
+      polygon4g_boundary_side_pairing_label_compatible g disk pairing
+  }⟩
 
 /-- The characteristic maps for the one zero-cell, `2g` one-cells, and
 one two-cell of the standard polygonal model. -/
