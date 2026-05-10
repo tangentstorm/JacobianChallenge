@@ -443,7 +443,7 @@ preimages of \(\infty\) becoming poles.
 
 \begin{definition}[Riemann-Roch space \(L(D)\)]
 \label{def:riemann-roch-space}
-\uses{def:divisor,def:meromorphic-function,def:principal-divisor}
+\uses{def:divisor,def:meromorphic-function,def:principal-divisor,lem:meromorphic-vector-space-instance}
 For a divisor \(D\),
 \[
   L(D) := \{f\in\Mer(X) : (f)+D\ge 0\}\cup\{0\}.
@@ -530,12 +530,27 @@ Mathlib infrastructure (\texttt{FreeAbelianGroup}). Others
 require sheaf-of-meromorphic-germs gluing or argument-principle work
 that is not yet in Mathlib.
 \end{formalizationnote}
-
 \subsection{Stepwise refinement of \texttt{MeromorphicDegree.lean}
 (sum-of-orders)}
 \label{subsec:meromorphic-degree-refinement}
+\uses{lem:meromorphic-local-normalization, lem:meromorphic-fiber-count-conservation}
+
+\begin{lemma}[Local normalization of meromorphic maps]
+\label{lem:meromorphic-local-normalization}
+A meromorphic map locally admits the form \(z \mapsto z^k\) or \(z \mapsto 1/z^k\).
+\lean{JacobianChallenge.HolomorphicForms.liftToCp1_local_kfold_ramified_finite, JacobianChallenge.HolomorphicForms.liftToCp1_local_kfold_ramified_infty}
+\notready
+\end{lemma}
+
+\begin{lemma}[Conservation of fiber count]
+\label{lem:meromorphic-fiber-count-conservation}
+The weighted fiber count of a meromorphic map is locally constant.
+\lean{JacobianChallenge.HolomorphicForms.liftToCp1_weightedFiberSum_eventually_eq_finite, JacobianChallenge.HolomorphicForms.liftToCp1_weightedFiberSum_eventually_eq_infty}
+\notready
+\end{lemma}
 
 \code{Jacobian/HolomorphicForms/MeromorphicDegree.lean} carries two
+...
 \texttt{sorry}s --- continuity of the meromorphic lift over a unique
 simple pole, and bijectivity of the lift from pole-divisor degree~one ---
 that classify as \emph{Aristotle-BLOCKER} pending the four \texttt{sorry}s

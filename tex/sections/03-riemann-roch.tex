@@ -202,7 +202,7 @@ genuine analytic content is concentrated in the two bound sub-leaves.
 
 \begin{theorem}[Classical input: Riemann-Roch (umbrella)]
 \label{input:riemann-roch}
-\uses{input:divisors,thm:serre-duality-rs,thm:euler-char-line-bundle,lem:serre-duality-overview-stepwise,input:rr-squeeze,input:stage-a-closeout,input:banach-data-hone}
+\uses{input:divisors,thm:serre-duality-rs,thm:euler-char-line-bundle,lem:serre-duality-overview-stepwise,input:rr-squeeze,input:stage-a-closeout,input:banach-data-hone,lem:r8subC-ge,lem:r8subC-le,lem:r8subC-low-degree,lem:rs-dualizing-degree,thm:rr-high-degree}
 \lean{JacobianChallenge.Blueprint.input_riemann_roch}
 \leanok
 For every divisor \(D\) on \(X\),
@@ -212,7 +212,8 @@ For every divisor \(D\) on \(X\),
 where \(K\) is a canonical divisor and \(\ell(D)=\dim_{\C} L(D)\).
 Combines the Euler-characteristic formula
 (Theorem~\ref{thm:euler-char-line-bundle}) with Serre duality
-(Theorem~\ref{thm:serre-duality-rs}).
+(Theorem~\ref{thm:serre-duality-rs}), using the low/high degree squeeze
+to handle the boundary cases and dualization.
 \end{theorem}
 \begin{proof}\leanok\end{proof}
 
@@ -269,6 +270,30 @@ Thus \(L(p)\) has dimension \(2\), so it contains a nonconstant meromorphic
 function with at most a simple pole at \(p\). Such a function cannot have any
 other pole and therefore defines a degree-one map to \(\CPone\).
 \end{proof}
+
+\subsection{Vector space structure of meromorphic functions}
+
+\begin{lemma}[Algebraic operations on meromorphic functions]
+\label{lem:meromorphic-algebraic-ops}
+Meromorphic functions form a \(\C\)-vector space under pointwise addition and scalar multiplication.
+\lean{JacobianChallenge.HolomorphicForms.add_toFun, JacobianChallenge.HolomorphicForms.neg_toFun, JacobianChallenge.HolomorphicForms.smul_toFun, JacobianChallenge.HolomorphicForms.zero}
+\notready
+\end{lemma}
+
+\begin{lemma}[Properties of constant meromorphic functions]
+\label{lem:meromorphic-constants}
+Constant functions are meromorphic and have empty zero/pole sets.
+\lean{JacobianChallenge.HolomorphicForms.constant, JacobianChallenge.HolomorphicForms.constant_poles, JacobianChallenge.HolomorphicForms.constant_zeros}
+\notready
+\end{lemma}
+
+\begin{theorem}[Meromorphic vector space instance]
+\label{lem:meromorphic-vector-space-instance}
+\uses{lem:meromorphic-algebraic-ops, lem:meromorphic-constants}
+The type of meromorphic functions is a \(\C\)-vector space.
+\lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionVectorSpace}
+\notready
+\end{theorem}
 
 \subsection{Genus-zero Riemann--Roch route: structural decomposition}
 \label{sec:genus-zero-rr-route}

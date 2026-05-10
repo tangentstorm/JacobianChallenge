@@ -238,7 +238,7 @@ leaf.
 
 \begin{lemma}[Homology invariance of periods]
 \label{lem:period-homology-invariance}
-\uses{thm:stokes-on-rs-with-boundary,lem:holomorphic-form-is-closed}
+\uses{thm:stokes-on-rs-with-boundary,lem:holomorphic-form-is-closed,lem:path-integral-primitive,lem:integral-cech-path-equivalence}
 If \(\gamma\) and \(\gamma'\) represent the same class in \(H_1(X,\Z)\), then
 \[
   \int_{\gamma}\omega=\int_{\gamma'}\omega
@@ -367,6 +367,7 @@ the help of the polygon-interior primitive
 
 \begin{definition}[Symplectic basis of \(H_1(X,\Z)\)]
 \label{def:symplectic-basis}
+\uses{lem:h1-free-of-genus}
 A symplectic basis of \(H_1(X,\Z)\) is a \(\Z\)-basis
 \(a_1,\dots,a_g,b_1,\dots,b_g\) for which the algebraic intersection
 pairing satisfies

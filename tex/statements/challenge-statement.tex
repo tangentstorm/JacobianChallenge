@@ -45,10 +45,9 @@ challenge revolves around tying the analytic definition (vector-space
 dimension) to the topological one (number of handles), and the bridge
 between them is forged by Riemann–Roch.
 \end{layman}
-
 \begin{theorem}[Genus-zero classification]
 \label{thm:genus-zero-classification}
-\uses{input:riemann-roch,prop:genus-zero-degree-one-map,input:degree-one-isomorphism,def:analytic-genus,thm:analytic-eq-topological-genus}
+\uses{input:riemann-roch,prop:genus-zero-degree-one-map,input:degree-one-isomorphism,def:analytic-genus,thm:analytic-eq-topological-genus,lem:holomorphic-one-form-linearEquiv-to-OnePointCx}
 For a compact connected Riemann surface \(X\),
 \[
   g(X)=0 \quad\Longleftrightarrow\quad X \cong_{\mathrm{homeo}} \Sphere .
@@ -58,7 +57,8 @@ For a compact connected Riemann surface \(X\),
 \proofplan
 \(\Rightarrow\): use Riemann--Roch at genus \(0\) to build degree-one meromorphic map
 to \(\mathbf{P}^1\), then classify degree-one maps as homeomorphisms.
-\(\Leftarrow\): compute holomorphic one-forms on the sphere as zero.
+\(\Leftarrow\): transport the vanishing of holomorphic forms on \(\mathbf{P}^1\)
+to \(X\) via the biholomorphism (Theorem~\ref{lem:holomorphic-one-form-linearEquiv-to-OnePointCx}).
 \end{theorem}
 
 \begin{layman}

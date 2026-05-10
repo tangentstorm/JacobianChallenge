@@ -91,7 +91,6 @@ In local coordinates, if \(\eta=h(w)\,dw\), then
 \]
 which is holomorphic. Linearity is immediate.
 \end{proof}
-
 \begin{lemma}[Trace of holomorphic one-forms]
 \label{lem:trace-forms}
 \uses{lem:trf-r1}
@@ -103,8 +102,20 @@ For nonconstant \(f\), there is a complex-linear trace map
 \leanok
 \end{lemma}
 
+\begin{theorem}[Trace--pullback identity for holomorphic 1-forms]
+\label{thm:trace-pullback-identity}
+\uses{lem:trace-forms,lem:pullback-forms}
+For nonconstant holomorphic \(f : X \to Y\) and \(\eta \in H^{0}(Y, \Omega^{1})\),
+\[
+  \tr_{f}(f^{*}\eta) = \deg(f) \cdot \eta.
+\]
+\lean{JacobianChallenge.HolomorphicForms.trace_pullback_identity}
+\notready
+\end{theorem}
+
 \begin{layman}
 Given a nonconstant holomorphic map between compact Riemann surfaces,
+...
 the \emph{trace} on 1-forms is a natural way to push a 1-form on the
 source down to a 1-form on the target. Away from the (finite) branch
 locus, the map is a local degree-\(d\) covering with \(d\) inverse

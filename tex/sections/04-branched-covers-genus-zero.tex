@@ -510,6 +510,30 @@ classification. The reverse direction needs comparison of analytic and
 topological genus.
 \end{formalizationnote}
 
+\subsection{Identification with \(\CPone\): coordinate chart details}
+
+\begin{lemma}[Continuity of local representatives]
+\label{lem:section-localRepr-continuity}
+For a holomorphic section of the cotangent bundle, the local representative in the identity and inversion charts are continuous.
+\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection_localRepr_identityChart_contDiff, JacobianChallenge.HolomorphicForms.ContMDiffSection_localRepr_inversionChart_continuousAt_zero}
+\notready
+\end{lemma}
+
+\begin{lemma}[Pullback of the holomorphic one-form across charts]
+\label{lem:onepoint-cx-chart-overlap-pullback}
+The holomorphic 1-form on \(\CPone\) transforms correctly across chart overlaps.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_chartOverlap_pullback}
+\notready
+\end{lemma}
+
+\begin{theorem}[Isomorphism with \(\CPone\) one-forms]
+\label{lem:holomorphic-one-form-linearEquiv-to-OnePointCx}
+\uses{lem:section-localRepr-continuity, lem:onepoint-cx-chart-overlap-pullback}
+For any Riemann surface \(X\) biholomorphic to \(\CPone\), there is a linear equivalence between their spaces of holomorphic 1-forms.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx}
+\notready
+\end{theorem}
+
 \subsection{Degree-one meromorphic-to-sphere classification: structural decomposition}
 \label{sec:degree-one-mer-decomp}
 
