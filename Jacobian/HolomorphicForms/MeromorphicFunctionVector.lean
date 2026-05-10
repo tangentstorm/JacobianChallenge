@@ -48,36 +48,18 @@ def zero (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
 
 instance : Zero (MeromorphicFunctionType X) := ⟨zero X⟩
 
-/-- Addition of meromorphic functions: pointwise sum on the Riemann sphere,
-where `∞ + finite = ∞` and `finite + ∞ = ∞`. -/
-noncomputable def add_meromorphic (f g : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
-  { toFun := fun x =>
-      match f.toFun x, g.toFun x with
-      | some a, some b => ((a + b : ℂ) : OnePoint ℂ)
-      | _, _ => ∞
-    toFun_continuous := by sorry
-    isMeromorphic := by sorry }
+/-- Addition of meromorphic functions (axiomatic skeleton). -/
+noncomputable axiom add_meromorphic (f g : MeromorphicFunctionType X) : MeromorphicFunctionType X
 
 noncomputable instance : Add (MeromorphicFunctionType X) := ⟨add_meromorphic⟩
 
-/-
-The toFun of a sum is the pointwise sum (where both are finite).
--/
+/-- The toFun of a sum is the pointwise sum (where both are finite). -/
 theorem add_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f g : MeromorphicFunctionType X) :
     ∀ x, f.toFun x ≠ ∞ → g.toFun x ≠ ∞ →
       (f + g).toFun x = ((f.toFun x).getD 0 + (g.toFun x).getD 0 : ℂ) :=
-  by
-    intro x hx_f hx_g
-    have h_eq : f.toFun x = some (f.toFiniteFun x) ∧ g.toFun x = some (g.toFiniteFun x) := by
-      cases h : f.toFun x <;> cases h' : g.toFun x <;> simp_all +decide;
-      unfold MeromorphicFunctionType.toFiniteFun; aesop;
-    convert congr_arg₂ ( · + · ) h_eq.1 h_eq.2 using 1;
-    rotate_right;
-    exact fun _ _ => ⟨ fun x y => match x, y with | some a, some b => some ( a + b ) | _, _ => none ⟩;
-    · exact?;
-    · aesop
+  sorry
 
 /-- Negation of meromorphic functions (axiomatic skeleton). -/
 noncomputable axiom neg_meromorphic (f : MeromorphicFunctionType X) : MeromorphicFunctionType X
@@ -94,8 +76,11 @@ theorem neg_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 /-- Subtraction of meromorphic functions. -/
 noncomputable instance : Sub (MeromorphicFunctionType X) := ⟨fun f g => f + (-g)⟩
 
-/-- Scalar multiplication of meromorphic functions (axiomatic skeleton). -/
-noncomputable axiom smul_meromorphic (c : ℂ) (f : MeromorphicFunctionType X) : MeromorphicFunctionType X
+/-- Scalar multiplication of meromorphic functions. -/
+noncomputable def smul_meromorphic (c : ℂ) (f : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
+  { toFun := fun x => OnePoint.map (c * ·) (f.toFun x)
+    toFun_continuous := sorry
+    isMeromorphic := sorry }
 
 noncomputable instance : SMul ℂ (MeromorphicFunctionType X) := ⟨smul_meromorphic⟩
 
@@ -103,8 +88,13 @@ noncomputable instance : SMul ℂ (MeromorphicFunctionType X) := ⟨smul_meromor
 theorem smul_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (c : ℂ) (f : MeromorphicFunctionType X) :
-    ∀ x, f.toFun x ≠ ∞ → (c • f).toFun x = (c * (f.toFun x).getD 0 : ℂ) :=
-  sorry
+    ∀ x, f.toFun x ≠ ∞ → (c • f).toFun x = (c * (f.toFun x).getD 0 : ℂ) := by
+  intro x hx
+  show (smul_meromorphic c f).toFun x = ↑(c * Option.getD (f.toFun x) 0)
+  simp only [smul_meromorphic]
+  cases h : f.toFun x with
+  | infty => simp [h] at hx
+  | coe z => rfl
 
 /-- Constant meromorphic functions. -/
 def constant (c : ℂ) : MeromorphicFunctionType X :=
