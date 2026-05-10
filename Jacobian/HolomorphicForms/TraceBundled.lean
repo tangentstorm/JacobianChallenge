@@ -151,8 +151,17 @@ theorem traceFormsBundled_zero
 theorem pullbackFormsBundled_constant
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (hconst : ∃ y₀, ∀ x, f x = y₀) (η : HolomorphicOneForm ℂ Y) :
-    pullbackFormsBundled f hf η = 0 :=
-  sorry
+    pullbackFormsBundled f hf η = 0 := by
+  apply ContMDiffSection.coe_inj
+  funext x
+  obtain ⟨y₀, hf_const⟩ := hconst
+  unfold pullbackFormsBundled pullbackFormsFunFiber
+  -- Derivative of constant map is zero
+  have hdf : mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x = 0 := by
+    apply mfderiv_zero_of_eventually_const
+    filter_upwards with x' using hf_const x'
+  rw [hdf]
+  exact ContinuousLinearMap.comp_zero _
 
 /-- **The Trace-Pullback Identity.** The fundamental identity for
 holomorphic 1-forms: the trace of a pullback is multiplication by
