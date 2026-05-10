@@ -13,6 +13,40 @@ def IsHarmonic {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   -- Placeholder for Δ f = 0
   True
 
+/-- **Sub-obligation 2.1: Sobolev space H^1(X).**
+The Dirichlet principle is formulated in the Hilbert space of functions with
+square-integrable derivatives. -/
+def SobolevH1 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) : Type _ :=
+  -- Placeholder for H^1(X)
+  X → ℝ
+
+/-- **Sub-obligation 2.2: Dirichlet energy functional.**
+The energy functional E(u) = ∫ |∇u|^2 dV is minimized by harmonic functions. -/
+def DirichletEnergy {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) (u : SobolevH1 X g) : ℝ :=
+  -- Placeholder for ∫ |∇u|^2
+  0
+
+/-- **Sub-obligation 2.3: Construction of a trial function with dipole singularity.**
+To find a harmonic function with a dipole singularity Re(1/z) at P, we first
+construct a smooth trial function u_0 that has the correct singularity in a
+small chart around P and is zero elsewhere. -/
+theorem exists_trial_dipole (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) (P : X) :
+    ∃ u₀ : X → ℝ, True := by
+  -- u₀ ~ Re(1/z) near P.
+  sorry
+
+/-- **Sub-obligation 2.4: Variational solution (Lax-Milgram).**
+The harmonic function u is found by minimizing the Dirichlet energy E(u - u₀)
+over the Sobolev space H^1(X), which effectively solves the Poisson equation
+Δ u = Δ u₀ in the sense of distributions. -/
+theorem exists_harmonic_minimizer (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) (u₀ : X → ℝ) :
+    ∃ v : SobolevH1 X g, IsHarmonic g (fun x => u₀ x + v x) := by
+  sorry
+
 /-- Dirichlet Principle / Green's Function: on a compact Riemann surface,
 for any point P, there exists a harmonic function with a specific dipole
 singularity at P (locally behaving like Re(1/z)). -/
@@ -21,8 +55,12 @@ theorem exists_dipole_harmonic (X : Type*) [TopologicalSpace X] [T2Space X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (g : CompatibleMetric X) (P : X) :
     ∃ u : X → ℝ, True := by
-  -- u is harmonic on X \ {P} and has the correct singularity at P.
-  sorry
+  -- 1. Construct the trial function u₀
+  obtain ⟨u₀, _⟩ := exists_trial_dipole X g P
+  -- 2. Find the harmonic minimizer v
+  obtain ⟨v, hv⟩ := exists_harmonic_minimizer X g u₀
+  -- 3. u = u₀ + v is the desired harmonic function
+  exact ⟨fun x => u₀ x + v x, hv⟩
 
 /-- In genus 0, the first de Rham cohomology group is trivial.
 This implies that every closed 1-form is exact. -/
@@ -35,13 +73,32 @@ theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2
     True := by
   sorry
 
+/-- **Sub-obligation 3.1: The conjugate 1-form is closed.**
+For a harmonic function u, the 1-form *du is closed (d*du = 0). -/
+theorem conjugate_one_form_closed (X : Type*) [TopologicalSpace X]
+    [ChartedSpace ℂ X] (g : CompatibleMetric X) (u : X → ℝ) (hu : IsHarmonic g u) :
+    -- Placeholder for d(*du) = 0
+    True := by
+  sorry
+
+/-- **Sub-obligation 3.2: Closed forms are exact in genus 0.**
+If H^1_dR(X) = 0, every closed 1-form is exact. -/
+theorem exact_of_closed_in_genus_zero (X : Type*) [TopologicalSpace X]
+    [ChartedSpace ℂ X] (ω : X → ℝ) (hb1 : True) (hclosed : True) :
+    ∃ v : X → ℝ, True := by
+  -- Placeholder for ω = dv
+  sorry
+
 /-- If H^1_dR(X) = 0, any harmonic function (with appropriate domain)
 admits a harmonic conjugate, making u + iv holomorphic. -/
 theorem harmonic_conjugate_exists (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (g : CompatibleMetric X) (u : X → ℝ)
-    (hb1 : True) (hu : True) :
+    (hb1 : True) (hu : IsHarmonic g u) :
     ∃ v : X → ℝ, True := by
-  sorry
+  -- 1. *du is a closed 1-form
+  have hclosed := conjugate_one_form_closed X g u hu
+  -- 2. H^1 = 0 implies *du is exact, so *du = dv
+  exact exact_of_closed_in_genus_zero X (sorry) hb1 hclosed
 
 /-- **Sub-obligation 1a: Cauchy-Riemann equations.**
 A pair of real-valued functions (u, v) satisfies the Cauchy-Riemann equations
