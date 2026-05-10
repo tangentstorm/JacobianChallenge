@@ -144,11 +144,92 @@ lemma standardWord_get_unique {g : ℕ} (ℓ : Letter g) :
     exact List.mem_iff_get.mp h_exists;
   exact ⟨ i, hi, fun j hj => by have := List.nodup_iff_injective_get.mp h_unique; have := @this j i; aesop ⟩
 
-/-- For the standard word, `sidePairingRel` agrees with `Polygon4g.SideRel`. -/
+/-- Helper: `boundaryParam'` respects changing the first argument along equality. -/
+lemma boundaryParam'_congr_length {L₁ L₂ : ℕ} (hL : L₁ = L₂) (i : ℕ) (t : ℝ) :
+    boundaryParam' L₁ i t = boundaryParam' L₂ i t := by
+  subst hL; rfl
+
+/-
+The polygon side-pairing generator implies the edge-word side-pairing generator
+for the standard word (up to EqvGen).
+-/
+private lemma polygon_sideGen_imp (g : ℕ) (x y : DiskC)
+    (h : Polygon4g.SideGen g x y) :
+    Relation.EqvGen (SideGen g (standardWord g)) x y := by
+  obtain ⟨ i, t, ht ⟩ := h;
+  · convert Relation.EqvGen.rel _ _ ( SideGen.pair ⟨ 4 * i.val, by linarith [ i.2, standardWord_length g ] ⟩ ⟨ 4 * i.val + 2, by linarith [ i.2, standardWord_length g ] ⟩ t ht _ ) using 1;
+    · exact boundaryParam'_congr_length ( by rw [ standardWord_length ] ) _ _;
+    · exact boundaryParam'_congr_length ( by rw [ standardWord_length ] ) _ _;
+    · rw [ standardWord_get_handle i |>.1, standardWord_get_handle i |>.2.2.1 ];
+      rfl;
+  · simp +decide [ boundaryParam ];
+    apply Relation.EqvGen.rel;
+    convert SideGen.pair _ _ _ _ _;
+    · exact (standardWord_length g).symm;
+    rotate_left;
+    · exact (standardWord_length g).symm;
+    rotate_left;
+    exact ⟨ 4 * ‹Fin g›.val + 1, by rw [ standardWord_length ] ; linarith [ Fin.is_lt ‹_› ] ⟩;
+    exact ⟨ 4 * ‹Fin g›.val + 3, by rw [ standardWord_length ] ; linarith [ Fin.is_lt ‹_› ] ⟩;
+    · assumption;
+    · have := standardWord_get_handle ‹_›; aesop;
+    · rfl;
+    · rfl
+
+/-
+The edge-word side-pairing generator for the standard word implies the polygon
+side-pairing generator (up to EqvGen).
+-/
+private lemma edgeWord_sideGen_imp (g : ℕ) (x y : DiskC)
+    (h : SideGen g (standardWord g) x y) :
+    Relation.EqvGen (Polygon4g.SideGen g) x y := by
+  obtain ⟨ i, j, t, ht, h ⟩ := h;
+  -- By definition of `standardWord`, we know that `i.val = 4 * k + r` for some `k : Fin g` and `r ∈ {0,1,2,3}`.
+  obtain ⟨k, r, hr⟩ : ∃ k : Fin g, ∃ r : Fin 4, i.val = 4 * k.val + r.val := by
+    exact ⟨ ⟨ i / 4, Nat.div_lt_of_lt_mul <| by linarith [ Fin.is_lt i, show List.length ( standardWord g ) = 4 * g from standardWord_length g ] ⟩, ⟨ i % 4, Nat.mod_lt _ <| by decide ⟩, by norm_num; linarith [ Nat.mod_add_div i 4 ] ⟩;
+  -- By definition of `standardWord`, we know that `j.val = 4 * k' + r'` for some `k' : Fin g` and `r' ∈ {0,1,2,3}`.
+  obtain ⟨k', r', hr'⟩ : ∃ k' : Fin g, ∃ r' : Fin 4, j.val = 4 * k'.val + r'.val := by
+    have h_div : j.val < 4 * g := by
+      exact j.2.trans_le ( by simp +decide [ standardWord_length ] );
+    exact ⟨ ⟨ j / 4, Nat.div_lt_of_lt_mul <| by linarith ⟩, ⟨ j % 4, Nat.mod_lt _ <| by decide ⟩, by simp +decide [ Nat.div_add_mod ] ⟩;
+  fin_cases r <;> fin_cases r' <;> simp_all +decide only [List.get_eq_getElem];
+  all_goals have := standardWord_get_handle k; have := standardWord_get_handle k'; simp_all +decide [ Letter.inv ] ;
+  · convert Relation.EqvGen.rel _ _ ( Polygon4g.SideGen.a_pair k' t ht ) using 1;
+    · exact boundaryParam'_congr_length ( by rw [ standardWord_length ] ) _ _;
+    · exact boundaryParam'_congr_length ( by simp +decide [ standardWord_length ] ) _ _;
+  · convert Relation.EqvGen.rel _ _ ( Polygon4g.SideGen.b_pair k' t ht ) using 1;
+    · exact boundaryParam'_congr_length ( standardWord_length g ) _ _;
+    · exact boundaryParam'_congr_length ( standardWord_length g ) _ _;
+  · have := Polygon4g.mk_a_pair g k' ( 1 - t ) ⟨ by linarith, by linarith ⟩ ; simp_all +decide [ boundaryParam ] ;
+    convert this.symm using 1;
+    · rw [ standardWord_length ];
+    · rw [ standardWord_length ];
+  · apply Relation.EqvGen.symm;
+    convert Polygon4g.mk_b_pair g k' ( 1 - t ) ⟨ by linarith, by linarith ⟩ using 1;
+    simp +decide [ Polygon4g.mk_eq_mk_iff, boundaryParam'_congr_length ( standardWord_length g ) ];
+    rfl
+
+/-
+For the standard word, `sidePairingRel` agrees with `Polygon4g.SideRel`.
+-/
 theorem sidePairingRel_standardWord (g : ℕ) :
     sidePairingRel g (standardWord g) = Polygon4g.SideRel g := by
-  sorry
-
+  unfold sidePairingRel;
+  -- Unfold the definitions of `sidePairingRel` and `Polygon4g.SideRel`.
+  unfold Polygon4g.SideRel;
+  apply le_antisymm;
+  · intro x y h;
+    induction h;
+    · exact edgeWord_sideGen_imp g _ _ ‹_›;
+    · exact Relation.EqvGen.refl _;
+    · exact Relation.EqvGen.symm _ _ ‹_›;
+    · exact Relation.EqvGen.trans _ _ _ ‹_› ‹_›;
+  · intro x y h;
+    induction h;
+    · exact polygon_sideGen_imp g _ _ ‹_›;
+    · exact Relation.EqvGen.refl _;
+    · exact Relation.EqvGen.symm _ _ ‹_›;
+    · exact Relation.EqvGen.trans _ _ _ ‹_› ‹_›
 
 /-- `sidePairingRel` is an equivalence relation. -/
 theorem sidePairingRel_equivalence (g : ℕ) (w : EdgeWord g) :
