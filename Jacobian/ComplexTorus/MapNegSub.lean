@@ -13,7 +13,6 @@ homomorphism; they're stated separately for convenient `simp` lookup.
 namespace JacobianChallenge.ComplexTorus
 
 variable {V W : Type*} [NormedAddCommGroup V] [NormedAddCommGroup W]
-  [NormedSpace ℂ V] [NormedSpace ℂ W]
   {Λ : FullComplexLattice V} {Γ : FullComplexLattice W}
 
 /-- The induced quotient map commutes with negation. -/

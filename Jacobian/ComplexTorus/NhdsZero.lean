@@ -15,7 +15,7 @@ namespace JacobianChallenge.ComplexTorus
 
 open Filter Topology
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- Neighborhoods of `0` in the torus quotient are pushed forward from

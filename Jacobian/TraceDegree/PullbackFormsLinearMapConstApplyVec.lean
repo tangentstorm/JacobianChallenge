@@ -15,7 +15,6 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X Y : Type*}
   [TopologicalSpace X] [ChartedSpace E X]
   [TopologicalSpace Y] [ChartedSpace E Y]
-  [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Y]
 
 /-- Vector-apply form of the bundled constant pullback: zero. -/
