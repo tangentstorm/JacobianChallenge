@@ -324,7 +324,16 @@ theorem cycleLipChain_obligation :
     ∀ (m : ℕ) (a b : Fin m → X)
       (γs : ∀ i : Fin m, Path (a i) (b i)),
       ∃ K : NNReal, ∀ i : Fin m, ChartLiftLipschitzOnPartitions (γs i) K := by
-  sorry
+  intro m a b γs
+  -- For each i, obtain a Lipschitz constant K_i from the path-level obligation.
+  choose Ks hKs using fun i => cycleLipPath_obligation (γs i)
+  -- Take K = sup of all K_i (works even when m = 0, giving K = 0).
+  refine ⟨Finset.sup Finset.univ Ks, fun i => ?_⟩
+  -- ChartLiftLipschitzOnPartitions is monotone in K via LipschitzOnWith monotonicity.
+  intro n hn pickX j h
+  have hKi := hKs i n hn pickX j h
+  intro x hx y hy
+  exact le_trans (hKi hx hy) (by gcongr; exact Finset.le_sup (Finset.mem_univ i))
 
 /-- Raw obligation: the trace lift preserves the period subgroup.
 
