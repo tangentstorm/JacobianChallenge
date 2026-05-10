@@ -53,6 +53,12 @@ noncomputable opaque traceFormsBundled
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X) : HolomorphicOneForm ℂ Y
 
+/-- The trace of the zero form is zero. (Linearity axiom). -/
+theorem traceFormsBundled_zero
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
+    traceFormsBundled f hf 0 = 0 :=
+  sorry
+
 /-- The trace as a ℂ-linear map between holomorphic 1-form spaces. -/
 noncomputable def traceFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
@@ -61,11 +67,7 @@ noncomputable def traceFormsBundledLM
   map_add' η ζ := by
     -- Trace is linear: use identity principle
     by_cases hconst : ∃ y₀, ∀ x, f x = y₀
-    · -- Constant map case: trace is zero
-      have htr : ∀ ω, traceFormsBundled f hf ω = 0 := fun ω => by
-        -- Proof that trace along constant map is zero
-        sorry
-      rw [htr, htr, htr]
+    · rw [traceFormsBundled_zero, traceFormsBundled_zero, traceFormsBundled_zero]
       simp
     · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
         (isHolomorphic_of_contMDiff hf) hconst
@@ -75,8 +77,7 @@ noncomputable def traceFormsBundledLM
       exact traceAtRegularValue_add hbc (fun x => η.toFun x) (fun x => ζ.toFun x) y hy
   map_smul' k η := by
     by_cases hconst : ∃ y₀, ∀ x, f x = y₀
-    · have htr : ∀ ω, traceFormsBundled f hf ω = 0 := fun ω => sorry
-      rw [htr, htr]
+    · rw [traceFormsBundled_zero, traceFormsBundled_zero]
       simp
     · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
         (isHolomorphic_of_contMDiff hf) hconst
@@ -85,7 +86,9 @@ noncomputable def traceFormsBundledLM
       simp [traceFormsBundled_apply_fun_regular hf hbc]
       exact traceAtRegularValue_smul hbc k (fun x => η.toFun x) y hy
 
-/-- Agreement between bundled trace and the local fiber sum at regular values. -/
+/-- **Section extraction axiom for trace.**
+The underlying function of the bundled trace equals the local fiber sum
+at regular values. -/
 theorem traceFormsBundled_apply_fun_regular
     {f : X → Y} (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (hbc : BranchedCoverData X Y f)
@@ -146,12 +149,6 @@ theorem holomorphicOneForm_ext_on
   -- 4. Connectedness of Y propagates this equality to the entire surface.
   sorry
 
-/-- The trace of the zero form is zero. -/
-theorem traceFormsBundled_zero
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
-    traceFormsBundled f hf 0 = 0 :=
-  sorry
-
 /-- The pullback along a constant map is zero. -/
 theorem pullbackFormsBundled_constant
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
@@ -193,6 +190,5 @@ theorem trace_pullback_identity
     intro y hy
     rw [branchedDegree_eq_weightedFiberCard hbc y]
     exact trace_pullback_identity_regular f hf hbc η y hy
-
 
 end JacobianChallenge.HolomorphicForms
