@@ -110,7 +110,7 @@ For nonconstant holomorphic \(f : X \to Y\) and \(\eta \in H^{0}(Y, \Omega^{1})\
   \tr_{f}(f^{*}\eta) = \deg(f) \cdot \eta.
 \]
 \lean{JacobianChallenge.HolomorphicForms.trace_pullback_identity}
-\notready
+\leanok
 \end{theorem}
 
 \begin{layman}
@@ -152,8 +152,10 @@ Away from the branch locus, choose local inverse branches
   =
   d\,\eta.
 \]
+\lean{JacobianChallenge.HolomorphicForms.trace_pullback_identity_regular}
 Both sides are holomorphic one-forms on \(Y\), so equality on the complement
-of the finite branch locus extends across the branch locus.
+of the finite branch locus extends across the branch locus via the identity principle.
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_ext_on}
 \end{proof}
 
 \begin{lemma}[Maps descend to Jacobians]
