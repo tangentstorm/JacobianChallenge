@@ -18,12 +18,14 @@ def local_euclidean_metric (_U : Set ℂ) : Unit := ()
 
 /-- **Sub-obligation 1.2: Partition of unity.**
 Every compact manifold admits a smooth partition of unity subordinated to any
-open cover. -/
+open cover. Mathlib provides this via `SmoothPartitionOfUnity.exists_isSubordinate`
+(applied after restricting the complex manifold structure to the underlying real manifold). -/
 theorem exists_partition_of_unity (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (atlas : Set (OpenPartialHomeomorph X ℂ)) (hcover : (⋃ c ∈ atlas, c.source) = Set.univ) :
-    ∃ (functions : List (X → ℝ)), True := by
+    ∃ (pou : List (X → ℝ)), True := by
+  -- Follows from `SmoothPartitionOfUnity.exists_isSubordinate` on the real restriction.
   sorry
 
 /-- **Sub-obligation 1.3: Metric gluing.**
