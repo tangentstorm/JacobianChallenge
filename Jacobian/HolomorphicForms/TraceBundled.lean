@@ -120,12 +120,10 @@ theorem regularLocus_dense
     {f : X → Y} (h : BranchedCoverData X Y f) :
     Dense (regularLocus h) := by
   -- The regular locus is the complement of a finite set.
-  -- In a connected manifold of real dimension 2, this is dense.
-  apply Set.dense_compl_finite
+  -- In an infinite T1 space, the complement of a finite set is dense.
+  apply Set.Finite.dense_compl
   · exact branchLocus_finite h
-  · -- Need to show Y is infinite.
-    -- Compact connected Riemann surfaces are infinite unless they are a point.
-    -- But we assume non-constant f, which implies Y has more than one point.
+  · -- Compact connected Riemann surfaces are infinite.
     sorry
 
 /-- **Identity principle for holomorphic 1-forms.**
@@ -136,9 +134,11 @@ theorem holomorphicOneForm_ext_on
     {ω₁ ω₂ : HolomorphicOneForm ℂ Y} (h : ∀ y ∈ s, ω₁.toFun y = ω₂.toFun y) :
     ω₁ = ω₂ := by
   apply ContMDiffSection.coe_inj
-  -- 1. Agreement on dense set implies agreement on open neighborhoods
-  -- via local analytic identity principle.
-  -- 2. Connectedness propagates local equality to global equality.
+  funext y
+  -- 1. In any chart, the sections are analytic functions U → ℂ.
+  -- 2. Agreement on a dense set implies agreement on a set with accumulation points.
+  -- 3. The local analytic identity principle implies equality on the chart.
+  -- 4. Connectedness of Y propagates this equality to the entire surface.
   sorry
 
 /-- The trace of the zero form is zero. -/
