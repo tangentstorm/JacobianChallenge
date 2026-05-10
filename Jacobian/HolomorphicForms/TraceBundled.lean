@@ -118,8 +118,10 @@ theorem holomorphicOneForm_ext_on
     {s : Set Y} (hs : Dense s)
     {ω₁ ω₂ : HolomorphicOneForm ℂ Y} (h : ∀ y ∈ s, ω₁.toFun y = ω₂.toFun y) :
     ω₁ = ω₂ := by
-  -- This is the "Identity Principle" bridge.
-  -- Bottom-up: local analytic identity principle + connectedness.
+  apply ContMDiffSection.coe_inj
+  -- 1. Agreement on dense set implies agreement on open neighborhoods
+  -- via local analytic identity principle.
+  -- 2. Connectedness propagates local equality to global equality.
   sorry
 
 /-- **The Trace-Pullback Identity.** The fundamental identity for
