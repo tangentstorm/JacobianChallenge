@@ -156,7 +156,12 @@ theorem trace_pullback_at_regular_value
     (η : HolomorphicOneForm ℂ Y)
     (y : Y) (hy : isRegularValue h y) :
     traceAtRegularValue h (fun x => (pullbackFormsBundled f sorry η).toFun x) y hy =
-      (h.weightedFiberCard y : ℂ) • η.toFun y :=
+      (h.weightedFiberCard y : ℂ) • η.toFun y := by
+  unfold traceAtRegularValue
+  -- 1. Use pullback definition: (f* η)_x = η_{f(x)} ∘ df_x
+  -- 2. Use cotangentPushforward definition: (df_x)⁻¹* (f* η)_x = η_{f(x)}
+  -- 3. Sum over fiber: ∑ η_y = (card fiber) • η_y
+  -- 4. weightedFiberCard = card fiber (since all e_x = 1)
   sorry
 
 end JacobianChallenge.HolomorphicForms
