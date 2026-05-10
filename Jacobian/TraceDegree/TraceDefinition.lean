@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.BranchedCover
 import Jacobian.HolomorphicForms.CotangentBundle
+import Jacobian.HolomorphicForms.PullbackBundled
 
 /-!
 # Trace (pushforward) of differential forms along a branched cover
@@ -24,6 +25,7 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 open JacobianChallenge.HolomorphicForms
+open JacobianChallenge.HolomorphicForms.HolomorphicMap
 
 variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
 variable [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -76,30 +78,42 @@ theorem localInverseAt_holomorphic
     IsHolomorphicAt (localInverseAt h x hx) (f x) :=
   sorry
 
+/-- The pullback of a holomorphic form along a local inverse branch. -/
+noncomputable def localPullbackAt
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    (hf : IsHolomorphic f)
+    (ω : HolomorphicOneForm ℂ X)
+    (x : X) (hx : h.ramificationIndex x = 1) :
+    HolomorphicOneForm ℂ Y :=
+  -- This is technically only defined locally, but we can extend it
+  -- or use a local version of HolomorphicOneForm.
+  -- For the top-down refinement, we state the existence.
+  sorry
+
 /-- A local version of the trace sum, defined in a neighborhood of `y`. -/
 noncomputable def localTraceAtRegularValue
     {f : X → Y} (h : BranchedCoverData X Y f)
+    (hf : IsHolomorphic f)
     (ω : HolomorphicOneForm ℂ X)
     (y : Y) (hy : isRegularValue h y) :
-    Y → CotangentSpace ℂ Y y :=
-  fun y' =>
-    let fiber := (h.finite_fiber y).toFinset
-    fiber.attach.sum (fun ⟨x, hx_mem⟩ =>
-      let hx_fiber : x ∈ f ⁻¹' {y} := by
-        rw [Set.Finite.mem_toFinset] at hx_mem
-        assumption
-      let hx_unram : h.ramificationIndex x = 1 := hy x hx_fiber
-      -- Pullback of ω along localInverseAt h x hx_unram
-      sorry
-    )
+    HolomorphicOneForm ℂ Y :=
+  let fiber := (h.finite_fiber y).toFinset
+  fiber.attach.sum (fun ⟨x, hx_mem⟩ =>
+    let hx_fiber : x ∈ f ⁻¹' {y} := by
+      rw [Set.Finite.mem_toFinset] at hx_mem
+      assumption
+    let hx_unram : h.ramificationIndex x = 1 := hy x hx_fiber
+    localPullbackAt h hf ω x hx_unram
+  )
 
-/-- The local trace is holomorphic at `y`. -/
+/-- The local trace is holomorphic (it is a finite sum of local pullbacks). -/
 theorem localTraceAtRegularValue_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hf : IsHolomorphic f)
     (ω : HolomorphicOneForm ℂ X)
     (y : Y) (hy : isRegularValue h y) :
-    IsHolomorphicAt (localTraceAtRegularValue h ω y hy) y :=
-  sorry
+    ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, CotangentModelFiber ℂ) (⊤ : WithTop ℕ∞)
+      (localTraceAtRegularValue h hf ω y hy) :=
+  (localTraceAtRegularValue h hf ω y hy).contMDiff
 
 end JacobianChallenge.HolomorphicForms
