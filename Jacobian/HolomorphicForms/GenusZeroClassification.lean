@@ -5,6 +5,8 @@ import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.EntireZero
 import Jacobian.HolomorphicForms.InversionChartContinuity
 import Jacobian.HolomorphicForms.GenusZeroTypes
+import Jacobian.HolomorphicForms.HarmonicFunctions
+import Jacobian.HolomorphicForms.Isothermal
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 import Mathlib.Topology.Compactification.OnePoint.Sphere
 
@@ -1267,28 +1269,32 @@ noncomputable def genusZeroSimplePoleMeromorphicMapAt
     X → OnePoint ℂ :=
   genusZeroRiemannRochNonconstantMapAt X P h
 
-/-- **Assembly for the Riemann-Roch leaf.** Choose any point of the connected
-surface and package the fixed-pole Riemann-Roch map at that point.
-
-The remaining Riemann-Roch leaf is now the single fixed-pole existence
-statement `genusZeroRiemannRochFixedPoleData_nonempty`: for a prescribed
-point `P`, genus zero Riemann-Roch produces a meromorphic map whose only pole
-is simple and located at `P`. -/
-noncomputable def simplePoleMeromorphicMapOfGenusZero
+/-- **Uniformization via PDE: The existence of a simple pole.**
+Using the Dirichlet principle and harmonic functions, any compact Riemann surface
+with analytic genus 0 admits a meromorphic function with a single simple pole at P.
+This replaces the Riemann-Roch algebraic proof with the analytic PDE proof. -/
+theorem genusZero_exists_simplePole_meromorphicMap_viaPDE
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (h : analyticGenus ℂ X = 0) :
-    GenusZeroSimplePoleMeromorphicMap X :=
-  let P : X := Classical.choice (inferInstance : Nonempty X)
-  let data := genusZeroRiemannRochFixedPoleData X P h
-  { meromorphicMap := data.meromorphicMap
-    pole := P
-    simple_pole_cert := genusZeroRiemannRochSimplePoleAt X P h }
+    (h : analyticGenus ℂ X = 0) (P : X) :
+    ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
+  -- 1. X admits a compatible Riemannian metric
+  obtain ⟨g⟩ := exists_compatible_metric X
+  -- 2. Isothermal coordinates exist for g
+  have _hiso := exists_isothermal_coordinates X g
+  -- 3. Construct the dipole harmonic function u at P
+  obtain ⟨u, hu⟩ := exists_dipole_harmonic X g P
+  -- 4. Genus 0 implies H^1_dR(X) = 0
+  have hb1 := analytic_genus_zero_implies_b1_zero X h
+  -- 5. Harmonic conjugate v exists for u
+  obtain ⟨v, _hv⟩ := harmonic_conjugate_exists X g u hb1 hu
+  -- 6. Combine u and v to get a meromorphic function with a simple pole at P
+  exact dipole_harmonic_yields_simple_pole X P u v
 
-/-- **Sub-obligation 1 wrapper (sorry-free).** Existence form of
-`simplePoleMeromorphicMapOfGenusZero`. -/
+/-- **Sub-obligation 1 (existence form, via PDE).** Existence of a
+meromorphic map with a single simple pole. -/
 theorem genus_zero_exists_simplePole_meromorphicMap
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1296,7 +1302,9 @@ theorem genus_zero_exists_simplePole_meromorphicMap
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : analyticGenus ℂ X = 0) :
     Nonempty (GenusZeroSimplePoleMeromorphicMap X) := by
-  exact ⟨simplePoleMeromorphicMapOfGenusZero X h⟩
+  let P : X := Classical.choice (inferInstance : Nonempty X)
+  obtain ⟨f, hf⟩ := genusZero_exists_simplePole_meromorphicMap_viaPDE X h P
+  exact ⟨{ meromorphicMap := f, pole := P, simple_pole_cert := hf }⟩
 
 /-- **Properness/degree data existence leaf.** A one-simple-pole map has
 some proper degree-one promotion.

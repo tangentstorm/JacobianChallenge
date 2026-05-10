@@ -47,8 +47,10 @@ theorem exists_compatible_metric (X : Type*) [TopologicalSpace X] [T2Space X]
   -- 1. Pick a finite atlas
   -- 2. Construct local Euclidean metrics
   -- 3. Pick a partition of unity
+  obtain ⟨pou, _⟩ := exists_partition_of_unity X (Set.univ : Set (OpenPartialHomeomorph X ℂ)) (by sorry)
   -- 4. Glue
-  sorry
+  let _g := glue_local_metrics X (Set.univ : Set (OpenPartialHomeomorph X ℂ)) (fun _ => ()) pou
+  exact ⟨_g⟩
 
 /-- **Sub-obligation 1.4: Beltrami Equation / Existence of Isothermal Coordinates.**
 On any 2-manifold with a Riemannian metric, there exist local coordinates (u, v)
