@@ -92,33 +92,45 @@ theorem localInverseAt_holomorphic
   -- 3. Transport holomorphicity back to the manifold side.
   sorry
 
-/-- The pullback of a holomorphic form along a local inverse branch. -/
+/-- The pullback of a holomorphic form along a local inverse branch.
+Underlying function: `y' ↦ (df_{s_i(y')})⁻¹* ω_{s_i(y')}`. -/
 noncomputable def localPullbackAt
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hf : IsHolomorphic f)
     (ω : HolomorphicOneForm ℂ X)
     (x : X) (hx : h.ramificationIndex x = 1) :
-    HolomorphicOneForm ℂ Y :=
-  -- This is technically only defined locally, but we can extend it
-  -- or use a local version of HolomorphicOneForm.
-  -- For the top-down refinement, we state the existence.
-  sorry
+    Y → CotangentModelFiber ℂ :=
+  -- Use localInverseAt and cotangentPushforward
+  fun y => cotangentPushforward f (localInverseAt h x hx y) (ω (localInverseAt h x hx y))
 
-/-- A local version of the trace sum, defined in a neighborhood of `y`. -/
+/-- A local version of the trace sum, defined in a neighborhood of `y`.
+Underlying function: `y' ↦ ∑ (df_{s_i(y')})⁻¹* ω_{s_i(y')}`. -/
 noncomputable def localTraceAtRegularValue
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hf : IsHolomorphic f)
     (ω : HolomorphicOneForm ℂ X)
     (y : Y) (hy : isRegularValue h y) :
-    HolomorphicOneForm ℂ Y :=
-  let fiber := (h.finite_fiber y).toFinset
-  fiber.attach.sum (fun ⟨x, hx_mem⟩ =>
-    let hx_fiber : x ∈ f ⁻¹' {y} := by
-      rw [Set.Finite.mem_toFinset] at hx_mem
-      assumption
-    let hx_unram : h.ramificationIndex x = 1 := hy x hx_fiber
-    localPullbackAt h hf ω x hx_unram
-  )
+    Y → CotangentModelFiber ℂ :=
+  fun y' =>
+    let fiber := (h.finite_fiber y).toFinset
+    fiber.attach.sum (fun ⟨x, hx_mem⟩ =>
+      let hx_fiber : x ∈ f ⁻¹' {y} := by
+        rw [Set.Finite.mem_toFinset] at hx_mem
+        assumption
+      let hx_unram : h.ramificationIndex x = 1 := hy x hx_fiber
+      localPullbackAt h hf ω x hx_unram y'
+    )
+
+/-- The local trace is holomorphic at regular values. -/
+theorem localTraceAtRegularValue_holomorphic
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    (hf : IsHolomorphic f)
+    (ω : HolomorphicOneForm ℂ X)
+    (y : Y) (hy : isRegularValue h y) :
+    IsHolomorphicAt (localTraceAtRegularValue h hf ω y hy) y := by
+  -- 1. Each term (pullback along local inverse) is holomorphic.
+  -- 2. Finite sum of holomorphic functions is holomorphic.
+  sorry
 
 /-- The trace sum is additive. -/
 theorem traceAtRegularValue_add
