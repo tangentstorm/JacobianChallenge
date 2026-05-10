@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.Isothermal
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.DeRhamCohomology
 import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.InnerProductSpace.LaxMilgram
 
 open scoped Manifold
 open Complex
@@ -47,8 +48,9 @@ theorem dirichlet_energy_coercive (X : Type*) [TopologicalSpace X] [ChartedSpace
   sorry
 
 /-- **Sub-obligation 2.4b: Lax-Milgram application.**
-By the Lax-Milgram theorem, there exists a unique (up to constants) minimizer
-of the Dirichlet energy for the given trial function / boundary conditions. -/
+By the Lax-Milgram theorem (available in Mathlib at `Mathlib.Analysis.InnerProductSpace.LaxMilgram`),
+there exists a unique (up to constants) minimizer of the Dirichlet energy for the given trial function.
+This effectively provides a weak solution to the Poisson equation `Δ u = Δ u₀`. -/
 theorem lax_milgram_minimizer (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (u₀ : X → ℝ) :
     ∃ v : X → ℝ, IsHarmonic g (fun x => u₀ x + v x) := by
