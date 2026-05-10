@@ -10,6 +10,7 @@ import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 import Mathlib.LinearAlgebra.Dimension.Free
 import Mathlib.LinearAlgebra.Basis.Defs
 import Mathlib.Topology.CWComplex.Classical.Basic
+import Mathlib.Topology.CWComplex.Classical.Finite
 
 /-!
 # Cellular homology of a compact Riemann surface (frontier API)
@@ -18,6 +19,7 @@ import Mathlib.Topology.CWComplex.Classical.Basic
 namespace JacobianChallenge.Periods
 
 open scoped Manifold
+open Topology Metric Set
 
 /-- **Frontier placeholder structure.** Finite CW structure on `X`: an
 abstract witness that `X` admits a finite cellular decomposition. -/
@@ -30,16 +32,123 @@ structure FiniteCWStructure
   /-- The complex is finite-dimensional. -/
   finite_dim : ∃ n, ∀ m > n, IsEmpty (cw.cell m)
 
+/-! ### Transport of CW structures across homeomorphisms -/
+
+/-- The transported characteristic map: compose the original map with `f.symm`. -/
+noncomputable def transportMap
+    {X : Type} {Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    (f : X ≃ₜ Y) {n : ℕ} (pe : PartialEquiv (Fin n → ℝ) Y) :
+    PartialEquiv (Fin n → ℝ) X where
+  toFun v := f.symm (pe v)
+  invFun x := pe.symm (f x)
+  source := pe.source
+  target := f.symm '' pe.target
+  map_source' v hv := ⟨pe v, pe.map_source' hv, rfl⟩
+  map_target' x hx := by
+    obtain ⟨y, hy, rfl⟩ := hx
+    simp only [Homeomorph.apply_symm_apply]; exact pe.map_target' hy
+  left_inv' v hv := by
+    show pe.symm (f (f.symm (pe v))) = v
+    rw [Homeomorph.apply_symm_apply]; exact pe.left_inv hv
+  right_inv' x hx := by
+    obtain ⟨y, hy, rfl⟩ := hx
+    show f.symm (pe (pe.symm (f (f.symm y)))) = f.symm y
+    rw [Homeomorph.apply_symm_apply, pe.right_inv hy]
+
+@[simp]
+theorem transportMap_image
+    {X : Type} {Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    (f : X ≃ₜ Y) {n : ℕ} (pe : PartialEquiv (Fin n → ℝ) Y) (S : Set (Fin n → ℝ)) :
+    (transportMap f pe) '' S = f.symm '' (pe '' S) := by
+  ext x; simp only [mem_image, transportMap]; constructor
+  · rintro ⟨v, hv, rfl⟩; exact ⟨pe v, ⟨v, hv, rfl⟩, rfl⟩
+  · rintro ⟨y, ⟨v, hv, rfl⟩, rfl⟩; exact ⟨v, hv, rfl⟩
+
+set_option maxHeartbeats 400000 in
+/-- Transport a `FiniteCWStructure` across a homeomorphism.
+Given `f : X ≃ₜ Y` and a finite CW structure on `Y`, construct
+one on `X` by composing characteristic maps with `f.symm`.
+
+The construction uses the same cell indexing types and composes
+each characteristic map with `f.symm` to land in `X`. Each CW complex
+axiom (source_eq, continuousOn, pairwiseDisjoint, mapsTo, union) follows
+from the corresponding axiom on `Y` composed with the bijection `f.symm`. -/
+noncomputable def FiniteCWStructure.ofHomeo
+    {X : Type} {Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    (f : X ≃ₜ Y) (cwY : FiniteCWStructure Y) : FiniteCWStructure X :=
+  let N := cwY.finite_dim.choose
+  let hN := cwY.finite_dim.choose_spec
+  let cwX := CWComplex.mkFinite (Set.univ : Set X)
+    (cell := cwY.cw.cell)
+    (map := fun n i => transportMap f (cwY.cw.map n i))
+    (eventually_isEmpty_cell := by
+      rw [Filter.eventually_atTop]
+      exact ⟨N + 1, fun m hm => hN m (by omega)⟩)
+    (finite_cell := fun n => Fintype.finite (cwY.fintype_cell n))
+    (source_eq := fun n i => cwY.cw.source_eq n i)
+    (continuousOn := fun n i =>
+      f.symm.continuous.continuousOn.comp (cwY.cw.continuousOn n i) (fun _ _ => mem_univ _))
+    (continuousOn_symm := fun n i => by
+      change ContinuousOn (fun x => (cwY.cw.map n i).symm (f x))
+        (f.symm '' (cwY.cw.map n i).target)
+      have htgt : f.symm '' (cwY.cw.map n i).target = f ⁻¹' (cwY.cw.map n i).target := by
+        ext x; constructor
+        · rintro ⟨y, hy, rfl⟩; simp [hy]
+        · intro hx; exact ⟨f x, hx, by simp⟩
+      rw [htgt]
+      exact (cwY.cw.continuousOn_symm n i).comp f.continuous.continuousOn (fun x hx => hx))
+    (pairwiseDisjoint' := by
+      intro a _ b _ hab
+      simp only [Function.onFun, transportMap_image]
+      rw [Set.disjoint_image_iff f.symm.injective]
+      exact cwY.cw.pairwiseDisjoint' (mem_univ a) (mem_univ b) hab)
+    (mapsTo_iff_image_subset := fun n i => by
+      intro v hv
+      obtain ⟨I, hI⟩ := cwY.cw.mapsTo' n i
+      have h2 := hI hv
+      simp only [mem_iUnion] at h2 ⊢
+      obtain ⟨m, hm, j, hjI, hy⟩ := h2
+      exact ⟨m, hm, j, by rw [transportMap_image]; exact Set.mem_image_of_mem _ hy⟩)
+    (union' := by
+      simp_rw [transportMap_image]
+      have : ⋃ n, ⋃ j, f.symm '' (cwY.cw.map n j '' closedBall 0 1) =
+          f.symm '' (⋃ n, ⋃ j, cwY.cw.map n j '' closedBall 0 1) := by
+        rw [Set.image_iUnion]; congr 1; ext n; rw [Set.image_iUnion]
+      rw [this, cwY.cw.union', Set.image_univ, Homeomorph.range_coe])
+  ⟨cwX, fun n => cwY.fintype_cell n, ⟨N, hN⟩⟩
+
+/-- **Frontier leaf (Polygon4g CW structure).** The standard fundamental
+polygon `Polygon4g g` admits a finite CW structure with 1 vertex,
+`2g` edges, and 1 face (for `g ≥ 1`; for `g = 0` it is a single
+2-cell). -/
+theorem polygon4g_finiteCWStructure (g : ℕ) :
+    Nonempty (FiniteCWStructure (Polygon4g g)) := by
+  sorry
+
 /-- **Frontier opaque (Nonempty witness).** Existence of a finite CW
-structure for compact connected smooth surfaces. Mathlib gap: `Radó's
-theorem` (every compact surface admits a triangulation), absent in
-v4.28.0; this is one of the project's red-border umbrella sorries. -/
+structure for compact connected smooth surfaces.
+
+**Proof route:** bridge the complex 1-manifold to a real 2-manifold,
+obtain orientability, apply the surface classification theorem
+(`existsHomeoToPolygon4g`) to get `X ≃ₜ Polygon4g g`, then transport
+the standard CW structure on `Polygon4g g` via `FiniteCWStructure.ofHomeo`. -/
 theorem compactRiemannSurface_hasFiniteCWStructure
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    Nonempty (FiniteCWStructure X) :=
-  sorry
+    Nonempty (FiniteCWStructure X) := by
+  -- 1. Bridge from complex 1-manifold to real 2-manifold
+  obtain ⟨srStruct⟩ := ChartedSpaceComplex_to_smoothReal2 X
+  letI : ChartedSpace (EuclideanSpace ℝ (Fin 2)) X := srStruct.chartedSpace
+  letI : IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) X := srStruct.isManifold
+  -- 2. Riemann surfaces are orientable
+  letI : Orientable X := ⟨⟨()⟩⟩
+  -- 3. Apply surface classification
+  obtain ⟨g, ⟨homeo⟩⟩ := existsHomeoToPolygon4g X
+  -- 4. Transport CW structure from Polygon4g g
+  obtain ⟨cwP⟩ := polygon4g_finiteCWStructure g
+  exact ⟨FiniteCWStructure.ofHomeo homeo cwP⟩
 
 /-- **Frontier ℕ-valued placeholder.** Number of `n`-cells in the cellular
 structure. -/
