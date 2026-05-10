@@ -58,8 +58,25 @@ noncomputable def traceFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
     HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y where
   toFun := traceFormsBundled f hf
-  map_add' η ζ := sorry -- Trace is linear
-  map_smul' k η := sorry
+  map_add' η ζ := by
+    -- Trace is linear: use identity principle
+    by_cases hconst : ∃ y₀, ∀ x, f x = y₀
+    · sorry
+    · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+        (isHolomorphic_of_contMDiff hf) hconst
+      apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
+      intro y hy
+      simp [traceFormsBundled_apply_fun_regular hf hbc]
+      exact traceAtRegularValue_add hbc (fun x => η.toFun x) (fun x => ζ.toFun x) y hy
+  map_smul' k η := by
+    by_cases hconst : ∃ y₀, ∀ x, f x = y₀
+    · sorry
+    · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+        (isHolomorphic_of_contMDiff hf) hconst
+      apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
+      intro y hy
+      simp [traceFormsBundled_apply_fun_regular hf hbc]
+      exact traceAtRegularValue_smul hbc k (fun x => η.toFun x) y hy
 
 /-- Agreement between bundled trace and the local fiber sum at regular values. -/
 theorem traceFormsBundled_apply_fun_regular
