@@ -1285,13 +1285,13 @@ theorem genusZero_exists_simplePole_meromorphicMap_viaPDE
   -- 2. Isothermal coordinates exist for g
   have _hiso := exists_isothermal_coordinates X g
   -- 3. Construct the dipole harmonic function u at P
-  obtain ⟨u, hu⟩ := exists_dipole_harmonic X g P
+  obtain ⟨u, hu_harm, hu_sing⟩ := exists_dipole_harmonic X g P
   -- 4. Genus 0 implies H^1_dR(X) = 0
   have hb1 := analytic_genus_zero_implies_b1_zero X h
   -- 5. Harmonic conjugate v exists for u
-  obtain ⟨v, _hv⟩ := harmonic_conjugate_exists X g u hb1 hu
+  obtain ⟨v, hv_cr⟩ := harmonic_conjugate_exists X g u hb1 hu_harm
   -- 6. Combine u and v to get a meromorphic function with a simple pole at P
-  exact dipole_harmonic_yields_simple_pole X P u v
+  exact dipole_harmonic_yields_simple_pole X g P u v hu_sing hv_cr
 
 /-- **Sub-obligation 1 (existence form, via PDE).** Existence of a
 meromorphic map with a single simple pole. -/
