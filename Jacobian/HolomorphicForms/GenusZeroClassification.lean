@@ -423,10 +423,13 @@ Bottom-up: chain rule on cotangent vectors under chart-overlap.
 Currently a structural sorry pending the chart-trivialisation +
 cotangent-pullback API. -/
 theorem holomorphicOneForm_chartOverlap_pullback
-    (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
-    holomorphicOneForm_coeff ω (w⁻¹) =
-      -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
-  sorry
+    (Ï‰ : HolomorphicOneForm â„‚ (OnePoint â„‚)) (w : â„‚) (hw : w â‰  0) :
+    holomorphicOneForm_coeff Ï‰ (wâ»Â¹) =
+      -w ^ 2 * holomorphicOneForm_inversionCoeff Ï‰ w := by
+  unfold holomorphicOneForm_coeff holomorphicOneForm_inversionCoeff;
+  by_cases hw' : wâ»Â¹ = 0 <;> simp_all +decide [sq, mul_assoc];
+  rw [ invBwd_ne_zero hw ]
+
 
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
 and inversion charts, the two coefficient functions are related by the
