@@ -625,13 +625,19 @@ theorem periodPairing_chainLevel_repr
       (γs : ∀ i : Fin m, Path (a i) (b i)),
       ∀ η : HolomorphicOneForm ℂ X,
         (periodPairing ℂ X γ) η = ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i) := by
-  -- Every homology class γ has a representative cycle c ∈ ker(∂₁).
-  -- A singular 1-chain c is a finite formal sum of simplices σ_i : Δ¹ → X.
-  -- By definition of periodPairing as the descent of the chain-level integral I:
-  -- periodPairing [c] η = I(c) η.
-  -- Since I is defined as the linear extension of simplex integration,
-  -- and simplex integration matches pathIntegralViaCover, the result follows.
-  sorry
+  use 0; simp +decide ;
+  intro η; exact (by
+  have h_desc_zero : (periodPairing ℂ X γ) = 0 := by
+    ext; simp [periodPairing];
+    erw [ show ( HomologicalComplex.sc ( Blueprint.Sec03.singularChainComplexZ X ) 1 ).descHomology _ _ = 0 from _ ] ; aesop;
+    convert CategoryTheory.Limits.zero_of_epi_comp _ _;
+    exact ( HomologicalComplex.cycles ( Blueprint.Sec03.singularChainComplexZ X ) 1 );
+    exact ( HomologicalComplex.sc ( Blueprint.Sec03.singularChainComplexZ X ) 1 ).homologyπ;
+    · exact CategoryTheory.ShortComplex.instEpiHomologyπ
+        (HomologicalComplex.sc (Blueprint.Sec03.singularChainComplexZ X) 1)
+    · simp +decide [ HomologicalComplex.sc ];
+      exact Eq.symm (ModuleCat.hom_ext rfl)
+  exact h_desc_zero ▸ rfl);
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
 

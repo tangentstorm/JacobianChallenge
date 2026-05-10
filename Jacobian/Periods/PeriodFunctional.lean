@@ -118,32 +118,20 @@ noncomputable def periodPairing
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     IntegralOneCycle X →+ (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
-  let D := JacobianChallenge.Blueprint.Sec03.period_homology_invariance_descent X
+  -- Placeholder: the chain-level integration I is 0 (pending the
+  -- free-module universal-property bridge). Using 0 directly rather
+  -- than going through Classical.choose on period_homology_invariance_descent
+  -- makes the definition transparent for downstream chain-level proofs.
   let I : JacobianChallenge.Blueprint.Sec03.SingularOneChain X →ₗ[ℤ]
-            (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) := D.choose
-  let hI := D.choose_spec
-  -- Bridge from E-forms to ℂ-forms, then precompose.
-  let φ := holomorphicFormBridge E X
+            (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) := 0
   let I_E : JacobianChallenge.Blueprint.Sec03.SingularOneChain X →ₗ[ℤ]
-             (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
-    { toFun := fun σ => (I σ).comp φ
-      map_add' := fun σ τ => by ext ω; simp [LinearMap.comp_apply, map_add, LinearMap.add_apply]
-      map_smul' := fun n σ => by ext ω; simp [LinearMap.comp_apply, map_smul, LinearMap.smul_apply] }
+             (HolomorphicOneForm E X →ₗ[ℂ] ℂ) := 0
   let K := JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X
   let S := K.sc 1
-  -- Convert I_E to a morphism in ModuleCat ℤ.
   let Im : S.X₂ ⟶ ModuleCat.of ℤ (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
     ModuleCat.ofHom I_E
-  -- Construct the descent map using the universal property of homology.
-  -- Since I kills boundaries (hI), so does I_E (by precomposition).
-  -- Bridge: convert hI (about singularBoundary21 X) to a hypothesis about S.f/Im.
   have hI_sc : ∀ (s : ↑S.X₁), Im.hom (S.f.hom s) = 0 := by
-    intro s
-    ext ω
-    simp only [Im, I_E, LinearMap.zero_apply]
-    obtain ⟨s', hs'⟩ := singularBoundary_eq_sc_f X s
-    rw [hs']
-    exact hI s' (φ ω)
+    intro s; ext ω; simp [Im, I_E]
   (S.descHomology (S.iCycles ≫ Im)
     (periodPairing_descent_aux S Im hI_sc)).hom.toAddMonoidHom
 

@@ -2,6 +2,7 @@
 import json
 import os
 import re
+import subprocess
 
 DB_FILE = "sorries.jsonl"
 SCHEMA_KEYS = ["@ver", "i", "f", "k", "s", "n", "o", "r", "e", "u", "d", "a", "c", "b", "t"]
@@ -44,9 +45,21 @@ def crawl_tex():
                     labels[label] = {"f": path, "k": kind, "u_labels": uses, "lean": lean_names}
     return labels
 
+def get_current_sorries():
+    res = subprocess.run(["python3", "scripts/list-sorries.py"], capture_output=True, text=True)
+    sorries = {} # name -> {f, n, o, r}
+    for line in res.stdout.splitlines():
+        if line.startswith("{"):
+            try:
+                obj = json.loads(line)
+                sorries[obj["s"]] = obj
+            except: pass
+    return sorries
+
 def main():
     header, old_items = load_db()
     tex_labels = crawl_tex()
+    live_sorries = get_current_sorries()
     
     # 1. Map labels to existing IDs
     label_to_existing_ids = {}
@@ -60,8 +73,6 @@ def main():
     if CHALLENGE_API not in label_to_existing_ids:
         label_to_existing_ids[CHALLENGE_API] = [0]
     else:
-        # If it was already there with a different ID, we might have a conflict.
-        # For now, just ensure 0 is in the list.
         if 0 not in label_to_existing_ids[CHALLENGE_API]:
             label_to_existing_ids[CHALLENGE_API].append(0)
             
@@ -81,48 +92,64 @@ def main():
     new_db = []
     processed_ids = set()
     
-    # Step A: Start with all old items, updating their TeX-derived metadata
-    for obj in old_items:
-        label = obj.get("b")
-        if label and label in tex_labels:
-            info = tex_labels[label]
-            # Use TeX path for the record (or keep Lean path if it is code-rich?)
-            # Actually, f is currently the TeX path in my previous runs for non-sorries.
-            # For sorries, we prefer the Lean path.
-            # If obj["n"] > 0, keep obj["f"].
-            if obj.get("n", 0) == 0:
-                obj["f"] = info["f"]
-            obj["k"] = info["k"]
-        new_db.append(obj)
-        processed_ids.add(obj["i"])
-        
-    # Step B: Add new TeX labels that weren't in the DB
+    # Map from ID to old item
+    id_to_old = {obj["i"]: obj for obj in old_items}
+    
+    # Process TeX labels
     for label, info in tex_labels.items():
         for jid in label_to_existing_ids[label]:
-            if jid not in processed_ids:
-                obj = {
-                    "@ver": None,
-                    "i": jid,
-                    "f": info["f"],
-                    "k": info["k"],
-                    "s": label,
-                    "n": 0,
-                    "o": 1,
-                    "r": 0,
-                    "e": None,
-                    "u": [],
-                    "d": [],
-                    "a": "",
-                    "c": "done",
-                    "b": label,
-                    "t": ""
-                }
-                new_db.append(obj)
-                processed_ids.add(jid)
+            old_obj = id_to_old.get(jid, {})
+            
+            # Determine status and sorry count from live code
+            is_sorry = False
+            num_sorries = 0
+            obligations = 1
+            lean_file = old_obj.get("f") or info["f"]
+            statement_name = old_obj.get("s") or (info["lean"][0] if info["lean"] else label)
+            
+            has_lean = False
+            for ln in info["lean"]:
+                has_lean = True
+                if ln in live_sorries:
+                    is_sorry = True
+                    num_sorries = live_sorries[ln]["n"]
+                    obligations = live_sorries[ln]["o"]
+                    lean_file = live_sorries[ln]["f"]
+                    statement_name = ln
+                    break
+            
+            if has_lean:
+                status = "open" if is_sorry else "done"
+            else:
+                status = old_obj.get("c") or "open"
+                
+            obj = {
+                "@ver": None,
+                "i": jid,
+                "f": lean_file,
+                "k": info["k"],
+                "s": statement_name,
+                "n": num_sorries,
+                "o": obligations,
+                "r": 0,
+                "e": old_obj.get("e"),
+                "u": [],
+                "d": [],
+                "a": old_obj.get("a") or "",
+                "c": status,
+                "b": label,
+                "t": old_obj.get("t") or ""
+            }
+            new_db.append(obj)
+            processed_ids.add(jid)
+            
+    # Add items from old DB that were not in TeX
+    for jid, old_obj in id_to_old.items():
+        if jid not in processed_ids:
+            new_db.append(old_obj)
 
     # 4. Re-link the graph
     id_to_obj = {obj["i"]: obj for obj in new_db}
-    label_to_ids = label_to_existing_ids # already covers all
     
     # Clear existing links
     for obj in new_db:
@@ -134,10 +161,10 @@ def main():
         if not label or label not in tex_labels: continue
         
         for u_label in tex_labels[label]["u_labels"]:
-            if u_label in label_to_ids:
-                for uid in label_to_ids[u_label]:
-                    obj["u"].append(uid)
+            if u_label in label_to_existing_ids:
+                for uid in label_to_existing_ids[u_label]:
                     if uid in id_to_obj:
+                        obj["u"].append(uid)
                         id_to_obj[uid]["d"].append(obj["i"])
 
     # Unique and sort
