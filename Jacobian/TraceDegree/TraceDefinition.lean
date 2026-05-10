@@ -60,17 +60,46 @@ noncomputable def traceAtRegularValue
     cotangentPushforward f x (ω x)
   )
 
-/-- The trace of a holomorphic 1-form is holomorphic on the regular locus.
-(Away from branch points, the sum of local pullbacks is holomorphic). -/
-theorem traceAtRegularValue_holomorphic
+/-- A local inverse of `f` at an unramified point `x`. -/
+noncomputable def localInverseAt
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    (x : X) (hx : h.ramificationIndex x = 1) :
+    Y → X :=
+  let ⟨_U, _V, _hU, _hV, _hxU, _hfxV, hbij⟩ := h.local_bijective_unramified x hx
+  fun y => if hy : y ∈ _V then hbij.invOn.f' y else x
+
+/-- The local inverse is holomorphic at `f x`. -/
+theorem localInverseAt_holomorphic
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    (hf : IsHolomorphic f)
+    (x : X) (hx : h.ramificationIndex x = 1) :
+    IsHolomorphicAt (localInverseAt h x hx) (f x) :=
+  sorry
+
+/-- A local version of the trace sum, defined in a neighborhood of `y`. -/
+noncomputable def localTraceAtRegularValue
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    (ω : HolomorphicOneForm ℂ X)
+    (y : Y) (hy : isRegularValue h y) :
+    Y → CotangentSpace ℂ Y y :=
+  fun y' =>
+    let fiber := (h.finite_fiber y).toFinset
+    fiber.attach.sum (fun ⟨x, hx_mem⟩ =>
+      let hx_fiber : x ∈ f ⁻¹' {y} := by
+        rw [Set.Finite.mem_toFinset] at hx_mem
+        assumption
+      let hx_unram : h.ramificationIndex x = 1 := hy x hx_fiber
+      -- Pullback of ω along localInverseAt h x hx_unram
+      sorry
+    )
+
+/-- The local trace is holomorphic at `y`. -/
+theorem localTraceAtRegularValue_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hf : IsHolomorphic f)
     (ω : HolomorphicOneForm ℂ X)
     (y : Y) (hy : isRegularValue h y) :
-    IsHolomorphicAt (fun y' =>
-      -- We need a version of traceAtRegularValue that works in a neighborhood
-      sorry
-    ) y :=
+    IsHolomorphicAt (localTraceAtRegularValue h ω y hy) y :=
   sorry
 
 end JacobianChallenge.HolomorphicForms
