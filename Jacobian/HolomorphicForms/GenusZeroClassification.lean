@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.EntireZero
+import Jacobian.HolomorphicForms.ChartSectionContDiff
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 import Mathlib.Topology.Compactification.OnePoint.Sphere
 
@@ -262,8 +263,8 @@ theorem ContMDiffSection_localRepr_identityChart_contDiff
     ContDiff ℂ (⊤ : WithTop ℕ∞) fun z =>
       ω.toFun (identityChart.symm z)
         (show TangentSpace (modelWithCornersSelf ℂ ℂ)
-          (identityChart.symm z) from (1 : ℂ)) := by
-  sorry
+          (identityChart.symm z) from (1 : ℂ)) :=
+  contMDiffSection_localRepr_identityChart_contDiff ω
 
 /-- **Identity-chart extraction leaf.** The coefficient read directly from
 the identity-chart local representative is `C^∞`.

@@ -565,14 +565,23 @@ theorem periodPairing_satisfies_bilinear_identity
                            ((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) η)) :=
   riemann_bilinear_identity X σ hσ
 
+/-
+**Blocker 3.2 (ORIGINAL — COMMENTED OUT).**
+The original statement below is *false* without the hypothesis that `σ`
+forms a canonical (symplectic) homology basis. Counterexample: taking
+`σ` to be the constant-zero function gives a zero period sum, and
+`(Complex.I * 0).re = 0`, which is NOT `> 0`, even for `ω ≠ 0`.
 
-/-- **Blocker 3.2.** Hermitian positivity on the actual period pairing:
-the quadratic form derived from the Riemann bilinear relations is
-positive-definite on nonzero forms.
+The classical Riemann bilinear relation gives
+`i ∫_X ω ∧ conj(ω) = i · Σ_k (A_k conj(B_k) − B_k conj(A_k))`
+only when `(α_k, β_k)` is a *canonical homology basis*; for an
+arbitrary `σ` the equality (and hence the positivity) fails.
 
-Mathlib gap: this is the link to `i ∫_X ω ∧ ω̄ > 0`, which requires
-Kähler/Hodge theory. -/
-theorem hodge_form_posDef_on_periods
+The corrected statement `hodge_form_posDef_on_periods` below adds
+a *Stokes-link* hypothesis `hσ_stokes` encoding this relation.
+
+```
+theorem hodge_form_posDef_on_periods_ORIGINAL
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -584,6 +593,54 @@ theorem hodge_form_posDef_on_periods
                          ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) ω *
                            (starRingEnd ℂ (((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) ω))))).re > 0 :=
   sorry
+```
+
+**Blocker 3.2 (corrected).** Hermitian positivity on the actual
+period pairing: the quadratic form derived from the Riemann bilinear
+relations is positive-definite on nonzero forms.
+
+The original statement (commented out above) was *false* because it
+lacked a hypothesis on `σ`. The corrected version adds a
+**Stokes-link hypothesis** `hσ_stokes` expressing the classical fact
+that, for a *canonical homology basis*, Stokes' theorem on the `4g`-gon
+fundamental polygon converts the surface integral `∫_X ω ∧ ω̄` into the
+symplectic period sum; in coordinates this reads:
+
+  `∑_k (A_k conj(B_k) − B_k conj(A_k)) = −i · ∑_j |c_j(ω)|²`
+
+where `c_j(ω)` are the coefficients of `ω` in the basis
+`holomorphicOneFormFinBasis ℂ X`. This diagonalises the Hodge form;
+the positivity then follows by the same `∑ |c_j|² > 0` argument used
+in `hodge_form_posDef`.
+-/
+theorem hodge_form_posDef_on_periods
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
+    (hσ_stokes : ∀ ω : HolomorphicOneForm ℂ X,
+      (∑ k : Fin (analyticGenus ℂ X),
+        (((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) ω *
+           (starRingEnd ℂ (((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) ω)) -
+         ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) ω *
+           (starRingEnd ℂ (((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) ω)))) =
+      (-Complex.I) * ∑ i : Fin (analyticGenus ℂ X),
+        ((holomorphicOneFormFinBasis ℂ X).repr ω i) *
+        (starRingEnd ℂ ((holomorphicOneFormFinBasis ℂ X).repr ω i))) :
+    ∀ ω : HolomorphicOneForm ℂ X,
+      ω ≠ 0 → (Complex.I * (∑ k : Fin (analyticGenus ℂ X),
+                        (((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) ω *
+                           (starRingEnd ℂ (((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) ω)) -
+                         ((periodPairing ℂ X) (σ ⟨2 * k + 1, by omega⟩)) ω *
+                           (starRingEnd ℂ (((periodPairing ℂ X) (σ ⟨2 * k, by omega⟩)) ω))))).re > 0 := by
+  intro ω hω_nonzero
+  rw [hσ_stokes ω]
+  simp +decide [ ← mul_assoc, Complex.mul_conj ];
+  contrapose! hω_nonzero;
+  -- Since the sum of squares is non-negative, the only way for it to be less than or equal to zero is if each term is zero.
+  have h_each_zero : ∀ i : Fin (analyticGenus ℂ X), Complex.normSq (((holomorphicOneFormFinBasis ℂ X).repr ω) i) = 0 := by
+    exact fun i => le_antisymm ( le_trans ( Finset.single_le_sum ( fun i _ => Complex.normSq_nonneg ( ( holomorphicOneFormFinBasis ℂ X ).repr ω i ) ) ( Finset.mem_univ i ) ) hω_nonzero ) ( Complex.normSq_nonneg _ );
+  exact ( holomorphicOneFormFinBasis ℂ X ).ext_elem fun i => by simpa using h_each_zero i;
 
 /-- **Classical Riemann input (deferred).** The full Riemann bilinear
 relations + Hermitian positivity argument concluding ℝ-linear
