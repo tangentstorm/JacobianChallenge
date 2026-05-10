@@ -194,8 +194,13 @@ unfolded-disk's surjection to `M`, satisfies the
 `EdgeWordPresentation` axioms. -/
 theorem unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    [ConnectedSpace M]
+    [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
+    [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) M]
     {T : Triangulation M} (_D : UnfoldedDisk M T) :
-    Nonempty Unit := ⟨()⟩
+    Nonempty (EdgeWordPresentation M) := by
+  sorry
 
 /-- **Round 48 / Stage A leaf (unfolded disk → edge word, reassembly).** -/
 theorem unfoldedDisk_to_edgeWordPresentation
@@ -207,8 +212,7 @@ theorem unfoldedDisk_to_edgeWordPresentation
     {T : Triangulation M} (D : UnfoldedDisk M T) :
     Nonempty (EdgeWordPresentation M) := by
   have _ := unfoldedDisk_boundary_word_data D
-  have _ := unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms D
-  exact ⟨sorry⟩
+  exact unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms D
 
 /-- **Round 48 / Stage A leaf (sorry-free assembly).** The classical
 chain "triangulation → dual graph → spanning tree → cut → unfolded

@@ -105,18 +105,44 @@ lemma standardWord_length (g : ℕ) : (standardWord g).length = 4 * g := by
   simp [handleBlock, List.length_flatMap, List.length_finRange]
   linarith
 
-/-- The letters in `standardWord g` at indices `4i`, `4i+1`, `4i+2`, `4i+3`. -/
+/-
+The letters in `standardWord g` at indices `4i`, `4i+1`, `4i+2`, `4i+3`.
+-/
 lemma standardWord_get_handle {g : ℕ} (i : Fin g) :
     (standardWord g).get ⟨4 * i.val, by rw [standardWord_length]; linarith [i.is_lt]⟩ = Letter.a i ∧
     (standardWord g).get ⟨4 * i.val + 1, by rw [standardWord_length]; linarith [i.is_lt]⟩ = Letter.b i ∧
     (standardWord g).get ⟨4 * i.val + 2, by rw [standardWord_length]; linarith [i.is_lt]⟩ = Letter.aInv i ∧
     (standardWord g).get ⟨4 * i.val + 3, by rw [standardWord_length]; linarith [i.is_lt]⟩ = Letter.bInv i := by
-  sorry
+  unfold standardWord; simp +decide ;
+  -- By definition of `List.flatMap`, we can split the list into the first `i` elements, the `i`-th element, and the remaining elements.
+  have h_split : List.flatMap handleBlock (List.finRange g) = List.flatMap handleBlock (List.take i (List.finRange g)) ++ handleBlock i ++ List.flatMap handleBlock (List.drop (i + 1) (List.finRange g)) := by
+    have h_split : List.flatMap handleBlock (List.finRange g) = List.flatMap handleBlock (List.take (i.val + 1) (List.finRange g)) ++ List.flatMap handleBlock (List.drop (i.val + 1) (List.finRange g)) := by
+      rw [ ← List.flatMap_append, List.take_append_drop ];
+    simp_all +decide [ List.take_add_one ];
+  have h_split : List.length (List.flatMap handleBlock (List.take i (List.finRange g))) = 4 * i := by
+    simp +arith +decide [ handleBlock ];
+  simp_all +decide [ handleBlock ]
 
-/-- Each letter appears exactly once in `standardWord g`. -/
+/-
+Each letter appears exactly once in `standardWord g`.
+-/
 lemma standardWord_get_unique {g : ℕ} (ℓ : Letter g) :
     ∃! i : Fin (standardWord g).length, (standardWord g).get i = ℓ := by
-  sorry
+  -- By definition of `standardWord`, each letter appears exactly once.
+  have h_unique : List.Nodup (standardWord g) := by
+    unfold standardWord;
+    rw [ List.nodup_flatMap ];
+    unfold handleBlock; simp +decide [ List.pairwise_iff_get ] ;
+    exact fun i j hij => ne_of_gt hij;
+  obtain ⟨i, hi⟩ : ∃ i : Fin (standardWord g).length, (standardWord g).get i = ℓ := by
+    have h_exists : ℓ ∈ standardWord g := by
+      cases ℓ <;> simp +decide [ standardWord ];
+      · exact ⟨ _, List.mem_cons_self ⟩;
+      · exact ⟨ _, List.mem_cons_of_mem _ ( List.mem_cons_self ) ⟩;
+      · exact ⟨ _, List.mem_cons_of_mem _ ( List.mem_cons_of_mem _ ( List.mem_cons_self ) ) ⟩;
+      · exact ⟨ _, List.mem_cons_of_mem _ ( List.mem_cons_of_mem _ ( List.mem_cons_of_mem _ ( List.mem_singleton_self _ ) ) ) ⟩;
+    exact List.mem_iff_get.mp h_exists;
+  exact ⟨ i, hi, fun j hj => by have := List.nodup_iff_injective_get.mp h_unique; have := @this j i; aesop ⟩
 
 /-- For the standard word, `sidePairingRel` agrees with `Polygon4g.SideRel`. -/
 theorem sidePairingRel_standardWord (g : ℕ) :
