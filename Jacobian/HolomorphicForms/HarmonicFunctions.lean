@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.DeRhamCohomology
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.InnerProductSpace.LaxMilgram
+import Mathlib.Topology.Algebra.Order.Field
 
 open scoped Manifold
 open Complex
@@ -215,9 +216,23 @@ theorem holomorphic_of_harmonic_conjugate (X : Type*) [TopologicalSpace X]
 /-- **Sub-obligation 2a.1: Local limit in C.**
 The function z -> Re(1/z) has magnitude tending to infinity as z -> 0. -/
 theorem magnitude_re_inv_z_tendsto_infty :
-    Filter.Tendsto (fun z : ℂ => norm (1/z))
-      (nhdsWithin 0 ({0}ᶜ)) Filter.atTop := by
-  sorry
+    Filter.Tendsto (fun z : ℂ => norm (1 / z))
+      (nhdsWithin 0 {0}ᶜ) Filter.atTop := by
+  have : (fun z : ℂ => norm (1 / z)) = fun z => (norm z)⁻¹ := by
+    ext z
+    rw [one_div, norm_inv]
+  rw [this]
+  have h1 : Filter.Tendsto (fun z : ℂ => norm z) (nhdsWithin 0 {0}ᶜ) (nhdsWithin 0 (Set.Ioi 0)) := by
+    apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
+    · have h0 : norm (0 : ℂ) = 0 := norm_zero
+      have hc : Filter.Tendsto (norm : ℂ → ℝ) (nhds 0) (nhds (norm (0 : ℂ))) :=
+        (continuous_norm : Continuous (norm : ℂ → ℝ)).tendsto 0
+      rw [h0] at hc
+      exact Filter.Tendsto.mono_left hc nhdsWithin_le_nhds
+    · filter_upwards [self_mem_nhdsWithin] with z hz
+      rw [Set.mem_Ioi, norm_pos_iff]
+      exact hz
+  exact Filter.Tendsto.comp tendsto_inv_nhdsGT_zero h1
 
 /-- **Sub-obligation 2a: Singularity magnitude limit.**
 The dipole singularity Re(1/z) has magnitude tending to infinity. -/
