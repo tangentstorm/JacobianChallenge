@@ -214,7 +214,10 @@ where \(K\) is a canonical divisor and \(\ell(D)=\dim_{\C} L(D)\).
 Combines the Euler-characteristic formula
 (Theorem~\ref{thm:euler-char-line-bundle}) with Serre duality
 (Theorem~\ref{thm:serre-duality-rs}), using the low/high degree squeeze
-to handle the boundary cases and dualization.
+to handle the boundary cases and dualization. In Lean this is now a
+sorry-free umbrella assembly through \code{riemann\_roch\_umbrella\_exists},
+instantiating line bundles, canonical subtraction, degree, genus, and
+\(h^0\)-dimension from the sheaf-cohomology bridge.
 \leanok
 \end{theorem}
 \begin{proof}
