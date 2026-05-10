@@ -42,6 +42,8 @@ for root, _, files in os.walk("tex"):
                     if used_labels:
                         label_uses[label] = list(set(used_labels))
 
+print(f"Parsed Blueprint: {len(all_labels)} nodes, {len(label_uses)} edges.")
+
 # 2. Load sorries database
 db_items = []
 header = None
@@ -64,23 +66,28 @@ for obj in db_items:
         label_to_ids[obj["b"]].append(obj["i"])
 
 # 3. Calculate dependencies
-# REFINEMENT FLOW: Root (Goal) -> Leaf (Mathlib)
-# u = parent (closer to Goal), d = child (closer to Leaf)
+# TRUTH FLOW: Source/Leaf -> Consumer/Root
+# u = source (upstream), d = consumer (downstream)
 id_to_u = {obj["i"]: set() for obj in db_items}
 id_to_d = {obj["i"]: set() for obj in db_items}
 
+# IMPORTANT: Blacklist Challenge API nodes from blueprint to keep graph acyclic
+# (Prose-only loops where Goal uses Detail and Detail uses Goal)
+BLACKLIST = {"thm:challenge-api", "def:analytic-jacobian", "def:abel-jacobi", "thm:push-pull-functoriality", "thm:genus-zero-classification"}
+
 for obj in db_items:
     b = obj.get("b")
-    if not b or b not in label_uses: continue
+    if not b or b not in label_uses or b in BLACKLIST: continue
     
-    # TeX "\uses{X}" means "this node refines into X"
-    # So X is DOWNSTREAM (d) of this node.
-    for leaf_label in label_uses[b]:
-        if leaf_label in label_to_ids:
-            for lid in label_to_ids[leaf_label]:
-                if lid != obj["i"]:
-                    id_to_d[obj["i"]].add(lid)
-                    id_to_u[lid].add(obj["i"])
+    # TeX "\uses{X}" means "this node depends on X for its proof"
+    # So X is the SOURCE of truth for this node.
+    # Therefore X is UPSTREAM (u) of this node.
+    for src_label in label_uses[b]:
+        if src_label in label_to_ids and src_label not in BLACKLIST:
+            for sid in label_to_ids[src_label]:
+                if sid != obj["i"]:
+                    id_to_u[obj["i"]].add(sid)
+                    id_to_d[sid].add(obj["i"])
 
 # 4. Write back maintaining order
 SCHEMA_KEYS = ["@ver", "i", "f", "k", "s", "n", "o", "r", "e", "u", "d", "a", "c", "b", "t"]
@@ -93,4 +100,4 @@ with open("sorries.jsonl", "w") as f:
         row = {k: obj.get(k) for k in SCHEMA_KEYS}
         f.write(json.dumps(row, separators=(",", ":")) + "\n")
 
-print(f"Graph fully synchronized: u=Goalward (Roots), d=Leafward (Frontier).")
+print(f"Graph fully synchronized: u=Sources (Leaves), d=Consumers (Roots).")

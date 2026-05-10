@@ -59,6 +59,9 @@ def get_lean_sorries(root_dir):
                 path = os.path.join(root, file)
                 rel_path = os.path.relpath(path, os.getcwd())
                 
+                if rel_path == "Jacobian/Challenge.lean":
+                    continue
+                
                 try:
                     with open(path, 'r', encoding='utf-8') as f:
                         content = f.read()
