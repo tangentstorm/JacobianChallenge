@@ -57,6 +57,15 @@
 \notready
 \end{theorem}
 
+\subsection{Topological Implementation: Surface Classification and Stage A}
+
+\begin{lemma}[Polygonal model and cellular homology]
+\label{lem:polygon-cellular-singular-iso}
+\uses{lem:r3subB-cellular-iso}
+\lean{JacobianChallenge.Periods.polygon4g_cellular_singular_iso}
+\notready
+\end{lemma}
+
 \subsection{Remaining Implementation Details}
 
 \begin{lemma}[Meromorphic lift and degree]
@@ -86,9 +95,15 @@
 
 \subsection{Connection to Main Goals}
 
+\begin{lemma}[Intended implementation orphans]
+\label{lem:intended-orphans}
+\uses{lem:impl-misc-orphans, lem:impl-orphans-aggregate}
+These implementation details are tracked but currently isolated from the main proof spine.
+\end{lemma}
+
 \begin{lemma}[Wiring implementation to roots]
 \label{lem:impl-wiring-to-roots}
-\uses{lem:section-arzela-ascoli, lem:meromorphic-vector-space-instance, lem:polygon-cellular-singular-iso, lem:impl-meromorphic-lift, lem:impl-trace-lip}
+\uses{lem:section-arzela-ascoli, lem:meromorphic-vector-space-instance, lem:polygon-cellular-singular-iso, lem:impl-meromorphic-lift, lem:impl-trace-lip, lem:intended-orphans}
 This lemma serves as the final hook connecting the implementation-level proof obligations
 back into the project's high-level goal nodes.
 \notready
