@@ -32,6 +32,22 @@ class SobolevH1 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
   -- Placeholder for the Hilbert space structure
   is_hilbert : True
 
+/-- **Sub-obligation 2.1a: Existence of Sobolev structure.**
+Every compact Riemannian manifold admits a Hilbert space structure on its H^1 Sobolev space. -/
+theorem exists_sobolev_hilbert_structure (X : Type*) [TopologicalSpace X] [CompactSpace X]
+    [ChartedSpace ℂ X] (g : CompatibleMetric X) :
+    Nonempty (SobolevH1 X g) := by
+  sorry
+
+/-- **Sub-obligation 2.5: Elliptic Regularity.**
+A weak solution (minimizer) of the Dirichlet problem for smooth trial functions
+is actually a smooth (and thus harmonic in the classical sense) function. -/
+theorem elliptic_regularity_harmonic (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) (u : X → ℝ) (hweak : IsHarmonic g u) :
+    -- Placeholder for Smooth u
+    True := by
+  sorry
+
 /-- **Sub-obligation 2.2: Dirichlet energy functional.**
 The energy functional E(u) = ∫ |∇u|^2 dV is minimized by harmonic functions. -/
 def DirichletEnergy {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -56,14 +72,31 @@ theorem lax_milgram_minimizer (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ
     ∃ v : X → ℝ, IsHarmonic g (fun x => u₀ x + v x) := by
   sorry
 
+/-- **Sub-obligation 2.3a: Chart-local dipole.**
+In a local complex chart around P, we can define a function that is exactly
+Re(1/z) near the origin. -/
+noncomputable def local_dipole_function (_U : Set ℂ) (z₀ : ℂ) : ℂ → ℝ :=
+  fun z => (1 / (z - z₀)).re
+
+/-- **Sub-obligation 2.3b: Smooth bump function.**
+There exists a smooth bump function supported in a small disk around P. -/
+theorem exists_smooth_bump (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] (P : X) :
+    ∃ ψ : X → ℝ, True := by
+  sorry
+
 /-- **Sub-obligation 2.3: Construction of a trial function with dipole singularity.**
 To find a harmonic function with a dipole singularity Re(1/z) at P, we first
 construct a smooth trial function u_0 that has the correct singularity in a
 small chart around P and is zero elsewhere. -/
 theorem exists_trial_dipole (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (g : CompatibleMetric X) (P : X) :
     ∃ u₀ : X → ℝ, True := by
-  -- u₀ ~ Re(1/z) near P.
+  -- 1. Pick a chart at P
+  -- 2. Define local_dipole_function
+  -- 3. Pick a bump function ψ
+  -- 4. u₀ = ψ * local_dipole (extended by zero)
   sorry
 
 /-- **Sub-obligation 2.4: Variational solution (Lax-Milgram).**
