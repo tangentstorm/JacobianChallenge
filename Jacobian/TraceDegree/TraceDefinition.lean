@@ -106,6 +106,24 @@ noncomputable def localTraceAtRegularValue
     localPullbackAt h hf ω x hx_unram
   )
 
+/-- The trace sum is additive. -/
+theorem traceAtRegularValue_add
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    (ω₁ ω₂ : ∀ x, CotangentSpace ℂ X x)
+    (y : Y) (hy : isRegularValue h y) :
+    traceAtRegularValue h (fun x => ω₁ x + ω₂ x) y hy =
+      traceAtRegularValue h ω₁ y hy + traceAtRegularValue h ω₂ y hy :=
+  sorry
+
+/-- The trace sum preserves scalar multiplication. -/
+theorem traceAtRegularValue_smul
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    (c : ℂ) (ω : ∀ x, CotangentSpace ℂ X x)
+    (y : Y) (hy : isRegularValue h y) :
+    traceAtRegularValue h (fun x => c • ω x) y hy =
+      c • traceAtRegularValue h ω y hy :=
+  sorry
+
 /-- The trace of a pullback is scaled by the degree (at regular values).
 (tr f (f* η))_y = deg(f) • η_y. -/
 theorem trace_pullback_at_regular_value
