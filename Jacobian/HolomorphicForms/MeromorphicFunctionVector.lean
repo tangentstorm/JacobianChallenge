@@ -69,7 +69,9 @@ theorem add_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     · unfold toFiniteFun; cases h : f.toFun x with | infty => exact absurd h hx_f | coe v => rfl
     · unfold toFiniteFun; cases h : g.toFun x with | infty => exact absurd h hx_g | coe v => rfl
   rw [h_eq.1, h_eq.2]
-  simp [Add.add, add_meromorphic]
+  simp only [Option.getD_some]
+  change (add_meromorphic f g).toFun x = _
+  simp only [add_meromorphic, h_eq.1, h_eq.2]
 
 /-- Negation of meromorphic functions. -/
 noncomputable def neg_meromorphic (f : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
