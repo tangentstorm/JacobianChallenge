@@ -573,16 +573,23 @@ degree, hence \(\ell(K-[P])=0\).
 divisor of negative degree has trivial Riemann--Roch space.
 \end{proof}
 
+\begin{lemma}[Global holomorphic functions are constant]
+\label{lem:poles-eq-zero-iff-constant}
+On a compact connected Riemann surface, a meromorphic function with no poles is constant.
+\lean{JacobianChallenge.HolomorphicForms.poles_eq_zero_iff_constant}
+\notready
+\end{lemma}
+
 \begin{lemma}[\(\ell(D)\geq 2\) implies a nonconstant element]
 \label{lem:rr-space-dim-ge-two-nonconstant}
-\uses{def:riemann-roch-space}
+\uses{def:riemann-roch-space, lem:poles-eq-zero-iff-constant}
 If \(\dim_{\C}L(D)\geq 2\), then \(L(D)\) contains a nonconstant
 element.
 \lean{JacobianChallenge.HolomorphicForms.riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic}
 \leanok
 \end{lemma}
 \begin{proof}
-The constants form a one-dimensional subspace of \(L(D)\); any
+The constants form a one-dimensional subspace of \(L(D)\) (by Lemma~\ref{lem:poles-eq-zero-iff-constant}); any
 element outside that line is nonconstant.
 \end{proof}
 

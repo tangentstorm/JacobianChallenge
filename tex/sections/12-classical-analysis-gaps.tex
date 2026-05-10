@@ -4690,8 +4690,15 @@ orientation of $\partial D_{i}$ as a boundary of $X \setminus
 \bigsqcup D_{i}$).
 \notready
 \end{lemma}
+\begin{lemma}[Pass A.1: reduce to one-variable, $q=1$]
+\label{lem:srt-r1}
+The integral on singular 1-chains is determined by the integral on singular 1-simplices.
+\lean{JacobianChallenge.Blueprint.Sec03.exists_singularSimplex_integration}
+\notready
+\end{lemma}
 
 \begin{lemma}[Pass D.2: each boundary integral is $2\pi i \cdot \mathrm{Res}_{p_{i}}\omega$]
+...
 \label{lem:srt-r2-residue-as-boundary}
 \uses{lem:srt-r3-cauchy-formula-disk}
 For a meromorphic 1-form $\omega$ on a chart-disk $D \ni p$
@@ -4981,6 +4988,13 @@ $(g \circ F)'(w) = g'(F(w)) \cdot F'(w)$ for holomorphic $g, F$, by the complex 
 
 % --------------------------------------------------------------
 \subsubsection*{Chain DR: de Rham comparison and path integration (lem:period-homology-invariance)}
+
+\begin{lemma}[Stokes gap: integration along singular boundaries]
+\label{lem:stokes-gap-integration-kills-boundary}
+The integral of any holomorphic 1-form along a singular 1-cycle that bounds a singular 2-chain is zero.
+\lean{JacobianChallenge.Blueprint.Sec03.chain_integration_kills_boundary}
+\notready
+\end{lemma}
 
 \begin{lemma}[Path-integral primitive on a chart disk]
 \label{lem:path-integral-primitive}
