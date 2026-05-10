@@ -1,16 +1,26 @@
 import Jacobian.HolomorphicForms.Isothermal
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.DeRhamCohomology
+import Mathlib.Analysis.Complex.Basic
 
 open scoped Manifold
 open Complex
 
 namespace JacobianChallenge.HolomorphicForms
 
-/-- A function is harmonic if it is annihilated by the Laplace-Beltrami operator. -/
+/-- The Hodge star operator on 1-forms of a Riemann surface.
+On a 1-manifold, the Hodge star maps 1-forms to 1-forms (specifically,
+it rotates cotangent vectors by 90 degrees). -/
+def HodgeStar {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) (ω : X → ℝ) : (X → ℝ) :=
+  -- Placeholder for *ω
+  ω
+
+/-- A function is harmonic if it is annihilated by the Laplace-Beltrami operator.
+Δ f = d*df = 0. -/
 def IsHarmonic {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (f : X → ℝ) : Prop :=
-  -- Placeholder for Δ f = 0
+  -- Placeholder for d*df = 0
   True
 
 /-- **Sub-obligation 2.1: Sobolev space H^1(X).**
@@ -98,20 +108,20 @@ theorem harmonic_conjugate_exists (X : Type*) [TopologicalSpace X]
   -- 1. *du is a closed 1-form
   have hclosed := conjugate_one_form_closed X g u hu
   -- 2. H^1 = 0 implies *du is exact, so *du = dv
-  exact exact_of_closed_in_genus_zero X (sorry) hb1 hclosed
+  exact exact_of_closed_in_genus_zero X (HodgeStar g (sorry)) hb1 hclosed
 
 /-- **Sub-obligation 1a: Cauchy-Riemann equations.**
 A pair of real-valued functions (u, v) satisfies the Cauchy-Riemann equations
-if v is a harmonic conjugate of u. -/
+if du = *dv. -/
 def SatisfiesCauchyRiemann {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    (u v : X → ℝ) : Prop :=
+    (g : CompatibleMetric X) (u v : X → ℝ) : Prop :=
   -- Placeholder for du = *dv
   True
 
 /-- **Sub-obligation 1b: CR implies holomorphic.**
 If (u, v) satisfies the Cauchy-Riemann equations, then f = u + iv is holomorphic. -/
 theorem holomorphic_of_CR {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    (u v : X → ℝ) (hcr : SatisfiesCauchyRiemann u v) :
+    (g : CompatibleMetric X) (u v : X → ℝ) (hcr : SatisfiesCauchyRiemann g u v) :
     -- Placeholder for Holomorphic (u + iv)
     True := by
   sorry
@@ -124,9 +134,16 @@ theorem holomorphic_of_harmonic_conjugate (X : Type*) [TopologicalSpace X]
     -- Placeholder for Holomorphic (u + iv) on X \ {P}
     True := by
   -- 1. Conjugate relationship implies CR equations
-  have hcr : SatisfiesCauchyRiemann u v := sorry
+  have hcr : SatisfiesCauchyRiemann (sorry) u v := sorry
   -- 2. CR implies holomorphic
-  exact holomorphic_of_CR u v hcr
+  exact holomorphic_of_CR (sorry) u v hcr
+
+/-- **Sub-obligation 2a.1: Local limit in C.**
+The function z -> Re(1/z) has magnitude tending to infinity as z -> 0. -/
+theorem magnitude_re_inv_z_tendsto_infty :
+    Filter.Tendsto (fun z : ℂ => norm (1/z))
+      (nhdsWithin 0 ({0}ᶜ)) Filter.atTop := by
+  sorry
 
 /-- **Sub-obligation 2a: Singularity magnitude limit.**
 The dipole singularity Re(1/z) has magnitude tending to infinity. -/
@@ -134,6 +151,8 @@ theorem dipole_singularity_magnitude_tendsto_infty (X : Type*) [TopologicalSpace
     [ChartedSpace ℂ X] (P : X) (u v : X → ℝ) :
     Filter.Tendsto (fun x => Real.sqrt (u x ^ 2 + v x ^ 2))
       (nhdsWithin P ({P}ᶜ)) Filter.atTop := by
+  -- 1. Locally u + iv ~ 1/z
+  -- 2. Apply magnitude_re_inv_z_tendsto_infty
   sorry
 
 /-- **Sub-obligation 2b: Magnitude limit implies OnePoint continuity.**
