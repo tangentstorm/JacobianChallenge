@@ -86,7 +86,10 @@ theorem localInverseAt_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hf : IsHolomorphic f)
     (x : X) (hx : h.ramificationIndex x = 1) :
-    IsHolomorphicAt (localInverseAt h x hx) (f x) :=
+    IsHolomorphicAt (localInverseAt h x hx) (f x) := by
+  -- 1. Order = 1 implies chart-local derivative is nonzero.
+  -- 2. Apply AnalyticAt.localInverse from Mathlib.
+  -- 3. Transport holomorphicity back to the manifold side.
   sorry
 
 /-- The pullback of a holomorphic form along a local inverse branch. -/
