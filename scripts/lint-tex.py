@@ -112,8 +112,10 @@ def strip_math(text: str) -> str:
     text = re.sub(r"\$[^$]*\$", "", text)
     text = re.sub(r"\\\([\s\S]*?\\\)", "", text)
     text = re.sub(r"\\\[[\s\S]*?\\\]", "", text)
-    text = re.sub(r"\\code\{[^{}]*\}", "", text)
-    text = re.sub(r"\\texttt\{[^{}]*\}", "", text)
+    # Handle code-like environments that may contain unicode or backslashes.
+    # We use a regex that supports one level of nested braces to handle \code{\lean{...}}.
+    code_regex = r"\\(?:code|texttt|lean|texttt|detokenize|symbol|proofleanok|mathlibok|uses|proves|label|ref|cite)"
+    text = re.sub(code_regex + r"\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}", "", text)
     text = re.sub(r"\\verb\|[^|]*\|", "", text)
     return text
 
@@ -405,9 +407,10 @@ def lint_file(path: str) -> list[tuple[int, str, str]]:
                 0x2100 <= o <= 0x214F or  # letterlike symbols
                 0x1D400 <= o <= 0x1D7FF)  # math alphanumeric
 
-    # Strip \code{...} regions so the FATAL scan ignores Lean
+    # Strip \code{...} and \lean{...} regions so the FATAL scan ignores Lean
     # identifiers wrapped in detokenize.
-    code_stripped = re.sub(r"\\code\{[^{}]*\}", "", text)
+    code_regex = r"\\(?:code|texttt|lean|texttt|detokenize|symbol|proofleanok|mathlibok|uses|proves|label|ref|cite)"
+    code_stripped = re.sub(code_regex + r"\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\}", "", text)
     code_stripped_lines = code_stripped.split("\n")
 
     for line_no, line in enumerate(lines, 1):
