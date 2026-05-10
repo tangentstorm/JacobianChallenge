@@ -11,39 +11,142 @@ surface needed by the Jacobian project.
 
 namespace JacobianChallenge.Periods
 
+/-- The singular datum attached to the unique zero-cell of the standard
+polygonal cell structure. -/
+opaque Polygon4gCellularSingularZeroCellData
+    (g : ℕ) (_C : Polygon4gCellularModel g) : Type
+
+/-- **Comparison leaf 1a.** Construct the singular zero-cell datum. -/
+theorem polygon4g_cellular_singular_zero_cell_data
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
+    Nonempty (Polygon4gCellularSingularZeroCellData g C) := by
+  sorry
+
+/-- The singular edge-path data attached to the `2g` oriented one-cells
+of the standard polygonal cell structure. -/
+opaque Polygon4gCellularSingularOneCellData
+    (g : ℕ) (_C : Polygon4gCellularModel g) : Type
+
+/-- **Comparison leaf 1b.** Construct the singular one-cell edge-path
+data. -/
+theorem polygon4g_cellular_singular_one_cell_data
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
+    Nonempty (Polygon4gCellularSingularOneCellData g C) := by
+  sorry
+
+/-- The singular two-cell datum: the quotient disk characteristic map
+and its boundary parametrisation by the surface word. -/
+opaque Polygon4gCellularSingularTwoCellData
+    (g : ℕ) (_C : Polygon4gCellularModel g) : Type
+
+/-- **Comparison leaf 1c.** Construct the singular two-cell disk and
+attaching-map data. -/
+theorem polygon4g_cellular_singular_two_cell_data
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
+    Nonempty (Polygon4gCellularSingularTwoCellData g C) := by
+  sorry
+
 /-- The comparison data between the cellular chain complex of the
 standard polygon model and singular chains on the quotient surface.
 
 Bottom-up route: define the characteristic-map pushforward on cells,
 or specialise the usual cellular filtration construction to the finite
 CW complex with one zero-cell, `2g` one-cells, and one two-cell. -/
-opaque Polygon4gCellularSingularComparisonData
-    (g : ℕ) (_C : Polygon4gCellularModel g) : Type
+structure Polygon4gCellularSingularComparisonData
+    (g : ℕ) (C : Polygon4gCellularModel g) where
+  zeroCell : Polygon4gCellularSingularZeroCellData g C
+  oneCells : Polygon4gCellularSingularOneCellData g C
+  twoCell : Polygon4gCellularSingularTwoCellData g C
 
-/-- **Comparison leaf 1.** Existence of the cellular-to-singular
-comparison data for the standard polygonal cell structure. -/
+/-- **Comparison assembly 1.** Existence of the cellular-to-singular
+comparison data for the standard polygonal cell structure, assembled
+from the zero-cell, one-cell, and two-cell data leaves. -/
 theorem polygon4g_cellular_singular_comparison_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
-    Nonempty (Polygon4gCellularSingularComparisonData g C) := by
+    Nonempty (Polygon4gCellularSingularComparisonData g C) :=
+by
+  obtain ⟨zeroCell⟩ := polygon4g_cellular_singular_zero_cell_data g C _h_boundary
+  obtain ⟨oneCells⟩ := polygon4g_cellular_singular_one_cell_data g C _h_boundary
+  obtain ⟨twoCell⟩ := polygon4g_cellular_singular_two_cell_data g C _h_boundary
+  exact ⟨{ zeroCell, oneCells, twoCell }⟩
+
+/-- Degree-zero correctness of the comparison data: the unique
+zero-cell maps to the singular class of the polygon vertex. -/
+opaque Polygon4gCellularSingularChainMapDegreeZero
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (_D : Polygon4gCellularSingularComparisonData g C) : Prop
+
+/-- **Comparison leaf 2a.** The comparison data is correct in degree
+zero. -/
+theorem polygon4g_cellular_singular_chain_map_degree_zero
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Polygon4gCellularSingularChainMapDegreeZero g C h_boundary D := by
+  sorry
+
+/-- Degree-one correctness of the comparison data: each oriented
+one-cell maps to the corresponding singular edge path, and its singular
+boundary agrees with the zero cellular boundary at the unique vertex. -/
+opaque Polygon4gCellularSingularChainMapDegreeOneBoundary
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (_D : Polygon4gCellularSingularComparisonData g C) : Prop
+
+/-- **Comparison leaf 2b.** The comparison data is compatible with the
+one-cell boundary calculation. -/
+theorem polygon4g_cellular_singular_chain_map_degree_one_boundary
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D := by
+  sorry
+
+/-- Degree-two correctness of the comparison data: the two-cell
+attaching map is sent to the singular boundary represented by the
+surface word, whose abelianised boundary is the cellular formula. -/
+opaque Polygon4gCellularSingularChainMapDegreeTwoAttaching
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (_D : Polygon4gCellularSingularComparisonData g C) : Prop
+
+/-- **Comparison leaf 2c.** The comparison data is compatible with the
+two-cell attaching map. -/
+theorem polygon4g_cellular_singular_chain_map_degree_two_attaching
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D := by
   sorry
 
 /-- Correctness of the comparison data: it is compatible with the
 cellular and singular differentials and computes the intended attaching
 maps in dimensions `0`, `1`, and `2`. -/
-opaque Polygon4gCellularSingularChainMapCorrect
+abbrev Polygon4gCellularSingularChainMapCorrect
     (g : ℕ) (C : Polygon4gCellularModel g)
-    (_h_boundary : Polygon4gCellularBoundaryFormula g C)
-    (_D : Polygon4gCellularSingularComparisonData g C) : Prop
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C) : Prop :=
+  Polygon4gCellularSingularChainMapDegreeZero g C h_boundary D ∧
+    Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D ∧
+      Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D
 
-/-- **Comparison leaf 2.** The chosen comparison data gives the correct
-chain-level cellular-to-singular comparison map. -/
+/-- **Comparison assembly 2.** The chosen comparison data gives the
+correct chain-level cellular-to-singular comparison map.  This is now
+assembled from the degree `0`, `1`, and `2` correctness leaves. -/
 theorem polygon4g_cellular_singular_chain_map_correct
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C) :
-    Polygon4gCellularSingularChainMapCorrect g C h_boundary D := by
-  sorry
+    Polygon4gCellularSingularChainMapCorrect g C h_boundary D :=
+by
+  exact ⟨polygon4g_cellular_singular_chain_map_degree_zero g C h_boundary D,
+    polygon4g_cellular_singular_chain_map_degree_one_boundary g C h_boundary D,
+    polygon4g_cellular_singular_chain_map_degree_two_attaching g C h_boundary D⟩
 
 /-- The comparison map respects the cellular filtration on singular
 chains.  For the polygon this says cells in the `n`-skeleton map into
