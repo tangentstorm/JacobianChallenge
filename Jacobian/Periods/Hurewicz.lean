@@ -45,17 +45,85 @@ theorem polygon4g_cellular_singular_chain_map_correct
     Polygon4gCellularSingularChainMapCorrect g C h_boundary D := by
   sorry
 
-/-- **Comparison leaf 3.** A correct cellular-to-singular comparison map
-induces the expected isomorphism on first homology.  Bottom-up route:
-specialise the cellular homology theorem / filtration argument to this
-finite two-dimensional CW complex. -/
+/-- The comparison map respects the cellular filtration on singular
+chains.  For the polygon this says cells in the `n`-skeleton map into
+singular chains supported on the `n`-skeleton, for `n = 0, 1, 2`. -/
+opaque Polygon4gCellularSingularFiltrationCompatible
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (_h_correct : Polygon4gCellularSingularChainMapCorrect g C _h_boundary D) : Prop
+
+/-- **Comparison leaf 3a.** The correct comparison map is compatible
+with the cellular filtration. -/
+theorem polygon4g_cellular_singular_filtration_compatible
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (h_correct : Polygon4gCellularSingularChainMapCorrect g C h_boundary D) :
+    Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct := by
+  sorry
+
+/-- The associated graded map of the cellular-to-singular comparison is
+the identity on the cellular generators in degrees relevant to `H₁`.
+This packages the local relative-homology calculation for each open
+cell. -/
+opaque Polygon4gCellularSingularAssociatedGradedH1Iso
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (h_correct : Polygon4gCellularSingularChainMapCorrect g C _h_boundary D)
+    (_h_filtration :
+      Polygon4gCellularSingularFiltrationCompatible g C _h_boundary D h_correct) : Prop
+
+/-- **Comparison leaf 3b.** The associated graded comparison is an
+isomorphism in the degrees that control first homology. -/
+theorem polygon4g_cellular_singular_associated_graded_H1_iso
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (h_correct : Polygon4gCellularSingularChainMapCorrect g C h_boundary D)
+    (h_filtration :
+      Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct) :
+    Polygon4gCellularSingularAssociatedGradedH1Iso
+      g C h_boundary D h_correct h_filtration := by
+  sorry
+
+/-- **Comparison leaf 3c.** A filtration-compatible comparison whose
+associated graded map is an isomorphism in the relevant degrees induces
+the expected isomorphism on first homology.  Bottom-up route: specialise
+the cellular homology theorem / filtration spectral sequence argument
+to this finite two-dimensional CW complex. -/
+theorem polygon4g_cellular_singular_H1_iso_of_filtered_graded
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (h_correct : Polygon4gCellularSingularChainMapCorrect g C h_boundary D)
+    (h_filtration :
+      Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct)
+    (_h_graded :
+      Polygon4gCellularSingularAssociatedGradedH1Iso
+        g C h_boundary D h_correct h_filtration) :
+    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
+  sorry
+
+/-- **Comparison assembly 3.** A correct cellular-to-singular comparison
+map induces the expected isomorphism on first homology.  This theorem is
+sorry-free; the filtration-theorem work is isolated in leaves 3a--3c. -/
 theorem polygon4g_cellular_singular_H1_iso_of_chain_map
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C)
     (_h_correct : Polygon4gCellularSingularChainMapCorrect g C h_boundary D) :
-    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
-  sorry
+    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) :=
+by
+  let h_filtration :=
+    polygon4g_cellular_singular_filtration_compatible
+      g C h_boundary D _h_correct
+  exact polygon4g_cellular_singular_H1_iso_of_filtered_graded
+    g C h_boundary D _h_correct h_filtration
+    (polygon4g_cellular_singular_associated_graded_H1_iso
+      g C h_boundary D _h_correct h_filtration)
 
 /-- **Comparison assembly.** Cellular homology of the standard
 polygonal CW model agrees with singular homology.  This theorem is now
