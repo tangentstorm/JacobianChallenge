@@ -43,6 +43,7 @@ R7 & Dolbeault isomorphism & \code{Jacobian.Analysis.Dolbeault} \\
 R8 & Serre duality on a Riemann surface & \code{Jacobian.Analysis.SerreDuality} \\
 R9 & Bundled differential forms \(\Omega^{k}\) & \code{Jacobian.Analysis.BundledForms} \\
 R10 & Sobolev / elliptic regularity & \code{Jacobian.Analysis.SobolevElliptic} \\
+R11 & Uniformization theorem (genus 0) & \code{Jacobian.HolomorphicForms.UniformizationPDE} \\
 \end{tabular}
 \end{center}
 
@@ -10952,3 +10953,46 @@ Each chain is a single multi-month classical formalisation effort
 the chain decomposition is now explicit and the leaves all land on
 mathlib4-present statements.
 \end{layman}
+
+%======================================================================
+\subsection{R11 — The Uniformization Theorem (Genus 0)}
+\label{subsec:gap-R11-uniformization}
+
+The headline (Theorem~\ref{thm:uniformization-genus-zero}) says: any compact connected Riemann surface of analytic genus 0 is biholomorphic to the Riemann sphere. This provides the analytic foundation for the genus-zero classification.
+
+\subsubsection*{Classical proof}
+
+The proof via PDE (harmonic functions) proceeds as follows:
+
+\begin{enumerate}
+\item \emph{Riemannian metric.} Construct a compatible Riemannian metric on the Riemann surface.
+\item \emph{Isothermal coordinates.} Prove that every Riemannian metric on a 2-manifold is locally conformally equivalent to the Euclidean metric.
+\item \emph{Dirichlet principle.} For any point \(P\), construct a harmonic function \(u\) with a dipole singularity (locally \(Re(1/z)\)) at \(P\). This is done by minimizing the Dirichlet energy in a Sobolev space.
+\item \emph{Harmonic conjugate.} On a genus-zero surface, the first cohomology vanishes, so every closed 1-form is exact. The conjugate form \(*du\) is closed and thus exact, giving a harmonic conjugate \(v\).
+\item \emph{Meromorphic assembly.} The function \(f = u + iv\) is holomorphic off \(P\) and has a simple pole at \(P\).
+\item \emph{Biholomorphism.} A degree-one meromorphic map to the sphere is a biholomorphism.
+\end{enumerate}
+
+\subsubsection*{Lean proof plan}
+
+Decomposed into structural obligations in \code{Jacobian/HolomorphicForms/UniformizationPDE.lean} and its dependencies.
+
+\begin{itemize}
+\item \emph{Metric \& Coordinates.} \code{exists_compatible_metric} and \code{exists_isothermal_coordinates} in \code{Isothermal.lean}.
+\item \emph{Dirichlet Principle.} \code{exists_dipole_harmonic} in \code{HarmonicFunctions.lean}, broken into trial-function construction (\code{exists_trial_dipole}) and Sobolev minimizer existence (\code{exists_harmonic_minimizer}).
+\item \emph{Cohomology \& Conjugates.} \code{analytic_genus_zero_implies_b1_zero} and \code{harmonic_conjugate_exists}, using the closedness of the conjugate form (\code{conjugate_one_form_closed}).
+\item \emph{Extension \& Order.} \code{dipole_harmonic_yields_simple_pole}, using Riemann extension (\code{holomorphic_at_P_of_continuous_at_infty}) and vanishing order analysis (\code{inverse_dipole_vanishing_order_one}).
+\end{itemize}
+
+\begin{lemma}[Uniformization (assembly form): via PDE]
+\label{lem:uniformization-pde-overview}
+\uses{exists_compatible_metric,exists_isothermal_coordinates,exists_dipole_harmonic,harmonic_conjugate_exists,dipole_harmonic_yields_simple_pole}
+The Lean target \code{Jacobian.HolomorphicForms.genus_zero_homeomorph_onePointCx_PDE} assembles the Uniformization theorem from the PDE-based sub-leaves.
+\lean{JacobianChallenge.HolomorphicForms.genus_zero_homeomorph_onePointCx_PDE}
+\notready
+\end{lemma}
+
+\begin{layman}
+The Uniformization theorem is the crown jewel of 19th-century complex analysis. For genus zero, it says that every ``spherical'' Riemann surface is just the standard Riemann sphere in disguise. The proof we've mapped out uses the heavy machinery of partial differential equations. We pick a point, find a special kind of ``dipole'' harmonic function that blows up there (like the electric potential of a dipole), and then use the fact that the surface has no holes to find a matching ``harmonic conjugate'' function. Together, they form a complex-valued map that identifies the surface with the sphere. Mathlib lacks the foundations for this (Sobolev spaces on manifolds, the Dirichlet principle, etc.), so we've scoped out the necessary API to bridge this gap.
+\end{layman}
+
