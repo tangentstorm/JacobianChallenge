@@ -212,26 +212,6 @@ noncomputable def closedForm_pathIntegral_primitive
     SmoothDiffForm 0 X :=
   (closedForm_pathIntegral_primitive_exists X ω hω).choose
 
-/-- **Smoothness of the path-integral primitive.**
-The path-integral primitive obtained via `closedForm_pathIntegral_primitive_exists`
-is a smooth 0-form: each component is a `ContMDiff` (smooth) section of
-the cotangent bundle, as guaranteed by the type `SmoothDiffForm 0 X`
-(which unfolds to `Fin 1 → HolomorphicOneForm ℂ X`, i.e., a tuple of
-smooth sections). -/
-theorem closedForm_pathIntegral_primitive_smooth
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (ω : ClosedForm 1 X)
-    (hω : deRhamComparisonMap1 X ω = 0)
-    (i : Fin 1) :
-    ContMDiff (modelWithCornersSelf ℂ ℂ)
-      ((modelWithCornersSelf ℂ ℂ).prod (𝓘(ℂ, CotangentModelFiber ℂ)))
-      ⊤
-      (fun x => Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) x
-        ((closedForm_pathIntegral_primitive X ω hω i).toFun x)) :=
-  (closedForm_pathIntegral_primitive X ω hω i).contMDiff_toFun
-
 /-- **Injectivity sub-obligation 2 (derivative correctness).**
 The exterior derivative of the path-integral primitive is the original 1-form.
 Proved from the specification of `closedForm_pathIntegral_primitive_exists`. -/
