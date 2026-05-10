@@ -12,7 +12,7 @@ The kernel of `mkHom` is exactly `Λ.subgroup`.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- The kernel of the bundled quotient projection equals the lattice. -/

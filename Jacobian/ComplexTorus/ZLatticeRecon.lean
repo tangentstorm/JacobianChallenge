@@ -60,7 +60,6 @@ variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
 /-! ### Auxiliary instances -/
 
-omit [NormedSpace ℂ V] [FiniteDimensional ℂ V] in
 /-- Transfer `DiscreteTopology` from a `Submodule ℤ V` to its
 underlying `AddSubgroup V`. The carrier sets are definitionally equal,
 but the Lean types differ, so we transfer via the inclusion map. -/

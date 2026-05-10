@@ -15,7 +15,7 @@ namespace JacobianChallenge.ComplexTorus
 
 open scoped Pointwise
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- A subset of `V` projects to a dense subset of the torus iff it is

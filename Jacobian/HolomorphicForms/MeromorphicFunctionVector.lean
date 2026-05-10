@@ -158,13 +158,13 @@ Note: the finite-support obligation is deferred; on a compact Riemann
 surface, the identity principle guarantees only finitely many zeros. -/
 noncomputable def zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicFunctionType X) : Divisor X :=
+    (_f : MeromorphicFunctionType X) : Divisor X :=
   0  -- Placeholder: to be refined with VanishingOrder-based zero counting
 
 /-- The pole divisor of a meromorphic function. -/
 noncomputable def poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicFunctionType X) : Divisor X :=
+    (_f : MeromorphicFunctionType X) : Divisor X :=
   0  -- Placeholder: to be refined with VanishingOrder-based pole counting
 
 /-- The principal divisor `(f) = (zeros) - (poles)`. -/
@@ -198,7 +198,7 @@ theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 /-- Non-zero constant meromorphic functions have no zeros. -/
 theorem constant_zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (c : ℂ) (hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
+    (c : ℂ) (_hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
   rfl
 
 /-- Membership in the Riemann-Roch space `L(D)`: `f = 0` or `(f) + D ≥ 0`. -/
