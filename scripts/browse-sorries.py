@@ -156,6 +156,7 @@ class Outliner:
         # Footer
         footer = Text("\nCommands: ", style="bold")
         footer.append("[ID] dive | ", style="white")
+        footer.append("[ID!] jump | ", style="white")
         footer.append("[v] vim lean | ", style="white")
         footer.append("[V] vim tex | ", style="white")
         footer.append("[u] up | ", style="white")
@@ -190,20 +191,35 @@ class Outliner:
                 else:
                     self.console.print(f"[red]No TeX file found for label '{label}'[/red]")
                     input("Press Enter to continue...")
-            elif choice.isdigit():
-                jid = int(choice)
-                if jid in self.db:
-                    if self.current_id:
-                        valid_ids = self.db[self.current_id].get("u", [])
-                    else:
-                        valid_ids = self.get_roots()
-                    
-                    if not self.show_done:
-                        valid_ids = [vid for vid in valid_ids if self.db[vid].get("c") != "done"]
+            elif (m := re.match(r"^(\d+)(!)?$", choice)):
+                jid = int(m.group(1))
+                force = m.group(2) == "!"
+                
+                if jid not in self.db:
+                    self.console.print(f"[red]Error: ID {jid} not found in database.[/red]")
+                    input("Press Enter to continue...")
+                    continue
+                
+                # Determine visible IDs
+                if self.current_id:
+                    visible_ids = self.db[self.current_id].get("u", [])
+                else:
+                    visible_ids = self.get_roots()
+                
+                if not self.show_done:
+                    visible_ids = [vid for vid in visible_ids if self.db[vid].get("c") != "done"]
 
-                    if jid in valid_ids:
-                        if self.current_id: self.history.append(self.current_id)
-                        self.current_id = jid
+                if jid in visible_ids:
+                    if self.current_id: self.history.append(self.current_id)
+                    self.current_id = jid
+                elif force:
+                    # Teleport: Reset history to avoid confusing path
+                    self.history = []
+                    self.current_id = jid
+                else:
+                    self.console.print(f"[yellow]Warning: ID {jid} is not a visible dependency.[/yellow]")
+                    self.console.print(f"To jump directly to this node, type [bold]{jid}![/bold]")
+                    input("Press Enter to continue...")
 
 
 if __name__ == "__main__":
