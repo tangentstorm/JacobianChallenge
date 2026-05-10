@@ -26,17 +26,33 @@ def IsHarmonic {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 /-- **Sub-obligation 2.1: Sobolev space H^1(X).**
 The Dirichlet principle is formulated in the Hilbert space of functions with
 square-integrable derivatives. -/
-def SobolevH1 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    (g : CompatibleMetric X) : Type _ :=
-  -- Placeholder for H^1(X)
-  X → ℝ
+class SobolevH1 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) where
+  -- Placeholder for the Hilbert space structure
+  is_hilbert : True
 
 /-- **Sub-obligation 2.2: Dirichlet energy functional.**
 The energy functional E(u) = ∫ |∇u|^2 dV is minimized by harmonic functions. -/
 def DirichletEnergy {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    (g : CompatibleMetric X) (u : SobolevH1 X g) : ℝ :=
+    (g : CompatibleMetric X) (u : X → ℝ) : ℝ :=
   -- Placeholder for ∫ |∇u|^2
   0
+
+/-- **Sub-obligation 2.4a: Coercivity and Boundedness.**
+The Dirichlet energy (bilinear form) is coercive and bounded on the Sobolev
+space H^1(X) / {const}. -/
+theorem dirichlet_energy_coercive (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) :
+    True := by
+  sorry
+
+/-- **Sub-obligation 2.4b: Lax-Milgram application.**
+By the Lax-Milgram theorem, there exists a unique (up to constants) minimizer
+of the Dirichlet energy for the given trial function / boundary conditions. -/
+theorem lax_milgram_minimizer (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) (u₀ : X → ℝ) :
+    ∃ v : X → ℝ, IsHarmonic g (fun x => u₀ x + v x) := by
+  sorry
 
 /-- **Sub-obligation 2.3: Construction of a trial function with dipole singularity.**
 To find a harmonic function with a dipole singularity Re(1/z) at P, we first
@@ -54,8 +70,8 @@ over the Sobolev space H^1(X), which effectively solves the Poisson equation
 Δ u = Δ u₀ in the sense of distributions. -/
 theorem exists_harmonic_minimizer (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (u₀ : X → ℝ) :
-    ∃ v : SobolevH1 X g, IsHarmonic g (fun x => u₀ x + v x) := by
-  sorry
+    ∃ v : X → ℝ, IsHarmonic g (fun x => u₀ x + v x) := by
+  exact lax_milgram_minimizer X g u₀
 
 /-- Dirichlet Principle / Green's Function: on a compact Riemann surface,
 for any point P, there exists a harmonic function with a specific dipole
@@ -72,6 +88,27 @@ theorem exists_dipole_harmonic (X : Type*) [TopologicalSpace X] [T2Space X]
   -- 3. u = u₀ + v is the desired harmonic function
   exact ⟨fun x => u₀ x + v x, hv⟩
 
+/-- **Sub-obligation 5.1: Hodge Decomposition.**
+For a compact Riemann surface, the first de Rham cohomology group is
+isomorphic to the sum of holomorphic and anti-holomorphic 1-forms.
+H^1_dR(X, C) ≅ H^0(X, Ω^1) ⊕ H^0(X, Ω_bar^1). -/
+theorem hodge_decomposition (X : Type*) [TopologicalSpace X] [T2Space X]
+    [CompactSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    True := by
+  sorry
+
+/-- **Sub-obligation 5.2: Dimension equality.**
+The dimension of the space of holomorphic 1-forms is the analytic genus g.
+Hodge theory then implies dim H^1_dR(X, R) = 2g. -/
+theorem dim_h1_eq_two_genus (X : Type*) [TopologicalSpace X] [T2Space X]
+    [CompactSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
+    True := by
+  -- dim H^1_dR(X, R) = 2 * analyticGenus ℂ X
+  sorry
+
 /-- In genus 0, the first de Rham cohomology group is trivial.
 This implies that every closed 1-form is exact. -/
 theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2Space X]
@@ -81,6 +118,8 @@ theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2
     (h : analyticGenus ℂ X = 0) :
     -- Placeholder for H^1_dR(X) = 0
     True := by
+  -- 1. Apply dim_h1_eq_two_genus
+  -- 2. dim H^1 = 2 * 0 = 0
   sorry
 
 /-- **Sub-obligation 3.1: The conjugate 1-form is closed.**
