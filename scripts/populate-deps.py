@@ -34,6 +34,15 @@ db_items = []
 header = None
 label_to_ids = {}
 
+# Blacklist labels that create circular dependencies or conflict with code structure
+BLACKLIST = {
+    "thm:challenge-api",
+    "def:analytic-jacobian",
+    "def:abel-jacobi",
+    "thm:push-pull-functoriality",
+    "thm:genus-zero-classification"
+}
+
 with open("sorries.jsonl", "r") as f:
     for i, line in enumerate(f):
         if not line.strip(): continue
@@ -49,34 +58,43 @@ with open("sorries.jsonl", "r") as f:
                 label_to_ids[b] = []
             label_to_ids[b].append(obj["i"])
 
-# 3. Calculate 'u' (upstream) and build 'd' (downstream) inverses
+# 3. Calculate 'u' (upstream/leafward) and build 'd' (downstream/rootward) inverses
+# Refinement Flow: Root (Goal) -> Leaf (Axiom/Mathlib)
+# Truth Flow: Leaf (Source) -> Root (Goal/Sink)
+# convention: u (Upstream) is closer to the Leaves. d (Downstream) is closer to the Root.
 id_to_u = {obj["i"]: set() for obj in db_items}
 id_to_d = {obj["i"]: set() for obj in db_items}
 
 for obj in db_items:
     b = obj.get("b")
-    if not b or b not in label_uses: continue
+    if not b or b not in label_uses or b in BLACKLIST: continue
     
-    # What labels does this blueprint item use?
-    upstream_labels = label_uses[b]
-    for u_label in upstream_labels:
-        if u_label in label_to_ids:
-            upstream_ids = label_to_ids[u_label]
-            for uid in upstream_ids:
-                if uid != obj["i"]: # no self edges
-                    id_to_u[obj["i"]].add(uid)
-                    id_to_d[uid].add(obj["i"])
+    # "uses" in TeX means "depends on for proof" (Leafward)
+    leafward_labels = label_uses[b]
+    for leaf_label in leafward_labels:
+        if leaf_label in label_to_ids and leaf_label not in BLACKLIST:
+            leaf_ids = label_to_ids[leaf_label]
+            for lid in leaf_ids:
+                if lid != obj["i"]: # no self edges
+                    # obj depends on lid, so lid is UPSTREAM of obj
+                    id_to_u[obj["i"]].add(lid)
+                    # lid feeds into obj, so obj is DOWNSTREAM of lid
+                    id_to_d[lid].add(obj["i"])
 
 # 4. Update objects
 updates = 0
 for obj in db_items:
     i = obj["i"]
-    new_u = sorted(list(id_to_u[i]))
-    new_d = sorted(list(id_to_d[i]))
+    # Merge existing sets with new ones
+    current_u = set(obj.get("u", []))
+    current_d = set(obj.get("d", []))
     
-    if obj.get("u") != new_u or obj.get("d") != new_d:
-        obj["u"] = new_u
-        obj["d"] = new_d
+    merged_u = sorted(list(current_u | id_to_u[i]))
+    merged_d = sorted(list(current_d | id_to_d[i]))
+    
+    if obj.get("u") != merged_u or obj.get("d") != merged_d:
+        obj["u"] = merged_u
+        obj["d"] = merged_d
         updates += 1
 
 # 5. Write back maintaining exact schema order
