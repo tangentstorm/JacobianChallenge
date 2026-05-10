@@ -169,6 +169,16 @@ For an invertible sheaf \(\mathcal{L}=\mathcal{O}_X(D)\),
 \begin{proof}
 \leanok\end{proof}
 
+\paragraph{Implementation roadmap (top-down bridge).}
+The current Lean node \code{riemann\_roch\_umbrella\_exists} remains a temporary
+placeholder and is targeted to be replaced by a sheaf-cohomological
+assembly with three explicit inputs: (i) Euler-characteristic Riemann--Roch,
+(ii) Serre duality rank transport, and (iii) canonical-subtraction/degree
+compatibility on line bundles. The intended concrete fields are
+\code{RSLineBundleSheaf}, \code{RSDualizingSheaf}, \code{RSLineBundleSub},
+\code{RSLineBundleDegree}, \code{RSGenus}, and
+\code{Module.finrank \; \mathbb C \; (RSSheafCohomology \cdots 0)}.
+
 \begin{layman}
 Take the dimensions of the two cohomology groups of a line bundle and
 subtract: that's the \emph{Euler characteristic} of the bundle. The
@@ -222,6 +232,16 @@ instantiating line bundles, canonical subtraction, degree, genus, and
 \end{theorem}
 \begin{proof}
 \leanok\end{proof}
+
+\paragraph{Implementation roadmap (top-down bridge).}
+The current Lean node \code{riemann\_roch\_umbrella\_exists} remains a temporary
+placeholder and is targeted to be replaced by a sheaf-cohomological
+assembly with three explicit inputs: (i) Euler-characteristic Riemann--Roch,
+(ii) Serre duality rank transport, and (iii) canonical-subtraction/degree
+compatibility on line bundles. The intended concrete fields are
+\code{RSLineBundleSheaf}, \code{RSDualizingSheaf}, \code{RSLineBundleSub},
+\code{RSLineBundleDegree}, \code{RSGenus}, and
+\code{Module.finrank \; \mathbb C \; (RSSheafCohomology \cdots 0)}.
 
 \begin{layman}
 We package the Riemann–Roch theorem as a single classical input.
