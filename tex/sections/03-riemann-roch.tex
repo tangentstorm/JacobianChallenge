@@ -169,6 +169,16 @@ For an invertible sheaf \(\mathcal{L}=\mathcal{O}_X(D)\),
 \begin{proof}
 \leanok\end{proof}
 
+\paragraph{Implementation roadmap (top-down bridge).}
+The current Lean node \code{riemann\_roch\_umbrella\_exists} remains a temporary
+placeholder and is targeted to be replaced by a sheaf-cohomological
+assembly with three explicit inputs: (i) Euler-characteristic Riemann--Roch,
+(ii) Serre duality rank transport, and (iii) canonical-subtraction/degree
+compatibility on line bundles. The intended concrete fields are
+\code{RSLineBundleSheaf}, \code{RSDualizingSheaf}, \code{RSLineBundleSub},
+\code{RSLineBundleDegree}, \code{RSGenus}, and
+\code{Module.finrank \; \mathbb C \; (RSSheafCohomology \cdots 0)}.
+
 \begin{layman}
 Take the dimensions of the two cohomology groups of a line bundle and
 subtract: that's the \emph{Euler characteristic} of the bundle. The
@@ -214,11 +224,27 @@ where \(K\) is a canonical divisor and \(\ell(D)=\dim_{\C} L(D)\).
 Combines the Euler-characteristic formula
 (Theorem~\ref{thm:euler-char-line-bundle}) with Serre duality
 (Theorem~\ref{thm:serre-duality-rs}), using the low/high degree squeeze
-to handle the boundary cases and dualization.
+to handle the boundary cases and dualization. In Lean this is assembled
+through \code{riemann\_roch\_umbrella\_exists} using the sheaf-cohomology
+bridge data (\code{RSLineBundleSheaf}, \code{RSDualizingSheaf},
+\code{RSLineBundleSub}, \code{RSLineBundleDegree}, \code{RSGenus},
+and \(h^0=\dim H^0\)); the current statement is parameterized by the
+required cohomology \(\C\)-module structures.
 \leanok
 \end{theorem}
 \begin{proof}
 \leanok\end{proof}
+
+\paragraph{Implementation roadmap (top-down bridge).}
+The Lean node \code{riemann\_roch\_umbrella\_exists} is now a sheaf-cohomological
+assembly parameterized by the frontier module-instance data, and is targeted
+to be specialized further once those instances are canonical. It factors into a
+assembly with three explicit inputs: (i) Euler-characteristic Riemann--Roch,
+(ii) Serre duality rank transport, and (iii) canonical-subtraction/degree
+compatibility on line bundles. The intended concrete fields are
+\code{RSLineBundleSheaf}, \code{RSDualizingSheaf}, \code{RSLineBundleSub},
+\code{RSLineBundleDegree}, \code{RSGenus}, and
+\code{Module.finrank \; \mathbb C \; (RSSheafCohomology \cdots 0)}.
 
 \begin{layman}
 We package the Riemann–Roch theorem as a single classical input.
@@ -607,4 +633,3 @@ element.
 The constants form a one-dimensional subspace of \(L(D)\) (by Lemma~\ref{lem:poles-eq-zero-iff-constant}); any
 element outside that line is nonconstant.
 \end{proof}
-

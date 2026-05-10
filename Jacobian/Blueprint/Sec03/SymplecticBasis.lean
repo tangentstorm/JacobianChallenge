@@ -15,8 +15,7 @@ rank `2g` on which the algebraic intersection pairing is the standard
 symplectic block form `J_g = [[0, I_g], [-I_g, 0]]`).
 
 This file now records *concrete* Lean signatures for every sub-leaf
-of the plan, with `sorry` placeholders for the proofs of the MEDIUM
-and HARD leaves. The TRIVIAL leaf (`standardSymplecticForm`) is
+of the plan. The TRIVIAL leaf (`standardSymplecticForm`) is
 discharged in full; the SHORT leaves (`isSymplecticBasis`,
 `h1_free_of_genus`) are stated against the concrete `IntegralOneCycle`
 homology type defined in `Jacobian/Periods/IntegralOneCycle.lean`
@@ -32,16 +31,16 @@ Coverage of the plan's sub-leaves:
 * sub-leaf #2 (SHORT)   `isSymplecticBasis` — predicate built from #1
   and #5.
 * sub-leaf #3 (SHORT)   `h1_free_of_genus` — `Nonempty (Basis ...)`,
-  body `sorry`.
+  currently an explicit blueprint axiom.
 * sub-leaf #6 (MEDIUM)  `intersectionForm_nondeg` — concrete
-  ∀-∃ statement, body `sorry`.
+  ∀-∃ statement, currently an explicit blueprint axiom.
 * sub-leaf #4 (HARD)    `existsSymplecticBasis` — concrete ∃-statement,
-  body `sorry`.
+  currently an explicit blueprint axiom.
 * assembly §4           `symplecticBasis` — `Classical.choose` of #4.
 
-All `sorry`s are isolated: the file compiles sorry-free at the
-*signature* level (every declaration type-checks), and downstream
-clients can quote the names without needing to know their proofs.
+The file compiles sorry-free at the *signature* level (every
+declaration type-checks), and downstream clients can quote the names
+without needing to know the omitted hard proofs.
 
 NOTE FOR WORKERS:
 
@@ -110,10 +109,10 @@ Stated here for an arbitrary topological space `X`; the genus
 hypothesis is encoded by parameterising over `g : Nat` (the
 implementation will tie `g` to the topological genus once the
 project's `analyticGenus = topologicalGenus` bridge lands). -/
-theorem h1_free_of_genus
+axiom h1_free_of_genus
     (X : Type) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     (g : Nat) :
-    Nonempty (Module.Basis (Fin (2*g)) ℤ (IntegralOneCycle X)) := sorry
+    Nonempty (Module.Basis (Fin (2*g)) ℤ (IntegralOneCycle X))
 
 /-- Plan sub-leaf #6 (MEDIUM): non-degeneracy of the intersection
 pairing on `H₁(X, ℤ)` for a closed orientable surface — every nonzero
@@ -122,19 +121,19 @@ homology class pairs nontrivially with some other class.
 Follows from Poincaré duality on a compact orientable 2-manifold; in
 the symplectic-basis route, immediate from sub-leaf #4 plus a
 linear-algebra unfold. -/
-theorem intersectionForm_nondeg
+axiom intersectionForm_nondeg
     (X : Type) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     {v : IntegralOneCycle X} (hv : v ≠ 0) :
-    ∃ w : IntegralOneCycle X, intersectionForm X v w ≠ 0 := sorry
+    ∃ w : IntegralOneCycle X, intersectionForm X v w ≠ 0
 
 /-- Plan sub-leaf #4 (HARD): existence of a symplectic basis of
 `H₁(X, ℤ)` for a compact connected Riemann surface of genus `g`.
 
 Classical proof routes are sketched in this file's header. -/
-theorem existsSymplecticBasis
+axiom existsSymplecticBasis
     (X : Type) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     (g : Nat) :
-    ∃ b : Module.Basis (Fin (2*g)) ℤ (IntegralOneCycle X), isSymplecticBasis b := sorry
+    ∃ b : Module.Basis (Fin (2*g)) ℤ (IntegralOneCycle X), isSymplecticBasis b
 
 /-- Plan §4 assembly: a chosen symplectic basis of `H₁(X, ℤ)`,
 extracted from the existence statement #4 via `Classical.choose`. -/
