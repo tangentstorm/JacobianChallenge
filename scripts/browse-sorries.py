@@ -94,7 +94,7 @@ class Outliner:
 
         # Breadcrumbs (Hierarchy Path)
         self.console.print(Text("Path:", style="blue bold"))
-        if not self.history and not self.current_id:
+        if not self.history and self.current_id is None:
             self.console.print(Text("  SORRY ROOTS", style="yellow bold"))
         else:
             for i, hid in enumerate(self.history):
@@ -104,13 +104,13 @@ class Outliner:
             
             # Current node
             indent = "  " * (len(self.history) + 1)
-            if self.current_id:
+            if self.current_id is not None:
                 node = self.db[self.current_id]
                 self.console.print(Text(f"{indent}{self.current_id} ", style="blue") + Text(node["s"], style="yellow bold"))
         self.console.print("-" * self.console.width)
 
         # Children
-        if self.current_id:
+        if self.current_id is not None:
             node = self.db[self.current_id]
             # Refinement: Move toward leaves (u)
             child_ids = node.get("u", [])
@@ -179,11 +179,11 @@ class Outliner:
                 self.history = []; self.current_id = None
             elif choice.lower() == 't':
                 self.show_done = not self.show_done
-            elif choice == 'v' and self.current_id:
+            elif choice == 'v' and self.current_id is not None:
                 node = self.db[self.current_id]
                 line = node.get("l") or 1
                 subprocess.run(["vim", f"+{line}", "-c", "normal zz", node["f"]])
-            elif choice == 'V' and self.current_id:
+            elif choice == 'V' and self.current_id is not None:
                 label = self.db[self.current_id].get("b")
                 if label in self.tex_map:
                     path, line = self.tex_map[label]
@@ -201,7 +201,7 @@ class Outliner:
                     continue
                 
                 # Determine visible IDs
-                if self.current_id:
+                if self.current_id is not None:
                     visible_ids = self.db[self.current_id].get("u", [])
                 else:
                     visible_ids = self.get_roots()
@@ -210,7 +210,7 @@ class Outliner:
                     visible_ids = [vid for vid in visible_ids if self.db[vid].get("c") != "done"]
 
                 if jid in visible_ids:
-                    if self.current_id: self.history.append(self.current_id)
+                    if self.current_id is not None: self.history.append(self.current_id)
                     self.current_id = jid
                 elif force:
                     # Teleport: Reset history to avoid confusing path
