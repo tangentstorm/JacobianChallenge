@@ -81,11 +81,35 @@ theorem trace_pullback_identity_regular
   -- This requires matching pullbackFormsBundled with cotangentPushforward
   sorry
 
+/-- The target-side branch locus (image of ramification points) is finite. -/
+theorem branchLocus_finite
+    {f : X → Y} (h : BranchedCoverData X Y f) :
+    {y : Y | ¬ isRegularValue h y}.Finite := by
+  have hram : {x : X | h.ramificationIndex x ≠ 1}.Finite := h.ramified_finite
+  have h_eq : {y : Y | ¬ isRegularValue h y} = f '' {x : X | h.ramificationIndex x ≠ 1} := by
+    ext y; constructor
+    · intro hy
+      simp [isRegularValue] at hy
+      obtain ⟨x, hx, hx_ram⟩ := hy
+      exact ⟨x, hx_ram, hx⟩
+    · rintro ⟨x, hx_ram, rfl⟩
+      simp [isRegularValue]
+      exact ⟨x, rfl, hx_ram⟩
+  rw [h_eq]
+  exact hram.image f
+
 /-- The regular locus is dense in Y. -/
 theorem regularLocus_dense
     {f : X → Y} (h : BranchedCoverData X Y f) :
-    Dense (regularLocus h) :=
-  sorry
+    Dense (regularLocus h) := by
+  -- The regular locus is the complement of a finite set.
+  -- In a connected manifold of real dimension 2, this is dense.
+  apply Set.dense_compl_finite
+  · exact branchLocus_finite h
+  · -- Need to show Y is infinite.
+    -- Compact connected Riemann surfaces are infinite unless they are a point.
+    -- But we assume non-constant f, which implies Y has more than one point.
+    sorry
 
 /-- **Identity principle for holomorphic 1-forms.**
 Two holomorphic 1-forms that agree on a dense set of a connected Riemann
