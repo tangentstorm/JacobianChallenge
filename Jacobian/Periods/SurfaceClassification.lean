@@ -429,21 +429,6 @@ theorem singularH1_polygon4g_succ_finrank (g : ℕ) :
   obtain ⟨e⟩ := singularH1_polygon4g_succ_iso_freeZ g
   rw [e.finrank_eq, Module.finrank_pi, Fintype.card_fin]
 
-/-- **Stage A2 unified basis (any genus).** The first singular homology
-of the standard fundamental polygon admits a ℤ-basis indexed by
-`Fin (2g)`, for *any* `g : ℕ`. The `g = 0` branch uses
-`Module.Basis.empty` over the (proved-subsingleton) singular `H₁` of the
-disk-quotient `Polygon4g 0`; the `g = g'+1` branch uses
-`polygon4g_succ_singularH1_basis`. -/
-theorem polygon4g_singularH1_basis (g : ℕ) :
-    Nonempty (Module.Basis (Fin (2 * g)) ℤ
-      (singularH1 (Polygon4g g))) := by
-  cases g with
-  | zero =>
-    haveI : IsEmpty (Fin (2 * 0)) := by simpa using Fin.isEmpty
-    exact ⟨Module.Basis.empty _⟩
-  | succ g => exact polygon4g_succ_singularH1_basis g
-
 /-- **Unified Stage A2 structural iso (any genus).** The first singular
 homology of the standard fundamental polygon is ℤ-linearly isomorphic
 to the free ℤ-module `Fin (2g) → ℤ` for any `g : ℕ`.
