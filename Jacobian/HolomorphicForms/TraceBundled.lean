@@ -139,6 +139,19 @@ theorem holomorphicOneForm_ext_on
   -- 2. Connectedness propagates local equality to global equality.
   sorry
 
+/-- The trace of the zero form is zero. -/
+theorem traceFormsBundled_zero
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
+    traceFormsBundled f hf 0 = 0 :=
+  sorry
+
+/-- The pullback along a constant map is zero. -/
+theorem pullbackFormsBundled_constant
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (hconst : ∃ y₀, ∀ x, f x = y₀) (η : HolomorphicOneForm ℂ Y) :
+    pullbackFormsBundled f hf η = 0 :=
+  sorry
+
 /-- **The Trace-Pullback Identity.** The fundamental identity for
 holomorphic 1-forms: the trace of a pullback is multiplication by
 the degree.
@@ -152,7 +165,10 @@ theorem trace_pullback_identity
   -- 1. Get branched cover data
   by_cases hconst : ∃ y₀, ∀ x, f x = y₀
   · -- Constant case: both sides are zero
-    sorry
+    rw [pullbackFormsBundled_constant f hf hconst η]
+    rw [traceFormsBundled_zero f hf]
+    rw [analyticDegree_constant f hf hconst]
+    simp
   · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
       (isHolomorphic_of_contMDiff hf) hconst
     -- 2. Use identity principle: equal on dense set implies equal everywhere
