@@ -61,7 +61,8 @@ noncomputable def traceFormsBundledLM
   map_add' η ζ := by
     -- Trace is linear: use identity principle
     by_cases hconst : ∃ y₀, ∀ x, f x = y₀
-    · sorry
+    · rw [traceFormsBundled_zero, traceFormsBundled_zero, traceFormsBundled_zero]
+      simp
     · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
         (isHolomorphic_of_contMDiff hf) hconst
       apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
@@ -70,7 +71,8 @@ noncomputable def traceFormsBundledLM
       exact traceAtRegularValue_add hbc (fun x => η.toFun x) (fun x => ζ.toFun x) y hy
   map_smul' k η := by
     by_cases hconst : ∃ y₀, ∀ x, f x = y₀
-    · sorry
+    · rw [traceFormsBundled_zero, traceFormsBundled_zero]
+      simp
     · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
         (isHolomorphic_of_contMDiff hf) hconst
       apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
