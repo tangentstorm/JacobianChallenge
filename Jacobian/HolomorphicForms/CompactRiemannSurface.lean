@@ -234,11 +234,17 @@ theorem ContMDiffSection.fiberNorm_eq_abs_eval_one
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : HolomorphicOneForm ℂ X) (x : X) :
-    ContMDiffSection.fiberNorm σ x = ‖(σ.toFun x) (1 : ℂ)‖ :=
+    ContMDiffSection.fiberNorm σ x = ‖(σ.toFun x) (1 : ℂ)‖ := by
   -- Fiber norm is the operator norm on T*X x = ℂ →L[ℂ] ℂ.
   -- In 1D complex manifold, TangentSpace is ℂ and the operator norm
   -- satisfies ‖f‖ = ‖f 1‖.
-  sorry
+  show ‖σ.toFun x‖ = ‖(σ.toFun x) (1 : ℂ)‖
+  have key : ∀ (f : ℂ →L[ℂ] ℂ), ‖f‖ = ‖f 1‖ := by
+    intro f
+    have h1 : f = ContinuousLinearMap.toSpanSingleton ℂ (f 1) := by ext; simp
+    conv_lhs => rw [h1]
+    rw [ContinuousLinearMap.norm_toSpanSingleton]
+  exact key (σ.toFun x)
 
 /-- **Structural axiom (CRS-fnB).** The eval-at-1 of a smooth
 cotangent-bundle section, viewed as `X → ℂ`, is continuous. -/

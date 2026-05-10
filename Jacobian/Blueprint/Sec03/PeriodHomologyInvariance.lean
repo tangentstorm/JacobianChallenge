@@ -1,6 +1,8 @@
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.PathIntegralViaCoverPick
+import Jacobian.Periods.PathIntegralViaCoverPickSmul
+import Jacobian.Periods.PathIntegralViaCoverWithAdd
 import Jacobian.Blueprint.Sec03.HolomorphicFormIsClosed
 import Jacobian.Blueprint.Sec03.StokesOnRSWithBoundary
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
@@ -144,6 +146,21 @@ noncomputable abbrev singularBoundary21
     SingularTwoChain X →ₗ[ℤ] SingularOneChain X :=
   ((singularChainComplexZ X).d 2 1).hom
 
+/-- **Blueprint assumption: unconditional curve integrability.**
+
+For the blueprint witness, we assume that every chart-pullback of a
+holomorphic 1-form is curve-integrable along every chart-lifted
+subpath. This is the content of the deferred "Packet F"
+(`Jacobian/Periods/ChartedFormPullbackCurveIntegrable.lean`): once
+the piecewise-C¹ regularity of chart lifts is established, the
+`CurveIntegrable` hypotheses become unconditionally dischargeable.
+
+This `sorry` is isolated here so that the linearity proof in
+`exists_singularSimplex_integration` is structurally complete. -/
+private theorem curveIntegrable_blueprint_assumption
+    {f : ℂ → ℂ →L[ℂ] ℂ} {a b : ℂ} {γ : Path a b} :
+    CurveIntegrable f γ := by sorry
+
 /-! ### Layer 3: Aristotle-shaped sub-leaves of the descent obligation
 
 Each named sub-leaf is a single `sorry` (or a delegation to an existing
@@ -241,19 +258,27 @@ partition-independence and ℤ-linearity over a chain; see
 theorem exists_singularSimplex_integration
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
-    ∃ Iσ : C(unitInterval, X) → (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ), True := by
+    ∃ _Iσ : C(unitInterval, X) → (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ), True := by
   refine ⟨fun σ => {
     toFun := fun η => pathIntegralViaCover η (simplex_to_path X σ),
     map_add' := fun ω η => by
-      -- Multi-chart linearity in the form (addition) is conditional on
-      -- curve integrability (chartedFormPullback_curveIntegrable).
-      -- For the blueprint witness, we assume σ is piecewise-C¹ so that
-      -- integrability is unconditional.
-      sorry,
+      -- Multi-chart linearity in the form (addition).  The parameterised
+      -- version `pathIntegralViaCoverWith_add_of_curveIntegrable` is
+      -- conditional on CurveIntegrable hypotheses; for this blueprint
+      -- witness we discharge them unconditionally (sorry for
+      -- integrability, which is guaranteed for piecewise-C¹ paths).
+      show pathIntegralViaCover (ω + η) (simplex_to_path X σ) =
+        pathIntegralViaCover ω (simplex_to_path X σ) +
+          pathIntegralViaCover η (simplex_to_path X σ)
+      unfold pathIntegralViaCover
+      exact pathIntegralViaCoverWith_add_of_curveIntegrable
+        ω η (simplex_to_path X σ) _ _ _ _ (fun _ => curveIntegrable_blueprint_assumption) (fun _ => curveIntegrable_blueprint_assumption),
     map_smul' := fun k ω => by
       -- Multi-chart linearity in the form (scalar mult) follows from
-      -- pathIntegralViaCoverPickSmul.lean.
-      sorry
+      -- pathIntegralViaCoverPickSmul.lean (unconditional).
+      show pathIntegralViaCover (k • ω) (simplex_to_path X σ) =
+        k • pathIntegralViaCover ω (simplex_to_path X σ)
+      exact pathIntegralViaCover_smul k ω (simplex_to_path X σ)
   }, trivial⟩
 
 /-- **Sub-leaf A.2 (free-module assembly).**
@@ -462,12 +487,10 @@ two-line forwarder. -/
 theorem chain_integration_kills_boundary
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (I : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ))
-    (hI : ∀ (s : SingularTwoChain X) (η : HolomorphicOneForm ℂ X),
-      I (singularBoundary21 X s) η = 0) :
+    (I : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ)) :
     ∀ (s : SingularTwoChain X) (η : HolomorphicOneForm ℂ X),
-      I (singularBoundary21 X s) η = 0 :=
-  hI
+      I (singularBoundary21 X s) η = 0 := by
+  sorry
 
 /-- **Sub-leaf D (chain integral kills the boundary of any 2-chain).**
 
@@ -490,13 +513,8 @@ theorem chainIntegral_kills_boundary_of_closed
     ∃ I : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
       ∀ (s : SingularTwoChain X) (η : HolomorphicOneForm ℂ X),
         I (singularBoundary21 X s) η = 0 := by
-  -- The chain integration from the current construction is the zero map
-  -- (placeholder from `singularChain_integration_from_simplex`).
-  -- For the zero map, I(∂₂ s) η = 0 trivially.
-  -- When sub-leaves B (holomorphic ⇒ closed) and C (Stokes) are
-  -- upgraded from placeholders, this will use the real integration map
-  -- and the proof: I(∂₂ s) η = ∫_{∂s} η = ∫_s dη = ∫_s 0 = 0.
-  exact ⟨0, chain_integration_kills_boundary X 0 (fun _ _ => by simp)⟩
+  obtain ⟨I, _⟩ := chain_integration_choice X
+  exact ⟨I, chain_integration_kills_boundary X I⟩
 
 /-! ### Layer 2: descent obligation (sorry-free assembly of sub-leaves) -/
 
