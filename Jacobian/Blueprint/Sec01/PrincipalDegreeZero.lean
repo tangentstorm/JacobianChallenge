@@ -659,7 +659,7 @@ theorem principal_degree_zero_of_nonzero
       show ((h.finite_fiber ((0 : ℂ) : OnePoint ℂ)).toFinset).sum
               (fun p => ((h.ramificationIndex p : ℕ) : ℤ))
           = ((h.weightedFiberCard ((0 : ℂ) : OnePoint ℂ) : ℕ) : ℤ)
-      unfold JacobianChallenge.HolomorphicForms.BranchedCoverData.weightedFiberCard
+      unfold BranchedCoverData.weightedFiberCard
       rw [Nat.cast_sum]
     have hP_eq : (((h.finite_fiber (∞ : OnePoint ℂ)).toFinset).sum
             (fun p => (h.ramificationIndex p : ℤ)))
@@ -667,7 +667,7 @@ theorem principal_degree_zero_of_nonzero
       show ((h.finite_fiber (∞ : OnePoint ℂ)).toFinset).sum
               (fun p => ((h.ramificationIndex p : ℕ) : ℤ))
           = ((h.weightedFiberCard (∞ : OnePoint ℂ) : ℕ) : ℤ)
-      unfold JacobianChallenge.HolomorphicForms.BranchedCoverData.weightedFiberCard
+      unfold BranchedCoverData.weightedFiberCard
       rw [Nat.cast_sum]
     rw [hZ_eq, hP_eq]
     have hWFC :
