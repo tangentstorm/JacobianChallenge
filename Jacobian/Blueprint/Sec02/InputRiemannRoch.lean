@@ -25,6 +25,8 @@ duality nondegeneracy). -/
 
 namespace JacobianChallenge.Blueprint
 
+universe u
+
 open scoped Manifold
 
 /-- Riemann-Roch umbrella package on a compact Riemann surface: the
@@ -42,9 +44,9 @@ Fields:
 * `sub` — the line-bundle subtraction `L − M = L ⊗ M⁻¹`.
 * `genus` — the genus of `X`.
 * `riemann_roch` — the classical RR identity. -/
-structure RiemannRochUmbrella (X : Type*) [TopologicalSpace X] [CompactSpace X] where
+structure RiemannRochUmbrella (X : Type u) [TopologicalSpace X] [CompactSpace X] where
   /-- Type of line bundles on `X`. -/
-  LineBundleType : Type
+  LineBundleType : Type (max 1 u)
   /-- Canonical line bundle `K_X`. -/
   canonical : LineBundleType
   /-- Line-bundle subtraction `L − M = L ⊗ M⁻¹`. -/
@@ -65,7 +67,7 @@ structure RiemannRochUmbrella (X : Type*) [TopologicalSpace X] [CompactSpace X] 
 `riemann_roch`. The deep content is in
 `riemann_roch_umbrella_exists`. -/
 theorem input_riemann_roch
-    {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {X : Type u} [TopologicalSpace X] [CompactSpace X]
     (h : RiemannRochUmbrella X) (L : h.LineBundleType) :
     (h.h0 L : ℤ) - (h.h0 (h.sub h.canonical L) : ℤ)
       = h.degree L + 1 - h.genus :=
@@ -87,21 +89,32 @@ constructions; the χ-identity gives
 and `thm:serre-duality-rs` (covered by
 `Jacobian/HolomorphicForms/SerreDualityRS.lean`). -/
 theorem riemann_roch_umbrella_exists
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    (X : Type u) [TopologicalSpace X] [CompactSpace X] [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [CategoryTheory.HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
+    [CategoryTheory.HasExt.{0}
+      (CategoryTheory.Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
+    (hmod0 : ∀ L : HolomorphicForms.RSLineBundleSheaf X,
+      Module ℂ (HolomorphicForms.RSSheafCohomology X L 0))
+    (hmod1 : ∀ L : HolomorphicForms.RSLineBundleSheaf X,
+      Module ℂ (HolomorphicForms.RSSheafCohomology X L 1)) :
     Nonempty (RiemannRochUmbrella X) := by
   refine ⟨{
-    LineBundleType := PUnit
-    canonical := PUnit.unit
-    sub := fun _ _ => PUnit.unit
-    degree := fun _ => 0
-    h0 := fun _ => 0
-    genus := 1
+    LineBundleType := HolomorphicForms.RSLineBundleSheaf X
+    canonical := HolomorphicForms.RSDualizingSheaf X
+    sub := HolomorphicForms.RSLineBundleSub X
+    degree := HolomorphicForms.RSLineBundleDegree X
+    h0 := fun L => by
+      letI := hmod0 L
+      exact Module.finrank ℂ (HolomorphicForms.RSSheafCohomology X L 0)
+    genus := (HolomorphicForms.RSGenus X : ℤ)
     riemann_roch := ?_
   }⟩
   intro L
-  cases L
-  norm_num
+  letI := hmod0 L
+  letI := hmod1 L
+  letI := hmod0 (HolomorphicForms.RSLineBundleSub X (HolomorphicForms.RSDualizingSheaf X) L)
+  simpa using HolomorphicForms.riemann_roch_classical_identity X L
 
 
 end JacobianChallenge.Blueprint
