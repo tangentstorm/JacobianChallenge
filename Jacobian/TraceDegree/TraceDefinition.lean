@@ -60,13 +60,17 @@ noncomputable def traceAtRegularValue
     cotangentPushforward f x (ω x)
   )
 
-/-- The trace of a pullback is scaled by the degree (at regular values). -/
-theorem trace_pullback_at_regular_value
+/-- The trace of a holomorphic 1-form is holomorphic on the regular locus.
+(Away from branch points, the sum of local pullbacks is holomorphic). -/
+theorem traceAtRegularValue_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
-    (η : ∀ y, CotangentSpace ℂ Y y)
+    (hf : IsHolomorphic f)
+    (ω : HolomorphicOneForm ℂ X)
     (y : Y) (hy : isRegularValue h y) :
-    traceAtRegularValue h (fun x => cotangentPushforward f x (η (f x))) y hy =
-      (h.weightedFiberCard y : ℂ) • η y :=
+    IsHolomorphicAt (fun y' =>
+      -- We need a version of traceAtRegularValue that works in a neighborhood
+      sorry
+    ) y :=
   sorry
 
 end JacobianChallenge.HolomorphicForms
