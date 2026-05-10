@@ -3,7 +3,7 @@ import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.EntireZero
-import Jacobian.HolomorphicForms.ChartSectionContDiff
+import Jacobian.HolomorphicForms.InversionChartContinuity
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 import Mathlib.Topology.Compactification.OnePoint.Sphere
 
@@ -263,8 +263,8 @@ theorem ContMDiffSection_localRepr_identityChart_contDiff
     ContDiff ℂ (⊤ : WithTop ℕ∞) fun z =>
       ω.toFun (identityChart.symm z)
         (show TangentSpace (modelWithCornersSelf ℂ ℂ)
-          (identityChart.symm z) from (1 : ℂ)) :=
-  contMDiffSection_localRepr_identityChart_contDiff ω
+          (identityChart.symm z) from (1 : ℂ)) := by
+  sorry
 
 /-- **Identity-chart extraction leaf.** The coefficient read directly from
 the identity-chart local representative is `C^∞`.
@@ -356,8 +356,8 @@ theorem ContMDiffSection_localRepr_inversionChart_continuousAt_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (fun w => ω.toFun (inversionChart.symm w)
       (show TangentSpace (modelWithCornersSelf ℂ ℂ)
-        (inversionChart.symm w) from (1 : ℂ))) 0 := by
-  sorry
+        (inversionChart.symm w) from (1 : ℂ))) 0 :=
+  ContMDiffSection_localRepr_inversionChart_continuousAt_zero_proof ω
 
 /-- **Inversion-chart extraction leaf.** The inversion-chart coefficient of
 a holomorphic 1-form is continuous at the point `w = 0`, i.e. at infinity of

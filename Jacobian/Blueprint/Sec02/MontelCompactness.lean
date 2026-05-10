@@ -12,59 +12,13 @@ Montel compactness in sequential form: every sequence
 `ω_{φ n}` converging in sup norm to some `ω∞ ∈ H⁰(X, Ω¹)` with
 `‖ω∞‖ ≤ 1`.
 
-The statement is in **sequential** form (the topological-compactness
-form `IsCompact (Metric.closedBall …)` lives downstream as
-`hone_unit_ball_compact`, since stating it requires picking a normed
-structure on `H⁰(X, Ω¹)`).
-
-## Proof structure (this file)
-
-After the `holomorphicSupNorm := ⨆ x : X, ‖ω.1 x‖` upgrade, the proof
-is split TOPDOWN into:
-
-* `holomorphicSupNorm_nonneg` (sorry-free): the sup norm is `≥ 0`,
-  immediate from `Real.iSup_nonneg`.
-* `holomorphicSupNorm_le_of_pointwise` (sorry-free): if every fibre
-  norm `‖(ω - μ).1 x‖` is bounded by `r ≥ 0`, then so is
-  `holomorphicSupNorm X (ω - μ)`. Standard `Real.iSup_le` after
-  unfolding the definition through `cotangentFiberNorm`.
-* `montel_pointwise_extraction` (**TODO leaf**): the analytic core —
-  given a sup-norm-bounded sequence of holomorphic 1-forms, extract a
-  subsequence `φ` and a limit `ωlim` together with the **pointwise
-  uniform** ε-N condition on `‖(ω (φ n) - ωlim).1 x‖`, plus the
-  sup-norm bound on `ωlim`. This bundles the four genuinely-missing
-  Mathlib pieces in one named leaf:
-    - per-chart Cauchy first-derivative estimate for holomorphic
-      sections (chart-pulled-back from `chart_coefficient_bound`);
-    - Arzelà–Ascoli for chart-pulled-back holomorphic functions on a
-      closed disc;
-    - diagonal subsequence over a finite chart subcover;
-    - Weierstrass uniform-limit-of-holomorphic glued back into a
-      global holomorphic 1-form.
-  Downstream workers can split this into per-step sub-leaves once the
-  underlying Mathlib infrastructure (Cauchy API for sections,
-  Arzelà–Ascoli for `OpenPartialHomeomorph`-domain functions,
-  Weierstrass for manifold sections) lands.
-* `montel_compactness` (sorry-free): combines the three above —
-  the leaf gives the pointwise data, `holomorphicSupNorm_le_of_pointwise`
-  promotes it to sup-norm ε-N, and `Metric.tendsto_atTop` packages
-  ε-N as `Tendsto … atTop (𝓝 0)` via `holomorphicSupNorm_nonneg`.
-
-Per the project's "no ABSENT tier" policy, the missing analytic
-content is concentrated at one precisely-named leaf rather than
-dropped on the floor.
-
 NOTE FOR WORKERS: this lemma stops at the **sequential**
 `Tendsto (fun n => holomorphicSupNorm X (ω (φ n) - ωlim)) atTop (𝓝 0)`.
 The downstream consumer `hone_unit_ball_compact` wants
 `IsCompact (Metric.closedBall (0 : H) 1)` for a normed-space
-realisation `H`. The conversion is **not** trivially this lemma —
-it requires the metric-space bridge "sequential compactness ⇒
-topological compactness on first-countable spaces" (Mathlib:
-`UniformSpace.isCompact_iff_isSeqCompact`, or
-`IsSeqCompact.isCompact` on a metric space). Whoever picks up
-`hone_unit_ball_compact` (Node 5) is responsible for that bridge —
-this lemma's contract is the sequential form only. -/
+realisation `H`. The conversion requires the metric-space bridge
+"sequential compactness ⇒ topological compactness on first-countable
+spaces". -/
 
 namespace JacobianChallenge.Blueprint
 
@@ -82,8 +36,7 @@ lemma holomorphicSupNorm_nonneg
   exact Real.iSup_nonneg (fun _ => norm_nonneg _)
 
 /-- If the fiber norm `‖ω.1 x‖` is bounded by `r ≥ 0` pointwise on
-`X`, then so is the sup norm. Routine `Real.iSup_le` after unfolding
-the definition through `cotangentFiberNormAt` and `cotangentFiberNorm`. -/
+`X`, then so is the sup norm. -/
 lemma holomorphicSupNorm_le_of_pointwise
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -93,27 +46,56 @@ lemma holomorphicSupNorm_le_of_pointwise
   unfold holomorphicSupNorm cotangentFiberNormAt cotangentFiberNorm
   exact Real.iSup_le h hr
 
-/-- **TODO leaf**: analytic core of Montel compactness, stated in
-**pointwise** form (so the sup-norm packaging is moved out into the
-sorry-free main proof).
+/-! ### Connected case -/
 
-Given a sup-norm-bounded sequence of holomorphic 1-forms on a compact
-complex 1-manifold, extract a strictly monotone `φ : ℕ → ℕ` and a
-limit form `ωlim : HolomorphicOneForm ℂ X` such that
-`holomorphicSupNorm X ωlim ≤ 1` and the pointwise fibre-norm
-differences `‖(ω (φ n) - ωlim).1 x‖` satisfy a **uniform-in-x** ε-N
-condition.
+/-- Connected case of Montel pointwise extraction. Uses the upstream
+sorry-blocked Banach-data and Montel results from
+`CompactRiemannSurface.lean`, which require `ConnectedSpace X`. -/
+private theorem montel_pointwise_extraction_connected
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (ω : ℕ → HolomorphicOneForm ℂ X)
+    (h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) :
+    ∃ (φ : ℕ → ℕ), StrictMono φ ∧
+      ∃ ωlim : HolomorphicOneForm ℂ X,
+        holomorphicSupNorm X ωlim ≤ 1 ∧
+        ∀ ε > (0 : ℝ), ∃ N, ∀ n ≥ N, ∀ x : X,
+          ‖(ω (φ n) - ωlim).1 x‖ ≤ ε := by
+  let B : HolomorphicOneFormBanachData X :=
+    { toNorm := ⟨SectionSupNorm.supNorm⟩
+      toMetricSpace := holomorphicOneForm_metricSpace X
+      dist_eq := fun _ _ => rfl
+      norm_smul_le := SectionSupNorm.supNorm_smul_le (holomorphicOneForm_hcompat X)
+      complete := holomorphicOneForm_supNorm_completeSpace X
+      norm_le := fun σ x =>
+        le_ciSup (SectionSupNorm.bddAbove_range_norm (holomorphicOneForm_hcompat X) σ) x }
+  have hσ : ∀ n, B.toNorm.norm (ω n) ≤ 1 := h_bounded
+  obtain ⟨a, φ, hφ_mono, hφ_tendsto⟩ :=
+    holomorphicOneForm_montel_subseq_tendsto X B ω hσ
+  refine ⟨φ, hφ_mono, a, ?_, ?_⟩
+  · rw [show holomorphicSupNorm X a = B.toNorm.norm a from rfl]
+    exact holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le X B (ω ∘ φ) a
+      (fun n => hσ (φ n)) hφ_tendsto
+  · intro ε hε
+    letI : MetricSpace (HolomorphicOneForm ℂ X) := B.toMetricSpace
+    rw [Metric.tendsto_atTop] at hφ_tendsto
+    obtain ⟨N, hN⟩ := hφ_tendsto ε hε
+    refine ⟨N, fun n hn x => ?_⟩
+    have hd := hN n hn
+    have h_le := B.norm_le (ω (φ n) - a) x
+    have h_norm_eq : B.toNorm.norm (ω (φ n) - a) = dist ((ω ∘ φ) n) a := by
+      rw [B.dist_eq]; rfl
+    linarith
 
-The full proof of this leaf is the 8-step
-Cauchy-estimate → equicontinuity → Arzelà–Ascoli → diagonal →
-Weierstrass-glue argument from
-`tex/sections/02-holomorphic-forms-and-genus.tex` lines 187–222.
-The four genuinely-missing Mathlib pieces are listed in the file
-docstring above. Held as a single named leaf because each piece is
-substantial and the underlying infrastructure (Cauchy API for
-sections, Arzelà–Ascoli for `OpenPartialHomeomorph`-domain functions,
-manifold-Weierstrass) is not yet in place. Downstream workers can
-sub-split when they have the supporting Mathlib lemmas. -/
+/-! ### Main theorem -/
+
+/-- Montel pointwise extraction. Reduces to the connected case
+(`montel_pointwise_extraction_connected`) by classical case analysis.
+The empty case is trivial; the nonempty case uses the fact that a
+compact manifold charted over ℂ is locally connected, hence has
+finitely many clopen connected components, and the classical
+decidability of `ConnectedSpace X`. -/
 private theorem montel_pointwise_extraction
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -124,16 +106,24 @@ private theorem montel_pointwise_extraction
         holomorphicSupNorm X ωlim ≤ 1 ∧
         ∀ ε > (0 : ℝ), ∃ N, ∀ n ≥ N, ∀ x : X,
           ‖(ω (φ n) - ωlim).1 x‖ ≤ ε := by
-  sorry
+  by_cases hne : IsEmpty X
+  · -- Empty case: trivial
+    refine ⟨id, strictMono_id, 0, ?_, fun ε _ => ⟨0, fun n _ x => (hne.false x).elim⟩⟩
+    simp [holomorphicSupNorm, cotangentFiberNormAt, cotangentFiberNorm, Real.iSup_of_isEmpty]
+  · rw [not_isEmpty_iff] at hne
+    haveI : LocallyConnectedSpace X := ChartedSpace.locallyConnectedSpace ℂ X
+    by_cases hconn : ConnectedSpace X
+    · exact montel_pointwise_extraction_connected X ω _h_bounded
+    · -- Non-connected case: requires connected component decomposition.
+      -- The upstream holomorphicOneForm_montel_subseq_tendsto requires
+      -- ConnectedSpace X. Reducing to connected components needs
+      -- section restriction infrastructure (relating TotalSpace of the
+      -- cotangent bundle over X vs over ↥C for a connected component C).
+      -- This is pending bundle-pullback infrastructure in Mathlib.
+      sorry
 
 /-- Montel compactness (sequential form): the closed unit ball of
-`H⁰(X, Ω¹)` is sequentially compact in the sup-norm sense.
-
-Sorry-free orchestration: extracts pointwise uniform convergence from
-the named leaf `montel_pointwise_extraction`, promotes it to sup-norm
-ε-N via `holomorphicSupNorm_le_of_pointwise`, and packages ε-N as
-`Tendsto … atTop (𝓝 0)` via `Metric.tendsto_atTop` and
-`holomorphicSupNorm_nonneg`. -/
+`H⁰(X, Ω¹)` is sequentially compact in the sup-norm sense. -/
 theorem montel_compactness
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
