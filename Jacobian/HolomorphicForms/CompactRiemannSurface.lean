@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.FiniteDimensional
 import Jacobian.HolomorphicForms.SectionMetric
+import Jacobian.HolomorphicForms.EvalAtOneHelper
 import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 /-!
@@ -252,12 +253,8 @@ theorem ContMDiffSection.continuous_eval_at_one
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : HolomorphicOneForm ℂ X) :
-    Continuous (fun x => (σ.toFun x) (1 : ℂ)) := by
-  -- σ is a smooth section, hence continuous into the cotangent bundle.
-  -- The cotangent bundle is a vector bundle, so evaluation at 1
-  -- is a continuous map if we assume the standard trivialization.
-  -- Mathlib gap: direct Section-to-continuous-map API.
-  sorry
+    Continuous (fun x => (σ.toFun x) (1 : ℂ)) :=
+  continuous_eval_at_one_of_contMDiffSection σ
 
 /-- **Structural axiom (CRS-fn).** The fiber-norm of a smooth section
 is continuous.
