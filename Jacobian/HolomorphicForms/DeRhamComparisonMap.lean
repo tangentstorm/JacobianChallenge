@@ -113,27 +113,48 @@ theorem cech_cocycle_from_singular_cocycle
     ∃ _cech : Type, True := by
   exact ⟨Unit, trivial⟩
 
+/-- **Frontier sorry (SURJECTIVITY of de Rham comparison).**
+For every ℤ-linear functional `φ` on integral 1-cycles, there exists a
+closed 1-form whose de Rham comparison map image equals `φ`.
+
+Bottom-up content: prescribed-period theorem via Čech-to-de-Rham map.
+Mathlib gap: partition of unity on manifolds is present, but the Poincaré
+lemma + chart-wise primitive construction is absent. -/
+private theorem closed_form_from_cech_cocycle_exists
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ := by
+  sorry
+
 /-- **Surjectivity sub-obligation 1b (Closed form from Čech cocycle).**
 Using a partition of unity and the Poincaré lemma, a Čech 1-cocycle
-can be realized as a global closed 1-form. -/
+can be realized as a global closed 1-form.
+
+Defined as `Classical.choose` of `closed_form_from_cech_cocycle_exists`,
+so that `integral_closed_form_from_cech_eq` follows by `choose_spec`. -/
 noncomputable def closed_form_from_cech_cocycle
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    ClosedForm 1 X := by
-  exact 0
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ClosedForm 1 X :=
+  (closed_form_from_cech_cocycle_exists X φ).choose
 
 /-- **Surjectivity sub-obligation 1c (Integral correctness).**
 The closed form constructed from the Čech cocycle integrates to the
-prescribed singular cocycle. -/
+prescribed singular cocycle.
+
+Proved from `choose_spec` of the existence lemma
+`closed_form_from_cech_cocycle_exists`. -/
 theorem integral_closed_form_from_cech_eq
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    deRhamComparisonMap1 X (closed_form_from_cech_cocycle X φ) = φ := by
-  sorry
+    deRhamComparisonMap1 X (closed_form_from_cech_cocycle X φ) = φ :=
+  (closed_form_from_cech_cocycle_exists X φ).choose_spec
 
 /-- **Surjectivity sub-obligation 1 (representative choice).**
 For a prescribed period functional, choose a closed 1-form candidate.
