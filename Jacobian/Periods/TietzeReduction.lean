@@ -1,7 +1,9 @@
 import Jacobian.Periods.SurfaceClassificationData
 import Jacobian.Periods.Orientable
 import Jacobian.Periods.EdgeWord
-import Mathlib
+import Jacobian.Periods.HandleSwapHomeo
+import Mathlib.Geometry.Manifold.IsManifold.Basic
+import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-!
 # Round 49 — Tietze reduction `EdgeWordPresentation → PolygonalQuotientPresentation`
@@ -133,6 +135,23 @@ theorem handleSwap_index_ordering
     (E : EdgeWordPresentation M) (_w : EdgeWord E.extractedGenus) :
     Nonempty Unit := ⟨()⟩
 
+/-- **Core Brahana lemma (orientable handle separation).**  Given that
+`w` is the cyclic reduction of the boundary word `E.word` of an
+orientable surface, `w` can be rearranged into `standardWord g` via
+handle-swap moves (and possibly further inverse cancellations). -/
+private lemma brahana_orientable_core
+    {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
+    [ConnectedSpace M]
+    [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
+    [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
+      (⊤ : WithTop ℕ∞) M]
+    [Orientable M]
+    (E : EdgeWordPresentation M) (w : EdgeWord E.extractedGenus)
+    (_hReduced : ∀ x : EdgeWord E.extractedGenus, ¬ EdgeWord.InverseCancel w x)
+    (_hWordEq : EdgeWord.WordEq E.word w) :
+    EdgeWord.TietzeEq w (EdgeWord.standardWord E.extractedGenus) := by
+  sorry
+
 /-- **Round 54 / Stage A leaf (Brahana step 2: handle separation,
 orientable case, reassembly).** -/
 theorem rawWord_handle_separation_orientable
@@ -143,10 +162,14 @@ theorem rawWord_handle_separation_orientable
       (⊤ : WithTop ℕ∞) M]
     [Orientable M]
     (E : EdgeWordPresentation M) (w : EdgeWord E.extractedGenus)
-    (_hReduced : ∀ x : EdgeWord E.extractedGenus, ¬ EdgeWord.InverseCancel w x) :
+    (_hReduced : ∀ x : EdgeWord E.extractedGenus, ¬ EdgeWord.InverseCancel w x)
+    (hWordEq : EdgeWord.WordEq E.word w) :
     ∃ v : EdgeWord E.extractedGenus, EdgeWord.TietzeEq w v ∧
-      v = EdgeWord.standardWord E.extractedGenus := by
-  sorry
+      v = EdgeWord.standardWord E.extractedGenus :=
+  ⟨EdgeWord.standardWord E.extractedGenus,
+   brahana_orientable_core E w _hReduced hWordEq,
+   rfl⟩
+
 
 /-- **Round 49 / Stage A leaf (Tietze reduction, orientable case,
 reassembly).** For an orientable 2-manifold, the raw edge word is
@@ -163,18 +186,19 @@ theorem rawWord_tietzeEq_standardWord_orientable
     [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) M]
     [Orientable M]
-    (E : EdgeWordPresentation M) (w : EdgeWord E.extractedGenus) :
+    (E : EdgeWordPresentation M) (w : EdgeWord E.extractedGenus)
+    (hw : w = E.word) :
     EdgeWord.TietzeEq w (EdgeWord.standardWord E.extractedGenus) := by
-  obtain ⟨v, hwv, hRed⟩ := rawWord_cyclic_reduction w
-  obtain ⟨u, hvu, hue⟩ := rawWord_handle_separation_orientable E v hRed
-  have step1 : EdgeWord.TietzeEq w v := hwv.toTietzeEq
+  subst hw
+  obtain ⟨v, hwv, hRed⟩ := rawWord_cyclic_reduction E.word
+  obtain ⟨u, hvu, hue⟩ := rawWord_handle_separation_orientable E v hRed hwv
+  have step1 : EdgeWord.TietzeEq E.word v := hwv.toTietzeEq
   exact step1.trans (hue ▸ hvu)
+
 
 /-- Helper: there exist continuous maps φ ψ : DiskC → DiskC that
 transform one side-pairing into the other and satisfy round-trip
-properties, enabling construction of the quotient homeomorphism.
-This encapsulates the geometric content of the inverse-cancellation
-homeomorphism. -/
+properties. -/
 private lemma inverseCancel_geometric_maps
     {g : ℕ} {w v : EdgeWord g} (_h : EdgeWord.InverseCancel w v) :
     ∃ (φ ψ : DiskC → DiskC),
@@ -187,10 +211,8 @@ private lemma inverseCancel_geometric_maps
       (∀ x, EdgeWord.sidePairingRel g w (ψ (φ x)) x) := by
   sorry
 
-/-
-**Round 77 / Stage A leaf.** Single-step `InverseCancel` preserves
-the disk-quotient up to homeomorphism.
--/
+/-- **Round 77 / Stage A leaf.** Single-step `InverseCancel` preserves
+the disk-quotient up to homeomorphism. -/
 theorem wordQuotient_homeomorph_of_inverseCancel_step
     {g : ℕ} {w v : EdgeWord g} (_h : EdgeWord.InverseCancel w v) :
     Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
@@ -208,15 +230,25 @@ theorem wordQuotient_homeomorph_of_inverseCancel_step
   · fun_prop;
   · fun_prop
 
+
 /-- **Round 77 / Stage A leaf.** Single-step `HandleSwap` preserves
-the disk-quotient up to homeomorphism. -/
+the disk-quotient up to homeomorphism.
+
+Decomposition: the handle swap `xs ++ h ++ ys → ys ++ h ++ xs`
+is equivalent to three simpler steps:
+1. Cyclic rotation by `|xs|`: `xs ++ h ++ ys → h ++ (ys ++ xs)`
+2. Handle-prefix tail rotation by `|ys|`: `h ++ (ys ++ xs) → h ++ (xs ++ ys)`
+3. Cyclic rotation by `|h| + |xs|`: `h ++ xs ++ ys → ys ++ h ++ xs`
+
+Cyclic rotation is realised by a rigid rotation of the closed unit disk.
+The handle-prefix tail rotation uses the fact that the handle identifications
+merge all five vertices around `h` into a single point, allowing the
+tail arcs to be freely rotated.
+-/
 theorem wordQuotient_homeomorph_of_handleSwap_step
     {g : ℕ} {w v : EdgeWord g} (_h : EdgeWord.HandleSwap w v) :
-    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) :=
-  -- Topological property: swapping handle blocks permutes the arcs
-  -- on the boundary of the disk. This is a self-homeomorphism of the
-  -- disk that descends to the quotient.
-  sorry
+    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
+  exact wordQuotient_homeomorph_of_handleSwap_step_v2 _h
 
 /-- **Round 49 / Stage A leaf (single Tietze step, reassembly).**
 Each elementary Tietze step preserves the disk-quotient up to
@@ -329,7 +361,7 @@ noncomputable def EdgeWordPresentation.toPolygonalQuotient_via_tietze
     [Orientable M]
     (E : EdgeWordPresentation M) : PolygonalQuotientPresentation M := by
   let w := E.word
-  have htietze := rawWord_tietzeEq_standardWord_orientable E w
+  have htietze := rawWord_tietzeEq_standardWord_orientable E w rfl
   let homeoWord := Classical.choice (wordQuotient_homeomorph_of_tietzeEq htietze)
   let homeoStd := Classical.choice
     (standardWord_wordQuotient_homeomorph_polygon4g E.extractedGenus)
