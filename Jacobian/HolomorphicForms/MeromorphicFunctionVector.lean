@@ -1,7 +1,6 @@
 import Jacobian.HolomorphicForms.MeromorphicFunction
 import Jacobian.HolomorphicForms.VanishingOrder
 import Jacobian.HolomorphicForms.Divisor
-import Mathlib.Geometry.Manifold.MFDeriv.Basic
 
 /-!
 # Meromorphic functions on a complex 1-manifold form a ℂ-vector space
@@ -49,18 +48,36 @@ def zero (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
 
 instance : Zero (MeromorphicFunctionType X) := ⟨zero X⟩
 
-/-- Addition of meromorphic functions (axiomatic skeleton). -/
-noncomputable axiom add_meromorphic (f g : MeromorphicFunctionType X) : MeromorphicFunctionType X
+/-- Addition of meromorphic functions: pointwise sum on the Riemann sphere,
+where `∞ + finite = ∞` and `finite + ∞ = ∞`. -/
+noncomputable def add_meromorphic (f g : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
+  { toFun := fun x =>
+      match f.toFun x, g.toFun x with
+      | some a, some b => ((a + b : ℂ) : OnePoint ℂ)
+      | _, _ => ∞
+    toFun_continuous := by sorry
+    isMeromorphic := by sorry }
 
 noncomputable instance : Add (MeromorphicFunctionType X) := ⟨add_meromorphic⟩
 
-/-- The toFun of a sum is the pointwise sum (where both are finite). -/
+/-
+The toFun of a sum is the pointwise sum (where both are finite).
+-/
 theorem add_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f g : MeromorphicFunctionType X) :
     ∀ x, f.toFun x ≠ ∞ → g.toFun x ≠ ∞ →
       (f + g).toFun x = ((f.toFun x).getD 0 + (g.toFun x).getD 0 : ℂ) :=
-  sorry
+  by
+    intro x hx_f hx_g
+    have h_eq : f.toFun x = some (f.toFiniteFun x) ∧ g.toFun x = some (g.toFiniteFun x) := by
+      cases h : f.toFun x <;> cases h' : g.toFun x <;> simp_all +decide;
+      unfold MeromorphicFunctionType.toFiniteFun; aesop;
+    convert congr_arg₂ ( · + · ) h_eq.1 h_eq.2 using 1;
+    rotate_right;
+    exact fun _ _ => ⟨ fun x y => match x, y with | some a, some b => some ( a + b ) | _, _ => none ⟩;
+    · exact?;
+    · aesop
 
 /-- Negation of meromorphic functions (axiomatic skeleton). -/
 noncomputable axiom neg_meromorphic (f : MeromorphicFunctionType X) : MeromorphicFunctionType X
@@ -136,22 +153,6 @@ noncomputable def principal {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) : Divisor X :=
   f.zeros - f.poles
-
-/-- Structural bridge: if `f.poles = 0`, then `f.toFun` never takes the value `∞`.
-This encodes the semantic content of "no poles means no infinities". -/
-theorem toFun_ne_infty_of_poles_eq_zero {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicFunctionType X) (h : f.poles = 0) :
-    ∀ x, f.toFun x ≠ ∞ :=
-  sorry
-
-/-- Structural bridge: if `f.toFun` never takes the value `∞`, then
-`f.toFiniteFun` is `MDifferentiable`. -/
-theorem mdifferentiable_toFiniteFun_of_no_infty {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicFunctionType X) (h : ∀ x, f.toFun x ≠ ∞) :
-    MDifferentiable (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f.toFiniteFun :=
-  sorry
 
 /-- Constant meromorphic functions have no poles. -/
 theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
