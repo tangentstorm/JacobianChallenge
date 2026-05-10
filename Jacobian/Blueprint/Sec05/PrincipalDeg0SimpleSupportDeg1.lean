@@ -1,5 +1,6 @@
 import Jacobian.Blueprint.Sec01.PrincipalDivisor
 import Jacobian.Blueprint.Sec01.MeromorphicToCp1
+import Jacobian.Blueprint.Sec01.PrincipalDegreeZero
 
 /-! # Blueprint stub: `lem:principal-deg0-simple-support-deg1`
 
@@ -28,6 +29,7 @@ plug in immediately.
 namespace JacobianChallenge.Blueprint
 
 open scoped Manifold
+open JacobianChallenge.HolomorphicForms.HolomorphicMap
 
 /-- The point divisor `[P]`: the divisor assigning coefficient `1` to `P`
 and `0` elsewhere. Wraps `Finsupp.single P 1`. -/
@@ -39,18 +41,27 @@ noncomputable def Divisor.point {X : Type*} (P : X) : Divisor X :=
 def Nonconstant {X Y : Type*} (g : X → Y) : Prop :=
   ¬ ∃ c : Y, ∀ x : X, g x = c
 
-/-- **Placeholder.** The branched degree of a continuous map
-`g : X → Y` between compact Riemann surfaces, viewed as a function.
+section
+open Classical
+/-- The branched degree of a holomorphic map `g : X → Y` between
+compact Riemann surfaces.
 
-The eventual definition builds a `BranchedCoverData` (see
-`Jacobian/Blueprint/Sec02/BranchedDegree.lean`) from the
-open-mapping / isolated-zeros theorems and reads off
-`BranchedCoverData.branchedDegree`; that analytic constructor is
-still frontier-bound, so we leave the body as `0` (an obviously
-wrong but type-correct stand-in). -/
+Builds a `BranchedCoverData` via
+`branchedCoverData_of_nonconstant_holomorphic` (Sec02 leaf 8) and
+reads off `branchedDegree`. Returns `0` when the map is constant or
+not holomorphic. -/
 noncomputable def branchedDegreeOfMap
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
-    (_g : X → Y) : ℕ := 0
+    [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
+    [CompactSpace X] [T2Space X] [PreconnectedSpace X]
+    [T2Space Y] [PreconnectedSpace Y] [Nonempty Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    (g : X → Y) : ℕ :=
+  if h : IsHolomorphic g ∧ ¬ ∃ y₀, ∀ x, g x = y₀ then
+    branchedDegree (branchedCoverData_of_nonconstant_holomorphic h.1 h.2)
+  else 0
+end
 
 /-! ### Helper: meromorphic order -1 implies not continuous -/
 
@@ -272,19 +283,109 @@ theorem nonconstant_of_two_distinct_values
   intro ⟨e, he⟩
   exact hne_val (by rw [← ha, he a, ← he b, hb])
 
-/-- **Sub-leaf 4.** From `(meromorphicToCp1 X f)⁻¹(∞) = {Q₂}` (a simple
-pole) we get `branchedDegreeOfMap = 1`. This is the deep frontier sub-
-obligation: it requires the `BranchedCoverData` constructor for
-nonconstant holomorphic maps to ℂP¹, plus the constancy-of-weighted-
-fibre-count theorem (Sec02 leaf 8). -/
+/-! ### Helpers for the branched-degree-1 proof -/
+
+open JacobianChallenge.HolomorphicForms.VanishingOrder in
+/-- Points other than Q₂ do not map to ∞ under the CP¹ lift. -/
+theorem meromorphicToCp1_ne_infty_of_ne_pole
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂)
+    (P : X) (hP : P ≠ Q₂) :
+    meromorphicToCp1 X f P ≠ OnePoint.infty := by
+  have h_meromorphicToCp1_ne_infty : ∀ p, p ≠ Q₂ → (vanishingOrder X p (fun q => (f q).getD 0)).untopD 0 ≥ 0 := by
+    intro p hp;
+    unfold principalDivisor at hpd;
+    split_ifs at hpd <;> simp_all +decide [ Divisor.point ];
+    · replace hpd := congr_arg ( fun g => g p ) hpd ; simp_all +decide [ Finsupp.single_apply ];
+      exact hpd.symm ▸ by by_cases h : p = Q₁ <;> simp +decide [ h ] ;
+    · replace hpd := congr_arg ( fun f => f Q₁ ) hpd ; simp_all +decide;
+  contrapose! h_meromorphicToCp1_ne_infty;
+  have h_meromorphicToCp1_ne_infty : ¬∃ y₀ : OnePoint ℂ, ∀ x, meromorphicToCp1 X f x = y₀ := by
+    intro h_const
+    obtain ⟨y₀, hy₀⟩ := h_const
+    have h_const_eq : ∀ x, meromorphicToCp1 X f x = y₀ := by
+      exact hy₀;
+    have := meromorphicToCp1_at_zero_of_simple_two_point_principal X f Q₁ Q₂ hne hpd; simp_all +decide [ meromorphicToCp1 ] ;
+  have h_meromorphicToCp1_ne_infty : ∀ [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X], ∀ [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) (OnePoint ℂ)], (vanishingOrder X P (fun q => (f q).getD 0)).untopD 0 = -(mapAnalyticOrderAt (meromorphicToCp1 X f) P : ℤ) := by
+    exact?;
+  have h_meromorphicToCp1_ne_infty : 0 < mapAnalyticOrderAt (meromorphicToCp1 X f) P := by
+    apply_rules [ mapAnalyticOrderAt_pos ];
+    exact?;
+  rename_i h₁ h₂ h₃;
+  exact ⟨ P, hP, by erw [ h₃ ] ; exact neg_neg_of_pos ( Nat.cast_pos.mpr h_meromorphicToCp1_ne_infty ) ⟩
+
+/-
+The preimage of ∞ under the CP¹ lift is exactly {Q₂}.
+-/
+theorem fiber_infty_eq_singleton
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
+    (meromorphicToCp1 X f) ⁻¹' {(OnePoint.infty : OnePoint ℂ)} = {Q₂} := by
+  grind +suggestions
+
+open JacobianChallenge.HolomorphicForms.VanishingOrder in
+/-- The analytic order of the CP¹ lift at a simple pole is 1. -/
+theorem mapAnalyticOrderAt_eq_one_at_simple_pole
+    (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
+    [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
+    mapAnalyticOrderAt (meromorphicToCp1 X f) Q₂ = 1 := by
+  have h_pole : meromorphicToCp1 X f Q₂ = OnePoint.infty := by
+    exact?
+  have h_val : meromorphicToCp1 X f Q₁ = ((0 : ℂ) : OnePoint ℂ) := by
+    exact?;
+  have h_nonconst : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c := by
+    rintro ⟨ c, hc ⟩ ; simp_all +decide [ meromorphicToCp1 ] ;
+  generalize_proofs at *;
+  have h_val : (vanishingOrder X Q₂ (fun q => (f q).getD 0)).untopD 0 = -1 := by
+    unfold principalDivisor at hpd;
+    split_ifs at hpd <;> simp_all +decide [ Finsupp.ext_iff, Divisor.point ];
+    · simpa [ hne ] using hpd Q₂;
+    · specialize hpd Q₁ ; simp_all +decide [ Finsupp.single_apply ];
+  have := vanishingOrder_eq_neg_mapAnalyticOrderAt_at_pole X f h_nonconst ( by trivial ) Q₂ h_pole; simp_all +decide ;
+
+/-
+**Sub-leaf 4.** From `(meromorphicToCp1 X f)⁻¹(∞) = {Q₂}` (a simple
+pole) we get `branchedDegreeOfMap = 1`. Uses the `BranchedCoverData`
+constructor for nonconstant holomorphic maps to ℂP¹, plus the
+constancy-of-weighted-fibre-count theorem (Sec02 leaf 8).
+-/
 theorem branchedDegreeOfMap_eq_one_of_simple_two_point_principal
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
-    [ChartedSpace ℂ X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     branchedDegreeOfMap (meromorphicToCp1 X f) = 1 := by
-  sorry
+  by_cases h : IsHolomorphic ( meromorphicToCp1 X f ) ∧ ¬ ∃ y₀ : OnePoint ℂ, ∀ x : X, meromorphicToCp1 X f x = y₀ <;> simp_all +decide [ branchedDegreeOfMap ];
+  · rw [ branchedDegree_eq_weightedFiberCard ];
+    swap;
+    exact OnePoint.infty;
+    unfold branchedCoverData_of_nonconstant_holomorphic;
+    refine' le_antisymm _ _;
+    · refine' le_trans ( Finset.sum_le_sum_of_subset _ ) _;
+      exact { Q₂ };
+      · intro x hx; have := fiber_infty_eq_singleton X f Q₁ Q₂ hne hpd; simp_all +decide [ Set.ext_iff ] ;
+      · simp +decide [ mapAnalyticOrderAt_eq_one_at_simple_pole X f Q₁ Q₂ hne hpd ];
+    · refine' le_trans _ ( Finset.single_le_sum ( fun x _ => _ ) ( show Q₂ ∈ _ from _ ) );
+      · have := mapAnalyticOrderAt_eq_one_at_simple_pole X f Q₁ Q₂ hne hpd; aesop;
+      · exact?;
+      · simp +decide [ fiber_infty_eq_singleton X f Q₁ Q₂ hne hpd ];
+  · contrapose! h;
+    refine' ⟨ _, _ ⟩;
+    · exact?;
+    · intro y₀
+      by_contra h_contra
+      push_neg at h_contra;
+      have := meromorphicToCp1_at_zero_of_simple_two_point_principal X f Q₁ Q₂ hne hpd; have := meromorphicToCp1_at_pole_of_simple_two_point_principal X f Q₁ Q₂ hne hpd; simp_all +decide ;
 
 /-- **Headline theorem (sorry-free assembly).** If `f ∈ Mer(X)^{×}` has
 principal divisor `(f) = Q₁ - Q₂` with `Q₁ ≠ Q₂`, then the associated
@@ -296,7 +397,7 @@ Assembled from the four sub-leaves above:
 - branched-degree-1: sub-leaf 4 directly. -/
 theorem principal_deg0_simple_support_deg1
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
-    [ChartedSpace ℂ X]
+    [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
