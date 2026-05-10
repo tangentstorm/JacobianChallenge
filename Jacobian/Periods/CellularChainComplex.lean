@@ -28,32 +28,109 @@ instance polygon4gCellularH1_module (g : ℕ) :
   unfold Polygon4gCellularH1
   infer_instance
 
+/-- The quotient-disk cell datum underlying the standard polygonal
+model: the closed disk with boundary side identifications. -/
+opaque Polygon4gQuotientDiskCellData (g : ℕ) : Type
+
+/-- **Cellular leaf 1a.** Construct the quotient-disk cell datum for
+the standard `4g`-gon. -/
+theorem polygon4g_quotient_disk_cell_data (g : ℕ) :
+    Nonempty (Polygon4gQuotientDiskCellData g) := by
+  sorry
+
+/-- The edge-pairing datum for the standard polygon: paired boundary
+arcs labelled by the `aᵢ,bᵢ` generators. -/
+opaque Polygon4gEdgePairingCellData
+    (g : ℕ) (_disk : Polygon4gQuotientDiskCellData g) : Type
+
+/-- **Cellular leaf 1b.** Construct the edge-pairing datum on the
+quotient disk. -/
+theorem polygon4g_edge_pairing_cell_data
+    (g : ℕ) (disk : Polygon4gQuotientDiskCellData g) :
+    Nonempty (Polygon4gEdgePairingCellData g disk) := by
+  sorry
+
+/-- The characteristic maps for the one zero-cell, `2g` one-cells, and
+one two-cell of the standard polygonal model. -/
+opaque Polygon4gCharacteristicMapData
+    (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
+    (_edgePairing : Polygon4gEdgePairingCellData g disk) : Type
+
+/-- **Cellular leaf 1c.** Construct the characteristic maps for the
+standard polygonal cell structure. -/
+theorem polygon4g_characteristic_map_data
+    (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
+    (edgePairing : Polygon4gEdgePairingCellData g disk) :
+    Nonempty (Polygon4gCharacteristicMapData g disk edgePairing) := by
+  sorry
+
 /-- A witness that `Polygon4g g` carries the standard cellular model:
 one zero-cell, `2g` one-cells, and one two-cell.  The concrete CW data
 and characteristic maps are the missing Mathlib-side construction. -/
 opaque Polygon4gCellularModel (g : ℕ) : Type
 
-/-- **Cellular leaf 1.** Existence of the standard cellular model on
-`Polygon4g g`.  Bottom-up route: construct the quotient CW structure
-from the closed disk, with all side-pairings collapsed to the unique
-zero-cell and paired boundary arcs giving the `a_i,b_i` one-cells. -/
-theorem polygon4g_standard_cellular_model (g : ℕ) :
+/-- **Cellular leaf 1d.** Realise the quotient-disk, edge-pairing, and
+characteristic-map data as a cellular model on `Polygon4g g`. -/
+theorem polygon4g_realize_standard_cellular_model
+    (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
+    (edgePairing : Polygon4gEdgePairingCellData g disk)
+    (_characteristicMaps : Polygon4gCharacteristicMapData g disk edgePairing) :
     Nonempty (Polygon4gCellularModel g) := by
   sorry
 
-/-- **Cellular leaf 2.** Boundary formula for the standard model.  It
-packages two facts: the one-cell boundary is zero because all endpoints
-are the unique vertex, and the two-cell boundary is the abelianised
-surface relator, hence zero. -/
-opaque Polygon4gCellularBoundaryFormula (g : ℕ) (_ : Polygon4gCellularModel g) : Prop
+/-- **Cellular assembly 1.** Existence of the standard cellular model on
+`Polygon4g g`, assembled from the quotient-disk, edge-pairing,
+characteristic-map, and realisation leaves. -/
+theorem polygon4g_standard_cellular_model (g : ℕ) :
+    Nonempty (Polygon4gCellularModel g) :=
+by
+  obtain ⟨disk⟩ := polygon4g_quotient_disk_cell_data g
+  obtain ⟨edgePairing⟩ := polygon4g_edge_pairing_cell_data g disk
+  obtain ⟨characteristicMaps⟩ :=
+    polygon4g_characteristic_map_data g disk edgePairing
+  exact polygon4g_realize_standard_cellular_model
+    g disk edgePairing characteristicMaps
 
-/-- **Cellular leaf 2.** The cellular boundary formula for the standard
-polygon model.  Bottom-up route: compute the attaching map
-`∏ᵢ [aᵢ,bᵢ]`; after abelianisation every commutator contributes zero. -/
+/-- The cellular boundary of every one-cell is zero, since all one-cell
+endpoints are identified with the unique zero-cell. -/
+opaque Polygon4gOneCellBoundaryZero
+    (g : ℕ) (_C : Polygon4gCellularModel g) : Prop
+
+/-- **Cellular leaf 2a.** The one-cell boundary is zero for the standard
+polygon model. -/
+theorem polygon4g_one_cell_boundary_zero
+    (g : ℕ) (C : Polygon4gCellularModel g) :
+    Polygon4gOneCellBoundaryZero g C := by
+  sorry
+
+/-- The cellular two-cell boundary is the abelianisation of the surface
+relator `∏ᵢ [aᵢ,bᵢ]`, hence zero in the free abelian group on one-cells. -/
+opaque Polygon4gTwoCellBoundaryAbelianizedRelator
+    (g : ℕ) (_C : Polygon4gCellularModel g) : Prop
+
+/-- **Cellular leaf 2b.** The two-cell boundary is the abelianised
+commutator product and therefore vanishes. -/
+theorem polygon4g_two_cell_boundary_abelianized_relator
+    (g : ℕ) (C : Polygon4gCellularModel g) :
+    Polygon4gTwoCellBoundaryAbelianizedRelator g C := by
+  sorry
+
+/-- **Cellular boundary formula.** It packages two facts: the one-cell
+boundary is zero because all endpoints are the unique vertex, and the
+two-cell boundary is the abelianised surface relator, hence zero. -/
+abbrev Polygon4gCellularBoundaryFormula
+    (g : ℕ) (C : Polygon4gCellularModel g) : Prop :=
+  Polygon4gOneCellBoundaryZero g C ∧
+    Polygon4gTwoCellBoundaryAbelianizedRelator g C
+
+/-- **Cellular assembly 2.** The cellular boundary formula for the
+standard polygon model. -/
 theorem polygon4g_cellular_boundary_formula
     (g : ℕ) (C : Polygon4gCellularModel g) :
-    Polygon4gCellularBoundaryFormula g C := by
-  sorry
+    Polygon4gCellularBoundaryFormula g C :=
+by
+  exact ⟨polygon4g_one_cell_boundary_zero g C,
+    polygon4g_two_cell_boundary_abelianized_relator g C⟩
 
 /-- **Cellular leaf 3.** The first cellular homology computed from the
 standard polygon chain complex is the free module on the `2g` one-cells.

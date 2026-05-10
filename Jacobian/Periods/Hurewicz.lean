@@ -36,18 +36,53 @@ theorem polygon4g_cellular_singular_one_cell_data
     Nonempty (Polygon4gCellularSingularOneCellData g C) := by
   sorry
 
-/-- The singular two-cell datum: the quotient disk characteristic map
-and its boundary parametrisation by the surface word. -/
-opaque Polygon4gCellularSingularTwoCellData
+/-- The singular disk characteristic-map datum for the unique two-cell. -/
+opaque Polygon4gCellularSingularTwoCellCharacteristicData
     (g : ℕ) (_C : Polygon4gCellularModel g) : Type
 
-/-- **Comparison leaf 1c.** Construct the singular two-cell disk and
-attaching-map data. -/
+/-- **Comparison leaf 1c(i).** Construct the singular characteristic
+map data for the unique two-cell. -/
+theorem polygon4g_cellular_singular_two_cell_characteristic_data
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
+    Nonempty (Polygon4gCellularSingularTwoCellCharacteristicData g C) := by
+  sorry
+
+/-- The boundary parametrisation of the singular two-cell by the
+standard surface word `∏ᵢ [aᵢ,bᵢ]`. -/
+opaque Polygon4gCellularSingularTwoCellBoundaryWordData
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_characteristic : Polygon4gCellularSingularTwoCellCharacteristicData g C) : Type
+
+/-- **Comparison leaf 1c(ii).** Construct the boundary-word
+parametrisation for the singular two-cell. -/
+theorem polygon4g_cellular_singular_two_cell_boundary_word_data
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (characteristic : Polygon4gCellularSingularTwoCellCharacteristicData g C) :
+    Nonempty (Polygon4gCellularSingularTwoCellBoundaryWordData g C characteristic) := by
+  sorry
+
+/-- The singular two-cell datum: the quotient disk characteristic map
+and its boundary parametrisation by the surface word. -/
+structure Polygon4gCellularSingularTwoCellData
+    (g : ℕ) (C : Polygon4gCellularModel g) where
+  characteristic : Polygon4gCellularSingularTwoCellCharacteristicData g C
+  boundaryWord : Polygon4gCellularSingularTwoCellBoundaryWordData g C characteristic
+
+/-- **Comparison assembly 1c.** Construct the singular two-cell disk and
+attaching-map data from characteristic-map and boundary-word leaves. -/
 theorem polygon4g_cellular_singular_two_cell_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
-    Nonempty (Polygon4gCellularSingularTwoCellData g C) := by
-  sorry
+    Nonempty (Polygon4gCellularSingularTwoCellData g C) :=
+by
+  obtain ⟨characteristic⟩ :=
+    polygon4g_cellular_singular_two_cell_characteristic_data g C _h_boundary
+  obtain ⟨boundaryWord⟩ :=
+    polygon4g_cellular_singular_two_cell_boundary_word_data
+      g C _h_boundary characteristic
+  exact ⟨{ characteristic, boundaryWord }⟩
 
 /-- The comparison data between the cellular chain complex of the
 standard polygon model and singular chains on the quotient surface.
