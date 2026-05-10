@@ -4379,8 +4379,9 @@ step) gives \(\chi(L)=\deg L+1-g\), i.e.\
 
 \begin{lemma}[R8-sub-C.C.r1 --- dual bundle degree]
 \label{lem:r8subC-C-r1}
+\label{lem:rs-dualizing-degree}
 \(\deg(L^{-1}\otimes K_{X})=2g-2-\deg L\).
-\lean{JacobianChallenge.HolomorphicForms.dual_bundle_degree}
+\lean{JacobianChallenge.HolomorphicForms.dual_bundle_degree, JacobianChallenge.HolomorphicForms.RSLineBundleDegree_dual_tensor_canonical}
 \leanok
 \end{lemma}
 
@@ -4395,10 +4396,11 @@ non-degeneracy.
 
 \begin{lemma}[R8-sub-C.C.r3 --- application of (\(\geq\)) to the dual bundle]
 \label{lem:r8subC-C-r3}
+\label{thm:rr-high-degree}
 Apply r-r3 of R8-sub-C.B to \(L^{-1}\otimes K_{X}\); rewrite via
 r1 (degree) and r2 (Serre swap) to land at the \(\leq\) statement
 on \(L\).
-\lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_le_via_dual}
+\lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_le_via_dual, JacobianChallenge.HolomorphicForms.riemann_roch_high_degree_via_serre}
 \leanok
 \end{lemma}
 

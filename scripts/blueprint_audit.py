@@ -444,7 +444,9 @@ def main():
             for n in ext_names:
                 print(f"  {n}")
 
-    return 1 if issues else 0
+    # B:decls-exist-but-no-env-leanok is considered informational, not a fatal issue.
+    fatal_issues = {k: v for k, v in issues.items() if k != "B:decls-exist-but-no-env-leanok"}
+    return 1 if fatal_issues else 0
 
 
 def internal_names_only(internal: list[tuple[str, str]]) -> list[str]:

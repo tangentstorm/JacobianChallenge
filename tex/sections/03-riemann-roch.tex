@@ -166,7 +166,8 @@ For an invertible sheaf \(\mathcal{L}=\mathcal{O}_X(D)\),
 \lean{JacobianChallenge.HolomorphicForms.euler_char_line_bundle}
 \leanok
 \end{theorem}
-\begin{proof}\leanok\end{proof}
+\begin{proof}
+\leanok\end{proof}
 
 \begin{layman}
 Take the dimensions of the two cohomology groups of a line bundle and
@@ -204,7 +205,7 @@ genuine analytic content is concentrated in the two bound sub-leaves.
 \label{input:riemann-roch}
 \uses{input:divisors,thm:serre-duality-rs,thm:euler-char-line-bundle,lem:serre-duality-overview-stepwise,input:rr-squeeze,input:stage-a-closeout,input:banach-data-hone,lem:r8subC-ge,lem:r8subC-le,lem:r8subC-low-degree,lem:rs-dualizing-degree,thm:rr-high-degree}
 \lean{JacobianChallenge.Blueprint.input_riemann_roch}
-\leanok
+
 For every divisor \(D\) on \(X\),
 \[
   \ell(D)-\ell(K-D)=\deg(D)+1-g(X),
@@ -214,8 +215,10 @@ Combines the Euler-characteristic formula
 (Theorem~\ref{thm:euler-char-line-bundle}) with Serre duality
 (Theorem~\ref{thm:serre-duality-rs}), using the low/high degree squeeze
 to handle the boundary cases and dualization.
+\leanok
 \end{theorem}
-\begin{proof}\leanok\end{proof}
+\begin{proof}
+\leanok\end{proof}
 
 \begin{layman}
 We package the Riemann–Roch theorem as a single classical input.
@@ -260,7 +263,8 @@ to be honest isomorphisms — pinning the surface down as the sphere
 itself.
 \end{layman}
 
-\begin{proof}\leanok
+\begin{proof}
+\leanok
 Apply Riemann-Roch to \(D=p\). Since \(\deg(p)=1\) and \(g(X)=0\),
 \[
   \ell(p)-\ell(K-p)=2.
@@ -318,7 +322,8 @@ whose pole divisor is \(0\). Then there exists a smooth function
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_of_no_poles}
 \leanok
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
+\leanok
 Vanishing of the pole divisor at every point means \(f\) takes only
 finite values, i.e.\ \(f(x)\neq\infty\) for all \(x\in X\). The lift
 \(g:=\iota^{-1}\circ f\) is therefore well-defined; its smoothness
@@ -331,10 +336,11 @@ inherits from the smoothness of \(f\) in any chart at a finite point
 \uses{def:divisor,def:riemann-roch-space,lem:mem-L-point-pole-pointwise-bound,lem:meromorphic-poles-effective,lem:divisor-effective-le-point-iff}
 If \(f\in L([P])\), then either \(\operatorname{poles}(f)=0\) or
 \(\operatorname{poles}(f)=[P]\).
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles_eq_zero_or_point_of_mem_L_point}
+\lean{JacobianChallenge.HolomorphicForms.genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point}
 \leanok
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
+\leanok
 Membership in \(L([P])\) is the divisor inequality
 \((f)+[P]\geq 0\), i.e.\ \(\operatorname{zeros}(f)-\operatorname{poles}(f)+[P]\geq 0\) at every
 point. For \(Q\neq P\) this reduces to
@@ -355,7 +361,7 @@ nonconstant and lies in \(L([P])\).
 \lean{JacobianChallenge.HolomorphicForms.genusZero_pointRiemannRochSpace_witness_exists}
 \leanok
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
 By Theorem~\ref{input:riemann-roch} applied to \(D=[P]\),
 \(\ell([P])-\ell(K-[P])=\deg(P)+1-g(X)=1+1-0=2\). In genus zero,
 \(K-[P]\) has degree \(-3\), so \(\ell(K-[P])=0\). Hence
@@ -372,7 +378,8 @@ A meromorphic map \(f:X\to\CPone\) on a compact connected complex
 \lean{JacobianChallenge.HolomorphicForms.holomorphic_meromorphicMapToSphere_constant_on_compact}
 \leanok
 \end{theorem}
-\begin{proof}\leanok
+\begin{proof}
+\leanok
 By Lemma~\ref{lem:meromorphic-no-poles-factors}, the map factors as
 \(\iota\circ g\) for some smooth \(g:X\to\C\). The function \(g\)
 is smooth (in fact holomorphic, in the manifold sense) and \(X\) is
@@ -391,7 +398,8 @@ space \(L([P])\) for any point \(P\) admits a nonconstant element.
 \lean{JacobianChallenge.HolomorphicForms.genusZero_exists_nonconstant_mem_L_point}
 \leanok
 \end{theorem}
-\begin{proof}\leanok
+\begin{proof}
+\leanok
 Apply Lemma~\ref{lem:genus-zero-RR-witness}; package the resulting
 \((f,\,f\,\text{nonconstant},\,f\in L([P]))\) data into the project's
 \code{GenusZeroPointRiemannRochElement} structure.
@@ -405,7 +413,8 @@ surface has pole divisor exactly \([P]\).
 \lean{JacobianChallenge.HolomorphicForms.genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point}
 \leanok
 \end{theorem}
-\begin{proof}\leanok
+\begin{proof}
+\leanok
 By Lemma~\ref{lem:mem-L-point-pole-bound}, \(\operatorname{poles}(f)\in\{0,[P]\}\).
 If \(\operatorname{poles}(f)=0\), then \(f\) is holomorphic, and by
 Theorem~\ref{thm:meromorphic-liouville-compact} \(f\) is constant,
@@ -427,7 +436,8 @@ values: \(\forall x,\ f(x)\neq\infty\).
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toMap_ne_infty_of_no_poles}
 \leanok
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
+\leanok
 Direct interpretation of \(\operatorname{poles}(f)=0\): the pole-divisor records
 the locus where \(f\) reaches \(\infty\), and zero divisor means no
 such point.
@@ -439,10 +449,11 @@ Given a map \(f:X\to\CPone\) with \(f(x)\neq\infty\) for every
 \(x\in X\), there is a function \(g:X\to\C\) such that
 \(f(x)=\iota(g(x))\) for all \(x\), where \(\iota:\C\to\CPone\) is
 the canonical inclusion.
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_pointwise_lift_exists}
-\leanok
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_mdifferentiable}
+
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
+
 \(\CPone=\code{OnePoint}\,\C=\code{Option}\,\C\). The hypothesis
 \(f(x)\neq\code{Option}.\code{none}\) lets us define \(g(x):=(f(x)).\code{getD}\,0\),
 i.e. the \(\code{some}\) payload (or default at unreachable \(\code{none}\)). At
@@ -457,10 +468,11 @@ excluded by hypothesis; the \(\code{some}\,y\) branch gives
 If a meromorphic map \(f:X\to\CPone\) factors as
 \(f=\iota\circ g\) for some \(g:X\to\C\), then \(g\) is smooth
 (\code{MDifferentiable}).
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_mdiff_of_lift_eq}
-\leanok
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_mdifferentiable}
+
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
+
 At every point \(x\in X\) the map \(f\) lives in the identity chart
 of \(\CPone\) (since \(f(x)=\iota(g(x))\neq\infty\)). The chart-local
 representative of \(f\) is then the chart-pulled-back \(g\); since
@@ -477,10 +489,11 @@ the abstract structure.
 Given a meromorphic map \(f:X\to\CPone\) with \(f(x)\neq\infty\) for
 all \(x\in X\), the function \(g(x):=\iota^{-1}(f(x))\) is well-defined
 on \(X\) and smooth.
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_mdiff_of_no_infty}
-\leanok
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.toFiniteFun_mdifferentiable}
+
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
+
 Well-definedness is the no-\(\infty\) hypothesis. Smoothness inherits
 from the chart-local representations of \(f\) at finite points: in
 each chart the map is given by a holomorphic function on a chart
@@ -493,10 +506,10 @@ disc, which transports through \(\iota^{-1}\) to a smooth
 For an actual meromorphic function \(f\), the zero and pole divisors
 have disjoint support: at every \(Q\), \(\operatorname{zeros}(f)(Q)=0\) or
 \(\operatorname{poles}(f)(Q)=0\).
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.zeros_poles_disjoint_support}
-\leanok
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.zero_or_pole_eq_zero}
+
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
 At \(Q\), \(f\) is locally given by a Laurent series with a single
 order \(n\in\Z\). If \(n\geq 0\), \(f\) is holomorphic at \(Q\) with
 zero of order \(n\) (so \(\operatorname{poles}(f)(Q)=0\)). If \(n<0\), \(f\) has a
@@ -508,10 +521,11 @@ are exclusive.
 \label{lem:mem-L-point-pole-pointwise-bound}
 \uses{def:riemann-roch-space,lem:meromorphic-zeros-poles-disjoint}
 If \(f\in L([P])\), then \(\operatorname{poles}(f)(Q)\leq[P](Q)\) for every \(Q\).
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles_le_point_of_mem_L_point}
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.MemRiemannRochSpace}
 \leanok
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
+\leanok
 \(L([P])\) membership says \((f)+[P]\geq 0\), i.e.\
 \(\operatorname{zeros}(f)-\operatorname{poles}(f)+[P]\geq 0\). At each \(Q\), use
 Lemma~\ref{lem:meromorphic-zeros-poles-disjoint} (disjoint zero/pole
@@ -524,10 +538,10 @@ and the inequality reduces to \(-\operatorname{poles}(f)(Q)+[P](Q)\geq 0\), givi
 \label{lem:meromorphic-poles-effective}
 \uses{def:divisor}
 The pole divisor of a meromorphic map is effective.
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poles_effective}
-\leanok
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.poleDivisor_nonneg}
+
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
 \(\operatorname{poles}(f)\) is by construction non-negative at every point: pole
 orders are non-negative integers.
 \end{proof}
@@ -537,10 +551,11 @@ orders are non-negative integers.
 \uses{def:divisor}
 An effective divisor \(D\) with \(D(Q)\leq[P](Q)\) for all \(Q\) is
 either \(0\) or \([P]\).
-\lean{JacobianChallenge.HolomorphicForms.Divisor.effective_le_point_iff_zero_or_eq}
+\lean{JacobianChallenge.HolomorphicForms.effective_le_point_iff_grounded}
 \leanok
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
+\leanok
 Off \(P\): \(0\leq D(Q)\leq 0\), so \(D(Q)=0\). At \(P\):
 \(0\leq D(P)\leq 1\), so \(D(P)\in\{0,1\}\). The two cases give the
 two conclusions via \code{Finsupp} extensionality.
@@ -555,7 +570,7 @@ On a compact connected genus-zero Riemann surface, the integers
 \lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_difference_eq_two}
 \leanok
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
 RR applied to \(D=[P]\) gives
 \(\ell(P)-\ell(K-P)=\deg(P)+1-g=1+1-0=2\).
 \end{proof}
@@ -568,7 +583,7 @@ degree, hence \(\ell(K-[P])=0\).
 \lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_K_minus_point_dim_zero}
 \leanok
 \end{lemma}
-\begin{proof}\leanok
+\begin{proof}
 \(\deg(K)=2g-2=-2\) in genus zero, so \(\deg(K-[P])=-3<0\), and any
 divisor of negative degree has trivial Riemann--Roch space.
 \end{proof}
