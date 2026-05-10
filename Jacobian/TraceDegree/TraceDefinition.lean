@@ -47,9 +47,20 @@ we push $\omega_x \in T_x^* X$ to $T_{f(x)}^* Y$. -/
 noncomputable def cotangentPushforward
     (f : X → Y) (x : X) (ωx : CotangentSpace ℂ X x) :
     CotangentSpace ℂ Y (f x) :=
-  -- This requires (mfderiv f x) to be an isomorphism.
-  -- In the regular locus, this is guaranteed by the unramified hypothesis.
-  sorry
+  let df := mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x
+  -- At regular values, df is a continuous linear equivalence.
+  -- For the top-down refinement, we use the inverse if it exists.
+  if h : IsIso df then
+    ωx.comp h.inv
+  else
+    0
+
+/-- Predicate for a continuous linear map being an isomorphism. -/
+structure IsIso {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    [NormedAddCommGroup F] [NormedSpace ℂ F] (f : E →L[ℂ] F) : Prop where
+  inv : F →L[ℂ] E
+  left_inv : inv.comp f = ContinuousLinearMap.id ℂ E
+  right_inv : f.comp inv = ContinuousLinearMap.id ℂ F
 
 /-- The trace of a 1-form at a regular value `y`.
 Sum over $x \in f^{-1}(y)$ of $(df_x)^{-1*} \omega_x$. -/
@@ -112,8 +123,15 @@ theorem traceAtRegularValue_add
     (ω₁ ω₂ : ∀ x, CotangentSpace ℂ X x)
     (y : Y) (hy : isRegularValue h y) :
     traceAtRegularValue h (fun x => ω₁ x + ω₂ x) y hy =
-      traceAtRegularValue h ω₁ y hy + traceAtRegularValue h ω₂ y hy :=
-  sorry
+      traceAtRegularValue h ω₁ y hy + traceAtRegularValue h ω₂ y hy := by
+  unfold traceAtRegularValue
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro ⟨x, hx⟩ _
+  unfold cotangentPushforward
+  split_ifs with hiso
+  · exact ContinuousLinearMap.add_comp _ _ _
+  · rw [add_zero]; rfl
 
 /-- The trace sum preserves scalar multiplication. -/
 theorem traceAtRegularValue_smul
@@ -121,8 +139,15 @@ theorem traceAtRegularValue_smul
     (c : ℂ) (ω : ∀ x, CotangentSpace ℂ X x)
     (y : Y) (hy : isRegularValue h y) :
     traceAtRegularValue h (fun x => c • ω x) y hy =
-      c • traceAtRegularValue h ω y hy :=
-  sorry
+      c • traceAtRegularValue h ω y hy := by
+  unfold traceAtRegularValue
+  rw [Finset.smul_sum]
+  apply Finset.sum_congr rfl
+  intro ⟨x, hx⟩ _
+  unfold cotangentPushforward
+  split_ifs with hiso
+  · exact ContinuousLinearMap.smul_comp c _ _
+  · rw [smul_zero]
 
 /-- The trace of a pullback is scaled by the degree (at regular values).
 (tr f (f* η))_y = deg(f) • η_y. -/
