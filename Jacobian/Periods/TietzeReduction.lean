@@ -1,8 +1,7 @@
 import Jacobian.Periods.SurfaceClassificationData
 import Jacobian.Periods.Orientable
 import Jacobian.Periods.EdgeWord
-import Mathlib.Geometry.Manifold.IsManifold.Basic
-import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib
 
 /-!
 # Round 49 — Tietze reduction `EdgeWordPresentation → PolygonalQuotientPresentation`
@@ -171,17 +170,43 @@ theorem rawWord_tietzeEq_standardWord_orientable
   have step1 : EdgeWord.TietzeEq w v := hwv.toTietzeEq
   exact step1.trans (hue ▸ hvu)
 
-/-- **Round 77 / Stage A leaf.** Single-step `InverseCancel` preserves
-the disk-quotient up to homeomorphism. -/
+/-- Helper: there exist continuous maps φ ψ : DiskC → DiskC that
+transform one side-pairing into the other and satisfy round-trip
+properties, enabling construction of the quotient homeomorphism.
+This encapsulates the geometric content of the inverse-cancellation
+homeomorphism. -/
+private lemma inverseCancel_geometric_maps
+    {g : ℕ} {w v : EdgeWord g} (_h : EdgeWord.InverseCancel w v) :
+    ∃ (φ ψ : DiskC → DiskC),
+      Continuous φ ∧ Continuous ψ ∧
+      (∀ x y, EdgeWord.sidePairingRel g w x y →
+        EdgeWord.sidePairingRel g v (φ x) (φ y)) ∧
+      (∀ x y, EdgeWord.sidePairingRel g v x y →
+        EdgeWord.sidePairingRel g w (ψ x) (ψ y)) ∧
+      (∀ x, EdgeWord.sidePairingRel g v (φ (ψ x)) x) ∧
+      (∀ x, EdgeWord.sidePairingRel g w (ψ (φ x)) x) := by
+  sorry
+
+/-
+**Round 77 / Stage A leaf.** Single-step `InverseCancel` preserves
+the disk-quotient up to homeomorphism.
+-/
 theorem wordQuotient_homeomorph_of_inverseCancel_step
     {g : ℕ} {w v : EdgeWord g} (_h : EdgeWord.InverseCancel w v) :
-    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) :=
-  -- Topological property: cancelling an adjacent inverse pair aa⁻¹
-  -- identifies two arcs that meet at a vertex, effectively collapsing
-  -- a "lens" (the interior arc between them) to a point. This
-  -- operation is a strong deformation retract of the disk, preserving
-  -- the quotient homeomorphism type.
-  sorry
+    Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
+  obtain ⟨φ, ψ, hφc, hψc, hφ, hψ, hr1, hr2⟩ := inverseCancel_geometric_maps _h
+  refine' ⟨ _, _, _ ⟩;
+  refine' ⟨ _, _, _, _ ⟩;
+  exact fun x => Quotient.map' φ ( by tauto ) x;
+  exact fun x => Quotient.map' ψ hψ x;
+  all_goals norm_num [ Function.LeftInverse, Function.RightInverse ];
+  · intro x;
+    induction x using Quotient.inductionOn';
+    exact Quotient.sound ( hr2 _ );
+  · intro x; exact (by
+    obtain ⟨ x, rfl ⟩ := Quotient.exists_rep x; exact Quotient.sound ( hr1 x ) ;);
+  · fun_prop;
+  · fun_prop
 
 /-- **Round 77 / Stage A leaf.** Single-step `HandleSwap` preserves
 the disk-quotient up to homeomorphism. -/
