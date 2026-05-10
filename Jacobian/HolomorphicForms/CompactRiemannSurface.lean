@@ -366,8 +366,117 @@ theorem holomorphicOneForm_supNorm_cauchySeq_limit_holomorphic
       (holomorphicOneForm_metricSpace X).toUniformSpace _ _σ) :
     True := trivial
 
-/-- **Structural axiom (CRS-step4).** Sup-norm convergence to the
-pointwise/holomorphic limit, assembling the previous three steps. -/
+/-
+**Sub-obligation (CRS-step4a-i).** A sup-norm Cauchy sequence
+of holomorphic 1-forms is pointwise Cauchy in each fiber.
+-/
+theorem holomorphicOneForm_supNorm_cauchySeq_fiberwise_cauchy
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
+      (holomorphicOneForm_metricSpace X).toUniformSpace _ σ)
+    (x : X) :
+    CauchySeq (fun n => (σ n).toFun x) := by
+  have h_cauchy : CauchySeq (fun n => (σ n).1 x) := by
+    have h_bdd : ∀ n m, ‖(σ n).1 x - (σ m).1 x‖ ≤ dist (σ n) (σ m) := by
+      exact fun n m => le_ciSup ( bddAbove_range_norm ( holomorphicOneForm_hcompat X ) ( σ n - σ m ) ) x
+    -- Since ‖(σ n).1 x - (σ m).1 x‖ ≤ dist (σ n) (σ m) and dist (σ n) (σ m) → 0, we can apply the definition of Cauchy sequence.
+    have h_cauchy_seq : ∀ ε > 0, ∃ N, ∀ n ≥ N, ∀ m ≥ N, ‖(σ n).1 x - (σ m).1 x‖ ≤ ε := by
+      intro ε εpos
+      obtain ⟨N, hN⟩ : ∃ N, ∀ n ≥ N, ∀ m ≥ N, dist (σ n) (σ m) < ε := by
+        have := _hCauchy;
+        convert Metric.cauchySeq_iff.1 this ε εpos using 1;
+      exact ⟨ N, fun n hn m hm => le_trans ( h_bdd n m ) ( le_of_lt ( hN n hn m hm ) ) ⟩;
+    exact Metric.cauchySeq_iff.2 fun ε hε => by rcases h_cauchy_seq ( ε / 2 ) ( half_pos hε ) with ⟨ N, hN ⟩ ; exact ⟨ N, fun n hn m hm => by simpa [ dist_eq_norm ] using lt_of_le_of_lt ( hN n hn m hm ) ( half_lt_self hε ) ⟩ ;
+  exact h_cauchy
+
+/-- **Sub-obligation (CRS-step4a-ii).** The pointwise limit of a
+sup-norm Cauchy sequence of holomorphic 1-forms exists in each fiber,
+because each fiber `CotangentSpace ℂ X x ≅ ℂ →L[ℂ] ℂ` is a
+complete normed space. -/
+noncomputable def holomorphicOneForm_supNorm_cauchySeq_fiberwise_limit
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
+      (holomorphicOneForm_metricSpace X).toUniformSpace _ σ)
+    (x : X) : CotangentSpace ℂ X x :=
+  limUnder Filter.atTop (fun n => (σ n).toFun x)
+
+theorem holomorphicOneForm_supNorm_cauchySeq_fiberwise_limit_spec
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
+      (holomorphicOneForm_metricSpace X).toUniformSpace _ σ)
+    (x : X) :
+    Filter.Tendsto (fun n => (σ n).toFun x) Filter.atTop
+      (nhds (holomorphicOneForm_supNorm_cauchySeq_fiberwise_limit X σ _hCauchy x)) := by
+  -- CotangentSpace ℂ X x = ℂ →L[ℂ] ℂ definitionally, which is complete
+  letI : CompleteSpace (CotangentSpace ℂ X x) :=
+    show CompleteSpace (ℂ →L[ℂ] ℂ) from inferInstance
+  exact (holomorphicOneForm_supNorm_cauchySeq_fiberwise_cauchy X σ _hCauchy x).tendsto_limUnder
+
+/-- **Sub-obligation (CRS-step4a-iii, Weierstrass).** The pointwise
+limit function is a smooth section of the cotangent bundle.
+
+This is the Weierstrass convergence theorem for holomorphic 1-forms:
+a uniform (sup-norm) limit of smooth sections is smooth.
+
+Mathlib provides `TendstoLocallyUniformlyOn.differentiableOn`
+(Weierstrass for functions `ℂ → E` on open subsets of `ℂ`), but the
+lift from chart-local differentiability to global `ContMDiff` for a
+vector bundle section is a non-trivial infrastructure step. -/
+theorem holomorphicOneForm_supNorm_cauchySeq_limit_contMDiff
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
+      (holomorphicOneForm_metricSpace X).toUniformSpace _ σ)
+    (f : (x : X) → CotangentSpace ℂ X x)
+    (_hf : ∀ x, Filter.Tendsto (fun n => (σ n).toFun x) Filter.atTop (nhds (f x))) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ)
+      ((modelWithCornersSelf ℂ ℂ).prod (modelWithCornersSelf ℂ (CotangentModelFiber ℂ)))
+      ⊤ (fun x => Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) x (f x)) := by
+  sorry
+
+/-- **Sub-obligation (CRS-step4a).** Pointwise limit construction:
+a sup-norm Cauchy sequence of holomorphic 1-forms admits a holomorphic
+1-form that is the pointwise limit in each fiber.
+
+Assembly from the three sub-obligations:
+- `holomorphicOneForm_supNorm_cauchySeq_fiberwise_cauchy` (pointwise Cauchy)
+- `holomorphicOneForm_supNorm_cauchySeq_fiberwise_limit_spec` (pointwise limit exists)
+- `holomorphicOneForm_supNorm_cauchySeq_limit_contMDiff` (Weierstrass: limit is smooth) -/
+theorem holomorphicOneForm_supNorm_cauchySeq_pointwise_limit
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
+      (holomorphicOneForm_metricSpace X).toUniformSpace _ σ) :
+    ∃ a : HolomorphicOneForm ℂ X,
+      ∀ x : X, Filter.Tendsto (fun n => (σ n).toFun x) Filter.atTop
+        (nhds (a.toFun x)) := by
+  let f := holomorphicOneForm_supNorm_cauchySeq_fiberwise_limit X σ _hCauchy
+  have hf := holomorphicOneForm_supNorm_cauchySeq_fiberwise_limit_spec X σ _hCauchy
+  have hsmooth := holomorphicOneForm_supNorm_cauchySeq_limit_contMDiff X σ _hCauchy f hf
+  exact ⟨⟨f, hsmooth⟩, hf⟩
+
+/-
+**Structural axiom (CRS-step4).** Sup-norm convergence to the
+pointwise/holomorphic limit, assembling the previous three steps.
+
+Proved from `holomorphicOneForm_supNorm_cauchySeq_pointwise_limit`:
+given the pointwise limit `a`, sup-norm convergence follows by
+passing the Cauchy bound `‖(σ m)(x) − (σ n)(x)‖ < ε` through the
+limit `n → ∞`, then taking `sup` over `x`.
+-/
 theorem holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -379,7 +488,32 @@ theorem holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
       @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
         (@nhds (HolomorphicOneForm ℂ X)
           (holomorphicOneForm_metricSpace X).toUniformSpace.toTopologicalSpace a) := by
-  sorry
+  obtain ⟨ a, ha ⟩ := holomorphicOneForm_supNorm_cauchySeq_pointwise_limit X σ _hCauchy;
+  have h_uniform : ∀ ε > 0, ∃ N, ∀ n ≥ N, ∀ x : X, ‖(σ n).toFun x - a.toFun x‖ < ε := by
+    intro ε εpos
+    obtain ⟨N, hN⟩ : ∃ N, ∀ m n, m ≥ N → n ≥ N → ∀ x : X, ‖(σ m).toFun x - (σ n).toFun x‖ < ε / 2 := by
+      have h_uniform : ∀ ε > 0, ∃ N, ∀ m n, m ≥ N → n ≥ N → dist (σ m) (σ n) < ε := by
+        intro ε εpos
+        have := _hCauchy
+        simp_all +decide [ Metric.cauchySeq_iff ];
+        exact Exists.elim ( _hCauchy ε εpos ) fun N hN => ⟨ N, fun m n hm hn => hN m hm n hn ⟩;
+      obtain ⟨ N, hN ⟩ := h_uniform ( ε / 2 ) ( half_pos εpos );
+      use N;
+      intro m n hm hn x;
+      refine' lt_of_le_of_lt _ ( hN m n hm hn );
+      apply le_csSup;
+      · apply_rules [ SectionSupNorm.bddAbove_range_norm, holomorphicOneForm_hcompat ];
+      · exact ⟨ x, rfl ⟩;
+    exact ⟨ N, fun n hn x => by simpa using lt_of_le_of_lt ( le_of_tendsto ( Filter.Tendsto.norm ( Filter.Tendsto.sub ( tendsto_const_nhds ) ( ha x ) ) ) ( Filter.eventually_atTop.mpr ⟨ N, fun m hm => le_of_lt ( hN n m hn hm x ) ⟩ ) ) ( by linarith ) ⟩;
+  have h_uniform : Filter.Tendsto (fun n => supNorm (σ n - a)) Filter.atTop (nhds 0) := by
+    rw [ Metric.tendsto_nhds ];
+    intro ε hε; obtain ⟨ N, hN ⟩ := h_uniform ( ε / 2 ) ( half_pos hε ) ; filter_upwards [ Filter.Ici_mem_atTop N ] with n hn; simp_all +decide [ dist_eq_norm ] ;
+    rw [ abs_of_nonneg ( by exact Real.iSup_nonneg fun _ => norm_nonneg _ ) ];
+    refine' lt_of_le_of_lt ( ciSup_le fun x => _ ) ( half_lt_self hε );
+    exact le_of_lt ( hN n hn x );
+  use a;
+  letI := holomorphicOneForm_metricSpace X;
+  exact tendsto_iff_dist_tendsto_zero.mpr h_uniform
 
 /-- **Prerequisite 2a (sorry — analytic core of completeness).**
 Every sup-norm Cauchy sequence of holomorphic 1-forms converges (in
