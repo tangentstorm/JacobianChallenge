@@ -72,10 +72,9 @@ hand, the Jacobian (Definition~\ref{def:analytic-jacobian}) is just
 ``dual-of-1-forms modulo lattice'' — and that quotient is
 automatically a compact complex Lie additive group.
 \end{layman}
-
 \begin{theorem}[Trace-pullback identity]
 \label{thm:trace-pullback}
-\uses{def:degree-trace,lem:trace-forms,lem:pullback-forms}
+\uses{def:degree-trace,lem:trace-forms,lem:pullback-forms,thm:trace-pullback-identity}
 For every \(\eta\in\HY\),
 \[
   \tr_f(f^{*}\eta)=\deg(f)\,\eta.
@@ -83,8 +82,8 @@ For every \(\eta\in\HY\),
 \lean{JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback}
 \leanok
 \proofplan
-Compute locally on regular values using inverse branches, then globalize by
-analytic continuation to conclude \(\tr_f(f^*\eta)=\deg(f)\eta\).
+Use the fundamental identity \(\tr_f \circ f^* = \deg(f)\) on holomorphic 1-forms
+(Theorem~\ref{thm:trace-pullback-identity}) and descend to the Jacobian quotient.
 \end{theorem}
 
 \begin{layman}

@@ -1,0 +1,95 @@
+\section{Implementation Details and Formalization Hooks}
+\label{sec:impl-details}
+
+\subsection{Analytic Implementation: Compact Riemann Surfaces}
+
+\begin{lemma}[Continuity of evaluation and fiber norm]
+\label{lem:section-eval-continuity}
+\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection.continuous_eval_at_one, JacobianChallenge.HolomorphicForms.ContMDiffSection.fiberNorm_eq_abs_eval_one}
+\notready
+\end{lemma}
+
+\begin{lemma}[Pointwise limit of Cauchy sequence]
+\label{lem:section-limit-steps}
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps}
+\notready
+\end{lemma}
+
+\begin{lemma}[Arzel\`{a}--Ascoli for 1-forms]
+\label{lem:section-arzela-ascoli}
+\uses{lem:section-eval-continuity, lem:section-limit-steps}
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_arzela_ascoli}
+\notready
+\end{lemma}
+
+\subsection{Analytic Implementation: de Rham and Periods}
+
+\begin{lemma}[Path-integral primitive on a chart disk]
+\label{lem:path-integral-primitive}
+\lean{JacobianChallenge.HolomorphicForms.closedForm_pathIntegral_primitive, JacobianChallenge.HolomorphicForms.closedForm_pathIntegral_primitive_derivative}
+\notready
+\end{lemma}
+
+\begin{lemma}[Integration equivalence: \v{C}ech vs.\ path]
+\label{lem:integral-cech-path-equivalence}
+\lean{JacobianChallenge.HolomorphicForms.integral_closed_form_from_cech_eq}
+\notready
+\end{lemma}
+
+\subsection{Algebraic Implementation: Meromorphic Function Space}
+
+\begin{lemma}[Algebraic operations on meromorphic functions]
+\label{lem:meromorphic-algebraic-ops}
+\lean{JacobianChallenge.HolomorphicForms.add_toFun, JacobianChallenge.HolomorphicForms.neg_toFun, JacobianChallenge.HolomorphicForms.smul_toFun, JacobianChallenge.HolomorphicForms.zero, JacobianChallenge.HolomorphicForms.poles, JacobianChallenge.HolomorphicForms.zeros}
+\notready
+\end{lemma}
+
+\begin{lemma}[Properties of constant meromorphic functions]
+\label{lem:meromorphic-constants}
+\lean{JacobianChallenge.HolomorphicForms.constant, JacobianChallenge.HolomorphicForms.constant_poles, JacobianChallenge.HolomorphicForms.constant_zeros}
+\notready
+\end{lemma}
+
+\begin{theorem}[Meromorphic vector space instance]
+\label{lem:meromorphic-vector-space-instance}
+\uses{lem:meromorphic-algebraic-ops, lem:meromorphic-constants}
+\lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionVectorSpace}
+\notready
+\end{theorem}
+
+\subsection{Remaining Implementation Details}
+
+\begin{lemma}[Meromorphic lift and degree]
+\label{lem:impl-meromorphic-lift}
+\uses{lem:meromorphic-local-normalization, lem:meromorphic-fiber-count-conservation}
+\lean{JacobianChallenge.HolomorphicForms.isHolomorphic_of_contMDiff}
+\notready
+\end{lemma}
+
+\begin{lemma}[Lip-cycle and Trace preservation]
+\label{lem:impl-trace-lip}
+\lean{JacobianChallenge.TraceDegree.pullbackTraceLift_preserves_lattice_raw, JacobianChallenge.TraceDegree.cycleLipChain_obligation, JacobianChallenge.TraceDegree.cycleLipPath_obligation}
+\notready
+\end{lemma}
+
+\begin{lemma}[Miscellaneous algebraic orphans]
+\label{lem:impl-misc-orphans}
+\lean{JacobianChallenge.HolomorphicForms.residueMap_left_inv, JacobianChallenge.HolomorphicForms.residueMap_right_inv, JacobianChallenge.Periods.edgeBasisMap_surjective}
+\notready
+\end{lemma}
+
+\begin{lemma}[All remaining implementation orphans]
+\label{lem:impl-orphans-aggregate}
+\lean{montel_pointwise_extraction,chain_integration_kills_boundary,exists_singularSimplex_integration,intersectionForm_nondeg,branchedDegreeOfMap_eq_one_of_simple_two_point_principal,ContMDiffSection.continuous_eval_at_one,ContMDiffSection.fiberNorm_eq_abs_eval_one,poles_eq_zero_iff_constant,residueMap_left_inv,residueMap_right_inv,honestMeromorphic_branchedCoverData_obligation,unfoldedDisk_to_edgeWordPresentation,sidePairingRel_standardWord,standardWord_get_handle,standardWord_get_unique,pathIntegralViaCoverWith_refinement_invariant',polygon4g_cellular_singular_iso,edgeBasisMap_surjective,cyclePushforward_chainLevel_repr,periodPairing_chainLevel_repr,rawWord_handle_separation_orientable,wordQuotient_homeomorph_of_handleSwap_step,wordQuotient_homeomorph_of_inverseCancel_step,boundary_sq_zero_on_simplex,cellularToSingular_isChainMap,cellularToSingular_isChainMap_basis_extension,cellular_face_finset,cellular_face_index,cellular_face_sign,cellular_pair_exact,cellular_signed_face_basis,cellular_signed_face_extends_linearly,cellular_signed_face_operator_chain,characteristic_singular_face_compat,five_lemma_glue_to_global_iso,relative_hurewicz_skeletal_pair,simplex_affine_extension_existence,simplex_affine_map,simplex_affine_map_continuous,singularH_wedge_of_spheres,skeletal_h1_five_lemma_identity,skeletal_h1_quotient_substantive,skeletal_h1_zeroSkeleton,skeletal_pair_wedge_of_spheres,handleSwap_grouping_inductive_step,pullbackTraceLift_preserves_lattice_raw,cycleLipChain_obligation,cycleLipPath_obligation,isHolomorphic_of_contMDiff}
+\notready
+\end{lemma}
+
+\subsection{Connection to Main Goals}
+
+\begin{lemma}[Wiring implementation to roots]
+\label{lem:impl-wiring-to-roots}
+\uses{lem:section-arzela-ascoli, lem:meromorphic-vector-space-instance, lem:polygon-cellular-singular-iso, lem:impl-meromorphic-lift, lem:impl-trace-lip, lem:impl-orphans-aggregate}
+This lemma serves as the final hook connecting the implementation-level proof obligations
+back into the project's high-level goal nodes.
+\notready
+\end{lemma}

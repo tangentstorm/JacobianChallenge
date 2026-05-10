@@ -3673,7 +3673,7 @@ At chain-level this is the identity
 checked on the basis of \(K_{n}\) by computing the signed face
 operator on each side.
 \lean{JacobianChallenge.StageA.cellularToSingular_isChainMap_substantive}
-\leanok
+\notready
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.A.r2 --- skeletal-pair LES]
@@ -4980,6 +4980,39 @@ $(g \circ F)'(w) = g'(F(w)) \cdot F'(w)$ for holomorphic $g, F$, by the complex 
 \end{lemma}
 
 % --------------------------------------------------------------
+\subsubsection*{Chain DR: de Rham comparison and path integration (lem:period-homology-invariance)}
+
+\begin{lemma}[Path-integral primitive on a chart disk]
+\label{lem:path-integral-primitive}
+A closed 1-form on a chart-disk has a primitive defined by path integration.
+\lean{JacobianChallenge.HolomorphicForms.closedForm_pathIntegral_primitive, JacobianChallenge.HolomorphicForms.closedForm_pathIntegral_primitive_derivative}
+\notready
+\end{lemma}
+
+\begin{lemma}[Integration equivalence: \v{C}ech vs.\ path]
+\label{lem:integral-cech-path-equivalence}
+The \v{C}ech-derived integral of a closed 1-form equals its path integral.
+\lean{JacobianChallenge.HolomorphicForms.integral_closed_form_from_cech_eq}
+\notready
+\end{lemma}
+
+\subsubsection*{Chain RH: Riemann--Hurwitz formula (thm:riemann-hurwitz-formula)}
+
+\begin{lemma}[Riemann--Hurwitz formula]
+\label{thm:riemann-hurwitz-formula}
+For a nonconstant holomorphic map $f : X \to Y$ of degree $d$ between compact Riemann surfaces,
+$2 g_{X} - 2 = d \cdot (2 g_{Y} - 2) + \deg R$.
+\lean{JacobianChallenge.Blueprint.AbelExistence.RiemannHurwitzDeg1.riemann_hurwitz_formula}
+\notready
+\end{lemma}
+
+\begin{lemma}[Degree-1 map has zero ramification]
+\label{lem:ramification-zero-of-deg-one}
+A holomorphic map of degree 1 has no ramification points.
+\lean{JacobianChallenge.Blueprint.AbelExistence.RiemannHurwitzDeg1.ramification_zero_of_deg_one}
+\notready
+\end{lemma}
+
 \subsubsection*{Chain F9: Trace of a holomorphic 1-form along a finite branched cover (lem:trace-forms)}
 
 \begin{lemma}[Pass F9.1: define $\mathrm{tr}\,\omega$ on the unbranched locus]
@@ -7608,6 +7641,16 @@ Standard model: $4g$-gon with $aba^{-1}b^{-1}\cdots$ relator gives genus $g$.
 \label{lem:toh-r8}
 \uses{lem:toh-r9}
 Closed orientable 2-manifolds are classified by genus.
+\notready
+\end{lemma}
+
+\begin{lemma}[Integral homology rank is 2g]
+\label{lem:h1-free-of-genus}
+\uses{lem:toh-r8}
+For a compact connected Riemann surface $X$ of genus $g$,
+the first integral homology $H_{1}(X, \Z)$ is a free $\Z$-module
+of rank $2g$.
+\lean{JacobianChallenge.Blueprint.Sec03.h1_free_of_genus}
 \notready
 \end{lemma}
 
