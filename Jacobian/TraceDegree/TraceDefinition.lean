@@ -106,14 +106,14 @@ noncomputable def localTraceAtRegularValue
     localPullbackAt h hf ω x hx_unram
   )
 
-/-- The local trace is holomorphic (it is a finite sum of local pullbacks). -/
-theorem localTraceAtRegularValue_holomorphic
+/-- The trace of a pullback is scaled by the degree (at regular values).
+(tr f (f* η))_y = deg(f) • η_y. -/
+theorem trace_pullback_at_regular_value
     {f : X → Y} (h : BranchedCoverData X Y f)
-    (hf : IsHolomorphic f)
-    (ω : HolomorphicOneForm ℂ X)
+    (η : HolomorphicOneForm ℂ Y)
     (y : Y) (hy : isRegularValue h y) :
-    ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, CotangentModelFiber ℂ) (⊤ : WithTop ℕ∞)
-      (localTraceAtRegularValue h hf ω y hy) :=
-  (localTraceAtRegularValue h hf ω y hy).contMDiff
+    traceAtRegularValue h (fun x => (pullbackFormsBundled f sorry η).toFun x) y hy =
+      (h.weightedFiberCard y : ℂ) • η.toFun y :=
+  sorry
 
 end JacobianChallenge.HolomorphicForms
