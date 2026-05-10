@@ -77,9 +77,7 @@ theorem trace_pullback_identity_regular
     (traceFormsBundled f hf (pullbackFormsBundled f hf η)).toFun y =
       ((hbc.weightedFiberCard y : ℂ) • η).toFun y := by
   rw [traceFormsBundled_apply_fun_regular hf hbc (pullbackFormsBundled f hf η) y hy]
-  -- Use trace_pullback_at_regular_value from TraceDefinition.lean
-  -- This requires matching pullbackFormsBundled with cotangentPushforward
-  sorry
+  exact trace_pullback_at_regular_value hbc η y hy
 
 /-- The target-side branch locus (image of ramification points) is finite. -/
 theorem branchLocus_finite
