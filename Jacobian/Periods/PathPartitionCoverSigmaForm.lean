@@ -1,5 +1,8 @@
 import Jacobian.Periods.PathPartition
 import Jacobian.Periods.DivFinIcc
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Normed.Module.Basic
+import Mathlib.Topology.Subpath
 
 /-!
 # Cover for the σ-form γ-segment at index `Fin.rev i`
