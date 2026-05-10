@@ -25,7 +25,8 @@ theorem exists_partition_of_unity (X : Type*) [TopologicalSpace X] [T2Space X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (atlas : Set (OpenPartialHomeomorph X ℂ)) (hcover : (⋃ c ∈ atlas, c.source) = Set.univ) :
     ∃ (pou : List (X → ℝ)), True := by
-  -- Follows from `SmoothPartitionOfUnity.exists_isSubordinate` on the real restriction.
+  -- 1. Restrict to real manifold
+  -- 2. Apply SmoothPartitionOfUnity.exists_isSubordinate
   sorry
 
 /-- **Sub-obligation 1.3: Metric gluing.**
@@ -44,13 +45,15 @@ theorem exists_compatible_metric (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Nonempty (CompatibleMetric X) := by
-  -- 1. Pick a finite atlas
-  -- 2. Construct local Euclidean metrics
-  -- 3. Pick a partition of unity
-  obtain ⟨pou, _⟩ := exists_partition_of_unity X (Set.univ : Set (OpenPartialHomeomorph X ℂ)) (by sorry)
-  -- 4. Glue
-  let _g := glue_local_metrics X (Set.univ : Set (OpenPartialHomeomorph X ℂ)) (fun _ => ()) pou
-  exact ⟨_g⟩
+  -- 1. Pick a finite sub-atlas (compactness)
+  have _hatlas : ∃ (atlas : Set (OpenPartialHomeomorph X ℂ)), (⋃ c ∈ atlas, c.source) = Set.univ ∧ atlas.Finite := sorry
+  obtain ⟨atlas, hcover, _hfinite⟩ := _hatlas
+  -- 2. Get the partition of unity for this atlas
+  obtain ⟨pou, _⟩ := exists_partition_of_unity X atlas hcover
+  -- 3. Construct local metrics
+  let local_gs : atlas → Unit := fun _ => ()
+  -- 4. Glue to form the global metric
+  exact ⟨glue_local_metrics X atlas local_gs pou⟩
 
 /-- **Sub-obligation 1.4: Beltrami Equation / Existence of Isothermal Coordinates.**
 On any 2-manifold with a Riemannian metric, there exist local coordinates (u, v)
