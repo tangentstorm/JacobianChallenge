@@ -25,6 +25,12 @@ def IsHarmonic {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   -- Placeholder for d*df = 0
   True
 
+/-- A real function has a dipole singularity at P if it locally behaves like Re(1/z). -/
+def HasRealDipoleSingularity {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    (P : X) (u : X → ℝ) : Prop :=
+  -- Placeholder for u ~ Re(1/z) near P
+  True
+
 /-- **Sub-obligation 2.1: Sobolev space H^1(X).**
 The Dirichlet principle is formulated in the Hilbert space of functions with
 square-integrable derivatives. -/
@@ -93,7 +99,7 @@ small chart around P and is zero elsewhere. -/
 theorem exists_trial_dipole (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (g : CompatibleMetric X) (P : X) :
-    ∃ u₀ : X → ℝ, True := by
+    ∃ u₀ : X → ℝ, HasRealDipoleSingularity P u₀ := by
   -- 1. Pick a chart at P
   -- 2. Define local_dipole_function
   -- 3. Pick a bump function ψ
@@ -116,13 +122,16 @@ theorem exists_dipole_harmonic (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (g : CompatibleMetric X) (P : X) :
-    ∃ u : X → ℝ, True := by
+    ∃ u : X → ℝ, IsHarmonic g u ∧ HasRealDipoleSingularity P u := by
   -- 1. Construct the trial function u₀
-  obtain ⟨u₀, _⟩ := exists_trial_dipole X g P
+  obtain ⟨u₀, hu₀⟩ := exists_trial_dipole X g P
   -- 2. Find the harmonic minimizer v
   obtain ⟨v, hv⟩ := exists_harmonic_minimizer X g u₀
-  -- 3. u = u₀ + v is the desired harmonic function
-  exact ⟨fun x => u₀ x + v x, hv⟩
+  -- 3. u = u₀ + v is the desired harmonic function.
+  -- The minimizer v is in H^1, which doesn't alter the principal singularity at P.
+  -- Thus u₀ + v still has the required real dipole singularity.
+  have hu_sing : HasRealDipoleSingularity P (fun x => u₀ x + v x) := sorry
+  exact ⟨fun x => u₀ x + v x, hv, hu_sing⟩
 
 /-- **Sub-obligation 5.1: Hodge Decomposition.**
 For a compact Riemann surface, the first de Rham cohomology group is
@@ -158,6 +167,22 @@ theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2
   -- 2. dim H^1 = 2 * 0 = 0
   sorry
 
+/-- **Sub-obligation 1a: Cauchy-Riemann equations.**
+A pair of real-valued functions (u, v) satisfies the Cauchy-Riemann equations
+if du = *dv. -/
+def SatisfiesCauchyRiemann {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) (u v : X → ℝ) : Prop :=
+  -- Placeholder for du = *dv
+  True
+
+/-- **Sub-obligation 1b: CR implies holomorphic.**
+If (u, v) satisfies the Cauchy-Riemann equations, then f = u + iv is holomorphic. -/
+theorem holomorphic_of_CR {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    (g : CompatibleMetric X) (u v : X → ℝ) (hcr : SatisfiesCauchyRiemann g u v) :
+    -- Placeholder for Holomorphic (u + iv)
+    True := by
+  sorry
+
 /-- **Sub-obligation 3.1: The conjugate 1-form is closed.**
 For a harmonic function u, the 1-form *du is closed (d*du = 0). -/
 theorem conjugate_one_form_closed (X : Type*) [TopologicalSpace X]
@@ -179,39 +204,24 @@ admits a harmonic conjugate, making u + iv holomorphic. -/
 theorem harmonic_conjugate_exists (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (g : CompatibleMetric X) (u : X → ℝ)
     (hb1 : True) (hu : IsHarmonic g u) :
-    ∃ v : X → ℝ, True := by
+    ∃ v : X → ℝ, SatisfiesCauchyRiemann g u v := by
   -- 1. *du is a closed 1-form
   have hclosed := conjugate_one_form_closed X g u hu
   -- 2. H^1 = 0 implies *du is exact, so *du = dv
-  exact exact_of_closed_in_genus_zero X (HodgeStar g (sorry)) hb1 hclosed
-
-/-- **Sub-obligation 1a: Cauchy-Riemann equations.**
-A pair of real-valued functions (u, v) satisfies the Cauchy-Riemann equations
-if du = *dv. -/
-def SatisfiesCauchyRiemann {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    (g : CompatibleMetric X) (u v : X → ℝ) : Prop :=
-  -- Placeholder for du = *dv
-  True
-
-/-- **Sub-obligation 1b: CR implies holomorphic.**
-If (u, v) satisfies the Cauchy-Riemann equations, then f = u + iv is holomorphic. -/
-theorem holomorphic_of_CR {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    (g : CompatibleMetric X) (u v : X → ℝ) (hcr : SatisfiesCauchyRiemann g u v) :
-    -- Placeholder for Holomorphic (u + iv)
-    True := by
+  -- We extract the potential v from the exactness of *du.
+  -- This v satisfies the Cauchy-Riemann equations with u.
   sorry
 
 /-- **Sub-obligation 1 assembly.**
 A harmonic function and its harmonic conjugate assemble into a holomorphic
 function. -/
 theorem holomorphic_of_harmonic_conjugate (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (u v : X → ℝ) :
+    [ChartedSpace ℂ X] (g : CompatibleMetric X) (u v : X → ℝ)
+    (hcr : SatisfiesCauchyRiemann g u v) :
     -- Placeholder for Holomorphic (u + iv) on X \ {P}
     True := by
-  -- 1. Conjugate relationship implies CR equations
-  have hcr : SatisfiesCauchyRiemann (sorry) u v := sorry
-  -- 2. CR implies holomorphic
-  exact holomorphic_of_CR (sorry) u v hcr
+  -- CR implies holomorphic
+  exact holomorphic_of_CR g u v hcr
 
 /-- **Sub-obligation 2a.1: Local limit in C.**
 The function z -> Re(1/z) has magnitude tending to infinity as z -> 0. -/
@@ -237,9 +247,9 @@ theorem magnitude_re_inv_z_tendsto_infty :
 /-- **Sub-obligation 2a: Singularity magnitude limit.**
 The dipole singularity Re(1/z) has magnitude tending to infinity. -/
 theorem dipole_singularity_magnitude_tendsto_infty (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (P : X) (u v : X → ℝ) :
-    Filter.Tendsto (fun x => Real.sqrt (u x ^ 2 + v x ^ 2))
-      (nhdsWithin P ({P}ᶜ)) Filter.atTop := by
+    [ChartedSpace ℂ X] (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
+    (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) :
+    Filter.Tendsto (fun x : X => norm (⟨u x, v x⟩ : ℂ)) (nhdsWithin P {P}ᶜ) Filter.atTop := by
   -- 1. Locally u + iv ~ 1/z
   -- 2. Apply magnitude_re_inv_z_tendsto_infty
   sorry
@@ -247,45 +257,53 @@ theorem dipole_singularity_magnitude_tendsto_infty (X : Type*) [TopologicalSpace
 /-- **Sub-obligation 2b: Magnitude limit implies OnePoint continuity.**
 If |f(z)| → ∞ as z → P, then the extension f : X → OnePoint ℂ is continuous at P. -/
 theorem continuous_at_infinity_of_magnitude_atTop (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (P : X) (f : X → ℂ) :
-    -- Placeholder for Tendsto f (nhdsWithin P {P}ᶜ) Filter.cocompact
-    True := by
-  sorry
+    [ChartedSpace ℂ X] (P : X) (f : X → ℂ)
+    (h_mag : Filter.Tendsto (fun x => norm (f x)) (nhdsWithin P {P}ᶜ) Filter.atTop) :
+    Filter.Tendsto f (nhdsWithin P {P}ᶜ) (Filter.cocompact ℂ) := by
+  rw [← Metric.cobounded_eq_cocompact]
+  exact tendsto_norm_atTop_iff_cobounded.mp h_mag
 
 /-- **Sub-obligation 2 assembly.**
 Because u has a dipole singularity at P (u ~ Re(1/z)), the magnitude
 |u + iv| goes to infinity at P. Thus, the map into OnePoint ℂ is continuous. -/
 theorem dipole_harmonic_continuous_extension (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (P : X) (u v : X → ℝ) :
-    -- Placeholder for Continuous at P
-    True := by
+    [ChartedSpace ℂ X] (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
+    (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) :
+    Filter.Tendsto (fun x : X => (⟨u x, v x⟩ : ℂ)) (nhdsWithin P {P}ᶜ) (Filter.cocompact ℂ) := by
   -- 1. Singularity behavior
-  have hlim := dipole_singularity_magnitude_tendsto_infty X P u v
+  have hlim := dipole_singularity_magnitude_tendsto_infty X g P u v hu hcr
   -- 2. Limit implies continuity at infinity
-  exact continuous_at_infinity_of_magnitude_atTop X P (fun x => ⟨u x, v x⟩)
+  exact continuous_at_infinity_of_magnitude_atTop X P (fun x => ⟨u x, v x⟩) hlim
 
 /-- **Sub-obligation 3a: Riemann Removable Singularity for poles.**
 If f is holomorphic on X \ {P} and continuous at P as a map to OnePoint ℂ,
-then f is holomorphic at P (as a meromorphic map). -/
+then f is holomorphic at P (as a meromorphic map).
+
+Note: Mathlib provides the core analytic result in
+`Mathlib.Analysis.Complex.RemovableSingularity` for functions `f : ℂ → E`.
+This sub-obligation represents lifting that result to complex manifolds
+by evaluating it in a local chart around P. -/
 theorem holomorphic_at_P_of_continuous_at_infty (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (P : X) (f : X → OnePoint ℂ) (hholo : True) (hcont : True) :
     -- Placeholder for f is holomorphic at P
     True := by
-  -- Proof: consider 1/f, which is bounded near P, hence has a removable
-  -- singularity and vanishes at P.
+  -- Proof: consider 1/f in a chart around P, which is bounded near P,
+  -- hence has a removable singularity and vanishes at P by the Mathlib theorem.
   sorry
 
 /-- **Sub-obligation 3 assembly.**
 The continuous map to OnePoint ℂ is actually holomorphic at P,
 meaning it gives a true meromorphic function. -/
 theorem dipole_harmonic_holomorphic_extension (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (P : X) (u v : X → ℝ) (hcont : True) :
+    [ChartedSpace ℂ X] (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
+    (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v)
+    (hcont : Filter.Tendsto (fun x : X => (⟨u x, v x⟩ : ℂ)) (nhdsWithin P {P}ᶜ) (Filter.cocompact ℂ)) :
     -- Placeholder for Holomorphic on all of X
     True := by
   -- 1. Holomorphic off P
-  have hholo_off := holomorphic_of_harmonic_conjugate X u v
+  have hholo_off := holomorphic_of_harmonic_conjugate X g u v hcr
   -- 2. Riemann extension
-  exact holomorphic_at_P_of_continuous_at_infty X P (sorry) hholo_off hcont
+  exact holomorphic_at_P_of_continuous_at_infty X P (sorry) hholo_off (sorry)
 
 /-- **Sub-obligation 4a: Order of vanishing of 1/f.**
 If f is constructed from a dipole singularity u ~ Re(1/z), then 1/f
@@ -300,7 +318,8 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X]
 Since the singularity of u is locally Re(1/z), the pole of f at P is simple. -/
 theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (P : X) (u v : X → ℝ) (hholo : True) :
+    (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
+    (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) (hholo : True) :
     -- We need to ensure the witness 'f' exists to state its pole order.
     ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
   -- 1. Vanishing order of 1/f is 1
@@ -315,15 +334,16 @@ theorem dipole_harmonic_yields_simple_pole (X : Type*) [TopologicalSpace X] [T2S
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (u v : X → ℝ) :
+    (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
+    (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) :
     ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
   -- 1. Assemble u + iv off P
-  have _hholo_off := holomorphic_of_harmonic_conjugate X u v
+  have _hholo_off := holomorphic_of_harmonic_conjugate X g u v hcr
   -- 2. Extend continuously to P in OnePoint ℂ
-  have _hcont := dipole_harmonic_continuous_extension X P u v
+  have _hcont := dipole_harmonic_continuous_extension X g P u v hu hcr
   -- 3. The extension is holomorphic at P (Riemann removable singularity)
-  have _hholo := dipole_harmonic_holomorphic_extension X P u v _hcont
+  have _hholo := dipole_harmonic_holomorphic_extension X g P u v hu hcr _hcont
   -- 4. The pole at P is simple (order 1)
-  exact dipole_harmonic_pole_is_simple X P u v _hholo
+  exact dipole_harmonic_pole_is_simple X g P u v hu hcr _hholo
 
 end JacobianChallenge.HolomorphicForms
