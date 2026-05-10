@@ -283,12 +283,13 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X]
 
 /-- **Sub-obligation 4 assembly.**
 Since the singularity of u is locally Re(1/z), the pole of f at P is simple. -/
-theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (P : X) (u v : X → ℝ) (hholo : True) :
-    -- Placeholder for f.poles = Divisor.point P
-    True := by
+theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (P : X) (u v : X → ℝ) (hholo : True) :
+    -- We need to ensure the witness 'f' exists to state its pole order.
+    ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
   -- 1. Vanishing order of 1/f is 1
-  have horder := inverse_dipole_vanishing_order_one X P u v
+  have _horder := inverse_dipole_vanishing_order_one X P u v
   -- 2. Order 1 zero implies simple pole
   sorry
 
@@ -301,17 +302,13 @@ theorem dipole_harmonic_yields_simple_pole (X : Type*) [TopologicalSpace X] [T2S
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (u v : X → ℝ) :
     ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
-  -- 1. Assemble u + iv
+  -- 1. Assemble u + iv off P
   have _hholo_off := holomorphic_of_harmonic_conjugate X u v
-  -- 2. Extend continuously to P
+  -- 2. Extend continuously to P in OnePoint ℂ
   have _hcont := dipole_harmonic_continuous_extension X P u v
-  -- 3. Show the extension is globally holomorphic to OnePoint ℂ
+  -- 3. The extension is holomorphic at P (Riemann removable singularity)
   have _hholo := dipole_harmonic_holomorphic_extension X P u v _hcont
-  -- 4. Verify the pole is simple
-  have _hpole := dipole_harmonic_pole_is_simple X P u v _hholo
-  -- Final packaging: the map f(x) = u(x) + i v(x) (with ∞ at P) is meromorphic.
-  -- We provide the witness via Classical.choice from the existence of the
-  -- holomorphic map.
-  sorry
+  -- 4. The pole at P is simple (order 1)
+  exact dipole_harmonic_pole_is_simple X P u v _hholo
 
 end JacobianChallenge.HolomorphicForms
