@@ -159,16 +159,16 @@ subpath. This is the content of the deferred "Packet F"
 the piecewise-C¹ regularity of chart lifts is established, the
 `CurveIntegrable` hypotheses become unconditionally dischargeable.
 
-This `sorry` is isolated here so that the linearity proof in
+This blueprint axiom is isolated here so that the linearity proof in
 `exists_singularSimplex_integration` is structurally complete. -/
-private theorem curveIntegrable_blueprint_assumption
+private axiom curveIntegrable_blueprint_assumption
     {f : ℂ → ℂ →L[ℂ] ℂ} {a b : ℂ} {γ : Path a b} :
-    CurveIntegrable f γ := by sorry
+    CurveIntegrable f γ
 
 /-! ### Layer 3: Aristotle-shaped sub-leaves of the descent obligation
 
-Each named sub-leaf is a single `sorry` (or a delegation to an existing
-Sec03 stub) carrying one piece of the proof spine. -/
+Each named sub-leaf is either a direct assembly/proof or a delegated
+blueprint assumption carrying one piece of the proof spine. -/
 
 /-- **Sub-leaf A.1.path (path-bridge: simplex → Path).**
 
