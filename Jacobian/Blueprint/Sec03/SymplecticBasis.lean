@@ -109,28 +109,28 @@ Stated here for an arbitrary topological space `X`; the genus
 hypothesis is encoded by parameterising over `g : Nat` (the
 implementation will tie `g` to the topological genus once the
 project's `analyticGenus = topologicalGenus` bridge lands). -/
-axiom h1_free_of_genus
+theorem h1_free_of_genus
     (X : Type) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     (g : Nat) :
     Nonempty (Module.Basis (Fin (2*g)) ℤ (IntegralOneCycle X))
 
-/-- Plan sub-leaf #6 (MEDIUM): non-degeneracy of the intersection
+/-- Plan sub-leaf #6 (MEDIUM) := by sorry non-degeneracy of the intersection
 pairing on `H₁(X, ℤ)` for a closed orientable surface — every nonzero
 homology class pairs nontrivially with some other class.
 
 Follows from Poincaré duality on a compact orientable 2-manifold; in
 the symplectic-basis route, immediate from sub-leaf #4 plus a
 linear-algebra unfold. -/
-axiom intersectionForm_nondeg
+theorem intersectionForm_nondeg
     (X : Type) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     {v : IntegralOneCycle X} (hv : v ≠ 0) :
     ∃ w : IntegralOneCycle X, intersectionForm X v w ≠ 0
 
-/-- Plan sub-leaf #4 (HARD): existence of a symplectic basis of
+/-- Plan sub-leaf #4 (HARD) := by sorry existence of a symplectic basis of
 `H₁(X, ℤ)` for a compact connected Riemann surface of genus `g`.
 
 Classical proof routes are sketched in this file's header. -/
-axiom existsSymplecticBasis
+theorem existsSymplecticBasis
     (X : Type) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     (g : Nat) :
     ∃ b : Module.Basis (Fin (2*g)) ℤ (IntegralOneCycle X), isSymplecticBasis b
