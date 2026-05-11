@@ -1192,9 +1192,9 @@
 {"i":1244,"f":"Jacobian/Periods/TietzeReduction.lean","k":"lemma","s":"inverseCancel_geometric_maps","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1245,"f":"Jacobian/Blueprint/Sec03/SymplecticBasis.lean","k":"theorem","s":"intersectionForm_nondeg","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1246,"f":"Jacobian/HolomorphicForms/CMfldBumpStub.lean","k":"theorem","s":"cMfldBump_apply_self","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":1247,"f":"Jacobian/HolomorphicForms/CMfldBumpStub.lean","k":"theorem","s":"cMfldBump_continuous","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1247,"f":"Jacobian/HolomorphicForms/CMfldBumpStub.lean","k":"theorem","s":"cMfldBump_continuous","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1248,"f":"Jacobian/HolomorphicForms/CMfldBumpStub.lean","k":"theorem","s":"cMfldBump_eq_one_near","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":1249,"f":"Jacobian/HolomorphicForms/CMfldBumpStub.lean","k":"theorem","s":"cMfldBump_eq_zero_off_chartSource","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1249,"f":"Jacobian/HolomorphicForms/CMfldBumpStub.lean","k":"theorem","s":"cMfldBump_eq_zero_off_chartSource","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1250,"f":"Jacobian/HolomorphicForms/EvalAtOneHelper.lean","k":"theorem","s":"contMDiff_tangentSection_one","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1251,"f":"Jacobian/Periods/HandleSwapHomeo.lean","k":"theorem","s":"handlePrefix_tailRotate_homeomorph","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1252,"f":"Jacobian/Periods/HandleSwapHomeo.lean","k":"theorem","s":"wordQuotient_homeomorph_of_rotate","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
