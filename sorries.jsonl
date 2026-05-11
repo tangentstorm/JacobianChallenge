@@ -18,7 +18,7 @@
 {"i":37,"f":"Jacobian/HolomorphicForms/EulerCharLineBundle.lean","k":"lemma","s":"h0_minus_h1_ge_riemann","n":0,"o":1,"r":1,"e":null,"u":[768,769,770],"d":[1,165],"a":"","c":"done","b":"lem:r8subC-ge","t":""}
 {"i":38,"f":"Jacobian/HolomorphicForms/EulerCharLineBundle.lean","k":"lemma","s":"h0_minus_h1_le_riemann","n":0,"o":1,"r":1,"e":null,"u":[70,71,771],"d":[1,165],"a":"","c":"done","b":"lem:r8subC-le","t":""}
 {"i":39,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"lemma","s":"ContMDiffSection_localRepr_identityChart_contDiff","n":0,"o":1,"r":1,"e":2,"u":[],"d":[548],"a":"","c":"done","b":"lem:section-localRepr-identity-chart-contdiff","t":"infrastructure"}
-{"i":40,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"ContMDiffSection_localRepr_inversionChart_continuousAt_zero","n":1,"o":1,"r":1,"e":2,"u":[],"d":[551],"a":"","c":"open","b":"lem:section-localRepr-inversion-chart-continuous-at-zero","t":"infrastructure"}
+{"i":40,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"ContMDiffSection_localRepr_inversionChart_continuousAt_zero","n":1,"o":1,"r":1,"e":2,"u":[],"d":[551],"a":"","c":"done","b":"lem:section-localRepr-inversion-chart-continuous-at-zero","t":"infrastructure"}
 {"i":41,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"holomorphicOneForm_chartOverlap_pullback","n":1,"o":1,"r":1,"e":4,"u":[578],"d":[236,540],"a":"","c":"open","b":"lem:onepoint-cx-chart-overlap-pullback","t":"infrastructure"}
 {"i":42,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"lemma","s":"holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx","n":0,"o":1,"r":1,"e":4,"u":[],"d":[537],"a":"jc1-agent","c":"done","b":"lem:holomorphic-one-form-pullback-via-biholo","t":"infrastructure"}
 {"i":43,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"lemma","s":"add_toFun","n":0,"o":1,"r":1,"e":2,"u":[],"d":[569],"a":"","c":"done","b":"lem:meromorphic-algebraic-ops","t":"infrastructure"}
@@ -1165,8 +1165,8 @@
 {"i":1217,"f":"Jacobian/HolomorphicForms/EulerCharLineBundle.lean","k":"theorem","s":"euler_char_eq_formula","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1218,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"contMDiff_homeomorph_to_onePointCx","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1219,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"contMDiff_homeomorph_to_onePointCx_symm","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":1220,"f":"Jacobian/HolomorphicForms/InversionChartContinuity.lean","k":"theorem","s":"identityChartCoeff_contDiff","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":1221,"f":"Jacobian/HolomorphicForms/InversionChartContinuity.lean","k":"theorem","s":"identityChartCoeff_tendsto_zero","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1220,"f":"Jacobian/HolomorphicForms/InversionChartContinuity.lean","k":"theorem","s":"identityChartCoeff_contDiff","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":1221,"f":"Jacobian/HolomorphicForms/InversionChartContinuity.lean","k":"theorem","s":"identityChartCoeff_tendsto_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1222,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"def","s":"add_meromorphic","n":1,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1223,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"theorem","s":"mdifferentiable_toFiniteFun_of_no_infty","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1224,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"def","s":"neg_meromorphic","n":2,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
@@ -1284,7 +1284,7 @@
 {"i":1336,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_singular_two_cell_characteristic_data","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1337,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_singular_zero_cell_data","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1338,"f":"Jacobian/Periods/Polygon4gCellular.lean","k":"theorem","s":"polygon4g_succ_hurewicz_iso_freeZ","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":1339,"f":"Jacobian/Periods/Polygon4gCellular.lean","k":"theorem","s":"polygon4g_succ_singularH1_isTorsionFree","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1339,"f":"Jacobian/Periods/Polygon4gCellular.lean","k":"theorem","s":"polygon4g_succ_singularH1_isTorsionFree","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1340,"f":"Jacobian/TraceDegree/PushforwardBasis.lean","k":"theorem","s":"pathPiecewiseC1_obligation","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1341,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"localInverseAt_holomorphic","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1342,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"localTraceAtRegularValue_holomorphic","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
