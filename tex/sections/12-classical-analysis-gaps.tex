@@ -402,7 +402,7 @@ The two Phase-4 obligations stated at the
 forward-declared map \code{gluedChartMap} together with the chain
 B7 and chain B8 sub-leaves restated at the surface level:
 
-\begin{lemma}[R1.4.1.r1$^{\(\mathrm{ovr}$\)}: per-chart-source continuity]
+\begin{lemma}[R1.4.1.r1$^{\mathrm{ovr}}$: per-chart-source continuity]
 \label{lem:rado-overview-glued-continuousOn-chart}
 \uses{lem:rgc-r1}
 For every \(\varphi : \mathrm{PartialHomeomorph}\,M\,\R^{2}\),
@@ -411,7 +411,7 @@ For every \(\varphi : \mathrm{PartialHomeomorph}\,M\,\R^{2}\),
 \leanok
 \end{lemma}
 
-\begin{lemma}[R1.4.1.r4$^{\(\mathrm{ovr}$\)}: open-cover pasting]
+\begin{lemma}[R1.4.1.r4$^{\mathrm{ovr}}$: open-cover pasting]
 \label{lem:rado-overview-glued-pasting}
 \uses{lem:rgc-r3,lem:rgc-r4}
 A function on \(M\) whose restriction to each set of an open cover is
@@ -421,7 +421,7 @@ continuous is itself continuous (Mathlib:
 \leanok\mathlibok
 \end{lemma}
 
-\begin{lemma}[R1.4.1.r5$^{\(\mathrm{ovr}$\)}: glued map is continuous]
+\begin{lemma}[R1.4.1.r5$^{\mathrm{ovr}}$: glued map is continuous]
 \label{lem:rado-overview-glued-continuous}
 \uses{lem:rado-overview-glued-continuousOn-chart,lem:rado-overview-glued-pasting,lem:rado-finite-disk-atlas}
 Reassembly: the glued chart map is continuous.  Pull a finite disk
@@ -431,7 +431,7 @@ each branch with the per-chart-source obligation.
 \leanok
 \end{lemma}
 
-\begin{lemma}[R1.4.2.r1$^{\(\mathrm{ovr}$\)}: per-chart-source injectivity]
+\begin{lemma}[R1.4.2.r1$^{\mathrm{ovr}}$: per-chart-source injectivity]
 \label{lem:rado-overview-glued-injOn-chart}
 \uses{lem:rgb-r1}
 For every \(x \in M\), \code{Set.InjOn} \(\code{gluedChartMap}\,K\)
@@ -440,7 +440,7 @@ of the chart source at \(x\).
 \leanok
 \end{lemma}
 
-\begin{lemma}[R1.4.2.r2$^{\(\mathrm{ovr}$\)}: global injectivity]
+\begin{lemma}[R1.4.2.r2$^{\mathrm{ovr}}$: global injectivity]
 \label{lem:rado-overview-glued-injective}
 \uses{lem:rgb-r2,lem:rado-overview-glued-injOn-chart}
 Per-chart injectivity plus overlap-cocycle compatibility lifts to
@@ -449,7 +449,7 @@ global \code{Function.Injective}.
 \leanok
 \end{lemma}
 
-\begin{lemma}[R1.4.2.r3$^{\(\mathrm{ovr}$\)}: image covers \(|K|\)]
+\begin{lemma}[R1.4.2.r3$^{\mathrm{ovr}}$: image covers \(|K|\)]
 \label{lem:rado-overview-glued-image-covers}
 \uses{lem:rgb-r3}
 \code{Set.range} (\code{gluedChartMap}\,\(K\)) \(=\) \code{Set.univ}.
@@ -458,7 +458,7 @@ Reduces to chain B8 (\code{lem:rgb-r3}--\code{lem:rgb-r4}).
 \leanok
 \end{lemma}
 
-\begin{lemma}[R1.4.2.r4$^{\(\mathrm{ovr}$\)}: surjectivity from cover]
+\begin{lemma}[R1.4.2.r4$^{\mathrm{ovr}}$: surjectivity from cover]
 \label{lem:rado-overview-glued-surjective}
 \uses{lem:rado-overview-glued-image-covers}
 \code{Function.Surjective} (\code{gluedChartMap}\,\(K\)) follows from
@@ -467,7 +467,7 @@ Reduces to chain B8 (\code{lem:rgb-r3}--\code{lem:rgb-r4}).
 \leanok
 \end{lemma}
 
-\begin{lemma}[R1.4.2.r5$^{\(\mathrm{ovr}$\)}: bijectivity reassembly]
+\begin{lemma}[R1.4.2.r5$^{\mathrm{ovr}}$: bijectivity reassembly]
 \label{lem:rado-overview-glued-bijective}
 \uses{lem:rado-overview-glued-injective,lem:rado-overview-glued-surjective}
 \code{Function.Bijective} from injectivity \(\wedge\) surjectivity.
