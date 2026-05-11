@@ -394,8 +394,14 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
   let C := constantFunctions X
   let LC := L ⊓ C
   have hdim_LC : Module.finrank ℂ LC ≤ 1 := by
-    -- LC is a submodule of C, and dim C = 1.
-    sorry
+    haveI : FiniteDimensional ℂ C := by
+      dsimp [C]
+      infer_instance
+    calc
+      Module.finrank ℂ LC ≤ Module.finrank ℂ C := Submodule.finrank_mono inf_le_right
+      _ = 1 := by
+        dsimp [C]
+        exact finrank_constantFunctions X
   have hne : L ≠ LC := by
     intro h
     have : Module.finrank ℂ L = Module.finrank ℂ LC := by rw [h]
