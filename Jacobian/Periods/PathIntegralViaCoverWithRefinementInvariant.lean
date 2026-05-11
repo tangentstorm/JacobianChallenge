@@ -241,7 +241,7 @@ private lemma pathIntegralViaCoverWith_eq_of_size_eq
       pathIntegralViaCoverWith ω γ m hm pick₂ hcov₂ := by
   subst h
   generalize_proofs at *;
-  exact?
+  exact pathIntegralViaCoverWith_pick_independent ω γ n hn pick₁ pick₂ hcov₁ hcov₂
 
 /-! ### Coverage for common refinement -/
 
@@ -309,7 +309,7 @@ private lemma segment_integrability
             simp +decide [ divFinIcc_val ];
             constructor <;> nlinarith [ show ( i : ℝ ) + 1 ≤ n by norm_cast; exact Nat.succ_le_of_lt i.2, show ( i : ℝ ) ≥ 0 by positivity, div_mul_cancel₀ ( ( i : ℝ ) + 1 ) ( by positivity : ( n : ℝ ) ≠ 0 ), div_mul_cancel₀ ( ( i : ℝ ) ) ( by positivity : ( n : ℝ ) ≠ 0 ) ] ⟩ _ _ using 1
           generalize_proofs at *;
-          · simp +decide [ ht₁, ht₂ ] ; ring;
+          · simp +decide [ ht₁, ht₂ ] ; ring_nf;
           · simp +decide [ divFinIcc ];
             exact mul_nonneg ( sub_nonneg.2 <| by gcongr ; linarith ) ht₁;
           · all_goals generalize_proofs at *;
@@ -329,7 +329,7 @@ private lemma segment_integrability
   have h_cont_diff : ContinuousOn (fun t => (chartedFormPullback (chartAt E (pickChart i)) ω) ((chartAt E (pickChart i)) ((γ.subpath (divFinIcc n hn ↑i.val (le_of_lt i.isLt)) (divFinIcc n hn (↑i.val + 1) i.isLt)).extend t)) (derivWithin ((chartAt E (pickChart i)) ∘ ⇑(γ.subpath (divFinIcc n hn ↑i.val (le_of_lt i.isLt)) (divFinIcc n hn (↑i.val + 1) i.isLt)).extend) (Icc 0 1) t)) (Set.Icc 0 1) := by
     refine' ContinuousOn.clm_apply _ _;
     · refine' ContinuousOn.comp ( chartedFormPullback_continuousOn _ _ _ ) _ _;
-      · exact?;
+      · exact IsManifold.chart_mem_maximalAtlas (pickChart i);
       · refine' h_cont_diff.continuousOn.mono _;
         intro t ht;
         simp_all +decide [ Path.subpath ];
@@ -347,7 +347,7 @@ private lemma segment_integrability
         refine' h_cont_diff.mono _;
         intro t ht; simp +decide [ *, Path.subpath ] ;
         convert hcov i ⟨ ( 1 - t ) * ( i / n : ℝ ) + t * ( ( i + 1 ) / n : ℝ ), by
-          constructor <;> nlinarith [ ht.1, ht.2, show ( i : ℝ ) + 1 ≤ n by norm_cast; linarith [ Fin.is_lt i ], div_mul_cancel₀ ( ( i : ℝ ) : ℝ ) ( by positivity : ( n : ℝ ) ≠ 0 ), div_mul_cancel₀ ( ( i + 1 : ℝ ) : ℝ ) ( by positivity : ( n : ℝ ) ≠ 0 ) ] ⟩ _ _ using 1 <;> ring
+          constructor <;> nlinarith [ ht.1, ht.2, show ( i : ℝ ) + 1 ≤ n by norm_cast; linarith [ Fin.is_lt i ], div_mul_cancel₀ ( ( i : ℝ ) : ℝ ) ( by positivity : ( n : ℝ ) ≠ 0 ), div_mul_cancel₀ ( ( i + 1 : ℝ ) : ℝ ) ( by positivity : ( n : ℝ ) ≠ 0 ) ] ⟩ _ _ using 1 <;> ring_nf
         all_goals generalize_proofs at *;
         · exact le_add_of_nonneg_right ( mul_nonneg ( inv_nonneg.2 ( Nat.cast_nonneg _ ) ) ht.1 );
         · nlinarith [ ht.1, ht.2, inv_pos.2 ( by positivity : 0 < ( n : ℝ ) ) ];
