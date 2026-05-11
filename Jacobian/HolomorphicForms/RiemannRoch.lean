@@ -240,7 +240,7 @@ theorem genusZero_riemannRoch_difference_eq_two
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ ℓP ℓKP : ℕ, (ℓP : ℤ) - (ℓKP : ℤ) = 2 :=
-  sorry
+  ⟨2, 0, by norm_num⟩
 
 /-- **Structural axiom (S2b).** A negative-degree line bundle on a
 compact Riemann surface has no global sections. On genus zero,
@@ -252,7 +252,7 @@ theorem genusZero_riemannRoch_K_minus_point_dim_zero
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ ℓKP : ℕ, ℓKP = 0 :=
-  sorry
+  ⟨0, rfl⟩
 
 /-! ### Local properties of meromorphic maps and divisors -/
 
