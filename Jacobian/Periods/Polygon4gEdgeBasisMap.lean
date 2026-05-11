@@ -100,8 +100,28 @@ theorem edgeHomologyClass_exists (g : ℕ) (i : Fin (2 * (g + 1))) :
     ∃ _c : singularH1 (Polygon4g (g + 1)), True :=
   ⟨edgeHomologyClass g i, trivial⟩
 
+/-
+`edgeBasisMap g` evaluated on a standard basis vector `Pi.single i 1`
+yields `edgeHomologyClass g i`.
+-/
+theorem edgeBasisMap_single (g : ℕ) (i : Fin (2 * (g + 1))) :
+    edgeBasisMap g (Pi.single i 1) = edgeHomologyClass g i := by
+  unfold edgeBasisMap;
+  simp +decide [ LinearMap.toSpanSingleton, LinearMap.proj ]
 
-/-- **Phase 6.b leaf (sub-sorry, strictly weaker than the iso).**
+/-
+The range of `edgeBasisMap g` equals the ℤ-span of the edge
+homology family.
+-/
+theorem edgeBasisMap_range (g : ℕ) :
+    LinearMap.range (edgeBasisMap g) = Submodule.span ℤ (Set.range (edgeHomologyFamily g)) := by
+  refine' le_antisymm ( LinearMap.range_le_iff_comap.mpr _ ) ( Submodule.span_le.mpr ( Set.range_subset_iff.mpr _ ) );
+  · ext x;
+    simp +decide [ edgeBasisMap, Submodule.mem_span_range_iff_exists_fun ];
+    exact ⟨ _, rfl ⟩;
+  · exact fun i => ⟨ Pi.single i 1, edgeBasisMap_single g i ⟩
+
+/-- **Phase 6.b spanning leaf.**
 The edge homology classes span `singularH1 (Polygon4g (g+1))`.
 
 **Substantive Proof (lift-to-disk shortcut):**
@@ -118,12 +138,17 @@ The edge homology classes span `singularH1 (Polygon4g (g+1))`.
 6. Projecting back to `Polygon4g`, `z` is homologous to the sum of the
    projections of the edge-paths, which are the `edgeHomologyClass`
    elements. -/
+theorem edgeHomologyFamily_spans (g : ℕ) :
+    Submodule.span ℤ (Set.range (edgeHomologyFamily g)) = ⊤ := by
+  sorry
+
+/-- **Phase 6.b leaf (derived from `edgeHomologyFamily_spans`).**
+The edge homology classes span `singularH1 (Polygon4g (g+1))`,
+which is exactly the surjectivity of `edgeBasisMap g`. -/
 theorem edgeBasisMap_surjective (g : ℕ) :
     Function.Surjective (edgeBasisMap g) := by
-  -- The core spanning lemma: for a 1-cycle `z` in the polygon,
-  -- there exists a 1-chain `z'` in the disk such that `mk# z' = z`.
-  -- This allows bypassing the general subdivision requirement.
-  sorry
+  rw [← LinearMap.range_eq_top, edgeBasisMap_range]
+  exact edgeHomologyFamily_spans g
 
 /-- **Phase 6.a leaf (sub-sorry, strictly weaker than the iso).**
 The edge homology classes are linearly independent in

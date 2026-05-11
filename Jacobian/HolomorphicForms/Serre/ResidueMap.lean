@@ -20,13 +20,13 @@ Round 15 names two pieces:
 `residueMap` with its inverse, and gives `serreTraceMap` its concrete
 content.
 
-## Implementation note
+## Architecture note
 
-The round-trip identities `residueMap_left_inv` /
-`residueMap_right_inv` are discharged from a single sorry'd
-`LinearEquiv` (`residueMapEquiv`), so the remaining sorry is
-concentrated in one place while the algebraic round-trip properties
-hold definitionally.
+The forward map, its inverse, and the two round-trip identities are
+all derived from a single sorry'd `LinearEquiv` (`residueMapEquiv`),
+so the round-trip properties follow from the equivalence structure
+without additional sorry. The single remaining sorry sits in
+`residueMapEquiv` itself, which is the frontier obligation.
 -/
 
 namespace JacobianChallenge.HolomorphicForms
@@ -34,11 +34,11 @@ namespace JacobianChallenge.HolomorphicForms
 open scoped Manifold
 open CategoryTheory
 
-/-- **Frontier `def` (sorry).** The canonical `ℂ`-linear equivalence
+/-- **Frontier `def` (sorry).** Canonical `ℂ`-linear equivalence
 `H¹(X, K_X) ≃ₗ[ℂ] ℂ` on a compact connected Riemann surface.
-All frontier sorry is concentrated here; the forward map
-(`residueMap`), inverse (`residueMap_inverse`), and round-trip
-identities are derived from this equivalence. -/
+This is the single sorry'd building block from which `residueMap`,
+`residueMap_inverse`, and the round-trip identities are all
+derived. -/
 noncomputable def residueMapEquiv
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
@@ -47,11 +47,11 @@ noncomputable def residueMapEquiv
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
     RSSheafCohomology X (RSDualizingSheaf X) 1 ≃ₗ[ℂ] ℂ := by
-  sorry
+  exact sorry
 
 /-- **Frontier `def`.** Residue / integration map
-`H¹(X, K_X) → ℂ` on a compact connected Riemann surface, extracted
-as the forward direction of `residueMapEquiv`. -/
+`H¹(X, K_X) → ℂ` on a compact connected Riemann surface.
+Derived as the forward direction of `residueMapEquiv`. -/
 noncomputable def residueMap
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
@@ -62,8 +62,9 @@ noncomputable def residueMap
     RSSheafCohomology X (RSDualizingSheaf X) 1 →ₗ[ℂ] ℂ :=
   (residueMapEquiv X).toLinearMap
 
-/-- **Frontier `def`.** Inverse of the residue / integration map,
-extracted as the backward direction of `residueMapEquiv`. -/
+/-- **Frontier `def`.** Inverse of the residue /
+integration map. Derived as the inverse direction of
+`residueMapEquiv`. -/
 noncomputable def residueMap_inverse
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
@@ -74,8 +75,9 @@ noncomputable def residueMap_inverse
     ℂ →ₗ[ℂ] RSSheafCohomology X (RSDualizingSheaf X) 1 :=
   (residueMapEquiv X).symm.toLinearMap
 
-/-- **Proved.** Round-trip identity 1: `residueMap_inverse`
-followed by `residueMap` is the identity on the domain. -/
+/-- **Round-trip identity 1.** `residueMap` followed by
+`residueMap_inverse` is the identity. Proved from
+`residueMapEquiv.symm_apply_apply`. -/
 theorem residueMap_left_inv
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
@@ -83,11 +85,13 @@ theorem residueMap_left_inv
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
-    Function.LeftInverse (residueMap_inverse X) (residueMap X) :=
-  (residueMapEquiv X).symm_apply_apply
+    Function.LeftInverse (residueMap_inverse X) (residueMap X) := by
+  intro x
+  exact (residueMapEquiv X).symm_apply_apply x
 
-/-- **Proved.** Round-trip identity 2: `residueMap`
-followed by `residueMap_inverse` is the identity on `ℂ`. -/
+/-- **Round-trip identity 2.** `residueMap_inverse` followed by
+`residueMap` is the identity. Proved from
+`residueMapEquiv.apply_symm_apply`. -/
 theorem residueMap_right_inv
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
@@ -95,7 +99,8 @@ theorem residueMap_right_inv
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
-    Function.RightInverse (residueMap_inverse X) (residueMap X) :=
-  (residueMapEquiv X).apply_symm_apply
+    Function.RightInverse (residueMap_inverse X) (residueMap X) := by
+  intro x
+  exact (residueMapEquiv X).apply_symm_apply x
 
 end JacobianChallenge.HolomorphicForms

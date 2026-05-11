@@ -405,6 +405,14 @@ A sup-norm Cauchy sequence of holomorphic 1-forms converges to a limit.
 \uses{lem:section-eval-continuity, lem:section-limit-steps}
 Equibounded and equicontinuous families of holomorphic 1-forms are relatively compact.
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_arzela_ascoli}
+\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_closedBall_totallyBounded}
+\lean{JacobianChallenge.HolomorphicForms.bcf_totallyBounded_of_range_compact_of_equicontinuous}
+\textbf{Top-down status.} The Lean development now exposes a sorry-free
+assembly theorem
+\lean{holomorphicOneForm\_closedBall\_totallyBounded}
+which composes chart-local equiboundedness/equicontinuity placeholders
+with the Arzel\`a--Ascoli bridge; additionally, the core bounded-continuous
+Arzel\`a--Ascoli total-boundedness step has been formalized as a reusable lemma.
 \notready
 \end{lemma}
 
@@ -443,4 +451,3 @@ finite-dimensionality of the realisation, and transport back along
 the realisation isomorphism. (\(\C\)-linear bijections preserve
 finite-dimensionality.)
 \end{proofsketch}
-

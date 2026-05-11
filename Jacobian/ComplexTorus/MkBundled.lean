@@ -13,7 +13,7 @@ files can use `mkHom` without reaching into the Mathlib namespace.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- The quotient projection as an additive group homomorphism. -/

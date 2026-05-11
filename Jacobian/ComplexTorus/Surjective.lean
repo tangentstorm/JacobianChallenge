@@ -15,12 +15,12 @@ condition holds.
 namespace JacobianChallenge.ComplexTorus
 
 variable {V W : Type*} [NormedAddCommGroup V] [NormedAddCommGroup W]
-  [NormedSpace ℂ V] [NormedSpace ℂ W]
   {Λ : FullComplexLattice V} {Γ : FullComplexLattice W}
 
 /-- If `f : V →+ W` is surjective and lattice-preserving, the induced quotient
 homomorphism is surjective. -/
-lemma map_surjective {f : V →+ W} (hf_surj : Function.Surjective f)
+lemma map_surjective [NormedSpace ℂ V] [NormedSpace ℂ W]
+    {f : V →+ W} (hf_surj : Function.Surjective f)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) :
     Function.Surjective (map Λ Γ f hf) := by
   intro q

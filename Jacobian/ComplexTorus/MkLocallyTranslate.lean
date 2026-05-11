@@ -21,11 +21,12 @@ quotient projection `mk : V → V ⧸ Λ.subgroup` and for the
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
 
 /-- `y ↦ localSection Λ w r (mk y) - y` is continuous on the full
 chart preimage `mk ⁻¹' (mk '' Metric.ball w r)`. -/
 lemma continuousOn_localSection_mk_sub'
+    [NormedSpace ℂ V]
     (Λ : FullComplexLattice V) (w : V) {δ r : ℝ}
     (hr_lt : r < δ / 2)
     (hiso : ∀ g ∈ Λ.subgroup, g ≠ 0 → δ ≤ ‖g‖) :
@@ -48,6 +49,7 @@ the map `y ↦ localSection Λ w r (mk y)` agrees with the translation
 `y ↦ y + g` (for `g := localSection Λ w r (mk x) - x ∈ Λ.subgroup`)
 on a neighborhood of `x` (within the preimage). -/
 lemma mk_locally_translate
+    [NormedSpace ℂ V]
     (Λ : FullComplexLattice V) (w : V) {δ r : ℝ}
     (hδpos : 0 < δ)
     (hr_lt : r < δ / 2)

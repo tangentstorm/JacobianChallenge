@@ -32,7 +32,6 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-omit [NormedSpace ℂ V] in
 /-- For any full complex lattice and any base point, a small enough
 open ball admits the chart-construction prerequisites: the quotient
 projection is injective on the ball, and the image is open in the
