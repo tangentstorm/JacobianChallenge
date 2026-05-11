@@ -7,7 +7,7 @@
 \label{lem:polygon-cellular-singular-iso}
 \uses{lem:r3subB-cellular-iso}
 \lean{JacobianChallenge.Periods.polygon4g_cellular_singular_iso}
-\notready
+\leanok
 \end{lemma}
 
 \subsection{Remaining Implementation Details}
@@ -15,26 +15,26 @@
 \begin{lemma}[Meromorphic lift and degree]
 \label{lem:impl-meromorphic-lift}
 \uses{lem:meromorphic-local-normalization, lem:meromorphic-fiber-count-conservation}
-\lean{JacobianChallenge.HolomorphicForms.isHolomorphic_of_contMDiff}
-\notready
+\lean{JacobianChallenge.HolomorphicForms.HolomorphicMap.isHolomorphic_of_contMDiff}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Lip-cycle and Trace preservation]
 \label{lem:impl-trace-lip}
 \lean{JacobianChallenge.TraceDegree.pullbackTraceLift_preserves_lattice_raw, JacobianChallenge.TraceDegree.cycleLipChain_obligation, JacobianChallenge.TraceDegree.cycleLipPath_obligation}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Miscellaneous algebraic orphans]
 \label{lem:impl-misc-orphans}
 \lean{JacobianChallenge.HolomorphicForms.residueMap_left_inv, JacobianChallenge.HolomorphicForms.residueMap_right_inv, JacobianChallenge.Periods.edgeBasisMap_surjective}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[All remaining implementation orphans]
 \label{lem:impl-orphans-aggregate}
 \lean{montel_pointwise_extraction,intersectionForm_nondeg,branchedDegreeOfMap_eq_one_of_simple_two_point_principal,honestMeromorphic_branchedCoverData_obligation,unfoldedDisk_to_edgeWordPresentation,sidePairingRel_standardWord,standardWord_get_handle,standardWord_get_unique,pathIntegralViaCoverWith_refinement_invariant',edgeBasisMap_surjective,cyclePushforward_chainLevel_repr,periodPairing_chainLevel_repr,rawWord_handle_separation_orientable,wordQuotient_homeomorph_of_handleSwap_step,wordQuotient_homeomorph_of_inverseCancel_step}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.impl_orphans_aggregate}
 \end{lemma}
 
 \subsection{Connection to Main Goals}
@@ -50,5 +50,5 @@ These implementation details are tracked but currently isolated from the main pr
 \uses{lem:section-arzela-ascoli, lem:meromorphic-vector-space-instance, lem:polygon-cellular-singular-iso, lem:impl-meromorphic-lift, lem:impl-trace-lip, lem:intended-orphans}
 This lemma serves as the final hook connecting the implementation-level proof obligations
 back into the project's high-level goal nodes.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.impl_wiring_to_roots}
 \end{lemma}

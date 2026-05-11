@@ -306,23 +306,23 @@ other pole and therefore defines a degree-one map to \(\CPone\).
 \begin{lemma}[Algebraic operations on meromorphic functions]
 \label{lem:meromorphic-algebraic-ops}
 Meromorphic functions form a \(\C\)-vector space under pointwise addition and scalar multiplication.
-\lean{JacobianChallenge.HolomorphicForms.add_toFun, JacobianChallenge.HolomorphicForms.neg_toFun, JacobianChallenge.HolomorphicForms.smul_toFun, JacobianChallenge.HolomorphicForms.zero}
-\notready
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.add_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.neg_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.smul_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.zero}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Properties of constant meromorphic functions]
 \label{lem:meromorphic-constants}
 Constant functions are meromorphic and have empty zero/pole sets.
-\lean{JacobianChallenge.HolomorphicForms.constant, JacobianChallenge.HolomorphicForms.constant_poles, JacobianChallenge.HolomorphicForms.constant_zeros}
-\notready
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.constant, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.constant_poles, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.constant_zeros}
+\leanok
 \end{lemma}
 
 \begin{theorem}[Meromorphic vector space instance]
 \label{lem:meromorphic-vector-space-instance}
 \uses{lem:meromorphic-algebraic-ops, lem:meromorphic-constants}
 The type of meromorphic functions is a \(\C\)-vector space.
-\lean{JacobianChallenge.HolomorphicForms.meromorphicFunctionVectorSpace}
-\notready
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.meromorphicFunctionVectorSpace}
+\leanok
 \end{theorem}
 
 \subsection{Genus-zero Riemann--Roch route: structural decomposition}
@@ -618,7 +618,7 @@ divisor of negative degree has trivial Riemann--Roch space.
 \label{lem:poles-eq-zero-iff-constant}
 On a compact connected Riemann surface, a meromorphic function with no poles is constant.
 \lean{JacobianChallenge.HolomorphicForms.poles_eq_zero_iff_constant}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[\(\ell(D)\geq 2\) implies a nonconstant element]
