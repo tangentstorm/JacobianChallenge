@@ -1,5 +1,6 @@
 import Jacobian.AbelJacobi.AnalyticOfCurveBasis
 import Jacobian.TraceDegree.PushforwardBasis
+import Jacobian.TraceDegree.PiecewiseC1Instance
 import Jacobian.ComplexTorus.OfClm
 import Jacobian.ComplexTorus.MkSmooth
 import Jacobian.HolomorphicForms.HolomorphicMap

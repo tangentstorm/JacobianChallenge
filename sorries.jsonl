@@ -1285,7 +1285,7 @@
 {"i":1337,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_singular_zero_cell_data","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1338,"f":"Jacobian/Periods/Polygon4gCellular.lean","k":"theorem","s":"polygon4g_succ_hurewicz_iso_freeZ","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1339,"f":"Jacobian/Periods/Polygon4gCellular.lean","k":"theorem","s":"polygon4g_succ_singularH1_isTorsionFree","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":1340,"f":"Jacobian/TraceDegree/PushforwardBasis.lean","k":"theorem","s":"pathPiecewiseC1_obligation","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1340,"f":"Jacobian/TraceDegree/PiecewiseC1Instance.lean","k":"instance","s":"instPiecewiseC1PathRegularity","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"lem:impl-trace-lip","t":"assumption"}
 {"i":1341,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"localInverseAt_holomorphic","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1342,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"localTraceAtRegularValue_holomorphic","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1343,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"trace_pullback_at_regular_value","n":2,"o":2,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
