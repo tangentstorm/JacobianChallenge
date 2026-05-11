@@ -3,7 +3,7 @@
 
 \begin{layman}
 Every smooth surface has a notion of \emph{tangent vector} at a
-point — a little arrow giving a direction of motion. Dual to that,
+point --- a little arrow giving a direction of motion. Dual to that,
 every surface has a notion of \emph{cotangent vector}: a tiny linear
 gadget that takes a tangent vector and returns a number. A
 \emph{holomorphic 1-form} on a Riemann surface is a global,
@@ -12,7 +12,7 @@ holomorphically. In any chart \(z\), a holomorphic 1-form looks like
 \(h(z)\,dz\) for some holomorphic function \(h\); under a change of
 chart it transforms by the chain rule. The space of all such global
 forms is denoted \(H^0(X,\Omega^1_X)\). Its complex dimension is the
-\emph{analytic genus} \(g(X)\) — the most fundamental invariant we
+\emph{analytic genus} \(g(X)\) --- the most fundamental invariant we
 attach to \(X\).
 
 The deep fact of this chapter is that \(g(X)\) is finite. The
@@ -22,7 +22,7 @@ compact (\emph{Montel's theorem}: a bounded sequence of holomorphic
 functions has a uniformly convergent subsequence); apply Riesz's
 lemma (a normed space whose unit ball is compact must be
 finite-dimensional). The compactness of the surface is what makes
-the sup-norm finite in the first place — on the entire complex
+the sup-norm finite in the first place --- on the entire complex
 plane, the dimension of holomorphic 1-forms is uncountably infinite.
 
 The chapter develops this in stages. The cotangent bundle gets a
@@ -37,8 +37,8 @@ dimensionality through Riesz.
 Why bother? Genus is the single most important invariant of a
 Riemann surface; it controls everything else. Tying it down
 rigorously to a finite-dimensional vector-space dimension is what
-lets all the later constructions — Riemann--Roch, the Jacobian,
-Abel--Jacobi, push-pull — even be \emph{stated}. The next chapter
+lets all the later constructions --- Riemann--Roch, the Jacobian,
+Abel--Jacobi, push-pull --- even be \emph{stated}. The next chapter
 combines this finite-dim result with sheaf cohomology to prove
 Riemann--Roch.
 \end{layman}
@@ -86,7 +86,7 @@ structure on \(T^{*}X\), and the operator-norm continuity from
 
 \begin{layman}
 At each point of the surface, a holomorphic 1-form picks out a tiny
-linear gadget — a local rule that turns a direction into a complex number.
+linear gadget --- a local rule that turns a direction into a complex number.
 This local gadget lives in a one-dimensional space called the
 \emph{cotangent fiber}, and we want to measure how big the gadget is.
 The trick: borrow a coordinate chart at the point (a bit of flat graph
@@ -96,7 +96,7 @@ gadget outputs on a unit-length input?'' That maximum is its norm.
 Different charts give slightly different units, but we standardize by
 always using the canonical chart that's already attached to the surface's
 atlas. Why bother? With a length on every fiber, we can ask whether a
-1-form is big or small at any point — a prerequisite to defining a global
+1-form is big or small at any point --- a prerequisite to defining a global
 ``size'' on the whole space of holomorphic 1-forms in the next step.
 \end{layman}
 
@@ -132,7 +132,7 @@ always attains a maximum (no sneaking off to infinity). The standard
 checks pass: the norm is zero exactly for the zero 1-form, scales
 correctly under multiplication by a complex number, and obeys the
 triangle inequality. So the space of holomorphic 1-forms becomes a
-\emph{normed vector space} — the same structural home as Euclidean space
+\emph{normed vector space} --- the same structural home as Euclidean space
 or any Banach space. Why bother? Once you have a norm, you have notions
 of distance, convergence, balls, and compactness. The whole analytic
 strategy for proving finite-dimensionality runs on those notions.
@@ -157,12 +157,12 @@ choice of fiber norm on \(T^{*}X\)), such that
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
-Open up a single coordinate chart — a flat patch of graph paper laid over
+Open up a single coordinate chart --- a flat patch of graph paper laid over
 a piece of the surface. On that patch, every holomorphic 1-form looks
 like an ordinary holomorphic function multiplied by the differential of
 the coordinate. The lemma says the size of that ordinary function at
-each point is bounded above by a fixed constant — depending only on the
-chart — times the global supremum norm of the 1-form. In plain terms,
+each point is bounded above by a fixed constant --- depending only on the
+chart --- times the global supremum norm of the 1-form. In plain terms,
 shrinking a 1-form globally shrinks its local coefficient on the chart
 by at most a fixed factor; the chart can't blow up the constants behind
 your back. Why bother? It's the bridge between the abstract norm on the
@@ -202,18 +202,18 @@ strictly increasing \(\varphi:\N\to\N\) and a limit
 
 \begin{layman}
 Now the analytic punchline. Take any sequence of holomorphic 1-forms
-whose norms are all bounded by 1 — the closed unit ball. The claim: you
+whose norms are all bounded by 1 --- the closed unit ball. The claim: you
 can always extract a subsequence converging uniformly on the whole
 surface to another holomorphic 1-form of norm at most 1. This is Montel's
-theorem in disguise — magic special to holomorphic functions, with no
+theorem in disguise --- magic special to holomorphic functions, with no
 analogue for plain continuous or merely smooth functions. The proof works
 chart by chart: in each chart, Cauchy's integral formula bounds
-derivatives, which forces the sequence to be \emph{equicontinuous} — every
-form in the sequence wiggles at the same controlled rate. Arzelà–Ascoli
+derivatives, which forces the sequence to be \emph{equicontinuous} --- every
+form in the sequence wiggles at the same controlled rate. Arzel\`a--Ascoli
 then extracts a convergent subsequence, and the chartwise limits glue
 into a global holomorphic limit by Weierstrass's convergence theorem
 (uniform limits of holomorphic functions are again holomorphic). Why
-bother? It says the unit ball is sequentially compact — a heavy hammer
+bother? It says the unit ball is sequentially compact --- a heavy hammer
 that, in normed spaces, is the trademark signature of being
 finite-dimensional.
 \end{layman}
@@ -242,9 +242,9 @@ on \(\overline{B(c_i, r_i)}\). (Mathlib:
 \texttt{DiffContOnCl.circleIntegral\_sub\_inv\_smul} for the
 Cauchy formula;
 \texttt{circleIntegral.norm\_integral\_le\_of\_norm\_le\_const} for the
-\(L^{\infty}\)–to–integral bound.)
+\(L^{\infty}\)--to--integral bound.)
 
-\emph{Step 4: Arzelà–Ascoli on each chart.} The Arzelà–Ascoli theorem
+\emph{Step 4: Arzel\`a--Ascoli on each chart.} The Arzel\`a--Ascoli theorem
 (Mathlib \texttt{ArzelaAscoli.isCompact\_closure\_of\_isClosedEmbedding})
 extracts a subsequence converging uniformly on
 \(\overline{B(c_i, r_i)}\). Iterating across the \(N\) charts
@@ -257,7 +257,7 @@ limits agree on overlaps (because they are obtained from a single
 diagonal subsequence), so they assemble into a function on \(X\) which
 is the uniform limit of \(\omega_{\varphi(n)}\). By Weierstrass's
 convergence theorem (uniform limit of holomorphic functions is
-holomorphic; cf.\ Forster \S 14 or Griffiths–Harris pp.~7–8) the chart
+holomorphic; cf.\ Forster \S 14 or Griffiths--Harris pp.~7--8) the chart
 coefficients of the limit are again holomorphic, so the limit is a
 holomorphic 1-form \(\omega_\infty\). The sup-norm bound
 \(\|\omega_\infty\|\le 1\) follows by taking the limit in
@@ -279,13 +279,13 @@ Definition~\ref{def:holomorphic-sup-norm}, the closed unit ball
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
-The previous lemma extracted convergent subsequences — that's
+The previous lemma extracted convergent subsequences --- that's
 \emph{sequential} compactness. This theorem upgrades it to ordinary
 \emph{topological} compactness, the textbook ``every open cover has a
 finite subcover'' kind. The two flavors agree in any normed space,
 because such spaces are metrisable, and in metric spaces sequential and
 topological compactness are the same notion. So the closed unit ball of
-holomorphic 1-forms — the set of forms with norm at most 1 — is compact in
+holomorphic 1-forms --- the set of forms with norm at most 1 --- is compact in
 the textbook sense. Why bother? Compactness of a closed ball is one of
 those innocent-sounding facts that's actually a structural giveaway: in
 a normed space, it \emph{forces} the space to be finite-dimensional.
@@ -324,16 +324,16 @@ Theorem~\ref{thm:hone-unit-ball-compact}, this gives
 Here's a surprising fact called Riesz's lemma: in any normed vector
 space, if even a single closed ball of positive radius is compact, then
 the whole space must be finite-dimensional. The intuition is that
-infinite-dimensional spaces are too roomy to be compact — you can always
+infinite-dimensional spaces are too roomy to be compact --- you can always
 find a sequence of unit-distance-apart points that never converges, and
 compactness rules this out, so room runs out. Mathlib already has this
 packaged. Apply it to our setting: the closed unit ball of holomorphic
 1-forms is compact (just shown), therefore the space of holomorphic
 1-forms is finite-dimensional. Why bother? This is the headline
-conclusion of the entire chapter. The genus of the surface — defined as
-the dimension of this space — is now guaranteed to be a finite whole
+conclusion of the entire chapter. The genus of the surface --- defined as
+the dimension of this space --- is now guaranteed to be a finite whole
 number. Without it, the whole rest of the project (lattices, Jacobians,
-Abel–Jacobi maps) would have nothing to grab onto.
+Abel--Jacobi maps) would have nothing to grab onto.
 \end{layman}
 
 \begin{proofsketch}
@@ -369,7 +369,7 @@ sup norm is automatically finite-dimensional. This bundles the fiber
 norm, the sup norm, the local coefficient bound, Montel's compactness
 theorem, the upgrade from sequential to topological compactness, and
 Riesz's lemma. There's a separate route to the same conclusion via
-Riemann–Roch — listed alongside as its own umbrella — but the analytic
+Riemann--Roch --- listed alongside as its own umbrella --- but the analytic
 route is the project's preferred path because its prerequisites are
 mostly already in Mathlib. Why bother? Naming the umbrella keeps the
 dependency graph clean. Downstream theorems depend on
@@ -409,7 +409,7 @@ Equibounded and equicontinuous families of holomorphic 1-forms are relatively co
 \lean{JacobianChallenge.HolomorphicForms.bcf_totallyBounded_of_range_compact_of_equicontinuous}
 \textbf{Top-down status.} The Lean development now exposes a sorry-free
 assembly theorem
-\lean{holomorphicOneForm\_closedBall\_totallyBounded}
+\lean{holomorphicOneForm_closedBall_totallyBounded}
 which composes chart-local equiboundedness/equicontinuity placeholders
 with the Arzel\`a--Ascoli bridge; additionally, the core bounded-continuous
 Arzel\`a--Ascoli total-boundedness step has been formalized as a reusable lemma.
@@ -430,14 +430,14 @@ The vector space \(\HX\) is finite-dimensional:
 \begin{layman}
 This is the headline statement, in its public form: the space of global
 holomorphic 1-forms on a compact Riemann surface is finite-dimensional.
-Equivalently, the analytic genus — defined as the complex dimension of
-that space — is a finite natural number. We get it by taking any
+Equivalently, the analytic genus --- defined as the complex dimension of
+that space --- is a finite natural number. We get it by taking any
 project-side normed-space realization of this space, applying the
 finite-dimensionality umbrella, and transporting the conclusion back.
 Why bother? Genus is the single most important invariant of a Riemann
 surface. ``Sphere'' has genus 0, ``donut'' has genus 1, ``two-handled
 pretzel'' has genus 2, and so on up. Knowing genus is finite means we
-can actually compute with it — and the finite-dimensionality of the
+can actually compute with it --- and the finite-dimensionality of the
 1-forms is what makes period lattices, Jacobians, and the entire
 downstream story even formulable.
 \end{layman}

@@ -13,7 +13,7 @@
 Throughout, \(X\) is a compact connected Riemann surface, i.e.\ a
 nonempty compact connected Hausdorff space carrying an analytic complex
 manifold atlas (\code{ChartedSpace ℂ X} together with
-\code{IsManifold 𝓘(ℂ) ω X} in the Lean target). The challenge fixes
+\code{IsManifold 𝓘(ℂ) $\omega$ X} in the Lean target). The challenge fixes
 six pieces of data and four anti-hack theorems on top of that setup.
 
 \subsection{Genus}
@@ -37,13 +37,13 @@ The \emph{analytic genus} of a compact Riemann surface is the complex
 dimension of the space of global holomorphic 1-forms on it. The
 finite-dimensionality theorem (proved later, in the holomorphic-forms
 section) makes this an honest natural number. By the genus-zero classification below, this number also matches
-the topological genus — the count of handles you'd see if you held the
+the topological genus --- the count of handles you'd see if you held the
 surface in your hands. The sphere has analytic genus 0, the donut has 1,
 the two-handled pretzel has 2, and so on. Why bother? Genus is the
 single most important invariant in Riemann surface theory. The whole
 challenge revolves around tying the analytic definition (vector-space
 dimension) to the topological one (number of handles), and the bridge
-between them is forged by Riemann–Roch.
+between them is forged by Riemann--Roch.
 \end{layman}
 \begin{theorem}[Genus-zero classification]
 \label{thm:genus-zero-classification}
@@ -72,7 +72,7 @@ the topological genus zero, and the comparison theorem identifies
 analytic and topological genus, giving analytic genus zero. Why
 bother? It forbids the trivial fake construction
 ``\code{genus X := 0}.'' The genus has to actually equal the
-topological genus — ruling out any constant function pretending to be
+topological genus --- ruling out any constant function pretending to be
 genus. Without this anchor, all the challenge's anti-hacks would be
 wide open.
 \end{layman}
@@ -104,12 +104,12 @@ instances required by \code{Jacobian/Challenge.lean}.
 The \emph{Jacobian} of a compact Riemann surface is the quotient: take
 the dual of the holomorphic 1-forms (a finite-dimensional complex
 vector space), mod out by the period lattice (a full discrete grid),
-and the result is a compact complex torus — a higher-dimensional
+and the result is a compact complex torus --- a higher-dimensional
 generalization of an ordinary donut. Why bother? This is the central
 object of the challenge. Every theorem in the public API is about the
 Jacobian or about maps into and out of it. The construction inherits
-all the structural goodness of the complex-torus package — addition,
-compactness, holomorphic atlas, Lie group structure — for free, just
+all the structural goodness of the complex-torus package --- addition,
+compactness, holomorphic atlas, Lie group structure --- for free, just
 by plugging in the dual space and the period lattice. The compact
 complex Lie group structure on \(\Jac(X)\) is itself an anti-hack: any
 construction that fails to deliver every layer (group, topology,
@@ -139,7 +139,7 @@ period lattice, then descend to Jacobian quotient class. Holomorphicity is
 \end{definition}
 
 \begin{layman}
-Pick a base point on the surface. The \emph{Abel–Jacobi} map sends
+Pick a base point on the surface. The \emph{Abel--Jacobi} map sends
 any other point to the class in the Jacobian represented by ``integrate
 every holomorphic 1-form along a path from base to here.'' Different
 paths give answers differing by periods, but the period lattice is
@@ -148,7 +148,7 @@ on which path you chose. The result is a holomorphic map from the
 surface into its own Jacobian, sending the base point to zero. Why
 bother? This is the central comparison map between the surface and
 its Jacobian. It's holomorphic, and (crucially, on positive-genus
-surfaces) it's injective — so the surface sits inside its Jacobian as a
+surfaces) it's injective --- so the surface sits inside its Jacobian as a
 genuine curve rather than collapsing to a point.
 \end{layman}
 
@@ -164,14 +164,14 @@ invoke Abel point-separation (Abel theorem input).
 \end{theorem}
 
 \begin{layman}
-On a compact Riemann surface of positive genus, the Abel–Jacobi map is
+On a compact Riemann surface of positive genus, the Abel--Jacobi map is
 \emph{injective}: distinct points on the surface go to distinct points
 in the Jacobian. This is the second anti-hack theorem of the
 challenge. The proof chain (worked out in detail in the Abel--Jacobi
 section):
-equality of Abel–Jacobi images forces a principal divisor of the form
+equality of Abel--Jacobi images forces a principal divisor of the form
 ``one point minus another,'' which gives a degree-one map to the
-Riemann sphere, which forces the surface to be the sphere — but the
+Riemann sphere, which forces the surface to be the sphere --- but the
 sphere has genus zero, contradiction. Why bother? Injectivity rules
 out trivial fake Jacobians like ``\code{Jacobian X := PUnit}''
 (which would collapse all points to one) or any other construction
@@ -205,7 +205,7 @@ branches off branch locus and extending holomorphically across it.
 \begin{layman}
 Two operations associated to a holomorphic map between compact Riemann
 surfaces. The \emph{degree} counts how many times the map covers its
-target — zero if the map is constant; otherwise the size of a generic
+target --- zero if the map is constant; otherwise the size of a generic
 fiber, with multiplicities at branch points. The \emph{trace on
 1-forms} is the natural way to push a holomorphic 1-form on the source
 down to a holomorphic 1-form on the target, by summing over local
@@ -250,7 +250,7 @@ Jacobian, and they compose correctly under composition of holomorphic
 maps. The pullback reverses arrow direction (target to source); the
 pushforward respects arrow direction (source to target). It's
 ``functoriality'' in the categorical sense: the assignment
-``Riemann surface'' \(\mapsto\) ``Jacobian'' is a functor — both
+``Riemann surface'' \(\mapsto\) ``Jacobian'' is a functor --- both
 contravariantly (via pullback) and covariantly (via pushforward).
 Why bother? Without functoriality, the push-pull operations would be
 ad-hoc and could be gamed; with it, they're forced to behave like

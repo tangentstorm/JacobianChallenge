@@ -10,8 +10,8 @@ the surface. For any other point \(Q\), choose any path from \(P\)
 to \(Q\) and define the Abel--Jacobi class of \(Q\) to be ``the
 linear functional that integrates each holomorphic 1-form along
 this path,'' viewed in the Jacobian quotient. Different path
-choices change the answer by a period vector — exactly an element
-of the period lattice — so the result is well-defined modulo the
+choices change the answer by a period vector --- exactly an element
+of the period lattice --- so the result is well-defined modulo the
 lattice. We get a holomorphic map
 \(\AJ_P : X \to \Jac(X)\),
 sending \(P\) to zero, smooth and complex-analytic everywhere.
@@ -26,7 +26,7 @@ chain that loops back through every section so far. Equality of
 Abel--Jacobi images would force a principal divisor of the form
 ``one point minus another,'' i.e., a meromorphic function with a
 single simple pole at one point and a single simple zero at another.
-That function is a degree-one map to the Riemann sphere — and
+That function is a degree-one map to the Riemann sphere --- and
 section 4 already proved that any degree-one holomorphic map from a
 compact Riemann surface to the sphere is a homeomorphism. So the
 surface is the sphere, but the sphere has genus zero, contradicting
@@ -68,13 +68,13 @@ from \(P\) to \(Q\).
 \begin{layman}
 Fix a base point \(P\) on the surface and any other point \(Q\). Pick a
 path from \(P\) to \(Q\), and integrate every holomorphic 1-form along
-that path. The result is a vector of complex numbers — an element of
+that path. The result is a vector of complex numbers --- an element of
 the dual of the 1-form space. \emph{Different paths give different
 vectors}, but the difference between any two paths is exactly a
 period (a closed-loop integral), which is an element of the period
-lattice. So the answer modulo the period lattice — i.e., its class in
-the Jacobian — is the same regardless of which path you chose. Why
-bother? Without this, the Abel–Jacobi map ``send \(Q\) to the integral
+lattice. So the answer modulo the period lattice --- i.e., its class in
+the Jacobian --- is the same regardless of which path you chose. Why
+bother? Without this, the Abel--Jacobi map ``send \(Q\) to the integral
 from \(P\) to \(Q\)'' wouldn't even be well-defined. The lattice
 quotient is exactly the right gadget to absorb the path ambiguity, and
 the resulting map will turn out to be holomorphic and rich enough to
@@ -96,14 +96,14 @@ holomorphic one-form over that cycle gives an element of the period lattice.
 \end{lemma}
 
 \begin{layman}
-The Abel–Jacobi map sends the base point \(P\) to zero in the Jacobian.
+The Abel--Jacobi map sends the base point \(P\) to zero in the Jacobian.
 Use the constant ``path'' that just sits at \(P\): integrating any
 1-form along a stationary path gives zero, so every coordinate of the
 output vector is zero, and the resulting class in the Jacobian is the
 zero element. Why bother? It's a tiny lemma, but it's needed to satisfy
 the public challenge API, which contains a literal axiom asserting the
-Abel–Jacobi map sends the base point to zero. Structurally, it nails
-down the Abel–Jacobi map as a \emph{pointed} map (taking a chosen
+Abel--Jacobi map sends the base point to zero. Structurally, it nails
+down the Abel--Jacobi map as a \emph{pointed} map (taking a chosen
 point to the identity element of a group), which is the natural setting
 for comparing it with group homomorphisms downstream.
 \end{layman}
@@ -123,8 +123,8 @@ The map \(\AJ_P:X\to\Jac(X)\) is holomorphic.
 \end{lemma}
 
 \begin{layman}
-The Abel–Jacobi map — sending each point to the class in the Jacobian
-of the integral-from-base-point of all 1-forms — is holomorphic. The
+The Abel--Jacobi map --- sending each point to the class in the Jacobian
+of the integral-from-base-point of all 1-forms --- is holomorphic. The
 intuition is local: in a coordinate disk on the surface, write a
 holomorphic 1-form as \(h(z)\,dz\); its integral with respect to the
 disk's coordinate is just an antiderivative of \(h\), which is again
@@ -132,7 +132,7 @@ holomorphic. So each component of the lift to the dual space is
 holomorphic, and the quotient map down to the torus is a local
 biholomorphism. (Quotienting by a discrete lattice doesn't break
 smoothness.) Why bother? Holomorphicity isn't optional. The challenge
-demands the Abel–Jacobi map be a smooth map of complex manifolds, and
+demands the Abel--Jacobi map be a smooth map of complex manifolds, and
 this is what produces analytic continuations, infinitesimal injectivity,
 and the eventual point-separation argument.
 \end{layman}
@@ -168,18 +168,18 @@ condition is needed to make the result independent of base point.}
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
-The Abel–Jacobi map starts as a function from points to Jacobian
+The Abel--Jacobi map starts as a function from points to Jacobian
 elements, but it extends naturally to formal sums of points (divisors)
 by linearity: a divisor with integer weights at finitely many points
 maps to the corresponding integer combination of point-images. The
 catch is that this extension is canonical only on \emph{degree-zero}
-divisors — those whose total weight sums to zero — because any
+divisors --- those whose total weight sums to zero --- because any
 base-point dependence cancels exactly when the weights balance.
 Restricted to degree-zero divisors, the extension is a genuine group
 homomorphism into the Jacobian. Why bother? It reframes the
 point-separation question in the right form. ``Two points have the
-same Abel–Jacobi image'' is the same as ``their difference divisor
-is in the kernel of the homomorphism'' — which is exactly the object
+same Abel--Jacobi image'' is the same as ``their difference divisor
+is in the kernel of the homomorphism'' --- which is exactly the object
 that Abel's theorem identifies as the principal divisors.
 \end{layman}
 
@@ -199,16 +199,16 @@ result; see e.g.\ Forster Lectures on Riemann Surfaces, Chapter 3.}
 
 \begin{layman}
 This is Abel's theorem in its existence form, and it's deep. Take any
-degree-zero divisor — a finite collection of points with integer weights
-summing to zero. If the Abel–Jacobi image of that divisor is zero in
+degree-zero divisor --- a finite collection of points with integer weights
+summing to zero. If the Abel--Jacobi image of that divisor is zero in
 the Jacobian, then there exists a meromorphic function on the surface
 whose zeros and poles match the divisor exactly, weight by weight.
 Concretely: ``the period lattice swallows up your divisor'' is
 equivalent to ``there's a global meromorphic function with that
 divisor.'' The classical proof builds the function using
-theta-function machinery — a thousand-line construction we package as a
+theta-function machinery --- a thousand-line construction we package as a
 single classical input. Why bother? Combined with the homomorphism
-lemma above, this is exactly the kernel description of Abel–Jacobi.
+lemma above, this is exactly the kernel description of Abel--Jacobi.
 From it falls out the headline injectivity statement on positive-genus
 surfaces, one of the four anti-hack theorems baked into the challenge.
 \end{layman}
@@ -235,7 +235,7 @@ principal means there's a degree-one holomorphic map from the surface
 to the Riemann sphere. Why bother? Degree-one maps to the sphere are
 biholomorphisms (as proved in section 04), so they force the source
 surface to itself \emph{be} a sphere, with genus zero. This is the
-contradiction engine that makes Abel–Jacobi separate points on
+contradiction engine that makes Abel--Jacobi separate points on
 positive-genus surfaces: if two distinct points had the same image,
 genus would have to be zero.
 \end{layman}
@@ -449,7 +449,7 @@ from \(P\) to \(p\) differ by a closed cycle, and the period of
 gives a factor of \(1\). So \(\widetilde g\) is single-valued.
 Locally near \(Q_1\), \(\omega\) has a simple pole of residue
 \(+1\), so \(\int\omega\) looks like \(\log(z-Q_1) + \text{holomorphic}\),
-and \(\widetilde g\) looks like \((z-Q_1) \cdot (\text{unit})\) — a
+and \(\widetilde g\) looks like \((z-Q_1) \cdot (\text{unit})\) --- a
 simple zero. Symmetrically, near \(Q_2\) the residue is \(-1\) and
 \(\widetilde g\) has a simple pole. Elsewhere \(\omega\) is
 holomorphic so \(\widetilde g\) is holomorphic and non-vanishing.
@@ -552,7 +552,7 @@ evaluates to \(2\pi i\) times the path integral of \(\omega_k\) from
 \(Q_2\) to \(Q_1\). The proof is Stokes' theorem on a fundamental
 polygon plus the residue calculation at the two simple poles. Why
 bother? It is the precise numerical bridge between ``log periods''
-of \(f_0\) and ``period integrals'' of holomorphic 1-forms — the
+of \(f_0\) and ``period integrals'' of holomorphic 1-forms --- the
 exact translation needed to convert the AJ kernel hypothesis into a
 \(2\pi i\Z\) condition on log periods.
 \end{layman}
@@ -658,7 +658,7 @@ Exponentiating a single-valued primitive of \(d\log f_0\) gives a
 single-valued function on \(X\setminus\{Q_1, Q_2\}\). At \(Q_1\),
 \(d\log f_0\) has a simple pole of residue \(+1\), so its primitive
 looks like \(\log(z-Q_1)\) locally and the exponential is
-\((z-Q_1)\cdot\text{unit}\) — a simple zero. At \(Q_2\), the
+\((z-Q_1)\cdot\text{unit}\) --- a simple zero. At \(Q_2\), the
 residue is \(-1\), giving a simple pole. Elsewhere
 \(d\log f_0\) is holomorphic, so the exponential is holomorphic and
 non-vanishing. The divisor of \(\exp L\) is therefore exactly
@@ -953,7 +953,7 @@ project lemmas:
 \item
   \texttt{Jacobian/HolomorphicForms/RiemannRochStrong.lean}:
   \texttt{riemann\_roch\_strong\_h0} (sorry-free in the high-degree
-  régime) and \texttt{riemann\_roch\_strong\_h0\_pos} provide the
+  r\'egime) and \texttt{riemann\_roch\_strong\_h0\_pos} provide the
   high-degree special case of \texttt{lem:rr-formula-general}.
 \item
   \texttt{Jacobian/Blueprint/Sec05/AbelExistence.lean} and
@@ -1002,7 +1002,7 @@ Lemma~\ref{lem:meromorphic-via-log-exp} (log-exp construction) those
 two ingredients yield a meromorphic function \(f\) with
 \((f) = (Q_1) - (Q_2)\). Conversion to
 Theorem~\ref{thm:abel-existence} (umbrella) is by specialisation to
-the divisor \(D = (Q_1) - (Q_2)\) — the path-integral period
+the divisor \(D = (Q_1) - (Q_2)\) --- the path-integral period
 congruence is exactly the statement \(\AJ(D) = 0\) in \(\Jac(X)\).
 \end{proof}
 
@@ -1068,7 +1068,7 @@ exact form needed by the formal project: \emph{a meromorphic function
 with a single simple pole forces analytic genus zero.} A pole divisor
 that is a single point has degree one, and a degree-one branched
 covering of \(\C\widehat{\C}\) is a homeomorphism onto the Riemann
-sphere — there is nowhere for additional sheets to hide. The source
+sphere --- there is nowhere for additional sheets to hide. The source
 surface is therefore homeomorphic to the sphere, and the easy
 direction of the analytic genus-zero classification (already proved
 sorry-free in the project) reads off
@@ -1099,11 +1099,11 @@ specifically
 \begin{layman}
 Any nonconstant holomorphic map of degree one to the Riemann sphere is
 a biholomorphism. Biholomorphisms preserve everything analytic, so the
-source surface has the same genus as the sphere — namely zero. We
+source surface has the same genus as the sphere --- namely zero. We
 already proved that degree-one maps are isomorphisms (the classical
 input from section 04); biholomorphic surfaces have isomorphic spaces
 of holomorphic 1-forms, so the same dimension, so the same analytic
-genus. The genus of the Riemann sphere is zero — a separate classical
+genus. The genus of the Riemann sphere is zero --- a separate classical
 computation, since every meromorphic 1-form on the sphere has at
 least one pole, leaving no honest holomorphic 1-forms at all. Why
 bother? It's the contradiction step in the point-separation argument:
@@ -1130,17 +1130,17 @@ If \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
 
 \begin{layman}
 The point-separation form of Abel's theorem: on a compact Riemann
-surface of positive genus, if two points have the same Abel–Jacobi
+surface of positive genus, if two points have the same Abel--Jacobi
 image, they must already be equal. The argument is by contradiction.
 Suppose two distinct points had the same image. Then the homomorphism
 extension sends their difference divisor to zero, so by Abel's
 existence theorem there's a meromorphic function with exactly that
 divisor. By the simple-support lemma it's a degree-one map to the
-sphere, which is a biholomorphism, which forces genus zero —
+sphere, which is a biholomorphism, which forces genus zero ---
 contradicting our assumption. So distinct points must have distinct
 images. Why bother? This is the headline anti-hack theorem: the
-Abel–Jacobi map is injective on positive-genus surfaces. It rules out
-trivial fake constructions like ``Jacobian X := PUnit'' — only a
+Abel--Jacobi map is injective on positive-genus surfaces. It rules out
+trivial fake constructions like ``Jacobian X := PUnit'' --- only a
 genuinely nontrivial Jacobian could distinguish all the points of the
 surface.
 \end{layman}
@@ -1168,16 +1168,16 @@ principal divisors. In particular, if \(g(X)>0\) and
 
 \begin{layman}
 We package the classical theory of Abel's theorem as a single named
-input: the kernel of the Abel–Jacobi map on degree-zero divisors is
+input: the kernel of the Abel--Jacobi map on degree-zero divisors is
 exactly the principal divisors, and as a corollary, on a positive-genus
-surface the Abel–Jacobi map separates points. The classical proof is
-decades of nineteenth-century complex analysis — hundreds of pages of
-theta functions and ``automorphy factors'' — wrapped into a single
+surface the Abel--Jacobi map separates points. The classical proof is
+decades of nineteenth-century complex analysis --- hundreds of pages of
+theta functions and ``automorphy factors'' --- wrapped into a single
 named import. Why bother? This is the deepest classical ingredient the
 project consumes, and naming it as one umbrella lets every downstream
 node depend on the umbrella rather than its internals. If a future
 formalization splits this into a hundred pieces, only the umbrella's
-proof — not its dependents — needs to change.
+proof --- not its dependents --- needs to change.
 \end{layman}
 
 \begin{proof}[Proof of Theorem~\ref{thm:abel-jacobi-injective}]

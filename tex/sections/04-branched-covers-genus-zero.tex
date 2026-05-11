@@ -3,13 +3,13 @@
 
 \begin{layman}
 A nonconstant holomorphic map between compact Riemann surfaces is
-never just an injection — it is a \emph{branched covering}. Most
+never just an injection --- it is a \emph{branched covering}. Most
 points in the target have the same finite number \(d\) of preimages
 in the source; at finitely many \emph{branch points} the preimages
 collide with multiplicity. The number \(d\) is the \emph{degree} of
 the map, the basic numerical invariant of the cover. A degree-one
-holomorphic map between compact Riemann surfaces — generic fibre is
-a single point — is automatically a homeomorphism, and in fact a
+holomorphic map between compact Riemann surfaces --- generic fibre is
+a single point --- is automatically a homeomorphism, and in fact a
 biholomorphism: this is one of the chapter's punch lines and the
 key step in the genus-zero classification.
 
@@ -19,7 +19,7 @@ index} \(e_p(f)\), the local-power-series order of \(f - f(p)\) at
 \(p\). The fibre sum \(\sum_{p \in f^{-1}(q)} e_p(f)\) is the
 weighted count of preimages; the weighted-fibre-sum-is-locally-
 constant theorem then forces this count to be the same for every
-\(q\) — that constant value is the degree. Showing local constancy
+\(q\) --- that constant value is the degree. Showing local constancy
 costs real work: the unramified locus is open, ramified points are
 isolated and finite, the chart-local power series can be put in a
 local conjugate-to-\(z^k\) normal form via a holomorphic \(k\)-th
@@ -43,7 +43,7 @@ hack theorems pinned by \texttt{Jacobian/Challenge.lean}. It rules
 out trivial fake constructions like \texttt{genus X := 0}: the
 challenge demands that \texttt{genus X = 0} actually entails \(X\)
 is the topological sphere. Reaching that conclusion goes through
-exactly this chapter — branched degree, Riemann-Hurwitz, degree-one
+exactly this chapter --- branched degree, Riemann-Hurwitz, degree-one
 classification, and the analytic-genus-zero \(\Rightarrow\)
 sphere argument.
 \end{layman}
@@ -79,9 +79,9 @@ point you choose. The multiplicity at a preimage is its
 index of \(1\) means the map is a clean local homeomorphism nearby; an
 index of \(2\) means two sheets pinch into one (like the square-root
 function); higher indices mean more pinching. Why bother? Degree turns
-holomorphic maps between surfaces into measurable things — the way
+holomorphic maps between surfaces into measurable things --- the way
 ``2-to-1 covering'' or ``5-to-1 covering'' captures the structure. Most
-of the classical theory of maps between Riemann surfaces (Riemann–Hurwitz,
+of the classical theory of maps between Riemann surfaces (Riemann--Hurwitz,
 the trace, push-pull) runs on this number.
 \end{layman}
 
@@ -123,8 +123,8 @@ image of \(x\)) plus the common helper.}
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
-The branch points of a map — places where two or more sheets pinch
-together, so the ramification index jumps above \(1\) — can never form
+The branch points of a map --- places where two or more sheets pinch
+together, so the ramification index jumps above \(1\) --- can never form
 an infinite cluster. Locally, ramification means the derivative of the
 map vanishes. Derivatives of holomorphic gadgets are themselves
 holomorphic, and on a compact surface the zero set of a nonzero
@@ -133,7 +133,7 @@ identity-theorem-plus-compactness combo we saw for divisors. So branch
 points come in tidy finite quantity. Why bother? Most theorems about
 branched covers are easier to state and prove ``away from the branch
 locus,'' and knowing that locus is finite guarantees we can always
-extend conclusions across it by continuity — exactly how the trace of a
+extend conclusions across it by continuity --- exactly how the trace of a
 1-form will be defined later.
 \end{layman}
 
@@ -324,8 +324,8 @@ each preimage, the local picture (either a single unramified sheet of
 weight \(1\), or \(k\) simple sheets summing to \(k\), or one
 ramified sheet of weight \(k\)) contributes the same amount whether
 you're sitting exactly at the branch value or slightly displaced.
-Stitching together all the preimages of a target point — there are
-finitely many — and choosing disjoint neighborhoods around each, the
+Stitching together all the preimages of a target point --- there are
+finitely many --- and choosing disjoint neighborhoods around each, the
 total weighted count is locally constant.
 \end{layman}
 
@@ -347,7 +347,7 @@ Mathlib (preconnected target \(\Rightarrow\) globally constant).}
 
 \begin{layman}
 Locally constant on a connected target means globally constant. So the
-weighted fibre count assigns the same number — the degree — to every
+weighted fibre count assigns the same number --- the degree --- to every
 target point. This is the proof that ``the degree of a holomorphic map''
 is actually a single well-defined number, not a value that drifts as
 you move around the target.
@@ -366,7 +366,7 @@ unramified.
 If a holomorphic map between compact Riemann surfaces has degree one,
 every fiber's ramification indices sum to one. Since each index is at
 least one, the only way the total can equal one is if the fiber consists
-of exactly one point with index exactly one. So no branching anywhere —
+of exactly one point with index exactly one. So no branching anywhere ---
 the map is everywhere a clean local homeomorphism. Why bother?
 Degree-one maps are the candidate isomorphisms between Riemann surfaces.
 Showing they have no branching is the first hurdle; the next hurdle
@@ -395,7 +395,7 @@ fact that unramification means the local derivative is nonzero.}
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
-Take a nonconstant holomorphic map that's unramified — meaning it never
+Take a nonconstant holomorphic map that's unramified --- meaning it never
 pinches sheets together. Around every point, the map is a \emph{local
 biholomorphism}: a small neighborhood of the source maps in a smooth,
 invertible, holomorphic way onto a small neighborhood of the target.
@@ -405,7 +405,7 @@ nonzero derivative is exactly the condition for a holomorphic function
 to have a holomorphic local inverse. Why bother? Locally, the map looks
 like the identity (after a change of coordinates). Combined with
 degree-one (every fiber a singleton), this will force the whole map to
-be a global biholomorphism — the isomorphism we need to identify
+be a global biholomorphism --- the isomorphism we need to identify
 genus-zero surfaces with the sphere.
 \end{layman}
 
@@ -421,11 +421,11 @@ A degree-one holomorphic map \(f:X\to Y\) is bijective.
 \begin{layman}
 A degree-one holomorphic map between compact Riemann surfaces is a
 bijection. \emph{Surjective}: a nonconstant holomorphic map between
-compact surfaces is always onto — its image is open (open mapping
+compact surfaces is always onto --- its image is open (open mapping
 theorem) and closed (compactness), and a nonempty subset that's both
 open and closed in a connected space is the whole thing. \emph{Injective}:
 each fiber has size exactly one, by the no-ramification lemma. So the
-map is both onto and one-to-one — a set-theoretic bijection. Why bother?
+map is both onto and one-to-one --- a set-theoretic bijection. Why bother?
 A continuous bijection between compact Hausdorff spaces is automatically
 a homeomorphism (next theorem), and combined with the local
 biholomorphism from above, that promotes our degree-one map to a full
@@ -453,7 +453,7 @@ or analogous topology fact (PRESENT).}
 
 \begin{layman}
 A purely topological gem: any continuous one-to-one onto map from one
-compact Hausdorff space to another is automatically a homeomorphism —
+compact Hausdorff space to another is automatically a homeomorphism ---
 its inverse is continuous for free, no extra checking required. The
 reason is a chain of clean implications. Closed subsets of a compact
 space are themselves compact. Compact subsets of a Hausdorff space are
@@ -480,7 +480,7 @@ We package the chain ``degree-one nonconstant holomorphic map between
 compact Riemann surfaces is a biholomorphism'' as a single classical
 input. It bundles three steps: degree one means no ramification; no
 ramification means a local biholomorphism everywhere; and a continuous
-bijection between compact Hausdorff spaces is a homeomorphism — together
+bijection between compact Hausdorff spaces is a homeomorphism --- together
 giving a global holomorphic isomorphism. Why bother? Combined with the
 genus-zero existence proposition (genus zero gives a degree-one map to
 the sphere), this umbrella delivers the forward direction of the
@@ -706,7 +706,7 @@ smooth covector field. Evaluating a smooth covector field on a
 constant tangent vector yields a smooth scalar function. The
 specific Mathlib gap is the \emph{chart-trivialisation API for
 \code{ContMDiffSection}} on the cotangent bundle, which is absent
-in v4.28.0 — once supplied, the proof is immediate.
+in v4.28.0 --- once supplied, the proof is immediate.
 \end{proof}
 
 \begin{lemma}[Inversion-chart coefficient is continuous at \(0\)]
@@ -946,7 +946,7 @@ isomorphism because \(de\) is invertible at every point.
 The cotangent-bundle section \(\omega.\code{toFun}\) pulled back through
 \(\code{identityChart}.\code{symm}\) and evaluated at \(1:\C\) gives a
 \(C^{\infty}\) function on \(\C\).
-\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection_localRepr_identityChart_contDiff}
+\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection_localRepr_identityChart_contDiff,identityChartCoeff_contDiff,identityChartCoeff_tendsto_zero}
 \leanok
 \end{lemma}
 \begin{proof}
