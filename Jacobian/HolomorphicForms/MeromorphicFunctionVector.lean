@@ -223,7 +223,11 @@ noncomputable instance : Sub (MeromorphicFunctionType X) := ⟨fun f g => f + (-
 noncomputable def smul_meromorphic (c : ℂ) (f : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
   { toFun := fun x => OnePoint.map (c * ·) (f.toFun x)
     toFun_continuous := sorry
-    isMeromorphic := sorry }
+    isMeromorphic := fun p => by
+      unfold MeromorphicAtX
+      convert (MeromorphicAt.const c (chartAt ℂ p p)).mul (f.isMeromorphic p) using 1
+      ext z
+      cases h : f.toFun ((chartAt ℂ p).symm z) <;> simp [h, Option.getD] }
 
 noncomputable instance : SMul ℂ (MeromorphicFunctionType X) := ⟨smul_meromorphic⟩
 
