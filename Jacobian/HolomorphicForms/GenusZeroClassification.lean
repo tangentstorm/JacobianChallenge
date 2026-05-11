@@ -3,10 +3,6 @@ import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.EntireZero
-import Jacobian.HolomorphicForms.InversionChartContinuity
-import Jacobian.HolomorphicForms.GenusZeroTypes
-import Jacobian.HolomorphicForms.HarmonicFunctions
-import Jacobian.HolomorphicForms.Isothermal
 import Jacobian.HolomorphicForms.ChartSectionContDiff
 import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
@@ -792,25 +788,17 @@ as two named structural companions plus a sorry-free assembly.
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 `§Uniformization-lite`. -/
 
-/-- **Structural axiom (G1b).** A homeomorphism `X ≃ₜ OnePoint ℂ`
-that is biholomorphic induces a `ℂ`-linear pullback on holomorphic
-1-form spaces.
+/- **INCORRECT (commented out).** The original statement claimed that
+*any* homeomorphism `e : X ≃ₜ OnePoint ℂ` is automatically `ContMDiff`.
+This is false: complex conjugation `z ↦ z̄` extends to a self-homeomorphism
+of `OnePoint ℂ` that is NOT `ℂ`-smooth (not holomorphic), providing a
+counterexample with `X = OnePoint ℂ` and its standard `IsManifold` instance.
 
-In the project's current API, the homeomorphism alone is not enough;
-biholomorphicity is needed. The companion sorry below captures the
-existence of the pullback at the level of linear isomorphism.
+The correct mathematical content is the uniformization theorem at genus 0:
+there EXISTS a biholomorphism `X → OnePoint ℂ`, but not every homeomorphism
+is one.  The corrected statement below uses an existential quantifier.
 
-Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:holomorphic-one-form-pullback-via-biholo`.
-
-**Sub-obligation (smoothness of homeomorphism).** A homeomorphism
-`X ≃ₜ OnePoint ℂ` from a compact connected Riemann surface to `ℂℙ¹`
-is smooth (ContMDiff) in the forward direction.
-
-This follows from the uniqueness of complex structure on `S²`
-(uniformization at genus 0): the homeomorphism is automatically
-a biholomorphism, hence smooth. -/
-
+/-- **Structural axiom (G1b).** — INCORRECT as stated. -/
 theorem contMDiff_homeomorph_to_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -820,13 +808,6 @@ theorem contMDiff_homeomorph_to_onePointCx
       (⊤ : WithTop ℕ∞) e := by
   sorry
 
-/-- **Sub-obligation (smoothness of inverse homeomorphism).** A homeomorphism
-`X ≃ₜ OnePoint ℂ` from a compact connected Riemann surface to `ℂℙ¹`
-is smooth (ContMDiff) in the reverse direction.
-
-This follows from the uniqueness of complex structure on `S²`
-(uniformization at genus 0): the homeomorphism is automatically
-a biholomorphism, hence smooth in both directions. -/
 theorem contMDiff_homeomorph_to_onePointCx_symm
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -834,6 +815,32 @@ theorem contMDiff_homeomorph_to_onePointCx_symm
     (e : X ≃ₜ OnePoint ℂ) :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) e.symm := by
+  sorry
+-/
+
+/-- **Structural axiom (G1b, corrected).** A compact connected Riemann
+surface homeomorphic to `OnePoint ℂ` (= ℂℙ¹) admits a *biholomorphism*
+to `OnePoint ℂ` — i.e. there EXISTS a homeomorphism that is `ContMDiff`
+in both directions.
+
+The original statement incorrectly claimed that the *given* homeomorphism
+is automatically smooth. This is false: complex conjugation on `OnePoint ℂ`
+is a self-homeomorphism that is NOT `ℂ`-smooth.
+
+The corrected statement is the uniformization theorem at genus 0:
+a compact simply-connected Riemann surface is biholomorphic to ℂℙ¹.
+This remains sorry'd because the uniformization theorem is not in
+Mathlib. -/
+theorem exists_contMDiff_homeomorph_to_onePointCx
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_e : X ≃ₜ OnePoint ℂ) :
+    ∃ (f : X ≃ₜ OnePoint ℂ),
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) f ∧
+      ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+        (⊤ : WithTop ℕ∞) f.symm := by
   sorry
 
 /-
@@ -871,10 +878,10 @@ theorem holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) :=
-  ⟨pullbackLinearEquivOfHomeomorph _e
-    (contMDiff_homeomorph_to_onePointCx X _e)
-    (contMDiff_homeomorph_to_onePointCx_symm X _e)⟩
+    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
+  obtain ⟨f, hf, hf_symm⟩ := exists_contMDiff_homeomorph_to_onePointCx X _e
+  exact ⟨pullbackLinearEquivOfHomeomorph f hf hf_symm⟩
+
 
 /-- **Structural axiom (G1).** A topological homeomorphism from a
 compact connected complex 1-manifold `X` to the standard 2-sphere
@@ -1236,6 +1243,50 @@ matures.
   pursuing uniformization via universal covers.
 -/
 
+/-- The Riemann-Roch output in genus zero: a meromorphic map to `OnePoint ℂ`
+whose pole divisor is the point divisor `[pole]`. -/
+structure GenusZeroSimplePoleMeromorphicMap
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
+  meromorphicMap : MeromorphicMapToSphere X
+  pole : X
+  simple_pole_cert : meromorphicMap.poles = Divisor.point pole
+
+namespace GenusZeroSimplePoleMeromorphicMap
+
+/-- The underlying map to the Riemann sphere. -/
+def toMap {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : GenusZeroSimplePoleMeromorphicMap X) : X → OnePoint ℂ :=
+  f.meromorphicMap.toMap
+
+end GenusZeroSimplePoleMeromorphicMap
+
+/-- Placeholder data after the compactness/properness step: the genus-zero
+meromorphic map is a degree-one map to `OnePoint ℂ`.
+
+The fields are the topological consequences needed by the final assembly:
+continuity and bijectivity. A future refinement should replace this bridge by
+properness plus the local degree calculation, then derive these fields. -/
+structure GenusZeroProperDegreeOneMap
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
+  toMap : X → OnePoint ℂ
+  continuous_toMap : Continuous toMap
+  bijective_toMap : Function.Bijective toMap
+  degree_one_data : ∃ f : MeromorphicMapToSphere X,
+    toMap = f.toMap ∧ Nonempty (MeromorphicDegreeOneData X f)
+
+/-- Placeholder data for the last analytic step: a degree-one meromorphic map
+is a biholomorphic parametrization of `X` by `OnePoint ℂ`.
+
+At the topological surface needed here, this is represented by the resulting
+homeomorphism. Future work can strengthen the structure with a biholomorphism
+type once the project has one. -/
+structure GenusZeroBiholomorphicParametrization
+    (X : Type*) [TopologicalSpace X] where
+  toHomeomorph : X ≃ₜ OnePoint ℂ
+
 /-!
 ### TOPDOWN decomposition for `genus_zero_homeomorph_onePointCx`
 
@@ -1336,32 +1387,28 @@ noncomputable def genusZeroSimplePoleMeromorphicMapAt
     X → OnePoint ℂ :=
   genusZeroRiemannRochNonconstantMapAt X P h
 
-/-- **Uniformization via PDE: The existence of a simple pole.**
-Using the Dirichlet principle and harmonic functions, any compact Riemann surface
-with analytic genus 0 admits a meromorphic function with a single simple pole at P.
-This replaces the Riemann-Roch algebraic proof with the analytic PDE proof. -/
-theorem genusZero_exists_simplePole_meromorphicMap_viaPDE
+/-- **Assembly for the Riemann-Roch leaf.** Choose any point of the connected
+surface and package the fixed-pole Riemann-Roch map at that point.
+
+The remaining Riemann-Roch leaf is now the single fixed-pole existence
+statement `genusZeroRiemannRochFixedPoleData_nonempty`: for a prescribed
+point `P`, genus zero Riemann-Roch produces a meromorphic map whose only pole
+is simple and located at `P`. -/
+noncomputable def simplePoleMeromorphicMapOfGenusZero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (h : analyticGenus ℂ X = 0) (P : X) :
-    ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
-  -- 1. X admits a compatible Riemannian metric
-  obtain ⟨g⟩ := exists_compatible_metric X
-  -- 2. Isothermal coordinates exist for g
-  have _hiso := exists_isothermal_coordinates X g
-  -- 3. Construct the dipole harmonic function u at P
-  obtain ⟨u, hu_harm, hu_sing⟩ := exists_dipole_harmonic X g P
-  -- 4. Genus 0 implies H^1_dR(X) = 0
-  have hb1 := analytic_genus_zero_implies_b1_zero X h
-  -- 5. Harmonic conjugate v exists for u
-  obtain ⟨v, hv_cr⟩ := harmonic_conjugate_exists X g u hb1 hu_harm
-  -- 6. Combine u and v to get a meromorphic function with a simple pole at P
-  exact dipole_harmonic_yields_simple_pole X g P u v hu_sing hv_cr
+    (h : analyticGenus ℂ X = 0) :
+    GenusZeroSimplePoleMeromorphicMap X :=
+  let P : X := Classical.choice (inferInstance : Nonempty X)
+  let data := genusZeroRiemannRochFixedPoleData X P h
+  { meromorphicMap := data.meromorphicMap
+    pole := P
+    simple_pole_cert := genusZeroRiemannRochSimplePoleAt X P h }
 
-/-- **Sub-obligation 1 (existence form, via PDE).** Existence of a
-meromorphic map with a single simple pole. -/
+/-- **Sub-obligation 1 wrapper (sorry-free).** Existence form of
+`simplePoleMeromorphicMapOfGenusZero`. -/
 theorem genus_zero_exists_simplePole_meromorphicMap
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1369,9 +1416,7 @@ theorem genus_zero_exists_simplePole_meromorphicMap
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : analyticGenus ℂ X = 0) :
     Nonempty (GenusZeroSimplePoleMeromorphicMap X) := by
-  let P : X := Classical.choice (inferInstance : Nonempty X)
-  obtain ⟨f, hf⟩ := genusZero_exists_simplePole_meromorphicMap_viaPDE X h P
-  exact ⟨{ meromorphicMap := f, pole := P, simple_pole_cert := hf }⟩
+  exact ⟨simplePoleMeromorphicMapOfGenusZero X h⟩
 
 /-- **Properness/degree data existence leaf.** A one-simple-pole map has
 some proper degree-one promotion.

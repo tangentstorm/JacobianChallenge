@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.MeromorphicFunction
 import Jacobian.HolomorphicForms.VanishingOrder
 import Jacobian.HolomorphicForms.Divisor
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
+import Mathlib
 
 /-!
 # Meromorphic functions on a complex 1-manifold form a ℂ-vector space
@@ -46,6 +47,116 @@ def zero (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
 
 instance : Zero (MeromorphicFunctionType X) := ⟨zero X⟩
 
+/-! ### Helper lemmas for addition of meromorphic functions -/
+
+/-- If `(x : OnePoint ℂ).getD 0 ≠ 0`, then `x ≠ ∞`. -/
+private lemma ne_infty_of_getD_ne_zero {x : OnePoint ℂ} (h : x.getD 0 ≠ 0) : x ≠ ∞ := by
+  intro hx; subst hx; exact h rfl
+
+/-
+On a punctured neighborhood, a meromorphic-typed function's `toFun` is either
+eventually finite or eventually `∞`.
+-/
+private lemma toFun_eventually_finite_or_infty (f : MeromorphicFunctionType X) (p : X) :
+    (∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ,
+      f.toFun ((extChartAt 𝓘(ℂ) p).symm z) ≠ ∞) ∨
+    (∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ,
+      f.toFun ((extChartAt 𝓘(ℂ) p).symm z) = ∞) := by
+  by_cases h : f.toFun p = ∞;
+  · have := f.isMeromorphic p;
+    obtain h|h := this.eventually_eq_zero_or_eventually_ne_zero;
+    · refine' Or.inr _;
+      have h_cont : ∀ᶠ z in nhds p, f.toFun z ≠ OnePoint.some 0 := by
+        exact f.toFun_continuous.continuousAt.eventually_ne ( by aesop );
+      have h_cont : ∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ, f.toFun ((extChartAt 𝓘(ℂ) p).symm z) ≠ OnePoint.some 0 := by
+        have h_cont : Filter.Tendsto (fun z => (extChartAt 𝓘(ℂ) p).symm z) (nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ) (nhds p) := by
+          have h_cont : Filter.Tendsto (fun z => (extChartAt 𝓘(ℂ) p).symm z) (nhds (extChartAt 𝓘(ℂ) p p)) (nhds p) := by
+            have h_cont : ContinuousAt (fun z => (extChartAt 𝓘(ℂ) p).symm z) (extChartAt 𝓘(ℂ) p p) := by
+              exact?;
+            convert h_cont.tendsto using 1;
+            simp +decide [ extChartAt ];
+          exact h_cont.mono_left inf_le_left;
+        exact h_cont.eventually ‹_›;
+      filter_upwards [ h_cont, h ] with z hz₁ hz₂;
+      cases h : f.toFun ( ( extChartAt 𝓘(ℂ) p ).symm z ) <;> aesop;
+    · exact Or.inl ( h.mono fun x hx => by contrapose! hx; aesop );
+  · left;
+    have h_cont : ContinuousAt f.toFun p := by
+      exact f.toFun_continuous.continuousAt;
+    have h_cont : ContinuousAt (fun z => f.toFun ((extChartAt 𝓘(ℂ) p).symm z)) (extChartAt 𝓘(ℂ) p p) := by
+      refine' ContinuousAt.comp _ _;
+      · convert h_cont using 1;
+        simp +decide [ extChartAt ];
+      · refine' ContinuousAt.comp _ _;
+        · exact?;
+        · exact continuousAt_id;
+    exact h_cont.eventually_ne ( by simpa [ h ] ) |> fun h => h.filter_mono inf_le_left
+
+/-
+When `f.toFun` is eventually `∞` on a punctured neighborhood, the `getD 0` of
+any match involving `f.toFun` is eventually `0`.
+-/
+private lemma getD_match_eq_zero_of_infty (f g : MeromorphicFunctionType X) (p : X)
+    (hf : ∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ,
+      f.toFun ((extChartAt 𝓘(ℂ) p).symm z) = ∞) :
+    ∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ,
+      (match f.toFun ((extChartAt 𝓘(ℂ) p).symm z),
+            g.toFun ((extChartAt 𝓘(ℂ) p).symm z) with
+        | some a, some b => ((a + b : ℂ) : OnePoint ℂ)
+        | _, _ => ∞).getD 0 = 0 := by
+  filter_upwards [ hf ] with z hz;
+  rw [ hz ];
+  cases g.toFun ( ( extChartAt 𝓘(ℂ) p ).symm z ) <;> rfl
+
+/-
+When both `f.toFun` and `g.toFun` are finite, the `getD 0` of the match
+equals the sum of the `getD 0`'s.
+-/
+private lemma getD_match_eq_add_of_finite (f g : MeromorphicFunctionType X) (p : X)
+    (hf : ∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ,
+      f.toFun ((extChartAt 𝓘(ℂ) p).symm z) ≠ ∞)
+    (hg : ∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ,
+      g.toFun ((extChartAt 𝓘(ℂ) p).symm z) ≠ ∞) :
+    ∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ,
+      (match f.toFun ((extChartAt 𝓘(ℂ) p).symm z),
+            g.toFun ((extChartAt 𝓘(ℂ) p).symm z) with
+        | some a, some b => ((a + b : ℂ) : OnePoint ℂ)
+        | _, _ => ∞).getD 0 =
+      (f.toFun ((extChartAt 𝓘(ℂ) p).symm z)).getD 0 +
+      (g.toFun ((extChartAt 𝓘(ℂ) p).symm z)).getD 0 := by
+  filter_upwards [ hf, hg ] with z hz₁ hz₂;
+  cases h : f.toFun ( ( extChartAt 𝓘(ℂ, ℂ) p ).symm z ) <;> cases h' : g.toFun ( ( extChartAt 𝓘(ℂ, ℂ) p ).symm z ) <;> simp_all +decide [ Option.getD ]
+
+/-
+The `isMeromorphic` obligation of `add_meromorphic`: the `getD 0` of the
+pointwise sum is meromorphic at every point.
+-/
+lemma add_meromorphic_isMeromorphic (f g : MeromorphicFunctionType X) (p : X) :
+    MeromorphicAtX
+      (fun q => (match f.toFun q, g.toFun q with
+        | some a, some b => ((a + b : ℂ) : OnePoint ℂ)
+        | _, _ => ∞).getD 0) p := by
+  -- Apply the lemma that states the sum of two meromorphic functions is meromorphic.
+  apply (toFun_eventually_finite_or_infty f p).elim (fun hf => ?_) (fun hg => ?_);
+  · apply (toFun_eventually_finite_or_infty g p).elim (fun hg => ?_) (fun hg => ?_);
+    · have h_meromorphic : MeromorphicAt (fun z => (f.toFiniteFun ((extChartAt 𝓘(ℂ) p).symm z)) + (g.toFiniteFun ((extChartAt 𝓘(ℂ) p).symm z))) (extChartAt 𝓘(ℂ) p p) := by
+        exact MeromorphicAt.add ( f.isMeromorphic p ) ( g.isMeromorphic p );
+      have h_eq : ∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ, (match f.toFun ((extChartAt 𝓘(ℂ) p).symm z), g.toFun ((extChartAt 𝓘(ℂ) p).symm z) with
+        | some a, some b => ((a + b : ℂ) : OnePoint ℂ)
+        | _, _ => ∞).getD 0 = (f.toFiniteFun ((extChartAt 𝓘(ℂ) p).symm z)) + (g.toFiniteFun ((extChartAt 𝓘(ℂ) p).symm z)) := by
+          exact getD_match_eq_add_of_finite f g p hf hg;
+      convert h_meromorphic.congr _;
+      filter_upwards [ h_eq ] with z hz using hz.symm;
+    · refine' ( analyticAt_const.meromorphicAt.congr _ );
+      exact 0;
+      filter_upwards [ hg ] with z hz using by cases h : f.toFun ( extChartAt 𝓘(ℂ) p |>.symm z ) <;> aesop;
+  · have h_zero : ∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ, (match f.toFun ((extChartAt 𝓘(ℂ) p).symm z), g.toFun ((extChartAt 𝓘(ℂ) p).symm z) with
+      | some a, some b => ((a + b : ℂ) : OnePoint ℂ)
+      | _, _ => ∞).getD 0 = 0 := by
+        filter_upwards [ hg ] with z hz using by rw [ hz ] ; rfl;
+    convert ( analyticAt_const.meromorphicAt.congr _ ) using 1;
+    exacts [ 0, by filter_upwards [ h_zero ] with z hz; exact hz.symm ]
+
 /-- Addition of meromorphic functions: pointwise sum on the Riemann sphere. -/
 noncomputable def add_meromorphic (f g : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
   { toFun := fun x =>
@@ -53,7 +164,7 @@ noncomputable def add_meromorphic (f g : MeromorphicFunctionType X) : Meromorphi
       | some a, some b => ((a + b : ℂ) : OnePoint ℂ)
       | _, _ => ∞
     toFun_continuous := by sorry
-    isMeromorphic := by sorry }
+    isMeromorphic := fun p => add_meromorphic_isMeromorphic f g p }
 
 noncomputable instance : Add (MeromorphicFunctionType X) := ⟨add_meromorphic⟩
 
@@ -158,13 +269,13 @@ Note: the finite-support obligation is deferred; on a compact Riemann
 surface, the identity principle guarantees only finitely many zeros. -/
 noncomputable def zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_f : MeromorphicFunctionType X) : Divisor X :=
+    (f : MeromorphicFunctionType X) : Divisor X :=
   0  -- Placeholder: to be refined with VanishingOrder-based zero counting
 
 /-- The pole divisor of a meromorphic function. -/
 noncomputable def poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_f : MeromorphicFunctionType X) : Divisor X :=
+    (f : MeromorphicFunctionType X) : Divisor X :=
   0  -- Placeholder: to be refined with VanishingOrder-based pole counting
 
 /-- The principal divisor `(f) = (zeros) - (poles)`. -/
@@ -181,34 +292,13 @@ theorem toFun_ne_infty_of_poles_eq_zero {X : Type*} [TopologicalSpace X] [Charte
     ∀ x, f.toFun x ≠ ∞ :=
   sorry
 
-/-
-Structural bridge: if `f.toFun` never takes the value `∞`, then
-`f.toFiniteFun` is `MDifferentiable`.
--/
+/-- Structural bridge: if `f.toFun` never takes the value `∞`, then
+`f.toFiniteFun` is `MDifferentiable`. -/
 theorem mdifferentiable_toFiniteFun_of_no_infty {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) (h : ∀ x, f.toFun x ≠ ∞) :
     MDifferentiable (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f.toFiniteFun :=
-  by
-    -- Since $f.toFiniteFun$ is continuous, we can apply the fact that the composition of continuous functions is continuous.
-    have h_cont : Continuous f.toFiniteFun := by
-      convert f.toFun_continuous using 1;
-      constructor <;> intro h <;> rw [ continuous_iff_continuousAt ] at *;
-      · exact fun x => f.toFun_continuous.continuousAt;
-      · intro x;
-        convert ContinuousAt.comp ( show ContinuousAt ( fun y : OnePoint ℂ => y.getD 0 ) ( f.toFun x ) from ?_ ) ( h x ) using 1;
-        rw [ ContinuousAt ];
-        cases h : f.toFun x <;> simp_all +decide [ OnePoint.nhds_coe_eq ];
-        exact ContinuousAt.tendsto fun ⦃U⦄ a => a;
-    intro x;
-    have h_analytic : AnalyticAt ℂ (f.toFiniteFun ∘ (extChartAt 𝓘(ℂ) x).symm) (extChartAt 𝓘(ℂ) x x) := by
-      apply_rules [ MeromorphicAt.analyticAt ];
-      · exact f.isMeromorphic x;
-      · exact h_cont.continuousAt.comp ( continuousAt_extChartAt_symm x );
-    refine' ⟨ _, _ ⟩;
-    · exact h_cont.continuousWithinAt;
-    · convert h_analytic.differentiableAt.differentiableWithinAt using 1;
-      ext; simp [DifferentiableWithinAtProp]
+  sorry
 
 /-- Constant meromorphic functions have no poles. -/
 theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -219,7 +309,7 @@ theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 /-- Non-zero constant meromorphic functions have no zeros. -/
 theorem constant_zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (c : ℂ) (_hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
+    (c : ℂ) (hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
   rfl
 
 /-- Membership in the Riemann-Roch space `L(D)`: `f = 0` or `(f) + D ≥ 0`. -/
