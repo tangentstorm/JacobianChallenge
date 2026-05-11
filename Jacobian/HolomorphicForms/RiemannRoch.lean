@@ -25,8 +25,30 @@ def riemannRochSpace
     (D : Divisor X) : Submodule ℂ (MeromorphicFunctionType X) where
   carrier := { f | f.MemRiemannRochSpace D }
   zero_mem' := Or.inl rfl
-  add_mem' := sorry
-  smul_mem' := sorry
+  add_mem' := by
+    intro f g hf hg
+    rcases hf with rfl | hf
+    · rcases hg with rfl | hg
+      · exact Or.inl (by
+          ext x
+          simp)
+      · exact Or.inr (by simpa [MeromorphicFunctionType.MemRiemannRochSpace,
+          MeromorphicFunctionType.principal, MeromorphicFunctionType.zeros,
+          MeromorphicFunctionType.poles] using hg)
+    · exact Or.inr (by simpa [MeromorphicFunctionType.MemRiemannRochSpace,
+        MeromorphicFunctionType.principal, MeromorphicFunctionType.zeros,
+        MeromorphicFunctionType.poles] using hf)
+  smul_mem' := by
+    intro c f hf
+    rcases hf with rfl | hf
+    · exact Or.inl (by
+        ext x
+        by_cases hc : c = 0
+        · simp [hc]
+        · simp)
+    · exact Or.inr (by simpa [MeromorphicFunctionType.MemRiemannRochSpace,
+        MeromorphicFunctionType.principal, MeromorphicFunctionType.zeros,
+        MeromorphicFunctionType.poles] using hf)
 
 /-- The subspace of constant meromorphic functions. -/
 def constantFunctions (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
