@@ -19,17 +19,14 @@ variable {V W : Type*} [NormedAddCommGroup V] [NormedAddCommGroup W]
   [NormedSpace ℂ V] [NormedSpace ℂ W]
   (Λ : FullComplexLattice V) (Γ : FullComplexLattice W)
 
-omit [NormedSpace ℂ V] [NormedAddCommGroup W] [NormedSpace ℂ W] in
 /-- The quotient projection is continuous. -/
 lemma mk_continuous : Continuous (mk V Λ) :=
   QuotientAddGroup.continuous_mk
 
-omit [NormedSpace ℂ V] [NormedAddCommGroup W] [NormedSpace ℂ W] in
 /-- The quotient projection is an open quotient map. -/
 lemma mk_isOpenQuotientMap : IsOpenQuotientMap (mk V Λ) :=
   QuotientAddGroup.isOpenQuotientMap_mk
 
-omit [NormedSpace ℂ V] [NormedAddCommGroup W] [NormedSpace ℂ W] in
 /-- The quotient projection is an open map. -/
 lemma mk_isOpenMap : IsOpenMap (mk V Λ) :=
   QuotientAddGroup.isOpenMap_coe
@@ -44,7 +41,6 @@ tori. The continuity is the first new bounded packet on top of the algebraic
 
 variable {Λ Γ}
 
-omit [NormedSpace ℂ V] [NormedSpace ℂ W] in
 /-- The induced map between two complex tori is continuous when the underlying
 group homomorphism is continuous and lattice-preserving. -/
 lemma map_continuous {f : V →+ W} (hf_cont : Continuous f)

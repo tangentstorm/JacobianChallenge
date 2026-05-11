@@ -9,7 +9,7 @@ Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- The preimage of an open set under `mk` is open (mk is continuous). -/

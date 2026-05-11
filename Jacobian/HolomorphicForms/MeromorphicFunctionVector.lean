@@ -158,13 +158,13 @@ Note: the finite-support obligation is deferred; on a compact Riemann
 surface, the identity principle guarantees only finitely many zeros. -/
 noncomputable def zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicFunctionType X) : Divisor X :=
+    (_f : MeromorphicFunctionType X) : Divisor X :=
   0  -- Placeholder: to be refined with VanishingOrder-based zero counting
 
 /-- The pole divisor of a meromorphic function. -/
 noncomputable def poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicFunctionType X) : Divisor X :=
+    (_f : MeromorphicFunctionType X) : Divisor X :=
   0  -- Placeholder: to be refined with VanishingOrder-based pole counting
 
 /-- The principal divisor `(f) = (zeros) - (poles)`. -/
@@ -181,13 +181,34 @@ theorem toFun_ne_infty_of_poles_eq_zero {X : Type*} [TopologicalSpace X] [Charte
     ∀ x, f.toFun x ≠ ∞ :=
   sorry
 
-/-- Structural bridge: if `f.toFun` never takes the value `∞`, then
-`f.toFiniteFun` is `MDifferentiable`. -/
+/-
+Structural bridge: if `f.toFun` never takes the value `∞`, then
+`f.toFiniteFun` is `MDifferentiable`.
+-/
 theorem mdifferentiable_toFiniteFun_of_no_infty {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (f : MeromorphicFunctionType X) (h : ∀ x, f.toFun x ≠ ∞) :
     MDifferentiable (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f.toFiniteFun :=
-  sorry
+  by
+    -- Since $f.toFiniteFun$ is continuous, we can apply the fact that the composition of continuous functions is continuous.
+    have h_cont : Continuous f.toFiniteFun := by
+      convert f.toFun_continuous using 1;
+      constructor <;> intro h <;> rw [ continuous_iff_continuousAt ] at *;
+      · exact fun x => f.toFun_continuous.continuousAt;
+      · intro x;
+        convert ContinuousAt.comp ( show ContinuousAt ( fun y : OnePoint ℂ => y.getD 0 ) ( f.toFun x ) from ?_ ) ( h x ) using 1;
+        rw [ ContinuousAt ];
+        cases h : f.toFun x <;> simp_all +decide [ OnePoint.nhds_coe_eq ];
+        exact ContinuousAt.tendsto fun ⦃U⦄ a => a;
+    intro x;
+    have h_analytic : AnalyticAt ℂ (f.toFiniteFun ∘ (extChartAt 𝓘(ℂ) x).symm) (extChartAt 𝓘(ℂ) x x) := by
+      apply_rules [ MeromorphicAt.analyticAt ];
+      · exact f.isMeromorphic x;
+      · exact h_cont.continuousAt.comp ( continuousAt_extChartAt_symm x );
+    refine' ⟨ _, _ ⟩;
+    · exact h_cont.continuousWithinAt;
+    · convert h_analytic.differentiableAt.differentiableWithinAt using 1;
+      ext; simp [DifferentiableWithinAtProp]
 
 /-- Constant meromorphic functions have no poles. -/
 theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -198,7 +219,7 @@ theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 /-- Non-zero constant meromorphic functions have no zeros. -/
 theorem constant_zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (c : ℂ) (hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
+    (c : ℂ) (_hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
   rfl
 
 /-- Membership in the Riemann-Roch space `L(D)`: `f = 0` or `(f) + D ≥ 0`. -/

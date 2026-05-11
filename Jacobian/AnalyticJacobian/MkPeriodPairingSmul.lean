@@ -12,9 +12,11 @@ namespace JacobianChallenge.AnalyticJacobian
 
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+  [ChartedSpace ℂ X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 
 /-- `mk` of a natural-scaled `periodPairing` value is `0`. -/
 @[simp] theorem mk_nsmul_periodPairing

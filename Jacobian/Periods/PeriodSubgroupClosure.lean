@@ -12,9 +12,11 @@ namespace JacobianChallenge.Periods
 
 open JacobianChallenge.HolomorphicForms
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+  [ChartedSpace ℂ X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 
 /-- `periodSubgroup` is closed under addition. -/
 theorem add_mem_periodSubgroup

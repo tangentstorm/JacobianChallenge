@@ -306,10 +306,10 @@ private lemma segment_integrability
         · ext t; simp [Path.subpath];
           intro ht₁ ht₂;
           convert hcov i ⟨ divFinIcc n hn i.val ( le_of_lt i.isLt ) + ( divFinIcc n hn ( i.val + 1 ) i.isLt - divFinIcc n hn i.val ( le_of_lt i.isLt ) ) * t, by
-            simp +decide [ divFinIcc_val, hn ];
+            simp +decide [ divFinIcc_val ];
             constructor <;> nlinarith [ show ( i : ℝ ) + 1 ≤ n by norm_cast; exact Nat.succ_le_of_lt i.2, show ( i : ℝ ) ≥ 0 by positivity, div_mul_cancel₀ ( ( i : ℝ ) + 1 ) ( by positivity : ( n : ℝ ) ≠ 0 ), div_mul_cancel₀ ( ( i : ℝ ) ) ( by positivity : ( n : ℝ ) ≠ 0 ) ] ⟩ _ _ using 1
           generalize_proofs at *;
-          · simp +decide [ projIcc, ht₁, ht₂ ] ; ring;
+          · simp +decide [ ht₁, ht₂ ] ; ring;
           · simp +decide [ divFinIcc ];
             exact mul_nonneg ( sub_nonneg.2 <| by gcongr ; linarith ) ht₁;
           · all_goals generalize_proofs at *;

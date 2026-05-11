@@ -31,7 +31,7 @@ the dual of `HolomorphicOneForm X`, as ℂ-vector spaces.
 The proof goes via Serre duality on `F = 𝒪_X` (whose canonical dual
 is `K_X`), combined with `h0Canonical_isoHolomorphicOneForm` (round
 23). -/
-axiom h1Structure_isoHolomorphicOneFormDual
+noncomputable def h1Structure_isoHolomorphicOneFormDual
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -39,7 +39,8 @@ axiom h1Structure_isoHolomorphicOneFormDual
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSStructureSheaf X) 1)] :
     RSSheafCohomology X (RSStructureSheaf X) 1 ≃ₗ[ℂ]
-      Module.Dual ℂ (HolomorphicOneForm ℂ X)
+      Module.Dual ℂ (HolomorphicOneForm ℂ X) :=
+  sorry
 
 /-- **Frontier theorem (sorry).** Dimension consequence:
 `dim_ℂ H¹(X, 𝒪_X) = dim_ℂ HolomorphicOneForm ℂ X`. -/

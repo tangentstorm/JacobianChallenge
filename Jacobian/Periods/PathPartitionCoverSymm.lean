@@ -1,4 +1,6 @@
 import Jacobian.Periods.PathPartition
+import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Normed.Module.Basic
 
 /-!
 # Converting a cover for `γ` into one for `γ.symm`

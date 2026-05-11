@@ -14,15 +14,19 @@ namespace JacobianChallenge.AnalyticJacobian
 
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+  [ChartedSpace ℂ X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 
 /-- Quotient projection from a linear functional to its analytic
 Jacobian class. -/
-noncomputable abbrev mk (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
+noncomputable abbrev mk (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ) : AnalyticJacobianGroup E X :=
   QuotientAddGroup.mk φ
 
