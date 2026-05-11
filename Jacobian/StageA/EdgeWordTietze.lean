@@ -148,6 +148,45 @@ theorem handleSwap_grouping_base_case
   ⟨w, Relation.ReflTransGen.refl,
     (handleSwap_displacement_zero_iff_grouped w).mp h0⟩
 
+/-- **R3-sub-B.B.r3.r2.helper (Round 2 helper, substantive in `g = 0`).**
+The genuine reduction obligation behind the inductive step: every
+orientable, fully-reduced edge word is `TietzeEq` to `standardWord g`.
+
+Since `standardWord g` is itself handle-grouped, this is the only
+content needed to witness the existential in
+`handleSwap_grouping_inductive_step` (the `_hpos` hypothesis there is
+redundant once we commit to `v := standardWord g`).
+
+* The `g = 0` case is immediate: `Letter 0` is uninhabited (its
+  constructors take `Fin 0`, which is empty), so `w = []` and
+  `standardWord 0 = []`, and `TietzeEq` is reflexive.
+* The `g ≥ 1` case is the heart of the Brahana–Seifert–Threlfall
+  handle-pairing reduction at the `EdgeWord` level. With the current
+  `HandleSwap.move` inductive (which rotates only complete
+  `[a i, b i, aInv i, bInv i]` blocks), this case is gated on a
+  Round-3+ extension of `TietzeStep` admitting cyclic-rotation or
+  partial-block moves; left as the substantive obligation. -/
+theorem orientable_fullyReduced_tietzeEq_standardWord
+    {g : ℕ} (w : EdgeWord g)
+    (_hReduced : EdgeWord.IsFullyReduced w)
+    (_hOrient : ¬ EdgeWord.HasNonorientablePair w) :
+    EdgeWord.TietzeEq w (EdgeWord.standardWord g) := by
+  rcases g with _ | n
+  · -- `g = 0`: `Letter 0` is uninhabited, so `w = []`.
+    have hw : w = ([] : EdgeWord 0) := by
+      cases w with
+      | nil => rfl
+      | cons ℓ _ =>
+        cases ℓ with
+        | a i => exact i.elim0
+        | b i => exact i.elim0
+        | aInv i => exact i.elim0
+        | bInv i => exact i.elim0
+    rw [hw]
+    exact Relation.ReflTransGen.refl
+  · -- `g = n + 1`: substantive Brahana–Seifert–Threlfall reduction.
+    sorry
+
 /-- **R3-sub-B.B.r3.r2 (Round 2).** Inductive step of the μ-induction:
 `μ(w) > 0` ⇒ a HandleSwap step lands at `w'` with `μ w' < μ w`;
 recurse. With the Round-2 coarse μ, `μ w ≠ 0` is equivalent to
@@ -156,16 +195,20 @@ so this branch carries the genuine reduction obligation: produce a
 handle-grouped Tietze-equivalent of an orientable, fully-reduced,
 non-handle-grouped word.
 
-Round-3+ refinement supplies the substantive recursion using a
-fine-grained μ together with `handleSwap_strictly_decreases_mu`; the
-present round leaves the obligation explicit. -/
+Witness construction: take `v := standardWord g`, which is handle-grouped
+by `standardWord_isStandardForm`; the `TietzeEq` chain is provided by
+`orientable_fullyReduced_tietzeEq_standardWord`. The `_hpos` hypothesis
+is unused (the witness `standardWord g` works for any orientable,
+fully-reduced `w`, regardless of whether it is already in standard form). -/
 theorem handleSwap_grouping_inductive_step
     {g : ℕ} (w : EdgeWord g)
-    (_hReduced : EdgeWord.IsFullyReduced w)
-    (_hOrient : ¬ EdgeWord.HasNonorientablePair w)
+    (hReduced : EdgeWord.IsFullyReduced w)
+    (hOrient : ¬ EdgeWord.HasNonorientablePair w)
     (_hpos : handleSwap_displacement_measure w ≠ 0) :
-    ∃ v : EdgeWord g, EdgeWord.TietzeEq w v ∧ EdgeWord.IsHandleGrouped v := by
-  sorry
+    ∃ v : EdgeWord g, EdgeWord.TietzeEq w v ∧ EdgeWord.IsHandleGrouped v :=
+  ⟨EdgeWord.standardWord g,
+    orientable_fullyReduced_tietzeEq_standardWord w hReduced hOrient,
+    EdgeWord.standardWord_isStandardForm⟩
 
 /-- **R3-sub-B.B.r3.** Strong induction on μ extracts the
 HandleSwap-equivalent handle-grouped representative. (Round 1
