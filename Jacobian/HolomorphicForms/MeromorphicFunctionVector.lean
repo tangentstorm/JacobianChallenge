@@ -186,8 +186,19 @@ theorem add_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 /-- Negation of meromorphic functions. -/
 noncomputable def neg_meromorphic (f : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
   { toFun := fun x => OnePoint.map (fun c => -c) (f.toFun x)
-    toFun_continuous := sorry
-    isMeromorphic := sorry }
+    toFun_continuous := by
+      let negHomeomorph : ℂ ≃ₜ ℂ :=
+        { Equiv.neg ℂ with
+          continuous_toFun := continuous_neg
+          continuous_invFun := continuous_neg }
+      have hcont : Continuous (fun x => (Homeomorph.onePointCongr negHomeomorph) (f.toFun x)) :=
+        (Homeomorph.onePointCongr negHomeomorph).continuous.comp f.toFun_continuous
+      convert hcont using 1
+    isMeromorphic := fun p => by
+      unfold MeromorphicAtX
+      convert (f.isMeromorphic p).neg using 1
+      ext z
+      cases h : f.toFun ((chartAt ℂ p).symm z) <;> simp [h, Option.getD] }
 
 noncomputable instance : Neg (MeromorphicFunctionType X) := ⟨neg_meromorphic⟩
 
