@@ -25,8 +25,8 @@ at the corresponding theorem of the previous sections.
 
 Slot-filling sounds mechanical, but it has subtleties. The
 challenge wants \code{Jacobian X} to be a particular kind of
-algebraic-topological gadget — an additive abelian group with
-extra structure — and the analytic construction produces a
+algebraic-topological gadget --- an additive abelian group with
+extra structure --- and the analytic construction produces a
 quotient of a vector space by a lattice, which is a different
 formal object until we transport along the right equivalences.
 The Lean side handles these transports via the
@@ -44,30 +44,30 @@ We now assemble the declarations required by \code{Jacobian/Challenge.lean}.
 
 \begin{theorem}[Challenge API from the analytic construction]
 \label{thm:challenge-api}
-\uses{thm:fd-holomorphic-one-forms,thm:genus-zero-classification,def:analytic-jacobian,def:abel-jacobi,lem:aj-self,lem:aj-holomorphic,thm:abel-jacobi-injective,thm:push-pull-functoriality,thm:pushforward-pullback,thm:riemann-hurwitz-deg1,lem:impl-wiring-to-roots}
+\uses{thm:polygonal-model,lem:uniformization-pde-overview,thm:fd-holomorphic-one-forms,thm:genus-zero-classification,def:analytic-jacobian,def:abel-jacobi,lem:aj-self,lem:aj-holomorphic,thm:abel-jacobi-injective,thm:push-pull-functoriality,thm:pushforward-pullback,thm:riemann-hurwitz-deg1,lem:impl-wiring-to-roots}
 The analytic period-lattice construction supplies all definitions and theorems
 in the Jacobian Challenge API.
-\lean{genus, genus_eq_zero_iff_homeo, Jacobian, Jacobian.ofCurve, Jacobian.pushforward, Jacobian.pullback, Jacobian.pushforward_pullback}
+\lean{JacobianChallenge.Solution.genus, JacobianChallenge.Solution.genus_eq_zero_iff_homeo, JacobianChallenge.Solution.Jacobian, Jacobian.ofCurve, Jacobian.pushforward, Jacobian.pullback, Jacobian.pushforward_pullback}
 \leanok
 \end{theorem}
 
 \begin{layman}
 This is the moment all the bookkeeping pays off. We assemble the public
-API of the Jacobian Challenge — the small set of definitions and
-theorems that \texttt{Jacobian/Challenge.lean} exposes — directly from
+API of the Jacobian Challenge --- the small set of definitions and
+theorems that \texttt{Jacobian/Challenge.lean} exposes --- directly from
 the analytic period-lattice construction. \emph{Genus} is the
 finite-dimensional dimension of holomorphic 1-forms; the genus-zero
 classification matches it to the topological sphere. The
 \emph{Jacobian} is the dual-of-1-forms quotient by the period lattice,
 inheriting all its algebraic, topological, and analytic structure from
-the complex-torus package. \emph{Abel–Jacobi} is the path-integration
+the complex-torus package. \emph{Abel--Jacobi} is the path-integration
 map, holomorphic and (in positive genus) injective. \emph{Pullback}
 and \emph{pushforward} between Jacobians come from the dual of the
 1-form maps, and the trace identity gives the key
 ``push-then-pull equals multiplication-by-degree'' equation. Why
 bother? This is the deliverable. Once every constituent theorem is
 formally proved in Lean, this assembly node certifies that the entire
-\texttt{Challenge.lean} API holds — finishing the challenge.
+\texttt{Challenge.lean} API holds --- finishing the challenge.
 \end{layman}
 
 \begin{proof}\leanok

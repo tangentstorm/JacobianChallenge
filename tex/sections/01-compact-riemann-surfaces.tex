@@ -5,7 +5,7 @@
 A \emph{Riemann surface} is one of the most patient objects in
 mathematics: a curved two-dimensional surface that, when you put a
 microscope to any patch of it, looks like a piece of the complex
-plane. The sphere is a Riemann surface — every patch can be
+plane. The sphere is a Riemann surface --- every patch can be
 described by a single complex coordinate \(z\). The doughnut surface
 is a Riemann surface. Every smooth algebraic curve in the projective
 plane, like the elliptic curve \(y^2 = x^3 + ax + b\), is a Riemann
@@ -16,7 +16,7 @@ them with complex numbers).
 This section sets up the algebraic dictionary we'll need in every
 later section. The first move is to ask: ``How does a function blow
 up or vanish at a point?'' On the complex plane the answer is the
-familiar \emph{order} of a Taylor expansion — \(z^3\) vanishes to
+familiar \emph{order} of a Taylor expansion --- \(z^3\) vanishes to
 order three at the origin, \(1/z^2\) blows up to order minus two.
 On a curved surface we have to make sure this order is independent
 of which microscope (which chart) we used to look. It is, and that
@@ -27,8 +27,8 @@ The second move is to use vanishing orders for accounting. A
 \emph{divisor} is just a tally sheet: ``vanishes to order three
 here, blows up to order two there, otherwise zero.'' Divisors form
 an abelian group under addition. The set of zeros and poles of a
-nonzero meromorphic function is a finite, signed tally — a
-\emph{principal divisor} — and the principle of conservation we'll
+nonzero meromorphic function is a finite, signed tally --- a
+\emph{principal divisor} --- and the principle of conservation we'll
 prove (``a meromorphic function has equally many zeros and poles,
 counted with multiplicity'') becomes the slogan that the degree of a
 principal divisor is zero. From here, the deeper theorems
@@ -75,7 +75,7 @@ distance to the point; order \(+2\) means as fast as the distance squared
 (twice as fast); order \(-1\) means it blows up roughly like one-over-distance.
 A boring nonzero value gets order \(0\). The all-zero function gets order
 \(+\infty\) by convention. The catch is that ``distance to a point'' isn't
-intrinsic to a curvy surface — you have to pick a flat coordinate chart, like
+intrinsic to a curvy surface --- you have to pick a flat coordinate chart, like
 laying graph paper over a patch of globe. The lemma quietly proves that the
 answer doesn't depend on which chart you pick. Why bother? This single integer
 is the atom out of which divisors, principal divisors, and the whole
@@ -129,7 +129,7 @@ For a nonzero meromorphic function \(f\) on \(X\), the set
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
-Take a meromorphic function — one that's allowed finitely many points where
+Take a meromorphic function --- one that's allowed finitely many points where
 it hits zero or blows up. The claim is that those special points can never
 crowd together: between any two of them there's always some breathing room.
 Said another way, you can't have an infinite sequence of zeros or poles
@@ -138,7 +138,7 @@ polynomial have only finitely many roots in any bounded region: complex
 analytic functions are rigid, and ``rigid'' rules out a sea of nearby
 misbehavior. Why bother? Together with compactness of the surface (the next
 step), this turns ``the set of interesting points'' from something
-potentially wild into a tidy finite list — exactly the input the divisor
+potentially wild into a tidy finite list --- exactly the input the divisor
 bookkeeping needs.
 \end{layman}
 
@@ -163,10 +163,10 @@ For a nonzero meromorphic function \(f\) on the compact Riemann surface
 
 \begin{layman}
 Combine two facts and you get a clean conclusion. Fact one: the surface is
-compact, meaning it's closed and bounded — a sphere, a donut, a pretzel,
+compact, meaning it's closed and bounded --- a sphere, a donut, a pretzel,
 never an infinitely-extending plane. Fact two (just shown): the points where
 a meromorphic function vanishes or blows up never crowd together. On a
-compact space, any infinite set of points has to crowd somewhere — there's
+compact space, any infinite set of points has to crowd somewhere --- there's
 nowhere for them to spread out to. So if our points refuse to crowd, there
 can only be finitely many of them. Why bother? This is the moment the
 abstract ``divisor'' machinery snaps into focus: each meromorphic function
@@ -194,7 +194,7 @@ The divisor group \(\Div(X)\) is the free abelian group on the points of
 A divisor is just a bookkeeping device: pick finitely many points on the
 surface, attach a whole-number weight to each (positive, negative, or
 zero), and that whole tagged collection is your ``divisor.'' Think of it
-as a shopping list with quantities — except some items can have a
+as a shopping list with quantities --- except some items can have a
 negative count, meaning ``minus three of those.'' Two divisors get
 ``added'' the obvious way: at each shared point, sum the weights; at
 points that appear in only one of them, just carry the weight over.
@@ -203,7 +203,7 @@ under ordinary addition. Why bother? Because later we'll use divisors to
 keep score: where does a function vanish, where does it blow up, by how
 much. The bookkeeping turns out to be exactly what's needed to ask
 ``how many independent functions can have these zeros and these poles?''
-— which is the central question of Riemann–Roch.
+--- which is the central question of Riemann--Roch.
 \end{layman}
 
 \begin{definition}[Degree of a divisor]
@@ -217,7 +217,7 @@ The degree map \(\deg:\Div(X)\to\Z\) sends \(D=\sum_p n_p\,p\) to
 
 \begin{layman}
 We saw that a divisor is a tagged collection of points with whole-number
-weights — a shopping list, possibly with negative quantities. The
+weights --- a shopping list, possibly with negative quantities. The
 \emph{degree} is the simplest thing you can do with such a list: just add up
 all the weights, ignoring which points they were attached to. Three apples,
 minus two oranges, plus seven pears? Degree \(3 - 2 + 7 = 8\). It's the
@@ -227,7 +227,7 @@ and then adding the totals. So degree is a clean homomorphism from divisors
 to the integers. Why bother? It splits divisors into ``net positive,''
 ``net negative,'' and ``net zero'' classes. The degree-zero divisors are the
 ones that can come from a single meromorphic function, and they're the input
-to the Abel–Jacobi map down the road.
+to the Abel--Jacobi map down the road.
 \end{layman}
 
 \begin{proofsketch}[Lean formalization strategy]
@@ -245,12 +245,12 @@ The two definitions reduce to a $\sim$15--25 LOC file
   with \texttt{instance : AddCommGroup (Divisor X) := inferInstanceAs \_}.
   No \texttt{noncomputable}, no \texttt{@[reducible]}, no extra type
   classes on \(X\) (the blueprint says ``free abelian group on the
-  points of \(X\)'' — \(X\) is a plain \texttt{Type}).
+  points of \(X\)'' --- \(X\) is a plain \texttt{Type}).
 \item \texttt{def Divisor.of (p : X) : Divisor X := FreeAbelianGroup.of p}.
 \item \texttt{def Divisor.degree : Divisor X $\to_+$ $\Z$ :=
   FreeAbelianGroup.lift (fun \_ => 1)}.
 \item \texttt{@[simp] theorem degree\_of (p : X) :
-  degree (of p) = 1 := by simp [degree, of]} —
+  degree (of p) = 1 := by simp [degree, of]} ---
   one-line proof via \texttt{FreeAbelianGroup.lift\_apply\_of}.
 \end{enumerate}
 No new sorries, no Mathlib gap. This is a clean leaf chosen specifically
@@ -275,18 +275,18 @@ chart atlas to a global field on \(X\) is project-side work.}
 
 \begin{layman}
 A holomorphic function on the surface is one that's complex-differentiable
-everywhere — the smoothest, most rigid kind there is. A \emph{meromorphic}
+everywhere --- the smoothest, most rigid kind there is. A \emph{meromorphic}
 function relaxes this slightly: it's holomorphic except at finitely many
 points where it's allowed to blow up to infinity in a controlled way (think
 \(1/z\) at the origin). On a compact surface, the holomorphic functions are
-boring — they have to be constants — but the meromorphic ones form a rich
+boring --- they have to be constants --- but the meromorphic ones form a rich
 field, the kind of algebraic object where you can add, subtract, multiply,
 and divide, just like rational numbers. You can also picture a meromorphic
-function as a holomorphic map to the Riemann sphere — the complex plane with
-a single extra ``point at infinity'' — where ``blowing up'' just means
+function as a holomorphic map to the Riemann sphere --- the complex plane with
+a single extra ``point at infinity'' --- where ``blowing up'' just means
 ``going to that point.'' Why bother? Meromorphic functions are the test
 functions of the entire theory: their zeros and poles generate principal
-divisors, and Riemann–Roch is the question of how many of them fit a given
+divisors, and Riemann--Roch is the question of how many of them fit a given
 pattern.
 \end{layman}
 
@@ -309,8 +309,8 @@ zero with a positive weight equal to its order (a double zero gets a 2), tag
 every pole with a negative weight equal to how badly it blows up (a simple
 pole gets a \(-1\)), and ignore every other point. The result is the
 \emph{principal divisor} of the function. Multiplying two functions adds
-their shopping lists — zeros stack, poles stack, and a zero meeting a
-matching pole cancels — so this is a genuine group homomorphism from the
+their shopping lists --- zeros stack, poles stack, and a zero meeting a
+matching pole cancels --- so this is a genuine group homomorphism from the
 multiplicative group of nonzero meromorphic functions into the additive
 group of divisors. Why bother? Principal divisors are the
 ``trivially achievable'' divisors. The big question of the whole theory is:
@@ -355,14 +355,14 @@ For every nonzero \(f\in\Mer(X)\), \(\deg(f)=0\).
 \begin{layman}
 Take any nonzero meromorphic function and write down its shopping list of
 zeros and poles, weighted by order. The claim: the weights always sum to
-exactly zero. Zeros and poles are perfectly balanced — for every total of
+exactly zero. Zeros and poles are perfectly balanced --- for every total of
 \(k\) units of vanishing, there's an equal total of pole strength elsewhere.
 A physical picture: think of the function as defining a flow on the surface;
 zeros are ``sources,'' poles are ``sinks,'' and on a closed surface with
-no boundary, sources and sinks must balance globally — there's nowhere
+no boundary, sources and sinks must balance globally --- there's nowhere
 else for the flow to go. Why bother? It tells us that every principal
 divisor lives entirely inside the degree-zero divisors. So when we later
-quotient out, we'll be quotienting inside one fixed degree level — exactly
+quotient out, we'll be quotienting inside one fixed degree level --- exactly
 the structural setup the Jacobian needs.
 \end{layman}
 
@@ -372,7 +372,7 @@ The classical proof uses the argument principle on a polygonal model of
 \(\frac{1}{2\pi i}\oint_{\partial X}\,d\!\log f\) counts zeros minus
 poles, but the polygon's boundary cancels out by the identification of
 opposite sides, so the difference is zero. Equivalently, this is a
-special case of \(\sum\Res = 0\) for the meromorphic 1-form \(df/f\).
+special case of \(\sum\operatorname{Re}s = 0\) for the meromorphic 1-form \(df/f\).
 \end{proofsketch}
 
 \subsection{Meromorphic functions as maps to \texorpdfstring{\(\CPone\)}{CP1}}
@@ -390,7 +390,7 @@ Riemann surfaces.
 
 \begin{layman}
 Any meromorphic function naturally extends to a map into the \emph{Riemann
-sphere} — the complex plane plus a single extra ``point at infinity''
+sphere} --- the complex plane plus a single extra ``point at infinity''
 wrapped around like the north pole of a globe. Wherever the function gives
 a finite value, send the point there as usual; wherever the function blows
 up, send the point to that distinguished north pole. Suddenly there's
@@ -400,7 +400,7 @@ discontinuity becomes a smooth, well-defined output. And this extended
 map is holomorphic everywhere. Why bother? It converts ``meromorphic
 function with ugly poles'' into ``holomorphic map between two compact
 surfaces,'' which unlocks topological tools like degree, ramification,
-and covering theory — exactly what we'll need to analyze maps between
+and covering theory --- exactly what we'll need to analyze maps between
 Riemann surfaces.
 \end{layman}
 
@@ -416,7 +416,7 @@ meromorphic functions on \(X\) and nonconstant holomorphic maps
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
-The promotion to a sphere-valued map isn't just a convenience — it's a
+The promotion to a sphere-valued map isn't just a convenience --- it's a
 perfect two-way correspondence. Every nonzero meromorphic function gives a
 nonconstant holomorphic map to the Riemann sphere; every nonconstant
 holomorphic map to the Riemann sphere comes from a unique meromorphic
@@ -453,17 +453,17 @@ For a divisor \(D\),
 \end{definition}
 
 \begin{layman}
-Pick a divisor — your shopping list of points with whole-number weights.
-The associated Riemann–Roch space is the collection of all meromorphic
+Pick a divisor --- your shopping list of points with whole-number weights.
+The associated Riemann--Roch space is the collection of all meromorphic
 functions whose own shopping list is, position by position, no worse than
 the one you picked. Concretely: if your list permits a double pole at a
 point, the function is allowed to blow up at most that badly there; if
 your list demands a zero at another point, the function must vanish there.
 (The zero function is included by convention.) Think of the divisor as a
-budget — points where poles are permitted, points where zeros are required —
-and the Riemann–Roch space as every meromorphic function that lives within
+budget --- points where poles are permitted, points where zeros are required ---
+and the Riemann--Roch space as every meromorphic function that lives within
 budget. Why bother? The dimension of this space, as a complex vector
-space, is the central quantity of the whole classical theory. Riemann–Roch
+space, is the central quantity of the whole classical theory. Riemann--Roch
 is a formula computing exactly how many independent functions fit any
 given budget, and from that flows everything about line bundles,
 embeddings, and the geometry of curves.
@@ -479,16 +479,16 @@ embeddings, and the geometry of curves.
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
-The Riemann–Roch space — meromorphic functions fitting a given budget of
-zeros and poles — is closed under the two basic vector-space operations.
+The Riemann--Roch space --- meromorphic functions fitting a given budget of
+zeros and poles --- is closed under the two basic vector-space operations.
 If two functions both fit the budget, their sum still fits the budget
 (the worst poles can't get worse by adding); and scaling a function by a
 complex number doesn't change its zeros or poles at all. So this set
 isn't just a collection, it's a complex vector space, with a finite
 dimension we can count. Why bother? A vector space is the playground of
-linear algebra. Once we know Riemann–Roch spaces are vector spaces, we
+linear algebra. Once we know Riemann--Roch spaces are vector spaces, we
 can ask: what's their dimension? That single number is the protagonist
-of the Riemann–Roch theorem.
+of the Riemann--Roch theorem.
 \end{layman}
 
 \subsection{Aggregate input}
@@ -508,7 +508,7 @@ classical inputs (Riemann-Roch, Abel's theorem).
 \begin{layman}
 We package every classical fact above into one named bundle: the theory
 of meromorphic functions, divisors, principal divisors, the degree map,
-and Riemann–Roch spaces on a compact Riemann surface. Each piece is more
+and Riemann--Roch spaces on a compact Riemann surface. Each piece is more
 than a century old, fully understood by professionals, and, frankly,
 hundreds of pages to formalize from first principles in a proof
 assistant. Rather than reinvent that wheel inside this project, we cite
@@ -574,13 +574,13 @@ gives a sorry-free twenty-pass ledger for the reduction:
   constancy on a connected target, surjectivity from positivity,
   injectivity from the count-equals-card identity.
 \item \emph{Passes 13--17.} Bridging structure between
-  \texttt{MeromorphicMapToSphere} and the §1
+  \texttt{MeromorphicMapToSphere} and the \S 1
   \texttt{liftToCp1\_isHolomorphic} record, plus the
   finite-fibre-from-compact-source lemma.
 \item \emph{Passes 18--20.} Final assembly markers showing both
-  \texttt{MeromorphicDegree} sorries reduce to four named §1
+  \texttt{MeromorphicDegree} sorries reduce to four named \S 1
   obligations.
 \end{itemize}
 
 Every pass is sorry-free; the ledger pins the dependency graph at the
-type level so Aristotle work on §1 has a stable downstream consumer.
+type level so Aristotle work on \S 1 has a stable downstream consumer.

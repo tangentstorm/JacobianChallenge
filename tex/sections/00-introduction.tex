@@ -7,7 +7,7 @@
 
 In April 2026, the mathematician Kevin Buzzard issued a public
 challenge: formalize, in the proof assistant Lean, a small but
-pivotal piece of modern mathematics — the construction and basic
+pivotal piece of modern mathematics --- the construction and basic
 properties of the \emph{Jacobian} of a compact Riemann surface. The
 Jacobian is one of the most studied objects in nineteenth- and
 twentieth-century geometry. To a curved two-dimensional surface
@@ -23,7 +23,7 @@ Lean file, \code{Jacobian/Challenge.lean}, listing perhaps two dozen
 named definitions and theorems. Filling those entries with literal
 \code{sorry} placeholders takes about thirty lines. The hard part
 is that four of the theorems are deliberately constructed to defeat
-any cheat — any attempt to define \code{Jacobian X := PUnit} (a
+any cheat --- any attempt to define \code{Jacobian X := PUnit} (a
 single point) or \code{genus X := 0} (always zero) and call it done.
 They force the genus to track topology, the Jacobian to be a
 genuine compact complex Lie group, the Abel--Jacobi map to be
@@ -46,7 +46,7 @@ project's automated proof work; a remote tool called
 \emph{Aristotle} picks bounded leaves off the graph and discharges
 them one at a time.
 
-The construction we use is one of several available routes — the
+The construction we use is one of several available routes --- the
 \emph{analytic period-lattice} construction. Pick a compact connected
 Riemann surface \(X\). Form the finite-dimensional complex vector
 space \(H^0(X,\Omega^1_X)\) of holomorphic 1-forms on \(X\). Take its
@@ -54,8 +54,8 @@ linear dual. Inside that dual, find the \emph{period lattice}: the
 discrete grid of vectors obtained by integrating each form along
 each integer-homology loop. Quotient by this lattice. The result, a
 compact complex torus of dimension \(g(X)\), is the Jacobian. Every
-challenge property — group structure, manifold structure, every
-anti-hack theorem — falls out of this single construction once
+challenge property --- group structure, manifold structure, every
+anti-hack theorem --- falls out of this single construction once
 enough analytic background has been established.
 
 After this introduction, the document opens with two short cataloging
@@ -74,9 +74,9 @@ develops \(H^0(X,\Omega^1_X)\) and its finite dimensionality
 through the Montel--Riesz route. Section~5 packages
 Riemann--Roch and the sheaf-cohomology infrastructure feeding it.
 Section~6 develops the branched-cover degree theory and reaches
-the genus-zero classification — the first anti-hack theorem.
-Section~7 develops the \emph{polygonal model} — the classical
-unfolding of the surface onto a flat \(4g\)-gon — that underlies
+the genus-zero classification --- the first anti-hack theorem.
+Section~7 develops the \emph{polygonal model} --- the classical
+unfolding of the surface onto a flat \(4g\)-gon --- that underlies
 all later integration arguments. Section~8 builds the period
 pairing and the Riemann bilinear relations. Section~9 constructs
 the Jacobian via the complex-torus package. Section~10 establishes
@@ -89,7 +89,7 @@ A reader can approach the document at three levels. Skim only the
 section headings for a high-level sense of the construction. Read
 the boldfaced theorem statements and surrounding prose for a
 working mathematician's tour. Read the \textbf{Plain English}
-insets — like this one — for a general-audience narrative version,
+insets --- like this one --- for a general-audience narrative version,
 free of any prerequisite beyond curiosity. The formal-only PDF
 strips these insets; the companion build keeps them.
 \end{layman}

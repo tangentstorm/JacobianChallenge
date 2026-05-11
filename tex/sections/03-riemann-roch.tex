@@ -5,7 +5,7 @@
 Riemann--Roch is the classical bridge between algebra and analysis on
 a compact Riemann surface. It controls the dimension of the space of
 meromorphic functions with prescribed zeros and poles. Pick a
-\emph{divisor} \(D\) on \(X\) — a finite signed list of points, like
+\emph{divisor} \(D\) on \(X\) --- a finite signed list of points, like
 ``allow at most a double pole here, demand at least a simple zero
 there.'' The associated \emph{Riemann--Roch space} \(L(D)\) consists
 of meromorphic functions whose pole/zero behavior is bounded by
@@ -20,7 +20,7 @@ fixed in the previous chapter. Two pieces fall out: an exact
 identity (when the right side fully determines \(\ell(D)\), e.g.\
 when \(\deg(D)\) is large enough) and an inequality known as
 Riemann's theorem. Together they let us produce meromorphic
-functions on demand — and the existence of one specific meromorphic
+functions on demand --- and the existence of one specific meromorphic
 function (a degree-one map to the Riemann sphere on a genus-zero
 surface) drives the genus-zero classification of the next chapter.
 
@@ -33,7 +33,7 @@ canonical pairing reduces \(H^1(X,\mathcal{L})\) to global
 sections of \(K \otimes \mathcal{L}^{-1}\), making the obstruction
 explicit and finite-dimensional. The Euler characteristic of an
 invertible sheaf collapses to a single closed-form expression in
-the divisor degree and the genus — which is the Riemann--Roch
+the divisor degree and the genus --- which is the Riemann--Roch
 identity in cohomological form.
 
 Why bother? Riemann--Roch is the engine of one of the four anti-hack
@@ -60,7 +60,7 @@ decomposition visible in the dep graph.
 For an invertible sheaf \(\mathcal{L}\) on \(X\) (equivalently a divisor
 class), there are cohomology groups \(H^{0}(X,\mathcal{L})\) and
 \(H^{1}(X,\mathcal{L})\), with \(H^{0}(X,\mathcal{O}_X(D))=L(D)\).
-\depends{Sheaves on Riemann surfaces, sheaf cohomology, line bundles —
+\depends{Sheaves on Riemann surfaces, sheaf cohomology, line bundles ---
 none packaged in Mathlib for compact RS at v4.28.0.}
 \lean{JacobianChallenge.HolomorphicForms.RSSheafCohomology}
 \leanok
@@ -69,17 +69,17 @@ none packaged in Mathlib for compact RS at v4.28.0.}
 \begin{layman}
 A \emph{line bundle} on the surface is a way of attaching a tiny
 one-dimensional complex line to every point, varying smoothly from point
-to point — like a ribbon glued onto the surface. Sometimes those ribbons
+to point --- like a ribbon glued onto the surface. Sometimes those ribbons
 can be twisted together globally; sometimes not. The two cohomology
 groups \(H^0\) and \(H^1\) are linear-algebraic gadgets that count,
 respectively, how many \emph{global sections} the bundle has (smooth
 choices of one point on each ribbon) and how badly the bundle is twisted
 (the obstruction to having sections). For a bundle coming from a
-divisor — a budget of zeros and poles — the global sections are exactly
-the Riemann–Roch space we already met. The first group is harder to
+divisor --- a budget of zeros and poles --- the global sections are exactly
+the Riemann--Roch space we already met. The first group is harder to
 picture, but the next step (Serre duality) will rewrite it as global
 sections of a different bundle, making it computable. Why bother?
-Riemann–Roch in its modern form is a relationship between these two
+Riemann--Roch in its modern form is a relationship between these two
 groups, and stating it cleanly requires giving them names.
 \end{layman}
 
@@ -106,7 +106,7 @@ All sub-leaves currently sorry.}
 
 \begin{layman}
 Serre duality is a magical identity. The first cohomology group of a
-line bundle — the slippery, hard-to-picture one — turns out to be the
+line bundle --- the slippery, hard-to-picture one --- turns out to be the
 linear dual of a much friendlier object: the global sections of the
 \emph{canonical} bundle twisted by the inverse of your bundle. ``Linear
 dual'' just means ``space of linear functions on,'' so the dimension
@@ -114,8 +114,8 @@ matches. In short, every difficult \(H^1\) on a compact Riemann surface
 quietly is a familiar \(H^0\) of something else. The canonical bundle
 itself is the bundle of holomorphic 1-forms, the same finite-dimensional
 space we just learned to bound. Why bother? It converts the
-two-cohomology-group statement of Riemann–Roch into a single inequality
-between countable, vector-space dimensions — exactly the form most useful
+two-cohomology-group statement of Riemann--Roch into a single inequality
+between countable, vector-space dimensions --- exactly the form most useful
 for producing meromorphic functions with prescribed zeros and poles.
 \end{layman}
 
@@ -152,7 +152,7 @@ homological-algebra construction. Dolbeault's theorem says they
 agree. Why bother? Hodge decomposition (next chapter's bridge)
 gives that every de Rham class on a compact Riemann surface has a
 unique \((p,q)\)-decomposition; Dolbeault then promotes the
-\((p,q)\) piece to global sections of a coherent sheaf — exactly
+\((p,q)\) piece to global sections of a coherent sheaf --- exactly
 the input Riemann--Roch and Serre duality consume. Without
 Dolbeault, the Hodge / Riemann--Roch chain has no shared currency.
 \end{layman}
@@ -183,13 +183,13 @@ compatibility on line bundles. The intended concrete fields are
 Take the dimensions of the two cohomology groups of a line bundle and
 subtract: that's the \emph{Euler characteristic} of the bundle. The
 theorem says this single number is determined by an embarrassingly simple
-formula — the degree of the divisor (i.e., its total weight, possibly
+formula --- the degree of the divisor (i.e., its total weight, possibly
 negative), plus 1, minus the genus of the surface. No matter how
 intricately the bundle is twisted, the alternating sum of its cohomology
 dimensions collapses to that line. It's the same kind of magic as
 Euler's classical \(V - E + F = 2\) for polyhedra: a wild combinatorial
 quantity that's secretly determined by topology. Why bother? Combined
-with Serre duality, this formula is exactly Riemann–Roch — the theorem
+with Serre duality, this formula is exactly Riemann--Roch --- the theorem
 that lets us count how many independent meromorphic functions fit any
 given budget of zeros and poles.
 \end{layman}
@@ -208,7 +208,7 @@ genuine analytic content is concentrated in the two bound sub-leaves.
 \end{proofsketch}
 
 % Riemann's inequality (the weaker half of Riemann-Roch) is off the
-% challenge-API spine — \ref{input:riemann-roch} already implies it.
+% challenge-API spine --- \ref{input:riemann-roch} already implies it.
 % Moved to \ref{sec:orphaned-statements}.
 
 \begin{theorem}[Classical input: Riemann-Roch (umbrella)]
@@ -247,7 +247,7 @@ compatibility on line bundles. The intended concrete fields are
 \code{Module.finrank \; \mathbb C \; (RSSheafCohomology \cdots 0)}.
 
 \begin{layman}
-We package the Riemann–Roch theorem as a single classical input.
+We package the Riemann--Roch theorem as a single classical input.
 Combining Serre duality (which converts hard cohomology into easy
 cohomology) and the Euler-characteristic formula (which equates an
 alternating sum to a topological constant) yields, for every divisor,
@@ -255,7 +255,7 @@ the famous identity: the dimension of functions fitting your budget,
 minus the dimension of functions fitting the complementary budget,
 equals degree-of-budget plus one minus genus. In plain words, the gap
 between two sibling counting questions is a single number you can read
-off from degree and genus. Why bother? Riemann–Roch is the workhorse
+off from degree and genus. Why bother? Riemann--Roch is the workhorse
 that turns abstract divisor theory into actual constructions: produce a
 meromorphic function with this pole here, that zero there, and the
 formula tells you whether it exists and how many such functions are
@@ -274,18 +274,18 @@ has degree one.
 \end{proposition}
 
 \begin{layman}
-Suppose the surface has genus zero — so the dimension of holomorphic
-1-forms is zero. Pick any single point on the surface. Riemann–Roch,
+Suppose the surface has genus zero --- so the dimension of holomorphic
+1-forms is zero. Pick any single point on the surface. Riemann--Roch,
 applied to that one-point divisor, says the budget ``functions allowed
 at most a simple pole there, holomorphic everywhere else'' has dimension
 exactly \(2\). Two dimensions worth of functions means at least one of
 them is nonconstant, and the constraint guarantees its only pole is the
-one we chose. Such a function has exactly one pole on the surface —
+one we chose. Such a function has exactly one pole on the surface ---
 which, viewed as a map to the Riemann sphere, has degree one (it's
 one-to-one on a generic value). Why bother? This is the forward
 direction of the genus-zero classification. Any genus-zero surface
 admits a degree-one map to the sphere, and degree-one maps will turn out
-to be honest isomorphisms — pinning the surface down as the sphere
+to be honest isomorphisms --- pinning the surface down as the sphere
 itself.
 \end{layman}
 
@@ -321,7 +321,7 @@ Constant functions are meromorphic and have empty zero/pole sets.
 \label{lem:meromorphic-vector-space-instance}
 \uses{lem:meromorphic-algebraic-ops, lem:meromorphic-constants}
 The type of meromorphic functions is a \(\C\)-vector space.
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.meromorphicFunctionVectorSpace}
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.meromorphicFunctionVectorSpace,instance}
 \leanok
 \end{theorem}
 
@@ -447,7 +447,7 @@ Theorem~\ref{thm:meromorphic-liouville-compact} \(f\) is constant,
 contradicting the hypothesis.  Hence \(\operatorname{poles}(f)=[P]\).
 \end{proof}
 
-\subsection{Structural axioms — iteration 2 decomposition}
+\subsection{Structural axioms --- iteration 2 decomposition}
 \label{sec:rr-structural-iter2}
 
 The headline lemmas above further decompose into pointwise structural

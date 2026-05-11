@@ -5,7 +5,7 @@
 This section is about how Riemann surfaces \emph{interact} when
 mapped to one another. A holomorphic map \(f : X \to Y\) between
 compact Riemann surfaces is either constant or a \emph{finite
-branched covering} — a map where every point of \(Y\) has the same
+branched covering} --- a map where every point of \(Y\) has the same
 finite number of preimages on \(X\), with multiplicities at a
 finite set of \emph{branch points}. The number is the
 \emph{degree} of \(f\), and is the first invariant we attach to
@@ -18,7 +18,7 @@ local coordinates, \(f^*(h(w)\,dw) = h(f(z))\,f'(z)\,dz\). It is
 linear and well-behaved everywhere. \emph{Trace} \(\tr_f\), or
 \emph{pushforward}, goes the opposite direction: takes a 1-form
 on the source and pushes it down to one on the target. The
-construction is delicate — one must sum over the local inverse
+construction is delicate --- one must sum over the local inverse
 branches of \(f\) on the target, define a putative form there,
 and then prove that the result extends holomorphically across
 the branch points (where the inverse branches collide). The
@@ -63,7 +63,7 @@ Pullback gives a complex-linear map
 \[
   f^{*}:\HY\to\HX.
 \]
-\lean{JacobianChallenge.TraceDegree.pullbackFormsLinearMap}
+\lean{JacobianChallenge.TraceDegree.pullbackFormsLinearMap,periodPairing_pullbackFormsBundledLM}
 \leanok
 \end{lemma}
 
@@ -74,7 +74,7 @@ Given a holomorphic map between compact Riemann surfaces, the
 to measure infinitesimal directions downstream, you can measure
 infinitesimal directions upstream by first applying the map and then
 measuring downstream. Locally, if a target 1-form is \(h(w)\,dw\), its
-pullback through a map \(w = f(z)\) is just \(h(f(z))\,f'(z)\,dz\) —
+pullback through a map \(w = f(z)\) is just \(h(f(z))\,f'(z)\,dz\) ---
 the chain rule. This operation is complex-linear (sums and scalar
 multiples come along for the ride) and lands in honest holomorphic
 1-forms. Why bother? Pullback gives a well-behaved arrow on the spaces
@@ -98,7 +98,7 @@ For nonconstant \(f\), there is a complex-linear trace map
 \[
   \tr_f:\HX\to\HY.
 \]
-\lean{JacobianChallenge.TraceDegree.analyticPushforward}
+\lean{JacobianChallenge.TraceDegree.analyticPushforward,traceFormsBundled_apply_fun_regular,traceFormsBundled_zero}
 \leanok
 \end{lemma}
 
@@ -127,7 +127,7 @@ across the branch points to give a global holomorphic 1-form on the
 target. The operation is complex-linear, just like pullback. Why
 bother? Trace is the dual partner to pullback. In the Jacobian story,
 dualizing trace gives the pushforward on Jacobians. Together,
-pullback and pushforward satisfy the trace identity — the algebraic
+pullback and pushforward satisfy the trace identity --- the algebraic
 backbone of the ``push-then-pull = multiplication-by-degree''
 anti-hack theorem.
 \end{layman}
@@ -174,7 +174,7 @@ therefore induce continuous holomorphic group homomorphisms
 Pullback and trace are operations on holomorphic 1-forms; to make them
 act on \emph{Jacobians} we have to cross a quotient. The key algebraic
 fact is that the dual maps these operations induce on the 1-form duals
-send periods to periods — i.e., they preserve the period lattices on
+send periods to periods --- i.e., they preserve the period lattices on
 each side. Once that's true, both maps descend to honest homomorphisms
 on the lattice quotients, which are the Jacobians. The descended maps
 stay holomorphic because they're induced by linear maps between the

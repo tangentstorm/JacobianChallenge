@@ -80,11 +80,38 @@ class Outliner:
         
     def get_roots(self):
         # By default, only show REACHABLE roots
-        nodes = [i for i, n in self.db.items() if not n.get("d") and (n.get("o") or 0) > 0 and n.get("r") == 1]
+        # A root is either:
+        # 1. A node with no downstream dependencies (the ultimate goal)
+        # 2. A node that is NOT DONE but all its downstream nodes ARE DONE (the current frontier)
+        
+        all_nodes = [i for i, n in self.db.items() if n.get("r") == 1]
         
         if not self.show_done:
-            nodes = [i for i in nodes if self.db[i].get("c") != "done"]
-        return nodes
+            # Find nodes that are open
+            open_nodes = [i for i in all_nodes if self.db[i].get("c") != "done"]
+            
+            # A node is a "root" in the refinement sense if it is OPEN
+            # but all its downstream dependents are either non-existent or DONE.
+            roots = []
+            for i in open_nodes:
+                downstream = self.db[i].get("d", [])
+                if not downstream:
+                    roots.append(i)
+                    continue
+                
+                # If all downstream nodes are done, this is a frontier root.
+                if all(self.db.get(d, {}).get("c") == "done" for d in downstream):
+                    roots.append(i)
+            
+            if not roots and open_nodes:
+                # Fallback: if we can't find clear frontiers, show top-level open nodes
+                roots = [i for i in open_nodes if not self.db[i].get("d")]
+                if not roots: roots = open_nodes[:10]
+                
+            return roots
+        
+        # If showing done, just return the ultimate goals (nodes with no downstream)
+        return [i for i, n in self.db.items() if not n.get("d") and n.get("r") == 1]
 
     def render_ui(self):
         self.console.clear()
