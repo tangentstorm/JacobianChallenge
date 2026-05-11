@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.EntireZero
+import Jacobian.HolomorphicForms.InversionChartContinuity
 import Jacobian.HolomorphicForms.ChartSectionContDiff
 import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
@@ -358,7 +359,7 @@ theorem ContMDiffSection_localRepr_inversionChart_continuousAt_zero
     ContinuousAt (fun w => ω.toFun (inversionChart.symm w)
       (show TangentSpace (modelWithCornersSelf ℂ ℂ)
         (inversionChart.symm w) from (1 : ℂ))) 0 := by
-  sorry
+  exact ContMDiffSection_localRepr_inversionChart_continuousAt_zero_proof ω
 
 /-- **Inversion-chart extraction leaf.** The inversion-chart coefficient of
 a holomorphic 1-form is continuous at the point `w = 0`, i.e. at infinity of

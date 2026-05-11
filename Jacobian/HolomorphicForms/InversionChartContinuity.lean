@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.EntireZero
+import Jacobian.HolomorphicForms.ChartSectionContDiff
 import Mathlib.CategoryTheory.Category.Basic
 
 /-!
@@ -53,7 +54,7 @@ This is equivalent to the structural axiom G2a. -/
 theorem identityChartCoeff_contDiff (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContDiff ℂ ⊤ (fun z : ℂ => ω.toFun (↑z : OnePoint ℂ)
       (show TangentSpace (modelWithCornersSelf ℂ ℂ) (↑z : OnePoint ℂ) from (1 : ℂ))) := by
-  sorry
+  convert contMDiffSection_localRepr_identityChart_contDiff ω using 1
 
 /-- The identity chart coefficient is differentiable (entire). -/
 theorem identityChartCoeff_differentiable (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :

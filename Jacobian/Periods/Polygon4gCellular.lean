@@ -183,7 +183,9 @@ theorem polygon4g_succ_singularH1_isFinite (g : ℕ) :
 theorem polygon4g_succ_singularH1_isTorsionFree (g : ℕ) :
     Module.IsTorsionFree ℤ (singularH1 (Polygon4g (g + 1))) := by
   obtain ⟨e⟩ := hurewicz_singularH1_iso_polygon4g g
-  sorry
+  exact Function.Injective.moduleIsTorsionFree
+    (R := ℤ) (M := singularH1 (Polygon4g (g + 1))) (N := Polygon4gAbelianization g)
+    e.symm e.symm.injective (fun r m => e.symm.map_smul r m)
 
 /-- **Stage A leaf (C1b, round 5).** Rank computation. -/
 theorem polygon4g_succ_singularH1_finrank_eq (g : ℕ) :
