@@ -28,7 +28,7 @@ lemma t2Space_quotient_of_isClosed_subgroup
   haveI : IsClosed (N : Set V) := h
   exact inferInstance
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- The complex-torus quotient is `T2`. Wrapper around

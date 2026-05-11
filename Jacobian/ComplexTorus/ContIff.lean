@@ -13,7 +13,7 @@ out of the quotient is continuous by checking it on representatives.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V W : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V W : Type*} [NormedAddCommGroup V]
   [TopologicalSpace W]
   (Λ : FullComplexLattice V)
 

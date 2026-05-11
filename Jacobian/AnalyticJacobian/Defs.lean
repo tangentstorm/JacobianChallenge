@@ -30,18 +30,22 @@ open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 The full Lie-group structure is layered on top of this base type via
 the deferred lattice/full-rank theorems. -/
 noncomputable abbrev AnalyticJacobianGroup
-    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
-    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Type _ :=
   (HolomorphicOneForm E X →ₗ[ℂ] ℂ) ⧸ periodSubgroup E X
 
 /-- Sanity check: the additive group structure on `AnalyticJacobianGroup`
 comes for free from `QuotientAddGroup`. -/
 noncomputable example
-    (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
+    (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
-    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     AddCommGroup (AnalyticJacobianGroup E X) :=
   inferInstance
 

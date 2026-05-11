@@ -18,11 +18,11 @@ namespace JacobianChallenge.AnalyticJacobian
 
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- `evalLinearMap x` is additive in the vector argument
+/- `evalLinearMap x` is additive in the vector argument
 (at the LinearMap level). -/
 theorem evalLinearMap_vec_add (x : X) (v w : E) :
     evalLinearMap (X := X) x (v + w) =
@@ -30,11 +30,14 @@ theorem evalLinearMap_vec_add (x : X) (v w : E) :
   ext η
   exact evalLinearMap_add_vec x v w η
 
-/-- `evalLinearMap x` sends `0` to the zero LinearMap. -/
+/- `evalLinearMap x` sends `0` to the zero LinearMap. -/
 theorem evalLinearMap_vec_zero (x : X) :
     evalLinearMap (X := X) x (0 : E) = 0 := by
   ext η
   exact evalLinearMap_zero_vec x η
+
+variable [ChartedSpace ℂ X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 
 @[simp] theorem evalJacobianClass_zero_vec (x : X) :
     evalJacobianClass (E := E) (X := X) x 0 = 0 := by

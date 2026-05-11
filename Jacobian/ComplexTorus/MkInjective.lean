@@ -12,7 +12,7 @@ is trivial. This is a useful corner case that future code may need.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- `mk V Λ` is injective iff the lattice is the trivial subgroup. -/

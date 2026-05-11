@@ -88,7 +88,6 @@ instance quotient_t2Space (Λ : FullComplexLattice V) : T2Space (quotient V Λ) 
   haveI : IsClosed (Λ.subgroup : Set V) := Λ.isClosed
   exact inferInstance
 
-omit [NormedAddCommGroup W] [NormedAddCommGroup U] [NormedSpace ℂ V] [NormedSpace ℂ W] [NormedSpace ℂ U] in
 /-- If `K ⊆ V` is compact and every point of `V` lies in some
 `subgroup`-translate of `K`, the quotient `V ⧸ subgroup` is compact.
 This is the generic "cocompact lattice ⇒ compact quotient" lemma; the
@@ -122,7 +121,6 @@ instance quotient_compactSpace (Λ : FullComplexLattice V) :
 def mk (Λ : FullComplexLattice V) : V → quotient V Λ :=
   QuotientAddGroup.mk
 
-omit [NormedAddCommGroup W] [NormedAddCommGroup U] [NormedSpace ℂ V] [NormedSpace ℂ W] [NormedSpace ℂ U] in
 lemma mk_surjective (Λ : FullComplexLattice V) : Function.Surjective (mk V Λ) :=
   QuotientAddGroup.mk_surjective
 
@@ -134,7 +132,6 @@ def map (Λ : FullComplexLattice V) (Γ : FullComplexLattice W) (f : V →+ W)
     quotient V Λ →+ quotient W Γ :=
   QuotientAddGroup.map Λ.subgroup Γ.subgroup f hf
 
-omit [NormedAddCommGroup U] [NormedSpace ℂ V] [NormedSpace ℂ W] [NormedSpace ℂ U] in
 lemma map_mk (Λ : FullComplexLattice V) (Γ : FullComplexLattice W) (f : V →+ W)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) (v : V) :
     map Λ Γ f hf (mk V Λ v) = mk W Γ (f v) :=
@@ -146,7 +143,6 @@ lemma map_id (Λ : FullComplexLattice V) :
     map Λ Λ (AddMonoidHom.id V) (by intro v hv; exact hv) = AddMonoidHom.id (quotient V Λ) :=
   QuotientAddGroup.map_id Λ.subgroup
 
-omit [NormedSpace ℂ V] [NormedSpace ℂ W] [NormedSpace ℂ U] in
 lemma map_comp (Λ : FullComplexLattice V) (Γ : FullComplexLattice W)
     (Η : FullComplexLattice U) (f : V →+ W) (g : W →+ U)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup)

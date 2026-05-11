@@ -163,6 +163,8 @@ import Jacobian.Periods.PeriodFunctional
 import Jacobian.Periods.PeriodFunctionalApi
 import Jacobian.Periods.PeriodFunctionalIntSmul
 import Jacobian.Periods.RiemannBilinearRefinement
+import Jacobian.Periods.CellularChainComplex
+import Jacobian.Periods.Hurewicz
 import Jacobian.Periods.PeriodSubgroupNeg
 import Jacobian.Periods.PeriodSubgroupApi
 import Jacobian.Periods.PeriodSubgroupClosure

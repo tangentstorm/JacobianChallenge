@@ -14,11 +14,11 @@ exactly `Λ.subgroup`, the induced map `map Λ Γ f hf` is injective.
 namespace JacobianChallenge.ComplexTorus
 
 variable {V W : Type*} [NormedAddCommGroup V] [NormedAddCommGroup W]
-  [NormedSpace ℂ V] [NormedSpace ℂ W]
   {Λ : FullComplexLattice V} {Γ : FullComplexLattice W}
 
 /-- If `f⁻¹(Γ.subgroup) ⊆ Λ.subgroup`, the induced quotient map is injective. -/
-lemma map_injective_of_preimage_subset {f : V →+ W}
+lemma map_injective_of_preimage_subset [NormedSpace ℂ V] [NormedSpace ℂ W]
+    {f : V →+ W}
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup)
     (hker : ∀ v : V, f v ∈ Γ.subgroup → v ∈ Λ.subgroup) :
     Function.Injective (map Λ Γ f hf) := by

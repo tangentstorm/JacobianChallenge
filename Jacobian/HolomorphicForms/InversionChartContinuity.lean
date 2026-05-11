@@ -118,7 +118,7 @@ theorem section_infty_eq_zero' (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     have hω_zero : ω.toFun (OnePoint.some z) = 0 := by
       nontriviality;
       exact?
-    simp [H, hω_zero];
+    simp [H];
     convert e.zeroSection _ _;
     any_goals exact OnePoint.some z;
     any_goals exact ℂ;
@@ -129,7 +129,7 @@ theorem section_infty_eq_zero' (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
         any_goals exact ℂ;
         all_goals try infer_instance;
         · simp +decide [ Prod.ext_iff, Bundle.zeroSection ];
-        · simp +decide [ e, hz ];
+        · simp +decide [ e ];
           simp +decide [ chartAt ];
           simp +decide [ ChartedSpace.chartAt ];
           simp +decide [ inversionChart, hz ];

@@ -26,6 +26,7 @@ variable {V : Type*} [NormedAddCommGroup V]
 /-- For each point of the chart overlap, the chart transition agrees
 with a translation by a fixed lattice element on a neighborhood. -/
 lemma localSection_mk_locally_translate
+    [NormedSpace ℂ V]
     (Λ : FullComplexLattice V) (v₁ v₂ : V) {δ r : ℝ}
     (hδpos : 0 < δ)
     (hr_lt : r < δ / 2)

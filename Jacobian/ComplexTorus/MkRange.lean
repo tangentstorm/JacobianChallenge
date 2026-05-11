@@ -9,15 +9,15 @@ Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- The range of the quotient projection is everything. -/
-@[simp] lemma range_mk : Set.range (mk V Λ) = Set.univ :=
+@[simp] lemma range_mk [NormedSpace ℂ V] : Set.range (mk V Λ) = Set.univ :=
   (mk_surjective V Λ).range_eq
 
 /-- The image of the universal set under `mk` is the universal set. -/
-@[simp] lemma mk_image_univ : mk V Λ '' Set.univ = Set.univ :=
+@[simp] lemma mk_image_univ [NormedSpace ℂ V] : mk V Λ '' Set.univ = Set.univ :=
   Set.image_univ_of_surjective (mk_surjective V Λ)
 
 end JacobianChallenge.ComplexTorus
