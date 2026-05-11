@@ -221,13 +221,27 @@ noncomputable instance : Sub (MeromorphicFunctionType X) := ⟨fun f g => f + (-
 
 /-- Scalar multiplication of meromorphic functions. -/
 noncomputable def smul_meromorphic (c : ℂ) (f : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
-  { toFun := fun x => OnePoint.map (c * ·) (f.toFun x)
-    toFun_continuous := sorry
+  { toFun := if hc : c = 0 then fun _ => ((0 : ℂ) : OnePoint ℂ)
+      else fun x => OnePoint.map (c * ·) (f.toFun x)
+    toFun_continuous := by
+      by_cases hc : c = 0
+      · simp [hc]
+        exact continuous_const
+      · let smulHomeomorph : ℂ ≃ₜ ℂ := Homeomorph.mulLeft₀ c hc
+        have hcont : Continuous (fun x => (Homeomorph.onePointCongr smulHomeomorph) (f.toFun x)) :=
+          (Homeomorph.onePointCongr smulHomeomorph).continuous.comp f.toFun_continuous
+        simpa [hc, smulHomeomorph, Homeomorph.coe_mulLeft₀] using hcont
     isMeromorphic := fun p => by
       unfold MeromorphicAtX
-      convert (MeromorphicAt.const c (chartAt ℂ p p)).mul (f.isMeromorphic p) using 1
-      ext z
-      cases h : f.toFun ((chartAt ℂ p).symm z) <;> simp [h, Option.getD] }
+      by_cases hc : c = 0
+      · subst c
+        convert (AnalyticAt.meromorphicAt (𝕜 := ℂ)
+          (f := fun _ : ℂ => (0 : ℂ)) analyticAt_const) using 1
+        ext z
+        simp [Option.getD]
+      · convert (MeromorphicAt.const c (chartAt ℂ p p)).mul (f.isMeromorphic p) using 1
+        ext z
+        cases h : f.toFun ((chartAt ℂ p).symm z) <;> simp [hc, h, Option.getD] }
 
 noncomputable instance : SMul ℂ (MeromorphicFunctionType X) := ⟨smul_meromorphic⟩
 
@@ -239,9 +253,11 @@ theorem smul_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   intro x hx
   show (smul_meromorphic c f).toFun x = ↑(c * Option.getD (f.toFun x) 0)
   simp only [smul_meromorphic]
+  by_cases hc : c = 0
+  · simp [hc]
   cases h : f.toFun x with
   | infty => exact absurd h hx
-  | coe z => rfl
+  | coe z => simp [hc, h, Option.getD]
 
 /-- Constant meromorphic functions. -/
 def constant (c : ℂ) : MeromorphicFunctionType X :=
