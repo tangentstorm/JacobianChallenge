@@ -12,7 +12,7 @@ quotient compatibly with the quotient projection.
 
 namespace JacobianChallenge.ComplexTorus
 
-variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
 /-- The quotient projection commutes with integer scalar multiplication. -/

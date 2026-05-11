@@ -14,9 +14,11 @@ namespace JacobianChallenge.AnalyticJacobian
 
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+  [ChartedSpace ℂ X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 
 /-- `evalJacobianClass P v = evalJacobianClass Q w` iff
 `evalLinearMap P v - evalLinearMap Q w ∈ periodSubgroup`. -/

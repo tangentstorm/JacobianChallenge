@@ -168,6 +168,51 @@ nonzero derivative at the relevant point (project lemmas
 
 section ChartIndependence
 
+
+/- Local-equality lemma: on a neighborhood of `e₁ p`, the alternate
+chart-local form `e₂ ∘ f ∘ e₁.symm` factors as
+`ψ ∘ chartLocalAt f p ∘ φ`, where `φ = chartAt ℂ p ∘ e₁.symm` and
+`ψ = e₂ ∘ (chartAt ℂ (f p)).symm` are the chart transitions on the
+two sides. -/
+theorem alternate_chart_eventuallyEq_compose
+    {f : X → Y} (hf_cont : Continuous f) {p : X}
+    (e₁ : OpenPartialHomeomorph X ℂ) (hp₁ : p ∈ e₁.source)
+    (e₂ : OpenPartialHomeomorph Y ℂ) (_hp₂ : f p ∈ e₂.source) :
+    (fun t => e₂ (f (e₁.symm t)))
+      =ᶠ[𝓝 (e₁ p)]
+        ((fun s => e₂ ((chartAt ℂ (f p)).symm s))
+          ∘ chartLocalAt f p
+          ∘ (fun t => chartAt ℂ p (e₁.symm t))) := by
+  have htarget : e₁.target ∈ 𝓝 (e₁ p) :=
+    e₁.open_target.mem_nhds (e₁.map_source hp₁)
+  have hep_target : e₁ p ∈ e₁.target := e₁.map_source hp₁
+  have hsymm_at : e₁.symm (e₁ p) = p := e₁.left_inv hp₁
+  have hsymm : ContinuousAt e₁.symm (e₁ p) := e₁.symm.continuousAt hep_target
+  have hsource_X : e₁.symm ⁻¹' (chartAt ℂ p).source ∈ 𝓝 (e₁ p) := by
+    refine hsymm ?_
+    rw [hsymm_at]
+    exact (chartAt ℂ p).open_source.mem_nhds (mem_chart_source ℂ p)
+  have hsource_Y : (fun t => f (e₁.symm t)) ⁻¹' (chartAt ℂ (f p)).source
+      ∈ 𝓝 (e₁ p) := by
+    have hf_at : ContinuousAt f (e₁.symm (e₁ p)) := by
+      rw [hsymm_at]; exact hf_cont.continuousAt
+    have hcomp : ContinuousAt (fun t => f (e₁.symm t)) (e₁ p) :=
+      hf_at.comp hsymm
+    refine hcomp ?_
+    show (chartAt ℂ (f p)).source ∈ 𝓝 (f (e₁.symm (e₁ p)))
+    rw [hsymm_at]
+    exact (chartAt ℂ (f p)).open_source.mem_nhds (mem_chart_source ℂ (f p))
+  filter_upwards [htarget, hsource_X, hsource_Y] with t _ hsXt hsYt
+  have h1 : (chartAt ℂ p).symm (chartAt ℂ p (e₁.symm t)) = e₁.symm t :=
+    (chartAt ℂ p).left_inv hsXt
+  have h2 : (chartAt ℂ (f p)).symm (chartAt ℂ (f p) (f (e₁.symm t)))
+      = f (e₁.symm t) :=
+    (chartAt ℂ (f p)).left_inv hsYt
+  show e₂ (f (e₁.symm t))
+      = e₂ ((chartAt ℂ (f p)).symm (chartLocalAt f p (chartAt ℂ p (e₁.symm t))))
+  unfold chartLocalAt
+  simp [Function.comp_apply, h1, h2]
+
 variable [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
 
 open JacobianChallenge.HolomorphicForms.VanishingOrder
@@ -228,50 +273,6 @@ theorem chartAt_symm_transition_deriv_ne_zero
   intro h
   rw [h, mul_zero] at hprod
   exact zero_ne_one hprod
-
-/-- Local-equality lemma: on a neighborhood of `e₁ p`, the alternate
-chart-local form `e₂ ∘ f ∘ e₁.symm` factors as
-`ψ ∘ chartLocalAt f p ∘ φ`, where `φ = chartAt ℂ p ∘ e₁.symm` and
-`ψ = e₂ ∘ (chartAt ℂ (f p)).symm` are the chart transitions on the
-two sides. -/
-theorem alternate_chart_eventuallyEq_compose
-    {f : X → Y} (hf_cont : Continuous f) {p : X}
-    (e₁ : OpenPartialHomeomorph X ℂ) (hp₁ : p ∈ e₁.source)
-    (e₂ : OpenPartialHomeomorph Y ℂ) (_hp₂ : f p ∈ e₂.source) :
-    (fun t => e₂ (f (e₁.symm t)))
-      =ᶠ[𝓝 (e₁ p)]
-        ((fun s => e₂ ((chartAt ℂ (f p)).symm s))
-          ∘ chartLocalAt f p
-          ∘ (fun t => chartAt ℂ p (e₁.symm t))) := by
-  have htarget : e₁.target ∈ 𝓝 (e₁ p) :=
-    e₁.open_target.mem_nhds (e₁.map_source hp₁)
-  have hep_target : e₁ p ∈ e₁.target := e₁.map_source hp₁
-  have hsymm_at : e₁.symm (e₁ p) = p := e₁.left_inv hp₁
-  have hsymm : ContinuousAt e₁.symm (e₁ p) := e₁.symm.continuousAt hep_target
-  have hsource_X : e₁.symm ⁻¹' (chartAt ℂ p).source ∈ 𝓝 (e₁ p) := by
-    refine hsymm ?_
-    rw [hsymm_at]
-    exact (chartAt ℂ p).open_source.mem_nhds (mem_chart_source ℂ p)
-  have hsource_Y : (fun t => f (e₁.symm t)) ⁻¹' (chartAt ℂ (f p)).source
-      ∈ 𝓝 (e₁ p) := by
-    have hf_at : ContinuousAt f (e₁.symm (e₁ p)) := by
-      rw [hsymm_at]; exact hf_cont.continuousAt
-    have hcomp : ContinuousAt (fun t => f (e₁.symm t)) (e₁ p) :=
-      hf_at.comp hsymm
-    refine hcomp ?_
-    show (chartAt ℂ (f p)).source ∈ 𝓝 (f (e₁.symm (e₁ p)))
-    rw [hsymm_at]
-    exact (chartAt ℂ (f p)).open_source.mem_nhds (mem_chart_source ℂ (f p))
-  filter_upwards [htarget, hsource_X, hsource_Y] with t _ hsXt hsYt
-  have h1 : (chartAt ℂ p).symm (chartAt ℂ p (e₁.symm t)) = e₁.symm t :=
-    (chartAt ℂ p).left_inv hsXt
-  have h2 : (chartAt ℂ (f p)).symm (chartAt ℂ (f p) (f (e₁.symm t)))
-      = f (e₁.symm t) :=
-    (chartAt ℂ (f p)).left_inv hsYt
-  show e₂ (f (e₁.symm t))
-      = e₂ ((chartAt ℂ (f p)).symm (chartLocalAt f p (chartAt ℂ p (e₁.symm t))))
-  unfold chartLocalAt
-  simp [Function.comp_apply, h1, h2]
 
 /-- **Chart independence (`ℕ∞` form).** For any two analytic charts
 `e₁` at `p ∈ X` and `e₂` at `f p ∈ Y` (in the maximal atlas), the
@@ -358,8 +359,6 @@ end ChartIndependence
 
 section FiniteFiber
 
-variable [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
-
 /-- **Local identity principle (chart-local).** An analytic function
 on `ℂ` that is frequently zero on a punctured neighborhood of `z₀` is
 eventually zero on a full neighborhood. -/
@@ -373,7 +372,7 @@ private theorem analyticAt_eventually_eq_zero_of_frequently
     obtain ⟨_, h1, h2⟩ := (hfreq.and_eventually hnonzero).exists
     exact h2 h1
 
-/-- **Local identity principle for a holomorphic map.** -/
+/- **Local identity principle for a holomorphic map.** -/
 theorem IsHolomorphicAt.eventually_eq_of_frequently_eq
     {f : X → Y} {x₀ : X} {y₀ : Y}
     (hf : IsHolomorphicAt f x₀) (hf_cont : Continuous f) (hfx₀ : f x₀ = y₀)

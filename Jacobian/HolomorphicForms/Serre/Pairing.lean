@@ -42,23 +42,26 @@ open CategoryTheory
 /-- **Frontier instance (sorry).** `ℂ`-module structure on the cup-
 product target `H¹(X, F ⊗ Hom(F, K_X))`. Required to assemble the
 Serre pairing as a chain of `ℂ`-linear maps. -/
-axiom serrePairing_module_H1Tensor
+instance serrePairing_module_H1Tensor
     (X : Type*) [TopologicalSpace X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F : RSAbSheaf X) :
-    Module ℂ (RSSheafCohomology X (RSTensorAbSheaf X F (serreDualSheaf X F)) 1)
+    Module ℂ (RSSheafCohomology X (RSTensorAbSheaf X F (serreDualSheaf X F)) 1) :=
+  sorry
 
 /-- **Frontier instance (sorry).** `ℂ`-module structure on
 `H¹(X, K_X)` required to land the Serre pairing in `ℂ` via the trace
 map. -/
-axiom serrePairing_module_H1Canonical
+instance serrePairing_module_H1Canonical
     (X : Type*) [TopologicalSpace X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})] :
-    Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)
+    Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1) :=
+    sorry
 
-/-- **Refined (round 4).** The Serre pairing
+    /-- **Refined (round 4).**
+ The Serre pairing
 `H⁰(X, F) × H¹(X, Hom(F, K_X)) → ℂ`, assembled as
 `traceMap ∘ H¹(eval) ∘ cupProduct`. -/
 noncomputable def serrePairing
