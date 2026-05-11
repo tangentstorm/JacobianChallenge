@@ -371,26 +371,55 @@ theorem cycleLipChain_obligation :
   intro x hx y hy
   exact le_trans (hKi hx hy) (by gcongr; exact Finset.le_sup (Finset.mem_univ i))
 
-/-- Named obligation: paths on a compact Riemann surface satisfy the
-piecewise-C¹ regularity condition with a uniform derivative bound.
+/-- **Project-level regularity assumption (typeclass form).**
 
-This is the regularity assumption introduced by the bug fix to
-`cycleLipPath_obligation` (ID 121). In the context of integral
-1-cycles on compact Riemann surfaces, this holds because cycles are
-built from piecewise-smooth paths. Eventually discharged once
-`IntegralOneCycle` carries smoothness data, or by restricting
-paths in the period pairing to the piecewise-smooth class. -/
-theorem pathPiecewiseC1_obligation :
-    ∀ {a b : X} (γ' : Path a b),
-      ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀ := by
-  sorry
+The statement carried by an instance: *every continuous path `γ : Path a b`
+on `X` admits a uniform `K₀` with `ChartLiftPiecewiseC1 γ K₀`* — i.e.
+every continuous path is piecewise C¹ in chart coordinates with a
+uniform derivative bound.
 
-/-- Chain-level C¹ obligation, derived from `pathPiecewiseC1_obligation`. -/
-theorem chainPiecewiseC1_obligation :
+This is **false for arbitrary continuous paths**: a nowhere-
+differentiable continuous path (e.g. a Weierstrass-style curve embedded
+in a chart) inhabits `Path a b` but cannot satisfy
+`ChartLiftPiecewiseC1`.
+
+The bug fix to `cycleLipPath_obligation` (formerly ID 121) added
+`ChartLiftPiecewiseC1` as a per-path hypothesis there; this typeclass
+isolates the *uniform* version as an assumption on the *surface*. It
+captures what would be true if every singular 1-cycle on `X` admitted a
+piecewise-smooth representative — the genuine geometric content the
+project's period-pairing layer needs.
+
+Eventual discharge (out of scope of the current Lean layer):
+* enrich `IntegralOneCycle X` to carry smoothness data and only need
+  the assumption for the chosen representative;
+* or restrict the period pairing's domain to a piecewise-smooth
+  subclass of `H₁(X, ℤ)` that is shown to span the homology.
+
+Carried as a typeclass so the `analyticPushforward` API can pick it up
+implicitly without threading an explicit hypothesis through every
+call site. Provided by a single named sorry-instance in
+`Jacobian/TraceDegree/PiecewiseC1Instance.lean`. -/
+class PiecewiseC1PathRegularity (X : Type)
+    [TopologicalSpace X] [ChartedSpace ℂ X] : Prop where
+  /-- Witness: every path admits a uniform piecewise-C¹ bound. -/
+  out : ∀ {a b : X} (γ' : Path a b), ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀
+
+/-- Accessor: extract the per-path bound from a `PiecewiseC1PathRegularity X`
+instance. Replaces former direct calls to `pathPiecewiseC1_obligation`. -/
+theorem pathPiecewiseC1_of_regularity [hReg : PiecewiseC1PathRegularity X]
+    {a b : X} (γ' : Path a b) :
+    ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀ :=
+  hReg.out γ'
+
+/-- Chain-level consequence: under `[PiecewiseC1PathRegularity X]`,
+every finite family of paths in `X` is piecewise C¹ (each with its
+own bound). Replaces former `chainPiecewiseC1_obligation`. -/
+theorem chainPiecewiseC1_of_regularity [PiecewiseC1PathRegularity X] :
     ∀ (m : ℕ) (a b : Fin m → X)
       (γs : ∀ i : Fin m, Path (a i) (b i)),
       ∀ i : Fin m, ∃ K₀ : NNReal, ChartLiftPiecewiseC1 (γs i) K₀ :=
-  fun _ _ _ γs i => pathPiecewiseC1_obligation (γs i)
+  fun _ _ _ γs i => pathPiecewiseC1_of_regularity (γs i)
 
 /-- Raw obligation: the trace lift preserves the period subgroup.
 
@@ -408,6 +437,7 @@ the algebraic bridge above (a `LinearMap.dualMap` identity), the Stokes
 naturality in `Periods/PullbackNaturality.lean`, and the C¹ regularity
 obligation `pathPiecewiseC1_obligation`. -/
 theorem pushforwardTraceLift_preserves_lattice_raw
+    [PiecewiseC1PathRegularity X]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice X).subgroup,
       pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup := by
@@ -431,9 +461,10 @@ theorem pushforwardTraceLift_preserves_lattice_raw
       periodPairing ℂ Y (cyclePushforward f hf γ) := by
     refine LinearMap.ext fun η => ?_
     exact periodPairing_pullbackFormsBundledLM f hf γ η
-      (fun γ' => cycleLipPath_obligation γ' _ (pathPiecewiseC1_obligation γ').choose_spec)
+      (fun γ' => cycleLipPath_obligation γ' _
+        (pathPiecewiseC1_of_regularity γ').choose_spec)
       (fun m a' b' γs => cycleLipChain_obligation m a' b' γs
-        (fun i => pathPiecewiseC1_obligation (γs i)))
+        (fun i => pathPiecewiseC1_of_regularity (γs i)))
   rw [hnat]
   -- Now: holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y (cyclePushforward f hf γ)) ∈ basisAlignedPeriodSubgroupConcrete Y.
   refine holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete Y ?_
@@ -472,8 +503,9 @@ Note: `pushforwardTraceLiftCLM` has type `→L[ℂ]` while
 `pushforwardTraceLift` has type `→+`; the underlying additive maps
 agree definitionally (the `→L[ℂ]` and `→ₗ[ℂ]` and `→+` are all
 extracted from the same matrix-transpose `Matrix.toLin'` value). -/
-noncomputable def analyticPushforward (f : X → Y)
-    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+noncomputable def analyticPushforward
+    [PiecewiseC1PathRegularity X]
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisAnalyticJacobian X →ₜ+ BasisAnalyticJacobian Y where
   toFun := ComplexTorus.mapClm (pushforwardTraceLiftCLM f hf)
     (pushforwardTraceLift_preserves_lattice_raw f hf)
@@ -491,6 +523,7 @@ Sorry-free: unfold `analyticPushforward` to `mapClm`, then
 hom of `pushforwardTraceLiftCLM` is definitionally
 `pushforwardTraceLift`. -/
 theorem analyticPushforward_mk_spec_raw
+    [PiecewiseC1PathRegularity X]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (v : Fin (analyticGenus ℂ X) → ℂ) :
     analyticPushforward f hf
@@ -520,6 +553,7 @@ smooth maps:
 The equation on `chart.source` uses `chart.left_inv'` plus
 `mapClm`'s definition (`map_mk`). -/
 theorem analyticPushforward_contMDiff_raw
+    [PiecewiseC1PathRegularity X]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
@@ -593,8 +627,9 @@ trace-coordinate interface and the three raw geometric sorries.
 
 /-- Companion specification: the analytic pushforward is holomorphic.
 Sorry-free: alias for `analyticPushforward_contMDiff_raw`. -/
-theorem analyticPushforward_contMDiff_spec (f : X → Y)
-    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+theorem analyticPushforward_contMDiff_spec
+    [PiecewiseC1PathRegularity X]
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
       (analyticPushforward f hf) :=
@@ -602,7 +637,9 @@ theorem analyticPushforward_contMDiff_spec (f : X → Y)
 
 /-- The analytic pushforward is holomorphic. Public top-down
 obligation; sorry-free. -/
-lemma analyticPushforward_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+lemma analyticPushforward_contMDiff
+    [PiecewiseC1PathRegularity X]
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
       (analyticPushforward f hf) :=
@@ -610,6 +647,7 @@ lemma analyticPushforward_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘
 
 /-- The trace lift preserves the period lattice. Sorry-free alias. -/
 theorem pushforwardTraceLift_preserves_lattice
+    [PiecewiseC1PathRegularity X]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice X).subgroup,
       pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup :=
@@ -619,6 +657,7 @@ theorem pushforwardTraceLift_preserves_lattice
 projection: the pushforward applied to `mk v` equals `mk` of the
 trace lift applied to `v`. Sorry-free alias. -/
 theorem analyticPushforward_mk_spec
+    [PiecewiseC1PathRegularity X]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (v : Fin (analyticGenus ℂ X) → ℂ) :
     analyticPushforward f hf
@@ -702,6 +741,7 @@ Sorry-free assembly: `analyticPushforward_mk_spec` and
 `pushforwardTraceLift_comp_spec` reduce both sides on the quotient
 projection. -/
 theorem analyticPushforward_comp_spec
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (P : BasisAnalyticJacobian X) :
@@ -716,6 +756,7 @@ theorem analyticPushforward_comp_spec
 
 /-- Pushforward distributes covariantly over composition. Sorry-free. -/
 lemma analyticPushforward_comp_apply
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (P : BasisAnalyticJacobian X) :
@@ -725,7 +766,7 @@ lemma analyticPushforward_comp_apply
 
 /-- Pushforward along the identity is the `ContinuousAddMonoidHom`
 identity. Sorry-free assembly via descent + `pushforwardTraceLift_id`. -/
-theorem analyticPushforward_id_eq :
+theorem analyticPushforward_id_eq [PiecewiseC1PathRegularity X] :
     analyticPushforward (X := X) (Y := X) id contMDiff_id =
       ContinuousAddMonoidHom.id (BasisAnalyticJacobian X) := by
   ext P
@@ -734,14 +775,16 @@ theorem analyticPushforward_id_eq :
   rfl
 
 /-- Specification of the identity case; sorry-free. -/
-theorem analyticPushforward_id_spec (P : BasisAnalyticJacobian X) :
+theorem analyticPushforward_id_spec [PiecewiseC1PathRegularity X]
+    (P : BasisAnalyticJacobian X) :
     analyticPushforward (X := X) (Y := X) id contMDiff_id P = P := by
   rw [analyticPushforward_id_eq]
   rfl
 
 /-- Pushforward along the identity is the identity. Public top-down
 obligation; sorry-free. -/
-lemma analyticPushforward_id_apply (P : BasisAnalyticJacobian X) :
+lemma analyticPushforward_id_apply [PiecewiseC1PathRegularity X]
+    (P : BasisAnalyticJacobian X) :
     analyticPushforward (X := X) (Y := X) id contMDiff_id P = P :=
   analyticPushforward_id_spec P
 

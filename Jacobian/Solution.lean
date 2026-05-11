@@ -11,6 +11,7 @@ import Jacobian.AbelJacobi.AnalyticOfCurveBasis
 import Jacobian.TraceDegree.PullbackBasis
 import Jacobian.TraceDegree.PushforwardBasis
 import Jacobian.TraceDegree.AnalyticDegree
+import Jacobian.TraceDegree.PiecewiseC1Instance
 
 set_option linter.unusedSectionVars false
 
