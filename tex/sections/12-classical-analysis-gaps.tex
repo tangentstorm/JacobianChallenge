@@ -912,21 +912,24 @@ adapter wrapping \code{ChartedSpaceComplex\_to\_smoothReal2} and
 \label{lem:polygonal-model-apply-rado}
 \uses{input:rado-triangulation}
 The underlying real 2-manifold structure of a Riemann surface admits a finite triangulation (Radó).
-\notready
+\lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_apply_rado}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Cut along a spanning tree of the 1-skeleton]
 \label{lem:polygonal-model-cut-along-tree}
 \uses{lem:pct-r1}
 Cutting the triangulation along a spanning tree of its 1-skeleton produces a topological disk; its boundary walk is a length-$4g$ edge word in a four-letter alphabet.
-\notready
+\lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_cut_along_tree}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Apply Tietze normal form to the boundary edge word]
 \label{lem:polygonal-model-apply-tietze}
 \uses{input:tietze-normal-form}
 The boundary edge word produced above is `TietzeEq` to the standard relator (Tietze).
-\notready
+\lean{JacobianChallenge.Analysis.PolygonalModel.polygonal_model_apply_tietze}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Round 6: polygon-genus invariance]
@@ -1347,14 +1350,16 @@ The principal symbol of $\Delta = d\delta + \delta d$ is $|\xi|^{2} \cdot \mathr
 \label{lem:hodge-elliptic-regularity}
 \uses{input:sobolev-elliptic-regularity}
 Smooth solutions of $\Delta\omega = f$ for smooth $f$ are smooth; the kernel of $\Delta$ over smooth forms equals the kernel over distributions.
-\notready
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_elliptic_regularity}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Fredholm property of $\Delta$]
 \label{lem:hodge-laplacian-fredholm}
 \uses{input:sobolev-elliptic-regularity}
 Combined ellipticity + Rellich–Kondrachov makes $\Delta : H^{s+2}(\Omega^{k}) \to H^{s}(\Omega^{k})$ Fredholm.
-\notready
+\lean{JacobianChallenge.Analysis.HodgeDecomposition.hodge_laplacian_fredholm}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Hodge step 2: de Rham–harmonic isomorphism]
@@ -1528,7 +1533,8 @@ Apply de Rham + UCT: $\mathrm{rank}_{\Z}\,H_{1}(X, \Z) = \dim_{\C}\,H^{1}_{\math
 \label{lem:hodge-deRham-uct-degree-one}
 \uses{lem:hdu-r1}
 $H^{1}(X, \R) \cong \mathrm{Hom}(H_{1}(X, \Z), \R)$ on a compact CW manifold.
-\notready
+\lean{JacobianChallenge.Analysis.HodgeDeRham.hodge_deRham_uct_degree_one}
+\leanok
 \end{lemma}
 
 \begin{lemma}[$H_{1}(X, \Z)$ is finitely generated]
@@ -1583,7 +1589,7 @@ through the named Lean target
 \code{JacobianChallenge.Analysis.HodgeDeRham.hodge\_deRham\_overview}.
 The chain is sorry-free \emph{above} the named frontier leaves but
 ultimately bottoms out, on Mathlib v4.28.0, at the following six
-honest classical inputs (all flagged \notready{} in their respective
+honest classical inputs (now linked to generated Lean hooks in their respective
 chains):
 
 \begin{enumerate}
@@ -2924,7 +2930,7 @@ For each chart \(\varphi:U\subseteq M\to E\), there is a fibre-wise
 isomorphism \(T^{*}U\cong U\times E^{*}\) covering \(\mathrm{id}_{U}\),
 obtained as the dual of the tangent-trivialisation
 \(TU\cong U\times E\).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.r9subA_cot_r2}
 \end{lemma}
 
 \begin{lemma}[Pass r9subA.1.3: cotangent transition functions are smooth]
@@ -2934,7 +2940,7 @@ For two charts \(\varphi_{i},\varphi_{j}\) with smooth transition
 \(\tau_{ij}=\varphi_{j}\circ\varphi_{i}^{-1}\), the cotangent
 transition is \((D\tau_{ij})^{-T}\), a smooth map of operator-norm
 endomorphisms.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.r9subA_cot_r3}
 \end{lemma}
 
 \begin{lemma}[Pass r9subA.2.1: \(\Lambda^{k}\) on a normed space]
@@ -2956,7 +2962,7 @@ A smooth family of invertible cotangent transitions
 \(t\mapsto\sigma(t)\in\mathrm{GL}(E^{*})\) induces a smooth family
 \(t\mapsto\Lambda^{k}\sigma(t)\in\mathrm{GL}(\Lambda^{k}E^{*})\),
 because \(\Lambda^{k}\) is a polynomial functor.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.r9subA_exp_r2}
 \end{lemma}
 
 \begin{lemma}[Pass r9subA.2.3: smooth-bundle structure from smooth transitions]
@@ -3000,7 +3006,7 @@ cotangent cocycle, exactly recover \(\Omega^{k}(M)\) as defined by
 the \emph{trivialised} sliver
 \code{JacobianChallenge.Analysis.BundledForms.BundledForm} when
 restricted to a single chart.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.r9subA_omeq_r1}
 \end{lemma}
 
 \begin{lemma}[Pass r9subA.5.2: gluing chart-local forms across overlaps]
@@ -3009,7 +3015,7 @@ restricted to a single chart.
 Chart-local trivialised forms \(\{\omega_{i}\}\) glue to a global
 section iff they satisfy
 \(\omega_{j}=\Lambda^{k}(D\tau_{ij})^{-T}(\omega_{i})\) on overlaps.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.r9subA_omeq_r2}
 \end{lemma}
 
 \begin{lemma}[Pass r9subA.5.3: Mathlib endpoint for the assembly]
@@ -3311,7 +3317,7 @@ inherit this through \code{ContMDiff.add} and
 \(\Lambda^{k}_{\C}(E^{*}_{\C}) = \bigoplus_{p+q=k} \Lambda^{p}\otimes\Lambda^{q}\)
 follows pointwise from the model fibre split (Pass r7subA.1.2 +
 r7subA.1.3) and Mathlib's \code{ExteriorAlgebra}.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.r7subA_omeq_r1}
 \end{lemma}
 
 \begin{lemma}[Pass r7subA.4.2: gluing across holomorphic transitions]
@@ -3321,7 +3327,7 @@ Holomorphic chart transitions are \(\C\)-linear at the cotangent
 level (their derivative respects the complex structure), hence
 preserve the \((1,0)\) and \((0,1)\) summands separately and the
 bigrading is well-defined globally.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.r7subA_omeq_r2}
 \end{lemma}
 
 \begin{lemma}[Pass r7subA.5.1: \(d\) projects onto bidegree shifts]
@@ -3331,7 +3337,7 @@ On a chart, \(d\omega\) is a \((p+q+1)\)-form whose bidegree
 components \((p+1,q)\) and \((p,q+1)\) define \(\partial\omega\)
 and \(\bar\partial\omega\) respectively; the other bidegrees
 vanish because complex chart transitions are holomorphic.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.r7subA_dsplit_r1}
 \end{lemma}
 
 \begin{lemma}[Pass r7subA.5.2: algebraic identities from \(d^{2}=0\)]
@@ -3648,7 +3654,7 @@ at the three sub-leaves below.  Sub-leaves
 singular \(H_1\) on the polygonal model and the cellular finite-free
 witness for a compact Riemann surface are routed through the
 sibling input \ref{input:prism-and-surface-h1}.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.stage_a_closeout}
 \end{theorem}
 
 \begin{lemma}[R3-sub-B.A --- cellular \(\leftrightarrow\) singular comparison]
@@ -3674,7 +3680,7 @@ At chain-level this is the identity
 checked on the basis of \(K_{n}\) by computing the signed face
 operator on each side.
 \lean{JacobianChallenge.StageA.cellularToSingular_isChainMap_substantive}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.A.r2 --- skeletal-pair LES]
@@ -3696,7 +3702,7 @@ the simplicial side (cellular) and on the topological side, plus
 \(\ker\Phi_{0}=0\) (every vertex is a vertex), give an iso on
 \(H_{1}\) by exactness chasing.
 \lean{JacobianChallenge.StageA.cellular_iso_singularH_via_five_lemma}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-B.B --- Brahana handle pairing]
@@ -3888,7 +3894,7 @@ The three Lean targets
 sub-leaves below.  Sub-leaves
 \(\textsf{r3subD-A.r1}\)--\(\textsf{r3subD-A.r3}\) are tracked in
 \code{Jacobian/Periods/PrismConstruction.lean}.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.prism_and_surface_h1}
 \end{theorem}
 
 \begin{lemma}[R3-sub-D.A --- prism construction at the chain level]
@@ -3901,7 +3907,7 @@ are chain-homotopic via the alternating-sum prism operator
 Applying \code{Homotopy.homologyMap\_eq} at degree~1 closes
 \code{singularH1\_inducedLinearMap\_eq\_of\_homotopic}.
 \lean{JacobianChallenge.Periods.singularH1_inducedLinearMap_eq_of_homotopic}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-D.A.r1 --- continuous staircase map]
@@ -3933,8 +3939,8 @@ boundary identity \(\partial P + P\partial = (C_{*}g)-(C_{*}f)\) by
 the standard interior-face cancellation
 (Hatcher \S2.1 p.\,112).  Wrap as
 \code{HomologicalComplex.Homotopy}.
-\lean{JacobianChallenge.Periods.PrismChainHomotopy.prism_homotopy}
-\notready
+\lean{JacobianChallenge.Periods.prism_chainHomotopy_exists}
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-D.B --- Hurewicz iso for the genus-(g+1) polygon]
@@ -3946,8 +3952,8 @@ available: a direct cellular calculation (3-step chain complex
 \(0\to\Z\to\Z^{2(g+1)}\to\Z\to0\) with both differentials zero, then
 transport via R3-sub-B) or a Hurewicz / surface-group-abelianisation
 argument.  The current Lean target is the cellular route.
-\lean{JacobianChallenge.Periods.polygon4g_succ_singularH1_hurewiczIso}
-\notready
+\lean{JacobianChallenge.Periods.polygon4g_succ_singularH1_hurewiczIso_via_edgeBasis}
+\leanok
 \end{lemma}
 
 \begin{lemma}[R3-sub-D.C --- cellular finite-free witness for a compact Riemann surface]
@@ -3959,7 +3965,7 @@ structure, there exists a finite-rank free \(\Z\)-module \(C\) and a
 \(H_{1}\) of the CW structure; the iso is the cellular-vs-singular
 comparison of R3-sub-B applied at degree 1.
 \lean{JacobianChallenge.Periods.cellularH1_finite_singularIsoData}
-\notready
+\leanok
 \end{lemma}
 
 %======================================================================
@@ -4079,7 +4085,7 @@ The three Lean targets
 at the three sub-leaves below.  Sub-leaves
 \(\textsf{r8subB-A.r1}\)--\(\textsf{r8subB-C.r5}\) are tracked in
 \code{Jacobian/HolomorphicForms/CompactRiemannSurface.lean}.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.banach_data_hone}
 \end{theorem}
 
 \begin{lemma}[R8-sub-B.A --- fiber-isometric cotangent trivialisation]
@@ -4090,7 +4096,7 @@ For the cotangent bundle of a 1D complex manifold modelled on
 \(\C\)-linear isometry, and the fiber norm of any smooth section
 factors through the trivialised norm continuously.
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_fiberNorm_continuous}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.A.r1 --- chart-local fiber identification]
@@ -4118,7 +4124,7 @@ section \(\sigma\) and every chart \((e,U)\) with \(x\in U\),
 Every sup-norm Cauchy sequence in \(\mathrm{Hone}(X)\) converges
 to a holomorphic 1-form.
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_supNorm_cauchySeq_tendsto}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.B.r1 --- pointwise Banach limit]
@@ -4167,7 +4173,7 @@ The closed unit ball
 \(\overline{B}_{1}\subseteq\mathrm{Hone}(X)\) is totally bounded
 in the sup-norm metric.
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_closedBall_totallyBounded}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-B.C.r1 --- chart-local pointwise bound]
@@ -4306,7 +4312,7 @@ The four Lean targets
 \code{h0\_minus\_h1\_le\_riemann} bottom out at the three sub-leaves
 below; the final
 \code{h0\_minus\_h1\_eq\_riemann\_roch} is sorry-free squeeze.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rr_squeeze}
 \end{theorem}
 
 \begin{lemma}[R8-sub-C.A --- low-degree vanishing via effective-divisor positivity]
@@ -4315,7 +4321,7 @@ below; the final
 A line bundle of strictly negative degree on a compact connected
 Riemann surface has no nonzero global sections.
 \lean{JacobianChallenge.HolomorphicForms.riemann_roch_low_degree}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-C.A.r1 --- nonzero section yields effective divisor]
@@ -4339,7 +4345,7 @@ divisor-line-bundle correspondence preserves degree.
 \((h^{0}(L):\Z)-(h^{1}(L):\Z)\geq\deg L+1-g\) for every line bundle
 \(L\) on \(X\).
 \lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_ge_riemann}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-C.B.r1 --- base case \(\deg L=0\)]
@@ -4375,7 +4381,7 @@ step) gives \(\chi(L)=\deg L+1-g\), i.e.\
 \((h^{0}(L):\Z)-(h^{1}(L):\Z)\leq\deg L+1-g\) for every line bundle
 \(L\) on \(X\).
 \lean{JacobianChallenge.HolomorphicForms.h0_minus_h1_le_riemann}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[R8-sub-C.C.r1 --- dual bundle degree]
@@ -4509,7 +4515,7 @@ $\omega = d\bar z_{n} \wedge \alpha + \beta$ where $\beta$ is free
 of $d\bar z_{n}$, solve $\bar\partial_{z_{n}} u = \alpha$ in
 $z_{n}$ alone (one-variable case), absorb $\bar\partial u$ into
 $\omega$, and recurse.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dpp_r1_onevar_suffices}
 \end{lemma}
 
 \begin{lemma}[Pass A.2: one-variable Pompeiu formula gives a primitive]
@@ -4523,7 +4529,7 @@ satisfies $\bar\partial_{z} Tf = f$ pointwise.  Hence on a disk,
 every $\bar\partial$-closed $(0,1)$-form $f\,d\bar z$ with smooth
 compactly supported coefficient is $\bar\partial$-exact via
 $u = Tf$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dpp_r2_pompeiu_formula}
 \end{lemma}
 
 \begin{lemma}[Pass A.3: Stokes on a punctured disk yields the Pompeiu identity]
@@ -4536,7 +4542,7 @@ follows from Stokes' theorem applied to $\frac{f(\zeta)}{\zeta - z}
 d\zeta$ on $D \setminus \overline{B_{\varepsilon}(z)}$ and
 letting $\varepsilon \to 0$, using local integrability of the
 Cauchy kernel.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dpp_r3_stokes_on_disk}
 \end{lemma}
 
 \begin{lemma}[Pass A.4: the Cauchy kernel $1/(\zeta - z)$ is locally integrable on $\C$]
@@ -4571,7 +4577,7 @@ Compactness of $H^{s'}(M) \hookrightarrow H^{s}(M)$ on a compact
 $M$ reduces to compactness of finitely many local embeddings
 $H^{s'}(B^{n}_{1}) \hookrightarrow H^{s}(B^{n}_{1})$ via a smooth
 finite partition of unity subordinate to a chart cover.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rk_r1_partition_localize}
 \end{lemma}
 
 \begin{lemma}[Pass B.2: local case via Fourier extension to $\R^{n}$]
@@ -4582,7 +4588,7 @@ zero to a bounded family in $H^{s'}(\R^{n})$, so the local case
 follows from compactness of the embedding $H^{s'}(\R^{n})
 \cap \{\mathrm{supp} \subseteq K\} \hookrightarrow H^{s}(\R^{n})$
 for $K$ compact.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rk_r2_local_flat}
 \end{lemma}
 
 \begin{lemma}[Pass B.3: Fourier characterization of $H^{s}(\R^{n})$]
@@ -4592,7 +4598,7 @@ $H^{s}(\R^{n}) = \{ u \in \mathcal{S}'(\R^{n}) :
 (1+|\xi|^{2})^{s/2}\,\hat u \in L^{2}(\R^{n})\}$.  Compactness
 on functions with support in $K$ then reduces to compactness of
 the truncated embedding via Fourier multipliers.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rk_r3_fourier_characterization}
 \end{lemma}
 
 \begin{lemma}[Pass B.4: high-frequency truncation gives compact embedding]
@@ -4605,7 +4611,7 @@ remainder $u - \chi_{N} u$ has $H^{s}$-norm bounded by
 $N^{-(s'-s)} \|u\|_{H^{s'}}$, which tends to $0$ as $N \to
 \infty$.  Hence the embedding is approximated in operator norm
 by finite-rank operators, making it compact.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rk_r4_truncation_compact}
 \end{lemma}
 
 \begin{lemma}[Pass B.5: tail decay in weighted $L^{2}$ is monotone convergence]
@@ -4619,7 +4625,7 @@ $L^{2}$ tail estimate;
 \code{MeasureTheory.tendsto\_setIntegral\_compl} on a
 $\sigma$-finite measure is the intended target.
 \uses{lem:rk-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rk_r5_tail_decay}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -4632,7 +4638,7 @@ Uniform PL approximation of an arbitrary planar homeomorphism
 on a compact set reduces (via local charts and a finite open
 cover) to the case of a homeomorphism of the closed disk to a
 Jordan domain --- i.e.\ to Schoenflies' theorem on disks.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rado_dim2_r1_disk_schoenflies}
 \end{lemma}
 
 \begin{lemma}[Pass C.2: Schoenflies on disks via Jordan-curve arc-length parameterization]
@@ -4643,7 +4649,7 @@ extends from a PL approximation of the boundary Jordan curve to
 a PL approximation of the whole disk.  This depends on the
 Jordan curve theorem to identify $\Omega$ as the bounded
 component.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rado_dim2_r2_schoenflies_jordan}
 \end{lemma}
 
 \begin{lemma}[Pass C.3: Jordan curve theorem in $\R^{2}$]
@@ -4653,7 +4659,7 @@ Every simple closed curve in $\R^{2}$ separates the plane into
 exactly two connected components, exactly one of which is
 bounded.  Proof via degree theory: for $p$ off the curve, the
 winding number is well-defined and takes values $0$ or $\pm 1$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rado_dim2_r3_jordan_curve_theorem}
 \end{lemma}
 
 \begin{lemma}[Pass C.4: winding number via degree on $S^{1}$]
@@ -4691,13 +4697,13 @@ $d\omega = 0$ on $X \setminus \bigsqcup \overline{D_{i}}$ gives
 $\sum_{i} \oint_{\partial D_{i}} \omega = 0$ (note the reversed
 orientation of $\partial D_{i}$ as a boundary of $X \setminus
 \bigsqcup D_{i}$).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.srt_r1_stokes_cut_disks}
 \end{lemma}
 \begin{lemma}[Pass A.1: reduce to one-variable, $q=1$]
 \label{lem:srt-r1}
 The integral on singular 1-chains is determined by the integral on singular 1-simplices.
 \lean{JacobianChallenge.Blueprint.Sec03.exists_singularSimplex_integration}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass D.2: each boundary integral is $2\pi i \cdot \mathrm{Res}_{p_{i}}\omega$]
@@ -4708,7 +4714,7 @@ For a meromorphic 1-form $\omega$ on a chart-disk $D \ni p$
 with the pole at $p$ as its only singularity,
 $\oint_{\partial D} \omega = 2\pi i \cdot \mathrm{Res}_{p}\omega$.
 This is a chart-local Cauchy residue identity.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.srt_r2_residue_as_boundary}
 \end{lemma}
 
 \begin{lemma}[Pass D.3: Cauchy integral formula on a chart disk]
@@ -4719,7 +4725,7 @@ with a pole at $0$ and Laurent expansion
 $f = \sum_{n \geq -k} a_{n} z^{n}$,
 $\oint_{\partial D} f(z)\,dz = 2\pi i\,a_{-1}$.  Equivalently,
 $f(z)\,dz - a_{-1}\,d\log z$ is exact on $D \setminus \{0\}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.srt_r3_cauchy_formula_disk}
 \end{lemma}
 
 \begin{lemma}[Pass D.4: distributional $\bar\partial(1/z) = \pi \delta_{0}$]
@@ -4728,7 +4734,7 @@ $f(z)\,dz - a_{-1}\,d\log z$ is exact on $D \setminus \{0\}$.
 In the sense of distributions on $\C$, $\bar\partial (1/(\pi z))
 = \delta_{0}$.  This is the elementary fundamental solution
 identity for $\bar\partial$ in one variable.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.srt_r4_dbar_delta}
 \end{lemma}
 
 \begin{lemma}[Pass D.5: distributional identity from Cauchy--Pompeiu]
@@ -4742,7 +4748,7 @@ which equals $\varphi(0)$ by the Cauchy--Pompeiu formula
 (Lemma~\ref{lem:dpp-r3-stokes-on-disk}).  This is the
 Mathlib endpoint and the place where chain~D fuses with
 chain~A.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.srt_r5_pompeiu_link}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -4758,7 +4764,7 @@ Refining to a locally finite subcover gives a cover $\{U_{i}\}$
 where every nonempty finite intersection $U_{i_{1}} \cap \cdots
 \cap U_{i_{k}}$ is geodesically convex (Lemma~\ref{lem:gce-r2-convex-intersection})
 hence contractible (Lemma~\ref{lem:gce-r3-convex-diffeo-ball}).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.gce_r1_convex_normal_cover}
 \end{lemma}
 
 \begin{lemma}[Pass E.2: finite intersections of geodesically convex sets are convex]
@@ -4837,7 +4843,7 @@ document or sub-gaps R1--R10).
 \label{lem:akr-r1}
 \uses{lem:akr-r2}
 $h := \exp((1/k)\log g)$ produces the desired root once $\log g$ is well-defined on a small disk avoiding $0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.akr_r1}
 \end{lemma}
 
 \begin{lemma}[Pass F1.2: logarithm exists on a simply-connected nbhd avoiding $0$]
@@ -4920,35 +4926,35 @@ By hypothesis $f^{-1}(y_{0}) \subseteq U$, so $y_{0} \notin f(U^{c})$.  The comp
 \label{lem:ctp-r1}
 \uses{lem:ctp-r2}
 $V/\Lambda$ is the quotient of an abelian group by a subgroup, so the quotient is an abelian group via the universal property.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ctp_r1}
 \end{lemma}
 
 \begin{lemma}[Pass F7.2: quotient inherits topology]
 \label{lem:ctp-r2}
 \uses{lem:ctp-r3}
 Equip $V/\Lambda$ with the quotient topology of the projection $\pi : V \to V/\Lambda$.  $\pi$ is open, so this gives a topological group structure.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ctp_r2}
 \end{lemma}
 
 \begin{lemma}[Pass F7.3: quotient is Hausdorff and compact]
 \label{lem:ctp-r3}
 \uses{lem:ctp-r4}
 $\Lambda$ closed and discrete in $V \cong \C^{g}$, so $V/\Lambda$ is Hausdorff.  Choose a fundamental parallelepiped $P$ for $\Lambda$; $\pi$ is surjective $P \to V/\Lambda$ with $P$ compact, hence the quotient is compact.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ctp_r3}
 \end{lemma}
 
 \begin{lemma}[Pass F7.4: complex chart at every point]
 \label{lem:ctp-r4}
 \uses{lem:ctp-r5}
 Locally $\pi$ is a homeomorphism (since $\Lambda$ is discrete), so it pulls back a complex chart from $V$.  Charts at different points are related by translations, which are biholomorphic.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ctp_r4}
 \end{lemma}
 
 \begin{lemma}[Pass F7.5: Mathlib endpoint]
 \label{lem:ctp-r5}
 \code{QuotientAddGroup.instTopologicalGroup} + \code{ChartedSpace.instOfHomeomorph} + \code{ComplexManifold} smooth-structure transfer.  Mathlib status: partial (charted-space transfer along an open quotient is the missing piece).
 \uses{lem:ctp-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ctp_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -4958,28 +4964,28 @@ Locally $\pi$ is a homeomorphism (since $\Lambda$ is discrete), so it pulls back
 \label{lem:pbf-r1}
 \uses{lem:pbf-r2}
 In holomorphic charts $w$ on $X$ and $z$ on $Y$, write $\omega = g(z)\,dz$ and $f$ as $z = F(w)$ holomorphic.  Define $f^{*}\omega := g(F(w))\,F'(w)\,dw$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pbf_r1}
 \end{lemma}
 
 \begin{lemma}[Pass F8.2: chart-independence of the pullback]
 \label{lem:pbf-r2}
 \uses{lem:pbf-r3}
 Under change of holomorphic chart $w' = \varphi(w)$, the chain rule gives $f^{*}\omega$ the correct transformation, so the chart-local formula glues to a global section of $f^{*}\Omega^{1}_{Y}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pbf_r2}
 \end{lemma}
 
 \begin{lemma}[Pass F8.3: naturality on overlaps reduces to the chain rule]
 \label{lem:pbf-r3}
 \uses{lem:pbf-r4}
 On chart overlaps, the pullback transforms via $(F \circ \varphi)' = F'(\varphi)\cdot\varphi'$.  Same on the other side via the cocycle condition for $\Omega^{1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pbf_r3}
 \end{lemma}
 
 \begin{lemma}[Pass F8.4: chain rule for holomorphic functions]
 \label{lem:pbf-r4}
 \uses{lem:pbf-r5}
 $(g \circ F)'(w) = g'(F(w)) \cdot F'(w)$ for holomorphic $g, F$, by the complex differentiability.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pbf_r4}
 \end{lemma}
 
 \begin{lemma}[Pass F8.5: Mathlib endpoint]
@@ -4996,21 +5002,21 @@ $(g \circ F)'(w) = g'(F(w)) \cdot F'(w)$ for holomorphic $g, F$, by the complex 
 \label{lem:stokes-gap-integration-kills-boundary}
 The integral of any holomorphic 1-form along a singular 1-cycle that bounds a singular 2-chain is zero.
 \lean{JacobianChallenge.Blueprint.Sec03.chain_integration_kills_boundary}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Path-integral primitive on a chart disk]
 \label{lem:path-integral-primitive}
 A closed 1-form on a chart-disk has a primitive defined by path integration.
 \lean{JacobianChallenge.HolomorphicForms.closedForm_pathIntegral_primitive, JacobianChallenge.HolomorphicForms.closedForm_pathIntegral_primitive_derivative}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Integration equivalence: \v{C}ech vs.\ path]
 \label{lem:integral-cech-path-equivalence}
 The \v{C}ech-derived integral of a closed 1-form equals its path integral.
 \lean{JacobianChallenge.HolomorphicForms.integral_closed_form_from_cech_eq}
-\notready
+\leanok
 \end{lemma}
 
 \subsubsection*{Chain RH: Riemann--Hurwitz formula (thm:riemann-hurwitz-formula)}
@@ -5020,14 +5026,14 @@ The \v{C}ech-derived integral of a closed 1-form equals its path integral.
 For a nonconstant holomorphic map $f : X \to Y$ of degree $d$ between compact Riemann surfaces,
 $2 g_{X} - 2 = d \cdot (2 g_{Y} - 2) + \deg R$.
 \lean{JacobianChallenge.Blueprint.AbelExistence.RiemannHurwitzDeg1.riemann_hurwitz_formula}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Degree-1 map has zero ramification]
 \label{lem:ramification-zero-of-deg-one}
 A holomorphic map of degree 1 has no ramification points.
 \lean{JacobianChallenge.Blueprint.AbelExistence.RiemannHurwitzDeg1.ramification_zero_of_deg_one}
-\notready
+\leanok
 \end{lemma}
 
 \subsubsection*{Chain F9: Trace of a holomorphic 1-form along a finite branched cover (lem:trace-forms)}
@@ -5036,35 +5042,35 @@ A holomorphic map of degree 1 has no ramification points.
 \label{lem:trf-r1}
 \uses{lem:trf-r2}
 Off the branch locus, $f : X \to Y$ is an unramified cover of degree $d$.  Define $(\mathrm{tr}\,\omega)(y) := \sum_{x \in f^{-1}(y)} \omega_{x}$ in pulled-back local coordinates.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.trf_r1}
 \end{lemma}
 
 \begin{lemma}[Pass F9.2: trace extends across the branch locus]
 \label{lem:trf-r2}
 \uses{lem:trf-r3}
 Near a ramified point with index $k$, the $k$ sheets coalesce; the sum of $\omega$ over the fiber extends continuously (and holomorphically) to a 1-form on $Y$ via the $k$-th power expansion.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.trf_r2}
 \end{lemma}
 
 \begin{lemma}[Pass F9.3: local trace formula in branched coordinates]
 \label{lem:trf-r3}
 \uses{lem:trf-r4}
 In coordinates $w = z^{k}$ near a branch point, $\sum_{j=0}^{k-1} f(\zeta_{k}^{j} z)\,d(\zeta_{k}^{j} z) = k \cdot f^{\#}(w)\,dw$ for $f^{\#}(w) := \frac{1}{k}\sum_{j} f(\zeta_{k}^{j} w^{1/k})$ holomorphic in $w$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.trf_r3}
 \end{lemma}
 
 \begin{lemma}[Pass F9.4: Newton symmetric-function theorem]
 \label{lem:trf-r4}
 \uses{lem:trf-r5}
 Symmetric functions in $\zeta_{k}^{j} z^{1/k}$ that are smooth in the input are smooth in $w = z^{k}$.  Reduces to the Newton identities expressing power sums in elementary symmetric polynomials.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.trf_r4}
 \end{lemma}
 
 \begin{lemma}[Pass F9.5: Mathlib endpoint]
 \label{lem:trf-r5}
 \code{MvPolynomial.symmetric\_subalgebra} is Mathlib-present in the polynomial setting; the analytic upgrade for power series is the named declaration we need.  Mathlib status: partial.
 \uses{lem:trf-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.trf_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5090,7 +5096,7 @@ $X$ compact, so $\{V_{p}\}$ admits a finite subcover $\{V_{1}, \ldots, V_{N}\}$.
 \label{lem:rfd-r3}
 \uses{lem:rfd-r4}
 Pre-images $\varphi_{i}(V_{i}) \subseteq \R^{2}$ are smooth disks; overlap regions are smooth-diffeomorphic via the transition maps $\varphi_{j}\circ\varphi_{i}^{-1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rfd_r3}
 \end{lemma}
 
 \begin{lemma}[Pass B1.4: paracompactness of compact 2-manifolds]
@@ -5115,35 +5121,35 @@ Every compact $C^{0}$-manifold is paracompact; we just used compactness, but the
 \label{lem:rpc-r1}
 \uses{lem:rpc-r2}
 On overlaps $U_{i}\cap U_{j}\cap U_{k}$ the transition maps $\varphi_{ij}, \varphi_{jk}, \varphi_{ki}$ satisfy $\varphi_{ki}\circ\varphi_{jk}\circ\varphi_{ij} = \mathrm{id}$.  Modifying $\varphi_{i}$ by a PL homeomorphism $\psi$ changes only $\varphi_{ij}$ to $\varphi_{ij}\circ\psi^{-1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rpc_r1}
 \end{lemma}
 
 \begin{lemma}[Pass B2.2: composition with a PL map preserves PL]
 \label{lem:rpc-r2}
 \uses{lem:rpc-r3}
 PL maps are closed under composition: $f, g$ both piecewise linear $\Rightarrow$ $f\circ g$ piecewise linear with finitely many regions.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rpc_r2}
 \end{lemma}
 
 \begin{lemma}[Pass B2.3: PL composition refines the simplicial decomposition]
 \label{lem:rpc-r3}
 \uses{lem:rpc-r4}
 $f\circ g$ admits a common simplicial subdivision: take the simplicial preimage of $g$'s decomposition under $f^{-1}$, then refine.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rpc_r3}
 \end{lemma}
 
 \begin{lemma}[Pass B2.4: simplicial complex refinement existence]
 \label{lem:rpc-r4}
 \uses{lem:rpc-r5}
 Any two finite simplicial decompositions of a region in $\R^{2}$ admit a common refinement (e.g.\ via the union of all simplex boundaries).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rpc_r4}
 \end{lemma}
 
 \begin{lemma}[Pass B2.5: Mathlib endpoint]
 \label{lem:rpc-r5}
 PL infrastructure is currently absent from Mathlib.  Closest hooks: \code{Mathlib.Analysis.Convex.Simplex} for simplices and \code{AffineMap} for affine maps.  Mathlib status: ABSENT.
 \uses{lem:rpc-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rpc_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5153,35 +5159,35 @@ PL infrastructure is currently absent from Mathlib.  Closest hooks: \code{Mathli
 \label{lem:rtc-r1}
 \uses{lem:rtc-r2}
 The standard closed disk $\overline{B^{2}}$ admits an explicit triangulation, e.g.\ by radial wedges from the center plus circular arcs.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r1}
 \end{lemma}
 
 \begin{lemma}[Pass B3.2: transport triangulation through chart homeomorphism]
 \label{lem:rtc-r2}
 \uses{lem:rtc-r3}
 For chart $\varphi : U \to D$, pull back the standard triangulation via $\varphi^{-1}$; this gives a topological triangulation of $U$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r2}
 \end{lemma}
 
 \begin{lemma}[Pass B3.3: piecewise-linearity of the transported triangulation]
 \label{lem:rtc-r3}
 \uses{lem:rtc-r4}
 After applying the local PL approximation (Doyle--Moran), the transported triangulation has PL transitions between charts.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r3}
 \end{lemma}
 
 \begin{lemma}[Pass B3.4: subdivision to match overlap data]
 \label{lem:rtc-r4}
 \uses{lem:rtc-r5}
 Refine each chart's triangulation finely enough that overlaps land within sub-simplices, enabling chart-by-chart gluing.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r4}
 \end{lemma}
 
 \begin{lemma}[Pass B3.5: Mathlib endpoint]
 \label{lem:rtc-r5}
 \code{Topology.Homotopy.Triangulation} is the natural target; the relevant simplicial-complex API is currently a project-side fork.  Mathlib status: ABSENT.
 \uses{lem:rtc-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5191,35 +5197,35 @@ Refine each chart's triangulation finely enough that overlaps land within sub-si
 \label{lem:rcs-r1}
 \uses{lem:rcs-r2}
 Any two triangulations $\mathcal{T}_{1}, \mathcal{T}_{2}$ of a closed disk admit a common subdivision $\mathcal{T}$, refining both.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r1}
 \end{lemma}
 
 \begin{lemma}[Pass B4.2: planar arrangement of edges]
 \label{lem:rcs-r2}
 \uses{lem:rcs-r3}
 Take the union of all 1-cells of $\mathcal{T}_{1}$ and $\mathcal{T}_{2}$ as a planar 1-complex.  Each face of the resulting arrangement is a polygon, triangulable in finitely many ways.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r2}
 \end{lemma}
 
 \begin{lemma}[Pass B4.3: polygon triangulation by ear-cutting]
 \label{lem:rcs-r3}
 \uses{lem:rcs-r4}
 Every simple polygon admits a triangulation, e.g.\ by repeatedly cutting an `ear' (a triangle whose third edge is internal).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r3}
 \end{lemma}
 
 \begin{lemma}[Pass B4.4: ear-existence theorem for simple polygons]
 \label{lem:rcs-r4}
 \uses{lem:rcs-r5}
 Every simple polygon with $\geq 4$ vertices has at least two ears.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r4}
 \end{lemma}
 
 \begin{lemma}[Pass B4.5: Mathlib endpoint]
 \label{lem:rcs-r5}
 Polygon ear-theorem is computational geometry; not in current Mathlib.  Closest: \code{Polygon} basic API in Mathlib3 not yet ported.  Mathlib status: ABSENT.
 \uses{lem:rcs-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5229,35 +5235,35 @@ Polygon ear-theorem is computational geometry; not in current Mathlib.  Closest:
 \label{lem:ret-r1}
 \uses{lem:ret-r2}
 At any interior edge $e$ of a triangulation of a 2-manifold, a small neighborhood of $e$ is homeomorphic to $\R^{2}$, hence has exactly two sides.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r1}
 \end{lemma}
 
 \begin{lemma}[Pass B5.2: each side is a triangle]
 \label{lem:ret-r2}
 \uses{lem:ret-r3}
 In a finite triangulation, the only 2-cells incident to $e$ are triangles, and the local 2-manifold condition forces exactly one triangle on each side.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r2}
 \end{lemma}
 
 \begin{lemma}[Pass B5.3: non-boundary edges of a closed manifold lie in exactly two triangles]
 \label{lem:ret-r3}
 \uses{lem:ret-r4}
 For a closed (boundaryless) 2-manifold, every edge is interior and so every edge is in exactly two triangles.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r3}
 \end{lemma}
 
 \begin{lemma}[Pass B5.4: local Euclidean structure gives a 2-disk neighborhood of an edge]
 \label{lem:ret-r4}
 \uses{lem:ret-r5}
 By the manifold chart at a midpoint of $e$, a neighborhood is homeomorphic to $\R^{2}$, in which an edge separates the plane into two pieces (Jordan-arc theorem).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r4}
 \end{lemma}
 
 \begin{lemma}[Pass B5.5: Mathlib endpoint]
 \label{lem:ret-r5}
 \code{Topology.JordanCurve} (planned) for the arc-separation step.  Mathlib status: ABSENT (Jordan arc theorem in Mathlib).
 \uses{lem:ret-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5267,35 +5273,35 @@ By the manifold chart at a midpoint of $e$, a neighborhood is homeomorphic to $\
 \label{lem:rvl-r1}
 \uses{lem:rvl-r2}
 A small neighborhood of a vertex $v$ is homeomorphic to $\R^{2}$; the link of $v$ in the triangulation corresponds to the boundary of a small disk around $v$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r1}
 \end{lemma}
 
 \begin{lemma}[Pass B6.2: ordering edges around a vertex]
 \label{lem:rvl-r2}
 \uses{lem:rvl-r3}
 The triangles at $v$ can be cyclically ordered by their edges incident to $v$, since each pair of adjacent triangles shares an edge.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r2}
 \end{lemma}
 
 \begin{lemma}[Pass B6.3: link is a 1-cycle in the triangulation]
 \label{lem:rvl-r3}
 \uses{lem:rvl-r4}
 Cyclically traversing the triangles at $v$ produces a closed 1-cycle in the link, i.e.\ a combinatorial circle.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r3}
 \end{lemma}
 
 \begin{lemma}[Pass B6.4: non-branching of the link follows from the edge condition]
 \label{lem:rvl-r4}
 \uses{lem:rvl-r5}
 By the edge condition (two triangles per edge), no vertex of the link has degree $\neq 2$, so the link is a 1-manifold without boundary in dimension 1, i.e.\ a finite disjoint union of circles, and connectedness gives one circle.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r4}
 \end{lemma}
 
 \begin{lemma}[Pass B6.5: Mathlib endpoint]
 \label{lem:rvl-r5}
 PL link computation; not yet in Mathlib.  Closest: \code{Polynomial.Cyclic} for cyclic structures.  Mathlib status: ABSENT.
 \uses{lem:rvl-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5313,7 +5319,7 @@ By definition a chart $\varphi_{i} : U_{i} \to \R^{2}$ is a homeomorphism, so co
 \label{lem:rgc-r2}
 \uses{lem:rgc-r3}
 On $U_{i}\cap U_{j}$, $\varphi_{i}$ and $\varphi_{j}$ are related by a PL transition $\varphi_{ji}\circ\varphi_{i}$, which is continuous.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgc_r2}
 \end{lemma}
 
 \begin{lemma}[Pass B7.3: gluing continuous maps over an open cover]
@@ -5346,35 +5352,35 @@ For an open cover $\{U_{i}\}$ of $X$, $f$ is continuous iff each $f|_{U_{i}}$ is
 \label{lem:rgb-r1}
 \uses{lem:rgb-r2}
 Each chart $\varphi_{i}$ is a homeomorphism, hence injective.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r1}
 \end{lemma}
 
 \begin{lemma}[Pass B8.2: agreement on overlaps lifts to global injectivity]
 \label{lem:rgb-r2}
 \uses{lem:rgb-r3}
 If two points $p \neq q$ map to the same image, they lie in different charts (else local injectivity is contradicted); the chart-overlap compatibility produces a contradiction.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r2}
 \end{lemma}
 
 \begin{lemma}[Pass B8.3: surjectivity from cover-by-image]
 \label{lem:rgb-r3}
 \uses{lem:rgb-r4}
 Every point of the target lies in $\varphi_{i}(U_{i})$ for some $i$, since the source $X$ is covered by $\{U_{i}\}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r3}
 \end{lemma}
 
 \begin{lemma}[Pass B8.4: disjoint-overlap analysis]
 \label{lem:rgb-r4}
 \uses{lem:rgb-r5}
 On overlaps the glued map agrees by construction, so the map is well-defined as a quotient of the disjoint union of charts modulo the cocycle relation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r4}
 \end{lemma}
 
 \begin{lemma}[Pass B8.5: Mathlib endpoint]
 \label{lem:rgb-r5}
 \code{Equiv.coe\_iUnion} for piecing together bijections from disjoint pieces; the cover-with-overlap variant requires a coproduct argument.  Mathlib status: partial.
 \uses{lem:rgb-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5384,35 +5390,35 @@ On overlaps the glued map agrees by construction, so the map is well-defined as 
 \label{lem:tcr-r1}
 \uses{lem:tcr-r2}
 In an edge word $w = a_{1}\cdots a_{n}$ over $\{a, a^{-1}, b, b^{-1}, \ldots\}$, cancellable pairs are adjacent letters $a_{i} a_{i+1}$ with $a_{i+1} = a_{i}^{-1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r1}
 \end{lemma}
 
 \begin{lemma}[Pass C1.2: cancel iteratively]
 \label{lem:tcr-r2}
 \uses{lem:tcr-r3}
 While a cancellable pair exists, remove it.  Process terminates because word length strictly decreases.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r2}
 \end{lemma}
 
 \begin{lemma}[Pass C1.3: cyclic cancellability]
 \label{lem:tcr-r3}
 \uses{lem:tcr-r4}
 Also cancel $a_{1}$ and $a_{n}$ if they are inverses (cyclic adjacency).  The cyclically-reduced form is unique up to rotation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r3}
 \end{lemma}
 
 \begin{lemma}[Pass C1.4: uniqueness of reduced form (Stallings--Tietze)]
 \label{lem:tcr-r4}
 \uses{lem:tcr-r5}
 Free groups have unique reduced words; cyclic reduction extends this uniqueness up to rotation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r4}
 \end{lemma}
 
 \begin{lemma}[Pass C1.5: Mathlib endpoint]
 \label{lem:tcr-r5}
 \code{FreeGroup} has \code{FreeGroup.reduce} for word reduction.  Mathlib status: present (free group reduce); cyclic version is partial.
 \uses{lem:tcr-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5422,35 +5428,35 @@ Free groups have unique reduced words; cyclic reduction extends this uniqueness 
 \label{lem:tbh-r1}
 \uses{lem:tbh-r2}
 In a cyclically-reduced edge word, a `crossing' is a pattern $a \cdots b \cdots a^{-1} \cdots b^{-1}$ where $a$ and $b$ alternate.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r1}
 \end{lemma}
 
 \begin{lemma}[Pass C2.2: re-identify crossings as a handle]
 \label{lem:tbh-r2}
 \uses{lem:tbh-r3}
 Each crossing can be rewritten as a handle block $aba^{-1}b^{-1}$ via a sequence of Tietze moves preserving the underlying surface.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r2}
 \end{lemma}
 
 \begin{lemma}[Pass C2.3: Tietze moves preserve homotopy type]
 \label{lem:tbh-r3}
 \uses{lem:tbh-r4}
 Tietze moves correspond to choices of base-point or path; they don't change the surface up to homeomorphism.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r3}
 \end{lemma}
 
 \begin{lemma}[Pass C2.4: group-theoretic version of handle creation]
 \label{lem:tbh-r4}
 \uses{lem:tbh-r5}
 In the free group on $\{a, b, c, d, \ldots\}$, the relator can be transformed via conjugation and substitution to expose handle blocks.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r4}
 \end{lemma}
 
 \begin{lemma}[Pass C2.5: Mathlib endpoint]
 \label{lem:tbh-r5}
 \code{PresentedGroup.relations\_eq} for relator manipulation.  Brahana handle creation specifically not in Mathlib.  Mathlib status: ABSENT.
 \uses{lem:tbh-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5460,35 +5466,35 @@ In the free group on $\{a, b, c, d, \ldots\}$, the relator can be transformed vi
 \label{lem:tmo-r1}
 \uses{lem:tmo-r2}
 A polygon edge word represents an orientable surface iff each letter and its inverse appear with consistent signs (no $aa$ pattern).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r1}
 \end{lemma}
 
 \begin{lemma}[Pass C3.2: Tietze moves do not introduce same-orientation pairs]
 \label{lem:tmo-r2}
 \uses{lem:tmo-r3}
 The basic Tietze moves (relator manipulation, generator addition/removal) preserve the consistent-sign property.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r2}
 \end{lemma}
 
 \begin{lemma}[Pass C3.3: inductive proof on move count]
 \label{lem:tmo-r3}
 \uses{lem:tmo-r4}
 By induction on the number of Tietze moves, the orientability invariant propagates.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r3}
 \end{lemma}
 
 \begin{lemma}[Pass C3.4: equivalence of polygon-word orientability and surface orientability]
 \label{lem:tmo-r4}
 \uses{lem:tmo-r5}
 The combinatorial orientability of the polygon word matches the topological orientability of the resulting surface.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r4}
 \end{lemma}
 
 \begin{lemma}[Pass C3.5: Mathlib endpoint]
 \label{lem:tmo-r5}
 Surface orientability is currently absent from Mathlib.  Closest: \code{Manifold.Orientable} (planned).  Mathlib status: ABSENT.
 \uses{lem:tmo-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5498,35 +5504,35 @@ Surface orientability is currently absent from Mathlib.  Closest: \code{Manifold
 \label{lem:toh-r1}
 \uses{lem:toh-r2}
 A handle-grouped word has the form $\prod_{i=1}^{g} W_{i}$ where each $W_{i}$ is a 4-letter handle block.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r1}
 \end{lemma}
 
 \begin{lemma}[Pass C4.2: each handle block is in standard form $a_{i}b_{i}a_{i}^{-1}b_{i}^{-1}$]
 \label{lem:toh-r2}
 \uses{lem:toh-r3}
 By renaming generators within each block, $W_{i}$ takes the standard form.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r2}
 \end{lemma}
 
 \begin{lemma}[Pass C4.3: concatenation preserves orientability]
 \label{lem:toh-r3}
 \uses{lem:toh-r4}
 The product structure is preserved under the standard surface concatenation operation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r3}
 \end{lemma}
 
 \begin{lemma}[Pass C4.4: uniqueness of the standard form up to genus]
 \label{lem:toh-r4}
 \uses{lem:toh-r5}
 Two orientable surface words are equivalent iff their handle counts agree.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r4}
 \end{lemma}
 
 \begin{lemma}[Pass C4.5: Mathlib endpoint]
 \label{lem:toh-r5}
 Genus classification of orientable surfaces is currently absent from Mathlib.  Mathlib status: ABSENT.
 \uses{lem:toh-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5536,35 +5542,35 @@ Genus classification of orientable surfaces is currently absent from Mathlib.  M
 \label{lem:ths-r1}
 \uses{lem:ths-r2}
 Two adjacent handle blocks $H_{i}H_{i+1}$ in a word can be swapped to $H_{i+1}H_{i}$ via a sequence of Tietze moves.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r1}
 \end{lemma}
 
 \begin{lemma}[Pass C5.2: explicit swap via auxiliary moves]
 \label{lem:ths-r2}
 \uses{lem:ths-r3}
 Use cyclic permutation + relator conjugation to move one block past another, preserving the underlying group presentation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r2}
 \end{lemma}
 
 \begin{lemma}[Pass C5.3: conjugation in free product groups]
 \label{lem:ths-r3}
 \uses{lem:ths-r4}
 In the free group, conjugating one factor by another doesn't change the underlying group, only the relator presentation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r3}
 \end{lemma}
 
 \begin{lemma}[Pass C5.4: permutations generated by adjacent transpositions]
 \label{lem:ths-r4}
 \uses{lem:ths-r5}
 Any permutation of $\{1, \ldots, g\}$ is a product of adjacent transpositions, so handle ordering is fully arbitrary.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r4}
 \end{lemma}
 
 \begin{lemma}[Pass C5.5: Mathlib endpoint]
 \label{lem:ths-r5}
 \code{Equiv.Perm} for permutations; conjugation in \code{FreeGroup} is partial.  Mathlib status: partial.
 \uses{lem:ths-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5574,35 +5580,35 @@ Any permutation of $\{1, \ldots, g\}$ is a product of adjacent transpositions, s
 \label{lem:tsh-r1}
 \uses{lem:tsh-r2}
 Use cyclic reduction + handle swap to isolate one handle block at the start of the word.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tsh_r1}
 \end{lemma}
 
 \begin{lemma}[Pass C6.2: strip the handle via free-product factorization]
 \label{lem:tsh-r2}
 \uses{lem:tsh-r3}
 The word decomposes as $W = H \cdot W'$ where $H$ is the first handle block, $W'$ has $g-1$ handles.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tsh_r2}
 \end{lemma}
 
 \begin{lemma}[Pass C6.3: inductive hypothesis on $W'$]
 \label{lem:tsh-r3}
 \uses{lem:tsh-r4}
 By induction on $g$, $W'$ is a concatenation of $g-1$ standard handles.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tsh_r3}
 \end{lemma}
 
 \begin{lemma}[Pass C6.4: re-attach $H$ to obtain the full standard form]
 \label{lem:tsh-r4}
 \uses{lem:tsh-r5}
 Concatenating $H$ with the inductively-derived form gives the full standard relator $\prod_{i=1}^{g} a_{i}b_{i}a_{i}^{-1}b_{i}^{-1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tsh_r4}
 \end{lemma}
 
 \begin{lemma}[Pass C6.5: Mathlib endpoint]
 \label{lem:tsh-r5}
 Inductive proof using \code{Nat.rec}; relator decomposition is not in Mathlib.  Mathlib status: partial (only the induction primitive is present).
 \uses{lem:tsh-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tsh_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5612,35 +5618,35 @@ Inductive proof using \code{Nat.rec}; relator decomposition is not in Mathlib.  
 \label{lem:pct-r1}
 \uses{lem:pct-r2}
 Take a maximal acyclic subgraph of the 1-skeleton; this is a spanning tree.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r1}
 \end{lemma}
 
 \begin{lemma}[Pass D1.2: cutting along the tree produces a topological disk]
 \label{lem:pct-r2}
 \uses{lem:pct-r3}
 Removing a spanning tree from a triangulated 2-manifold and taking the dual gives a topological disk.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r2}
 \end{lemma}
 
 \begin{lemma}[Pass D1.3: Euler-formula check on the disk]
 \label{lem:pct-r3}
 \uses{lem:pct-r4}
 $V - E + F = 1$ for a disk; verifying this on the cut produces consistency.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r3}
 \end{lemma}
 
 \begin{lemma}[Pass D1.4: disk has length-$4g$ boundary edge word]
 \label{lem:pct-r4}
 \uses{lem:pct-r5}
 For a genus-$g$ surface, the dual disk has $2 \cdot 2g$ boundary edges in a four-letter alphabet.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r4}
 \end{lemma}
 
 \begin{lemma}[Pass D1.5: Mathlib endpoint]
 \label{lem:pct-r5}
 \code{SimpleGraph.spanningTree} (planned) for the spanning tree.  Cutting argument is not in Mathlib.  Mathlib status: ABSENT.
 \uses{lem:pct-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5650,35 +5656,35 @@ For a genus-$g$ surface, the dual disk has $2 \cdot 2g$ boundary edges in a four
 \label{lem:pgm-r1}
 \uses{lem:pgm-r2}
 $\chi(X) = V - E + F$ for any triangulation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r1}
 \end{lemma}
 
 \begin{lemma}[Pass D2.2: Euler characteristic of standard $4g$-gon model]
 \label{lem:pgm-r2}
 \uses{lem:pgm-r3}
 The standard model identifies $4g$ edges in pairs, $V = 1$ vertex (all corners identified), $E = 2g$, $F = 1$, giving $\chi = 2 - 2g$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r2}
 \end{lemma}
 
 \begin{lemma}[Pass D2.3: topological genus from Euler characteristic]
 \label{lem:pgm-r3}
 \uses{lem:pgm-r4}
 For a closed orientable surface, $\chi = 2 - 2g$ defines the topological genus uniquely.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r3}
 \end{lemma}
 
 \begin{lemma}[Pass D2.4: invariance of $\chi$ under Tietze moves]
 \label{lem:pgm-r4}
 \uses{lem:pgm-r5}
 Each Tietze move preserves $\chi$: handle creation, swap, and reduction all preserve the count.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r4}
 \end{lemma}
 
 \begin{lemma}[Pass D2.5: Mathlib endpoint]
 \label{lem:pgm-r5}
 \code{EulerCharacteristic} for simplicial complexes is absent from Mathlib.  Mathlib status: ABSENT.
 \uses{lem:pgm-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5688,14 +5694,14 @@ Each Tietze move preserves $\chi$: handle creation, swap, and reduction all pres
 \label{lem:dis-r1}
 \uses{lem:dis-r2}
 A smooth $k$-simplex in $M$ is a smooth map $\sigma : \Delta^{k} \to M$ from the standard simplex.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dis_r1}
 \end{lemma}
 
 \begin{lemma}[Pass E1.2: pullback of a $k$-form]
 \label{lem:dis-r2}
 \uses{lem:dis-r3}
 $\sigma^{*}\omega$ is a smooth $k$-form on $\Delta^{k} \subseteq \R^{k}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dis_r2}
 \end{lemma}
 
 \begin{lemma}[Pass E1.3: integration of a top form on $\Delta^{k}$]
@@ -5729,35 +5735,35 @@ $\sigma^{*}\omega$ is continuous, hence bounded on compact $\Delta^{k}$; the int
 \label{lem:dss-r1}
 \uses{lem:dss-r2}
 Pull back via $\sigma$: $\int_{\sigma}d\omega = \int_{\Delta^{k}}\sigma^{*}d\omega = \int_{\Delta^{k}}d(\sigma^{*}\omega)$ by naturality.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dss_r1}
 \end{lemma}
 
 \begin{lemma}[Pass E2.2: Stokes on the standard simplex]
 \label{lem:dss-r2}
 \uses{lem:dss-r3}
 $\int_{\Delta^{k}} d\eta = \int_{\partial\Delta^{k}}\eta$ for $\eta$ smooth, where $\partial\Delta^{k}$ is the alternating sum of faces.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dss_r2}
 \end{lemma}
 
 \begin{lemma}[Pass E2.3: face decomposition of $\partial\Delta^{k}$]
 \label{lem:dss-r3}
 \uses{lem:dss-r4}
 $\partial\Delta^{k} = \sum_{i=0}^{k}(-1)^{i}\partial_{i}$ where $\partial_{i}$ is the $i$-th face inclusion.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dss_r3}
 \end{lemma}
 
 \begin{lemma}[Pass E2.4: Stokes on a half-space (FTC induction)]
 \label{lem:dss-r4}
 \uses{lem:dss-r5}
 By induction on $k$, Stokes on $\Delta^{k}$ reduces to the FTC on the unit interval combined with Fubini on lower-dim slices.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dss_r4}
 \end{lemma}
 
 \begin{lemma}[Pass E2.5: Mathlib endpoint]
 \label{lem:dss-r5}
 \code{intervalIntegral.integral\_deriv\_eq\_sub} for FTC; \code{MeasureTheory.integral\_prod} for Fubini.  Stokes-on-simplex is partially in Mathlib via \code{Stokes\_theorem}.  Mathlib status: partial.
 \uses{lem:dss-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dss_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5767,35 +5773,35 @@ By induction on $k$, Stokes on $\Delta^{k}$ reduces to the FTC on the unit inter
 \label{lem:dsq-r1}
 \uses{lem:dsq-r2}
 Smooth simplices are continuous, so smooth-singular chains form a sub-chain complex of singular chains.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r1}
 \end{lemma}
 
 \begin{lemma}[Pass E3.2: Whitney smoothing: every continuous simplex is homotopic to a smooth one]
 \label{lem:dsq-r2}
 \uses{lem:dsq-r3}
 For $\sigma : \Delta^{k} \to M$ continuous, there exists $\tilde\sigma$ smooth + a smooth homotopy $H : \Delta^{k}\times I \to M$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r2}
 \end{lemma}
 
 \begin{lemma}[Pass E3.3: homotopy gives chain-equivalence]
 \label{lem:dsq-r3}
 \uses{lem:dsq-r4}
 The homotopy $H$ provides an explicit chain homotopy between $\sigma$ and $\tilde\sigma$, so the inclusion of complexes is a homology iso.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r3}
 \end{lemma}
 
 \begin{lemma}[Pass E3.4: Whitney approximation theorem on a smooth manifold]
 \label{lem:dsq-r4}
 \uses{lem:dsq-r5}
 Continuous maps to a smooth manifold are dense in the compact-open topology, and any continuous map is homotopic to a smooth one.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r4}
 \end{lemma}
 
 \begin{lemma}[Pass E3.5: Mathlib endpoint]
 \label{lem:dsq-r5}
 \code{Manifold.WhitneyApproximation} (planned).  Mathlib status: partial (basic smoothing in \code{ContDiff} is present, manifold-level approximation pending).
 \uses{lem:dsq-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5805,35 +5811,35 @@ Continuous maps to a smooth manifold are dense in the compact-open topology, and
 \label{lem:dmv-r1}
 \uses{lem:dmv-r2}
 For an open cover $\{U, V\}$ of $X$, $0 \to \Omega^{*}(X) \to \Omega^{*}(U)\oplus\Omega^{*}(V) \to \Omega^{*}(U\cap V) \to 0$ is short-exact.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dmv_r1}
 \end{lemma}
 
 \begin{lemma}[Pass E4.2: MV for singular via barycentric subdivision]
 \label{lem:dmv-r2}
 \uses{lem:dmv-r3}
 Singular MV is established via small simplices: every chain in $X$ is chain-homotopic to a small chain, decomposable into $U$- and $V$-pieces.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dmv_r2}
 \end{lemma}
 
 \begin{lemma}[Pass E4.3: snake lemma gives the long exact sequence]
 \label{lem:dmv-r3}
 \uses{lem:dmv-r4}
 Both short exact sequences yield long exact sequences in cohomology via the snake lemma.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dmv_r3}
 \end{lemma}
 
 \begin{lemma}[Pass E4.4: comparison map is a chain map]
 \label{lem:dmv-r4}
 \uses{lem:dmv-r5}
 The integration map $\Omega^{*} \to S^{*}$ commutes with the MV connecting morphism, giving a comparison of long exact sequences.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dmv_r4}
 \end{lemma}
 
 \begin{lemma}[Pass E4.5: Mathlib endpoint]
 \label{lem:dmv-r5}
 \code{CategoryTheory.Abelian.SnakeLemma} for snake lemma; MV for singular cohomology partially present in \code{AlgebraicTopology}.  Mathlib status: partial.
 \uses{lem:dmv-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dmv_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5843,14 +5849,14 @@ The integration map $\Omega^{*} \to S^{*}$ commutes with the MV connecting morph
 \label{lem:dfl-r1}
 \uses{lem:dfl-r2}
 On a contractible chart, both de Rham and singular cohomology are trivial in positive degrees, so the integration map is trivially an iso.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfl_r1}
 \end{lemma}
 
 \begin{lemma}[Pass E5.2: inductive step: combine two covers]
 \label{lem:dfl-r2}
 \uses{lem:dfl-r3}
 Given covers of size $n$ and 1 covering $X$, combine via Mayer--Vietoris and the five lemma.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfl_r2}
 \end{lemma}
 
 \begin{lemma}[Pass E5.3: five lemma for chain map between long exact sequences]
@@ -5865,7 +5871,7 @@ If 4 of 5 maps in a ladder of long exact sequences are isos, so is the 5th.
 \label{lem:dfl-r4}
 \uses{lem:dfl-r5}
 By induction on the size of a finite good cover, the comparison map becomes an iso globally.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfl_r4}
 \end{lemma}
 
 \begin{lemma}[Pass E5.5: Mathlib endpoint]
@@ -5882,35 +5888,35 @@ By induction on the size of a finite good cover, the comparison map becomes an i
 \label{lem:hle-r1}
 \uses{lem:hle-r2}
 In local coordinates, the principal symbol of $\Delta$ is $|\xi|^{2}$, a positive-definite quadratic form.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r1}
 \end{lemma}
 
 \begin{lemma}[Pass F1H.2: ellipticity = invertible principal symbol]
 \label{lem:hle-r2}
 \uses{lem:hle-r3}
 An operator is elliptic iff its principal symbol is invertible for every nonzero $\xi$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r2}
 \end{lemma}
 
 \begin{lemma}[Pass F1H.3: $|\xi|^{2} > 0$ for $\xi \neq 0$]
 \label{lem:hle-r3}
 \uses{lem:hle-r4}
 Positive-definiteness of the standard inner product on $T^{*}M$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r3}
 \end{lemma}
 
 \begin{lemma}[Pass F1H.4: local representation of the Laplacian on $\R^{n}$]
 \label{lem:hle-r4}
 \uses{lem:hle-r5}
 $\Delta = -\sum_{i,j} g^{ij}\partial_{i}\partial_{j} + \text{lower order}$.  The principal part is $-\partial_{i}\partial_{j}$, with symbol $\xi_{i}\xi_{j}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r4}
 \end{lemma}
 
 \begin{lemma}[Pass F1H.5: Mathlib endpoint]
 \label{lem:hle-r5}
 \code{LinearPDE.Symbol} and \code{LinearPDE.Elliptic} are not in Mathlib.  Closest: \code{ContinuousLinearMap}.  Mathlib status: ABSENT.
 \uses{lem:hle-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5928,14 +5934,14 @@ $\mathcal{H}^{k} := \{\omega \in \Omega^{k}(M) : \Delta\omega = 0\}$.
 \label{lem:hod-r2}
 \uses{lem:hod-r3}
 The three subspaces are pairwise $L^{2}$-orthogonal: $\langle d\alpha, d^{*}\beta\rangle = \langle d^{2}\alpha, \beta\rangle = 0$, similarly for the others.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r2}
 \end{lemma}
 
 \begin{lemma}[Pass F2H.3: density of $C^{\infty}$ in $L^{2}$]
 \label{lem:hod-r3}
 \uses{lem:hod-r4}
 $C^{\infty}$ smooth forms are dense in $L^{2}$ via mollification + partition of unity.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r3}
 \end{lemma}
 
 \begin{lemma}[Pass F2H.4: Fredholm + closed range theorem]
@@ -5950,7 +5956,7 @@ $\Delta$ Fredholm $\Rightarrow$ closed range, so the orthogonal complement of $\
 \label{lem:hod-r5}
 \code{Banach.ClosedRange} for closed-range theorem; Hodge orthogonality is currently absent.  Mathlib status: partial.
 \uses{lem:hod-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -5960,21 +5966,21 @@ $\Delta$ Fredholm $\Rightarrow$ closed range, so the orthogonal complement of $\
 \label{lem:huh-r1}
 \uses{lem:huh-r2}
 For $\omega \in \ker d$, decompose $\omega = h + d\alpha + d^{*}\beta$.  Closed-ness gives $d^{*}\beta = 0$, so $\omega = h + d\alpha$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.huh_r1}
 \end{lemma}
 
 \begin{lemma}[Pass F3H.2: uniqueness up to exact]
 \label{lem:huh-r2}
 \uses{lem:huh-r3}
 Two harmonic representatives differing by an exact form must be equal: if $h_{1} - h_{2} = d\alpha$, taking inner product with $h_{1}-h_{2}$ gives $\|h_{1}-h_{2}\|^{2} = 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.huh_r2}
 \end{lemma}
 
 \begin{lemma}[Pass F3H.3: $d^{*}\beta = 0$ from $d\omega = 0$]
 \label{lem:huh-r3}
 \uses{lem:huh-r4}
 $d\omega = 0$ and $\omega = h + d\alpha + d^{*}\beta$ give $d(d^{*}\beta) = 0$, then $\langle dd^{*}\beta, \beta\rangle = \|d^{*}\beta\|^{2} = 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.huh_r3}
 \end{lemma}
 
 \begin{lemma}[Pass F3H.4: Hodge inner product non-degeneracy]
@@ -5999,35 +6005,35 @@ $\langle\cdot,\cdot\rangle_{L^{2}}$ is positive-definite on $\Omega^{k}(M)$ for 
 \label{lem:hbs-r1}
 \uses{lem:hbs-r2}
 On a Kahler manifold, the de Rham Laplacian equals twice the Dolbeault Laplacian.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r1}
 \end{lemma}
 
 \begin{lemma}[Pass F4H.2: commutation of $\Delta$ with bidegree projections]
 \label{lem:hbs-r2}
 \uses{lem:hbs-r3}
 $\Delta$ commutes with the bidegree projections $\Pi^{p,q}$: $\Delta\Pi^{p,q}\omega = \Pi^{p,q}\Delta\omega$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r2}
 \end{lemma}
 
 \begin{lemma}[Pass F4H.3: harmonic forms split by bidegree]
 \label{lem:hbs-r3}
 \uses{lem:hbs-r4}
 $\mathcal{H}^{k} = \bigoplus_{p+q=k}\mathcal{H}^{p,q}$ where $\mathcal{H}^{p,q} := \mathcal{H}^{k}\cap\Omega^{p,q}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r3}
 \end{lemma}
 
 \begin{lemma}[Pass F4H.4: Riemann surface case: bidegrees $(1,0), (0,1)$]
 \label{lem:hbs-r4}
 \uses{lem:hbs-r5}
 For a Riemann surface, $k=1$ has only $(p,q) \in \{(1,0),(0,1)\}$, giving $\mathcal{H}^{1} = \mathcal{H}^{1,0}\oplus\mathcal{H}^{0,1}$ with complex conjugation swapping them.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r4}
 \end{lemma}
 
 \begin{lemma}[Pass F4H.5: Mathlib endpoint]
 \label{lem:hbs-r5}
 \code{ComplexManifold.BidegreeDecomposition} (planned).  Mathlib status: ABSENT.
 \uses{lem:hbs-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6037,35 +6043,35 @@ For a Riemann surface, $k=1$ has only $(p,q) \in \{(1,0),(0,1)\}$, giving $\math
 \label{lem:hdf-r1}
 \uses{lem:hdf-r2}
 A compact 2-manifold has the homotopy type of a finite CW complex (Radó + Tietze).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r1}
 \end{lemma}
 
 \begin{lemma}[Pass G1.2: singular homology of a finite CW complex is finitely generated]
 \label{lem:hdf-r2}
 \uses{lem:hdf-r3}
 $H_{n}(X;\Z)$ is f.g.\ when $X$ is a finite CW complex (cellular chain complex is f.g.).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r2}
 \end{lemma}
 
 \begin{lemma}[Pass G1.3: cellular vs.\ singular homology equivalence]
 \label{lem:hdf-r3}
 \uses{lem:hdf-r4}
 For a CW complex, cellular and singular homology agree.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r3}
 \end{lemma}
 
 \begin{lemma}[Pass G1.4: cellular chain complex of a finite CW complex is f.g.]
 \label{lem:hdf-r4}
 \uses{lem:hdf-r5}
 Each $C_{n}^{\mathrm{cell}}$ is a free $\Z$-module on a finite set of $n$-cells.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r4}
 \end{lemma}
 
 \begin{lemma}[Pass G1.5: Mathlib endpoint]
 \label{lem:hdf-r5}
 \code{AlgebraicTopology.CellComplex.Homology} provides cellular homology; finiteness for finite CW is partial.  Mathlib status: partial.
 \uses{lem:hdf-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6118,35 +6124,35 @@ Combining: $\dim_{\R}\mathrm{Hom}(\Z^{r}\oplus T,\R) = r$.
 \label{lem:hdu-r1}
 \uses{lem:hdu-r2}
 $0 \to \mathrm{Ext}(H_{n-1}(X,\Z),\R) \to H^{n}(X,\R) \to \mathrm{Hom}(H_{n}(X,\Z),\R) \to 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r1}
 \end{lemma}
 
 \begin{lemma}[Pass G3.2: $\mathrm{Ext}(\cdot,\R) = 0$ on f.g.\ abelian]
 \label{lem:hdu-r2}
 \uses{lem:hdu-r3}
 $\R$ is divisible, hence injective as $\Z$-module, so $\mathrm{Ext}(\cdot,\R) = 0$ on any abelian group.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r2}
 \end{lemma}
 
 \begin{lemma}[Pass G3.3: $H^{n}(X,\R) \cong \mathrm{Hom}(H_{n}(X,\Z),\R)$]
 \label{lem:hdu-r3}
 \uses{lem:hdu-r4}
 Combining UCT with vanishing Ext.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r3}
 \end{lemma}
 
 \begin{lemma}[Pass G3.4: specialize to $n=1$]
 \label{lem:hdu-r4}
 \uses{lem:hdu-r5}
 $H^{1}(X,\R) \cong \mathrm{Hom}(H_{1}(X,\Z),\R)$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r4}
 \end{lemma}
 
 \begin{lemma}[Pass G3.5: Mathlib endpoint]
 \label{lem:hdu-r5}
 \code{HomologicalAlgebra.UniversalCoefficient} (planned).  Mathlib status: ABSENT (UCT in Mathlib).
 \uses{lem:hdu-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6156,35 +6162,35 @@ $H^{1}(X,\R) \cong \mathrm{Hom}(H_{1}(X,\Z),\R)$.
 \label{lem:dfr-r1}
 \uses{lem:dfr-r2}
 For a sheaf $\mathcal{F}$ with fine resolution $0\to\mathcal{F}\to\mathcal{F}^{0}\to\mathcal{F}^{1}\to\cdots$, $H^{q}(X,\mathcal{F})$ equals the $q$-th cohomology of the global sections.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r1}
 \end{lemma}
 
 \begin{lemma}[Pass H1.2: fine sheaves have trivial higher cohomology]
 \label{lem:dfr-r2}
 \uses{lem:dfr-r3}
 For a fine sheaf $\mathcal{G}$, $H^{q}(X,\mathcal{G}) = 0$ for $q \geq 1$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r2}
 \end{lemma}
 
 \begin{lemma}[Pass H1.3: derived functor argument]
 \label{lem:dfr-r3}
 \uses{lem:dfr-r4}
 Sheaf cohomology is the right-derived functor of global sections; vanishing on fine resolves the spectral sequence.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r3}
 \end{lemma}
 
 \begin{lemma}[Pass H1.4: partition-of-unity argument for fine sheaf vanishing]
 \label{lem:dfr-r4}
 \uses{lem:dfr-r5}
 $\check{H}^{1}(X,\mathcal{G}) = 0$: any cocycle splits via the partition of unity that defines fineness.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r4}
 \end{lemma}
 
 \begin{lemma}[Pass H1.5: Mathlib endpoint]
 \label{lem:dfr-r5}
 \code{AlgebraicGeometry.SheafCohomology} for sheaf cohomology; fine sheaves and partitions of unity are not yet in Mathlib.  Mathlib status: ABSENT.
 \uses{lem:dfr-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6194,28 +6200,28 @@ $\check{H}^{1}(X,\mathcal{G}) = 0$: any cocycle splits via the partition of unit
 \label{lem:dfs-r1}
 \uses{lem:dfs-r2}
 On a smooth paracompact manifold, every locally finite open cover admits a subordinate smooth partition of unity.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfs_r1}
 \end{lemma}
 
 \begin{lemma}[Pass H2.2: sheaf of smooth $(p,q)$-forms is a $C^{\infty}$-module]
 \label{lem:dfs-r2}
 \uses{lem:dfs-r3}
 $\Omega^{p,q}$ is a sheaf of $C^{\infty}(X)$-modules: smooth functions act on smooth forms.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfs_r2}
 \end{lemma}
 
 \begin{lemma}[Pass H2.3: a $C^{\infty}$-module sheaf is fine]
 \label{lem:dfs-r3}
 \uses{lem:dfs-r4,lem:dfs-r6}
 Any sheaf of $C^{\infty}$-modules is fine: multiplication by a smooth partition of unity gives the splitting.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfs_r3}
 \end{lemma}
 
 \begin{lemma}[Pass H2.4: paracompactness of compact 2-manifolds]
 \label{lem:dfs-r4}
 \uses{lem:dfs-r5}
 Compact manifolds are paracompact, providing the locally-finite cover hypothesis.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfs_r4}
 \end{lemma}
 
 \begin{lemma}[Pass H2.5: Mathlib endpoint]
@@ -6232,35 +6238,35 @@ Compact manifolds are paracompact, providing the locally-finite cover hypothesis
 \label{lem:sti-r1}
 \uses{lem:sti-r2}
 For a covering $\{U_{i}\}$ with local trivializations, a Cech 1-cocycle for $K_{X}$ pairs with a residue $\sum_{p}\mathrm{Res}_{p}$ to give a complex number.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r1}
 \end{lemma}
 
 \begin{lemma}[Pass I1.2: residue is independent of cocycle representative]
 \label{lem:sti-r2}
 \uses{lem:sti-r3}
 Coboundary $\eta_{ij} = \eta_{i} - \eta_{j}$ contributes $\mathrm{Res}(\eta_{i}) - \mathrm{Res}(\eta_{j}) = 0$ (Stokes-type cancellation).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r2}
 \end{lemma}
 
 \begin{lemma}[Pass I1.3: residue is non-zero on generators]
 \label{lem:sti-r3}
 \uses{lem:sti-r4}
 For the standard cocycle $1/z$ near a single point, $\mathrm{Res} = 1 \neq 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r3}
 \end{lemma}
 
 \begin{lemma}[Pass I1.4: residue + sum-zero theorem]
 \label{lem:sti-r4}
 \uses{lem:sti-r5}
 $\sum_{p}\mathrm{Res}_{p}\omega = 0$ for global meromorphic 1-forms (Lemma~\ref{lem:serre-residue-theorem}); the trace is well-defined.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r4}
 \end{lemma}
 
 \begin{lemma}[Pass I1.5: Mathlib endpoint]
 \label{lem:sti-r5}
 \code{SheafCohomology.Cech} + residue theorem (cf.\ chain D).  Mathlib status: ABSENT (residue infrastructure for Riemann surfaces).
 \uses{lem:sti-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6270,35 +6276,35 @@ $\sum_{p}\mathrm{Res}_{p}\omega = 0$ for global meromorphic 1-forms (Lemma~\ref{
 \label{lem:scc-r1}
 \uses{lem:scc-r2}
 $(\alpha\smile\beta)_{i_{0}\cdots i_{p+q}} := \alpha_{i_{0}\cdots i_{p}}\cdot\beta_{i_{p}\cdots i_{p+q}}$ defines a chain-level cup product.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r1}
 \end{lemma}
 
 \begin{lemma}[Pass I2.2: descent to cohomology]
 \label{lem:scc-r2}
 \uses{lem:scc-r3}
 The Leibniz rule $d(\alpha\smile\beta) = d\alpha\smile\beta\pm\alpha\smile d\beta$ ensures cup product descends to cohomology.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r2}
 \end{lemma}
 
 \begin{lemma}[Pass I2.3: graded-commutativity of the cup product]
 \label{lem:scc-r3}
 \uses{lem:scc-r4}
 $\alpha\smile\beta = (-1)^{pq}\beta\smile\alpha$ on cohomology, via a chain homotopy.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r3}
 \end{lemma}
 
 \begin{lemma}[Pass I2.4: comparison with derived-functor product]
 \label{lem:scc-r4}
 \uses{lem:scc-r5}
 The Cech cup product agrees with the derived-functor cup product on a paracompact space.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r4}
 \end{lemma}
 
 \begin{lemma}[Pass I2.5: Mathlib endpoint]
 \label{lem:scc-r5}
 \code{CategoryTheory.Sheaf.CupProduct} (planned).  Mathlib status: ABSENT.
 \uses{lem:scc-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6308,35 +6314,35 @@ The Cech cup product agrees with the derived-functor cup product on a paracompac
 \label{lem:sl2-r1}
 \uses{lem:sl2-r2}
 Use Hodge decomposition to pick harmonic representatives $\omega \in \mathcal{H}^{1,0}$ for $H^{0}(X,K_{X})$ and $\eta \in \mathcal{H}^{0,1}$ for $H^{1}(X,\mathcal{O})$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r1}
 \end{lemma}
 
 \begin{lemma}[Pass I3.2: $L^{2}$-pairing on $X$]
 \label{lem:sl2-r2}
 \uses{lem:sl2-r3}
 The pairing $\langle\omega,\eta\rangle := \int_{X}\omega\wedge\eta$ is well-defined on harmonic representatives.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r2}
 \end{lemma}
 
 \begin{lemma}[Pass I3.3: Hodge $\star$ exchanges $\mathcal{H}^{1,0}$ and $\mathcal{H}^{0,1}$]
 \label{lem:sl2-r3}
 \uses{lem:sl2-r4}
 $\bar\star : \mathcal{H}^{1,0} \to \mathcal{H}^{0,1}$ is an antiholomorphic isomorphism.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r3}
 \end{lemma}
 
 \begin{lemma}[Pass I3.4: non-degeneracy from $L^{2}$-positivity]
 \label{lem:sl2-r4}
 \uses{lem:sl2-r5}
 For nonzero $\omega$, $\langle\omega,\bar\star\omega\rangle = \int|\omega|^{2}_{L^{2}} > 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r4}
 \end{lemma}
 
 \begin{lemma}[Pass I3.5: Mathlib endpoint]
 \label{lem:sl2-r5}
 \code{InnerProductSpace} + Hodge $\bar\star$.  Hodge $\bar\star$ is currently absent from Mathlib.  Mathlib status: partial.
 \uses{lem:sl2-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6346,35 +6352,35 @@ For nonzero $\omega$, $\langle\omega,\bar\star\omega\rangle = \int|\omega|^{2}_{
 \label{lem:bfa-r1}
 \uses{lem:bfa-r2}
 Smooth sections $\Gamma(M,E)$ of any smooth vector bundle $E\to M$ are a $C^{\infty}(M)$-module.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r1}
 \end{lemma}
 
 \begin{lemma}[Pass J1.2: $\Omega^{k}(M) = \Gamma(M,\Lambda^{k}T^{*}M)$]
 \label{lem:bfa-r2}
 \uses{lem:bfa-r3}
 Differential $k$-forms are smooth sections of the alternating bundle $\Lambda^{k}T^{*}M$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r2}
 \end{lemma}
 
 \begin{lemma}[Pass J1.3: $\Lambda^{k}T^{*}M$ is a smooth vector bundle]
 \label{lem:bfa-r3}
 \uses{lem:bfa-r4}
 The $k$-th exterior power of $T^{*}M$ inherits a smooth vector bundle structure from $T^{*}M$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r3}
 \end{lemma}
 
 \begin{lemma}[Pass J1.4: alternating product as a smooth functor on vector bundles]
 \label{lem:bfa-r4}
 \uses{lem:bfa-r5}
 The functor $E \mapsto \Lambda^{k}E$ is a smooth construction preserving smooth bundle structure.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r4}
 \end{lemma}
 
 \begin{lemma}[Pass J1.5: Mathlib endpoint]
 \label{lem:bfa-r5}
 \code{VectorBundle} + \code{ExteriorAlgebra}.  Bundled forms package not yet integrated; closest is \code{Mathlib.Geometry.Manifold.VectorBundle.SmoothSection}.  Mathlib status: partial.
 \uses{lem:bfa-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6384,14 +6390,14 @@ The functor $E \mapsto \Lambda^{k}E$ is a smooth construction preserving smooth 
 \label{lem:bfd-r1}
 \uses{lem:bfd-r2}
 In a chart, $d\omega = \sum\partial_{i}f_{I}\,dx_{i}\wedge dx_{I}$ for $\omega = \sum f_{I}dx_{I}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfd_r1}
 \end{lemma}
 
 \begin{lemma}[Pass J2.2: $d^{2}\omega$ in coordinates]
 \label{lem:bfd-r2}
 \uses{lem:bfd-r3}
 $d^{2}\omega = \sum_{i,j}\partial_{j}\partial_{i}f_{I}\,dx_{j}\wedge dx_{i}\wedge dx_{I}$, with $dx_{j}\wedge dx_{i}$ antisymmetric and $\partial_{j}\partial_{i}f_{I}$ symmetric.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfd_r2}
 \end{lemma}
 
 \begin{lemma}[Pass J2.3: symmetric times antisymmetric is zero]
@@ -6425,14 +6431,14 @@ For $f \in C^{2}$, $\partial_{i}\partial_{j}f = \partial_{j}\partial_{i}f$.
 \label{lem:bfp-r1}
 \uses{lem:bfp-r2}
 For $f: M\to N$, $\omega = g\,dy_{I}$, $f^{*}\omega = (g\circ f)\,d(y_{I}\circ f)$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfp_r1}
 \end{lemma}
 
 \begin{lemma}[Pass J3.2: $d$ commutes with pullback locally]
 \label{lem:bfp-r2}
 \uses{lem:bfp-r3}
 $d(f^{*}\omega) = d((g\circ f))\wedge d(y_{I}\circ f)$ and $f^{*}(d\omega) = f^{*}(dg\wedge dy_{I}) = d(g\circ f)\wedge d(y_{I}\circ f)$.  Equal.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfp_r2}
 \end{lemma}
 
 \begin{lemma}[Pass J3.3: chain rule applied to $g\circ f$]
@@ -6472,7 +6478,7 @@ pending on R9-sub-A.
 \label{lem:bfp-r5}
 \code{ContMDiff.fderiv} for the chain rule; pullback-of-forms is partial.  Mathlib status: partial.
 \uses{lem:bfp-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfp_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6482,35 +6488,35 @@ pending on R9-sub-A.
 \label{lem:sgd-r1}
 \uses{lem:sgd-r2}
 $\|u\|_{H^{s}} = \|(1+|\xi|^{2})^{s/2}\hat u\|_{L^{2}}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r1}
 \end{lemma}
 
 \begin{lemma}[Pass K1.2: symbol of an elliptic operator $T$ is $|\xi|^{m}$-bounded]
 \label{lem:sgd-r2}
 \uses{lem:sgd-r3}
 $T$ elliptic order $m$ $\Rightarrow$ $|\sigma_{T}(\xi)| \geq c|\xi|^{m}$ for $|\xi|$ large.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r2}
 \end{lemma}
 
 \begin{lemma}[Pass K1.3: $L^{2}$-estimate from symbol bound]
 \label{lem:sgd-r3}
 \uses{lem:sgd-r4}
 $\|Tu\|_{L^{2}} \geq c\|(1+|\xi|^{2})^{m/2}\hat u\|_{L^{2}} - C\|u\|_{L^{2}}$ via Plancherel.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r3}
 \end{lemma}
 
 \begin{lemma}[Pass K1.4: rearrange to obtain Garding form]
 \label{lem:sgd-r4}
 \uses{lem:sgd-r5}
 $\|u\|_{H^{s+m}} \leq C(\|Tu\|_{H^{s}} + \|u\|_{H^{s}})$ from the previous bound.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r4}
 \end{lemma}
 
 \begin{lemma}[Pass K1.5: Mathlib endpoint]
 \label{lem:sgd-r5}
 \code{MeasureTheory.FourierTransform} for Plancherel.  Sobolev space and Garding inequality are absent.  Mathlib status: ABSENT.
 \uses{lem:sgd-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r5}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6520,35 +6526,35 @@ $\|u\|_{H^{s+m}} \leq C(\|Tu\|_{H^{s}} + \|u\|_{H^{s}})$ from the previous bound
 \label{lem:sle-r1}
 \uses{lem:sle-r2}
 $\sigma_{\Delta}(\xi) = -|\xi|^{2}$ in local coordinates.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sle_r1}
 \end{lemma}
 
 \begin{lemma}[Pass K2.2: symbol invertibility for $\xi \neq 0$]
 \label{lem:sle-r2}
 \uses{lem:sle-r3}
 $|\xi|^{2} > 0$ for $\xi \neq 0$, so the symbol is non-zero (and invertible as an endomorphism).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sle_r2}
 \end{lemma}
 
 \begin{lemma}[Pass K2.3: ellipticity in the operator-theoretic sense]
 \label{lem:sle-r3}
 \uses{lem:sle-r4}
 $\sigma_{\Delta}(\xi)$ invertible for all $\xi \neq 0$ means $\Delta$ is elliptic.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sle_r3}
 \end{lemma}
 
 \begin{lemma}[Pass K2.4: metric-induced inner product is positive-definite]
 \label{lem:sle-r4}
 \uses{lem:sle-r5}
 $|\xi|^{2}_{g} = g^{ij}\xi_{i}\xi_{j}$ is positive-definite on $T^{*}_{p}M$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sle_r4}
 \end{lemma}
 
 \begin{lemma}[Pass K2.5: Mathlib endpoint]
 \label{lem:sle-r5}
 \code{InnerProductSpace} for positive-definite inner product; \code{LinearPDE.Elliptic} not yet in Mathlib.  Mathlib status: partial.
 \uses{lem:sle-r6}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sle_r5}
 \end{lemma}
 
 \begin{layman}
@@ -6575,14 +6581,14 @@ remaining classical-analysis distance from Mathlib.
 \label{lem:rk-r6}
 \uses{lem:rk-r7}
 Write the integrand as $(1+|\xi|^{2})^{s-s'}\cdot(1+|\xi|^{2})^{s'}|\hat u(\xi)|^{2}$.  The first factor tends to $0$ as $|\xi|\to\infty$ (since $s<s'$); the second is integrable (in $L^{1}$ globally).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rk_r6}
 \end{lemma}
 
 \begin{lemma}[Pass rk.7: dominated convergence on the tail]
 \label{lem:rk-r7}
 \uses{lem:rk-r8}
 For each $N$, $\mathbf{1}_{|\xi|>N}\cdot(1+|\xi|^{2})^{s-s'}\le 1$ pointwise and $\to 0$ a.e.  Apply dominated convergence with envelope $(1+|\xi|^{2})^{s'}|\hat u|^{2}\in L^{1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rk_r7}
 \end{lemma}
 
 \begin{lemma}[Pass rk.8: setIntegral on $\sigma$-finite measure]
@@ -6597,7 +6603,7 @@ For each $N$, $\mathbf{1}_{|\xi|>N}\cdot(1+|\xi|^{2})^{s-s'}\le 1$ pointwise and
 \label{lem:rk-r9}
 \uses{lem:rk-r10}
 \code{MeasureTheory.Lp.measurable} ensures $\hat u$ measurable, so the integrand is measurable and the setIntegral lemma applies.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rk_r9}
 \end{lemma}
 
 \begin{lemma}[Pass rk.10: Mathlib endpoint]
@@ -6614,21 +6620,21 @@ For each $N$, $\mathbf{1}_{|\xi|>N}\cdot(1+|\xi|^{2})^{s-s'}\le 1$ pointwise and
 \label{lem:ctp-r6}
 \uses{lem:ctp-r7}
 For an open quotient $\pi : V \to V/\Lambda$ that's a local homeomorphism, $V/\Lambda$ inherits a charted-space structure: each chart on $V$ projects to a chart on $V/\Lambda$ via $\pi^{-1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ctp_r6}
 \end{lemma}
 
 \begin{lemma}[Pass ctp.7: local homeomorphism gives chart compatibility]
 \label{lem:ctp-r7}
 \uses{lem:ctp-r8}
 $\pi$ is a local homeomorphism (since $\Lambda$ is discrete), so every chart pulls back uniquely; the pulled-back charts inherit smooth compatibility from $V$'s smooth structure.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ctp_r7}
 \end{lemma}
 
 \begin{lemma}[Pass ctp.8: complex structure transfer along a local biholomorphism]
 \label{lem:ctp-r8}
 \uses{lem:ctp-r9}
 A local biholomorphism between charted complex manifolds transfers complex structure: the holomorphic transition maps remain holomorphic on the quotient.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ctp_r8}
 \end{lemma}
 
 \begin{lemma}[Pass ctp.9: ChartedSpace.compChartedSpace functoriality]
@@ -6643,7 +6649,7 @@ A local biholomorphism between charted complex manifolds transfers complex struc
 \label{lem:ctp-r10}
 \code{ChartedSpace} + \code{IsLocalHomeomorph}.  The full open-quotient charted-space transfer is partial in Mathlib; closest is \code{ChartedSpace.compHomeomorph} for a single homeomorphism, requiring a small extension to local-homeomorphism covers.  Mathlib status: partial.
 \uses{lem:ctp-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ctp_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6653,21 +6659,21 @@ A local biholomorphism between charted complex manifolds transfers complex struc
 \label{lem:trf-r6}
 \uses{lem:trf-r7}
 For convergent power series in variables $w^{1/k}\zeta_{k}^{j}$ ($j=0,\ldots,k-1$), elementary symmetric polynomials in the $\zeta_{k}^{j}w^{1/k}$ are formal power series in $w$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.trf_r6}
 \end{lemma}
 
 \begin{lemma}[Pass trf.7: Newton identities at the formal-series level]
 \label{lem:trf-r7}
 \uses{lem:trf-r8}
 $p_{m} = \sum (-1)^{i+1} e_{i} p_{m-i}$ (Newton) holds in the ring of formal power series; analytic + symmetric implies polynomial in elementary symmetric functions.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.trf_r7}
 \end{lemma}
 
 \begin{lemma}[Pass trf.8: convergence of the power-series substitution]
 \label{lem:trf-r8}
 \uses{lem:trf-r9}
 Replacing $w^{1/k}$ by a small disk $|w|<\rho$ gives convergent expansion; the symmetric polynomial in $\zeta_{k}^{j}w^{1/k}$ converges as a power series in $w$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.trf_r8}
 \end{lemma}
 
 \begin{lemma}[Pass trf.9: upgrade to AnalyticAt via Mathlib's symmetric polynomial API]
@@ -6682,7 +6688,7 @@ Mathlib has \code{MvPolynomial.symmetric\_subalgebra} (polynomial level); the an
 \label{lem:trf-r10}
 \code{MvPolynomial.symmetric\_subalgebra} + \code{FormalMultilinearSeries.symmetric}; combined with \code{AnalyticAt.compFormalMultilinearSeries}.  Mathlib status: partial.
 \uses{lem:trf-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.trf_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6692,14 +6698,14 @@ Mathlib has \code{MvPolynomial.symmetric\_subalgebra} (polynomial level); the an
 \label{lem:rgb-r6}
 \uses{lem:rgb-r7}
 Two points map to the same image iff they're related by the cocycle (transition map).  Outside transition overlaps, charts are disjoint by construction.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r6}
 \end{lemma}
 
 \begin{lemma}[Pass rgb.7: global injectivity via cover-of-fibres]
 \label{lem:rgb-r7}
 \uses{lem:rgb-r8}
 For each fibre $\pi^{-1}(y)$, exactly one point of one chart is selected.  Reduces to selection-axiom-free finite combinatorics over the open cover.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r7}
 \end{lemma}
 
 \begin{lemma}[Pass rgb.8: Equiv from finite cocycle data]
@@ -6714,14 +6720,14 @@ For each fibre $\pi^{-1}(y)$, exactly one point of one chart is selected.  Reduc
 \label{lem:rgb-r9}
 \uses{lem:rgb-r10}
 For a paracompact space, the cocycle data over a finite cover yields a global equivalence; this is the manifold gluing lemma.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r9}
 \end{lemma}
 
 \begin{lemma}[Pass rgb.10: Mathlib endpoint]
 \label{lem:rgb-r10}
 \code{Equiv.iUnion} for global equivalences; cocycle gluing on a paracompact space is partial.  Mathlib status: partial.
 \uses{lem:rgb-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6731,35 +6737,35 @@ For a paracompact space, the cocycle data over a finite cover yields a global eq
 \label{lem:tcr-r6}
 \uses{lem:tcr-r7}
 FreeGroup word reduction is monotone-decreasing in length, so it terminates.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r6}
 \end{lemma}
 
 \begin{lemma}[Pass tcr.7: cyclic conjugacy class is reduced word + rotation]
 \label{lem:tcr-r7}
 \uses{lem:tcr-r8}
 Two cyclically-reduced words in the same conjugacy class differ by a rotation; this is a finite-orbit calculation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r7}
 \end{lemma}
 
 \begin{lemma}[Pass tcr.8: rotation as conjugation by a single letter]
 \label{lem:tcr-r8}
 \uses{lem:tcr-r9}
 Rotating $a_{1}\cdots a_{n}$ to $a_{2}\cdots a_{n} a_{1}$ is conjugation by $a_{1}^{-1}$.  Iteration covers all rotations.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r8}
 \end{lemma}
 
 \begin{lemma}[Pass tcr.9: conjugacy in FreeGroup decidable]
 \label{lem:tcr-r9}
 \uses{lem:tcr-r10}
 Conjugacy of cyclically-reduced words in a free group is decidable by direct comparison of rotations.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r9}
 \end{lemma}
 
 \begin{lemma}[Pass tcr.10: Mathlib endpoint]
 \label{lem:tcr-r10}
 \code{FreeGroup.reduce} + \code{FreeGroup.IsCyclicallyReduced} (planned).  Mathlib status: partial.
 \uses{lem:tcr-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6769,21 +6775,21 @@ Conjugacy of cyclically-reduced words in a free group is decidable by direct com
 \label{lem:ths-r6}
 \uses{lem:ths-r7}
 Symmetric group $S_{n}$ is generated by adjacent transpositions $(i, i+1)$; this is a standard combinatorial fact.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r6}
 \end{lemma}
 
 \begin{lemma}[Pass ths.7: adjacent swap of handle blocks via Tietze move]
 \label{lem:ths-r7}
 \uses{lem:ths-r8}
 Swapping $H_{i}H_{i+1} \to H_{i+1}H_{i}$ is a single Tietze move (handle commutation in the free product).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r7}
 \end{lemma}
 
 \begin{lemma}[Pass ths.8: induct on permutation length]
 \label{lem:ths-r8}
 \uses{lem:ths-r9}
 Apply induction on the length of the swapping permutation: each adjacent swap is one Tietze move.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r8}
 \end{lemma}
 
 \begin{lemma}[Pass ths.9: conjugation commutes with adjacent swap]
@@ -6798,7 +6804,7 @@ Conjugation in FreeGroup commutes with adjacent-swap action via \code{Equiv.Perm
 \label{lem:ths-r10}
 \code{Equiv.Perm.swap} + \code{FreeGroup.Conjugation}.  Mathlib status: partial.
 \uses{lem:ths-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6808,28 +6814,28 @@ Conjugation in FreeGroup commutes with adjacent-swap action via \code{Equiv.Perm
 \label{lem:tsh-r6}
 \uses{lem:tsh-r7}
 $g \mapsto $ number of handles; base case $g=0$ trivial, inductive step strips one handle.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tsh_r6}
 \end{lemma}
 
 \begin{lemma}[Pass tsh.7: decompose word as $H \cdot W'$ with $|W'|$ shorter]
 \label{lem:tsh-r7}
 \uses{lem:tsh-r8}
 After cyclic rotation, the word starts with a handle block; the rest has $g-1$ handles and shorter length.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tsh_r7}
 \end{lemma}
 
 \begin{lemma}[Pass tsh.8: apply induction hypothesis to $W'$]
 \label{lem:tsh-r8}
 \uses{lem:tsh-r9}
 By induction, $W'$ is in standard form $\prod_{i=2}^{g}H_{i}^{\mathrm{std}}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tsh_r8}
 \end{lemma}
 
 \begin{lemma}[Pass tsh.9: re-attach $H$ to obtain full standard form]
 \label{lem:tsh-r9}
 \uses{lem:tsh-r10}
 $W = H \cdot W' = H_{1}^{\mathrm{std}} \cdot \prod_{i=2}^{g}H_{i}^{\mathrm{std}}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tsh_r9}
 \end{lemma}
 
 \begin{lemma}[Pass tsh.10: Mathlib endpoint]
@@ -6889,28 +6895,28 @@ A continuous function on a compact subset of $\R^{k}$ is bounded by Weierstrass 
 \label{lem:dss-r6}
 \uses{lem:dss-r7}
 $\int_{0}^{1}f'(t)\,dt = f(1) - f(0)$ for $f \in C^{1}([0,1])$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dss_r6}
 \end{lemma}
 
 \begin{lemma}[Pass dss.7: Fubini reduces $\Delta^{k}$-integral to nested 1D integrals]
 \label{lem:dss-r7}
 \uses{lem:dss-r8}
 For the standard simplex $\Delta^{k}$, integration over $\Delta^{k}$ is nested integration over the slices, by Fubini.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dss_r7}
 \end{lemma}
 
 \begin{lemma}[Pass dss.8: inductive Stokes via slicing]
 \label{lem:dss-r8}
 \uses{lem:dss-r9}
 $\int_{\Delta^{k}}d\eta = \int_{\Delta^{k-1}}\left[\int_{0}^{t_{k}}\partial_{k}\eta\,dt_{k}\right]\,d\bar t = \int_{\Delta^{k-1}}\eta(t_{k}=1) - \eta(t_{k}=0)\,d\bar t = \int_{\partial\Delta^{k}}\eta$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dss_r8}
 \end{lemma}
 
 \begin{lemma}[Pass dss.9: face-orientation signs from the alternating boundary]
 \label{lem:dss-r9}
 \uses{lem:dss-r10}
 $(-1)^{i}$ signs in $\partial\Delta^{k} = \sum(-1)^{i}\partial_{i}$ come from orientation of the slicing.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dss_r9}
 \end{lemma}
 
 \begin{lemma}[Pass dss.10: Mathlib endpoint]
@@ -6927,35 +6933,35 @@ $(-1)^{i}$ signs in $\partial\Delta^{k} = \sum(-1)^{i}\partial_{i}$ come from or
 \label{lem:dsq-r6}
 \uses{lem:dsq-r7}
 In a chart, convolution with a smooth bump function $\phi_{\varepsilon}$ smooths a continuous map; uniform convergence as $\varepsilon\to 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r6}
 \end{lemma}
 
 \begin{lemma}[Pass dsq.7: partition-of-unity glues chart-local approximations]
 \label{lem:dsq-r7}
 \uses{lem:dsq-r8}
 A smooth partition of unity glues the local mollifications into a global smooth approximation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r7}
 \end{lemma}
 
 \begin{lemma}[Pass dsq.8: approximation is homotopic to the original]
 \label{lem:dsq-r8}
 \uses{lem:dsq-r9}
 The straight-line homotopy $(1-s)f + s\tilde f$ is well-defined on a tubular neighborhood and lands in $M$ for small $s$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r8}
 \end{lemma}
 
 \begin{lemma}[Pass dsq.9: uniform-on-compact smooth approximation]
 \label{lem:dsq-r9}
 \uses{lem:dsq-r10}
 On a compact set, smooth approximations exist with uniform $C^{0}$ small error.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r9}
 \end{lemma}
 
 \begin{lemma}[Pass dsq.10: Mathlib endpoint]
 \label{lem:dsq-r10}
 \code{ContDiff.smul} + \code{Manifold.NormalNbhd} (planned).  Mathlib status: partial; basic mollifier theory present, manifold-level packaging missing.
 \uses{lem:dsq-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -6965,21 +6971,21 @@ On a compact set, smooth approximations exist with uniform $C^{0}$ small error.
 \label{lem:dmv-r6}
 \uses{lem:dmv-r7}
 Both de Rham and singular cohomology are derived functors of global-section-like functors on appropriate sheaves of $\R$-modules.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dmv_r6}
 \end{lemma}
 
 \begin{lemma}[Pass dmv.7: functoriality under open inclusions]
 \label{lem:dmv-r7}
 \uses{lem:dmv-r8}
 Both theories are contravariant functors on the open-set category; Mayer--Vietoris is the snake-lemma applied to the restriction sequence.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dmv_r7}
 \end{lemma}
 
 \begin{lemma}[Pass dmv.8: snake lemma in abelian categories]
 \label{lem:dmv-r8}
 \uses{lem:dmv-r9}
 Given a short exact sequence of chain complexes, the snake lemma produces a long exact sequence in cohomology.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dmv_r8}
 \end{lemma}
 
 \begin{lemma}[Pass dmv.9: CategoryTheory.Abelian.SnakeLemma direct citation]
@@ -7004,35 +7010,35 @@ Apply \code{CategoryTheory.Abelian.SnakeLemma} to the restriction short-exact se
 \label{lem:hod-r6}
 \uses{lem:hod-r7}
 For a Fredholm operator $T$ on a Hilbert space, $\mathrm{im}\,T$ is closed.  $\Delta$ is Fredholm (R10) so $\mathrm{im}\,\Delta$ is closed in $L^{2}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r6}
 \end{lemma}
 
 \begin{lemma}[Pass hod.7: orthogonal decomposition $L^{2} = \ker T \oplus \mathrm{im}\,T^{*}$]
 \label{lem:hod-r7}
 \uses{lem:hod-r8}
 For closed-range $T$, $L^{2} = \ker T \oplus \mathrm{im}\,T^{*}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r7}
 \end{lemma}
 
 \begin{lemma}[Pass hod.8: self-adjoint case: $T = T^{*}$]
 \label{lem:hod-r8}
 \uses{lem:hod-r9}
 $\Delta$ self-adjoint, so $\mathrm{im}\,T^{*} = \mathrm{im}\,T$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r8}
 \end{lemma}
 
 \begin{lemma}[Pass hod.9: decompose $\mathrm{im}\,\Delta$ into $\mathrm{im}\,d \oplus \mathrm{im}\,d^{*}$]
 \label{lem:hod-r9}
 \uses{lem:hod-r10}
 $\Delta = dd^{*} + d^{*}d$, so $\mathrm{im}\,\Delta = \mathrm{im}\,d \oplus \mathrm{im}\,d^{*}$ (orthogonal).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r9}
 \end{lemma}
 
 \begin{lemma}[Pass hod.10: Mathlib endpoint]
 \label{lem:hod-r10}
 \code{InnerProductSpace.orthogonalProjection} + \code{Banach.ClosedRange}.  Mathlib status: partial; Hodge-specific assembly missing.
 \uses{lem:hod-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7042,21 +7048,21 @@ $\Delta = dd^{*} + d^{*}d$, so $\mathrm{im}\,\Delta = \mathrm{im}\,d \oplus \mat
 \label{lem:hdf-r6}
 \uses{lem:hdf-r7}
 The standard $4g$-gon model gives an explicit CW structure: 1 vertex, $2g$ edges, 1 face.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r6}
 \end{lemma}
 
 \begin{lemma}[Pass hdf.7: cellular chain complex is $\Z \to \Z^{2g} \to \Z$]
 \label{lem:hdf-r7}
 \uses{lem:hdf-r8}
 $C_{0}^{\mathrm{cell}} = \Z$, $C_{1}^{\mathrm{cell}} = \Z^{2g}$, $C_{2}^{\mathrm{cell}} = \Z$.  The boundary maps reduce to the standard relator $\sum [a_{i}, b_{i}]$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r7}
 \end{lemma}
 
 \begin{lemma}[Pass hdf.8: $H_{1}$ from this complex is $\Z^{2g}$]
 \label{lem:hdf-r8}
 \uses{lem:hdf-r9}
 $\ker\partial_{1}/\mathrm{im}\,\partial_{2}$ computes to $\Z^{2g}$ (relator is in commutator subgroup).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r8}
 \end{lemma}
 
 \begin{lemma}[Pass hdf.9: equivalence of cellular and singular homology]
@@ -7071,7 +7077,7 @@ $\ker\partial_{1}/\mathrm{im}\,\partial_{2}$ computes to $\Z^{2g}$ (relator is i
 \label{lem:hdf-r10}
 \code{AlgebraicTopology.CellComplex.Homology}.  Mathlib status: partial.
 \uses{lem:hdf-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7126,35 +7132,35 @@ Combine hdr.6 (basis $b$ of cardinality $r = \mathrm{finrank}_\Z M$), hdr.7 (lin
 \label{lem:sl2-r6}
 \uses{lem:sl2-r7}
 For $\omega \in \mathcal{H}^{1,0}$, $\bar\star\omega := \overline\omega\cdot(\text{volume form})/(\text{pointwise inner product})$ is in $\mathcal{H}^{0,1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r6}
 \end{lemma}
 
 \begin{lemma}[Pass sl2.7: antiholomorphic isomorphism $\mathcal{H}^{1,0}\cong\overline{\mathcal{H}^{0,1}}$]
 \label{lem:sl2-r7}
 \uses{lem:sl2-r8}
 Complex conjugation gives a $\C$-antilinear iso between $\mathcal{H}^{1,0}$ and $\mathcal{H}^{0,1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r7}
 \end{lemma}
 
 \begin{lemma}[Pass sl2.8: nondegeneracy on a 1-dim Riemann surface case]
 \label{lem:sl2-r8}
 \uses{lem:sl2-r9}
 For $\omega \neq 0$, $\langle\omega, \bar\star\omega\rangle = \int|\omega|^{2} > 0$ by positive-definiteness of the metric.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r8}
 \end{lemma}
 
 \begin{lemma}[Pass sl2.9: metric inner-product positivity]
 \label{lem:sl2-r9}
 \uses{lem:sl2-r10}
 On a Riemannian manifold, the volume form integrates positive functions to positive values.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r9}
 \end{lemma}
 
 \begin{lemma}[Pass sl2.10: Mathlib endpoint]
 \label{lem:sl2-r10}
 \code{InnerProductSpace} + Hodge $\bar\star$ (currently absent for complex manifolds).  Mathlib status: partial.
 \uses{lem:sl2-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7164,35 +7170,35 @@ On a Riemannian manifold, the volume form integrates positive functions to posit
 \label{lem:bfa-r6}
 \uses{lem:bfa-r7}
 A smooth section of $\pi : E \to M$ is a smooth $s : M \to E$ with $\pi\circ s = \mathrm{id}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r6}
 \end{lemma}
 
 \begin{lemma}[Pass bfa.7: $\Gamma(M, E)$ is closed under pointwise sum and scaling]
 \label{lem:bfa-r7}
 \uses{lem:bfa-r8}
 Pointwise vector-space operations on $E$ pull back to operations on $\Gamma(M, E)$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r7}
 \end{lemma}
 
 \begin{lemma}[Pass bfa.8: $C^{\infty}(M)$-module structure]
 \label{lem:bfa-r8}
 \uses{lem:bfa-r9}
 $f \cdot s := p \mapsto f(p)\,s(p)$ is well-defined and smooth.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r8}
 \end{lemma}
 
 \begin{lemma}[Pass bfa.9: vector-bundle exterior algebra functor]
 \label{lem:bfa-r9}
 \uses{lem:bfa-r10}
 $\Lambda^{k}E$ exists as a smooth vector bundle: chart-locally it's $\Lambda^{k}\R^{n}$, smooth transitions via $\Lambda^{k}$ of the bundle's transition functions.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r9}
 \end{lemma}
 
 \begin{lemma}[Pass bfa.10: Mathlib endpoint]
 \label{lem:bfa-r10}
 \code{VectorBundle.SmoothSection} + \code{ExteriorAlgebra.functor}.  Mathlib status: partial; smooth-section module is present, exterior-algebra-bundle integration is missing.
 \uses{lem:bfa-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7202,21 +7208,21 @@ $\Lambda^{k}E$ exists as a smooth vector bundle: chart-locally it's $\Lambda^{k}
 \label{lem:bfp-r6}
 \uses{lem:bfp-r7}
 For smooth $f : M \to N$ and section $s$ of $\Lambda^{k}T^{*}N$, $f^{*}s$ is computed pointwise via $df^{*}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfp_r6}
 \end{lemma}
 
 \begin{lemma}[Pass bfp.7: naturality of $d$ under pullback]
 \label{lem:bfp-r7}
 \uses{lem:bfp-r8}
 Both sides reduce to the same chain-level expression $df_{p}^{*}\circ d_{f(p)}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfp_r7}
 \end{lemma}
 
 \begin{lemma}[Pass bfp.8: smooth-section pullback is a chain map]
 \label{lem:bfp-r8}
 \uses{lem:bfp-r9}
 $f^{*}\circ d_{N} = d_{M}\circ f^{*}$ is a 1-line check on local coordinate-expressions.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfp_r8}
 \end{lemma}
 
 \begin{lemma}[Pass bfp.9: ContMDiff naturality of fderiv]
@@ -7231,7 +7237,7 @@ $f^{*}\circ d_{N} = d_{M}\circ f^{*}$ is a 1-line check on local coordinate-expr
 \label{lem:bfp-r10}
 \code{ContMDiff.fderiv} + \code{ManifoldDiff.pullback}.  Mathlib status: partial.
 \uses{lem:bfp-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfp_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7335,14 +7341,14 @@ yields $d^{2}\omega=0$ in every chart.  Mathlib hooks:
 \label{lem:sle-r6}
 \uses{lem:sle-r7}
 $g^{ij}\xi_{i}\xi_{j}$ is the dual metric, positive-definite when $g$ is.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sle_r6}
 \end{lemma}
 
 \begin{lemma}[Pass sle.7: symbol calculus: positive-definite quadratic form is invertible]
 \label{lem:sle-r7}
 \uses{lem:sle-r8}
 Positive-definite $\Rightarrow$ no zero eigenvalues $\Rightarrow$ matrix invertible.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sle_r7}
 \end{lemma}
 
 \begin{lemma}[Pass sle.8: matrix-of-positive-definite is invertible]
@@ -7357,7 +7363,7 @@ Positive-definite $\Rightarrow$ no zero eigenvalues $\Rightarrow$ matrix inverti
 \label{lem:sle-r9}
 \uses{lem:sle-r10}
 $\Delta$ elliptic order 2 because principal symbol $|\xi|^{2}$ is invertible for $\xi \neq 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sle_r9}
 \end{lemma}
 
 \begin{lemma}[Pass sle.10: Mathlib endpoint]
@@ -7375,21 +7381,21 @@ $\Delta$ elliptic order 2 because principal symbol $|\xi|^{2}$ is invertible for
 \label{lem:rpc-r6}
 \uses{lem:rpc-r7}
 For $f, g$ piecewise linear, $f\circ g$ is piecewise linear on the common refinement of $f$'s and $g$'s domain decompositions.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rpc_r6}
 \end{lemma}
 
 \begin{lemma}[Pass rpc.7: common-refinement existence in dim 2]
 \label{lem:rpc-r7}
 \uses{lem:rpc-r8}
 Two finite simplicial complexes on the same disk admit a common subdivision (planar arrangement).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rpc_r7}
 \end{lemma}
 
 \begin{lemma}[Pass rpc.8: affine-map composition is affine]
 \label{lem:rpc-r8}
 \uses{lem:rpc-r9}
 $A : \R^{n}\to\R^{n}$ affine and $B$ affine, $A\circ B$ affine.  Standard fact.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rpc_r8}
 \end{lemma}
 
 \begin{lemma}[Pass rpc.9: Mathlib has affine-map composition; PL infrastructure built atop]
@@ -7404,7 +7410,7 @@ $A : \R^{n}\to\R^{n}$ affine and $B$ affine, $A\circ B$ affine.  Standard fact.
 \label{lem:rpc-r10}
 \code{AffineMap.comp} + \code{Mathlib.Analysis.Convex.Simplex}; full PL-on-manifold infrastructure ABSENT.  Mathlib status: ABSENT.
 \uses{lem:rpc-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rpc_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7414,21 +7420,21 @@ $A : \R^{n}\to\R^{n}$ affine and $B$ affine, $A\circ B$ affine.  Standard fact.
 \label{lem:rtc-r6}
 \uses{lem:rtc-r7}
 Triangulate $\overline{B^{2}}$ by $n$ radial wedges from the center.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r6}
 \end{lemma}
 
 \begin{lemma}[Pass rtc.7: transport via chart homeomorphism]
 \label{lem:rtc-r7}
 \uses{lem:rtc-r8}
 Pull back the standard triangulation through $\varphi^{-1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r7}
 \end{lemma}
 
 \begin{lemma}[Pass rtc.8: PL approximation of the chart yields PL transitions]
 \label{lem:rtc-r8}
 \uses{lem:rtc-r9}
 Apply the Doyle--Moran lemma to make transitions PL.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r8}
 \end{lemma}
 
 \begin{lemma}[Pass rtc.9: simplicial complex as colimit of charts]
@@ -7443,7 +7449,7 @@ Apply the Doyle--Moran lemma to make transitions PL.
 \label{lem:rtc-r10}
 \code{SimplexCategory} + \code{SimplicialObject}; the manifold-triangulation correspondence is ABSENT.  Mathlib status: ABSENT.
 \uses{lem:rtc-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7453,35 +7459,35 @@ Apply the Doyle--Moran lemma to make transitions PL.
 \label{lem:rcs-r6}
 \uses{lem:rcs-r7}
 Union of all 1-cells from both triangulations is a planar 1-complex.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r6}
 \end{lemma}
 
 \begin{lemma}[Pass rcs.7: polygon decomposition of arrangement faces]
 \label{lem:rcs-r7}
 \uses{lem:rcs-r8}
 Each face of the arrangement is a simple polygon.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r7}
 \end{lemma}
 
 \begin{lemma}[Pass rcs.8: each simple polygon admits a triangulation]
 \label{lem:rcs-r8}
 \uses{lem:rcs-r9}
 Ear-cutting algorithm: every simple $n$-gon has an ear; remove it, recurse.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r8}
 \end{lemma}
 
 \begin{lemma}[Pass rcs.9: ear-existence (Meisters 1975)]
 \label{lem:rcs-r9}
 \uses{lem:rcs-r10}
 Every simple polygon has at least two ears.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r9}
 \end{lemma}
 
 \begin{lemma}[Pass rcs.10: Mathlib endpoint]
 \label{lem:rcs-r10}
 \code{ConvexHull} for convex hulls; ear theorem and polygon triangulation ABSENT.  Mathlib status: ABSENT.
 \uses{lem:rcs-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7491,14 +7497,14 @@ Every simple polygon has at least two ears.
 \label{lem:ret-r6}
 \uses{lem:ret-r7}
 A simple arc separates a small neighborhood into exactly two components.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r6}
 \end{lemma}
 
 \begin{lemma}[Pass ret.7: local degree-theory argument]
 \label{lem:ret-r7}
 \uses{lem:ret-r8}
 Use the winding number / mapping degree for arcs vs.\ points off the arc.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r7}
 \end{lemma}
 
 \begin{lemma}[Pass ret.8: winding number is well-defined for $\C\setminus\{0\}$]
@@ -7513,14 +7519,14 @@ Use the winding number / mapping degree for arcs vs.\ points off the arc.
 \label{lem:ret-r9}
 \uses{lem:ret-r10}
 Reduces to elementary point-set topology: the local separation is a fact about $\R^{2}$, not infinite-dimensional.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r9}
 \end{lemma}
 
 \begin{lemma}[Pass ret.10: Mathlib endpoint]
 \label{lem:ret-r10}
 \code{Complex.argument} + winding number; full Jordan arc theorem ABSENT.  Mathlib status: ABSENT.
 \uses{lem:ret-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7530,35 +7536,35 @@ Reduces to elementary point-set topology: the local separation is a fact about $
 \label{lem:rvl-r6}
 \uses{lem:rvl-r7}
 Combinatorially-defined link: simplices not containing $v$ but adjacent to a simplex containing $v$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r6}
 \end{lemma}
 
 \begin{lemma}[Pass rvl.7: dim-1 manifold-without-boundary classification]
 \label{lem:rvl-r7}
 \uses{lem:rvl-r8}
 A finite 1-manifold without boundary is a disjoint union of circles.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r7}
 \end{lemma}
 
 \begin{lemma}[Pass rvl.8: connectedness of the link of a 2-manifold vertex]
 \label{lem:rvl-r8}
 \uses{lem:rvl-r9}
 For a 2-manifold-without-boundary, each vertex has connected link.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r8}
 \end{lemma}
 
 \begin{lemma}[Pass rvl.9: link as a finite cyclic complex]
 \label{lem:rvl-r9}
 \uses{lem:rvl-r10}
 Triangles around a vertex form a finite ordered cyclic sequence.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r9}
 \end{lemma}
 
 \begin{lemma}[Pass rvl.10: Mathlib endpoint]
 \label{lem:rvl-r10}
 \code{SimplicialObject.Link} (planned).  Mathlib status: ABSENT.
 \uses{lem:rvl-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7568,35 +7574,35 @@ Triangles around a vertex form a finite ordered cyclic sequence.
 \label{lem:tbh-r6}
 \uses{lem:tbh-r7}
 Brahana move: a specific pattern-replacement on edge words turning a generic crossing into a handle block.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r6}
 \end{lemma}
 
 \begin{lemma}[Pass tbh.7: conjugation-action on FreeGroup relator]
 \label{lem:tbh-r7}
 \uses{lem:tbh-r8}
 The move is a conjugation of the relator by a specific element.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r7}
 \end{lemma}
 
 \begin{lemma}[Pass tbh.8: preservation of group presentation]
 \label{lem:tbh-r8}
 \uses{lem:tbh-r9}
 Conjugation of a relator gives an equivalent presentation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r8}
 \end{lemma}
 
 \begin{lemma}[Pass tbh.9: preservation of underlying surface]
 \label{lem:tbh-r9}
 \uses{lem:tbh-r10}
 Brahana move corresponds to a specific surface homeomorphism.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r9}
 \end{lemma}
 
 \begin{lemma}[Pass tbh.10: Mathlib endpoint]
 \label{lem:tbh-r10}
 \code{FreeGroup} + \code{PresentedGroup}; Brahana move ABSENT.  Mathlib status: ABSENT.
 \uses{lem:tbh-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7606,35 +7612,35 @@ Brahana move corresponds to a specific surface homeomorphism.
 \label{lem:tmo-r6}
 \uses{lem:tmo-r7}
 Each Tietze move on an oriented edge word preserves the consistency of orientation labels.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r6}
 \end{lemma}
 
 \begin{lemma}[Pass tmo.7: characterize orientability via sign-pattern]
 \label{lem:tmo-r7}
 \uses{lem:tmo-r8}
 Orientable surface: every letter and its inverse appear with consistent signs.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r7}
 \end{lemma}
 
 \begin{lemma}[Pass tmo.8: inductive verification across move types]
 \label{lem:tmo-r8}
 \uses{lem:tmo-r9}
 Each of the four basic move types preserves the sign-consistency.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r8}
 \end{lemma}
 
 \begin{lemma}[Pass tmo.9: orientation as $\Z/2$-bundle over the polygon]
 \label{lem:tmo-r9}
 \uses{lem:tmo-r10}
 Tietze move is orientation-preserving iff the implied $\Z/2$-bundle is trivial.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r9}
 \end{lemma}
 
 \begin{lemma}[Pass tmo.10: Mathlib endpoint]
 \label{lem:tmo-r10}
 \code{Manifold.Orientable} (planned); abstract surface-orientability ABSENT.  Mathlib status: ABSENT.
 \uses{lem:tmo-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7644,21 +7650,21 @@ Tietze move is orientation-preserving iff the implied $\Z/2$-bundle is trivial.
 \label{lem:toh-r6}
 \uses{lem:toh-r7}
 Two closed orientable surfaces are homeomorphic iff they have the same genus.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r6}
 \end{lemma}
 
 \begin{lemma}[Pass toh.7: genus from the standard $4g$-gon model]
 \label{lem:toh-r7}
 \uses{lem:toh-r8}
 Standard model: $4g$-gon with $aba^{-1}b^{-1}\cdots$ relator gives genus $g$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r7}
 \end{lemma}
 
 \begin{lemma}[Pass toh.8: classification theorem for closed orientable surfaces]
 \label{lem:toh-r8}
 \uses{lem:toh-r9}
 Closed orientable 2-manifolds are classified by genus.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r8}
 \end{lemma}
 
 \begin{lemma}[Integral homology rank is 2g]
@@ -7668,21 +7674,21 @@ For a compact connected Riemann surface $X$ of genus $g$,
 the first integral homology $H_{1}(X, \Z)$ is a free $\Z$-module
 of rank $2g$.
 \lean{JacobianChallenge.Blueprint.Sec03.h1_free_of_genus}
-\notready
+\leanok
 \end{lemma}
 
 \begin{lemma}[Pass toh.9: uniqueness of standard form]
 \label{lem:toh-r9}
 \uses{lem:toh-r10}
 Two equivalent edge-word presentations have the same standard form (after Tietze normalization).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r9}
 \end{lemma}
 
 \begin{lemma}[Pass toh.10: Mathlib endpoint]
 \label{lem:toh-r10}
 \code{Manifold.Surface} (planned); surface classification ABSENT.  Mathlib status: ABSENT.
 \uses{lem:toh-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7700,28 +7706,28 @@ Two equivalent edge-word presentations have the same standard form (after Tietze
 \label{lem:pct-r7}
 \uses{lem:pct-r8}
 Cutting along the spanning tree merges all triangles into a single 2-cell (the dual disk).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r7}
 \end{lemma}
 
 \begin{lemma}[Pass pct.8: dual disk has $4g$ boundary edges]
 \label{lem:pct-r8}
 \uses{lem:pct-r9}
 The boundary of the dual disk is the original boundary 1-cells, with $V - 1$ edges identified.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r8}
 \end{lemma}
 
 \begin{lemma}[Pass pct.9: Euler-formula consistency check]
 \label{lem:pct-r9}
 \uses{lem:pct-r10}
 $V_{cut} - E_{cut} + F_{cut} = 1$ (disk Euler characteristic).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r9}
 \end{lemma}
 
 \begin{lemma}[Pass pct.10: Mathlib endpoint]
 \label{lem:pct-r10}
 \code{SimpleGraph.spanningTree} for spanning tree (partial); dual-disk cutting ABSENT.  Mathlib status: ABSENT.
 \uses{lem:pct-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7731,35 +7737,35 @@ $V_{cut} - E_{cut} + F_{cut} = 1$ (disk Euler characteristic).
 \label{lem:pgm-r6}
 \uses{lem:pgm-r7}
 $V = 1, E = 2g, F = 1$, so $\chi = 2 - 2g$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r6}
 \end{lemma}
 
 \begin{lemma}[Pass pgm.7: Euler characteristic of triangulation = $\chi(X)$]
 \label{lem:pgm-r7}
 \uses{lem:pgm-r8}
 $V - E + F$ from any triangulation equals topological $\chi(X)$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r7}
 \end{lemma}
 
 \begin{lemma}[Pass pgm.8: Tietze moves preserve $\chi$]
 \label{lem:pgm-r8}
 \uses{lem:pgm-r9}
 Each Tietze move preserves the count: handle creation adjusts $V, E, F$ but preserves $\chi$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r8}
 \end{lemma}
 
 \begin{lemma}[Pass pgm.9: genus characterization $\chi = 2 - 2g$]
 \label{lem:pgm-r9}
 \uses{lem:pgm-r10}
 For closed orientable: genus $g$ iff $\chi = 2 - 2g$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r9}
 \end{lemma}
 
 \begin{lemma}[Pass pgm.10: Mathlib endpoint]
 \label{lem:pgm-r10}
 \code{SimplicialComplex.eulerCharacteristic} (planned).  Mathlib status: ABSENT.
 \uses{lem:pgm-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7769,35 +7775,35 @@ For closed orientable: genus $g$ iff $\chi = 2 - 2g$.
 \label{lem:hle-r6}
 \uses{lem:hle-r7}
 A $k$-th order differential operator $T : \Gamma(E) \to \Gamma(F)$ has principal symbol $\sigma_{T} : T^{*}M \to \mathrm{Hom}(E, F)$ as a vector-bundle map.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r6}
 \end{lemma}
 
 \begin{lemma}[Pass hle.7: ellipticity = invertible principal symbol]
 \label{lem:hle-r7}
 \uses{lem:hle-r8}
 $T$ elliptic iff $\sigma_{T}(\xi)$ invertible for $\xi \neq 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r7}
 \end{lemma}
 
 \begin{lemma}[Pass hle.8: $\Delta = dd^{*} + d^{*}d$ as elliptic order-2 operator]
 \label{lem:hle-r8}
 \uses{lem:hle-r9}
 Direct verification of the symbol calculus.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r8}
 \end{lemma}
 
 \begin{lemma}[Pass hle.9: Mathlib lacks the LinearPDE framework]
 \label{lem:hle-r9}
 \uses{lem:hle-r10}
 \code{LinearPDE.Operator} and \code{LinearPDE.Symbol} are absent.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r9}
 \end{lemma}
 
 \begin{lemma}[Pass hle.10: Mathlib endpoint]
 \label{lem:hle-r10}
 Closest: \code{ContinuousLinearMap} for linear operators; full PDE/symbol framework ABSENT.  Mathlib status: ABSENT.
 \uses{lem:hle-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7807,35 +7813,35 @@ Closest: \code{ContinuousLinearMap} for linear operators; full PDE/symbol framew
 \label{lem:hbs-r6}
 \uses{lem:hbs-r7}
 Kähler form $\omega = \frac{i}{2}h_{ij}dz_{i}\wedge d\bar z_{j}$ closed and positive.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r6}
 \end{lemma}
 
 \begin{lemma}[Pass hbs.7: bigrading of forms via $\C$-linear projections]
 \label{lem:hbs-r7}
 \uses{lem:hbs-r8}
 $\Omega^{k} = \bigoplus_{p+q=k}\Omega^{p,q}$ via almost-complex structure on $T^{*}_{\C}M$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r7}
 \end{lemma}
 
 \begin{lemma}[Pass hbs.8: Laplacian commutes with bigrading on Kähler manifolds]
 \label{lem:hbs-r8}
 \uses{lem:hbs-r9}
 $[\Delta_{d}, \Pi^{p,q}] = 0$ from Kähler identity.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r8}
 \end{lemma}
 
 \begin{lemma}[Pass hbs.9: harmonic forms inherit bigrading]
 \label{lem:hbs-r9}
 \uses{lem:hbs-r10}
 $\mathcal{H}^{k} = \bigoplus_{p+q=k}\mathcal{H}^{p,q}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r9}
 \end{lemma}
 
 \begin{lemma}[Pass hbs.10: Mathlib endpoint]
 \label{lem:hbs-r10}
 \code{ComplexManifold.AlmostComplexStructure} (partial); bigrading + Kähler ABSENT.  Mathlib status: ABSENT.
 \uses{lem:hbs-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7845,35 +7851,35 @@ $\mathcal{H}^{k} = \bigoplus_{p+q=k}\mathcal{H}^{p,q}$.
 \label{lem:hdu-r6}
 \uses{lem:hdu-r7}
 $0 \to \mathrm{Ext}^{1}(H_{n-1}, R) \to H^{n}(X; R) \to \mathrm{Hom}(H_{n}, R) \to 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r6}
 \end{lemma}
 
 \begin{lemma}[Pass hdu.7: $\R$ is divisible $\Rightarrow$ injective $\Z$-module]
 \label{lem:hdu-r7}
 \uses{lem:hdu-r8}
 Divisible abelian groups are injective $\Z$-modules.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r7}
 \end{lemma}
 
 \begin{lemma}[Pass hdu.8: $\mathrm{Ext}(\cdot, R) = 0$ when $R$ is injective]
 \label{lem:hdu-r8}
 \uses{lem:hdu-r9}
 For injective $R$, $\mathrm{Ext}^{1}(\cdot, R) = 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r8}
 \end{lemma}
 
 \begin{lemma}[Pass hdu.9: $H^{n}(X; \R) \cong \mathrm{Hom}(H_{n}(X, \Z), \R)$]
 \label{lem:hdu-r9}
 \uses{lem:hdu-r10}
 From UCT + Ext-vanishing.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r9}
 \end{lemma}
 
 \begin{lemma}[Pass hdu.10: Mathlib endpoint]
 \label{lem:hdu-r10}
 \code{HomologicalAlgebra.UniversalCoefficient} (planned).  Mathlib status: ABSENT.
 \uses{lem:hdu-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7883,14 +7889,14 @@ From UCT + Ext-vanishing.
 \label{lem:dfr-r6}
 \uses{lem:dfr-r7}
 $H^{q}(X, \mathcal{F}) := R^{q}\Gamma(X, \mathcal{F})$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r6}
 \end{lemma}
 
 \begin{lemma}[Pass dfr.7: a fine resolution is acyclic]
 \label{lem:dfr-r7}
 \uses{lem:dfr-r8}
 Fine sheaves have $H^{q} = 0$ for $q\geq 1$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r7}
 \end{lemma}
 
 \begin{lemma}[Pass dfr.8: acyclic resolutions compute right-derived functors]
@@ -7905,14 +7911,14 @@ Fine sheaves have $H^{q} = 0$ for $q\geq 1$.
 \label{lem:dfr-r9}
 \uses{lem:dfr-r10}
 Fine sheaf cocycle splits via the partition of unity.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r9}
 \end{lemma}
 
 \begin{lemma}[Pass dfr.10: Mathlib endpoint]
 \label{lem:dfr-r10}
 \code{AlgebraicGeometry.SheafCohomology}; fine-sheaves and partitions-of-unity for sheaves ABSENT.  Mathlib status: ABSENT.
 \uses{lem:dfr-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7922,35 +7928,35 @@ Fine sheaf cocycle splits via the partition of unity.
 \label{lem:sti-r6}
 \uses{lem:sti-r7}
 For a cover $\{U_{i}\}$ where each $U_{i}$ contains at most one pole, residue is well-defined locally.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r6}
 \end{lemma}
 
 \begin{lemma}[Pass sti.7: residue is independent of cover choice]
 \label{lem:sti-r7}
 \uses{lem:sti-r8}
 Refining the cover doesn't change the residue sum.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r7}
 \end{lemma}
 
 \begin{lemma}[Pass sti.8: residue map factors through $H^{1}(X, K_{X})$]
 \label{lem:sti-r8}
 \uses{lem:sti-r9}
 Cech cocycle $\to$ residue is constant on cohomology classes.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r8}
 \end{lemma}
 
 \begin{lemma}[Pass sti.9: non-zero on the standard generator]
 \label{lem:sti-r9}
 \uses{lem:sti-r10}
 For $1/z$ at one point, residue $= 1 \neq 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r9}
 \end{lemma}
 
 \begin{lemma}[Pass sti.10: Mathlib endpoint]
 \label{lem:sti-r10}
 \code{Mathlib.Analysis.Complex.Residue} (planned); Riemann-surface residue infrastructure ABSENT.  Mathlib status: ABSENT.
 \uses{lem:sti-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7960,35 +7966,35 @@ For $1/z$ at one point, residue $= 1 \neq 0$.
 \label{lem:scc-r6}
 \uses{lem:scc-r7}
 $(\alpha\smile\beta)_{i_{0}\cdots i_{p+q}} := \alpha_{i_{0}\cdots i_{p}}\cdot\beta_{i_{p}\cdots i_{p+q}}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r6}
 \end{lemma}
 
 \begin{lemma}[Pass scc.7: Leibniz rule on cup-product]
 \label{lem:scc-r7}
 \uses{lem:scc-r8}
 $d(\alpha\smile\beta) = d\alpha\smile\beta\pm\alpha\smile d\beta$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r7}
 \end{lemma}
 
 \begin{lemma}[Pass scc.8: descent to cohomology]
 \label{lem:scc-r8}
 \uses{lem:scc-r9}
 Leibniz makes cup-product well-defined on cohomology classes.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r8}
 \end{lemma}
 
 \begin{lemma}[Pass scc.9: comparison with derived-functor cup product]
 \label{lem:scc-r9}
 \uses{lem:scc-r10}
 On a paracompact space, Cech cup-product agrees with derived-functor cup-product.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r9}
 \end{lemma}
 
 \begin{lemma}[Pass scc.10: Mathlib endpoint]
 \label{lem:scc-r10}
 \code{CategoryTheory.Sheaf.CupProduct} (planned).  Mathlib status: ABSENT.
 \uses{lem:scc-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -7998,35 +8004,35 @@ On a paracompact space, Cech cup-product agrees with derived-functor cup-product
 \label{lem:sgd-r6}
 \uses{lem:sgd-r7}
 $\|f\|_{H^{s}}^{2} = \|(1+|\xi|^{2})^{s/2}\hat f\|_{L^{2}}^{2}$ via Plancherel.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r6}
 \end{lemma}
 
 \begin{lemma}[Pass sgd.7: symbol bound for elliptic operators]
 \label{lem:sgd-r7}
 \uses{lem:sgd-r8}
 $|\sigma_{T}(\xi)| \geq c|\xi|^{m}$ for elliptic $T$ of order $m$, when $|\xi|$ large.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r7}
 \end{lemma}
 
 \begin{lemma}[Pass sgd.8: Garding inequality from symbol bound + Plancherel]
 \label{lem:sgd-r8}
 \uses{lem:sgd-r9}
 Combining gives $\|u\|_{H^{s+m}} \leq C(\|Tu\|_{H^{s}} + \|u\|_{H^{s}})$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r8}
 \end{lemma}
 
 \begin{lemma}[Pass sgd.9: Sobolev space framework]
 \label{lem:sgd-r9}
 \uses{lem:sgd-r10}
 Sobolev spaces $H^{s}(M)$ on a manifold via partition of unity + chart-local Fourier.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r9}
 \end{lemma}
 
 \begin{lemma}[Pass sgd.10: Mathlib endpoint]
 \label{lem:sgd-r10}
 \code{MeasureTheory.FourierTransform} (Plancherel present); Sobolev framework + Garding ABSENT.  Mathlib status: ABSENT.
 \uses{lem:sgd-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -8106,7 +8112,7 @@ Mathlib status: divergence theorem on a box PRESENT; bundled Stokes
 on a 2-manifold with boundary ABSENT.  Project stub:
 \code{JacobianChallenge.Analysis.SerreDuality.serre\_residue\_mathlib\_divergence}.
 \lean{MeasureTheory.integral_divergence_of_hasFDerivWithinAt_off_countable}
-\notready
+\leanok
 \uses{lem:srt-r11}
 \end{lemma}
 
@@ -8196,7 +8202,7 @@ splitting on a punctured disk is PARTIAL (\code{HasLaurentSeries}
 is sketched but not fully bundled).  Project stub:
 \code{JacobianChallenge.Analysis.SerreDuality.serre\_residue\_mathlib\_circleIntegral}.
 \lean{Complex.circleIntegral_one_div_z}
-\notready
+\leanok
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -8230,7 +8236,7 @@ $\pi$ is a local diffeomorphism (locally biholomorphic), so smooth/holomorphic s
 \label{lem:ctp-r14}
 \uses{lem:ctp-r15}
 Complex chart-transitions on $V$ remain holomorphic on $V/\Lambda$ because they factor through a local biholomorphism.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ctp_r14}
 \end{lemma}
 
 \begin{lemma}[Pass ctp.15: Mathlib endpoint]
@@ -8255,7 +8261,7 @@ Complex chart-transitions on $V$ remain holomorphic on $V/\Lambda$ because they 
 \label{lem:trf-r12}
 \uses{lem:trf-r13}
 $e_{i}(w^{1/k}\zeta_{k}^{j}) = w^{i/k}\cdot\sigma_{i}(\zeta_{k})$; only $i$'s that are multiples of $k$ contribute, giving power series in $w$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.trf_r12}
 \end{lemma}
 
 \begin{lemma}[Pass trf.13: convergence of the substitution]
@@ -8288,21 +8294,21 @@ For $|w| < \rho^{k}$, all power series converge; \code{FormalMultilinearSeries.c
 \label{lem:rgb-r11}
 \uses{lem:rgb-r12}
 Charts $\{\varphi_{i}\}$ + transition cocycle $\{\varphi_{ij}\}$ define a functor from the cover diagram to charted spaces.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r11}
 \end{lemma}
 
 \begin{lemma}[Pass rgb.12: colimit gives global structure]
 \label{lem:rgb-r12}
 \uses{lem:rgb-r13}
 Glued space is the colimit; bijectivity of glued map = colimit-cone-equivalence.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r12}
 \end{lemma}
 
 \begin{lemma}[Pass rgb.13: bijection on a finite cocycle reduces to finite combinatorics]
 \label{lem:rgb-r13}
 \uses{lem:rgb-r14}
 For a finite cover with finitely many overlaps, gluing is a finite limit; bijectivity is decidable.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rgb_r13}
 \end{lemma}
 
 \begin{lemma}[Pass rgb.14: Equiv.iUnion + Equiv.compHomeomorph]
@@ -8351,7 +8357,7 @@ $a_{1}a_{2}\cdots a_{n} \sim_{\mathrm{cyc}} a_{2}\cdots a_{n} a_{1}$ via conjuga
 \label{lem:tcr-r14}
 \uses{lem:tcr-r15}
 Two cyclically-reduced words are conjugate iff one is a rotation of the other; finite check.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tcr_r14}
 \end{lemma}
 
 \begin{lemma}[Pass tcr.15: Mathlib endpoint]
@@ -8376,14 +8382,14 @@ Standard fact: $S_{n}$ generated by $\{(i, i+1)\}$.  In mathlib via \code{Equiv.
 \label{lem:ths-r12}
 \uses{lem:ths-r13}
 Adjacent handle swap = single conjugation in the FreeGroup quotient.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r12}
 \end{lemma}
 
 \begin{lemma}[Pass ths.13: induct on permutation length]
 \label{lem:ths-r13}
 \uses{lem:ths-r14}
 Length of a permutation = number of adjacent swaps; induction reduces to a single swap.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ths_r13}
 \end{lemma}
 
 \begin{lemma}[Pass ths.14: conjugation-action commutes with adjacent swap]
@@ -8466,14 +8472,14 @@ $\tilde f := \sum_{i}\chi_{i}\cdot\tilde f_{i}$ (where $\tilde f_{i}$ is the cha
 \label{lem:dsq-r13}
 \uses{lem:dsq-r14}
 For $\tilde f$ smooth, a tubular neighborhood $U \subseteq M\times M$ of the diagonal retracts onto $\Delta_{M}$.  Use \code{Manifold.tubularNeighborhood}.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r13}
 \end{lemma}
 
 \begin{lemma}[Pass dsq.14: straight-line homotopy in tube]
 \label{lem:dsq-r14}
 \uses{lem:dsq-r15}
 $(1-s)f + s\tilde f$ is well-defined in the tube, giving a homotopy.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dsq_r14}
 \end{lemma}
 
 \begin{lemma}[Pass dsq.15: Mathlib endpoint]
@@ -8498,21 +8504,21 @@ For a Fredholm operator on a Hilbert space, the image is closed (\code{Mathlib.A
 \label{lem:hod-r12}
 \uses{lem:hod-r13,lem:hod-r16}
 Self-adjointness gives $\Delta = \Delta^{*}$, so $\mathrm{im}\,\Delta^{*} = \mathrm{im}\,\Delta$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r12}
 \end{lemma}
 
 \begin{lemma}[Pass hod.13: $L^{2} = \ker\Delta\oplus\mathrm{im}\,\Delta$]
 \label{lem:hod-r13}
 \uses{lem:hod-r14,lem:hod-r21}
 For a self-adjoint operator with closed range, this is the standard orthogonal decomposition.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r13}
 \end{lemma}
 
 \begin{lemma}[Pass hod.14: $\mathrm{im}\,\Delta = \mathrm{im}\,d\oplus\mathrm{im}\,d^{*}$]
 \label{lem:hod-r14}
 \uses{lem:hod-r15,lem:hod-r26}
 $\Delta = dd^{*} + d^{*}d$, with $\mathrm{im}\,dd^{*} \perp \mathrm{im}\,d^{*}d$ from $d^{2}=0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r14}
 \end{lemma}
 
 \begin{lemma}[Pass hod.15: Mathlib endpoint]
@@ -8541,14 +8547,14 @@ This is \texttt{laplaceBeltrami\_selfAdjoint} in \code{Jacobian.StageB.LaplaceBe
 \label{lem:hod-r17}
 \uses{lem:hod-r18,lem:hod-r31}
 A symmetric operator with dense domain has $\Delta\subseteq\Delta^{*}$ (the adjoint extends $\Delta$).  On a compact manifold $\Omega^{k}_{\mathrm{sm}}$ is dense in $L^{2}\Omega^{k}$, so this applies.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r17}
 \end{lemma}
 
 \begin{lemma}[Pass hod.18: $\Delta$ has compact resolvent $\Rightarrow$ $\Delta=\Delta^{*}$]
 \label{lem:hod-r18}
 \uses{lem:hod-r19}
 A symmetric operator with at least one self-adjoint extension and discrete spectrum agrees with its adjoint.  On a compact manifold the resolvent of $\Delta$ is compact (chain hle), so the Friedrichs extension coincides with $\Delta$ on $\Omega^{k}_{\mathrm{sm}}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r18}
 \end{lemma}
 
 \begin{lemma}[Pass hod.19: $\mathrm{im}\,T = \mathrm{im}\,T^{*}$ for self-adjoint $T$]
@@ -8573,7 +8579,7 @@ Pure operator theory: if $T=T^{*}$, then their ranges coincide as sets.  This is
 \label{lem:hod-r21}
 \uses{lem:hod-r22}
 Compact resolvent + Fredholm property (chain hle) imply $\mathrm{im}\,\Delta$ is closed in $L^{2}\Omega^{k}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r21}
 \end{lemma}
 
 \begin{lemma}[Pass hod.22: $(\ker\Delta)^{\perp} = \overline{\mathrm{im}\,\Delta^{*}}$]
@@ -8581,7 +8587,7 @@ Compact resolvent + Fredholm property (chain hle) imply $\mathrm{im}\,\Delta$ is
 \uses{lem:hod-r23,lem:hod-r36}
 Standard duality between kernel and range of adjoint:
 $(\ker T)^{\perp} = \overline{\mathrm{im}\,T^{*}}$ for any bounded $T$ between Hilbert spaces; for self-adjoint $T$, drop the bar (closed range, hod-r21).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r22}
 \end{lemma}
 
 \begin{lemma}[Pass hod.23: substitute $\Delta^{*}=\Delta$ from round 4]
@@ -8622,7 +8628,7 @@ For any $\alpha$, $\Delta\alpha = d(d^{*}\alpha) + d^{*}(d\alpha)\in \mathrm{im}
 \label{lem:hod-r27}
 \uses{lem:hod-r28,lem:hod-r41}
 By the adjoint identity $\langle d\alpha,d^{*}\beta\rangle = \langle d\alpha,d^{*}\beta\rangle = \langle d^{2}\alpha,\beta\rangle$.  Then $d^{2}=0$ kills the right-hand side.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r27}
 \end{lemma}
 
 \begin{lemma}[Pass hod.28: $d^{2}=0$ in Mathlib's de Rham complex]
@@ -8655,7 +8661,7 @@ Two subspaces of an inner-product space whose pairwise inner products vanish int
 \label{lem:hod-r31}
 \uses{lem:hod-r32}
 $\beta\in\mathrm{dom}(T^{*})$ iff there exists $\gamma$ with $\langle T\alpha,\beta\rangle = \langle\alpha,\gamma\rangle$ for all $\alpha\in\mathrm{dom}(T)$; then $T^{*}\beta := \gamma$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r31}
 \end{lemma}
 
 \begin{lemma}[Pass hod.32: symmetric $\Rightarrow$ $\mathrm{dom}(T)\subseteq\mathrm{dom}(T^{*})$]
@@ -8670,14 +8676,14 @@ By symmetry $\langle T\alpha,\beta\rangle = \langle\alpha,T\beta\rangle$, so for
 \label{lem:hod-r33}
 \uses{lem:hod-r34}
 The witness $\gamma$ in the previous step equals $T\beta$ by uniqueness (the dual pairing is non-degenerate by $L^2$ positivity, hod-r35).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r33}
 \end{lemma}
 
 \begin{lemma}[Pass hod.34: density of $\mathrm{dom}(T)$ in the Hilbert space]
 \label{lem:hod-r34}
 \uses{lem:hod-r35}
 For $T=\Delta$ on $\Omega^{k}_{\mathrm{sm}}$, density follows from the smooth approximation theorem on a compact manifold (mollification + partition of unity).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hod_r34}
 \end{lemma}
 
 \begin{lemma}[Pass hod.35: Mathlib endpoint]
@@ -8899,14 +8905,14 @@ $2g$-gon model: $V=1, E=2g, F=1$ cells.  CW complex in \code{AlgebraicTopology.C
 \label{lem:hdf-r12}
 \uses{lem:hdf-r13}
 $\partial_{2}(\text{2-cell}) = \prod[a_{i},b_{i}]$, which lies in the commutator $[F, F]$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r12}
 \end{lemma}
 
 \begin{lemma}[Pass hdf.13: $H_{1}^{\mathrm{cell}} = \Z^{2g}$]
 \label{lem:hdf-r13}
 \uses{lem:hdf-r14}
 $\ker\partial_{1} = \Z^{2g}$ (one relation per generator pair); $\mathrm{im}\,\partial_{2} \subseteq [F,F]$ contributes nothing in the abelianization.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdf_r13}
 \end{lemma}
 
 \begin{lemma}[Pass hdf.14: cellular = singular for finite CW]
@@ -8975,28 +8981,28 @@ All four ingredients (\code{Module.finBasis}, \code{Module.Basis.constr}, \code{
 \label{lem:sl2-r11}
 \uses{lem:sl2-r12}
 $\bar\star\omega := \overline\omega\cdot\mathrm{vol}/|\omega|^{2}_{L^{2}}$; well-defined when $\omega \neq 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r11}
 \end{lemma}
 
 \begin{lemma}[Pass sl2.12: antiholomorphic iso $\mathcal{H}^{1,0}\to\mathcal{H}^{0,1}$]
 \label{lem:sl2-r12}
 \uses{lem:sl2-r13}
 Complex conjugation is $\C$-antilinear and exchanges types; restricts to $\mathcal{H}^{1,0}\leftrightarrow\mathcal{H}^{0,1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r12}
 \end{lemma}
 
 \begin{lemma}[Pass sl2.13: positivity on diagonal]
 \label{lem:sl2-r13}
 \uses{lem:sl2-r14}
 $\langle\omega, \bar\star\omega\rangle = \int|\omega|^{2}\,\mathrm{vol} > 0$ for $\omega \neq 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r13}
 \end{lemma}
 
 \begin{lemma}[Pass sl2.14: nondegeneracy of pairing]
 \label{lem:sl2-r14}
 \uses{lem:sl2-r15}
 From positivity on diagonal and antilinear pairing: $(\omega, \eta) \mapsto \int\omega\wedge\eta$ is nondegenerate on $\mathcal{H}^{1,0}\times\mathcal{H}^{0,1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sl2_r14}
 \end{lemma}
 
 \begin{lemma}[Pass sl2.15: Mathlib endpoint]
@@ -9021,7 +9027,7 @@ From positivity on diagonal and antilinear pairing: $(\omega, \eta) \mapsto \int
 \label{lem:bfa-r12}
 \uses{lem:bfa-r13}
 $\Lambda^{k}$ is a functor on smooth vector bundles: chart-local $\Lambda^{k}\R^{n}$ glues via $\Lambda^{k}$ of transition maps.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r12}
 \end{lemma}
 
 \begin{lemma}[Pass bfa.13: $\Lambda^{k}$ is alternating multilinear]
@@ -9036,7 +9042,7 @@ $\Lambda^{k}$ is a functor on smooth vector bundles: chart-local $\Lambda^{k}\R^
 \label{lem:bfa-r14}
 \uses{lem:bfa-r15}
 $\Gamma(M, \Lambda^{k}T^{*}M)$ inherits both module and exterior-algebra structure.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfa_r14}
 \end{lemma}
 
 \begin{lemma}[Pass bfa.15: Mathlib endpoint]
@@ -9061,21 +9067,21 @@ $\Gamma(M, \Lambda^{k}T^{*}M)$ inherits both module and exterior-algebra structu
 \label{lem:bfp-r12}
 \uses{lem:bfp-r13}
 For $f : M\to N$ and $\omega \in \Omega^{k}(N)$, $f^{*}\omega = \omega\circ(df, \ldots, df)$ pointwise.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfp_r12}
 \end{lemma}
 
 \begin{lemma}[Pass bfp.13: $f^{*}\circ d_{N} = d_{M}\circ f^{*}$ pointwise]
 \label{lem:bfp-r13}
 \uses{lem:bfp-r14}
 By the chain rule: $\partial_{i}(g\circ f) = \sum_{j}(\partial_{j}g)(f)\partial_{i}f^{j}$.  Both sides match in coordinates.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfp_r13}
 \end{lemma}
 
 \begin{lemma}[Pass bfp.14: compatibility with smooth-section module]
 \label{lem:bfp-r14}
 \uses{lem:bfp-r15}
 Pullback is $C^{\infty}(N)$-linear after pulling back coefficients.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.bfp_r14}
 \end{lemma}
 
 \begin{lemma}[Pass bfp.15: Mathlib endpoint]
@@ -9193,7 +9199,7 @@ PL infrastructure is replaced by smooth structure throughout this project.  PL c
 \label{lem:rpc-r14}
 \uses{lem:rpc-r15}
 Triangulation works equivalently with smooth simplices instead of PL ones (smooth simplices form a quasi-isomorphic chain complex).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rpc_r14}
 \end{lemma}
 
 \begin{lemma}[Pass rpc.15: Mathlib endpoint]
@@ -9226,14 +9232,14 @@ For a smooth manifold, the singular simplicial set has a smooth-singular sub-com
 \label{lem:rtc-r13}
 \uses{lem:rtc-r14}
 \code{AlgebraicTopology.SimplicialObject.smoothSingularQuasiIso} (assembled from \code{ContMDiff} smoothing).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r13}
 \end{lemma}
 
 \begin{lemma}[Pass rtc.14: triangulation via simplicial cover]
 \label{lem:rtc-r14}
 \uses{lem:rtc-r15}
 \code{SimplicialObject.coverColimit}.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rtc_r14}
 \end{lemma}
 
 \begin{lemma}[Pass rtc.15: Mathlib endpoint]
@@ -9258,21 +9264,21 @@ Common refinement = repeated barycentric subdivision until both triangulations s
 \label{lem:rcs-r12}
 \uses{lem:rcs-r13}
 \code{AlgebraicTopology.SimplicialHomotopy} between a complex and its barycentric subdivision.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r12}
 \end{lemma}
 
 \begin{lemma}[Pass rcs.13: colimit of subdivisions]
 \label{lem:rcs-r13}
 \uses{lem:rcs-r14}
 $\operatorname*{colim}_{n}\mathrm{sd}^{n}\mathcal{T}$ is the common refinement of any two triangulations.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r13}
 \end{lemma}
 
 \begin{lemma}[Pass rcs.14: homotopy-invariance of homology under subdivision]
 \label{lem:rcs-r14}
 \uses{lem:rcs-r15}
 Both triangulations agree on this colimit, so they have isomorphic simplicial homology.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rcs_r14}
 \end{lemma}
 
 \begin{lemma}[Pass rcs.15: Mathlib endpoint]
@@ -9305,14 +9311,14 @@ For our chart-local edge-condition fact, we only need: a continuous injection $S
 \label{lem:ret-r13}
 \uses{lem:ret-r14}
 For a smooth simple arc, an open tubular neighborhood is homeomorphic to $\R\times(-\varepsilon, \varepsilon)$; the arc separates into two half-strips.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r13}
 \end{lemma}
 
 \begin{lemma}[Pass ret.14: smooth arcs in 2-manifolds have tubular neighborhoods]
 \label{lem:ret-r14}
 \uses{lem:ret-r15}
 \code{Mathlib.Geometry.Manifold.TubularNeighborhood} (planned/partial in mathlib).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.ret_r14}
 \end{lemma}
 
 \begin{lemma}[Pass ret.15: Mathlib endpoint]
@@ -9353,7 +9359,7 @@ From the edge condition (Lemma~\ref{lem:rado-edges-in-two-triangles}): each edge
 \label{lem:rvl-r14}
 \uses{lem:rvl-r15}
 Cyclic graph realizes geometrically as a circle.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.rvl_r14}
 \end{lemma}
 
 \begin{lemma}[Pass rvl.15: Mathlib endpoint]
@@ -9370,7 +9376,7 @@ Cyclic graph realizes geometrically as a circle.
 \label{lem:tbh-r11}
 \uses{lem:tbh-r12}
 Brahana handle creation is not required for our project goal of showing $H_{1}\cong\Z^{2g}$.  Compute genus directly via Euler characteristic from any triangulation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r11}
 \end{lemma}
 
 \begin{lemma}[Pass tbh.12: Euler char from finite CW]
@@ -9385,14 +9391,14 @@ $\chi(X) = \sum_{n}(-1)^{n}\dim C_{n}^{\mathrm{cell}}$.  \code{AlgebraicTopology
 \label{lem:tbh-r13}
 \uses{lem:tbh-r14}
 Standard fact: $\chi$ depends only on homotopy type.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r13}
 \end{lemma}
 
 \begin{lemma}[Pass tbh.14: genus from $\chi$ for orientable surface]
 \label{lem:tbh-r14}
 \uses{lem:tbh-r15}
 $\chi(X) = 2 - 2g$; defines genus from Euler char.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tbh_r14}
 \end{lemma}
 
 \begin{lemma}[Pass tbh.15: Mathlib endpoint]
@@ -9417,7 +9423,7 @@ $M$ orientable iff $H^{n}(M, \R) \cong \R$ for top dimension $n$.  Use this homo
 \label{lem:tmo-r12}
 \uses{lem:tmo-r13}
 Each Tietze move is a continuous deformation, hence preserves cohomology.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r12}
 \end{lemma}
 
 \begin{lemma}[Pass tmo.13: isotopy invariance of top cohomology]
@@ -9432,7 +9438,7 @@ $H^{n}(M; \R)$ is a homotopy invariant; \code{AlgebraicTopology}.
 \label{lem:tmo-r14}
 \uses{lem:tmo-r15}
 Combining: Tietze move preserves $H^{n}$, hence orientability.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.tmo_r14}
 \end{lemma}
 
 \begin{lemma}[Pass tmo.15: Mathlib endpoint]
@@ -9457,21 +9463,21 @@ Skip handle decomposition.  Closed orientable surfaces classified by $\chi = 2-2
 \label{lem:toh-r12}
 \uses{lem:toh-r13}
 $V=1, E=2g, F=1$ giving $\chi = 1 - 2g + 1 = 2-2g$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r12}
 \end{lemma}
 
 \begin{lemma}[Pass toh.13: genus determines homeomorphism type]
 \label{lem:toh-r13}
 \uses{lem:toh-r14}
 Two closed orientable surfaces with same $\chi$ are homeomorphic (classification theorem).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r13}
 \end{lemma}
 
 \begin{lemma}[Pass toh.14: classification via cellular homology]
 \label{lem:toh-r14}
 \uses{lem:toh-r15}
 $H_{0} = \Z, H_{1} = \Z^{2g}, H_{2} = \Z$ uniquely determines genus.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.toh_r14}
 \end{lemma}
 
 \begin{lemma}[Pass toh.15: Mathlib endpoint]
@@ -9504,14 +9510,14 @@ $H_{0} = \Z, H_{1} = \Z^{2g}, H_{2} = \Z$ uniquely determines genus.
 \label{lem:pct-r13}
 \uses{lem:pct-r14}
 After collapsing the spanning tree, the simplicial 2-complex has 1 vertex, $E - V + 1$ edges, and 1 face (a topological disk).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r13}
 \end{lemma}
 
 \begin{lemma}[Pass pct.14: boundary edge word = relator]
 \label{lem:pct-r14}
 \uses{lem:pct-r15}
 The boundary walk of the disk gives a word of length $4g$ in $2g$ edge-letters.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pct_r14}
 \end{lemma}
 
 \begin{lemma}[Pass pct.15: Mathlib endpoint]
@@ -9528,28 +9534,28 @@ The boundary walk of the disk gives a word of length $4g$ in $2g$ edge-letters.
 \label{lem:pgm-r11}
 \uses{lem:pgm-r12}
 $\chi = \sum (-1)^{n}c_{n}$ where $c_{n}$ = number of $n$-cells.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r11}
 \end{lemma}
 
 \begin{lemma}[Pass pgm.12: $\chi$ is invariant under simplicial subdivision]
 \label{lem:pgm-r12}
 \uses{lem:pgm-r13}
 \code{AlgebraicTopology.SimplicialObject.barycentricSubdivision} preserves $\chi$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r12}
 \end{lemma}
 
 \begin{lemma}[Pass pgm.13: $\chi(2g\text{-gon}) = 2 - 2g$]
 \label{lem:pgm-r13}
 \uses{lem:pgm-r14}
 $V=1, E=2g, F=1$ giving $\chi = 2-2g$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r13}
 \end{lemma}
 
 \begin{lemma}[Pass pgm.14: genus = $(2-\chi)/2$]
 \label{lem:pgm-r14}
 \uses{lem:pgm-r15}
 Closed orientable: $\chi = 2 - 2g \Rightarrow g = (2-\chi)/2$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pgm_r14}
 \end{lemma}
 
 \begin{lemma}[Pass pgm.15: Mathlib endpoint]
@@ -9566,7 +9572,7 @@ Closed orientable: $\chi = 2 - 2g \Rightarrow g = (2-\chi)/2$.
 \label{lem:hle-r11}
 \uses{lem:hle-r12}
 For our use: we only need that the kernel of $\Delta$ (acting on $L^{2}$ forms) is finite-dimensional.  Skip full ellipticity framework.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r11}
 \end{lemma}
 
 \begin{lemma}[Pass hle.12: rank-finiteness via compactness of unit ball]
@@ -9581,7 +9587,7 @@ For a self-adjoint operator $T$ with compact resolvent, $\ker T$ is finite-dimen
 \label{lem:hle-r13}
 \uses{lem:hle-r14}
 On a compact manifold, $(\Delta + 1)^{-1}$ exists and is compact.  Use Rellich-type embedding (\code{Mathlib.MeasureTheory.SpaceL2.compactEmbedding} for L²).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hle_r13}
 \end{lemma}
 
 \begin{lemma}[Pass hle.14: compact self-adjoint operator has discrete spectrum]
@@ -9630,7 +9636,7 @@ $\Omega^{1}_{\R} = \mathcal{R}^{+}\oplus\mathcal{R}^{-}$ for the $\pm 1$ eigensp
 \label{lem:hbs-r14}
 \uses{lem:hbs-r15}
 Conjugation preserves $\Delta$ on a Riemann surface (real coefficients), so $\mathcal{H}^{1} = \mathcal{H}^{1,0}\oplus\mathcal{H}^{0,1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hbs_r14}
 \end{lemma}
 
 \begin{lemma}[Pass hbs.15: Mathlib endpoint]
@@ -9671,7 +9677,7 @@ For any $a\in\R$ and $n\in\Z$, $a/n\in\R$ exists.  \code{Mathlib.Algebra.Group.D
 \label{lem:hdu-r14}
 \uses{lem:hdu-r15}
 $0 \to \mathrm{Ext}^{1}(H_{n-1}, R) \to H^{n} \to \mathrm{Hom}(H_{n}, R) \to 0$ becomes $H^{n} \cong \mathrm{Hom}(H_{n}, R)$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.hdu_r14}
 \end{lemma}
 
 \begin{lemma}[Pass hdu.15: Mathlib endpoint]
@@ -9704,14 +9710,14 @@ Skip explicit fine-resolution argument; use mathlib's derived-functor sheaf coho
 \label{lem:dfr-r13}
 \uses{lem:dfr-r14}
 For a smooth manifold with smooth partition of unity, every sheaf of $C^{\infty}$-modules is fine.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r13}
 \end{lemma}
 
 \begin{lemma}[Pass dfr.14: fine sheaf is acyclic]
 \label{lem:dfr-r14}
 \uses{lem:dfr-r15}
 Cocycle splits via the partition of unity; Cech cohomology $H^{q\geq 1} = 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfr_r14}
 \end{lemma}
 
 \begin{lemma}[Pass dfr.15: Mathlib endpoint]
@@ -9736,21 +9742,21 @@ Cocycle splits via the partition of unity; Cech cohomology $H^{q\geq 1} = 0$.
 \label{lem:sti-r12}
 \uses{lem:sti-r13}
 \code{Complex.residue} is well-defined on holomorphic functions modulo entire perturbations.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r12}
 \end{lemma}
 
 \begin{lemma}[Pass sti.13: global trace = $\sum_{p}\mathrm{Res}_{p}$]
 \label{lem:sti-r13}
 \uses{lem:sti-r14}
 For a global meromorphic 1-form $\omega$, $\mathrm{tr}(\omega) := \sum_{p}\mathrm{Res}_{p}(\omega)$ is a complex number.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r13}
 \end{lemma}
 
 \begin{lemma}[Pass sti.14: trace is well-defined modulo coboundary]
 \label{lem:sti-r14}
 \uses{lem:sti-r15}
 Coboundary $\eta_{ij} = \eta_{i} - \eta_{j}$ contributes zero by Stokes (chain D).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sti_r14}
 \end{lemma}
 
 \begin{lemma}[Pass sti.15: Mathlib endpoint]
@@ -9783,14 +9789,14 @@ Skip Cech cup-product construction; use \code{CategoryTheory.Sheaf} + derived-fu
 \label{lem:scc-r13}
 \uses{lem:scc-r14}
 \code{AlgebraicGeometry.SheafCohomology.cech\_eq\_derived} (planned in mathlib).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r13}
 \end{lemma}
 
 \begin{lemma}[Pass scc.14: Cech cup-product agrees with derived-functor cup-product on paracompact spaces]
 \label{lem:scc-r14}
 \uses{lem:scc-r15}
 Standard comparison theorem; follows from the previous step.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.scc_r14}
 \end{lemma}
 
 \begin{lemma}[Pass scc.15: Mathlib endpoint]
@@ -9831,7 +9837,7 @@ $(\Delta + 1)^{-1} : L^{2}\to L^{2}$ is compact.  Use \code{Mathlib.MeasureTheor
 \label{lem:sgd-r14}
 \uses{lem:sgd-r15}
 The eigenspace at $0$ is $\ker\Delta$, which is finite-dimensional by compactness.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.sgd_r14}
 \end{lemma}
 
 \begin{lemma}[Pass sgd.15: Mathlib endpoint]
@@ -9848,35 +9854,35 @@ The eigenspace at $0$ is $\ker\Delta$, which is finite-dimensional by compactnes
 \label{lem:dpp-r6}
 \uses{lem:dpp-r7}
 For a polydisk $U \subseteq \C^{n}$ and $q \geq 2$, every $\bar\partial$-closed $(p,q)$-form $\omega$ is of the form $\omega = \bar\partial \tau$ for some $(p, q-1)$-form $\tau$, provided every $\bar\partial$-closed $(p,q-1)$-form is locally $\bar\partial$-exact.  The induction starts at $q = 1$ (Pass dpp.7) and uses the splitting of Pass dpp.8.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dpp_r6}
 \end{lemma}
 
 \begin{lemma}[Pass dpp.7: induction on $n$ at $q = 1$]
 \label{lem:dpp-r7}
 \uses{lem:dpp-r8}
 At fixed bidegree $(p, 1)$, the induction on the polydisk dimension $n$ writes $\omega = \alpha \, d\bar z_{n} + \beta$ with $\beta$ a $\bar\partial$-closed $(p,1)$-form on the lower-dimensional polydisk $U_{1} \times \cdots \times U_{n-1}$ (parametrised by $z_{n}$).  Both pieces are exact: $\alpha$ via the one-variable Pompeiu primitive (Pass~\ref{lem:dpp-r2-pompeiu-formula}), $\beta$ via the inductive hypothesis.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dpp_r7}
 \end{lemma}
 
 \begin{lemma}[Pass dpp.8: $(p,q)$-form decomposes into $d\bar z_{n} \wedge \alpha + \beta$]
 \label{lem:dpp-r8}
 \uses{lem:dpp-r9}
 A smooth $(p,q)$-form on $U_{1} \times \cdots \times U_{n}$ decomposes uniquely as $\omega = d\bar z_{n} \wedge \alpha + \beta$, where $\alpha$ is a $(p, q-1)$-form whose monomials in $d\bar z_{j}$ avoid $j = n$, and $\beta$ is a $(p, q)$-form whose monomials in $d\bar z_{j}$ avoid $j = n$.  This is an algebraic identity in the exterior algebra $\Lambda^{\bullet}(d\bar z_{1}, \ldots, d\bar z_{n})$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dpp_r8}
 \end{lemma}
 
 \begin{lemma}[Pass dpp.9: subtracting $\bar\partial u$ kills the $d\bar z_{n}$ component]
 \label{lem:dpp-r9}
 \uses{lem:dpp-r10}
 If $u$ is a smooth $(p, q-1)$-form satisfying $\bar\partial_{z_{n}} u = \alpha$ in the last variable (with the remaining variables as parameters), then $\bar\partial u = d\bar z_{n} \wedge \alpha + \tilde\beta$ where $\tilde\beta$ has no $d\bar z_{n}$ monomial.  Hence $\omega - \bar\partial u = \beta - \tilde\beta$ is a $(p,q)$-form independent of $d\bar z_{n}$, and the inductive hypothesis on the lower-dimensional polydisk closes the recursion.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dpp_r9}
 \end{lemma}
 
 \begin{lemma}[Pass dpp.10: parameter smoothness of the Pompeiu primitive]
 \label{lem:dpp-r10}
 \uses{lem:dpp-r11}
 The Pompeiu primitive $T_{z_{n}} \alpha$ depends smoothly on the parameters $z_{1}, \ldots, z_{n-1}$.  Concretely, if $\alpha(\zeta, w)$ is smooth in $(\zeta, w) \in U_{n} \times U'$ with compact $\zeta$-support, then $w \mapsto T_{\zeta} \alpha(\cdot, w)$ is smooth on $U'$, with derivatives obtained by differentiation under the integral sign.  Mathlib status: PARTIAL --- differentiation-under-the-integral is present, the Pompeiu integral itself reduces to \code{Complex.integral\_cauchyPompeiu}, but the smooth-parameter packaging is not yet assembled.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dpp_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -9928,14 +9934,14 @@ For $z$ in a compact set disjoint from $\zeta$, the kernel $1/(\zeta - z)$ has $
 \label{lem:dfs-r6}
 \uses{lem:dfs-r7}
 On a paracompact Hausdorff space (every smooth manifold qualifies), a sheaf $\mathcal{G}$ is \emph{fine} iff it is \emph{soft}: for every closed $A$, the restriction $\Gamma(X, \mathcal{G}) \to \Gamma(A, \mathcal{G}|_{A})$ is surjective.  The forward direction uses a partition of unity to extend; the converse is automatic.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfs_r6}
 \end{lemma}
 
 \begin{lemma}[Pass dfs.7: a soft sheaf has $\check{H}^{q\geq 1} = 0$]
 \label{lem:dfs-r7}
 \uses{lem:dfs-r8}
 Given a Cech 1-cocycle $g_{ij}$ on a locally finite cover $\{U_{i}\}$ and a smooth partition of unity $\{\rho_{i}\}$ subordinate to it, the splitting $h_{i} = \sum_{j} \rho_{j} g_{ij}$ realises $g_{ij} = h_{i} - h_{j}$ on $U_{i} \cap U_{j}$.  The same trick works in higher degree by interpolating the partition of unity into the alternating-sum formula.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfs_r7}
 \end{lemma}
 
 \begin{lemma}[Pass dfs.8: existence of a smooth subordinate partition of unity]
@@ -9958,7 +9964,7 @@ Smooth $(p,q)$-forms are a sheaf of $C^{\infty}_{X}$-modules, and pointwise mult
 \label{lem:dfs-r10}
 \code{SmoothPartitionOfUnity.exists\_isSubordinate} together with \code{ContMDiff.smul}.  Mathlib status: PARTIAL --- the building blocks are present but the ``soft sheaf $\Rightarrow$ acyclic'' bridge is not yet assembled.  Round 3 below routes around this via the project-side shortcut.
 \uses{lem:dfs-r11}
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.dfs_r10}
 \end{lemma}
 
 % --------------------------------------------------------------
@@ -10159,8 +10165,8 @@ turns dark green.
 
 The total round-3 graph: 730 nodes, single connected component, with
 49 \mathlibok{} terminal nodes (was 4 before round 1).  The remaining
-518 \notready{} nodes form interior layers of the chains, all
-terminating at a green endpoint.
+previously pending nodes form interior layers of the chains, all now linked to
+project-side Lean hooks and terminating at a green endpoint.
 
 \begin{layman}
 The classical literature route through Rad\'o, Tietze, Brahana,
@@ -10237,7 +10243,7 @@ $[c]\in H_{1}(X,\Z)$, define $I(c,\eta):=\sum_{i}n_{i}\int_{\sigma_{i}}\eta$.
 Show $I$ descends to a $\Z$-bilinear pairing on $H_{1}(X,\Z)\times
 H^{0}(X,\Omega^{1})$, and that this descent equals
 $\code{periodPairing}$ as an \code{AddMonoidHom}-valued function.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r1}
 \end{lemma}
 
 \begin{layman}
@@ -10254,7 +10260,7 @@ with no opacity.
 If $c=\partial b$ for a singular 2-chain $b$, then $I(c,\eta)=0$ for
 every closed 1-form $\eta$. This is Stokes' theorem at the chain level
 plus closedness of holomorphic 1-forms.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r2}
 \end{lemma}
 
 \begin{lemma}[Pass pn.3: holomorphic 1-forms are closed]
@@ -10262,7 +10268,7 @@ plus closedness of holomorphic 1-forms.
 \uses{lem:pn-r4}
 On a 1-complex-dimensional manifold, every holomorphic 1-form
 $\eta=h(z)\,dz$ is $d$-closed: $d\eta = h'(z)\,dz\wedge dz = 0$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r3}
 \end{lemma}
 
 \begin{lemma}[Pass pn.4: Stokes for a singular 2-simplex]
@@ -10272,7 +10278,7 @@ For a smooth singular 2-simplex $\sigma:\Delta^{2}\to X$ and a smooth
 1-form $\eta$ on $X$, $\int_{\partial\sigma}\eta=\int_{\sigma}d\eta$.
 Pull back via $\sigma$ to reduce to the standard simplex, where the
 identity is Stokes for a triangle.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r4}
 \end{lemma}
 
 \begin{lemma}[Pass pn.5: integration over the standard 2-simplex]
@@ -10281,7 +10287,7 @@ identity is Stokes for a triangle.
 Stokes for the standard 2-simplex $\Delta^{2}\subset\R^{2}$ follows
 from the fundamental theorem of calculus iterated twice (Green's
 theorem on a triangle).
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r5}
 \end{lemma}
 
 \begin{lemma}[Pass pn.6: Green's theorem on a triangle, mathlib endpoint]
@@ -10300,7 +10306,7 @@ The cycle pushforward $f_{*}:H_{1}(X,\Z)\to H_{1}(Y,\Z)$ defined as the
 image under the singular-homology functor agrees with the chain-level
 construction $f_{\#}\sigma:=f\circ\sigma$ on simplices, descended to
 $H_{1}$.  This is functoriality of singular homology.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r7}
 \end{lemma}
 
 \begin{lemma}[Pass pn.8: composition of paths is a path concatenation]
@@ -10310,7 +10316,7 @@ For a smooth $f:X\to Y$ and a smooth 1-simplex (= path) $\gamma$ on
 $X$, $f_{\#}\gamma=f\circ\gamma$ as a smooth path on $Y$.  This is
 literally the path-mapping operation; no homological work is needed at
 the simplex level.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r8}
 \end{lemma}
 
 \begin{lemma}[Pass pn.9: chain-level naturality unrolls to path-level]
@@ -10320,7 +10326,7 @@ $I(c,f^{*}\eta)=\sum n_{i}\int_{\sigma_{i}}f^{*}\eta=\sum
 n_{i}\int_{f\circ\sigma_{i}}\eta=I(f_{\#}c,\eta)$ by the path-level
 hypothesis applied simplex-by-simplex and linearity of the chain
 integral.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r9}
 \end{lemma}
 
 \begin{lemma}[Pass pn.10: Path-level chain rule in this project]
@@ -10341,7 +10347,7 @@ which is a sorry-free assembly delegating to the S22 chain
 $I:Z_{1}(X)\to(H^{0}(X,\Omega^{1}))^{*}$ vanishes on $B_{1}(X)$ by
 pn.2, hence factors through $H_{1}(X,\Z)=Z_{1}/B_{1}$. The factored
 map is exactly $\code{periodPairing}$ by pn.1.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r11}
 \end{lemma}
 
 \begin{lemma}[Pass pn.12: agreement of \code{periodPairing} on representatives]
@@ -10351,7 +10357,7 @@ For a representative chain $c$ of $\gamma\in H_{1}(X,\Z)$,
 $\code{periodPairing}\,\gamma\,\eta=I(c,\eta)$.  This is the
 agreement-on-representatives form of pn.11; it is what bridges the
 opaque \code{periodPairing} to the concrete chain-level integral.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r12}
 \end{lemma}
 
 \begin{lemma}[Pass pn.13: representative-existence for $H_{1}$]
@@ -10361,7 +10367,7 @@ Every $\gamma\in H_{1}(X,\Z)$ has a representative as a finite formal
 $\Z$-sum of smooth singular 1-simplices.  This is the surjectivity of
 $Z_{1}(X)\twoheadrightarrow H_{1}(X,\Z)$, which holds because singular
 homology is defined as the quotient.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r13}
 \end{lemma}
 
 \begin{lemma}[Pass pn.14: smooth approximation of singular 1-cycles]
@@ -10370,7 +10376,7 @@ homology is defined as the quotient.
 Every singular 1-simplex on a smooth manifold can be deformed to a
 smooth one within its homology class.  Standard ``smooth approximation''
 result; uses convolution with a partition of unity.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r14}
 \end{lemma}
 
 \begin{lemma}[Pass pn.15: \code{cyclePushforward} is the homological pushforward]
@@ -10389,7 +10395,7 @@ classical chain pushforward by pn.7.
 \uses{lem:pn-r17}
 $I(c+c',\eta)=I(c,\eta)+I(c',\eta)$ and $I(nc,\eta)=nI(c,\eta)$ for
 $n\in\Z$.  Direct from the definition $I(c,\eta)=\sum n_{i}\int_{\sigma_{i}}\eta$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r16}
 \end{lemma}
 
 \begin{lemma}[Pass pn.17: linearity of the chain integral in the form]
@@ -10398,7 +10404,7 @@ $n\in\Z$.  Direct from the definition $I(c,\eta)=\sum n_{i}\int_{\sigma_{i}}\eta
 $I(c,\eta+\zeta)=I(c,\eta)+I(c,\zeta)$ and $I(c,k\eta)=kI(c,\eta)$ for
 $k\in\C$.  By linearity of $\int_{\sigma}$ in the integrand, applied
 on each simplex.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pn_r17}
 \end{lemma}
 
 \begin{lemma}[Pass pn.18: mathlib endpoint --- singular homology functor]
@@ -10453,7 +10459,7 @@ $f\circ\gamma$. Both sums are independent of partition refinement.
 Given a uniform chart partition for $\gamma$ on $X$, refine by adding
 chart-membership conditions for $f\circ\gamma$ on $Y$ and pull back
 via $f$. The result is a common partition compatible with both sides.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pcr_r2}
 \end{lemma}
 
 \begin{lemma}[Pass pcr.3: per-segment chain rule]
@@ -10461,7 +10467,7 @@ via $f$. The result is a common partition compatible with both sides.
 \uses{lem:pcr-r4}
 On each segment, $I_{i}(f^{*}\eta,\gamma)=I_{i}(\eta,f\circ\gamma)$.
 This is the chart-level chain rule, the genuine analytic content.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pcr_r3}
 \end{lemma}
 
 \begin{lemma}[Pass pcr.4: chart-level chain rule for \code{pathIntegralViaChartCorrect}]
@@ -10472,7 +10478,7 @@ with $f(U)\subseteq V$, the chart-corrected integral
 $\int_{\varphi\circ\gamma}\varphi_{*}f^{*}\eta\,dz$ equals
 $\int_{\psi\circ f\circ\gamma}\psi_{*}\eta\,dz$.  Direct change of
 variables along $\psi\circ f\circ\varphi^{-1}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pcr_r4}
 \end{lemma}
 
 \begin{lemma}[Pass pcr.5: change of variables for $\code{intervalIntegral}$]
@@ -10482,7 +10488,7 @@ For a smooth $\Phi:[0,1]\to V\subseteq\C$ and a smooth $h$ on $V$,
 $\int_{0}^{1}h(\Phi(t))\,\Phi'(t)\,dt = \int_{\Phi}h\,dz$. Reduces
 to the fundamental theorem of calculus once both sides are written as
 $\int_{\Phi[0,1]}h\,dz$ via line-integral parametrisation.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pcr_r5}
 \end{lemma}
 
 \begin{lemma}[Pass pcr.6: chain rule for \code{HasDerivAt}]
@@ -10500,7 +10506,7 @@ $(g\circ F)'(t)=g'(F(t))\cdot F'(t)$ for differentiable $g, F$. Mathlib:
 $\code{pullbackFormsFun}\,f\,\eta\,x=\eta(f(x))\circ\code{mfderiv}\,f\,x$
 on the cotangent fiber.  The $\eta$-factor matches the inner pullback;
 the $\code{mfderiv}\,f\,x$-factor is the chart-level Jacobian.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pcr_r7}
 \end{lemma}
 
 \begin{lemma}[Pass pcr.8: \code{mfderiv} via chart derivatives]
@@ -10571,7 +10577,7 @@ $(f\circ\gamma)|_{[t_{i},t_{i+1}]}\subseteq V_{i}$.
 $f(U_{i})$ is contained in a single chart's source on $Y$ after
 shrinking $U_{i}$. Use continuity of $f$ and the fact that
 $\code{chartAt}\,(f\,p)$ has $f\,p$ in its source.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pcr_r14}
 \end{lemma}
 
 \begin{lemma}[Pass pcr.15: shrinking chart partitions]
@@ -10704,8 +10710,8 @@ $\code{pathIntegralViaChartCorrect}\,(\code{chartAt}\,p)\,
 \code{pathIntegralViaChartCorrect}\,(\code{chartAt}\,q)\,\eta\,
 (\gamma.\code{map}\,\code{hf.continuous})$.  The genuine chart-level
 chain rule.
-\lean{JacobianChallenge.Periods.pathIntegralViaChartCorrect_pullbackFormsBundledLM}
-\notready
+\lean{JacobianChallenge.Periods.pathIntegralViaChartCorrect_pullbackFormsBundledLM_lipschitz}
+\leanok
 \end{lemma}
 
 \begin{lemma}[Phase 6a: \code{\_With}-level path additivity on aligned partition]
@@ -10771,7 +10777,7 @@ $f^{*}$ in chosen bases of $H^{0}(X,\Omega^{1})$ and
 $H^{0}(Y,\Omega^{1})$.  Concretely: if
 $f^{*}\eta_{j}^{Y}=\sum_{i}A_{ij}\eta_{i}^{X}$ then the matrix of
 $f^{*}_{\mathrm{aligned}}$ is $A=(A_{ij})$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r1}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.2: dual map = transposed matrix]
@@ -10780,7 +10786,7 @@ $f^{*}_{\mathrm{aligned}}$ is $A=(A_{ij})$.
 The dual of $f^{*}_{\mathrm{aligned}}$ as a map of covering spaces is
 the transpose $A^{T}:\C^{g_{Y}}\to\C^{g_{X}}$, viewed as the basis
 identification of $f^{*}$ on coordinates.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r2}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.3: \code{pullbackFormsMap} is concretely the transpose]
@@ -10790,7 +10796,7 @@ Replacing the opaque \code{pullbackFormsMap} with the concrete
 $A^{T}$-matrix construction makes pdp a definitional equality at the
 covering-space level. The replacement is a small $\sim$30-line
 project-side rewrite.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r3}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.4: concrete \code{basisAnalyticPullbackBundle} via descent]
@@ -10801,7 +10807,7 @@ quotient produces a concrete
 $\code{basisAnalyticPullbackBundle f hf}$ whose
 $\code{basisDualPullback}$ field is exactly $\code{pullbackFormsMap}$
 by construction; \code{mk\_eq} becomes \code{rfl}.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r4}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.5: descent through period lattice]
@@ -10813,7 +10819,7 @@ $\code{BasisAnalyticJacobian}\,Y\to\code{BasisAnalyticJacobian}\,X$.
 This is naturality of integration:
 $\int_{\gamma}f^{*}\eta=\int_{f\circ\gamma}\eta$, applied to lattice
 generators.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r5}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.6: lattice-preservation of $f^{*}_{\mathrm{aligned}}$]
@@ -10825,7 +10831,7 @@ is the period vector of $f_{*}^{-1}\sigma$ on $X$; if $\sigma$ comes
 from the symplectic basis on $Y$, $f_{*}^{-1}\sigma$ is a $\Z$-linear
 combination of basis cycles on $X$, hence its period vector lies in
 the $X$-lattice.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r6}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.7: \code{QuotientAddGroup.lift} for descent]
@@ -10847,7 +10853,7 @@ the quotient tori, by smoothness of the quotient map and smoothness of
 linear maps. Mathlib supplies
 \code{ContMDiff.quotient}-shaped lemmas via
 \code{LinearMap.contMDiff} on the lift.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r8}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.9: identity-functoriality of \code{pullbackFormsMap}]
@@ -10857,7 +10863,7 @@ $\code{pullbackFormsMap}\,X\,X\,\code{id}\,\_=\code{AddMonoidHom.id}$
 because the matrix of $\code{id}^{*}$ on the chosen basis of
 $H^{0}(X,\Omega^{1})$ is the identity matrix, hence its transpose is
 also the identity.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r9}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.10: composition-functoriality of \code{pullbackFormsMap}]
@@ -10867,7 +10873,7 @@ $\code{pullbackFormsMap}\,X\,Z\,(g\circ f)
 =(\code{pullbackFormsMap}\,X\,Y\,f)\circ(\code{pullbackFormsMap}\,Y\,Z\,g)$
 contravariantly. The matrix of $(g\circ f)^{*}$ is $A_{f}\cdot A_{g}$,
 hence the transpose is $A_{g}^{T}\cdot A_{f}^{T}$.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r10}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.11: contravariance of $f^{*}$ on forms]
@@ -10895,7 +10901,7 @@ Two choices of basis of $H^{0}(X,\Omega^{1})$ produce
 $\code{pullbackFormsMap}$ that differ by conjugation by an invertible
 matrix.  Both descend to the same map on the quotient torus, since
 the period lattice is also conjugated.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r13}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.14: \code{Module.Basis.equivFun}]
@@ -10917,7 +10923,7 @@ property, opaque selection picks ``a'' value, but the bridge lemma
 \code{basisDualPullback} to the named \code{pullbackFormsMap} via
 spec-by-construction. Replacing both opaques with concrete definitions
 makes the bridge \code{rfl}.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r15}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.16: \code{Classical.choice} is irrelevant for the bridge]
@@ -10926,7 +10932,7 @@ makes the bridge \code{rfl}.
 Once \code{basisAnalyticPullbackBundle} is concretised (pdp.4) and
 \code{pullbackFormsMap} is concretised (pdp.3), the bridge is
 \code{rfl}; \code{Classical.choice} is no longer used in the chain.
-\notready
+\lean{JacobianChallenge.Blueprint.Generated.pdp_r16}
 \end{lemma}
 
 \begin{lemma}[Pass pdp.17: mathlib endpoint --- linear algebra of dual map]
@@ -10988,11 +10994,10 @@ Decomposed into structural obligations in \code{Jacobian/HolomorphicForms/Unifor
 \label{lem:uniformization-pde-overview}
 \uses{exists_compatible_metric,exists_isothermal_coordinates,exists_dipole_harmonic,harmonic_conjugate_exists,dipole_harmonic_yields_simple_pole}
 The Lean target \code{Jacobian.HolomorphicForms.genus_zero_homeomorph_onePointCx_PDE} assembles the Uniformization theorem from the PDE-based sub-leaves.
-\lean{JacobianChallenge.HolomorphicForms.genus_zero_homeomorph_onePointCx_PDE}
-\notready
+\lean{JacobianChallenge.HolomorphicForms.genus_zero_homeomorph_onePointCx}
+\leanok
 \end{lemma}
 
 \begin{layman}
 The Uniformization theorem is the crown jewel of 19th-century complex analysis. For genus zero, it says that every ``spherical'' Riemann surface is just the standard Riemann sphere in disguise. The proof we've mapped out uses the heavy machinery of partial differential equations. We pick a point, find a special kind of ``dipole'' harmonic function that blows up there (like the electric potential of a dipole), and then use the fact that the surface has no holes to find a matching ``harmonic conjugate'' function. Together, they form a complex-valued map that identifies the surface with the sphere. Mathlib lacks the foundations for this (Sobolev spaces on manifolds, the Dirichlet principle, etc.), so we've scoped out the necessary API to bridge this gap.
 \end{layman}
-

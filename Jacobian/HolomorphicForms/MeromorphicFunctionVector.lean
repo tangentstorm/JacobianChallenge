@@ -260,6 +260,12 @@ noncomputable instance : Module ℂ (MeromorphicFunctionType X) :=
     add_smul := fun c d f => sorry
     zero_smul := fun f => sorry }
 
+/-- Named blueprint hook for the meromorphic-function vector-space instance. -/
+theorem meromorphicFunctionVectorSpace {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    Nonempty (Module ℂ (MeromorphicFunctionType X)) :=
+  ⟨inferInstance⟩
+
 /-- The zero divisor of a meromorphic function.
 
 Defined via the vanishing order: for each point `p`, the coefficient is
