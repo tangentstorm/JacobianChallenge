@@ -564,6 +564,19 @@ theorem isHolomorphic_finite_fiber
 
 end FiniteFiber
 
+/-- The direct analytic part of the smooth-holomorphic bridge:
+a `ContMDiffAt` map between complex charted spaces is holomorphic at
+that point in the canonical chart-local sense. -/
+theorem isHolomorphicAt_of_contMDiffAt
+    {X Y : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [TopologicalSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    {f : X → Y} {p : X}
+    (hf : ContMDiffAt 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f p) :
+    IsHolomorphicAt f p := by
+  rw [contMDiffAt_iff] at hf
+  exact (hf.2.contDiffAt (by simp)).analyticAt
+
 /-- **Holomorphic-smooth bridge.** Every `ContMDiff` map between complex
 manifolds is `IsHolomorphic`.
 
