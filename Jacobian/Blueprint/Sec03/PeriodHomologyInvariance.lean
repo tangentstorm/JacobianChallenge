@@ -243,6 +243,26 @@ theorem pathIntegral_linear_in_form
     Nonempty Unit := by
   exact ⟨()⟩
 
+
+/-- Continuity of chart-pullback forms along chart-lifted subpaths.
+This is the bridge from `chartedFormPullback_continuousOn` (Packet F)
+to the per-segment `CurveIntegrable` hypotheses.  Currently sorry;
+the full proof requires assembling chart-atlas membership and
+range-containment for each segment. -/
+private theorem chartedFormPullback_continuous_assumption
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
+    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
+    Continuous (chartedFormPullback c ω) := by sorry
+
+/-- C¹ regularity of chart-lifted subpaths.  Currently sorry; the
+full proof requires showing that `chartLift` applied to a smooth
+path produces a C¹ extension. -/
+private theorem chartLift_contDiffOn_assumption
+    {a b : ℂ} {γ : Path a b} :
+    ContDiffOn ℝ 1 γ.extend unitInterval := by sorry
+
 /-- **Sub-leaf A.1 (per-simplex integration exists).**
 
 For every continuous map `σ : C(unitInterval, X)` (the topological
