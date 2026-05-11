@@ -2,7 +2,6 @@ import Jacobian.HolomorphicForms.MeromorphicFunction
 import Jacobian.HolomorphicForms.VanishingOrder
 import Jacobian.HolomorphicForms.Divisor
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
-import Mathlib
 
 /-!
 # Meromorphic functions on a complex 1-manifold form a ℂ-vector space
@@ -72,7 +71,7 @@ private lemma toFun_eventually_finite_or_infty (f : MeromorphicFunctionType X) (
         have h_cont : Filter.Tendsto (fun z => (extChartAt 𝓘(ℂ) p).symm z) (nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ) (nhds p) := by
           have h_cont : Filter.Tendsto (fun z => (extChartAt 𝓘(ℂ) p).symm z) (nhds (extChartAt 𝓘(ℂ) p p)) (nhds p) := by
             have h_cont : ContinuousAt (fun z => (extChartAt 𝓘(ℂ) p).symm z) (extChartAt 𝓘(ℂ) p p) := by
-              exact?;
+              exact continuousAt_extChartAt_symm p;
             convert h_cont.tendsto using 1;
             simp +decide [ extChartAt ];
           exact h_cont.mono_left inf_le_left;
@@ -88,9 +87,9 @@ private lemma toFun_eventually_finite_or_infty (f : MeromorphicFunctionType X) (
       · convert h_cont using 1;
         simp +decide [ extChartAt ];
       · refine' ContinuousAt.comp _ _;
-        · exact?;
+        · exact continuousAt_extChartAt_symm p;
         · exact continuousAt_id;
-    exact h_cont.eventually_ne ( by simpa [ h ] ) |> fun h => h.filter_mono inf_le_left
+    exact h_cont.eventually_ne ( by simp [ h ] ) |> fun h => h.filter_mono inf_le_left
 
 /-
 When `f.toFun` is eventually `∞` on a punctured neighborhood, the `getD 0` of
@@ -275,13 +274,13 @@ Note: the finite-support obligation is deferred; on a compact Riemann
 surface, the identity principle guarantees only finitely many zeros. -/
 noncomputable def zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicFunctionType X) : Divisor X :=
+    (_f : MeromorphicFunctionType X) : Divisor X :=
   0  -- Placeholder: to be refined with VanishingOrder-based zero counting
 
 /-- The pole divisor of a meromorphic function. -/
 noncomputable def poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (f : MeromorphicFunctionType X) : Divisor X :=
+    (_f : MeromorphicFunctionType X) : Divisor X :=
   0  -- Placeholder: to be refined with VanishingOrder-based pole counting
 
 /-- The principal divisor `(f) = (zeros) - (poles)`. -/
@@ -315,7 +314,7 @@ theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 /-- Non-zero constant meromorphic functions have no zeros. -/
 theorem constant_zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (c : ℂ) (hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
+    (c : ℂ) (_hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
   rfl
 
 /-- Membership in the Riemann-Roch space `L(D)`: `f = 0` or `(f) + D ≥ 0`. -/

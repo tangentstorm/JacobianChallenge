@@ -1,7 +1,7 @@
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.EntireZero
-import Mathlib
+import Mathlib.CategoryTheory.Category.Basic
 
 /-!
 # Continuity of cotangent section local representative in the inversion chart
@@ -117,7 +117,7 @@ theorem section_infty_eq_zero' (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     intros z hz
     have hω_zero : ω.toFun (OnePoint.some z) = 0 := by
       nontriviality;
-      exact?
+      exact section_finite_eq_zero' ω z
     simp [H];
     convert e.zeroSection _ _;
     any_goals exact OnePoint.some z;
@@ -158,7 +158,7 @@ theorem section_infty_eq_zero' (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     have := e.injOn ( show { proj := OnePoint.infty, snd := ω.toFun OnePoint.infty } ∈ e.source from ?_ ) ( show { proj := OnePoint.infty, snd := 0 } ∈ e.source from ?_ ) hω_infty ; aesop;
     · simp +decide [ e, Trivialization.source_eq ];
     · simp +decide [ e.mem_source ];
-      exact?
+      exact FiberBundle.mem_baseSet_trivializationAt' OnePoint.infty
   exact h_nonzero hω_infty;
 
 /-! ### Assembly -/

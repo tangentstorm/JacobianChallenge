@@ -3,7 +3,6 @@ import Jacobian.HolomorphicForms.HolomorphicMap
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.LocalMappingThm
 import Jacobian.Blueprint.Sec02.WeightedFiberCardConst
-import Mathlib
 
 /-! Production API promoted from blueprint: `def:meromorphic-to-cp1` in
 `tex/sections/01-compact-riemann-surfaces.tex`.

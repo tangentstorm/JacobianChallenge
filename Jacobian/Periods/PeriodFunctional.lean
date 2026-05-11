@@ -71,7 +71,7 @@ theorem singularBoundary_eq_sc_f
     ∀ (s : ↑S.X₁), ∃ (s' : ↑(JacobianChallenge.Blueprint.Sec03.SingularTwoChain X)),
       S.f.hom s = JacobianChallenge.Blueprint.Sec03.singularBoundary21 X s' := by
   unfold Blueprint.Sec03.singularChainComplexZ; simp +decide [ AlgebraicTopology.singularChainComplexFunctor ] ;
-  unfold AlgebraicTopology.SSet.singularChainComplexFunctor; simp +decide [ AlgebraicTopology.SSet.singularChainComplexFunctor ] ;
+  unfold AlgebraicTopology.SSet.singularChainComplexFunctor; simp +decide ;
   unfold AlgebraicTopology.alternatingFaceMapComplex;
   unfold AlgebraicTopology.AlternatingFaceMapComplex.obj; simp +decide [ ComplexShape.down ] ;
   unfold ChainComplex.of; simp +decide [ ComplexShape.down' ] ;

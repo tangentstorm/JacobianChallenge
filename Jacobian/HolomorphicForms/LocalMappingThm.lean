@@ -1,6 +1,8 @@
 import Jacobian.HolomorphicForms.HolomorphicMap
 import Jacobian.Blueprint.Sec02.WeightedFiberCardConst
-import Mathlib
+import Mathlib.Analysis.Complex.OpenMapping
+import Mathlib.FieldTheory.Separable
+import Mathlib.Tactic.Cases
 
 /-! # Local Mapping Theorem for ℂ → ℂ Analytic Functions
 
@@ -21,7 +23,8 @@ theorem pow_sub_const_roots_card {k : ℕ} (hk : 0 < k) {w : ℂ} (hw : w ≠ 0)
     exact Polynomial.separable_X_pow_sub_C w (by aesop) (by aesop)
   rw [Multiset.toFinset_card_of_nodup h_distinct]
   have h_card : Multiset.card (Polynomial.roots (Polynomial.X ^ k - Polynomial.C w)) =
-    Polynomial.natDegree (Polynomial.X ^ k - Polynomial.C w) := by exact?
+    Polynomial.natDegree (Polynomial.X ^ k - Polynomial.C w) := by
+      exact IsAlgClosed.card_roots_eq_natDegree
   rw [h_card, Polynomial.natDegree_X_pow_sub_C]
 
 /-- Each root of z^k - w has analyticOrderNatAt = 1. -/
@@ -134,17 +137,17 @@ then analyticOrderNatAt (h ∘ φ - h(φ(t))) t = analyticOrderNatAt (h - h(φ t
 -/
 theorem analyticOrderNatAt_comp_of_biholo {φ h : ℂ → ℂ} {t : ℂ}
     (hφ_an : AnalyticAt ℂ φ t) (hφ' : deriv φ t ≠ 0)
-    (hh_an : AnalyticAt ℂ h (φ t)) :
+    (_hh_an : AnalyticAt ℂ h (φ t)) :
     analyticOrderNatAt (fun u => h (φ u) - h (φ t)) t =
     analyticOrderNatAt (fun z => h z - h (φ t)) (φ t) := by
   unfold analyticOrderNatAt;
   rw [ show ( fun u => h ( φ u ) - h ( φ t ) ) = ( fun z => h z - h ( φ t ) ) ∘ φ by ext; rfl, analyticOrderAt_comp_of_deriv_ne_zero ] ; aesop;
-  assumption
+  exact hφ'
 
 /-
 All k-th roots of a nonzero complex number have norm equal to ‖w‖^(1/k).
 -/
-theorem kth_root_norm {k : ℕ} (hk : 0 < k) {w ζ : ℂ} (hw : w ≠ 0) (hζ : ζ ^ k = w) :
+theorem kth_root_norm {k : ℕ} (hk : 0 < k) {w ζ : ℂ} (_hw : w ≠ 0) (hζ : ζ ^ k = w) :
     ‖ζ‖ = ‖w‖ ^ ((1 : ℝ) / k) := by
   norm_num [ ← hζ, hk.ne' ];
   rw [ ← Real.rpow_natCast, ← Real.rpow_mul ( norm_nonneg _ ), mul_inv_cancel₀ ( by positivity ), Real.rpow_one ]
@@ -164,7 +167,7 @@ theorem lift_roots_through_biholo {φ : ℂ → ℂ} {z₀ : ℂ} {r δ : ℝ}
       (∀ t ∈ preimages, φ t ∈ roots) ∧
       (∀ t ∈ Metric.ball z₀ r, φ t ∈ roots → t ∈ preimages) := by
   choose! f hf_mem hf_eq using fun x hx => h_surj ( h_roots_in x hx );
-  refine' ⟨ Finset.image f roots, _, _, _, _ ⟩ <;> simp_all +decide [ Finset.card_image_of_injOn ];
+  refine' ⟨ Finset.image f roots, _, _, _, _ ⟩ <;> simp_all +decide;
   · exact Finset.card_image_of_injOn fun x hx y hy hxy => by have := hf_eq x hx; have := hf_eq y hy; aesop;
   · exact fun x hx => hf_mem x hx;
   · exact fun t ht ht' => ⟨ φ t, ht', h_inj ( hf_mem _ ht' ) ht ( by aesop ) ⟩
@@ -196,7 +199,7 @@ theorem preimage_near_center {φ : ℂ → ℂ} {z₀ : ℂ} {R : ℝ} (hR : 0 <
     (hφ_cont : ContinuousOn φ (Metric.closedBall z₀ R))
     (hφ0 : φ z₀ = 0)
     (h_inj : Set.InjOn φ (Metric.closedBall z₀ R))
-    {ε : ℝ} (hε : 0 < ε) (hεR : ε ≤ R) :
+    {ε : ℝ} (hε : 0 < ε) (_hεR : ε ≤ R) :
     ∃ δ > 0, ∀ t ∈ Metric.ball z₀ R, ‖φ t‖ < δ → t ∈ Metric.ball z₀ ε := by
   -- Consider the set S = closedBall(z₀, R) \ ball(z₀, ε). S is compact.
   set S : Set ℂ := Metric.closedBall z₀ R \ Metric.ball z₀ ε
@@ -234,8 +237,8 @@ theorem analyticOrderNatAt_congr {f g : ℂ → ℂ} {z₀ : ℂ}
 /-
 The norm of a k-th root is strictly bounded by δ when ‖w‖ < δ^k.
 -/
-theorem kth_root_norm_lt_of_pow_norm_lt {k : ℕ} (hk : 0 < k) {δ : ℝ} (hδ : 0 < δ)
-    {w ζ : ℂ} (hw : w ≠ 0) (hζ : ζ ^ k = w) (hw_bound : ‖w‖ < δ ^ k) :
+theorem kth_root_norm_lt_of_pow_norm_lt {k : ℕ} (_hk : 0 < k) {δ : ℝ} (hδ : 0 < δ)
+    {w ζ : ℂ} (_hw : w ≠ 0) (hζ : ζ ^ k = w) (hw_bound : ‖w‖ < δ ^ k) :
     ‖ζ‖ < δ := by
   exact lt_of_pow_lt_pow_left₀ _ hδ.le ( by simpa [ ← hζ, hδ.le ] using hw_bound )
 

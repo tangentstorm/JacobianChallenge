@@ -5,7 +5,7 @@ namespace JacobianChallenge.HolomorphicForms
 /-- Stubbed ℂ-manifold bump function. -/
 noncomputable def cMfldBump
     {X : Type _} [TopologicalSpace X] [ChartedSpace ℂ X]
-    (Q : X) : X → ℝ := by
+    (_Q : X) : X → ℝ := by
   exact Classical.choice ⟨fun _ => 0⟩
 
 theorem cMfldBump_apply_self

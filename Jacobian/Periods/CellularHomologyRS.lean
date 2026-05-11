@@ -3,7 +3,7 @@ import Jacobian.Periods.SurfaceClassification
 import Jacobian.Periods.TopologicalGenusInvariance
 import Jacobian.Periods.Orientable
 import Jacobian.Periods.SmoothRealStructure
-import Mathlib
+import Mathlib.Topology.CWComplex.Classical.Basic
 
 /-!
 # Cellular homology of a compact Riemann surface (frontier API)

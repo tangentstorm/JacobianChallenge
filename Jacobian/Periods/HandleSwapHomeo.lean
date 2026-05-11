@@ -1,5 +1,4 @@
 import Jacobian.Periods.EdgeWord
-import Mathlib
 
 namespace JacobianChallenge.Periods
 

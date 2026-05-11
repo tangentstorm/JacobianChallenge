@@ -1,6 +1,5 @@
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Defs
-import Mathlib
 
 /-!
 # Chart-trivialization for cotangent sections
@@ -93,7 +92,10 @@ private lemma trivialized_section_contDiffAt
   · convert h_cont_diff.2 using 1;
     simp +decide [ extChartAt ];
     rw [ chartAt_onePoint_some ] ; norm_num [ identityChart ];
-    grind +suggestions;
+    exact OnePoint.coe_injective
+      ((Topology.IsOpenEmbedding.toOpenPartialHomeomorph_right_inv
+          (fun x : ℂ => (x : OnePoint ℂ)) OnePoint.isOpenEmbedding_coe
+          (Set.mem_range_self z₀)).symm)
   · exact Filter.univ_mem' fun x => ⟨ x, rfl ⟩
 
 theorem contMDiffSection_localRepr_identityChart_contDiff
