@@ -669,16 +669,47 @@ theorem skeletal_h1_quotient_substantive
       cellularChain K 1 ⧸ (LinearMap.range (cellularBoundary K 1))) :=
   sorry
 
+/-- **Round 9.** *Sub-leaf of `cellular_iso_singularH_via_five_lemma`.*
+The five-lemma assembly: given the chain-map iso, the relative-pair
+LES iso, and the vanishing of relative `H_1` on the 0-skeleton, the
+five-lemma produces the headline iso. Stated as a Hom of the input
+data into the conclusion (sorry'd). -/
+theorem five_lemma_glue_to_global_iso
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [AbstractSimplicialComplex.Finite K]
+    (_hChain : ∀ (n : ℕ) (s : K.nSimplices (n + 1)),
+      rawSingularBoundary _ n
+        ((cellularToSingularChain K (n + 1)) (Finsupp.single s 1)) =
+      (cellularToSingularChain K n)
+        ((cellularBoundary K n) (Finsupp.single s 1)))
+    (_hLES : ∀ (n : ℕ),
+      Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] cellularChain K n)) :
+    Nonempty (cellularH K 1 ≃ₗ[ℤ]
+      singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+  sorry
+
 /-- **R3-sub-B.A.r3.r3 (Round 4).** Sub-leaf: five-lemma assembly on
 the H_1 piece. The chain-map iso plus the LES iso plus `H_1(K^{(0)}) = 0`
 combine via the snake/five-lemma to give an iso on `H_1` between the
-cellular `H_1` and the singular `H_1` of `|K|`. -/
+cellular `H_1` and the singular `H_1` of `|K|`.
+
+The assembly is sorry-free: it dispatches the chain-map hypothesis to
+`cellularToSingular_isChainMap_substantive` (Round 2 / R3-sub-B.A.r1)
+and the relative-pair LES hypothesis to `LinearEquiv.refl` (since
+`relativeSkeletalH K n` is by `abbrev` defined as `cellularChain K n`,
+the identity equivalence witnesses the LES iso in the placeholder
+state). The actual five-lemma step is concentrated in
+`five_lemma_glue_to_global_iso` (Round 9), which is the deeper sorry
+gated on the upstream promotions documented on
+`cellular_iso_singularH_via_five_lemma`. -/
 theorem skeletal_h1_five_lemma_identity
     [TopologicalSpace V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
       singularH1 (AbstractSimplicialComplex.Geometric K)) :=
-  sorry
+  five_lemma_glue_to_global_iso K
+    (fun n s => cellularToSingular_isChainMap_substantive K n s)
+    (fun _n => ⟨LinearEquiv.refl ℤ _⟩)
 
 /-- **Comparison theorem (statement form).** The chain map
 `cellular → singular` induces an isomorphism on each `H_n`.
@@ -975,26 +1006,12 @@ theorem polygon4g_cellular_h1_explicit (g : ℕ) :
 These rounds break the remaining sorries into obligations that map
 directly onto Mathlib lemmas or onto the three upstream-promotion
 gates documented on `cellular_iso_singularH_via_five_lemma`. Each
-sub-leaf names the next-level lemma it would dispatch to. -/
+sub-leaf names the next-level lemma it would dispatch to.
 
-/-- **Round 9.** *Sub-leaf of `cellular_iso_singularH_via_five_lemma`.*
-The five-lemma assembly: given the chain-map iso, the relative-pair
-LES iso, and the vanishing of relative `H_1` on the 0-skeleton, the
-five-lemma produces the headline iso. Stated as a Hom of the input
-data into the conclusion (sorry'd). -/
-theorem five_lemma_glue_to_global_iso
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
-    [AbstractSimplicialComplex.Finite K]
-    (_hChain : ∀ (n : ℕ) (s : K.nSimplices (n + 1)),
-      rawSingularBoundary _ n
-        ((cellularToSingularChain K (n + 1)) (Finsupp.single s 1)) =
-      (cellularToSingularChain K n)
-        ((cellularBoundary K n) (Finsupp.single s 1)))
-    (_hLES : ∀ (n : ℕ),
-      Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] cellularChain K n)) :
-    Nonempty (cellularH K 1 ≃ₗ[ℤ]
-      singularH1 (AbstractSimplicialComplex.Geometric K)) :=
-  sorry
+Round 9 (`five_lemma_glue_to_global_iso`) is the five-lemma assembly
+itself; it is declared earlier in the file (just before
+`skeletal_h1_five_lemma_identity`) so that the Round-4 sub-leaf can
+forward to it. -/
 
 /-- **Round 10.** *Sub-leaf of `cellular_signed_face_basis`.*
 The face-list `Finset (K.nSimplices n)` of an `(n+1)`-simplex `s`:
