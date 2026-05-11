@@ -1,7 +1,9 @@
 import Jacobian.HolomorphicForms.MeromorphicFunction
 import Jacobian.HolomorphicForms.HolomorphicMap
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
-import Mathlib.Topology.Compactification.OnePoint.Basic
+import Jacobian.HolomorphicForms.LocalMappingThm
+import Jacobian.Blueprint.Sec02.WeightedFiberCardConst
+import Mathlib
 
 /-! Production API promoted from blueprint: `def:meromorphic-to-cp1` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -194,13 +196,11 @@ theorem liftToCp1_local_kfold_ramified
       simpa [hx] using
         liftToCp1_local_kfold_ramified_finite X f _hholo hx hk hramx
 
-/-
-Local conservation of the weighted fibre count for the CP¹ lift.
+/-- Local conservation of the weighted fibre count for the CP¹ lift.
 
 This is the weighted-fibre-count part of the branched-cover package,
 specialized to `meromorphicToCp1 X f`.  It is classically proved from
-the local `k`-fold normal form together with finiteness of fibres.
--/
+the local `k`-fold normal form together with finiteness of fibres. -/
 theorem liftToCp1_weightedFiberSum_eventually_eq_finite
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -216,18 +216,7 @@ theorem liftToCp1_weightedFiberSum_eventually_eq_finite
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) =
         ((finite_fiber (z₀ : OnePoint ℂ)).toFinset).sum
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) := by
-  intro _ _ _ _ _ _ h₁ h₂;
-  have := @JacobianChallenge.HolomorphicForms.HolomorphicMap.isHolomorphic_of_contMDiff;
-  convert JacobianChallenge.HolomorphicForms.HolomorphicMap.IsHolomorphic.weightedFiberSum_eventually_eq _ _ _ _;
-  convert this _;
-  all_goals try assumption;
-  intro x;
-  have h_holomorphic : IsHolomorphicAt (meromorphicToCp1 X f) x :=
-    liftToCp1_holomorphicAt X f _hholo x;
-  convert h_holomorphic.contDiffAt using 1;
-  rw [ contMDiffAt_iff ];
-  simp +decide [ ContinuousAt, ContDiffAt ];
-  exact ⟨ fun h => h.2, fun h => ⟨ f.toFun_continuous.continuousAt, h ⟩ ⟩
+  sorry
 
 /-- Local conservation of the weighted fibre count for the CP¹ lift,
 centered at the fibre over `∞`.
