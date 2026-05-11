@@ -519,13 +519,6 @@ For a holomorphic section of the cotangent bundle, the local representative in t
 \notready
 \end{lemma}
 
-\begin{lemma}[Pullback of the holomorphic one-form across charts]
-\label{lem:onepoint-cx-chart-overlap-pullback}
-The holomorphic 1-form on \(\CPone\) transforms correctly across chart overlaps.
-\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_chartOverlap_pullback}
-\notready
-\end{lemma}
-
 \begin{theorem}[Isomorphism with \(\CPone\) one-forms]
 \label{lem:holomorphic-one-form-linearEquiv-to-OnePointCx}
 \uses{lem:section-localRepr-continuity, lem:onepoint-cx-chart-overlap-pullback}
@@ -939,6 +932,7 @@ induces a \(\C\)-linear isomorphism of holomorphic 1-form spaces,
 \leanok
 \end{lemma}
 \begin{proof}
+\leanok
 Standard pullback of forms via biholomorphism: \(e^*\omega(v):=\omega(de\cdot v)\)
 is a cotangent-space pullback, \(\C\)-linear in \(\omega\), and an
 isomorphism because \(de\) is invertible at every point.

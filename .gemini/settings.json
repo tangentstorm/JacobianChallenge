@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "aristotle": {
+      "command": "python3",
+      "args": [
+        "/Users/michal/ver/aristotle-skill/mcp/aristotle_mcp.py"
+      ]
+    }
+  }
+}

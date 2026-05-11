@@ -55,20 +55,22 @@ noncomputable def serreDualSheaf (X : Type*) [TopologicalSpace X]
 provides only an `AddCommGroup`; the `ℂ`-action would come from a
 sheaf-of-`ℂ`-vector-spaces (or `𝒪_X`-module) realisation of `F`,
 which is ABSENT in v4.28.0. -/
-axiom serreDualSheaf_module_H0
+instance serreDualSheaf_module_H0
     (X : Type*) [TopologicalSpace X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F : RSAbSheaf X) :
-    Module ℂ (RSSheafCohomology X F 0)
+    Module ℂ (RSSheafCohomology X F 0) :=
+  sorry
 
 /-- **Frontier instance (sorry).** The `ℂ`-module structure on
 `H¹(X, Hom(F, K_X))` required by `SerreDualityRSDatum`. -/
-axiom serreDualSheaf_module_H1
+instance serreDualSheaf_module_H1
     (X : Type*) [TopologicalSpace X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F : RSAbSheaf X) :
-    Module ℂ (RSSheafCohomology X (serreDualSheaf X F) 1)
+    Module ℂ (RSSheafCohomology X (serreDualSheaf X F) 1) :=
+  sorry
 
 end JacobianChallenge.HolomorphicForms
