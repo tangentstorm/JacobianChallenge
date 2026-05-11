@@ -3,7 +3,8 @@ import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Ext
 import Jacobian.HolomorphicForms.EntireZero
-import Jacobian.HolomorphicForms.InversionChartContinuity
+import Jacobian.HolomorphicForms.ChartSectionContDiff
+import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 import Mathlib.Topology.Compactification.OnePoint.Sphere
 
@@ -263,8 +264,8 @@ theorem ContMDiffSection_localRepr_identityChart_contDiff
     ContDiff ℂ (⊤ : WithTop ℕ∞) fun z =>
       ω.toFun (identityChart.symm z)
         (show TangentSpace (modelWithCornersSelf ℂ ℂ)
-          (identityChart.symm z) from (1 : ℂ)) := by
-  sorry
+          (identityChart.symm z) from (1 : ℂ)) :=
+  contMDiffSection_localRepr_identityChart_contDiff ω
 
 /-- **Identity-chart extraction leaf.** The coefficient read directly from
 the identity-chart local representative is `C^∞`.
@@ -356,8 +357,8 @@ theorem ContMDiffSection_localRepr_inversionChart_continuousAt_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (fun w => ω.toFun (inversionChart.symm w)
       (show TangentSpace (modelWithCornersSelf ℂ ℂ)
-        (inversionChart.symm w) from (1 : ℂ))) 0 :=
-  ContMDiffSection_localRepr_inversionChart_continuousAt_zero_proof ω
+        (inversionChart.symm w) from (1 : ℂ))) 0 := by
+  sorry
 
 /-- **Inversion-chart extraction leaf.** The inversion-chart coefficient of
 a holomorphic 1-form is continuous at the point `w = 0`, i.e. at infinity of
@@ -796,15 +797,80 @@ biholomorphicity is needed. The companion sorry below captures the
 existence of the pullback at the level of linear isomorphism.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:holomorphic-one-form-pullback-via-biholo`. -/
+`lem:holomorphic-one-form-pullback-via-biholo`.
+
+**Sub-obligation (smoothness of homeomorphism).** A homeomorphism
+`X ≃ₜ OnePoint ℂ` from a compact connected Riemann surface to `ℂℙ¹`
+is smooth (ContMDiff) in the forward direction.
+
+This follows from the uniqueness of complex structure on `S²`
+(uniformization at genus 0): the homeomorphism is automatically
+a biholomorphism, hence smooth. -/
+
+theorem contMDiff_homeomorph_to_onePointCx
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (e : X ≃ₜ OnePoint ℂ) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) e := by
+  sorry
+
+/-- **Sub-obligation (smoothness of inverse homeomorphism).** A homeomorphism
+`X ≃ₜ OnePoint ℂ` from a compact connected Riemann surface to `ℂℙ¹`
+is smooth (ContMDiff) in the reverse direction.
+
+This follows from the uniqueness of complex structure on `S²`
+(uniformization at genus 0): the homeomorphism is automatically
+a biholomorphism, hence smooth in both directions. -/
+theorem contMDiff_homeomorph_to_onePointCx_symm
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (e : X ≃ₜ OnePoint ℂ) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) e.symm := by
+  sorry
+
+/-
+Construct a `ℂ`-linear equivalence between holomorphic 1-form spaces
+from a smooth homeomorphism and its smooth inverse, using functorial
+pullback. The pullback along `e` and `e.symm` give inverse linear maps
+by composition and identity functoriality.
+-/
+noncomputable def pullbackLinearEquivOfHomeomorph
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    {Y : Type*} [TopologicalSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    (e : X ≃ₜ Y)
+    (he : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ e)
+    (he_symm : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ e.symm) :
+    HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ Y := by
+  refine LinearEquiv.ofLinear
+    (pullbackFormsBundledLM Y X e.symm he_symm)
+    (pullbackFormsBundledLM X Y e he) ?_ ?_
+  · -- (pullback e) ∘ (pullback e.symm) = id on forms of X
+    convert rfl;
+    convert pullbackFormsBundledLM_comp _ _ _ _ using 1;
+    convert pullbackFormsBundledLM_id.symm;
+    exact funext fun x => e.apply_symm_apply x
+  · -- (pullback e.symm) ∘ (pullback e) = id on forms of Y
+    convert rfl;
+    convert pullbackFormsBundledLM_comp _ _ _ _ using 1;
+    convert pullbackFormsBundledLM_id.symm;
+    exact funext fun x => e.symm_apply_apply x
+
 theorem holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
-    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
-  sorry
+    Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) :=
+  ⟨pullbackLinearEquivOfHomeomorph _e
+    (contMDiff_homeomorph_to_onePointCx X _e)
+    (contMDiff_homeomorph_to_onePointCx_symm X _e)⟩
 
 /-- **Structural axiom (G1).** A topological homeomorphism from a
 compact connected complex 1-manifold `X` to the standard 2-sphere

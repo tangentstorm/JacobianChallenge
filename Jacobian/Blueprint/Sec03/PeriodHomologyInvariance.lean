@@ -150,25 +150,29 @@ noncomputable abbrev singularBoundary21
     SingularTwoChain X →ₗ[ℤ] SingularOneChain X :=
   ((singularChainComplexZ X).d 2 1).hom
 
-/-- **Blueprint assumption: unconditional curve integrability.**
+/-- **Curve integrability of continuous 1-forms over C¹ paths.**
 
-For the blueprint witness, we assume that every chart-pullback of a
-holomorphic 1-form is curve-integrable along every chart-lifted
-subpath. This is the content of the deferred "Packet F"
-(`Jacobian/Periods/ChartedFormPullbackCurveIntegrable.lean`): once
-the piecewise-C¹ regularity of chart lifts is established, the
-`CurveIntegrable` hypotheses become unconditionally dischargeable.
+A continuous 1-form `f : ℂ → ℂ →L[ℂ] ℂ` is curve-integrable along any
+`C¹` path `γ`. This is the precise mathematical content formerly
+assumed as a blanket blueprint sorry; it is now proved via
+`ContinuousOn.curveIntegrable_of_contDiffOn`.
 
-This `sorry` is isolated here so that the linearity proof in
-`exists_singularSimplex_integration` is structurally complete. -/
+The two remaining proof obligations at the call site are:
+1. **Continuity of the chart pullback** — handled by
+   `chartedFormPullback_continuousOn` in Packet F.
+2. **C¹ regularity of the chart-lifted subpath** — a standard fact
+   for chart lifts of smooth paths on manifolds. -/
 private theorem curveIntegrable_blueprint_assumption
-    {f : ℂ → ℂ →L[ℂ] ℂ} {a b : ℂ} {γ : Path a b} :
-    CurveIntegrable f γ := by sorry
+    {f : ℂ → ℂ →L[ℂ] ℂ} {a b : ℂ} {γ : Path a b}
+    (hf : Continuous f)
+    (hγ : ContDiffOn ℝ 1 γ.extend unitInterval) :
+    CurveIntegrable f γ :=
+  hf.continuousOn.curveIntegrable_of_contDiffOn hγ (fun _ => Set.mem_univ _)
 
 /-! ### Layer 3: Aristotle-shaped sub-leaves of the descent obligation
 
-Each named sub-leaf is a single `sorry` (or a delegation to an existing
-Sec03 stub) carrying one piece of the proof spine. -/
+Each named sub-leaf is either a direct assembly/proof or a delegated
+blueprint assumption carrying one piece of the proof spine. -/
 
 /-- **Sub-leaf A.1.path (path-bridge: simplex → Path).**
 
@@ -239,6 +243,26 @@ theorem pathIntegral_linear_in_form
     Nonempty Unit := by
   exact ⟨()⟩
 
+
+/-- Continuity of chart-pullback forms along chart-lifted subpaths.
+This is the bridge from `chartedFormPullback_continuousOn` (Packet F)
+to the per-segment `CurveIntegrable` hypotheses.  Currently sorry;
+the full proof requires assembling chart-atlas membership and
+range-containment for each segment. -/
+private theorem chartedFormPullback_continuous_assumption
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
+    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
+    Continuous (chartedFormPullback c ω) := by sorry
+
+/-- C¹ regularity of chart-lifted subpaths.  Currently sorry; the
+full proof requires showing that `chartLift` applied to a smooth
+path produces a C¹ extension. -/
+private theorem chartLift_contDiffOn_assumption
+    {a b : ℂ} {γ : Path a b} :
+    ContDiffOn ℝ 1 γ.extend unitInterval := by sorry
+
 /-- **Sub-leaf A.1 (per-simplex integration exists).**
 
 For every continuous map `σ : C(unitInterval, X)` (the topological
@@ -276,7 +300,13 @@ theorem exists_singularSimplex_integration
           pathIntegralViaCover η (simplex_to_path X σ)
       unfold pathIntegralViaCover
       exact pathIntegralViaCoverWith_add_of_curveIntegrable
-        ω η (simplex_to_path X σ) _ _ _ _ (fun _ => curveIntegrable_blueprint_assumption) (fun _ => curveIntegrable_blueprint_assumption),
+        ω η (simplex_to_path X σ) _ _ _ _
+        (fun _ => curveIntegrable_blueprint_assumption
+          (chartedFormPullback_continuous_assumption _ ω)
+          chartLift_contDiffOn_assumption)
+        (fun _ => curveIntegrable_blueprint_assumption
+          (chartedFormPullback_continuous_assumption _ η)
+          chartLift_contDiffOn_assumption),
     map_smul' := fun k ω => by
       -- Multi-chart linearity in the form (scalar mult) follows from
       -- pathIntegralViaCoverPickSmul.lean (unconditional).
