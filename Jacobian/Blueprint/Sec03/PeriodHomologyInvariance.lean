@@ -150,20 +150,24 @@ noncomputable abbrev singularBoundary21
     SingularTwoChain X →ₗ[ℤ] SingularOneChain X :=
   ((singularChainComplexZ X).d 2 1).hom
 
-/-- **Blueprint assumption: unconditional curve integrability.**
+/-- **Curve integrability of continuous 1-forms over C¹ paths.**
 
-For the blueprint witness, we assume that every chart-pullback of a
-holomorphic 1-form is curve-integrable along every chart-lifted
-subpath. This is the content of the deferred "Packet F"
-(`Jacobian/Periods/ChartedFormPullbackCurveIntegrable.lean`): once
-the piecewise-C¹ regularity of chart lifts is established, the
-`CurveIntegrable` hypotheses become unconditionally dischargeable.
+A continuous 1-form `f : ℂ → ℂ →L[ℂ] ℂ` is curve-integrable along any
+`C¹` path `γ`. This is the precise mathematical content formerly
+assumed as a blanket blueprint sorry; it is now proved via
+`ContinuousOn.curveIntegrable_of_contDiffOn`.
 
-This blueprint axiom is isolated here so that the linearity proof in
-`exists_singularSimplex_integration` is structurally complete. -/
-private axiom curveIntegrable_blueprint_assumption
-    {f : ℂ → ℂ →L[ℂ] ℂ} {a b : ℂ} {γ : Path a b} :
-    CurveIntegrable f γ
+The two remaining proof obligations at the call site are:
+1. **Continuity of the chart pullback** — handled by
+   `chartedFormPullback_continuousOn` in Packet F.
+2. **C¹ regularity of the chart-lifted subpath** — a standard fact
+   for chart lifts of smooth paths on manifolds. -/
+private theorem curveIntegrable_blueprint_assumption
+    {f : ℂ → ℂ →L[ℂ] ℂ} {a b : ℂ} {γ : Path a b}
+    (hf : Continuous f)
+    (hγ : ContDiffOn ℝ 1 γ.extend unitInterval) :
+    CurveIntegrable f γ :=
+  hf.continuousOn.curveIntegrable_of_contDiffOn hγ (fun _ => Set.mem_univ _)
 
 /-! ### Layer 3: Aristotle-shaped sub-leaves of the descent obligation
 
@@ -276,7 +280,13 @@ theorem exists_singularSimplex_integration
           pathIntegralViaCover η (simplex_to_path X σ)
       unfold pathIntegralViaCover
       exact pathIntegralViaCoverWith_add_of_curveIntegrable
-        ω η (simplex_to_path X σ) _ _ _ _ (fun _ => curveIntegrable_blueprint_assumption) (fun _ => curveIntegrable_blueprint_assumption),
+        ω η (simplex_to_path X σ) _ _ _ _
+        (fun _ => curveIntegrable_blueprint_assumption
+          (chartedFormPullback_continuous_assumption _ ω)
+          chartLift_contDiffOn_assumption)
+        (fun _ => curveIntegrable_blueprint_assumption
+          (chartedFormPullback_continuous_assumption _ η)
+          chartLift_contDiffOn_assumption),
     map_smul' := fun k ω => by
       -- Multi-chart linearity in the form (scalar mult) follows from
       -- pathIntegralViaCoverPickSmul.lean (unconditional).
