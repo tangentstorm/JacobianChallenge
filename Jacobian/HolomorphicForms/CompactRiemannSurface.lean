@@ -996,12 +996,13 @@ abbrev HolomorphicOneFormClosedBallTotallyBounded
       (@Metric.closedBall (HolomorphicOneForm ℂ X)
         B.toMetricSpace.toPseudoMetricSpace 0 1)
 
-axiom holomorphicOneForm_arzela_ascoli_refine23
+theorem holomorphicOneForm_arzela_ascoli_refine23
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
-    HolomorphicOneFormClosedBallTotallyBounded X B
+    HolomorphicOneFormClosedBallTotallyBounded X B :=
+  sorry
 
 /-- A transport wrapper making the final refinement leaf consumable from
 an explicit witness. This is the bridge we will use to replace the
