@@ -250,13 +250,37 @@ identifies its index cardinality with `2(g+1)` using
 linear equivalence with `Basis.equivFun.symm`. The output is a genuine
 basis-derived iso, not a finrank-driven existence statement. -/
 
+/-- **Sub-obligation (Cellular-Singular Basis).** The first singular
+homology `singularH1 (Polygon4g g)` admits a `ℤ`-basis indexed by
+`Fin (2 * g)`.  This bundles three facts:
+
+* **Freeness** — `singularH1 (Polygon4g g)` is torsion-free over `ℤ`;
+* **Finite generation** — it is finitely generated;
+* **Rank** — the rank is `2 * g`.
+
+All three follow from the CW structure of `Polygon4g g` (one 0-cell,
+`2g` 1-cells, one 2-cell with trivial boundary) together with the
+cellular-singular comparison theorem (Hatcher, Thm 2.35).
+
+**Mathlib gap.** Neither the cellular-singular comparison nor the
+Hurewicz theorem connecting `π₁(X)^{ab}` to `H₁(X,ℤ)` is present
+in Mathlib v4.28.0.  This is the single named bridge axiom for the
+polygon’s homology computation. -/
+theorem polygon4g_singularH1_basis (g : ℕ) :
+    Nonempty (Module.Basis (Fin (2 * g)) ℤ (singularH1 (Polygon4g g))) := by
+  sorry
+
 /-- **Bridge (Cellular-Singular).** The cellular homology of the
 fundamental polygon is isomorphic to its singular homology.
-Mathlib gap: the general cellular-singular comparison. For the
-polygon we provide this as a named project-side bridge. -/
+
+Derived from `polygon4g_singularH1_basis` via `Basis.equivFun`:
+given a `Fin (2g)`-indexed `ℤ`-basis of `singularH1 (Polygon4g g)`,
+the basis equivalence gives `singularH1 (Polygon4g g) ≃ₗ[ℤ]
+(Fin (2g) → ℤ)`, and we symmetrise. -/
 theorem polygon4g_cellular_singular_iso (g : ℕ) :
-    Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] singularH1 (Polygon4g g)) :=
-  sorry
+    Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
+  obtain ⟨b⟩ := polygon4g_singularH1_basis g
+  exact ⟨b.equivFun.symm⟩
 
 /-- **Stage A leaf (C1b, round 6 sub-leaf).** The cellular/Hurewicz
 iso for `Polygon4g (g+1)`: there exists a ℤ-linear isomorphism between
@@ -440,5 +464,16 @@ theorem polygon4g_succ_singularH1_basis_via_hurewicz (g : ℕ) :
       (singularH1 (Polygon4g (g + 1)))) := by
   obtain ⟨e⟩ := polygon4g_hurewicz_iso g
   exact ⟨(Pi.basisFun ℤ _).map e⟩
+
+
+/-- **Polygon 0 is contractible (instance).** -/
+instance polygon4g_zero_contractibleSpace : ContractibleSpace (Polygon4g 0) := by
+  obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
+  exact h.contractibleSpace
+
+/-- **Genus-zero singular `H₁` is subsingleton (instance).** -/
+instance polygon4g_zero_singularH1_subsingleton :
+    Subsingleton (singularH1 (Polygon4g 0)) :=
+  singularH1_subsingleton_of_contractibleSpace
 
 end JacobianChallenge.Periods

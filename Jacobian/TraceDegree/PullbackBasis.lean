@@ -73,18 +73,77 @@ noncomputable def pullbackTraceLiftCLM
     (Fin (analyticGenus ℂ Y) → ℂ) →L[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   LinearMap.toContinuousLinearMap (pullbackTraceLiftLinearMap f hf)
 
+/-- **Transfer functional obligation.** For every cycle `σ` on `Y`, the
+linear functional on `H⁰(X, Ω¹)` obtained by applying the pullback
+trace lift to the period vector of `σ` and pulling back through the
+basis-aligned dual equivalence lies in the period subgroup of `X`.
+
+Mathematically, this asserts the existence of a *transfer map* on
+cycles: there is a cycle `γ` on `X` such that for every holomorphic
+1-form `ω` on `X`,
+`∫_γ ω = ∑ⱼ (∫_σ ηⱼ) · (i-th coordinate of f*(ηⱼ))`,
+where `ηⱼ` are the chosen basis forms on `Y` and `f*` is the
+holomorphic-form pullback.
+
+This is the genuine Mathlib gap: constructing the transfer (wrong-way)
+map `f^! : H₁(Y, ℤ) → H₁(X, ℤ)` for a branched cover `f : X → Y`,
+and proving the naturality `∫_{f^!(σ)} ω = ∫_σ f_*(ω)` where `f_*`
+is the trace on forms. -/
+theorem transfer_functional_mem_periodSubgroup
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (σ : IntegralOneCycle Y) :
+    (holomorphicOneFormDualEquiv ℂ X).symm
+      (pullbackTraceLiftCLM f hf
+        (holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y σ)))
+    ∈ periodSubgroup ℂ X := by
+  sorry
+
 /-- Raw geometric obligation: the form pullback preserves the period
 subgroup (in the contravariant direction).
 
 This is the dual of `pushforwardTraceLift_preserves_lattice_raw`.
 Mathematically, it relies on the naturality of integration via the
 transfer map (pullback on cycles): `∫_{f*σ} η = ∫_σ f_* η`.
-Bottom-up content: a Mathlib gap (transfer maps for branched covers). -/
+
+The proof decomposes into:
+1. Membership witness: `transfer_functional_mem_periodSubgroup`
+   (the genuine geometric content — transfer maps for branched covers).
+2. Algebraic assembly: the pullback trace lift applied to a period
+   vector equals the basis-aligned dual equiv applied to the transfer
+   functional. -/
 theorem pullbackTraceLift_preserves_lattice_raw
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice Y).subgroup,
       pullbackTraceLiftCLM f hf v ∈ (periodFullComplexLattice X).subgroup := by
-  sorry
+  intro v hv
+  -- Unfold to the concrete representative.
+  show pullbackTraceLiftCLM f hf v ∈ basisAlignedPeriodSubgroupConcrete X
+  -- Extract the witness functional φ from membership in the Y-side subgroup.
+  have hv' : v ∈ basisAlignedPeriodSubgroupConcrete Y := hv
+  rw [mem_basisAlignedPeriodSubgroupConcrete_iff] at hv'
+  obtain ⟨φ, hφ_mem, hφ_eq⟩ := hv'
+  -- φ is in the range of periodPairing; extract a cycle σ.
+  change φ ∈ (periodPairing ℂ Y).range at hφ_mem
+  rw [AddMonoidHom.mem_range] at hφ_mem
+  obtain ⟨σ, hσ⟩ := hφ_mem
+  -- Rewrite v in terms of φ and σ.
+  rw [← hφ_eq, ← hσ]
+  -- Define ψ as the pulled-back functional.
+  set ψ := (holomorphicOneFormDualEquiv ℂ X).symm
+    (pullbackTraceLiftCLM f hf
+      (holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y σ))) with hψ_def
+  -- ψ ∈ periodSubgroup ℂ X by the transfer obligation.
+  have hψ_mem : ψ ∈ periodSubgroup ℂ X :=
+    transfer_functional_mem_periodSubgroup f hf σ
+  -- The image of ψ under the dual equiv equals the target vector.
+  have hψ_eq : holomorphicOneFormDualEquiv ℂ X ψ =
+      pullbackTraceLiftCLM f hf
+        (holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y σ)) := by
+    rw [hψ_def]
+    exact (holomorphicOneFormDualEquiv ℂ X).apply_symm_apply _
+  -- Conclude membership.
+  rw [← hψ_eq]
+  exact holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete X hψ_mem
 
 /-- The analytic pullback induced by a holomorphic map of compact
 Riemann surfaces, on the basis-aligned carrier.

@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.FiniteDimensional
 import Jacobian.HolomorphicForms.SectionMetric
+import Jacobian.HolomorphicForms.EvalAtOneHelper
 import Mathlib.Analysis.Normed.Module.FiniteDimension
 import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
 
@@ -253,12 +254,8 @@ theorem ContMDiffSection.continuous_eval_at_one
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (σ : HolomorphicOneForm ℂ X) :
-    Continuous (fun x => (σ.toFun x) (1 : ℂ)) := by
-  -- σ is a smooth section, hence continuous into the cotangent bundle.
-  -- The cotangent bundle is a vector bundle, so evaluation at 1
-  -- is a continuous map if we assume the standard trivialization.
-  -- Mathlib gap: direct Section-to-continuous-map API.
-  sorry
+    Continuous (fun x => (σ.toFun x) (1 : ℂ)) :=
+  continuous_eval_at_one_of_contMDiffSection σ
 
 /-- **Structural axiom (CRS-fn).** The fiber-norm of a smooth section
 is continuous.
@@ -366,6 +363,35 @@ theorem holomorphicOneForm_supNorm_cauchySeq_limit_holomorphic
     (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
       (holomorphicOneForm_metricSpace X).toUniformSpace _ _σ) :
     True := trivial
+
+/-- **Structural axiom (CRS-step3′).** The limit of a Cauchy sequence
+of holomorphic 1-forms is smooth (`ContMDiff`).
+
+Since `HolomorphicOneForm ℂ X` is defined as `ContMDiffSection` (a
+bundled `C^∞` section of the cotangent bundle), every element carries
+a proof of `ContMDiff` by construction. In particular, once the limit
+has been constructed as an element of `HolomorphicOneForm ℂ X` (via
+the pointwise-limit + Weierstrass route encoded in steps 1–3), its
+smoothness is automatic. This theorem records that fact explicitly.
+
+Cross-ref: tex blueprint §14 R8-sub-B.B step 3; supplements
+`holomorphicOneForm_supNorm_cauchySeq_limit_holomorphic`. -/
+theorem holomorphicOneForm_supNorm_cauchySeq_limit_contMDiff
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
+      (holomorphicOneForm_metricSpace X).toUniformSpace _ σ)
+    (a : HolomorphicOneForm ℂ X)
+    (_ha : @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
+      (@nhds (HolomorphicOneForm ℂ X)
+        (holomorphicOneForm_metricSpace X).toUniformSpace.toTopologicalSpace a)) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ)
+      ((modelWithCornersSelf ℂ ℂ).prod
+        (modelWithCornersSelf ℂ (CotangentModelFiber ℂ)))
+      ⊤ (fun x => Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) x (a x)) :=
+  a.contMDiff
 
 /-- **Structural axiom (CRS-step4).** Sup-norm convergence to the
 pointwise/holomorphic limit, assembling the previous three steps. -/

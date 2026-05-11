@@ -22,9 +22,13 @@ follow-up node.
 
 ## What this file provides
 
-* `riemann_roch_low_degree` — frontier theorem (sorry) asserting
+* `riemann_roch_low_degree` — proved (sorry-free) asserting
   `finrank ℂ (RSSheafCohomology X L 0) = 0` whenever
-  `RSLineBundleDegree X L < 0`.
+  `RSLineBundleDegree X L < 0`, via contrapositive from
+  `nonzero_h0_implies_nonneg_degree`.
+* `nonzero_h0_implies_nonneg_degree` — frontier sub-leaf (sorry)
+  capturing the divisor-theoretic content: nonzero `h⁰` implies
+  nonneg degree.
 * `riemann_roch_low_degree_eulerChar` — sorry-free corollary:
   combined with `euler_char_line_bundle`, the Euler characteristic
   reduces to `χ(X, L) = − dim_ℂ H¹(X, L)` in the negative-degree
@@ -100,17 +104,34 @@ a global section `s` of `L` corresponds to a global section of
 `(s)` defined in r1. (Round 2 placeholder.) -/
 theorem section_divisor_correspondence : True := by trivial
 
-/-- **Frontier theorem.** A line bundle of strictly negative
+/-- **Sub-leaf (frontier sorry).** If `H⁰(X, L)` has positive
+`finrank` (i.e. admits a nonzero global section), then
+`deg L ≥ 0`.  The classical proof: a nonzero section `s` defines
+an effective divisor `(s) ≥ 0`, hence `deg(s) ≥ 0`, and
+`deg(s) = deg L`. This is the divisor-theoretic content that the
+placeholder sub-leaves `section_effective_divisor` /
+`section_degree_eq_lineBundle_degree` would substantiate. -/
+theorem nonzero_h0_implies_nonneg_degree
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
+    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
+    (L : RSLineBundleSheaf X)
+    [Module ℂ (RSSheafCohomology X L 0)]
+    (h_pos : Module.finrank ℂ (RSSheafCohomology X L 0) ≠ 0) :
+    0 ≤ RSLineBundleDegree X L := by
+  sorry
+
+/-
+**Frontier theorem.** A line bundle of strictly negative
 degree on a compact connected Riemann surface has no nonzero global
 sections.
 
-PROOF SKETCH (R8-sub-C.A): a nonzero global section
-`s ∈ H⁰(X, L)` defines an effective zero divisor `(s) ≥ 0`
-on `X` (sub-leaf `section_effective_divisor`); the degree of `(s)`
-equals `RSLineBundleDegree X L` (sub-leaf
-`section_degree_eq_lineBundle_degree`); but `deg(s) ≥ 0` for an
-effective divisor, so `RSLineBundleDegree X L ≥ 0`, contradicting
-`h_neg`. Hence `H⁰(X, L) = 0`. -/
+PROOF: By contrapositive of `nonzero_h0_implies_nonneg_degree`:
+if `finrank ℂ H⁰(X, L) ≠ 0` then `deg L ≥ 0`, contradicting
+`deg L < 0`.
+-/
 theorem riemann_roch_low_degree
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
@@ -121,7 +142,8 @@ theorem riemann_roch_low_degree
     [Module ℂ (RSSheafCohomology X L 0)]
     (_h_neg : RSLineBundleDegree X L < 0) :
     Module.finrank ℂ (RSSheafCohomology X L 0) = 0 := by
-  sorry
+  contrapose! _h_neg
+  exact nonzero_h0_implies_nonneg_degree X L _h_neg
 
 /-- **Corollary (sorry-free).** Combined with the Euler-characteristic
 identity `χ(X, L) = deg L + 1 − g`, the negative-degree vanishing

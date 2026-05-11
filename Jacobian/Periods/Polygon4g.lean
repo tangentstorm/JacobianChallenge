@@ -7,6 +7,8 @@ import Mathlib.Topology.Connected.PathConnected
 import Mathlib.Topology.Connected.LocPathConnected
 import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Topology.Constructions
+import Mathlib.Topology.Homeomorph.Defs
+import Mathlib.Topology.Homotopy.Contractible
 
 /-!
 # Standard fundamental polygon `Polygon4g`
@@ -64,6 +66,9 @@ open Complex Set
 /-- Closed unit disk in `ℂ`. The carrier of `Polygon4g` before
 quotienting. -/
 abbrev DiskC : Type := Metric.closedBall (0 : ℂ) 1
+
+instance diskC_contractibleSpace : ContractibleSpace DiskC :=
+  Metric.contractibleSpace_closedBall (zero_le_one)
 
 /-- The angle (in radians) corresponding to the `i`-th of `L`
 boundary arcs at parameter `t ∈ [0,1]`. Concretely
@@ -214,5 +219,24 @@ lemma mk_b_pair (g : ℕ) (i : Fin g) (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 1)
   Quotient.sound (Relation.EqvGen.rel _ _ (SideGen.b_pair i t ht))
 
 end Polygon4g
+
+
+lemma polygon4g_sideRel_zero_iff_eq (a b : DiskC) : Polygon4g.SideRel 0 a b ↔ a = b := by
+  refine ⟨fun h => ?_, fun h => h ▸ Relation.EqvGen.refl _⟩
+  induction h with
+  | rel _ _ hr => cases hr with | a_pair i _ _ => exact i.elim0 | b_pair i _ _ => exact i.elim0
+  | refl _ => rfl
+  | symm _ _ _ ih => exact ih.symm
+  | trans _ _ _ _ _ ih₁ ih₂ => exact ih₁.trans ih₂
+
+theorem polygon4g_zero_homeo_diskC : Nonempty (Polygon4g 0 ≃ₜ DiskC) := by
+  let f : Polygon4g 0 → DiskC := Quotient.lift id (fun a b hab => (polygon4g_sideRel_zero_iff_eq a b).mp hab)
+  have hf_cts : Continuous f := continuous_id.quotient_lift _
+  let e : Polygon4g 0 ≃ DiskC := { toFun := f, invFun := Polygon4g.mk 0, left_inv := fun q => by induction q using Quotient.inductionOn with | _ z => rfl, right_inv := fun _ => rfl }
+  exact ⟨hf_cts.homeoOfEquivCompactToT2 (f := e)⟩
+
+instance polygon4g_zero_t2Space : T2Space (Polygon4g 0) := by
+  obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
+  exact h.symm.t2Space
 
 end JacobianChallenge.Periods
