@@ -1170,7 +1170,7 @@
 {"i":1222,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"def","s":"add_meromorphic","n":1,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1223,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"theorem","s":"mdifferentiable_toFiniteFun_of_no_infty","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1224,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"def","s":"neg_meromorphic","n":2,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":1225,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"def","s":"smul_meromorphic","n":1,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1225,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"def","s":"smul_meromorphic","n":1,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1226,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"theorem","s":"toFun_ne_infty_of_poles_eq_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1227,"f":"Jacobian/HolomorphicForms/RiemannRochLowDegree.lean","k":"theorem","s":"nonzero_h0_implies_nonneg_degree","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1228,"f":"Jacobian/HolomorphicForms/Serre/ResidueMap.lean","k":"def","s":"residueMapEquiv","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
