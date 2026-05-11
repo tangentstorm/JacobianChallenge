@@ -6,6 +6,10 @@ import Jacobian.Periods.IntegralOneCycle
 import Mathlib.Algebra.Category.ModuleCat.Colimits
 import Mathlib.Algebra.Category.ModuleCat.Abelian
 import Mathlib.LinearAlgebra.Dimension.Finrank
+import Mathlib.AlgebraicTopology.SingularHomology.Basic
+import Mathlib.Topology.Category.TopCat.Basic
+import Mathlib.Topology.Homotopy.Contractible
+import Mathlib.Topology.Homotopy.Equiv
 
 /-!
 # Topological genus via singular homology
@@ -58,6 +62,31 @@ noncomputable def topologicalGenus
     (M : Type) [TopologicalSpace M] [CompactSpace M] [ConnectedSpace M] :
     ℕ :=
   Module.finrank ℤ (singularH1 M) / 2
+
+private instance unit_totallyDisconnected : TotallyDisconnectedSpace Unit :=
+  ⟨fun _ _ _ => Set.subsingleton_of_subsingleton⟩
+
+theorem singularH1_unit_subsingleton : Subsingleton (singularH1 Unit) :=
+  ModuleCat.subsingleton_of_isZero <|
+    AlgebraicTopology.isZero_singularHomologyFunctor_of_totallyDisconnectedSpace
+      (ModuleCat ℤ) 1 (ModuleCat.of ℤ ℤ) (TopCat.of Unit) one_ne_zero
+
+theorem singularH1_iso_of_homotopyEquiv {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    (h : ContinuousMap.HomotopyEquiv X Y) :
+    Nonempty (singularH1 X ≃ₗ[ℤ] singularH1 Y) :=
+  sorry -- Prism construction
+
+theorem singularH1_subsingleton_of_homotopyEquivUnit {X : Type} [TopologicalSpace X]
+    (h : ContinuousMap.HomotopyEquiv X Unit) :
+    Subsingleton (singularH1 X) := by
+  obtain ⟨e⟩ := singularH1_iso_of_homotopyEquiv h
+  haveI := singularH1_unit_subsingleton
+  exact e.toEquiv.subsingleton
+
+theorem singularH1_subsingleton_of_contractibleSpace {X : Type} [TopologicalSpace X] [ContractibleSpace X] :
+    Subsingleton (singularH1 X) := by
+  obtain ⟨h⟩ := ContractibleSpace.hequiv_unit X
+  exact singularH1_subsingleton_of_homotopyEquivUnit h
 
 end JacobianChallenge.Periods
 

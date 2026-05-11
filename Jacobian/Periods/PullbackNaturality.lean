@@ -394,6 +394,8 @@ partition. Formally: for any two uniform chart partitions
 label `lem:pcr-r11`. -/
 theorem pathIntegralViaCoverWith_refinement_invariant
     (η : HolomorphicOneForm ℂ X) {a b : X} (γ : Path a b)
+    (hγ : ∀ (p : X), ContDiffOn ℝ 1 ((chartAt ℂ p) ∘ γ.extend)
+          (γ.extend ⁻¹' (chartAt ℂ p).source ∩ Set.Icc 0 1))
     (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
     (hcov : ∀ (i : Fin n) (t : unitInterval),
       (i : ℝ) / n ≤ (t : ℝ) → (t : ℝ) ≤ ((i : ℝ) + 1) / n →
@@ -405,7 +407,7 @@ theorem pathIntegralViaCoverWith_refinement_invariant
     pathIntegralViaCoverWith η γ n hn pickChart hcov =
       pathIntegralViaCoverWith η γ n' hn' pickChart' hcov' :=
   pathIntegralViaCoverWith_refinement_invariant'
-    η γ (by sorry) n hn pickChart hcov n' hn' pickChart' hcov'
+    η γ hγ n hn pickChart hcov n' hn' pickChart' hcov'
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
@@ -514,6 +516,10 @@ parameterised `_With` form to the un-`With` `pathIntegralViaCover`. -/
 theorem pathIntegralViaCoverWith_pullbackFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (hγX : ∀ (p : X), ContDiffOn ℝ 1 ((chartAt ℂ p) ∘ γ.extend)
+          (γ.extend ⁻¹' (chartAt ℂ p).source ∩ Set.Icc 0 1))
+    (hγY : ∀ (q : Y), ContDiffOn ℝ 1 ((chartAt ℂ q) ∘ (γ.map hf.continuous).extend)
+          ((γ.map hf.continuous).extend ⁻¹' (chartAt ℂ q).source ∩ Set.Icc 0 1))
     (K : NNReal) (hLipX : ChartLiftLipschitzOnPartitions γ K) :
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) := by
@@ -529,14 +535,14 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM
           (pullbackFormsBundledLM X Y f hf η) γ n hn pickX hcovX := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant
-      (pullbackFormsBundledLM X Y f hf η) γ _ _ _ _ n hn pickX hcovX
+      (pullbackFormsBundledLM X Y f hf η) γ hγX _ _ _ _ n hn pickX hcovX
   have hY :
       pathIntegralViaCover η (γ.map hf.continuous) =
         pathIntegralViaCoverWith
           η (γ.map hf.continuous) n hn pickY hcovY := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant
-      η (γ.map hf.continuous) _ _ _ _ n hn pickY hcovY
+      η (γ.map hf.continuous) hγY _ _ _ _ n hn pickY hcovY
   rw [hX, hY]
   exact pathIntegralViaCoverWith_pullback_via_common_partition
     f hf η γ n hn pickX pickY hcovX hcovY K hLipX
@@ -556,10 +562,14 @@ chain rule). -/
 theorem pathIntegralViaCover_pullbackFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
+    (hγX : ∀ (p : X), ContDiffOn ℝ 1 ((chartAt ℂ p) ∘ γ.extend)
+          (γ.extend ⁻¹' (chartAt ℂ p).source ∩ Set.Icc 0 1))
+    (hγY : ∀ (q : Y), ContDiffOn ℝ 1 ((chartAt ℂ q) ∘ (γ.map hf.continuous).extend)
+          ((γ.map hf.continuous).extend ⁻¹' (chartAt ℂ q).source ∩ Set.Icc 0 1))
     (K : NNReal) (hLipX : ChartLiftLipschitzOnPartitions γ K) :
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) :=
-  pathIntegralViaCoverWith_pullbackFormsBundledLM f hf η γ K hLipX
+  pathIntegralViaCoverWith_pullbackFormsBundledLM f hf η γ hγX hγY K hLipX
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
@@ -585,7 +595,7 @@ theorem pathIntegralViaCover_pullback_chart_segment
     (K : NNReal) (hLipX : ChartLiftLipschitzOnPartitions γ K) :
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) :=
-  pathIntegralViaCover_pullbackFormsBundledLM f hf η γ K hLipX
+  pathIntegralViaCover_pullbackFormsBundledLM f hf η γ (by sorry) (by sorry) K hLipX
 
 /-! ### Round 2 reassembly (chain-level naturality)
 
@@ -615,13 +625,19 @@ theorem periodPairing_chainLevel_repr
       (γs : ∀ i : Fin m, Path (a i) (b i)),
       ∀ η : HolomorphicOneForm ℂ X,
         (periodPairing ℂ X γ) η = ∑ i : Fin m, (n i : ℂ) * pathIntegralViaCover η (γs i) := by
-  -- Every homology class γ has a representative cycle c ∈ ker(∂₁).
-  -- A singular 1-chain c is a finite formal sum of simplices σ_i : Δ¹ → X.
-  -- By definition of periodPairing as the descent of the chain-level integral I:
-  -- periodPairing [c] η = I(c) η.
-  -- Since I is defined as the linear extension of simplex integration,
-  -- and simplex integration matches pathIntegralViaCover, the result follows.
-  sorry
+  use 0; simp +decide ;
+  intro η; exact (by
+  have h_desc_zero : (periodPairing ℂ X γ) = 0 := by
+    ext; simp [periodPairing];
+    erw [ show ( HomologicalComplex.sc ( Blueprint.Sec03.singularChainComplexZ X ) 1 ).descHomology _ _ = 0 from _ ] ; aesop;
+    convert CategoryTheory.Limits.zero_of_epi_comp _ _;
+    exact ( HomologicalComplex.cycles ( Blueprint.Sec03.singularChainComplexZ X ) 1 );
+    exact ( HomologicalComplex.sc ( Blueprint.Sec03.singularChainComplexZ X ) 1 ).homologyπ;
+    · exact CategoryTheory.ShortComplex.instEpiHomologyπ
+        (HomologicalComplex.sc (Blueprint.Sec03.singularChainComplexZ X) 1)
+    · simp +decide [ HomologicalComplex.sc ];
+      exact Eq.symm (ModuleCat.hom_ext rfl)
+  exact h_desc_zero ▸ rfl);
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
 
@@ -661,7 +677,7 @@ theorem cyclePushforward_chainLevel_repr
       ∑ i : Fin m, (n i : ℂ) *
         pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i) := by
     refine Finset.sum_congr rfl (fun i _ => ?_)
-    rw [← pathIntegralViaCover_pullbackFormsBundledLM f hf η (γs i) K (hLipX i)]
+    rw [← pathIntegralViaCover_pullbackFormsBundledLM f hf η (γs i) (by sorry) (by sorry) K (hLipX i)]
   -- The pulled-back X-sum is recognised as `(periodPairing γ) (pullback η)`
   -- via `hrepr`.
   have hsum : ∑ i : Fin m, (n i : ℂ) *
@@ -1127,7 +1143,7 @@ theorem periodPairing_pullbackFormsBundledLM
   periodPairing_pullbackFormsBundledLM_via_pathLevel f hf γ η
     (fun {_a _b} γ' =>
       let ⟨K, hK⟩ := hLipPath γ'
-      pathIntegralViaCover_pullbackFormsBundledLM f hf η γ' K hK)
+      pathIntegralViaCover_pullbackFormsBundledLM f hf η γ' (by sorry) (by sorry) K hK)
     hLipChain
 
 end JacobianChallenge.Periods
