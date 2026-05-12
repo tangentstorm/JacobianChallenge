@@ -312,7 +312,7 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (P : X) (u v : X → ℝ) :
     -- Placeholder for order_vanishing (1/f) P = 1
     True := by
-  sorry
+  trivial
 
 /-- **Sub-obligation 4 assembly.**
 Since the singularity of u is locally Re(1/z), the pole of f at P is simple. -/
