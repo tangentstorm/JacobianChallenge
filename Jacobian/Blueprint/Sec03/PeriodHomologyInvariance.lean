@@ -249,9 +249,40 @@ theorem pathIntegral_linear_in_form
 
 /-- Continuity of chart-pullback forms along chart-lifted subpaths.
 This is the bridge from `chartedFormPullback_continuousOn` (Packet F)
-to the per-segment `CurveIntegrable` hypotheses.  Currently sorry;
-the full proof requires assembling chart-atlas membership and
-range-containment for each segment. -/
+to the per-segment `CurveIntegrable` hypotheses.
+
+**BLOCKER (statement-level).** The conclusion asks for global
+`Continuous (chartedFormPullback c ω)` on `E`, but
+`chartedFormPullback c ω e = (ω.toFun (c.symm e)).comp (mfderiv 𝓘 𝓘 c.symm e)`
+is only well-controlled on `c.target`. Outside `c.target` the partial
+homeomorphism `c.symm` returns its junk default and `mfderiv c.symm`
+need not extend continuously across the boundary of `c.target`, so the
+function is not continuous on `E` in general.
+
+Three concrete prerequisites separate this stub from a sorry-free
+proof; none can be supplied without changing the statement (which the
+current task forbids):
+
+1. **Localisation to `c.target`.** Replace `Continuous _` with
+   `ContinuousOn _ c.target` (matching the existing production lemma
+   `JacobianChallenge.Periods.chartedFormPullback_continuousOn` in
+   `Jacobian/Periods/ChartedFormPullbackCurveIntegrable.lean`).
+2. **`[StableChartAt E X]` instance.** Required by
+   `chartedFormPullback_continuousOn` to identify
+   `mfderiv (chartAt E p₀)` with the identity on a chart neighborhood
+   (see `mfderiv_chartAt_eq_id_of_stable`).
+3. **Chart-atlas membership** `c ∈ IsManifold.maximalAtlas
+   (modelWithCornersSelf ℂ E) ⊤ X`. Needed to invoke
+   `contMDiffOn_symm_of_mem_maximalAtlas`, the smoothness fact behind
+   the operator-continuity of `e ↦ mfderiv 𝓘 𝓘 c.symm e` on
+   `c.target`.
+
+Once the call site (`exists_singularSimplex_integration`'s use of
+`pathIntegralViaCoverWith_add_of_curveIntegrable`) is rewritten to
+thread chart-atlas membership and per-segment `range ⊆ c.target` data
+into a `ContinuousOn`-flavoured curve-integrability statement, this
+sorry collapses to a one-line forwarder to
+`chartedFormPullback_continuousOn`. -/
 private theorem chartedFormPullback_continuous_assumption
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
