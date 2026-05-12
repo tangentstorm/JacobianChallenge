@@ -636,12 +636,21 @@ theorem skeletal_pair_les_relative
 /-- **R3-sub-B.A.r2.r1 (Round 3).** Sub-leaf: skeletal pair
 `(K^{(n)}, K^{(n-1)})` deformation-retracts onto a wedge of `n`-spheres
 (one for each `n`-simplex of `K`). Encoded as a homotopy equivalence
-to a sorry'd `wedgeOfSpheres (K.nSimplices n) n` placeholder type. -/
+to a sorry'd `wedgeOfSpheres (K.nSimplices n) n` placeholder type.
+
+Proof: compose the deformation-retraction stub
+`skeletal_pair_deformation_retract_wedge`
+(`relativeSkeletalH K n ≃ₗ[ℤ] ULift (K.nSimplices n →₀ ℤ)`, the
+ULift-wrapped wedge model from the Topological Core) with
+`ULift.moduleEquiv` to strip the universe-lift wrapper that the
+scaffolding lockdown introduced on the topological side. -/
 theorem skeletal_pair_wedge_of_spheres
     [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
     Nonempty (relativeSkeletalH K n ≃ₗ[ℤ]
-      (K.nSimplices n →₀ ℤ)) :=
-  sorry
+      (K.nSimplices n →₀ ℤ)) := by
+  obtain ⟨(e : relativeSkeletalH K n ≃ₗ[ℤ] ULift.{0} (K.nSimplices n →₀ ℤ))⟩ :=
+    skeletal_pair_deformation_retract_wedge K n
+  exact ⟨e.trans ULift.moduleEquiv⟩
 
 /-- **R3-sub-B.A.r2.r2 (Round 3).** Sub-leaf: singular homology of a
 wedge of `α` `n`-spheres is `⊕_α ℤ` in degree `n` and `0` elsewhere
