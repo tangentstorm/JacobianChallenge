@@ -1,6 +1,7 @@
 import Jacobian.Periods.Polygon4g
 import Jacobian.Periods.TopologicalGenus
 import Jacobian.Periods.PolygonCellularHomology
+import Jacobian.Periods.Hurewicz
 import Mathlib.Algebra.Module.Torsion.Free
 import Mathlib.LinearAlgebra.Basis.Defs
 import Mathlib.LinearAlgebra.Dimension.Constructions
@@ -118,10 +119,15 @@ theorem polygon4g_succ_pathConnected (g : ℕ) :
   inferInstance
 
 /-- **Round 45 / Stage A leaf.** Identification of `singularH1` with
-the abelianisation of the fundamental group. -/
+the abelianisation of the fundamental group. The proof routes through
+the project-side cellular-to-singular comparison
+`polygon4g_cellularH1_to_singularH1`, exploiting the fact that both
+`Polygon4gAbelianization g` and `Polygon4gCellularH1 (g + 1)` reduce
+to `Fin (2 * (g + 1)) → ℤ`. -/
 theorem polygon4g_succ_hurewicz_iso_freeZ (g : ℕ) :
-    Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) :=
-  sorry
+    Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) := by
+  obtain ⟨e⟩ := polygon4g_cellularH1_to_singularH1 (g + 1)
+  exact ⟨e⟩
 
 /-- **Summary assembly (Packet C1).** -/
 theorem hurewicz_singularH1_iso_polygon4g (g : ℕ) :
