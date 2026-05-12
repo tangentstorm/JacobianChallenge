@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.VanishingOrder
+import Jacobian.HolomorphicForms.AnalyticLocalMapping
 import Mathlib.Analysis.Analytic.Order
 import Mathlib.Geometry.Manifold.ContMDiff.Defs
 
@@ -595,7 +596,11 @@ theorem isHolomorphic_of_contMDiff
     [TopologicalSpace Y] [ChartedSpace ℂ Y]
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
-    IsHolomorphic f :=
-  sorry
+    IsHolomorphic f := by
+  refine' { continuous := hf.continuous, holomorphicAt := fun p => isHolomorphicAt_of_contMDiffAt (hf p), .. }
+  · intro _instX _instY x k hk hram
+    sorry
+  · intro _instX _instY _instC _instT2X _instP _instT2Y hnonconst hfinite y₀
+    sorry
 
 end JacobianChallenge.HolomorphicForms.HolomorphicMap
