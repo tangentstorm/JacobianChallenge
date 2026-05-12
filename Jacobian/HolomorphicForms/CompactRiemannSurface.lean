@@ -406,6 +406,20 @@ theorem holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
       @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
         (@nhds (HolomorphicOneForm ℂ X)
           (holomorphicOneForm_metricSpace X).toUniformSpace.toTopologicalSpace a) := by
+  -- BLOCKER: the four upstream "step" axioms this theorem is supposed to
+  -- assemble are all currently `True := trivial` placeholders, producing
+  -- no `HolomorphicOneForm`-valued data:
+  --   * `holomorphicOneForm_supNorm_cauchySeq_pointwise_limit_exists` (step 1)
+  --   * `holomorphicOneForm_supNorm_cauchySeq_limit_continuous`       (step 2)
+  --   * `holomorphicOneForm_supNorm_cauchySeq_limit_holomorphic`      (step 3)
+  --   * `holomorphicOneForm_uniform_limit`                            (step 4)
+  -- Step 3 (Weierstrass on sections) is the genuine Mathlib gap (no
+  -- uniform-limit-of-holomorphic-functions lemma in v4.28.0). Until at
+  -- least step 1 is upgraded to return a witness in `HolomorphicOneForm ℂ X`
+  -- (or some intermediate type) together with a sup-norm convergence
+  -- proof, no in-file assembly can produce the required `∃ a, …`. Task
+  -- is blocked under the single-file write scope; the fix must widen to
+  -- include the upstream step-axiom file.
   sorry
 
 /-- **Prerequisite 2a (sorry — analytic core of completeness).**
