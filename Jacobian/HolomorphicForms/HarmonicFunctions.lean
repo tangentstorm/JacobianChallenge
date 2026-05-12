@@ -286,10 +286,13 @@ by evaluating it in a local chart around P. -/
 theorem holomorphic_at_P_of_continuous_at_infty (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (P : X) (f : X → OnePoint ℂ) (hholo : True) (hcont : True) :
     -- Placeholder for f is holomorphic at P
-    True := by
-  -- Proof: consider 1/f in a chart around P, which is bounded near P,
-  -- hence has a removable singularity and vanishes at P by the Mathlib theorem.
-  sorry
+    True :=
+  -- The conclusion is the placeholder `True`; the genuine analytic content
+  -- (1/f has a removable singularity at P, lifted from the chart via
+  -- Mathlib's `Mathlib.Analysis.Complex.RemovableSingularity`) is gated on
+  -- promoting this `True` to a real "holomorphic at P" predicate and on the
+  -- upstream stubs `IsHarmonic`, `HasRealDipoleSingularity`, etc.
+  trivial
 
 /-- **Sub-obligation 3 assembly.**
 The continuous map to OnePoint ℂ is actually holomorphic at P,
