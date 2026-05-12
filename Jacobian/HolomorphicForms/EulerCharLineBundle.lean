@@ -160,6 +160,36 @@ theorem euler_char_eq_formula
     (Module.finrank ℂ (RSSheafCohomology X L 0) : ℤ) -
         (Module.finrank ℂ (RSSheafCohomology X L 1) : ℤ) =
       RSLineBundleDegree X L + 1 - (RSGenus X : ℤ) := by
+  -- BLOCKER: this is the genuine analytic content of Riemann-Roch and
+  -- cannot be discharged with the current scaffolding.  The RHS uses
+  -- `RSLineBundleDegree X L`, declared above as `noncomputable opaque`
+  -- with no underlying computational content, so the propositional
+  -- statement carries no exploitable equation between the two sides.
+  --
+  -- Missing prerequisites (all ABSENT in Mathlib v4.28.0 per
+  -- `ref/Inventory.md` and `ref/plans/sheaf-cohomology-rs.md` §2):
+  --
+  --   (1) a real definition of `RSLineBundleDegree` via the
+  --       divisor ↔ line-bundle correspondence on a Riemann surface
+  --       (or via `c₁(L) ∈ H²(X, ℤ)`); both routes need analytic-sheaf
+  --       or de Rham machinery not yet present;
+  --   (2) the skyscraper-twist short exact sequence
+  --       `0 → L → L(p) → ℂ_p → 0` and Euler-characteristic additivity
+  --       along it (placeholder `eulerChar_additive_ses_point` above
+  --       is a `True := trivial` stub);
+  --   (3) the base case `χ(𝒪_X) = 1 - g` for the trivial bundle
+  --       (placeholder `h0_minus_h1_trivial_bundle` is a `True` stub),
+  --       which itself depends on `dim H⁰(𝒪_X) = 1` (connected compact
+  --       RS) and `dim H¹(𝒪_X) = g` (Hodge / Serre duality);
+  --   (4) `FiniteDimensionalSheafCohomologyRS` witnesses for arbitrary
+  --       line bundles (frontier class in `SheafCohomologyRS.lean`
+  --       with no concrete instances yet); without these,
+  --       `Module.finrank` may silently collapse to 0.
+  --
+  -- The classical proof is strong induction on `|deg L|` using (2)/(3)
+  -- and Serre duality (already a frontier in `SerreDualityRS.lean`).
+  -- Without (1)-(4) there is no Lean-level handle to reduce the LHS
+  -- to the opaque RHS.
   sorry
 
 /-- **Sub-leaf 1 (Riemann's inequality, `≥` direction).** The integer
