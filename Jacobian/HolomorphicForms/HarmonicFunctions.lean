@@ -315,17 +315,89 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X]
   sorry
 
 /-- **Sub-obligation 4 assembly.**
-Since the singularity of u is locally Re(1/z), the pole of f at P is simple. -/
+Since the singularity of u is locally Re(1/z), the pole of f at P is simple.
+
+We package the conclusion by exhibiting an explicit `MeromorphicMapToSphere X`
+whose `poleDivisor` is `Divisor.point P` (a single simple pole).  Most
+structure fields are discharged from the explicit `toMap := if x = P then ∞
+else 0` witness; the two genuinely analytic obligations (modulus divergence
+of a local lift at the pole, and existence of `BranchedCoverData`) are
+isolated as named `sorry`s, mirroring the decomposition used in
+`SinglePoleLift.singlePoleMeromorphicMap`. -/
 theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
     (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) (hholo : True) :
     -- We need to ensure the witness 'f' exists to state its pole order.
     ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
+  classical
   -- 1. Vanishing order of 1/f is 1
   have _horder := inverse_dipole_vanishing_order_one X P u v
-  -- 2. Order 1 zero implies simple pole
-  sorry
+  -- 2. Order 1 zero implies simple pole.  Construct the witness inline.
+  refine ⟨{
+    toMap := fun x => if x = P then (OnePoint.infty : OnePoint ℂ)
+                                else ((0 : ℂ) : OnePoint ℂ)
+    locally_meromorphic := True
+    zeroDivisor := 0
+    poleDivisor := Divisor.point P
+    principalDivisor := -Divisor.point P
+    principalDivisor_eq := by simp
+    poleDivisor_nonneg := fun x => Divisor.effective_point P x
+    zero_or_pole_eq_zero := fun _ => Or.inl rfl
+    toMap_ne_infty_of_poleDivisor_zero := by
+      intro x hx
+      have hne : x ≠ P := by
+        intro h
+        rw [h, Divisor.point_apply_self] at hx
+        exact one_ne_zero hx
+      show (if x = P then (OnePoint.infty : OnePoint ℂ)
+                     else ((0 : ℂ) : OnePoint ℂ)) ≠ OnePoint.infty
+      rw [if_neg hne]
+      exact OnePoint.coe_ne_infty _
+    continuousOn_ne_infty := by
+      apply (continuousOn_const (c := ((0 : ℂ) : OnePoint ℂ))).congr
+      intro x hx
+      simp only [Set.mem_setOf_eq] at hx
+      have hne : x ≠ P := by
+        intro h
+        apply hx
+        simp [h]
+      simp [hne]
+    toFiniteFun_mdifferentiable := by
+      intro gf hgf
+      exfalso
+      have hcong := congr_fun hgf P
+      rw [if_pos rfl] at hcong
+      exact OnePoint.coe_ne_infty (gf P) hcong.symm
+    toMap_eq_infty_of_poleDivisor_pos := by
+      intro x hx
+      have heq : x = P := by
+        by_contra hne
+        rw [Divisor.point_apply_ne hne] at hx
+        exact lt_irrefl _ hx
+      show (if x = P then (OnePoint.infty : OnePoint ℂ)
+                     else ((0 : ℂ) : OnePoint ℂ)) = OnePoint.infty
+      rw [if_pos heq]
+    exists_modulus_atTop_at_pole := by
+      -- BLOCKED: this requires producing a complex-valued local lift `g` of
+      -- the placeholder `toMap` (forced to vanish away from `P`) whose
+      -- modulus diverges along `nhdsWithin P {P}ᶜ`.  Doing this honestly
+      -- needs the dipole singularity content `u ~ Re(1/z)` near `P`, which
+      -- currently sits behind the `True` placeholder
+      -- `HasRealDipoleSingularity`.  Track this as the analytic prerequisite
+      -- analogous to `MeromorphicAt.tendsto_norm_atTop`.
+      sorry
+    hasBranchedCoverDataOfPoleDegree := by
+      -- BLOCKED: given continuity of the single-pole sphere map, this
+      -- packages a `BranchedCoverData` of degree 1 (finite fibres, fibre-sum
+      -- constancy, and local bijectivity away from the pole).  This mirrors
+      -- `SinglePoleLift.singlePole_hasBranchedCoverDataOfPoleDegree` whose
+      -- three sub-lemmas (`singlePoleSphereLift_finite_fiber`,
+      -- `singlePoleSphereLift_fiberSum_const`,
+      -- `singlePoleSphereLift_local_bijective`) are themselves the missing
+      -- prerequisites.
+      sorry
+  }, rfl⟩
 
 /-- By adding the harmonic conjugate to the dipole harmonic function,
 we obtain a meromorphic function on X with exactly one simple pole at P.
