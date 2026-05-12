@@ -412,11 +412,37 @@ theorem cellularToSingular_isChainMap
       (cellularToSingularChain K n).comp (cellularBoundary K n) :=
   sorry
 
-/-! ### Relative-H placeholder for skeletal pairs -/
+/-! ### Relative-H placeholder for skeletal pairs
 
-/-- Substantive type for `H_n^sing(|K^{(n)}|, |K^{(n-1)}|; ℤ)`.
-Wrapped in a structure to prevent trivial proofs via placeholder aliases. -/
+The type `relativeSkeletalH K n` is the intended interface for
+`H_n^sing(|K^{(n)}|, |K^{(n-1)}|; ℤ)` — relative singular homology of
+the skeletal pair. **It is currently a thin wrapper around
+`K.nSimplices n →₀ ℤ`** (i.e. structurally isomorphic by construction to
+the free `ℤ`-module on `K.nSimplices n`). This shape is a deliberate
+infrastructure placeholder: the genuine definition requires singular
+chain complexes on `AbstractSimplicialComplex.Geometric K`, the
+`(n-1)`-skeleton subcomplex, and the kernel/image quotient — none of
+which are wired up yet in this project.
+
+Consequences:
+
+* The structural iso `relativeSkeletalH K n ≃ₗ[ℤ] (K.nSimplices n →₀ ℤ)`
+  (`relative_hurewicz_identity_under_placeholder`) is honest *given the
+  current definition*, but is mathematically a placeholder for the deep
+  *wedge-of-spheres / cellular-vs-singular comparison theorem*.
+* Theorems in this section whose proofs route through
+  `homology_wedge_axiom` rely on that load-bearing geometric content,
+  which is admitted as a named `sorry` and tracked as missing
+  infrastructure (see the docstring on `homology_wedge_axiom`).
+
+When the real singular-homology infrastructure lands, `relativeSkeletalH`
+should be redefined as the genuine relative singular homology and the
+sorry in `homology_wedge_axiom` filled by the standard
+attaching-map/excision argument. -/
 structure relativeSkeletalH [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) where
+  /-- Cellular shadow of a relative skeletal class. In the placeholder
+  regime this field is the entire datum; the real definition will replace
+  this structure with a genuine singular-chain quotient. -/
   down : K.nSimplices n →₀ ℤ
 
 namespace relativeSkeletalH
@@ -449,6 +475,13 @@ instance [IsEmpty (K.nSimplices n)] : Subsingleton (relativeSkeletalH K n) :=
 
 end relativeSkeletalH
 
+/-- The trivial structural iso induced by the current placeholder shape
+of `relativeSkeletalH` (one field `down : cellularChain K n`). This is
+**not** the genuine cellular↔singular comparison theorem — the name
+encodes that this is the iso witnessed *under the placeholder*. Real
+proofs of the wedge-of-spheres identification must not rely on this
+iso; see `homology_wedge_axiom` for the honestly-admitted geometric
+content. -/
 noncomputable def relative_hurewicz_identity_under_placeholder
     [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
     relativeSkeletalH K n ≃ₗ[ℤ] (K.nSimplices n →₀ ℤ) where
@@ -476,9 +509,31 @@ theorem homology_Sn_reduced (n : ℕ) : Nonempty (ℤ ≃ₗ[ℤ] ℤ) :=
         obtain ⟨e2⟩ := singularH_suspension_iso n
         exact ⟨e1.trans e2⟩
 
-theorem homology_wedge_axiom [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (α : Type) (n : ℕ) :
+/-- **Wedge-of-spheres / cellular comparison axiom.**
+
+Geometric content: the quotient `|K^{(n)}|/|K^{(n-1)}|` is homeomorphic
+to a wedge of `n`-spheres indexed by `K.nSimplices n` (each `n`-simplex
+contributes one sphere via its characteristic-map collapse). Combined
+with the excision identification
+`H_n(|K^{(n)}|,|K^{(n-1)}|;ℤ) ≅ H̃_n(|K^{(n)}|/|K^{(n-1)}|;ℤ)`,
+the wedge axiom for reduced singular homology, and
+`H̃_n(S^n;ℤ) ≅ ℤ`, this yields the displayed `ℤ`-module isomorphism.
+
+**Status:** Honestly admitted as `sorry`. Discharging it requires
+infrastructure that is not yet present in this project: a usable
+singular chain complex / singular homology API for arbitrary spaces, the
+`(n-1)`-skeleton as a subspace of the geometric realisation, excision,
+the wedge axiom, and `H̃_n(S^n)`. This `sorry` replaces what was a
+degenerate proof routing through
+`relative_hurewicz_identity_under_placeholder` — see that decl's
+docstring for the explanation of why that route was a placeholder.
+
+The unused `α : Type` parameter is retained for call-site compatibility
+with `homology_wedge_of_spheres_iso_finsupp` below. -/
+theorem homology_wedge_axiom [TopologicalSpace V] [LinearOrder V] [DecidableEq V]
+    (K : AbstractSimplicialComplex V) (_α : Type) (n : ℕ) :
     Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] (K.nSimplices n →₀ ℤ)) :=
-  ⟨relative_hurewicz_identity_under_placeholder K n⟩
+  sorry
 
 theorem skeletal_pair_deformation_retract_wedge
     [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
@@ -499,14 +554,29 @@ theorem skeletal_pair_wedge_of_spheres
       (K.nSimplices n →₀ ℤ)) :=
   homology_wedge_of_spheres_iso_finsupp K n
 
+/-- Rank of the relative skeletal `H_n` of a finite-`n`-skeleton-pair
+equals the number of `n`-simplices.
+
+This is the rank-level statement of the wedge-of-spheres theorem. The
+proof reduces to `homology_wedge_axiom` (the geometric content,
+currently admitted as a `sorry`; see its docstring) plus the standard
+`Module.finrank_finsupp_self` rank computation for a finitely-supported
+free module.
+
+Earlier the proof of this theorem routed through
+`relative_hurewicz_identity_under_placeholder`, exploiting the
+definitional equality between `relativeSkeletalH K n` and
+`cellularChain K n`. That route was a degenerate placeholder proof. The
+present proof depends instead on the *named* admission of the geometric
+content in `homology_wedge_axiom`, so the dependency on missing
+infrastructure is now explicit and trackable. -/
 theorem singularH_wedge_of_spheres
     [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ)
     [Fintype (K.nSimplices n)] :
-    Module.finrank ℤ (relativeSkeletalH K n) = (Fintype.card (K.nSimplices n)) :=
-  by
-    obtain ⟨e⟩ := skeletal_pair_wedge_of_spheres K n
-    rw [e.finrank_eq]
-    exact Module.finrank_finsupp_self ℤ
+    Module.finrank ℤ (relativeSkeletalH K n) = (Fintype.card (K.nSimplices n)) := by
+  obtain ⟨e⟩ := skeletal_pair_wedge_of_spheres K n
+  rw [e.finrank_eq]
+  exact Module.finrank_finsupp_self ℤ
 
 theorem skeletal_pair_les_relative
     [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
