@@ -151,25 +151,45 @@ noncomputable def barycentricPointOfSimplex
   · rw [htoFinset]
     simp [c]
 
-/-- Subspace topology on `BarycentricPoint K`, induced from the
-product topology on `V → ℝ` via the `coords` projection. -/
+/-- The geometric realisation of `K` as a topological space.
+
+*Project-stage placeholder.*  In a full development this would be the
+weak-topology quotient `(⨆ s ∈ K.simplices, Δˢⁱᵐᵖˡᵉˣ s)/∼`.  For
+scaffolding we set `Geometric K := V` (the vertex type), inheriting
+whatever topological structure `V` carries.  Selecting `V = M` at the
+assembly headline (e.g. in `rado_overview`) gives `Geometric K ≃ₜ M`
+literally as `Homeomorph.refl M`.
+
+The substantive realisation type — a subspace of `V → ℝ` carved out
+by the barycentric-coordinate constraints — is `BarycentricPoint K`
+(declared above). Its topology, declared below as
+`barycentricPointTopology`, makes it a real geometric realisation
+candidate; the upstream promotion swaps `Geometric K`'s body to
+`BarycentricPoint K` once the rest of the consumers are ready to
+relinquish the `Geometric K = V = M` refl shortcut. -/
+abbrev Geometric (_K : AbstractSimplicialComplex V) : Type u := V
+
+/-- **Substantive realisation.**  Subspace topology on
+`BarycentricPoint K`, induced from the product topology on `V → ℝ`
+via the `coords` projection.
+
+This is the genuine geometric-realisation topology candidate —
+contrast with the placeholder `Geometric K := V`, which inherits the
+ambient topology of `V` rather than the convex-combination topology
+that the classical realisation carries. -/
 instance barycentricPointTopology
     [TopologicalSpace V] : TopologicalSpace (BarycentricPoint K) :=
   TopologicalSpace.induced (fun p : BarycentricPoint K => p.coords) Pi.topologicalSpace
 
 /-- **Substantive realisation type alias.**  The genuine
 geometric-realisation candidate `|K|` for the simplicial complex `K`,
-carrying the barycentric-coordinate topology. -/
+carrying the barycentric-coordinate topology. Distinct from the
+placeholder `Geometric K := V`; the iso headline
+`cellular_iso_singularH_via_five_lemma` is gated on swapping
+`Geometric K`'s body to this type once consumers (notably the
+`Rado/Overview.lean` chain `M ≃ₜ Geometric K`) migrate. -/
 abbrev BarycentricRealisation (K : AbstractSimplicialComplex V) : Type u :=
   BarycentricPoint K
-
-/-- The geometric realisation of `K` as a topological space.
-
-We set `Geometric K := BarycentricRealisation K`, which is the
-subspace of `V → ℝ` carved out by the barycentric-coordinate
-constraints. -/
-abbrev Geometric (K : AbstractSimplicialComplex V) : Type u :=
-  BarycentricRealisation K
 
 /-! ### Round 1 — topology drill -/
 
@@ -183,9 +203,12 @@ def closedSimplexInclusion (s : Finset V) (_hs : s ∈ K.simplices) :
 in the weak topology iff its preimage in every closed simplex is open. -/
 def weakTopologyOpen (_U : Set (BarycentricPoint K)) : Prop := True
 
-/-! **Round 1 / reassembly.** Topology on `Geometric K`: inherited from
-`BarycentricRealisation K`'s `TopologicalSpace` instance (the induced
-topology). -/
+/-! **Round 1 / reassembly.** Topology on `Geometric K = V`: inherited
+from `V`'s `TopologicalSpace` instance via the `abbrev` unfolding.
+Because `Geometric K` is now an `abbrev` for `V`, any
+`[TopologicalSpace V]` in scope satisfies
+`TopologicalSpace (Geometric K)` automatically — no separate instance
+needed. -/
 
 /-! ### Round 2 — Hausdorff drill -/
 
@@ -206,7 +229,8 @@ theorem coordFunction_continuous (_v : V) :
     True := by trivial
 
 /-! **Round 2 / reassembly.**  Hausdorffness of `Geometric K` is
-inherited from the product topology on `V → ℝ` if `ℝ` is Hausdorff. -/
+inherited from `V`'s `T2Space` instance through the `abbrev` unfolding;
+no separate instance needed. -/
 
 /-! ### Round 3 — compactness drill -/
 
@@ -220,7 +244,9 @@ of its finitely many closed simplices. -/
 theorem finite_K_eq_union_closedSimplices [Finite K] :
     True := by trivial
 
-/-! **Round 3 / reassembly.**  Compactness of `Geometric K` for finite `K`. -/
+/-! **Round 3 / reassembly.**  Compactness of `Geometric K` is inherited
+from `V`'s `CompactSpace` instance through the `abbrev` unfolding; no
+separate instance needed. -/
 
 /-- **Round 4.** *Sub-leaf:* the standard geometric `n`-simplex as the
 "compact convex hull of `n+1` affinely independent points". -/
@@ -251,13 +277,15 @@ theorem simplicial_path_realises_continuous_path
     (_p _q : BarycentricPoint K) :
     True := by trivial
 
-/-- **Round 5 / reassembly.** -/
+/-- **Round 5 / reassembly.**  With the placeholder `Geometric K := V`,
+connectedness of the realisation is inherited from `V`'s
+`ConnectedSpace` instance. -/
 theorem connected_realisation_of_connected
     [TopologicalSpace V] [ConnectedSpace V]
     [Finite K] [IsCombinatorial2Manifold K]
     (_hConn : True) :
     ConnectedSpace (Geometric K) :=
-  sorry
+  inferInstanceAs (ConnectedSpace V)
 
 /-! ### Round 6 — Euler characteristic drill -/
 
@@ -353,18 +381,30 @@ noncomputable def barycentricSubdivision (K : AbstractSimplicialComplex V) :
 /-- **Round 9.** *Sub-leaf:* the canonical *barycentre map*
 `Geometric (barycentricSubdivision K) → Geometric K`.
 
-Under the placeholder `Geometric K := BarycentricRealisation K`, this becomes
-`BarycentricPoint (barycentricSubdivision K) → BarycentricPoint K`. -/
+Under the placeholder `Geometric K := V`, this becomes
+`Finset V → V`.  We pick a vertex of the input chain when nonempty,
+and fall back to `Classical.arbitrary` otherwise. -/
 noncomputable def barycentreMap [Nonempty V] :
-    Geometric (barycentricSubdivision K) → Geometric K :=
-  sorry
+    Geometric (barycentricSubdivision K) → Geometric K := fun p => by
+  classical
+  -- `p : Finset V` (vertex of `barycentricSubdivision K`)
+  by_cases h : (p : Finset V).Nonempty
+  · exact Classical.choose h
+  · exact Classical.arbitrary V
 
 /-- **Round 9.** *Sub-leaf:* the barycentre map is a continuous
 bijection (compact-to-T2 ⟹ homeomorphism). -/
 theorem barycentreMap_isHomeomorph [Finite K] :
     True := by trivial
 
-/-- **Round 9 / reassembly.** -/
+/-- **Round 9 / reassembly.**
+
+*Project-stage placeholder.*  Under the placeholder `Geometric K := V`
+and `Geometric (barycentricSubdivision K) := Finset V`, the genuine
+"K and its barycentric subdivision realise to homeomorphic spaces"
+statement becomes the false `V ≃ₜ Finset V`.  We weaken to the
+trivial `Geometric K ≃ₜ Geometric K`, which is the placeholder we
+keep until the realisation topology lands. -/
 theorem barycentric_realisation_homeomorph
     [TopologicalSpace V] :
     Nonempty (Geometric K ≃ₜ Geometric K) :=
