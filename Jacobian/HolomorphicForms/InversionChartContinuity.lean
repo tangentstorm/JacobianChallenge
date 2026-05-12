@@ -67,12 +67,40 @@ theorem identityChartCoeff_differentiable (ω : HolomorphicOneForm ℂ (OnePoint
 The trivialized inversion-chart representative `H(w)` is smooth at `w = 0`
 (from `contMDiffAt_section_iff` at `∞`). The Hom-bundle trivialization
 formula gives `f(w⁻¹) = -w² · H(w)(1)` for `w ≠ 0`. Since `H(w)(1)` is
-bounded near `0`, we get `|f(z)| ≤ C/|z|²` for large `|z|`. -/
+bounded near `0`, we get `|f(z)| ≤ C/|z|²` for large `|z|`.
+
+**BLOCKED (2026-05-12).** The proof requires the cotangent chart-overlap
+pullback formula `f(w⁻¹) = -w² · H(w)(1)` (where `H` is the trivialized
+inversion-chart representative). This is exactly the missing prerequisite
+`holomorphicOneForm_chartOverlap_pullback` in
+`Jacobian/HolomorphicForms/GenusZeroClassification.lean` (line ~426), which
+is itself a `sorry` pending the chart-trivialisation + cotangent-pullback
+API on the cotangent bundle (Mathlib v4.28.0 gap; see G4b in
+`GenusZeroClassification.lean`).
+
+Boundedness of `H(w)(1)` near `w = 0` alone is insufficient: the decay
+`|f(z)| ≤ C/|z|²` (and hence `Tendsto … (cocompact ℂ) (nhds 0)`) requires
+the explicit Jacobian factor `-w²` from the chart transition `z = w⁻¹`,
+`dz/dw = -1/w²`.
+
+`GenusZeroClassification.lean` cannot be imported here without creating an
+import cycle (`GenusZeroClassification` imports `InversionChartContinuity`).
+Resolving this leaf therefore requires either:
+* discharging `holomorphicOneForm_chartOverlap_pullback` (cotangent
+  bundle chain-rule formula), or
+* relocating the chart-overlap formula into a file upstream of both
+  `InversionChartContinuity` and `GenusZeroClassification`.
+
+Until one of the above is done, the leaf statement is kept unchanged and
+left as `sorry` per the project's anti-axiomatisation policy. -/
 
 theorem identityChartCoeff_tendsto_zero (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     Tendsto (fun z : ℂ => ω.toFun (↑z : OnePoint ℂ)
       (show TangentSpace (modelWithCornersSelf ℂ ℂ) (↑z : OnePoint ℂ) from (1 : ℂ)))
       (cocompact ℂ) (nhds 0) := by
+  -- BLOCKER: cotangent chart-overlap pullback formula
+  -- (`holomorphicOneForm_chartOverlap_pullback` in `GenusZeroClassification.lean`,
+  -- currently a sorry).  See the docstring above for details.
   sorry
 
 /-! ### Step 3: Liouville → f ≡ 0 -/
