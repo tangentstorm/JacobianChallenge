@@ -996,6 +996,42 @@ abbrev HolomorphicOneFormClosedBallTotallyBounded
       (@Metric.closedBall (HolomorphicOneForm ℂ X)
         B.toMetricSpace.toPseudoMetricSpace 0 1)
 
+/-- **BLOCKER (claude/holomorphic-arzela-ascoli-yr5K4).**
+The leaf of the 23-step Arzelà–Ascoli refinement chain. Provable proof
+would invoke `bcf_totallyBounded_of_range_compact_of_equicontinuous`
+(already sorry-free, above) after chartwise reduction of holomorphic
+1-forms in the closed unit ball to a family of bounded continuous
+functions on a compact source whose range lies in a fixed compact set
+and which is equicontinuous.
+
+**Missing upstream prerequisites (both in this same file):**
+
+* `holomorphicOneForm_chart_local_equibounded` — currently
+  `True := trivial`; must be refactored to expose typed equiboundedness
+  data (a uniform sup-norm bound on chartwise representatives of the
+  closed unit ball).
+
+* `holomorphicOneForm_chart_local_equicontinuous` — currently
+  `True := trivial`; must be refactored to expose typed equicontinuity
+  data (a uniform Cauchy first-derivative estimate giving a common
+  Lipschitz constant on chart discs).
+
+Beyond those two, an additional `B`-side field is needed: a
+chart-localisation map turning a `HolomorphicOneForm ℂ X` with
+`B`-norm ≤ 1 into a `BoundedContinuousFunction α β` on a fixed compact
+chart cover, so that the chartwise equiboundedness/equicontinuity
+witnesses can be assembled into the hypotheses of
+`bcf_totallyBounded_of_range_compact_of_equicontinuous`.
+
+The abstract `B : HolomorphicOneFormBanachData X` alone (norm, metric,
+complete, `norm_smul_le`, `norm_le`) is provably insufficient to
+conclude totally-boundedness of the closed unit ball: that would
+require a finite-dimensionality witness on `HolomorphicOneForm ℂ X`,
+which is exactly the property the Arzelà–Ascoli argument is meant to
+establish.
+
+Single-file scope cannot close this `sorry`; statement left unchanged
+per task fallback instruction. -/
 theorem holomorphicOneForm_arzela_ascoli_refine23
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
