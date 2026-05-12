@@ -2,6 +2,7 @@ import Mathlib.Data.Set.Finite.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Topology.Connected.Basic
+import Jacobian.HolomorphicForms.HolomorphicMap
 
 /-! # Production API promoted from blueprint `def:branched-degree` (TRIVIAL/SHORT/MEDIUM/HARD leaves)
 
@@ -33,7 +34,13 @@ Downstream nodes (degree-one bijection, Riemann-Hurwitz, push-pull)
 should depend on `branchedDegree_eq_weightedFiberCard` and
 `branchedDegree_one_fiber_unique`, **not** on the unfolded
 `Classical.arbitrary` choice. The analytic constructor (leaf 8) is
-where the open-mapping theorem and isolated-zeros enter the project. -/
+where the open-mapping theorem and isolated-zeros enter the project.
+
+## Compatibility lemmas
+
+* `BranchedCoverData.ramificationIndex_eq_mapAnalyticOrderAt` : links
+  the combinatorial index to the chart-local analytic order.
+-/
 
 namespace JacobianChallenge.HolomorphicForms
 
@@ -84,6 +91,51 @@ structure BranchedCoverData
     ∀ x : X, ramificationIndex x = 1 →
       ∃ U : Set X, ∃ V : Set Y,
         IsOpen U ∧ IsOpen V ∧ x ∈ U ∧ f x ∈ V ∧ Set.BijOn f U V
+
+/-- **Plan leaf 13 (NEW).** Compatibility between the combinatorial
+ramification index and the analytic order of the map. This lemma is
+typically provided by the analytic constructor for `BranchedCoverData`. -/
+theorem BranchedCoverData.ramificationIndex_eq_mapAnalyticOrderAt
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    {x : X} (hf : HolomorphicMap.IsHolomorphicAt f x) :
+    h.ramificationIndex x = HolomorphicMap.mapAnalyticOrderAt f x := by
+  sorry
+
+/-- **Plan leaf 9 (NEW).** The local inverse of `f` near an unramified
+point `x`. Defined using `Function.invFunOn` from the local bijection
+witness. -/
+noncomputable def BranchedCoverData.localInverseAt
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y] [Nonempty X]
+    {f : X → Y} (h : BranchedCoverData X Y f) (x : X)
+    (hx : h.ramificationIndex x = 1) : Y → X :=
+  Function.invFunOn f (h.local_bijective_unramified x hx).choose
+
+/-- **Plan leaf 10 (NEW).** The local inverse at an unramified point
+is a genuine inverse on some neighborhood. This "compatibility lemma"
+packages the `Function.invFunOn` properties with the `BranchedCoverData`
+topology fields. -/
+theorem BranchedCoverData.localInverse_is_inverse
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y] [Nonempty X]
+    {f : X → Y} (h : BranchedCoverData X Y f) {x : X}
+    (hx : h.ramificationIndex x = 1) :
+    ∃ U : Set X, ∃ V : Set Y,
+      IsOpen U ∧ IsOpen V ∧ x ∈ U ∧ f x ∈ V ∧
+      Set.BijOn f U V ∧
+      (∀ y' ∈ V, f (h.localInverseAt x hx y') = y') ∧
+      (∀ x' ∈ U, h.localInverseAt x hx (f x') = x') := by
+  set U := (h.local_bijective_unramified x hx).choose
+  set V := (h.local_bijective_unramified x hx).choose_spec.choose
+  have hspec := (h.local_bijective_unramified x hx).choose_spec.choose_spec
+  refine ⟨U, V, hspec.1, hspec.2.1, hspec.2.2.1, hspec.2.2.2.1, hspec.2.2.2.2, ?_, ?_⟩
+  · intro y' hy'
+    unfold localInverseAt
+    exact hspec.2.2.2.2.right_inv hy'
+  · intro x' hx'
+    unfold localInverseAt
+    exact hspec.2.2.2.2.left_inv hx'
+
 
 /-- Derived: the weighted cardinality of the fibre over `y`, i.e. the
 sum of ramification indices of all preimages of `y`. -/

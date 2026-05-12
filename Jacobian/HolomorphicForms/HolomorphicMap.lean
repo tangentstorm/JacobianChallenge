@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.VanishingOrder
 import Jacobian.HolomorphicForms.AnalyticLocalMapping
 import Mathlib.Analysis.Analytic.Order
 import Mathlib.Geometry.Manifold.ContMDiff.Defs
+import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Analytic
 
 /-!
 # Holomorphic maps between charted-on-`ℂ` spaces
@@ -31,6 +32,9 @@ branched-degree story).
 * `mapAnalyticOrderAt f p` : chart-local ramification / multiplicity
   index of `f` at `p`.  Defined as
   `analyticOrderNatAt (chartLocalAt f p · - chartLocalAt f p (chartAt ℂ p p)) (chartAt ℂ p p)`.
+* `IsHolomorphicAt.localInverse` : manifold-level local inverse of a
+  holomorphic map at an unramified point, defined via Mathlib's
+  `AnalyticAt.localInverse`.
 
 ## Reuse of project infrastructure
 
@@ -69,6 +73,27 @@ proved using `analyticAt_transition_of_mem_maximalAtlas` from
 `Jacobian.HolomorphicForms.VanishingOrder`. -/
 def IsHolomorphicAt (f : X → Y) (p : X) : Prop :=
   AnalyticAt ℂ (chartLocalAt f p) (chartAt ℂ p p)
+
+/-- **Holomorphic congruence.** If `f` and `g` agree on a neighborhood of `p`,
+then `f` is holomorphic at `p` iff `g` is. -/
+theorem IsHolomorphicAt.congr_of_eventuallyEq
+    {f g : X → Y} {p : X} (hf : IsHolomorphicAt f p)
+    (hfg : f =ᶠ[𝓝 p] g) : IsHolomorphicAt g p := by
+  unfold IsHolomorphicAt chartLocalAt at *
+  have heq_p : f p = g p := hfg.self_of_nhds
+  rw [heq_p] at hf
+  rcases hf with ⟨p_series, hp⟩
+  have h_chart_cont := (chartAt ℂ p).symm.continuousAt (mem_chart_target ℂ p)
+  refine ⟨p_series, hp.congr (Filter.EventuallyEq.comp_tendsto hfg h_chart_cont)⟩
+
+
+
+
+
+
+
+
+
 
 /-- The *chart-local order of vanishing* of `f - f p` at `p`, computed
 in the canonical chart pair.  Concretely:
@@ -143,6 +168,32 @@ theorem chartLocalAt_chartAt_self (f : X → Y) (p : X) :
   have : (chartAt ℂ p).symm (chartAt ℂ p p) = p :=
     (chartAt ℂ p).left_inv (mem_chart_source ℂ p)
   simp [this]
+
+section LocalInverse
+
+variable [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+
+/-- Manifold-level local inverse of a holomorphic map at an unramified point.
+Defined by lifting Mathlib's analytic local inverse (produced by the inverse
+function theorem) through the canonical charts. -/
+noncomputable def IsHolomorphicAt.localInverse
+    {f : X → Y} {p : X} (hf : IsHolomorphicAt f p)
+    (hderiv : deriv (chartLocalAt f p) (chartAt ℂ p p) ≠ 0) : Y → X :=
+  fun y => (chartAt ℂ p).symm
+    (hf.hasStrictDerivAt.localInverse (chartLocalAt f p)
+      (deriv (chartLocalAt f p) (chartAt ℂ p p)) (chartAt ℂ p p) hderiv
+      (chartAt ℂ (f p) y))
+
+/-- **Plan leaf 11 (NEW).** The manifold-level local inverse of a
+holomorphic map at an unramified point is holomorphic at the image
+point. This is the manifold lift of `AnalyticAt.analyticAt_localInverse`. -/
+theorem IsHolomorphicAt.localInverse_isHolomorphicAt
+    {f : X → Y} {p : X} (hf : IsHolomorphicAt f p)
+    (hderiv : deriv (chartLocalAt f p) (chartAt ℂ p p) ≠ 0) :
+    IsHolomorphicAt (hf.localInverse hderiv) (f p) := by
+  sorry
+
+end LocalInverse
 
 /-! ## Chart independence of `mapAnalyticOrderAt`
 

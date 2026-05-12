@@ -40,89 +40,84 @@ This file records the four sub-leaves of that statement:
   `JacobianChallenge.Blueprint.AbelExistence.Pic0` to avoid
   colliding with sibling sec05 stub namespaces. -/
 
+import Jacobian.Blueprint.Sec05.AbelExistence
+import Jacobian.AnalyticJacobian.Defs
+
+/-! Blueprint stub: degree-zero Picard group `Pic⁰(X)` and the
+Abel–Jacobi isomorphism `Pic⁰(X) ≃ Jac(X)`. -/
+
 namespace JacobianChallenge.Blueprint
 namespace AbelExistence
 namespace Pic0
 
+open JacobianChallenge.HolomorphicForms
+open JacobianChallenge.AnalyticJacobian
+
+
 /-! ## Supporting placeholders -/
 
-/-- Placeholder for the degree-zero Picard group
-`Pic⁰(X) := Div⁰(X) / Principal(X)`, the quotient of degree-zero
-divisors by principal divisors. The eventual real definition is
-`AddSubgroup.quotient (principalDivisors X)` restricted to the
-degree-zero subgroup (cf. `Jacobian/Blueprint/Sec01/PrincipalDivisors.lean`
-for the `principalDivisors` `AddSubgroup`). -/
-def Pic0 (_X : Type) : Type := Unit
+/-- The degree-zero Picard group `Pic⁰(X) := Div⁰(X) / Principal(X)`,
+the quotient of degree-zero divisors by principal divisors. -/
+def Pic0 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : Type _ :=
+  QuotientAddGroup.Quotient (AbelExistence.IsPrincipal (X := X)) -- placeholder for the subgroup
 
-/-- Placeholder for the Jacobian variety as a target of `aj_Pic0`.
-The eventual real target is the analytic Jacobian
-`JacobianChallenge.AnalyticJacobian.AnalyticJacobianType X`. -/
-def Jac (_X : Type) : Type := Unit
+/-- The Jacobian variety as a target of `aj_Pic0`. -/
+def Jac (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : Type _ :=
+  AnalyticJacobianGroup ℂ X
 
-instance instPic0Add (X : Type) : Add (Pic0 X) := ⟨fun _ _ => ()⟩
-instance instPic0Zero (X : Type) : Zero (Pic0 X) := ⟨()⟩
-instance instJacAdd (X : Type) : Add (Jac X) := ⟨fun _ _ => ()⟩
-instance instJacZero (X : Type) : Zero (Jac X) := ⟨()⟩
-
-/-- The class map `Div⁰(X) → Pic⁰(X)`, `D ↦ [D]`. Placeholder. -/
-def classMap {X : Type} (_D : Div0 X) : Pic0 X := ()
+/-- The class map `Div⁰(X) → Pic⁰(X)`, `D ↦ [D]`. -/
+def classMap {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (D : Div0 X) : Pic0 X :=
+  QuotientAddGroup.mk D
 
 /-- The Abel–Jacobi map descended to the quotient
-`AJ_Pic⁰ : Pic⁰(X) → Jac(X)`. Placeholder. -/
-def aj_Pic0 (_X : Type) (_c : Pic0 _X) : Jac _X := ()
+`AJ_Pic⁰ : Pic⁰(X) → Jac(X)`. -/
+noncomputable def aj_Pic0 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    Pic0 X → Jac X :=
+  QuotientAddGroup.lift _ (AJ X) (by
+    intro D hD
+    exact AbelExistence.AJ_principal_zero X (hD.choose) (by rw [hD.choose_spec]) -- placeholder
+  )
 
 /-- The composition `Div⁰(X) → Pic⁰(X) → Jac(X)` agrees with the
-original `AJ` on `Div⁰`. Placeholder commutativity statement.
-
-In the eventual production decl this is the *defining property* of
-`aj_Pic0` (it is the unique map descending the original `AJ`
-through the quotient `classMap`); here it is a `True` placeholder
-because both sides are `()`. -/
-theorem aj_Pic0_factors (X : Type) (D : Div0 X) :
-    aj_Pic0 X (classMap D) = aj_Pic0 X (classMap D) := rfl
+...
+theorem aj_Pic0_factors (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (D : Div0 X) :
+    aj_Pic0 X (classMap D) = AJ X D := by
+  rfl
 
 /-! ## Sub-leaves -/
 
 /-- **Sub-leaf 1 (MEDIUM).** Injectivity of the descended
-Abel–Jacobi map.
-
-**Proof sketch.** If `aj_Pic0 X [D₁] = aj_Pic0 X [D₂]`, then by
-the factorization above `AJ X D₁ = AJ X D₂` for representatives,
-i.e. `AJ X (D₁ − D₂) = 0` in `Jac X`. By Abel's theorem
-(`AbelExistence.principal_iff_AJ_zero`), `D₁ − D₂` is principal,
-so `[D₁] = [D₂]` in `Pic⁰(X)`. -/
-theorem aj_Pic0_injective (X : Type) :
+Abel–Jacobi map. -/
+theorem aj_Pic0_injective (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Function.Injective (aj_Pic0 X) := by
-  intro a b _h
-  cases a
-  cases b
-  rfl
+  intro a b h
+  sorry
 
 /-- **Sub-leaf 2 (HARD).** Surjectivity of the descended
-Abel–Jacobi map (Jacobi inversion).
-
-**Proof sketch.** Given `z ∈ Jac(X)`, construct a degree-zero
-divisor `D` with `AJ(D) = z`. The classical proof picks `g`
-points `(p₁, …, p_g)` on `X` with
-`AJ([p₁] + ⋯ + [p_g] − g·[p₀]) = z` using either (a) Riemann's
-theta-function inversion theorem, or (b) holomorphic-flow argument
-on the symmetric product `Sym^g(X)`. Both routes need the
-period-lattice / theta-function infrastructure listed **ABSENT**
-in the Mathlib inventory of `ref/plans/abel-existence.md`. -/
-theorem aj_Pic0_surjective (X : Type) :
+Abel–Jacobi map (Jacobi inversion). -/
+theorem aj_Pic0_surjective (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Function.Surjective (aj_Pic0 X) := by
   intro y
-  cases y
-  exact ⟨(), rfl⟩
+  sorry
 
 /-- **Sub-leaf 3 (MEDIUM, assembly).** The descended Abel–Jacobi
-map is a bijection: `Pic⁰(X) ≃ Jac(X)`.
-
-**Proof.** Bundle injectivity (sub-leaf 1) and surjectivity
-(sub-leaf 2). Sorry-free assembly above the two math leaves. -/
-theorem aj_Pic0_bijective (X : Type) :
+map is a bijection: `Pic⁰(X) ≃ Jac(X)`. -/
+theorem aj_Pic0_bijective (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
     Function.Injective (aj_Pic0 X) ∧ Function.Surjective (aj_Pic0 X) :=
   ⟨aj_Pic0_injective X, aj_Pic0_surjective X⟩
+
+end Pic0
+
 
 end Pic0
 end AbelExistence

@@ -24,26 +24,25 @@ open scoped Manifold
 
 universe u v
 
-/-- `H^k_dR(M, ℝ)`: real de Rham cohomology in degree `k`.
-
-Stubbed as `PUnit`; real definition: `closed/exact` quotient on
-`Omega M k`. -/
+/-- `H^k_dR(M, ℝ)`: real de Rham cohomology in degree `k`. -/
 def deRhamH {E : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    (_M : Type v) [TopologicalSpace _M] [ChartedSpace E _M]
-    [IsManifold (modelWithCornersSelf ℝ E) (⊤ : WithTop ℕ∞) _M]
-    (_k : ℕ) : Type := PUnit
+    (M : Type v) [TopologicalSpace M] [ChartedSpace E M]
+    [IsManifold (modelWithCornersSelf ℝ E) (⊤ : WithTop ℕ∞) M]
+    (k : ℕ) : Type _ :=
+  QuotientAddGroup.Quotient (LinearMap.range (exteriorDerivative (E := E) (M := M) (k - 1))) -- placeholder for the subgroup
 
 instance {E : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (M : Type v) [TopologicalSpace M] [ChartedSpace E M]
     [IsManifold (modelWithCornersSelf ℝ E) (⊤ : WithTop ℕ∞) M]
-    (k : ℕ) : AddCommGroup (deRhamH (E := E) M k) := by
-  unfold deRhamH; infer_instance
+    (k : ℕ) : AddCommGroup (deRhamH (E := E) M k) :=
+  QuotientAddGroup.addCommGroup _
 
 instance {E : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (M : Type v) [TopologicalSpace M] [ChartedSpace E M]
     [IsManifold (modelWithCornersSelf ℝ E) (⊤ : WithTop ℕ∞) M]
-    (k : ℕ) : Module ℝ (deRhamH (E := E) M k) := by
-  unfold deRhamH; infer_instance
+    (k : ℕ) : Module ℝ (deRhamH (E := E) M k) :=
+  QuotientAddGroup.module _
+
 
 variable {E : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E]
 variable (M : Type v) [TopologicalSpace M] [ChartedSpace E M]

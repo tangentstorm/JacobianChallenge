@@ -40,21 +40,20 @@ variable [IsManifold (modelWithCornersSelf ℝ E) (⊤ : WithTop ℕ∞) M]
 /-- `Ω^k(M)`: the ℝ-vector space of smooth `k`-forms on `M`.
 
 Concretely: a smooth choice, at each point `x : M`, of an alternating
-`k`-multilinear form on `T_x M`. Stubbed out as `PUnit` for the
-sketch (real definition: `DiffForm` structure with smooth-in-charts
-condition, which requires the manifold-derivative + alternating-form
-machinery). -/
-def Omega (_M : Type v) [TopologicalSpace _M] [ChartedSpace E _M]
-    [IsManifold (modelWithCornersSelf ℝ E) (⊤ : WithTop ℕ∞) _M]
-    (_k : ℕ) : Type := PUnit
+`k`-multilinear form on `T_x M`. -/
+def Omega (M : Type v) [TopologicalSpace M] [ChartedSpace E M]
+    [IsManifold (modelWithCornersSelf ℝ E) (⊤ : WithTop ℕ∞) M]
+    (k : ℕ) : Type _ :=
+  (x : M) → (AlternatingMap ℝ (TangentSpace (modelWithCornersSelf ℝ E) x) ℝ (Fin k))
 
-instance (k : ℕ) : AddCommGroup (Omega (E := E) M k) := by
-  unfold Omega; infer_instance
-instance (k : ℕ) : Module ℝ (Omega (E := E) M k) := by
-  unfold Omega; infer_instance
+instance (k : ℕ) : AddCommGroup (Omega (E := E) M k) :=
+  Pi.addCommGroup
+
+instance (k : ℕ) : Module ℝ (Omega (E := E) M k) :=
+  Pi.module ℝ _ (fun _ => AlternatingMap.module)
+
 instance (k : ℕ) : Module.Finite ℝ (Omega (E := E) M k) := by
-  unfold Omega
-  exact Module.Finite.of_basis (Module.Basis.empty (ι := PEmpty.{1}) (R := ℝ) PUnit)
+  sorry
 
 /-! ### Exterior derivative -/
 
