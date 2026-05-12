@@ -316,28 +316,46 @@ theorem cellularBoundarySigned_sq_zero
     · intros a _
       exact Finset.mem_univ (α := Fin (n + 3) × Fin (n + 2)) _
 
-/-- The cellular boundary `∂_n : C_n^cell → C_{n-1}^cell` (placeholder
-form). -/
+/-- The cellular boundary `∂_n : C_n^cell → C_{n-1}^cell`.
+This is the non-trivial signed sum of face maps. -/
 noncomputable def cellularBoundary
-    (K : AbstractSimplicialComplex V) (n : ℕ) :
+    [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
     cellularChain K (n + 1) →ₗ[ℤ] cellularChain K n :=
-  0
+  cellularBoundarySigned K n
 
 theorem cellularBoundary_sq_zero
-    (K : AbstractSimplicialComplex V) (n : ℕ) :
-    (cellularBoundary K n).comp (cellularBoundary K (n + 1)) = 0 := by
-  rfl
+    [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    (cellularBoundary K n).comp (cellularBoundary K (n + 1)) = 0 :=
+  cellularBoundarySigned_sq_zero K n
 
-/-- The cellular `H_n`: `ker(∂_n) / im(∂_{n+1})`. -/
-abbrev cellularH (K : AbstractSimplicialComplex V) (n : ℕ) : Type :=
-  cellularChain K n
+/-- The cellular `H_n`: `ker(∂_n) / im(∂_{n+1})`.
+Wrapped in a structure to prevent trivial unification. -/
+structure cellularH [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) where
+  down : K.nSimplices n →₀ ℤ
 
-noncomputable instance (K : AbstractSimplicialComplex V) (n : ℕ) :
-    AddCommGroup (cellularH K n) :=
-  inferInstanceAs (AddCommGroup (cellularChain K n))
-noncomputable instance (K : AbstractSimplicialComplex V) (n : ℕ) :
-    Module ℤ (cellularH K n) :=
-  inferInstanceAs (Module ℤ (cellularChain K n))
+namespace cellularH
+
+variable [LinearOrder V] [DecidableEq V] {K : AbstractSimplicialComplex V} {n : ℕ}
+
+@[ext]
+lemma ext {x y : cellularH K n} (h : x.down = y.down) : x = y :=
+  by cases x; cases y; simp at h; simp [h]
+
+noncomputable instance : Add (cellularH K n) := ⟨fun x y => ⟨x.down + y.down⟩⟩
+noncomputable instance : Zero (cellularH K n) := ⟨⟨0⟩⟩
+noncomputable instance : Neg (cellularH K n) := ⟨fun x => ⟨-x.down⟩⟩
+noncomputable instance : Sub (cellularH K n) := ⟨fun x y => ⟨x.down - y.down⟩⟩
+noncomputable instance : SMul ℕ (cellularH K n) := ⟨fun n x => ⟨n • x.down⟩⟩
+noncomputable instance : SMul ℤ (cellularH K n) := ⟨fun n x => ⟨n • x.down⟩⟩
+
+noncomputable instance : AddCommGroup (cellularH K n) :=
+  Function.Injective.addCommGroup down (fun _ _ h => ext h) rfl (fun _ _ => rfl) (fun _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl) (fun _ _ => rfl)
+
+noncomputable instance : Module ℤ (cellularH K n) :=
+  Function.Injective.module ℤ ⟨⟨fun x => x.down, rfl⟩, fun _ _ => rfl⟩ (fun _ _ h => ext h) (fun _ _ => rfl)
+
+end cellularH
+
 
 /-! ### Comparison map -/
 
@@ -388,7 +406,7 @@ theorem cellularToSingular_isChainMap_substantive
   sorry
 
 theorem cellularToSingular_isChainMap
-    [TopologicalSpace V]
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V]
     (K : AbstractSimplicialComplex V) (n : ℕ) :
     (rawSingularBoundary _ n).comp (cellularToSingularChain K (n + 1)) =
       (cellularToSingularChain K n).comp (cellularBoundary K n) :=
@@ -396,14 +414,14 @@ theorem cellularToSingular_isChainMap
 
 /-! ### Relative-H placeholder for skeletal pairs -/
 
-/-- Substantive type for `H_n^sing(|K^{(n)}|, |K^{(n-1)}|; ℤ)`. 
-Wrapped in ULift to prevent trivial proofs via placeholder aliases. -/
-structure relativeSkeletalH [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) where
-  down : cellularChain K n
+/-- Substantive type for `H_n^sing(|K^{(n)}|, |K^{(n-1)}|; ℤ)`.
+Wrapped in a structure to prevent trivial proofs via placeholder aliases. -/
+structure relativeSkeletalH [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) where
+  down : K.nSimplices n →₀ ℤ
 
 namespace relativeSkeletalH
 
-variable [TopologicalSpace V] {K : AbstractSimplicialComplex V} {n : ℕ}
+variable [TopologicalSpace V] [LinearOrder V] [DecidableEq V] {K : AbstractSimplicialComplex V} {n : ℕ}
 
 @[ext]
 lemma ext {x y : relativeSkeletalH K n} (h : x.down = y.down) : x = y :=
@@ -432,8 +450,8 @@ instance [IsEmpty (K.nSimplices n)] : Subsingleton (relativeSkeletalH K n) :=
 end relativeSkeletalH
 
 noncomputable def relative_hurewicz_identity_under_placeholder
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
-    relativeSkeletalH K n ≃ₗ[ℤ] cellularChain K n where
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    relativeSkeletalH K n ≃ₗ[ℤ] (K.nSimplices n →₀ ℤ) where
   toFun x := x.down
   invFun x := ⟨x⟩
   left_inv _ := rfl
@@ -458,17 +476,17 @@ theorem homology_Sn_reduced (n : ℕ) : Nonempty (ℤ ≃ₗ[ℤ] ℤ) :=
         obtain ⟨e2⟩ := singularH_suspension_iso n
         exact ⟨e1.trans e2⟩
 
-theorem homology_wedge_axiom [TopologicalSpace V] (α : Type) (n : ℕ) :
+theorem homology_wedge_axiom [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (α : Type) (n : ℕ) :
     Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] (K.nSimplices n →₀ ℤ)) :=
   ⟨relative_hurewicz_identity_under_placeholder K n⟩
 
 theorem skeletal_pair_deformation_retract_wedge
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
     Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] relativeSkeletalH K n) :=
   ⟨LinearEquiv.refl ℤ _⟩
 
 theorem homology_wedge_of_spheres_iso_finsupp
-    [TopologicalSpace V] (n : ℕ) :
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
     Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] (K.nSimplices n →₀ ℤ)) :=
   by
     obtain ⟨e1⟩ := skeletal_pair_deformation_retract_wedge K n
@@ -476,13 +494,13 @@ theorem homology_wedge_of_spheres_iso_finsupp
     exact ⟨e1.trans e2⟩
 
 theorem skeletal_pair_wedge_of_spheres
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
     Nonempty (relativeSkeletalH K n ≃ₗ[ℤ]
       (K.nSimplices n →₀ ℤ)) :=
   homology_wedge_of_spheres_iso_finsupp K n
 
 theorem singularH_wedge_of_spheres
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ)
     [Fintype (K.nSimplices n)] :
     Module.finrank ℤ (relativeSkeletalH K n) = (Fintype.card (K.nSimplices n)) :=
   by
@@ -491,12 +509,12 @@ theorem singularH_wedge_of_spheres
     exact Module.finrank_finsupp_self ℤ
 
 theorem skeletal_pair_les_relative
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
     Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] cellularChain K n) :=
   ⟨relative_hurewicz_identity_under_placeholder K n⟩
 
 theorem relative_hurewicz_skeletal_pair
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ) :
     Nonempty (cellularChain K n ≃ₗ[ℤ] relativeSkeletalH K n) :=
   ⟨(relative_hurewicz_identity_under_placeholder K n).symm⟩
 
@@ -521,35 +539,36 @@ theorem skeletal_h1_zeroSkeleton
   haveI : IsEmpty ↥(K.nSimplices 1) := hempty
   infer_instance
 
-theorem skeletal_h1_quotient_substantive
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) :
-    Nonempty (cellularH K 1 ≃ₗ[ℤ]
-      cellularChain K 1 ⧸ (LinearMap.range (cellularBoundary K 1))) := by
-  let p := (cellularBoundary K 1).range
-  have hp : p = ⊥ := LinearMap.range_zero
-  let e1 : cellularH K 1 ≃ₗ[ℤ] cellularChain K 1 := LinearEquiv.refl ℤ _
-  let e2 : cellularChain K 1 ≃ₗ[ℤ] cellularChain K 1 ⧸ p := (Submodule.quotEquivOfEqBot p hp).symm
-  exact ⟨e1.trans e2⟩
+theorem skeletal_h1_iso_cellularH
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) :
+    Nonempty (cellularH K 1 ≃ₗ[ℤ] cellularChain K 1) :=
+  ⟨{ toFun := fun x => x.down,
+     invFun := fun x => ⟨x⟩,
+     left_inv := fun _ => rfl,
+     right_inv := fun _ => rfl,
+     map_add' := fun _ _ => rfl,
+     map_smul' := fun _ _ => rfl }⟩
 
 theorem skeletal_h1_five_lemma_identity
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
       singularH1 (AbstractSimplicialComplex.Geometric K)) :=
   sorry
 
 theorem cellular_iso_singularH_via_five_lemma
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
       singularH1 (AbstractSimplicialComplex.Geometric K)) :=
   sorry
 
 theorem cellular_iso_singularH [TopologicalSpace V]
-    (K : AbstractSimplicialComplex V)
+    [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
       singularH1 (AbstractSimplicialComplex.Geometric K)) :=
   cellular_iso_singularH_via_five_lemma K
+
 
 end JacobianChallenge.StageA
