@@ -20,11 +20,16 @@ The project uses "typed scaffolding" where complex types are often aliased to si
 - **Scripted Check:** Use `lake build` to check compilation, but also visually audit the `git diff` for changes to `def`s.
 - **Axiom Check:** Use `#print axioms [theorem_name]` to ensure the proof hasn't introduced unwanted shortcuts or hidden dependencies.
 
+## 9. Build & Cache Management
+Project builds can be extremely slow if Mathlib is recompiled from scratch.
+- **Guideline:** Explicitly state: "If you need to build the project to verify your work, you MUST run `lake exe cache get` first to retrieve the pre-built Mathlib binaries."
+
 ## 5. Explicit Anti-Cheat Instructions
 Add this block to all high-effort formalization prompts:
 > **ANTI-CHEAT CLAUSE:**
-> - You must NOT change the definitions of the mathematical objects provided in the scaffolding.
-> - You must NOT rely on placeholder type aliases to discharge the goal.
+> - You must **NOT** change the definitions of the mathematical objects provided in the scaffolding.
+> - You must **NOT** rely on placeholder type aliases to discharge the goal.
+> - If you need to build, run `lake exe cache get` first.
 > - If you find a definition is insufficient for a real proof, STOP and report the issue rather than providing a degenerate solution.
 
 ## 6. Upgrading Scaffolding (Type Separation)
