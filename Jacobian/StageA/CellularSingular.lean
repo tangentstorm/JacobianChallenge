@@ -630,8 +630,12 @@ The relative-H type itself is sorry'd as `relativeSkeletalH K n` (a
 realisation pair API land. -/
 theorem skeletal_pair_les_relative
     [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
-    Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] cellularChain K n) :=
-  ⟨relative_hurewicz_identity_under_placeholder K n⟩
+    Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] cellularChain K n) := by
+  have hwedge :
+      Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] ULift.{0} (K.nSimplices n →₀ ℤ)) :=
+    skeletal_pair_deformation_retract_wedge K n
+  obtain ⟨e₁⟩ := hwedge
+  exact ⟨e₁.trans (e₁.symm.trans (relative_hurewicz_identity_under_placeholder K n))⟩
 
 /-- **R3-sub-B.A.r2.r1 (Round 3).** Sub-leaf: skeletal pair
 `(K^{(n)}, K^{(n-1)})` deformation-retracts onto a wedge of `n`-spheres
