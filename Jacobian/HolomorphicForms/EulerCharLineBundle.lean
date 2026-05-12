@@ -160,6 +160,39 @@ theorem euler_char_eq_formula
     (Module.finrank ℂ (RSSheafCohomology X L 0) : ℤ) -
         (Module.finrank ℂ (RSSheafCohomology X L 1) : ℤ) =
       RSLineBundleDegree X L + 1 - (RSGenus X : ℤ) := by
+  -- BLOCKER (2026-05-12, claude/euler-char-formula-FnMyi):
+  -- This theorem is unprovable in its current form against the
+  -- v4.28.0 frontier.  Two independent obstructions:
+  --
+  -- 1. `RSLineBundleDegree` (above, lines 64-66) is declared
+  --    `noncomputable opaque ... : ℤ` — i.e. an integer-valued
+  --    function with no characterizing axioms or equations.  No
+  --    nontrivial equation relating the LHS (a finrank difference)
+  --    to `RSLineBundleDegree X L` can be discharged without first
+  --    giving that symbol a real definition (or characterizing
+  --    axioms).  Making the symbol agree with the LHS by fiat is
+  --    explicitly the kind of hack-answer the project rules out.
+  --
+  -- 2. Even with a concrete `RSLineBundleDegree`, the classical
+  --    proof requires inputs ABSENT in Mathlib v4.28.0 (see file
+  --    header, lines 19-30, and `ref/scope-out.md`):
+  --      * divisor ↔ line-bundle correspondence on a compact RS,
+  --      * skyscraper sheaf `ℂ_p` and the twisting short exact
+  --        sequence `0 → L → L(p) → ℂ_p → 0`,
+  --      * base case `h⁰(O_X) = 1`, `h¹(O_X) = g` for the trivial
+  --        line bundle (Hodge / Serre on the structure sheaf),
+  --      * Serre-duality identification `H¹(L)* ≃ H⁰(L⁻¹ ⊗ K_X)`
+  --        (the frontier class `SerreDualityRS` has no instances),
+  --      * finite-dimensionality of `Hᵍ` for coherent sheaves on a
+  --        compact RS (`FiniteDimensionalSheafCohomologyRS`, no
+  --        instances).
+  --
+  -- The placeholder leaves at lines 133, 139, 188, 194, 199 of this
+  -- file (`h0_minus_h1_trivial_bundle`, `eulerChar_additive_ses_point`,
+  -- `dual_bundle_degree`, `serre_duality_h0_h1_swap`,
+  -- `h0_minus_h1_le_via_dual`) are the intended Round-2 refinement
+  -- targets that, once made into honest theorems, will combine to
+  -- discharge this `sorry`.
   sorry
 
 /-- **Sub-leaf 1 (Riemann's inequality, `≥` direction).** The integer
