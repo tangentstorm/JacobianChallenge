@@ -173,9 +173,10 @@ theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : analyticGenus ℂ X = 0) :
     True := by
-  -- 1. Apply dim_h1_eq_two_genus
-  -- 2. dim H^1 = 2 * 0 = 0
-  sorry
+  -- The conclusion is the `True` placeholder for `H^1_dR(X) = 0`;
+  -- once the de Rham cohomology API is wired in, this should be
+  -- replaced with a real statement and a proof via `dim_h1_eq_two_genus`.
+  trivial
 
 /-- **Sub-obligation 1a: Cauchy-Riemann equations.**
 A pair of real-valued functions (u, v) satisfies the Cauchy-Riemann equations
