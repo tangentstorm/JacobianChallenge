@@ -428,11 +428,11 @@ the inclusion `Δⁿ ↪ |K|` realising `s` as a singular `n`-simplex.
 Requires `[TopologicalSpace V]` since `Geometric K = V` and the
 singular simplex codomain needs a topology. -/
 noncomputable def simplexCharSingular
-    [TopologicalSpace V]
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V]
     (K : AbstractSimplicialComplex V) (n : ℕ)
-    (_s : K.nSimplices n) :
-    SingularSimplex (AbstractSimplicialComplex.Geometric K) n :=
-  ContinuousMap.const (stdSimplex n) (simplexVertexPoint K n _s)
+    (s : K.nSimplices n) :
+    SingularSimplex (AbstractSimplicialComplex.BarycentricRealisation K) n :=
+  ⟨simplex_affine_map K n s, simplex_affine_map_continuous K n s⟩
 
 /-- The chain-level comparison map
 `C_*^cell(K) → C_*^sing(|K|, ℤ)` sending a simplex to its
@@ -440,12 +440,12 @@ characteristic singular simplex.
 
 Concrete form: linear extension via `Finsupp.lmapDomain` of the
 basis-level map `simplexCharSingular K n : K.nSimplices n →
-SingularSimplex (Geometric K) n`. -/
+SingularSimplex (BarycentricRealisation K) n`. -/
 noncomputable def cellularToSingularChain
-    [TopologicalSpace V]
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V]
     (K : AbstractSimplicialComplex V) (n : ℕ) :
     cellularChain K n →ₗ[ℤ]
-      (SingularSimplex (AbstractSimplicialComplex.Geometric K) n →₀ ℤ) :=
+      (SingularSimplex (AbstractSimplicialComplex.BarycentricRealisation K) n →₀ ℤ) :=
   Finsupp.lmapDomain ℤ ℤ (simplexCharSingular K n)
 
 /-- The "raw" singular boundary `∂_n : C_n^sing → C_{n-1}^sing`: signed
@@ -470,9 +470,10 @@ noncomputable def rawSingularBoundary
 `∂^sing ∘ Φ_{n+1} = Φ_n ∘ ∂^cell`. Sorry'd; the substantive version is
 `cellularToSingular_isChainMap_substantive` (Round-1 sub-leaf). -/
 theorem cellularToSingular_isChainMap
-    [TopologicalSpace V]
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V]
     (K : AbstractSimplicialComplex V) (n : ℕ) :
-    (rawSingularBoundary _ n).comp (cellularToSingularChain K (n + 1)) =
+    (rawSingularBoundary (AbstractSimplicialComplex.BarycentricRealisation K) n).comp
+        (cellularToSingularChain K (n + 1)) =
       (cellularToSingularChain K n).comp (cellularBoundary K n) :=
   sorry
 
@@ -515,9 +516,9 @@ cellular boundary of `s`. This is the basis-pointwise version of the
 chain-map equation in `cellularToSingular_isChainMap`; `Finsupp.lift`
 extends it linearly to all chains. -/
 theorem cellularToSingular_isChainMap_substantive
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ)
     (s : K.nSimplices (n + 1)) :
-    rawSingularBoundary _ n
+    rawSingularBoundary (AbstractSimplicialComplex.Geometric K) n
         ((cellularToSingularChain K (n + 1)) (Finsupp.single s 1)) =
       (cellularToSingularChain K n)
         ((cellularBoundary K n) (Finsupp.single s 1)) :=
@@ -642,10 +643,10 @@ is built explicitly in `polygonStarCellularH1Equiv` (sorry-free, in
 this file); that route bypasses the general comparison theorem
 entirely. -/
 theorem cellular_iso_singularH_via_five_lemma
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
-      singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+      singularH1 (AbstractSimplicialComplex.BarycentricRealisation K)) :=
   sorry
 
 /-- **R3-sub-B.A.r3.r1 (Round 4).** Sub-leaf: `H_1(K^{(0)}, ∅) = 0`
@@ -653,7 +654,7 @@ for the 0-skeleton (a discrete set of vertices). The 0-skeleton has
 no 1-simplices, so the cellular `1`-chain group is trivial; the
 relative-H placeholder is therefore subsingleton. -/
 theorem skeletal_h1_zeroSkeleton
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
     (_h : ∀ s ∈ K.simplices, AbstractSimplicialComplex.dimSimplex s = 0) :
     Subsingleton (relativeSkeletalH K 1) :=
   sorry
@@ -664,7 +665,7 @@ identity: `cellularH K 1 = cellularChain K 1 ⧸ (LinearMap.range
 (cellularBoundary K 1)).toAddSubgroup` once `cellularH` is promoted to
 the genuine quotient. -/
 theorem skeletal_h1_quotient_substantive
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) :
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
       cellularChain K 1 ⧸ (LinearMap.range (cellularBoundary K 1))) :=
   sorry
@@ -674,10 +675,10 @@ the H_1 piece. The chain-map iso plus the LES iso plus `H_1(K^{(0)}) = 0`
 combine via the snake/five-lemma to give an iso on `H_1` between the
 cellular `H_1` and the singular `H_1` of `|K|`. -/
 theorem skeletal_h1_five_lemma_identity
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
-      singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+      singularH1 (AbstractSimplicialComplex.BarycentricRealisation K)) :=
   sorry
 
 /-- **Comparison theorem (statement form).** The chain map
@@ -689,11 +690,12 @@ skeletal-LES sub-leaves. The conclusion's provability is gated on the
 three upstream promotions (`Geometric`, `cellularBoundary`,
 `simplexCharSingular`) documented on
 `cellular_iso_singularH_via_five_lemma`. -/
-theorem cellular_iso_singularH [TopologicalSpace V]
+theorem cellular_iso_singularH
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V]
     (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
-      singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+      singularH1 (AbstractSimplicialComplex.BarycentricRealisation K)) :=
   cellular_iso_singularH_via_five_lemma K
 
 /-! ### A concrete star complex with prescribed first cellular rank -/
@@ -855,21 +857,99 @@ theorem boundary_sq_zero_linearity_preservation
 
 /-- **Round 3.** *Sub-leaf of `simplexCharSingular`.* Affine map from
 the standard `Δⁿ` (a topological subspace of `ℝⁿ⁺¹`) to the
-`n`-simplex's affine span in `Geometric K`. Sorry'd until
-`Geometric K` is promoted from the placeholder vertex set. -/
-def simplex_affine_map
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ)
-    (_s : K.nSimplices n) :
-    stdSimplex n → AbstractSimplicialComplex.Geometric K :=
-  sorry
+`n`-simplex's affine span in `BarycentricRealisation K`. -/
+noncomputable def simplex_affine_map
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V]
+    (K : AbstractSimplicialComplex V) (n : ℕ)
+    (s : K.nSimplices n) :
+    stdSimplex n → AbstractSimplicialComplex.BarycentricRealisation K := fun x =>
+  let hcard := nSimplices_card K s
+  let coords : V → ℝ := fun v =>
+    if hv : v ∈ s.1 then
+      (ULift.down x : Fin (n + 1) → ℝ) ((s.1.orderEmbOfFin hcard).symm ⟨v, hv⟩)
+    else 0
+  { coords := coords
+    finite_support := by
+      apply Set.Finite.subset s.1.finite_toSet
+      intro v hv
+      simp [coords] at hv
+      split_ifs at hv with hmem
+      · exact hmem
+      · contradiction
+    support_is_simplex := by
+      let support := {v | coords v ≠ 0}
+      have h_support_sub : support ⊆ s.1 := by
+        intro v hv
+        simp [coords] at hv
+        split_ifs at hv with hmem
+        · exact hmem
+        · contradiction
+      have h_sum : s.1.sum coords = 1 := by
+        rw [← Fin.sum_univ_get (fun i => coords (s.1.orderEmbOfFin hcard i))]
+        simp [coords]
+        have h_sum_x : ∑ i, (ULift.down x : Fin (n + 1) → ℝ) i = 1 := (ULift.down x).property.2
+        convert h_sum_x
+        ext i
+        simp
+        exact OrderIso.symm_apply_apply _ _
+      have h_nonempty : support.Nonempty := by
+        by_contra h_empty
+        simp [Set.not_nonempty_iff_eq_empty] at h_empty
+        have h_zero : ∀ v ∈ s.1, coords v = 0 := by
+          intro v hv
+          by_contra h_nz
+          exact h_empty.subset h_nz
+        have h_sum_zero : s.1.sum coords = 0 := Finset.sum_eq_zero h_zero
+        rw [h_sum] at h_sum_zero
+        norm_num at h_sum_zero
+      apply K.downward_closed s.2.1
+      · exact Finset.coe_subset.mp h_support_sub
+      · exact Set.Finite.toFinset_nonempty.mpr h_nonempty
+    coords_nonneg := by
+      intro v
+      simp [coords]
+      split_ifs <;> simp
+      apply (ULift.down x).property.1
+    coords_sum_one := by
+      have h_sum : s.1.sum coords = 1 := by
+        rw [← Fin.sum_univ_get (fun i => coords (s.1.orderEmbOfFin hcard i))]
+        simp [coords]
+        have h_sum_x : ∑ i, (ULift.down x : Fin (n + 1) → ℝ) i = 1 := (ULift.down x).property.2
+        convert h_sum_x
+        ext i
+        simp
+        exact OrderIso.symm_apply_apply _ _
+      let support := {v | coords v ≠ 0}
+      have h_support_sub : support ⊆ s.1 := by
+        intro v hv
+        simp [coords] at hv
+        split_ifs at hv with hmem
+        · exact hmem
+        · contradiction
+      rw [← h_sum]
+      apply Finset.sum_subset
+      · exact Finset.coe_subset.mp h_support_sub
+      · intro v hv hv_nsupp
+        simp at hv_nsupp
+        exact hv_nsupp
+  }
 
 /-- **Round 3.** *Sub-leaf:* the affine map is continuous (so it
 upgrades to a `ContinuousMap`, the singular simplex carrier). -/
 theorem simplex_affine_map_continuous
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V]
+    (K : AbstractSimplicialComplex V) (n : ℕ)
     (s : K.nSimplices n) :
-    Continuous (simplex_affine_map K n s) :=
-  sorry
+    Continuous (simplex_affine_map K n s) := by
+  apply continuous_induced_rng
+  apply continuous_pi_iff.mpr
+  intro v
+  simp [simplex_affine_map]
+  split_ifs with hv
+  · apply (continuous_apply ((s.1.orderEmbOfFin (nSimplices_card K s)).symm ⟨v, hv⟩)).comp
+    apply continuous_subtype_val.comp
+    apply continuous_ulift_down
+  · apply continuous_const
 
 /-- **Round 4.** *Sub-leaf of `cellularToSingular_isChainMap`.*
 The composition with the `i`-th face inclusion equals the post-
@@ -983,10 +1063,10 @@ LES iso, and the vanishing of relative `H_1` on the 0-skeleton, the
 five-lemma produces the headline iso. Stated as a Hom of the input
 data into the conclusion (sorry'd). -/
 theorem five_lemma_glue_to_global_iso
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K]
     (_hChain : ∀ (n : ℕ) (s : K.nSimplices (n + 1)),
-      rawSingularBoundary _ n
+      rawSingularBoundary (AbstractSimplicialComplex.Geometric K) n
         ((cellularToSingularChain K (n + 1)) (Finsupp.single s 1)) =
       (cellularToSingularChain K n)
         ((cellularBoundary K n) (Finsupp.single s 1)))
@@ -1124,13 +1204,14 @@ chain-map equation reduces to the basis-pointwise statement
 (`cellularToSingular_isChainMap_substantive`) by `Finsupp.lhom_ext` /
 `LinearMap.ext_basis`. Sorry'd. -/
 theorem cellularToSingular_isChainMap_basis_extension
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ)
     (h_basis : ∀ s : K.nSimplices (n + 1),
-      rawSingularBoundary _ n
+      rawSingularBoundary (AbstractSimplicialComplex.Geometric K) n
         ((cellularToSingularChain K (n + 1)) (Finsupp.single s 1)) =
       (cellularToSingularChain K n)
         ((cellularBoundary K n) (Finsupp.single s 1))) :
-    (rawSingularBoundary _ n).comp (cellularToSingularChain K (n + 1)) =
+    (rawSingularBoundary (AbstractSimplicialComplex.Geometric K) n).comp
+        (cellularToSingularChain K (n + 1)) =
       (cellularToSingularChain K n).comp (cellularBoundary K n) := by
   let _ := h_basis
   sorry
@@ -1143,7 +1224,7 @@ chaining `cellularToSingular_isChainMap_basis_extension` (Round 18),
 a `Nonempty.intro` over the chained `LinearEquiv.trans`s. Sorry'd
 until the upstream promotions land. -/
 theorem cellular_iso_singularH_assembly_skeleton
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
       singularH1 (AbstractSimplicialComplex.Geometric K)) :=
@@ -1154,7 +1235,7 @@ theorem cellular_iso_singularH_assembly_skeleton
 /-- **Round 20.** *Sub-leaf:* the headline forwards to the assembly
 skeleton; once Rounds 9–19 land, this becomes the proof. -/
 theorem cellular_iso_singularH_via_assembly
-    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
       singularH1 (AbstractSimplicialComplex.Geometric K)) :=
