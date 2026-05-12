@@ -81,15 +81,59 @@ noncomputable def localInverseAt
   let ⟨_U, _V, _hU, _hV, _hxU, _hfxV, hbij⟩ := h.local_bijective_unramified x hx
   fun y => if hy : y ∈ _V then hbij.invOn.f' y else x
 
-/-- The local inverse is holomorphic at `f x`. -/
+/-- The local inverse is holomorphic at `f x`.
+
+BLOCKER (2026-05-12): this theorem is currently blocked on several missing
+prerequisites that cannot be addressed inside this file under the allowed
+write scope.
+
+1. **Definitional inconsistency in `localInverseAt`.** The body of
+   `localInverseAt` uses `hbij.invOn.f' y`, but neither `Set.BijOn.invOn`
+   nor `Set.InvOn` exposes a field `.f'` on the pinned Mathlib commit.
+   The canonical noncomputable left/right inverse for a `Set.BijOn` is
+   `Function.invFunOn f U`.  Until `localInverseAt` is rewritten to use a
+   well-defined inverse (e.g. `Function.invFunOn f U y` or the analytic
+   local inverse produced by `AnalyticAt.localInverse`), the statement
+   here has no provable content.  Fixing this requires editing the
+   `localInverseAt` definition above, which is allowed by scope, but the
+   correct replacement is itself dictated by item (3) below.
+
+2. **No analytic content in `BranchedCoverData.ramificationIndex`.**
+   The structure field `ramificationIndex : X → ℕ` is abstract data:
+   nothing in `BranchedCoverData` ties it to `mapAnalyticOrderAt f x` or
+   to nonvanishing of the chart-local derivative.  To turn
+   `h.ramificationIndex x = 1` into "the chart-local derivative of `f` at
+   `chartAt ℂ x x` is nonzero", we need either a compatibility lemma
+   `h.ramificationIndex x = mapAnalyticOrderAt f x` (currently absent
+   from `BranchedCover.lean`) or a separate hypothesis carrying that
+   information.
+
+3. **`AnalyticAt.localInverse` API at the manifold level.** Mathlib
+   v4.28.0 provides `AnalyticAt.localInverse` for `ℂ → ℂ` analytic
+   functions with nonzero derivative, but no manifold-level
+   `IsHolomorphicAt.localInverse`.  Lifting the chart-local analytic
+   inverse to `IsHolomorphicAt` on the manifold requires showing that
+   the lifted function coincides with `localInverseAt h x hx` on a
+   neighbourhood of `f x` and then invoking
+   `IsHolomorphicAt.congr_of_eventuallyEq` (also currently absent from
+   `HolomorphicMap.lean`).
+
+The intended three-step proof remains:
+1. Order = 1 implies chart-local derivative is nonzero.
+2. Apply `AnalyticAt.localInverse` from Mathlib.
+3. Transport holomorphicity back to the manifold side.
+-/
 theorem localInverseAt_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hf : IsHolomorphic f)
     (x : X) (hx : h.ramificationIndex x = 1) :
     IsHolomorphicAt (localInverseAt h x hx) (f x) := by
-  -- 1. Order = 1 implies chart-local derivative is nonzero.
-  -- 2. Apply AnalyticAt.localInverse from Mathlib.
-  -- 3. Transport holomorphicity back to the manifold side.
+  -- BLOCKER: see the docstring above.  Prerequisites missing:
+  --   * `localInverseAt` uses an undefined `.f'` projection.
+  --   * `BranchedCoverData.ramificationIndex` is not linked to
+  --     `mapAnalyticOrderAt f` (no compatibility lemma).
+  --   * No manifold-level `AnalyticAt.localInverse` / no
+  --     `IsHolomorphicAt.congr_of_eventuallyEq` in `HolomorphicMap.lean`.
   sorry
 
 /-- The pullback of a holomorphic form along a local inverse branch.
