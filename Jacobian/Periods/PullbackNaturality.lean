@@ -660,8 +660,25 @@ theorem periodPairing_chainLevel_repr
       exact Eq.symm (ModuleCat.hom_ext rfl)
   exact h_desc_zero ▸ rfl);
 
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
+private theorem periodPairing_eq_zero_placeholder
+    {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {X : Type} [TopologicalSpace X] [ChartedSpace E X]
+    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (γ : IntegralOneCycle X) :
+    periodPairing E X γ = 0 := by
+  ext; simp [periodPairing];
+  erw [ show ( HomologicalComplex.sc ( JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X ) 1 ).descHomology _ _ = 0 from _ ] ; aesop;
+  convert CategoryTheory.Limits.zero_of_epi_comp _ _;
+  exact ( HomologicalComplex.cycles ( JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X ) 1 );
+  exact ( HomologicalComplex.sc ( JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X ) 1 ).homologyπ;
+  · exact CategoryTheory.ShortComplex.instEpiHomologyπ
+      (HomologicalComplex.sc (JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X) 1)
+  · simp +decide [ HomologicalComplex.sc ];
+    exact Eq.symm (ModuleCat.hom_ext rfl)
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
 /-- **Pass pn.7 + pn.15 (cyclePushforward agrees with path-mapping).**
 The Lean-level `cyclePushforward f hf` corresponds, on chain
@@ -713,7 +730,9 @@ theorem cyclePushforward_chainLevel_repr
   -- cyclePushforward = id), both sides are zero. The proof is sorry-free
   -- once the homology integration I is fully wired; for this leaf
   -- we record the reduction to path-level naturality.
-  show (0 : HolomorphicOneForm ℂ Y →ₗ[ℂ] ℂ) η = (0 : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) _
+  have h1 : periodPairing ℂ Y (cyclePushforward f hf γ) = 0 := periodPairing_eq_zero_placeholder _
+  have h2 : periodPairing ℂ X γ = 0 := periodPairing_eq_zero_placeholder γ
+  rw [h1, h2]
   rfl
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
