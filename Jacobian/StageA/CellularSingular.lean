@@ -679,10 +679,13 @@ theorem skeletal_h1_zeroSkeleton
     have h0 : AbstractSimplicialComplex.dimSimplex s.1 = 0 := _h s.1 s.2.1
     have h1 : AbstractSimplicialComplex.dimSimplex s.1 = 1 := s.2.2
     omega
-  refine ⟨fun f g => ?_⟩
-  apply Finsupp.ext
-  intro x
-  exact hempty.elim x
+  haveI : Subsingleton (cellularChain K 1) := by
+    refine ⟨fun f g => ?_⟩
+    apply Finsupp.ext
+    intro x
+    exact hempty.elim x
+  show Subsingleton (ULift (cellularChain K 1))
+  infer_instance
 
 /-- **R3-sub-B.A.r3.r2 (Round 4).** Sub-leaf: `H_2(K^{(2)}, K^{(1)})`
 LES gives `coker(∂_2) = H_1(K^{(1)}) / im ∂_2`. As a chain-level
