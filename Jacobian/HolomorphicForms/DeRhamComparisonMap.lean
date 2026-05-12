@@ -126,13 +126,42 @@ noncomputable def closed_form_from_cech_cocycle
 
 /-- **Surjectivity sub-obligation 1c (Integral correctness).**
 The closed form constructed from the Čech cocycle integrates to the
-prescribed singular cocycle. -/
+prescribed singular cocycle.
+
+**BLOCKER (data-trivial upstream stub).** The target equation is
+`deRhamComparisonMap1 X (closed_form_from_cech_cocycle X φ) = φ`. The
+upstream `closed_form_from_cech_cocycle X φ` is currently the
+data-trivial stub `:= 0` (see `closed_form_from_cech_cocycle` above).
+Since `deRhamComparisonMap1 X` is an opaque `ℂ`-linear map, `map_zero`
+forces `deRhamComparisonMap1 X 0 = 0`, so the goal reduces to `0 = φ`,
+which is false for any nonzero `φ`. The theorem is therefore not
+provable until the upstream stub is replaced with a real construction.
+
+Missing prerequisite: the surjectivity half of the de Rham theorem on a
+compact smooth manifold — concretely, given a `ℤ`-linear functional `φ`
+on integer 1-cycles, build a closed 1-form `ω` whose integral over each
+cycle equals `φ`. The classical construction uses a good cover, a
+partition of unity, the Poincaré lemma on each chart, and Čech-to-de-Rham
+descent. None of these are present in the pinned Mathlib v4.28.0 in
+assembled form on charted manifolds (`Mathlib.Geometry.Manifold.PartitionOfUnity`
+provides the partition of unity, but no chart-wise Poincaré primitive
++ Čech-to-de-Rham comparison).
+
+Until that is built, the proof body remains a `sorry` and any downstream
+consumer (`deRhamComparisonMap1_prescribed_period_correct`,
+`deRhamComparisonMap1_surjective`, `comparison_range_eq_top`,
+`deRhamH1_linearEquiv`) inherits this single load-bearing obligation. -/
 theorem integral_closed_form_from_cech_eq
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     deRhamComparisonMap1 X (closed_form_from_cech_cocycle X φ) = φ := by
+  -- BLOCKER: upstream `closed_form_from_cech_cocycle X φ := 0` is a
+  -- data-trivial stub; with the opaque linear map this forces the
+  -- goal to `0 = φ`, false for general `φ`. Missing prerequisite:
+  -- chart-wise Poincaré + Čech-to-de-Rham construction of a closed
+  -- form with prescribed periods.
   sorry
 
 /-- **Surjectivity sub-obligation 1 (representative choice).**
