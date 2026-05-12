@@ -755,24 +755,62 @@ theorem skeletal_h1_quotient_substantive
     simp
   refine ⟨LinearEquiv.refl ℤ _ |>.trans (Submodule.quotEquivOfEqBot p hp).symm⟩
 
+/-- **Topological Core bridge (Round 4, singular-side leaf).**
+
+Singular-side leg of the five-lemma assembly at degree `1`: the
+wedge-of-1-spheres model of the skeletal pair `(K^{(1)}, K^{(0)})`
+is `ℤ`-linearly isomorphic to `singularH1 (Geometric K)`. In the
+substantive setting this follows from the LES of the pair
+`(|K^{(1)}|, |K^{(0)}|)` with `H_1(K^{(0)}) = 0` plus the
+cellular-approximation iso `H_1(|K^{(1)}|) ≃ H_1(|K|)`; the wedge
+identification on the relative-`H` side is supplied by the
+Topological Core's `skeletal_pair_deformation_retract_wedge`. -/
+theorem wedge_iso_singularH1_geometricK
+    [TopologicalSpace V] (K : AbstractSimplicialComplex V)
+    [AbstractSimplicialComplex.Finite K] :
+    Nonempty (ULift.{0, 0} (K.nSimplices 1 →₀ ℤ) ≃ₗ[ℤ]
+      singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+  sorry
+
 /-- **R3-sub-B.A.r3.r3 (Round 4).** Sub-leaf: five-lemma assembly on
 the H_1 piece. The chain-map iso plus the LES iso plus `H_1(K^{(0)}) = 0`
 combine via the snake/five-lemma to give an iso on `H_1` between the
-cellular `H_1` and the singular `H_1` of `|K|`. -/
+cellular `H_1` and the singular `H_1` of `|K|`.
+
+**Discharge strategy.** The inner `e_sing` step is now sorry-free at
+this declaration: it composes two Topological-Core-aligned sub-leaves
+through the shared `ULift.{0, 0} (K.nSimplices 1 →₀ ℤ)` waypoint:
+
+* `skeletal_pair_deformation_retract_wedge K 1` — the wedge-of-1-spheres
+  model of `relativeSkeletalH K 1` (Topological Core sub-leaf, still
+  `sorry`'d but with a meaningful statement that survives upstream
+  promotion).
+* `wedge_iso_singularH1_geometricK K` — the singular-side bridge from
+  the wedge model to `singularH1 (Geometric K)` (the genuinely missing
+  piece, factored out as a focused sub-leaf).
+
+The composition discharges the previous bare `sorry` at the `e_sing`
+let-binding while leaving the parent sub-leaves' `sorry`s untouched. -/
 theorem skeletal_h1_five_lemma_identity
     [TopologicalSpace V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
       singularH1 (AbstractSimplicialComplex.Geometric K)) := by
+  -- Extract the Topological-Core wedge model and the singular-side bridge
+  -- at the outer (Prop) level so the `Nonempty.intro` at the end can
+  -- absorb the choices.  The ULift universe is pinned to `0` so the
+  -- wedge model's RHS unifies with the bridge's LHS.
+  obtain ⟨e_wedge⟩ : Nonempty (relativeSkeletalH K 1 ≃ₗ[ℤ]
+      ULift.{0, 0} (K.nSimplices 1 →₀ ℤ)) :=
+    skeletal_pair_deformation_retract_wedge K 1
+  obtain ⟨e_bridge⟩ := wedge_iso_singularH1_geometricK K
   -- 1. Identify cellularH with cellularChain (they are abbrevs).
   let e_cell : cellularH K 1 ≃ₗ[ℤ] cellularChain K 1 := LinearEquiv.refl ℤ _
   -- 2. Use the relative Hurewicz bridge to identify cellularChain with relativeSkeletalH.
   let e_rel := (relative_hurewicz_identity_under_placeholder K 1).symm
-  -- 3. The Five-Lemma induction step glues the vanishing of H1 on the 0-skeleton
-  -- with the relative isomorphism on the (1,0) pair to identify singularH1.
-  -- This step is currently a sorry representing the singular LES induction.
-  let e_sing : relativeSkeletalH K 1 ≃ₗ[ℤ] singularH1 (AbstractSimplicialComplex.Geometric K) :=
-    sorry
+  -- 3. The singular-side leg, composed from the wedge model and the bridge.
+  let e_sing : relativeSkeletalH K 1 ≃ₗ[ℤ]
+      singularH1 (AbstractSimplicialComplex.Geometric K) := e_wedge.trans e_bridge
   exact ⟨e_cell.trans (e_rel.trans e_sing)⟩
 
 /-- **Comparison theorem (statement form).** The chain map
