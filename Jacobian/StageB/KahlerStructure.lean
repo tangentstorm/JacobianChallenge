@@ -2,6 +2,7 @@ import Jacobian.StageB.HarmonicForms
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.LinearAlgebra.Basis.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Stage B — Kähler manifolds and `(p, q)` decomposition
@@ -34,16 +35,19 @@ def DolbeaultForm (_X : Type) [TopologicalSpace _X] [ChartedSpace ℂ _X]
 
 instance (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p q : ℕ) : AddCommGroup (DolbeaultForm X p q) := by
   unfold DolbeaultForm; infer_instance
 
 instance (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p q : ℕ) : Module ℂ (DolbeaultForm X p q) := by
   unfold DolbeaultForm; infer_instance
 
 instance (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p q : ℕ) : Module.Finite ℂ (DolbeaultForm X p q) := by
   unfold DolbeaultForm
   exact Module.Finite.of_basis (Module.Basis.empty (ι := PEmpty.{1}) (R := ℂ) PUnit)
@@ -89,16 +93,19 @@ def DolbeaultH (_X : Type) [TopologicalSpace _X] [ChartedSpace ℂ _X]
 
 instance (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p q : ℕ) : AddCommGroup (DolbeaultH X p q) := by
   unfold DolbeaultH; infer_instance
 
 instance (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p q : ℕ) : Module ℂ (DolbeaultH X p q) := by
   unfold DolbeaultH; infer_instance
 
 instance (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p q : ℕ) : Module.Finite ℂ (DolbeaultH X p q) := by
   unfold DolbeaultH
   exact Module.Finite.of_basis (Module.Basis.empty (ι := PEmpty.{1}) (R := ℂ) PUnit)

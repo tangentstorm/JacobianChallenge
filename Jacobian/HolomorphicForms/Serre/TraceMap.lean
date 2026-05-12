@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.Serre.DualizingSheaf
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Trace map `H¹(X, K_X) → ℂ` (frontier)
@@ -29,6 +30,7 @@ noncomputable def serreTraceMap
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :

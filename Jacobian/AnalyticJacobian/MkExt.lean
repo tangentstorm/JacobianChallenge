@@ -1,5 +1,6 @@
 import Jacobian.AnalyticJacobian.MkOps
 import Jacobian.HolomorphicForms.EvalLinearMap
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Extensionality, surjectivity, and `evalLinearMap` lift for `mk`
@@ -18,6 +19,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- `mk` is surjective. -/
 theorem mk_surjective : Function.Surjective (mk E X) :=

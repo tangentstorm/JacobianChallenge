@@ -2,6 +2,7 @@ import Jacobian.Periods.HodgeDeRham
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.HomTorsionVanishing
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # R6 — Hodge / de Rham rank for a Riemann surface
@@ -28,6 +29,7 @@ open JacobianChallenge JacobianChallenge.HolomorphicForms
 variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-! ### Headline (R6) -/
 

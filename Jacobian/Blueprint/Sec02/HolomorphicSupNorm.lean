@@ -1,5 +1,6 @@
 import Jacobian.Blueprint.Sec02.CotangentFiberNorm
 import Jacobian.HolomorphicForms.Defs
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `def:holomorphic-sup-norm`
 
@@ -40,6 +41,7 @@ finite; cf.\ `IsCompact.exists_isMaxOn` and the production
 noncomputable def holomorphicSupNorm
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : HolomorphicOneForm ℂ X) : ℝ :=
   ⨆ x : X, cotangentFiberNormAt X x (ω.1 x)
 

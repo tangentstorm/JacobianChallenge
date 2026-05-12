@@ -1,6 +1,7 @@
 import Jacobian.Blueprint.Sec02.MontelCompactness
 import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.Topology.Sequences
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `thm:hone-unit-ball-compact`
 
@@ -47,6 +48,7 @@ whose norm equals `holomorphicSupNorm`. -/
 theorem hone_unit_ball_compact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
     (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
     (_h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) :

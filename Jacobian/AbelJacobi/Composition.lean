@@ -1,5 +1,6 @@
 import Jacobian.AbelJacobi.Defs
 import Jacobian.AnalyticJacobian.EvalJacobianClassOps
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Composition / endpoint algebra for `witnessAbelJacobi`
@@ -22,6 +23,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- Chain rule: passing through an intermediate point cancels:
 `witness basePoint Q - witness basePoint P = witness P Q`. -/

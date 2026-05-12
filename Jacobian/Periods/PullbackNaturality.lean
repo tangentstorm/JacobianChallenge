@@ -11,6 +11,7 @@ import Jacobian.TraceDegree.PiecewiseC1Def
 import Jacobian.TraceDegree.PiecewiseC1Instance
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.Algebra.Category.ModuleCat.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Naturality of `periodPairing` under form-pullback
@@ -73,6 +74,7 @@ noncomputable def cyclePushforward
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
   [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
   [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
@@ -96,7 +98,8 @@ theorem cyclePushforward_comp
   rfl
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
-  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] in
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /-- Identity-functoriality: `cyclePushforward id _` is the identity. -/
 theorem cyclePushforward_id :
     cyclePushforward (id : X → X) contMDiff_id = AddMonoidHom.id _ := by
@@ -316,6 +319,7 @@ theorem pathIntegralViaCover_trans_eq_add
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
   [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y] in
 /-- **Pass pcr.13 (chart-source compatibility under f).** If `γ`
@@ -666,6 +670,7 @@ private theorem periodPairing_eq_zero_placeholder
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (γ : IntegralOneCycle X) :
     periodPairing E X γ = 0 := by
   ext; simp [periodPairing];

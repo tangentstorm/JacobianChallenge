@@ -1,6 +1,7 @@
 import Jacobian.Periods.ChartedFormPullback
 import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.Geometry.Manifold.MFDeriv.Atlas
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Chart-level chain rule for the form-pullback
@@ -33,8 +34,10 @@ open JacobianChallenge.TraceDegree
 
 variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 variable {Y : Type*} [TopologicalSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+  [JacobianChallenge.Periods.StableChartAt ℂ Y]
 
 /-- **Chart-level chain rule (algebraic).** For a smooth `f : X → Y`
 between complex manifolds, holomorphic 1-form `η` on `Y`, charts

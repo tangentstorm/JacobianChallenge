@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.Serre.CanonicalDual
 import Jacobian.HolomorphicForms.Serre.Datum
 import Jacobian.HolomorphicForms.Serre.Pairing
 import Jacobian.HolomorphicForms.Serre.Nondegeneracy
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Existence of the Serre-duality datum on the canonical dual (frontier)
@@ -28,6 +29,7 @@ section
 variable (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
   [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
   [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
 

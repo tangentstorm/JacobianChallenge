@@ -6,6 +6,7 @@ import Jacobian.HolomorphicForms.HolomorphicMap
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.InnerProductSpace.LaxMilgram
 import Mathlib.Topology.Algebra.Order.Field
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 open scoped Manifold
 open Complex
@@ -110,6 +111,7 @@ construct a smooth trial function u_0 that has the correct singularity in a
 small chart around P and is zero elsewhere. -/
 theorem exists_trial_dipole (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (g : CompatibleMetric X) (P : X) :
     ∃ u₀ : X → ℝ, HasRealDipoleSingularity P u₀ := by
   -- 1. Pick a chart at P
@@ -133,6 +135,7 @@ singularity at P (locally behaving like Re(1/z)). -/
 theorem exists_dipole_harmonic (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (g : CompatibleMetric X) (P : X) :
     ∃ u : X → ℝ, IsHarmonic g u ∧ HasRealDipoleSingularity P u := by
   -- 1. Construct the trial function u₀
@@ -151,7 +154,8 @@ isomorphic to the sum of holomorphic and anti-holomorphic 1-forms.
 H^1_dR(X, C) ≅ H^0(X, Ω^1) ⊕ H^0(X, Ω_bar^1). -/
 theorem hodge_decomposition (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     True := by
   sorry
 
@@ -161,6 +165,7 @@ Hodge theory then implies dim H^1_dR(X, R) = 2g. -/
 theorem dim_h1_eq_two_genus (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     True := by
   -- dim H^1_dR(X, R) = 2 * analyticGenus ℂ X
@@ -188,6 +193,7 @@ existing `analyticGenus_eq_zero_iff_subsingleton` equivalence. -/
 theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : analyticGenus ℂ X = 0) :
     Subsingleton (HolomorphicOneForm ℂ X) :=
@@ -340,6 +346,7 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X]
 Since the singularity of u is locally Re(1/z), the pole of f at P is simple. -/
 theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
     (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) (hholo : IsHolomorphic (fun x => (⟨u x, v x⟩ : ℂ))) :
     -- We need to ensure the witness 'f' exists to state its pole order.
@@ -356,6 +363,7 @@ This is a sorry-free assembly of the sub-obligations above. -/
 theorem dipole_harmonic_yields_simple_pole (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
     (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) :

@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.Defs
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Mathlib.Geometry.Manifold.VectorBundle.Hom
 
 /-!
@@ -12,37 +13,34 @@ open Bundle
 
 variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- The constant `1` section of the tangent bundle of a manifold modeled on
 `modelWithCornersSelf ℂ ℂ` is `ContMDiff`.
 
-**BLOCKER.** This statement is not provable for an arbitrary
-`[ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ⊤ X]`. The trivialized
-form of the constant-1 section at `x₀` is
-`y ↦ (tangentBundleCore _ X).coordChange (achart ℂ y) (achart ℂ x₀) y · 1`,
-whose first argument `achart ℂ y` need not be locally constant near
-`x₀` — the abstract `ChartedSpace` API allows `chartAt` to be any
-selector into the atlas. Without local compatibility of `chartAt`
-(typically captured by `[JacobianChallenge.Periods.StableChartAt ℂ X]`,
-under which `achart ℂ y = achart ℂ x₀` on `(chartAt ℂ x₀).source` and
-the `coordChange` collapses to the identity by
-`tangentBundleCore.coordChange_self`), this `coordChange` family is
-generally not smooth as a function of `y`.
-
-Missing prerequisite: a `[StableChartAt ℂ X]` hypothesis at this
-declaration (and at `continuous_eval_at_one_of_contMDiffSection`
-below), matching the convention used elsewhere in the project
-(`Jacobian/Periods/HolomorphicOneFormToFunContinuous.lean`,
-`Jacobian/HolomorphicForms/TraceBundled.lean`, etc.). The proof would
-then proceed by `Bundle.contMDiffAt_section`,
-`congr_of_eventuallyEq` against `contMDiffAt_const`, and
-`TangentBundle.continuousLinearMapAt_trivializationAt_eq_core` together
-with `tangentBundleCore.coordChange_self` (the model-space lemma
-`TangentBundle.coordChange_model_space` only applies when `X = ℂ`). -/
+The proof uses `Bundle.contMDiffAt_section` to reduce smoothness of the
+section to smoothness of its trivialization at `x₀`. By
+`FiberBundleCore.localTriv_apply`, that trivialization sends
+`⟨y, 1⟩ ↦ ⟨y, (tangentBundleCore _ X).coordChange (achart ℂ y) (achart ℂ x₀) y 1⟩`.
+Under `[StableChartAt ℂ X]`, `achart ℂ y = achart ℂ x₀` on
+`(chartAt ℂ x₀).source`, so the `coordChange` collapses to the identity
+by `FiberBundleCore.coordChange_self`, giving the constant value `1`
+on a neighbourhood of `x₀`. -/
 theorem contMDiff_tangentSection_one :
     ContMDiff (𝓘(ℂ, ℂ)) ((𝓘(ℂ, ℂ)).prod (𝓘(ℂ, ℂ))) ⊤
       (fun x : X => TotalSpace.mk' ℂ (E := TangentSpace (𝓘(ℂ, ℂ))) x (1 : ℂ)) := by
-  sorry
+  intro x₀
+  rw [Bundle.contMDiffAt_section]
+  refine (contMDiffAt_const (c := (1 : ℂ))).congr_of_eventuallyEq ?_
+  have hx₀ : x₀ ∈ (chartAt ℂ x₀).source := mem_chart_source ℂ x₀
+  filter_upwards [(chartAt ℂ x₀).open_source.mem_nhds hx₀] with y hy
+  have hachart : achart ℂ y = achart ℂ x₀ :=
+    JacobianChallenge.Periods.achart_eq_of_mem_source hy
+  change (tangentBundleCore (𝓘(ℂ, ℂ)) X).coordChange
+      (achart ℂ y) (achart ℂ x₀) y (1 : ℂ) = (1 : ℂ)
+  rw [hachart]
+  exact (tangentBundleCore (𝓘(ℂ, ℂ)) X).coordChange_self
+    (achart ℂ x₀) y hy (1 : ℂ)
 
 /-- Eval-at-1 of a smooth cotangent section is continuous. Uses
 `ContMDiff.clm_bundle_apply` to combine the cotangent section with

@@ -1,4 +1,5 @@
 import Jacobian.AnalyticJacobian.Mk
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Group operation lemmas for `AnalyticJacobianGroup.mk`
@@ -16,6 +17,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 theorem mk_neg (φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ) :
     mk E X (-φ) = - mk E X φ := by

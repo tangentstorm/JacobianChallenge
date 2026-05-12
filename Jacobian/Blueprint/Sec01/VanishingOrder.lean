@@ -1,6 +1,7 @@
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Jacobian.HolomorphicForms.VanishingOrder
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint: `def:vanishing-order` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -30,6 +31,7 @@ negative integers for poles). -/
 noncomputable def vanishingOrder
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p : X) (f : X → ℂ) : WithTop ℤ :=
   JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p f
 

@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.CotangentBundle
 import Mathlib.Geometry.Manifold.Complex
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Global holomorphic functions on a compact connected Riemann surface
 
@@ -42,6 +43,7 @@ theorem holomorphic_compact_connected_constant
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : X → ℂ)
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) f) :
@@ -60,6 +62,7 @@ theorem holomorphic_compact_connected_const_apply
     {X : Type*} [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     {f : X → ℂ}
     (hf : ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) f)

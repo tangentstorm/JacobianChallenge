@@ -1,4 +1,5 @@
 import Jacobian.Blueprint.Sec01.MeromorphicFunctionConcrete
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint: leaf 3 of `def:meromorphic-function` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -46,6 +47,7 @@ namespace MeromorphicFunction
 
 variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- The trivial meromorphic function with placeholder germs everywhere.
 Inhabits `MeromorphicFunction X` while `MeromorphicGerm` is the `Unit`

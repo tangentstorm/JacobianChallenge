@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.FiniteDimensional
 import Jacobian.HolomorphicForms.BranchedCover
 import Mathlib.Topology.Compactification.OnePoint.Basic
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Meromorphic maps to the Riemann sphere
@@ -99,6 +100,7 @@ namespace MeromorphicMapToSphere
 
 variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 instance : CoeFun (MeromorphicMapToSphere X) (fun _ => X → OnePoint ℂ) where
   coe f := f.toMap

@@ -1,6 +1,7 @@
 import Jacobian.Periods.Orientable
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Analysis.Complex.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Complex 1-manifolds are orientable
@@ -41,7 +42,8 @@ instance is the API hook for the eventual holomorphic-Jacobian
 argument. -/
 instance complexManifold_orientable
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Orientable X :=
   ⟨⟨()⟩⟩
 

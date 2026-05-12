@@ -1,4 +1,5 @@
 import Jacobian.AbelJacobi.BaseChange
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # More identities relating `witnessAbelJacobi` and `evalJacobianClass`
@@ -17,6 +18,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- Explicit form: `witness basePoint P v + evalJacobianClass basePoint v
 = evalJacobianClass P v`. -/

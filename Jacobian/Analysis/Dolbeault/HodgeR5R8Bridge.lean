@@ -3,6 +3,7 @@ import Jacobian.Analysis.HodgeDecomposition.AbstractHodgeComplex
 import Jacobian.HolomorphicForms.Serre.HarmonicForms
 import Jacobian.Analysis.BundledForms.SubA
 import Jacobian.Analysis.BundledForms.SubAComplex
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # R7 via R5 (Hodge) + R8 (harmonic-form representatives) + R9 (bundled forms)
@@ -122,6 +123,7 @@ theorem r5_harmonic_witness :
 variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-! ### R8 hookup: harmonic-form representatives -/
 

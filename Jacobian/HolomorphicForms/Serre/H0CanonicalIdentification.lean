@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.SheafCohomologyRS
 import Jacobian.HolomorphicForms.Serre.DualizingSheaf
 import Jacobian.HolomorphicForms.Defs
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Identification `H⁰(X, K_X) ≃ HolomorphicOneForm X` (frontier)
@@ -31,6 +32,7 @@ noncomputable def h0Canonical_isoHolomorphicOneForm
     (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)] :

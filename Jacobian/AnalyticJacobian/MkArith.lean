@@ -1,4 +1,5 @@
 import Jacobian.AnalyticJacobian.MkMembership
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Arithmetic identities for `mk`
@@ -16,6 +17,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- `mk φ = -mk ψ` iff `φ + ψ ∈ periodSubgroup`. -/
 theorem mk_eq_neg_iff_add_mem

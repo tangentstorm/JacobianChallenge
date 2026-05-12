@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.RiemannRochLowDegree
 import Jacobian.HolomorphicForms.SerreDualityRS
 import Jacobian.HolomorphicForms.Serre.RiemannRochHighFromSerre
 import Mathlib.Tactic.Linarith
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Vanishing of `H¹(X, L)` for high-degree line bundles (Serre vanishing)
@@ -76,6 +77,7 @@ theorem riemann_roch_high_degree
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)
@@ -104,6 +106,7 @@ theorem riemann_roch_high_degree_h0
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)

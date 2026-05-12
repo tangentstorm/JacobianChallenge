@@ -1,4 +1,5 @@
 import Jacobian.AbelJacobi.Coset
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Telescoping / 4-point chain identities for `witnessAbelJacobi`
@@ -17,6 +18,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- 4-point chain: `(P→Q) + (Q→R) + (R→S) = (P→S)`. -/
 theorem witnessAbelJacobi_chain_four

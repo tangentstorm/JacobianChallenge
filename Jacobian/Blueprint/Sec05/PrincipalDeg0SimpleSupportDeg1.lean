@@ -1,6 +1,7 @@
 import Jacobian.Blueprint.Sec01.PrincipalDivisor
 import Jacobian.Blueprint.Sec01.MeromorphicToCp1
 import Jacobian.Blueprint.Sec01.PrincipalDegreeZero
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `lem:principal-deg0-simple-support-deg1`
 
@@ -56,6 +57,7 @@ noncomputable def branchedDegreeOfMap
     [CompactSpace X] [T2Space X] [PreconnectedSpace X]
     [T2Space Y] [PreconnectedSpace Y] [Nonempty Y]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
     (g : X → Y) : ℕ :=
   if h : IsHolomorphic g ∧ ¬ ∃ y₀, ∀ x, g x = y₀ then
@@ -105,6 +107,7 @@ But `g(z) = (z - z₀)^n · h(z) → 0` as `z → z₀`, contradicting large nor
 theorem toFun_ne_infty_of_pos_meromorphicOrderAt
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (p : X)
     {n : ℤ} (hn : 0 < n)
     (hord : meromorphicOrderAt
@@ -164,6 +167,7 @@ with `h` analytic. Since `n ≥ 1`, this tends to `0` as `z → z₀`. By unique
 theorem toFun_val_eq_zero_of_pos_meromorphicOrderAt
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (p : X) (w : ℂ)
     (hw : f.toFun p = (w : OnePoint ℂ))
     {n : ℤ} (hn : 0 < n)
@@ -216,6 +220,7 @@ theorem meromorphicToCp1_at_pole_of_simple_two_point_principal
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     meromorphicToCp1 X f Q₂ = OnePoint.infty := by
@@ -256,6 +261,7 @@ theorem meromorphicToCp1_at_zero_of_simple_two_point_principal
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     meromorphicToCp1 X f Q₁ = ((0 : ℂ) : OnePoint ℂ) := by
@@ -291,6 +297,7 @@ theorem meromorphicToCp1_ne_infty_of_ne_pole
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂)
     (P : X) (hP : P ≠ Q₂) :
@@ -324,6 +331,7 @@ theorem fiber_infty_eq_singleton
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     (meromorphicToCp1 X f) ⁻¹' {(OnePoint.infty : OnePoint ℂ)} = {Q₂} := by
@@ -335,6 +343,7 @@ theorem mapAnalyticOrderAt_eq_one_at_simple_pole
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     mapAnalyticOrderAt (meromorphicToCp1 X f) Q₂ = 1 := by
@@ -362,6 +371,7 @@ theorem branchedDegreeOfMap_eq_one_of_simple_two_point_principal
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     branchedDegreeOfMap (meromorphicToCp1 X f) = 1 := by
@@ -399,6 +409,7 @@ theorem principal_deg0_simple_support_deg1
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hpd : principalDivisor X f = Divisor.point Q₁ - Divisor.point Q₂) :
     Nonconstant (meromorphicToCp1 X f) ∧

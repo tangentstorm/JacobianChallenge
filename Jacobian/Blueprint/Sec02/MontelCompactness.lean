@@ -2,6 +2,7 @@ import Jacobian.Blueprint.Sec02.HolomorphicSupNorm
 import Jacobian.Blueprint.Sec02.ChartCoefficientBound
 import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Data.Real.Archimedean
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `lem:montel-compactness`
 
@@ -30,6 +31,7 @@ nonnegative. -/
 lemma holomorphicSupNorm_nonneg
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : HolomorphicOneForm ℂ X) :
     0 ≤ holomorphicSupNorm X ω := by
   unfold holomorphicSupNorm cotangentFiberNormAt cotangentFiberNorm
@@ -40,6 +42,7 @@ lemma holomorphicSupNorm_nonneg
 lemma holomorphicSupNorm_le_of_pointwise
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : HolomorphicOneForm ℂ X) {r : ℝ} (hr : 0 ≤ r)
     (h : ∀ x, ‖ω.1 x‖ ≤ r) :
     holomorphicSupNorm X ω ≤ r := by
@@ -55,6 +58,7 @@ private theorem montel_pointwise_extraction_connected
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ℕ → HolomorphicOneForm ℂ X)
     (h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) :
     ∃ (φ : ℕ → ℕ), StrictMono φ ∧
@@ -99,6 +103,7 @@ decidability of `ConnectedSpace X`. -/
 private theorem montel_pointwise_extraction
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ℕ → HolomorphicOneForm ℂ X)
     (_h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) :
     ∃ (φ : ℕ → ℕ), StrictMono φ ∧
@@ -152,6 +157,7 @@ private theorem montel_pointwise_extraction
 theorem montel_compactness
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ℕ → HolomorphicOneForm ℂ X)
     (_h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) :
     ∃ (φ : ℕ → ℕ), StrictMono φ ∧
