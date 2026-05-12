@@ -251,13 +251,65 @@ theorem pathIntegral_linear_in_form
 This is the bridge from `chartedFormPullback_continuousOn` (Packet F)
 to the per-segment `CurveIntegrable` hypotheses.  Currently sorry;
 the full proof requires assembling chart-atlas membership and
-range-containment for each segment. -/
+range-containment for each segment.
+
+**Blocker (2026-05-12).** As stated this theorem is mathematically
+too strong:
+
+* The available production-side fact (Packet F,
+  `Jacobian/Periods/ChartedFormPullbackCurveIntegrable.lean`) is
+  `chartedFormPullback_continuousOn c hc ω : ContinuousOn
+  (chartedFormPullback c ω) c.target`, conditioned on
+  `[StableChartAt E X]` and `hc : c ∈ IsManifold.maximalAtlas …`.
+  The present theorem has neither hypothesis available.
+* By unfolding `chartedFormPullback`, outside `c.target` we have
+  `mfderiv (modelWithCornersSelf ℂ E) (modelWithCornersSelf ℂ E)
+  c.symm e = 0` (since `c.symm` is not `MDifferentiableAt e`
+  there), so the pullback is the zero map on `c.targetᶜ`. Inside
+  `c.target` the pullback can have a nonzero limit at boundary
+  points of `c.target`, so global `Continuous` fails in general.
+
+Missing prerequisites to discharge this leaf without changing the
+statement:
+
+1. A typeclass instance `StableChartAt E X` available at the call
+   site (so that `mfderiv_chartSymm_continuousOn` applies).
+2. A membership witness `c ∈ IsManifold.maximalAtlas
+   (modelWithCornersSelf ℂ E) ⊤ X` (so that `chartedFormPullback`
+   actually transports a smooth form under a smooth chart).
+3. A range-containment hypothesis or a global-extension lemma
+   showing that `chartedFormPullback c ω` is identically zero (or
+   continuously zero) outside `c.target` and matches at the
+   boundary; the strict-zero fact above plus a *boundary-vanishing*
+   hypothesis on `ω` (e.g. compact support inside `c.source`)
+   would suffice, but neither is currently available in the
+   project.
+
+The cleanest fix is at the call site in
+`exists_singularSimplex_integration`: the per-segment
+`CurveIntegrable` only needs continuity of the pullback on the
+segment's chart-lifted image, which lives in `c.target`. Replacing
+`curveIntegrable_blueprint_assumption` with a
+`ContinuousOn`-flavoured variant (or directly using
+`chartedFormPullback_curveIntegrable` from Packet F) would
+side-step this leaf entirely. That refactor is out of scope here
+(it would require editing files outside the allowed write scope).
+-/
 private theorem chartedFormPullback_continuous_assumption
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
-    Continuous (chartedFormPullback c ω) := by sorry
+    Continuous (chartedFormPullback c ω) := by
+  -- BLOCKER: see docstring above. Missing prerequisites are
+  --   (i)   [StableChartAt E X] hypothesis,
+  --   (ii)  c ∈ IsManifold.maximalAtlas (modelWithCornersSelf ℂ E) ⊤ X,
+  --   (iii) boundary-vanishing of `ω` (or refactor to ContinuousOn c.target).
+  -- The production-side `chartedFormPullback_continuousOn` discharges
+  -- the `ContinuousOn c.target` form under (i) + (ii); upgrading to
+  -- global `Continuous` requires (iii) which is not currently provable
+  -- from the available hypotheses.
+  sorry
 
 /-- C¹ regularity of chart-lifted subpaths. Established by extracting
 regularity data from the `PiecewiseC1PathRegularity X` instance. -/
