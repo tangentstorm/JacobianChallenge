@@ -427,6 +427,39 @@ theorem holomorphicOneForm_chartOverlap_pullback
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
+  -- BLOCKED (structural).  The statement is not provable from the current
+  -- project definitions of `holomorphicOneForm_coeff` and
+  -- `holomorphicOneForm_inversionCoeff` alone.  Both definitions evaluate
+  -- `ω.toFun p` against `(1 : ℂ)` via the *trivial* identification
+  -- `TangentSpace (modelWithCornersSelf ℂ ℂ) p = ℂ` (Mathlib's
+  -- `TangentSpace` is `def`-aliased to the model fiber `E`, independent of
+  -- the point or the chart).  Under `invBwd_ne_zero hw : invBwd w = ↑(w⁻¹)`
+  -- the two sides unfold to
+  --     ω.toFun (↑(w⁻¹)) 1  vs.  -w^2 * ω.toFun (↑(w⁻¹)) 1,
+  -- i.e. the same linear-functional value differing by the factor `-w^2`.
+  -- The equality therefore forces `(1 + w^2) * ω.toFun (↑(w⁻¹)) 1 = 0`,
+  -- which is the *conclusion* this lemma is meant to help derive — not
+  -- something available from the manifold/section API at this layer.
+  --
+  -- Missing prerequisite: a chart-trivialisation API for sections of the
+  -- cotangent bundle on `OnePoint ℂ`, such that the identity-chart and
+  -- inversion-chart "coefficients" carry the chart's local trivialisation
+  -- (so that the chain-rule Jacobian `d(w⁻¹)/dw = -w⁻²` enters the
+  -- transition formula).  Concretely, one of:
+  --   (a) redefine `holomorphicOneForm_inversionCoeff` to use the
+  --       inversion-chart local trivialisation of `CotangentSpace ℂ
+  --       (OnePoint ℂ)` (the `Trivialization`/`VectorBundleCore` API on
+  --       `Bundle.ContinuousLinearMap (RingHom.id ℂ)` applied to the
+  --       tangent bundle and the trivial line bundle); or
+  --   (b) phrase the transition via `OpenPartialHomeomorph` chart-overlap
+  --       pullback of cotangent vectors (`ContMDiffSection.pullback` plus
+  --       `mfderiv` of `inversionChart ≫ identityChart.symm`).
+  -- Both routes require chart-trivialisation infrastructure on the
+  -- cotangent bundle that is absent in Mathlib v4.28.0 at the pinned
+  -- commit (and is the same "chart-trivialisation gap" already documented
+  -- on `ContMDiffSection_localRepr_identityChart_contDiff` (G2a) and
+  -- `ContMDiffSection_localRepr_inversionChart_continuousAt_zero` (G3a)
+  -- in this file).
   sorry
 
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
