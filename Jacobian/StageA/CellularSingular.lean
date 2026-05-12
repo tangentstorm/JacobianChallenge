@@ -631,11 +631,8 @@ realisation pair API land. -/
 theorem skeletal_pair_les_relative
     [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
     Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] cellularChain K n) := by
-  have hwedge :
-      Nonempty (relativeSkeletalH K n ≃ₗ[ℤ] ULift.{0} (K.nSimplices n →₀ ℤ)) :=
-    skeletal_pair_deformation_retract_wedge K n
-  obtain ⟨e₁⟩ := hwedge
-  exact ⟨e₁.trans (e₁.symm.trans (relative_hurewicz_identity_under_placeholder K n))⟩
+  obtain ⟨e_wedge⟩ := skeletal_pair_deformation_retract_wedge K n
+  exact ⟨e_wedge.trans (relative_hurewicz_identity_under_placeholder K n)⟩
 
 /-- **R3-sub-B.A.r2.r1 (Round 3).** Sub-leaf: skeletal pair
 `(K^{(n)}, K^{(n-1)})` deformation-retracts onto a wedge of `n`-spheres
@@ -750,10 +747,9 @@ theorem skeletal_h1_quotient_substantive
       cellularChain K 1 ⧸ (LinearMap.range (cellularBoundary K 1))) := by
   let p := LinearMap.range (cellularBoundary K 1)
   have hp : p = ⊥ := by
-    rw [cellularBoundary]
-    ext x
-    simp
-  refine ⟨LinearEquiv.refl ℤ _ |>.trans (Submodule.quotEquivOfEqBot p hp).symm⟩
+    dsimp [cellularBoundary]
+    exact LinearMap.range_zero
+  exact ⟨(Submodule.quotEquivOfEqBot p hp).symm⟩
 
 /-- **Topological Core bridge (Round 4, singular-side leaf).**
 
