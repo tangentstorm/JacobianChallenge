@@ -305,6 +305,74 @@ noncomputable def principal {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X
     (f : MeromorphicFunctionType X) : Divisor X :=
   f.zeros - f.poles
 
+/-!
+### Blocker analysis for `toFun_ne_infty_of_poles_eq_zero`
+
+**Status (2026-05-12):** sorry — the theorem is currently *unprovable*
+as stated, and provably so, because the upstream `poles` definition is
+a data-trivial placeholder.
+
+#### The placeholder
+
+`MeromorphicFunctionType.poles` (line 312) is
+
+```
+noncomputable def poles (_f : MeromorphicFunctionType X) : Divisor X := 0
+```
+
+The `_f` binder is unused: `poles` returns `(0 : Divisor X)` for every
+input. Hence `f.poles = 0` reduces to `(0 : Divisor X) = (0 : Divisor X)`,
+which is `rfl` and carries no information about `f`.
+
+#### Counterexample to the current statement
+
+The constant-∞ map is a valid `MeromorphicFunctionType X`:
+
+* `toFun := fun _ => (∞ : OnePoint ℂ)` is continuous (constant);
+* the ℂ-projection `(toFun q).getD 0` evaluates to `(0 : ℂ)` (because
+  `(∞ : OnePoint ℂ).getD 0 = 0`), and the constant-`0` function is
+  analytic, hence `MeromorphicAt` at every point.
+
+For this `f`, the hypothesis `h : f.poles = 0` is satisfied (vacuously
+by `rfl`), yet the conclusion `∀ x, f.toFun x ≠ ∞` is false — every
+point witnesses `f.toFun x = ∞`.
+
+#### Why a non-degenerate proof is blocked
+
+The mission strategy assumes `poles` records pole orders, i.e., that
+`(f.poles).point_apply p` (or similar) extracts `-orderAt p f.toFiniteFun`
+when the order is negative. With the current placeholder, no such
+extraction is possible: `f.poles` literally throws `f` away.
+
+A real definition would set, point-wise,
+`(poles f) p = (-orderAt p f.toFiniteFun).toNat.max 0`, but constructing
+this as a `Divisor X = X →₀ ℤ` requires *finite support* of
+`{p | orderAt p f.toFiniteFun < 0}`, which is **not provable without a
+compactness assumption** on `X` (the typeclass context here is only
+`TopologicalSpace`, `ChartedSpace ℂ`, and `IsManifold 𝓘(ℂ) ⊤`; there is
+no `[CompactSpace X]`).
+
+#### Suggested path forward
+
+Two non-degenerate options, both out of scope for this single-file
+proof task per the mission's ANTI-CHEAT CLAUSE:
+
+1. **Widen scope to refine `poles`.** Replace the placeholder with a
+   real `VanishingOrder`-based definition. This needs either
+   `[CompactSpace X]` added to `MeromorphicFunctionType` (or to `poles`
+   specifically) plus a chart-local finiteness lemma routed through
+   `MeromorphicOn.isClopen_setOf_meromorphicOrderAt_eq_top` and the
+   identity-principle infrastructure already in `VanishingOrder.lean`.
+2. **Restate via the existing predicate.** The file already defines
+   `is_holomorphic f := ∀ x, f.toFun x ≠ ∞` (line 29). The intended
+   structural bridge could be reformulated to take `is_holomorphic f`
+   as hypothesis directly, deferring the `poles = 0 ↔ is_holomorphic`
+   equivalence to a separate theorem proved *after* `poles` is refined.
+
+Per the ANTI-CHEAT CLAUSE ("If you find a definition is insufficient
+for a real proof, STOP and report the issue rather than providing a
+degenerate solution"), the `sorry` is preserved unchanged. -/
+
 /-- Structural bridge: if `f.poles = 0`, then `f.toFun` never takes the value `∞`.
 This encodes the semantic content of "no poles means no infinities". -/
 theorem toFun_ne_infty_of_poles_eq_zero {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
