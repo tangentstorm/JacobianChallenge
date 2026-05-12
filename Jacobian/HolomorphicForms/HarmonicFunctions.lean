@@ -300,10 +300,15 @@ theorem dipole_harmonic_holomorphic_extension (X : Type*) [TopologicalSpace X]
     (hcont : Filter.Tendsto (fun x : X => (⟨u x, v x⟩ : ℂ)) (nhdsWithin P {P}ᶜ) (Filter.cocompact ℂ)) :
     -- Placeholder for Holomorphic on all of X
     True := by
-  -- 1. Holomorphic off P
-  have hholo_off := holomorphic_of_harmonic_conjugate X g u v hcr
-  -- 2. Riemann extension
-  exact holomorphic_at_P_of_continuous_at_infty X P (sorry) hholo_off (sorry)
+  -- The conclusion is a `True` placeholder. The real content (the Riemann
+  -- removable-singularity step) is gated on the placeholder targets of
+  -- `holomorphic_of_harmonic_conjugate` and
+  -- `holomorphic_at_P_of_continuous_at_infty`, which still return `True`.
+  -- Once those are upgraded to genuine holomorphicity predicates, this proof
+  -- should chain them via `holomorphic_at_P_of_continuous_at_infty` applied to
+  -- `f := fun x => (⟨u x, v x⟩ : OnePoint ℂ)` using `hcont` and the off-`P`
+  -- holomorphicity from `holomorphic_of_harmonic_conjugate`.
+  trivial
 
 /-- **Sub-obligation 4a: Order of vanishing of 1/f.**
 If f is constructed from a dipole singularity u ~ Re(1/z), then 1/f
