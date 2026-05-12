@@ -988,7 +988,7 @@ theorem holomorphicOneForm_chart_local_equicontinuous
 /-- Shared target proposition for the Arzelà–Ascoli refinement chain. -/
 abbrev HolomorphicOneFormClosedBallTotallyBounded
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) : Prop :=
     @TotallyBounded (HolomorphicOneForm ℂ X)
@@ -998,7 +998,7 @@ abbrev HolomorphicOneFormClosedBallTotallyBounded
 
 theorem holomorphicOneForm_arzela_ascoli_refine23
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1009,7 +1009,7 @@ an explicit witness. This is the bridge we will use to replace the
 frontier axiom by concrete chartwise data in subsequent passes. -/
 theorem holomorphicOneForm_arzela_ascoli_refine23_of_witness
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X)
     (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
@@ -1017,7 +1017,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine23_of_witness
 
 theorem holomorphicOneForm_arzela_ascoli_refine22
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1025,7 +1025,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine22
 
 theorem holomorphicOneForm_arzela_ascoli_refine21
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1033,7 +1033,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine21
 
 theorem holomorphicOneForm_arzela_ascoli_refine20
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1041,7 +1041,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine20
 
 theorem holomorphicOneForm_arzela_ascoli_refine19
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1049,7 +1049,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine19
 
 theorem holomorphicOneForm_arzela_ascoli_refine18
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1057,7 +1057,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine18
 
 theorem holomorphicOneForm_arzela_ascoli_refine17
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1065,7 +1065,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine17
 
 theorem holomorphicOneForm_arzela_ascoli_refine16
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1073,7 +1073,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine16
 
 theorem holomorphicOneForm_arzela_ascoli_refine15
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1081,7 +1081,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine15
 
 theorem holomorphicOneForm_arzela_ascoli_refine14
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1089,7 +1089,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine14
 
 theorem holomorphicOneForm_arzela_ascoli_refine13
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1097,7 +1097,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine13
 
 theorem holomorphicOneForm_arzela_ascoli_refine12
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1105,7 +1105,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine12
 
 theorem holomorphicOneForm_arzela_ascoli_refine11
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1113,7 +1113,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine11
 
 theorem holomorphicOneForm_arzela_ascoli_refine10
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1121,7 +1121,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine10
 
 theorem holomorphicOneForm_arzela_ascoli_refine09
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1129,7 +1129,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine09
 
 theorem holomorphicOneForm_arzela_ascoli_refine08
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1137,7 +1137,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine08
 
 theorem holomorphicOneForm_arzela_ascoli_refine07
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1145,7 +1145,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine07
 
 theorem holomorphicOneForm_arzela_ascoli_refine06
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1153,7 +1153,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine06
 
 theorem holomorphicOneForm_arzela_ascoli_refine05
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1161,7 +1161,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine05
 
 theorem holomorphicOneForm_arzela_ascoli_refine04
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1169,7 +1169,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine04
 
 theorem holomorphicOneForm_arzela_ascoli_refine03
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1177,7 +1177,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine03
 
 theorem holomorphicOneForm_arzela_ascoli_refine02
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1185,7 +1185,7 @@ theorem holomorphicOneForm_arzela_ascoli_refine02
 
 theorem holomorphicOneForm_arzela_ascoli_refine01
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
@@ -1197,7 +1197,7 @@ ending at `holomorphicOneForm_arzela_ascoli_refine23`; this theorem is
 pure assembly and keeps the original argument signature used downstream. -/
 theorem holomorphicOneForm_arzela_ascoli
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X)
     (_he : True) (_hec : True) :
@@ -2005,7 +2005,7 @@ theorem holomorphicOneForm_arzela_refinement_pass_220 : True := by
 
 theorem holomorphicOneForm_closedBall_totallyBounded
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     @TotallyBounded (HolomorphicOneForm ℂ X)
@@ -2076,7 +2076,7 @@ theorem global_sup_via_chart_max : True := by trivial
 
 theorem holomorphicOneForm_montel_subseq_isCauchy
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X)
     (σ : ℕ → HolomorphicOneForm ℂ X)
@@ -2128,7 +2128,7 @@ assembly of `holomorphicOneForm_montel_subseq_isCauchy` and
 `HolomorphicOneFormBanachData.cauchySeq_tendsto`. -/
 theorem holomorphicOneForm_montel_subseq_tendsto
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X)
     (σ : ℕ → HolomorphicOneForm ℂ X)
@@ -2152,7 +2152,7 @@ metric topology — Mathlib's `Metric.isClosed_closedBall` applied to
 and is *not* a sorry. -/
 theorem holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X)
     (σ : ℕ → HolomorphicOneForm ℂ X) (a : HolomorphicOneForm ℂ X)
@@ -2176,7 +2176,7 @@ theorem holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le
 
 theorem holomorphicOneForm_montel
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (B : HolomorphicOneFormBanachData X) :
     @IsCompact (HolomorphicOneForm ℂ X)
