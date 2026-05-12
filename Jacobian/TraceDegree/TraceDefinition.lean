@@ -209,18 +209,67 @@ theorem traceAtRegularValue_smul
   · rw [smul_zero]
 
 /-- The trace of a pullback is scaled by the degree (at regular values).
-(tr f (f* η))_y = deg(f) • η_y. -/
+(tr f (f* η))_y = deg(f) • η_y.
+
+BLOCKER (2026-05-12): this theorem is currently blocked on the same missing
+prerequisite documented at `localInverseAt_holomorphic` (item 2 of its
+docstring): there is no link between `BranchedCoverData.ramificationIndex`
+and the analytic content of the manifold differential `mfderiv`.
+
+The intended four-step reduction is:
+
+1. Pullback definition: `(pullbackFormsBundled f _ η).toFun x` unfolds to
+   `pullbackFormsFunFiber f η x = (η.toFun (f x)).comp (mfderiv 𝓘(ℂ,ℂ) 𝓘(ℂ,ℂ) f x)`.
+2. For `x ∈ f ⁻¹' {y}`, rewrite `f x = y` so the term reads
+   `(η.toFun y).comp (mfderiv 𝓘(ℂ,ℂ) 𝓘(ℂ,ℂ) f x)`.
+3. Apply `cotangentPushforward` with `IsIso (mfderiv 𝓘(ℂ,ℂ) 𝓘(ℂ,ℂ) f x)`:
+   the inverse cancels the chain-rule factor and the summand reduces to
+   `η.toFun y` (using `ContinuousLinearMap.comp_assoc`,
+   `IsIso.right_inv`, and `ContinuousLinearMap.comp_id`).
+4. The sum over the (unramified) fiber becomes
+   `(h.finite_fiber y).toFinset.card • η.toFun y`, which equals
+   `(h.weightedFiberCard y : ℂ) • η.toFun y` because every summand of the
+   weighted count is `1` at a regular value (see
+   `branchedDegree_eq_card_toFinset_of_unramified_fiber` for the integer
+   analogue).
+
+**Missing prerequisite.** Step 3 requires
+`IsIso (mfderiv 𝓘(ℂ,ℂ) 𝓘(ℂ,ℂ) f x)` for every `x` in the regular fiber.
+`BranchedCoverData.ramificationIndex : X → ℕ` is abstract data — nothing
+in `BranchedCoverData` ties it to `mapAnalyticOrderAt f x` or to
+nonvanishing of the chart-local derivative. To turn
+`h.ramificationIndex x = 1` into `IsIso (mfderiv … f x)` we need either:
+
+* a compatibility lemma `h.ramificationIndex x = mapAnalyticOrderAt f x`
+  (currently absent from `BranchedCover.lean`) plus the analytic-order-one
+  ⇒ derivative-nonzero bridge, transported across charts, or
+* a new structure field on `BranchedCoverData` recording the analytic
+  identification (and consequently a refactor of every existing producer
+  of `BranchedCoverData`), or
+* a separate hypothesis on `trace_pullback_at_regular_value` carrying the
+  IsIso witness, taken as input.
+
+Editing `BranchedCoverData` or weakening the theorem statement is out of
+scope here (forbidden writes); naming the prerequisite is the correct
+action under the project's BLOCKER convention.
+
+A secondary technical point: the `sorry` appearing inside the statement
+(as the `hf` argument to `pullbackFormsBundled`) is harmless for the
+present blocker analysis, because `pullbackFormsBundled.toFun` reduces
+to `pullbackFormsFunFiber` independent of the smoothness witness.
+Discharging this `sorry` would require carrying a `ContMDiff` hypothesis
+on `f`; this is a separate concern from the IsIso blocker above. -/
 theorem trace_pullback_at_regular_value
     {f : X → Y} (h : BranchedCoverData X Y f)
     (η : HolomorphicOneForm ℂ Y)
     (y : Y) (hy : isRegularValue h y) :
     traceAtRegularValue h (fun x => (pullbackFormsBundled f sorry η).toFun x) y hy =
       (h.weightedFiberCard y : ℂ) • η.toFun y := by
-  unfold traceAtRegularValue
-  -- 1. Use pullback definition: (f* η)_x = η_{f(x)} ∘ df_x
-  -- 2. Use cotangentPushforward definition: (df_x)⁻¹* (f* η)_x = η_{f(x)}
-  -- 3. Sum over fiber: ∑ η_y = (card fiber) • η_y
-  -- 4. weightedFiberCard = card fiber (since all e_x = 1)
+  -- BLOCKER: see the docstring above.  The reduction requires
+  --   `IsIso (mfderiv 𝓘(ℂ,ℂ) 𝓘(ℂ,ℂ) f x)` for every `x` in the regular
+  --   fiber, but `h.ramificationIndex x = 1` carries no analytic content
+  --   linking it to `mfderiv`.  Same missing prerequisite as
+  --   `localInverseAt_holomorphic` (item 2 of its BLOCKER docstring).
   sorry
 
 end JacobianChallenge.HolomorphicForms
