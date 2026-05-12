@@ -557,24 +557,26 @@ theorem skeletal_pair_wedge_of_spheres
 /-- Rank of the relative skeletal `H_n` of a finite-`n`-skeleton-pair
 equals the number of `n`-simplices.
 
-This is the rank-level statement of the wedge-of-spheres theorem. The
-proof reduces to `homology_wedge_axiom` (the geometric content,
-currently admitted as a `sorry`; see its docstring) plus the standard
-`Module.finrank_finsupp_self` rank computation for a finitely-supported
-free module.
+This is the rank-level statement of the wedge-of-spheres theorem.
 
-Earlier the proof of this theorem routed through
-`relative_hurewicz_identity_under_placeholder`, exploiting the
-definitional equality between `relativeSkeletalH K n` and
-`cellularChain K n`. That route was a degenerate placeholder proof. The
-present proof depends instead on the *named* admission of the geometric
-content in `homology_wedge_axiom`, so the dependency on missing
-infrastructure is now explicit and trackable. -/
+**Proof structure (post-refactor).** The proof now depends on a single
+named admission of the geometric content — `homology_wedge_axiom` (the
+iso `relativeSkeletalH K n ≃ₗ[ℤ] (K.nSimplices n →₀ ℤ)`, currently a
+`sorry` enumerating the missing infrastructure). The rank computation
+itself uses Mathlib's `LinearEquiv.finrank_eq` and
+`Module.finrank_finsupp_self`.
+
+The earlier proof routed through `skeletal_pair_wedge_of_spheres` →
+`homology_wedge_of_spheres_iso_finsupp`, which inserted an unnecessary
+trivial intermediate (`skeletal_pair_deformation_retract_wedge` of type
+`relativeSkeletalH K n ≃ relativeSkeletalH K n`, witnessed by
+`LinearEquiv.refl`). Skipping that intermediate localises the
+placeholder dependency to exactly one decl: `homology_wedge_axiom`. -/
 theorem singularH_wedge_of_spheres
     [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V) (n : ℕ)
     [Fintype (K.nSimplices n)] :
     Module.finrank ℤ (relativeSkeletalH K n) = (Fintype.card (K.nSimplices n)) := by
-  obtain ⟨e⟩ := skeletal_pair_wedge_of_spheres K n
+  obtain ⟨e⟩ := homology_wedge_axiom K (K.nSimplices n) n
   rw [e.finrank_eq]
   exact Module.finrank_finsupp_self ℤ
 
