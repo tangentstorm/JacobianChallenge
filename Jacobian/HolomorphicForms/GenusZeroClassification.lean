@@ -831,7 +831,29 @@ is a self-homeomorphism that is NOT `ℂ`-smooth.
 The corrected statement is the uniformization theorem at genus 0:
 a compact simply-connected Riemann surface is biholomorphic to ℂℙ¹.
 This remains sorry'd because the uniformization theorem is not in
-Mathlib. -/
+Mathlib.
+
+**BLOCKER.** Missing prerequisite: the uniformization theorem at genus 0,
+i.e. every compact connected Riemann surface homeomorphic to `OnePoint ℂ`
+admits a biholomorphism to `OnePoint ℂ`. Not available in Mathlib v4.28.0
+(no `ℂℙ¹` as a Riemann surface, no Riemann–Roch, no Riemann mapping theorem
+for compact Riemann surfaces). The Riemann–Roch route used elsewhere in
+this file (cf. `clean_end.lean`: simple-pole meromorphic map → proper
+degree-one map → biholomorphic parametrization) currently only produces
+a *topological* homeomorphism via `GenusZeroBiholomorphicParametrization`
+— the smoothness fields are not yet recorded. Discharging this sorry
+requires either:
+  (a) extending `GenusZeroBiholomorphicParametrization` with `ContMDiff`
+      witnesses for `toHomeomorph` and `toHomeomorph.symm`, plus the
+      analytic-step proof that a degree-one meromorphic map is smooth
+      in both directions; or
+  (b) a direct uniformization theorem for compact genus-0 Riemann
+      surfaces.
+
+The topological hypothesis `_e` alone is insufficient: complex
+conjugation on `OnePoint ℂ` is a self-homeomorphism that is not
+`ℂ`-smooth, so the smooth witness must come from analytic data on `X`,
+which is exactly the missing uniformization content. -/
 theorem exists_contMDiff_homeomorph_to_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -842,6 +864,7 @@ theorem exists_contMDiff_homeomorph_to_onePointCx
         (⊤ : WithTop ℕ∞) f ∧
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) f.symm := by
+  -- BLOCKER: uniformization theorem at genus 0 (see docstring above).
   sorry
 
 /-
