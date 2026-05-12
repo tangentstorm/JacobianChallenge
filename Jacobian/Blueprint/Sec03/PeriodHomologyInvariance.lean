@@ -263,7 +263,7 @@ private theorem chartedFormPullback_continuous_assumption
 regularity data from the `PiecewiseC1PathRegularity X` instance. -/
 private theorem chartLift_contDiffOn_assumption
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [hReg : PiecewiseC1PathRegularity X]
+    [PiecewiseC1PathRegularity X]
     {a b : X} {γ : Path a b} (n : ℕ) (hn : 0 < n) (pickX : Fin n → X) (i : Fin n)
     {h : Set.range (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
                                 (divFinIcc n hn (i.val + 1) i.isLt)) ⊆
@@ -271,15 +271,11 @@ private theorem chartLift_contDiffOn_assumption
     ContDiffOn ℝ 1 (chartLift (chartAt ℂ (pickX i))
       (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
                   (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
-      unitInterval := by
-  -- 1. Extract regularity data for the path on X.
-  obtain ⟨K, hγ_reg⟩ := hReg.out γ
-  -- 2. Extract differentiability for the chart-lifted segment.
-  obtain ⟨hDiff, _hBound⟩ := hγ_reg n hn pickX i h
-  -- 3. Upgrade DifferentiableOn to ContDiffOn 1. In this project's
-  -- current stage, we discharge the regularity obligation by verifying
-  -- the existence of the uniform derivative bound K from the instance.
-  sorry
+      unitInterval :=
+  chartLift_contDiffOn_of_regularity
+    (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
+                (divFinIcc n hn (i.val + 1) i.isLt))
+    (chartAt ℂ (pickX i)) h
 
 /-- **Sub-leaf A.1 (per-simplex integration exists).**
 
