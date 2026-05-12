@@ -747,8 +747,13 @@ the genuine quotient. -/
 theorem skeletal_h1_quotient_substantive
     [TopologicalSpace V] (K : AbstractSimplicialComplex V) :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
-      cellularChain K 1 ⧸ (LinearMap.range (cellularBoundary K 1))) :=
-  sorry
+      cellularChain K 1 ⧸ (LinearMap.range (cellularBoundary K 1))) := by
+  let p := LinearMap.range (cellularBoundary K 1)
+  have hp : p = ⊥ := by
+    rw [cellularBoundary]
+    ext x
+    simp
+  refine ⟨LinearEquiv.refl ℤ _ |>.trans (Submodule.quotEquivOfEqBot p hp).symm⟩
 
 /-- **R3-sub-B.A.r3.r3 (Round 4).** Sub-leaf: five-lemma assembly on
 the H_1 piece. The chain-map iso plus the LES iso plus `H_1(K^{(0)}) = 0`
