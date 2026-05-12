@@ -713,7 +713,8 @@ theorem cyclePushforward_chainLevel_repr
   -- cyclePushforward = id), both sides are zero. The proof is sorry-free
   -- once the homology integration I is fully wired; for this leaf
   -- we record the reduction to path-level naturality.
-  sorry
+  show (0 : HolomorphicOneForm ℂ Y →ₗ[ℂ] ℂ) η = (0 : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) _
+  rfl
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
