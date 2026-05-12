@@ -14,257 +14,243 @@ identify our jobs without inspecting tarballs.
 
 ## Live Status (2026-05-07, /loop tick — backend live, queue light)
 
-Aristotle backend is live again (5 IN_PROGRESS jobs on first page,
-none in `aristotle_jobs.jsonl` — all FourColor or other-project work
-that we ignore per `ref/PROMPT.md` step 2). Cellular-Hurewicz bridge
-made big strides on origin/main between the previous tick and this
-one — `singularChainElement_boundary_decomposition`,
-`PrismChainCombinatorialIdentity`, `cellularBoundarySigned_sq_zero`,
-and the `edgeHomologyClass` upgrade all landed sorry-free.
-
-**Submitted this tick (2 live + 1 cancel-and-re-aim):**
-
-| ID | File | Target |
-|---|---|---|
-| ~~`2ff4fff7`~~ | `Jacobian/Periods/SingularChainElement.lean` | ~~`singularChainElement_boundary_decomposition`~~ — **cancelled**: target already discharged on origin/main (commit `7d141b7`) before this tick's push; cancelled within the same tick per ref/PROMPT.md cancel rule (target sorry no longer exists locally). |
-| `2c73f336` | `Jacobian/Periods/Polygon4gEdgeBasisMap.lean` | `edgeBasisMap_injective` — Phase 6.a leaf of the cellular-Hurewicz bridge. The file's docstring explicitly notes this becomes provable once `edgeHomologyClass` is the real homology projection — that upgrade landed in commit `2fc4812`, so the proof is now unblocked. Strategy: `edgeChainCoeff` (dual of `Sigma.ι` at `edgeSimplex g i`) descending to homology via the just-landed `singularChainElement_boundary_decomposition`. |
-| `b9fcfdb4` | `Jacobian/Periods/PathIntegralViaCoverWithRefinementInvariant.lean` | `pathIntegralViaCoverWith_refinement_invariant'` — only sorry in file; the in-source strategy comment (lines 319-336) lays out a 4-step refine-to-LCM + chart-change-per-summand proof. All helpers (`pathIntegralViaCoverWith_refine_to_multiple`, `pathIntegralViaChartCorrect_chart_change`, `divFinIcc`) already exist and are sorry-free. |
-
-**Tick C (third /loop check, ~+40 min):** Both packets still
-IN_PROGRESS (13% / 5%); no completions to integrate, no upstream
-advances. Surveyed remaining production sorries (~80 across 27
-files); the bulk are gated on Mathlib gaps (line-bundle / divisor
-API, sheaf-cohomology comparison, Stokes on manifolds, partition-of-
-unity Poincaré, cellular-vs-singular comparison, branched-cover
-local mapping theorem) or on Round-1 `True := by trivial`
-placeholder upstream leaves. Submitting BLOCKER-class targets
-contradicts the "Aristotle: substantive only" rule; left the queue
-at 2 live packets pending real result returns.
-
-**Tick D (fourth /loop check, ~+60 min):** Packet `2c73f336`
-(`edgeBasisMap_injective`) returned COMPLETE_WITH_ERRORS but with
-a clean 9-line proof and a green local build — **integrated**. The
-proof routes via Orzech's property (`OrzechProperty.bijective_of_surjective_endomorphism`)
-rather than the suggested chain-level `edgeChainCoeff` extraction,
-relying on `edgeBasisMap_surjective` (still sorry, out of scope)
-plus the Hurewicz iso (still sorry, planned in C1c). It introduces
-no new sorries and shifts dependency cleanly to a sibling leaf.
-`b9fcfdb4` (path-integral refinement invariance) still IN_PROGRESS
-at 13%.
-
-**Ticks E/F/G (~+80–+120 min):** `b9fcfdb4` stuck at 15% across
-three checks; per cancel rule (target sorry still exists locally,
-no user instruction) it keeps running. Tick G dispatched a third
-packet `cdd76e1a` against `polygon4g_succ_singularH1_finrank_eq`
-(rank-computation leaf in `Polygon4gCellular.lean`); enumerated
-four strategy hints and flagged the circular dependencies for the
-non-direct routes. Likely BLOCKER given Mathlib gaps, but the
-previous Orzech result earned the benefit of the doubt — worth one
-shot for both a real attempt and useful triage info either way.
-
-**Tick I (~+150 min):** `cdd76e1a` returned with a partial discharge
-— **integrated**. The original `_finrank_eq` sorry is gone; in its
-place a new sorry'd helper `polygon4g_succ_singularH1_linearEquiv_abelianization`
-asserts the Hurewicz iso directly, bypassing the circular
-`polygon4g_succ_hurewicz_iso_explicit` ↔ `_freeAb_data` ↔
-`_finrank_eq` chain. Net sorry count unchanged but the architectural
-obstruction is now expressed as one clean iso-existence statement
-instead of a tangle of three. Same shifting-the-sorry pattern as the
-2c73f336 Orzech integration. Build green on Polygon4gCellular and
-downstream Polygon4gEdgeBasisMap. `b9fcfdb4` still IN_PROGRESS at
-16%.
-
-**Tick J (~+170 min):** Dispatched `9bf8be37` exploiting the new
-`_linearEquiv_abelianization` helper to discharge the **other two**
-sorries in `Polygon4gCellular.lean` (`_isFinite` + `_isTorsionFree`).
-This is a genuinely net-2 sorry reduction: both follow trivially
-from the iso (`Module.Finite` transports along `LinearEquiv`;
-`IsTorsionFree` follows from `Module.Free` of the codomain
-`Polygon4gAbelianization g = Fin (2(g+1)) → ℤ`). If it lands, the
-file goes from 3 sorries to 1, consolidating the entire
-cellular-Hurewicz architectural obstruction onto one named gap.
-
-**Tick K (~+190 min):** `9bf8be37` returned and **integrated** —
-first packet this session producing an actual net sorry-count
-decrease. Aristotle's discharge used `Module.Finite.equiv` and
-`Function.Injective.moduleIsTorsionFree` correctly, but worked
-around declaration ordering by introducing a forward-declared
-`_aux` sorry (since the iso lemma sat at line ~306 after the
-targets at ~260, ~276). On integration this was rewritten to
-**reorder the file**: `_linearEquiv_abelianization` moved upward to
-precede `_isFinite`, the aux deleted, the targets referencing the
-real iso directly. Final state of `Polygon4gCellular.lean`: 1 sorry
-on the iso (line 279), `_isFinite` / `_isTorsionFree` / `_finrank_eq`
-all sorry-free. Build verified on the file + downstream
-`Polygon4gEdgeBasisMap`. The cellular-Hurewicz obstruction is now
-consolidated onto exactly one named gap.
-
-**Ticks L-O (~+210–+290 min):** `b9fcfdb4` finally finished after
-~5 hours grinding. **Rejected** on integration. The patch builds
-and contains a useful sorry-free `hcov_refined` helper for the
-Nat-arithmetic of refined covers, BUT it also introduces a new
-sorry'd helper `chartPullback_intervalIntegrable_segment` whose
-unconditional statement is FALSE in general (Aristotle's own
-summary acknowledges: "for general continuous paths, this
-derivative may not be integrable"). Sorry-ing a known-false
-statement is worse than no progress. Reverted. The genuine fix is
-a STATEMENT change — add a `CurveIntegrable` / C¹ hypothesis to
-`pathIntegralViaCoverWith_refinement_invariant'` itself — which
-Claude does not make autonomously. Routed to brainstorm.
-
-**Tick P (~+310 min):** Per explicit user directive "assign it
-something", dispatched `d94e2fb9` against the consolidated single
-sorry of the entire cellular-Hurewicz architecture
-(`polygon4g_succ_singularH1_linearEquiv_abelianization`). Probable
-BLOCKER given Mathlib v4.28.0 lacks both the cellular chain
-complex on a topological space AND the Hurewicz natural
-transformation, but the prompt enumerates four strategies (cellular,
-Hurewicz, direct-via-edgeBasisMap, Mathlib API survey) and includes
-an explicit anti-cheat clause forbidding the b9fcfdb4-style
-false-statement helper behind sorry. Even a clean BLOCKER triage
-result is useful here.
-
-**Tick Q (~+360 min):** `d94e2fb9` returned the **cleanest BLOCKER
-triage of the session** — no file modifications, no sorry'd
-workaround, just a route-by-route Mathlib API survey. Key findings
-recorded in `aristotle_jobs.jsonl`: Mathlib v4.28.0 has no
-mechanism to *compute* singular H₁ of any non-trivial topological
-space (only `singularHomologyFunctorZeroOfTotallyDisconnectedSpace`
-exists, and it's H₀). `CWComplex` exists but is purely point-set;
-no `cellularChainComplex`. `FundamentalGroup` and
-`singularHomologyFunctor` exist separately with no Hurewicz natural
-transformation. The cellular-Hurewicz iso is genuinely an upstream
-Mathlib infrastructure project. Status: **routed to brainstorm**.
-
-**Tick R (~+400 min):** `816b4aa9` (`liftToCp1_holomorphicAt_finite`
-in `Jacobian/Blueprint/Sec01/MeromorphicToCp1.lean`) returned with
-the **first COMPLETE status of the session** (not
-COMPLETE_WITH_ERRORS) — **integrated** for a genuine net-1 sorry
-reduction (file from 6 to 5 sorries). Aristotle found the
-`MeromorphicAt.analyticAt` Mathlib bridge that answers the open
-question from the prompt's risk analysis. The proof uses heavy
-tactics (`apply_rules`, `simp +decide`, `convert`, `aesop`) which
-is borderline against the project's direct-tactics preference;
-left as-is since it builds and is sorry-free. On integration also
-fixed Aristotle's accidental docstring damage (`/-- -/` had been
-changed to `/- -/`, detaching it from the theorem).
-
-**Tick U (~+720 min):** First 3 saturation packets returned, all
-**clean BLOCKER triages with no file modifications** (the strong
-b9fcfdb4 anti-cheat clause is paying off):
-* `705a104f` (PathIntegralViaCoverWithRefinementInvariant retry):
-  confirms the integrability hypothesis is genuinely needed —
-  routed to brainstorm.
-* `1c8d60a8` (EulerCharLineBundle): `RSLineBundleDegree` is opaque
-  with no axioms connecting it to sheaf cohomology — same Round-1
-  placeholder cascade — routed to brainstorm.
-* `334149e3` (TietzeReduction): **constructive disproof** with
-  Polygon4g-vs-DiskC counterexamples for g=1 and g=2; the targets
-  are provably FALSE because `sidePairingRel` and
-  `EdgeWordPresentation` are scaffolding stubs — same pattern as
-  3fc21b62 (`cellular_iso_singularH`) — routed to brainstorm.
-The other 11 saturation packets remain IN_PROGRESS at 2-16% plus
-`14f33171` at 45%.
-
-**Tick T (~+700 min):** Per user directive to saturate the
-queue, dispatched **14 parallel packets** bringing queue to the
-15-cap (with `14f33171` still IN_PROGRESS from earlier). The
-parallel CLI calls each reported `AristotleAPIError` but all 14
-projects were actually created (verified by `aristotle list`).
-Targets cover the substantive remainder of the production sorry
-set excluding three locks (Polygon4gEdgeBasisMap → codex,
-AnalyticOfCurveBasis → other worker, Polygon4gCellular's
-`_linearEquiv_abelianization` → already-clean BLOCKER triage
-from d94e2fb9). One of the 14 is a **new infrastructure packet**
-that creates `Jacobian/Periods/HurewiczMap.lean` and starts
-implementing the Hurewicz route (foundation step: define the map
-`π₁(X) → singular H₁(X, ℤ)` for path-connected `X`, plus
-homotopy invariance and concatenation), per the user's directive
-to start building one of the missing routes from the d94e2fb9
-triage rather than re-dispatch. Project IDs and target list are
-in `aristotle_jobs.jsonl` under `saturation-batch-2026-05-07T11:30Z`;
-exact ID-to-target mapping resolves at retrieval time (each
-tarball's `ARISTOTLE_SUMMARY.md` names the target).
-
-**Tick S (~+440 min):** `d3ae5b59` (`liftToCp1_holomorphicAt_infty`,
-the pole-case sibling) returned **second consecutive clean COMPLETE**
-— **integrated** for another net-1 sorry reduction (file from 5 to
-4 sorries). Aristotle applied the inversion chart at ∞ + Mathlib's
-`MeromorphicAt.inv` + the same `MeromorphicAt.analyticAt` bridge.
-Both halves of `liftToCp1_holomorphicAt` are now sorry-free, and
-the assembled theorem inherits sorry-freeness from them. Two ticks
-of momentum on this file; remaining 4 sorries are deeper (k-fold
-normal form, weighted fibre count) and likely require classical
-local mapping theorem from Mathlib.
-
-The companion `edgeBasisMap_surjective` (line 114) requires barycentric
-subdivision and is explicitly *out of scope* for `2c73f336`.
-
-**Next-tick candidates** (still queued from the 2026-05-05 frontier
-list; not submitted this tick to keep write scopes disjoint):
-
-* C4a — `Jacobian/Periods/ChartedFormPullbackNaturality.lean`
-  (chart-level chain-rule for path integrals, no Stokes).
-* C8a — `Jacobian/HolomorphicForms/Serre/ResidueMap.lean` —
-  needs concretisation of `residueMap` first (currently both round-trip
-  endpoints are `opaque`, so as-is would BLOCKER).
-* C7c — `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` line-264
-  sorry-free assembly (gated on the C7a/b helper files existing).
-
----
+- **b782c387-5718-4565-a3e8-ed049d6c4c26** (submitted): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — Recon: survey Mathlib v4.28.0 API for topology-of-uniform-convergence on ContMDiffSection (step (a) of the Riemann-Roch plan from 72ac3a75)
+- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. High-risk gap-narrowing on the Riemann-Roch / FD chain.
+- **848a0c88-6c27-423d-865b-38b35390b7a0** (submitted): `Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean` — NEW recon file: how to construct the Banach data on `ContMDiffSection` for compact X. Companion to `holomorphicOneForm_normedSpace_uniformOnCompact` obligation.
+- **90750074-0d26-4f60-b32e-a79942e56111** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_subsingleton` — the Liouville core of genus-zero classification (no global holomorphic 1-form on ℂℙ¹). Anti-hack #1 critical path.
+- **dc8af381-8277-44ab-95f4-6e62dba5faee** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Discharge `exists_compact_periodFundamentalDomain` using the existing `IsZLattice ℝ` instance + Mathlib ZSpan API. Reduction 3→2 sorries in this file.
+- **6992e390-050b-49fb-bb21-5fde3ccb0449** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOPDOWN reduction: discharge `holomorphicOneForm_locallyCompact_of_compactRiemannSurface` sorry-free using `holomorphicOneForm_montel B` (still-sorry but named) — translation invariance on a normed space. Reduction 3→2 sorries in CompactRiemannSurface.lean.
+- **d493c66b-a666-4b4d-a245-67db26ff4346** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_toFun_eq_zero` — chart-coefficient extraction sorry exposed by 90750074. The Liouville analytic content is now discharged; this is the chart-pullback API gap.
+- **63158306-c2f9-4f3e-a2e9-1b385e59fe48** (submitted): `Jacobian/HolomorphicForms/SectionFiberNorm.lean` — NEW file: Step 1 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.fiberNorm` and prove its continuity. Building block for the eventual `holomorphicOneForm_normedSpace_uniformOnCompact` discharge.
+- **1f7d4399-438b-4d8a-b128-dc290bde3a48** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOPDOWN on the now-narrower finite leaf `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` (Liouville application via identity-chart pullback + EntireZero black-box).
+- **f1786fa8-bbaa-4cdd-9683-b9dfbdf01797** (submitted): `Jacobian/HolomorphicForms/SectionSupNorm.lean` — NEW file: Step 2 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.supNorm` and prove 5 sup-norm properties (zero, eq_zero_iff, add_le, smul_le, neg). 40-60 LOC per recon §5 Step 2.
+- **51fd0fce-fb19-45e7-9ef1-efbf65de7ac9** (submitted): `Jacobian/HolomorphicForms/SectionMetric.lean` — NEW file: Step 3 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.dist` and prove 4 MetricSpace axioms + dist_eq. ~20-50 LOC per recon §5 Step 3.
+- **8585f085-371e-4c86-b276-adadf70f6392** (submitted): `Jacobian/HolomorphicForms/SectionComplete.lean` — NEW file: Step 4 of `848a0c88` Banach-data construction recon — completeness via embedding HolomorphicOneForm ℂ X into C(X, ℂ) + closedness. Hardest step, 80-150 LOC.
+- **7e2bc288-bedc-4149-b0d8-28bcadf78ade** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — TOPDOWN refinement of 3 sorries (analyticPullback_contMDiff/_id_apply/_comp_apply). Acceptable outcomes: full proofs, companion-spec split, or survey docstring.
+- **4d56b249-931f-46e3-8ace-50d28a74ac78** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — TOPDOWN refinement of 3 sorries (analyticPushforward_contMDiff/_id_apply/_comp_apply). Mirror of PullbackBasis packet 7e2bc288.
+- **bbe527bb-28a6-4d6e-a32a-cf5f8d8df6e3** (submitted): `Jacobian/TraceDegree/AnalyticDegree.lean` — Discharge analyticPushforward_analyticPullback (anti-hack #4) via the recommended companion opaque _spec from prior survey 10e5bfbb.
+- **d1d10391-67c2-4bfc-ad21-5514a1052a55** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Discharge 2 sorries (complexTorusULift_contMDiff_up/_down). Both should be straightforward via the transported chart structure (chart-target map is identity).
+- **d967438b-5455-49c9-a8ab-08bf2e0482e8** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — TOPDOWN of 3 sorries: pathIntegralFunctional_self, analyticOfCurve_contMDiff, pathIntegralFunctional_separates_points (Abel's theorem).
+- **c5101910-f51a-4aab-8abf-d801b239642a** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — TOPDOWN of 2 sorries: periodSubgroup_isZLattice (integrality), periodSubgroup_spans_real (Riemann bilinear nondegeneracy).
+- **c7feba63-8103-4859-846f-053274534d9d** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOPDOWN refinement of holomorphicOneForm_montel (only — _normedSpace handled by 8585f085 chain).
+- **b3280ab0-41c9-46fd-82be-4eb17e7c0748** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOPDOWN refinement of 4 sorries: 2 Liouville-core leaves (chart-extraction blocker) + 2 uniformization items.
+- **d8fd495f-b92d-4c09-898b-ce7614ecfaa7** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Single-sorry packet on complexTorusULift_contMDiff_up only.
+- **b4029f72-c3d9-4629-a961-e5ade014ea84** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_id_apply only.
+- **c910ac80-7262-443d-88c1-bb55817ac27e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_contMDiff only.
+- **2bd5f151-4bab-4023-ae9e-dc614099864a** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Single-sorry packet on complexTorusULift_contMDiff_down only.
+- **27c56154-66ff-4c22-a86b-e112054f19de** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_comp_apply only.
+- **f280ecc6-c477-48f1-9128-3d8b7eeb0012** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_contMDiff only.
+- **271cc21e-7540-4a49-978e-a51cad18978c** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_id_apply only.
+- **6c796045-b207-4290-9d5c-5b02499ca57e** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_comp_apply only.
+- **3d5f379e-568b-4e13-8f51-c9529fdc1f36** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on pathIntegralFunctional_self only.
+- **c6c4c612-3d0a-4b8f-a792-9ee8ff6eb80f** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on analyticOfCurve_contMDiff only.
+- **4f76ac75-4b03-44bf-9c4d-e473bcbb86b8** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on pathIntegralFunctional_separates_points (Abel's theorem).
+- **99825c13-b58a-420b-b25c-ff202a2a5e70** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on the new analyticPullback_comp_spec (Claude's split target).
+- **2aab5e91-890a-447f-9729-f4872a50e23e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on the improved analyticPullback_id_spec (= ContinuousAddMonoidHom.id _).
+- **a3b5ae84-236d-4b40-a64a-259b3f8a7752** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on the new pathIntegralFunctional_self_spec.
+- **777f976c-0e8e-4078-a345-68f015c9d7aa** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on the new analyticPushforward_contMDiff_spec.
+- **3264c622-6675-4b18-94f3-9ec50f130185** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on analyticOfCurve_contMDiff_spec.
+- **7f273ec8-537c-4bc9-a159-3098725b12f7** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on pathIntegralFunctional_separates_points_spec (Abel's theorem deep content).
+- **09a7e39c-5748-4c12-a2a0-55b2039d52c7** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on analyticPushforward_id_spec.
+- **90fc4a81-0f3c-4a7f-a09a-34f8e16b532b** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on analyticPushforward_comp_spec.
+- **f914a263-801f-4dbc-8671-bc6d67a763bf** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — contMDiff_continuousAddMonoidHom_complexTorus general lemma.
+- **c69fcd88-2cb2-4710-bef0-200e1a2cd351** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_id_spec respecting basisDualPullback structure.
+- **369f3f7b-4879-4ef1-9994-d46784537914** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_contMDiff via complex-torus smoothness lemma.
+- **16277f52-39bc-4f28-9860-8d771687c3ad** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — quotientMk_contMDiff_spec via charted-space machinery.
+- **65001239-6493-4b88-8f4d-e21c6373addd** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — analyticPushforward_id_eq deeper split.
+- **654d5071-ee04-446c-a69e-0d584517149e** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_contMDiff_spec gap analysis.
+- **7f3ec297-cad6-409f-bc0d-f4c0dc196fd2** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_mk_eq + basisDualPullback_comp paired packet.
+- **e3dcd529-c13e-4409-8236-3c4fd5474c11** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — analyticPushforward_mk_spec descent compatibility.
+- **0a5f74a8-0259-4d37-b6f3-1690c29cac19** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — PeriodFunctional sorry (long-blocked).
+- **03715a4d-0570-47fe-b3a7-bae31ecca811** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — GenusZeroClassification sorry (long-blocked).
+- **05100f76-7d7d-4798-bb7c-c35c7ee7cabb** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_id (NEW from local _id_spec split).
+- **b7799fc9-ad77-40de-9b32-42f2d735ac82** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id (NEW from local _id_eq split).
+- **6b2f47f1-c0fe-4313-a950-57525866b53e** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_separates_points_spec (Abel anti-hack #2) — orphan packet.
+- **403c9581-217e-4df5-a9b7-656409a0d9dd** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (after Claude's bundle refactor closed _mk_eq).
+- **5f052643-eee1-47d4-bce2-a3717c488d8d** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec — orphan packet (covariant trace-lift composition).
+- **e19361c4-97c0-44bb-a8e4-1036aadfee16** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — GenusZeroClassification sorry (Aristotle's pick, not chart-blocked).
+- **bbca4cae-6ca6-4d1a-90b6-6bab64f6b71e** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Second PeriodFunctional sorry (whichever 0a5f74a8 didn't pick).
+- **58eb31f0-9b8c-411d-9087-0ff130a58ec8** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — Step 5: holomorphicOneForm_normedSpace_uniformOnCompact assembly (after 8585f085 lands).
+- **360a05bf-5522-4d96-8e44-fb68e19ad707** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — Specifically L320: analyticGenus ℂ X = analyticGenus ℂ (OnePoint ℂ).
+- **fbfe1498-210b-4931-a093-788d14de2cb0** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — Specifically L591: Nonempty (X ≃ₜ Metric.sphere ...) sphere homeomorphism.
+- **e7250841-96e4-4d65-9be5-81dcaf1ae393** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_montel_subseq_tendsto (NEW from Montel TOPDOWN split): analytic core — Cauchy estimates + Arzelà–Ascoli + Weierstrass.
+- **ba57741f-3fef-4160-b252-1af4ea559094** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (NEW from subagent TOPDOWN split).
+- **dc58e548-c453-4335-a57c-e739df284174** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec_apply_at (NEW from subagent TOPDOWN split).
+- **de8822fb-8ae9-4c26-a026-213c17802e28** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_fiberNorm_continuous (NEW from 58eb31f0 split).
+- **bed365ae-8a56-49fd-a9c8-432d36d0e7de** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_completeSpace (NEW from 58eb31f0 split).
+- **20995679-1911-4bcf-b0e9-12b6b6bc29a3** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_montel_subseq_isCauchy (NEW from Montel TOPDOWN split).
+- **8a8ea66d-a01e-4317-a3ea-0ce135ae485c** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_closedBall_totallyBounded (NEW from 20995679 split).
+- **706bf2e2-1e99-48ee-8926-1eb995019743** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_cauchySeq_tendsto (NEW from a8db8a8f split).
+- **76c01cf9-02c3-4a37-9a60-f983a96bdf3e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_finite_eq_zero (Liouville finite leaf — 1:1 coverage).
+- **c2a57d71-73b5-4669-8892-78e24ec878cb** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_infty_eq_zero (Liouville infty leaf — 1:1 coverage).
+- **88effa1c-9abb-4391-99d2-a277c7e05c39** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneFormLinearEquivOfHomeoSphere (uniformization-lite — 1:1 coverage).
+- **0cfa1878-064e-49dd-9d39-acba1d18adfc** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — periodVectors_linearIndependent (Riemann bilinear — 1:1 coverage).
+- **ad278fcd-6c7c-476a-ba06-b5fb15989e6b** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (replacement for rejected 403c9581 — 1:1 coverage).
+- **9b4998a5-7fd1-468e-91d5-ae2861eec0f6** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (renewed attempt after ba57741f docstring integration).
+- **3b7e5dac-a8b0-4863-be44-462d2f09c961** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec_apply_at (renewed attempt after dc58e548 docstring integration).
+- **dc2c19e1-76ba-4fab-ba91-3a996a15add6** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_entire (NEW from 76c01cf9 split).
+- **659de1fb-a95c-4d0d-8cd9-99925f04f931** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_tendsto_zero (NEW from 76c01cf9 split).
+- **af6e2c7a-1412-4823-96fb-eade7b78c3ca** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — subsingleton_holomorphicOneForm_of_homeo_sphere (NEW from 88effa1c split).
+- **e227f244-521b-4105-9744-25d6d25338f3** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — symplectic_basis_of_cycles (NEW from 0cfa1878 split).
+- **0de5af2a-87b1-4fff-8721-c2e5136654d6** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — period_vectors_linearIndependent_of_symplectic (NEW from 0cfa1878 split).
+- **a0bddfd5-c8f6-476a-ae89-47571f269525** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (renewed after ad278fcd docstring integration).
+- **921772f5-cea4-429c-a2c9-3d7bd55f13b6** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — h1_basis_of_compact_riemann_surface (NEW from e227f244 split).
+- **4d0d28d6-6d52-4e7e-b1ab-16afe7cf0180** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (renewed after a0bddfd5 no-op).
+- **3683ef39-f83c-41e3-98ed-a1ed2dd6f2cd** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (renewed after 9b4998a5 deferred).
+- **362e259f-b8cf-4522-a55f-de60211c801d** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp (NEW from af653549 split).
+- **9c222f2d-2be3-499f-a8a6-9fe263bec7f4** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — period_vectors_linearIndependent_of_symplectic (renewed after 0de5af2a stale).
+- **6f6f015d-7c0d-4cba-9182-07300e8c9be8** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — basisAnalyticPushforwardBundle_id_traceLift (NEW from a8778c20 bundle-primitive split).
+- **f3a8e713-ba50-4ec6-b31b-ca49dd3e9460** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — basisAnalyticPushforwardBundle_comp_traceLift (NEW from a1ce4200 bundle-primitive split).
+- **6547fde4-4483-430f-b567-5cb1f81b0c18** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisAnalyticPullbackBundle_id_dualPullback (NEW from PullbackBasis bundle-primitive split).
+- **86bef3e0-0fa0-40b4-83ce-700cc19b847e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisAnalyticPullbackBundle_comp_dualPullback (NEW from PullbackBasis bundle-primitive split).
+- **632f36aa-6152-40dd-ad86-582d47e6b2db** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_fiberNorm_continuous — fresh packet for previously uncovered sorry.
+- **fc057985-4072-43e4-b4a1-668153917ba7** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_cauchySeq_tendsto — fresh packet for previously uncovered sorry.
+- **6751b37c-9af7-4757-a5cc-9602ff3603d9** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_closedBall_totallyBounded — fresh packet for previously uncovered sorry.
+- **2a5eea2c-0ce6-4316-b857-a77068d82713** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_entire — fresh packet for previously uncovered sorry.
+- **47166a51-62ae-40a6-a4a1-5086a7a4614e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_tendsto_zero — fresh packet for previously uncovered sorry.
+- **50ed9388-fdd1-4456-9c83-387c8f83ab3d** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_infty_eq_zero — Liouville-infty leaf, fresh packet.
+- **edca80d7-307a-490a-a343-fa6e4c4b92f7** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — subsingleton_holomorphicOneForm_of_homeo_sphere — uniformization-lite, fresh packet.
+- **4f698084-46b4-4a5d-970f-368a0225c3f4** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — genus_zero_homeomorph_onePointCx — uniformization core. Codex also racing this in worktree.
+- **303edecd-6419-49e5-8994-0200b5f66fe7** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — periodSubgroup_isZLattice — discreteness of basis-aligned period subgroup. TOPDOWN plan in docstring.
+- **263e138e-1e3c-4281-80e3-66618f709eae** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — h1_free_of_compact_surface — fresh packet for previously uncovered sorry (NEW from 921772f5 split).
+- **c17e5dd9-80d5-4312-b8f0-673890bdc881** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — analyticGenus_eq_topologicalGenus — submitted on cap-recovery.
+- **7ceff781-61d0-4e33-8ce4-7edbac690bb3** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_separates_points_spec — submitted on cap-recovery.
+- **56e6ac87-4c37-4c7a-b5b5-8d3ef369b0d6** (submitted): `Jacobian/Blueprint/Sec05/RiemannHurwitzDeg1.lean` — 2 sorries — placeholder-refinement framing: refine local SurfaceMap to bundle ramification_satisfies_riemann_hurwitz invariant.
+- **db7d56a1-84a9-4ad1-82ad-7ae2fa13a102** (submitted): `Jacobian/StageA/EdgeWordTietze.lean` — 1 sorry (handleSwap_grouping_inductive_step). Refine local handleSwap_strictly_decreases_mu (True := trivial placeholder) into real content.
+- **31175f0a-6e6a-4b9a-9e1a-5b1287c8d9e2** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — ID 4: singular simplex integration
+- **c2cf69e5-b4a5-44b6-972a-8db7a66cebce** (submitted): `Jacobian/Periods/Polygon4gCellular.lean` — prove polygon4g_succ_hurewicz_iso_freeZ
+- **421a90df-fb9a-46d0-82e3-25d40c3b418a** (submitted): `Jacobian/TraceDegree/PiecewiseC1Instance.lean` — prove instPiecewiseC1PathRegularity
+- **0006f3e9-5842-40e9-b8fd-e77d39667a57** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove localInverseAt_holomorphic
+- **7bd649ad-2b68-43fb-9cc7-a119925825e9** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove localTraceAtRegularValue_holomorphic
+- **b4654c4b-01ec-4fe7-bbcf-9c976473ea72** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove trace_pullback_at_regular_value
+- **0050e6c0-3326-4d75-9c21-58f79bdccfce** (submitted): `Jacobian/Blueprint/Sec02/MontelCompactness.lean` — prove montel_pointwise_extraction
+- **1259f3fa-872c-4ae5-8c0a-634e23cac4d9** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — prove chartLift_contDiffOn_assumption
+- **3fec87fa-3619-4acc-87d5-a82ae74293e5** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — prove chartedFormPullback_continuous_assumption
+- **1b11a60f-19e5-455d-beb7-a5baadc0ac3c** (submitted): `Jacobian/HolomorphicForms/CMfldBumpStub.lean` — prove cMfldBump_apply_self
+- **da91941b-89cc-46b4-86a9-156dcc2d8624** (submitted): `Jacobian/HolomorphicForms/CMfldBumpStub.lean` — prove cMfldBump_eq_one_near
+- **1a50bfc4-e90d-4c9d-8891-3e0994b48b7e** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_arzela_ascoli_refine23
+- **eb62762d-9750-4cf4-a8cd-1d2a6c361dd6** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
+- **d0717941-5047-454b-8fd5-68382a67e40d** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove closedForm_pathIntegral_primitive_exists
 
 ## Live Status (2026-05-04, R10 dispatch end-to-end on
-`claude/refine-14-r10-proof-GuSaj`)
 
-R10 (Sobolev / elliptic regularity) — the largest classical-analysis
-sub-gap (blueprint estimate 4500–6500 LOC) — is dispatched
-end-to-end on the spectral-shortcut route, against unmodified
-Mathlib v4.28.0.  No Aristotle packets were used for this work; all
-edits are local Claude commits.
-
-**Files added (no `sorry`, no `True`-valued bodies):**
-
-| Milestone | File | LOC | Content |
-|---|---|---|---|
-| M0 (chain K2) | `Jacobian/Analysis/SobolevElliptic/ModelSymbol.lean` | ~180 | Principal symbol of model Laplacian invertible at nonzero ξ |
-| M1 substrate | `Jacobian/Analysis/BundledForms/{SmoothFun,Omega0,L2Norm,L2Completion}.lean` | ~600 | Real `L²(M, μ)` Hilbert space with `IsManifoldMeasure μ` typeclass |
-| M2 metric | `Jacobian/StageB/RiemannianMetricBundled.lean` | ~120 | Real Riemannian metric class wrapping Mathlib `RiemannianBundle` |
-| M2 spectral | `Jacobian/Analysis/SobolevElliptic/AbstractFredholmResolvent.lean` | ~170 | Compact `T` + λ≠0 ⇒ `Eigenspace T λ` finite-dim |
-| M3 resolvent | `Jacobian/Analysis/SobolevElliptic/AbstractResolvent.lean` | ~150 | `T := i ∘ i*` self-adjoint, non-neg, compactness preservation |
-| M4 plug-in | `Jacobian/Analysis/SobolevElliptic/HeadlinePlugIn.lean` | ~150 | `class HasLaplaceResolvent M μ` → `Module.Finite (RealHarmonic M μ)` |
-| M4 witness | `Jacobian/Analysis/SobolevElliptic/RealizabilityWitness.lean` | ~95 | Trivial witness for finite-dim L² (proves realizability) |
-
-**Downstream wiring:** R5/R7/R8 each have a substantive companion
-theorem that takes `[HasLaplaceResolvent M μ]` and produces
-`Module.Finite ℝ (RealHarmonic M μ)`:
-- `Jacobian/Analysis/HodgeDecomposition/Overview.lean` →
-  `hodge_harmonic_forms_finite_dim_substantive`
-- `Jacobian/Analysis/Dolbeault/Overview.lean` →
-  `dolbeault_harmonic_forms_finite_dim_substantive`
-- `Jacobian/Analysis/SerreDuality/Overview.lean` →
-  `serre_duality_harmonic_finite_dim_substantive`
-
-**Blueprint:** new subsection `subsec:r10-phase-dispatch` in
-`tex/sections/12-classical-analysis-gaps.tex` documents the
-M0–M4 milestones; chain K2 has Round 3
-(`subsubsec:sle-round-3`) of stepwise refinement reaching
-`Matrix.PosDef.invertible` and `real_inner_self_pos`.
-
-**Residual analytic gap (single typeclass instance):** non-trivial
-`HasLaplaceResolvent` for an infinite-dim L² requires (a) construct
-`H¹(M)` (manifold Sobolev, R10-sub-A,B), (b) prove Rellich on a
-compact manifold, (c) link the resolvent eigenspace to a classical
-ker Δ.  All three are flagged ABSENT in Mathlib v4.28.0; future
-work plugs into the framework with no further changes to the
-spectral-output side.
-
-**No Aristotle queue conflict:** all R10 work is in the
-`Jacobian/Analysis/{SobolevElliptic, BundledForms,
-HodgeDecomposition, Dolbeault, SerreDuality}/` and `Jacobian/StageB/`
-trees; current Aristotle saturation (Stage A: HolomorphicForms,
-Periods, AbelJacobi) writes elsewhere.
-
----
+- **b782c387-5718-4565-a3e8-ed049d6c4c26** (submitted): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — Recon: survey Mathlib v4.28.0 API for topology-of-uniform-convergence on ContMDiffSection (step (a) of the Riemann-Roch plan from 72ac3a75)
+- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. High-risk gap-narrowing on the Riemann-Roch / FD chain.
+- **848a0c88-6c27-423d-865b-38b35390b7a0** (submitted): `Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean` — NEW recon file: how to construct the Banach data on `ContMDiffSection` for compact X. Companion to `holomorphicOneForm_normedSpace_uniformOnCompact` obligation.
+- **90750074-0d26-4f60-b32e-a79942e56111** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_subsingleton` — the Liouville core of genus-zero classification (no global holomorphic 1-form on ℂℙ¹). Anti-hack #1 critical path.
+- **dc8af381-8277-44ab-95f4-6e62dba5faee** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Discharge `exists_compact_periodFundamentalDomain` using the existing `IsZLattice ℝ` instance + Mathlib ZSpan API. Reduction 3→2 sorries in this file.
+- **6992e390-050b-49fb-bb21-5fde3ccb0449** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOPDOWN reduction: discharge `holomorphicOneForm_locallyCompact_of_compactRiemannSurface` sorry-free using `holomorphicOneForm_montel B` (still-sorry but named) — translation invariance on a normed space. Reduction 3→2 sorries in CompactRiemannSurface.lean.
+- **d493c66b-a666-4b4d-a245-67db26ff4346** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_toFun_eq_zero` — chart-coefficient extraction sorry exposed by 90750074. The Liouville analytic content is now discharged; this is the chart-pullback API gap.
+- **63158306-c2f9-4f3e-a2e9-1b385e59fe48** (submitted): `Jacobian/HolomorphicForms/SectionFiberNorm.lean` — NEW file: Step 1 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.fiberNorm` and prove its continuity. Building block for the eventual `holomorphicOneForm_normedSpace_uniformOnCompact` discharge.
+- **1f7d4399-438b-4d8a-b128-dc290bde3a48** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOPDOWN on the now-narrower finite leaf `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` (Liouville application via identity-chart pullback + EntireZero black-box).
+- **f1786fa8-bbaa-4cdd-9683-b9dfbdf01797** (submitted): `Jacobian/HolomorphicForms/SectionSupNorm.lean` — NEW file: Step 2 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.supNorm` and prove 5 sup-norm properties (zero, eq_zero_iff, add_le, smul_le, neg). 40-60 LOC per recon §5 Step 2.
+- **51fd0fce-fb19-45e7-9ef1-efbf65de7ac9** (submitted): `Jacobian/HolomorphicForms/SectionMetric.lean` — NEW file: Step 3 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.dist` and prove 4 MetricSpace axioms + dist_eq. ~20-50 LOC per recon §5 Step 3.
+- **8585f085-371e-4c86-b276-adadf70f6392** (submitted): `Jacobian/HolomorphicForms/SectionComplete.lean` — NEW file: Step 4 of `848a0c88` Banach-data construction recon — completeness via embedding HolomorphicOneForm ℂ X into C(X, ℂ) + closedness. Hardest step, 80-150 LOC.
+- **7e2bc288-bedc-4149-b0d8-28bcadf78ade** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — TOPDOWN refinement of 3 sorries (analyticPullback_contMDiff/_id_apply/_comp_apply). Acceptable outcomes: full proofs, companion-spec split, or survey docstring.
+- **4d56b249-931f-46e3-8ace-50d28a74ac78** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — TOPDOWN refinement of 3 sorries (analyticPushforward_contMDiff/_id_apply/_comp_apply). Mirror of PullbackBasis packet 7e2bc288.
+- **bbe527bb-28a6-4d6e-a32a-cf5f8d8df6e3** (submitted): `Jacobian/TraceDegree/AnalyticDegree.lean` — Discharge analyticPushforward_analyticPullback (anti-hack #4) via the recommended companion opaque _spec from prior survey 10e5bfbb.
+- **d1d10391-67c2-4bfc-ad21-5514a1052a55** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Discharge 2 sorries (complexTorusULift_contMDiff_up/_down). Both should be straightforward via the transported chart structure (chart-target map is identity).
+- **d967438b-5455-49c9-a8ab-08bf2e0482e8** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — TOPDOWN of 3 sorries: pathIntegralFunctional_self, analyticOfCurve_contMDiff, pathIntegralFunctional_separates_points (Abel's theorem).
+- **c5101910-f51a-4aab-8abf-d801b239642a** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — TOPDOWN of 2 sorries: periodSubgroup_isZLattice (integrality), periodSubgroup_spans_real (Riemann bilinear nondegeneracy).
+- **c7feba63-8103-4859-846f-053274534d9d** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOPDOWN refinement of holomorphicOneForm_montel (only — _normedSpace handled by 8585f085 chain).
+- **b3280ab0-41c9-46fd-82be-4eb17e7c0748** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOPDOWN refinement of 4 sorries: 2 Liouville-core leaves (chart-extraction blocker) + 2 uniformization items.
+- **d8fd495f-b92d-4c09-898b-ce7614ecfaa7** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Single-sorry packet on complexTorusULift_contMDiff_up only.
+- **b4029f72-c3d9-4629-a961-e5ade014ea84** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_id_apply only.
+- **c910ac80-7262-443d-88c1-bb55817ac27e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_contMDiff only.
+- **2bd5f151-4bab-4023-ae9e-dc614099864a** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Single-sorry packet on complexTorusULift_contMDiff_down only.
+- **27c56154-66ff-4c22-a86b-e112054f19de** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_comp_apply only.
+- **f280ecc6-c477-48f1-9128-3d8b7eeb0012** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_contMDiff only.
+- **271cc21e-7540-4a49-978e-a51cad18978c** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_id_apply only.
+- **6c796045-b207-4290-9d5c-5b02499ca57e** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_comp_apply only.
+- **3d5f379e-568b-4e13-8f51-c9529fdc1f36** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on pathIntegralFunctional_self only.
+- **c6c4c612-3d0a-4b8f-a792-9ee8ff6eb80f** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on analyticOfCurve_contMDiff only.
+- **4f76ac75-4b03-44bf-9c4d-e473bcbb86b8** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on pathIntegralFunctional_separates_points (Abel's theorem).
+- **99825c13-b58a-420b-b25c-ff202a2a5e70** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on the new analyticPullback_comp_spec (Claude's split target).
+- **2aab5e91-890a-447f-9729-f4872a50e23e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on the improved analyticPullback_id_spec (= ContinuousAddMonoidHom.id _).
+- **a3b5ae84-236d-4b40-a64a-259b3f8a7752** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on the new pathIntegralFunctional_self_spec.
+- **777f976c-0e8e-4078-a345-68f015c9d7aa** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on the new analyticPushforward_contMDiff_spec.
+- **3264c622-6675-4b18-94f3-9ec50f130185** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on analyticOfCurve_contMDiff_spec.
+- **7f273ec8-537c-4bc9-a159-3098725b12f7** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on pathIntegralFunctional_separates_points_spec (Abel's theorem deep content).
+- **09a7e39c-5748-4c12-a2a0-55b2039d52c7** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on analyticPushforward_id_spec.
+- **90fc4a81-0f3c-4a7f-a09a-34f8e16b532b** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on analyticPushforward_comp_spec.
+- **f914a263-801f-4dbc-8671-bc6d67a763bf** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — contMDiff_continuousAddMonoidHom_complexTorus general lemma.
+- **c69fcd88-2cb2-4710-bef0-200e1a2cd351** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_id_spec respecting basisDualPullback structure.
+- **369f3f7b-4879-4ef1-9994-d46784537914** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_contMDiff via complex-torus smoothness lemma.
+- **16277f52-39bc-4f28-9860-8d771687c3ad** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — quotientMk_contMDiff_spec via charted-space machinery.
+- **65001239-6493-4b88-8f4d-e21c6373addd** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — analyticPushforward_id_eq deeper split.
+- **654d5071-ee04-446c-a69e-0d584517149e** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_contMDiff_spec gap analysis.
+- **7f3ec297-cad6-409f-bc0d-f4c0dc196fd2** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_mk_eq + basisDualPullback_comp paired packet.
+- **e3dcd529-c13e-4409-8236-3c4fd5474c11** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — analyticPushforward_mk_spec descent compatibility.
+- **0a5f74a8-0259-4d37-b6f3-1690c29cac19** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — PeriodFunctional sorry (long-blocked).
+- **03715a4d-0570-47fe-b3a7-bae31ecca811** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — GenusZeroClassification sorry (long-blocked).
+- **05100f76-7d7d-4798-bb7c-c35c7ee7cabb** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_id (NEW from local _id_spec split).
+- **b7799fc9-ad77-40de-9b32-42f2d735ac82** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id (NEW from local _id_eq split).
+- **6b2f47f1-c0fe-4313-a950-57525866b53e** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_separates_points_spec (Abel anti-hack #2) — orphan packet.
+- **403c9581-217e-4df5-a9b7-656409a0d9dd** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (after Claude's bundle refactor closed _mk_eq).
+- **5f052643-eee1-47d4-bce2-a3717c488d8d** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec — orphan packet (covariant trace-lift composition).
+- **e19361c4-97c0-44bb-a8e4-1036aadfee16** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — GenusZeroClassification sorry (Aristotle's pick, not chart-blocked).
+- **bbca4cae-6ca6-4d1a-90b6-6bab64f6b71e** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Second PeriodFunctional sorry (whichever 0a5f74a8 didn't pick).
+- **58eb31f0-9b8c-411d-9087-0ff130a58ec8** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — Step 5: holomorphicOneForm_normedSpace_uniformOnCompact assembly (after 8585f085 lands).
+- **360a05bf-5522-4d96-8e44-fb68e19ad707** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — Specifically L320: analyticGenus ℂ X = analyticGenus ℂ (OnePoint ℂ).
+- **fbfe1498-210b-4931-a093-788d14de2cb0** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — Specifically L591: Nonempty (X ≃ₜ Metric.sphere ...) sphere homeomorphism.
+- **e7250841-96e4-4d65-9be5-81dcaf1ae393** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_montel_subseq_tendsto (NEW from Montel TOPDOWN split): analytic core — Cauchy estimates + Arzelà–Ascoli + Weierstrass.
+- **ba57741f-3fef-4160-b252-1af4ea559094** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (NEW from subagent TOPDOWN split).
+- **dc58e548-c453-4335-a57c-e739df284174** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec_apply_at (NEW from subagent TOPDOWN split).
+- **de8822fb-8ae9-4c26-a026-213c17802e28** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_fiberNorm_continuous (NEW from 58eb31f0 split).
+- **bed365ae-8a56-49fd-a9c8-432d36d0e7de** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_completeSpace (NEW from 58eb31f0 split).
+- **20995679-1911-4bcf-b0e9-12b6b6bc29a3** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_montel_subseq_isCauchy (NEW from Montel TOPDOWN split).
+- **8a8ea66d-a01e-4317-a3ea-0ce135ae485c** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_closedBall_totallyBounded (NEW from 20995679 split).
+- **706bf2e2-1e99-48ee-8926-1eb995019743** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_cauchySeq_tendsto (NEW from a8db8a8f split).
+- **76c01cf9-02c3-4a37-9a60-f983a96bdf3e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_finite_eq_zero (Liouville finite leaf — 1:1 coverage).
+- **c2a57d71-73b5-4669-8892-78e24ec878cb** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_infty_eq_zero (Liouville infty leaf — 1:1 coverage).
+- **88effa1c-9abb-4391-99d2-a277c7e05c39** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneFormLinearEquivOfHomeoSphere (uniformization-lite — 1:1 coverage).
+- **0cfa1878-064e-49dd-9d39-acba1d18adfc** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — periodVectors_linearIndependent (Riemann bilinear — 1:1 coverage).
+- **ad278fcd-6c7c-476a-ba06-b5fb15989e6b** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (replacement for rejected 403c9581 — 1:1 coverage).
+- **9b4998a5-7fd1-468e-91d5-ae2861eec0f6** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (renewed attempt after ba57741f docstring integration).
+- **3b7e5dac-a8b0-4863-be44-462d2f09c961** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec_apply_at (renewed attempt after dc58e548 docstring integration).
+- **dc2c19e1-76ba-4fab-ba91-3a996a15add6** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_entire (NEW from 76c01cf9 split).
+- **659de1fb-a95c-4d0d-8cd9-99925f04f931** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_tendsto_zero (NEW from 76c01cf9 split).
+- **af6e2c7a-1412-4823-96fb-eade7b78c3ca** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — subsingleton_holomorphicOneForm_of_homeo_sphere (NEW from 88effa1c split).
+- **e227f244-521b-4105-9744-25d6d25338f3** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — symplectic_basis_of_cycles (NEW from 0cfa1878 split).
+- **0de5af2a-87b1-4fff-8721-c2e5136654d6** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — period_vectors_linearIndependent_of_symplectic (NEW from 0cfa1878 split).
+- **a0bddfd5-c8f6-476a-ae89-47571f269525** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (renewed after ad278fcd docstring integration).
+- **921772f5-cea4-429c-a2c9-3d7bd55f13b6** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — h1_basis_of_compact_riemann_surface (NEW from e227f244 split).
+- **4d0d28d6-6d52-4e7e-b1ab-16afe7cf0180** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (renewed after a0bddfd5 no-op).
+- **3683ef39-f83c-41e3-98ed-a1ed2dd6f2cd** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (renewed after 9b4998a5 deferred).
+- **362e259f-b8cf-4522-a55f-de60211c801d** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp (NEW from af653549 split).
+- **9c222f2d-2be3-499f-a8a6-9fe263bec7f4** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — period_vectors_linearIndependent_of_symplectic (renewed after 0de5af2a stale).
+- **6f6f015d-7c0d-4cba-9182-07300e8c9be8** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — basisAnalyticPushforwardBundle_id_traceLift (NEW from a8778c20 bundle-primitive split).
+- **f3a8e713-ba50-4ec6-b31b-ca49dd3e9460** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — basisAnalyticPushforwardBundle_comp_traceLift (NEW from a1ce4200 bundle-primitive split).
+- **6547fde4-4483-430f-b567-5cb1f81b0c18** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisAnalyticPullbackBundle_id_dualPullback (NEW from PullbackBasis bundle-primitive split).
+- **86bef3e0-0fa0-40b4-83ce-700cc19b847e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisAnalyticPullbackBundle_comp_dualPullback (NEW from PullbackBasis bundle-primitive split).
+- **632f36aa-6152-40dd-ad86-582d47e6b2db** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_fiberNorm_continuous — fresh packet for previously uncovered sorry.
+- **fc057985-4072-43e4-b4a1-668153917ba7** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_cauchySeq_tendsto — fresh packet for previously uncovered sorry.
+- **6751b37c-9af7-4757-a5cc-9602ff3603d9** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_closedBall_totallyBounded — fresh packet for previously uncovered sorry.
+- **2a5eea2c-0ce6-4316-b857-a77068d82713** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_entire — fresh packet for previously uncovered sorry.
+- **47166a51-62ae-40a6-a4a1-5086a7a4614e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_tendsto_zero — fresh packet for previously uncovered sorry.
+- **50ed9388-fdd1-4456-9c83-387c8f83ab3d** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_infty_eq_zero — Liouville-infty leaf, fresh packet.
+- **edca80d7-307a-490a-a343-fa6e4c4b92f7** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — subsingleton_holomorphicOneForm_of_homeo_sphere — uniformization-lite, fresh packet.
+- **4f698084-46b4-4a5d-970f-368a0225c3f4** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — genus_zero_homeomorph_onePointCx — uniformization core. Codex also racing this in worktree.
+- **303edecd-6419-49e5-8994-0200b5f66fe7** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — periodSubgroup_isZLattice — discreteness of basis-aligned period subgroup. TOPDOWN plan in docstring.
+- **263e138e-1e3c-4281-80e3-66618f709eae** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — h1_free_of_compact_surface — fresh packet for previously uncovered sorry (NEW from 921772f5 split).
+- **c17e5dd9-80d5-4312-b8f0-673890bdc881** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — analyticGenus_eq_topologicalGenus — submitted on cap-recovery.
+- **7ceff781-61d0-4e33-8ce4-7edbac690bb3** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_separates_points_spec — submitted on cap-recovery.
+- **56e6ac87-4c37-4c7a-b5b5-8d3ef369b0d6** (submitted): `Jacobian/Blueprint/Sec05/RiemannHurwitzDeg1.lean` — 2 sorries — placeholder-refinement framing: refine local SurfaceMap to bundle ramification_satisfies_riemann_hurwitz invariant.
+- **db7d56a1-84a9-4ad1-82ad-7ae2fa13a102** (submitted): `Jacobian/StageA/EdgeWordTietze.lean` — 1 sorry (handleSwap_grouping_inductive_step). Refine local handleSwap_strictly_decreases_mu (True := trivial placeholder) into real content.
+- **31175f0a-6e6a-4b9a-9e1a-5b1287c8d9e2** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — ID 4: singular simplex integration
+- **c2cf69e5-b4a5-44b6-972a-8db7a66cebce** (submitted): `Jacobian/Periods/Polygon4gCellular.lean` — prove polygon4g_succ_hurewicz_iso_freeZ
+- **421a90df-fb9a-46d0-82e3-25d40c3b418a** (submitted): `Jacobian/TraceDegree/PiecewiseC1Instance.lean` — prove instPiecewiseC1PathRegularity
+- **0006f3e9-5842-40e9-b8fd-e77d39667a57** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove localInverseAt_holomorphic
+- **7bd649ad-2b68-43fb-9cc7-a119925825e9** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove localTraceAtRegularValue_holomorphic
+- **b4654c4b-01ec-4fe7-bbcf-9c976473ea72** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove trace_pullback_at_regular_value
+- **0050e6c0-3326-4d75-9c21-58f79bdccfce** (submitted): `Jacobian/Blueprint/Sec02/MontelCompactness.lean` — prove montel_pointwise_extraction
+- **1259f3fa-872c-4ae5-8c0a-634e23cac4d9** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — prove chartLift_contDiffOn_assumption
+- **3fec87fa-3619-4acc-87d5-a82ae74293e5** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — prove chartedFormPullback_continuous_assumption
+- **1b11a60f-19e5-455d-beb7-a5baadc0ac3c** (submitted): `Jacobian/HolomorphicForms/CMfldBumpStub.lean` — prove cMfldBump_apply_self
+- **da91941b-89cc-46b4-86a9-156dcc2d8624** (submitted): `Jacobian/HolomorphicForms/CMfldBumpStub.lean` — prove cMfldBump_eq_one_near
+- **1a50bfc4-e90d-4c9d-8891-3e0994b48b7e** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_arzela_ascoli_refine23
+- **eb62762d-9750-4cf4-a8cd-1d2a6c361dd6** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
+- **d0717941-5047-454b-8fd5-68382a67e40d** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove closedForm_pathIntegral_primitive_exists
 
 ## Curve-analysis frontier delegation packets (2026-05-05, queued; Aristotle blocked)
 
@@ -441,129 +427,243 @@ module(s).
 
 ## Live Status (2026-05-02, roadmap-driven saturation tick)
 
-Roadmap-driven saturation wave per `ref/plans/roadmap.org`. 14 packets
-submitted across W1 P1/P2/P3; 15th rejected with "too many requests"
-(cap hit). 1 pre-existing packet (`f74d0ed8`) carries over.
-
-**Submitted this tick (14):**
-
-| ID | File | Target |
-|---|---|---|
-| `2799e6e5` | HolomorphicForms/GenusZeroClassification.lean | line 442 (sub-obligation 1) |
-| `0366d364` | HolomorphicForms/GenusZeroClassification.lean | line 494 (sub-obligation 2) |
-| `ce81878d` | HolomorphicForms/GenusZeroClassification.lean | line 886 (subsingleton) |
-| `1c513243` | Periods/PullbackNaturality.lean | line 139 `periodPairing_pullbackFormsBundledLM` |
-| `c42f5c52` | Periods/PullbackNaturality.lean | line 239 `pathIntegralViaCover_pullbackFormsBundledLM` |
-| `78190419` | HolomorphicForms/CompactRiemannSurface.lean | line 161 (fiberNorm continuity) |
-| `f98d8709` | HolomorphicForms/CompactRiemannSurface.lean | line 229 (Cauchy completeness) |
-| `ea5f8d3c` | HolomorphicForms/CompactRiemannSurface.lean | line 656 (Montel closed-ball totally bounded) |
-| `bdaae2fc` | Periods/PeriodFunctional.lean | line 260 `hodge_form_riemannBilinear` |
-| `574477c0` | Periods/PeriodFunctional.lean | line 275 `hodge_form_posDef` |
-| `fff296dc` | Periods/PeriodFunctional.lean | line 306 `period_functionals_via_hodge` |
-| `9d200ee7` | HolomorphicForms/CanonicalDivisor.lean | line 101 (canonical degree = 2g - 2) |
-| `6519d1a1` | HolomorphicForms/EulerCharLineBundle.lean | line 123 (RR / Euler char) |
-| `3f20f469` | HolomorphicForms/RiemannRochHighDegree.lean | line 83 (high-degree RR) |
-
-**Skipped from this wave (gated):** `analyticOfCurve_injective`
-(AbelJacobi line 280 — needs cloud-Claude scoping pass per
-`ref/plans/roadmap.org`); the Stage-A-blocked sorries in PeriodFunctional
-(`h1_has_even_basis`, `h1_free`, `analyticGenus_eq_topologicalGenus`,
-`periodSubgroup_eq_zspan_of_basis`); SerreDualityRS line 139 (rejected at
-the cap — retry next tick).
-
-Many of the deeper frontier-sorries (Hodge bilinear/positivity, Serre
-duality, RR, Euler char) are likely BLOCKER returns; per memory the
-BLOCKER-only diffs route to brainstorm rather than integrate. The
-attackable subset is GenusZeroClassification 442/494/886, the two
-PullbackNaturality cycle/path naturality lemmas, and the three
-CompactRiemannSurface fiberNorm/completeness/Montel sub-steps.
+- **b782c387-5718-4565-a3e8-ed049d6c4c26** (submitted): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — Recon: survey Mathlib v4.28.0 API for topology-of-uniform-convergence on ContMDiffSection (step (a) of the Riemann-Roch plan from 72ac3a75)
+- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. High-risk gap-narrowing on the Riemann-Roch / FD chain.
+- **848a0c88-6c27-423d-865b-38b35390b7a0** (submitted): `Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean` — NEW recon file: how to construct the Banach data on `ContMDiffSection` for compact X. Companion to `holomorphicOneForm_normedSpace_uniformOnCompact` obligation.
+- **90750074-0d26-4f60-b32e-a79942e56111** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_subsingleton` — the Liouville core of genus-zero classification (no global holomorphic 1-form on ℂℙ¹). Anti-hack #1 critical path.
+- **dc8af381-8277-44ab-95f4-6e62dba5faee** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Discharge `exists_compact_periodFundamentalDomain` using the existing `IsZLattice ℝ` instance + Mathlib ZSpan API. Reduction 3→2 sorries in this file.
+- **6992e390-050b-49fb-bb21-5fde3ccb0449** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOPDOWN reduction: discharge `holomorphicOneForm_locallyCompact_of_compactRiemannSurface` sorry-free using `holomorphicOneForm_montel B` (still-sorry but named) — translation invariance on a normed space. Reduction 3→2 sorries in CompactRiemannSurface.lean.
+- **d493c66b-a666-4b4d-a245-67db26ff4346** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_toFun_eq_zero` — chart-coefficient extraction sorry exposed by 90750074. The Liouville analytic content is now discharged; this is the chart-pullback API gap.
+- **63158306-c2f9-4f3e-a2e9-1b385e59fe48** (submitted): `Jacobian/HolomorphicForms/SectionFiberNorm.lean` — NEW file: Step 1 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.fiberNorm` and prove its continuity. Building block for the eventual `holomorphicOneForm_normedSpace_uniformOnCompact` discharge.
+- **1f7d4399-438b-4d8a-b128-dc290bde3a48** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOPDOWN on the now-narrower finite leaf `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` (Liouville application via identity-chart pullback + EntireZero black-box).
+- **f1786fa8-bbaa-4cdd-9683-b9dfbdf01797** (submitted): `Jacobian/HolomorphicForms/SectionSupNorm.lean` — NEW file: Step 2 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.supNorm` and prove 5 sup-norm properties (zero, eq_zero_iff, add_le, smul_le, neg). 40-60 LOC per recon §5 Step 2.
+- **51fd0fce-fb19-45e7-9ef1-efbf65de7ac9** (submitted): `Jacobian/HolomorphicForms/SectionMetric.lean` — NEW file: Step 3 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.dist` and prove 4 MetricSpace axioms + dist_eq. ~20-50 LOC per recon §5 Step 3.
+- **8585f085-371e-4c86-b276-adadf70f6392** (submitted): `Jacobian/HolomorphicForms/SectionComplete.lean` — NEW file: Step 4 of `848a0c88` Banach-data construction recon — completeness via embedding HolomorphicOneForm ℂ X into C(X, ℂ) + closedness. Hardest step, 80-150 LOC.
+- **7e2bc288-bedc-4149-b0d8-28bcadf78ade** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — TOPDOWN refinement of 3 sorries (analyticPullback_contMDiff/_id_apply/_comp_apply). Acceptable outcomes: full proofs, companion-spec split, or survey docstring.
+- **4d56b249-931f-46e3-8ace-50d28a74ac78** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — TOPDOWN refinement of 3 sorries (analyticPushforward_contMDiff/_id_apply/_comp_apply). Mirror of PullbackBasis packet 7e2bc288.
+- **bbe527bb-28a6-4d6e-a32a-cf5f8d8df6e3** (submitted): `Jacobian/TraceDegree/AnalyticDegree.lean` — Discharge analyticPushforward_analyticPullback (anti-hack #4) via the recommended companion opaque _spec from prior survey 10e5bfbb.
+- **d1d10391-67c2-4bfc-ad21-5514a1052a55** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Discharge 2 sorries (complexTorusULift_contMDiff_up/_down). Both should be straightforward via the transported chart structure (chart-target map is identity).
+- **d967438b-5455-49c9-a8ab-08bf2e0482e8** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — TOPDOWN of 3 sorries: pathIntegralFunctional_self, analyticOfCurve_contMDiff, pathIntegralFunctional_separates_points (Abel's theorem).
+- **c5101910-f51a-4aab-8abf-d801b239642a** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — TOPDOWN of 2 sorries: periodSubgroup_isZLattice (integrality), periodSubgroup_spans_real (Riemann bilinear nondegeneracy).
+- **c7feba63-8103-4859-846f-053274534d9d** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOPDOWN refinement of holomorphicOneForm_montel (only — _normedSpace handled by 8585f085 chain).
+- **b3280ab0-41c9-46fd-82be-4eb17e7c0748** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOPDOWN refinement of 4 sorries: 2 Liouville-core leaves (chart-extraction blocker) + 2 uniformization items.
+- **d8fd495f-b92d-4c09-898b-ce7614ecfaa7** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Single-sorry packet on complexTorusULift_contMDiff_up only.
+- **b4029f72-c3d9-4629-a961-e5ade014ea84** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_id_apply only.
+- **c910ac80-7262-443d-88c1-bb55817ac27e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_contMDiff only.
+- **2bd5f151-4bab-4023-ae9e-dc614099864a** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Single-sorry packet on complexTorusULift_contMDiff_down only.
+- **27c56154-66ff-4c22-a86b-e112054f19de** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_comp_apply only.
+- **f280ecc6-c477-48f1-9128-3d8b7eeb0012** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_contMDiff only.
+- **271cc21e-7540-4a49-978e-a51cad18978c** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_id_apply only.
+- **6c796045-b207-4290-9d5c-5b02499ca57e** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_comp_apply only.
+- **3d5f379e-568b-4e13-8f51-c9529fdc1f36** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on pathIntegralFunctional_self only.
+- **c6c4c612-3d0a-4b8f-a792-9ee8ff6eb80f** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on analyticOfCurve_contMDiff only.
+- **4f76ac75-4b03-44bf-9c4d-e473bcbb86b8** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on pathIntegralFunctional_separates_points (Abel's theorem).
+- **99825c13-b58a-420b-b25c-ff202a2a5e70** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on the new analyticPullback_comp_spec (Claude's split target).
+- **2aab5e91-890a-447f-9729-f4872a50e23e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on the improved analyticPullback_id_spec (= ContinuousAddMonoidHom.id _).
+- **a3b5ae84-236d-4b40-a64a-259b3f8a7752** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on the new pathIntegralFunctional_self_spec.
+- **777f976c-0e8e-4078-a345-68f015c9d7aa** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on the new analyticPushforward_contMDiff_spec.
+- **3264c622-6675-4b18-94f3-9ec50f130185** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on analyticOfCurve_contMDiff_spec.
+- **7f273ec8-537c-4bc9-a159-3098725b12f7** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on pathIntegralFunctional_separates_points_spec (Abel's theorem deep content).
+- **09a7e39c-5748-4c12-a2a0-55b2039d52c7** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on analyticPushforward_id_spec.
+- **90fc4a81-0f3c-4a7f-a09a-34f8e16b532b** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on analyticPushforward_comp_spec.
+- **f914a263-801f-4dbc-8671-bc6d67a763bf** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — contMDiff_continuousAddMonoidHom_complexTorus general lemma.
+- **c69fcd88-2cb2-4710-bef0-200e1a2cd351** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_id_spec respecting basisDualPullback structure.
+- **369f3f7b-4879-4ef1-9994-d46784537914** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_contMDiff via complex-torus smoothness lemma.
+- **16277f52-39bc-4f28-9860-8d771687c3ad** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — quotientMk_contMDiff_spec via charted-space machinery.
+- **65001239-6493-4b88-8f4d-e21c6373addd** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — analyticPushforward_id_eq deeper split.
+- **654d5071-ee04-446c-a69e-0d584517149e** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_contMDiff_spec gap analysis.
+- **7f3ec297-cad6-409f-bc0d-f4c0dc196fd2** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_mk_eq + basisDualPullback_comp paired packet.
+- **e3dcd529-c13e-4409-8236-3c4fd5474c11** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — analyticPushforward_mk_spec descent compatibility.
+- **0a5f74a8-0259-4d37-b6f3-1690c29cac19** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — PeriodFunctional sorry (long-blocked).
+- **03715a4d-0570-47fe-b3a7-bae31ecca811** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — GenusZeroClassification sorry (long-blocked).
+- **05100f76-7d7d-4798-bb7c-c35c7ee7cabb** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_id (NEW from local _id_spec split).
+- **b7799fc9-ad77-40de-9b32-42f2d735ac82** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id (NEW from local _id_eq split).
+- **6b2f47f1-c0fe-4313-a950-57525866b53e** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_separates_points_spec (Abel anti-hack #2) — orphan packet.
+- **403c9581-217e-4df5-a9b7-656409a0d9dd** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (after Claude's bundle refactor closed _mk_eq).
+- **5f052643-eee1-47d4-bce2-a3717c488d8d** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec — orphan packet (covariant trace-lift composition).
+- **e19361c4-97c0-44bb-a8e4-1036aadfee16** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — GenusZeroClassification sorry (Aristotle's pick, not chart-blocked).
+- **bbca4cae-6ca6-4d1a-90b6-6bab64f6b71e** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Second PeriodFunctional sorry (whichever 0a5f74a8 didn't pick).
+- **58eb31f0-9b8c-411d-9087-0ff130a58ec8** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — Step 5: holomorphicOneForm_normedSpace_uniformOnCompact assembly (after 8585f085 lands).
+- **360a05bf-5522-4d96-8e44-fb68e19ad707** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — Specifically L320: analyticGenus ℂ X = analyticGenus ℂ (OnePoint ℂ).
+- **fbfe1498-210b-4931-a093-788d14de2cb0** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — Specifically L591: Nonempty (X ≃ₜ Metric.sphere ...) sphere homeomorphism.
+- **e7250841-96e4-4d65-9be5-81dcaf1ae393** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_montel_subseq_tendsto (NEW from Montel TOPDOWN split): analytic core — Cauchy estimates + Arzelà–Ascoli + Weierstrass.
+- **ba57741f-3fef-4160-b252-1af4ea559094** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (NEW from subagent TOPDOWN split).
+- **dc58e548-c453-4335-a57c-e739df284174** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec_apply_at (NEW from subagent TOPDOWN split).
+- **de8822fb-8ae9-4c26-a026-213c17802e28** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_fiberNorm_continuous (NEW from 58eb31f0 split).
+- **bed365ae-8a56-49fd-a9c8-432d36d0e7de** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_completeSpace (NEW from 58eb31f0 split).
+- **20995679-1911-4bcf-b0e9-12b6b6bc29a3** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_montel_subseq_isCauchy (NEW from Montel TOPDOWN split).
+- **8a8ea66d-a01e-4317-a3ea-0ce135ae485c** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_closedBall_totallyBounded (NEW from 20995679 split).
+- **706bf2e2-1e99-48ee-8926-1eb995019743** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_cauchySeq_tendsto (NEW from a8db8a8f split).
+- **76c01cf9-02c3-4a37-9a60-f983a96bdf3e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_finite_eq_zero (Liouville finite leaf — 1:1 coverage).
+- **c2a57d71-73b5-4669-8892-78e24ec878cb** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_infty_eq_zero (Liouville infty leaf — 1:1 coverage).
+- **88effa1c-9abb-4391-99d2-a277c7e05c39** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneFormLinearEquivOfHomeoSphere (uniformization-lite — 1:1 coverage).
+- **0cfa1878-064e-49dd-9d39-acba1d18adfc** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — periodVectors_linearIndependent (Riemann bilinear — 1:1 coverage).
+- **ad278fcd-6c7c-476a-ba06-b5fb15989e6b** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (replacement for rejected 403c9581 — 1:1 coverage).
+- **9b4998a5-7fd1-468e-91d5-ae2861eec0f6** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (renewed attempt after ba57741f docstring integration).
+- **3b7e5dac-a8b0-4863-be44-462d2f09c961** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec_apply_at (renewed attempt after dc58e548 docstring integration).
+- **dc2c19e1-76ba-4fab-ba91-3a996a15add6** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_entire (NEW from 76c01cf9 split).
+- **659de1fb-a95c-4d0d-8cd9-99925f04f931** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_tendsto_zero (NEW from 76c01cf9 split).
+- **af6e2c7a-1412-4823-96fb-eade7b78c3ca** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — subsingleton_holomorphicOneForm_of_homeo_sphere (NEW from 88effa1c split).
+- **e227f244-521b-4105-9744-25d6d25338f3** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — symplectic_basis_of_cycles (NEW from 0cfa1878 split).
+- **0de5af2a-87b1-4fff-8721-c2e5136654d6** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — period_vectors_linearIndependent_of_symplectic (NEW from 0cfa1878 split).
+- **a0bddfd5-c8f6-476a-ae89-47571f269525** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (renewed after ad278fcd docstring integration).
+- **921772f5-cea4-429c-a2c9-3d7bd55f13b6** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — h1_basis_of_compact_riemann_surface (NEW from e227f244 split).
+- **4d0d28d6-6d52-4e7e-b1ab-16afe7cf0180** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (renewed after a0bddfd5 no-op).
+- **3683ef39-f83c-41e3-98ed-a1ed2dd6f2cd** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (renewed after 9b4998a5 deferred).
+- **362e259f-b8cf-4522-a55f-de60211c801d** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp (NEW from af653549 split).
+- **9c222f2d-2be3-499f-a8a6-9fe263bec7f4** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — period_vectors_linearIndependent_of_symplectic (renewed after 0de5af2a stale).
+- **6f6f015d-7c0d-4cba-9182-07300e8c9be8** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — basisAnalyticPushforwardBundle_id_traceLift (NEW from a8778c20 bundle-primitive split).
+- **f3a8e713-ba50-4ec6-b31b-ca49dd3e9460** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — basisAnalyticPushforwardBundle_comp_traceLift (NEW from a1ce4200 bundle-primitive split).
+- **6547fde4-4483-430f-b567-5cb1f81b0c18** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisAnalyticPullbackBundle_id_dualPullback (NEW from PullbackBasis bundle-primitive split).
+- **86bef3e0-0fa0-40b4-83ce-700cc19b847e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisAnalyticPullbackBundle_comp_dualPullback (NEW from PullbackBasis bundle-primitive split).
+- **632f36aa-6152-40dd-ad86-582d47e6b2db** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_fiberNorm_continuous — fresh packet for previously uncovered sorry.
+- **fc057985-4072-43e4-b4a1-668153917ba7** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_cauchySeq_tendsto — fresh packet for previously uncovered sorry.
+- **6751b37c-9af7-4757-a5cc-9602ff3603d9** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_closedBall_totallyBounded — fresh packet for previously uncovered sorry.
+- **2a5eea2c-0ce6-4316-b857-a77068d82713** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_entire — fresh packet for previously uncovered sorry.
+- **47166a51-62ae-40a6-a4a1-5086a7a4614e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_tendsto_zero — fresh packet for previously uncovered sorry.
+- **50ed9388-fdd1-4456-9c83-387c8f83ab3d** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_infty_eq_zero — Liouville-infty leaf, fresh packet.
+- **edca80d7-307a-490a-a343-fa6e4c4b92f7** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — subsingleton_holomorphicOneForm_of_homeo_sphere — uniformization-lite, fresh packet.
+- **4f698084-46b4-4a5d-970f-368a0225c3f4** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — genus_zero_homeomorph_onePointCx — uniformization core. Codex also racing this in worktree.
+- **303edecd-6419-49e5-8994-0200b5f66fe7** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — periodSubgroup_isZLattice — discreteness of basis-aligned period subgroup. TOPDOWN plan in docstring.
+- **263e138e-1e3c-4281-80e3-66618f709eae** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — h1_free_of_compact_surface — fresh packet for previously uncovered sorry (NEW from 921772f5 split).
+- **c17e5dd9-80d5-4312-b8f0-673890bdc881** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — analyticGenus_eq_topologicalGenus — submitted on cap-recovery.
+- **7ceff781-61d0-4e33-8ce4-7edbac690bb3** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_separates_points_spec — submitted on cap-recovery.
+- **56e6ac87-4c37-4c7a-b5b5-8d3ef369b0d6** (submitted): `Jacobian/Blueprint/Sec05/RiemannHurwitzDeg1.lean` — 2 sorries — placeholder-refinement framing: refine local SurfaceMap to bundle ramification_satisfies_riemann_hurwitz invariant.
+- **db7d56a1-84a9-4ad1-82ad-7ae2fa13a102** (submitted): `Jacobian/StageA/EdgeWordTietze.lean` — 1 sorry (handleSwap_grouping_inductive_step). Refine local handleSwap_strictly_decreases_mu (True := trivial placeholder) into real content.
+- **31175f0a-6e6a-4b9a-9e1a-5b1287c8d9e2** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — ID 4: singular simplex integration
+- **c2cf69e5-b4a5-44b6-972a-8db7a66cebce** (submitted): `Jacobian/Periods/Polygon4gCellular.lean` — prove polygon4g_succ_hurewicz_iso_freeZ
+- **421a90df-fb9a-46d0-82e3-25d40c3b418a** (submitted): `Jacobian/TraceDegree/PiecewiseC1Instance.lean` — prove instPiecewiseC1PathRegularity
+- **0006f3e9-5842-40e9-b8fd-e77d39667a57** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove localInverseAt_holomorphic
+- **7bd649ad-2b68-43fb-9cc7-a119925825e9** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove localTraceAtRegularValue_holomorphic
+- **b4654c4b-01ec-4fe7-bbcf-9c976473ea72** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove trace_pullback_at_regular_value
+- **0050e6c0-3326-4d75-9c21-58f79bdccfce** (submitted): `Jacobian/Blueprint/Sec02/MontelCompactness.lean` — prove montel_pointwise_extraction
+- **1259f3fa-872c-4ae5-8c0a-634e23cac4d9** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — prove chartLift_contDiffOn_assumption
+- **3fec87fa-3619-4acc-87d5-a82ae74293e5** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — prove chartedFormPullback_continuous_assumption
+- **1b11a60f-19e5-455d-beb7-a5baadc0ac3c** (submitted): `Jacobian/HolomorphicForms/CMfldBumpStub.lean` — prove cMfldBump_apply_self
+- **da91941b-89cc-46b4-86a9-156dcc2d8624** (submitted): `Jacobian/HolomorphicForms/CMfldBumpStub.lean` — prove cMfldBump_eq_one_near
+- **1a50bfc4-e90d-4c9d-8891-3e0994b48b7e** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_arzela_ascoli_refine23
+- **eb62762d-9750-4cf4-a8cd-1d2a6c361dd6** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
+- **d0717941-5047-454b-8fd5-68382a67e40d** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove closedForm_pathIntegral_primitive_exists
 
 ## Live Status (2026-04-29 17:01 EDT, prior tick — kept for context)
 
-- **ref/PROMPT.md §3 rule: every production sorry has a 1:1 Aristotle job.**
-- **Open production sorries:** 17 (unchanged).
-- **Aristotle integrations to date: 129**.
-- **Backend state (first page of `aristotle list`):** 6 QUEUED
-  (f3a8e713, 6f6f015d, 9c222f2d, 3683ef39, 6547fde4, 86bef3e0),
-  3 COMPLETE on first page (921772f5 integrated, a0bddfd5 no-op,
-  4d0d28d6 rejected this tick — stale baseline). 1 CANCELED
-  (362e259f).
-- **Sub-agents:** local HEq-field fix attempt on PullbackBasis
-  reverted this tick — triggered the instance diamond per
-  `diamond-problem.txt` analysis. Working tree clean. `sorry-prompt.md`
-  rewritten with the diamond-aware approach (`noncomputable def`
-  + `Eq.mpr`/`▸` instead of `subst`) for off-host dispatch on
-  `basisAnalyticPushforwardBundle_id_traceLift`. Codex still racing
-  `genus_zero_homeomorph_onePointCx` in its own worktree.
-
-### This tick
-
-Local-only work (Aristotle backend frozen — no IN_PROGRESS jobs on
-first page, no new completions to integrate):
-
-- **Committed prior-tick docstring** on
-  `basisAnalyticPushforwardBundle_comp_traceLift` (8fc61ab):
-  ~50-line blocker analysis mirroring `_id_traceLift`'s docstring.
-  No code change; verified by `lake build` (83s).
-- **TOPDOWN bundle-primitive refactor on PullbackBasis** (71a5eaf):
-  - Lifted `basisDualPullback_id_apply` (per-vector sorry) into
-    `basisAnalyticPullbackBundle_id_dualPullback` (bundle field
-    AddMonoidHom-equality, NEW sorry).
-  - Lifted `basisDualPullback_comp` (per-vector sorry) into
-    `basisAnalyticPullbackBundle_comp_dualPullback` (bundle field
-    AddMonoidHom-equality, NEW sorry).
-  - Per-vector / per-coord forms (`basisDualPullback_id`,
-    `basisDualPullback_id_apply`, `basisDualPullback_comp_top`,
-    `basisDualPullback_comp`) are now sorry-free assemblies via
-    `unfold + rw + rfl` and `AddMonoidHom.comp_apply`.
-  - Net 0 sorries; mirrors PushforwardBasis pattern
-    (af653549 + a8778c20 + a1ce4200).
-  - Verified: `lake build Jacobian.TraceDegree.PullbackBasis`
-    (176s, exit 0).
-- **Submitted 2 new packets** for the new bundle-primitive sorries:
-  `6547fde4` (`_id_dualPullback`), `86bef3e0` (`_comp_dualPullback`).
-
-### Active our-packets after this tick
-
-Visible on first page of `aristotle list`:
-
-| ID | File | Target | Status |
-|---|---|---|---|
-| `f3a8e713` | PushforwardBasis | `_comp_traceLift` (bundle) | QUEUED |
-| `6f6f015d` | PushforwardBasis | `_id_traceLift` (bundle) | QUEUED |
-| `9c222f2d` | PeriodFunctional | `period_vectors_linearIndependent_of_symplectic` | QUEUED |
-| `362e259f` | PushforwardBasis | `pushforwardTraceLift_comp` (stale, target sorry-free) | QUEUED |
-| `3683ef39` | PushforwardBasis | `_id_apply_at` (stale, target sorry-free) | QUEUED |
-| `4d0d28d6` | PullbackBasis | `basisDualPullback_comp` (stale after 71a5eaf) | QUEUED |
-| `6547fde4` | PullbackBasis | `_id_dualPullback` (NEW) | SUBMITTED |
-| `86bef3e0` | PullbackBasis | `_comp_dualPullback` (NEW) | SUBMITTED |
-
-Older packets covering CompactRiemannSurface, GenusZeroClassification,
-PeriodFunctional `periodSubgroup_isZLattice`, and AnalyticOfCurveBasis
-sorries are paginated below the first page. Per `aristotle_jobs.jsonl`,
-the open sorries are all covered.
-
-### Stale packets (target sorry sorry-free / renamed; left running)
-
-`362e259f` `3683ef39` `4d0d28d6` (this tick) plus earlier
-`bbe527bb` `c7feba63` `b4029f72` `c910ac80` `27c56154` `f280ecc6`
-`271cc21e` `6c796045` `3d5f379e` `c6c4c612` `d8fd495f` `2bd5f151`
-`b7799fc9` `5f052643` `8585f085` `0a5f74a8` `6b2f47f1` `03715a4d`
-`05100f76`.
-
-### Sub-agents launched this tick (background, worktree-isolated)
-
-Per ref/PROMPT.md §3 — racing the two newest-submitted QUEUED Aristotle
-packets:
-
-- `ad96003a19385a71c` — racing `6547fde4`
-  (`basisAnalyticPullbackBundle_id_dualPullback`)
-- `a5ded3e9db49ff1f7` — racing `86bef3e0`
-  (`basisAnalyticPullbackBundle_comp_dualPullback`)
-
-Both target the same file but disjoint declarations. Each runs in its
-own git worktree; integration is by cherry-pick of the targeted file
-edit when (and only when) the agent's local `lake build` passes.
+- **b782c387-5718-4565-a3e8-ed049d6c4c26** (submitted): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — Recon: survey Mathlib v4.28.0 API for topology-of-uniform-convergence on ContMDiffSection (step (a) of the Riemann-Roch plan from 72ac3a75)
+- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. High-risk gap-narrowing on the Riemann-Roch / FD chain.
+- **848a0c88-6c27-423d-865b-38b35390b7a0** (submitted): `Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean` — NEW recon file: how to construct the Banach data on `ContMDiffSection` for compact X. Companion to `holomorphicOneForm_normedSpace_uniformOnCompact` obligation.
+- **90750074-0d26-4f60-b32e-a79942e56111** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_subsingleton` — the Liouville core of genus-zero classification (no global holomorphic 1-form on ℂℙ¹). Anti-hack #1 critical path.
+- **dc8af381-8277-44ab-95f4-6e62dba5faee** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Discharge `exists_compact_periodFundamentalDomain` using the existing `IsZLattice ℝ` instance + Mathlib ZSpan API. Reduction 3→2 sorries in this file.
+- **6992e390-050b-49fb-bb21-5fde3ccb0449** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOPDOWN reduction: discharge `holomorphicOneForm_locallyCompact_of_compactRiemannSurface` sorry-free using `holomorphicOneForm_montel B` (still-sorry but named) — translation invariance on a normed space. Reduction 3→2 sorries in CompactRiemannSurface.lean.
+- **d493c66b-a666-4b4d-a245-67db26ff4346** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_toFun_eq_zero` — chart-coefficient extraction sorry exposed by 90750074. The Liouville analytic content is now discharged; this is the chart-pullback API gap.
+- **63158306-c2f9-4f3e-a2e9-1b385e59fe48** (submitted): `Jacobian/HolomorphicForms/SectionFiberNorm.lean` — NEW file: Step 1 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.fiberNorm` and prove its continuity. Building block for the eventual `holomorphicOneForm_normedSpace_uniformOnCompact` discharge.
+- **1f7d4399-438b-4d8a-b128-dc290bde3a48** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOPDOWN on the now-narrower finite leaf `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` (Liouville application via identity-chart pullback + EntireZero black-box).
+- **f1786fa8-bbaa-4cdd-9683-b9dfbdf01797** (submitted): `Jacobian/HolomorphicForms/SectionSupNorm.lean` — NEW file: Step 2 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.supNorm` and prove 5 sup-norm properties (zero, eq_zero_iff, add_le, smul_le, neg). 40-60 LOC per recon §5 Step 2.
+- **51fd0fce-fb19-45e7-9ef1-efbf65de7ac9** (submitted): `Jacobian/HolomorphicForms/SectionMetric.lean` — NEW file: Step 3 of `848a0c88` Banach-data construction recon — define `ContMDiffSection.dist` and prove 4 MetricSpace axioms + dist_eq. ~20-50 LOC per recon §5 Step 3.
+- **8585f085-371e-4c86-b276-adadf70f6392** (submitted): `Jacobian/HolomorphicForms/SectionComplete.lean` — NEW file: Step 4 of `848a0c88` Banach-data construction recon — completeness via embedding HolomorphicOneForm ℂ X into C(X, ℂ) + closedness. Hardest step, 80-150 LOC.
+- **7e2bc288-bedc-4149-b0d8-28bcadf78ade** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — TOPDOWN refinement of 3 sorries (analyticPullback_contMDiff/_id_apply/_comp_apply). Acceptable outcomes: full proofs, companion-spec split, or survey docstring.
+- **4d56b249-931f-46e3-8ace-50d28a74ac78** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — TOPDOWN refinement of 3 sorries (analyticPushforward_contMDiff/_id_apply/_comp_apply). Mirror of PullbackBasis packet 7e2bc288.
+- **bbe527bb-28a6-4d6e-a32a-cf5f8d8df6e3** (submitted): `Jacobian/TraceDegree/AnalyticDegree.lean` — Discharge analyticPushforward_analyticPullback (anti-hack #4) via the recommended companion opaque _spec from prior survey 10e5bfbb.
+- **d1d10391-67c2-4bfc-ad21-5514a1052a55** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Discharge 2 sorries (complexTorusULift_contMDiff_up/_down). Both should be straightforward via the transported chart structure (chart-target map is identity).
+- **d967438b-5455-49c9-a8ab-08bf2e0482e8** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — TOPDOWN of 3 sorries: pathIntegralFunctional_self, analyticOfCurve_contMDiff, pathIntegralFunctional_separates_points (Abel's theorem).
+- **c5101910-f51a-4aab-8abf-d801b239642a** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — TOPDOWN of 2 sorries: periodSubgroup_isZLattice (integrality), periodSubgroup_spans_real (Riemann bilinear nondegeneracy).
+- **c7feba63-8103-4859-846f-053274534d9d** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOPDOWN refinement of holomorphicOneForm_montel (only — _normedSpace handled by 8585f085 chain).
+- **b3280ab0-41c9-46fd-82be-4eb17e7c0748** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOPDOWN refinement of 4 sorries: 2 Liouville-core leaves (chart-extraction blocker) + 2 uniformization items.
+- **d8fd495f-b92d-4c09-898b-ce7614ecfaa7** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Single-sorry packet on complexTorusULift_contMDiff_up only.
+- **b4029f72-c3d9-4629-a961-e5ade014ea84** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_id_apply only.
+- **c910ac80-7262-443d-88c1-bb55817ac27e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_contMDiff only.
+- **2bd5f151-4bab-4023-ae9e-dc614099864a** (submitted): `Jacobian/ComplexTorus/ULiftTransport.lean` — Single-sorry packet on complexTorusULift_contMDiff_down only.
+- **27c56154-66ff-4c22-a86b-e112054f19de** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on analyticPullback_comp_apply only.
+- **f280ecc6-c477-48f1-9128-3d8b7eeb0012** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_contMDiff only.
+- **271cc21e-7540-4a49-978e-a51cad18978c** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_id_apply only.
+- **6c796045-b207-4290-9d5c-5b02499ca57e** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Single-sorry packet on analyticPushforward_comp_apply only.
+- **3d5f379e-568b-4e13-8f51-c9529fdc1f36** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on pathIntegralFunctional_self only.
+- **c6c4c612-3d0a-4b8f-a792-9ee8ff6eb80f** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on analyticOfCurve_contMDiff only.
+- **4f76ac75-4b03-44bf-9c4d-e473bcbb86b8** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Single-sorry packet on pathIntegralFunctional_separates_points (Abel's theorem).
+- **99825c13-b58a-420b-b25c-ff202a2a5e70** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on the new analyticPullback_comp_spec (Claude's split target).
+- **2aab5e91-890a-447f-9729-f4872a50e23e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — Single-sorry packet on the improved analyticPullback_id_spec (= ContinuousAddMonoidHom.id _).
+- **a3b5ae84-236d-4b40-a64a-259b3f8a7752** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on the new pathIntegralFunctional_self_spec.
+- **777f976c-0e8e-4078-a345-68f015c9d7aa** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on the new analyticPushforward_contMDiff_spec.
+- **3264c622-6675-4b18-94f3-9ec50f130185** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on analyticOfCurve_contMDiff_spec.
+- **7f273ec8-537c-4bc9-a159-3098725b12f7** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — Replacement packet on pathIntegralFunctional_separates_points_spec (Abel's theorem deep content).
+- **09a7e39c-5748-4c12-a2a0-55b2039d52c7** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on analyticPushforward_id_spec.
+- **90fc4a81-0f3c-4a7f-a09a-34f8e16b532b** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — Replacement packet on analyticPushforward_comp_spec.
+- **f914a263-801f-4dbc-8671-bc6d67a763bf** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — contMDiff_continuousAddMonoidHom_complexTorus general lemma.
+- **c69fcd88-2cb2-4710-bef0-200e1a2cd351** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_id_spec respecting basisDualPullback structure.
+- **369f3f7b-4879-4ef1-9994-d46784537914** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_contMDiff via complex-torus smoothness lemma.
+- **16277f52-39bc-4f28-9860-8d771687c3ad** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — quotientMk_contMDiff_spec via charted-space machinery.
+- **65001239-6493-4b88-8f4d-e21c6373addd** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — analyticPushforward_id_eq deeper split.
+- **654d5071-ee04-446c-a69e-0d584517149e** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_contMDiff_spec gap analysis.
+- **7f3ec297-cad6-409f-bc0d-f4c0dc196fd2** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — analyticPullback_mk_eq + basisDualPullback_comp paired packet.
+- **e3dcd529-c13e-4409-8236-3c4fd5474c11** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — analyticPushforward_mk_spec descent compatibility.
+- **0a5f74a8-0259-4d37-b6f3-1690c29cac19** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — PeriodFunctional sorry (long-blocked).
+- **03715a4d-0570-47fe-b3a7-bae31ecca811** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — GenusZeroClassification sorry (long-blocked).
+- **05100f76-7d7d-4798-bb7c-c35c7ee7cabb** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_id (NEW from local _id_spec split).
+- **b7799fc9-ad77-40de-9b32-42f2d735ac82** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id (NEW from local _id_eq split).
+- **6b2f47f1-c0fe-4313-a950-57525866b53e** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_separates_points_spec (Abel anti-hack #2) — orphan packet.
+- **403c9581-217e-4df5-a9b7-656409a0d9dd** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (after Claude's bundle refactor closed _mk_eq).
+- **5f052643-eee1-47d4-bce2-a3717c488d8d** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec — orphan packet (covariant trace-lift composition).
+- **e19361c4-97c0-44bb-a8e4-1036aadfee16** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — GenusZeroClassification sorry (Aristotle's pick, not chart-blocked).
+- **bbca4cae-6ca6-4d1a-90b6-6bab64f6b71e** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Second PeriodFunctional sorry (whichever 0a5f74a8 didn't pick).
+- **58eb31f0-9b8c-411d-9087-0ff130a58ec8** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — Step 5: holomorphicOneForm_normedSpace_uniformOnCompact assembly (after 8585f085 lands).
+- **360a05bf-5522-4d96-8e44-fb68e19ad707** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — Specifically L320: analyticGenus ℂ X = analyticGenus ℂ (OnePoint ℂ).
+- **fbfe1498-210b-4931-a093-788d14de2cb0** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — Specifically L591: Nonempty (X ≃ₜ Metric.sphere ...) sphere homeomorphism.
+- **e7250841-96e4-4d65-9be5-81dcaf1ae393** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_montel_subseq_tendsto (NEW from Montel TOPDOWN split): analytic core — Cauchy estimates + Arzelà–Ascoli + Weierstrass.
+- **ba57741f-3fef-4160-b252-1af4ea559094** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (NEW from subagent TOPDOWN split).
+- **dc58e548-c453-4335-a57c-e739df284174** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec_apply_at (NEW from subagent TOPDOWN split).
+- **de8822fb-8ae9-4c26-a026-213c17802e28** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_fiberNorm_continuous (NEW from 58eb31f0 split).
+- **bed365ae-8a56-49fd-a9c8-432d36d0e7de** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_completeSpace (NEW from 58eb31f0 split).
+- **20995679-1911-4bcf-b0e9-12b6b6bc29a3** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_montel_subseq_isCauchy (NEW from Montel TOPDOWN split).
+- **8a8ea66d-a01e-4317-a3ea-0ce135ae485c** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_closedBall_totallyBounded (NEW from 20995679 split).
+- **706bf2e2-1e99-48ee-8926-1eb995019743** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_cauchySeq_tendsto (NEW from a8db8a8f split).
+- **76c01cf9-02c3-4a37-9a60-f983a96bdf3e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_finite_eq_zero (Liouville finite leaf — 1:1 coverage).
+- **c2a57d71-73b5-4669-8892-78e24ec878cb** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_infty_eq_zero (Liouville infty leaf — 1:1 coverage).
+- **88effa1c-9abb-4391-99d2-a277c7e05c39** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneFormLinearEquivOfHomeoSphere (uniformization-lite — 1:1 coverage).
+- **0cfa1878-064e-49dd-9d39-acba1d18adfc** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — periodVectors_linearIndependent (Riemann bilinear — 1:1 coverage).
+- **ad278fcd-6c7c-476a-ba06-b5fb15989e6b** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (replacement for rejected 403c9581 — 1:1 coverage).
+- **9b4998a5-7fd1-468e-91d5-ae2861eec0f6** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (renewed attempt after ba57741f docstring integration).
+- **3b7e5dac-a8b0-4863-be44-462d2f09c961** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp_spec_apply_at (renewed attempt after dc58e548 docstring integration).
+- **dc2c19e1-76ba-4fab-ba91-3a996a15add6** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_entire (NEW from 76c01cf9 split).
+- **659de1fb-a95c-4d0d-8cd9-99925f04f931** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_tendsto_zero (NEW from 76c01cf9 split).
+- **af6e2c7a-1412-4823-96fb-eade7b78c3ca** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — subsingleton_holomorphicOneForm_of_homeo_sphere (NEW from 88effa1c split).
+- **e227f244-521b-4105-9744-25d6d25338f3** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — symplectic_basis_of_cycles (NEW from 0cfa1878 split).
+- **0de5af2a-87b1-4fff-8721-c2e5136654d6** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — period_vectors_linearIndependent_of_symplectic (NEW from 0cfa1878 split).
+- **a0bddfd5-c8f6-476a-ae89-47571f269525** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (renewed after ad278fcd docstring integration).
+- **921772f5-cea4-429c-a2c9-3d7bd55f13b6** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — h1_basis_of_compact_riemann_surface (NEW from e227f244 split).
+- **4d0d28d6-6d52-4e7e-b1ab-16afe7cf0180** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisDualPullback_comp (renewed after a0bddfd5 no-op).
+- **3683ef39-f83c-41e3-98ed-a1ed2dd6f2cd** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_id_apply_at (renewed after 9b4998a5 deferred).
+- **362e259f-b8cf-4522-a55f-de60211c801d** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — pushforwardTraceLift_comp (NEW from af653549 split).
+- **9c222f2d-2be3-499f-a8a6-9fe263bec7f4** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — period_vectors_linearIndependent_of_symplectic (renewed after 0de5af2a stale).
+- **6f6f015d-7c0d-4cba-9182-07300e8c9be8** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — basisAnalyticPushforwardBundle_id_traceLift (NEW from a8778c20 bundle-primitive split).
+- **f3a8e713-ba50-4ec6-b31b-ca49dd3e9460** (submitted): `Jacobian/TraceDegree/PushforwardBasis.lean` — basisAnalyticPushforwardBundle_comp_traceLift (NEW from a1ce4200 bundle-primitive split).
+- **6547fde4-4483-430f-b567-5cb1f81b0c18** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisAnalyticPullbackBundle_id_dualPullback (NEW from PullbackBasis bundle-primitive split).
+- **86bef3e0-0fa0-40b4-83ce-700cc19b847e** (submitted): `Jacobian/TraceDegree/PullbackBasis.lean` — basisAnalyticPullbackBundle_comp_dualPullback (NEW from PullbackBasis bundle-primitive split).
+- **632f36aa-6152-40dd-ad86-582d47e6b2db** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_fiberNorm_continuous — fresh packet for previously uncovered sorry.
+- **fc057985-4072-43e4-b4a1-668153917ba7** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_supNorm_cauchySeq_tendsto — fresh packet for previously uncovered sorry.
+- **6751b37c-9af7-4757-a5cc-9602ff3603d9** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — holomorphicOneForm_closedBall_totallyBounded — fresh packet for previously uncovered sorry.
+- **2a5eea2c-0ce6-4316-b857-a77068d82713** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_entire — fresh packet for previously uncovered sorry.
+- **47166a51-62ae-40a6-a4a1-5086a7a4614e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_coeff_tendsto_zero — fresh packet for previously uncovered sorry.
+- **50ed9388-fdd1-4456-9c83-387c8f83ab3d** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — holomorphicOneForm_onePointCx_toFun_infty_eq_zero — Liouville-infty leaf, fresh packet.
+- **edca80d7-307a-490a-a343-fa6e4c4b92f7** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — subsingleton_holomorphicOneForm_of_homeo_sphere — uniformization-lite, fresh packet.
+- **4f698084-46b4-4a5d-970f-368a0225c3f4** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — genus_zero_homeomorph_onePointCx — uniformization core. Codex also racing this in worktree.
+- **303edecd-6419-49e5-8994-0200b5f66fe7** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — periodSubgroup_isZLattice — discreteness of basis-aligned period subgroup. TOPDOWN plan in docstring.
+- **263e138e-1e3c-4281-80e3-66618f709eae** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — h1_free_of_compact_surface — fresh packet for previously uncovered sorry (NEW from 921772f5 split).
+- **c17e5dd9-80d5-4312-b8f0-673890bdc881** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — analyticGenus_eq_topologicalGenus — submitted on cap-recovery.
+- **7ceff781-61d0-4e33-8ce4-7edbac690bb3** (submitted): `Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean` — pathIntegralFunctional_separates_points_spec — submitted on cap-recovery.
+- **56e6ac87-4c37-4c7a-b5b5-8d3ef369b0d6** (submitted): `Jacobian/Blueprint/Sec05/RiemannHurwitzDeg1.lean` — 2 sorries — placeholder-refinement framing: refine local SurfaceMap to bundle ramification_satisfies_riemann_hurwitz invariant.
+- **db7d56a1-84a9-4ad1-82ad-7ae2fa13a102** (submitted): `Jacobian/StageA/EdgeWordTietze.lean` — 1 sorry (handleSwap_grouping_inductive_step). Refine local handleSwap_strictly_decreases_mu (True := trivial placeholder) into real content.
+- **31175f0a-6e6a-4b9a-9e1a-5b1287c8d9e2** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — ID 4: singular simplex integration
+- **c2cf69e5-b4a5-44b6-972a-8db7a66cebce** (submitted): `Jacobian/Periods/Polygon4gCellular.lean` — prove polygon4g_succ_hurewicz_iso_freeZ
+- **421a90df-fb9a-46d0-82e3-25d40c3b418a** (submitted): `Jacobian/TraceDegree/PiecewiseC1Instance.lean` — prove instPiecewiseC1PathRegularity
+- **0006f3e9-5842-40e9-b8fd-e77d39667a57** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove localInverseAt_holomorphic
+- **7bd649ad-2b68-43fb-9cc7-a119925825e9** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove localTraceAtRegularValue_holomorphic
+- **b4654c4b-01ec-4fe7-bbcf-9c976473ea72** (submitted): `Jacobian/TraceDegree/TraceDefinition.lean` — prove trace_pullback_at_regular_value
+- **0050e6c0-3326-4d75-9c21-58f79bdccfce** (submitted): `Jacobian/Blueprint/Sec02/MontelCompactness.lean` — prove montel_pointwise_extraction
+- **1259f3fa-872c-4ae5-8c0a-634e23cac4d9** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — prove chartLift_contDiffOn_assumption
+- **3fec87fa-3619-4acc-87d5-a82ae74293e5** (submitted): `Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean` — prove chartedFormPullback_continuous_assumption
+- **1b11a60f-19e5-455d-beb7-a5baadc0ac3c** (submitted): `Jacobian/HolomorphicForms/CMfldBumpStub.lean` — prove cMfldBump_apply_self
+- **da91941b-89cc-46b4-86a9-156dcc2d8624** (submitted): `Jacobian/HolomorphicForms/CMfldBumpStub.lean` — prove cMfldBump_eq_one_near
+- **1a50bfc4-e90d-4c9d-8891-3e0994b48b7e** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_arzela_ascoli_refine23
+- **eb62762d-9750-4cf4-a8cd-1d2a6c361dd6** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
+- **d0717941-5047-454b-8fd5-68382a67e40d** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove closedForm_pathIntegral_primitive_exists
 
 ## Layer status
 
