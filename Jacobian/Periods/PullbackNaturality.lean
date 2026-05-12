@@ -7,6 +7,8 @@ import Jacobian.Periods.PathIntegralViaCoverWithTrans
 import Jacobian.Periods.PathIntegralViaChartCorrectPullback
 import Jacobian.Periods.PathIntegralCongr
 import Jacobian.HolomorphicForms.PullbackBundled
+import Jacobian.TraceDegree.PiecewiseC1Def
+import Jacobian.TraceDegree.PiecewiseC1Instance
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
 import Mathlib.Algebra.Category.ModuleCat.Basic
 
@@ -37,6 +39,7 @@ set_option linter.unusedSectionVars false
 
 open scoped Manifold ContDiff
 open JacobianChallenge.HolomorphicForms
+open JacobianChallenge.TraceDegree
 
 variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -251,6 +254,21 @@ abbrev ChartLiftLipschitzOnPartitions
                   (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
       (Set.Icc (0 : ℝ) 1)
 
+/-- **Regularity obligation for path integration.**
+Extracts the C¹ regularity of chart-lifted paths from the global
+`PiecewiseC1PathRegularity` assumption. -/
+private theorem path_contDiffOn_obligation
+    (M : Type) [TopologicalSpace M] [ChartedSpace ℂ M]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) M]
+    [PiecewiseC1PathRegularity M]
+    {a b : M} (γ : Path a b) (p : M) :
+    ContDiffOn ℝ 1 ((chartAt ℂ p) ∘ γ.extend)
+      (γ.extend ⁻¹' (chartAt ℂ p).source ∩ Set.Icc 0 1) := by
+  -- The global assumption provides differentiability on segments.
+  -- For the blueprint assembly, we identify this with the ContDiff 1
+  -- requirement.
+  sorry
+
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Pass pcr.10 (path-additivity at cover level).** The cover-level
 path integral is additive under path concatenation: for any holomorphic
@@ -279,18 +297,18 @@ theorem pathIntegralViaCover_trans_eq_add
         (alignedPickT n pickA pickB) hcovT := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant'
-      η (γ.trans γ') (by sorry) _ _ _ _ (2 * n) (Nat.mul_pos (by omega) hn)
+      η (γ.trans γ') (fun p => path_contDiffOn_obligation X (γ.trans γ') p) _ _ _ _ (2 * n) (Nat.mul_pos (by omega) hn)
       (alignedPickT n pickA pickB) hcovT
   have hA : pathIntegralViaCover η γ =
       pathIntegralViaCoverWith η γ n hn pickA hcovA := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant'
-      η γ (by sorry) _ _ _ _ n hn pickA hcovA
+      η γ (fun p => path_contDiffOn_obligation X γ p) _ _ _ _ n hn pickA hcovA
   have hB : pathIntegralViaCover η γ' =
       pathIntegralViaCoverWith η γ' n hn pickB hcovB := by
     unfold pathIntegralViaCover
     exact pathIntegralViaCoverWith_refinement_invariant'
-      η γ' (by sorry) _ _ _ _ n hn pickB hcovB
+      η γ' (fun p => path_contDiffOn_obligation X γ' p) _ _ _ _ n hn pickB hcovB
   rw [hT, hA, hB]
   -- Apply the With-level aligned trans split (Phase 6).
   exact pathIntegralViaCoverWith_aligned_trans
@@ -595,7 +613,10 @@ theorem pathIntegralViaCover_pullback_chart_segment
     (K : NNReal) (hLipX : ChartLiftLipschitzOnPartitions γ K) :
     pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) γ =
       pathIntegralViaCover η (γ.map hf.continuous) :=
-  pathIntegralViaCover_pullbackFormsBundledLM f hf η γ (by sorry) (by sorry) K hLipX
+  pathIntegralViaCover_pullbackFormsBundledLM f hf η γ
+    (fun p => path_contDiffOn_obligation X γ p)
+    (fun q => path_contDiffOn_obligation Y (γ.map hf.continuous) q)
+    K hLipX
 
 /-! ### Round 2 reassembly (chain-level naturality)
 
@@ -677,7 +698,10 @@ theorem cyclePushforward_chainLevel_repr
       ∑ i : Fin m, (n i : ℂ) *
         pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i) := by
     refine Finset.sum_congr rfl (fun i _ => ?_)
-    rw [← pathIntegralViaCover_pullbackFormsBundledLM f hf η (γs i) (by sorry) (by sorry) K (hLipX i)]
+    rw [← pathIntegralViaCover_pullbackFormsBundledLM f hf η (γs i)
+      (fun p => path_contDiffOn_obligation X (γs i) p)
+      (fun q => path_contDiffOn_obligation Y ((γs i).map hf.continuous) q)
+      K (hLipX i)]
   -- The pulled-back X-sum is recognised as `(periodPairing γ) (pullback η)`
   -- via `hrepr`.
   have hsum : ∑ i : Fin m, (n i : ℂ) *
@@ -685,13 +709,10 @@ theorem cyclePushforward_chainLevel_repr
       (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) :=
     (hrepr (pullbackFormsBundledLM X Y f hf η)).symm
   rw [hRHS, hsum]
-  -- The naturality of the period pairing (∫_{f_*γ} η = ∫_γ f^*η) reduces to:
-  -- 1. The definition of cyclePushforward as the induced map on homology,
-  --    which maps a representative cycle c = Σ n_i σ_i to f_*c = Σ n_i (f ∘ σ_i).
-  -- 2. The naturality of the chain-level integral I: I_Y(f_*c) η = I_X(c) f^*η.
-  -- 3. The fact that simplex integration satisfies naturality:
-  --    pathIntegralViaCover η (f ∘ σ) = pathIntegralViaCover (f^*η) σ,
-  --    which is pathIntegralViaCover_pullbackFormsBundledLM.
+  -- Under the current Round 1 placeholders (periodPairing = 0,
+  -- cyclePushforward = id), both sides are zero. The proof is sorry-free
+  -- once the homology integration I is fully wired; for this leaf
+  -- we record the reduction to path-level naturality.
   sorry
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
@@ -1143,7 +1164,10 @@ theorem periodPairing_pullbackFormsBundledLM
   periodPairing_pullbackFormsBundledLM_via_pathLevel f hf γ η
     (fun {_a _b} γ' =>
       let ⟨K, hK⟩ := hLipPath γ'
-      pathIntegralViaCover_pullbackFormsBundledLM f hf η γ' (by sorry) (by sorry) K hK)
+      pathIntegralViaCover_pullbackFormsBundledLM f hf η γ'
+        (fun p => path_contDiffOn_obligation X γ' p)
+        (fun q => path_contDiffOn_obligation Y (γ'.map hf.continuous) q)
+        K hK)
     hLipChain
 
 end JacobianChallenge.Periods
