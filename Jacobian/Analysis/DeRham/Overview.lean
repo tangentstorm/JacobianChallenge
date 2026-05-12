@@ -20,6 +20,14 @@ Independent build target.  Real-typed `sorry` declarations on top of
 `deRham_theorem`).
 -/
 
+import Jacobian.StageB.DifferentialForms
+import Jacobian.StageB.DeRhamComplex
+import Jacobian.StageB.DeRhamComparison
+import Mathlib.AlgebraicTopology.SingularHomology.Basic
+
+/-!
+# R4 — De Rham theorem
+...
 namespace JacobianChallenge.Analysis.DeRham
 
 open scoped Manifold
@@ -33,16 +41,17 @@ variable {E : Type u} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 /-! ### Singular cohomology placeholder -/
 
-/-- *Forward declaration.*  Singular cohomology of `M` in degree `k`
-with `ℂ` coefficients.  Mathlib has singular *homology*; the
-`ℂ`-cohomology variant is a project-side construction. -/
-def singularHC (_M : Type) [TopologicalSpace _M] (_k : ℕ) : Type := PUnit
+/-- Singular cohomology of `M` in degree `k`
+with `ℂ` coefficients, defined as the dual of singular homology. -/
+def singularHC (M : Type) [TopologicalSpace M] (k : ℕ) : Type _ :=
+  (SingularHomology M k →ₗ[ℤ] ℂ)
 
-instance (k : ℕ) : AddCommGroup (singularHC M k) := by
-  unfold singularHC; infer_instance
+noncomputable instance (k : ℕ) : AddCommGroup (singularHC M k) :=
+  LinearMap.addCommGroup
 
-instance (k : ℕ) : Module ℂ (singularHC M k) := by
-  unfold singularHC; infer_instance
+noncomputable instance (k : ℕ) : Module ℂ (singularHC M k) :=
+  LinearMap.module
+
 
 /-! ### Headline (R4) -/
 

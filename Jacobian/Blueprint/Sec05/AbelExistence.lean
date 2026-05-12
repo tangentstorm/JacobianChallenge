@@ -44,26 +44,24 @@ is `DECOMPOSE`; this file is the decomposition target.
   `\lean{...}` annotations in the blueprint TeX rather than carrying
   parallel placeholder definitions. -/
 
+import Jacobian.AnalyticJacobian.Defs
+import Jacobian.HolomorphicForms.VanishingOrder
+import Jacobian.HolomorphicForms.AnalyticLocalMapping
+
+/-! Blueprint stubs: `thm:abel-existence` (sec05) sub-leaves
+...
 namespace JacobianChallenge.Blueprint
+
+open JacobianChallenge.HolomorphicForms
+open JacobianChallenge.AnalyticJacobian
 
 /-- **Sub-leaf 1 (TRIVIAL).** Degree-zero divisors on a compact
 connected Riemann surface `X`.
 
 Mathematical definition (per `ref/plans/abel-existence.md`):
-`Div0 X := {D : Divisor X // D.degree = 0}`. The eventual production
-construction will use `Jacobian/Blueprint/Sec01/Divisor.lean`
-(`Blueprint.Divisor`) and
-`Jacobian/Blueprint/Sec01/DivisorDegree.lean`
-(`Blueprint.Divisor.degree`); together they give the subtype carrying
-the deg-0 constraint.
-
-Currently a `Unit` placeholder so downstream stubs (`AJ`,
-`AJ_principal_zero`, …) can be type-checked without importing the
-Sec01 divisor scaffolding. The placeholder is *intentional*: this
-file contains no `sorry` for the TRIVIAL/SHORT leaves and `lake build
-Jacobian.Blueprint.Sec05.AbelExistence` succeeds without pulling in
-Mathlib. -/
-def Div0 (_X : Type) : Type := Unit
+`Div0 X := {D : Divisor X // D.degree = 0}`. -/
+def Div0 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X] : Type _ :=
+  {D : X → ℤ // Set.Finite {x | D x ≠ 0} ∧ (Finsupp.sum (Finsupp.onFinite {x | D x ≠ 0} (by sorry)) (fun _ n => n) : ℤ) = 0}
 
 /-- **Sub-leaf 2 (SHORT).** The Abel–Jacobi map
 `AJ : Div⁰(X) → Jac(X)`.
@@ -71,120 +69,71 @@ def Div0 (_X : Type) : Type := Unit
 Mathematical definition: pick a base point `p₀ ∈ X` and a basis
 `ω₁, …, ω_g` of holomorphic 1-forms; for `D = ∑ nᵢ [pᵢ] ∈ Div⁰(X)`,
 set `AJ(D) := ∑ nᵢ ∫_{p₀}^{pᵢ} ω  (mod Λ)` where `Λ` is the period
-lattice. Path independence on `Div⁰` follows from `deg D = 0` plus
-homotopy invariance of integrals of closed forms (Stokes); see
-production-side `JacobianChallenge.AbelJacobi.analyticOfCurve` and
-`Jacobian/Periods/PeriodFunctional.lean` for the eventual real
-plumbing.
-
-Currently the identity `Unit → Unit`. The eventual real signature is
-an additive group hom `Div0 X →+ Jac X` into the analytic Jacobian
-(`Jacobian/AnalyticJacobian/AnalyticJacobianType.lean`).
-
-Path-independence is a separate downstream obligation tracked under
-`lem:aj-path-independence` (already discharged production-side as
-`AbelJacobi.analyticOfCurve`, see `ref/scope-out.md` sec05 row 1). -/
-def AJ (X : Type) (_D : Div0 X) : Unit := ()
+lattice. -/
+noncomputable def AJ (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [ChartedSpace ℂ X] -- redundant but keeps the signature simple
+    (D : Div0 X) : AnalyticJacobianGroup ℂ X :=
+  sorry
 
 namespace AbelExistence
 
+open JacobianChallenge.HolomorphicForms
+
 /-! ## Supporting placeholders for the MEDIUM/HARD leaves
-
-`MeromorphicFunction X`, `divisor f`, and `IsPrincipal D` are needed
-to type-check leaves 3–5. Like `Div0` and `AJ`, they are deliberate
-`Unit`/`Prop` placeholders so this file can be compiled without
-Mathlib; the eventual real definitions live in
-`Mathlib.Analysis.Meromorphic.Divisor` (`MeromorphicOn`,
-`MeromorphicOn.divisor`) and the Sec01 scaffolding
-`JacobianChallenge.Blueprint.MeromorphicFunction` (the *structural*
-form in `Jacobian/Blueprint/Sec01/MeromorphicFunctionStructure.lean`).
-
-These helpers are isolated in the nested `AbelExistence` namespace so
-they do not collide with the Sec01 `MeromorphicFunction` structure
-that already lives at `JacobianChallenge.Blueprint.MeromorphicFunction`. -/
-
+...
 /-- Placeholder for the type of meromorphic functions on `X`, scoped
-to the Sec05 Abel-existence stubs. The real definition will use
-Mathlib's `MeromorphicOn` from `Mathlib.Analysis.Meromorphic.Basic`
-(or the structural Sec01 form
-`JacobianChallenge.Blueprint.MeromorphicFunction`) once that chain
-is wired up. -/
-def MeromorphicFunction (_X : Type) : Type := Unit
+to the Sec05 Abel-existence stubs. -/
+def MeromorphicFunction (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X] : Type :=
+  {f : X → OnePoint ℂ // IsHolomorphic f}
 
 /-- Placeholder for the divisor `(f) := ∑_{p ∈ X} ord_p(f) ⋅ [p]`
-of a meromorphic function. The real construction uses
-`MeromorphicOn.divisor` from
-`Mathlib.Analysis.Meromorphic.Divisor`; the resulting divisor lies
-in `Div0 X` because the sum of orders of a meromorphic function on
-a compact Riemann surface is zero (residue theorem applied to
-`df/f`, see `thm:principal-degree-zero` in `ref/scope-out.md`). -/
-def divisor {X : Type} (_f : MeromorphicFunction X) : Div0 X := ()
+of a meromorphic function. -/
+noncomputable def divisor {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_f : MeromorphicFunction X) : Div0 X :=
+  sorry
 
 /-- Placeholder predicate: a divisor is **principal** iff it is the
-divisor of some meromorphic function `f ≠ 0`. The real definition
-will additionally require `f ≠ 0`; here, with `MeromorphicFunction`
-a `Unit` placeholder, the nonvanishing constraint is suppressed.
-
-`IsPrincipal D := ∃ f : MeromorphicFunction X, divisor f = D`. -/
-def IsPrincipal {X : Type} (D : Div0 X) : Prop :=
+divisor of some meromorphic function `f ≠ 0`. -/
+def IsPrincipal {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (D : Div0 X) : Prop :=
   ∃ f : MeromorphicFunction X, divisor f = D
 
 /-! ## MEDIUM/HARD leaves -/
 
 /-- **Sub-leaf 3 (MEDIUM).** The Abel–Jacobi map vanishes on
 principal divisors:
-`AJ (divisor f) = 0` for every meromorphic `f` on `X`.
-
-**Proof sketch (per `ref/plans/abel-existence.md`).** Apply the
-residue theorem (equivalently, Stokes) to the logarithmic
-derivative `df/f`. The integral of `df/f` along any cycle in
-`X ∖ supp(divisor f)` is `2πi ⋅ ∑ residues = 0`. Restricted to a
-homology basis, this means each period of the divisor pulls back
-to a lattice element, i.e. `AJ (divisor f) = 0` in `Jac X`.
-
-The Mathlib hooks are
-`Mathlib.Analysis.Meromorphic.Divisor.MeromorphicOn.divisor` for
-the source side and a not-yet-formalised residue/Stokes statement
-on a compact Riemann surface (cf. `thm:stokes-on-rs-with-boundary`
-in `ref/scope-out.md`) for the target side. -/
-theorem AJ_principal_zero (X : Type) (f : MeromorphicFunction X) :
-    AJ X (divisor f) = () := by
-  rfl
+`AJ X (divisor f) = 0` for every meromorphic `f` on `X`. -/
+theorem AJ_principal_zero (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (f : MeromorphicFunction X) :
+    AJ X (divisor f) = 0 := by
+  sorry
 
 /-- **Sub-leaf 4 (HARD).** Existence direction of Abel's theorem:
 if `AJ D = 0` for a degree-zero divisor `D`, then `D` is the
-divisor of some meromorphic function on `X`.
-
-**Proof sketch (per `ref/plans/abel-existence.md`).** Either
-(a) construct `f` via the Riemann theta function:
-`f(p) := θ(AJ([p] - [p₀]) - e)` for a suitable vector `e`
-depending on `D`, then verify `divisor f = D` using the heat-kernel
-properties of `θ`; or (b) cut `X` along a symplectic homology basis
-to obtain a fundamental polygon, define a multivalued logarithmic
-primitive, exponentiate, and check well-definedness using
-`AJ D = 0` (the period lattice obstruction vanishes). Both routes
-need the period-lattice / theta-function infrastructure listed
-**ABSENT** in the plan's Mathlib inventory. ≤250 LOC of glue once
-the primitives land. -/
-theorem existence_of_f (X : Type) (D : Div0 X) (_h : AJ X D = ()) :
+divisor of some meromorphic function on `X`. -/
+theorem existence_of_f (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (D : Div0 X) (h : AJ X D = 0) :
     ∃ f : MeromorphicFunction X, divisor f = D := by
-  cases D
-  exact ⟨(), rfl⟩
+  sorry
 
 /-- **Sub-leaf 5 (MEDIUM).** Abel's theorem assembled:
-`D` is principal iff `AJ D = 0`.
-
-**Proof.** The forward direction unpacks `IsPrincipal` to extract
-`f` with `divisor f = D` and applies `AJ_principal_zero`. The
-backward direction applies `existence_of_f` to obtain the witness.
-This assembly is purely propositional and matches the closed-form
-proof in §4 of `ref/plans/abel-existence.md`. -/
-theorem principal_iff_AJ_zero (X : Type) (D : Div0 X) :
-    IsPrincipal D ↔ AJ X D = () := by
+`D` is principal iff `AJ D = 0`. -/
+theorem principal_iff_AJ_zero (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (D : Div0 X) :
+    IsPrincipal D ↔ AJ X D = 0 := by
   refine ⟨fun ⟨f, hf⟩ => ?_, fun h => existence_of_f X D h⟩
-  -- Forward: `D = divisor f` so `AJ X D = AJ X (divisor f) = 0` by `AJ_principal_zero`.
-  exact hf ▸ AJ_principal_zero X f
+  rw [← hf]
+  exact AJ_principal_zero X f
 
 end AbelExistence
+
+end JacobianChallenge.Blueprint
+
 
 end JacobianChallenge.Blueprint

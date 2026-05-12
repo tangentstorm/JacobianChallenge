@@ -45,6 +45,17 @@ namespace JacobianChallenge.Blueprint
 namespace AbelExistence
 namespace RiemannHurwitzDeg1
 
+import Jacobian.HolomorphicForms.AnalyticGenus
+import Jacobian.HolomorphicForms.AnalyticLocalMapping
+
+/-! Blueprint stub: `thm:riemann-hurwitz-deg1` in
+`tex/sections/05-abel-jacobi-map.tex` (sec05 row of
+`ref/scope-out.md`, classified **DECOMPOSE**).
+...
+namespace RiemannHurwitzDeg1
+
+open JacobianChallenge.HolomorphicForms
+
 /-! ## Supporting placeholders
 
 `SurfaceMap X Y` records a holomorphic map between two surfaces
@@ -52,27 +63,23 @@ together with its degree and the integer degree of its ramification
 divisor; `genus X : Nat` is the genus of `X`. All `Unit` / `Nat` /
 `Int` placeholders so this file compiles Mathlib-free. -/
 
-/-- Placeholder for the genus of a compact connected Riemann
-surface. The eventual real definition is the dimension of the
-holomorphic 1-forms on `X` (cf.
+/-- The genus of a compact connected Riemann surface, defined as the
+dimension of the holomorphic 1-forms on `X` (cf.
 `JacobianChallenge.HolomorphicForms.genus` and the Sec02
 `thm:fd-holomorphic-one-forms` chain). -/
-def genus (_X : Type) : Nat := 0
+def genus (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X] : Nat :=
+  analyticGenus ℂ X
 
 /-- Placeholder bundle: a holomorphic map `f : X → Y` together with
-its branched degree and the integer degree of its ramification
-divisor. The eventual real shape is a structure carrying the
-`HolomorphicMap` plus the proven invariants
-(`branchedDegree`, `ramificationDivisor.degree`).
-
-The `hurwitz` field records the Riemann–Hurwitz identity
-`2 g_X − 2 = d · (2 g_Y − 2) + deg R` as an axiom on the data.
-The eventual real proof derives this from a lifted triangulation
-and Euler-characteristic comparison (cf.
-`RiemannHurwitzViaEulerChar.lean`); here it is recorded as data so
-that downstream assembly leaves (`ramification_zero_of_deg_one`,
-`riemann_hurwitz_deg1`) can be discharged without `sorry`. -/
-structure SurfaceMap (X Y : Type) where
+...
+structure SurfaceMap (X Y : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    [TopologicalSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    [FiniteDimensionalHolomorphicOneForms ℂ Y] where
   /-- Branched degree `d := deg f`. -/
   degree : Nat
   /-- Integer degree of the ramification divisor `R`,
@@ -91,7 +98,13 @@ structure SurfaceMap (X Y : Type) where
 `2 g_X − 2 = d · (2 g_Y − 2) + deg R`.
 
 Discharged from the `hurwitz` field of `SurfaceMap`. -/
-theorem riemann_hurwitz_formula (X Y : Type) (f : SurfaceMap X Y) :
+theorem riemann_hurwitz_formula (X Y : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    [TopologicalSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    [FiniteDimensionalHolomorphicOneForms ℂ Y]
+    (f : SurfaceMap X Y) :
     (2 : Int) * (genus X : Int) - 2 =
       (f.degree : Int) * (2 * (genus Y : Int) - 2)
         + f.ramificationDivisorDegree :=
@@ -101,14 +114,17 @@ theorem riemann_hurwitz_formula (X Y : Type) (f : SurfaceMap X Y) :
 compact connected Riemann surfaces has zero ramification divisor.
 
 **Proof.** From the Riemann–Hurwitz identity with `d = 1`:
-`2 g_X − 2 = 1 · (2 g_Y − 2) + deg R`, so `deg R = 0`.
-(With the placeholder `genus _ = 0`, this reduces to
-`-2 = -2 + deg R`.) -/
-theorem ramification_zero_of_deg_one (X Y : Type) (f : SurfaceMap X Y)
+`2 g_X − 2 = 1 · (2 g_Y − 2) + deg R`, so `deg R = 0`. -/
+theorem ramification_zero_of_deg_one (X Y : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    [TopologicalSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    [FiniteDimensionalHolomorphicOneForms ℂ Y]
+    (f : SurfaceMap X Y)
     (hdeg : f.degree = 1) :
     f.ramificationDivisorDegree = 0 := by
   have hRH := f.hurwitz
-  simp [genus, hdeg] at hRH
   omega
 
 /-- **Sub-leaf 3 (assembly).** Riemann–Hurwitz deg-1
@@ -121,7 +137,13 @@ Riemann–Hurwitz formula:
   `2 g_X − 2 = 1 · (2 g_Y − 2) + 0 = 2 g_Y − 2`,
 
 then divide by `2`. Discharged by `omega` over `Int`. -/
-theorem riemann_hurwitz_deg1 (X Y : Type) (f : SurfaceMap X Y)
+theorem riemann_hurwitz_deg1 (X Y : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    [TopologicalSpace Y] [ChartedSpace ℂ Y]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+    [FiniteDimensionalHolomorphicOneForms ℂ Y]
+    (f : SurfaceMap X Y)
     (hdeg : f.degree = 1) :
     genus X = genus Y := by
   have hRH := riemann_hurwitz_formula X Y f
@@ -130,6 +152,7 @@ theorem riemann_hurwitz_deg1 (X Y : Type) (f : SurfaceMap X Y)
   -- hRH : 2 * (genus X : Int) − 2 = 1 * (2 * (genus Y : Int) − 2) + 0
   have h : (genus X : Int) = (genus Y : Int) := by omega
   exact_mod_cast h
+
 
 end RiemannHurwitzDeg1
 end AbelExistence

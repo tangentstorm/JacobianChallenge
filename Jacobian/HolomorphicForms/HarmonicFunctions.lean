@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.Isothermal
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.DeRhamCohomology
+import Jacobian.HolomorphicForms.HolomorphicMap
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.InnerProductSpace.LaxMilgram
 import Mathlib.Topology.Algebra.Order.Field
@@ -9,6 +10,8 @@ open scoped Manifold
 open Complex
 
 namespace JacobianChallenge.HolomorphicForms
+
+open HolomorphicMap
 
 /-- The Hodge star operator on 1-forms of a Riemann surface.
 On a 1-manifold, the Hodge star maps 1-forms to 1-forms (specifically,
@@ -19,25 +22,32 @@ def HodgeStar {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   ω
 
 /-- A function is harmonic if it is annihilated by the Laplace-Beltrami operator.
-Δ f = d*df = 0. -/
+Δ f = d*df = 0.
+On a Riemann surface, this is equivalent to locally being the real part of
+a holomorphic function. -/
 def IsHarmonic {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    (g : CompatibleMetric X) (f : X → ℝ) : Prop :=
-  -- Placeholder for d*df = 0
-  True
+    (_g : CompatibleMetric X) (f : X → ℝ) : Prop :=
+  ∀ p : X, ∃ (f_holo : X → ℂ), IsHolomorphicAt f_holo p ∧
+    ∀ᶠ x in 𝓝 p, (f_holo x).re = f x
 
 /-- A real function has a dipole singularity at P if it locally behaves like Re(1/z). -/
 def HasRealDipoleSingularity {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     (P : X) (u : X → ℝ) : Prop :=
-  -- Placeholder for u ~ Re(1/z) near P
-  True
+  ∃ (chart : OpenPartialHomeomorph X ℂ) (z₀ : ℂ),
+    P ∈ chart.source ∧ chart P = z₀ ∧
+    ∀ᶠ x in 𝓝 P, x ∈ chart.source ∧
+      ∃ (v : X → ℝ), IsHarmonic (sorry) v ∧
+        ∀ᶠ y in 𝓝 x, u y = (1 / (chart y - z₀)).re + v y
 
 /-- **Sub-obligation 2.1: Sobolev space H^1(X).**
 The Dirichlet principle is formulated in the Hilbert space of functions with
 square-integrable derivatives. -/
 class SobolevH1 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) where
-  -- Placeholder for the Hilbert space structure
-  is_hilbert : True
+  /-- The underlying Hilbert space. -/
+  carrier : Type*
+  [inst_hilbert : InnerProductSpace ℝ carrier]
+  [inst_complete : CompleteSpace carrier]
 
 /-- **Sub-obligation 2.1a: Existence of Sobolev structure.**
 Every compact Riemannian manifold admits a Hilbert space structure on its H^1 Sobolev space. -/
@@ -51,8 +61,7 @@ A weak solution (minimizer) of the Dirichlet problem for smooth trial functions
 is actually a smooth (and thus harmonic in the classical sense) function. -/
 theorem elliptic_regularity_harmonic (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (u : X → ℝ) (hweak : IsHarmonic g u) :
-    -- Placeholder for Smooth u
-    True := by
+    ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℝ, ℝ) ⊤ u := by
   sorry
 
 /-- **Sub-obligation 2.2: Dirichlet energy functional.**
@@ -89,7 +98,9 @@ noncomputable def local_dipole_function (_U : Set ℂ) (z₀ : ℂ) : ℂ → �
 There exists a smooth bump function supported in a small disk around P. -/
 theorem exists_smooth_bump (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] (P : X) :
-    ∃ ψ : X → ℝ, True := by
+    ∃ ψ : X → ℝ, ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℝ, ℝ) ⊤ ψ ∧ 
+      Metric.closedBall P (sorry) ⊆ {x | ψ x = 1} ∧
+      Set.support ψ ⊆ Metric.ball P (sorry) := by
   sorry
 
 /-- **Sub-obligation 2.3: Construction of a trial function with dipole singularity.**
@@ -161,7 +172,6 @@ theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : analyticGenus ℂ X = 0) :
-    -- Placeholder for H^1_dR(X) = 0
     True := by
   -- 1. Apply dim_h1_eq_two_genus
   -- 2. dim H^1 = 2 * 0 = 0
@@ -169,26 +179,25 @@ theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2
 
 /-- **Sub-obligation 1a: Cauchy-Riemann equations.**
 A pair of real-valued functions (u, v) satisfies the Cauchy-Riemann equations
-if du = *dv. -/
+if du = *dv.
+On a Riemann surface, this is equivalent to u + iv being holomorphic. -/
 def SatisfiesCauchyRiemann {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    (g : CompatibleMetric X) (u v : X → ℝ) : Prop :=
-  -- Placeholder for du = *dv
-  True
+    (_g : CompatibleMetric X) (u v : X → ℝ) : Prop :=
+  ∀ p : X, IsHolomorphicAt (fun x => ⟨u x, v x⟩) p
 
 /-- **Sub-obligation 1b: CR implies holomorphic.**
 If (u, v) satisfies the Cauchy-Riemann equations, then f = u + iv is holomorphic. -/
 theorem holomorphic_of_CR {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (u v : X → ℝ) (hcr : SatisfiesCauchyRiemann g u v) :
-    -- Placeholder for Holomorphic (u + iv)
-    True := by
+    IsHolomorphic (fun x => ⟨u x, v x⟩) := by
   sorry
 
 /-- **Sub-obligation 3.1: The conjugate 1-form is closed.**
 For a harmonic function u, the 1-form *du is closed (d*du = 0). -/
 theorem conjugate_one_form_closed (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (g : CompatibleMetric X) (u : X → ℝ) (hu : IsHarmonic g u) :
-    -- Placeholder for d(*du) = 0
     True := by
+  -- Placeholder for d(*du) = 0
   sorry
 
 /-- **Sub-obligation 3.2: Closed forms are exact in genus 0.**
@@ -218,8 +227,7 @@ function. -/
 theorem holomorphic_of_harmonic_conjugate (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (g : CompatibleMetric X) (u v : X → ℝ)
     (hcr : SatisfiesCauchyRiemann g u v) :
-    -- Placeholder for Holomorphic (u + iv) on X \ {P}
-    True := by
+    IsHolomorphic (fun x => ⟨u x, v x⟩) := by
   -- CR implies holomorphic
   exact holomorphic_of_CR g u v hcr
 
@@ -284,9 +292,8 @@ Note: Mathlib provides the core analytic result in
 This sub-obligation represents lifting that result to complex manifolds
 by evaluating it in a local chart around P. -/
 theorem holomorphic_at_P_of_continuous_at_infty (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (P : X) (f : X → OnePoint ℂ) (hholo : True) (hcont : True) :
-    -- Placeholder for f is holomorphic at P
-    True := by
+    [ChartedSpace ℂ X] (P : X) (f : X → OnePoint ℂ) (hholo : IsHolomorphicAt f (sorry)) (hcont : True) :
+    IsHolomorphicAt f P := by
   -- Proof: consider 1/f in a chart around P, which is bounded near P,
   -- hence has a removable singularity and vanishes at P by the Mathlib theorem.
   sorry
@@ -298,20 +305,19 @@ theorem dipole_harmonic_holomorphic_extension (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
     (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v)
     (hcont : Filter.Tendsto (fun x : X => (⟨u x, v x⟩ : ℂ)) (nhdsWithin P {P}ᶜ) (Filter.cocompact ℂ)) :
-    -- Placeholder for Holomorphic on all of X
-    True := by
+    IsHolomorphic (fun x => (⟨u x, v x⟩ : ℂ)) := by
   -- 1. Holomorphic off P
   have hholo_off := holomorphic_of_harmonic_conjugate X g u v hcr
   -- 2. Riemann extension
-  exact holomorphic_at_P_of_continuous_at_infty X P (sorry) hholo_off (sorry)
+  sorry
 
 /-- **Sub-obligation 4a: Order of vanishing of 1/f.**
 If f is constructed from a dipole singularity u ~ Re(1/z), then 1/f
 has a zero of order 1 at P. -/
 theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (P : X) (u v : X → ℝ) :
-    -- Placeholder for order_vanishing (1/f) P = 1
     True := by
+  -- Placeholder for order_vanishing (1/f) P = 1
   sorry
 
 /-- **Sub-obligation 4 assembly.**
@@ -319,13 +325,14 @@ Since the singularity of u is locally Re(1/z), the pole of f at P is simple. -/
 theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
-    (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) (hholo : True) :
+    (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) (hholo : IsHolomorphic (fun x => (⟨u x, v x⟩ : ℂ))) :
     -- We need to ensure the witness 'f' exists to state its pole order.
     ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
   -- 1. Vanishing order of 1/f is 1
   have _horder := inverse_dipole_vanishing_order_one X P u v
   -- 2. Order 1 zero implies simple pole
   sorry
+
 
 /-- By adding the harmonic conjugate to the dipole harmonic function,
 we obtain a meromorphic function on X with exactly one simple pole at P.

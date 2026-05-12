@@ -45,72 +45,60 @@ follow-up — but the dep-graph node now exists.
 * Helpers nested under
   `JacobianChallenge.Blueprint.AbelExistence.JacobiInversion`. -/
 
+import Jacobian.Blueprint.Sec05.AbelExistence
+import Jacobian.Blueprint.Sec05.Pic0
+import Jacobian.AnalyticJacobian.Defs
+
+/-! Blueprint stub: Jacobi inversion theorem (sec05). -/
+
 namespace JacobianChallenge.Blueprint
 namespace AbelExistence
 namespace JacobiInversion
 
+open JacobianChallenge.HolomorphicForms
+open JacobianChallenge.AnalyticJacobian
+
 /-! ## Supporting placeholders -/
 
-/-- Placeholder for the `g`-th symmetric product `Sym^g(X)`,
-the unordered `g`-tuples of points of `X`. The eventual real
-definition is the quotient `(Fin g → X) / Sym(g)` of `g`-tuples
-by the symmetric group action. -/
-def SymProduct (_g : Nat) (_X : Type) : Type := Unit
+/-- The `g`-th symmetric product `Sym^g(X)`, the unordered `g`-tuples
+of points of `X`. -/
+def SymProduct (g : Nat) (X : Type*) : Type _ :=
+  (Fin g → X) -- placeholder for quotient by Sym(g)
 
 /-- The Abel–Jacobi map extended to the `g`-th symmetric product:
-`AJ_sym : Sym^g(X) → Jac(X)`,
-`(p₁, …, p_g) ↦ AJ([p₁] + ⋯ + [p_g] − g·[p₀])`. Placeholder. -/
-def aj_sym (_g : Nat) (X : Type) (_s : SymProduct _g X) : Pic0.Jac X := 0
+`AJ_sym : Sym^g(X) → Jac(X)`. -/
+noncomputable def aj_sym (g : Nat) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (s : SymProduct g X) : Pic0.Jac X :=
+  sorry
 
-/-- The natural surjection `Sym^g(X) → Pic⁰(X)`,
-`(p₁, …, p_g) ↦ [[p₁] + ⋯ + [p_g] − g·[p₀]]`. Placeholder. -/
-def symToPic0 (_g : Nat) (X : Type) (_s : SymProduct _g X) : Pic0.Pic0 X :=
-  0
+/-- The natural surjection `Sym^g(X) → Pic⁰(X)`. -/
+noncomputable def symToPic0 (g : Nat) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (s : SymProduct g X) : Pic0.Pic0 X :=
+  sorry
 
 /-! ## Sub-leaves -/
 
 /-- **Sub-leaf 1 (HARD).** Jacobi inversion at the symmetric-product
-level: `AJ_sym : Sym^g(X) → Jac(X)` is surjective.
-
-**Proof sketch.** Both source and target are compact complex
-manifolds of dimension `g`. The map `AJ_sym` is holomorphic
-(extending the pointwise Abel–Jacobi map by symmetric-product
-gluing) and proper (by compactness of `Sym^g(X)`), hence has
-closed image. The image contains `0 ∈ Jac(X)` (take
-`p₁ = ⋯ = p_g = p₀`) and equals an open neighbourhood of `0` by
-the holomorphic implicit function theorem at a generic non-special
-divisor (Jacobi's original argument). A closed open subset of the
-connected manifold `Jac(X)` is the whole space.
-
-Mathlib hooks: complex implicit function theorem
-(`HasFDerivAt.localHomeomorph`), properness of compact-domain
-holomorphic maps, connectedness of complex tori (sec04
-`prop:complex-torus-package`). The full chain is currently absent
-at the production level; this leaf records the conclusion. -/
-theorem aj_sym_surjective (g : Nat) (X : Type) (_hg : g ≥ 1) :
+level: `AJ_sym : Sym^g(X) → Jac(X)` is surjective. -/
+theorem aj_sym_surjective (g : Nat) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_hg : g ≥ 1) :
     Function.Surjective (aj_sym g X) := by
   intro y
-  cases y
-  exact ⟨(), rfl⟩
+  sorry
 
 /-- **Sub-leaf 2 (MEDIUM, retarget).** Surjectivity of the
-descended `aj_Pic0 : Pic⁰(X) → Jac(X)` via Jacobi inversion.
-
-**Proof sketch.** Given `z ∈ Jac(X)`, leaf 1 produces
-`s ∈ Sym^g(X)` with `aj_sym g X s = z`. The class
-`symToPic0 g X s ∈ Pic⁰(X)` then satisfies
-`aj_Pic0 X (symToPic0 g X s) = z` by the compatibility
-`aj_Pic0 ∘ symToPic0 = aj_sym` (which itself is the defining
-factorization of `aj_Pic0` through the natural `Sym^g → Pic⁰`
-map). The compatibility step is left as a `sorry` because the
-placeholder defs in `Pic0.lean` and this file do not yet record
-the factorization equation — that equation will become a
-`rfl`/`simp` lemma once the production decls land. -/
+descended `aj_Pic0 : Pic⁰(X) → Jac(X)` via Jacobi inversion. -/
 theorem aj_Pic0_surjective_via_jacobi_inversion
-    (g : Nat) (X : Type) (_hg : g ≥ 1) :
+    (g : Nat) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (_hg : g ≥ 1) :
     Function.Surjective (Pic0.aj_Pic0 X) := by
   exact Pic0.aj_Pic0_surjective X
 
 end JacobiInversion
+
 end AbelExistence
 end JacobianChallenge.Blueprint

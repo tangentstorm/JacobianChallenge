@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Mathlib.Geometry.Manifold.IsManifold.Basic
 
 open scoped Manifold
 
@@ -8,9 +9,13 @@ namespace JacobianChallenge.HolomorphicForms
 In the context of a Riemann surface, compatibility usually means the metric
 respects the conformal structure (the transition maps are conformal). -/
 class CompatibleMetric (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X] where
-  -- Placeholder for the actual metric tensor (e.g., a section of Sym^2 T*X)
-  tensor : Unit
-  is_positive_definite : Prop
+  /-- The Riemannian metric tensor `g`.
+  Classically, this is a smooth section of `Sym²(T*X)`.
+  Placeholder alias: we use a bilinear form on each tangent space. -/
+  tensor : (x : X) → (TangentSpace 𝓘(ℂ, ℂ) x) →ₗ[ℝ] (TangentSpace 𝓘(ℂ, ℂ) x) →ₗ[ℝ] ℝ
+  /-- The metric is positive definite. -/
+  is_positive_definite : ∀ x, Symmetric (tensor x) ∧ (∀ v ≠ 0, 0 < (tensor x) v v)
+
 
 /-- **Sub-obligation 1.1: Local metrics in charts.**
 In each complex chart, we can define the standard Euclidean metric dz ⊗ dz_bar. -/
