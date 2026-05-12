@@ -272,10 +272,7 @@ private theorem chartLift_contDiffOn_assumption
       (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
                   (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
       unitInterval :=
-  chartLift_contDiffOn_of_regularity
-    (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
-                (divFinIcc n hn (i.val + 1) i.isLt))
-    (chartAt ℂ (pickX i)) h
+  chartLift_contDiffOn_of_regularity γ n hn pickX i h
 
 /-- **Sub-leaf A.1 (per-simplex integration exists).**
 

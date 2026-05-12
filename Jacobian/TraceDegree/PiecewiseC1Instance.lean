@@ -86,12 +86,5 @@ noncomputable instance instPiecewiseC1PathRegularity
     -- missing prerequisites (smooth singular homology + smooth
     -- approximation theorem + period-pairing refactor).
     sorry
-  out_contDiff := by
-    -- BLOCKED for the same reason as `out`: `chartLift c γ h` is
-    -- definitionally `c ∘ γ`, so a Weierstrass-style nowhere-
-    -- differentiable continuous `γ` lifts to a non-C¹ path.
-    -- The honest fix is the same smoothness-aware cycle domain
-    -- described above.
-    sorry
 
 end JacobianChallenge.TraceDegree

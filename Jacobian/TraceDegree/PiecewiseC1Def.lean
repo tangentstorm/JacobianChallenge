@@ -11,7 +11,7 @@ open Set unitInterval JacobianChallenge.Periods
 /-- **Piecewise-C¹ regularity condition for paths.**
 
 Says: for every uniform-grain partition `n, pickX` and segment index
-`i`, the chart-lifted segment of `γ` is C¹ on `[0, 1]`, *and* its
+`i`, the chart-lifted segment of `γ` is `C¹` on `[0, 1]`, *and* its
 derivative norm is uniformly bounded by `K` (the same `K` across all
 partitions and segments).
 
@@ -28,7 +28,7 @@ abbrev ChartLiftPiecewiseC1
     (h : Set.range (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
                                 (divFinIcc n hn (i.val + 1) i.isLt)) ⊆
           (chartAt ℂ (pickX i)).source),
-    DifferentiableOn ℝ (chartLift (chartAt ℂ (pickX i))
+    ContDiffOn ℝ 1 (chartLift (chartAt ℂ (pickX i))
       (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
                   (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
       (Set.Icc (0 : ℝ) 1) ∧
@@ -58,13 +58,6 @@ class PiecewiseC1PathRegularity (X : Type*)
     [TopologicalSpace X] [ChartedSpace ℂ X] : Prop where
   /-- Witness: every path admits a uniform piecewise-C¹ bound. -/
   out : ∀ {a b : X} (γ' : Path a b), ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀
-  /-- Per-chart C¹ shape of the same obligation: for every chart `c` whose
-  source contains the range of `γ'`, the chart-lifted path's extension is
-  `C¹` on `unitInterval`. The chart-local curve-integral API (e.g.
-  `ContinuousOn.curveIntegrable_of_contDiffOn`) consumes this directly. -/
-  out_contDiff : ∀ {a b : X} (γ' : Path a b)
-    (c : OpenPartialHomeomorph X ℂ) (h_range : Set.range γ' ⊆ c.source),
-    ContDiffOn ℝ 1 (chartLift c γ' h_range).extend unitInterval
 
 /-- Accessor: extract the per-path bound from a `PiecewiseC1PathRegularity X`
 instance. -/
@@ -73,13 +66,20 @@ theorem pathPiecewiseC1_of_regularity {X : Type*} [TopologicalSpace X] [ChartedS
     ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀ :=
   hReg.out γ'
 
-/-- Accessor: chart-lift `C¹` regularity from a `PiecewiseC1PathRegularity X`
-instance. -/
+/-- Accessor: chart-lift `C¹` regularity of a subpath in an atlas chart,
+extracted from the strengthened `ChartLiftPiecewiseC1` data. Sorry-free
+derivation from the typeclass; the only audit-trail sorry remains in
+`instPiecewiseC1PathRegularity.out`. -/
 theorem chartLift_contDiffOn_of_regularity {X : Type*}
     [TopologicalSpace X] [ChartedSpace ℂ X] [hReg : PiecewiseC1PathRegularity X]
-    {a b : X} (γ' : Path a b) (c : OpenPartialHomeomorph X ℂ)
-    (h_range : Set.range γ' ⊆ c.source) :
-    ContDiffOn ℝ 1 (chartLift c γ' h_range).extend unitInterval :=
-  hReg.out_contDiff γ' c h_range
+    {a b : X} (γ' : Path a b) (n : ℕ) (hn : 0 < n) (pickX : Fin n → X) (i : Fin n)
+    (h : Set.range (γ'.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
+                                (divFinIcc n hn (i.val + 1) i.isLt)) ⊆
+          (chartAt ℂ (pickX i)).source) :
+    ContDiffOn ℝ 1 (chartLift (chartAt ℂ (pickX i))
+      (γ'.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
+                   (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
+      (Set.Icc (0 : ℝ) 1) :=
+  ((hReg.out γ').choose_spec n hn pickX i h).1
 
 end JacobianChallenge.TraceDegree
