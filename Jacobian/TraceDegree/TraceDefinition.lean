@@ -209,18 +209,87 @@ theorem traceAtRegularValue_smul
   · rw [smul_zero]
 
 /-- The trace of a pullback is scaled by the degree (at regular values).
-(tr f (f* η))_y = deg(f) • η_y. -/
+(tr f (f* η))_y = deg(f) • η_y.
+
+BLOCKER (2026-05-12): this theorem is blocked on several missing
+prerequisites that cannot be supplied inside `TraceDefinition.lean`
+under the allowed write scope, and on pre-existing build errors in
+this file that already prevent `lake build Jacobian.TraceDegree.TraceDefinition`
+from succeeding (see the BLOCKER docstring on `localInverseAt_holomorphic`
+above for the latter).
+
+Mathematical prerequisites specific to *this* theorem:
+
+1. **`IsIso (mfderiv f x)` at unramified preimages.** Unfolding
+   `(pullbackFormsBundled f sorry η).toFun x` to
+   `(η.toFun (f x)).comp (mfderiv f x)` and then evaluating
+   `cotangentPushforward f x (...)` requires resolving the
+   `if h : IsIso (mfderiv f x) then ... else 0` branch. At a regular
+   value, every preimage `x ∈ f ⁻¹' {y}` has `h.ramificationIndex x = 1`,
+   but `BranchedCoverData` ties `ramificationIndex` to *no* analytic
+   datum (see item 2 of `localInverseAt_holomorphic`'s BLOCKER). Without
+   a compatibility lemma `ramificationIndex x = 1 → IsIso (mfderiv f x)`
+   (which itself needs `IsHolomorphic f` and the chart-level analytic
+   structure), the trivial branch (`else 0`) is the only one the kernel
+   can take, and the theorem as stated is unprovable: the LHS reduces
+   to `0` while the RHS is generally nonzero. The theorem really needs
+   an additional hypothesis `hf : IsHolomorphic f` (or `ContMDiff`) plus
+   the compatibility lemma above; the current signature omits both.
+
+2. **Chain-rule inverse cancellation.** Once `IsIso (mfderiv f x)` is
+   available, the per-fibre summand is
+   `((η.toFun y).comp (mfderiv f x)).comp inv`, which must reduce to
+   `η.toFun y` via `ContinuousLinearMap.comp_assoc` and the
+   right-inverse field of `IsIso`. This is mechanical but only after
+   prerequisite (1) is in scope.
+
+3. **Constant-fibre sum vs. `weightedFiberCard`.** The RHS uses
+   `h.weightedFiberCard y = ((h.finite_fiber y).toFinset).sum h.ramificationIndex`.
+   At a regular value, every summand is `1`, so this equals
+   `((h.finite_fiber y).toFinset).card`, which then matches the size of
+   the LHS sum. The cast-and-`smul` rewriting (`(Finset.card : ℕ) → ℂ`
+   acting by repeated addition) is a small lemma but is downstream of
+   the previous two prerequisites.
+
+4. **`sorry` inside the theorem statement.** The term
+   `pullbackFormsBundled f sorry η` passes `sorry` for the
+   `hf : ContMDiff 𝓘(ℂ,ℂ) 𝓘(ℂ,ℂ) ⊤ f` argument. While
+   `pullbackFormsBundled`'s `toFun` projection does not depend on
+   `hf` definitionally (so unfolding `.toFun` to
+   `pullbackFormsFunFiber f η x = (η.toFun (f x)).comp (mfderiv f x)`
+   works regardless), the statement is morally bound to an
+   unsupplied smoothness hypothesis, which should become an explicit
+   parameter once the file compiles.
+
+The intended four-step proof remains exactly as the original sketch:
+1. Unfold `(pullbackFormsBundled f sorry η).toFun x` to the chain-rule
+   composition `(η.toFun (f x)).comp (mfderiv f x)`.
+2. Use the (currently missing) `ramificationIndex = 1 → IsIso (mfderiv ..)`
+   bridge to resolve the `cotangentPushforward` `if`-branch and cancel
+   the inverse, leaving `η.toFun y` for each fibre point.
+3. Reduce the resulting constant sum over the fibre to
+   `((h.finite_fiber y).toFinset).card • η.toFun y`.
+4. Identify `((h.finite_fiber y).toFinset).card` with
+   `h.weightedFiberCard y` at the regular value (every summand is `1`).
+-/
 theorem trace_pullback_at_regular_value
     {f : X → Y} (h : BranchedCoverData X Y f)
     (η : HolomorphicOneForm ℂ Y)
     (y : Y) (hy : isRegularValue h y) :
     traceAtRegularValue h (fun x => (pullbackFormsBundled f sorry η).toFun x) y hy =
       (h.weightedFiberCard y : ℂ) • η.toFun y := by
-  unfold traceAtRegularValue
-  -- 1. Use pullback definition: (f* η)_x = η_{f(x)} ∘ df_x
-  -- 2. Use cotangentPushforward definition: (df_x)⁻¹* (f* η)_x = η_{f(x)}
-  -- 3. Sum over fiber: ∑ η_y = (card fiber) • η_y
-  -- 4. weightedFiberCard = card fiber (since all e_x = 1)
+  -- BLOCKER: see the docstring above.  Prerequisites missing:
+  --   * `BranchedCoverData.ramificationIndex` not linked to `IsIso (mfderiv f ·)`
+  --     (would need both `IsHolomorphic f` as a hypothesis and a chart-level
+  --     analytic compatibility lemma, neither currently available).
+  --   * The theorem statement passes `sorry` for the `ContMDiff` hypothesis of
+  --     `pullbackFormsBundled`; once compiling, this should become an explicit
+  --     argument.
+  --   * Pre-existing build errors elsewhere in this file (see the BLOCKER on
+  --     `localInverseAt_holomorphic`) prevent the verification command
+  --     `lake build Jacobian.TraceDegree.TraceDefinition` from succeeding,
+  --     so no progress on a single sorry inside the file can be observed
+  --     end-to-end without first repairing the surrounding declarations.
   sorry
 
 end JacobianChallenge.HolomorphicForms
