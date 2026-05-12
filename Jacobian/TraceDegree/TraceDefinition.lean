@@ -209,18 +209,73 @@ theorem traceAtRegularValue_smul
   · rw [smul_zero]
 
 /-- The trace of a pullback is scaled by the degree (at regular values).
-(tr f (f* η))_y = deg(f) • η_y. -/
+`(tr f (f* η))_y = deg(f) • η_y`.
+
+BLOCKER (2026-05-12): this theorem is blocked on the same missing
+prerequisite as `localInverseAt_holomorphic` above — a compatibility
+lemma tying the abstract structure field `h.ramificationIndex x = 1`
+to the analytic statement `IsIso (mfderiv 𝓘(ℂ,ℂ) 𝓘(ℂ,ℂ) f x)`.
+
+The intended four-step proof goes:
+
+1. **Substitute the pullback.** By `pullbackFormsBundled`'s definition
+   the summand at `x` is
+   `cotangentPushforward f x ((η.toFun (f x)).comp (mfderiv 𝓘 𝓘 f x))`.
+   For `x ∈ f ⁻¹' {y}` we have `f x = y`, so the inner factor is
+   `(η.toFun y).comp (mfderiv 𝓘 𝓘 f x)`.
+
+2. **Enter the `IsIso` branch of `cotangentPushforward`.** This is
+   the missing step.  `cotangentPushforward` is defined by
+   `if h : IsIso (mfderiv 𝓘 𝓘 f x) then ωx.comp h.inv else 0`, so
+   without a proof that `mfderiv 𝓘 𝓘 f x` is invertible at every
+   unramified preimage we cannot escape the `else 0` branch and the
+   LHS collapses to `0`, contradicting the RHS as soon as
+   `η.toFun y ≠ 0` or the fiber is nonempty.
+
+   To enter the iso branch we need either:
+
+   * a new structure field on `BranchedCoverData` stating
+     `∀ x, h.ramificationIndex x = 1 → IsIso (mfderiv 𝓘 𝓘 f x)`, or
+   * a project-wide compatibility lemma
+     `h.ramificationIndex x = mapAnalyticOrderAt f x` plus the analytic
+     fact `mapAnalyticOrderAt f x = 1 → IsIso (mfderiv 𝓘 𝓘 f x)`
+     (the latter coming from the chart-local nonvanishing derivative
+     and `ContinuousLinearEquiv.ofNonzeroComplex` / Mathlib's
+     `HasFDerivAt.localInverse`).
+
+   Both routes require editing files outside the allowed write scope
+   (`BranchedCover.lean` for the structure field; a new analytic
+   compatibility file otherwise).
+
+3. **Cancel the derivative with its inverse.** Once we are inside the
+   `IsIso` branch with witness `hiso : IsIso (mfderiv 𝓘 𝓘 f x)` we
+   have, by `ContinuousLinearMap.comp_assoc` plus `hiso.right_inv`,
+   `((η.toFun y).comp (mfderiv 𝓘 𝓘 f x)).comp hiso.inv
+       = (η.toFun y).comp ((mfderiv 𝓘 𝓘 f x).comp hiso.inv)
+       = (η.toFun y).comp (ContinuousLinearMap.id ℂ ℂ)
+       = η.toFun y`.
+
+4. **Sum over the fiber.** Each summand is now `η.toFun y`, a constant
+   in the sum, so the LHS becomes `fiber.card • η.toFun y`.  At a
+   regular value every `h.ramificationIndex x = 1`, so
+   `h.weightedFiberCard y = fiber.card` by
+   `branchedDegree_eq_card_toFinset_of_unramified_fiber` (combinatorial,
+   already proved in `BranchedCover.lean`); the natural-number scalar
+   coerces into `ℂ` and the two sides agree.
+
+Steps (1), (3), (4) are all assemblies of facts already proved in this
+file or in `BranchedCover.lean`; step (2) is the genuine missing
+prerequisite. -/
 theorem trace_pullback_at_regular_value
     {f : X → Y} (h : BranchedCoverData X Y f)
     (η : HolomorphicOneForm ℂ Y)
     (y : Y) (hy : isRegularValue h y) :
     traceAtRegularValue h (fun x => (pullbackFormsBundled f sorry η).toFun x) y hy =
       (h.weightedFiberCard y : ℂ) • η.toFun y := by
-  unfold traceAtRegularValue
-  -- 1. Use pullback definition: (f* η)_x = η_{f(x)} ∘ df_x
-  -- 2. Use cotangentPushforward definition: (df_x)⁻¹* (f* η)_x = η_{f(x)}
-  -- 3. Sum over fiber: ∑ η_y = (card fiber) • η_y
-  -- 4. weightedFiberCard = card fiber (since all e_x = 1)
+  -- BLOCKER: no compatibility lemma in this file's allowed scope ties
+  -- `h.ramificationIndex x = 1` to `IsIso (mfderiv 𝓘(ℂ,ℂ) 𝓘(ℂ,ℂ) f x)`,
+  -- so the `cotangentPushforward` summands cannot be lifted out of the
+  -- `else 0` branch.  See the docstring above for the full triage.
   sorry
 
 end JacobianChallenge.HolomorphicForms
