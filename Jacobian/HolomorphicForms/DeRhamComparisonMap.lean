@@ -113,27 +113,52 @@ theorem cech_cocycle_from_singular_cocycle
     ∃ _cech : Type, True := by
   exact ⟨Unit, trivial⟩
 
+/-- **Surjectivity sub-obligation 1b' (Existence of a Čech-de-Rham preimage).**
+Packages the existential content of the Čech-to-de-Rham construction:
+for every `φ : IntegralOneCycle X →ₗ[ℤ] ℂ` there is a closed 1-form
+whose `deRhamComparisonMap1`-image is `φ`.
+
+Bottom-up content: extend `φ` to a singular cocycle, build a Čech 1-cocycle
+on a good cover via `cech_cocycle_from_singular_cocycle`, then realize it
+as a global closed 1-form using a smooth partition of unity and the
+Poincaré lemma on chart domains. Mathlib gap: partition of unity on
+manifolds is present (`Mathlib.Geometry.Manifold.PartitionOfUnity`); the
+chart-wise primitive (Poincaré lemma) is absent. This lemma is the
+*single* analytic sorry behind sub-obligations 1b, 1c, and the eventual
+surjectivity statement `deRhamComparisonMap1_surjective`. -/
+private theorem cech_de_rham_preimage_exists
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ := by
+  sorry
+
 /-- **Surjectivity sub-obligation 1b (Closed form from Čech cocycle).**
 Using a partition of unity and the Poincaré lemma, a Čech 1-cocycle
-can be realized as a global closed 1-form. -/
+can be realized as a global closed 1-form. Constructed as the
+`Classical.choose` of `cech_de_rham_preimage_exists`; integral
+correctness then follows by `Classical.choose_spec`
+(see `integral_closed_form_from_cech_eq`). -/
 noncomputable def closed_form_from_cech_cocycle
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    ClosedForm 1 X := by
-  exact 0
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ClosedForm 1 X :=
+  (cech_de_rham_preimage_exists X φ).choose
 
 /-- **Surjectivity sub-obligation 1c (Integral correctness).**
 The closed form constructed from the Čech cocycle integrates to the
-prescribed singular cocycle. -/
+prescribed singular cocycle. Direct corollary of the spec of
+`cech_de_rham_preimage_exists`. -/
 theorem integral_closed_form_from_cech_eq
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    deRhamComparisonMap1 X (closed_form_from_cech_cocycle X φ) = φ := by
-  sorry
+    deRhamComparisonMap1 X (closed_form_from_cech_cocycle X φ) = φ :=
+  (cech_de_rham_preimage_exists X φ).choose_spec
 
 /-- **Surjectivity sub-obligation 1 (representative choice).**
 For a prescribed period functional, choose a closed 1-form candidate.
