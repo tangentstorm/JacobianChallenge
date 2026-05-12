@@ -190,7 +190,48 @@ theorem deRhamComparisonMap1_surjective
 A closed 1-form with zero periods admits a global smooth 0-form whose
 exterior derivative is the original form. This is the deep analytic
 content (FTC for forms / path-integration on a connected manifold);
-the sorry here represents that frontier obligation. -/
+the sorry here represents that frontier obligation.
+
+**BLOCKER — not provable in the current frontier model.**
+
+Unfolding the current substrates:
+* `exteriorDerivative 0 X` is *definitionally* the zero linear map
+  (see `Jacobian/HolomorphicForms/SmoothDifferentialForm.lean`), so the
+  LHS of the conclusion is always `(0 : SmoothDiffForm 1 X)`.
+* `ClosedForm 1 X = LinearMap.ker (exteriorDerivative 1 X) = LinearMap.ker 0 = ⊤`,
+  so `(ω : SmoothDiffForm 1 X)` ranges over *all* of `SmoothDiffForm 1 X`.
+* Therefore the conclusion is equivalent to `(ω : SmoothDiffForm 1 X) = 0`.
+* The hypothesis `deRhamComparisonMap1 X ω = 0` is stated against the
+  `noncomputable opaque` declaration `deRhamComparisonMap1` (line ~79
+  of this file), which has *no body*: nothing in the current source
+  exposes a relationship between `deRhamComparisonMap1 X ω = 0` and
+  `ω.val = 0`, so the hypothesis is uninformative.
+
+Missing prerequisites required to discharge this honestly:
+1. *A non-trivial `exteriorDerivative`* on the form substrate (currently
+   the zero-differential placeholder in
+   `Jacobian/HolomorphicForms/SmoothDifferentialForm.lean`). Bottom-up
+   content: chartwise exterior derivative of `ℂ`-valued forms on a
+   complex manifold; Mathlib v4.28.0 has the cotangent bundle but no
+   global `d`.
+2. *A concrete definition of `deRhamComparisonMap1`* (currently `opaque`
+   above) realising "integrate a closed 1-form over an integer 1-cycle".
+   Bottom-up content: pullback of forms along smooth 1-simplices + the
+   bridge to `IntegralOneCycle X`.
+3. *The injectivity half of de Rham* — a closed 1-form with vanishing
+   periods is exact. This is precisely the "global path-integral
+   primitive on a non-simply-connected manifold" frontier called out in
+   the docstring of `deRhamComparisonMap1_kernel_subset_exact` below;
+   the standard route is sheaf/Čech cohomology comparison or
+   simply-connected covers + descent, neither of which is present in
+   Mathlib at the pinned commit.
+
+Until items (1)–(3) are built, this theorem remains a single named
+`sorry`. Direct tactic discharge is impossible because the conclusion
+reduces (via the zero-differential surrogate) to a statement about
+`(ω : SmoothDiffForm 1 X)` that cannot be derived from an opaque
+hypothesis. Statement is intentionally left unchanged per the project's
+"audit-trail of false assumptions" discipline. -/
 theorem closedForm_pathIntegral_primitive_exists
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -198,6 +239,12 @@ theorem closedForm_pathIntegral_primitive_exists
     (ω : ClosedForm 1 X)
     (_hω : deRhamComparisonMap1 X ω = 0) :
     ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  -- BLOCKED: conclusion reduces to `(ω : SmoothDiffForm 1 X) = 0` because
+  -- `exteriorDerivative 0 X = 0`, but the hypothesis `_hω` is stated
+  -- against the opaque `deRhamComparisonMap1` and exposes no relation
+  -- to `ω.val`. See the declaration docstring above for the missing
+  -- prerequisites (real `d`, concrete comparison map, injectivity half
+  -- of de Rham).
   sorry
 
 /-- **Injectivity sub-obligation 1 (path-integral primitive).**
