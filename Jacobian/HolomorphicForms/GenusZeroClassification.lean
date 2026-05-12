@@ -427,6 +427,44 @@ theorem holomorphicOneForm_chartOverlap_pullback
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
+  -- BLOCKER (chart-trivialisation + cotangent-pullback API).
+  --
+  -- The current definitions
+  --   `holomorphicOneForm_coeff ω z      := ω.toFun (↑z) (1 : ℂ)`
+  --   `holomorphicOneForm_inversionCoeff ω w := ω.toFun (invBwd w) (1 : ℂ)`
+  -- both pass the *literal* tangent vector `(1 : ℂ)` to `ω.toFun`, because
+  -- `TangentSpace (modelWithCornersSelf ℂ ℂ) p` is definitionally `ℂ` for
+  -- every base point `p` (no chart enters the application).
+  --
+  -- For `w ≠ 0` we have `invBwd w = ↑(w⁻¹)` (lemma `invBwd_ne_zero`), so
+  -- after `unfold holomorphicOneForm_coeff holomorphicOneForm_inversionCoeff`
+  -- and `rw [invBwd_ne_zero hw]` the goal reduces to
+  --   `ω.toFun ↑(w⁻¹) 1 = -w^2 * ω.toFun ↑(w⁻¹) 1`,
+  -- i.e. `ω.toFun ↑(w⁻¹) 1 · (1 + w^2) = 0`, which is *not* provable
+  -- pointwise: it would force every holomorphic 1-form on `OnePoint ℂ` to
+  -- vanish on the finite chart (which is the eventual conclusion of the
+  -- genus-zero classification, but cannot be assumed here).
+  --
+  -- Mathematical content the theorem is *meant* to express: the cotangent
+  -- pullback of `ω` through the chart transition `z = w⁻¹` (Jacobian
+  -- `dz/dw = -w⁻²`) relates the identity-chart and inversion-chart local
+  -- representatives by `f(w⁻¹) = -w² · g(w)`. Capturing this requires
+  -- redefining `holomorphicOneForm_inversionCoeff` to incorporate the
+  -- chart pullback — i.e. evaluate `ω.toFun (invBwd w)` on the pushforward
+  -- of `1 ∈ T_w ℂ` through `D (invBwd) w` — rather than feeding the bare
+  -- `(1 : ℂ)`. With the naive definition, the theorem is degenerate.
+  --
+  -- Missing prerequisite (Mathlib v4.28.0 gap, also tracked as structural
+  -- axiom G4b in the file header): the chart-trivialisation API for
+  -- `ContMDiffSection` on the cotangent bundle, which would let us read
+  -- `ω.toFun` through the trivialization induced by `inversionChart` and
+  -- transport the resulting linear functional back via the transition
+  -- Jacobian `-w⁻²` from `onePointCx_chart_overlap_derivative`.
+  --
+  -- See also: `Jacobian/HolomorphicForms/PullbackBundled.lean`
+  -- (`pullbackFormsFunFiber` uses `mfderiv`; the analogous chart-pullback
+  -- inside this file would need `mfderiv invBwd` at `w`, which lacks
+  -- standalone API in v4.28.0).
   sorry
 
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
