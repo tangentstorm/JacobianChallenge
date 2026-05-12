@@ -1,4 +1,4 @@
-import Jacobian.TraceDegree.PushforwardBasis
+import Jacobian.TraceDegree.PiecewiseC1Def
 
 /-!
 # Piecewise-C¹ regularity instance for compact Riemann surfaces
@@ -15,7 +15,7 @@ assumption requires one of:
 * enriching `IntegralOneCycle X` (currently singular `H₁`, untyped on
   smoothness) to carry a piecewise-smooth representative;
 * restricting the period pairing's cycle domain to a piecewise-smooth
-  subclass shown to span `H₁(X, ℤ)`;
+  subclass of `H₁(X, ℤ)` that is shown to span the homology;
 * a layer of "smooth singular homology" not currently in Mathlib.
 
 Until that infrastructure is built, the sorry is **isolated to this
@@ -30,7 +30,7 @@ Blueprint anchor: `lem:impl-trace-lip`
 
 namespace JacobianChallenge.TraceDegree
 
-open JacobianChallenge JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
+open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 
 /-- The piecewise-C¹ path regularity assumption, as a typeclass instance
 applicable to every `ChartedSpace ℂ X`. The intended use is compact

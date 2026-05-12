@@ -4,6 +4,7 @@ import Jacobian.HolomorphicForms.PullbackBundled
 import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Jacobian.Periods.PullbackNaturality
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
+import Jacobian.TraceDegree.PiecewiseC1Def
 import Mathlib.LinearAlgebra.Matrix.ToLin
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Analysis.Calculus.MeanValue
@@ -298,35 +299,6 @@ theorem pushforwardTraceLift_apply_holomorphicOneFormDualEquiv
   intro i _
   rw [map_smul, smul_eq_mul]
 
-/-- **Piecewise-C¹ regularity condition for paths.**
-
-Says: for every uniform-grain partition `n, pickX` and segment index
-`i`, the chart-lifted segment of `γ` is C¹ on `[0, 1]`, *and* its
-derivative norm is uniformly bounded by `K` (the same `K` across all
-partitions and segments).
-
-On a compact manifold with smooth atlas, a path that is piecewise C¹
-(in the manifold sense) always satisfies this: C¹ on each piece gives
-continuous derivatives, compactness of the path image gives finitely
-many chart sources covering it, and the chart-transition derivatives
-are bounded on that compact image; composing these bounds gives the
-uniform `K`. -/
-abbrev ChartLiftPiecewiseC1
-    {a b : X} (γ : Path a b) (K : NNReal) : Prop :=
-  ∀ (n : ℕ) (hn : 0 < n) (pickX : Fin n → X) (i : Fin n)
-    (h : Set.range ((γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
-                                (divFinIcc n hn (i.val + 1) i.isLt))) ⊆
-          (chartAt ℂ (pickX i)).source),
-    DifferentiableOn ℝ (chartLift (chartAt ℂ (pickX i))
-      (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
-                  (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
-      (Set.Icc (0 : ℝ) 1) ∧
-    ∀ t ∈ Set.Icc (0 : ℝ) 1,
-      ‖derivWithin (chartLift (chartAt ℂ (pickX i))
-        (γ.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
-                    (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
-        (Set.Icc (0 : ℝ) 1) t‖₊ ≤ K
-
 /-- **BUG FIX** (formerly ID 121). The original statement
 `∀ γ, ∃ K, ChartLiftLipschitzOnPartitions γ K` was *false* for
 arbitrary continuous paths: a nowhere-differentiable path, e.g.
@@ -370,56 +342,6 @@ theorem cycleLipChain_obligation :
   have hKi := hKs i n hn pickX j h
   intro x hx y hy
   exact le_trans (hKi hx hy) (by gcongr; exact Finset.le_sup (Finset.mem_univ i))
-
-/-- **Project-level regularity assumption (typeclass form).**
-
-The statement carried by an instance: *every continuous path `γ : Path a b`
-on `X` admits a uniform `K₀` with `ChartLiftPiecewiseC1 γ K₀`* — i.e.
-every continuous path is piecewise C¹ in chart coordinates with a
-uniform derivative bound.
-
-This is **false for arbitrary continuous paths**: a nowhere-
-differentiable continuous path (e.g. a Weierstrass-style curve embedded
-in a chart) inhabits `Path a b` but cannot satisfy
-`ChartLiftPiecewiseC1`.
-
-The bug fix to `cycleLipPath_obligation` (formerly ID 121) added
-`ChartLiftPiecewiseC1` as a per-path hypothesis there; this typeclass
-isolates the *uniform* version as an assumption on the *surface*. It
-captures what would be true if every singular 1-cycle on `X` admitted a
-piecewise-smooth representative — the genuine geometric content the
-project's period-pairing layer needs.
-
-Eventual discharge (out of scope of the current Lean layer):
-* enrich `IntegralOneCycle X` to carry smoothness data and only need
-  the assumption for the chosen representative;
-* or restrict the period pairing's domain to a piecewise-smooth
-  subclass of `H₁(X, ℤ)` that is shown to span the homology.
-
-Carried as a typeclass so the `analyticPushforward` API can pick it up
-implicitly without threading an explicit hypothesis through every
-call site. Provided by a single named sorry-instance in
-`Jacobian/TraceDegree/PiecewiseC1Instance.lean`. -/
-class PiecewiseC1PathRegularity (X : Type)
-    [TopologicalSpace X] [ChartedSpace ℂ X] : Prop where
-  /-- Witness: every path admits a uniform piecewise-C¹ bound. -/
-  out : ∀ {a b : X} (γ' : Path a b), ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀
-
-/-- Accessor: extract the per-path bound from a `PiecewiseC1PathRegularity X`
-instance. Replaces former direct calls to `pathPiecewiseC1_obligation`. -/
-theorem pathPiecewiseC1_of_regularity [hReg : PiecewiseC1PathRegularity X]
-    {a b : X} (γ' : Path a b) :
-    ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀ :=
-  hReg.out γ'
-
-/-- Chain-level consequence: under `[PiecewiseC1PathRegularity X]`,
-every finite family of paths in `X` is piecewise C¹ (each with its
-own bound). Replaces former `chainPiecewiseC1_obligation`. -/
-theorem chainPiecewiseC1_of_regularity [PiecewiseC1PathRegularity X] :
-    ∀ (m : ℕ) (a b : Fin m → X)
-      (γs : ∀ i : Fin m, Path (a i) (b i)),
-      ∀ i : Fin m, ∃ K₀ : NNReal, ChartLiftPiecewiseC1 (γs i) K₀ :=
-  fun _ _ _ γs i => pathPiecewiseC1_of_regularity (γs i)
 
 /-- Raw obligation: the trace lift preserves the period subgroup.
 
