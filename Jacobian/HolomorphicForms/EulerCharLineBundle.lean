@@ -160,6 +160,32 @@ theorem euler_char_eq_formula
     (Module.finrank ℂ (RSSheafCohomology X L 0) : ℤ) -
         (Module.finrank ℂ (RSSheafCohomology X L 1) : ℤ) =
       RSLineBundleDegree X L + 1 - (RSGenus X : ℤ) := by
+  -- BLOCKER: this theorem is gated on upstream placeholder definitions
+  -- that have no analytic content attached.  Specifically:
+  --
+  -- 1. `RSLineBundleDegree X L` is a `noncomputable opaque` (line 64
+  --    above) with no axioms or equational characterization.  Without
+  --    a divisor/c₁ realization, the RHS is an uncharacterized ℤ and
+  --    cannot be matched by the LHS for arbitrary `L`.
+  -- 2. `RSLineBundleSheaf X` is a placeholder abbrev in
+  --    `SheafCohomologyRS.lean` (just an `AddCommGrpCat`-valued sheaf,
+  --    with no local-freeness or rank-1 structure).  Hence there is
+  --    no twist-by-point operation `L ↦ L(p)` and no short exact
+  --    sequence `0 → L → L(p) → ℂ_p → 0` to induct along.
+  -- 3. `RSSheafCohomology X L q` is `Sheaf.H` on a coarse
+  --    abelian-group sheaf.  There is no `FiniteDimensionalSheafCohomologyRS`
+  --    instance witness for arbitrary `L`, no concrete `ℂ`-module
+  --    structure, and no Serre-duality identification
+  --    `H¹(L)* ≃ H⁰(L⁻¹ ⊗ K_X)` (frontier class in `SerreDualityRS.lean`).
+  -- 4. The base-case `dim H⁰(O_X) = 1` (connected compact RS) is also
+  --    absent for the placeholder `O_X`.
+  --
+  -- All four are listed as ABSENT in the file's module docstring and
+  -- in `ref/plans/sheaf-cohomology-rs.md` §2.  Per CLAUDE.md, this is
+  -- a "BLOCKER triage" rather than an Aristotle-discharge job: the
+  -- proof cannot be completed by local tactics until the upstream
+  -- divisor / line-bundle / coherent-sheaf-finite-dimensionality
+  -- machinery is built in Mathlib (or stubbed here with real axioms).
   sorry
 
 /-- **Sub-leaf 1 (Riemann's inequality, `≥` direction).** The integer
