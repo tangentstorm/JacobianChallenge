@@ -1,4 +1,5 @@
 import Jacobian.Periods.PeriodFunctional
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Small named API around the opaque `periodPairing`
@@ -19,6 +20,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- The period pairing sends the 0-cycle to the zero functional. -/
 @[simp] theorem periodPairing_zero :

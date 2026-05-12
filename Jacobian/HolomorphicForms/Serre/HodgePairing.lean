@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.Serre.Dolbeault
 import Jacobian.HolomorphicForms.Serre.Pairing
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Hodge / L² nondegeneracy of the Serre pairing (frontier)
@@ -26,6 +27,7 @@ theorem serrePairing_specialised_witness_left
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F : RSAbSheaf X)
@@ -46,6 +48,7 @@ theorem serrePairing_specialised_witness_right
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F : RSAbSheaf X)

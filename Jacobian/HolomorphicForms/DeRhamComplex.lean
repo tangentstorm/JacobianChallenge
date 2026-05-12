@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.SmoothDifferentialForm
 import Jacobian.HolomorphicForms.DeRhamCohomology
 import Jacobian.HolomorphicForms.RealComplexDeRham
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Bridge between de Rham cohomology dimensions and the explicit complex
@@ -29,7 +30,8 @@ explicit closed-mod-exact quotient model. -/
 theorem complexDimDeRhamH1ℂ_eq_finrank_cocycle
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     complexDimDeRhamH1ℂ X = Module.finrank ℂ (deRhamH1Cocycle X) := by
   rfl
 
@@ -39,7 +41,8 @@ real-coefficient quotient when the real de Rham complex is set up. -/
 theorem realDimDeRhamH1_eq_finrank_cocycleℝ
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     realDimDeRhamH1 X = Module.finrank ℂ (deRhamH1Cocycle X) := by
   rw [realDim_deRhamH1_eq_complexDim_deRhamH1ℂ X,
       complexDimDeRhamH1ℂ_eq_finrank_cocycle X]

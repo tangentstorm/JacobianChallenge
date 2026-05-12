@@ -7,6 +7,7 @@ import Jacobian.TraceDegree.PullbackFormsLinearMap
 import Mathlib.Geometry.Manifold.MFDeriv.SpecificFunctions
 import Mathlib.Geometry.Manifold.ContMDiffMFDeriv
 import Mathlib.Geometry.Manifold.VectorBundle.SmoothSection
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Bundled smooth pullback of holomorphic 1-forms

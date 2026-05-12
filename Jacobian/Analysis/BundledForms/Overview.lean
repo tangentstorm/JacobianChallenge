@@ -3,6 +3,7 @@ import Jacobian.StageB.KahlerStructure
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 import Mathlib.LinearAlgebra.Alternating.Basic
 import Mathlib.Analysis.Complex.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # R9 — Bundled differential forms `Ω^k(M)` on a smooth manifold
@@ -169,6 +170,7 @@ the bigraded variant is the prerequisite for R7 (Dolbeault). -/
 theorem bundled_forms_bigraded_decomposition (X : Type) [TopologicalSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p q : ℕ) :
     ∃ _g : AddCommGroup (DolbeaultForm X p q), True :=
   ⟨inferInstance, trivial⟩
@@ -179,6 +181,7 @@ theorem bundled_forms_bigraded_decomposition (X : Type) [TopologicalSpace X]
 theorem bundled_forms_d_splits (X : Type) [TopologicalSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p q : ℕ) :
     Nonempty (DolbeaultForm X p q →ₗ[ℂ] DolbeaultForm X (p + 1) q) ∧
     Nonempty (DolbeaultForm X p q →ₗ[ℂ] DolbeaultForm X p (q + 1)) :=

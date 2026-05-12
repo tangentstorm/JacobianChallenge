@@ -3,6 +3,7 @@ import Mathlib.Topology.ClusterPt
 import Mathlib.Topology.DiscreteSubset
 import Mathlib.Analysis.Meromorphic.IsolatedZeros
 import Mathlib.Analysis.Meromorphic.Order
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint: `lem:divisor-discrete` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -50,6 +51,7 @@ of `p` on which `vanishingOrder X · f = 0`. -/
 theorem divisor_discrete
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : X → ℂ)
     (hf_mero : ∀ q : X, MeromorphicAtX f q)
     (h_nontriv : ∃ p : X, vanishingOrder X p f ≠ ⊤) :

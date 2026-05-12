@@ -4,6 +4,7 @@ import Jacobian.AnalyticJacobian.Defs
 import Jacobian.AnalyticJacobian.Mk
 import Jacobian.AnalyticJacobian.MkExt
 import Jacobian.AbelJacobi.Defs
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Quotient-level equivalence — top of the basis-aligned period bridge
@@ -48,6 +49,7 @@ open JacobianChallenge.HolomorphicForms JacobianChallenge.AnalyticJacobian
 variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- The basis-aligned analytic Jacobian (concrete version): the quotient
 of the basis-aligned model `Fin (analyticGenus ℂ X) → ℂ` by the

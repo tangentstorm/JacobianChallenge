@@ -7,6 +7,7 @@ import Jacobian.Periods.RealHomologyTensor
 import Mathlib.LinearAlgebra.Isomorphisms
 import Mathlib.CategoryTheory.Sites.Sheafification
 import Mathlib.CategoryTheory.Sites.ConstantSheaf
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # De Rham comparison map (frontier API)
@@ -82,7 +83,8 @@ refinement in this file decomposes its image and kernel. -/
 noncomputable opaque deRhamComparisonMap1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ClosedForm 1 X →ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ)
 
 /-- **Current-model exactness identity.** The de Rham comparison map
@@ -96,6 +98,7 @@ theorem deRhamComparisonMap1_vanishes_on_exact
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (η : ClosedForm 1 X)
     (hη : (η : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
     deRhamComparisonMap1 X η = 0 := by
@@ -114,6 +117,7 @@ theorem deRhamComparisonMap1_exists_form_with_periods
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ := by
   sorry
@@ -124,6 +128,7 @@ theorem cech_cocycle_from_singular_cocycle
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     ∃ (ι : Type) (U : ι → TopologicalSpace.Opens (TopCat.of X))
       (_C : CochainComplex AddCommGrpCat.{0} ℕ),
@@ -139,6 +144,7 @@ noncomputable def closed_form_from_cech_cocycle
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     ClosedForm 1 X :=
   (deRhamComparisonMap1_exists_form_with_periods X φ).choose
@@ -150,6 +156,7 @@ theorem integral_closed_form_from_cech_eq
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     deRhamComparisonMap1 X (closed_form_from_cech_cocycle X φ) = φ :=
   (deRhamComparisonMap1_exists_form_with_periods X φ).choose_spec
@@ -164,6 +171,7 @@ theorem deRhamComparisonMap1_prescribed_period_candidate
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     ∃ ω : ClosedForm 1 X, ω = closed_form_from_cech_cocycle X φ := by
   exact ⟨closed_form_from_cech_cocycle X φ, rfl⟩
@@ -180,6 +188,7 @@ theorem deRhamComparisonMap1_prescribed_period_correct
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     deRhamComparisonMap1 X
         (Classical.choose (deRhamComparisonMap1_prescribed_period_candidate X φ)) = φ := by
@@ -201,6 +210,7 @@ theorem deRhamComparisonMap1_surjective
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ := by
   refine ⟨Classical.choose (deRhamComparisonMap1_prescribed_period_candidate X φ), ?_⟩
@@ -215,6 +225,7 @@ theorem closedForm_pathIntegral_primitive_exists
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
     (_hω : deRhamComparisonMap1 X ω = 0) :
     ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
@@ -227,6 +238,7 @@ noncomputable def closedForm_pathIntegral_primitive
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     SmoothDiffForm 0 X :=
@@ -239,6 +251,7 @@ theorem closedForm_pathIntegral_primitive_derivative
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     exteriorDerivative 0 X (closedForm_pathIntegral_primitive X ω hω) = (ω : SmoothDiffForm 1 X) :=
@@ -257,6 +270,7 @@ theorem deRhamComparisonMap1_zero_period_potential
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
@@ -277,6 +291,7 @@ theorem deRhamComparisonMap1_kernel_subset_exact
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
@@ -290,7 +305,8 @@ same functional. Direct corollary of
 theorem deRhamComparisonMap1_descends
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ _ : deRhamH1Cocycle X →ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ), True := by
   refine ⟨(ExactForm.toClosedSubmodule 0 X).liftQ (deRhamComparisonMap1 X) ?_, trivial⟩
   intro η hη
@@ -310,7 +326,8 @@ inside closed forms.  Proved from `deRhamComparisonMap1_vanishes_on_exact`
 private theorem comparison_ker_eq_exact
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     LinearMap.ker (deRhamComparisonMap1 X) = ExactForm.toClosedSubmodule 0 X := by
   ext η
   constructor
@@ -326,7 +343,8 @@ Proved from `deRhamComparisonMap1_surjective`. -/
 private theorem comparison_range_eq_top
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     LinearMap.range (deRhamComparisonMap1 X) = ⊤ := by
   rw [LinearMap.range_eq_top]
   intro φ
@@ -344,7 +362,8 @@ everything (surjectivity). -/
 private noncomputable def deRhamH1_linearEquiv
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     deRhamH1Cocycle X ≃ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ) :=
   -- Step 1: deRhamH1Cocycle X ≃ₗ[ℂ] (ClosedFormSub 1 X ⧸ ker)
   (Submodule.quotEquivOfEq _ _ (comparison_ker_eq_exact X).symm) |>.trans
@@ -381,7 +400,8 @@ pure-algebra identity `finrank_homℤℂ_eq_finrank_of_free`. -/
 theorem deRhamH1Cocycle_finrank_eq_realDim_singularH1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module.finrank ℂ (deRhamH1Cocycle X) = realDimSingularH1 X := by
   rw [(deRhamH1_linearEquiv X).finrank_eq]
   rw [realDim_singularH1_eq_finrank_intH1_via_uct X]
@@ -395,7 +415,8 @@ through the explicit quotient model + integration map. -/
 theorem realDimDeRhamH1_eq_realDimSingularH1_via_cocycle
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     realDimDeRhamH1 X = realDimSingularH1 X := by
   rw [realDimDeRhamH1_eq_finrank_cocycleℝ X,
       deRhamH1Cocycle_finrank_eq_realDim_singularH1 X]

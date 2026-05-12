@@ -1,4 +1,5 @@
 import Jacobian.AnalyticJacobian.EvalJacobianClassOps
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Integer-scaling on the vec slot of `evalJacobianClass`
@@ -18,6 +19,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 theorem evalLinearMap_vec_nsmul [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (x : X) (n : ℕ) (v : E) :
     evalLinearMap (X := X) x (n • v) = n • evalLinearMap (X := X) x v := by
   ext η
@@ -25,6 +27,7 @@ theorem evalLinearMap_vec_nsmul [ChartedSpace ℂ X]
 
 theorem evalLinearMap_vec_zsmul [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (x : X) (n : ℤ) (v : E) :
     evalLinearMap (X := X) x (n • v) = n • evalLinearMap (X := X) x v := by
   ext η
@@ -32,6 +35,7 @@ theorem evalLinearMap_vec_zsmul [ChartedSpace ℂ X]
 
 variable [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 theorem evalJacobianClass_nsmul_vec (x : X) (n : ℕ) (v : E) :
     evalJacobianClass (E := E) (X := X) x (n • v) =

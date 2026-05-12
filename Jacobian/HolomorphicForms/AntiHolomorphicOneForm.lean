@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.FiniteDimensional
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Anti-holomorphic 1-forms (frontier API)
@@ -73,6 +74,7 @@ theorem AntiHolomorphicOneForm.module_finite_of_compact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Module.Finite ℂ (AntiHolomorphicOneForm X) :=
   inferInstanceAs (Module.Finite ℂ (HolomorphicOneForm ℂ X))
@@ -103,6 +105,7 @@ theorem analyticAntiGenus_eq_analyticGenus
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     analyticAntiGenus X = analyticGenus ℂ X := rfl
 
@@ -111,7 +114,8 @@ spaces, packaged as an ℝ-linear equivalence. -/
 theorem AntiHolomorphicOneForm.realLinearEquiv_holomorphic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ _ : (HolomorphicOneForm ℂ X) ≃ₗ[ℝ] (AntiHolomorphicOneForm X), True :=
   ⟨LinearEquiv.refl _ _, trivial⟩
 

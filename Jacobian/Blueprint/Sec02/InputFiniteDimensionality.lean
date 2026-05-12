@@ -1,5 +1,6 @@
 import Jacobian.Blueprint.Sec02.HoneUnitBallCompact
 import Jacobian.Blueprint.Sec02.FdFromRiesz
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `input:finite-dimensionality`
 
@@ -26,6 +27,7 @@ over `ℂ`. -/
 theorem input_finite_dimensionality
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
     (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
     (h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) :

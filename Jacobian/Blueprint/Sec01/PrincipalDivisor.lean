@@ -1,6 +1,7 @@
 import Jacobian.Blueprint.Sec01.Divisor
 import Jacobian.Blueprint.Sec01.MeromorphicFunction
 import Jacobian.Blueprint.Sec01.DivisorFiniteSupport
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint: `def:principal-divisor` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -25,6 +26,7 @@ extraction. -/
 private noncomputable def underlyingC
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) : X → ℂ :=
   fun p => (f p).getD 0
 
@@ -52,6 +54,7 @@ noncomputable def principalDivisor
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) : Divisor X := by
   classical
   by_cases hf : (∀ q : X, MeromorphicAtX (underlyingC f) q) ∧

@@ -5,6 +5,7 @@ import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Jacobian.HolomorphicForms.ChartedSpaceComplexPoints
 import Mathlib.Geometry.Manifold.Complex
 import Mathlib.LinearAlgebra.Dimension.Finrank
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Riemann-Roch interface for the genus-zero route
@@ -22,6 +23,7 @@ open scoped Manifold OnePoint
 def riemannRochSpace
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (D : Divisor X) : Submodule ℂ (MeromorphicFunctionType X) where
   carrier := { f | f.MemRiemannRochSpace D }
   zero_mem' := Or.inl rfl
@@ -34,7 +36,8 @@ def riemannRochSpace
 
 /-- The subspace of constant meromorphic functions. -/
 def constantFunctions (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Submodule ℂ (MeromorphicFunctionType X) where
   carrier := { f | ∃ c : ℂ, f.toFun = fun _ => (c : OnePoint ℂ) }
   zero_mem' := ⟨0, rfl⟩
@@ -70,7 +73,8 @@ def constantFunctions (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
 
 /-- The equivalence between ℂ and the subspace of constant functions. -/
 noncomputable def constantFunctionsEquiv (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [Nonempty X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] [Nonempty X] :
     ℂ ≃ₗ[ℂ] constantFunctions X where
   toFun c := ⟨MeromorphicFunctionType.constant c, ⟨c, rfl⟩⟩
   invFun f := (Classical.choose f.2)
@@ -104,6 +108,7 @@ noncomputable def constantFunctionsEquiv (X : Type*) [TopologicalSpace X] [Chart
 theorem finrank_constantFunctions
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [Nonempty X] :
     Module.finrank ℂ (constantFunctions X) = 1 := by
   rw [LinearEquiv.finrank_eq (constantFunctionsEquiv X).symm]
@@ -113,6 +118,7 @@ theorem finrank_constantFunctions
 instance finiteDimensional_constantFunctions
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [Nonempty X] :
     FiniteDimensional ℂ (constantFunctions X) := by
   apply FiniteDimensional.of_finrank_pos
@@ -123,6 +129,7 @@ instance finiteDimensional_constantFunctions
 theorem poles_eq_zero_iff_constant
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) :
     f.poles = 0 ↔ f ∈ constantFunctions X := by
   constructor
@@ -161,6 +168,7 @@ structure GenusZeroPointRiemannRochElement
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
     (h : analyticGenus ℂ X = 0) where
@@ -173,6 +181,7 @@ structure GenusZeroFixedPoleMeromorphicData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
     (h : analyticGenus ℂ X = 0) where
@@ -190,6 +199,7 @@ Cross-ref: `tex/sections/03-riemann-roch.tex`,
 theorem MeromorphicMapToSphere.toMap_ne_infty_of_no_poles
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X) (hpole : f.poles = 0) :
     ∀ x, f.toMap x ≠ OnePoint.infty := by
   intro x
@@ -208,6 +218,7 @@ differentiability. -/
 theorem MeromorphicMapToSphere.toFiniteFun_of_no_poles
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X) (hpole : f.poles = 0) :
     ∃ g : X → ℂ, MDifferentiable (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) g ∧
       f.toMap = (fun x => ((g x : ℂ) : OnePoint ℂ)) := by
@@ -241,6 +252,7 @@ theorem genusZero_riemannRoch_difference_eq_two
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ ℓP ℓKP : ℕ, (ℓP : ℤ) - (ℓKP : ℤ) = 2 :=
@@ -253,6 +265,7 @@ theorem genusZero_riemannRoch_K_minus_point_dim_zero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ ℓKP : ℕ, ℓKP = 0 :=
@@ -367,6 +380,7 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (D : Divisor X)
     (hdim : Module.finrank ℂ (riemannRochSpace X D) ≥ 2) :
@@ -438,6 +452,7 @@ theorem genusZero_pointRiemannRochSpace_witness_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ f : MeromorphicMapToSphere X,
@@ -470,6 +485,7 @@ theorem genusZero_exists_nonconstant_mem_L_point
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
     (h : analyticGenus ℂ X = 0) :
@@ -489,6 +505,7 @@ theorem holomorphic_meromorphicMapToSphere_constant_on_compact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X)
     (hpole : f.poles = 0) :
     ¬ f.Nonconstant := by
@@ -515,6 +532,7 @@ theorem genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0)
     (f : GenusZeroPointRiemannRochElement X P h) :
@@ -565,6 +583,7 @@ theorem genusZero_fixedPole_meromorphicData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     Nonempty (GenusZeroFixedPoleMeromorphicData X P h) := by

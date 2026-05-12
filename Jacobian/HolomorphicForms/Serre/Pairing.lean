@@ -5,6 +5,7 @@ import Jacobian.HolomorphicForms.Serre.CupProduct
 import Jacobian.HolomorphicForms.Serre.EvalSheafMap
 import Jacobian.HolomorphicForms.Serre.H1Functoriality
 import Jacobian.HolomorphicForms.Serre.TraceMap
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Serre pairing on the canonical dual (refined assembly)
@@ -68,6 +69,7 @@ noncomputable def serrePairing
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F : RSAbSheaf X) :

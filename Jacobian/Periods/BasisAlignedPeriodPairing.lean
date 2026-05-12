@@ -1,4 +1,5 @@
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Basis-aligned period pairing
@@ -34,6 +35,7 @@ open JacobianChallenge.HolomorphicForms
 variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- The basis-aligned period pairing: integration of holomorphic 1-forms
 over integer 1-cycles, postcomposed with the basis-aligned dual

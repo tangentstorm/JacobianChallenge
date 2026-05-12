@@ -1,4 +1,5 @@
 import Jacobian.AnalyticJacobian.NontrivialWitness
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Abel-Jacobi map (witness skeleton)
@@ -27,6 +28,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- Base-point-relative witness map into the analytic Jacobian
 quotient. *Not* the full Abel-Jacobi map (deferred), but a

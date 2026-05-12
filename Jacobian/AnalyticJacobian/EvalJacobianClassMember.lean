@@ -1,5 +1,6 @@
 import Jacobian.AnalyticJacobian.MkMembership
 import Jacobian.AnalyticJacobian.EvalJacobianClassZero
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # `evalJacobianClass` ↔ `periodSubgroup` membership criteria
@@ -17,6 +18,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- An `evalLinearMap` value lying in `periodSubgroup` makes the
 corresponding `evalJacobianClass` zero. -/

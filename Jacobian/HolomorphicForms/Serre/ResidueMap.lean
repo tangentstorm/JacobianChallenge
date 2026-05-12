@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.Serre.DualizingSheaf
 import Jacobian.HolomorphicForms.Serre.HarmonicForms
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Residue / integration map for `H¹(X, K_X)` (frontier)
@@ -43,6 +44,7 @@ noncomputable def residueMapEquiv
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
@@ -56,6 +58,7 @@ noncomputable def residueMap
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
@@ -69,6 +72,7 @@ noncomputable def residueMap_inverse
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
@@ -82,6 +86,7 @@ theorem residueMap_left_inv
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
@@ -96,6 +101,7 @@ theorem residueMap_right_inv
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :

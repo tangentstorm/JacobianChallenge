@@ -1,5 +1,6 @@
 import Jacobian.AbelJacobi.Defs
 import Jacobian.AbelJacobi.Composition
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Combined sub/add witness identities
@@ -19,6 +20,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- `(witness A B) + (witness B A) = 0` (sym pairing). Direct corollary
 of the swap identity. -/

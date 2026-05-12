@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.Defs
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Geometry.Manifold.IsManifold.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Sec 03 API: abstract algebra layer
@@ -72,6 +73,7 @@ opaque wedgeIntegral
     (X : Type) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_ω _η : HolomorphicOneForm ℂ X) : ℂ
 
 /-- Opaque Hermitian pairing `⟨ω, η⟩ := i ∫_X ω ∧ conj η`. The factor
@@ -81,6 +83,7 @@ opaque hermitianPairing
     (X : Type) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_ω _η : HolomorphicOneForm ℂ X) : ℂ
 
 /-- Opaque period `∫_γ ω` of a holomorphic 1-form along an integral
@@ -91,6 +94,7 @@ opaque period
     (X : Type) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_γ : H1Z X) (_ω : HolomorphicOneForm ℂ X) : ℂ
 
 /-- The period vector of `ω` against a symplectic basis: the
@@ -101,6 +105,7 @@ noncomputable def periodVector
     (X : Type) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     {g : ℕ} (sb : SymplecticBasis X g) (ω : HolomorphicOneForm ℂ X) :
     Fin (2 * g) → ℂ := fun i =>
   if h : i.val < g then

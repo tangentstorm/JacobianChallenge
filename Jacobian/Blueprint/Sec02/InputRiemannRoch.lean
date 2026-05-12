@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.CotangentBundle
 import Jacobian.HolomorphicForms.Serre.RiemannRochUmbrellaPieces
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `input:riemann-roch`
 
@@ -218,6 +219,7 @@ and `thm:serre-duality-rs` (covered by
 theorem riemann_roch_umbrella_exists
     (X : Type u) [TopologicalSpace X] [CompactSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [CategoryTheory.HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [CategoryTheory.HasExt.{0}
       (CategoryTheory.Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]

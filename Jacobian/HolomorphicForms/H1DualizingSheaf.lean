@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.SerreDualityRS
 import Jacobian.HolomorphicForms.Serre.H1CanonicalIso
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Mathlib.LinearAlgebra.Dimension.Finrank
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # `H¹(X, K_X) ≃ ℂ` on a compact Riemann surface
@@ -80,6 +81,7 @@ theorem h1_dualizing_sheaf_one_dim
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
@@ -98,6 +100,7 @@ theorem h1_dualizing_sheaf_finiteDimensional
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :

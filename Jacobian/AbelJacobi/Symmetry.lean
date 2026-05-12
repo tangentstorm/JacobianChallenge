@@ -1,4 +1,5 @@
 import Jacobian.AbelJacobi.WitnessMk
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Symmetry / sign identities for `witnessAbelJacobi` / `evalJacobianClass`
@@ -17,6 +18,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- Negating the vector flips the witness sign (alias). -/
 theorem witnessAbelJacobi_neg_vec_eq_neg

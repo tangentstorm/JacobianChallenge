@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.Serre.LineBundleSerre
 import Jacobian.HolomorphicForms.EulerCharLineBundle
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Serre vanishing in the high-degree régime (refinement)
@@ -38,6 +39,7 @@ theorem RSLineBundleDegree_dual_tensor_canonical
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (L : RSLineBundleSheaf X) :
     RSLineBundleDegree X
         (RSTensorAbSheaf X (RSLineBundleDual X L) (RSDualizingSheaf X))
@@ -60,6 +62,7 @@ theorem serre_duality_h1_h0_linearEquiv
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)
@@ -80,6 +83,7 @@ theorem riemann_roch_high_degree_via_serre
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)

@@ -1,5 +1,6 @@
 import Jacobian.AnalyticJacobian.EvalJacobianClass
 import Jacobian.HolomorphicForms.EvalLinearMapVecExtra
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Vec-slot group operations on `evalJacobianClass`
@@ -18,6 +19,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 theorem evalLinearMap_vec_neg [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (x : X) (v : E) :
     evalLinearMap (X := X) x (-v) = -evalLinearMap (X := X) x v := by
   ext η
@@ -25,6 +27,7 @@ theorem evalLinearMap_vec_neg [ChartedSpace ℂ X]
 
 theorem evalLinearMap_vec_sub [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (x : X) (v w : E) :
     evalLinearMap (X := X) x (v - w) =
       evalLinearMap (X := X) x v - evalLinearMap (X := X) x w := by
@@ -33,6 +36,7 @@ theorem evalLinearMap_vec_sub [ChartedSpace ℂ X]
 
 variable [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 theorem evalJacobianClass_neg_vec (x : X) (v : E) :
     evalJacobianClass (E := E) (X := X) x (-v) =

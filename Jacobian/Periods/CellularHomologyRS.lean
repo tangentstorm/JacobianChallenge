@@ -4,6 +4,7 @@ import Jacobian.Periods.TopologicalGenusInvariance
 import Jacobian.Periods.Orientable
 import Jacobian.Periods.SmoothRealStructure
 import Mathlib.Topology.CWComplex.Classical.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Cellular homology of a compact Riemann surface (frontier API)
@@ -99,7 +100,8 @@ structure for compact connected smooth surfaces. Proved by:
 theorem compactRiemannSurface_hasFiniteCWStructure
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Nonempty (FiniteCWStructure X) := by
   -- 1. Bridge from complex 1-manifold to real 2-manifold
   obtain ⟨srStruct⟩ := ChartedSpaceComplex_to_smoothReal2 X
@@ -165,6 +167,7 @@ theorem cellularH1_finite_free
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_cw : FiniteCWStructure X) :
     ∃ (CH1 : Type) (_ : AddCommGroup CH1) (_ : Module ℤ CH1),
       Module.Finite ℤ CH1 ∧ Module.Free ℤ CH1 :=
@@ -184,6 +187,7 @@ theorem cellularH1_finite_singularIsoData
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_cw : FiniteCWStructure X) :
     ∃ (CH1 : Type) (_ : AddCommGroup CH1) (_iCH1 : Module ℤ CH1)
       (_hF : Module.Finite ℤ CH1) (_hFr : Module.Free ℤ CH1),
@@ -214,6 +218,7 @@ theorem cellular_iso_singular_h1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (cw : FiniteCWStructure X) :
     ∃ (CH1 : Type) (_ : AddCommGroup CH1) (_ : Module ℤ CH1),
       Nonempty (CH1 ≃ₗ[ℤ] IntegralOneCycle X) := by
@@ -227,6 +232,7 @@ theorem IntegralOneCycle_finite_of_cellular
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (cw : FiniteCWStructure X) :
     Module.Finite ℤ (IntegralOneCycle X) := by
   obtain ⟨_, _, _, _hF, _, hIso⟩ := cellularH1_finite_singularIsoData X cw
@@ -246,6 +252,7 @@ theorem IntegralOneCycle_free_of_cellular
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (cw : FiniteCWStructure X) :
     Module.Free ℤ (IntegralOneCycle X) := by
   obtain ⟨_, _, _, _, _hFr, hIso⟩ := cellularH1_finite_singularIsoData X cw
@@ -257,7 +264,8 @@ delegates through Radó triangulation + cellular finite generation. -/
 theorem IntegralOneCycle_finite_via_cellular
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module.Finite ℤ (IntegralOneCycle X) := by
   obtain ⟨cw⟩ := compactRiemannSurface_hasFiniteCWStructure X
   exact IntegralOneCycle_finite_of_cellular X cw
@@ -267,7 +275,8 @@ through Radó + cellular freeness. -/
 theorem IntegralOneCycle_torsionFree_via_cellular
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module.Free ℤ (IntegralOneCycle X) := by
   obtain ⟨cw⟩ := compactRiemannSurface_hasFiniteCWStructure X
   exact IntegralOneCycle_free_of_cellular X cw

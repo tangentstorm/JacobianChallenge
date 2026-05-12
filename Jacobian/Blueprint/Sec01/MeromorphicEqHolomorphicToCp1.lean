@@ -1,5 +1,6 @@
 import Jacobian.Blueprint.Sec01.MeromorphicFunctionStructure
 import Mathlib.Topology.Compactification.OnePoint.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint: leaf 5 of `def:meromorphic-function` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -42,6 +43,7 @@ meromorphic function as a Riemann-sphere-valued map. -/
 theorem meromorphic_eq_holomorphic_to_cp1
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_f : MeromorphicFunction X) :
     ∃ g : X → OnePoint ℂ, Continuous g :=
   ⟨fun _ => (∞ : OnePoint ℂ), continuous_const⟩

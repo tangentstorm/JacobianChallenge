@@ -4,6 +4,7 @@ import Mathlib.Analysis.Complex.Basic
 import Mathlib.CategoryTheory.Sites.Sheaf
 import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 import Mathlib.LinearAlgebra.Basis.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Stage B — Coherent sheaves on a Riemann surface
@@ -64,10 +65,12 @@ def holomorphicFormSheaf (_X : Type) [TopologicalSpace _X] [ChartedSpace ℂ _X]
 
 instance (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p : ℕ) : AddCommGroup (holomorphicFormSheaf X p) := by
   unfold holomorphicFormSheaf; infer_instance
 instance (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p : ℕ) : Module ℂ (holomorphicFormSheaf X p) := by
   unfold holomorphicFormSheaf; infer_instance
 

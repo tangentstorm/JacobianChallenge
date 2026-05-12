@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.Serre.LineBundleDual
 import Jacobian.HolomorphicForms.Serre.H0CanonicalIdentification
 import Jacobian.HolomorphicForms.Serre.StructureSheaf
 import Jacobian.HolomorphicForms.Defs
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Identification `H¹(X, 𝒪_X) ≃ HolomorphicOneForm X *` (frontier)
@@ -35,6 +36,7 @@ noncomputable def h1Structure_isoHolomorphicOneFormDual
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSStructureSheaf X) 1)] :
@@ -48,6 +50,7 @@ theorem h1Structure_finrank_eq_holomorphicOneForm
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSStructureSheaf X) 1)]

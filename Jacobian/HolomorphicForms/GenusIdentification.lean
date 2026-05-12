@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.CanonicalDivisor
 import Jacobian.HolomorphicForms.Serre.H0CanonicalIdentification
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Genus identification: analytic ↔ cohomological
@@ -103,6 +104,7 @@ theorem analyticGenus_eq_cohomological_genus_h0_KX
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
@@ -128,6 +130,7 @@ theorem RSGenus_eq_analyticGenus
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     RSGenus X = analyticGenus ℂ X := by
   rfl
