@@ -131,6 +131,20 @@ identify our jobs without inspecting tarballs.
 - **1a50bfc4-e90d-4c9d-8891-3e0994b48b7e** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_arzela_ascoli_refine23
 - **eb62762d-9750-4cf4-a8cd-1d2a6c361dd6** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
 - **d0717941-5047-454b-8fd5-68382a67e40d** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove closedForm_pathIntegral_primitive_exists
+- **3d57f254-af04-4476-9699-dde009d44057** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove integral_closed_form_from_cech_eq
+- **a42af231-fd34-412b-9fc5-4328a147c235** (submitted): `Jacobian/HolomorphicForms/EulerCharLineBundle.lean` — prove euler_char_eq_formula
+- **d3b3da49-ce4d-462c-87fc-12a7664bf55b** (submitted): `Jacobian/HolomorphicForms/EvalAtOneHelper.lean` — prove contMDiff_tangentSection_one
+- **93a3141d-3479-4bc1-883b-e47df40dff1e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — prove exists_contMDiff_homeomorph_to_onePointCx
+- **5b1e92ee-43c7-4996-addf-e24b07138855** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — prove holomorphicOneForm_chartOverlap_pullback
+- **31e84dbe-716d-4abf-9d03-45592f3904a6** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove analytic_genus_zero_implies_b1_zero
+- **4361742e-9bcd-4e24-963e-744dbf6a2b09** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove conjugate_one_form_closed
+- **5cade433-aad2-4272-aab3-c5086662957f** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dim_h1_eq_two_genus
+- **4c518083-cc1e-4cc4-9c05-858d70626a67** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_harmonic_holomorphic_extension
+- **22d76fd0-ab40-42ad-8d14-1dc40cccacc7** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_harmonic_pole_is_simple
+- **699d3b99-8464-4710-a622-18d5bb25c10c** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_singularity_magnitude_tendsto_infty
+- **39f9355a-5e32-41a8-9a7c-a7d80ebd6179** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dirichlet_energy_coercive
+- **60752cb4-9d2b-479e-a7bc-bd9305b23e6d** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove elliptic_regularity_harmonic
+- **eb712420-492a-4851-8435-d2f8edf1d492** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove exact_of_closed_in_genus_zero
 
 ## Live Status (2026-05-04, R10 dispatch end-to-end on
 
@@ -251,6 +265,20 @@ identify our jobs without inspecting tarballs.
 - **1a50bfc4-e90d-4c9d-8891-3e0994b48b7e** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_arzela_ascoli_refine23
 - **eb62762d-9750-4cf4-a8cd-1d2a6c361dd6** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
 - **d0717941-5047-454b-8fd5-68382a67e40d** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove closedForm_pathIntegral_primitive_exists
+- **3d57f254-af04-4476-9699-dde009d44057** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove integral_closed_form_from_cech_eq
+- **a42af231-fd34-412b-9fc5-4328a147c235** (submitted): `Jacobian/HolomorphicForms/EulerCharLineBundle.lean` — prove euler_char_eq_formula
+- **d3b3da49-ce4d-462c-87fc-12a7664bf55b** (submitted): `Jacobian/HolomorphicForms/EvalAtOneHelper.lean` — prove contMDiff_tangentSection_one
+- **93a3141d-3479-4bc1-883b-e47df40dff1e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — prove exists_contMDiff_homeomorph_to_onePointCx
+- **5b1e92ee-43c7-4996-addf-e24b07138855** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — prove holomorphicOneForm_chartOverlap_pullback
+- **31e84dbe-716d-4abf-9d03-45592f3904a6** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove analytic_genus_zero_implies_b1_zero
+- **4361742e-9bcd-4e24-963e-744dbf6a2b09** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove conjugate_one_form_closed
+- **5cade433-aad2-4272-aab3-c5086662957f** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dim_h1_eq_two_genus
+- **4c518083-cc1e-4cc4-9c05-858d70626a67** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_harmonic_holomorphic_extension
+- **22d76fd0-ab40-42ad-8d14-1dc40cccacc7** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_harmonic_pole_is_simple
+- **699d3b99-8464-4710-a622-18d5bb25c10c** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_singularity_magnitude_tendsto_infty
+- **39f9355a-5e32-41a8-9a7c-a7d80ebd6179** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dirichlet_energy_coercive
+- **60752cb4-9d2b-479e-a7bc-bd9305b23e6d** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove elliptic_regularity_harmonic
+- **eb712420-492a-4851-8435-d2f8edf1d492** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove exact_of_closed_in_genus_zero
 
 ## Curve-analysis frontier delegation packets (2026-05-05, queued; Aristotle blocked)
 
@@ -544,6 +572,20 @@ module(s).
 - **1a50bfc4-e90d-4c9d-8891-3e0994b48b7e** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_arzela_ascoli_refine23
 - **eb62762d-9750-4cf4-a8cd-1d2a6c361dd6** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
 - **d0717941-5047-454b-8fd5-68382a67e40d** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove closedForm_pathIntegral_primitive_exists
+- **3d57f254-af04-4476-9699-dde009d44057** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove integral_closed_form_from_cech_eq
+- **a42af231-fd34-412b-9fc5-4328a147c235** (submitted): `Jacobian/HolomorphicForms/EulerCharLineBundle.lean` — prove euler_char_eq_formula
+- **d3b3da49-ce4d-462c-87fc-12a7664bf55b** (submitted): `Jacobian/HolomorphicForms/EvalAtOneHelper.lean` — prove contMDiff_tangentSection_one
+- **93a3141d-3479-4bc1-883b-e47df40dff1e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — prove exists_contMDiff_homeomorph_to_onePointCx
+- **5b1e92ee-43c7-4996-addf-e24b07138855** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — prove holomorphicOneForm_chartOverlap_pullback
+- **31e84dbe-716d-4abf-9d03-45592f3904a6** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove analytic_genus_zero_implies_b1_zero
+- **4361742e-9bcd-4e24-963e-744dbf6a2b09** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove conjugate_one_form_closed
+- **5cade433-aad2-4272-aab3-c5086662957f** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dim_h1_eq_two_genus
+- **4c518083-cc1e-4cc4-9c05-858d70626a67** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_harmonic_holomorphic_extension
+- **22d76fd0-ab40-42ad-8d14-1dc40cccacc7** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_harmonic_pole_is_simple
+- **699d3b99-8464-4710-a622-18d5bb25c10c** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_singularity_magnitude_tendsto_infty
+- **39f9355a-5e32-41a8-9a7c-a7d80ebd6179** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dirichlet_energy_coercive
+- **60752cb4-9d2b-479e-a7bc-bd9305b23e6d** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove elliptic_regularity_harmonic
+- **eb712420-492a-4851-8435-d2f8edf1d492** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove exact_of_closed_in_genus_zero
 
 ## Live Status (2026-04-29 17:01 EDT, prior tick — kept for context)
 
@@ -664,6 +706,20 @@ module(s).
 - **1a50bfc4-e90d-4c9d-8891-3e0994b48b7e** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_arzela_ascoli_refine23
 - **eb62762d-9750-4cf4-a8cd-1d2a6c361dd6** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — prove holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
 - **d0717941-5047-454b-8fd5-68382a67e40d** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove closedForm_pathIntegral_primitive_exists
+- **3d57f254-af04-4476-9699-dde009d44057** (submitted): `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean` — prove integral_closed_form_from_cech_eq
+- **a42af231-fd34-412b-9fc5-4328a147c235** (submitted): `Jacobian/HolomorphicForms/EulerCharLineBundle.lean` — prove euler_char_eq_formula
+- **d3b3da49-ce4d-462c-87fc-12a7664bf55b** (submitted): `Jacobian/HolomorphicForms/EvalAtOneHelper.lean` — prove contMDiff_tangentSection_one
+- **93a3141d-3479-4bc1-883b-e47df40dff1e** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — prove exists_contMDiff_homeomorph_to_onePointCx
+- **5b1e92ee-43c7-4996-addf-e24b07138855** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — prove holomorphicOneForm_chartOverlap_pullback
+- **31e84dbe-716d-4abf-9d03-45592f3904a6** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove analytic_genus_zero_implies_b1_zero
+- **4361742e-9bcd-4e24-963e-744dbf6a2b09** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove conjugate_one_form_closed
+- **5cade433-aad2-4272-aab3-c5086662957f** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dim_h1_eq_two_genus
+- **4c518083-cc1e-4cc4-9c05-858d70626a67** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_harmonic_holomorphic_extension
+- **22d76fd0-ab40-42ad-8d14-1dc40cccacc7** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_harmonic_pole_is_simple
+- **699d3b99-8464-4710-a622-18d5bb25c10c** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dipole_singularity_magnitude_tendsto_infty
+- **39f9355a-5e32-41a8-9a7c-a7d80ebd6179** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove dirichlet_energy_coercive
+- **60752cb4-9d2b-479e-a7bc-bd9305b23e6d** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove elliptic_regularity_harmonic
+- **eb712420-492a-4851-8435-d2f8edf1d492** (submitted): `Jacobian/HolomorphicForms/HarmonicFunctions.lean` — prove exact_of_closed_in_genus_zero
 
 ## Layer status
 
