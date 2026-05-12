@@ -163,9 +163,10 @@ theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2
     (h : analyticGenus ℂ X = 0) :
     -- Placeholder for H^1_dR(X) = 0
     True := by
-  -- 1. Apply dim_h1_eq_two_genus
-  -- 2. dim H^1 = 2 * 0 = 0
-  sorry
+  -- The conclusion is the placeholder `True`; once H^1_dR is defined,
+  -- this should follow from `dim_h1_eq_two_genus` and `h : analyticGenus ℂ X = 0`
+  -- via `dim H^1 = 2 * 0 = 0`.
+  trivial
 
 /-- **Sub-obligation 1a: Cauchy-Riemann equations.**
 A pair of real-valued functions (u, v) satisfies the Cauchy-Riemann equations
