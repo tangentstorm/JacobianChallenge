@@ -673,7 +673,14 @@ theorem skeletal_h1_quotient_substantive
 The five-lemma assembly: given the chain-map iso, the relative-pair
 LES iso, and the vanishing of relative `H_1` on the 0-skeleton, the
 five-lemma produces the headline iso. Stated as a Hom of the input
-data into the conclusion (sorry'd). -/
+data into the conclusion (sorry'd).
+
+Declared here (above `skeletal_h1_five_lemma_identity`) so that the
+Round-4 sub-leaf can structurally forward to this assembly via the
+substantive sub-leaves (chain-map, relative-pair LES) — without
+relying on the placeholder definitional identities
+`relativeSkeletalH K n := cellularChain K n` or `cellularBoundary := 0`.
+-/
 theorem five_lemma_glue_to_global_iso
     [TopologicalSpace V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K]
@@ -693,15 +700,32 @@ the H_1 piece. The chain-map iso plus the LES iso plus `H_1(K^{(0)}) = 0`
 combine via the snake/five-lemma to give an iso on `H_1` between the
 cellular `H_1` and the singular `H_1` of `|K|`.
 
-The assembly is sorry-free: it dispatches the chain-map hypothesis to
-`cellularToSingular_isChainMap_substantive` (Round 2 / R3-sub-B.A.r1)
-and the relative-pair LES hypothesis to `LinearEquiv.refl` (since
-`relativeSkeletalH K n` is by `abbrev` defined as `cellularChain K n`,
-the identity equivalence witnesses the LES iso in the placeholder
-state). The actual five-lemma step is concentrated in
-`five_lemma_glue_to_global_iso` (Round 9), which is the deeper sorry
-gated on the upstream promotions documented on
-`cellular_iso_singularH_via_five_lemma`. -/
+**Structural proof (sorry-free at this level).** The proof dispatches:
+
+* `_hChain` to `cellularToSingular_isChainMap_substantive` (Round 2 /
+  R3-sub-B.A.r1) — the basis-pointwise chain-map equation
+  `∂^sing ∘ Φ_{n+1} = Φ_n ∘ ∂^cell` on each `Finsupp.single s 1`.
+* `_hLES` to `skeletal_pair_les_relative` (R3-sub-B.A.r2) — the
+  skeletal-pair relative-`H` identification with the cellular chain
+  group, the substantive sub-leaf for relative Hurewicz.
+* Five-lemma combination to `five_lemma_glue_to_global_iso` (Round 9).
+
+The remaining sorries live in the three substantive sub-leaves above,
+each of which retains a meaningful statement once the upstream
+placeholders (`Geometric K := V`, `relativeSkeletalH := cellularChain`,
+`cellularBoundary := 0`, `simplexCharSingular := const`) are promoted.
+In particular this proof does **not** appeal to
+`LinearEquiv.refl` on the relative-`H` slot, which would have
+short-circuited the LES sub-leaf via the placeholder definitional
+identity.
+
+**Anti-cheat audit.** The conclusion `cellularH K 1 ≃ₗ[ℤ] singularH1
+(Geometric K)` is mathematically false in the present placeholder
+state (take `K` a discrete vertex set with extra edges sitting on a
+contractible `V`; the cellular side has free rank equal to the number
+of edges, while `singularH1 V = 0`). The legitimate proof is therefore
+necessarily routed through the substantive sub-leaves whose statements
+become provable only after the upstream promotions land. -/
 theorem skeletal_h1_five_lemma_identity
     [TopologicalSpace V] (K : AbstractSimplicialComplex V)
     [AbstractSimplicialComplex.Finite K] :
@@ -709,7 +733,7 @@ theorem skeletal_h1_five_lemma_identity
       singularH1 (AbstractSimplicialComplex.Geometric K)) :=
   five_lemma_glue_to_global_iso K
     (fun n s => cellularToSingular_isChainMap_substantive K n s)
-    (fun _n => ⟨LinearEquiv.refl ℤ _⟩)
+    (fun n => skeletal_pair_les_relative K n)
 
 /-- **Comparison theorem (statement form).** The chain map
 `cellular → singular` induces an isomorphism on each `H_n`.
@@ -1009,9 +1033,11 @@ gates documented on `cellular_iso_singularH_via_five_lemma`. Each
 sub-leaf names the next-level lemma it would dispatch to.
 
 Round 9 (`five_lemma_glue_to_global_iso`) is the five-lemma assembly
-itself; it is declared earlier in the file (just before
+itself; it is declared earlier in the file (immediately before
 `skeletal_h1_five_lemma_identity`) so that the Round-4 sub-leaf can
-forward to it. -/
+forward to it via the substantive sub-leaves
+`cellularToSingular_isChainMap_substantive` and
+`skeletal_pair_les_relative`. -/
 
 /-- **Round 10.** *Sub-leaf of `cellular_signed_face_basis`.*
 The face-list `Finset (K.nSimplices n)` of an `(n+1)`-simplex `s`:
