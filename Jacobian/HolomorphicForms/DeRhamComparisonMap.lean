@@ -190,7 +190,27 @@ theorem deRhamComparisonMap1_surjective
 A closed 1-form with zero periods admits a global smooth 0-form whose
 exterior derivative is the original form. This is the deep analytic
 content (FTC for forms / path-integration on a connected manifold);
-the sorry here represents that frontier obligation. -/
+the sorry here represents that frontier obligation.
+
+**Blocker note.** In the current placeholder model from
+`Jacobian/HolomorphicForms/SmoothDifferentialForm.lean`, the
+`exteriorDerivative` is set to `0`, so the goal reduces to
+`(ω : SmoothDiffForm 1 X) = 0`. The only hypothesis we have is
+`_hω : deRhamComparisonMap1 X ω = 0`, where `deRhamComparisonMap1` is
+`noncomputable opaque` with no specified value — there is no
+extensionality lemma that lets us extract `ω.val = 0` from this
+equality. To discharge this sorry we therefore need at least one of:
+* a non-zero refinement of `exteriorDerivative` (so the goal is not
+  forced into `ω.val = 0`), or
+* a refinement of `deRhamComparisonMap1` into a concrete `def`
+  (rather than `opaque`) together with a proof that it is injective
+  on `ClosedForm 1 X` in the current model.
+
+Both are upstream changes outside the allowed write scope for this
+task. The honest analytic content this theorem will eventually carry
+is the global path-integral primitive on a connected manifold (FTC
+for closed forms with vanishing periods); see the
+"Mathlib gap" notes above on `deRhamComparisonMap1_kernel_subset_exact`. -/
 theorem closedForm_pathIntegral_primitive_exists
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
