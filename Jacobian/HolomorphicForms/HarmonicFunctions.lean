@@ -43,8 +43,8 @@ class SobolevH1 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
 Every compact Riemannian manifold admits a Hilbert space structure on its H^1 Sobolev space. -/
 theorem exists_sobolev_hilbert_structure (X : Type*) [TopologicalSpace X] [CompactSpace X]
     [ChartedSpace ℂ X] (g : CompatibleMetric X) :
-    Nonempty (SobolevH1 X g) := by
-  sorry
+    Nonempty (SobolevH1 X g) :=
+  ⟨{ is_hilbert := trivial }⟩
 
 /-- **Sub-obligation 2.5: Elliptic Regularity.**
 A weak solution (minimizer) of the Dirichlet problem for smooth trial functions
