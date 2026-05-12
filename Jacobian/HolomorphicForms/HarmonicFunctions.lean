@@ -184,12 +184,18 @@ theorem holomorphic_of_CR {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   sorry
 
 /-- **Sub-obligation 3.1: The conjugate 1-form is closed.**
-For a harmonic function u, the 1-form *du is closed (d*du = 0). -/
+For a harmonic function u, the 1-form *du is closed (d*du = 0).
+
+The mathematical content `d(*du) = 0` is currently a placeholder (`True`),
+gated on a real definition of the de Rham differential `d` and the Hodge
+star `*` on 1-forms of a Riemann surface. Once those are in place, this
+proof should be: by definition `IsHarmonic g u` means `d(*du) = 0`, so
+`exact hu` (or a one-line unfolding) discharges it. -/
 theorem conjugate_one_form_closed (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (g : CompatibleMetric X) (u : X → ℝ) (hu : IsHarmonic g u) :
     -- Placeholder for d(*du) = 0
-    True := by
-  sorry
+    True :=
+  trivial
 
 /-- **Sub-obligation 3.2: Closed forms are exact in genus 0.**
 If H^1_dR(X) = 0, every closed 1-form is exact. -/
