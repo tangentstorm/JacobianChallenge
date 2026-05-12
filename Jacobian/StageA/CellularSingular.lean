@@ -673,8 +673,16 @@ relative-H placeholder is therefore subsingleton. -/
 theorem skeletal_h1_zeroSkeleton
     [TopologicalSpace V] [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
     (_h : ∀ s ∈ K.simplices, AbstractSimplicialComplex.dimSimplex s = 0) :
-    Subsingleton (relativeSkeletalH K 1) :=
-  sorry
+    Subsingleton (relativeSkeletalH K 1) := by
+  have hempty : IsEmpty ↥(K.nSimplices 1) := by
+    refine ⟨fun s => ?_⟩
+    have h0 : AbstractSimplicialComplex.dimSimplex s.1 = 0 := _h s.1 s.2.1
+    have h1 : AbstractSimplicialComplex.dimSimplex s.1 = 1 := s.2.2
+    omega
+  refine ⟨fun f g => ?_⟩
+  apply Finsupp.ext
+  intro x
+  exact hempty.elim x
 
 /-- **R3-sub-B.A.r3.r2 (Round 4).** Sub-leaf: `H_2(K^{(2)}, K^{(1)})`
 LES gives `coker(∂_2) = H_1(K^{(1)}) / im ∂_2`. As a chain-level
