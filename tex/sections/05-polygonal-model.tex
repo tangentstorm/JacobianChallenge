@@ -377,8 +377,12 @@ all sorry) and a parallel project-side chain in
 \code{H1EvenBasisViaSurfaceClassification.lean} that wires the
 classical pieces into the analytic genus equality the rest of the
 blueprint consumes. Edge-word algebra and the Tietze relation are
-sorry-free; the umbrella reduction theorem and the Stage~A bottom-up
-infrastructure remain open.}
+sorry-free. On the homology side,
+\code{polygon4g\_cellular\_singular\_iso} is now a sorry-free assembly
+from \code{polygon4g\_singularH1\_basis}; the remaining frontier is the
+positive-genus Hurewicz/cellular computation packaged as
+\code{polygon4g\_succ\_hurewicz\_iso\_freeZ}. The umbrella reduction
+theorem and the Stage~A bottom-up infrastructure remain open.}
 \lean{JacobianChallenge.Blueprint.polygonal_model}
 \leanok
 \end{theorem}
