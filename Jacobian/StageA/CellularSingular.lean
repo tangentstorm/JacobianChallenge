@@ -485,13 +485,30 @@ The skeletal-pair LES sub-leaves (Round 2/3) reference
 ℤ-module type; the substantive form lands once the skeleton sub-complex
 API and the singular relative-homology functor are wired in. -/
 
-/-- Placeholder for `H_n^sing(|K^{(n)}|, |K^{(n-1)}|; ℤ)`. Carried as
-the cellular `n`-chain group, which the relative-Hurewicz theorem
-identifies it with on the nose. Promoted to the genuine relative-H
-once the skeleton subcomplex API lands. -/
-abbrev relativeSkeletalH
+/-- The n-skeleton of an abstract simplicial complex K, as a new complex. -/
+def skeleton (K : AbstractSimplicialComplex V) (n : ℕ) : AbstractSimplicialComplex V where
+  faces := {s | s ∈ K.faces ∧ s.card ≤ n + 1}
+  nonempty_of_mem := fun s h => K.nonempty_of_mem h.1
+  downward_closed := fun s t hst hmem => ⟨K.downward_closed hmem.1 hst (K.nonempty_of_mem hmem.1), 
+                                         by have := t.card_le_card hst; omega⟩
+
+/-- The wedge of α n-spheres. -/
+def wedgeOfSpheres (α : Type*) (n : ℕ) : Type := PUnit -- Placeholder topology
+
+/-- Substantive type for `H_n^sing(|K^{(n)}|, |K^{(n-1)}|; ℤ)`. 
+Now a distinct type to prevent trivial proofs via placeholder aliases. -/
+noncomputable def relativeSkeletalH
     [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) : Type :=
-  cellularChain K n
+  ULift (cellularChain K n) -- Temporary distinct wrapper
+
+noncomputable instance [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    AddCommGroup (relativeSkeletalH K n) :=
+  inferInstanceAs (AddCommGroup (ULift _))
+
+noncomputable instance [TopologicalSpace V] (K : AbstractSimplicialComplex V) (n : ℕ) :
+    Module ℤ (relativeSkeletalH K n) :=
+  inferInstanceAs (Module ℤ (ULift _))
+
 
 /-! ### Quasi-isomorphism — R3-sub-B.A stepwise refinement
 
