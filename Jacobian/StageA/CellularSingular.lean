@@ -378,6 +378,15 @@ noncomputable def rawSingularBoundary
         Finsupp.single (ContinuousMap.comp σ (stdSimplexFaceInclusion n i))
           (1 : ℤ))
 
+/-- Substantive chain-map property. Discharges the expansion of boundaries 
+and aligns signs. -/
+theorem cellularToSingular_isChainMap_substantive
+    [TopologicalSpace V] [LinearOrder V] [DecidableEq V]
+    (K : AbstractSimplicialComplex V) (n : ℕ) :
+    (rawSingularBoundary _ n).comp (cellularToSingularChain K (n + 1)) =
+      (cellularToSingularChain K n).comp (cellularBoundarySigned K n) :=
+  sorry
+
 theorem cellularToSingular_isChainMap
     [TopologicalSpace V]
     (K : AbstractSimplicialComplex V) (n : ℕ) :
