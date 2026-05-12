@@ -125,15 +125,79 @@ noncomputable def localTraceAtRegularValue
       localPullbackAt h hf ω x hx_unram y'
     )
 
-/-- The local trace is holomorphic at regular values. -/
+/-- The local trace is holomorphic at regular values.
+
+BLOCKED: this proof requires several prerequisites that are not yet
+available in the project.
+
+The function under analysis has type `Y → CotangentModelFiber ℂ`,
+i.e. `Y → (ℂ →L[ℂ] ℂ)`, and the conclusion `IsHolomorphicAt _ y`
+unfolds to `AnalyticAt ℂ (chartLocalAt _ y) (chartAt ℂ y y)` via the
+project-local `JacobianChallenge.HolomorphicForms.HolomorphicMap`
+definition.  Discharging this requires:
+
+* **Missing prerequisite 1 — `ChartedSpace ℂ (CotangentModelFiber ℂ)`.**
+  `IsHolomorphicAt` is currently defined only for maps `X → Y` between
+  two `ChartedSpace ℂ`-equipped types.  The target
+  `CotangentModelFiber ℂ = ℂ →L[ℂ] ℂ` has no such instance in scope:
+  Mathlib only provides `chartedSpaceSelf` (giving
+  `ChartedSpace (ℂ →L[ℂ] ℂ) (ℂ →L[ℂ] ℂ)`, not the required model on
+  `ℂ`), and the project supplies no transitive instance.  Until either
+  `IsHolomorphicAt` is generalised to allow normed-space valued maps
+  (e.g. via `MAnalyticAt` / `ContMDiffAt` for a non-`ChartedSpace ℂ`
+  codomain), or a `ChartedSpace ℂ (ℂ →L[ℂ] ℂ)` instance is built from
+  the 1-dimensional evaluation isomorphism `(· 1) : (ℂ →L[ℂ] ℂ) ≃L[ℂ] ℂ`,
+  the statement above does not have a usable elaboration target.
+
+* **Missing prerequisite 2 — finite-sum closure for `IsHolomorphicAt`.**
+  Even granting prerequisite 1, the trace is `Finset.sum`-shaped, so the
+  proof needs `IsHolomorphicAt 0 y` (zero summand) and
+  `IsHolomorphicAt.add` (cons summand) for the cotangent-fibre target.
+  Neither lemma exists anywhere in `Jacobian/HolomorphicForms/`.
+
+* **Missing prerequisite 3 — `localInverseAt_holomorphic`.**  Each
+  summand is `cotangentPushforward f (localInverseAt h x hx y')
+  (ω (localInverseAt h x hx y'))`; holomorphicity of every such summand
+  reduces to holomorphicity of `localInverseAt h x hx` (the unproved
+  `localInverseAt_holomorphic` `sorry` directly above) composed with the
+  holomorphicity of `cotangentPushforward` in its base argument.
+
+* **Missing prerequisite 4 — holomorphicity of `cotangentPushforward`
+  in the base point.**  The definition contains an `if h : IsIso df
+  then ωx.comp h.inv else 0` branch (with `IsIso` declared *after*
+  `cotangentPushforward` in this very file, a forward reference that
+  itself is suspicious).  No lemma states that `y' ↦
+  cotangentPushforward f (s y') (ω (s y'))` is holomorphic when `s` is a
+  local holomorphic section and `f` is unramified at `s y`, because the
+  pushforward's `IsIso` branch is decided pointwise via `if … then …
+  else 0` and the resulting function has no API connecting it to
+  `IsHolomorphicAt` on `CotangentModelFiber ℂ`.
+
+The proof skeleton, once those prerequisites are in place, is:
+
+  1. `unfold localTraceAtRegularValue`.
+  2. `apply Finset.holomorphicAt_sum` (the missing closure lemma) and
+     reduce to a per-`x` goal.
+  3. Each per-`x` goal is `IsHolomorphicAt (localPullbackAt h hf ω x
+     hx_unram) y`, dispatched by composing
+     `localInverseAt_holomorphic h hf x hx_unram` with the
+     cotangent-pushforward holomorphicity lemma (also missing).
+
+This file therefore leaves the statement unchanged and records the
+blocker rather than introducing fake helper definitions.  -/
 theorem localTraceAtRegularValue_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hf : IsHolomorphic f)
     (ω : HolomorphicOneForm ℂ X)
     (y : Y) (hy : isRegularValue h y) :
     IsHolomorphicAt (localTraceAtRegularValue h hf ω y hy) y := by
-  -- 1. Each term (pullback along local inverse) is holomorphic.
-  -- 2. Finite sum of holomorphic functions is holomorphic.
+  -- BLOCKER: see docstring above.  Missing prerequisites:
+  --   1. `ChartedSpace ℂ (CotangentModelFiber ℂ)` instance (or a
+  --      generalisation of `IsHolomorphicAt` to normed-space targets).
+  --   2. Finite-sum closure lemmas
+  --      (`IsHolomorphicAt 0`, `IsHolomorphicAt.add`) for that target.
+  --   3. `localInverseAt_holomorphic` (also `sorry` above).
+  --   4. Holomorphicity of `cotangentPushforward` in the base point.
   sorry
 
 /-- The trace sum is additive. -/
