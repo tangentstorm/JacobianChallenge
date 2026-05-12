@@ -250,8 +250,32 @@ theorem dipole_singularity_magnitude_tendsto_infty (X : Type*) [TopologicalSpace
     [ChartedSpace ℂ X] (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
     (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) :
     Filter.Tendsto (fun x : X => norm (⟨u x, v x⟩ : ℂ)) (nhdsWithin P {P}ᶜ) Filter.atTop := by
-  -- 1. Locally u + iv ~ 1/z
-  -- 2. Apply magnitude_re_inv_z_tendsto_infty
+  -- BLOCKER: the conclusion is not derivable from the hypotheses as currently
+  -- stated. The predicates `HasRealDipoleSingularity` (line 29) and
+  -- `SatisfiesCauchyRiemann` (line 173) are both definitional placeholders
+  -- equal to `True`, so `hu : True` and `hcr : True` supply no information
+  -- about the local behaviour of `u` and `v` near `P`. The conclusion
+  -- `|u + iv| → ∞` is therefore false in general (e.g. take `u = v = 0`).
+  --
+  -- Missing prerequisites (must be supplied upstream, outside this task's
+  -- write scope, before this theorem becomes provable):
+  --   1. A genuine definition of `HasRealDipoleSingularity P u` that exposes
+  --      a complex chart `φ : X → ℂ` around `P` with `φ P = 0` and a bounded
+  --      remainder `r : X → ℝ` such that, near `P`,
+  --        `u x = (1 / φ x).re + r x`.
+  --   2. A genuine definition of `SatisfiesCauchyRiemann g u v` that yields
+  --      a similar local description of `v` as `(1 / φ x).im + s x` with `s`
+  --      bounded near `P` (i.e. `u + i v` differs from `1 / φ` by a bounded
+  --      perturbation in a punctured neighbourhood of `P`).
+  --
+  -- Sketch once available:
+  --   * Pull back along the chart: `Tendsto φ (nhdsWithin P {P}ᶜ)
+  --       (nhdsWithin 0 {0}ᶜ)`.
+  --   * Combine with `magnitude_re_inv_z_tendsto_infty` to get
+  --     `|1 / φ x| → ∞` along the punctured neighbourhood.
+  --   * Use the bounded perturbation and the triangle inequality
+  --     (`Filter.Tendsto.atTop_add` / `tendsto_atTop_add_left_of_le`)
+  --     to conclude `|u + i v| → ∞`.
   sorry
 
 /-- **Sub-obligation 2b: Magnitude limit implies OnePoint continuity.**
