@@ -39,10 +39,52 @@ generality so it satisfies all callers uniformly.
 
 The body is the named sorry tracked in `sorries.jsonl` (id 1340,
 blueprint `lem:impl-trace-lip`) — see the module docstring for the
-honest discharge plan. -/
+honest discharge plan.
+
+**BLOCKER — unconditional statement is false.**
+The hypothesis quantifies over arbitrary `γ : Path a b`, which is
+just a *continuous* map `unitInterval → X`. Unfolding
+`chartLift c γ h = γ.map' (c.continuousOn_toFun.mono h)`, the lifted
+path's `extend` is definitionally `c ∘ γ.extend`. For a
+Weierstrass-style nowhere-differentiable continuous `γ` whose image
+lies in a single chart source (take `n := 1`, `pickX 0 := a`, so the
+subpath equals `γ` itself), `c ∘ γ.extend` is not
+`DifferentiableOn ℝ` on `Icc 0 1`, hence no `K₀ : NNReal` can witness
+`ChartLiftPiecewiseC1 γ K₀`.
+
+**Missing prerequisites** required to discharge this honestly:
+1. *Smooth singular homology over ℤ for a smooth manifold* —
+   replace the current singular `IntegralOneCycle X` with a chain
+   complex whose 1-simplices are required to be piecewise C¹ (or
+   smooth) in chart coordinates. Mathlib (pinned commit
+   `8f9d9cff6bd728b17a24e163c9402775d9e6a365`) does not provide this.
+2. *Smooth approximation / Whitney-style theorem*: the inclusion of
+   the smooth chain complex into the singular chain complex induces
+   an isomorphism on homology. This is the standard tool that lets
+   one pick a smooth representative inside every singular homology
+   class, which is exactly what `PiecewiseC1PathRegularity` should
+   really be saying — restricted to a smooth subcomplex of cycles,
+   not to all continuous paths.
+3. *Refactor of the period pairing API* so that
+   `IntegralOneCycle X` carries a smooth/piecewise-C¹ witness and
+   downstream callers (`PushforwardBasis.lean`, `PullbackBasis.lean`,
+   `analyticPushforward`) consume that witness instead of asking for
+   the false unconditional regularity above.
+
+Until items (1)–(3) are built, this instance must remain a single
+named `sorry`. Direct tactic discharge is impossible because the
+proposition is false; the only honest fix is to weaken the typeclass
+to a smoothness-aware cycle domain. Statement is intentionally left
+unchanged here per the project's "audit-trail of false assumptions"
+discipline — see the module docstring. -/
 noncomputable instance instPiecewiseC1PathRegularity
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X] :
     PiecewiseC1PathRegularity X where
-  out := by sorry
+  out := by
+    -- BLOCKED: proposition is false for arbitrary continuous paths.
+    -- See module docstring + declaration docstring above for the
+    -- missing prerequisites (smooth singular homology + smooth
+    -- approximation theorem + period-pairing refactor).
+    sorry
 
 end JacobianChallenge.TraceDegree
