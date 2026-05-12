@@ -1,6 +1,8 @@
 import Jacobian.HolomorphicForms.BranchedCover
 import Jacobian.HolomorphicForms.CotangentBundle
 import Jacobian.HolomorphicForms.PullbackBundled
+import Mathlib.Geometry.Manifold.ChartedSpace
+import Mathlib.Topology.Algebra.Module.Equiv
 
 /-!
 # Trace (pushforward) of differential forms along a branched cover
@@ -125,80 +127,195 @@ noncomputable def localTraceAtRegularValue
       localPullbackAt h hf ω x hx_unram y'
     )
 
+/-! ### Local infrastructure for `localTraceAtRegularValue_holomorphic`
+
+The trace is a `Finset.sum` of `Y → CotangentModelFiber ℂ` valued
+functions, so to prove `IsHolomorphicAt (... sum ...) y` we need:
+
+1. a `ChartedSpace ℂ (CotangentModelFiber ℂ)` instance so the conclusion
+   `IsHolomorphicAt _ y` even elaborates (the target type
+   `CotangentModelFiber ℂ = ℂ →L[ℂ] ℂ` has no native instance — Mathlib
+   gives only `chartedSpaceSelf (ℂ →L[ℂ] ℂ)`, which uses the wrong
+   model);
+2. closure of `IsHolomorphicAt` under finite sums (zero summand + cons
+   summand) for cotangent-fibre targets;
+3. holomorphicity of each summand `localPullbackAt h hf ω x hx` at `y`,
+   which combines `localInverseAt_holomorphic` (now available upstream
+   modulo two sub-`sorry`s) with holomorphicity of the cotangent
+   pushforward in its base argument.
+
+The pieces below are stated in the form needed for the main theorem.
+-/
+
+/-- Evaluation at `1` gives a continuous ℂ-linear equivalence
+`(ℂ →L[ℂ] ℂ) ≃L[ℂ] ℂ`.  Used to install a `ChartedSpace ℂ` structure on
+`CotangentModelFiber ℂ`. -/
+noncomputable def cotangentFiberEquivℂ : (ℂ →L[ℂ] ℂ) ≃L[ℂ] ℂ where
+  toFun f := f 1
+  invFun c := ContinuousLinearMap.toSpanSingleton ℂ c
+  left_inv f := by
+    ext x
+    have hx : x = x • (1 : ℂ) := by rw [smul_eq_mul, mul_one]
+    calc (ContinuousLinearMap.toSpanSingleton ℂ (f 1)) x
+        = x • f 1 := by simp [ContinuousLinearMap.toSpanSingleton_apply]
+      _ = f (x • 1) := (f.map_smul x 1).symm
+      _ = f x := by rw [smul_eq_mul, mul_one]
+  right_inv c := by simp [ContinuousLinearMap.toSpanSingleton_apply]
+  map_add' f g := by simp
+  map_smul' c f := by simp
+  continuous_toFun :=
+    (ContinuousLinearMap.apply ℂ ℂ (1 : ℂ)).continuous
+  continuous_invFun := by
+    simpa using (ContinuousLinearMap.toSpanSingleton ℂ
+      (M := ℂ) (E := ℂ)).continuous
+
+/-- Single chart for `CotangentModelFiber ℂ` provided by
+`cotangentFiberEquivℂ`. -/
+noncomputable def cotangentFiberChart :
+    PartialHomeomorph (CotangentModelFiber ℂ) ℂ :=
+  cotangentFiberEquivℂ.toHomeomorph.toPartialHomeomorph
+
+@[simp] theorem cotangentFiberChart_source :
+    cotangentFiberChart.source = Set.univ := by
+  simp [cotangentFiberChart]
+
+@[simp] theorem cotangentFiberChart_target :
+    cotangentFiberChart.target = Set.univ := by
+  simp [cotangentFiberChart]
+
+/-- Single-chart `ChartedSpace ℂ (CotangentModelFiber ℂ)` instance via
+the canonical evaluation isomorphism. -/
+noncomputable instance : ChartedSpace ℂ (CotangentModelFiber ℂ) where
+  atlas := {cotangentFiberChart}
+  chartAt _ := cotangentFiberChart
+  mem_chart_source _ := by simp
+  chart_mem_atlas _ := rfl
+
+@[simp] theorem chartAt_cotangentModelFiber (v : CotangentModelFiber ℂ) :
+    (chartAt ℂ v : PartialHomeomorph (CotangentModelFiber ℂ) ℂ) =
+      cotangentFiberChart := rfl
+
+@[simp] theorem cotangentFiberChart_apply (v : CotangentModelFiber ℂ) :
+    cotangentFiberChart v = v 1 := rfl
+
+@[simp] theorem cotangentFiberChart_symm_apply (c : ℂ) :
+    cotangentFiberChart.symm c = ContinuousLinearMap.toSpanSingleton ℂ c :=
+  rfl
+
+/-- The constant zero function `Y → CotangentModelFiber ℂ` is
+holomorphic at any point. -/
+theorem isHolomorphicAt_const_zero (y : Y) :
+    IsHolomorphicAt (fun _ : Y => (0 : CotangentModelFiber ℂ)) y := by
+  -- Chart-local presentation is the constant `0 : ℂ`, which is analytic.
+  show AnalyticAt ℂ (chartLocalAt (fun _ : Y => (0 : CotangentModelFiber ℂ)) y)
+      (chartAt ℂ y y)
+  refine analyticAt_const.congr ?_
+  filter_upwards with t
+  simp [chartLocalAt, cotangentFiberChart, cotangentFiberEquivℂ]
+
+/-- `IsHolomorphicAt` on `Y → CotangentModelFiber ℂ` is closed under
+pointwise addition. -/
+theorem IsHolomorphicAt.add_cotangent
+    {g₁ g₂ : Y → CotangentModelFiber ℂ} {y : Y}
+    (hg₁ : IsHolomorphicAt g₁ y) (hg₂ : IsHolomorphicAt g₂ y) :
+    IsHolomorphicAt (fun y' => g₁ y' + g₂ y') y := by
+  -- The chart-local presentation is linear in the cotangent-fibre
+  -- coordinate (evaluation at `1`), so addition passes through.
+  show AnalyticAt ℂ
+    (chartLocalAt (fun y' => g₁ y' + g₂ y') y) (chartAt ℂ y y)
+  have hsum : chartLocalAt (fun y' => g₁ y' + g₂ y') y
+      = chartLocalAt g₁ y + chartLocalAt g₂ y := by
+    funext t
+    simp [chartLocalAt, cotangentFiberChart, cotangentFiberEquivℂ,
+      ContinuousLinearMap.add_apply]
+  rw [hsum]
+  exact hg₁.add hg₂
+
+/-- `IsHolomorphicAt` on `Y → CotangentModelFiber ℂ` is closed under
+finite `Finset.sum`. -/
+theorem isHolomorphicAt_finset_sum
+    {ι : Type*} (s : Finset ι) (g : ι → Y → CotangentModelFiber ℂ)
+    (y : Y) (hg : ∀ i ∈ s, IsHolomorphicAt (g i) y) :
+    IsHolomorphicAt (fun y' => ∑ i ∈ s, g i y') y := by
+  classical
+  induction s using Finset.induction_on with
+  | empty =>
+      simpa using isHolomorphicAt_const_zero (Y := Y) y
+  | insert a s has ih =>
+      have h_a : IsHolomorphicAt (g a) y := hg a (Finset.mem_insert_self _ _)
+      have h_s : IsHolomorphicAt (fun y' => ∑ i ∈ s, g i y') y :=
+        ih (fun i hi => hg i (Finset.mem_insert_of_mem hi))
+      have hsum_eq :
+          (fun y' => ∑ i ∈ insert a s, g i y') =
+            (fun y' => g a y' + ∑ i ∈ s, g i y') := by
+        funext y'
+        exact Finset.sum_insert has
+      rw [hsum_eq]
+      exact h_a.add_cotangent h_s
+
+/-- Holomorphicity of `localPullbackAt h hf ω x hx` at `y = f x`.
+
+The pullback is `y' ↦ cotangentPushforward f (s y') (ω (s y'))` with
+`s := h.localInverseAt x hx`.  Holomorphicity follows from:
+`s` is holomorphic at `f x` (by `localInverseAt_holomorphic`), `ω` is a
+holomorphic 1-form (its chart-local coefficient is analytic), and the
+cotangent pushforward in the chart-local presentation reduces to
+division by the nonvanishing chart-local derivative of `f` at `s y'`.
+
+This intermediate step still needs the cotangent-pushforward chart
+identity; we record it as an obligation here for the next pass. -/
+theorem localPullbackAt_holomorphicAt
+    {f : X → Y} (h : BranchedCoverData X Y f) (hf : IsHolomorphic f)
+    (ω : HolomorphicOneForm ℂ X) {x : X} (hx : h.ramificationIndex x = 1) :
+    IsHolomorphicAt (localPullbackAt h hf ω x hx) (f x) := by
+  -- The proof reduces to:
+  --   * `localInverseAt_holomorphic h hf x hx : IsHolomorphicAt _ (f x)`
+  --     (in `Jacobian/TraceDegree/TraceDefinition.lean`, modulo two
+  --     internal sub-`sorry`s on `deriv ≠ 0` and `=ᶠ`),
+  --   * `cotangentPushforward` chart identity:
+  --     `cotangentFiberChart (cotangentPushforward f x' ω) =
+  --       (1 / chartLocalDeriv f x') · cotangentFiberChart ω`
+  --     (this identity is not yet anywhere in the project).
+  -- Until that chart identity exists, no compiling proof is possible
+  -- here without a placeholder.
+  sorry
+
 /-- The local trace is holomorphic at regular values.
 
-BLOCKED: this proof requires several prerequisites that are not yet
-available in the project.
+Strategy:
 
-The function under analysis has type `Y → CotangentModelFiber ℂ`,
-i.e. `Y → (ℂ →L[ℂ] ℂ)`, and the conclusion `IsHolomorphicAt _ y`
-unfolds to `AnalyticAt ℂ (chartLocalAt _ y) (chartAt ℂ y y)` via the
-project-local `JacobianChallenge.HolomorphicForms.HolomorphicMap`
-definition.  Discharging this requires:
-
-* **Missing prerequisite 1 — `ChartedSpace ℂ (CotangentModelFiber ℂ)`.**
-  `IsHolomorphicAt` is currently defined only for maps `X → Y` between
-  two `ChartedSpace ℂ`-equipped types.  The target
-  `CotangentModelFiber ℂ = ℂ →L[ℂ] ℂ` has no such instance in scope:
-  Mathlib only provides `chartedSpaceSelf` (giving
-  `ChartedSpace (ℂ →L[ℂ] ℂ) (ℂ →L[ℂ] ℂ)`, not the required model on
-  `ℂ`), and the project supplies no transitive instance.  Until either
-  `IsHolomorphicAt` is generalised to allow normed-space valued maps
-  (e.g. via `MAnalyticAt` / `ContMDiffAt` for a non-`ChartedSpace ℂ`
-  codomain), or a `ChartedSpace ℂ (ℂ →L[ℂ] ℂ)` instance is built from
-  the 1-dimensional evaluation isomorphism `(· 1) : (ℂ →L[ℂ] ℂ) ≃L[ℂ] ℂ`,
-  the statement above does not have a usable elaboration target.
-
-* **Missing prerequisite 2 — finite-sum closure for `IsHolomorphicAt`.**
-  Even granting prerequisite 1, the trace is `Finset.sum`-shaped, so the
-  proof needs `IsHolomorphicAt 0 y` (zero summand) and
-  `IsHolomorphicAt.add` (cons summand) for the cotangent-fibre target.
-  Neither lemma exists anywhere in `Jacobian/HolomorphicForms/`.
-
-* **Missing prerequisite 3 — `localInverseAt_holomorphic`.**  Each
-  summand is `cotangentPushforward f (localInverseAt h x hx y')
-  (ω (localInverseAt h x hx y'))`; holomorphicity of every such summand
-  reduces to holomorphicity of `localInverseAt h x hx` (the unproved
-  `localInverseAt_holomorphic` `sorry` directly above) composed with the
-  holomorphicity of `cotangentPushforward` in its base argument.
-
-* **Missing prerequisite 4 — holomorphicity of `cotangentPushforward`
-  in the base point.**  The definition contains an `if h : IsIso df
-  then ωx.comp h.inv else 0` branch (with `IsIso` declared *after*
-  `cotangentPushforward` in this very file, a forward reference that
-  itself is suspicious).  No lemma states that `y' ↦
-  cotangentPushforward f (s y') (ω (s y'))` is holomorphic when `s` is a
-  local holomorphic section and `f` is unramified at `s y`, because the
-  pushforward's `IsIso` branch is decided pointwise via `if … then …
-  else 0` and the resulting function has no API connecting it to
-  `IsHolomorphicAt` on `CotangentModelFiber ℂ`.
-
-The proof skeleton, once those prerequisites are in place, is:
-
-  1. `unfold localTraceAtRegularValue`.
-  2. `apply Finset.holomorphicAt_sum` (the missing closure lemma) and
-     reduce to a per-`x` goal.
-  3. Each per-`x` goal is `IsHolomorphicAt (localPullbackAt h hf ω x
-     hx_unram) y`, dispatched by composing
-     `localInverseAt_holomorphic h hf x hx_unram` with the
-     cotangent-pushforward holomorphicity lemma (also missing).
-
-This file therefore leaves the statement unchanged and records the
-blocker rather than introducing fake helper definitions.  -/
+1. The trace `localTraceAtRegularValue h hf ω y hy` is a finite
+   `Finset.sum` over the fibre `f⁻¹{y}` of pullbacks `localPullbackAt`.
+2. Each pullback is holomorphic at `y` by `localPullbackAt_holomorphicAt`
+   (using `f x = y` for `x ∈ f⁻¹{y}`).
+3. Finite sums of holomorphic functions are holomorphic by
+   `isHolomorphicAt_finset_sum`. -/
 theorem localTraceAtRegularValue_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hf : IsHolomorphic f)
     (ω : HolomorphicOneForm ℂ X)
     (y : Y) (hy : isRegularValue h y) :
     IsHolomorphicAt (localTraceAtRegularValue h hf ω y hy) y := by
-  -- BLOCKER: see docstring above.  Missing prerequisites:
-  --   1. `ChartedSpace ℂ (CotangentModelFiber ℂ)` instance (or a
-  --      generalisation of `IsHolomorphicAt` to normed-space targets).
-  --   2. Finite-sum closure lemmas
-  --      (`IsHolomorphicAt 0`, `IsHolomorphicAt.add`) for that target.
-  --   3. `localInverseAt_holomorphic` (also `sorry` above).
-  --   4. Holomorphicity of `cotangentPushforward` in the base point.
-  sorry
+  unfold localTraceAtRegularValue
+  -- Reduce to a finite-sum-of-holomorphic claim, indexed by
+  -- `((h.finite_fiber y).toFinset).attach`.
+  refine isHolomorphicAt_finset_sum
+    ((h.finite_fiber y).toFinset.attach)
+    (fun a y' =>
+      localPullbackAt h hf ω a.1
+        (hy a.1 ((Set.Finite.mem_toFinset _).mp a.2)) y')
+    y ?_
+  -- Per-fibre obligation: each pullback is holomorphic at `y`.
+  intro a _ha_mem
+  have hx_fiber : a.1 ∈ f ⁻¹' {y} :=
+    (Set.Finite.mem_toFinset _).mp a.2
+  have hf_a : f a.1 = y := hx_fiber
+  -- Transport `f a.1 = y` through the pullback-holomorphic lemma.
+  have :=
+    localPullbackAt_holomorphicAt h hf ω
+      (hy a.1 hx_fiber)
+  -- `localPullbackAt_holomorphicAt` concludes at `f a.1`; rewrite to `y`.
+  simpa [hf_a] using this
 
 /-- The trace sum is additive. -/
 theorem traceAtRegularValue_add
