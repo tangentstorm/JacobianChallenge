@@ -842,6 +842,33 @@ theorem exists_contMDiff_homeomorph_to_onePointCx
         (⊤ : WithTop ℕ∞) f ∧
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) f.symm := by
+  -- BLOCKER: this is the uniformization theorem at genus 0 — every compact
+  -- simply-connected Riemann surface is biholomorphic to `ℂℙ¹`. The
+  -- hypothesis `_e : X ≃ₜ OnePoint ℂ` is purely topological, so the
+  -- conclusion cannot be derived without genuine analytic input.
+  -- Missing prerequisites (none of which exist in the pinned Mathlib
+  -- v4.28.0 nor in this project):
+  --   * `MeromorphicMapToSphere` has no `ContMDiff` field — the file's
+  --     own chain `genus_zero_exists_simplePole_meromorphicMap` →
+  --     `simplePole_meromorphicMap_proper_degreeOne` →
+  --     `proper_degreeOne_meromorphicMap_biholomorphic` produces only a
+  --     `Homeomorph` via `Continuous.homeoOfEquivCompactToT2`, with no
+  --     smoothness data propagated from the meromorphic source.
+  --   * `GenusZeroBiholomorphicParametrization` (line ~1287) carries only
+  --     a `Homeomorph`, not a `ContMDiff` certificate; upgrading it would
+  --     require enriching every step of the Riemann–Roch route with
+  --     smoothness obligations.
+  --   * No `FiniteDimensionalHolomorphicOneForms ℂ X` instance is
+  --     available from the present hypotheses, so even the existing
+  --     continuous-only route via `genus_zero_homeomorph_onePointCx`
+  --     (which requires that typeclass plus `analyticGenus = 0`) is not
+  --     applicable here.
+  --   * Equivalently, the uniformization theorem (Riemann mapping for
+  --     simply-connected surfaces, or Koebe's theorem / Perron's method,
+  --     or Riemann–Roch + degree-one ⇒ biholomorphism) is not formalized
+  --     in Mathlib.
+  -- See lines 822–834 above and the discussion at lines 1170–1220 for
+  -- the full mathematical context.
   sorry
 
 /-
