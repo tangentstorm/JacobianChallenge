@@ -14,7 +14,34 @@ variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 
 /-- The constant `1` section of the tangent bundle of a manifold modeled on
-`modelWithCornersSelf ℂ ℂ` is `ContMDiff`. -/
+`modelWithCornersSelf ℂ ℂ` is `ContMDiff`.
+
+**BLOCKER — missing prerequisite `[JacobianChallenge.Periods.StableChartAt ℂ X]`.**
+
+Reducing via `Bundle.contMDiffAt_section` at a point `x₀ : X`, the goal becomes
+smoothness of
+  `fun x ↦ (trivializationAt ℂ (TangentSpace 𝓘(ℂ,ℂ)) x₀ ⟨x, 1⟩).2`
+at `x₀`. Unfolding `trivializationAt = (tangentBundleCore _ _).localTriv (achart ℂ x₀)`
+via `VectorBundleCore.localTriv_apply` gives
+  `(tangentBundleCore 𝓘(ℂ,ℂ) X).coordChange (achart ℂ x) (achart ℂ x₀) x 1`.
+This involves `achart ℂ x`, which depends on the chart selected at the variable
+point `x`. In Mathlib's `ChartedSpace`, the chart selector
+`x ↦ chartAt H x` carries **no** local-constancy or continuity guarantee, so the
+above function is not smooth (or even continuous) in `x` without an extra
+hypothesis.
+
+The project's `JacobianChallenge.Periods.StableChartAt H M` typeclass
+(`Jacobian/Periods/TrivializationContinuousLinearMapAt.lean`) supplies exactly
+this missing assumption: `chartAt H q = chartAt H p` for `q ∈ (chartAt H p).source`.
+Under `[StableChartAt ℂ X]`, `achart ℂ x = achart ℂ x₀` on `(chartAt ℂ x₀).source`
+and `coordChange_self` collapses the expression to `1`, making the section
+locally constant in the trivialization and hence smooth via
+`ContMDiffAt.congr_of_eventuallyEq contMDiffAt_const`.
+
+To unblock: add `[JacobianChallenge.Periods.StableChartAt ℂ X]` to the variable
+section of this file (this hypothesis is already standard on downstream uses
+in `Jacobian/Solution.lean` and `Jacobian/Periods/HolomorphicOneFormToFunContinuous.lean`).
+-/
 theorem contMDiff_tangentSection_one :
     ContMDiff (𝓘(ℂ, ℂ)) ((𝓘(ℂ, ℂ)).prod (𝓘(ℂ, ℂ))) ⊤
       (fun x : X => TotalSpace.mk' ℂ (E := TangentSpace (𝓘(ℂ, ℂ))) x (1 : ℂ)) := by
