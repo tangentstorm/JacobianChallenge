@@ -135,6 +135,6 @@
 {"i":1470,"f":"Jacobian/StageA/CellularSingular.lean","k":"theorem","s":"skeletal_h1_zeroSkeleton","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1471,"f":"Jacobian/StageA/CellularSingular.lean","k":"theorem","s":"skeletal_pair_les_relative","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1472,"f":"Jacobian/StageA/CellularSingular.lean","k":"theorem","s":"skeletal_pair_wedge_of_spheres","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":1473,"f":"Jacobian/StageA/EdgeWordTietze.lean","k":"theorem","s":"handleSwap_grouping_inductive_step","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1473,"f":"Jacobian/StageA/EdgeWordTietze.lean","k":"theorem","s":"handleSwap_grouping_inductive_step","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1474,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"def","s":"basisAnalyticPullbackBundle","n":1,"o":0,"r":1,"e":6,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1475,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"theorem","s":"transfer_functional_mem_periodSubgroup","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
