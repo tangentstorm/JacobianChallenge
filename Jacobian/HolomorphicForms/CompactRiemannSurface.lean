@@ -406,6 +406,25 @@ theorem holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
       @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
         (@nhds (HolomorphicOneForm ℂ X)
           (holomorphicOneForm_metricSpace X).toUniformSpace.toTopologicalSpace a) := by
+  -- BLOCKER: this theorem is the "Step 4 assembly" of Steps 1–3, but each
+  -- of the three upstream prerequisites is a `True := trivial` placeholder
+  -- that carries no data with which to construct the witness `a`:
+  --   * `holomorphicOneForm_supNorm_cauchySeq_pointwise_limit_exists`
+  --     (Step 1) — pointwise Banach-fiber limit; currently `True`.
+  --   * `holomorphicOneForm_supNorm_cauchySeq_limit_continuous`
+  --     (Step 2) — continuity of the pointwise limit; currently `True`.
+  --   * `holomorphicOneForm_supNorm_cauchySeq_limit_holomorphic`
+  --     (Step 3) — Weierstrass on holomorphic sections; currently `True`.
+  --     This is the genuine Mathlib gap (no Weierstrass convergence
+  --     theorem for holomorphic functions / sections in v4.28.0; see
+  --     Blocker 3 in `holomorphicOneForm_montel`'s docstring).
+  -- The only `CompleteSpace` witness on `holomorphicOneForm_metricSpace`
+  -- in the project (`holomorphicOneForm_supNorm_completeSpace`) is itself
+  -- proved via `holomorphicOneForm_supNorm_cauchySeq_tendsto`, which
+  -- forwards directly to this theorem — so it cannot be used as a route.
+  -- Missing prerequisite: at minimum Step 1 must produce an actual
+  -- pointwise-limit witness (currently it returns `True`); Steps 2–4 then
+  -- follow once a witness exists.
   sorry
 
 /-- **Prerequisite 2a (sorry — analytic core of completeness).**
