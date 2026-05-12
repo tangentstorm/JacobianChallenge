@@ -114,12 +114,37 @@ private theorem montel_pointwise_extraction
     haveI : LocallyConnectedSpace X := ChartedSpace.locallyConnectedSpace ℂ X
     by_cases hconn : ConnectedSpace X
     · exact montel_pointwise_extraction_connected X ω _h_bounded
-    · -- Non-connected case: requires connected component decomposition.
-      -- The upstream holomorphicOneForm_montel_subseq_tendsto requires
-      -- ConnectedSpace X. Reducing to connected components needs
-      -- section restriction infrastructure (relating TotalSpace of the
-      -- cotangent bundle over X vs over ↥C for a connected component C).
-      -- This is pending bundle-pullback infrastructure in Mathlib.
+    · -- Non-connected case. BLOCKED on upstream `ConnectedSpace X`
+      -- assumptions in `Jacobian/HolomorphicForms/CompactRiemannSurface.lean`
+      -- (outside the allowed write scope for this task).
+      --
+      -- Missing prerequisite, in order of preference:
+      --
+      --   (P1) Generalise the upstream Montel chain to drop
+      --        `[ConnectedSpace X]`:
+      --          * `holomorphicOneForm_closedBall_totallyBounded`
+      --          * `holomorphicOneForm_montel_subseq_isCauchy`
+      --          * `holomorphicOneForm_montel_subseq_tendsto`
+      --          * `holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le`
+      --        Then `montel_pointwise_extraction_connected` immediately
+      --        proves this branch (drop the `ConnectedSpace X` instance
+      --        from its hypotheses).
+      --
+      --   (P2) Alternatively, build section-restriction infrastructure
+      --        for `HolomorphicOneForm ℂ X` to a clopen connected
+      --        component `C ⊆ X` (i.e. a `ContMDiffSection` pullback
+      --        along the inclusion `↥C → X` of the cotangent bundle),
+      --        plus a gluing lemma reassembling sections from finitely
+      --        many components. With this, restrict each `ω n` to each
+      --        component, apply the connected case + a diagonal
+      --        subsequence argument, then glue limits.
+      --
+      -- A compact charted-space-over-ℂ X is locally connected
+      -- (`ChartedSpace.locallyConnectedSpace ℂ X` — already in scope
+      -- via the `haveI` above), hence its connected components are
+      -- clopen and finite in number — but turning that observation
+      -- into a usable decomposition of `HolomorphicOneForm ℂ X`
+      -- requires (P2).
       sorry
 
 /-- Montel compactness (sequential form): the closed unit ball of
