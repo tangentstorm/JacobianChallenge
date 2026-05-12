@@ -421,12 +421,61 @@ relates to its value at `(invBwd w : OnePoint ℂ)` (read in the
 inversion chart) by the Jacobian factor `-w²`.
 
 Bottom-up: chain rule on cotangent vectors under chart-overlap.
-Currently a structural sorry pending the chart-trivialisation +
-cotangent-pullback API. -/
+
+**BLOCKER (cotangent-pullback API gap in Mathlib v4.28.0).** With the
+current local definitions, this statement is *circular and not provable
+from below*:
+
+* `holomorphicOneForm_coeff ω z := (ω.toFun ↑z) (1 : ℂ)`
+* `holomorphicOneForm_inversionCoeff ω w := (ω.toFun (invBwd w)) (1 : ℂ)`
+
+Both definitions evaluate `ω.toFun` directly on the constant
+tangent-vector `1 : ℂ` (since `TangentSpace 𝓘(ℂ, ℂ) p` is *definitionally*
+`ℂ` for every `p : OnePoint ℂ`). For `w ≠ 0`, `invBwd w = ↑(w⁻¹)` (via
+`invBwd_ne_zero`), so both sides of the claimed identity reduce to the
+same value `K := (ω.toFun ↑(w⁻¹)) 1`. The asserted relation `K = -w² · K`
+is then equivalent to `(1 + w²) · K = 0`, which is *not* a general
+theorem about smooth cotangent sections — it would force `K = 0` outside
+`w ∈ {±i}`, i.e. it would already encode the (downstream) conclusion
+`f ≡ 0` rather than being derivable above it.
+
+The correct enabling prerequisites are:
+
+1. **Reformulation of `holomorphicOneForm_inversionCoeff`.** It must be
+   defined via the cotangent-bundle trivialisation through
+   `inversionChart` (i.e. apply `ω.toFun (invBwd w)` to the
+   *chart-induced* tangent vector `d(inversionChart.symm)₍w₎ 1`, not to
+   the bare `1 : ℂ`). With that chart-dependent definition, the
+   chain-rule factor `d(w⁻¹)/dw = -w⁻²` flips sign and exponent to
+   produce the Jacobian factor `-w²` on the comparison.
+
+2. **`ContMDiffSection` chart-trivialisation API.** The same
+   chart-extraction leaf gap that `ContMDiffSection_localRepr_*` tracks
+   for sub-obligations G2a/G3a: Mathlib v4.28.0 does not expose
+   `ContMDiffSection.localRepr` or a `mfderiv`-style cotangent pullback
+   for vector-bundle sections through a chart change.
+
+Both leaves are upstream of this file and out of scope of its allowed
+write set. Once either (1) the definition of
+`holomorphicOneForm_inversionCoeff` is reformulated to absorb the chart
+Jacobian, or (2) the Mathlib cotangent-pullback API lands, the proof of
+this lemma is a one-line consequence of `onePointCx_chart_overlap_derivative`
+combined with the chart-overlap pullback formula for `ω.toFun`. -/
 theorem holomorphicOneForm_chartOverlap_pullback
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
+  -- BLOCKER: see docstring above. The statement is *not* derivable from
+  -- the current definitions of `holomorphicOneForm_coeff` and
+  -- `holomorphicOneForm_inversionCoeff`, both of which evaluate
+  -- `ω.toFun` at `(1 : ℂ)` without absorbing the chart-Jacobian factor.
+  -- For `w ≠ 0` both sides reduce to `K := (ω.toFun ↑(w⁻¹)) 1`, so the
+  -- claim becomes `K = -w² · K`, equivalent to `(1 + w²) · K = 0`,
+  -- which cannot be established generically.
+  -- Missing prerequisite: cotangent-pullback API for `ContMDiffSection`
+  -- through a chart change (or a reformulation of
+  -- `holomorphicOneForm_inversionCoeff` via the inversion-chart
+  -- trivialisation; both options are upstream of this file).
   sorry
 
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
