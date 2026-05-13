@@ -39,6 +39,7 @@ variable {Y : Type*} [TopologicalSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
   [JacobianChallenge.Periods.StableChartAt ℂ Y]
 
+set_option linter.unusedSectionVars false in
 /-- **Chart-level chain rule (algebraic).** For a smooth `f : X → Y`
 between complex manifolds, holomorphic 1-form `η` on `Y`, charts
 `cX = chartAt ℂ p` and `cY = chartAt ℂ q`, and `e ∈ cX.target` with
@@ -59,6 +60,8 @@ theorem chartedFormPullback_pullbackFormsBundledLM_eq
           ((chartAt ℂ q) (f ((chartAt ℂ p).symm e)))).comp
         (mfderiv 𝓘(ℂ) 𝓘(ℂ)
           (fun e' => (chartAt ℂ q) (f ((chartAt ℂ p).symm e'))) e) := by
+  haveI _stableX : StableChartAt ℂ X := inferInstance
+  haveI _stableY : StableChartAt ℂ Y := inferInstance
   set cX := chartAt ℂ p
   set cY := chartAt ℂ q
   -- Manifold differentiability hypotheses
@@ -138,6 +141,8 @@ theorem chartedFormPullback_pullbackFormsBundledLM_apply
         ((chartAt ℂ q) (f ((chartAt ℂ p).symm e)))
         (mfderiv 𝓘(ℂ) 𝓘(ℂ)
           (fun e' => (chartAt ℂ q) (f ((chartAt ℂ p).symm e'))) e v) := by
+  haveI _stableX : StableChartAt ℂ X := inferInstance
+  haveI _stableY : StableChartAt ℂ Y := inferInstance
   rw [chartedFormPullback_pullbackFormsBundledLM_eq f hf η p q e he_target he_source]
   rfl
 

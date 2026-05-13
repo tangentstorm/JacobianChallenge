@@ -441,6 +441,7 @@ theorem holomorphicOneForm_chartOverlap_pullback
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
+  have _hw_used : w ≠ 0 := hw
   -- Both `holomorphicOneForm_coeff ω (w⁻¹)` and
   -- `holomorphicOneForm_inversionCoeff ω w` are obtained by evaluating
   -- `ω.toFun` (which is the underlying section function) at some point

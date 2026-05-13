@@ -137,6 +137,7 @@ map is one of the degree/properness work packets. -/
 def ExtendsContinuously (f : MeromorphicMapToSphere X) : Prop :=
   Continuous f.toMap
 
+omit [Periods.StableChartAt ℂ X] in
 @[simp] theorem principal_eq_zeroDivisor_sub_poleDivisor
     (f : MeromorphicMapToSphere X) :
     f.principal = f.zeroDivisor - f.poleDivisor :=
