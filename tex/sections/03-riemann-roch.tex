@@ -306,14 +306,14 @@ other pole and therefore defines a degree-one map to \(\CPone\).
 \begin{lemma}[Algebraic operations on meromorphic functions]
 \label{lem:meromorphic-algebraic-ops}
 Meromorphic functions form a \(\C\)-vector space under pointwise addition and scalar multiplication.
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.add_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.neg_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.smul_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.zero}
+\lean{JacobianChallenge.HolomorphicForms.add_meromorphic, JacobianChallenge.HolomorphicForms.neg_meromorphic, JacobianChallenge.HolomorphicForms.smul_meromorphic, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.add_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.neg_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.smul_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.zero}
 \leanok
 \end{lemma}
 
 \begin{lemma}[Properties of constant meromorphic functions]
 \label{lem:meromorphic-constants}
 Constant functions are meromorphic and have empty zero/pole sets.
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.constant, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.constant_poles, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.constant_zeros}
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.constant, JacobianChallenge.HolomorphicForms.constant_poles, JacobianChallenge.HolomorphicForms.constant_zeros, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.constant_poles, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.constant_zeros}
 \leanok
 \end{lemma}
 
@@ -380,7 +380,7 @@ effective elsewhere zero, \(\operatorname{poles}(f)\) is either \(0\) or \([P]\)
 
 \begin{lemma}[Genus-zero RR witness]
 \label{lem:genus-zero-RR-witness}
-\uses{input:riemann-roch,lem:genus-zero-rr-identity-applied,lem:genus-zero-rr-vanish-K-minus-point,lem:rr-space-dim-ge-two-nonconstant}
+\uses{input:riemann-roch,def:riemann-roch-space,lem:genus-zero-rr-identity-applied,lem:genus-zero-rr-vanish-K-minus-point,lem:rr-space-dim-ge-two-nonconstant}
 On a compact connected genus-zero Riemann surface, for every point
 \(P\) there exists a meromorphic map \(f:X\to\CPone\) which is
 nonconstant and lies in \(L([P])\).
@@ -625,7 +625,7 @@ On a compact connected Riemann surface, a meromorphic function with no poles is 
 
 \begin{lemma}[\(\ell(D)\geq 2\) implies a nonconstant element]
 \label{lem:rr-space-dim-ge-two-nonconstant}
-\uses{def:riemann-roch-space, lem:poles-eq-zero-iff-constant}
+\uses{def:riemann-roch-space, lem:meromorphic-vector-space-instance, lem:meromorphic-constants, lem:poles-eq-zero-iff-constant}
 If \(\dim_{\C}L(D)\geq 2\), then \(L(D)\) contains a nonconstant
 element.
 \lean{JacobianChallenge.HolomorphicForms.riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic}
