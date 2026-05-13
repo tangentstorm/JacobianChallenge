@@ -5,6 +5,10 @@
       "args": [
         "/Users/michal/ver/aristotle-skill/mcp/aristotle_mcp.py"
       ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [ "@playwright/mcp@latest" ]
     }
   }
 }
