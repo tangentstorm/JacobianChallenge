@@ -1,0 +1,57 @@
+name: Solution linter check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Jacobian/**"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - ".github/workflows/solution-build.yml"
+  pull_request:
+    paths:
+      - "Jacobian/**"
+      - "lakefile.toml"
+      - "lean-toolchain"
+      - ".github/workflows/solution-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  solution-linter:
+    name: Jacobian.Solution linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl https://elan.github.io/elan/install.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+      - name: Get Mathlib cache
+        run: lake exe cache get
+
+      - name: Build Solution without linter warnings
+        shell: bash
+        run: |
+          set -o pipefail
+
+          lake build Jacobian.Solution 2>&1 | tee build.log
+
+          unexpected_warnings="$(
+            grep "warning:" build.log \
+              | grep -v "declaration uses \`sorry\`" \
+              | grep -v "declaration uses 'sorry'" \
+              || true
+          )"
+
+          if [ -n "$unexpected_warnings" ]; then
+            echo "CI FAILED: Found warnings other than declaration uses \`sorry\`."
+            echo "$unexpected_warnings"
+            exit 1
+          fi
+
+          echo "CI PASSED: Build completed with no disallowed linter warnings."
