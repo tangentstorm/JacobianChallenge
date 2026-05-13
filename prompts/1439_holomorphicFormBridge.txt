@@ -1,6 +1,5 @@
 Please rename this session to "1439. Prove holomorphicFormBridge".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/PeriodFunctional.lean
 Target sorry: def holomorphicFormBridge
 Allowed writes: only Jacobian/Periods/PeriodFunctional.lean

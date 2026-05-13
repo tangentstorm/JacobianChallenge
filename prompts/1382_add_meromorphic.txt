@@ -1,6 +1,5 @@
 Please rename this session to "1382. Prove add_meromorphic".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean
 Target sorry: def add_meromorphic
 Allowed writes: only Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean

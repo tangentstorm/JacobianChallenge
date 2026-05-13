@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Prove cMfldBump".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/CMfldBumpStub.lean
 Target sorry: noncomputable def cMfldBump
 Allowed writes: only Jacobian/HolomorphicForms/CMfldBumpStub.lean

@@ -1,6 +1,5 @@
 Please rename this session to "1440. Prove riemann_classical_real_LI_input".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/PeriodFunctional.lean
 Target sorry: theorem riemann_classical_real_LI_input
 Allowed writes: only Jacobian/Periods/PeriodFunctional.lean

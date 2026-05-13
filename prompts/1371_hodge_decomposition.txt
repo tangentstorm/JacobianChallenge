@@ -1,6 +1,5 @@
 Please rename this session to "1371. Prove hodge_decomposition".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem hodge_decomposition
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

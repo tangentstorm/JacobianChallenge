@@ -1,6 +1,5 @@
 Please rename this session to "1375. Prove lax_milgram_minimizer".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem lax_milgram_minimizer
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

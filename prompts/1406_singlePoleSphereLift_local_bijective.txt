@@ -1,6 +1,5 @@
 Please rename this session to "1406. Prove singlePoleSphereLift_local_bijective".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/SinglePoleLift.lean
 Target sorry: lemma singlePoleSphereLift_local_bijective
 Allowed writes: only Jacobian/HolomorphicForms/SinglePoleLift.lean

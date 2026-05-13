@@ -1,6 +1,5 @@
 Please rename this session to "1396. Prove h1Structure_isoHolomorphicOneFormDual".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Serre/H1StructureViaSerre.lean
 Target sorry: def h1Structure_isoHolomorphicOneFormDual
 Allowed writes: only Jacobian/HolomorphicForms/Serre/H1StructureViaSerre.lean

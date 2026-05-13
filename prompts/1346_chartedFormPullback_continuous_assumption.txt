@@ -1,6 +1,5 @@
 Please rename this session to "1346. Prove chartedFormPullback_continuous_assumption".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean
 Target sorry: theorem chartedFormPullback_continuous_assumption
 Allowed writes: only Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean

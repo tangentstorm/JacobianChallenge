@@ -1,6 +1,5 @@
 Please rename this session to "1348. Prove cMfldBump_eq_one_near".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/CMfldBumpStub.lean
 Target sorry: theorem cMfldBump_eq_one_near
 Allowed writes: only Jacobian/HolomorphicForms/CMfldBumpStub.lean

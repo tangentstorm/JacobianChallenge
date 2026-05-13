@@ -1,6 +1,5 @@
 Please rename this session to "1399. Prove residueMapEquiv".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Serre/ResidueMap.lean
 Target sorry: def residueMapEquiv
 Allowed writes: only Jacobian/HolomorphicForms/Serre/ResidueMap.lean

@@ -1,6 +1,5 @@
 Please rename this session to "1458. Prove cellular_signed_face_basis".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem cellular_signed_face_basis
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

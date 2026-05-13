@@ -1,6 +1,5 @@
 Please rename this session to "1453. Prove cellular_face_finset".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: def cellular_face_finset
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

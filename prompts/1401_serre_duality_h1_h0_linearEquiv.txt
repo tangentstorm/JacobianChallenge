@@ -1,6 +1,5 @@
 Please rename this session to "1401. Prove serre_duality_h1_h0_linearEquiv".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Serre/RiemannRochHighFromSerre.lean
 Target sorry: theorem serre_duality_h1_h0_linearEquiv
 Allowed writes: only Jacobian/HolomorphicForms/Serre/RiemannRochHighFromSerre.lean

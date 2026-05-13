@@ -1,6 +1,5 @@
 Please rename this session to "1459. Prove cellular_signed_face_extends_linearly".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem cellular_signed_face_extends_linearly
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

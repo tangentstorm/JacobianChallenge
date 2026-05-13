@@ -1,6 +1,5 @@
 Please rename this session to "1370. Prove harmonic_conjugate_exists".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem harmonic_conjugate_exists
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

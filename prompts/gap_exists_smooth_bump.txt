@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Fix exists_smooth_bump".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem exists_smooth_bump
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

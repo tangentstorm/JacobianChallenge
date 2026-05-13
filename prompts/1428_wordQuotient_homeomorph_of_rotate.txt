@@ -1,6 +1,5 @@
 Please rename this session to "1428. Prove wordQuotient_homeomorph_of_rotate".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/HandleSwapHomeo.lean
 Target sorry: theorem wordQuotient_homeomorph_of_rotate
 Allowed writes: only Jacobian/Periods/HandleSwapHomeo.lean

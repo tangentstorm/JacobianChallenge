@@ -1,6 +1,5 @@
 Please rename this session to "1373. Prove holomorphic_of_CR".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem holomorphic_of_CR
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

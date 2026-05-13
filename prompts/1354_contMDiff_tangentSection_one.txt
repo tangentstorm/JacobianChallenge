@@ -1,6 +1,5 @@
 Please rename this session to "1354. Prove contMDiff_tangentSection_one".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/EvalAtOneHelper.lean
 Target sorry: theorem contMDiff_tangentSection_one
 Allowed writes: only Jacobian/HolomorphicForms/EvalAtOneHelper.lean

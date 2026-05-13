@@ -1,6 +1,5 @@
 Please rename this session to "1474. Prove basisAnalyticPullbackBundle".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/TraceDegree/PullbackBasis.lean
 Target sorry: def basisAnalyticPullbackBundle
 Allowed writes: only Jacobian/TraceDegree/PullbackBasis.lean

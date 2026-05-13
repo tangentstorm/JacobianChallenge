@@ -1,6 +1,5 @@
 Please rename this session to "1392. Prove nonzero_h0_implies_nonneg_degree".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/RiemannRochLowDegree.lean
 Target sorry: theorem nonzero_h0_implies_nonneg_degree
 Allowed writes: only Jacobian/HolomorphicForms/RiemannRochLowDegree.lean

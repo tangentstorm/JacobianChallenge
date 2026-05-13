@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Fix dipole_harmonic_pole_is_simple".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem dipole_harmonic_pole_is_simple
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

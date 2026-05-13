@@ -1,6 +1,5 @@
 Please rename this session to "1435. Prove polygon4g_cellular_singular_one_cell_data".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/Hurewicz.lean
 Target sorry: theorem polygon4g_cellular_singular_one_cell_data
 Allowed writes: only Jacobian/Periods/Hurewicz.lean

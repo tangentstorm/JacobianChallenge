@@ -1,6 +1,5 @@
 Please rename this session to "1385. Prove toFun_ne_infty_of_poles_eq_zero".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean
 Target sorry: theorem toFun_ne_infty_of_poles_eq_zero
 Allowed writes: only Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean

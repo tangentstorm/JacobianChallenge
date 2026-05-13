@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Fix dirichlet_energy_coercive".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem dirichlet_energy_coercive
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

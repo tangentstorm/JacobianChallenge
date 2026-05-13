@@ -1,6 +1,5 @@
 Please rename this session to "1381. Prove kfold_fiber_of_conjugate_pow".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/LocalMappingThm.lean
 Target sorry: theorem kfold_fiber_of_conjugate_pow
 Allowed writes: only Jacobian/HolomorphicForms/LocalMappingThm.lean

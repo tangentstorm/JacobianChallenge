@@ -1,6 +1,5 @@
 Please rename this session to "1379. Prove exists_isothermal_coordinates_local".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Isothermal.lean
 Target sorry: theorem exists_isothermal_coordinates_local
 Allowed writes: only Jacobian/HolomorphicForms/Isothermal.lean

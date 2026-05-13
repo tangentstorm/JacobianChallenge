@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Fix localTraceAtRegularValue_holomorphic".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/TraceDegree/TraceDefinition.lean
 Target sorry: theorem localTraceAtRegularValue_holomorphic
 Allowed writes: only Jacobian/TraceDegree/TraceDefinition.lean

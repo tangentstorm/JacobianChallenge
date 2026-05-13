@@ -23,6 +23,7 @@ The project uses "typed scaffolding" where complex types are often aliased to si
 ## 9. Build & Cache Management
 Project builds can be extremely slow if Mathlib is recompiled from scratch.
 - **Guideline:** Explicitly state: "If you need to build the project to verify your work, you MUST run `lake exe cache get` first to retrieve the pre-built Mathlib binaries."
+- **Path Portability:** Do **NOT** include absolute paths or "Working directory" lines in prompts. Agents should discover the project root automatically or use relative paths.
 
 ## 5. Explicit Anti-Cheat Instructions
 Add this block to all high-effort formalization prompts:

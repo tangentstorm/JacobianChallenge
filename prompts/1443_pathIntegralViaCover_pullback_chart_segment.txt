@@ -1,6 +1,5 @@
 Please rename this session to "1443. Prove pathIntegralViaCover_pullback_chart_segment".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/PullbackNaturality.lean
 Target sorry: theorem pathIntegralViaCover_pullback_chart_segment
 Allowed writes: only Jacobian/Periods/PullbackNaturality.lean

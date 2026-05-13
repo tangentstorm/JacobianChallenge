@@ -1,6 +1,5 @@
 Please rename this session to "1368. Prove exists_sobolev_hilbert_structure".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem exists_sobolev_hilbert_structure
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

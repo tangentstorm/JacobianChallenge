@@ -1,6 +1,5 @@
 Please rename this session to "1448. Prove singularH1_iso_of_homotopyEquiv".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/TopologicalGenus.lean
 Target sorry: theorem singularH1_iso_of_homotopyEquiv
 Allowed writes: only Jacobian/Periods/TopologicalGenus.lean

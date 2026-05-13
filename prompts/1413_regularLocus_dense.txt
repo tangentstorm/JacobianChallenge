@@ -1,6 +1,5 @@
 Please rename this session to "1413. Prove regularLocus_dense".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/TraceBundled.lean
 Target sorry: theorem regularLocus_dense
 Allowed writes: only Jacobian/HolomorphicForms/TraceBundled.lean

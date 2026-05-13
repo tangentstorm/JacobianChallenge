@@ -1,6 +1,5 @@
 Please rename this session to "1409. Prove twoPole_finite_fiber".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/SinglePoleLift.lean
 Target sorry: lemma twoPole_finite_fiber
 Allowed writes: only Jacobian/HolomorphicForms/SinglePoleLift.lean

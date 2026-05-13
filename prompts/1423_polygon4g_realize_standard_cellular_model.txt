@@ -1,6 +1,5 @@
 Please rename this session to "1423. Prove polygon4g_realize_standard_cellular_model".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/CellularChainComplex.lean
 Target sorry: theorem polygon4g_realize_standard_cellular_model
 Allowed writes: only Jacobian/Periods/CellularChainComplex.lean

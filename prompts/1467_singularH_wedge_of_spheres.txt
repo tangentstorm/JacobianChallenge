@@ -1,6 +1,5 @@
 Please rename this session to "1467. Prove singularH_wedge_of_spheres".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem singularH_wedge_of_spheres
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

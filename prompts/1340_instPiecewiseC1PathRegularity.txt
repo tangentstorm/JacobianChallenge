@@ -1,6 +1,5 @@
 Please rename this session to "1340. Prove instPiecewiseC1PathRegularity".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/TraceDegree/PiecewiseC1Instance.lean
 Target sorry: instance instPiecewiseC1PathRegularity
 Allowed writes: only Jacobian/TraceDegree/PiecewiseC1Instance.lean

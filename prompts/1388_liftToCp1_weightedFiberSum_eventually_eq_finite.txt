@@ -1,6 +1,5 @@
 Please rename this session to "1388. Prove liftToCp1_weightedFiberSum_eventually_eq_finite".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/MeromorphicToCp1.lean
 Target sorry: theorem liftToCp1_weightedFiberSum_eventually_eq_finite
 Allowed writes: only Jacobian/HolomorphicForms/MeromorphicToCp1.lean

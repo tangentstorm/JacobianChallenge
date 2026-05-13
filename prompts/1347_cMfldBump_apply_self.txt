@@ -1,6 +1,5 @@
 Please rename this session to "1347. Prove cMfldBump_apply_self".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/CMfldBumpStub.lean
 Target sorry: theorem cMfldBump_apply_self
 Allowed writes: only Jacobian/HolomorphicForms/CMfldBumpStub.lean

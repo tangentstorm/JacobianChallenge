@@ -1,6 +1,5 @@
 Please rename this session to "1412. Prove holomorphicOneForm_ext_on".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/TraceBundled.lean
 Target sorry: theorem holomorphicOneForm_ext_on
 Allowed writes: only Jacobian/HolomorphicForms/TraceBundled.lean

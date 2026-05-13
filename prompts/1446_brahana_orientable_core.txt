@@ -1,6 +1,5 @@
 Please rename this session to "1446. Prove brahana_orientable_core".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/TietzeReduction.lean
 Target sorry: lemma brahana_orientable_core
 Allowed writes: only Jacobian/Periods/TietzeReduction.lean

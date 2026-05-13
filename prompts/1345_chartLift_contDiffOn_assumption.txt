@@ -1,6 +1,5 @@
 Please rename this session to "1345. Prove chartLift_contDiffOn_assumption".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean
 Target sorry: theorem chartLift_contDiffOn_assumption
 Allowed writes: only Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean

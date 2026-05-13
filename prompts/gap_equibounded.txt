@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Prove equibounded".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/CompactRiemannSurface.lean
 Target sorry: theorem holomorphicOneForm_chart_local_equibounded and theorem holomorphicOneForm_chart_local_equicontinuous
 Allowed writes: only Jacobian/HolomorphicForms/CompactRiemannSurface.lean

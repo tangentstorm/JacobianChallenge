@@ -1,6 +1,5 @@
 Please rename this session to "1410. Prove twoPole_hasBranchedCoverDataOfPoleDegree".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/SinglePoleLift.lean
 Target sorry: lemma twoPole_hasBranchedCoverDataOfPoleDegree
 Allowed writes: only Jacobian/HolomorphicForms/SinglePoleLift.lean

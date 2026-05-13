@@ -1,6 +1,5 @@
 Please rename this session to "1398. Prove serrePairing_module_H1Tensor".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Serre/Pairing.lean
 Target sorry: instance serrePairing_module_H1Tensor
 Allowed writes: only Jacobian/HolomorphicForms/Serre/Pairing.lean

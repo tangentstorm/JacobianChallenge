@@ -1,6 +1,5 @@
 Please rename this session to "1449. Prove boundary_sq_zero_on_simplex".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem boundary_sq_zero_on_simplex
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

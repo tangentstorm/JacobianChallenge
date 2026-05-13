@@ -1,6 +1,5 @@
 Please rename this session to "1442. Prove cyclePushforward_chainLevel_repr".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/PullbackNaturality.lean
 Target sorry: theorem cyclePushforward_chainLevel_repr
 Allowed writes: only Jacobian/Periods/PullbackNaturality.lean

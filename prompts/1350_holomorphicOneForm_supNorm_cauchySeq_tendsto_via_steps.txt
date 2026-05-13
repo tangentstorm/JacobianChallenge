@@ -1,6 +1,5 @@
 Please rename this session to "1350. Prove holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/CompactRiemannSurface.lean
 Target sorry: theorem holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
 Allowed writes: only Jacobian/HolomorphicForms/CompactRiemannSurface.lean

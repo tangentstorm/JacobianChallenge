@@ -1,6 +1,5 @@
 Please rename this session to "1441. Prove edgeHomologyFamily_spans".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/Polygon4gEdgeBasisMap.lean
 Target sorry: theorem edgeHomologyFamily_spans
 Allowed writes: only Jacobian/Periods/Polygon4gEdgeBasisMap.lean

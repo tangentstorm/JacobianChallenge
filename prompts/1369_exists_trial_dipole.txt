@@ -1,6 +1,5 @@
 Please rename this session to "1369. Prove exists_trial_dipole".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem exists_trial_dipole
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

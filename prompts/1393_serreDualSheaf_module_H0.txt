@@ -1,6 +1,5 @@
 Please rename this session to "1393. Prove serreDualSheaf_module_H0".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Serre/CanonicalDual.lean
 Target sorry: instance serreDualSheaf_module_H0
 Allowed writes: only Jacobian/HolomorphicForms/Serre/CanonicalDual.lean

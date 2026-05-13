@@ -1,6 +1,5 @@
 Please rename this session to "1384. Prove mdifferentiable_toFiniteFun_of_no_infty".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean
 Target sorry: theorem mdifferentiable_toFiniteFun_of_no_infty
 Allowed writes: only Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean

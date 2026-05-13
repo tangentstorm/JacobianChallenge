@@ -1,6 +1,5 @@
 Please rename this session to "1355. Prove exists_contMDiff_homeomorph_to_onePointCx".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/GenusZeroClassification.lean
 Target sorry: theorem exists_contMDiff_homeomorph_to_onePointCx
 Allowed writes: only Jacobian/HolomorphicForms/GenusZeroClassification.lean

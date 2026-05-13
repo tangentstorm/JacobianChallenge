@@ -1,6 +1,5 @@
 Please rename this session to "1461. Prove characteristic_singular_face_compat".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem characteristic_singular_face_compat
 Allowed writes: only Jacobian/StageA/CellularSingular.lean
