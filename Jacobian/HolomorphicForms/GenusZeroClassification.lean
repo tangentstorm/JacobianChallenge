@@ -421,13 +421,36 @@ relates to its value at `(invBwd w : OnePoint ℂ)` (read in the
 inversion chart) by the Jacobian factor `-w²`.
 
 Bottom-up: chain rule on cotangent vectors under chart-overlap.
-Currently a structural sorry pending the chart-trivialisation +
-cotangent-pullback API. -/
+
+**Note on the proof shortcut.** With the *current* local definitions
+of `holomorphicOneForm_coeff` and `holomorphicOneForm_inversionCoeff`
+— both evaluate `ω.toFun` directly on `(1 : ℂ)` since
+`TangentSpace 𝓘(ℂ, ℂ) p` is definitionally `ℂ` — neither side carries
+the chart-Jacobian explicitly. The identity nevertheless holds because
+of the upstream fact `holomorphicOneForm_onePointCx_eq_zero` (proved
+in `InversionChartContinuity.lean` via the bundle-trivialisation
+analysis at `∞` plus Liouville on the identity chart): every
+holomorphic 1-form on `OnePoint ℂ` is identically zero, so both sides
+of the asserted equation collapse to `0` and the chart-Jacobian factor
+is vacuously satisfied. The deep mathematical content (the actual
+chart-Jacobian relation between local coefficients) lives in
+`identityChartCoeff_tendsto_zero` of `InversionChartContinuity.lean`,
+which remains the load-bearing leaf for the full Liouville argument. -/
 theorem holomorphicOneForm_chartOverlap_pullback
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
-  sorry
+  -- Both `holomorphicOneForm_coeff ω (w⁻¹)` and
+  -- `holomorphicOneForm_inversionCoeff ω w` are obtained by evaluating
+  -- `ω.toFun` (which is the underlying section function) at some point
+  -- of `OnePoint ℂ` on the tangent vector `(1 : ℂ)`. Using the upstream
+  -- `holomorphicOneForm_onePointCx_eq_zero` lemma, `ω.toFun` vanishes
+  -- identically, so both evaluations are `0` and the chart-Jacobian
+  -- factor `-w²` multiplies `0`, giving `0 = 0`.
+  unfold holomorphicOneForm_coeff holomorphicOneForm_inversionCoeff
+  rw [holomorphicOneForm_onePointCx_eq_zero ω (↑(w⁻¹) : OnePoint ℂ),
+      holomorphicOneForm_onePointCx_eq_zero ω (invBwd w)]
+  simp
 
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
 and inversion charts, the two coefficient functions are related by the
