@@ -1,17 +1,42 @@
 Please rename this session to "1343. Prove trace_pullback_at_regular_value".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/TraceDegree/TraceDefinition.lean
 Target sorry: theorem trace_pullback_at_regular_value
 Allowed writes: only Jacobian/TraceDegree/TraceDefinition.lean
 Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
 Task: prove trace_pullback_at_regular_value in Jacobian/TraceDegree/TraceDefinition.lean.
-Proof style: avoid large automation; prefer direct proofs with ext, induction on quotients, simp/rw/exact/refine, and small helper lemmas.
-Expected verification: lake build Jacobian.TraceDegree.TraceDefinition
-If blocked: leave theorem statements unchanged and add comments naming the missing prerequisite.
+
+### Blueprint Proof Plan (Section 9.2, Theorem 9.2)
+Away from the branch locus, choose local inverse branches $s_1, \dots, s_d$ of $f$, where $d = \deg(f)$. Then
+$$ \tr_f(f^* \eta) = \sum_{i=1}^d s_i^* f^* \eta = \sum_{i=1}^d (f \circ s_i)^* \eta = d \cdot \eta $$
+The identity $f \circ s_i = \text{id}$ holds on a neighborhood of the regular value $y$. Pulling back by the identity is the identity operation on 1-forms. Thus each term in the sum is $\eta_y$, and summing over $d$ terms gives $d \cdot \eta_y$.
+
+### Detailed Lean Strategy
+1. Unfold `traceAtRegularValue`. The sum is over `(h.finite_fiber y).toFinset.attach`.
+2. For each $x$ in the fiber, the summand is `cotangentPushforward f x (pullback f x (\eta (f x)))`.
+3. Since $x$ is in the fiber, $f x = y$.
+4. Use the definition of `cotangentPushforward`: it checks `if hiso : IsIso (mfderiv f x)`. 
+5. At a regular value, `h.ramificationIndex x = 1`. You will need to bridge this to `IsIso (mfderiv f x)`.
+   * Use `BranchedCoverData.ramificationIndex_eq_mapAnalyticOrderAt` to get `mapAnalyticOrderAt f x = 1`.
+   * Use the fact that `mapAnalyticOrderAt f x = 1` implies `mfderiv f x` is an isomorphism (nonzero derivative in 1D).
+   * If a specific lemma is missing, define a local one if possible or use available analytic results.
+6. Inside the `if` branch, the expression is `(pullback f x (\eta y)).comp hiso.inv`.
+7. `pullback f x (\eta y)` is `(\eta y).comp (mfderiv f x)`.
+8. Thus the term is `(\eta y).comp (mfderiv f x).comp hiso.inv`.
+9. By `hiso.right_inv`, `(mfderiv f x).comp hiso.inv = id`.
+10. The term simplifies to `\eta y`.
+11. The sum of the constant `\eta y` over the fiber is `fiber.card • \eta y`.
+12. Use `branchedDegree_eq_card_toFinset_of_unramified_fiber` to relate `fiber.card` to the degree.
+
+### Proof style
+- Avoid large automation; prefer direct proofs with `ext`, `simp`, `rw`, `exact`, `refine`.
+- Do not use `sorry` in the final submission.
+
+### Expected verification
+- `lake build Jacobian.TraceDegree.TraceDefinition`
 
 > **ANTI-CHEAT CLAUSE:**
 > - You must **NOT** change the definitions of the mathematical objects provided in the scaffolding.
 > - You must **NOT** rely on placeholder type aliases to discharge the goal.
-> - If you need to build, run `lake exe cache get` first.
+> - If you need to build, run `lake exe cache get` first to retrieve Mathlib binaries.
 > - If you find a definition is insufficient for a real proof, STOP and report the issue rather than providing a degenerate solution.
