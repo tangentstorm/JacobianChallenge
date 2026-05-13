@@ -99,8 +99,8 @@ theorem BranchedCoverData.ramificationIndex_eq_mapAnalyticOrderAt
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
     {f : X → Y} (h : BranchedCoverData X Y f)
-    {x : X} (hf : HolomorphicMap.IsHolomorphicAt f x) :
-    h.ramificationIndex x = HolomorphicMap.mapAnalyticOrderAt f x := by
+    {x : X} (hf : IsHolomorphicAt f x) :
+    h.ramificationIndex x = mapAnalyticOrderAt f x := by
   sorry
 
 /-- **Plan leaf 9 (NEW).** The local inverse of `f` near an unramified

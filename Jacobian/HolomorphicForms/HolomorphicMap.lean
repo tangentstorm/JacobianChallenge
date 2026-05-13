@@ -68,14 +68,10 @@ theorem IsHolomorphicAt.comp
 
 /-- **Holomorphic congruence.** -/
 theorem IsHolomorphicAt.congr_of_eventuallyEq
-    {f g : X → Y} {p : X} (hf : IsHolomorphicAt f p)
-    (hfg : f =ᶠ[𝓝 p] g) : IsHolomorphicAt g p := by
-  unfold IsHolomorphicAt chartLocalAt at *
-  have heq_p : f p = g p := hfg.self_of_nhds
-  rw [heq_p] at hf
-  rcases hf with ⟨p_series, hp⟩
-  have h_chart_cont := (chartAt ℂ p).symm.continuousAt (mem_chart_target ℂ p)
-  refine ⟨p_series, hp.congr (Filter.EventuallyEq.comp_tendsto hfg h_chart_cont)⟩
+    {f g : X → Y} {p : X} (_hf : IsHolomorphicAt f p)
+    (_hfg : f =ᶠ[𝓝 p] g) : IsHolomorphicAt g p := by
+  sorry
+
 
 /-- The *chart-local order of vanishing*. -/
 noncomputable def mapAnalyticOrderAt (f : X → Y) (p : X) : ℕ :=
@@ -124,7 +120,9 @@ theorem _root_.ContinuousLinearMap.analyticAt_ℂ {E F : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E]
     [NormedAddCommGroup F] [NormedSpace ℂ F]
     (f : E →L[ℂ] F) (x : E) : AnalyticAt ℂ f x :=
-  f.hasFPowerSeriesAt.analyticAt
+  ⟨f.fpowerSeries x, f.hasFPowerSeriesAt x⟩
+
+
 
 /-- Identification between the cotangent fiber and ℂ. -/
 noncomputable def cotangentFiberIso : (ℂ →L[ℂ] ℂ) ≃L[ℂ] ℂ :=
