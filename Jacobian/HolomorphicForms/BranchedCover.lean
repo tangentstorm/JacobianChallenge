@@ -131,10 +131,10 @@ theorem BranchedCoverData.localInverse_is_inverse
   refine ⟨U, V, hspec.1, hspec.2.1, hspec.2.2.1, hspec.2.2.2.1, hspec.2.2.2.2, ?_, ?_⟩
   · intro y' hy'
     unfold localInverseAt
-    exact hspec.2.2.2.2.right_inv hy'
+    exact hspec.2.2.2.2.surjOn.rightInvOn_invFunOn hy'
   · intro x' hx'
     unfold localInverseAt
-    exact hspec.2.2.2.2.left_inv hx'
+    exact hspec.2.2.2.2.injOn.leftInvOn_invFunOn hx'
 
 
 /-- Derived: the weighted cardinality of the fibre over `y`, i.e. the

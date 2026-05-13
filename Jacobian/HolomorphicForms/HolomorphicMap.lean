@@ -79,12 +79,21 @@ then `f` is holomorphic at `p` iff `g` is. -/
 theorem IsHolomorphicAt.congr_of_eventuallyEq
     {f g : X → Y} {p : X} (hf : IsHolomorphicAt f p)
     (hfg : f =ᶠ[𝓝 p] g) : IsHolomorphicAt g p := by
-  unfold IsHolomorphicAt chartLocalAt at *
+  unfold IsHolomorphicAt at *
   have heq_p : f p = g p := hfg.self_of_nhds
-  rw [heq_p] at hf
   rcases hf with ⟨p_series, hp⟩
-  have h_chart_cont := (chartAt ℂ p).symm.continuousAt (mem_chart_target ℂ p)
-  refine ⟨p_series, hp.congr (Filter.EventuallyEq.comp_tendsto hfg h_chart_cont)⟩
+  have h_local_eq : chartLocalAt f p =ᶠ[𝓝 (chartAt ℂ p p)] chartLocalAt g p := by
+    have h_cont := (chartAt ℂ p).symm.continuousAt (mem_chart_target ℂ p)
+    have h_tendsto : Filter.Tendsto (chartAt ℂ p).symm (𝓝 (chartAt ℂ p p)) (𝓝 p) := by
+      have h_eq : (chartAt ℂ p).symm (chartAt ℂ p p) = p := (chartAt ℂ p).left_inv (mem_chart_source ℂ p)
+      convert h_cont.tendsto
+      exact h_eq.symm
+    have hfg_comp := Filter.EventuallyEq.comp_tendsto hfg h_tendsto
+    filter_upwards [hfg_comp] with z hz
+    dsimp only [chartLocalAt]
+    rw [heq_p]
+    exact congr_arg _ hz
+  exact ⟨p_series, hp.congr h_local_eq⟩
 
 
 
