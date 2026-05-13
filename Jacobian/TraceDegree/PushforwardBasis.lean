@@ -317,7 +317,8 @@ theorem cycleLipPath_obligation :
   intro a b γ' K₀ hγ
   exact ⟨K₀, fun n hn pickX i h => by
     obtain ⟨hDiff, hBound⟩ := hγ n hn pickX i h
-    exact (convex_Icc 0 1).lipschitzOnWith_of_nnnorm_derivWithin_le hDiff hBound⟩
+    exact (convex_Icc 0 1).lipschitzOnWith_of_nnnorm_derivWithin_le
+      hDiff.differentiableOn hBound⟩
 
 /-- Raw geometric obligation (chain-level uniform Lipschitz).
 
