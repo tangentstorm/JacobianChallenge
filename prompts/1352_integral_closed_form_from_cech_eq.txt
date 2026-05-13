@@ -1,0 +1,17 @@
+Please rename this session to "1352. Prove integral_closed_form_from_cech_eq".
+
+Working directory: C:\ver\JacobianChallenge
+Target file: Jacobian/HolomorphicForms/DeRhamComparisonMap.lean
+Target sorry: theorem integral_closed_form_from_cech_eq
+Allowed writes: only Jacobian/HolomorphicForms/DeRhamComparisonMap.lean
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+Task: prove integral_closed_form_from_cech_eq in Jacobian/HolomorphicForms/DeRhamComparisonMap.lean.
+Proof style: avoid large automation; prefer direct proofs with ext, induction on quotients, simp/rw/exact/refine, and small helper lemmas.
+Expected verification: lake build Jacobian.HolomorphicForms.DeRhamComparisonMap
+If blocked: leave theorem statements unchanged and add comments naming the missing prerequisite.
+
+> **ANTI-CHEAT CLAUSE:**
+> - You must **NOT** change the definitions of the mathematical objects provided in the scaffolding.
+> - You must **NOT** rely on placeholder type aliases to discharge the goal.
+> - If you need to build, run `lake exe cache get` first.
+> - If you find a definition is insufficient for a real proof, STOP and report the issue rather than providing a degenerate solution.

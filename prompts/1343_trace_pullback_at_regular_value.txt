@@ -1,0 +1,17 @@
+Please rename this session to "1343. Prove trace_pullback_at_regular_value".
+
+Working directory: C:\ver\JacobianChallenge
+Target file: Jacobian/TraceDegree/TraceDefinition.lean
+Target sorry: theorem trace_pullback_at_regular_value
+Allowed writes: only Jacobian/TraceDegree/TraceDefinition.lean
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+Task: prove trace_pullback_at_regular_value in Jacobian/TraceDegree/TraceDefinition.lean.
+Proof style: avoid large automation; prefer direct proofs with ext, induction on quotients, simp/rw/exact/refine, and small helper lemmas.
+Expected verification: lake build Jacobian.TraceDegree.TraceDefinition
+If blocked: leave theorem statements unchanged and add comments naming the missing prerequisite.
+
+> **ANTI-CHEAT CLAUSE:**
+> - You must **NOT** change the definitions of the mathematical objects provided in the scaffolding.
+> - You must **NOT** rely on placeholder type aliases to discharge the goal.
+> - If you need to build, run `lake exe cache get` first.
+> - If you find a definition is insufficient for a real proof, STOP and report the issue rather than providing a degenerate solution.

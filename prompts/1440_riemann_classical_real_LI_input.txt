@@ -1,0 +1,17 @@
+Please rename this session to "1440. Prove riemann_classical_real_LI_input".
+
+Working directory: C:\ver\JacobianChallenge
+Target file: Jacobian/Periods/PeriodFunctional.lean
+Target sorry: theorem riemann_classical_real_LI_input
+Allowed writes: only Jacobian/Periods/PeriodFunctional.lean
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+Task: prove riemann_classical_real_LI_input in Jacobian/Periods/PeriodFunctional.lean.
+Proof style: avoid large automation; prefer direct proofs with ext, induction on quotients, simp/rw/exact/refine, and small helper lemmas.
+Expected verification: lake build Jacobian.Periods.PeriodFunctional
+If blocked: leave theorem statements unchanged and add comments naming the missing prerequisite.
+
+> **ANTI-CHEAT CLAUSE:**
+> - You must **NOT** change the definitions of the mathematical objects provided in the scaffolding.
+> - You must **NOT** rely on placeholder type aliases to discharge the goal.
+> - If you need to build, run `lake exe cache get` first.
+> - If you find a definition is insufficient for a real proof, STOP and report the issue rather than providing a degenerate solution.
