@@ -4,6 +4,7 @@ import Jacobian.HolomorphicForms.DeRhamComparisonMap
 import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.RealHomologyTensor
 import Mathlib.Geometry.Manifold.IsManifold.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # De Rham theorem and singular bridge (frontier API)
@@ -73,7 +74,8 @@ would replace with a real proof. -/
 theorem realDim_deRhamH1_eq_realDim_singularH1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     realDimDeRhamH1 X = realDimSingularH1 X :=
   realDimDeRhamH1_eq_realDimSingularH1_via_cocycle X
 
@@ -97,7 +99,8 @@ Both are pure linear-algebra obligations.  See `IntegralOneCycleRank.lean`. -/
 theorem realDim_singularH1_eq_finrank_intH1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     realDimSingularH1 X = Module.finrank ℤ (IntegralOneCycle X) :=
   realDim_singularH1_eq_finrank_intH1_via_uct X
 
@@ -112,7 +115,8 @@ assembly. -/
 theorem realDim_deRhamH1_eq_finrank_intH1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     realDimDeRhamH1 X = Module.finrank ℤ (IntegralOneCycle X) := by
   rw [realDim_deRhamH1_eq_realDim_singularH1 X,
       realDim_singularH1_eq_finrank_intH1 X]

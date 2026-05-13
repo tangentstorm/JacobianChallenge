@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.Serre.DualizingSheaf
 import Jacobian.HolomorphicForms.Serre.CanonicalDual
 import Jacobian.HolomorphicForms.Serre.HarmonicForms
 import Jacobian.HolomorphicForms.Serre.L2Pairing
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Dolbeault identification of `H¹` (frontier)
@@ -40,6 +41,7 @@ theorem serrePairing_witness_left
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F : RSAbSheaf X)
@@ -64,6 +66,7 @@ theorem serrePairing_witness_right
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F : RSAbSheaf X)

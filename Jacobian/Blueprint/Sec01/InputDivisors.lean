@@ -8,6 +8,7 @@ import Jacobian.Blueprint.Sec01.MeromorphicToCp1
 import Jacobian.Blueprint.Sec01.MeromorphicAsCp1Map
 import Jacobian.Blueprint.Sec01.RiemannRochSpace
 import Jacobian.Blueprint.Sec01.RiemannRochSpaceVector
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint: `input:divisors` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -36,7 +37,8 @@ def inputDivisors
 theorem input_divisors_holds
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     inputDivisors X := by
   intro f
   exact principal_degree_zero X f

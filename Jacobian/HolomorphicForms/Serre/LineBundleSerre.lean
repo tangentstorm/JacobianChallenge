@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.Serre.LineBundleDual
 import Jacobian.HolomorphicForms.Serre.DatumExists
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Serre duality specialised to line bundles (frontier)
@@ -38,6 +39,7 @@ theorem serre_duality_lineBundle_exists
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)

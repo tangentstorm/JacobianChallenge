@@ -4,6 +4,7 @@ import Jacobian.StageB.KahlerStructure
 import Jacobian.Analysis.SobolevElliptic.HeadlinePlugIn
 import Jacobian.Analysis.HodgeDecomposition.AbstractHodgeComplex
 import Mathlib.Analysis.InnerProductSpace.PiL2
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # R5 — Hodge decomposition on a compact Kähler manifold
@@ -192,6 +193,7 @@ theorem hodge_poincare_duality [CompactSpace M] (n k : ℕ) :
 
 variable {X : Type} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
   [IsKahler X]
 
 /-- **R5.5.1.**  Kähler compatibility is captured by the typeclass

@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.EulerCharLineBundle
 import Jacobian.HolomorphicForms.Serre.H0CanonicalIdentification
 import Jacobian.HolomorphicForms.H1DualizingSheaf
 import Mathlib.Tactic.Linarith
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Canonical divisor degree on a compact Riemann surface
@@ -76,6 +77,7 @@ theorem canonical_h0_finrank_eq_genus
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)] :
@@ -93,6 +95,7 @@ theorem canonical_h1_finrank_eq_one
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
@@ -110,6 +113,7 @@ theorem canonical_eulerCharacteristic_eq_genus_minus_one
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)]
@@ -151,6 +155,7 @@ theorem canonical_degree_eq_two_genus_minus_two
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)]

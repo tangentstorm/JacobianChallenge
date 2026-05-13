@@ -1,5 +1,6 @@
 import Jacobian.Blueprint.Sec01.DivisorDiscrete
 import Mathlib.Topology.Compactness.Compact
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint: `lem:divisor-finite-support` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -24,6 +25,7 @@ theorem divisor_finite_support
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : X → ℂ)
     (hf_mero : ∀ q : X, MeromorphicAtX f q)
     (h_nontriv : ∃ p : X, vanishingOrder X p f ≠ ⊤) :

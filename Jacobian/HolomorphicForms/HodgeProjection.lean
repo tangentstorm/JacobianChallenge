@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.HodgeLaplacian
 import Jacobian.HolomorphicForms.DeRhamComplex
 import Jacobian.HolomorphicForms.HodgeStarRS
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Harmonic projection: H¹_dR ≃ Harm¹ (frontier API)
@@ -49,7 +50,8 @@ API exists. -/
 noncomputable def harmonicProjection1
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     SmoothDiffForm 1 X →ₗ[ℂ] HarmonicOneForm X :=
   LinearMap.id
 
@@ -63,7 +65,8 @@ identity on harmonic forms. -/
 theorem harmonicProjection1_closed_surjective
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Function.Surjective ((harmonicProjection1 X).domRestrict (ClosedForm 1 X)) := by
   intro η
   refine ⟨⟨η, ?_⟩, rfl⟩
@@ -74,7 +77,8 @@ because every harmonic form is already the projection of a closed form. -/
 theorem harmonicProjection1_surjective
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Function.Surjective (harmonicProjection1 X) := by
   intro η
   obtain ⟨ω, hω⟩ := harmonicProjection1_closed_surjective X η
@@ -89,6 +93,7 @@ theorem harmonicProjection1_vanishes_on_exact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : SmoothDiffForm 1 X) (hω : ω ∈ ExactForm 0 X) :
     harmonicProjection1 X ω = 0 := by
   have hω0 : ω = 0 := by
@@ -107,6 +112,7 @@ theorem harmonicProjection1_kernel_subset_exact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : SmoothDiffForm 1 X) (_hclosed : exteriorDerivative 1 X ω = 0)
     (hproj : harmonicProjection1 X ω = 0) :
     ω ∈ ExactForm 0 X := by
@@ -123,6 +129,7 @@ theorem harmonicProjection1_kernel_eq_exact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : SmoothDiffForm 1 X) (hclosed : exteriorDerivative 1 X ω = 0) :
     harmonicProjection1 X ω = 0 ↔ ω ∈ ExactForm 0 X := by
   constructor
@@ -133,7 +140,8 @@ theorem harmonicProjection1_kernel_eq_exact
 private theorem harmonicProjection1_closed_ker_eq_exact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     LinearMap.ker ((harmonicProjection1 X).domRestrict (ClosedForm 1 X)) =
       ExactForm.toClosedSubmodule 0 X := by
   ext ω
@@ -161,7 +169,8 @@ Bottom-up content: combines `harmonicProjection1_surjective`,
 theorem deRhamH1_isLinearEquiv_harmonic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ _ : deRhamH1Cocycle X ≃ₗ[ℂ] HarmonicOneForm X, True := by
   let π₁ : ClosedFormSub 1 X →ₗ[ℂ] HarmonicOneForm X :=
     (harmonicProjection1 X).domRestrict (ClosedForm 1 X)
@@ -179,7 +188,8 @@ theorem deRhamH1_isLinearEquiv_harmonic
 theorem deRhamH1Cocycle_finrank_eq_analyticHarmonicGenus
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module.finrank ℂ (deRhamH1Cocycle X) = analyticHarmonicGenus X := by
   obtain ⟨e, _⟩ := deRhamH1_isLinearEquiv_harmonic X
   exact e.finrank_eq
@@ -192,7 +202,8 @@ isomorphism. -/
 theorem complexDimDeRhamH1ℂ_eq_analyticHarmonicGenus_via_cocycle
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     complexDimDeRhamH1ℂ X = analyticHarmonicGenus X := by
   rw [complexDimDeRhamH1ℂ_eq_finrank_cocycle X,
       deRhamH1Cocycle_finrank_eq_analyticHarmonicGenus X]

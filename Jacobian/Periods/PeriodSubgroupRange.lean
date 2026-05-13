@@ -1,4 +1,5 @@
 import Jacobian.Periods.PeriodFunctional
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # `periodSubgroup` is the range of `periodPairing`
@@ -17,6 +18,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- `periodSubgroup E X` equals `(periodPairing E X).range`. -/
 theorem periodSubgroup_eq_range :

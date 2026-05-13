@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.SmoothDifferentialForm
 import Jacobian.HolomorphicForms.HodgeStarRS
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Hodge Laplacian on a Riemann surface (frontier API)
@@ -48,14 +49,16 @@ come from a Hermitian metric and the metric Hodge star once the cotangent
 metric / Hodge-star API exists. -/
 noncomputable def hodgeStarOp
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     SmoothDiffForm 1 X →ₗ[ℂ] SmoothDiffForm 1 X :=
   Complex.I • LinearMap.id
 
 /-- `⋆² = -1` on the current placeholder model of 1-forms. -/
 theorem hodgeStarOp_squared
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     (hodgeStarOp X).comp (hodgeStarOp X) = -LinearMap.id := by
   ext ω
   simp [hodgeStarOp]
@@ -68,7 +71,8 @@ formal adjoint is also zero. The geometric replacement is the metric
 adjoint `-⋆ d ⋆` once the real Hodge-star/form API exists. -/
 noncomputable def dStarOperator1
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     SmoothDiffForm 1 X →ₗ[ℂ] SmoothDiffForm 0 X :=
   0
 
@@ -76,7 +80,8 @@ noncomputable def dStarOperator1
 for the zero-differential surrogate. -/
 noncomputable def dStarOperator2
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     SmoothDiffForm 2 X →ₗ[ℂ] SmoothDiffForm 1 X :=
   0
 
@@ -84,7 +89,8 @@ noncomputable def dStarOperator2
 `Δ := d_0 ∘ d^*_1 + d^*_2 ∘ d_1 : Ω¹ → Ω¹`. -/
 noncomputable def hodgeLaplacian1
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     SmoothDiffForm 1 X →ₗ[ℂ] SmoothDiffForm 1 X :=
   (exteriorDerivative 0 X).comp (dStarOperator1 X)
     + (dStarOperator2 X).comp (exteriorDerivative 1 X)
@@ -93,7 +99,8 @@ noncomputable def hodgeLaplacian1
 `d^*_2 ∘ d_1` applied to 1-forms. Definition-shaped frontier theorem. -/
 theorem hodgeLaplacian1_def
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     hodgeLaplacian1 X
       = (exteriorDerivative 0 X).comp (dStarOperator1 X)
         + (dStarOperator2 X).comp (exteriorDerivative 1 X) := by
@@ -108,6 +115,7 @@ theorem hodgeLaplacian1_kernel_subset_closed_coclosed
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : SmoothDiffForm 1 X)
     (_hω : hodgeLaplacian1 X ω = 0) :
     exteriorDerivative 1 X ω = 0 ∧ dStarOperator1 X ω = 0 := by
@@ -125,6 +133,7 @@ theorem hodgeLaplacian1_kernel_iff
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : SmoothDiffForm 1 X) :
     hodgeLaplacian1 X ω = 0 ↔
       exteriorDerivative 1 X ω = 0 ∧ dStarOperator1 X ω = 0 := by
@@ -141,7 +150,8 @@ surrogate representation. -/
 theorem harmonicEquivLaplacianKernel
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ _ : HarmonicOneForm X ≃ₗ[ℂ] LinearMap.ker (hodgeLaplacian1 X), True := by
   refine ⟨?_, trivial⟩
   refine
@@ -165,7 +175,8 @@ exist but the Laplacian on forms requires the form apparatus first. -/
 theorem hodgeLaplacian1_kernel_finite
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module.Finite ℂ (LinearMap.ker (hodgeLaplacian1 X)) := by
   obtain ⟨e, _⟩ := harmonicEquivLaplacianKernel X
   haveI : Module.Finite ℂ (HarmonicOneForm X) := analyticHarmonicGenus_finite X

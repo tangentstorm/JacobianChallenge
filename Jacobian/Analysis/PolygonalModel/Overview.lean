@@ -8,6 +8,7 @@ import Jacobian.StageA.EdgeWordTietze
 import Mathlib.Geometry.Manifold.IsManifold.Basic
 import Mathlib.Combinatorics.SimpleGraph.Basic
 import Mathlib.Analysis.InnerProductSpace.PiL2
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 -- The R3 R3.1.x / R3.5.x leaves are intentionally stated with the
 -- full Riemann-surface variable bundle for documentation symmetry,
@@ -86,6 +87,7 @@ open JacobianChallenge.Periods
 variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
   [Orientable X]
 
 /-! ### Genus placeholder -/

@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.Defs
 import Jacobian.Periods.ChartedForm
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 import Mathlib.Analysis.Calculus.FDeriv.Analytic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint stub: `lem:holomorphic-form-is-closed` in
 `tex/sections/03-periods-and-riemann-bilinear.tex`.
@@ -87,6 +88,7 @@ function" in the substrate, this becomes a one-line forwarder. -/
 theorem chart_pullback_holomorphic
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_c : OpenPartialHomeomorph X ℂ) (_ω : HolomorphicOneForm ℂ X) :
     Nonempty Unit := by
   exact ⟨()⟩
@@ -106,6 +108,7 @@ forwarder via Mathlib's holomorphic-`fderiv` calculus. -/
 theorem chart_pullback_dbar_zero
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (c : OpenPartialHomeomorph X ℂ) (ω : HolomorphicOneForm ℂ X) : Nonempty Unit :=
   chart_pullback_holomorphic X c ω
 
@@ -121,6 +124,7 @@ exterior-product API on the model space `ℂ`. -/
 theorem chart_pullback_d_eq_zero
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (c : OpenPartialHomeomorph X ℂ) (ω : HolomorphicOneForm ℂ X) : Nonempty Unit :=
   chart_pullback_dbar_zero X c ω
 
@@ -139,6 +143,7 @@ chart-cover sum + sub-leaf 3 forwarding. -/
 theorem holomorphic_form_is_closed
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_ω : HolomorphicOneForm ℂ X) :
     Nonempty Unit := by
   exact ⟨()⟩

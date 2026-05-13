@@ -1,5 +1,6 @@
 import Jacobian.AnalyticJacobian.EvalJacobianClassEq
 import Jacobian.AnalyticJacobian.MkMembership
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Sub-membership characterization of `evalJacobianClass` equality
@@ -19,6 +20,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- `evalJacobianClass P v = evalJacobianClass Q w` iff
 `evalLinearMap P v - evalLinearMap Q w ∈ periodSubgroup`. -/

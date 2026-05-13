@@ -2,6 +2,7 @@ import Jacobian.Periods.PathIntegralViaChartCorrect
 import Jacobian.Periods.ChartedFormPullbackChainRule
 import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Chart-level chain rule for `pathIntegralViaChartCorrect`
@@ -84,8 +85,10 @@ open Set unitInterval JacobianChallenge.HolomorphicForms
 
 variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 variable {Y : Type*} [TopologicalSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
+  [JacobianChallenge.Periods.StableChartAt ℂ Y]
 
 open scoped Manifold ContDiff Topology Asymptotics NNReal
 

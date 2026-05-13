@@ -7,6 +7,7 @@ import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.GenusZeroClassification
 import Jacobian.HolomorphicForms.SinglePoleLift
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 set_option linter.unusedSectionVars false
 
@@ -46,6 +47,7 @@ open JacobianChallenge.ComplexTorus
 variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- The basis-aligned analytic carrier for the Jacobian: the complex
 torus quotient of `Fin (analyticGenus ℂ X) → ℂ` by the period lattice.
@@ -70,7 +72,8 @@ integral over a constant path is trivially zero. -/
 structure PathIntegralFunctionalBundle
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
   /-- The path-integral coordinates `(P, Q) ↦ (∫_P^Q ω₁, …, ∫_P^Q ωₘ)`. -/
   val : X → X → Fin (analyticGenus ℂ X) → ℂ
   /-- Integrating over a constant loop yields zero. -/
@@ -487,6 +490,7 @@ The `ord` field is intentionally absent: the project's
 structure ThirdKindMeromorphicData
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (Q₁ Q₂ : X) where
   /-- The underlying meromorphic data, packaged via `RawMeromorphicWithPrincipal`. -/
   data : RawMeromorphicWithPrincipal X
@@ -512,6 +516,7 @@ existence of the witness and let the sub-leaves enforce its content. -/
 structure LogPeriodVanishing
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_data : RawMeromorphicWithPrincipal X) where
   /-- Placeholder witness: the period vector of `d log f` lies in
   `2πi · ℤ^{2g}`. The actual condition is delegated to the bottom-up
@@ -1495,6 +1500,7 @@ project lacks the multi-valued-primitive infrastructure to record
 structure SingleValuedLogPrimitive
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (Q₁ Q₂ : X)
     (_td : ThirdKindMeromorphicData X Q₁ Q₂) where
   /-- Placeholder witness for the single-valued log primitive. -/
@@ -2297,6 +2303,7 @@ opaque pathIntegralFunctional_injective_mod_periods
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (P : X) (h : 0 < analyticGenus ℂ X) :
     Function.Injective (analyticOfCurve X P)
 ```

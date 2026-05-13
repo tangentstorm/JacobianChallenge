@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.VanishingOrder
 import Mathlib.Topology.Compactification.OnePoint.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Production API promoted from blueprint: `def:meromorphic-function` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -32,7 +33,8 @@ namespace MeromorphicFunctionType
 
 /-- Apply a `MeromorphicFunctionType` as a function `X → OnePoint ℂ`. -/
 instance instCoeFun (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     CoeFun (MeromorphicFunctionType X) (fun _ => X → OnePoint ℂ) :=
   ⟨MeromorphicFunctionType.toFun⟩
 

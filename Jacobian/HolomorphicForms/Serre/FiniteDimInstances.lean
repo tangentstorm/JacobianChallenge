@@ -2,6 +2,7 @@ import Jacobian.HolomorphicForms.SheafCohomologyRS
 import Jacobian.HolomorphicForms.Serre.DualizingSheaf
 import Jacobian.HolomorphicForms.Serre.HarmonicForms
 import Jacobian.HolomorphicForms.Serre.StructureSheaf
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Finite-dimensionality of `H^q` for `K_X` and `𝒪_X` (frontier)
@@ -36,7 +37,8 @@ g-dimensional ℂ-vector space. -/
 theorem harmonicForms_canonical_H0_finiteDimensional
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     FiniteDimensional ℂ (harmonicForms X (RSDualizingSheaf X) 0) := by
   infer_instance
 
@@ -44,7 +46,8 @@ theorem harmonicForms_canonical_H0_finiteDimensional
 theorem harmonicForms_structure_H0_finiteDimensional
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     FiniteDimensional ℂ (harmonicForms X (RSStructureSheaf X) 0) := by
   infer_instance
 
@@ -53,7 +56,8 @@ Classically equal to the genus `g`. -/
 theorem harmonicForms_structure_H1_finiteDimensional
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     FiniteDimensional ℂ (harmonicForms X (RSStructureSheaf X) 1) := by
   infer_instance
 
@@ -61,7 +65,8 @@ theorem harmonicForms_structure_H1_finiteDimensional
 theorem harmonicForms_canonical_H1_finiteDimensional
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     FiniteDimensional ℂ (harmonicForms X (RSDualizingSheaf X) 1) := by
   infer_instance
 

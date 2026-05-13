@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.MeromorphicDegree
 import Mathlib.Topology.Compactification.OnePoint.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 open scoped Manifold
 
@@ -20,6 +21,7 @@ namespace GenusZeroSimplePoleMeromorphicMap
 /-- The underlying map to the Riemann sphere. -/
 def toMap {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : GenusZeroSimplePoleMeromorphicMap X) : X → OnePoint ℂ :=
   f.meromorphicMap.toMap
 

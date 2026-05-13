@@ -10,6 +10,7 @@ import Jacobian.Periods.ComplexManifoldOrientable
 import Jacobian.Periods.RiemannBilinearRefinement
 import Jacobian.Blueprint.Sec03.PeriodHomologyInvariance
 import Mathlib.Algebra.Module.ZLattice.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Period functional (target statement)
@@ -93,7 +94,8 @@ noncomputable def holomorphicFormBridge
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     HolomorphicOneForm E X →ₗ[ℂ] HolomorphicOneForm ℂ X := by
   sorry
 
@@ -116,7 +118,8 @@ noncomputable def periodPairing
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     IntegralOneCycle X →+ (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
   -- Placeholder: the chain-level integration I is 0 (pending the
   -- free-module universal-property bridge). Using 0 directly rather
@@ -153,6 +156,7 @@ integration — is `period_homology_invariance_descent` in
 theorem period_homology_invariance
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     {σ τ : IntegralOneCycle X} (h : σ = τ)
     (η : HolomorphicOneForm ℂ X) :
     (periodPairing ℂ X) σ η = (periodPairing ℂ X) τ η := by
@@ -229,7 +233,8 @@ named-leaf scaffolding, *not* re-introduced here. -/
 theorem stageA_surface_CW_basis
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Nonempty (Module.Basis (Fin (2 * topologicalGenus X)) ℤ
       (IntegralOneCycle X)) := by
   obtain ⟨srStruct⟩ := ChartedSpaceComplex_to_smoothReal2 X
@@ -253,7 +258,8 @@ lands, this delegation becomes a one-line consumer. -/
 theorem h1_free_of_compact_surface
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Nonempty (Module.Basis (Fin (2 * topologicalGenus X)) ℤ
       (IntegralOneCycle X)) :=
   stageA_surface_CW_basis X
@@ -297,7 +303,8 @@ leaf is now a one-line delegate. -/
 theorem stageB_analytic_eq_topological
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     analyticGenus ℂ X = topologicalGenus X := by
   haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
     compactRiemannSurface_finiteDimensionalHolomorphicOneForms X
@@ -323,7 +330,8 @@ duality.
 theorem analyticGenus_eq_topologicalGenus
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     analyticGenus ℂ X = topologicalGenus X :=
   stageB_analytic_eq_topological X
 
@@ -336,7 +344,8 @@ via `Fin.castOrderIso` reindex. -/
 theorem h1_basis_of_compact_riemann_surface
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Nonempty (Module.Basis (Fin (2 * analyticGenus ℂ X)) ℤ
       (IntegralOneCycle X)) := by
   obtain ⟨b⟩ := h1_free_of_compact_surface X
@@ -352,7 +361,8 @@ TOPDOWN assembly (Aristotle e227f244): extracts a ℤ-basis from
 theorem symplectic_basis_of_cycles
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X),
       Function.Injective σ := by
   obtain ⟨b⟩ := h1_basis_of_compact_riemann_surface X
@@ -365,6 +375,7 @@ theorem period_vectors_mem_subgroup
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X) :
     ∀ i, (holomorphicOneFormDualEquiv ℂ X) ((periodPairing ℂ X) (σ i))
       ∈ (AddSubgroup.map
@@ -418,7 +429,8 @@ pairing themselves rather than taking the witness from here. -/
 theorem wedge_integration_pairing_exists
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ (Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
            (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ),
       ∀ f g, Q f g = -Q g f :=
@@ -454,6 +466,7 @@ theorem riemann_bilinear_identity
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
     (_hσ : Function.Injective σ) :
     ∃ Q : HolomorphicOneForm ℂ X → HolomorphicOneForm ℂ X → ℂ,
@@ -509,7 +522,8 @@ the level of `‖h(z)‖² dA`, see
 theorem hodge_form_posDef
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ Q : (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) →
           (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) → ℂ,
       ∀ f : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ,
@@ -600,6 +614,7 @@ theorem periodPairing_satisfies_bilinear_identity
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
     (hσ : Function.Injective σ) :
     ∃ Q : HolomorphicOneForm ℂ X → HolomorphicOneForm ℂ X → ℂ,
@@ -631,6 +646,7 @@ theorem hodge_form_posDef_on_periods_ORIGINAL
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X) :
     ∀ ω : HolomorphicOneForm ℂ X,
       ω ≠ 0 → (Complex.I * (∑ k : Fin (analyticGenus ℂ X),
@@ -663,6 +679,7 @@ theorem hodge_form_posDef_on_periods
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
     (hσ_stokes : ∀ ω : HolomorphicOneForm ℂ X,
       (∑ k : Fin (analyticGenus ℂ X),
@@ -703,6 +720,7 @@ theorem riemann_classical_real_LI_input
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
     (hσ : Function.Injective σ) :
     LinearIndependent ℝ
@@ -743,6 +761,7 @@ theorem period_functionals_ℝ_linearIndependent
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
     (hσ : Function.Injective σ) :
     LinearIndependent ℝ
@@ -760,6 +779,7 @@ theorem period_vectors_linearIndependent_of_symplectic
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : Fin (2 * analyticGenus ℂ X) → IntegralOneCycle X)
     (hσ : Function.Injective σ) :
     LinearIndependent ℝ
@@ -774,7 +794,8 @@ Now sorry-free assembly of the three sub-obligations above. -/
 theorem periodVectors_linearIndependent
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ (b : Fin (2 * analyticGenus ℂ X) → Fin (analyticGenus ℂ X) → ℂ),
       LinearIndependent ℝ b ∧
       ∀ i, b i ∈ (AddSubgroup.map
@@ -941,7 +962,8 @@ structure.
 theorem periodSubgroup_eq_zspan_of_basis
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ (b : Fin (2 * analyticGenus ℂ X) → Fin (analyticGenus ℂ X) → ℂ),
       LinearIndependent ℝ b ∧
       AddSubgroup.map
@@ -1041,7 +1063,8 @@ theorem periodSubgroup_isZLattice
     [ConnectedSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     DiscreteTopology
       (AddSubgroup.map
         (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
@@ -1076,7 +1099,8 @@ algebra, sorry-free in
 theorem periodSubgroup_spans_real
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Submodule.span ℝ
       ((AddSubgroup.map
         (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
@@ -1101,7 +1125,8 @@ noncomputable def periodSubgroup
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     AddSubgroup (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
   (periodPairing E X).range
 
@@ -1150,7 +1175,8 @@ fundamental domain) is delegated to the three theorems above. -/
 noncomputable def basisAlignedPeriodSubmoduleℤ
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Submodule ℤ (Fin (analyticGenus ℂ X) → ℂ) :=
   AddSubgroup.toIntSubmodule
     (AddSubgroup.map
@@ -1167,7 +1193,8 @@ rest. No new bottom-up content. -/
 noncomputable instance basisAlignedPeriodSubmoduleℤ_discreteTopology
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     DiscreteTopology (basisAlignedPeriodSubmoduleℤ X) := by
   haveI : DiscreteTopology
       (AddSubgroup.map
@@ -1193,7 +1220,8 @@ above. No new bottom-up content. -/
 noncomputable instance basisAlignedPeriodSubmoduleℤ_isZLattice
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     IsZLattice ℝ (basisAlignedPeriodSubmoduleℤ X) where
   span_top := by
     -- `(basisAlignedPeriodSubmoduleℤ X : Set _)` reduces by `rfl` to the
@@ -1228,7 +1256,8 @@ fundamental domain — is centralised here next to its inputs. -/
 theorem exists_compact_periodFundamentalDomain
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ D : Set (Fin (analyticGenus ℂ X) → ℂ),
       IsCompact D ∧
       ∀ v : Fin (analyticGenus ℂ X) → ℂ,

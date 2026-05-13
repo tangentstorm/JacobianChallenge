@@ -1,5 +1,6 @@
 import Jacobian.AnalyticJacobian.Mk
 import Jacobian.Periods.PeriodSubgroupRange
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # `mk` zero ↔ membership in `periodPairing.range`
@@ -17,6 +18,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- `mk E X φ = 0` iff `φ` lies in the range of `periodPairing`. -/
 theorem mk_eq_zero_iff_mem_range

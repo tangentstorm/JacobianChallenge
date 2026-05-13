@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.Serre.LineBundleSerre
 import Jacobian.HolomorphicForms.Serre.RiemannRochHighFromSerre
 import Jacobian.HolomorphicForms.EulerCharLineBundle
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Pieces of the `RiemannRochUmbrella` package (frontier)
@@ -54,6 +55,7 @@ theorem serre_h1_finrank_eq_h0_canonical_sub
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)
@@ -80,6 +82,7 @@ theorem riemann_roch_classical_identity
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)

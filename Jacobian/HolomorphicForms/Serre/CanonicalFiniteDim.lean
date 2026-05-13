@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.Serre.FiniteDimInstances
 import Jacobian.HolomorphicForms.Serre.HarmonicForms
 import Jacobian.HolomorphicForms.SheafCohomologyRS
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Finite-dimensionality discharge for `K_X` and `𝒪_X` (frontier)
@@ -44,6 +45,7 @@ theorem finiteDimensionalSheafCohomologyRS_canonical
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 0)]
@@ -68,6 +70,7 @@ theorem finiteDimensionalSheafCohomologyRS_structure
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSStructureSheaf X) 0)]

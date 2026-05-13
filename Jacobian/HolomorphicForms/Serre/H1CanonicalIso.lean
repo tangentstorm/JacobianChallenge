@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.Serre.DualizingSheaf
 import Jacobian.HolomorphicForms.Serre.ResidueMap
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Identification `H¹(X, K_X) ≃ₗ[ℂ] ℂ` (refined)
@@ -26,6 +27,7 @@ noncomputable def h1Canonical_isoToC
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     [Module ℂ (RSSheafCohomology X (RSDualizingSheaf X) 1)] :
