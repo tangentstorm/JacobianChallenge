@@ -4,6 +4,7 @@ import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 import Mathlib.SetTheory.Cardinal.Finite
 import Mathlib.Topology.Connected.TotallyDisconnected
 import Jacobian.HolomorphicForms.SmoothDifferentialForm
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # De Rham cohomology dimensions on a smooth manifold (frontier API)
@@ -56,19 +57,22 @@ open scoped Manifold
 1-forms. -/
 noncomputable def deRhamH1Cocycle
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Type _ :=
   (ClosedFormSub (Nat.succ 0) X) ⧸ (ExactForm.toClosedSubmodule 0 X)
 
 noncomputable instance deRhamH1Cocycle.instAddCommGroup
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     AddCommGroup (deRhamH1Cocycle X) :=
   inferInstanceAs (AddCommGroup (_ ⧸ (ExactForm.toClosedSubmodule 0 X)))
 
 noncomputable instance deRhamH1Cocycle.instModuleℂ
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module ℂ (deRhamH1Cocycle X) :=
   inferInstanceAs (Module ℂ (_ ⧸ (ExactForm.toClosedSubmodule 0 X)))
 
@@ -77,7 +81,8 @@ noncomputable instance deRhamH1Cocycle.instModuleℂ
 quotient model. -/
 noncomputable def complexDimDeRhamH1ℂ
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ :=
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] : ℕ :=
   Module.finrank ℂ (deRhamH1Cocycle X)
 
 /-- Real dimension of the first de Rham cohomology group in the current
@@ -86,7 +91,8 @@ complex, the real/complex extension-of-scalars bridge is represented by
 the same closed-mod-exact quotient finrank. -/
 noncomputable def realDimDeRhamH1
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ :=
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] : ℕ :=
   Module.finrank ℂ (deRhamH1Cocycle X)
 
 /-- Real dimension of the zeroth de Rham
@@ -124,7 +130,8 @@ adapted to smooth ℂ-valued functions. -/
 theorem complexDim_deRhamH0ℂ_eq_one_of_compact_connected
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     complexDimDeRhamH0ℂ X = 1 := by
   rw [complexDimDeRhamH0ℂ, Nat.card_eq_one_iff_unique]
   constructor
@@ -146,7 +153,8 @@ to `H₀(X, ℤ) ≅ ℤ`. -/
 theorem realDim_deRhamH0_eq_one_of_compact_connected
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     realDimDeRhamH0 X = 1 := by
   rw [realDimDeRhamH0, Nat.card_eq_one_iff_unique]
   constructor

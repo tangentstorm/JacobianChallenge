@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.CotangentBundle
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `input:degree-one-isomorphism`
 
@@ -38,6 +39,7 @@ theorem degree_one_isomorphism
     (X Y : Type*) [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
     (_f : X → Y) :
     Nonempty (X → Y) := by

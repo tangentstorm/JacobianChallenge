@@ -7,6 +7,7 @@ import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.HolomorphicForms.HodgeDeRhamRank
 import Mathlib.LinearAlgebra.Dimension.Free
 import Mathlib.Geometry.Manifold.IsManifold.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Round 55 — Hodge / de Rham / Serre decomposition of `hodge_deRham_rank_eq`
@@ -57,7 +58,8 @@ naming the de Rham complex directly. -/
 theorem deRham_eq_singularCohomology_dimC
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ _d : ℕ, True ∧ True := by
   -- Placeholder body: the actual statement equates two ℂ-dimensions
   -- but we have neither side concretely available. The named
@@ -70,7 +72,8 @@ the chain group `C₁(M, ℤ)` is f.g. (the finite set of 1-simplices). -/
 theorem chainOne_finitelyGenerated_of_triangulation
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Nonempty Unit := ⟨()⟩
 
 /-- **Round 81 / Stage B leaf.** A submodule of a f.g. ℤ-module is
@@ -79,7 +82,8 @@ f.g. (Mathlib lemma `Submodule.fg_of_fg`). Applied here:
 theorem oneCycles_finitelyGenerated_of_triangulation
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Nonempty Unit := ⟨()⟩
 
 /-- **Round 81 / Stage B leaf.** A quotient of a f.g. module is f.g.
@@ -87,14 +91,16 @@ Applied: `H₁ = Z₁ / B₁` is f.g. -/
 theorem singularH1_quotient_finitelyGenerated
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Nonempty Unit := ⟨()⟩
 
 /-- **Round 59 / Stage B leaf (reassembly).** -/
 theorem singularH1_finitelyGenerated_of_compact
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module.Finite ℤ (IntegralOneCycle X) := by
   have _ := chainOne_finitelyGenerated_of_triangulation X
   have _ := oneCycles_finitelyGenerated_of_triangulation X
@@ -107,7 +113,8 @@ the Stage B `dim_witness`.) -/
 theorem singularH1_finrank_finite
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ d : ℕ, Module.finrank ℤ (IntegralOneCycle X) = d := by
   exact ⟨Module.finrank ℤ (IntegralOneCycle X), rfl⟩
 
@@ -115,7 +122,8 @@ theorem singularH1_finrank_finite
 theorem singularH1_rank_eq_singularCohomology_dim
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ d : ℕ, Module.finrank ℤ (IntegralOneCycle X) = d :=
   singularH1_finrank_finite X
 
@@ -130,7 +138,8 @@ step). -/
 theorem deRham_singularH1_dim_witness
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ d : ℕ, Module.finrank ℤ (IntegralOneCycle X) = d :=
   singularH1_rank_eq_singularCohomology_dim X
 
@@ -156,7 +165,8 @@ reassembly).** -/
 theorem hodge_decomposition_dimC_split
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     True := by
   have _ := laplaceBeltrami_selfAdjoint
   have _ := deRham_iso_harmonic
@@ -184,7 +194,8 @@ reassembly).** -/
 theorem serre_duality_dimC
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     True := by
   have _ := coherent_cohomology_pairing
   have _ := serre_pairing_nondegenerate
@@ -197,7 +208,8 @@ genus). -/
 theorem analyticGenus_witness
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ g_an : ℕ, g_an = analyticGenus ℂ X := ⟨_, rfl⟩
 
 /-- **Round 82 / Stage B leaf.** `rank_ℤ H₁(X, ℤ) = 2 · g_an` follows
@@ -208,7 +220,8 @@ identity is the `sorry`. -/
 theorem singularH1_rank_eq_two_analyticGenus_via_dimC
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module.finrank ℤ (IntegralOneCycle X) = 2 * analyticGenus ℂ X := by
   haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
     compactRiemannSurface_finiteDimensionalHolomorphicOneForms X
@@ -218,7 +231,8 @@ theorem singularH1_rank_eq_two_analyticGenus_via_dimC
 theorem hodge_decomposition_singularH1_rank
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module.finrank ℤ (IntegralOneCycle X) = 2 * analyticGenus ℂ X :=
   singularH1_rank_eq_two_analyticGenus_via_dimC X
 
@@ -232,7 +246,8 @@ witness used to *justify* the Hodge step at the level above ours.) -/
 theorem hodge_deRham_rank_eq_via_classical_route
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) :=
   (hodge_decomposition_singularH1_rank X).symm
 

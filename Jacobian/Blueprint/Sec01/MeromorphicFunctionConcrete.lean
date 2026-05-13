@@ -1,4 +1,5 @@
 import Jacobian.Blueprint.Sec01.MeromorphicFunction
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint: concrete leaves of `def:meromorphic-function` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -39,6 +40,7 @@ downstream users only need a `Type*` placeholder. -/
 def MeromorphicGerm
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_x : X) : Type :=
   Unit
 
@@ -54,6 +56,7 @@ underlying `MeromorphicFunctionType` is itself a placeholder
 def MeromorphicOn
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_U : Set X) : Type _ :=
   MeromorphicFunctionType X
 

@@ -3,6 +3,7 @@ import Jacobian.Blueprint.Sec01.DivisorDegree
 import Jacobian.Blueprint.Sec01.MeromorphicToCp1
 import Jacobian.Blueprint.Sec02.BranchedDegree
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint: sub-leaves of `thm:principal-degree-zero`
 
@@ -67,6 +68,7 @@ theorem principalDivisor_zero_of_underlying_zero
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X)
     (hf : ¬ ((∀ q : X, MeromorphicAtX (fun p => (f p).getD 0) q) ∧
               (∃ p : X, vanishingOrder X p (fun p => (f p).getD 0) ≠ ⊤))) :
@@ -100,6 +102,7 @@ noncomputable def liftToCp1_branchedCoverData
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X)
     (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
     (_hholo : True) :
@@ -121,6 +124,7 @@ theorem vanishingOrder_eq_mapAnalyticOrderAt_at_zero
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X)
     (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
     (_hholo : True)
@@ -178,6 +182,7 @@ theorem vanishingOrder_eq_ramificationIndex_at_zero
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X)
     (hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
     (hholo : True)
@@ -207,6 +212,7 @@ theorem vanishingOrder_eq_neg_mapAnalyticOrderAt_at_pole
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X)
     (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
     (_hholo : True)
@@ -263,6 +269,7 @@ theorem vanishingOrder_eq_neg_ramificationIndex_at_pole
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X)
     (hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
     (hholo : True)
@@ -297,6 +304,7 @@ theorem vanishingOrder_eq_zero_of_regular_point
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (_hholo : True) (p : X)
     (h0 : meromorphicToCp1 X f p ≠ ((0 : ℂ) : OnePoint ℂ))
     (hinf : meromorphicToCp1 X f p ≠ (∞ : OnePoint ℂ)) :
@@ -378,6 +386,7 @@ theorem principalDivisor_support_subset_zeros_union_poles
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X)
     (_hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
     (hholo : True) :
@@ -431,6 +440,7 @@ theorem degree_principalDivisor_eq_zeros_minus_poles
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X)
     (hf_nonconstant : ¬ ∃ c : OnePoint ℂ, ∀ x, f x = c)
     (hholo : True)
@@ -531,6 +541,7 @@ says the order of a nonzero constant is `0`. -/
 theorem vanishingOrder_const_nonzero
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (p : X) {z : ℂ} (hz : z ≠ 0) :
     vanishingOrder X p (fun _ => z) = 0 := by
   classical
@@ -551,6 +562,7 @@ theorem principalDivisor_eq_zero_of_constant_nonzero
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X)
     {z : ℂ} (hz : z ≠ 0) (hconst : ∀ x, (f x).getD 0 = z) :
     principalDivisor X f = 0 := by
@@ -588,6 +600,7 @@ theorem principal_degree_zero_of_nonzero
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X)
     (hf : ∃ p : X, vanishingOrder X p (fun q => (f q).getD 0) ≠ ⊤) :
     Divisor.degree (principalDivisor X f) = 0 := by
@@ -714,6 +727,7 @@ theorem principal_degree_zero
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) :
     Divisor.degree (principalDivisor X f) = 0 := by
   classical

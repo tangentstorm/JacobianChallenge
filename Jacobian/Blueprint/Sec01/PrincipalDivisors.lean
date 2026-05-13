@@ -1,5 +1,6 @@
 import Jacobian.Blueprint.Sec01.PrincipalDivisor
 import Mathlib.Algebra.Group.Subgroup.Defs
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint: `def:principal-divisors` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -14,7 +15,8 @@ open scoped Manifold
 noncomputable def principalDivisors
     (X : Type*) [TopologicalSpace X] [ConnectedSpace X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     AddSubgroup (Divisor X) :=
   AddSubgroup.closure (Set.range (principalDivisor X))
 

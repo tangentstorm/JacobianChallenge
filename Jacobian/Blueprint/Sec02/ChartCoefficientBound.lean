@@ -1,5 +1,6 @@
 import Jacobian.Blueprint.Sec02.HolomorphicSupNorm
 import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `lem:chart-coefficient-bound`
 
@@ -36,6 +37,7 @@ but treated here as a black box. -/
 theorem chart_coefficient_bound
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (e : OpenPartialHomeomorph X ℂ) (_he : e ∈ atlas ℂ X) :
     ∃ C : ℝ, 0 ≤ C ∧ ∀ (ω : HolomorphicOneForm ℂ X) (x : X),
       x ∈ e.source →

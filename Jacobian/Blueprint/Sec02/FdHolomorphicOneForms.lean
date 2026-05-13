@@ -1,4 +1,5 @@
 import Jacobian.Blueprint.Sec02.InputFiniteDimensionality
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `thm:fd-holomorphic-one-forms`
 
@@ -44,6 +45,7 @@ blueprint endpoint obtained by composing
 theorem fd_holomorphic_one_forms_via_input
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     {H : Type*} [NormedAddCommGroup H] [NormedSpace ℂ H]
     (e : HolomorphicOneForm ℂ X ≃ₗ[ℂ] H)
     (h_norm : ∀ ω : HolomorphicOneForm ℂ X, ‖e ω‖ = holomorphicSupNorm X ω) :
@@ -62,7 +64,8 @@ and closes with Riesz's theorem (`FiniteDimensional.of_locallyCompactSpace`).
 theorem fd_holomorphic_one_forms
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     FiniteDimensional ℂ (HolomorphicOneForm ℂ X) := by
   obtain ⟨B⟩ := holomorphicOneForm_normedSpace_uniformOnCompact X
   letI : NormedAddCommGroup (HolomorphicOneForm ℂ X) := B.toNormedAddCommGroup

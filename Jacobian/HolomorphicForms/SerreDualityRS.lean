@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.Serre.CotangentSheaf
 import Jacobian.HolomorphicForms.Serre.DualizingSheaf
 import Jacobian.HolomorphicForms.Serre.Datum
 import Jacobian.HolomorphicForms.Serre.DatumExists
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Serre duality on a compact Riemann surface (project API layer)
@@ -93,6 +94,7 @@ theorem serre_duality_rs
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F : RSAbSheaf X)

@@ -12,6 +12,7 @@ import Jacobian.TraceDegree.PullbackBasis
 import Jacobian.TraceDegree.PushforwardBasis
 import Jacobian.TraceDegree.AnalyticDegree
 import Jacobian.TraceDegree.PiecewiseC1Instance
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 set_option linter.unusedSectionVars false
 
@@ -24,7 +25,8 @@ namespace JacobianChallenge.Solution
 
 /-- The genus of a compact Riemann surface. -/
 noncomputable def genus (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] : ℕ :=
+    [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] : ℕ :=
   JacobianChallenge.HolomorphicForms.analyticGenus ℂ X
 
 /-- Genus zero classification. -/

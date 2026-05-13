@@ -1,5 +1,6 @@
 import Jacobian.AnalyticJacobian.MkPeriodPairingCycle
 import Jacobian.Periods.PeriodFunctionalIntSmul
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # `mk` ∘ `periodPairing` on integer-scaled cycles
@@ -18,6 +19,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- `mk` of `periodPairing (n • σ)` for `n : ℕ` is `0`. -/
 @[simp] theorem mk_periodPairing_nsmul_cycle

@@ -6,6 +6,7 @@ import Jacobian.HolomorphicForms.Divisor
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.BranchedCover
 import Jacobian.HolomorphicForms.ChartedSpaceComplexPoints
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 namespace JacobianChallenge.HolomorphicForms
 
@@ -15,6 +16,7 @@ open Classical
 
 variable {X : Type _} [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- f(x) = cMfldBump(Q,x) / ((chartAt ℂ Q).toFun(x) - φ(Q))  on chart, 0 off,
     with f(Q) := ∞. -/

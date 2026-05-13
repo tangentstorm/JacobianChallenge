@@ -5,6 +5,7 @@ import Jacobian.Periods.SurfaceClassification
 import Jacobian.Periods.AnalyticGenusEqTopologicalGenus
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.FiniteDimensional
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `thm:polygonal-model`
 
@@ -60,6 +61,7 @@ theorem polygonal_model
     (X : Type) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (g : ℕ) (_hg : analyticGenus ℂ X = g) :
     Nonempty (X ≃ₜ Polygon4g g) := by

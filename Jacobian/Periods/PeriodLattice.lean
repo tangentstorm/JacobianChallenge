@@ -2,6 +2,7 @@ import Jacobian.ComplexTorus.Defs
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Period lattice in the basis-aligned model
@@ -42,6 +43,7 @@ open JacobianChallenge.HolomorphicForms
 variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- The period subgroup of a compact Riemann surface, expressed in the
 basis-aligned model `Fin (analyticGenus ℂ X) → ℂ`.

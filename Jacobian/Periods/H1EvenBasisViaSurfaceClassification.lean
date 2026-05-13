@@ -1,6 +1,7 @@
 import Jacobian.Periods.SurfaceClassification
 import Jacobian.Periods.SmoothRealStructure
 import Jacobian.Periods.ComplexManifoldOrientable
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Round 56 — `h1_has_even_basis` via surface classification
@@ -36,7 +37,8 @@ admits a ℤ-basis of singular `H₁` indexed by `Fin (2g)` for some
 theorem h1_has_even_basis_via_surface_classification
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∃ g : ℕ, Nonempty (Module.Basis (Fin (2 * g)) ℤ (IntegralOneCycle X)) := by
   obtain ⟨srStruct⟩ := ChartedSpaceComplex_to_smoothReal2 X
   letI : ChartedSpace (EuclideanSpace ℝ (Fin 2)) X := srStruct.chartedSpace

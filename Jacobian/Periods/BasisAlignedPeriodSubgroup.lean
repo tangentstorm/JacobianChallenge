@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Jacobian.Periods.PeriodFunctional
 import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Basis-aligned period subgroup (concrete representative)
@@ -40,6 +41,7 @@ open JacobianChallenge.HolomorphicForms
 variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- The basis-aligned period subgroup, defined concretely as the image of
 the functional-space `periodSubgroup ℂ X` under the basis-aligned dual

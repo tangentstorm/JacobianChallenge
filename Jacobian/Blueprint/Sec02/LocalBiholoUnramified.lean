@@ -1,6 +1,7 @@
 import Jacobian.Blueprint.Sec02.BranchedDegree
 import Jacobian.HolomorphicForms.CotangentBundle
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Deriv
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `thm:local-biholo-unramified`
 
@@ -61,6 +62,7 @@ theorem local_biholo_unramified
     (X Y : Type*) [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
     {f : X → Y} (h : BranchedCoverData X Y f)
     (x : X) (_hunram : h.ramificationIndex x = 1) :

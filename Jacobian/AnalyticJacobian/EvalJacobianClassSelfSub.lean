@@ -1,4 +1,5 @@
 import Jacobian.AnalyticJacobian.EvalJacobianClass
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # `evalJacobianClass`-self subtraction is zero
@@ -16,6 +17,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-- `evalJacobianClass P v - evalJacobianClass P v = 0`. -/
 theorem evalJacobianClass_self_sub_self

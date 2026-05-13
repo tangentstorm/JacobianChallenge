@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.CompactRiemannSurface
 import Mathlib.Geometry.Manifold.IsManifold.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 open scoped Manifold
 
@@ -28,6 +29,7 @@ open cover. Mathlib provides this via `SmoothPartitionOfUnity.exists_isSubordina
 theorem exists_partition_of_unity (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (atlas : Set (OpenPartialHomeomorph X ℂ)) (hcover : (⋃ c ∈ atlas, c.source) = Set.univ) :
     ∃ (pou : List (X → ℝ)), True := by
   -- 1. Restrict to real manifold
@@ -48,7 +50,8 @@ noncomputable def glue_local_metrics (X : Type*) [TopologicalSpace X] [ChartedSp
 This is a sorry-free assembly of local metrics and partition of unity. -/
 theorem exists_compatible_metric (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Nonempty (CompatibleMetric X) := by
   -- 1. Pick a finite sub-atlas (compactness)
   have _hatlas : ∃ (atlas : Set (OpenPartialHomeomorph X ℂ)), (⋃ c ∈ atlas, c.source) = Set.univ ∧ atlas.Finite := sorry

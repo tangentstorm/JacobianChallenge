@@ -2,6 +2,7 @@ import Jacobian.Periods.TopologicalGenus
 import Jacobian.Periods.PeriodFunctional
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.FiniteDimensional
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Stage B umbrella: analytic genus equals topological genus
@@ -66,6 +67,7 @@ theorem singularH1_compactRiemannSurface_iso_freeZ
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Nonempty (singularH1 X ≃ₗ[ℤ] (Fin (2 * analyticGenus ℂ X) → ℤ)) := by
   obtain ⟨b⟩ := h1_basis_of_compact_riemann_surface X
@@ -84,6 +86,7 @@ theorem singularH1_finrank_eq_two_mul_analyticGenus
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Module.finrank ℤ (singularH1 X) = 2 * analyticGenus ℂ X := by
   obtain ⟨e⟩ := singularH1_compactRiemannSurface_iso_freeZ X

@@ -1,4 +1,5 @@
 import Jacobian.HolomorphicForms.SheafCohomologyRS
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Serre-duality datum (structure)
@@ -37,6 +38,7 @@ structure SerreDualityRSDatum
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (F dualSheaf : RSAbSheaf X)

@@ -1,5 +1,6 @@
 import Jacobian.HolomorphicForms.Defs
 import Jacobian.Periods.PeriodFunctional
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # The analytic Jacobian as an abstract group quotient
@@ -34,7 +35,8 @@ noncomputable abbrev AnalyticJacobianGroup
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Type _ :=
   (HolomorphicOneForm E X →ₗ[ℂ] ℂ) ⧸ periodSubgroup E X
 
@@ -45,7 +47,8 @@ noncomputable example
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     AddCommGroup (AnalyticJacobianGroup E X) :=
   inferInstance
 

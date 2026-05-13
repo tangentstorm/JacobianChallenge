@@ -2,6 +2,7 @@ import Jacobian.StageB.KahlerStructure
 import Jacobian.StageB.CoherentSheaves
 import Jacobian.Analysis.SobolevElliptic.HeadlinePlugIn
 import Mathlib.Geometry.Manifold.IsManifold.Basic
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # R7 — The Dolbeault isomorphism
@@ -47,6 +48,7 @@ open JacobianChallenge.StageB
 variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 /-! ### Headline (R7) -/
 

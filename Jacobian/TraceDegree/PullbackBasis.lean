@@ -396,9 +396,11 @@ noncomputable def pullbackFormsMap
     (X' Y' : Type) [TopologicalSpace X'] [T2Space X']
     [CompactSpace X'] [ConnectedSpace X'] [ChartedSpace ℂ X']
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X']
+    [JacobianChallenge.Periods.StableChartAt ℂ X']
     [TopologicalSpace Y'] [T2Space Y'] [CompactSpace Y']
     [ConnectedSpace Y'] [ChartedSpace ℂ Y']
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y']
+    [JacobianChallenge.Periods.StableChartAt ℂ Y']
     (f : X' → Y') (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y') → ℂ) →+ (Fin (analyticGenus ℂ X') → ℂ) :=
   (holomorphicTraceCoord f hf).toAddMonoidHom

@@ -1,4 +1,5 @@
 import Jacobian.Blueprint.Sec01.RiemannRochSpace
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! Blueprint: `lem:riemann-roch-space-vector` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
@@ -15,6 +16,7 @@ asserting existence of such structure. -/
 theorem riemann_roch_space_vector
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_D : Divisor X) :
     -- TODO: replace `True` with `IsAddSubgroup` + `ℂ`-stability
     -- once `MeromorphicFunctionType` carries an additive/scalar

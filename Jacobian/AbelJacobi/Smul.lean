@@ -1,5 +1,6 @@
 import Jacobian.AbelJacobi.Composition
 import Jacobian.AnalyticJacobian.EvalJacobianClassSmul
+import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Vec-slot sub/nsmul/zsmul + zero-class characterization for `witnessAbelJacobi`
@@ -19,6 +20,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 theorem witnessAbelJacobi_sub_vec
     (basePoint P : X) (v w : E) :
