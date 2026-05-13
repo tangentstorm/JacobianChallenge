@@ -59,6 +59,7 @@ private lemma ne_infty_of_getD_ne_zero {x : OnePoint ℂ} (h : x.getD 0 ≠ 0) :
 On a punctured neighborhood, a meromorphic-typed function's `toFun` is either
 eventually finite or eventually `∞`.
 -/
+omit [JacobianChallenge.Periods.StableChartAt ℂ X] in
 private lemma toFun_eventually_finite_or_infty (f : MeromorphicFunctionType X) (p : X) :
     (∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ,
       f.toFun ((extChartAt 𝓘(ℂ) p).symm z) ≠ ∞) ∨
@@ -98,6 +99,7 @@ private lemma toFun_eventually_finite_or_infty (f : MeromorphicFunctionType X) (
 When `f.toFun` is eventually `∞` on a punctured neighborhood, the `getD 0` of
 any match involving `f.toFun` is eventually `0`.
 -/
+omit [JacobianChallenge.Periods.StableChartAt ℂ X] in
 private lemma getD_match_eq_zero_of_infty (f g : MeromorphicFunctionType X) (p : X)
     (hf : ∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ,
       f.toFun ((extChartAt 𝓘(ℂ) p).symm z) = ∞) :
@@ -114,6 +116,7 @@ private lemma getD_match_eq_zero_of_infty (f g : MeromorphicFunctionType X) (p :
 When both `f.toFun` and `g.toFun` are finite, the `getD 0` of the match
 equals the sum of the `getD 0`'s.
 -/
+omit [JacobianChallenge.Periods.StableChartAt ℂ X] in
 private lemma getD_match_eq_add_of_finite (f g : MeromorphicFunctionType X) (p : X)
     (hf : ∀ᶠ z in nhdsWithin (extChartAt 𝓘(ℂ) p p) {extChartAt 𝓘(ℂ) p p}ᶜ,
       f.toFun ((extChartAt 𝓘(ℂ) p).symm z) ≠ ∞)
@@ -133,6 +136,7 @@ private lemma getD_match_eq_add_of_finite (f g : MeromorphicFunctionType X) (p :
 The `isMeromorphic` obligation of `add_meromorphic`: the `getD 0` of the
 pointwise sum is meromorphic at every point.
 -/
+omit [JacobianChallenge.Periods.StableChartAt ℂ X] in
 lemma add_meromorphic_isMeromorphic (f g : MeromorphicFunctionType X) (p : X) :
     MeromorphicAtX
       (fun q => (match f.toFun q, g.toFun q with
