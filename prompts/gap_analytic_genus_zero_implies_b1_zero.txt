@@ -1,0 +1,17 @@
+Please rename this session to "GAP. Fix analytic_genus_zero_implies_b1_zero".
+
+Working directory: C:\ver\JacobianChallenge
+Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
+Target sorry: theorem analytic_genus_zero_implies_b1_zero
+Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+Task: Investigate and structurally fix `analytic_genus_zero_implies_b1_zero`. Claude reported that `H^1_dR` is currently a `True` placeholder. Define the proper mathematical structure for De Rham cohomology $H^1_{dR}$ and update the theorem statement and its dependencies to reflect the real definition.
+Proof style: avoid large automation; prefer direct proofs with ext, induction on quotients, simp/rw/exact/refine, and small helper lemmas.
+Expected verification: lake build Jacobian.HolomorphicForms.HarmonicFunctions
+If blocked: leave theorem statements unchanged and add comments naming the missing prerequisite.
+
+> **ANTI-CHEAT CLAUSE:**
+> - You must **NOT** change the definitions of the mathematical objects provided in the scaffolding.
+> - You must **NOT** rely on placeholder type aliases to discharge the goal.
+> - If you need to build, run `lake exe cache get` first.
+> - If you find a definition is insufficient for a real proof, STOP and report the issue rather than providing a degenerate solution.
