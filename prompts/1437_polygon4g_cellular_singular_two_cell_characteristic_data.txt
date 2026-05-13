@@ -1,6 +1,5 @@
 Please rename this session to "1437. Prove polygon4g_cellular_singular_two_cell_characteristic_data".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/Hurewicz.lean
 Target sorry: theorem polygon4g_cellular_singular_two_cell_characteristic_data
 Allowed writes: only Jacobian/Periods/Hurewicz.lean

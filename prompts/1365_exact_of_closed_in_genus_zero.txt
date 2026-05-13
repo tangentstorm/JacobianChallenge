@@ -1,6 +1,5 @@
 Please rename this session to "1365. Prove exact_of_closed_in_genus_zero".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem exact_of_closed_in_genus_zero
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

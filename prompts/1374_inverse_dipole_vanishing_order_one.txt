@@ -1,6 +1,5 @@
 Please rename this session to "1374. Prove inverse_dipole_vanishing_order_one".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem inverse_dipole_vanishing_order_one
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

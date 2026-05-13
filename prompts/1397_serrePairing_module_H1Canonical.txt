@@ -1,6 +1,5 @@
 Please rename this session to "1397. Prove serrePairing_module_H1Canonical".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Serre/Pairing.lean
 Target sorry: instance serrePairing_module_H1Canonical
 Allowed writes: only Jacobian/HolomorphicForms/Serre/Pairing.lean

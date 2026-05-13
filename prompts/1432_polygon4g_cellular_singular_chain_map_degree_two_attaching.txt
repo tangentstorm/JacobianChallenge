@@ -1,6 +1,5 @@
 Please rename this session to "1432. Prove polygon4g_cellular_singular_chain_map_degree_two_attaching".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/Hurewicz.lean
 Target sorry: theorem polygon4g_cellular_singular_chain_map_degree_two_attaching
 Allowed writes: only Jacobian/Periods/Hurewicz.lean

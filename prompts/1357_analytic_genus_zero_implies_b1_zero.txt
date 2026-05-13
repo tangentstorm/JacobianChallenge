@@ -1,6 +1,5 @@
 Please rename this session to "1357. Prove analytic_genus_zero_implies_b1_zero".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem analytic_genus_zero_implies_b1_zero
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

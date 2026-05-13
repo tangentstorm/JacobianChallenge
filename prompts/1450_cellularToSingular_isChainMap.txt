@@ -1,6 +1,5 @@
 Please rename this session to "1450. Prove cellularToSingular_isChainMap".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem cellularToSingular_isChainMap
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

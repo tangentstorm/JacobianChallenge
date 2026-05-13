@@ -1,6 +1,5 @@
 Please rename this session to "1376. Prove isHolomorphic_of_contMDiff".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HolomorphicMap.lean
 Target sorry: theorem isHolomorphic_of_contMDiff
 Allowed writes: only Jacobian/HolomorphicForms/HolomorphicMap.lean

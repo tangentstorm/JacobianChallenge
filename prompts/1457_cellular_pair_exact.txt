@@ -1,6 +1,5 @@
 Please rename this session to "1457. Prove cellular_pair_exact".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem cellular_pair_exact
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

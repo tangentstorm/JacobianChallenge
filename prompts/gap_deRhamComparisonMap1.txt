@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Prove deRhamComparisonMap1".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/DeRhamComparisonMap.lean
 Target sorry: noncomputable opaque deRhamComparisonMap1
 Allowed writes: only Jacobian/HolomorphicForms/DeRhamComparisonMap.lean

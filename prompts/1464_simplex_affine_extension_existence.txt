@@ -1,6 +1,5 @@
 Please rename this session to "1464. Prove simplex_affine_extension_existence".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem simplex_affine_extension_existence
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

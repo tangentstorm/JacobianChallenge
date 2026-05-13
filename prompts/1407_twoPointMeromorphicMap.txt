@@ -1,6 +1,5 @@
 Please rename this session to "1407. Prove twoPointMeromorphicMap".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/SinglePoleLift.lean
 Target sorry: def twoPointMeromorphicMap
 Allowed writes: only Jacobian/HolomorphicForms/SinglePoleLift.lean

@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Prove chartedFormPullback".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean
 Target sorry: private theorem chartedFormPullback_continuous_assumption
 Allowed writes: only Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean

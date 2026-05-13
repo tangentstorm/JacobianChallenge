@@ -1,6 +1,5 @@
 Please rename this session to "1475. Prove transfer_functional_mem_periodSubgroup".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/TraceDegree/PullbackBasis.lean
 Target sorry: theorem transfer_functional_mem_periodSubgroup
 Allowed writes: only Jacobian/TraceDegree/PullbackBasis.lean

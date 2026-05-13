@@ -1,6 +1,5 @@
 Please rename this session to "1463. Prove relative_hurewicz_skeletal_pair".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem relative_hurewicz_skeletal_pair
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

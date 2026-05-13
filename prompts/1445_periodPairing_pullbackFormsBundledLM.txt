@@ -1,6 +1,5 @@
 Please rename this session to "1445. Prove periodPairing_pullbackFormsBundledLM".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/PullbackNaturality.lean
 Target sorry: theorem periodPairing_pullbackFormsBundledLM
 Allowed writes: only Jacobian/Periods/PullbackNaturality.lean

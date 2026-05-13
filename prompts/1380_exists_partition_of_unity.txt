@@ -1,6 +1,5 @@
 Please rename this session to "1380. Prove exists_partition_of_unity".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Isothermal.lean
 Target sorry: theorem exists_partition_of_unity
 Allowed writes: only Jacobian/HolomorphicForms/Isothermal.lean

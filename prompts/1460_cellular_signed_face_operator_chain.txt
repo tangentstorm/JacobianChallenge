@@ -1,6 +1,5 @@
 Please rename this session to "1460. Prove cellular_signed_face_operator_chain".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: def cellular_signed_face_operator_chain
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

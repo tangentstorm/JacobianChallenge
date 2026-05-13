@@ -1,6 +1,5 @@
 Please rename this session to "1462. Prove five_lemma_glue_to_global_iso".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem five_lemma_glue_to_global_iso
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

@@ -1,6 +1,5 @@
 Please rename this session to "1427. Prove handlePrefix_tailRotate_homeomorph".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/HandleSwapHomeo.lean
 Target sorry: theorem handlePrefix_tailRotate_homeomorph
 Allowed writes: only Jacobian/Periods/HandleSwapHomeo.lean

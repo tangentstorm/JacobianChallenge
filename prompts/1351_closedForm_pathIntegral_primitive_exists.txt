@@ -1,6 +1,5 @@
 Please rename this session to "1351. Prove closedForm_pathIntegral_primitive_exists".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/DeRhamComparisonMap.lean
 Target sorry: theorem closedForm_pathIntegral_primitive_exists
 Allowed writes: only Jacobian/HolomorphicForms/DeRhamComparisonMap.lean

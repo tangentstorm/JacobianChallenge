@@ -1,6 +1,5 @@
 Please rename this session to "1390. Prove genusZero_pointRiemannRochSpace_witness_exists".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/RiemannRoch.lean
 Target sorry: theorem genusZero_pointRiemannRochSpace_witness_exists
 Allowed writes: only Jacobian/HolomorphicForms/RiemannRoch.lean

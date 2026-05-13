@@ -1,6 +1,5 @@
 Please rename this session to "1415. Prove traceFormsBundled_zero".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/TraceBundled.lean
 Target sorry: theorem traceFormsBundled_zero
 Allowed writes: only Jacobian/HolomorphicForms/TraceBundled.lean

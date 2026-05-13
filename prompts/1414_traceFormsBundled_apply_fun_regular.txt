@@ -1,6 +1,5 @@
 Please rename this session to "1414. Prove traceFormsBundled_apply_fun_regular".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/TraceBundled.lean
 Target sorry: theorem traceFormsBundled_apply_fun_regular
 Allowed writes: only Jacobian/HolomorphicForms/TraceBundled.lean

@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Fix integral_closed_form_from_cech_eq".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/DeRhamComparisonMap.lean
 Target sorry: theorem integral_closed_form_from_cech_eq
 Allowed writes: only Jacobian/HolomorphicForms/DeRhamComparisonMap.lean

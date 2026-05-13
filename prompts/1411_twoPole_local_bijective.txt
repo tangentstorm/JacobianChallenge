@@ -1,6 +1,5 @@
 Please rename this session to "1411. Prove twoPole_local_bijective".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/SinglePoleLift.lean
 Target sorry: lemma twoPole_local_bijective
 Allowed writes: only Jacobian/HolomorphicForms/SinglePoleLift.lean

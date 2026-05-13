@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Fix elliptic_regularity_harmonic".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem elliptic_regularity_harmonic
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

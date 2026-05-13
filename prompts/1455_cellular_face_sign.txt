@@ -1,6 +1,5 @@
 Please rename this session to "1455. Prove cellular_face_sign".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: def cellular_face_sign
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

@@ -1,6 +1,5 @@
 Please rename this session to "1360. Prove dipole_harmonic_holomorphic_extension".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem dipole_harmonic_holomorphic_extension
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

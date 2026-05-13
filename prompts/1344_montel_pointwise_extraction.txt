@@ -1,6 +1,5 @@
 Please rename this session to "1344. Prove montel_pointwise_extraction".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Blueprint/Sec02/MontelCompactness.lean
 Target sorry: theorem montel_pointwise_extraction
 Allowed writes: only Jacobian/Blueprint/Sec02/MontelCompactness.lean

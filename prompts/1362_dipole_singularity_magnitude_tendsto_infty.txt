@@ -1,6 +1,5 @@
 Please rename this session to "1362. Prove dipole_singularity_magnitude_tendsto_infty".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem dipole_singularity_magnitude_tendsto_infty
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

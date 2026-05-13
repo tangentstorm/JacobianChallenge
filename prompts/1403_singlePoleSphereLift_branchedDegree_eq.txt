@@ -1,6 +1,5 @@
 Please rename this session to "1403. Prove singlePoleSphereLift_branchedDegree_eq".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/SinglePoleLift.lean
 Target sorry: lemma singlePoleSphereLift_branchedDegree_eq
 Allowed writes: only Jacobian/HolomorphicForms/SinglePoleLift.lean

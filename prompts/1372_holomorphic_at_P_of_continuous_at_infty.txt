@@ -1,6 +1,5 @@
 Please rename this session to "1372. Prove holomorphic_at_P_of_continuous_at_infty".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem holomorphic_at_P_of_continuous_at_infty
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

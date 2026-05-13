@@ -1,6 +1,5 @@
 Please rename this session to "1456. Prove cellular_iso_singularH_via_five_lemma".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem cellular_iso_singularH_via_five_lemma
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

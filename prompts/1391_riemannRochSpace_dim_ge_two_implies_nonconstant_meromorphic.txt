@@ -1,6 +1,5 @@
 Please rename this session to "1391. Prove riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/RiemannRoch.lean
 Target sorry: theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
 Allowed writes: only Jacobian/HolomorphicForms/RiemannRoch.lean

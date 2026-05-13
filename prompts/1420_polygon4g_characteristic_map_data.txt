@@ -1,6 +1,5 @@
 Please rename this session to "1420. Prove polygon4g_characteristic_map_data".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/CellularChainComplex.lean
 Target sorry: theorem polygon4g_characteristic_map_data
 Allowed writes: only Jacobian/Periods/CellularChainComplex.lean

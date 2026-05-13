@@ -1,6 +1,5 @@
 Please rename this session to "1383. Prove instance".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean
 Target sorry: instance instance
 Allowed writes: only Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean

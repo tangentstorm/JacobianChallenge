@@ -1,6 +1,5 @@
 Please rename this session to "1426. Prove unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/DualGraphCut.lean
 Target sorry: theorem unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms
 Allowed writes: only Jacobian/Periods/DualGraphCut.lean

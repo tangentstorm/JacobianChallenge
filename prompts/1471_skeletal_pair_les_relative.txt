@@ -1,6 +1,5 @@
 Please rename this session to "1471. Prove skeletal_pair_les_relative".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem skeletal_pair_les_relative
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

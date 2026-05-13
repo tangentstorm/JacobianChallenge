@@ -1,6 +1,5 @@
 Please rename this session to "1349. Prove holomorphicOneForm_arzela_ascoli_refine23".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/CompactRiemannSurface.lean
 Target sorry: theorem holomorphicOneForm_arzela_ascoli_refine23
 Allowed writes: only Jacobian/HolomorphicForms/CompactRiemannSurface.lean

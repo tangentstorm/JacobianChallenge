@@ -1,6 +1,5 @@
 Please rename this session to "1454. Prove cellular_face_index".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: def cellular_face_index
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

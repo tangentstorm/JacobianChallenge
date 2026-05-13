@@ -1,6 +1,5 @@
 Please rename this session to "1358. Prove conjugate_one_form_closed".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/HarmonicFunctions.lean
 Target sorry: theorem conjugate_one_form_closed
 Allowed writes: only Jacobian/HolomorphicForms/HarmonicFunctions.lean

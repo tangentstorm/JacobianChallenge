@@ -1,6 +1,5 @@
 Please rename this session to "1338. Prove polygon4g_succ_hurewicz_iso_freeZ".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/Polygon4gCellular.lean
 Target sorry: theorem polygon4g_succ_hurewicz_iso_freeZ
 Allowed writes: only Jacobian/Periods/Polygon4gCellular.lean

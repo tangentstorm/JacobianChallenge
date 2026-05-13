@@ -1,6 +1,5 @@
 Please rename this session to "1422. Prove polygon4g_one_cell_boundary_zero".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/CellularChainComplex.lean
 Target sorry: theorem polygon4g_one_cell_boundary_zero
 Allowed writes: only Jacobian/Periods/CellularChainComplex.lean

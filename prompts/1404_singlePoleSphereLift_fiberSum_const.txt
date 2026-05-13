@@ -1,6 +1,5 @@
 Please rename this session to "1404. Prove singlePoleSphereLift_fiberSum_const".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/SinglePoleLift.lean
 Target sorry: lemma singlePoleSphereLift_fiberSum_const
 Allowed writes: only Jacobian/HolomorphicForms/SinglePoleLift.lean

@@ -1,6 +1,5 @@
 Please rename this session to "GAP. Fix holomorphicOneForm_chartOverlap_pullback".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/GenusZeroClassification.lean
 Target sorry: theorem holomorphicOneForm_chartOverlap_pullback
 Allowed writes: only Jacobian/HolomorphicForms/GenusZeroClassification.lean

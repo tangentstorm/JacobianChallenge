@@ -1,6 +1,5 @@
 Please rename this session to "1400. Prove RSLineBundleDegree_dual_tensor_canonical".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Serre/RiemannRochHighFromSerre.lean
 Target sorry: theorem RSLineBundleDegree_dual_tensor_canonical
 Allowed writes: only Jacobian/HolomorphicForms/Serre/RiemannRochHighFromSerre.lean

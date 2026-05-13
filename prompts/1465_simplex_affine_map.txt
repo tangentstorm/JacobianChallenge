@@ -1,6 +1,5 @@
 Please rename this session to "1465. Prove simplex_affine_map".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: def simplex_affine_map
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

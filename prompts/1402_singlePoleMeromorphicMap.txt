@@ -1,6 +1,5 @@
 Please rename this session to "1402. Prove singlePoleMeromorphicMap".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/SinglePoleLift.lean
 Target sorry: def singlePoleMeromorphicMap
 Allowed writes: only Jacobian/HolomorphicForms/SinglePoleLift.lean

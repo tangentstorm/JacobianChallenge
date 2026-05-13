@@ -1,6 +1,5 @@
 Please rename this session to "1419. Prove polygon4g_boundary_side_subdivision".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/CellularChainComplex.lean
 Target sorry: theorem polygon4g_boundary_side_subdivision
 Allowed writes: only Jacobian/Periods/CellularChainComplex.lean

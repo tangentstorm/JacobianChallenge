@@ -1,6 +1,5 @@
 Please rename this session to "1386. Prove liftToCp1_local_kfold_ramified_finite".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/MeromorphicToCp1.lean
 Target sorry: theorem liftToCp1_local_kfold_ramified_finite
 Allowed writes: only Jacobian/HolomorphicForms/MeromorphicToCp1.lean

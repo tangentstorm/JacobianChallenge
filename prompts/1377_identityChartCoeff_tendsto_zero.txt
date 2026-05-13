@@ -1,6 +1,5 @@
 Please rename this session to "1377. Prove identityChartCoeff_tendsto_zero".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/InversionChartContinuity.lean
 Target sorry: theorem identityChartCoeff_tendsto_zero
 Allowed writes: only Jacobian/HolomorphicForms/InversionChartContinuity.lean

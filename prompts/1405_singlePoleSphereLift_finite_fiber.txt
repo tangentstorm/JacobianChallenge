@@ -1,6 +1,5 @@
 Please rename this session to "1405. Prove singlePoleSphereLift_finite_fiber".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/SinglePoleLift.lean
 Target sorry: lemma singlePoleSphereLift_finite_fiber
 Allowed writes: only Jacobian/HolomorphicForms/SinglePoleLift.lean

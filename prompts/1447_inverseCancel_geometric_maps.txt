@@ -1,6 +1,5 @@
 Please rename this session to "1447. Prove inverseCancel_geometric_maps".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/TietzeReduction.lean
 Target sorry: lemma inverseCancel_geometric_maps
 Allowed writes: only Jacobian/Periods/TietzeReduction.lean

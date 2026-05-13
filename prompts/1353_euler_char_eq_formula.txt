@@ -1,6 +1,5 @@
 Please rename this session to "1353. Prove euler_char_eq_formula".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/EulerCharLineBundle.lean
 Target sorry: theorem euler_char_eq_formula
 Allowed writes: only Jacobian/HolomorphicForms/EulerCharLineBundle.lean

@@ -1,6 +1,5 @@
 Please rename this session to "1395. Prove h0Canonical_isoHolomorphicOneForm".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Serre/H0CanonicalIdentification.lean
 Target sorry: def h0Canonical_isoHolomorphicOneForm
 Allowed writes: only Jacobian/HolomorphicForms/Serre/H0CanonicalIdentification.lean

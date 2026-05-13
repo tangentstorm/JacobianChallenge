@@ -1,6 +1,5 @@
 Please rename this session to "1451. Prove cellularToSingular_isChainMap_basis_extension".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/StageA/CellularSingular.lean
 Target sorry: theorem cellularToSingular_isChainMap_basis_extension
 Allowed writes: only Jacobian/StageA/CellularSingular.lean

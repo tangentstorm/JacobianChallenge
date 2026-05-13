@@ -1,6 +1,5 @@
 Please rename this session to "1378. Prove exists_compatible_metric".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/HolomorphicForms/Isothermal.lean
 Target sorry: theorem exists_compatible_metric
 Allowed writes: only Jacobian/HolomorphicForms/Isothermal.lean

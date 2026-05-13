@@ -1,6 +1,5 @@
 Please rename this session to "1444. Prove pathIntegralViaCover_trans_eq_add".
 
-Working directory: C:\ver\JacobianChallenge
 Target file: Jacobian/Periods/PullbackNaturality.lean
 Target sorry: theorem pathIntegralViaCover_trans_eq_add
 Allowed writes: only Jacobian/Periods/PullbackNaturality.lean
