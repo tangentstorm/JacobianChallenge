@@ -3,6 +3,7 @@ import Jacobian.HolomorphicForms.Isothermal
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.DeRhamCohomology
 import Jacobian.HolomorphicForms.HolomorphicMap
+import Jacobian.HolomorphicForms.HodgeDecomposition
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.InnerProductSpace.LaxMilgram
 import Mathlib.Topology.Algebra.Order.Field
@@ -161,15 +162,20 @@ theorem hodge_decomposition (X : Type*) [TopologicalSpace X] [T2Space X]
 
 /-- **Sub-obligation 5.2: Dimension equality.**
 The dimension of the space of holomorphic 1-forms is the analytic genus g.
-Hodge theory then implies dim H^1_dR(X, R) = 2g. -/
+Hodge theory then implies dim H^1_dR(X, ℝ) = 2g.
+
+Concretely: the ℕ-valued surrogate `realDimDeRhamH1 X` defined in
+`Jacobian/HolomorphicForms/DeRhamCohomology.lean` equals
+`2 * analyticGenus ℂ X`. The proof is a direct re-export of the
+sorry-free Hodge-side assembly `realDimDeRhamH1_eq_two_analyticGenus`
+in `Jacobian/HolomorphicForms/HodgeDecomposition.lean`. -/
 theorem dim_h1_eq_two_genus (X : Type*) [TopologicalSpace X] [T2Space X]
-    [CompactSpace X] [ChartedSpace ℂ X]
+    [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
-    True := by
-  -- dim H^1_dR(X, R) = 2 * analyticGenus ℂ X
-  sorry
+    realDimDeRhamH1 X = 2 * analyticGenus ℂ X :=
+  realDimDeRhamH1_eq_two_analyticGenus X
 
 /-- In genus 0, the first de Rham cohomology group is trivial.
 
@@ -178,8 +184,10 @@ By Hodge theory `dim_ℝ H¹_dR(X, ℝ) = 2 · analyticGenus ℂ X`, so
 forces every closed 1-form to be exact.
 
 The full de Rham cohomology API is not yet formalized in this
-project (`dim_h1_eq_two_genus` in this file is still a `True`
-placeholder). The substantive content of the genus-zero hypothesis
+project as a typed Hilbert space, so the `realDimDeRhamH1 X = 0`
+form (which `dim_h1_eq_two_genus` now provides via the ℕ-valued
+surrogate) is not the most ergonomic conclusion for downstream
+consumers. The substantive content of the genus-zero hypothesis
 that is currently available — and that downstream consumers of this
 theorem actually need — is the vanishing of the space of
 holomorphic 1-forms: `Subsingleton (HolomorphicOneForm ℂ X)`. This
@@ -191,7 +199,7 @@ We therefore state the theorem with the strongest conclusion the
 current infrastructure supports, and prove it directly from the
 existing `analyticGenus_eq_zero_iff_subsingleton` equivalence. -/
 theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2Space X]
-    [CompactSpace X] [ChartedSpace ℂ X]
+    [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
