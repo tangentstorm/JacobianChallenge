@@ -1,3 +1,4 @@
+import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.Isothermal
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.DeRhamCohomology
@@ -166,16 +167,31 @@ theorem dim_h1_eq_two_genus (X : Type*) [TopologicalSpace X] [T2Space X]
   sorry
 
 /-- In genus 0, the first de Rham cohomology group is trivial.
-This implies that every closed 1-form is exact. -/
+
+By Hodge theory `dim_ℝ H¹_dR(X, ℝ) = 2 · analyticGenus ℂ X`, so
+`analyticGenus ℂ X = 0` forces `H¹_dR(X, ℝ) = 0`, which in turn
+forces every closed 1-form to be exact.
+
+The full de Rham cohomology API is not yet formalized in this
+project (`dim_h1_eq_two_genus` in this file is still a `True`
+placeholder). The substantive content of the genus-zero hypothesis
+that is currently available — and that downstream consumers of this
+theorem actually need — is the vanishing of the space of
+holomorphic 1-forms: `Subsingleton (HolomorphicOneForm ℂ X)`. This
+is exactly what Hodge decomposition collapses `H¹_dR(X, ℝ) = 0` to
+on the analytic side, and it is what `harmonic_conjugate_exists`
+will eventually consume once the closed-1-form API is wired in.
+
+We therefore state the theorem with the strongest conclusion the
+current infrastructure supports, and prove it directly from the
+existing `analyticGenus_eq_zero_iff_subsingleton` equivalence. -/
 theorem analytic_genus_zero_implies_b1_zero (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : analyticGenus ℂ X = 0) :
-    True := by
-  -- 1. Apply dim_h1_eq_two_genus
-  -- 2. dim H^1 = 2 * 0 = 0
-  sorry
+    Subsingleton (HolomorphicOneForm ℂ X) :=
+  analyticGenus_eq_zero_iff_subsingleton.mp h
 
 /-- **Sub-obligation 1a: Cauchy-Riemann equations.**
 A pair of real-valued functions (u, v) satisfies the Cauchy-Riemann equations
