@@ -68,12 +68,32 @@ def get_style(node):
         return "yellow bold"
     return "white dim"
 
+def reachable_status(node):
+    r = node.get("r")
+    if r == 1:
+        return "1"
+    if r == 0:
+        return "0"
+    return "?"
+
+def dependency_counts(db, node):
+    upstream = node.get("u", [])
+    open_upstream = [uid for uid in upstream if db.get(uid, {}).get("c") != "done"]
+    return len(open_upstream), len(upstream)
+
+def dependency_count_text(db, node):
+    open_count, total_count = dependency_counts(db, node)
+    if total_count == 0:
+        return "-"
+    return f"{open_count}/{total_count}"
+
 class Outliner:
     def __init__(self, db, tex_map):
         self.db = db
         self.tex_map = tex_map
         self.history = []
         self.direction = "refinement" # "refinement" (Root -> Leaf)
+        self.root_mode = "frontier" # "frontier" or "leaves"
         self.show_done = False
         self.current_id = None
         self.console = Console()
@@ -89,6 +109,16 @@ class Outliner:
         if not self.show_done:
             # Find nodes that are open
             open_nodes = [i for i in all_nodes if self.db[i].get("c") != "done"]
+
+            if self.root_mode == "leaves":
+                # Actionable leaves: open reachable nodes with no open
+                # upstream dependencies in the refinement direction.
+                leaves = []
+                for i in open_nodes:
+                    upstream = self.db[i].get("u", [])
+                    if all(self.db.get(u, {}).get("c") == "done" for u in upstream):
+                        leaves.append(i)
+                return leaves
             
             # A node is a "root" in the refinement sense if it is OPEN
             # but all its downstream dependents are either non-existent or DONE.
@@ -110,19 +140,23 @@ class Outliner:
                 
             return roots
         
+        if self.root_mode == "leaves":
+            return [i for i, n in self.db.items() if not n.get("u") and n.get("r") == 1]
+
         # If showing done, just return the ultimate goals (nodes with no downstream)
         return [i for i, n in self.db.items() if not n.get("d") and n.get("r") == 1]
 
     def render_ui(self):
         self.console.clear()
         
-        title = "SORRIES TREE (Refinement Flow: Roots âžž Leaves)"
+        title = f"SORRIES TREE (Refinement Flow: Roots -> Leaves | mode: {self.root_mode})"
         self.console.print(Panel(Text(title, justify="center", style="bold cyan")))
 
         # Breadcrumbs (Hierarchy Path)
         self.console.print(Text("Path:", style="blue bold"))
         if not self.history and self.current_id is None:
-            self.console.print(Text("  SORRY ROOTS", style="yellow bold"))
+            root_label = "ACTIONABLE LEAVES" if self.root_mode == "leaves" else "SORRY ROOTS"
+            self.console.print(Text(f"  {root_label}", style="yellow bold"))
         else:
             for i, hid in enumerate(self.history):
                 node = self.db[hid]
@@ -149,6 +183,8 @@ class Outliner:
             details.add_row(Text("Statement:", style="blue"), Text(node["s"], style="yellow"))
             details.add_row(Text("File:", style="blue"), Text(f"{node['f']}:{node.get('l') or '?'}", style="white"))
             details.add_row(Text("Blueprint:", style="blue"), Text(node.get("b") or "None", style="green"))
+            details.add_row(Text("Reachable:", style="blue"), Text(reachable_status(node), style="yellow" if node.get("r") == 1 else "white dim"))
+            details.add_row(Text("Deps:", style="blue"), Text(dependency_count_text(self.db, node), style="magenta"))
             details.add_row(Text("Effort:", style="blue"), Text(str(node.get("e") or "?"), style="magenta"))
             self.console.print(Panel(details, title="Current Node Details", border_style="blue"))
         else:
@@ -160,24 +196,19 @@ class Outliner:
         else:
             table = Table(title="Dependencies (Leafward)", box=None, show_header=True, header_style="bold blue")
             table.add_column("ID", style="cyan", width=4)
-            table.add_column("Deps", style="magenta", width=4, justify="right")
+            table.add_column("r", width=1, justify="center")
+            table.add_column("Open/All", style="magenta", width=8, justify="right")
             table.add_column("Effort", style="magenta", width=6, justify="right")
             table.add_column("Statement")
             table.add_column("Status")
             
             for cid in sorted(child_ids):
                 cnode = self.db[cid]
-                # Count dependencies for this child (always leafward 'u')
-                grandchild_ids = cnode.get("u", [])
-                if not self.show_done:
-                    grandchild_ids = [gcid for gcid in grandchild_ids if self.db[gcid].get("c") != "done"]
-                
-                dep_count = len(grandchild_ids)
-                dep_str = str(dep_count) if dep_count > 0 else "-"
+                dep_str = dependency_count_text(self.db, cnode)
                 effort_str = str(cnode.get("e") or "?")
                 
                 status = "Done" if cnode.get("c") == "done" else "Open"
-                table.add_row(str(cid), dep_str, effort_str, cnode["s"], status, style=get_style(cnode))
+                table.add_row(str(cid), reachable_status(cnode), dep_str, effort_str, cnode["s"], status, style=get_style(cnode))
             self.console.print(table)
 
         # Footer
@@ -188,6 +219,8 @@ class Outliner:
         footer.append("[V] vim tex | ", style="white")
         footer.append("[u] up | ", style="white")
         footer.append("[r] reset | ", style="white")
+        next_mode = "leaves" if self.root_mode == "frontier" else "frontier"
+        footer.append(f"[m] {next_mode} mode | ", style="white")
         t_label = "hide done" if self.show_done else "show done"
         footer.append(f"[t] {t_label} | ", style="white")
         footer.append("[q] quit", style="white")
@@ -203,6 +236,9 @@ class Outliner:
                 if self.history: self.current_id = self.history.pop()
                 else: self.current_id = None
             elif choice.lower() == 'r':
+                self.history = []; self.current_id = None
+            elif choice.lower() == 'm':
+                self.root_mode = "leaves" if self.root_mode == "frontier" else "frontier"
                 self.history = []; self.current_id = None
             elif choice.lower() == 't':
                 self.show_done = not self.show_done
