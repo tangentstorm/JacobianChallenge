@@ -66,13 +66,23 @@ def strip_block_comments(text: str) -> str:
     """Replace Lean block comments (/- ... -/, including /-! and /--) with
     blank lines of the same length so line numbers are preserved. Handles
     nesting.
+
+    Some blueprint stub files contain truncated doc blocks of the form
+    `/-! ...` followed by real declarations. Lean will not parse those files,
+    but this audit is intentionally a lightweight cross-reference check rather
+    than a Lean build. If a block comment is unterminated, preserve the text
+    from that opener onward instead of hiding all following declarations.
     """
     out = []
     i = 0
     n = len(text)
     depth = 0
+    unclosed_start = None
+    unclosed_out_start = None
     while i < n:
         if depth == 0 and i + 1 < n and text[i] == '/' and text[i + 1] == '-':
+            unclosed_start = i
+            unclosed_out_start = len(out)
             depth = 1
             out.append('  ')
             i += 2
@@ -87,6 +97,9 @@ def strip_block_comments(text: str) -> str:
                 depth -= 1
                 out.append('  ')
                 i += 2
+                if depth == 0:
+                    unclosed_start = None
+                    unclosed_out_start = None
                 continue
             ch = text[i]
             out.append('\n' if ch == '\n' else ' ')
@@ -94,6 +107,9 @@ def strip_block_comments(text: str) -> str:
             continue
         out.append(text[i])
         i += 1
+    if depth > 0 and unclosed_start is not None and unclosed_out_start is not None:
+        out = out[:unclosed_out_start]
+        out.append(text[unclosed_start:])
     return "".join(out)
 
 
@@ -119,7 +135,9 @@ def index_lean_decls(lean_dir: Path):
         while i < len(lines):
             line = lines[i]
             if (m := NS_RE.match(line)):
-                stack.append(("ns", m.group(1)))
+                name = m.group(1)
+                if not (stack and stack[-1] == ("ns", name)):
+                    stack.append(("ns", name))
                 i += 1
                 continue
             if (m := SEC_RE.match(line)):
