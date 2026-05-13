@@ -111,7 +111,7 @@ Every ℝ-linear functional on the singular 1-cycles of a compact Riemann
 surface arises as the integral of some closed 1-form.  This is the
 analytical core of the de Rham theorem's surjectivity. -/
 theorem deRhamComparisonMap1_exists_form_with_periods
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
@@ -121,18 +121,22 @@ theorem deRhamComparisonMap1_exists_form_with_periods
 /-- **Surjectivity sub-obligation 1a (Čech cocycle from singular).**
 A singular 1-cocycle defines a Čech 1-cocycle with respect to a good cover. -/
 theorem cech_cocycle_from_singular_cocycle
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    ∃ (ι : Type) (U : ι → TopologicalSpace.Opens (TopCat.of X)) (c : RSCechComplex X U (TopCat.Presheaf.constant AddCommGrpCat (TopCat.of X) ℂ).sheafify), True := by
+    ∃ (ι : Type) (U : ι → TopologicalSpace.Opens (TopCat.of X))
+      (_C : CochainComplex AddCommGrpCat.{0} ℕ),
+      _C = RSCechComplex X U
+        ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
+          (AddCommGrpCat.of ℂ)) := by
   sorry
 
 /-- **Surjectivity sub-obligation 1b (Closed form from Čech cocycle).**
 Using a partition of unity and the Poincaré lemma, a Čech 1-cocycle
 can be realized as a global closed 1-form. -/
 noncomputable def closed_form_from_cech_cocycle
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
@@ -143,7 +147,7 @@ noncomputable def closed_form_from_cech_cocycle
 The closed form constructed from the Čech cocycle integrates to the
 prescribed singular cocycle. -/
 theorem integral_closed_form_from_cech_eq
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
