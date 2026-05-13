@@ -61,12 +61,21 @@ def main():
     tex_labels = crawl_tex()
     live_sorries = get_current_sorries()
     
-    # 1. Map labels to existing IDs
+    # 1. Map labels and statement names to existing IDs
     label_to_existing_ids = {}
+    name_to_existing_ids = {}
     for obj in old_items:
-        if obj.get("b"):
-            if obj["b"] not in label_to_existing_ids: label_to_existing_ids[obj["b"]] = []
-            label_to_existing_ids[obj["b"]].append(obj["i"])
+        jid = obj["i"]
+        label = obj.get("b")
+        name = obj.get("s")
+        
+        if label:
+            if label not in label_to_existing_ids: label_to_existing_ids[label] = []
+            label_to_existing_ids[label].append(jid)
+        
+        if name:
+            if name not in name_to_existing_ids: name_to_existing_ids[name] = []
+            name_to_existing_ids[name].append(jid)
             
     # Ensure challenge-api is ID 0
     CHALLENGE_API = "thm:challenge-api"
@@ -77,14 +86,28 @@ def main():
             label_to_existing_ids[CHALLENGE_API].append(0)
             
     # 2. Assign IDs to new TeX labels
-    max_id = 124
+    # Find current max ID to ensure new ones are truly new
+    max_id = 0
     for obj in old_items:
         if isinstance(obj.get("i"), int):
             max_id = max(max_id, obj["i"])
             
     next_id = max_id + 1
     for label in sorted(tex_labels.keys()):
-        if label not in label_to_existing_ids:
+        if label in label_to_existing_ids:
+            continue
+            
+        # Fallback: check if any Lean names for this label already have IDs
+        found_id = None
+        for ln in tex_labels[label]["lean"]:
+            if ln in name_to_existing_ids:
+                # Use the first existing ID found for this Lean name
+                found_id = name_to_existing_ids[ln][0]
+                break
+        
+        if found_id is not None:
+            label_to_existing_ids[label] = [found_id]
+        else:
             label_to_existing_ids[label] = [next_id]
             next_id += 1
             
