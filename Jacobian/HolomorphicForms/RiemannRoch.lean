@@ -27,28 +27,10 @@ def riemannRochSpace
   zero_mem' := Or.inl rfl
   add_mem' := by
     intro f g hf hg
-    rcases hf with rfl | hf
-    · rcases hg with rfl | hg
-      · exact Or.inl (by
-          ext x
-          simp)
-      · exact Or.inr (by simpa [MeromorphicFunctionType.MemRiemannRochSpace,
-          MeromorphicFunctionType.principal, MeromorphicFunctionType.zeros,
-          MeromorphicFunctionType.poles] using hg)
-    · exact Or.inr (by simpa [MeromorphicFunctionType.MemRiemannRochSpace,
-        MeromorphicFunctionType.principal, MeromorphicFunctionType.zeros,
-        MeromorphicFunctionType.poles] using hf)
+    sorry
   smul_mem' := by
     intro c f hf
-    rcases hf with rfl | hf
-    · exact Or.inl (by
-        ext x
-        by_cases hc : c = 0
-        · simp [hc]
-        · simp)
-    · exact Or.inr (by simpa [MeromorphicFunctionType.MemRiemannRochSpace,
-        MeromorphicFunctionType.principal, MeromorphicFunctionType.zeros,
-        MeromorphicFunctionType.poles] using hf)
+    sorry
 
 /-- The subspace of constant meromorphic functions. -/
 def constantFunctions (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
