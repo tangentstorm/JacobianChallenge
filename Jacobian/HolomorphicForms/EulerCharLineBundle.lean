@@ -197,6 +197,41 @@ theorem euler_char_eq_formula
   -- discharge this `sorry`.
   sorry
 
+/-- **Hypothesis-parameterized variant of `euler_char_eq_formula`.**
+
+Given an external proof `hChi` that the Euler characteristic of `L`
+agrees with the Riemann-Roch right-hand-side `deg L + 1 - g`, the
+finrank-difference form of the identity follows by definitional
+unfolding of `RSEulerCharacteristic` (which is, by definition,
+`finrank H⁰ − finrank H¹`).
+
+This isolates the genuinely analytic content of Riemann-Roch — the
+χ-identity itself — as an explicit hypothesis a consumer must
+supply. Downstream consumers that can produce the χ-identity by
+sheaf-theoretic or analytic means (e.g. once the divisor↔line-bundle
+correspondence, the twisting SES `0 → L → L(p) → ℂ_p → 0`, and the
+base case `h⁰(O_X) = 1, h¹(O_X) = g` are formalized) can chain
+through this lemma to recover the finrank-difference form for free.
+
+Sorry-free: the bridge between `RSEulerCharacteristic` and the
+finrank difference is definitional (see
+`rsEulerCharacteristic_eq_h0_minus_h1` below). -/
+theorem euler_char_eq_formula_of_chi
+    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
+    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
+    (L : RSLineBundleSheaf X)
+    [Module ℂ (RSSheafCohomology X L 0)]
+    [Module ℂ (RSSheafCohomology X L 1)]
+    (hChi : RSEulerCharacteristic X L
+      = RSLineBundleDegree X L + 1 - (RSGenus X : ℤ)) :
+    (Module.finrank ℂ (RSSheafCohomology X L 0) : ℤ) -
+        (Module.finrank ℂ (RSSheafCohomology X L 1) : ℤ) =
+      RSLineBundleDegree X L + 1 - (RSGenus X : ℤ) :=
+  hChi
+
 /-- **Sub-leaf 1 (Riemann's inequality, `≥` direction).** The integer
 difference `(h⁰(L) : ℤ) - (h¹(L) : ℤ)` is at least `deg L + 1 - g`.
 
