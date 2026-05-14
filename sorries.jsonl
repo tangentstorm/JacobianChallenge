@@ -5,7 +5,7 @@
 {"i":1340,"f":"Jacobian/TraceDegree/PiecewiseC1Instance.lean","k":"instance","s":"instPiecewiseC1PathRegularity","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1341,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"localInverseAt_holomorphic","n":1,"o":1,"r":0,"e":5,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1342,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"localTraceAtRegularValue_holomorphic","n":1,"o":1,"r":0,"e":6,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":1343,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"trace_pullback_at_regular_value","n":2,"o":2,"r":0,"e":7,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1343,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"trace_pullback_at_regular_value","n":0,"o":2,"r":1,"e":7,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1344,"f":"Jacobian/Blueprint/Sec02/MontelCompactness.lean","k":"theorem","s":"montel_pointwise_extraction","n":1,"o":1,"r":0,"e":null,"u":[],"d":[1921],"a":"","c":"open","b":"lem:impl-orphans-aggregate","t":""}
 {"i":1345,"f":"Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean","k":"theorem","s":"chartLift_contDiffOn_assumption","n":1,"o":0,"r":0,"e":8,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1346,"f":"Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean","k":"theorem","s":"chartedFormPullback_continuous_assumption","n":1,"o":0,"r":1,"e":7,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
@@ -1218,7 +1218,7 @@
 {"i":2652,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"mapAnalyticOrderAt_congr_of_maximalAtlas","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2653,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"mapAnalyticOrderAt_pos","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2654,"f":"Jacobian/StageA/EdgeWordTietze.lean","k":"theorem","s":"handleSwap_strictly_decreases_mu","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2655,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"def","s":"cotangentPushforward","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2655,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"def","s":"cotangentPushforward","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2656,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"localPullbackAt_holomorphic","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2657,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"traceAtRegularValue_add","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2658,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"traceAtRegularValue_smul","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2657,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"traceAtRegularValue_add","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2658,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"traceAtRegularValue_smul","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
