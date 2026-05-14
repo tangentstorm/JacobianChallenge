@@ -2,6 +2,18 @@
 \label{sec:riemann-roch}
 
 \begin{layman}
+\textbf{Architectural Note (2026-05-13):} This entire section and its
+corresponding Lean subsystems (\code{EulerCharLineBundle},
+\code{RiemannRoch}, and the \code{Serre/} duality tower) have been
+officially **deprioritized**. The project has adopted an analytic
+shortcut that bypasses the need for general Riemann--Roch machinery
+to prove finite-dimensionality and the genus-zero classification.
+These items are marked as \code{wontdo} in the project ledger to
+ensure resources are focused on the critical period-lattice and
+Abel--Jacobi proofs.
+\end{layman}
+
+\begin{layman}
 Riemann--Roch is the classical bridge between algebra and analysis on
 a compact Riemann surface. It controls the dimension of the space of
 meromorphic functions with prescribed zeros and poles. Pick a
