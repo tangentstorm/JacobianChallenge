@@ -43,7 +43,7 @@ open scoped ContDiff Manifold
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 open JacobianChallenge.AbelJacobi
 open JacobianChallenge.ComplexTorus
-open JacobianChallenge.HolomorphicForms.HolomorphicMap
+open JacobianChallenge.HolomorphicForms
 
 open Classical
 

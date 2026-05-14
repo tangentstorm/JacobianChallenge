@@ -35,7 +35,7 @@ holomorphic on `Y`.
 namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold ContDiff
-open JacobianChallenge.HolomorphicForms.HolomorphicMap
+open JacobianChallenge.HolomorphicForms
 open JacobianChallenge.TraceDegree
 open JacobianChallenge.Periods
 

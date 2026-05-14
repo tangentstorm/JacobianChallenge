@@ -56,7 +56,7 @@ theorem analyticDegree_eq_branchedDegree (f : X → Y)
     analyticDegree f hf =
       JacobianChallenge.HolomorphicForms.branchedDegree
         (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-          (JacobianChallenge.HolomorphicForms.HolomorphicMap.isHolomorphic_of_contMDiff hf)
+          (JacobianChallenge.HolomorphicForms.isHolomorphic_of_contMDiff hf)
           hnonconst) := by
   unfold analyticDegree basisAnalyticPullbackBundle
   simp [hnonconst]

@@ -179,6 +179,52 @@ theorem mapAnalyticOrderAt_congr_of_maximalAtlas
     mapAnalyticOrderAt f_ p := by
   sorry
 
+/-- Backwards-compatible name for the chart-independence theorem. -/
+theorem mapAnalyticOrderAt_eq_of_mem_maximalAtlas
+    {f_ : X → Y} (_hf : IsHolomorphic f_) {p : X}
+    {e₁ : OpenPartialHomeomorph X ℂ}
+    (he₁ : e₁ ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X) (hp₁ : p ∈ e₁.source)
+    {e₂ : OpenPartialHomeomorph Y ℂ}
+    (he₂ : e₂ ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω Y) (hp₂ : f_ p ∈ e₂.source) :
+    analyticOrderNatAt (fun t => e₂ (f_ (e₁.symm t)) - e₂ (f_ p)) (e₁ p) =
+    mapAnalyticOrderAt f_ p :=
+  mapAnalyticOrderAt_congr_of_maximalAtlas he₁ hp₁ he₂ hp₂
+
 end ChartIndependence
+
+section Compatibility
+
+/-- Local constancy of a holomorphic map on a preconnected source forces global constancy. -/
+theorem IsHolomorphic.eq_const_of_eventuallyEq
+    [PreconnectedSpace X] [T2Space Y]
+    {f : X → Y} (_hf : IsHolomorphic f) {y₀ : Y} {x₁ : X}
+    (_h_local : ∀ᶠ x in 𝓝 x₁, f x = y₀) :
+    ∀ x, f x = y₀ := by
+  sorry
+
+/-- Finite fibres of a nonconstant holomorphic map on a compact source. -/
+theorem isHolomorphic_finite_fiber
+    [CompactSpace X] [PreconnectedSpace X] [T2Space Y]
+    {f : X → Y} (_hf : IsHolomorphic f)
+    (_hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) (y : Y) :
+    (f ⁻¹' {y}).Finite := by
+  sorry
+
+/-- Positivity of the local analytic order for a nonconstant holomorphic map. -/
+theorem mapAnalyticOrderAt_pos
+    [PreconnectedSpace X] [T2Space Y]
+    {f : X → Y} (_hf : IsHolomorphic f)
+    (_hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) (x : X) :
+    0 < mapAnalyticOrderAt f x := by
+  sorry
+
+/-- Smooth maps between complex manifolds are holomorphic in the project-local sense. -/
+theorem isHolomorphic_of_contMDiff
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    {f : X → Y} (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
+    IsHolomorphic f := by
+  sorry
+
+end Compatibility
 
 end JacobianChallenge.HolomorphicForms

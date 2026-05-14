@@ -14,7 +14,7 @@ meromorphic function. -/
 namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold OnePoint Topology
-open JacobianChallenge.HolomorphicForms.HolomorphicMap
+open JacobianChallenge.HolomorphicForms
 
 /-- The associated map to `OnePoint ℂ` (the Riemann sphere) from a
 meromorphic function: simply the underlying set function `f.toFun`. -/
@@ -293,7 +293,7 @@ theorem liftToCp1_isHolomorphic
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (hholo : True) :
-    JacobianChallenge.HolomorphicForms.HolomorphicMap.IsHolomorphic
+    JacobianChallenge.HolomorphicForms.IsHolomorphic
       (meromorphicToCp1 X f) := by
   exact
     { continuous := liftToCp1_continuous X f hholo
