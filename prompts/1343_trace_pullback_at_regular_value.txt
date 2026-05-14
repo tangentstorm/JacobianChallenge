@@ -8,6 +8,13 @@ Task: prove trace_pullback_at_regular_value in Jacobian/TraceDegree/TraceDefinit
 
 ### Blueprint Proof Plan (Section 9.2, Theorem 9.2)
 Away from the branch locus, choose local inverse branches $s_1, \dots, s_d$ of $f$, where $d = \deg(f)$. Then
+
+Sorries ledger:
+- ID: `1343`.
+- Statement: `trace_pullback_at_regular_value`.
+- Source: `Jacobian/TraceDegree/TraceDefinition.lean`.
+- Blueprint ref: not recorded in `sorries.jsonl`.
+
 $$ \tr_f(f^* \eta) = \sum_{i=1}^d s_i^* f^* \eta = \sum_{i=1}^d (f \circ s_i)^* \eta = d \cdot \eta $$
 The identity $f \circ s_i = \text{id}$ holds on a neighborhood of the regular value $y$. Pulling back by the identity is the identity operation on 1-forms. Thus each term in the sum is $\eta_y$, and summing over $d$ terms gives $d \cdot \eta_y$.
 
@@ -34,6 +41,11 @@ The identity $f \circ s_i = \text{id}$ holds on a neighborhood of the regular va
 
 ### Expected verification
 - `lake build Jacobian.TraceDegree.TraceDefinition`
+
+Blueprint alignment and audit:
+- Use the relevant Blueprint or plan context in `ref/` when available. The proof must be semantically equivalent to that argument; shortcuts that bypass the core mathematical difficulty are unacceptable.
+- Before finishing, inspect `git diff` and confirm no existing `def` or `structure` declarations were changed unless this prompt explicitly asks for a named definition refinement.
+- Run `#print axioms` on the target theorem or definition where practical, and report any unexpected axioms or hidden dependencies.
 
 > **ANTI-CHEAT CLAUSE:**
 > - You must **NOT** change the definitions of the mathematical objects provided in the scaffolding.

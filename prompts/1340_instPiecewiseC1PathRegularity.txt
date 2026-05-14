@@ -9,6 +9,13 @@ Proof style: avoid large automation; prefer direct proofs with ext, induction on
 Expected verification: lake build Jacobian.TraceDegree.PiecewiseC1Instance
 If blocked: leave theorem statements unchanged and add comments naming the missing prerequisite.
 
+Sorries ledger:
+- ID: `1340`.
+- Statement: `instPiecewiseC1PathRegularity`.
+- Source: `Jacobian/TraceDegree/PiecewiseC1Instance.lean`.
+- Blueprint ref: not recorded in `sorries.jsonl`; nearest textual occurrence is `tex/sections/15-implementation-details.tex:188`.
+
+
 ## Blueprint Context (LaTeX)
 ```latex
 \begin{layman}...\end{layman} blocks contain plain-English narrations
@@ -153,7 +160,6 @@ If blocked: leave theorem statements unchanged and add comments naming the missi
 
 \end{document}
 
-
 \documentclass[11pt]{article}
 
 \input{macros}
@@ -253,7 +259,6 @@ exactly this chapter --- branched degree, Riemann-Hurwitz, degree-one
 classification, and the analytic-genus-zero \(\Rightarrow\)
 sphere argument.
 \end{layman}
-
 
 \begin{definition}[Branched-cover degree of a nonconstant holomorphic map]
 \label{def:branched-degree}
@@ -2694,6 +2699,11 @@ subclass shown to span $H_1(X,\mathbb{Z})$.
 ```
 
 The proof must be semantically equivalent to the argument provided in the Blueprint. Shortcuts that bypass the core mathematical difficulty are unacceptable.
+
+Blueprint alignment and audit:
+- Use the relevant Blueprint or plan context in `ref/` when available. The proof must be semantically equivalent to that argument; shortcuts that bypass the core mathematical difficulty are unacceptable.
+- Before finishing, inspect `git diff` and confirm no existing `def` or `structure` declarations were changed unless this prompt explicitly asks for a named definition refinement.
+- Run `#print axioms` on the target theorem or definition where practical, and report any unexpected axioms or hidden dependencies.
 
 > **ANTI-CHEAT CLAUSE:**
 > - You must **NOT** change the definitions of the mathematical objects provided in the scaffolding.
