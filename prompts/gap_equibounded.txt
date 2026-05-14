@@ -9,6 +9,16 @@ Proof style: avoid large automation; prefer direct proofs with ext, induction on
 Expected verification: lake build Jacobian.HolomorphicForms.CompactRiemannSurface
 If blocked: leave theorem statements unchanged and add comments naming the missing prerequisite.
 
+Sorries ledger:
+- Targets `holomorphicOneForm_chart_local_equibounded` and `holomorphicOneForm_chart_local_equicontinuous` are not recorded as separate rows in `sorries.jsonl`.
+- Related IDs: `2143` (`chart_local_pointwise_bound`), `2144` (`chart_local_cauchy_derivative_estimate`), `2145` (`chart_local_equicontinuous`), `2146` (`chart_local_arzela_ascoli`), and `2147` (`global_totally_bounded_via_chart_cover`).
+- Blueprint refs: `lem:r8subB-C-r1` through `lem:r8subB-C-r5` in `tex/sections/12-classical-analysis-gaps.tex:4190`.
+
+
+Blueprint alignment and audit:
+- Use the relevant Blueprint or plan context in `ref/` when available. The proof must be semantically equivalent to that argument; shortcuts that bypass the core mathematical difficulty are unacceptable.
+- Before finishing, inspect `git diff` and confirm no existing `def` or `structure` declarations were changed unless this prompt explicitly asks for a named definition refinement.
+- Run `#print axioms` on the target theorem or definition where practical, and report any unexpected axioms or hidden dependencies.
 
 > **ANTI-CHEAT CLAUSE:**
 > - You must **NOT** change the definitions of the mathematical objects provided in the scaffolding.

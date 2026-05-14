@@ -9,6 +9,16 @@ Proof style: avoid large automation; prefer direct proofs with ext, induction on
 Expected verification: lake build Jacobian.HolomorphicForms.DeRhamComparisonMap
 If blocked: leave theorem statements unchanged and add comments naming the missing prerequisite.
 
+Sorries ledger:
+- Target `deRhamComparisonMap1` itself is not recorded as a separate row in `sorries.jsonl`.
+- Related ID: `2624` (`deRhamComparisonMap1_exists_form_with_periods`), with no blueprint ref recorded.
+- Blueprint context: `lem:hodge-deRham-deRham-bridge` in `tex/sections/12-classical-analysis-gaps.tex:1554`.
+
+
+Blueprint alignment and audit:
+- Use the relevant Blueprint or plan context in `ref/` when available. The proof must be semantically equivalent to that argument; shortcuts that bypass the core mathematical difficulty are unacceptable.
+- Before finishing, inspect `git diff` and confirm no existing `def` or `structure` declarations were changed unless this prompt explicitly asks for a named definition refinement.
+- Run `#print axioms` on the target theorem or definition where practical, and report any unexpected axioms or hidden dependencies.
 
 > **ANTI-CHEAT CLAUSE:**
 > - You must **NOT** change the definitions of the mathematical objects provided in the scaffolding.
