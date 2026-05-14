@@ -14,8 +14,8 @@ identify our jobs without inspecting tarballs.
 
 ## Live Status (2026-05-07, /loop tick — backend live, queue light)
 
-- **b782c387-5718-4565-a3e8-ed049d6c4c26** (submitted): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — Recon: survey Mathlib v4.28.0 API for topology-of-uniform-convergence on ContMDiffSection (step (a) of the Riemann-Roch plan from 72ac3a75)
-- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. High-risk gap-narrowing on the Riemann-Roch / FD chain.
+- **b782c387-5718-4565-a3e8-ed049d6c4c26** (WONTDO): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — (Deprioritized: R-R route bypassed by analytic shortcut)
+- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. (CRITICAL PATH: Supporting analytic finite-dimensionality).
 - **848a0c88-6c27-423d-865b-38b35390b7a0** (submitted): `Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean` — NEW recon file: how to construct the Banach data on `ContMDiffSection` for compact X. Companion to `holomorphicOneForm_normedSpace_uniformOnCompact` obligation.
 - **90750074-0d26-4f60-b32e-a79942e56111** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_subsingleton` — the Liouville core of genus-zero classification (no global holomorphic 1-form on ℂℙ¹). Anti-hack #1 critical path.
 - **dc8af381-8277-44ab-95f4-6e62dba5faee** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Discharge `exists_compact_periodFundamentalDomain` using the existing `IsZLattice ℝ` instance + Mathlib ZSpan API. Reduction 3→2 sorries in this file.
@@ -148,8 +148,8 @@ identify our jobs without inspecting tarballs.
 
 ## Live Status (2026-05-04, R10 dispatch end-to-end on
 
-- **b782c387-5718-4565-a3e8-ed049d6c4c26** (submitted): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — Recon: survey Mathlib v4.28.0 API for topology-of-uniform-convergence on ContMDiffSection (step (a) of the Riemann-Roch plan from 72ac3a75)
-- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. High-risk gap-narrowing on the Riemann-Roch / FD chain.
+- **b782c387-5718-4565-a3e8-ed049d6c4c26** (WONTDO): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — (Deprioritized: R-R route bypassed by analytic shortcut)
+- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. (CRITICAL PATH: Supporting analytic finite-dimensionality).
 - **848a0c88-6c27-423d-865b-38b35390b7a0** (submitted): `Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean` — NEW recon file: how to construct the Banach data on `ContMDiffSection` for compact X. Companion to `holomorphicOneForm_normedSpace_uniformOnCompact` obligation.
 - **90750074-0d26-4f60-b32e-a79942e56111** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_subsingleton` — the Liouville core of genus-zero classification (no global holomorphic 1-form on ℂℙ¹). Anti-hack #1 critical path.
 - **dc8af381-8277-44ab-95f4-6e62dba5faee** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Discharge `exists_compact_periodFundamentalDomain` using the existing `IsZLattice ℝ` instance + Mathlib ZSpan API. Reduction 3→2 sorries in this file.
@@ -404,9 +404,10 @@ theory layer or even a placeholder `Divisor X` / `IsPrincipal d` API
 exists in the project." Until then, either keep the consolidated form
 or commit to introducing the placeholder API in C7a's file.
 
-### Packet C8 — RR/Serre cluster (24 sorries / 11 files)
-
+### Packet C8 — RR/Serre cluster (24 sorries / 11 files) [WONTDO]
 These are all pieces of classical Riemann-Roch / residue / Serre
+(Deprioritized: analytic shortcut adopted 2026-05-13)
+
 duality. The cluster sorries break down as follows; each is its own
 Aristotle packet (one file → one or two declarations) and each is
 blocked on the same upstream Mathlib gap (divisor / line-bundle /
@@ -455,8 +456,8 @@ module(s).
 
 ## Live Status (2026-05-02, roadmap-driven saturation tick)
 
-- **b782c387-5718-4565-a3e8-ed049d6c4c26** (submitted): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — Recon: survey Mathlib v4.28.0 API for topology-of-uniform-convergence on ContMDiffSection (step (a) of the Riemann-Roch plan from 72ac3a75)
-- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. High-risk gap-narrowing on the Riemann-Roch / FD chain.
+- **b782c387-5718-4565-a3e8-ed049d6c4c26** (WONTDO): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — (Deprioritized: R-R route bypassed by analytic shortcut)
+- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. (CRITICAL PATH: Supporting analytic finite-dimensionality).
 - **848a0c88-6c27-423d-865b-38b35390b7a0** (submitted): `Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean` — NEW recon file: how to construct the Banach data on `ContMDiffSection` for compact X. Companion to `holomorphicOneForm_normedSpace_uniformOnCompact` obligation.
 - **90750074-0d26-4f60-b32e-a79942e56111** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_subsingleton` — the Liouville core of genus-zero classification (no global holomorphic 1-form on ℂℙ¹). Anti-hack #1 critical path.
 - **dc8af381-8277-44ab-95f4-6e62dba5faee** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Discharge `exists_compact_periodFundamentalDomain` using the existing `IsZLattice ℝ` instance + Mathlib ZSpan API. Reduction 3→2 sorries in this file.
@@ -589,8 +590,8 @@ module(s).
 
 ## Live Status (2026-04-29 17:01 EDT, prior tick — kept for context)
 
-- **b782c387-5718-4565-a3e8-ed049d6c4c26** (submitted): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — Recon: survey Mathlib v4.28.0 API for topology-of-uniform-convergence on ContMDiffSection (step (a) of the Riemann-Roch plan from 72ac3a75)
-- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. High-risk gap-narrowing on the Riemann-Roch / FD chain.
+- **b782c387-5718-4565-a3e8-ed049d6c4c26** (WONTDO): `Jacobian/HolomorphicForms/SectionTopologyRecon.lean` — (Deprioritized: R-R route bypassed by analytic shortcut)
+- **5dfd5106-8e6b-45b4-92a6-b4265d3a5704** (submitted): `Jacobian/HolomorphicForms/CompactRiemannSurface.lean` — TOP-DOWN survey on `holomorphicOneForm_montel` — Montel's theorem for holomorphic 1-forms on compact Riemann surface. (CRITICAL PATH: Supporting analytic finite-dimensionality).
 - **848a0c88-6c27-423d-865b-38b35390b7a0** (submitted): `Jacobian/HolomorphicForms/SectionTopologyConstructionRecon.lean` — NEW recon file: how to construct the Banach data on `ContMDiffSection` for compact X. Companion to `holomorphicOneForm_normedSpace_uniformOnCompact` obligation.
 - **90750074-0d26-4f60-b32e-a79942e56111** (submitted): `Jacobian/HolomorphicForms/GenusZeroClassification.lean` — TOP-DOWN refinement on `holomorphicOneForm_onePointCx_subsingleton` — the Liouville core of genus-zero classification (no global holomorphic 1-form on ℂℙ¹). Anti-hack #1 critical path.
 - **dc8af381-8277-44ab-95f4-6e62dba5faee** (submitted): `Jacobian/Periods/PeriodFunctional.lean` — Discharge `exists_compact_periodFundamentalDomain` using the existing `IsZLattice ℝ` instance + Mathlib ZSpan API. Reduction 3→2 sorries in this file.

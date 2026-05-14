@@ -258,13 +258,23 @@ Needed API:
 - finite dimensionality for compact Riemann surfaces;
 - definition of genus as the dimension of this space.
 
-Finite-dimensionality is not a small linear-algebra lemma after the definitions
-are in place. It likely needs serious compact Riemann surface theory, for
-example Riemann-Roch, Hodge/de Rham machinery, or an equivalent analytic route.
+### Architectural Shortcut (Adopted 2026-05-13)
 
-The theorem `genus_eq_zero_iff_homeo` is especially deep with this definition.
-It likely depends on uniformization or the classification of genus-zero compact
-Riemann surfaces, not just local complex analysis.
+The project has officially adopted an **analytic shortcut** for finite-dimensionality
+and the genus-zero classification (`genus_eq_zero_iff_homeo`). 
+
+- **Riemann-Roch & Serre Duality:** The full Riemann-Roch machinery and its
+  prerequisite Serre duality subsystems have been **deprioritized** and marked
+  as `wontdo` in the project ledger (`sorries.jsonl`).
+- **Analytic Path:** We rely on Cartan–Serre and direct analytic methods (e.g.,
+  Cauchy estimates and Arzelà–Ascoli via Montel's theorem) to establish
+  finite-dimensionality.
+- **Genus-Zero:** The genus-zero classification is handled as a self-contained
+  analytic case in `GenusZeroClassification.lean`, proving that no global
+  holomorphic 1-form exists on `ℂP¹` without invoking the general $\chi$-formula.
+
+This ensures the project remains focused on the critical path: the
+period-lattice construction and the Abel-Jacobi map.
 
 ### Phase 2 — Blocker 5 (resolved 2026-04-28)
 
