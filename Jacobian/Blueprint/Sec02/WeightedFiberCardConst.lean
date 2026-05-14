@@ -67,7 +67,7 @@ namespace JacobianChallenge.Blueprint
 
 open scoped Manifold Topology ContDiff
 open Set Filter
-open JacobianChallenge.HolomorphicForms.HolomorphicMap
+open JacobianChallenge.HolomorphicForms
 
 /-! ### Common helper
 

@@ -30,7 +30,7 @@ plug in immediately.
 namespace JacobianChallenge.Blueprint
 
 open scoped Manifold
-open JacobianChallenge.HolomorphicForms.HolomorphicMap
+open JacobianChallenge.HolomorphicForms
 
 /-- The point divisor `[P]`: the divisor assigning coefficient `1` to `P`
 and `0` elsewhere. Wraps `Finsupp.single P 1`. -/

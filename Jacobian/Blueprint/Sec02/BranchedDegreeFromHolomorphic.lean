@@ -20,7 +20,7 @@ Three of the four originally-named obstacles have been discharged in
 
   1. **Chart-independence of `mapAnalyticOrderAt`** — proved,
      `analyticOrderAt_alternate_chart_eq` /
-     `mapAnalyticOrderAt_eq_of_mem_maximalAtlas`.
+     `mapAnalyticOrderAt_congr_of_maximalAtlas`.
   2. **Positivity of `mapAnalyticOrderAt`** for nonconstant
      holomorphic maps on a preconnected source — proved,
      `mapAnalyticOrderAt_pos`.
@@ -48,7 +48,7 @@ proved relative to the project-local `IsHolomorphic` package. -/
 
 namespace JacobianChallenge.Blueprint
 
-open JacobianChallenge.HolomorphicForms.HolomorphicMap
+open JacobianChallenge.HolomorphicForms
 open scoped Manifold ContDiff
 
 /-- **Plan leaf 8.** Analytic constructor for `BranchedCoverData`: a

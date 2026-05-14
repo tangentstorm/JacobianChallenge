@@ -47,7 +47,7 @@ open scoped OnePoint
 open scoped Topology
 open Filter
 open JacobianChallenge.HolomorphicForms.VanishingOrder
-open JacobianChallenge.HolomorphicForms.HolomorphicMap
+open JacobianChallenge.HolomorphicForms
 
 /-! ## Sub-leaf #1 (SHORT) — constant-zero case. -/
 
