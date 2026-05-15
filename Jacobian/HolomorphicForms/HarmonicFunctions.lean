@@ -163,10 +163,8 @@ theorem hodge_decomposition (X : Type*) [TopologicalSpace X] [T2Space X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [ConnectedSpace X] [FiniteDimensionalHolomorphicOneForms ℂ X] :
-    analyticHarmonicGenus X = 2 * analyticGenus ℂ X := by
-  -- This is a substantive statement now.
-  -- See Jacobian/HolomorphicForms/HodgeDecomposition.lean for the arithmetic assembly.
-  sorry
+    analyticHarmonicGenus X = 2 * analyticGenus ℂ X :=
+  analyticHarmonicGenus_eq_two_analyticGenus X
 
 /-- **Sub-obligation 5.2: Dimension equality.**
 The dimension of the space of holomorphic 1-forms is the analytic genus g.
