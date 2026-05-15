@@ -360,13 +360,45 @@ theorem dipole_harmonic_holomorphic_extension (X : Type*) [TopologicalSpace X]
 
 /-- **Sub-obligation 4a: Order of vanishing of 1/f.**
 If f is constructed from a dipole singularity u ~ Re(1/z), then 1/f
-has a zero of order 1 at P. -/
+has a zero of order 1 at P.
+
+BLOCKER (sorries-ledger ID 1374): the statement as written is not provable
+in full generality. The conclusion `mapAnalyticOrderAt (fun x =>
+(⟨u x, v x⟩ : ℂ)⁻¹) P = 1` requires the function `x ↦ ⟨u x, v x⟩⁻¹` to be
+analytic at `P` in the chart-local sense; otherwise Mathlib's
+`analyticOrderNatAt_of_not_analyticAt` returns the junk value `0`,
+contradicting `= 1`. For an arbitrary `v : X → ℝ` (e.g. a nowhere-analytic
+real function), `u + i v` is not even continuous-as-a-complex-function,
+let alone holomorphic, so the conclusion fails.
+
+Missing prerequisites in the statement:
+  * `(hcr : SatisfiesCauchyRiemann g u v)` — to force `u + i v` holomorphic
+    off `P`, available at the unique call site `dipole_harmonic_pole_is_simple`;
+  * `(hholo : IsHolomorphic (fun x => (⟨u x, v x⟩ : ℂ)))` — to give the
+    chart-local analytic extension at `P` via Riemann removable singularity,
+    also available at the call site.
+
+With those hypotheses, the proof would proceed by:
+  1. unfolding `HasRealDipoleSingularity` to obtain a chart in which
+     `u(y) = Re(1/(chart y - z₀)) + (harmonic correction)`;
+  2. combining with the Cauchy–Riemann data to conclude
+     `(u + i v)(y) = 1/(chart y - z₀) + g(y)` for a chart-local analytic `g`
+     (the harmonic correction promotes to its holomorphic completion);
+  3. inverting: `(u + i v)⁻¹(y) = (chart y - z₀) / (1 + (chart y - z₀)·g(y))`,
+     whose chart-local analytic order at `P` is exactly `1` by
+     `AnalyticAt.analyticOrderNatAt_eq_iff` with witness
+     `g'(t) := 1 / (1 + (t - z₀)·g((chart).symm t))`, analytic and nonzero at `z₀`.
+
+The current call site only consumes this lemma via `have _horder := …` and
+discards the result, so the downstream proof is not blocked on it. -/
 theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X] [T2Space X]
     [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (P : X) (u v : X → ℝ) (hu : HasRealDipoleSingularity P u) :
     mapAnalyticOrderAt (fun x => (⟨u x, v x⟩ : ℂ)⁻¹) P = 1 := by
   -- Fixed conclusion to assert order of vanishing is 1.
+  -- BLOCKER: statement lacks the holomorphy hypothesis on `u + i v` required
+  -- to rule out the `analyticOrderNatAt = 0` junk value. See docstring above.
   sorry
 
 /-- **Sub-obligation 4 assembly.**
