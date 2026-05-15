@@ -135,8 +135,29 @@ noncomputable def singlePoleMeromorphicMap (Q : X) : MeromorphicMapToSphere X :=
       · contradiction
       · exact OnePoint.coe_ne_infty _
       · exact OnePoint.coe_ne_infty _
+    -- BLOCKED on upstream sorries `cMfldBump_apply_self` (id 1347) and
+    -- `cMfldBump_eq_one_near` (id 1348) in `Jacobian/HolomorphicForms/CMfldBumpStub.lean`.
+    -- The current placeholder `cMfldBump := fun _ => 0` makes
+    -- `singlePoleSphereLift Q` equal to `↑0` everywhere off `{Q}`, so the
+    -- continuity statement is technically true but a degenerate consequence
+    -- of the placeholder.  An honest proof needs an honest bump whose
+    -- support is contained in `(chartAt ℂ Q).source` and which is `1` near
+    -- `Q`; with such a bump, continuity off `Q` follows from continuity of
+    -- the bump, of `chartAt ℂ Q` on its (open) source, and injectivity of
+    -- the chart (so the denominator `φ x - φ Q` is nonzero off `Q`).
     continuousOn_ne_infty := by sorry
-    toFiniteFun_mdifferentiable := fun _ _ => by sorry
+    -- Discharged vacuously: the hypothesis says `toMap = fun x => ↑(g x)`,
+    -- but at `Q` the LHS is `OnePoint.infty` while `↑(g Q)` is a finite
+    -- coercion, so the hypothesis is impossible.
+    toFiniteFun_mdifferentiable := fun g hg => by
+      exfalso
+      have hQ : singlePoleSphereLift Q Q = ((g Q : ℂ) : OnePoint ℂ) :=
+        congrFun hg Q
+      have hinfty : singlePoleSphereLift Q Q = OnePoint.infty := by
+        unfold singlePoleSphereLift
+        simp
+      rw [hinfty] at hQ
+      exact OnePoint.coe_ne_infty (g Q) hQ.symm
     toMap_eq_infty_of_poleDivisor_pos := fun x hx => by
       have heq : x = Q := by
         by_contra hne
@@ -144,6 +165,17 @@ noncomputable def singlePoleMeromorphicMap (Q : X) : MeromorphicMapToSphere X :=
         exact (lt_irrefl _) hx
       unfold singlePoleSphereLift
       rw [if_pos heq]
+    -- BLOCKED on upstream sorries `cMfldBump_apply_self` (id 1347) and
+    -- `cMfldBump_eq_one_near` (id 1348) in `Jacobian/HolomorphicForms/CMfldBumpStub.lean`.
+    -- With the current placeholder `cMfldBump := fun _ => 0`, any complex
+    -- lift `g` agreeing with `singlePoleSphereLift Q` on `{Q}ᶜ` must be
+    -- identically `0` there, so `‖g x‖ → ∞` along `nhdsWithin Q {Q}ᶜ`
+    -- cannot hold (the filter is nontrivial because `ChartedSpace ℂ X`
+    -- rules out `Q` being isolated).  An honest proof takes
+    -- `g x := (cMfldBump Q x : ℝ) / (chartAt ℂ Q x - chartAt ℂ Q Q)` and
+    -- uses `cMfldBump_eq_one_near Q` together with continuity of the chart
+    -- at `Q` so the denominator tends to `0` while the numerator stays
+    -- eventually equal to `1`.
     exists_modulus_atTop_at_pole := fun _ _ => by sorry
     hasBranchedCoverDataOfPoleDegree := singlePole_hasBranchedCoverDataOfPoleDegree Q }
 
