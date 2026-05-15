@@ -997,42 +997,21 @@ theorem finite_toFinset_sum_eq_of_set_eq
 
 /-- Smooth maps between complex manifolds are holomorphic in the project-local sense.
 
-BLOCKED (sorry 1376, blueprint `lem:impl-meromorphic-lift`).
-This is the constructor for `IsHolomorphic f` from a `ContMDiff` hypothesis,
-which has four fields:
+PARTIAL (sorry 1376, blueprint `lem:impl-meromorphic-lift`).
 
-* `continuous` — discharged directly from `ContMDiff.continuous`.
+The `IsHolomorphic` structure has four fields; three are now discharged
+on rebase by the upstream-merged helpers
+`IsHolomorphicAt.of_contMDiff` and `local_kfold_ramified_of_contMDiff`:
 
-* `holomorphicAt : ∀ p, IsHolomorphicAt f p` — requires turning a
-  `ContMDiffAt 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞)` hypothesis (which is `Cⁿ`
-  at level `n = ω` over the complex model) into `AnalyticAt ℂ` for the
-  chart-local representation `chartAt ℂ (f p) ∘ f ∘ (chartAt ℂ p).symm`.
-  Pinned Mathlib `v4.28.0` does not provide a manifold-level analyticity
-  predicate or a `ContMDiff → AnalyticAt` chart-local extraction lemma
-  (no `MAnalyticAt`, no `analyticAt_iff_contMDiff_ω`), so this requires a
-  new helper not present in this file.
-
-* `local_kfold_ramified` — the manifold-level local mapping theorem: at a
-  point with `mapAnalyticOrderAt f x = k > 0`, the map is locally a
-  `k`-to-`1` branched cover with the central fibre as the unique ramified
-  point. The CP¹-specific analog
-  `JacobianChallenge.HolomorphicForms.liftToCp1_local_kfold_ramified_finite`
-  in `Jacobian/HolomorphicForms/MeromorphicToCp1.lean` is itself still a
-  `sorry`, and the chart-level prerequisite
-  `JacobianChallenge.HolomorphicForms.kfold_fiber_of_conjugate_pow` in
-  `Jacobian/HolomorphicForms/LocalMappingThm.lean` has not yet been lifted
-  to the manifold setting via chart transport.
-
-* `weightedFiberSum_eventually_eq` — local conservation of the weighted
-  fibre count on compact, preconnected `X`. The CP¹-specific analog
-  `JacobianChallenge.HolomorphicForms.liftToCp1_weightedFiberSum_eventually_eq_finite`
-  is also still a `sorry`, and no generic manifold-level version exists.
-
-The first two prerequisites (chart-local analyticity from `ContMDiff` at
-`ω`, manifold-level local mapping theorem) and the fibre-count
-conservation theorem must land before this sorry can be discharged
-honestly; degenerate solutions would violate the anti-cheat clause
-(`mapAnalyticOrderAt` would have to be tied to genuine analytic order). -/
+* `continuous` — `_hf.continuous`. ✓
+* `holomorphicAt` — via `IsHolomorphicAt.of_contMDiff`. ✓
+* `local_kfold_ramified` — via `local_kfold_ramified_of_contMDiff`. ✓
+* `weightedFiberSum_eventually_eq` — manifold-level fibre-count
+  conservation for nonconstant analytic maps with finite fibres on a
+  compact source. BLOCKED: existing project lemmas either already require
+  `IsHolomorphic` (and so would be circular) or apply to separately
+  constructed meromorphic sphere lifts; no generic chart-level
+  fibre-count conservation theorem yet exists. -/
 theorem isHolomorphic_of_contMDiff
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
@@ -1049,6 +1028,7 @@ theorem isHolomorphic_of_contMDiff
     -- surface. Existing project lemmas either already require
     -- `IsHolomorphic` or apply to separately constructed meromorphic sphere
     -- lifts, so using them here would be circular.
+    intro _ _ _ _ _ _ hnonconst finite_fiber y₀
     sorry
 
 end Compatibility
