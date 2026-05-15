@@ -49,11 +49,11 @@ def Omega (M : Type v) [TopologicalSpace M] [ChartedSpace E M]
 instance (k : ℕ) : AddCommGroup (Omega (E := E) M k) :=
   Pi.addCommGroup
 
-axiom instModuleOmega (k : ℕ) : Module ℝ (Omega (E := E) M k)
-attribute [instance] instModuleOmega
+instance (k : ℕ) : Module ℝ (Omega (E := E) M k) :=
+  Pi.module ℝ _ (fun _ => AlternatingMap.module)
 
-axiom instModuleFiniteOmega (k : ℕ) : Module.Finite ℝ (Omega (E := E) M k)
-attribute [instance] instModuleFiniteOmega
+instance (k : ℕ) : Module.Finite ℝ (Omega (E := E) M k) := by
+  sorry
 
 /-! ### Exterior derivative -/
 
