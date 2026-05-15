@@ -51,7 +51,18 @@ theorem IsHolomorphicAt.smul
 theorem IsHolomorphicAt.sum {ι : Type*} {s : Finset ι} {f : ι → X → ℂ} {p : X}
     (_hf : ∀ i ∈ s, IsHolomorphicAt (f i) p) :
     IsHolomorphicAt (fun x => Finset.sum s (fun i => f i x)) p := by
-  sorry
+  classical
+  revert _hf
+  refine Finset.induction_on s ?_ ?_
+  · intro _hf
+    change IsHolomorphicAt (fun _ : X => (0 : ℂ)) p
+    unfold IsHolomorphicAt chartLocalAt
+    simpa using (analyticAt_const :
+      AnalyticAt ℂ (fun _ : ℂ => chartAt ℂ (0 : ℂ) (0 : ℂ)) (chartAt ℂ p p))
+  · intro a s ha ih hfs
+    simpa [Finset.sum_insert, ha] using
+      IsHolomorphicAt.add (hfs a (Finset.mem_insert_self a s))
+        (ih fun i hi => hfs i (Finset.mem_insert_of_mem hi))
 
 /-- **Holomorphic linear combination.** -/
 theorem IsHolomorphicAt.sum_smul {ι : Type*} {s : Finset ι} {f : ι → X → ℂ} {c : ι → ℂ} {p : X}
