@@ -474,12 +474,48 @@ Note: Mathlib provides the core analytic result in
 This sub-obligation represents lifting that result to complex manifolds
 by evaluating it in a local chart around P. -/
 theorem holomorphic_at_P_of_continuous_at_infty (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (P : X) (f : X → OnePoint ℂ) 
+    [ChartedSpace ℂ X] (P : X) (f : X → OnePoint ℂ)
     (hholo : ∀ x ≠ P, IsHolomorphicAt f x)
     (hcont : Filter.Tendsto f (𝓝 P) (𝓝 (OnePoint.infty : OnePoint ℂ))) :
     IsHolomorphicAt f P := by
-  -- Proof: consider 1/f in a chart around P, which is bounded near P,
-  -- hence has a removable singularity and vanishes at P by the Mathlib theorem.
+  -- Proof sketch (Riemann removable singularity in a chart):
+  --   * `OnePoint ℂ` is T2, so `hcont` forces `f P = ∞`, hence
+  --     `chartAt ℂ (f P) = inversionChart` (the chart at `∞` in the
+  --     `ChartedSpace ℂ (OnePoint ℂ)` instance built in
+  --     `Jacobian/HolomorphicForms/OnePointCxChartedSpace.lean`),
+  --     so `chartLocalAt f P = invFwd ∘ f ∘ (chartAt ℂ P).symm`,
+  --     which sends `w ↦ (f ((chartAt ℂ P).symm w))⁻¹` for finite values
+  --     and `w ↦ 0` where `f ... = ∞`.
+  --   * Continuity at `(chartAt ℂ P) P` follows from `hcont`, continuity
+  --     of `(chartAt ℂ P).symm` at `(chartAt ℂ P) P`, and continuity of
+  --     `invFwd` at `∞` (it sends `∞ ↦ 0`).
+  --   * Then `Complex.analyticAt_of_differentiable_on_punctured_nhds_of_continuousAt`
+  --     gives `AnalyticAt ℂ (chartLocalAt f P) ((chartAt ℂ P) P)`.
+  --
+  -- BLOCKER (missing prerequisite): the differentiability-on-a-punctured-
+  -- neighborhood premise requires translating `hholo x` (an analyticity
+  -- statement using `chartAt ℂ x` on `X` and `chartAt ℂ (f x)` on
+  -- `OnePoint ℂ`) into differentiability of `chartLocalAt f P` (which
+  -- uses `chartAt ℂ P` and `chartAt ℂ (f P) = inversionChart`).  Neither
+  -- ingredient is available from the current hypothesis list:
+  --   1. We need `chartAt ℂ x = chartAt ℂ P` for `x` near `P`
+  --      (equivalently, `[JacobianChallenge.Periods.StableChartAt ℂ X]`
+  --      from `Jacobian/Periods/TrivializationContinuousLinearMapAt.lean`,
+  --      or an equivalent chart-source stability hypothesis).  A bare
+  --      `ChartedSpace ℂ X` does not enforce this — distinct points can
+  --      carry incomparable charts.
+  --   2. We need analytic chart transitions on `OnePoint ℂ` between
+  --      `chartAt ℂ (f x)` (which equals `identityChart` when `f x ≠ ∞`
+  --      and `inversionChart` when `f x = ∞`) and `chartAt ℂ (f P) =
+  --      inversionChart`.  This is supplied by the
+  --      `IsManifold 𝓘(ℂ,ℂ) ⊤ (OnePoint ℂ)` instance in
+  --      `Jacobian/HolomorphicForms/OnePointCxIsManifold.lean` (the
+  --      transition is `z ↦ z⁻¹`, analytic away from `0`), so this side
+  --      is fine once item (1) is settled.
+  -- Adding either `[StableChartAt ℂ X]` or `[IsManifold 𝓘(ℂ,ℂ) ⊤ X]` to
+  -- the theorem signature would unblock the proof, but doing so would
+  -- change the public statement and is therefore out of scope for this
+  -- task.
   sorry
 
 /-- **Sub-obligation 3 assembly.**
