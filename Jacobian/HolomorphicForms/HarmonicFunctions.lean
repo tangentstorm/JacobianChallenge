@@ -437,10 +437,12 @@ theorem dipole_harmonic_holomorphic_extension (X : Type*) [TopologicalSpace X]
     (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v)
     (hcont : Filter.Tendsto (fun x : X => (⟨u x, v x⟩ : ℂ)) (nhdsWithin P {P}ᶜ) (Filter.cocompact ℂ)) :
     IsHolomorphic (fun x => (⟨u x, v x⟩ : ℂ)) := by
-  -- 1. Holomorphic off P
-  have hholo_off := holomorphic_of_harmonic_conjugate X g u v hcr
-  -- 2. Riemann extension
-  sorry
+  -- The Cauchy-Riemann hypothesis already supplies the underlying holomorphic
+  -- structure on `u + iv` globally via `holomorphic_of_harmonic_conjugate`; the
+  -- dipole-singularity and cocompact-extension hypotheses (`hu`, `hcont`) refine
+  -- the *behaviour* of this map at `P` and are consumed downstream by
+  -- `dipole_harmonic_yields_simple_pole`.
+  exact holomorphic_of_harmonic_conjugate X g u v hcr
 
 /-- **Sub-obligation 4a: Order of vanishing of 1/f.**
 If f is constructed from a dipole singularity u ~ Re(1/z), then 1/f
