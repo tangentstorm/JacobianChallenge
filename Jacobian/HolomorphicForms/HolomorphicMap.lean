@@ -39,7 +39,8 @@ def IsHolomorphicAt (f : X → Y) (p : X) : Prop :=
 theorem IsHolomorphicAt.add
     {f g : X → ℂ} {p : X} (_hf : IsHolomorphicAt f p)
     (_hg : IsHolomorphicAt g p) : IsHolomorphicAt (f + g) p := by
-  sorry
+  unfold IsHolomorphicAt chartLocalAt at *
+  simpa [Pi.add_apply, Function.comp_def] using _hf.add _hg
 
 /-- **Holomorphic scalar multiplication.** -/
 theorem IsHolomorphicAt.smul
