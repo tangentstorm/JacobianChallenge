@@ -9,12 +9,10 @@ import Mathlib.Analysis.InnerProductSpace.LaxMilgram
 import Mathlib.Topology.Algebra.Order.Field
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
-open scoped Manifold
+open scoped Manifold Topology
 open Complex
 
 namespace JacobianChallenge.HolomorphicForms
-
-open HolomorphicMap
 
 /-- The Hodge star operator on 1-forms of a Riemann surface.
 On a 1-manifold, the Hodge star maps 1-forms to 1-forms (specifically,
@@ -122,11 +120,35 @@ theorem exists_trial_dipole (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (g : CompatibleMetric X) (P : X) :
     ∃ u₀ : X → ℝ, HasRealDipoleSingularity P u₀ := by
-  -- 1. Pick a chart at P
-  -- 2. Define local_dipole_function
-  -- 3. Pick a bump function ψ
-  -- 4. u₀ = ψ * local_dipole (extended by zero)
-  sorry
+  -- Pick `chart := chartAt ℂ P` and `z₀ := chart P`. Define
+  --   `u₀ y := (1 / (chart y - z₀)).re`
+  -- so that `u₀ y` *equals* the dipole expression `(1/(chart y - z₀)).re`
+  -- exactly (no smooth-bump cutoff is needed for the
+  -- `HasRealDipoleSingularity` predicate, which only requires the equality
+  -- to hold *eventually* on a chart-source neighbourhood).
+  -- The harmonic remainder `v` is then the constant-zero function, which is
+  -- harmonic with the constant-zero holomorphic witness.
+  refine ⟨fun y => (1 / (chartAt ℂ P y - chartAt ℂ P P)).re,
+    chartAt ℂ P, chartAt ℂ P P, mem_chart_source ℂ P, rfl, ?_⟩
+  filter_upwards [chart_source_mem_nhds ℂ P] with x hx
+  refine ⟨hx, fun _ => 0, ?_, ?_⟩
+  · -- The constant-zero real function is harmonic, witnessed by the
+    -- constant-zero holomorphic function.
+    show ∀ p : X, ∃ (f_holo : X → ℂ), IsHolomorphicAt f_holo p ∧
+      ∀ᶠ x in 𝓝 p, (f_holo x).re = (fun _ : X => (0 : ℝ)) x
+    intro p
+    refine ⟨fun _ => 0, ?_, ?_⟩
+    · -- `chartLocalAt 0 p` is the constant `chartAt ℂ 0 0`.
+      have hconst : chartLocalAt (fun _ : X => (0 : ℂ)) p = fun _ : ℂ => chartAt ℂ (0 : ℂ) 0 := by
+        ext _; rfl
+      show AnalyticAt ℂ (chartLocalAt (fun _ : X => (0 : ℂ)) p) (chartAt ℂ p p)
+      rw [hconst]
+      exact analyticAt_const
+    · filter_upwards with _
+      simp
+  · -- The dipole expression equals itself plus zero.
+    filter_upwards with _
+    simp
 
 /-- **Sub-obligation 2.4: Variational solution (Lax-Milgram).**
 The harmonic function u is found by minimizing the Dirichlet energy E(u - u₀)
