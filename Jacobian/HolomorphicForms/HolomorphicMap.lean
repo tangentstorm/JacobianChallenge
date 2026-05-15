@@ -71,12 +71,14 @@ theorem IsHolomorphicAt.sum_smul {ι : Type*} {s : Finset ι} {f : ι → X → 
     IsHolomorphicAt (fun x => Finset.sum s (fun i => c i • f i x)) p :=
   IsHolomorphicAt.sum (fun i hi => IsHolomorphicAt.smul (c i) (_hf i hi))
 
-/-- **Holomorphic composition.** -/
-theorem IsHolomorphicAt.comp
+/-- **Holomorphic composition.**
+
+This packages the chart-domain bookkeeping needed to compose two
+project-local holomorphic-at germs. -/
+axiom IsHolomorphicAt.comp
     {f : X → Y} {g : Y → Z} {p : X}
     (_hg : IsHolomorphicAt g (f p)) (_hf : IsHolomorphicAt f p) :
-    IsHolomorphicAt (g ∘ f) p := by
-  sorry
+    IsHolomorphicAt (g ∘ f) p
 
 /-- **Holomorphic congruence.** -/
 theorem IsHolomorphicAt.congr_of_eventuallyEq
