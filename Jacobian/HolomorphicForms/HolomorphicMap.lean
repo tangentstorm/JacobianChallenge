@@ -44,8 +44,9 @@ theorem IsHolomorphicAt.add
 /-- **Holomorphic scalar multiplication.** -/
 theorem IsHolomorphicAt.smul
     {f : X → ℂ} {p : X} (c : ℂ) (_hf : IsHolomorphicAt f p) :
-    IsHolomorphicAt (c • f) p := by
-  sorry
+  IsHolomorphicAt (c • f) p := by
+  unfold IsHolomorphicAt chartLocalAt at *
+  simpa [Pi.smul_apply, Function.comp_def] using (_hf.const_smul (c := c))
 
 /-- **Holomorphic finite sum.** -/
 theorem IsHolomorphicAt.sum {ι : Type*} {s : Finset ι} {f : ι → X → ℂ} {p : X}
