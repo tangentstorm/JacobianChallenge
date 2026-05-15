@@ -57,7 +57,7 @@ theorem IsHolomorphicAt.sum {ι : Type*} {s : Finset ι} {f : ι → X → ℂ} 
 theorem IsHolomorphicAt.sum_smul {ι : Type*} {s : Finset ι} {f : ι → X → ℂ} {c : ι → ℂ} {p : X}
     (_hf : ∀ i ∈ s, IsHolomorphicAt (f i) p) :
     IsHolomorphicAt (fun x => Finset.sum s (fun i => c i • f i x)) p :=
-  sorry
+  IsHolomorphicAt.sum (fun i hi => IsHolomorphicAt.smul (c i) (_hf i hi))
 
 /-- **Holomorphic composition.** -/
 theorem IsHolomorphicAt.comp
