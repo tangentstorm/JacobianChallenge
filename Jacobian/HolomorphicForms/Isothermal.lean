@@ -141,9 +141,9 @@ theorem exists_compatible_metric (X : Type*) [TopologicalSpace X] [T2Space X]
 Euclidean metric in that chart. -/
 def IsIsothermalAt (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (e : OpenPartialHomeomorph X ℂ) (x : X) : Prop :=
-  x ∈ e.source ∧ ∃ (λ : ℝ), 0 < λ ∧
+  x ∈ e.source ∧ ∃ (kappa : ℝ), 0 < kappa ∧
     ∀ (v w : TangentSpace 𝓘(ℂ, ℂ) x),
-      g.tensor x v w = λ * euclideanOnComplex (e.mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) x v) (e.mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) x w)
+      g.tensor x v w = kappa * euclideanOnComplex (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) e x v) (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) e x w)
 
 /-- **Sub-obligation 1.4: Beltrami Equation / Existence of Isothermal Coordinates.**
 On any 2-manifold with a Riemannian metric, there exist local coordinates
