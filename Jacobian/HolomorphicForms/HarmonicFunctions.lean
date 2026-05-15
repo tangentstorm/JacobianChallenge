@@ -124,12 +124,35 @@ def DirichletEnergy {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 
 /-- **Sub-obligation 2.4a: Coercivity and Boundedness.**
 The Dirichlet energy (bilinear form) is coercive and bounded on the Sobolev
-space H^1(X) / {const}. -/
-theorem dirichlet_energy_coercive (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+space H^1(X) / {const}.
+
+The current statement extracts the most immediate consequence of the
+positive-definite-ness of the underlying metric tensor: at the chosen
+base point and tangent vector, the diagonal value `g(v, v)` is
+non-negative. This is the seed of the genuine coercivity bound
+`E(u) ≥ c · ‖u‖²`; the full integral statement will be slotted in once
+the Sobolev / bilinear-form integration infrastructure is wired up.
+
+Signature note: the goal mentions `Classical.arbitrary X`, which requires
+`[Nonempty X]` to elaborate. The pre-existing scaffolding omitted this
+typeclass, leaving the statement type-incorrect (it failed to elaborate
+at all); we add `[Nonempty X]` here as the minimal repair needed for the
+statement to make sense. The hypothesis is the natural one — picking an
+arbitrary point of `X` is the intended reading.
+
+The proof splits on whether the chosen tangent vector is zero: if so,
+ℝ-bilinearity collapses `g(0, 0)` to `0`; otherwise
+`CompatibleMetric.is_positive_definite` gives `0 < g(v, v)`, hence
+`0 ≤ g(v, v)`. -/
+theorem dirichlet_energy_coercive (X : Type*) [TopologicalSpace X] [Nonempty X]
+    [ChartedSpace ℂ X]
     (g : CompatibleMetric X) [inst : SobolevH1 X g] (u : inst.carrier) :
     0 ≤ g.tensor (Classical.arbitrary X) (Classical.arbitrary _) (Classical.arbitrary _) := by
-  -- This is a substantive statement about the metric tensor being non-negative.
-  sorry
+  set v : TangentSpace 𝓘(ℂ, ℂ) (Classical.arbitrary X) := Classical.arbitrary _ with hv_def
+  by_cases hv : v = 0
+  · rw [hv]
+    simp
+  · exact (g.is_positive_definite (Classical.arbitrary X) v hv).le
 
 /-- **Sub-obligation 2.4b: Lax-Milgram application.**
 By the Lax-Milgram theorem (available in Mathlib at `Mathlib.Analysis.InnerProductSpace.LaxMilgram`),
