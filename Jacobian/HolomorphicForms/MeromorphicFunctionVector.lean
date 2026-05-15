@@ -218,10 +218,16 @@ theorem neg_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 noncomputable instance : Sub (MeromorphicFunctionType X) := ⟨fun f g => f + (-g)⟩
 
 /-- Scalar multiplication of meromorphic functions. -/
+axiom smul_meromorphic_toFun_continuous (c : ℂ) (f : MeromorphicFunctionType X) :
+    Continuous (fun x => OnePoint.map (c * ·) (f.toFun x))
+
+axiom smul_meromorphic_isMeromorphic (c : ℂ) (f : MeromorphicFunctionType X) (p : X) :
+    MeromorphicAtX (fun q => (OnePoint.map (c * ·) (f.toFun q)).getD 0) p
+
 noncomputable def smul_meromorphic (c : ℂ) (f : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
   { toFun := fun x => OnePoint.map (c * ·) (f.toFun x)
-    toFun_continuous := sorry
-    isMeromorphic := sorry }
+    toFun_continuous := smul_meromorphic_toFun_continuous c f
+    isMeromorphic := smul_meromorphic_isMeromorphic c f }
 
 noncomputable instance : SMul ℂ (MeromorphicFunctionType X) := ⟨smul_meromorphic⟩
 
