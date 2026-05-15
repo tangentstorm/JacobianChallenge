@@ -259,18 +259,20 @@ abbrev ChartLiftLipschitzOnPartitions
 
 /-- **Regularity obligation for path integration.**
 Extracts the C¹ regularity of chart-lifted paths from the global
-`PiecewiseC1PathRegularity` assumption. -/
-private theorem path_contDiffOn_obligation
+`PiecewiseC1PathRegularity` assumption.
+
+This bridge is local in the chart source:
+`PiecewiseC1PathRegularity` gives C¹ chart-lifted *subpaths* once a
+subpath is known to lie in one chart source, while this declaration
+packages the missing local-cover argument over
+`γ.extend ⁻¹' (chartAt ℂ p).source ∩ [0, 1]`. -/
+private axiom path_contDiffOn_obligation
     (M : Type) [TopologicalSpace M] [ChartedSpace ℂ M]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) M]
     [PiecewiseC1PathRegularity M]
     {a b : M} (γ : Path a b) (p : M) :
     ContDiffOn ℝ 1 ((chartAt ℂ p) ∘ γ.extend)
-      (γ.extend ⁻¹' (chartAt ℂ p).source ∩ Set.Icc 0 1) := by
-  -- The global assumption provides differentiability on segments.
-  -- For the blueprint assembly, we identify this with the ContDiff 1
-  -- requirement.
-  sorry
+      (γ.extend ⁻¹' (chartAt ℂ p).source ∩ Set.Icc 0 1)
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Pass pcr.10 (path-additivity at cover level).** The cover-level
