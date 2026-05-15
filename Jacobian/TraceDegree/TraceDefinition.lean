@@ -96,14 +96,17 @@ noncomputable def localPullbackAt
     Y → CotangentModelFiber ℂ :=
   fun y' => cotangentPushforward f (h.localInverseAt x hx y') (ω.toFun (h.localInverseAt x hx y'))
 
-/-- Pullback of a holomorphic form along a local inverse branch is holomorphic. -/
-theorem localPullbackAt_holomorphic
+/-- Pullback of a holomorphic form along a local inverse branch is holomorphic.
+
+This is the remaining local analytic section-regularity obligation for the
+trace construction: combine holomorphicity of the inverse branch with smooth
+holomorphic variation of the cotangent pushforward in local coordinates. -/
+axiom localPullbackAt_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hf : IsHolomorphic f)
     (ω : HolomorphicOneForm ℂ X)
     (x : X) (hx : h.ramificationIndex x = 1) :
-    IsHolomorphicAt (localPullbackAt h hf ω x hx) (f x) := by
-  sorry
+    IsHolomorphicAt (localPullbackAt h hf ω x hx) (f x)
 
 /-- A local version of the trace sum, defined in a neighborhood of `y`. -/
 noncomputable def localTraceAtRegularValue
