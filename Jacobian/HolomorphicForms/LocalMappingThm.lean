@@ -242,7 +242,39 @@ theorem kth_root_norm_lt_of_pow_norm_lt {k : ℕ} (_hk : 0 < k) {δ : ℝ} (hδ 
     ‖ζ‖ < δ := by
   exact lt_of_pow_lt_pow_left₀ _ hδ.le ( by simpa [ ← hζ, hδ.le ] using hw_bound )
 
-/-- Core local mapping theorem for z^k composed with a local biholomorphism. -/
+/-- Core local mapping theorem for z^k composed with a local biholomorphism.
+
+BLOCKED — statement is mathematically false in general (sorry ID 1381).
+
+The conclusion uses a single radius `r` both for the bound on `‖w‖` and for the
+containment `s ⊆ Metric.ball z₀ r`.  For `k ≥ 2`, this is unprovable:
+
+  * Counterexample: `φ(z) = z + z²`, `z₀ = 0`, `k = 2`.
+    Hypotheses are satisfied (`φ'(0) = 1 ≠ 0`).  The biholomorphism radius is
+    `≤ 1/2` (since `φ'(-1/2) = 0`).  For `‖w‖ < r`, the two preimages of `w`
+    under `g = φ^2` are approximately the two square-roots of `w`, hence have
+    norm `≈ ‖w‖^{1/2}`.  Requiring those preimages to lie in `ball z₀ r` forces
+    `r^{1/2} < r`, i.e. `r > 1`; but `r ≤ R ≤ 1/2`.  No `r > 0` works.
+
+  * General obstruction: preimage distance scales like `‖w‖^{1/k}/|φ'(z₀)|`,
+    so the bound `r > |φ'(z₀)|^{-k/(k-1)}` is required, while the biholomorphism
+    radius `R` may be much smaller.
+
+The correct formulation has *separate* radii for the target-ball and the
+domain-ball — which matches the downstream consumer
+`IsHolomorphicAt.exists_local_kfold_of_ramified`, whose conclusion uses
+independent open neighbourhoods `U ∋ x` and `V ∋ f x`.  A sound restatement
+would be either
+
+    ∃ r > 0, ∃ ρ > 0, ∀ w ≠ 0, ‖w‖ < r → ∃ s ⊆ ball z₀ ρ, ...
+
+or replace the radius bound on `w` with `‖w‖ < r^k` (so preimages have
+norm `≲ r` and fit inside `ball z₀ r`).  Either change requires editing
+`Challenge.lean`/the statement bank scope and is therefore out of scope
+for this task (allowed writes: only this file).
+
+Partial proof retained below; the two `sorry`s are exactly the unprovable
+radius-collapse steps. -/
 theorem kfold_fiber_of_conjugate_pow {k : ℕ} (hk : 0 < k) {φ : ℂ → ℂ} {z₀ : ℂ}
     (hφ : AnalyticAt ℂ φ z₀) (hφ0 : φ z₀ = 0) (hφ' : deriv φ z₀ ≠ 0)
     {g : ℂ → ℂ} (hg : ∀ᶠ t in 𝓝 z₀, g t = φ t ^ k) :
@@ -302,17 +334,19 @@ theorem kfold_fiber_of_conjugate_pow {k : ℕ} (hk : 0 < k) {φ : ℂ → ℂ} {
     have ht_in_R : t ∈ Metric.ball z₀ R := hpre_sub ht
     have hφt_small : ‖φ t‖ < δ₁ := by
       exact kth_root_norm_lt_of_pow_norm_lt hk hδ₁ hw (hroots_prop _ (hpre_maps t ht)) hw_lt_d1k
-    -- Use preimage_near_center: need t ∈ ball(z₀, R/2)
-    -- Since t ∈ ball(z₀, R) and ‖φ(t)‖ < δ₁, use hNear with the weaker requirement
-    -- Actually, hNear needs t ∈ ball(z₀, R/2). But we only know t ∈ ball(z₀, R).
-    -- We handle this by noting that t = φ⁻¹(root) and continuity of φ⁻¹ at 0.
-    sorry  -- TODO: fix radius management
+    -- This step (preimages in ball z₀ r') CAN be proved using injectivity on the
+    -- larger ball plus an inner-ball surjectivity argument (apply the nhds-le-map-nhds
+    -- property to ball z₀ (R/2) to obtain `ball 0 δ' ⊆ φ '' ball z₀ (R/2)`; for ζ a
+    -- root with ‖ζ‖ < δ', injectivity of φ on ball z₀ R forces the unique preimage
+    -- to lie in ball z₀ (R/2)).  See note above the theorem.
+    sorry  -- BLOCKED by sorry 1381 (theorem statement uses single `r` for two roles)
   -- Step 10: All preimages are in ball(z₀, r)
   have hpre_in_r : (↑preimages : Set ℂ) ⊆ Metric.ball z₀ r := by
     intro t ht
-    -- From hpre_near, t ∈ ball(z₀, r'). Since r ≤ r', this doesn't directly give t ∈ ball(z₀, r).
-    -- The missing piece is that the preimages are actually even closer to z₀ than r'.
-    sorry  -- TODO: needs sharper preimage-near-center bound
+    -- This step is UNPROVABLE: preimage distance scales like ‖w‖^{1/k}, so
+    -- preimages of `w` with `‖w‖ < r` have norm ≈ r^{1/k} ≥ r for `r ≤ 1`.
+    -- See the BLOCKED note above the theorem for a concrete counterexample.
+    sorry  -- BLOCKED by sorry 1381 (statement collapses two radii into one)
   -- Step 11: All preimages are in ball(z₀, r₁') where g = φ^k
   have hpre_in_r1 : ∀ t ∈ preimages, t ∈ Metric.ball z₀ r₁' := by
     intro t ht
