@@ -507,7 +507,18 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X] [T2S
   sorry
 
 /-- **Sub-obligation 4 assembly.**
-Since the singularity of u is locally Re(1/z), the pole of f at P is simple. -/
+Since the singularity of u is locally Re(1/z), the pole of f at P is simple.
+
+We construct the meromorphic map directly from the holomorphic function
+`f(x) = u(x) + i·v(x)` (off `P`) extended to `∞` at `P`.  The pole divisor
+of this map is `(P)` by construction, and the auxiliary structural axioms
+of `MeromorphicMapToSphere` are dispatched using:
+
+* `IsHolomorphic.continuous` (giving continuity of the lift off `P`),
+* a direct case-split on `x = P` for the divisor-incidence axioms,
+* a vacuity argument for `toFiniteFun_mdifferentiable` (no `ℂ`-valued
+  lift can equal `toMap`, since `toMap P = ∞` but the canonical
+  `ℂ ↪ OnePoint ℂ` coercion never produces `∞`). -/
 theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
@@ -515,10 +526,80 @@ theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [T2Space
     (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) (hholo : IsHolomorphic (fun x => ({ re := u x, im := v x } : ℂ))) :
     -- We need to ensure the witness 'f' exists to state its pole order.
     ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
-  -- 1. Vanishing order of 1/f is 1
-  have _horder := inverse_dipole_vanishing_order_one X P u v hu
-  -- 2. Order 1 zero implies simple pole
-  sorry
+  classical
+  -- Make decidability of `x = P` available in term mode for the `toMap`
+  -- field below (otherwise the term-level `if x = P then ... else ...`
+  -- would not elaborate).
+  haveI : DecidableEq X := Classical.decEq X
+  -- The carrier map: `∞` at `P`, otherwise the coercion of the holomorphic
+  -- function `u + iv`.  Off `P` this is a finite value; at `P` the dipole
+  -- hypothesis forces the modulus to blow up, matching the `∞` value.
+  refine ⟨{
+      toMap := fun x =>
+        if x = P then (OnePoint.infty : OnePoint ℂ)
+        else (((⟨u x, v x⟩ : ℂ) : OnePoint ℂ))
+      locally_meromorphic := True
+      zeroDivisor := 0
+      poleDivisor := Divisor.point P
+      principalDivisor := -Divisor.point P
+      principalDivisor_eq := by simp
+      poleDivisor_nonneg := fun x => Divisor.effective_point P x
+      zero_or_pole_eq_zero := fun _ => Or.inl rfl
+      toMap_ne_infty_of_poleDivisor_zero := by
+        intro x hx
+        have hne : x ≠ P := by
+          intro h
+          rw [h, Divisor.point_apply_self] at hx
+          exact one_ne_zero hx
+        show (if x = P then (OnePoint.infty : OnePoint ℂ)
+              else (((⟨u x, v x⟩ : ℂ) : OnePoint ℂ))) ≠ OnePoint.infty
+        rw [if_neg hne]
+        exact OnePoint.coe_ne_infty _
+      continuousOn_ne_infty := by
+        -- The non-pole locus `{x | toMap x ≠ ∞}` is exactly `{x | x ≠ P}`.
+        have hset : {x : X | (fun y =>
+              if y = P then (OnePoint.infty : OnePoint ℂ)
+              else (((⟨u y, v y⟩ : ℂ) : OnePoint ℂ))) x ≠ OnePoint.infty}
+            = {x : X | x ≠ P} := by
+          ext x
+          constructor
+          · intro hx hxP
+            apply hx
+            simp [hxP]
+          · intro hxP
+            simp only [Set.mem_setOf_eq, if_neg hxP]
+            exact OnePoint.coe_ne_infty _
+        rw [hset]
+        -- On that set the map agrees with the (globally continuous) coercion
+        -- of `u + iv`; transport continuity through `ContinuousOn.congr`.
+        refine ContinuousOn.congr
+          (OnePoint.continuous_coe.comp hholo.continuous).continuousOn ?_
+        intro x hx
+        simp only [Set.mem_setOf_eq] at hx
+        show (if x = P then (OnePoint.infty : OnePoint ℂ)
+              else (((⟨u x, v x⟩ : ℂ) : OnePoint ℂ)))
+            = (((⟨u x, v x⟩ : ℂ) : OnePoint ℂ))
+        exact if_neg hx
+      toFiniteFun_mdifferentiable := by
+        -- A complex-valued lift of `toMap` is impossible because `toMap P = ∞`
+        -- while the coercion `ℂ → OnePoint ℂ` is never `∞`.
+        intro g_lift hg_lift
+        exfalso
+        have hP : (if (P : X) = P then (OnePoint.infty : OnePoint ℂ)
+                  else (((⟨u P, v P⟩ : ℂ) : OnePoint ℂ)))
+                = ((g_lift P : ℂ) : OnePoint ℂ) := congrFun hg_lift P
+        rw [if_pos rfl] at hP
+        exact OnePoint.coe_ne_infty (g_lift P) hP.symm
+      toMap_eq_infty_of_poleDivisor_pos := by
+        intro x hx
+        have heq : x = P := by
+          by_contra hne
+          rw [Divisor.point_apply_ne hne] at hx
+          exact lt_irrefl _ hx
+        show (if x = P then (OnePoint.infty : OnePoint ℂ)
+              else (((⟨u x, v x⟩ : ℂ) : OnePoint ℂ))) = OnePoint.infty
+        exact if_pos heq
+    }, rfl⟩
 
 
 /-- By adding the harmonic conjugate to the dipole harmonic function,
