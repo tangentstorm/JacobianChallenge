@@ -49,8 +49,12 @@ class SobolevH1 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) where
   /-- The underlying Hilbert space. -/
   carrier : Type*
+  [inst_normed : NormedAddCommGroup carrier]
+  [inst_module : Module ℝ carrier]
   [inst_hilbert : InnerProductSpace ℝ carrier]
   [inst_complete : CompleteSpace carrier]
+  /-- The embedding of Sobolev functions into the space of functions on X. -/
+  toFun : carrier → (X → ℝ)
 
 /-- **Sub-obligation 2.1a: Existence of Sobolev structure.**
 Every compact Riemannian manifold admits a Hilbert space structure on its H^1 Sobolev space. -/
