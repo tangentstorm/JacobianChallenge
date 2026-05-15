@@ -82,7 +82,22 @@ theorem IsHolomorphicAt.comp
 theorem IsHolomorphicAt.congr_of_eventuallyEq
     {f g : X → Y} {p : X} (_hf : IsHolomorphicAt f p)
     (_hfg : f =ᶠ[𝓝 p] g) : IsHolomorphicAt g p := by
-  sorry
+  have hfp : f p = g p := _hfg.self_of_nhds
+  unfold IsHolomorphicAt at *
+  refine _hf.congr ?_
+  have hsymm :
+      Tendsto (fun z => (chartAt ℂ p).symm z) (𝓝 (chartAt ℂ p p)) (𝓝 p) :=
+    by
+      have hcont := (chartAt ℂ p).continuousAt_symm
+        ((chartAt ℂ p).map_source (mem_chart_source ℂ p))
+      change Tendsto (fun z => (chartAt ℂ p).symm z) (𝓝 (chartAt ℂ p p))
+        (𝓝 ((chartAt ℂ p).symm (chartAt ℂ p p))) at hcont
+      simpa [(chartAt ℂ p).left_inv (mem_chart_source ℂ p)] using hcont
+  have hfg_chart :
+      ∀ᶠ z in 𝓝 (chartAt ℂ p p), f ((chartAt ℂ p).symm z) = g ((chartAt ℂ p).symm z) :=
+    hsymm.eventually _hfg
+  filter_upwards [hfg_chart] with z hz
+  simp [chartLocalAt, Function.comp_def, hfp, hz]
 
 
 /-- The *chart-local order of vanishing*. -/

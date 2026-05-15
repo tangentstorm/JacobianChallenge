@@ -1206,7 +1206,7 @@
 {"i":2640,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphic.eq_const_of_eventuallyEq","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2641,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphicAt.add","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2642,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphicAt.comp","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2643,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphicAt.congr_of_eventuallyEq","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2643,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphicAt.congr_of_eventuallyEq","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"proved by pulling eventual equality through chart inverse"}
 {"i":2644,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphicAt.smul","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"proved via AnalyticAt.const_smul"}
 {"i":2645,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphicAt.sum","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"proved by Finset induction using add and constant zero"}
 {"i":2646,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphicAt.sum_smul","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"assembled from IsHolomorphicAt.sum and IsHolomorphicAt.smul"}
