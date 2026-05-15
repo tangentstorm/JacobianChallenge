@@ -216,7 +216,47 @@ theorem mapAnalyticOrderAt_pos
     {f : X → Y} (_hf : IsHolomorphic f)
     (_hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) (x : X) :
     0 < mapAnalyticOrderAt f x := by
-  sorry
+  let z₀ := chartAt ℂ x x
+  let F : ℂ → ℂ := fun z => chartLocalAt f x z - chartLocalAt f x z₀
+  have hF_an : AnalyticAt ℂ F z₀ := (_hf.holomorphicAt x).sub analyticAt_const
+  have hF_zero : F z₀ = 0 := by
+    simp [F, z₀]
+  have horder_ne_zero : analyticOrderAt F z₀ ≠ 0 := by
+    intro h0
+    exact (hF_an.analyticOrderAt_eq_zero.mp h0) hF_zero
+  have horder_ne_top : analyticOrderAt F z₀ ≠ ⊤ := by
+    intro htop
+    have h_const_chart : ∀ᶠ z in 𝓝 z₀, chartLocalAt f x z = chartLocalAt f x z₀ := by
+      have hzero : ∀ᶠ z in 𝓝 z₀, F z = 0 := analyticOrderAt_eq_top.mp htop
+      simpa [F, sub_eq_zero] using hzero
+    have h_source : ∀ᶠ x' in 𝓝 x, x' ∈ (chartAt ℂ x).source :=
+      (chartAt ℂ x).open_source.mem_nhds (mem_chart_source ℂ x)
+    have h_chart_tendsto :
+        Tendsto (fun x' => chartAt ℂ x x') (𝓝 x) (𝓝 z₀) :=
+      (chartAt ℂ x).continuousAt (mem_chart_source ℂ x)
+    have h_chart_eq : ∀ᶠ x' in 𝓝 x,
+        x' ∈ (chartAt ℂ x).source ∧
+          chartLocalAt f x (chartAt ℂ x x') = chartLocalAt f x z₀ :=
+      Filter.Eventually.and h_source (h_chart_tendsto.eventually h_const_chart)
+    have h_target : ∀ᶠ x' in 𝓝 x, f x' ∈ (chartAt ℂ (f x)).source :=
+      _hf.continuous.continuousAt.preimage_mem_nhds
+        ((chartAt ℂ (f x)).open_source.mem_nhds (mem_chart_source ℂ (f x)))
+    have h_local : ∀ᶠ x' in 𝓝 x, f x' = f x := by
+      filter_upwards [h_chart_eq, h_target] with x' hx' hfx'
+      have hchart : chartAt ℂ (f x) (f x') = chartAt ℂ (f x) (f x) := by
+        simpa [chartLocalAt, Function.comp_def, z₀,
+          (chartAt ℂ x).left_inv hx'.1] using hx'.2
+      exact (chartAt ℂ (f x)).injOn hfx' (mem_chart_source ℂ (f x)) hchart
+    exact _hnonconst ⟨f x, fun x' => _hf.eq_const_of_eventuallyEq h_local x'⟩
+  unfold mapAnalyticOrderAt analyticOrderNatAt
+  change 0 < (analyticOrderAt F z₀).toNat
+  exact Nat.pos_of_ne_zero fun hnat0 => by
+    have hcast : (analyticOrderAt F z₀).toNat = analyticOrderAt F z₀ :=
+      ENat.coe_toNat horder_ne_top
+    have horder_zero : analyticOrderAt F z₀ = 0 := by
+      rw [← hcast, hnat0]
+      simp
+    exact horder_ne_zero horder_zero
 
 /-- Smooth maps between complex manifolds are holomorphic in the project-local sense. -/
 theorem isHolomorphic_of_contMDiff
