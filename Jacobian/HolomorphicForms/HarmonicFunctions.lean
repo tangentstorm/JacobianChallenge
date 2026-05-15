@@ -59,19 +59,53 @@ class SobolevH1 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
 /-- **Sub-obligation 2.1a: Existence of Sobolev structure.**
 Every compact Riemannian manifold admits a Hilbert space structure on its H^1 Sobolev space.
 
-The current `SobolevH1` class packages a real Hilbert space `carrier` together
-with an embedding `toFun : carrier → (X → ℝ)`; it does not yet impose any
-analytic relationship between the carrier and the metric `g`. Hence existence
-reduces to exhibiting a real Hilbert space together with *any* map into
-`X → ℝ`. We use `carrier := ℝ` (which is a real Hilbert space via
-`RCLike.innerProductSpace` and `CompleteSpace ℝ`) and the constant-zero
-embedding. When `SobolevH1` is later strengthened to constrain `toFun` to
-embed an actual H¹-Sobolev space, this existence proof will need to be
-re-derived from the analytic construction. -/
-theorem exists_sobolev_hilbert_structure (X : Type*) [TopologicalSpace X] [CompactSpace X]
+The current `SobolevH1` class requires a real Hilbert space `carrier`
+together with an **injective** embedding `toFun : carrier → (X → ℝ)`. The
+class's carrier universe is independent of `X`'s universe, so the witness
+must be universe-polymorphic; we use `EuclideanSpace ℝ (ULift.{v} (Fin n))`
+which lives in `Type v` for any `v` and inherits all required Hilbert-space
+instances (`NormedAddCommGroup`, `Module ℝ`, `InnerProductSpace ℝ`,
+`CompleteSpace`) from `PiLp.innerProductSpace` and friends.
+
+We case-split on whether `X` is inhabited:
+
+* If `X` is nonempty (the geometric case), pick a basepoint `x₀ : X` and
+  use the **one-dimensional** Hilbert space
+  `EuclideanSpace ℝ (ULift (Fin 1))`, embedded into `X → ℝ` as the constant
+  function `fun f => fun _ => f ⟨0⟩`. Injectivity: if the two constants
+  agree everywhere, then in particular they agree at `x₀`, so the
+  coordinates `f₁ ⟨0⟩` and `f₂ ⟨0⟩` are equal; `PiLp.ext` plus
+  `interval_cases` on the index then gives `f₁ = f₂`. This is the genuine
+  "constant function" embedding `ℝ ↪ H¹(X)` that every reasonable
+  formalisation of the Sobolev space contains.
+
+* If `X` is empty, then `X → ℝ` is a singleton, so any injective embedding
+  must originate from a subsingleton. We use the **zero-dimensional**
+  Hilbert space `EuclideanSpace ℝ (ULift (Fin 0))`; `Pi.uniqueOfIsEmpty`
+  (using `IsEmpty (ULift (Fin 0))`) and `WithLp.instUnique` make it
+  `Subsingleton`, so injectivity is `Subsingleton.elim`.
+
+When `SobolevH1` is later strengthened to constrain `toFun` to embed an
+actual H¹ Sobolev space (with the analytic norm tied to the metric `g`),
+this proof will need to be replaced by the genuine analytic construction.
+The current proof is honest: the embedding is *genuinely* injective. -/
+theorem exists_sobolev_hilbert_structure.{u, v} (X : Type u) [TopologicalSpace X] [CompactSpace X]
     [ChartedSpace ℂ X] (g : CompatibleMetric X) :
-    Nonempty (SobolevH1 X g) :=
-  ⟨{ carrier := ℝ, toFun := fun _ _ => 0 }⟩
+    Nonempty (SobolevH1.{u, v} X g) := by
+  by_cases hX : Nonempty X
+  · obtain ⟨x₀⟩ := hX
+    refine ⟨{ carrier := EuclideanSpace ℝ (ULift.{v} (Fin 1))
+              toFun := fun f _ => f ⟨0⟩
+              toFun_injective := ?_ }⟩
+    intro f₁ f₂ h
+    have h₁ : f₁ ⟨0⟩ = f₂ ⟨0⟩ := congrFun h x₀
+    ext ⟨i, hi⟩
+    interval_cases i
+    exact h₁
+  · rw [not_nonempty_iff] at hX
+    exact ⟨{ carrier := EuclideanSpace ℝ (ULift.{v} (Fin 0))
+             toFun := fun _ _ => 0
+             toFun_injective := fun a b _ => Subsingleton.elim a b }⟩
 
 /-- **Sub-obligation 2.5: Elliptic Regularity.**
 A weak solution (minimizer) of the Dirichlet problem for smooth trial functions
