@@ -1195,7 +1195,7 @@
 {"i":2628,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"theorem","s":"constant_zeros","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2629,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"def","s":"neg_meromorphic","n":2,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2630,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"def","s":"poles","n":2,"o":2,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2631,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"def","s":"smul_meromorphic","n":0,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"isolated scalar multiplication continuity and meromorphicity fields as axioms"}
+{"i":2631,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"def","s":"smul_meromorphic","n":2,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2632,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"axiom","s":"zeros","n":0,"o":2,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"isolated finite support of meromorphic zero divisor"}
 {"i":2633,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"def","s":"riemannRochSpace","n":2,"o":2,"r":1,"e":null,"u":[1482,1486,1495,1383],"d":[1390,1391,1512,1742,1930,2276,2305,2594],"a":"","c":"wontdo","b":"def:riemann-roch-space","t":""}
 {"i":2634,"f":"Jacobian/Periods/PullbackNaturality.lean","k":"axiom","s":"path_contDiffOn_obligation","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"isolated local chart-source C1 bridge from PiecewiseC1PathRegularity"}
