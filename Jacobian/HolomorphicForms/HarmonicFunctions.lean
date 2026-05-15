@@ -232,11 +232,13 @@ theorem holomorphic_of_CR {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 
 /-- **Sub-obligation 3.1: The conjugate 1-form is closed.**
 For a harmonic function u, the 1-form *du is closed (d*du = 0). -/
-theorem conjugate_one_form_closed (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (g : CompatibleMetric X) (u : X → ℝ) (hu : IsHarmonic g u) :
-    -- Placeholder for d(*du) = 0
-    True :=
-  trivial
+theorem conjugate_one_form_closed (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (g : CompatibleMetric X) (u : X → ℝ) (hu : IsHarmonic g u) :
+    exteriorDerivative 1 X (HodgeStar g (differentialOneForm_of_real u)) = 0 := by
+  -- This is a substantive statement now.
+  sorry
 
 /-- **Sub-obligation 3.2: Closed forms are exact in genus 0.**
 If H^1_dR(X) = 0, every closed 1-form is exact. -/
@@ -251,15 +253,17 @@ theorem exact_of_closed_in_genus_zero (X : Type*) [TopologicalSpace X] [T2Space 
 
 /-- If H^1_dR(X) = 0, any harmonic function (with appropriate domain)
 admits a harmonic conjugate, making u + iv holomorphic. -/
-theorem harmonic_conjugate_exists (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (g : CompatibleMetric X) (u : X → ℝ)
-    (hb1 : True) (hu : IsHarmonic g u) :
+theorem harmonic_conjugate_exists (X : Type*) [TopologicalSpace X] [T2Space X]
+    [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (g : CompatibleMetric X) (u : X → ℝ)
+    (h_genus : analyticHarmonicGenus X = 0) (hu : IsHarmonic g u) :
     ∃ v : X → ℝ, SatisfiesCauchyRiemann g u v := by
   -- 1. *du is a closed 1-form
   have hclosed := conjugate_one_form_closed X g u hu
-  -- 2. H^1 = 0 implies *du is exact, so *du = dv
+  -- 2. analyticHarmonicGenus X = 0 implies *du is exact, so *du = dv
   -- We extract the potential v from the exactness of *du.
-  -- This v satisfies the Cauchy-Riemann equations with u.
   sorry
 
 /-- **Sub-obligation 1 assembly.**
@@ -333,7 +337,9 @@ Note: Mathlib provides the core analytic result in
 This sub-obligation represents lifting that result to complex manifolds
 by evaluating it in a local chart around P. -/
 theorem holomorphic_at_P_of_continuous_at_infty (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (P : X) (f : X → OnePoint ℂ) (hholo : IsHolomorphicAt f (sorry)) (hcont : True) :
+    [ChartedSpace ℂ X] (P : X) (f : X → OnePoint ℂ) 
+    (hholo : ∀ x ≠ P, IsHolomorphicAt f x)
+    (hcont : Filter.Tendsto f (𝓝 P) (𝓝 OnePoint.infinity)) :
     IsHolomorphicAt f P := by
   -- Proof: consider 1/f in a chart around P, which is bounded near P,
   -- hence has a removable singularity and vanishes at P by the Mathlib theorem.
@@ -355,10 +361,12 @@ theorem dipole_harmonic_holomorphic_extension (X : Type*) [TopologicalSpace X]
 /-- **Sub-obligation 4a: Order of vanishing of 1/f.**
 If f is constructed from a dipole singularity u ~ Re(1/z), then 1/f
 has a zero of order 1 at P. -/
-theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (P : X) (u v : X → ℝ) :
-    True := by
-  -- Placeholder for order_vanishing (1/f) P = 1
+theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X] [T2Space X]
+    [ChartedSpace ℂ X] [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (u v : X → ℝ) (hu : HasRealDipoleSingularity P u) :
+    mapAnalyticOrderAt (fun x => (⟨u x, v x⟩ : ℂ)⁻¹) P = 1 := by
+  -- Fixed conclusion to assert order of vanishing is 1.
   sorry
 
 /-- **Sub-obligation 4 assembly.**
