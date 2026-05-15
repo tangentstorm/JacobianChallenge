@@ -90,7 +90,48 @@ theorem dirichlet_energy_coercive (X : Type*) [TopologicalSpace X] [ChartedSpace
 /-- **Sub-obligation 2.4b: Lax-Milgram application.**
 By the Lax-Milgram theorem (available in Mathlib at `Mathlib.Analysis.InnerProductSpace.LaxMilgram`),
 there exists a unique (up to constants) minimizer of the Dirichlet energy for the given trial function.
-This effectively provides a weak solution to the Poisson equation `Δ u = Δ u₀`. -/
+This effectively provides a weak solution to the Poisson equation `Δ u = Δ u₀`.
+
+BLOCKER (sorry ID 1375, 2026-05-15): the statement as written is mathematically
+too weak to require Lax-Milgram and admits a degenerate witness.
+Specifically, taking `v := fun x => -u₀ x` makes `u₀ x + v x = 0` pointwise,
+and the zero function `f ≡ 0` is `IsHarmonic g` for free — the witness
+`f_holo := fun _ => (0 : ℂ)` is `IsHolomorphicAt` everywhere (constant
+functions are `AnalyticAt`) and `(0 : ℂ).re = 0 = f x`. This means the
+conclusion `∃ v, IsHarmonic g (u₀ + v)` is trivially provable for *any*
+`u₀ : X → ℝ`, with no recourse to a Sobolev space, an energy functional,
+the Lax-Milgram theorem, or even the metric `g`.
+
+The downstream consumer `exists_dipole_harmonic` (line ~146) needs a
+non-degenerate `v` so that `u₀ + v` still has the dipole singularity at `P`
+(the `hu_sing` sorry on line ~154). The degenerate witness `v = -u₀`
+cancels the dipole, so a proof of `lax_milgram_minimizer` via that
+witness would make `hu_sing` unprovable, exposing the gap.
+
+Missing prerequisites to make this a real Lax-Milgram application:
+  1. A `SobolevH1 X g` instance must be assumed, and `v` must come from
+     `inst.carrier`, e.g.
+       `[inst : SobolevH1 X g] (u₀ : inst.carrier) :
+          ∃ v : inst.carrier,
+            IsHarmonic g (fun x => inst.toFun u₀ x + inst.toFun v x)`
+     so that `v` is forced to live in `H¹(X)`, ruling out the
+     pointwise-cancellation witness.
+  2. A bilinear form on `inst.carrier` (the Dirichlet energy as a
+     continuous bilinear map) plus its coercivity must be available so
+     that Mathlib's `LaxMilgram.continuousLinearEquivOfBilin` can be
+     applied.
+  3. Either the trial function `u₀` must be restricted to be smooth
+     (so its singularity is preserved by adding `H¹` data), or the
+     conclusion must additionally assert a regularity / orthogonality
+     property of `u₀ + v` distinguishing it from `0` when `u₀` is
+     singular.
+
+Until the statement is strengthened upstream (this prompt forbids changing
+the theorem signature), there is no non-degenerate proof to write, and a
+degenerate proof would silently destroy the downstream singularity
+argument. Leaving the `sorry` in place per the "If blocked: leave
+theorem statements unchanged and add comments naming the missing
+prerequisite" instruction. -/
 theorem lax_milgram_minimizer (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (u₀ : X → ℝ) :
     ∃ v : X → ℝ, IsHarmonic g (fun x => u₀ x + v x) := by
