@@ -261,16 +261,13 @@ end ChartIndependence
 
 section Compatibility
 
-/-- Local constancy of a holomorphic map on a preconnected source forces
-global constancy.
-
-This is the project-local analytic-continuation principle for holomorphic
-maps into a Hausdorff charted target. -/
-axiom IsHolomorphic.eq_const_of_eventuallyEq
+/-- Local constancy of a holomorphic map on a preconnected source forces global constancy. -/
+theorem IsHolomorphic.eq_const_of_eventuallyEq
     [PreconnectedSpace X] [T2Space Y]
     {f : X → Y} (_hf : IsHolomorphic f) {y₀ : Y} {x₁ : X}
     (_h_local : ∀ᶠ x in 𝓝 x₁, f x = y₀) :
-    ∀ x, f x = y₀
+    ∀ x, f x = y₀ := by
+  sorry
 
 /-- Finite fibres of a nonconstant holomorphic map on a compact source.
 
