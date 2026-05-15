@@ -126,7 +126,7 @@ theorem _root_.ContinuousLinearMap.analyticAt_ℂ {E F : Type*}
 
 /-- Identification between the cotangent fiber and ℂ. -/
 noncomputable def cotangentFiberIso : (ℂ →L[ℂ] ℂ) ≃L[ℂ] ℂ :=
-  sorry
+  (ContinuousLinearMap.toSpanSingletonCLE (𝕜 := ℂ) (E := ℂ)).symm
 
 /-- **Plan leaf 15 (NEW).** CotangentModelFiber ℂ is a manifold over ℂ. -/
 axiom instChartedSpaceCotangentModelFiber :

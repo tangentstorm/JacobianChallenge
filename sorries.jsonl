@@ -1211,7 +1211,7 @@
 {"i":2645,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphicAt.sum","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2646,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphicAt.sum_smul","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2647,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"chartAt_symm_transition_deriv_ne_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2648,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"def","s":"cotangentFiberIso","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2648,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"def","s":"cotangentFiberIso","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"implemented as symmetric ContinuousLinearMap.toSpanSingletonCLE"}
 {"i":2649,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"axiom","s":"instChartedSpaceCotangentModelFiber","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"isolated charted-space structure on cotangent model fiber as instance axiom"}
 {"i":2650,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"axiom","s":"instIsManifoldCotangentModelFiber","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"isolated complex manifold structure on cotangent model fiber as instance axiom"}
 {"i":2651,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"axiom","s":"isHolomorphic_finite_fiber","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"isolated compact-source finite-fibre analytic input as axiom"}
