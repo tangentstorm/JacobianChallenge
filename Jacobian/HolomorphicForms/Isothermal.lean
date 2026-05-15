@@ -137,6 +137,25 @@ theorem exists_compatible_metric (X : Type*) [TopologicalSpace X] [T2Space X]
   -- Glue.
   exact ⟨glue_local_metrics X atlas local_gs pou h_pou⟩
 
+/-- Manifold derivative of an open partial homeomorphism, defined as the
+manifold derivative of its underlying function `↑e : X → Y`.
+
+The redesigned `IsIsothermalAt` predicate uses dot notation `e.mfderiv I I' x`,
+but neither Mathlib nor this project provides such a projection on
+`OpenPartialHomeomorph`. We supply a thin wrapper that just forwards to
+`_root_.mfderiv` on the function coercion, so the existing predicate
+definition continues to elaborate. This adds no mathematical content. -/
+noncomputable def _root_.OpenPartialHomeomorph.mfderiv
+    {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {E E' : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E]
+    [NormedAddCommGroup E'] [NormedSpace 𝕜 E']
+    [ChartedSpace E X] [ChartedSpace E' Y]
+    (e : OpenPartialHomeomorph X Y) (I : ModelWithCorners 𝕜 E E)
+    (I' : ModelWithCorners 𝕜 E' E') (x : X) :
+    TangentSpace I x →L[𝕜] TangentSpace I' (e x) :=
+  _root_.mfderiv I I' (e : X → Y) x
+
 /-- A chart is isothermal for a metric g if the metric is conformal to the
 Euclidean metric in that chart. -/
 def IsIsothermalAt (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -146,10 +165,68 @@ def IsIsothermalAt (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
       g.tensor x v w = kappa * euclideanOnComplex (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) e x v) (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) e x w)
 
 /-- **Sub-obligation 1.4: Beltrami Equation / Existence of Isothermal Coordinates.**
+
 On any 2-manifold with a Riemannian metric, there exist local coordinates
 `(u, v)` in which the metric takes the form `λ(u, v) (du² + dv²)`. This is
 the core analytic result for the existence of complex structures from
-metrics. -/
+metrics.
+
+### Status: BLOCKED on missing infrastructure.
+
+The substantive proof requires the following steps:
+
+1. **Linear-algebra Cholesky/square-root step.** Given the positive-definite
+   symmetric ℝ-bilinear form `q := g.tensor x` on `TangentSpace 𝓘(ℂ, ℂ) x = ℂ`
+   (viewed as ℝ²), produce a continuous ℝ-linear equivalence
+   `L : ℂ ≃L[ℝ] ℂ` such that `q v w = ⟪L v, L w⟫_ℝ` for all `v w`.
+   This is the operator/matrix square root of the positive-definite operator
+   represented by `q`; in 2D it can be written explicitly via Cholesky
+   coefficients of `q` in the standard ℝ-basis `{1, i}`. The required
+   prerequisite is either `Matrix.PosDef.sqrt` on a `2 × 2` matrix or
+   `LinearMap.IsPositive`'s square root applied to the operator
+   `v ↦ (LinearMap.toContinuousLinearMap ∘ q.toLinearMap) v`.
+
+2. **Chart construction.** Define the candidate isothermal chart
+   `e := (chartAt ℂ x).trans (L.toHomeomorph.toOpenPartialHomeomorph)`.
+   By `OpenPartialHomeomorph.coe_trans`, `↑e = ↑L ∘ ↑(chartAt ℂ x)`,
+   and `e.source = (chartAt ℂ x).source` (since `L` is a global homeomorphism).
+   Hence `x ∈ e.source` follows from `mem_chart_source ℂ x`.
+
+3. **Chain-rule mfderiv computation.** Under `[TopologicalSpace X] [ChartedSpace ℂ X]`
+   with the model `𝓘(ℂ, ℂ)`, one needs to show
+   `mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (↑e) x = (L : ℂ →L[ℝ] ℂ)`. Two sublemmas are
+   required:
+   * `mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (↑(chartAt ℂ x)) x = ContinuousLinearMap.id ℝ ℂ`
+     — the manifold derivative of a self-chart is the identity. (This is the
+     content of `Jacobian.Periods.TrivializationContinuousLinearMapAt.mfderiv_chartAt_eq_id_of_stable`,
+     but that lemma requires the `[StableChartAt ℂ X]` instance, which this
+     theorem's signature does not assume.)
+   * Chain rule: `mfderiv I I (L ∘ ↑c) x = (L : ℂ →L[ℝ] ℂ).comp (mfderiv I I (↑c) x)`,
+     using `MDifferentiableAt.comp` and the fact that a continuous linear
+     equivalence is `MDifferentiable` everywhere.
+
+4. **Closing the goal.** With `L` chosen as in step 1 and the mfderiv computed
+   in step 3, the witness `κ := 1` discharges the conformality equation:
+   `g.tensor x v w = ⟪L v, L w⟫_ℝ = euclideanOnComplex (L v) (L w)`.
+
+### Missing prerequisites in this project's import set
+
+* The `[StableChartAt ℂ X]` instance is not part of the theorem's signature.
+  Without it, computing `mfderiv (↑(chartAt ℂ x)) x = id` requires unfolding
+  `mfderiv` through `writtenInExtChartAt` and `extChartAt` on the model
+  `𝓘(ℂ, ℂ)`; the necessary helper lemma
+  `mfderiv_chartAt_self_eq_id : mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (↑(chartAt ℂ x)) x = ContinuousLinearMap.id ℝ ℂ`
+  does not yet exist in this codebase under just `[ChartedSpace ℂ X]`.
+* A Cholesky/square-root constructor producing a `ℂ ≃L[ℝ] ℂ` from a
+  positive-definite symmetric ℝ-bilinear form on `ℂ` is not packaged in
+  Mathlib at this commit; one would have to extract it from
+  `Matrix.PosDef.sqrt` on the `2 × 2` matrix representation in the basis
+  `{1, i}`, or from `LinearMap.IsSymmetric.exists_orthonormalBasis_apply`
+  for the 2D case.
+
+Both prerequisites are out of scope for an edit limited to this file. The
+sorry remains here, naming the missing infrastructure; a follow-up task
+introducing the two helper lemmas above can discharge it. -/
 theorem exists_isothermal_coordinates_local (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (g : CompatibleMetric X) (x : X) :
     ∃ (chart : OpenPartialHomeomorph X ℂ), IsIsothermalAt X g chart x := by
