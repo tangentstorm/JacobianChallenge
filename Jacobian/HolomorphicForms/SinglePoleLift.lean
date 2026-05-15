@@ -237,8 +237,25 @@ noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (hne : Q1 ≠ Q2) : Meromor
         · contradiction
         · contradiction
       · exact OnePoint.coe_ne_infty _
-    continuousOn_ne_infty := by sorry
-    toFiniteFun_mdifferentiable := fun _ _ => by sorry
+    continuousOn_ne_infty := by
+      -- On the locus where `toMap ≠ ∞`, the if-branch is forced to be `else`,
+      -- so the map is constantly `((0:ℂ):OnePoint ℂ)`.  Continuity then comes
+      -- from `continuousOn_const` via `ContinuousOn.congr`.
+      refine (continuousOn_const (c := ((0 : ℂ) : OnePoint ℂ))).congr ?_
+      intro x hx
+      simp only [Set.mem_setOf_eq] at hx
+      show (if x = Q1 ∨ x = Q2 then (OnePoint.infty : OnePoint ℂ) else ((0 : ℂ) : OnePoint ℂ)) = ((0 : ℂ) : OnePoint ℂ)
+      by_cases h : x = Q1 ∨ x = Q2
+      · exfalso; apply hx; rw [if_pos h]
+      · rw [if_neg h]
+    toFiniteFun_mdifferentiable := fun g hg => by
+      -- The hypothesis `toMap = (fun x => (g x : OnePoint ℂ))` is unsatisfiable:
+      -- evaluating at `Q1` gives `∞ = (g Q1 : OnePoint ℂ)`, contradicting
+      -- `OnePoint.coe_ne_infty`.
+      exfalso
+      have h := congr_fun hg Q1
+      rw [if_pos (Or.inl rfl)] at h
+      exact OnePoint.coe_ne_infty (g Q1) h.symm
     toMap_eq_infty_of_poleDivisor_pos := fun x hx => by
       have heq : x = Q1 ∨ x = Q2 := by
         by_contra h_nor
@@ -249,6 +266,16 @@ noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (hne : Q1 ≠ Q2) : Meromor
         rw [hzero] at hx'
         exact lt_irrefl _ hx'
       rw [if_pos heq]
+    -- BLOCKER (sorry 1407, partial): the degenerate `toMap` is constantly
+    -- `((0:ℂ):OnePoint ℂ)` on the non-pole locus, so any lift `g : X → ℂ`
+    -- satisfying `toMap x = (g x : OnePoint ℂ)` for non-pole `x` is forced to
+    -- be `0` there.  In every punctured neighbourhood of a pole `P` we can
+    -- find non-pole points (since `Q1 ≠ Q2` and the chart at `P` injects an
+    -- open subset of `ℂ` into `X`), so `‖g·‖` cannot tend to `atTop` along
+    -- `nhdsWithin P {P}ᶜ`.  Discharging this honestly requires replacing the
+    -- toMap with a genuine meromorphic representative (compare
+    -- `singlePoleSphereLift`, which uses `cMfldBump Q x / (φ x - φ Q)`).
+    -- The anti-cheat clause forbids weakening `toMap` here.
     exists_modulus_atTop_at_pole := fun _ _ => by sorry
     hasBranchedCoverDataOfPoleDegree := twoPole_hasBranchedCoverDataOfPoleDegree Q1 Q2 hne }
 
