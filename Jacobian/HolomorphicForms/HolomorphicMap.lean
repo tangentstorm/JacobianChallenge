@@ -267,17 +267,13 @@ theorem IsHolomorphic.eq_const_of_eventuallyEq
     ∀ x, f x = y₀ := by
   sorry
 
-/-- Finite fibres of a nonconstant holomorphic map on a compact source.
-
-This is the project-level analytic finiteness input: nonconstant
-holomorphic maps between compact Riemann surfaces have discrete, hence
-finite, fibres. The usual proof uses local mapping normal form plus compact
-Hausdorffness of the source. -/
-axiom isHolomorphic_finite_fiber
+/-- Finite fibres of a nonconstant holomorphic map on a compact source. -/
+theorem isHolomorphic_finite_fiber
     [CompactSpace X] [PreconnectedSpace X] [T2Space Y]
     {f : X → Y} (_hf : IsHolomorphic f)
     (_hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) (y : Y) :
-    (f ⁻¹' {y}).Finite
+    (f ⁻¹' {y}).Finite := by
+  sorry
 
 /-- Positivity of the local analytic order for a nonconstant holomorphic map. -/
 theorem mapAnalyticOrderAt_pos
