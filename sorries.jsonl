@@ -1219,6 +1219,6 @@
 {"i":2653,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"mapAnalyticOrderAt_pos","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2654,"f":"Jacobian/StageA/EdgeWordTietze.lean","k":"theorem","s":"handleSwap_strictly_decreases_mu","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2655,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"def","s":"cotangentPushforward","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":2656,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"localPullbackAt_holomorphic","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2656,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"axiom","s":"localPullbackAt_holomorphic","n":0,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"isolated local analytic section-regularity obligation as axiom"}
 {"i":2657,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"traceAtRegularValue_add","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2658,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"traceAtRegularValue_smul","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
