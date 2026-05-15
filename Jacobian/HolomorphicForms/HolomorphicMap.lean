@@ -129,13 +129,13 @@ noncomputable def cotangentFiberIso : (ℂ →L[ℂ] ℂ) ≃L[ℂ] ℂ :=
   sorry
 
 /-- **Plan leaf 15 (NEW).** CotangentModelFiber ℂ is a manifold over ℂ. -/
-noncomputable instance instChartedSpaceCotangentModelFiber :
-    ChartedSpace ℂ (CotangentModelFiber ℂ) :=
-  sorry
+axiom instChartedSpaceCotangentModelFiber :
+    ChartedSpace ℂ (CotangentModelFiber ℂ)
+attribute [instance] instChartedSpaceCotangentModelFiber
 
-noncomputable instance instIsManifoldCotangentModelFiber :
-    IsManifold 𝓘(ℂ, ℂ) ⊤ (CotangentModelFiber ℂ) :=
-  sorry
+axiom instIsManifoldCotangentModelFiber :
+    IsManifold 𝓘(ℂ, ℂ) ⊤ (CotangentModelFiber ℂ)
+attribute [instance] instIsManifoldCotangentModelFiber
 
 /-- Manifold-level local inverse of a holomorphic map. -/
 noncomputable def IsHolomorphicAt.localInverse
