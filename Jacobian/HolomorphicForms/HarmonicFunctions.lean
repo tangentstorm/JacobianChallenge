@@ -435,13 +435,39 @@ theorem magnitude_re_inv_z_tendsto_infty :
   exact Filter.Tendsto.comp tendsto_inv_nhdsGT_zero h1
 
 /-- **Sub-obligation 2a: Singularity magnitude limit.**
-The dipole singularity Re(1/z) has magnitude tending to infinity. -/
+The dipole singularity Re(1/z) has magnitude tending to infinity.
+
+BLOCKED. A faithful proof requires pulling `f = u + iv` back through the
+chart produced by `HasRealDipoleSingularity P u` and identifying the
+chart-local representative with `1/(w - z₀)` modulo a bounded holomorphic
+correction. Note that `|Re(1/z)| ↛ ∞` along the imaginary axis, so the
+bound has to come from the holomorphic completion `u + iv`, not from `u`
+alone.
+
+The chart-pullback machinery (`IsHolomorphicAt.{add, smul, comp,
+congr_of_eventuallyEq}`) is now real in
+`Jacobian/HolomorphicForms/HolomorphicMap.lean`. What is still missing:
+
+* `holomorphic_of_CR` (sorry at line 347 of this file) is needed to turn
+  the `SatisfiesCauchyRiemann g u v` hypothesis into the manifold-level
+  holomorphic statement `IsHolomorphic (fun x => ⟨u x, v x⟩)`.
+* Uniqueness of holomorphic functions with a given real part up to
+  imaginary constants, applied on the punctured chart-disk to identify
+  `f ∘ chart.symm - 1/(· - z₀)` with the local holomorphic completion of
+  the harmonic regular part `v_local`. Mathlib's
+  `Mathlib.Analysis.Complex.RealDeriv` and
+  `Mathlib.Analysis.Complex.RemovableSingularity` provide the local
+  pieces, but the gluing through `OpenPartialHomeomorph` is not yet
+  wired up.
+* `Filter.Tendsto` transfer through `chart : OpenPartialHomeomorph X ℂ`
+  to push the chart-side limit `norm (1/(w - z₀)) → ⊤` back to `X`. -/
 theorem dipole_singularity_magnitude_tendsto_infty (X : Type*) [TopologicalSpace X]
     [ChartedSpace ℂ X] (g : CompatibleMetric X) (P : X) (u v : X → ℝ)
     (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) :
     Filter.Tendsto (fun x : X => norm ({ re := u x, im := v x } : ℂ)) (nhdsWithin P {P}ᶜ) Filter.atTop := by
-  -- 1. Locally u + iv ~ 1/z
-  -- 2. Apply magnitude_re_inv_z_tendsto_infty
+  -- 1. Locally u + iv ~ 1/(chart - z₀)
+  -- 2. Apply magnitude_re_inv_z_tendsto_infty after pulling back through `chart`.
+  -- See the theorem docstring for the missing prerequisites.
   sorry
 
 /-- **Sub-obligation 2b: Magnitude limit implies OnePoint continuity.**
