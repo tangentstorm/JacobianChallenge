@@ -160,8 +160,11 @@ H^1_dR(X, C) ≅ H^0(X, Ω^1) ⊕ H^0(X, Ω_bar^1). -/
 theorem hodge_decomposition (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    True := by
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [ConnectedSpace X] [FiniteDimensionalHolomorphicOneForms ℂ X] :
+    analyticHarmonicGenus X = 2 * analyticGenus ℂ X := by
+  -- This is a substantive statement now.
+  -- See Jacobian/HolomorphicForms/HodgeDecomposition.lean for the arithmetic assembly.
   sorry
 
 /-- **Sub-obligation 5.2: Dimension equality.**
