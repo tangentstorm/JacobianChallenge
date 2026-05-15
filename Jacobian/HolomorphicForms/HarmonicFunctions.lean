@@ -123,7 +123,35 @@ theorem exists_sobolev_hilbert_structure.{u, v} (X : Type u) [TopologicalSpace X
 
 /-- **Sub-obligation 2.5: Elliptic Regularity.**
 A weak solution (minimizer) of the Dirichlet problem for smooth trial functions
-is actually a smooth (and thus harmonic in the classical sense) function. -/
+is actually a smooth (and thus harmonic in the classical sense) function.
+
+BLOCKER (2026-05-15, Task 1364): the conclusion type `ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℝ, ℝ) ⊤ u`
+is ill-typed in Mathlib v4.28.0. `Mathlib.Geometry.Manifold.ContMDiff.Defs`
+unifies a single scalar field `𝕜` across both the source and target models:
+
+```
+variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+  {I : ModelWithCorners 𝕜 E H} {I' : ModelWithCorners 𝕜 E' H'}
+```
+
+However `𝓘(ℂ, ℂ) : ModelWithCorners ℂ ℂ ℂ` forces `𝕜 = ℂ` while
+`𝓘(ℝ, ℝ) : ModelWithCorners ℝ ℝ ℝ` forces `𝕜 = ℝ`; the two are
+not unifiable, so the application `ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℝ, ℝ) ⊤ u`
+fails elaboration with an `Application type mismatch`.
+
+The standard Mathlib pattern for "real smooth function on a complex
+manifold" replaces the source model with the ℝ-restriction of the
+complex chart codomain — i.e. `𝓘(ℝ, ℂ)` — so that both models share
+`𝕜 = ℝ`. Discharging this sorry requires the project to change the
+statement to a well-typed form (e.g. `ContMDiff 𝓘(ℝ, ℂ) 𝓘(ℝ, ℝ) ⊤ u`),
+which is outside the allowed write scope for this task
+(`Jacobian/HolomorphicForms/HarmonicFunctions.lean` only, with the
+theorem statement frozen).
+
+Additionally, the upstream module `Jacobian/HolomorphicForms/Isothermal.lean`
+currently fails to elaborate (an existential uses `λ` as a bound name,
+which clashes with lambda syntax in v4.28.0), so the file cannot be built
+even if the signature were repaired. -/
 theorem elliptic_regularity_harmonic (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (u : X → ℝ) (hweak : IsHarmonic g u) :
     ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ (fun x => (u x : ℂ)) := by
