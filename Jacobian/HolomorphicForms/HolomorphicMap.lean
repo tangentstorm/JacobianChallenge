@@ -168,7 +168,40 @@ theorem chartAt_symm_transition_deriv_ne_zero
     {q : Z} (e : OpenPartialHomeomorph Z ℂ)
     (he : e ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω Z) (hq : q ∈ e.source) :
     deriv ((⇑e) ∘ (chartAt ℂ q).symm) (chartAt ℂ q q) ≠ 0 := by
-  sorry
+  have hg : AnalyticAt ℂ (chartAt ℂ q ∘ e.symm) (e q) :=
+    transition_analyticAt e he hq
+  have hgep : (chartAt ℂ q ∘ e.symm) (e q) = chartAt ℂ q q := by
+    simp [Function.comp_apply, e.left_inv hq]
+  have hg' : AnalyticAt ℂ (e ∘ (chartAt ℂ q).symm) (chartAt ℂ q q) :=
+    analyticAt_transition_of_mem_maximalAtlas
+      (IsManifold.chart_mem_maximalAtlas q) he (mem_chart_source ℂ q) hq
+  have hid : (e ∘ (chartAt ℂ q).symm) ∘ (chartAt ℂ q ∘ e.symm) =ᶠ[𝓝 (e q)] id := by
+    have hmem : e.target ∩ e.symm ⁻¹' (chartAt ℂ q).source ∈ 𝓝 (e q) :=
+      target_inter_preimage_mem_nhds e hq
+    filter_upwards [hmem] with y hy
+    obtain ⟨hy₁, hy₂⟩ := hy
+    show e ((chartAt ℂ q).symm ((chartAt ℂ q) (e.symm y))) = y
+    rw [(chartAt ℂ q).left_inv hy₂, e.right_inv hy₁]
+  have hg_d : HasDerivAt (chartAt ℂ q ∘ e.symm)
+      (deriv (chartAt ℂ q ∘ e.symm) (e q)) (e q) :=
+    hg.differentiableAt.hasDerivAt
+  have hg'_d : HasDerivAt (e ∘ (chartAt ℂ q).symm)
+      (deriv (e ∘ (chartAt ℂ q).symm) (chartAt ℂ q q)) (chartAt ℂ q q) :=
+    hg'.differentiableAt.hasDerivAt
+  have hcomp : HasDerivAt ((e ∘ (chartAt ℂ q).symm) ∘ (chartAt ℂ q ∘ e.symm))
+      (deriv (e ∘ (chartAt ℂ q).symm) (chartAt ℂ q q) *
+        deriv (chartAt ℂ q ∘ e.symm) (e q)) (e q) :=
+    HasDerivAt.comp_of_eq (e q) hg'_d hg_d hgep.symm
+  have hcomp1 : HasDerivAt ((e ∘ (chartAt ℂ q).symm) ∘ (chartAt ℂ q ∘ e.symm))
+      (1 : ℂ) (e q) :=
+    (hasDerivAt_id (e q)).congr_of_eventuallyEq hid
+  have hprod :
+      deriv (e ∘ (chartAt ℂ q).symm) (chartAt ℂ q q) *
+        deriv (chartAt ℂ q ∘ e.symm) (e q) = 1 :=
+    hcomp.unique hcomp1
+  intro h
+  rw [h, zero_mul] at hprod
+  exact zero_ne_one hprod
 
 /-- The chart-local order of vanishing is independent of choice of charts.
 
