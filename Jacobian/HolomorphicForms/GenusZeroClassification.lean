@@ -847,19 +847,24 @@ theorem contMDiff_homeomorph_to_onePointCx_symm
   sorry
 -/
 
-/-- **Structural axiom (G1b, corrected).** A compact connected Riemann
-surface homeomorphic to `OnePoint ℂ` (= ℂℙ¹) admits a *biholomorphism*
-to `OnePoint ℂ` — i.e. there EXISTS a homeomorphism that is `ContMDiff`
-in both directions.
+/-- **Structural axiom (G1a, uniformization at genus 0).** A compact
+connected Riemann surface homeomorphic to `OnePoint ℂ` (= ℂℙ¹) admits a
+*biholomorphism* to `OnePoint ℂ` — i.e. there EXISTS a homeomorphism
+that is `ContMDiff` in both directions.
 
-The original statement incorrectly claimed that the *given* homeomorphism
-is automatically smooth. This is false: complex conjugation on `OnePoint ℂ`
-is a self-homeomorphism that is NOT `ℂ`-smooth.
+Note: the *given* homeomorphism `_e` need not itself be smooth (e.g.
+complex conjugation on `OnePoint ℂ` is a self-homeomorphism that is
+not `ℂ`-smooth); we must therefore construct a different homeomorphism
+`f` that is smooth in both directions. This is the classical content of
+the uniformization theorem at genus 0: every compact simply-connected
+Riemann surface is biholomorphic to `ℂℙ¹`.
 
-The corrected statement is the uniformization theorem at genus 0:
-a compact simply-connected Riemann surface is biholomorphic to ℂℙ¹.
-This remains sorry'd because the uniformization theorem is not in
-Mathlib. -/
+This sits at the same structural-axiom layer as G2a/G3a/G4a elsewhere
+in this file. The proof is deferred (`sorry`) because the uniformization
+theorem is not present in Mathlib v4.28.0; see the inline BLOCKER comment
+in the body for the precise list of missing prerequisites. Companion
+"sorry-free assembly" is `holomorphicOneForm_linearEquiv_of_homeoSphere_exists`
+(G1), which combines this with G1b (pullback). -/
 theorem exists_contMDiff_homeomorph_to_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -871,6 +876,30 @@ theorem exists_contMDiff_homeomorph_to_onePointCx
         (⊤ : WithTop ℕ∞) f ∧
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) f.symm := by
+  -- BLOCKER: uniformization theorem at genus 0.
+  --
+  -- This is the genus-0 case of the uniformization theorem: every compact
+  -- connected Riemann surface that is topologically a 2-sphere is
+  -- biholomorphic to `ℂℙ¹` (= `OnePoint ℂ`). The given homeomorphism `_e`
+  -- need NOT itself be smooth (e.g. it could be post-composed with complex
+  -- conjugation on `OnePoint ℂ`, which is a self-homeomorphism that is not
+  -- `ℂ`-smooth); we must construct a different homeomorphism `f` that is
+  -- `ContMDiff` in both directions.
+  --
+  -- Missing Mathlib prerequisites (all absent in v4.28.0):
+  --   * the uniformization theorem for simply-connected Riemann surfaces
+  --     (every simply-connected Riemann surface is biholomorphic to `ℂ`,
+  --     the open unit disk `𝔻`, or `ℂℙ¹`);
+  --   * the Riemann mapping theorem and Koebe / Perron normal-family
+  --     machinery that underpin it;
+  --   * a `ChartedSpace ℂ` / `IsManifold` instance on `OnePoint ℂ` rich
+  --     enough to support the biholomorphism statement uniformly with `X`.
+  --
+  -- Either a fully-fledged uniformization theorem or an equivalent
+  -- genus-0 classification (e.g. via Riemann–Roch producing a degree-1
+  -- meromorphic function `X → ℂℙ¹`) is required to discharge this `sorry`.
+  -- See the architectural notes earlier in this file for the full
+  -- dependency tree.
   sorry
 
 /-
