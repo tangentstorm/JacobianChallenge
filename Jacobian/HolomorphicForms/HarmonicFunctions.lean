@@ -55,6 +55,8 @@ class SobolevH1 (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
   [inst_complete : CompleteSpace carrier]
   /-- The embedding of Sobolev functions into the space of functions on X. -/
   toFun : carrier → (X → ℝ)
+  /-- The embedding is injective. -/
+  toFun_injective : Function.Injective toFun
 
 /-- **Sub-obligation 2.1a: Existence of Sobolev structure.**
 Every compact Riemannian manifold admits a Hilbert space structure on its H^1 Sobolev space. -/
