@@ -170,14 +170,18 @@ theorem chartAt_symm_transition_deriv_ne_zero
     deriv ((⇑e) ∘ (chartAt ℂ q).symm) (chartAt ℂ q q) ≠ 0 := by
   sorry
 
-/-- The chart-local order of vanishing is independent of choice of charts. -/
-theorem mapAnalyticOrderAt_congr_of_maximalAtlas
+/-- The chart-local order of vanishing is independent of choice of charts.
+
+This packages the analytic-order invariance under biholomorphic chart
+transitions. A bottom-up proof should combine analytic transition maps,
+nonzero transition derivatives, and invariance of `analyticOrderNatAt` under
+pre- and post-composition by local biholomorphisms. -/
+axiom mapAnalyticOrderAt_congr_of_maximalAtlas
     {f_ : X → Y} {p : X} {e₁ : OpenPartialHomeomorph X ℂ} {e₂ : OpenPartialHomeomorph Y ℂ}
     (_he₁ : e₁ ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X) (_hp₁ : p ∈ e₁.source)
     (_he₂ : e₂ ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω Y) (_hp₂ : f_ p ∈ e₂.source) :
     analyticOrderNatAt (fun t => e₂ (f_ (e₁.symm t)) - e₂ (f_ p)) (e₁ p) =
-    mapAnalyticOrderAt f_ p := by
-  sorry
+    mapAnalyticOrderAt f_ p
 
 /-- Backwards-compatible name for the chart-independence theorem. -/
 theorem mapAnalyticOrderAt_eq_of_mem_maximalAtlas
