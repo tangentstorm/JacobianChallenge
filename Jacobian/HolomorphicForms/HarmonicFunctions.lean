@@ -181,16 +181,32 @@ theorem exists_dipole_harmonic (X : Type*) [TopologicalSpace X] [T2Space X]
 /-- **Sub-obligation 5.1: Hodge Decomposition.**
 For a compact Riemann surface, the first de Rham cohomology group is
 isomorphic to the sum of holomorphic and anti-holomorphic 1-forms.
-H^1_dR(X, C) ≅ H^0(X, Ω^1) ⊕ H^0(X, Ω_bar^1). -/
+H^1_dR(X, C) ≅ H^0(X, Ω^1) ⊕ H^0(X, Ω_bar^1).
+
+The numeric content extracted here,
+`analyticHarmonicGenus X = 2 * analyticGenus ℂ X`, is the direct
+consequence of the two pieces of substantive analytic content
+formalised elsewhere in the project:
+
+* `analyticHarmonicGenus_eq_analyticGenus_add_anti`
+  (`Jacobian/HolomorphicForms/HodgeStarRS.lean`) — harmonic 1-forms
+  decompose as holomorphic ⊕ anti-holomorphic, giving
+  `dim_ℂ Harm¹(X) = dim_ℂ Ω¹(X) + dim_ℂ Ω̄¹(X)`.
+* `analyticAntiGenus_eq_analyticGenus`
+  (`Jacobian/HolomorphicForms/AntiHolomorphicOneForm.lean`) — pointwise
+  complex conjugation gives a conjugate-linear bijection, so
+  `dim_ℂ Ω̄¹(X) = dim_ℂ Ω¹(X)`.
+
+Combining these gives `g_h = g + g = 2g`. -/
 theorem hodge_decomposition (X : Type*) [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [ConnectedSpace X] [FiniteDimensionalHolomorphicOneForms ℂ X] :
     analyticHarmonicGenus X = 2 * analyticGenus ℂ X := by
-  -- This is a substantive statement now.
-  -- See Jacobian/HolomorphicForms/HodgeDecomposition.lean for the arithmetic assembly.
-  sorry
+  rw [analyticHarmonicGenus_eq_analyticGenus_add_anti X,
+      analyticAntiGenus_eq_analyticGenus X]
+  ring
 
 /-- **Sub-obligation 5.2: Dimension equality.**
 The dimension of the space of holomorphic 1-forms is the analytic genus g.
