@@ -79,13 +79,111 @@ noncomputable def traceAtRegularValue
   let s := (h.finite_fiber y).toFinset
   Finset.sum s.attach (fun x => cotangentPushforward f x.1 (ω x.1))
 
+/-- Local re-statement of
+`JacobianChallenge.Blueprint.mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero`
+(in `Jacobian/Blueprint/Sec02/WeightedFiberCardConst.lean`), inlined
+here because that blueprint file is currently broken upstream. -/
+private theorem _mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero
+    {f : X → Y} {x : X} (_hf : IsHolomorphicAt f x) :
+    mapAnalyticOrderAt f x = 1 ↔ deriv (chartLocalAt f x) (chartAt ℂ x x) ≠ 0 := by
+  constructor <;> intro h
+  · have h_order : analyticOrderAt
+        (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))
+        (chartAt ℂ x x) = 1 := by
+      convert h using 1
+      unfold mapAnalyticOrderAt
+      simp +decide [analyticOrderNatAt]
+    have h_deriv : analyticOrderAt
+        (deriv (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x)))
+        (chartAt ℂ x x) = 0 := by
+      have := AnalyticAt.analyticOrderAt_deriv_add_one
+        (show AnalyticAt ℂ
+            (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))
+            (chartAt ℂ x x) from ?_)
+      · aesop
+      · exact _hf.sub analyticAt_const
+    rw [analyticOrderAt_eq_zero] at h_deriv
+    simp_all +decide [deriv_sub_const]
+    exact h_deriv.resolve_left fun h => h <| AnalyticAt.deriv _hf
+  · unfold mapAnalyticOrderAt
+    rw [analyticOrderNatAt]
+    rw [AnalyticAt.analyticOrderAt_sub_eq_one_of_deriv_ne_zero] <;> aesop
+
 /-- The local inverse is holomorphic at `f x`. -/
 theorem localInverseAt_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
     (_hf : IsHolomorphic f)
     (x : X) (hx : h.ramificationIndex x = 1) :
     IsHolomorphicAt (h.localInverseAt x hx) (f x) := by
-  sorry
+  obtain ⟨U, _V, hU_open, _hV_open, hxU, _hfxV, _hfBij, _hf_right, hf_left⟩ :=
+    h.localInverse_is_inverse hx
+  have hfx_hol : IsHolomorphicAt f x := _hf.holomorphicAt x
+  have hramAt : mapAnalyticOrderAt f x = 1 := by
+    rw [← h.ramificationIndex_eq_mapAnalyticOrderAt hfx_hol]; exact hx
+  have hderiv : deriv (chartLocalAt f x) (chartAt ℂ x x) ≠ 0 :=
+    (_mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero hfx_hol).mp hramAt
+  set g : ℂ → ℂ := chartLocalAt f x with hg_def
+  set c : ℂ := chartAt ℂ x x with hc_def
+  have hgc : g c = chartAt ℂ (f x) (f x) := chartLocalAt_chartAt_self f x
+  have hg_analytic : AnalyticAt ℂ g c := hfx_hol
+  have hg_strict : HasStrictDerivAt g (deriv g c) c := hg_analytic.hasStrictDerivAt
+  set r : ℂ → ℂ := hg_strict.localInverse g (deriv g c) c hderiv with hr_def
+  have hr_analytic : AnalyticAt ℂ r (g c) := hg_analytic.analyticAt_localInverse hderiv
+  have h_locinv_fx : h.localInverseAt x hx (f x) = x := hf_left x hxU
+  -- Reduce the goal via congruence with `r`.
+  show AnalyticAt ℂ (chartLocalAt (h.localInverseAt x hx) (f x)) (chartAt ℂ (f x) (f x))
+  rw [← hgc]
+  refine hr_analytic.congr ?_
+  -- Establish the eventual equality
+  -- `r t = chartLocalAt (h.localInverseAt x hx) (f x) t` for `t` near `g c`.
+  have hf_cont : ContinuousAt f x := _hf.continuous.continuousAt
+  have hr_left : ∀ᶠ z in 𝓝 c, r (g z) = z := hg_strict.eventually_left_inverse hderiv
+  have hr_right : ∀ᶠ t in 𝓝 (g c), g (r t) = t := hg_strict.eventually_right_inverse hderiv
+  have hr_at : r (g c) = c := hr_left.self_of_nhds
+  have hr_cont : ContinuousAt r (g c) := hr_analytic.continuousAt
+  have h_symm_cont_x : ContinuousAt (chartAt ℂ x).symm c :=
+    (chartAt ℂ x).continuousAt_symm (mem_chart_target ℂ x)
+  have h_symm_at_x : (chartAt ℂ x).symm c = x :=
+    (chartAt ℂ x).left_inv (mem_chart_source ℂ x)
+  have e1 : ∀ᶠ t in 𝓝 (g c), r t ∈ (chartAt ℂ x).target :=
+    hr_cont.preimage_mem_nhds (by
+      rw [hr_at]
+      exact (chartAt ℂ x).open_target.mem_nhds (mem_chart_target ℂ x))
+  have h_symm_r_cont : ContinuousAt (fun t => (chartAt ℂ x).symm (r t)) (g c) :=
+    h_symm_cont_x.comp_of_eq hr_cont hr_at
+  have e2 : ∀ᶠ t in 𝓝 (g c), (chartAt ℂ x).symm (r t) ∈ U := by
+    refine h_symm_r_cont.preimage_mem_nhds ?_
+    show U ∈ 𝓝 ((chartAt ℂ x).symm (r (g c)))
+    rw [hr_at, h_symm_at_x]
+    exact hU_open.mem_nhds hxU
+  have e3 : ∀ᶠ t in 𝓝 (g c), t ∈ (chartAt ℂ (f x)).target := by
+    rw [hgc]
+    exact (chartAt ℂ (f x)).open_target.mem_nhds (mem_chart_target ℂ (f x))
+  have e5 : ∀ᶠ t in 𝓝 (g c), f ((chartAt ℂ x).symm (r t)) ∈ (chartAt ℂ (f x)).source := by
+    have h_cont : ContinuousAt (fun t => f ((chartAt ℂ x).symm (r t))) (g c) :=
+      hf_cont.comp_of_eq h_symm_r_cont (by rw [hr_at, h_symm_at_x])
+    refine h_cont.preimage_mem_nhds ?_
+    show (chartAt ℂ (f x)).source ∈ 𝓝 (f ((chartAt ℂ x).symm (r (g c))))
+    rw [hr_at, h_symm_at_x]
+    exact chart_source_mem_nhds ℂ (f x)
+  filter_upwards [e1, e2, e3, e5, hr_right] with t ht1 ht2 ht3 ht5 ht6
+  -- Goal: `r t = chartLocalAt (h.localInverseAt x hx) (f x) t`.
+  have hy_source : (chartAt ℂ (f x)).symm t ∈ (chartAt ℂ (f x)).source :=
+    (chartAt ℂ (f x)).map_target ht3
+  have hy_eq : chartAt ℂ (f x) ((chartAt ℂ (f x)).symm t) = t :=
+    (chartAt ℂ (f x)).right_inv ht3
+  have hfut_eq : chartAt ℂ (f x) (f ((chartAt ℂ x).symm (r t))) = t := ht6
+  have hfut_eq_yt :
+      f ((chartAt ℂ x).symm (r t)) = (chartAt ℂ (f x)).symm t :=
+    (chartAt ℂ (f x)).injOn ht5 hy_source (by rw [hfut_eq, hy_eq])
+  have hlocinv_eq :
+      h.localInverseAt x hx ((chartAt ℂ (f x)).symm t) = (chartAt ℂ x).symm (r t) := by
+    rw [← hfut_eq_yt]
+    exact hf_left _ ht2
+  show r t = chartLocalAt (h.localInverseAt x hx) (f x) t
+  show r t = chartAt ℂ (h.localInverseAt x hx (f x))
+        (h.localInverseAt x hx ((chartAt ℂ (f x)).symm t))
+  rw [hlocinv_eq, h_locinv_fx, (chartAt ℂ x).right_inv ht1]
 
 /-- The pullback of a holomorphic form along a local inverse branch. -/
 noncomputable def localPullbackAt
@@ -170,36 +268,6 @@ theorem traceAtRegularValue_smul
     exact (smul_zero (A := CotangentSpace ℂ Y (f x)) c).symm
 
 /-! ### Analytic bridge: ramification index 1 ⇒ mfderiv is an iso. -/
-
-/-- Local re-statement of
-`JacobianChallenge.Blueprint.mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero`
-(in `Jacobian/Blueprint/Sec02/WeightedFiberCardConst.lean`), inlined
-here because that blueprint file is currently broken upstream. -/
-private theorem _mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero
-    {f : X → Y} {x : X} (_hf : IsHolomorphicAt f x) :
-    mapAnalyticOrderAt f x = 1 ↔ deriv (chartLocalAt f x) (chartAt ℂ x x) ≠ 0 := by
-  constructor <;> intro h
-  · have h_order : analyticOrderAt
-        (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))
-        (chartAt ℂ x x) = 1 := by
-      convert h using 1
-      unfold mapAnalyticOrderAt
-      simp +decide [analyticOrderNatAt]
-    have h_deriv : analyticOrderAt
-        (deriv (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x)))
-        (chartAt ℂ x x) = 0 := by
-      have := AnalyticAt.analyticOrderAt_deriv_add_one
-        (show AnalyticAt ℂ
-            (fun t => chartLocalAt f x t - chartLocalAt f x (chartAt ℂ x x))
-            (chartAt ℂ x x) from ?_)
-      · aesop
-      · exact _hf.sub analyticAt_const
-    rw [analyticOrderAt_eq_zero] at h_deriv
-    simp_all +decide [deriv_sub_const]
-    exact h_deriv.resolve_left fun h => h <| AnalyticAt.deriv _hf
-  · unfold mapAnalyticOrderAt
-    rw [analyticOrderNatAt]
-    rw [AnalyticAt.analyticOrderAt_sub_eq_one_of_deriv_ne_zero] <;> aesop
 
 /-- **Analytic bridge.** At an unramified point of a branched cover,
 the manifold derivative `mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x` is a continuous
