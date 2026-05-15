@@ -228,6 +228,51 @@ If (u, v) satisfies the Cauchy-Riemann equations, then f = u + iv is holomorphic
 theorem holomorphic_of_CR {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (u v : X → ℝ) (hcr : SatisfiesCauchyRiemann g u v) :
     IsHolomorphic (fun x => ⟨u x, v x⟩) := by
+  -- BLOCKER: structure theorems about holomorphic maps.
+  --
+  -- `SatisfiesCauchyRiemann g u v` is exactly
+  --   `∀ p, IsHolomorphicAt (fun x => ⟨u x, v x⟩) p`,
+  -- i.e. it provides the `holomorphicAt` field of `IsHolomorphic`.
+  -- However, the `HolomorphicMap.IsHolomorphic` structure
+  -- (Jacobian/HolomorphicForms/HolomorphicMap.lean:83) has three further
+  -- substantive fields that must be discharged, none of which are
+  -- consequences of pointwise holomorphicity by direct argument:
+  --
+  --   * `continuous : Continuous f` — requires a lemma
+  --     `IsHolomorphicAt.continuousAt : IsHolomorphicAt f p → ContinuousAt f p`
+  --     obtained by transporting `AnalyticAt.continuousAt` of the
+  --     chart-local representation through the chart partial-homeomorphisms
+  --     `chartAt ℂ p` and `chartAt ℂ (f p)`. This lemma is referenced in a
+  --     comment at `Jacobian/HolomorphicForms/MeromorphicDegreeRefinement.lean:137`
+  --     but is not formalized anywhere in the project.
+  --
+  --   * `local_kfold_ramified` — the manifold-level local mapping theorem
+  --     (a holomorphic map with chart-local vanishing order `k > 0` is
+  --     locally `k`-to-1 with simple branches). The chart-local version
+  --     is proved at `Jacobian/HolomorphicForms/AnalyticLocalMapping.lean:191`
+  --     (`analytic_local_mapping_theorem`), but the lift to two charts via
+  --     `chartLocalAt` and `mapAnalyticOrderAt` — including chart-independence
+  --     of the order — is not assembled.
+  --
+  --   * `weightedFiberSum_eventually_eq` — local constancy of the topological
+  --     degree (weighted fibre sum of `mapAnalyticOrderAt`). This is the
+  --     core of the branched-covering / degree theory and requires the
+  --     local mapping theorem above plus a compactness / glueing argument.
+  --     Compare `Jacobian/Blueprint/Sec02/WeightedFiberCardConst.lean`
+  --     (still sorry-laden for unrelated statements about holomorphic `f`).
+  --
+  -- Equivalently, this theorem is the missing converse to the structural
+  -- bundling done by `isHolomorphic_of_contMDiff`
+  -- (`Jacobian/HolomorphicForms/HolomorphicMap.lean:222`), which is itself
+  -- still `sorry`. Both theorems collapse to the same trio of structural
+  -- facts about holomorphic maps; until those facts are established
+  -- (or `IsHolomorphic` is refactored to be definitionally pointwise),
+  -- `holomorphic_of_CR` cannot be discharged.
+  --
+  -- Allowed-writes scope (this file only) is insufficient to add the
+  -- prerequisite lemmas, which belong in
+  -- `Jacobian/HolomorphicForms/HolomorphicMap.lean` (continuity bridge,
+  -- chart-level local mapping theorem, weighted-fibre-sum stability).
   sorry
 
 /-- **Sub-obligation 3.1: The conjugate 1-form is closed.**
