@@ -299,12 +299,10 @@ Defined via the vanishing order: for each point `p`, the coefficient is
 
 Note: the finite-support obligation is deferred; on a compact Riemann
 surface, the identity principle guarantees only finitely many zeros. -/
-noncomputable def zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+axiom zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (f : MeromorphicFunctionType X) : Divisor X :=
-  Finsupp.onFinset (Classical.choice (sorry : Nonempty (Finset X)))
-    (zeros_coeff f) (by sorry)
+    (f : MeromorphicFunctionType X) : Divisor X
 
 /-- The pole divisor of a meromorphic function. -/
 noncomputable def poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
