@@ -136,7 +136,9 @@ noncomputable def singlePoleMeromorphicMap (Q : X) : MeromorphicMapToSphere X :=
       · exact OnePoint.coe_ne_infty _
       · exact OnePoint.coe_ne_infty _
     continuousOn_ne_infty := by sorry
-    toFiniteFun_mdifferentiable := fun _ _ => by sorry
+    toFiniteFun_mdifferentiable := fun g hg => by
+      have hQ := congrFun hg Q
+      simp [singlePoleSphereLift] at hQ
     toMap_eq_infty_of_poleDivisor_pos := fun x hx => by
       have heq : x = Q := by
         by_contra hne
@@ -237,8 +239,20 @@ noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (hne : Q1 ≠ Q2) : Meromor
         · contradiction
         · contradiction
       · exact OnePoint.coe_ne_infty _
-    continuousOn_ne_infty := by sorry
-    toFiniteFun_mdifferentiable := fun _ _ => by sorry
+    continuousOn_ne_infty := by
+      refine ContinuousOn.congr
+        (f := fun _ : X => ((0 : ℂ) : OnePoint ℂ))
+        continuousOn_const ?_
+      intro x hx
+      by_cases hpole : x = Q1 ∨ x = Q2
+      · simp at hx
+        rcases hpole with hQ1 | hQ2
+        · exact False.elim (hx.1 hQ1)
+        · exact False.elim (hx.2 hQ2)
+      · simp [hpole]
+    toFiniteFun_mdifferentiable := fun g hg => by
+      have hQ := congrFun hg Q1
+      simp at hQ
     toMap_eq_infty_of_poleDivisor_pos := fun x hx => by
       have heq : x = Q1 ∨ x = Q2 := by
         by_contra h_nor

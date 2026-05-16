@@ -3,6 +3,7 @@ import Jacobian.Periods.IntegralOneCycle
 import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverPickSmul
 import Jacobian.Periods.PathIntegralViaCoverWithAdd
+import Jacobian.Periods.ChartedFormPullbackCurveIntegrable
 import Jacobian.Blueprint.Sec03.HolomorphicFormIsClosed
 import Jacobian.Blueprint.Sec03.StokesOnRSWithBoundary
 import Mathlib.AlgebraicTopology.SingularHomology.Basic
@@ -251,18 +252,6 @@ theorem pathIntegral_linear_in_form
   exact ⟨()⟩
 
 
-/-- Continuity of chart-pullback forms along chart-lifted subpaths.
-This is the bridge from `chartedFormPullback_continuousOn` (Packet F)
-to the per-segment `CurveIntegrable` hypotheses.  Currently sorry;
-the full proof requires assembling chart-atlas membership and
-range-containment for each segment. -/
-private theorem chartedFormPullback_continuous_assumption
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-    {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
-    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
-    (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
-    Continuous (chartedFormPullback c ω) := by sorry
-
 /-- C¹ regularity of chart-lifted subpaths. Established by extracting
 regularity data from the `PiecewiseC1PathRegularity X` instance. -/
 private theorem chartLift_contDiffOn_assumption
@@ -319,12 +308,102 @@ theorem exists_singularSimplex_integration
       let hcov := h0.choose_spec.choose_spec.choose_spec
       exact pathIntegralViaCoverWith_add_of_curveIntegrable
         ω η (simplex_to_path X σ) n hn pickChart hcov
-        (fun i => curveIntegrable_blueprint_assumption
-          (chartedFormPullback_continuous_assumption _ ω)
-          (chartLift_contDiffOn_assumption (X := X) (γ := simplex_to_path X σ) (n := n) (hn := hn) (pickX := pickChart) (i := i)))
-        (fun i => curveIntegrable_blueprint_assumption
-          (chartedFormPullback_continuous_assumption _ η)
-          (chartLift_contDiffOn_assumption (X := X) (γ := simplex_to_path X σ) (n := n) (hn := hn) (pickX := pickChart) (i := i))),
+        (fun i =>
+          chartedFormPullback_curveIntegrable
+            (chartAt ℂ (pickChart i)) (IsManifold.chart_mem_maximalAtlas (pickChart i)) ω
+            (chartLift (chartAt ℂ (pickChart i))
+              ((simplex_to_path X σ).subpath
+                (divFinIcc n hn i.val (le_of_lt i.isLt))
+                (divFinIcc n hn (i.val + 1) i.isLt))
+              (by
+                rw [Path.range_subpath]
+                intro x hx
+                obtain ⟨t, ht, rfl⟩ := hx
+                rw [Set.uIcc_of_le (divFinIcc_le_succ n hn i.val i.isLt)] at ht
+                rcases Set.mem_Icc.mp ht with ⟨h1, h2⟩
+                have hle2 : (t : ℝ) ≤ ((i.val : ℝ) + 1) / n := by
+                  have h2' : (t : ℝ) ≤
+                      (divFinIcc n hn (i.val + 1) i.isLt : ℝ) := h2
+                  rw [divFinIcc_val] at h2'
+                  push_cast at h2'
+                  exact h2'
+                exact hcov i t h1 hle2))
+            (chartLift_contDiffOn_assumption (X := X) (γ := simplex_to_path X σ)
+              (n := n) (hn := hn) (pickX := pickChart) (i := i))
+            (fun t => by
+              change (chartAt ℂ (pickChart i)) _ ∈ (chartAt ℂ (pickChart i)).target
+              exact (chartAt ℂ (pickChart i)).map_source
+                (by
+                  let τ := Path.subpathAux
+                    (divFinIcc n hn i.val (le_of_lt i.isLt))
+                    (divFinIcc n hn (i.val + 1) i.isLt) t
+                  have hτmemI : τ ∈ Set.uIcc
+                      (divFinIcc n hn i.val (le_of_lt i.isLt))
+                      (divFinIcc n hn (i.val + 1) i.isLt) := by
+                    rw [← Path.range_subpathAux]
+                    exact ⟨t, rfl⟩
+                  rw [Set.uIcc_of_le (divFinIcc_le_succ n hn i.val i.isLt)] at hτmemI
+                  rcases Set.mem_Icc.mp hτmemI with ⟨hτ1, hτ2⟩
+                  have h1 : ((i.val : ℝ) / n) ≤ (τ : ℝ) := by
+                    have hτ1' : (divFinIcc n hn i.val (le_of_lt i.isLt) : ℝ) ≤
+                        (τ : ℝ) := hτ1
+                    rw [divFinIcc_val] at hτ1'
+                    exact hτ1'
+                  have hle2 : (τ : ℝ) ≤ ((i.val : ℝ) + 1) / n := by
+                    have h2' : (τ : ℝ) ≤
+                        (divFinIcc n hn (i.val + 1) i.isLt : ℝ) := hτ2
+                    rw [divFinIcc_val] at h2'
+                    push_cast at h2'
+                    exact h2'
+                  simpa [Path.subpath, τ] using hcov i τ h1 hle2)))
+        (fun i =>
+          chartedFormPullback_curveIntegrable
+            (chartAt ℂ (pickChart i)) (IsManifold.chart_mem_maximalAtlas (pickChart i)) η
+            (chartLift (chartAt ℂ (pickChart i))
+              ((simplex_to_path X σ).subpath
+                (divFinIcc n hn i.val (le_of_lt i.isLt))
+                (divFinIcc n hn (i.val + 1) i.isLt))
+              (by
+                rw [Path.range_subpath]
+                intro x hx
+                obtain ⟨t, ht, rfl⟩ := hx
+                rw [Set.uIcc_of_le (divFinIcc_le_succ n hn i.val i.isLt)] at ht
+                rcases Set.mem_Icc.mp ht with ⟨h1, h2⟩
+                have hle2 : (t : ℝ) ≤ ((i.val : ℝ) + 1) / n := by
+                  have h2' : (t : ℝ) ≤
+                      (divFinIcc n hn (i.val + 1) i.isLt : ℝ) := h2
+                  rw [divFinIcc_val] at h2'
+                  push_cast at h2'
+                  exact h2'
+                exact hcov i t h1 hle2))
+            (chartLift_contDiffOn_assumption (X := X) (γ := simplex_to_path X σ)
+              (n := n) (hn := hn) (pickX := pickChart) (i := i))
+            (fun t => by
+              change (chartAt ℂ (pickChart i)) _ ∈ (chartAt ℂ (pickChart i)).target
+              exact (chartAt ℂ (pickChart i)).map_source
+                (by
+                  let τ := Path.subpathAux
+                    (divFinIcc n hn i.val (le_of_lt i.isLt))
+                    (divFinIcc n hn (i.val + 1) i.isLt) t
+                  have hτmemI : τ ∈ Set.uIcc
+                      (divFinIcc n hn i.val (le_of_lt i.isLt))
+                      (divFinIcc n hn (i.val + 1) i.isLt) := by
+                    rw [← Path.range_subpathAux]
+                    exact ⟨t, rfl⟩
+                  rw [Set.uIcc_of_le (divFinIcc_le_succ n hn i.val i.isLt)] at hτmemI
+                  rcases Set.mem_Icc.mp hτmemI with ⟨hτ1, hτ2⟩
+                  have h1 : ((i.val : ℝ) / n) ≤ (τ : ℝ) := by
+                    have hτ1' : (divFinIcc n hn i.val (le_of_lt i.isLt) : ℝ) ≤
+                        (τ : ℝ) := hτ1
+                    rw [divFinIcc_val] at hτ1'
+                    exact hτ1'
+                  have hle2 : (τ : ℝ) ≤ ((i.val : ℝ) + 1) / n := by
+                    have h2' : (τ : ℝ) ≤
+                        (divFinIcc n hn (i.val + 1) i.isLt : ℝ) := hτ2
+                    rw [divFinIcc_val] at h2'
+                    push_cast at h2'
+                    exact h2'
+                  simpa [Path.subpath, τ] using hcov i τ h1 hle2))),
     map_smul' := fun k ω => by
       -- Multi-chart linearity in the form (scalar mult) follows from
       -- pathIntegralViaCoverPickSmul.lean (unconditional).

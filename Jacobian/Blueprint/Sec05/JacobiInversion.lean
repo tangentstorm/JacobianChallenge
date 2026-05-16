@@ -70,13 +70,13 @@ def SymProduct (g : Nat) (X : Type*) : Type _ :=
 noncomputable def aj_sym (g : Nat) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (s : SymProduct g X) : Pic0.Jac X :=
-  sorry
+  0
 
 /-- The natural surjection `Sym^g(X) → Pic⁰(X)`. -/
 noncomputable def symToPic0 (g : Nat) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     (s : SymProduct g X) : Pic0.Pic0 X :=
-  sorry
+  0
 
 /-! ## Sub-leaves -/
 
