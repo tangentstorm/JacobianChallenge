@@ -129,13 +129,17 @@ theorem cech_cocycle_from_singular_cocycle
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    (_φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     ∃ (ι : Type) (U : ι → TopologicalSpace.Opens (TopCat.of X))
       (_C : CochainComplex AddCommGrpCat.{0} ℕ),
       _C = RSCechComplex X U
         ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
           (AddCommGrpCat.of ℂ)) := by
-  sorry
+  let U : PUnit → TopologicalSpace.Opens (TopCat.of X) := fun _ => ⊤
+  refine ⟨PUnit, U,
+    RSCechComplex X U
+      ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
+        (AddCommGrpCat.of ℂ)), rfl⟩
 
 /-- **Surjectivity sub-obligation 1b (Closed form from Čech cocycle).**
 Using a partition of unity and the Poincaré lemma, a Čech 1-cocycle
