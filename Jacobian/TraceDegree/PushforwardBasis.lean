@@ -5,7 +5,6 @@ import Jacobian.HolomorphicForms.BasisAlignedDualEquiv
 import Jacobian.Periods.PullbackNaturality
 import Jacobian.Periods.BasisAlignedPeriodSubgroup
 import Jacobian.TraceDegree.PiecewiseC1Def
-import Jacobian.TraceDegree.PiecewiseC1Instance
 import Mathlib.LinearAlgebra.Matrix.ToLin
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Analysis.Calculus.MeanValue
@@ -386,9 +385,9 @@ theorem pushforwardTraceLift_preserves_lattice_raw
     refine LinearMap.ext fun η => ?_
     exact periodPairing_pullbackFormsBundledLM f hf γ η
       (fun γ' => cycleLipPath_obligation γ' _
-        (pathPiecewiseC1_of_regularity γ' (cyclePathRegularity_obligation γ')).choose_spec)
+        (pathPiecewiseC1_of_regularity γ').choose_spec)
       (fun m a' b' γs => cycleLipChain_obligation m a' b' γs
-        (fun i => pathPiecewiseC1_of_regularity (γs i) (cyclePathRegularity_obligation (γs i))))
+        (fun i => pathPiecewiseC1_of_regularity (γs i)))
   rw [hnat]
   -- Now: holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y (cyclePushforward f hf γ)) ∈ basisAlignedPeriodSubgroupConcrete Y.
   refine holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete Y ?_

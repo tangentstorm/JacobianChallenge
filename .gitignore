@@ -1,7 +1,6 @@
 .lake/
 .claude/*
 !.claude/settings.json
-!.claude/skills/
 .playwright-mcp/
 aristotle-staging/
 .worktrees/

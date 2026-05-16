@@ -3,30 +3,26 @@ import Jacobian.TraceDegree.PiecewiseC1Def
 /-!
 # Piecewise-C¹ regularity instance for compact Riemann surfaces
 
-This file provides the `PiecewiseC1PathRegularity X` typeclass instance
-that the period-pairing / trace-degree layer needs.
+This file provides the (sorry-shaped) `PiecewiseC1PathRegularity X`
+instance that the period-pairing / trace-degree layer needs.
 
-**2026-05-14 refactor — predicate gate.** The class field was previously
-the **false** unconditional claim that every continuous path on `X` is
-piecewise C¹. The class is now gated on a per-path
-`IsPiecewiseC1Path γ` predicate (defined in `PiecewiseC1Def.lean`):
-the instance asserts only that a witness can be extracted from a
-witness, which is vacuously true.
-
-The residual false content is **isolated** to a single named obligation
-`cyclePathRegularity_obligation`, which states that EVERY continuous
-path is piecewise C¹. This is the same false universal claim, but now
-named, scoped, and audit-friendly. Production code routes through this
-named obligation rather than the typeclass field.
-
-The honest fix for `cyclePathRegularity_obligation` requires:
+The `Prop` itself — *every continuous path on `X` is piecewise C¹ in
+chart coordinates with a uniform derivative bound* — is **false for
+arbitrary continuous paths** (a nowhere-differentiable continuous path
+is a valid inhabitant of `Path a b`). The honest discharge of this
+assumption requires one of:
 
 * enriching `IntegralOneCycle X` (currently singular `H₁`, untyped on
   smoothness) to carry a piecewise-smooth representative;
 * restricting the period pairing's cycle domain to a piecewise-smooth
   subclass of `H₁(X, ℤ)` that is shown to span the homology;
-* a smooth singular homology theory bridged to continuous singular
-  homology via Whitney smooth approximation.
+* a layer of "smooth singular homology" not currently in Mathlib.
+
+Until that infrastructure is built, the sorry is **isolated to this
+single named instance** — production code (`PushforwardBasis.lean`,
+`PullbackBasis.lean`, downstream Jacobian functoriality) is no longer
+claiming to prove the false unconditional statement. The instance
+is the single, named, auditable point where the assumption enters.
 
 Blueprint anchor: `lem:impl-trace-lip`
 (`tex/sections/15-implementation-details.tex`).
@@ -36,44 +32,59 @@ namespace JacobianChallenge.TraceDegree
 
 open JacobianChallenge.HolomorphicForms JacobianChallenge.Periods
 
-/-- The piecewise-C¹ path regularity typeclass instance, predicate-gated.
-The class field is the trivial extractor `fun γ h => h`: given a
-piecewise-C¹ witness for `γ`, return it. Sorry-free. -/
-instance instPiecewiseC1PathRegularity
+/-- The piecewise-C¹ path regularity assumption, as a typeclass instance
+applicable to every `ChartedSpace ℂ X`. The intended use is compact
+Riemann surfaces, but the instance is stated at the typeclass header's
+generality so it satisfies all callers uniformly.
+
+The body is the named sorry tracked in `sorries.jsonl` (id 1340,
+blueprint `lem:impl-trace-lip`) — see the module docstring for the
+honest discharge plan.
+
+**BLOCKER — unconditional statement is false.**
+The hypothesis quantifies over arbitrary `γ : Path a b`, which is
+just a *continuous* map `unitInterval → X`. Unfolding
+`chartLift c γ h = γ.map' (c.continuousOn_toFun.mono h)`, the lifted
+path's `extend` is definitionally `c ∘ γ.extend`. For a
+Weierstrass-style nowhere-differentiable continuous `γ` whose image
+lies in a single chart source (take `n := 1`, `pickX 0 := a`, so the
+subpath equals `γ` itself), `c ∘ γ.extend` is not
+`DifferentiableOn ℝ` on `Icc 0 1`, hence no `K₀ : NNReal` can witness
+`ChartLiftPiecewiseC1 γ K₀`.
+
+**Missing prerequisites** required to discharge this honestly:
+1. *Smooth singular homology over ℤ for a smooth manifold* —
+   replace the current singular `IntegralOneCycle X` with a chain
+   complex whose 1-simplices are required to be piecewise C¹ (or
+   smooth) in chart coordinates. Mathlib (pinned commit
+   `8f9d9cff6bd728b17a24e163c9402775d9e6a365`) does not provide this.
+2. *Smooth approximation / Whitney-style theorem*: the inclusion of
+   the smooth chain complex into the singular chain complex induces
+   an isomorphism on homology. This is the standard tool that lets
+   one pick a smooth representative inside every singular homology
+   class, which is exactly what `PiecewiseC1PathRegularity` should
+   really be saying — restricted to a smooth subcomplex of cycles,
+   not to all continuous paths.
+3. *Refactor of the period pairing API* so that
+   `IntegralOneCycle X` carries a smooth/piecewise-C¹ witness and
+   downstream callers (`PushforwardBasis.lean`, `PullbackBasis.lean`,
+   `analyticPushforward`) consume that witness instead of asking for
+   the false unconditional regularity above.
+
+Until items (1)–(3) are built, this instance must remain a single
+named `sorry`. Direct tactic discharge is impossible because the
+proposition is false; the only honest fix is to weaken the typeclass
+to a smoothness-aware cycle domain. Statement is intentionally left
+unchanged here per the project's "audit-trail of false assumptions"
+discipline — see the module docstring. -/
+noncomputable instance instPiecewiseC1PathRegularity
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X] :
     PiecewiseC1PathRegularity X where
-  out := fun _γ h => h
-
-/-- **Named residual obligation (BLOCKER, false universally).**
-
-The cycle-level regularity assumption: every continuous path on `X` is
-piecewise C¹ in chart coordinates with a uniform derivative bound.
-
-This is **literally false** for arbitrary continuous paths (Weierstrass-
-style nowhere-differentiable continuous paths inhabit `Path a b`). The
-sorry is intentionally preserved as a NAMED obligation so the audit
-trail is explicit at each call site.
-
-Discharge path (multi-session work, see plan file):
-1. Define a `PiecewiseC1Path a b X` structure carrying the smoothness
-   witness as data (Phase 2).
-2. Refactor `pathPotentialAsForm` (flagship descent) to construct paths
-   via a smooth-manifold path-connectedness theorem instead of choosing
-   arbitrary continuous paths (Phase 4).
-3. Eliminate this obligation by either: (a) refactoring downstream
-   `IntegralOneCycle X` to be smooth-quotient, or (b) restricting all
-   callers to supply per-path `IsPiecewiseC1Path γ` witnesses.
-
-Callers: `Jacobian/TraceDegree/PushforwardBasis.lean:388,390`,
-`Jacobian/Blueprint/Sec03/PeriodHomologyInvariance.lean:281` family. -/
-theorem cyclePathRegularity_obligation
-    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    {a b : X} (γ : Path a b) :
-    IsPiecewiseC1Path γ := by
-  -- BLOCKED: the claim is false for arbitrary continuous paths.
-  -- Discharge requires the multi-phase plan in
-  -- /Users/eric.yhl/.claude/plans/can-you-try-to-stateful-whistle.md
-  -- (smooth singular homology / smooth-path refactor of the flagship).
-  sorry
+  out := by
+    -- BLOCKED: proposition is false for arbitrary continuous paths.
+    -- See module docstring + declaration docstring above for the
+    -- missing prerequisites (smooth singular homology + smooth
+    -- approximation theorem + period-pairing refactor).
+    sorry
 
 end JacobianChallenge.TraceDegree
