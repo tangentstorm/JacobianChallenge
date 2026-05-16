@@ -194,8 +194,16 @@ theorem add_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 /-- Negation of meromorphic functions. -/
 noncomputable def neg_meromorphic (f : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
   { toFun := fun x => OnePoint.map (fun c => -c) (f.toFun x)
-    toFun_continuous := sorry
-    isMeromorphic := sorry }
+    toFun_continuous := by
+      exact (OnePoint.continuous_map continuous_neg
+        (Homeomorph.neg ℂ).map_coclosedCompact.le).comp f.toFun_continuous
+    isMeromorphic := by
+      intro p
+      unfold MeromorphicAtX
+      have hf := f.isMeromorphic p
+      convert hf.neg using 1
+      ext z
+      cases h : f.toFun ((chartAt ℂ p).symm z) <;> simp [h, Option.getD] }
 
 noncomputable instance : Neg (MeromorphicFunctionType X) := ⟨neg_meromorphic⟩
 
@@ -219,9 +227,24 @@ noncomputable instance : Sub (MeromorphicFunctionType X) := ⟨fun f g => f + (-
 
 /-- Scalar multiplication of meromorphic functions. -/
 noncomputable def smul_meromorphic (c : ℂ) (f : MeromorphicFunctionType X) : MeromorphicFunctionType X :=
+  if hc : c = 0 then 0 else
   { toFun := fun x => OnePoint.map (c * ·) (f.toFun x)
-    toFun_continuous := sorry
-    isMeromorphic := sorry }
+    toFun_continuous := by
+      have hcont : Continuous (fun z : ℂ => c * z) := continuous_const.mul continuous_id
+      exact (OnePoint.continuous_map hcont
+        ((Homeomorph.mulLeft₀ c hc).map_coclosedCompact.le)).comp f.toFun_continuous
+    isMeromorphic := by
+      intro p
+      unfold MeromorphicAtX
+      have hf := f.isMeromorphic p
+      have hm : MeromorphicAt
+          (fun z => c * f.toFiniteFun ((chartAt ℂ p).symm z))
+          (chartAt ℂ p p) := by
+        simpa [Pi.mul_apply] using (MeromorphicAt.const c (chartAt ℂ p p)).mul hf
+      convert hm using 1
+      ext z
+      cases h : f.toFun ((chartAt ℂ p).symm z) <;>
+        simp +decide [extChartAt, MeromorphicFunctionType.toFiniteFun, h, Option.getD] }
 
 noncomputable instance : SMul ℂ (MeromorphicFunctionType X) := ⟨smul_meromorphic⟩
 
@@ -233,10 +256,14 @@ theorem smul_toFun {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     ∀ x, f.toFun x ≠ ∞ → (c • f).toFun x = (c * (f.toFun x).getD 0 : ℂ) := by
   intro x hx
   show (smul_meromorphic c f).toFun x = ↑(c * Option.getD (f.toFun x) 0)
-  simp only [smul_meromorphic]
-  cases h : f.toFun x with
-  | infty => exact absurd h hx
-  | coe z => rfl
+  by_cases hc : c = 0
+  · rw [smul_meromorphic, dif_pos hc]
+    change (zero X).toFun x = ↑(c * Option.getD (f.toFun x) 0)
+    simp [zero, hc]
+  · simp only [smul_meromorphic, dif_neg hc]
+    cases h : f.toFun x with
+    | infty => exact absurd h hx
+    | coe z => rfl
 
 /-- Constant meromorphic functions. -/
 def constant (c : ℂ) : MeromorphicFunctionType X :=
@@ -398,6 +425,25 @@ theorem toFun_ne_infty_of_poles_eq_zero {X : Type*} [TopologicalSpace X] [Charte
     ∀ x, f.toFun x ≠ ∞ :=
   sorry
 
+/-- At a finite point of `OnePoint ℂ`, the finite-value projection is continuous. -/
+private lemma finiteProjection_continuousAt (c : ℂ) :
+    ContinuousAt (fun y : OnePoint ℂ => y.getD 0) (c : OnePoint ℂ) := by
+  rw [OnePoint.continuousAt_coe]
+  simpa using (continuousAt_id : ContinuousAt (fun x : ℂ => x) c)
+
+omit [JacobianChallenge.Periods.StableChartAt ℂ X] in
+/-- If a meromorphic function has no infinite values, its finite projection is continuous. -/
+private lemma toFiniteFun_continuousAt (f : MeromorphicFunctionType X)
+    (h : ∀ x, f.toFun x ≠ ∞) (p : X) : ContinuousAt f.toFiniteFun p := by
+  unfold MeromorphicFunctionType.toFiniteFun
+  cases hp : f.toFun p with
+  | infty => exact False.elim ((h p) hp)
+  | coe c =>
+      have hg : ContinuousAt (fun y : OnePoint ℂ => y.getD 0) (f.toFun p) := by
+        simpa [hp] using finiteProjection_continuousAt c
+      have hf : ContinuousAt f.toFun p := f.toFun_continuous.continuousAt
+      exact hg.comp hf
+
 /-- Structural bridge: if `f.toFun` never takes the value `∞`, then
 `f.toFiniteFun` is `MDifferentiable`. -/
 theorem mdifferentiable_toFiniteFun_of_no_infty {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -405,21 +451,48 @@ theorem mdifferentiable_toFiniteFun_of_no_infty {X : Type*} [TopologicalSpace X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicFunctionType X) (h : ∀ x, f.toFun x ≠ ∞) :
     MDifferentiable (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f.toFiniteFun :=
-  sorry
+  fun p => by
+    rw [mdifferentiableAt_iff]
+    constructor
+    · exact toFiniteFun_continuousAt f h p
+    · have hs : ContinuousAt (fun z => (extChartAt 𝓘(ℂ) p).symm z)
+          (extChartAt 𝓘(ℂ) p p) := by
+        exact continuousAt_extChartAt_symm p
+      have hsymm : (extChartAt 𝓘(ℂ) p).symm (extChartAt 𝓘(ℂ) p p) = p := by
+        simp [extChartAt]
+      have hcont_at_symm : ContinuousAt f.toFiniteFun
+          ((extChartAt 𝓘(ℂ) p).symm (extChartAt 𝓘(ℂ) p p)) := by
+        simpa [hsymm] using toFiniteFun_continuousAt f h p
+      have hcont_chart : ContinuousAt
+          (fun z => f.toFiniteFun ((extChartAt 𝓘(ℂ) p).symm z))
+          (extChartAt 𝓘(ℂ) p p) := by
+        exact hcont_at_symm.comp hs
+      have han : AnalyticAt ℂ
+          (fun z => f.toFiniteFun ((extChartAt 𝓘(ℂ) p).symm z))
+          (extChartAt 𝓘(ℂ) p p) := by
+        exact (f.isMeromorphic p).analyticAt hcont_chart
+      have hd : DifferentiableAt ℂ
+          (fun z => f.toFiniteFun ((extChartAt 𝓘(ℂ) p).symm z))
+          (extChartAt 𝓘(ℂ) p p) := han.differentiableAt
+      simpa [writtenInExtChartAt] using hd.differentiableWithinAt
 
 /-- Constant meromorphic functions have no poles. -/
 theorem constant_poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (c : ℂ) : (constant (X := X) c).poles = 0 :=
-  sorry
+  by
+    ext p
+    simp [poles, poles_coeff, constant]
 
 /-- Non-zero constant meromorphic functions have no zeros. -/
 theorem constant_zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (c : ℂ) (_hc : c ≠ 0) : (constant (X := X) c).zeros = 0 :=
-  sorry
+  by
+    ext p
+    simp [zeros, zeros_coeff, constant, _hc]
 
 /-- Membership in the Riemann-Roch space `L(D)`: `f = 0` or `(f) + D ≥ 0`. -/
 def MemRiemannRochSpace {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]

@@ -100,7 +100,11 @@ noncomputable def pathIntegralViaCoverWith
         intro x ⟨t, ht, rfl⟩
         -- ht : t ∈ uIcc (divFinIcc n hn i ...) (divFinIcc n hn (i+1) ...)
         -- hcov needs t.val ∈ [i/n, (i+1)/n]
-        sorry)
+        rw [Set.uIcc_of_le (divFinIcc_le_succ n hn i.val i.isLt)] at ht
+        rcases Set.mem_Icc.mp ht with ⟨h1, h2⟩
+        have h2' : (t : ℝ) ≤ (divFinIcc n hn (i.val + 1) i.isLt : ℝ) := h2
+        rw [divFinIcc_val] at h2'
+        exact hcov i t h1 h2')
 
 -- Wrapper: choose any partition via Classical.
 noncomputable def pathIntegralViaCover
