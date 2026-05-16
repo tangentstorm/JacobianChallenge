@@ -117,6 +117,7 @@ private noncomputable def pairOnSimplexC
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X) (σ : SingSimplex 1 X) : ℂ :=
   -- `SmoothDiffForm 1 X = HolomorphicOneForm ℂ X` definitionally; the
   -- subtype coercion produces the underlying holomorphic 1-form directly.
@@ -165,6 +166,7 @@ private noncomputable def chainPairing
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X) : singChain 1 X ⟶ ModuleCat.of ℤ ℂ :=
   singChain_desc (fun σ => scalarMul1ℤℂ (pairOnSimplexC ω σ))
 
@@ -176,6 +178,7 @@ private theorem chainPairing_basis_eq
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X) (σ : SingSimplex 1 X) :
     singChain_basis σ ≫ chainPairing ω =
       scalarMul1ℤℂ (pairOnSimplexC ω σ) := by
@@ -407,6 +410,7 @@ private theorem pairOnSimplexC_smul
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (k : ℂ) (ω : ClosedForm 1 X) (σ : SingSimplex 1 X) :
     pairOnSimplexC (k • ω) σ = k • pairOnSimplexC ω σ := by
   -- (k • ω).val = k • ω.val by Submodule subtype smul; this is the
@@ -504,6 +508,7 @@ private theorem chainPairing_smul
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (k : ℂ) (ω : ClosedForm 1 X) :
     chainPairing (k • ω) = chainPairing ω ≫ mulByKℂ k := by
   apply singChain_hom_ext
@@ -1129,6 +1134,7 @@ noncomputable def ClosedForm.toHolomorphicOneForm
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X) : HolomorphicOneForm ℂ X :=
   (ω : SmoothDiffForm 1 X)
 
@@ -1139,6 +1145,7 @@ noncomputable def ClosedForm.lineIntegral
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X) {x y : X} (γ : Path x y) : ℂ :=
   pathIntegralViaCover (ClosedForm.toHolomorphicOneForm ω) γ
 
@@ -1166,6 +1173,7 @@ theorem ClosedForm.lineIntegral_trans_of_witnesses
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X) (x : X) :
     ClosedForm.lineIntegral ω (Path.refl x) = 0 :=
   pathIntegralViaCover_refl (ClosedForm.toHolomorphicOneForm ω) x
@@ -1190,6 +1198,7 @@ private theorem pairOnSimplexC_toSingSimplex
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X) {a b : X} (γ : Path a b) :
     pairOnSimplexC ω (Path.toSingSimplex γ) =
       pathIntegralViaCover (ClosedForm.toHolomorphicOneForm ω) γ := by
@@ -1236,6 +1245,7 @@ private theorem chainPairing_partitionChain_one
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X) {a b : X} (γ : Path a b) :
     (chainPairing ω).hom (Path.partitionChain γ 1 Nat.one_pos) =
       pairOnSimplexC ω (Path.toSingSimplex

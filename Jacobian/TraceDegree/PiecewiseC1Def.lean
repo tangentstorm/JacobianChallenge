@@ -88,12 +88,18 @@ theorem pathPiecewiseC1_of_regularity {X : Type*} [TopologicalSpace X] [ChartedS
     ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀ :=
   hReg.out γ' h
 
-/-- Accessor: chart-lift `C¹` regularity of a subpath in an atlas chart,
-extracted from the strengthened `ChartLiftPiecewiseC1` data. Sorry-free
-derivation from the typeclass; the only audit-trail sorry remains in
-`instPiecewiseC1PathRegularity.out`. -/
+/-- Accessor: chart-lift `C¹` regularity of a subpath in an atlas chart.
+
+**Refactor note (post-rebase):** the previous body relied on
+`PiecewiseC1PathRegularity.out` returning an `∃ K, ChartLiftPiecewiseC1 γ K`
+existential, which our predicate-gating refactor replaced with the
+identity-like function `IsPiecewiseC1Path γ → IsPiecewiseC1Path γ`.
+The derivation no longer goes through without an `IsPiecewiseC1Path γ'`
+witness at this call site; left as a named frontier sorry until callers
+are routed through the witness-form of the API
+(`pathPiecewiseC1_of_regularity`). -/
 theorem chartLift_contDiffOn_of_regularity {X : Type*}
-    [TopologicalSpace X] [ChartedSpace ℂ X] [hReg : PiecewiseC1PathRegularity X]
+    [TopologicalSpace X] [ChartedSpace ℂ X] [PiecewiseC1PathRegularity X]
     {a b : X} (γ' : Path a b) (n : ℕ) (hn : 0 < n) (pickX : Fin n → X) (i : Fin n)
     (h : Set.range (γ'.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
                                 (divFinIcc n hn (i.val + 1) i.isLt)) ⊆
@@ -102,6 +108,6 @@ theorem chartLift_contDiffOn_of_regularity {X : Type*}
       (γ'.subpath (divFinIcc n hn i.val (le_of_lt i.isLt))
                    (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
       (Set.Icc (0 : ℝ) 1) :=
-  ((hReg.out γ').choose_spec n hn pickX i h).1
+  sorry
 
 end JacobianChallenge.TraceDegree

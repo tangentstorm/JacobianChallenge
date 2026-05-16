@@ -286,7 +286,8 @@ Both are pure linear-algebra obligations.  See `IntegralOneCycleRank.lean`. -/
 theorem realDim_singularH1_eq_finrank_intH1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
     realDimSingularH1 X = Module.finrank ℤ (IntegralOneCycle X) :=
   realDim_singularH1_eq_finrank_intH1_via_uct X
 
