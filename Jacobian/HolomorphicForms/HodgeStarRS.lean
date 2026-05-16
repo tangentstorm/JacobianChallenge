@@ -65,7 +65,7 @@ replaced by the genuine kernel-of-Laplacian definition. -/
 abbrev HarmonicOneForm
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : Type _ :=
-  Fin 2 → HolomorphicOneForm ℂ X
+  HolomorphicOneForm ℂ X
 
 /-- The complex dimension of the space of harmonic 1-forms.  Equals
 `2g` for a compact connected Riemann surface (the Hodge theorem). -/
@@ -102,14 +102,18 @@ theorem complexDim_deRhamH1_eq_analyticHarmonicGenus
     -- `complexDimDeRhamH1ℂ X` lives in `HodgeTheoremRS.lean`. The genuine
     -- frontier obligation is that named bridge.
 
-/-- **Round refinement.** Harmonic 1-forms on a Riemann surface
-decompose as holomorphic plus anti-holomorphic, at the level of ℂ-dim:
+/-- **Frontier theorem (sorry).** Harmonic 1-forms on a Riemann surface
+decompose as holomorphic plus anti-holomorphic at the level of ℂ-dim:
 `dim_ℂ Harm¹(X) = dim_ℂ Ω¹(X) + dim_ℂ \bar Ω¹(X)`.
 
-In the current frontier model, `HarmonicOneForm X` is definitionally
-`Fin 2 → HolomorphicOneForm ℂ X`, while `AntiHolomorphicOneForm X` is
-definitionally `HolomorphicOneForm ℂ X`; the proof is therefore exactly
-mathlib's finite-product finrank formula. -/
+Previously the placeholder model `HarmonicOneForm X = Fin 2 →
+HolomorphicOneForm ℂ X` made this `2 * analyticGenus` by Mathlib's
+finite-product finrank. After the §5.1 refactor where `SmoothDiffForm
+1 X = HolomorphicOneForm ℂ X` and `HarmonicOneForm X` is realigned to
+the same single-form type, this identity now requires the genuine
+(1,0)-(0,1) decomposition of smooth 1-forms — a real frontier on
+Riemann surfaces (chartwise wedge with the complex structure).
+Sorry pending the decomposition API. -/
 theorem analyticHarmonicGenus_eq_analyticGenus_add_anti
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -117,10 +121,7 @@ theorem analyticHarmonicGenus_eq_analyticGenus_add_anti
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     analyticHarmonicGenus X = analyticGenus ℂ X + analyticAntiGenus X := by
-  unfold analyticHarmonicGenus HarmonicOneForm analyticGenus analyticAntiGenus AntiHolomorphicOneForm
-  rw [Module.finrank_pi_fintype]
-  simp
-  exact Nat.two_mul _
+  sorry
 
 /-- **Frontier theorem (sorry).** Existence of a global Hermitian
 (equivalently, conformal Riemannian) metric on a Riemann surface.

@@ -3,6 +3,9 @@ import Jacobian.HolomorphicForms.DeRhamComplex
 import Jacobian.HolomorphicForms.HodgeStarRS
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
+set_option synthInstance.maxHeartbeats 400000
+set_option maxHeartbeats 800000
+
 /-!
 # Harmonic projection: H¹_dR ≃ Harm¹ (frontier API)
 
@@ -84,11 +87,18 @@ theorem harmonicProjection1_surjective
   obtain ⟨ω, hω⟩ := harmonicProjection1_closed_surjective X η
   exact ⟨(ω : SmoothDiffForm 1 X), hω⟩
 
-/-- **Current-model Hodge orthogonality.** Exact 1-forms project to
-zero; in the zero-differential surrogate, exact forms are zero.
+/-- **Frontier sub-obligation (Hodge orthogonality).** Exact 1-forms
+project to zero under the harmonic projection.
 
 Bottom-up content: `(dη, ω)_{L²} = (η, d^* ω)_{L²}` and `d^* ω = 0`
-for harmonic `ω`. Integration by parts is the missing piece. -/
+for harmonic `ω`. Integration by parts is the missing piece.
+
+Previously collapsed via the `exteriorDerivative := 0` placeholder
+(making every exact form zero); after §5.1 the real `exteriorDerivative0`
+no longer makes this trivial. Pending the real harmonic projection
+(`harmonicProjection1` is currently the identity — itself a placeholder
+that needs elliptic regularity to make real), this is a focused
+frontier sorry. -/
 theorem harmonicProjection1_vanishes_on_exact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -96,11 +106,7 @@ theorem harmonicProjection1_vanishes_on_exact
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : SmoothDiffForm 1 X) (hω : ω ∈ ExactForm 0 X) :
     harmonicProjection1 X ω = 0 := by
-  have hω0 : ω = 0 := by
-    rcases hω with ⟨η, hη⟩
-    simpa [ExactForm, exteriorDerivative] using hη.symm
-  rw [hω0]
-  exact map_zero (harmonicProjection1 X)
+  sorry
 
 /-- **Current-model Hodge representative uniqueness.** If a closed
 1-form has zero harmonic projection, then it is exact.
@@ -116,7 +122,9 @@ theorem harmonicProjection1_kernel_subset_exact
     (ω : SmoothDiffForm 1 X) (_hclosed : exteriorDerivative 1 X ω = 0)
     (hproj : harmonicProjection1 X ω = 0) :
     ω ∈ ExactForm 0 X := by
-  rw [show ω = 0 by simpa [harmonicProjection1] using hproj]
+  -- With `harmonicProjection1 := LinearMap.id`, `hproj : ω = 0`, so
+  -- `ω ∈ ExactForm 0 X` reduces to `0 ∈ ExactForm 0 X`.
+  rw [show ω = 0 from hproj]
   exact Submodule.zero_mem _
 
 /-- **Current-model kernel identity.** The harmonic projection vanishes

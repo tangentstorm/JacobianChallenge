@@ -143,10 +143,11 @@ theorem hodgeLaplacian1_kernel_iff
     simp [hodgeLaplacian1, hdω, hdsω]
 
 /-- **Current-model identification.** Identification of `HarmonicOneForm X`
-(the alias `Fin 2 → HolomorphicOneForm ℂ X` from `HodgeStarRS.lean`)
-with the kernel of `Δ` on smooth 1-forms. Stated as an existence
-theorem to keep downstream consumers independent of the chosen
-surrogate representation. -/
+(after §5.1 the alias `HolomorphicOneForm ℂ X` from `HodgeStarRS.lean`)
+with the kernel of `Δ` on smooth 1-forms. Since `hodgeLaplacian1 X =
+0 + 0 = 0` in our model (`exteriorDerivative 1 X = 0` and the codiff
+factors through `exteriorDerivative 1`), the kernel is everything, and
+the identification is the identity on `HolomorphicOneForm ℂ X`. -/
 theorem harmonicEquivLaplacianKernel
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

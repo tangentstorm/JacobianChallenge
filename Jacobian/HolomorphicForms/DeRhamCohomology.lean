@@ -6,6 +6,8 @@ import Mathlib.Topology.Connected.TotallyDisconnected
 import Jacobian.HolomorphicForms.SmoothDifferentialForm
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
+set_option synthInstance.maxHeartbeats 400000
+
 /-!
 # De Rham cohomology dimensions on a smooth manifold (frontier API)
 
