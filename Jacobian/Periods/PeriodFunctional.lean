@@ -9,6 +9,7 @@ import Jacobian.Periods.SmoothRealStructure
 import Jacobian.Periods.ComplexManifoldOrientable
 import Jacobian.Periods.RiemannBilinearRefinement
 import Jacobian.Blueprint.Sec03.PeriodHomologyInvariance
+import Jacobian.Periods.SingularChainDescent
 import Mathlib.Algebra.Module.ZLattice.Basic
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
@@ -43,41 +44,10 @@ namespace JacobianChallenge.Periods
 
 open JacobianChallenge.HolomorphicForms CategoryTheory
 
-/-- **Descent proof helper.** If a ℤ-linear map `I` on chains kills the
-image of the short-complex boundary `S.f` (for `S = K.sc 1`), then
-`S.toCycles ≫ S.iCycles ≫ Im = 0` holds. -/
-theorem periodPairing_descent_aux
-    {C : ModuleCat ℤ}
-    (S : CategoryTheory.ShortComplex (ModuleCat ℤ))
-    (Im : S.X₂ ⟶ C)
-    (hI : ∀ (s : ↑S.X₁), Im.hom (S.f.hom s) = 0) :
-    S.toCycles ≫ S.iCycles ≫ Im = 0 := by
-  suffices h : S.f ≫ Im = 0 by rw [← CategoryTheory.Category.assoc, S.toCycles_i]; exact h
-  apply ModuleCat.hom_ext
-  ext s
-  simp only [ModuleCat.hom_comp, LinearMap.comp_apply, ModuleCat.hom_zero,
-              LinearMap.zero_apply]
-  exact hI s
-
-/-
-**Bridge: singularBoundary21 vs ShortComplex.f.** The boundary map
-`singularBoundary21 X = (K.d 2 1).hom` agrees with `(K.sc 1).f.hom` up to
-the propositional equality `(ComplexShape.down ℕ).prev 1 = 2`. This lemma
-bridges the two formulations.
--/
-theorem singularBoundary_eq_sc_f
-    (X : Type) [TopologicalSpace X] :
-    let K := JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X
-    let S := K.sc 1
-    ∀ (s : ↑S.X₁), ∃ (s' : ↑(JacobianChallenge.Blueprint.Sec03.SingularTwoChain X)),
-      S.f.hom s = JacobianChallenge.Blueprint.Sec03.singularBoundary21 X s' := by
-  unfold Blueprint.Sec03.singularChainComplexZ; simp +decide [ AlgebraicTopology.singularChainComplexFunctor ] ;
-  unfold AlgebraicTopology.SSet.singularChainComplexFunctor; simp +decide ;
-  unfold AlgebraicTopology.alternatingFaceMapComplex;
-  unfold AlgebraicTopology.AlternatingFaceMapComplex.obj; simp +decide [ ComplexShape.down ] ;
-  unfold ChainComplex.of; simp +decide [ ComplexShape.down' ] ;
-  split_ifs <;> simp_all +decide [ ComplexShape.prev ];
-  exact fun s => ⟨ _, rfl ⟩
+-- `periodPairing_descent_aux` and `singularBoundary_eq_sc_f` moved to
+-- `Jacobian/Periods/SingularChainDescent.lean` to break an import cycle
+-- between this file and `DeRhamComparisonMap.lean`. Both are re-exported
+-- via the import above (same `JacobianChallenge.Periods` namespace).
 
 /-- **Bridge: model-space change for holomorphic forms.**
 Given a complex manifold `X` charted over both `E` and `ℂ`, this is

@@ -38,33 +38,55 @@ abbrev ChartLiftPiecewiseC1
                     (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
         (Set.Icc (0 : ℝ) 1) t‖₊ ≤ K
 
-/-- **Project-level regularity assumption (typeclass form).**
+/-- **Piecewise-C¹ regularity predicate.** A continuous path `γ : Path a b`
+on a charted space `X` is *piecewise C¹ in chart coordinates* if there
+exists a uniform derivative bound `K : NNReal` such that
+`ChartLiftPiecewiseC1 γ K` holds — i.e. every chart-lifted segment of
+every uniform-grain partition of `γ` is C¹ on `[0, 1]` with derivative
+norm bounded by `K`.
 
-The statement carried by an instance: *every continuous path `γ : Path a b`
-on `X` admits a uniform `K₀` with `ChartLiftPiecewiseC1 γ K₀`* — i.e.
-every continuous path is piecewise C¹ in chart coordinates with a
-uniform derivative bound.
+Unlike the unconditional class `PiecewiseC1PathRegularity` below, this
+predicate is mathematically correct: it picks out exactly those paths
+for which the chart-lift regularity machinery applies. Non-examples
+include nowhere-differentiable continuous paths (Weierstrass-style). -/
+abbrev IsPiecewiseC1Path {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {a b : X} (γ : Path a b) : Prop :=
+  ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ K₀
 
-This is **false for arbitrary continuous paths**: a nowhere-
-differentiable continuous path (e.g. a Weierstrass-style curve embedded
-in a chart) inhabits `Path a b` but cannot satisfy
-`ChartLiftPiecewiseC1`.
+/-- **Project-level regularity assumption (typeclass form, predicate-gated).**
 
-Carried as a typeclass so the `analyticPushforward` API can pick it up
-implicitly without threading an explicit hypothesis through every
-call site. Provided by a single named sorry-instance in
-`Jacobian/TraceDegree/PiecewiseC1Instance.lean`. -/
+Predicate-gated form: *given a piecewise-C¹ witness for a path, we can
+extract the uniform `K₀` bound.* This is **vacuously true** (the witness
+is the conclusion itself) — the class no longer makes a false universal
+claim.
+
+Historical context: the previous form of this class asserted that EVERY
+continuous path is piecewise C¹ in chart coordinates with a uniform
+derivative bound. That statement is **false for arbitrary continuous
+paths** (a nowhere-differentiable continuous path inhabits `Path a b`).
+The instance was a single isolated sorry.
+
+The honest fix is to gate the conclusion on a per-path witness
+`IsPiecewiseC1Path γ`. The class instance becomes trivial; callers
+that need a witness for a SPECIFIC path provide it themselves. Callers
+that need a witness for an arbitrary path (universally quantified) now
+route through a named obligation (`cyclePathRegularity_obligation` in
+`Jacobian/TraceDegree/PiecewiseC1Instance.lean`), making the residual
+false content audit-friendly. -/
 class PiecewiseC1PathRegularity (X : Type*)
     [TopologicalSpace X] [ChartedSpace ℂ X] : Prop where
-  /-- Witness: every path admits a uniform piecewise-C¹ bound. -/
-  out : ∀ {a b : X} (γ' : Path a b), ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀
+  /-- Witness extractor: given a piecewise-C¹ witness for a path, return it.
+  This is vacuous (`fun _ h => h`); the class exists only to keep the
+  legacy typeclass discipline at consumer sites. -/
+  out : ∀ {a b : X} (γ' : Path a b), IsPiecewiseC1Path γ' → IsPiecewiseC1Path γ'
 
-/-- Accessor: extract the per-path bound from a `PiecewiseC1PathRegularity X`
-instance. -/
-theorem pathPiecewiseC1_of_regularity {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X] [hReg : PiecewiseC1PathRegularity X]
-    {a b : X} (γ' : Path a b) :
+/-- Accessor: extract the per-path bound from a piecewise-C¹ witness.
+With the predicate-gated class, this is just a pass-through. -/
+theorem pathPiecewiseC1_of_regularity {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    [hReg : PiecewiseC1PathRegularity X]
+    {a b : X} (γ' : Path a b) (h : IsPiecewiseC1Path γ') :
     ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀ :=
-  hReg.out γ'
+  hReg.out γ' h
 
 /-- Accessor: chart-lift `C¹` regularity of a subpath in an atlas chart,
 extracted from the strengthened `ChartLiftPiecewiseC1` data. Sorry-free

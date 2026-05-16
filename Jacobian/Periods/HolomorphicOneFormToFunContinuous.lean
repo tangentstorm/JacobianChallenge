@@ -63,8 +63,9 @@ private noncomputable def tangent_symmL (b₀ b : X) : E →L[ℂ] E :=
   (trivializationAt E (TangentSpace (modelWithCornersSelf ℂ E)) b₀).symmL ℂ b
 
 /-- The cotangent value, viewed as `E →L[ℂ] ℂ` via the definitional fiber
-identification. -/
-private noncomputable def cotangent_value
+identification. Public so that smooth-section theorems downstream can
+type the codomain explicitly without dependent-function casts. -/
+noncomputable def cotangent_value
     (ω : HolomorphicOneForm E X) (b : X) : E →L[ℂ] ℂ :=
   ω.toFun b
 
@@ -234,5 +235,53 @@ theorem holomorphicOneForm_toFun_continuous
     filter_upwards [hbaseSet_nhd] with b hb
     exact composition_eq_cotangent_value_on_baseSet ω b₀ b hb
   exact hcomposed.congr h_round_trip
+
+omit [StableChartAt E X] in
+/-- **Smooth lift of `ω_comp_symmL_continuousAt`.** The trivialized
+cotangent section is `C^⊤` at `b₀`. The proof is identical to
+`ω_comp_symmL_continuousAt` minus the final `.continuousAt`. -/
+private theorem ω_comp_symmL_contMDiffAt
+    (ω : HolomorphicOneForm E X) (b₀ : X) :
+    ContMDiffAt (modelWithCornersSelf ℂ E) 𝓘(ℂ, E →L[ℂ] ℂ) ⊤
+      (fun b : X => (cotangent_value ω b).comp (tangent_symmL b₀ b)) b₀ := by
+  have hb₀ :
+      b₀ ∈ (trivializationAt (E →L[ℂ] ℂ) (CotangentSpace E X) b₀).baseSet :=
+    FiberBundle.mem_baseSet_trivializationAt' (F := E →L[ℂ] ℂ)
+      (E := CotangentSpace E X) b₀
+  have hsmooth :
+      ContMDiffAt (modelWithCornersSelf ℂ E) 𝓘(ℂ, E →L[ℂ] ℂ)
+        (⊤ : WithTop ℕ∞)
+        (fun b => ((trivializationAt (E →L[ℂ] ℂ) (CotangentSpace E X) b₀)
+          ⟨b, ω.toFun b⟩).snd) b₀ :=
+    ((trivializationAt (E →L[ℂ] ℂ) (CotangentSpace E X) b₀).contMDiffAt_section_iff
+      hb₀).mp ω.contMDiff_toFun.contMDiffAt
+  have heq : (fun b : X => ((trivializationAt (E →L[ℂ] ℂ) (CotangentSpace E X) b₀)
+        ⟨b, ω.toFun b⟩).snd) =
+      (fun b : X => (cotangent_value ω b).comp (tangent_symmL b₀ b)) := by
+    funext b
+    exact trivCT_section_eq_comp_symmL ω b₀ b
+  rw [← heq]
+  exact hsmooth
+
+/-- **Smooth lift of `holomorphicOneForm_toFun_continuous`.** Under
+`[StableChartAt E X]`, the underlying function `b ↦ ω.toFun b : X →
+(E →L[ℂ] ℂ)` (via the cotangent-value identification) is `C^⊤`.
+Routes through `ω_comp_symmL_contMDiffAt` plus
+`tangent_symmL_eq_id_on_source` (`tangent_symmL b₀ b = id` on chart
+source under StableChartAt), so the composition `ω.toFun b ∘
+tangent_symmL b₀ b` reduces to `ω.toFun b` on a `𝓝 b₀` neighborhood,
+yielding smoothness of `ω.toFun` at b₀ via
+`ContMDiffAt.congr_of_eventuallyEq`. -/
+theorem holomorphicOneForm_toFun_contMDiff
+    (ω : HolomorphicOneForm E X) :
+    ContMDiff (modelWithCornersSelf ℂ E) 𝓘(ℂ, E →L[ℂ] ℂ) ⊤
+      (cotangent_value (X := X) (E := E) ω) := by
+  intro b₀
+  have hsmooth_comp := ω_comp_symmL_contMDiffAt ω b₀
+  have hopen : IsOpen (chartAt E b₀).source := (chartAt E b₀).open_source
+  have hmem : b₀ ∈ (chartAt E b₀).source := mem_chart_source E b₀
+  apply hsmooth_comp.congr_of_eventuallyEq
+  filter_upwards [hopen.mem_nhds hmem] with b hb
+  rw [tangent_symmL_eq_id_on_source b₀ hb, ContinuousLinearMap.comp_id]
 
 end JacobianChallenge.Periods

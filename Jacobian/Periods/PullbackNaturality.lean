@@ -4,6 +4,7 @@ import Jacobian.Periods.PathIntegralViaCoverPick
 import Jacobian.Periods.PathIntegralViaCoverPickRefl
 import Jacobian.Periods.PathIntegralViaCoverWithRefinementInvariant
 import Jacobian.Periods.PathIntegralViaCoverWithTrans
+import Jacobian.Periods.PathIntegralViaCoverTrans
 import Jacobian.Periods.PathIntegralViaChartCorrectPullback
 import Jacobian.Periods.PathIntegralCongr
 import Jacobian.HolomorphicForms.PullbackBundled
@@ -257,65 +258,12 @@ abbrev ChartLiftLipschitzOnPartitions
                   (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
       (Set.Icc (0 : ℝ) 1)
 
-/-- **Regularity obligation for path integration.**
-Extracts the C¹ regularity of chart-lifted paths from the global
-`PiecewiseC1PathRegularity` assumption. -/
-private theorem path_contDiffOn_obligation
-    (M : Type) [TopologicalSpace M] [ChartedSpace ℂ M]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) M]
-    [PiecewiseC1PathRegularity M]
-    {a b : M} (γ : Path a b) (p : M) :
-    ContDiffOn ℝ 1 ((chartAt ℂ p) ∘ γ.extend)
-      (γ.extend ⁻¹' (chartAt ℂ p).source ∩ Set.Icc 0 1) := by
-  -- The global assumption provides differentiability on segments.
-  -- For the blueprint assembly, we identify this with the ContDiff 1
-  -- requirement.
-  sorry
-
-omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- **Pass pcr.10 (path-additivity at cover level).** The cover-level
-path integral is additive under path concatenation: for any holomorphic
-form `ω` on `X` and concatenable paths `γ : Path a b`, `γ' : Path b c`,
-`pathIntegralViaCover ω (γ.trans γ') =
-  pathIntegralViaCover ω γ + pathIntegralViaCover ω γ'`.
-
-This is the un-`With` lift of `pathIntegralViaCoverWith_trans` to the
-ambient choice of partition (which `pathIntegralViaCover` makes via
-`Classical.choose`). Currently absent at the un-`With` level; see
-TeX label `lem:pcr-r10` for the chain-level argument. -/
-theorem pathIntegralViaCover_trans_eq_add
-    (η : HolomorphicOneForm ℂ X) {a b c : X}
-    (γ : Path a b) (γ' : Path b c) :
-    pathIntegralViaCover η (γ.trans γ') =
-      pathIntegralViaCover η γ + pathIntegralViaCover η γ' := by
-  -- Extract a common-multiple aligned chart partition for γ.trans γ'
-  -- whose first half covers γ and second half covers γ'.
-  obtain ⟨n, hn, pickA, pickB, hcovA, hcovB, hcovT⟩ :=
-    exists_aligned_partition_for_trans (E := ℂ) X γ γ'
-  -- Bridge each `pathIntegralViaCover` to its `pathIntegralViaCoverWith`
-  -- form on the chosen partition via refinement invariance.
-  have hT : pathIntegralViaCover η (γ.trans γ') =
-      pathIntegralViaCoverWith η (γ.trans γ') (2 * n)
-        (Nat.mul_pos (by omega) hn)
-        (alignedPickT n pickA pickB) hcovT := by
-    unfold pathIntegralViaCover
-    exact pathIntegralViaCoverWith_refinement_invariant'
-      η (γ.trans γ') (fun p => path_contDiffOn_obligation X (γ.trans γ') p) _ _ _ _ (2 * n) (Nat.mul_pos (by omega) hn)
-      (alignedPickT n pickA pickB) hcovT
-  have hA : pathIntegralViaCover η γ =
-      pathIntegralViaCoverWith η γ n hn pickA hcovA := by
-    unfold pathIntegralViaCover
-    exact pathIntegralViaCoverWith_refinement_invariant'
-      η γ (fun p => path_contDiffOn_obligation X γ p) _ _ _ _ n hn pickA hcovA
-  have hB : pathIntegralViaCover η γ' =
-      pathIntegralViaCoverWith η γ' n hn pickB hcovB := by
-    unfold pathIntegralViaCover
-    exact pathIntegralViaCoverWith_refinement_invariant'
-      η γ' (fun p => path_contDiffOn_obligation X γ' p) _ _ _ _ n hn pickB hcovB
-  rw [hT, hA, hB]
-  -- Apply the With-level aligned trans split (Phase 6).
-  exact pathIntegralViaCoverWith_aligned_trans
-    η γ γ' n hn pickA pickB hcovA hcovB hcovT
+-- `path_contDiffOn_obligation` and `pathIntegralViaCover_trans_eq_add`
+-- were relocated to `Jacobian/Periods/PathIntegralViaCoverTrans.lean`
+-- so they sit upstream of `Jacobian/HolomorphicForms/DeRhamComparisonMap.lean`
+-- in the import DAG. The import above re-exposes
+-- `pathIntegralViaCover_trans_eq_add` for downstream consumers in this
+-- file (e.g. the line-818 `pathIntegralViaCover_refl` callsite).
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
