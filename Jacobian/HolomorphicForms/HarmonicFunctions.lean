@@ -6,6 +6,7 @@ import Jacobian.HolomorphicForms.HolomorphicMap
 import Jacobian.HolomorphicForms.HodgeDecomposition
 import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.InnerProductSpace.LaxMilgram
+import Mathlib.Geometry.Manifold.BumpFunction
 import Mathlib.Topology.Algebra.Order.Field
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
@@ -37,7 +38,9 @@ def HasRealDipoleSingularity {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ 
   ∃ (chart : OpenPartialHomeomorph X ℂ) (z₀ : ℂ),
     P ∈ chart.source ∧ chart P = z₀ ∧
     ∀ᶠ x in 𝓝 P, x ∈ chart.source ∧
-      ∃ (v : X → ℝ), IsHarmonic (sorry) v ∧
+      ∃ (v : X → ℝ),
+        (∀ p : X, ∃ (f_holo : X → ℂ), IsHolomorphicAt f_holo p ∧
+          ∀ᶠ y in 𝓝 p, (f_holo y).re = v y) ∧
         ∀ᶠ y in 𝓝 x, u y = (1 / (chart y - z₀)).re + v y
 
 /-- **Sub-obligation 2.1: Sobolev space H^1(X).**
@@ -128,8 +131,15 @@ space H^1(X) / {const}. -/
 theorem dirichlet_energy_coercive (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) [inst : SobolevH1 X g] (u : inst.carrier) :
     0 ≤ g.tensor (Classical.arbitrary X) (Classical.arbitrary _) (Classical.arbitrary _) := by
-  -- This is a substantive statement about the metric tensor being non-negative.
-  sorry
+  by_cases hX : Nonempty X
+  · let x : X := Classical.arbitrary X
+    let v : TangentSpace 𝓘(ℂ, ℂ) x := Classical.arbitrary _
+    change 0 ≤ g.tensor x v v
+    by_cases hv : v = 0
+    · simp [hv]
+    · exact (g.is_positive_definite x v hv).le
+  · haveI : IsEmpty X := not_nonempty_iff.mp hX
+    exact IsEmpty.elim (Classical.arbitrary X)
 
 /-- **Sub-obligation 2.4b: Lax-Milgram application.**
 By the Lax-Milgram theorem (available in Mathlib at `Mathlib.Analysis.InnerProductSpace.LaxMilgram`),
@@ -147,13 +157,29 @@ noncomputable def local_dipole_function (_U : Set ℂ) (z₀ : ℂ) : ℂ → �
   fun z => (1 / (z - z₀)).re
 
 /-- **Sub-obligation 2.3b: Smooth bump function.**
-There exists a smooth bump function supported in a small disk around P. -/
-theorem exists_smooth_bump (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] (P : X) :
-    ∃ ψ : X → ℝ, ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ (fun x => (ψ x : ℂ)) ∧ 
-      Metric.closedBall P (sorry) ⊆ {x | ψ x = 1} ∧
-      Set.support ψ ⊆ Metric.ball P (sorry) := by
-  sorry
+There exists a real smooth bump function supported in the chart at `P`,
+equal to `1` on a neighborhood of `P`.
+
+The stronger scaffolded formulation with
+`ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ (fun x => (ψ x : ℂ))` would assert a
+compactly supported holomorphic bump, which is false on connected complex
+manifolds. The real smooth statement is the usable bump-function input for
+the Dirichlet construction. -/
+theorem exists_smooth_bump (X : Type*) [TopologicalSpace X] [T2Space X]
+    [ChartedSpace ℂ X] [IsManifold (𝓘(ℝ, ℂ)) (⊤ : WithTop ℕ∞) X] (P : X) :
+    ∃ ψ : X → ℝ,
+      ContMDiff (𝓘(ℝ, ℂ)) (𝓘(ℝ, ℝ)) (↑(⊤ : ℕ∞) : WithTop ℕ∞) ψ ∧
+      ψ P = 1 ∧
+      (∃ U : Set X, IsOpen U ∧ P ∈ U ∧ ∀ x ∈ U, ψ x = 1) ∧
+      Function.support ψ ⊆ (chartAt ℂ P).source := by
+  let ψ : SmoothBumpFunction (𝓘(ℝ, ℂ)) P :=
+    Classical.choice (show Nonempty (SmoothBumpFunction (𝓘(ℝ, ℂ)) P) from inferInstance)
+  refine ⟨ψ, ψ.contMDiff, ψ.eq_one, ?_, ψ.support_subset_source⟩
+  have hnear : (ψ : X → ℝ) =ᶠ[𝓝 P] 1 := ψ.eventuallyEq_one
+  have hnear' : ∀ᶠ x in 𝓝 P, (ψ : X → ℝ) x = 1 := hnear
+  rw [eventually_nhds_iff] at hnear'
+  rcases hnear' with ⟨U, hU, hUopen, hPU⟩
+  exact ⟨U, hUopen, hPU, hU⟩
 
 /-- **Sub-obligation 2.3: Construction of a trial function with dipole singularity.**
 To find a harmonic function with a dipole singularity Re(1/z) at P, we first
@@ -321,8 +347,7 @@ theorem conjugate_one_form_closed (X : Type*) [TopologicalSpace X] [ChartedSpace
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (g : CompatibleMetric X) (u : X → ℝ) (hu : IsHarmonic g u) :
     exteriorDerivative 1 X (HodgeStar g (differentialOneForm_of_real u)) = 0 := by
-  -- This is a substantive statement now.
-  sorry
+  rfl
 
 /-- **Sub-obligation 3.2: Closed forms are exact in genus 0.**
 If H^1_dR(X) = 0, every closed 1-form is exact. -/
@@ -332,8 +357,27 @@ theorem exact_of_closed_in_genus_zero (X : Type*) [TopologicalSpace X] [T2Space 
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : SmoothDiffForm 1 X) (hclosed : exteriorDerivative 1 X ω = 0) :
     analyticHarmonicGenus X = 0 → ω ∈ ExactForm 0 X := by
-  -- This is now a substantive statement.
-  sorry
+  intro h_genus
+  have hfinrank :
+      Module.finrank ℂ (deRhamH1Cocycle X) = 0 := by
+    rw [deRhamH1Cocycle_finrank_eq_analyticHarmonicGenus X, h_genus]
+  obtain ⟨e, _⟩ := deRhamH1_isLinearEquiv_harmonic X
+  haveI : Module.Finite ℂ (deRhamH1Cocycle X) :=
+    Module.Finite.equiv e.symm
+  haveI : Subsingleton (deRhamH1Cocycle X) :=
+    (Module.finrank_zero_iff).mp hfinrank
+  haveI : Subsingleton (ClosedFormSub 1 X ⧸ ExactForm.toClosedSubmodule 0 X) := by
+    change Subsingleton (deRhamH1Cocycle X)
+    infer_instance
+  let ωc : ClosedFormSub 1 X := ⟨ω, LinearMap.mem_ker.mpr hclosed⟩
+  have hquot' : (Submodule.Quotient.mk ωc : deRhamH1Cocycle X) = 0 :=
+    Subsingleton.elim _ _
+  have hquot :
+      (Submodule.Quotient.mk ωc :
+        ClosedFormSub 1 X ⧸ ExactForm.toClosedSubmodule 0 X) = 0 := hquot'
+  have hmem : ωc ∈ ExactForm.toClosedSubmodule 0 X :=
+    (Submodule.Quotient.mk_eq_zero _).mp hquot
+  simpa [ωc, ExactForm.toClosedSubmodule] using hmem
 
 /-- If H^1_dR(X) = 0, any harmonic function (with appropriate domain)
 admits a harmonic conjugate, making u + iv holomorphic. -/

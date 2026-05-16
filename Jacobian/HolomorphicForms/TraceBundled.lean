@@ -1,6 +1,10 @@
 import Jacobian.HolomorphicForms.Defs
+import Jacobian.HolomorphicForms.ChartedSpaceComplexPoints
+import Jacobian.HolomorphicForms.CompactRiemannSurface
+import Jacobian.HolomorphicForms.SectionFiberNorm
 import Jacobian.HolomorphicForms.HolomorphicMap
 import Jacobian.HolomorphicForms.BranchedCover
+import Jacobian.HolomorphicForms.ToFunApplyVec
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 import Jacobian.TraceDegree.TraceDefinition
 import Jacobian.HolomorphicForms.PullbackBundled
@@ -36,6 +40,7 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold ContDiff
 open JacobianChallenge.HolomorphicForms
+open JacobianChallenge.HolomorphicForms.SectionFiberNorm
 open JacobianChallenge.TraceDegree
 open JacobianChallenge.Periods
 
@@ -59,53 +64,6 @@ theorem traceFormsBundled_zero
     traceFormsBundled f hf 0 = 0 :=
   sorry
 
-/-- The trace as a ℂ-linear map between holomorphic 1-form spaces. -/
-noncomputable def traceFormsBundledLM
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
-    HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y where
-  toFun := traceFormsBundled f hf
-  map_add' η ζ := by
-    -- Trace is linear: use identity principle
-    by_cases hconst : ∃ y₀, ∀ x, f x = y₀
-    · rw [traceFormsBundled_zero, traceFormsBundled_zero, traceFormsBundled_zero]
-      simp
-    · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-        (isHolomorphic_of_contMDiff hf) hconst
-      apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
-      intro y hy
-      simp [traceFormsBundled_apply_fun_regular hf hbc]
-      exact traceAtRegularValue_add hbc (fun x => η.toFun x) (fun x => ζ.toFun x) y hy
-  map_smul' k η := by
-    by_cases hconst : ∃ y₀, ∀ x, f x = y₀
-    · rw [traceFormsBundled_zero, traceFormsBundled_zero]
-      simp
-    · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-        (isHolomorphic_of_contMDiff hf) hconst
-      apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
-      intro y hy
-      simp [traceFormsBundled_apply_fun_regular hf hbc]
-      exact traceAtRegularValue_smul hbc k (fun x => η.toFun x) y hy
-
-/-- **Section extraction axiom for trace.**
-The underlying function of the bundled trace equals the local fiber sum
-at regular values. -/
-theorem traceFormsBundled_apply_fun_regular
-    {f : X → Y} (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
-    (hbc : BranchedCoverData X Y f)
-    (η : HolomorphicOneForm ℂ X) (y : Y) (hy : isRegularValue hbc y) :
-    (traceFormsBundled f hf η).toFun y = traceAtRegularValue hbc (fun x => η.toFun x) y hy :=
-  sorry
-
-/-- The trace–pullback identity holds at regular values. -/
-theorem trace_pullback_identity_regular
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
-    (hbc : BranchedCoverData X Y f)
-    (η : HolomorphicOneForm ℂ Y) (y : Y) (hy : isRegularValue hbc y) :
-    (traceFormsBundled f hf (pullbackFormsBundled f hf η)).toFun y =
-      ((hbc.weightedFiberCard y : ℂ) • η).toFun y := by
-  rw [traceFormsBundled_apply_fun_regular hf hbc (pullbackFormsBundled f hf η) y hy]
-  exact trace_pullback_at_regular_value hbc hf (isHolomorphic_of_contMDiff hf) η y hy
-
 /-- The target-side branch locus (image of ramification points) is finite. -/
 theorem branchLocus_finite
     {f : X → Y} (h : BranchedCoverData X Y f) :
@@ -123,16 +81,38 @@ theorem branchLocus_finite
   rw [h_eq]
   exact hram.image f
 
+private theorem dense_compl_of_finite_of_perfect
+    {Z : Type*} [TopologicalSpace Z] [T1Space Z] [PerfectSpace Z]
+    {s : Set Z} (hs : s.Finite) :
+    Dense (sᶜ : Set Z) := by
+  classical
+  let F := hs.toFinset
+  have hF : (F : Set Z) = s := hs.coe_toFinset
+  rw [← hF]
+  induction F using Finset.induction_on with
+  | empty =>
+      simp
+  | insert a F _ha ih =>
+      have hsingle : Dense ({a}ᶜ : Set Z) := dense_compl_singleton a
+      have hFopen : IsOpen ((F : Set Z)ᶜ) := F.finite_toSet.isClosed.isOpen_compl
+      have hinter : Dense ({a}ᶜ ∩ (F : Set Z)ᶜ : Set Z) :=
+        hsingle.inter_of_isOpen_right ih hFopen
+      have hset : (insert a (F : Set Z))ᶜ = ({a}ᶜ ∩ (F : Set Z)ᶜ : Set Z) := by
+        ext z
+        simp
+      simpa [Finset.coe_insert, hset] using hinter
+
 /-- The regular locus is dense in Y. -/
 theorem regularLocus_dense
     {f : X → Y} (h : BranchedCoverData X Y f) :
     Dense (regularLocus h) := by
-  -- The regular locus is the complement of a finite set.
-  -- In an infinite T1 space, the complement of a finite set is dense.
-  apply Set.Finite.dense_compl
-  · exact branchLocus_finite h
-  · -- Compact connected Riemann surfaces are infinite.
-    sorry
+  haveI : Nontrivial Y := by
+    obtain ⟨p, q, hpq⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := Y)
+    exact ⟨⟨p, q, hpq⟩⟩
+  haveI : PerfectSpace Y := inferInstance
+  have hbranch : Dense ({y : Y | ¬ isRegularValue h y}ᶜ : Set Y) :=
+    dense_compl_of_finite_of_perfect (branchLocus_finite h)
+  simpa [regularLocus, Set.compl_setOf] using hbranch
 
 /-- **Identity principle for holomorphic 1-forms.**
 Two holomorphic 1-forms that agree on a dense set of a connected Riemann
@@ -141,13 +121,91 @@ theorem holomorphicOneForm_ext_on
     {s : Set Y} (hs : Dense s)
     {ω₁ ω₂ : HolomorphicOneForm ℂ Y} (h : ∀ y ∈ s, ω₁.toFun y = ω₂.toFun y) :
     ω₁ = ω₂ := by
-  apply ContMDiffSection.coe_inj
-  funext y
-  -- 1. In any chart, the sections are analytic functions U → ℂ.
-  -- 2. Agreement on a dense set implies agreement on a set with accumulation points.
-  -- 3. The local analytic identity principle implies equality on the chart.
-  -- 4. Connectedness of Y propagates this equality to the entire surface.
+  apply ContMDiffSection.ext
+  intro y
+  let δ : HolomorphicOneForm ℂ Y := ω₁ - ω₂
+  have hcont : Continuous (ContMDiffSection.fiberNorm δ) :=
+    holomorphicOneForm_fiberNorm_continuous Y δ
+  have hzero_on : Set.EqOn (ContMDiffSection.fiberNorm δ) (fun _ : Y => (0 : ℝ)) s := by
+    intro z hz
+    have hzfun : δ.toFun z = 0 := by
+      dsimp [δ]
+      change ((ω₁ - ω₂ : HolomorphicOneForm ℂ Y) : ∀ y, _) z = 0
+      rw [ContMDiffSection.coe_sub]
+      exact sub_eq_zero.mpr (h z hz)
+    simp [ContMDiffSection.fiberNorm, hzfun]
+  have hzero_all : ContMDiffSection.fiberNorm δ = fun _ : Y => (0 : ℝ) :=
+    Continuous.ext_on hs hcont continuous_const hzero_on
+  have hyzero : δ.toFun y = 0 := by
+    have hn : ‖δ.toFun y‖ = 0 := by
+      simpa [ContMDiffSection.fiberNorm] using congrFun hzero_all y
+    exact norm_eq_zero.mp hn
+  dsimp [δ] at hyzero
+  change ((ω₁ - ω₂ : HolomorphicOneForm ℂ Y) : ∀ y, _) y = 0 at hyzero
+  rw [ContMDiffSection.coe_sub] at hyzero
+  exact sub_eq_zero.mp hyzero
+
+/-- **Section extraction axiom for trace.**
+The underlying function of the bundled trace equals the local fiber sum
+at regular values. -/
+theorem traceFormsBundled_apply_fun_regular
+    {f : X → Y} (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (hbc : BranchedCoverData X Y f)
+    (η : HolomorphicOneForm ℂ X) (y : Y) (hy : isRegularValue hbc y) :
+    (traceFormsBundled f hf η).toFun y = traceAtRegularValue hbc (fun x => η.toFun x) y hy :=
   sorry
+
+/-- The trace as a ℂ-linear map between holomorphic 1-form spaces. -/
+noncomputable def traceFormsBundledLM
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
+    HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y where
+  toFun := by
+    classical
+    exact fun η => if ∃ y₀, ∀ x, f x = y₀ then 0 else traceFormsBundled f hf η
+  map_add' η ζ := by
+    classical
+    -- Trace is linear: use identity principle
+    by_cases hconst : ∃ y₀, ∀ x, f x = y₀
+    · change (if ∃ y₀, ∀ x, f x = y₀ then 0 else traceFormsBundled f hf (η + ζ)) =
+        (if ∃ y₀, ∀ x, f x = y₀ then 0 else traceFormsBundled f hf η) +
+          (if ∃ y₀, ∀ x, f x = y₀ then 0 else traceFormsBundled f hf ζ)
+      simp [hconst]
+    · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+        (isHolomorphic_of_contMDiff hf) hconst
+      simp only [if_neg hconst]
+      apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
+      intro y hy
+      rw [traceFormsBundled_apply_fun_regular hf hbc (η + ζ) y hy]
+      simpa [add_toFun_apply, traceFormsBundled_apply_fun_regular hf hbc η y hy,
+        traceFormsBundled_apply_fun_regular hf hbc ζ y hy] using
+        traceAtRegularValue_add hbc (fun x => η.toFun x) (fun x => ζ.toFun x) y hy
+  map_smul' k η := by
+    classical
+    by_cases hconst : ∃ y₀, ∀ x, f x = y₀
+    · change (if ∃ y₀, ∀ x, f x = y₀ then 0 else traceFormsBundled f hf (k • η)) =
+        k • (if ∃ y₀, ∀ x, f x = y₀ then 0 else traceFormsBundled f hf η)
+      simp only [if_pos hconst]
+      apply ContMDiffSection.ext
+      intro y
+      simp
+    · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+        (isHolomorphic_of_contMDiff hf) hconst
+      simp only [if_neg hconst]
+      apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
+      intro y hy
+      rw [traceFormsBundled_apply_fun_regular hf hbc (k • η) y hy]
+      simpa [smul_toFun_apply, traceFormsBundled_apply_fun_regular hf hbc η y hy] using
+        traceAtRegularValue_smul hbc k (fun x => η.toFun x) y hy
+
+/-- The trace–pullback identity holds at regular values. -/
+theorem trace_pullback_identity_regular
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (hbc : BranchedCoverData X Y f)
+    (η : HolomorphicOneForm ℂ Y) (y : Y) (hy : isRegularValue hbc y) :
+    (traceFormsBundled f hf (pullbackFormsBundled f hf η)).toFun y =
+      ((hbc.weightedFiberCard y : ℂ) • η).toFun y := by
+  rw [traceFormsBundled_apply_fun_regular hf hbc (pullbackFormsBundled f hf η) y hy]
+  exact trace_pullback_at_regular_value hbc hf (isHolomorphic_of_contMDiff hf) η y hy
 
 /-- The pullback along a constant map is zero. -/
 theorem pullbackFormsBundled_constant
@@ -157,13 +215,9 @@ theorem pullbackFormsBundled_constant
   apply ContMDiffSection.coe_inj
   funext x
   obtain ⟨y₀, hf_const⟩ := hconst
-  unfold pullbackFormsBundled pullbackFormsFunFiber
-  -- Derivative of constant map is zero
-  have hdf : mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x = 0 := by
-    apply mfderiv_zero_of_eventually_const
-    filter_upwards with x' using hf_const x'
-  rw [hdf]
-  exact ContinuousLinearMap.comp_zero _
+  have hf_eq : f = fun _ : X => y₀ := funext hf_const
+  subst f
+  simp [pullbackFormsBundled, pullbackFormsFunFiber, mfderiv_const]
 
 /-- **The Trace-Pullback Identity.** The fundamental identity for
 holomorphic 1-forms: the trace of a pullback is multiplication by
@@ -181,8 +235,10 @@ theorem trace_pullback_identity
     rw [pullbackFormsBundled_constant f hf hconst η]
     rw [traceFormsBundled_zero f hf]
     rw [analyticDegree_constant f hf hconst]
+    apply ContMDiffSection.ext
+    intro y
     simp
-  · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+  · let hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
       (isHolomorphic_of_contMDiff hf) hconst
     -- 2. Use identity principle: equal on dense set implies equal everywhere
     rw [analyticDegree_eq_branchedDegree f hf hconst]

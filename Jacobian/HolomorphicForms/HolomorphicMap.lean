@@ -181,7 +181,60 @@ theorem IsHolomorphicAt.localInverse_isHolomorphicAt
     {f : X → Y} {p : X} (hf : IsHolomorphicAt f p)
     (hderiv : deriv (chartLocalAt f p) (chartAt ℂ p p) ≠ 0) :
     IsHolomorphicAt (hf.localInverse hderiv) (f p) := by
-  sorry
+  unfold IsHolomorphicAt chartLocalAt IsHolomorphicAt.localInverse
+  let r : ℂ → ℂ :=
+    hf.hasStrictDerivAt.localInverse (chartLocalAt f p)
+      (deriv (chartLocalAt f p) (chartAt ℂ p p)) (chartAt ℂ p p) hderiv
+  have hli_r :
+      r (chartLocalAt f p (chartAt ℂ p p)) = chartAt ℂ p p := by
+    dsimp [r]
+    exact (HasStrictDerivAt.eventually_left_inverse
+      (f := chartLocalAt f p)
+      (f' := (deriv (chartLocalAt f p) (chartAt ℂ p p) : ℂ))
+      (a := chartAt ℂ p p) (hf := hf.hasStrictDerivAt)
+      (hf' := hderiv)).self_of_nhds
+  have h_inv_apply :
+      (chartAt ℂ p).symm
+          (hf.hasStrictDerivAt.localInverse (chartLocalAt f p)
+            (deriv (chartLocalAt f p) (chartAt ℂ p p)) (chartAt ℂ p p) hderiv
+            (chartAt ℂ (f p) (f p))) = p := by
+    change (chartAt ℂ p).symm (r (chartAt ℂ (f p) (f p))) = p
+    have harg : chartAt ℂ (f p) (f p) = chartLocalAt f p (chartAt ℂ p p) := by
+      simp [chartLocalAt]
+    rw [harg, hli_r]
+    exact (chartAt ℂ p).left_inv (mem_chart_source ℂ p)
+  rw [h_inv_apply]
+  have hr : AnalyticAt ℂ r (chartLocalAt f p (chartAt ℂ p p)) :=
+    hf.analyticAt_localInverse hderiv
+  have hfp :
+      chartLocalAt f p (chartAt ℂ p p) = chartAt ℂ (f p) (f p) := by
+    simp [chartLocalAt]
+  rw [hfp] at hr
+  refine hr.congr ?_
+  have hsrc :
+      ∀ᶠ z in 𝓝 (chartAt ℂ (f p) (f p)),
+        z ∈ (chartAt ℂ (f p)).target :=
+    chart_target_mem_nhds ℂ (f p)
+  have hsrc_p :
+      ∀ᶠ z in 𝓝 (chartAt ℂ (f p) (f p)),
+        r z ∈ (chartAt ℂ p).target := by
+    have hr_tendsto : Tendsto r (𝓝 (chartAt ℂ (f p) (f p))) (𝓝 (chartAt ℂ p p)) := by
+      have hr_cont := hr.continuousAt
+      have hli :
+          r (chartAt ℂ (f p) (f p)) = chartAt ℂ p p := by
+        rw [← hfp]
+        exact hli_r
+      simpa [ContinuousAt, hli] using hr_cont
+    exact hr_tendsto.eventually (chart_target_mem_nhds ℂ p)
+  filter_upwards [hsrc, hsrc_p] with z hzY hzX
+  change r z =
+    (chartAt ℂ p)
+      ((chartAt ℂ p).symm
+        (r ((chartAt ℂ (f p)) ((chartAt ℂ (f p)).symm z))))
+  have hzYeq : (chartAt ℂ (f p)) ((chartAt ℂ (f p)).symm z) = z :=
+    (chartAt ℂ (f p)).right_inv hzY
+  rw [hzYeq]
+  exact ((chartAt ℂ p).right_inv hzX).symm
 
 end LocalInverse
 

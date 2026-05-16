@@ -410,7 +410,7 @@ theorem cellularToSingular_isChainMap
     (K : AbstractSimplicialComplex V) (n : ℕ) :
     (rawSingularBoundary _ n).comp (cellularToSingularChain K (n + 1)) =
       (cellularToSingularChain K n).comp (cellularBoundary K n) :=
-  sorry
+  cellularToSingular_isChainMap_substantive K n
 
 /-! ### Relative-H placeholder for skeletal pairs -/
 
@@ -561,7 +561,7 @@ theorem cellular_iso_singularH_via_five_lemma
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
       singularH1 (AbstractSimplicialComplex.Geometric K)) :=
-  sorry
+  skeletal_h1_five_lemma_identity K
 
 theorem cellular_iso_singularH [TopologicalSpace V]
     [LinearOrder V] [DecidableEq V] (K : AbstractSimplicialComplex V)
