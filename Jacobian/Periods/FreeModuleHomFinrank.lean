@@ -1,13 +1,20 @@
 import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 import Mathlib.LinearAlgebra.FreeModule.Finite.Basic
 import Mathlib.LinearAlgebra.FreeModule.Basic
+import Mathlib.LinearAlgebra.FreeModule.PID
 import Mathlib.LinearAlgebra.Dimension.Finrank
 import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.LinearAlgebra.Dimension.Finite
 import Mathlib.LinearAlgebra.Dimension.Free
+import Mathlib.LinearAlgebra.Dimension.RankNullity
+import Mathlib.LinearAlgebra.Dimension.Localization
 import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
 import Mathlib.LinearAlgebra.Basis.Defs
+import Mathlib.LinearAlgebra.Basis.Basic
 import Mathlib.LinearAlgebra.LinearIndependent.Defs
 import Mathlib.Data.Real.Basic
+import Mathlib.Data.Complex.Basic
+import Mathlib.Algebra.Module.Equiv.Basic
 
 /-!
 # Pure-algebra refinement of `finrank_homℤℝ_eq_finrank_of_free`
@@ -80,5 +87,35 @@ theorem finrank_homℤℝ_eq_finrank_of_free_via_basis
     [Module.Free ℤ M] [Module.Finite ℤ M] :
     Module.finrank ℝ (M →ₗ[ℤ] ℝ) = Module.finrank ℤ M := by
   exact finrank_homℤℝ_eq_basis_card (Module.finBasis ℤ M)
+
+/-- **Basis-evaluation equivalence (ℂ variant).** For a ℤ-basis
+`b : Fin n → M`, the evaluation map `f ↦ (f ∘ b)` from
+`Hom_ℤ(M, ℂ)` to `Fin n → ℂ` is a ℂ-linear equivalence. -/
+theorem homℤℂ_basis_evaluation_isLinearEquivℂ
+    {n : ℕ} {M : Type*} [AddCommGroup M] [Module ℤ M]
+    (b : Module.Basis (Fin n) ℤ M) :
+    ∃ _ : (M →ₗ[ℤ] ℂ) ≃ₗ[ℂ] (Fin n → ℂ), True :=
+  ⟨(b.constr ℂ).symm, trivial⟩
+
+/-- `dim_ℂ (Fin n → ℂ) = n`. -/
+theorem finrank_pi_complex_eq_card (n : ℕ) :
+    Module.finrank ℂ (Fin n → ℂ) = n :=
+  Module.finrank_fin_fun ℂ
+
+/-- For a fg free ℤ-module `M`, `dim_ℂ Hom_ℤ(M, ℂ) = rank_ℤ M`.
+ℂ-analogue of `finrank_homℤℝ_eq_finrank_of_free_via_basis`. -/
+theorem finrank_homℤℂ_eq_finrank_of_free
+    (M : Type*) [AddCommGroup M] [Module ℤ M]
+    [Module.Free ℤ M] [Module.Finite ℤ M] :
+    Module.finrank ℂ (M →ₗ[ℤ] ℂ) = Module.finrank ℤ M := by
+  obtain ⟨e, _⟩ := homℤℂ_basis_evaluation_isLinearEquivℂ (Module.finBasis ℤ M)
+  rw [e.finrank_eq, finrank_pi_complex_eq_card]
+
+-- Note: a `Hom_ℤℂ_finrank_eq_of_surjective_ker_rank_zero` general lemma is awkward
+-- due to `Module ℤ` typeclass diamonds (Submodule.module vs AddCommGroup.toIntModule
+-- on submodules / quotients). The consumer F.2 instead inlines the rank-nullity
+-- argument over concrete `smoothOneChainCycleSubmodule X` / `IntegralOneCycle X`,
+-- where the instance diamond is locally controlled. The `finrank_homℤℂ_eq_finrank_of_free`
+-- helper above is the load-bearing piece F.2 consumes from this file.
 
 end JacobianChallenge.Periods
