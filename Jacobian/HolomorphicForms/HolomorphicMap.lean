@@ -176,6 +176,7 @@ noncomputable def IsHolomorphicAt.localInverse
       (deriv (chartLocalAt f p) (chartAt ℂ p p)) (chartAt ℂ p p) hderiv
       (chartAt ℂ (f p) y))
 
+omit [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y] in
 /-- **Plan leaf 11 (NEW).** The local inverse is holomorphic. -/
 theorem IsHolomorphicAt.localInverse_isHolomorphicAt
     {f : X → Y} {p : X} (hf : IsHolomorphicAt f p)
