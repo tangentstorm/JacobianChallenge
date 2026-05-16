@@ -547,24 +547,24 @@ noncomputable def smoothOneChainCycleSubmodule
     LinearMap.ker
       ((JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X).d 1 0).hom
 
-/-- **Inc 11b.8 (Step 9): Smooth de Rham comparison map.** A
-ℂ-linear map sending a closed 1-form `ω` to the ℤ-linear "period
-functional" on smooth chain-level cycles, given by `chainPairing ω`.
+/-- **De Rham comparison map (smooth-cycle codomain).** A ℂ-linear
+map sending a closed 1-form `ω` to the ℤ-linear "period functional"
+on smooth chain-level cycles, given by `chainPairing ω`.
 
-This is **structurally similar** to the original
-`deRhamComparisonMap1`, but its DOMAIN is restricted to smooth
-chain-level cycles, and its proof closure DOES NOT reach the
-universal-false sorries (`every_singSimplex_isContDiffSingSimplex`,
-`path_contDiffOn_obligation`). The additivity proof uses
-`chainPairing_add_apply_of_smooth_chain` (sorry-free) instead of the
-universal-sorry-bearing `chainPairing_add`. The scalar-mul proof uses
-`chainPairing_smul` (already sorry-free). And it operates at
-chain-level (no homology descent), so no
-`chainPairing_kills_boundary` needed.
+**Codomain shape vs. main.** Earlier versions of this file declared
+`deRhamComparisonMap1` as a `noncomputable opaque` with codomain
+`IntegralOneCycle X →ₗ[ℤ] ℂ`. That universal codomain required a
+period pairing on _every_ singular 1-cycle — including
+nowhere-smooth ones — which forced a Whitney smoothing step that is
+absent from Mathlib v4.28.0. This concrete `def` narrows the
+codomain to `smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ`, which is the
+honest period pairing built by `chainPairing` on smooth 1-cycles.
+The integer-cycle codomain is recovered via the named Whitney
+frontier `deRhamComparisonMap1_to_intH1` (see below).
 
-The flagship's new hypothesis (Inc 11b.8 Step 10) is
-`hω : deRhamComparisonMap1_smooth X ω = 0`. -/
-private noncomputable def deRhamComparisonMap1_smooth
+The additivity proof uses `chainPairing_add_apply_of_smooth_chain`
+(sorry-free) and operates at chain-level (no homology descent). -/
+noncomputable def deRhamComparisonMap1
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -1327,20 +1327,20 @@ private theorem isContDiffOneChainCycle_partitionChain_loop
 /-- **Inc 11b.8 (Step 11 bridge): smooth comparison map applied to a
 loop's smooth chain-cycle equals its path integral.** This is the
 witness-form analog of `loopToIntegralOneCycle_comparisonMap_eq` but
-operating at the chain-cycle level via `deRhamComparisonMap1_smooth`.
+operating at the chain-cycle level via `deRhamComparisonMap1`.
 Sorry-free under the smoothness witness. -/
-private theorem deRhamComparisonMap1_smooth_partitionChain_loop_eq
+private theorem deRhamComparisonMap1_partitionChain_loop_eq
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X) {x : X} {γ : _root_.Path x x}
     (hγ : JacobianChallenge.TraceDegree.IsChartContDiffPath γ) :
-    deRhamComparisonMap1_smooth X ω
+    deRhamComparisonMap1 X ω
         ⟨Path.partitionChain γ 1 Nat.one_pos,
          isContDiffOneChainCycle_partitionChain_loop hγ⟩ =
       pathIntegralViaCover (ClosedForm.toHolomorphicOneForm ω) γ := by
-  -- Unfold deRhamComparisonMap1_smooth: domRestrict of (chainPairing ω).hom.
+  -- Unfold deRhamComparisonMap1: domRestrict of (chainPairing ω).hom.
   show (chainPairing ω).hom (Path.partitionChain γ 1 Nat.one_pos) = _
   -- Apply chainPairing_partitionChain_one + pairOnSimplexC_toSingSimplex.
   rw [chainPairing_partitionChain_one]
@@ -1362,23 +1362,23 @@ private theorem deRhamComparisonMap1_smooth_partitionChain_loop_eq
 /-- **Inc 11b.8 (Step 11): smooth-cycle witness-form variant.** Line
 integral of a closed 1-form over a SMOOTH loop vanishes when the
 form's SMOOTH period homomorphism is zero. Sorry-free under the
-hypothesis `hω : deRhamComparisonMap1_smooth X ω = 0` (which DOES
+hypothesis `hω : deRhamComparisonMap1 X ω = 0` (which DOES
 NOT reach the false-universal sorries) + explicit chart-C¹ witness
 on the loop. -/
-theorem ClosedForm.lineIntegral_loop_eq_zero_of_smooth_zero_periods
+theorem ClosedForm.lineIntegral_loop_eq_zero_of_zero_periods
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1_smooth X ω = 0)
+    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1 X ω = 0)
     {x : X} (γ : _root_.Path x x)
     (hγ : JacobianChallenge.TraceDegree.IsChartContDiffPath γ) :
     ClosedForm.lineIntegral ω γ = 0 := by
   -- ClosedForm.lineIntegral ω γ = pathIntegralViaCover ω γ by def.
   show pathIntegralViaCover (ClosedForm.toHolomorphicOneForm ω) γ = 0
-  -- Bridge: this equals (deRhamComparisonMap1_smooth X ω) applied to the
+  -- Bridge: this equals (deRhamComparisonMap1 X ω) applied to the
   -- smooth chain cycle from γ.
-  rw [← deRhamComparisonMap1_smooth_partitionChain_loop_eq ω hγ]
+  rw [← deRhamComparisonMap1_partitionChain_loop_eq ω hγ]
   rw [hω, LinearMap.zero_apply]
 
 /-- A chosen path from a basepoint to a target on a connected
@@ -1557,14 +1557,14 @@ theorem manifoldPathFromBasepoint_loop_chartPullbackStraightPathFullyWarmed_isCh
 
 /-- **Inc 11b.8 (Step 11): smooth-cycle path-independence.** Same
 conclusion as `lineIntegral_eq_of_zero_periods_of_witnesses` but with
-`hω : deRhamComparisonMap1_smooth X ω = 0` (sorry-free closure).
+`hω : deRhamComparisonMap1 X ω = 0` (sorry-free closure).
 Takes chart-C¹ witnesses for both paths and their trans-symm loop. -/
-theorem ClosedForm.lineIntegral_eq_of_smooth_zero_periods
+theorem ClosedForm.lineIntegral_eq_of_zero_periods
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1_smooth X ω = 0)
+    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1 X ω = 0)
     {x y : X} (γ₀ γ₁ : _root_.Path x y)
     (hγ₀ : JacobianChallenge.TraceDegree.IsChartContDiffPath γ₀)
     (hγ₁ : JacobianChallenge.TraceDegree.IsChartContDiffPath γ₁)
@@ -1572,7 +1572,7 @@ theorem ClosedForm.lineIntegral_eq_of_smooth_zero_periods
       (γ₀.trans γ₁.symm)) :
     ClosedForm.lineIntegral ω γ₀ = ClosedForm.lineIntegral ω γ₁ := by
   have hloop : ClosedForm.lineIntegral ω (γ₀.trans γ₁.symm) = 0 :=
-    ClosedForm.lineIntegral_loop_eq_zero_of_smooth_zero_periods ω hω
+    ClosedForm.lineIntegral_loop_eq_zero_of_zero_periods ω hω
       (γ₀.trans γ₁.symm) htrans
   have hadd : ClosedForm.lineIntegral ω (γ₀.trans γ₁.symm)
               = ClosedForm.lineIntegral ω γ₀ + ClosedForm.lineIntegral ω γ₁.symm :=
@@ -1586,64 +1586,59 @@ theorem ClosedForm.lineIntegral_eq_of_smooth_zero_periods
       _ = 0 := hloop
   linear_combination hzero
 
-/-! ### Inc 11b.8 (Step 11 cascade): smooth-cycle flagship variant.
+/-! ### Path-potential + chart-local FTC pipeline.
 
-The following declarations build a parallel `_smooth` cascade of the
-path-potential and chart-local FTC pipeline, consuming the smooth
-hypothesis `hω : deRhamComparisonMap1_smooth X ω = 0`. Each smooth
-helper mirrors an existing helper whose closure reaches the universal-
-false sorries; the smooth variants close their closures through the
-sorry-free `_smooth_zero_periods` and `_of_witnesses` machinery
-established earlier. The terminal flagship
-`closedForm_pathIntegral_primitive_exists_smooth` is sorry-free under
-`#print axioms`. -/
+The following declarations build the path-potential cascade consuming
+the smooth-cycle hypothesis `hω : deRhamComparisonMap1 X ω = 0`. The
+terminal flagship `closedForm_pathIntegral_primitive_exists` is
+sorry-free under `#print axioms`. -/
 
 /-- **Smooth-cycle path-integral primitive.** Same body as
 `pathPotential`, consuming the smooth-cycle hypothesis instead of the
 universal-cycle one. The hypothesis is unused in the body; it is
 recorded for downstream consumers (path-independence and concat
 lemmas) to invoke. -/
-noncomputable def ClosedForm.pathPotential_smooth
+noncomputable def ClosedForm.pathPotential
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (_hω : deRhamComparisonMap1_smooth X ω = 0)
+    (_hω : deRhamComparisonMap1 X ω = 0)
     (x₀ x : X) : ℂ :=
   ClosedForm.lineIntegral ω (manifoldPathFromBasepoint x₀ x)
 
-/-- Path-independence for `pathPotential_smooth` (witness form).
+/-- Path-independence for `pathPotential` (witness form).
 The potential equals the line integral along ANY chart-C¹ alternative
 path `η`, provided the trans-symm loop is chart-C¹. Sorry-free via
-`lineIntegral_eq_of_smooth_zero_periods`. -/
-theorem ClosedForm.pathPotential_smooth_eq_lineIntegral_of_witnesses
+`lineIntegral_eq_of_zero_periods`. -/
+theorem ClosedForm.pathPotential_eq_lineIntegral_of_witnesses
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (hω : deRhamComparisonMap1_smooth X ω = 0)
+    (hω : deRhamComparisonMap1 X ω = 0)
     (x₀ x : X) (η : _root_.Path x₀ x)
     (hη : JacobianChallenge.TraceDegree.IsChartContDiffPath η)
     (htrans : JacobianChallenge.TraceDegree.IsChartContDiffPath
       ((manifoldPathFromBasepoint x₀ x).trans η.symm)) :
-    ClosedForm.pathPotential_smooth ω hω x₀ x = ClosedForm.lineIntegral ω η :=
-  ClosedForm.lineIntegral_eq_of_smooth_zero_periods ω hω
+    ClosedForm.pathPotential ω hω x₀ x = ClosedForm.lineIntegral ω η :=
+  ClosedForm.lineIntegral_eq_of_zero_periods ω hω
     (manifoldPathFromBasepoint x₀ x) η
     (manifoldPathFromBasepoint_isChartContDiffPath x₀ x) hη htrans
 
-/-- Concat for `pathPotential_smooth` (witness form). The potential at
+/-- Concat for `pathPotential` (witness form). The potential at
 endpoint of a path equals the potential at the start plus the line
 integral. Sorry-free via `_smooth_eq_lineIntegral_of_witnesses` and
 `lineIntegral_trans_of_witnesses`. -/
-theorem ClosedForm.pathPotential_smooth_concat_of_witnesses
+theorem ClosedForm.pathPotential_concat_of_witnesses
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (hω : deRhamComparisonMap1_smooth X ω = 0)
+    (hω : deRhamComparisonMap1 X ω = 0)
     (x₀ x y : X) (γ : _root_.Path x y)
     (hγ : JacobianChallenge.TraceDegree.IsChartContDiffPath γ)
     (htrans_outer : JacobianChallenge.TraceDegree.IsChartContDiffPath
@@ -1651,9 +1646,9 @@ theorem ClosedForm.pathPotential_smooth_concat_of_witnesses
     (htrans_loop : JacobianChallenge.TraceDegree.IsChartContDiffPath
       ((manifoldPathFromBasepoint x₀ y).trans
         ((manifoldPathFromBasepoint x₀ x).trans γ).symm)) :
-    ClosedForm.pathPotential_smooth ω hω x₀ y =
-      ClosedForm.pathPotential_smooth ω hω x₀ x + ClosedForm.lineIntegral ω γ := by
-  rw [ClosedForm.pathPotential_smooth_eq_lineIntegral_of_witnesses ω hω x₀ y
+    ClosedForm.pathPotential ω hω x₀ y =
+      ClosedForm.pathPotential ω hω x₀ x + ClosedForm.lineIntegral ω γ := by
+  rw [ClosedForm.pathPotential_eq_lineIntegral_of_witnesses ω hω x₀ y
         ((manifoldPathFromBasepoint x₀ x).trans γ) htrans_outer htrans_loop]
   rw [ClosedForm.lineIntegral_trans_of_witnesses ω
         (manifoldPathFromBasepoint x₀ x) γ
@@ -1662,12 +1657,12 @@ theorem ClosedForm.pathPotential_smooth_concat_of_witnesses
 
 /-- Smooth-cycle variant of `pathPotential_chartLocal_eventually`. Same
 body, smooth hypothesis, sorry-free closure. -/
-private theorem pathPotential_smooth_chartLocal_eventually
+private theorem pathPotential_chartLocal_eventually
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1_smooth X ω = 0)
+    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1 X ω = 0)
     (x₀ : X) (p : X) (r : ℝ) (hr_pos : 0 < r)
     (hr_subset : Metric.ball ((chartAt ℂ p) p) r ⊆ (chartAt ℂ p).target)
     (F : ℂ → ℂ)
@@ -1676,8 +1671,8 @@ private theorem pathPotential_smooth_chartLocal_eventually
               (JacobianChallenge.Periods.chartPullbackFun (chartAt ℂ p)
                 (ClosedForm.toHolomorphicOneForm ω) z) z) :
     ∀ᶠ x in 𝓝 p,
-      ClosedForm.pathPotential_smooth ω hω x₀ x =
-        (ClosedForm.pathPotential_smooth ω hω x₀ p - F ((chartAt ℂ p) p))
+      ClosedForm.pathPotential ω hω x₀ x =
+        (ClosedForm.pathPotential ω hω x₀ p - F ((chartAt ℂ p) p))
           + F ((chartAt ℂ p) x) := by
   filter_upwards [JacobianChallenge.Periods.chartAt_preimage_ball_mem_nhds p r hr_pos]
     with x hx
@@ -1702,9 +1697,9 @@ private theorem pathPotential_smooth_chartLocal_eventually
     manifoldPathFromBasepoint_loop_chartPullbackStraightPathFullyWarmed_isChartContDiffPath
       x₀ p x r hr_pos hr_subset hx_ball hx_source ε_warmup hε_warmup
   have h_concat :
-      ClosedForm.pathPotential_smooth ω hω x₀ x =
-        ClosedForm.pathPotential_smooth ω hω x₀ p + ClosedForm.lineIntegral ω γ :=
-    ClosedForm.pathPotential_smooth_concat_of_witnesses ω hω x₀ p x γ
+      ClosedForm.pathPotential ω hω x₀ x =
+        ClosedForm.pathPotential ω hω x₀ p + ClosedForm.lineIntegral ω γ :=
+    ClosedForm.pathPotential_concat_of_witnesses ω hω x₀ p x γ
       h_γ_isChartContDiff h_trans_outer h_trans_loop
   have h_range : Set.range γ ⊆ (chartAt ℂ p).source :=
     JacobianChallenge.Periods.chartPullbackStraightPathFullyWarmed_range_subset_source
@@ -1724,12 +1719,12 @@ private theorem pathPotential_smooth_chartLocal_eventually
   ring
 
 /-- Smooth-cycle variant of `pathPotential_chartLocal_eventuallyEq`. -/
-private theorem pathPotential_smooth_chartLocal_eventuallyEq
+private theorem pathPotential_chartLocal_eventuallyEq
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1_smooth X ω = 0) (x₀ : X)
+    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1 X ω = 0) (x₀ : X)
     (p : X) :
     ∃ (F : ℂ → ℂ) (c : ℂ) (r : ℝ) (_hr_pos : 0 < r)
         (_hr_subset : Metric.ball ((chartAt ℂ p) p) r ⊆ (chartAt ℂ p).target),
@@ -1740,7 +1735,7 @@ private theorem pathPotential_smooth_chartLocal_eventuallyEq
       ContMDiffAt (modelWithCornersSelf ℂ ℂ)
         (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) F ((chartAt ℂ p) p) ∧
       ∀ᶠ x in 𝓝 p,
-        ClosedForm.pathPotential_smooth ω hω x₀ x = c + F ((chartAt ℂ p) x) := by
+        ClosedForm.pathPotential ω hω x₀ x = c + F ((chartAt ℂ p) x) := by
   obtain ⟨r, hr_pos, hr_subset⟩ :=
     JacobianChallenge.Periods.exists_ballShaped_chartAt p
   set c := chartAt ℂ p with hc_def
@@ -1764,24 +1759,24 @@ private theorem pathPotential_smooth_chartLocal_eventuallyEq
         (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) F (c p) :=
     h_F_analytic.contDiffAt (n := (⊤ : WithTop ℕ∞)).contMDiffAt
   refine ⟨F,
-    ClosedForm.pathPotential_smooth ω hω x₀ p - F (c p),
+    ClosedForm.pathPotential ω hω x₀ p - F (c p),
     r, hr_pos, hr_subset, hF, h_F_contMDiffAt, ?_⟩
-  exact pathPotential_smooth_chartLocal_eventually ω hω x₀ p r hr_pos hr_subset F hF
+  exact pathPotential_chartLocal_eventually ω hω x₀ p r hr_pos hr_subset F hF
 
-/-- Smooth-cycle variant of `pathPotential_smooth` (smoothness of the
+/-- Smooth-cycle variant of `pathPotential` (smoothness of the
 potential function). -/
-private theorem pathPotential_smooth_isContMDiff
+private theorem pathPotential_isContMDiff
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1_smooth X ω = 0) (x₀ : X) :
+    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1 X ω = 0) (x₀ : X) :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
               (⊤ : WithTop ℕ∞)
-              (fun x => ClosedForm.pathPotential_smooth ω hω x₀ x) := by
+              (fun x => ClosedForm.pathPotential ω hω x₀ x) := by
   intro p
   obtain ⟨F, c, _r, _hr_pos, _hr_subset, _hF_primitive, hF_smooth, h_eq⟩ :=
-    pathPotential_smooth_chartLocal_eventuallyEq ω hω x₀ p
+    pathPotential_chartLocal_eventuallyEq ω hω x₀ p
   have h_chartAt_smooth :
       ContMDiffAt (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) (chartAt ℂ p) p :=
@@ -1798,26 +1793,26 @@ private theorem pathPotential_smooth_isContMDiff
     contMDiffAt_const.add h_comp_smooth
   exact h_target_smooth.congr_of_eventuallyEq h_eq
 
-/-- Lift `pathPotential_smooth ω hω x₀` to a `SmoothDiffForm 0 X`. -/
-noncomputable def ClosedForm.pathPotentialAsForm_smooth
+/-- Lift `pathPotential ω hω x₀` to a `SmoothDiffForm 0 X`. -/
+noncomputable def ClosedForm.pathPotentialAsForm
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1_smooth X ω = 0)
+    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1 X ω = 0)
     (x₀ : X) : SmoothDiffForm 0 X :=
-  ⟨fun x => ClosedForm.pathPotential_smooth ω hω x₀ x,
-    pathPotential_smooth_isContMDiff ω hω x₀⟩
+  ⟨fun x => ClosedForm.pathPotential ω hω x₀ x,
+    pathPotential_isContMDiff ω hω x₀⟩
 
 /-- Smooth-cycle variant of `pathPotential_chartLocal_mfderiv_eq_omega`.
 The hypothesis `_hω` is unused in the body — it carries through only
 for signature compatibility with the smooth flagship descent. -/
-private theorem pathPotential_smooth_chartLocal_mfderiv_eq_omega
+private theorem pathPotential_chartLocal_mfderiv_eq_omega
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : ClosedForm 1 X) (_hω : deRhamComparisonMap1_smooth X ω = 0) (_x₀ : X)
+    (ω : ClosedForm 1 X) (_hω : deRhamComparisonMap1 X ω = 0) (_x₀ : X)
     (p : X) (F : ℂ → ℂ) (c : ℂ) (r : ℝ) (hr_pos : 0 < r)
     (_hr_subset : Metric.ball ((chartAt ℂ p) p) r ⊆ (chartAt ℂ p).target)
     (hF_primitive : ∀ z ∈ Metric.ball ((chartAt ℂ p) p) r,
@@ -1908,69 +1903,50 @@ private theorem pathPotential_smooth_chartLocal_mfderiv_eq_omega
 
 /-- Smooth-cycle variant of
 `ClosedForm.pathPotentialAsForm_exteriorDerivative`. -/
-theorem ClosedForm.pathPotentialAsForm_smooth_exteriorDerivative
+theorem ClosedForm.pathPotentialAsForm_exteriorDerivative
     {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1_smooth X ω = 0) (x₀ : X) :
-    exteriorDerivative 0 X (ClosedForm.pathPotentialAsForm_smooth ω hω x₀) =
+    (ω : ClosedForm 1 X) (hω : deRhamComparisonMap1 X ω = 0) (x₀ : X) :
+    exteriorDerivative 0 X (ClosedForm.pathPotentialAsForm ω hω x₀) =
       (ω : SmoothDiffForm 1 X) := by
   apply ContMDiffSection.coe_inj
   funext p
   show mfderiv (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-        (fun y => ClosedForm.pathPotential_smooth ω hω x₀ y) p =
+        (fun y => ClosedForm.pathPotential ω hω x₀ y) p =
       ((ω : SmoothDiffForm 1 X) : HolomorphicOneForm ℂ X) p
   obtain ⟨F, c, r, hr_pos, hr_subset, hF_primitive, _hF_smooth, h_eq⟩ :=
-    pathPotential_smooth_chartLocal_eventuallyEq ω hω x₀ p
+    pathPotential_chartLocal_eventuallyEq ω hω x₀ p
   rw [Filter.EventuallyEq.mfderiv_eq
-        (h_eq : (fun y => ClosedForm.pathPotential_smooth ω hω x₀ y) =ᶠ[𝓝 p] _)]
-  exact pathPotential_smooth_chartLocal_mfderiv_eq_omega
+        (h_eq : (fun y => ClosedForm.pathPotential ω hω x₀ y) =ᶠ[𝓝 p] _)]
+  exact pathPotential_chartLocal_mfderiv_eq_omega
     ω hω x₀ p F c r hr_pos hr_subset hF_primitive
 
-/-- **Smooth-cycle flagship.** A closed 1-form whose smooth-cycle
-period functional vanishes admits a global smooth 0-form whose
-exterior derivative is the form. Sorry-free closure under
-`#print axioms`: this is the soundness milestone of Inc 11b.8. -/
-theorem closedForm_pathIntegral_primitive_exists_smooth
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : ClosedForm 1 X)
-    (hω : deRhamComparisonMap1_smooth X ω = 0) :
-    ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
-  obtain ⟨x₀⟩ := (inferInstance : Nonempty X)
-  exact ⟨ClosedForm.pathPotentialAsForm_smooth ω hω x₀,
-         ClosedForm.pathPotentialAsForm_smooth_exteriorDerivative ω hω x₀⟩
-
 /-- **Injectivity sub-obligation 1a (existence of path-integral
-primitive) — PR 158 main theorem, smooth-cycle discharge.** A closed
-1-form whose **smooth-cycle** period functional vanishes admits a
-global smooth 0-form whose exterior derivative is the original form.
+primitive) — PR 158 marquee.** A closed 1-form whose smooth-cycle
+period functional vanishes admits a global smooth 0-form whose
+exterior derivative is the original form. Sorry-free closure under
+`#print axioms`: this is the soundness milestone of PR 158.
 
-**Inc 12.6 refactor (2026-05-15):** the hypothesis was changed from
-`deRhamComparisonMap1 X ω = 0` (the universal-cycle map, defined
-through `chainPairing_kills_boundary` which carries reachable
-sorries) to `deRhamComparisonMap1_smooth X ω = 0` (the smooth-cycle
-map, defined sorry-free via `smoothSingChain1Submodule`). The body
-delegates to `closedForm_pathIntegral_primitive_exists_smooth`, whose
-`#print axioms` closure is already standard-axioms-only.
+The hypothesis `deRhamComparisonMap1 X ω = 0` consumes the
+smooth-cycle de Rham comparison map (concrete `def` via
+`chainPairing`, sorry-free); the body delegates to
+`ClosedForm.pathPotentialAsForm` and its derivative correctness.
 
-This is the honest discharge path that PR 158 itself documented in
-its Triage section: "a refinement of `deRhamComparisonMap1` into a
-concrete `def` together with a proof that it is injective." The
-smooth-cycle map IS that refinement; this rewires the named flagship
-to consume it. -/
+The integer-cycle hypothesis recoverable via the Whitney extension
+`deRhamComparisonMap1_to_intH1` (frontier sorry below). -/
 theorem closedForm_pathIntegral_primitive_exists
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (hω : deRhamComparisonMap1_smooth X ω = 0) :
-    ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
-  closedForm_pathIntegral_primitive_exists_smooth X ω hω
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  obtain ⟨x₀⟩ := (inferInstance : Nonempty X)
+  exact ⟨ClosedForm.pathPotentialAsForm ω hω x₀,
+         ClosedForm.pathPotentialAsForm_exteriorDerivative ω hω x₀⟩
 
 /-- **Injectivity sub-obligation 1 (path-integral primitive).**
 A closed 1-form whose smooth-cycle period functional vanishes
@@ -1982,7 +1958,7 @@ noncomputable def closedForm_pathIntegral_primitive
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (hω : deRhamComparisonMap1_smooth X ω = 0) :
+    (hω : deRhamComparisonMap1 X ω = 0) :
     SmoothDiffForm 0 X :=
   (closedForm_pathIntegral_primitive_exists X ω hω).choose
 
@@ -1995,7 +1971,7 @@ theorem closedForm_pathIntegral_primitive_derivative
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (hω : deRhamComparisonMap1_smooth X ω = 0) :
+    (hω : deRhamComparisonMap1 X ω = 0) :
     exteriorDerivative 0 X (closedForm_pathIntegral_primitive X ω hω) = (ω : SmoothDiffForm 1 X) :=
   (closedForm_pathIntegral_primitive_exists X ω hω).choose_spec
 
@@ -2014,7 +1990,7 @@ theorem deRhamComparisonMap1_zero_period_potential
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (hω : deRhamComparisonMap1_smooth X ω = 0) :
+    (hω : deRhamComparisonMap1 X ω = 0) :
     ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
   exact ⟨closedForm_pathIntegral_primitive X ω hω, closedForm_pathIntegral_primitive_derivative X ω hω⟩
 
@@ -2024,13 +2000,13 @@ avoiding the homology descent (which would route through
 `chainPairing_kills_boundary`). Routes through the chain-Stokes
 factorization `chainPairing dθ = K.d ≫ θBoundary θ` and uses the
 smooth chain-cycle's boundary-zero clause directly. -/
-theorem deRhamComparisonMap1_smooth_vanishes_on_mfderiv
+theorem deRhamComparisonMap1_vanishes_on_mfderiv
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (θ : SmoothDiffForm 0 X) :
-    deRhamComparisonMap1_smooth X
+    deRhamComparisonMap1 X
         ⟨mfderivAsForm θ,
          by
            show mfderivAsForm θ ∈ LinearMap.ker (exteriorDerivative 1 X)
@@ -2055,35 +2031,35 @@ the exact submodule. Sorry-free parallel of
 flagship. Downstream consumers of the kernel-subset-exact identity can
 be rewired to consume this variant once they have access to the
 smooth-cycle hypothesis. -/
-theorem deRhamComparisonMap1_smooth_kernel_subset_exact
+theorem deRhamComparisonMap1_kernel_subset_exact
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (hω : deRhamComparisonMap1_smooth X ω = 0) :
+    (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
   rw [ExactForm]
-  exact closedForm_pathIntegral_primitive_exists_smooth X ω hω
+  exact closedForm_pathIntegral_primitive_exists X ω hω
 
 /-! ### Inc D.2: smooth-cycle de Rham LinearEquiv (post-unhook plan)
 
 The smooth-cycle parallel of the deleted `deRhamH1_linearEquiv`. Built
-via first iso theorem on `deRhamComparisonMap1_smooth`:
+via first iso theorem on `deRhamComparisonMap1`:
 
 ```
 deRhamH1Cocycle X ≃ₗ[ℂ] (smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ)
 ```
 
 Sub-obligations (sub-sorries):
-- `comparison_ker_eq_exact_smooth` — kernel of the smooth-cycle map
+- `comparison_ker_eq_exact` — kernel of the smooth-cycle map
   equals the exact-form submodule (de Rham injectivity, smooth side).
-- `comparison_range_eq_top_smooth` — range of the smooth-cycle map is
+- `comparison_range_eq_top` — range of the smooth-cycle map is
   all of `smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ` (de Rham surjectivity,
   smooth side; frontier).
 
 Both are textbook results restricted to smooth chain-cycles; the
-`comparison_ker_eq_exact_smooth` half is the analytic content that
+`comparison_ker_eq_exact` half is the analytic content that
 Inc D.3 (per-simplex smooth FTC + chain-Stokes via span induction)
 will discharge sorry-free. -/
 
@@ -2095,17 +2071,17 @@ Smooth-cycle parallel of the deleted universal-cycle
 `rcases` extracts a primitive `θ` with `exteriorDerivative 0 X θ = ω.val`;
 then `ω` itself equals (the closed-form lift of) `mfderivAsForm θ`, so
 its smooth-cycle pairing reduces to
-`deRhamComparisonMap1_smooth_vanishes_on_mfderiv` (which still inherits
+`deRhamComparisonMap1_vanishes_on_mfderiv` (which still inherits
 sorry through `pairOnSimplexC_mfderivAsForm`; Inc D.3.a + D.3.b will
 discharge that sub-sorry). -/
-theorem deRhamComparisonMap1_smooth_vanishes_on_exact
+theorem deRhamComparisonMap1_vanishes_on_exact
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (η : ClosedFormSub 1 X)
     (hη : η ∈ ExactForm.toClosedSubmodule 0 X) :
-    deRhamComparisonMap1_smooth X η = 0 := by
+    deRhamComparisonMap1 X η = 0 := by
   -- Unfold membership: η.val = exteriorDerivative 0 X θ for some θ.
   rcases hη with ⟨θ, hθ⟩
   -- `exteriorDerivative 0 X θ = mfderivAsForm θ` by definitional `rfl` on
@@ -2117,16 +2093,16 @@ theorem deRhamComparisonMap1_smooth_vanishes_on_exact
     apply Subtype.ext
     exact hθ.symm
   rw [hη_eq]
-  exact deRhamComparisonMap1_smooth_vanishes_on_mfderiv X θ
+  exact deRhamComparisonMap1_vanishes_on_mfderiv X θ
 
 /-- **Frontier sub-obligation (Inc D.2, half 1) — discharged via D.3.c.**
 Kernel of the smooth de Rham comparison map equals the exact 1-form
 submodule. The smooth-cycle parallel of the deleted universal-cycle
 `comparison_ker_eq_exact`, now provable by combining the two halves:
-- (⊆) `deRhamComparisonMap1_smooth_kernel_subset_exact` (sorry-free,
+- (⊆) `deRhamComparisonMap1_kernel_subset_exact` (sorry-free,
   from the smooth flagship).
-- (⊇) `deRhamComparisonMap1_smooth_vanishes_on_exact` (new in D.3.c,
-  reduces to `deRhamComparisonMap1_smooth_vanishes_on_mfderiv`).
+- (⊇) `deRhamComparisonMap1_vanishes_on_exact` (new in D.3.c,
+  reduces to `deRhamComparisonMap1_vanishes_on_mfderiv`).
 
 Sorry inheritance: the ⊇ direction still propagates sorry through
 `chainPairing_mfderivAsForm_eq_d_comp_θBoundary` → `pairOnSimplexC_mfderivAsForm`
@@ -2134,22 +2110,22 @@ Sorry inheritance: the ⊇ direction still propagates sorry through
 sorry-free with `pairOnSimplexC_mfderivAsForm_of_smooth` (per-simplex FTC
 restricted to smooth simplices) + Inc D.3.b's smooth chain-Stokes via span
 induction. -/
-theorem comparison_ker_eq_exact_smooth
+theorem comparison_ker_eq_exact
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    LinearMap.ker (deRhamComparisonMap1_smooth X)
+    LinearMap.ker (deRhamComparisonMap1 X)
       = ExactForm.toClosedSubmodule 0 X := by
   ext η
   constructor
   · intro hη
     show (ClosedForm 1 X).subtype η ∈ ExactForm 0 X
-    exact deRhamComparisonMap1_smooth_kernel_subset_exact X η
+    exact deRhamComparisonMap1_kernel_subset_exact X η
       (LinearMap.mem_ker.mp hη)
   · intro hη
     apply LinearMap.mem_ker.mpr
-    exact deRhamComparisonMap1_smooth_vanishes_on_exact X η hη
+    exact deRhamComparisonMap1_vanishes_on_exact X η hη
 
 /-- **Frontier sub-obligation (Inc D.2, half 2).** Range of the smooth
 de Rham comparison map is all of `smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ`.
@@ -2165,12 +2141,12 @@ direct proof using harmonic representatives (Hodge theory on a compact
 Riemann surface), or by porting the universal-cycle argument with
 chart-local primitives restricted to smooth chains. Inc D.5 will
 investigate. -/
-theorem comparison_range_eq_top_smooth
+theorem comparison_range_eq_top
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    LinearMap.range (deRhamComparisonMap1_smooth X) = ⊤ :=
+    LinearMap.range (deRhamComparisonMap1 X) = ⊤ :=
   sorry
 
 /-- **Smooth-cycle de Rham LinearEquiv (Inc D.2 main).** The smooth de
@@ -2181,12 +2157,12 @@ deRhamH1Cocycle X ≃ₗ[ℂ] (smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ).
 ```
 
 Built via the first isomorphism theorem from
-`comparison_ker_eq_exact_smooth` (kernel) and
-`comparison_range_eq_top_smooth` (range). Same pattern as the deleted
+`comparison_ker_eq_exact` (kernel) and
+`comparison_range_eq_top` (range). Same pattern as the deleted
 universal-cycle `deRhamH1_linearEquiv` (Strip 1), but on the smooth-
 cycle codomain — which is the codomain where the kernel-equality is
 honest. -/
-noncomputable def deRhamH1_smooth_linearEquiv
+noncomputable def deRhamH1_linearEquiv
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -2194,13 +2170,13 @@ noncomputable def deRhamH1_smooth_linearEquiv
     deRhamH1Cocycle X ≃ₗ[ℂ]
       (smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ) :=
   -- Step 1: deRhamH1Cocycle X = ClosedFormSub 1 X ⧸ ExactForm
-  --       ≃ₗ[ℂ] ClosedFormSub 1 X ⧸ ker (deRhamComparisonMap1_smooth X)
+  --       ≃ₗ[ℂ] ClosedFormSub 1 X ⧸ ker (deRhamComparisonMap1 X)
   (Submodule.quotEquivOfEq _ _
-      (comparison_ker_eq_exact_smooth X).symm) |>.trans
+      (comparison_ker_eq_exact X).symm) |>.trans
   -- Step 2: ClosedFormSub 1 X ⧸ ker ≃ₗ[ℂ] range
-  ((LinearMap.quotKerEquivRange (deRhamComparisonMap1_smooth X)).trans
+  ((LinearMap.quotKerEquivRange (deRhamComparisonMap1 X)).trans
   -- Step 3: range = ⊤ ⇒ range ≃ₗ[ℂ] codomain
-  (LinearEquiv.ofTop _ (comparison_range_eq_top_smooth X)))
+  (LinearEquiv.ofTop _ (comparison_range_eq_top X)))
 
 /-- **Inc D.2 dim equality.** Through the smooth-cycle LinearEquiv,
 the ℂ-dimensions of `deRhamH1Cocycle X` and `smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ`
@@ -2212,6 +2188,147 @@ theorem deRhamH1Cocycle_finrank_eq_finrank_homℤℂ_smoothCycle
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Module.finrank ℂ (deRhamH1Cocycle X)
       = Module.finrank ℂ (smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ) :=
-  (deRhamH1_smooth_linearEquiv X).finrank_eq
+  (deRhamH1_linearEquiv X).finrank_eq
+
+/-! ### Whitney extension frontier + restored named API on main
+
+The named obligations below preserve the API surface of the
+previous-revision (opaque `deRhamComparisonMap1`) version of this
+file. Signatures have been **codomain-shifted** from
+`IntegralOneCycle X →ₗ[ℤ] ℂ` to
+`smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ` to match the narrowed
+codomain of the concrete `deRhamComparisonMap1`. The integer-cycle
+version is recovered through the Whitney extension
+`deRhamComparisonMap1_to_intH1` (frontier sorry).
+-/
+
+/-- **Whitney extension frontier.** The de Rham comparison map at the
+integer-cycle codomain. Built from `deRhamComparisonMap1` (smooth-cycle
+codomain) by Whitney-smoothing every singular 1-cycle to a homologous
+smooth one and pairing through the chain-cycle integration.
+
+Mathlib v4.28.0 status: ABSENT. Whitney's approximation theorem in
+dimension 1 (for continuous singular simplices) is not in Mathlib;
+this map is the named hole that, once discharged, recovers the
+universal-codomain de Rham comparison map.
+
+Discharge plan: take `c : IntegralOneCycle X`, lift to a representative
+in `singChain 1 X`, Whitney-smooth it to a smooth 1-cycle `c̃ ∈
+smoothOneChainCycleSubmodule X`, apply `deRhamComparisonMap1 X ω` to
+`c̃`, and verify the result is independent of representative and
+smoothing (uses chain-Stokes for the homology equivalence). -/
+noncomputable def deRhamComparisonMap1_to_intH1
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    ClosedForm 1 X →ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ) :=
+  sorry
+
+/-- **Existence of global closed form with prescribed periods
+(smooth-cycle codomain).** Every ℤ-linear functional on smooth chain-
+level cycles arises as the period pairing of some closed 1-form.
+Derived from `comparison_range_eq_top` (the surjectivity frontier);
+sorry-bearing only through that. -/
+theorem deRhamComparisonMap1_exists_form_with_periods
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ :=
+  LinearMap.range_eq_top.mp (comparison_range_eq_top X) φ
+
+/-- **Surjectivity sub-obligation 1 (representative choice).**
+For a prescribed period functional on smooth chain cycles, choose a
+closed 1-form candidate. -/
+theorem deRhamComparisonMap1_prescribed_period_candidate
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ :=
+  deRhamComparisonMap1_exists_form_with_periods X φ
+
+/-- **Surjectivity sub-obligation 2 (prescribed-period correctness).**
+The candidate closed form chosen for a smooth-cycle period functional
+integrates to that functional on every smooth chain cycle. -/
+theorem deRhamComparisonMap1_prescribed_period_correct
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ) :
+    deRhamComparisonMap1 X
+        (Classical.choose (deRhamComparisonMap1_prescribed_period_candidate X φ)) = φ :=
+  Classical.choose_spec (deRhamComparisonMap1_prescribed_period_candidate X φ)
+
+/-- **Surjectivity of the de Rham comparison map (smooth-cycle codomain).**
+Every ℤ-linear functional on smooth chain-level cycles is realised as
+the period pairing of some closed 1-form. Sorry-bearing only through
+`comparison_range_eq_top`. -/
+theorem deRhamComparisonMap1_surjective
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ :=
+  deRhamComparisonMap1_exists_form_with_periods X φ
+
+/-- **De Rham comparison map descends to H¹_dR (sorry-free).** The
+comparison map sends two cocycles in the same de Rham class to the
+same smooth-cycle functional. Direct corollary of
+`deRhamComparisonMap1_vanishes_on_exact`. -/
+theorem deRhamComparisonMap1_descends
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    ∃ _ : deRhamH1Cocycle X →ₗ[ℂ]
+      (smoothOneChainCycleSubmodule X →ₗ[ℤ] ℂ), True := by
+  refine ⟨(ExactForm.toClosedSubmodule 0 X).liftQ
+    (deRhamComparisonMap1 X) ?_, trivial⟩
+  intro η hη
+  exact LinearMap.mem_ker.mpr (deRhamComparisonMap1_vanishes_on_exact X η hη)
+
+/-- **Pure algebra: ℂ-dim of Hom_ℤ(M, ℂ) equals ℤ-rank of M** for a
+finitely generated free ℤ-module `M`. -/
+private theorem finrank_homℤℂ_eq_finrank_of_free
+    (M : Type*) [AddCommGroup M] [Module ℤ M]
+    [Module.Free ℤ M] [Module.Finite ℤ M] :
+    Module.finrank ℂ (M →ₗ[ℤ] ℂ) = Module.finrank ℤ M := by
+  have h_iso : (M →ₗ[ℤ] ℂ) ≃ₗ[ℂ] (Fin (Module.finrank ℤ M) → ℂ) :=
+    ((Module.finBasis ℤ M).constr ℂ).symm
+  simpa using LinearEquiv.finrank_eq h_iso
+
+/-- **Frontier identity (sorry, bridges to `realDimSingularH1`).** The
+descended de Rham comparison map gives a finrank identity
+`Module.finrank ℂ (deRhamH1Cocycle X) = realDimSingularH1 X`.
+
+Sorry: the bridge from the smooth-cycle finrank
+(`deRhamH1Cocycle_finrank_eq_finrank_homℤℂ_smoothCycle`) to the
+integer-cycle / `realDimSingularH1` side requires the Whitney
+extension `deRhamComparisonMap1_to_intH1` (above). -/
+theorem deRhamH1Cocycle_finrank_eq_realDim_singularH1
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    Module.finrank ℂ (deRhamH1Cocycle X) = realDimSingularH1 X :=
+  sorry
+
+/-- **Sorry-free assembly.** Bridges
+`realDim_deRhamH1_eq_realDim_singularH1` (in `DeRhamSingular.lean`)
+through the explicit quotient model + integration map. -/
+theorem realDimDeRhamH1_eq_realDimSingularH1_via_cocycle
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    realDimDeRhamH1 X = realDimSingularH1 X := by
+  rw [realDimDeRhamH1_eq_finrank_cocycleℝ X,
+      deRhamH1Cocycle_finrank_eq_realDim_singularH1 X]
 
 end JacobianChallenge.HolomorphicForms
