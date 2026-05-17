@@ -201,11 +201,12 @@ noncomputable def traceFormsBundledLM
 theorem trace_pullback_identity_regular
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
     (η : HolomorphicOneForm ℂ Y) (y : Y) (hy : isRegularValue hbc y) :
     (traceFormsBundled f hf (pullbackFormsBundled f hf η)).toFun y =
       ((hbc.weightedFiberCard y : ℂ) • η).toFun y := by
   rw [traceFormsBundled_apply_fun_regular hf hbc (pullbackFormsBundled f hf η) y hy]
-  exact trace_pullback_at_regular_value hbc hf (isHolomorphic_of_contMDiff hf) η y hy
+  exact trace_pullback_at_regular_value hbc hcompat hf (isHolomorphic_of_contMDiff hf) η y hy
 
 /-- The pullback along a constant map is zero. -/
 theorem pullbackFormsBundled_constant
@@ -240,11 +241,14 @@ theorem trace_pullback_identity
     simp
   · let hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
       (isHolomorphic_of_contMDiff hf) hconst
+    have hcompat : hbc.RamificationIndexCompatible :=
+      JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
+        (isHolomorphic_of_contMDiff hf) hconst
     -- 2. Use identity principle: equal on dense set implies equal everywhere
     rw [analyticDegree_eq_branchedDegree f hf hconst]
     apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
     intro y hy
     rw [branchedDegree_eq_weightedFiberCard hbc y]
-    exact trace_pullback_identity_regular f hf hbc η y hy
+    exact trace_pullback_identity_regular f hf hbc hcompat η y hy
 
 end JacobianChallenge.HolomorphicForms
