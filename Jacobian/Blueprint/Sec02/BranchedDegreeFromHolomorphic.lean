@@ -95,4 +95,18 @@ noncomputable def branchedCoverData_of_nonconstant_holomorphic
         obtain ⟨z, hz, huniqz⟩ := huniq y hy
         exact ⟨z, ⟨hz.1, by simpa [hz.2] using hy⟩, hz.2⟩
 
+/-- The analytic constructor makes the ramification index definitionally
+equal to the chart-local analytic order. -/
+theorem branchedCoverData_of_nonconstant_holomorphic_compatible
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
+    [CompactSpace X] [T2Space X]
+    [PreconnectedSpace X] [T2Space Y] [PreconnectedSpace Y]
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    {f : X → Y} (hf : IsHolomorphic f)
+    (hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) :
+    (branchedCoverData_of_nonconstant_holomorphic hf hnonconst).RamificationIndexCompatible := by
+  intro x _hfx
+  rfl
+
 end JacobianChallenge.Blueprint
