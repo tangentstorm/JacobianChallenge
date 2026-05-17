@@ -284,6 +284,7 @@ ambient choice of partition (which `pathIntegralViaCover` makes via
 `Classical.choose`). Currently absent at the un-`With` level; see
 TeX label `lem:pcr-r10` for the chain-level argument. -/
 theorem pathIntegralViaCover_trans_eq_add
+    [PiecewiseC1PathRegularity X]
     (η : HolomorphicOneForm ℂ X) {a b c : X}
     (γ : Path a b) (γ' : Path b c) :
     pathIntegralViaCover η (γ.trans γ') =
@@ -608,6 +609,7 @@ The single-chart hypotheses are now redundant: the general
 unconditional. This lemma is preserved as a named API entry so
 existing references compile. See TeX label `lem:pcr-r4`. -/
 theorem pathIntegralViaCover_pullback_chart_segment
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
     (_h_singleChart_X : ∃ p : X, ∀ t : unitInterval,
@@ -698,6 +700,7 @@ into a sum of `pathIntegralViaCover (pullback η) (γs i)`, which
 `(periodPairing ℂ X γ) (pullback η)`, also `0` under the
 placeholder. -/
 theorem cyclePushforward_chainLevel_repr
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X)
     (m : ℕ) (a b : Fin m → X) (n : Fin m → ℤ)
@@ -757,6 +760,7 @@ omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y
 3. Use `cyclePushforward_chainLevel_repr` to identify the resulting
    sum on `Y` with `(periodPairing ℂ Y (cyclePushforward f hf γ)) η`. -/
 theorem periodPairing_pullbackFormsBundledLM_via_pathLevel
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
     (h_path :
@@ -1177,6 +1181,7 @@ above the chart-level companion). -/
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
 theorem periodPairing_pullbackFormsBundledLM
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
     (hLipPath : ∀ {a b : X} (γ' : Path a b),
