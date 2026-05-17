@@ -114,12 +114,13 @@ private theorem _mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero
 /-- The local inverse is holomorphic at `f x`. -/
 theorem localInverseAt_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
+    (hcompat : h.RamificationIndexCompatible)
     (_hf : IsHolomorphic f)
     (x : X) (hx : h.ramificationIndex x = 1) :
     IsHolomorphicAt (h.localInverseAt x hx) (f x) := by
   classical
   have hramAt : mapAnalyticOrderAt f x = 1 := by
-    rw [← h.ramificationIndex_eq_mapAnalyticOrderAt (_hf.holomorphicAt x)]
+    rw [← h.ramificationIndex_eq_mapAnalyticOrderAt hcompat (_hf.holomorphicAt x)]
     exact hx
   have hderiv : deriv (chartLocalAt f x) (chartAt ℂ x x) ≠ 0 :=
     (_mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero
@@ -212,6 +213,7 @@ trace construction: combine holomorphicity of the inverse branch with smooth
 holomorphic variation of the cotangent pushforward in local coordinates. -/
 axiom localPullbackAt_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
+    (hcompat : h.RamificationIndexCompatible)
     (hf : IsHolomorphic f)
     (ω : HolomorphicOneForm ℂ X)
     (x : X) (hx : h.ramificationIndex x = 1) :
@@ -262,6 +264,7 @@ noncomputable def localTraceAtRegularValue
 /-- The local trace is holomorphic at regular values. -/
 theorem localTraceAtRegularValue_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
+    (hcompat : h.RamificationIndexCompatible)
     (hf : IsHolomorphic f)
     (ω : HolomorphicOneForm ℂ X)
     (y : Y) (hy : isRegularValue h y) :
@@ -272,7 +275,7 @@ theorem localTraceAtRegularValue_holomorphic
   have hx_fiber : x ∈ f ⁻¹' {y} := (Set.Finite.mem_toFinset _).mp hx_mem
   have hfx : f x = y := hx_fiber
   simpa [hfx] using
-    (localPullbackAt_holomorphic h hf ω x (hy x hx_fiber))
+    (localPullbackAt_holomorphic h hcompat hf ω x (hy x hx_fiber))
 
 /-- The trace sum is additive. -/
 theorem traceAtRegularValue_add
@@ -317,11 +320,12 @@ the manifold derivative `mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x` is a continu
 linear isomorphism `TangentSpace 𝓘 x →L[ℂ] TangentSpace 𝓘 (f x)`,
 given that `f` is holomorphic and continuous at `x`. -/
 theorem mfderiv_isIso_of_ramificationIndex_one
-    {f : X → Y} (h : BranchedCoverData X Y f) (hf : IsHolomorphic f) {x : X}
+    {f : X → Y} (h : BranchedCoverData X Y f)
+    (hcompat : h.RamificationIndexCompatible) (hf : IsHolomorphic f) {x : X}
     (hx : h.ramificationIndex x = 1) :
     Nonempty (IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x)) := by
   have hramAt : mapAnalyticOrderAt f x = 1 := by
-    rw [← h.ramificationIndex_eq_mapAnalyticOrderAt (hf.holomorphicAt x)]
+    rw [← h.ramificationIndex_eq_mapAnalyticOrderAt hcompat (hf.holomorphicAt x)]
     exact hx
   have hderiv : deriv (chartLocalAt f x) (chartAt ℂ x x) ≠ 0 :=
     (_mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero
@@ -371,6 +375,7 @@ underlying function (via `pullbackFormsBundled`) and, through a private
 `mfderiv_isIso_of_ramificationIndex_one`. -/
 theorem trace_pullback_at_regular_value
     {f : X → Y} (h : BranchedCoverData X Y f)
+    (hcompat : h.RamificationIndexCompatible)
     (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (hHol : IsHolomorphic f)
     (η : HolomorphicOneForm ℂ Y)
@@ -385,7 +390,7 @@ theorem trace_pullback_at_regular_value
     have hfx : f x = y := hx_fiber
     have hx_unram : h.ramificationIndex x = 1 := hy x hx_fiber
     have hiso : Nonempty (IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x)) :=
-      mfderiv_isIso_of_ramificationIndex_one h hHol hx_unram
+      mfderiv_isIso_of_ramificationIndex_one h hcompat hHol hx_unram
     show cotangentPushforward f x (pullbackFormsFunFiber f η x) = η.toFun y
     unfold cotangentPushforward pullbackFormsFunFiber
     simp only [dif_pos hiso]
