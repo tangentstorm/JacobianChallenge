@@ -57,6 +57,7 @@ lemma genus_eq_zero_iff_homeo :
 -- Type-0-specialised section for the Jacobian-related declarations.
 variable {X₀ : Type} [TopologicalSpace X₀] [T2Space X₀] [CompactSpace X₀] [ConnectedSpace X₀]
   [ChartedSpace ℂ X₀] [IsManifold 𝓘(ℂ) ω X₀] [JacobianChallenge.Periods.StableChartAt ℂ X₀]
+  [JacobianChallenge.TraceDegree.PiecewiseC1PathRegularity X₀]
 
 noncomputable def Jacobian := JacobianChallenge.Solution.Jacobian X₀
 
@@ -93,6 +94,7 @@ lemma ofCurve_inj (P : X₀) (h : 0 < genus (X := X₀)) : Function.Injective (o
 
 variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [ChartedSpace ℂ Y] [IsManifold 𝓘(ℂ) ω Y] [JacobianChallenge.Periods.StableChartAt ℂ Y]
+  [JacobianChallenge.TraceDegree.PiecewiseC1PathRegularity Y]
 variable (f : X₀ → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
 
 noncomputable def pushforward : Jacobian (X₀ := X₀) →ₜ+ Jacobian (X₀ := Y) where
@@ -114,6 +116,7 @@ lemma pushforward_id_apply (P : Jacobian (X₀ := X₀)) : pushforward id contMD
 
 variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
   [ChartedSpace ℂ Z] [IsManifold 𝓘(ℂ) ω Z] [JacobianChallenge.Periods.StableChartAt ℂ Z]
+  [JacobianChallenge.TraceDegree.PiecewiseC1PathRegularity Z]
 variable (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
 
 lemma pushforward_comp_apply (P : Jacobian (X₀ := X₀)) :

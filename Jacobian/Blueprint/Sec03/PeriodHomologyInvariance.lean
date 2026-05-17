@@ -253,7 +253,8 @@ theorem pathIntegral_linear_in_form
 
 
 /-- C¹ regularity of chart-lifted subpaths. Established by extracting
-regularity data from the `PiecewiseC1PathRegularity X` instance. -/
+regularity data from an explicit `PiecewiseC1PathRegularity X`
+frontier hypothesis. -/
 private theorem chartLift_contDiffOn_assumption
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [PiecewiseC1PathRegularity X]
@@ -471,7 +472,8 @@ information for a fixed chain. -/
 theorem exists_singularChain_integration
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [PiecewiseC1PathRegularity X] :
     ∃ _ : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
       True := by
   obtain ⟨Iσ, _⟩ := exists_singularSimplex_integration X
@@ -604,7 +606,8 @@ argument. -/
 theorem chain_integration_choice
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [PiecewiseC1PathRegularity X] :
     ∃ _ : SingularOneChain X →ₗ[ℤ] (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ),
       True :=
   exists_singularChain_integration X

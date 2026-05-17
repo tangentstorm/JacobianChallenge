@@ -74,6 +74,7 @@ theorem analyticDegree_constant (f : X → Y)
 identity in basis-aligned form. Sorry-free extraction from
 `basisAnalyticPullbackBundle.trace_pullback_spec`. -/
 theorem analyticPushforward_analyticPullback_spec (f : X → Y)
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
     analyticPushforward f hf (analyticPullback f hf Q) =
       (analyticDegree f hf) • Q :=
@@ -174,6 +175,7 @@ The identity `analyticPushforward f hf (analyticPullback f hf Q) = d • Q`
 follows from the form-level identity `traceFormsBundled f hf (pullbackFormsBundled f hf η) = d • η`
 by dualization and descent through the period quotient. -/
 lemma analyticPushforward_analyticPullback (f : X → Y)
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
     analyticPushforward f hf (analyticPullback f hf Q) =
       (analyticDegree f hf) • Q :=
