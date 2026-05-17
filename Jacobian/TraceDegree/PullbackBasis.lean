@@ -286,7 +286,9 @@ structure BasisAnalyticPullbackBundle
   degree : ℕ
   /-- Trace-pullback identity (anti-hack #4):
   `pushf (pullback Q) = degree • Q` for every `Q`. -/
-  trace_pullback_spec : ∀ Q : BasisAnalyticJacobian Y,
+  trace_pullback_spec :
+    [PiecewiseC1PathRegularity X] → [PiecewiseC1PathRegularity Y] →
+    ∀ Q : BasisAnalyticJacobian Y,
     analyticPushforward _f _hf (analyticPullback Q) = degree • Q
 
 noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
@@ -296,7 +298,7 @@ noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
      mk_eq := fun _ => rfl
      contMDiff_pull := contMDiff_const
      degree := 0
-     trace_pullback_spec := fun Q => by
+     trace_pullback_spec := fun {_} {_} Q => by
        -- pull = 0 here, so pull Q = 0, and pushf 0 = 0 = 0 • Q.
        show (analyticPushforward f hf) (0 : BasisAnalyticJacobian X) =
          (0 : ℕ) • Q
@@ -318,7 +320,7 @@ noncomputable def basisAnalyticPullbackBundle (f : X → Y)
         JacobianChallenge.HolomorphicForms.branchedDegree
           (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
             hf_holo h)
-    trace_pullback_spec := fun _ => sorry }
+    trace_pullback_spec := fun {_} {_} _ => sorry }
 
 /-- The analytic pullback is holomorphic.
 

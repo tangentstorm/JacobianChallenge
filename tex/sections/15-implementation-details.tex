@@ -185,23 +185,25 @@ give the filtered comparison isomorphism.
 
 \begin{lemma}[Lip-cycle and Trace preservation]
 \label{lem:impl-trace-lip}
-\lean{JacobianChallenge.TraceDegree.pullbackTraceLift_preserves_lattice_raw, JacobianChallenge.TraceDegree.cycleLipChain_obligation, JacobianChallenge.TraceDegree.cycleLipPath_obligation, JacobianChallenge.TraceDegree.PiecewiseC1PathRegularity, JacobianChallenge.TraceDegree.instPiecewiseC1PathRegularity}
+\lean{JacobianChallenge.TraceDegree.pullbackTraceLift_preserves_lattice_raw, JacobianChallenge.TraceDegree.cycleLipChain_obligation, JacobianChallenge.TraceDegree.cycleLipPath_obligation, JacobianChallenge.TraceDegree.PiecewiseC1PathRegularity, JacobianChallenge.TraceDegree.PiecewiseC1Path, JacobianChallenge.TraceDegree.no_global_piecewiseC1PathRegularity_instance, JacobianChallenge.TraceDegree.smooth_chain_homology_comparison_frontier}
 \leanok
 The trace lift preserves the period lattice. The two named \(C^1\)-cycle obligations
 (\texttt{cycleLipPath\_obligation}, \texttt{cycleLipChain\_obligation}) reduce a uniform Lipschitz
 bound on chart-lifted paths to a uniform piecewise-\(C^1\) hypothesis on the
 representative paths, via the mean-value inequality.
 
-The uniform piecewise-\(C^1\) hypothesis itself is isolated as a typeclass
-\texttt{PiecewiseC1PathRegularity X} on the surface. Production code in
-\texttt{Jacobian/TraceDegree/PushforwardBasis.lean} and \texttt{PullbackBasis.lean} carries
-this typeclass as an instance hypothesis rather than claiming to prove the false unconditional
-form (a nowhere-differentiable continuous \texttt{Path a b} would be a counterexample).
-The single named sorry-instance lives in
-\texttt{Jacobian/TraceDegree/PiecewiseC1Instance.lean} and is the auditable boundary at which
-the assumption enters. Honest discharge requires either enriching \texttt{IntegralOneCycle X}
-to carry smoothness data, or restricting the period pairing's cycle domain to a piecewise-smooth
-subclass shown to span $H_1(X,\mathbb{Z})$.
+The uniform piecewise-\(C^1\) hypothesis is no longer provided by a global
+instance.  The sound path-level replacement is the wrapper
+\texttt{PiecewiseC1Path}, which bundles a continuous path with chartwise
+piecewise-\(C^1\) data.  Remaining frontier declarations may still carry
+\texttt{PiecewiseC1PathRegularity X} as an explicit hypothesis, but
+\texttt{Jacobian/TraceDegree/PiecewiseC1Instance.lean} intentionally exports
+no instance for it: a nowhere-differentiable continuous \texttt{Path a b}
+would be a counterexample.  Honest discharge requires either enriching
+\texttt{IntegralOneCycle X} to carry smoothness data, or restricting the
+period pairing's cycle domain to a piecewise-smooth subclass shown to span
+$H_1(X,\mathbb{Z})$; this is recorded as the smooth-chain homology comparison
+frontier.
 \end{lemma}
 
 \begin{lemma}[Miscellaneous algebraic orphans]
