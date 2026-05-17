@@ -36,10 +36,13 @@ should depend on `branchedDegree_eq_weightedFiberCard` and
 `Classical.arbitrary` choice. The analytic constructor (leaf 8) is
 where the open-mapping theorem and isolated-zeros enter the project.
 
-## Compatibility lemmas
+## Compatibility predicate
 
-* `BranchedCoverData.ramificationIndex_eq_mapAnalyticOrderAt` : links
-  the combinatorial index to the chart-local analytic order.
+* `BranchedCoverData.RamificationIndexCompatible` : the explicit
+  hypothesis linking the combinatorial index to the chart-local
+  analytic order.  It is not automatic for arbitrary
+  `BranchedCoverData`; analytic constructors should prove it by
+  construction.
 -/
 
 namespace JacobianChallenge.HolomorphicForms
@@ -92,16 +95,26 @@ structure BranchedCoverData
       ∃ U : Set X, ∃ V : Set Y,
         IsOpen U ∧ IsOpen V ∧ x ∈ U ∧ f x ∈ V ∧ Set.BijOn f U V
 
-/-- **Plan leaf 13 (NEW).** Compatibility between the combinatorial
-ramification index and the analytic order of the map. This lemma is
-typically provided by the analytic constructor for `BranchedCoverData`. -/
+/-- Compatibility between the combinatorial ramification index and the
+chart-local analytic order.  This is deliberately a hypothesis/predicate,
+not a theorem about arbitrary `BranchedCoverData`: non-analytic or
+hand-built data can otherwise choose an unrelated index function. -/
+def BranchedCoverData.RamificationIndexCompatible
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
+    {f : X → Y} (h : BranchedCoverData X Y f) : Prop :=
+  ∀ x : X, IsHolomorphicAt f x → h.ramificationIndex x = mapAnalyticOrderAt f x
+
+/-- Convenience projection for an explicit ramification/order
+compatibility hypothesis. -/
 theorem BranchedCoverData.ramificationIndex_eq_mapAnalyticOrderAt
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
-    {f : X → Y} (h : BranchedCoverData X Y f)
+    {f : X → Y} {h : BranchedCoverData X Y f}
+    (hcompat : h.RamificationIndexCompatible)
     {x : X} (hf : IsHolomorphicAt f x) :
-    h.ramificationIndex x = mapAnalyticOrderAt f x := by
-  sorry
+    h.ramificationIndex x = mapAnalyticOrderAt f x :=
+  hcompat x hf
 
 /-- **Plan leaf 9 (NEW).** The local inverse of `f` near an unramified
 point `x`. Defined using `Function.invFunOn` from the local bijection
