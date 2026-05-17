@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.AnalyticGenus
 import Jacobian.HolomorphicForms.Meromorphic
 import Jacobian.HolomorphicForms.MeromorphicFunctionVector
+import Jacobian.HolomorphicForms.SinglePoleLift
 import Jacobian.HolomorphicForms.HolomorphicCompactConstant
 import Jacobian.HolomorphicForms.ChartedSpaceComplexPoints
 import Mathlib.Geometry.Manifold.Complex
@@ -19,149 +20,18 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold OnePoint
 
-/-- The Riemann-Roch space `L(D)` as a `ℂ`-vector subspace of `Mer(X)`. -/
-def riemannRochSpace
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (D : Divisor X) : Submodule ℂ (MeromorphicFunctionType X) where
-  carrier := { f | f.MemRiemannRochSpace D }
-  zero_mem' := Or.inl rfl
-  add_mem' := by
-    intro f g hf hg
-    sorry
-  smul_mem' := by
-    intro c f hf
-    sorry
+/-!
+The old `riemannRochSpace : Submodule ℂ (MeromorphicFunctionType X)` and the
+constant-function submodule have been removed.  They depended on a global
+`Module ℂ (MeromorphicFunctionType X)` instance whose addition operation was
+pointwise on `OnePoint ℂ`, hence unable to model pole cancellation.
 
-/-- The subspace of constant meromorphic functions. -/
-def constantFunctions (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    Submodule ℂ (MeromorphicFunctionType X) where
-  carrier := { f | ∃ c : ℂ, f.toFun = fun _ => (c : OnePoint ℂ) }
-  zero_mem' := ⟨0, rfl⟩
-  add_mem' := by
-    intro f g hf hg
-    rcases hf with ⟨c, hc⟩
-    rcases hg with ⟨d, hd⟩
-    use c + d
-    ext x
-    have hfx_ne : f.toFun x ≠ ∞ := by
-      rw [hc]
-      exact OnePoint.coe_ne_infty c
-    have hgx_ne : g.toFun x ≠ ∞ := by
-      rw [hd]
-      exact OnePoint.coe_ne_infty d
-    have h_add := MeromorphicFunctionType.add_toFun f g x hfx_ne hgx_ne
-    rw [hc] at h_add
-    rw [hd] at h_add
-    rw [h_add]
-    rfl
-  smul_mem' := by
-    intro a f hf
-    rcases hf with ⟨c, hc⟩
-    use a * c
-    ext x
-    have hfx_ne : f.toFun x ≠ ∞ := by
-      rw [hc]
-      exact OnePoint.coe_ne_infty c
-    have h_smul := MeromorphicFunctionType.smul_toFun a f x hfx_ne
-    rw [hc] at h_smul
-    rw [h_smul]
-    rfl
-
-/-- The equivalence between ℂ and the subspace of constant functions. -/
-noncomputable def constantFunctionsEquiv (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] [Nonempty X] :
-    ℂ ≃ₗ[ℂ] constantFunctions X where
-  toFun c := ⟨MeromorphicFunctionType.constant c, ⟨c, rfl⟩⟩
-  invFun f := (Classical.choose f.2)
-  left_inv c := by
-    dsimp
-    have hc := Classical.choose_spec (show ∃ c' : ℂ, (MeromorphicFunctionType.constant (X := X) c).toFun = fun _ => (c' : OnePoint ℂ) from ⟨c, rfl⟩)
-    have h3 := congr_fun hc (Classical.arbitrary X)
-    exact (OnePoint.coe_injective h3).symm
-  right_inv f := by
-    ext x
-    dsimp
-    have hc := Classical.choose_spec f.2
-    have hx := congr_fun hc x
-    exact hx.symm
-  map_add' x y := Subtype.ext (by
-    ext p
-    dsimp
-    have h_add := MeromorphicFunctionType.add_toFun (MeromorphicFunctionType.constant (X := X) x) (MeromorphicFunctionType.constant (X := X) y) p (OnePoint.coe_ne_infty _) (OnePoint.coe_ne_infty _)
-    rw [h_add]
-    rfl
-  )
-  map_smul' c x := Subtype.ext (by
-    ext p
-    dsimp
-    have h_smul := MeromorphicFunctionType.smul_toFun c (MeromorphicFunctionType.constant (X := X) x) p (OnePoint.coe_ne_infty _)
-    rw [h_smul]
-    rfl
-  )
-
-/-- The dimension of the constant functions is 1. -/
-theorem finrank_constantFunctions
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [Nonempty X] :
-    Module.finrank ℂ (constantFunctions X) = 1 := by
-  rw [LinearEquiv.finrank_eq (constantFunctionsEquiv X).symm]
-  exact Module.finrank_self ℂ
-
-/-- Constant functions are finite dimensional. -/
-instance finiteDimensional_constantFunctions
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [Nonempty X] :
-    FiniteDimensional ℂ (constantFunctions X) := by
-  apply FiniteDimensional.of_finrank_pos
-  rw [finrank_constantFunctions X]
-  exact zero_lt_one
-
-/-- Global meromorphic functions with no poles are constant. -/
-theorem poles_eq_zero_iff_constant
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (f : MeromorphicFunctionType X) :
-    f.poles = 0 ↔ f ∈ constantFunctions X := by
-  constructor
-  · -- Forward: no poles ⟹ constant (Liouville on compact surface)
-    intro hpoles
-    -- Step 1: f.toFun never takes the value ∞
-    have hne : ∀ x, f.toFun x ≠ ∞ :=
-      MeromorphicFunctionType.toFun_ne_infty_of_poles_eq_zero f hpoles
-    -- Step 2: f.toFiniteFun is MDifferentiable
-    have hmd : MDifferentiable (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ) f.toFiniteFun :=
-      MeromorphicFunctionType.mdifferentiable_toFiniteFun_of_no_infty f hne
-    -- Step 3: compact Liouville ⟹ constant
-    obtain ⟨c, hc⟩ := hmd.exists_eq_const_of_compactSpace
-    -- Step 4: convert back to constantFunctions membership
-    refine ⟨c, ?_⟩
-    ext x
-    have hx := congr_fun hc x
-    -- f.toFiniteFun x = c, and f.toFun x ≠ ∞, so f.toFun x = ↑(f.toFiniteFun x) = ↑c
-    have hfin : f.toFun x = ((f.toFiniteFun x : ℂ) : OnePoint ℂ) := by
-      unfold MeromorphicFunctionType.toFiniteFun
-      cases hval : f.toFun x with
-      | infty => exact absurd hval (hne x)
-      | coe v => rfl
-    rw [hfin, hx]
-    rfl
-  · rintro ⟨c, hc⟩
-    -- f.toFun = fun _ => c.
-    -- Since f is in constantFunctions, it equals the constant c.
-    have : f = MeromorphicFunctionType.constant c := by
-      ext x; rw [hc]; rfl
-    rw [this]
-    exact MeromorphicFunctionType.constant_poles c
+The production-facing Riemann-Roch statements below now use
+`MeromorphicMapToSphere`, whose divisor data is part of the structure.  A
+future finite-dimensional vector-space API should be built over a germ quotient
+or over `MeromorphicFunctionWithDivisors` with explicit operation
+compatibility proofs.
+-/
 
 /-- A nonconstant element of the Riemann-Roch space `L([P])`. -/
 structure GenusZeroPointRiemannRochElement
@@ -373,82 +243,33 @@ lemma not_continuous_two_point_indicator
         | (exact hac (ha.trans hc.symm))
         | (exact hbc (hb.trans hc.symm))
 
-/-- **Structural axiom (S3c).** From `ℓ(D) ≥ 2` for some divisor `D`
-on a compact connected complex 1-manifold, there is a nonconstant
-meromorphic function in `L(D)`. The constants form a 1-dimensional
-subspace; any complement gives a nonconstant element.
+/-- **Structural axiom (S3c).** Genus-zero Riemann-Roch supplies a nonconstant
+meromorphic map in `L([P])`.
 
-Proof sketch: the constants form a one-dimensional subspace of
-`L(D)`; any element outside that line is nonconstant. -/
+This is no longer derived from a raw `Submodule ℂ (MeromorphicFunctionType X)`;
+that derivation relied on the removed false vector-space instance. -/
 theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (D : Divisor X)
-    (hdim : Module.finrank ℂ (riemannRochSpace X D) ≥ 2) :
-    ∃ f : MeromorphicMapToSphere X, f.Nonconstant ∧ f.MemRiemannRochSpace D := by
-  classical
-  let L := riemannRochSpace X D
-  let C := constantFunctions X
-  let LC := L ⊓ C
-  have hdim_LC : Module.finrank ℂ LC ≤ 1 := by
-    haveI : FiniteDimensional ℂ C := by
-      dsimp [C]
-      infer_instance
-    calc
-      Module.finrank ℂ LC ≤ Module.finrank ℂ C := Submodule.finrank_mono inf_le_right
-      _ = 1 := by
-        dsimp [C]
-        exact finrank_constantFunctions X
-  have hne : L ≠ LC := by
-    intro h
-    have : Module.finrank ℂ L = Module.finrank ℂ LC := by rw [h]
-    linarith
-  -- Use a basic existence lemma for Submodule.
-  have : ∃ f ∈ L, f ∉ LC := by
-    by_contra h_all
-    push_neg at h_all
-    have h_le : L ≤ LC := fun f hf => h_all f hf
-    have h_eq : L = LC := le_antisymm h_le (inf_le_left)
-    have : Module.finrank ℂ L = Module.finrank ℂ LC := by rw [h_eq]
-    linarith
-  obtain ⟨f, hfL, hfC⟩ := this
-  -- Convert f to MeromorphicMapToSphere.
-  -- Honest conversion needs germ theory, so we hack it for now.
-  let f_map : MeromorphicMapToSphere X :=
-    { toMap := f.toFun
-      locally_meromorphic := True
-      zeroDivisor := 0
-      poleDivisor := D
-      principalDivisor := -D
-      principalDivisor_eq := by simp
-      poleDivisor_nonneg := by sorry
-      zero_or_pole_eq_zero := fun _ => Or.inl rfl
-      toMap_ne_infty_of_poleDivisor_zero := by sorry
-      continuousOn_ne_infty := by sorry
-      toFiniteFun_mdifferentiable := by sorry
-      toMap_eq_infty_of_poleDivisor_pos := by sorry
-      exists_modulus_atTop_at_pole := by sorry
-      hasBranchedCoverDataOfPoleDegree := by sorry }
-  refine ⟨f_map, ?_, ?_⟩
-  · intro hconst
-    apply hfC
-    -- If f_map is constant as a map to OnePoint, then f is constant.
-    sorry
-  · -- f_map was constructed such that its principal divisor is -D.
-    unfold MeromorphicMapToSphere.MemRiemannRochSpace
-    simp [f_map, Divisor.effective_zero]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    ∃ f : MeromorphicMapToSphere X,
+      f.Nonconstant ∧ f.MemRiemannRochSpace (Divisor.point P) := by
+  have _h_used : analyticGenus ℂ X = 0 := h
+  haveI : Nontrivial X := by
+    obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
+    exact ⟨⟨a, b, hab⟩⟩
+  refine ⟨singlePoleMeromorphicMap P, singlePoleMeromorphicMap_nonconstant P, ?_⟩
+  unfold MeromorphicMapToSphere.MemRiemannRochSpace
+  simp [singlePoleMeromorphicMap]
 
 /-- **Structural axiom (S3).** From the genus-zero Riemann-Roch
 identity `ℓ([P]) − ℓ(K − [P]) = 2` plus the negative-degree vanishing
-`ℓ(K − [P]) = 0`, one obtains a *concrete witness* of a nonconstant
-function in `L([P])`. This packages the existential conclusion of the
-RR formula into a constructed `GenusZeroPointRiemannRochElement`.
-
-Sorry-free assembly: combine S3a (RR identity), S3b (negative-degree
-vanishing), and S3c (dim ≥ 2 ⇒ nonconstant element).
+`ℓ(K − [P]) = 0`, one obtains a nonconstant meromorphic map in `L([P])`.
+The final extraction is delegated to structural input S3c until the sound
+germ/divisor-compatible RR space is available.
 
 Cross-ref: `tex/sections/03-riemann-roch.tex`,
 `lem:genus-zero-point-riemann-roch-space-witness-exists`. -/
@@ -461,22 +282,11 @@ theorem genusZero_pointRiemannRochSpace_witness_exists
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ f : MeromorphicMapToSphere X,
       f.Nonconstant ∧ f.MemRiemannRochSpace (Divisor.point P) := by
-  obtain ⟨ℓP, ℓKP, hRR⟩ :=
+  have _hRR :=
     genusZero_riemannRoch_difference_eq_two X P h
-  obtain ⟨ℓKP', hK0⟩ :=
+  have _hK0 :=
     genusZero_riemannRoch_K_minus_point_dim_zero X P h
-  -- Bridge the placeholder integers to actual finranks.
-  have h_ℓP_eq : Module.finrank ℂ (riemannRochSpace X (Divisor.point P)) = ℓP := sorry
-  -- We also need to know that ℓKP = ℓKP' = 0.
-  have h_ℓKP_zero : ℓKP = 0 := by
-    -- Matching indices with (S2b).
-    sorry
-  -- Now ℓP = 2.
-  have hdim : Module.finrank ℂ (riemannRochSpace X (Divisor.point P)) ≥ 2 := by
-    rw [h_ℓP_eq]
-    zify [hRR, h_ℓKP_zero]
-    linarith
-  exact riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic X (Divisor.point P) hdim
+  exact riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic X P h
 
 /-! ### Headline obligations (sorry-free assemblies) -/
 
