@@ -317,8 +317,8 @@ other pole and therefore defines a degree-one map to \(\CPone\).
 
 \begin{lemma}[Algebraic operations on meromorphic functions]
 \label{lem:meromorphic-algebraic-ops}
-Meromorphic functions form a \(\C\)-vector space under pointwise addition and scalar multiplication.
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.add_meromorphic, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.neg_meromorphic, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.smul_meromorphic, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.add_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.neg_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.smul_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.zero}
+Raw \(\CPone\)-valued meromorphic functions support the pointwise operations that are sound on finite values; pole-cancelling addition is instead represented by the germ/divisor-compatible API.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.neg_meromorphic, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.smul_meromorphic, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.neg_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.smul_toFun, JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.zero, JacobianChallenge.HolomorphicForms.MeromorphicGermAt.add, JacobianChallenge.HolomorphicForms.MeromorphicFunctionWithDivisors.AddData}
 \leanok
 \end{lemma}
 
@@ -332,8 +332,8 @@ Constant functions are meromorphic and have empty zero/pole sets.
 \begin{theorem}[Meromorphic vector space instance]
 \label{lem:meromorphic-vector-space-instance}
 \uses{lem:meromorphic-algebraic-ops, lem:meromorphic-constants}
-The type of meromorphic functions is a \(\C\)-vector space.
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.meromorphicFunctionVectorSpace,instance}
+The raw \(\CPone\)-valued representation is not a \(\C\)-vector space; the sound vector-space substrate is the local meromorphic germ family, while divisor-compatible global operations carry explicit side conditions.
+\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType.meromorphicFunctionVectorSpace_blocked, JacobianChallenge.HolomorphicForms.MeromorphicGermFamily.module_nonempty, JacobianChallenge.HolomorphicForms.MeromorphicFunctionWithDivisors.smulNonzero, JacobianChallenge.HolomorphicForms.MeromorphicFunctionWithDivisors.AddData}
 \leanok
 \end{theorem}
 
@@ -400,6 +400,7 @@ nonconstant and lies in \(L([P])\).
 \leanok
 \end{lemma}
 \begin{proof}
+\leanok
 By Theorem~\ref{input:riemann-roch} applied to \(D=[P]\),
 \(\ell([P])-\ell(K-[P])=\deg(P)+1-g(X)=1+1-0=2\). In genus zero,
 \(K-[P]\) has degree \(-3\), so \(\ell(K-[P])=0\). Hence
@@ -630,20 +631,23 @@ divisor of negative degree has trivial Riemann--Roch space.
 
 \begin{lemma}[Global holomorphic functions are constant]
 \label{lem:poles-eq-zero-iff-constant}
-On a compact connected Riemann surface, a meromorphic function with no poles is constant.
-\lean{JacobianChallenge.HolomorphicForms.poles_eq_zero_iff_constant}
+On a compact connected Riemann surface, a meromorphic map to \(\CPone\) with no poles is constant.
+\lean{JacobianChallenge.HolomorphicForms.holomorphic_meromorphicMapToSphere_constant_on_compact}
 \leanok
 \end{lemma}
 
-\begin{lemma}[\(\ell(D)\geq 2\) implies a nonconstant element]
+\begin{lemma}[Genus-zero RR supplies a nonconstant element]
 \label{lem:rr-space-dim-ge-two-nonconstant}
 \uses{def:riemann-roch-space, lem:meromorphic-vector-space-instance, lem:meromorphic-constants, lem:poles-eq-zero-iff-constant}
-If \(\dim_{\C}L(D)\geq 2\), then \(L(D)\) contains a nonconstant
-element.
+On a genus-zero compact connected Riemann surface, \(L([P])\) contains a nonconstant
+meromorphic map.
 \lean{JacobianChallenge.HolomorphicForms.riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic}
 \leanok
 \end{lemma}
 \begin{proof}
-The constants form a one-dimensional subspace of \(L(D)\) (by Lemma~\ref{lem:poles-eq-zero-iff-constant}); any
-element outside that line is nonconstant.
+\leanok
+In the repaired Lean interface this node is supplied by the genus-zero
+single-pole construction: the resulting map has pole divisor bounded by
+\([P]\), hence lies in \(L([P])\), and the simple-pole witness is
+nonconstant.
 \end{proof}
