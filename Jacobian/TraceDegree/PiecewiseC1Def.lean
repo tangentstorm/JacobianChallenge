@@ -38,7 +38,37 @@ abbrev ChartLiftPiecewiseC1
                     (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
         (Set.Icc (0 : ℝ) 1) t‖₊ ≤ K
 
-/-- **Project-level regularity assumption (typeclass form).**
+/-- **Regular path wrapper.**
+
+This is the sound path domain for period integration: the underlying
+topological `Path` is bundled together with chartwise piecewise-C¹
+data and a uniform derivative bound. Lemmas should consume this
+wrapper, or equivalent explicit hypotheses, when they need analytic
+path integration. -/
+structure PiecewiseC1Path
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    (a b : X) where
+  /-- The underlying continuous path. -/
+  toPath : Path a b
+  /-- A uniform derivative bound for all chart-lifted uniform subpaths. -/
+  bound : NNReal
+  /-- Chartwise piecewise-C¹ regularity with the chosen bound. -/
+  regular : ChartLiftPiecewiseC1 toPath bound
+
+/-- Coerce a regular path to its underlying continuous path. -/
+instance
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {a b : X} : CoeFun (PiecewiseC1Path (X := X) a b) (fun _ => unitInterval → X) where
+  coe γ := γ.toPath
+
+/-- The explicit regularity witness carried by a `PiecewiseC1Path`. -/
+theorem PiecewiseC1Path.chartLiftPiecewiseC1
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+    {a b : X} (γ : PiecewiseC1Path (X := X) a b) :
+    ChartLiftPiecewiseC1 γ.toPath γ.bound :=
+  γ.regular
+
+/-- **Legacy project-level regularity assumption (typeclass form).**
 
 The statement carried by an instance: *every continuous path `γ : Path a b`
 on `X` admits a uniform `K₀` with `ChartLiftPiecewiseC1 γ K₀`* — i.e.
@@ -50,10 +80,10 @@ differentiable continuous path (e.g. a Weierstrass-style curve embedded
 in a chart) inhabits `Path a b` but cannot satisfy
 `ChartLiftPiecewiseC1`.
 
-Carried as a typeclass so the `analyticPushforward` API can pick it up
-implicitly without threading an explicit hypothesis through every
-call site. Provided by a single named sorry-instance in
-`Jacobian/TraceDegree/PiecewiseC1Instance.lean`. -/
+This class is retained only as a legacy explicit hypothesis for
+frontier declarations that have not yet been moved to
+`PiecewiseC1Path`/regular chain inputs. There is intentionally no
+global instance in `Jacobian/TraceDegree/PiecewiseC1Instance.lean`. -/
 class PiecewiseC1PathRegularity (X : Type*)
     [TopologicalSpace X] [ChartedSpace ℂ X] : Prop where
   /-- Witness: every path admits a uniform piecewise-C¹ bound. -/
@@ -67,9 +97,8 @@ theorem pathPiecewiseC1_of_regularity {X : Type*} [TopologicalSpace X] [ChartedS
   hReg.out γ'
 
 /-- Accessor: chart-lift `C¹` regularity of a subpath in an atlas chart,
-extracted from the strengthened `ChartLiftPiecewiseC1` data. Sorry-free
-derivation from the typeclass; the only audit-trail sorry remains in
-`instPiecewiseC1PathRegularity.out`. -/
+extracted from the strengthened `ChartLiftPiecewiseC1` data. This is a
+sorry-free derivation from an explicit legacy regularity hypothesis. -/
 theorem chartLift_contDiffOn_of_regularity {X : Type*}
     [TopologicalSpace X] [ChartedSpace ℂ X] [hReg : PiecewiseC1PathRegularity X]
     {a b : X} (γ' : Path a b) (n : ℕ) (hn : 0 < n) (pickX : Fin n → X) (i : Fin n)

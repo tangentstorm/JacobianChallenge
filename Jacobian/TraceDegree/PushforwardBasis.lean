@@ -360,7 +360,7 @@ the algebraic bridge above (a `LinearMap.dualMap` identity), the Stokes
 naturality in `Periods/PullbackNaturality.lean`, and the C¹ regularity
 obligation `pathPiecewiseC1_obligation`. -/
 theorem pushforwardTraceLift_preserves_lattice_raw
-    [PiecewiseC1PathRegularity X]
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice X).subgroup,
       pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup := by
@@ -427,7 +427,7 @@ Note: `pushforwardTraceLiftCLM` has type `→L[ℂ]` while
 agree definitionally (the `→L[ℂ]` and `→ₗ[ℂ]` and `→+` are all
 extracted from the same matrix-transpose `Matrix.toLin'` value). -/
 noncomputable def analyticPushforward
-    [PiecewiseC1PathRegularity X]
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisAnalyticJacobian X →ₜ+ BasisAnalyticJacobian Y where
   toFun := ComplexTorus.mapClm (pushforwardTraceLiftCLM f hf)
@@ -446,7 +446,7 @@ Sorry-free: unfold `analyticPushforward` to `mapClm`, then
 hom of `pushforwardTraceLiftCLM` is definitionally
 `pushforwardTraceLift`. -/
 theorem analyticPushforward_mk_spec_raw
-    [PiecewiseC1PathRegularity X]
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (v : Fin (analyticGenus ℂ X) → ℂ) :
     analyticPushforward f hf
@@ -476,7 +476,7 @@ smooth maps:
 The equation on `chart.source` uses `chart.left_inv'` plus
 `mapClm`'s definition (`map_mk`). -/
 theorem analyticPushforward_contMDiff_raw
-    [PiecewiseC1PathRegularity X]
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
@@ -551,7 +551,7 @@ trace-coordinate interface and the three raw geometric sorries.
 /-- Companion specification: the analytic pushforward is holomorphic.
 Sorry-free: alias for `analyticPushforward_contMDiff_raw`. -/
 theorem analyticPushforward_contMDiff_spec
-    [PiecewiseC1PathRegularity X]
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
@@ -561,7 +561,7 @@ theorem analyticPushforward_contMDiff_spec
 /-- The analytic pushforward is holomorphic. Public top-down
 obligation; sorry-free. -/
 lemma analyticPushforward_contMDiff
-    [PiecewiseC1PathRegularity X]
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ)) ω
@@ -570,7 +570,7 @@ lemma analyticPushforward_contMDiff
 
 /-- The trace lift preserves the period lattice. Sorry-free alias. -/
 theorem pushforwardTraceLift_preserves_lattice
-    [PiecewiseC1PathRegularity X]
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice X).subgroup,
       pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup :=
@@ -580,7 +580,7 @@ theorem pushforwardTraceLift_preserves_lattice
 projection: the pushforward applied to `mk v` equals `mk` of the
 trace lift applied to `v`. Sorry-free alias. -/
 theorem analyticPushforward_mk_spec
-    [PiecewiseC1PathRegularity X]
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (v : Fin (analyticGenus ℂ X) → ℂ) :
     analyticPushforward f hf
@@ -665,6 +665,7 @@ Sorry-free assembly: `analyticPushforward_mk_spec` and
 projection. -/
 theorem analyticPushforward_comp_spec
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
+    [PiecewiseC1PathRegularity Z]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (P : BasisAnalyticJacobian X) :
@@ -680,6 +681,7 @@ theorem analyticPushforward_comp_spec
 /-- Pushforward distributes covariantly over composition. Sorry-free. -/
 lemma analyticPushforward_comp_apply
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
+    [PiecewiseC1PathRegularity Z]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
     (P : BasisAnalyticJacobian X) :
