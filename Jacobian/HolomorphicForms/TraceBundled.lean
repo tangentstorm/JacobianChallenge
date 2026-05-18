@@ -155,9 +155,37 @@ theorem traceFormsBundled_apply_fun_regular
     (traceFormsBundled f hf η).toFun y = traceAtRegularValue hbc (fun x => η.toFun x) y hy :=
   sorry
 
-/-- The trace as a ℂ-linear map between holomorphic 1-form spaces. -/
-noncomputable def traceFormsBundledLM
+/-- Minimal trace input used by local linearity and regular-value
+assemblies.  This separates the specification needed downstream from
+the construction of the global bundled trace form. -/
+structure TraceFormsRegularSpec
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) where
+  /-- Trace sends the zero form to zero. -/
+  map_zero : traceFormsBundled f hf 0 = 0
+  /-- At regular values, trace agrees with the finite local fiber sum. -/
+  apply_fun_regular :
+    ∀ (hbc : BranchedCoverData X Y f) (η : HolomorphicOneForm ℂ X)
+      (y : Y) (hy : isRegularValue hbc y),
+      (traceFormsBundled f hf η).toFun y =
+        traceAtRegularValue hbc (fun x => η.toFun x) y hy
+
+/-- Frontier provider: the current global trace frontiers packaged as
+the smaller local regular-value specification.
+
+Narrow consumers should take `TraceFormsRegularSpec f hf` explicitly
+instead of calling this provider internally. -/
+def traceFormsRegularSpec_frontier
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
+    TraceFormsRegularSpec f hf where
+  map_zero := traceFormsBundled_zero f hf
+  apply_fun_regular := fun hbc η y hy =>
+    traceFormsBundled_apply_fun_regular hf hbc η y hy
+
+/-- The trace as a ℂ-linear map between holomorphic 1-form spaces,
+from an explicit regular-value trace specification. -/
+noncomputable def traceFormsBundledLM_of_spec
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (htrace : TraceFormsRegularSpec f hf) :
     HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y where
   toFun := by
     classical
@@ -175,9 +203,9 @@ noncomputable def traceFormsBundledLM
       simp only [if_neg hconst]
       apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
       intro y hy
-      rw [traceFormsBundled_apply_fun_regular hf hbc (η + ζ) y hy]
-      simpa [add_toFun_apply, traceFormsBundled_apply_fun_regular hf hbc η y hy,
-        traceFormsBundled_apply_fun_regular hf hbc ζ y hy] using
+      rw [htrace.apply_fun_regular hbc (η + ζ) y hy]
+      simpa [add_toFun_apply, htrace.apply_fun_regular hbc η y hy,
+        htrace.apply_fun_regular hbc ζ y hy] using
         traceAtRegularValue_add hbc (fun x => η.toFun x) (fun x => ζ.toFun x) y hy
   map_smul' k η := by
     classical
@@ -193,20 +221,42 @@ noncomputable def traceFormsBundledLM
       simp only [if_neg hconst]
       apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
       intro y hy
-      rw [traceFormsBundled_apply_fun_regular hf hbc (k • η) y hy]
-      simpa [smul_toFun_apply, traceFormsBundled_apply_fun_regular hf hbc η y hy] using
+      rw [htrace.apply_fun_regular hbc (k • η) y hy]
+      simpa [smul_toFun_apply, htrace.apply_fun_regular hbc η y hy] using
         traceAtRegularValue_smul hbc k (fun x => η.toFun x) y hy
 
-/-- The trace–pullback identity holds at regular values. -/
+/-- The trace as a ℂ-linear map between holomorphic 1-form spaces.
+
+Compatibility wrapper using the named frontier provider. New
+sorry-free consumers should use `traceFormsBundledLM_of_spec` with an
+explicit `TraceFormsRegularSpec`. -/
+noncomputable def traceFormsBundledLM
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
+    HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y :=
+  traceFormsBundledLM_of_spec f hf (traceFormsRegularSpec_frontier f hf)
+
+/-- The trace–pullback identity holds at regular values from explicit trace data. -/
+theorem trace_pullback_identity_regular_of_spec
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (htrace : TraceFormsRegularSpec f hf)
+    (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (η : HolomorphicOneForm ℂ Y) (y : Y) (hy : isRegularValue hbc y) :
+    (traceFormsBundled f hf (pullbackFormsBundled f hf η)).toFun y =
+      ((hbc.weightedFiberCard y : ℂ) • η).toFun y := by
+  rw [htrace.apply_fun_regular hbc (pullbackFormsBundled f hf η) y hy]
+  exact trace_pullback_at_regular_value hbc hcompat hf (isHolomorphic_of_contMDiff hf) η y hy
+
+/-- Compatibility wrapper using the named trace frontier provider. -/
 theorem trace_pullback_identity_regular
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (hbc : BranchedCoverData X Y f)
     (hcompat : hbc.RamificationIndexCompatible)
     (η : HolomorphicOneForm ℂ Y) (y : Y) (hy : isRegularValue hbc y) :
     (traceFormsBundled f hf (pullbackFormsBundled f hf η)).toFun y =
-      ((hbc.weightedFiberCard y : ℂ) • η).toFun y := by
-  rw [traceFormsBundled_apply_fun_regular hf hbc (pullbackFormsBundled f hf η) y hy]
-  exact trace_pullback_at_regular_value hbc hcompat hf (isHolomorphic_of_contMDiff hf) η y hy
+      ((hbc.weightedFiberCard y : ℂ) • η).toFun y :=
+  trace_pullback_identity_regular_of_spec f hf (traceFormsRegularSpec_frontier f hf)
+    hbc hcompat η y hy
 
 /-- The pullback along a constant map is zero. -/
 theorem pullbackFormsBundled_constant
@@ -220,13 +270,15 @@ theorem pullbackFormsBundled_constant
   subst f
   simp [pullbackFormsBundled, pullbackFormsFunFiber, mfderiv_const]
 
-/-- **The Trace-Pullback Identity.** The fundamental identity for
+/- **The Trace-Pullback Identity.** The fundamental identity for
 holomorphic 1-forms: the trace of a pullback is multiplication by
 the degree.
 
 This is the analytic heart of the Challenge's anti-hack #4. -/
-theorem trace_pullback_identity
+/-- Trace-pullback identity from explicit trace data. -/
+theorem trace_pullback_identity_of_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (htrace : TraceFormsRegularSpec f hf)
     (η : HolomorphicOneForm ℂ Y) :
     traceFormsBundled f hf (pullbackFormsBundled f hf η) =
       (JacobianChallenge.TraceDegree.analyticDegree f hf : ℂ) • η := by
@@ -234,7 +286,7 @@ theorem trace_pullback_identity
   by_cases hconst : ∃ y₀, ∀ x, f x = y₀
   · -- Constant case: both sides are zero
     rw [pullbackFormsBundled_constant f hf hconst η]
-    rw [traceFormsBundled_zero f hf]
+    rw [htrace.map_zero]
     rw [analyticDegree_constant f hf hconst]
     apply ContMDiffSection.ext
     intro y
@@ -249,6 +301,17 @@ theorem trace_pullback_identity
     apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
     intro y hy
     rw [branchedDegree_eq_weightedFiberCard hbc y]
-    exact trace_pullback_identity_regular f hf hbc hcompat η y hy
+    exact trace_pullback_identity_regular_of_spec f hf htrace hbc hcompat η y hy
+
+/-- **The Trace-Pullback Identity.** Compatibility wrapper using the
+named trace frontier provider. New shortcut assemblies should use
+`trace_pullback_identity_of_spec` when the trace data is part of the
+explicit boundary. -/
+theorem trace_pullback_identity
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ Y) :
+    traceFormsBundled f hf (pullbackFormsBundled f hf η) =
+      (JacobianChallenge.TraceDegree.analyticDegree f hf : ℂ) • η :=
+  trace_pullback_identity_of_spec f hf (traceFormsRegularSpec_frontier f hf) η
 
 end JacobianChallenge.HolomorphicForms

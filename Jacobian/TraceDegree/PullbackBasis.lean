@@ -244,6 +244,31 @@ theorem analyticPullback_contMDiff_raw
     exact hEq q' hq'
   exact hOn.contMDiffAt hMem
 
+/-- Basis-level pullback data, separated from the descended analytic
+pullback on the quotient.
+
+Consumers that only need the covering-space additive homomorphism or
+its matrix identification should use this record (via
+`basisDualPullback`) rather than the full `BasisAnalyticPullbackBundle`,
+which also carries quotient smoothness, degree, and trace-pullback
+frontier fields. -/
+structure BasisPullbackLinearData
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) where
+  /-- The dual form-pullback on the basis-coordinate covering space. -/
+  basisDualPullback : (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ)
+  /-- Identification with the basis-aligned form-pullback matrix. -/
+  basisDualPullback_eq_matrix_AddHom :
+    basisDualPullback = (pullbackTraceLiftLinearMap f hf).toAddMonoidHom
+
+/-- Concrete basis-level pullback data. This construction uses only the
+form-pullback matrix and does not require quotient smoothness or
+trace-pullback degree data. -/
+noncomputable def basisPullbackLinearData
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    BasisPullbackLinearData f hf where
+  basisDualPullback := (pullbackTraceLiftLinearMap f hf).toAddMonoidHom
+  basisDualPullback_eq_matrix_AddHom := rfl
+
 /-- Bundle carrying the analytic pullback together with its
 covering-space representative `basisDualPullback` and the descent
 compatibility axiom `mk_eq`.
@@ -281,28 +306,38 @@ structure BasisAnalyticPullbackBundle
   contMDiff_pull :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ)) ω analyticPullback
-  /-- The (analytic) degree of `f`. Used in the trace-pullback identity
-  (anti-hack #4). -/
+
+/-- Degree and trace-pullback data, split away from the quotient-smooth
+pullback bundle.  This is the explicit frontier needed by statements
+such as `analyticPushforward_analyticPullback`; basis-level and
+smoothness consumers should not depend on it. -/
+structure BasisAnalyticPullbackDegreeSpec
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) where
+  /-- The analytic degree of `f`. -/
   degree : ℕ
   /-- Trace-pullback identity (anti-hack #4):
   `pushf (pullback Q) = degree • Q` for every `Q`. -/
   trace_pullback_spec :
     [PiecewiseC1PathRegularity X] → [PiecewiseC1PathRegularity Y] →
     ∀ Q : BasisAnalyticJacobian Y,
-    analyticPushforward _f _hf (analyticPullback Q) = degree • Q
+    analyticPushforward f hf (analyticPullback f hf Q) = degree • Q
 
-noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    Inhabited (BasisAnalyticPullbackBundle X Y f hf) :=
-  ⟨{ analyticPullback := 0
-     basisDualPullback := 0
-     mk_eq := fun _ => rfl
-     contMDiff_pull := contMDiff_const
-     degree := 0
-     trace_pullback_spec := fun {_} {_} Q => by
-       -- pull = 0 here, so pull Q = 0, and pushf 0 = 0 = 0 • Q.
-       show (analyticPushforward f hf) (0 : BasisAnalyticJacobian X) =
-         (0 : ℕ) • Q
-       rw [map_zero, zero_smul] }⟩
+/-- Frontier provider for analytic degree and trace-pullback data.
+
+The degree is the known constant/branched-cover degree.  The
+trace-pullback identity remains the genuine frontier input and is kept
+separate from basis-level pullback and quotient smoothness data. -/
+noncomputable def basisAnalyticPullbackDegreeSpec_frontier
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    BasisAnalyticPullbackDegreeSpec f hf where
+  degree :=
+    if h : ∃ y₀, ∀ x, f x = y₀ then 0
+    else
+      have hf_holo : IsHolomorphic f := isHolomorphic_of_contMDiff hf
+      JacobianChallenge.HolomorphicForms.branchedDegree
+        (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+          hf_holo h)
+  trace_pullback_spec := fun {_} {_} _ => sorry
 
 /-- The bundled analytic pullback (data + descent axiom). Concretely
 realized by descent through the period quotient. -/
@@ -311,16 +346,8 @@ noncomputable def basisAnalyticPullbackBundle (f : X → Y)
     BasisAnalyticPullbackBundle X Y f hf :=
   { analyticPullback := analyticPullback f hf
     basisDualPullback := (pullbackTraceLiftLinearMap f hf).toAddMonoidHom
-    mk_eq := fun v => rfl
-    contMDiff_pull := analyticPullback_contMDiff_raw f hf
-    degree :=
-      if h : ∃ y₀, ∀ x, f x = y₀ then 0
-      else
-        have hf_holo : IsHolomorphic f := isHolomorphic_of_contMDiff hf
-        JacobianChallenge.HolomorphicForms.branchedDegree
-          (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-            hf_holo h)
-    trace_pullback_spec := fun {_} {_} _ => sorry }
+    mk_eq := fun _ => rfl
+    contMDiff_pull := analyticPullback_contMDiff_raw f hf }
 
 /-- The analytic pullback is holomorphic.
 
@@ -348,11 +375,20 @@ relationship:
 homomorphism on the covering space
 `Fin (analyticGenus ℂ Y) → ℂ → Fin (analyticGenus ℂ X) → ℂ`.
 
-Extracted from `basisAnalyticPullbackBundle`. -/
+Extracted from the smaller `BasisPullbackLinearData`, so basis-level
+consumers do not depend on quotient smoothness or degree fields. -/
 noncomputable def basisDualPullback (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ) :=
-  (basisAnalyticPullbackBundle f hf).basisDualPullback
+  (basisPullbackLinearData f hf).basisDualPullback
+
+/-- The small basis-level pullback agrees with the form-pullback linear map.
+This theorem is independent of quotient smoothness and degree data. -/
+theorem basisDualPullback_eq_pullbackTraceLiftLinearMap
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    basisDualPullback f hf =
+      (pullbackTraceLiftLinearMap f hf).toAddMonoidHom :=
+  (basisPullbackLinearData f hf).basisDualPullback_eq_matrix_AddHom
 
 /-! ### Bundle-primitive split (mirrors PushforwardBasis pattern)
 
@@ -362,23 +398,13 @@ blocker where Lean had no intrinsic propositional relationship between
 the dual pullbacks for `f`, `g`, and `g ∘ f`.
 -/
 
-/-! ### Round 1 (2026-05-05) — split the HEq diamond sorries
+/-! ### Basis-level split
 
-The two diamond sorries
-`basisAnalyticPullbackBundle_id_dualPullback` and
-`basisAnalyticPullbackBundle_comp_dualPullback` cannot be discharged
-without a concrete (non-opaque) realisation of the per-(f, hf)
-bundle. We split each into:
-
-* `basisAnalyticPullbackBundle_eq_pullbackFormsMap` — bridge from the
-  bundle's `basisDualPullback` field to a *named* covering-space
-  dual-pullback function `pullbackFormsMap` (currently both are
-  opaque-realised; bridge is itself a sorry);
-* `pullbackFormsMap_id` — identity functoriality of the bridge map;
-* `pullbackFormsMap_comp` — composition functoriality.
-
-Each is the same Mathlib gap (concrete dual of basis-aligned form
-pullback) but stated as a separate, smaller named obligation. -/
+The basis-coordinate pullback is now exposed through
+`BasisPullbackLinearData`, while `BasisAnalyticPullbackBundle` remains
+the larger quotient-level package carrying smoothness, degree, and
+trace-pullback data.  Basis-only consumers route through
+`basisDualPullback` and the `pullbackFormsMap` lemmas below. -/
 
 /-- **Stage A leaf (round 2, concretised).** Concrete dual of the
 basis-aligned form pullback, defined as `holomorphicTraceCoord f hf`
@@ -388,12 +414,9 @@ pullback `f^* : H⁰(Y, Ω¹) → H⁰(X, Ω¹)`) coerced to a `→+`.
 This concretisation collapses both `pullbackFormsMap_id_eq_id` and
 `pullbackFormsMap_comp_eq` to sorry-free assemblies, riding on the
 sorry-free `holomorphicTraceCoord_id` and `holomorphicTraceCoord_comp`
-in `PushforwardBasis.lean`. The `basisAnalyticPullbackBundle_eq_pullbackFormsMap`
-bridge remains a (single) sorry because `basisAnalyticPullbackBundle`
-itself is still `noncomputable opaque` — concretising the bundle
-requires lattice preservation for `holomorphicTraceCoord`, which is
-genuinely Mathlib-gap-bound (Stokes naturality on the pullback side,
-analogous to the pushforward-side `pushforwardTraceLift_preserves_lattice_raw`). -/
+in `PushforwardBasis.lean`. The full quotient-level bundle still keeps
+the trace-pullback identity as a separate frontier field; basis-level
+functoriality does not depend on that field. -/
 noncomputable def pullbackFormsMap
     (X' Y' : Type) [TopologicalSpace X'] [T2Space X']
     [CompactSpace X'] [ConnectedSpace X'] [ChartedSpace ℂ X']
@@ -423,6 +446,15 @@ noncomputable def basisAlignedFormPullbackMatrix
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   holomorphicTraceCoord f hf
+
+/-- The top-level basis pullback is the matrix-level additive map.
+This uses only `BasisPullbackLinearData`, not the full analytic
+pullback bundle. -/
+theorem basisDualPullback_eq_matrix_AddHom
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    basisDualPullback f hf =
+      (basisAlignedFormPullbackMatrix f hf).toAddMonoidHom :=
+  basisDualPullback_eq_pullbackTraceLiftLinearMap f hf
 
 /-- **Pass pdp.2 + pdp.3 (transposed matrix is the dual map).**
 The dual of the basis-aligned form pullback, viewed as a map of
@@ -493,9 +525,8 @@ theorem pullbackFormsMap_comp_eq
 selected at `(X, X, id, contMDiff_id)` is the identity additive group
 homomorphism on the covering space.
 
-**Round 1 sorry-free assembly.** Compose
-`basisAnalyticPullbackBundle_eq_pullbackFormsMap` (the bridge sorry)
-with `pullbackFormsMap_id_eq_id` (the identity-functoriality sorry). -/
+Sorry-free assembly through `basisAnalyticPullbackBundle_eq_pullbackFormsMap`
+and `pullbackFormsMap_id_eq_id`. -/
 theorem basisAnalyticPullbackBundle_id_dualPullback :
     (basisAnalyticPullbackBundle (X := X) (Y := X) id contMDiff_id).basisDualPullback =
       AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
@@ -504,12 +535,14 @@ theorem basisAnalyticPullbackBundle_id_dualPullback :
     pullbackFormsMap_id_eq_id (X := X)]
 
 /-- The dual form-pullback along `id` is the identity additive group
-homomorphism. Sorry-free: extracts the bundle-level axiom via `unfold`. -/
+homomorphism. Sorry-free from the small basis-level data and
+`pullbackFormsMap_id_eq_id`; no quotient smoothness field is used. -/
 theorem basisDualPullback_id :
     basisDualPullback (X := X) (Y := X) id contMDiff_id =
       AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
-  unfold basisDualPullback
-  exact basisAnalyticPullbackBundle_id_dualPullback
+  rw [basisDualPullback_eq_matrix_AddHom (X := X) (Y := X) id contMDiff_id,
+    ← pullbackFormsMap_eq_matrix_AddHom (X := X) (Y := X) id contMDiff_id,
+    pullbackFormsMap_id_eq_id (X := X)]
 
 /-- Pointwise form of `basisDualPullback_id`: the dual form-pullback
 along `id` is pointwise the identity on the covering space.
@@ -545,53 +578,16 @@ basis-aligned linear maps, then dualization.
 equals the composition of dual pullbacks for `f` and `g`
 (contravariantly), at each covering-space vector.
 
-**Root cause: three independent opaques.** The three
-`basisDualPullback` values appearing in this equation originate
-from three distinct opaque values:
-`basisAnalyticPullbackBundle (g ∘ f) (hg.comp hf)`,
-`basisAnalyticPullbackBundle f hf`, and
-`basisAnalyticPullbackBundle g hg`. Each `opaque` is selected
-independently by `Classical.choice` from the `Inhabited` witness
-(which uses `basisDualPullback := 0`), so Lean has no propositional
-relationship between the three covering-space lifts.
-
-**Why `mk_eq` is insufficient.** The `mk_eq` field of
-`BasisAnalyticPullbackBundle` only gives quotient-level descent
-compatibility, yielding congruence modulo the period lattice — not
-the exact covering-space equality required.
-
-**Why a composition bundle does not resolve it.** Same cross-instance
-opacity issue as `pushforwardTraceLift_comp_spec_apply_at`: a comp
-bundle cannot constrain the per-`(f, hf)` opaques, since
-`basisDualPullback f hf` is defined directly from
-`basisAnalyticPullbackBundle f hf`.
-
-**Mathlib API required to land this:** concrete pullback of
-holomorphic 1-forms `f* : H⁰(Y, Ω¹) → H⁰(X, Ω¹)`, contravariant
-functoriality `(g ∘ f)* = f* ∘ g*`, basis-coordinate matrix
-representation. All absent in v4.28.0.
-
-**Structural change required:** replace the per-`(f, hf)` opaque
-bundle with a concrete (non-opaque) definition built from
-`pullbackFormsMap`. This is the exact dual of the blocker on
-`pushforwardTraceLift_comp_spec_apply_at`.
-
-#### Bundle-primitive split (mirrors PushforwardBasis pattern)
-
-The composition obligation is now isolated as a single
-`AddMonoidHom`-equality at the bundle field level
-(`basisAnalyticPullbackBundle_comp_dualPullback` below), with the
-top-level `basisDualPullback_comp_top` and the per-vector
-`basisDualPullback_comp` as sorry-free assemblies. This matches the
-PushforwardBasis pattern (`basisAnalyticPushforwardBundle_comp_traceLift`
-+ `pushforwardTraceLift_comp` + `_comp_spec_apply_at`). -/
+The proof now routes through the concrete basis-level map
+`pullbackFormsMap`; it does not use quotient smoothness or the
+trace-pullback degree field from `BasisAnalyticPullbackBundle`. -/
 theorem basisAnalyticPullbackBundle_comp_dualPullback
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     (basisAnalyticPullbackBundle (g ∘ f) (hg.comp hf)).basisDualPullback =
       ((basisAnalyticPullbackBundle f hf).basisDualPullback).comp
         (basisAnalyticPullbackBundle g hg).basisDualPullback := by
-  -- Round 1 sorry-free assembly: route through the structural bridge.
+  -- Route through the concrete basis-level pullback map.
   rw [basisAnalyticPullbackBundle_eq_pullbackFormsMap (g ∘ f) (hg.comp hf),
       basisAnalyticPullbackBundle_eq_pullbackFormsMap f hf,
       basisAnalyticPullbackBundle_eq_pullbackFormsMap g hg,
@@ -599,14 +595,20 @@ theorem basisAnalyticPullbackBundle_comp_dualPullback
 
 /-- Top-level contravariant functoriality of the dual form-pullback:
 `(g ∘ f)* = f* ∘ g*` as an additive group homomorphism on the covering
-space. Sorry-free: extracts the bundle-level axiom via `unfold`. -/
+space. Sorry-free from the small basis-level data and
+`pullbackFormsMap_comp_eq`; no quotient smoothness field is used. -/
 theorem basisDualPullback_comp_top
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     basisDualPullback (g ∘ f) (hg.comp hf) =
       (basisDualPullback f hf).comp (basisDualPullback g hg) := by
-  unfold basisDualPullback
-  exact basisAnalyticPullbackBundle_comp_dualPullback f hf g hg
+  rw [basisDualPullback_eq_matrix_AddHom (g ∘ f) (hg.comp hf),
+      basisDualPullback_eq_matrix_AddHom f hf,
+      basisDualPullback_eq_matrix_AddHom g hg,
+      ← pullbackFormsMap_eq_matrix_AddHom (g ∘ f) (hg.comp hf),
+      ← pullbackFormsMap_eq_matrix_AddHom f hf,
+      ← pullbackFormsMap_eq_matrix_AddHom g hg,
+      pullbackFormsMap_comp_eq f hf g hg]
 
 /-- Pointwise form: `basisDualPullback (g ∘ f) v = basisDualPullback f
 (basisDualPullback g v)`. Sorry-free assembly via
