@@ -151,10 +151,21 @@ lemma pullback_comp_apply (P : Jacobian (X₀ := Z)) :
 noncomputable def _root_.ContMDiff.degree (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
   JacobianChallenge.TraceDegree.analyticDegree f hf
 
-lemma pushforward_pullback (P : Jacobian (X₀ := Y)) :
+/-- Pushforward after pullback from explicit basis-level degree data. -/
+lemma pushforward_pullback_of_degreeSpec
+    (hdeg : JacobianChallenge.TraceDegree.BasisAnalyticPullbackDegreeSpec f hf)
+    (hdegree :
+      hdeg.degree = JacobianChallenge.TraceDegree.analyticDegree f hf)
+    (P : Jacobian (X₀ := Y)) :
     pushforward f hf (pullback f hf P) = (JacobianChallenge.TraceDegree.analyticDegree f hf) • P := by
   show ULift.up (JacobianChallenge.TraceDegree.analyticPushforward f hf (JacobianChallenge.TraceDegree.analyticPullback f hf P.down)) =
     (JacobianChallenge.TraceDegree.analyticDegree f hf) • P
-  rw [JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback]; rfl
+  rw [JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback_of_degreeSpec f hf hdeg hdegree P.down]
+  rfl
+
+lemma pushforward_pullback (P : Jacobian (X₀ := Y)) :
+    pushforward f hf (pullback f hf P) = (JacobianChallenge.TraceDegree.analyticDegree f hf) • P :=
+  pushforward_pullback_of_degreeSpec f hf
+    (JacobianChallenge.TraceDegree.basisAnalyticPullbackDegreeSpec_frontier f hf) rfl P
 
 end Jacobian

@@ -40,12 +40,11 @@ variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [StableChartAt ℂ Y]
 
 /-- The (analytic) degree of a holomorphic map `f : X → Y` of compact
-Riemann surfaces. Extracted from `basisAnalyticPullbackBundle.degree`.
-Equals `0` for constant maps; the bottom-up content (branched-cover
-degree, generic-fiber cardinality with ramification multiplicity) is
-deferred to the bundle's witness. -/
+Riemann surfaces. Extracted from the explicit
+`BasisAnalyticPullbackDegreeSpec` frontier provider, not from the
+basis-level or quotient-smooth pullback bundle. -/
 noncomputable def analyticDegree (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
-  (basisAnalyticPullbackBundle f hf).degree
+  (basisAnalyticPullbackDegreeSpec_frontier f hf).degree
 
 /-- **Analytic degree identity.** For non-constant maps, the analytic
 degree equals the geometric branched degree.
@@ -58,7 +57,7 @@ theorem analyticDegree_eq_branchedDegree (f : X → Y)
         (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
           (JacobianChallenge.HolomorphicForms.isHolomorphic_of_contMDiff hf)
           hnonconst) := by
-  unfold analyticDegree basisAnalyticPullbackBundle
+  unfold analyticDegree basisAnalyticPullbackDegreeSpec_frontier
   simp [hnonconst]
 
 /-- **Analytic degree of constant maps.** The degree of a constant map is zero.
@@ -67,20 +66,32 @@ Sorry-free: definitional via the construction in `PullbackBasis.lean`. -/
 theorem analyticDegree_constant (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (hconst : ∃ y₀, ∀ x, f x = y₀) :
     analyticDegree f hf = 0 := by
-  unfold analyticDegree basisAnalyticPullbackBundle
+  unfold analyticDegree basisAnalyticPullbackDegreeSpec_frontier
   simp [hconst]
 
 /-- Companion specification (anti-hack obligation): the trace-pullback
-identity in basis-aligned form. Sorry-free extraction from
-`basisAnalyticPullbackBundle.trace_pullback_spec`. -/
+identity in basis-aligned form, from explicit degree/trace data. -/
+theorem analyticPushforward_analyticPullback_spec_of_degreeSpec (f : X → Y)
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (hdeg : BasisAnalyticPullbackDegreeSpec f hf)
+    (hdegree : hdeg.degree = analyticDegree f hf)
+    (Q : BasisAnalyticJacobian Y) :
+    analyticPushforward f hf (analyticPullback f hf Q) =
+      (analyticDegree f hf) • Q := by
+  rw [← hdegree]
+  exact hdeg.trace_pullback_spec Q
+
+/-- Compatibility wrapper using the named degree/trace frontier provider. -/
 theorem analyticPushforward_analyticPullback_spec (f : X → Y)
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
     analyticPushforward f hf (analyticPullback f hf Q) =
       (analyticDegree f hf) • Q :=
-  (basisAnalyticPullbackBundle f hf).trace_pullback_spec Q
+  analyticPushforward_analyticPullback_spec_of_degreeSpec f hf
+    (basisAnalyticPullbackDegreeSpec_frontier f hf) rfl Q
 
-/-- The trace–pullback identity, in basis-aligned form: pushforward
+/- The trace–pullback identity, in basis-aligned form: pushforward
 of pullback equals degree-multiplication on `BasisAnalyticJacobian Y`.
 
 Top-down obligation. Bottom-up: descend the classical trace–pullback
@@ -174,12 +185,25 @@ analyticPushforward_analyticPullback
 The identity `analyticPushforward f hf (analyticPullback f hf Q) = d • Q`
 follows from the form-level identity `traceFormsBundled f hf (pullbackFormsBundled f hf η) = d • η`
 by dualization and descent through the period quotient. -/
+/-- The trace-pullback identity in basis-aligned form from explicit degree data. -/
+lemma analyticPushforward_analyticPullback_of_degreeSpec (f : X → Y)
+    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (hdeg : BasisAnalyticPullbackDegreeSpec f hf)
+    (hdegree : hdeg.degree = analyticDegree f hf)
+    (Q : BasisAnalyticJacobian Y) :
+    analyticPushforward f hf (analyticPullback f hf Q) =
+      (analyticDegree f hf) • Q :=
+  analyticPushforward_analyticPullback_spec_of_degreeSpec f hf hdeg hdegree Q
+
+/-- Compatibility wrapper using the named degree/trace frontier provider. -/
 lemma analyticPushforward_analyticPullback (f : X → Y)
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
     analyticPushforward f hf (analyticPullback f hf Q) =
       (analyticDegree f hf) • Q :=
-  analyticPushforward_analyticPullback_spec f hf Q
+  analyticPushforward_analyticPullback_of_degreeSpec f hf
+    (basisAnalyticPullbackDegreeSpec_frontier f hf) rfl Q
 
 
 end JacobianChallenge.TraceDegree
