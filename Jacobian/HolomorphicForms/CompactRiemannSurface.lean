@@ -2413,10 +2413,23 @@ theorem compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel
   infer_instance
 
 /-- Compact connected Riemann surfaces have finite-dimensional
-holomorphic one-forms, using the explicitly named Montel frontier
-provider rather than a hidden `[HolomorphicOneFormMontelData X]`
-instance. -/
-noncomputable instance compactRiemannSurface_finiteDimensionalHolomorphicOneForms
+holomorphic one-forms from explicit Montel data. This instance is
+deliberately conditional: typeclass search may use finite-dimensionality
+only after the Montel input is already visible in the local context. -/
+noncomputable instance compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel_inst
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [HolomorphicOneFormMontelData X] :
+    FiniteDimensionalHolomorphicOneForms ℂ X :=
+  compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel X
+
+/-- Frontier provider for compact connected Riemann-surface
+finite-dimensionality. This is deliberately not an instance: it uses the
+named Montel frontier internally, so callers that want this shortcut must
+choose the frontier declaration explicitly. -/
+noncomputable def compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]

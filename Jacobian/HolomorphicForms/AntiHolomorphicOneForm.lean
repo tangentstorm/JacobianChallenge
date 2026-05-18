@@ -64,7 +64,7 @@ abbrev AntiHolomorphicOneForm
 
 /-- **Frontier theorem.** Finite-dimensionality of
 `AntiHolomorphicOneForm X` for compact connected `X`. Mirror of
-`compactRiemannSurface_finiteDimensionalHolomorphicOneForms`.
+`compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel`.
 
 Currently delegates to the underlying holomorphic finiteness via the
 alias; the named theorem is kept stable so that a future replacement of
