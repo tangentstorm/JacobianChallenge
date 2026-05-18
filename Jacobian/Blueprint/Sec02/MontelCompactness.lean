@@ -67,16 +67,12 @@ private theorem montel_pointwise_extraction_connected
         ∀ ε > (0 : ℝ), ∃ N, ∀ n ≥ N, ∀ x : X,
           ‖(ω (φ n) - ωlim).1 x‖ ≤ ε := by
   let B : HolomorphicOneFormBanachData X :=
-    { toNorm := ⟨SectionSupNorm.supNorm⟩
-      toMetricSpace := holomorphicOneForm_metricSpace X
-      dist_eq := fun _ _ => rfl
-      norm_smul_le := SectionSupNorm.supNorm_smul_le (holomorphicOneForm_hcompat X)
-      complete := holomorphicOneForm_supNorm_completeSpace X
-      norm_le := fun σ x =>
-        le_ciSup (SectionSupNorm.bddAbove_range_norm (holomorphicOneForm_hcompat X) σ) x }
+    holomorphicOneForm_supNormBanachData X
   have hσ : ∀ n, B.toNorm.norm (ω n) ≤ 1 := h_bounded
+  have htbB : HolomorphicOneFormClosedBallTotallyBounded X B :=
+    holomorphicOneForm_supNorm_closedBall_totallyBounded X
   obtain ⟨a, φ, hφ_mono, hφ_tendsto⟩ :=
-    holomorphicOneForm_montel_subseq_tendsto X B ω hσ
+    holomorphicOneForm_montel_subseq_tendsto X B htbB ω hσ
   refine ⟨φ, hφ_mono, a, ?_, ?_⟩
   · rw [show holomorphicSupNorm X a = B.toNorm.norm a from rfl]
     exact holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le X B (ω ∘ φ) a

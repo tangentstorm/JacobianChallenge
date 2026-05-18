@@ -34,10 +34,12 @@ variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [StableChartAt ℂ X]
+  [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X]
 variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [ChartedSpace ℂ Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
   [StableChartAt ℂ Y]
+  [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ Y]
 
 /-- The (analytic) degree of a holomorphic map `f : X → Y` of compact
 Riemann surfaces. This is intentionally opaque: basis-level pullback
@@ -172,25 +174,13 @@ analyticPushforward_analyticPullback
 The identity `analyticPushforward f hf (analyticPullback f hf Q) = d • Q`
 follows from the form-level identity `traceFormsBundled f hf (pullbackFormsBundled f hf η) = d • η`
 by dualization and descent through the period quotient. -/
-/-- The trace-pullback identity in basis-aligned form from explicit degree data. -/
-lemma analyticPushforward_analyticPullback_of_degreeSpec (f : X → Y)
-    [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
-    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
-    (hdeg : BasisAnalyticPullbackDegreeSpec f hf)
-    (hdegree : hdeg.degree = analyticDegree f hf)
-    (Q : BasisAnalyticJacobian Y) :
-    analyticPushforward f hf (analyticPullback f hf Q) =
-      (analyticDegree f hf) • Q :=
-  analyticPushforward_analyticPullback_spec_of_degreeSpec f hf hdeg hdegree Q
-
-/-- Compatibility wrapper using the named degree/trace frontier provider. -/
+/-- Compatibility wrapper using the named trace-pullback frontier. -/
 lemma analyticPushforward_analyticPullback (f : X → Y)
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
     analyticPushforward f hf (analyticPullback f hf Q) =
       (analyticDegree f hf) • Q :=
-  analyticPushforward_analyticPullback_of_degreeSpec f hf
-    (basisAnalyticPullbackDegreeSpec_frontier f hf) rfl Q
+  analyticPushforward_analyticPullback_spec f hf Q
 
 
 end JacobianChallenge.TraceDegree

@@ -20,10 +20,10 @@ realisation supplied by the production-side
 `Jacobian/HolomorphicForms/CompactRiemannSurface.lean`).
 
 This is the named obligation that
-`JacobianChallenge.HolomorphicForms.compactRiemannSurface_finiteDimensionalHolomorphicOneForms`
-ultimately discharges in the production tree; the blueprint version is
-the cleanly stub-able statement on the bare `HolomorphicOneForm`
-type.
+`JacobianChallenge.HolomorphicForms.compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel`
+discharges from explicit Montel data in the production tree; the
+blueprint version is the cleanly stub-able statement on the bare
+`HolomorphicOneForm` type.
 
 Status note: this theorem currently closes through the production
 Banach/local-compactness assembly (`holomorphicOneForm_...`) rather
@@ -67,11 +67,14 @@ theorem fd_holomorphic_one_forms
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     FiniteDimensional ℂ (HolomorphicOneForm ℂ X) := by
-  obtain ⟨B⟩ := holomorphicOneForm_normedSpace_uniformOnCompact X
+  let B : HolomorphicOneFormBanachData X :=
+    holomorphicOneForm_supNormBanachData X
   letI : NormedAddCommGroup (HolomorphicOneForm ℂ X) := B.toNormedAddCommGroup
   letI : NormedSpace ℂ (HolomorphicOneForm ℂ X) := B.toNormedSpace
+  have htbB : HolomorphicOneFormClosedBallTotallyBounded X B :=
+    holomorphicOneForm_supNorm_closedBall_totallyBounded X
   letI : LocallyCompactSpace (HolomorphicOneForm ℂ X) :=
-    holomorphicOneForm_locallyCompact_of_compactRiemannSurface X B
+    holomorphicOneForm_locallyCompact_of_compactRiemannSurface X B htbB
   exact FiniteDimensional.of_locallyCompactSpace ℂ
 
 end JacobianChallenge.Blueprint

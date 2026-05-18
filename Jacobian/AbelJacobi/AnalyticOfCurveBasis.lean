@@ -48,6 +48,7 @@ variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
+  [FiniteDimensionalHolomorphicOneForms ℂ X]
 
 /-- The basis-aligned analytic carrier for the Jacobian: the complex
 torus quotient of `Fin (analyticGenus ℂ X) → ℂ` by the period lattice.
@@ -73,7 +74,8 @@ structure PathIntegralFunctionalBundle
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X] where
   /-- The path-integral coordinates `(P, Q) ↦ (∫_P^Q ω₁, …, ∫_P^Q ωₘ)`. -/
   val : X → X → Fin (analyticGenus ℂ X) → ℂ
   /-- Integrating over a constant loop yields zero. -/
