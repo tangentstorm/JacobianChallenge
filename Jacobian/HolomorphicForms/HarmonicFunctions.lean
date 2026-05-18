@@ -506,19 +506,58 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X] [T2S
   -- Fixed conclusion to assert order of vanishing is 1.
   sorry
 
+/-- **Frontier: order/pole bridge.**
+Given a complex-valued function on `X` that is holomorphic and whose
+reciprocal has analytic order `1` at `P`, the function determines a
+`MeromorphicMapToSphere X` whose pole divisor is exactly `(P)`.
+
+This is a *named frontier*: its body is `sorry` because the bridge from
+the chart-local analytic order (`mapAnalyticOrderAt`) to the global
+divisor data of `MeromorphicMapToSphere` requires:
+
+  • a chart-local Laurent / order-of-pole construction identifying the
+    pole divisor of the extended map with the divisor whose value at `P`
+    is the order of vanishing of `1/f` at `P`;
+  • compatibility of that local-pole datum with the global
+    `MeromorphicMapToSphere` axiom layer (`poleDivisor_nonneg`,
+    `zero_or_pole_eq_zero`, `toMap_ne_infty_of_poleDivisor_zero`,
+    `toMap_eq_infty_of_poleDivisor_pos`).
+
+The structural shape of the witness is well understood (lift `f` to
+`OnePoint ℂ` by sending the order-`k` pole to `∞`); the analytic
+content that locks `poleDivisor` to the *analytic* order datum
+`horder`, rather than letting it be chosen freely, is the missing
+ingredient.  Crucially, this frontier exists so that
+`dipole_harmonic_pole_is_simple` cannot satisfy its conclusion by
+freely picking `poleDivisor := Divisor.point P`: the `(P)` in the
+conclusion must come from `horder`, not from a structure-literal
+choice. -/
+theorem meromorphicMapToSphere_of_holomorphic_off_point_order_one
+    (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (f : X → ℂ)
+    (_hholo : IsHolomorphic f)
+    (_horder : mapAnalyticOrderAt (fun x => (f x)⁻¹) P = 1) :
+    ∃ F : MeromorphicMapToSphere X, F.poles = Divisor.point P := by
+  sorry
+
 /-- **Sub-obligation 4 assembly.**
-Since the singularity of u is locally Re(1/z), the pole of f at P is simple.
+Since the singularity of `u` is locally `Re(1/z)`, the pole of
+`f = u + i·v` at `P` is simple.
 
-We construct the meromorphic map directly from the holomorphic function
-`f(x) = u(x) + i·v(x)` (off `P`) extended to `∞` at `P`.  The pole divisor
-of this map is `(P)` by construction, and the auxiliary structural axioms
-of `MeromorphicMapToSphere` are dispatched using:
+The proof routes through the order/pole bridge:
 
-* `IsHolomorphic.continuous` (giving continuity of the lift off `P`),
-* a direct case-split on `x = P` for the divisor-incidence axioms,
-* a vacuity argument for `toFiniteFun_mdifferentiable` (no `ℂ`-valued
-  lift can equal `toMap`, since `toMap P = ∞` but the canonical
-  `ℂ ↪ OnePoint ℂ` coercion never produces `∞`). -/
+1. `inverse_dipole_vanishing_order_one` upgrades the dipole hypothesis
+   `HasRealDipoleSingularity P u` to the analytic order-`1` vanishing
+   of `1/f` at `P`.
+2. `meromorphicMapToSphere_of_holomorphic_off_point_order_one`
+   converts the order-`1` datum into a `MeromorphicMapToSphere` whose
+   pole divisor is `(P)`.
+
+Crucially this proof does **not** choose `poleDivisor := Divisor.point P`
+inside a structure literal; the `(P)` in the conclusion comes from the
+analytic-order side via the named frontier. -/
 theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
@@ -526,80 +565,12 @@ theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [T2Space
     (hu : HasRealDipoleSingularity P u) (hcr : SatisfiesCauchyRiemann g u v) (hholo : IsHolomorphic (fun x => ({ re := u x, im := v x } : ℂ))) :
     -- We need to ensure the witness 'f' exists to state its pole order.
     ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
-  classical
-  -- Make decidability of `x = P` available in term mode for the `toMap`
-  -- field below (otherwise the term-level `if x = P then ... else ...`
-  -- would not elaborate).
-  haveI : DecidableEq X := Classical.decEq X
-  -- The carrier map: `∞` at `P`, otherwise the coercion of the holomorphic
-  -- function `u + iv`.  Off `P` this is a finite value; at `P` the dipole
-  -- hypothesis forces the modulus to blow up, matching the `∞` value.
-  refine ⟨{
-      toMap := fun x =>
-        if x = P then (OnePoint.infty : OnePoint ℂ)
-        else (((⟨u x, v x⟩ : ℂ) : OnePoint ℂ))
-      locally_meromorphic := True
-      zeroDivisor := 0
-      poleDivisor := Divisor.point P
-      principalDivisor := -Divisor.point P
-      principalDivisor_eq := by simp
-      poleDivisor_nonneg := fun x => Divisor.effective_point P x
-      zero_or_pole_eq_zero := fun _ => Or.inl rfl
-      toMap_ne_infty_of_poleDivisor_zero := by
-        intro x hx
-        have hne : x ≠ P := by
-          intro h
-          rw [h, Divisor.point_apply_self] at hx
-          exact one_ne_zero hx
-        show (if x = P then (OnePoint.infty : OnePoint ℂ)
-              else (((⟨u x, v x⟩ : ℂ) : OnePoint ℂ))) ≠ OnePoint.infty
-        rw [if_neg hne]
-        exact OnePoint.coe_ne_infty _
-      continuousOn_ne_infty := by
-        -- The non-pole locus `{x | toMap x ≠ ∞}` is exactly `{x | x ≠ P}`.
-        have hset : {x : X | (fun y =>
-              if y = P then (OnePoint.infty : OnePoint ℂ)
-              else (((⟨u y, v y⟩ : ℂ) : OnePoint ℂ))) x ≠ OnePoint.infty}
-            = {x : X | x ≠ P} := by
-          ext x
-          constructor
-          · intro hx hxP
-            apply hx
-            simp [hxP]
-          · intro hxP
-            simp only [Set.mem_setOf_eq, if_neg hxP]
-            exact OnePoint.coe_ne_infty _
-        rw [hset]
-        -- On that set the map agrees with the (globally continuous) coercion
-        -- of `u + iv`; transport continuity through `ContinuousOn.congr`.
-        refine ContinuousOn.congr
-          (OnePoint.continuous_coe.comp hholo.continuous).continuousOn ?_
-        intro x hx
-        simp only [Set.mem_setOf_eq] at hx
-        show (if x = P then (OnePoint.infty : OnePoint ℂ)
-              else (((⟨u x, v x⟩ : ℂ) : OnePoint ℂ)))
-            = (((⟨u x, v x⟩ : ℂ) : OnePoint ℂ))
-        exact if_neg hx
-      toFiniteFun_mdifferentiable := by
-        -- A complex-valued lift of `toMap` is impossible because `toMap P = ∞`
-        -- while the coercion `ℂ → OnePoint ℂ` is never `∞`.
-        intro g_lift hg_lift
-        exfalso
-        have hP : (if (P : X) = P then (OnePoint.infty : OnePoint ℂ)
-                  else (((⟨u P, v P⟩ : ℂ) : OnePoint ℂ)))
-                = ((g_lift P : ℂ) : OnePoint ℂ) := congrFun hg_lift P
-        rw [if_pos rfl] at hP
-        exact OnePoint.coe_ne_infty (g_lift P) hP.symm
-      toMap_eq_infty_of_poleDivisor_pos := by
-        intro x hx
-        have heq : x = P := by
-          by_contra hne
-          rw [Divisor.point_apply_ne hne] at hx
-          exact lt_irrefl _ hx
-        show (if x = P then (OnePoint.infty : OnePoint ℂ)
-              else (((⟨u x, v x⟩ : ℂ) : OnePoint ℂ))) = OnePoint.infty
-        exact if_pos heq
-    }, rfl⟩
+  -- 1. The dipole hypothesis gives analytic order `1` of `1/(u + iv)` at `P`.
+  have horder := inverse_dipole_vanishing_order_one X P u v hu
+  -- 2. The order/pole bridge produces a `MeromorphicMapToSphere` with
+  --    pole divisor exactly `(P)`.
+  exact meromorphicMapToSphere_of_holomorphic_off_point_order_one
+    X P (fun x => ({ re := u x, im := v x } : ℂ)) hholo horder
 
 
 /-- By adding the harmonic conjugate to the dipole harmonic function,
