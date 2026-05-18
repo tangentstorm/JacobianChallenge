@@ -46,6 +46,7 @@ noncomputable def basisAlignedPeriodPairing :
   ((holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom).comp
     (periodPairing ℂ X)
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Pointwise: the basis-aligned period pairing applies the dual equiv to
 the functional-space period pairing. -/
 theorem basisAlignedPeriodPairing_apply (σ : IntegralOneCycle X) :
@@ -53,6 +54,7 @@ theorem basisAlignedPeriodPairing_apply (σ : IntegralOneCycle X) :
       holomorphicOneFormDualEquiv ℂ X (periodPairing ℂ X σ) :=
   rfl
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- The basis-aligned period subgroup is exactly the range of the
 basis-aligned period pairing. -/
 theorem basisAlignedPeriodSubgroupConcrete_eq_range :
@@ -69,6 +71,7 @@ theorem basisAlignedPeriodSubgroupConcrete_eq_range :
   · rintro ⟨σ, hv⟩
     exact ⟨periodPairing ℂ X σ, ⟨σ, rfl⟩, hv⟩
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Period pairings of cycles always lie in the basis-aligned period
 subgroup. -/
 theorem basisAlignedPeriodPairing_mem
@@ -78,6 +81,7 @@ theorem basisAlignedPeriodPairing_mem
   rw [basisAlignedPeriodSubgroupConcrete_eq_range]
   exact ⟨σ, rfl⟩
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Two basis-aligned period values are equal iff the underlying
 functional-space periods are equal. Follows from injectivity of the
 dual equivalence. -/
@@ -87,6 +91,7 @@ theorem basisAlignedPeriodPairing_eq_iff (σ τ : IntegralOneCycle X) :
   rw [basisAlignedPeriodPairing_apply, basisAlignedPeriodPairing_apply,
       EmbeddingLike.apply_eq_iff_eq]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- `basisAlignedPeriodPairing X σ = 0` iff
 `periodPairing ℂ X σ = 0`. Special case of `_eq_iff` at `τ = 0`. -/
 theorem basisAlignedPeriodPairing_eq_zero_iff (σ : IntegralOneCycle X) :
@@ -96,6 +101,7 @@ theorem basisAlignedPeriodPairing_eq_zero_iff (σ : IntegralOneCycle X) :
         ((basisAlignedPeriodPairing X).map_zero).symm,
       basisAlignedPeriodPairing_eq_iff, (periodPairing ℂ X).map_zero]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Pulling a basis-aligned period back through the inverse dual
 equivalence recovers the functional-space `periodPairing`. -/
 theorem holomorphicOneFormDualEquiv_symm_basisAlignedPeriodPairing
