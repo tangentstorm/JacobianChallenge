@@ -397,10 +397,26 @@ theorem harmonic_conjugate_exists (X : Type*) [TopologicalSpace X] [T2Space X]
     (g : CompatibleMetric X) (u : X → ℝ)
     (h_genus : analyticHarmonicGenus X = 0) (hu : IsHarmonic g u) :
     ∃ v : X → ℝ, SatisfiesCauchyRiemann g u v := by
-  -- 1. *du is a closed 1-form
-  have hclosed := conjugate_one_form_closed X g u hu
-  -- 2. analyticHarmonicGenus X = 0 implies *du is exact, so *du = dv
-  -- We extract the potential v from the exactness of *du.
+  classical
+  -- Skolemise the per-point holomorphic witnesses from `hu : IsHarmonic g u`.
+  choose φ hφ_holo hφ_eq using hu
+  -- Candidate harmonic conjugate: read off the imaginary part of the
+  -- chosen witness *at the same point*.
+  refine ⟨fun x => (φ x x).im, ?_⟩
+  intro p
+  -- We try to identify `fun x => ⟨u x, (φ x x).im⟩` with `φ p` near `p`,
+  -- using `IsHolomorphicAt.congr_of_eventuallyEq`. The real parts match
+  -- eventually (via `hφ_eq p`), but the imaginary parts compare
+  -- `(φ x x).im` (a per-point choice) with `(φ p x).im` (the witness at
+  -- `p`). These differ by a locally-constant imaginary additive function
+  -- — exactly the 1-cocycle whose vanishing is the analytic content of
+  -- `analyticHarmonicGenus X = 0`. Bridging this in the current substrate
+  -- requires converting `_hexact : *du ∈ ExactForm 0 X` into a global
+  -- real primitive function, but the placeholder `exteriorDerivative` is
+  -- the zero linear map (so `ExactForm 0 X = ⊥` in the substrate) and
+  -- there is no exposed identification `SmoothDiffForm 0 X ↔ (X → ℝ)`,
+  -- so the cocycle vanishing does not transfer to a function-level
+  -- equation `(φ x x).im = (φ p x).im` near `p`.
   sorry
 
 /-- **Sub-obligation 1 assembly.**
