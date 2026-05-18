@@ -69,13 +69,13 @@ noncomputable def branchedCoverData_of_nonconstant_holomorphic
     [CompactSpace X] [T2Space X]
     [PreconnectedSpace X] [T2Space Y] [PreconnectedSpace Y]
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
-    {f : X → Y} (hf : IsHolomorphic f)
+    {f : X → Y} (hf : IsHolomorphic f) (hw : HasWeightedFiberConservation f)
     (hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) :
     BranchedCoverData X Y f where
   ramificationIndex := mapAnalyticOrderAt f
   ramificationIndex_pos := mapAnalyticOrderAt_pos hf hnonconst
   finite_fiber := isHolomorphic_finite_fiber hf hnonconst
-  fiberSum_const := isHolomorphic_weightedFiberSum_const hf hnonconst
+  fiberSum_const := isHolomorphic_weightedFiberSum_const hf hw hnonconst
   ramified_finite := mapAnalyticOrderAt_ramified_finite hf hnonconst
   local_bijective_unramified := by
     intro x hx
@@ -103,9 +103,9 @@ theorem branchedCoverData_of_nonconstant_holomorphic_compatible
     [CompactSpace X] [T2Space X]
     [PreconnectedSpace X] [T2Space Y] [PreconnectedSpace Y]
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
-    {f : X → Y} (hf : IsHolomorphic f)
+    {f : X → Y} (hf : IsHolomorphic f) (_hw : HasWeightedFiberConservation f)
     (hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) :
-    (branchedCoverData_of_nonconstant_holomorphic hf hnonconst).RamificationIndexCompatible := by
+    (branchedCoverData_of_nonconstant_holomorphic hf _hw hnonconst).RamificationIndexCompatible := by
   intro x _hfx
   rfl
 

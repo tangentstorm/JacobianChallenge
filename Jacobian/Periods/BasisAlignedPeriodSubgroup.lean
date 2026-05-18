@@ -42,18 +42,19 @@ variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
+  [FiniteDimensionalHolomorphicOneForms ℂ X]
 
 /-- The basis-aligned period subgroup, defined concretely as the image of
 the functional-space `periodSubgroup ℂ X` under the basis-aligned dual
-equivalence. The deferred-instance `compactRiemannSurface_finiteDimensionalHolomorphicOneForms`
-provides the `[FiniteDimensionalHolomorphicOneForms ℂ X]` needed by the
-basis machinery. -/
+equivalence. The `[FiniteDimensionalHolomorphicOneForms ℂ X]` assumption
+keeps the basis machinery's finite-dimensionality requirement visible. -/
 noncomputable def basisAlignedPeriodSubgroupConcrete :
     AddSubgroup (Fin (analyticGenus ℂ X) → ℂ) :=
   AddSubgroup.map
     (holomorphicOneFormDualEquiv ℂ X).toLinearMap.toAddMonoidHom
     (periodSubgroup ℂ X)
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- An element of `basisAlignedPeriodSubgroupConcrete X` is exactly the
 image of some functional-space period under the dual equivalence. -/
 theorem mem_basisAlignedPeriodSubgroupConcrete_iff
@@ -64,6 +65,7 @@ theorem mem_basisAlignedPeriodSubgroupConcrete_iff
   unfold basisAlignedPeriodSubgroupConcrete
   exact AddSubgroup.mem_map
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- The `0` of the basis-aligned space lies in the concrete period
 subgroup (since `0 ∈ periodSubgroup` always, and the dual equiv preserves
 zero). Sanity check; redundant with `AddSubgroup.zero_mem` but recorded
@@ -73,6 +75,7 @@ theorem zero_mem_basisAlignedPeriodSubgroupConcrete :
       basisAlignedPeriodSubgroupConcrete X :=
   (basisAlignedPeriodSubgroupConcrete X).zero_mem
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Inverse-direction transport: pulling back an element of the
 basis-aligned period subgroup through the inverse dual equivalence
 lands in the functional-space `periodSubgroup ℂ X`. -/
@@ -85,6 +88,7 @@ theorem holomorphicOneFormDualEquiv_symm_mem_periodSubgroup
   rw [← hφ_eq, LinearEquiv.symm_apply_apply]
   exact hφ_mem
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Forward-direction transport: pushing an element of the functional-space
 `periodSubgroup ℂ X` through the dual equivalence lands in the
 basis-aligned period subgroup. The trivial `mp` direction; recorded
@@ -95,6 +99,7 @@ theorem holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete
     holomorphicOneFormDualEquiv ℂ X φ ∈ basisAlignedPeriodSubgroupConcrete X :=
   (mem_basisAlignedPeriodSubgroupConcrete_iff X _).mpr ⟨φ, hφ, rfl⟩
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- The dual equivalence restricts to a bijection between the
 functional-space and basis-aligned period subgroups (as sets). Combines
 the forward-direction membership transport, injectivity of the

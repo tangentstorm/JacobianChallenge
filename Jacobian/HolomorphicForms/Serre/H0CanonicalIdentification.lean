@@ -16,9 +16,10 @@ of the cotangent bundle. The named obligation here is the bridging
 linear equivalence; it is a frontier sorry pending the analytic
 structure on `holomorphicOneFormPresheaf`.
 
-Combined with Mathlib's existing
-`compactRiemannSurface_finiteDimensionalHolomorphicOneForms`, this
-discharges `dim_ℂ H⁰(X, K_X) < ∞` and connects to `analyticGenus X`.
+Combined with the explicit
+`compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel`
+route, this discharges `dim_ℂ H⁰(X, K_X) < ∞` and connects to
+`analyticGenus X`.
 -/
 
 namespace JacobianChallenge.HolomorphicForms

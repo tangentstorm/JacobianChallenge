@@ -26,7 +26,8 @@ namespace JacobianChallenge.Solution
 /-- The genus of a compact Riemann surface. -/
 noncomputable def genus (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] : ℕ :=
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X] : ℕ :=
   JacobianChallenge.HolomorphicForms.analyticGenus ℂ X
 
 /-- Genus-zero classification along the meromorphic degree-one route, conditional
@@ -35,6 +36,7 @@ degree-one branched cover. -/
 lemma genus_eq_zero_with_routeData_homeo {X : Type*} [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : genus X = 0)
     (hmod :
       (JacobianChallenge.HolomorphicForms.simplePoleMeromorphicMapOfGenusZero X
@@ -48,14 +50,16 @@ lemma genus_eq_zero_with_routeData_homeo {X : Type*} [TopologicalSpace X] [T2Spa
 
 /-- Genus zero classification. -/
 lemma genus_eq_zero_iff_homeo {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
-    [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X] :
     genus X = 0 ↔ Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :=
   JacobianChallenge.HolomorphicForms.analyticGenus_eq_zero_iff_homeomorphic_sphere X
 
 /-- The Jacobian of a compact Riemann surface. -/
 noncomputable def Jacobian (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] : Type :=
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X] : Type :=
   ULift (JacobianChallenge.ComplexTorus.quotient
     (Fin (genus X) → ℂ) (JacobianChallenge.Periods.periodFullComplexLattice X))
 
@@ -64,6 +68,7 @@ end JacobianChallenge.Solution
 -- let X be a compact Riemann surface
 variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+  [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X]
 
 noncomputable def genus := JacobianChallenge.Solution.genus (X := X)
 
@@ -85,6 +90,7 @@ lemma genus_eq_zero_iff_homeo :
 -- Type-0-specialised section for the Jacobian-related declarations.
 variable {X₀ : Type} [TopologicalSpace X₀] [T2Space X₀] [CompactSpace X₀] [ConnectedSpace X₀]
   [ChartedSpace ℂ X₀] [IsManifold 𝓘(ℂ) ω X₀] [JacobianChallenge.Periods.StableChartAt ℂ X₀]
+  [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X₀]
   [JacobianChallenge.TraceDegree.PiecewiseC1PathRegularity X₀]
 
 noncomputable def Jacobian := JacobianChallenge.Solution.Jacobian X₀
@@ -134,6 +140,7 @@ lemma ofCurve_inj (P : X₀) (h : 0 < genus (X := X₀)) : Function.Injective (o
 
 variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [ChartedSpace ℂ Y] [IsManifold 𝓘(ℂ) ω Y] [JacobianChallenge.Periods.StableChartAt ℂ Y]
+  [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ Y]
   [JacobianChallenge.TraceDegree.PiecewiseC1PathRegularity Y]
 variable (f : X₀ → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
 
@@ -156,6 +163,7 @@ lemma pushforward_id_apply (P : Jacobian (X₀ := X₀)) : pushforward id contMD
 
 variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
   [ChartedSpace ℂ Z] [IsManifold 𝓘(ℂ) ω Z] [JacobianChallenge.Periods.StableChartAt ℂ Z]
+  [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ Z]
   [JacobianChallenge.TraceDegree.PiecewiseC1PathRegularity Z]
 variable (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
 
@@ -191,21 +199,13 @@ lemma pullback_comp_apply (P : Jacobian (X₀ := Z)) :
 noncomputable def _root_.ContMDiff.degree (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
   JacobianChallenge.TraceDegree.analyticDegree f hf
 
-/-- Pushforward after pullback from explicit basis-level degree data. -/
-lemma pushforward_pullback_of_degreeSpec
-    (hdeg : JacobianChallenge.TraceDegree.BasisAnalyticPullbackDegreeSpec f hf)
-    (hdegree :
-      hdeg.degree = JacobianChallenge.TraceDegree.analyticDegree f hf)
-    (P : Jacobian (X₀ := Y)) :
-    pushforward f hf (pullback f hf P) = (JacobianChallenge.TraceDegree.analyticDegree f hf) • P := by
-  show ULift.up (JacobianChallenge.TraceDegree.analyticPushforward f hf (JacobianChallenge.TraceDegree.analyticPullback f hf P.down)) =
-    (JacobianChallenge.TraceDegree.analyticDegree f hf) • P
-  rw [JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback_of_degreeSpec f hf hdeg hdegree P.down]
-  rfl
-
 lemma pushforward_pullback (P : Jacobian (X₀ := Y)) :
     pushforward f hf (pullback f hf P) = (JacobianChallenge.TraceDegree.analyticDegree f hf) • P :=
-  pushforward_pullback_of_degreeSpec f hf
-    (JacobianChallenge.TraceDegree.basisAnalyticPullbackDegreeSpec_frontier f hf) rfl P
+  by
+    show ULift.up (JacobianChallenge.TraceDegree.analyticPushforward f hf
+      (JacobianChallenge.TraceDegree.analyticPullback f hf P.down)) =
+      (JacobianChallenge.TraceDegree.analyticDegree f hf) • P
+    rw [JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback f hf P.down]
+    rfl
 
 end Jacobian
