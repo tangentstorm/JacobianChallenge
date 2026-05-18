@@ -136,7 +136,7 @@
 {"i":1471,"f":"Jacobian/StageA/CellularSingular.lean","k":"theorem","s":"skeletal_pair_les_relative","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1472,"f":"Jacobian/StageA/CellularSingular.lean","k":"theorem","s":"skeletal_pair_wedge_of_spheres","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1473,"f":"Jacobian/StageA/EdgeWordTietze.lean","k":"theorem","s":"handleSwap_grouping_inductive_step","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":1474,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"def","s":"basisAnalyticPullbackBundle","n":1,"o":0,"r":1,"e":6,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1474,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"def","s":"basisAnalyticPullbackBundle","n":1,"o":0,"r":1,"e":6,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1475,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"theorem","s":"transfer_functional_mem_periodSubgroup","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1476,"f":"tex/statements/challenge-statement.tex","k":"definition","s":"Jacobian.ofCurve","n":0,"o":1,"r":1,"e":null,"u":[1478,1530],"d":[0,1529,1531,2580,2582],"a":"","c":"done","b":"def:abel-jacobi","t":""}
 {"i":1477,"f":"tex/statements/challenge-statement.tex","k":"definition","s":"JacobianChallenge.HolomorphicForms.analyticGenus","n":0,"o":1,"r":1,"e":null,"u":[],"d":[1478,2591,2592],"a":"","c":"done","b":"def:analytic-genus","t":""}
@@ -1222,3 +1222,4 @@
 {"i":2656,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"axiom","s":"localPullbackAt_holomorphic","n":0,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":"isolated local analytic section-regularity obligation as axiom"}
 {"i":2657,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"traceAtRegularValue_add","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2658,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"traceAtRegularValue_smul","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2659,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"def","s":"basisAnalyticPullbackDegreeSpec_frontier","n":1,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}

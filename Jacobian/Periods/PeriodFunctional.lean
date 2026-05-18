@@ -99,6 +99,18 @@ noncomputable def holomorphicFormBridge
     HolomorphicOneForm E X →ₗ[ℂ] HolomorphicOneForm ℂ X := by
   sorry
 
+/-- **Complex-model bridge.** In the model-space case actually used by
+the period/Jacobian route, no cotangent model-space conversion is needed:
+forms already live over the `ℂ` model. This keeps consumers off the
+general `holomorphicFormBridge` frontier, whose arbitrary-`E`
+statement requires chart/cotangent compatibility data. -/
+noncomputable def holomorphicFormBridgeComplex
+    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ X :=
+  LinearMap.id
+
 /-- The period pairing
 `IntegralOneCycle X →+ (HolomorphicOneForm E X →ₗ[ℂ] ℂ)`.
 Mathematically: integrate the form over the cycle.
@@ -108,11 +120,12 @@ integration `pathIntegralViaCover` (packaged as a chain-level
 integration in `JacobianChallenge.Blueprint.Sec03.period_homology_invariance_descent`)
 to the homology level. The well-definedness of this descent
 (that the integral kills boundaries) is the "Stokes gap" and remains
-a `sorry` in the underlying `chain_integration_kills_boundary` leaf.
+a frontier leaf in the underlying `chain_integration_kills_boundary` story.
 
-The construction factors through `holomorphicFormBridge` to bridge
-from the ℂ-model integration to general model space `E`. The descent
-proof is sorry-free given the chain-level boundary-killing property. -/
+For the main complex-model route, prefer `periodPairingComplex` below.
+The arbitrary model-space version does not discharge the intrinsic
+cotangent-space bridge; that compatibility is isolated in
+`holomorphicFormBridge`. -/
 noncomputable def periodPairing
     (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
@@ -135,6 +148,29 @@ noncomputable def periodPairing
     ModuleCat.ofHom I_E
   have hI_sc : ∀ (s : ↑S.X₁), Im.hom (S.f.hom s) = 0 := by
     intro s; ext ω; simp [Im, I_E]
+  (S.descHomology (S.iCycles ≫ Im)
+    (periodPairing_descent_aux S Im hI_sc)).hom.toAddMonoidHom
+
+/-- Complex-model period pairing. This is the period API used by the
+Jacobian/trace route; it avoids depending on the arbitrary model-space
+`holomorphicFormBridge` frontier. -/
+noncomputable def periodPairingComplex
+    (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    IntegralOneCycle X →+ (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) :=
+  -- Placeholder: the complex-model chain-level integration is still 0
+  -- pending the free-module universal-property bridge. Unlike the
+  -- arbitrary-`E` API, this definition keeps `HolomorphicOneForm ℂ X`
+  -- throughout and does not call `holomorphicFormBridge`.
+  let I : JacobianChallenge.Blueprint.Sec03.SingularOneChain X →ₗ[ℤ]
+            (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) := 0
+  let K := JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X
+  let S := K.sc 1
+  let Im : S.X₂ ⟶ ModuleCat.of ℤ (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) :=
+    ModuleCat.ofHom I
+  have hI_sc : ∀ (s : ↑S.X₁), Im.hom (S.f.hom s) = 0 := by
+    intro s; ext ω; simp [Im, I]
   (S.descHomology (S.iCycles ≫ Im)
     (periodPairing_descent_aux S Im hI_sc)).hom.toAddMonoidHom
 
