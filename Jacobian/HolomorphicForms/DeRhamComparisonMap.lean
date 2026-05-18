@@ -141,85 +141,6 @@ theorem cech_cocycle_from_singular_cocycle
       ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
         (AddCommGrpCat.of ℂ)), rfl⟩
 
-/-- **Surjectivity sub-obligation 1b (Closed form from Čech cocycle).**
-Using a partition of unity and the Poincaré lemma, a Čech 1-cocycle
-can be realized as a global closed 1-form. -/
-noncomputable def closed_form_from_cech_cocycle
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    ClosedForm 1 X :=
-  (deRhamComparisonMap1_exists_form_with_periods X φ).choose
-
-/-- **Surjectivity sub-obligation 1c (Integral correctness).**
-The closed form constructed from the Čech cocycle integrates to the
-prescribed singular cocycle. -/
-theorem integral_closed_form_from_cech_eq
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    deRhamComparisonMap1 X (closed_form_from_cech_cocycle X φ) = φ :=
-  (deRhamComparisonMap1_exists_form_with_periods X φ).choose_spec
-
-
-/-- **Surjectivity sub-obligation 1 (representative choice).**
-For a prescribed period functional, choose a closed 1-form candidate.
-
-Current mathematical content: we construct the closed form via the
-Čech-to-de-Rham map (`closed_form_from_cech_cocycle`). -/
-theorem deRhamComparisonMap1_prescribed_period_candidate
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    ∃ ω : ClosedForm 1 X, ω = closed_form_from_cech_cocycle X φ := by
-  exact ⟨closed_form_from_cech_cocycle X φ, rfl⟩
-
-/-- **Surjectivity sub-obligation 2 (prescribed-period correctness).**
-The candidate closed form chosen for a period functional integrates to
-that functional on every integral 1-cycle.
-
-Bottom-up content: de Rham's prescribed-period theorem. This is the
-precise analytic/geometric core of surjectivity after the representative
-has been chosen: integration of the constructed closed form agrees with
-the input singular cocycle. -/
-theorem deRhamComparisonMap1_prescribed_period_correct
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    deRhamComparisonMap1 X
-        (Classical.choose (deRhamComparisonMap1_prescribed_period_candidate X φ)) = φ := by
-  have h := Classical.choose_spec (deRhamComparisonMap1_prescribed_period_candidate X φ)
-  rw [h]
-  exact integral_closed_form_from_cech_eq X φ
-
-/-- **Frontier identity (sorry, SURJECTIVITY half of de Rham).**
-Every ℝ-linear functional on `IntegralOneCycle X` arises (after
-extending scalars) as the integral of some closed 1-form.
-
-Bottom-up content: prescribed-period theorem.  For each ℝ-valued
-1-cocycle `c` on the singular complex, partition-of-unity construction
-plus Poincaré lemma yields a closed 1-form `ω_c` whose integral over
-each cycle is `c`.  Mathlib gap: partition of unity on manifolds is
-present (`Mathlib.Geometry.Manifold.PartitionOfUnity`); the Poincaré
-lemma + chart-wise primitive construction is absent. -/
-theorem deRhamComparisonMap1_surjective
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ := by
-  refine ⟨Classical.choose (deRhamComparisonMap1_prescribed_period_candidate X φ), ?_⟩
-  exact deRhamComparisonMap1_prescribed_period_correct X φ
-
 /-- **Injectivity sub-obligation 1a (existence of path-integral primitive).**
 A closed 1-form with zero periods admits a global smooth 0-form whose
 exterior derivative is the original form. This is the deep analytic
@@ -235,9 +156,177 @@ theorem closedForm_pathIntegral_primitive_exists
     ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
   sorry
 
+/-- Minimal degree-1 de Rham comparison inputs used by the local
+surjectivity/injectivity assemblies.  The record keeps the prescribed
+period and zero-period primitive frontiers explicit, instead of forcing
+consumers to depend on the whole de Rham comparison narrative. -/
+structure DeRhamComparisonMap1Spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+  /-- Every cycle functional is represented by a closed 1-form. -/
+  exists_form_with_periods :
+    ∀ φ : IntegralOneCycle X →ₗ[ℤ] ℂ,
+      ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ
+  /-- A closed 1-form with zero periods has a global primitive. -/
+  primitive_exists :
+    ∀ (ω : ClosedForm 1 X), deRhamComparisonMap1 X ω = 0 →
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)
+
+/-- Frontier provider: the current de Rham frontier theorems packaged as
+the smaller comparison specification.
+
+Narrow consumers should take `DeRhamComparisonMap1Spec X` explicitly
+instead of calling this provider internally. -/
+def deRhamComparisonMap1Spec_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    DeRhamComparisonMap1Spec X where
+  exists_form_with_periods := deRhamComparisonMap1_exists_form_with_periods X
+  primitive_exists := closedForm_pathIntegral_primitive_exists X
+
+/-- **Surjectivity sub-obligation 1b (Closed form from Čech cocycle).**
+Using an explicit degree-1 de Rham comparison specification, choose a
+closed 1-form with the prescribed periods. -/
+noncomputable def closed_form_from_cech_cocycle_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X)
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ClosedForm 1 X :=
+  (hDR.exists_form_with_periods φ).choose
+
+/-- Compatibility wrapper using the named de Rham frontier provider.
+New shortcut consumers should use `closed_form_from_cech_cocycle_of_spec`. -/
+noncomputable def closed_form_from_cech_cocycle
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ClosedForm 1 X :=
+  closed_form_from_cech_cocycle_of_spec X (deRhamComparisonMap1Spec_frontier X) φ
+
+/-- **Surjectivity sub-obligation 1c (Integral correctness).**
+The closed form constructed from explicit de Rham comparison data
+integrates to the prescribed singular cocycle. -/
+theorem integral_closed_form_from_cech_eq_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X)
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    deRhamComparisonMap1 X (closed_form_from_cech_cocycle_of_spec X hDR φ) = φ :=
+  (hDR.exists_form_with_periods φ).choose_spec
+
+/-- Compatibility wrapper using the named de Rham frontier provider. -/
+theorem integral_closed_form_from_cech_eq
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    deRhamComparisonMap1 X (closed_form_from_cech_cocycle X φ) = φ :=
+  integral_closed_form_from_cech_eq_of_spec X (deRhamComparisonMap1Spec_frontier X) φ
+
+/-- **Surjectivity sub-obligation 1 (representative choice).**
+For a prescribed period functional, choose a closed 1-form candidate
+from explicit de Rham comparison data. -/
+theorem deRhamComparisonMap1_prescribed_period_candidate_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X)
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, ω = closed_form_from_cech_cocycle_of_spec X hDR φ := by
+  exact ⟨closed_form_from_cech_cocycle_of_spec X hDR φ, rfl⟩
+
+/-- Compatibility wrapper using the named de Rham frontier provider. -/
+theorem deRhamComparisonMap1_prescribed_period_candidate
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, ω = closed_form_from_cech_cocycle X φ := by
+  exact ⟨closed_form_from_cech_cocycle X φ, rfl⟩
+
+/-- **Surjectivity sub-obligation 2 (prescribed-period correctness).**
+The candidate closed form chosen from explicit de Rham comparison data
+integrates to the requested functional. -/
+theorem deRhamComparisonMap1_prescribed_period_correct_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X)
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    deRhamComparisonMap1 X
+        (Classical.choose (deRhamComparisonMap1_prescribed_period_candidate_of_spec X hDR φ)) =
+      φ := by
+  have h := Classical.choose_spec
+    (deRhamComparisonMap1_prescribed_period_candidate_of_spec X hDR φ)
+  rw [h]
+  exact integral_closed_form_from_cech_eq_of_spec X hDR φ
+
+/-- Compatibility wrapper using the named de Rham frontier provider. -/
+theorem deRhamComparisonMap1_prescribed_period_correct
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    deRhamComparisonMap1 X
+        (Classical.choose (deRhamComparisonMap1_prescribed_period_candidate X φ)) = φ := by
+  have h := Classical.choose_spec (deRhamComparisonMap1_prescribed_period_candidate X φ)
+  rw [h]
+  exact integral_closed_form_from_cech_eq X φ
+
+/-- Surjectivity of the de Rham comparison map from explicit comparison data. -/
+theorem deRhamComparisonMap1_surjective_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X)
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ := by
+  refine ⟨Classical.choose (deRhamComparisonMap1_prescribed_period_candidate_of_spec X hDR φ), ?_⟩
+  exact deRhamComparisonMap1_prescribed_period_correct_of_spec X hDR φ
+
+/-- Frontier compatibility wrapper for the surjectivity half of de Rham. -/
+theorem deRhamComparisonMap1_surjective
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ :=
+  deRhamComparisonMap1_surjective_of_spec X (deRhamComparisonMap1Spec_frontier X) φ
+
 /-- **Injectivity sub-obligation 1 (path-integral primitive).**
 A closed 1-form with zero periods defines a global smooth 0-form via path integration.
-Defined as the `Exists.choose` of `closedForm_pathIntegral_primitive_exists`. -/
+Defined from an explicit de Rham comparison specification. -/
+noncomputable def closedForm_pathIntegral_primitive_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X)
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    SmoothDiffForm 0 X :=
+  (hDR.primitive_exists ω hω).choose
+
+/-- Compatibility wrapper using the named de Rham frontier provider. -/
 noncomputable def closedForm_pathIntegral_primitive
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -246,11 +335,24 @@ noncomputable def closedForm_pathIntegral_primitive
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     SmoothDiffForm 0 X :=
-  (closedForm_pathIntegral_primitive_exists X ω hω).choose
+  closedForm_pathIntegral_primitive_of_spec X (deRhamComparisonMap1Spec_frontier X) ω hω
 
 /-- **Injectivity sub-obligation 2 (derivative correctness).**
 The exterior derivative of the path-integral primitive is the original 1-form.
-Proved from the specification of `closedForm_pathIntegral_primitive_exists`. -/
+Proved from an explicit de Rham comparison specification. -/
+theorem closedForm_pathIntegral_primitive_derivative_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X)
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X (closedForm_pathIntegral_primitive_of_spec X hDR ω hω) =
+      (ω : SmoothDiffForm 1 X) :=
+  (hDR.primitive_exists ω hω).choose_spec
+
+/-- Compatibility wrapper using the named de Rham frontier provider. -/
 theorem closedForm_pathIntegral_primitive_derivative
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -259,7 +361,8 @@ theorem closedForm_pathIntegral_primitive_derivative
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     exteriorDerivative 0 X (closedForm_pathIntegral_primitive X ω hω) = (ω : SmoothDiffForm 1 X) :=
-  (closedForm_pathIntegral_primitive_exists X ω hω).choose_spec
+  closedForm_pathIntegral_primitive_derivative_of_spec X
+    (deRhamComparisonMap1Spec_frontier X) ω hω
 
 /-- **Injectivity sub-obligation (zero periods give a global potential).**
 If a closed 1-form has zero comparison functional, then it is the
@@ -269,7 +372,20 @@ This is the constructive heart of the injectivity half of de Rham:
 the potential is obtained by integrating the closed form along paths
 and using zero periods to prove path-independence. The final kernel
 statement below is only the range-membership packaging of this
-potential. -/
+potential.  This version takes the de Rham comparison data explicitly. -/
+theorem deRhamComparisonMap1_zero_period_potential_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X)
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  exact ⟨closedForm_pathIntegral_primitive_of_spec X hDR ω hω,
+    closedForm_pathIntegral_primitive_derivative_of_spec X hDR ω hω⟩
+
+/-- Compatibility wrapper using the named de Rham frontier provider. -/
 theorem deRhamComparisonMap1_zero_period_potential
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -277,11 +393,12 @@ theorem deRhamComparisonMap1_zero_period_potential
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
-    ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
-  exact ⟨closedForm_pathIntegral_primitive X ω hω, closedForm_pathIntegral_primitive_derivative X ω hω⟩
+    ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  deRhamComparisonMap1_zero_period_potential_of_spec X
+    (deRhamComparisonMap1Spec_frontier X) ω hω
 
 
-/-- **Frontier identity (sorry, INJECTIVITY half of de Rham).**
+/- **Frontier identity (sorry, INJECTIVITY half of de Rham).**
 A closed 1-form integrating to zero on every integer 1-cycle is
 exact.
 
@@ -291,6 +408,20 @@ direct global potential construction (using simply-connected covers
 and a path-integral primitive, then descent).  Mathlib gap: sheaf
 cohomology comparison on manifolds is partial; global path-integral
 primitive on a non-simply-connected manifold is absent. -/
+/-- Injectivity half of the de Rham comparison map from explicit de Rham data. -/
+theorem deRhamComparisonMap1_kernel_subset_exact_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X)
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact deRhamComparisonMap1_zero_period_potential_of_spec X hDR ω hω
+
+/-- Compatibility wrapper using the named de Rham frontier provider. -/
 theorem deRhamComparisonMap1_kernel_subset_exact
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -298,9 +429,9 @@ theorem deRhamComparisonMap1_kernel_subset_exact
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
-    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
-  rw [ExactForm]
-  exact deRhamComparisonMap1_zero_period_potential X ω hω
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X :=
+  deRhamComparisonMap1_kernel_subset_exact_of_spec X
+    (deRhamComparisonMap1Spec_frontier X) ω hω
 
 /-- **Frontier identity (sorry, ARISTOTLE-SIZED).** The de Rham
 comparison map sends two cocycles in the same de-Rham class to the
@@ -327,33 +458,53 @@ then bridges to `realDimSingularH1` through UCT + pure-algebra finrank.
 inside closed forms.  Proved from `deRhamComparisonMap1_vanishes_on_exact`
 (⊇ direction) and `deRhamComparisonMap1_kernel_subset_exact`
 (⊆ direction). -/
-private theorem comparison_ker_eq_exact
+private theorem comparison_ker_eq_exact_of_spec
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X) :
     LinearMap.ker (deRhamComparisonMap1 X) = ExactForm.toClosedSubmodule 0 X := by
   ext η
   constructor
   · intro hη
     show (ClosedForm 1 X).subtype η ∈ ExactForm 0 X
-    exact deRhamComparisonMap1_kernel_subset_exact X η (LinearMap.mem_ker.mp hη)
+    exact deRhamComparisonMap1_kernel_subset_exact_of_spec X hDR η (LinearMap.mem_ker.mp hη)
   · intro hη
     apply LinearMap.mem_ker.mpr
     exact deRhamComparisonMap1_vanishes_on_exact X η hη
 
+/-- Compatibility wrapper using the named de Rham frontier provider. -/
+private theorem comparison_ker_eq_exact
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    LinearMap.ker (deRhamComparisonMap1 X) = ExactForm.toClosedSubmodule 0 X :=
+  comparison_ker_eq_exact_of_spec X (deRhamComparisonMap1Spec_frontier X)
+
 /-- Range of the de Rham comparison map is all of the target space.
 Proved from `deRhamComparisonMap1_surjective`. -/
+private theorem comparison_range_eq_top_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X) :
+    LinearMap.range (deRhamComparisonMap1 X) = ⊤ := by
+  rw [LinearMap.range_eq_top]
+  intro φ
+  obtain ⟨ω, hω⟩ := deRhamComparisonMap1_surjective_of_spec X hDR φ
+  exact ⟨ω, hω⟩
+
+/-- Compatibility wrapper using the named de Rham frontier provider. -/
 private theorem comparison_range_eq_top
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    LinearMap.range (deRhamComparisonMap1 X) = ⊤ := by
-  rw [LinearMap.range_eq_top]
-  intro φ
-  obtain ⟨ω, hω⟩ := deRhamComparisonMap1_surjective X φ
-  exact ⟨ω, hω⟩
+    LinearMap.range (deRhamComparisonMap1 X) = ⊤ :=
+  comparison_range_eq_top_of_spec X (deRhamComparisonMap1Spec_frontier X)
 
 /-- The de Rham comparison map descends to a ℂ-linear equivalence
 from `deRhamH1Cocycle X` (closed mod exact) to the space of
@@ -363,18 +514,28 @@ Constructed via the first isomorphism theorem: the descended map from
 the quotient by the kernel to the range is an isomorphism, and the kernel
 equals the exact submodule (Stokes + injectivity) while the range is
 everything (surjectivity). -/
+private noncomputable def deRhamH1_linearEquiv_of_spec
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (hDR : DeRhamComparisonMap1Spec X) :
+    deRhamH1Cocycle X ≃ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ) :=
+  -- Step 1: deRhamH1Cocycle X ≃ₗ[ℂ] (ClosedFormSub 1 X ⧸ ker)
+  (Submodule.quotEquivOfEq _ _ (comparison_ker_eq_exact_of_spec X hDR).symm) |>.trans
+  -- Step 2: (ClosedFormSub 1 X ⧸ ker) ≃ₗ[ℂ] range
+  ((LinearMap.quotKerEquivRange (deRhamComparisonMap1 X)) |>.trans
+  -- Step 3: range ≃ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ)
+  (LinearEquiv.ofTop _ (comparison_range_eq_top_of_spec X hDR)))
+
+/-- Compatibility wrapper using the named de Rham frontier provider. -/
 private noncomputable def deRhamH1_linearEquiv
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     deRhamH1Cocycle X ≃ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ) :=
-  -- Step 1: deRhamH1Cocycle X ≃ₗ[ℂ] (ClosedFormSub 1 X ⧸ ker)
-  (Submodule.quotEquivOfEq _ _ (comparison_ker_eq_exact X).symm) |>.trans
-  -- Step 2: (ClosedFormSub 1 X ⧸ ker) ≃ₗ[ℂ] range
-  ((LinearMap.quotKerEquivRange (deRhamComparisonMap1 X)) |>.trans
-  -- Step 3: range ≃ₗ[ℂ] (IntegralOneCycle X →ₗ[ℤ] ℂ)
-  (LinearEquiv.ofTop _ (comparison_range_eq_top X)))
+  deRhamH1_linearEquiv_of_spec X (deRhamComparisonMap1Spec_frontier X)
 
 /-
 Pure algebra: for a finitely generated free ℤ-module `M`,
