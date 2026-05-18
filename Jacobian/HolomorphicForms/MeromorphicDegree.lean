@@ -136,7 +136,8 @@ theorem MeromorphicMapToSphere.modulus_diverges_at_simple_pole
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P)
+    (hmod : f.PoleModulusData) :
     ∃ g : X → ℂ,
       (∀ x : X, x ≠ P → f.toMap x = ((g x : ℂ) : OnePoint ℂ)) ∧
       Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop := by
@@ -149,7 +150,7 @@ theorem MeromorphicMapToSphere.modulus_diverges_at_simple_pole
       rw [hpole]
     rw [h, Divisor.point_apply_self]
     decide
-  obtain ⟨g, hg_eq, hg_div⟩ := f.exists_modulus_atTop_at_pole P hposP
+  obtain ⟨g, hg_eq, hg_div⟩ := hmod.exists_modulus_atTop_at_pole P hposP
   refine ⟨g, ?_, hg_div⟩
   intro x hx
   -- For `x ≠ P`, `f.poleDivisor x = (point P) x = 0` from `hpole`.
@@ -201,10 +202,11 @@ theorem MeromorphicMapToSphere.tendsto_infty_at_pole_of_poleDivisor_point
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P)
+    (hmod : f.PoleModulusData) :
     Filter.Tendsto f.toMap (nhds P) (nhds (OnePoint.infty : OnePoint ℂ)) := by
   -- Step 1: punctured-nhd version via M2a + M2b.
-  obtain ⟨g, hgeq, hdiv⟩ := f.modulus_diverges_at_simple_pole P hpole
+  obtain ⟨g, hgeq, hdiv⟩ := f.modulus_diverges_at_simple_pole P hpole hmod
   have hp_lim : Filter.Tendsto f.toMap (nhdsWithin P {P}ᶜ)
       (nhds (OnePoint.infty : OnePoint ℂ)) := by
     refine (OnePoint.tendsto_infty_of_modulus_diverges P g hdiv).congr' ?_
@@ -239,7 +241,8 @@ theorem meromorphicMapToSphere_continuous_of_poleDivisor_point
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P)
+    (hmod : f.PoleModulusData) :
     Continuous f.toMap := by
   -- Strategy: continuity at P follows from M2; continuity off P follows from M1.
   rw [continuous_iff_continuousAt]
@@ -250,7 +253,7 @@ theorem meromorphicMapToSphere_continuous_of_poleDivisor_point
     have h_at_pole : f.toMap P = (OnePoint.infty : OnePoint ℂ) :=
       f.toMap_pole_eq_infty_of_poleDivisor_point P hpole
     rw [ContinuousAt, h_at_pole]
-    exact f.tendsto_infty_at_pole_of_poleDivisor_point P hpole
+    exact f.tendsto_infty_at_pole_of_poleDivisor_point P hpole hmod
   · -- Off the pole, use M1.
     have hcont_on : ContinuousOn f.toMap {P}ᶜ :=
       f.continuousOn_compl_pole_of_poleDivisor_point P hpole
@@ -302,10 +305,11 @@ theorem MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X)
     (hcont : Continuous f.toMap)
-    (hdegree : Divisor.degree f.poles = 1) :
+    (hdegree : Divisor.degree f.poles = 1)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
     ∃ h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) f.toMap,
       JacobianChallenge.HolomorphicForms.branchedDegree h = 1 := by
-  obtain ⟨h, hd⟩ := f.hasBranchedCoverDataOfPoleDegree hcont
+  obtain ⟨h, hd⟩ := hbranch.hasBranchedCoverDataOfPoleDegree hcont
   refine ⟨h, ?_⟩
   show JacobianChallenge.HolomorphicForms.branchedDegree h = 1
   rw [hd]
@@ -343,10 +347,11 @@ theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X)
     (hcont : Continuous f.toMap)
-    (hdegree : Divisor.degree f.poles = 1) :
+    (hdegree : Divisor.degree f.poles = 1)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
     Function.Surjective f.toMap := by
   obtain ⟨h, hd⟩ :=
-    f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
+    f.exists_branchedCoverData_of_pole_degree_one hcont hdegree hbranch
   exact (JacobianChallenge.HolomorphicForms.degree_one_bijective h hd).2
 
 /-! ### Dead-code note: M5a/M5a-i/M5a-ii superseded by M-bridge.
@@ -385,10 +390,11 @@ theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X)
     (hcont : Continuous f.toMap)
-    (hdegree : Divisor.degree f.poles = 1) :
+    (hdegree : Divisor.degree f.poles = 1)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
     Function.Injective f.toMap := by
   obtain ⟨h, hd⟩ :=
-    f.exists_branchedCoverData_of_pole_degree_one hcont hdegree
+    f.exists_branchedCoverData_of_pole_degree_one hcont hdegree hbranch
   exact (JacobianChallenge.HolomorphicForms.degree_one_bijective h hd).1
 
 /-- **Degree-one bijectivity leaf.** A continuous meromorphic map to
@@ -403,10 +409,11 @@ theorem meromorphicMapToSphere_bijective_of_poleDivisor_degree_one
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X)
     (hcont : Continuous f.toMap)
-    (hdegree : Divisor.degree f.poles = 1) :
+    (hdegree : Divisor.degree f.poles = 1)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
     Function.Bijective f.toMap :=
-  ⟨f.injective_of_continuous_and_pole_degree_one hcont hdegree,
-   f.surjective_of_continuous_and_pole_degree_one hcont hdegree⟩
+  ⟨f.injective_of_continuous_and_pole_degree_one hcont hdegree hbranch,
+   f.surjective_of_continuous_and_pole_degree_one hcont hdegree hbranch⟩
 
 /-- **Degree-one assembly.** A meromorphic map whose pole divisor is `[P]`
 has degree one and therefore is continuous and bijective as a map to
@@ -417,16 +424,18 @@ theorem meromorphicDegreeOneData_of_poleDivisor_point
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : MeromorphicMapToSphere X) (P : X)
-    (hpole : f.poles = Divisor.point P) :
+    (hpole : f.poles = Divisor.point P)
+    (hmod : f.PoleModulusData)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
     Nonempty (MeromorphicDegreeOneData X f) := by
   have hcont : Continuous f.toMap :=
-    meromorphicMapToSphere_continuous_of_poleDivisor_point X f P hpole
+    meromorphicMapToSphere_continuous_of_poleDivisor_point X f P hpole hmod
   have hdegree : Divisor.degree f.poles = 1 :=
     meromorphicMapToSphere_poleDivisor_degree_eq_one_of_point f P hpole
   exact ⟨
     { continuous_toMap := hcont
       bijective_toMap :=
-        meromorphicMapToSphere_bijective_of_poleDivisor_degree_one X f hcont hdegree
+        meromorphicMapToSphere_bijective_of_poleDivisor_degree_one X f hcont hdegree hbranch
       degree_eq_pole_degree := hdegree }⟩
 
 end JacobianChallenge.HolomorphicForms
