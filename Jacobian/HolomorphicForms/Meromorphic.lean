@@ -76,25 +76,6 @@ structure MeromorphicMapToSphere
   evaluates to `∞ : OnePoint ℂ`. -/
   toMap_eq_infty_of_poleDivisor_pos :
     ∀ P : X, 0 < poleDivisor P → toMap P = (OnePoint.infty : OnePoint ℂ)
-  /-- Near a pole, the meromorphic map admits a complex-valued lift on
-  the non-pole locus whose modulus tends to infinity along the punctured
-  neighbourhood filter.  This is the `MeromorphicAt.tendsto_norm_atTop`
-  content packaged in `OnePoint`-friendly form. -/
-  exists_modulus_atTop_at_pole :
-    ∀ P : X, 0 < poleDivisor P →
-      ∃ g : X → ℂ,
-        (∀ x : X, poleDivisor x = 0 → toMap x = ((g x : ℂ) : OnePoint ℂ)) ∧
-        Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop
-  /-- Conditional on continuity, the analytic content of the map: a
-  branched-cover datum whose `branchedDegree` matches the pole
-  divisor's degree. The hypothesis is conditional because
-  `MeromorphicMapToSphere` is also constructed with non-honest
-  `toMap` (placeholder structure literals); for non-continuous
-  `toMap`, this Prop is vacuously satisfiable. -/
-  hasBranchedCoverDataOfPoleDegree :
-    Continuous toMap →
-    ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) toMap),
-      JacobianChallenge.HolomorphicForms.branchedDegree h = poleDivisor.degree.toNat
 
 namespace MeromorphicMapToSphere
 
@@ -136,6 +117,30 @@ kept separate from meromorphicity because proving continuity of the extended
 map is one of the degree/properness work packets. -/
 def ExtendsContinuously (f : MeromorphicMapToSphere X) : Prop :=
   Continuous f.toMap
+
+/-- Additional analytic data for an honest meromorphic map: near a pole,
+the map admits a finite lift on the non-pole locus whose modulus tends to
+infinity.  This is deliberately separate from `MeromorphicMapToSphere`
+because several scaffold maps carry formal divisor data without satisfying
+this analytic conclusion. -/
+structure PoleModulusData (f : MeromorphicMapToSphere X) where
+  exists_modulus_atTop_at_pole :
+    ∀ P : X, 0 < f.poleDivisor P →
+      ∃ g : X → ℂ,
+        (∀ x : X, f.poleDivisor x = 0 →
+          f.toMap x = ((g x : ℂ) : OnePoint ℂ)) ∧
+        Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop
+
+/-- Additional analytic data for an honest nonconstant meromorphic map:
+conditional on continuity, it has branched-cover data whose degree is the
+degree of the pole divisor.  This is not a field of
+`MeromorphicMapToSphere`, since it is false for the cutoff/indicator
+scaffolding maps used elsewhere in this file family. -/
+structure BranchedCoverDataOfPoleDegree (f : MeromorphicMapToSphere X) where
+  hasBranchedCoverDataOfPoleDegree :
+    Continuous f.toMap →
+    ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) f.toMap),
+      JacobianChallenge.HolomorphicForms.branchedDegree h = f.poleDivisor.degree.toNat
 
 omit [Periods.StableChartAt ℂ X] in
 @[simp] theorem principal_eq_zeroDivisor_sub_poleDivisor

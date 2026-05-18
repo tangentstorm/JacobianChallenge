@@ -22,82 +22,94 @@ normalised at its centre and is identically \(1\) near that centre.
 
 \begin{lemma}[Single-pole finite fibers]
 \label{lem:impl-single-pole-finite-fiber}
-The explicit single-pole sphere lift has finite fibers.
+Formerly claimed that the explicit single-pole sphere lift has finite
+fibers.  This is not true for the bump-cutoff scaffold; the honest
+finite-fiber fact belongs to future prescribed-pole meromorphic data.
 \lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_finite_fiber}
-\leanok
+\notready
 \end{lemma}
 
 \begin{lemma}[Single-pole fiber count]
 \label{lem:impl-single-pole-fiber-sum}
 \uses{lem:impl-single-pole-finite-fiber}
-The weighted fiber count of the explicit single-pole sphere lift is
-constant.
+Formerly claimed that the weighted fiber count of the explicit
+single-pole sphere lift is constant.  This is deferred to honest
+prescribed-pole data, not the cutoff scaffold.
 \lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_fiberSum_const}
-\leanok
+\notready
 \end{lemma}
 
 \begin{lemma}[Single-pole local bijectivity]
 \label{lem:impl-single-pole-local-bijective}
-The explicit single-pole sphere lift is locally bijective away from
-ramification.
+Formerly claimed that the explicit single-pole sphere lift is locally
+bijective away from ramification.  The cutoff scaffold can be locally
+constant, so the honest fact is frontier data.
 \lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_local_bijective}
-\leanok
+\notready
 \end{lemma}
 
 \begin{lemma}[Single-pole branched degree]
 \label{lem:impl-single-pole-branched-degree}
-The branched degree of the explicit single-pole sphere lift is \(1\).
+Formerly claimed that the branched degree of the explicit single-pole
+sphere lift is \(1\).  This is now quarantined as prescribed-pole
+meromorphic data rather than a fact about the displayed cutoff map.
 \lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_branchedDegree_eq}
-\leanok
+\notready
 \end{lemma}
 
 \begin{lemma}[Single-pole meromorphic map package]
 \label{lem:impl-single-pole-meromorphic-map}
 \uses{lem:impl-cmfld-bump-normalisation,lem:impl-single-pole-finite-fiber,lem:impl-single-pole-fiber-sum,lem:impl-single-pole-local-bijective,lem:impl-single-pole-branched-degree}
 The explicit single-pole sphere lift packages as a
-\code{MeromorphicMapToSphere} with the required branched-cover data.
+\code{MeromorphicMapToSphere} with divisor bookkeeping; branched-cover and
+modulus-divergence facts are supplied separately by prescribed-pole data.
 \lean{JacobianChallenge.HolomorphicForms.singlePoleMeromorphicMap}
 \leanok
 \end{lemma}
 
 \begin{lemma}[Two-pole finite fibers]
 \label{lem:impl-two-pole-finite-fiber}
-The explicit two-pole meromorphic representative has finite fibers.
+Formerly claimed that the explicit two-pole indicator representative has
+finite fibers.  Its zero fiber can be infinite, so this is not a fact
+about the displayed map.
 \lean{JacobianChallenge.HolomorphicForms.twoPole_finite_fiber}
-\leanok
+\notready
 \end{lemma}
 
 \begin{lemma}[Two-pole fiber count]
 \label{lem:impl-two-pole-fiber-sum}
 \uses{lem:impl-two-pole-finite-fiber}
-The weighted fiber count of the explicit two-pole representative is
-constant.
+Formerly claimed that the weighted fiber count of the explicit two-pole
+indicator representative is constant.  This belongs to honest
+two-pole meromorphic data, not the placeholder map.
 \lean{JacobianChallenge.HolomorphicForms.twoPole_fiberSum_const}
-\leanok
+\notready
 \end{lemma}
 
 \begin{lemma}[Two-pole local bijectivity]
 \label{lem:impl-two-pole-local-bijective}
-The explicit two-pole representative is locally bijective away from
-ramification.
+Formerly claimed that the explicit two-pole representative is locally
+bijective away from ramification.  The indicator scaffold is locally
+constant away from the marked points.
 \lean{JacobianChallenge.HolomorphicForms.twoPole_local_bijective}
-\leanok
+\notready
 \end{lemma}
 
 \begin{lemma}[Two-pole branched-cover data]
 \label{lem:impl-two-pole-branched-cover-data}
 \uses{lem:impl-two-pole-finite-fiber,lem:impl-two-pole-fiber-sum,lem:impl-two-pole-local-bijective}
-The explicit two-pole representative carries branched-cover data of the
-expected pole degree.
+Formerly claimed that the explicit two-pole representative carries
+branched-cover data of the expected pole degree.  This is now quarantined
+as future prescribed-pole data.
 \lean{JacobianChallenge.HolomorphicForms.twoPole_hasBranchedCoverDataOfPoleDegree}
-\leanok
+\notready
 \end{lemma}
 
 \begin{lemma}[Two-pole meromorphic map package]
 \label{lem:impl-two-pole-meromorphic-map}
 \uses{lem:impl-two-pole-branched-cover-data}
 The explicit two-pole representative packages as a
-\code{MeromorphicMapToSphere}.
+\code{MeromorphicMapToSphere} with divisor bookkeeping.
 \lean{JacobianChallenge.HolomorphicForms.twoPointMeromorphicMap}
 \leanok
 \end{lemma}
