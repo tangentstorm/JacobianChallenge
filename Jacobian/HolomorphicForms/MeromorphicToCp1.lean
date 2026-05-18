@@ -296,9 +296,22 @@ theorem liftToCp1_isHolomorphic
     JacobianChallenge.HolomorphicForms.IsHolomorphic
       (meromorphicToCp1 X f) := by
   exact
-    { continuous := liftToCp1_continuous X f hholo
-      holomorphicAt := liftToCp1_holomorphicAt X f hholo
-      local_kfold_ramified := liftToCp1_local_kfold_ramified X f hholo
+    { toIsHolomorphicBasic :=
+        { continuous := liftToCp1_continuous X f hholo
+          holomorphicAt := liftToCp1_holomorphicAt X f hholo }
+      local_kfold_ramified := liftToCp1_local_kfold_ramified X f hholo }
+
+/-- Weighted-fiber conservation for the CP¹ lift, kept separate from
+basic/local holomorphicity. -/
+theorem liftToCp1_hasWeightedFiberConservation
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicFunctionType X) (hholo : True) :
+    JacobianChallenge.HolomorphicForms.HasWeightedFiberConservation
+      (meromorphicToCp1 X f) := by
+  exact
+    {
       weightedFiberSum_eventually_eq :=
         liftToCp1_weightedFiberSum_eventually_eq X f hholo }
 

@@ -638,14 +638,14 @@ theorem weightedFiberSum_eventually_eq
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space Y]
-    {f : X → Y} (hf : IsHolomorphic f)
+    {f : X → Y} (hf : IsHolomorphic f) (hw : HasWeightedFiberConservation f)
     (hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) (y₀ : Y) :
     ∀ᶠ y in 𝓝 y₀,
       ((isHolomorphic_finite_fiber hf hnonconst y).toFinset).sum
         (mapAnalyticOrderAt f) =
       ((isHolomorphic_finite_fiber hf hnonconst y₀).toFinset).sum
         (mapAnalyticOrderAt f) := by
-  exact hf.weightedFiberSum_eventually_eq hnonconst
+  exact hw.weightedFiberSum_eventually_eq hnonconst
     (isHolomorphic_finite_fiber hf hnonconst) y₀
 
 /-- **D4 = Sub-leaf 4.** Local conservation: combining
@@ -659,14 +659,14 @@ theorem isHolomorphic_weightedFiberSum_isLocallyConstant
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space Y]
-    {f : X → Y} (hf : IsHolomorphic f)
+    {f : X → Y} (hf : IsHolomorphic f) (hw : HasWeightedFiberConservation f)
     (hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) :
     IsLocallyConstant (fun y : Y =>
       ((isHolomorphic_finite_fiber hf hnonconst y).toFinset).sum
         (mapAnalyticOrderAt f)) := by
   rw [IsLocallyConstant.iff_eventually_eq]
   intro y₀
-  exact weightedFiberSum_eventually_eq hf hnonconst y₀
+  exact weightedFiberSum_eventually_eq hf hw hnonconst y₀
 
 /-- **Final assembly.** Combining sub-leaf 4 with preconnectedness of
 `Y`: the weighted fibre sum is constant on `Y`. -/
@@ -676,13 +676,13 @@ theorem isHolomorphic_weightedFiberSum_const
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     [CompactSpace X] [T2Space X] [PreconnectedSpace X]
     [T2Space Y] [PreconnectedSpace Y]
-    {f : X → Y} (hf : IsHolomorphic f)
+    {f : X → Y} (hf : IsHolomorphic f) (hw : HasWeightedFiberConservation f)
     (hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀) (y₁ y₂ : Y) :
     ((isHolomorphic_finite_fiber hf hnonconst y₁).toFinset).sum
       (mapAnalyticOrderAt f) =
     ((isHolomorphic_finite_fiber hf hnonconst y₂).toFinset).sum
       (mapAnalyticOrderAt f) :=
-  (isHolomorphic_weightedFiberSum_isLocallyConstant hf hnonconst).apply_eq_of_preconnectedSpace
+  (isHolomorphic_weightedFiberSum_isLocallyConstant hf hw hnonconst).apply_eq_of_preconnectedSpace
     y₁ y₂
 
 end JacobianChallenge.Blueprint
