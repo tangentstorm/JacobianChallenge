@@ -189,10 +189,12 @@ then nearby nonzero values have exactly `k` simple preimages near `z₀`.
 -/
 set_option maxHeartbeats 800000 in
 theorem analytic_local_mapping_theorem (g : ℂ → ℂ) (z₀ : ℂ) (k : ℕ) (hk : 0 < k)
+    {N : Set ℂ} (hN_open : IsOpen N) (hz₀N : z₀ ∈ N)
     (hg : AnalyticAt ℂ g z₀) (hg0 : g z₀ = 0)
     (hord : analyticOrderNatAt g z₀ = k)
     (hord_ne_top : analyticOrderAt g z₀ ≠ ⊤) :
     ∃ U : Set ℂ, IsOpen U ∧ z₀ ∈ U ∧
+    U ⊆ N ∧
     ∃ V : Set ℂ, IsOpen V ∧ (0 : ℂ) ∈ V ∧
     ∀ w ∈ V, w ≠ 0 →
     ∃ S : Finset ℂ, S.card = k ∧ ↑S ⊆ U ∧
@@ -201,26 +203,26 @@ theorem analytic_local_mapping_theorem (g : ℂ → ℂ) (z₀ : ℂ) (k : ℕ) 
   -- By exists_local_power_form, get φ analytic at z₀ with φ(z₀) = 0, φ'(z₀) ≠ 0, and g =ᶠ φ^k near z₀.
   obtain ⟨φ, hφ, hφ'⟩ : ∃ φ : ℂ → ℂ, AnalyticAt ℂ φ z₀ ∧ φ z₀ = 0 ∧ deriv φ z₀ ≠ 0 ∧ ∀ᶠ z in 𝓝 z₀, g z = φ z ^ k := by
     exact exists_local_power_form g z₀ k hk hg hg0 hord hord_ne_top;
-  obtain ⟨U, hU, hU'⟩ : ∃ U : Set ℂ, IsOpen U ∧ z₀ ∈ U ∧ InjOn φ U ∧ (∀ z ∈ U, AnalyticAt ℂ φ z) ∧ (∀ z ∈ U, deriv φ z ≠ 0) ∧ ∀ z ∈ U, g z = φ z ^ k := by
-    have := exists_local_biholomorphism_strong φ z₀ hφ hφ'.2.1;
-    obtain ⟨ U, hU₁, hU₂, W, hW₁, hW₂, hW₃, hW₄, hW₅, hW₆, hW₇ ⟩ := this; rcases Metric.mem_nhds_iff.mp hφ'.2.2 with ⟨ ε, ε_pos, hε ⟩ ; exact ⟨ U ∩ Metric.ball z₀ ε, hU₁.inter ( Metric.isOpen_ball ), ⟨ hU₂, Metric.mem_ball_self ε_pos ⟩, hW₃.mono <| Set.inter_subset_left, fun z hz => hW₆ z hz.1, fun z hz => hW₇ z hz.1, fun z hz => hε <| Metric.mem_ball.mpr <| by aesop ⟩ ;
+  obtain ⟨U, hU, hU'⟩ : ∃ U : Set ℂ, IsOpen U ∧ z₀ ∈ U ∧ U ⊆ N ∧ InjOn φ U ∧ (∀ z ∈ U, AnalyticAt ℂ φ z) ∧ (∀ z ∈ U, deriv φ z ≠ 0) ∧ ∀ z ∈ U, g z = φ z ^ k := by
+      have := exists_local_biholomorphism_strong φ z₀ hφ hφ'.2.1;
+      obtain ⟨ U, hU₁, hU₂, W, hW₁, hW₂, hW₃, hW₄, hW₅, hW₆, hW₇ ⟩ := this; rcases Metric.mem_nhds_iff.mp hφ'.2.2 with ⟨ ε, ε_pos, hε ⟩ ; exact ⟨ (U ∩ Metric.ball z₀ ε) ∩ N, (hU₁.inter ( Metric.isOpen_ball )).inter hN_open, ⟨⟨ hU₂, Metric.mem_ball_self ε_pos ⟩, hz₀N⟩, Set.inter_subset_right, hW₃.mono <| (Set.inter_subset_left.trans Set.inter_subset_left), fun z hz => hW₆ z hz.1.1, fun z hz => hW₇ z hz.1.1, fun z hz => hε <| Metric.mem_ball.mpr <| by aesop ⟩ ;
   obtain ⟨V, hV, hV'⟩ : ∃ V : Set ℂ, IsOpen V ∧ φ z₀ ∈ V ∧ V ⊆ φ '' U ∧ (∀ w ∈ V, ∃ z ∈ U, φ z = w) := by
     have h_image : IsOpen (φ '' U) := by
       apply_rules [ isOpen_iff_mem_nhds.mpr ];
       rintro _ ⟨ x, hx, rfl ⟩;
       have h_image : AnalyticAt ℂ φ x := by
-        exact hU'.2.2.1 x hx;
+        exact hU'.2.2.2.1 x hx;
       have := h_image.eventually_constant_or_nhds_le_map_nhds;
       cases' this with h h;
       · have h_const : ∀ᶠ z in 𝓝 x, deriv φ z = 0 := by
           rw [ eventually_nhds_iff ] at *;
           obtain ⟨ t, ht₁, ht₂, ht₃ ⟩ := h; exact ⟨ t, fun y hy => HasDerivAt.deriv ( by exact HasDerivAt.congr_of_eventuallyEq ( hasDerivAt_const _ _ ) ( Filter.eventuallyEq_of_mem ( IsOpen.mem_nhds ht₂ hy ) fun z hz => ht₁ z hz ) ), ht₂, ht₃ ⟩ ;
-        exact absurd ( h_const.self_of_nhds ) ( hU'.2.2.2.1 x hx );
+        exact absurd ( h_const.self_of_nhds ) ( hU'.2.2.2.2.1 x hx );
       · exact h ( Filter.mem_map.mpr <| Filter.mem_of_superset ( hU.mem_nhds hx ) <| Set.subset_preimage_image _ _ );
     exact ⟨ φ '' U, h_image, Set.mem_image_of_mem φ hU'.1, Set.Subset.refl _, fun w hw => hw ⟩;
   obtain ⟨ε, hε⟩ : ∃ ε > 0, Metric.ball 0 ε ⊆ V := by
     exact Metric.isOpen_iff.mp hV 0 ( by aesop );
-  refine' ⟨ U, hU, hU'.1, Metric.ball 0 ( ε ^ k ), Metric.isOpen_ball, _, _ ⟩ <;> simp_all +decide [ Metric.mem_ball ];
+  refine' ⟨ U, hU, hU'.1, hU'.2.1, Metric.ball 0 ( ε ^ k ), Metric.isOpen_ball, _, _ ⟩ <;> simp_all +decide [ Metric.mem_ball ];
   intro w hw hw'; obtain ⟨S, hS⟩ : ∃ S : Finset ℂ, S.card = k ∧ (∀ t ∈ S, t ^ k = w) ∧ (∀ t, t ^ k = w → t ∈ S) := by
     exact card_roots_pow_eq k hk w hw';
   -- For each $t \in S$, there exists $z_t \in U$ such that $\varphi(z_t) = t$.
@@ -239,7 +241,7 @@ theorem analytic_local_mapping_theorem (g : ℂ → ℂ) (z₀ : ℂ) (k : ℕ) 
   · intro t ht; specialize hz; have := hz.1 t ht; simp_all +decide;
     convert analyticOrderNatAt_pow_sub_at_simple_root φ ( z t ) k hk w _ _ _ _ using 1 <;> simp_all +decide [ analyticOrderNatAt ];
     rw [ analyticOrderAt_congr ];
-    filter_upwards [ IsOpen.mem_nhds hU ( hz.1 t ht |>.1 ) ] with x hx using by rw [ hU'.2.2.2.2 x hx ] ;
+    filter_upwards [ IsOpen.mem_nhds hU ( hz.1 t ht |>.1 ) ] with x hx using by rw [ hU'.2.2.2.2.2 x hx ] ;
   · intro z' hz' hz''; use φ z'; aesop;
 
 end AnalyticLocalMapping

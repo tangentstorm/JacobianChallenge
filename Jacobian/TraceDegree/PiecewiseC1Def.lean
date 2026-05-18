@@ -88,6 +88,15 @@ class PiecewiseC1PathRegularity (X : Type*)
     [TopologicalSpace X] [ChartedSpace ℂ X] : Prop where
   /-- Witness: every path admits a uniform piecewise-C¹ bound. -/
   out : ∀ {a b : X} (γ' : Path a b), ∃ K₀ : NNReal, ChartLiftPiecewiseC1 γ' K₀
+  /-- Chartwise C¹ regularity on each chart-source portion of the path.
+
+  This is kept as part of the legacy frontier hypothesis because the
+  period-integration API needs exactly this localized statement, while the
+  uniform-subpath field above only applies after a whole subpath is already
+  known to lie in a single chart source. -/
+  chart_contDiffOn : ∀ {a b : X} (γ' : Path a b) (p : X),
+    ContDiffOn ℝ 1 ((chartAt ℂ p) ∘ γ'.extend)
+      (γ'.extend ⁻¹' (chartAt ℂ p).source ∩ Set.Icc 0 1)
 
 /-- Accessor: extract the per-path bound from a `PiecewiseC1PathRegularity X`
 instance. -/
