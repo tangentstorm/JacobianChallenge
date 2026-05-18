@@ -70,6 +70,7 @@ noncomputable def analyticJacobianBasisAlignedEquiv :
     (basisAlignedPeriodSubgroupConcrete X)
     (holomorphicOneFormDualEquiv ℂ X).toAddEquiv rfl
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- The quotient-level equiv sends the class of a functional to the class
 of its image under the basis-aligned dual equivalence. Direct corollary
 of `QuotientAddGroup.congr_mk`. -/
@@ -80,6 +81,7 @@ of `QuotientAddGroup.congr_mk`. -/
       QuotientAddGroup.mk (holomorphicOneFormDualEquiv ℂ X φ) :=
   rfl
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- The inverse equiv sends a basis-aligned class back to the class of
 the inverse-equiv-pulled-back functional. -/
 theorem analyticJacobianBasisAlignedEquiv_symm_mk
@@ -90,6 +92,7 @@ theorem analyticJacobianBasisAlignedEquiv_symm_mk
         ((holomorphicOneFormDualEquiv ℂ X).symm v) :=
   rfl
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- The basis-aligned image of an `evalJacobianClass` value: applying the
 equiv to `evalJacobianClass P v` gives the basis-aligned class of the
 corresponding `evalLinearMap`. Combines `evalJacobianClass_def` with
@@ -104,6 +107,7 @@ the previous mk-simp lemma. -/
   rw [JacobianChallenge.AnalyticJacobian.evalJacobianClass_def,
       analyticJacobianBasisAlignedEquiv_mk]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- The basis-aligned image of a `witnessAbelJacobi` value: the equiv
 distributes over the underlying subtraction and the `evalJacobianClass`
 unfolding. -/
@@ -123,6 +127,7 @@ theorem analyticJacobianBasisAlignedEquiv_witnessAbelJacobi
       analyticJacobianBasisAlignedEquiv_evalJacobianClass,
       analyticJacobianBasisAlignedEquiv_evalJacobianClass]
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- The basis-aligned image of a diagonal `witnessAbelJacobi` is `0`:
 follows from `witnessAbelJacobi_self` and `map_zero` of the equiv. -/
 @[simp] theorem analyticJacobianBasisAlignedEquiv_witnessAbelJacobi_self
@@ -133,6 +138,7 @@ follows from `witnessAbelJacobi_self` and `map_zero` of the equiv. -/
   rw [JacobianChallenge.AbelJacobi.witnessAbelJacobi_self]
   exact (analyticJacobianBasisAlignedEquiv X).map_zero
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Period pairings are killed by the basis-aligned quotient projection:
 `mk (basisAlignedPeriodPairing X σ) = 0` in the basis-aligned analytic
 Jacobian quotient, for any cycle `σ`. Follows from
@@ -144,6 +150,7 @@ Jacobian quotient, for any cycle `σ`. Follows from
         BasisAlignedAnalyticJacobian X) = 0 :=
   (QuotientAddGroup.eq_zero_iff _).mpr (basisAlignedPeriodPairing_mem X σ)
 
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- Single-`mk` form of the witnessAbelJacobi-bridge theorem:
 distributes the bridge over witness subtraction and combines the two
 `mk`-classes via `QuotientAddGroup.mk_sub`. Useful when downstream
