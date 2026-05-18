@@ -1507,11 +1507,13 @@ theorem properDegreeOneMapOfSimplePole_nonempty
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (_f : GenusZeroSimplePoleMeromorphicMap X) :
+    (_f : GenusZeroSimplePoleMeromorphicMap X)
+    (hmod : _f.meromorphicMap.PoleModulusData)
+    (hbranch : _f.meromorphicMap.BranchedCoverDataOfPoleDegree) :
     Nonempty (GenusZeroProperDegreeOneMap X) := by
   let hdegree :=
     meromorphicDegreeOneData_of_poleDivisor_point X _f.meromorphicMap _f.pole
-      _f.simple_pole_cert
+      _f.simple_pole_cert hmod hbranch
   refine hdegree.elim ?_
   intro data
   exact ⟨
@@ -1528,9 +1530,11 @@ noncomputable def properDegreeOneMapOfSimplePole
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (f : GenusZeroSimplePoleMeromorphicMap X) :
+    (f : GenusZeroSimplePoleMeromorphicMap X)
+    (hmod : f.meromorphicMap.PoleModulusData)
+    (hbranch : f.meromorphicMap.BranchedCoverDataOfPoleDegree) :
     GenusZeroProperDegreeOneMap X :=
-  Classical.choice (properDegreeOneMapOfSimplePole_nonempty X f)
+  Classical.choice (properDegreeOneMapOfSimplePole_nonempty X f hmod hbranch)
 
 /-- **Sub-obligation 2 wrapper (sorry-free).** Existence form of
 `properDegreeOneMapOfSimplePole`. -/
@@ -1540,9 +1544,11 @@ theorem simplePole_meromorphicMap_proper_degreeOne
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (f : GenusZeroSimplePoleMeromorphicMap X) :
+    (f : GenusZeroSimplePoleMeromorphicMap X)
+    (hmod : f.meromorphicMap.PoleModulusData)
+    (hbranch : f.meromorphicMap.BranchedCoverDataOfPoleDegree) :
     Nonempty (GenusZeroProperDegreeOneMap X) := by
-  exact ⟨properDegreeOneMapOfSimplePole X f⟩
+  exact ⟨properDegreeOneMapOfSimplePole X f hmod hbranch⟩
 
 /-- **Sub-obligation 3 (degree one implies parametrization).** A proper
 degree-one meromorphic map from a compact connected Riemann surface to
@@ -1571,16 +1577,21 @@ compactification of `ℂ`.
 Pure assembly of the three Riemann-Roch route leaves above:
 simple-pole meromorphic function, proper degree-one map, and degree-one
 biholomorphic parametrization. -/
-theorem genus_zero_homeomorph_onePointCx
+theorem genus_zero_homeomorph_onePointCx_with_routeData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (h : analyticGenus ℂ X = 0) :
+    (h : analyticGenus ℂ X = 0)
+    (hmod : (simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.PoleModulusData)
+    (hbranch :
+      (simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.BranchedCoverDataOfPoleDegree) :
     Nonempty (X ≃ₜ OnePoint ℂ) := by
   let ⟨f⟩ := genus_zero_exists_simplePole_meromorphicMap X h
-  let ⟨g⟩ := simplePole_meromorphicMap_proper_degreeOne X f
+  change Nonempty (X ≃ₜ OnePoint ℂ)
+  let ⟨g⟩ := simplePole_meromorphicMap_proper_degreeOne X
+    (simplePoleMeromorphicMapOfGenusZero X h) hmod hbranch
   let ⟨b⟩ := proper_degreeOne_meromorphicMap_biholomorphic X g
   exact ⟨b.toHomeomorph⟩
 
@@ -1594,6 +1605,42 @@ Decomposes into two obligations:
 2. `onePointCx_homeomorph_sphere` — the standard homeomorphism
    `OnePoint ℂ ≃ₜ S²` via inverse stereographic projection (proved
    sorry-free using `onePointEquivSphereOfFinrankEq`). -/
+theorem homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (_h : analyticGenus ℂ X = 0)
+    (hmod : (simplePoleMeromorphicMapOfGenusZero X _h).meromorphicMap.PoleModulusData)
+    (hbranch :
+      (simplePoleMeromorphicMapOfGenusZero X _h).meromorphicMap.BranchedCoverDataOfPoleDegree) :
+    Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1) :=
+  let ⟨e⟩ := genus_zero_homeomorph_onePointCx_with_routeData X _h hmod hbranch
+  ⟨e.trans onePointCx_homeomorph_sphere⟩
+
+/-- **Uniformization (genus zero), public frontier statement.** A compact
+connected Riemann surface with `analyticGenus = 0` is homeomorphic to the
+one-point compactification of `ℂ`.
+
+The route-data version above records the currently proved assembly from
+explicit pole-modulus and branched-cover data.  This public theorem keeps the
+original contract: the remaining work is to construct that data for the
+Riemann-Roch fixed-pole map, not to require it from callers. -/
+theorem genus_zero_homeomorph_onePointCx
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (h : analyticGenus ℂ X = 0) :
+    Nonempty (X ≃ₜ OnePoint ℂ) := by
+  -- Frontier: construct `PoleModulusData` and
+  -- `BranchedCoverDataOfPoleDegree` for the fixed-pole Riemann-Roch map.
+  sorry
+
+/-- The "hard" direction of genus-zero classification, public frontier
+statement with the original contract. -/
 theorem homeomorphic_sphere_of_analyticGenus_eq_zero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1612,6 +1659,26 @@ Pure assembly of the two directions
 `analyticGenus_eq_zero_of_homeomorphic_sphere` and
 `homeomorphic_sphere_of_analyticGenus_eq_zero`; this declaration adds
 no new sorry. -/
+theorem analyticGenus_eq_zero_with_routeData_homeomorphic_sphere
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
+    (∃ h : analyticGenus ℂ X = 0,
+      (simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.PoleModulusData ∧
+      (simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.BranchedCoverDataOfPoleDegree) →
+      Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1) := by
+  rintro ⟨h, hmod, hbranch⟩
+  exact homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData X h hmod hbranch
+
+/-- A compact connected Riemann surface has analytic genus zero iff it is
+homeomorphic to the standard 2-sphere.
+
+This preserves the original public theorem contract. The hard direction routes
+through the public frontier theorem above; the conditional route-data assembly
+is available separately as
+`analyticGenus_eq_zero_with_routeData_homeomorphic_sphere`. -/
 theorem analyticGenus_eq_zero_iff_homeomorphic_sphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

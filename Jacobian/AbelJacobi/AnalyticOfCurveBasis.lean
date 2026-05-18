@@ -1071,22 +1071,35 @@ divisor cannot be a single point.
 
 This sub-leaf re-uses S20 directly (which is itself a sorry-free
 assembly in the round-2 chain). -/
-theorem nonconstant_single_pole_implies_genus_zero
+theorem nonconstant_single_pole_implies_genus_zero_with_meromorphicData
     (f : HolomorphicForms.MeromorphicMapToSphere X)
     (Q : X)
-    (hpole : f.poles = HolomorphicForms.Divisor.point Q) :
+    (hpole : f.poles = HolomorphicForms.Divisor.point Q)
+    (hmod : f.PoleModulusData)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
     analyticGenus ℂ X = 0 := by
   -- Inline the same chain that S20 uses (we cannot call S20 here
   -- because it is defined later in the same file). Identical content
   -- to `degree_one_meromorphicMap_implies_analyticGenus_zero`.
   obtain ⟨data⟩ :=
-    HolomorphicForms.meromorphicDegreeOneData_of_poleDivisor_point X f Q hpole
+    HolomorphicForms.meromorphicDegreeOneData_of_poleDivisor_point X f Q hpole hmod hbranch
   let equiv : X ≃ OnePoint ℂ := Equiv.ofBijective f.toMap data.bijective_toMap
   have hcont : Continuous equiv := by simpa [equiv] using data.continuous_toMap
   let h₁ : X ≃ₜ OnePoint ℂ := hcont.homeoOfEquivCompactToT2
   let h₂ : X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1 :=
     h₁.trans HolomorphicForms.onePointCx_homeomorph_sphere
   exact HolomorphicForms.analyticGenus_eq_zero_of_homeomorphic_sphere X ⟨h₂⟩
+
+/-- Public frontier: a nonconstant meromorphic map with a single pole forces
+genus zero.  The explicit route-data version above is the currently proved
+assembly. -/
+theorem nonconstant_single_pole_implies_genus_zero
+    (f : HolomorphicForms.MeromorphicMapToSphere X)
+    (Q : X)
+    (hpole : f.poles = HolomorphicForms.Divisor.point Q) :
+    analyticGenus ℂ X = 0 := by
+  -- Frontier: construct the pole-modulus and branched-cover data for `f`.
+  sorry
 
 /-! **Round-15 sub-leaf for R10/2 (NEW SORRY).** Final pole-equality
 step: combine the two impossibility lemmas with case analysis on
@@ -2107,13 +2120,15 @@ This assembly chains four already-named obligations:
 
 Steps 1, 3, 4 each have downstream sorries inside their own files;
 no new sorry is introduced here. -/
-theorem degree_one_meromorphicMap_implies_analyticGenus_zero
+theorem degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData
     (f : HolomorphicForms.MeromorphicMapToSphere X) (Q₂ : X)
-    (hpole : f.poleDivisor = HolomorphicForms.Divisor.point Q₂) :
+    (hpole : f.poleDivisor = HolomorphicForms.Divisor.point Q₂)
+    (hmod : f.PoleModulusData)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
     analyticGenus ℂ X = 0 := by
   -- Step 1: simple pole gives continuity + bijectivity of `f.toMap`.
   obtain ⟨data⟩ :=
-    HolomorphicForms.meromorphicDegreeOneData_of_poleDivisor_point X f Q₂ hpole
+    HolomorphicForms.meromorphicDegreeOneData_of_poleDivisor_point X f Q₂ hpole hmod hbranch
   -- Step 2: package the continuous bijection as a homeomorphism `X ≃ₜ OnePoint ℂ`.
   let equiv : X ≃ OnePoint ℂ := Equiv.ofBijective f.toMap data.bijective_toMap
   have hcont : Continuous equiv := by simpa [equiv] using data.continuous_toMap
@@ -2124,9 +2139,38 @@ theorem degree_one_meromorphicMap_implies_analyticGenus_zero
   -- Step 4: easy direction of the genus-zero classification.
   exact HolomorphicForms.analyticGenus_eq_zero_of_homeomorphic_sphere X ⟨h₂⟩
 
+/-- **S20 public frontier.** A meromorphic map with one simple pole forces
+genus zero. The route-data version
+`degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData`
+is the currently proved assembly; this theorem keeps the original contract. -/
+theorem degree_one_meromorphicMap_implies_analyticGenus_zero
+    (f : HolomorphicForms.MeromorphicMapToSphere X) (Q₂ : X)
+    (hpole : f.poleDivisor = HolomorphicForms.Divisor.point Q₂) :
+    analyticGenus ℂ X = 0 := by
+  -- Frontier: construct the pole-modulus and branched-cover data for `f`.
+  sorry
+
 /-- **Round 1 sorry-free assembly.** Combines
 `abelJacobi_image_zero_implies_principal` and
 `degree_one_meromorphicMap_implies_analyticGenus_zero`. -/
+theorem period_congruence_distinct_implies_genus_zero_with_meromorphicData
+    (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
+    (hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X)
+    (hanalytic :
+      ∀ f : HolomorphicForms.MeromorphicMapToSphere X,
+        f.poleDivisor = HolomorphicForms.Divisor.point Q₂ →
+          f.PoleModulusData ∧ f.BranchedCoverDataOfPoleDegree) :
+    analyticGenus ℂ X = 0 := by
+  obtain ⟨f, hpole⟩ :=
+    abelJacobi_image_zero_implies_principal X P Q₁ Q₂ hne hperiod
+  obtain ⟨hmod, hbranch⟩ := hanalytic f hpole
+  exact degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData X f Q₂
+    hpole hmod hbranch
+
+/-- **Round 1 public assembly.** Combines Abel existence with the public S20
+frontier theorem. -/
 theorem period_congruence_distinct_implies_genus_zero
     (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hperiod :
@@ -2140,6 +2184,23 @@ theorem period_congruence_distinct_implies_genus_zero
 /-- Sorry-free assembly: derives point-separation from
 `period_congruence_distinct_implies_genus_zero` by contradiction with
 `0 < analyticGenus ℂ X`. -/
+theorem pathIntegralFunctional_separates_points_spec_with_meromorphicData
+    (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
+    (hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X)
+    (hanalytic :
+      ∀ f : HolomorphicForms.MeromorphicMapToSphere X,
+        f.poleDivisor = HolomorphicForms.Divisor.point Q₂ →
+          f.PoleModulusData ∧ f.BranchedCoverDataOfPoleDegree) :
+    Q₁ = Q₂ := by
+  by_contra hne
+  exact absurd
+    (period_congruence_distinct_implies_genus_zero_with_meromorphicData X P Q₁ Q₂ hne
+      hperiod hanalytic)
+    (by omega)
+
+/-- Sorry-free assembly using the public genus-zero implication frontier. -/
 theorem pathIntegralFunctional_separates_points_spec
     (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
     (hperiod :
@@ -2156,6 +2217,22 @@ endpoints are equal.
 
 Top-down leaf obligation. Discharged via
 `pathIntegralFunctional_separates_points_spec`. -/
+theorem pathIntegralFunctional_separates_points_with_meromorphicData
+    (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
+    (hperiod :
+      -pathIntegralFunctional X P Q₁ + pathIntegralFunctional X P Q₂ ∈
+        basisAlignedPeriodSubgroup X)
+    (hanalytic :
+      ∀ f : HolomorphicForms.MeromorphicMapToSphere X,
+        f.poleDivisor = HolomorphicForms.Divisor.point Q₂ →
+          f.PoleModulusData ∧ f.BranchedCoverDataOfPoleDegree) :
+    Q₁ = Q₂ :=
+  pathIntegralFunctional_separates_points_spec_with_meromorphicData X P h Q₁ Q₂ hperiod
+    hanalytic
+
+/-- Abel's theorem in basis-aligned path-integral coordinates: if two
+path-integral coordinate vectors differ by a period vector, then their
+endpoints are equal. -/
 theorem pathIntegralFunctional_separates_points
     (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
     (hperiod :
@@ -2381,6 +2458,24 @@ bottom-up formalisation of Abel's theorem — which in turn requires
 substantial new Mathlib infrastructure (meromorphic functions on
 manifolds, divisor theory, degree of maps between Riemann surfaces).
 -/
+lemma analyticOfCurve_injective_with_meromorphicData (P : X) (h : 0 < analyticGenus ℂ X)
+    (hanalytic :
+      ∀ f : HolomorphicForms.MeromorphicMapToSphere X,
+        ∀ Q : X, f.poleDivisor = HolomorphicForms.Divisor.point Q →
+          f.PoleModulusData ∧ f.BranchedCoverDataOfPoleDegree) :
+    Function.Injective (analyticOfCurve X P) := by
+  intro Q₁ Q₂ heq
+  apply pathIntegralFunctional_separates_points_with_meromorphicData X P h Q₁ Q₂
+  unfold analyticOfCurve at heq
+  exact QuotientAddGroup.eq.mp heq
+  intro f hf
+  exact hanalytic f Q₂ hf
+
+/-- Abel injectivity for positive genus.
+
+This preserves the original public theorem contract. The route-data version
+`analyticOfCurve_injective_with_meromorphicData` is available for callers that
+already have the explicit meromorphic promotion data. -/
 lemma analyticOfCurve_injective (P : X) (h : 0 < analyticGenus ℂ X) :
     Function.Injective (analyticOfCurve X P) := by
   intro Q₁ Q₂ heq
