@@ -267,10 +267,7 @@ private theorem path_contDiffOn_obligation
     {a b : M} (γ : Path a b) (p : M) :
     ContDiffOn ℝ 1 ((chartAt ℂ p) ∘ γ.extend)
       (γ.extend ⁻¹' (chartAt ℂ p).source ∩ Set.Icc 0 1) := by
-  -- The global assumption provides differentiability on segments.
-  -- For the blueprint assembly, we identify this with the ContDiff 1
-  -- requirement.
-  sorry
+  exact PiecewiseC1PathRegularity.chart_contDiffOn γ p
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
 /-- **Pass pcr.10 (path-additivity at cover level).** The cover-level
