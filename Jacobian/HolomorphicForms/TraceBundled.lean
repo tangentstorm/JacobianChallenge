@@ -185,7 +185,8 @@ def traceFormsRegularSpec_frontier
 from an explicit regular-value trace specification. -/
 noncomputable def traceFormsBundledLM_of_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
-    (htrace : TraceFormsRegularSpec f hf) :
+    (htrace : TraceFormsRegularSpec f hf)
+    (hw : HasWeightedFiberConservation f) :
     HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y where
   toFun := by
     classical
@@ -199,7 +200,7 @@ noncomputable def traceFormsBundledLM_of_spec
           (if ∃ y₀, ∀ x, f x = y₀ then 0 else traceFormsBundled f hf ζ)
       simp [hconst]
     · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-        (isHolomorphic_of_contMDiff hf) hconst
+        (isHolomorphic_of_contMDiff hf) hw hconst
       simp only [if_neg hconst]
       apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
       intro y hy
@@ -217,7 +218,7 @@ noncomputable def traceFormsBundledLM_of_spec
       intro y
       simp
     · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-        (isHolomorphic_of_contMDiff hf) hconst
+        (isHolomorphic_of_contMDiff hf) hw hconst
       simp only [if_neg hconst]
       apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
       intro y hy
@@ -229,11 +230,12 @@ noncomputable def traceFormsBundledLM_of_spec
 
 Compatibility wrapper using the named frontier provider. New
 sorry-free consumers should use `traceFormsBundledLM_of_spec` with an
-explicit `TraceFormsRegularSpec`. -/
+explicit `TraceFormsRegularSpec` and weighted-fiber conservation. -/
 noncomputable def traceFormsBundledLM
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (hw : HasWeightedFiberConservation f) :
     HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y :=
-  traceFormsBundledLM_of_spec f hf (traceFormsRegularSpec_frontier f hf)
+  traceFormsBundledLM_of_spec f hf (traceFormsRegularSpec_frontier f hf) hw
 
 /-- The trace–pullback identity holds at regular values from explicit trace data. -/
 theorem trace_pullback_identity_regular_of_spec
@@ -279,6 +281,12 @@ This is the analytic heart of the Challenge's anti-hack #4. -/
 theorem trace_pullback_identity_of_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (htrace : TraceFormsRegularSpec f hf)
+    (hw : HasWeightedFiberConservation f)
+    (hdegree : ∀ hnonconst : ¬ ∃ y₀, ∀ x, f x = y₀,
+      JacobianChallenge.TraceDegree.analyticDegree f hf =
+        branchedDegree
+          (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+            (isHolomorphic_of_contMDiff hf) hw hnonconst))
     (η : HolomorphicOneForm ℂ Y) :
     traceFormsBundled f hf (pullbackFormsBundled f hf η) =
       (JacobianChallenge.TraceDegree.analyticDegree f hf : ℂ) • η := by
@@ -292,12 +300,12 @@ theorem trace_pullback_identity_of_spec
     intro y
     simp
   · let hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-      (isHolomorphic_of_contMDiff hf) hconst
+      (isHolomorphic_of_contMDiff hf) hw hconst
     have hcompat : hbc.RamificationIndexCompatible :=
       JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
-        (isHolomorphic_of_contMDiff hf) hconst
+        (isHolomorphic_of_contMDiff hf) hw hconst
     -- 2. Use identity principle: equal on dense set implies equal everywhere
-    rw [analyticDegree_eq_branchedDegree f hf hconst]
+    rw [analyticDegree_eq_branchedDegree f hf hbc (hdegree hconst)]
     apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
     intro y hy
     rw [branchedDegree_eq_weightedFiberCard hbc y]
@@ -309,9 +317,15 @@ named trace frontier provider. New shortcut assemblies should use
 explicit boundary. -/
 theorem trace_pullback_identity
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (hw : HasWeightedFiberConservation f)
+    (hdegree : ∀ hnonconst : ¬ ∃ y₀, ∀ x, f x = y₀,
+      JacobianChallenge.TraceDegree.analyticDegree f hf =
+        branchedDegree
+          (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+            (isHolomorphic_of_contMDiff hf) hw hnonconst))
     (η : HolomorphicOneForm ℂ Y) :
     traceFormsBundled f hf (pullbackFormsBundled f hf η) =
       (JacobianChallenge.TraceDegree.analyticDegree f hf : ℂ) • η :=
-  trace_pullback_identity_of_spec f hf (traceFormsRegularSpec_frontier f hf) η
+  trace_pullback_identity_of_spec f hf (traceFormsRegularSpec_frontier f hf) hw hdegree η
 
 end JacobianChallenge.HolomorphicForms

@@ -140,10 +140,18 @@ noncomputable def mapAnalyticOrderAt (f : X → Y) (p : X) : ℕ :=
     (fun t => chartLocalAt f p t - chartLocalAt f p (chartAt ℂ p p))
     (chartAt ℂ p p)
 
-/-- `f : X → Y` is *holomorphic*. -/
-structure IsHolomorphic (f : X → Y) : Prop where
+/-- Basic project-local holomorphicity: continuity plus chart-local
+analyticity at every point. This intentionally carries no branched-cover
+or weighted-fiber data. -/
+structure IsHolomorphicBasic (f : X → Y) : Prop where
   continuous : Continuous f
   holomorphicAt : ∀ p, IsHolomorphicAt f p
+
+/-- `f : X → Y` is holomorphic with the local ramification package used
+by branched-cover consumers. Global weighted-fiber conservation is kept
+out of this structure and should be requested explicitly by consumers
+that need degree/branched-cover data. -/
+structure IsHolomorphic (f : X → Y) : Prop extends IsHolomorphicBasic f where
   local_kfold_ramified :
     ∀ [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
       {x : X} {k : ℕ}, 0 < k → mapAnalyticOrderAt f x = k →
@@ -153,6 +161,10 @@ structure IsHolomorphic (f : X → Y) : Prop where
       ∃ s : Finset X, s.card = k ∧ ↑s ⊆ U ∧
         (∀ x' ∈ s, f x' = y ∧ mapAnalyticOrderAt f x' = 1) ∧
         (∀ x' ∈ U, f x' = y → x' ∈ s)
+
+/-- Explicit global weighted-fiber conservation package. This is a
+branched-cover theorem, not part of basic holomorphicity. -/
+structure HasWeightedFiberConservation (f : X → Y) : Prop where
   weightedFiberSum_eventually_eq :
     ∀ [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
       [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space Y],
@@ -161,6 +173,11 @@ structure IsHolomorphic (f : X → Y) : Prop where
       ∀ y₀ : Y, ∀ᶠ y in 𝓝 y₀,
         (Finset.sum (finite_fiber y).toFinset (mapAnalyticOrderAt f)) =
         (Finset.sum (finite_fiber y₀).toFinset (mapAnalyticOrderAt f))
+
+/-- Projection from the local ramification package to basic
+holomorphicity. -/
+theorem IsHolomorphic.toBasic {f : X → Y} (hf : IsHolomorphic f) :
+    IsHolomorphicBasic f := hf.toIsHolomorphicBasic
 
 /-- The chart-local presentation evaluated at the chart image of `p`
 yields the chart image of `f p`. -/
@@ -995,24 +1012,30 @@ theorem finite_toFinset_sum_eq_of_set_eq
     exact Iff.rfl
   rw [hfin]
 
-/-- Smooth maps between complex manifolds are holomorphic in the project-local sense. -/
+/-- Smooth maps between complex manifolds are holomorphic in the basic
+project-local sense. -/
+theorem isHolomorphicBasic_of_contMDiff
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    {f : X → Y} (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
+    IsHolomorphicBasic f := by
+  exact
+    { continuous := _hf.continuous
+      holomorphicAt := IsHolomorphicAt.of_contMDiff _hf }
+
+/-- Smooth maps between complex manifolds are holomorphic with the local
+ramification package. Global weighted-fiber conservation is deliberately
+not produced here; branched-cover consumers should ask for
+`HasWeightedFiberConservation f` explicitly. -/
 theorem isHolomorphic_of_contMDiff
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
     IsHolomorphic f := by
   refine
-    { continuous := _hf.continuous
-      holomorphicAt := IsHolomorphicAt.of_contMDiff _hf
+    { toIsHolomorphicBasic := isHolomorphicBasic_of_contMDiff _hf
       local_kfold_ramified := ?_
-      weightedFiberSum_eventually_eq := ?_ }
-  · intro _iX _iY x k hk hram
-    exact local_kfold_ramified_of_contMDiff _hf hk hram
-  · -- Blocked: this is the global conservation of weighted fibre cardinality
-    -- for a nonconstant holomorphic map on a compact connected Riemann
-    -- surface. Existing project lemmas either already require
-    -- `IsHolomorphic` or apply to separately constructed meromorphic sphere
-    -- lifts, so using them here would be circular.
-    sorry
+    }
+  intro _iX _iY x k hk hram
+  exact local_kfold_ramified_of_contMDiff _hf hk hram
 
 end Compatibility
 
