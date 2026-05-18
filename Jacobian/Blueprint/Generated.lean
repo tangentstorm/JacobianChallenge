@@ -127,19 +127,19 @@ def pbf_r3 : Prop := True
 def pbf_r4 : Prop := True
 
 /-- Generated hook for `lem:trf-r1` at `tex/sections/12-classical-analysis-gaps.tex:5041`. -/
-def trf_r1 : Prop := True
+def traceForm_on_unbranchedLocus : Prop := True
 
 /-- Generated hook for `lem:trf-r2` at `tex/sections/12-classical-analysis-gaps.tex:5048`. -/
-def trf_r2 : Prop := True
+def traceForm_extends_across_branchLocus : Prop := True
 
 /-- Generated hook for `lem:trf-r3` at `tex/sections/12-classical-analysis-gaps.tex:5055`. -/
-def trf_r3 : Prop := True
+def localTraceFormula_branchedCoordinates : Prop := True
 
 /-- Generated hook for `lem:trf-r4` at `tex/sections/12-classical-analysis-gaps.tex:5062`. -/
-def trf_r4 : Prop := True
+def newtonSymmetricFunction_reduction : Prop := True
 
 /-- Generated hook for `lem:trf-r5` at `tex/sections/12-classical-analysis-gaps.tex:5069`. -/
-def trf_r5 : Prop := True
+def symmetricPolynomial_endpoint_partial : Prop := True
 
 /-- Generated hook for `lem:rfd-r3` at `tex/sections/12-classical-analysis-gaps.tex:5095`. -/
 def rfd_r3 : Prop := True
@@ -649,16 +649,16 @@ def ctp_r8 : Prop := True
 def ctp_r10 : Prop := True
 
 /-- Generated hook for `lem:trf-r6` at `tex/sections/12-classical-analysis-gaps.tex:6658`. -/
-def trf_r6 : Prop := True
+def tracePowerSeries_symmetricFunctions : Prop := True
 
 /-- Generated hook for `lem:trf-r7` at `tex/sections/12-classical-analysis-gaps.tex:6665`. -/
-def trf_r7 : Prop := True
+def newtonIdentities_formalSeries : Prop := True
 
 /-- Generated hook for `lem:trf-r8` at `tex/sections/12-classical-analysis-gaps.tex:6672`. -/
-def trf_r8 : Prop := True
+def powerSeriesSubstitution_converges : Prop := True
 
 /-- Generated hook for `lem:trf-r10` at `tex/sections/12-classical-analysis-gaps.tex:6687`. -/
-def trf_r10 : Prop := True
+def symmetricPowerSeries_analyticEndpointPartial : Prop := True
 
 /-- Generated hook for `lem:rgb-r6` at `tex/sections/12-classical-analysis-gaps.tex:6697`. -/
 def rgb_r6 : Prop := True
@@ -1069,7 +1069,7 @@ def sgd_r10 : Prop := True
 def ctp_r14 : Prop := True
 
 /-- Generated hook for `lem:trf-r12` at `tex/sections/12-classical-analysis-gaps.tex:8260`. -/
-def trf_r12 : Prop := True
+def elementarySymmetric_powerSeries_in_baseCoordinate : Prop := True
 
 /-- Generated hook for `lem:rgb-r11` at `tex/sections/12-classical-analysis-gaps.tex:8293`. -/
 def rgb_r11 : Prop := True
@@ -1291,100 +1291,100 @@ def dfs_r7 : Prop := True
 def dfs_r10 : Prop := True
 
 /-- Generated hook for `lem:pn-r1` at `tex/sections/12-classical-analysis-gaps.tex:10238`. -/
-def pn_r1 : Prop := True
+def periodPairing_chainLevel_realisation : Prop := True
 
 /-- Generated hook for `lem:pn-r2` at `tex/sections/12-classical-analysis-gaps.tex:10257`. -/
-def pn_r2 : Prop := True
+def chainIntegral_vanishes_on_boundaries : Prop := True
 
 /-- Generated hook for `lem:pn-r3` at `tex/sections/12-classical-analysis-gaps.tex:10266`. -/
-def pn_r3 : Prop := True
+def holomorphicOneForms_closed : Prop := True
 
 /-- Generated hook for `lem:pn-r4` at `tex/sections/12-classical-analysis-gaps.tex:10274`. -/
-def pn_r4 : Prop := True
+def stokes_singularTwoSimplex : Prop := True
 
 /-- Generated hook for `lem:pn-r5` at `tex/sections/12-classical-analysis-gaps.tex:10284`. -/
-def pn_r5 : Prop := True
+def stokes_standardTwoSimplex : Prop := True
 
 /-- Generated hook for `lem:pn-r7` at `tex/sections/12-classical-analysis-gaps.tex:10302`. -/
-def pn_r7 : Prop := True
+def chainPushforward_singularHomologyFunctor : Prop := True
 
 /-- Generated hook for `lem:pn-r8` at `tex/sections/12-classical-analysis-gaps.tex:10312`. -/
-def pn_r8 : Prop := True
+def smoothPath_pushforward_comp : Prop := True
 
 /-- Generated hook for `lem:pn-r9` at `tex/sections/12-classical-analysis-gaps.tex:10322`. -/
-def pn_r9 : Prop := True
+def chainNaturality_unrolls_to_paths : Prop := True
 
 /-- Generated hook for `lem:pn-r11` at `tex/sections/12-classical-analysis-gaps.tex:10344`. -/
-def pn_r11 : Prop := True
+def chainPairing_descends_to_homology : Prop := True
 
 /-- Generated hook for `lem:pn-r12` at `tex/sections/12-classical-analysis-gaps.tex:10353`. -/
-def pn_r12 : Prop := True
+def periodPairing_agrees_on_representatives : Prop := True
 
 /-- Generated hook for `lem:pn-r13` at `tex/sections/12-classical-analysis-gaps.tex:10363`. -/
-def pn_r13 : Prop := True
+def homologyClass_has_singularCycleRepresentative : Prop := True
 
 /-- Generated hook for `lem:pn-r14` at `tex/sections/12-classical-analysis-gaps.tex:10373`. -/
-def pn_r14 : Prop := True
+def singularOneCycles_smoothApproximation : Prop := True
 
 /-- Generated hook for `lem:pn-r16` at `tex/sections/12-classical-analysis-gaps.tex:10393`. -/
-def pn_r16 : Prop := True
+def chainIntegral_linear_in_cycle : Prop := True
 
 /-- Generated hook for `lem:pn-r17` at `tex/sections/12-classical-analysis-gaps.tex:10401`. -/
-def pn_r17 : Prop := True
+def chainIntegral_linear_in_form : Prop := True
 
 /-- Generated hook for `lem:pcr-r2` at `tex/sections/12-classical-analysis-gaps.tex:10456`. -/
-def pcr_r2 : Prop := True
+def commonChartPartition_for_mappedPath : Prop := True
 
 /-- Generated hook for `lem:pcr-r3` at `tex/sections/12-classical-analysis-gaps.tex:10465`. -/
-def pcr_r3 : Prop := True
+def pathIntegral_segment_chainRule : Prop := True
 
 /-- Generated hook for `lem:pcr-r4` at `tex/sections/12-classical-analysis-gaps.tex:10473`. -/
-def pcr_r4 : Prop := True
+def chartCorrectedIntegral_chainRule : Prop := True
 
 /-- Generated hook for `lem:pcr-r5` at `tex/sections/12-classical-analysis-gaps.tex:10484`. -/
-def pcr_r5 : Prop := True
+def intervalIntegral_changeOfVariables : Prop := True
 
 /-- Generated hook for `lem:pcr-r7` at `tex/sections/12-classical-analysis-gaps.tex:10503`. -/
-def pcr_r7 : Prop := True
+def pullbackFormsFun_mfderiv_decomposition : Prop := True
 
 /-- Generated hook for `lem:pcr-r14` at `tex/sections/12-classical-analysis-gaps.tex:10574`. -/
-def pcr_r14 : Prop := True
+def coveringChart_exists_for_mappedSegment : Prop := True
 
 /-- Generated hook for `lem:pdp-r1` at `tex/sections/12-classical-analysis-gaps.tex:10771`. -/
-def pdp_r1 : Prop := True
+def pullbackMapOnJacobians_concrete : Prop := True
 
 /-- Generated hook for `lem:pdp-r2` at `tex/sections/12-classical-analysis-gaps.tex:10783`. -/
-def pdp_r2 : Prop := True
+def pullbackMap_eq_basisAnalyticPullbackBundle : Prop := True
 
 /-- Generated hook for `lem:pdp-r3` at `tex/sections/12-classical-analysis-gaps.tex:10792`. -/
-def pdp_r3 : Prop := True
+def pullbackFormsMap_basisAligned : Prop := True
 
 /-- Generated hook for `lem:pdp-r4` at `tex/sections/12-classical-analysis-gaps.tex:10802`. -/
-def pdp_r4 : Prop := True
+def basisAnalyticPullbackBundle_concrete : Prop := True
 
 /-- Generated hook for `lem:pdp-r5` at `tex/sections/12-classical-analysis-gaps.tex:10813`. -/
-def pdp_r5 : Prop := True
+def periodNaturality_for_pullbackFormsMap : Prop := True
 
 /-- Generated hook for `lem:pdp-r6` at `tex/sections/12-classical-analysis-gaps.tex:10825`. -/
-def pdp_r6 : Prop := True
+def pullbackAligned_preserves_periodLattice : Prop := True
 
 /-- Generated hook for `lem:pdp-r8` at `tex/sections/12-classical-analysis-gaps.tex:10848`. -/
-def pdp_r8 : Prop := True
+def descendedPullback_smooth : Prop := True
 
 /-- Generated hook for `lem:pdp-r9` at `tex/sections/12-classical-analysis-gaps.tex:10859`. -/
-def pdp_r9 : Prop := True
+def pullbackFormsMap_id : Prop := True
 
 /-- Generated hook for `lem:pdp-r10` at `tex/sections/12-classical-analysis-gaps.tex:10869`. -/
-def pdp_r10 : Prop := True
+def pullbackFormsMap_comp : Prop := True
 
 /-- Generated hook for `lem:pdp-r13` at `tex/sections/12-classical-analysis-gaps.tex:10897`. -/
-def pdp_r13 : Prop := True
+def pullbackDescent_independent_of_basis : Prop := True
 
 /-- Generated hook for `lem:pdp-r15` at `tex/sections/12-classical-analysis-gaps.tex:10917`. -/
-def pdp_r15 : Prop := True
+def opaqueValue_uniqueness_bridge : Prop := True
 
 /-- Generated hook for `lem:pdp-r16` at `tex/sections/12-classical-analysis-gaps.tex:10929`. -/
-def pdp_r16 : Prop := True
+def classicalChoice_irrelevant_for_bridge : Prop := True
 
 /-- Generated hook for `lem:impl-orphans-aggregate` at `tex/sections/15-implementation-details.tex:34`. -/
 def impl_orphans_aggregate : Prop := True
