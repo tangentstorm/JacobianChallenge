@@ -125,33 +125,44 @@ theorem exists_sobolev_hilbert_structure.{u, v} (X : Type u) [TopologicalSpace X
 A weak solution (minimizer) of the Dirichlet problem for smooth trial functions
 is actually a smooth (and thus harmonic in the classical sense) function.
 
-BLOCKER (2026-05-15, Task 1364): the conclusion type `ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℝ, ℝ) ⊤ u`
-is ill-typed in Mathlib v4.28.0. `Mathlib.Geometry.Manifold.ContMDiff.Defs`
-unifies a single scalar field `𝕜` across both the source and target models:
+BLOCKER (2026-05-18, Task 1364): the conclusion
+`ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ (fun x => (u x : ℂ))` is *well-typed* but
+**mathematically degenerate** — it is false for every non-locally-constant
+harmonic `u`, so the hypothesis `IsHarmonic g u` cannot prove it.
 
-```
-variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
-  {I : ModelWithCorners 𝕜 E H} {I' : ModelWithCorners 𝕜 E' H'}
-```
+In Mathlib v4.28.0, `(⊤ : WithTop ℕ∞)` denotes `ω`
+(`Mathlib/Analysis/Calculus/ContDiff/FTaylorSeries.lean:112`:
+`scoped[ContDiff] notation3 "ω" => (⊤ : WithTop ℕ∞)`), and
+`ContDiff 𝕜 ω f` unfolds to `AnalyticOnNhd 𝕜 (… Taylor series …) univ`
+(`Mathlib/Analysis/Calculus/ContDiff/Defs.lean:1037-1040`). With both
+models taken as `𝓘(ℂ, ℂ) = modelWithCornersSelf ℂ ℂ`, the chart-local
+predicate is therefore `AnalyticAt ℂ` of a function `ℂ → ℂ`, i.e.
+holomorphy.
 
-However `𝓘(ℂ, ℂ) : ModelWithCorners ℂ ℂ ℂ` forces `𝕜 = ℂ` while
-`𝓘(ℝ, ℝ) : ModelWithCorners ℝ ℝ ℝ` forces `𝕜 = ℝ`; the two are
-not unifiable, so the application `ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℝ, ℝ) ⊤ u`
-fails elaboration with an `Application type mismatch`.
+The function `(fun x => (u x : ℂ))` is the ℝ→ℂ coercion of a real-valued
+function, so its image lies in `ℝ ⊂ ℂ`. Its chart-local presentation
+`fun z => ((u ((chartAt ℂ p).symm z)) : ℂ)` is a ℂ-valued function with
+zero imaginary part. A holomorphic ℂ → ℂ function with identically zero
+imaginary part is locally constant by the Cauchy–Riemann equations
+(equivalently, by the open-mapping theorem). Hence
+`ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ (fun x => (u x : ℂ))` is **equivalent to
+`u` being locally constant on every chart**.
 
-The standard Mathlib pattern for "real smooth function on a complex
-manifold" replaces the source model with the ℝ-restriction of the
-complex chart codomain — i.e. `𝓘(ℝ, ℂ)` — so that both models share
-`𝕜 = ℝ`. Discharging this sorry requires the project to change the
-statement to a well-typed form (e.g. `ContMDiff 𝓘(ℝ, ℂ) 𝓘(ℝ, ℝ) ⊤ u`),
-which is outside the allowed write scope for this task
-(`Jacobian/HolomorphicForms/HarmonicFunctions.lean` only, with the
-theorem statement frozen).
+`IsHarmonic g u` (defined just above as "locally the real part of a
+function holomorphic at the point") is satisfied by genuinely non-constant
+harmonic functions — e.g. `u(x) = (chartAt ℂ p x).re`, witnessed by
+`f_holo(x) = chartAt ℂ p x`, which is holomorphic at `p` via the trivial
+chart on `ℂ` but whose real part is *not* locally constant. So the
+hypothesis is strictly weaker than the conclusion, and no proof can exist.
 
-Additionally, the upstream module `Jacobian/HolomorphicForms/Isothermal.lean`
-currently fails to elaborate (an existential uses `λ` as a bound name,
-which clashes with lambda syntax in v4.28.0), so the file cannot be built
-even if the signature were repaired. -/
+The semantically correct statement would replace the conclusion with
+real (not complex) smoothness, e.g.
+`ContMDiff (𝓘(ℝ, ℂ).{ContMDiff.complexRealRestrict}) 𝓘(ℝ, ℝ) ⊤ u`
+or `ContMDiff (𝓘(ℝ, ℂ)) (𝓘(ℝ, ℝ)) ∞ u` (where `∞ = (⊤ : ℕ∞)` is C∞,
+not ω). Both of these require modifying the theorem signature and adding
+a `ChartedSpace ℂ X → ChartedSpace ℂ X` viewing X as an ℝ-manifold, which
+is outside the allowed write scope for this task. Per the anti-cheat
+clause, refusing to supply a degenerate proof. -/
 theorem elliptic_regularity_harmonic (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (u : X → ℝ) (hweak : IsHarmonic g u) :
     ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ (fun x => (u x : ℂ)) := by
