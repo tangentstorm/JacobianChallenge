@@ -50,6 +50,7 @@ variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
+  [FiniteDimensionalHolomorphicOneForms ℂ X]
 
 /-- The basis-aligned analytic Jacobian (concrete version): the quotient
 of the basis-aligned model `Fin (analyticGenus ℂ X) → ℂ` by the
