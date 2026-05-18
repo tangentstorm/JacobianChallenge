@@ -1,6 +1,39 @@
 import Mathlib.Geometry.Manifold.Complex
+import Mathlib.Topology.Algebra.Module.PerfectSpace
+
+open scoped Topology
 
 namespace JacobianChallenge.HolomorphicForms
+
+lemma punctured_nhds_neBot_of_chartedSpaceComplex
+    {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X] (p : X) :
+    (𝓝[≠] p).NeBot := by
+  by_contra hbot
+  have hsingleton_open_X : IsOpen ({p} : Set X) :=
+    (isOpen_singleton_iff_punctured_nhds p).mpr (Filter.not_neBot.mp hbot)
+  let φ := chartAt ℂ p
+  have hp_src : p ∈ φ.source := mem_chart_source ℂ p
+  have hsubset : ({p} : Set X) ⊆ φ.source := by
+    intro x hx
+    simpa [Set.mem_singleton_iff.mp hx] using hp_src
+  have hopen_image : IsOpen (φ '' ({p} : Set X)) :=
+    φ.isOpen_image_of_subset_source hsingleton_open_X hsubset
+  have himage : φ '' ({p} : Set X) = ({φ p} : Set ℂ) := by
+    ext z
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      rw [Set.mem_singleton_iff.mp hx]
+      simp
+    · intro hz
+      refine ⟨p, by simp, ?_⟩
+      exact (Set.mem_singleton_iff.mp hz).symm
+  have hsingleton_open : IsOpen ({φ p} : Set ℂ) := by
+    simpa [himage] using hopen_image
+  have hpunctured_bot :
+      𝓝[≠] (φ p) = ⊥ :=
+    (isOpen_singleton_iff_punctured_nhds (φ p)).mp hsingleton_open
+  haveI : (𝓝[≠] (φ p)).NeBot := PerfectSpace.not_isolated (φ p)
+  exact (Filter.NeBot.ne (f := 𝓝[≠] (φ p)) inferInstance) hpunctured_bot
 
 lemma exists_two_distinct_points_of_chartedSpaceComplex
     {X : Type*} [TopologicalSpace X] [Nonempty X] [ChartedSpace ℂ X] :
