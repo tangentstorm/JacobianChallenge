@@ -29,6 +29,23 @@ noncomputable def genus (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpa
     [JacobianChallenge.Periods.StableChartAt ℂ X] : ℕ :=
   JacobianChallenge.HolomorphicForms.analyticGenus ℂ X
 
+/-- Genus-zero classification along the meromorphic degree-one route, conditional
+on the analytic data that promotes the fixed-pole Riemann-Roch map to a
+degree-one branched cover. -/
+lemma genus_eq_zero_with_routeData_homeo {X : Type*} [TopologicalSpace X] [T2Space X]
+    [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (h : genus X = 0)
+    (hmod :
+      (JacobianChallenge.HolomorphicForms.simplePoleMeromorphicMapOfGenusZero X
+        (by simpa [genus] using h)).meromorphicMap.PoleModulusData)
+    (hbranch :
+      (JacobianChallenge.HolomorphicForms.simplePoleMeromorphicMapOfGenusZero X
+        (by simpa [genus] using h)).meromorphicMap.BranchedCoverDataOfPoleDegree) :
+    Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :=
+  JacobianChallenge.HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData X
+    (by simpa [genus] using h) hmod hbranch
+
 /-- Genus zero classification. -/
 lemma genus_eq_zero_iff_homeo {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
@@ -49,6 +66,17 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Connecte
   [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X] [JacobianChallenge.Periods.StableChartAt ℂ X]
 
 noncomputable def genus := JacobianChallenge.Solution.genus (X := X)
+
+lemma genus_eq_zero_with_routeData_homeo
+    (h : genus (X := X) = 0)
+    (hmod :
+      (JacobianChallenge.HolomorphicForms.simplePoleMeromorphicMapOfGenusZero X
+        (by simpa [genus] using h)).meromorphicMap.PoleModulusData)
+    (hbranch :
+      (JacobianChallenge.HolomorphicForms.simplePoleMeromorphicMapOfGenusZero X
+        (by simpa [genus] using h)).meromorphicMap.BranchedCoverDataOfPoleDegree) :
+    Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :=
+  JacobianChallenge.Solution.genus_eq_zero_with_routeData_homeo (X := X) h hmod hbranch
 
 lemma genus_eq_zero_iff_homeo :
     genus (X := X) = 0 ↔ Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :=
@@ -88,8 +116,20 @@ lemma ofCurve_self (P : X₀) : ofCurve P P = 0 := by
   show ULift.up (JacobianChallenge.AbelJacobi.analyticOfCurve X₀ P P) = 0
   rw [JacobianChallenge.AbelJacobi.analyticOfCurve_self]; rfl
 
+lemma ofCurve_inj_with_meromorphicData (P : X₀) (h : 0 < genus (X := X₀))
+    (hanalytic :
+      ∀ f : JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere X₀,
+        ∀ Q : X₀, f.poleDivisor = JacobianChallenge.HolomorphicForms.Divisor.point Q →
+          f.PoleModulusData ∧ f.BranchedCoverDataOfPoleDegree) :
+    Function.Injective (ofCurve P) := by
+  intro a b hab
+  apply JacobianChallenge.AbelJacobi.analyticOfCurve_injective_with_meromorphicData X₀ P
+    (by simpa [genus] using h) hanalytic
+  exact ULift.up_injective hab
+
 lemma ofCurve_inj (P : X₀) (h : 0 < genus (X := X₀)) : Function.Injective (ofCurve P) := by
-  intro a b hab; apply JacobianChallenge.AbelJacobi.analyticOfCurve_injective X₀ P (by simpa [genus] using h)
+  intro a b hab
+  apply JacobianChallenge.AbelJacobi.analyticOfCurve_injective X₀ P (by simpa [genus] using h)
   exact ULift.up_injective hab
 
 variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]

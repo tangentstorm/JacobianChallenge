@@ -116,93 +116,38 @@ private theorem singlePoleLocalLift_continuousWithinAt_compl
     rw [show singlePoleLocalLift Q x = 0 by simp [singlePoleLocalLift, hxsrc]]
     exact continuousWithinAt_const.congr' hzero_within
 
-/-! ### BranchedCoverData construction helpers
+/-! ### Honest prescribed-pole data versus scaffold maps
 
-The previous shared obligation `honestMeromorphic_branchedCoverData_obligation`
-was universally quantified over *all* continuous `f : X → OnePoint ℂ` and *all*
-divisors `D`, making it **mathematically false** (e.g. a constant map on an
-infinite space cannot have finite fibers, and the degree cannot be made to match
-an arbitrary divisor).
+The displayed maps below are local scaffolding: `singlePoleSphereLift` is cut
+off by a bump function and the two-pole map is an indicator-style function.
+Neither displayed map can honestly support finite-fiber, weighted-fiber
+constancy, or local-bijectivity statements.  In particular, their `0`-fibers
+can be large and they are locally constant on nontrivial regions.
 
-We replace it with **specific constructions** for each meromorphic map, where
-the hard analytical sub-obligations (finite fibers, degree constancy,
-local bijectivity) are isolated as individual `sorry` targets that can be
-discharged independently once the required analytic machinery is in place. -/
+The downstream mathematical API should consume one of the bundled data records
+below when it needs the analytic content of an honest meromorphic map with
+prescribed pole divisor. -/
 
-/-- Finite fibers for `singlePoleSphereLift Q`, assuming continuity.
-A continuous map from a compact Riemann surface with a single simple pole
-has degree 1, hence every fiber is finite (in fact a singleton). -/
-lemma singlePoleSphereLift_finite_fiber (Q : X)
-    (hcont : Continuous (singlePoleSphereLift Q)) :
-    ∀ y : OnePoint ℂ, (singlePoleSphereLift Q ⁻¹' {y}).Finite := by
-  -- Blocked: the current concrete lift is cut off by `cMfldBump` and is
-  -- explicitly `0` off the chosen chart source.  Continuity alone does not
-  -- imply finite fibres, and the `0`-fibre can contain a large off-chart
-  -- region.  This needs an honest global meromorphic one-pole map, not the
-  -- present bump-cutoff surrogate.
-  sorry
+/-- Bundled data for an honest meromorphic map with one prescribed simple
+pole.  The cutoff formula `singlePoleSphereLift` is not used to prove these
+fields; future constructors should fill this record from Riemann-Roch or a
+global meromorphic-function construction. -/
+structure SinglePoleMeromorphicMapData (Q : X) where
+  map : MeromorphicMapToSphere X
+  poleDivisor_eq : map.poles = Divisor.point Q
+  nonconstant : map.Nonconstant
+  poleModulusData : map.PoleModulusData
+  branchedCoverDataOfPoleDegree : map.BranchedCoverDataOfPoleDegree
 
-/-- The weighted fiber count of `singlePoleSphereLift Q` is constant across
-all fibers, equal to 1 (the degree of a single simple pole). -/
-lemma singlePoleSphereLift_fiberSum_const (Q : X)
-    (hcont : Continuous (singlePoleSphereLift Q))
-    (hfin : ∀ y : OnePoint ℂ, (singlePoleSphereLift Q ⁻¹' {y}).Finite) :
-    ∀ y₁ y₂ : OnePoint ℂ,
-      (hfin y₁).toFinset.sum (fun _ => 1) = (hfin y₂).toFinset.sum (fun _ => 1) := by
-  -- Blocked with `singlePoleSphereLift_finite_fiber`: the desired degree-one
-  -- fibre count belongs to a genuine meromorphic map with one simple pole,
-  -- while the current cutoff model has an artificial `0`-fibre.
-  sorry
-
-/-- Local bijectivity of `singlePoleSphereLift Q` at every point
-(since ramification index is uniformly 1 for a simple-pole map). -/
-lemma singlePoleSphereLift_local_bijective (Q : X)
-    (hcont : Continuous (singlePoleSphereLift Q)) :
-    ∀ x : X, (fun (_ : X) => (1 : ℕ)) x = 1 →
-      ∃ U : Set X, ∃ V : Set (OnePoint ℂ),
-        IsOpen U ∧ IsOpen V ∧ x ∈ U ∧ singlePoleSphereLift Q x ∈ V ∧
-          Set.BijOn (singlePoleSphereLift Q) U V := by
-  -- Blocked: local bijectivity is false at points in any open region where
-  -- the cutoff presentation is locally constant `0`.  A proof requires a
-  -- non-cutoff meromorphic local normal form around every nonramified point.
-  sorry
-
-/-- The branched degree of `singlePoleSphereLift Q` equals 1 =
-`(Divisor.point Q).degree.toNat`. -/
-lemma singlePoleSphereLift_branchedDegree_eq (Q : X)
-    (h : BranchedCoverData X (OnePoint ℂ) (singlePoleSphereLift Q)) :
-    branchedDegree h = (Divisor.point Q).degree.toNat := by
-  -- Blocked: this should follow from a branched-cover datum for an honest
-  -- degree-one meromorphic map.  For the current cutoff map, the preceding
-  -- finite-fibre and local-bijection fields are not available honestly.
-  sorry
-
-/-- Construct `BranchedCoverData` for `singlePoleSphereLift Q`.
-A meromorphic function with a single simple pole has degree 1, so every
-fiber is a singleton with ramification index 1. -/
-noncomputable def singlePoleSphereLift_branchedCoverData (Q : X)
-    (hcont : Continuous (singlePoleSphereLift Q)) :
-    BranchedCoverData X (OnePoint ℂ) (singlePoleSphereLift Q) where
-  ramificationIndex := fun _ => 1
-  ramificationIndex_pos := fun _ => Nat.one_pos
-  finite_fiber := singlePoleSphereLift_finite_fiber Q hcont
-  fiberSum_const := singlePoleSphereLift_fiberSum_const Q hcont
-    (singlePoleSphereLift_finite_fiber Q hcont)
-  ramified_finite := by
-    convert Set.finite_empty
-    ext x; simp
-  local_bijective_unramified := singlePoleSphereLift_local_bijective Q hcont
-
-/-- The `hasBranchedCoverDataOfPoleDegree` obligation for `singlePoleMeromorphicMap`:
-given continuity, produce a `BranchedCoverData` whose `branchedDegree` equals
-`(Divisor.point Q).degree.toNat = 1`. -/
-lemma singlePole_hasBranchedCoverDataOfPoleDegree (Q : X) :
-    Continuous (singlePoleSphereLift Q) →
-    ∃ (h : BranchedCoverData X (OnePoint ℂ) (singlePoleSphereLift Q)),
-      branchedDegree h = (Divisor.point Q).degree.toNat := by
-  intro hcont
-  exact ⟨singlePoleSphereLift_branchedCoverData Q hcont,
-         singlePoleSphereLift_branchedDegree_eq Q _⟩
+/-- Bundled data for an honest meromorphic map with two prescribed simple
+poles.  This replaces the former false branched-cover claims about the
+two-valued indicator placeholder. -/
+structure TwoPointMeromorphicMapData (Q1 Q2 : X) where
+  map : MeromorphicMapToSphere X
+  poleDivisor_eq : map.poles = Divisor.point Q1 + Divisor.point Q2
+  nonconstant : map.Nonconstant
+  poleModulusData : map.PoleModulusData
+  branchedCoverDataOfPoleDegree : map.BranchedCoverDataOfPoleDegree
 
 /-- A meromorphic map with a single simple pole at Q. -/
 noncomputable def singlePoleMeromorphicMap (Q : X) : MeromorphicMapToSphere X :=
@@ -273,55 +218,9 @@ noncomputable def singlePoleMeromorphicMap (Q : X) : MeromorphicMapToSphere X :=
         exact (lt_irrefl _) hx
       unfold singlePoleSphereLift
       rw [if_pos heq]
-    exists_modulus_atTop_at_pole := fun P hP => by
-      have hPQ : P = Q := by
-        by_contra hne
-        rw [Divisor.point_apply_ne hne] at hP
-        exact (lt_irrefl _ hP)
-      subst P
-      refine ⟨singlePoleLocalLift Q, ?_, ?_⟩
-      · intro x hx
-        have hx_ne : x ≠ Q := by
-          intro h
-          rw [h, Divisor.point_apply_self] at hx
-          exact zero_ne_one hx.symm
-        unfold singlePoleSphereLift singlePoleLocalLift
-        by_cases hxsrc : x ∈ (chartAt ℂ Q).source
-        · simp [hx_ne, hxsrc]
-        · simp [hx_ne, hxsrc]
-      · let φ := chartAt ℂ Q
-        have hφ₀ : Filter.Tendsto (fun x : X => φ x - φ Q)
-            (nhdsWithin Q {Q}ᶜ) (nhds (0 : ℂ)) := by
-          have hφ : Filter.Tendsto (fun x : X => φ x) (nhds Q) (nhds (φ Q)) :=
-            φ.continuousAt (mem_chart_source ℂ Q)
-          have hc : Filter.Tendsto (fun _ : X => φ Q) (nhds Q) (nhds (φ Q)) :=
-            tendsto_const_nhds
-          simpa using (hφ.sub hc).mono_left nhdsWithin_le_nhds
-        have hφ_ne : ∀ᶠ x in nhdsWithin Q {Q}ᶜ, φ x - φ Q ≠ 0 := by
-          have hsrc : ∀ᶠ x in nhdsWithin Q {Q}ᶜ, x ∈ φ.source :=
-            mem_nhdsWithin_of_mem_nhds (φ.open_source.mem_nhds (mem_chart_source ℂ Q))
-          have hne : ∀ᶠ x in nhdsWithin Q {Q}ᶜ, x ≠ Q :=
-            eventually_nhdsWithin_of_forall (by intro x hx; exact hx)
-          filter_upwards [hsrc, hne] with x hxsrc hxne hzero
-          apply hxne
-          exact φ.injOn hxsrc (mem_chart_source ℂ Q) (sub_eq_zero.mp hzero)
-        have hrecip : Filter.Tendsto (fun x : X => ‖(φ x - φ Q)⁻¹‖)
-            (nhdsWithin Q {Q}ᶜ) Filter.atTop := by
-          exact tendsto_norm_inv_nhdsNE_zero_atTop.comp
-            (tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
-              (fun x : X => φ x - φ Q) hφ₀ hφ_ne)
-        rcases cMfldBump_eq_one_near Q with ⟨U, hUopen, hQU, hU⟩
-        have hsrc : ∀ᶠ x in nhdsWithin Q {Q}ᶜ, x ∈ φ.source :=
-          mem_nhdsWithin_of_mem_nhds (φ.open_source.mem_nhds (mem_chart_source ℂ Q))
-        have hne : ∀ᶠ x in nhdsWithin Q {Q}ᶜ, x ≠ Q :=
-          eventually_nhdsWithin_of_forall (by intro x hx; exact hx)
-        have hUevent : ∀ᶠ x in nhdsWithin Q {Q}ᶜ, x ∈ U :=
-          mem_nhdsWithin_of_mem_nhds (hUopen.mem_nhds hQU)
-        refine hrecip.congr' ?_
-        filter_upwards [hsrc, hne, hUevent] with x hxsrc hxne hxU
-        simp [singlePoleLocalLift, φ, hxsrc, hxne, hU x hxU, div_eq_mul_inv]
-    hasBranchedCoverDataOfPoleDegree := singlePole_hasBranchedCoverDataOfPoleDegree Q }
+  }
 
+omit [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /-- A single-pole map is non-constant. -/
 theorem singlePoleMeromorphicMap_nonconstant (Q : X) [Nontrivial X] :
     (singlePoleMeromorphicMap Q).Nonconstant := by
@@ -337,57 +236,9 @@ theorem singlePoleMeromorphicMap_nonconstant (Q : X) [Nontrivial X] :
   · exact OnePoint.coe_ne_infty _ h2
   · exact OnePoint.coe_ne_infty _ h2
 
-/-! ### Two-pole BranchedCoverData construction -/
-
-/-- Finite fibers for the two-pole map, assuming continuity. -/
-lemma twoPole_finite_fiber (Q1 Q2 : X) (hne : Q1 ≠ Q2)
-    (f := fun x : X => if x = Q1 ∨ x = Q2 then
-      (OnePoint.infty : OnePoint ℂ) else ((0 : ℂ) : OnePoint ℂ))
-    (hcont : Continuous f) :
-    ∀ y : OnePoint ℂ, (f ⁻¹' {y}).Finite := by
-  -- Blocked: this statement is false for the displayed map on any infinite
-  -- source, since the `0`-fibre is the complement of the two marked points.
-  -- Continuity of this indicator-style map cannot provide finite fibres.
-  sorry
-
-/-- The weighted fiber count of the two-pole map is constant across all fibers. -/
-lemma twoPole_fiberSum_const (Q1 Q2 : X) (hne : Q1 ≠ Q2)
-    (f := fun x : X => if x = Q1 ∨ x = Q2 then
-      (OnePoint.infty : OnePoint ℂ) else ((0 : ℂ) : OnePoint ℂ))
-    (hcont : Continuous f)
-    (hfin : ∀ y : OnePoint ℂ, (f ⁻¹' {y}).Finite) :
-    ∀ y₁ y₂ : OnePoint ℂ,
-      (hfin y₁).toFinset.sum (fun _ => 1) = (hfin y₂).toFinset.sum (fun _ => 1) := by
-  -- Blocked with `twoPole_finite_fiber`: the finite fibre hypothesis is not
-  -- honestly obtainable for the current two-valued placeholder map.
-  sorry
-
-/-- Local bijectivity of the two-pole map at unramified points. -/
-lemma twoPole_local_bijective (Q1 Q2 : X) (hne : Q1 ≠ Q2)
-    (f := fun x : X => if x = Q1 ∨ x = Q2 then
-      (OnePoint.infty : OnePoint ℂ) else ((0 : ℂ) : OnePoint ℂ))
-    (hcont : Continuous f) :
-    ∀ x : X, (fun (_ : X) => (1 : ℕ)) x = 1 →
-      ∃ U : Set X, ∃ V : Set (OnePoint ℂ),
-        IsOpen U ∧ IsOpen V ∧ x ∈ U ∧ f x ∈ V ∧ Set.BijOn f U V := by
-  -- Blocked: away from the two marked points the displayed map is locally
-  -- constant `0`, so it cannot be locally bijective on nontrivial
-  -- neighborhoods.  This needs an actual two-pole meromorphic function.
-  sorry
-
-/-- The `hasBranchedCoverDataOfPoleDegree` obligation for `twoPointMeromorphicMap`. -/
-lemma twoPole_hasBranchedCoverDataOfPoleDegree (Q1 Q2 : X) (hne : Q1 ≠ Q2)
-    (f := fun x : X => if x = Q1 ∨ x = Q2 then
-      (OnePoint.infty : OnePoint ℂ) else ((0 : ℂ) : OnePoint ℂ)) :
-    Continuous f →
-    ∃ (h : BranchedCoverData X (OnePoint ℂ) f),
-      branchedDegree h = (Divisor.point Q1 + Divisor.point Q2).degree.toNat := by
-  -- Blocked: the current two-valued placeholder map cannot support the
-  -- finite-fibre or local-bijection fields required by `BranchedCoverData`.
-  sorry
-
 /-- A meromorphic map with two simple poles at Q1 and Q2. -/
-noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (hne : Q1 ≠ Q2) : MeromorphicMapToSphere X :=
+noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (_hne : Q1 ≠ Q2) :
+    MeromorphicMapToSphere X :=
   { toMap := fun x => if x = Q1 ∨ x = Q2 then OnePoint.infty else ((0 : ℂ) : OnePoint ℂ)
     locally_meromorphic := True
     zeroDivisor := 0
@@ -446,14 +297,9 @@ noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (hne : Q1 ≠ Q2) : Meromor
         rw [hzero] at hx'
         exact lt_irrefl _ hx'
       rw [if_pos heq]
-    exists_modulus_atTop_at_pole := fun _ _ => by
-      -- Blocked: the displayed two-pole placeholder is finite and equal to
-      -- `0` on every punctured neighborhood away from the pole point itself,
-      -- so no finite lift can have norm tending to `atTop`.  The constructor
-      -- needs a genuine two-pole meromorphic map.
-      sorry
-    hasBranchedCoverDataOfPoleDegree := twoPole_hasBranchedCoverDataOfPoleDegree Q1 Q2 hne }
+  }
 
+omit [T2Space X] [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /-- A two-pole map is non-constant. -/
 theorem twoPointMeromorphicMap_nonconstant [Nonempty X] (Q1 Q2 : X) (hne : Q1 ≠ Q2) :
     (twoPointMeromorphicMap Q1 Q2 hne).Nonconstant := by
