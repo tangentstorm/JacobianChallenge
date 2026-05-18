@@ -43,6 +43,11 @@ theorem wordQuotient_homeomorph_of_rotate
     {g : ℕ} (w : EdgeWord g) (k : ℕ) :
     Nonempty (EdgeWord.wordQuotient g w ≃ₜ
               EdgeWord.wordQuotient g (w.rotate k)) := by
+  -- Blocked: the honest proof must construct the quotient map induced by a
+  -- rotation of `DiskC`, prove the boundary parametrisation identity sending
+  -- side `i` for `w` to the corresponding side of `w.rotate k`, and then
+  -- descend that map through `Quotient.map'`.  The needed arithmetic bridge
+  -- is a modular `boundaryParam'` rotation lemma, not currently available.
   sorry
 
 /-- Rotating the tail of a handle-prefixed word preserves the quotient. -/
@@ -52,6 +57,10 @@ theorem handlePrefix_tailRotate_homeomorph
                 ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u) ≃ₜ
               EdgeWord.wordQuotient g
                 ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u.rotate m)) := by
+  -- Blocked beyond whole-word rotation: this needs a piecewise disk
+  -- homeomorphism fixing the four handle sides while rotating only the tail
+  -- boundary arcs, plus a proof that it respects the generated side-pairing
+  -- relation.  A global disk rotation does not preserve the fixed prefix.
   sorry
 
 /-! ### Assembly -/
