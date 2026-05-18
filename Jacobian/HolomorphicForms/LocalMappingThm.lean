@@ -85,10 +85,10 @@ theorem local_biholo_ball {φ : ℂ → ℂ} {z₀ : ℂ}
       (∀ t ∈ Metric.ball z₀ r, deriv φ t ≠ 0) ∧
       (∀ t ∈ Metric.ball z₀ r, deriv φ t ≠ 0 →
         analyticOrderNatAt (fun s => φ s - φ t) t = 1) := by
-  obtain ⟨r, hr⟩ : ∃ r > 0, InjOn φ (Metric.ball z₀ r) ∧
+  obtain ⟨r, hr⟩ : ∃ r > 0, Set.InjOn φ (Metric.ball z₀ r) ∧
       (∀ t ∈ Metric.ball z₀ r, AnalyticAt ℂ φ t) ∧
       (∀ t ∈ Metric.ball z₀ r, deriv φ t ≠ 0) := by
-    have h_inj : ∃ r > 0, InjOn φ (Metric.ball z₀ r) := by
+    have h_inj : ∃ r > 0, Set.InjOn φ (Metric.ball z₀ r) := by
       have h_inj : ∃ r > 0, ∀ x ∈ Metric.ball z₀ r, ∀ y ∈ Metric.ball z₀ r,
           φ x = φ y → x = y := by
         have h_deriv_ne_zero : HasStrictDerivAt φ (deriv φ z₀) z₀ := by
