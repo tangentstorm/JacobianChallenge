@@ -7,8 +7,9 @@ import Mathlib.Topology.UniformSpace.UniformConvergenceTopology
 # Reconnaissance: topology on `ContMDiffSection` for the Riemann-Roch route
 
 This is a recon stub for the next-up Mathlib infrastructure piece flagged
-by Aristotle's `compactRiemannSurface_finiteDimensionalHolomorphicOneForms`
-survey (in `CompactRiemannSurface.lean`):
+by Aristotle's compact-Riemann-surface finite-dimensionality survey
+(now exposed as `_of_montel` plus a named `_frontier` wrapper in
+`CompactRiemannSurface.lean`):
 
 > Step (a): Define the topology of uniform convergence on compact sets
 > for `ContMDiffSection`, and upgrade it to a Banach space structure
@@ -21,9 +22,10 @@ strategy-documentation. It contains no production declarations and is
 not re-exported by any umbrella.
 
 The eventual goal is to discharge
-`compactRiemannSurface_finiteDimensionalHolomorphicOneForms` via Riesz's
-theorem on the function space of holomorphic 1-forms (a.k.a. holomorphic
-sections of the cotangent bundle) on a compact connected Riemann surface.
+`compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel`
+via Riesz's theorem on the function space of holomorphic 1-forms
+(a.k.a. holomorphic sections of the cotangent bundle) on a compact
+connected Riemann surface.
 
 ## What Aristotle should fill in
 

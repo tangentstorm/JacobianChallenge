@@ -221,10 +221,9 @@ theorem singularH1_rank_eq_two_analyticGenus_via_dimC
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Module.finrank ℤ (IntegralOneCycle X) = 2 * analyticGenus ℂ X := by
-  haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
-    compactRiemannSurface_finiteDimensionalHolomorphicOneForms X
   exact (JacobianChallenge.HolomorphicForms.two_analyticGenus_eq_finrank_intH1 X).symm
 
 /-- **Round 55 / Stage B leaf (Hodge decomposition reassembly).** -/
@@ -232,7 +231,8 @@ theorem hodge_decomposition_singularH1_rank
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Module.finrank ℤ (IntegralOneCycle X) = 2 * analyticGenus ℂ X :=
   singularH1_rank_eq_two_analyticGenus_via_dimC X
 
@@ -247,7 +247,8 @@ theorem hodge_deRham_rank_eq_via_classical_route
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
     2 * analyticGenus ℂ X = Module.finrank ℤ (IntegralOneCycle X) :=
   (hodge_decomposition_singularH1_rank X).symm
 
