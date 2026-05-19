@@ -16,6 +16,8 @@ a branched cover `f : X → Y`.
 
 namespace JacobianChallenge.HolomorphicForms
 
+set_option linter.unusedSectionVars false
+
 open scoped Manifold Topology BigOperators Classical
 open Set Filter
 
