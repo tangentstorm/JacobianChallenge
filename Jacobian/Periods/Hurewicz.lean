@@ -143,6 +143,249 @@ by
   obtain ⟨twoCell⟩ := polygon4g_cellular_singular_two_cell_data g C _h_boundary
   exact ⟨{ zeroCell, oneCells, twoCell }⟩
 
+/-- The cellular zero-chain module for the standard polygon model:
+free rank one on the unique vertex. -/
+abbrev Polygon4gCellularC0 (_g : ℕ) : Type :=
+  Unit → ℤ
+
+/-- The cellular two-chain module for the standard polygon model:
+free rank one on the unique two-cell. -/
+abbrev Polygon4gCellularC2 (_g : ℕ) : Type :=
+  Unit → ℤ
+
+instance polygon4gCellularC0_addCommGroup (g : ℕ) :
+    AddCommGroup (Polygon4gCellularC0 g) := by
+  unfold Polygon4gCellularC0
+  infer_instance
+
+instance polygon4gCellularC0_module (g : ℕ) :
+    Module ℤ (Polygon4gCellularC0 g) := by
+  unfold Polygon4gCellularC0
+  infer_instance
+
+instance polygon4gCellularC2_addCommGroup (g : ℕ) :
+    AddCommGroup (Polygon4gCellularC2 g) := by
+  unfold Polygon4gCellularC2
+  infer_instance
+
+instance polygon4gCellularC2_module (g : ℕ) :
+    Module ℤ (Polygon4gCellularC2 g) := by
+  unfold Polygon4gCellularC2
+  infer_instance
+
+/-- The unique cellular zero-cell generator. -/
+def polygon4gCellularC0Vertex {g : ℕ} : Polygon4gCellularC0 g :=
+  fun _ => 1
+
+/-- The unique cellular two-cell generator. -/
+def polygon4gCellularC2Face {g : ℕ} : Polygon4gCellularC2 g :=
+  fun _ => 1
+
+/-- Project-side singular zero-chains on `Polygon4g g`: finitely
+supported integral sums of points. -/
+abbrev Polygon4gSingularC0 (g : ℕ) : Type :=
+  Polygon4g g →₀ ℤ
+
+/-- Project-side singular one-chains for the polygon comparison, wrapped
+around the coefficients of the recorded edge paths.  The wrapper prevents
+the associated-graded comparison from reducing to a reflexive equivalence
+between aliases. -/
+structure Polygon4gSingularC1
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_D : Polygon4gCellularSingularComparisonData g C) where
+  coeff : Fin (2 * g) → ℤ
+
+namespace Polygon4gSingularC1
+
+variable {g : ℕ} {C : Polygon4gCellularModel g}
+variable {D : Polygon4gCellularSingularComparisonData g C}
+
+@[ext]
+lemma ext {x y : Polygon4gSingularC1 g C D} (h : x.coeff = y.coeff) : x = y := by
+  cases x
+  cases y
+  simp at h
+  simp [h]
+
+instance : Add (Polygon4gSingularC1 g C D) :=
+  ⟨fun x y => ⟨x.coeff + y.coeff⟩⟩
+
+instance : Zero (Polygon4gSingularC1 g C D) :=
+  ⟨⟨0⟩⟩
+
+instance : Neg (Polygon4gSingularC1 g C D) :=
+  ⟨fun x => ⟨-x.coeff⟩⟩
+
+instance : Sub (Polygon4gSingularC1 g C D) :=
+  ⟨fun x y => ⟨x.coeff - y.coeff⟩⟩
+
+instance : SMul ℤ (Polygon4gSingularC1 g C D) :=
+  ⟨fun n x => ⟨n • x.coeff⟩⟩
+
+instance : SMul ℕ (Polygon4gSingularC1 g C D) :=
+  ⟨fun n x => ⟨n • x.coeff⟩⟩
+
+instance : AddCommGroup (Polygon4gSingularC1 g C D) :=
+  Function.Injective.addCommGroup coeff (fun _ _ h => ext h)
+    rfl (fun _ _ => rfl) (fun _ => rfl) (fun _ _ => rfl)
+    (fun _ _ => rfl) (fun _ _ => rfl)
+
+instance : Module ℤ (Polygon4gSingularC1 g C D) :=
+  Function.Injective.module ℤ ⟨⟨fun x => x.coeff, rfl⟩, fun _ _ => rfl⟩
+    (fun _ _ h => ext h) (fun _ _ => rfl)
+
+@[simp] lemma add_coeff (x y : Polygon4gSingularC1 g C D) (e : Fin (2 * g)) :
+    (x + y).coeff e = x.coeff e + y.coeff e :=
+  rfl
+
+@[simp] lemma smul_coeff (n : ℤ) (x : Polygon4gSingularC1 g C D) (e : Fin (2 * g)) :
+    (n • x).coeff e = n * x.coeff e :=
+  rfl
+
+end Polygon4gSingularC1
+
+/-- Project-side singular two-chains for the comparison: free rank one
+on the characteristic disk. -/
+abbrev Polygon4gSingularC2
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (_D : Polygon4gCellularSingularComparisonData g C) : Type :=
+  Unit → ℤ
+
+/-- Boundary of a path-chain: target minus source as a singular
+zero-chain. -/
+noncomputable def polygon4gPathBoundary
+    {g : ℕ} {C : Polygon4gCellularModel g} (γ : Path C.vertex C.vertex) :
+    Polygon4gSingularC0 g :=
+  Finsupp.single (γ 1) (1 : ℤ) - Finsupp.single (γ 0) (1 : ℤ)
+
+/-- A based loop has zero path boundary when both endpoints are the
+model vertex. -/
+theorem polygon4gPathBoundary_eq_zero_of_endpoints
+    {g : ℕ} {C : Polygon4gCellularModel g} (γ : Path C.vertex C.vertex)
+    (h0 : γ 0 = C.vertex) (h1 : γ 1 = C.vertex) :
+    polygon4gPathBoundary γ = 0 := by
+  rw [polygon4gPathBoundary, h0, h1, sub_self]
+
+/-- The singular zero-chain at the unique cellular vertex. -/
+noncomputable def polygon4gSingularVertexChain
+    {g : ℕ} (C : Polygon4gCellularModel g) : Polygon4gSingularC0 g :=
+  Finsupp.single C.vertex (1 : ℤ)
+
+/-- The singular one-chain associated to the cellular boundary word:
+the abelianised word coefficients on the recorded edge-path generators. -/
+def polygon4gBoundaryWordChain
+    {g : ℕ} {C : Polygon4gCellularModel g}
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Polygon4gSingularC1 g C D :=
+  ⟨edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord⟩
+
+/-- The cellular-to-singular chain map and the singular proxy
+boundaries used by the polygon comparison.  This is deliberately
+chain-level: the fields are maps between chain modules and explicit
+boundary operators, not propositions about endpoints alone. -/
+structure Polygon4gCellularToSingularChainMap
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) where
+  mapC0 : Polygon4gCellularC0 g →ₗ[ℤ] Polygon4gSingularC0 g
+  mapC1 : Polygon4gCellularC1 g →ₗ[ℤ] Polygon4gSingularC1 g C D
+  mapC2 : Polygon4gCellularC2 g →ₗ[ℤ] Polygon4gSingularC2 g C D
+  singularBoundaryC1 :
+    Polygon4gSingularC1 g C D →ₗ[ℤ] Polygon4gSingularC0 g
+  singularBoundaryC2 :
+    Polygon4gSingularC2 g C D →ₗ[ℤ] Polygon4gSingularC1 g C D
+  /-- On every one-cell generator, the singular boundary is target minus
+  source for the corresponding path. -/
+  boundaryC1_on_basis :
+    ∀ e : Fin (2 * g),
+      singularBoundaryC1 (mapC1 (polygon4gCellularBasis e)) =
+        polygon4gPathBoundary (D.oneCells.edgePath e)
+  /-- The characteristic disk boundary is represented by the boundary-word
+  one-chain. -/
+  boundaryC2_on_face :
+    singularBoundaryC2 (mapC2 polygon4gCellularC2Face) =
+      polygon4gBoundaryWordChain D
+
+/-- The concrete cellular-to-singular chain map carried by the project-side
+polygon data. -/
+noncomputable def polygon4g_cellularToSingularChainMap
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Polygon4gCellularToSingularChainMap g C D where
+  mapC0 := {
+    toFun := fun c => c () • polygon4gSingularVertexChain C
+    map_add' := by
+      intro c d
+      ext x
+      simp [Pi.add_apply, add_smul]
+    map_smul' := by
+      intro n c
+      ext x
+      simp [Pi.smul_apply, smul_smul]
+  }
+  mapC1 := {
+    toFun := fun c => ⟨c⟩
+    map_add' := by
+      intro c d
+      ext e
+      rfl
+    map_smul' := by
+      intro n c
+      ext e
+      rfl
+  }
+  mapC2 := LinearMap.id
+  singularBoundaryC1 := {
+    toFun := fun c =>
+      ∑ e : Fin (2 * g), c.coeff e • polygon4gPathBoundary (D.oneCells.edgePath e)
+    map_add' := by
+      intro a b
+      ext x
+      simp only [Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.coe_add,
+        Finsupp.coe_smul, Pi.add_apply, Pi.smul_apply, smul_eq_mul]
+      change
+        (∑ e : Fin (2 * g),
+            (a.coeff e + b.coeff e) *
+              (polygon4gPathBoundary (D.oneCells.edgePath e)) x) =
+          ∑ e : Fin (2 * g),
+            a.coeff e * (polygon4gPathBoundary (D.oneCells.edgePath e)) x +
+          ∑ e : Fin (2 * g),
+            b.coeff e * (polygon4gPathBoundary (D.oneCells.edgePath e)) x
+      simp [add_mul, Finset.sum_add_distrib]
+    map_smul' := by
+      intro n a
+      ext x
+      simp only [Finsupp.coe_finset_sum, Finset.sum_apply, Finsupp.coe_smul,
+        Pi.smul_apply, smul_eq_mul, RingHom.id_apply, Polygon4gSingularC1.smul_coeff]
+      change
+        (∑ e : Fin (2 * g),
+            (n * a.coeff e) *
+              (polygon4gPathBoundary (D.oneCells.edgePath e)) x) =
+          n * ∑ e : Fin (2 * g),
+            a.coeff e * (polygon4gPathBoundary (D.oneCells.edgePath e)) x
+      rw [Finset.mul_sum]
+      apply Finset.sum_congr rfl
+      intro e _
+      ring
+  }
+  singularBoundaryC2 := {
+    toFun := fun c => c () • polygon4gBoundaryWordChain D
+    map_add' := by
+      intro a b
+      ext e
+      simp [Pi.add_apply, add_smul]
+    map_smul' := by
+      intro n a
+      ext e
+      simp [Pi.smul_apply, smul_smul]
+  }
+  boundaryC1_on_basis := by
+    intro e
+    ext x
+    simp [polygon4gCellularBasis]
+  boundaryC2_on_face := by
+    ext e
+    simp [polygon4gCellularC2Face]
+
 /-- The zero-skeleton of the standard polygonal cellular model. -/
 def Polygon4gZeroSkeleton
     (g : ℕ) (C : Polygon4gCellularModel g) (x : Polygon4g g) : Prop :=
@@ -167,6 +410,59 @@ theorem polygon4g_mem_twoSkeleton
     Polygon4gTwoSkeleton g C x := by
   induction x using Quotient.inductionOn with
   | h z => exact ⟨z, rfl⟩
+
+/-- Chain-level support predicates for the singular chains used in the
+filtered comparison.  The predicates are stated on chains, not just on
+individual cellular attaching maps. -/
+structure Polygon4gFilteredSingularChainSupport
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (_M : Polygon4gCellularToSingularChainMap g C D) : Type where
+  /-- Zero-chains are generated by the unique vertex chain. -/
+  zeroChainSupported : Polygon4gSingularC0 g → Prop
+  /-- One-chains are supported on the recorded edge-path generators. -/
+  oneChainSupported : Polygon4gSingularC1 g C D → Prop
+  /-- Two-chains are supported on the characteristic disk generator. -/
+  twoChainSupported : Polygon4gSingularC2 g C D → Prop
+  zeroChainSupported_iff :
+    ∀ c, zeroChainSupported c ↔
+      ∃ n : ℤ, c = n • polygon4gSingularVertexChain C
+  oneChainSupported_iff :
+    ∀ c, oneChainSupported c ↔
+      ∀ e : Fin (2 * g), c.coeff e ≠ 0 →
+        ∀ t : Set.Icc (0 : ℝ) 1,
+          Polygon4gOneSkeleton g C (D.oneCells.edgePath e t)
+  twoChainSupported_iff :
+    ∀ c, twoChainSupported c ↔
+      c () ≠ 0 →
+        ∀ z : C.disk.diskSource.carrier,
+          Polygon4gTwoSkeleton g C (D.twoCell.characteristic.characteristic z)
+
+/-- The associated-graded degree-one comparison as a real linear
+equivalence from cellular one-generators to the singular edge-chain
+wrapper.  This is intentionally not a reflexive equivalence between
+aliases. -/
+def polygon4g_cellularH1_to_singularC1_equiv
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Polygon4gCellularH1 g ≃ₗ[ℤ] Polygon4gSingularC1 g C D where
+  toFun := fun c => ⟨c⟩
+  invFun := fun c => c.coeff
+  left_inv := by
+    intro c
+    rfl
+  right_inv := by
+    intro c
+    ext e
+    rfl
+  map_add' := by
+    intro c d
+    ext e
+    rfl
+  map_smul' := by
+    intro n c
+    ext e
+    rfl
 
 /-- Degree-zero correctness of the comparison data: the unique
 zero-cell maps to the singular class of the polygon vertex. -/
@@ -195,6 +491,23 @@ structure Polygon4gCellularSingularChainMapDegreeOneBoundary
   edgePath_target : ∀ e : Fin (2 * g), (D.oneCells.edgePath e) 1 = C.vertex
   /-- The cellular one-boundary is zero for every edge. -/
   cellular_boundary_zero : Polygon4gOneCellBoundaryZero g C
+  /-- There is a concrete chain map whose degree-one singular boundary is
+  the path-chain boundary on each cellular one-cell generator. -/
+  singular_path_boundary_formula :
+    ∃ M : Polygon4gCellularToSingularChainMap g C D,
+      ∀ e : Fin (2 * g),
+        M.singularBoundaryC1 (M.mapC1 (polygon4gCellularBasis e)) =
+          polygon4gPathBoundary (D.oneCells.edgePath e)
+  /-- Since the edge representatives are based loops, their singular
+  path-chain boundaries vanish. -/
+  singular_path_boundary_zero :
+    ∀ e : Fin (2 * g), polygon4gPathBoundary (D.oneCells.edgePath e) = 0
+  /-- Consequently the chain-level singular boundary of each mapped one-cell
+  generator vanishes. -/
+  singular_chain_boundary_zero :
+    ∃ M : Polygon4gCellularToSingularChainMap g C D,
+      ∀ e : Fin (2 * g),
+        M.singularBoundaryC1 (M.mapC1 (polygon4gCellularBasis e)) = 0
   /-- Every point of each comparison edge is supported on the one-skeleton. -/
   edgePath_mem_oneSkeleton :
     ∀ e : Fin (2 * g), ∀ t : Set.Icc (0 : ℝ) 1,
@@ -209,11 +522,12 @@ structure Polygon4gCellularSingularChainMapDegreeTwoAttaching
     (D : Polygon4gCellularSingularComparisonData g C) : Prop where
   /-- The comparison's two-cell characteristic map is the quotient map. -/
   characteristic_eq_mk :
-    ∀ z : DiskC, D.twoCell.characteristic.characteristic z = Polygon4g.mk g z
+    ∀ z, D.twoCell.characteristic.characteristic z =
+      Polygon4g.mk g (C.disk.diskSource.sourceHomeomorph z)
   /-- The comparison's two-cell characteristic map agrees pointwise with
   the cellular model's characteristic map. -/
   characteristic_eq_model :
-    ∀ z : DiskC, D.twoCell.characteristic.characteristic z = C.twoCellCharacteristic z
+    ∀ z, D.twoCell.characteristic.characteristic z = C.twoCellCharacteristic z
   /-- The boundary word is the model boundary word. -/
   boundaryWord_eq_model : D.twoCell.boundaryWord.boundaryWord = C.boundaryWord
   /-- The boundary word is the standard product of commutators. -/
@@ -224,6 +538,20 @@ structure Polygon4gCellularSingularChainMapDegreeTwoAttaching
   /-- The abelianised two-boundary vanishes in cellular one-chains. -/
   boundaryWord_abelianizedBoundary :
     edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord = 0
+  /-- The singular boundary of the mapped characteristic disk is the
+  boundary-word one-chain. -/
+  singular_disk_boundary_formula :
+    ∃ M : Polygon4gCellularToSingularChainMap g C D,
+      M.singularBoundaryC2 (M.mapC2 polygon4gCellularC2Face) =
+        polygon4gBoundaryWordChain D
+  /-- The boundary-word one-chain has exactly the abelianised word
+  coefficients. -/
+  boundaryWord_chain_coefficients :
+    (polygon4gBoundaryWordChain D).coeff =
+      edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord
+  /-- The boundary-word singular one-chain vanishes because the surface
+  relator abelianises to zero. -/
+  boundaryWord_chain_zero : polygon4gBoundaryWordChain D = 0
   /-- The model cellular two-boundary formula is available. -/
   cellular_two_boundary_formula : Polygon4gTwoCellBoundaryAbelianizedRelator g C
 
@@ -243,13 +571,33 @@ theorem polygon4g_cellular_singular_chain_map_degree_one_boundary
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C) :
     Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D := by
-  refine ⟨D.oneCells.edgePath_eq_model, ?_, ?_, h_boundary.1, ?_⟩
-  · intro e
+  let M := polygon4g_cellularToSingularChainMap g C D
+  have h_source : ∀ e : Fin (2 * g), (D.oneCells.edgePath e) 0 = C.vertex := by
+    intro e
     rw [D.oneCells.edgePath_eq_model]
     exact (h_boundary.1 e).1
-  · intro e
+  have h_target : ∀ e : Fin (2 * g), (D.oneCells.edgePath e) 1 = C.vertex := by
+    intro e
     rw [D.oneCells.edgePath_eq_model]
     exact (h_boundary.1 e).2
+  refine
+    { edgePath_eq_model := D.oneCells.edgePath_eq_model
+      edgePath_source := h_source
+      edgePath_target := h_target
+      cellular_boundary_zero := h_boundary.1
+      singular_path_boundary_formula := ?_
+      singular_path_boundary_zero := ?_
+      singular_chain_boundary_zero := ?_
+      edgePath_mem_oneSkeleton := ?_ }
+  · exact ⟨M, fun e => M.boundaryC1_on_basis e⟩
+  · intro e
+    exact polygon4gPathBoundary_eq_zero_of_endpoints
+      (D.oneCells.edgePath e) (h_source e) (h_target e)
+  · refine ⟨M, ?_⟩
+    intro e
+    rw [M.boundaryC1_on_basis e]
+    exact polygon4gPathBoundary_eq_zero_of_endpoints
+      (D.oneCells.edgePath e) (h_source e) (h_target e)
   · intro e t
     right
     exact ⟨e, t, by rw [D.oneCells.edgePath_eq_model]⟩
@@ -261,15 +609,27 @@ theorem polygon4g_cellular_singular_chain_map_degree_two_attaching
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C) :
     Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D := by
-  refine ⟨D.twoCell.characteristic.characteristic_eq_mk, ?_,
-    D.twoCell.boundaryWord.boundaryWord_eq_model,
-    D.twoCell.boundaryWord.boundaryWord_standard,
-    D.twoCell.boundaryWord.boundaryWord_sidePairing,
-    D.twoCell.boundaryWord.boundaryWord_abelianizedBoundary,
-    h_boundary.2⟩
-  intro z
-  rw [D.twoCell.characteristic.characteristic_eq_mk z,
-    C.twoCellCharacteristic_eq_mk z]
+  let M := polygon4g_cellularToSingularChainMap g C D
+  refine
+    { characteristic_eq_mk := D.twoCell.characteristic.characteristic_eq_mk
+      characteristic_eq_model := ?_
+      boundaryWord_eq_model := D.twoCell.boundaryWord.boundaryWord_eq_model
+      boundaryWord_standard := D.twoCell.boundaryWord.boundaryWord_standard
+      boundaryWord_sidePairing := D.twoCell.boundaryWord.boundaryWord_sidePairing
+      boundaryWord_abelianizedBoundary :=
+        D.twoCell.boundaryWord.boundaryWord_abelianizedBoundary
+      singular_disk_boundary_formula := ⟨M, M.boundaryC2_on_face⟩
+      boundaryWord_chain_coefficients := rfl
+      boundaryWord_chain_zero := ?_
+      cellular_two_boundary_formula := h_boundary.2 }
+  · intro z
+    rw [D.twoCell.characteristic.characteristic_eq_mk z,
+      C.twoCellCharacteristic_eq_mk z]
+  · change
+      (⟨edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord⟩ :
+        Polygon4gSingularC1 g C D) = 0
+    rw [D.twoCell.boundaryWord.boundaryWord_abelianizedBoundary]
+    rfl
 
 /-- Correctness of the comparison data: it is compatible with the
 cellular and singular differentials and computes the intended attaching
@@ -303,6 +663,19 @@ structure Polygon4gCellularSingularFiltrationCompatible
     (_h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C)
     (_h_correct : Polygon4gCellularSingularChainMapCorrect g C _h_boundary D) : Prop where
+  /-- A concrete chain map, chain-level support predicates, filtered image
+  statements, and boundary-preservation statements for the singular-chain
+  filtration. -/
+  filtered_chain_support :
+    ∃ M : Polygon4gCellularToSingularChainMap g C D,
+      ∃ S : Polygon4gFilteredSingularChainSupport g C D M,
+        (∀ c : Polygon4gCellularC0 g, S.zeroChainSupported (M.mapC0 c)) ∧
+        (∀ c : Polygon4gCellularC1 g, S.oneChainSupported (M.mapC1 c)) ∧
+        (∀ c : Polygon4gCellularC2 g, S.twoChainSupported (M.mapC2 c)) ∧
+        (∀ c : Polygon4gSingularC1 g C D,
+          S.oneChainSupported c → S.zeroChainSupported (M.singularBoundaryC1 c)) ∧
+        (∀ c : Polygon4gSingularC2 g C D,
+          S.twoChainSupported c → S.oneChainSupported (M.singularBoundaryC2 c))
   /-- The zero-cell image is supported on the zero-skeleton. -/
   zeroCell_supported : Polygon4gZeroSkeleton g C D.zeroCell.vertex
   /-- The one-cell images are supported on the one-skeleton. -/
@@ -311,7 +684,8 @@ structure Polygon4gCellularSingularFiltrationCompatible
       Polygon4gOneSkeleton g C (D.oneCells.edgePath e t)
   /-- The two-cell image is supported on the two-skeleton. -/
   twoCell_supported :
-    ∀ z : DiskC, Polygon4gTwoSkeleton g C (D.twoCell.characteristic.characteristic z)
+    ∀ z : C.disk.diskSource.carrier,
+      Polygon4gTwoSkeleton g C (D.twoCell.characteristic.characteristic z)
 
 /-- The associated graded map of the cellular-to-singular comparison is
 the identity on the cellular generators in degrees relevant to `H₁`.
@@ -331,14 +705,19 @@ structure Polygon4gCellularSingularAssociatedGradedH1Iso
   /-- The associated graded degree-one generators are represented by the
   model one-cell loops. -/
   graded_one_generators : D.oneCells.edgePath = C.oneCellPath
+  /-- The concrete associated-graded degree-one map is the degree-one
+  component of a real cellular-to-singular chain map. -/
+  graded_one_map_eq_chainMap :
+    ∃ M : Polygon4gCellularToSingularChainMap g C D,
+      (polygon4g_cellularH1_to_singularC1_equiv g C D).toLinearMap = M.mapC1
   /-- The associated graded degree-two boundary is the abelianised surface
   relator, hence zero in cellular one-chains. -/
   graded_two_boundary_zero :
     edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord = 0
-  /-- The project-side cellular `H₁` is the free module on the one-cell
-  generators. -/
-  cellularH1_identifies_generators :
-    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] Polygon4gCellularC1 g)
+  /-- The project-side degree-one associated-graded map is an isomorphism
+  from cellular `H₁` generators to singular edge-chain generators. -/
+  graded_one_isomorphism :
+    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] Polygon4gSingularC1 g C D)
 
 /-- Concrete frontier theorem: a cellular-to-singular comparison with
 inspectable chain-level boundary compatibility, skeleton support, and
@@ -375,12 +754,57 @@ theorem polygon4g_cellular_singular_filtration_compatible
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C)
     (h_correct : Polygon4gCellularSingularChainMapCorrect g C h_boundary D) :
-    Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct :=
-  ⟨h_correct.1.vertex_mem_zeroSkeleton,
-    h_correct.2.1.edgePath_mem_oneSkeleton,
-    fun z => by
+    Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct := by
+  let M := polygon4g_cellularToSingularChainMap g C D
+  let S : Polygon4gFilteredSingularChainSupport g C D M :=
+    { zeroChainSupported := fun c =>
+        ∃ n : ℤ, c = n • polygon4gSingularVertexChain C
+      oneChainSupported := fun c =>
+        ∀ e : Fin (2 * g), c.coeff e ≠ 0 →
+          ∀ t : Set.Icc (0 : ℝ) 1,
+            Polygon4gOneSkeleton g C (D.oneCells.edgePath e t)
+      twoChainSupported := fun c =>
+        c () ≠ 0 →
+          ∀ z : C.disk.diskSource.carrier,
+            Polygon4gTwoSkeleton g C (D.twoCell.characteristic.characteristic z)
+      zeroChainSupported_iff := by
+        intro c
+        rfl
+      oneChainSupported_iff := by
+        intro c
+        rfl
+      twoChainSupported_iff := by
+        intro c
+        rfl }
+  refine
+    { filtered_chain_support := ?_
+      zeroCell_supported := h_correct.1.vertex_mem_zeroSkeleton
+      oneCells_supported := h_correct.2.1.edgePath_mem_oneSkeleton
+      twoCell_supported := ?_ }
+  · refine ⟨M, S, ?_, ?_, ?_, ?_, ?_⟩
+    · intro c
+      change ∃ n : ℤ, M.mapC0 c = n • polygon4gSingularVertexChain C
+      exact ⟨c (), rfl⟩
+    · intro c e _ t
+      exact h_correct.2.1.edgePath_mem_oneSkeleton e t
+    · intro c _ z
       rw [h_correct.2.2.characteristic_eq_mk z]
-      exact polygon4g_mem_twoSkeleton g C (Polygon4g.mk g z)⟩
+      exact polygon4g_mem_twoSkeleton g C
+        (Polygon4g.mk g (C.disk.diskSource.sourceHomeomorph z))
+    · intro c _hc
+      change ∃ n : ℤ, M.singularBoundaryC1 c = n • polygon4gSingularVertexChain C
+      refine ⟨0, ?_⟩
+      have h_path_zero :
+          ∀ e : Fin (2 * g), polygon4gPathBoundary (D.oneCells.edgePath e) = 0 :=
+        h_correct.2.1.singular_path_boundary_zero
+      ext x
+      simp [M, polygon4g_cellularToSingularChainMap, h_path_zero]
+    · intro c _hc e _he t
+      exact h_correct.2.1.edgePath_mem_oneSkeleton e t
+  · intro z
+    rw [h_correct.2.2.characteristic_eq_mk z]
+    exact polygon4g_mem_twoSkeleton g C
+      (Polygon4g.mk g (C.disk.diskSource.sourceHomeomorph z))
 
 /-- **Comparison leaf 3b.** The associated graded comparison is an
 isomorphism in the degrees that control first homology. -/
@@ -393,10 +817,18 @@ theorem polygon4g_cellular_singular_associated_graded_H1_iso
       Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct) :
     Polygon4gCellularSingularAssociatedGradedH1Iso
       g C h_boundary D h_correct h_filtration :=
-  ⟨h_correct.1.vertex_eq_model,
-    h_correct.2.1.edgePath_eq_model,
-    h_correct.2.2.boundaryWord_abelianizedBoundary,
-    ⟨LinearEquiv.refl ℤ _⟩⟩
+by
+  let M := polygon4g_cellularToSingularChainMap g C D
+  let E := polygon4g_cellularH1_to_singularC1_equiv g C D
+  refine
+    { graded_zero_generator := h_correct.1.vertex_eq_model
+      graded_one_generators := h_correct.2.1.edgePath_eq_model
+      graded_one_map_eq_chainMap := ?_
+      graded_two_boundary_zero := h_correct.2.2.boundaryWord_abelianizedBoundary
+      graded_one_isomorphism := ⟨E⟩ }
+  refine ⟨M, ?_⟩
+  ext c e
+  rfl
 
 /-- **Comparison leaf 3c.** A filtration-compatible comparison whose
 associated graded map is an isomorphism in the relevant degrees induces
