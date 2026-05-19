@@ -13,7 +13,7 @@
 {"i":1348,"f":"Jacobian/HolomorphicForms/CMfldBumpStub.lean","k":"theorem","s":"cMfldBump_eq_one_near","n":1,"o":1,"r":1,"e":2,"u":[],"d":[1402],"a":"aristotle:da91941b-89cc-46b4-86a9-156dcc2d8624","c":"done","b":"lem:impl-cmfld-bump-normalisation","t":""}
 {"i":1349,"f":"Jacobian/HolomorphicForms/CompactRiemannSurface.lean","k":"theorem","s":"holomorphicOneForm_arzela_ascoli_refine23","n":1,"o":1,"r":1,"e":7,"u":[],"d":[],"a":"aristotle:1a50bfc4-e90d-4c9d-8891-3e0994b48b7e","c":"done","b":"","t":""}
 {"i":1350,"f":"Jacobian/HolomorphicForms/CompactRiemannSurface.lean","k":"theorem","s":"holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps","n":1,"o":1,"r":1,"e":6,"u":[],"d":[],"a":"aristotle:eb62762d-9750-4cf4-a8cd-1d2a6c361dd6","c":"open","b":"","t":""}
-{"i":1351,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"closedForm_pathIntegral_primitive_exists","n":1,"o":1,"r":1,"e":null,"u":[],"d":[2030],"a":"aristotle:d0717941-5047-454b-8fd5-68382a67e40d","c":"open","b":"lem:path-integral-primitive","t":""}
+{"i":1351,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"closedForm_pathIntegral_primitive_exists","n":1,"o":1,"r":1,"e":null,"u":[],"d":[2030],"a":"aristotle:d0717941-5047-454b-8fd5-68382a67e40d","c":"done","b":"lem:path-integral-primitive","t":""}
 {"i":1352,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"integral_closed_form_from_cech_eq","n":1,"o":1,"r":0,"e":7,"u":[],"d":[],"a":"aristotle:3d57f254-af04-4476-9699-dde009d44057","c":"done","b":"","t":""}
 {"i":1353,"f":"Jacobian/HolomorphicForms/EulerCharLineBundle.lean","k":"theorem","s":"euler_char_eq_formula","n":1,"o":1,"r":0,"e":null,"u":[2460],"d":[2458],"a":"aristotle:a42af231-fd34-412b-9fc5-4328a147c235","c":"wontdo","b":"lem:tbh-r12","t":""}
 {"i":1354,"f":"Jacobian/HolomorphicForms/EvalAtOneHelper.lean","k":"theorem","s":"contMDiff_tangentSection_one","n":1,"o":1,"r":0,"e":3,"u":[],"d":[],"a":"aristotle:d3b3da49-ce4d-462c-87fc-12a7664bf55b","c":"done","b":"","t":""}
@@ -1188,7 +1188,7 @@
 {"i":2621,"f":"Jacobian/Blueprint/Sec05/JacobiInversion.lean","k":"def","s":"symToPic0","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2622,"f":"Jacobian/HolomorphicForms/BranchedCover.lean","k":"theorem","s":"BranchedCoverData.ramificationIndex_eq_mapAnalyticOrderAt","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2623,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"cech_cocycle_from_singular_cocycle","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":2624,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"deRhamComparisonMap1_exists_form_with_periods","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2624,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"deRhamComparisonMap1_exists_form_with_periods","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2625,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"def","s":"HasRealDipoleSingularity","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2626,"f":"Jacobian/HolomorphicForms/HolomorphicMap.lean","k":"theorem","s":"IsHolomorphicAt.localInverse_isHolomorphicAt","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2627,"f":"Jacobian/HolomorphicForms/MeromorphicFunctionVector.lean","k":"theorem","s":"constant_poles","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
@@ -1233,3 +1233,4 @@
 {"i":2667,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_local_kfold_ramified","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2668,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_weightedFiberSum_eventually_eq","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2669,"f":"Jacobian/HolomorphicForms/TraceBundled.lean","k":"def","s":"traceFormsRegularSpec_frontier","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2670,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"def","s":"deRhamComparisonMap1Spec_frontier","n":2,"o":2,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
