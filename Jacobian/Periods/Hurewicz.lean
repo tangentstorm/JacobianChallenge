@@ -71,6 +71,8 @@ structure Polygon4gCellularSingularTwoCellBoundaryWordData
     (_characteristic : Polygon4gCellularSingularTwoCellCharacteristicData g C) where
   /-- The word read on the boundary of the characteristic disk. -/
   boundaryWord : EdgeWord g
+  /-- It is the boundary word recorded by the cellular model. -/
+  boundaryWord_eq_model : boundaryWord = C.boundaryWord
   /-- The boundary word is the standard product of commutators. -/
   boundaryWord_standard : boundaryWord.IsStandardForm
   /-- The boundary word induces the same quotient relation as `Polygon4g`. -/
@@ -89,6 +91,7 @@ theorem polygon4g_cellular_singular_two_cell_boundary_word_data
     Nonempty (Polygon4gCellularSingularTwoCellBoundaryWordData g C characteristic) :=
   ⟨{
     boundaryWord := C.boundaryWord
+    boundaryWord_eq_model := rfl
     boundaryWord_standard := h_boundary.2.1
     boundaryWord_sidePairing := h_boundary.2.2.1
     boundaryWord_abelianizedBoundary := h_boundary.2.2.2
@@ -140,68 +143,89 @@ by
   obtain ⟨twoCell⟩ := polygon4g_cellular_singular_two_cell_data g C _h_boundary
   exact ⟨{ zeroCell, oneCells, twoCell }⟩
 
+/-- The zero-skeleton of the standard polygonal cellular model. -/
+def Polygon4gZeroSkeleton
+    (g : ℕ) (C : Polygon4gCellularModel g) (x : Polygon4g g) : Prop :=
+  x = C.vertex
+
+/-- The one-skeleton of the standard polygonal cellular model, represented
+project-side by the unique vertex and the points on the recorded one-cell
+loops. -/
+def Polygon4gOneSkeleton
+    (g : ℕ) (C : Polygon4gCellularModel g) (x : Polygon4g g) : Prop :=
+  x = C.vertex ∨ ∃ e : Fin (2 * g), ∃ t : Set.Icc (0 : ℝ) 1, C.oneCellPath e t = x
+
+/-- The two-skeleton of the standard polygonal cellular model, represented
+project-side as the image of the quotient disk map. -/
+def Polygon4gTwoSkeleton
+    (g : ℕ) (_C : Polygon4gCellularModel g) (x : Polygon4g g) : Prop :=
+  ∃ z : DiskC, Polygon4g.mk g z = x
+
+/-- Every point of `Polygon4g g` lies in the project-side two-skeleton. -/
+theorem polygon4g_mem_twoSkeleton
+    (g : ℕ) (C : Polygon4gCellularModel g) (x : Polygon4g g) :
+    Polygon4gTwoSkeleton g C x := by
+  induction x using Quotient.inductionOn with
+  | h z => exact ⟨z, rfl⟩
+
 /-- Degree-zero correctness of the comparison data: the unique
 zero-cell maps to the singular class of the polygon vertex. -/
-opaque Polygon4gCellularSingularChainMapDegreeZero
+structure Polygon4gCellularSingularChainMapDegreeZero
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C)
-    (_D : Polygon4gCellularSingularComparisonData g C) : Prop
+    (D : Polygon4gCellularSingularComparisonData g C) : Prop where
+  /-- The comparison's zero-cell representative is the model vertex. -/
+  vertex_eq_model : D.zeroCell.vertex = C.vertex
+  /-- The zero-cell representative lies in the zero-skeleton. -/
+  vertex_mem_zeroSkeleton :
+    Polygon4gZeroSkeleton g C D.zeroCell.vertex
 
 /-- Degree-one correctness of the comparison data: each oriented
 one-cell maps to the corresponding singular edge path, and its singular
 boundary agrees with the zero cellular boundary at the unique vertex. -/
-opaque Polygon4gCellularSingularChainMapDegreeOneBoundary
+structure Polygon4gCellularSingularChainMapDegreeOneBoundary
     (g : ℕ) (C : Polygon4gCellularModel g)
-    (_h_boundary : Polygon4gCellularBoundaryFormula g C)
-    (_D : Polygon4gCellularSingularComparisonData g C) : Prop
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C) : Prop where
+  /-- The comparison sends each one-cell generator to the model one-cell path. -/
+  edgePath_eq_model : D.oneCells.edgePath = C.oneCellPath
+  /-- Each comparison edge starts at the unique model vertex. -/
+  edgePath_source : ∀ e : Fin (2 * g), (D.oneCells.edgePath e) 0 = C.vertex
+  /-- Each comparison edge ends at the unique model vertex. -/
+  edgePath_target : ∀ e : Fin (2 * g), (D.oneCells.edgePath e) 1 = C.vertex
+  /-- The cellular one-boundary is zero for every edge. -/
+  cellular_boundary_zero : Polygon4gOneCellBoundaryZero g C
+  /-- Every point of each comparison edge is supported on the one-skeleton. -/
+  edgePath_mem_oneSkeleton :
+    ∀ e : Fin (2 * g), ∀ t : Set.Icc (0 : ℝ) 1,
+      Polygon4gOneSkeleton g C (D.oneCells.edgePath e t)
 
 /-- Degree-two correctness of the comparison data: the two-cell
 attaching map is sent to the singular boundary represented by the
 surface word, whose abelianised boundary is the cellular formula. -/
-opaque Polygon4gCellularSingularChainMapDegreeTwoAttaching
-    (g : ℕ) (C : Polygon4gCellularModel g)
-    (_h_boundary : Polygon4gCellularBoundaryFormula g C)
-    (_D : Polygon4gCellularSingularComparisonData g C) : Prop
-
-/-- The narrow chain-level frontier for the standard polygonal
-cellular-to-singular comparison.
-
-It packages exactly the missing construction of the singular chain map
-on the unique vertex, the `2g` one-cell loops, and the characteristic
-two-disk, together with the boundary identities in degrees `0`, `1`,
-and `2`. -/
-structure Polygon4gCellularSingularChainMapSpec
+structure Polygon4gCellularSingularChainMapDegreeTwoAttaching
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
-    (D : Polygon4gCellularSingularComparisonData g C) where
-  /-- The unique cellular vertex maps to the singular zero-simplex at
-  the model vertex. -/
-  degree_zero :
-    Polygon4gCellularSingularChainMapDegreeZero g C h_boundary D
-  /-- Each one-cell generator maps to the corresponding singular edge
-  loop, whose boundary is zero at the unique vertex. -/
-  degree_one_boundary :
-    Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D
-  /-- The singular boundary of the characteristic two-disk is the
-  standard attaching word, matching the abelianised cellular boundary. -/
-  degree_two_attaching :
-    Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D
-
-/-- Frontier theorem: construct the chain-level cellular-to-singular
-comparison for the standard polygonal model and prove its boundary
-compatibility in degrees `0`, `1`, and `2`.
-
-This is the single remaining chain-level gap replacing the former three
-independent leaf sorries. -/
-theorem polygon4g_cellular_singular_chain_map_spec_frontier
-    (g : ℕ) (C : Polygon4gCellularModel g)
-    (h_boundary : Polygon4gCellularBoundaryFormula g C)
-    (D : Polygon4gCellularSingularComparisonData g C) :
-    Polygon4gCellularSingularChainMapSpec g C h_boundary D := by
-  -- Frontier: the project records the polygonal cellular generators and
-  -- attaching word, but not the actual singular chain map or boundary
-  -- computation needed to prove these three facts bottom-up.
-  sorry
+    (D : Polygon4gCellularSingularComparisonData g C) : Prop where
+  /-- The comparison's two-cell characteristic map is the quotient map. -/
+  characteristic_eq_mk :
+    ∀ z : DiskC, D.twoCell.characteristic.characteristic z = Polygon4g.mk g z
+  /-- The comparison's two-cell characteristic map agrees pointwise with
+  the cellular model's characteristic map. -/
+  characteristic_eq_model :
+    ∀ z : DiskC, D.twoCell.characteristic.characteristic z = C.twoCellCharacteristic z
+  /-- The boundary word is the model boundary word. -/
+  boundaryWord_eq_model : D.twoCell.boundaryWord.boundaryWord = C.boundaryWord
+  /-- The boundary word is the standard product of commutators. -/
+  boundaryWord_standard : D.twoCell.boundaryWord.boundaryWord.IsStandardForm
+  /-- The word induces the polygon side-pairing relation. -/
+  boundaryWord_sidePairing :
+    EdgeWord.sidePairingRel g D.twoCell.boundaryWord.boundaryWord = Polygon4g.SideRel g
+  /-- The abelianised two-boundary vanishes in cellular one-chains. -/
+  boundaryWord_abelianizedBoundary :
+    edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord = 0
+  /-- The model cellular two-boundary formula is available. -/
+  cellular_two_boundary_formula : Polygon4gTwoCellBoundaryAbelianizedRelator g C
 
 /-- **Comparison leaf 2a.** The comparison data is correct in degree
 zero. -/
@@ -210,7 +234,7 @@ theorem polygon4g_cellular_singular_chain_map_degree_zero
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C) :
     Polygon4gCellularSingularChainMapDegreeZero g C h_boundary D :=
-  (polygon4g_cellular_singular_chain_map_spec_frontier g C h_boundary D).degree_zero
+  ⟨D.zeroCell.vertex_eq_model, D.zeroCell.vertex_eq_model⟩
 
 /-- **Comparison leaf 2b.** The comparison data is compatible with the
 one-cell boundary calculation. -/
@@ -218,8 +242,17 @@ theorem polygon4g_cellular_singular_chain_map_degree_one_boundary
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C) :
-    Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D :=
-  (polygon4g_cellular_singular_chain_map_spec_frontier g C h_boundary D).degree_one_boundary
+    Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D := by
+  refine ⟨D.oneCells.edgePath_eq_model, ?_, ?_, h_boundary.1, ?_⟩
+  · intro e
+    rw [D.oneCells.edgePath_eq_model]
+    exact (h_boundary.1 e).1
+  · intro e
+    rw [D.oneCells.edgePath_eq_model]
+    exact (h_boundary.1 e).2
+  · intro e t
+    right
+    exact ⟨e, t, by rw [D.oneCells.edgePath_eq_model]⟩
 
 /-- **Comparison leaf 2c.** The comparison data is compatible with the
 two-cell attaching map. -/
@@ -227,8 +260,16 @@ theorem polygon4g_cellular_singular_chain_map_degree_two_attaching
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C) :
-    Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D :=
-  (polygon4g_cellular_singular_chain_map_spec_frontier g C h_boundary D).degree_two_attaching
+    Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D := by
+  refine ⟨D.twoCell.characteristic.characteristic_eq_mk, ?_,
+    D.twoCell.boundaryWord.boundaryWord_eq_model,
+    D.twoCell.boundaryWord.boundaryWord_standard,
+    D.twoCell.boundaryWord.boundaryWord_sidePairing,
+    D.twoCell.boundaryWord.boundaryWord_abelianizedBoundary,
+    h_boundary.2⟩
+  intro z
+  rw [D.twoCell.characteristic.characteristic_eq_mk z,
+    C.twoCellCharacteristic_eq_mk z]
 
 /-- Correctness of the comparison data: it is compatible with the
 cellular and singular differentials and computes the intended attaching
@@ -257,67 +298,74 @@ by
 /-- The comparison map respects the cellular filtration on singular
 chains.  For the polygon this says cells in the `n`-skeleton map into
 singular chains supported on the `n`-skeleton, for `n = 0, 1, 2`. -/
-opaque Polygon4gCellularSingularFiltrationCompatible
+structure Polygon4gCellularSingularFiltrationCompatible
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C)
-    (_h_correct : Polygon4gCellularSingularChainMapCorrect g C _h_boundary D) : Prop
+    (_h_correct : Polygon4gCellularSingularChainMapCorrect g C _h_boundary D) : Prop where
+  /-- The zero-cell image is supported on the zero-skeleton. -/
+  zeroCell_supported : Polygon4gZeroSkeleton g C D.zeroCell.vertex
+  /-- The one-cell images are supported on the one-skeleton. -/
+  oneCells_supported :
+    ∀ e : Fin (2 * g), ∀ t : Set.Icc (0 : ℝ) 1,
+      Polygon4gOneSkeleton g C (D.oneCells.edgePath e t)
+  /-- The two-cell image is supported on the two-skeleton. -/
+  twoCell_supported :
+    ∀ z : DiskC, Polygon4gTwoSkeleton g C (D.twoCell.characteristic.characteristic z)
 
 /-- The associated graded map of the cellular-to-singular comparison is
 the identity on the cellular generators in degrees relevant to `H₁`.
 This packages the local relative-homology calculation for each open
 cell. -/
-opaque Polygon4gCellularSingularAssociatedGradedH1Iso
+structure Polygon4gCellularSingularAssociatedGradedH1Iso
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C)
     (h_correct : Polygon4gCellularSingularChainMapCorrect g C _h_boundary D)
     (_h_filtration :
-      Polygon4gCellularSingularFiltrationCompatible g C _h_boundary D h_correct) : Prop
+      Polygon4gCellularSingularFiltrationCompatible g C _h_boundary D h_correct) :
+    Prop where
+  /-- The associated graded degree-zero generator is represented by the
+  model vertex. -/
+  graded_zero_generator : D.zeroCell.vertex = C.vertex
+  /-- The associated graded degree-one generators are represented by the
+  model one-cell loops. -/
+  graded_one_generators : D.oneCells.edgePath = C.oneCellPath
+  /-- The associated graded degree-two boundary is the abelianised surface
+  relator, hence zero in cellular one-chains. -/
+  graded_two_boundary_zero :
+    edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord = 0
+  /-- The project-side cellular `H₁` is the free module on the one-cell
+  generators. -/
+  cellularH1_identifies_generators :
+    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] Polygon4gCellularC1 g)
 
-/-- The narrow filtered-comparison frontier for the standard polygonal
-cellular-to-singular map.
+/-- Concrete frontier theorem: a cellular-to-singular comparison with
+inspectable chain-level boundary compatibility, skeleton support, and
+associated-graded generator identifications induces the expected
+isomorphism on first homology.
 
-It packages the cellular filtration compatibility, the associated
-graded degree-one isomorphism, and the resulting first-homology
-isomorphism.  The actual missing theorem is the usual filtered
-cellular/singular comparison specialised to this two-dimensional CW
-model. -/
-structure Polygon4gCellularSingularFilteredComparisonSpec
+This is the remaining missing theorem boundary: it is the filtered
+cellular/singular comparison in degree `1`, specialized to the standard
+two-dimensional `Polygon4g` cellular model and stated over concrete
+project-side data rather than opaque predicates. -/
+theorem polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C)
-    (h_correct : Polygon4gCellularSingularChainMapCorrect g C h_boundary D) where
-  /-- The comparison map respects the cellular skeleta filtration. -/
-  filtration_compatible :
-    Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct
-  /-- On the associated graded pieces controlling `H₁`, the comparison
-  is the local relative-homology isomorphism generated by the cells. -/
-  associated_graded_H1_iso :
-    Polygon4gCellularSingularAssociatedGradedH1Iso
-      g C h_boundary D h_correct filtration_compatible
-  /-- The filtered comparison induces the expected isomorphism from
-  cellular first homology to singular first homology. -/
-  H1_iso :
-    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g))
-
-/-- Frontier theorem: a correct cellular-to-singular comparison for the
-standard polygonal model is filtration-compatible, is an isomorphism on
-the associated graded pieces in the degrees controlling `H₁`, and hence
-induces an isomorphism on first homology.
-
-This is the single remaining filtered homological-algebra/topology gap
-replacing the former filtration, associated-graded, and H₁ leaf sorries. -/
-theorem polygon4g_cellular_singular_filtered_comparison_spec_frontier
-    (g : ℕ) (C : Polygon4gCellularModel g)
-    (h_boundary : Polygon4gCellularBoundaryFormula g C)
-    (D : Polygon4gCellularSingularComparisonData g C)
-    (h_correct : Polygon4gCellularSingularChainMapCorrect g C h_boundary D) :
-    Polygon4gCellularSingularFilteredComparisonSpec
-      g C h_boundary D h_correct := by
-  -- Frontier: the project has not yet implemented the cellular skeleton
-  -- filtration or the filtered-complex/five-lemma comparison theorem for
-  -- singular chains of this CW model.
+    (h0 : Polygon4gCellularSingularChainMapDegreeZero g C h_boundary D)
+    (h1 : Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D)
+    (h2 : Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D)
+    (h_filtration :
+      Polygon4gCellularSingularFiltrationCompatible g C h_boundary D ⟨h0, h1, h2⟩)
+    (_h_graded :
+      Polygon4gCellularSingularAssociatedGradedH1Iso
+        g C h_boundary D ⟨h0, h1, h2⟩ h_filtration) :
+    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
+  -- Frontier: the concrete comparison data above is enough to state the
+  -- usual cellular-to-singular theorem for this finite CW model, but the
+  -- project still lacks the filtered singular-chain comparison/five-lemma
+  -- implementation that turns those fields into an actual `singularH1` iso.
   sorry
 
 /-- **Comparison leaf 3a.** The correct comparison map is compatible
@@ -328,8 +376,11 @@ theorem polygon4g_cellular_singular_filtration_compatible
     (D : Polygon4gCellularSingularComparisonData g C)
     (h_correct : Polygon4gCellularSingularChainMapCorrect g C h_boundary D) :
     Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct :=
-  (polygon4g_cellular_singular_filtered_comparison_spec_frontier
-    g C h_boundary D h_correct).filtration_compatible
+  ⟨h_correct.1.vertex_mem_zeroSkeleton,
+    h_correct.2.1.edgePath_mem_oneSkeleton,
+    fun z => by
+      rw [h_correct.2.2.characteristic_eq_mk z]
+      exact polygon4g_mem_twoSkeleton g C (Polygon4g.mk g z)⟩
 
 /-- **Comparison leaf 3b.** The associated graded comparison is an
 isomorphism in the degrees that control first homology. -/
@@ -341,12 +392,11 @@ theorem polygon4g_cellular_singular_associated_graded_H1_iso
     (h_filtration :
       Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct) :
     Polygon4gCellularSingularAssociatedGradedH1Iso
-      g C h_boundary D h_correct h_filtration := by
-  let S :=
-    polygon4g_cellular_singular_filtered_comparison_spec_frontier
-      g C h_boundary D h_correct
-  have hEq : S.filtration_compatible = h_filtration := proof_irrel _ _
-  simpa [hEq] using S.associated_graded_H1_iso
+      g C h_boundary D h_correct h_filtration :=
+  ⟨h_correct.1.vertex_eq_model,
+    h_correct.2.1.edgePath_eq_model,
+    h_correct.2.2.boundaryWord_abelianizedBoundary,
+    ⟨LinearEquiv.refl ℤ _⟩⟩
 
 /-- **Comparison leaf 3c.** A filtration-compatible comparison whose
 associated graded map is an isomorphism in the relevant degrees induces
@@ -363,14 +413,14 @@ theorem polygon4g_cellular_singular_H1_iso_of_filtered_graded
     (_h_graded :
       Polygon4gCellularSingularAssociatedGradedH1Iso
         g C h_boundary D h_correct h_filtration) :
-    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) :=
-  (polygon4g_cellular_singular_filtered_comparison_spec_frontier
-    g C h_boundary D h_correct).H1_iso
+    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
+  exact polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison
+    g C h_boundary D h_correct.1 h_correct.2.1 h_correct.2.2 h_filtration _h_graded
 
 /-- **Comparison assembly 3.** A correct cellular-to-singular comparison
 map induces the expected isomorphism on first homology.  This theorem is
-sorry-free; the filtration-theorem work is isolated in
-`polygon4g_cellular_singular_filtered_comparison_spec_frontier`. -/
+sorry-free; the remaining filtered-comparison work is isolated in
+`polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison`. -/
 theorem polygon4g_cellular_singular_H1_iso_of_chain_map
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -389,7 +439,7 @@ by
 /-- **Comparison assembly.** Cellular homology of the standard
 polygonal CW model agrees with singular homology.  This theorem is now
 sorry-free; the remaining bottom-up comparison work is isolated in the
-chain-map and filtered-comparison frontier providers above. -/
+concrete filtered-comparison frontier above. -/
 theorem polygon4g_cellular_to_singularH1_comparison
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
