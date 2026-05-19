@@ -37,7 +37,13 @@ open scoped Manifold
 The `locally_meromorphic` field is a named placeholder predicate; the
 remaining axiom fields capture the structural consequences of being
 genuinely meromorphic that the downstream API (Riemann-Roch, degree theory)
-relies on. -/
+relies on.
+
+This is an axiom-carrying structure: constructors that choose divisor fields
+directly are appropriate only for explicitly named frontier/scaffold
+declarations.  Production route theorems should obtain pole divisors through
+bridge lemmas from analytic/order data rather than by assigning
+`poleDivisor` by hand. -/
 structure MeromorphicMapToSphere
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where

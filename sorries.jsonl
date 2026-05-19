@@ -23,7 +23,7 @@
 {"i":1358,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"theorem","s":"conjugate_one_form_closed","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"aristotle:4361742e-9bcd-4e24-963e-744dbf6a2b09","c":"done","b":"","t":""}
 {"i":1359,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"theorem","s":"dim_h1_eq_two_genus","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"aristotle:5cade433-aad2-4272-aab3-c5086662957f","c":"done","b":"","t":""}
 {"i":1360,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"theorem","s":"dipole_harmonic_holomorphic_extension","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"claude:01RBrHQhzNyKmByCv5hxej14","c":"done","b":"","t":""}
-{"i":1361,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"theorem","s":"dipole_harmonic_pole_is_simple","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"claude:01GPwUqFfKri3cUijQm6rS4y","c":"open","b":"","t":""}
+{"i":1361,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"theorem","s":"dipole_harmonic_pole_is_simple","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"claude:01GPwUqFfKri3cUijQm6rS4y","c":"done","b":"","t":""}
 {"i":1362,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"theorem","s":"dipole_singularity_magnitude_tendsto_infty","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"claude:01QWo4LW8C11zm6dKxXeHvjK","c":"open","b":"","t":""}
 {"i":1363,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"theorem","s":"dirichlet_energy_coercive","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"claude:01FbAPT1hZ5QdqN3gbKyu6pP","c":"done","b":"","t":""}
 {"i":1364,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"theorem","s":"elliptic_regularity_harmonic","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"claude:01NUHsoAzpNh9JAnc849mFdh","c":"open","b":"","t":""}
@@ -1229,3 +1229,4 @@
 {"i":2663,"f":"Jacobian/HolomorphicForms/CompactRiemannSurface.lean","k":"theorem","s":"holomorphicOneForm_supNorm_closedBall_totallyBounded","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2664,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"theorem","s":"analyticDegree_constant","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2665,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"theorem","s":"analyticPushforward_analyticPullback_spec","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2666,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"theorem","s":"meromorphicMapToSphere_of_inverse_order_one_frontier","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
