@@ -76,6 +76,9 @@ structure Polygon4gCellularSingularTwoCellBoundaryWordData
   /-- The boundary word induces the same quotient relation as `Polygon4g`. -/
   boundaryWord_sidePairing :
     EdgeWord.sidePairingRel g boundaryWord = Polygon4g.SideRel g
+  /-- The boundary word has zero abelianised cellular boundary. -/
+  boundaryWord_abelianizedBoundary :
+    edgeWordAbelianizedBoundary boundaryWord = 0
 
 /-- **Comparison leaf 1c(ii).** Construct the boundary-word
 parametrisation for the singular two-cell. -/
@@ -87,7 +90,8 @@ theorem polygon4g_cellular_singular_two_cell_boundary_word_data
   ⟨{
     boundaryWord := C.boundaryWord
     boundaryWord_standard := h_boundary.2.1
-    boundaryWord_sidePairing := h_boundary.2.2
+    boundaryWord_sidePairing := h_boundary.2.2.1
+    boundaryWord_abelianizedBoundary := h_boundary.2.2.2
   }⟩
 
 /-- The singular two-cell datum: the quotient disk characteristic map

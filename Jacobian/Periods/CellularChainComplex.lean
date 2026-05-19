@@ -30,6 +30,74 @@ instance polygon4gCellularH1_module (g : ℕ) :
   unfold Polygon4gCellularH1
   infer_instance
 
+/-- The project-side cellular one-chain module for the standard
+`Polygon4g g` model: free abelian chains on the `2g` oriented one-cells. -/
+abbrev Polygon4gCellularC1 (g : ℕ) : Type :=
+  Fin (2 * g) → ℤ
+
+/-- Index of the one-cell labelled `aᵢ` in the cellular one-chain basis. -/
+def polygon4g_aEdgeIndex {g : ℕ} (i : Fin g) : Fin (2 * g) :=
+  ⟨2 * i.val, by omega⟩
+
+/-- Index of the one-cell labelled `bᵢ` in the cellular one-chain basis. -/
+def polygon4g_bEdgeIndex {g : ℕ} (i : Fin g) : Fin (2 * g) :=
+  ⟨2 * i.val + 1, by omega⟩
+
+/-- The basis one-chain supported at a single oriented one-cell. -/
+def polygon4gCellularBasis {g : ℕ} (e : Fin (2 * g)) :
+    Polygon4gCellularC1 g :=
+  fun e' => if e' = e then 1 else 0
+
+/-- Abelianised cellular boundary contribution of one oriented boundary
+letter.  The convention is `aᵢ ↦ +aᵢ`, `bᵢ ↦ +bᵢ`, and inverse letters map
+to the corresponding negative basis vectors. -/
+def letterAbelianizedBoundary {g : ℕ} : Letter g → Polygon4gCellularC1 g
+  | Letter.a i => polygon4gCellularBasis (polygon4g_aEdgeIndex i)
+  | Letter.b i => polygon4gCellularBasis (polygon4g_bEdgeIndex i)
+  | Letter.aInv i => -polygon4gCellularBasis (polygon4g_aEdgeIndex i)
+  | Letter.bInv i => -polygon4gCellularBasis (polygon4g_bEdgeIndex i)
+
+/-- Abelianised cellular one-chain read from an edge word. -/
+def edgeWordAbelianizedBoundary {g : ℕ} (w : EdgeWord g) :
+    Polygon4gCellularC1 g :=
+  (w.map letterAbelianizedBoundary).sum
+
+@[simp] theorem edgeWordAbelianizedBoundary_nil {g : ℕ} :
+    edgeWordAbelianizedBoundary ([] : EdgeWord g) = 0 := by
+  rfl
+
+@[simp] theorem edgeWordAbelianizedBoundary_cons {g : ℕ}
+    (l : Letter g) (w : EdgeWord g) :
+    edgeWordAbelianizedBoundary (l :: w) =
+      letterAbelianizedBoundary l + edgeWordAbelianizedBoundary w := by
+  rfl
+
+@[simp] theorem edgeWordAbelianizedBoundary_append {g : ℕ}
+    (w₁ w₂ : EdgeWord g) :
+    edgeWordAbelianizedBoundary (w₁ ++ w₂) =
+      edgeWordAbelianizedBoundary w₁ + edgeWordAbelianizedBoundary w₂ := by
+  unfold edgeWordAbelianizedBoundary
+  simp [List.map_append, List.sum_append]
+
+/-- Each commutator block `aᵢ bᵢ aᵢ⁻¹ bᵢ⁻¹` has zero abelianised cellular
+boundary. -/
+theorem edgeWordAbelianizedBoundary_handleBlock {g : ℕ} (i : Fin g) :
+    edgeWordAbelianizedBoundary (EdgeWord.handleBlock i) = 0 := by
+  ext e
+  simp [EdgeWord.handleBlock, edgeWordAbelianizedBoundary, letterAbelianizedBoundary]
+
+/-- The standard product of commutators has zero abelianised cellular
+two-boundary in the project-side cellular one-chain module. -/
+theorem edgeWordAbelianizedBoundary_standardWord (g : ℕ) :
+    edgeWordAbelianizedBoundary (EdgeWord.standardWord g) = 0 := by
+  unfold EdgeWord.standardWord
+  induction List.finRange g with
+  | nil =>
+      simp
+  | cons i is ih =>
+      simp [List.flatMap_cons, edgeWordAbelianizedBoundary_append,
+        edgeWordAbelianizedBoundary_handleBlock, ih]
+
 /-- The closed-disk source for the standard polygonal cell datum. -/
 opaque Polygon4gClosedDiskCellSource (g : ℕ) : Type
 
@@ -183,12 +251,6 @@ structure Polygon4gCharacteristicMapData
   is a loop at the unique vertex. -/
   oneCellBoundaryZero :
     ∀ e : Fin (2 * g), oneCellPath e 0 = vertex ∧ oneCellPath e 1 = vertex
-  /-- The two-cell boundary is the abelianised standard commutator relator:
-  the model records the standard attaching word and its compatibility with
-  the quotient relation. -/
-  twoCellBoundaryAbelianizedRelator :
-    boundaryWord.IsStandardForm ∧
-      EdgeWord.sidePairingRel g boundaryWord = Polygon4g.SideRel g
 
 /-- **Cellular leaf 1c.** Construct the characteristic maps for the
 standard polygonal cell structure. -/
@@ -251,6 +313,12 @@ theorem boundaryWord_sidePairing {g : ℕ} (C : Polygon4gCellularModel g) :
     EdgeWord.sidePairingRel g C.boundaryWord = Polygon4g.SideRel g :=
   C.characteristicMaps.boundaryWord_sidePairing
 
+/-- The boundary word has zero abelianised cellular boundary. -/
+theorem boundaryWord_abelianizedBoundary {g : ℕ} (C : Polygon4gCellularModel g) :
+    edgeWordAbelianizedBoundary C.boundaryWord = 0 := by
+  rw [show C.boundaryWord = EdgeWord.standardWord g from C.boundaryWord_standard]
+  exact edgeWordAbelianizedBoundary_standardWord g
+
 end Polygon4gCellularModel
 
 /-- **Cellular leaf 1d.** Realise the quotient-disk, edge-pairing, and
@@ -293,14 +361,16 @@ relator `∏ᵢ [aᵢ,bᵢ]`, hence zero in the free abelian group on one-cells.
 def Polygon4gTwoCellBoundaryAbelianizedRelator
     (g : ℕ) (C : Polygon4gCellularModel g) : Prop :=
   C.boundaryWord.IsStandardForm ∧
-    EdgeWord.sidePairingRel g C.boundaryWord = Polygon4g.SideRel g
+    EdgeWord.sidePairingRel g C.boundaryWord = Polygon4g.SideRel g ∧
+      edgeWordAbelianizedBoundary C.boundaryWord = 0
 
 /-- **Cellular leaf 2b.** The two-cell boundary is the abelianised
 commutator product and therefore vanishes. -/
 theorem polygon4g_two_cell_boundary_abelianized_relator
     (g : ℕ) (C : Polygon4gCellularModel g) :
     Polygon4gTwoCellBoundaryAbelianizedRelator g C :=
-  C.characteristicMaps.twoCellBoundaryAbelianizedRelator
+  ⟨C.boundaryWord_standard, C.boundaryWord_sidePairing,
+    C.boundaryWord_abelianizedBoundary⟩
 
 /-- **Cellular boundary formula.** It packages two facts: the one-cell
 boundary is zero because all endpoints are the unique vertex, and the
