@@ -278,6 +278,30 @@ theorem liftToCp1_weightedFiberSum_eventually_eq
         (liftToCp1_weightedFiberSum_eventually_eq_finite
           X f _hholo (z₀ := z₀) hnonconst finite_fiber)
 
+/-- Basic holomorphicity of the CP¹ lift of a meromorphic function. -/
+theorem liftToCp1_isHolomorphicBasic
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicFunctionType X) (hholo : True) :
+    JacobianChallenge.HolomorphicForms.IsHolomorphicBasic
+      (meromorphicToCp1 X f) := by
+  exact
+    { continuous := liftToCp1_continuous X f hholo
+      holomorphicAt := liftToCp1_holomorphicAt X f hholo }
+
+/-- Local k-fold ramification data for the CP¹ lift, kept separate from
+basic holomorphicity. -/
+theorem liftToCp1_hasLocalKfoldRamification
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicFunctionType X) (hholo : True) :
+    JacobianChallenge.HolomorphicForms.HasLocalKfoldRamification
+      (meromorphicToCp1 X f) := by
+  exact
+    { local_kfold_ramified := liftToCp1_local_kfold_ramified X f hholo }
+
 /-- Holomorphicity of the CP¹ lift of a meromorphic function.
 
 This is the analytic content needed by sub-leaf 2 of
@@ -285,9 +309,8 @@ This is the analytic content needed by sub-leaf 2 of
 `meromorphicToCp1 X f := f.toFun`, one must prove it is holomorphic in
 the project-local sense used by the branched-cover constructor.
 
-The continuity field is already `liftToCp1_continuous`; the remaining
-fields are the chart-local holomorphicity and the classical one-variable
-local-counting package built into `HolomorphicMap.IsHolomorphic`. -/
+Compatibility wrapper assembling the older `IsHolomorphic` package from
+the now-separated basic and local-kfold route data. -/
 theorem liftToCp1_isHolomorphic
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -295,11 +318,9 @@ theorem liftToCp1_isHolomorphic
     (f : MeromorphicFunctionType X) (hholo : True) :
     JacobianChallenge.HolomorphicForms.IsHolomorphic
       (meromorphicToCp1 X f) := by
-  exact
-    { toIsHolomorphicBasic :=
-        { continuous := liftToCp1_continuous X f hholo
-          holomorphicAt := liftToCp1_holomorphicAt X f hholo }
-      local_kfold_ramified := liftToCp1_local_kfold_ramified X f hholo }
+  exact IsHolomorphic.of_basic
+    (liftToCp1_isHolomorphicBasic X f hholo)
+    (liftToCp1_hasLocalKfoldRamification X f hholo)
 
 /-- Weighted-fiber conservation for the CP¹ lift, kept separate from
 basic/local holomorphicity. -/
