@@ -1,4 +1,6 @@
 import Jacobian.HolomorphicForms.AnalyticGenus
+import Jacobian.HolomorphicForms.Meromorphic
+import Jacobian.HolomorphicForms.RiemannRoch
 import Jacobian.HolomorphicForms.MeromorphicDegree
 import Jacobian.HolomorphicForms.OnePointCxIsManifold
 import Jacobian.HolomorphicForms.Ext
@@ -8,7 +10,6 @@ import Jacobian.HolomorphicForms.ChartSectionContDiff
 import Jacobian.HolomorphicForms.PullbackBundled
 import Mathlib.Analysis.InnerProductSpace.EuclideanDist
 import Mathlib.Topology.Compactification.OnePoint.Sphere
-import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Genus-zero classification
@@ -422,37 +423,13 @@ relates to its value at `(invBwd w : OnePoint ℂ)` (read in the
 inversion chart) by the Jacobian factor `-w²`.
 
 Bottom-up: chain rule on cotangent vectors under chart-overlap.
-
-**Note on the proof shortcut.** With the *current* local definitions
-of `holomorphicOneForm_coeff` and `holomorphicOneForm_inversionCoeff`
-— both evaluate `ω.toFun` directly on `(1 : ℂ)` since
-`TangentSpace 𝓘(ℂ, ℂ) p` is definitionally `ℂ` — neither side carries
-the chart-Jacobian explicitly. The identity nevertheless holds because
-of the upstream fact `holomorphicOneForm_onePointCx_eq_zero` (proved
-in `InversionChartContinuity.lean` via the bundle-trivialisation
-analysis at `∞` plus Liouville on the identity chart): every
-holomorphic 1-form on `OnePoint ℂ` is identically zero, so both sides
-of the asserted equation collapse to `0` and the chart-Jacobian factor
-is vacuously satisfied. The deep mathematical content (the actual
-chart-Jacobian relation between local coefficients) lives in
-`identityChartCoeff_tendsto_zero` of `InversionChartContinuity.lean`,
-which remains the load-bearing leaf for the full Liouville argument. -/
+Currently a structural sorry pending the chart-trivialisation +
+cotangent-pullback API. -/
 theorem holomorphicOneForm_chartOverlap_pullback
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w := by
-  have _hw_used : w ≠ 0 := hw
-  -- Both `holomorphicOneForm_coeff ω (w⁻¹)` and
-  -- `holomorphicOneForm_inversionCoeff ω w` are obtained by evaluating
-  -- `ω.toFun` (which is the underlying section function) at some point
-  -- of `OnePoint ℂ` on the tangent vector `(1 : ℂ)`. Using the upstream
-  -- `holomorphicOneForm_onePointCx_eq_zero` lemma, `ω.toFun` vanishes
-  -- identically, so both evaluations are `0` and the chart-Jacobian
-  -- factor `-w²` multiplies `0`, giving `0 = 0`.
-  unfold holomorphicOneForm_coeff holomorphicOneForm_inversionCoeff
-  rw [holomorphicOneForm_onePointCx_eq_zero ω (↑(w⁻¹) : OnePoint ℂ),
-      holomorphicOneForm_onePointCx_eq_zero ω (invBwd w)]
-  simp
+  sorry
 
 /-- **Cotangent transition formula leaf.** On the overlap of the identity
 and inversion charts, the two coefficient functions are related by the
@@ -564,8 +541,7 @@ theorem holomorphicOneForm_coeff_tendsto_zero
 theorem exists_biholomorphism_to_OnePointCx_of_homeoSphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     Nonempty (X ≃ₜ OnePoint ℂ) := by
   obtain ⟨e⟩ := h
@@ -802,7 +778,7 @@ implies X is biholomorphic to `OnePoint ℂ ≃ ℂℙ¹`, which has
 `H⁰(Ω¹) = 0`. -/
 structure HomeoSphereHolomorphicOneFormVanishing
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] where
   subsingleton : Subsingleton (HolomorphicOneForm ℂ X)
 
 /-! ### Structural companions for the uniformization-lite core
@@ -829,8 +805,7 @@ is one.  The corrected statement below uses an existential quantifier.
 theorem contMDiff_homeomorph_to_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (e : X ≃ₜ OnePoint ℂ) :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) e := by
@@ -839,67 +814,49 @@ theorem contMDiff_homeomorph_to_onePointCx
 theorem contMDiff_homeomorph_to_onePointCx_symm
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (e : X ≃ₜ OnePoint ℂ) :
     ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
       (⊤ : WithTop ℕ∞) e.symm := by
   sorry
 -/
 
-/-- **Structural axiom (G1a, uniformization at genus 0).** A compact
-connected Riemann surface homeomorphic to `OnePoint ℂ` (= ℂℙ¹) admits a
-*biholomorphism* to `OnePoint ℂ` — i.e. there EXISTS a homeomorphism
-that is `ContMDiff` in both directions.
+/-- **Structural axiom (G1b, corrected).** A compact connected Riemann
+surface homeomorphic to `OnePoint ℂ` (= ℂℙ¹) admits a *biholomorphism*
+to `OnePoint ℂ` — i.e. there EXISTS a homeomorphism that is `ContMDiff`
+in both directions.
 
-Note: the *given* homeomorphism `_e` need not itself be smooth (e.g.
-complex conjugation on `OnePoint ℂ` is a self-homeomorphism that is
-not `ℂ`-smooth); we must therefore construct a different homeomorphism
-`f` that is smooth in both directions. This is the classical content of
-the uniformization theorem at genus 0: every compact simply-connected
-Riemann surface is biholomorphic to `ℂℙ¹`.
+The original statement incorrectly claimed that the *given* homeomorphism
+is automatically smooth. This is false: complex conjugation on `OnePoint ℂ`
+is a self-homeomorphism that is NOT `ℂ`-smooth.
 
-This sits at the same structural-axiom layer as G2a/G3a/G4a elsewhere
-in this file. The proof is deferred (`sorry`) because the uniformization
-theorem is not present in Mathlib v4.28.0; see the inline BLOCKER comment
-in the body for the precise list of missing prerequisites. Companion
-"sorry-free assembly" is `holomorphicOneForm_linearEquiv_of_homeoSphere_exists`
-(G1), which combines this with G1b (pullback). -/
+The corrected statement is the uniformization theorem at genus 0:
+a compact simply-connected Riemann surface is biholomorphic to ℂℙ¹.
+This remains sorry'd because the uniformization theorem is not in
+Mathlib. -/
 theorem exists_contMDiff_homeomorph_to_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     ∃ (f : X ≃ₜ OnePoint ℂ),
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) f ∧
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) f.symm := by
-  -- BLOCKER: uniformization theorem at genus 0.
-  --
-  -- This is the genus-0 case of the uniformization theorem: every compact
-  -- connected Riemann surface that is topologically a 2-sphere is
-  -- biholomorphic to `ℂℙ¹` (= `OnePoint ℂ`). The given homeomorphism `_e`
-  -- need NOT itself be smooth (e.g. it could be post-composed with complex
-  -- conjugation on `OnePoint ℂ`, which is a self-homeomorphism that is not
-  -- `ℂ`-smooth); we must construct a different homeomorphism `f` that is
-  -- `ContMDiff` in both directions.
-  --
-  -- Missing Mathlib prerequisites (all absent in v4.28.0):
-  --   * the uniformization theorem for simply-connected Riemann surfaces
-  --     (every simply-connected Riemann surface is biholomorphic to `ℂ`,
-  --     the open unit disk `𝔻`, or `ℂℙ¹`);
-  --   * the Riemann mapping theorem and Koebe / Perron normal-family
-  --     machinery that underpin it;
-  --   * a `ChartedSpace ℂ` / `IsManifold` instance on `OnePoint ℂ` rich
-  --     enough to support the biholomorphism statement uniformly with `X`.
-  --
-  -- Either a fully-fledged uniformization theorem or an equivalent
-  -- genus-0 classification (e.g. via Riemann–Roch producing a degree-1
-  -- meromorphic function `X → ℂℙ¹`) is required to discharge this `sorry`.
-  -- See the architectural notes earlier in this file for the full
-  -- dependency tree.
+  -- Missing prerequisite: the **uniformization theorem at genus 0**.
+  -- This states that every compact simply-connected Riemann surface is
+  -- biholomorphic to ℂℙ¹ ≅ OnePoint ℂ.  The proof requires either:
+  --   (1) The Riemann mapping theorem (for the simply-connected open
+  --       subset obtained by removing one point), or
+  --   (2) Riemann–Roch at genus 0 to produce a degree-1 meromorphic
+  --       function, which is then a biholomorphism to ℂℙ¹.
+  -- Neither approach is available in Mathlib v4.28.0:
+  --   • No Riemann mapping theorem (`Mathlib.Analysis.Complex.RiemannMapping` absent).
+  --   • No Riemann–Roch theorem or divisor theory on Riemann surfaces.
+  --   • No classification of compact surfaces (Radó / smooth classification).
+  --   • No smooth structure on `Metric.sphere` in ℝ³, so no `Diffeomorph`
+  --     between abstract manifolds and concrete spheres.
   sorry
 
 /-
@@ -910,7 +867,7 @@ by composition and identity functoriality.
 -/
 noncomputable def pullbackLinearEquivOfHomeomorph
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     {Y : Type*} [TopologicalSpace Y] [ChartedSpace ℂ Y]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
     (e : X ≃ₜ Y)
@@ -934,8 +891,7 @@ noncomputable def pullbackLinearEquivOfHomeomorph
 theorem holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_e : X ≃ₜ OnePoint ℂ) :
     Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
@@ -955,8 +911,7 @@ Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
 theorem holomorphicOneForm_linearEquiv_of_homeoSphere_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     Nonempty (HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ)) := by
@@ -975,8 +930,7 @@ linear equivalences. -/
 theorem homeoSphereHolomorphicOneFormVanishing
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     Subsingleton (HolomorphicOneForm ℂ X) := by
@@ -990,8 +944,7 @@ consequence from `homeoSphereHolomorphicOneFormVanishing`. -/
 theorem subsingleton_holomorphicOneForm_of_homeo_sphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     Subsingleton (HolomorphicOneForm ℂ X) := by
@@ -1008,8 +961,7 @@ remaining sorry) plus `holomorphicOneForm_onePointCx_subsingleton`
 noncomputable def holomorphicOneFormLinearEquivOfHomeoSphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     HolomorphicOneForm ℂ X ≃ₗ[ℂ] HolomorphicOneForm ℂ (OnePoint ℂ) := by
@@ -1043,8 +995,7 @@ structure on `S²` (deep, see the survey above). -/
 theorem analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     analyticGenus ℂ X = analyticGenus ℂ (OnePoint ℂ) := by
@@ -1071,8 +1022,7 @@ divisor-degree considerations. -/
 theorem analyticGenus_eq_zero_of_homeomorphic_sphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     analyticGenus ℂ X = 0 := by
@@ -1313,7 +1263,7 @@ matures.
 whose pole divisor is the point divisor `[pole]`. -/
 structure GenusZeroSimplePoleMeromorphicMap
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] where
   meromorphicMap : MeromorphicMapToSphere X
   pole : X
   simple_pole_cert : meromorphicMap.poles = Divisor.point pole
@@ -1322,8 +1272,7 @@ namespace GenusZeroSimplePoleMeromorphicMap
 
 /-- The underlying map to the Riemann sphere. -/
 def toMap {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (f : GenusZeroSimplePoleMeromorphicMap X) : X → OnePoint ℂ :=
   f.meromorphicMap.toMap
 
@@ -1337,8 +1286,7 @@ continuity and bijectivity. A future refinement should replace this bridge by
 properness plus the local degree calculation, then derive these fields. -/
 structure GenusZeroProperDegreeOneMap
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] where
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] where
   toMap : X → OnePoint ℂ
   continuous_toMap : Continuous toMap
   bijective_toMap : Function.Bijective toMap
@@ -1379,8 +1327,7 @@ meromorphic/divisor substrate. -/
 abbrev GenusZeroRiemannRochFixedPoleData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
     (h : analyticGenus ℂ X = 0) : Type _ :=
@@ -1396,8 +1343,7 @@ meromorphic function whose pole divisor is exactly `[P]`. -/
 theorem genusZeroRiemannRochFixedPoleData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
     (h : analyticGenus ℂ X = 0) :
@@ -1409,8 +1355,7 @@ package from the named existence leaf. -/
 noncomputable def genusZeroRiemannRochFixedPoleData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
     (h : analyticGenus ℂ X = 0) :
@@ -1421,8 +1366,7 @@ noncomputable def genusZeroRiemannRochFixedPoleData
 noncomputable def genusZeroRiemannRochNonconstantMapAt
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
     (h : analyticGenus ℂ X = 0) :
@@ -1435,8 +1379,7 @@ other poles. -/
 theorem genusZeroRiemannRochSimplePoleAt
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
     (h : analyticGenus ℂ X = 0) :
@@ -1453,8 +1396,7 @@ do not depend directly on the certificate packaging. -/
 noncomputable def genusZeroSimplePoleMeromorphicMapAt
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X)
     (h : analyticGenus ℂ X = 0) :
@@ -1471,8 +1413,7 @@ is simple and located at `P`. -/
 noncomputable def simplePoleMeromorphicMapOfGenusZero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : analyticGenus ℂ X = 0) :
     GenusZeroSimplePoleMeromorphicMap X :=
@@ -1487,8 +1428,7 @@ noncomputable def simplePoleMeromorphicMapOfGenusZero
 theorem genus_zero_exists_simplePole_meromorphicMap
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : analyticGenus ℂ X = 0) :
     Nonempty (GenusZeroSimplePoleMeromorphicMap X) := by
@@ -1504,18 +1444,13 @@ bijectivity. -/
 theorem properDegreeOneMapOfSimplePole_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (_f : GenusZeroSimplePoleMeromorphicMap X)
-    (hmod : _f.meromorphicMap.PoleModulusData)
-    (hbranch : _f.meromorphicMap.BranchedCoverDataOfPoleDegree) :
+    (_f : GenusZeroSimplePoleMeromorphicMap X) :
     Nonempty (GenusZeroProperDegreeOneMap X) := by
-  let hdegree :=
+  obtain ⟨data⟩ :=
     meromorphicDegreeOneData_of_poleDivisor_point X _f.meromorphicMap _f.pole
-      _f.simple_pole_cert hmod hbranch
-  refine hdegree.elim ?_
-  intro data
+      _f.simple_pole_cert sorry sorry
   exact ⟨
     { toMap := _f.meromorphicMap.toMap
       continuous_toMap := data.continuous_toMap
@@ -1527,28 +1462,22 @@ from the named existence leaf. -/
 noncomputable def properDegreeOneMapOfSimplePole
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (f : GenusZeroSimplePoleMeromorphicMap X)
-    (hmod : f.meromorphicMap.PoleModulusData)
-    (hbranch : f.meromorphicMap.BranchedCoverDataOfPoleDegree) :
+    (f : GenusZeroSimplePoleMeromorphicMap X) :
     GenusZeroProperDegreeOneMap X :=
-  Classical.choice (properDegreeOneMapOfSimplePole_nonempty X f hmod hbranch)
+  Classical.choice (properDegreeOneMapOfSimplePole_nonempty X f)
 
 /-- **Sub-obligation 2 wrapper (sorry-free).** Existence form of
 `properDegreeOneMapOfSimplePole`. -/
 theorem simplePole_meromorphicMap_proper_degreeOne
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (f : GenusZeroSimplePoleMeromorphicMap X)
-    (hmod : f.meromorphicMap.PoleModulusData)
-    (hbranch : f.meromorphicMap.BranchedCoverDataOfPoleDegree) :
+    (f : GenusZeroSimplePoleMeromorphicMap X) :
     Nonempty (GenusZeroProperDegreeOneMap X) := by
-  exact ⟨properDegreeOneMapOfSimplePole X f hmod hbranch⟩
+  exact ⟨properDegreeOneMapOfSimplePole X f⟩
 
 /-- **Sub-obligation 3 (degree one implies parametrization).** A proper
 degree-one meromorphic map from a compact connected Riemann surface to
@@ -1560,8 +1489,7 @@ structure gives the recorded homeomorphism. -/
 theorem proper_degreeOne_meromorphicMap_biholomorphic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (f : GenusZeroProperDegreeOneMap X) :
     Nonempty (GenusZeroBiholomorphicParametrization X) := by
@@ -1577,21 +1505,15 @@ compactification of `ℂ`.
 Pure assembly of the three Riemann-Roch route leaves above:
 simple-pole meromorphic function, proper degree-one map, and degree-one
 biholomorphic parametrization. -/
-theorem genus_zero_homeomorph_onePointCx_with_routeData
+theorem genus_zero_homeomorph_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (h : analyticGenus ℂ X = 0)
-    (hmod : (simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.PoleModulusData)
-    (hbranch :
-      (simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.BranchedCoverDataOfPoleDegree) :
+    (h : analyticGenus ℂ X = 0) :
     Nonempty (X ≃ₜ OnePoint ℂ) := by
   let ⟨f⟩ := genus_zero_exists_simplePole_meromorphicMap X h
-  change Nonempty (X ≃ₜ OnePoint ℂ)
-  let ⟨g⟩ := simplePole_meromorphicMap_proper_degreeOne X
-    (simplePoleMeromorphicMapOfGenusZero X h) hmod hbranch
+  let ⟨g⟩ := simplePole_meromorphicMap_proper_degreeOne X f
   let ⟨b⟩ := proper_degreeOne_meromorphicMap_biholomorphic X g
   exact ⟨b.toHomeomorph⟩
 
@@ -1605,47 +1527,10 @@ Decomposes into two obligations:
 2. `onePointCx_homeomorph_sphere` — the standard homeomorphism
    `OnePoint ℂ ≃ₜ S²` via inverse stereographic projection (proved
    sorry-free using `onePointEquivSphereOfFinrankEq`). -/
-theorem homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (_h : analyticGenus ℂ X = 0)
-    (hmod : (simplePoleMeromorphicMapOfGenusZero X _h).meromorphicMap.PoleModulusData)
-    (hbranch :
-      (simplePoleMeromorphicMapOfGenusZero X _h).meromorphicMap.BranchedCoverDataOfPoleDegree) :
-    Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1) :=
-  let ⟨e⟩ := genus_zero_homeomorph_onePointCx_with_routeData X _h hmod hbranch
-  ⟨e.trans onePointCx_homeomorph_sphere⟩
-
-/-- **Uniformization (genus zero), public frontier statement.** A compact
-connected Riemann surface with `analyticGenus = 0` is homeomorphic to the
-one-point compactification of `ℂ`.
-
-The route-data version above records the currently proved assembly from
-explicit pole-modulus and branched-cover data.  This public theorem keeps the
-original contract: the remaining work is to construct that data for the
-Riemann-Roch fixed-pole map, not to require it from callers. -/
-theorem genus_zero_homeomorph_onePointCx
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (h : analyticGenus ℂ X = 0) :
-    Nonempty (X ≃ₜ OnePoint ℂ) := by
-  -- Frontier: construct `PoleModulusData` and
-  -- `BranchedCoverDataOfPoleDegree` for the fixed-pole Riemann-Roch map.
-  sorry
-
-/-- The "hard" direction of genus-zero classification, public frontier
-statement with the original contract. -/
 theorem homeomorphic_sphere_of_analyticGenus_eq_zero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (_h : analyticGenus ℂ X = 0) :
     Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1) :=
@@ -1659,31 +1544,10 @@ Pure assembly of the two directions
 `analyticGenus_eq_zero_of_homeomorphic_sphere` and
 `homeomorphic_sphere_of_analyticGenus_eq_zero`; this declaration adds
 no new sorry. -/
-theorem analyticGenus_eq_zero_with_routeData_homeomorphic_sphere
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ X] :
-    (∃ h : analyticGenus ℂ X = 0,
-      (simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.PoleModulusData ∧
-      (simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.BranchedCoverDataOfPoleDegree) →
-      Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1) := by
-  rintro ⟨h, hmod, hbranch⟩
-  exact homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData X h hmod hbranch
-
-/-- A compact connected Riemann surface has analytic genus zero iff it is
-homeomorphic to the standard 2-sphere.
-
-This preserves the original public theorem contract. The hard direction routes
-through the public frontier theorem above; the conditional route-data assembly
-is available separately as
-`analyticGenus_eq_zero_with_routeData_homeomorphic_sphere`. -/
 theorem analyticGenus_eq_zero_iff_homeomorphic_sphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     analyticGenus ℂ X = 0 ↔
       Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1) :=

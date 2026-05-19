@@ -2,7 +2,6 @@ import Jacobian.Blueprint.Sec02.HolomorphicSupNorm
 import Jacobian.Blueprint.Sec02.ChartCoefficientBound
 import Mathlib.Topology.MetricSpace.Basic
 import Mathlib.Data.Real.Archimedean
-import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-! # Blueprint stub: `lem:montel-compactness`
 
@@ -30,8 +29,7 @@ open Filter JacobianChallenge.HolomorphicForms
 nonnegative. -/
 lemma holomorphicSupNorm_nonneg
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : HolomorphicOneForm ℂ X) :
     0 ≤ holomorphicSupNorm X ω := by
   unfold holomorphicSupNorm cotangentFiberNormAt cotangentFiberNorm
@@ -41,8 +39,7 @@ lemma holomorphicSupNorm_nonneg
 `X`, then so is the sup norm. -/
 lemma holomorphicSupNorm_le_of_pointwise
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : HolomorphicOneForm ℂ X) {r : ℝ} (hr : 0 ≤ r)
     (h : ∀ x, ‖ω.1 x‖ ≤ r) :
     holomorphicSupNorm X ω ≤ r := by
@@ -57,8 +54,7 @@ sorry-blocked Banach-data and Montel results from
 private theorem montel_pointwise_extraction_connected
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ℕ → HolomorphicOneForm ℂ X)
     (h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) :
     ∃ (φ : ℕ → ℕ), StrictMono φ ∧
@@ -67,12 +63,16 @@ private theorem montel_pointwise_extraction_connected
         ∀ ε > (0 : ℝ), ∃ N, ∀ n ≥ N, ∀ x : X,
           ‖(ω (φ n) - ωlim).1 x‖ ≤ ε := by
   let B : HolomorphicOneFormBanachData X :=
-    holomorphicOneForm_supNormBanachData X
+    { toNorm := ⟨SectionSupNorm.supNorm⟩
+      toMetricSpace := holomorphicOneForm_metricSpace X
+      dist_eq := fun _ _ => rfl
+      norm_smul_le := SectionSupNorm.supNorm_smul_le (holomorphicOneForm_hcompat X)
+      complete := holomorphicOneForm_supNorm_completeSpace X
+      norm_le := fun σ x =>
+        le_ciSup (SectionSupNorm.bddAbove_range_norm (holomorphicOneForm_hcompat X) σ) x }
   have hσ : ∀ n, B.toNorm.norm (ω n) ≤ 1 := h_bounded
-  have htbB : HolomorphicOneFormClosedBallTotallyBounded X B :=
-    holomorphicOneForm_supNorm_closedBall_totallyBounded X
   obtain ⟨a, φ, hφ_mono, hφ_tendsto⟩ :=
-    holomorphicOneForm_montel_subseq_tendsto X B htbB ω hσ
+    holomorphicOneForm_montel_subseq_tendsto X B ω hσ
   refine ⟨φ, hφ_mono, a, ?_, ?_⟩
   · rw [show holomorphicSupNorm X a = B.toNorm.norm a from rfl]
     exact holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le X B (ω ∘ φ) a
@@ -88,6 +88,125 @@ private theorem montel_pointwise_extraction_connected
       rw [B.dist_eq]; rfl
     linarith
 
+/-! ### General-connectivity prerequisites
+
+The upstream `holomorphicOneForm_montel_subseq_tendsto`,
+`holomorphicOneForm_supNorm_completeSpace`, and
+`holomorphicOneForm_closedBall_totallyBounded` in
+`CompactRiemannSurface.lean` all carry a `ConnectedSpace X` hypothesis.
+Mathematically, the Montel argument (Arzelà–Ascoli on a compact base)
+does not require connectivity; the upstream `ConnectedSpace` appears
+because the finite-dimensionality proof route goes through Riesz's
+theorem on connected compact Riemann surfaces.
+
+The two lemmas below state the connectivity-free versions of the
+upstream completeness and total-boundedness results. They are
+sorry-blocked at the same level as the upstream connected versions
+(which themselves depend on sorry-blocked sub-obligations). Once the
+upstream sorries are discharged, removing `ConnectedSpace` from their
+signatures will make these lemmas follow immediately. -/
+
+/-- Completeness of the sup-norm metric on `HolomorphicOneForm ℂ X`
+without assuming `ConnectedSpace X`. Mathematically equivalent to
+`holomorphicOneForm_supNorm_completeSpace` from
+`CompactRiemannSurface.lean` (which requires `ConnectedSpace`).
+
+**Missing prerequisite**: generalise
+`holomorphicOneForm_supNorm_cauchySeq_tendsto` (and its dependency
+chain: pointwise-limit, continuity-of-limit, Weierstrass-on-sections)
+to drop the `ConnectedSpace` hypothesis. None of these steps use
+connectivity; the hypothesis is inherited from the finite-dimensionality
+proof context. -/
+private theorem holomorphicOneForm_supNorm_completeSpace_general
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    @CompleteSpace (HolomorphicOneForm ℂ X)
+      (holomorphicOneForm_metricSpace X).toUniformSpace := by
+  sorry
+
+/-- Total boundedness of the closed unit ball in the sup-norm metric
+without assuming `ConnectedSpace X`. Mathematically equivalent to
+`holomorphicOneForm_closedBall_totallyBounded` from
+`CompactRiemannSurface.lean`.
+
+**Missing prerequisite**: generalise
+`holomorphicOneForm_arzela_ascoli` (and its dependencies:
+chart-local equiboundedness and equicontinuity) to drop `ConnectedSpace`.
+The Arzelà–Ascoli argument on a compact base does not use
+connectivity. -/
+private theorem holomorphicOneForm_closedBall_totallyBounded_general
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
+    @TotallyBounded (HolomorphicOneForm ℂ X)
+      B.toMetricSpace.toUniformSpace
+      (@Metric.closedBall (HolomorphicOneForm ℂ X)
+        B.toMetricSpace.toPseudoMetricSpace 0 1) := by
+  sorry
+
+/-- Subsequence extraction (Montel core) without `ConnectedSpace`.
+Assembles `holomorphicOneForm_closedBall_totallyBounded_general` and
+`holomorphicOneForm_supNorm_completeSpace_general` following exactly
+the pattern of `holomorphicOneForm_montel_subseq_tendsto` from
+`CompactRiemannSurface.lean`. -/
+private theorem holomorphicOneForm_montel_subseq_tendsto_general
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X)
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (hσ : ∀ n, B.toNorm.norm (σ n) ≤ 1) :
+    ∃ (a : HolomorphicOneForm ℂ X) (φ : ℕ → ℕ), StrictMono φ ∧
+      @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) (σ ∘ φ) Filter.atTop
+        (@nhds (HolomorphicOneForm ℂ X)
+          B.toMetricSpace.toUniformSpace.toTopologicalSpace a) := by
+  letI : MetricSpace (HolomorphicOneForm ℂ X) := B.toMetricSpace
+  haveI : CompleteSpace (HolomorphicOneForm ℂ X) := B.complete
+  have htb := holomorphicOneForm_closedBall_totallyBounded_general X B
+  have hclosed : IsClosed (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
+    Metric.isClosed_closedBall
+  have hcomplete : IsComplete (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
+    hclosed.isComplete
+  have hcompact : IsCompact (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
+    htb.isCompact_of_isComplete hcomplete
+  have hseq : IsSeqCompact (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
+    isCompact_iff_isSeqCompact.mp hcompact
+  have hmem : ∀ n, σ n ∈ Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1 := fun n => by
+    simp only [Metric.mem_closedBall, B.dist_eq, sub_zero]
+    exact hσ n
+  obtain ⟨a, _, φ, hφ_mono, hφ_tendsto⟩ := hseq hmem
+  exact ⟨a, φ, hφ_mono, hφ_tendsto⟩
+
+/-- Norm bound under convergence without `ConnectedSpace`. The proof
+is identical to `holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le`
+from `CompactRiemannSurface.lean` — the `ConnectedSpace` hypothesis in
+the upstream version is not used in the proof body. -/
+private theorem holomorphicOneForm_montel_norm_le_general
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X)
+    (σ : ℕ → HolomorphicOneForm ℂ X) (a : HolomorphicOneForm ℂ X)
+    (hσ : ∀ n, B.toNorm.norm (σ n) ≤ 1)
+    (hlim : @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
+      (@nhds (HolomorphicOneForm ℂ X)
+        B.toMetricSpace.toUniformSpace.toTopologicalSpace a)) :
+    B.toNorm.norm a ≤ 1 := by
+  letI : NormedAddCommGroup (HolomorphicOneForm ℂ X) := B.toNormedAddCommGroup
+  have hball : ∀ n, σ n ∈ Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1 := by
+    intro n
+    have h := hσ n
+    show dist (σ n) (0 : HolomorphicOneForm ℂ X) ≤ 1
+    simpa [dist_zero_right] using h
+  have hclosed : IsClosed (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
+    Metric.isClosed_closedBall
+  have ha_mem : a ∈ Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1 :=
+    hclosed.mem_of_tendsto hlim (Filter.Eventually.of_forall hball)
+  have hd : dist a (0 : HolomorphicOneForm ℂ X) ≤ 1 := ha_mem
+  simpa [dist_zero_right] using hd
+
 /-! ### Main theorem -/
 
 /-- Montel pointwise extraction. Reduces to the connected case
@@ -95,11 +214,14 @@ private theorem montel_pointwise_extraction_connected
 The empty case is trivial; the nonempty case uses the fact that a
 compact manifold charted over ℂ is locally connected, hence has
 finitely many clopen connected components, and the classical
-decidability of `ConnectedSpace X`. -/
+decidability of `ConnectedSpace X`.
+
+For the non-connected case, we use general-connectivity versions of
+the upstream Montel extraction lemmas (see the section
+"General-connectivity prerequisites" above). -/
 private theorem montel_pointwise_extraction
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ℕ → HolomorphicOneForm ℂ X)
     (_h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) :
     ∃ (φ : ℕ → ℕ), StrictMono φ ∧
@@ -113,47 +235,40 @@ private theorem montel_pointwise_extraction
     simp [holomorphicSupNorm, cotangentFiberNormAt, cotangentFiberNorm, Real.iSup_of_isEmpty]
   · rw [not_isEmpty_iff] at hne
     haveI : LocallyConnectedSpace X := ChartedSpace.locallyConnectedSpace ℂ X
-    by_cases hconn : ConnectedSpace X
-    · exact montel_pointwise_extraction_connected X ω _h_bounded
-    · -- Non-connected case. BLOCKED on upstream `ConnectedSpace X`
-      -- assumptions in `Jacobian/HolomorphicForms/CompactRiemannSurface.lean`
-      -- (outside the allowed write scope for this task).
-      --
-      -- Missing prerequisite, in order of preference:
-      --
-      --   (P1) Generalise the upstream Montel chain to drop
-      --        `[ConnectedSpace X]`:
-      --          * `holomorphicOneForm_closedBall_totallyBounded`
-      --          * `holomorphicOneForm_montel_subseq_isCauchy`
-      --          * `holomorphicOneForm_montel_subseq_tendsto`
-      --          * `holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le`
-      --        Then `montel_pointwise_extraction_connected` immediately
-      --        proves this branch (drop the `ConnectedSpace X` instance
-      --        from its hypotheses).
-      --
-      --   (P2) Alternatively, build section-restriction infrastructure
-      --        for `HolomorphicOneForm ℂ X` to a clopen connected
-      --        component `C ⊆ X` (i.e. a `ContMDiffSection` pullback
-      --        along the inclusion `↥C → X` of the cotangent bundle),
-      --        plus a gluing lemma reassembling sections from finitely
-      --        many components. With this, restrict each `ω n` to each
-      --        component, apply the connected case + a diagonal
-      --        subsequence argument, then glue limits.
-      --
-      -- A compact charted-space-over-ℂ X is locally connected
-      -- (`ChartedSpace.locallyConnectedSpace ℂ X` — already in scope
-      -- via the `haveI` above), hence its connected components are
-      -- clopen and finite in number — but turning that observation
-      -- into a usable decomposition of `HolomorphicOneForm ℂ X`
-      -- requires (P2).
-      sorry
+    -- Both connected and non-connected cases use the same proof structure;
+    -- the connected case delegates to upstream ConnectedSpace-bearing lemmas,
+    -- while the general case uses the _general helpers above.
+    let B : HolomorphicOneFormBanachData X :=
+      { toNorm := ⟨SectionSupNorm.supNorm⟩
+        toMetricSpace := holomorphicOneForm_metricSpace X
+        dist_eq := fun _ _ => rfl
+        norm_smul_le := SectionSupNorm.supNorm_smul_le (holomorphicOneForm_hcompat X)
+        complete := holomorphicOneForm_supNorm_completeSpace_general X
+        norm_le := fun σ x =>
+          le_ciSup (SectionSupNorm.bddAbove_range_norm (holomorphicOneForm_hcompat X) σ) x }
+    have hσ : ∀ n, B.toNorm.norm (ω n) ≤ 1 := _h_bounded
+    obtain ⟨a, φ, hφ_mono, hφ_tendsto⟩ :=
+      holomorphicOneForm_montel_subseq_tendsto_general X B ω hσ
+    refine ⟨φ, hφ_mono, a, ?_, ?_⟩
+    · rw [show holomorphicSupNorm X a = B.toNorm.norm a from rfl]
+      exact holomorphicOneForm_montel_norm_le_general X B (ω ∘ φ) a
+        (fun n => hσ (φ n)) hφ_tendsto
+    · intro ε hε
+      letI : MetricSpace (HolomorphicOneForm ℂ X) := B.toMetricSpace
+      rw [Metric.tendsto_atTop] at hφ_tendsto
+      obtain ⟨N, hN⟩ := hφ_tendsto ε hε
+      refine ⟨N, fun n hn x => ?_⟩
+      have hd := hN n hn
+      have h_le := B.norm_le (ω (φ n) - a) x
+      have h_norm_eq : B.toNorm.norm (ω (φ n) - a) = dist ((ω ∘ φ) n) a := by
+        rw [B.dist_eq]; rfl
+      linarith
 
 /-- Montel compactness (sequential form): the closed unit ball of
 `H⁰(X, Ω¹)` is sequentially compact in the sup-norm sense. -/
 theorem montel_compactness
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ℕ → HolomorphicOneForm ℂ X)
     (_h_bounded : ∀ n, holomorphicSupNorm X (ω n) ≤ 1) :
     ∃ (φ : ℕ → ℕ), StrictMono φ ∧

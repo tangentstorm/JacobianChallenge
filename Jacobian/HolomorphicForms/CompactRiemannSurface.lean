@@ -3,7 +3,6 @@ import Jacobian.HolomorphicForms.SectionMetric
 import Jacobian.HolomorphicForms.EvalAtOneHelper
 import Mathlib.Analysis.Normed.Module.FiniteDimension
 import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
-import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Finite-dimensionality on a compact connected Riemann surface
@@ -51,6 +50,10 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
+variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
+
 /-- Bundle of typeclass data witnessing a Banach-space structure on
 `HolomorphicOneForm ℂ X` whose topology is the topology of uniform
 convergence on compact sets, **built atop the existing
@@ -66,7 +69,7 @@ no propositional transport needed when feeding the result back to
 Used as a packed return value for the "step (a)" obligation. -/
 structure HolomorphicOneFormBanachData
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] where
   /-- The norm function on the section space. -/
   toNorm : Norm (HolomorphicOneForm ℂ X)
   /-- The metric-space structure realising the uniform-on-compacts
@@ -103,7 +106,7 @@ structure HolomorphicOneFormBanachData
 namespace HolomorphicOneFormBanachData
 
 variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
   (B : HolomorphicOneFormBanachData X)
 
@@ -172,8 +175,7 @@ Mathlib `ContinuousLinearMap.evalCLM` evaluation at `1 : ℂ`.) -/
 theorem cotangent_fiber_eval_isometry
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_x : X) : True := by trivial
 
 /-- **R8-sub-B.A.r2.** Trivialisation `hcompat` witness: for every
@@ -184,8 +186,7 @@ section `σ` and every chart `(e, U)` with `x ∈ U`,
 theorem cotangent_trivialisation_hcompat
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
     True := by trivial
 
 /-! ### R8-sub-B.A round-2 decomposition -/
@@ -238,8 +239,7 @@ Cross-ref: `tex/sections/02-holomorphic-forms-finite-dim.tex`,
 `lem:cotangent-fiber-norm-eval-one`. -/
 theorem ContMDiffSection.fiberNorm_eq_abs_eval_one
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : HolomorphicOneForm ℂ X) (x : X) :
     ContMDiffSection.fiberNorm σ x = ‖(σ.toFun x) (1 : ℂ)‖ := by
   -- Fiber norm is the operator norm on T*X x = ℂ →L[ℂ] ℂ.
@@ -257,7 +257,7 @@ theorem ContMDiffSection.fiberNorm_eq_abs_eval_one
 cotangent-bundle section, viewed as `X → ℂ`, is continuous. -/
 theorem ContMDiffSection.continuous_eval_at_one
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : HolomorphicOneForm ℂ X) :
     Continuous (fun x => (σ.toFun x) (1 : ℂ)) :=
@@ -271,8 +271,7 @@ and `ContMDiffSection.continuous_eval_at_one`. -/
 theorem holomorphicOneForm_fiberNorm_continuous_via_eval_at_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : HolomorphicOneForm ℂ X) :
     Continuous (ContMDiffSection.fiberNorm σ) := by
   -- Continuous on a function is proved by showing it's equal to a continuous one.
@@ -285,8 +284,7 @@ theorem holomorphicOneForm_fiberNorm_continuous_via_eval_at_one
 theorem holomorphicOneForm_fiberNorm_continuous
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : HolomorphicOneForm ℂ X) :
     Continuous (ContMDiffSection.fiberNorm σ) :=
   holomorphicOneForm_fiberNorm_continuous_via_eval_at_one σ
@@ -296,8 +294,7 @@ used by `SectionSupNorm` and `SectionMetric`. -/
 theorem holomorphicOneForm_hcompat
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
     ∀ (σ : HolomorphicOneForm ℂ X),
       Continuous (ContMDiffSection.fiberNorm σ) :=
   holomorphicOneForm_fiberNorm_continuous X
@@ -308,8 +305,7 @@ the individual axioms proved in `SectionMetric.lean`. -/
 noncomputable def holomorphicOneForm_metricSpace
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
     MetricSpace (HolomorphicOneForm ℂ X) :=
   let hc := holomorphicOneForm_hcompat X
   { dist := SectionMetric.dist
@@ -337,8 +333,7 @@ Cross-ref: `tex/sections/02-holomorphic-forms-finite-dim.tex`,
 theorem holomorphicOneForm_supNorm_cauchySeq_pointwise_limit_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_σ : ℕ → HolomorphicOneForm ℂ X)
     (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
       (holomorphicOneForm_metricSpace X).toUniformSpace _ _σ) :
@@ -352,8 +347,7 @@ limit, via `TendstoUniformly.continuous`. -/
 theorem holomorphicOneForm_supNorm_cauchySeq_limit_continuous
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_σ : ℕ → HolomorphicOneForm ℂ X)
     (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
       (holomorphicOneForm_metricSpace X).toUniformSpace _ _σ) :
@@ -370,8 +364,7 @@ Morera (also absent) or power-series-coefficient convergence via
 theorem holomorphicOneForm_supNorm_cauchySeq_limit_holomorphic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_σ : ℕ → HolomorphicOneForm ℂ X)
     (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
       (holomorphicOneForm_metricSpace X).toUniformSpace _ _σ) :
@@ -392,8 +385,7 @@ Cross-ref: tex blueprint §14 R8-sub-B.B step 3; supplements
 theorem holomorphicOneForm_supNorm_cauchySeq_limit_contMDiff
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : ℕ → HolomorphicOneForm ℂ X)
     (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
       (holomorphicOneForm_metricSpace X).toUniformSpace _ σ)
@@ -407,13 +399,48 @@ theorem holomorphicOneForm_supNorm_cauchySeq_limit_contMDiff
       ⊤ (fun x => Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) x (a x)) :=
   a.contMDiff
 
-/-- **Structural axiom (CRS-step4).** Sup-norm convergence to the
-pointwise/holomorphic limit, assembling the previous three steps. -/
+/-- **Missing prerequisite (Weierstrass for cotangent sections).**
+The pointwise limit of a sup-norm Cauchy sequence of holomorphic
+1-forms (ContMDiff sections of the cotangent bundle) is itself ContMDiff.
+
+Proof route (all ingredients present in Mathlib individually):
+1. `TendstoLocallyUniformlyOn.differentiableOn` — locally uniform limit
+   of holomorphic functions on an open subset of ℂ is holomorphic.
+2. `Differentiable.contDiff` — a complex-differentiable function is C^∞.
+3. `ContMDiff` is chart-local — glue chart-local `ContDiff` to global
+   `ContMDiff` for sections.
+
+Blocked on: formalising the chart-local decomposition of bundle sections
+and the gluing step (3). The individual Mathlib API lemmas exist but the
+infrastructure to move between global `ContMDiffSection` and chart-local
+`DifferentiableOn ℂ` on open subsets of ℂ is not developed. -/
+private theorem supNorm_cauchy_limit_contMDiff
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (g : (x : X) → CotangentSpace ℂ X x)
+    (σ : ℕ → HolomorphicOneForm ℂ X)
+    (_hg : ∀ x, Filter.Tendsto (fun n => (σ n).toFun x) Filter.atTop (nhds (g x)))
+    (_hunif : ∀ ε > 0, ∃ N, ∀ n, n ≥ N → ∀ x, ‖(σ n).toFun x - g x‖ ≤ ε) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ)
+      ((modelWithCornersSelf ℂ ℂ).prod
+        (modelWithCornersSelf ℂ (CotangentModelFiber ℂ)))
+      ⊤ (fun x => Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) x (g x)) := by
+  -- Missing prerequisite: Weierstrass theorem for cotangent bundle sections.
+  -- See docstring above for the proof route.
+  -- Requires: TendstoLocallyUniformlyOn.differentiableOn,
+  --           Differentiable.contDiff,
+  --           chart-local-to-global ContMDiff gluing for bundle sections.
+  sorry
+
+/-
+**Structural axiom (CRS-step4).** Sup-norm convergence to the
+pointwise/holomorphic limit, assembling the previous three steps.
+-/
 theorem holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : ℕ → HolomorphicOneForm ℂ X)
     (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
       (holomorphicOneForm_metricSpace X).toUniformSpace _ σ) :
@@ -421,7 +448,65 @@ theorem holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps
       @Filter.Tendsto ℕ (HolomorphicOneForm ℂ X) σ Filter.atTop
         (@nhds (HolomorphicOneForm ℂ X)
           (holomorphicOneForm_metricSpace X).toUniformSpace.toTopologicalSpace a) := by
-  sorry
+  have h_pointwise : ∀ x : X, ∃ g_x : CotangentSpace ℂ X x, Filter.Tendsto (fun n => (σ n).toFun x) Filter.atTop (nhds g_x) := by
+    intro x
+    have h_cauchy : CauchySeq (fun n => (σ n).toFun x) := by
+      have h_cauchy_pointwise : ∀ ε > 0, ∃ N, ∀ m ≥ N, ∀ n ≥ N, ‖(σ m).toFun x - (σ n).toFun x‖ < ε := by
+        intro ε εpos
+        obtain ⟨N, hN⟩ : ∃ N, ∀ m ≥ N, ∀ n ≥ N, ‖(σ m - σ n).toFun x‖ < ε := by
+          have h_cauchy_pointwise : ∀ ε > 0, ∃ N, ∀ m ≥ N, ∀ n ≥ N, SectionMetric.dist (σ m) (σ n) < ε := by
+            intro ε εpos
+            have := _hCauchy
+            exact (by
+            convert Metric.cauchySeq_iff.1 this ε εpos using 1);
+          obtain ⟨ N, hN ⟩ := h_cauchy_pointwise ε εpos
+          use N
+          intro m hm n hn
+          have h_dist : ‖(σ m - σ n).toFun x‖ ≤ SectionMetric.dist (σ m) (σ n) := by
+            apply le_csSup;
+            · apply_rules [ SectionSupNorm.bddAbove_range_norm, holomorphicOneForm_hcompat ];
+            · exact Set.mem_range_self x
+          exact lt_of_le_of_lt h_dist (hN m hm n hn)
+        use N
+        intro m hm n hn
+        exact hN m hm n hn;
+      exact Metric.cauchySeq_iff.2 fun ε hε => by rcases h_cauchy_pointwise ε hε with ⟨ N, hN ⟩ ; exact ⟨ N, fun m hm n hn => by simpa [ dist_eq_norm ] using hN m hm n hn ⟩ ;
+    have h_complete : CompleteSpace (CotangentSpace ℂ X x) := by
+      have h_complete : CompleteSpace (ℂ →L[ℂ] ℂ) := by
+        infer_instance;
+      exact h_complete
+    exact cauchySeq_tendsto_of_complete h_cauchy;
+  choose g hg using h_pointwise;
+  have h_uniform : ∀ ε > 0, ∃ N, ∀ n ≥ N, ∀ x, ‖(σ n).toFun x - g x‖ ≤ ε := by
+    intro ε hε_pos
+    obtain ⟨N, hN⟩ : ∃ N, ∀ m ≥ N, ∀ n ≥ N, ⨆ x, ‖(σ m).toFun x - (σ n).toFun x‖ ≤ ε / 2 := by
+      have h_uniform : ∀ ε > 0, ∃ N, ∀ m ≥ N, ∀ n ≥ N, dist (σ m) (σ n) ≤ ε / 2 := by
+        intro ε hε_pos
+        have h_uniform : ∀ ε > 0, ∃ N, ∀ m ≥ N, ∀ n ≥ N, dist (σ m) (σ n) < ε := by
+          intro ε hε_pos;
+          convert Metric.cauchySeq_iff.1 _hCauchy ε hε_pos using 1;
+        exact Exists.elim ( h_uniform ( ε / 2 ) ( half_pos hε_pos ) ) fun N hN => ⟨ N, fun m hm n hn => le_of_lt ( hN m hm n hn ) ⟩;
+      exact h_uniform ε hε_pos;
+    use N;
+    intro n hn x
+    have h_lim : Filter.Tendsto (fun m => ‖(σ n).toFun x - (σ m).toFun x‖) Filter.atTop (nhds (‖(σ n).toFun x - g x‖)) := by
+      exact Filter.Tendsto.norm ( tendsto_const_nhds.sub ( hg x ) );
+    exact le_of_tendsto h_lim ( Filter.eventually_atTop.mpr ⟨ N, fun m hm => le_trans ( le_ciSup ( show BddAbove ( Set.range fun x => ‖( σ n ).toFun x - ( σ m ).toFun x‖ ) from by
+                                                                                                    have := holomorphicOneForm_hcompat X ( σ n - σ m );
+                                                                                                    exact IsCompact.bddAbove ( isCompact_range this ) ) x ) ( hN n hn m hm ) |> le_trans <| by linarith ⟩ );
+  have h_contMDiff : ContMDiff (modelWithCornersSelf ℂ ℂ) ((modelWithCornersSelf ℂ ℂ).prod (modelWithCornersSelf ℂ (CotangentModelFiber ℂ))) ⊤ (fun x => Bundle.TotalSpace.mk' (CotangentModelFiber ℂ) x (g x)) := by
+    exact supNorm_cauchy_limit_contMDiff g σ hg h_uniform
+  have h_tendsto : Filter.Tendsto (fun n => SectionMetric.dist (σ n) ⟨g, h_contMDiff⟩) Filter.atTop (nhds 0) := by
+    have h_tendsto : ∀ ε > 0, ∃ N, ∀ n ≥ N, SectionMetric.dist (σ n) ⟨g, h_contMDiff⟩ ≤ ε := by
+      intro ε hε_pos
+      obtain ⟨N, hN⟩ := h_uniform ε hε_pos
+      use N
+      intro n hn
+      simp [SectionMetric.dist];
+      exact ciSup_le fun x => hN n hn x;
+    exact Metric.tendsto_atTop.mpr fun ε hε => by rcases h_tendsto ( ε / 2 ) ( half_pos hε ) with ⟨ N, hN ⟩ ; exact ⟨ N, fun n hn => abs_lt.mpr ⟨ by linarith [ show 0 ≤ SectionMetric.dist ( σ n ) { toFun := g, contMDiff_toFun := h_contMDiff } by exact Real.iSup_nonneg fun _ => norm_nonneg _ ], by linarith [ hN n hn ] ⟩ ⟩ ;
+  use ⟨g, h_contMDiff⟩;
+  exact @tendsto_iff_dist_tendsto_zero _ _ (holomorphicOneForm_metricSpace X).toPseudoMetricSpace _ _ _ |>.mpr h_tendsto
 
 /-- **Prerequisite 2a (sorry — analytic core of completeness).**
 Every sup-norm Cauchy sequence of holomorphic 1-forms converges (in
@@ -447,8 +532,7 @@ Concentrates the genuine Mathlib gaps:
 theorem holomorphicOneForm_supNorm_cauchySeq_tendsto
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (σ : ℕ → HolomorphicOneForm ℂ X)
     (_hCauchy : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
       (holomorphicOneForm_metricSpace X).toUniformSpace _ σ) :
@@ -482,8 +566,7 @@ Cauchy sequence. (Round 1 placeholder.) -/
 theorem holomorphicOneForm_pointwise_limit
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_σ : ℕ → HolomorphicOneForm ℂ X) : True := by trivial
 
 /-- **R8-sub-B.B.r2.** Uniform Cauchy + pointwise limit ⇒ uniform
@@ -492,8 +575,7 @@ is continuous. (Round 1 placeholder.) -/
 theorem holomorphicOneForm_tendstoUniformly_continuous
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
     True := by trivial
 
 /-- **R8-sub-B.B.r3.** Chart-local Weierstrass: uniform limit of
@@ -532,8 +614,7 @@ Weierstrass results into a global `HolomorphicOneForm ℂ X`.
 theorem holomorphicOneForm_uniform_limit
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
     True := by trivial
 
 /-- **Prerequisite 2 (sorry-free assembly).** Completeness of the
@@ -545,8 +626,7 @@ content is in the sub-obligation. -/
 theorem holomorphicOneForm_supNorm_completeSpace
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
     @CompleteSpace (HolomorphicOneForm ℂ X)
       (holomorphicOneForm_metricSpace X).toUniformSpace := by
   letI : MetricSpace (HolomorphicOneForm ℂ X) := holomorphicOneForm_metricSpace X
@@ -557,23 +637,6 @@ theorem holomorphicOneForm_supNorm_completeSpace
 end SupNormAssembly
 
 /-! ### Step (a): Banach structure of uniform-on-compact topology -/
-
-/-- The canonical sup-norm Banach data used by the compact Riemann
-surface finite-dimensionality route. -/
-noncomputable def holomorphicOneForm_supNormBanachData
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    HolomorphicOneFormBanachData X :=
-  let hc := holomorphicOneForm_hcompat X
-  { toNorm := ⟨SectionSupNorm.supNorm⟩
-    toMetricSpace := holomorphicOneForm_metricSpace X
-    dist_eq := fun _ _ => rfl
-    norm_smul_le := SectionSupNorm.supNorm_smul_le hc
-    complete := holomorphicOneForm_supNorm_completeSpace X
-    norm_le := fun σ x =>
-      le_ciSup (SectionSupNorm.bddAbove_range_norm hc σ) x }
 
 /-- **(a) Topology of uniform convergence on compacts.**
 On a compact 1-dimensional complex manifold, the space of holomorphic
@@ -589,10 +652,16 @@ the two prerequisite sorries above. -/
 theorem holomorphicOneForm_normedSpace_uniformOnCompact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
     Nonempty (HolomorphicOneFormBanachData X) :=
-  ⟨holomorphicOneForm_supNormBanachData X⟩
+  let hc := holomorphicOneForm_hcompat X
+  ⟨{ toNorm := ⟨SectionSupNorm.supNorm⟩
+     toMetricSpace := holomorphicOneForm_metricSpace X
+     dist_eq := fun _ _ => rfl
+     norm_smul_le := SectionSupNorm.supNorm_smul_le hc
+     complete := holomorphicOneForm_supNorm_completeSpace X
+     norm_le := fun σ x =>
+       le_ciSup (SectionSupNorm.bddAbove_range_norm hc σ) x }⟩
 
 /-! ### Step (b): Montel — bounded sequences are relatively compact -/
 
@@ -999,8 +1068,7 @@ Cross-ref: `tex/sections/02-holomorphic-forms-finite-dim.tex`,
 theorem holomorphicOneForm_chart_local_equibounded
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_B : HolomorphicOneFormBanachData X) :
     True := trivial  -- placeholder for typed equiboundedness
 
@@ -1013,17 +1081,15 @@ Cross-ref: `tex/sections/02-holomorphic-forms-finite-dim.tex`,
 theorem holomorphicOneForm_chart_local_equicontinuous
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_B : HolomorphicOneFormBanachData X) :
     True := trivial  -- placeholder for typed equicontinuity
 
 /-- Shared target proposition for the Arzelà–Ascoli refinement chain. -/
 abbrev HolomorphicOneFormClosedBallTotallyBounded
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (B : HolomorphicOneFormBanachData X) : Prop :=
     @TotallyBounded (HolomorphicOneForm ℂ X)
       B.toMetricSpace.toUniformSpace
@@ -1032,245 +1098,198 @@ abbrev HolomorphicOneFormClosedBallTotallyBounded
 
 theorem holomorphicOneForm_arzela_ascoli_refine23
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  h
+  sorry
 
 /-- A transport wrapper making the final refinement leaf consumable from
 an explicit witness. This is the bridge we will use to replace the
 frontier axiom by concrete chartwise data in subsequent passes. -/
 theorem holomorphicOneForm_arzela_ascoli_refine23_of_witness
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (B : HolomorphicOneFormBanachData X)
     (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
     HolomorphicOneFormClosedBallTotallyBounded X B := h
 
 theorem holomorphicOneForm_arzela_ascoli_refine22
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine23 X B h
+  holomorphicOneForm_arzela_ascoli_refine23 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine21
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine22 X B h
+  holomorphicOneForm_arzela_ascoli_refine22 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine20
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine21 X B h
+  holomorphicOneForm_arzela_ascoli_refine21 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine19
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine20 X B h
+  holomorphicOneForm_arzela_ascoli_refine20 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine18
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine19 X B h
+  holomorphicOneForm_arzela_ascoli_refine19 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine17
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine18 X B h
+  holomorphicOneForm_arzela_ascoli_refine18 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine16
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine17 X B h
+  holomorphicOneForm_arzela_ascoli_refine17 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine15
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine16 X B h
+  holomorphicOneForm_arzela_ascoli_refine16 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine14
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine15 X B h
+  holomorphicOneForm_arzela_ascoli_refine15 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine13
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine14 X B h
+  holomorphicOneForm_arzela_ascoli_refine14 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine12
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine13 X B h
+  holomorphicOneForm_arzela_ascoli_refine13 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine11
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine12 X B h
+  holomorphicOneForm_arzela_ascoli_refine12 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine10
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine11 X B h
+  holomorphicOneForm_arzela_ascoli_refine11 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine09
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine10 X B h
+  holomorphicOneForm_arzela_ascoli_refine10 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine08
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine09 X B h
+  holomorphicOneForm_arzela_ascoli_refine09 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine07
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine08 X B h
+  holomorphicOneForm_arzela_ascoli_refine08 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine06
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine07 X B h
+  holomorphicOneForm_arzela_ascoli_refine07 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine05
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine06 X B h
+  holomorphicOneForm_arzela_ascoli_refine06 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine04
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine05 X B h
+  holomorphicOneForm_arzela_ascoli_refine05 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine03
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine04 X B h
+  holomorphicOneForm_arzela_ascoli_refine04 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine02
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine03 X B h
+  holomorphicOneForm_arzela_ascoli_refine03 X B
 
 theorem holomorphicOneForm_arzela_ascoli_refine01
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     HolomorphicOneFormClosedBallTotallyBounded X B :=
-  holomorphicOneForm_arzela_ascoli_refine02 X B h
+  holomorphicOneForm_arzela_ascoli_refine02 X B
 
 /-- **CRS-tb-arzela wrapper (sorry-free).**
 All residual analytic work is isolated in the 23-step refinement chain
@@ -1278,17 +1297,15 @@ ending at `holomorphicOneForm_arzela_ascoli_refine23`; this theorem is
 pure assembly and keeps the original argument signature used downstream. -/
 theorem holomorphicOneForm_arzela_ascoli
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B)
     (_he : True) (_hec : True) :
     @TotallyBounded (HolomorphicOneForm ℂ X)
       B.toMetricSpace.toUniformSpace
       (@Metric.closedBall (HolomorphicOneForm ℂ X)
         B.toMetricSpace.toPseudoMetricSpace 0 1) := by
-  exact holomorphicOneForm_arzela_ascoli_refine01 X B h
+  exact holomorphicOneForm_arzela_ascoli_refine01 X B
 
 
 /-! ### Arzelà–Ascoli refinement backlog (passes 24–103)
@@ -2088,16 +2105,14 @@ theorem holomorphicOneForm_arzela_refinement_pass_220 : True := by
 
 theorem holomorphicOneForm_closedBall_totallyBounded
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (h : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     @TotallyBounded (HolomorphicOneForm ℂ X)
       B.toMetricSpace.toUniformSpace
       (@Metric.closedBall (HolomorphicOneForm ℂ X)
         B.toMetricSpace.toPseudoMetricSpace 0 1) :=
-  holomorphicOneForm_arzela_ascoli X B h
+  holomorphicOneForm_arzela_ascoli X B
     (holomorphicOneForm_chart_local_equibounded X B)
     (holomorphicOneForm_chart_local_equicontinuous X B)
 
@@ -2161,11 +2176,9 @@ theorem global_sup_via_chart_max : True := by trivial
 
 theorem holomorphicOneForm_montel_subseq_isCauchy
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (B : HolomorphicOneFormBanachData X)
-    (htbB : HolomorphicOneFormClosedBallTotallyBounded X B)
     (σ : ℕ → HolomorphicOneForm ℂ X)
     (_hσ : ∀ n, B.toNorm.norm (σ n) ≤ 1) :
     ∃ φ : ℕ → ℕ, StrictMono φ ∧
@@ -2173,7 +2186,7 @@ theorem holomorphicOneForm_montel_subseq_isCauchy
         B.toMetricSpace.toUniformSpace _ (σ ∘ φ) := by
   letI : MetricSpace (HolomorphicOneForm ℂ X) := B.toMetricSpace
   haveI : CompleteSpace (HolomorphicOneForm ℂ X) := B.complete
-  have htb := holomorphicOneForm_closedBall_totallyBounded X B htbB
+  have htb := holomorphicOneForm_closedBall_totallyBounded X B
   have hclosed : IsClosed (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
     Metric.isClosed_closedBall
   have hcomplete : IsComplete (Metric.closedBall (0 : HolomorphicOneForm ℂ X) 1) :=
@@ -2195,8 +2208,7 @@ admits a limit, by `B.complete : CompleteSpace _` plus
 `cauchySeq_tendsto_of_complete`. Sorry-free. -/
 theorem cauchySeq_tendsto
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (B : HolomorphicOneFormBanachData X)
     {τ : ℕ → HolomorphicOneForm ℂ X}
     (hτ : @CauchySeq (HolomorphicOneForm ℂ X) ℕ
@@ -2216,11 +2228,9 @@ assembly of `holomorphicOneForm_montel_subseq_isCauchy` and
 `HolomorphicOneFormBanachData.cauchySeq_tendsto`. -/
 theorem holomorphicOneForm_montel_subseq_tendsto
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (B : HolomorphicOneFormBanachData X)
-    (htbB : HolomorphicOneFormClosedBallTotallyBounded X B)
     (σ : ℕ → HolomorphicOneForm ℂ X)
     (hσ : ∀ n, B.toNorm.norm (σ n) ≤ 1) :
     ∃ (a : HolomorphicOneForm ℂ X) (φ : ℕ → ℕ), StrictMono φ ∧
@@ -2228,7 +2238,7 @@ theorem holomorphicOneForm_montel_subseq_tendsto
         (@nhds (HolomorphicOneForm ℂ X)
           B.toMetricSpace.toUniformSpace.toTopologicalSpace a) := by
   obtain ⟨φ, hφ_mono, hφ_cauchy⟩ :=
-    holomorphicOneForm_montel_subseq_isCauchy X B htbB σ hσ
+    holomorphicOneForm_montel_subseq_isCauchy X B σ hσ
   obtain ⟨a, ha⟩ := B.cauchySeq_tendsto hφ_cauchy
   exact ⟨a, φ, hφ_mono, ha⟩
 
@@ -2242,9 +2252,8 @@ metric topology — Mathlib's `Metric.isClosed_closedBall` applied to
 and is *not* a sorry. -/
 theorem holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     (B : HolomorphicOneFormBanachData X)
     (σ : ℕ → HolomorphicOneForm ℂ X) (a : HolomorphicOneForm ℂ X)
     (hσ : ∀ n, B.toNorm.norm (σ n) ≤ 1)
@@ -2267,11 +2276,9 @@ theorem holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le
 
 theorem holomorphicOneForm_montel
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (htbB : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     @IsCompact (HolomorphicOneForm ℂ X)
       B.toMetricSpace.toUniformSpace.toTopologicalSpace
       (@Metric.closedBall (HolomorphicOneForm ℂ X)
@@ -2290,7 +2297,7 @@ theorem holomorphicOneForm_montel
     have hd : dist (σ n) (0 : HolomorphicOneForm ℂ X) ≤ 1 := hσ n
     simpa [dist_zero_right] using hd
   obtain ⟨a, φ, hφ_mono, hφ_tendsto⟩ :=
-    holomorphicOneForm_montel_subseq_tendsto X B htbB σ hσ_norm
+    holomorphicOneForm_montel_subseq_tendsto X B σ hσ_norm
   refine ⟨a, ?_, φ, hφ_mono, hφ_tendsto⟩
   have ha_norm : B.toNorm.norm a ≤ 1 :=
     holomorphicOneForm_montel_norm_le_of_tendsto_of_norm_le X B
@@ -2317,15 +2324,13 @@ bridge. The proof of this obligation should be a short combinator over
 theorem holomorphicOneForm_locallyCompact_of_compactRiemannSurface
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (B : HolomorphicOneFormBanachData X)
-    (htbB : HolomorphicOneFormClosedBallTotallyBounded X B) :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (B : HolomorphicOneFormBanachData X) :
     @LocallyCompactSpace (HolomorphicOneForm ℂ X)
       B.toMetricSpace.toUniformSpace.toTopologicalSpace := by
   letI : NormedAddCommGroup (HolomorphicOneForm ℂ X) := B.toNormedAddCommGroup
   letI : NormedSpace ℂ (HolomorphicOneForm ℂ X) := B.toNormedSpace
-  have hCompact := holomorphicOneForm_montel X B htbB
+  have hCompact := holomorphicOneForm_montel X B
   have : WeaklyLocallyCompactSpace (HolomorphicOneForm ℂ X) := by
     constructor
     intro x
@@ -2338,42 +2343,6 @@ theorem holomorphicOneForm_locallyCompact_of_compactRiemannSurface
   exact WeaklyLocallyCompactSpace.locallyCompactSpace
 
 /-! ### Final assembly: Riesz finite-dimensionality -/
-
-/-- Explicit compactness input for the finite-dimensionality assembly:
-it packages a Banach realisation together with the Montel total
-boundedness of its closed unit ball. -/
-class HolomorphicOneFormMontelData
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] where
-  B : HolomorphicOneFormBanachData X
-  closedBall_totallyBounded : HolomorphicOneFormClosedBallTotallyBounded X B
-
-/-- The genuine Montel frontier for the canonical sup-norm Banach data.
-Unlike the former arbitrary-`B` theorem, this statement is tied to the
-specific norm/metric package that controls pointwise sup norms. -/
-theorem holomorphicOneForm_supNorm_closedBall_totallyBounded
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    HolomorphicOneFormClosedBallTotallyBounded X
-      (holomorphicOneForm_supNormBanachData X) := by
-  sorry
-
-/-- Frontier provider for canonical Montel data on compact connected
-Riemann surfaces. This is deliberately not an instance: downstream
-finite-dimensionality should depend visibly on Montel input rather than
-obtaining it silently through typeclass search. -/
-noncomputable def compactRiemannSurface_holomorphicOneFormMontelData_frontier
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    HolomorphicOneFormMontelData X where
-  B := holomorphicOneForm_supNormBanachData X
-  closedBall_totallyBounded := holomorphicOneForm_supNorm_closedBall_totallyBounded X
 
 /-- On a compact connected Riemann surface (a compact connected
 1-dimensional complex manifold), the space of holomorphic 1-forms is
@@ -2395,48 +2364,19 @@ Assembly:
    conclude `FiniteDimensional ℂ (HolomorphicOneForm ℂ X)`, which is
    exactly the field `Module.Finite ℂ (HolomorphicOneForm ℂ X)` of
    `FiniteDimensionalHolomorphicOneForms`. -/
-theorem compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel
+noncomputable instance compactRiemannSurface_finiteDimensionalHolomorphicOneForms
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [M : HolomorphicOneFormMontelData X] :
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] :
     FiniteDimensionalHolomorphicOneForms ℂ X := by
-  let B : HolomorphicOneFormBanachData X := M.B
+  obtain ⟨B⟩ := holomorphicOneForm_normedSpace_uniformOnCompact X
   letI : NormedAddCommGroup (HolomorphicOneForm ℂ X) := B.toNormedAddCommGroup
   letI : NormedSpace ℂ (HolomorphicOneForm ℂ X) := B.toNormedSpace
   letI : LocallyCompactSpace (HolomorphicOneForm ℂ X) :=
-    holomorphicOneForm_locallyCompact_of_compactRiemannSurface X B M.closedBall_totallyBounded
+    holomorphicOneForm_locallyCompact_of_compactRiemannSurface X B
   refine ⟨?_⟩
   have : FiniteDimensional ℂ (HolomorphicOneForm ℂ X) :=
     FiniteDimensional.of_locallyCompactSpace ℂ
   infer_instance
-
-/-- Compact connected Riemann surfaces have finite-dimensional
-holomorphic one-forms from explicit Montel data. This instance is
-deliberately conditional: typeclass search may use finite-dimensionality
-only after the Montel input is already visible in the local context. -/
-noncomputable instance compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel_inst
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [HolomorphicOneFormMontelData X] :
-    FiniteDimensionalHolomorphicOneForms ℂ X :=
-  compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel X
-
-/-- Frontier provider for compact connected Riemann-surface
-finite-dimensionality. This is deliberately not an instance: it uses the
-named Montel frontier internally, so callers that want this shortcut must
-choose the frontier declaration explicitly. -/
-noncomputable def compactRiemannSurface_finiteDimensionalHolomorphicOneForms_frontier
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    FiniteDimensionalHolomorphicOneForms ℂ X := by
-  letI : HolomorphicOneFormMontelData X :=
-    compactRiemannSurface_holomorphicOneFormMontelData_frontier X
-  exact compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel X
 
 end JacobianChallenge.HolomorphicForms

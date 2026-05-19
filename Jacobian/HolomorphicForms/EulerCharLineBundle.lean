@@ -2,7 +2,6 @@ import Jacobian.HolomorphicForms.SheafCohomologyRS
 import Jacobian.HolomorphicForms.SerreDualityRS
 import Jacobian.HolomorphicForms.Defs
 import Mathlib.LinearAlgebra.Dimension.Finrank
-import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
 # Euler characteristic of a line bundle on a compact Riemann surface
@@ -80,7 +79,7 @@ always finite and equals the topological genus. -/
 noncomputable def RSGenus
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : ℕ :=
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X] : ℕ :=
   Module.finrank ℂ (HolomorphicOneForm ℂ X)
 
 /-- The Euler characteristic of a line-bundle sheaf on a compact
@@ -152,8 +151,7 @@ divisor machinery ABSENT in Mathlib v4.28.0. -/
 theorem euler_char_eq_formula
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)
@@ -162,75 +160,24 @@ theorem euler_char_eq_formula
     (Module.finrank ℂ (RSSheafCohomology X L 0) : ℤ) -
         (Module.finrank ℂ (RSSheafCohomology X L 1) : ℤ) =
       RSLineBundleDegree X L + 1 - (RSGenus X : ℤ) := by
-  -- BLOCKER (2026-05-12, claude/euler-char-formula-FnMyi):
-  -- This theorem is unprovable in its current form against the
-  -- v4.28.0 frontier.  Two independent obstructions:
-  --
-  -- 1. `RSLineBundleDegree` (above, lines 64-66) is declared
-  --    `noncomputable opaque ... : ℤ` — i.e. an integer-valued
-  --    function with no characterizing axioms or equations.  No
-  --    nontrivial equation relating the LHS (a finrank difference)
-  --    to `RSLineBundleDegree X L` can be discharged without first
-  --    giving that symbol a real definition (or characterizing
-  --    axioms).  Making the symbol agree with the LHS by fiat is
-  --    explicitly the kind of hack-answer the project rules out.
-  --
-  -- 2. Even with a concrete `RSLineBundleDegree`, the classical
-  --    proof requires inputs ABSENT in Mathlib v4.28.0 (see file
-  --    header, lines 19-30, and `ref/scope-out.md`):
-  --      * divisor ↔ line-bundle correspondence on a compact RS,
-  --      * skyscraper sheaf `ℂ_p` and the twisting short exact
-  --        sequence `0 → L → L(p) → ℂ_p → 0`,
-  --      * base case `h⁰(O_X) = 1`, `h¹(O_X) = g` for the trivial
-  --        line bundle (Hodge / Serre on the structure sheaf),
-  --      * Serre-duality identification `H¹(L)* ≃ H⁰(L⁻¹ ⊗ K_X)`
-  --        (the frontier class `SerreDualityRS` has no instances),
-  --      * finite-dimensionality of `Hᵍ` for coherent sheaves on a
-  --        compact RS (`FiniteDimensionalSheafCohomologyRS`, no
-  --        instances).
-  --
-  -- The placeholder leaves at lines 133, 139, 188, 194, 199 of this
-  -- file (`h0_minus_h1_trivial_bundle`, `eulerChar_additive_ses_point`,
-  -- `dual_bundle_degree`, `serre_duality_h0_h1_swap`,
-  -- `h0_minus_h1_le_via_dual`) are the intended Round-2 refinement
-  -- targets that, once made into honest theorems, will combine to
-  -- discharge this `sorry`.
+  -- BLOCKED: This theorem cannot be proved in the current project state.
+  -- Missing prerequisites (all ABSENT in Mathlib v4.28.0):
+  --   1. `RSLineBundleDegree` is declared `opaque` with no characterising
+  --      axioms (e.g. additivity under twisting, base-case value for the
+  --      trivial bundle). A specification / recursor for the degree is
+  --      needed before any equation involving it can be derived.
+  --   2. Coherent analytic sheaf theory on a compact Riemann surface
+  --      (structure sheaf 𝒪_X, locally-free 𝒪_X-modules, short exact
+  --      sequence 0 → L → L(p) → ℂ_p → 0 for twisting by a point).
+  --   3. Divisor ↔ line-bundle correspondence and `deg` for divisors.
+  --   4. Finite-dimensionality of H^q for coherent sheaves on a compact
+  --      Riemann surface (`FiniteDimensionalSheafCohomologyRS` instances).
+  --   5. Base-case computation: h⁰(𝒪_X) = 1, h¹(𝒪_X) = g.
+  --   6. Euler-characteristic additivity along the twist short exact
+  --      sequence: χ(L(p)) = χ(L) + 1.
+  -- Once these are available the classical proof proceeds by strong
+  -- induction on |deg L| using (5) as base and (6) as step.
   sorry
-
-/-- **Hypothesis-parameterized variant of `euler_char_eq_formula`.**
-
-Given an external proof `hChi` that the Euler characteristic of `L`
-agrees with the Riemann-Roch right-hand-side `deg L + 1 - g`, the
-finrank-difference form of the identity follows by definitional
-unfolding of `RSEulerCharacteristic` (which is, by definition,
-`finrank H⁰ − finrank H¹`).
-
-This isolates the genuinely analytic content of Riemann-Roch — the
-χ-identity itself — as an explicit hypothesis a consumer must
-supply. Downstream consumers that can produce the χ-identity by
-sheaf-theoretic or analytic means (e.g. once the divisor↔line-bundle
-correspondence, the twisting SES `0 → L → L(p) → ℂ_p → 0`, and the
-base case `h⁰(O_X) = 1, h¹(O_X) = g` are formalized) can chain
-through this lemma to recover the finrank-difference form for free.
-
-Sorry-free: the bridge between `RSEulerCharacteristic` and the
-finrank difference is definitional (see
-`rsEulerCharacteristic_eq_h0_minus_h1` below). -/
-theorem euler_char_eq_formula_of_chi
-    (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
-    [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
-    (L : RSLineBundleSheaf X)
-    [Module ℂ (RSSheafCohomology X L 0)]
-    [Module ℂ (RSSheafCohomology X L 1)]
-    (hChi : RSEulerCharacteristic X L
-      = RSLineBundleDegree X L + 1 - (RSGenus X : ℤ)) :
-    (Module.finrank ℂ (RSSheafCohomology X L 0) : ℤ) -
-        (Module.finrank ℂ (RSSheafCohomology X L 1) : ℤ) =
-      RSLineBundleDegree X L + 1 - (RSGenus X : ℤ) :=
-  hChi
 
 /-- **Sub-leaf 1 (Riemann's inequality, `≥` direction).** The integer
 difference `(h⁰(L) : ℤ) - (h¹(L) : ℤ)` is at least `deg L + 1 - g`.
@@ -240,8 +187,7 @@ equality `euler_char_eq_formula`. -/
 theorem h0_minus_h1_ge_riemann
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)
@@ -277,8 +223,7 @@ equality `euler_char_eq_formula`. -/
 theorem h0_minus_h1_le_riemann
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)
@@ -295,8 +240,7 @@ bounds gives the headline equality on the integer-difference form
 theorem h0_minus_h1_eq_riemann_roch
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)
@@ -336,8 +280,7 @@ equality directly. -/
 theorem euler_char_line_bundle
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [T2Space X]
     [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] [JacobianChallenge.Periods.StableChartAt ℂ X]
     [HasSheafify (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0}]
     [HasExt.{0} (Sheaf (Opens.grothendieckTopology (TopCat.of X)) AddCommGrpCat.{0})]
     (L : RSLineBundleSheaf X)

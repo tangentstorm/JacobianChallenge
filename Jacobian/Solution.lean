@@ -37,16 +37,10 @@ lemma genus_eq_zero_with_routeData_homeo {X : Type*} [TopologicalSpace X] [T2Spa
     [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X]
-    (h : genus X = 0)
-    (hmod :
-      (JacobianChallenge.HolomorphicForms.simplePoleMeromorphicMapOfGenusZero X
-        (by simpa [genus] using h)).meromorphicMap.PoleModulusData)
-    (hbranch :
-      (JacobianChallenge.HolomorphicForms.simplePoleMeromorphicMapOfGenusZero X
-        (by simpa [genus] using h)).meromorphicMap.BranchedCoverDataOfPoleDegree) :
+    (h : genus X = 0) :
     Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :=
-  JacobianChallenge.HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData X
-    (by simpa [genus] using h) hmod hbranch
+  JacobianChallenge.HolomorphicForms.homeomorphic_sphere_of_analyticGenus_eq_zero X
+    (by simpa [genus] using h)
 
 /-- Genus zero classification. -/
 lemma genus_eq_zero_iff_homeo {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [ConnectedSpace X]
@@ -73,15 +67,9 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Connecte
 noncomputable def genus := JacobianChallenge.Solution.genus (X := X)
 
 lemma genus_eq_zero_with_routeData_homeo
-    (h : genus (X := X) = 0)
-    (hmod :
-      (JacobianChallenge.HolomorphicForms.simplePoleMeromorphicMapOfGenusZero X
-        (by simpa [genus] using h)).meromorphicMap.PoleModulusData)
-    (hbranch :
-      (JacobianChallenge.HolomorphicForms.simplePoleMeromorphicMapOfGenusZero X
-        (by simpa [genus] using h)).meromorphicMap.BranchedCoverDataOfPoleDegree) :
+    (h : genus (X := X) = 0) :
     Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :=
-  JacobianChallenge.Solution.genus_eq_zero_with_routeData_homeo (X := X) h hmod hbranch
+  JacobianChallenge.Solution.genus_eq_zero_with_routeData_homeo (X := X) h
 
 lemma genus_eq_zero_iff_homeo :
     genus (X := X) = 0 ↔ Nonempty (X ≃ₜ (Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :=

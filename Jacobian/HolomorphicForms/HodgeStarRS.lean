@@ -151,10 +151,8 @@ theorem analyticHarmonicGenus_finite
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-  [HolomorphicOneFormMontelData X] :
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Module.Finite ℂ (HarmonicOneForm X) := by
-  haveI : FiniteDimensionalHolomorphicOneForms ℂ X :=
-    compactRiemannSurface_finiteDimensionalHolomorphicOneForms_of_montel X
   unfold HarmonicOneForm
   infer_instance
 

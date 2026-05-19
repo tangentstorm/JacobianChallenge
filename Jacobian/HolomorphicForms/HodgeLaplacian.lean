@@ -177,7 +177,7 @@ theorem hodgeLaplacian1_kernel_finite
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
-    [HolomorphicOneFormMontelData X] :
+    [FiniteDimensionalHolomorphicOneForms ℂ X] :
     Module.Finite ℂ (LinearMap.ker (hodgeLaplacian1 X)) := by
   obtain ⟨e, _⟩ := harmonicEquivLaplacianKernel X
   haveI : Module.Finite ℂ (HarmonicOneForm X) := analyticHarmonicGenus_finite X
