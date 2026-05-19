@@ -48,10 +48,10 @@ theorem polygon4g_cellular_singular_one_cell_data
 structure Polygon4gCellularSingularTwoCellCharacteristicData
     (g : ℕ) (C : Polygon4gCellularModel g) where
   /-- The singular characteristic map of the two-cell. -/
-  characteristic : ContinuousMap DiskC (Polygon4g g)
-  /-- It is the quotient map from the closed disk. -/
+  characteristic : ContinuousMap C.disk.diskSource.carrier (Polygon4g g)
+  /-- It is the quotient map from the closed disk (via the homeomorph). -/
   characteristic_eq_mk :
-    ∀ z : DiskC, characteristic z = Polygon4g.mk g z
+    ∀ z, characteristic z = Polygon4g.mk g (C.disk.diskSource.sourceHomeomorph z)
 
 /-- **Comparison leaf 1c(i).** Construct the singular characteristic
 map data for the unique two-cell. -/
