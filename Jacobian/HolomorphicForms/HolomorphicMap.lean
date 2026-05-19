@@ -147,6 +147,19 @@ structure IsHolomorphicBasic (f : X → Y) : Prop where
   continuous : Continuous f
   holomorphicAt : ∀ p, IsHolomorphicAt f p
 
+/-- Explicit local ramification/counting package. This is a local
+mapping theorem input, not part of basic holomorphicity. -/
+structure HasLocalKfoldRamification (f : X → Y) : Prop where
+  local_kfold_ramified :
+    ∀ [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+      {x : X} {k : ℕ}, 0 < k → mapAnalyticOrderAt f x = k →
+      ∃ U : Set X, IsOpen U ∧ x ∈ U ∧
+      ∃ V : Set Y, IsOpen V ∧ f x ∈ V ∧
+      ∀ y ∈ V, y ≠ f x →
+      ∃ s : Finset X, s.card = k ∧ ↑s ⊆ U ∧
+        (∀ x' ∈ s, f x' = y ∧ mapAnalyticOrderAt f x' = 1) ∧
+        (∀ x' ∈ U, f x' = y → x' ∈ s)
+
 /-- `f : X → Y` is holomorphic with the local ramification package used
 by branched-cover consumers. Global weighted-fiber conservation is kept
 out of this structure and should be requested explicitly by consumers
@@ -178,6 +191,21 @@ structure HasWeightedFiberConservation (f : X → Y) : Prop where
 holomorphicity. -/
 theorem IsHolomorphic.toBasic {f : X → Y} (hf : IsHolomorphic f) :
     IsHolomorphicBasic f := hf.toIsHolomorphicBasic
+
+/-- Projection from the compatibility holomorphic package to explicit
+local ramification data. -/
+theorem IsHolomorphic.toLocalKfold {f : X → Y} (hf : IsHolomorphic f) :
+    HasLocalKfoldRamification f where
+  local_kfold_ramified := hf.local_kfold_ramified
+
+/-- Compatibility constructor for the older `IsHolomorphic` package from
+the intentionally separated basic and local-kfold inputs. -/
+def IsHolomorphic.of_basic {f : X → Y}
+    (hbasic : IsHolomorphicBasic f)
+    (hkfold : HasLocalKfoldRamification f) :
+    IsHolomorphic f where
+  toIsHolomorphicBasic := hbasic
+  local_kfold_ramified := hkfold.local_kfold_ramified
 
 /-- The chart-local presentation evaluated at the chart image of `p`
 yields the chart image of `f p`. -/
@@ -1022,20 +1050,16 @@ theorem isHolomorphicBasic_of_contMDiff
     { continuous := _hf.continuous
       holomorphicAt := IsHolomorphicAt.of_contMDiff _hf }
 
-/-- Smooth maps between complex manifolds are holomorphic with the local
-ramification package. Global weighted-fiber conservation is deliberately
-not produced here; branched-cover consumers should ask for
-`HasWeightedFiberConservation f` explicitly. -/
+/-- Compatibility wrapper for the older `IsHolomorphic` package.
+
+Smoothness supplies only `IsHolomorphicBasic`; the local ramification
+package is an explicit input. -/
 theorem isHolomorphic_of_contMDiff
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
-    {f : X → Y} (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
+    {f : X → Y} (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f)
+    (hkfold : HasLocalKfoldRamification f) :
     IsHolomorphic f := by
-  refine
-    { toIsHolomorphicBasic := isHolomorphicBasic_of_contMDiff _hf
-      local_kfold_ramified := ?_
-    }
-  intro _iX _iY x k hk hram
-  exact local_kfold_ramified_of_contMDiff _hf hk hram
+  exact IsHolomorphic.of_basic (isHolomorphicBasic_of_contMDiff _hf) hkfold
 
 end Compatibility
 
