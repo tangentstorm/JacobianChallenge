@@ -1184,7 +1184,7 @@
 {"i":2617,"f":"tex/statements/statement-bank.tex","k":"theorem","s":"JacobianChallenge.TraceDegree.analyticPushforward_analyticPullback","n":0,"o":1,"r":1,"e":null,"u":[1481,2091,1414,2618],"d":[2609],"a":"","c":"done","b":"thm:trace-pullback","t":""}
 {"i":2618,"f":"tex/sections/09-degree-trace-push-pull.tex","k":"theorem","s":"JacobianChallenge.HolomorphicForms.trace_pullback_identity","n":0,"o":1,"r":1,"e":null,"u":[2091,1414],"d":[2617],"a":"","c":"done","b":"thm:trace-pullback-identity","t":""}
 {"i":2619,"f":"Jacobian/Blueprint/Sec05/JacobiInversion.lean","k":"def","s":"aj_sym","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":2620,"f":"Jacobian/Blueprint/Sec05/JacobiInversion.lean","k":"theorem","s":"aj_sym_surjective","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2620,"f":"Jacobian/Blueprint/Sec05/JacobiInversion.lean","k":"theorem","s":"aj_sym_surjective","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2621,"f":"Jacobian/Blueprint/Sec05/JacobiInversion.lean","k":"def","s":"symToPic0","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2622,"f":"Jacobian/HolomorphicForms/BranchedCover.lean","k":"theorem","s":"BranchedCoverData.ramificationIndex_eq_mapAnalyticOrderAt","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2623,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"theorem","s":"cech_cocycle_from_singular_cocycle","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
