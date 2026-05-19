@@ -1,4 +1,5 @@
 import Jacobian.Blueprint.Generated
+import Jacobian.Blueprint.MathlibEndpoints
 -- sec01
 import Jacobian.Blueprint.Sec01.VanishingOrder
 import Jacobian.Blueprint.Sec01.Divisor
