@@ -109,63 +109,6 @@ theorem deRhamComparisonMap1_vanishes_on_exact
   rw [hη_sub]
   exact map_zero (deRhamComparisonMap1 X)
 
-/-- **Existence of global closed form with prescribed periods.**
-Every ℝ-linear functional on the singular 1-cycles of a compact Riemann
-surface arises as the integral of some closed 1-form.  This is the
-analytical core of the de Rham theorem's surjectivity. -/
-theorem deRhamComparisonMap1_exists_form_with_periods
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ := by
-  -- Blocker: this is the surjectivity half of the degree-one de Rham
-  -- comparison theorem.  Since `deRhamComparisonMap1` is opaque, a proof needs
-  -- the actual integration map, a good-cover/Cech or singular-cochain
-  -- construction of a closed representative, and the period comparison
-  -- equation for every integral cycle.
-  sorry
-
-/-- **Surjectivity sub-obligation 1a (Čech cocycle from singular).**
-A singular 1-cocycle defines a Čech 1-cocycle with respect to a good cover. -/
-theorem cech_cocycle_from_singular_cocycle
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (_φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    ∃ (ι : Type) (U : ι → TopologicalSpace.Opens (TopCat.of X))
-      (_C : CochainComplex AddCommGrpCat.{0} ℕ),
-      _C = RSCechComplex X U
-        ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
-          (AddCommGrpCat.of ℂ)) := by
-  let U : PUnit → TopologicalSpace.Opens (TopCat.of X) := fun _ => ⊤
-  refine ⟨PUnit, U,
-    RSCechComplex X U
-      ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
-        (AddCommGrpCat.of ℂ)), rfl⟩
-
-/-- **Injectivity sub-obligation 1a (existence of path-integral primitive).**
-A closed 1-form with zero periods admits a global smooth 0-form whose
-exterior derivative is the original form. This is the deep analytic
-content (FTC for forms / path-integration on a connected manifold);
-the sorry here represents that frontier obligation. -/
-theorem closedForm_pathIntegral_primitive_exists
-    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (ω : ClosedForm 1 X)
-    (_hω : deRhamComparisonMap1 X ω = 0) :
-    ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
-  -- Blocker: zero periods imply exactness only after the genuine de Rham
-  -- comparison/injectivity theorem.  A proof must construct the global
-  -- path-integral primitive and prove it is smooth with derivative `ω`;
-  -- the current surrogate differential-form API does not expose path
-  -- integration or the fundamental theorem for forms.
-  sorry
-
 /-- Minimal degree-1 de Rham comparison inputs used by the local
 surjectivity/injectivity assemblies.  The record keeps the prescribed
 period and zero-period primitive frontiers explicit, instead of forcing
@@ -195,9 +138,82 @@ def deRhamComparisonMap1Spec_frontier
     [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    DeRhamComparisonMap1Spec X where
-  exists_form_with_periods := deRhamComparisonMap1_exists_form_with_periods X
-  primitive_exists := closedForm_pathIntegral_primitive_exists X
+    DeRhamComparisonMap1Spec X := {
+  exists_form_with_periods := fun φ => by
+    -- Blocker: this is the surjectivity half of the degree-one de Rham
+    -- comparison theorem.  Since `deRhamComparisonMap1` is opaque, a proof needs
+    -- the actual integration map, a good-cover/Cech or singular-cochain
+    -- construction of a closed representative, and the period comparison
+    -- equation for every integral cycle.
+    sorry
+  primitive_exists := fun ω hω => by
+    -- Blocker: zero periods imply exactness only after the genuine de Rham
+    -- comparison/injectivity theorem.  A proof must construct the global
+    -- path-integral primitive and prove it is smooth with derivative `ω`;
+    -- the current surrogate differential-form API does not expose path
+    -- integration or the fundamental theorem for forms.
+    sorry
+}
+
+/-- **Existence of global closed form with prescribed periods.**
+Every ℝ-linear functional on the singular 1-cycles of a compact Riemann
+surface arises as the integral of some closed 1-form.  This is the
+analytical core of the de Rham theorem's surjectivity.
+
+Mathematical content:
+* choose a singular cohomology class/function on cycles;
+* use degree-1 de Rham comparison to choose a closed form representative;
+* show the integration functional equals the prescribed `φ`. -/
+theorem deRhamComparisonMap1_exists_form_with_periods
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ :=
+  (deRhamComparisonMap1Spec_frontier X).exists_form_with_periods φ
+
+/-- **Surjectivity sub-obligation 1a (Čech cocycle from singular).**
+A singular 1-cocycle defines a Čech 1-cocycle with respect to a good cover. -/
+theorem cech_cocycle_from_singular_cocycle
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ∃ (ι : Type) (U : ι → TopologicalSpace.Opens (TopCat.of X))
+      (_C : CochainComplex AddCommGrpCat.{0} ℕ),
+      _C = RSCechComplex X U
+        ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
+          (AddCommGrpCat.of ℂ)) := by
+  let U : PUnit → TopologicalSpace.Opens (TopCat.of X) := fun _ => ⊤
+  refine ⟨PUnit, U,
+    RSCechComplex X U
+      ((CategoryTheory.Functor.const ((TopologicalSpace.Opens (TopCat.of X))ᵒᵖ)).obj
+        (AddCommGrpCat.of ℂ)), rfl⟩
+
+/-- **Injectivity sub-obligation 1a (existence of path-integral primitive).**
+A closed 1-form with zero periods admits a global smooth 0-form whose
+exterior derivative is the original form. This is the deep analytic
+content (FTC for forms / path-integration on a connected manifold).
+
+Mathematical construction:
+* choose a base point using connectedness/nonemptiness;
+* define a candidate primitive by integrating along a path from the basepoint;
+* use zero periods to prove path-independence;
+* prove local smoothness and derivative equality in charts;
+* use closedness of `ω` and the fundamental theorem for line integrals. -/
+theorem closedForm_pathIntegral_primitive_exists
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  (deRhamComparisonMap1Spec_frontier X).primitive_exists ω hω
+
+
 
 /-- **Surjectivity sub-obligation 1b (Closed form from Čech cocycle).**
 Using an explicit degree-1 de Rham comparison specification, choose a
