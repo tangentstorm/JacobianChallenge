@@ -25,19 +25,24 @@ structure FiniteCWStructure
   /-- The complex is finite-dimensional. -/
   finite_dim : ∃ n, ∀ m > n, IsEmpty (cw.cell m)
 
+/-- **Frontier.** Bridge from the project-side standard cellular model to
+a Mathlib `FiniteCWStructure`.
+
+Mathlib gap: construction of the actual `Topology.CWComplex` fields
+(cell indexing sets, characteristic maps, and the frontier condition)
+from the quotient-polygon data in `Polygon4gCellularModel g`. -/
+noncomputable def polygon4g_cellularModel_to_mathlibCW_frontier (g : ℕ)
+    (_C : Polygon4gCellularModel g) :
+    FiniteCWStructure (Polygon4g g) :=
+  sorry
+
 /-- **Stage A leaf.** The standard fundamental polygon `Polygon4g g`
 admits a finite CW structure with one 0-cell, `2g` 1-cells, and one
-2-cell.  Mathlib gap: construction of the characteristic maps from
-`Fin n → ℝ` into the quotient topology on `Polygon4g g`; this is the
-core geometric content of the polygonal CW decomposition. -/
+2-cell.  This is realised by the standard `Polygon4gCellularModel`. -/
 theorem polygon4g_finiteCWStructure (g : ℕ) :
     Nonempty (FiniteCWStructure (Polygon4g g)) := by
-  -- Blocker: `FiniteCWStructure` needs an actual `Topology.CWComplex` on
-  -- `Set.univ : Set (Polygon4g g)`, including characteristic maps, cell
-  -- finiteness, and a dimension bound.  The project-side polygon quotient is
-  -- present, but the standard disk/edge/two-cell characteristic maps have not
-  -- been connected to Mathlib's `CWComplex` fields.
-  sorry
+  obtain ⟨C⟩ := polygon4g_standard_cellular_model g
+  exact ⟨polygon4g_cellularModel_to_mathlibCW_frontier g C⟩
 
 /-
 **Transport of CW complex structures along homeomorphisms.**

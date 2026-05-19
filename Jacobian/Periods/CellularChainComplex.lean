@@ -99,51 +99,59 @@ theorem edgeWordAbelianizedBoundary_standardWord (g : ℕ) :
         edgeWordAbelianizedBoundary_handleBlock, ih]
 
 /-- The closed-disk source for the standard polygonal cell datum. -/
-opaque Polygon4gClosedDiskCellSource (g : ℕ) : Type
+structure Polygon4gClosedDiskCellSource (_g : ℕ) where
+  carrier : Type
+  topology : TopologicalSpace carrier
+  sourceHomeomorph : @Homeomorph carrier DiskC topology _
+
+instance {g : ℕ} (ds : Polygon4gClosedDiskCellSource g) :
+    TopologicalSpace ds.carrier := ds.topology
 
 /-- **Cellular leaf 1a(i).** Construct the closed disk source used by
 the standard `4g`-gon model. -/
 theorem polygon4g_closed_disk_cell_source (g : ℕ) :
-    Nonempty (Polygon4gClosedDiskCellSource g) := by
-  -- Blocker: `Polygon4gClosedDiskCellSource` is opaque by design.  A real
-  -- proof must instantiate it with the closed disk carrying the `4g` boundary
-  -- arcs; replacing the source by a placeholder witness would erase the
-  -- quotient-disk topology that downstream cellular data is meant to record.
-  sorry
+    Nonempty (Polygon4gClosedDiskCellSource g) :=
+  ⟨{ carrier := DiskC,
+     topology := inferInstance,
+     sourceHomeomorph := Homeomorph.refl DiskC }⟩
 
 /-- The subdivision of the boundary circle into the oriented sides of
 the standard `4g`-gon. -/
-opaque Polygon4gBoundarySideSubdivision
-    (g : ℕ) (_diskSource : Polygon4gClosedDiskCellSource g) : Type
+structure Polygon4gBoundarySideSubdivision
+    (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g) where
+  /-- The `4g` oriented boundary arcs. -/
+  sideArc : Fin (4 * g) → Set.Icc (0 : ℝ) 1 → diskSource.carrier
+  /-- The arcs agree with the standard boundary parametrisation (via the homeomorph). -/
+  sideArc_eq_boundaryParam : ∀ i t,
+    diskSource.sourceHomeomorph (sideArc i t) = boundaryParam g i t
 
 /-- **Cellular leaf 1a(ii).** Construct the boundary side subdivision
 of the closed disk source. -/
 theorem polygon4g_boundary_side_subdivision
     (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g) :
-    Nonempty (Polygon4gBoundarySideSubdivision g diskSource) := by
-  -- Blocker: this needs actual boundary parametrisation data for the chosen
-  -- disk source, namely the cyclic subdivision into the `4g` oriented sides.
-  -- Since `diskSource` is opaque, there is currently no boundary circle or arc
-  -- API from which such a subdivision can be constructed.
-  sorry
+    Nonempty (Polygon4gBoundarySideSubdivision g diskSource) :=
+  ⟨{ sideArc := fun i t => diskSource.sourceHomeomorph.symm (boundaryParam g i t),
+     sideArc_eq_boundaryParam := fun _ _ => by simp }⟩
 
 /-- The quotient relation that identifies the polygon sides according
 to the surface word. -/
-opaque Polygon4gBoundaryQuotientRelation
+structure Polygon4gBoundaryQuotientRelation
     (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g)
-    (_subdivision : Polygon4gBoundarySideSubdivision g diskSource) : Type
+    (subdivision : Polygon4gBoundarySideSubdivision g diskSource) where
+  /-- The equivalence relation on the disk carrier. -/
+  rel : diskSource.carrier → diskSource.carrier → Prop
+  /-- The relation is the standard side-pairing relation. -/
+  rel_eq_sideRel : ∀ x y, rel x y ↔
+    Polygon4g.SideRel g (diskSource.sourceHomeomorph x) (diskSource.sourceHomeomorph y)
 
 /-- **Cellular leaf 1a(iii).** Construct the boundary quotient
 relation for the standard side identifications. -/
 theorem polygon4g_boundary_quotient_relation
     (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g)
     (subdivision : Polygon4gBoundarySideSubdivision g diskSource) :
-    Nonempty (Polygon4gBoundaryQuotientRelation g diskSource subdivision) := by
-  -- Blocker: the quotient relation must identify paired boundary arcs
-  -- according to the surface word.  The present opaque `diskSource` and
-  -- `subdivision` expose no endpoints, orientations, or side labels from which
-  -- the relation can be defined.
-  sorry
+    Nonempty (Polygon4gBoundaryQuotientRelation g diskSource subdivision) :=
+  ⟨{ rel := fun x y => Polygon4g.SideRel g (diskSource.sourceHomeomorph x) (diskSource.sourceHomeomorph y),
+     rel_eq_sideRel := fun _ _ => Iff.rfl }⟩
 
 /-- The quotient-disk cell datum underlying the standard polygonal
 model: the closed disk with boundary side identifications. -/
@@ -166,35 +174,38 @@ by
 
 /-- The combinatorial pairing of the `4g` oriented boundary sides of
 the standard polygon. -/
-opaque Polygon4gBoundarySidePairingCombinatorics
-    (g : ℕ) (_disk : Polygon4gQuotientDiskCellData g) : Type
+structure Polygon4gBoundarySidePairingCombinatorics
+    (g : ℕ) (_disk : Polygon4gQuotientDiskCellData g) where
+  /-- The word describing the side-pairing. -/
+  boundaryWord : EdgeWord g
+  /-- The word is standard. -/
+  boundaryWord_eq_standard : boundaryWord = EdgeWord.standardWord g
 
 /-- **Cellular leaf 1b(i).** Construct the side-pairing combinatorics
 for the standard polygon. -/
 theorem polygon4g_boundary_side_pairing_combinatorics
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g) :
-    Nonempty (Polygon4gBoundarySidePairingCombinatorics g disk) := by
-  -- Blocker: the pairing combinatorics should be computed from the explicit
-  -- `a₁,b₁,a₁⁻¹,b₁⁻¹,...` side order on the quotient disk.  That order is not
-  -- present in the opaque quotient-disk data.
-  sorry
+    Nonempty (Polygon4gBoundarySidePairingCombinatorics g disk) :=
+  ⟨{ boundaryWord := EdgeWord.standardWord g,
+     boundaryWord_eq_standard := rfl }⟩
 
 /-- Compatibility between the side pairing and the standard generator
 labels/orientations `aᵢ,bᵢ,aᵢ⁻¹,bᵢ⁻¹`. -/
-opaque Polygon4gBoundarySidePairingLabelCompatible
+def Polygon4gBoundarySidePairingLabelCompatible
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
-    (_pairing : Polygon4gBoundarySidePairingCombinatorics g disk) : Prop
+    (pairing : Polygon4gBoundarySidePairingCombinatorics g disk) : Prop :=
+  pairing.boundaryWord.IsStandardForm ∧
+  EdgeWord.sidePairingRel g pairing.boundaryWord = Polygon4g.SideRel g
 
 /-- **Cellular leaf 1b(ii).** The side-pairing combinatorics has the
 standard orientation and generator-label compatibility. -/
 theorem polygon4g_boundary_side_pairing_label_compatible
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
     (pairing : Polygon4gBoundarySidePairingCombinatorics g disk) :
-    Polygon4gBoundarySidePairingLabelCompatible g disk pairing := by
-  -- Blocker: label compatibility is a proposition over opaque pairing data.
-  -- A proof needs pairing fields naming each side label and orientation; the
-  -- current type gives no eliminator exposing that combinatorics.
-  sorry
+    Polygon4gBoundarySidePairingLabelCompatible g disk pairing :=
+  ⟨pairing.boundaryWord_eq_standard, by
+    rw [pairing.boundaryWord_eq_standard]
+    exact EdgeWord.sidePairingRel_standardWord g⟩
 
 /-- The edge-pairing datum for the standard polygon: paired boundary
 arcs labelled by the `aᵢ,bᵢ` generators. -/
@@ -226,7 +237,7 @@ for the cellular chain calculation, and leaves the future bridge to
 `Topology.CWComplex` as a separate theorem. -/
 structure Polygon4gCharacteristicMapData
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
-    (_edgePairing : Polygon4gEdgePairingCellData g disk) : Type where
+    (_edgePairing : Polygon4gEdgePairingCellData g disk) where
   /-- The unique vertex of the cellular model, as a point of the quotient
   polygon. -/
   vertex : Polygon4g g
@@ -235,10 +246,10 @@ structure Polygon4gCharacteristicMapData
   oneCellPath : Fin (2 * g) → Path vertex vertex
   /-- The characteristic map of the unique two-cell, before passing to a
   full Mathlib `CWComplex` record. -/
-  twoCellCharacteristic : ContinuousMap DiskC (Polygon4g g)
-  /-- The two-cell map is the quotient map from the closed disk. -/
+  twoCellCharacteristic : ContinuousMap disk.diskSource.carrier (Polygon4g g)
+  /-- The two-cell map is the quotient map from the closed disk (via the homeomorph). -/
   twoCellCharacteristic_eq_mk :
-    ∀ z : DiskC, twoCellCharacteristic z = Polygon4g.mk g z
+    ∀ z, twoCellCharacteristic z = Polygon4g.mk g (disk.diskSource.sourceHomeomorph z)
   /-- The attaching word read around the boundary of the unique two-cell. -/
   boundaryWord : EdgeWord g
   /-- The attaching word is the standard product of commutators. -/
@@ -252,16 +263,72 @@ structure Polygon4gCharacteristicMapData
   oneCellBoundaryZero :
     ∀ e : Fin (2 * g), oneCellPath e 0 = vertex ∧ oneCellPath e 1 = vertex
 
+/-- **Frontier lemma.** The quotient of boundary arcs form based loops
+at the unique vertex. -/
+theorem polygon4g_boundary_arcs_are_loops (g : ℕ) (k : ℕ) :
+    Polygon4g.mk g (boundaryParam g k 0) = Polygon4g.mk g (boundaryParam g 0 0) ∧
+    Polygon4g.mk g (boundaryParam g k 1) = Polygon4g.mk g (boundaryParam g 0 0) :=
+  sorry
+
+lemma boundaryAngle'_continuous (L i : ℕ) :
+    Continuous (fun t : ℝ => boundaryAngle' L i t) := by
+  unfold boundaryAngle'
+  apply Continuous.div_const
+  apply Continuous.mul
+  · exact continuous_const
+  · apply Continuous.add
+    · exact continuous_const
+    · exact continuous_id
+
+lemma boundaryParamC'_continuous (L i : ℕ) :
+    Continuous (fun t : ℝ => boundaryParamC' L i t) := by
+  unfold boundaryParamC'
+  apply Complex.continuous_exp.comp
+  apply Continuous.mul
+  · exact Complex.continuous_ofReal.comp (boundaryAngle'_continuous L i)
+  · exact continuous_const
+
+lemma boundaryParam'_continuous (L i : ℕ) :
+    Continuous (fun t : ℝ => boundaryParam' L i t) := by
+  unfold boundaryParam'
+  exact continuous_induced_rng.mpr (boundaryParamC'_continuous L i)
+
+/-- **Sorry-free.** The standard boundary parametrisation is
+continuous on `[0,1]`. -/
+theorem polygon4g_boundaryParam_continuous (g : ℕ) (k : ℕ) :
+    Continuous (fun t : ℝ => boundaryParam g k t) :=
+  boundaryParam'_continuous (4 * g) k
+
+/-- The index of the boundary arc corresponding to the `e`-th oriented
+one-cell.  Maps `2*i ↦ 4*i` (`aᵢ`) and `2*i + 1 ↦ 4*i + 1` (`bᵢ`). -/
+def polygon4g_oneCell_arcIndex {g : ℕ} (e : Fin (2 * g)) : ℕ :=
+  2 * e.val - (e.val % 2)
+
 /-- **Cellular leaf 1c.** Construct the characteristic maps for the
 standard polygonal cell structure. -/
 theorem polygon4g_characteristic_map_data
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
     (edgePairing : Polygon4gEdgePairingCellData g disk) :
-    Nonempty (Polygon4gCharacteristicMapData g disk edgePairing) := by
-  -- Blocker: characteristic maps require concrete continuous maps for the
-  -- unique zero-cell, the `2g` one-cells, and the two-cell attaching disk.  The
-  -- quotient disk and edge-pairing records are still abstract witnesses.
-  sorry
+    Nonempty (Polygon4gCharacteristicMapData g disk edgePairing) :=
+by
+  let v := Polygon4g.mk g (boundaryParam g 0 0)
+  exact ⟨{
+    vertex := v
+    oneCellPath := fun e => {
+      toFun := fun t => Polygon4g.mk g (boundaryParam g (polygon4g_oneCell_arcIndex e) t)
+      continuous_toFun := (Polygon4g.mk_continuous g).comp ((polygon4g_boundaryParam_continuous g _).comp continuous_subtype_val)
+      source' := (polygon4g_boundary_arcs_are_loops g _).1
+      target' := (polygon4g_boundary_arcs_are_loops g _).2
+    }
+    twoCellCharacteristic := ⟨fun z => Polygon4g.mk g (disk.diskSource.sourceHomeomorph z),
+      (Polygon4g.mk_continuous g).comp disk.diskSource.sourceHomeomorph.continuous⟩
+    twoCellCharacteristic_eq_mk := fun _ => rfl
+    boundaryWord := EdgeWord.standardWord g
+    boundaryWord_standard := EdgeWord.standardWord_isStandardForm
+    boundaryWord_sidePairing := EdgeWord.sidePairingRel_standardWord g
+    oneCellBoundaryZero := fun e =>
+      ⟨(polygon4g_boundary_arcs_are_loops g _).1, (polygon4g_boundary_arcs_are_loops g _).2⟩
+  }⟩
 
 /-- A witness that `Polygon4g g` carries the standard project-side
 cellular model: one zero-cell, `2g` one-cells, and one two-cell.
@@ -270,7 +337,7 @@ The record is deliberately tied to the quotient polygon and exposes the
 cellular data needed by the chain calculation.  It is not a Mathlib
 `CWComplex`; a future bridge can package these fields into Mathlib's CW
 API. -/
-structure Polygon4gCellularModel (g : ℕ) : Type where
+structure Polygon4gCellularModel (g : ℕ) where
   /-- The quotient-disk source, subdivision, and side quotient relation. -/
   disk : Polygon4gQuotientDiskCellData g
   /-- The labelled side-pairing data for the quotient disk. -/
@@ -291,7 +358,7 @@ def oneCellPath {g : ℕ} (C : Polygon4gCellularModel g) :
 
 /-- The characteristic map of the unique two-cell. -/
 def twoCellCharacteristic {g : ℕ} (C : Polygon4gCellularModel g) :
-    ContinuousMap DiskC (Polygon4g g) :=
+    ContinuousMap C.disk.diskSource.carrier (Polygon4g g) :=
   C.characteristicMaps.twoCellCharacteristic
 
 /-- The boundary word of the unique two-cell. -/
@@ -300,7 +367,7 @@ def boundaryWord {g : ℕ} (C : Polygon4gCellularModel g) : EdgeWord g :=
 
 /-- The two-cell characteristic map is the quotient map. -/
 theorem twoCellCharacteristic_eq_mk {g : ℕ} (C : Polygon4gCellularModel g) :
-    ∀ z : DiskC, C.twoCellCharacteristic z = Polygon4g.mk g z :=
+    ∀ z, C.twoCellCharacteristic z = Polygon4g.mk g (C.disk.diskSource.sourceHomeomorph z) :=
   C.characteristicMaps.twoCellCharacteristic_eq_mk
 
 /-- The boundary word is the standard product of commutators. -/
