@@ -364,6 +364,7 @@ theorem exact_of_closed_in_genus_zero (X : Type*) [TopologicalSpace X] [T2Space 
     [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
     (ω : SmoothDiffForm 1 X) (hclosed : exteriorDerivative 1 X ω = 0) :
     analyticHarmonicGenus X = 0 → ω ∈ ExactForm 0 X := by
   intro h_genus
@@ -506,6 +507,29 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X] [T2S
   -- Fixed conclusion to assert order of vanishing is 1.
   sorry
 
+/-- **Frontier bridge: analytic order one of the inverse gives one simple pole.**
+
+This is the honest boundary between the current analytic/order API and
+`MeromorphicMapToSphere`'s divisor-carrying structure.  Callers should route
+simple-pole conclusions through this theorem (or a future proved replacement)
+instead of constructing a `MeromorphicMapToSphere` by manually setting
+`poleDivisor := Divisor.point P`.
+
+The intended proof builds the one-point extension of `F`, proves that it is
+meromorphic, and identifies the pole divisor from the chart-local order
+statement for `F⁻¹`. -/
+theorem meromorphicMapToSphere_of_inverse_order_one_frontier (X : Type*)
+    [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (F : X → ℂ)
+    (hholo : IsHolomorphic F)
+    (horder : mapAnalyticOrderAt (fun x => (F x)⁻¹) P = 1) :
+    ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
+  -- Frontier: chart-local order data for `F⁻¹` must be converted into the
+  -- divisor field of the associated meromorphic map to the Riemann sphere.
+  sorry
+
 /-- **Sub-obligation 4 assembly.**
 Since the singularity of u is locally Re(1/z), the pole of f at P is simple. -/
 theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
@@ -516,9 +540,10 @@ theorem dipole_harmonic_pole_is_simple (X : Type*) [TopologicalSpace X] [T2Space
     -- We need to ensure the witness 'f' exists to state its pole order.
     ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
   -- 1. Vanishing order of 1/f is 1
-  have _horder := inverse_dipole_vanishing_order_one X P u v hu
-  -- 2. Order 1 zero implies simple pole
-  sorry
+  have horder := inverse_dipole_vanishing_order_one X P u v hu
+  -- 2. Order 1 zero implies simple pole via the named frontier bridge.
+  exact meromorphicMapToSphere_of_inverse_order_one_frontier X P
+    (fun x => ({ re := u x, im := v x } : ℂ)) hholo horder
 
 
 /-- By adding the harmonic conjugate to the dipole harmonic function,

@@ -149,7 +149,12 @@ structure TwoPointMeromorphicMapData (Q1 Q2 : X) where
   poleModulusData : map.PoleModulusData
   branchedCoverDataOfPoleDegree : map.BranchedCoverDataOfPoleDegree
 
-/-- A meromorphic map with a single simple pole at Q. -/
+/-- Scaffold constructor for the displayed single-pole cutoff map.
+
+This constructor assigns `poleDivisor := Divisor.point Q` directly, so it is
+not an analytic route theorem.  Production simple-pole conclusions should use
+frontier/bridge data such as `SinglePoleMeromorphicMapData` or an
+order-to-divisor bridge. -/
 noncomputable def singlePoleMeromorphicMap (Q : X) : MeromorphicMapToSphere X :=
   { toMap := singlePoleSphereLift Q
     locally_meromorphic := True
@@ -236,7 +241,10 @@ theorem singlePoleMeromorphicMap_nonconstant (Q : X) [Nontrivial X] :
   · exact OnePoint.coe_ne_infty _ h2
   · exact OnePoint.coe_ne_infty _ h2
 
-/-- A meromorphic map with two simple poles at Q1 and Q2. -/
+/-- Scaffold constructor for the displayed two-point indicator map.
+
+This constructor prescribes its pole divisor directly and is isolated as
+scaffolding, not as a proof that analytic order data creates those poles. -/
 noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (_hne : Q1 ≠ Q2) :
     MeromorphicMapToSphere X :=
   { toMap := fun x => if x = Q1 ∨ x = Q2 then OnePoint.infty else ((0 : ℂ) : OnePoint ℂ)
