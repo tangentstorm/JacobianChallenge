@@ -123,6 +123,10 @@ theorem nonzero_h0_implies_nonneg_degree
     [Module ℂ (RSSheafCohomology X L 0)]
     (h_pos : Module.finrank ℂ (RSSheafCohomology X L 0) ≠ 0) :
     0 ≤ RSLineBundleDegree X L := by
+  -- Blocker: this is the missing divisor-of-section argument.  The current
+  -- placeholders record the effective divisor and degree-comparison leaves as
+  -- `True`, so they do not provide the data needed to derive a numerical
+  -- inequality for `RSLineBundleDegree`.
   sorry
 
 /-

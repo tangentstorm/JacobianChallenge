@@ -68,6 +68,10 @@ longer faked by the basis pullback bundle. -/
 theorem analyticDegree_constant (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (_hconst : ∃ y₀, ∀ x, f x = y₀) :
     analyticDegree f hf = 0 := by
+  -- Blocker: `analyticDegree` is intentionally `opaque`.  The constant-map
+  -- equation must come from a real degree construction or from an explicit
+  -- degree specification supplied by callers; it is not a consequence of the
+  -- current opaque declaration.
   sorry
 
 /-- Companion specification (anti-hack obligation): the trace-pullback
@@ -78,6 +82,9 @@ theorem analyticPushforward_analyticPullback_spec (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
     analyticPushforward f hf (analyticPullback f hf Q) =
       (analyticDegree f hf) • Q := by
+  -- Blocker: this is the basis-level trace-pullback identity.  The involved
+  -- maps and degree are opaque at this layer, so a proof needs the geometric
+  -- trace/degree construction and descent through the period quotient.
   sorry
 
 /- The trace–pullback identity, in basis-aligned form: pushforward

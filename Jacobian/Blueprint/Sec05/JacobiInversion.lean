@@ -23,21 +23,16 @@ Jacobi inversion theorem says `AJ_sym` is **surjective** — every
 `Sym^g(X) → Pic⁰(X)`, `(p₁, …, p_g) ↦ [[p₁] + ⋯ + [p_g] − g·[p₀]]`
 gives the surjectivity of `aj_Pic0 : Pic⁰(X) → Jac(X)`.
 
-## Sub-leaves
+## Sub-leaf
 
-1. `aj_sym_surjective` (**HARD**, `sorry`) — the symmetric-product
-   Abel–Jacobi map is surjective. Standard proof: complex-analytic
-   dimension count plus properness of `Sym^g(X) → Jac(X)` (closed
-   image), then connectedness of `Jac(X)` gives surjectivity.
-2. `aj_Pic0_surjective_via_jacobi_inversion` (**MEDIUM**, `sorry`)
-   — derives `Pic⁰` surjectivity from leaf 1 via the
-   `Sym^g(X) → Pic⁰(X)` factorization. The shape is sorry-free in
-   structure but the actual factorization step needs the
-   `Sym^g → Pic⁰` placeholder, which is itself a stub here.
+`aj_Pic0_surjective_via_jacobi_inversion` records the intended
+Jacobi-inversion route once `Sym^g(X)`, the Abel-Jacobi map on the
+symmetric product, and the `Sym^g(X) → Pic⁰(X)` factorization are
+substantive.
 
 The Pic⁰ surjectivity sorry from `Pic0.aj_Pic0_surjective` is
 **not** retargeted through this leaf yet — that is a separate
-follow-up — but the dep-graph node now exists.
+follow-up.
 
 ## Conventions
 
@@ -78,18 +73,9 @@ noncomputable def symToPic0 (g : Nat) (X : Type*) [TopologicalSpace X] [ChartedS
     (s : SymProduct g X) : Pic0.Pic0 X :=
   0
 
-/-! ## Sub-leaves -/
+/-! ## Sub-leaf -/
 
-/-- **Sub-leaf 1 (HARD).** Jacobi inversion at the symmetric-product
-level: `AJ_sym : Sym^g(X) → Jac(X)` is surjective. -/
-theorem aj_sym_surjective (g : Nat) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    (_hg : g ≥ 1) :
-    Function.Surjective (aj_sym g X) := by
-  intro y
-  sorry
-
-/-- **Sub-leaf 2 (MEDIUM, retarget).** Surjectivity of the
+/-- **Retargeting shim.** Surjectivity of the
 descended `aj_Pic0 : Pic⁰(X) → Jac(X)` via Jacobi inversion. -/
 theorem aj_Pic0_surjective_via_jacobi_inversion
     (g : Nat) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
