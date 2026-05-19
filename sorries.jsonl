@@ -1227,10 +1227,11 @@
 {"i":2661,"f":"Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean","k":"theorem","s":"nonconstant_single_pole_implies_genus_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2662,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"genus_zero_homeomorph_onePointCx","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2663,"f":"Jacobian/HolomorphicForms/CompactRiemannSurface.lean","k":"theorem","s":"holomorphicOneForm_supNorm_closedBall_totallyBounded","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2664,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"theorem","s":"analyticDegree_constant","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2665,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"theorem","s":"analyticPushforward_analyticPullback_spec","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2664,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"theorem","s":"analyticDegree_constant","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2665,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"theorem","s":"analyticPushforward_analyticPullback_spec","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2666,"f":"Jacobian/HolomorphicForms/HarmonicFunctions.lean","k":"theorem","s":"meromorphicMapToSphere_of_inverse_order_one_frontier","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2667,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_local_kfold_ramified","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2668,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_weightedFiberSum_eventually_eq","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2669,"f":"Jacobian/HolomorphicForms/TraceBundled.lean","k":"def","s":"traceFormsRegularSpec_frontier","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2669,"f":"Jacobian/HolomorphicForms/TraceBundled.lean","k":"def","s":"traceFormsRegularSpec_frontier","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2670,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"def","s":"deRhamComparisonMap1Spec_frontier","n":2,"o":2,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2671,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"def","s":"analyticTraceDegreeSpec_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
