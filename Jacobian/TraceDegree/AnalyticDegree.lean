@@ -1,5 +1,6 @@
 import Jacobian.TraceDegree.PullbackBasis
 import Jacobian.TraceDegree.PushforwardBasis
+import Jacobian.HolomorphicForms.TraceSpec
 import Jacobian.TraceDegree.PiecewiseC1Instance
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
@@ -29,6 +30,7 @@ namespace JacobianChallenge.TraceDegree
 
 open scoped ContDiff Manifold
 open JacobianChallenge.AbelJacobi JacobianChallenge.Periods
+open JacobianChallenge.HolomorphicForms
 
 variable {X : Type} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -47,6 +49,55 @@ data does not fabricate degree data, and the geometric identification
 with branched degree is exposed through explicit hypotheses/frontier
 lemmas. -/
 noncomputable opaque analyticDegree (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ
+
+/-- Bundled analytic trace/degree contract for a holomorphic map of compact
+Riemann surfaces.
+
+The fields are the mathematical laws needed by the public route theorems:
+constant maps have degree zero, nonconstant analytic degree agrees with the
+branched-cover degree supplied by the project constructor, the global trace
+agrees with the local regular-fiber trace, trace after pullback is degree
+multiplication on holomorphic forms, and the descended basis-aligned Jacobian
+maps satisfy the corresponding push-pull identity. -/
+structure AnalyticTraceDegreeSpec (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) where
+  /-- Constant maps have analytic degree zero. -/
+  degree_constant : (∃ y₀, ∀ x, f x = y₀) → analyticDegree f hf = 0
+  /-- For nonconstant maps, analytic degree agrees with the constructed
+  branched-cover degree under the standard local ramification and weighted
+  fiber conservation hypotheses. -/
+  degree_eq_branched :
+    ∀ (hkfold : HasLocalKfoldRamification f) (hw : HasWeightedFiberConservation f)
+      (hnonconst : ¬ ∃ y₀, ∀ x, f x = y₀),
+      analyticDegree f hf =
+        branchedDegree
+          (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+            (isHolomorphic_of_contMDiff hf hkfold) hw hnonconst)
+  /-- The global trace form agrees with the regular-value local trace. -/
+  trace_regular : TraceFormsRegularSpec f hf
+  /-- Form-level trace-pullback identity. -/
+  trace_pullback :
+    ∀ η : HolomorphicOneForm ℂ Y,
+      traceFormsBundled f hf (pullbackFormsBundled f hf η) =
+        (analyticDegree f hf : ℂ) • η
+  /-- Basis-aligned Jacobian push-pull identity. -/
+  push_pull :
+    ∀ [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
+      (Q : BasisAnalyticJacobian Y),
+      analyticPushforward f hf (analyticPullback f hf Q) =
+        (analyticDegree f hf) • Q
+
+/-- Frontier provider for the analytic trace/degree package.
+
+This is the single named boundary for the current trace-degree cluster.  Its
+content is the classical analytic construction of the global trace of
+holomorphic one-forms, the analytic degree (zero for constant maps and the
+branched-cover degree for nonconstant maps), the trace-pullback identity, and
+the descent of that identity through the basis-aligned period quotient. -/
+noncomputable def analyticTraceDegreeSpec_frontier (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    AnalyticTraceDegreeSpec f hf := by
+  sorry
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [IsManifold 𝓘(ℂ) ω X] [StableChartAt ℂ X]
@@ -67,12 +118,8 @@ This is a genuine degree-theory frontier now that `analyticDegree` is no
 longer faked by the basis pullback bundle. -/
 theorem analyticDegree_constant (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (_hconst : ∃ y₀, ∀ x, f x = y₀) :
-    analyticDegree f hf = 0 := by
-  -- Blocker: `analyticDegree` is intentionally `opaque`.  The constant-map
-  -- equation must come from a real degree construction or from an explicit
-  -- degree specification supplied by callers; it is not a consequence of the
-  -- current opaque declaration.
-  sorry
+    analyticDegree f hf = 0 :=
+  (analyticTraceDegreeSpec_frontier f hf).degree_constant _hconst
 
 /-- Companion specification (anti-hack obligation): the trace-pullback
 identity in basis-aligned form. This remains an explicit frontier; it
@@ -81,11 +128,8 @@ theorem analyticPushforward_analyticPullback_spec (f : X → Y)
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
     analyticPushforward f hf (analyticPullback f hf Q) =
-      (analyticDegree f hf) • Q := by
-  -- Blocker: this is the basis-level trace-pullback identity.  The involved
-  -- maps and degree are opaque at this layer, so a proof needs the geometric
-  -- trace/degree construction and descent through the period quotient.
-  sorry
+      (analyticDegree f hf) • Q :=
+  (analyticTraceDegreeSpec_frontier f hf).push_pull Q
 
 /- The trace–pullback identity, in basis-aligned form: pushforward
 of pullback equals degree-multiplication on `BasisAnalyticJacobian Y`.
