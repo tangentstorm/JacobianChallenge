@@ -403,6 +403,11 @@ theorem cellularToSingular_isChainMap_substantive
     (K : AbstractSimplicialComplex V) (n : ℕ) :
     (rawSingularBoundary _ n).comp (cellularToSingularChain K (n + 1)) =
       (cellularToSingularChain K n).comp (cellularBoundarySigned K n) :=
+  -- Blocker: `simplexCharSingular` is currently a constant simplex at a
+  -- chosen vertex, not the affine characteristic map of the geometric
+  -- simplex.  The chain-map identity needs face-compatibility of genuine
+  -- characteristic maps; with constant representatives the singular boundary
+  -- and the signed cellular face sum do not carry the same data.
   sorry
 
 theorem cellularToSingular_isChainMap
@@ -554,6 +559,11 @@ theorem skeletal_h1_five_lemma_identity
     [AbstractSimplicialComplex.Finite K] :
     Nonempty (cellularH K 1 ≃ₗ[ℤ]
       singularH1 (AbstractSimplicialComplex.Geometric K)) :=
+  -- Blocker: this is the cellular/singular comparison theorem.  The local
+  -- record types above model cellular chains, but `singularH1` is Mathlib's
+  -- actual singular homology, so an equivalence requires a proved
+  -- chain-level comparison map and the skeletal long-exact-sequence/five
+  -- lemma argument, not just the current `cellularH` wrapper.
   sorry
 
 theorem cellular_iso_singularH_via_five_lemma

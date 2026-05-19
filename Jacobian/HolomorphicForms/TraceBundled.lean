@@ -58,12 +58,6 @@ noncomputable opaque traceFormsBundled
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X) : HolomorphicOneForm ℂ Y
 
-/-- The trace of the zero form is zero. (Linearity axiom). -/
-theorem traceFormsBundled_zero
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
-    traceFormsBundled f hf 0 = 0 :=
-  sorry
-
 /- The target-side branch locus (image of ramification points) is finite. -/
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
@@ -153,16 +147,6 @@ theorem holomorphicOneForm_ext_on
   rw [ContMDiffSection.coe_sub] at hyzero
   exact sub_eq_zero.mp hyzero
 
-/-- **Section extraction axiom for trace.**
-The underlying function of the bundled trace equals the local fiber sum
-at regular values. -/
-theorem traceFormsBundled_apply_fun_regular
-    {f : X → Y} (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
-    (hbc : BranchedCoverData X Y f)
-    (η : HolomorphicOneForm ℂ X) (y : Y) (hy : isRegularValue hbc y) :
-    (traceFormsBundled f hf η).toFun y = traceAtRegularValue hbc (fun x => η.toFun x) y hy :=
-  sorry
-
 /-- Minimal trace input used by local linearity and regular-value
 assemblies.  This separates the specification needed downstream from
 the construction of the global bundled trace form. -/
@@ -184,10 +168,13 @@ Narrow consumers should take `TraceFormsRegularSpec f hf` explicitly
 instead of calling this provider internally. -/
 def traceFormsRegularSpec_frontier
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
-    TraceFormsRegularSpec f hf where
-  map_zero := traceFormsBundled_zero f hf
-  apply_fun_regular := fun hbc η y hy =>
-    traceFormsBundled_apply_fun_regular hf hbc η y hy
+    TraceFormsRegularSpec f hf := by
+  -- Frontier: `traceFormsBundled` is currently an `opaque` global trace form.
+  -- The needed boundary is exactly this specification: it sends the zero form
+  -- to zero and agrees with the finite local fiber trace at regular values.
+  -- A proof requires replacing the opaque trace with the actual global trace
+  -- construction.
+  sorry
 
 /-- The trace as a ℂ-linear map between holomorphic 1-form spaces,
 from an explicit regular-value trace specification. -/

@@ -120,6 +120,11 @@ theorem deRhamComparisonMap1_exists_form_with_periods
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ := by
+  -- Blocker: this is the surjectivity half of the degree-one de Rham
+  -- comparison theorem.  Since `deRhamComparisonMap1` is opaque, a proof needs
+  -- the actual integration map, a good-cover/Cech or singular-cochain
+  -- construction of a closed representative, and the period comparison
+  -- equation for every integral cycle.
   sorry
 
 /-- **Surjectivity sub-obligation 1a (Čech cocycle from singular).**
@@ -154,6 +159,11 @@ theorem closedForm_pathIntegral_primitive_exists
     (ω : ClosedForm 1 X)
     (_hω : deRhamComparisonMap1 X ω = 0) :
     ∃ θ : SmoothDiffForm 0 X, exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  -- Blocker: zero periods imply exactness only after the genuine de Rham
+  -- comparison/injectivity theorem.  A proof must construct the global
+  -- path-integral primitive and prove it is smooth with derivative `ω`;
+  -- the current surrogate differential-form API does not expose path
+  -- integration or the fundamental theorem for forms.
   sorry
 
 /-- Minimal degree-1 de Rham comparison inputs used by the local

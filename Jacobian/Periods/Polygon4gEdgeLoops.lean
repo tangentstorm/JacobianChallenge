@@ -51,7 +51,7 @@ def edgeArcIdx (g : ℕ) (i : Fin (2 * (g + 1))) : ℕ :=
 
 lemma boundaryAngle_continuous (g i : ℕ) :
     Continuous (boundaryAngle g i) := by
-  unfold boundaryAngle
+  unfold boundaryAngle boundaryAngle'
   fun_prop
 
 lemma boundaryParamC_continuous (g i : ℕ) :
