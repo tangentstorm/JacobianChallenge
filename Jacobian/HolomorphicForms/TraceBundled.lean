@@ -64,7 +64,11 @@ theorem traceFormsBundled_zero
     traceFormsBundled f hf 0 = 0 :=
   sorry
 
-/-- The target-side branch locus (image of ramification points) is finite. -/
+/- The target-side branch locus (image of ramification points) is finite. -/
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [ChartedSpace ℂ Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
 theorem branchLocus_finite
     {f : X → Y} (h : BranchedCoverData X Y f) :
     {y : Y | ¬ isRegularValue h y}.Finite := by
@@ -102,7 +106,10 @@ private theorem dense_compl_of_finite_of_perfect
         simp
       simpa [Finset.coe_insert, hset] using hinter
 
-/-- The regular locus is dense in Y. -/
+/- The regular locus is dense in Y. -/
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
+  [CompactSpace Y] [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
 theorem regularLocus_dense
     {f : X → Y} (h : BranchedCoverData X Y f) :
     Dense (regularLocus h) := by
@@ -114,9 +121,10 @@ theorem regularLocus_dense
     dense_compl_of_finite_of_perfect (branchLocus_finite h)
   simpa [regularLocus, Set.compl_setOf] using hbranch
 
-/-- **Identity principle for holomorphic 1-forms.**
+/- **Identity principle for holomorphic 1-forms.**
 Two holomorphic 1-forms that agree on a dense set of a connected Riemann
 surface are equal everywhere. -/
+omit [ConnectedSpace Y] in
 theorem holomorphicOneForm_ext_on
     {s : Set Y} (hs : Dense s)
     {ω₁ ω₂ : HolomorphicOneForm ℂ Y} (h : ∀ y ∈ s, ω₁.toFun y = ω₂.toFun y) :
@@ -186,6 +194,7 @@ from an explicit regular-value trace specification. -/
 noncomputable def traceFormsBundledLM_of_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (htrace : TraceFormsRegularSpec f hf)
+    (hkfold : HasLocalKfoldRamification f)
     (hw : HasWeightedFiberConservation f) :
     HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y where
   toFun := by
@@ -200,7 +209,7 @@ noncomputable def traceFormsBundledLM_of_spec
           (if ∃ y₀, ∀ x, f x = y₀ then 0 else traceFormsBundled f hf ζ)
       simp [hconst]
     · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-        (isHolomorphic_of_contMDiff hf) hw hconst
+        (isHolomorphic_of_contMDiff hf hkfold) hw hconst
       simp only [if_neg hconst]
       apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
       intro y hy
@@ -218,7 +227,7 @@ noncomputable def traceFormsBundledLM_of_spec
       intro y
       simp
     · have hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-        (isHolomorphic_of_contMDiff hf) hw hconst
+        (isHolomorphic_of_contMDiff hf hkfold) hw hconst
       simp only [if_neg hconst]
       apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
       intro y hy
@@ -233,34 +242,41 @@ sorry-free consumers should use `traceFormsBundledLM_of_spec` with an
 explicit `TraceFormsRegularSpec` and weighted-fiber conservation. -/
 noncomputable def traceFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (hkfold : HasLocalKfoldRamification f)
     (hw : HasWeightedFiberConservation f) :
     HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y :=
-  traceFormsBundledLM_of_spec f hf (traceFormsRegularSpec_frontier f hf) hw
+  traceFormsBundledLM_of_spec f hf (traceFormsRegularSpec_frontier f hf) hkfold hw
 
-/-- The trace–pullback identity holds at regular values from explicit trace data. -/
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/- The trace–pullback identity holds at regular values from explicit trace data. -/
 theorem trace_pullback_identity_regular_of_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (htrace : TraceFormsRegularSpec f hf)
+    (hHol : IsHolomorphic f)
     (hbc : BranchedCoverData X Y f)
     (hcompat : hbc.RamificationIndexCompatible)
     (η : HolomorphicOneForm ℂ Y) (y : Y) (hy : isRegularValue hbc y) :
     (traceFormsBundled f hf (pullbackFormsBundled f hf η)).toFun y =
       ((hbc.weightedFiberCard y : ℂ) • η).toFun y := by
   rw [htrace.apply_fun_regular hbc (pullbackFormsBundled f hf η) y hy]
-  exact trace_pullback_at_regular_value hbc hcompat hf (isHolomorphic_of_contMDiff hf) η y hy
+  exact trace_pullback_at_regular_value hbc hcompat hf hHol η y hy
 
 /-- Compatibility wrapper using the named trace frontier provider. -/
 theorem trace_pullback_identity_regular
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (hkfold : HasLocalKfoldRamification f)
     (hbc : BranchedCoverData X Y f)
     (hcompat : hbc.RamificationIndexCompatible)
     (η : HolomorphicOneForm ℂ Y) (y : Y) (hy : isRegularValue hbc y) :
     (traceFormsBundled f hf (pullbackFormsBundled f hf η)).toFun y =
       ((hbc.weightedFiberCard y : ℂ) • η).toFun y :=
   trace_pullback_identity_regular_of_spec f hf (traceFormsRegularSpec_frontier f hf)
-    hbc hcompat η y hy
+    (isHolomorphic_of_contMDiff hf hkfold) hbc hcompat η y hy
 
-/-- The pullback along a constant map is zero. -/
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+/- The pullback along a constant map is zero. -/
 theorem pullbackFormsBundled_constant
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (hconst : ∃ y₀, ∀ x, f x = y₀) (η : HolomorphicOneForm ℂ Y) :
@@ -279,14 +295,17 @@ the degree.
 This is the analytic heart of the Challenge's anti-hack #4. -/
 /-- Trace-pullback identity from explicit trace data. -/
 theorem trace_pullback_identity_of_spec
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (htrace : TraceFormsRegularSpec f hf)
+    (hkfold : HasLocalKfoldRamification f)
     (hw : HasWeightedFiberConservation f)
     (hdegree : ∀ hnonconst : ¬ ∃ y₀, ∀ x, f x = y₀,
       JacobianChallenge.TraceDegree.analyticDegree f hf =
         branchedDegree
           (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-            (isHolomorphic_of_contMDiff hf) hw hnonconst))
+            (isHolomorphic_of_contMDiff hf hkfold) hw hnonconst))
     (η : HolomorphicOneForm ℂ Y) :
     traceFormsBundled f hf (pullbackFormsBundled f hf η) =
       (JacobianChallenge.TraceDegree.analyticDegree f hf : ℂ) • η := by
@@ -300,32 +319,36 @@ theorem trace_pullback_identity_of_spec
     intro y
     simp
   · let hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-      (isHolomorphic_of_contMDiff hf) hw hconst
+      (isHolomorphic_of_contMDiff hf hkfold) hw hconst
     have hcompat : hbc.RamificationIndexCompatible :=
       JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
-        (isHolomorphic_of_contMDiff hf) hw hconst
+        (isHolomorphic_of_contMDiff hf hkfold) hw hconst
     -- 2. Use identity principle: equal on dense set implies equal everywhere
     rw [analyticDegree_eq_branchedDegree f hf hbc (hdegree hconst)]
     apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
     intro y hy
     rw [branchedDegree_eq_weightedFiberCard hbc y]
-    exact trace_pullback_identity_regular_of_spec f hf htrace hbc hcompat η y hy
+    exact trace_pullback_identity_regular_of_spec f hf htrace
+      (isHolomorphic_of_contMDiff hf hkfold) hbc hcompat η y hy
 
 /-- **The Trace-Pullback Identity.** Compatibility wrapper using the
 named trace frontier provider. New shortcut assemblies should use
 `trace_pullback_identity_of_spec` when the trace data is part of the
 explicit boundary. -/
 theorem trace_pullback_identity
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (hkfold : HasLocalKfoldRamification f)
     (hw : HasWeightedFiberConservation f)
     (hdegree : ∀ hnonconst : ¬ ∃ y₀, ∀ x, f x = y₀,
       JacobianChallenge.TraceDegree.analyticDegree f hf =
         branchedDegree
           (JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
-            (isHolomorphic_of_contMDiff hf) hw hnonconst))
+            (isHolomorphic_of_contMDiff hf hkfold) hw hnonconst))
     (η : HolomorphicOneForm ℂ Y) :
     traceFormsBundled f hf (pullbackFormsBundled f hf η) =
       (JacobianChallenge.TraceDegree.analyticDegree f hf : ℂ) • η :=
-  trace_pullback_identity_of_spec f hf (traceFormsRegularSpec_frontier f hf) hw hdegree η
+  trace_pullback_identity_of_spec f hf (traceFormsRegularSpec_frontier f hf) hkfold hw hdegree η
 
 end JacobianChallenge.HolomorphicForms
