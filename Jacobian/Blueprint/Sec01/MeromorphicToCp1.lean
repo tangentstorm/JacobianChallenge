@@ -15,11 +15,7 @@ export JacobianChallenge.HolomorphicForms
    liftToCp1_holomorphicAt_finite
    liftToCp1_holomorphicAt_infty
    liftToCp1_holomorphicAt
-   liftToCp1_local_kfold_ramified_finite
-   liftToCp1_local_kfold_ramified_infty
    liftToCp1_local_kfold_ramified
-   liftToCp1_weightedFiberSum_eventually_eq_finite
-   liftToCp1_weightedFiberSum_eventually_eq_infty
    liftToCp1_weightedFiberSum_eventually_eq
    liftToCp1_isHolomorphic)
 

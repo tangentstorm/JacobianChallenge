@@ -51,15 +51,17 @@ open Complex Set AlgebraicTopology
 angle at the start of arc `k+1`. -/
 lemma boundaryAngle_one_eq_succ_zero (g k : ℕ) :
     boundaryAngle g k 1 = boundaryAngle g (k + 1) 0 := by
-  unfold boundaryAngle
+  unfold boundaryAngle boundaryAngle'
   push_cast
-  ring
+  ring_nf
 
 /-- Numerical identity in `ℂ`: the boundary parameter at the end of
 arc `k` equals the parameter at the start of arc `k+1`. -/
 lemma boundaryParamC_one_eq_succ_zero (g k : ℕ) :
     boundaryParamC g k 1 = boundaryParamC g (k + 1) 0 := by
-  unfold boundaryParamC
+  unfold boundaryParamC boundaryParamC'
+  change exp (((boundaryAngle g k 1 : ℂ)) * I) =
+    exp (((boundaryAngle g (k + 1) 0 : ℂ)) * I)
   rw [boundaryAngle_one_eq_succ_zero]
 
 /-- The `DiskC` lift of the boundary-arc endpoint identity. -/

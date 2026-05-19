@@ -140,6 +140,11 @@ The edge homology classes span `singularH1 (Polygon4g (g+1))`.
    elements. -/
 theorem edgeHomologyFamily_spans (g : ℕ) :
     Submodule.span ℤ (Set.range (edgeHomologyFamily g)) = ⊤ := by
+  -- Blocker: the advertised lift-to-disk proof needs explicit chain-level
+  -- infrastructure not present in the current API: lifting singular 1-cycles
+  -- through the polygon quotient, repairing lifted boundaries by boundary-edge
+  -- arcs, using contractibility of `DiskC` to identify the repaired lift as a
+  -- boundary, and projecting that boundary calculation back to homology.
   sorry
 
 /-- **Phase 6.b leaf (derived from `edgeHomologyFamily_spans`).**

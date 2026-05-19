@@ -21,6 +21,9 @@ theorem polygon4g_cellular_singular_zero_cell_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
     Nonempty (Polygon4gCellularSingularZeroCellData g C) := by
+  -- Blocker: the unique zero-cell of the cellular model is not exposed by the
+  -- opaque `Polygon4gCellularModel`.  A proof needs an actual characteristic
+  -- map or vertex witness in `Polygon4g g`, not just the abstract model token.
   sorry
 
 /-- The singular edge-path data attached to the `2g` oriented one-cells
@@ -34,6 +37,9 @@ theorem polygon4g_cellular_singular_one_cell_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
     Nonempty (Polygon4gCellularSingularOneCellData g C) := by
+  -- Blocker: one-cell data should be the `2g` singular edge paths induced by
+  -- the labelled polygon sides.  The opaque cellular model has no edge
+  -- indexing, endpoint maps, or side-path representatives to package.
   sorry
 
 /-- The singular disk characteristic-map datum for the unique two-cell. -/
@@ -46,6 +52,9 @@ theorem polygon4g_cellular_singular_two_cell_characteristic_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
     Nonempty (Polygon4gCellularSingularTwoCellCharacteristicData g C) := by
+  -- Blocker: the two-cell characteristic singular datum must come from the
+  -- quotient-disk attaching map into `Polygon4g g`.  That map is not a field
+  -- of the current opaque cellular model.
   sorry
 
 /-- The boundary parametrisation of the singular two-cell by the
@@ -61,6 +70,10 @@ theorem polygon4g_cellular_singular_two_cell_boundary_word_data
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (characteristic : Polygon4gCellularSingularTwoCellCharacteristicData g C) :
     Nonempty (Polygon4gCellularSingularTwoCellBoundaryWordData g C characteristic) := by
+  -- Blocker: boundary-word data needs the restriction of the two-cell
+  -- characteristic map to the boundary circle, identified with the standard
+  -- surface word.  The characteristic datum is opaque and exposes no boundary
+  -- parametrisation or labelled edge traversal.
   sorry
 
 /-- The singular two-cell datum: the quotient disk characteristic map
@@ -123,6 +136,9 @@ theorem polygon4g_cellular_singular_chain_map_degree_zero
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C) :
     Polygon4gCellularSingularChainMapDegreeZero g C h_boundary D := by
+  -- Blocker: degree-zero correctness requires evaluating the comparison map
+  -- on the actual zero-cell generator and comparing it with the singular class
+  -- of the polygon vertex.  `D.zeroCell` is opaque data with no computation rule.
   sorry
 
 /-- Degree-one correctness of the comparison data: each oriented
@@ -140,6 +156,9 @@ theorem polygon4g_cellular_singular_chain_map_degree_one_boundary
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C) :
     Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D := by
+  -- Blocker: this is the chain-map boundary identity for each one-cell.  It
+  -- needs the explicit singular edge paths and their endpoints at the unique
+  -- vertex; neither is readable from the opaque comparison data.
   sorry
 
 /-- Degree-two correctness of the comparison data: the two-cell
@@ -157,6 +176,10 @@ theorem polygon4g_cellular_singular_chain_map_degree_two_attaching
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C) :
     Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D := by
+  -- Blocker: this is the attaching-map compatibility for the two-cell.  The
+  -- proof must expand the boundary of the singular disk as the labelled
+  -- commutator word and compare it with the cellular two-boundary formula.
+  -- The current comparison record exposes neither expansion.
   sorry
 
 /-- Correctness of the comparison data: it is compatible with the
@@ -200,6 +223,9 @@ theorem polygon4g_cellular_singular_filtration_compatible
     (D : Polygon4gCellularSingularComparisonData g C)
     (h_correct : Polygon4gCellularSingularChainMapCorrect g C h_boundary D) :
     Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct := by
+  -- Blocker: filtration compatibility is a theorem about supports in the
+  -- cellular skeleta.  The present cellular/comparison data has no skeleton
+  -- filtration, support predicate, or chain map whose image can be inspected.
   sorry
 
 /-- The associated graded map of the cellular-to-singular comparison is
@@ -225,6 +251,10 @@ theorem polygon4g_cellular_singular_associated_graded_H1_iso
       Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct) :
     Polygon4gCellularSingularAssociatedGradedH1Iso
       g C h_boundary D h_correct h_filtration := by
+  -- Blocker: associated-graded comparison needs the local relative homology
+  -- calculation for each open cell and a computed map on those generators.
+  -- The opaque predicate records the result but supplies no relative chain
+  -- complexes or generator-level map to prove it from.
   sorry
 
 /-- **Comparison leaf 3c.** A filtration-compatible comparison whose
@@ -243,6 +273,10 @@ theorem polygon4g_cellular_singular_H1_iso_of_filtered_graded
       Polygon4gCellularSingularAssociatedGradedH1Iso
         g C h_boundary D h_correct h_filtration) :
     Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
+  -- Blocker: this is the spectral-sequence/five-lemma comparison step from a
+  -- filtration-compatible chain map with associated-graded isomorphism to an
+  -- isomorphism on `H₁`.  The hypotheses are project-side opaque predicates,
+  -- not an actual filtered chain map in Mathlib's homological algebra API.
   sorry
 
 /-- **Comparison assembly 3.** A correct cellular-to-singular comparison

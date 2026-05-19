@@ -79,31 +79,11 @@ theorem singularBoundary_eq_sc_f
   split_ifs <;> simp_all +decide [ ComplexShape.prev ];
   exact fun s => ⟨ _, rfl ⟩
 
-/-- **Bridge: model-space change for holomorphic forms.**
-Given a complex manifold `X` charted over both `E` and `ℂ`, this is
-the ℂ-linear map from `HolomorphicOneForm E X` to
-`HolomorphicOneForm ℂ X`. Mathematically the cotangent space is
-intrinsic (chart-independent); formally the two section types differ
-because `CotangentSpace E X` and `CotangentSpace ℂ X` are built from
-different model-space data.
-
-**Named obligation** (sorry): requires a chart-compatibility bridge
-between the two cotangent bundle trivializations. -/
-noncomputable def holomorphicFormBridge
-    (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
-    (X : Type) [TopologicalSpace X] [ChartedSpace E X]
-    [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
-    [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X] :
-    HolomorphicOneForm E X →ₗ[ℂ] HolomorphicOneForm ℂ X := by
-  sorry
-
 /-- **Complex-model bridge.** In the model-space case actually used by
 the period/Jacobian route, no cotangent model-space conversion is needed:
-forms already live over the `ℂ` model. This keeps consumers off the
-general `holomorphicFormBridge` frontier, whose arbitrary-`E`
-statement requires chart/cotangent compatibility data. -/
+forms already live over the `ℂ` model. The former arbitrary-`E` bridge
+was deliberately removed: no consumer used it, and its proof requires a
+real chart/cotangent compatibility theorem not needed by the Jacobian route. -/
 noncomputable def holomorphicFormBridgeComplex
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -122,10 +102,7 @@ to the homology level. The well-definedness of this descent
 (that the integral kills boundaries) is the "Stokes gap" and remains
 a frontier leaf in the underlying `chain_integration_kills_boundary` story.
 
-For the main complex-model route, prefer `periodPairingComplex` below.
-The arbitrary model-space version does not discharge the intrinsic
-cotangent-space bridge; that compatibility is isolated in
-`holomorphicFormBridge`. -/
+For the main complex-model route, prefer `periodPairingComplex` below. -/
 noncomputable def periodPairing
     (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
@@ -152,17 +129,14 @@ noncomputable def periodPairing
     (periodPairing_descent_aux S Im hI_sc)).hom.toAddMonoidHom
 
 /-- Complex-model period pairing. This is the period API used by the
-Jacobian/trace route; it avoids depending on the arbitrary model-space
-`holomorphicFormBridge` frontier. -/
+Jacobian/trace route; it keeps all forms in the `ℂ` model. -/
 noncomputable def periodPairingComplex
     (X : Type) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
     IntegralOneCycle X →+ (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) :=
   -- Placeholder: the complex-model chain-level integration is still 0
-  -- pending the free-module universal-property bridge. Unlike the
-  -- arbitrary-`E` API, this definition keeps `HolomorphicOneForm ℂ X`
-  -- throughout and does not call `holomorphicFormBridge`.
+  -- pending the free-module universal-property bridge.
   let I : JacobianChallenge.Blueprint.Sec03.SingularOneChain X →ₗ[ℤ]
             (HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) := 0
   let K := JacobianChallenge.Blueprint.Sec03.singularChainComplexZ X
@@ -780,6 +754,11 @@ theorem riemann_classical_real_LI_input
   --    to conclude the row vectors a_i are ℝ-linearly independent.
   -- 6. Linear independence of coordinate vectors in a basis implies
   --    linear independence of the functionals.
+  -- Blocker: `hσ : Function.Injective σ` is not enough classical input.
+  -- The argument above needs `σ` to be a canonical/symplectic homology basis
+  -- and needs Stokes on the fundamental polygon to identify the period sum
+  -- with the positive Hodge form.  An arbitrary injective family of cycles
+  -- need not have nondegenerate period pairings.
   sorry
 
 /-- **Analytic core.** The period functionals `(periodPairing ℂ X) ∘ σ`

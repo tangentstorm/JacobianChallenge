@@ -132,53 +132,7 @@ theorem liftToCp1_holomorphicAt
   | coe z =>
       exact liftToCp1_holomorphicAt_finite X f _hholo p hval
 
-/-- Local `k`-fold normal form/counting for the CP¹ lift.
-
-This packages the classical one-variable local mapping theorem for the
-meromorphic lift: at a point where the analytic order is `k > 0`, nearby
-noncentral fibres are counted by exactly `k` points, all unramified. -/
-theorem liftToCp1_local_kfold_ramified_finite
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (f : MeromorphicFunctionType X) (_hholo : True)
-    {x : X} {z : ℂ} (_hx : meromorphicToCp1 X f x = (z : OnePoint ℂ))
-    {k : ℕ} (_hk : 0 < k)
-    (_hramx : mapAnalyticOrderAt (meromorphicToCp1 X f) x = k) :
-    ∃ U : Set X, IsOpen U ∧ x ∈ U ∧
-    ∃ V : Set (OnePoint ℂ), IsOpen V ∧ meromorphicToCp1 X f x ∈ V ∧
-    ∀ y ∈ V, y ≠ meromorphicToCp1 X f x →
-    ∃ s : Finset X, s.card = k ∧ ↑s ⊆ U ∧
-      (∀ x' ∈ s, meromorphicToCp1 X f x' = y ∧
-        mapAnalyticOrderAt (meromorphicToCp1 X f) x' = 1) ∧
-      (∀ x' ∈ U, meromorphicToCp1 X f x' = y → x' ∈ s) := by
-  sorry
-
-/-- Local `k`-fold normal form/counting for the CP¹ lift at a pole.
-
-This is the same local mapping theorem read in the inversion chart at
-`∞`, where the reciprocal branch has an ordinary zero of order `k`. -/
-theorem liftToCp1_local_kfold_ramified_infty
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (f : MeromorphicFunctionType X) (_hholo : True)
-    {x : X} (_hx : meromorphicToCp1 X f x = (∞ : OnePoint ℂ))
-    {k : ℕ} (_hk : 0 < k)
-    (_hramx : mapAnalyticOrderAt (meromorphicToCp1 X f) x = k) :
-    ∃ U : Set X, IsOpen U ∧ x ∈ U ∧
-    ∃ V : Set (OnePoint ℂ), IsOpen V ∧ meromorphicToCp1 X f x ∈ V ∧
-    ∀ y ∈ V, y ≠ meromorphicToCp1 X f x →
-    ∃ s : Finset X, s.card = k ∧ ↑s ⊆ U ∧
-      (∀ x' ∈ s, meromorphicToCp1 X f x' = y ∧
-        mapAnalyticOrderAt (meromorphicToCp1 X f) x' = 1) ∧
-      (∀ x' ∈ U, meromorphicToCp1 X f x' = y → x' ∈ s) := by
-  sorry
-
-/-- Local `k`-fold normal form/counting for the CP¹ lift.
-
-This is now a case split on whether the central target value is finite
-or `∞`. -/
+/-- Local `k`-fold normal form/counting for the CP¹ lift. -/
 theorem liftToCp1_local_kfold_ramified
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -195,63 +149,13 @@ theorem liftToCp1_local_kfold_ramified
         (∀ x' ∈ s, meromorphicToCp1 X f x' = y ∧
           mapAnalyticOrderAt (meromorphicToCp1 X f) x' = 1) ∧
         (∀ x' ∈ U, meromorphicToCp1 X f x' = y → x' ∈ s) := by
-  intro _instX _instY x k hk hramx
-  cases hx : meromorphicToCp1 X f x with
-  | infty =>
-      simpa [hx] using
-        liftToCp1_local_kfold_ramified_infty X f _hholo hx hk hramx
-  | coe z =>
-      simpa [hx] using
-        liftToCp1_local_kfold_ramified_finite X f _hholo hx hk hramx
-
-/-- Local conservation of the weighted fibre count for the CP¹ lift.
-
-This is the weighted-fibre-count part of the branched-cover package,
-specialized to `meromorphicToCp1 X f`.  It is classically proved from
-the local `k`-fold normal form together with finiteness of fibres. -/
-theorem liftToCp1_weightedFiberSum_eventually_eq_finite
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (f : MeromorphicFunctionType X) (_hholo : True)
-    {z₀ : ℂ} :
-    ∀ [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-      [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) (OnePoint ℂ)]
-      [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space (OnePoint ℂ)],
-      (¬ ∃ y₀ : OnePoint ℂ, ∀ x, meromorphicToCp1 X f x = y₀) →
-      (finite_fiber : ∀ y : OnePoint ℂ, ((meromorphicToCp1 X f) ⁻¹' {y}).Finite) →
-      ∀ᶠ y in 𝓝 (z₀ : OnePoint ℂ),
-        ((finite_fiber y).toFinset).sum
-          (mapAnalyticOrderAt (meromorphicToCp1 X f)) =
-        ((finite_fiber (z₀ : OnePoint ℂ)).toFinset).sum
-          (mapAnalyticOrderAt (meromorphicToCp1 X f)) := by
+  -- Frontier: this is the local mapping theorem for the CP¹ lift, in finite
+  -- and infinity charts.  The current `MeromorphicFunctionType` gives local
+  -- meromorphicity of the raw map, but no chart-local normal form, finite
+  -- local fibers, or ramification/order compatibility data.
   sorry
 
-/-- Local conservation of the weighted fibre count for the CP¹ lift,
-centered at the fibre over `∞`.
-
-This is the inversion-chart version of the weighted-fibre-count
-conservation theorem. -/
-theorem liftToCp1_weightedFiberSum_eventually_eq_infty
-    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (f : MeromorphicFunctionType X) (_hholo : True) :
-    ∀ [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-      [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) (OnePoint ℂ)]
-      [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space (OnePoint ℂ)],
-      (¬ ∃ y₀ : OnePoint ℂ, ∀ x, meromorphicToCp1 X f x = y₀) →
-      (finite_fiber : ∀ y : OnePoint ℂ, ((meromorphicToCp1 X f) ⁻¹' {y}).Finite) →
-      ∀ᶠ y in 𝓝 (∞ : OnePoint ℂ),
-        ((finite_fiber y).toFinset).sum
-          (mapAnalyticOrderAt (meromorphicToCp1 X f)) =
-        ((finite_fiber (∞ : OnePoint ℂ)).toFinset).sum
-          (mapAnalyticOrderAt (meromorphicToCp1 X f)) := by
-  sorry
-
-/-- Local conservation of the weighted fibre count for the CP¹ lift.
-
-This is now a case split on the centre fibre value. -/
+/-- Local conservation of the weighted fibre count for the CP¹ lift. -/
 theorem liftToCp1_weightedFiberSum_eventually_eq
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -267,16 +171,11 @@ theorem liftToCp1_weightedFiberSum_eventually_eq
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) =
         ((finite_fiber y₀).toFinset).sum
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) := by
-  intro _instX _instY _compact _t2 _preconn _t2target hnonconst finite_fiber y₀
-  cases y₀ with
-  | infty =>
-      simpa using
-        liftToCp1_weightedFiberSum_eventually_eq_infty
-          X f _hholo hnonconst finite_fiber
-  | coe z₀ =>
-      simpa using
-        (liftToCp1_weightedFiberSum_eventually_eq_finite
-          X f _hholo (z₀ := z₀) hnonconst finite_fiber)
+  -- Frontier: weighted-fiber conservation is a global branched-cover theorem.
+  -- Even with finite fibers as an input, the proof needs properness/degree
+  -- data and compatibility of the local ramification indices with
+  -- `mapAnalyticOrderAt`; none of this is contained in `hholo : True`.
+  sorry
 
 /-- Basic holomorphicity of the CP¹ lift of a meromorphic function. -/
 theorem liftToCp1_isHolomorphicBasic
