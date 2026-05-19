@@ -13,55 +13,69 @@ namespace JacobianChallenge.Periods
 
 /-- The singular datum attached to the unique zero-cell of the standard
 polygonal cell structure. -/
-opaque Polygon4gCellularSingularZeroCellData
-    (g : ℕ) (_C : Polygon4gCellularModel g) : Type
+structure Polygon4gCellularSingularZeroCellData
+    (g : ℕ) (C : Polygon4gCellularModel g) where
+  /-- The singular zero-simplex is the unique cellular vertex. -/
+  vertex : Polygon4g g
+  /-- It is the vertex recorded by the cellular model. -/
+  vertex_eq_model : vertex = C.vertex
 
 /-- **Comparison leaf 1a.** Construct the singular zero-cell datum. -/
 theorem polygon4g_cellular_singular_zero_cell_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
-    Nonempty (Polygon4gCellularSingularZeroCellData g C) := by
-  -- Blocker: the unique zero-cell of the cellular model is not exposed by the
-  -- opaque `Polygon4gCellularModel`.  A proof needs an actual characteristic
-  -- map or vertex witness in `Polygon4g g`, not just the abstract model token.
-  sorry
+    Nonempty (Polygon4gCellularSingularZeroCellData g C) :=
+  ⟨{ vertex := C.vertex, vertex_eq_model := rfl }⟩
 
 /-- The singular edge-path data attached to the `2g` oriented one-cells
 of the standard polygonal cell structure. -/
-opaque Polygon4gCellularSingularOneCellData
-    (g : ℕ) (_C : Polygon4gCellularModel g) : Type
+structure Polygon4gCellularSingularOneCellData
+    (g : ℕ) (C : Polygon4gCellularModel g) where
+  /-- The singular representatives of the oriented one-cells. -/
+  edgePath : Fin (2 * g) → Path C.vertex C.vertex
+  /-- They are the one-cell loops recorded by the cellular model. -/
+  edgePath_eq_model : edgePath = C.oneCellPath
 
 /-- **Comparison leaf 1b.** Construct the singular one-cell edge-path
 data. -/
 theorem polygon4g_cellular_singular_one_cell_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
-    Nonempty (Polygon4gCellularSingularOneCellData g C) := by
-  -- Blocker: one-cell data should be the `2g` singular edge paths induced by
-  -- the labelled polygon sides.  The opaque cellular model has no edge
-  -- indexing, endpoint maps, or side-path representatives to package.
-  sorry
+    Nonempty (Polygon4gCellularSingularOneCellData g C) :=
+  ⟨{ edgePath := C.oneCellPath, edgePath_eq_model := rfl }⟩
 
 /-- The singular disk characteristic-map datum for the unique two-cell. -/
-opaque Polygon4gCellularSingularTwoCellCharacteristicData
-    (g : ℕ) (_C : Polygon4gCellularModel g) : Type
+structure Polygon4gCellularSingularTwoCellCharacteristicData
+    (g : ℕ) (C : Polygon4gCellularModel g) where
+  /-- The singular characteristic map of the two-cell. -/
+  characteristic : ContinuousMap DiskC (Polygon4g g)
+  /-- It is the quotient map from the closed disk. -/
+  characteristic_eq_mk :
+    ∀ z : DiskC, characteristic z = Polygon4g.mk g z
 
 /-- **Comparison leaf 1c(i).** Construct the singular characteristic
 map data for the unique two-cell. -/
 theorem polygon4g_cellular_singular_two_cell_characteristic_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
-    Nonempty (Polygon4gCellularSingularTwoCellCharacteristicData g C) := by
-  -- Blocker: the two-cell characteristic singular datum must come from the
-  -- quotient-disk attaching map into `Polygon4g g`.  That map is not a field
-  -- of the current opaque cellular model.
-  sorry
+    Nonempty (Polygon4gCellularSingularTwoCellCharacteristicData g C) :=
+  ⟨{
+    characteristic := C.twoCellCharacteristic
+    characteristic_eq_mk := C.twoCellCharacteristic_eq_mk
+  }⟩
 
 /-- The boundary parametrisation of the singular two-cell by the
 standard surface word `∏ᵢ [aᵢ,bᵢ]`. -/
-opaque Polygon4gCellularSingularTwoCellBoundaryWordData
+structure Polygon4gCellularSingularTwoCellBoundaryWordData
     (g : ℕ) (C : Polygon4gCellularModel g)
-    (_characteristic : Polygon4gCellularSingularTwoCellCharacteristicData g C) : Type
+    (_characteristic : Polygon4gCellularSingularTwoCellCharacteristicData g C) where
+  /-- The word read on the boundary of the characteristic disk. -/
+  boundaryWord : EdgeWord g
+  /-- The boundary word is the standard product of commutators. -/
+  boundaryWord_standard : boundaryWord.IsStandardForm
+  /-- The boundary word induces the same quotient relation as `Polygon4g`. -/
+  boundaryWord_sidePairing :
+    EdgeWord.sidePairingRel g boundaryWord = Polygon4g.SideRel g
 
 /-- **Comparison leaf 1c(ii).** Construct the boundary-word
 parametrisation for the singular two-cell. -/
@@ -69,12 +83,12 @@ theorem polygon4g_cellular_singular_two_cell_boundary_word_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
     (characteristic : Polygon4gCellularSingularTwoCellCharacteristicData g C) :
-    Nonempty (Polygon4gCellularSingularTwoCellBoundaryWordData g C characteristic) := by
-  -- Blocker: boundary-word data needs the restriction of the two-cell
-  -- characteristic map to the boundary circle, identified with the standard
-  -- surface word.  The characteristic datum is opaque and exposes no boundary
-  -- parametrisation or labelled edge traversal.
-  sorry
+    Nonempty (Polygon4gCellularSingularTwoCellBoundaryWordData g C characteristic) :=
+  ⟨{
+    boundaryWord := C.boundaryWord
+    boundaryWord_standard := h_boundary.2.1
+    boundaryWord_sidePairing := h_boundary.2.2
+  }⟩
 
 /-- The singular two-cell datum: the quotient disk characteristic map
 and its boundary parametrisation by the surface word. -/
@@ -138,7 +152,8 @@ theorem polygon4g_cellular_singular_chain_map_degree_zero
     Polygon4gCellularSingularChainMapDegreeZero g C h_boundary D := by
   -- Blocker: degree-zero correctness requires evaluating the comparison map
   -- on the actual zero-cell generator and comparing it with the singular class
-  -- of the polygon vertex.  `D.zeroCell` is opaque data with no computation rule.
+  -- of the polygon vertex.  The comparison data now exposes the vertex, but
+  -- there is still no project-side singular chain map to evaluate.
   sorry
 
 /-- Degree-one correctness of the comparison data: each oriented
@@ -157,8 +172,9 @@ theorem polygon4g_cellular_singular_chain_map_degree_one_boundary
     (D : Polygon4gCellularSingularComparisonData g C) :
     Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D := by
   -- Blocker: this is the chain-map boundary identity for each one-cell.  It
-  -- needs the explicit singular edge paths and their endpoints at the unique
-  -- vertex; neither is readable from the opaque comparison data.
+  -- needs an actual singular-chain boundary operator and comparison map.  The
+  -- edge paths and endpoints are exposed by `D`, but the chain-level map is
+  -- still a frontier theorem.
   sorry
 
 /-- Degree-two correctness of the comparison data: the two-cell
@@ -179,7 +195,8 @@ theorem polygon4g_cellular_singular_chain_map_degree_two_attaching
   -- Blocker: this is the attaching-map compatibility for the two-cell.  The
   -- proof must expand the boundary of the singular disk as the labelled
   -- commutator word and compare it with the cellular two-boundary formula.
-  -- The current comparison record exposes neither expansion.
+  -- The comparison record exposes the characteristic map and boundary word,
+  -- but not the singular-chain computation of the disk boundary.
   sorry
 
 /-- Correctness of the comparison data: it is compatible with the

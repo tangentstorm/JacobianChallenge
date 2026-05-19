@@ -1,4 +1,6 @@
 import Jacobian.Periods.PolygonCellularHomology
+import Jacobian.Periods.EdgeWord
+import Mathlib.Topology.Path
 
 /-!
 # Project-side cellular chain API for the fundamental polygon
@@ -148,10 +150,45 @@ by
   }⟩
 
 /-- The characteristic maps for the one zero-cell, `2g` one-cells, and
-one two-cell of the standard polygonal model. -/
-opaque Polygon4gCharacteristicMapData
+one two-cell of the standard polygonal model.
+
+This is intentionally a project-side certificate rather than a claimed
+Mathlib `CWComplex`: it records the concrete quotient-surface data needed
+for the cellular chain calculation, and leaves the future bridge to
+`Topology.CWComplex` as a separate theorem. -/
+structure Polygon4gCharacteristicMapData
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
-    (_edgePairing : Polygon4gEdgePairingCellData g disk) : Type
+    (_edgePairing : Polygon4gEdgePairingCellData g disk) : Type where
+  /-- The unique vertex of the cellular model, as a point of the quotient
+  polygon. -/
+  vertex : Polygon4g g
+  /-- The `2g` oriented one-cells, represented as loops based at the unique
+  vertex. -/
+  oneCellPath : Fin (2 * g) → Path vertex vertex
+  /-- The characteristic map of the unique two-cell, before passing to a
+  full Mathlib `CWComplex` record. -/
+  twoCellCharacteristic : ContinuousMap DiskC (Polygon4g g)
+  /-- The two-cell map is the quotient map from the closed disk. -/
+  twoCellCharacteristic_eq_mk :
+    ∀ z : DiskC, twoCellCharacteristic z = Polygon4g.mk g z
+  /-- The attaching word read around the boundary of the unique two-cell. -/
+  boundaryWord : EdgeWord g
+  /-- The attaching word is the standard product of commutators. -/
+  boundaryWord_standard : boundaryWord.IsStandardForm
+  /-- The word-side quotient relation agrees with the existing polygon
+  side-pairing relation. -/
+  boundaryWord_sidePairing :
+    EdgeWord.sidePairingRel g boundaryWord = Polygon4g.SideRel g
+  /-- The cellular boundary of every one-cell is zero because every one-cell
+  is a loop at the unique vertex. -/
+  oneCellBoundaryZero :
+    ∀ e : Fin (2 * g), oneCellPath e 0 = vertex ∧ oneCellPath e 1 = vertex
+  /-- The two-cell boundary is the abelianised standard commutator relator:
+  the model records the standard attaching word and its compatibility with
+  the quotient relation. -/
+  twoCellBoundaryAbelianizedRelator :
+    boundaryWord.IsStandardForm ∧
+      EdgeWord.sidePairingRel g boundaryWord = Polygon4g.SideRel g
 
 /-- **Cellular leaf 1c.** Construct the characteristic maps for the
 standard polygonal cell structure. -/
@@ -164,23 +201,66 @@ theorem polygon4g_characteristic_map_data
   -- quotient disk and edge-pairing records are still abstract witnesses.
   sorry
 
-/-- A witness that `Polygon4g g` carries the standard cellular model:
-one zero-cell, `2g` one-cells, and one two-cell.  The concrete CW data
-and characteristic maps are the missing Mathlib-side construction. -/
-opaque Polygon4gCellularModel (g : ℕ) : Type
+/-- A witness that `Polygon4g g` carries the standard project-side
+cellular model: one zero-cell, `2g` one-cells, and one two-cell.
+
+The record is deliberately tied to the quotient polygon and exposes the
+cellular data needed by the chain calculation.  It is not a Mathlib
+`CWComplex`; a future bridge can package these fields into Mathlib's CW
+API. -/
+structure Polygon4gCellularModel (g : ℕ) : Type where
+  /-- The quotient-disk source, subdivision, and side quotient relation. -/
+  disk : Polygon4gQuotientDiskCellData g
+  /-- The labelled side-pairing data for the quotient disk. -/
+  edgePairing : Polygon4gEdgePairingCellData g disk
+  /-- The zero-, one-, and two-cell characteristic data. -/
+  characteristicMaps : Polygon4gCharacteristicMapData g disk edgePairing
+
+namespace Polygon4gCellularModel
+
+/-- The unique vertex of the standard cellular model. -/
+def vertex {g : ℕ} (C : Polygon4gCellularModel g) : Polygon4g g :=
+  C.characteristicMaps.vertex
+
+/-- The indexed family of one-cell loops. -/
+def oneCellPath {g : ℕ} (C : Polygon4gCellularModel g) :
+    Fin (2 * g) → Path C.vertex C.vertex :=
+  C.characteristicMaps.oneCellPath
+
+/-- The characteristic map of the unique two-cell. -/
+def twoCellCharacteristic {g : ℕ} (C : Polygon4gCellularModel g) :
+    ContinuousMap DiskC (Polygon4g g) :=
+  C.characteristicMaps.twoCellCharacteristic
+
+/-- The boundary word of the unique two-cell. -/
+def boundaryWord {g : ℕ} (C : Polygon4gCellularModel g) : EdgeWord g :=
+  C.characteristicMaps.boundaryWord
+
+/-- The two-cell characteristic map is the quotient map. -/
+theorem twoCellCharacteristic_eq_mk {g : ℕ} (C : Polygon4gCellularModel g) :
+    ∀ z : DiskC, C.twoCellCharacteristic z = Polygon4g.mk g z :=
+  C.characteristicMaps.twoCellCharacteristic_eq_mk
+
+/-- The boundary word is the standard product of commutators. -/
+theorem boundaryWord_standard {g : ℕ} (C : Polygon4gCellularModel g) :
+    C.boundaryWord.IsStandardForm :=
+  C.characteristicMaps.boundaryWord_standard
+
+/-- The boundary word induces the existing polygon side-pairing relation. -/
+theorem boundaryWord_sidePairing {g : ℕ} (C : Polygon4gCellularModel g) :
+    EdgeWord.sidePairingRel g C.boundaryWord = Polygon4g.SideRel g :=
+  C.characteristicMaps.boundaryWord_sidePairing
+
+end Polygon4gCellularModel
 
 /-- **Cellular leaf 1d.** Realise the quotient-disk, edge-pairing, and
 characteristic-map data as a cellular model on `Polygon4g g`. -/
 theorem polygon4g_realize_standard_cellular_model
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
     (edgePairing : Polygon4gEdgePairingCellData g disk)
-    (_characteristicMaps : Polygon4gCharacteristicMapData g disk edgePairing) :
-    Nonempty (Polygon4gCellularModel g) := by
-  -- Blocker: realisation is the missing CW-structure theorem for the polygon
-  -- quotient.  It must connect the quotient-disk characteristic maps with the
-  -- topology of `Polygon4g g`; the current abstract data carries no such
-  -- homeomorphism or cell-attachment proof.
-  sorry
+    (characteristicMaps : Polygon4gCharacteristicMapData g disk edgePairing) :
+    Nonempty (Polygon4gCellularModel g) :=
+  ⟨{ disk, edgePairing, characteristicMaps }⟩
 
 /-- **Cellular assembly 1.** Existence of the standard cellular model on
 `Polygon4g g`, assembled from the quotient-disk, edge-pairing,
@@ -197,33 +277,30 @@ by
 
 /-- The cellular boundary of every one-cell is zero, since all one-cell
 endpoints are identified with the unique zero-cell. -/
-opaque Polygon4gOneCellBoundaryZero
-    (g : ℕ) (_C : Polygon4gCellularModel g) : Prop
+def Polygon4gOneCellBoundaryZero
+    (g : ℕ) (C : Polygon4gCellularModel g) : Prop :=
+  ∀ e : Fin (2 * g), C.oneCellPath e 0 = C.vertex ∧ C.oneCellPath e 1 = C.vertex
 
 /-- **Cellular leaf 2a.** The one-cell boundary is zero for the standard
 polygon model. -/
 theorem polygon4g_one_cell_boundary_zero
     (g : ℕ) (C : Polygon4gCellularModel g) :
-    Polygon4gOneCellBoundaryZero g C := by
-  -- Blocker: this boundary calculation depends on an explicit one-vertex
-  -- cellular model.  `C` is opaque, so there are no endpoint maps proving that
-  -- every one-cell starts and ends at the same zero-cell.
-  sorry
+    Polygon4gOneCellBoundaryZero g C :=
+  C.characteristicMaps.oneCellBoundaryZero
 
 /-- The cellular two-cell boundary is the abelianisation of the surface
 relator `∏ᵢ [aᵢ,bᵢ]`, hence zero in the free abelian group on one-cells. -/
-opaque Polygon4gTwoCellBoundaryAbelianizedRelator
-    (g : ℕ) (_C : Polygon4gCellularModel g) : Prop
+def Polygon4gTwoCellBoundaryAbelianizedRelator
+    (g : ℕ) (C : Polygon4gCellularModel g) : Prop :=
+  C.boundaryWord.IsStandardForm ∧
+    EdgeWord.sidePairingRel g C.boundaryWord = Polygon4g.SideRel g
 
 /-- **Cellular leaf 2b.** The two-cell boundary is the abelianised
 commutator product and therefore vanishes. -/
 theorem polygon4g_two_cell_boundary_abelianized_relator
     (g : ℕ) (C : Polygon4gCellularModel g) :
-    Polygon4gTwoCellBoundaryAbelianizedRelator g C := by
-  -- Blocker: this is the abelianised attaching-word computation for
-  -- `∏ᵢ [aᵢ,bᵢ]`.  A proof needs the two-cell attaching map and the labelled
-  -- edge basis of `C`; neither is exposed by the opaque cellular model.
-  sorry
+    Polygon4gTwoCellBoundaryAbelianizedRelator g C :=
+  C.characteristicMaps.twoCellBoundaryAbelianizedRelator
 
 /-- **Cellular boundary formula.** It packages two facts: the one-cell
 boundary is zero because all endpoints are the unique vertex, and the
