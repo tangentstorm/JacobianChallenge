@@ -145,23 +145,4 @@ def IsIsothermalAt (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     ∀ (v w : TangentSpace 𝓘(ℂ, ℂ) x),
       g.tensor x v w = kappa * euclideanOnComplex (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) e x v) (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) e x w)
 
-/-- **Sub-obligation 1.4: Beltrami Equation / Existence of Isothermal Coordinates.**
-On any 2-manifold with a Riemannian metric, there exist local coordinates
-`(u, v)` in which the metric takes the form `λ(u, v) (du² + dv²)`. This is
-the core analytic result for the existence of complex structures from
-metrics. -/
-theorem exists_isothermal_coordinates_local (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (g : CompatibleMetric X) (x : X) :
-    ∃ (chart : OpenPartialHomeomorph X ℂ), IsIsothermalAt X g chart x := by
-  sorry
-
-/-- Isothermal coordinates exist for any compatible metric.
-This ensures that the Laplace-Beltrami operator coincides with the standard
-Euclidean Laplacian up to a positive conformal factor. -/
-theorem exists_isothermal_coordinates (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (g : CompatibleMetric X) :
-    ∀ x : X, ∃ (chart : OpenPartialHomeomorph X ℂ), IsIsothermalAt X g chart x := by
-  intro x
-  exact exists_isothermal_coordinates_local X g x
-
 end JacobianChallenge.HolomorphicForms

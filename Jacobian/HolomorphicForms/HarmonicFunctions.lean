@@ -121,14 +121,6 @@ theorem exists_sobolev_hilbert_structure.{u, v} (X : Type u) [TopologicalSpace X
              toFun := fun _ _ => 0
              toFun_injective := fun a b _ => Subsingleton.elim a b }⟩
 
-/-- **Sub-obligation 2.5: Elliptic Regularity.**
-A weak solution (minimizer) of the Dirichlet problem for smooth trial functions
-is actually a smooth (and thus harmonic in the classical sense) function. -/
-theorem elliptic_regularity_harmonic (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
-    (g : CompatibleMetric X) (u : X → ℝ) (hweak : IsHarmonic g u) :
-    ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ⊤ (fun x => (u x : ℂ)) := by
-  sorry
-
 /-- **Sub-obligation 2.2: Dirichlet energy functional.**
 The energy functional E(u) = ∫ |∇u|^2 dV is minimized by harmonic functions. -/
 def DirichletEnergy {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
@@ -254,7 +246,13 @@ theorem exists_dipole_harmonic (X : Type*) [TopologicalSpace X] [T2Space X]
   -- 3. u = u₀ + v is the desired harmonic function.
   -- The minimizer v is in H^1, which doesn't alter the principal singularity at P.
   -- Thus u₀ + v still has the required real dipole singularity.
-  have hu_sing : HasRealDipoleSingularity P (fun x => u₀ x + v x) := sorry
+  have hu_sing : HasRealDipoleSingularity P (fun x => u₀ x + v x) := by
+    -- Blocker: `hv` proves harmonicity of `u₀ + v`, not harmonicity of the
+    -- correction term needed as the remainder in the dipole decomposition.
+    -- Moreover the theorem asks for `IsHarmonic g u` at every point including
+    -- the prescribed singular point, so the analytic API should distinguish
+    -- harmonicity on `X \ {P}` from the singular local expansion.
+    sorry
   exact ⟨fun x => u₀ x + v x, hv, hu_sing⟩
 
 /-- **Sub-obligation 5.1: Hodge Decomposition.**
@@ -347,6 +345,11 @@ If (u, v) satisfies the Cauchy-Riemann equations, then f = u + iv is holomorphic
 theorem holomorphic_of_CR {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     (g : CompatibleMetric X) (u v : X → ℝ) (hcr : SatisfiesCauchyRiemann g u v) :
     IsHolomorphic (fun x => ({ re := u x, im := v x } : ℂ)) := by
+  -- Blocker: `SatisfiesCauchyRiemann` currently supplies only pointwise
+  -- `IsHolomorphicAt`.  The target is the full `IsHolomorphic` package, which
+  -- also includes continuity and local k-fold ramification data.  A real proof
+  -- needs a bridge from pointwise chart analyticity to `IsHolomorphicBasic`
+  -- plus `HasLocalKfoldRamification`.
   sorry
 
 /-- **Sub-obligation 3.1: The conjugate 1-form is closed.**
@@ -402,6 +405,10 @@ theorem harmonic_conjugate_exists (X : Type*) [TopologicalSpace X] [T2Space X]
   have hclosed := conjugate_one_form_closed X g u hu
   -- 2. analyticHarmonicGenus X = 0 implies *du is exact, so *du = dv
   -- We extract the potential v from the exactness of *du.
+  -- Blocker: the current exactness route only produces a zero-form
+  -- primitive in the surrogate differential-form API.  It does not provide
+  -- the function-level potential `v : X → ℝ` together with the chart-local
+  -- Cauchy-Riemann equations required by `SatisfiesCauchyRiemann`.
   sorry
 
 /-- **Sub-obligation 1 assembly.**
@@ -443,6 +450,11 @@ theorem dipole_singularity_magnitude_tendsto_infty (X : Type*) [TopologicalSpace
     Filter.Tendsto (fun x : X => norm ({ re := u x, im := v x } : ℂ)) (nhdsWithin P {P}ᶜ) Filter.atTop := by
   -- 1. Locally u + iv ~ 1/z
   -- 2. Apply magnitude_re_inv_z_tendsto_infty
+  -- Blocker: `HasRealDipoleSingularity` controls only the real part
+  -- `u = Re(1/z) + harmonic remainder`.  The given `v` is related through
+  -- pointwise holomorphicity of `u + i v`, but the API does not expose the
+  -- local principal-part statement `u + i v = 1/z + holomorphic remainder`
+  -- needed to transfer `magnitude_re_inv_z_tendsto_infty`.
   sorry
 
 /-- **Sub-obligation 2b: Magnitude limit implies OnePoint continuity.**
@@ -466,23 +478,6 @@ theorem dipole_harmonic_continuous_extension (X : Type*) [TopologicalSpace X]
   -- 2. Limit implies continuity at infinity
   exact continuous_at_infinity_of_magnitude_atTop X P (fun x => ({ re := u x, im := v x } : ℂ)) hlim
 
-/-- **Sub-obligation 3a: Riemann Removable Singularity for poles.**
-If f is holomorphic on X \ {P} and continuous at P as a map to OnePoint ℂ,
-then f is holomorphic at P (as a meromorphic map).
-
-Note: Mathlib provides the core analytic result in
-`Mathlib.Analysis.Complex.RemovableSingularity` for functions `f : ℂ → E`.
-This sub-obligation represents lifting that result to complex manifolds
-by evaluating it in a local chart around P. -/
-theorem holomorphic_at_P_of_continuous_at_infty (X : Type*) [TopologicalSpace X]
-    [ChartedSpace ℂ X] (P : X) (f : X → OnePoint ℂ) 
-    (hholo : ∀ x ≠ P, IsHolomorphicAt f x)
-    (hcont : Filter.Tendsto f (𝓝 P) (𝓝 (OnePoint.infty : OnePoint ℂ))) :
-    IsHolomorphicAt f P := by
-  -- Proof: consider 1/f in a chart around P, which is bounded near P,
-  -- hence has a removable singularity and vanishes at P by the Mathlib theorem.
-  sorry
-
 /-- **Sub-obligation 3 assembly.**
 The continuous map to OnePoint ℂ is actually holomorphic at P,
 meaning it gives a true meromorphic function. -/
@@ -505,6 +500,10 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X] [T2S
     (P : X) (u v : X → ℝ) (hu : HasRealDipoleSingularity P u) :
     mapAnalyticOrderAt (fun x => ({ re := u x, im := v x } : ℂ)⁻¹) P = 1 := by
   -- Fixed conclusion to assert order of vanishing is 1.
+  -- Blocker: order one for the inverse requires the full complex local
+  -- expansion `u + i v = 1/(z-z₀) + holomorphic`, not just the real-part
+  -- dipole predicate on `u`.  The theorem has no hypothesis connecting `v`
+  -- to the imaginary principal part.
   sorry
 
 /-- **Frontier bridge: analytic order one of the inverse gives one simple pole.**

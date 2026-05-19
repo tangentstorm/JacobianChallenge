@@ -150,6 +150,11 @@ private lemma brahana_orientable_core
     (_hReduced : ∀ x : EdgeWord E.extractedGenus, ¬ EdgeWord.InverseCancel w x)
     (_hWordEq : EdgeWord.WordEq E.word w) :
     EdgeWord.TietzeEq w (EdgeWord.standardWord E.extractedGenus) := by
+  -- Blocker: the three Brahana helpers above currently return only
+  -- `Nonempty Unit`, so they contain no handle-swap sequence, preservation
+  -- proofs, or final equality with `standardWord`.  This lemma needs the
+  -- substantive combinatorial reduction from a reduced orientable edge word
+  -- to the standard commutator word through actual `TietzeStep`s.
   sorry
 
 /-- **Round 54 / Stage A leaf (Brahana step 2: handle separation,
@@ -209,6 +214,10 @@ private lemma inverseCancel_geometric_maps
         EdgeWord.sidePairingRel g w (ψ x) (ψ y)) ∧
       (∀ x, EdgeWord.sidePairingRel g v (φ (ψ x)) x) ∧
       (∀ x, EdgeWord.sidePairingRel g w (ψ (φ x)) x) := by
+  -- Blocker: an inverse-cancellation homeomorphism is not induced by the
+  -- identity on `DiskC`.  It needs explicit quotient-respecting disk maps that
+  -- collapse or reparametrize the two cancelled boundary arcs and prove the
+  -- generated side-pairing equivalence relations correspond after deletion.
   sorry
 
 /-- **Round 77 / Stage A leaf.** Single-step `InverseCancel` preserves

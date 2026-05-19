@@ -91,8 +91,8 @@ reducing each to leaves that bottom out at four named §1 obligations.
   `MeromorphicDegree` sorries reduce to the four named §1
   `liftToCp1_*` sorries (`liftToCp1_holomorphicAt_finite`,
   `liftToCp1_holomorphicAt_infty`,
-  `liftToCp1_local_kfold_ramified_finite`,
-  `liftToCp1_weightedFiberSum_eventually_eq_finite`).
+  `liftToCp1_local_kfold_ramified`,
+  `liftToCp1_weightedFiberSum_eventually_eq`).
 
 The leaves below are stated against generic surrogate hypotheses so that
 this file is sorry-free until the §1 plug-ins land. Each leaf carries an
@@ -331,10 +331,8 @@ def sec01_obligations_remaining : Prop :=
   -- `Jacobian/HolomorphicForms/MeromorphicToCp1.lean`:
   -- (1) `liftToCp1_holomorphicAt_finite`
   -- (2) `liftToCp1_holomorphicAt_infty`
-  -- (3) `liftToCp1_local_kfold_ramified_finite`
-  --     (and the symmetric `_infty`)
-  -- (4) `liftToCp1_weightedFiberSum_eventually_eq_finite`
-  --     (and the symmetric `_infty`)
+  -- (3) `liftToCp1_local_kfold_ramified`
+  -- (4) `liftToCp1_weightedFiberSum_eventually_eq`
   True
 
 theorem degreeOneData_no_more_sorries_modulo_sec01 :

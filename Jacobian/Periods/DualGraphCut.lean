@@ -200,6 +200,10 @@ theorem unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms
       (⊤ : WithTop ℕ∞) M]
     {T : Triangulation M} (_D : UnfoldedDisk M T) :
     Nonempty (EdgeWordPresentation M) := by
+  -- Blocker: `UnfoldedDisk` is currently just `PUnit`; it carries no boundary
+  -- word, projection `DiskC → M`, continuity proof, surjectivity proof, or
+  -- kernel relation.  Those are exactly the fields needed to construct an
+  -- `EdgeWordPresentation`.
   sorry
 
 /-- **Round 48 / Stage A leaf (unfolded disk → edge word, reassembly).** -/

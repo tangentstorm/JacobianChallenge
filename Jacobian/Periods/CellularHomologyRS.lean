@@ -32,6 +32,11 @@ admits a finite CW structure with one 0-cell, `2g` 1-cells, and one
 core geometric content of the polygonal CW decomposition. -/
 theorem polygon4g_finiteCWStructure (g : ℕ) :
     Nonempty (FiniteCWStructure (Polygon4g g)) := by
+  -- Blocker: `FiniteCWStructure` needs an actual `Topology.CWComplex` on
+  -- `Set.univ : Set (Polygon4g g)`, including characteristic maps, cell
+  -- finiteness, and a dimension bound.  The project-side polygon quotient is
+  -- present, but the standard disk/edge/two-cell characteristic maps have not
+  -- been connected to Mathlib's `CWComplex` fields.
   sorry
 
 /-

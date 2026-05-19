@@ -1092,17 +1092,6 @@ theorem nonconstant_single_pole_implies_genus_zero_with_meromorphicData
     h₁.trans HolomorphicForms.onePointCx_homeomorph_sphere
   exact HolomorphicForms.analyticGenus_eq_zero_of_homeomorphic_sphere X ⟨h₂⟩
 
-/-- Public frontier: a nonconstant meromorphic map with a single pole forces
-genus zero.  The explicit route-data version above is the currently proved
-assembly. -/
-theorem nonconstant_single_pole_implies_genus_zero
-    (f : HolomorphicForms.MeromorphicMapToSphere X)
-    (Q : X)
-    (hpole : f.poles = HolomorphicForms.Divisor.point Q) :
-    analyticGenus ℂ X = 0 := by
-  -- Frontier: construct the pole-modulus and branched-cover data for `f`.
-  sorry
-
 /-! **Round-15 sub-leaf for R10/2 (NEW SORRY).** Final pole-equality
 step: combine the two impossibility lemmas with case analysis on
 sub-divisors of `(Q₁) + (Q₂)` to conclude `f.poles = (Q₁) + (Q₂)`. -/
@@ -2151,6 +2140,18 @@ theorem degree_one_meromorphicMap_implies_analyticGenus_zero
     analyticGenus ℂ X = 0 := by
   -- Frontier: construct the pole-modulus and branched-cover data for `f`.
   sorry
+
+/-- Public assembly: a nonconstant meromorphic map with a single pole forces
+genus zero.  This is just the public degree-one implication applied to the
+same pole-divisor equality; nonconstancy is part of the intended classical
+route, but the current public degree-one frontier already carries the missing
+analytic construction. -/
+theorem nonconstant_single_pole_implies_genus_zero
+    (f : HolomorphicForms.MeromorphicMapToSphere X)
+    (Q : X)
+    (hpole : f.poles = HolomorphicForms.Divisor.point Q) :
+    analyticGenus ℂ X = 0 := by
+  exact degree_one_meromorphicMap_implies_analyticGenus_zero X f Q hpole
 
 /-- **Round 1 sorry-free assembly.** Combines
 `abelJacobi_image_zero_implies_principal` and
