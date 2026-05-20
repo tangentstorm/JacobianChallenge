@@ -178,27 +178,8 @@ theorem liftToCp1_local_kfold_ramified
 
 /-- Local conservation of the weighted fibre count for the CP¹ lift.
 
-### Why this is a frontier sorry
-
-Weighted-fiber conservation (the degree theorem for branched covers) is the
-*global* statement that the weighted fiber sum is locally constant on the
-target. A real proof needs:
-
-* the local k-fold ramification data from `liftToCp1_local_kfold_ramified`
-  to get neighborhoods on which fiber multiplicities sum to the local
-  degree;
-* compactness/properness to cover the fiber over `y₀` by finitely many such
-  neighborhoods;
-* a disjoint-union argument showing that nearby fibers decompose as a
-  disjoint union of the local fiber witnesses;
-* the sum of `mapAnalyticOrderAt` over that disjoint union, plus the
-  ramification/order compatibility from the local mapping theorem.
-
-The `finite_fiber` hypothesis here is only finite support data; it does
-not by itself give weighted conservation. The `_hholo : True` carries no
-analytic content. Discharging this honestly requires the local-mapping
-infrastructure above and a properness argument for the CP¹ lift, neither
-of which is currently in the codebase. -/
+Discharged via the general `weightedFiberConservation_of_contMDiff`
+applied to `liftToCp1_contMDiff`. -/
 theorem liftToCp1_weightedFiberSum_eventually_eq
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -214,10 +195,9 @@ theorem liftToCp1_weightedFiberSum_eventually_eq
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) =
         ((finite_fiber y₀).toFinset).sum
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) := by
-  -- Frontier: weighted-fiber conservation = branched-cover degree principle.
-  -- Do not force `mapAnalyticOrderAt` to be constant or ignore ramification —
-  -- both would silently weaken the statement.
-  sorry
+  intro _ _ _ _ _ _ hnonconst finite_fiber y₀
+  exact weightedFiberConservation_of_contMDiff
+    (liftToCp1_contMDiff X f) hnonconst finite_fiber y₀
 
 /-- Basic holomorphicity of the CP¹ lift of a meromorphic function. -/
 theorem liftToCp1_isHolomorphicBasic
