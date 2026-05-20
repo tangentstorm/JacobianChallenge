@@ -152,9 +152,21 @@ structure TwoPointMeromorphicMapData (Q1 Q2 : X) where
 /-- Scaffold constructor for the displayed single-pole cutoff map.
 
 This constructor assigns `poleDivisor := Divisor.point Q` directly, so it is
-not an analytic route theorem.  Production simple-pole conclusions should use
-frontier/bridge data such as `SinglePoleMeromorphicMapData` or an
-order-to-divisor bridge. -/
+not an analytic route theorem. Production simple-pole conclusions should use
+the honest bundled record `SinglePoleMeromorphicMapData` or an order-to-divisor
+bridge — see `meromorphicMapToSphere_of_inverse_order_one_frontier` in
+`HarmonicFunctions.lean`.
+
+**Analytical character of this scaffold.** The bump cutoff defining
+`singlePoleSphereLift` only acts away from `Q`; near `Q` the map equals
+`1/(z - z₀)`. Consequently the scaffold genuinely satisfies
+`PoleModulusData` (proved as `singlePoleMeromorphicMap_poleModulusData`
+below) — modulus divergence at the pole is true for it. What the scaffold
+does NOT satisfy is `BranchedCoverDataOfPoleDegree`: the cutoff produces a
+large constant-zero region outside `(chartAt ℂ Q).source`, so the `0`-fiber
+typically fails `finite_fiber`. In particular, using this scaffold to
+discharge any genus-zero-from-simple-pole frontier theorem is unsound —
+not because of `PoleModulusData`, but because of branched-cover data. -/
 noncomputable def singlePoleMeromorphicMap (Q : X) : MeromorphicMapToSphere X :=
   { toMap := singlePoleSphereLift Q
     locally_meromorphic := True
@@ -224,6 +236,141 @@ noncomputable def singlePoleMeromorphicMap (Q : X) : MeromorphicMapToSphere X :=
       unfold singlePoleSphereLift
       rw [if_pos heq]
   }
+
+/-- Helper: `‖1/z‖ → ∞` as `z → 0` within `{0}ᶜ` in `ℂ`. -/
+private theorem norm_inv_tendsto_atTop_at_zero :
+    Filter.Tendsto (fun z : ℂ => ‖(1 : ℂ) / z‖)
+      (nhdsWithin 0 {0}ᶜ) Filter.atTop := by
+  have hrw : (fun z : ℂ => ‖(1 : ℂ) / z‖) = fun z => (‖z‖)⁻¹ := by
+    ext z; rw [one_div, norm_inv]
+  rw [hrw]
+  have hnorm_tendsto :
+      Filter.Tendsto (fun z : ℂ => ‖z‖) (nhdsWithin 0 {0}ᶜ) (nhdsWithin 0 (Set.Ioi 0)) := by
+    apply tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within
+    · have h0 : ‖(0 : ℂ)‖ = 0 := norm_zero
+      have hc : Filter.Tendsto (norm : ℂ → ℝ) (nhds 0) (nhds (‖(0 : ℂ)‖)) :=
+        (continuous_norm : Continuous (norm : ℂ → ℝ)).tendsto 0
+      rw [h0] at hc
+      exact Filter.Tendsto.mono_left hc nhdsWithin_le_nhds
+    · filter_upwards [self_mem_nhdsWithin] with z hz
+      rw [Set.mem_Ioi, norm_pos_iff]
+      exact hz
+  exact Filter.Tendsto.comp tendsto_inv_nhdsGT_zero hnorm_tendsto
+
+omit [T2Space X] [IsManifold (𝓘(ℂ, ℂ)) ⊤ X] [Periods.StableChartAt ℂ X] in
+/-- Modulus divergence at `Q` for the cutoff lift.
+
+The scaffold's `singlePoleSphereLift` agrees with `singlePoleLocalLift Q`
+near `Q` (the bump cutoff is `1` on a neighborhood of `Q`), and the local
+lift is `1/(chartAt ℂ Q x - chartAt ℂ Q Q)` there. The chart map sends `Q`
+to its image and is injective on its source, so the denominator tends to
+`0` (but is nonzero off `Q`), hence the modulus tends to `+∞`. -/
+private theorem singlePoleLocalLift_norm_tendsto_atTop (Q : X) :
+    Filter.Tendsto (fun x => ‖singlePoleLocalLift Q x‖)
+      (nhdsWithin Q {Q}ᶜ) Filter.atTop := by
+  -- Pick an open neighborhood `U` of `Q` on which the bump equals `1`.
+  obtain ⟨U, hUopen, hQU, hUbump⟩ := cMfldBump_eq_one_near (X := X) Q
+  -- Combine with chart source: there is an open set `W ⊆ U ∩ source` containing `Q`.
+  set W : Set X := U ∩ (chartAt ℂ Q).source with hW_def
+  have hWopen : IsOpen W := hUopen.inter (chartAt ℂ Q).open_source
+  have hQW : Q ∈ W := ⟨hQU, mem_chart_source ℂ Q⟩
+  -- For `x ∈ W` with `x ≠ Q`, `singlePoleLocalLift Q x = 1 / (φ x - φ Q)`.
+  set φ : X → ℂ := fun x => chartAt ℂ Q x with hφ_def
+  have hlocal_eq : ∀ᶠ x in nhdsWithin Q {Q}ᶜ,
+      singlePoleLocalLift Q x = 1 / (φ x - φ Q) := by
+    refine eventually_nhdsWithin_iff.mpr (Filter.Eventually.mono
+      (hWopen.mem_nhds hQW) ?_)
+    intro x hxW hxQ
+    have hxQ' : x ≠ Q := hxQ
+    have hbump : cMfldBump Q x = 1 := hUbump x hxW.1
+    have hxsrc : x ∈ (chartAt ℂ Q).source := hxW.2
+    unfold singlePoleLocalLift
+    simp [hxsrc, hxQ', hbump, hφ_def, one_div]
+  -- It now suffices to show `‖1 / (φ x - φ Q)‖ → ∞` along `nhdsWithin Q {Q}ᶜ`.
+  have hsuffices :
+      Filter.Tendsto (fun x => ‖(1 : ℂ) / (φ x - φ Q)‖)
+        (nhdsWithin Q {Q}ᶜ) Filter.atTop := by
+    -- Push `φ` to the limit: as `x → Q`, `φ x → φ Q`, so `φ x - φ Q → 0`.
+    -- Plus injectivity of `φ` on source gives `φ x - φ Q ≠ 0` for `x ≠ Q` in source.
+    have hφ_cont : ContinuousAt φ Q :=
+      (chartAt ℂ Q).continuousAt (mem_chart_source ℂ Q)
+    have hφ_tendsto : Filter.Tendsto (fun x => φ x - φ Q) (nhds Q) (nhds 0) := by
+      have h₁ : Filter.Tendsto φ (nhds Q) (nhds (φ Q)) := hφ_cont
+      have h₂ := h₁.sub_const (φ Q)
+      simpa using h₂
+    have hφ_within : Filter.Tendsto (fun x => φ x - φ Q) (nhdsWithin Q {Q}ᶜ) (nhds 0) :=
+      hφ_tendsto.mono_left nhdsWithin_le_nhds
+    have hne_ev : ∀ᶠ x in nhdsWithin Q {Q}ᶜ, (φ x - φ Q) ≠ 0 := by
+      refine eventually_nhdsWithin_iff.mpr (Filter.Eventually.mono
+        ((chartAt ℂ Q).open_source.mem_nhds (mem_chart_source ℂ Q)) ?_)
+      intro x hxsrc hxQ
+      have hxQ' : x ≠ Q := hxQ
+      intro h
+      apply hxQ'
+      exact (chartAt ℂ Q).injOn hxsrc (mem_chart_source ℂ Q) (sub_eq_zero.mp h)
+    have hφ_within_cmpl :
+        Filter.Tendsto (fun x => φ x - φ Q) (nhdsWithin Q {Q}ᶜ) (nhdsWithin 0 {0}ᶜ) :=
+      tendsto_nhdsWithin_of_tendsto_nhds_of_eventually_within _ hφ_within hne_ev
+    -- Compose with `‖1/·‖ → ∞` at `0`.
+    exact norm_inv_tendsto_atTop_at_zero.comp hφ_within_cmpl
+  -- Replace `singlePoleLocalLift Q x` by `1 / (φ x - φ Q)` eventually.
+  refine hsuffices.congr' ?_
+  filter_upwards [hlocal_eq] with x hx
+  show (fun x => ‖(1 : ℂ) / (φ x - φ Q)‖) x = (fun x => ‖singlePoleLocalLift Q x‖) x
+  simp only
+  rw [hx]
+
+omit [Periods.StableChartAt ℂ X] in
+/-- The scaffold `singlePoleMeromorphicMap Q` satisfies `PoleModulusData`.
+
+The bump cutoff in `singlePoleSphereLift` does not interfere with the
+modulus-divergence content of `PoleModulusData`: the cutoff equals `1` on
+a neighborhood of `Q`, so locally `1/(z - z₀)` is the unbumped principal
+part, and its modulus diverges. The same `singlePoleLocalLift Q` that
+appears in the scaffold's `continuousOn_ne_infty` field also serves as
+the witness `g` for the modulus-data field.
+
+This shows that `PoleModulusData` by itself is **not** the missing
+analytic content for genus-zero classification. The actually unprovable
+piece for the scaffold is `BranchedCoverDataOfPoleDegree`: the cutoff
+produces a (possibly infinite) constant-zero region outside the chart
+source, so the `0`-fiber is too large to satisfy `finite_fiber`, and the
+weighted-fiber-constancy field of `BranchedCoverData` fails. Compare
+with `SinglePoleMeromorphicMapData`, which is the honest bundled record
+requiring both pieces of route data. -/
+theorem singlePoleMeromorphicMap_poleModulusData (Q : X) :
+    (singlePoleMeromorphicMap Q).PoleModulusData where
+  exists_modulus_atTop_at_pole := by
+    classical
+    intro P hP
+    -- Only `P = Q` has positive `poleDivisor` for the scaffold.
+    have hPQ : P = Q := by
+      by_contra hPneQ
+      have hzero : (singlePoleMeromorphicMap Q).poleDivisor P = 0 := by
+        change (Divisor.point Q) P = 0
+        exact Divisor.point_apply_ne hPneQ
+      rw [hzero] at hP
+      exact (lt_irrefl _) hP
+    refine ⟨singlePoleLocalLift Q, ?_, ?_⟩
+    · -- For x with poleDivisor x = 0 (i.e. x ≠ Q), `toMap x = (singlePoleLocalLift Q x : OnePoint ℂ)`.
+      intro x hx
+      have hxQ : x ≠ Q := by
+        intro h
+        rw [h] at hx
+        have hval : (singlePoleMeromorphicMap Q).poleDivisor Q = 1 := by
+          change (Divisor.point Q : Divisor X) Q = 1
+          exact Divisor.point_apply_self (X := X) Q
+        rw [hval] at hx
+        exact one_ne_zero hx
+      -- Unfold both sides and case-split on chart membership.
+      show singlePoleSphereLift Q x = ((singlePoleLocalLift Q x : ℂ) : OnePoint ℂ)
+      unfold singlePoleSphereLift singlePoleLocalLift
+      by_cases hxsrc : x ∈ (chartAt ℂ Q).source
+      · simp [hxQ, hxsrc]
+      · simp [hxQ, hxsrc]
+    · -- Modulus divergence: rewrite the filter at `P` to be `Q`-indexed.
+      rw [hPQ]
+      exact singlePoleLocalLift_norm_tendsto_atTop Q
 
 omit [JacobianChallenge.Periods.StableChartAt ℂ X] in
 /-- A single-pole map is non-constant. -/

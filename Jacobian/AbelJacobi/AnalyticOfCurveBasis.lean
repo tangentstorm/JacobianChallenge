@@ -2132,31 +2132,41 @@ theorem degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicDat
 
 /-- **S20 public frontier (route-data construction missing).** A meromorphic
 map with one simple pole would force genus zero *if* it carried honest analytic
-data near the pole. With only the bare divisor equality `f.poleDivisor =
-Divisor.point Q₂`, this implication is not provable from the current
-`MeromorphicMapToSphere` structure: the scaffold constructor
+data near the pole AND a real branched-cover structure. With only the bare
+divisor equality `f.poleDivisor = Divisor.point Q₂`, this implication is not
+provable from the current `MeromorphicMapToSphere` structure.
+
+**The scaffold counterexample.** The constructor
 `JacobianChallenge.HolomorphicForms.singlePoleMeromorphicMap` (in
 `SinglePoleLift.lean`) produces, for arbitrary `X`, a `MeromorphicMapToSphere`
-whose `poleDivisor` is `Divisor.point Q` — without modulus divergence near the
-pole. Concluding `analyticGenus ℂ X = 0` from such a scaffold would be unsound.
+whose `poleDivisor` is `Divisor.point Q`. It satisfies `PoleModulusData`
+(proved sorry-free as
+`HolomorphicForms.singlePoleMeromorphicMap_poleModulusData` — the bump cutoff
+equals `1` near `Q`, so locally the lift is `1/(z - z₀)` and the modulus
+diverges). What the scaffold genuinely fails is
+`BranchedCoverDataOfPoleDegree`: the cutoff zeros out the map outside the
+chart source, producing a large constant-zero region whose `0`-fiber is not
+finite. Concluding `analyticGenus ℂ X = 0` from this scaffold via the
+no-route-data theorem would be unsound — the missing piece is branched-cover
+data, not modulus divergence.
 
 The honest assembly that *can* be proved is
 `degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData`,
-which takes the missing analytic data as additional hypotheses
-(`PoleModulusData` and `BranchedCoverDataOfPoleDegree`). The clean wrapper
+which takes BOTH `PoleModulusData` and `BranchedCoverDataOfPoleDegree` as
+explicit hypotheses. The clean wrapper
 `degree_one_meromorphicMap_implies_analyticGenus_zero_of_routeData` below
 exposes it under a friendlier name.
 
 This declaration is kept as a documented frontier sorry so the downstream
 chain into `Solution.ofCurve_inj` (whose signature in `Jacobian/Challenge.lean`
 takes no route data) still type-checks. Discharging this frontier requires
-building `PoleModulusData` and `BranchedCoverDataOfPoleDegree` directly from
-the simple-pole hypothesis — which in the current API is impossible because
-`MeromorphicMapToSphere` does not enforce analytic divergence at poles. The
-correct fix is either (a) strengthen `MeromorphicMapToSphere` with a modulus
-field and update scaffolds accordingly (the alternative shape called out in
-goal.md), or (b) propagate explicit route-data hypotheses all the way up the
-chain through `Challenge.lean`, which is forbidden by the project contract.
+building `BranchedCoverDataOfPoleDegree` from the simple-pole hypothesis,
+which in the current API is impossible because `MeromorphicMapToSphere` does
+not enforce global properness or finite fibers. The correct fix is either
+(a) strengthen `MeromorphicMapToSphere` with a branched-cover field and
+isolate scaffolds that cannot satisfy it, or (b) propagate explicit
+route-data hypotheses all the way up the chain through `Challenge.lean`,
+which is forbidden by the project contract.
 
 Do not "prove" this theorem by manufacturing route data from `hpole` alone:
 that would derive genus-zero classification for arbitrary `X`. -/
