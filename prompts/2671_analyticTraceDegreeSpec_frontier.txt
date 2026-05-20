@@ -1,0 +1,26 @@
+Please rename this session to "2671. Prove analyticTraceDegreeSpec_frontier".
+
+Target file: Jacobian/TraceDegree/AnalyticDegree.lean
+Target sorry: def analyticTraceDegreeSpec_frontier
+Allowed writes: prefer Jacobian/TraceDegree/AnalyticDegree.lean and TraceDegree support files.
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+
+Task: construct the analytic trace/degree specification for holomorphic maps of compact Riemann surfaces.
+
+Fields to prove:
+- constant maps have analytic degree zero;
+- nonconstant analytic degree agrees with branched-cover degree under local ramification and weighted conservation hypotheses;
+- global trace agrees with local regular-fiber trace;
+- `traceFormsBundled f hf (pullbackFormsBundled f hf η) = (analyticDegree f hf : ℂ) • η`;
+- descended basis-aligned push-pull identity.
+
+Anti-cheat:
+- Do not redefine `analyticDegree`, `analyticPushforward`, or `analyticPullback` to force the equations.
+- Do not use arbitrary `LinearMap.ext` over opaque maps unless the equality follows from real trace/pullback definitions.
+
+Verification:
+```sh
+lake build Jacobian.TraceDegree.AnalyticDegree
+python3 scripts/fix-sorries.py
+python3 scripts/audit-sorries.py sorries.jsonl
+```

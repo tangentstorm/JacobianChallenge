@@ -1,0 +1,27 @@
+Please rename this session to "2672. Prove polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison".
+
+Target file: Jacobian/Periods/Hurewicz.lean
+Target sorry: theorem polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison
+Allowed writes: prefer Jacobian/Periods/Hurewicz.lean, Jacobian/Periods/CellularChainComplex.lean, and StageA cellular-singular files.
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+
+Task: prove the concrete cellular-to-singular H₁ comparison theorem for the standard `Polygon4g` cellular model.
+
+Current state:
+The hypotheses now mention concrete chain-map, boundary, filtration, and associated-graded comparison data. The remaining theorem should turn those fields into `Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g))`.
+
+Expected approach:
+1. Inspect `Polygon4gCellularToSingularChainMap`, `Polygon4gCellularSingularFiltrationCompatible`, and associated-graded structures in `Hurewicz.lean`.
+2. Prefer routing through `Jacobian/StageA/CellularSingular.lean` if `cellularToSingular_isChainMap_substantive` or `skeletal_h1_five_lemma_identity` has become usable.
+3. Otherwise prove the polygon-specific filtered-chain five-lemma specialization.
+
+Anti-cheat:
+- Do not replace the theorem with `LinearEquiv.refl` between project-side aliases.
+- Do not weaken the concrete comparison hypotheses back to point-support bookkeeping.
+
+Verification:
+```sh
+lake build Jacobian.Periods.Hurewicz
+python3 scripts/fix-sorries.py
+python3 scripts/audit-sorries.py sorries.jsonl
+```

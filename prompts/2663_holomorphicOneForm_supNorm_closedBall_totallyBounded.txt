@@ -1,0 +1,24 @@
+Please rename this session to "2663. Prove holomorphicOneForm_supNorm_closedBall_totallyBounded".
+
+Target file: Jacobian/HolomorphicForms/CompactRiemannSurface.lean
+Target sorry: theorem holomorphicOneForm_supNorm_closedBall_totallyBounded
+Allowed writes: Jacobian/HolomorphicForms/CompactRiemannSurface.lean and narrowly scoped helper files if needed.
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+
+Task: prove total boundedness of the sup-norm closed unit ball of holomorphic one-forms.
+
+Expected approach:
+1. Read the existing Arzela-Ascoli/Montel refinement lemmas in `CompactRiemannSurface.lean`.
+2. Use the already-proved local equibounded/equicontinuity/refinement chain if it is complete.
+3. If still blocked, identify the exact missing compactness theorem: finite chart cover, diagonal subsequence, uniform convergence, or closedness of the holomorphic condition.
+
+Anti-cheat:
+- Do not use a placeholder `TotallyBounded` proof through a fake metric/norm.
+- Do not change `holomorphicOneForm_supNormBanachData` to make the theorem trivial.
+
+Verification:
+```sh
+lake build Jacobian.HolomorphicForms.CompactRiemannSurface
+python3 scripts/fix-sorries.py
+python3 scripts/audit-sorries.py sorries.jsonl
+```

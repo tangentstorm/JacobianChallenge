@@ -1,0 +1,24 @@
+Please rename this session to "2674. Prove polygon4g_cellularModel_to_mathlibCW_frontier".
+
+Target file: Jacobian/Periods/CellularHomologyRS.lean
+Target sorry: def polygon4g_cellularModel_to_mathlibCW_frontier
+Allowed writes: prefer Jacobian/Periods/CellularHomologyRS.lean and the cellular model files.
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+
+Task: bridge the project-side `Polygon4gCellularModel g` to the available Mathlib/topological CW-complex structure, or prove the strongest honest project-side replacement if Mathlib lacks the required CW API.
+
+Expected approach:
+1. Inspect Mathlib v4.28.0 CW-complex/topology APIs actually imported in this repo.
+2. If a real CW structure exists, construct the one 0-cell, `2g` one-cells, and one 2-cell with characteristic maps from `Polygon4gCellularModel`.
+3. If Mathlib lacks the necessary CW-complex record, introduce a narrow project-side frontier stating exactly the missing bridge and route downstream uses through the project-side cellular model instead.
+
+Anti-cheat:
+- Do not define a fake CW structure as `True`, `Unit`, or a reflexive equivalence.
+- Do not claim a Mathlib CW bridge without actual cell attachments and characteristic maps.
+
+Verification:
+```sh
+lake build Jacobian.Periods.CellularHomologyRS
+python3 scripts/fix-sorries.py
+python3 scripts/audit-sorries.py sorries.jsonl
+```
