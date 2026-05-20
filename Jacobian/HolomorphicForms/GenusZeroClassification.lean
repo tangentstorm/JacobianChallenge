@@ -1619,31 +1619,73 @@ theorem homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData
   let ⟨e⟩ := genus_zero_homeomorph_onePointCx_with_routeData X _h hmod hbranch
   ⟨e.trans onePointCx_homeomorph_sphere⟩
 
-/-- **Uniformization (genus zero), public frontier statement.** A compact
-connected Riemann surface with `analyticGenus = 0` is homeomorphic to the
-one-point compactification of `ℂ`.
+/-- **Narrow fixed-pole route-data frontier.**
 
-The route-data version above (`genus_zero_homeomorph_onePointCx_with_routeData`)
-records the currently proved assembly from explicit pole-modulus and
-branched-cover data. A cleanly named wrapper
-`genus_zero_homeomorph_onePointCx_of_routeData` exists below and is the
-sorry-free form callers should use whenever route data is in hand.
+This is the exact remaining Riemann-Roch-to-route-data obligation for
+the genus-zero classification: for a compact connected Riemann surface
+of analytic genus zero, there exists a `GenusZeroSimplePoleMeromorphicMap`
+whose underlying `MeromorphicMapToSphere` carries both honest
+`PoleModulusData` and honest `BranchedCoverDataOfPoleDegree`.
 
-The remaining work for this no-route-data frontier is to construct
-`PoleModulusData` and `BranchedCoverDataOfPoleDegree` for the fixed-pole
-Riemann-Roch map `simplePoleMeromorphicMapOfGenusZero X h`. The genuinely
-unprovable piece is `BranchedCoverDataOfPoleDegree`: the underlying
-Riemann-Roch construction goes through scaffold-style cutoff maps (see
-`SinglePoleLift.lean`'s `singlePoleMeromorphicMap`, which satisfies
-`PoleModulusData` but not branched-cover data — the cutoff produces
-infinite `0`-fibers). Building branched-cover data requires properness,
-finite fibers, and weighted-fiber conservation for an actually-analytic
-map — i.e. the full local mapping theorem + degree-of-branched-cover
-infrastructure not present in this codebase.
+**Status.** The bundled-record style makes the missing analytical
+content precise: it lives in this single subtype-inhabitation
+obligation. The remaining mathematical work is to replace the
+scaffold-backed `singlePoleMeromorphicMap` route in
+`riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic` /
+`genusZero_pointRiemannRochSpace_witness_exists` with an honest
+meromorphic function produced by Riemann-Roch.
 
-Do not "prove" this theorem by manufacturing route data from `h`: such a
-proof would imply uniformization for arbitrary surfaces, which is exactly
-the genus-zero classification it pretends to deliver. -/
+**Why the scaffold is not acceptable.** The cutoff lift
+`singlePoleMeromorphicMap Q` satisfies `PoleModulusData` (proved as
+`HolomorphicForms.singlePoleMeromorphicMap_poleModulusData` in
+`SinglePoleLift.lean`), but its 0-fiber outside the chart source is
+typically infinite, so it cannot satisfy `BranchedCoverDataOfPoleDegree`
+(`finite_fiber` fails). Discharging this frontier therefore requires
+either a different scaffold with finite fibers, or a real Riemann-Roch
+production of a `MeromorphicFunctionType`-style meromorphic function
+whose CP¹ lift is then a real branched cover.
+
+**What is already in place.** Weighted-fiber conservation for ContMDiff
+maps between compact preconnected complex 1-manifolds is now proved
+(`weightedFiberConservation_of_contMDiff` in
+`Jacobian/HolomorphicForms/HolomorphicMap.lean`). So once the meromorphic
+function is produced honestly, building `BranchedCoverDataOfPoleDegree`
+reduces to matching the branched degree with the pole-divisor degree
+(`Divisor.point P`'s degree is `1`). That remaining matching step is
+the only purely-analytic part still open. -/
+theorem genusZero_fixedPole_routeData_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (h : analyticGenus ℂ X = 0) :
+    Nonempty
+      { data : GenusZeroSimplePoleMeromorphicMap X //
+        data.meromorphicMap.PoleModulusData ∧
+        data.meromorphicMap.BranchedCoverDataOfPoleDegree } := by
+  sorry
+
+/-- **Uniformization (genus zero):** a compact connected Riemann surface
+with `analyticGenus = 0` is homeomorphic to the one-point
+compactification of `ℂ`.
+
+This is now a sorry-free assembly around the narrow new frontier
+`genusZero_fixedPole_routeData_nonempty`. The proof:
+
+1. Extract the bundled `data : GenusZeroSimplePoleMeromorphicMap X`
+   together with `PoleModulusData` and `BranchedCoverDataOfPoleDegree`
+   for `data.meromorphicMap`.
+2. Apply `simplePole_meromorphicMap_proper_degreeOne` to package this
+   as a proper degree-one map to `OnePoint ℂ`.
+3. Apply `proper_degreeOne_meromorphicMap_biholomorphic` to package
+   that as a homeomorphism `X ≃ₜ OnePoint ℂ`.
+
+Note: this does **not** route through `simplePoleMeromorphicMapOfGenusZero X h`.
+That declaration is backed by `singlePoleMeromorphicMap`, which is a
+scaffold without honest branched-cover data; consuming it as if it had
+route data would be unsound. The honest `data` is supplied directly by
+the new frontier. -/
 theorem genus_zero_homeomorph_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1652,10 +1694,10 @@ theorem genus_zero_homeomorph_onePointCx
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : analyticGenus ℂ X = 0) :
     Nonempty (X ≃ₜ OnePoint ℂ) := by
-  -- Frontier: build `PoleModulusData` and `BranchedCoverDataOfPoleDegree`
-  -- for `simplePoleMeromorphicMapOfGenusZero X h`. See the docstring for
-  -- why this cannot be discharged by manufacturing route data from `h`.
-  sorry
+  obtain ⟨⟨data, hmod, hbranch⟩⟩ := genusZero_fixedPole_routeData_nonempty X h
+  let ⟨g⟩ := simplePole_meromorphicMap_proper_degreeOne X data hmod hbranch
+  let ⟨b⟩ := proper_degreeOne_meromorphicMap_biholomorphic X g
+  exact ⟨b.toHomeomorph⟩
 
 /-- **Cleanly named alias** for `genus_zero_homeomorph_onePointCx_with_routeData`:
 the honest route-data form of the genus-zero uniformization. Sorry-free
