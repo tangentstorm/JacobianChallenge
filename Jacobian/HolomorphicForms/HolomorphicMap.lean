@@ -1093,6 +1093,17 @@ theorem isHolomorphic_of_contMDiff
     IsHolomorphic f := by
   exact IsHolomorphic.of_basic (isHolomorphicBasic_of_contMDiff _hf) hkfold
 
+/-- The local `k`-fold ramification package is automatic from
+`ContMDiff` smoothness: the chart-local analytic order machinery
+`local_kfold_ramified_of_contMDiff` already extracts the witness
+neighbourhoods point-by-point. -/
+theorem hasLocalKfoldRamification_of_contMDiff
+    {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
+    HasLocalKfoldRamification f where
+  local_kfold_ramified := by
+    intro _ _ _ _ hk hram
+    exact local_kfold_ramified_of_contMDiff hf hk hram
+
 /-- **Weighted-fiber conservation** for a nonconstant complex-smooth map
 between compact Hausdorff preconnected complex 1-manifolds.
 
@@ -1270,6 +1281,15 @@ theorem weightedFiberConservation_of_contMDiff
   -- Connect LHS via finite_toFinset_sum_eq_of_set_eq.
   rw [finite_toFinset_sum_eq_of_set_eq (finite_fiber y) (w := mapAnalyticOrderAt f) hfib_eq]
   rw [hsum_total]
+
+/-- The global weighted-fibre conservation package is automatic from
+`ContMDiff` smoothness via `weightedFiberConservation_of_contMDiff`. -/
+theorem hasWeightedFiberConservation_of_contMDiff
+    {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
+    HasWeightedFiberConservation f where
+  weightedFiberSum_eventually_eq := by
+    intro _ _ _ _ _ _ hnonconst finite_fiber y₀
+    exact weightedFiberConservation_of_contMDiff hf hnonconst finite_fiber y₀
 
 end Compatibility
 
