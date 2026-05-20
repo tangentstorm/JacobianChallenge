@@ -1,0 +1,26 @@
+Please rename this session to "2670. Prove deRhamComparisonMap1Spec_frontier".
+
+Target file: Jacobian/HolomorphicForms/DeRhamComparisonMap.lean
+Target sorry: def deRhamComparisonMap1Spec_frontier
+Allowed writes: prefer Jacobian/HolomorphicForms/DeRhamComparisonMap.lean and de Rham/singular integration API files.
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+
+Task: fill the two fields of `DeRhamComparisonMap1Spec`:
+- every integral cycle functional is represented by a closed 1-form;
+- a closed 1-form with zero periods has a global primitive.
+
+Expected approach:
+1. First replace or refine the opaque `deRhamComparisonMap1` only if you can implement the actual integration map.
+2. Prove the surjectivity half using a real de Rham comparison theorem or a good-cover/Cech construction.
+3. Prove the injectivity half using path-integral primitives/Poincare lemma/sheaf exactness.
+
+Anti-cheat:
+- Do not exploit the current opaque map by choosing arbitrary forms.
+- Do not change `ExactForm` or `ClosedForm` to collapse the quotient.
+
+Verification:
+```sh
+lake build Jacobian.HolomorphicForms.DeRhamComparisonMap
+python3 scripts/fix-sorries.py
+python3 scripts/audit-sorries.py sorries.jsonl
+```
