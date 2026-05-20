@@ -247,7 +247,16 @@ lemma not_continuous_two_point_indicator
 meromorphic map in `L([P])`.
 
 This is no longer derived from a raw `Submodule ℂ (MeromorphicFunctionType X)`;
-that derivation relied on the removed false vector-space instance. -/
+that derivation relied on the removed false vector-space instance.
+
+**Scaffold use is safe here.** The witness is `singlePoleMeromorphicMap P`, a
+cutoff scaffold. The conclusion only asserts (a) nonconstancy and (b)
+membership in the Riemann-Roch space `L([P])` — both are purely divisor- /
+topology-level claims that hold for the scaffold by construction. No
+analytic content (modulus divergence, branched-cover data) is claimed about
+the scaffold here. Callers that need genus-zero classification must still
+route through a real route-data theorem; see
+`genus_zero_homeomorph_onePointCx_of_routeData`. -/
 theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

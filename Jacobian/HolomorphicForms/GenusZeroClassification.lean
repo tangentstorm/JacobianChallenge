@@ -1631,12 +1631,15 @@ sorry-free form callers should use whenever route data is in hand.
 
 The remaining work for this no-route-data frontier is to construct
 `PoleModulusData` and `BranchedCoverDataOfPoleDegree` for the fixed-pole
-Riemann-Roch map `simplePoleMeromorphicMapOfGenusZero X h`. That construction
-is the analytic content of the genus-zero classification and not provable
-from `analyticGenus ℂ X = 0` alone using only the bare
-`MeromorphicMapToSphere` structure — the structure does not enforce modulus
-divergence at poles, so scaffold maps with prescribed simple-pole divisors
-exist that do not satisfy `PoleModulusData`.
+Riemann-Roch map `simplePoleMeromorphicMapOfGenusZero X h`. The genuinely
+unprovable piece is `BranchedCoverDataOfPoleDegree`: the underlying
+Riemann-Roch construction goes through scaffold-style cutoff maps (see
+`SinglePoleLift.lean`'s `singlePoleMeromorphicMap`, which satisfies
+`PoleModulusData` but not branched-cover data — the cutoff produces
+infinite `0`-fibers). Building branched-cover data requires properness,
+finite fibers, and weighted-fiber conservation for an actually-analytic
+map — i.e. the full local mapping theorem + degree-of-branched-cover
+infrastructure not present in this codebase.
 
 Do not "prove" this theorem by manufacturing route data from `h`: such a
 proof would imply uniformization for arbitrary surfaces, which is exactly
