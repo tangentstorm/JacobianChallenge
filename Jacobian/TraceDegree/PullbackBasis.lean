@@ -77,22 +77,43 @@ noncomputable def pullbackTraceLiftCLM
     (Fin (analyticGenus ℂ Y) → ℂ) →L[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   LinearMap.toContinuousLinearMap (pullbackTraceLiftLinearMap f hf)
 
+/-- **Narrow transfer-cycle leaf.** The genuine geometric content: for
+every cycle `σ` on `Y` there exists a *transfer cycle* `γ` on `X`
+whose period pairing equals the basis-coordinate pulled-back
+functional of `σ`.
+
+This is the precise wrong-way (transfer) map `f^! : H₁(Y, ℤ) → H₁(X, ℤ)`
+for a branched cover `f : X → Y`, together with the cycle-level
+naturality identity. Mathlib does not provide it at the pinned
+commit; it is the single named geometric frontier from which
+`transfer_functional_mem_periodSubgroup` follows by purely algebraic
+manipulation (range membership of `periodPairing`).
+
+The statement is precisely the *existence of a witness cycle* whose
+`periodPairing` equals the pulled-back functional. No claim is made
+here about its construction (sum over sheets, naturality with trace,
+etc.); those are the future work of a `Mathlib.Topology.BranchedCover.Transfer`
+layer. -/
+theorem transferCycle_periodPairing_naturality
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (σ : IntegralOneCycle Y) :
+    ∃ γ : IntegralOneCycle X,
+      periodPairing ℂ X γ =
+        (holomorphicOneFormDualEquiv ℂ X).symm
+          (pullbackTraceLiftCLM f hf
+            (holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y σ))) := by
+  sorry
+
 /-- **Transfer functional obligation.** For every cycle `σ` on `Y`, the
 linear functional on `H⁰(X, Ω¹)` obtained by applying the pullback
 trace lift to the period vector of `σ` and pulling back through the
 basis-aligned dual equivalence lies in the period subgroup of `X`.
 
-Mathematically, this asserts the existence of a *transfer map* on
-cycles: there is a cycle `γ` on `X` such that for every holomorphic
-1-form `ω` on `X`,
-`∫_γ ω = ∑ⱼ (∫_σ ηⱼ) · (i-th coordinate of f*(ηⱼ))`,
-where `ηⱼ` are the chosen basis forms on `Y` and `f*` is the
-holomorphic-form pullback.
-
-This is the genuine Mathlib gap: constructing the transfer (wrong-way)
-map `f^! : H₁(Y, ℤ) → H₁(X, ℤ)` for a branched cover `f : X → Y`,
-and proving the naturality `∫_{f^!(σ)} ω = ∫_σ f_*(ω)` where `f_*`
-is the trace on forms. -/
+Sorry-free assembly from the narrow geometric leaf
+`transferCycle_periodPairing_naturality`: extract the witness cycle
+`γ` and observe that the pulled-back functional, being equal to
+`periodPairing ℂ X γ`, lies in `(periodPairing ℂ X).range =
+periodSubgroup ℂ X`. -/
 theorem transfer_functional_mem_periodSubgroup
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) :
@@ -100,7 +121,10 @@ theorem transfer_functional_mem_periodSubgroup
       (pullbackTraceLiftCLM f hf
         (holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y σ)))
     ∈ periodSubgroup ℂ X := by
-  sorry
+  obtain ⟨γ, hγ⟩ := transferCycle_periodPairing_naturality f hf σ
+  -- `periodSubgroup ℂ X = (periodPairing ℂ X).range` by definition.
+  show _ ∈ (periodPairing ℂ X).range
+  exact ⟨γ, hγ⟩
 
 /-- Raw geometric obligation: the form pullback preserves the period
 subgroup (in the contravariant direction).
