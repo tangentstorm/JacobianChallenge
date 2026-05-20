@@ -153,19 +153,18 @@ theorem analyticDegree_eq_branchedDegree (f : X → Y)
     analyticDegree f hf =
       JacobianChallenge.HolomorphicForms.branchedDegree hbc := hdegree
 
-/-- **The narrow weighted-fiber conservation provider.** A genuine
-analytic content frontier: a smooth map `f : X → Y` between compact
-Riemann surfaces has globally locally-constant weighted fibre sum.
+/-- **The weighted-fiber conservation provider.** Sorry-free wrapper
+around `hasWeightedFiberConservation_of_contMDiff` (which packages
+the analytic theorem `weightedFiberConservation_of_contMDiff` from
+`Jacobian/HolomorphicForms/HolomorphicMap.lean`).
 
-Currently a named sorry. The proof is `local_kfold_ramified_of_contMDiff`
-+ shrinking arguments, but it requires real analytic work
-(open-mapping near ramified points + fibre sum bookkeeping). Isolated
-here as a single named frontier so that consumers don't have to plumb
-the hypothesis through. -/
-noncomputable def hasWeightedFiberConservation_provider (f : X → Y)
-    (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    HasWeightedFiberConservation f := by
-  sorry
+Trace-degree consumers no longer carry a provider-local analytic gap;
+the remaining analytic content lives where it belongs, in
+`HolomorphicMap.lean`. -/
+theorem hasWeightedFiberConservation_provider (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    HasWeightedFiberConservation f :=
+  hasWeightedFiberConservation_of_contMDiff hf
 
 /-- **The narrow trace-pullback identity provider.** This is the
 sole remaining trace/pullback frontier from the form-level identity
