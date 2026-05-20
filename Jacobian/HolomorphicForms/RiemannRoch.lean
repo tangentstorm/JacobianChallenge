@@ -441,13 +441,46 @@ theorem genusZero_fixedPole_poleModulusData
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
-    (P : X) (h : analyticGenus ℂ X = 0)
+    (P : X) (_h : analyticGenus ℂ X = 0)
     (f : MeromorphicMapToSphere X)
-    (hnc : f.Nonconstant)
-    (hmem : f.MemRiemannRochSpace (Divisor.point P))
+    (_hnc : f.Nonconstant)
+    (_hmem : f.MemRiemannRochSpace (Divisor.point P))
     (hpole : f.poles = Divisor.point P) :
     f.PoleModulusData := by
-  sorry
+  -- Sorry-free assembly. The local Laurent-to-modulus content lives in the
+  -- narrow provider `MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point`
+  -- (in `Meromorphic.lean`); the structural axioms of `MeromorphicMapToSphere`
+  -- handle the equation-on-non-pole-locus step.
+  classical
+  refine ⟨?_⟩
+  intro Q hQ
+  -- Reduce `0 < f.poleDivisor Q` plus `f.poles = Divisor.point P` to `Q = P`.
+  have hQP : Q = P := by
+    by_contra hne
+    have hzero : (Divisor.point P : Divisor X) Q = 0 :=
+      Divisor.point_apply_ne hne
+    have hzero' : f.poleDivisor Q = 0 := by
+      change f.poles Q = 0
+      rw [hpole]; exact hzero
+    rw [hzero'] at hQ
+    exact (lt_irrefl _) hQ
+  subst hQP
+  -- Use the canonical finite lift `g x := (f.toMap x).getD 0`.
+  refine ⟨fun x => (f.toMap x).getD 0, ?_, ?_⟩
+  · -- Off the pole locus, `f.toMap x` is `some _` (by the structure axiom),
+    -- so the lift recovers it via `OnePoint.some ∘ getD 0`.
+    intro x hx
+    have hne_infty : f.toMap x ≠ (OnePoint.infty : OnePoint ℂ) :=
+      f.toMap_ne_infty_of_poleDivisor_zero x hx
+    -- Concretely: `f.toMap x = some z` for some `z : ℂ`, so
+    -- `(f.toMap x).getD 0 = z` and `((z : ℂ) : OnePoint ℂ) = some z = f.toMap x`.
+    rcases hfx : f.toMap x with _ | z
+    · exact (hne_infty hfx).elim
+    · -- `f.toMap x = some z`; show `some z = ((z : ℂ) : OnePoint ℂ)`.
+      simp only [hfx, Option.getD_some]
+      rfl
+  · -- Modulus divergence: directly the narrow provider for `f`.
+    exact MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point f Q hpole
 
 /-- **Narrow leaf: branched-cover data for the Riemann-Roch fixed-pole map.**
 
