@@ -103,7 +103,7 @@
 {"i":1438,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_singular_zero_cell_data","n":0,"o":1,"r":1,"e":null,"u":[],"d":[1431,1432,1433],"a":"","c":"done","b":"lem:impl-cellular-singular-cell-data","t":""}
 {"i":1439,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"def","s":"holomorphicFormBridge","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1440,"f":"Jacobian/Periods/PeriodFunctional.lean","k":"theorem","s":"riemann_classical_real_LI_input","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":1441,"f":"Jacobian/Periods/Polygon4gEdgeBasisMap.lean","k":"theorem","s":"edgeHomologyFamily_spans","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1441,"f":"Jacobian/Periods/Polygon4gEdgeBasisMap.lean","k":"theorem","s":"edgeHomologyFamily_spans","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1442,"f":"Jacobian/Periods/PullbackNaturality.lean","k":"theorem","s":"cyclePushforward_chainLevel_repr","n":3,"o":3,"r":0,"e":5,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1443,"f":"Jacobian/Periods/PullbackNaturality.lean","k":"theorem","s":"pathIntegralViaCover_pullback_chart_segment","n":2,"o":2,"r":0,"e":6,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1444,"f":"Jacobian/Periods/PullbackNaturality.lean","k":"theorem","s":"pathIntegralViaCover_trans_eq_add","n":3,"o":3,"r":0,"e":4,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
@@ -137,7 +137,7 @@
 {"i":1472,"f":"Jacobian/StageA/CellularSingular.lean","k":"theorem","s":"skeletal_pair_wedge_of_spheres","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1473,"f":"Jacobian/StageA/EdgeWordTietze.lean","k":"theorem","s":"handleSwap_grouping_inductive_step","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1474,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"def","s":"basisAnalyticPullbackBundle","n":1,"o":0,"r":1,"e":6,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":1475,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"theorem","s":"transfer_functional_mem_periodSubgroup","n":1,"o":1,"r":0,"e":5,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1475,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"theorem","s":"transfer_functional_mem_periodSubgroup","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":1476,"f":"tex/statements/challenge-statement.tex","k":"definition","s":"Jacobian.ofCurve","n":0,"o":1,"r":1,"e":null,"u":[1478,1530],"d":[0,1529,1531,2580,2582],"a":"","c":"done","b":"def:abel-jacobi","t":""}
 {"i":1477,"f":"tex/statements/challenge-statement.tex","k":"definition","s":"JacobianChallenge.HolomorphicForms.analyticGenus","n":0,"o":1,"r":1,"e":null,"u":[],"d":[1478,2591,2592],"a":"","c":"done","b":"def:analytic-genus","t":""}
 {"i":1478,"f":"tex/statements/challenge-statement.tex","k":"definition","s":"Jacobian","n":0,"o":1,"r":1,"e":null,"u":[1477,2576,2602],"d":[0,1476,2092,2614],"a":"","c":"done","b":"def:analytic-jacobian","t":""}
@@ -1223,7 +1223,7 @@
 {"i":2657,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"traceAtRegularValue_add","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2658,"f":"Jacobian/TraceDegree/TraceDefinition.lean","k":"theorem","s":"traceAtRegularValue_smul","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2659,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"def","s":"basisAnalyticPullbackDegreeSpec_frontier","n":1,"o":0,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":2660,"f":"Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean","k":"theorem","s":"degree_one_meromorphicMap_implies_analyticGenus_zero","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2660,"f":"Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean","k":"theorem","s":"degree_one_meromorphicMap_implies_analyticGenus_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2661,"f":"Jacobian/AbelJacobi/AnalyticOfCurveBasis.lean","k":"theorem","s":"nonconstant_single_pole_implies_genus_zero","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2662,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"genus_zero_homeomorph_onePointCx","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2663,"f":"Jacobian/HolomorphicForms/CompactRiemannSurface.lean","k":"theorem","s":"holomorphicOneForm_supNorm_closedBall_totallyBounded","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
@@ -1234,7 +1234,11 @@
 {"i":2668,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_weightedFiberSum_eventually_eq","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2669,"f":"Jacobian/HolomorphicForms/TraceBundled.lean","k":"def","s":"traceFormsRegularSpec_frontier","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2670,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"def","s":"deRhamComparisonMap1Spec_frontier","n":2,"o":2,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2671,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"def","s":"analyticTraceDegreeSpec_frontier","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2672,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2671,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"def","s":"analyticTraceDegreeSpec_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2672,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2673,"f":"Jacobian/Periods/CellularChainComplex.lean","k":"theorem","s":"polygon4g_boundary_arcs_are_loops","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2674,"f":"Jacobian/Periods/CellularHomologyRS.lean","k":"def","s":"polygon4g_cellularModel_to_mathlibCW_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2675,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4gSingularC1_toSingularH1LinearMap_bijective","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2676,"f":"Jacobian/Periods/Polygon4gEdgeBasisMap.lean","k":"theorem","s":"polygon4gSingularC1EdgeClassMap_surjective","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2677,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"edgeBasisMap_injective","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2678,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"edgeBasisMap_surjective","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
