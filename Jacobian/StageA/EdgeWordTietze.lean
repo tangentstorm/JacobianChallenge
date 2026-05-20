@@ -465,6 +465,20 @@ theorem orientability_invariant_under_wordEq
   | refl => exact hOrient
   | tail _ hStep ih => exact orientability_invariant_under_inverseCancel ih hStep
 
+/-- **R3-sub-B.helper.r2 (sorry-free assembly).** Orientability is
+preserved by a single `TietzeStep.rotate` step.
+
+Round 3 proof: rotation preserves counts exactly. -/
+theorem orientability_invariant_under_rotate
+    {g : ℕ} {w : EdgeWord g} {k : ℕ}
+    (hOrient : ¬ EdgeWord.HasNonorientablePair w) :
+    ¬ EdgeWord.HasNonorientablePair (w.rotate k) := by
+  intro ⟨i, hpair⟩
+  apply hOrient
+  refine ⟨i, ?_⟩
+  simp only [(List.rotate_perm w k).count_eq] at hpair
+  exact hpair
+
 /-- **Round 1 helper (sorry-free assembly).** Orientability is
 invariant under `TietzeEq` (cancellation + HandleSwap chain).
 
@@ -481,6 +495,7 @@ theorem orientability_invariant_under_TietzeEq
       cases hStep with
       | cancel hC => exact orientability_invariant_under_inverseCancel ih hC
       | swap hS => exact orientability_invariant_under_handleSwap ih hS
+      | rotate k => exact orientability_invariant_under_rotate ih
 
 /-- **Brahana–Seifert–Threlfall reduction (sorry-free assembly).**
 
