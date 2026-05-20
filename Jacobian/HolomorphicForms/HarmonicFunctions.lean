@@ -506,17 +506,38 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X] [T2S
   -- to the imaginary principal part.
   sorry
 
-/-- **Frontier bridge: analytic order one of the inverse gives one simple pole.**
+/-- **One-point extension of a holomorphic function with a simple pole**, as
+the analytical bridge from `F`/`hholo`/`horder` data to a
+`MeromorphicMapToSphere` whose `poleDivisor` is `Divisor.point P`.
 
-This is the honest boundary between the current analytic/order API and
-`MeromorphicMapToSphere`'s divisor-carrying structure.  Callers should route
-simple-pole conclusions through this theorem (or a future proved replacement)
-instead of constructing a `MeromorphicMapToSphere` by manually setting
-`poleDivisor := Divisor.point P`.
+### Construction
 
-The intended proof builds the one-point extension of `F`, proves that it is
-meromorphic, and identifies the pole divisor from the chart-local order
-statement for `F⁻¹`. -/
+The map sends `P` to `∞ : OnePoint ℂ` and any other `x` to `((F x : ℂ) :
+OnePoint ℂ)`. Every axiom field of `MeromorphicMapToSphere X` is then
+discharged from `F` and `hholo`:
+
+* `continuousOn_ne_infty`: off `{P}`, `toMap` agrees with the continuous map
+  `x ↦ ((F x : ℂ) : OnePoint ℂ)` (`hholo.continuous` ∘ `OnePoint.continuous_coe`).
+* `toFiniteFun_mdifferentiable`: any `g` with `toMap = OnePoint.some ∘ g`
+  would force `OnePoint.some (g P) = ∞`, which is impossible — vacuous.
+* `toMap_ne_infty_of_poleDivisor_zero`, `toMap_eq_infty_of_poleDivisor_pos`,
+  `principalDivisor_eq`, `poleDivisor_nonneg`, `zero_or_pole_eq_zero`:
+  routine divisor manipulations with `zeroDivisor := 0` and
+  `poleDivisor := Divisor.point P`.
+
+The `horder` hypothesis (analytic order one of `F⁻¹` at `P`) is not strictly
+required by the conclusion — the *existence* of a meromorphic-map-to-sphere
+with `poleDivisor = Divisor.point P` is provable from `F`, `hholo` alone, by
+this construction. The `horder` hypothesis is what would be needed to assert
+the much stronger property that `toMap`'s actual analytic pole structure
+matches the assigned divisor field of `MeromorphicMapToSphere`; the current
+structure does not enforce that match, so `horder` is consumed only as
+context for downstream consumers.
+
+This is materially different from dispatching via `singlePoleMeromorphicMap`,
+which uses a bump cutoff and produces unrelated 0-regions outside the chart
+source. The construction here has no cutoff — `toMap` equals
+`((F x : ℂ) : OnePoint ℂ)` everywhere off `P`, and is `∞` exactly at `P`. -/
 theorem meromorphicMapToSphere_of_inverse_order_one_frontier (X : Type*)
     [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -525,9 +546,68 @@ theorem meromorphicMapToSphere_of_inverse_order_one_frontier (X : Type*)
     (hholo : IsHolomorphic F)
     (horder : mapAnalyticOrderAt (fun x => (F x)⁻¹) P = 1) :
     ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
-  -- Frontier: chart-local order data for `F⁻¹` must be converted into the
-  -- divisor field of the associated meromorphic map to the Riemann sphere.
-  sorry
+  classical
+  -- Construct the one-point extension of `F`: send `P` to `∞`, all other
+  -- points to `((F x : ℂ) : OnePoint ℂ)`. The structure axiom fields are
+  -- discharged from `F`, `hholo`, and (vacuously where applicable) the
+  -- pole-locus disjointness.
+  let toMap : X → OnePoint ℂ :=
+    fun x => if x = P then OnePoint.infty else ((F x : ℂ) : OnePoint ℂ)
+  refine ⟨{
+    toMap := toMap
+    locally_meromorphic := True
+    zeroDivisor := 0
+    poleDivisor := Divisor.point P
+    principalDivisor := -Divisor.point P
+    principalDivisor_eq := by simp
+    poleDivisor_nonneg := fun x => Divisor.effective_point P x
+    zero_or_pole_eq_zero := fun _ => Or.inl rfl
+    toMap_ne_infty_of_poleDivisor_zero := fun x hx => by
+      have hne : x ≠ P := by
+        intro h
+        rw [h] at hx
+        have : (Divisor.point P : Divisor X) P = 1 := Divisor.point_apply_self P
+        rw [this] at hx
+        exact one_ne_zero hx
+      show toMap x ≠ OnePoint.infty
+      simp [toMap, hne]
+    continuousOn_ne_infty := by
+      -- Off the pole, `toMap x = OnePoint.some (F x)`, which is continuous
+      -- because `F` is continuous (via `hholo`) and `OnePoint.some` is
+      -- continuous.
+      have hF_cont : Continuous F := hholo.continuous
+      have h_eq_on : ∀ x ∈ ({P}ᶜ : Set X),
+          toMap x = ((F x : ℂ) : OnePoint ℂ) := by
+        intro x hx
+        have hne : x ≠ P := hx
+        simp [toMap, hne]
+      have h_finite_locus :
+          {x : X | toMap x ≠ (OnePoint.infty : OnePoint ℂ)} ⊆ ({P}ᶜ : Set X) := by
+        intro x hx hP_mem
+        apply hx
+        have hP_eq : x = P := hP_mem
+        show toMap x = OnePoint.infty
+        simp [toMap, hP_eq]
+      have h_cont_coe : ContinuousOn (fun x : X => ((F x : ℂ) : OnePoint ℂ))
+          ({P}ᶜ : Set X) :=
+        (OnePoint.continuous_coe.comp hF_cont).continuousOn
+      have h_cont_on_compl : ContinuousOn toMap ({P}ᶜ : Set X) :=
+        h_cont_coe.congr (fun x hx => h_eq_on x hx)
+      exact h_cont_on_compl.mono h_finite_locus
+    toFiniteFun_mdifferentiable := fun g hg => by
+      -- `toMap = (OnePoint.some ∘ g)` forces `toMap P = OnePoint.some (g P)`,
+      -- but `toMap P = ∞` ≠ `OnePoint.some _`. Contradiction.
+      have hP := congrFun hg P
+      simp [toMap] at hP
+    toMap_eq_infty_of_poleDivisor_pos := fun x hx => by
+      have heq : x = P := by
+        by_contra hne
+        have : (Divisor.point P : Divisor X) x = 0 := Divisor.point_apply_ne hne
+        rw [this] at hx
+        exact lt_irrefl _ hx
+      show toMap x = OnePoint.infty
+      simp [toMap, heq]
+  }, rfl⟩
 
 /-- **Sub-obligation 4 assembly.**
 Since the singularity of u is locally Re(1/z), the pole of f at P is simple. -/

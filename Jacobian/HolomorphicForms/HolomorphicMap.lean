@@ -483,6 +483,38 @@ theorem IsHolomorphicAt.of_contMDiff
     simpa [contDiffWithinAt_univ, ModelWithCorners.range_eq_target] using hchart.2
   exact hcd.analyticAt
 
+/-- Manifold-level complex smoothness supplied by chart-local analyticity and
+global continuity.
+
+This is the converse to `IsHolomorphicAt.of_contMDiff`, packaged for the case
+where the chart-local presentation is genuinely analytic at every point and
+the underlying set function is continuous (so the manifold-level continuity
+side of `ContMDiffAt` is in hand).
+
+The proof routes through `AnalyticAt.contDiffAt` (Mathlib) to upgrade the
+chart-local analyticity to `ContDiffAt`, then assembles via
+`contMDiffAt_iff_of_mem_source`. -/
+theorem ContMDiff.of_isHolomorphic_and_continuous
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    {f : X → Y} (hholo : ∀ p, IsHolomorphicAt f p) (hcont : Continuous f) :
+    ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f := by
+  intro p
+  -- We aim at `ContMDiffAt 𝓘(ℂ) 𝓘(ℂ) ⊤ f p` and use
+  -- `contMDiffAt_iff_of_mem_source` to reduce to chart-local data.
+  rw [contMDiffAt_iff_of_mem_source (I := 𝓘(ℂ)) (I' := 𝓘(ℂ))
+        (x := p) (y := f p) (f := f) (n := (⊤ : WithTop ℕ∞))
+        (mem_chart_source ℂ p) (mem_chart_source ℂ (f p))]
+  refine ⟨hcont.continuousAt, ?_⟩
+  -- Chart-local analyticity gives `AnalyticAt`, hence `ContDiffAt`.
+  have hAA : AnalyticAt ℂ
+      (chartAt ℂ (f p) ∘ f ∘ (chartAt ℂ p).symm) (chartAt ℂ p p) := hholo p
+  have hCD : ContDiffAt ℂ (⊤ : WithTop ℕ∞)
+      (chartAt ℂ (f p) ∘ f ∘ (chartAt ℂ p).symm) (chartAt ℂ p p) :=
+    hAA.contDiffAt
+  -- Rewrite to match the `ContDiffWithinAt` shape expected by
+  -- `contMDiffAt_iff_of_mem_source`.
+  simpa [contDiffWithinAt_univ, ModelWithCorners.range_eq_target] using hCD
+
 /-- Local constancy of a holomorphic map on a preconnected source forces global constancy. -/
 theorem IsHolomorphic.eq_const_of_eventuallyEq
     [PreconnectedSpace X] [T2Space Y]
@@ -1060,6 +1092,184 @@ theorem isHolomorphic_of_contMDiff
     (hkfold : HasLocalKfoldRamification f) :
     IsHolomorphic f := by
   exact IsHolomorphic.of_basic (isHolomorphicBasic_of_contMDiff _hf) hkfold
+
+/-- **Weighted-fiber conservation** for a nonconstant complex-smooth map
+between compact Hausdorff preconnected complex 1-manifolds.
+
+For every base point `y₀ : Y`, the weighted fiber sum
+`∑ x ∈ f⁻¹{y}, mapAnalyticOrderAt f x` is locally constant — eventually
+equal to its value at `y₀` on a neighborhood of `y₀`.
+
+### Proof outline (D3 in the blueprint)
+
+1. The fiber `S₀ := f⁻¹{y₀}` is finite.
+2. Pick pairwise-disjoint open neighborhoods `U₀(x)` of each `x ∈ S₀`.
+3. Refine each `U₀(x)` to `U'(x)` and find `V(x) ∋ y₀` such that for
+   `y ∈ V(x)` with `y ≠ y₀`, the local fiber `U'(x) ∩ f⁻¹{y}` has exactly
+   `kₓ := mapAnalyticOrderAt f x` simple preimages.
+4. `eventually_fiber_subset_of_compact_T2` (properness on compact source)
+   gives a neighborhood `V'` of `y₀` such that `f⁻¹{y} ⊆ ⋃ x∈S₀, U'(x)`
+   for `y ∈ V'`.
+5. On `V := V' ∩ ⋂ V(x)` minus `{y₀}`, the fiber decomposes as a
+   pairwise-disjoint union of the local pieces. Each piece has
+   weighted sum `kₓ`. The total equals `∑ x∈S₀, kₓ`. -/
+theorem weightedFiberConservation_of_contMDiff
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space Y]
+    {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f)
+    (hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀)
+    (finite_fiber : ∀ y : Y, (f ⁻¹' {y}).Finite)
+    (y₀ : Y) :
+    ∀ᶠ y in 𝓝 y₀,
+      (Finset.sum (finite_fiber y).toFinset (mapAnalyticOrderAt f)) =
+      (Finset.sum (finite_fiber y₀).toFinset (mapAnalyticOrderAt f)) := by
+  classical
+  -- Step 1: name the fiber over y₀.
+  set S₀ : Finset X := (finite_fiber y₀).toFinset with hS₀_def
+  have hS₀_finite : (f ⁻¹' {y₀}).Finite := finite_fiber y₀
+  have hmem_S₀ : ∀ x, x ∈ S₀ ↔ f x = y₀ := by
+    intro x; simp [hS₀_def, Set.Finite.mem_toFinset]
+  -- Step 2: pairwise-disjoint open neighborhoods of S₀ (T2Space, from
+  -- Mathlib's `Set.Finite.t2_separation`).
+  have hU₀_data : ∃ U₀ : X → Set X,
+      (∀ x ∈ (f ⁻¹' {y₀}), IsOpen (U₀ x) ∧ x ∈ U₀ x) ∧
+      Set.Pairwise (f ⁻¹' {y₀}) (fun x y => Disjoint (U₀ x) (U₀ y)) := by
+    obtain ⟨U, hU⟩ := Set.Finite.t2_separation hS₀_finite
+    exact ⟨U, fun x hx => ⟨(hU.1 x).2, (hU.1 x).1⟩, hU.2⟩
+  obtain ⟨U₀, hU₀_mem, hU₀_disj⟩ := hU₀_data
+  -- Positivity of the order at every point of `X`.
+  have hk_pos : ∀ x : X, 0 < mapAnalyticOrderAt f x := fun x =>
+    mapAnalyticOrderAt_pos_of_contMDiff hf hnonconst x
+  -- Step 3: refine each `U₀ x` (for x ∈ S₀) and get a local-kfold witness.
+  -- Package as `x : X` extended functions (arbitrary outside S₀).
+  -- We use `Classical.choose` via `choose!` to get a default value outside S₀.
+  have hlocal_data : ∀ x : X, ∃ U : Set X, IsOpen U ∧ x ∈ U ∧
+      (x ∈ (f ⁻¹' {y₀}) → U ⊆ U₀ x) ∧
+      ∃ V : Set Y, IsOpen V ∧ f x ∈ V ∧
+      ∀ y ∈ V, y ≠ f x →
+      ∃ s : Finset X, s.card = mapAnalyticOrderAt f x ∧ ↑s ⊆ U ∧
+        (∀ x' ∈ s, f x' = y ∧ mapAnalyticOrderAt f x' = 1) ∧
+        (∀ x' ∈ U, f x' = y → x' ∈ s) := by
+    intro x
+    by_cases hx : x ∈ (f ⁻¹' {y₀})
+    · -- Inside the fiber: refine inside U₀ x.
+      have hxU₀ : x ∈ U₀ x := (hU₀_mem x hx).2
+      have hU₀_open : IsOpen (U₀ x) := (hU₀_mem x hx).1
+      obtain ⟨U, hUopen, hxU, hUsub, V, hVopen, hyV, hkfold⟩ :=
+        local_kfold_ramified_of_contMDiff_within (f := f) hf
+          hU₀_open hxU₀ (hk_pos x) rfl
+      exact ⟨U, hUopen, hxU, fun _ => hUsub, V, hVopen, hyV, hkfold⟩
+    · -- Outside the fiber: just use the standard local-kfold theorem in any open set.
+      obtain ⟨U, hUopen, hxU, V, hVopen, hyV, hkfold⟩ :=
+        local_kfold_ramified_of_contMDiff (f := f) hf (hk_pos x) rfl
+      exact ⟨U, hUopen, hxU, fun hxfib => absurd hxfib hx, V, hVopen, hyV, hkfold⟩
+  -- Extract chosen data.
+  choose U hUopen hxU hU_sub_U₀ V hVopen hyV hkfold using hlocal_data
+  -- For x ∈ S₀, V x ∈ 𝓝 (f x) = 𝓝 y₀.
+  have hVx_nhds : ∀ x ∈ S₀, V x ∈ 𝓝 y₀ := by
+    intro x hx
+    have hfx : f x = y₀ := (hmem_S₀ x).mp hx
+    have := (hVopen x).mem_nhds (hyV x)
+    rwa [hfx] at this
+  -- Step 4: ⋂ x ∈ S₀, V x ∈ 𝓝 y₀ by finite intersection.
+  have hVinter_nhds : (⋂ x ∈ S₀, V x) ∈ 𝓝 y₀ := by
+    refine (Filter.biInter_finset_mem S₀).mpr ?_
+    intro x hx
+    exact hVx_nhds x hx
+  -- The union `⋃ x ∈ S₀, U x` is open and contains the fiber `f⁻¹{y₀}`.
+  have hUunion_open : IsOpen (⋃ x ∈ S₀, U x) :=
+    isOpen_biUnion (fun x _ => hUopen x)
+  have hfiber_sub_union : f ⁻¹' {y₀} ⊆ ⋃ x ∈ S₀, U x := by
+    intro x hx
+    have hxS₀ : x ∈ S₀ := by rw [hmem_S₀]; exact hx
+    refine Set.mem_iUnion₂.mpr ⟨x, hxS₀, hxU x⟩
+  -- Step 5: properness — eventually f⁻¹{y} ⊆ ⋃ U x for y near y₀.
+  have hfiber_ev :
+      ∀ᶠ y in 𝓝 y₀, f ⁻¹' {y} ⊆ ⋃ x ∈ S₀, U x :=
+    eventually_fiber_subset_of_compact_T2 hf.continuous hUunion_open hfiber_sub_union
+  -- For each x ∈ S₀, U x ⊆ U₀ x.
+  have hU_sub_U₀_S₀ : ∀ x ∈ S₀, U x ⊆ U₀ x := by
+    intro x hx
+    have : x ∈ (f ⁻¹' {y₀}) := (hmem_S₀ x).mp hx
+    exact hU_sub_U₀ x this
+  -- The `U x` for x ∈ S₀ are pairwise disjoint (inherited from U₀ via subset).
+  have hU_disj : Set.PairwiseDisjoint (S₀ : Set X) U := by
+    intro x hxS₀ y hyS₀ hxy
+    have hxfib : x ∈ (f ⁻¹' {y₀}) := (hmem_S₀ x).mp (Finset.mem_coe.mp hxS₀)
+    have hyfib : y ∈ (f ⁻¹' {y₀}) := (hmem_S₀ y).mp (Finset.mem_coe.mp hyS₀)
+    have hsx : U x ⊆ U₀ x := hU_sub_U₀_S₀ x (Finset.mem_coe.mp hxS₀)
+    have hsy : U y ⊆ U₀ y := hU_sub_U₀_S₀ y (Finset.mem_coe.mp hyS₀)
+    exact (hU₀_disj hxfib hyfib hxy).mono hsx hsy
+  -- Combine: filter upwards on (𝓝 y₀ ∩ ⋂ V x ∩ fiber-eventual).
+  filter_upwards [hfiber_ev, hVinter_nhds] with y hy_sub hy_in_Vs
+  by_cases hyy₀ : y = y₀
+  · subst hyy₀; rfl
+  -- Now y ≠ y₀ and we have local-kfold structure.
+  -- For each x ∈ S₀: y ∈ V x (from hy_in_Vs) and y ≠ f x = y₀.
+  have hy_V : ∀ x ∈ S₀, y ∈ V x := by
+    intro x hx
+    have := hy_in_Vs
+    rw [Set.mem_iInter₂] at this
+    exact this x hx
+  have hy_ne_fx : ∀ x ∈ S₀, y ≠ f x := by
+    intro x hx
+    rw [(hmem_S₀ x).mp hx]; exact hyy₀
+  -- For each x ∈ S₀, get the local finset of `kₓ` simple preimages.
+  have hsx_data : ∀ x ∈ S₀, ∃ s : Finset X,
+      s.card = mapAnalyticOrderAt f x ∧ ↑s ⊆ U x ∧
+      (∀ x' ∈ s, f x' = y ∧ mapAnalyticOrderAt f x' = 1) ∧
+      (∀ x' ∈ U x, f x' = y → x' ∈ s) := by
+    intro x hx
+    exact hkfold x y (hy_V x hx) (hy_ne_fx x hx)
+  choose! s hscard hsU hssimple hscomplete using hsx_data
+  -- Define the predicted Finset for f⁻¹{y}:
+  set s_total : Finset X := S₀.biUnion s with hs_total_def
+  -- Identify `(finite_fiber y).toFinset = s_total` as sets.
+  have hfib_eq : (f ⁻¹' {y} : Set X) = (s_total : Set X) := by
+    ext x'
+    constructor
+    · intro hx'
+      -- x' ∈ f⁻¹{y}, so by hy_sub it's in some U x for x ∈ S₀.
+      have hx'_in_union : x' ∈ ⋃ x ∈ S₀, U x := hy_sub hx'
+      rw [Set.mem_iUnion₂] at hx'_in_union
+      rcases hx'_in_union with ⟨x, hxS₀, hx'U⟩
+      have hx'eq : f x' = y := hx'
+      have hx'_in_sx : x' ∈ s x := hscomplete x hxS₀ x' hx'U hx'eq
+      refine Finset.mem_coe.mpr (Finset.mem_biUnion.mpr ⟨x, hxS₀, hx'_in_sx⟩)
+    · intro hx'
+      rcases Finset.mem_biUnion.mp (Finset.mem_coe.mp hx') with ⟨x, hxS₀, hx'_in_sx⟩
+      show f x' = y
+      exact (hssimple x hxS₀ x' hx'_in_sx).1
+  -- Pairwise disjointness of `s x` as Finsets (inherited from U x).
+  have hs_disj_set : (S₀ : Set X).PairwiseDisjoint (fun x => s x) := by
+    intro x hxS₀ x₂ hx₂S₀ hxy
+    have hx_sub : (s x : Set X) ⊆ U x := by
+      intro z hz; exact hsU x (Finset.mem_coe.mp hxS₀) hz
+    have hx₂_sub : (s x₂ : Set X) ⊆ U x₂ := by
+      intro z hz; exact hsU x₂ (Finset.mem_coe.mp hx₂S₀) hz
+    have hUdisj := hU_disj hxS₀ hx₂S₀ hxy
+    -- Translate set-disjointness on `U x` and `U x₂` to Finset-disjointness on `s x` and `s x₂`.
+    rw [Function.onFun, Finset.disjoint_left]
+    intro z hzx hzx₂
+    have hz_in_Ux : z ∈ U x := hx_sub (Finset.mem_coe.mpr hzx)
+    have hz_in_Ux₂ : z ∈ U x₂ := hx₂_sub (Finset.mem_coe.mpr hzx₂)
+    exact (Set.disjoint_left.mp hUdisj) hz_in_Ux hz_in_Ux₂
+  -- Sum over the disjoint union: weighted sum is ∑ x ∈ S₀, k_x.
+  have hsum_total :
+      s_total.sum (mapAnalyticOrderAt f) =
+        ∑ x ∈ S₀, mapAnalyticOrderAt f x := by
+    rw [hs_total_def, Finset.sum_biUnion hs_disj_set]
+    refine Finset.sum_congr rfl ?_
+    intro x hxS₀
+    -- (s x).sum (mapAnalyticOrderAt f) = mapAnalyticOrderAt f x = k_x.
+    have hcard : (s x).card = mapAnalyticOrderAt f x := hscard x hxS₀
+    have horder : ∀ x' ∈ s x, mapAnalyticOrderAt f x' = 1 := by
+      intro x' hx'
+      exact (hssimple x hxS₀ x' hx').2
+    exact local_kfold_witness_weighted_sum (f := f) hcard horder
+  -- Connect LHS via finite_toFinset_sum_eq_of_set_eq.
+  rw [finite_toFinset_sum_eq_of_set_eq (finite_fiber y) (w := mapAnalyticOrderAt f) hfib_eq]
+  rw [hsum_total]
 
 end Compatibility
 

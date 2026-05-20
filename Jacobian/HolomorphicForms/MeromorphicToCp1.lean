@@ -132,7 +132,31 @@ theorem liftToCp1_holomorphicAt
   | coe z =>
       exact liftToCp1_holomorphicAt_finite X f _hholo p hval
 
-/-- Local `k`-fold normal form/counting for the CP¹ lift. -/
+/-- Manifold-level complex smoothness of the CP¹ lift.
+
+Bridges the chart-local analyticity from `liftToCp1_holomorphicAt` (every
+chart at the lift's value is analytic, both at finite values and at ∞) with
+the global continuity from `MeromorphicFunctionType.toFun_continuous`, using
+`ContMDiff.of_isHolomorphic_and_continuous`. This unlocks Mathlib's
+manifold-level holomorphic-map machinery (including the local mapping
+theorem) for the lift. -/
+theorem liftToCp1_contMDiff
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicFunctionType X) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (meromorphicToCp1 X f) :=
+  ContMDiff.of_isHolomorphic_and_continuous
+    (liftToCp1_holomorphicAt X f True.intro)
+    f.toFun_continuous
+
+/-- Local `k`-fold normal form/counting for the CP¹ lift.
+
+Discharged by combining `liftToCp1_contMDiff` (manifold-level smoothness of
+the lift) with the project-level local mapping theorem
+`local_kfold_ramified_of_contMDiff`. The `Finset` witness is the actual
+local fiber produced by that theorem, not a fabricated witness. -/
 theorem liftToCp1_local_kfold_ramified
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -149,13 +173,13 @@ theorem liftToCp1_local_kfold_ramified
         (∀ x' ∈ s, meromorphicToCp1 X f x' = y ∧
           mapAnalyticOrderAt (meromorphicToCp1 X f) x' = 1) ∧
         (∀ x' ∈ U, meromorphicToCp1 X f x' = y → x' ∈ s) := by
-  -- Frontier: this is the local mapping theorem for the CP¹ lift, in finite
-  -- and infinity charts.  The current `MeromorphicFunctionType` gives local
-  -- meromorphicity of the raw map, but no chart-local normal form, finite
-  -- local fibers, or ramification/order compatibility data.
-  sorry
+  intro _ _ x k hk hram
+  exact local_kfold_ramified_of_contMDiff (liftToCp1_contMDiff X f) hk hram
 
-/-- Local conservation of the weighted fibre count for the CP¹ lift. -/
+/-- Local conservation of the weighted fibre count for the CP¹ lift.
+
+Discharged via the general `weightedFiberConservation_of_contMDiff`
+applied to `liftToCp1_contMDiff`. -/
 theorem liftToCp1_weightedFiberSum_eventually_eq
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -171,11 +195,9 @@ theorem liftToCp1_weightedFiberSum_eventually_eq
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) =
         ((finite_fiber y₀).toFinset).sum
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) := by
-  -- Frontier: weighted-fiber conservation is a global branched-cover theorem.
-  -- Even with finite fibers as an input, the proof needs properness/degree
-  -- data and compatibility of the local ramification indices with
-  -- `mapAnalyticOrderAt`; none of this is contained in `hholo : True`.
-  sorry
+  intro _ _ _ _ _ _ hnonconst finite_fiber y₀
+  exact weightedFiberConservation_of_contMDiff
+    (liftToCp1_contMDiff X f) hnonconst finite_fiber y₀
 
 /-- Basic holomorphicity of the CP¹ lift of a meromorphic function. -/
 theorem liftToCp1_isHolomorphicBasic

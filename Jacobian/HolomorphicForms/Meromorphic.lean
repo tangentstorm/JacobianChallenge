@@ -156,4 +156,39 @@ omit [Periods.StableChartAt ℂ X] in
 
 end MeromorphicMapToSphere
 
+/-- **Narrow Laurent-to-modulus provider.**
+
+For any `MeromorphicMapToSphere X` with pole divisor `Divisor.point P`,
+the norm of the canonical finite lift `x ↦ (f.toMap x).getD 0` tends to
+`+∞` along the punctured neighborhood of `P`.
+
+This is the precise local Laurent-to-modulus content that the
+`PoleModulusData` field requires. It is stated independently of how `f`
+was produced (Riemann-Roch, dipole construction, etc.); the burden is
+proving modulus divergence purely from the simple-pole hypothesis and
+the structural axioms of `MeromorphicMapToSphere`.
+
+**Intended proof.** Near `P`, in any chart, the chart-local presentation
+of `f` has an order-one pole. The `toFiniteFun_mdifferentiable` axiom
+of `MeromorphicMapToSphere` combined with chart-local Laurent normal
+form yields the standard `1/(z - z₀)` divergence. The current
+`MeromorphicMapToSphere` structure does not directly expose this Laurent
+normal form; this provider names the gap precisely.
+
+**Why not `singlePoleMeromorphicMap_poleModulusData`.** That theorem
+gives the same modulus content for the specific cutoff scaffold; here
+`f` is an arbitrary `MeromorphicMapToSphere` with pole divisor `[P]`. -/
+theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    Filter.Tendsto
+      (fun x => ‖(f.toMap x).getD 0‖)
+      (nhdsWithin P {P}ᶜ)
+      Filter.atTop := by
+  sorry
+
 end JacobianChallenge.HolomorphicForms
