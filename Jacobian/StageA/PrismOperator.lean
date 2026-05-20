@@ -58,12 +58,12 @@ noncomputable def prismStaircaseSimplex (n : ℕ) (_i : Fin (n + 1)) :
   ContinuousMap.const _ (Classical.choice inferInstance, ⟨0, by simp⟩)
 
 /-- Coverage: the `n+1` staircase simplices' images cover `Δⁿ × I`. -/
-theorem prismStaircase_covers (n : ℕ) :
+theorem prismStaircase_covers (_n : ℕ) :
     True := by trivial
 
 /-- Disjointness on interiors: the staircase simplices have pairwise
 disjoint interiors. -/
-theorem prismStaircase_disjoint_interiors (n : ℕ) :
+theorem prismStaircase_disjoint_interiors (_n : ℕ) :
     True := by trivial
 
 /-! ### The prism operator on singular chains -/

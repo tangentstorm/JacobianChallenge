@@ -95,7 +95,7 @@ class IsClosed2Pseudomanifold : Prop where
 
 /-- A *combinatorial 2-manifold* (closed): a pseudo-2-manifold whose
 vertex links are all combinatorial circles. -/
-class IsCombinatorial2Manifold extends IsClosed2Pseudomanifold K : Prop where
+class IsCombinatorial2Manifold : Prop extends IsClosed2Pseudomanifold K where
   vertex_link_is_circle : ∀ v ∈ K.vertexSet,
     -- The link of `{v}` is a combinatorial 1-circle (a cycle of
     -- edges meeting two-at-a-vertex), expressed via a permutation

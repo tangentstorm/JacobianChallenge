@@ -90,15 +90,108 @@ noncomputable def edgeBasisMap (g : ℕ) :
 
 /-- **Phase 4 stub (existence form, kept for backwards compatibility).** -/
 theorem edgeBasisMap_exists (g : ℕ) :
-    ∃ _f : Polygon4gAbelianization g →ₗ[ℤ] singularH1 (Polygon4g (g + 1)),
-      True :=
-  ⟨edgeBasisMap g, trivial⟩
+    ∃ f : Polygon4gAbelianization g →ₗ[ℤ] singularH1 (Polygon4g (g + 1)),
+      f = edgeBasisMap g :=
+  ⟨edgeBasisMap g, rfl⟩
 
 /-- **Phase 4 stub.** Existence of edge homology classes (kept for
 backwards compatibility). -/
 theorem edgeHomologyClass_exists (g : ℕ) (i : Fin (2 * (g + 1))) :
-    ∃ _c : singularH1 (Polygon4g (g + 1)), True :=
-  ⟨edgeHomologyClass g i, trivial⟩
+    ∃ c : singularH1 (Polygon4g (g + 1)), c = edgeHomologyClass g i :=
+  ⟨edgeHomologyClass g i, rfl⟩
+
+/-- The existing concrete edge homology class agrees with the Hurewicz
+project-side edge-chain class map on a single cellular edge generator.
+This is the bridge needed to transport future cellular/Hurewicz spanning
+statements to the concrete `edgeHomologyFamily`. -/
+theorem edgeHomologyClass_eq_toSingularH1Class_single
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C)
+    (i : Fin (2 * (g + 1))) :
+    edgeHomologyClass g i =
+      Polygon4gSingularC1.toSingularH1Class (g + 1) C D ⟨Pi.single i 1⟩ := by
+  rw [Polygon4gSingularC1.toSingularH1_single]
+  rfl
+
+/-- The coefficient map from the project-side singular one-chain wrapper
+to the free module on polygon edges. -/
+noncomputable def polygon4gSingularC1CoeffMap
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C) :
+    Polygon4gSingularC1 (g + 1) C D →ₗ[ℤ] Polygon4gAbelianization g where
+  toFun := fun c => c.coeff
+  map_add' := by
+    intro x y
+    rfl
+  map_smul' := by
+    intro n x
+    rfl
+
+/-- The project-side singular one-chain wrapper is linearly equivalent
+to the free coefficient module on the polygon edges. -/
+noncomputable def polygon4gSingularC1CoeffLinearEquiv
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C) :
+    Polygon4gSingularC1 (g + 1) C D ≃ₗ[ℤ] Polygon4gAbelianization g where
+  toFun := fun c => c.coeff
+  invFun := fun v => ⟨v⟩
+  left_inv := by
+    intro c
+    ext i
+    rfl
+  right_inv := by
+    intro v
+    rfl
+  map_add' := by
+    intro x y
+    rfl
+  map_smul' := by
+    intro n x
+    rfl
+
+/-- The coefficient linear map is the linear map underlying the
+coefficient equivalence. -/
+theorem polygon4gSingularC1CoeffMap_eq_equiv_toLinearMap
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C) :
+    polygon4gSingularC1CoeffMap g C D =
+      (polygon4gSingularC1CoeffLinearEquiv g C D).toLinearMap := by
+  ext c
+  rfl
+
+/-- The linear edge-class realization of the project-side singular
+one-chain wrapper: read off its edge coefficients, then form the
+corresponding finite linear combination of concrete edge homology
+classes. -/
+noncomputable def polygon4gSingularC1EdgeClassMap
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C) :
+    Polygon4gSingularC1 (g + 1) C D →ₗ[ℤ] singularH1 (Polygon4g (g + 1)) :=
+  (edgeBasisMap g).comp (polygon4gSingularC1CoeffMap g C D)
+
+/-- The linear edge-class realization is exactly `edgeBasisMap` applied
+to the wrapper coefficients. -/
+theorem polygon4gSingularC1EdgeClassMap_apply
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C)
+    (c : Polygon4gSingularC1 (g + 1) C D) :
+    polygon4gSingularC1EdgeClassMap g C D c = edgeBasisMap g c.coeff :=
+  rfl
+
+/-- Surjectivity of the project-side edge-class realization is equivalent
+to surjectivity of the concrete edge-basis map. -/
+theorem polygon4gSingularC1EdgeClassMap_surjective_iff_edgeBasisMap_surjective
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C) :
+    Function.Surjective (polygon4gSingularC1EdgeClassMap g C D) ↔
+      Function.Surjective (edgeBasisMap g) := by
+  constructor
+  · intro h y
+    obtain ⟨c, hc⟩ := h y
+    exact ⟨c.coeff, by simpa [polygon4gSingularC1EdgeClassMap_apply] using hc⟩
+  · intro h y
+    obtain ⟨v, hv⟩ := h y
+    exact ⟨⟨v⟩, by simpa [polygon4gSingularC1EdgeClassMap_apply] using hv⟩
 
 /-
 `edgeBasisMap g` evaluated on a standard basis vector `Pi.single i 1`
@@ -108,6 +201,27 @@ theorem edgeBasisMap_single (g : ℕ) (i : Fin (2 * (g + 1))) :
     edgeBasisMap g (Pi.single i 1) = edgeHomologyClass g i := by
   unfold edgeBasisMap;
   simp +decide [ LinearMap.toSpanSingleton, LinearMap.proj ]
+
+/-- On project-side edge generators, the linear edge-class realization
+agrees with the concrete Hurewicz class map. -/
+theorem polygon4gSingularC1EdgeClassMap_single_eq_toSingularH1Class
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C)
+    (i : Fin (2 * (g + 1))) :
+    polygon4gSingularC1EdgeClassMap g C D ⟨Pi.single i 1⟩ =
+      Polygon4gSingularC1.toSingularH1Class (g + 1) C D ⟨Pi.single i 1⟩ := by
+  rw [polygon4gSingularC1EdgeClassMap_apply, edgeBasisMap_single,
+    edgeHomologyClass_eq_toSingularH1Class_single]
+
+/-- Evaluation of the edge-basis map on coefficients: it is the explicit
+finite sum of the singleton-span maps applied to each coefficient.  This
+is the scalar-instance-stable normal form of the statement that
+`edgeBasisMap` is the finite linear combination of the edge classes. -/
+theorem edgeBasisMap_apply (g : ℕ) (v : Polygon4gAbelianization g) :
+    edgeBasisMap g v =
+      ∑ i : Fin (2 * (g + 1)),
+        LinearMap.toSpanSingleton ℤ _ (edgeHomologyClass g i) (v i) := by
+  simp [edgeBasisMap, LinearMap.proj]
 
 /-
 The range of `edgeBasisMap g` equals the ℤ-span of the edge
@@ -120,6 +234,25 @@ theorem edgeBasisMap_range (g : ℕ) :
     simp +decide [ edgeBasisMap, Submodule.mem_span_range_iff_exists_fun ];
     exact ⟨ _, rfl ⟩;
   · exact fun i => ⟨ Pi.single i 1, edgeBasisMap_single g i ⟩
+
+/-- The edge-family spanning statement is exactly surjectivity of the
+concrete edge-basis map.  This isolates the remaining Phase 6.b content
+as a statement about the chain-level edge classes, rather than as a
+separate abstract spanning obligation. -/
+theorem edgeHomologyFamily_spans_iff_edgeBasisMap_surjective (g : ℕ) :
+    Submodule.span ℤ (Set.range (edgeHomologyFamily g)) = ⊤ ↔
+      Function.Surjective (edgeBasisMap g) := by
+  rw [← LinearMap.range_eq_top, edgeBasisMap_range]
+
+/-- The edge-family spanning theorem is equivalent to surjectivity of
+the project-side edge-class realization. -/
+theorem edgeHomologyFamily_spans_iff_project_edgeClassMap_surjective
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C) :
+    Submodule.span ℤ (Set.range (edgeHomologyFamily g)) = ⊤ ↔
+      Function.Surjective (polygon4gSingularC1EdgeClassMap g C D) := by
+  rw [edgeHomologyFamily_spans_iff_edgeBasisMap_surjective,
+    polygon4gSingularC1EdgeClassMap_surjective_iff_edgeBasisMap_surjective]
 
 /-- **Phase 6.b spanning leaf.**
 The edge homology classes span `singularH1 (Polygon4g (g+1))`.

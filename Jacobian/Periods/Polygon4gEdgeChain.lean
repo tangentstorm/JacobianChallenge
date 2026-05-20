@@ -247,4 +247,28 @@ theorem edgeChain_isCycle (g : ℕ) (i : Fin (2 * (g + 1))) :
       = 0
   simp [pow_zero, pow_one, one_smul, add_neg_cancel]
 
+/-- The concrete edge chain indexed by the one-cells of `Polygon4g g`.
+For `g = 0` the index type is empty; for `g = h + 1` this is the
+existing `edgeChain h`.  This version matches the `Fin (2 * g)` indexing
+used by the project-side cellular model and Hurewicz comparison data. -/
+noncomputable def edgeChainOnGenus (g : ℕ) (i : Fin (2 * g)) :
+    SingularChainCoproduct (Polygon4g g) 1 := by
+  cases g with
+  | zero =>
+      exact False.elim (Fin.elim0 i)
+  | succ h =>
+      exact edgeChain h i
+
+/-- The genus-indexed concrete edge chain is a singular 1-cycle. -/
+theorem edgeChainOnGenus_isCycle (g : ℕ) (i : Fin (2 * g)) :
+    (((singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).obj (TopCat.of (Polygon4g g))).d 1 0
+        (edgeChainOnGenus g i : SingularChainCoproduct (Polygon4g g) 1)
+      = 0 := by
+  cases g with
+  | zero =>
+      exact False.elim (Fin.elim0 i)
+  | succ h =>
+      exact edgeChain_isCycle h i
+
 end JacobianChallenge.Periods
