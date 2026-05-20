@@ -311,6 +311,7 @@ and `HandleSwap`. -/
 inductive TietzeStep : {g : ℕ} → EdgeWord g → EdgeWord g → Prop where
   | cancel {g : ℕ} {w v : EdgeWord g} (h : InverseCancel w v) : TietzeStep w v
   | swap   {g : ℕ} {w v : EdgeWord g} (h : HandleSwap w v) : TietzeStep w v
+  | rotate {g : ℕ} {w : EdgeWord g} (k : ℕ) : TietzeStep w (w.rotate k)
 
 /-- Word equivalence under the full Tietze move set. -/
 def TietzeEq {g : ℕ} : EdgeWord g → EdgeWord g → Prop :=
