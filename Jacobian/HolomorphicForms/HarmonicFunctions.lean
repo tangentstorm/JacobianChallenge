@@ -509,14 +509,37 @@ theorem inverse_dipole_vanishing_order_one (X : Type*) [TopologicalSpace X] [T2S
 /-- **Frontier bridge: analytic order one of the inverse gives one simple pole.**
 
 This is the honest boundary between the current analytic/order API and
-`MeromorphicMapToSphere`'s divisor-carrying structure.  Callers should route
+`MeromorphicMapToSphere`'s divisor-carrying structure. Callers should route
 simple-pole conclusions through this theorem (or a future proved replacement)
 instead of constructing a `MeromorphicMapToSphere` by manually setting
 `poleDivisor := Divisor.point P`.
 
-The intended proof builds the one-point extension of `F`, proves that it is
-meromorphic, and identifies the pole divisor from the chart-local order
-statement for `F⁻¹`. -/
+### Why this is a frontier sorry
+
+To honestly discharge this theorem from `F`, `hholo : IsHolomorphic F`, and
+`horder : mapAnalyticOrderAt (·⁻¹ ∘ F) P = 1`, one must construct the
+one-point extension of `F` to `OnePoint ℂ` and produce every analytic axiom
+field of `MeromorphicMapToSphere X`:
+
+* `toMap`: the value `((F x : ℂ) : OnePoint ℂ)` for `x ≠ P`, and `∞` at `P`
+  — but only after proving the limit `F x → ∞` near `P` (currently no API);
+* `continuousOn_ne_infty`: continuity off the pole locus, which needs the
+  removable-singularity / one-point limit at the boundary;
+* `toFiniteFun_mdifferentiable`: holomorphicity of any global complex-valued
+  lift through `OnePoint.some`;
+* `toMap_eq_infty_of_poleDivisor_pos`: the value at `P` is `∞`, justified
+  by the order-one zero of `F⁻¹`.
+
+The scaffold constructor
+`JacobianChallenge.HolomorphicForms.singlePoleMeromorphicMap` in
+`SinglePoleLift.lean` *technically* satisfies the existence claim
+`∃ f, f.poles = Divisor.point P` for *any* `P` and ignores `F`, `hholo`,
+`horder`. Discharging this frontier via that scaffold is forbidden by the
+project contract (see `goal.md`): a real proof must consume `F`, `hholo`,
+`horder` to produce the analytic axiom fields, not assign the divisor by
+hand. The remaining infrastructure gap is a one-point extension API for
+holomorphic functions on Riemann surfaces, not present in Mathlib at the
+pinned v4.28.0 commit. -/
 theorem meromorphicMapToSphere_of_inverse_order_one_frontier (X : Type*)
     [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -525,8 +548,10 @@ theorem meromorphicMapToSphere_of_inverse_order_one_frontier (X : Type*)
     (hholo : IsHolomorphic F)
     (horder : mapAnalyticOrderAt (fun x => (F x)⁻¹) P = 1) :
     ∃ f : MeromorphicMapToSphere X, f.poles = Divisor.point P := by
-  -- Frontier: chart-local order data for `F⁻¹` must be converted into the
-  -- divisor field of the associated meromorphic map to the Riemann sphere.
+  -- Frontier: the missing infrastructure is the one-point extension API
+  -- for holomorphic functions; see the docstring above. Do not dispatch
+  -- this via `singlePoleMeromorphicMap P`, which ignores `F`, `hholo`,
+  -- `horder`.
   sorry
 
 /-- **Sub-obligation 4 assembly.**

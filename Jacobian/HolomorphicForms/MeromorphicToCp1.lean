@@ -132,7 +132,30 @@ theorem liftToCp1_holomorphicAt
   | coe z =>
       exact liftToCp1_holomorphicAt_finite X f _hholo p hval
 
-/-- Local `k`-fold normal form/counting for the CP¹ lift. -/
+/-- Local `k`-fold normal form/counting for the CP¹ lift.
+
+### Why this is a frontier sorry
+
+This is the local mapping theorem (`z ↦ z^k` normal form) for the CP¹ lift,
+in both the finite chart and the infinity chart on `OnePoint ℂ`. A real
+proof has to:
+
+* split on whether `meromorphicToCp1 X f x` is finite or `∞`;
+* in the finite chart, reduce to the local analytic map for the finite lift
+  of `f` and apply `AnalyticLocalMapping.analytic_local_mapping_theorem`;
+* in the infinity chart, reduce to the reciprocal local branch and apply
+  the same local mapping theorem to `f.toFun⁻¹`;
+* prove compatibility of `mapAnalyticOrderAt (meromorphicToCp1 X f)` with the
+  finite/infinity chart normal forms — i.e., that the chart-local order at
+  `x` matches the multiplicity from the local mapping theorem;
+* identify the produced `Finset` with the actual local fiber, not an
+  arbitrary witness.
+
+The current `MeromorphicFunctionType` exposes local meromorphicity of the
+raw map but no chart-local normal form, no finite-local-fiber data, and no
+ramification/order compatibility lemma. The missing infrastructure is a
+sharper local-analytic API for meromorphic germs on Riemann surfaces. Until
+that exists this theorem cannot be discharged honestly. -/
 theorem liftToCp1_local_kfold_ramified
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -149,13 +172,34 @@ theorem liftToCp1_local_kfold_ramified
         (∀ x' ∈ s, meromorphicToCp1 X f x' = y ∧
           mapAnalyticOrderAt (meromorphicToCp1 X f) x' = 1) ∧
         (∀ x' ∈ U, meromorphicToCp1 X f x' = y → x' ∈ s) := by
-  -- Frontier: this is the local mapping theorem for the CP¹ lift, in finite
-  -- and infinity charts.  The current `MeromorphicFunctionType` gives local
-  -- meromorphicity of the raw map, but no chart-local normal form, finite
-  -- local fibers, or ramification/order compatibility data.
+  -- Frontier: local mapping theorem for meromorphic CP¹ lifts. Do not
+  -- fabricate a `Finset` witness — the `s` here must be the actual local
+  -- fiber produced by the local analytic mapping theorem.
   sorry
 
-/-- Local conservation of the weighted fibre count for the CP¹ lift. -/
+/-- Local conservation of the weighted fibre count for the CP¹ lift.
+
+### Why this is a frontier sorry
+
+Weighted-fiber conservation (the degree theorem for branched covers) is the
+*global* statement that the weighted fiber sum is locally constant on the
+target. A real proof needs:
+
+* the local k-fold ramification data from `liftToCp1_local_kfold_ramified`
+  to get neighborhoods on which fiber multiplicities sum to the local
+  degree;
+* compactness/properness to cover the fiber over `y₀` by finitely many such
+  neighborhoods;
+* a disjoint-union argument showing that nearby fibers decompose as a
+  disjoint union of the local fiber witnesses;
+* the sum of `mapAnalyticOrderAt` over that disjoint union, plus the
+  ramification/order compatibility from the local mapping theorem.
+
+The `finite_fiber` hypothesis here is only finite support data; it does
+not by itself give weighted conservation. The `_hholo : True` carries no
+analytic content. Discharging this honestly requires the local-mapping
+infrastructure above and a properness argument for the CP¹ lift, neither
+of which is currently in the codebase. -/
 theorem liftToCp1_weightedFiberSum_eventually_eq
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -171,10 +215,9 @@ theorem liftToCp1_weightedFiberSum_eventually_eq
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) =
         ((finite_fiber y₀).toFinset).sum
           (mapAnalyticOrderAt (meromorphicToCp1 X f)) := by
-  -- Frontier: weighted-fiber conservation is a global branched-cover theorem.
-  -- Even with finite fibers as an input, the proof needs properness/degree
-  -- data and compatibility of the local ramification indices with
-  -- `mapAnalyticOrderAt`; none of this is contained in `hholo : True`.
+  -- Frontier: weighted-fiber conservation = branched-cover degree principle.
+  -- Do not force `mapAnalyticOrderAt` to be constant or ignore ramification —
+  -- both would silently weaken the statement.
   sorry
 
 /-- Basic holomorphicity of the CP¹ lift of a meromorphic function. -/

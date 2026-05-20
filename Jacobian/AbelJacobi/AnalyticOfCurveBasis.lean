@@ -2130,22 +2130,70 @@ theorem degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicDat
   -- Step 4: easy direction of the genus-zero classification.
   exact HolomorphicForms.analyticGenus_eq_zero_of_homeomorphic_sphere X ⟨h₂⟩
 
-/-- **S20 public frontier.** A meromorphic map with one simple pole forces
-genus zero. The route-data version
-`degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData`
-is the currently proved assembly; this theorem keeps the original contract. -/
+/-- **S20 public frontier (route-data construction missing).** A meromorphic
+map with one simple pole would force genus zero *if* it carried honest analytic
+data near the pole. With only the bare divisor equality `f.poleDivisor =
+Divisor.point Q₂`, this implication is not provable from the current
+`MeromorphicMapToSphere` structure: the scaffold constructor
+`JacobianChallenge.HolomorphicForms.singlePoleMeromorphicMap` (in
+`SinglePoleLift.lean`) produces, for arbitrary `X`, a `MeromorphicMapToSphere`
+whose `poleDivisor` is `Divisor.point Q` — without modulus divergence near the
+pole. Concluding `analyticGenus ℂ X = 0` from such a scaffold would be unsound.
+
+The honest assembly that *can* be proved is
+`degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData`,
+which takes the missing analytic data as additional hypotheses
+(`PoleModulusData` and `BranchedCoverDataOfPoleDegree`). The clean wrapper
+`degree_one_meromorphicMap_implies_analyticGenus_zero_of_routeData` below
+exposes it under a friendlier name.
+
+This declaration is kept as a documented frontier sorry so the downstream
+chain into `Solution.ofCurve_inj` (whose signature in `Jacobian/Challenge.lean`
+takes no route data) still type-checks. Discharging this frontier requires
+building `PoleModulusData` and `BranchedCoverDataOfPoleDegree` directly from
+the simple-pole hypothesis — which in the current API is impossible because
+`MeromorphicMapToSphere` does not enforce analytic divergence at poles. The
+correct fix is either (a) strengthen `MeromorphicMapToSphere` with a modulus
+field and update scaffolds accordingly (the alternative shape called out in
+goal.md), or (b) propagate explicit route-data hypotheses all the way up the
+chain through `Challenge.lean`, which is forbidden by the project contract.
+
+Do not "prove" this theorem by manufacturing route data from `hpole` alone:
+that would derive genus-zero classification for arbitrary `X`. -/
 theorem degree_one_meromorphicMap_implies_analyticGenus_zero
     (f : HolomorphicForms.MeromorphicMapToSphere X) (Q₂ : X)
     (hpole : f.poleDivisor = HolomorphicForms.Divisor.point Q₂) :
     analyticGenus ℂ X = 0 := by
-  -- Frontier: construct the pole-modulus and branched-cover data for `f`.
+  -- Frontier: this implication is NOT provable from `hpole` alone; see the
+  -- declaration's docstring for why. The route-data form
+  -- `..._with_meromorphicData` (also exposed as `..._of_routeData`) is the
+  -- honest theorem.
   sorry
 
-/-- Public assembly: a nonconstant meromorphic map with a single pole forces
-genus zero.  This is just the public degree-one implication applied to the
-same pole-divisor equality; nonconstancy is part of the intended classical
-route, but the current public degree-one frontier already carries the missing
-analytic construction. -/
+/-- **Cleanly named alias** for
+`degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData`:
+the honest route-data form of S20. This wrapper is sorry-free and just
+forwards to the existing assembly. -/
+theorem degree_one_meromorphicMap_implies_analyticGenus_zero_of_routeData
+    (f : HolomorphicForms.MeromorphicMapToSphere X) (Q₂ : X)
+    (hpole : f.poleDivisor = HolomorphicForms.Divisor.point Q₂)
+    (hmod : f.PoleModulusData)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
+    analyticGenus ℂ X = 0 :=
+  degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData X f Q₂
+    hpole hmod hbranch
+
+/-- Public assembly: a meromorphic map with a single pole forces genus zero.
+
+This forwards to `degree_one_meromorphicMap_implies_analyticGenus_zero` and
+therefore inherits the same frontier sorry. The route-data form
+`nonconstant_single_pole_implies_genus_zero_with_meromorphicData` is
+sorry-free and is the honest assembly to use when route data is in hand.
+
+This declaration is kept only because the downstream chain into
+`Solution.ofCurve_inj` (defined by `Jacobian/Challenge.lean` without
+route-data hypotheses) eventually reaches it; do not consume it in new
+code without route data. -/
 theorem nonconstant_single_pole_implies_genus_zero
     (f : HolomorphicForms.MeromorphicMapToSphere X)
     (Q : X)
@@ -2173,7 +2221,12 @@ theorem period_congruence_distinct_implies_genus_zero_with_meromorphicData
     hpole hmod hbranch
 
 /-- **Round 1 public assembly.** Combines Abel existence with the public S20
-frontier theorem. -/
+frontier theorem.
+
+Because this forwards to `degree_one_meromorphicMap_implies_analyticGenus_zero`,
+it inherits the same frontier sorry. The route-data form
+`period_congruence_distinct_implies_genus_zero_with_meromorphicData` above is
+the sorry-free assembly. -/
 theorem period_congruence_distinct_implies_genus_zero
     (P : X) (Q₁ Q₂ : X) (hne : Q₁ ≠ Q₂)
     (hperiod :

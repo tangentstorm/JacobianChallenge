@@ -1623,10 +1623,24 @@ theorem homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData
 connected Riemann surface with `analyticGenus = 0` is homeomorphic to the
 one-point compactification of `ℂ`.
 
-The route-data version above records the currently proved assembly from
-explicit pole-modulus and branched-cover data.  This public theorem keeps the
-original contract: the remaining work is to construct that data for the
-Riemann-Roch fixed-pole map, not to require it from callers. -/
+The route-data version above (`genus_zero_homeomorph_onePointCx_with_routeData`)
+records the currently proved assembly from explicit pole-modulus and
+branched-cover data. A cleanly named wrapper
+`genus_zero_homeomorph_onePointCx_of_routeData` exists below and is the
+sorry-free form callers should use whenever route data is in hand.
+
+The remaining work for this no-route-data frontier is to construct
+`PoleModulusData` and `BranchedCoverDataOfPoleDegree` for the fixed-pole
+Riemann-Roch map `simplePoleMeromorphicMapOfGenusZero X h`. That construction
+is the analytic content of the genus-zero classification and not provable
+from `analyticGenus ℂ X = 0` alone using only the bare
+`MeromorphicMapToSphere` structure — the structure does not enforce modulus
+divergence at poles, so scaffold maps with prescribed simple-pole divisors
+exist that do not satisfy `PoleModulusData`.
+
+Do not "prove" this theorem by manufacturing route data from `h`: such a
+proof would imply uniformization for arbitrary surfaces, which is exactly
+the genus-zero classification it pretends to deliver. -/
 theorem genus_zero_homeomorph_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1635,9 +1649,26 @@ theorem genus_zero_homeomorph_onePointCx
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (h : analyticGenus ℂ X = 0) :
     Nonempty (X ≃ₜ OnePoint ℂ) := by
-  -- Frontier: construct `PoleModulusData` and
-  -- `BranchedCoverDataOfPoleDegree` for the fixed-pole Riemann-Roch map.
+  -- Frontier: build `PoleModulusData` and `BranchedCoverDataOfPoleDegree`
+  -- for `simplePoleMeromorphicMapOfGenusZero X h`. See the docstring for
+  -- why this cannot be discharged by manufacturing route data from `h`.
   sorry
+
+/-- **Cleanly named alias** for `genus_zero_homeomorph_onePointCx_with_routeData`:
+the honest route-data form of the genus-zero uniformization. Sorry-free
+wrapper that just forwards to the existing assembly. -/
+theorem genus_zero_homeomorph_onePointCx_of_routeData
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (h : analyticGenus ℂ X = 0)
+    (hmod : (simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.PoleModulusData)
+    (hbranch :
+      (simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.BranchedCoverDataOfPoleDegree) :
+    Nonempty (X ≃ₜ OnePoint ℂ) :=
+  genus_zero_homeomorph_onePointCx_with_routeData X h hmod hbranch
 
 /-- The "hard" direction of genus-zero classification, public frontier
 statement with the original contract. -/
