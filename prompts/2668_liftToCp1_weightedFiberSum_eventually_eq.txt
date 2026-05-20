@@ -1,0 +1,24 @@
+Please rename this session to "2668. Prove liftToCp1_weightedFiberSum_eventually_eq".
+
+Target file: Jacobian/HolomorphicForms/MeromorphicToCp1.lean
+Target sorry: theorem liftToCp1_weightedFiberSum_eventually_eq
+Allowed writes: prefer Jacobian/HolomorphicForms/MeromorphicToCp1.lean and branched-cover degree API files.
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+
+Task: prove local conservation of weighted fiber count for the CP¹ lift.
+
+Expected approach:
+1. Use the local k-fold theorem from `liftToCp1_local_kfold_ramified`.
+2. Establish properness/finite branched-cover degree for the nonconstant CP¹ lift.
+3. Prove that the weighted sum of `mapAnalyticOrderAt` over finite fibers is locally constant.
+
+Anti-cheat:
+- The `finite_fiber` hypothesis only gives finite fibers; it does not by itself prove weighted conservation.
+- Do not make `mapAnalyticOrderAt` constant or ignore ramification.
+
+Verification:
+```sh
+lake build Jacobian.HolomorphicForms.MeromorphicToCp1
+python3 scripts/fix-sorries.py
+python3 scripts/audit-sorries.py sorries.jsonl
+```
