@@ -37,15 +37,11 @@ noncomputable def diskMul (c : ℂ) (hc : ‖c‖ = 1) : DiskC ≃ₜ DiskC wher
   continuous_invFun := Continuous.subtype_mk (continuous_const.mul continuous_subtype_val) _
 
 lemma diskMul_apply (c : ℂ) (hc : ‖c‖ = 1) (z : DiskC) :
-    (diskMul c hc z).1 = c * z.1 := rfl
+    (diskMul c hc z).val = c * z.1 := rfl
 
 private lemma norm_exp_I_mul_real (r : ℝ) :
     ‖Complex.exp (Complex.I * (r : ℂ))‖ = 1 := by
-  simp
-
-private lemma norm_exp_real_mul_I (r : ℝ) :
-    ‖Complex.exp ((r : ℂ) * Complex.I)‖ = 1 := by
-  simp
+  rw [mul_comm, Complex.norm_exp_ofReal_mul_I]
 
 /-- Map a homeomorphism between two types to a homeomorphism between their quotients,
 given that the homeomorphism respects the relations. -/
@@ -64,6 +60,27 @@ private def Quotient.homeo' {α β : Type*} [TopologicalSpace α] [TopologicalSp
   continuous_invFun := Continuous.quotient_map' f.symm.continuous (fun x y h => by
     have h_symm := hf (f.symm x) (f.symm y); simp only [Homeomorph.apply_symm_apply] at h_symm; rwa [h_symm])
 
+/-! ### Rotation-invariance lemmas -/
+
+/-- Rigid rotation of the disk by a specified number of boundary sides. -/
+noncomputable def diskRotateBySide (L : ℕ) (hL : L ≠ 0) (k : ℕ) : DiskC ≃ₜ DiskC :=
+  let theta := 2 * Real.pi * k / L
+  diskMul (Complex.exp (Complex.I * theta)) (norm_exp_I_mul_real theta)
+
+/-- **Narrow Leaf.** Side-pairing relation is preserved under rigid disk rotation. -/
+theorem sidePairingRel_rotate_iff
+    {g : ℕ} (w : EdgeWord g) (k : ℕ) (hL : w.length ≠ 0) :
+    ∀ x y : DiskC,
+      EdgeWord.sidePairingRel g w x y ↔
+        EdgeWord.sidePairingRel g (w.rotate k)
+          (diskRotateBySide w.length hL (w.length * (k / w.length + 1) - k) x)
+          (diskRotateBySide w.length hL (w.length * (k / w.length + 1) - k) y) := by
+  -- Technical blocker: This requires a rigorous proof that disk rotation by -2πk/L
+  -- transforms the w-identifications to (w.rotate k)-identifications.
+  -- The construction follows from the fact that cyclic shift of boundary word
+  -- corresponds exactly to rigid rotation of boundary labels.
+  sorry
+
 /-! ### Quotient lemmas -/
 
 /-- Cyclic rotation of the word preserves the quotient. -/
@@ -74,9 +91,11 @@ theorem wordQuotient_homeomorph_of_rotate
   by_cases hL : w.length = 0
   · have hw : w = [] := List.eq_nil_of_length_eq_zero hL
     subst hw; exact ⟨Homeomorph.refl _⟩
-  · -- Rigid rotation of the disk boundary preserves the side-pairing relation
-    -- and induces a homeomorphism of the quotient.
-    sorry
+  · let hL_pos : w.length ≠ 0 := hL
+    let k_rot := w.length * (k / w.length + 1) - k
+    exact ⟨Quotient.homeo'
+      (diskRotateBySide w.length hL_pos k_rot)
+      (sidePairingRel_rotate_iff w k hL_pos)⟩
 
 /-- Rotating the tail of a handle-prefixed word preserves the quotient. -/
 theorem handlePrefix_tailRotate_homeomorph
