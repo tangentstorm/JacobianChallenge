@@ -137,7 +137,7 @@
 {"i":1472,"f":"Jacobian/StageA/CellularSingular.lean","k":"theorem","s":"skeletal_pair_wedge_of_spheres","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1473,"f":"Jacobian/StageA/EdgeWordTietze.lean","k":"theorem","s":"handleSwap_grouping_inductive_step","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1474,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"def","s":"basisAnalyticPullbackBundle","n":1,"o":0,"r":1,"e":6,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
-{"i":1475,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"theorem","s":"transfer_functional_mem_periodSubgroup","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1475,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"theorem","s":"transfer_functional_mem_periodSubgroup","n":1,"o":1,"r":1,"e":5,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1476,"f":"tex/statements/challenge-statement.tex","k":"definition","s":"Jacobian.ofCurve","n":0,"o":1,"r":1,"e":null,"u":[1478,1530],"d":[0,1529,1531,2580,2582],"a":"","c":"done","b":"def:abel-jacobi","t":""}
 {"i":1477,"f":"tex/statements/challenge-statement.tex","k":"definition","s":"JacobianChallenge.HolomorphicForms.analyticGenus","n":0,"o":1,"r":1,"e":null,"u":[],"d":[1478,2591,2592],"a":"","c":"done","b":"def:analytic-genus","t":""}
 {"i":1478,"f":"tex/statements/challenge-statement.tex","k":"definition","s":"Jacobian","n":0,"o":1,"r":1,"e":null,"u":[1477,2576,2602],"d":[0,1476,2092,2614],"a":"","c":"done","b":"def:analytic-jacobian","t":""}
@@ -1234,7 +1234,7 @@
 {"i":2668,"f":"Jacobian/HolomorphicForms/MeromorphicToCp1.lean","k":"theorem","s":"liftToCp1_weightedFiberSum_eventually_eq","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2669,"f":"Jacobian/HolomorphicForms/TraceBundled.lean","k":"def","s":"traceFormsRegularSpec_frontier","n":1,"o":1,"r":0,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2670,"f":"Jacobian/HolomorphicForms/DeRhamComparisonMap.lean","k":"def","s":"deRhamComparisonMap1Spec_frontier","n":2,"o":2,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2671,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"def","s":"analyticTraceDegreeSpec_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2671,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"def","s":"analyticTraceDegreeSpec_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2672,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2673,"f":"Jacobian/Periods/CellularChainComplex.lean","k":"theorem","s":"polygon4g_boundary_arcs_are_loops","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2674,"f":"Jacobian/Periods/CellularHomologyRS.lean","k":"def","s":"polygon4g_cellularModel_to_mathlibCW_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
@@ -1245,3 +1245,7 @@
 {"i":2679,"f":"Jacobian/HolomorphicForms/Meromorphic.lean","k":"theorem","s":"MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2680,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"edgeBasisMap_injective","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2681,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"edgeBasisMap_surjective","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2682,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"def","s":"analyticPushPull_provider","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2683,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"def","s":"traceFormsRegularSpec_provider","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2684,"f":"Jacobian/TraceDegree/AnalyticDegree.lean","k":"def","s":"trace_pullback_provider","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2685,"f":"Jacobian/TraceDegree/PullbackBasis.lean","k":"theorem","s":"transferCycle_periodPairing_naturality","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
