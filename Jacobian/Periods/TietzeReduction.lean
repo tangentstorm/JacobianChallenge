@@ -281,9 +281,9 @@ or similar. -/
 theorem wordQuotient_homeomorph_of_tietzeEq
     {g : ℕ} {w v : EdgeWord g} (h : EdgeWord.TietzeEq w v) :
     Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
-  -- Each `EdgeWord.TietzeStep` is either a `cancel` or a `swap` step;
-  -- the corresponding leaf produces the homeomorphism. Compose along
-  -- the reflexive-transitive closure.
+  -- Each `EdgeWord.TietzeStep` is either a `cancel`, `swap`, or `rotate`
+  -- step; the corresponding leaf produces the homeomorphism. Compose
+  -- along the reflexive-transitive closure.
   refine Relation.ReflTransGen.head_induction_on h ?_ ?_
   · exact ⟨Homeomorph.refl _⟩
   · intro _a _b hab _hbc ih
