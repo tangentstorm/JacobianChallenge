@@ -1,4 +1,7 @@
 import Jacobian.Periods.CellularChainComplex
+import Jacobian.Periods.Polygon4gEdgeChain
+import Mathlib.Algebra.Homology.ConcreteCategory
+import Mathlib.LinearAlgebra.Pi
 
 /-!
 # Project-side Hurewicz and cellular-to-singular bridge
@@ -10,6 +13,34 @@ surface needed by the Jacobian project.
 -/
 
 namespace JacobianChallenge.Periods
+
+open AlgebraicTopology CategoryTheory
+
+/-- **Round 50 / Stage A leaf.** Opaque "surface group abelianisation"
+witness.  Concretely this is the free abelian module on the oriented
+edge generators of `Polygon4g (g+1)`. -/
+def Polygon4gAbelianization (g : ℕ) : Type :=
+  Fin (2 * (g + 1)) → ℤ
+
+instance polygon4gAbelianization_addCommGroup (g : ℕ) :
+    AddCommGroup (Polygon4gAbelianization g) := by
+  unfold Polygon4gAbelianization
+  infer_instance
+
+instance polygon4gAbelianization_module (g : ℕ) :
+    Module ℤ (Polygon4gAbelianization g) := by
+  unfold Polygon4gAbelianization
+  infer_instance
+
+instance polygon4gAbelianization_module_free (g : ℕ) :
+    Module.Free ℤ (Polygon4gAbelianization g) := by
+  unfold Polygon4gAbelianization
+  infer_instance
+
+instance polygon4gAbelianization_module_finite (g : ℕ) :
+    Module.Finite ℤ (Polygon4gAbelianization g) := by
+  unfold Polygon4gAbelianization
+  infer_instance
 
 /-- The singular datum attached to the unique zero-cell of the standard
 polygonal cell structure. -/
@@ -242,7 +273,265 @@ instance : Module ℤ (Polygon4gSingularC1 g C D) :=
     (n • x).coeff e = n * x.coeff e :=
   rfl
 
+/-- Realize the project-side singular one-chain wrapper as an actual
+Mathlib singular 1-chain by summing the concrete polygon edge chains with
+the recorded coefficients. -/
+noncomputable def toConcreteEdgeChain
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Polygon4gSingularC1 g C D →ₗ[ℤ]
+      SingularChainCoproduct (Polygon4g g) 1 where
+  toFun := fun c =>
+    ∑ e : Fin (2 * g), c.coeff e • edgeChainOnGenus g e
+  map_add' := by
+    intro x y
+    simp only [add_coeff]
+    rw [← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl (fun e _ => ?_)
+    rw [add_zsmul]
+  map_smul' := by
+    intro n x
+    simp only [smul_coeff, RingHom.id_apply]
+    rw [Finset.smul_sum]
+    refine Finset.sum_congr rfl (fun e _ => ?_)
+    rw [mul_zsmul]
+    exact (Int.cast_smul_eq_zsmul (R := ℤ) n
+      (x.coeff e • edgeChainOnGenus g e)).symm
+
+/-- The concrete edge-chain realization of a single project-side edge
+generator is the corresponding singular edge chain. -/
+theorem toConcreteEdgeChain_single
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) (e : Fin (2 * g)) :
+    toConcreteEdgeChain g C D ⟨Pi.single e 1⟩ = edgeChainOnGenus g e := by
+  unfold toConcreteEdgeChain
+  simp [Pi.single_apply]
+
+/-- The singular chain complex of `Polygon4g g`. -/
+noncomputable abbrev polygonChainComplexOnGenus (g : ℕ) :
+    ChainComplex (ModuleCat ℤ) ℕ :=
+  ((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+      (ModuleCat.of ℤ ℤ)).obj (TopCat.of (Polygon4g g))
+
+/-- The shape relation `(down ℕ).next 1 = 0` used by `cyclesMk`. -/
+private lemma next_one_eq_zero_on_genus :
+    (ComplexShape.down ℕ).next 1 = 0 :=
+  ComplexShape.next_eq' _ (by simp [ComplexShape.down])
+
+/-- The concrete realization of every project-side singular one-chain is
+a Mathlib singular one-cycle, because it is a finite integral linear
+combination of the concrete edge cycles. -/
+theorem toConcreteEdgeChain_isCycle
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (c : Polygon4gSingularC1 g C D) :
+    (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).obj (TopCat.of (Polygon4g g))).d 1 0
+        (toConcreteEdgeChain g C D c :
+          SingularChainCoproduct (Polygon4g g) 1) = 0 := by
+  unfold toConcreteEdgeChain
+  change (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).obj (TopCat.of (Polygon4g g))).d 1 0
+      (∑ e : Fin (2 * g), c.coeff e • edgeChainOnGenus g e :
+        SingularChainCoproduct (Polygon4g g) 1) = 0
+  rw [map_sum]
+  refine Finset.sum_eq_zero (fun e _ => ?_)
+  rw [map_zsmul, edgeChainOnGenus_isCycle]
+  exact zsmul_zero (c.coeff e)
+
+/-- Project-side singular edge chains determine actual Mathlib
+singular `H₁` by taking their concrete singular-chain realization,
+proving it is a cycle, and applying `homologyπ`. -/
+noncomputable def toSingularH1Class
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Polygon4gSingularC1 g C D → singularH1 (Polygon4g g) :=
+  fun c =>
+    ((forget₂ (ModuleCat ℤ) Ab).map ((polygonChainComplexOnGenus g).homologyπ 1))
+      ((polygonChainComplexOnGenus g).cyclesMk
+        (toConcreteEdgeChain g C D c) 0 next_one_eq_zero_on_genus
+        (by simpa [polygonChainComplexOnGenus] using toConcreteEdgeChain_isCycle g C D c))
+
+/-- On a single project-side edge generator, the canonical map to
+Mathlib `H₁` is represented by the corresponding concrete edge chain. -/
+theorem toSingularH1_single
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) (e : Fin (2 * g)) :
+    toSingularH1Class g C D ⟨Pi.single e 1⟩ =
+      ((forget₂ (ModuleCat ℤ) Ab).map ((polygonChainComplexOnGenus g).homologyπ 1))
+        ((polygonChainComplexOnGenus g).cyclesMk
+          (edgeChainOnGenus g e) 0 next_one_eq_zero_on_genus
+          (by simpa [polygonChainComplexOnGenus] using edgeChainOnGenus_isCycle g e)) := by
+  simp [toSingularH1Class, toConcreteEdgeChain_single]
+
+/-- Linearized version of `toSingularH1Class`: a project-side singular
+one-chain is sent to the finite integral linear combination of the
+actual singular `H₁` classes of its edge generators. -/
+noncomputable def coeffLinearMap
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Polygon4gSingularC1 g C D →ₗ[ℤ] (Fin (2 * g) → ℤ) where
+  toFun := fun c => c.coeff
+  map_add' := by
+    intro x y
+    rfl
+  map_smul' := by
+    intro n x
+    rfl
+
+/-- Linearized version of `toSingularH1Class`: a project-side singular
+one-chain is sent to the finite integral linear combination of the
+actual singular `H₁` classes of its edge generators. -/
+noncomputable def toSingularH1LinearMap
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Polygon4gSingularC1 g C D →ₗ[ℤ] singularH1 (Polygon4g g) :=
+  (∑ e : Fin (2 * g),
+      (LinearMap.toSpanSingleton ℤ _
+        (toSingularH1Class g C D ⟨Pi.single e 1⟩)).comp
+        (LinearMap.proj (R := ℤ) (φ := fun _ : Fin (2 * g) => ℤ) e)).comp
+    (coeffLinearMap g C D)
+
 end Polygon4gSingularC1
+
+/-- The homology class of the i-th edge cycle in
+`singularH1 (Polygon4g (g+1))`. -/
+noncomputable def edgeHomologyClass (g : ℕ) (i : Fin (2 * (g + 1))) :
+    singularH1 (Polygon4g (g + 1)) :=
+  ((forget₂ (ModuleCat ℤ) Ab).map
+      ((Polygon4gSingularC1.polygonChainComplexOnGenus (g + 1)).homologyπ 1))
+    ((Polygon4gSingularC1.polygonChainComplexOnGenus (g + 1)).cyclesMk
+      (edgeChain g i) 0
+      (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+      (by
+        simpa [Polygon4gSingularC1.polygonChainComplexOnGenus]
+          using edgeChain_isCycle g i))
+
+/-- The image set of the edge homology classes. -/
+noncomputable def edgeHomologyFamily (g : ℕ) :
+    Fin (2 * (g + 1)) → singularH1 (Polygon4g (g + 1)) :=
+  edgeHomologyClass g
+
+/-- The linear map sending each free edge generator to its concrete
+singular homology class. -/
+noncomputable def edgeBasisMap (g : ℕ) :
+    Polygon4gAbelianization g →ₗ[ℤ] singularH1 (Polygon4g (g + 1)) :=
+  ∑ i : Fin (2 * (g + 1)),
+    (LinearMap.toSpanSingleton ℤ _ (edgeHomologyClass g i)).comp
+      (LinearMap.proj (R := ℤ) (φ := fun _ : Fin (2 * (g + 1)) => ℤ) i)
+
+/-- Evaluation of the edge-basis map on coefficients. -/
+theorem edgeBasisMap_apply (g : ℕ) (v : Polygon4gAbelianization g) :
+    edgeBasisMap g v =
+      ∑ i : Fin (2 * (g + 1)),
+        LinearMap.toSpanSingleton ℤ _ (edgeHomologyClass g i) (v i) := by
+  simp [edgeBasisMap, LinearMap.proj]
+
+/-- Edge-loop classes span Mathlib singular `H₁` of the polygon quotient. -/
+theorem edgeBasisMap_surjective (g : ℕ) :
+    Function.Surjective (edgeBasisMap g) := by
+  -- Missing topology: lift singular one-cycles to the disk, repair the lifted
+  -- boundary by polygon side arcs, kill the repaired cycle using disk
+  -- contractibility, and project back to edge homology classes.
+  sorry
+
+/-- Edge-loop classes are independent in Mathlib singular `H₁` of the
+polygon quotient. -/
+theorem edgeBasisMap_injective (g : ℕ) :
+    Function.Injective (edgeBasisMap g) := by
+  -- Missing topology: construct edge-coefficient functionals on singular
+  -- chains, prove they descend to homology, and compute their Kronecker
+  -- pairing with the edge classes.
+  sorry
+
+/-- In positive genus, the project-side singular-C1 map is exactly the
+edge-basis map applied to the coefficient vector. -/
+theorem polygon4gSingularC1_toSingularH1LinearMap_apply_succ
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C)
+    (c : Polygon4gSingularC1 (g + 1) C D) :
+    Polygon4gSingularC1.toSingularH1LinearMap (g + 1) C D c =
+      edgeBasisMap g c.coeff := by
+  rw [edgeBasisMap_apply]
+  unfold Polygon4gSingularC1.toSingularH1LinearMap
+  simp only [LinearMap.comp_apply, LinearMap.sum_apply,
+    LinearMap.toSpanSingleton_apply]
+  refine Finset.sum_congr rfl ?_
+  intro i _hi
+  rw [LinearMap.proj_apply]
+  have hcoeff :
+      (Polygon4gSingularC1.coeffLinearMap (g + 1) C D c) i = c.coeff i := rfl
+  rw [hcoeff]
+  rw [show edgeHomologyClass g i =
+      Polygon4gSingularC1.toSingularH1Class (g + 1) C D ⟨Pi.single i 1⟩ by
+    rw [Polygon4gSingularC1.toSingularH1_single]
+    rfl]
+
+/-- Positive-genus bridge from project-side singular edge chains to
+Mathlib singular `H₁`, assembled from the edge-basis spanning and
+independence leaves. -/
+theorem polygon4gSingularC1_toSingularH1LinearMap_bijective_succ
+    (g : ℕ) (C : Polygon4gCellularModel (g + 1))
+    (D : Polygon4gCellularSingularComparisonData (g + 1) C) :
+    Function.Bijective (Polygon4gSingularC1.toSingularH1LinearMap (g + 1) C D) := by
+  constructor
+  · intro x y hxy
+    have hcoeff : x.coeff = y.coeff := by
+      apply edgeBasisMap_injective g
+      rw [← polygon4gSingularC1_toSingularH1LinearMap_apply_succ g C D x,
+        ← polygon4gSingularC1_toSingularH1LinearMap_apply_succ g C D y]
+      exact hxy
+    ext i
+    exact congrFun hcoeff i
+  · intro y
+    obtain ⟨v, hv⟩ := edgeBasisMap_surjective g y
+    refine ⟨⟨v⟩, ?_⟩
+    rw [polygon4gSingularC1_toSingularH1LinearMap_apply_succ g C D]
+    exact hv
+
+/-- Genus-zero bridge.  The domain has no edge coefficients, and
+`Polygon4g 0` is contractible, so both sides are subsingletons. -/
+theorem polygon4gSingularC1_toSingularH1LinearMap_bijective_zero
+    (C : Polygon4gCellularModel 0)
+    (D : Polygon4gCellularSingularComparisonData 0 C) :
+    Function.Bijective (Polygon4gSingularC1.toSingularH1LinearMap 0 C D) := by
+  constructor
+  · intro x y _h
+    ext i
+    exact Fin.elim0 i
+  · intro y
+    haveI : ContractibleSpace (Polygon4g 0) := by
+      obtain ⟨h⟩ := polygon4g_zero_homeo_diskC
+      exact h.contractibleSpace
+    haveI : Subsingleton (singularH1 (Polygon4g 0)) :=
+      singularH1_subsingleton_of_contractibleSpace
+    refine ⟨⟨0⟩, ?_⟩
+    exact Subsingleton.elim _ _
+
+/-- The concrete project-side singular edge-chain model is bijective onto
+Mathlib singular `H₁`, with the positive-genus case reduced to the two
+edge-basis frontier leaves. -/
+theorem polygon4gSingularC1_toSingularH1LinearMap_bijective
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Function.Bijective (Polygon4gSingularC1.toSingularH1LinearMap g C D) := by
+  cases g with
+  | zero => exact polygon4gSingularC1_toSingularH1LinearMap_bijective_zero C D
+  | succ g => exact polygon4gSingularC1_toSingularH1LinearMap_bijective_succ g C D
+
+/-- Injectivity half extracted from the concrete polygon singular-C1 bridge. -/
+theorem polygon4gSingularC1_toSingularH1LinearMap_injective
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Function.Injective (Polygon4gSingularC1.toSingularH1LinearMap g C D) :=
+  (polygon4gSingularC1_toSingularH1LinearMap_bijective g C D).injective
+
+/-- Surjectivity half extracted from the concrete polygon singular-C1 bridge. -/
+theorem polygon4gSingularC1_toSingularH1LinearMap_surjective
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) :
+    Function.Surjective (Polygon4gSingularC1.toSingularH1LinearMap g C D) :=
+  (polygon4gSingularC1_toSingularH1LinearMap_bijective g C D).surjective
 
 /-- Project-side singular two-chains for the comparison: free rank one
 on the characteristic disk. -/
@@ -385,6 +674,23 @@ noncomputable def polygon4g_cellularToSingularChainMap
   boundaryC2_on_face := by
     ext e
     simp [polygon4gCellularC2Face]
+
+/-- The concrete cellular-to-singular map sends a cellular one-cell
+generator to the actual singular edge chain after realizing the project
+side `Polygon4gSingularC1` wrapper as concrete singular chains. -/
+theorem polygon4g_cellularToSingularChainMap_basis_realizes_edgeChain
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (e : Fin (2 * g)) :
+    Polygon4gSingularC1.toConcreteEdgeChain g C D
+        ((polygon4g_cellularToSingularChainMap g C D).mapC1
+          (polygon4gCellularBasis e)) =
+      edgeChainOnGenus g e := by
+  rw [show (polygon4g_cellularToSingularChainMap g C D).mapC1
+      (polygon4gCellularBasis e) = (⟨Pi.single e 1⟩ : Polygon4gSingularC1 g C D) by
+    ext e'
+    simp [polygon4g_cellularToSingularChainMap, polygon4gCellularBasis, Pi.single_apply]]
+  exact Polygon4gSingularC1.toConcreteEdgeChain_single g C D e
 
 /-- The zero-skeleton of the standard polygonal cellular model. -/
 def Polygon4gZeroSkeleton
@@ -719,6 +1025,87 @@ structure Polygon4gCellularSingularAssociatedGradedH1Iso
   graded_one_isomorphism :
     Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] Polygon4gSingularC1 g C D)
 
+/-- A concrete bridge from the project-side singular one-chain wrapper
+used by the polygon comparison to Mathlib's actual singular `H₁`.
+This is the precise topological input still missing from the current
+API: the filtered/five-lemma argument must construct this equivalence
+from the chain map and filtration data, not by definitional equality. -/
+structure Polygon4gSingularC1RealizesSingularH1
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C) where
+  /-- The resulting equivalence between the project-side edge-chain
+  associated-graded model and Mathlib singular homology. -/
+  equiv : Polygon4gSingularC1 g C D ≃ₗ[ℤ] singularH1 (Polygon4g g)
+  /-- The chain-level comparison whose degree-one component gives the
+  project-side edge-chain model. -/
+  chainMap : Polygon4gCellularToSingularChainMap g C D
+  /-- The chain map realizes the associated-graded degree-one comparison,
+  so the bridge is tied to the cellular-to-singular chain data rather than
+  to an arbitrary algebraic isomorphism. -/
+  chainMap_degree_one :
+    chainMap.mapC1 = (polygon4g_cellularH1_to_singularC1_equiv g C D).toLinearMap
+
+/-- If the concrete linear edge-chain class map is bijective, it gives
+the realization data required by the filtered Hurewicz comparison.
+This isolates the remaining topological content as bijectivity of the
+actual edge-chain map into Mathlib singular `H₁`. -/
+noncomputable def polygon4g_singularC1_realizes_singularH1_of_toSingularH1LinearMap_bijective
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (h_bij :
+      Function.Bijective (Polygon4gSingularC1.toSingularH1LinearMap g C D)) :
+    Polygon4gSingularC1RealizesSingularH1 g C D :=
+  { equiv :=
+      LinearEquiv.ofBijective
+        (Polygon4gSingularC1.toSingularH1LinearMap g C D) h_bij
+    chainMap := polygon4g_cellularToSingularChainMap g C D
+    chainMap_degree_one := by
+      ext c e
+      rfl }
+
+/-- Conditional form of the filtered comparison: once the project-side
+singular edge-chain wrapper is identified with Mathlib `singularH1`
+by a chain-level realization, the existing associated-graded cellular
+isomorphism gives the desired cellular-to-singular `H₁` equivalence. -/
+theorem polygon4g_cellular_to_singular_H1_iso_of_singularC1_realization
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (h_correct : Polygon4gCellularSingularChainMapCorrect g C h_boundary D)
+    (h_filtration :
+      Polygon4gCellularSingularFiltrationCompatible g C h_boundary D h_correct)
+    (h_graded :
+      Polygon4gCellularSingularAssociatedGradedH1Iso
+        g C h_boundary D h_correct h_filtration)
+    (h_realizes : Polygon4gSingularC1RealizesSingularH1 g C D) :
+    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
+  obtain ⟨e₁⟩ := h_graded.graded_one_isomorphism
+  exact ⟨e₁.trans h_realizes.equiv⟩
+
+/-- Conditional concrete comparison via the actual linear edge-chain map
+into Mathlib singular `H₁`.  This is the same Hurewicz conclusion as the
+frontier theorem below, with the remaining topological content isolated
+as bijectivity of `Polygon4gSingularC1.toSingularH1LinearMap`. -/
+theorem polygon4g_cellular_to_singular_H1_iso_of_toSingularH1LinearMap_bijective
+    (g : ℕ) (C : Polygon4gCellularModel g)
+    (h_boundary : Polygon4gCellularBoundaryFormula g C)
+    (D : Polygon4gCellularSingularComparisonData g C)
+    (h0 : Polygon4gCellularSingularChainMapDegreeZero g C h_boundary D)
+    (h1 : Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D)
+    (h2 : Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D)
+    (h_filtration :
+      Polygon4gCellularSingularFiltrationCompatible g C h_boundary D ⟨h0, h1, h2⟩)
+    (h_graded :
+      Polygon4gCellularSingularAssociatedGradedH1Iso
+        g C h_boundary D ⟨h0, h1, h2⟩ h_filtration)
+    (h_bij :
+      Function.Bijective (Polygon4gSingularC1.toSingularH1LinearMap g C D)) :
+    Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
+  exact polygon4g_cellular_to_singular_H1_iso_of_singularC1_realization
+    g C h_boundary D ⟨h0, h1, h2⟩ h_filtration h_graded
+    (polygon4g_singularC1_realizes_singularH1_of_toSingularH1LinearMap_bijective
+      g C D h_bij)
+
 /-- Concrete frontier theorem: a cellular-to-singular comparison with
 inspectable chain-level boundary compatibility, skeleton support, and
 associated-graded generator identifications induces the expected
@@ -737,15 +1124,13 @@ theorem polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison
     (h2 : Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D)
     (h_filtration :
       Polygon4gCellularSingularFiltrationCompatible g C h_boundary D ⟨h0, h1, h2⟩)
-    (_h_graded :
+    (h_graded :
       Polygon4gCellularSingularAssociatedGradedH1Iso
         g C h_boundary D ⟨h0, h1, h2⟩ h_filtration) :
     Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
-  -- Frontier: the concrete comparison data above is enough to state the
-  -- usual cellular-to-singular theorem for this finite CW model, but the
-  -- project still lacks the filtered singular-chain comparison/five-lemma
-  -- implementation that turns those fields into an actual `singularH1` iso.
-  sorry
+  exact polygon4g_cellular_to_singular_H1_iso_of_toSingularH1LinearMap_bijective
+    g C h_boundary D h0 h1 h2 h_filtration h_graded
+    (polygon4gSingularC1_toSingularH1LinearMap_bijective g C D)
 
 /-- **Comparison leaf 3a.** The correct comparison map is compatible
 with the cellular filtration. -/

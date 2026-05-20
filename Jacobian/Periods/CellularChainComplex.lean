@@ -1,5 +1,6 @@
 import Jacobian.Periods.PolygonCellularHomology
 import Jacobian.Periods.EdgeWord
+import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Topology.Path
 
 /-!
@@ -268,7 +269,138 @@ at the unique vertex. -/
 theorem polygon4g_boundary_arcs_are_loops (g : ℕ) (k : ℕ) :
     Polygon4g.mk g (boundaryParam g k 0) = Polygon4g.mk g (boundaryParam g 0 0) ∧
     Polygon4g.mk g (boundaryParam g k 1) = Polygon4g.mk g (boundaryParam g 0 0) :=
-  sorry
+by
+  classical
+  have h_endpoint : ∀ j : ℕ, boundaryParam g j 1 = boundaryParam g (j + 1) 0 := by
+    intro j
+    unfold boundaryParam boundaryParam' boundaryParamC' boundaryAngle'
+    ext
+    congr 2
+    push_cast
+    ring_nf
+  have h_start : ∀ k : ℕ,
+      Polygon4g.mk g (boundaryParam g k 0) =
+        Polygon4g.mk g (boundaryParam g 0 0) := by
+    by_cases hg0 : g = 0
+    · subst hg0
+      intro k
+      congr 1
+      unfold boundaryParam boundaryParam' boundaryParamC' boundaryAngle'
+      ext
+      congr 2
+      push_cast
+      ring_nf
+    · have hperiodC : ∀ k : ℕ,
+          boundaryParamC g (k + 4 * g) 0 = boundaryParamC g k 0 := by
+        intro k
+        unfold boundaryParamC boundaryParamC' boundaryAngle'
+        rw [Complex.exp_eq_exp_iff_exists_int]
+        use 1
+        push_cast
+        have hgR : (g : ℝ) ≠ 0 := by positivity
+        ring_nf
+        have hterm :
+            (↑Real.pi * ↑g * (↑g)⁻¹ * Complex.I * 2 : ℂ) =
+              ↑Real.pi * Complex.I * 2 := by
+          field_simp [hgR]
+          exact mul_inv_cancel₀ (by exact_mod_cast hgR)
+        rw [hterm]
+      have hperiod : ∀ k : ℕ,
+          boundaryParam g (k + 4 * g) 0 = boundaryParam g k 0 := by
+        intro k
+        unfold boundaryParam boundaryParam'
+        ext
+        exact hperiodC k
+      have h_a0 : ∀ i : Fin g,
+          Polygon4g.mk g (boundaryParam g (4 * i.val) 0) =
+            Polygon4g.mk g (boundaryParam g (4 * i.val + 3) 0) := by
+        intro i
+        have h := Polygon4g.mk_a_pair g i 0 ⟨le_rfl, zero_le_one⟩
+        simp only [sub_zero] at h
+        rw [h, h_endpoint (4 * i.val + 2)]
+      have h_a1 : ∀ i : Fin g,
+          Polygon4g.mk g (boundaryParam g (4 * i.val + 1) 0) =
+            Polygon4g.mk g (boundaryParam g (4 * i.val + 2) 0) := by
+        intro i
+        have h := Polygon4g.mk_a_pair g i 1 ⟨zero_le_one, le_rfl⟩
+        rw [show (1 - 1 : ℝ) = 0 by ring] at h
+        rw [← h_endpoint (4 * i.val)]
+        exact h
+      have h_b1 : ∀ i : Fin g,
+          Polygon4g.mk g (boundaryParam g (4 * i.val + 2) 0) =
+            Polygon4g.mk g (boundaryParam g (4 * i.val + 3) 0) := by
+        intro i
+        have h := Polygon4g.mk_b_pair g i 1 ⟨zero_le_one, le_rfl⟩
+        rw [show (1 - 1 : ℝ) = 0 by ring] at h
+        rw [← h_endpoint (4 * i.val + 1)]
+        exact h
+      have h_b0 : ∀ i : Fin g,
+          Polygon4g.mk g (boundaryParam g (4 * i.val + 1) 0) =
+            Polygon4g.mk g (boundaryParam g (4 * i.val + 4) 0) := by
+        intro i
+        have h := Polygon4g.mk_b_pair g i 0 ⟨le_rfl, zero_le_one⟩
+        simp only [sub_zero] at h
+        rw [h, h_endpoint (4 * i.val + 3)]
+      have h_handle : ∀ (i : Fin g) (a b : Fin 4),
+          Polygon4g.mk g (boundaryParam g (4 * i.val + a.val) 0) =
+            Polygon4g.mk g (boundaryParam g (4 * i.val + b.val) 0) := by
+        intro i a b
+        have hto3 : ∀ c : Fin 4,
+            Polygon4g.mk g (boundaryParam g (4 * i.val + c.val) 0) =
+              Polygon4g.mk g (boundaryParam g (4 * i.val + 3) 0) := by
+          intro c
+          fin_cases c
+          · exact h_a0 i
+          · exact (h_a1 i).trans (h_b1 i)
+          · exact h_b1 i
+          · rfl
+        rw [hto3 a, ← hto3 b]
+      have h_link : ∀ i : Fin g,
+          Polygon4g.mk g (boundaryParam g (4 * i.val + 4) 0) =
+            Polygon4g.mk g (boundaryParam g (4 * i.val) 0) := by
+        intro i
+        exact (h_b0 i).symm.trans (h_handle i ⟨1, by decide⟩ ⟨0, by decide⟩)
+      have h_block_to_zero : ∀ i : ℕ, i < g →
+          Polygon4g.mk g (boundaryParam g (4 * i) 0) =
+            Polygon4g.mk g (boundaryParam g 0 0) := by
+        intro i
+        induction i with
+        | zero =>
+            intro _
+            rfl
+        | succ i ih =>
+            intro hi
+            have hi' : i < g := Nat.lt_of_succ_lt hi
+            let fi : Fin g := ⟨i, hi'⟩
+            have hprev := ih hi'
+            have hstep := h_link fi
+            have hfour : 4 * fi.val + 4 = 4 * (i + 1) := by
+              simp [fi]
+              omega
+            rw [hfour] at hstep
+            simpa [fi] using hstep.trans hprev
+      have h_small : ∀ k : ℕ, k < 4 * g →
+          Polygon4g.mk g (boundaryParam g k 0) =
+            Polygon4g.mk g (boundaryParam g 0 0) := by
+        intro k hk
+        have hi : k / 4 < g := by omega
+        let i : Fin g := ⟨k / 4, hi⟩
+        let r : Fin 4 := ⟨k % 4, Nat.mod_lt _ (by decide)⟩
+        have hwithin := h_handle i r ⟨0, by decide⟩
+        have hzero := h_block_to_zero (k / 4) hi
+        have hkdecomp' : 4 * (k / 4) + k % 4 = k := by omega
+        rw [← hkdecomp']
+        simpa [i, r] using hwithin.trans hzero
+      intro k
+      refine Nat.strong_induction_on k ?_
+      intro k ih
+      by_cases hk : k < 4 * g
+      · exact h_small k hk
+      · have hsub_lt : k - 4 * g < k := by omega
+        have hdecomp : k = (k - 4 * g) + 4 * g := by omega
+        rw [hdecomp, hperiod]
+        exact ih (k - 4 * g) hsub_lt
+  exact ⟨h_start k, by rw [h_endpoint k]; exact h_start (k + 1)⟩
 
 lemma boundaryAngle'_continuous (L i : ℕ) :
     Continuous (fun t : ℝ => boundaryAngle' L i t) := by
