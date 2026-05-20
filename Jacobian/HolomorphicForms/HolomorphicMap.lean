@@ -483,6 +483,38 @@ theorem IsHolomorphicAt.of_contMDiff
     simpa [contDiffWithinAt_univ, ModelWithCorners.range_eq_target] using hchart.2
   exact hcd.analyticAt
 
+/-- Manifold-level complex smoothness supplied by chart-local analyticity and
+global continuity.
+
+This is the converse to `IsHolomorphicAt.of_contMDiff`, packaged for the case
+where the chart-local presentation is genuinely analytic at every point and
+the underlying set function is continuous (so the manifold-level continuity
+side of `ContMDiffAt` is in hand).
+
+The proof routes through `AnalyticAt.contDiffAt` (Mathlib) to upgrade the
+chart-local analyticity to `ContDiffAt`, then assembles via
+`contMDiffAt_iff_of_mem_source`. -/
+theorem ContMDiff.of_isHolomorphic_and_continuous
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    {f : X → Y} (hholo : ∀ p, IsHolomorphicAt f p) (hcont : Continuous f) :
+    ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f := by
+  intro p
+  -- We aim at `ContMDiffAt 𝓘(ℂ) 𝓘(ℂ) ⊤ f p` and use
+  -- `contMDiffAt_iff_of_mem_source` to reduce to chart-local data.
+  rw [contMDiffAt_iff_of_mem_source (I := 𝓘(ℂ)) (I' := 𝓘(ℂ))
+        (x := p) (y := f p) (f := f) (n := (⊤ : WithTop ℕ∞))
+        (mem_chart_source ℂ p) (mem_chart_source ℂ (f p))]
+  refine ⟨hcont.continuousAt, ?_⟩
+  -- Chart-local analyticity gives `AnalyticAt`, hence `ContDiffAt`.
+  have hAA : AnalyticAt ℂ
+      (chartAt ℂ (f p) ∘ f ∘ (chartAt ℂ p).symm) (chartAt ℂ p p) := hholo p
+  have hCD : ContDiffAt ℂ (⊤ : WithTop ℕ∞)
+      (chartAt ℂ (f p) ∘ f ∘ (chartAt ℂ p).symm) (chartAt ℂ p p) :=
+    hAA.contDiffAt
+  -- Rewrite to match the `ContDiffWithinAt` shape expected by
+  -- `contMDiffAt_iff_of_mem_source`.
+  simpa [contDiffWithinAt_univ, ModelWithCorners.range_eq_target] using hCD
+
 /-- Local constancy of a holomorphic map on a preconnected source forces global constancy. -/
 theorem IsHolomorphic.eq_const_of_eventuallyEq
     [PreconnectedSpace X] [T2Space Y]

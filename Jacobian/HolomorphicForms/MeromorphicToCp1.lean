@@ -132,30 +132,31 @@ theorem liftToCp1_holomorphicAt
   | coe z =>
       exact liftToCp1_holomorphicAt_finite X f _hholo p hval
 
+/-- Manifold-level complex smoothness of the CP¹ lift.
+
+Bridges the chart-local analyticity from `liftToCp1_holomorphicAt` (every
+chart at the lift's value is analytic, both at finite values and at ∞) with
+the global continuity from `MeromorphicFunctionType.toFun_continuous`, using
+`ContMDiff.of_isHolomorphic_and_continuous`. This unlocks Mathlib's
+manifold-level holomorphic-map machinery (including the local mapping
+theorem) for the lift. -/
+theorem liftToCp1_contMDiff
+    (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicFunctionType X) :
+    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
+      (⊤ : WithTop ℕ∞) (meromorphicToCp1 X f) :=
+  ContMDiff.of_isHolomorphic_and_continuous
+    (liftToCp1_holomorphicAt X f True.intro)
+    f.toFun_continuous
+
 /-- Local `k`-fold normal form/counting for the CP¹ lift.
 
-### Why this is a frontier sorry
-
-This is the local mapping theorem (`z ↦ z^k` normal form) for the CP¹ lift,
-in both the finite chart and the infinity chart on `OnePoint ℂ`. A real
-proof has to:
-
-* split on whether `meromorphicToCp1 X f x` is finite or `∞`;
-* in the finite chart, reduce to the local analytic map for the finite lift
-  of `f` and apply `AnalyticLocalMapping.analytic_local_mapping_theorem`;
-* in the infinity chart, reduce to the reciprocal local branch and apply
-  the same local mapping theorem to `f.toFun⁻¹`;
-* prove compatibility of `mapAnalyticOrderAt (meromorphicToCp1 X f)` with the
-  finite/infinity chart normal forms — i.e., that the chart-local order at
-  `x` matches the multiplicity from the local mapping theorem;
-* identify the produced `Finset` with the actual local fiber, not an
-  arbitrary witness.
-
-The current `MeromorphicFunctionType` exposes local meromorphicity of the
-raw map but no chart-local normal form, no finite-local-fiber data, and no
-ramification/order compatibility lemma. The missing infrastructure is a
-sharper local-analytic API for meromorphic germs on Riemann surfaces. Until
-that exists this theorem cannot be discharged honestly. -/
+Discharged by combining `liftToCp1_contMDiff` (manifold-level smoothness of
+the lift) with the project-level local mapping theorem
+`local_kfold_ramified_of_contMDiff`. The `Finset` witness is the actual
+local fiber produced by that theorem, not a fabricated witness. -/
 theorem liftToCp1_local_kfold_ramified
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -172,10 +173,8 @@ theorem liftToCp1_local_kfold_ramified
         (∀ x' ∈ s, meromorphicToCp1 X f x' = y ∧
           mapAnalyticOrderAt (meromorphicToCp1 X f) x' = 1) ∧
         (∀ x' ∈ U, meromorphicToCp1 X f x' = y → x' ∈ s) := by
-  -- Frontier: local mapping theorem for meromorphic CP¹ lifts. Do not
-  -- fabricate a `Finset` witness — the `s` here must be the actual local
-  -- fiber produced by the local analytic mapping theorem.
-  sorry
+  intro _ _ x k hk hram
+  exact local_kfold_ramified_of_contMDiff (liftToCp1_contMDiff X f) hk hram
 
 /-- Local conservation of the weighted fibre count for the CP¹ lift.
 
