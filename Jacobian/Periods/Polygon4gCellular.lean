@@ -61,29 +61,6 @@ top-down level so the leaves below can name it without committing
 to a specific `Mathlib.GroupTheory.Presentation` representation. -/
 opaque Polygon4gFundamentalGroup (g : ℕ) : Type
 
-/-- **Round 50 / Stage A leaf.** Opaque "surface group abelianisation"
-witness. We make this `:= Fin (2*(g+1)) → ℤ` directly so the basis
-side is sorry-free; the bottom-up content lives entirely in the
-Hurewicz iso (`polygon4g_hurewicz_iso`). -/
-def Polygon4gAbelianization (g : ℕ) : Type :=
-  Fin (2 * (g + 1)) → ℤ
-
-instance polygon4gAbelianization_addCommGroup (g : ℕ) :
-    AddCommGroup (Polygon4gAbelianization g) := by
-  unfold Polygon4gAbelianization; infer_instance
-
-instance polygon4gAbelianization_module (g : ℕ) :
-    Module ℤ (Polygon4gAbelianization g) := by
-  unfold Polygon4gAbelianization; infer_instance
-
-instance polygon4gAbelianization_module_free (g : ℕ) :
-    Module.Free ℤ (Polygon4gAbelianization g) := by
-  unfold Polygon4gAbelianization; infer_instance
-
-instance polygon4gAbelianization_module_finite (g : ℕ) :
-    Module.Finite ℤ (Polygon4gAbelianization g) := by
-  unfold Polygon4gAbelianization; infer_instance
-
 /-- **Round 60 / Stage A leaf (commutator-product abelianisation
 vanishes).** In any abelian group, the commutator product
 `∏ᵢ [aᵢ, bᵢ]` vanishes. (Since each `[aᵢ, bᵢ] = aᵢ + bᵢ - aᵢ - bᵢ = 0`.)
