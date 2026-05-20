@@ -439,21 +439,21 @@ theorem section_infty_eq_zero' (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     any_goals exact OnePoint.some z;
     any_goals exact ℂ;
     all_goals try infer_instance;
-    · constructor <;> intro h <;> simp_all +decide [ Prod.ext_iff ];
+    · constructor <;> intro h <;> simp_all [ Prod.ext_iff ];
       · convert e.zeroSection _ _;
         any_goals exact OnePoint.some z;
         any_goals exact ℂ;
         all_goals try infer_instance;
-        · simp +decide [ Prod.ext_iff, Bundle.zeroSection ];
-        · simp +decide [ e ];
-          simp +decide [ chartAt ];
-          simp +decide [ ChartedSpace.chartAt ];
-          simp +decide [ inversionChart, hz ];
+        · simp [ Prod.ext_iff, Bundle.zeroSection ];
+        · simp [ e ];
+          simp [ chartAt ];
+          simp [ ChartedSpace.chartAt ];
+          simp [ inversionChart, hz ];
       · convert h.2;
     · simp +zetaDelta at *;
-      simp +decide [ chartAt ];
-      simp +decide [ ChartedSpace.chartAt ];
-      simp +decide [ inversionChart, hz ]
+      simp [ chartAt ];
+      simp [ ChartedSpace.chartAt ];
+      simp [ inversionChart, hz ]
   have hH_zero_base : H OnePoint.infty = 0 := by
     have hH_zero_base : ∀ᶠ x in nhdsWithin OnePoint.infty {OnePoint.infty}ᶜ, H x = 0 := by
       rw [ eventually_nhdsWithin_iff ];
@@ -469,11 +469,11 @@ theorem section_infty_eq_zero' (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
         convert e.zeroSection _;
         any_goals exact ℂ;
         all_goals try infer_instance;
-        exact ⟨ fun h => fun _ => Prod.ext rfl h, fun h => h ( by simp +decide [ e ] ) |> congr_arg Prod.snd ⟩;
+        exact ⟨ fun h => fun _ => Prod.ext rfl h, fun h => h ( by simp [ e ] ) |> congr_arg Prod.snd ⟩;
       exact Prod.ext ( by aesop ) hω_infty;
     have := e.injOn ( show { proj := OnePoint.infty, snd := ω.toFun OnePoint.infty } ∈ e.source from ?_ ) ( show { proj := OnePoint.infty, snd := 0 } ∈ e.source from ?_ ) hω_infty ; aesop;
-    · simp +decide [ e, Trivialization.source_eq ];
-    · simp +decide [ e.mem_source ];
+    · simp [ e, Trivialization.source_eq ];
+    · simp [ e.mem_source ];
       exact FiberBundle.mem_baseSet_trivializationAt' OnePoint.infty
   exact h_nonzero hω_infty;
 
