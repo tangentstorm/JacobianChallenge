@@ -133,6 +133,13 @@ lemma ofCurve_inj_with_meromorphicData (P : X₀) (h : 0 < genus (X := X₀))
     (by simpa [genus] using h) hanalytic
   exact ULift.up_injective hab
 
+/-- Public Abel-Jacobi injectivity contract from `Jacobian/Challenge.lean`.
+
+Forwards to `JacobianChallenge.AbelJacobi.analyticOfCurve_injective`, which
+transitively depends on the frontier sorry
+`degree_one_meromorphicMap_implies_analyticGenus_zero`. The route-data form
+`ofCurve_inj_with_meromorphicData` above is the honest assembly when a caller
+can supply explicit meromorphic promotion data. -/
 lemma ofCurve_inj (P : X₀) (h : 0 < genus (X := X₀)) : Function.Injective (ofCurve P) := by
   intro a b hab
   apply JacobianChallenge.AbelJacobi.analyticOfCurve_injective X₀ P (by simpa [genus] using h)

@@ -2201,6 +2201,19 @@ theorem nonconstant_single_pole_implies_genus_zero
     analyticGenus ℂ X = 0 := by
   exact degree_one_meromorphicMap_implies_analyticGenus_zero X f Q hpole
 
+/-- **Cleanly named route-data form** of
+`nonconstant_single_pole_implies_genus_zero`. Forwards to
+`nonconstant_single_pole_implies_genus_zero_with_meromorphicData`; sorry-free
+because it consumes honest analytic route data. -/
+theorem nonconstant_single_pole_implies_genus_zero_of_routeData
+    (f : HolomorphicForms.MeromorphicMapToSphere X)
+    (Q : X)
+    (hpole : f.poles = HolomorphicForms.Divisor.point Q)
+    (hmod : f.PoleModulusData)
+    (hbranch : f.BranchedCoverDataOfPoleDegree) :
+    analyticGenus ℂ X = 0 :=
+  nonconstant_single_pole_implies_genus_zero_with_meromorphicData X f Q hpole hmod hbranch
+
 /-- **Round 1 sorry-free assembly.** Combines
 `abelJacobi_image_zero_implies_principal` and
 `degree_one_meromorphicMap_implies_analyticGenus_zero`. -/
@@ -2256,7 +2269,16 @@ theorem pathIntegralFunctional_separates_points_spec_with_meromorphicData
       hperiod hanalytic)
     (by omega)
 
-/-- Sorry-free assembly using the public genus-zero implication frontier. -/
+/-- Assembly through the public genus-zero implication frontier.
+
+The proof body here is sorry-free, but it transitively depends on
+`degree_one_meromorphicMap_implies_analyticGenus_zero` via
+`period_congruence_distinct_implies_genus_zero`. That dependency carries the
+real frontier sorry and the warning that this implication is not provable
+from bare divisor data. Treat this declaration as part of the same frontier
+boundary: for any caller that actually has the analytic route data, use
+`pathIntegralFunctional_separates_points_spec_with_meromorphicData`
+instead. -/
 theorem pathIntegralFunctional_separates_points_spec
     (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
     (hperiod :
@@ -2288,7 +2310,13 @@ theorem pathIntegralFunctional_separates_points_with_meromorphicData
 
 /-- Abel's theorem in basis-aligned path-integral coordinates: if two
 path-integral coordinate vectors differ by a period vector, then their
-endpoints are equal. -/
+endpoints are equal.
+
+Forwards to `pathIntegralFunctional_separates_points_spec`; inherits the
+same frontier-sorry dependency through
+`degree_one_meromorphicMap_implies_analyticGenus_zero`. The route-data
+form `pathIntegralFunctional_separates_points_with_meromorphicData` is
+the honest theorem for callers with explicit analytic route data. -/
 theorem pathIntegralFunctional_separates_points
     (P : X) (h : 0 < analyticGenus ℂ X) (Q₁ Q₂ : X)
     (hperiod :
@@ -2529,9 +2557,17 @@ lemma analyticOfCurve_injective_with_meromorphicData (P : X) (h : 0 < analyticGe
 
 /-- Abel injectivity for positive genus.
 
-This preserves the original public theorem contract. The route-data version
-`analyticOfCurve_injective_with_meromorphicData` is available for callers that
-already have the explicit meromorphic promotion data. -/
+This preserves the original public theorem contract (consumed by
+`Solution.ofCurve_inj` whose signature in `Jacobian/Challenge.lean` takes no
+route data). The proof body assembles
+`pathIntegralFunctional_separates_points`, which in turn transitively depends
+on the frontier sorry
+`degree_one_meromorphicMap_implies_analyticGenus_zero`. So while this lemma
+has no `sorry` of its own, it inherits that frontier-sorry dependency.
+
+The route-data version `analyticOfCurve_injective_with_meromorphicData` is
+the honest assembly for callers that can supply explicit meromorphic
+promotion data; new code should prefer it. -/
 lemma analyticOfCurve_injective (P : X) (h : 0 < analyticGenus ℂ X) :
     Function.Injective (analyticOfCurve X P) := by
   intro Q₁ Q₂ heq
