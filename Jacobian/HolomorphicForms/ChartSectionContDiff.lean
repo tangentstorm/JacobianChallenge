@@ -34,11 +34,11 @@ private lemma tangent_triv_identity (z₀ z : ℂ)
     (trivializationAt ℂ (TangentSpace (modelWithCornersSelf ℂ ℂ)) (OnePoint.some z₀)
       (TotalSpace.mk (OnePoint.some z) v)).2 = v := by
   erw [ TangentBundle.trivializationAt_apply ];
-  simp +decide [ fderivWithin_univ, chartAt_onePoint_some ];
+  simp [ fderivWithin_univ, chartAt_onePoint_some ];
   erw [ show ( identityChart ∘ identityChart.symm : ℂ → ℂ ) = id from funext fun x => ?_ ];
   · erw [ deriv_id ] ; norm_num;
   · unfold identityChart;
-    simp +decide [ Topology.IsOpenEmbedding.toOpenPartialHomeomorph ];
+    simp [ Topology.IsOpenEmbedding.toOpenPartialHomeomorph ];
     unfold Function.invFunOn; aesop
 
 /-
@@ -49,7 +49,7 @@ private lemma trivial_triv_identity (z₀ : ℂ)
     (x : OnePoint ℂ) (v : (Bundle.Trivial (OnePoint ℂ) ℂ) x) :
     (trivializationAt ℂ (Bundle.Trivial (OnePoint ℂ) ℂ) (OnePoint.some z₀)
       (TotalSpace.mk x v)).2 = v := by
-  cases x <;> simp_all +decide [ Trivial ]
+  cases x <;> simp_all [ Trivial ]
 
 /-
 The trivialized cotangent section value equals the section value for
@@ -69,9 +69,9 @@ private lemma cotangent_triv_eq_section
   rw [ Trivialization.symm_apply ];
   all_goals norm_num [ trivializationAt ];
   · congr;
-  · simp +decide [ chartAt ];
-    simp +decide [ ChartedSpace.chartAt ];
-    simp +decide [ identityChart ]
+  · simp [ chartAt ];
+    simp [ ChartedSpace.chartAt ];
+    simp [ identityChart ]
 
 /-
 The trivialized section is ContDiffAt at each point.
@@ -90,7 +90,7 @@ private lemma trivialized_section_contDiffAt
   rw [ contMDiffAt_iff ] at h_cont_diff;
   rw [ contDiffWithinAt_iff_contDiffAt ] at h_cont_diff;
   · convert h_cont_diff.2 using 1;
-    simp +decide [ extChartAt ];
+    simp [ extChartAt ];
     rw [ chartAt_onePoint_some ] ; norm_num [ identityChart ];
     exact OnePoint.coe_injective
       ((Topology.IsOpenEmbedding.toOpenPartialHomeomorph_right_inv
@@ -109,7 +109,7 @@ theorem contMDiffSection_localRepr_identityChart_contDiff
   convert ( trivialized_section_contDiffAt ω z |> ContDiffAt.clm_apply <| contDiffAt_const ) using 1;
   swap;
   exact 1;
-  ext; simp +decide [ cotangent_triv_eq_section ] ;
+  ext; simp [ cotangent_triv_eq_section ] ;
   congr! 2
 
 end JacobianChallenge.HolomorphicForms

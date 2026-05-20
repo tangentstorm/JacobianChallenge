@@ -68,15 +68,15 @@ theorem analyticAt_kthRoot (k : ℕ) (hk : 0 < k) (u : ℂ → ℂ) (z₀ : ℂ)
     · aesop;
     · filter_upwards [ hu.continuousAt.eventually_mem ( Complex.isOpen_slitPlane.mem_nhds hsl ) ] with z hz using by rw [ ← Complex.cpow_nat_mul, mul_comm ] ; norm_num [ hk.ne' ] ;
   · have h_neg_slit : -u z₀ ∈ Complex.slitPlane := by
-      simp_all +decide [ Complex.slitPlane ];
+      simp_all [ Complex.slitPlane ];
       exact lt_of_le_of_ne hsl.1 fun h => hu0 <| by simp [ Complex.ext_iff, h, hsl.2 ] ;
     obtain ⟨ω, hω⟩ : ∃ ω : ℂ, ω ^ k = -1 := by
       exact ⟨ ( -1 : ℂ ) ^ ( 1 / k : ℂ ), by rw [ ← Complex.cpow_nat_mul, mul_one_div_cancel ( Nat.cast_ne_zero.mpr hk.ne' ), Complex.cpow_one ] ⟩;
-    refine' ⟨ fun z => ω * ( -u z ) ^ ( 1 / k : ℂ ), _, _, _ ⟩ <;> simp_all +decide;
+    refine' ⟨ fun z => ω * ( -u z ) ^ ( 1 / k : ℂ ), _, _, _ ⟩ <;> simp_all;
     · apply_rules [ AnalyticAt.mul, AnalyticAt.cpow, analyticAt_id, analyticAt_const ];
       exact hu.neg;
     · cases k <;> aesop;
-    · filter_upwards [ hu.continuousAt.eventually ( Metric.ball_mem_nhds _ <| show 0 < ‖u z₀‖ by aesop ) ] with z hz ; simp_all +decide [ mul_pow, ← Complex.cpow_nat_mul ];
+    · filter_upwards [ hu.continuousAt.eventually ( Metric.ball_mem_nhds _ <| show 0 < ‖u z₀‖ by aesop ) ] with z hz ; simp_all [ mul_pow, ← Complex.cpow_nat_mul ];
       norm_num [ hk.ne' ]
 
 /-! ### Local normal form φ(z)^k -/
@@ -125,7 +125,7 @@ theorem exists_local_biholomorphism_strong (φ : ℂ → ℂ) (z₀ : ℂ)
       have := h_inv.isLittleO.tendsto_div_nhds_zero
       generalize_proofs at *;
       have := Metric.tendsto_nhds_nhds.1 this ( ‖deriv φ z₀‖ ) ( by simpa using hφ' );
-      obtain ⟨ δ, δ_pos, H ⟩ := this; use Metric.ball z₀ δ ∩ U; simp_all +decide [ dist_eq_norm, InjOn ] ;
+      obtain ⟨ δ, δ_pos, H ⟩ := this; use Metric.ball z₀ δ ∩ U; simp_all [ dist_eq_norm, InjOn ] ;
       exact ⟨ IsOpen.inter ( Metric.isOpen_ball ) hU.1, fun x₁ hx₁ hx₁' x₂ hx₂ hx₂' h => Classical.not_not.1 fun hx => absurd ( H x₁ x₂ hx₁ hx₂ ) ( by simp [ *, sub_eq_iff_eq_add ] ) ⟩
     generalize_proofs at *;
     exact ⟨ h_inj.choose, h_inj.choose_spec.1, h_inj.choose_spec.2.1, h_inj.choose_spec.2.2.2, fun z hz => hU.2.2.1 z ( h_inj.choose_spec.2.2.1 hz ), fun z hz => hU.2.2.2 z ( h_inj.choose_spec.2.2.1 hz ) ⟩;
@@ -149,7 +149,7 @@ theorem exists_local_biholomorphism_strong (φ : ℂ → ℂ) (z₀ : ℂ)
 If φ is analytic at z' with φ'(z') ≠ 0 and φ(z')^k = w ≠ 0,
 then the function z ↦ φ(z)^k - w has order exactly 1 at z'.
 -/
-set_option maxHeartbeats 400000 in
+
 theorem analyticOrderNatAt_pow_sub_at_simple_root
     (φ : ℂ → ℂ) (z' : ℂ) (k : ℕ) (hk : 0 < k) (w : ℂ)
     (hφ : AnalyticAt ℂ φ z') (hφ' : deriv φ z' ≠ 0)
@@ -159,19 +159,19 @@ theorem analyticOrderNatAt_pow_sub_at_simple_root
     apply_rules [ analyticOrderNatAt_mul ];
     · exact hφ.sub ( analyticAt_const );
     · fun_prop;
-    · simp_all +decide [ analyticOrderAt ];
-      split_ifs <;> simp_all +decide [ sub_eq_iff_eq_add ];
+    · simp_all [ analyticOrderAt ];
+      split_ifs <;> simp_all [ sub_eq_iff_eq_add ];
       exact hφ' ( HasDerivAt.deriv ( by exact HasDerivAt.congr_of_eventuallyEq ( hasDerivAt_const _ _ ) ‹∀ᶠ z in 𝓝 z', φ z = φ z'› ) );
-    · simp_all +decide [ analyticOrderAt ];
-      split_ifs <;> simp_all +decide;
+    · simp_all [ analyticOrderAt ];
+      split_ifs <;> simp_all;
       rename_i h₁ h₂;
-      have := h₂.self_of_nhds; simp_all +decide [ ← hroot ] ;
-      simp_all +decide [ ← pow_add ];
+      have := h₂.self_of_nhds; simp_all [ ← hroot ] ;
+      simp_all [ ← pow_add ];
       rw [ Finset.sum_congr rfl fun i hi => by rw [ add_tsub_cancel_of_le ( Nat.le_sub_one_of_lt ( Finset.mem_range.mp hi ) ) ] ] at this ; aesop;
   have h_order_zero : analyticOrderNatAt (fun z => ∑ i ∈ Finset.range k, φ z ^ i * φ z' ^ (k - 1 - i)) z' = 0 := by
-    simp_all +decide [ analyticOrderNatAt ];
+    simp_all [ analyticOrderNatAt ];
     have h_order_zero : (fun z => ∑ i ∈ Finset.range k, φ z ^ i * φ z' ^ (k - 1 - i)) z' ≠ 0 := by
-      simp_all +decide [ ← pow_add ];
+      simp_all [ ← pow_add ];
       rw [ Finset.sum_congr rfl fun i hi => by rw [ add_tsub_cancel_of_le ( Nat.le_sub_one_of_lt ( Finset.mem_range.mp hi ) ) ] ] ; aesop;
     exact Or.inl <| analyticOrderAt_eq_zero.mpr <| by tauto;
   convert h_order using 1;
@@ -187,7 +187,7 @@ theorem analyticOrderNatAt_pow_sub_at_simple_root
 If `g` is analytic at `z₀` with `g(z₀) = 0` and order `k ≥ 1`,
 then nearby nonzero values have exactly `k` simple preimages near `z₀`.
 -/
-set_option maxHeartbeats 800000 in
+
 theorem analytic_local_mapping_theorem (g : ℂ → ℂ) (z₀ : ℂ) (k : ℕ) (hk : 0 < k)
     {N : Set ℂ} (hN_open : IsOpen N) (hz₀N : z₀ ∈ N)
     (hg : AnalyticAt ℂ g z₀) (hg0 : g z₀ = 0)
@@ -222,7 +222,7 @@ theorem analytic_local_mapping_theorem (g : ℂ → ℂ) (z₀ : ℂ) (k : ℕ) 
     exact ⟨ φ '' U, h_image, Set.mem_image_of_mem φ hU'.1, Set.Subset.refl _, fun w hw => hw ⟩;
   obtain ⟨ε, hε⟩ : ∃ ε > 0, Metric.ball 0 ε ⊆ V := by
     exact Metric.isOpen_iff.mp hV 0 ( by aesop );
-  refine' ⟨ U, hU, hU'.1, hU'.2.1, Metric.ball 0 ( ε ^ k ), Metric.isOpen_ball, _, _ ⟩ <;> simp_all +decide [ Metric.mem_ball ];
+  refine' ⟨ U, hU, hU'.1, hU'.2.1, Metric.ball 0 ( ε ^ k ), Metric.isOpen_ball, _, _ ⟩ <;> simp_all [ Metric.mem_ball ];
   intro w hw hw'; obtain ⟨S, hS⟩ : ∃ S : Finset ℂ, S.card = k ∧ (∀ t ∈ S, t ^ k = w) ∧ (∀ t, t ^ k = w → t ∈ S) := by
     exact card_roots_pow_eq k hk w hw';
   -- For each $t \in S$, there exists $z_t \in U$ such that $\varphi(z_t) = t$.
@@ -235,11 +235,11 @@ theorem analytic_local_mapping_theorem (g : ℂ → ℂ) (z₀ : ℂ) (k : ℕ) 
       exact hV'.2.2 t ( hε.2 ( mem_ball_zero_iff.mpr ht_norm ) );
     choose! z hz using hz;
     exact ⟨ z, hz, fun t₁ t₂ ht₁ ht₂ hne h => hne <| by have := hz t₁ ht₁; have := hz t₂ ht₂; aesop ⟩;
-  refine' ⟨ Finset.image z S, _, _, _, _ ⟩ <;> simp_all +decide;
+  refine' ⟨ Finset.image z S, _, _, _, _ ⟩ <;> simp_all;
   · rw [ Finset.card_image_of_injOn fun t₁ ht₁ t₂ ht₂ h => by contrapose! h; exact hz.2 t₁ t₂ ht₁ ht₂ h, hS.1 ];
   · exact fun x hx => hz.1 x hx |>.1;
-  · intro t ht; specialize hz; have := hz.1 t ht; simp_all +decide;
-    convert analyticOrderNatAt_pow_sub_at_simple_root φ ( z t ) k hk w _ _ _ _ using 1 <;> simp_all +decide [ analyticOrderNatAt ];
+  · intro t ht; specialize hz; have := hz.1 t ht; simp_all;
+    convert analyticOrderNatAt_pow_sub_at_simple_root φ ( z t ) k hk w _ _ _ _ using 1 <;> simp_all [ analyticOrderNatAt ];
     rw [ analyticOrderAt_congr ];
     filter_upwards [ IsOpen.mem_nhds hU ( hz.1 t ht |>.1 ) ] with x hx using by rw [ hU'.2.2.2.2.2 x hx ] ;
   · intro z' hz' hz''; use φ z'; aesop;
