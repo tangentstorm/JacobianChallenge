@@ -41,11 +41,11 @@ lemma diskMul_apply (c : ℂ) (hc : ‖c‖ = 1) (z : DiskC) :
 
 private lemma norm_exp_I_mul_real (r : ℝ) :
     ‖Complex.exp (Complex.I * (r : ℂ))‖ = 1 := by
-  simp [mul_comm, Complex.norm_exp_ofReal_mul_I]
+  simp
 
 private lemma norm_exp_real_mul_I (r : ℝ) :
     ‖Complex.exp ((r : ℂ) * Complex.I)‖ = 1 := by
-  simp [Complex.norm_exp_ofReal_mul_I]
+  simp
 
 /-- Map a homeomorphism between two types to a homeomorphism between their quotients,
 given that the homeomorphism respects the relations. -/
