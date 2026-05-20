@@ -416,38 +416,104 @@ theorem genusZero_fixedPole_meromorphicData_nonempty
       poleDivisor_eq_point :=
         genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point X P h ⟨f, hnc, hmem⟩ }⟩
 
-/-- **Exact Riemann-Roch-to-route-data construction (narrow frontier).**
+/-- **Narrow leaf: pole-modulus data for the Riemann-Roch fixed-pole map.**
+
+For an honest meromorphic-map-to-sphere `f` arising from the
+genus-zero Riemann-Roch witness (nonconstant, in `L([P])`, with
+`f.poles = Divisor.point P`), the local Laurent expansion near `P`
+gives the modulus-divergence content of `PoleModulusData`.
+
+**Intended proof.** Use the chart-local Laurent normal form for `f`
+near `P`: with `f.poles = Divisor.point P`, `f` has a simple pole at
+`P` and finite values elsewhere. Define the finite lift `g` by
+`g x := (f.toMap x).getD 0` on the non-pole locus (or via the
+`toFiniteFun_mdifferentiable` structural axiom on a global lift) and
+show `‖g x‖ → ∞` as `x → P` in `{P}ᶜ`. This is the same content
+proved for the scaffold in `singlePoleMeromorphicMap_poleModulusData`,
+but for a genuine Riemann-Roch witness rather than the cutoff. The
+remaining gap is the chart-local Laurent-to-modulus bridge for a
+generic `MeromorphicMapToSphere` whose pole divisor is `[P]`. Do not
+substitute `singlePoleMeromorphicMap_poleModulusData`; the underlying
+maps are not equal. -/
+theorem genusZero_fixedPole_poleModulusData
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : MeromorphicMapToSphere X)
+    (hnc : f.Nonconstant)
+    (hmem : f.MemRiemannRochSpace (Divisor.point P))
+    (hpole : f.poles = Divisor.point P) :
+    f.PoleModulusData := by
+  sorry
+
+/-- **Narrow leaf: branched-cover data for the Riemann-Roch fixed-pole map.**
+
+For an honest meromorphic-map-to-sphere `f` arising from the
+genus-zero Riemann-Roch witness with `f.poles = Divisor.point P` and
+known pole-modulus data, the analytic CP¹-lift route produces
+`BranchedCoverDataOfPoleDegree`.
+
+**Intended proof.** Continuity of `f.toMap` follows from
+`meromorphicMapToSphere_continuous_of_poleDivisor_point` (proved
+sorry-free, takes `hmod`). Manifold-level complex smoothness then
+yields a `ContMDiff` map. From there, the already-proved blueprint
+chain applies:
+
+* `liftToCp1_local_kfold_ramified` / `local_kfold_ramified_of_contMDiff`
+  for local k-fold structure;
+* `liftToCp1_weightedFiberSum_eventually_eq` /
+  `weightedFiberConservation_of_contMDiff` for weighted-fiber
+  conservation;
+* `branchedCoverData_of_nonconstant_holomorphic` (in
+  `Jacobian/Blueprint/Sec02/BranchedDegreeFromHolomorphic.lean`) for
+  the `BranchedCoverData`;
+* matching `branchedDegree = (Divisor.point P).degree.toNat = 1`
+  follows from the order-one chart-local normal form at the simple
+  pole.
+
+The remaining gap is the bridge from `MeromorphicMapToSphere` /
+`continuousOn_ne_infty` to manifold-level `ContMDiff` of `f.toMap`,
+which the structure does not directly provide for generic maps. -/
+theorem genusZero_fixedPole_branchedCoverDataOfPoleDegree
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0)
+    (f : MeromorphicMapToSphere X)
+    (hnc : f.Nonconstant)
+    (hmem : f.MemRiemannRochSpace (Divisor.point P))
+    (hpole : f.poles = Divisor.point P)
+    (hmod : f.PoleModulusData) :
+    f.BranchedCoverDataOfPoleDegree := by
+  sorry
+
+/-- **Exact Riemann-Roch-to-route-data construction (sorry-free assembly).**
 
 For a compact connected Riemann surface of analytic genus zero and a
 prescribed pole point `P`, there exists a `SinglePoleMeromorphicMapData P`:
 an honest meromorphic-map-to-sphere whose `poleDivisor` is `Divisor.point P`,
 together with both `PoleModulusData` and `BranchedCoverDataOfPoleDegree`.
 
-This is the precise remaining Riemann-Roch-to-route-data construction.
+Sorry-free assembly:
 
-**Intended proof.** Riemann-Roch gives a nonconstant meromorphic function
-in `L([P])` (already proved sorry-free as
-`genusZero_pointRiemannRochSpace_witness_exists`). The pole divisor of any
-such function is exactly `[P]`
-(`genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point`). The local
-Laurent expansion of this function near `P` yields
-`PoleModulusData`. The CP¹ lift, combined with already-proved local
-ramification (`liftToCp1_local_kfold_ramified`) and weighted-fiber
-conservation (`liftToCp1_weightedFiberSum_eventually_eq`, which feeds
-`branchedCoverData_of_nonconstant_holomorphic` in the blueprint), gives
-the branched-cover data; matching the branched degree to
-`(Divisor.point P).degree.toNat = 1` closes the construction.
+1. `genusZero_pointRiemannRochSpace_witness_exists` (already proved)
+   produces a nonconstant meromorphic map `f` in `L([P])`.
+2. `genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point`
+   (already proved) gives `f.poles = Divisor.point P`.
+3. `genusZero_fixedPole_poleModulusData` (narrow leaf) produces
+   `f.PoleModulusData`.
+4. `genusZero_fixedPole_branchedCoverDataOfPoleDegree` (narrow leaf)
+   produces `f.BranchedCoverDataOfPoleDegree`.
+5. Package the result as a `SinglePoleMeromorphicMapData (X := X) P`.
 
-**Why `singlePoleMeromorphicMap P` is not a valid witness.** The cutoff
-scaffold satisfies `PoleModulusData` (proved separately as
-`singlePoleMeromorphicMap_poleModulusData`), but its `0`-fiber outside the
-chart source is generically infinite, so it cannot satisfy
-`BranchedCoverDataOfPoleDegree` (`finite_fiber` fails).
-
-**Strength relative to `genusZero_fixedPole_meromorphicData_nonempty`.**
-That predecessor delivers only a `MeromorphicMapToSphere` with the right
-pole divisor; this one additionally delivers the analytic route data
-required to feed `simplePole_meromorphicMap_proper_degreeOne`. -/
+The two remaining narrow leaves are independent: the pole-modulus
+leaf is local Laurent content; the branched-cover leaf is the global
+CP¹-lift-to-branched-cover bridge. -/
 theorem genusZero_fixedPole_singlePoleRouteData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -456,7 +522,19 @@ theorem genusZero_fixedPole_singlePoleRouteData_nonempty
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     Nonempty (SinglePoleMeromorphicMapData (X := X) P) := by
-  sorry
+  obtain ⟨f, hnc, hmem⟩ := genusZero_pointRiemannRochSpace_witness_exists X P h
+  have hpole : f.poles = Divisor.point P :=
+    genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point X P h ⟨f, hnc, hmem⟩
+  have hmod : f.PoleModulusData :=
+    genusZero_fixedPole_poleModulusData X P h f hnc hmem hpole
+  have hbranch : f.BranchedCoverDataOfPoleDegree :=
+    genusZero_fixedPole_branchedCoverDataOfPoleDegree X P h f hnc hmem hpole hmod
+  exact ⟨{
+    map := f
+    poleDivisor_eq := hpole
+    nonconstant := hnc
+    poleModulusData := hmod
+    branchedCoverDataOfPoleDegree := hbranch }⟩
 
 /-- **Fixed-pole route-data assembly wrapper.**
 
