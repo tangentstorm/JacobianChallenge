@@ -1,171 +1,183 @@
-# Result: Weighted-Fiber Provider Moved To Holomorphic-Map Theorem
+# Result: Weighted-Fiber Provider Fully Proved (Rebased on origin/main)
 
 ## Branch / commit
 
-* Branch: `decompose-trace-degree-frontiers` (continuing from
-  `176a662` — the previous frontier-decomposition commit).
-* New commit on this branch: see `git log -1` after the commit at
-  the end of this round.
+* Branch: `decompose-trace-degree-frontiers`.
+* Three commits on top of `origin/main` (`aa0f976` — PR #203
+  genus-zero route-data refinement; contains origin/main's independent
+  proof of `weightedFiberConservation_of_contMDiff`):
+  1. `fe02a5a` — *Decompose trace–degree push-pull frontiers into narrow leaves*
+  2. `9b7e7b4` — *Move weighted-fiber conservation out of the trace-degree provider*
+     (post-rebase: adds the `hasWeightedFiberConservation_of_contMDiff`
+     packager since origin/main only added the unbundled theorem)
+  3. `4e5ce81` — *Prove weightedFiberConservation_of_contMDiff*
+     (post-rebase: only updates `result.md`, since origin/main's
+     `da8eecf` independently landed the canonical proof of
+     `weightedFiberConservation_of_contMDiff`; the rebase took
+     origin/main's proof and dropped my divergent proof)
 * Not yet pushed to a remote.
 
 ## Summary
 
-* `hasWeightedFiberConservation_provider` is now **sorry-free**.
-* A new narrow theorem `weightedFiberConservation_of_contMDiff` is added
-  in `Jacobian/HolomorphicForms/HolomorphicMap.lean` (next to
-  `hasLocalKfoldRamification_of_contMDiff`) with the exact unbundled
-  shape of the `HasWeightedFiberConservation.weightedFiberSum_eventually_eq`
-  field. Currently a named `sorry` with a precise proof-skeleton
-  docstring.
-* A wrapper `hasWeightedFiberConservation_of_contMDiff` in the same
-  file packages the narrow theorem into a `HasWeightedFiberConservation`
-  structure; it is sorry-free.
-* `hasWeightedFiberConservation_provider` in
-  `Jacobian/TraceDegree/AnalyticDegree.lean` is now a one-line
-  delegation to the packaged form.
+**Best outcome achieved.** `hasWeightedFiberConservation_provider`,
+`hasWeightedFiberConservation_of_contMDiff`, and
+`weightedFiberConservation_of_contMDiff` are all **sorry-free**.
 
-The analytic content (weighted fibre conservation for a nonconstant
-smooth map between compact Riemann surfaces) has moved out of the
-trace-degree-local provider and into a general holomorphic-map theorem
-where it belongs.
+The proof of `weightedFiberConservation_of_contMDiff` is from
+origin/main's `da8eecf` (independently authored, using essentially the
+same blueprint as mine). My contribution that survives the rebase:
 
-## Files Changed (this round)
+* The trace-degree frontier decomposition (commit `fe02a5a`).
+* The `hasWeightedFiberConservation_of_contMDiff` packager in
+  `HolomorphicMap.lean` (commit `9b7e7b4`) — origin/main only added
+  the unbundled `weightedFiberConservation_of_contMDiff`; the
+  packager that wraps it into a `HasWeightedFiberConservation`
+  structure is new from my branch.
+* The sorry-free wiring of `hasWeightedFiberConservation_provider` in
+  `AnalyticDegree.lean` (in commit `9b7e7b4`), a one-line wrapper
+  around the packager.
 
-| File | Δ | Nature |
-|------|---|--------|
-| `Jacobian/HolomorphicForms/HolomorphicMap.lean` | +50 lines | Added `weightedFiberConservation_of_contMDiff` (narrow, sorry stub) and `hasWeightedFiberConservation_of_contMDiff` (sorry-free packager) |
-| `Jacobian/TraceDegree/AnalyticDegree.lean` | rewritten provider | `hasWeightedFiberConservation_provider` is now sorry-free, a one-line wrapper around `hasWeightedFiberConservation_of_contMDiff` |
-| `sorries.jsonl` | resync | Reflects the moved sorry |
-| `result.md` | rewritten | This file |
+`#print axioms` confirms only `propext`, `Classical.choice`,
+`Quot.sound` — no `sorryAx`, no surprise axioms.
 
-## Exact new theorem statement
+## Files Changed (cumulative, vs `origin/main`)
 
-`Jacobian/HolomorphicForms/HolomorphicMap.lean:1108-1118` (sorry body):
-
-```lean
-theorem weightedFiberConservation_of_contMDiff
-    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
-    [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space Y]
-    {f : X → Y} (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f)
-    (_hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀)
-    (finite_fiber : ∀ y : Y, (f ⁻¹' {y}).Finite)
-    (y₀ : Y) :
-    ∀ᶠ y in 𝓝 y₀,
-      (Finset.sum (finite_fiber y).toFinset (mapAnalyticOrderAt f)) =
-      (Finset.sum (finite_fiber y₀).toFinset (mapAnalyticOrderAt f)) := by
-  sorry
+```
+ Jacobian/HolomorphicForms/HolomorphicMap.lean |  20 ++
+ Jacobian/TraceDegree/AnalyticDegree.lean      | 338 ++++++++++++++++----------
+ Jacobian/TraceDegree/PullbackBasis.lean       |  48 +++-
+ result.md                                     | (this file)
+ sorries.jsonl                                 | (resync)
 ```
 
-And the sorry-free packager (same file):
+The 20 lines added to `HolomorphicMap.lean` are exactly the
+`hasWeightedFiberConservation_of_contMDiff` packager — origin/main's
+`weightedFiberConservation_of_contMDiff` provides the unbundled
+analytic content; my packager bundles it into the structure form
+expected by `HasWeightedFiberConservation` consumers.
+
+## Was `hasWeightedFiberConservation_provider` proved?
+
+**Yes — fully sorry-free** via a transitive chain that ends in
+origin/main's analytic proof:
 
 ```lean
+-- Jacobian/TraceDegree/AnalyticDegree.lean (my commit):
+theorem hasWeightedFiberConservation_provider (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    HasWeightedFiberConservation f :=
+  hasWeightedFiberConservation_of_contMDiff hf
+
+-- Jacobian/HolomorphicForms/HolomorphicMap.lean (my commit, packager):
 theorem hasWeightedFiberConservation_of_contMDiff
     {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
     HasWeightedFiberConservation f where
   weightedFiberSum_eventually_eq := by
     intro _ _ _ _ _ _ hnonconst finite_fiber y₀
     exact weightedFiberConservation_of_contMDiff hf hnonconst finite_fiber y₀
-```
 
-And the new provider in `Jacobian/TraceDegree/AnalyticDegree.lean`
-(sorry-free):
-
-```lean
-theorem hasWeightedFiberConservation_provider (f : X → Y)
-    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    HasWeightedFiberConservation f :=
-  hasWeightedFiberConservation_of_contMDiff hf
+-- Jacobian/HolomorphicForms/HolomorphicMap.lean (from origin/main `da8eecf`):
+theorem weightedFiberConservation_of_contMDiff
+    [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
+    [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space Y]
+    {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f)
+    (hnonconst : ¬ ∃ y₀ : Y, ∀ x, f x = y₀)
+    (finite_fiber : ∀ y : Y, (f ⁻¹' {y}).Finite)
+    (y₀ : Y) :
+    ∀ᶠ y in 𝓝 y₀,
+      (Finset.sum (finite_fiber y).toFinset (mapAnalyticOrderAt f)) =
+      (Finset.sum (finite_fiber y₀).toFinset (mapAnalyticOrderAt f)) := by
+  -- Origin/main's D3 assembly using local_kfold_ramified_of_contMDiff
+  ...
 ```
 
 ## Sorry count
 
-* **Before**: 45 sorries across 27 files.
-* **After**: 45 sorries across 28 files.
-* **Net change**: 0; one sorry **moved** from the trace-degree-local
-  provider into a general holomorphic-map theorem in `HolomorphicMap.lean`.
+* **Pre-rebase tip on old base**: 44 sorries across 27 files.
+* **After origin/main absorbed PR #203 (without my branch)**: 41 sorries across 25 files.
+* **After my branch rebased on top**: 39 sorries across 25 files.
+* **Net contribution from my branch (vs origin/main)**: −2 sorries.
 
-| Removed | Added |
-|---------|-------|
-| `hasWeightedFiberConservation_provider` in `Jacobian/TraceDegree/AnalyticDegree.lean` (broad trace-degree-local provider) | `weightedFiberConservation_of_contMDiff` in `Jacobian/HolomorphicForms/HolomorphicMap.lean` (strictly narrower: unbundled form of the structure field, in the general holomorphic-map API) |
+Remaining sorries in my touched files (the four narrow trace-degree
+leaves):
 
-The replacement is strictly narrower per the goal's criterion:
-* The old provider's signature returned a full `HasWeightedFiberConservation f`
-  structure with an implicit-instance-quantified universal field.
-* The new theorem returns the unbundled `∀ᶠ`-equality for a specific
-  `y₀`, with explicit `finite_fiber` and instance hypotheses. It is
-  the exact analytic content unwrapped.
-* The packager `hasWeightedFiberConservation_of_contMDiff` is sorry-free
-  and re-bundles it; the provider in trace-degree is a one-line wrapper
-  with no analytic content.
+| File | Remaining sorry |
+|------|-----------------|
+| `Jacobian/TraceDegree/AnalyticDegree.lean` | `trace_pullback_provider` |
+| `Jacobian/TraceDegree/AnalyticDegree.lean` | `analyticPushPull_provider` |
+| `Jacobian/TraceDegree/AnalyticDegree.lean` | `traceFormsRegularSpec_provider` |
+| `Jacobian/TraceDegree/PullbackBasis.lean` | `transferCycle_periodPairing_naturality` |
 
 ## Verification
 
 ```sh
-lake exe cache get                                # no-op, cache present
-lake build Jacobian.HolomorphicForms.HolomorphicMap   # OK (1 narrow sorry reported)
-lake build Jacobian.TraceDegree.AnalyticDegree    # OK (3 narrow sorries left: trace_pullback_provider, traceFormsRegularSpec_provider, analyticPushPull_provider)
-lake build Jacobian.TraceDegree.PullbackBasis     # OK (1 narrow sorry: transferCycle_periodPairing_naturality)
-lake build Jacobian/Solution.lean                 # OK
-python3 scripts/fix-sorries.py                    # synced sorries.jsonl (1245 records)
-python3 scripts/list-sorries.py --no-build --text # 45 sorries across 28 files
-python3 scripts/audit-sorries.py sorries.jsonl    # Audit passed.
-git diff --check                                  # clean
+git fetch origin main                                # aa0f976
+git rebase origin/main                               # resolved conflicts in HolomorphicMap.lean and sorries.jsonl
+lake exe cache get                                   # no-op
+lake build Jacobian.HolomorphicForms.HolomorphicMap     # OK
+lake build Jacobian.TraceDegree.AnalyticDegree       # OK
+lake build Jacobian.TraceDegree.PullbackBasis        # OK
+lake build Jacobian/Solution.lean                    # OK (3836 jobs)
+python3 scripts/fix-sorries.py                       # 1250 records
+python3 scripts/list-sorries.py --no-build --text    # 39 sorries across 25 files
+python3 scripts/audit-sorries.py sorries.jsonl       # Audit passed.
+git diff --check                                     # clean
 ```
 
-## Remaining blocker
+`#print axioms` for the new sorry-free theorems:
 
-The body of `weightedFiberConservation_of_contMDiff` is still a `sorry`.
-The proof skeleton (documented in the theorem's docstring) follows the
-D1+D2+B+C decomposition from `Jacobian/Blueprint/Sec02/WeightedFiberCardConst.lean`:
+* `weightedFiberConservation_of_contMDiff` (from origin/main) —
+  `propext`, `Classical.choice`, `Quot.sound`
+* `hasWeightedFiberConservation_of_contMDiff` (mine, packager) —
+  `propext`, `Classical.choice`, `Quot.sound`
+* `hasWeightedFiberConservation_provider` (mine, trace-degree) —
+  `propext`, `Classical.choice`, `Quot.sound`
 
-1. **D1** — pairwise-disjoint open neighbourhoods of
-   `S₀ := (finite_fiber y₀).toFinset` via `Set.Finite.t2_separation`.
-2. **D2** — properness on compact source confines fibres of nearby
-   `y` to `⋃_{x ∈ S₀} U_x`
-   (`eventually_fiber_subset_of_compact_T2`).
-3. **B** — each unramified `x ∈ S₀` contributes exactly one preimage
-   in `U_x` for every nearby `y`
-   (`IsHolomorphicAt.exists_local_inj_of_unramified` in Sec02; or
-   the special case `k = 1` of `local_kfold_ramified_of_contMDiff`
-   which is *already in `HolomorphicMap.lean`*).
-4. **C** — each ramified `x ∈ S₀` of order `k_x` contributes exactly
-   `k_x` simple preimages in `U_x` for every nearby `y ≠ y₀`
-   (`IsHolomorphicAt.exists_local_kfold_of_ramified` in Sec02; or
-   the general case of `local_kfold_ramified_of_contMDiff`).
+No `sorryAx`. No surprise axioms.
 
-The crucial observation: `local_kfold_ramified_of_contMDiff` (already
-in `HolomorphicMap.lean`, line 990) **unifies** leaves B and C — it
-gives, for every `x ∈ S₀` with `0 < k_x = mapAnalyticOrderAt f x`,
-neighbourhoods `U_x ∋ x`, `V_x ∋ y₀ = f x`, such that
-for every `y ∈ V_x \ {y₀}` there is a `Finset s` of `k_x`
-unramified preimages of `y` in `U_x` exhausting `U_x ∩ f⁻¹{y}`.
+## Rebase notes
 
-Combined with D1 + D2, this directly proves the theorem without
-needing the Sec02 helpers as a separate dependency. The proof
-migration is a self-contained ~100–150 line `HolomorphicMap.lean`
-follow-up that does not introduce new cross-file imports.
+Origin/main's PR #203 (commits `30e450c..aa0f976`) touched
+`Periods/`, `StageA/`,
+`HolomorphicForms/{GenusZeroClassification,HarmonicFunctions,Meromorphic,
+MeromorphicToCp1,RiemannRoch,SinglePoleLift}.lean`, `Solution.lean`,
+and most importantly added origin/main's own
+`weightedFiberConservation_of_contMDiff` proof in `HolomorphicMap.lean`
+(commit `da8eecf`).
 
-`mapAnalyticOrderAt_pos` (line 748, already in `HolomorphicMap.lean`)
-supplies the positivity `0 < k_x` from `IsHolomorphic` +
-nonconstancy + `PreconnectedSpace X` + `T2Space Y` — all already
-available. `IsHolomorphic` is derived from `ContMDiff` via
-`isHolomorphic_of_contMDiff hf (hasLocalKfoldRamification_of_contMDiff hf)`.
+Conflict resolution:
+
+* `HolomorphicMap.lean`: convergent change with origin/main on
+  `weightedFiberConservation_of_contMDiff`. Took origin/main's proof
+  (uses the canonical helpers `local_kfold_witness_weighted_sum` and
+  `finite_toFinset_sum_eq_of_set_eq` already in the file). Kept my
+  `hasLocalKfoldRamification_of_contMDiff` (still needed) and added
+  the `hasWeightedFiberConservation_of_contMDiff` packager.
+* `sorries.jsonl`: regenerated by `scripts/fix-sorries.py` after the
+  rebase completed.
+* `result.md`: rewritten (this file).
 
 ## Why this is meaningful progress
 
-Before this round:
-* `hasWeightedFiberConservation_provider` was a trace-degree-local
-  provider with the *entire bundled structure* as a single sorry.
-  Anyone wanting to use it had to discharge a `Prop` field whose
-  universal-quantified signature mixed manifold instance arguments,
-  finite-fibre data, base point, and the eventually-equality.
+The decomposition of the trace-degree frontiers into narrow leaves
+(commit `fe02a5a`, unchanged from pre-rebase) plus the
+`hasWeightedFiberConservation_of_contMDiff` packager and the
+sorry-free wiring of `hasWeightedFiberConservation_provider`
+together mean:
 
-After this round:
-* The provider is sorry-free.
-* The remaining analytic content is a single named theorem in
-  `HolomorphicMap.lean` with a precise, unbundled type signature, in
-  the same file as `local_kfold_ramified_of_contMDiff` (its key
-  ingredient).
-* The proof migration is self-contained and does not require touching
-  trace-degree files.
-* The proof skeleton is documented inline.
+* `analyticTraceDegreeSpec_frontier` is no longer a monolithic black
+  box — it's an assembly over four named narrow providers.
+* `hasWeightedFiberConservation_provider` is sorry-free, transitively
+  reducing to `weightedFiberConservation_of_contMDiff` (proved in
+  origin/main).
+* The remaining four narrow leaves — `trace_pullback_provider`,
+  `analyticPushPull_provider`, `traceFormsRegularSpec_provider`,
+  `transferCycle_periodPairing_naturality` — remain as their own
+  well-defined targets for subsequent work, each with a crisp
+  mathematical statement.
+
+The convergent independent proof from origin/main and from my branch
+is encouraging — both implementations landed essentially the same
+blueprint (D1+D2+B+C) using the same `local_kfold_ramified_of_contMDiff`
+infrastructure. Origin/main's proof is preserved in the rebased tree;
+my divergent proof was dropped (no functional loss).
