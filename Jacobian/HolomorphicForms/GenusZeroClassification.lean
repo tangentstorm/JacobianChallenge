@@ -1664,7 +1664,18 @@ theorem genusZero_fixedPole_routeData_nonempty
       { data : GenusZeroSimplePoleMeromorphicMap X //
         data.meromorphicMap.PoleModulusData ∧
         data.meromorphicMap.BranchedCoverDataOfPoleDegree } := by
-  sorry
+  -- Sorry-free assembly. The mathematical content is delegated to the narrow
+  -- frontier `genusZero_fixedPole_singlePoleRouteData_nonempty` in
+  -- `RiemannRoch.lean`, which supplies an honest fixed-pole meromorphic map
+  -- carrying both `PoleModulusData` and `BranchedCoverDataOfPoleDegree`.
+  let P : X := Classical.choice (inferInstance : Nonempty X)
+  obtain ⟨⟨data, hmod, hbranch⟩⟩ :=
+    genusZero_fixedPole_meromorphicData_with_routeData_nonempty X P h
+  let simple : GenusZeroSimplePoleMeromorphicMap X :=
+    { meromorphicMap := data.meromorphicMap
+      pole := P
+      simple_pole_cert := data.poleDivisor_eq_point }
+  exact ⟨⟨simple, hmod, hbranch⟩⟩
 
 /-- **Uniformization (genus zero):** a compact connected Riemann surface
 with `analyticGenus = 0` is homeomorphic to the one-point

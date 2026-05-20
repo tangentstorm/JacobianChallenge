@@ -1238,4 +1238,5 @@
 {"i":2672,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2673,"f":"Jacobian/Periods/CellularChainComplex.lean","k":"theorem","s":"polygon4g_boundary_arcs_are_loops","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2674,"f":"Jacobian/Periods/CellularHomologyRS.lean","k":"def","s":"polygon4g_cellularModel_to_mathlibCW_frontier","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2675,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"genusZero_fixedPole_routeData_nonempty","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2675,"f":"Jacobian/HolomorphicForms/GenusZeroClassification.lean","k":"theorem","s":"genusZero_fixedPole_routeData_nonempty","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
+{"i":2676,"f":"Jacobian/HolomorphicForms/RiemannRoch.lean","k":"theorem","s":"genusZero_fixedPole_singlePoleRouteData_nonempty","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}

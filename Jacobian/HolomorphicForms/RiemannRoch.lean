@@ -416,4 +416,70 @@ theorem genusZero_fixedPole_meromorphicData_nonempty
       poleDivisor_eq_point :=
         genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point X P h ⟨f, hnc, hmem⟩ }⟩
 
+/-- **Exact Riemann-Roch-to-route-data construction (narrow frontier).**
+
+For a compact connected Riemann surface of analytic genus zero and a
+prescribed pole point `P`, there exists a `SinglePoleMeromorphicMapData P`:
+an honest meromorphic-map-to-sphere whose `poleDivisor` is `Divisor.point P`,
+together with both `PoleModulusData` and `BranchedCoverDataOfPoleDegree`.
+
+This is the precise remaining Riemann-Roch-to-route-data construction.
+
+**Intended proof.** Riemann-Roch gives a nonconstant meromorphic function
+in `L([P])` (already proved sorry-free as
+`genusZero_pointRiemannRochSpace_witness_exists`). The pole divisor of any
+such function is exactly `[P]`
+(`genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point`). The local
+Laurent expansion of this function near `P` yields
+`PoleModulusData`. The CP¹ lift, combined with already-proved local
+ramification (`liftToCp1_local_kfold_ramified`) and weighted-fiber
+conservation (`liftToCp1_weightedFiberSum_eventually_eq`, which feeds
+`branchedCoverData_of_nonconstant_holomorphic` in the blueprint), gives
+the branched-cover data; matching the branched degree to
+`(Divisor.point P).degree.toNat = 1` closes the construction.
+
+**Why `singlePoleMeromorphicMap P` is not a valid witness.** The cutoff
+scaffold satisfies `PoleModulusData` (proved separately as
+`singlePoleMeromorphicMap_poleModulusData`), but its `0`-fiber outside the
+chart source is generically infinite, so it cannot satisfy
+`BranchedCoverDataOfPoleDegree` (`finite_fiber` fails).
+
+**Strength relative to `genusZero_fixedPole_meromorphicData_nonempty`.**
+That predecessor delivers only a `MeromorphicMapToSphere` with the right
+pole divisor; this one additionally delivers the analytic route data
+required to feed `simplePole_meromorphicMap_proper_degreeOne`. -/
+theorem genusZero_fixedPole_singlePoleRouteData_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    Nonempty (SinglePoleMeromorphicMapData (X := X) P) := by
+  sorry
+
+/-- **Fixed-pole route-data assembly wrapper.**
+
+Sorry-free assembly: unwraps a `SinglePoleMeromorphicMapData P` produced by
+the narrow frontier `genusZero_fixedPole_singlePoleRouteData_nonempty`,
+repackages its `map` field as a `GenusZeroFixedPoleMeromorphicData X P h`,
+and exposes the bundled `PoleModulusData` and `BranchedCoverDataOfPoleDegree`
+as a subtype. -/
+theorem genusZero_fixedPole_meromorphicData_with_routeData_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    Nonempty
+      { data : GenusZeroFixedPoleMeromorphicData X P h //
+        data.meromorphicMap.PoleModulusData ∧
+        data.meromorphicMap.BranchedCoverDataOfPoleDegree } := by
+  obtain ⟨route⟩ := genusZero_fixedPole_singlePoleRouteData_nonempty X P h
+  let data : GenusZeroFixedPoleMeromorphicData X P h :=
+    { meromorphicMap := route.map
+      poleDivisor_eq_point := route.poleDivisor_eq }
+  exact ⟨⟨data, route.poleModulusData, route.branchedCoverDataOfPoleDegree⟩⟩
+
 end JacobianChallenge.HolomorphicForms
