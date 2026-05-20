@@ -1,0 +1,30 @@
+Please rename this session to "2662. Prove genus_zero_homeomorph_onePointCx".
+
+Target file: Jacobian/HolomorphicForms/GenusZeroClassification.lean
+Target sorry: theorem genus_zero_homeomorph_onePointCx
+Allowed writes: prefer Jacobian/HolomorphicForms/GenusZeroClassification.lean and directly needed route-data files.
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+
+Task: prove the public genus-zero classification theorem `genus_zero_homeomorph_onePointCx`.
+
+Current state:
+- `genus_zero_homeomorph_onePointCx_with_routeData` is already the intended assembly.
+- The remaining public theorem is blocked by route data for the fixed-pole Riemann-Roch map:
+  - `(simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.PoleModulusData`;
+  - `(simplePoleMeromorphicMapOfGenusZero X h).meromorphicMap.BranchedCoverDataOfPoleDegree`.
+
+Expected approach:
+1. Inspect `simplePoleMeromorphicMapOfGenusZero`, `genusZeroRiemannRochFixedPoleData`, and `MeromorphicMapToSphere` route-data APIs.
+2. Prove the two route-data fields from the actual analytic construction, not from manually assigned divisor data.
+3. Finish by applying `genus_zero_homeomorph_onePointCx_with_routeData`.
+
+Anti-cheat:
+- Do not construct `PoleModulusData` or `BranchedCoverDataOfPoleDegree` with vacuous or arbitrary witnesses.
+- Do not weaken the public theorem.
+
+Verification:
+```sh
+lake build Jacobian.HolomorphicForms.GenusZeroClassification
+python3 scripts/fix-sorries.py
+python3 scripts/audit-sorries.py sorries.jsonl
+```

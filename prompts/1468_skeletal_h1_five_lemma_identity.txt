@@ -1,0 +1,30 @@
+Please rename this session to "1468. Prove skeletal_h1_five_lemma_identity".
+
+Target file: Jacobian/StageA/CellularSingular.lean
+Target sorry: theorem skeletal_h1_five_lemma_identity
+Allowed writes: prefer Jacobian/StageA/CellularSingular.lean and narrowly scoped StageA cellular/singular helper files.
+Forbidden files: Jacobian/Challenge.lean, Jacobian/WorkPackets/StatementBank.lean
+
+Read first:
+- `prompts/plan_hard_1468_skeletal_h1_five_lemma_identity.md`
+- `Jacobian/StageA/CellularSingular.lean`
+- `Jacobian/Periods/Hurewicz.lean`
+
+Task: prove the skeletal H₁ five-lemma comparison identity that turns a filtered cellular-to-singular chain comparison into the H₁ isomorphism.
+
+Expected approach:
+1. Make the StageA filtered-chain objects concrete enough to state the long exact sequence/five-lemma square.
+2. Use a real chain map and boundary compatibility, not the current constant-simplex placeholder.
+3. Prove the H₁ comparison by an actual diagram chase or by specializing a Mathlib homological algebra theorem if available.
+
+Anti-cheat:
+- Do not prove this with reflexivity between aliases.
+- Do not rely on `simplexCharSingular` as a constant simplex unless the theorem is explicitly changed to a true statement about that constant map.
+- Do not make filtration predicates `True` merely to close the goal.
+
+Verification:
+```sh
+lake build Jacobian.StageA.CellularSingular
+python3 scripts/fix-sorries.py
+python3 scripts/audit-sorries.py sorries.jsonl
+```
