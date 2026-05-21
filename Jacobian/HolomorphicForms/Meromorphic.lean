@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.Divisor
 import Jacobian.HolomorphicForms.FiniteDimensional
 import Jacobian.HolomorphicForms.BranchedCover
+import Jacobian.HolomorphicForms.OnePointCxChartedSpace
 import Mathlib.Topology.Compactification.OnePoint.Basic
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
@@ -147,6 +148,61 @@ structure BranchedCoverDataOfPoleDegree (f : MeromorphicMapToSphere X) where
     Continuous f.toMap →
     ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) f.toMap),
       JacobianChallenge.HolomorphicForms.branchedDegree h = f.poleDivisor.degree.toNat
+
+/-- **Honest analytic data for a `MeromorphicMapToSphere`.**
+
+The abstract `MeromorphicMapToSphere` structure carries only set-level
+data, divisor arithmetic, topological values at poles, continuity off
+poles, and a *global* finite-lift differentiability axiom that is
+vacuous whenever there are any poles. `PoleModulusData` adds a
+modulus-divergence witness near poles but no analyticity.
+
+This record bundles the **per-point analytic content** that an honest
+meromorphic-map-to-sphere actually carries but the abstract interface
+cannot derive:
+
+* `continuous_toMap` — the global continuity statement
+  (`MeromorphicMapToSphere.ExtendsContinuously`). Although the
+  structure has a continuous extension on the non-pole locus, the
+  global continuity at poles requires additional analytic input. We
+  collect it here.
+* `meromorphic_getD` — the *point-by-point* `MeromorphicAtX` predicate
+  for the canonical finite lift `q ↦ (f.toMap q).getD 0`. This is the
+  precise analytic content needed by the
+  `MeromorphicFunctionType`/`liftToCp1` infrastructure of
+  `MeromorphicToCp1.lean`.
+* `simple_pole_order_one` — at a *simple* pole, the chart-local
+  analytic order of `f.toMap` equals `1`. This is the analytic content
+  "simple pole ⇒ ramification index one", read in the inversion chart
+  on `OnePoint ℂ`.
+
+Scaffold maps (e.g. `singlePoleMeromorphicMap`, `twoPointMeromorphicMap`)
+generally cannot produce this data; production constructors (the
+Riemann-Roch witness, dipole construction, an honest
+`MeromorphicFunctionType` package) supply it by construction. The
+data is intentionally *separate* from `MeromorphicMapToSphere` so that
+the abstract interface can continue to be lock-stepped with scaffold
+constructors that genuinely fail these analytic claims.
+
+Production downstream theorems should consume `AnalyticData` (or the
+record in which it is bundled) rather than the abstract interface
+plus `PoleModulusData`. -/
+structure AnalyticData (f : MeromorphicMapToSphere X) where
+  /-- Global continuity of the map to `OnePoint ℂ`. -/
+  continuous_toMap : Continuous f.toMap
+  /-- The canonical finite lift `(f.toMap ·).getD 0` is meromorphic at
+  every point in the manifold sense. -/
+  meromorphic_getD :
+    ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p
+  /-- At a *simple* pole, the chart-local analytic order of `f.toMap`
+  is exactly `1`. This is the analytic content
+  "simple pole ⇒ ramification index one". -/
+  simple_pole_order_one :
+    ∀ P : X,
+      f.poles = Divisor.point P →
+        JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1
 
 omit [Periods.StableChartAt ℂ X] in
 @[simp] theorem principal_eq_zeroDivisor_sub_poleDivisor
