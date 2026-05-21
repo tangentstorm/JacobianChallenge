@@ -166,21 +166,69 @@ theorem hasWeightedFiberConservation_provider (f : X → Y)
     HasWeightedFiberConservation f :=
   hasWeightedFiberConservation_of_contMDiff hf
 
-/-- **The narrow trace-pullback identity provider.** This is the
-sole remaining trace/pullback frontier from the form-level identity
-`tr_f (f* η) = deg(f) · η` (Steps 3-5 of the analytic proof outline:
-holomorphic extension across the branch locus).
+/-- **The narrow trace regularity provider.** The remaining trace
+construction frontier: global trace of holomorphic 1-forms agrees with
+the regular-value local trace formula. -/
+noncomputable def traceFormsRegularSpec_provider (f : X → Y)
+    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    TraceFormsRegularSpec f hf := by
+  sorry
 
-Cannot be assembled sorry-free here because the assembly theorem
-`trace_pullback_identity_of_spec` lives downstream in `TraceBundled.lean`.
-Consumers in `TraceBundled.lean` should prefer the `_of_spec` form
-directly. -/
+/-- **The narrow trace-pullback identity provider.** The form-level
+identity `tr_f (f* η) = deg(f) · η` (Steps 3-5 of the analytic proof
+outline: holomorphic extension across the branch locus).
+
+Assembled here from four narrow inputs, the same shape as
+`trace_pullback_identity_of_spec` in `TraceBundled.lean`:
+* `traceFormsRegularSpec_provider` — regular-value trace formula;
+* `hasLocalKfoldRamification_of_contMDiff` — local k-fold ramification;
+* `hasWeightedFiberConservation_provider` — weighted-fiber conservation;
+* `analyticDegree_eq_canonical_branchedDegree` — degree normalisation.
+
+The mirror assembly `trace_pullback_identity_of_spec` in
+`TraceBundled.lean` takes the same shape but with an explicit
+`TraceFormsRegularSpec` boundary; here the trace spec is supplied via
+the named provider so callers can use the identity uniformly with the
+provider-based interface. -/
 noncomputable def trace_pullback_provider (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) :
     traceFormsBundled f hf (pullbackFormsBundled f hf η) =
       (analyticDegree f hf : ℂ) • η := by
-  sorry
+  classical
+  set htrace : TraceFormsRegularSpec f hf := traceFormsRegularSpec_provider f hf with htrace_def
+  set hkfold : HasLocalKfoldRamification f := hasLocalKfoldRamification_of_contMDiff hf
+    with hkfold_def
+  set hw : HasWeightedFiberConservation f := hasWeightedFiberConservation_provider f hf
+    with hw_def
+  have hHol : IsHolomorphic f := isHolomorphic_of_contMDiff hf hkfold
+  by_cases hconst : ∃ y₀, ∀ x, f x = y₀
+  · -- Constant case: both sides are zero.
+    have hpb_zero : pullbackFormsBundled f hf η = 0 := by
+      apply ContMDiffSection.coe_inj
+      funext x
+      obtain ⟨y₀, hf_const⟩ := hconst
+      have hf_eq : f = fun _ : X => y₀ := funext hf_const
+      subst f
+      simp [pullbackFormsBundled, pullbackFormsFunFiber, mfderiv_const]
+    rw [hpb_zero, htrace.map_zero, analyticDegree_constant f hf hconst]
+    apply ContMDiffSection.ext
+    intro y
+    simp
+  · -- Nonconstant case: descend through the regular locus by the identity principle.
+    set hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+      hHol hw hconst with hbc_def
+    have hcompat : hbc.RamificationIndexCompatible :=
+      JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
+        hHol hw hconst
+    have hdeg : analyticDegree f hf = branchedDegree hbc :=
+      analyticDegree_eq_canonical_branchedDegree f hf hHol hbc hcompat hconst
+    rw [hdeg]
+    apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
+    intro y hy
+    rw [branchedDegree_eq_weightedFiberCard hbc y,
+        htrace.apply_fun_regular hbc (pullbackFormsBundled f hf η) y hy]
+    exact trace_pullback_at_regular_value hbc hcompat hf hHol η y hy
 
 /-- **The narrow push-pull descent provider.** The basis-aligned
 Jacobian push-pull identity, descended from the trace-pullback
@@ -229,14 +277,6 @@ structure AnalyticTraceDegreeSpec (f : X → Y)
       (Q : BasisAnalyticJacobian Y),
       analyticPushforward f hf (analyticPullback f hf Q) =
         (analyticDegree f hf) • Q
-
-/-- **The narrow trace regularity provider.** The remaining trace
-construction frontier: global trace of holomorphic 1-forms agrees with
-the regular-value local trace formula. -/
-noncomputable def traceFormsRegularSpec_provider (f : X → Y)
-    (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    TraceFormsRegularSpec f hf := by
-  sorry
 
 /-- **Assembled analytic trace/degree spec.** All the bundled fields
 are now small named providers or sorry-free degree facts.
@@ -301,7 +341,7 @@ are sorry-free.
 analyticPushforward_analyticPullback
   └── analyticPushPull_provider                        (narrow sorry)
         ↑ descended from
-        trace_pullback_provider                        (narrow sorry)
+        trace_pullback_provider                        (sorry-free)
               ↑ assembled from
               traceFormsRegularSpec_provider           (narrow sorry)
               analyticDegree_eq_canonical_branchedDegree (sorry-free)
