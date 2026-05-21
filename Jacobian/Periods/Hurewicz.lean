@@ -515,6 +515,26 @@ noncomputable def polygon4gMkContinuousMap (g : ℕ) :
     C(DiskC, Polygon4g g) :=
   ⟨Polygon4g.mk g, Polygon4g.mk_continuous g⟩
 
+/-- Functoriality of the exposed singular-chain basis element: the
+singular chain map induced by a continuous map sends a generator to the
+generator of the composed singular simplex. -/
+theorem singularChainElement_map
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    (f : C(X, Y)) (n : ℕ)
+    (σ : C(stdSimplex ℝ (Fin (n + 1)), X)) :
+    ModuleCat.Hom.hom
+      ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f n)
+        (singularChainElement σ) =
+      singularChainElement (f.comp σ) := by
+  rw [show singularChainElement σ =
+      (singChain_basis σ).hom (1 : ℤ) by rfl]
+  rw [show singularChainElement (f.comp σ) =
+      (singChain_basis (f.comp σ)).hom (1 : ℤ) by rfl]
+  have h := singChain_map_basis f n σ
+  have hh := congrArg ModuleCat.Hom.hom h
+  exact congrArg (fun F => F (1 : ℤ)) hh
+
 /-- Constant singular zero-simplex at a point. -/
 noncomputable def pointSingularSimplex
     (X : Type) [TopologicalSpace X] (x : X) :
@@ -798,6 +818,17 @@ theorem edgeBasisMap_eq_homologyClass_edgeChain_sum
   intro i _hi
   exact (Int.cast_smul_eq_zsmul (R := ℤ) (v i) (edgeHomologyClass g i)).symm
 
+/-- A finite integral combination of polygon edge chains is a singular
+one-cycle. -/
+theorem edgeChain_sum_isCycle
+    (g : ℕ) (v : Polygon4gAbelianization g) :
+    (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
+      (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) = 0 := by
+  rw [map_sum]
+  refine Finset.sum_eq_zero (fun e _he => ?_)
+  rw [map_zsmul, edgeChain_isCycle g e]
+  exact zsmul_zero (v e)
+
 /-- Repaired disk-cycle data for a polygon singular cycle.  The disk
 cycle records the lifted-and-repaired cycle in `DiskC`; the projection
 relation says that the original polygon class is the projected disk
@@ -997,6 +1028,32 @@ theorem polygon4g_lift_data_sum_projects_to_subdivision_chain
                 decomp.coeff s • (simplexLift s).subdividedChain) - t)
             decomp.chain_eq.symm
 
+/-- The projected subdivision chain is exactly the degree-one singular
+chain pushforward of the summed lifted disk chain. -/
+theorem polygon4g_projectedSubdivisionChain_eq_chainMap_liftedDiskChain
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp) :
+    ModuleCat.Hom.hom
+      ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map
+          (TopCat.ofHom (polygon4gMkContinuousMap (g + 1)))).f 1)
+        lifted.liftedDiskChain =
+      lifted.projectedSubdivisionChain := by
+  classical
+  letI := decomp.simplexFintype
+  rw [lifted.liftedDiskChain_eq, lifted.projectedSubdivisionChain_eq]
+  rw [map_sum]
+  refine Finset.sum_congr rfl ?_
+  intro s _hs
+  rw [map_zsmul]
+  congr 1
+  rw [map_sum, (lifted.simplexLift s).subdividedChain_eq]
+  refine Finset.sum_congr rfl ?_
+  intro i _hi
+  exact singularChainElement_map (polygon4gMkContinuousMap (g + 1)) 1
+    ((lifted.simplexLift s).lift i)
+
 /-- Endpoint pairs extracted from the boundary of the summed lifted
 chain.  Each pair is a genuine `SideRel` pair and carries the endpoint
 repair data for that relation. -/
@@ -1163,6 +1220,31 @@ noncomputable def polygon4g_repair_pairs_sum_algebra_data
             exact (Finset.sum_apply e (Finset.univ : Finset pairs.Pair)
               (fun x => (pairs.repair x).coeff)).symm
 
+/-- Narrow remaining projection/naturality bridge for the repair-sum
+package.  It no longer mentions the edge-basis map: it only says that
+the quotient-map image of the repaired disk cycle, together with the
+explicit repaired edge-chain cycle, represents the original polygon
+cycle. -/
+theorem polygon4g_repair_sum_projected_diskCycle_relation
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp)
+    (pairs : Polygon4gCycleEndpointPairFamily g z hz decomp lifted)
+    (algebra : Polygon4gRepairSumAlgebraData g z hz decomp lifted pairs) :
+    singularH1ClassOfCycle (Polygon4g (g + 1)) z hz =
+      singularH1_inducedLinearMap (polygon4gMkContinuousMap (g + 1))
+        (singularH1ClassOfCycle DiskC algebra.diskCycle algebra.diskCycle_isCycle) +
+        singularH1ClassOfCycle (Polygon4g (g + 1))
+          (∑ e : Fin (2 * (g + 1)), algebra.edgeCoeffs e • edgeChain g e)
+          (edgeChain_sum_isCycle g algebra.edgeCoeffs) := by
+  -- Missing naturality/chain-homology compatibility: use
+  -- `polygon4g_projectedSubdivisionChain_eq_chainMap_liftedDiskChain`,
+  -- `algebra.diskCycle_eq`, `lifted.subdivision_homology`, and
+  -- `algebra.projectedRepair_homologous_edge` to identify the pushed
+  -- repaired disk cycle plus the edge-chain cycle with `z` in `H₁`.
+  sorry
+
 /-- Remaining homological-algebra bridge for the repair-sum package:
 the explicit chain-boundary relations in `Polygon4gRepairSumAlgebraData`
 give the desired equality in singular `H₁`. -/
@@ -1177,11 +1259,10 @@ theorem polygon4g_repair_sum_projected_relation_from_algebra_data
       singularH1_inducedLinearMap (polygon4gMkContinuousMap (g + 1))
         (singularH1ClassOfCycle DiskC algebra.diskCycle algebra.diskCycle_isCycle) +
         edgeBasisMap g algebra.edgeCoeffs := by
-  -- Missing homological algebra: combine the subdivision boundary from
-  -- `lifted`, the summed repair boundary from `algebra`, and naturality of
-  -- the quotient-map chain map to identify the two cycle representatives in
-  -- homology.
-  sorry
+  rw [← edgeBasisMap_eq_homologyClass_edgeChain_sum
+    g algebra.edgeCoeffs (edgeChain_sum_isCycle g algebra.edgeCoeffs)]
+  exact polygon4g_repair_sum_projected_diskCycle_relation
+    g z hz decomp lifted pairs algebra
 
 /-- Atomic repair-summation leaf: sum the endpoint repairs and edge
 coefficients for a finite endpoint-pair family, producing the repaired
