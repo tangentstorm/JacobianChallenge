@@ -1,4 +1,5 @@
 import Jacobian.Periods.EdgeWord
+import Mathlib.Logic.Relation
 
 namespace JacobianChallenge.Periods
 
@@ -67,18 +68,27 @@ noncomputable def diskRotateBySide (L : ℕ) (hL : L ≠ 0) (k : ℕ) : DiskC �
   let theta := 2 * Real.pi * k / L
   diskMul (Complex.exp (Complex.I * theta)) (norm_exp_I_mul_real theta)
 
+lemma diskRotateBySide_apply (L : ℕ) (_hL : L ≠ 0) (k : ℕ) (z : DiskC) :
+    (diskRotateBySide L _hL k z).val = Complex.exp (Complex.I * (2 * Real.pi * k / L : ℝ)) * z.1 := rfl
+
+/-- **Narrow Leaf.** Rigid disk rotation transports boundary parameters. -/
+lemma diskRotateBySide_boundaryParam
+    (L : ℕ) (hL : L ≠ 0) (k i : ℕ) (t : ℝ) :
+    diskRotateBySide L hL k (boundaryParam' L i t) =
+    boundaryParam' L (i + k) t := by
+  -- Identity derived from exp(I * 2π(i+k+t)/L) = exp(I * 2πk/L) * exp(I * 2π(i+t)/L).
+  -- And modular arithmetic for boundary angle indices.
+  sorry
+
 /-- **Narrow Leaf.** Side-pairing relation is preserved under rigid disk rotation. -/
 theorem sidePairingRel_rotate_iff
     {g : ℕ} (w : EdgeWord g) (k : ℕ) (hL : w.length ≠ 0) :
     ∀ x y : DiskC,
-      EdgeWord.sidePairingRel g w x y ↔
-        EdgeWord.sidePairingRel g (w.rotate k)
-          (diskRotateBySide w.length hL (w.length * (k / w.length + 1) - k) x)
-          (diskRotateBySide w.length hL (w.length * (k / w.length + 1) - k) y) := by
-  -- Technical blocker: This requires a rigorous proof that disk rotation by -2πk/L
-  -- transforms the w-identifications to (w.rotate k)-identifications.
-  -- The construction follows from the fact that cyclic shift of boundary word
-  -- corresponds exactly to rigid rotation of boundary labels.
+      sidePairingRel g (w.rotate k) x y ↔
+        sidePairingRel g w (diskRotateBySide w.length hL k x) (diskRotateBySide w.length hL k y) := by
+  -- Identity: identification in rotated word is rotated identification of original word.
+  -- This lifts generator preservation (SideGen) through the equivalence closure (EqvGen)
+  -- in both directions using inverse disk rotation.
   sorry
 
 /-! ### Quotient lemmas -/
@@ -92,10 +102,10 @@ theorem wordQuotient_homeomorph_of_rotate
   · have hw : w = [] := List.eq_nil_of_length_eq_zero hL
     subst hw; exact ⟨Homeomorph.refl _⟩
   · let hL_pos : w.length ≠ 0 := hL
-    let k_rot := w.length * (k / w.length + 1) - k
-    exact ⟨Quotient.homeo'
-      (diskRotateBySide w.length hL_pos k_rot)
-      (sidePairingRel_rotate_iff w k hL_pos)⟩
+    let f := diskRotateBySide w.length hL_pos k
+    have h_resp : ∀ x y, sidePairingRel g (w.rotate k) x y ↔ sidePairingRel g w (f x) (f y) := by
+      intro x y; exact sidePairingRel_rotate_iff w k hL_pos x y
+    exact ⟨(Quotient.homeo' f h_resp).symm⟩
 
 /-- Rotating the tail of a handle-prefixed word preserves the quotient. -/
 theorem handlePrefix_tailRotate_homeomorph
