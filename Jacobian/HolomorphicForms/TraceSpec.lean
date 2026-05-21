@@ -20,7 +20,7 @@ cycle.
 
 namespace JacobianChallenge.HolomorphicForms
 
-open scoped Manifold ContDiff
+open scoped Manifold ContDiff Topology
 open JacobianChallenge.HolomorphicForms
 open JacobianChallenge.HolomorphicForms.SectionFiberNorm
 open JacobianChallenge.Periods
@@ -62,22 +62,203 @@ structure TraceFormsConstructionData
   /-- The zero input form maps to the zero global form. -/
   map_zero_spec : η = 0 → traceForm = 0
 
-/-- **The narrow trace construction provider.** Produces the global
-bundled trace form together with the two specifications that determine
-it. This is the sole remaining analytic leaf beneath the bundled trace
-API: it is the genuine content of "extend the finite local fiber sum
-holomorphically across the finite branch locus".
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/-- **Helper.** `cotangentPushforward` is zero on the zero cotangent
+vector. Sorry-free unfolding of the definition. -/
+private theorem cotangentPushforward_zero
+    (f : X → Y) (x : X) :
+    cotangentPushforward f x (0 : CotangentSpace ℂ X x) = 0 := by
+  unfold cotangentPushforward
+  by_cases h : Nonempty (IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x))
+  · simp only [dif_pos h]
+    exact ContinuousLinearMap.zero_comp _
+  · simp only [dif_neg h]
 
-Strictly narrower than the previous `opaque traceFormsBundled`: the
-opaque had no field structure, so `traceFormsBundled` could be any
-`HolomorphicOneForm ℂ Y`; the construction-data provider forces
-`traceFormsBundled` to satisfy the regular-value identity and the
-zero-input identity. -/
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
+  [IsManifold 𝓘(ℂ, ℂ) ω X]
+  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
+  [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
+/-- **Helper.** The trace sum at a regular value of the zero pointwise
+input is zero. Sorry-free reduction to `cotangentPushforward_zero` on
+every summand of the finite fiber sum. -/
+private theorem traceAtRegularValue_zero
+    {f : X → Y} (hbc : BranchedCoverData X Y f)
+    (y : Y) (hy : isRegularValue hbc y) :
+    traceAtRegularValue hbc (fun _ : X => (0 : CotangentModelFiber ℂ)) y hy = 0 := by
+  classical
+  unfold traceAtRegularValue
+  refine Finset.sum_eq_zero ?_
+  rintro ⟨x, _⟩ _
+  exact cotangentPushforward_zero f x
+
+/-- **Construction data for the zero input form.** Fully proved.
+
+When `η = 0`, the trace is the zero form on `Y`, and both fields are
+immediate:
+
+* `regular_spec` reduces every summand of the finite fiber sum to
+  `cotangentPushforward f x 0 = 0`;
+* `map_zero_spec` is `rfl` since the global form is already zero.
+
+This is the strictly smaller "zero-input" leaf split out of the original
+construction provider. -/
+private noncomputable def traceFormsConstructionData_zero
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
+    TraceFormsConstructionData f hf (0 : HolomorphicOneForm ℂ X) where
+  traceForm := 0
+  regular_spec := by
+    intro hbc y hy
+    -- LHS is (0 : HolomorphicOneForm ℂ Y).toFun y = 0
+    -- RHS is traceAtRegularValue over (fun x => (0 : HolomorphicOneForm ℂ X).toFun x)
+    have hzero_toFun : ∀ x : X, (0 : HolomorphicOneForm ℂ X).toFun x = 0 := by
+      intro x
+      change ((0 : HolomorphicOneForm ℂ X) : ∀ y, _) x = 0
+      simp
+    have hLHS : (0 : HolomorphicOneForm ℂ Y).toFun y = 0 := by
+      change ((0 : HolomorphicOneForm ℂ Y) : ∀ y, _) y = 0
+      simp
+    rw [hLHS]
+    have hcongr :
+        (fun x : X => (0 : HolomorphicOneForm ℂ X).toFun x) =
+          (fun _ : X => (0 : CotangentModelFiber ℂ)) := by
+      funext x
+      exact hzero_toFun x
+    rw [hcongr]
+    exact (traceAtRegularValue_zero hbc y hy).symm
+  map_zero_spec _ := rfl
+
+/-- **Construction data for a constant map.** Fully proved.
+
+For a constant map `f x = y₀`, the trace is the zero form. The
+`regular_spec` field is discharged by case-splitting on whether the
+target value `y` equals `y₀`:
+
+* If `y ≠ y₀`, then the fiber `f ⁻¹' {y}` is empty, so the finite local
+  fiber sum is the empty sum, which is zero;
+* If `y = y₀`, the existence of a `BranchedCoverData` at a regular
+  value of a constant map contradicts perfectness of the target: by
+  `hbc.local_bijective_unramified` at any unramified preimage `x`,
+  there are open sets `U ⊆ X`, `V ⊆ Y` with `f` bijective from `U` to
+  `V`. But for constant `f` this forces `V = {y₀}`, contradicting
+  `IsOpen V` since the target charted ℂ-space `Y` is perfect (no
+  isolated points).
+
+This is the strictly smaller "constant-map" leaf split out of the
+original construction provider. -/
+private noncomputable def traceFormsConstructionData_constant
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ X) (hconst : ∃ y₀, ∀ x, f x = y₀)
+    (hη : η ≠ 0) :
+    TraceFormsConstructionData f hf η where
+  traceForm := 0
+  regular_spec := by
+    classical
+    intro hbc y hy
+    obtain ⟨y₀, hfy₀⟩ := hconst
+    have hLHS : (0 : HolomorphicOneForm ℂ Y).toFun y = 0 := by
+      change ((0 : HolomorphicOneForm ℂ Y) : ∀ y, _) y = 0
+      simp
+    rw [hLHS]
+    -- Case split on y = y₀.
+    by_cases hy_eq : y = y₀
+    · -- y = y₀: derive contradiction via local_bijective_unramified.
+      exfalso
+      -- Pick any x : X (X is nonempty from ConnectedSpace).
+      let x : X := Classical.arbitrary X
+      have hx_fiber : x ∈ f ⁻¹' {y} := by
+        show f x = y
+        rw [hy_eq, hfy₀ x]
+      have hx_ram : hbc.ramificationIndex x = 1 := hy x hx_fiber
+      -- f x = y, so f x is in V; local bijection forces V = {y}.
+      obtain ⟨U, V, hUopen, hVopen, hxU, hfxV, hbij⟩ :=
+        hbc.local_bijective_unramified x hx_ram
+      -- f '' U = V (BijOn) and f is constant equal to y on U.
+      have hfU_eq : f '' U = {y} := by
+        ext z
+        constructor
+        · rintro ⟨x', _, rfl⟩
+          show f x' = y
+          rw [hy_eq, hfy₀ x']
+        · intro hz
+          refine ⟨x, hxU, ?_⟩
+          show f x = z
+          rw [Set.mem_singleton_iff.mp hz, hy_eq, hfy₀ x]
+      have hV_eq : V = ({y} : Set Y) := hbij.image_eq ▸ hfU_eq
+      -- V open and V = {y}: singleton {y} would be open in Y.
+      have hV_singleton_open : IsOpen ({y} : Set Y) := hV_eq ▸ hVopen
+      -- But Y is perfect: no isolated points.
+      rw [isOpen_singleton_iff_punctured_nhds] at hV_singleton_open
+      haveI : Nontrivial Y := by
+        obtain ⟨p, q, hpq⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := Y)
+        exact ⟨⟨p, q, hpq⟩⟩
+      haveI : PerfectSpace Y := inferInstance
+      have hY_perfect : (𝓝[≠] y).NeBot := PerfectSpace.not_isolated y
+      exact hY_perfect.ne hV_singleton_open
+    · -- y ≠ y₀: the fiber is empty, so the sum is zero.
+      have hfiber_empty : f ⁻¹' {y} = ∅ := by
+        ext x
+        simp only [Set.mem_preimage, Set.mem_singleton_iff, Set.mem_empty_iff_false,
+          iff_false]
+        intro hfx
+        apply hy_eq
+        rw [← hfx, hfy₀ x]
+      show (0 : CotangentSpace ℂ Y y) =
+        ((hbc.finite_fiber y).toFinset).attach.sum
+          (fun x => cotangentPushforward f x.1 (η.toFun x.1))
+      have htoFinset_empty : (hbc.finite_fiber y).toFinset = (∅ : Finset X) := by
+        rw [Set.Finite.toFinset_eq_empty]
+        exact hfiber_empty
+      rw [htoFinset_empty, Finset.attach_empty, Finset.sum_empty]
+  map_zero_spec h := absurd h hη
+
+/-- **Narrow leaf: trace construction for a nonconstant nonzero
+input.** This is the sole remaining analytic frontier beneath the
+bundled trace API. The cases `η = 0` and "`f` constant" are fully
+handled by `traceFormsConstructionData_zero` and
+`traceFormsConstructionData_constant`; this leaf carries exactly the
+nonconstant-map-with-nonzero-input portion, which is the genuine
+content of "extend the finite local fiber sum of a nonzero
+holomorphic 1-form holomorphically across the finite branch locus of a
+nonconstant holomorphic map".
+
+Strictly narrower than the previous `traceFormsConstructionData_provider`
+sorry: it is only required to produce the construction data for the
+case where `f` is nonconstant **and** `η ≠ 0`. -/
+noncomputable def traceFormsConstructionData_nonconstant_nonzero_provider
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ X) (_hη : η ≠ 0)
+    (_hnonconst : ¬ ∃ y₀, ∀ x, f x = y₀) :
+    TraceFormsConstructionData f hf η := by
+  sorry
+
+/-- **The trace construction provider.** Three-way case split:
+
+* `η = 0` — fully proved via `traceFormsConstructionData_zero`;
+* `η ≠ 0` and `f` constant — fully proved via
+  `traceFormsConstructionData_constant`;
+* `η ≠ 0` and `f` nonconstant — delegates to the strictly narrower
+  analytic leaf
+  `traceFormsConstructionData_nonconstant_nonzero_provider`.
+
+The first two branches are strictly smaller leaves already proved in
+this pass; the third branch is the genuine analytic frontier (removable
+singularity / holomorphic extension of the finite local fiber sum
+across the finite branch locus of a nonconstant holomorphic map). -/
 noncomputable def traceFormsConstructionData_provider
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X) :
     TraceFormsConstructionData f hf η := by
-  sorry
+  classical
+  by_cases hη : η = 0
+  · -- Zero-input case: fully proved. Cast the η-specialized data back to η.
+    cases hη
+    exact traceFormsConstructionData_zero f hf
+  · by_cases hconst : ∃ y₀, ∀ x, f x = y₀
+    · exact traceFormsConstructionData_constant f hf η hconst hη
+    · exact traceFormsConstructionData_nonconstant_nonzero_provider f hf η hη hconst
 
 /-- The trace (pushforward) of a holomorphic 1-form along a smooth map.
 Sorry-free shim around `traceFormsConstructionData_provider`: the trace
