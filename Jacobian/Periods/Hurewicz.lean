@@ -738,6 +738,66 @@ theorem edgeBasisMap_apply (g : ℕ) (v : Polygon4gAbelianization g) :
         LinearMap.toSpanSingleton ℤ _ (edgeHomologyClass g i) (v i) := by
   simp [edgeBasisMap, LinearMap.proj]
 
+/-- The homology class of a finite integral edge-chain combination is
+exactly the edge-basis map applied to its coefficient vector. -/
+theorem edgeBasisMap_eq_homologyClass_edgeChain_sum
+    (g : ℕ) (v : Polygon4gAbelianization g)
+    (hsum :
+      (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
+        (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) = 0) :
+    singularH1ClassOfCycle (Polygon4g (g + 1))
+      (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) hsum =
+        edgeBasisMap g v := by
+  classical
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  have hclass_sum :
+      singularH1ClassOfCycle (Polygon4g (g + 1))
+        (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) hsum =
+          ∑ i : Fin (2 * (g + 1)), v i • edgeHomologyClass g i := by
+    unfold singularH1ClassOfCycle
+    change ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1))
+        (K.cyclesMk (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hsum) =
+      ∑ i : Fin (2 * (g + 1)), v i • edgeHomologyClass g i
+    have hcycles :
+        K.cyclesMk (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hsum =
+          ∑ i : Fin (2 * (g + 1)),
+            v i • K.cyclesMk (edgeChain g i) 0
+              (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+              (by
+                simpa [K, singularChainComplexZ,
+                    Polygon4gSingularC1.polygonChainComplexOnGenus]
+                  using edgeChain_isCycle g i) := by
+      apply (ModuleCat.mono_iff_injective (K.iCycles 1)).1 inferInstance
+      change
+        ((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1))
+          (K.cyclesMk (∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hsum) =
+        ((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1))
+          (∑ i : Fin (2 * (g + 1)),
+            v i • K.cyclesMk (edgeChain g i) 0
+              (ComplexShape.next_eq' _ (by simp [ComplexShape.down]))
+              (by
+                simpa [K, singularChainComplexZ,
+                    Polygon4gSingularC1.polygonChainComplexOnGenus]
+                  using edgeChain_isCycle g i))
+      rw [K.i_cyclesMk, map_sum]
+      refine Finset.sum_congr rfl ?_
+      intro i _hi
+      rw [map_zsmul, K.i_cyclesMk]
+    rw [hcycles, map_sum]
+    refine Finset.sum_congr rfl ?_
+    intro i _hi
+    rw [map_zsmul]
+    unfold edgeHomologyClass
+    rfl
+  rw [edgeBasisMap_apply, hclass_sum]
+  simp only [LinearMap.toSpanSingleton_apply]
+  refine Finset.sum_congr rfl ?_
+  intro i _hi
+  exact (Int.cast_smul_eq_zsmul (R := ℤ) (v i) (edgeHomologyClass g i)).symm
+
 /-- Repaired disk-cycle data for a polygon singular cycle.  The disk
 cycle records the lifted-and-repaired cycle in `DiskC`; the projection
 relation says that the original polygon class is the projected disk
