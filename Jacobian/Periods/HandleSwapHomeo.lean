@@ -77,7 +77,6 @@ lemma diskRotateBySide_boundaryParam
     diskRotateBySide L hL k (boundaryParam' L i t) =
     boundaryParam' L (i + k) t := by
   -- Identity derived from exp(I * 2π(i+k+t)/L) = exp(I * 2πk/L) * exp(I * 2π(i+t)/L).
-  -- And modular arithmetic for boundary angle indices.
   sorry
 
 /-- **Narrow Leaf.** Side-pairing relation is preserved under rigid disk rotation. -/
@@ -87,8 +86,6 @@ theorem sidePairingRel_rotate_iff
       sidePairingRel g (w.rotate k) x y ↔
         sidePairingRel g w (diskRotateBySide w.length hL k x) (diskRotateBySide w.length hL k y) := by
   -- Identity: identification in rotated word is rotated identification of original word.
-  -- This lifts generator preservation (SideGen) through the equivalence closure (EqvGen)
-  -- in both directions using inverse disk rotation.
   sorry
 
 /-! ### Quotient lemmas -/
