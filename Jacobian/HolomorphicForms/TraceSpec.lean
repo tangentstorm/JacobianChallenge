@@ -34,10 +34,58 @@ variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [IsManifold 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) Y]
   [StableChartAt ℂ Y]
 
-/-- The trace (pushforward) of a holomorphic 1-form along a smooth map. -/
-noncomputable opaque traceFormsBundled
+/-- **Trace construction data.** Packages the global bundled trace form
+`traceForm` of a holomorphic 1-form `η` along a smooth map `f : X → Y`
+between compact Riemann surfaces, together with the two specifications
+that determine it:
+
+* `regular_spec` — at every regular value of every compatible
+  branched-cover datum, the global form agrees with the finite local
+  fiber sum `traceAtRegularValue`;
+* `map_zero_spec` — when the input form is zero, the global form is
+  zero.
+
+The analytic content of producing such data (holomorphic extension of
+the finite local fiber sum across the finite branch locus, plus the
+identification at the regular values) is supplied by the single narrow
+construction provider `traceFormsConstructionData_provider`. -/
+structure TraceFormsConstructionData
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
-    (η : HolomorphicOneForm ℂ X) : HolomorphicOneForm ℂ Y
+    (η : HolomorphicOneForm ℂ X) where
+  /-- The global bundled trace form of `η` along `f`. -/
+  traceForm : HolomorphicOneForm ℂ Y
+  /-- At every regular value of any compatible branched-cover datum on
+  `f`, the global form agrees with the finite local fiber sum. -/
+  regular_spec :
+    ∀ (hbc : BranchedCoverData X Y f) (y : Y) (hy : isRegularValue hbc y),
+      traceForm.toFun y = traceAtRegularValue hbc (fun x => η.toFun x) y hy
+  /-- The zero input form maps to the zero global form. -/
+  map_zero_spec : η = 0 → traceForm = 0
+
+/-- **The narrow trace construction provider.** Produces the global
+bundled trace form together with the two specifications that determine
+it. This is the sole remaining analytic leaf beneath the bundled trace
+API: it is the genuine content of "extend the finite local fiber sum
+holomorphically across the finite branch locus".
+
+Strictly narrower than the previous `opaque traceFormsBundled`: the
+opaque had no field structure, so `traceFormsBundled` could be any
+`HolomorphicOneForm ℂ Y`; the construction-data provider forces
+`traceFormsBundled` to satisfy the regular-value identity and the
+zero-input identity. -/
+noncomputable def traceFormsConstructionData_provider
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ X) :
+    TraceFormsConstructionData f hf η := by
+  sorry
+
+/-- The trace (pushforward) of a holomorphic 1-form along a smooth map.
+Sorry-free shim around `traceFormsConstructionData_provider`: the trace
+is the `traceForm` field of the construction data. -/
+noncomputable def traceFormsBundled
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ X) : HolomorphicOneForm ℂ Y :=
+  (traceFormsConstructionData_provider f hf η).traceForm
 
 /- The target-side branch locus (image of ramification points) is finite. -/
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
