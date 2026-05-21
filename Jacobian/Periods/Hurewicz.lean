@@ -510,6 +510,38 @@ theorem singularH1ClassOfCycle_eq_of_boundary
   rw [map_sub] at hzero
   exact sub_eq_zero.mp hzero
 
+/-- The homology class of the sum of two singular one-cycles is the sum
+of their homology classes. -/
+theorem singularH1ClassOfCycle_add
+    {X : Type} [TopologicalSpace X]
+    (z z' : SingularChainCoproduct X 1)
+    (hz : (singularChainComplexZ X).d 1 0 z = 0)
+    (hz' : (singularChainComplexZ X).d 1 0 z' = 0)
+    (hadd : (singularChainComplexZ X).d 1 0 (z + z') = 0) :
+    singularH1ClassOfCycle X (z + z') hadd =
+      singularH1ClassOfCycle X z hz + singularH1ClassOfCycle X z' hz' := by
+  let K := singularChainComplexZ X
+  unfold singularH1ClassOfCycle
+  have hcycles :
+      K.cyclesMk (z + z') 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hadd =
+        K.cyclesMk z 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz +
+          K.cyclesMk z' 0
+            (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz' := by
+    apply (ModuleCat.mono_iff_injective (K.iCycles 1)).1 inferInstance
+    change
+      ((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1))
+        (K.cyclesMk (z + z') 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hadd) =
+      ((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1))
+        (K.cyclesMk z 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz +
+        K.cyclesMk z' 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz')
+    rw [map_add, K.i_cyclesMk, K.i_cyclesMk, K.i_cyclesMk]
+  rw [hcycles, map_add]
+
 /-- The quotient map `DiskC → Polygon4g g` as a continuous map. -/
 noncomputable def polygon4gMkContinuousMap (g : ℕ) :
     C(DiskC, Polygon4g g) :=
@@ -534,6 +566,57 @@ theorem singularChainElement_map
   have h := singChain_map_basis f n σ
   have hh := congrArg ModuleCat.Hom.hom h
   exact congrArg (fun F => F (1 : ℤ)) hh
+
+/-- Naturality of `singularH1ClassOfCycle` for the project-level
+`singularH1_inducedLinearMap`, stated at the exposed chain level. -/
+theorem singularH1_inducedLinearMap_classOfCycle
+    {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
+    (f : C(X, Y))
+    (z : SingularChainCoproduct X 1)
+    (hz : (singularChainComplexZ X).d 1 0 z = 0)
+    (hmapz :
+      (singularChainComplexZ Y).d 1 0
+        (ModuleCat.Hom.hom
+          ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+            (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f 1) z) = 0) :
+    singularH1_inducedLinearMap f (singularH1ClassOfCycle X z hz) =
+      singularH1ClassOfCycle Y
+        (ModuleCat.Hom.hom
+          ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+            (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f 1) z) hmapz := by
+  let KX := singularChainComplexZ X
+  let KY := singularChainComplexZ Y
+  let F :=
+    (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+      (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f))
+  change
+    ((forget₂ (ModuleCat ℤ) Ab).map (HomologicalComplex.homologyMap F 1))
+      (((forget₂ (ModuleCat ℤ) Ab).map (KX.homologyπ 1))
+        (KX.cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz)) =
+      ((forget₂ (ModuleCat ℤ) Ab).map (KY.homologyπ 1))
+        (KY.cyclesMk (ModuleCat.Hom.hom (F.f 1) z) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hmapz)
+  rw [← ConcreteCategory.forget₂_comp_apply, HomologicalComplex.homologyπ_naturality]
+  rw [ConcreteCategory.forget₂_comp_apply]
+  congr 1
+  apply (ModuleCat.mono_iff_injective (KY.iCycles 1)).1 inferInstance
+  change
+    ((forget₂ (ModuleCat ℤ) Ab).map (KY.iCycles 1))
+      (((forget₂ (ModuleCat ℤ) Ab).map (HomologicalComplex.cyclesMap F 1))
+        (KX.cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz)) =
+      ((forget₂ (ModuleCat ℤ) Ab).map (KY.iCycles 1))
+        (KY.cyclesMk (ModuleCat.Hom.hom (F.f 1) z) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hmapz)
+  rw [← ConcreteCategory.forget₂_comp_apply, HomologicalComplex.cyclesMap_i,
+    ConcreteCategory.forget₂_comp_apply]
+  change
+    ModuleCat.Hom.hom (F.f 1)
+      (((forget₂ (ModuleCat ℤ) Ab).map (KX.iCycles 1))
+        (KX.cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz)) =
+      ((forget₂ (ModuleCat ℤ) Ab).map (KY.iCycles 1))
+        (KY.cyclesMk (ModuleCat.Hom.hom (F.f 1) z) 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hmapz)
+  rw [KX.i_cyclesMk, KY.i_cyclesMk]
 
 /-- Constant singular zero-simplex at a point. -/
 noncomputable def pointSingularSimplex
@@ -701,6 +784,53 @@ structure Polygon4gEndpointRepairData
     (singularChainComplexZ (Polygon4g (g + 1))).d 2 1 edgeChainBoundary =
       projectedRepairChain -
         ∑ e : Fin (2 * (g + 1)), coeff e • edgeChain g e
+
+/-- The projected chain of one boundary-arc step is the singular-chain
+pushforward of its disk chain along the polygon quotient map. -/
+theorem polygon4gBoundaryArcStep_projected_eq_chainMap
+    (g : ℕ) (step : Polygon4gBoundaryArcStep g) :
+    ModuleCat.Hom.hom
+      ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map
+          (TopCat.ofHom (polygon4gMkContinuousMap (g + 1)))).f 1)
+      (singularChainElement (step.path.comp stdSimplexToUnitInterval)) =
+      polygon4gBoundaryArcStepProjectedChain g step := by
+  exact singularChainElement_map (polygon4gMkContinuousMap (g + 1)) 1
+    (step.path.comp stdSimplexToUnitInterval)
+
+/-- The projected chain of a list of boundary-arc steps is the
+singular-chain pushforward of the corresponding disk-side step chain. -/
+theorem polygon4gBoundaryArcSteps_projected_eq_chainMap
+    (g : ℕ) (steps : List (Polygon4gBoundaryArcStep g)) :
+    ModuleCat.Hom.hom
+      ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map
+          (TopCat.ofHom (polygon4gMkContinuousMap (g + 1)))).f 1)
+      ((steps.map fun step =>
+        step.orientation.sign • singularChainElement
+          (step.path.comp stdSimplexToUnitInterval)).sum) =
+      polygon4gBoundaryArcStepsProjectedChain g steps := by
+  induction steps with
+  | nil =>
+      simp [polygon4gBoundaryArcStepsProjectedChain]
+  | cons step steps ih =>
+      simp [polygon4gBoundaryArcStepsProjectedChain, ih,
+        polygon4gBoundaryArcStep_projected_eq_chainMap]
+
+/-- The projected repair chain stored in endpoint-repair data is the
+singular-chain pushforward of the disk repair chain. -/
+theorem polygon4gEndpointRepair_projected_eq_chainMap
+    (g : ℕ) (p q : DiskC)
+    (hrel : Polygon4g.SideRel (g + 1) p q)
+    (repair : Polygon4gEndpointRepairData g p q hrel) :
+    ModuleCat.Hom.hom
+      ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map
+          (TopCat.ofHom (polygon4gMkContinuousMap (g + 1)))).f 1)
+      repair.diskRepairChain =
+      repair.projectedRepairChain := by
+  rw [repair.diskRepairChain_eq, repair.projectedRepairChain_eq]
+  exact polygon4gBoundaryArcSteps_projected_eq_chainMap g repair.steps
 
 /-- If two lifted endpoints project to the same polygon point, their
 endpoint difference is repaired by a finite integral sum of polygon
@@ -1110,6 +1240,13 @@ structure Polygon4gRepairSumAlgebraData
   diskCycle_eq : diskCycle = lifted.liftedDiskChain - diskRepairSum
   diskCycle_isCycle : (singularChainComplexZ DiskC).d 1 0 diskCycle = 0
   projectedRepairSum : SingularChainCoproduct (Polygon4g (g + 1)) 1
+  projectedRepairSum_eq_chainMap_diskRepairSum :
+    ModuleCat.Hom.hom
+      ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map
+          (TopCat.ofHom (polygon4gMkContinuousMap (g + 1)))).f 1)
+      diskRepairSum =
+      projectedRepairSum
   projectedRepairBoundary :
     (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 projectedRepairSum =
       (@Finset.univ pairs.Pair pairs.pairFintype).sum
@@ -1154,6 +1291,7 @@ noncomputable def polygon4g_repair_pairs_sum_algebra_data
     diskCycle_eq := rfl
     diskCycle_isCycle := ?_
     projectedRepairSum := projectedRepairSum
+    projectedRepairSum_eq_chainMap_diskRepairSum := ?_
     projectedRepairBoundary := ?_
     edgeChainBoundarySum := edgeChainBoundarySum
     projectedRepair_homologous_edge := ?_
@@ -1171,6 +1309,13 @@ noncomputable def polygon4g_repair_pairs_sum_algebra_data
       exact (pairs.repair pair).diskRepairBoundary
     rw [hrepair]
     simp
+  · dsimp [projectedRepairSum, diskRepairSum, pairFinset]
+    rw [map_sum]
+    refine Finset.sum_congr rfl ?_
+    intro pair _hpair
+    exact polygon4gEndpointRepair_projected_eq_chainMap g
+      (pairs.leftEndpoint pair) (pairs.rightEndpoint pair)
+      (pairs.endpointRel pair) (pairs.repair pair)
   · dsimp [projectedRepairSum, pairFinset]
     rw [map_sum]
     refine Finset.sum_congr rfl ?_
@@ -1220,6 +1365,25 @@ noncomputable def polygon4g_repair_pairs_sum_algebra_data
             exact (Finset.sum_apply e (Finset.univ : Finset pairs.Pair)
               (fun x => (pairs.repair x).coeff)).symm
 
+/-- The quotient-map pushforward of the repaired disk cycle is the
+projected lifted subdivision chain minus the projected repair chain. -/
+theorem polygon4g_repair_sum_diskCycle_chainMap_eq
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp)
+    (pairs : Polygon4gCycleEndpointPairFamily g z hz decomp lifted)
+    (algebra : Polygon4gRepairSumAlgebraData g z hz decomp lifted pairs) :
+    ModuleCat.Hom.hom
+      ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map
+          (TopCat.ofHom (polygon4gMkContinuousMap (g + 1)))).f 1)
+      algebra.diskCycle =
+      lifted.projectedSubdivisionChain - algebra.projectedRepairSum := by
+  rw [algebra.diskCycle_eq, map_sub,
+    polygon4g_projectedSubdivisionChain_eq_chainMap_liftedDiskChain g z decomp lifted,
+    algebra.projectedRepairSum_eq_chainMap_diskRepairSum]
+
 /-- Narrow remaining projection/naturality bridge for the repair-sum
 package.  It no longer mentions the edge-basis map: it only says that
 the quotient-map image of the repaired disk cycle, together with the
@@ -1238,12 +1402,59 @@ theorem polygon4g_repair_sum_projected_diskCycle_relation
         singularH1ClassOfCycle (Polygon4g (g + 1))
           (∑ e : Fin (2 * (g + 1)), algebra.edgeCoeffs e • edgeChain g e)
           (edgeChain_sum_isCycle g algebra.edgeCoeffs) := by
-  -- Missing naturality/chain-homology compatibility: use
-  -- `polygon4g_projectedSubdivisionChain_eq_chainMap_liftedDiskChain`,
-  -- `algebra.diskCycle_eq`, `lifted.subdivision_homology`, and
-  -- `algebra.projectedRepair_homologous_edge` to identify the pushed
-  -- repaired disk cycle plus the edge-chain cycle with `z` in `H₁`.
-  sorry
+  let X := Polygon4g (g + 1)
+  let K := singularChainComplexZ X
+  let F :=
+    (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+      (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom (polygon4gMkContinuousMap (g + 1))))
+  let pushedDiskCycle : SingularChainCoproduct X 1 :=
+    ModuleCat.Hom.hom (F.f 1) algebra.diskCycle
+  let edgeCycle : SingularChainCoproduct X 1 :=
+    ∑ e : Fin (2 * (g + 1)), algebra.edgeCoeffs e • edgeChain g e
+  have hpushedCycle : K.d 1 0 pushedDiskCycle = 0 := by
+    change ((forget₂ (ModuleCat ℤ) Ab).map (K.d 1 0))
+      (((forget₂ (ModuleCat ℤ) Ab).map (F.f 1)) algebra.diskCycle) = 0
+    rw [← ConcreteCategory.forget₂_comp_apply, HomologicalComplex.Hom.comm,
+      ConcreteCategory.forget₂_comp_apply]
+    change ModuleCat.Hom.hom (F.f 0)
+      (ModuleCat.Hom.hom ((singularChainComplexZ DiskC).d 1 0) algebra.diskCycle) = 0
+    rw [algebra.diskCycle_isCycle]
+    exact map_zero (ModuleCat.Hom.hom (F.f 0))
+  have hedgeCycle : K.d 1 0 edgeCycle = 0 := by
+    exact edgeChain_sum_isCycle g algebra.edgeCoeffs
+  have hsumCycle : K.d 1 0 (pushedDiskCycle + edgeCycle) = 0 := by
+    rw [map_add, hpushedCycle, hedgeCycle, add_zero]
+  have hnat :
+      singularH1_inducedLinearMap (polygon4gMkContinuousMap (g + 1))
+          (singularH1ClassOfCycle DiskC algebra.diskCycle algebra.diskCycle_isCycle) =
+        singularH1ClassOfCycle X pushedDiskCycle hpushedCycle := by
+    exact singularH1_inducedLinearMap_classOfCycle
+      (polygon4gMkContinuousMap (g + 1))
+      algebra.diskCycle algebra.diskCycle_isCycle hpushedCycle
+  rw [hnat]
+  rw [← singularH1ClassOfCycle_add pushedDiskCycle edgeCycle
+    hpushedCycle hedgeCycle hsumCycle]
+  have hpushedEq :
+      pushedDiskCycle =
+        lifted.projectedSubdivisionChain - algebra.projectedRepairSum := by
+    exact polygon4g_repair_sum_diskCycle_chainMap_eq
+      g z hz decomp lifted pairs algebra
+  refine singularH1ClassOfCycle_eq_of_boundary
+    hz hsumCycle (algebra.edgeChainBoundarySum - lifted.subdivisionBoundary) ?_
+  calc
+    K.d 2 1 (algebra.edgeChainBoundarySum - lifted.subdivisionBoundary)
+        = K.d 2 1 algebra.edgeChainBoundarySum -
+            K.d 2 1 lifted.subdivisionBoundary := by
+            rw [map_sub]
+    _ = (algebra.projectedRepairSum - edgeCycle) -
+          (lifted.projectedSubdivisionChain - z) := by
+          rw [algebra.projectedRepair_homologous_edge,
+            lifted.subdivision_homology]
+    _ = z - ((lifted.projectedSubdivisionChain -
+          algebra.projectedRepairSum) + edgeCycle) := by
+          abel
+    _ = z - (pushedDiskCycle + edgeCycle) := by
+          rw [← hpushedEq]
 
 /-- Remaining homological-algebra bridge for the repair-sum package:
 the explicit chain-boundary relations in `Polygon4gRepairSumAlgebraData`
