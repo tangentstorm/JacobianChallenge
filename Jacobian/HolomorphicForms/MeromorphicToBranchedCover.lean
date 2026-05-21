@@ -651,21 +651,187 @@ theorem genusZero_fixedPole_branchedCoverDataOfPoleDegree
     f.BranchedCoverDataOfPoleDegree :=
   f.branchedCoverDataOfPoleDegree_of_simple_pole P hnc hpole han
 
-/-- **Production-frontier existence (sorry): a complex function with simple-pole
-principal part in genus zero.**
+/-! ### Riemann-Roch analytic-route conditional bridge
 
-The remaining genuine analytic / Riemann-Roch obligation: in genus zero,
-for every prescribed pole point `P`, there exists a complex function
-`F : X → ℂ` with simple-pole principal part at `P`. The required
-fields (meromorphicity, continuity of the one-point extension,
-order-one in the inversion chart, modulus divergence) are *exactly* the
-chart-local Laurent / order content a production PDE-dipole construction
-or a divisor-Riemann-Roch construction would output.
+The remaining genus-zero direct sorry is the *analytic-data* witness for
+the Riemann-Roch fixed-pole meromorphic function: existing RR theorems
+supply a `MeromorphicMapToSphere X` with `f.poles = Divisor.point P` and
+nonconstancy (`genusZero_pointRiemannRochSpace_witness_exists` /
+`genusZero_fixedPole_meromorphicData_nonempty`), and the narrow
+`genusZero_fixedPole_poleModulusData` provides the `PoleModulusData`
+under the same divisor hypothesis; what is *not yet* in the project is
+the per-point chart-local analytic content
+`MeromorphicMapToSphere.AnalyticData` (meromorphicity of the canonical
+finite lift everywhere, plus order-one at a simple pole). Below we
 
-This is the strictly-smallest mathematically standard frontier in the
-genus-zero meromorphic-route cluster: building a real meromorphic
-function with the prescribed simple pole. Once such an `F` is in hand,
-the full route data follows sorry-free through the bridge below. -/
+* prove a chart-free helper
+  `onePointExtend_getD_eq_toMap_of_pole`,
+* prove a sorry-free *conditional bridge* from
+  `(hpole, han, hmod)` to `HasComplexSimplePolePrincipalPart` —
+  `complexPrincipalPart_of_meromorphicMap_analyticData`,
+* isolate the strictly-narrower direct frontier
+  `genusZero_fixedPole_rr_analyticData_nonempty` (RR supplies a
+  meromorphic map together with `AnalyticData` and `PoleModulusData`),
+* assemble `genusZero_fixedPole_complexPrincipalPart_nonempty`
+  sorry-free from the bridge and the new frontier.
+
+This moves the sole direct sorry from the *generic* "complex principal
+part exists" claim to the *specific* "Riemann-Roch witness carries
+`AnalyticData`" claim — which is precisely the mathematical content
+that is still missing in the analytic infrastructure. -/
+
+omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
+/-- **Helper: the canonical one-point extension of the finite lift
+agrees with the original `f.toMap`.**
+
+For a `MeromorphicMapToSphere f` whose pole divisor is `Divisor.point P`,
+the canonical finite lift `(f.toMap ·).getD 0` extended back to `OnePoint ℂ`
+via `onePointExtend ... P` recovers `f.toMap`:
+
+* at `P`, both sides equal `∞` (left by definition of `onePointExtend`,
+  right by `toMap_pole_eq_infty_of_poleDivisor_point`);
+* off `P`, `f.toMap x = some z` for some `z` (by
+  `toMap_ne_infty_off_pole`), so `getD 0` recovers `z` and the
+  coercion `((z : ℂ) : OnePoint ℂ) = some z = f.toMap x`. -/
+theorem onePointExtend_getD_eq_toMap_of_pole
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P) :
+    onePointExtend (fun x => (f.toMap x).getD 0) P = f.toMap := by
+  classical
+  funext x
+  by_cases hx : x = P
+  · rw [hx, onePointExtend_at]
+    exact (f.toMap_pole_eq_infty_of_poleDivisor_point P hpole).symm
+  · rw [onePointExtend_off hx]
+    have hne : f.toMap x ≠ (OnePoint.infty : OnePoint ℂ) :=
+      f.toMap_ne_infty_off_pole P hpole x hx
+    rcases hfx : f.toMap x with _ | z
+    · exact (hne hfx).elim
+    · rfl
+
+/-- **Conditional bridge (sorry-free): from an honest meromorphic map
+with `AnalyticData` and `PoleModulusData` to
+`HasComplexSimplePolePrincipalPart`.**
+
+Given a `MeromorphicMapToSphere f` with simple pole at `P`
+(`f.poles = Divisor.point P`), per-point chart-local `AnalyticData`,
+and modulus-divergence `PoleModulusData`, the canonical finite lift
+`F := fun x => (f.toMap x).getD 0` carries the four fields of
+`HasComplexSimplePolePrincipalPart F P`:
+
+* `meromorphic_everywhere` — directly from `han.meromorphic_getD`;
+* `continuous_extension` — from `han.continuous_toMap` after rewriting
+  `onePointExtend F P = f.toMap` via the helper above;
+* `orderAt_pole` — from `han.simple_pole_order_one P hpole` after the
+  same rewrite;
+* `modulus_tendsto` — from
+  `MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point`,
+  whose conclusion is exactly `Tendsto (fun x => ‖(f.toMap x).getD 0‖)
+  (nhdsWithin P {P}ᶜ) atTop`; that statement is itself proved
+  sorry-free *if* `f.PoleModulusData` is in hand, but for stability we
+  re-derive it directly from `hmod` here so the bridge does not
+  depend on the open sorry in
+  `MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point`. -/
+theorem complexPrincipalPart_of_meromorphicMap_analyticData
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) (f : MeromorphicMapToSphere X)
+    (hpole : f.poles = Divisor.point P)
+    (han : f.AnalyticData)
+    (hmod : f.PoleModulusData) :
+    HasComplexSimplePolePrincipalPart (fun x => (f.toMap x).getD 0) P := by
+  classical
+  -- Helper: identify the one-point extension with `f.toMap`.
+  have hext : onePointExtend (fun x => (f.toMap x).getD 0) P = f.toMap :=
+    onePointExtend_getD_eq_toMap_of_pole f P hpole
+  refine
+    { meromorphic_everywhere := han.meromorphic_getD
+      continuous_extension := ?_
+      orderAt_pole := ?_
+      modulus_tendsto := ?_ }
+  · -- Continuity of the extension follows from continuity of `f.toMap`
+    -- and the identification `hext`.
+    rw [hext]
+    exact han.continuous_toMap
+  · -- The chart-local analytic order at `P` of the extension equals the
+    -- order of `f.toMap` at `P`, which is `1` by `simple_pole_order_one`.
+    rw [hext]
+    exact han.simple_pole_order_one P hpole
+  · -- Modulus divergence comes from `PoleModulusData` applied at the
+    -- single positive-pole point `P`.
+    -- Step 1: extract the finite-modulus lift from `hmod`.
+    have hposP : 0 < f.poleDivisor P := by
+      have hh : f.poleDivisor P = (Divisor.point P : Divisor X) P := by
+        change f.poles P = (Divisor.point P : Divisor X) P
+        rw [hpole]
+      rw [hh, Divisor.point_apply_self]
+      decide
+    obtain ⟨g, hg_eq, hg_div⟩ := hmod.exists_modulus_atTop_at_pole P hposP
+    -- Step 2: off `P`, `(f.toMap x).getD 0 = g x`.
+    -- So `‖(f.toMap x).getD 0‖ = ‖g x‖` eventually in `nhdsWithin P {P}ᶜ`.
+    refine (hg_div.congr' ?_)
+    filter_upwards [self_mem_nhdsWithin] with x hx
+    -- `hx : x ∈ {P}ᶜ`, i.e. `x ≠ P`. Then `f.poleDivisor x = 0`.
+    have hxP : x ≠ P := hx
+    have hxpoleZero : f.poleDivisor x = 0 := by
+      have hh : f.poleDivisor x = (Divisor.point P : Divisor X) x := by
+        change f.poles x = (Divisor.point P : Divisor X) x
+        rw [hpole]
+      rw [hh, Divisor.point_apply_ne hxP]
+    -- `hg_eq` gives `f.toMap x = ((g x : ℂ) : OnePoint ℂ)`.
+    have hfx : f.toMap x = ((g x : ℂ) : OnePoint ℂ) := hg_eq x hxpoleZero
+    -- Hence `(f.toMap x).getD 0 = g x`, so the norms agree.
+    show ‖g x‖ = ‖(f.toMap x).getD 0‖
+    rw [hfx]; rfl
+
+/-- **Narrow Riemann-Roch analytic-data witness frontier (direct sorry).**
+
+The strictly-smaller frontier replacing
+`genusZero_fixedPole_complexPrincipalPart_nonempty`. It packages all
+three pieces that the conditional bridge consumes:
+
+* a meromorphic-map-to-sphere `f` with `f.poles = Divisor.point P`
+  (provided sorry-free by the existing Riemann-Roch route via
+  `genusZero_fixedPole_meromorphicData_nonempty`);
+* the per-point chart-local `f.AnalyticData` (meromorphicity of the
+  canonical finite lift at every point, global continuity, and
+  order-one at the simple pole) — this is the *honest missing
+  analytic content*;
+* the modulus-divergence `f.PoleModulusData`, which the existing
+  `genusZero_fixedPole_poleModulusData` already produces from the same
+  RR data (modulo the narrow Laurent-to-modulus provider sorry in
+  `MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point`).
+
+The remaining direct sorry is therefore the *exact* gap: "the
+Riemann-Roch witness carries chart-local analytic data". That is the
+precise content a chart-local Laurent normal-form theorem (or an
+honest `MeromorphicFunctionType` package of the RR witness) would
+discharge — it is not the entire complex-principal-part existence
+claim. -/
+theorem genusZero_fixedPole_rr_analyticData_nonempty
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    ∃ f : MeromorphicMapToSphere X,
+      f.poles = Divisor.point P ∧ f.AnalyticData ∧ f.PoleModulusData := by
+  sorry
+
+/-- **Production-frontier existence (sorry-free assembly): a complex
+function with simple-pole principal part in genus zero.**
+
+Sorry-free assembly from
+`genusZero_fixedPole_rr_analyticData_nonempty` (the strictly-smaller
+RR analytic-data frontier) and the conditional bridge
+`complexPrincipalPart_of_meromorphicMap_analyticData`.
+
+The remaining direct sorry has been pushed entirely onto the
+narrow RR analytic-data witness frontier above; this theorem is a
+direct-sorry-free assembly. -/
 theorem genusZero_fixedPole_complexPrincipalPart_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -674,7 +840,10 @@ theorem genusZero_fixedPole_complexPrincipalPart_nonempty
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     ∃ F : X → ℂ, HasComplexSimplePolePrincipalPart F P := by
-  sorry
+  obtain ⟨f, hpole, han, hmod⟩ :=
+    genusZero_fixedPole_rr_analyticData_nonempty X P h
+  exact ⟨fun x => (f.toMap x).getD 0,
+    complexPrincipalPart_of_meromorphicMap_analyticData P f hpole han hmod⟩
 
 /-- **Sorry-free existence of `SimplePoleToSphereData` from the
 complex-principal-part frontier.**
