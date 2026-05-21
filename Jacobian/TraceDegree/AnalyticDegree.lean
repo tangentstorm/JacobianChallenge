@@ -166,13 +166,24 @@ theorem hasWeightedFiberConservation_provider (f : X → Y)
     HasWeightedFiberConservation f :=
   hasWeightedFiberConservation_of_contMDiff hf
 
-/-- **The narrow trace regularity provider.** The remaining trace
-construction frontier: global trace of holomorphic 1-forms agrees with
-the regular-value local trace formula. -/
+/-- **The narrow trace regularity provider.** Global trace of
+holomorphic 1-forms agrees with the regular-value local trace formula.
+
+Sorry-free assembly from the narrow analytic construction provider
+`traceFormsConstructionData_provider`: the `map_zero` field is the
+construction data's `map_zero_spec` applied to `rfl : (0 : _) = 0`;
+the `apply_fun_regular` field unfolds `traceFormsBundled` to the
+construction data's `traceForm` and invokes `regular_spec`. -/
 noncomputable def traceFormsRegularSpec_provider (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
-    TraceFormsRegularSpec f hf := by
-  sorry
+    TraceFormsRegularSpec f hf where
+  map_zero := by
+    change (traceFormsConstructionData_provider f hf 0).traceForm = 0
+    exact (traceFormsConstructionData_provider f hf 0).map_zero_spec rfl
+  apply_fun_regular := by
+    intro hbc η y hy
+    change (traceFormsConstructionData_provider f hf η).traceForm.toFun y = _
+    exact (traceFormsConstructionData_provider f hf η).regular_spec hbc y hy
 
 /-- **The narrow trace-pullback identity provider.** The form-level
 identity `tr_f (f* η) = deg(f) · η` (Steps 3-5 of the analytic proof
