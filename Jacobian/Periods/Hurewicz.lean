@@ -507,26 +507,42 @@ lemma sign_eq (o : BoundaryArcOrientation) : sign o = 1 ∨ sign o = -1 := by
 
 end BoundaryArcOrientation
 
+/-- The parameter along a partial oriented boundary arc.  The
+`startParam` and `endParam` fields are closed-interval points, so this
+can represent arbitrary side-interior endpoints, not only full side
+endpoints. -/
+noncomputable def boundaryArcOrientedAffineParam
+    (orientation : BoundaryArcOrientation)
+    (startParam endParam : Set.Icc (0 : ℝ) 1)
+    (t : unitInterval) : ℝ :=
+  match orientation with
+  | BoundaryArcOrientation.forward =>
+      (1 - t.1) * startParam.1 + t.1 * endParam.1
+  | BoundaryArcOrientation.reverse =>
+      (1 - t.1) * endParam.1 + t.1 * startParam.1
+
 /-- A boundary-arc path in the closed disk, with orientation and a
-concrete boundary parametrisation witness. -/
+concrete boundary parametrisation witness.  The side arc may be only a
+partial boundary side, and `arcIndex` may be either the canonical
+edge-basis side or its paired opposite side. -/
 structure Polygon4gBoundaryArcStep (g : ℕ) where
   source : DiskC
   target : DiskC
   edgeIndex : Fin (2 * (g + 1))
   arcIndex : ℕ
-  arcIndex_eq : arcIndex = edgeArcIdx g edgeIndex
+  arcIndex_represents_edge :
+    arcIndex = edgeArcIdx g edgeIndex ∨
+      arcIndex = edgeArcIdx g edgeIndex + 2
   orientation : BoundaryArcOrientation
+  startParam : Set.Icc (0 : ℝ) 1
+  endParam : Set.Icc (0 : ℝ) 1
   path : C(unitInterval, DiskC)
   source_eq : path 0 = source
   target_eq : path 1 = target
   path_param :
     ∀ t : unitInterval,
-      path t =
-        match orientation with
-        | BoundaryArcOrientation.forward =>
-            boundaryParam (g + 1) arcIndex t.1
-        | BoundaryArcOrientation.reverse =>
-            boundaryParam (g + 1) arcIndex (1 - t.1)
+      path t = boundaryParam (g + 1) arcIndex
+        (boundaryArcOrientedAffineParam orientation startParam endParam t)
 
 /-- A finite list of boundary arcs connects two disk endpoints. -/
 inductive Polygon4gBoundaryArcListConnects (g : ℕ) :
@@ -595,14 +611,17 @@ theorem polygon4g_singularSimplex_subdivision_lifts_to_disk
   sorry
 
 /-- Endpoint repair data for two disk points identified in the polygon
-quotient by `SideRel`.  The data is expressed before quotienting as a
-finite list of disk boundary arcs, then identifies its projection with
-the corresponding edge-chain combination. -/
+quotient by `SideRel`.  The repair is a disk-side chain built from
+partial boundary-side arcs.  Its projection is required to be homologous
+to an edge-chain combination by an explicit singular 2-boundary, not
+definitionally equal to full edge chains. -/
 structure Polygon4gEndpointRepairData
     (g : ℕ) (p q : DiskC)
     (_hrel : Polygon4g.SideRel (g + 1) p q) where
   coeff : Polygon4gAbelianization g
   diskRepairChain : SingularChainCoproduct DiskC 1
+  projectedRepairChain : SingularChainCoproduct (Polygon4g (g + 1)) 1
+  edgeChainBoundary : SingularChainCoproduct (Polygon4g (g + 1)) 2
   steps : List (Polygon4gBoundaryArcStep g)
   steps_connect : Polygon4gBoundaryArcListConnects g p q steps
   diskRepairChain_eq :
@@ -610,17 +629,20 @@ structure Polygon4gEndpointRepairData
       (steps.map fun step =>
         step.orientation.sign • singularChainElement
           (step.path.comp stdSimplexToUnitInterval)).sum
+  projectedRepairChain_eq :
+    projectedRepairChain = polygon4gBoundaryArcStepsProjectedChain g steps
   diskRepairBoundary :
     (singularChainComplexZ DiskC).d 1 0 diskRepairChain =
       pointChain DiskC q - pointChain DiskC p
-  projected_steps_boundary :
+  projectedRepairBoundary :
     (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
-        (polygon4gBoundaryArcStepsProjectedChain g steps) =
+        projectedRepairChain =
       pointChain (Polygon4g (g + 1)) (Polygon4g.mk (g + 1) q) -
         pointChain (Polygon4g (g + 1)) (Polygon4g.mk (g + 1) p)
-  edge_chain_eq :
-    polygon4gBoundaryArcStepsProjectedChain g steps =
-      ∑ e : Fin (2 * (g + 1)), coeff e • edgeChain g e
+  projectedRepair_homologous_edge :
+    (singularChainComplexZ (Polygon4g (g + 1))).d 2 1 edgeChainBoundary =
+      projectedRepairChain -
+        ∑ e : Fin (2 * (g + 1)), coeff e • edgeChain g e
 
 /-- If two lifted endpoints project to the same polygon point, their
 endpoint difference is repaired by a finite integral sum of polygon
@@ -917,6 +939,152 @@ theorem polygon4g_cycle_endpoint_pairs_from_boundary_zero
   -- pairs whose projections agree, hence are `SideRel` pairs.
   sorry
 
+/-- The chain-algebra output of summing a finite family of endpoint
+repairs.  This is separated from the final homology statement so the
+remaining obstruction, if any, is only the passage from explicit
+chain-boundary relations to equality in `H₁`. -/
+structure Polygon4gRepairSumAlgebraData
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp)
+    (pairs : Polygon4gCycleEndpointPairFamily g z hz decomp lifted) where
+  edgeCoeffs : Polygon4gAbelianization g
+  diskRepairSum : SingularChainCoproduct DiskC 1
+  diskCycle : SingularChainCoproduct DiskC 1
+  diskCycle_eq : diskCycle = lifted.liftedDiskChain - diskRepairSum
+  diskCycle_isCycle : (singularChainComplexZ DiskC).d 1 0 diskCycle = 0
+  projectedRepairSum : SingularChainCoproduct (Polygon4g (g + 1)) 1
+  projectedRepairBoundary :
+    (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 projectedRepairSum =
+      (@Finset.univ pairs.Pair pairs.pairFintype).sum
+        (fun pair =>
+          pointChain (Polygon4g (g + 1))
+              (Polygon4g.mk (g + 1) (pairs.rightEndpoint pair)) -
+            pointChain (Polygon4g (g + 1))
+              (Polygon4g.mk (g + 1) (pairs.leftEndpoint pair)))
+  edgeChainBoundarySum : SingularChainCoproduct (Polygon4g (g + 1)) 2
+  projectedRepair_homologous_edge :
+    (singularChainComplexZ (Polygon4g (g + 1))).d 2 1 edgeChainBoundarySum =
+      projectedRepairSum -
+        ∑ e : Fin (2 * (g + 1)), edgeCoeffs e • edgeChain g e
+
+/-- The finite-sum repair algebra: endpoint repairs can be summed into a
+repaired disk cycle and a projected repair chain homologous to the
+corresponding edge-chain combination. -/
+noncomputable def polygon4g_repair_pairs_sum_algebra_data
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp)
+    (pairs : Polygon4gCycleEndpointPairFamily g z hz decomp lifted) :
+    Polygon4gRepairSumAlgebraData g z hz decomp lifted pairs := by
+  classical
+  letI := pairs.pairFintype
+  let pairFinset : Finset pairs.Pair := @Finset.univ pairs.Pair pairs.pairFintype
+  let edgeCoeffs : Polygon4gAbelianization g :=
+    pairFinset.sum fun pair => (pairs.repair pair).coeff
+  let diskRepairSum : SingularChainCoproduct DiskC 1 :=
+    pairFinset.sum fun pair => (pairs.repair pair).diskRepairChain
+  let diskCycle : SingularChainCoproduct DiskC 1 :=
+    lifted.liftedDiskChain - diskRepairSum
+  let projectedRepairSum : SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
+    pairFinset.sum fun pair => (pairs.repair pair).projectedRepairChain
+  let edgeChainBoundarySum : SingularChainCoproduct (Polygon4g (g + 1)) 2 :=
+    pairFinset.sum fun pair => (pairs.repair pair).edgeChainBoundary
+  refine {
+    edgeCoeffs := edgeCoeffs
+    diskRepairSum := diskRepairSum
+    diskCycle := diskCycle
+    diskCycle_eq := rfl
+    diskCycle_isCycle := ?_
+    projectedRepairSum := projectedRepairSum
+    projectedRepairBoundary := ?_
+    edgeChainBoundarySum := edgeChainBoundarySum
+    projectedRepair_homologous_edge := ?_
+  }
+  · dsimp [diskCycle, diskRepairSum, pairFinset]
+    rw [map_sub, pairs.lifted_boundary_eq_pairs, map_sum]
+    have hrepair :
+        (∑ x : pairs.Pair,
+          (singularChainComplexZ DiskC).d 1 0 (pairs.repair x).diskRepairChain) =
+        ∑ x : pairs.Pair,
+          (pointChain DiskC (pairs.rightEndpoint x) -
+            pointChain DiskC (pairs.leftEndpoint x)) := by
+      refine Finset.sum_congr rfl ?_
+      intro pair _hpair
+      exact (pairs.repair pair).diskRepairBoundary
+    rw [hrepair]
+    simp
+  · dsimp [projectedRepairSum, pairFinset]
+    rw [map_sum]
+    refine Finset.sum_congr rfl ?_
+    intro pair _hpair
+    exact (pairs.repair pair).projectedRepairBoundary
+  · dsimp [edgeChainBoundarySum, projectedRepairSum, edgeCoeffs, pairFinset]
+    rw [map_sum]
+    calc
+      ∑ x : pairs.Pair,
+          (singularChainComplexZ (Polygon4g (g + 1))).d 2 1
+            (pairs.repair x).edgeChainBoundary
+          =
+        ∑ x : pairs.Pair,
+          ((pairs.repair x).projectedRepairChain -
+            ∑ e : Fin (2 * (g + 1)),
+              (pairs.repair x).coeff e • edgeChain g e) := by
+            refine Finset.sum_congr rfl ?_
+            intro pair _hpair
+            exact (pairs.repair pair).projectedRepair_homologous_edge
+      _ =
+        (∑ x : pairs.Pair, (pairs.repair x).projectedRepairChain) -
+          ∑ x : pairs.Pair,
+            ∑ e : Fin (2 * (g + 1)),
+              (pairs.repair x).coeff e • edgeChain g e := by
+            simp [Finset.sum_sub_distrib]
+      _ =
+        (∑ x : pairs.Pair, (pairs.repair x).projectedRepairChain) -
+          ∑ e : Fin (2 * (g + 1)),
+            (∑ x : pairs.Pair, (pairs.repair x).coeff e) • edgeChain g e := by
+            congr 1
+            rw [Finset.sum_comm]
+            refine Finset.sum_congr rfl ?_
+            intro e _he
+            simp_rw [← Int.cast_smul_eq_zsmul ℤ]
+            exact (Finset.sum_smul
+              (s := (Finset.univ : Finset pairs.Pair))
+              (x := edgeChain g e)
+              (f := fun x => (pairs.repair x).coeff e)).symm
+      _ =
+        (∑ x : pairs.Pair, (pairs.repair x).projectedRepairChain) -
+          ∑ e : Fin (2 * (g + 1)),
+            ((∑ x : pairs.Pair, (pairs.repair x).coeff) e) • edgeChain g e := by
+            congr 1
+            refine Finset.sum_congr rfl ?_
+            intro e _he
+            congr 1
+            exact (Finset.sum_apply e (Finset.univ : Finset pairs.Pair)
+              (fun x => (pairs.repair x).coeff)).symm
+
+/-- Remaining homological-algebra bridge for the repair-sum package:
+the explicit chain-boundary relations in `Polygon4gRepairSumAlgebraData`
+give the desired equality in singular `H₁`. -/
+theorem polygon4g_repair_sum_projected_relation_from_algebra_data
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp)
+    (pairs : Polygon4gCycleEndpointPairFamily g z hz decomp lifted)
+    (algebra : Polygon4gRepairSumAlgebraData g z hz decomp lifted pairs) :
+    singularH1ClassOfCycle (Polygon4g (g + 1)) z hz =
+      singularH1_inducedLinearMap (polygon4gMkContinuousMap (g + 1))
+        (singularH1ClassOfCycle DiskC algebra.diskCycle algebra.diskCycle_isCycle) +
+        edgeBasisMap g algebra.edgeCoeffs := by
+  -- Missing homological algebra: combine the subdivision boundary from
+  -- `lifted`, the summed repair boundary from `algebra`, and naturality of
+  -- the quotient-map chain map to identify the two cycle representatives in
+  -- homology.
+  sorry
+
 /-- Atomic repair-summation leaf: sum the endpoint repairs and edge
 coefficients for a finite endpoint-pair family, producing the repaired
 disk-cycle relation used by the final projection step. -/
@@ -927,10 +1095,15 @@ theorem polygon4g_repair_pairs_sum_edge_coefficients
     (lifted : Polygon4gLiftedSupportData g z decomp)
     (pairs : Polygon4gCycleEndpointPairFamily g z hz decomp lifted) :
     Nonempty (Polygon4gRepairedDiskCycleData g z hz) := by
-  -- Missing finite-sum repair algebra: add the projected endpoint repairs,
-  -- collect their edge coefficients, prove the repaired disk chain is a
-  -- cycle, and derive the projected homology relation.
-  sorry
+  let algebra := polygon4g_repair_pairs_sum_algebra_data g z hz decomp lifted pairs
+  exact ⟨{
+    edgeCoeffs := algebra.edgeCoeffs
+    diskCycle := algebra.diskCycle
+    diskCycle_isCycle := algebra.diskCycle_isCycle
+    projected_relation :=
+      polygon4g_repair_sum_projected_relation_from_algebra_data
+        g z hz decomp lifted pairs algebra
+  }⟩
 
 /-- Cycle-level lift and endpoint-repair package.  This is where the
 simplex subdivision/lift data and endpoint repair data are assembled
