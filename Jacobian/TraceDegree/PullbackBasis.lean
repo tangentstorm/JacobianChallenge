@@ -4,6 +4,7 @@ import Jacobian.TraceDegree.PiecewiseC1Instance
 import Jacobian.ComplexTorus.OfClm
 import Jacobian.ComplexTorus.MkSmooth
 import Jacobian.HolomorphicForms.HolomorphicMap
+import Jacobian.HolomorphicForms.TraceSpec
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 
 set_option linter.unusedSectionVars false
@@ -76,6 +77,41 @@ noncomputable def pullbackTraceLiftCLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →L[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   LinearMap.toContinuousLinearMap (pullbackTraceLiftLinearMap f hf)
+
+/-- **The basis-coordinate trace map.** Direction `H⁰(X, Ω¹) → H⁰(Y, Ω¹)`
+descended to basis coordinates. The covariant trace lift dual to
+`holomorphicTraceCoord` (which is the contravariant form-pullback
+matrix).
+
+Sorry-free assembly: the linear `traceFormsBundledLM` (from
+`TraceSpec.lean`, sorry-free assembly from the construction-data
+provider) sandwiched between the basis-coordinate equivalences. -/
+noncomputable def traceFormsCoord
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ X) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ Y) → ℂ) :=
+  (holomorphicOneFormFinBasis ℂ Y).equivFun.toLinearMap ∘ₗ
+    (traceFormsBundledLM f hf) ∘ₗ
+    (holomorphicOneFormFinBasis ℂ X).equivFun.symm.toLinearMap
+
+/-- **Corrected basis-coordinate dual pullback.** The dual / transpose
+of `traceFormsCoord`: a map `(Fin g_Y → ℂ) → (Fin g_X → ℂ)` representing
+Jacobian pullback **on dual functional coordinates** (where the
+Jacobian carrier `BasisAnalyticJacobian Y` is interpreted as a quotient
+of dual functionals on `H⁰(Y, Ω¹)`).
+
+This is the *correct* representative for Jacobian pullback. The
+existing `basisDualPullback` / `holomorphicTraceCoord` is the
+*form-pullback* matrix, which is dual to **cycle pushforward** under
+the period pairing, not Jacobian pullback. The two representatives
+differ; see the design note before
+`pushforwardTraceLift_traceDualPullbackLift_eq_nsmul` (in
+`AnalyticDegree.lean`).
+
+Sorry-free: matrix transpose of `traceFormsCoord`. -/
+noncomputable def traceDualPullbackLift
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
+  Matrix.toLin' (traceFormsCoord f hf).toMatrix'.transpose
 
 /-- **Narrow transfer-cycle leaf.** The genuine geometric content: for
 every cycle `σ` on `Y` there exists a *transfer cycle* `γ` on `X`
