@@ -472,6 +472,44 @@ noncomputable def singularH1ClassOfCycle
     ((singularChainComplexZ X).cyclesMk z 0
       (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz)
 
+/-- Two singular one-cycles represent the same `H₁` class when their
+difference is the boundary of an explicit singular two-chain. -/
+theorem singularH1ClassOfCycle_eq_of_boundary
+    {X : Type} [TopologicalSpace X]
+    {z z' : SingularChainCoproduct X 1}
+    (hz : (singularChainComplexZ X).d 1 0 z = 0)
+    (hz' : (singularChainComplexZ X).d 1 0 z' = 0)
+    (B : SingularChainCoproduct X 2)
+    (hB : (singularChainComplexZ X).d 2 1 B = z - z') :
+    singularH1ClassOfCycle X z hz =
+      singularH1ClassOfCycle X z' hz' := by
+  let K := singularChainComplexZ X
+  let cz :=
+    K.cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz
+  let cz' :=
+    K.cyclesMk z' 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz'
+  have hcycles :
+      cz - cz' = ((forget₂ (ModuleCat ℤ) Ab).map (K.toCycles 2 1)) B := by
+    apply (ModuleCat.mono_iff_injective (K.iCycles 1)).1 inferInstance
+    change
+      ((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1)) (cz - cz') =
+        ((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1))
+          (((forget₂ (ModuleCat ℤ) Ab).map (K.toCycles 2 1)) B)
+    rw [map_sub]
+    rw [K.i_cyclesMk, K.i_cyclesMk]
+    rw [← ConcreteCategory.forget₂_comp_apply, HomologicalComplex.toCycles_i]
+    exact hB.symm
+  unfold singularH1ClassOfCycle
+  change ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) cz =
+    ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) cz'
+  have hzero :
+      ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) (cz - cz') = 0 := by
+    rw [hcycles]
+    rw [← ConcreteCategory.forget₂_comp_apply, HomologicalComplex.toCycles_comp_homologyπ]
+    simp
+  rw [map_sub] at hzero
+  exact sub_eq_zero.mp hzero
+
 /-- The quotient map `DiskC → Polygon4g g` as a continuous map. -/
 noncomputable def polygon4gMkContinuousMap (g : ℕ) :
     C(DiskC, Polygon4g g) :=
