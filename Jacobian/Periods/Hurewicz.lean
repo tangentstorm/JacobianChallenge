@@ -486,60 +486,111 @@ noncomputable def pointChain
     SingularChainCoproduct X 0 :=
   singularChainElement (pointSingularSimplex X x)
 
+/-- A boundary-arc path in the closed disk, with orientation and a
+concrete boundary parametrisation witness. -/
+structure Polygon4gBoundaryArcStep (g : ℕ) where
+  source : DiskC
+  target : DiskC
+  arcIndex : ℕ
+  sign : ℤ
+  path : C(unitInterval, DiskC)
+  source_eq : path 0 = source
+  target_eq : path 1 = target
+  boundary_supported :
+    ∀ t : unitInterval, ∃ u : Set.Icc (0 : ℝ) 1,
+      path t = boundaryParam (g + 1) arcIndex u.1
+
+/-- A finite list of boundary arcs connects two disk endpoints. -/
+inductive Polygon4gBoundaryArcListConnects (g : ℕ) :
+    DiskC → DiskC → List (Polygon4gBoundaryArcStep g) → Prop
+  | nil (p : DiskC) : Polygon4gBoundaryArcListConnects g p p []
+  | cons {p q r : DiskC} {step : Polygon4gBoundaryArcStep g}
+      {steps : List (Polygon4gBoundaryArcStep g)}
+      (hsource : step.source = p)
+      (htarget : step.target = q)
+      (hrest : Polygon4gBoundaryArcListConnects g q r steps) :
+      Polygon4gBoundaryArcListConnects g p r (step :: steps)
+
+/-- The projected singular one-chain of a disk boundary-arc step. -/
+noncomputable def polygon4gBoundaryArcStepProjectedChain
+    (g : ℕ) (step : Polygon4gBoundaryArcStep g) :
+    SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
+  singularChainElement
+    ((polygon4gMkContinuousMap (g + 1)).comp
+      (step.path.comp stdSimplexToUnitInterval))
+
+/-- The projected singular chain of a list of boundary-arc steps, with
+the recorded orientations. -/
+noncomputable def polygon4gBoundaryArcStepsProjectedChain
+    (g : ℕ) (steps : List (Polygon4gBoundaryArcStep g)) :
+    SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
+  (steps.map fun step => step.sign • polygon4gBoundaryArcStepProjectedChain g step).sum
+
 /-- Finite local lifting data for a singular one-simplex in the polygon
-quotient.  `sourceSet` records the pieces of the simplex domain; the
-fields say the pieces cover the simplex and each piece has a disk lift
-whose projection agrees with the original simplex on that piece. -/
+quotient.  This records an actual finite subdivision by sub-simplices:
+each piece has a disk lift, adjacent lifted endpoints are related by
+`SideRel`, and the subdivided projected chain is homologous to the
+original simplex chain. -/
 structure Polygon4gSingularSimplexDiskLiftData
     (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) where
-  Piece : Type
-  pieceFintype : Fintype Piece
-  pieceNonempty : Nonempty Piece
-  sourceSet : Piece → Set (stdSimplex ℝ (Fin 2))
-  lift : Piece → C(stdSimplex ℝ (Fin 2), DiskC)
-  covers : ∀ s, ∃ p : Piece, s ∈ sourceSet p
+  n : ℕ
+  n_pos : 0 < n
+  subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2))
+  lift : Fin n → C(stdSimplex ℝ (Fin 2), DiskC)
   projects_on_piece :
-    ∀ (p : Piece) (s : stdSimplex ℝ (Fin 2)),
-      s ∈ sourceSet p → Polygon4g.mk (g + 1) (lift p s) = σ s
-  endpoint_compatibility :
-    ∀ (p q : Piece) (s : stdSimplex ℝ (Fin 2)),
-      s ∈ sourceSet p → s ∈ sourceSet q →
-        Polygon4g.mk (g + 1) (lift p s) =
-          Polygon4g.mk (g + 1) (lift q s)
+    ∀ (i : Fin n) (s : stdSimplex ℝ (Fin 2)),
+      Polygon4g.mk (g + 1) (lift i s) = σ (subSimplex i s)
+  adjacent_endpoint_rel :
+    ∀ (i j : Fin n), i.1 + 1 = j.1 →
+      Polygon4g.SideRel (g + 1)
+        (lift i (stdSimplexVertex 1))
+        (lift j (stdSimplexVertex 0))
+  subdividedChain : SingularChainCoproduct (Polygon4g (g + 1)) 1
+  subdividedChain_eq :
+    subdividedChain =
+      ∑ i : Fin n,
+        singularChainElement ((polygon4gMkContinuousMap (g + 1)).comp (lift i))
+  subdivisionBoundary : SingularChainCoproduct (Polygon4g (g + 1)) 2
+  subdivision_homology :
+    (singularChainComplexZ (Polygon4g (g + 1))).d 2 1 subdivisionBoundary =
+      subdividedChain - singularChainElement σ
 
 /-- A singular one-simplex in the quotient polygon admits a finite disk
 lifting package.  This is the subdivision/lifting leaf of the polygon
 spanning proof. -/
 theorem polygon4g_singularSimplex_subdivision_lifts_to_disk
     (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) :
-    ∃ data : Polygon4gSingularSimplexDiskLiftData g σ, Nonempty data.Piece := by
+    Nonempty (Polygon4gSingularSimplexDiskLiftData g σ) := by
   -- Missing topology: subdivide the interval so that each subpath lies in a
   -- quotient chart admitting a lift to the closed disk cell.
   sorry
 
 /-- Endpoint repair data for two disk points identified in the polygon
-quotient.  `repairChain` is required to be both a concrete edge-chain
-combination and a chain whose boundary is the projected endpoint
-difference. -/
+quotient by `SideRel`.  The data is expressed before quotienting as a
+finite list of disk boundary arcs, then identifies its projection with
+the corresponding edge-chain combination. -/
 structure Polygon4gEndpointRepairData
     (g : ℕ) (p q : DiskC)
-    (_hpq : Polygon4g.mk (g + 1) p = Polygon4g.mk (g + 1) q) where
+    (_hrel : Polygon4g.SideRel (g + 1) p q) where
   coeff : Polygon4gAbelianization g
-  repairChain : SingularChainCoproduct (Polygon4g (g + 1)) 1
-  boundary_eq :
-    (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 repairChain =
+  steps : List (Polygon4gBoundaryArcStep g)
+  steps_connect : Polygon4gBoundaryArcListConnects g p q steps
+  projected_steps_boundary :
+    (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
+        (polygon4gBoundaryArcStepsProjectedChain g steps) =
       pointChain (Polygon4g (g + 1)) (Polygon4g.mk (g + 1) q) -
         pointChain (Polygon4g (g + 1)) (Polygon4g.mk (g + 1) p)
   edge_chain_eq :
-    repairChain = ∑ e : Fin (2 * (g + 1)), coeff e • edgeChain g e
+    polygon4gBoundaryArcStepsProjectedChain g steps =
+      ∑ e : Fin (2 * (g + 1)), coeff e • edgeChain g e
 
 /-- If two lifted endpoints project to the same polygon point, their
 endpoint difference is repaired by a finite integral sum of polygon
 edge arcs. -/
 theorem polygon4g_endpoint_pair_repaired_by_edge_arcs
     (g : ℕ) (p q : DiskC)
-    (hpq : Polygon4g.mk (g + 1) p = Polygon4g.mk (g + 1) q) :
-    Nonempty (Polygon4gEndpointRepairData g p q hpq) := by
+    (hrel : Polygon4g.SideRel (g + 1) p q) :
+    Nonempty (Polygon4gEndpointRepairData g p q hrel) := by
   -- Missing boundary combinatorics: analyze `Polygon4g.SideRel`, turn the
   -- side-pairing path between `p` and `q` into boundary arcs, and identify
   -- those arcs with the concrete edge chains.
@@ -605,6 +656,121 @@ structure Polygon4gRepairedDiskCycleData
         (singularH1ClassOfCycle DiskC diskCycle diskCycle_isCycle) +
         edgeBasisMap g edgeCoeffs
 
+/-- A finite-support presentation of a singular one-chain as an
+integral sum of singular one-simplices. -/
+structure SingularOneChainSupportDecomposition
+    (X : Type) [TopologicalSpace X]
+    (z : SingularChainCoproduct X 1) where
+  Simplex : Type
+  simplexFintype : Fintype Simplex
+  coeff : Simplex → ℤ
+  simplex : Simplex → C(stdSimplex ℝ (Fin 2), X)
+  chain_eq :
+    z = ∑ s : Simplex, coeff s • singularChainElement (simplex s)
+
+/-- Atomic finite-support algebra leaf: every coproduct singular
+one-chain has a finite presentation by basis singular simplices. -/
+theorem singularChainCoproduct_sum_support_decomposition
+    (X : Type) [TopologicalSpace X]
+    (z : SingularChainCoproduct X 1) :
+    Nonempty (SingularOneChainSupportDecomposition X z) := by
+  -- Missing coproduct algebra: expose an element of the singular-chain
+  -- coproduct as a finite-support sum of basis simplex generators.
+  sorry
+
+/-- Lift data summed over a finite-support presentation of a polygon
+singular one-chain.  This is still before endpoint repair: it only says
+each support simplex has a subdivision/lift package and records the
+summed lifted disk chain and projected subdivided chain. -/
+structure Polygon4gLiftedSupportData
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z) where
+  simplexLift :
+    ∀ s : decomp.Simplex,
+      Polygon4gSingularSimplexDiskLiftData g (decomp.simplex s)
+  liftedDiskChain : SingularChainCoproduct DiskC 1
+  liftedDiskChain_eq :
+    liftedDiskChain =
+      (@Finset.univ decomp.Simplex decomp.simplexFintype).sum
+        (fun s => decomp.coeff s •
+          (∑ i : Fin ((simplexLift s).n),
+            singularChainElement ((simplexLift s).lift i)))
+  projectedSubdivisionChain : SingularChainCoproduct (Polygon4g (g + 1)) 1
+  projectedSubdivisionChain_eq :
+    projectedSubdivisionChain =
+      (@Finset.univ decomp.Simplex decomp.simplexFintype).sum
+        (fun s => decomp.coeff s • (simplexLift s).subdividedChain)
+  subdivisionBoundary : SingularChainCoproduct (Polygon4g (g + 1)) 2
+  subdivision_homology :
+    (singularChainComplexZ (Polygon4g (g + 1))).d 2 1 subdivisionBoundary =
+      projectedSubdivisionChain - z
+
+/-- Atomic lift-summation leaf: apply simplex subdivision/lift data over
+the finite support of a singular chain and sum the resulting chain
+relations. -/
+theorem polygon4g_lift_data_sum_projects_to_subdivision_chain
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z) :
+    Nonempty (Polygon4gLiftedSupportData g z decomp) := by
+  -- Missing finite-sum bookkeeping: choose lift data for every support
+  -- simplex, sum the lifted disk chains, and sum the subdivision homologies.
+  sorry
+
+/-- Endpoint pairs extracted from the boundary of the summed lifted
+chain.  Each pair is a genuine `SideRel` pair and carries the endpoint
+repair data for that relation. -/
+structure Polygon4gCycleEndpointPairFamily
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp) where
+  Pair : Type
+  pairFintype : Fintype Pair
+  leftEndpoint : Pair → DiskC
+  rightEndpoint : Pair → DiskC
+  endpointRel :
+    ∀ pair : Pair,
+      Polygon4g.SideRel (g + 1) (leftEndpoint pair) (rightEndpoint pair)
+  repair :
+    ∀ pair : Pair,
+      Polygon4gEndpointRepairData g (leftEndpoint pair) (rightEndpoint pair)
+        (endpointRel pair)
+  lifted_boundary_eq_pairs :
+    (singularChainComplexZ DiskC).d 1 0 lifted.liftedDiskChain =
+      (@Finset.univ Pair pairFintype).sum
+        (fun pair =>
+          pointChain DiskC (rightEndpoint pair) -
+            pointChain DiskC (leftEndpoint pair))
+
+/-- Atomic endpoint-pair extraction leaf: the polygon cycle condition
+forces the boundary of the lifted disk chain to be a finite sum of
+`SideRel` endpoint pairs. -/
+theorem polygon4g_cycle_endpoint_pairs_from_boundary_zero
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp) :
+    Nonempty (Polygon4gCycleEndpointPairFamily g z hz decomp lifted) := by
+  -- Missing boundary algebra: use `hz` and the projected subdivision
+  -- relation to show the lifted-chain boundary consists exactly of endpoint
+  -- pairs whose projections agree, hence are `SideRel` pairs.
+  sorry
+
+/-- Atomic repair-summation leaf: sum the endpoint repairs and edge
+coefficients for a finite endpoint-pair family, producing the repaired
+disk-cycle relation used by the final projection step. -/
+theorem polygon4g_repair_pairs_sum_edge_coefficients
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp)
+    (pairs : Polygon4gCycleEndpointPairFamily g z hz decomp lifted) :
+    Nonempty (Polygon4gRepairedDiskCycleData g z hz) := by
+  -- Missing finite-sum repair algebra: add the projected endpoint repairs,
+  -- collect their edge coefficients, prove the repaired disk chain is a
+  -- cycle, and derive the projected homology relation.
+  sorry
+
 /-- Cycle-level lift and endpoint-repair package.  This is where the
 simplex subdivision/lift data and endpoint repair data are assembled
 over the finite support of the singular chain. -/
@@ -612,12 +778,14 @@ theorem polygon4g_cycle_lift_repair_data
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0) :
     Nonempty (Polygon4gRepairedDiskCycleData g z hz) := by
-  -- Missing chain construction: decompose the finite singular chain into
-  -- simplices, apply `polygon4g_singularSimplex_subdivision_lifts_to_disk`
-  -- to each simplex, repair matching lifted endpoints using
-  -- `polygon4g_endpoint_pair_repaired_by_edge_arcs`, and sum the resulting
-  -- repaired disk cycle and edge coefficients.
-  sorry
+  obtain ⟨decomp⟩ :=
+    singularChainCoproduct_sum_support_decomposition
+      (Polygon4g (g + 1)) z
+  obtain ⟨lifted⟩ :=
+    polygon4g_lift_data_sum_projects_to_subdivision_chain g z decomp
+  obtain ⟨pairs⟩ :=
+    polygon4g_cycle_endpoint_pairs_from_boundary_zero g z hz decomp lifted
+  exact polygon4g_repair_pairs_sum_edge_coefficients g z hz decomp lifted pairs
 
 /-- Projecting the repaired disk-chain relation to the quotient polygon
 and killing the disk-cycle class by contractibility identifies the
