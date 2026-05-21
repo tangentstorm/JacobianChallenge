@@ -1,5 +1,7 @@
 import Jacobian.Periods.CellularChainComplex
 import Jacobian.Periods.Polygon4gEdgeChain
+import Mathlib.Algebra.Category.ModuleCat.Products
+import Mathlib.Algebra.DirectSum.Finsupp
 import Mathlib.Algebra.Homology.ConcreteCategory
 import Mathlib.LinearAlgebra.Pi
 
@@ -14,7 +16,8 @@ surface needed by the Jacobian project.
 
 namespace JacobianChallenge.Periods
 
-open AlgebraicTopology CategoryTheory
+open AlgebraicTopology CategoryTheory CategoryTheory.Limits SimplexCategory Opposite
+open Simplicial
 
 /-- **Round 50 / Stage A leaf.** Opaque "surface group abelianisation"
 witness.  Concretely this is the free abelian module on the oriented
@@ -486,19 +489,44 @@ noncomputable def pointChain
     SingularChainCoproduct X 0 :=
   singularChainElement (pointSingularSimplex X x)
 
+/-- Orientation for a primitive boundary-edge repair step. -/
+inductive BoundaryArcOrientation where
+  | forward
+  | reverse
+  deriving DecidableEq
+
+namespace BoundaryArcOrientation
+
+/-- The integral sign represented by an oriented boundary edge. -/
+def sign : BoundaryArcOrientation → ℤ
+  | forward => 1
+  | reverse => -1
+
+lemma sign_eq (o : BoundaryArcOrientation) : sign o = 1 ∨ sign o = -1 := by
+  cases o <;> simp [sign]
+
+end BoundaryArcOrientation
+
 /-- A boundary-arc path in the closed disk, with orientation and a
 concrete boundary parametrisation witness. -/
 structure Polygon4gBoundaryArcStep (g : ℕ) where
   source : DiskC
   target : DiskC
+  edgeIndex : Fin (2 * (g + 1))
   arcIndex : ℕ
-  sign : ℤ
+  arcIndex_eq : arcIndex = edgeArcIdx g edgeIndex
+  orientation : BoundaryArcOrientation
   path : C(unitInterval, DiskC)
   source_eq : path 0 = source
   target_eq : path 1 = target
-  boundary_supported :
-    ∀ t : unitInterval, ∃ u : Set.Icc (0 : ℝ) 1,
-      path t = boundaryParam (g + 1) arcIndex u.1
+  path_param :
+    ∀ t : unitInterval,
+      path t =
+        match orientation with
+        | BoundaryArcOrientation.forward =>
+            boundaryParam (g + 1) arcIndex t.1
+        | BoundaryArcOrientation.reverse =>
+            boundaryParam (g + 1) arcIndex (1 - t.1)
 
 /-- A finite list of boundary arcs connects two disk endpoints. -/
 inductive Polygon4gBoundaryArcListConnects (g : ℕ) :
@@ -524,7 +552,8 @@ the recorded orientations. -/
 noncomputable def polygon4gBoundaryArcStepsProjectedChain
     (g : ℕ) (steps : List (Polygon4gBoundaryArcStep g)) :
     SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
-  (steps.map fun step => step.sign • polygon4gBoundaryArcStepProjectedChain g step).sum
+  (steps.map fun step =>
+    step.orientation.sign • polygon4gBoundaryArcStepProjectedChain g step).sum
 
 /-- Finite local lifting data for a singular one-simplex in the polygon
 quotient.  This records an actual finite subdivision by sub-simplices:
@@ -573,8 +602,17 @@ structure Polygon4gEndpointRepairData
     (g : ℕ) (p q : DiskC)
     (_hrel : Polygon4g.SideRel (g + 1) p q) where
   coeff : Polygon4gAbelianization g
+  diskRepairChain : SingularChainCoproduct DiskC 1
   steps : List (Polygon4gBoundaryArcStep g)
   steps_connect : Polygon4gBoundaryArcListConnects g p q steps
+  diskRepairChain_eq :
+    diskRepairChain =
+      (steps.map fun step =>
+        step.orientation.sign • singularChainElement
+          (step.path.comp stdSimplexToUnitInterval)).sum
+  diskRepairBoundary :
+    (singularChainComplexZ DiskC).d 1 0 diskRepairChain =
+      pointChain DiskC q - pointChain DiskC p
   projected_steps_boundary :
     (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
         (polygon4gBoundaryArcStepsProjectedChain g steps) =
@@ -674,9 +712,76 @@ theorem singularChainCoproduct_sum_support_decomposition
     (X : Type) [TopologicalSpace X]
     (z : SingularChainCoproduct X 1) :
     Nonempty (SingularOneChainSupportDecomposition X z) := by
-  -- Missing coproduct algebra: expose an element of the singular-chain
-  -- coproduct as a finite-support sum of basis simplex generators.
-  sorry
+  classical
+  let I := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋1⦌)
+  let Z : I → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
+  let iso := ModuleCat.coprodIsoDirectSum Z
+  let dz : DirectSum I (fun i => (Z i : Type)) := iso.hom.hom z
+  let f : I →₀ ℤ := (finsuppLEquivDirectSum ℤ ℤ I).symm dz
+  let Simplex := {i : I // i ∈ f.support}
+  refine ⟨{
+    Simplex := Simplex
+    simplexFintype := inferInstance
+    coeff := fun s => f s.1
+    simplex := fun s => (singularChainSimplexIndex X 1).symm s.1
+    chain_eq := ?_
+  }⟩
+  change z =
+    ∑ s : Simplex,
+      f s.1 • singularChainElement ((singularChainSimplexIndex X 1).symm s.1)
+  have hinj : Function.Injective iso.hom.hom := by
+    intro a b h
+    have h2 := congrArg iso.inv.hom h
+    simpa [iso, Z] using h2
+  apply hinj
+  rw [map_sum]
+  simp only [map_zsmul]
+  have hdz : dz = (finsuppLEquivDirectSum ℤ ℤ I) f := by
+    simp [f, dz]
+  change dz =
+    ∑ x : Simplex,
+      f x.1 • iso.hom.hom
+        (singularChainElement ((singularChainSimplexIndex X 1).symm x.1))
+  rw [hdz]
+  have hι (i : I) :
+      iso.hom.hom ((Sigma.ι Z i).hom (1 : ℤ)) =
+        DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ) := by
+    have hm := ModuleCat.ι_coprodIsoDirectSum_hom Z i
+    have hh := congrArg ModuleCat.Hom.hom hm
+    exact congrArg (fun f => f (1 : ℤ)) hh
+  have hsum :
+      (∑ x : Simplex,
+          f x.1 • iso.hom.hom
+            (singularChainElement ((singularChainSimplexIndex X 1).symm x.1))) =
+        ∑ i ∈ f.support, f i • DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ) := by
+    change
+      (∑ x ∈ f.support.attach,
+          f x.1 • iso.hom.hom
+            (singularChainElement ((singularChainSimplexIndex X 1).symm x.1))) =
+        ∑ i ∈ f.support, f i • DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ)
+    simpa [singularChainElement, I, Z, iso, hι] using
+      (Finset.sum_attach f.support
+        (fun i => f i • DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ)))
+  rw [hsum]
+  rw [← Finsupp.sum_of_support_subset f
+    (show f.support ⊆ f.support from fun _ h => h)
+    (fun i c => c • DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ))]
+  · calc
+      (finsuppLEquivDirectSum ℤ ℤ I) f
+          = (finsuppLEquivDirectSum ℤ ℤ I)
+              (f.sum fun i c => Finsupp.single i c) := by
+              rw [Finsupp.sum_single]
+      _ = f.sum
+            (fun i c => (finsuppLEquivDirectSum ℤ ℤ I) (Finsupp.single i c)) := by
+              simp [Finsupp.sum, map_sum]
+      _ = f.sum
+            (fun i c => c • DirectSum.lof ℤ I (fun _ : I => ℤ) i (1 : ℤ)) := by
+              apply Finsupp.sum_congr
+              intro i _hi
+              simpa [finsuppLEquivDirectSum_single] using
+                ((DirectSum.lof ℤ I (fun _ : I => ℤ) i).map_smul (f i) (1 : ℤ))
+  · intro i _hi
+    simp
 
 /-- Lift data summed over a finite-support presentation of a polygon
 singular one-chain.  This is still before endpoint repair: it only says
@@ -712,9 +817,65 @@ theorem polygon4g_lift_data_sum_projects_to_subdivision_chain
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z) :
     Nonempty (Polygon4gLiftedSupportData g z decomp) := by
-  -- Missing finite-sum bookkeeping: choose lift data for every support
-  -- simplex, sum the lifted disk chains, and sum the subdivision homologies.
-  sorry
+  classical
+  let simplexLift :
+      ∀ s : decomp.Simplex,
+        Polygon4gSingularSimplexDiskLiftData g (decomp.simplex s) :=
+    fun s => Classical.choice
+      (polygon4g_singularSimplex_subdivision_lifts_to_disk g (decomp.simplex s))
+  let liftedDiskChain : SingularChainCoproduct DiskC 1 :=
+    (@Finset.univ decomp.Simplex decomp.simplexFintype).sum
+      (fun s => decomp.coeff s •
+        (∑ i : Fin ((simplexLift s).n),
+          singularChainElement ((simplexLift s).lift i)))
+  let projectedSubdivisionChain :
+      SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
+    (@Finset.univ decomp.Simplex decomp.simplexFintype).sum
+      (fun s => decomp.coeff s • (simplexLift s).subdividedChain)
+  let subdivisionBoundary :
+      SingularChainCoproduct (Polygon4g (g + 1)) 2 :=
+    (@Finset.univ decomp.Simplex decomp.simplexFintype).sum
+      (fun s => decomp.coeff s • (simplexLift s).subdivisionBoundary)
+  refine ⟨{
+    simplexLift := simplexLift
+    liftedDiskChain := liftedDiskChain
+    liftedDiskChain_eq := rfl
+    projectedSubdivisionChain := projectedSubdivisionChain
+    projectedSubdivisionChain_eq := rfl
+    subdivisionBoundary := subdivisionBoundary
+    subdivision_homology := ?_
+  }⟩
+  letI := decomp.simplexFintype
+  dsimp [subdivisionBoundary, projectedSubdivisionChain]
+  rw [map_sum]
+  simp only [map_zsmul]
+  calc
+    ∑ s : decomp.Simplex,
+        decomp.coeff s •
+          (singularChainComplexZ (Polygon4g (g + 1))).d 2 1
+            (simplexLift s).subdivisionBoundary
+        =
+      ∑ s : decomp.Simplex,
+        decomp.coeff s •
+          ((simplexLift s).subdividedChain -
+            singularChainElement (decomp.simplex s)) := by
+          refine Finset.sum_congr rfl ?_
+          intro s _hs
+          exact congrArg (fun c => decomp.coeff s • c)
+            (simplexLift s).subdivision_homology
+    _ =
+      (∑ s : decomp.Simplex, decomp.coeff s • (simplexLift s).subdividedChain) -
+        ∑ s : decomp.Simplex,
+          decomp.coeff s • singularChainElement (decomp.simplex s) := by
+          simp [zsmul_sub, Finset.sum_sub_distrib]
+    _ =
+      (∑ s : decomp.Simplex, decomp.coeff s • (simplexLift s).subdividedChain) -
+        z := by
+          exact congrArg
+            (fun t =>
+              (∑ s : decomp.Simplex,
+                decomp.coeff s • (simplexLift s).subdividedChain) - t)
+            decomp.chain_eq.symm
 
 /-- Endpoint pairs extracted from the boundary of the summed lifted
 chain.  Each pair is a genuine `SideRel` pair and carries the endpoint
