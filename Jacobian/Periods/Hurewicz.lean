@@ -313,10 +313,57 @@ noncomputable abbrev polygonChainComplexOnGenus (g : ℕ) :
   ((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
       (ModuleCat.of ℤ ℤ)).obj (TopCat.of (Polygon4g g))
 
+/-- The singular chain complex of a space, with integral coefficients. -/
+noncomputable abbrev singularChainComplexZ (X : Type) [TopologicalSpace X] :
+    ChainComplex (ModuleCat ℤ) ℕ :=
+  ((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+      (ModuleCat.of ℤ ℤ)).obj (TopCat.of X)
+
 /-- The shape relation `(down ℕ).next 1 = 0` used by `cyclesMk`. -/
 private lemma next_one_eq_zero_on_genus :
     (ComplexShape.down ℕ).next 1 = 0 :=
   ComplexShape.next_eq' _ (by simp [ComplexShape.down])
+
+/-- The shape relation `(down ℕ).next 1 = 0` used by degree-one
+singular-cycle representatives. -/
+private lemma next_one_eq_zero :
+    (ComplexShape.down ℕ).next 1 = 0 :=
+  ComplexShape.next_eq' _ (by simp [ComplexShape.down])
+
+/-- Every singular `H₁` class has a singular one-cycle representative.
+
+This is only homological algebra plumbing: `homologyπ` is an epimorphism
+from cycles to homology in `ModuleCat`, hence surjective on underlying
+modules, and `iCycles` identifies the chosen cycle object element with
+an actual chain killed by `d₁`. -/
+theorem singularH1_exists_cycle_repr
+    (X : Type) [TopologicalSpace X]
+    (y : singularH1 X) :
+    ∃ z : SingularChainCoproduct X 1,
+    ∃ hz : (singularChainComplexZ X).d 1 0 z = 0,
+      ((forget₂ (ModuleCat ℤ) Ab).map
+        ((singularChainComplexZ X).homologyπ 1))
+        ((singularChainComplexZ X).cyclesMk z 0 next_one_eq_zero hz) = y := by
+  let K := singularChainComplexZ X
+  have hπ_surj :
+      Function.Surjective
+        ((forget₂ (ModuleCat ℤ) Ab).map (K.homologyπ 1)) := by
+    exact (ModuleCat.epi_iff_surjective _).1 inferInstance
+  obtain ⟨x, hx⟩ := hπ_surj y
+  let z : SingularChainCoproduct X 1 :=
+    ((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1)) x
+  have hz : K.d 1 0 z = 0 := by
+    change ((forget₂ (ModuleCat ℤ) Ab).map (K.d 1 0))
+        (((forget₂ (ModuleCat ℤ) Ab).map (K.iCycles 1)) x) = 0
+    rw [← ConcreteCategory.forget₂_comp_apply, K.iCycles_d]
+    simp
+  refine ⟨z, hz, ?_⟩
+  have hcycles :
+      K.cyclesMk z 0 next_one_eq_zero hz = x := by
+    apply (ModuleCat.mono_iff_injective (K.iCycles 1)).1 inferInstance
+    simpa [K, z, singularChainComplexZ] using
+      (K.i_cyclesMk z 0 next_one_eq_zero hz)
+  simpa [K, hcycles] using hx
 
 /-- The concrete realization of every project-side singular one-chain is
 a Mathlib singular one-cycle, because it is a finite integral linear
@@ -394,6 +441,121 @@ noncomputable def toSingularH1LinearMap
 
 end Polygon4gSingularC1
 
+/-- The singular chain complex of a space, with integral coefficients. -/
+noncomputable abbrev singularChainComplexZ (X : Type) [TopologicalSpace X] :
+    ChainComplex (ModuleCat ℤ) ℕ :=
+  Polygon4gSingularC1.singularChainComplexZ X
+
+/-- Every singular `H₁` class has a singular one-cycle representative. -/
+theorem singularH1_exists_cycle_repr
+    (X : Type) [TopologicalSpace X]
+    (y : singularH1 X) :
+    ∃ z : SingularChainCoproduct X 1,
+    ∃ hz : (singularChainComplexZ X).d 1 0 z = 0,
+      ((forget₂ (ModuleCat ℤ) Ab).map
+        ((singularChainComplexZ X).homologyπ 1))
+        ((singularChainComplexZ X).cyclesMk z 0
+          (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz) = y :=
+  Polygon4gSingularC1.singularH1_exists_cycle_repr X y
+
+/-- The homology class of a specified singular one-cycle. -/
+noncomputable def singularH1ClassOfCycle
+    (X : Type) [TopologicalSpace X]
+    (z : SingularChainCoproduct X 1)
+    (hz : (singularChainComplexZ X).d 1 0 z = 0) :
+    singularH1 X :=
+  ((forget₂ (ModuleCat ℤ) Ab).map
+    ((singularChainComplexZ X).homologyπ 1))
+    ((singularChainComplexZ X).cyclesMk z 0
+      (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz)
+
+/-- The quotient map `DiskC → Polygon4g g` as a continuous map. -/
+noncomputable def polygon4gMkContinuousMap (g : ℕ) :
+    C(DiskC, Polygon4g g) :=
+  ⟨Polygon4g.mk g, Polygon4g.mk_continuous g⟩
+
+/-- Constant singular zero-simplex at a point. -/
+noncomputable def pointSingularSimplex
+    (X : Type) [TopologicalSpace X] (x : X) :
+    C(stdSimplex ℝ (Fin 1), X) :=
+  ⟨fun _ => x, continuous_const⟩
+
+/-- Singular zero-chain represented by a point. -/
+noncomputable def pointChain
+    (X : Type) [TopologicalSpace X] (x : X) :
+    SingularChainCoproduct X 0 :=
+  singularChainElement (pointSingularSimplex X x)
+
+/-- Finite local lifting data for a singular one-simplex in the polygon
+quotient.  `sourceSet` records the pieces of the simplex domain; the
+fields say the pieces cover the simplex and each piece has a disk lift
+whose projection agrees with the original simplex on that piece. -/
+structure Polygon4gSingularSimplexDiskLiftData
+    (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) where
+  Piece : Type
+  pieceFintype : Fintype Piece
+  pieceNonempty : Nonempty Piece
+  sourceSet : Piece → Set (stdSimplex ℝ (Fin 2))
+  lift : Piece → C(stdSimplex ℝ (Fin 2), DiskC)
+  covers : ∀ s, ∃ p : Piece, s ∈ sourceSet p
+  projects_on_piece :
+    ∀ (p : Piece) (s : stdSimplex ℝ (Fin 2)),
+      s ∈ sourceSet p → Polygon4g.mk (g + 1) (lift p s) = σ s
+  endpoint_compatibility :
+    ∀ (p q : Piece) (s : stdSimplex ℝ (Fin 2)),
+      s ∈ sourceSet p → s ∈ sourceSet q →
+        Polygon4g.mk (g + 1) (lift p s) =
+          Polygon4g.mk (g + 1) (lift q s)
+
+/-- A singular one-simplex in the quotient polygon admits a finite disk
+lifting package.  This is the subdivision/lifting leaf of the polygon
+spanning proof. -/
+theorem polygon4g_singularSimplex_subdivision_lifts_to_disk
+    (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) :
+    ∃ data : Polygon4gSingularSimplexDiskLiftData g σ, Nonempty data.Piece := by
+  -- Missing topology: subdivide the interval so that each subpath lies in a
+  -- quotient chart admitting a lift to the closed disk cell.
+  sorry
+
+/-- Endpoint repair data for two disk points identified in the polygon
+quotient.  `repairChain` is required to be both a concrete edge-chain
+combination and a chain whose boundary is the projected endpoint
+difference. -/
+structure Polygon4gEndpointRepairData
+    (g : ℕ) (p q : DiskC)
+    (_hpq : Polygon4g.mk (g + 1) p = Polygon4g.mk (g + 1) q) where
+  coeff : Polygon4gAbelianization g
+  repairChain : SingularChainCoproduct (Polygon4g (g + 1)) 1
+  boundary_eq :
+    (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 repairChain =
+      pointChain (Polygon4g (g + 1)) (Polygon4g.mk (g + 1) q) -
+        pointChain (Polygon4g (g + 1)) (Polygon4g.mk (g + 1) p)
+  edge_chain_eq :
+    repairChain = ∑ e : Fin (2 * (g + 1)), coeff e • edgeChain g e
+
+/-- If two lifted endpoints project to the same polygon point, their
+endpoint difference is repaired by a finite integral sum of polygon
+edge arcs. -/
+theorem polygon4g_endpoint_pair_repaired_by_edge_arcs
+    (g : ℕ) (p q : DiskC)
+    (hpq : Polygon4g.mk (g + 1) p = Polygon4g.mk (g + 1) q) :
+    Nonempty (Polygon4gEndpointRepairData g p q hpq) := by
+  -- Missing boundary combinatorics: analyze `Polygon4g.SideRel`, turn the
+  -- side-pairing path between `p` and `q` into boundary arcs, and identify
+  -- those arcs with the concrete edge chains.
+  sorry
+
+/-- Disk contractibility package, in the homology-level form needed by
+the polygon projection step: every singular one-cycle in `DiskC` has
+zero `H₁` class. -/
+theorem diskC_singular_one_cycle_homologyClass_eq_zero
+    (z : SingularChainCoproduct DiskC 1)
+    (hz : (singularChainComplexZ DiskC).d 1 0 z = 0) :
+    singularH1ClassOfCycle DiskC z hz = 0 := by
+  haveI : Subsingleton (singularH1 DiskC) :=
+    singularH1_subsingleton_of_contractibleSpace
+  exact Subsingleton.elim _ _
+
 /-- The homology class of the i-th edge cycle in
 `singularH1 (Polygon4g (g+1))`. -/
 noncomputable def edgeHomologyClass (g : ℕ) (i : Fin (2 * (g + 1))) :
@@ -427,13 +589,78 @@ theorem edgeBasisMap_apply (g : ℕ) (v : Polygon4gAbelianization g) :
         LinearMap.toSpanSingleton ℤ _ (edgeHomologyClass g i) (v i) := by
   simp [edgeBasisMap, LinearMap.proj]
 
+/-- Repaired disk-cycle data for a polygon singular cycle.  The disk
+cycle records the lifted-and-repaired cycle in `DiskC`; the projection
+relation says that the original polygon class is the projected disk
+class plus the concrete edge correction. -/
+structure Polygon4gRepairedDiskCycleData
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0) where
+  edgeCoeffs : Polygon4gAbelianization g
+  diskCycle : SingularChainCoproduct DiskC 1
+  diskCycle_isCycle : (singularChainComplexZ DiskC).d 1 0 diskCycle = 0
+  projected_relation :
+    singularH1ClassOfCycle (Polygon4g (g + 1)) z hz =
+      singularH1_inducedLinearMap (polygon4gMkContinuousMap (g + 1))
+        (singularH1ClassOfCycle DiskC diskCycle diskCycle_isCycle) +
+        edgeBasisMap g edgeCoeffs
+
+/-- Cycle-level lift and endpoint-repair package.  This is where the
+simplex subdivision/lift data and endpoint repair data are assembled
+over the finite support of the singular chain. -/
+theorem polygon4g_cycle_lift_repair_data
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0) :
+    Nonempty (Polygon4gRepairedDiskCycleData g z hz) := by
+  -- Missing chain construction: decompose the finite singular chain into
+  -- simplices, apply `polygon4g_singularSimplex_subdivision_lifts_to_disk`
+  -- to each simplex, repair matching lifted endpoints using
+  -- `polygon4g_endpoint_pair_repaired_by_edge_arcs`, and sum the resulting
+  -- repaired disk cycle and edge coefficients.
+  sorry
+
+/-- Projecting the repaired disk-chain relation to the quotient polygon
+and killing the disk-cycle class by contractibility identifies the
+original polygon cycle class with an edge-basis combination. -/
+theorem polygon4g_project_repaired_disk_cycle_to_edgeBasis
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (data : Polygon4gRepairedDiskCycleData g z hz) :
+    ∃ v : Polygon4gAbelianization g,
+      singularH1ClassOfCycle (Polygon4g (g + 1)) z hz = edgeBasisMap g v := by
+  refine ⟨data.edgeCoeffs, ?_⟩
+  rw [data.projected_relation,
+    diskC_singular_one_cycle_homologyClass_eq_zero data.diskCycle data.diskCycle_isCycle]
+  simp
+
+/-- Polygon cellular approximation in degree one: every singular
+one-cycle on `Polygon4g (g+1)` is homologous to a concrete integral
+combination of the polygon edge loops.
+
+This is now an assembly from the lift/repair package and the projection
+package. -/
+theorem polygon4g_cycle_homologous_to_edge_chain
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0) :
+    ∃ v : Polygon4gAbelianization g,
+      ((forget₂ (ModuleCat ℤ) Ab).map
+        ((singularChainComplexZ (Polygon4g (g + 1))).homologyπ 1))
+        ((singularChainComplexZ (Polygon4g (g + 1))).cyclesMk
+          z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz) =
+        edgeBasisMap g v := by
+  obtain ⟨data⟩ := polygon4g_cycle_lift_repair_data g z hz
+  exact polygon4g_project_repaired_disk_cycle_to_edgeBasis g z hz data
+
 /-- Edge-loop classes span Mathlib singular `H₁` of the polygon quotient. -/
 theorem edgeBasisMap_surjective (g : ℕ) :
     Function.Surjective (edgeBasisMap g) := by
-  -- Missing topology: lift singular one-cycles to the disk, repair the lifted
-  -- boundary by polygon side arcs, kill the repaired cycle using disk
-  -- contractibility, and project back to edge homology classes.
-  sorry
+  intro y
+  obtain ⟨z, hz, hy⟩ :=
+    singularH1_exists_cycle_repr (Polygon4g (g + 1)) y
+  obtain ⟨v, hv⟩ := polygon4g_cycle_homologous_to_edge_chain g z hz
+  refine ⟨v, ?_⟩
+  rw [← hy]
+  exact hv.symm
 
 /-- Edge-loop classes are independent in Mathlib singular `H₁` of the
 polygon quotient. -/
