@@ -120,7 +120,7 @@ noncomputable def traceFormsBundledLM
   traceFormsBundledLM_of_spec f hf (traceFormsRegularSpec_frontier f hf) hkfold hw
 
 omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
-  [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
+  [CompactSpace Y] [StableChartAt ℂ Y] in
 /- The trace–pullback identity holds at regular values from explicit trace data. -/
 theorem trace_pullback_identity_regular_of_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
