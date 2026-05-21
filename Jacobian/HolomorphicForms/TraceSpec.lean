@@ -5,8 +5,10 @@ import Jacobian.HolomorphicForms.SectionFiberNorm
 import Jacobian.HolomorphicForms.HolomorphicMap
 import Jacobian.HolomorphicForms.BranchedCover
 import Jacobian.HolomorphicForms.ToFunApplyVec
+import Jacobian.HolomorphicForms.PullbackBundled
 import Jacobian.TraceDegree.TraceDefinition
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
+import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 
 /-!
 # Trace form specification interface
@@ -268,6 +270,9 @@ noncomputable def traceFormsBundled
     (η : HolomorphicOneForm ℂ X) : HolomorphicOneForm ℂ Y :=
   (traceFormsConstructionData_provider f hf η).traceForm
 
+-- The linear trace map `traceFormsBundledLM` is defined later in this
+-- file, after the identity principle `holomorphicOneForm_ext_on`.
+
 /- The target-side branch locus (image of ramification points) is finite. -/
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X]
   [IsManifold 𝓘(ℂ, ℂ) ω X] [StableChartAt ℂ X]
@@ -370,5 +375,117 @@ structure TraceFormsRegularSpec
       (y : Y) (hy : isRegularValue hbc y),
       (traceFormsBundled f hf η).toFun y =
         traceAtRegularValue hbc (fun x => η.toFun x) y hy
+
+omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
+  [CompactSpace Y] [StableChartAt ℂ Y] in
+/-- Private helper: in the constant-map case, the construction-data
+provider for any input form `η` reduces to
+`traceFormsConstructionData_constant` (or
+`traceFormsConstructionData_zero` if `η = 0`); in either case, the
+resulting `traceForm` is the zero form on `Y`. -/
+private theorem traceFormsBundled_eq_zero_of_constant
+    {f : X → Y} {hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f}
+    (η : HolomorphicOneForm ℂ X) (hconst : ∃ y₀, ∀ x, f x = y₀) :
+    traceFormsBundled f hf η = 0 := by
+  classical
+  by_cases hη : η = 0
+  · subst hη
+    change (traceFormsConstructionData_provider f hf (0 : HolomorphicOneForm ℂ X)).traceForm = 0
+    exact (traceFormsConstructionData_provider f hf 0).map_zero_spec rfl
+  · change (traceFormsConstructionData_provider f hf η).traceForm = 0
+    rw [show traceFormsConstructionData_provider f hf η =
+      traceFormsConstructionData_constant f hf η hconst hη from by
+        unfold traceFormsConstructionData_provider
+        simp [hη, hconst]]
+    rfl
+
+/-- The linear trace map on holomorphic 1-forms.
+
+Sorry-free assembly from `traceFormsConstructionData_provider` plus the
+identity principle on the regular locus.
+
+Linearity is proved by the standard "dense agreement at regular values"
+trick: in the constant-map case both sides are zero
+(`traceFormsBundled_eq_zero_of_constant`); in the nonconstant case, the
+constructed trace forms agree with `traceAtRegularValue` on the dense
+regular locus of the canonical branched-cover datum, and
+`traceAtRegularValue` is already linear (via `traceAtRegularValue_add`
+and `traceAtRegularValue_smul`). The identity principle
+(`holomorphicOneForm_ext_on (regularLocus_dense hbc)`) then promotes
+agreement on the regular locus to agreement everywhere. -/
+noncomputable def traceFormsBundledLM
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
+    HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y where
+  toFun η := traceFormsBundled f hf η
+  map_add' η ζ := by
+    classical
+    by_cases hconst : ∃ y₀, ∀ x, f x = y₀
+    · rw [traceFormsBundled_eq_zero_of_constant η hconst,
+          traceFormsBundled_eq_zero_of_constant ζ hconst,
+          traceFormsBundled_eq_zero_of_constant (η + ζ) hconst,
+          add_zero]
+    · set hkfold := hasLocalKfoldRamification_of_contMDiff hf
+      set hw := hasWeightedFiberConservation_of_contMDiff hf
+      set hHol := isHolomorphic_of_contMDiff hf hkfold
+      set hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+        hHol hw hconst
+      apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
+      intro y hy
+      have hη_reg := (traceFormsConstructionData_provider f hf η).regular_spec hbc y hy
+      have hζ_reg := (traceFormsConstructionData_provider f hf ζ).regular_spec hbc y hy
+      have hηζ_reg := (traceFormsConstructionData_provider f hf (η + ζ)).regular_spec hbc y hy
+      change (traceFormsConstructionData_provider f hf (η + ζ)).traceForm.toFun y =
+        ((traceFormsConstructionData_provider f hf η).traceForm +
+          (traceFormsConstructionData_provider f hf ζ).traceForm).toFun y
+      rw [hηζ_reg]
+      change _ = ((traceFormsConstructionData_provider f hf η).traceForm.toFun +
+          (traceFormsConstructionData_provider f hf ζ).traceForm.toFun) y
+      simp only [Pi.add_apply]
+      rw [hη_reg, hζ_reg]
+      have h_eq : (fun x : X => (η + ζ).toFun x) =
+          (fun x => η.toFun x + ζ.toFun x) := by
+        funext x
+        show ((η + ζ : HolomorphicOneForm ℂ X) : ∀ y, _) x = _
+        rw [ContMDiffSection.coe_add]
+        rfl
+      rw [h_eq]
+      exact traceAtRegularValue_add hbc (fun x => η.toFun x) (fun x => ζ.toFun x) y hy
+  map_smul' k η := by
+    classical
+    by_cases hconst : ∃ y₀, ∀ x, f x = y₀
+    · show traceFormsBundled f hf (k • η) = k • traceFormsBundled f hf η
+      rw [traceFormsBundled_eq_zero_of_constant η hconst,
+          traceFormsBundled_eq_zero_of_constant (k • η) hconst]
+      have h0 : (k • (0 : HolomorphicOneForm ℂ Y)) = 0 := by
+        apply ContMDiffSection.ext
+        intro y
+        change ((k • (0 : HolomorphicOneForm ℂ Y)) : ∀ z, _) y = _
+        rw [ContMDiffSection.coe_smul]
+        simp
+      exact h0.symm
+    · set hkfold := hasLocalKfoldRamification_of_contMDiff hf
+      set hw := hasWeightedFiberConservation_of_contMDiff hf
+      set hHol := isHolomorphic_of_contMDiff hf hkfold
+      set hbc := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+        hHol hw hconst
+      show traceFormsBundled f hf (k • η) = k • traceFormsBundled f hf η
+      apply holomorphicOneForm_ext_on (regularLocus_dense hbc)
+      intro y hy
+      have hη_reg := (traceFormsConstructionData_provider f hf η).regular_spec hbc y hy
+      have hkη_reg := (traceFormsConstructionData_provider f hf (k • η)).regular_spec hbc y hy
+      change (traceFormsConstructionData_provider f hf (k • η)).traceForm.toFun y =
+        (k • (traceFormsConstructionData_provider f hf η).traceForm).toFun y
+      rw [hkη_reg]
+      change _ = (k • (traceFormsConstructionData_provider f hf η).traceForm.toFun) y
+      simp only [Pi.smul_apply]
+      rw [hη_reg]
+      have h_eq : (fun x : X => (k • η).toFun x) =
+          (fun x => k • η.toFun x) := by
+        funext x
+        show ((k • η : HolomorphicOneForm ℂ X) : ∀ y, _) x = _
+        rw [ContMDiffSection.coe_smul]
+        rfl
+      rw [h_eq]
+      exact traceAtRegularValue_smul hbc k (fun x => η.toFun x) y hy
 
 end JacobianChallenge.HolomorphicForms

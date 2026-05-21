@@ -105,19 +105,11 @@ noncomputable def traceFormsBundledLM_of_spec
       simpa [smul_toFun_apply, htrace.apply_fun_regular hbc η y hy] using
         traceAtRegularValue_smul hbc k (fun x => η.toFun x) y hy
 
-/-- The trace as a ℂ-linear map between holomorphic 1-form spaces.
-
-Compatibility wrapper using the named frontier provider. New
-sorry-free consumers should use `traceFormsBundledLM_of_spec` with an
-explicit `TraceFormsRegularSpec` and weighted-fiber conservation. -/
-noncomputable def traceFormsBundledLM
-    [FiniteDimensionalHolomorphicOneForms ℂ X]
-    [FiniteDimensionalHolomorphicOneForms ℂ Y]
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
-    (hkfold : HasLocalKfoldRamification f)
-    (hw : HasWeightedFiberConservation f) :
-    HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y :=
-  traceFormsBundledLM_of_spec f hf (traceFormsRegularSpec_frontier f hf) hkfold hw
+-- The basic linear trace map `traceFormsBundledLM` is now defined in
+-- `Jacobian/HolomorphicForms/TraceSpec.lean`, parameterised by only
+-- `(f, hf)` (no extra trace-spec or weighted-fiber arguments). The
+-- `_of_spec` variant below remains for callers that want to pass an
+-- explicit `TraceFormsRegularSpec` boundary.
 
 omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
   [CompactSpace Y] [StableChartAt ℂ Y] in
