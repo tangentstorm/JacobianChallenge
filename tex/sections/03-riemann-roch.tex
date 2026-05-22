@@ -216,7 +216,7 @@ upper bound \code{h0\_minus\_h1\_le\_riemann} (Serre duality applied to
 \code{h0\_minus\_h1\_eq\_riemann\_roch} via \code{Int.le\_antisymm}, and
 the sorry-free unfolding \code{rsEulerCharacteristic\_eq\_h0\_minus\_h1}.
 The headline assembly is sorry-free, composing the four leaves; the
-genuine analytic content is concentrated in the two bound sub-leaves.
+analytic content is concentrated in the two bound sub-leaves.
 \end{proofsketch}
 
 % Riemann's inequality (the weaker half of Riemann-Roch) is off the
@@ -297,7 +297,7 @@ which, viewed as a map to the Riemann sphere, has degree one (it's
 one-to-one on a generic value). Why bother? This is the forward
 direction of the genus-zero classification. Any genus-zero surface
 admits a degree-one map to the sphere, and degree-one maps will turn out
-to be honest isomorphisms --- pinning the surface down as the sphere
+to be isomorphisms --- pinning the surface down as the sphere
 itself.
 \end{layman}
 
@@ -347,7 +347,7 @@ decomposed into smaller \emph{structural axioms} on the abstract
 \code{MeromorphicMapToSphere} \(\!{}/{}\!\)\code{Divisor} types, since
 those types as currently designed do not yet expose the geometric
 content needed for the proof. The structural axioms below are the
-honest Mathlib gaps; each has a complete classical proof recorded
+Mathlib gaps; each has a complete classical proof recorded
 inline.
 
 \begin{lemma}[Meromorphic with no poles factors through \(\C\)]
@@ -517,7 +517,7 @@ of \(\CPone\) (since \(f(x)=\iota(g(x))\neq\infty\)). The chart-local
 representative of \(f\) is then the chart-pulled-back \(g\); since
 \(f\) is smooth as a manifold map (this is the structural smoothness
 field of \code{MeromorphicMapToSphere}), \(g\) inherits smoothness.
-The genuine Mathlib gap is the chart-trivialisation API for
+The Mathlib gap is the chart-trivialisation API for
 \code{MeromorphicMapToSphere} smoothness, which is not built into
 the abstract structure.
 \end{proof}

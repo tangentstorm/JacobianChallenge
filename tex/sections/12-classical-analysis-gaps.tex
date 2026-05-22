@@ -839,8 +839,7 @@ themselves sorry-free assemblies of named leaves).  The complex-to-real
 typeclass conversion uses
 \code{Periods. ChartedSpaceComplex\_to\_smoothReal2}.  The placeholder
 \code{analyticGenusPlaceholder} is now defined as
-\code{topologicalGenus} (was \code{0}); the genuine
-\code{analyticGenus = topologicalGenus} bridge will replace this
+\code{topologicalGenus} (was \code{0}); the \code{analyticGenus = topologicalGenus} bridge will replace this
 alias once the Stage-B Hodge-side input lands.
 
 Rounds 1--4' provide an alternative blueprint route through the
@@ -1589,7 +1588,7 @@ through the named Lean target
 \code{JacobianChallenge.Analysis.HodgeDeRham.hodge\_deRham\_overview}.
 The chain is sorry-free \emph{above} the named frontier leaves but
 ultimately bottoms out, on Mathlib v4.28.0, at the following six
-honest classical inputs (now linked to generated Lean hooks in their respective
+classical inputs (now linked to generated Lean hooks in their respective
 chains):
 
 \begin{enumerate}
@@ -1847,7 +1846,7 @@ contract \code{DolbeaultH X 0 1 \simeq_\C sheafH (structureSheaf : Type) 1}
 already holds at the placeholder level (every carrier collapses
 to \code{PUnit}).  Once any of the four upstream packages
 upgrades a \code{PUnit} placeholder to its substantive
-counterpart, the same dispatch produces the genuine isomorphism
+counterpart, the same dispatch produces the isomorphism
 with no edit at the R7 layer.
 
 \begin{layman}
@@ -1973,7 +1972,7 @@ Serre tree at \code{Jacobian/HolomorphicForms/Serre/}.
 \end{lemma}
 
 
-\subsubsection*{Current implementation status (honest read)}
+\subsubsection*{Current implementation status (implementation read)}
 
 Snapshot as of the present revision:
 
@@ -2008,7 +2007,7 @@ Snapshot as of the present revision:
   \code{Analysis/SerreDuality/Overview.lean}.  This is a
   \textbf{typed bridge}, not a permanent design choice: when R5 +
   R7 supply real harmonic forms, the surjectivity sub-leaves get
-  genuine proofs and the \code{Subsingleton} arguments must be
+  proofs and the \code{Subsingleton} arguments must be
   removed (otherwise they make the chain vacuous on positive-genus
   surfaces, where cohomology is non-zero).
 
@@ -2028,7 +2027,7 @@ Snapshot as of the present revision:
   "Subsingleton.*RSSheafCohomology" Jacobian/} enumerates the
   full backout list.
 
-\item \emph{What \emph{is} honestly closed.}  The depth-first
+\item \emph{What \emph{is} closed.}  The depth-first
   refinement tree itself: section~14.R8 now has Round 0 (assembly
   lemma), Round 1 (chain D + chains I1, I2, I3, each five passes),
   Round 2 (chains I1, I2, I3 each five more passes; chain D's
@@ -2657,7 +2656,7 @@ unmodified Mathlib v4.28.0, following the plan in
 \code{/root/.claude/plans/okay-let-s-plan-out-shimmering-hearth.md}.
 The key pivot is the \emph{spike-solution route}: we bypass the
 classical manifold-Sobolev / Garding / Rellich infrastructure
-(estimated 6--8k LOC, genuinely upstream-Mathlib material) and
+(estimated 6--8k LOC, upstream-Mathlib material) and
 route the headline finite-dim-kernel claim through compactness of
 $(\Delta+1)^{-1}$ on $L^2(M)$ plus the abstract spectral theorem
 ``compact $\Rightarrow$ each non-zero eigenvalue has finite-dim
@@ -8644,7 +8643,7 @@ statement.  But every cotangent fibre on a manifold is a model
 space, and the model-space statement is exactly what gets fed
 fibrewise into the manifold-level \code{IsElliptic} predicate once
 the bundled cotangent infrastructure exists.  So the round-3 sle
-chain genuinely closes the gap between the blueprint informal
+chain closes the gap between the blueprint informal
 proof and a real Mathlib proof, modulo the \emph{shared}
 bundled-forms gap that R9 and R10-sub-A,B already enumerate
 separately.  This pattern -- ``model-space leaf is closed; the
@@ -9028,7 +9027,7 @@ via $f$. The result is a common partition compatible with both sides.
 \label{lem:pcr-r3}
 \uses{lem:pcr-r4}
 On each segment, $I_{i}(f^{*}\eta,\gamma)=I_{i}(\eta,f\circ\gamma)$.
-This is the chart-level chain rule, the genuine analytic content.
+This is the chart-level chain rule, the analytic content.
 \lean{JacobianChallenge.Periods.pathIntegralViaCover_pullback_chart_segment}
 \leanok
 \end{lemma}
@@ -9192,7 +9191,7 @@ The pcr chain's body theorems
 \code{pathIntegralViaCover\_partition\_compat\_under\_smooth},
 \code{pathIntegralViaCoverWith\_refinement\_invariant},
 \code{pathIntegralViaCoverWith\_pullback\_via\_common\_partition})
-are now sorry-free in body, with the genuine analytic content
+are now sorry-free in body, with the analytic content
 factored into \emph{seven supporting packets} ranging across
 Phases 1--6 of the path-integral well-definedness chain.  Each
 packet is a single named, file-scoped Lean sorry with a focused
@@ -9259,7 +9258,7 @@ Phase 2 (\ref{lem:pcr-phase-2}) plus Fin-reindexing.
 For a path $\gamma$ whose range lies in two chart sources
 $(\code{chartAt}\,p).\code{source}$ and
 $(\code{chartAt}\,q).\code{source}$ simultaneously, the
-chart-corrected integrals via either chart agree.  Genuinely the
+chart-corrected integrals via either chart agree.  the
 chain rule for \code{mfderiv} applied to the chart transition
 $\code{chartAt}\,q\circ(\code{chartAt}\,p).\code{symm}$.
 \lean{JacobianChallenge.Periods.pathIntegralViaChartCorrect_chart_change}
@@ -9275,7 +9274,7 @@ $\gamma$ and $f\circ\gamma$ respectively,
 $\code{pathIntegralViaChartCorrect}\,(\code{chartAt}\,p)\,
 (\code{pullbackFormsBundledLM}\,X\,Y\,f\,\code{hf}\,\eta)\,\gamma=
 \code{pathIntegralViaChartCorrect}\,(\code{chartAt}\,q)\,\eta\,
-(\gamma.\code{map}\,\code{hf.continuous})$.  The genuine chart-level
+(\gamma.\code{map}\,\code{hf.continuous})$.  The chart-level
 chain rule.
 \lean{JacobianChallenge.Periods.pathIntegralViaChartCorrect_pullbackFormsBundledLM_lipschitz}
 \leanok

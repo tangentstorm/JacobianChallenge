@@ -23,8 +23,7 @@ normalised at its centre and is identically \(1\) near that centre.
 \begin{lemma}[Single-pole finite fibers]
 \label{lem:impl-single-pole-finite-fiber}
 Formerly claimed that the explicit single-pole sphere lift has finite
-fibers.  This is not true for the bump-cutoff scaffold; the honest
-finite-fiber fact belongs to future prescribed-pole meromorphic data.
+fibers.  This is not true for the bump-cutoff scaffold; the finite-fiber fact belongs to future prescribed-pole meromorphic data.
 \lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_finite_fiber}
 \notready
 \end{lemma}
@@ -33,8 +32,7 @@ finite-fiber fact belongs to future prescribed-pole meromorphic data.
 \label{lem:impl-single-pole-fiber-sum}
 \uses{lem:impl-single-pole-finite-fiber}
 Formerly claimed that the weighted fiber count of the explicit
-single-pole sphere lift is constant.  This is deferred to honest
-prescribed-pole data, not the cutoff scaffold.
+single-pole sphere lift is constant.  This is deferred to prescribed-pole data, not the cutoff scaffold.
 \lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_fiberSum_const}
 \notready
 \end{lemma}
@@ -43,7 +41,7 @@ prescribed-pole data, not the cutoff scaffold.
 \label{lem:impl-single-pole-local-bijective}
 Formerly claimed that the explicit single-pole sphere lift is locally
 bijective away from ramification.  The cutoff scaffold can be locally
-constant, so the honest fact is frontier data.
+constant, so the fact is frontier data.
 \lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_local_bijective}
 \notready
 \end{lemma}
@@ -80,8 +78,7 @@ about the displayed map.
 \label{lem:impl-two-pole-fiber-sum}
 \uses{lem:impl-two-pole-finite-fiber}
 Formerly claimed that the weighted fiber count of the explicit two-pole
-indicator representative is constant.  This belongs to honest
-two-pole meromorphic data, not the placeholder map.
+indicator representative is constant.  This belongs to two-pole meromorphic data, not the placeholder map.
 \lean{JacobianChallenge.HolomorphicForms.twoPole_fiberSum_const}
 \notready
 \end{lemma}
@@ -211,7 +208,7 @@ piecewise-\(C^1\) data.  Remaining frontier declarations may still carry
 \texttt{PiecewiseC1PathRegularity X} as an explicit hypothesis, but
 \texttt{Jacobian/TraceDegree/PiecewiseC1Instance.lean} intentionally exports
 no instance for it: a nowhere-differentiable continuous \texttt{Path a b}
-would be a counterexample.  Honest discharge requires either enriching
+would be a counterexample.  discharge requires either enriching
 \texttt{IntegralOneCycle X} to carry smoothness data, or restricting the
 period pairing's cycle domain to a piecewise-smooth subclass shown to span
 $H_1(X,\mathbb{Z})$; this is recorded as the smooth-chain homology comparison
@@ -226,7 +223,7 @@ frontier.
 
 \begin{lemma}[All remaining implementation orphans]
 \label{lem:impl-orphans-aggregate}
-\lean{montel_pointwise_extraction,intersectionForm_nondeg,branchedDegreeOfMap_eq_one_of_simple_two_point_principal,honestMeromorphic_branchedCoverData_obligation,unfoldedDisk_to_edgeWordPresentation,sidePairingRel_standardWord,standardWord_get_handle,standardWord_get_unique,pathIntegralViaCoverWith_refinement_invariant',edgeBasisMap_surjective,cyclePushforward_chainLevel_repr,periodPairing_chainLevel_repr,rawWord_handle_separation_orientable,wordQuotient_homeomorph_of_handleSwap_step,wordQuotient_homeomorph_of_inverseCancel_step}
+\lean{montel_pointwise_extraction,intersectionForm_nondeg,branchedDegreeOfMap_eq_one_of_simple_two_point_principal,meromorphic_branchedCoverData_obligation,unfoldedDisk_to_edgeWordPresentation,sidePairingRel_standardWord,standardWord_get_handle,standardWord_get_unique,pathIntegralViaCoverWith_refinement_invariant',edgeBasisMap_surjective,cyclePushforward_chainLevel_repr,periodPairing_chainLevel_repr,rawWord_handle_separation_orientable,wordQuotient_homeomorph_of_handleSwap_step,wordQuotient_homeomorph_of_inverseCancel_step}
 \lean{JacobianChallenge.Blueprint.Generated.impl_orphans_aggregate}
 \leanok
 \end{lemma}
