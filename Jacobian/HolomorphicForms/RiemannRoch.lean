@@ -416,25 +416,31 @@ theorem genusZero_fixedPole_meromorphicData_nonempty
       poleDivisor_eq_point :=
         genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point X P h ⟨f, hnc, hmem⟩ }⟩
 
-/-- **Narrow leaf: pole-modulus data for the Riemann-Roch fixed-pole map.**
+/-- **Narrow leaf: pole-modulus data for the Riemann-Roch fixed-pole map
+(compatibility frontier).**
 
 For an honest meromorphic-map-to-sphere `f` arising from the
 genus-zero Riemann-Roch witness (nonconstant, in `L([P])`, with
 `f.poles = Divisor.point P`), the local Laurent expansion near `P`
 gives the modulus-divergence content of `PoleModulusData`.
 
-**Intended proof.** Use the chart-local Laurent normal form for `f`
-near `P`: with `f.poles = Divisor.point P`, `f` has a simple pole at
-`P` and finite values elsewhere. Define the finite lift `g` by
-`g x := (f.toMap x).getD 0` on the non-pole locus (or via the
-`toFiniteFun_mdifferentiable` structural axiom on a global lift) and
-show `‖g x‖ → ∞` as `x → P` in `{P}ᶜ`. This is the same content
-proved for the scaffold in `singlePoleMeromorphicMap_poleModulusData`,
-but for a genuine Riemann-Roch witness rather than the cutoff. The
-remaining gap is the chart-local Laurent-to-modulus bridge for a
-generic `MeromorphicMapToSphere` whose pole divisor is `[P]`. Do not
-substitute `singlePoleMeromorphicMap_poleModulusData`; the underlying
-maps are not equal. -/
+**Status.** This theorem is mathematically underspecified: from the
+bare hypotheses it routes through the compatibility-frontier
+`MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point`,
+which is not provable from the structural axioms of
+`MeromorphicMapToSphere` alone (the structure does not expose Laurent
+normal form near a pole). It is kept as a documented frontier and is
+not used by any production downstream code; production code routes
+through the honest provider
+`SimplePoleRRSection` /
+`MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleModulusData_poleDivisor_point`,
+which take the modulus-divergence content as an explicit hypothesis or
+construct it from analytic principal-part data.
+
+**Why kept.** This theorem is referenced from the docstring of the
+genus-zero Riemann-Roch analytic-data bridge as part of the
+audit-trail discussion of why the production pipeline does *not*
+depend on the bare-hypothesis modulus theorem. -/
 theorem genusZero_fixedPole_poleModulusData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -447,14 +453,9 @@ theorem genusZero_fixedPole_poleModulusData
     (_hmem : f.MemRiemannRochSpace (Divisor.point P))
     (hpole : f.poles = Divisor.point P) :
     f.PoleModulusData := by
-  -- Sorry-free assembly. The local Laurent-to-modulus content lives in the
-  -- narrow provider `MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point`
-  -- (in `Meromorphic.lean`); the structural axioms of `MeromorphicMapToSphere`
-  -- handle the equation-on-non-pole-locus step.
   classical
   refine ⟨?_⟩
   intro Q hQ
-  -- Reduce `0 < f.poleDivisor Q` plus `f.poles = Divisor.point P` to `Q = P`.
   have hQP : Q = P := by
     by_contra hne
     have hzero : (Divisor.point P : Divisor X) Q = 0 :=
@@ -465,21 +466,15 @@ theorem genusZero_fixedPole_poleModulusData
     rw [hzero'] at hQ
     exact (lt_irrefl _) hQ
   subst hQP
-  -- Use the canonical finite lift `g x := (f.toMap x).getD 0`.
   refine ⟨fun x => (f.toMap x).getD 0, ?_, ?_⟩
-  · -- Off the pole locus, `f.toMap x` is `some _` (by the structure axiom),
-    -- so the lift recovers it via `OnePoint.some ∘ getD 0`.
-    intro x hx
+  · intro x hx
     have hne_infty : f.toMap x ≠ (OnePoint.infty : OnePoint ℂ) :=
       f.toMap_ne_infty_of_poleDivisor_zero x hx
-    -- Concretely: `f.toMap x = some z` for some `z : ℂ`, so
-    -- `(f.toMap x).getD 0 = z` and `((z : ℂ) : OnePoint ℂ) = some z = f.toMap x`.
     rcases hfx : f.toMap x with _ | z
     · exact (hne_infty hfx).elim
-    · -- `f.toMap x = some z`; show `some z = ((z : ℂ) : OnePoint ℂ)`.
-      simp only [hfx, Option.getD_some]
+    · simp only [hfx, Option.getD_some]
       rfl
-  · -- Modulus divergence: directly the narrow provider for `f`.
+  · -- Compatibility-frontier dependency: bare-hypothesis modulus theorem.
     exact MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point f Q hpole
 
 /-! The remaining genus-zero fixed-pole route-data assemblies
