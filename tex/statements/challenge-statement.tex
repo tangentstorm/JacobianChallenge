@@ -36,7 +36,7 @@ sup norm \(\to\) compact unit ball (Montel) \(\to\) Riesz theorem; then define
 The \emph{analytic genus} of a compact Riemann surface is the complex
 dimension of the space of global holomorphic 1-forms on it. The
 finite-dimensionality theorem (proved later, in the holomorphic-forms
-section) makes this an honest natural number. By the genus-zero classification below, this number also matches
+section) makes this an natural number. By the genus-zero classification below, this number also matches
 the topological genus --- the count of handles you'd see if you held the
 surface in your hands. The sphere has analytic genus 0, the donut has 1,
 the two-handled pretzel has 2, and so on. Why bother? Genus is the
@@ -149,7 +149,7 @@ surface into its own Jacobian, sending the base point to zero. Why
 bother? This is the central comparison map between the surface and
 its Jacobian. It's holomorphic, and (crucially, on positive-genus
 surfaces) it's injective --- so the surface sits inside its Jacobian as a
-genuine curve rather than collapsing to a point.
+curve rather than collapsing to a point.
 \end{layman}
 
 \begin{theorem}[Abel-Jacobi theorem, point-separation form]
@@ -175,9 +175,8 @@ Riemann sphere, which forces the surface to be the sphere --- but the
 sphere has genus zero, contradiction. Why bother? Injectivity rules
 out trivial fake Jacobians like ``\code{Jacobian X := PUnit}''
 (which would collapse all points to one) or any other construction
-that fails to actually distinguish the surface's points. The genuine
-compact-complex-Lie-group structure on the Jacobian, plus
-point-separation, forces the construction to be honest.
+that fails to actually distinguish the surface's points. The compact-complex-Lie-group structure on the Jacobian, plus
+point-separation, forces the construction to separate points.
 \end{layman}
 
 \subsection{Degree, pushforward, and pullback}
@@ -254,7 +253,7 @@ pushforward respects arrow direction (source to target). It's
 contravariantly (via pullback) and covariantly (via pushforward).
 Why bother? Without functoriality, the push-pull operations would be
 ad-hoc and could be gamed; with it, they're forced to behave like
-genuine geometric pushforwards and pullbacks. The challenge's API
+geometric pushforwards and pullbacks. The challenge's API
 requires this exact set of compatibility laws.
 \end{layman}
 
@@ -282,7 +281,7 @@ Combined with functoriality from the previous theorem, this forces
 push, pull, and degree to interact through the classical trace
 identity, no other interaction allowed. Why bother? This rules out
 any fake construction that defines push and pull as arbitrary
-unrelated homomorphisms. The genuine geometric pullback and
+unrelated homomorphisms. The geometric pullback and
 pushforward must satisfy this identity, so any implementation in Lean
 has to actually compute the trace correctly. Together with the genus
 classification, point separation, and torus structure, these four
