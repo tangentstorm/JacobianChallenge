@@ -64,29 +64,131 @@ private def Quotient.homeo' {α β : Type*} [TopologicalSpace α] [TopologicalSp
 /-! ### Rotation-invariance lemmas -/
 
 /-- Rigid rotation of the disk by a specified number of boundary sides. -/
-noncomputable def diskRotateBySide (L : ℕ) (hL : L ≠ 0) (k : ℕ) : DiskC ≃ₜ DiskC :=
+noncomputable def diskRotateBySide (L : ℕ) (_hL : L ≠ 0) (k : ℕ) : DiskC ≃ₜ DiskC :=
   let theta := 2 * Real.pi * k / L
   diskMul (Complex.exp (Complex.I * theta)) (norm_exp_I_mul_real theta)
 
 lemma diskRotateBySide_apply (L : ℕ) (_hL : L ≠ 0) (k : ℕ) (z : DiskC) :
     (diskRotateBySide L _hL k z).val = Complex.exp (Complex.I * (2 * Real.pi * k / L : ℝ)) * z.1 := rfl
 
+private lemma exp_I_add_real (a b : ℝ) :
+    Complex.exp (Complex.I * (a : ℂ)) *
+      Complex.exp (Complex.I * (b : ℂ)) =
+    Complex.exp (Complex.I * ((a + b : ℝ) : ℂ)) := by
+  rw [← Complex.exp_add, ← mul_add]
+  push_cast
+  rfl
+
 /-- **Narrow Leaf.** Rigid disk rotation transports boundary parameters. -/
 lemma diskRotateBySide_boundaryParam
     (L : ℕ) (hL : L ≠ 0) (k i : ℕ) (t : ℝ) :
     diskRotateBySide L hL k (boundaryParam' L i t) =
     boundaryParam' L (i + k) t := by
-  -- Identity derived from exp(I * 2π(i+k+t)/L) = exp(I * 2πk/L) * exp(I * 2π(i+t)/L).
-  sorry
+  ext
+  rw [diskRotateBySide_apply]
+  simp only [boundaryParam', boundaryParamC', boundaryAngle']
+  rw [mul_comm _ I, exp_I_add_real]
+  push_cast
+  congr 1
+  field_simp [Nat.cast_ne_zero.mpr hL]
+  ring
 
 /-- **Narrow Leaf.** Side-pairing relation is preserved under rigid disk rotation. -/
+private def shiftedFin (L : ℕ) (hL : L ≠ 0) (k : ℕ) (i : Fin L) : Fin L :=
+  ⟨(i.val + k) % L, Nat.mod_lt _ (Nat.pos_of_ne_zero hL)⟩
+
+private lemma boundaryParam'_mod_length
+    (L : ℕ) (hL : L ≠ 0) (n : ℕ) (t : ℝ) :
+    boundaryParam' L (n % L) t = boundaryParam' L n t := by
+  sorry
+
+private lemma boundaryParam'_shiftedFin
+    (L : ℕ) (hL : L ≠ 0) (k : ℕ) (i : Fin L) (t : ℝ) :
+    boundaryParam' L ((shiftedFin L hL k i).val) t =
+      boundaryParam' L (i.val + k) t := by
+  simp [shiftedFin]
+  apply boundaryParam'_mod_length L hL
+
+private lemma rotate_get_shiftedFin
+    {α : Type*} (w : List α) (k : ℕ) (hL : w.length ≠ 0)
+    (i : Fin (w.rotate k).length) :
+    (w.rotate k).get i =
+      w.get (shiftedFin w.length hL k
+        ⟨i.val, by simpa [List.length_rotate] using i.is_lt⟩) := by
+  rw [List.get_rotate]
+  simp [shiftedFin]
+
+private lemma sideGen_rotate_forward
+    {g : ℕ} (w : EdgeWord g) (k : ℕ) (hL : w.length ≠ 0)
+    {x y : DiskC} :
+    EdgeWord.SideGen g (w.rotate k) x y →
+      EdgeWord.SideGen g w
+        (diskRotateBySide w.length hL k x)
+        (diskRotateBySide w.length hL k y) := by
+  intro h
+  cases h with
+  | pair i j t ht hletter =>
+      let i' : Fin w.length := shiftedFin w.length hL k ⟨i.val, by simpa [List.length_rotate] using i.is_lt⟩
+      let j' : Fin w.length := shiftedFin w.length hL k ⟨j.val, by simpa [List.length_rotate] using j.is_lt⟩
+      have hL_rot : (w.rotate k).length = w.length := List.length_rotate w k
+      have h1 : diskRotateBySide w.length hL k (boundaryParam' (w.rotate k).length i.val t) =
+                 boundaryParam' w.length i'.val t := by
+        rw [boundaryParam'_congr_length hL_rot, diskRotateBySide_boundaryParam, boundaryParam'_shiftedFin]
+      have h2 : diskRotateBySide w.length hL k (boundaryParam' (w.rotate k).length j.val (1 - t)) =
+                 boundaryParam' w.length j'.val (1 - t) := by
+        rw [boundaryParam'_congr_length hL_rot, diskRotateBySide_boundaryParam, boundaryParam'_shiftedFin]
+      rw [h1, h2]
+      have hi_get : (w.rotate k).get i = w.get i' := rotate_get_shiftedFin w k hL i
+      have hj_get : (w.rotate k).get j = w.get j' := rotate_get_shiftedFin w k hL j
+      rw [hi_get, hj_get] at hletter
+      apply EdgeWord.SideGen.pair i' j' t ht
+      exact hletter
+
+private lemma eqvGen_map
+    {α β : Type*} {r : α → α → Prop} {s : β → β → Prop}
+    (f : α → β)
+    (hrel : ∀ {x y}, r x y → s (f x) (f y)) :
+    ∀ {x y}, Relation.EqvGen r x y → Relation.EqvGen s (f x) (f y) := by
+  intro x y h
+  induction h with
+  | rel _ _ hr => exact Relation.EqvGen.rel _ _ (hrel hr)
+  | refl x => exact Relation.EqvGen.refl (f x)
+  | symm x y _ ih => exact Relation.EqvGen.symm _ _ ih
+  | trans x y z _ _ ih1 ih2 => exact Relation.EqvGen.trans _ _ _ ih1 ih2
+
+private lemma rotate_rotate_inv_length (L : ℕ) (hL : L ≠ 0) (k : ℕ) :
+    (k + (L - k % L)) % L = 0 := by
+  sorry
+
+private lemma diskRotateBySide_comp_inv (L : ℕ) (hL : L ≠ 0) (k : ℕ) (z : DiskC) :
+    let kInv := L - k % L
+    diskRotateBySide L hL kInv (diskRotateBySide L hL k z) = z := by
+  sorry
+
 theorem sidePairingRel_rotate_iff
     {g : ℕ} (w : EdgeWord g) (k : ℕ) (hL : w.length ≠ 0) :
     ∀ x y : DiskC,
       sidePairingRel g (w.rotate k) x y ↔
         sidePairingRel g w (diskRotateBySide w.length hL k x) (diskRotateBySide w.length hL k y) := by
-  -- Identity: identification in rotated word is rotated identification of original word.
-  sorry
+  intro x y
+  constructor
+  · apply eqvGen_map (diskRotateBySide w.length hL k)
+    intro a b hab
+    apply sideGen_rotate_forward w k hL hab
+  · intro h
+    let k' := k % w.length
+    let kInv := w.length - k'
+    have h_w : (w.rotate k).rotate kInv = w := by
+      rw [List.rotate_rotate, ← List.rotate_mod, rotate_rotate_inv_length w.length hL k, List.rotate_zero]
+    have hL' : (w.rotate k).length ≠ 0 := by simpa using hL
+    have h_back := eqvGen_map (diskRotateBySide w.length hL kInv) (by
+      intro a b hab
+      have hab' : SideGen g ((w.rotate k).rotate kInv) a b := by rwa [h_w]
+      have h_gen := sideGen_rotate_forward (w.rotate k) kInv hL' hab'
+      simp only [List.length_rotate] at h_gen
+      exact h_gen) h
+    rw [diskRotateBySide_comp_inv w.length hL k x, diskRotateBySide_comp_inv w.length hL k y] at h_back
+    exact h_back
 
 /-! ### Quotient lemmas -/
 
@@ -112,14 +214,19 @@ theorem handlePrefix_tailRotate_homeomorph
               EdgeWord.wordQuotient g
                 ([Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i] ++ u.rotate m)) := by
   -- Geometric strategy:
-  -- 1. In the quotient of a word starting with [a, b, a⁻¹, b⁻¹], all five
-  --    vertices of the handle block are identified to a single point v.
-  -- 2. The tail arc u starts and ends at this same vertex v, forming a loop.
-  -- 3. The quotient space is the wedge sum of a punctured torus (the handle)
-  --    and the loop (the tail) glued at v.
-  -- 4. A cyclic rotation of the tail letters u corresponds to a continuous
-  --    reparametrisation of this tail loop which fixes the glue point v.
-  -- 5. Such a reparametrisation induces a homeomorphism of the whole quotient.
+  -- 1. Let hd := [a, b, a⁻¹, b⁻¹]. The word is hd ++ u.
+  -- 2. In the quotient, the boundary arcs corresponding to hd form a handle
+  --    glued at a single base vertex v.
+  -- 3. The arcs corresponding to u form a loop starting and ending at v.
+  -- 4. Rotating u cyclically by m positions corresponds to a continuous
+  --    reparametrisation of this tail loop which fixes v.
+  -- 5. Since the handle part is unchanged and the tail loop is only 
+  --    reparametrised fixing the glue point, the global quotient spaces are 
+  --    homeomorphic.
+  -- 6. This can be formalized by showing that the side-pairing relations 
+  --    are transformed into each other by a piecewise-defined homeomorphism 
+  --    of the disk which is the identity on the handle arcs and a shift 
+  --    on the tail arcs.
   sorry
 
 /-! ### Assembly -/
