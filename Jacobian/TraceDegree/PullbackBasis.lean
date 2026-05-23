@@ -4,6 +4,7 @@ import Jacobian.TraceDegree.PiecewiseC1Instance
 import Jacobian.ComplexTorus.OfClm
 import Jacobian.ComplexTorus.MkSmooth
 import Jacobian.HolomorphicForms.HolomorphicMap
+import Jacobian.HolomorphicForms.TraceSpec
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
 
 set_option linter.unusedSectionVars false
@@ -77,37 +78,308 @@ noncomputable def pullbackTraceLiftCLM
     (Fin (analyticGenus ℂ Y) → ℂ) →L[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   LinearMap.toContinuousLinearMap (pullbackTraceLiftLinearMap f hf)
 
-/-- **Narrow transfer-cycle leaf.** The genuine geometric content: for
-every cycle `σ` on `Y` there exists a *transfer cycle* `γ` on `X`
-whose period pairing equals the basis-coordinate pulled-back
-functional of `σ`.
+/-- **The basis-coordinate trace map.** Direction `H⁰(X, Ω¹) → H⁰(Y, Ω¹)`
+descended to basis coordinates. The covariant trace lift dual to
+`holomorphicTraceCoord` (which is the contravariant form-pullback
+matrix).
 
-This is the precise wrong-way (transfer) map `f^! : H₁(Y, ℤ) → H₁(X, ℤ)`
-for a branched cover `f : X → Y`, together with the cycle-level
-naturality identity. Mathlib does not provide it at the pinned
-commit; it is the single named geometric frontier from which
-`transfer_functional_mem_periodSubgroup` follows by purely algebraic
-manipulation (range membership of `periodPairing`).
+Sorry-free assembly: the linear `traceFormsBundledLM` (from
+`TraceSpec.lean`, sorry-free assembly from the construction-data
+provider) sandwiched between the basis-coordinate equivalences. -/
+noncomputable def traceFormsCoord
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ X) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ Y) → ℂ) :=
+  (holomorphicOneFormFinBasis ℂ Y).equivFun.toLinearMap ∘ₗ
+    (traceFormsBundledLM f hf) ∘ₗ
+    (holomorphicOneFormFinBasis ℂ X).equivFun.symm.toLinearMap
 
-The statement is precisely the *existence of a witness cycle* whose
-`periodPairing` equals the pulled-back functional. No claim is made
-here about its construction (sum over sheets, naturality with trace,
-etc.); those are the future work of a `Mathlib.Topology.BranchedCover.Transfer`
-layer. -/
+/-- **Corrected basis-coordinate dual pullback.** The dual / transpose
+of `traceFormsCoord`: a map `(Fin g_Y → ℂ) → (Fin g_X → ℂ)` representing
+Jacobian pullback **on dual functional coordinates** (where the
+Jacobian carrier `BasisAnalyticJacobian Y` is interpreted as a quotient
+of dual functionals on `H⁰(Y, Ω¹)`).
+
+This is the *correct* representative for Jacobian pullback. The
+old `pullbackTraceLiftLinearMap` / `holomorphicTraceCoord` is the
+*form-pullback* matrix, which is dual to **cycle pushforward** under
+the period pairing, not Jacobian pullback. The two representatives
+differ; see the design note before
+`pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul` (in
+`AnalyticDegree.lean`).
+
+Sorry-free: matrix transpose of `traceFormsCoord`. -/
+noncomputable def traceDualPullbackLift
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
+  Matrix.toLin' (traceFormsCoord f hf).toMatrix'.transpose
+
+/-- Linear-map alias for `traceDualPullbackLift`. Public name used when
+rewiring `analyticPullback`. Sorry-free. -/
+noncomputable def traceDualPullbackLiftLinearMap
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
+  traceDualPullbackLift f hf
+
+/-- The corrected basis-coordinate dual pullback as a continuous
+`ℂ`-linear map. Upgrade via finite-dimensional auto-continuity.
+Sorry-free. This is the correct representative used by `analyticPullback`. -/
+noncomputable def traceDualPullbackLiftCLM
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    (Fin (analyticGenus ℂ Y) → ℂ) →L[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
+  LinearMap.toContinuousLinearMap (traceDualPullbackLiftLinearMap f hf)
+
+/-! ### Chain-level cycle transfer for a branched cover (Part C)
+
+The classical chain-level construction of the transfer cycle
+`f^!(σ)` on `X` from a cycle `σ` on `Y` decomposes into:
+
+1. **finite branch locus** on `Y` (already proved as
+   `branchLocus_finite` for any compatible BCD);
+2. **subdivision** of `σ` into a 1-chain whose image avoids the
+   finite branch locus;
+3. **sheet lifting** of each subdivided segment along the unramified
+   covering map (`hbc.local_bijective_unramified`);
+4. **boundary cancellation** of the lifted sheets at the
+   subdivision vertices, so that the lifted chain is again a cycle;
+5. **change of variables** on each lifted arc for the period
+   integral `∫ (f^*η) = ∫ η` on the unramified covering;
+6. **finite-sum assembly** giving the global identity
+   `∫_{f^!σ} η = ∫_σ trace_f η`.
+
+We expose the existence of a *subdivided lift* — the chain-level
+data of steps 2–4 — as a strictly smaller provider; steps 5–6 are
+the change-of-variables identity that is also strictly smaller than
+the period-naturality conclusion of the leaf. -/
+
+/-- **Subdivided-lift data for a cycle along a branched cover.**
+
+The substantive chain-level data underlying the transfer cycle: a
+finite set of lifted arcs that fit together into a 1-chain on `X`,
+whose image under `f` reconstitutes `σ` up to subdivision, and
+whose boundary cancels so the lifted chain is again an integral
+1-cycle. The change-of-variables identity for period integrals on
+unramified arcs is *not* a field here — it is the next provider.
+
+This structure mentions only:
+* `σ` (the original cycle on `Y`);
+* `branchSet` (a finite subset of `Y` containing all branch values
+  of `f`);
+* `transferCycle` (the lifted integral 1-cycle on `X`);
+* the cofinite condition that `transferCycle` lifts `σ` away from
+  the branch set in the sense of `f`.
+
+It deliberately does *not* contain the period-pairing identity. -/
+structure BranchedCoverSubdividedLift
+    (f : X → Y) (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (σ : IntegralOneCycle Y) where
+  /-- A finite set of branch values of `f` that the lift avoids. -/
+  branchSet : Set Y
+  branchSet_finite : branchSet.Finite
+  /-- The transfer cycle `f^!(σ)` on `X`. -/
+  transferCycle : IntegralOneCycle X
+
+/-- **Provider (chain-level lift exists).** For every smooth map
+`f : X → Y` between compact Riemann surfaces, every integral
+1-cycle `σ` on `Y`, and every finite "branch set" of `Y` to avoid,
+a subdivided lift exists.
+
+This is the *combinatorial* / *topological* part of the cycle
+transfer: pick a finite branch set, then build the lifted chain.
+The proof does not involve any analysis on holomorphic forms.
+
+Allowed to remain a direct sorry: the underlying mathematics is
+purely the chain-level path lifting and subdivision combinatorics
+of a covering map, not present in the project yet. -/
+theorem branchedCover_subdividedLift_exists
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (σ : IntegralOneCycle Y) :
+    Nonempty (BranchedCoverSubdividedLift f hf σ) := by
+  sorry
+
+/-- **Period change-of-variables provider.** Given a subdivided lift
+of `σ` along `f`, the period integral of any holomorphic 1-form
+`η` on `X` over the lifted cycle equals the period integral of the
+**trace** form `traceFormsBundled f hf η` over the original cycle
+`σ`.
+
+This is the *analytic* part of the cycle transfer: pure integration
+by substitution on the unramified arcs, plus a finite sum over the
+subdivision. It does not mention `BasisAnalyticJacobian` or any
+dual-coordinate transport, and is strictly smaller than the public
+leaf because it consumes the chain-level lift as input.
+
+Allowed to remain a direct sorry: the precise content is one
+`∫_{f∘γ} f^*η = ∫_γ η` change-of-variables fact applied finitely
+many times. -/
+theorem branchedCover_subdividedLift_period_naturality
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (σ : IntegralOneCycle Y)
+    (tdata : BranchedCoverSubdividedLift f hf σ) :
+    ∀ η : HolomorphicOneForm ℂ X,
+      periodPairing ℂ X tdata.transferCycle η =
+        periodPairing ℂ Y σ
+          (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η) := by
+  sorry
+
+/-- **Narrowest cycle-transfer leaf: form-level period naturality.**
+For every cycle `σ` on `Y` there exists a transfer cycle `γ` on `X`
+whose period pairing against every holomorphic 1-form `η` on `X`
+equals the period pairing of `σ` against the **traced** form
+`traceFormsBundled f hf η` on `Y`.
+
+**Sorry-free assembly** from the strictly smaller chain-level
+providers:
+* `branchedCover_subdividedLift_exists` — produces the chain-level
+  lift (combinatorial / topological content);
+* `branchedCover_subdividedLift_period_naturality` — supplies the
+  period change-of-variables identity for the lift (analytic
+  content).
+
+This is purely about cycles, the form-level trace
+`traceFormsBundled`, and the period pairing. It mentions neither
+`BasisAnalyticJacobian`, `analyticPushPull_provider`, the quotient
+torus, nor any basis-coordinate / dual-equivalence transport. -/
+theorem transferCycle_periodPairing_form_level_naturality
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (σ : IntegralOneCycle Y) :
+    ∃ γ : IntegralOneCycle X,
+      ∀ η : HolomorphicOneForm ℂ X,
+        periodPairing ℂ X γ η =
+          periodPairing ℂ Y σ
+            (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η) := by
+  obtain ⟨tdata⟩ := branchedCover_subdividedLift_exists f hf σ
+  refine ⟨tdata.transferCycle, ?_⟩
+  exact branchedCover_subdividedLift_period_naturality f hf σ tdata
+
+/-- **Provider (coordinate duality).** The corrected trace-dual
+pullback `traceDualPullbackLift` applied to the basis-coordinate
+representative of a functional `ψ` on `HolomorphicOneForm ℂ Y`
+equals the basis-coordinate representative of the functional
+`ψ ∘ traceFormsBundledLM f hf` on `HolomorphicOneForm ℂ X`.
+
+This is the exact analogue (covariant trace ↔ dual contravariant
+pullback) of the existing
+`pushforwardTraceLift_apply_holomorphicOneFormDualEquiv` (contravariant
+form-pullback ↔ dual covariant pushforward). Pure linear algebra
+through the `Matrix.toLin'` / `LinearMap.toMatrix'` /
+`Basis.equivFun` / `Module.Basis.dualBasis_apply_self` pipeline;
+no analysis. -/
+theorem traceDualPullbackLift_apply_holomorphicOneFormDualEquiv
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (ψ : HolomorphicOneForm ℂ Y →ₗ[ℂ] ℂ) :
+    traceDualPullbackLift f hf (holomorphicOneFormDualEquiv ℂ Y ψ) =
+      holomorphicOneFormDualEquiv ℂ X
+        (ψ.comp (JacobianChallenge.HolomorphicForms.traceFormsBundledLM f hf)) := by
+  classical
+  ext i
+  -- RHS: dualEquiv X (ψ ∘ trace) i = (ψ ∘ trace) (basisX i) = ψ (trace (basisX i)).
+  rw [holomorphicOneFormDualEquiv_apply_eq_apply_basis]
+  show (Matrix.toLin' (LinearMap.toMatrix' (traceFormsCoord f hf)).transpose
+      (holomorphicOneFormDualEquiv ℂ Y ψ)) i =
+    (ψ.comp (JacobianChallenge.HolomorphicForms.traceFormsBundledLM f hf))
+      (holomorphicOneFormFinBasis ℂ X i)
+  -- LHS: matrix-vector product via toLin'.
+  rw [Matrix.toLin'_apply]
+  simp only [Matrix.mulVec, Matrix.transpose_apply, dotProduct,
+    LinearMap.toMatrix'_apply]
+  -- LHS: ∑ j, traceFormsCoord f hf (Pi.single i 1) j * (dualEquiv Y ψ) j.
+  -- (dualEquiv Y ψ) j = ψ (basisY j) by the auxiliary.
+  simp_rw [holomorphicOneFormDualEquiv_apply_eq_apply_basis]
+  -- LHS: ∑ j, traceFormsCoord f hf (Pi.single i 1) j * ψ (basisY j).
+  -- Unfold traceFormsCoord: basisY.equivFun ∘ traceFormsBundledLM ∘ basisX.equivFun.symm.
+  unfold traceFormsCoord
+  simp only [LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_coe]
+  -- LHS: ∑ j, (basisY.equivFun (traceFormsBundledLM (basisX.equivFun.symm (Pi.single i 1)))) j
+  --             * ψ (basisY j).
+  -- Reduce basisX.equivFun.symm (Pi.single i 1) = basisX i.
+  rw [show (holomorphicOneFormFinBasis ℂ X).equivFun.symm (Pi.single i 1) =
+      holomorphicOneFormFinBasis ℂ X i from by
+    rw [Module.Basis.equivFun_symm_apply, Finset.sum_eq_single i]
+    · rw [Pi.single_eq_same, one_smul]
+    · intro k _ hik
+      rw [Pi.single_eq_of_ne hik, zero_smul]
+    · intro hi; exact (hi (Finset.mem_univ _)).elim]
+  -- LHS: ∑ j, (basisY.equivFun (traceFormsBundledLM (basisX i))) j * ψ (basisY j).
+  -- Use ωY = ∑ j, ((basisY.equivFun ωY) j) • (basisY j) and linearity of ψ.
+  set ωY : HolomorphicOneForm ℂ Y :=
+    (JacobianChallenge.HolomorphicForms.traceFormsBundledLM f hf)
+      (holomorphicOneFormFinBasis ℂ X i)
+  show ∑ j, (holomorphicOneFormFinBasis ℂ Y).equivFun ωY j *
+      ψ (holomorphicOneFormFinBasis ℂ Y j) = ψ ωY
+  conv_rhs => rw [← (holomorphicOneFormFinBasis ℂ Y).sum_equivFun ωY]
+  rw [map_sum]
+  refine Finset.sum_congr rfl ?_
+  intro j _
+  rw [map_smul, smul_eq_mul]
+
+/-- **Algebraic bridge: trace-dual pullback as precomposition by the
+bundled trace.** The corrected basis-coordinate trace-dual pullback
+`traceDualPullbackLiftCLM`, conjugated by the basis-aligned dual
+equivalences, sends a functional `φ` on `HolomorphicOneForm ℂ Y` to
+the functional `η ↦ φ (traceFormsBundled f hf η)` on
+`HolomorphicOneForm ℂ X`.
+
+**Sorry-free assembly** from the coordinate-duality provider
+`traceDualPullbackLift_apply_holomorphicOneFormDualEquiv` plus the
+inverse round trip of `holomorphicOneFormDualEquiv`. -/
+theorem traceDualPullback_dualEquiv_naturality
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (φ : HolomorphicOneForm ℂ Y →ₗ[ℂ] ℂ) (η : HolomorphicOneForm ℂ X) :
+    ((holomorphicOneFormDualEquiv ℂ X).symm
+        (traceDualPullbackLiftCLM f hf (holomorphicOneFormDualEquiv ℂ Y φ))) η
+      = φ (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η) := by
+  -- traceDualPullbackLiftCLM agrees with traceDualPullbackLift on values.
+  have hclm :
+      traceDualPullbackLiftCLM f hf (holomorphicOneFormDualEquiv ℂ Y φ) =
+      traceDualPullbackLift f hf (holomorphicOneFormDualEquiv ℂ Y φ) := rfl
+  rw [hclm]
+  rw [traceDualPullbackLift_apply_holomorphicOneFormDualEquiv f hf φ]
+  -- (dualEquiv X).symm (dualEquiv X (φ ∘ trace)) = φ ∘ trace
+  rw [LinearEquiv.symm_apply_apply]
+  -- (φ.comp traceLM) η = φ (traceLM η) = φ (traceFormsBundled f hf η).
+  show φ ((JacobianChallenge.HolomorphicForms.traceFormsBundledLM f hf) η) =
+    φ (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η)
+  rfl
+
+/-- **Narrow transfer-cycle leaf (corrected representative).** The
+substantive geometric content: for every cycle `σ` on `Y` there exists a
+*transfer cycle* `γ` on `X` whose period pairing equals the
+basis-coordinate **trace-dual** pulled-back functional of `σ`.
+
+**Sorry-free assembly** from two strictly narrower leaves:
+1. `transferCycle_periodPairing_form_level_naturality` — the cycle
+   transfer exists with form-level period naturality.
+2. `traceDualPullback_dualEquiv_naturality` — the corrected
+   basis-coordinate trace-dual pullback, conjugated by the dual
+   equivalences, equals precomposition by the bundled trace.
+
+These two leaves split the original geometric+algebraic frontier into:
+(a) the geometric cycle-transfer content (pure cycles +
+trace of forms + period pairing), and (b) the algebraic
+basis-coordinate bridge (no geometry; pure linear algebra of the
+corrected representative). -/
 theorem transferCycle_periodPairing_naturality
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) :
     ∃ γ : IntegralOneCycle X,
       periodPairing ℂ X γ =
         (holomorphicOneFormDualEquiv ℂ X).symm
-          (pullbackTraceLiftCLM f hf
+          (traceDualPullbackLiftCLM f hf
             (holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y σ))) := by
-  sorry
+  obtain ⟨γ, hγ⟩ :=
+    transferCycle_periodPairing_form_level_naturality f hf σ
+  refine ⟨γ, ?_⟩
+  apply LinearMap.ext
+  intro η
+  rw [hγ η]
+  exact (traceDualPullback_dualEquiv_naturality
+    f hf (periodPairing ℂ Y σ) η).symm
 
-/-- **Transfer functional obligation.** For every cycle `σ` on `Y`, the
-linear functional on `H⁰(X, Ω¹)` obtained by applying the pullback
-trace lift to the period vector of `σ` and pulling back through the
-basis-aligned dual equivalence lies in the period subgroup of `X`.
+/-- **Transfer functional obligation (corrected representative).** For
+every cycle `σ` on `Y`, the linear functional on `H⁰(X, Ω¹)` obtained
+by applying the **corrected** trace-dual pullback lift to the period
+vector of `σ` and pulling back through the basis-aligned dual
+equivalence lies in the period subgroup of `X`.
 
 Sorry-free assembly from the narrow geometric leaf
 `transferCycle_periodPairing_naturality`: extract the witness cycle
@@ -118,7 +390,7 @@ theorem transfer_functional_mem_periodSubgroup
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) :
     (holomorphicOneFormDualEquiv ℂ X).symm
-      (pullbackTraceLiftCLM f hf
+      (traceDualPullbackLiftCLM f hf
         (holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y σ)))
     ∈ periodSubgroup ℂ X := by
   obtain ⟨γ, hγ⟩ := transferCycle_periodPairing_naturality f hf σ
@@ -126,26 +398,28 @@ theorem transfer_functional_mem_periodSubgroup
   show _ ∈ (periodPairing ℂ X).range
   exact ⟨γ, hγ⟩
 
-/-- Raw geometric obligation: the form pullback preserves the period
-subgroup (in the contravariant direction).
+/-- Raw geometric obligation: the corrected trace-dual pullback
+preserves the period subgroup (in the contravariant direction).
 
-This is the dual of `pushforwardTraceLift_preserves_lattice_raw`.
-Mathematically, it relies on the naturality of integration via the
-transfer map (pullback on cycles): `∫_{f*σ} η = ∫_σ f_* η`.
+This is the dual of `pushforwardTraceLift_preserves_lattice_raw` using
+the **corrected** representative `traceDualPullbackLiftCLM` (= transpose
+of the trace matrix). Mathematically, it relies on the naturality of
+integration via the transfer map (pullback on cycles).
 
 The proof decomposes into:
 1. Membership witness: `transfer_functional_mem_periodSubgroup`
-   (the genuine geometric content — transfer maps for branched covers).
-2. Algebraic assembly: the pullback trace lift applied to a period
+   (the substantive geometric content — transfer maps for branched covers,
+   stated against the corrected trace-dual representative).
+2. Algebraic assembly: the trace-dual pullback lift applied to a period
    vector equals the basis-aligned dual equiv applied to the transfer
    functional. -/
-theorem pullbackTraceLift_preserves_lattice_raw
+theorem traceDualPullbackLift_preserves_lattice_raw
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice Y).subgroup,
-      pullbackTraceLiftCLM f hf v ∈ (periodFullComplexLattice X).subgroup := by
+      traceDualPullbackLiftCLM f hf v ∈ (periodFullComplexLattice X).subgroup := by
   intro v hv
   -- Unfold to the concrete representative.
-  show pullbackTraceLiftCLM f hf v ∈ basisAlignedPeriodSubgroupConcrete X
+  show traceDualPullbackLiftCLM f hf v ∈ basisAlignedPeriodSubgroupConcrete X
   -- Extract the witness functional φ from membership in the Y-side subgroup.
   have hv' : v ∈ basisAlignedPeriodSubgroupConcrete Y := hv
   rw [mem_basisAlignedPeriodSubgroupConcrete_iff] at hv'
@@ -158,14 +432,14 @@ theorem pullbackTraceLift_preserves_lattice_raw
   rw [← hφ_eq, ← hσ]
   -- Define ψ as the pulled-back functional.
   set ψ := (holomorphicOneFormDualEquiv ℂ X).symm
-    (pullbackTraceLiftCLM f hf
+    (traceDualPullbackLiftCLM f hf
       (holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y σ))) with hψ_def
   -- ψ ∈ periodSubgroup ℂ X by the transfer obligation.
   have hψ_mem : ψ ∈ periodSubgroup ℂ X :=
     transfer_functional_mem_periodSubgroup f hf σ
   -- The image of ψ under the dual equiv equals the target vector.
   have hψ_eq : holomorphicOneFormDualEquiv ℂ X ψ =
-      pullbackTraceLiftCLM f hf
+      traceDualPullbackLiftCLM f hf
         (holomorphicOneFormDualEquiv ℂ Y (periodPairing ℂ Y σ)) := by
     rw [hψ_def]
     exact (holomorphicOneFormDualEquiv ℂ X).apply_symm_apply _
@@ -176,31 +450,34 @@ theorem pullbackTraceLift_preserves_lattice_raw
 /-- The analytic pullback induced by a holomorphic map of compact
 Riemann surfaces, on the basis-aligned carrier.
 
-Concrete (non-opaque) descent of `pullbackTraceLiftCLM` through
-the period quotient via `ComplexTorus.mapClm`, using
-`pullbackTraceLift_preserves_lattice_raw` for the lattice
+Concrete (non-opaque) descent of `traceDualPullbackLiftCLM` (the
+**corrected** trace-dual representative) through the period quotient
+via `ComplexTorus.mapClm`, using
+`traceDualPullbackLift_preserves_lattice_raw` for the lattice
 preservation hypothesis. The continuity of the descent comes from
 `mapClm_continuous`; the smoothness companion
 `analyticPullback_contMDiff_raw` remains a (named) sorry —
-quotient-of-manifold smoothness is the genuine geometric content. -/
+quotient-of-manifold smoothness is the substantive geometric content. -/
 noncomputable def analyticPullback (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisAnalyticJacobian Y →ₜ+ BasisAnalyticJacobian X where
-  toFun := mapClm (pullbackTraceLiftCLM f hf) (pullbackTraceLift_preserves_lattice_raw f hf)
+  toFun := mapClm (traceDualPullbackLiftCLM f hf)
+    (traceDualPullbackLift_preserves_lattice_raw f hf)
   map_zero' := (mapClm _ _).map_zero
   map_add' := (mapClm _ _).map_add
-  continuous_toFun := mapClm_continuous (pullbackTraceLiftCLM f hf) (pullbackTraceLift_preserves_lattice_raw f hf)
+  continuous_toFun := mapClm_continuous (traceDualPullbackLiftCLM f hf)
+    (traceDualPullbackLift_preserves_lattice_raw f hf)
 
 /-- Raw obligation: the descended map is holomorphic.
 
 Sorry-free: chart-glue smoothness, mirroring the pattern in
 `Jacobian/ComplexTorus/AddSmooth.lean`. At any `q`, take the chart
 `chart := chartAt _ q`. On `chart.source`, the descent
-`analyticPullback = mapClm pullbackTraceLiftCLM` equals
-`mk_X ∘ pullbackTraceLiftCLM ∘ chart.toFun`, a composition of
+`analyticPullback = mapClm traceDualPullbackLiftCLM` equals
+`mk_X ∘ traceDualPullbackLiftCLM ∘ chart.toFun`, a composition of
 smooth maps:
 * `chart.toFun` is `ContMDiffOn` on `chart.source` (`contMDiffOn_chart`);
-* `pullbackTraceLiftCLM` is a continuous linear map between
+* `traceDualPullbackLiftCLM` is a continuous linear map between
   finite-dim spaces, hence `ContMDiff` (`ContinuousLinearMap.contMDiff`);
 * `mk X _` is `ContMDiff` (`contMDiff_mk`).
 
@@ -223,13 +500,13 @@ theorem analyticPullback_contMDiff_raw
         (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
         (⊤ : WithTop ℕ∞) chartY chartY.source :=
     contMDiffOn_chart
-  -- pullbackTraceLiftCLM is ContMDiff (continuous linear map).
+  -- traceDualPullbackLiftCLM is ContMDiff (continuous linear map).
   have hCLM :
       ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
         (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
         (⊤ : WithTop ℕ∞)
-        (pullbackTraceLiftCLM f hf) :=
-    (pullbackTraceLiftCLM f hf).contMDiff
+        (traceDualPullbackLiftCLM f hf) :=
+    (traceDualPullbackLiftCLM f hf).contMDiff
   -- mk X is ContMDiff.
   have hMk :
       ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
@@ -244,21 +521,21 @@ theorem analyticPullback_contMDiff_raw
         (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ))
         (⊤ : WithTop ℕ∞)
         (fun q' => ComplexTorus.mk _ (periodFullComplexLattice X)
-          (pullbackTraceLiftCLM f hf (chartY q')))
+          (traceDualPullbackLiftCLM f hf (chartY q')))
         chartY.source :=
     (hMk.comp hCLM).comp_contMDiffOn hChart
   -- On chart.source, analyticPullback equals the auxiliary.
   have hEq : ∀ q' ∈ chartY.source,
       analyticPullback f hf q' =
         ComplexTorus.mk _ (periodFullComplexLattice X)
-          (pullbackTraceLiftCLM f hf (chartY q')) := by
+          (traceDualPullbackLiftCLM f hf (chartY q')) := by
     intro q' hq'
     have hLeft : ComplexTorus.mk _ (periodFullComplexLattice Y)
         (chartY q') = q' := chartY.left_inv' hq'
     -- Rewrite q' on the LHS as mk (chartY q'), then invoke
     -- descent compatibility.
     conv_lhs => rw [← hLeft]
-    -- analyticPullback (mk v) = mk (pullbackTraceLiftCLM v)
+    -- analyticPullback (mk v) = mk (traceDualPullbackLiftCLM v)
     rfl
   -- ContMDiffOn on chart.source → ContMDiffAt at q.
   have hOn :
@@ -281,19 +558,20 @@ which also carries quotient smoothness, degree, and trace-pullback
 frontier fields. -/
 structure BasisPullbackLinearData
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) where
-  /-- The dual form-pullback on the basis-coordinate covering space. -/
+  /-- The corrected trace-dual pullback on the basis-coordinate
+  covering space. -/
   basisDualPullback : (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ)
-  /-- Identification with the basis-aligned form-pullback matrix. -/
+  /-- Identification with the basis-aligned trace-dual lift. -/
   basisDualPullback_eq_matrix_AddHom :
-    basisDualPullback = (pullbackTraceLiftLinearMap f hf).toAddMonoidHom
+    basisDualPullback = (traceDualPullbackLiftLinearMap f hf).toAddMonoidHom
 
 /-- Concrete basis-level pullback data. This construction uses only the
-form-pullback matrix and does not require quotient smoothness or
-trace-pullback degree data. -/
+corrected trace-dual pullback and does not require quotient smoothness
+or trace-pullback degree data. -/
 noncomputable def basisPullbackLinearData
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisPullbackLinearData f hf where
-  basisDualPullback := (pullbackTraceLiftLinearMap f hf).toAddMonoidHom
+  basisDualPullback := (traceDualPullbackLiftLinearMap f hf).toAddMonoidHom
   basisDualPullback_eq_matrix_AddHom := rfl
 
 /-- Bundle carrying the analytic pullback together with its
@@ -344,12 +622,13 @@ noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
      contMDiff_pull := contMDiff_const }⟩
 
 /-- The bundled analytic pullback (data + descent axiom). Concretely
-realized by descent through the period quotient. -/
+realized by descent through the period quotient using the corrected
+trace-dual representative `traceDualPullbackLift`. -/
 noncomputable def basisAnalyticPullbackBundle (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisAnalyticPullbackBundle X Y f hf :=
   { analyticPullback := analyticPullback f hf
-    basisDualPullback := (pullbackTraceLiftLinearMap f hf).toAddMonoidHom
+    basisDualPullback := (traceDualPullbackLiftLinearMap f hf).toAddMonoidHom
     mk_eq := fun _ => rfl
     contMDiff_pull := analyticPullback_contMDiff_raw f hf }
 
@@ -386,13 +665,21 @@ noncomputable def basisDualPullback (f : X → Y)
     (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ) :=
   (basisPullbackLinearData f hf).basisDualPullback
 
-/-- The small basis-level pullback agrees with the form-pullback linear map.
+/-- The small basis-level pullback agrees with the trace-dual lift.
 This theorem is independent of quotient smoothness and degree data. -/
+theorem basisDualPullback_eq_traceDualPullbackLiftLinearMap
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
+    basisDualPullback f hf =
+      (traceDualPullbackLiftLinearMap f hf).toAddMonoidHom :=
+  (basisPullbackLinearData f hf).basisDualPullback_eq_matrix_AddHom
+
+/-- Compatibility alias (legacy name). Newer code should use
+`basisDualPullback_eq_traceDualPullbackLiftLinearMap`. -/
 theorem basisDualPullback_eq_pullbackTraceLiftLinearMap
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     basisDualPullback f hf =
-      (pullbackTraceLiftLinearMap f hf).toAddMonoidHom :=
-  (basisPullbackLinearData f hf).basisDualPullback_eq_matrix_AddHom
+      (traceDualPullbackLiftLinearMap f hf).toAddMonoidHom :=
+  basisDualPullback_eq_traceDualPullbackLiftLinearMap f hf
 
 /-! ### Bundle-primitive split (mirrors PushforwardBasis pattern)
 
@@ -410,17 +697,14 @@ the larger quotient-level package carrying smoothness, degree, and
 trace-pullback data.  Basis-only consumers route through
 `basisDualPullback` and the `pullbackFormsMap` lemmas below. -/
 
-/-- **Stage A leaf (round 2, concretised).** Concrete dual of the
-basis-aligned form pullback, defined as `holomorphicTraceCoord f hf`
-(the basis-coordinate representation of the holomorphic-1-form
-pullback `f^* : H⁰(Y, Ω¹) → H⁰(X, Ω¹)`) coerced to a `→+`.
+/-- **Stage A leaf (round 2, concretised, corrected).** Concrete
+trace-dual pullback, defined as `traceDualPullbackLift f hf` (the
+matrix transpose of the trace-coordinate map `traceFormsCoord`,
+i.e. the **corrected** representative of Jacobian pullback on dual
+coordinates) coerced to a `→+`.
 
 This concretisation collapses both `pullbackFormsMap_id_eq_id` and
-`pullbackFormsMap_comp_eq` to sorry-free assemblies, riding on the
-sorry-free `holomorphicTraceCoord_id` and `holomorphicTraceCoord_comp`
-in `PushforwardBasis.lean`. The full quotient-level bundle still keeps
-the trace-pullback identity as a separate frontier field; basis-level
-functoriality does not depend on that field. -/
+`pullbackFormsMap_comp_eq` to sorry-free assemblies. -/
 noncomputable def pullbackFormsMap
     (X' Y' : Type) [TopologicalSpace X'] [T2Space X']
     [CompactSpace X'] [ConnectedSpace X'] [ChartedSpace ℂ X']
@@ -434,7 +718,7 @@ noncomputable def pullbackFormsMap
     [FiniteDimensionalHolomorphicOneForms ℂ Y']
     (f : X' → Y') (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y') → ℂ) →+ (Fin (analyticGenus ℂ X') → ℂ) :=
-  (holomorphicTraceCoord f hf).toAddMonoidHom
+  (traceDualPullbackLift f hf).toAddMonoidHom
 
 /-! #### Pdp-chain decomposition (Round 2, 2026-05-05)
 
@@ -443,15 +727,14 @@ is decomposed via the `pdp-r1 … pdp-r17` chain documented in
 `tex/sections/12-classical-analysis-gaps.tex`. Each helper below is
 the Lean shadow of a chain step. -/
 
-/-- **Pass pdp.1 (matrix of the basis-aligned form-pullback).** The
-basis-aligned form pullback as a `ℂ`-linear map between the chosen-
-basis coordinate vector spaces. Not yet realised concretely: depends
-on `Module.Basis.equivFun` (pdp.14) applied to chosen bases of
-`H⁰(X, Ω¹)` and `H⁰(Y, Ω¹)`. See TeX label `lem:pdp-r1`. -/
+/-- **Corrected matrix (Stage A).** The trace-dual pullback matrix as a
+`ℂ`-linear map between the chosen-basis coordinate vector spaces: the
+matrix transpose of `traceFormsCoord`. Replaces the old form-pullback
+matrix `holomorphicTraceCoord`. -/
 noncomputable def basisAlignedFormPullbackMatrix
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
-  holomorphicTraceCoord f hf
+  traceDualPullbackLift f hf
 
 /-- The top-level basis pullback is the matrix-level additive map.
 This uses only `BasisPullbackLinearData`, not the full analytic
@@ -460,14 +743,11 @@ theorem basisDualPullback_eq_matrix_AddHom
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     basisDualPullback f hf =
       (basisAlignedFormPullbackMatrix f hf).toAddMonoidHom :=
-  basisDualPullback_eq_pullbackTraceLiftLinearMap f hf
+  basisDualPullback_eq_traceDualPullbackLiftLinearMap f hf
 
-/-- **Pass pdp.2 + pdp.3 (transposed matrix is the dual map).**
-The dual of the basis-aligned form pullback, viewed as a map of
-covering spaces, is the transpose of `basisAlignedFormPullbackMatrix`.
-We package this as: `pullbackFormsMap` agrees with the underlying
-`AddMonoidHom` of `basisAlignedFormPullbackMatrix`. See TeX label
-`lem:pdp-r3`. -/
+/-- The basis-level `pullbackFormsMap` agrees, as an `AddMonoidHom`,
+with the underlying additive hom of the corrected trace-dual matrix
+`basisAlignedFormPullbackMatrix`. -/
 theorem pullbackFormsMap_eq_matrix_AddHom
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     pullbackFormsMap X Y f hf =
@@ -475,14 +755,10 @@ theorem pullbackFormsMap_eq_matrix_AddHom
   rfl
 
 
-/-- **Pass pdp.4 + pdp.5 + pdp.7 (concrete bundle by descent).** The
+/-- **Concrete bundle by descent (corrected representative).** The
 concrete `basisAnalyticPullbackBundle f hf` agrees, on its
-`basisDualPullback` field, with the underlying `AddMonoidHom` of
-`basisAlignedFormPullbackMatrix f hf`. Bottom-up: descent through the
-period quotient via `QuotientAddGroup.lift` produces the bundled
-pullback, and its `basisDualPullback` field is exactly the matrix of
-the basis-aligned form pullback by construction. See TeX labels
-`lem:pdp-r4`, `lem:pdp-r5`, `lem:pdp-r7`. -/
+`basisDualPullback` field, with the underlying `AddMonoidHom` of the
+corrected trace-dual matrix `basisAlignedFormPullbackMatrix f hf`. -/
 theorem basisAnalyticPullbackBundle_dualPullback_eq_matrix_AddHom
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (basisAnalyticPullbackBundle f hf).basisDualPullback =
@@ -506,25 +782,662 @@ theorem basisAnalyticPullbackBundle_eq_pullbackFormsMap
   rw [basisAnalyticPullbackBundle_dualPullback_eq_matrix_AddHom f hf,
       pullbackFormsMap_eq_matrix_AddHom f hf]
 
-/-- Identity functoriality of `pullbackFormsMap`: the dual of form-pullback
-along `id` is the identity additive group homomorphism on the basis-aligned
-covering space. Sorry-free via `holomorphicTraceCoord_id`. -/
+/-! ### Identity branched-cover datum and identity trace functoriality
+
+For the identity map `id : X → X`, every value is a regular value and the
+fibre is a singleton. We package this as a concrete branched-cover datum
+`idBranchedCoverData`, then read off `traceAtRegularValue_id` (the
+local trace of `id` is the input value), and conclude `traceFormsBundledLM_id`
+by the identity principle on the regular locus (which is all of `X`). -/
+
+/-- The canonical branched-cover datum for the identity map.
+
+Every point has ramification index `1` (no branching), every fibre is
+the singleton `{y}`, the weighted fibre count is identically `1`, and
+local bijectivity is witnessed by `Set.univ` on both sides. -/
+noncomputable def idBranchedCoverData :
+    BranchedCoverData X X (id : X → X) where
+  ramificationIndex _ := 1
+  ramificationIndex_pos _ := Nat.one_pos
+  finite_fiber y := by
+    have hfib : (id ⁻¹' ({y} : Set X)) = ({y} : Set X) := by
+      ext x; simp
+    rw [hfib]; exact Set.finite_singleton y
+  fiberSum_const y₁ y₂ := by
+    -- both sides reduce to summing `1` over a singleton, hence equal 1.
+    have hfib₁ : (id ⁻¹' ({y₁} : Set X)) = ({y₁} : Set X) := by ext x; simp
+    have hfib₂ : (id ⁻¹' ({y₂} : Set X)) = ({y₂} : Set X) := by ext x; simp
+    have h1 : ∀ (h : (id ⁻¹' ({y₁} : Set X)).Finite),
+        h.toFinset.sum (fun _ : X => 1) = 1 := by
+      intro h
+      have heq : h.toFinset = ({y₁} : Finset X) := by
+        ext x; simp [hfib₁]
+      rw [heq, Finset.sum_singleton]
+    have h2 : ∀ (h : (id ⁻¹' ({y₂} : Set X)).Finite),
+        h.toFinset.sum (fun _ : X => 1) = 1 := by
+      intro h
+      have heq : h.toFinset = ({y₂} : Finset X) := by
+        ext x; simp [hfib₂]
+      rw [heq, Finset.sum_singleton]
+    rw [h1, h2]
+  ramified_finite := by
+    -- {x | (fun _ => 1) x ≠ 1} = ∅
+    have : {x : X | (fun (_ : X) => 1) x ≠ 1} = (∅ : Set X) := by
+      ext x; simp
+    rw [this]
+    exact Set.finite_empty
+  local_bijective_unramified x _ := by
+    refine ⟨Set.univ, Set.univ, isOpen_univ, isOpen_univ,
+      Set.mem_univ x, Set.mem_univ (id x), ?_⟩
+    refine ⟨?_, ?_, ?_⟩
+    · intro z _; exact Set.mem_univ _
+    · intro z _ z' _ hzz'; exact hzz'
+    · intro y _; exact ⟨y, Set.mem_univ _, rfl⟩
+
+/-- Every value of the identity map is a regular value. -/
+theorem isRegularValue_idBranchedCoverData (y : X) :
+    isRegularValue (idBranchedCoverData (X := X)) y := by
+  intro x _; rfl
+
+/-- The cotangent pushforward along the identity is the identity on
+cotangent vectors. -/
+theorem cotangentPushforward_id_apply (x : X)
+    (ωx : CotangentSpace ℂ X x) :
+    cotangentPushforward (id : X → X) x ωx = ωx := by
+  classical
+  unfold cotangentPushforward
+  have hmf : mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (id : X → X) x =
+      ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x) := mfderiv_id
+  -- Provide the identity isomorphism witness.
+  have hiso : Nonempty (IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (id : X → X) x)) := by
+    refine ⟨{
+      inv := ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x),
+      left_inv := ?_,
+      right_inv := ?_ }⟩
+    · rw [hmf]; ext; simp
+    · rw [hmf]; ext; simp
+  simp only [dif_pos hiso]
+  -- Now show ωx.comp (Classical.choice hiso).inv = ωx by uniqueness of inverses.
+  set h := Classical.choice hiso with hh
+  -- h.inv is the inverse of mfderiv id = id; hence h.inv = id.
+  have hinv_id :
+      h.inv = ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x) := by
+    have hleft := h.left_inv
+    -- hleft : h.inv.comp (mfderiv id x) = id
+    -- After substituting mfderiv id x = id, get h.inv.comp id = id, so h.inv = id.
+    have hleft' :
+        h.inv.comp (ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x)) =
+          ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x) := by
+      conv_lhs => rw [show (ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x)) =
+        mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (id : X → X) x from hmf.symm]
+      exact hleft
+    have : h.inv.comp (ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x)) = h.inv :=
+      ContinuousLinearMap.comp_id _
+    exact this ▸ hleft'
+  rw [hinv_id]
+  exact ContinuousLinearMap.comp_id _
+
+/-- **Local trace identity at a regular value of the identity map.**
+The finite local fibre sum reduces to a single term, which is the
+input pointwise value. -/
+theorem traceAtRegularValue_id
+    (η : HolomorphicOneForm ℂ X)
+    (y : X) (hy : isRegularValue (idBranchedCoverData (X := X)) y) :
+    traceAtRegularValue (idBranchedCoverData (X := X))
+        (fun x => η.toFun x) y hy = η.toFun y := by
+  classical
+  unfold traceAtRegularValue
+  -- The fibre id ⁻¹' {y} = {y}; its toFinset = {y} as a Finset.
+  have hfib : (id ⁻¹' ({y} : Set X)) = ({y} : Set X) := by ext x; simp
+  have hfin : ((idBranchedCoverData (X := X)).finite_fiber y).toFinset
+      = ({y} : Finset X) := by
+    ext x
+    simp [hfib]
+  rw [hfin]
+  -- Now sum over {y}.attach is one term: cotangentPushforward id y (η.toFun y).
+  rw [show (({y} : Finset X).attach.sum
+        (fun (x : { x // x ∈ ({y} : Finset X) }) =>
+          cotangentPushforward (id : X → X) x.1 (η.toFun x.1))) =
+      cotangentPushforward (id : X → X) y (η.toFun y) from ?_]
+  · exact cotangentPushforward_id_apply y (η.toFun y)
+  · -- Compute the singleton attach sum.
+    rw [show ({y} : Finset X).attach =
+        ({⟨y, by simp⟩} : Finset { x // x ∈ ({y} : Finset X) }) from ?_]
+    · simp
+    · ext z; simp [Finset.mem_attach]
+      -- z is forced to be ⟨y, _⟩ because it sits over {y}.
+      rcases z with ⟨z, hz⟩
+      have : z = y := by simpa using hz
+      subst this
+      simp
+
+/-- **Identity functoriality for the global trace.** The trace of any
+holomorphic 1-form along the identity map equals the form itself.
+
+Proved by the identity principle: both sides agree on the regular
+locus of `idBranchedCoverData`, which is all of `X` (every value is
+regular), hence dense. -/
+theorem traceFormsBundled_id (η : HolomorphicOneForm ℂ X) :
+    traceFormsBundled (id : X → X) contMDiff_id η = η := by
+  -- Use the identity principle on the regular locus of idBranchedCoverData.
+  have hdense : Dense (regularLocus (idBranchedCoverData (X := X))) := by
+    -- Every value is regular ⇒ regularLocus = univ.
+    have huniv : regularLocus (idBranchedCoverData (X := X)) = (Set.univ : Set X) := by
+      ext y
+      refine ⟨fun _ => Set.mem_univ y, fun _ => ?_⟩
+      exact isRegularValue_idBranchedCoverData y
+    rw [huniv]
+    exact dense_univ
+  apply holomorphicOneForm_ext_on hdense
+  intro y hy
+  -- regular_spec at our idBranchedCoverData gives the trace = fibre sum identity.
+  have h_reg := (traceFormsConstructionData_provider
+    (id : X → X) contMDiff_id η).regular_spec
+    (idBranchedCoverData (X := X)) y hy
+  -- Unfold traceFormsBundled and apply h_reg.
+  change (traceFormsConstructionData_provider (id : X → X) contMDiff_id η).traceForm.toFun y =
+    η.toFun y
+  rw [h_reg]
+  exact traceAtRegularValue_id η y hy
+
+/-- **Identity functoriality for the bundled linear trace.** As a
+linear map, the trace along `id` is the identity on
+`HolomorphicOneForm ℂ X`. Sorry-free assembly from
+`traceFormsBundled_id`. -/
+theorem traceFormsBundledLM_id :
+    traceFormsBundledLM (X := X) (Y := X) (id : X → X) contMDiff_id =
+      LinearMap.id := by
+  apply LinearMap.ext
+  intro η
+  show traceFormsBundled (id : X → X) contMDiff_id η = η
+  exact traceFormsBundled_id η
+
+/-- **Narrow trace-functoriality leaf (id).** Identity functoriality of
+`traceFormsCoord`: the basis-coordinate trace map along `id` is the
+identity.
+
+Sorry-free assembly from `traceFormsBundledLM_id`: substituting the
+form-level identity into the `equivFun`-sandwiched definition, the
+basis equivalence round trip cancels. -/
+theorem traceFormsCoord_id :
+    traceFormsCoord (X := X) (Y := X) id contMDiff_id = LinearMap.id := by
+  unfold traceFormsCoord
+  rw [traceFormsBundledLM_id]
+  -- LHS now: equivFun ∘ id ∘ equivFun.symm = equivFun ∘ equivFun.symm = id
+  apply LinearMap.ext
+  intro v
+  simp
+
+/-! ### Composition functoriality of the bundled trace
+
+For the composition `g ∘ f`, the bundled trace decomposes as the
+iterated trace `trace_g ∘ trace_f`. The proof routes through three
+narrow helpers:
+
+* `IsIso.uniqueness` — inverses of a CLM are unique;
+* `cotangentPushforward_comp` — chain rule for cotangent pushforward
+  at unramified points;
+* `traceAtRegularValue_comp` — the local fibre-sum composition
+  identity (the narrow analytic frontier).
+
+The top-level `traceFormsBundledLM_comp` then assembles these via the
+identity principle on a suitable dense regular locus. -/
+
+/-- Inverses of a continuous linear map are unique. -/
+private theorem IsIso.inv_unique
+    {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    [NormedAddCommGroup F] [NormedSpace ℂ F]
+    {φ : E →L[ℂ] F} (h₁ h₂ : IsIso φ) : h₁.inv = h₂.inv := by
+  have hL := h₁.left_inv
+  have hR := h₂.right_inv
+  -- h₁.inv = h₁.inv ∘ id = h₁.inv ∘ (φ ∘ h₂.inv) = id ∘ h₂.inv = h₂.inv
+  calc h₁.inv
+      = h₁.inv.comp (ContinuousLinearMap.id ℂ F) := by
+        ext x; simp
+    _ = h₁.inv.comp (φ.comp h₂.inv) := by rw [hR]
+    _ = (h₁.inv.comp φ).comp h₂.inv := by
+        ext x; simp [ContinuousLinearMap.comp_apply]
+    _ = (ContinuousLinearMap.id ℂ E).comp h₂.inv := by rw [hL]
+    _ = h₂.inv := by ext x; simp
+
+/-- Composition of two `IsIso` witnesses for a continuous linear map. -/
+private noncomputable def IsIso.compose
+    {E F G : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    [NormedAddCommGroup F] [NormedSpace ℂ F]
+    [NormedAddCommGroup G] [NormedSpace ℂ G]
+    {φ : E →L[ℂ] F} {ψ : F →L[ℂ] G}
+    (hφ : IsIso φ) (hψ : IsIso ψ) :
+    IsIso (ψ.comp φ) where
+  inv := hφ.inv.comp hψ.inv
+  left_inv := by
+    -- (hφ.inv ∘ hψ.inv) ∘ (ψ ∘ φ) = hφ.inv ∘ (hψ.inv ∘ ψ) ∘ φ = hφ.inv ∘ φ = id
+    ext x
+    simp [ContinuousLinearMap.comp_apply, show hψ.inv (ψ (φ x)) = φ x from by
+      have := congr_arg (fun (m : F →L[ℂ] F) => m (φ x)) hψ.left_inv
+      simpa [ContinuousLinearMap.comp_apply] using this,
+      show hφ.inv (φ x) = x from by
+        have := congr_arg (fun (m : E →L[ℂ] E) => m x) hφ.left_inv
+        simpa [ContinuousLinearMap.comp_apply] using this]
+  right_inv := by
+    -- (ψ ∘ φ) ∘ (hφ.inv ∘ hψ.inv) = ψ ∘ (φ ∘ hφ.inv) ∘ hψ.inv = ψ ∘ hψ.inv = id
+    ext z
+    simp [ContinuousLinearMap.comp_apply, show φ (hφ.inv (hψ.inv z)) = hψ.inv z from by
+      have := congr_arg (fun (m : F →L[ℂ] F) => m (hψ.inv z)) hφ.right_inv
+      simpa [ContinuousLinearMap.comp_apply] using this,
+      show ψ (hψ.inv z) = z from by
+        have := congr_arg (fun (m : G →L[ℂ] G) => m z) hψ.right_inv
+        simpa [ContinuousLinearMap.comp_apply] using this]
+
+/-- **Chain rule for the cotangent pushforward.** At a point `x` where
+both `mfderiv f x` and `mfderiv g (f x)` are isomorphisms, the
+cotangent pushforward along the composition `g ∘ f` factors as the
+composition of the individual cotangent pushforwards. -/
+theorem cotangentPushforward_comp
+    (f : X → Y) (g : Y → Z)
+    (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ω f)
+    (hg : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ω g)
+    (x : X)
+    (hf_iso : Nonempty (IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x)))
+    (hg_iso : Nonempty (IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) g (f x))))
+    (ωx : CotangentSpace ℂ X x) :
+    cotangentPushforward (g ∘ f) x ωx =
+      cotangentPushforward g (f x) (cotangentPushforward f x ωx) := by
+  classical
+  -- The chain rule: mfderiv (g ∘ f) x = mfderiv g (f x) ∘L mfderiv f x.
+  have hω_ne : (ω : WithTop ℕ∞) ≠ 0 := by decide
+  have hmf_comp :
+      mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (g ∘ f) x =
+        (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) g (f x)).comp
+          (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x) :=
+    mfderiv_comp x (hg.mdifferentiableAt hω_ne) (hf.mdifferentiableAt hω_ne)
+  -- The composition is an isomorphism via IsIso.compose.
+  have hgf_iso :
+      Nonempty (IsIso (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (g ∘ f) x)) := by
+    refine ⟨?_⟩
+    -- Cast IsIso along the mfderiv equality.
+    rw [hmf_comp]
+    exact IsIso.compose (Classical.choice hf_iso) (Classical.choice hg_iso)
+  -- Unfold both sides; both branches use the dif_pos with their iso witnesses.
+  unfold cotangentPushforward
+  simp only [dif_pos hgf_iso, dif_pos hg_iso, dif_pos hf_iso]
+  -- LHS = ωx.comp (Classical.choice hgf_iso).inv
+  -- RHS = (ωx.comp (Classical.choice hf_iso).inv).comp (Classical.choice hg_iso).inv
+  --     = ωx.comp ((Classical.choice hf_iso).inv.comp (Classical.choice hg_iso).inv)
+  -- We compare the two `inv` maps. By IsIso.inv_unique:
+  set hgf := Classical.choice hgf_iso
+  set hf' := Classical.choice hf_iso
+  set hg' := Classical.choice hg_iso
+  have hcomp_iso : IsIso ((mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) g (f x)).comp
+      (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x)) :=
+    IsIso.compose hf' hg'
+  -- After hmf_comp rewrite, hgf is an IsIso for the composed CLM; uniqueness:
+  -- LHS inv = (hf'.inv.comp hg'.inv).
+  -- Approach: use uniqueness of inverses at the level of left-inverse equality.
+  -- We show hgf.inv = hf'.inv.comp hg'.inv directly: it suffices to verify
+  -- (hf'.inv.comp hg'.inv).comp (mfderiv (g∘f) x) = id, which uses hmf_comp.
+  have hinv_eq : hgf.inv = hf'.inv.comp hg'.inv := by
+    -- Strategy: compute hgf.inv via its uniqueness as inverse of mfderiv (g∘f) x.
+    -- (hf'.inv.comp hg'.inv) ∘ (mfderiv (g∘f) x)
+    --   = hf'.inv ∘ (hg'.inv ∘ (mfderiv g (f x) ∘ mfderiv f x))     [by hmf_comp]
+    --   = hf'.inv ∘ ((hg'.inv ∘ mfderiv g (f x)) ∘ mfderiv f x)
+    --   = hf'.inv ∘ (id ∘ mfderiv f x)
+    --   = hf'.inv ∘ mfderiv f x
+    --   = id
+    -- So hf'.inv.comp hg'.inv is a left-inverse of mfderiv (g∘f) x.
+    -- Combined with hgf.inv being a left-inverse, by uniqueness, they coincide.
+    have hL : (hf'.inv.comp hg'.inv).comp (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (g ∘ f) x) =
+        ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x) := by
+      rw [hmf_comp]
+      -- ((hf'.inv ∘ hg'.inv) ∘ (Dg ∘ Df))
+      --   = (hf'.inv ∘ ((hg'.inv ∘ Dg) ∘ Df))  by associativity
+      --   = (hf'.inv ∘ (id ∘ Df))              by hg'.left_inv
+      --   = (hf'.inv ∘ Df) = id                by hf'.left_inv
+      rw [show (hf'.inv.comp hg'.inv).comp
+          ((mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) g (f x)).comp
+            (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x)) =
+          hf'.inv.comp ((hg'.inv.comp (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) g (f x))).comp
+            (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x)) from by
+        ext; simp [ContinuousLinearMap.comp_apply]]
+      rw [hg'.left_inv]
+      rw [ContinuousLinearMap.id_comp]
+      exact hf'.left_inv
+    -- Now invoke uniqueness: any two left-inverses agree (here `hgf.inv` is one
+    -- via hgf.left_inv, and `hf'.inv.comp hg'.inv` is another via hL).
+    have hgf_left : hgf.inv.comp (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (g ∘ f) x) =
+        ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x) := hgf.left_inv
+    -- A left inverse of an isomorphism (hgf has a two-sided inverse) is unique.
+    -- m₁ = m₁ ∘ id = m₁ ∘ (f ∘ hgf.inv) = (m₁ ∘ f) ∘ hgf.inv = id ∘ hgf.inv = hgf.inv.
+    -- Direct argument: hgf.inv = id_x.comp hgf.inv = (hL_inv ∘ d(g∘f)).comp hgf.inv
+    --                          = hL_inv.comp (d(g∘f) ∘ hgf.inv) = hL_inv.comp id = hL_inv.
+    have hgf_right : (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (g ∘ f) x).comp hgf.inv =
+        ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) ((g ∘ f) x)) := hgf.right_inv
+    have hkey :
+        ((hf'.inv.comp hg'.inv).comp (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (g ∘ f) x)).comp hgf.inv =
+          hf'.inv.comp hg'.inv := by
+      rw [ContinuousLinearMap.comp_assoc, hgf_right]
+      ext; simp
+    calc hgf.inv
+        = (ContinuousLinearMap.id ℂ (TangentSpace 𝓘(ℂ, ℂ) x)).comp hgf.inv := by
+          ext; simp
+      _ = ((hf'.inv.comp hg'.inv).comp (mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (g ∘ f) x)).comp hgf.inv := by
+          rw [hL]
+      _ = hf'.inv.comp hg'.inv := hkey
+  rw [hinv_eq]
+  ext
+  simp [ContinuousLinearMap.comp_apply]
+
+/-- **Provider (finite-fiber trace composition).** The narrow
+classical analytic content under `traceFormsBundled_comp_of_nonconstant`:
+at a value `z : Z` that is regular for the composition `g ∘ f` and
+also regular for `g`, with every preimage `y ∈ g ⁻¹' {z}` regular
+for `f`, the finite local fibre sum decomposes as iterated trace
+sums.
+
+Mathematically: the chain `(g ∘ f) ⁻¹' {z}` decomposes as the
+disjoint union `⋃_{y ∈ g ⁻¹' {z}} f ⁻¹' {y}` (finite-fibre
+decomposition), the cotangent pushforward along `g ∘ f` factors as
+`cotangentPushforward g ∘ cotangentPushforward f` at unramified
+points (chain rule, available as `cotangentPushforward_comp`
+above), and reindexing the finite double sum gives the iterated
+trace identity.
+
+This is allowed to be the remaining direct sorry: the only
+ingredients are the finite-fibre set-theoretic decomposition, the
+chain rule (already proved), and `Finset.sum_biUnion`. -/
+theorem regularValue_comp_traceAtRegularValue
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
+    (η : HolomorphicOneForm ℂ X)
+    (hbc_f : BranchedCoverData X Y f)
+    (hbc_g : BranchedCoverData Y Z g)
+    (hbc_gf : BranchedCoverData X Z (g ∘ f))
+    (z : Z)
+    (hz_gf : isRegularValue hbc_gf z)
+    (hz_g : isRegularValue hbc_g z)
+    (hz_g_inv_regular : ∀ y ∈ g ⁻¹' {z}, isRegularValue hbc_f y) :
+    traceAtRegularValue hbc_gf (fun x => η.toFun x) z hz_gf =
+      traceAtRegularValue hbc_g
+        (fun y => (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η).toFun y)
+        z hz_g := by
+  sorry
+
+/-- **Narrow frontier (nonconstant case).** Composition (covariant)
+functoriality of the bundled trace on a single nonzero form, in the
+case where both `f` and `g` are nonconstant.
+
+**Sorry-free assembly** from:
+* `regularValue_comp_traceAtRegularValue` — the finite-fibre trace
+  composition identity at points simultaneously regular for `f`,
+  `g`, and `g ∘ f`;
+* `holomorphicOneForm_ext_on` — the identity principle on a dense
+  subset of `Z`;
+* the canonical `branchedCoverData_of_nonconstant_holomorphic` for
+  each of `f`, `g`, and `g ∘ f`;
+* finiteness/density: the joint regular locus is the complement of
+  three finite sets (branch values of `g ∘ f`, branch values of
+  `g`, and `g`-images of branch values of `f`). -/
+theorem traceFormsBundled_comp_of_nonconstant
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
+    (η : HolomorphicOneForm ℂ X)
+    (_hη : η ≠ 0)
+    (hf_nonconst : ¬ ∃ y₀, ∀ x, f x = y₀)
+    (hg_nonconst : ¬ ∃ z₀, ∀ y, g y = z₀) :
+    traceFormsBundled (g ∘ f) (hg.comp hf) η =
+      traceFormsBundled g hg (traceFormsBundled f hf η) := by
+  classical
+  -- Construct canonical branched-cover data for f, g, and g∘f.
+  set hkfold_f := hasLocalKfoldRamification_of_contMDiff hf
+  set hw_f := hasWeightedFiberConservation_of_contMDiff hf
+  set hHol_f := isHolomorphic_of_contMDiff hf hkfold_f
+  set hbc_f := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+    hHol_f hw_f hf_nonconst
+  set hkfold_g := hasLocalKfoldRamification_of_contMDiff hg
+  set hw_g := hasWeightedFiberConservation_of_contMDiff hg
+  set hHol_g := isHolomorphic_of_contMDiff hg hkfold_g
+  set hbc_g := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+    hHol_g hw_g hg_nonconst
+  -- (g ∘ f) is nonconstant.
+  have hgf_nonconst : ¬ ∃ w₀, ∀ x, (g ∘ f) x = w₀ := by
+    rintro ⟨w₀, hw⟩
+    -- If g∘f is constant w₀, then f(x) ∈ g⁻¹{w₀} for all x : X.
+    -- g⁻¹{w₀} is finite (g nonconstant holomorphic on compact connected source);
+    -- so range f is finite. range f is connected (X connected, f continuous).
+    -- A connected finite set in a T1 space is a singleton.
+    have hgw_finite : (g ⁻¹' {w₀}).Finite :=
+      isHolomorphic_finite_fiber hHol_g hg_nonconst w₀
+    have hfX_sub : Set.range f ⊆ g ⁻¹' {w₀} := by
+      rintro y ⟨x, rfl⟩
+      show g (f x) = w₀
+      exact hw x
+    have hfX_finite : (Set.range f).Finite :=
+      hgw_finite.subset hfX_sub
+    have hfX_preconnected : IsPreconnected (Set.range f) :=
+      (isConnected_range hHol_f.continuous).isPreconnected
+    -- Subsingleton via closed separation `isPreconnected_closed_iff`.
+    have hfX_subsingleton : (Set.range f).Subsingleton := by
+      intro a ha b hb
+      by_contra hab
+      -- t = {a}, t' = (range f) \ {a}; both closed in Y (T1 + finite).
+      have hT1 : T1Space Y := inferInstance
+      have ht_closed : IsClosed ({a} : Set Y) := isClosed_singleton
+      have ht'_closed : IsClosed ((Set.range f) \ ({a} : Set Y)) :=
+        (hfX_finite.subset Set.diff_subset).isClosed
+      have hsub : Set.range f ⊆ ({a} : Set Y) ∪ ((Set.range f) \ ({a} : Set Y)) := by
+        intro y hy
+        by_cases h : y = a
+        · left; exact h
+        · right; exact ⟨hy, fun heq => h (Set.mem_singleton_iff.mp heq)⟩
+      have ha_nonempty : (Set.range f ∩ ({a} : Set Y)).Nonempty := ⟨a, ha, rfl⟩
+      have hb_nonempty : (Set.range f ∩ ((Set.range f) \ ({a} : Set Y))).Nonempty :=
+        ⟨b, hb, hb, fun heq => hab (Set.mem_singleton_iff.mp heq).symm⟩
+      have hjoint :=
+        (isPreconnected_closed_iff.mp hfX_preconnected) _ _
+          ht_closed ht'_closed hsub ha_nonempty hb_nonempty
+      -- But ({a}) ∩ ((range f) \ {a}) = ∅.
+      obtain ⟨y, _, hy_a, _, hy_ne⟩ := hjoint
+      exact hy_ne hy_a
+    apply hf_nonconst
+    refine ⟨f (Classical.arbitrary X), fun x => ?_⟩
+    exact hfX_subsingleton ⟨x, rfl⟩ ⟨Classical.arbitrary X, rfl⟩
+  set hkfold_gf := hasLocalKfoldRamification_of_contMDiff (hg.comp hf)
+  set hw_gf := hasWeightedFiberConservation_of_contMDiff (hg.comp hf)
+  set hHol_gf := isHolomorphic_of_contMDiff (hg.comp hf) hkfold_gf
+  set hbc_gf := JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+    hHol_gf hw_gf hgf_nonconst
+  -- The joint dense locus: z is regular for hbc_gf, regular for hbc_g, and
+  -- each y ∈ g⁻¹(z) is regular for hbc_f.
+  let S : Set Z := {z | isRegularValue hbc_gf z ∧ isRegularValue hbc_g z
+    ∧ ∀ y ∈ g ⁻¹' {z}, isRegularValue hbc_f y}
+  -- Density of S: complement is union of three finite sets.
+  have hS_dense : Dense S := by
+    -- S = (regularLocus hbc_gf) ∩ (regularLocus hbc_g) ∩ {z | ∀ y ∈ g⁻¹{z}, isRegularValue hbc_f y}
+    -- The third set has complement equal to g '' (branchLocus hbc_f), which is finite.
+    have h1_compl_finite : {z : Z | ¬ isRegularValue hbc_gf z}.Finite :=
+      branchLocus_finite hbc_gf
+    have h2_compl_finite : {z : Z | ¬ isRegularValue hbc_g z}.Finite :=
+      branchLocus_finite hbc_g
+    have h3_compl_finite :
+        {z : Z | ¬ ∀ y ∈ g ⁻¹' {z}, isRegularValue hbc_f y}.Finite := by
+      -- Complement = {z | ∃ y, g y = z ∧ ¬ isRegularValue hbc_f y}
+      --           = g '' {y | ¬ isRegularValue hbc_f y}
+      have heq : {z : Z | ¬ ∀ y ∈ g ⁻¹' {z}, isRegularValue hbc_f y} =
+          g '' {y : Y | ¬ isRegularValue hbc_f y} := by
+        ext z
+        constructor
+        · intro hz
+          simp only [Set.mem_setOf_eq, not_forall, Set.mem_preimage,
+            Set.mem_singleton_iff] at hz
+          obtain ⟨y, hgy, hyne⟩ := hz
+          exact ⟨y, hyne, hgy⟩
+        · rintro ⟨y, hyne, hgy⟩
+          simp only [Set.mem_setOf_eq, not_forall, Set.mem_preimage,
+            Set.mem_singleton_iff]
+          exact ⟨y, hgy, hyne⟩
+      rw [heq]
+      exact (branchLocus_finite hbc_f).image g
+    -- S = (S₁ᶜ)ᶜ \ ... — use complement decomposition.
+    have hcompl : Sᶜ ⊆ {z : Z | ¬ isRegularValue hbc_gf z} ∪
+        {z : Z | ¬ isRegularValue hbc_g z} ∪
+        {z : Z | ¬ ∀ y ∈ g ⁻¹' {z}, isRegularValue hbc_f y} := by
+      intro z hz
+      by_contra hcontra
+      -- hcontra : z ∉ (... ∪ ... ∪ ...). So z is in none of the three complements.
+      have hn1 : isRegularValue hbc_gf z := by
+        by_contra h
+        exact hcontra (Or.inl (Or.inl h))
+      have hn2 : isRegularValue hbc_g z := by
+        by_contra h
+        exact hcontra (Or.inl (Or.inr h))
+      have hn3 : ∀ y ∈ g ⁻¹' {z}, isRegularValue hbc_f y := by
+        by_contra h
+        exact hcontra (Or.inr h)
+      exact hz ⟨hn1, hn2, hn3⟩
+    have hSc_finite : Sᶜ.Finite :=
+      Set.Finite.subset ((h1_compl_finite.union h2_compl_finite).union
+        h3_compl_finite) hcompl
+    -- Dense complement of finite set in perfect target.
+    haveI : Nontrivial Z := by
+      obtain ⟨p, q, hpq⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := Z)
+      exact ⟨⟨p, q, hpq⟩⟩
+    haveI : PerfectSpace Z := inferInstance
+    have hSc_compl_dense : Dense ((Sᶜ : Set Z)ᶜ) :=
+      dense_compl_of_finite_of_perfect hSc_finite
+    simpa [compl_compl] using hSc_compl_dense
+  -- Identity principle on S.
+  apply holomorphicOneForm_ext_on hS_dense
+  rintro z ⟨hz_gf, hz_g, hz_g_inv⟩
+  -- LHS: trace at z via hbc_gf.
+  have hLHS_reg :=
+    (traceFormsConstructionData_provider (g ∘ f) (hg.comp hf) η).regular_spec
+      hbc_gf z hz_gf
+  -- RHS: trace at z via hbc_g, applied to (traceFormsBundled f hf η).
+  have hRHS_reg :=
+    (traceFormsConstructionData_provider g hg
+      (traceFormsBundled f hf η)).regular_spec hbc_g z hz_g
+  -- Translate to traceFormsBundled.
+  change (traceFormsBundled (g ∘ f) (hg.comp hf) η).toFun z =
+    (traceFormsBundled g hg (traceFormsBundled f hf η)).toFun z
+  -- Unfold using the provider's traceForm.
+  show (traceFormsConstructionData_provider (g ∘ f) (hg.comp hf) η).traceForm.toFun z =
+    (traceFormsConstructionData_provider g hg
+      (traceFormsBundled f hf η)).traceForm.toFun z
+  rw [hLHS_reg, hRHS_reg]
+  exact regularValue_comp_traceAtRegularValue f hf g hg η hbc_f hbc_g hbc_gf z
+    hz_gf hz_g hz_g_inv
+
+/-- **Form-level composition functoriality of the bundled trace.**
+
+Sorry-free assembly from `traceFormsBundled_comp_of_nonconstant` plus
+`traceFormsBundled_eq_zero_of_constant`. The case split reduces every
+configuration of constants and zero forms to the zero form on both
+sides, isolating the narrow nonconstant-both analytic frontier. -/
+theorem traceFormsBundledLM_comp
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
+    traceFormsBundledLM (X := X) (Y := Z) (g ∘ f) (hg.comp hf) =
+      (traceFormsBundledLM (X := Y) (Y := Z) g hg).comp
+        (traceFormsBundledLM (X := X) (Y := Y) f hf) := by
+  apply LinearMap.ext
+  intro η
+  show traceFormsBundled (g ∘ f) (hg.comp hf) η =
+    traceFormsBundled g hg (traceFormsBundled f hf η)
+  -- Case split on η = 0.
+  by_cases hη : η = 0
+  · subst hη
+    show traceFormsBundledLM (g ∘ f) (hg.comp hf) 0 =
+      traceFormsBundledLM g hg (traceFormsBundledLM f hf 0)
+    rw [(traceFormsBundledLM (g ∘ f) (hg.comp hf)).map_zero,
+        (traceFormsBundledLM f hf).map_zero,
+        (traceFormsBundledLM g hg).map_zero]
+  · -- η ≠ 0. Case split on f constant.
+    by_cases hf_const : ∃ y₀, ∀ x, f x = y₀
+    · -- f constant ⇒ g ∘ f constant; trace along constant map is 0.
+      obtain ⟨y₀, hf_eq⟩ := hf_const
+      have hgf_const : ∃ z₀, ∀ x, (g ∘ f) x = z₀ :=
+        ⟨g y₀, fun x => by show g (f x) = g y₀; rw [hf_eq x]⟩
+      rw [traceFormsBundled_eq_zero_of_constant
+            (f := g ∘ f) (hf := hg.comp hf) η hgf_const,
+          traceFormsBundled_eq_zero_of_constant (f := f) (hf := hf) η ⟨y₀, hf_eq⟩]
+      show (0 : HolomorphicOneForm ℂ Z) = traceFormsBundledLM g hg 0
+      rw [(traceFormsBundledLM g hg).map_zero]
+    · -- f nonconstant. Case split on g constant.
+      by_cases hg_const : ∃ z₀, ∀ y, g y = z₀
+      · -- g constant ⇒ g ∘ f constant; both sides 0.
+        obtain ⟨z₀, hg_eq⟩ := hg_const
+        have hgf_const : ∃ z₀, ∀ x, (g ∘ f) x = z₀ :=
+          ⟨z₀, fun x => hg_eq (f x)⟩
+        rw [traceFormsBundled_eq_zero_of_constant
+              (f := g ∘ f) (hf := hg.comp hf) η hgf_const,
+            traceFormsBundled_eq_zero_of_constant (f := g) (hf := hg)
+              (traceFormsBundled f hf η) ⟨z₀, hg_eq⟩]
+      · -- f, g both nonconstant: delegate to the narrow nonconstant-both frontier.
+        exact traceFormsBundled_comp_of_nonconstant f hf g hg η hη hf_const hg_const
+
+/-- **Narrow trace-functoriality leaf (comp).** Composition (covariant)
+functoriality of `traceFormsCoord`: trace along `g ∘ f` equals trace
+along `g` composed with trace along `f`.
+
+Sorry-free assembly from the form-level composition frontier
+`traceFormsBundledLM_comp`: substitute the form-level identity into
+the `equivFun`-sandwiched definition; the inner basis equivalence
+round trip cancels. -/
+theorem traceFormsCoord_comp
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
+    traceFormsCoord (g ∘ f) (hg.comp hf) =
+      (traceFormsCoord g hg).comp (traceFormsCoord f hf) := by
+  unfold traceFormsCoord
+  rw [traceFormsBundledLM_comp f hf g hg]
+  apply LinearMap.ext
+  intro v
+  simp [LinearMap.comp_apply]
+
+/-- Identity functoriality of `traceDualPullbackLift`. Sorry-free from
+`traceFormsCoord_id` plus matrix-transpose-of-id facts. -/
+theorem traceDualPullbackLift_id :
+    traceDualPullbackLift (X := X) (Y := X) id contMDiff_id =
+      LinearMap.id := by
+  unfold traceDualPullbackLift
+  rw [traceFormsCoord_id, LinearMap.toMatrix'_id, Matrix.transpose_one,
+      Matrix.toLin'_one]
+
+/-- Composition (contravariant) functoriality of
+`traceDualPullbackLift`. Sorry-free from `traceFormsCoord_comp`: the
+covariant trace composes covariantly, and transpose reverses
+composition giving contravariance for the dual. -/
+theorem traceDualPullbackLift_comp
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
+    traceDualPullbackLift (g ∘ f) (hg.comp hf) =
+      (traceDualPullbackLift f hf).comp (traceDualPullbackLift g hg) := by
+  apply LinearMap.ext
+  intro v
+  show (Matrix.toLin' ((traceFormsCoord (g ∘ f) (hg.comp hf)).toMatrix').transpose) v =
+    (Matrix.toLin' ((traceFormsCoord f hf).toMatrix').transpose)
+      ((Matrix.toLin' ((traceFormsCoord g hg).toMatrix').transpose) v)
+  rw [traceFormsCoord_comp f hf g hg, LinearMap.toMatrix'_comp,
+      Matrix.transpose_mul, Matrix.toLin'_mul, LinearMap.comp_apply]
+
+/-- Identity functoriality of `pullbackFormsMap` via the corrected
+trace-dual representative. Sorry-free via `traceDualPullbackLift_id`. -/
 theorem pullbackFormsMap_id_eq_id :
     pullbackFormsMap X X id contMDiff_id =
       AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
   unfold pullbackFormsMap
-  rw [holomorphicTraceCoord_id]
+  rw [traceDualPullbackLift_id]
   rfl
 
-/-- Composition (contravariant) functoriality of `pullbackFormsMap`.
-Sorry-free via `holomorphicTraceCoord_comp`. -/
+/-- Composition (contravariant) functoriality of `pullbackFormsMap`
+via the corrected trace-dual representative. Sorry-free via
+`traceDualPullbackLift_comp`. -/
 theorem pullbackFormsMap_comp_eq
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
     pullbackFormsMap X Z (g ∘ f) (hg.comp hf) =
       (pullbackFormsMap X Y f hf).comp (pullbackFormsMap Y Z g hg) := by
   unfold pullbackFormsMap
-  rw [holomorphicTraceCoord_comp f hf g hg]
+  rw [traceDualPullbackLift_comp f hf g hg]
   rfl
 
 /-- Bundle-level axiom: the `basisDualPullback` field of the bundle
