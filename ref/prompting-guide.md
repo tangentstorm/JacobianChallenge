@@ -2,6 +2,10 @@
 
 This guide contains strategies to ensure that AI agents (Claude, Codex, Gemini) produce mathematically meaningful proofs and do not "game" the scaffolding or trivialize definitions.
 
+> **Important:** Every `goal.md` you write for a worker **must** contain the following line near the top:
+>
+> > Read and follow `ref/proving-guide.md` for all rules regarding verification, `result.md`, `sorries.jsonl`, status reporting, and expected behavior.
+
 ## 1. Ensuring Definition Integrity
 Agents may attempt to simplify a `def` to make a subsequent `theorem` easier to prove.
 - **Guideline:** Explicitly state: "Do not modify existing `def` or `structure` declarations in the target file."
@@ -50,3 +54,22 @@ Finish the project by working "Leafward" from the goal.
 3. **Assemble:** Prove the top-level theorem `sorry-free` using the stubs.
 4. **Recurse:** Assign the new stubs as missions to specialized agents.
 5. **Promote:** Once a stub is proven, move its implementation from the "Infrastructure/Generated" files into the production modules.
+
+## 9. Worker Assignment and Handoff Protocol
+
+When assigning (or re-assigning) work to a worker, the manager **must** perform the following steps in order:
+
+1. **Delete the worker’s old `result.md`** (if it exists). This ensures the worker starts fresh and does not carry over stale status.
+2. **Overwrite the worker’s `goal.md`** with the new goal. The new `goal.md` **must** contain a clear reference to `ref/proving-guide.md` (see top of this document).
+3. **Create or update `.swarm-status`** in the worker’s directory with exactly one line in the following format:
+
+   ```
+   ASSIGNED: <branch-name>
+   ```
+
+   Example:
+   ```
+   ASSIGNED: fix/tietze-handle-combinatorics
+   ```
+
+These steps keep the swarm status accurate and prevent workers from seeing old results or ambiguous state when they start a new session.
