@@ -630,6 +630,92 @@ noncomputable def pointChain
     SingularChainCoproduct X 0 :=
   singularChainElement (pointSingularSimplex X x)
 
+lemma singularSimplexFace_path_zero
+    (X : Type) [TopologicalSpace X] (γ : C(unitInterval, X)) :
+    singularSimplexFace (γ.comp stdSimplexToUnitInterval) 0 =
+      pointSingularSimplex X (γ 1) := by
+  ext s
+  haveI : Subsingleton (stdSimplex ℝ (Fin 1)) := inferInstance
+  haveI : Subsingleton (stdSimplex ℝ (Fin (0 + 1))) := this
+  have hs : s = stdSimplex.vertex (0 : Fin 1) := Subsingleton.elim _ _
+  rw [hs]
+  simp [singularSimplexFace, stdSimplexFaceMap, pointSingularSimplex,
+    stdSimplexToUnitInterval]
+
+lemma singularSimplexFace_path_one
+    (X : Type) [TopologicalSpace X] (γ : C(unitInterval, X)) :
+    singularSimplexFace (γ.comp stdSimplexToUnitInterval) 1 =
+      pointSingularSimplex X (γ 0) := by
+  ext s
+  haveI : Subsingleton (stdSimplex ℝ (Fin 1)) := inferInstance
+  haveI : Subsingleton (stdSimplex ℝ (Fin (0 + 1))) := this
+  have hs : s = stdSimplex.vertex (0 : Fin 1) := Subsingleton.elim _ _
+  rw [hs]
+  simp [singularSimplexFace, stdSimplexFaceMap, pointSingularSimplex,
+    stdSimplexToUnitInterval]
+
+/-- Boundary of a path-shaped singular one-simplex. -/
+theorem singularChainElement_boundary_path
+    (X : Type) [TopologicalSpace X] (γ : C(unitInterval, X)) :
+    (singularChainComplexZ X).d 1 0
+        (singularChainElement (γ.comp stdSimplexToUnitInterval) :
+          SingularChainCoproduct X 1) =
+      pointChain X (γ 1) - pointChain X (γ 0) := by
+  rw [singularChainElement_boundary_decomposition X 0
+        (γ.comp stdSimplexToUnitInterval)]
+  rw [Fin.sum_univ_two]
+  rw [singularSimplexFace_path_zero X γ, singularSimplexFace_path_one X γ]
+  simp [pointChain, pow_zero, pow_one, one_smul, sub_eq_add_neg]
+
+/-- The inverse parametrisation from the unit interval to the standard
+one-simplex. -/
+noncomputable def unitIntervalToStdSimplex :
+    C(unitInterval, stdSimplex ℝ (Fin 2)) :=
+  ⟨stdSimplexHomeomorphUnitInterval.symm,
+    stdSimplexHomeomorphUnitInterval.symm.continuous⟩
+
+@[simp] lemma unitIntervalToStdSimplex_zero :
+    unitIntervalToStdSimplex (0 : unitInterval) = stdSimplexVertex 0 := by
+  apply stdSimplexHomeomorphUnitInterval.injective
+  simp [unitIntervalToStdSimplex]
+
+@[simp] lemma unitIntervalToStdSimplex_one :
+    unitIntervalToStdSimplex (1 : unitInterval) = stdSimplexVertex 1 := by
+  apply stdSimplexHomeomorphUnitInterval.injective
+  simp [unitIntervalToStdSimplex]
+
+lemma singularOneSimplex_asPath_comp
+    (X : Type) [TopologicalSpace X]
+    (σ : C(stdSimplex ℝ (Fin 2), X)) :
+    (σ.comp unitIntervalToStdSimplex).comp stdSimplexToUnitInterval = σ := by
+  ext s
+  simp [unitIntervalToStdSimplex, stdSimplexToUnitInterval]
+
+/-- Boundary of an arbitrary singular one-simplex, expressed by its two
+standard vertices. -/
+theorem singularChainElement_boundary_one_simplex
+    (X : Type) [TopologicalSpace X]
+    (σ : C(stdSimplex ℝ (Fin 2), X)) :
+    (singularChainComplexZ X).d 1 0
+        (singularChainElement σ : SingularChainCoproduct X 1) =
+      pointChain X (σ (stdSimplexVertex 1)) -
+        pointChain X (σ (stdSimplexVertex 0)) := by
+  rw [← singularOneSimplex_asPath_comp X σ]
+  rw [singularChainElement_boundary_path X (σ.comp unitIntervalToStdSimplex)]
+  simp [unitIntervalToStdSimplex, stdSimplexToUnitInterval]
+
+/-- Chain-map image of a point zero-chain. -/
+theorem pointChain_map
+    (X Y : Type) [TopologicalSpace X] [TopologicalSpace Y]
+    (f : C(X, Y)) (x : X) :
+    ModuleCat.Hom.hom
+      ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map (TopCat.ofHom f)).f 0)
+      (pointChain X x) =
+        pointChain Y (f x) := by
+  simpa [pointChain, pointSingularSimplex] using
+    singularChainElement_map f 0 (pointSingularSimplex X x)
+
 /-- Orientation for a primitive boundary-edge repair step. -/
 inductive BoundaryArcOrientation where
   | forward
@@ -643,10 +729,38 @@ def sign : BoundaryArcOrientation → ℤ
   | forward => 1
   | reverse => -1
 
+/-- Reverse an oriented boundary edge. -/
+def flip : BoundaryArcOrientation → BoundaryArcOrientation
+  | forward => reverse
+  | reverse => forward
+
 lemma sign_eq (o : BoundaryArcOrientation) : sign o = 1 ∨ sign o = -1 := by
   cases o <;> simp [sign]
 
+lemma sign_flip (o : BoundaryArcOrientation) :
+    sign (flip o) = - sign o := by
+  cases o <;> simp [sign, flip]
+
 end BoundaryArcOrientation
+
+/-- Reversal of the unit interval. -/
+noncomputable def unitIntervalReverse : C(unitInterval, unitInterval) where
+  toFun := fun t =>
+    ⟨1 - t.1, by
+      exact ⟨sub_nonneg.mpr t.2.2, sub_le_self _ t.2.1⟩⟩
+  continuous_toFun := by
+    exact Continuous.subtype_mk
+      (continuous_const.sub continuous_subtype_val) _
+
+@[simp] lemma unitIntervalReverse_zero :
+    unitIntervalReverse 0 = (1 : unitInterval) := by
+  ext
+  norm_num [unitIntervalReverse]
+
+@[simp] lemma unitIntervalReverse_one :
+    unitIntervalReverse 1 = (0 : unitInterval) := by
+  ext
+  norm_num [unitIntervalReverse]
 
 /-- The parameter along a partial oriented boundary arc.  The
 `startParam` and `endParam` fields are closed-interval points, so this
@@ -661,6 +775,32 @@ noncomputable def boundaryArcOrientedAffineParam
       (1 - t.1) * startParam.1 + t.1 * endParam.1
   | BoundaryArcOrientation.reverse =>
       (1 - t.1) * endParam.1 + t.1 * startParam.1
+
+lemma boundaryArcOrientedAffineParam_flip_reverse
+    (orientation : BoundaryArcOrientation)
+    (startParam endParam : Set.Icc (0 : ℝ) 1)
+    (t : unitInterval) :
+    boundaryArcOrientedAffineParam (BoundaryArcOrientation.flip orientation)
+        startParam endParam t =
+      boundaryArcOrientedAffineParam orientation startParam endParam
+        (unitIntervalReverse t) := by
+  cases orientation <;>
+    simp [boundaryArcOrientedAffineParam, BoundaryArcOrientation.flip,
+      unitIntervalReverse]
+  · ring_nf
+  · ring_nf
+
+lemma boundaryArcOrientedAffineParam_swap_reverse
+    (orientation : BoundaryArcOrientation)
+    (startParam endParam : Set.Icc (0 : ℝ) 1)
+    (t : unitInterval) :
+    boundaryArcOrientedAffineParam orientation endParam startParam t =
+      boundaryArcOrientedAffineParam orientation startParam endParam
+        (unitIntervalReverse t) := by
+  cases orientation <;>
+    simp [boundaryArcOrientedAffineParam, unitIntervalReverse]
+  · ring_nf
+  · ring_nf
 
 /-- A boundary-arc path in the closed disk, with orientation and a
 concrete boundary parametrisation witness.  The side arc may be only a
@@ -685,6 +825,33 @@ structure Polygon4gBoundaryArcStep (g : ℕ) where
       path t = boundaryParam (g + 1) arcIndex
         (boundaryArcOrientedAffineParam orientation startParam endParam t)
 
+/-- Reverse a boundary-arc step, swapping endpoints and interval
+parameters.  The stored edge orientation is left unchanged: the path
+itself is reversed, so the signed singular chain has the negated
+boundary needed by endpoint repair symmetry. -/
+noncomputable def Polygon4gBoundaryArcStep.reverse
+    {g : ℕ} (step : Polygon4gBoundaryArcStep g) :
+    Polygon4gBoundaryArcStep g where
+  source := step.target
+  target := step.source
+  edgeIndex := step.edgeIndex
+  arcIndex := step.arcIndex
+  arcIndex_represents_edge := step.arcIndex_represents_edge
+  orientation := step.orientation
+  startParam := step.endParam
+  endParam := step.startParam
+  path := step.path.comp unitIntervalReverse
+  source_eq := by
+    simp [ContinuousMap.comp_apply, step.target_eq]
+  target_eq := by
+    simp [ContinuousMap.comp_apply, step.source_eq]
+  path_param := by
+    intro t
+    rw [ContinuousMap.comp_apply, step.path_param]
+    exact congrArg (boundaryParam (g + 1) step.arcIndex)
+      (boundaryArcOrientedAffineParam_swap_reverse
+        step.orientation step.startParam step.endParam t).symm
+
 /-- A finite list of boundary arcs connects two disk endpoints. -/
 inductive Polygon4gBoundaryArcListConnects (g : ℕ) :
     DiskC → DiskC → List (Polygon4gBoundaryArcStep g) → Prop
@@ -696,6 +863,45 @@ inductive Polygon4gBoundaryArcListConnects (g : ℕ) :
       (hrest : Polygon4gBoundaryArcListConnects g q r steps) :
       Polygon4gBoundaryArcListConnects g p r (step :: steps)
 
+/-- Concatenating two connected boundary-arc lists gives a connected
+boundary-arc list. -/
+theorem Polygon4gBoundaryArcListConnects.append
+    {g : ℕ} {p q r : DiskC}
+    {steps₁ steps₂ : List (Polygon4gBoundaryArcStep g)}
+    (h₁ : Polygon4gBoundaryArcListConnects g p q steps₁)
+    (h₂ : Polygon4gBoundaryArcListConnects g q r steps₂) :
+    Polygon4gBoundaryArcListConnects g p r (steps₁ ++ steps₂) := by
+  induction h₁ with
+  | nil p =>
+      simpa using h₂
+  | cons hsource htarget hrest ih =>
+      exact Polygon4gBoundaryArcListConnects.cons hsource htarget (ih h₂)
+
+/-- Reverse a list of boundary-arc steps in the order needed for a
+path reversal. -/
+noncomputable def polygon4gBoundaryArcStepsReverse
+    {g : ℕ} (steps : List (Polygon4gBoundaryArcStep g)) :
+    List (Polygon4gBoundaryArcStep g) :=
+  steps.reverse.map Polygon4gBoundaryArcStep.reverse
+
+/-- A connected boundary-arc list remains connected after reversing all
+steps and their order. -/
+theorem Polygon4gBoundaryArcListConnects.reverse
+    {g : ℕ} {p q : DiskC} {steps : List (Polygon4gBoundaryArcStep g)}
+    (h : Polygon4gBoundaryArcListConnects g p q steps) :
+    Polygon4gBoundaryArcListConnects g q p
+      (polygon4gBoundaryArcStepsReverse steps) := by
+  induction h with
+  | nil p =>
+      simp [polygon4gBoundaryArcStepsReverse,
+        Polygon4gBoundaryArcListConnects.nil]
+  | cons hsource htarget hrest ih =>
+      dsimp [polygon4gBoundaryArcStepsReverse]
+      rw [List.reverse_cons, List.map_append]
+      refine Polygon4gBoundaryArcListConnects.append ih ?_
+      exact Polygon4gBoundaryArcListConnects.cons htarget hsource
+        (Polygon4gBoundaryArcListConnects.nil _)
+
 /-- The projected singular one-chain of a disk boundary-arc step. -/
 noncomputable def polygon4gBoundaryArcStepProjectedChain
     (g : ℕ) (step : Polygon4gBoundaryArcStep g) :
@@ -704,6 +910,23 @@ noncomputable def polygon4gBoundaryArcStepProjectedChain
     ((polygon4gMkContinuousMap (g + 1)).comp
       (step.path.comp stdSimplexToUnitInterval))
 
+/-- The disk-side singular one-chain of a list of boundary-arc steps,
+with the recorded orientations. -/
+noncomputable def polygon4gBoundaryArcStepsDiskChain
+    {g : ℕ} (steps : List (Polygon4gBoundaryArcStep g)) :
+    SingularChainCoproduct DiskC 1 :=
+  (steps.map fun step =>
+    step.orientation.sign • singularChainElement
+      (step.path.comp stdSimplexToUnitInterval)).sum
+
+/-- Disk-side chains of boundary-arc lists respect append. -/
+theorem polygon4gBoundaryArcStepsDiskChain_append
+    {g : ℕ} (steps₁ steps₂ : List (Polygon4gBoundaryArcStep g)) :
+    polygon4gBoundaryArcStepsDiskChain (steps₁ ++ steps₂) =
+      polygon4gBoundaryArcStepsDiskChain steps₁ +
+        polygon4gBoundaryArcStepsDiskChain steps₂ := by
+  simp [polygon4gBoundaryArcStepsDiskChain, List.map_append]
+
 /-- The projected singular chain of a list of boundary-arc steps, with
 the recorded orientations. -/
 noncomputable def polygon4gBoundaryArcStepsProjectedChain
@@ -711,6 +934,233 @@ noncomputable def polygon4gBoundaryArcStepsProjectedChain
     SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
   (steps.map fun step =>
     step.orientation.sign • polygon4gBoundaryArcStepProjectedChain g step).sum
+
+/-- Projected chains of boundary-arc lists respect append. -/
+theorem polygon4gBoundaryArcStepsProjectedChain_append
+    (g : ℕ) (steps₁ steps₂ : List (Polygon4gBoundaryArcStep g)) :
+    polygon4gBoundaryArcStepsProjectedChain g (steps₁ ++ steps₂) =
+      polygon4gBoundaryArcStepsProjectedChain g steps₁ +
+        polygon4gBoundaryArcStepsProjectedChain g steps₂ := by
+  simp [polygon4gBoundaryArcStepsProjectedChain, List.map_append]
+
+/-- The disk boundary of a reversed single boundary-arc generator is the
+negative of the original disk boundary. -/
+theorem polygon4gBoundaryArcStep_reverse_disk_boundary
+    {g : ℕ} (step : Polygon4gBoundaryArcStep g) :
+    (singularChainComplexZ DiskC).d 1 0
+        (polygon4gBoundaryArcStepsDiskChain
+          [Polygon4gBoundaryArcStep.reverse step]) =
+      - (singularChainComplexZ DiskC).d 1 0
+        (polygon4gBoundaryArcStepsDiskChain [step]) := by
+  simp [polygon4gBoundaryArcStepsDiskChain, map_zsmul]
+  rw [singularChainElement_boundary_path DiskC
+    (Polygon4gBoundaryArcStep.reverse step).path]
+  rw [singularChainElement_boundary_path DiskC step.path]
+  simp [Polygon4gBoundaryArcStep.reverse, ContinuousMap.comp_apply,
+    step.source_eq, step.target_eq]
+  rcases BoundaryArcOrientation.sign_eq step.orientation with hsign | hsign
+  · rw [hsign]
+    simp
+  · rw [hsign]
+    simp
+
+/-- The projected boundary of a reversed single boundary-arc generator
+is the negative of the original projected boundary. -/
+theorem polygon4gBoundaryArcStep_reverse_projected_boundary
+    (g : ℕ) (step : Polygon4gBoundaryArcStep g) :
+    (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
+        (polygon4gBoundaryArcStepsProjectedChain g
+          [Polygon4gBoundaryArcStep.reverse step]) =
+      - (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
+        (polygon4gBoundaryArcStepsProjectedChain g [step]) := by
+  simp [polygon4gBoundaryArcStepsProjectedChain,
+    polygon4gBoundaryArcStepProjectedChain, map_zsmul]
+  rw [show (polygon4gMkContinuousMap (g + 1)).comp
+      ((Polygon4gBoundaryArcStep.reverse step).path.comp stdSimplexToUnitInterval) =
+        ((polygon4gMkContinuousMap (g + 1)).comp
+          (Polygon4gBoundaryArcStep.reverse step).path).comp
+            stdSimplexToUnitInterval by
+      rw [ContinuousMap.comp_assoc]]
+  rw [show (polygon4gMkContinuousMap (g + 1)).comp
+      (step.path.comp stdSimplexToUnitInterval) =
+        ((polygon4gMkContinuousMap (g + 1)).comp step.path).comp
+          stdSimplexToUnitInterval by
+      rw [ContinuousMap.comp_assoc]]
+  rw [singularChainElement_boundary_path (Polygon4g (g + 1))
+    ((polygon4gMkContinuousMap (g + 1)).comp
+      (Polygon4gBoundaryArcStep.reverse step).path)]
+  rw [singularChainElement_boundary_path (Polygon4g (g + 1))
+    ((polygon4gMkContinuousMap (g + 1)).comp step.path)]
+  simp [Polygon4gBoundaryArcStep.reverse, ContinuousMap.comp_apply,
+    step.source_eq, step.target_eq]
+  rcases BoundaryArcOrientation.sign_eq step.orientation with hsign | hsign
+  · rw [hsign]
+    simp
+  · rw [hsign]
+    simp
+
+/-- Reversing a boundary-arc list negates its disk-side boundary. -/
+theorem polygon4gBoundaryArcStepsReverse_disk_boundary
+    {g : ℕ} (steps : List (Polygon4gBoundaryArcStep g)) :
+    (singularChainComplexZ DiskC).d 1 0
+        (polygon4gBoundaryArcStepsDiskChain
+          (polygon4gBoundaryArcStepsReverse steps)) =
+      - (singularChainComplexZ DiskC).d 1 0
+        (polygon4gBoundaryArcStepsDiskChain steps) := by
+  induction steps with
+  | nil =>
+      simp [polygon4gBoundaryArcStepsReverse,
+        polygon4gBoundaryArcStepsDiskChain]
+  | cons step steps ih =>
+      dsimp [polygon4gBoundaryArcStepsReverse]
+      rw [List.reverse_cons, List.map_append,
+        polygon4gBoundaryArcStepsDiskChain_append, map_add]
+      rw [show List.map Polygon4gBoundaryArcStep.reverse steps.reverse =
+        polygon4gBoundaryArcStepsReverse steps from rfl]
+      rw [ih]
+      rw [show List.map Polygon4gBoundaryArcStep.reverse [step] =
+        [Polygon4gBoundaryArcStep.reverse step] from rfl]
+      have hstep := polygon4gBoundaryArcStep_reverse_disk_boundary step
+      rw [hstep]
+      have hcons :
+          polygon4gBoundaryArcStepsDiskChain (step :: steps) =
+            polygon4gBoundaryArcStepsDiskChain [step] +
+              polygon4gBoundaryArcStepsDiskChain steps := by
+        simp [polygon4gBoundaryArcStepsDiskChain]
+      rw [hcons, map_add]
+      abel
+
+/-- Reversing a boundary-arc list negates its projected boundary. -/
+theorem polygon4gBoundaryArcStepsReverse_projected_boundary
+    (g : ℕ) (steps : List (Polygon4gBoundaryArcStep g)) :
+    (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
+        (polygon4gBoundaryArcStepsProjectedChain g
+          (polygon4gBoundaryArcStepsReverse steps)) =
+      - (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
+        (polygon4gBoundaryArcStepsProjectedChain g steps) := by
+  induction steps with
+  | nil =>
+      simp [polygon4gBoundaryArcStepsReverse,
+        polygon4gBoundaryArcStepsProjectedChain]
+  | cons step steps ih =>
+      dsimp [polygon4gBoundaryArcStepsReverse]
+      rw [List.reverse_cons, List.map_append,
+        polygon4gBoundaryArcStepsProjectedChain_append, map_add]
+      rw [show List.map Polygon4gBoundaryArcStep.reverse steps.reverse =
+        polygon4gBoundaryArcStepsReverse steps from rfl]
+      rw [ih]
+      rw [show List.map Polygon4gBoundaryArcStep.reverse [step] =
+        [Polygon4gBoundaryArcStep.reverse step] from rfl]
+      have hstep := polygon4gBoundaryArcStep_reverse_projected_boundary g step
+      rw [hstep]
+      have hcons :
+          polygon4gBoundaryArcStepsProjectedChain g (step :: steps) =
+            polygon4gBoundaryArcStepsProjectedChain g [step] +
+              polygon4gBoundaryArcStepsProjectedChain g steps := by
+        simp [polygon4gBoundaryArcStepsProjectedChain]
+      rw [hcons, map_add]
+      abel
+
+/-- Remaining one-step local prism leaf: a projected boundary-arc
+simplex and its reversed reparametrization bound a singular two-chain.
+The list-level statement below is just finite additivity. -/
+theorem polygon4gBoundaryArcStep_reverse_projected_homotopy
+    (g : ℕ) (step : Polygon4gBoundaryArcStep g) :
+    ∃ projectedReverseHomotopy :
+        SingularChainCoproduct (Polygon4g (g + 1)) 2,
+      (singularChainComplexZ (Polygon4g (g + 1))).d 2 1
+          projectedReverseHomotopy =
+        polygon4gBoundaryArcStepsProjectedChain g
+            [Polygon4gBoundaryArcStep.reverse step] +
+          polygon4gBoundaryArcStepsProjectedChain g [step] := by
+  -- Missing singular-prism computation for one projected path simplex
+  -- and its reversed reparametrization.
+  sorry
+
+/-- Reversing a finite list of projected boundary-arc chains is
+homologous to negation, by summing the one-step reverse prisms. -/
+theorem polygon4gBoundaryArcStepsReverse_projected_homotopy
+    (g : ℕ) (steps : List (Polygon4gBoundaryArcStep g)) :
+    ∃ projectedReverseHomotopy :
+        SingularChainCoproduct (Polygon4g (g + 1)) 2,
+      (singularChainComplexZ (Polygon4g (g + 1))).d 2 1
+          projectedReverseHomotopy =
+        polygon4gBoundaryArcStepsProjectedChain g
+            (polygon4gBoundaryArcStepsReverse steps) +
+          polygon4gBoundaryArcStepsProjectedChain g steps := by
+  induction steps with
+  | nil =>
+      refine ⟨0, ?_⟩
+      simp [polygon4gBoundaryArcStepsReverse,
+        polygon4gBoundaryArcStepsProjectedChain]
+  | cons step steps ih =>
+      obtain ⟨Bsteps, hBsteps⟩ := ih
+      obtain ⟨Bstep, hBstep⟩ :=
+        polygon4gBoundaryArcStep_reverse_projected_homotopy g step
+      refine ⟨Bsteps + Bstep, ?_⟩
+      rw [map_add, hBsteps, hBstep]
+      dsimp [polygon4gBoundaryArcStepsReverse]
+      rw [List.reverse_cons, List.map_append,
+        polygon4gBoundaryArcStepsProjectedChain_append]
+      rw [show List.map Polygon4gBoundaryArcStep.reverse steps.reverse =
+        polygon4gBoundaryArcStepsReverse steps from rfl]
+      rw [show List.map Polygon4gBoundaryArcStep.reverse [step] =
+        [Polygon4gBoundaryArcStep.reverse step] from rfl]
+      have hcons :
+          polygon4gBoundaryArcStepsProjectedChain g (step :: steps) =
+            polygon4gBoundaryArcStepsProjectedChain g [step] +
+              polygon4gBoundaryArcStepsProjectedChain g steps := by
+        simp [polygon4gBoundaryArcStepsProjectedChain]
+      rw [hcons]
+      abel
+
+/-- The list-level chain identities needed to reverse endpoint repair
+data.  Boundary reversal is exact, while the comparison between a
+singular one-simplex and its reversed reparametrization is supplied by
+the standard prism homotopy. -/
+theorem polygon4gBoundaryArcStepsReverse_repair_identities
+    (g : ℕ) (steps : List (Polygon4gBoundaryArcStep g)) :
+    (singularChainComplexZ DiskC).d 1 0
+        (polygon4gBoundaryArcStepsDiskChain
+          (polygon4gBoundaryArcStepsReverse steps)) =
+      - (singularChainComplexZ DiskC).d 1 0
+        (polygon4gBoundaryArcStepsDiskChain steps) ∧
+    (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
+        (polygon4gBoundaryArcStepsProjectedChain g
+          (polygon4gBoundaryArcStepsReverse steps)) =
+      - (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
+        (polygon4gBoundaryArcStepsProjectedChain g steps) ∧
+    ∃ projectedReverseHomotopy :
+        SingularChainCoproduct (Polygon4g (g + 1)) 2,
+      (singularChainComplexZ (Polygon4g (g + 1))).d 2 1
+          projectedReverseHomotopy =
+        polygon4gBoundaryArcStepsProjectedChain g
+            (polygon4gBoundaryArcStepsReverse steps) +
+          polygon4gBoundaryArcStepsProjectedChain g steps := by
+  exact ⟨polygon4gBoundaryArcStepsReverse_disk_boundary steps,
+    polygon4gBoundaryArcStepsReverse_projected_boundary g steps,
+    polygon4gBoundaryArcStepsReverse_projected_homotopy g steps⟩
+
+
+/-- Valid endpoint data for an ordered subdivision of a singular
+one-simplex.  The fields record the endpoint and adjacency conditions
+needed for the boundary terms of the subdivided one-chain to telescope.
+The actual affine/prism construction is discharged by
+`singular_one_simplex_subdivision_homologous`. -/
+structure SingularOneSimplexSubdivisionData
+    (n : ℕ)
+    (subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2))) where
+  n_pos : 0 < n
+  first_endpoint :
+    subSimplex ⟨0, n_pos⟩ (stdSimplexVertex 0) = stdSimplexVertex 0
+  last_endpoint :
+    subSimplex ⟨n - 1, Nat.sub_lt n_pos zero_lt_one⟩
+        (stdSimplexVertex 1) =
+      stdSimplexVertex 1
+  adjacent_endpoints :
+    ∀ (i j : Fin n), i.1 + 1 = j.1 →
+      subSimplex i (stdSimplexVertex 1) =
+        subSimplex j (stdSimplexVertex 0)
 
 /-- Finite local lifting data for a singular one-simplex in the polygon
 quotient.  This records an actual finite subdivision by sub-simplices:
@@ -722,6 +1172,7 @@ structure Polygon4gSingularSimplexDiskLiftData
   n : ℕ
   n_pos : 0 < n
   subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2))
+  subdivision_valid : SingularOneSimplexSubdivisionData n subSimplex
   lift : Fin n → C(stdSimplex ℝ (Fin 2), DiskC)
   projects_on_piece :
     ∀ (i : Fin n) (s : stdSimplex ℝ (Fin 2)),
@@ -741,15 +1192,120 @@ structure Polygon4gSingularSimplexDiskLiftData
     (singularChainComplexZ (Polygon4g (g + 1))).d 2 1 subdivisionBoundary =
       subdividedChain - singularChainElement σ
 
+/-- Finite local-lift data for a polygon quotient path, before the
+pure singular-chain subdivision homology is attached.  This is the
+topological part of `polygon4g_singularSimplex_subdivision_lifts_to_disk`:
+subdivide the interval into finitely many pieces admitting disk lifts,
+and record that adjacent lifted endpoints differ by the polygon side
+relation. -/
+structure Polygon4gQuotientPathFiniteLiftSubdivision
+    (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) where
+  n : ℕ
+  n_pos : 0 < n
+  subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2))
+  subdivision_valid : SingularOneSimplexSubdivisionData n subSimplex
+  lift : Fin n → C(stdSimplex ℝ (Fin 2), DiskC)
+  projects_on_piece :
+    ∀ (i : Fin n) (s : stdSimplex ℝ (Fin 2)),
+      Polygon4g.mk (g + 1) (lift i s) = σ (subSimplex i s)
+  adjacent_endpoint_rel :
+    ∀ (i j : Fin n), i.1 + 1 = j.1 →
+      Polygon4g.SideRel (g + 1)
+        (lift i (stdSimplexVertex 1))
+        (lift j (stdSimplexVertex 0))
+
+/-- Local topology leaf: every polygon quotient singular one-simplex has
+a finite subdivision by pieces that lift to the closed disk, with
+adjacent lifted endpoints related by `SideRel`. -/
+theorem polygon4g_quotient_path_finite_lift_subdivision
+    (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) :
+    Nonempty (Polygon4gQuotientPathFiniteLiftSubdivision g σ) := by
+  -- Missing topology: compactness of the interval plus quotient charts
+  -- admitting local disk lifts.
+  sorry
+
+/-- Singular-chain subdivision prism leaf for one-simplices in canonical
+restricted-piece form.  The finite family of maps is exactly
+`σ ∘ subSimplex i`; the wrapper below handles propositionally equal
+families. -/
+theorem singular_one_simplex_subdivision_prism_homologous
+    (X : Type) [TopologicalSpace X]
+    (σ : C(stdSimplex ℝ (Fin 2), X))
+    (n : ℕ) (_n_pos : 0 < n)
+    (subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2)))
+    (_subdivision_valid : SingularOneSimplexSubdivisionData n subSimplex) :
+    ∃ subdivisionBoundary : SingularChainCoproduct X 2,
+      (singularChainComplexZ X).d 2 1 subdivisionBoundary =
+        (∑ i : Fin n,
+          singularChainElement (σ.comp (subSimplex i))) -
+            singularChainElement σ := by
+  -- Missing singular-chain prism construction for a valid ordered
+  -- subdivision of one simplex.
+  sorry
+
+/-- Singular-chain subdivision algebra for one-simplices.  Given the
+projected pieces of a finite subdivision, their sum is homologous to
+the original singular simplex by an explicit singular two-chain. -/
+theorem singular_one_simplex_subdivision_homologous
+    (X : Type) [TopologicalSpace X]
+    (σ : C(stdSimplex ℝ (Fin 2), X))
+    (n : ℕ) (_n_pos : 0 < n)
+    (subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2)))
+    (_subdivision_valid : SingularOneSimplexSubdivisionData n subSimplex)
+    (τ : Fin n → C(stdSimplex ℝ (Fin 2), X))
+    (_hτ : ∀ (i : Fin n) (s : stdSimplex ℝ (Fin 2)),
+      τ i s = σ (subSimplex i s)) :
+    ∃ subdivisionBoundary : SingularChainCoproduct X 2,
+      (singularChainComplexZ X).d 2 1 subdivisionBoundary =
+        (∑ i : Fin n, singularChainElement (τ i)) - singularChainElement σ := by
+  obtain ⟨subdivisionBoundary, hsubdivision⟩ :=
+    singular_one_simplex_subdivision_prism_homologous
+      X σ n _n_pos subSimplex _subdivision_valid
+  refine ⟨subdivisionBoundary, ?_⟩
+  rw [hsubdivision]
+  congr 1
+  refine Finset.sum_congr rfl ?_
+  intro i _hi
+  congr 1
+  ext s
+  exact (_hτ i s).symm
+
 /-- A singular one-simplex in the quotient polygon admits a finite disk
 lifting package.  This is the subdivision/lifting leaf of the polygon
 spanning proof. -/
 theorem polygon4g_singularSimplex_subdivision_lifts_to_disk
     (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) :
     Nonempty (Polygon4gSingularSimplexDiskLiftData g σ) := by
-  -- Missing topology: subdivide the interval so that each subpath lies in a
-  -- quotient chart admitting a lift to the closed disk cell.
-  sorry
+  obtain ⟨lifted⟩ := polygon4g_quotient_path_finite_lift_subdivision g σ
+  let projectedPiece : Fin lifted.n →
+      C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1)) :=
+    fun i => (polygon4gMkContinuousMap (g + 1)).comp (lifted.lift i)
+  have hpiece :
+      ∀ (i : Fin lifted.n) (s : stdSimplex ℝ (Fin 2)),
+        projectedPiece i s = σ (lifted.subSimplex i s) := by
+    intro i s
+    exact lifted.projects_on_piece i s
+  obtain ⟨subdivisionBoundary, hsubdivision⟩ :=
+    singular_one_simplex_subdivision_homologous
+      (Polygon4g (g + 1)) σ lifted.n lifted.n_pos
+      lifted.subSimplex lifted.subdivision_valid projectedPiece hpiece
+  refine ⟨{
+    n := lifted.n
+    n_pos := lifted.n_pos
+    subSimplex := lifted.subSimplex
+    subdivision_valid := lifted.subdivision_valid
+    lift := lifted.lift
+    projects_on_piece := lifted.projects_on_piece
+    adjacent_endpoint_rel := lifted.adjacent_endpoint_rel
+    subdividedChain :=
+      ∑ i : Fin lifted.n,
+        singularChainElement
+          ((polygon4gMkContinuousMap (g + 1)).comp (lifted.lift i))
+    subdividedChain_eq := rfl
+    subdivisionBoundary := subdivisionBoundary
+    subdivision_homology := ?_
+  }⟩
+  simpa [projectedPiece] using hsubdivision
 
 /-- Endpoint repair data for two disk points identified in the polygon
 quotient by `SideRel`.  The repair is a disk-side chain built from
@@ -832,6 +1388,258 @@ theorem polygon4gEndpointRepair_projected_eq_chainMap
   rw [repair.diskRepairChain_eq, repair.projectedRepairChain_eq]
   exact polygon4gBoundaryArcSteps_projected_eq_chainMap g repair.steps
 
+/-- Reflexive endpoint repair: no boundary arcs, no edge coefficients,
+and no two-chain are needed. -/
+theorem polygon4g_endpoint_pair_repaired_refl
+    (g : ℕ) (p : DiskC) :
+    Nonempty (Polygon4gEndpointRepairData g p p (Relation.EqvGen.refl p)) := by
+  refine ⟨{
+    coeff := 0
+    diskRepairChain := 0
+    projectedRepairChain := 0
+    edgeChainBoundary := 0
+    steps := []
+    steps_connect := Polygon4gBoundaryArcListConnects.nil p
+    diskRepairChain_eq := ?_
+    projectedRepairChain_eq := ?_
+    diskRepairBoundary := ?_
+    projectedRepairBoundary := ?_
+    projectedRepair_homologous_edge := ?_
+  }⟩
+  · simp
+  · simp [polygon4gBoundaryArcStepsProjectedChain]
+  · simp
+  · simp
+  · rw [map_zero]
+    have hsum :
+        (∑ e : Fin (2 * (g + 1)),
+          ((0 : Polygon4gAbelianization g) e) • edgeChain g e :
+            SingularChainCoproduct (Polygon4g (g + 1)) 1) = 0 := by
+      refine Finset.sum_eq_zero ?_
+      intro e _he
+      change (0 : ℤ) • edgeChain g e = 0
+      exact zero_zsmul (edgeChain g e)
+    rw [hsum, sub_zero]
+
+/-- Edge-basis index corresponding to the `aᵢ` side pair. -/
+def polygon4g_aPair_edgeIndex (g : ℕ) (i : Fin (g + 1)) :
+    Fin (2 * (g + 1)) :=
+  ⟨2 * i.val, by omega⟩
+
+/-- Edge-basis index corresponding to the `bᵢ` side pair. -/
+def polygon4g_bPair_edgeIndex (g : ℕ) (i : Fin (g + 1)) :
+    Fin (2 * (g + 1)) :=
+  ⟨2 * i.val + 1, by omega⟩
+
+lemma edgeArcIdx_aPair_edgeIndex (g : ℕ) (i : Fin (g + 1)) :
+    edgeArcIdx g (polygon4g_aPair_edgeIndex g i) = 4 * i.val := by
+  unfold edgeArcIdx polygon4g_aPair_edgeIndex
+  rw [Nat.mul_div_right _ (by norm_num : 0 < 2)]
+  simp
+
+lemma edgeArcIdx_bPair_edgeIndex (g : ℕ) (i : Fin (g + 1)) :
+    edgeArcIdx g (polygon4g_bPair_edgeIndex g i) = 4 * i.val + 1 := by
+  unfold edgeArcIdx polygon4g_bPair_edgeIndex
+  have hdiv : (2 * i.val + 1) / 2 = i.val := by
+    rw [show 2 * i.val + 1 = 1 + 2 * i.val by omega]
+    rw [Nat.add_mul_div_left _ _ (by norm_num : 0 < 2)]
+    simp
+  have hmod : (2 * i.val + 1) % 2 = 1 := by
+    rw [show 2 * i.val + 1 = 1 + 2 * i.val by omega]
+    rw [Nat.add_mul_mod_self_left]
+  rw [hdiv, hmod]
+
+/-- Local primitive side-strip repair.  This is the single geometric
+leaf behind the `aᵢ` and `bᵢ` generator repairs: for one canonical
+edge basis arc and its opposite paired side, build the finite boundary
+arc repair and the side-strip two-chain relating its projection to the
+edge generator. -/
+theorem polygon4g_partial_side_arc_homologous_to_edge_chain
+    (g : ℕ) (e : Fin (2 * (g + 1))) (sideArc : ℕ) (t : ℝ)
+    (ht : t ∈ Set.Icc (0 : ℝ) 1)
+    (hside : edgeArcIdx g e = sideArc)
+    (hrel : Polygon4g.SideRel (g + 1)
+      (boundaryParam (g + 1) sideArc t)
+      (boundaryParam (g + 1) (sideArc + 2) (1 - t))) :
+    Nonempty (Polygon4gEndpointRepairData g
+      (boundaryParam (g + 1) sideArc t)
+      (boundaryParam (g + 1) (sideArc + 2) (1 - t))
+      hrel) := by
+  -- Missing primitive side-strip geometry: build the partial boundary
+  -- arc chain from `sideArc` through the adjacent edge to `sideArc + 2`,
+  -- then construct the projected side-strip two-chain homologous to
+  -- `edgeChain g e`.  This lemma is local to one edge and interval
+  -- parameter; it contains no arbitrary cycles or Hurewicz spanning data.
+  sorry
+
+/-- Primitive endpoint repair for one `aᵢ` side-pairing generator. -/
+theorem polygon4g_endpoint_pair_repaired_by_aPair
+    (g : ℕ) (i : Fin (g + 1)) (t : ℝ)
+    (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    Nonempty (Polygon4gEndpointRepairData g
+      (boundaryParam (g + 1) (4 * i.val) t)
+      (boundaryParam (g + 1) (4 * i.val + 2) (1 - t))
+      (Relation.EqvGen.rel
+        (boundaryParam (g + 1) (4 * i.val) t)
+        (boundaryParam (g + 1) (4 * i.val + 2) (1 - t))
+        (Polygon4g.SideGen.a_pair i t ht))) := by
+  simpa [edgeArcIdx_aPair_edgeIndex] using
+    polygon4g_partial_side_arc_homologous_to_edge_chain
+      g (polygon4g_aPair_edgeIndex g i) (4 * i.val) t ht
+      (edgeArcIdx_aPair_edgeIndex g i)
+      (Relation.EqvGen.rel
+        (boundaryParam (g + 1) (4 * i.val) t)
+        (boundaryParam (g + 1) (4 * i.val + 2) (1 - t))
+        (Polygon4g.SideGen.a_pair i t ht))
+
+/-- Primitive endpoint repair for one `bᵢ` side-pairing generator. -/
+theorem polygon4g_endpoint_pair_repaired_by_bPair
+    (g : ℕ) (i : Fin (g + 1)) (t : ℝ)
+    (ht : t ∈ Set.Icc (0 : ℝ) 1) :
+    Nonempty (Polygon4gEndpointRepairData g
+      (boundaryParam (g + 1) (4 * i.val + 1) t)
+      (boundaryParam (g + 1) (4 * i.val + 3) (1 - t))
+      (Relation.EqvGen.rel
+        (boundaryParam (g + 1) (4 * i.val + 1) t)
+        (boundaryParam (g + 1) (4 * i.val + 3) (1 - t))
+        (Polygon4g.SideGen.b_pair i t ht))) := by
+  simpa [edgeArcIdx_bPair_edgeIndex] using
+    polygon4g_partial_side_arc_homologous_to_edge_chain
+      g (polygon4g_bPair_edgeIndex g i) (4 * i.val + 1) t ht
+      (edgeArcIdx_bPair_edgeIndex g i)
+      (Relation.EqvGen.rel
+        (boundaryParam (g + 1) (4 * i.val + 1) t)
+        (boundaryParam (g + 1) (4 * i.val + 3) (1 - t))
+        (Polygon4g.SideGen.b_pair i t ht))
+
+/-- Primitive endpoint repair for one side-pairing generator, assembled
+from the two explicit `aᵢ` and `bᵢ` generator cases. -/
+theorem polygon4g_endpoint_pair_repaired_by_sideGen
+    (g : ℕ) (p q : DiskC)
+    (hgen : Polygon4g.SideGen (g + 1) p q) :
+    Nonempty (Polygon4gEndpointRepairData g p q
+      (Relation.EqvGen.rel p q hgen)) := by
+  cases hgen with
+  | a_pair i t ht =>
+      exact polygon4g_endpoint_pair_repaired_by_aPair g i t ht
+  | b_pair i t ht =>
+      exact polygon4g_endpoint_pair_repaired_by_bPair g i t ht
+
+/-- Reversal of endpoint repair data.  The reversed boundary-arc list is
+constructed above, but ordinary singular chains also need the prism
+homotopy comparing a simplex with its reversed reparametrization; that
+local chain-homotopy computation is kept as the remaining symmetry leaf. -/
+theorem polygon4g_endpoint_pair_repaired_symm
+    (g : ℕ) (p q : DiskC)
+    (hrel : Polygon4g.SideRel (g + 1) p q)
+    (repair : Polygon4gEndpointRepairData g p q hrel) :
+    Nonempty (Polygon4gEndpointRepairData g q p
+      (Relation.EqvGen.symm p q hrel)) := by
+  obtain ⟨hdiskBoundary, hprojectedBoundary,
+    ⟨projectedReverseHomotopy, hprojectedReverseHomotopy⟩⟩ :=
+    polygon4gBoundaryArcStepsReverse_repair_identities g repair.steps
+  refine ⟨{
+    coeff := - repair.coeff
+    diskRepairChain :=
+      polygon4gBoundaryArcStepsDiskChain
+        (polygon4gBoundaryArcStepsReverse repair.steps)
+    projectedRepairChain :=
+      polygon4gBoundaryArcStepsProjectedChain g
+        (polygon4gBoundaryArcStepsReverse repair.steps)
+    edgeChainBoundary :=
+      projectedReverseHomotopy - repair.edgeChainBoundary
+    steps := polygon4gBoundaryArcStepsReverse repair.steps
+    steps_connect := Polygon4gBoundaryArcListConnects.reverse repair.steps_connect
+    diskRepairChain_eq := ?_
+    projectedRepairChain_eq := ?_
+    diskRepairBoundary := ?_
+    projectedRepairBoundary := ?_
+    projectedRepair_homologous_edge := ?_
+  }⟩
+  · rfl
+  · rfl
+  · have horig :
+        (singularChainComplexZ DiskC).d 1 0
+            (polygon4gBoundaryArcStepsDiskChain repair.steps) =
+          pointChain DiskC q - pointChain DiskC p := by
+        rw [show polygon4gBoundaryArcStepsDiskChain repair.steps =
+          repair.diskRepairChain from repair.diskRepairChain_eq.symm]
+        exact repair.diskRepairBoundary
+    rw [hdiskBoundary, horig]
+    abel
+  · have horig :
+        (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
+            (polygon4gBoundaryArcStepsProjectedChain g repair.steps) =
+          pointChain (Polygon4g (g + 1)) (Polygon4g.mk (g + 1) q) -
+            pointChain (Polygon4g (g + 1)) (Polygon4g.mk (g + 1) p) := by
+        rw [show polygon4gBoundaryArcStepsProjectedChain g repair.steps =
+          repair.projectedRepairChain from repair.projectedRepairChain_eq.symm]
+        exact repair.projectedRepairBoundary
+    rw [hprojectedBoundary, horig]
+    abel
+  · rw [map_sub, hprojectedReverseHomotopy,
+      repair.projectedRepair_homologous_edge]
+    have hsum :
+        (∑ e : Fin (2 * (g + 1)),
+          (-repair.coeff) e • edgeChain g e) =
+          - (∑ e : Fin (2 * (g + 1)),
+            repair.coeff e • edgeChain g e) := by
+      rw [← Finset.sum_neg_distrib]
+      refine Finset.sum_congr rfl ?_
+      intro e _he
+      rw [Pi.neg_apply, neg_zsmul]
+    rw [hsum]
+    rw [show polygon4gBoundaryArcStepsProjectedChain g repair.steps =
+      repair.projectedRepairChain from repair.projectedRepairChain_eq.symm]
+    abel
+
+/-- Algebraic concatenation of endpoint repair data.  This should append
+the step lists, add coefficients, and add the stored two-chains. -/
+theorem polygon4g_endpoint_pair_repaired_trans
+    (g : ℕ) (p q r : DiskC)
+    (hpq : Polygon4g.SideRel (g + 1) p q)
+    (hqr : Polygon4g.SideRel (g + 1) q r)
+    (repair_pq : Polygon4gEndpointRepairData g p q hpq)
+    (repair_qr : Polygon4gEndpointRepairData g q r hqr) :
+    Nonempty (Polygon4gEndpointRepairData g p r
+      (Relation.EqvGen.trans p q r hpq hqr)) := by
+  refine ⟨{
+    coeff := repair_pq.coeff + repair_qr.coeff
+    diskRepairChain := repair_pq.diskRepairChain + repair_qr.diskRepairChain
+    projectedRepairChain := repair_pq.projectedRepairChain + repair_qr.projectedRepairChain
+    edgeChainBoundary := repair_pq.edgeChainBoundary + repair_qr.edgeChainBoundary
+    steps := repair_pq.steps ++ repair_qr.steps
+    steps_connect :=
+      Polygon4gBoundaryArcListConnects.append
+        repair_pq.steps_connect repair_qr.steps_connect
+    diskRepairChain_eq := ?_
+    projectedRepairChain_eq := ?_
+    diskRepairBoundary := ?_
+    projectedRepairBoundary := ?_
+    projectedRepair_homologous_edge := ?_
+  }⟩
+  · rw [repair_pq.diskRepairChain_eq, repair_qr.diskRepairChain_eq]
+    simp [List.map_append]
+  · rw [repair_pq.projectedRepairChain_eq, repair_qr.projectedRepairChain_eq,
+      polygon4gBoundaryArcStepsProjectedChain_append]
+  · rw [map_add, repair_pq.diskRepairBoundary, repair_qr.diskRepairBoundary]
+    abel
+  · rw [map_add, repair_pq.projectedRepairBoundary, repair_qr.projectedRepairBoundary]
+    abel
+  · rw [map_add, repair_pq.projectedRepair_homologous_edge,
+      repair_qr.projectedRepair_homologous_edge]
+    have hsum :
+        (∑ e : Fin (2 * (g + 1)),
+          (repair_pq.coeff + repair_qr.coeff) e • edgeChain g e) =
+          (∑ e : Fin (2 * (g + 1)), repair_pq.coeff e • edgeChain g e) +
+            (∑ e : Fin (2 * (g + 1)), repair_qr.coeff e • edgeChain g e) := by
+      rw [← Finset.sum_add_distrib]
+      refine Finset.sum_congr rfl ?_
+      intro e _he
+      rw [Pi.add_apply, add_zsmul]
+    rw [hsum]
+    abel
+
 /-- If two lifted endpoints project to the same polygon point, their
 endpoint difference is repaired by a finite integral sum of polygon
 edge arcs. -/
@@ -839,10 +1647,18 @@ theorem polygon4g_endpoint_pair_repaired_by_edge_arcs
     (g : ℕ) (p q : DiskC)
     (hrel : Polygon4g.SideRel (g + 1) p q) :
     Nonempty (Polygon4gEndpointRepairData g p q hrel) := by
-  -- Missing boundary combinatorics: analyze `Polygon4g.SideRel`, turn the
-  -- side-pairing path between `p` and `q` into boundary arcs, and identify
-  -- those arcs with the concrete edge chains.
-  sorry
+  induction hrel with
+  | rel _ _ hgen =>
+      exact polygon4g_endpoint_pair_repaired_by_sideGen g _ _ hgen
+  | refl x =>
+      exact polygon4g_endpoint_pair_repaired_refl g x
+  | symm _ _ _ ih =>
+      obtain ⟨repair⟩ := ih
+      exact polygon4g_endpoint_pair_repaired_symm g _ _ _ repair
+  | trans _ _ _ _ _ ih₁ ih₂ =>
+      obtain ⟨repair₁⟩ := ih₁
+      obtain ⟨repair₂⟩ := ih₂
+      exact polygon4g_endpoint_pair_repaired_trans g _ _ _ _ _ repair₁ repair₂
 
 /-- Disk contractibility package, in the homology-level form needed by
 the polygon projection step: every singular one-cycle in `DiskC` has
@@ -1210,19 +2026,258 @@ structure Polygon4gCycleEndpointPairFamily
           pointChain DiskC (rightEndpoint pair) -
             pointChain DiskC (leftEndpoint pair))
 
+/-- Endpoint relation pairs extracted from the boundary of the summed
+lifted chain, before endpoint repairs are attached. -/
+structure Polygon4gCycleEndpointRelPairFamily
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp) where
+  Pair : Type
+  pairFintype : Fintype Pair
+  leftEndpoint : Pair → DiskC
+  rightEndpoint : Pair → DiskC
+  endpointRel :
+    ∀ pair : Pair,
+      Polygon4g.SideRel (g + 1) (leftEndpoint pair) (rightEndpoint pair)
+  lifted_boundary_eq_pairs :
+    (singularChainComplexZ DiskC).d 1 0 lifted.liftedDiskChain =
+      (@Finset.univ Pair pairFintype).sum
+        (fun pair =>
+          pointChain DiskC (rightEndpoint pair) -
+            pointChain DiskC (leftEndpoint pair))
+
+/-- The projected boundary of the lifted disk chain vanishes in the
+polygon quotient.  This is the chain-map/naturality part of endpoint
+pair extraction, before finite endpoint pairing is applied. -/
+structure Polygon4gLiftedBoundaryProjectsToZero
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp) where
+  projected_lifted_boundary_zero :
+    ModuleCat.Hom.hom
+      ((((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+        (ModuleCat.of ℤ ℤ)).map
+          (TopCat.ofHom (polygon4gMkContinuousMap (g + 1)))).f 0)
+        ((singularChainComplexZ DiskC).d 1 0 lifted.liftedDiskChain) = 0
+
+/-- The boundary of the summed lifted disk chain expanded into the
+finite list of endpoints of the lifted subdivided one-simplices. -/
+structure Polygon4gLiftedEndpointBoundaryExpansion
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp) where
+  lifted_boundary_eq_endpoint_sum :
+    (singularChainComplexZ DiskC).d 1 0 lifted.liftedDiskChain =
+      (@Finset.univ decomp.Simplex decomp.simplexFintype).sum
+        (fun s => decomp.coeff s •
+          ((@Finset.univ (Fin ((lifted.simplexLift s).n)) inferInstance).sum
+            (fun i =>
+            pointChain DiskC ((lifted.simplexLift s).lift i (stdSimplexVertex 1)) -
+              pointChain DiskC
+                ((lifted.simplexLift s).lift i (stdSimplexVertex 0)))))
+
+/-- The quotient image of the expanded lifted endpoint boundary is zero.
+This is still before the finite matching/permutation argument. -/
+structure Polygon4gProjectedEndpointBoundaryCancellation
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp) where
+  projected_endpoint_sum_zero :
+    (@Finset.univ decomp.Simplex decomp.simplexFintype).sum
+      (fun s =>
+        decomp.coeff s •
+          (((@Finset.univ (Fin ((lifted.simplexLift s).n)) inferInstance).sum
+              (fun i =>
+                pointChain (Polygon4g (g + 1))
+                  (Polygon4g.mk (g + 1)
+                    ((lifted.simplexLift s).lift i (stdSimplexVertex 1))))) -
+            ((@Finset.univ (Fin ((lifted.simplexLift s).n)) inferInstance).sum
+              (fun i =>
+                pointChain (Polygon4g (g + 1))
+                  (Polygon4g.mk (g + 1)
+                    ((lifted.simplexLift s).lift i (stdSimplexVertex 0))))))) = 0
+
+/-- Chain-boundary expansion part of endpoint extraction: no quotient
+pairing is involved here, only finite-sum algebra and the boundary
+formula for singular one-simplices. -/
+theorem polygon4g_lifted_endpoint_boundary_expansion
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp) :
+    Polygon4gLiftedEndpointBoundaryExpansion g z decomp lifted := by
+  classical
+  refine ⟨?_⟩
+  rw [lifted.liftedDiskChain_eq, map_sum]
+  refine Finset.sum_congr rfl ?_
+  intro s _hs
+  rw [map_zsmul, map_sum]
+  congr 1
+  refine Finset.sum_congr rfl ?_
+  intro i _hi
+  exact singularChainElement_boundary_one_simplex DiskC
+    ((lifted.simplexLift s).lift i)
+
+/-- Project the expanded lifted endpoint boundary to the polygon
+quotient and use the chain-map zero result. -/
+theorem polygon4g_projected_endpoint_boundary_cancellation
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp)
+    (projectedZero :
+      Polygon4gLiftedBoundaryProjectsToZero g z hz decomp lifted)
+    (endpointExpansion :
+      Polygon4gLiftedEndpointBoundaryExpansion g z decomp lifted) :
+    Polygon4gProjectedEndpointBoundaryCancellation g z hz decomp lifted := by
+  classical
+  let F :=
+    (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+      (ModuleCat.of ℤ ℤ)).map
+        (TopCat.ofHom (polygon4gMkContinuousMap (g + 1))))
+  have hmap :=
+    congrArg (fun c => ModuleCat.Hom.hom (F.f 0) c)
+      endpointExpansion.lifted_boundary_eq_endpoint_sum
+  have hzero :
+      ModuleCat.Hom.hom (F.f 0)
+        ((singularChainComplexZ DiskC).d 1 0 lifted.liftedDiskChain) = 0 := by
+    simpa [F] using projectedZero.projected_lifted_boundary_zero
+  have hmap' :
+      ModuleCat.Hom.hom (F.f 0)
+          ((singularChainComplexZ DiskC).d 1 0 lifted.liftedDiskChain) =
+        ModuleCat.Hom.hom (F.f 0)
+          ((@Finset.univ decomp.Simplex decomp.simplexFintype).sum
+            (fun s => decomp.coeff s •
+              ((@Finset.univ (Fin ((lifted.simplexLift s).n)) inferInstance).sum
+                (fun i =>
+                  pointChain DiskC
+                      ((lifted.simplexLift s).lift i (stdSimplexVertex 1)) -
+                    pointChain DiskC
+                      ((lifted.simplexLift s).lift i (stdSimplexVertex 0)))))) := by
+    simpa using hmap
+  rw [hzero] at hmap'
+  rw [map_sum] at hmap'
+  simp only [map_zsmul] at hmap'
+  simp [F, pointChain_map] at hmap'
+  exact ⟨hmap'.symm⟩
+
+/-- Chain-map part of endpoint extraction: use the projected cycle
+condition and subdivision homology to show the projected lifted boundary
+is zero. -/
+theorem polygon4g_lifted_boundary_projects_to_zero
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp) :
+    Nonempty (Polygon4gLiftedBoundaryProjectsToZero g z hz decomp lifted) := by
+  let F :=
+    (((AlgebraicTopology.singularChainComplexFunctor (ModuleCat ℤ)).obj
+      (ModuleCat.of ℤ ℤ)).map
+        (TopCat.ofHom (polygon4gMkContinuousMap (g + 1))))
+  let K := singularChainComplexZ (Polygon4g (g + 1))
+  have hcomm :
+      ModuleCat.Hom.hom (F.f 0)
+          ((singularChainComplexZ DiskC).d 1 0 lifted.liftedDiskChain) =
+        K.d 1 0 (ModuleCat.Hom.hom (F.f 1) lifted.liftedDiskChain) := by
+    rw [← ModuleCat.comp_apply ((singularChainComplexZ DiskC).d 1 0) (F.f 0)]
+    rw [← ModuleCat.comp_apply (F.f 1) (K.d 1 0)]
+    exact congrArg
+      (fun φ : (singularChainComplexZ DiskC).X 1 ⟶ K.X 0 =>
+        ModuleCat.Hom.hom φ lifted.liftedDiskChain)
+      (F.comm 1 0).symm
+  have hproj :
+      ModuleCat.Hom.hom (F.f 1) lifted.liftedDiskChain =
+        lifted.projectedSubdivisionChain := by
+    simpa [F] using
+      polygon4g_projectedSubdivisionChain_eq_chainMap_liftedDiskChain
+        g z decomp lifted
+  have hboundary_projected :
+      K.d 1 0 lifted.projectedSubdivisionChain = 0 := by
+    have hdd :
+        K.d 1 0 (K.d 2 1 lifted.subdivisionBoundary) = 0 := by
+      rw [← ModuleCat.comp_apply (K.d 2 1) (K.d 1 0)]
+      exact congrArg
+        (fun φ : K.X 2 ⟶ K.X 0 =>
+          ModuleCat.Hom.hom φ lifted.subdivisionBoundary)
+        (HomologicalComplex.d_comp_d K 2 1 0)
+    have hsub := congrArg (fun c => K.d 1 0 c) lifted.subdivision_homology
+    change K.d 1 0 (K.d 2 1 lifted.subdivisionBoundary) =
+      K.d 1 0 (lifted.projectedSubdivisionChain - z) at hsub
+    rw [hdd, map_sub, hz, sub_zero] at hsub
+    exact hsub.symm
+  refine ⟨{ projected_lifted_boundary_zero := ?_ }⟩
+  rw [hcomm, hproj, hboundary_projected]
+
+/-- Finite endpoint-pairing leaf: once the projected boundary of a
+finite disk endpoint chain is zero, pair the disk endpoints whose
+projections agree, and convert those equal projections to `SideRel`. -/
+theorem finite_projected_endpoint_boundary_zero_pairs
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp)
+    (_projectedZero :
+      Polygon4gLiftedBoundaryProjectsToZero g z hz decomp lifted)
+    (_endpointExpansion :
+      Polygon4gLiftedEndpointBoundaryExpansion g z decomp lifted)
+    (_projectedEndpointCancellation :
+      Polygon4gProjectedEndpointBoundaryCancellation g z hz decomp lifted) :
+    Nonempty (Polygon4gCycleEndpointRelPairFamily g z hz decomp lifted) := by
+  -- Missing finite-support quotient bookkeeping: use the already
+  -- expanded lifted endpoint boundary and projected vanishing to pair
+  -- endpoint terms with equal quotient images, then convert those equal
+  -- projections to `SideRel`.
+  sorry
+
 /-- Atomic endpoint-pair extraction leaf: the polygon cycle condition
 forces the boundary of the lifted disk chain to be a finite sum of
-`SideRel` endpoint pairs. -/
+`SideRel` endpoint pairs.  Endpoint repairs are attached separately. -/
+theorem polygon4g_cycle_endpoint_rel_pairs_from_boundary_zero
+    (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
+    (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
+    (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
+    (lifted : Polygon4gLiftedSupportData g z decomp) :
+    Nonempty (Polygon4gCycleEndpointRelPairFamily g z hz decomp lifted) := by
+  obtain ⟨projectedZero⟩ :=
+    polygon4g_lifted_boundary_projects_to_zero g z hz decomp lifted
+  let endpointExpansion :=
+    polygon4g_lifted_endpoint_boundary_expansion g z decomp lifted
+  let projectedEndpointCancellation :=
+    polygon4g_projected_endpoint_boundary_cancellation
+      g z hz decomp lifted projectedZero endpointExpansion
+  exact finite_projected_endpoint_boundary_zero_pairs
+    g z hz decomp lifted projectedZero endpointExpansion
+      projectedEndpointCancellation
+
+/-- Endpoint-pair extraction with endpoint repairs attached. -/
 theorem polygon4g_cycle_endpoint_pairs_from_boundary_zero
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
     (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
     (lifted : Polygon4gLiftedSupportData g z decomp) :
     Nonempty (Polygon4gCycleEndpointPairFamily g z hz decomp lifted) := by
-  -- Missing boundary algebra: use `hz` and the projected subdivision
-  -- relation to show the lifted-chain boundary consists exactly of endpoint
-  -- pairs whose projections agree, hence are `SideRel` pairs.
-  sorry
+  classical
+  obtain ⟨pairs⟩ :=
+    polygon4g_cycle_endpoint_rel_pairs_from_boundary_zero g z hz decomp lifted
+  let repair :
+      ∀ pair : pairs.Pair,
+        Polygon4gEndpointRepairData g (pairs.leftEndpoint pair)
+          (pairs.rightEndpoint pair) (pairs.endpointRel pair) :=
+    fun pair => Classical.choice
+      (polygon4g_endpoint_pair_repaired_by_edge_arcs g
+        (pairs.leftEndpoint pair) (pairs.rightEndpoint pair)
+        (pairs.endpointRel pair))
+  exact ⟨{
+    Pair := pairs.Pair
+    pairFintype := pairs.pairFintype
+    leftEndpoint := pairs.leftEndpoint
+    rightEndpoint := pairs.rightEndpoint
+    endpointRel := pairs.endpointRel
+    repair := repair
+    lifted_boundary_eq_pairs := pairs.lifted_boundary_eq_pairs
+  }⟩
 
 /-- The chain-algebra output of summing a finite family of endpoint
 repairs.  This is separated from the final homology statement so the
