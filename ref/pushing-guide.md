@@ -33,9 +33,12 @@ After the rebase, run the full project verification:
 ```bash
 lake exe cache get
 lake build Jacobian.Solution
+python3 scripts/blueprint_audit.py
 ```
 
 The build must succeed. Warnings of the form `declaration uses sorry` are expected while the project still has open sorries. New non-sorry warnings are not acceptable.
+
+The blueprint audit must also pass. If `scripts/blueprint_audit.py` fails, stop and report the failure to the manager instead of pushing or merging.
 
 ## 4. Update sorries.jsonl Last
 
