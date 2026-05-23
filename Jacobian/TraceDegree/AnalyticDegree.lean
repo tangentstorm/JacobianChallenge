@@ -4,6 +4,7 @@ import Jacobian.HolomorphicForms.TraceSpec
 import Jacobian.TraceDegree.PiecewiseC1Instance
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Jacobian.Blueprint.Sec02.BranchedDegreeFromHolomorphic
+import Jacobian.ComplexTorus.Smul
 
 set_option linter.unusedSectionVars false
 
@@ -384,35 +385,51 @@ theorem pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul
 Jacobian push-pull identity, descended from the trace-pullback
 identity on holomorphic 1-forms through the period quotient.
 
-### Design status
+### Status (post-rewire)
 
-The vector-level push-pull identity
-`pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul` is now
-proved sorry-free using the **corrected** dual-coordinate pullback
-`traceDualPullbackLift` (= transpose of the trace matrix). However,
-the existing `analyticPullback` is built from
-`pullbackTraceLiftCLM = holomorphicTraceCoord` (= the form-pullback
-matrix), which is the wrong representative for Jacobian pullback on
-the dual-quotient `BasisAnalyticJacobian`.
-
-Closing `analyticPushPull_provider` against the existing
-`analyticPullback` would require restating
-`transferCycle_periodPairing_naturality` against
-`traceDualPullbackLift` (the corrected representative) and re-wiring
-`analyticPullback`'s `mapClm` to use that lattice preservation. This
-is a cascading refactor (the existing functoriality lemmas
-`analyticPullback_id`, `analyticPullback_comp` would need re-proof in
-the new representation).
-
-This narrow leaf therefore remains a `sorry`, but the **content** of
-the push-pull identity is sorry-free at the corrected vector level
-via `pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul`. -/
+Sorry-free. The previous rewire of `analyticPullback` to use the
+corrected dual-coordinate representative `traceDualPullbackLiftCLM`
+(= transpose of the trace matrix) — together with the
+lattice-preservation theorem
+`traceDualPullbackLift_preserves_lattice_raw` — descends the
+vector-level push-pull identity
+`pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul` through
+the period quotient via `ComplexTorus.mapClm` and
+`analyticPushforward_mk_spec_raw`. -/
 noncomputable def analyticPushPull_provider (f : X → Y)
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
     analyticPushforward f hf (analyticPullback f hf Q) =
       (analyticDegree f hf) • Q := by
-  sorry
+  -- Lift Q = mk v.
+  obtain ⟨v, rfl⟩ :=
+    ComplexTorus.mk_surjective _ (periodFullComplexLattice Y) Q
+  -- Descend the pullback: analyticPullback (mk v) = mk (basisDualPullback f hf v).
+  have hpull :
+      analyticPullback f hf
+        (ComplexTorus.mk _ (periodFullComplexLattice Y) v) =
+      ComplexTorus.mk _ (periodFullComplexLattice X)
+        ((traceDualPullbackLift f hf).toAddMonoidHom v) := by
+    -- Both equal `mapClm traceDualPullbackLiftCLM _ (mk v)` definitionally.
+    rfl
+  rw [hpull]
+  -- Descend the pushforward.
+  rw [analyticPushforward_mk_spec_raw f hf
+    ((traceDualPullbackLift f hf).toAddMonoidHom v)]
+  -- Vector-level identity:
+  -- pushforwardTraceLift ((traceDualPullbackLift) v) = (deg : ℂ) • v.
+  have hvec :
+      pushforwardTraceLift f hf
+        ((traceDualPullbackLift f hf).toAddMonoidHom v) =
+      (analyticDegree f hf : ℂ) • v := by
+    have h := pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul f hf
+    have happ := DFunLike.congr_fun h v
+    simpa [AddMonoidHom.comp_apply, LinearMap.smul_apply, LinearMap.id_apply]
+      using happ
+  rw [hvec]
+  -- mk ((n : ℂ) • v) = mk (n • v) = n • mk v.
+  rw [Nat.cast_smul_eq_nsmul ℂ (analyticDegree f hf) v]
+  exact ComplexTorus.mk_nsmul _ (analyticDegree f hf) v
 
 /-- Bundled analytic trace/degree contract for a holomorphic map of compact
 Riemann surfaces.
@@ -513,7 +530,7 @@ are sorry-free.
 
 ```
 analyticPushforward_analyticPullback
-  └── analyticPushPull_provider                        (narrow sorry)
+  └── analyticPushPull_provider                        (sorry-free)
         ↑ descended from
         trace_pullback_provider                        (sorry-free)
               ↑ assembled from
