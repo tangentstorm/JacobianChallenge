@@ -22,25 +22,22 @@ Before you may write or update `result.md`, you **must** complete the following 
 
 1. Run `lake exe cache get` if you have not done so recently.
 2. Run `lake build Jacobian.Solution`.
-3. Run `python3 scripts/fix-sorries.py`.
-4. Run `python3 scripts/audit-sorries.py sorries.jsonl`.
-5. Check the build output for any warnings that are **not** of the form "declaration uses `sorry`". You must not introduce new linter warnings. The presence of non-sorry warnings is a failure.
+3. Check the build output for any warnings that are **not** of the form "declaration uses `sorry`". You must not introduce new linter warnings. The presence of non-sorry warnings is a failure.
 
 You must only claim a task is complete when:
 - `lake build Jacobian.Solution` succeeds with no disallowed warnings,
-- `audit-sorries.py` passes, and
 - the relevant sorries have been substantively reduced (either proved or replaced by strictly narrower, named providers).
 
-Running only a partial build or skipping the linter/audit steps is not permitted.
+Running only a partial build is not enough to mark the assignment ready unless your current `goal.md` explicitly says otherwise. If you only ran partial builds, report that clearly in `result.md`.
 
 ## 3. Working with sorries.jsonl
 
 You must treat `sorries.jsonl` with extreme care.
 
 - You may **not** modify `sorries.jsonl` during normal work.
-- You are only permitted to run `fix-sorries.py` and `audit-sorries.py` as part of final verification.
+- You must not run `fix-sorries.py` or `audit-sorries.py` during the proving stage unless your current `goal.md` explicitly instructs you to.
 - You must not manually edit `sorries.jsonl` to adjust upstream/downstream relationships, effort estimates, or status unless explicitly instructed to do so in your current `goal.md`.
-- During a rebase, you must not attempt to manually resolve complex conflicts in `sorries.jsonl`. You must stop and report the situation to the manager.
+- Updating and auditing `sorries.jsonl` is part of the post-ACCEPT pushing workflow, not part of proof development. See `ref/pushing-guide.md`.
 
 Violations of these rules will be considered a failure to follow instructions.
 
@@ -55,7 +52,6 @@ Every `result.md` you write must contain at minimum:
 - Which previous frontier sorries are now direct-sorry-free as a result of your work.
 - Which sorries remain and why (be precise).
 - The output of `lake build Jacobian.Solution` (or confirmation that it passed cleanly).
-- The output of `audit-sorries.py`.
 - A brief assessment of the quality of the progress (e.g., "This is a clean provider decomposition" or "This is only a partial reduction and the core difficulty remains").
 
 You must not exaggerate progress or present reorganization as new mathematical content.
@@ -99,15 +95,6 @@ You are expected to make forward progress. If you find yourself unable to do so:
 
 Repeated failure to recognize when you are stuck will be treated as poor execution.
 
-## 6. Rebase and Merge Behavior
-
-At the start of every session, you **must** rebase onto the latest `origin/main` unless explicitly told otherwise.
-
-- You must run a clean rebase.
-- After rebasing, you must run `lake exe cache get` followed by `lake build Jacobian.Solution` before continuing work.
-- You must not leave the repository in a conflicted or dirty state when you finish a session.
-- If a rebase creates difficult conflicts in `sorries.jsonl` or core files, you must stop and report the situation rather than forcing a bad merge.
-
 ## 7. Collaboration with the Manager
 
 The manager (jc0) is responsible for maintaining global coherence. You must support this:
@@ -123,7 +110,7 @@ You must not engage in the following behaviors:
 
 - Shuffling sorries between files or theorems without creating meaningfully narrower providers.
 - Proving the same mathematical content in multiple places under different names.
-- Making large changes to `sorries.jsonl` without strong justification.
+- Modifying `sorries.jsonl` during proof development.
 - Claiming "progress" when the core difficulty has simply been moved or renamed.
 - Ignoring linter warnings or build failures.
 - Continuing to work for long periods after becoming stuck without clearly signaling it.
@@ -134,11 +121,7 @@ You must not engage in the following behaviors:
 You are expected to be competent with the following commands and use them appropriately:
 
 - `lake build Jacobian.Solution`
-- `python3 scripts/fix-sorries.py`
-- `python3 scripts/audit-sorries.py sorries.jsonl`
-- `python3 scripts/list-sorries.py`
-- `git status`, `git diff`, and clean rebasing
-- Reading and interpreting `sorries.jsonl` when necessary
+- `git status` and `git diff`
 
 You should run these tools proactively rather than waiting to be told.
 
