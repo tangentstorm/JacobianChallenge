@@ -100,7 +100,22 @@ private def shiftedFin (L : ℕ) (hL : L ≠ 0) (k : ℕ) (i : Fin L) : Fin L :=
 private lemma boundaryParam'_mod_length
     (L : ℕ) (hL : L ≠ 0) (n : ℕ) (t : ℝ) :
     boundaryParam' L (n % L) t = boundaryParam' L n t := by
-  sorry
+  ext
+  simp only [boundaryParam', boundaryParamC', boundaryAngle']
+  rw [Complex.exp_eq_exp_iff_exists_int]
+  use - ((n / L : ℕ) : ℤ)
+  rw [Int.cast_neg, Int.cast_natCast]
+  have h_div_mod : ((n % L : ℕ) : ℝ) = (n : ℝ) - (L : ℝ) * ((n / L : ℕ) : ℝ) := by
+    have h_id := Nat.mod_add_div n L
+    have h_cast : ((n % L : ℕ) : ℝ) + (L : ℝ) * ((n / L : ℕ) : ℝ) = (n : ℝ) := by
+      exact_mod_cast h_id
+    rw [← h_cast]
+    ring
+  rw [h_div_mod]
+  push_cast
+  have hL_C : (L : ℂ) ≠ 0 := by exact_mod_cast hL
+  field_simp [hL_C]
+  ring
 
 private lemma boundaryParam'_shiftedFin
     (L : ℕ) (hL : L ≠ 0) (k : ℕ) (i : Fin L) (t : ℝ) :
@@ -158,12 +173,57 @@ private lemma eqvGen_map
 
 private lemma rotate_rotate_inv_length (L : ℕ) (hL : L ≠ 0) (k : ℕ) :
     (k + (L - k % L)) % L = 0 := by
-  sorry
+  by_cases hk : k % L = 0
+  · rw [hk, Nat.sub_zero]
+    rw [Nat.add_mod, hk]
+    simp [Nat.mod_self]
+  · have h_lt : k % L < L := Nat.mod_lt k (Nat.pos_of_ne_zero hL)
+    have hk_pos : k % L ≥ 1 := Nat.one_le_iff_ne_zero.mpr hk
+    have h_sub_lt : L - k % L < L := by omega
+    have h_sub_mod : (L - k % L) % L = L - k % L := Nat.mod_eq_of_lt h_sub_lt
+    have h_eq : (k + (L - k % L)) % L = (k % L + (L - k % L)) % L := by
+      rw [Nat.add_mod, h_sub_mod]
+    rw [h_eq]
+    have h_sub : k % L + (L - k % L) = L := by
+      rw [Nat.add_comm]
+      exact Nat.sub_add_cancel (le_of_lt h_lt)
+    rw [h_sub]
+    simp [Nat.mod_self]
 
 private lemma diskRotateBySide_comp_inv (L : ℕ) (hL : L ≠ 0) (k : ℕ) (z : DiskC) :
     let kInv := L - k % L
     diskRotateBySide L hL kInv (diskRotateBySide L hL k z) = z := by
-  sorry
+  dsimp only
+  ext
+  simp only [diskRotateBySide_apply]
+  rw [← mul_assoc, exp_I_add_real]
+  have h_exp_one : Complex.exp (Complex.I * ((2 * Real.pi * ((L - k % L : ℕ) : ℝ) / L + 2 * Real.pi * ((k : ℕ) : ℝ) / L : ℝ) : ℂ)) = 1 := by
+    rw [← Complex.exp_zero]
+    rw [Complex.exp_eq_exp_iff_exists_int]
+    use (((L - k % L + k) / L : ℕ) : ℤ)
+    rw [Int.cast_natCast]
+    have h_mod := rotate_rotate_inv_length L hL k
+    rw [Nat.add_comm] at h_mod
+    have h_div : L * (((L - k % L) + k) / L) = (L - k % L) + k := by
+      apply Nat.mul_div_cancel'
+      exact Nat.dvd_of_mod_eq_zero h_mod
+    have h_cast_R : 2 * Real.pi * ((L - k % L : ℕ) : ℝ) / L + 2 * Real.pi * k / L =
+                    2 * Real.pi * (L * (((L - k % L + k) / L : ℕ) : ℝ)) / L := by
+      have hL_real : (L : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hL
+      field_simp [hL_real]
+      have h_lhs : ((L - k % L : ℕ) : ℝ) + (k : ℝ) = (((L - k % L) + k : ℕ) : ℝ) := by
+        push_cast
+        rfl
+      have h_cast_nat : ((L - k % L : ℕ) : ℝ) + (k : ℝ) = L * (((L - k % L + k) / L : ℕ) : ℝ) := by
+        rw [h_lhs]
+        exact_mod_cast h_div.symm
+      rw [← h_cast_nat]
+    rw [h_cast_R]
+    push_cast
+    have hL_C : (L : ℂ) ≠ 0 := by exact_mod_cast hL
+    field_simp [hL_C]
+    ring
+  rw [h_exp_one, one_mul]
 
 theorem sidePairingRel_rotate_iff
     {g : ℕ} (w : EdgeWord g) (k : ℕ) (hL : w.length ≠ 0) :
