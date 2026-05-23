@@ -128,25 +128,60 @@ The downstream mathematical API should consume one of the bundled data records
 below when it needs the analytic content of an honest meromorphic map with
 prescribed pole divisor. -/
 
+/-- **Smaller production frontier record (analytic-only).**
+
+Bundled data for an honest meromorphic map with one prescribed simple
+pole, *without* a `BranchedCoverDataOfPoleDegree` field. Branch data
+is a *proved consequence* of the fields below
+(via `genusZero_fixedPole_branchedCoverDataOfPoleDegree` /
+`MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole`),
+so it does not belong as an assumed field.
+
+This record is what the genus-zero Riemann-Roch route theorem
+actually produces; the full `SinglePoleMeromorphicMapData` package
+below is then built from this record by filling the branch field
+sorry-free from `AnalyticData`. -/
+structure SinglePoleMeromorphicAnalyticData (Q : X) where
+  map : MeromorphicMapToSphere X
+  poleDivisor_eq : map.poles = Divisor.point Q
+  nonconstant : map.Nonconstant
+  poleModulusData : map.PoleModulusData
+  analyticData : map.AnalyticData
+
 /-- Bundled data for an honest meromorphic map with one prescribed simple
 pole.  The cutoff formula `singlePoleSphereLift` is not used to prove these
 fields; future constructors should fill this record from Riemann-Roch or a
-global meromorphic-function construction. -/
+global meromorphic-function construction.
+
+The `analyticData` field carries the per-point chart-local Laurent /
+order content that the abstract `MeromorphicMapToSphere` interface cannot
+derive — the genuine analytic content of the map.
+
+The `branchedCoverDataOfPoleDegree` field is a *proved consequence* of
+the other fields (see
+`MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole`),
+retained here as cached data for downstream consumers. -/
 structure SinglePoleMeromorphicMapData (Q : X) where
   map : MeromorphicMapToSphere X
   poleDivisor_eq : map.poles = Divisor.point Q
   nonconstant : map.Nonconstant
   poleModulusData : map.PoleModulusData
+  analyticData : map.AnalyticData
   branchedCoverDataOfPoleDegree : map.BranchedCoverDataOfPoleDegree
 
 /-- Bundled data for an honest meromorphic map with two prescribed simple
 poles.  This replaces the former false branched-cover claims about the
-two-valued indicator placeholder. -/
+two-valued indicator placeholder.
+
+The `analyticData` field carries the per-point chart-local Laurent /
+order content that the abstract `MeromorphicMapToSphere` interface cannot
+derive — the genuine analytic content of the map. -/
 structure TwoPointMeromorphicMapData (Q1 Q2 : X) where
   map : MeromorphicMapToSphere X
   poleDivisor_eq : map.poles = Divisor.point Q1 + Divisor.point Q2
   nonconstant : map.Nonconstant
   poleModulusData : map.PoleModulusData
+  analyticData : map.AnalyticData
   branchedCoverDataOfPoleDegree : map.BranchedCoverDataOfPoleDegree
 
 /-- Scaffold constructor for the displayed single-pole cutoff map.
