@@ -10,7 +10,7 @@ You are not here to "make progress" in a vague sense. You are here to produce **
 
 - You must break large problems into **exact provider theorems** rather than broad wrappers or minor reorganizations.
 - You must **name** the new theorems you introduce. Vague or temporary names are not acceptable.
-- You must keep frontiers honest. Do not hide real mathematical difficulty behind large "infrastructure" theorems that still contain the original hard sorries.
+- You must keep frontiers accurate. Do not hide real mathematical difficulty behind large "infrastructure" theorems that still contain the original hard sorries.
 - You must prefer smaller, precisely scoped providers over large, multi-purpose ones.
 - You must not perform large refactors or renamings unless they are necessary to create clean, named providers. Cosmetic changes that do not reduce the frontier are forbidden.
 
@@ -29,7 +29,7 @@ Before you may write or update `result.md`, you **must** complete the following 
 You must only claim a task is complete when:
 - `lake build Jacobian.Solution` succeeds with no disallowed warnings,
 - `audit-sorries.py` passes, and
-- the relevant sorries have been genuinely reduced (either proved or replaced by strictly narrower, named providers).
+- the relevant sorries have been substantively reduced (either proved or replaced by strictly narrower, named providers).
 
 Running only a partial build or skipping the linter/audit steps is not permitted.
 
@@ -46,7 +46,7 @@ Violations of these rules will be considered a failure to follow instructions.
 
 ## 4. Writing result.md
 
-Your `result.md` is the primary way the manager evaluates your work. It must be clear, honest, and structured.
+Your `result.md` is the primary way the manager evaluates your work. It must be clear, accurate, and structured.
 
 Every `result.md` you write must contain at minimum:
 
@@ -56,11 +56,19 @@ Every `result.md` you write must contain at minimum:
 - Which sorries remain and why (be precise).
 - The output of `lake build Jacobian.Solution` (or confirmation that it passed cleanly).
 - The output of `audit-sorries.py`.
-- A brief but honest assessment of the quality of the progress (e.g., "This is a clean provider decomposition" or "This is only a partial reduction and the core difficulty remains").
+- A brief assessment of the quality of the progress (e.g., "This is a clean provider decomposition" or "This is only a partial reduction and the core difficulty remains").
 
 You must not exaggerate progress or present reorganization as new mathematical content.
 
 ## 5. Status Reporting
+
+When you receive a new assignment, the manager will usually set `.swarm-status` to `ASSIGNED: <branch-or-task>`. Before doing any implementation work, immediately update `.swarm-status` to acknowledge that you have received and understood the instructions:
+
+```
+WORKING: started
+```
+
+Keep the `WORKING:` line under 50 characters. Put details in notes or `result.md`, not in `.swarm-status`.
 
 After you have written or updated `result.md`, you **must** create or update the file `.swarm-status` in the root of your working directory with an **extremely short one-line summary** of your current status.
 
@@ -82,7 +90,7 @@ Do not write multi-line content or long explanations in `.swarm-status`. Keep it
 
 ## 6. Handling Difficulty and Getting Stuck
 
-You are expected to make genuine forward progress. If you find yourself unable to do so:
+You are expected to make forward progress. If you find yourself unable to do so:
 
 - You must stop after a reasonable amount of time (typically no more than 30–60 minutes of unproductive thrashing).
 - You must clearly describe the precise mathematical blocker in your `result.md`.
