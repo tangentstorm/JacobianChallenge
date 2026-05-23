@@ -1260,8 +1260,9 @@
 {"i":2694,"f":"Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean","k":"theorem","s":"genusZero_pointRRSection_outside_constants_exists","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2695,"f":"Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean","k":"theorem","s":"mapAnalyticOrderAt_onePointExtend_of_order_neg_one","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2696,"f":"Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean","k":"theorem","s":"meromorphic_no_poles_constant","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":2697,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"finite_projected_endpoint_boundary_zero_pairs","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2697,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"finite_projected_endpoint_boundary_zero_pairs","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":2698,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4gBoundaryArcStep_reverse_projected_homotopy","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2699,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_partial_side_arc_homologous_to_edge_chain","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2700,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_quotient_path_finite_lift_subdivision","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2701,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"singular_one_simplex_subdivision_prism_homologous","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2702,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"finite_projected_endpoint_sum_zero_pairing","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
