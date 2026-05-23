@@ -15,4 +15,5 @@ depgraph-with-legend.png
 scripts/__pycache__/
 goal.md
 result.md
+.swarm-status
 
