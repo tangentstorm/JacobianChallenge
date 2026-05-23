@@ -1,6 +1,7 @@
 import Jacobian.HolomorphicForms.Divisor
 import Jacobian.HolomorphicForms.FiniteDimensional
 import Jacobian.HolomorphicForms.BranchedCover
+import Jacobian.HolomorphicForms.OnePointCxChartedSpace
 import Mathlib.Topology.Compactification.OnePoint.Basic
 import Mathlib.Geometry.Manifold.MFDeriv.Basic
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
@@ -148,6 +149,61 @@ structure BranchedCoverDataOfPoleDegree (f : MeromorphicMapToSphere X) where
     ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) f.toMap),
       JacobianChallenge.HolomorphicForms.branchedDegree h = f.poleDivisor.degree.toNat
 
+/-- **Honest analytic data for a `MeromorphicMapToSphere`.**
+
+The abstract `MeromorphicMapToSphere` structure carries only set-level
+data, divisor arithmetic, topological values at poles, continuity off
+poles, and a *global* finite-lift differentiability axiom that is
+vacuous whenever there are any poles. `PoleModulusData` adds a
+modulus-divergence witness near poles but no analyticity.
+
+This record bundles the **per-point analytic content** that an honest
+meromorphic-map-to-sphere actually carries but the abstract interface
+cannot derive:
+
+* `continuous_toMap` — the global continuity statement
+  (`MeromorphicMapToSphere.ExtendsContinuously`). Although the
+  structure has a continuous extension on the non-pole locus, the
+  global continuity at poles requires additional analytic input. We
+  collect it here.
+* `meromorphic_getD` — the *point-by-point* `MeromorphicAtX` predicate
+  for the canonical finite lift `q ↦ (f.toMap q).getD 0`. This is the
+  precise analytic content needed by the
+  `MeromorphicFunctionType`/`liftToCp1` infrastructure of
+  `MeromorphicToCp1.lean`.
+* `simple_pole_order_one` — at a *simple* pole, the chart-local
+  analytic order of `f.toMap` equals `1`. This is the analytic content
+  "simple pole ⇒ ramification index one", read in the inversion chart
+  on `OnePoint ℂ`.
+
+Scaffold maps (e.g. `singlePoleMeromorphicMap`, `twoPointMeromorphicMap`)
+generally cannot produce this data; production constructors (the
+Riemann-Roch witness, dipole construction, an honest
+`MeromorphicFunctionType` package) supply it by construction. The
+data is intentionally *separate* from `MeromorphicMapToSphere` so that
+the abstract interface can continue to be lock-stepped with scaffold
+constructors that genuinely fail these analytic claims.
+
+Production downstream theorems should consume `AnalyticData` (or the
+record in which it is bundled) rather than the abstract interface
+plus `PoleModulusData`. -/
+structure AnalyticData (f : MeromorphicMapToSphere X) where
+  /-- Global continuity of the map to `OnePoint ℂ`. -/
+  continuous_toMap : Continuous f.toMap
+  /-- The canonical finite lift `(f.toMap ·).getD 0` is meromorphic at
+  every point in the manifold sense. -/
+  meromorphic_getD :
+    ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (f.toMap q).getD 0) p
+  /-- At a *simple* pole, the chart-local analytic order of `f.toMap`
+  is exactly `1`. This is the analytic content
+  "simple pole ⇒ ramification index one". -/
+  simple_pole_order_one :
+    ∀ P : X,
+      f.poles = Divisor.point P →
+        JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt f.toMap P = 1
+
 omit [Periods.StableChartAt ℂ X] in
 @[simp] theorem principal_eq_zeroDivisor_sub_poleDivisor
     (f : MeromorphicMapToSphere X) :
@@ -156,28 +212,80 @@ omit [Periods.StableChartAt ℂ X] in
 
 end MeromorphicMapToSphere
 
-/-- **Narrow Laurent-to-modulus provider.**
+/-- **Honest modulus-divergence provider (sorry-free, requires
+`PoleModulusData`).**
+
+For a `MeromorphicMapToSphere X` with pole divisor `Divisor.point P`
+that *also* carries explicit `PoleModulusData`, the norm of the
+canonical finite lift `x ↦ (f.toMap x).getD 0` tends to `+∞` along
+the punctured neighborhood of `P`.
+
+This is the honest provider used by production downstream code. The
+`PoleModulusData` hypothesis directly carries a global finite lift `g`
+of `f.toMap` off the pole locus whose modulus diverges at `P`; the
+proof glues together the off-pole agreement
+`f.toMap x = ((g x : ℂ) : OnePoint ℂ)` (whose `getD 0` recovers `g x`)
+with the modulus divergence of `g`, eventually in `nhdsWithin P {P}ᶜ`.
+
+**Why the bare-hypothesis form** `modulus_tendsto_atTop_of_poleDivisor_point`
+**below is kept as a compatibility frontier.** The bare-hypothesis
+version (no `PoleModulusData`) is *not* provable from the structural
+axioms of `MeromorphicMapToSphere` alone — the structure does not
+expose Laurent normal form near a pole. Production downstream code
+should consume this honest provider instead; the bare-hypothesis
+version remains only as a documented compatibility frontier for older
+callers, all of which have been rewritten to route through
+`PoleModulusData`. -/
+theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleModulusData_poleDivisor_point
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (f : MeromorphicMapToSphere X) (P : X)
+    (hpole : f.poles = Divisor.point P)
+    (hmod : f.PoleModulusData) :
+    Filter.Tendsto
+      (fun x => ‖(f.toMap x).getD 0‖)
+      (nhdsWithin P {P}ᶜ)
+      Filter.atTop := by
+  classical
+  have hposP : 0 < f.poleDivisor P := by
+    have hh : f.poleDivisor P = (Divisor.point P : Divisor X) P := by
+      change f.poles P = (Divisor.point P : Divisor X) P
+      rw [hpole]
+    rw [hh, Divisor.point_apply_self]; decide
+  obtain ⟨g, hg_eq, hg_div⟩ := hmod.exists_modulus_atTop_at_pole P hposP
+  refine (hg_div.congr' ?_)
+  filter_upwards [self_mem_nhdsWithin] with x hx
+  have hxP : x ≠ P := hx
+  have hxpoleZero : f.poleDivisor x = 0 := by
+    have hh : f.poleDivisor x = (Divisor.point P : Divisor X) x := by
+      change f.poles x = (Divisor.point P : Divisor X) x
+      rw [hpole]
+    rw [hh, Divisor.point_apply_ne hxP]
+  have hfx : f.toMap x = ((g x : ℂ) : OnePoint ℂ) := hg_eq x hxpoleZero
+  show ‖g x‖ = ‖(f.toMap x).getD 0‖
+  rw [hfx]; rfl
+
+/-- **Bare-hypothesis modulus-divergence frontier (compatibility only).**
 
 For any `MeromorphicMapToSphere X` with pole divisor `Divisor.point P`,
 the norm of the canonical finite lift `x ↦ (f.toMap x).getD 0` tends to
 `+∞` along the punctured neighborhood of `P`.
 
-This is the precise local Laurent-to-modulus content that the
-`PoleModulusData` field requires. It is stated independently of how `f`
-was produced (Riemann-Roch, dipole construction, etc.); the burden is
-proving modulus divergence purely from the simple-pole hypothesis and
-the structural axioms of `MeromorphicMapToSphere`.
+**This statement is not provable from its current hypotheses.** The
+structural axioms of `MeromorphicMapToSphere` do not expose chart-local
+Laurent normal form, which is the only honest source of modulus
+divergence near a pole. Production downstream code consumes the honest
+provider
+`MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleModulusData_poleDivisor_point`
+(above), which adds `PoleModulusData` to the hypotheses and discharges
+the conclusion sorry-free.
 
-**Intended proof.** Near `P`, in any chart, the chart-local presentation
-of `f` has an order-one pole. The `toFiniteFun_mdifferentiable` axiom
-of `MeromorphicMapToSphere` combined with chart-local Laurent normal
-form yields the standard `1/(z - z₀)` divergence. The current
-`MeromorphicMapToSphere` structure does not directly expose this Laurent
-normal form; this provider names the gap precisely.
-
-**Why not `singlePoleMeromorphicMap_poleModulusData`.** That theorem
-gives the same modulus content for the specific cutoff scaffold; here
-`f` is an arbitrary `MeromorphicMapToSphere` with pole divisor `[P]`. -/
+This declaration is kept only as a compatibility frontier; no
+production theorem in the project currently reaches it. The remaining
+`sorry` flags that the bare-hypothesis form is mathematically
+underspecified, not that it is an actionable proof gap. -/
 theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
