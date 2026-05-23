@@ -12,7 +12,7 @@ This module bridges a `MeromorphicMapToSphere X` equipped with explicit
 `HolomorphicForms/HolomorphicMap.lean` and
 `Blueprint/Sec02/BranchedDegreeFromHolomorphic.lean`.
 
-### Honest interface boundary
+### Semantic interface boundary
 
 A previous iteration of this file declared two generic structural-axiom
 sorries claiming that the analytic content "the canonical finite lift is
@@ -22,7 +22,7 @@ is derivable — `PoleModulusData` is a modulus-divergence witness, not an
 analytic one, and the structure's `toFiniteFun_mdifferentiable` field is
 *vacuous* in the presence of any pole.
 
-The honest abstraction boundary is **`MeromorphicMapToSphere.AnalyticData`**
+The actual abstraction boundary is **`MeromorphicMapToSphere.AnalyticData`**
 (defined in `Meromorphic.lean`): a record whose fields are *exactly* the
 chart-local Laurent / order content that production constructors of a
 `MeromorphicMapToSphere` (Riemann-Roch witness, dipole, etc.) must
@@ -32,7 +32,7 @@ supply by construction. With `AnalyticData` in hand, the
 `branchedCoverData_of_nonconstant_holomorphic` of
 `Sec02/BranchedDegreeFromHolomorphic.lean` discharge everything else.
 
-The genuine remaining project frontier — the *production Riemann-Roch
+The remaining project frontier — the *production Riemann-Roch
 analytic route-data theorem* — is now isolated in
 `genusZero_fixedPole_analyticRouteData_nonempty` below, which says
 "genus-zero Riemann-Roch supplies a fixed-pole meromorphic map together
@@ -248,9 +248,9 @@ theorem MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole
 
 /-! ### Concrete simple-pole-to-sphere data and constructor
 
-The production interface for an honest fixed-pole meromorphic-map-to-sphere
+The production interface for a concrete fixed-pole meromorphic-map-to-sphere
 is `SimplePoleToSphereData`. Its fields are the local analytic inputs
-genuinely needed to construct an honest one-pole map: a concrete
+actually needed to construct a one-pole map: a concrete
 piecewise-defined `toMap`, a global finite lift, continuity of `toMap`
 into `OnePoint ℂ`, meromorphicity of the lift, simple-pole order data,
 and modulus divergence at the pole.
@@ -264,7 +264,7 @@ single existence theorem
 
 /-- **Concrete simple-pole production input.**
 
-This record carries the local analytic content that an honest
+This record carries the local analytic content that a concrete
 fixed-pole meromorphic-map-to-sphere is actually built from:
 
 * `finiteLift : X → ℂ` — a global complex-valued function;
@@ -415,7 +415,7 @@ omit [CompactSpace X] [ConnectedSpace X] in
 a `SimplePoleToSphereData`.**
 
 Given a concrete simple-pole record `d : SimplePoleToSphereData X P`,
-constructs an honest `MeromorphicMapToSphere` whose pole divisor is
+constructs a concrete `MeromorphicMapToSphere` whose pole divisor is
 `Divisor.point P` together with `PoleModulusData` and
 `AnalyticData`. All structure-level fields are discharged from the
 record's fields with no sorry.
@@ -606,7 +606,7 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
 
 /-! ### Genus-zero fixed-pole route-data assemblies
 
-The remaining sorry has been narrowed to the *smallest* honest
+The remaining sorry has been narrowed to the *smallest*
 production frontier:
 `genusZero_fixedPole_simplePoleToSphereData_nonempty`, which supplies
 *only* the concrete simple-pole input data
@@ -615,7 +615,7 @@ production frontier:
 `MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole`.
 
 This separation matches the goal: the only remaining direct sorry in
-this cluster is the honest existence frontier of a real concrete
+this cluster is the existence frontier of a real concrete
 simple-pole meromorphic map. -/
 
 /-- **Branched-cover-data assembly for the genus-zero fixed-pole route
@@ -626,7 +626,7 @@ For a given `MeromorphicMapToSphere f` with prescribed simple pole at
 branched-cover-data structure follows from
 `branchedCoverDataOfPoleDegree_of_simple_pole`.
 
-This is the per-`f` theorem with honest hypotheses: the analytic
+This is the per-`f` theorem with concrete hypotheses: the analytic
 content comes in as `han : f.AnalyticData`, not as the impossible
 "derive analyticity from `PoleModulusData`" claim previously held
 here.
@@ -709,7 +709,7 @@ theorem onePointExtend_getD_eq_toMap_of_pole
     · exact (hne hfx).elim
     · rfl
 
-/-- **Conditional bridge (sorry-free): from an honest meromorphic map
+/-- **Conditional bridge (sorry-free): from a concrete meromorphic map
 with `AnalyticData` and `PoleModulusData` to
 `HasComplexSimplePolePrincipalPart`.**
 
@@ -786,7 +786,7 @@ theorem complexPrincipalPart_of_meromorphicMap_analyticData
     show ‖g x‖ = ‖(f.toMap x).getD 0‖
     rw [hfx]; rfl
 
-/-! ### Honest analytic Riemann-Roch witness
+/-! ### Production analytic Riemann-Roch witness
 
 The current divisor-level Riemann-Roch route (e.g. the assembly
 `genusZero_fixedPole_meromorphicData_nonempty`, which under the hood
@@ -794,7 +794,7 @@ selects `singlePoleMeromorphicMap P`) is correct only for
 divisor/topology-level claims: the underlying map is the bump-cutoff
 scaffold, whose canonical finite lift is *not* meromorphic everywhere
 and whose chart-local order at `P` is not the analytic order-one of a
-genuine simple pole. The honest analytic content of Riemann-Roch — an
+production simple pole. The actual analytic content of Riemann-Roch — an
 actual meromorphic function with prescribed simple pole *and* the
 chart-local Laurent / order data — is collected by the records below.
 
@@ -802,14 +802,14 @@ These records are intentionally *distinct* from
 `GenusZeroPointRiemannRochElement` (defined in `RiemannRoch.lean`).
 The latter is the divisor/topology-level RR witness that the existing
 scaffold can populate; the records below are the analytic-level
-witnesses that the scaffold cannot honestly populate.
+witnesses that the scaffold cannot actually populate.
 
 The records form a small hierarchy:
 
-* `SimplePoleRRSection X P` — the smallest, mathematically-honest
+* `SimplePoleRRSection X P` — the smallest, mathematically-concrete
   record: just a complex-valued function `finiteLift : X → ℂ` carrying
   `HasComplexSimplePolePrincipalPart` at `P`. This is the bare local
-  analytic content a genuine genus-zero Riemann-Roch section provides;
+  analytic content an actual genus-zero Riemann-Roch section provides;
   every projection (the full `MeromorphicMapToSphere`, its
   `AnalyticData`, `PoleModulusData`, `MemRiemannRochSpace (Divisor.point P)`,
   nonconstancy) is sorry-free from this record.
@@ -823,9 +823,9 @@ strictly-smallest existence frontier; the older
 `genusZero_fixedPole_analyticRRWitness_nonempty` becomes a sorry-free
 projection. -/
 
-/-- **Honest simple-pole Riemann-Roch section (smallest analytic witness).**
+/-- **Concrete simple-pole Riemann-Roch section (smallest analytic witness).**
 
-The bare local analytic data a genuine genus-zero Riemann-Roch fixed-pole
+The bare local analytic data an actual genus-zero Riemann-Roch fixed-pole
 section provides:
 
 * `finiteLift : X → ℂ` — the meromorphic function on `X` with a simple
@@ -855,8 +855,8 @@ structure SimplePoleRRSection
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (P : X) where
-  /-- The honest complex-valued meromorphic function with a simple pole
-  at `P` — the genuine Riemann-Roch section. -/
+  /-- The complex-valued meromorphic function with a simple pole
+  at `P` — the Riemann-Roch section. -/
   finiteLift : X → ℂ
   /-- The chart-local analytic principal-part data: meromorphic
   everywhere, the one-point extension is continuous on `OnePoint ℂ`,
@@ -884,15 +884,15 @@ noncomputable def toSimplePoleToSphereData
 
 end SimplePoleRRSection
 
-/-- **Honest analytic Riemann-Roch fixed-pole witness (older record).**
+/-- **Production analytic Riemann-Roch fixed-pole witness (older record).**
 
-The production output of a genuine genus-zero analytic Riemann-Roch
+The production output of an actual genus-zero analytic Riemann-Roch
 theorem on a compact connected Riemann surface: a meromorphic map to
 the sphere with pole divisor exactly `[P]` (`poleDivisor_eq`),
 nonconstant (`nonconstant`), in the Riemann-Roch space `L([P])`
 (`mem_L_point`), and — crucially — equipped with the chart-local
 analytic content (`analyticData`) and modulus-divergence
-(`poleModulusData`) that the bump-cutoff scaffold *cannot* honestly
+(`poleModulusData`) that the bump-cutoff scaffold *cannot* actually
 provide.
 
 This record is equivalent to `SimplePoleRRSection X P` — every
@@ -905,7 +905,7 @@ structure GenusZeroFixedPoleAnalyticRRWitness
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) where
-  /-- The honest meromorphic-map-to-sphere with a simple pole at `P`. -/
+  /-- The concrete meromorphic-map-to-sphere with a simple pole at `P`. -/
   map : MeromorphicMapToSphere X
   /-- The pole divisor is exactly `[P]`. -/
   poleDivisor_eq : map.poles = Divisor.point P
@@ -915,7 +915,7 @@ structure GenusZeroFixedPoleAnalyticRRWitness
   mem_L_point : map.MemRiemannRochSpace (Divisor.point P)
   /-- The chart-local analytic content: meromorphicity of the canonical
   finite lift everywhere, global continuity to `OnePoint ℂ`, and
-  order-one at the simple pole. This field is the honest analytic
+  order-one at the simple pole. This field is the actual analytic
   content of Riemann-Roch that the bump-cutoff scaffold cannot supply. -/
   analyticData : map.AnalyticData
   /-- Modulus-divergence at the pole. -/
@@ -1143,7 +1143,7 @@ content (`(finiteLift) = -[P] + zeros`), which a section produced by
 Riemann-Roch carries by construction and which `SimplePoleRRSection`
 does not encode. -/
 
-/-- **Section-level honest Riemann-Roch input with explicit local order
+/-- **Section-level Riemann-Roch input with explicit local order
 data.**
 
 The local data of a section `f ∈ L(P)` with simple pole at `P`:
@@ -1223,7 +1223,7 @@ This conversion does **not** use `orderAt_P_eq_neg_one` or `noPoleOff_P`
 — those are section-level local order data that the
 `HasComplexSimplePolePrincipalPart` predicate does not need to expose.
 They remain in the section record as evidence that the witness is a
-genuine Riemann-Roch section, not just a function with a simple-pole
+production Riemann-Roch section, not just a function with a simple-pole
 principal part. -/
 theorem hasComplexSimplePolePrincipalPart
     {P : X} (s : RiemannRochSectionAtPoint X P) :
