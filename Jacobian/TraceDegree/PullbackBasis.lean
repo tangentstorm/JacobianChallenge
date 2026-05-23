@@ -153,7 +153,7 @@ the period-naturality conclusion of the leaf. -/
 
 /-- **Subdivided-lift data for a cycle along a branched cover.**
 
-The genuine chain-level data underlying the transfer cycle: a
+The substantive chain-level data underlying the transfer cycle: a
 finite set of lifted arcs that fit together into a 1-chain on `X`,
 whose image under `f` reconstitutes `σ` up to subdivision, and
 whose boundary cancels so the lifted chain is again an integral
@@ -342,7 +342,7 @@ theorem traceDualPullback_dualEquiv_naturality
   rfl
 
 /-- **Narrow transfer-cycle leaf (corrected representative).** The
-genuine geometric content: for every cycle `σ` on `Y` there exists a
+substantive geometric content: for every cycle `σ` on `Y` there exists a
 *transfer cycle* `γ` on `X` whose period pairing equals the
 basis-coordinate **trace-dual** pulled-back functional of `σ`.
 
@@ -354,7 +354,7 @@ basis-coordinate **trace-dual** pulled-back functional of `σ`.
    equivalences, equals precomposition by the bundled trace.
 
 These two leaves split the original geometric+algebraic frontier into:
-(a) the genuinely geometric cycle-transfer content (pure cycles +
+(a) the geometric cycle-transfer content (pure cycles +
 trace of forms + period pairing), and (b) the algebraic
 basis-coordinate bridge (no geometry; pure linear algebra of the
 corrected representative). -/
@@ -408,7 +408,7 @@ integration via the transfer map (pullback on cycles).
 
 The proof decomposes into:
 1. Membership witness: `transfer_functional_mem_periodSubgroup`
-   (the genuine geometric content — transfer maps for branched covers,
+   (the substantive geometric content — transfer maps for branched covers,
    stated against the corrected trace-dual representative).
 2. Algebraic assembly: the trace-dual pullback lift applied to a period
    vector equals the basis-aligned dual equiv applied to the transfer
@@ -457,7 +457,7 @@ via `ComplexTorus.mapClm`, using
 preservation hypothesis. The continuity of the descent comes from
 `mapClm_continuous`; the smoothness companion
 `analyticPullback_contMDiff_raw` remains a (named) sorry —
-quotient-of-manifold smoothness is the genuine geometric content. -/
+quotient-of-manifold smoothness is the substantive geometric content. -/
 noncomputable def analyticPullback (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisAnalyticJacobian Y →ₜ+ BasisAnalyticJacobian X where

@@ -363,7 +363,7 @@ For any function `g : Y → CotangentModelFiber ℂ` that is
 Riemann's removable singularity theorem produces a global
 `HolomorphicOneForm ℂ Y` whose `toFun` agrees with `g` on `regular`.
 
-This is the genuine classical analytic content — pure complex analysis
+This is the substantive classical analytic content — pure complex analysis
 on `Y`, no reference to the source `X` or to the trace map. The
 hypotheses are exactly the data produced by Providers (1) and (2)
 when specialized to the trace function. Note that the conclusion
@@ -621,7 +621,7 @@ noncomputable def traceFormsConstructionData_nonconstant_nonzero_provider
   `traceFormsConstructionData_nonconstant_nonzero_provider`.
 
 The first two branches are strictly smaller leaves already proved in
-this pass; the third branch is the genuine analytic frontier (removable
+this pass; the third branch is the substantive analytic frontier (removable
 singularity / holomorphic extension of the finite local fiber sum
 across the finite branch locus of a nonconstant holomorphic map). -/
 noncomputable def traceFormsConstructionData_provider
