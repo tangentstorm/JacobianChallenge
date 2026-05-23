@@ -62,21 +62,23 @@ You must not exaggerate progress or present reorganization as new mathematical c
 
 ## 5. Status Reporting
 
-After you have written or updated `result.md`, you **must** create or update the file `.swarm-status` in the root of your working directory with a **one-line summary** of your current status.
+After you have written or updated `result.md`, you **must** create or update the file `.swarm-status` in the root of your working directory with an **extremely short one-line summary** of your current status.
 
 The line **must** start with one of the following prefixes:
 
-- `READY <status>`   — Use this when `result.md` explains what was done and the work is ready for review.
-- `BLOCKED <status>` — Use this when you are stuck. The status should briefly describe the blocker and what (if any) useful work was done.
+- `READY:`   — Use this when `result.md` explains what was done and the work is ready for review.
+- `BLOCKED:` — Use this when you are stuck. The status should briefly identify the blocker.
+
+The full line must be fewer than 50 characters. Put details in `result.md`, not in `.swarm-status`.
 
 **Examples:**
 
 ```
-READY Added exact providers for tail rotation and inverse cancel; 2662 is now direct-sorry-free
-BLOCKED Cannot prove handlePrefix_tailRotate_homeomorph without first proving rotation arithmetic lemmas
+READY: endpoint matching closed
+BLOCKED: needs prism lemma
 ```
 
-Do not write multi-line content or long explanations in `.swarm-status`. Keep it to a single line. This file is used by the manager (via `swarm -c status`) to get a quick overview of all workers.
+Do not write multi-line content or long explanations in `.swarm-status`. Keep it to a single line under 50 characters. This file is used by the manager (via `swarm -c status`) to get a quick overview of all workers.
 
 ## 6. Handling Difficulty and Getting Stuck
 
