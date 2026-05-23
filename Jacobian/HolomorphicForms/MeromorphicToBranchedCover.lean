@@ -1249,51 +1249,365 @@ def toSimplePoleRRSection
 
 end RiemannRochSectionAtPoint
 
+/-! ### Pure-RR section layer (`PointRiemannRochSection`)
+
+The record `PointRiemannRochSection X P` exposes *only* the algebraic
+content of an element of `L(P)` outside the constants: meromorphic
+everywhere, divisor bound `(f) ≥ -[P]`, and not constant. It contains
+no one-point-extension data, no chart-local order at `P` claim, no
+modulus-divergence data, and no analytic-extension fields. Those are
+local consequences of the algebraic data, isolated as separate provider
+lemmas below.
+
+The Riemann-Roch provider `genusZero_pointRRSection_outside_constants_exists`
+asks for the algebraic input only. The order-extraction lemma
+`PointRiemannRochSection.orderAt_P_eq_neg_one` deduces
+`orderAt P f = -1` from the algebraic data plus the compact-Liouville
+provider `meromorphic_no_poles_constant`. The conversion
+`PointRiemannRochSection.toRiemannRochSectionAtPoint` deduces the
+analytic-extension fields from the local-Laurent providers
+(`continuous_onePointExtend_of_meromorphic_order_neg_one`,
+`mapAnalyticOrderAt_onePointExtend_of_order_neg_one`,
+`tendsto_norm_atTop_of_order_neg_one`).
+
+This shape replaces the previous single direct sorry on
+`genusZero_fixedPole_rrSection_nonempty`: the new theorem is a sorry-free
+assembly from one RR existence provider plus four local analytic
+providers. -/
+
+/-- **Pure-RR section: an element of `L(P)` outside constants.**
+
+The minimal algebraic data of a Riemann-Roch section at a single point
+`P`: a complex-valued function on `X` that is meromorphic everywhere,
+holomorphic off `P`, has divisor bound `(f) ≥ -[P]` at `P`, and is not
+constant.
+
+No one-point-extension data, no analytic order at `P` claim, and no
+modulus-divergence data — those are local consequences, isolated in the
+provider lemmas below. -/
+structure PointRiemannRochSection
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (P : X) where
+  /-- The section as a complex-valued function. -/
+  finiteLift : X → ℂ
+  /-- Meromorphic at every point of `X`. -/
+  meromorphic_everywhere :
+    ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX finiteLift p
+  /-- Divisor bound at `P`: `orderAt P finiteLift ≥ -1`. -/
+  order_ge_neg_one_at_P :
+    ((-1 : ℤ) : WithTop ℤ) ≤
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P finiteLift
+  /-- No poles off `P`: `orderAt p finiteLift ≥ 0` for `p ≠ P`. -/
+  noPoleOff_P :
+    ∀ p : X, p ≠ P →
+      (0 : WithTop ℤ) ≤
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p finiteLift
+  /-- Not a constant section. -/
+  outside_constants :
+    ¬ ∃ c : ℂ, finiteLift = fun _ : X => c
+
+/-! ### Local analytic providers
+
+The four lemmas below isolate the *purely local* facts about a
+meromorphic function with prescribed chart-local order at one pole.
+They feed the conversion `PointRiemannRochSection.toRiemannRochSectionAtPoint`. -/
+
+/-- **Provider (compact Liouville).** A meromorphic function on a
+compact connected charted space with no poles anywhere is constant.
+
+This is the manifold-`ℂ` analogue of the classical statement that a
+holomorphic function on a compact connected Riemann surface is
+constant. With `0 ≤ orderAt p F` at every point, `F` extends to a
+global holomorphic function `X → ℂ`, hence constant by the maximum
+modulus principle (compactness + connectedness). -/
+theorem meromorphic_no_poles_constant
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (F : X → ℂ)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX F p)
+    (horders : ∀ p : X,
+      (0 : WithTop ℤ) ≤
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p F) :
+    ∃ c : ℂ, F = fun _ : X => c := by
+  sorry
+
+/-- **Provider (local Laurent → continuous extension).** If `F` is
+meromorphic everywhere on `X`, has no poles off `P`, and has chart-local
+order `-1` at `P`, then the one-point extension `onePointExtend F P` is
+continuous on `X`.
+
+Proof idea: off `P`, the extension is `((F · : ℂ) : OnePoint ℂ)`, which
+is continuous because `F` is locally holomorphic (no poles). At `P`,
+order `-1` gives a chart-local Laurent expansion
+`F ∘ chart.symm = c₋₁ · z⁻¹ + holomorphic`, so the inversion chart on
+`OnePoint ℂ` sees `F` as a function tending to `0`, hence the extension
+is continuous at `P` too. -/
+theorem continuous_onePointExtend_of_meromorphic_order_neg_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (F : X → ℂ) (P : X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX F p)
+    (hnoPoleOff : ∀ p : X, p ≠ P →
+      (0 : WithTop ℤ) ≤
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p F)
+    (horder :
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
+        ((-1 : ℤ) : WithTop ℤ)) :
+    Continuous (onePointExtend F P) := by
+  sorry
+
+/-- **Provider (local Laurent → chart-order one for the extension).**
+If `F` has chart-local meromorphic order `-1` at `P`, then the
+one-point extension `onePointExtend F P`, read in the inversion chart
+on `OnePoint ℂ`, has chart-local analytic order `1` at `P`.
+
+Proof idea: the inversion-chart pullback of `onePointExtend F P` at `P`
+is `1 / (F ∘ chart.symm)`, and order `-1` on `F` becomes order `1` on
+the reciprocal (the leading Laurent coefficient cancels, leaving a
+holomorphic function vanishing to first order). -/
+theorem mapAnalyticOrderAt_onePointExtend_of_order_neg_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (F : X → ℂ) (P : X)
+    (hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX F p)
+    (horder :
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
+        ((-1 : ℤ) : WithTop ℤ)) :
+    JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
+      (onePointExtend F P) P = 1 := by
+  sorry
+
+/-- **Provider (local Laurent → modulus divergence).** If `F` has
+chart-local order `-1` at `P`, then `‖F x‖ → ∞` as `x → P` through
+`{P}ᶜ`.
+
+Proof idea: order `-1` gives a chart-local Laurent expansion
+`F ∘ chart.symm = c₋₁ · z⁻¹ + holomorphic` with `c₋₁ ≠ 0`. The norm of
+this diverges to infinity as `z → 0`, and the chart is a homeomorphism
+near `P`, so divergence transfers along `nhdsWithin P {P}ᶜ`. -/
+theorem tendsto_norm_atTop_of_order_neg_one
+    {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (F : X → ℂ) (P : X)
+    (_hmer : ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX F p)
+    (horder :
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
+        ((-1 : ℤ) : WithTop ℤ)) :
+    Filter.Tendsto (fun x => ‖F x‖) (nhdsWithin P {P}ᶜ) Filter.atTop := by
+  set e := chartAt ℂ P with he_def
+  -- Step 1: meromorphic order of the chart pullback at `e P` equals `-1 < 0`.
+  have hP_source : P ∈ e.source := mem_chart_source ℂ P
+  have hP_target : e P ∈ e.target := e.map_source hP_source
+  have hOrd_pullback :
+      meromorphicOrderAt (F ∘ e.symm) (e P) = ((-1 : ℤ) : WithTop ℤ) := by
+    have h1 :
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P F =
+          meromorphicOrderAt (F ∘ e.symm) (e P) :=
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt_eq_chartAt P F
+    rw [h1] at horder
+    exact horder
+  have hNeg : meromorphicOrderAt (F ∘ e.symm) (e P) < (0 : WithTop ℤ) := by
+    rw [hOrd_pullback]
+    decide
+  -- Step 2: the chart pullback tends to infinity in norm at `e P`.
+  have hTendsto_pullback :
+      Filter.Tendsto (fun w => ‖(F ∘ e.symm) w‖) (nhdsWithin (e P) {e P}ᶜ)
+        Filter.atTop := by
+    have h := tendsto_cobounded_of_meromorphicOrderAt_neg
+      (f := F ∘ e.symm) (x := e P) hNeg
+    rwa [← tendsto_norm_atTop_iff_cobounded] at h
+  -- Step 3: `e` sends `nhdsWithin P {P}ᶜ` into `nhdsWithin (e P) {e P}ᶜ`.
+  have hChart_tendsto :
+      Filter.Tendsto (fun x => e x) (nhdsWithin P {P}ᶜ) (nhdsWithin (e P) {e P}ᶜ) := by
+    rw [tendsto_nhdsWithin_iff]
+    refine ⟨?_, ?_⟩
+    · -- continuity gives `Tendsto e (𝓝 P) (𝓝 (e P))`; restrict to `nhdsWithin`.
+      have hcont : Filter.Tendsto e (𝓝 P) (𝓝 (e P)) :=
+        (e.continuousAt hP_source).tendsto
+      exact hcont.mono_left nhdsWithin_le_nhds
+    · -- on a neighborhood of `P` (the chart source), `e x = e P ↔ x = P`.
+      have hsrc_nhd : e.source ∈ nhdsWithin P {P}ᶜ :=
+        mem_nhdsWithin_of_mem_nhds (e.open_source.mem_nhds hP_source)
+      filter_upwards [hsrc_nhd, self_mem_nhdsWithin] with x hx_src hx_ne
+      -- hx_ne : x ∈ {P}ᶜ, i.e., x ≠ P; hx_src : x ∈ e.source
+      have hxP : x ≠ P := hx_ne
+      intro hex
+      -- hex : e x = e P; since `e` is injective on its source, `x = P`.
+      apply hxP
+      have hinj := e.injOn hx_src hP_source hex
+      exact hinj
+  -- Step 4: compose; use that `(F ∘ e.symm) (e x) = F x` on `e.source`.
+  have hComp_tendsto :
+      Filter.Tendsto (fun x => ‖(F ∘ e.symm) (e x)‖) (nhdsWithin P {P}ᶜ)
+        Filter.atTop :=
+    hTendsto_pullback.comp hChart_tendsto
+  -- Step 5: rewrite using `e.symm (e x) = x` on the chart source.
+  refine hComp_tendsto.congr' ?_
+  have hsrc_nhd : e.source ∈ nhdsWithin P {P}ᶜ :=
+    mem_nhdsWithin_of_mem_nhds (e.open_source.mem_nhds hP_source)
+  filter_upwards [hsrc_nhd] with x hx_src
+  show ‖(F ∘ e.symm) (e x)‖ = ‖F x‖
+  congr 1
+  show F (e.symm (e x)) = F x
+  rw [e.left_inv hx_src]
+
+namespace PointRiemannRochSection
+
+variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
+  [ChartedSpace ℂ X]
+  [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+  [JacobianChallenge.Periods.StableChartAt ℂ X]
+
+/-- **Sorry-free order extraction.** A `PointRiemannRochSection`, by
+combining its algebraic divisor bound with the compact-Liouville
+provider, has chart-local order exactly `-1` at `P`.
+
+Proof: by `order_ge_neg_one_at_P` and `noPoleOff_P`, every chart-local
+order is nonnegative except possibly at `P`, where it is at least `-1`.
+If the order at `P` were also nonnegative, `meromorphic_no_poles_constant`
+would force `finiteLift` to be constant, contradicting
+`outside_constants`. Hence the order at `P` is exactly `-1`. -/
+theorem orderAt_P_eq_neg_one
+    [ConnectedSpace X]
+    {P : X} (s : PointRiemannRochSection X P) :
+    JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P s.finiteLift =
+      ((-1 : ℤ) : WithTop ℤ) := by
+  -- Case analysis on whether the order at `P` is `≥ 0`.
+  by_cases hP : (0 : WithTop ℤ) ≤
+      JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P s.finiteLift
+  · -- All orders are nonneg, so `finiteLift` is constant by compact Liouville.
+    exfalso
+    have horders : ∀ p : X,
+        (0 : WithTop ℤ) ≤
+          JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p s.finiteLift := by
+      intro p
+      by_cases hpP : p = P
+      · subst hpP; exact hP
+      · exact s.noPoleOff_P p hpP
+    obtain ⟨c, hc⟩ :=
+      meromorphic_no_poles_constant s.finiteLift s.meromorphic_everywhere horders
+    exact s.outside_constants ⟨c, hc⟩
+  · -- Order at `P` is `< 0` and `≥ -1`, so equals `-1`.
+    push_neg at hP
+    -- `hP : orderAt P s.finiteLift < 0`
+    -- Combined with `order_ge_neg_one_at_P : -1 ≤ orderAt P s.finiteLift`,
+    -- and the fact that the order is in `WithTop ℤ`.
+    have hge : ((-1 : ℤ) : WithTop ℤ) ≤
+        JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P s.finiteLift :=
+      s.order_ge_neg_one_at_P
+    -- Show `orderAt P s.finiteLift ≤ -1`.
+    have hlt : JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P s.finiteLift
+        < (0 : WithTop ℤ) := hP
+    -- In `WithTop ℤ`, `x < 0` is equivalent to `x ≤ -1` since `x ≥ -1`.
+    -- Conclude antisymmetry.
+    apply le_antisymm _ hge
+    -- Show `orderAt P s.finiteLift ≤ -1`.
+    -- Since `orderAt P s.finiteLift ≥ -1` and `< 0`, and values are integers in `WithTop ℤ`,
+    -- the only possibility is `= -1`.
+    cases hOrd : JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P s.finiteLift with
+    | top =>
+      -- top ≤ -1 is false unless top = -1, contradicting hlt
+      simp [hOrd] at hlt
+    | coe n =>
+      -- n is an integer; from hge, -1 ≤ n; from hlt, n < 0.  So n = -1.
+      rw [hOrd] at hge hlt
+      have hge' : (-1 : ℤ) ≤ n := by exact_mod_cast hge
+      have hlt' : n < (0 : ℤ) := by exact_mod_cast hlt
+      interval_cases n
+      simp
+
+/-- **Sorry-free conversion: a `PointRiemannRochSection` builds a
+`RiemannRochSectionAtPoint`.**
+
+The three additional fields needed by `RiemannRochSectionAtPoint`
+(continuous extension, chart-order one for the extension, and modulus
+divergence) are supplied by the three local-Laurent providers above,
+each applied with the chart-local order `-1` extracted by
+`orderAt_P_eq_neg_one`. -/
+noncomputable def toRiemannRochSectionAtPoint
+    [ConnectedSpace X]
+    {P : X} (s : PointRiemannRochSection X P) :
+    RiemannRochSectionAtPoint X P where
+  finiteLift := s.finiteLift
+  meromorphic_everywhere := s.meromorphic_everywhere
+  noPoleOff_P := s.noPoleOff_P
+  orderAt_P_eq_neg_one := s.orderAt_P_eq_neg_one
+  continuous_extension :=
+    continuous_onePointExtend_of_meromorphic_order_neg_one
+      s.finiteLift P s.meromorphic_everywhere s.noPoleOff_P s.orderAt_P_eq_neg_one
+  orderAt_pole_in_extension :=
+    mapAnalyticOrderAt_onePointExtend_of_order_neg_one
+      s.finiteLift P s.meromorphic_everywhere s.orderAt_P_eq_neg_one
+  modulus_tendsto :=
+    tendsto_norm_atTop_of_order_neg_one
+      s.finiteLift P s.meromorphic_everywhere s.orderAt_P_eq_neg_one
+
+end PointRiemannRochSection
+
 /-! ### Genus-zero existence frontier (strictly-smaller)
 
 The honest existence frontier for the genus-zero meromorphic-route
-cluster has been refactored from the predicate-shaped record
-`SimplePoleRRSection X P` to the strictly-richer section/order
-record `RiemannRochSectionAtPoint X P`. The new frontier
-`genusZero_fixedPole_rrSection_nonempty` (direct sorry) asks for
-the section together with its explicit local divisor/order data;
-`genusZero_fixedPole_simplePoleRRSection_nonempty` (sorry-free
-projection) drops that data via
-`RiemannRochSectionAtPoint.toSimplePoleRRSection`.
+cluster is now factored through the pure-RR section layer
+`PointRiemannRochSection X P` plus four local providers. The
+RR-only existence theorem is
+`genusZero_pointRRSection_outside_constants_exists` (direct sorry).
+The cluster frontier `genusZero_fixedPole_rrSection_nonempty` is a
+sorry-free assembly: pull a `PointRiemannRochSection` from the RR
+provider and convert it via `toRiemannRochSectionAtPoint`. -/
 
-This refactor satisfies the goal's "exposes actual section/function
-data and local divisor/order facts" criterion — the new direct sorry
-asks for a section with prescribed chart-local order `-1` at `P` and
-nonneg order off `P`, both of which are real section-level divisor
-facts that the principal-part predicate does not expose. -/
+/-- **Pure RR provider (direct sorry): an element of `L(P)` outside the
+constants exists in genus zero.**
 
-/-- **Honest section-level Riemann-Roch frontier (the single direct
-sorry in this cluster).**
+Intended proof: genus-zero Riemann-Roch gives `dim L(P) = 2`. The
+constants embed into `L(P)` with dimension `1`. Choose any element
+outside the constants; membership in `L(P)` is exactly the algebraic
+divisor bound `(f) ≥ -[P]`.
 
-In genus zero, for every prescribed pole point `P`, there exists an
-honest section `f` with explicit local divisor/order data: chart-local
-order `-1` at `P` (a simple pole), nonneg order elsewhere (no other
-poles), and the analytic-extension data (continuity, chart-order one
-in the inversion chart, modulus divergence).
+This is the *exact* RR provider for the genus-zero simple-pole route.
+It contains no one-point-extension data, no chart-local analytic order
+claim, and no modulus data — only the algebraic content of
+"nonconstant element of `L(P)`". The local-analytic consequences are
+isolated as separate providers and consumed by
+`PointRiemannRochSection.toRiemannRochSectionAtPoint`. -/
+theorem genusZero_pointRRSection_outside_constants_exists
+    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    [FiniteDimensionalHolomorphicOneForms ℂ X]
+    (P : X) (h : analyticGenus ℂ X = 0) :
+    Nonempty (PointRiemannRochSection X P) := by
+  sorry
 
-Mathematically this is the genus-zero Riemann-Roch theorem
-`dim L(P) = 2`, plus the deduction that a nonconstant element of
-`L(P)` on a compact connected Riemann surface must have a pole, and
-the divisor bound forces the pole to have order exactly one at `P`
-with no other poles. The proof requires either (i) a real
-finite-dimensional `L(P)` API with an honest non-constants section
-existence theorem, or (ii) the harmonic-dipole construction in
-`HolomorphicForms/HarmonicFunctions.lean` (currently blocked by five
-separate sorries in `exists_dipole_harmonic`,
-`harmonic_conjugate_exists`, `holomorphic_of_CR`,
-`dipole_singularity_magnitude_tendsto_infty`,
-`inverse_dipole_vanishing_order_one`).
+/-- **Honest section-level Riemann-Roch frontier (sorry-free assembly).**
 
-This is **not** the bump-cutoff scaffold `singlePoleMeromorphicMap P`:
-that map's canonical finite lift fails meromorphicity off the chart
-source and cannot satisfy `meromorphic_everywhere` or
-`orderAt_P_eq_neg_one`. Do not attempt to prove this by choosing the
-scaffold. -/
+Sorry-free assembly from the pure-RR provider
+`genusZero_pointRRSection_outside_constants_exists` and the local
+conversion `PointRiemannRochSection.toRiemannRochSectionAtPoint`.
+
+The direct sorry has been split into one RR existence sorry
+(`genusZero_pointRRSection_outside_constants_exists`) plus four local
+analytic-provider sorries (`meromorphic_no_poles_constant`,
+`continuous_onePointExtend_of_meromorphic_order_neg_one`,
+`mapAnalyticOrderAt_onePointExtend_of_order_neg_one`,
+`tendsto_norm_atTop_of_order_neg_one`) — none of which is the bump-cutoff
+scaffold `singlePoleMeromorphicMap P`. -/
 theorem genusZero_fixedPole_rrSection_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1302,7 +1616,8 @@ theorem genusZero_fixedPole_rrSection_nonempty
     [FiniteDimensionalHolomorphicOneForms ℂ X]
     (P : X) (h : analyticGenus ℂ X = 0) :
     Nonempty (RiemannRochSectionAtPoint X P) := by
-  sorry
+  obtain ⟨s⟩ := genusZero_pointRRSection_outside_constants_exists X P h
+  exact ⟨s.toRiemannRochSectionAtPoint⟩
 
 /-- **Sorry-free projection: a `SimplePoleRRSection` exists in
 genus zero.**
