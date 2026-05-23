@@ -1306,9 +1306,14 @@ structure PointRiemannRochSection
     ∀ p : X, p ≠ P →
       (0 : WithTop ℤ) ≤
         JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p finiteLift
-  /-- Not a constant section. -/
+  /-- The germ of `finiteLift` at `P` is not constant on a punctured
+  neighborhood. Equivalent (for meromorphic functions) to "the order at
+  `P` is not `0` or `⊤`", i.e. there is a real singularity or zero at
+  `P`. The weakest condition that is still satisfied by an element of
+  `L(P)` with a true simple pole at `P` and ruled out by a literal
+  constant. -/
   outside_constants :
-    ¬ ∃ c : ℂ, finiteLift = fun _ : X => c
+    ¬ ∃ c : ℂ, ∀ᶠ z in 𝓝[≠] P, finiteLift z = c
 
 /-! ### Local analytic providers
 
@@ -1316,14 +1321,25 @@ The four lemmas below isolate the *purely local* facts about a
 meromorphic function with prescribed chart-local order at one pole.
 They feed the conversion `PointRiemannRochSection.toRiemannRochSectionAtPoint`. -/
 
-/-- **Provider (compact Liouville).** A meromorphic function on a
-compact connected charted space with no poles anywhere is constant.
+/-- **Provider (compact Liouville, germ form).** A meromorphic function
+on a compact connected charted space with no poles anywhere agrees,
+locally on a punctured neighborhood of every point, with a single
+global constant.
 
-This is the manifold-`ℂ` analogue of the classical statement that a
-holomorphic function on a compact connected Riemann surface is
-constant. With `0 ≤ orderAt p F` at every point, `F` extends to a
-global holomorphic function `X → ℂ`, hence constant by the maximum
-modulus principle (compactness + connectedness). -/
+The conclusion is stated in germ form: the value of `F` at any single
+point is not constrained by `MeromorphicAtX F p` (which only constrains
+the punctured-neighborhood germ), so the literal global equality
+`F = fun _ ↦ c` is in general false. The germ-form conclusion is the
+strongest true statement: `F` agrees with some constant `c` on a
+punctured neighborhood of every point of `X`.
+
+Mathematical proof outline: with `0 ≤ orderAt p F` at every point, the
+chart pullbacks of `F` are meromorphic with nonneg order, hence
+analytic in a punctured neighborhood that extends to an analytic
+function on the whole chart. Patching gives a global holomorphic
+function `g : X → ℂ` agreeing with `F` on a punctured neighborhood of
+every point, and Mathlib's `MDifferentiable.exists_eq_const_of_compactSpace`
+applied to `g` (compact connected manifold) yields a constant `c`. -/
 theorem meromorphic_no_poles_constant
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1335,7 +1351,7 @@ theorem meromorphic_no_poles_constant
     (horders : ∀ p : X,
       (0 : WithTop ℤ) ≤
         JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p F) :
-    ∃ c : ℂ, F = fun _ : X => c := by
+    ∃ c : ℂ, ∀ p : X, ∀ᶠ z in 𝓝[≠] p, F z = c := by
   sorry
 
 /-- **Provider (local Laurent → continuous extension).** If `F` is
@@ -1481,8 +1497,10 @@ provider, has chart-local order exactly `-1` at `P`.
 Proof: by `order_ge_neg_one_at_P` and `noPoleOff_P`, every chart-local
 order is nonnegative except possibly at `P`, where it is at least `-1`.
 If the order at `P` were also nonnegative, `meromorphic_no_poles_constant`
-would force `finiteLift` to be constant, contradicting
-`outside_constants`. Hence the order at `P` is exactly `-1`. -/
+would force `finiteLift` to agree with a single constant on a
+punctured neighborhood of every point — in particular on a punctured
+neighborhood of `P` — contradicting `outside_constants`. Hence the
+order at `P` is exactly `-1`. -/
 theorem orderAt_P_eq_neg_one
     [ConnectedSpace X]
     {P : X} (s : PointRiemannRochSection X P) :
@@ -1491,7 +1509,8 @@ theorem orderAt_P_eq_neg_one
   -- Case analysis on whether the order at `P` is `≥ 0`.
   by_cases hP : (0 : WithTop ℤ) ≤
       JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P s.finiteLift
-  · -- All orders are nonneg, so `finiteLift` is constant by compact Liouville.
+  · -- All orders are nonneg, so `finiteLift` has a constant germ at `P`
+    -- (and everywhere) by compact Liouville.
     exfalso
     have horders : ∀ p : X,
         (0 : WithTop ℤ) ≤
@@ -1502,7 +1521,8 @@ theorem orderAt_P_eq_neg_one
       · exact s.noPoleOff_P p hpP
     obtain ⟨c, hc⟩ :=
       meromorphic_no_poles_constant s.finiteLift s.meromorphic_everywhere horders
-    exact s.outside_constants ⟨c, hc⟩
+    -- Specialize the global germ-equality at `P`.
+    exact s.outside_constants ⟨c, hc P⟩
   · -- Order at `P` is `< 0` and `≥ -1`, so equals `-1`.
     push_neg at hP
     -- `hP : orderAt P s.finiteLift < 0`
@@ -1562,10 +1582,9 @@ end PointRiemannRochSection
 
 /-! ### Genus-zero existence frontier (strictly-smaller)
 
-The honest existence frontier for the genus-zero meromorphic-route
-cluster is now factored through the pure-RR section layer
-`PointRiemannRochSection X P` plus four local providers. The
-RR-only existence theorem is
+The existence frontier for the genus-zero meromorphic-route cluster is
+factored through the pure-RR section layer `PointRiemannRochSection X P`
+plus four local providers. The RR-only existence theorem is
 `genusZero_pointRRSection_outside_constants_exists` (direct sorry).
 The cluster frontier `genusZero_fixedPole_rrSection_nonempty` is a
 sorry-free assembly: pull a `PointRiemannRochSection` from the RR
@@ -1595,7 +1614,7 @@ theorem genusZero_pointRRSection_outside_constants_exists
     Nonempty (PointRiemannRochSection X P) := by
   sorry
 
-/-- **Honest section-level Riemann-Roch frontier (sorry-free assembly).**
+/-- **Section-level Riemann-Roch frontier (sorry-free assembly).**
 
 Sorry-free assembly from the pure-RR provider
 `genusZero_pointRRSection_outside_constants_exists` and the local
@@ -1658,8 +1677,8 @@ theorem genusZero_fixedPole_analyticRRWitness_nonempty
 /-- **Narrow Riemann-Roch analytic-data witness frontier (sorry-free
 projection).**
 
-Sorry-free projection from the honest analytic Riemann-Roch witness
-record `GenusZeroFixedPoleAnalyticRRWitness X P`, which packages all
+Sorry-free projection from the analytic Riemann-Roch witness record
+`GenusZeroFixedPoleAnalyticRRWitness X P`, which packages all
 three pieces that the conditional bridge consumes:
 
 * a meromorphic-map-to-sphere `f` with `f.poles = Divisor.point P`;
@@ -1669,7 +1688,7 @@ three pieces that the conditional bridge consumes:
 * the modulus-divergence `f.PoleModulusData`.
 
 The direct sorry has been pushed entirely onto the strictly-smaller
-honest analytic Riemann-Roch frontier
+analytic Riemann-Roch frontier
 `genusZero_fixedPole_analyticRRWitness_nonempty`. -/
 theorem genusZero_fixedPole_rr_analyticData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
