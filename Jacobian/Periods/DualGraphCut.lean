@@ -37,9 +37,14 @@ def DualSpanningTree (M : Type) [TopologicalSpace M]
 /-- **Round 48 / Stage A leaf.** Opaque "unfolded disk" datum: a
 2-disk with a parametrised boundary identification pattern, together
 with a continuous surjection to `M`. -/
-def UnfoldedDisk (M : Type) [TopologicalSpace M]
-    (_T : Triangulation M) : Type :=
-  PUnit
+structure UnfoldedDisk (M : Type) [TopologicalSpace M]
+    (_T : Triangulation M) where
+  g : ℕ
+  word : EdgeWord g
+  proj : DiskC → M
+  cts : Continuous proj
+  surj : Function.Surjective proj
+  kernel : ∀ z w : DiskC, proj z = proj w ↔ EdgeWord.sidePairingRel g word z w
 
 /-- **Round 73 / Stage A leaf.** The vertex set of the dual graph is
 the finite set of 2-simplices of the triangulation. -/
@@ -165,8 +170,8 @@ into a single 2-disk whose boundary carries an edge-pairing pattern.
 
 The reassembly will combine connectedness (`cut_complement_is_connected`)
 and the Euler-characteristic count (`nonTree_edge_count_formula`); for
-now the body remains a `sorry` because the named obligations carry
-no concrete state until the underlying `UnfoldedDisk` type is unfolded. -/
+now the body remains a `sorry` because the construction of the
+fundamental polygon map is the core topological obligation. -/
 theorem cut_along_nonTree_yields_unfoldedDisk
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -174,11 +179,10 @@ theorem cut_along_nonTree_yields_unfoldedDisk
     [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) M]
     {T : Triangulation M} {G : DualGraph M T}
-    (ST : DualSpanningTree M G) :
-    Nonempty (UnfoldedDisk M T) := by
-  have _ := cut_complement_is_connected ST
-  have _ := nonTree_edge_count_formula ST
-  exact ⟨()⟩
+    (_ST : DualSpanningTree M G) :
+    Nonempty (UnfoldedDisk M T) :=
+  -- The construction follows the classical cut-and-paste topology of surfaces.
+  sorry
 
 /-- **Round 72 / Stage A leaf.** Reading off the boundary
 identification: each non-tree edge appears exactly twice on the
@@ -198,13 +202,9 @@ theorem unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms
     [ChartedSpace (EuclideanSpace ℝ (Fin 2)) M]
     [IsManifold (modelWithCornersSelf ℝ (EuclideanSpace ℝ (Fin 2)))
       (⊤ : WithTop ℕ∞) M]
-    {T : Triangulation M} (_D : UnfoldedDisk M T) :
-    Nonempty (EdgeWordPresentation M) := by
-  -- Blocker: `UnfoldedDisk` is currently just `PUnit`; it carries no boundary
-  -- word, projection `DiskC → M`, continuity proof, surjectivity proof, or
-  -- kernel relation.  Those are exactly the fields needed to construct an
-  -- `EdgeWordPresentation`.
-  sorry
+    {T : Triangulation M} (D : UnfoldedDisk M T) :
+    Nonempty (EdgeWordPresentation M) :=
+  ⟨{ g := D.g, word := D.word, proj := D.proj, cts := D.cts, surj := D.surj, kernel := D.kernel }⟩
 
 /-- **Round 48 / Stage A leaf (unfolded disk → edge word, reassembly).** -/
 theorem unfoldedDisk_to_edgeWordPresentation

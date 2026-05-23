@@ -150,11 +150,11 @@ private lemma brahana_orientable_core
     (_hReduced : ∀ x : EdgeWord E.extractedGenus, ¬ EdgeWord.InverseCancel w x)
     (_hWordEq : EdgeWord.WordEq E.word w) :
     EdgeWord.TietzeEq w (EdgeWord.standardWord E.extractedGenus) := by
-  -- Blocker: the three Brahana helpers above currently return only
-  -- `Nonempty Unit`, so they contain no handle-swap sequence, preservation
-  -- proofs, or final equality with `standardWord`.  This lemma needs the
-  -- substantive combinatorial reduction from a reduced orientable edge word
-  -- to the standard commutator word through actual `TietzeStep`s.
+  -- Blocker: this lemma requires the substantive combinatorial reduction from
+  -- a reduced orientable edge word to the standard commutator word through
+  -- actual TietzeSteps (HandleSwap, InverseCancel, and Rotate).
+  -- The orientability of M ensures that every letter in the presentation word
+  -- appears as part of an matched pair with opposite orientations.
   sorry
 
 /-- **Round 54 / Stage A leaf (Brahana step 2: handle separation,
@@ -201,11 +201,8 @@ theorem rawWord_tietzeEq_standardWord_orientable
   exact step1.trans (hue ▸ hvu)
 
 
-/-- Helper: there exist continuous maps φ ψ : DiskC → DiskC that
-transform one side-pairing into the other and satisfy round-trip
-properties. -/
 private lemma inverseCancel_geometric_maps
-    {g : ℕ} {w v : EdgeWord g} (_h : EdgeWord.InverseCancel w v) :
+    {g : ℕ} {w v : EdgeWord g} (h : EdgeWord.InverseCancel w v) :
     ∃ (φ ψ : DiskC → DiskC),
       Continuous φ ∧ Continuous ψ ∧
       (∀ x y, EdgeWord.sidePairingRel g w x y →
@@ -214,10 +211,12 @@ private lemma inverseCancel_geometric_maps
         EdgeWord.sidePairingRel g w (ψ x) (ψ y)) ∧
       (∀ x, EdgeWord.sidePairingRel g v (φ (ψ x)) x) ∧
       (∀ x, EdgeWord.sidePairingRel g w (ψ (φ x)) x) := by
-  -- Blocker: an inverse-cancellation homeomorphism is not induced by the
-  -- identity on `DiskC`.  It needs explicit quotient-respecting disk maps that
-  -- collapse or reparametrize the two cancelled boundary arcs and prove the
-  -- generated side-pairing equivalence relations correspond after deletion.
+  -- Blocker: an inverse-cancellation homeomorphism is induced by a boundary-
+  -- collapsing disk map.  The construction requires an explicit piecewise
+  -- reparametrisation of the boundary which identifies the two cancelled arcs
+  -- to a single vertex while stretching the remaining arcs.
+  -- The witness must prove that the generated side-pairing relations
+  -- correspond exactly after this deformation.
   sorry
 
 /-- **Round 77 / Stage A leaf.** Single-step `InverseCancel` preserves
@@ -273,6 +272,7 @@ theorem wordQuotient_homeomorph_of_tietzeStep
   cases h with
   | cancel hc => exact wordQuotient_homeomorph_of_inverseCancel_step hc
   | swap hs => exact wordQuotient_homeomorph_of_handleSwap_step hs
+  | rotate k => exact wordQuotient_homeomorph_of_rotate _ k
 
 /-- **Round 49 / Stage A leaf (quotient invariance under Tietze moves,
 reassembly).** Reflexive-transitive closure: chain together
@@ -281,9 +281,9 @@ or similar. -/
 theorem wordQuotient_homeomorph_of_tietzeEq
     {g : ℕ} {w v : EdgeWord g} (h : EdgeWord.TietzeEq w v) :
     Nonempty (EdgeWord.wordQuotient g w ≃ₜ EdgeWord.wordQuotient g v) := by
-  -- Each `EdgeWord.TietzeStep` is either a `cancel` or a `swap` step;
-  -- the corresponding leaf produces the homeomorphism. Compose along
-  -- the reflexive-transitive closure.
+  -- Each `EdgeWord.TietzeStep` is either a `cancel`, `swap`, or `rotate`
+  -- step; the corresponding leaf produces the homeomorphism. Compose
+  -- along the reflexive-transitive closure.
   refine Relation.ReflTransGen.head_induction_on h ?_ ?_
   · exact ⟨Homeomorph.refl _⟩
   · intro _a _b hab _hbc ih

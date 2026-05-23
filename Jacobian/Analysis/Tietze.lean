@@ -209,6 +209,8 @@ theorem tietzeStep_count_le {g : ℕ} {w v : EdgeWord g}
   | swap hs =>
     cases hs
     simp only [List.count_append]; omega
+  | rotate k =>
+    rw [(List.rotate_perm w k).count_eq]
 
 /-- **Round-3 helper.**  `TietzeEq`-equivalent words satisfy the same
 count-monotonicity property: counts can only decrease across the

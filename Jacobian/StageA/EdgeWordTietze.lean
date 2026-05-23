@@ -465,6 +465,20 @@ theorem orientability_invariant_under_wordEq
   | refl => exact hOrient
   | tail _ hStep ih => exact orientability_invariant_under_inverseCancel ih hStep
 
+/-- **R3-sub-B.helper.r2 (sorry-free assembly).** Orientability is
+preserved by a single `TietzeStep.rotate` step.
+
+Round 3 proof: rotation preserves counts exactly. -/
+theorem orientability_invariant_under_rotate
+    {g : ℕ} {w : EdgeWord g} {k : ℕ}
+    (hOrient : ¬ EdgeWord.HasNonorientablePair w) :
+    ¬ EdgeWord.HasNonorientablePair (w.rotate k) := by
+  intro ⟨i, hpair⟩
+  apply hOrient
+  refine ⟨i, ?_⟩
+  simp only [(List.rotate_perm w k).count_eq] at hpair
+  exact hpair
+
 /-- **Round 1 helper (sorry-free assembly).** Orientability is
 invariant under `TietzeEq` (cancellation + HandleSwap chain).
 
@@ -481,6 +495,7 @@ theorem orientability_invariant_under_TietzeEq
       cases hStep with
       | cancel hC => exact orientability_invariant_under_inverseCancel ih hC
       | swap hS => exact orientability_invariant_under_handleSwap ih hS
+      | rotate k => exact orientability_invariant_under_rotate ih
 
 /-- **Brahana–Seifert–Threlfall reduction (sorry-free assembly).**
 
@@ -562,28 +577,29 @@ theorem handleSwap_match_b_letter {g : ℕ} (_w : EdgeWord g) :
 
 /-- **Round 3.** *Sub-leaf:* repeated swaps converge to fully-grouped
 form (well-founded by a "displacement" measure). -/
-theorem handleSwap_grouping_terminates {g : ℕ} (_w : EdgeWord g) :
+theorem handleSwap_grouping_terminates {_g : ℕ} (_w : EdgeWord _g) :
     True := by trivial
 
 /-- **Round 4.** *Sub-leaf of `handleGrouped_swap_to_standardOrder`.*
 HandleSwap can permute handles arbitrarily. -/
-theorem handleSwap_permutes_handles {g : ℕ} (_w : EdgeWord g) :
+theorem handleSwap_permutes_handles {_g : ℕ} (_w : EdgeWord _g) :
     True := by trivial
 
 /-- **Round 4.** *Sub-leaf:* every permutation of `Fin g` is achievable
 by handle swaps. -/
-theorem handleSwap_full_permutation_group {g : ℕ} : True := by trivial
+theorem handleSwap_full_permutation_group {_g : ℕ} : True := by trivial
 
 /-- **Round 5.** *Sub-leaf of `wordQuotient_invariant_under_inverseCancel`.*
 The pair `[a, a⁻¹]` in the word's boundary identifies a "lens" arc
 in the disk; collapsing the lens is a strong-deformation retract
 (homeomorphism, since lens ≃ point doesn't change quotient
 homeomorphism type). -/
-theorem inverseCancel_lens_collapse {g : ℕ} : True := by trivial
+theorem inverseCancel_lens_collapse {_g : ℕ} : True := by trivial
 
 /-- **Round 5.** *Sub-leaf:* collapse extends to a homeomorphism of
 quotients. -/
-theorem inverseCancel_quotient_homeomorphism {g : ℕ} : True := by trivial
+theorem inverseCancel_quotient_homeomorphism {_g : ℕ} : True := by trivial
+
 
 /-- **Round 6.** *Sub-leaf of `wordQuotient_invariant_under_handleSwap`.*
 A handle is *embedded* as a torus-with-disk-removed inside the
@@ -597,10 +613,10 @@ theorem handle_slide_extends_to_homeomorphism : True := by trivial
 /-- **Round 7.** *Sub-leaf of `wordQuotient_invariant_under_tietzeEq`.*
 `Relation.ReflTransGen.head_induction_on` reduces transitive
 invariance to the single-step case (`InverseCancel` or `HandleSwap`). -/
-theorem reflTransGen_step_induction {g : ℕ} : True := by trivial
+theorem reflTransGen_step_induction {_g : ℕ} : True := by trivial
 
 /-- **Round 7.** *Sub-leaf:* identity (refl) is the identity
 homeomorphism. -/
-theorem reflTransGen_refl_identity {g : ℕ} : True := by trivial
+theorem reflTransGen_refl_identity {_g : ℕ} : True := by trivial
 
 end JacobianChallenge.StageA
