@@ -2001,7 +2001,7 @@ theorem polygon4g_projectedSubdivisionChain_eq_chainMap_liftedDiskChain
     ((lifted.simplexLift s).lift i)
 
 /-- Endpoint pairs extracted from the boundary of the summed lifted
-chain.  Each pair is a genuine `SideRel` pair and carries the endpoint
+chain.  Each pair is a specific `SideRel` pair and carries the endpoint
 repair data for that relation. -/
 structure Polygon4gCycleEndpointPairFamily
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
@@ -2099,6 +2099,69 @@ structure Polygon4gProjectedEndpointBoundaryCancellation
                 pointChain (Polygon4g (g + 1))
                   (Polygon4g.mk (g + 1)
                     ((lifted.simplexLift s).lift i (stdSimplexVertex 0))))))) = 0
+
+/-- Pure finite-support endpoint pairing output.  This strips the
+cycle-level names away from endpoint matching: a finite signed endpoint
+sum in the disk whose projection vanishes is represented as endpoint
+differences between disk points with equal quotient images, equivalently
+`SideRel`-related endpoints. -/
+structure FiniteProjectedEndpointPairFamily
+    (g : ℕ) (S : Type) [Fintype S]
+    (I : S → Type) [∀ s, Fintype (I s)]
+    (coeff : S → ℤ)
+    (leftEndpoint rightEndpoint : ∀ s, I s → DiskC)
+    (boundary : SingularChainCoproduct DiskC 0) where
+  Pair : Type
+  pairFintype : Fintype Pair
+  leftEndpoint' : Pair → DiskC
+  rightEndpoint' : Pair → DiskC
+  endpointRel :
+    ∀ pair : Pair,
+      Polygon4g.SideRel (g + 1) (leftEndpoint' pair) (rightEndpoint' pair)
+  boundary_eq_pairs :
+    boundary =
+      (@Finset.univ Pair pairFintype).sum
+        (fun pair =>
+          pointChain DiskC (rightEndpoint' pair) -
+            pointChain DiskC (leftEndpoint' pair))
+
+/-- Finite-support quotient bookkeeping provider.  This is the exact
+remaining algebraic leaf below cycle-level endpoint extraction: from a
+finite signed endpoint expansion and vanishing of its quotient image,
+construct a finite family of matched endpoint differences. -/
+theorem finite_projected_endpoint_sum_zero_pairing
+    (g : ℕ) (S : Type) [Fintype S]
+    (I : S → Type) [∀ s, Fintype (I s)]
+    (coeff : S → ℤ)
+    (leftEndpoint rightEndpoint : ∀ s, I s → DiskC)
+    (boundary : SingularChainCoproduct DiskC 0)
+    (_boundary_eq_endpoint_sum :
+      boundary =
+        (@Finset.univ S inferInstance).sum
+          (fun s => coeff s •
+            ((@Finset.univ (I s) inferInstance).sum
+              (fun i =>
+                pointChain DiskC (rightEndpoint s i) -
+                  pointChain DiskC (leftEndpoint s i)))))
+    (_projected_endpoint_sum_zero :
+      (@Finset.univ S inferInstance).sum
+        (fun s =>
+          coeff s •
+            (((@Finset.univ (I s) inferInstance).sum
+                (fun i =>
+                  pointChain (Polygon4g (g + 1))
+                    (Polygon4g.mk (g + 1) (rightEndpoint s i)))) -
+              ((@Finset.univ (I s) inferInstance).sum
+                (fun i =>
+                  pointChain (Polygon4g (g + 1))
+                    (Polygon4g.mk (g + 1) (leftEndpoint s i)))))) = 0) :
+    Nonempty
+      (FiniteProjectedEndpointPairFamily g S I coeff leftEndpoint rightEndpoint
+        boundary) := by
+  -- Missing finite-support algebra: normalize the signed endpoint sum,
+  -- pair equal projected point-chain occurrences, and convert equality
+  -- of quotient points to `Polygon4g.SideRel` via `Polygon4g.mk_eq_mk_iff`.
+  sorry
 
 /-- Chain-boundary expansion part of endpoint extraction: no quotient
 pairing is involved here, only finite-sum algebra and the boundary
@@ -2225,11 +2288,32 @@ theorem finite_projected_endpoint_boundary_zero_pairs
     (_projectedEndpointCancellation :
       Polygon4gProjectedEndpointBoundaryCancellation g z hz decomp lifted) :
     Nonempty (Polygon4gCycleEndpointRelPairFamily g z hz decomp lifted) := by
-  -- Missing finite-support quotient bookkeeping: use the already
-  -- expanded lifted endpoint boundary and projected vanishing to pair
-  -- endpoint terms with equal quotient images, then convert those equal
-  -- projections to `SideRel`.
-  sorry
+  classical
+  letI := decomp.simplexFintype
+  let I : decomp.Simplex → Type :=
+    fun s => Fin ((lifted.simplexLift s).n)
+  let leftEndpoint : ∀ s, I s → DiskC :=
+    fun s i => (lifted.simplexLift s).lift i (stdSimplexVertex 0)
+  let rightEndpoint : ∀ s, I s → DiskC :=
+    fun s i => (lifted.simplexLift s).lift i (stdSimplexVertex 1)
+  obtain ⟨pairs⟩ :=
+    finite_projected_endpoint_sum_zero_pairing
+      g decomp.Simplex I decomp.coeff leftEndpoint rightEndpoint
+      ((singularChainComplexZ DiskC).d 1 0 lifted.liftedDiskChain)
+      (by
+        simpa [I, leftEndpoint, rightEndpoint] using
+          _endpointExpansion.lifted_boundary_eq_endpoint_sum)
+      (by
+        simpa [I, leftEndpoint, rightEndpoint] using
+          _projectedEndpointCancellation.projected_endpoint_sum_zero)
+  exact ⟨{
+    Pair := pairs.Pair
+    pairFintype := pairs.pairFintype
+    leftEndpoint := pairs.leftEndpoint'
+    rightEndpoint := pairs.rightEndpoint'
+    endpointRel := pairs.endpointRel
+    lifted_boundary_eq_pairs := pairs.boundary_eq_pairs
+  }⟩
 
 /-- Atomic endpoint-pair extraction leaf: the polygon cycle condition
 forces the boundary of the lifted disk chain to be a finite sum of
