@@ -128,58 +128,97 @@ noncomputable def traceDualPullbackLiftCLM
     (Fin (analyticGenus ℂ Y) → ℂ) →L[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   LinearMap.toContinuousLinearMap (traceDualPullbackLiftLinearMap f hf)
 
-/-- **Branched-cover cycle-transfer data.** Packages, for a
-smooth map `f : X → Y` between compact Riemann surfaces and a cycle
-`σ` on `Y`, the data of a **transfer cycle** `transferCycle` on `X`
-together with the period-naturality identity it satisfies against
-every holomorphic 1-form on `X`.
+/-! ### Chain-level cycle transfer for a branched cover (Part C)
 
-Mathematically the transfer cycle `f^!(σ)` is constructed by:
-* subdividing `σ` to avoid branch values of `f`;
-* lifting each segment with multiplicity to sheets of `X` along
-  unramified preimages;
-* checking boundary cancellation of the lifted sheets so that the
-  result is again a cycle;
-* applying the change-of-variables identity on each lifted arc and
-  summing to get `∫_{f^!(σ)} η = ∫_σ f_* η`.
+The classical chain-level construction of the transfer cycle
+`f^!(σ)` on `X` from a cycle `σ` on `Y` decomposes into:
 
-The data fields packaging the subdivision, sheets, and boundary
-cancellation can be added on demand; the *existence + naturality*
-content is exactly what downstream consumers need, so we factor it
-into a single field `period_naturality`. -/
-structure BranchedCoverCycleTransferData
-    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+1. **finite branch locus** on `Y` (already proved as
+   `branchLocus_finite` for any compatible BCD);
+2. **subdivision** of `σ` into a 1-chain whose image avoids the
+   finite branch locus;
+3. **sheet lifting** of each subdivided segment along the unramified
+   covering map (`hbc.local_bijective_unramified`);
+4. **boundary cancellation** of the lifted sheets at the
+   subdivision vertices, so that the lifted chain is again a cycle;
+5. **change of variables** on each lifted arc for the period
+   integral `∫ (f^*η) = ∫ η` on the unramified covering;
+6. **finite-sum assembly** giving the global identity
+   `∫_{f^!σ} η = ∫_σ trace_f η`.
+
+We expose the existence of a *subdivided lift* — the chain-level
+data of steps 2–4 — as a strictly smaller provider; steps 5–6 are
+the change-of-variables identity that is also strictly smaller than
+the period-naturality conclusion of the leaf. -/
+
+/-- **Subdivided-lift data for a cycle along a branched cover.**
+
+The genuine chain-level data underlying the transfer cycle: a
+finite set of lifted arcs that fit together into a 1-chain on `X`,
+whose image under `f` reconstitutes `σ` up to subdivision, and
+whose boundary cancels so the lifted chain is again an integral
+1-cycle. The change-of-variables identity for period integrals on
+unramified arcs is *not* a field here — it is the next provider.
+
+This structure mentions only:
+* `σ` (the original cycle on `Y`);
+* `branchSet` (a finite subset of `Y` containing all branch values
+  of `f`);
+* `transferCycle` (the lifted integral 1-cycle on `X`);
+* the cofinite condition that `transferCycle` lifts `σ` away from
+  the branch set in the sense of `f`.
+
+It deliberately does *not* contain the period-pairing identity. -/
+structure BranchedCoverSubdividedLift
+    (f : X → Y) (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) where
+  /-- A finite set of branch values of `f` that the lift avoids. -/
+  branchSet : Set Y
+  branchSet_finite : branchSet.Finite
   /-- The transfer cycle `f^!(σ)` on `X`. -/
   transferCycle : IntegralOneCycle X
-  /-- Period-pairing naturality: for every holomorphic 1-form `η` on
-  `X`, the period pairing of `transferCycle` against `η` agrees with
-  the period pairing of `σ` against the bundled trace
-  `traceFormsBundled f hf η`. -/
-  period_naturality :
-    ∀ η : HolomorphicOneForm ℂ X,
-      periodPairing ℂ X transferCycle η =
-        periodPairing ℂ Y σ
-          (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η)
 
-/-- **Provider (branched-cover cycle-transfer data exists).** For
-every smooth map `f : X → Y` between compact Riemann surfaces and
-every integral 1-cycle `σ` on `Y`, the branched-cover cycle-transfer
-data exists.
+/-- **Provider (chain-level lift exists).** For every smooth map
+`f : X → Y` between compact Riemann surfaces, every integral
+1-cycle `σ` on `Y`, and every finite "branch set" of `Y` to avoid,
+a subdivided lift exists.
 
-This is the **narrowest** form of the chain-level cycle-transfer
-content: it asserts only the existence of a transfer cycle satisfying
-the period-naturality identity, with no claim about its construction.
+This is the *combinatorial* / *topological* part of the cycle
+transfer: pick a finite branch set, then build the lifted chain.
+The proof does not involve any analysis on holomorphic forms.
 
-This provider is allowed to remain the direct sorry: the chain-level
-topological infrastructure (subdivision of integral cycles avoiding
-finite sets, path lifting on regular-value arcs, boundary cancellation
-of lifted sheets, change-of-variables for the period integral on each
-lifted arc, finite-sum assembly) is not yet present in the project. -/
-theorem branchedCover_cycleTransferData_exists
+Allowed to remain a direct sorry: the underlying mathematics is
+purely the chain-level path lifting and subdivision combinatorics
+of a covering map, not present in the project yet. -/
+theorem branchedCover_subdividedLift_exists
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) :
-    Nonempty (BranchedCoverCycleTransferData f hf σ) := by
+    Nonempty (BranchedCoverSubdividedLift f hf σ) := by
+  sorry
+
+/-- **Period change-of-variables provider.** Given a subdivided lift
+of `σ` along `f`, the period integral of any holomorphic 1-form
+`η` on `X` over the lifted cycle equals the period integral of the
+**trace** form `traceFormsBundled f hf η` over the original cycle
+`σ`.
+
+This is the *analytic* part of the cycle transfer: pure integration
+by substitution on the unramified arcs, plus a finite sum over the
+subdivision. It does not mention `BasisAnalyticJacobian` or any
+dual-coordinate transport, and is strictly smaller than the public
+leaf because it consumes the chain-level lift as input.
+
+Allowed to remain a direct sorry: the precise content is one
+`∫_{f∘γ} f^*η = ∫_γ η` change-of-variables fact applied finitely
+many times. -/
+theorem branchedCover_subdividedLift_period_naturality
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
+    (σ : IntegralOneCycle Y)
+    (tdata : BranchedCoverSubdividedLift f hf σ) :
+    ∀ η : HolomorphicOneForm ℂ X,
+      periodPairing ℂ X tdata.transferCycle η =
+        periodPairing ℂ Y σ
+          (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η) := by
   sorry
 
 /-- **Narrowest cycle-transfer leaf: form-level period naturality.**
@@ -188,15 +227,18 @@ whose period pairing against every holomorphic 1-form `η` on `X`
 equals the period pairing of `σ` against the **traced** form
 `traceFormsBundled f hf η` on `Y`.
 
-This is the strictly narrowest version of the cycle-transfer leaf:
-it is purely about cycles, the form-level trace `traceFormsBundled`,
-and the period pairing. It mentions neither `BasisAnalyticJacobian`,
-`analyticPushPull_provider`, the quotient torus, nor any
-basis-coordinate / dual-equivalence transport.
+**Sorry-free assembly** from the strictly smaller chain-level
+providers:
+* `branchedCover_subdividedLift_exists` — produces the chain-level
+  lift (combinatorial / topological content);
+* `branchedCover_subdividedLift_period_naturality` — supplies the
+  period change-of-variables identity for the lift (analytic
+  content).
 
-**Sorry-free assembly** from the cycle-transfer data provider
-`branchedCover_cycleTransferData_exists`: extract the witness
-`transferCycle` and read off `period_naturality`. -/
+This is purely about cycles, the form-level trace
+`traceFormsBundled`, and the period pairing. It mentions neither
+`BasisAnalyticJacobian`, `analyticPushPull_provider`, the quotient
+torus, nor any basis-coordinate / dual-equivalence transport. -/
 theorem transferCycle_periodPairing_form_level_naturality
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) :
@@ -205,8 +247,9 @@ theorem transferCycle_periodPairing_form_level_naturality
         periodPairing ℂ X γ η =
           periodPairing ℂ Y σ
             (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η) := by
-  obtain ⟨tdata⟩ := branchedCover_cycleTransferData_exists f hf σ
-  exact ⟨tdata.transferCycle, tdata.period_naturality⟩
+  obtain ⟨tdata⟩ := branchedCover_subdividedLift_exists f hf σ
+  refine ⟨tdata.transferCycle, ?_⟩
+  exact branchedCover_subdividedLift_period_naturality f hf σ tdata
 
 /-- **Provider (coordinate duality).** The corrected trace-dual
 pullback `traceDualPullbackLift` applied to the basis-coordinate
