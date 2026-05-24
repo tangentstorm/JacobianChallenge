@@ -6,11 +6,14 @@ To ensure highly effective, autonomous progress in this multi-agent setup, all w
 
 ## 1. Status-Line Specification
 
-The very first line of each worker's `task.md` must be a standardized status indicator:
+The very first line of each worker's `task.md` must be a standardized status and detail indicator of the format `[STATUS]: [detail]`:
 
-*   `STATUS: WORKING` — The worker is actively developing their current commit-sized step.
-*   `STATUS: STEP-DONE` — The worker has completed the step, it builds cleanly with zero `sorry`s, and is ready for cross-verification.
-*   `STATUS: BLOCKED` — The worker is genuinely stuck and cannot proceed.
+*   `WORKING: [Active step description]` — The worker is actively developing the specified commit-sized step.
+    *   *Example*: `WORKING: Prove discreteness of closed subgroup`
+*   `STEP-DONE: [Active step description]` — The worker has completed the specified step (it compiles sorry-free) and is waiting for peer-review.
+    *   *Example*: `STEP-DONE: Prove discreteness of closed subgroup`
+*   `BLOCKED: [Detailed reason or Group dependency gate]` — The worker is genuinely stuck and cannot proceed.
+    *   *Example*: `BLOCKED: Gated on Group 2 Banach metric space`
 
 ---
 
