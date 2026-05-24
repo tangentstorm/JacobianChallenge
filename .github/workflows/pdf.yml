@@ -36,13 +36,17 @@ jobs:
 
       - name: Build PDF
         working-directory: tex
-        run: latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+        run: |
+          latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+          latexmk -pdf -interaction=nonstopmode -halt-on-error main-with-layman.tex
 
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
           name: jacobian-informal-proof
-          path: tex/main.pdf
+          path: |
+            tex/main.pdf
+            tex/main-with-layman.pdf
           retention-days: 90
           if-no-files-found: error
 
