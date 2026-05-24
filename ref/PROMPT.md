@@ -188,6 +188,7 @@ The timer will call you again.
   Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
   ```
   in addition to the active assistant's trailer (e.g. `Co-authored-by: Claude <claude@anthropic.com>`). On heartbeat/cleanup commits with no agent contributions, only the primary developer's identity is used.
+- **Enforce Status Lifecycles & Scoping**: When launching or auditing workers, ensure their active checklist in `task.md` is scoped to a single commit-sized step, begins with a standardized status line (`STATUS: WORKING` | `STATUS: STEP-DONE` | `STATUS: BLOCKED`), and that they strictly follow the unblocking protocol in [ref/status-guide.md](file:///Users/michal/ver/jc0/ref/status-guide.md). Let reviewer agents cross-verify `STATUS: STEP-DONE` before committing and merging.
 - **Imports are minimal and load-bearing.** `import Mathlib` is a cardinal
   sin — it pulls in the entire library, blowing up build times by an order
   of magnitude. Every Aristotle / sub-agent / Codex prompt must explicitly
