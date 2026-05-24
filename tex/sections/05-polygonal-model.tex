@@ -67,16 +67,7 @@ together pairwise via the identification pattern.
 
 \subsection{The fundamental \(4g\)-gon}
 
-\begin{definition}[Boundary parameterization of the closed unit disk]
-\label{def:polygon4g-boundary-param}
-For each genus \(g\geq 1\) and each index \(i\in\{0,\ldots,4g-1\}\),
-the \(i\)-th boundary arc of the disk is the map
-\(t\mapsto e^{i\,2\pi(i+t)/4g}\) for \(t\in[0,1]\), lifted into the
-closed unit disk. The \(4g\) arcs cover the boundary circle once
-each.
-\lean{JacobianChallenge.Periods.boundaryParamC}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 Take the closed unit disk in the plane. March around its boundary
@@ -91,23 +82,7 @@ can be defined by a simple formula in \(t\) rather than an abstract
 combinatorial chart.
 \end{layman}
 
-\begin{definition}[Standard \(4g\)-gon side-pairing relation]
-\label{def:polygon4g-side-rel}
-\uses{def:polygon4g-boundary-param}
-The \emph{standard side-pairing relation} on the closed unit disk
-identifies, for every handle index \(i\in\{0,\ldots,g-1\}\) and every
-parameter \(t\in[0,1]\):
-\begin{itemize}
-  \item the point on arc \(4i\) at parameter \(t\) with the point on
-    arc \(4i+2\) at parameter \(1-t\) (the \(a_i\)-cycle);
-  \item the point on arc \(4i+1\) at parameter \(t\) with the point on
-    arc \(4i+3\) at parameter \(1-t\) (the \(b_i\)-cycle).
-\end{itemize}
-The full relation is the equivalence closure of these generating
-pairs.
-\lean{JacobianChallenge.Periods.Polygon4g.SideRel}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 Pair up the \(4g\) arcs in groups of four --- one group per handle.
@@ -124,19 +99,7 @@ handle --- is what turns the disk into a higher-genus surface after
 quotienting.
 \end{layman}
 
-\begin{definition}[Standard fundamental polygon \(\mathrm{Polygon4g}\)]
-\label{def:polygon4g}
-\uses{def:polygon4g-side-rel}
-The standard fundamental \(4g\)-gon is the topological quotient of
-the closed unit disk by the standard side-pairing relation:
-\[
-  \mathrm{Polygon4g}(g) := \overline{D}^{1}\,/\!\sim_{\mathrm{side}}.
-\]
-Its quotient map is denoted \(\mathrm{mk}_g\) and is continuous by
-construction.
-\lean{JacobianChallenge.Periods.Polygon4g}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 Take the closed unit disk and collapse together every pair of
@@ -165,16 +128,7 @@ word; alternative words give homeomorphic surfaces if and only if
 they are related by an explicit set of combinatorial moves (Tietze
 transformations).
 
-\begin{definition}[Edge-word alphabet]
-\label{def:edge-word-alphabet}
-For each genus \(g\), the edge-word alphabet \(\mathrm{Letter}(g)\)
-has four families of letters indexed by handle \(i\in\{0,\ldots,g-1\}\):
-\(a_i\), \(b_i\), \(a_i^{-1}\), \(b_i^{-1}\).
-An \emph{edge word} is a finite list of letters,
-\(\mathrm{EdgeWord}(g) := \mathrm{List}(\mathrm{Letter}(g))\).
-\lean{JacobianChallenge.Periods.Letter, JacobianChallenge.Periods.EdgeWord}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 Pick a four-letter alphabet for each handle: ``go around the
@@ -189,21 +143,7 @@ homeomorphic surfaces, decompose handles, cancel inverses, and run
 the surface-classification algorithm --- all as list operations.
 \end{layman}
 
-\begin{definition}[Standard relator word]
-\label{def:standard-word}
-\uses{def:edge-word-alphabet}
-The \emph{standard relator word} of genus \(g\) is the concatenation
-\[
-  \mathrm{standardWord}(g)
-    := a_0\,b_0\,a_0^{-1}\,b_0^{-1}\,
-       a_1\,b_1\,a_1^{-1}\,b_1^{-1}\,\cdots\,
-       a_{g-1}\,b_{g-1}\,a_{g-1}^{-1}\,b_{g-1}^{-1}.
-\]
-A word is in \emph{standard form} if it equals
-\(\mathrm{standardWord}(g)\).
-\lean{JacobianChallenge.Periods.EdgeWord.standardWord}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 Concatenating the four-letter handle blocks for every
@@ -219,15 +159,7 @@ underlying surface is the genus-\(g\) closed orientable
 surface and not some exotic close cousin.
 \end{layman}
 
-\begin{lemma}[Standard word's quotient is \(\mathrm{Polygon4g}\)]
-\label{lem:polygon4g-eq-standard-word-quotient}
-\uses{def:polygon4g,def:standard-word}
-The quotient of the closed unit disk by the side-pairing induced by
-\(\mathrm{standardWord}(g)\) is identical (as a type) to
-\(\mathrm{Polygon4g}(g)\).
-\lean{JacobianChallenge.Periods.EdgeWord.polygon4g_eq_standard_word_quotient}
-\leanok
-\end{lemma}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -242,22 +174,7 @@ classification and Tietze moves), without translating back and forth
 through an awkward homeomorphism.
 \end{layman}
 
-\begin{definition}[Tietze equivalence on edge words]
-\label{def:tietze-equivalence}
-\uses{def:edge-word-alphabet}
-Two edge words are \emph{Tietze-equivalent} if one can be obtained
-from the other by a finite sequence of moves drawn from:
-\begin{itemize}
-  \item \emph{Inverse cancellation}: insert or remove a consecutive
-    pair \(\ell\,\ell^{-1}\) anywhere in the word;
-  \item \emph{Handle swap}: permute two complete four-letter handle
-    blocks within the word.
-\end{itemize}
-The relation is generated as the equivalence closure of these single
-moves.
-\lean{JacobianChallenge.Periods.EdgeWord.TietzeEq}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 Two recipes for gluing the boundary of a polygon are
@@ -276,26 +193,7 @@ heart of the surface-classification step (Stage A) below.
 
 \subsection{Classical inputs for surface classification}
 
-\begin{theorem}[Classical input: Rad\'o's triangulation theorem]
-\label{input:rado-triangulation}
 
-Every compact connected oriented topological 2-manifold admits a
-triangulation: a homeomorphism with the underlying space of a finite
-two-dimensional simplicial complex.
-\depends{Classical 1925 result (T. Rad\'o, \emph{\"Uber den Begriff der
-Riemannschen Fl\"ache}). Mathlib v4.28.0 has neither the
-simplicial-complex side nor the existence theorem; the formalisation
-is a multi-month project in its own right, conventionally treated
-through PL or smooth-triangulation methods. The project carries a
-bottom-up sketch of the classical proof in
-\code{Jacobian/StageA/RadoTheorem.lean} (chart cover, PL
-approximation, combinatorial assembly, ${\sim}150$ LOC of typed
-sorries) backed by the supporting modules
-\code{StageA/SimplicialComplex.lean} and
-\code{StageA/SpanningTree.lean}.}
-\lean{JacobianChallenge.StageA.rado_triangulation_theorem}
-\leanok
-\end{theorem}
 
 \begin{layman}
 Rad\'o's theorem says every compact two-dimensional surface --- Riemann
@@ -313,23 +211,7 @@ Mathlib does not yet have it; the project carries a thin
 filled by a future formalisation.
 \end{layman}
 
-\begin{theorem}[Classical input: Tietze normal form for orientable surface words]
-\label{input:tietze-normal-form}
-\uses{def:tietze-equivalence,def:orientable}
-Every edge word arising from a polygonal presentation of a compact
-connected orientable 2-manifold of genus \(g\) is Tietze-equivalent to
-the standard relator
-\(a_1 b_1 a_1^{-1} b_1^{-1} \cdots a_g b_g a_g^{-1} b_g^{-1}\).
-\depends{Classical Brahana--Seifert--Threlfall reduction. Mathlib
-v4.28.0 has neither edge words nor Tietze transformations on them;
-the project ships a top-down sketch under
-\code{Jacobian/StageA/EdgeWordTietze.lean}
-(\code{orientable_edgeWord_tietzeEq_standardWord}) and a parallel
-project-side decomposition in \code{Jacobian/Periods/TietzeReduction.lean}
-(handle separation, inverse cancellation, cyclic reduction).}
-\lean{JacobianChallenge.StageA.orientable_edgeWord_tietzeEq_standardWord}
-\leanok
-\end{theorem}
+
 
 \begin{layman}
 The Tietze normal-form theorem is the combinatorial heart of
@@ -353,35 +235,7 @@ theorem currently sits at the top of a sorry tree.
 
 \subsection{The polygonal model theorem (Stage A)}
 
-\begin{theorem}[Polygonal model of a compact Riemann surface]
-\label{thm:polygonal-model}
-\uses{def:polygon4g,lem:polygon4g-eq-standard-word-quotient,def:tietze-equivalence,def:orientable,input:rado-triangulation,input:tietze-normal-form,thm:polygon4g-cellular-singular}
-A compact connected oriented Riemann surface \(X\) of analytic
-genus \(g\) is homeomorphic to \(\mathrm{Polygon4g}(g)\):
-\[
-  X \cong_{\mathrm{homeo}} \mathrm{Polygon4g}(g).
-\]
-\depends{Standard topological classification of compact orientable
-surfaces (triangulation + reduction to the standard relator word via
-Tietze moves), or a Morse-theoretic handle decomposition. Mathlib
-v4.28.0 has none of these as packaged theorems; this is the largest
-classical-topology gap on the polygonal-model route. Tracked
-internally as ``Stage A,'' a roughly 3,000--5,000 LOC formalization
-project in its own right. The project ships a top-down sketch of
-the proof tree under \code{Jacobian/StageA/} (seven files: simplicial
-complexes, Rad\'o, spanning tree, prism operator, Hurewicz, edge-word
-Tietze, cellular--singular comparison; ${\sim}120$ typed declarations,
-all sorry) and a parallel project-side chain in
-\code{Jacobian/Periods/SurfaceClassification.lean} +
-\code{TietzeReduction.lean} + \code{Polygon4gCellular.lean} +
-\code{H1EvenBasisViaSurfaceClassification.lean} that wires the
-classical pieces into the analytic genus equality the rest of the
-blueprint consumes. Edge-word algebra and the Tietze relation are
-sorry-free; the umbrella reduction theorem and the Stage~A bottom-up
-infrastructure remain open.}
-\lean{JacobianChallenge.Blueprint.polygonal_model}
-\leanok
-\end{theorem}
+
 
 \begin{layman}
 Every compact connected oriented genus-\(g\) Riemann surface can be
@@ -478,49 +332,9 @@ notion (dimension of holomorphic 1-forms) by combining with the
 polygonal-model theorem and the period-lattice rank computation.
 \end{layman}
 
-\begin{theorem}[Cellular homology computes \(H_1\) of the fundamental polygon]
-\label{thm:polygon4g-cellular-singular}
-\uses{def:polygon4g,def:topological-genus}
-For the standard \(4g\)-gon, the free abelian group generated by the
-\(2g\) edge cycles is linearly isomorphic to singular first homology:
-\[
-  \Z^{2g} \cong H_1(\mathrm{Polygon4g}(g);\Z).
-\]
-\depends{The Lean assembly is now split across
-\code{Jacobian/Periods/CellularChainComplex.lean},
-\code{Jacobian/Periods/Hurewicz.lean}, and
-\code{Jacobian/Periods/Polygon4gCellular.lean}.  The top-level theorem
-\code{polygon4g\_cellular\_singular\_iso} is sorry-free: it composes
-\code{polygon4g\_cellularH1\_free\_assembly} with
-\code{polygon4g\_cellularH1\_to\_singularH1}.  The remaining named
-leaves are (i) closed disk source, (ii) boundary side subdivision,
-(iii) boundary quotient relation, (iv) boundary side-pairing
-combinatorics, (v) side-pairing orientation and label compatibility,
-(vi) characteristic maps, (vii) realisation as the standard cellular
-model, (viii) one-cell boundary zero, (ix) the two-cell abelianised
-commutator boundary, (x) singular zero-cell datum, (xi) singular
-one-cell edge-path data, (xii) singular two-cell characteristic-map
-data, (xiii) singular two-cell boundary-word parametrisation, (xiv)
-degree-zero correctness of the comparison map, (xv) one-cell boundary
-compatibility, (xvi) two-cell attaching-map compatibility, (xvii)
-filtration compatibility, (xviii) the associated-graded \(H_1\)
-calculation, and (xix) passage from the filtered graded comparison to
-the induced \(H_1\)-isomorphism.
-These are precisely the cellular-chain and Hurewicz-style APIs absent
-from Mathlib v4.28.0.}
-\lean{JacobianChallenge.Periods.polygon4g_cellular_singular_iso}
-\leanok
-\end{theorem}
 
-\begin{definition}[Orientable typeclass]
-\label{def:orientable}
-A topological space \(M\) is \emph{orientable} if it carries a
-consistent choice of orientation across all charts. (In the current
-formalization this is a thin placeholder typeclass with the
-real witness deferred to a later round.)
-\lean{JacobianChallenge.Periods.Orientable}
-\leanok
-\end{definition}
+
+
 
 \begin{layman}
 A surface is \emph{orientable} when you can paint it with a
@@ -535,25 +349,7 @@ different normal form (\(a_1^2 a_2^2 \cdots\)), so we need to flag
 the orientability hypothesis explicitly.
 \end{layman}
 
-\begin{theorem}[Classical input: de Rham theorem]
-\label{input:de-rham-theorem}
 
-For a smooth manifold \(M\), integration of forms over chains gives
-an isomorphism between de Rham and singular cohomology:
-\[
-  H^{k}_{\mathrm{dR}}(M,\C) \cong H^{k}_{\mathrm{sing}}(M,\C).
-\]
-\depends{Classical 1931 result of Georges de Rham. Mathlib v4.28.0
-has neither de Rham cohomology of manifolds nor the integration
-pairing that realises the comparison. The project sketches it in
-\code{Jacobian/StageB/DeRhamComplex.lean}
-(\(d^2 = 0\), closed/exact subspaces) and
-\code{Jacobian/StageB/DeRhamComparison.lean}
-(\code{deRham_theorem}, ${\sim}220$ LOC of typed sorries via good
-covers + Mayer--Vietoris).}
-\lean{JacobianChallenge.StageB.deRham_theorem}
-\leanok
-\end{theorem}
 
 \begin{layman}
 The de Rham theorem is the bridge between two ways of counting
@@ -572,31 +368,7 @@ matching integer ranks on both sides. Without de Rham, the
 analytic side of the genus identity has no topological referent.
 \end{layman}
 
-\begin{theorem}[Classical input: Hodge decomposition on a compact Riemann surface]
-\label{input:hodge-decomposition}
-\uses{input:de-rham-theorem}
-For a compact K\"ahler manifold \(X\) (in particular a compact Riemann
-surface) every de Rham cohomology class has a unique harmonic
-representative, and harmonic forms split by bidegree:
-\[
-  H^{1}_{\mathrm{dR}}(X,\C) \cong
-  H^{1,0}_{\bar\partial}(X) \oplus H^{0,1}_{\bar\partial}(X).
-\]
-\depends{Classical Hodge theorem (W.~V.~D.~Hodge, 1941). Requires
-elliptic regularity for the Laplace--Beltrami operator. Mathlib
-v4.28.0 has neither the Laplacian on a Riemannian manifold,
-elliptic-PDE compactness, harmonic-form decomposition, nor K\"ahler
-\((p,q)\)-bidegree. The project sketches the chain in
-\code{Jacobian/StageB/LaplaceBeltrami.lean}
-(volume form, Hodge star, codifferential, \(\Delta\) self-adjoint) +
-\code{Jacobian/StageB/HarmonicForms.lean}
-(\code{hodge_decomposition},
-\code{deRhamH_iso_Harmonic}, Poincar\'e duality) +
-\code{Jacobian/StageB/KahlerStructure.lean}
-(Dolbeault \((p,q)\)-decomposition, Hodge symmetry).}
-\lean{JacobianChallenge.StageB.hodge_decomposition,hodge_decomposition}
-\leanok
-\end{theorem}
+
 
 \begin{layman}
 The Hodge decomposition theorem says that on a compact K\"ahler
@@ -615,35 +387,7 @@ Riemann--Roch and Stokes, and Mathlib has none of the underlying
 elliptic-operator + harmonic-form theory yet.
 \end{layman}
 
-\begin{theorem}[Classical input: Hodge / de Rham rank for a Riemann surface]
-\label{input:hodge-deRham}
-\uses{def:topological-genus,input:de-rham-theorem,input:hodge-decomposition}
-For a compact connected oriented Riemann surface \(X\) of analytic
-genus \(g\), the rank of the integer first homology group is
-\(2g\):
-\[
-  \mathrm{rank}_{\Z}\,H_1(X,\Z) = 2 g_{\mathrm{an}}(X).
-\]
-\depends{The standard route is the Hodge / de Rham theorem:
-holomorphic 1-forms together with their conjugates span the
-de Rham cohomology \(H^1_{\mathrm{dR}}(X)\), which by de Rham's
-theorem is dual to singular \(H_1(X,\R)\); the integer lattice
-\(H_1(X,\Z)\) is then full of rank \(2g\). Mathlib v4.28.0 has
-neither de Rham cohomology of manifolds, the de Rham theorem, nor
-Hodge decomposition for Riemann surfaces. The project ships a
-bottom-up sketch of the chain under \code{Jacobian/StageB/}
-(\code{DifferentialForms} \(\to\) \code{DeRhamComplex} \(\to\)
-\code{DeRhamComparison} \(\to\) \code{LaplaceBeltrami} \(\to\)
-\code{HarmonicForms} \(\to\) \code{KahlerStructure} \(\to\)
-\code{CoherentSheaves} \(\to\) \code{SerreDuality}; eight files,
-${\sim}960$ LOC, all sorry) plus a top-down refinement under
-\code{Jacobian/Periods/HodgeDeRham.lean} (30 named sub-leaves).
-The project's Lean target is currently a sorry-bound assembly
-through which the
-\(g_{\mathrm{an}}=g_{\mathrm{top}}\) bridge is wired.}
-\lean{JacobianChallenge.Periods.hodge_deRham_rank_eq_via_classical_route}
-\leanok
-\end{theorem}
+
 
 \begin{layman}
 The Hodge / de Rham bridge is the deep input that makes the
@@ -668,7 +412,7 @@ alongside Riemann-Roch and Stokes.
 
 \begin{theorem}[Analytic genus equals topological genus]
 \label{thm:analytic-eq-topological-genus}
-\uses{thm:polygonal-model,def:topological-genus,input:hodge-deRham}
+\uses{def:topological-genus}
 For a compact connected oriented Riemann surface \(X\),
 \[
   g_{\mathrm{an}}(X) = g_{\mathrm{top}}(X).
@@ -734,15 +478,7 @@ needed by the next chapter: that the interior is open in the
 quotient, that the quotient map is injective there, and that every
 holomorphic 1-form on it admits a primitive.
 
-\begin{lemma}[Quotient is injective on the polygon interior]
-\label{lem:mk-injOn-openDisk}
-\uses{def:polygon4g}
-The polygon-quotient map \(\mathrm{mk}_g\) is injective on the open
-unit disk: distinct interior points stay distinct after taking
-equivalence classes.
-\lean{JacobianChallenge.Periods.PrimitiveOnPolygon.mk_injOn_openDisk}
-\leanok
-\end{lemma}
+
 \begin{proof}\leanok
 Every generating pair in the side-pairing relation has both points on
 the boundary circle. Hence the equivalence closure cannot relate any
@@ -759,14 +495,7 @@ of the polygon'' as a single open subset on which classical
 complex-analysis lemmas apply directly.
 \end{layman}
 
-\begin{lemma}[Polygon interior is open in the quotient]
-\label{lem:mk-image-openDisk-isOpen}
-\uses{def:polygon4g,lem:mk-injOn-openDisk}
-The image of the open unit disk under \(\mathrm{mk}_g\) is open in
-\(\mathrm{Polygon4g}(g)\).
-\lean{JacobianChallenge.Periods.PrimitiveOnPolygon.mk_image_openDisk_isOpen}
-\leanok
-\end{lemma}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -780,15 +509,7 @@ interior is open so that ``differentiable on the open polygon''
 is well-defined.
 \end{layman}
 
-\begin{lemma}[Holomorphic primitive on the open disk]
-\label{lem:holomorphic-primitive-openDisk}
-Every holomorphic function on the open unit disk admits a holomorphic
-primitive on it.
-\depends{Cauchy's theorem on a convex domain (Mathlib has this in
-\code{Mathlib.Analysis.Complex.HasPrimitives}).}
-\lean{JacobianChallenge.Periods.PrimitiveOnPolygon.holomorphic_has_primitive_openDisk}
-\leanok
-\end{lemma}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -801,15 +522,7 @@ argument turns ``integrate \(\omega\) along a polygon edge'' into
 \(F\) to exist.
 \end{layman}
 
-\begin{lemma}[Primitive of a holomorphic 1-form on the polygon]
-\label{lem:primitive-on-polygon}
-\uses{thm:polygonal-model,lem:mk-injOn-openDisk,lem:mk-image-openDisk-isOpen,lem:holomorphic-primitive-openDisk}
-On the interior of the standard fundamental polygon, every
-holomorphic 1-form \(\omega\) admits a holomorphic primitive
-\(F\) with \(dF=\omega\).
-\lean{JacobianChallenge.Blueprint.primitive_on_polygon}
-\leanok
-\end{lemma}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}

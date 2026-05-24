@@ -47,7 +47,7 @@ between them is forged by Riemann--Roch.
 \end{layman}
 \begin{theorem}[Genus-zero classification]
 \label{thm:genus-zero-classification}
-\uses{input:finite-dimensionality,input:degree-one-isomorphism,def:analytic-genus,thm:analytic-eq-topological-genus,lem:holomorphic-one-form-linearEquiv-to-OnePointCx,thm:homeo-sphere-holomorphic-one-form-vanishing,thm:degree-one-bijectivity-meromorphic}
+\uses{def:analytic-genus, thm:analytic-eq-topological-genus, lem:holomorphic-one-form-linearEquiv-to-OnePointCx, thm:homeo-sphere-holomorphic-one-form-vanishing, thm:degree-one-bijectivity-meromorphic}
 For a compact connected Riemann surface \(X\),
 \[
   g(X)=0 \quad\Longleftrightarrow\quad X \cong_{\mathrm{homeo}} \Sphere .
@@ -81,7 +81,7 @@ wide open.
 
 \begin{definition}[Analytic Jacobian]
 \label{def:analytic-jacobian}
-\uses{thm:period-lattice,prop:complex-torus-package,def:analytic-genus}
+\uses{thm:period-lattice, prop:complex-torus-package, def:analytic-genus}
 The Jacobian of \(X\) is the complex torus
 \[
   \Jac(X) := \HdualX / \periods_X ,
@@ -120,7 +120,7 @@ manifold, Lie) is rejected.
 
 \begin{definition}[Abel-Jacobi map]
 \label{def:abel-jacobi}
-\uses{def:analytic-jacobian,lem:aj-path-independence}
+\uses{def:analytic-jacobian, lem:aj-path-independence}
 For \(P\in X\), define
 \[
   \AJ_P(Q) :=
@@ -154,7 +154,7 @@ curve rather than collapsing to a point.
 
 \begin{theorem}[Abel-Jacobi theorem, point-separation form]
 \label{thm:abel-jacobi-injective}
-\uses{def:abel-jacobi,input:abel-theorem}
+\uses{def:abel-jacobi, input:abel-theorem}
 If \(g(X)>0\), then \(\AJ_P : X\to \Jac(X)\) is injective.
 \lean{Jacobian.ofCurve_inj}
 \leanok
@@ -183,7 +183,7 @@ point-separation, forces the construction to separate points.
 
 \begin{definition}[Degree and trace]
 \label{def:degree-trace}
-\uses{lem:pullback-forms,lem:trace-forms,def:branched-degree,thm:branched-degree-well-defined}
+\uses{lem:pullback-forms, lem:trace-forms, def:branched-degree, thm:branched-degree-well-defined}
 For a holomorphic map \(f:X\to Y\), define \(\deg(f)\) to be \(0\) if
 \(f\) is constant and otherwise the topological degree of the associated
 branched covering. For nonconstant \(f\), define the trace on one-forms
@@ -259,7 +259,7 @@ requires this exact set of compatibility laws.
 
 \begin{theorem}[Pushforward-pullback identity]
 \label{thm:pushforward-pullback}
-\uses{thm:trace-pullback,lem:push-pull-descend}
+\uses{thm:trace-pullback, lem:push-pull-descend}
 For every \(P\in\Jac(Y)\),
 \[
   f_{*}(f^{*}P)=\deg(f)\,P.

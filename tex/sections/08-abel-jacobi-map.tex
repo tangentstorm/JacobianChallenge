@@ -116,7 +116,7 @@ the constant path is zero.
 
 \begin{lemma}[Holomorphicity of Abel-Jacobi]
 \label{lem:aj-holomorphic}
-\uses{def:abel-jacobi,prop:complex-torus-package}
+\uses{def:abel-jacobi, prop:complex-torus-package}
 The map \(\AJ_P:X\to\Jac(X)\) is holomorphic.
 \lean{Jacobian.ofCurve_contMDiff}
 \leanok
@@ -154,17 +154,7 @@ divisors of degree zero with zero Abel-Jacobi image are principal. We
 decompose this and the corollary \(g(X)>0 \implies\) injectivity into named
 sub-obligations so the dep graph reflects the actual classical inputs.
 
-\begin{theorem}[Abel-Jacobi sends divisors to a homomorphism]
-\label{thm:aj-divisor-hom}
-\uses{def:abel-jacobi}
-The Abel-Jacobi map extends \(\Z\)-linearly to a group homomorphism
-\(\AJ : \Div^{0}(X) \to \Jac(X)\) on degree-zero divisors. In
-particular, \(\AJ_P(Q_1)=\AJ_P(Q_2)\) iff \(\AJ(Q_1-Q_2)=0\).
-\depends{Linear extension of \(\AJ_P\) to formal sums; degree-zero
-condition is needed to make the result independent of base point.}
-\lean{JacobianChallenge.Blueprint.AbelExistence.AjDivisorHom.AJ_addHom}
-\leanok
-\end{theorem}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -183,18 +173,7 @@ is in the kernel of the homomorphism'' --- which is exactly the object
 that Abel's theorem identifies as the principal divisors.
 \end{layman}
 
-\begin{theorem}[Abel existence: zero AJ image implies principal]
-\label{thm:abel-existence}
-\uses{thm:aj-divisor-hom,def:principal-divisor,input:divisors,input:riemann-bilinear}
-For \(D\in\Div^{0}(X)\), if \(\AJ(D)=0\) in \(\Jac(X)\), then there is a
-nonzero meromorphic function \(f\in\Mer(X)^{\times}\) with \((f)=D\).
-\depends{ABSENT in Mathlib. Classical proof uses the surjectivity of the
-exponential of the period map together with a meromorphic-function
-construction (theta-function-style). Multi-thousand-line classical
-result; see e.g.\ Forster Lectures on Riemann Surfaces, Chapter 3.}
-\lean{JacobianChallenge.Blueprint.AbelExistence.principal_iff_AJ_zero}
-\leanok
-\end{theorem}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -213,15 +192,7 @@ From it falls out the headline injectivity statement on positive-genus
 surfaces, one of the four anti-hack theorems baked into the challenge.
 \end{layman}
 
-\begin{lemma}[Principal divisor of degree zero with simple two-point support yields a degree-one map]
-\label{lem:principal-deg0-simple-support-deg1}
-\uses{def:principal-divisor,thm:principal-degree-zero,def:meromorphic-to-cp1}
-If \(f\in\Mer(X)^{\times}\) has \((f)=Q_1-Q_2\) with \(Q_1\ne Q_2\), then
-the associated map \(\widehat{f}:X\to\CPone\) is nonconstant of
-degree~\(1\).
-\lean{JacobianChallenge.Blueprint.principal_deg0_simple_support_deg1}
-\leanok
-\end{lemma}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -247,14 +218,7 @@ f^{-1}(\infty)=\{Q_2\}\) with multiplicity 1, so the generic fiber has
 size~1.
 \end{proofsketch}
 
-\begin{theorem}[Riemann-Hurwitz for degree-1 map: target genus 0]
-\label{thm:riemann-hurwitz-deg1}
-\uses{def:branched-degree,input:degree-one-isomorphism}
-A nonconstant holomorphic map \(f:X\to\CPone\) of degree \(1\) is a
-biholomorphism. In particular, \(g(X)=g(\CPone)=0\).
-\lean{JacobianChallenge.Blueprint.AbelExistence.RiemannHurwitzDeg1.riemann_hurwitz_deg1}
-\leanok
-\end{theorem}
+
 
 \subsection{Basis-aligned formulation of Abel and Riemann-Hurwitz at
 degree 1}
@@ -272,7 +236,7 @@ actually used by \texttt{Jacobian/Solution.lean}.
 \begin{theorem}[S19: Basis-aligned Abel existence
 in two-point form]
 \label{thm:abel-basis-aligned-two-point}
-\uses{lem:abel-two-point-form,lem:two-point-principal-packaging}
+\uses{lem:abel-two-point-form, lem:two-point-principal-packaging}
 Fix a base point \(P\in X\) and two distinct points
 \(Q_1\neq Q_2\). If
 \[
@@ -325,7 +289,7 @@ Riemann reciprocity (bilinear) identity, and the log-exp construction.
 
 \begin{lemma}[R5/A: Existence of third-kind data]
 \label{lem:third-kind-meromorphic-data-exists}
-\uses{thm:fd-holomorphic-one-forms,thm:abel-existence,lem:rr-two-point-dim-geq-two,lem:two-point-pole-realisation}
+\uses{lem:rr-two-point-dim-geq-two, lem:two-point-pole-realisation}
 For any pair of distinct points \(Q_1\neq Q_2\) on a compact
 connected Riemann surface \(X\), there exists a non-zero meromorphic
 function \(f_0:X\to\widehat{\C}\) whose pole divisor is exactly
@@ -366,7 +330,7 @@ divisor \(D-D=0\). Either way, a function with pole divisor exactly
 
 \begin{lemma}[R5/B: Riemann reciprocity for two-point divisors]
 \label{lem:third-kind-log-period-vanishing}
-\uses{def:period-pairing,thm:period-lattice,input:riemann-bilinear,lem:third-kind-meromorphic-data-exists,lem:residue-pairing-third-kind,lem:logperiod-vanishing-translation}
+\uses{def:period-pairing, thm:period-lattice, input:riemann-bilinear, lem:third-kind-meromorphic-data-exists, lem:residue-pairing-third-kind, lem:logperiod-vanishing-translation}
 Let \(f_0:X\to\widehat{\C}\) be third-kind data for \((Q_1, Q_2)\)
 (Lemma~\ref{lem:third-kind-meromorphic-data-exists}), and assume the
 basis-aligned period-congruence hypothesis
@@ -412,7 +376,7 @@ required vanishing condition.
 
 \begin{lemma}[R5/C: Log-exp construction]
 \label{lem:meromorphic-via-log-exp}
-\uses{lem:third-kind-meromorphic-data-exists,lem:third-kind-log-period-vanishing,lem:single-valued-log-primitive,lem:exp-log-primitive-divisor}
+\uses{lem:third-kind-meromorphic-data-exists, lem:third-kind-log-period-vanishing, lem:single-valued-log-primitive, lem:exp-log-primitive-divisor}
 Suppose third-kind data \(f_0\) for \((Q_1,Q_2)\) is given, and the
 periods of \(d\log f_0\) lie in \(2\pi i\cdot \Z^{2g}\) (i.e.\
 the conclusion of Lemma~\ref{lem:third-kind-log-period-vanishing}).
@@ -469,7 +433,7 @@ upstream in Mathlib).
 
 \begin{lemma}[R6/A1: Riemann--Roch dim bound for two-point pole divisor]
 \label{lem:rr-two-point-dim-geq-two}
-\uses{thm:fd-holomorphic-one-forms,thm:abel-existence,lem:rr-formula-two-point,lem:rr-formula-combine}
+\uses{lem:rr-formula-two-point, lem:rr-formula-combine}
 For any two distinct points \(Q_1\neq Q_2\) on a compact connected
 Riemann surface \(X\), the Riemann--Roch space \(L((Q_1)+(Q_2))\)
 has \(\C\)-dimension at least \(2\). In particular, the quotient by
@@ -502,7 +466,7 @@ observation for higher genus (Brill--Noether), we conclude
 
 \begin{lemma}[R6/A2: Pole-divisor realisation from RR dim bound]
 \label{lem:two-point-pole-realisation}
-\uses{lem:rr-two-point-dim-geq-two,lem:nonconstant-in-rr,lem:pole-maximality-two-point}
+\uses{lem:rr-two-point-dim-geq-two, lem:nonconstant-in-rr, lem:pole-maximality-two-point}
 If \(\ell((Q_1)+(Q_2)) \ge 2\), then there exists a meromorphic
 function \(f_0:X\to\widehat{\C}\) whose pole divisor is \emph{exactly}
 \((Q_1)+(Q_2)\) (not a sub-divisor like \((Q_1)\) alone).
@@ -535,7 +499,7 @@ on \(\C\widehat{\C}\)) supplies the witness directly.
 
 \begin{lemma}[R7/B1: Residue-theorem pairing identity]
 \label{lem:residue-pairing-third-kind}
-\uses{lem:third-kind-meromorphic-data-exists,input:riemann-bilinear,thm:stokes-on-rs-with-boundary}
+\uses{lem:third-kind-meromorphic-data-exists, input:riemann-bilinear, thm:stokes-on-rs-with-boundary}
 For third-kind data \(f_0\) on \(X\) and any holomorphic 1-form
 \(\omega_k\) in a chosen basis of \(H^0(X,\Omega^1)\), the bilinear
 pairing of \(d\log f_0\) with \(\omega_k\) over a symplectic
@@ -580,7 +544,7 @@ Equating the two evaluations of the integral yields the identity.
 
 \begin{lemma}[R7/B2: Log-period vanishing translation]
 \label{lem:logperiod-vanishing-translation}
-\uses{lem:residue-pairing-third-kind,thm:period-lattice,lem:pathintegrals-in-lattice,lem:scale-2pii}
+\uses{lem:residue-pairing-third-kind, thm:period-lattice, lem:pathintegrals-in-lattice, lem:scale-2pii}
 Combine Lemma~\ref{lem:residue-pairing-third-kind} with the
 basis-aligned period-congruence hypothesis to conclude that the
 period vector of \(d\log f_0\) lies in
@@ -612,7 +576,7 @@ against \(\omega_k\) equals \(2\pi i\cdot \int_{Q_2}^{Q_1}\omega_k\)
 
 \begin{lemma}[R8/C1: Single-valued log primitive existence]
 \label{lem:single-valued-log-primitive}
-\uses{lem:third-kind-meromorphic-data-exists,lem:logperiod-vanishing-translation,lem:dlog-closed,lem:closed-int-periods-primitive}
+\uses{lem:third-kind-meromorphic-data-exists, lem:logperiod-vanishing-translation, lem:dlog-closed, lem:closed-int-periods-primitive}
 Given third-kind data \(f_0\) and the log-period vanishing
 hypothesis, there exists a single-valued holomorphic function
 \(L : X\setminus\{Q_1,Q_2\} \to \C/2\pi i\,\Z\) with
@@ -643,7 +607,7 @@ function \(L : X \setminus\{Q_1,Q_2\} \to \C/2\pi i\Z\) with
 
 \begin{lemma}[R8/C2: Exponentiation and divisor identification]
 \label{lem:exp-log-primitive-divisor}
-\uses{lem:single-valued-log-primitive,lem:explog-holomorphic-off,lem:explog-zero-extend,lem:explog-pole-extend,lem:glue-package}
+\uses{lem:single-valued-log-primitive, lem:explog-holomorphic-off, lem:explog-zero-extend, lem:explog-pole-extend, lem:glue-package}
 The exponential \(\widetilde g = \exp L\) of the single-valued log
 primitive extends across the punctures \(\{Q_1, Q_2\}\) to a
 meromorphic function on \(X\), with simple zero at \(Q_1\) and
@@ -690,7 +654,7 @@ leaves are exactly the classical inputs Mathlib v4.28.0 lacks.
 \paragraph{Round 9 (R6/A1 split).}
 \begin{lemma}[R9/1: Bare RR formula for two-point divisor]
 \label{lem:rr-formula-two-point}
-\uses{lem:rr-formula-general,thm:fd-holomorphic-one-forms,lem:rr-specialise-two-point}
+\uses{lem:rr-formula-general, lem:rr-specialise-two-point}
 For \(D = (Q_1) + (Q_2)\) with \(Q_1\neq Q_2\), the Riemann--Roch
 formula gives
 \(\ell(D) - \ell(K-D) = 3 - g\).
@@ -751,7 +715,7 @@ representative of the quotient.
 
 \begin{lemma}[R10/2: Pole maximality for non-constants]
 \label{lem:pole-maximality-two-point}
-\uses{lem:nonconstant-in-rr,thm:riemann-hurwitz-deg1-basis-aligned,lem:nonconst-poles-nonzero,lem:single-pole-genus-zero,lem:pole-equality-aux}
+\uses{lem:nonconstant-in-rr, thm:riemann-hurwitz-deg1-basis-aligned, lem:nonconst-poles-nonzero, lem:single-pole-genus-zero, lem:pole-equality-aux}
 For \(g \ge 1\), a non-constant element of \(L((Q_1) + (Q_2))\) has
 pole divisor exactly \((Q_1) + (Q_2)\).
 \lean{JacobianChallenge.AbelJacobi.pole_eq_full_for_nonconstant_in_two_point_RR_space}
@@ -771,7 +735,7 @@ The pole divisor is a sub-divisor of \((Q_1) + (Q_2)\). Cases:
 \paragraph{Round 11 (R7/B2 split).}
 \begin{lemma}[R11/1: Path-integral lattice membership]
 \label{lem:pathintegrals-in-lattice}
-\uses{def:period-pairing,thm:period-lattice}
+\uses{def:period-pairing, thm:period-lattice}
 Componentwise: each \(\int_{Q_2}^{Q_1}\omega_k\) lies in the
 basis-aligned period lattice.
 \lean{JacobianChallenge.AbelJacobi.pathIntegrals_in_periodLattice_of_periodCongruence}
@@ -780,7 +744,7 @@ basis-aligned period lattice.
 
 \begin{lemma}[R11/2: Scale by \(2\pi i\) and package]
 \label{lem:scale-2pii}
-\uses{lem:pathintegrals-in-lattice,lem:residue-pairing-third-kind,lem:scale-lattice-by-2pii,lem:logperiod-package}
+\uses{lem:pathintegrals-in-lattice, lem:residue-pairing-third-kind, lem:scale-lattice-by-2pii, lem:logperiod-package}
 Multiplying \(\int_{Q_2}^{Q_1}\omega_k \in \Lambda\) by \(2\pi i\)
 combined with the residue-pairing identity gives the log-period
 vanishing.
@@ -799,7 +763,7 @@ The 1-form \(d\log f_0\) is holomorphic (hence closed) on
 
 \begin{lemma}[R12/2: Closed 1-form with integer periods has primitive]
 \label{lem:closed-int-periods-primitive}
-\uses{lem:dlog-closed,lem:univ-cover-primitive,lem:descend-via-quotient}
+\uses{lem:dlog-closed, lem:univ-cover-primitive, lem:descend-via-quotient}
 A closed 1-form with periods in a discrete subgroup \(\Lambda\)
 admits a single-valued primitive \(F : M \to \C/\Lambda\).
 \lean{JacobianChallenge.AbelJacobi.closed_oneForm_with_integer_periods_has_primitive}
@@ -827,7 +791,7 @@ admits a single-valued primitive \(F : M \to \C/\Lambda\).
 
 \begin{lemma}[R13/4: Glue + package the local extensions]
 \label{lem:glue-package}
-\uses{lem:explog-holomorphic-off,lem:explog-zero-extend,lem:explog-pole-extend,lem:glue-local-extensions,lem:package-global-extension}
+\uses{lem:explog-holomorphic-off, lem:explog-zero-extend, lem:explog-pole-extend, lem:glue-local-extensions, lem:package-global-extension}
 Combining the three local-extension properties gives a global
 \texttt{RawMeromorphicWithPrincipal} with principal divisor
 \((Q_1) - (Q_2)\).
@@ -838,7 +802,7 @@ Combining the three local-extension properties gives a global
 \paragraph{Round 14 (R9/1 split): general RR + specialisation.}
 \begin{lemma}[R14/1: General Riemann--Roch]
 \label{lem:rr-formula-general}
-\uses{input:divisors,thm:fd-holomorphic-one-forms,input:finite-dimensionality}
+
 For any divisor \(D\) of degree \(d\) on a compact connected Riemann
 surface of genus \(g\), \(\ell(D) - \ell(K - D) = d - g + 1\). Cf.\
 \texttt{riemann\_roch\_strong\_h0} in \texttt{RiemannRochStrong.lean}
@@ -858,7 +822,7 @@ Specialise the general RR formula to \(d = 2\) (arithmetic).
 \paragraph{Round 15 (R10/2 split): Liouville + degree-1 + case analysis.}
 \begin{lemma}[R15/1: Non-constant cannot have empty pole divisor]
 \label{lem:nonconst-poles-nonzero}
-\uses{thm:fd-holomorphic-one-forms}
+
 A non-constant meromorphic map on a compact connected Riemann
 surface has non-zero pole divisor (else Liouville). Cf.\
 \texttt{holomorphic\_meromorphicMapToSphere\_constant\_on\_compact} in
@@ -878,7 +842,7 @@ divisor implies analytic genus zero.
 
 \begin{lemma}[R15/3: Pole-equality assembly]
 \label{lem:pole-equality-aux}
-\uses{lem:nonconst-poles-nonzero,lem:single-pole-genus-zero}
+\uses{lem:nonconst-poles-nonzero, lem:single-pole-genus-zero}
 Combine R15/1 and R15/2 with case analysis to conclude the pole
 divisor equals the full \((Q_1) + (Q_2)\).
 \lean{JacobianChallenge.AbelJacobi.pole_full_two_point_of_nonconstant_in_RR_space_aux}
@@ -896,7 +860,7 @@ element of the scaled lattice (trivial linear-algebra fact).
 
 \begin{lemma}[R16/2: Package scaled lattice membership]
 \label{lem:logperiod-package}
-\uses{lem:scale-lattice-by-2pii,lem:residue-pairing-third-kind}
+\uses{lem:scale-lattice-by-2pii, lem:residue-pairing-third-kind}
 \lean{JacobianChallenge.AbelJacobi.logPeriodVanishing_witness_from_scaled_lattice}
 \leanok
 \end{lemma}
@@ -923,7 +887,7 @@ quotient.
 \paragraph{Round 18 (R13/4 split): glue + package.}
 \begin{lemma}[R18/1: Glue local extensions]
 \label{lem:glue-local-extensions}
-\uses{lem:explog-holomorphic-off,lem:explog-zero-extend,lem:explog-pole-extend}
+\uses{lem:explog-holomorphic-off, lem:explog-zero-extend, lem:explog-pole-extend}
 Glue the three local function patches (away-from-punctures,
 zero-extension at \(Q_1\), pole-extension at \(Q_2\)) into a global
 function on \(X\).
@@ -967,7 +931,7 @@ project lemmas:
 
 \begin{lemma}[S19a: Abel existence in two-point divisor form]
 \label{lem:abel-two-point-form}
-\uses{lem:third-kind-meromorphic-data-exists,lem:third-kind-log-period-vanishing,lem:meromorphic-via-log-exp}
+\uses{lem:third-kind-meromorphic-data-exists, lem:third-kind-log-period-vanishing, lem:meromorphic-via-log-exp}
 Fix \(P\in X\), distinct \(Q_1\neq Q_2\). If
 \(-I_{P,Q_1} + I_{P,Q_2} \in \Lambda_{\mathrm{ba}}\), then there is a
 non-zero meromorphic function \(f\in\Mer(X)^\times\) with
@@ -1008,7 +972,7 @@ congruence is exactly the statement \(\AJ(D) = 0\) in \(\Jac(X)\).
 
 \begin{lemma}[S19b: Two-point principal divisor packaging]
 \label{lem:two-point-principal-packaging}
-\uses{lem:principal-deg0-simple-support-deg1,def:principal-divisor}
+
 If \(f\in\Mer(X)^\times\) has \((f) = (Q_1) - (Q_2)\) with
 \(Q_1\neq Q_2\), then the canonical zero/pole decomposition of
 \((f)\) is \(\mathrm{div}_0(f) = (Q_1)\) and
@@ -1054,7 +1018,7 @@ the pole behaviour.
 
 \begin{theorem}[S20: Basis-aligned Riemann-Hurwitz at degree 1]
 \label{thm:riemann-hurwitz-deg1-basis-aligned}
-\uses{thm:riemann-hurwitz-deg1,lem:principal-deg0-simple-support-deg1,thm:genus-zero-classification}
+\uses{thm:genus-zero-classification}
 Let \(f : X \to \widehat{\C}\) be a meromorphic map whose pole divisor
 is the single point \((Q_2)\). Then \(\mathrm{analyticGenus}_\C\, X
 = 0\).
@@ -1122,7 +1086,7 @@ genus, and \(g(\CPone)=0\) is a separate well-known computation
 
 \begin{theorem}[Point-separation form of Abel's theorem]
 \label{thm:abel-point-separation}
-\uses{thm:aj-divisor-hom,thm:abel-existence,lem:principal-deg0-simple-support-deg1,thm:riemann-hurwitz-deg1,thm:abel-basis-aligned-two-point,thm:riemann-hurwitz-deg1-basis-aligned}
+\uses{thm:abel-basis-aligned-two-point, thm:riemann-hurwitz-deg1-basis-aligned}
 If \(g(X)>0\) and \(\AJ_P(Q_1)=\AJ_P(Q_2)\), then \(Q_1=Q_2\).
 \lean{JacobianChallenge.AbelJacobi.pathIntegralFunctional_separates_points}
 \leanok
@@ -1157,7 +1121,7 @@ the hypothesis.
 
 \begin{theorem}[Classical input: Abel's theorem (umbrella)]
 \label{input:abel-theorem}
-\uses{thm:abel-existence,thm:abel-point-separation}
+\uses{thm:abel-point-separation}
 \leanok
 For degree-zero divisors on \(X\), the Abel-Jacobi map has kernel exactly the
 principal divisors. In particular, if \(g(X)>0\) and

@@ -3,244 +3,60 @@
 
 \subsection{Topological Implementation: Surface Classification and Stage A}
 
-\begin{lemma}[Polygonal model and cellular homology]
-\label{lem:polygon-cellular-singular-iso}
-\uses{lem:impl-polygon-cellular-homology-free,lem:impl-cellular-singular-filtered-comparison}
-\lean{JacobianChallenge.Periods.polygon4g_cellular_singular_iso}
-\leanok
-\end{lemma}
+
 
 \subsection{Lean-Local Dependency Refinements}
 
-\begin{lemma}[Complex-manifold bump normalisation]
-\label{lem:impl-cmfld-bump-normalisation}
-The local bump function used in explicit meromorphic representatives is
-normalised at its centre and is identically \(1\) near that centre.
-\lean{JacobianChallenge.HolomorphicForms.cMfldBump_apply_self,JacobianChallenge.HolomorphicForms.cMfldBump_eq_one_near}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Single-pole finite fibers]
-\label{lem:impl-single-pole-finite-fiber}
-Formerly claimed that the explicit single-pole sphere lift has finite
-fibers.  This is not true for the bump-cutoff scaffold; the finite-fiber fact belongs to future prescribed-pole meromorphic data.
-\lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_finite_fiber}
-\notready
-\end{lemma}
 
-\begin{lemma}[Single-pole fiber count]
-\label{lem:impl-single-pole-fiber-sum}
-\uses{lem:impl-single-pole-finite-fiber}
-Formerly claimed that the weighted fiber count of the explicit
-single-pole sphere lift is constant.  This is deferred to prescribed-pole data, not the cutoff scaffold.
-\lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_fiberSum_const}
-\notready
-\end{lemma}
 
-\begin{lemma}[Single-pole local bijectivity]
-\label{lem:impl-single-pole-local-bijective}
-Formerly claimed that the explicit single-pole sphere lift is locally
-bijective away from ramification.  The cutoff scaffold can be locally
-constant, so the fact is frontier data.
-\lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_local_bijective}
-\notready
-\end{lemma}
 
-\begin{lemma}[Single-pole branched degree]
-\label{lem:impl-single-pole-branched-degree}
-Formerly claimed that the branched degree of the explicit single-pole
-sphere lift is \(1\).  This is now quarantined as prescribed-pole
-meromorphic data rather than a fact about the displayed cutoff map.
-\lean{JacobianChallenge.HolomorphicForms.singlePoleSphereLift_branchedDegree_eq}
-\notready
-\end{lemma}
 
-\begin{lemma}[Single-pole meromorphic map package]
-\label{lem:impl-single-pole-meromorphic-map}
-\uses{lem:impl-cmfld-bump-normalisation,lem:impl-single-pole-finite-fiber,lem:impl-single-pole-fiber-sum,lem:impl-single-pole-local-bijective,lem:impl-single-pole-branched-degree}
-The explicit single-pole sphere lift packages as a
-\code{MeromorphicMapToSphere} with divisor bookkeeping; branched-cover and
-modulus-divergence facts are supplied separately by prescribed-pole data.
-\lean{JacobianChallenge.HolomorphicForms.singlePoleMeromorphicMap}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Two-pole finite fibers]
-\label{lem:impl-two-pole-finite-fiber}
-Formerly claimed that the explicit two-pole indicator representative has
-finite fibers.  Its zero fiber can be infinite, so this is not a fact
-about the displayed map.
-\lean{JacobianChallenge.HolomorphicForms.twoPole_finite_fiber}
-\notready
-\end{lemma}
 
-\begin{lemma}[Two-pole fiber count]
-\label{lem:impl-two-pole-fiber-sum}
-\uses{lem:impl-two-pole-finite-fiber}
-Formerly claimed that the weighted fiber count of the explicit two-pole
-indicator representative is constant.  This belongs to two-pole meromorphic data, not the placeholder map.
-\lean{JacobianChallenge.HolomorphicForms.twoPole_fiberSum_const}
-\notready
-\end{lemma}
 
-\begin{lemma}[Two-pole local bijectivity]
-\label{lem:impl-two-pole-local-bijective}
-Formerly claimed that the explicit two-pole representative is locally
-bijective away from ramification.  The indicator scaffold is locally
-constant away from the marked points.
-\lean{JacobianChallenge.HolomorphicForms.twoPole_local_bijective}
-\notready
-\end{lemma}
 
-\begin{lemma}[Two-pole branched-cover data]
-\label{lem:impl-two-pole-branched-cover-data}
-\uses{lem:impl-two-pole-finite-fiber,lem:impl-two-pole-fiber-sum,lem:impl-two-pole-local-bijective}
-Formerly claimed that the explicit two-pole representative carries
-branched-cover data of the expected pole degree.  This is now quarantined
-as future prescribed-pole data.
-\lean{JacobianChallenge.HolomorphicForms.twoPole_hasBranchedCoverDataOfPoleDegree}
-\notready
-\end{lemma}
 
-\begin{lemma}[Two-pole meromorphic map package]
-\label{lem:impl-two-pole-meromorphic-map}
-\uses{lem:impl-two-pole-branched-cover-data}
-The explicit two-pole representative packages as a
-\code{MeromorphicMapToSphere} with divisor bookkeeping.
-\lean{JacobianChallenge.HolomorphicForms.twoPointMeromorphicMap}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Polygon disk quotient data]
-\label{lem:impl-polygon-disk-quotient-data}
-\uses{def:polygon4g}
-The standard \(4g\)-gon quotient is assembled from a closed disk source,
-a side subdivision, and the boundary quotient relation.
-\lean{JacobianChallenge.Periods.polygon4g_closed_disk_cell_source,JacobianChallenge.Periods.polygon4g_boundary_side_subdivision,JacobianChallenge.Periods.polygon4g_boundary_quotient_relation}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Polygon edge-pairing cell data]
-\label{lem:impl-polygon-edge-pairing-data}
-\uses{lem:impl-polygon-disk-quotient-data}
-The edge pairing data records the side-pairing combinatorics and its
-label compatibility.
-\lean{JacobianChallenge.Periods.polygon4g_boundary_side_pairing_combinatorics,JacobianChallenge.Periods.polygon4g_boundary_side_pairing_label_compatible}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Polygon characteristic maps]
-\label{lem:impl-polygon-characteristic-maps}
-\uses{lem:impl-polygon-disk-quotient-data,lem:impl-polygon-edge-pairing-data}
-The quotient disk and edge-pairing data supply characteristic maps for
-the standard cellular model.
-\lean{JacobianChallenge.Periods.polygon4g_characteristic_map_data,JacobianChallenge.Periods.polygon4g_realize_standard_cellular_model,JacobianChallenge.Periods.polygon4g_finiteCWStructure}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Polygon cellular boundary formula]
-\label{lem:impl-polygon-cellular-boundary-formula}
-\uses{lem:impl-polygon-characteristic-maps}
-The cellular boundary formula consists of the zero one-cell boundary and
-the abelianised two-cell relator.
-\lean{JacobianChallenge.Periods.polygon4g_one_cell_boundary_zero,JacobianChallenge.Periods.polygon4g_two_cell_boundary_abelianized_relator}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Polygon cellular homology is free]
-\label{lem:impl-polygon-cellular-homology-free}
-\uses{lem:impl-polygon-cellular-boundary-formula}
-The cellular boundary formula computes the free rank \(2g\) first
-cellular homology.
-\lean{JacobianChallenge.Periods.polygon4g_cellularH1_free_assembly}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Cellular-singular cell data]
-\label{lem:impl-cellular-singular-cell-data}
-\uses{lem:impl-polygon-characteristic-maps}
-The cellular-to-singular comparison starts with zero-, one-, and
-two-cell singular data.
-\lean{JacobianChallenge.Periods.polygon4g_cellular_singular_zero_cell_data,JacobianChallenge.Periods.polygon4g_cellular_singular_one_cell_data,JacobianChallenge.Periods.polygon4g_cellular_singular_two_cell_characteristic_data,JacobianChallenge.Periods.polygon4g_cellular_singular_two_cell_boundary_word_data}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Cellular-singular chain-map data]
-\label{lem:impl-cellular-singular-chain-map-data}
-\uses{lem:impl-cellular-singular-cell-data}
-The comparison data gives degree-zero, degree-one, and degree-two
-chain-map compatibility.
-\lean{JacobianChallenge.Periods.polygon4g_cellular_singular_chain_map_degree_zero,JacobianChallenge.Periods.polygon4g_cellular_singular_chain_map_degree_one_boundary,JacobianChallenge.Periods.polygon4g_cellular_singular_chain_map_degree_two_attaching}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Cellular-singular filtered comparison]
-\label{lem:impl-cellular-singular-filtered-comparison}
-\uses{lem:impl-cellular-singular-chain-map-data}
-Filtration compatibility and the associated-graded \(H_1\) computation
-give the filtered comparison isomorphism.
-\lean{JacobianChallenge.Periods.polygon4g_cellular_singular_filtration_compatible,JacobianChallenge.Periods.polygon4g_cellular_singular_associated_graded_H1_iso,JacobianChallenge.Periods.polygon4g_cellular_singular_H1_iso_of_filtered_graded}
-\leanok
-\end{lemma}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsection{Remaining Implementation Details}
 
-\begin{lemma}[Meromorphic lift and degree]
-\label{lem:impl-meromorphic-lift}
-\uses{lem:meromorphic-local-normalization,lem:meromorphic-fiber-count-conservation,lem:impl-single-pole-meromorphic-map,lem:impl-two-pole-meromorphic-map}
-\lean{JacobianChallenge.HolomorphicForms.isHolomorphic_of_contMDiff,isHolomorphic_of_contMDiff}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Lip-cycle and Trace preservation]
-\label{lem:impl-trace-lip}
-\lean{JacobianChallenge.TraceDegree.traceDualPullbackLift_preserves_lattice_raw, JacobianChallenge.TraceDegree.cycleLipChain_obligation, JacobianChallenge.TraceDegree.cycleLipPath_obligation, JacobianChallenge.TraceDegree.PiecewiseC1PathRegularity, JacobianChallenge.TraceDegree.PiecewiseC1Path, JacobianChallenge.TraceDegree.no_global_piecewiseC1PathRegularity_instance, JacobianChallenge.TraceDegree.smooth_chain_homology_comparison_frontier}
-\leanok
-The trace lift preserves the period lattice. The two named \(C^1\)-cycle obligations
-(\texttt{cycleLipPath\_obligation}, \texttt{cycleLipChain\_obligation}) reduce a uniform Lipschitz
-bound on chart-lifted paths to a uniform piecewise-\(C^1\) hypothesis on the
-representative paths, via the mean-value inequality.
 
-The uniform piecewise-\(C^1\) hypothesis is no longer provided by a global
-instance.  The sound path-level replacement is the wrapper
-\texttt{PiecewiseC1Path}, which bundles a continuous path with chartwise
-piecewise-\(C^1\) data.  Remaining frontier declarations may still carry
-\texttt{PiecewiseC1PathRegularity X} as an explicit hypothesis, but
-\texttt{Jacobian/TraceDegree/PiecewiseC1Instance.lean} intentionally exports
-no instance for it: a nowhere-differentiable continuous \texttt{Path a b}
-would be a counterexample.  discharge requires either enriching
-\texttt{IntegralOneCycle X} to carry smoothness data, or restricting the
-period pairing's cycle domain to a piecewise-smooth subclass shown to span
-$H_1(X,\mathbb{Z})$; this is recorded as the smooth-chain homology comparison
-frontier.
-\end{lemma}
 
-\begin{lemma}[Miscellaneous algebraic orphans]
-\label{lem:impl-misc-orphans}
-\lean{JacobianChallenge.HolomorphicForms.residueMap_left_inv, JacobianChallenge.HolomorphicForms.residueMap_right_inv, JacobianChallenge.Periods.edgeBasisMap_surjective}
-\leanok
-\end{lemma}
 
-\begin{lemma}[All remaining implementation orphans]
-\label{lem:impl-orphans-aggregate}
-\lean{montel_pointwise_extraction,intersectionForm_nondeg,branchedDegreeOfMap_eq_one_of_simple_two_point_principal,meromorphic_branchedCoverData_obligation,unfoldedDisk_to_edgeWordPresentation,sidePairingRel_standardWord,standardWord_get_handle,standardWord_get_unique,pathIntegralViaCoverWith_refinement_invariant',edgeBasisMap_surjective,cyclePushforward_chainLevel_repr,periodPairing_chainLevel_repr,rawWord_handle_separation_orientable,wordQuotient_homeomorph_of_handleSwap_step,wordQuotient_homeomorph_of_inverseCancel_step}
-\lean{JacobianChallenge.Blueprint.Generated.impl_orphans_aggregate}
-\leanok
-\end{lemma}
+
+
+
 
 \subsection{Connection to Main Goals}
 
-\begin{lemma}[Intended implementation orphans]
-\label{lem:intended-orphans}
-\uses{lem:impl-misc-orphans,lem:impl-orphans-aggregate}
-These implementation details are tracked but currently isolated from the main proof spine.
-\end{lemma}
 
-\begin{lemma}[Wiring implementation to roots]
-\label{lem:impl-wiring-to-roots}
-\uses{lem:section-arzela-ascoli,lem:polygon-cellular-singular-iso,lem:impl-meromorphic-lift,lem:impl-trace-lip,lem:intended-orphans}
-This lemma serves as the final hook connecting the implementation-level proof obligations
-back into the project's high-level goal nodes.
-\lean{JacobianChallenge.Blueprint.Generated.impl_wiring_to_roots}
-\leanok
-\end{lemma}
+
+

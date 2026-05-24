@@ -102,16 +102,7 @@ For nonconstant \(f\), there is a complex-linear trace map
 \leanok
 \end{lemma}
 
-\begin{theorem}[Trace--pullback identity for holomorphic 1-forms]
-\label{thm:trace-pullback-identity}
-\uses{lem:trace-forms,lem:pullback-forms}
-For nonconstant holomorphic \(f : X \to Y\) and \(\eta \in H^{0}(Y, \Omega^{1})\),
-\[
-  \tr_{f}(f^{*}\eta) = \deg(f) \cdot \eta.
-\]
-\lean{JacobianChallenge.HolomorphicForms.trace_pullback_identity}
-\leanok
-\end{theorem}
+
 
 \begin{layman}
 Given a nonconstant holomorphic map between compact Riemann surfaces,
@@ -160,7 +151,7 @@ of the finite branch locus extends across the branch locus via the identity prin
 
 \begin{lemma}[Maps descend to Jacobians]
 \label{lem:push-pull-descend}
-\uses{def:analytic-jacobian,lem:pullback-forms,lem:trace-forms}
+\uses{def:analytic-jacobian, lem:pullback-forms, lem:trace-forms}
 Pullback and trace preserve period lattices in the appropriate dual directions,
 therefore induce continuous holomorphic group homomorphisms
 \[

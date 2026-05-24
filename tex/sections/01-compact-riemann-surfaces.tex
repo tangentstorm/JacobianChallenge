@@ -118,14 +118,7 @@ Naming note: \texttt{PartialHomeomorph}, not \texttt{LocalHomeomorph}
 (already renamed in pre-v4.28).
 \end{proofsketch}
 
-\begin{lemma}[Discreteness of the divisor support]
-\label{lem:divisor-discrete}
-\uses{def:vanishing-order}
-For a nonzero meromorphic function \(f\) on \(X\), the set
-\(\{p\in X:\ord_p(f)\ne 0\}\) has no accumulation point.
-\lean{JacobianChallenge.Blueprint.divisor_discrete}
-\leanok
-\end{lemma}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -152,14 +145,7 @@ has no zeros and no poles other than at \(p\). The identity theorem
 applied across the chart atlas globalizes this.
 \end{proofsketch}
 
-\begin{lemma}[Compactness gives finite divisor support]
-\label{lem:divisor-finite-support}
-\uses{lem:divisor-discrete}
-For a nonzero meromorphic function \(f\) on the compact Riemann surface
-\(X\), the set \(\{p\in X:\ord_p(f)\ne 0\}\) is finite.
-\lean{JacobianChallenge.Blueprint.divisor_finite_support}
-\leanok
-\end{lemma}
+
 
 \begin{layman}
 Combine two facts and you get a clean conclusion. Fact one: the surface is
@@ -180,15 +166,7 @@ A subset of a compact space with no accumulation point is finite.
 
 \subsection{Divisor group}
 
-\begin{definition}[Divisor group]
-\label{def:divisor}
-The divisor group \(\Div(X)\) is the free abelian group on the points of
-\(X\). A divisor is a formal finite \(\Z\)-linear combination
-\(D=\sum_{p}n_p\,p\) with \(n_p\in\Z\) and \(\{p:n_p\ne 0\}\) finite.
-\depends{Mathlib's \texttt{FreeAbelianGroup}.}
-\lean{JacobianChallenge.Blueprint.Divisor}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 A divisor is just a bookkeeping device: pick finitely many points on the
@@ -206,14 +184,7 @@ much. The bookkeeping turns out to be exactly what's needed to ask
 --- which is the central question of Riemann--Roch.
 \end{layman}
 
-\begin{definition}[Degree of a divisor]
-\label{def:divisor-degree}
-\uses{def:divisor}
-The degree map \(\deg:\Div(X)\to\Z\) sends \(D=\sum_p n_p\,p\) to
-\(\sum_p n_p\). It is a group homomorphism.
-\lean{JacobianChallenge.Blueprint.Divisor.degree}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 We saw that a divisor is a tagged collection of points with whole-number
@@ -259,19 +230,7 @@ to verify the cloud SessionStart cache-prime hook.
 
 \subsection{Meromorphic functions, principal divisors, principal degree}
 
-\begin{definition}[Meromorphic functions on a compact Riemann surface]
-\label{def:meromorphic-function}
-\uses{def:vanishing-order}
-The set \(\Mer(X)\) of meromorphic functions on \(X\) is the set of
-sections of the sheaf of meromorphic germs. \(\Mer(X)\) is a field with
-the constants \(\C\) embedded as constant functions, and a nonzero
-\(f\in\Mer(X)\) defines a holomorphic map \(X\to\CPone\) with poles at
-\(\{p:\ord_p(f)<0\}\).
-\depends{Mathlib has \texttt{MeromorphicAt} on normed spaces; gluing along a
-chart atlas to a global field on \(X\) is project-side work.}
-\lean{JacobianChallenge.HolomorphicForms.MeromorphicFunctionType}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 A holomorphic function on the surface is one that's complex-differentiable
@@ -290,18 +249,7 @@ divisors, and Riemann--Roch is the question of how many of them fit a given
 pattern.
 \end{layman}
 
-\begin{definition}[Principal divisor of a meromorphic function]
-\label{def:principal-divisor}
-\uses{def:divisor,def:meromorphic-function,lem:divisor-finite-support}
-For a nonzero \(f\in\Mer(X)\),
-\[
-  (f) := \sum_{p\in X} \ord_p(f)\,p \in \Div(X).
-\]
-The map \((\,\cdot\,):\Mer(X)^{\times}\to\Div(X)\) is a group
-homomorphism (\(\Mer(X)^{\times}\) under multiplication).
-\lean{JacobianChallenge.Blueprint.principalDivisor}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 Each nonzero meromorphic function comes with a free shopping list: tag every
@@ -319,14 +267,7 @@ obstruction? The Jacobian variety, several sections later, is in spirit
 exactly the answer to that obstruction question.
 \end{layman}
 
-\begin{definition}[Principal divisors]
-\label{def:principal-divisors}
-\uses{def:principal-divisor}
-The subgroup of principal divisors is
-\(\Prin(X) := \{(f) : f\in\Mer(X)^{\times}\}\subset\Div(X)\).
-\lean{JacobianChallenge.Blueprint.principalDivisors}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 Collect every shopping list that comes from a meromorphic function in the
@@ -343,13 +284,7 @@ quotient is exactly what the Jacobian variety geometrizes: we're
 quotienting out the ``trivial'' equivalence so we can study what's left.
 \end{layman}
 
-\begin{theorem}[Principal divisors have degree zero]
-\label{thm:principal-degree-zero}
-\uses{def:principal-divisor,def:divisor-degree}
-For every nonzero \(f\in\Mer(X)\), \(\deg(f)=0\).
-\lean{JacobianChallenge.Blueprint.principal_degree_zero}
-\leanok
-\end{theorem}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -377,16 +312,7 @@ special case of \(\sum\Res = 0\) for the meromorphic 1-form \(df/f\).
 
 \subsection{Meromorphic functions as maps to \texorpdfstring{\(\CPone\)}{CP1}}
 
-\begin{definition}[Map to \(\CPone\) associated to a meromorphic function]
-\label{def:meromorphic-to-cp1}
-\uses{def:meromorphic-function}
-For nonzero \(f\in\Mer(X)\), define \(\widehat{f}:X\to\CPone\) by
-\(\widehat{f}(p)=f(p)\) where \(f\) is holomorphic at \(p\) and
-\(\widehat{f}(p)=\infty\) at poles. This is a holomorphic map of compact
-Riemann surfaces.
-\lean{JacobianChallenge.HolomorphicForms.meromorphicToCp1}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 Any meromorphic function naturally extends to a map into the \emph{Riemann
@@ -404,15 +330,7 @@ and covering theory --- exactly what we'll need to analyze maps between
 Riemann surfaces.
 \end{layman}
 
-\begin{theorem}[Meromorphic-to-\(\CPone\) bijection]
-\label{thm:meromorphic-as-cp1-map}
-\uses{def:meromorphic-to-cp1}
-The map \(f\mapsto\widehat{f}\) is a bijection between nonzero
-meromorphic functions on \(X\) and nonconstant holomorphic maps
-\(X\to\CPone\).
-\lean{JacobianChallenge.Blueprint.meromorphic_as_cp1_map}
-\leanok
-\end{theorem}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -441,16 +359,7 @@ preimages of \(\infty\) becoming poles.
 
 \subsection{Riemann-Roch space}
 
-\begin{definition}[Riemann-Roch space \(L(D)\)]
-\label{def:riemann-roch-space}
-\uses{def:divisor,def:meromorphic-function,def:principal-divisor}
-For a divisor \(D\),
-\[
-  L(D) := \{f\in\Mer(X) : (f)+D\ge 0\}\cup\{0\}.
-\]
-\lean{JacobianChallenge.Blueprint.riemannRochSpace}
-\leanok
-\end{definition}
+
 
 \begin{layman}
 Pick a divisor --- your shopping list of points with whole-number weights.
@@ -469,13 +378,7 @@ given budget, and from that flows everything about line bundles,
 embeddings, and the geometry of curves.
 \end{layman}
 
-\begin{lemma}[\(L(D)\) is a complex vector space]
-\label{lem:riemann-roch-space-vector}
-\uses{def:riemann-roch-space}
-\(L(D)\) is a \(\C\)-vector subspace of \(\Mer(X)\).
-\lean{JacobianChallenge.Blueprint.riemann_roch_space_vector}
-\leanok
-\end{lemma}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -493,16 +396,7 @@ of the Riemann--Roch theorem.
 
 \subsection{Aggregate input}
 
-\begin{theorem}[Classical input: Meromorphic functions and divisors (umbrella)]
-\label{input:divisors}
-\uses{def:divisor,def:divisor-degree,def:meromorphic-function,def:principal-divisor,def:principal-divisors,thm:principal-degree-zero,def:meromorphic-to-cp1,thm:meromorphic-as-cp1-map,def:riemann-roch-space,lem:riemann-roch-space-vector}
-\lean{JacobianChallenge.Blueprint.input_divisors_holds}
-\leanok
-The classical theory of meromorphic functions, divisors, principal
-divisors, the degree map, and Riemann-Roch spaces on a compact
-Riemann surface, packaged as a single dependency for downstream
-classical inputs (Riemann-Roch, Abel's theorem).
-\end{theorem}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -533,21 +427,11 @@ that is not yet in Mathlib.
 \subsection{Stepwise refinement of \texttt{MeromorphicDegree.lean}
 (sum-of-orders)}
 \label{subsec:meromorphic-degree-refinement}
-\uses{lem:meromorphic-local-normalization,lem:meromorphic-fiber-count-conservation}
+\uses{lem:meromorphic-local-normalization, lem:meromorphic-fiber-count-conservation}
 
-\begin{lemma}[Local normalization of meromorphic maps]
-\label{lem:meromorphic-local-normalization}
-A meromorphic map locally admits the form \(z \mapsto z^k\) or \(z \mapsto 1/z^k\).
-\lean{JacobianChallenge.HolomorphicForms.liftToCp1_local_kfold_ramified}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Conservation of fiber count]
-\label{lem:meromorphic-fiber-count-conservation}
-The weighted fiber count of a meromorphic map is locally constant.
-\lean{JacobianChallenge.HolomorphicForms.liftToCp1_weightedFiberSum_eventually_eq}
-\leanok
-\end{lemma}
+
+
 
 \code{Jacobian/HolomorphicForms/MeromorphicDegree.lean} carries two
 ...

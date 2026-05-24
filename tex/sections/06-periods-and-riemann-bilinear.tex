@@ -124,7 +124,7 @@ locally is the way the global linearity gets proved at all.
 
 \begin{definition}[Path integral via a chart cover]
 \label{def:path-integral-via-cover}
-\uses{def:path-integral-in-chart,lem:path-integral-in-chart-linearity}
+\uses{def:path-integral-in-chart, lem:path-integral-in-chart-linearity}
 Let \(\gamma:[0,1]\to X\) be a continuous path. Compactness of
 \([0,1]\) gives a finite partition
 \(0=t_0<t_1<\cdots<t_n=1\) and a chart \(c_i\) covering each
@@ -183,7 +183,7 @@ integral is a clean global notion.
 
 \begin{theorem}[Path integral descends to the period pairing]
 \label{thm:period-pairing-from-path-integral}
-\uses{def:path-integral-via-cover,lem:path-integral-cover-independent,lem:period-homology-invariance}
+\uses{def:path-integral-via-cover, lem:path-integral-cover-independent, lem:period-homology-invariance}
 The cover-based path integral assembles into a \(\Z\)-bilinear
 pairing
 \[
@@ -238,7 +238,7 @@ leaf.
 
 \begin{lemma}[Homology invariance of periods]
 \label{lem:period-homology-invariance}
-\uses{thm:stokes-on-rs-with-boundary,lem:holomorphic-form-is-closed}
+\uses{thm:stokes-on-rs-with-boundary, lem:holomorphic-form-is-closed}
 If \(\gamma\) and \(\gamma'\) represent the same class in \(H_1(X,\Z)\), then
 \[
   \int_{\gamma}\omega=\int_{\gamma'}\omega
@@ -365,24 +365,7 @@ symplectic basis to obtain the standard \(4g\)-gon
 the help of the polygon-interior primitive
 (Lemma~\ref{lem:primitive-on-polygon}).
 
-\begin{definition}[Symplectic basis of \(H_1(X,\Z)\)]
-\label{def:symplectic-basis}
 
-A symplectic basis of \(H_1(X,\Z)\) is a \(\Z\)-basis
-\(a_1,\dots,a_g,b_1,\dots,b_g\) for which the algebraic intersection
-pairing satisfies
-\((a_i,a_j)=(b_i,b_j)=0\) and \((a_i,b_j)=\delta_{ij}\).
-\depends{Mathlib has the algebraic theory of symplectic bilinear forms;
-the existence of a symplectic basis on a compact orientable surface is
-a topological theorem (every nondegenerate alternating form on a free
-\(\Z\)-module of rank \(2g\) admits a symplectic basis). The
-polygonal model of Section~\ref{sec:polygonal-model} provides a
-direct construction: the boundary identification of
-\(\mathrm{Polygon4g}(g)\) reads off the symplectic generators
-\(a_i, b_i\) by handle index.}
-\lean{JacobianChallenge.Blueprint.Sec03.isSymplecticBasis}
-\leanok
-\end{definition}
 
 \begin{layman}
 On a compact genus-\(g\) surface, the closed-loop equivalence classes
@@ -400,23 +383,7 @@ tractable only after this normalization --- a tangle of loops
 becomes a tidy \(2g\)-vector with predictable interactions.
 \end{layman}
 
-\begin{theorem}[Bilinear identity from Stokes on the polygon]
-\label{thm:bilinear-from-stokes}
-\uses{thm:polygonal-model,lem:primitive-on-polygon,thm:stokes-on-rs-with-boundary}
-For holomorphic one-forms \(\omega,\eta\) on \(X\),
-\[
-  \int_X \omega\wedge\eta
-  =
-  \sum_{i=1}^{g}
-  \left(
-    \int_{a_i}\omega\int_{b_i}\eta
-    -
-    \int_{b_i}\omega\int_{a_i}\eta
-  \right).
-\]
-\lean{JacobianChallenge.Blueprint.bilinear_from_stokes}
-\leanok
-\end{theorem}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -471,16 +438,7 @@ a sorry-free assembly. The eventual lift to the manifold-level
 Stokes fold once Mathlib gains manifold-side wedge + integration.
 \end{proofsketch}
 
-\begin{theorem}[Hermitian positivity \(i\int_X\omega\wedge\bar\omega>0\)]
-\label{thm:hermitian-positivity}
-\uses{thm:bilinear-from-stokes}
-For a nonzero holomorphic 1-form \(\omega\),
-\[
-  i\int_X \omega\wedge\overline{\omega} > 0.
-\]
-\lean{JacobianChallenge.Blueprint.hermitian_positivity}
-\leanok
-\end{theorem}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -534,7 +492,7 @@ reduces to this stand-in once \code{integrateTwoForm} (shared with
 
 \begin{theorem}[Period vectors have full real rank]
 \label{thm:period-vectors-full-real-rank}
-\uses{thm:bilinear-from-stokes,thm:hermitian-positivity,def:symplectic-basis}
+
 The \(2g\) period vectors
 \(\Pi_X(a_1),\dots,\Pi_X(a_g),\Pi_X(b_1),\dots,\Pi_X(b_g)
    \in\HdualX\)
@@ -571,7 +529,7 @@ coefficients to vanish.
 
 \begin{theorem}[Classical input: Riemann bilinear relations (umbrella)]
 \label{input:riemann-bilinear}
-\uses{thm:bilinear-from-stokes,thm:hermitian-positivity,thm:period-vectors-full-real-rank}
+\uses{thm:period-vectors-full-real-rank}
 \leanok
 The classical Riemann bilinear relations and Hermitian positivity, with
 their consequence that the \(2g\) symplectic-basis period vectors are

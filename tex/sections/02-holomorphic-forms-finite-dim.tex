@@ -53,36 +53,7 @@ The project's preferred route to \(\dim_{\C}\HX<\infty\) is analytic: a
 sup-norm makes \(\HX\) a normed space, Montel's theorem makes the closed
 unit ball compact, and Riesz's lemma forces finite dimensionality.
 
-\begin{definition}[Fiber norm on the cotangent bundle]
-\label{def:cotangent-fiber-norm}
-\lean{JacobianChallenge.Blueprint.cotangentFiberNorm}
-For each \(x\in X\) the cotangent fiber
-\(T^{*}_{x}X = T_{x}X \to_{\C}\C\) is a one-dimensional complex vector
-space. Equip it with the canonical operator norm
-\(\|v\|_{x} := \sup_{\xi\in T_{x}X,\ \|\xi\|=1} |v(\xi)|\),
-where \(\|\xi\|\) is taken via any chart isomorphism
-\(\dd\varphi_{x}: T_{x}X \xrightarrow{\sim} \C\) (any two chart norms
-on a one-dimensional fiber differ by a positive scalar, so the operator
-norm on \(T^{*}_{x}X\) inherits a chart-independent equivalence class;
-to fix a single function rather than an equivalence class we choose
-the chart norm coming from the preferred \texttt{chartAt} of the
-\texttt{ChartedSpace} structure).
 
-The resulting function
-\((x, v) \mapsto \|v\|_{x}\) is continuous on the total space of
-\(T^{*}X\): on each chart neighbourhood \(U\) the trivialisation
-identifies \(T^{*}_{x}X\) with \(\C\to_{\C}\C\) by an isomorphism
-varying continuously in \(x\), and the operator norm is itself
-continuous on \(\C\to_{\C}\C\); composition of continuous maps is
-continuous. (See Mathlib
-\texttt{Bundle.ContinuousLinearMap.vectorBundle} for the vector-bundle
-structure on \(T^{*}X\), and the operator-norm continuity from
-\texttt{ContinuousLinearMap.opNorm\_le\_iff}.)
-\depends{Mathlib operator norm on \(\C\to_{\C}\C\); project-side
-\texttt{CotangentSpace} from
-\texttt{Jacobian/HolomorphicForms/CotangentBundle.lean}.}
-\leanok
-\end{definition}
 
 \begin{layman}
 At each point of the surface, a holomorphic 1-form picks out a tiny
@@ -100,27 +71,7 @@ atlas. Why bother? With a length on every fiber, we can ask whether a
 ``size'' on the whole space of holomorphic 1-forms in the next step.
 \end{layman}
 
-\begin{definition}[Sup norm on \(\HX\)]
-\label{def:holomorphic-sup-norm}
-\uses{def:cotangent-fiber-norm}
-\lean{JacobianChallenge.Blueprint.holomorphicSupNorm}
-For \(\omega\in\HX\), define
-\[
-  \|\omega\| := \sup_{x\in X}\|\omega_x\|_{x},
-\]
-where \(\|\omega_x\|_{x}\) is the fiber norm of
-Definition~\ref{def:cotangent-fiber-norm}. Compactness of \(X\) plus
-continuity of \(x \mapsto \|\omega_x\|_{x}\) (the composition of the
-continuous section \(\omega\) with the continuous fiber-norm function)
-implies the sup is attained and finite, by the extreme value theorem
-(Mathlib \texttt{IsCompact.exists\_isMaxOn}). The standard checks
-\(\|\omega\|=0\iff \omega=0\), \(\|\lambda\omega\|=|\lambda|\|\omega\|\)
-and the triangle inequality follow pointwise from the corresponding
-properties of the fiber norm; this makes \((\HX,\|\cdot\|)\) a normed
-\(\C\)-vector space. (Cf.\ Forster, \emph{Lectures on Riemann
-Surfaces}, \S 14.)
-\leanok
-\end{definition}
+
 
 \begin{layman}
 We've measured the size of a holomorphic 1-form at each point. To get a
@@ -138,22 +89,7 @@ of distance, convergence, balls, and compactness. The whole analytic
 strategy for proving finite-dimensionality runs on those notions.
 \end{layman}
 
-\begin{lemma}[Local coefficient bound on a chart]
-\label{lem:chart-coefficient-bound}
-\uses{def:holomorphic-sup-norm}
-\lean{JacobianChallenge.Blueprint.chart_coefficient_bound}
-Let \(\varphi:U\to V\subseteq\C\) be a chart in the holomorphic atlas
-of \(X\). On \(U\) every \(\omega\in\HX\) admits a unique
-representation \(\omega = h_{\varphi}(z)\,dz\) with
-\(h_{\varphi} : V \to \C\) holomorphic. Then there is a constant
-\(C_{\varphi}\ge 0\), depending only on the chart \(\varphi\) (and the
-choice of fiber norm on \(T^{*}X\)), such that
-\[
-  |h_{\varphi}(z)| \;\le\; C_{\varphi}\,\|\omega\|
-  \qquad\text{for all } z \in V.
-\]
-\leanok
-\end{lemma}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -185,19 +121,7 @@ the supremum on the (relatively compact) chart image of the
 trivialisation comparison factor, which is finite by continuity.
 \end{proofsketch}
 
-\begin{lemma}[Montel compactness]
-\label{lem:montel-compactness}
-\uses{def:holomorphic-sup-norm,lem:chart-coefficient-bound}
-\lean{JacobianChallenge.Blueprint.montel_compactness}
-The closed unit ball of \(\HX\) is sequentially compact: every sequence
-\(\omega_n\in\HX\) with \(\|\omega_n\|\le 1\) for all \(n\) admits a
-strictly increasing \(\varphi:\N\to\N\) and a limit
-\(\omega_\infty\in\HX\) with \(\|\omega_\infty\|\le 1\) such that
-\(\|\omega_{\varphi(n)} - \omega_\infty\| \to 0\) as \(n\to\infty\)
-(equivalently, \(\omega_{\varphi(n)} \to \omega_\infty\) uniformly on
-\(X\)).
-\leanok
-\end{lemma}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -265,17 +189,7 @@ holomorphic 1-form \(\omega_\infty\). The sup-norm bound
 norm, by passing to the limit in the explicit estimate).
 \end{proofsketch}
 
-\begin{theorem}[Closed unit ball is compact]
-\label{thm:hone-unit-ball-compact}
-\uses{lem:montel-compactness}
-\lean{JacobianChallenge.Blueprint.hone_unit_ball_compact}
-Under any normed-\(\C\)-vector-space realisation of \(\HX\) whose norm
-agrees with the sup norm of
-Definition~\ref{def:holomorphic-sup-norm}, the closed unit ball
-\(\overline{B}(0,1) = \{\omega \in \HX : \|\omega\|\le 1\}\) is
-(topologically) compact.
-\leanok
-\end{theorem}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -303,21 +217,7 @@ the metric topology by continuity of the norm, so the conclusion is
 exactly \texttt{IsCompact (Metric.closedBall 0 1)}.
 \end{proofsketch}
 
-\begin{theorem}[Finite-dimensionality from Riesz]
-\label{thm:fd-from-riesz}
-\uses{thm:hone-unit-ball-compact}
-\lean{JacobianChallenge.Blueprint.fd_from_riesz}
-A normed \(\C\)-vector space whose closed ball of some positive radius
-is compact is finite-dimensional. This is Riesz's lemma; in Mathlib it
-is \texttt{FiniteDimensional.of\_isCompact\_closedBall} (file
-\texttt{Mathlib/Analysis/Normed/Module/FiniteDimension.lean}). Applied
-to a normed-space realisation of \(\HX\) supplied by
-Theorem~\ref{thm:hone-unit-ball-compact}, this gives
-\(\dim_{\C}\HX<\infty\).
-\depends{Mathlib's
-\texttt{FiniteDimensional.of\_isCompact\_closedBall}.}
-\leanok
-\end{theorem}
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -343,23 +243,7 @@ where \(h\) is the conclusion of
 Theorem~\ref{thm:hone-unit-ball-compact} for the chosen realisation.
 \end{proofsketch}
 
-\begin{theorem}[Classical input: Finite-dimensionality (umbrella)]
-\label{input:finite-dimensionality}
-\uses{thm:fd-from-riesz}
-\lean{JacobianChallenge.Blueprint.input_finite_dimensionality}
-\leanok
-For any normed-\(\C\)-vector-space realisation \(H\) of \(\HX\) whose
-norm equals the sup norm, \(H\) is finite-dimensional.
 
-This is the umbrella combining the analytic ingredients
-(Definitions~\ref{def:cotangent-fiber-norm}--\ref{def:holomorphic-sup-norm},
-Lemmas~\ref{lem:chart-coefficient-bound}--\ref{lem:montel-compactness},
-Theorems~\ref{thm:hone-unit-ball-compact}--\ref{thm:fd-from-riesz}).
-The alternative Riemann-Roch route (\ref{input:riemann-roch}) is named
-separately and not used by the analytic finite-dim proof.
-\depends{compactness, local coefficient extraction for one-forms,
-Montel + Riesz.}
-\end{theorem}
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
@@ -386,45 +270,13 @@ with Theorem~\ref{thm:fd-from-riesz}.
 
 \subsection{Compactness of holomorphic 1-forms: details}
 
-\begin{lemma}[Continuity of evaluation and fiber norm]
-\label{lem:section-eval-continuity}
-For a smooth section of the cotangent bundle, evaluation at a point and the fiber-norm are continuous.
-\lean{JacobianChallenge.HolomorphicForms.ContMDiffSection.continuous_eval_at_one, JacobianChallenge.HolomorphicForms.ContMDiffSection.fiberNorm_eq_abs_eval_one}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Pointwise limit of Cauchy sequence]
-\label{lem:section-limit-steps}
-A sup-norm Cauchy sequence of holomorphic 1-forms converges to a limit.
-\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_supNorm_cauchySeq_tendsto_via_steps}
-\leanok
-\end{lemma}
 
-\begin{lemma}[Arzel\`{a}--Ascoli for 1-forms]
-\label{lem:section-arzela-ascoli}
-\uses{lem:section-eval-continuity,lem:section-limit-steps}
-Equibounded and equicontinuous families of holomorphic 1-forms are relatively compact.
-\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_arzela_ascoli}
-\lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_closedBall_totallyBounded}
-\lean{JacobianChallenge.HolomorphicForms.bcf_totallyBounded_of_range_compact_of_equicontinuous}
-\textbf{Top-down status.} The Lean development now exposes a sorry-free
-assembly theorem
-\lean{holomorphicOneForm_closedBall_totallyBounded}
-which composes chart-local equiboundedness/equicontinuity placeholders
-with the Arzel\`a--Ascoli bridge; additionally, the core bounded-continuous
-Arzel\`a--Ascoli total-boundedness step has been formalized as a reusable lemma.
-\leanok
-\end{lemma}
 
-\begin{theorem}[Finite-dimensionality of holomorphic one-forms]
-\label{thm:fd-holomorphic-one-forms}
-\uses{input:finite-dimensionality,def:analytic-genus,lem:section-arzela-ascoli}
-\lean{JacobianChallenge.Blueprint.fd_holomorphic_one_forms}
-The vector space \(\HX\) is finite-dimensional:
-\(\dim_{\C}\HX<\infty\). Equivalently, the analytic genus
-\(g(X)=\dim_{\C}\HX\) is a finite natural number.
-\leanok
-\end{theorem}
+
+
+
+
 \begin{proof}\leanok\end{proof}
 
 \begin{layman}
