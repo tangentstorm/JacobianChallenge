@@ -88,9 +88,9 @@
 {"i":1423,"f":"Jacobian/Periods/CellularChainComplex.lean","k":"theorem","s":"polygon4g_realize_standard_cellular_model","n":0,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"done","b":"lem:impl-polygon-characteristic-maps","t":""}
 {"i":1424,"f":"Jacobian/Periods/CellularChainComplex.lean","k":"theorem","s":"polygon4g_two_cell_boundary_abelianized_relator","n":0,"o":1,"r":1,"e":null,"u":[],"d":[2638],"a":"","c":"done","b":"lem:impl-polygon-cellular-boundary-formula","t":""}
 {"i":1425,"f":"Jacobian/Periods/CellularHomologyRS.lean","k":"theorem","s":"polygon4g_finiteCWStructure","n":1,"o":1,"r":1,"e":4,"u":[1416,1417,1418,1419,1421],"d":[],"a":"","c":"done","b":"lem:impl-polygon-characteristic-maps","t":""}
-{"i":1426,"f":"Jacobian/Periods/DualGraphCut.lean","k":"theorem","s":"unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms","n":1,"o":1,"r":1,"e":4,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1426,"f":"Jacobian/Periods/DualGraphCut.lean","k":"theorem","s":"unfoldedDisk_boundary_satisfies_edgeWordPresentation_axioms","n":1,"o":1,"r":1,"e":4,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1427,"f":"Jacobian/Periods/HandleSwapHomeo.lean","k":"theorem","s":"handlePrefix_tailRotate_homeomorph","n":1,"o":1,"r":1,"e":4,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
-{"i":1428,"f":"Jacobian/Periods/HandleSwapHomeo.lean","k":"theorem","s":"wordQuotient_homeomorph_of_rotate","n":1,"o":1,"r":1,"e":4,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":1428,"f":"Jacobian/Periods/HandleSwapHomeo.lean","k":"theorem","s":"wordQuotient_homeomorph_of_rotate","n":1,"o":1,"r":1,"e":4,"u":[],"d":[],"a":"","c":"done","b":"","t":""}
 {"i":1429,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_singular_H1_iso_of_filtered_graded","n":1,"o":1,"r":1,"e":null,"u":[1431,1432,1433],"d":[],"a":"","c":"done","b":"lem:impl-cellular-singular-filtered-comparison","t":""}
 {"i":1430,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_singular_associated_graded_H1_iso","n":1,"o":1,"r":1,"e":null,"u":[1431,1432,1433],"d":[],"a":"","c":"done","b":"lem:impl-cellular-singular-filtered-comparison","t":""}
 {"i":1431,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_cellular_singular_chain_map_degree_one_boundary","n":1,"o":1,"r":1,"e":null,"u":[1435,1436,1437,1438],"d":[1429,1430,1434],"a":"","c":"done","b":"lem:impl-cellular-singular-chain-map-data","t":""}
@@ -1266,3 +1266,4 @@
 {"i":2700,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"polygon4g_quotient_path_finite_lift_subdivision","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2701,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"singular_one_simplex_subdivision_prism_homologous","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
 {"i":2702,"f":"Jacobian/Periods/Hurewicz.lean","k":"theorem","s":"finite_projected_endpoint_sum_zero_pairing","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
+{"i":2703,"f":"Jacobian/Periods/DualGraphCut.lean","k":"theorem","s":"cut_along_nonTree_yields_unfoldedDisk","n":1,"o":1,"r":1,"e":null,"u":[],"d":[],"a":"","c":"open","b":"","t":""}
