@@ -181,14 +181,14 @@ The timer will call you again.
   `intro`, `apply`, and small helper lemmas.
 - Tell Aristotle not to rely on large `aesop`, `grind`, broad `simp_all`, or
   fragile automation unless the task explicitly justifies it.
-- **Always credit contributing agents on commits.** When committing, ensure that all commits are made under the primary identity `Michal Wallace <michal.wallace@gmail.com>` and that any contributing agent (e.g. Claude, Aristotle, Gemini, Grok, Codex) is credited using normalized `Co-authored-by:` trailers at the bottom of the commit message. Follow the exact formatting and normalization rules specified in [ref/commit-guide.md](file:///Users/michal/ver/jc0/ref/commit-guide.md).
+- **Always credit contributing agents on commits.** When committing, ensure that all commits are made under the primary identity `Michal Wallace <michal.wallace@gmail.com>` and that any contributing agent (e.g. Claude, Aristotle, Gemini, Grok, Codex) is credited using normalized `Co-authored-by:` trailers at the bottom of the commit message. Follow the exact formatting and normalization rules specified in [scialect/rules/commit-guide.md](file:///Users/michal/ver/scialect/rules/commit-guide.md).
 
   For integration commits touching `aristotle_jobs.jsonl` with an `"integrated"` or `"rejected"` status update, or any Lean file changes derived from an Aristotle result, always add:
   ```
   Co-authored-by: Aristotle (Harmonic) <aristotle-harmonic@harmonic.fun>
   ```
   in addition to the active assistant's trailer (e.g. `Co-authored-by: Claude <claude@anthropic.com>`). On heartbeat/cleanup commits with no agent contributions, only the primary developer's identity is used.
-- **Enforce Status Lifecycles & Scoping**: When launching or auditing workers, ensure their active checklist in `task.md` is scoped to a single commit-sized step, begins with a standardized status line of the format `[STATUS]: [detail]` (e.g. `WORKING: [Active step description]`, `STEP-DONE: [Active step description]`, or `BLOCKED: [reason]`), and that they strictly follow the unblocking protocol in [ref/status-guide.md](file:///Users/michal/ver/jc0/ref/status-guide.md). Let reviewer agents cross-verify `STEP-DONE` status before committing and merging.
+- **Enforce Status Lifecycles & Scoping**: When launching or auditing workers, ensure their active checklist in `task.md` is scoped to a single commit-sized step, begins with a standardized status line of the format `[STATUS]: [detail]` (e.g. `WORKING: [Active step description]`, `STEP-DONE: [Active step description]`, or `BLOCKED: [reason]`), and that they strictly follow the unblocking protocol in [scialect/rules/status-guide.md](file:///Users/michal/ver/scialect/rules/status-guide.md). Let reviewer agents cross-verify `STEP-DONE` status before committing and merging.
 - **Imports are minimal and load-bearing.** `import Mathlib` is a cardinal
   sin — it pulls in the entire library, blowing up build times by an order
   of magnitude. Every Aristotle / sub-agent / Codex prompt must explicitly
