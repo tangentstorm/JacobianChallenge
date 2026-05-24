@@ -63,3 +63,4 @@ Bad delegation ("solve the Jacobian challenge", "fix all sorries") is explicitly
 - Public theorem names and statements stay stable once another file or Aristotle job depends on them.
 - If a statement is too hard, split it into helper lemmas. Do not paper over it with axioms in production files (placeholders in the statement bank are acceptable but should be tracked as missing infrastructure).
 - After integrating Aristotle work, update `README.md`'s progress report (UTF-8 shaded bars `█`/`░`, separator `━` — exact format in `ref/PROMPT.md`) and include both `README.md` and `aristotle_tasks.md` in the integration commit.
+- **Git Commit Crediting**: All commits must be authored and committed under `Michal Wallace <michal.wallace@gmail.com>`. Contributing agents must be credited using normalized `Co-authored-by:` trailers as specified in [ref/commit-guide.md](file:///Users/michal/ver/jc0/ref/commit-guide.md).
