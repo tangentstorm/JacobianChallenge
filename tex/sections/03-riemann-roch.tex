@@ -95,6 +95,8 @@ Riemann--Roch in its modern form is a relationship between these two
 groups, and stating it cleanly requires giving them names.
 \end{layman}
 
+\section{Orphaned statements: Riemann-Roch and Serre Duality}
+
 \begin{theorem}[Serre duality on a compact Riemann surface]
 \label{thm:serre-duality-rs}
 \uses{def:sheaf-cohomology-rs,input:dolbeault,lem:serre-pairing-construction,lem:serre-pairing-nondegenerate}
@@ -277,7 +279,7 @@ one-line corollaries of it.
 
 \begin{proposition}[Genus zero gives a degree-one meromorphic function]
 \label{prop:genus-zero-degree-one-map}
-\uses{input:riemann-roch,thm:genus-zero-exists-nonconstant-mem-L-point,thm:genus-zero-pole-identification,thm:meromorphic-continuous-extension,thm:degree-one-bijectivity-meromorphic,thm:homeo-sphere-holomorphic-one-form-vanishing}
+\uses{input:finite-dimensionality,thm:genus-zero-exists-nonconstant-mem-L-point,thm:genus-zero-pole-identification,thm:meromorphic-continuous-extension,thm:degree-one-bijectivity-meromorphic,thm:homeo-sphere-holomorphic-one-form-vanishing}
 If \(g(X)=0\), then for every \(p\in X\) there is a meromorphic function
 \(f:X\to\CPone\) with exactly one simple pole at \(p\). In particular, \(f\)
 has degree one.
@@ -392,7 +394,7 @@ effective elsewhere zero, \(\operatorname{poles}(f)\) is either \(0\) or \([P]\)
 
 \begin{lemma}[Genus-zero RR witness]
 \label{lem:genus-zero-RR-witness}
-\uses{input:riemann-roch,def:riemann-roch-space,lem:genus-zero-rr-identity-applied,lem:genus-zero-rr-vanish-K-minus-point,lem:rr-space-dim-ge-two-nonconstant}
+\uses{input:finite-dimensionality,def:riemann-roch-space,lem:genus-zero-rr-identity-applied,lem:genus-zero-rr-vanish-K-minus-point,lem:rr-space-dim-ge-two-nonconstant}
 On a compact connected genus-zero Riemann surface, for every point
 \(P\) there exists a meromorphic map \(f:X\to\CPone\) which is
 nonconstant and lies in \(L([P])\).
@@ -602,7 +604,7 @@ two conclusions via \code{Finsupp} extensionality.
 
 \begin{lemma}[Genus-zero RR identity at \((P)\)]
 \label{lem:genus-zero-rr-identity-applied}
-\uses{input:riemann-roch}
+\uses{input:finite-dimensionality}
 On a compact connected genus-zero Riemann surface, the integers
 \(\ell([P])\) and \(\ell(K-[P])\) satisfy
 \(\ell([P])-\ell(K-[P])=2\).
@@ -617,7 +619,7 @@ RR applied to \(D=[P]\) gives
 
 \begin{lemma}[\(\ell(K-(P))=0\) in genus zero]
 \label{lem:genus-zero-rr-vanish-K-minus-point}
-\uses{input:riemann-roch}
+\uses{input:finite-dimensionality}
 On a genus-zero compact Riemann surface, \(K-[P]\) has negative
 degree, hence \(\ell(K-[P])=0\).
 \lean{JacobianChallenge.HolomorphicForms.genusZero_riemannRoch_K_minus_point_dim_zero}
