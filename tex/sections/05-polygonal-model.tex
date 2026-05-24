@@ -278,7 +278,7 @@ heart of the surface-classification step (Stage A) below.
 
 \begin{theorem}[Classical input: Rad\'o's triangulation theorem]
 \label{input:rado-triangulation}
-\uses{lem:rado-pl-atlas-exists,lem:rado-assembled-simplicial-complex,lem:rado-realisation-homeomorphism,lem:rado-overview-stepwise,lem:rado-pl-assembled-is-2mfd,lem:rado-pl-assembled-realisation-homeo,lem:rado-overview-glued-continuous,lem:rado-overview-glued-bijective}
+
 Every compact connected oriented topological 2-manifold admits a
 triangulation: a homeomorphism with the underlying space of a finite
 two-dimensional simplicial complex.
@@ -315,7 +315,7 @@ filled by a future formalisation.
 
 \begin{theorem}[Classical input: Tietze normal form for orientable surface words]
 \label{input:tietze-normal-form}
-\uses{def:tietze-equivalence,def:orientable,lem:tietze-to-handle-grouped,lem:tietze-handle-grouped-to-standard,lem:tietze-overview-stepwise}
+\uses{def:tietze-equivalence,def:orientable}
 Every edge word arising from a polygonal presentation of a compact
 connected orientable 2-manifold of genus \(g\) is Tietze-equivalent to
 the standard relator
@@ -355,7 +355,7 @@ theorem currently sits at the top of a sorry tree.
 
 \begin{theorem}[Polygonal model of a compact Riemann surface]
 \label{thm:polygonal-model}
-\uses{def:polygon4g,lem:polygon4g-eq-standard-word-quotient,def:tietze-equivalence,def:orientable,input:rado-triangulation,input:tietze-normal-form,lem:polygonal-model-some-polygon-homeomorph,lem:polygonal-model-genus-matches,lem:polygonal-model-overview-stepwise,lem:polygonal-model-phase12-word-quotient,lem:polygonal-model-phase3-tietze-normal-form,lem:polygonal-model-phase3-quotient-lift,lem:polygonal-model-apply-tietze,thm:polygon4g-cellular-singular}
+\uses{def:polygon4g,lem:polygon4g-eq-standard-word-quotient,def:tietze-equivalence,def:orientable,input:rado-triangulation,input:tietze-normal-form,thm:polygon4g-cellular-singular}
 A compact connected oriented Riemann surface \(X\) of analytic
 genus \(g\) is homeomorphic to \(\mathrm{Polygon4g}(g)\):
 \[
@@ -537,7 +537,7 @@ the orientability hypothesis explicitly.
 
 \begin{theorem}[Classical input: de Rham theorem]
 \label{input:de-rham-theorem}
-\uses{lem:deRham-integration-descends,lem:deRham-iso-via-good-cover,lem:deRham-overview-stepwise}
+
 For a smooth manifold \(M\), integration of forms over chains gives
 an isomorphism between de Rham and singular cohomology:
 \[
@@ -574,7 +574,7 @@ analytic side of the genus identity has no topological referent.
 
 \begin{theorem}[Classical input: Hodge decomposition on a compact Riemann surface]
 \label{input:hodge-decomposition}
-\uses{input:de-rham-theorem,lem:hodge-laplacian-kernel-finite-dim,lem:hodge-deRham-iso-harmonic,lem:hodge-decomposition-overview-stepwise}
+\uses{input:de-rham-theorem}
 For a compact K\"ahler manifold \(X\) (in particular a compact Riemann
 surface) every de Rham cohomology class has a unique harmonic
 representative, and harmonic forms split by bidegree:
@@ -617,7 +617,7 @@ elliptic-operator + harmonic-form theory yet.
 
 \begin{theorem}[Classical input: Hodge / de Rham rank for a Riemann surface]
 \label{input:hodge-deRham}
-\uses{def:topological-genus,input:de-rham-theorem,input:hodge-decomposition,input:dolbeault,lem:hodge-deRham-dim-h1-dR,lem:hodge-deRham-rank-eq-dim,lem:hodge-deRham-overview-stepwise,lem:hodge-deRham-deRham-bridge,lem:hodge-deRham-uct-bridge,lem:hodge-deRham-real-of-complex}
+\uses{def:topological-genus,input:de-rham-theorem,input:hodge-decomposition}
 For a compact connected oriented Riemann surface \(X\) of analytic
 genus \(g\), the rank of the integer first homology group is
 \(2g\):

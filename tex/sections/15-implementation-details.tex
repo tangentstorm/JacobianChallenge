@@ -5,7 +5,7 @@
 
 \begin{lemma}[Polygonal model and cellular homology]
 \label{lem:polygon-cellular-singular-iso}
-\uses{lem:r3subB-cellular-iso,lem:impl-polygon-cellular-homology-free,lem:impl-cellular-singular-filtered-comparison}
+\uses{lem:impl-polygon-cellular-homology-free,lem:impl-cellular-singular-filtered-comparison}
 \lean{JacobianChallenge.Periods.polygon4g_cellular_singular_iso}
 \leanok
 \end{lemma}
@@ -187,7 +187,7 @@ give the filtered comparison isomorphism.
 
 \begin{lemma}[Meromorphic lift and degree]
 \label{lem:impl-meromorphic-lift}
-\uses{lem:meromorphic-local-normalization, lem:meromorphic-fiber-count-conservation, lem:impl-single-pole-meromorphic-map, lem:impl-two-pole-meromorphic-map}
+\uses{lem:meromorphic-local-normalization,lem:meromorphic-fiber-count-conservation,lem:impl-single-pole-meromorphic-map,lem:impl-two-pole-meromorphic-map}
 \lean{JacobianChallenge.HolomorphicForms.isHolomorphic_of_contMDiff,isHolomorphic_of_contMDiff}
 \leanok
 \end{lemma}
@@ -232,13 +232,13 @@ frontier.
 
 \begin{lemma}[Intended implementation orphans]
 \label{lem:intended-orphans}
-\uses{lem:impl-misc-orphans, lem:impl-orphans-aggregate}
+\uses{lem:impl-misc-orphans,lem:impl-orphans-aggregate}
 These implementation details are tracked but currently isolated from the main proof spine.
 \end{lemma}
 
 \begin{lemma}[Wiring implementation to roots]
 \label{lem:impl-wiring-to-roots}
-\uses{lem:section-arzela-ascoli, lem:meromorphic-vector-space-instance, lem:polygon-cellular-singular-iso, lem:impl-meromorphic-lift, lem:impl-trace-lip, lem:intended-orphans}
+\uses{lem:section-arzela-ascoli,lem:polygon-cellular-singular-iso,lem:impl-meromorphic-lift,lem:impl-trace-lip,lem:intended-orphans}
 This lemma serves as the final hook connecting the implementation-level proof obligations
 back into the project's high-level goal nodes.
 \lean{JacobianChallenge.Blueprint.Generated.impl_wiring_to_roots}

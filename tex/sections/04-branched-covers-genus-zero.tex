@@ -222,7 +222,7 @@ where \(z_0\) is the chart image of \(x\).
 
 \begin{lemma}[Holomorphic \texorpdfstring{\(k\)}{k}-th root]
 \label{lem:analytic-kth-root}
-\uses{lem:akr-r1}
+
 If \(g\) is analytic at \(z_0\) with \(g(z_0)\ne 0\) and \(k\ge 1\),
 there is an analytic \(h\) near \(z_0\) with \(h(z)^k=g(z)\) locally.
 \depends{Holomorphic logarithm
@@ -272,7 +272,7 @@ through charts.
 
 \begin{lemma}[Properness of fibre below an open neighborhood]
 \label{lem:proper-fiber-shrink}
-\uses{lem:pfs-r1}
+
 For a continuous map \(f\) from a compact source to a Hausdorff
 target, and any open \(U\) containing \(f^{-1}(y_0)\), there is a
 neighborhood \(V\) of \(y_0\) such that for every \(y\in V\),
@@ -521,7 +521,7 @@ For a holomorphic section of the cotangent bundle, the local representative in t
 
 \begin{theorem}[Isomorphism with \(\CPone\) one-forms]
 \label{lem:holomorphic-one-form-linearEquiv-to-OnePointCx}
-\uses{lem:section-localRepr-continuity, lem:onepoint-cx-chart-overlap-pullback}
+\uses{lem:section-localRepr-continuity,lem:onepoint-cx-chart-overlap-pullback}
 For any Riemann surface \(X\) biholomorphic to \(\CPone\), there is a linear equivalence between their spaces of holomorphic 1-forms.
 \lean{JacobianChallenge.HolomorphicForms.holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx}
 \leanok
@@ -606,7 +606,7 @@ with Lemma~\ref{lem:meromorphic-value-at-pole}.
 
 \begin{lemma}[Bridge: meromorphic-to-branched-cover-data]
 \label{lem:meromorphic-to-branched-cover-data}
-\uses{def:branched-degree,def:divisor}
+\uses{def:branched-degree,def:divisor,thm:meromorphic-continuous-extension}
 A meromorphic map \(f:X\to\CPone\) with \(\deg(\operatorname{poles}(f))=1\) admits a
 \code{BranchedCoverData} of branched degree 1.
 \lean{JacobianChallenge.HolomorphicForms.MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one}
