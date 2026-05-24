@@ -638,8 +638,8 @@ def main(argv: list[str]) -> int:
     # discoverable from the blueprint index/section pages.
     NAV_OLD = '<li ><a href="dep_graph_document.html">Dependency graph</a></li>'
     NAV_NEW = (
-        NAV_OLD
-        + '<li ><a href="dep_graph_collapsible.html">Collapsible overview</a></li>'
+        '<li ><a href="dep_graph_collapsible.html">Dependency graph</a></li>'
+        + '<li ><a href="dep_graph_document.html">Flat full graph</a></li>'
     )
     NAV_MARKER = "dep_graph_collapsible.html"  # idempotency check
     n_patched = 0

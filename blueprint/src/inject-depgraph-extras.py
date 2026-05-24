@@ -50,7 +50,75 @@ BIG_UMBRELLAS = [
     # like the original eight.
     "input:bundled-omega-k",
     "input:sobolev-elliptic-regularity",
+    # Collapsed overview nodes in dep_graph_collapsible.html
+    "gap_R1",
+    "gap_R2",
+    "gap_R3",
+    "gap_R4",
+    "gap_R5",
+    "gap_R6",
+    "gap_R7",
+    "gap_R8",
+    "gap_R9",
+    "gap_R10",
+    "gap_R11",
 ]
+
+LABEL_PAT = re.compile(r"\\label\{([^}]+)\}")
+DOT_RENDER_PAT = re.compile(r"\.renderDot\(`(.*?)`\)", re.DOTALL)
+
+HEADLINES = {
+    "input:rado-triangulation",
+    "input:tietze-normal-form",
+    "thm:polygonal-model",
+    "input:de-rham-theorem",
+    "input:hodge-decomposition",
+    "input:hodge-deRham",
+    "input:dolbeault",
+    "thm:serre-duality-rs",
+    "input:bundled-omega-k",
+    "input:sobolev-elliptic-regularity",
+    "lem:uniformization-genus-zero-biholomorphism",
+}
+
+def build_label_maps(repo_root: Path) -> dict[str, str]:
+    label_to_section: dict[str, str] = {}
+    for d in [repo_root / "tex" / "sections", repo_root / "tex" / "statements"]:
+        if not d.is_dir():
+            continue
+        for f in sorted(d.glob("*.tex")):
+            text = f.read_text(encoding="utf-8", errors="replace")
+            for lm in LABEL_PAT.finditer(text):
+                label_to_section[lm.group(1)] = f.stem
+    return label_to_section
+
+def strip_subleaves(dot_text: str, label_to_section: dict[str, str]) -> str:
+    stripped_nodes = set()
+    node_pat = re.compile(r'"([^"]+)"\s*\[([^\]]*)\];')
+    for label, attrs in node_pat.findall(dot_text):
+        sec = label_to_section.get(label)
+        if sec == "12-classical-analysis-gaps" and label not in HEADLINES:
+            stripped_nodes.add(label)
+            
+    new_lines = []
+    edge_pat = re.compile(r'"([^"]+)"\s*->\s*"([^"]+)"')
+    for line in dot_text.splitlines():
+        m_node = node_pat.search(line)
+        if m_node:
+            label = m_node.group(1)
+            if label in stripped_nodes:
+                continue
+                
+        m_edge = edge_pat.search(line)
+        if m_edge:
+            src, tgt = m_edge.group(1), m_edge.group(2)
+            if src in stripped_nodes or tgt in stripped_nodes:
+                continue
+                
+        new_lines.append(line)
+        
+    return "\n".join(new_lines)
+
 
 MARKER = "<!-- DEPGRAPH-EXTRAS-INJECTED -->"
 
@@ -193,9 +261,17 @@ INJECTED_SCRIPT = """
 """ % (str(BIG_UMBRELLAS).replace("'", '"'),)
 
 
-def inject(html: str) -> str:
+def inject(html: str, path: Path, label_to_section: dict[str, str]) -> str:
     if MARKER in html:
         return html
+        
+    if path.name == "dep_graph_document.html":
+        m_dot = DOT_RENDER_PAT.search(html)
+        if m_dot:
+            original_dot = m_dot.group(1)
+            cleaned_dot = strip_subleaves(original_dot, label_to_section)
+            html = html.replace(original_dot, cleaned_dot, 1)
+
     new = LEGEND_REPLACE.sub(LEGEND_HTML.strip(), html, count=1)
     new = new.replace(
         "</body>",
@@ -213,15 +289,20 @@ def main(argv: list[str]) -> int:
     if not root.is_dir():
         print(f"error: not a directory: {root}", file=sys.stderr)
         return 1
+        
+    repo_root = Path(__file__).resolve().parent.parent
+    label_to_section = build_label_maps(repo_root)
+    
     n = 0
     for path in root.glob("dep_graph*.html"):
         original = path.read_text(encoding="utf-8")
-        updated = inject(original)
+        updated = inject(original, path, label_to_section)
         if updated != original:
             path.write_text(updated, encoding="utf-8")
             n += 1
     print(f"inject-depgraph-extras: updated {n} dep_graph*.html files under {root}")
     return 0
+
 
 
 if __name__ == "__main__":
