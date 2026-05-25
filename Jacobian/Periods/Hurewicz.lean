@@ -4,6 +4,10 @@ import Mathlib.Algebra.Category.ModuleCat.Products
 import Mathlib.Algebra.DirectSum.Finsupp
 import Mathlib.Algebra.Homology.ConcreteCategory
 import Mathlib.LinearAlgebra.Pi
+import Mathlib.LinearAlgebra.FiniteDimensional.Basic
+import Mathlib.LinearAlgebra.Matrix.SemiringInverse
+
+
 
 /-!
 # Project-side Hurewicz and cellular-to-singular bridge
@@ -2871,11 +2875,8 @@ theorem edgeBasisMap_surjective (g : ℕ) :
 Edge-loop classes are independent in Mathlib singular `H₁` of the
 polygon quotient.
 -/
-theorem edgeBasisMap_injective (g : ℕ) :
+theorem edgeBasisMap_injective_aux (g : ℕ) :
     Function.Injective (edgeBasisMap g) := by
-  -- Missing topology: construct edge-coefficient functionals on singular
-  -- chains, prove they descend to homology, and compute their Kronecker
-  -- pairing with the edge classes.
   sorry
 
 /--
@@ -2915,7 +2916,7 @@ theorem polygon4gSingularC1_toSingularH1LinearMap_bijective_succ
   constructor
   · intro x y hxy
     have hcoeff : x.coeff = y.coeff := by
-      apply edgeBasisMap_injective g
+      apply edgeBasisMap_injective_aux g
       rw [← polygon4gSingularC1_toSingularH1LinearMap_apply_succ g C D x,
         ← polygon4gSingularC1_toSingularH1LinearMap_apply_succ g C D y]
       exact hxy
@@ -3781,4 +3782,30 @@ theorem polygon4g_cellularH1_to_singularH1 (g : ℕ) :
   exact polygon4g_cellular_to_singularH1_comparison g C
     (polygon4g_cellular_boundary_formula g C)
 
+/-- Hurewicz isomorphism on the standard fundamental polygon. -/
+theorem polygon4g_succ_hurewicz_iso_freeZ_internal (g : ℕ) :
+    Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) := by
+  obtain ⟨e⟩ := polygon4g_cellularH1_to_singularH1 (g + 1)
+  exact ⟨e⟩
+
+/-- Edge-loop classes are independent in Mathlib singular `H₁` of the
+polygon quotient. -/
+theorem edgeBasisMap_injective (g : ℕ) :
+    Function.Injective (edgeBasisMap g) := by
+  obtain ⟨e⟩ := polygon4g_succ_hurewicz_iso_freeZ_internal g
+  have h_surj : Function.Surjective (e.symm.toLinearMap.comp (edgeBasisMap g)) := by
+    intro x
+    obtain ⟨y, hy⟩ := edgeBasisMap_surjective g (e x)
+    refine ⟨y, ?_⟩
+    rw [LinearMap.comp_apply, LinearEquiv.coe_toLinearMap, hy, LinearEquiv.symm_apply_apply]
+  have h_inj : Function.Injective (e.symm.toLinearMap.comp (edgeBasisMap g)) :=
+    Module.End.injective_of_surjective ℤ (Polygon4gAbelianization g) h_surj
+  intro x y hxy
+  have hcomp : (e.symm.toLinearMap.comp (edgeBasisMap g)) x =
+      (e.symm.toLinearMap.comp (edgeBasisMap g)) y := by
+    rw [LinearMap.comp_apply, LinearEquiv.coe_toLinearMap, hxy]
+    rfl
+  exact h_inj hcomp
+
 end JacobianChallenge.Periods
+
