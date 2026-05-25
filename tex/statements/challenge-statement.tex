@@ -91,7 +91,7 @@ The challenge requires \(\Jac(X)\) to carry, simultaneously, the
 structures of an additive commutative group, a Hausdorff compact
 topological space, a complex manifold of complex dimension \(g(X)\), and
 a complex Lie additive group on that manifold structure.
-\lean{Jacobian}
+\lean{JacobianChallenge.Solution.Jacobian₀}
 \leanok
 \proofplan
 Use period lattice theorem + complex torus quotient package to construct
@@ -129,7 +129,7 @@ For \(P\in X\), define
 where the path is arbitrary and the class is taken modulo periods. The
 challenge requires \(\AJ_P\) to be holomorphic and to send \(P\) to the
 identity element of \(\Jac(X)\).
-\lean{Jacobian.ofCurve}
+\lean{JacobianChallenge.Solution.Jacobian₀.ofCurve}
 \leanok
 \proofplan
 Define by integrating forms from \(P\) to \(Q\); prove path-independence modulo
@@ -156,7 +156,7 @@ curve rather than collapsing to a point.
 \label{thm:abel-jacobi-injective}
 \uses{def:abel-jacobi, input:abel-theorem}
 If \(g(X)>0\), then \(\AJ_P : X\to \Jac(X)\) is injective.
-\lean{Jacobian.ofCurve_inj}
+\lean{JacobianChallenge.Solution.Jacobian₀.ofCurve_inj}
 \leanok
 \proofplan
 Reduce equality of Jacobian classes to vanishing of all period functionals and
@@ -194,7 +194,7 @@ by summing local inverse branches away from the branch locus and extending
 holomorphically. Only \(\deg(f)\) is exposed in the public API
 (\code{ContMDiff.degree}); the trace is internal infrastructure used to
 build the pushforward map below.
-\lean{ContMDiff.degree, JacobianChallenge.TraceDegree.pullbackFormsLinearMap}
+\lean{JacobianChallenge.TraceDegree.analyticDegree, JacobianChallenge.TraceDegree.pullbackFormsLinearMap}
 \leanok
 \proofplan
 Define degree by constant/nonconstant split; define trace by summing inverse
