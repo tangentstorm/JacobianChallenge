@@ -4,26 +4,13 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Topology.Connected.Basic
 import Jacobian.HolomorphicForms.HolomorphicMap
 
-/-! # Production API promoted from blueprint `def:branched-degree` (TRIVIAL/SHORT/MEDIUM/HARD leaves)
+/-!
+# Production API promoted from blueprint `def:branched-degree` (TRIVIAL/SHORT/MEDIUM/HARD leaves)
 
 Section 2 of `tex/sections/02-holomorphic-forms-and-genus.tex`.
 
 Concrete proof-bearing realisations of the eight sub-leaves catalogued in the
 ChatGPT plan `ref/plans/branched-degree.md`:
-
-* leaf 1 — `ramificationIndexStub` (TRIVIAL, proved)
-* leaf 2 — `BranchedCoverData` (SHORT, structure)
-* leaf 3 — `branchedDegree` (SHORT, proved)
-* leaf 4 — `branchedDegree_eq_weightedFiberCard` (SHORT, proved)
-* leaf 5 — `branchedDegree_pos` (MEDIUM, proved)
-* leaf 6 — `branchedDegree_eq_card_toFinset_of_unramified_fiber`
-  (MEDIUM, proved)
-* leaf 7 — `branchedDegree_one_fiber_unique` (HARD, proved via
-  `branchedDegree_one_fiber_singleton`)
-* leaf 8 — `branchedCoverData_of_nonconstant_holomorphic` still lives in
-  the blueprint frontier file
-  `Jacobian/Blueprint/Sec02/BranchedDegreeFromHolomorphic.lean`, so this
-  file remains free of manifold imports.
 
 Imports are narrow (no `import Mathlib`): `Set.Finite` /
 `Set.Finite.toFinset`, `Finset.sum` and `Finset.card`, and the
@@ -47,18 +34,13 @@ where the open-mapping theorem and isolated-zeros enter the project.
 
 namespace JacobianChallenge.HolomorphicForms
 
-/-- **Plan leaf 1 (TRIVIAL).** Temporary placeholder for the local
-ramification / mapping multiplicity `e_x(f)` of a holomorphic map
-between Riemann surfaces. Constant `1` lets the degree-one chain
-typecheck before the analytic order-of-vanishing definition lands; the
-final replacement reads the local power-series order
-`w ∘ f ∘ z⁻¹ (t) = a · tᵉ + O(tᵉ⁺¹)` and lives in the analytic frontier
-file. -/
+
 noncomputable def ramificationIndexStub
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     (_f : X → Y) (_x : X) : ℕ := 1
 
-/-- **Plan leaf 2 (SHORT).** Packaged data for a branched cover
+/--
+**Plan leaf 2 (SHORT).** Packaged data for a branched cover
 `f : X → Y`: the local ramification indices, finiteness of every fibre,
 and the constancy theorem for the weighted fibre count. Bundling the
 constancy hypothesis as a structure field is the load-bearing trick
@@ -69,7 +51,8 @@ theorem is in place.
 structure field), so consumers can rely on the formula
 `((finite_fiber y).toFinset).sum ramificationIndex` without worrying
 about user overrides. The constancy field is stated directly in terms
-of the formula. -/
+of the formula.
+-/
 structure BranchedCoverData
     (X Y : Type*) [TopologicalSpace X] [TopologicalSpace Y]
     (f : X → Y) where
@@ -77,12 +60,16 @@ structure BranchedCoverData
   ramificationIndex : X → ℕ
   /-- Multiplicities are positive. -/
   ramificationIndex_pos : ∀ x, 0 < ramificationIndex x
-  /-- Every fibre is finite (a deep fact for nonconstant holomorphic
-  maps between compact Riemann surfaces). -/
+  /--
+Every fibre is finite (a deep fact for nonconstant holomorphic
+  maps between compact Riemann surfaces).
+-/
   finite_fiber : ∀ y : Y, (f ⁻¹' {y}).Finite
-  /-- The weighted fibre count is constant on `Y` (the genuinely
+  /--
+The weighted fibre count is constant on `Y` (the genuinely
   nontrivial part of the definition); stated directly via the fibre
-  sum so that `branchedDegree_eq_weightedFiberCard` is unconditional. -/
+  sum so that `branchedDegree_eq_weightedFiberCard` is unconditional.
+-/
   fiberSum_const :
     ∀ y₁ y₂ : Y,
       ((finite_fiber y₁).toFinset).sum ramificationIndex
@@ -95,18 +82,22 @@ structure BranchedCoverData
       ∃ U : Set X, ∃ V : Set Y,
         IsOpen U ∧ IsOpen V ∧ x ∈ U ∧ f x ∈ V ∧ Set.BijOn f U V
 
-/-- Compatibility between the combinatorial ramification index and the
+/--
+Compatibility between the combinatorial ramification index and the
 chart-local analytic order.  This is deliberately a hypothesis/predicate,
 not a theorem about arbitrary `BranchedCoverData`: non-analytic or
-hand-built data can otherwise choose an unrelated index function. -/
+hand-built data can otherwise choose an unrelated index function.
+-/
 def BranchedCoverData.RamificationIndexCompatible
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
     {f : X → Y} (h : BranchedCoverData X Y f) : Prop :=
   ∀ x : X, IsHolomorphicAt f x → h.ramificationIndex x = mapAnalyticOrderAt f x
 
-/-- Convenience projection for an explicit ramification/order
-compatibility hypothesis. -/
+/--
+Convenience projection for an explicit ramification/order
+compatibility hypothesis.
+-/
 theorem BranchedCoverData.ramificationIndex_eq_mapAnalyticOrderAt
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -116,19 +107,23 @@ theorem BranchedCoverData.ramificationIndex_eq_mapAnalyticOrderAt
     h.ramificationIndex x = mapAnalyticOrderAt f x :=
   hcompat x hf
 
-/-- **Plan leaf 9 (NEW).** The local inverse of `f` near an unramified
+/--
+**Plan leaf 9 (NEW).** The local inverse of `f` near an unramified
 point `x`. Defined using `Function.invFunOn` from the local bijection
-witness. -/
+witness.
+-/
 noncomputable def BranchedCoverData.localInverseAt
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y] [Nonempty X]
     {f : X → Y} (h : BranchedCoverData X Y f) (x : X)
     (hx : h.ramificationIndex x = 1) : Y → X :=
   Function.invFunOn f (h.local_bijective_unramified x hx).choose
 
-/-- **Plan leaf 10 (NEW).** The local inverse at an unramified point
+/--
+**Plan leaf 10 (NEW).** The local inverse at an unramified point
 is a genuine inverse on some neighborhood. This "compatibility lemma"
 packages the `Function.invFunOn` properties with the `BranchedCoverData`
-topology fields. -/
+topology fields.
+-/
 theorem BranchedCoverData.localInverse_is_inverse
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y] [Nonempty X]
     {f : X → Y} (h : BranchedCoverData X Y f) {x : X}
@@ -150,25 +145,31 @@ theorem BranchedCoverData.localInverse_is_inverse
     exact hspec.2.2.2.2.injOn.leftInvOn_invFunOn hx'
 
 
-/-- Derived: the weighted cardinality of the fibre over `y`, i.e. the
-sum of ramification indices of all preimages of `y`. -/
+/--
+Derived: the weighted cardinality of the fibre over `y`, i.e. the
+sum of ramification indices of all preimages of `y`.
+-/
 noncomputable def BranchedCoverData.weightedFiberCard
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} (h : BranchedCoverData X Y f) (y : Y) : ℕ :=
   ((h.finite_fiber y).toFinset).sum h.ramificationIndex
 
-/-- **Plan leaf 3 (SHORT).** The branched degree of a packaged cover:
+/--
+**Plan leaf 3 (SHORT).** The branched degree of a packaged cover:
 the weighted fibre cardinality at any base point. We pick the base
 point via `Classical.arbitrary`; independence of the choice is
-expressed by `branchedDegree_eq_weightedFiberCard`. -/
+expressed by `branchedDegree_eq_weightedFiberCard`.
+-/
 noncomputable def branchedDegree
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f) : ℕ :=
   h.weightedFiberCard (Classical.arbitrary Y)
 
-/-- **Plan leaf 4 (SHORT).** Main downstream rewrite: `branchedDegree`
+/--
+**Plan leaf 4 (SHORT).** Main downstream rewrite: `branchedDegree`
 agrees with the weighted fibre count at **any** chosen base point
-`y : Y`. Direct corollary of `fiberSum_const`. -/
+`y : Y`. Direct corollary of `fiberSum_const`.
+-/
 theorem branchedDegree_eq_weightedFiberCard
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f) (y : Y) :
@@ -176,19 +177,23 @@ theorem branchedDegree_eq_weightedFiberCard
   unfold branchedDegree BranchedCoverData.weightedFiberCard
   exact h.fiberSum_const _ y
 
-/-- The weighted fibre count is constant on `Y`: the formula version
+/--
+The weighted fibre count is constant on `Y`: the formula version
 of `branchedDegree_eq_weightedFiberCard` that does not route through
-`branchedDegree`. -/
+`branchedDegree`.
+-/
 theorem BranchedCoverData.weightedFiberCard_const
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} (h : BranchedCoverData X Y f) (y₁ y₂ : Y) :
     h.weightedFiberCard y₁ = h.weightedFiberCard y₂ :=
   h.fiberSum_const y₁ y₂
 
-/-- **Plan leaf 5 (MEDIUM).** Surjective covers have positive degree:
+/--
+**Plan leaf 5 (MEDIUM).** Surjective covers have positive degree:
 pick any `y : Y`, pick a preimage `x` over `y`, observe
 `ramificationIndex x ≥ 1` is a positive summand in the finite
-weighted-fibre sum. -/
+weighted-fibre sum.
+-/
 theorem branchedDegree_pos
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f)
@@ -202,10 +207,12 @@ theorem branchedDegree_pos
   rw [Set.Finite.mem_toFinset]
   exact hx
 
-/-- **Plan leaf 6 (MEDIUM).** On a fibre with no ramification, the
+/--
+**Plan leaf 6 (MEDIUM).** On a fibre with no ramification, the
 branched degree equals the (finite) cardinality of the fibre. We state
 the fibre cardinality via `(h.finite_fiber y).toFinset.card` so the
-file remains free of `Nat.card`/`SetTheory.Cardinal` imports. -/
+file remains free of `Nat.card`/`SetTheory.Cardinal` imports.
+-/
 theorem branchedDegree_eq_card_toFinset_of_unramified_fiber
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f) (y : Y)
@@ -222,11 +229,13 @@ theorem branchedDegree_eq_card_toFinset_of_unramified_fiber
   rw [hcongr]
   simp
 
-/-- Helper for leaf 7: when `branchedDegree h = 1`, the fibre `Finset`
+/--
+Helper for leaf 7: when `branchedDegree h = 1`, the fibre `Finset`
 over any `y : Y` is a singleton `{x}` and the unique element has
 ramification index `1`.  This is the load-bearing combinatorial fact
 behind both `branchedDegree_one_fiber_unique` and the downstream
-`degree_one_bijective`. -/
+`degree_one_bijective`.
+-/
 theorem branchedDegree_one_fiber_singleton
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f) (y : Y)
@@ -255,9 +264,11 @@ theorem branchedDegree_one_fiber_singleton
   rw [hx, Finset.sum_singleton] at hsum
   exact hsum
 
-/-- **Plan leaf 7 (HARD).** A degree-one branched cover has a unique
+/--
+**Plan leaf 7 (HARD).** A degree-one branched cover has a unique
 preimage of every base point, and that preimage is unramified. The
-combinatorial heart of the degree-one ⇒ bijective chain. -/
+combinatorial heart of the degree-one ⇒ bijective chain.
+-/
 theorem branchedDegree_one_fiber_unique
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f) (y : Y)
@@ -274,7 +285,8 @@ theorem branchedDegree_one_fiber_unique
   rw [hxs, Finset.mem_singleton] at hx'_mem
   exact hx'_mem
 
-/-! # Production API promoted from blueprint `thm:degree-one-bijective`
+/-!
+# Production API promoted from blueprint `thm:degree-one-bijective`
 
 Section 2 of `tex/sections/02-holomorphic-forms-and-genus.tex`.
 
@@ -290,14 +302,17 @@ data from the holomorphic input is the still-open
 `branchedCoverData_of_nonconstant_holomorphic` (leaf 8 in
 the branched-degree story). Once that lands, the
 hypothesis here is fed by the constructor and this theorem becomes a
-direct consequence of the combinatorial leaf 7. -/
+direct consequence of the combinatorial leaf 7.
+-/
 
 
-/-- **`thm:degree-one-bijective`.** A degree-one branched cover is
+/--
+**`thm:degree-one-bijective`.** A degree-one branched cover is
 bijective.  Surjectivity comes from the singleton fibre over any
 target point; injectivity follows because two distinct preimages of
 the same point would each contribute a positive summand to a weighted
-fibre sum already equal to one. -/
+fibre sum already equal to one.
+-/
 theorem degree_one_bijective
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f : X → Y} [Nonempty Y] (h : BranchedCoverData X Y f)

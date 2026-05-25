@@ -10,8 +10,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- The from-`X` corrected chart-local path integral is ℂ-linear
-in the form. -/
+/--
+The from-`X` corrected chart-local path integral is ℂ-linear
+in the form.
+-/
 @[simp] theorem pathIntegralViaChartCorrect_smul
     (c : OpenPartialHomeomorph X E) (k : ℂ) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (h : range γ ⊆ c.source) :

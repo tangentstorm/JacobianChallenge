@@ -33,8 +33,10 @@ theorem witnessAbelJacobi_sum_range
       rw [Finset.sum_range_succ, ← ih]
       exact (witnessAbelJacobi_chain_three (f 0) (f n) (f (n + 1)) v).symm
 
-/-- Closed-loop telescoping: a closed sequence (f 0 = f n) gives a
-zero sum. -/
+/--
+Closed-loop telescoping: a closed sequence (f 0 = f n) gives a
+zero sum.
+-/
 theorem witnessAbelJacobi_sum_range_loop
     (f : ℕ → X) (n : ℕ) (h : f n = f 0) (v : E) :
     ∑ i ∈ Finset.range n,

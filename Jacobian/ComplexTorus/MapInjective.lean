@@ -5,8 +5,6 @@ import Jacobian.ComplexTorus.Mk
 /-!
 # Injectivity criterion for the induced quotient map
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 The single bounded packet: when the preimage of `Γ.subgroup` under `f` is
 exactly `Λ.subgroup`, the induced map `map Λ Γ f hf` is injective.
 -/

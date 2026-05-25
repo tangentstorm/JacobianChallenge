@@ -17,8 +17,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [TopologicalSpace Y] [ChartedSpace E Y]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Y]
 
-/-- The pullback function evaluated at a point is the chain-rule
-formula `(f^*η)_x = η_{f x} ∘ mfderiv f x`. -/
+/--
+The pullback function evaluated at a point is the chain-rule
+formula `(f^*η)_x = η_{f x} ∘ mfderiv f x`.
+-/
 @[simp] theorem pullbackFormsFun_apply
     (f : X → Y) (η : HolomorphicOneForm E Y) (x : X) :
     pullbackFormsFun f η x =

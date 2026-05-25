@@ -5,15 +5,6 @@ import Jacobian.ComplexTorus.LocalSectionContinuous
 /-!
 # `localSection ∘ mk` is locally a translation on the full chart preimage
 
-Queue B sibling. A v₁-free generalization of
-`TransitionLocallyTranslate.localSection_mk_locally_translate`: the
-function `y ↦ localSection Λ w r (mk y)` agrees with a translation
-`y ↦ y + g` (for a fixed lattice element `g`) on a neighborhood of
-each `x ∈ mk ⁻¹' (mk '' Metric.ball w r)`. The intersection-with-
-`Metric.ball v₁ r` constraint of the original lemma was only there
-to keep the chart-overlap shape; the substantive content does not
-need it.
-
 This is the building block needed both for smoothness of the
 quotient projection `mk : V → V ⧸ Λ.subgroup` and for the
 `LieAddGroup` smoothness of `+` and `-` on the quotient.
@@ -23,8 +14,10 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V]
 
-/-- `y ↦ localSection Λ w r (mk y) - y` is continuous on the full
-chart preimage `mk ⁻¹' (mk '' Metric.ball w r)`. -/
+/--
+`y ↦ localSection Λ w r (mk y) - y` is continuous on the full
+chart preimage `mk ⁻¹' (mk '' Metric.ball w r)`.
+-/
 lemma continuousOn_localSection_mk_sub'
     [NormedSpace ℂ V]
     (Λ : FullComplexLattice V) (w : V) {δ r : ℝ}
@@ -44,10 +37,12 @@ lemma continuousOn_localSection_mk_sub'
     exact hx
   exact hcomp.sub continuousOn_id
 
-/-- For each `x` in the full preimage `mk ⁻¹' (mk '' Metric.ball w r)`,
+/--
+For each `x` in the full preimage `mk ⁻¹' (mk '' Metric.ball w r)`,
 the map `y ↦ localSection Λ w r (mk y)` agrees with the translation
 `y ↦ y + g` (for `g := localSection Λ w r (mk x) - x ∈ Λ.subgroup`)
-on a neighborhood of `x` (within the preimage). -/
+on a neighborhood of `x` (within the preimage).
+-/
 lemma mk_locally_translate
     [NormedSpace ℂ V]
     (Λ : FullComplexLattice V) (w : V) {δ r : ℝ}

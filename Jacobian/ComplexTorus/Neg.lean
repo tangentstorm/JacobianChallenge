@@ -4,8 +4,6 @@ import Jacobian.ComplexTorus.Defs
 /-!
 # Negation on the complex-torus quotient
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 Two bounded packets: `mk_neg` (a quotient simp lemma) and the continuity of
 negation on `quotient V Λ`.
 -/

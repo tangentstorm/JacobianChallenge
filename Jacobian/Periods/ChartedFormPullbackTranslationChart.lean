@@ -23,9 +23,11 @@ open Filter Topology JacobianChallenge.HolomorphicForms
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) E]
 
-/-- Translation-chart bridge (right form): if `c.symm = fun x => x + v`,
+/--
+Translation-chart bridge (right form): if `c.symm = fun x => x + v`,
 the corrected chart-pullback equals the provisional chart-form
-unconditionally. -/
+unconditionally.
+-/
 theorem chartedFormPullback_eq_chartedForm_of_symm_eq_add_const
     (c : OpenPartialHomeomorph E E) (ω : HolomorphicOneForm E E)
     (e v : E) (h : (fun x : E => c.symm x) = (fun x : E => x + v)) :
@@ -34,9 +36,11 @@ theorem chartedFormPullback_eq_chartedForm_of_symm_eq_add_const
   rw [show ((c.symm : E → E)) = (fun x => x + v) from h]
   exact mfderiv_add_const_self v e
 
-/-- Translation-chart bridge (left form): if `c.symm = fun x => v + x`,
+/--
+Translation-chart bridge (left form): if `c.symm = fun x => v + x`,
 the corrected chart-pullback equals the provisional chart-form
-unconditionally. -/
+unconditionally.
+-/
 theorem chartedFormPullback_eq_chartedForm_of_symm_eq_const_add
     (c : OpenPartialHomeomorph E E) (ω : HolomorphicOneForm E E)
     (e v : E) (h : (fun x : E => c.symm x) = (fun x : E => v + x)) :
@@ -45,9 +49,11 @@ theorem chartedFormPullback_eq_chartedForm_of_symm_eq_const_add
   rw [show ((c.symm : E → E)) = (fun x => v + x) from h]
   exact mfderiv_const_add_self v e
 
-/-- Translation-chart bridge (subtraction form): if `c.symm =
+/--
+Translation-chart bridge (subtraction form): if `c.symm =
 fun x => x - v`, the corrected chart-pullback equals the provisional
-chart-form unconditionally. -/
+chart-form unconditionally.
+-/
 theorem chartedFormPullback_eq_chartedForm_of_symm_eq_sub_const
     (c : OpenPartialHomeomorph E E) (ω : HolomorphicOneForm E E)
     (e v : E) (h : (fun x : E => c.symm x) = (fun x : E => x - v)) :
@@ -56,11 +62,13 @@ theorem chartedFormPullback_eq_chartedForm_of_symm_eq_sub_const
   rw [show ((c.symm : E → E)) = (fun x => x - v) from h]
   exact mfderiv_sub_const_self v e
 
-/-- EventuallyEq variant of the right-translation bridge: if
+/--
+EventuallyEq variant of the right-translation bridge: if
 `c.symm =ᶠ[𝓝 e] (fun x => x + v)`, the corrected chart-pullback at
 `e` coincides with the provisional chart-form. Weaker than global
 function equality — only the local neighborhood of `e` matters for
-`mfderiv`. -/
+`mfderiv`.
+-/
 theorem chartedFormPullback_eq_chartedForm_of_symm_eventuallyEq_add_const
     (c : OpenPartialHomeomorph E E) (ω : HolomorphicOneForm E E)
     (e v : E)

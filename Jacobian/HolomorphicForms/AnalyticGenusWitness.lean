@@ -24,16 +24,20 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [FiniteDimensionalHolomorphicOneForms E X]
 
-/-- Witness positivity: a single non-vanishing `evalLinearMap` value
-forces `analyticGenus` to be positive. -/
+/--
+Witness positivity: a single non-vanishing `evalLinearMap` value
+forces `analyticGenus` to be positive.
+-/
 theorem analyticGenus_pos_of_evalLinearMap_ne_zero
     (η : HolomorphicOneForm E X) (x : X) (v : E)
     (h : evalLinearMap x v η ≠ 0) : 0 < analyticGenus E X :=
   analyticGenus_pos_of_exists_ne_zero
     ⟨η, ne_zero_of_evalLinearMap_ne_zero η x v h⟩
 
-/-- Witness non-zero: a single non-vanishing `evalLinearMap` value
-forces `analyticGenus` to be non-zero. -/
+/--
+Witness non-zero: a single non-vanishing `evalLinearMap` value
+forces `analyticGenus` to be non-zero.
+-/
 theorem analyticGenus_ne_zero_of_evalLinearMap_ne_zero
     (η : HolomorphicOneForm E X) (x : X) (v : E)
     (h : evalLinearMap x v η ≠ 0) : analyticGenus E X ≠ 0 :=
@@ -48,8 +52,10 @@ theorem analyticGenus_pos_of_toFun_ne_zero
     (by rwa [evalLinearMap_apply])
 
 set_option linter.unusedSectionVars false in
-/-- Convenience: form-level `Nontrivial` from an `evalLinearMap`
-witness. -/
+/--
+Convenience: form-level `Nontrivial` from an `evalLinearMap`
+witness.
+-/
 theorem nontrivial_holomorphicOneForm_of_evalLinearMap_ne_zero
     (η : HolomorphicOneForm E X) (x : X) (v : E)
     (h : evalLinearMap x v η ≠ 0) :

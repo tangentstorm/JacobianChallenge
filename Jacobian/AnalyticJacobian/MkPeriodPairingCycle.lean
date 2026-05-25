@@ -32,15 +32,19 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
     mk E X (periodPairing E X (σ - τ)) = 0 :=
   mk_periodPairing_eq_zero (σ - τ)
 
-/-- `mk` of the sum of two `periodPairing` images is `0`. Proof via
-`periodPairing_add` and `mk_periodPairing_eq_zero`. -/
+/--
+`mk` of the sum of two `periodPairing` images is `0`. Proof via
+`periodPairing_add` and `mk_periodPairing_eq_zero`.
+-/
 @[simp] theorem mk_periodPairing_add_periodPairing
     (σ τ : IntegralOneCycle X) :
     mk E X (periodPairing E X σ + periodPairing E X τ) = 0 := by
   rw [← periodPairing_add, mk_periodPairing_eq_zero]
 
-/-- `mk` of the difference of two `periodPairing` images is `0`. Proof
-via `periodPairing_sub` and `mk_periodPairing_eq_zero`. -/
+/--
+`mk` of the difference of two `periodPairing` images is `0`. Proof
+via `periodPairing_sub` and `mk_periodPairing_eq_zero`.
+-/
 @[simp] theorem mk_periodPairing_sub_periodPairing
     (σ τ : IntegralOneCycle X) :
     mk E X (periodPairing E X σ - periodPairing E X τ) = 0 := by

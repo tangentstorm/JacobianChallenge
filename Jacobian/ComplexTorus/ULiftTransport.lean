@@ -34,10 +34,12 @@ open scoped Manifold
 
 universe u
 
-/-- Transporting both charts in a transition along a homeomorphism does not
+/--
+Transporting both charts in a transition along a homeomorphism does not
 change the transition, up to source-equivalence. Pure assembly from
 Mathlib's `OpenPartialHomeomorph.symm_trans_self` plus standard
-re-association. -/
+re-association.
+-/
 lemma homeomorph_transOpenPartialHomeomorph_transition_eqOnSource
     {A B C : Type*} [TopologicalSpace A] [TopologicalSpace B] [TopologicalSpace C]
     (e : A ≃ₜ B) (c c' : OpenPartialHomeomorph B C) :
@@ -57,8 +59,10 @@ lemma homeomorph_transOpenPartialHomeomorph_transition_eqOnSource
     OpenPartialHomeomorph.ofSet_univ_eq_refl, OpenPartialHomeomorph.refl_trans]
   exact OpenPartialHomeomorph.eqOnSource_refl c'
 
-/-- The complex-torus chart at a `ULift`ed quotient point, transported
-through `Homeomorph.ulift`. -/
+/--
+The complex-torus chart at a `ULift`ed quotient point, transported
+through `Homeomorph.ulift`.
+-/
 noncomputable def complexTorusULiftChartAt
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     (Λ : FullComplexLattice V) (q : ULift.{u} (quotient V Λ)) :
@@ -66,10 +70,12 @@ noncomputable def complexTorusULiftChartAt
   (Homeomorph.ulift : ULift.{u} (quotient V Λ) ≃ₜ quotient V Λ).transOpenPartialHomeomorph
     (chartAtPoint Λ q.down)
 
-/-- ULift transport of the complex torus charted-space structure.
+/--
+ULift transport of the complex torus charted-space structure.
 
 Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
-`ChartedSpace` instance on `Jacobian X`. -/
+`ChartedSpace` instance on `Jacobian X`.
+-/
 noncomputable instance complexTorusULift_chartedSpace
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
@@ -81,14 +87,16 @@ noncomputable instance complexTorusULift_chartedSpace
     exact mem_chartAtPoint_source Λ q.down
   chart_mem_atlas q := ⟨q, rfl⟩
 
-/-- The transition between two `ULift`-transported quotient charts agrees,
+/--
+The transition between two `ULift`-transported quotient charts agrees,
 on its source, with the corresponding transition between the underlying
 quotient charts.
 
 Top-down obligation. Bottom-up: reassociate the `OpenPartialHomeomorph`
 composition and cancel
 `Homeomorph.ulift.toOpenPartialHomeomorph.symm ≫ₕ
-Homeomorph.ulift.toOpenPartialHomeomorph`. -/
+Homeomorph.ulift.toOpenPartialHomeomorph`.
+-/
 lemma complexTorusULift_transition_eqOnSource
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     (Λ : FullComplexLattice V)
@@ -99,10 +107,12 @@ lemma complexTorusULift_transition_eqOnSource
     (Homeomorph.ulift : ULift.{u} (quotient V Λ) ≃ₜ quotient V Λ)
     (chartAtPoint Λ q.down) (chartAtPoint Λ q'.down)
 
-/-- ULift transport of the complex torus `HasGroupoid` structure.
+/--
+ULift transport of the complex torus `HasGroupoid` structure.
 
 Pure assembly from `complexTorusULift_transition_eqOnSource` and the
-underlying quotient manifold transition theorem. -/
+underlying quotient manifold transition theorem.
+-/
 noncomputable instance complexTorusULift_hasGroupoid
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
@@ -115,39 +125,47 @@ noncomputable instance complexTorusULift_hasGroupoid
       (chart_mem_atlas V q.down) (chart_mem_atlas V q'.down))
     (complexTorusULift_transition_eqOnSource Λ q q')
 
-/-- ULift transport of the complex torus manifold structure.
+/--
+ULift transport of the complex torus manifold structure.
 
 Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
-`IsManifold` instance on `Jacobian X`. -/
+`IsManifold` instance on `Jacobian X`.
+-/
 noncomputable instance complexTorusULift_isManifold
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
     IsManifold (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
       (ULift.{u} (quotient V Λ)) where
 
-/-- The chart on `ULift (quotient V Λ)` at `ULift.up x` applied to `ULift.up y`
+/--
+The chart on `ULift (quotient V Λ)` at `ULift.up x` applied to `ULift.up y`
 unfolds to applying the underlying chart on `quotient V Λ` at `x` to `y`.
 
-Pure unfolding of `complexTorusULiftChartAt`. -/
+Pure unfolding of `complexTorusULiftChartAt`.
+-/
 lemma complexTorusULiftChartAt_up_apply_up
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     (Λ : FullComplexLattice V) (x y : quotient V Λ) :
     complexTorusULiftChartAt Λ (ULift.up x) (ULift.up y) =
       chartAtPoint Λ x y := rfl
 
-/-- The inverse of the chart on `ULift (quotient V Λ)` at `ULift.up x` applied
-to a vector `v : V` produces `ULift.up` of the underlying chart's inverse. -/
+/--
+The inverse of the chart on `ULift (quotient V Λ)` at `ULift.up x` applied
+to a vector `v : V` produces `ULift.up` of the underlying chart's inverse.
+-/
 lemma complexTorusULiftChartAt_up_symm_apply
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     (Λ : FullComplexLattice V) (x : quotient V Λ) (v : V) :
     (complexTorusULiftChartAt Λ (ULift.up x)).symm v =
       ULift.up ((chartAtPoint Λ x).symm v) := rfl
 
-/-- The quotient-to-ULift direction of the `Homeomorph.ulift` equivalence is
+/--
+The quotient-to-ULift direction of the `Homeomorph.ulift` equivalence is
 analytic for the transported chart structure.
 
 Top-down obligation. Bottom-up: in the transported charts this map is the
-identity on the model space. -/
+identity on the model space.
+-/
 lemma complexTorusULift_contMDiff_up
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V)
@@ -211,12 +229,14 @@ lemma complexTorusULift_contMDiff_up
   -- Match the goal shape.
   convert this using 1
 
-/-- The ULift-to-quotient direction of the `Homeomorph.ulift` equivalence is
+/--
+The ULift-to-quotient direction of the `Homeomorph.ulift` equivalence is
 analytic for the transported chart structure.
 
 Top-down obligation. Bottom-up: companion to
 `complexTorusULift_contMDiff_up`; in transported charts this map is the
-identity on the model space. -/
+identity on the model space.
+-/
 lemma complexTorusULift_contMDiff_down
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V)
@@ -273,11 +293,13 @@ lemma complexTorusULift_contMDiff_down
     hid.congr_of_eventuallyEq hee' hfx
   convert this using 1
 
-/-- Addition on the `ULift`ed quotient is analytic for the transported
+/--
+Addition on the `ULift`ed quotient is analytic for the transported
 complex-torus manifold structure.
 
 Top-down obligation. Bottom-up: compose `ULift.down` on both inputs,
-use smooth addition on the quotient, and compose with `ULift.up`. -/
+use smooth addition on the quotient, and compose with `ULift.up`.
+-/
 lemma complexTorusULift_contMDiff_add
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
@@ -310,13 +332,15 @@ noncomputable instance complexTorusULift_contMDiffAdd
       (ULift.{u} (quotient V Λ)) where
   contMDiff_add := complexTorusULift_contMDiff_add Λ
 
-/-- Negation on the `ULift`ed quotient is analytic for the transported
+/--
+Negation on the `ULift`ed quotient is analytic for the transported
 complex-torus manifold structure.
 
 Pure assembly: `(-a) = ULift.up (-a.down)` definitionally, so
 negation on `ULift` factors as
 `ULift.up ∘ (Neg.neg : quotient V Λ → quotient V Λ) ∘ ULift.down`,
-each piece being smooth. -/
+each piece being smooth.
+-/
 lemma complexTorusULift_contMDiff_neg
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
@@ -332,10 +356,12 @@ lemma complexTorusULift_contMDiff_neg
   exact (complexTorusULift_contMDiff_up Λ).comp
     ((contMDiff_quotient_neg Λ).comp (complexTorusULift_contMDiff_down Λ))
 
-/-- ULift transport of the complex torus Lie-add-group structure.
+/--
+ULift transport of the complex torus Lie-add-group structure.
 
 Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
-`LieAddGroup` instance on `Jacobian X`. -/
+`LieAddGroup` instance on `Jacobian X`.
+-/
 noncomputable instance complexTorusULift_lieAddGroup
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] (Λ : FullComplexLattice V) :
@@ -343,12 +369,14 @@ noncomputable instance complexTorusULift_lieAddGroup
       (ULift.{u} (quotient V Λ)) where
   contMDiff_neg := complexTorusULift_contMDiff_neg Λ
 
-/-- The map `ULift.up : quotient V Λ → ULift (quotient V Λ)` is `ContMDiff`
+/--
+The map `ULift.up : quotient V Λ → ULift (quotient V Λ)` is `ContMDiff`
 of every degree.
 
 Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
 `ofCurve_contMDiff` lemma (composed with `analyticOfCurve_contMDiff`).
-Bottom-up: a chart-target identity through `Homeomorph.ulift`. -/
+Bottom-up: a chart-target identity through `Homeomorph.ulift`.
+-/
 lemma contMDiff_uLift_up
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] {Λ : FullComplexLattice V}
@@ -357,9 +385,11 @@ lemma contMDiff_uLift_up
       (ULift.up : quotient V Λ → ULift.{u} (quotient V Λ)) :=
   complexTorusULift_contMDiff_up Λ
 
-/-- `ULift.down : ULift M → M` is `ContMDiff` of every degree, for the
+/--
+`ULift.down : ULift M → M` is `ContMDiff` of every degree, for the
 ULift transports of any complex torus quotient. Companion to
-`contMDiff_uLift_up`. -/
+`contMDiff_uLift_up`.
+-/
 lemma contMDiff_uLift_down
     {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
     [FiniteDimensional ℂ V] {Λ : FullComplexLattice V}
@@ -368,11 +398,10 @@ lemma contMDiff_uLift_down
       (ULift.down : ULift.{u} (quotient V Λ) → quotient V Λ) :=
   complexTorusULift_contMDiff_down Λ
 
-/-- Lift a continuous additive group homomorphism from the analytic
+/--
+Lift a continuous additive group homomorphism from the analytic
 carriers up to their `ULift` versions.
-
-Pure assembly — composes `ULift.up` and `ULift.down` (both continuous)
-with the underlying hom; no sorry of its own. -/
+-/
 noncomputable def ULiftContinuousAddMonoidHom
     {A B : Type*} [AddMonoid A] [AddMonoid B]
     [TopologicalSpace A] [TopologicalSpace B]

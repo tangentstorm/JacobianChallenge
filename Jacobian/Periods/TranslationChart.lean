@@ -36,8 +36,10 @@ set_option linter.unusedSectionVars false in
 @[simp] theorem translationChart_symm_apply (v x : E) :
     (translationChart v).symm x = x + (-v) := rfl
 
-/-- Concrete bridge instance: corrected and provisional chart-pullbacks
-agree on the translation chart. -/
+/--
+Concrete bridge instance: corrected and provisional chart-pullbacks
+agree on the translation chart.
+-/
 theorem chartedFormPullback_translationChart_eq_chartedForm
     (v : E) (ω : HolomorphicOneForm E E) (e : E) :
     chartedFormPullback (translationChart v) ω e =
@@ -69,25 +71,31 @@ theorem pathIntegralViaChartCorrect_translationChart_eq_pathIntegralViaChart
   rfl
 
 set_option linter.unusedSectionVars false in
-/-- Function-level transition: composing the inverse of `translationChart u`
+/--
+Function-level transition: composing the inverse of `translationChart u`
 with `translationChart v` is itself a translation by `v + (-u)`. This is
 the geometric content of why translation atlases close under chart
-transitions (the torus structure relies on this). -/
+transitions (the torus structure relies on this).
+-/
 @[simp] theorem translationChart_apply_translationChart_symm_apply
     (u v x : E) :
     translationChart v ((translationChart u).symm x) = x + (-u) + v := rfl
 
 set_option linter.unusedSectionVars false in
-/-- Conversely, applying `translationChart u`'s inverse after
-`translationChart v` is a translation by `(-u) + v`. -/
+/--
+Conversely, applying `translationChart u`'s inverse after
+`translationChart v` is a translation by `(-u) + v`.
+-/
 @[simp] theorem translationChart_symm_apply_translationChart_apply
     (u v x : E) :
     (translationChart u).symm (translationChart v x) = (x + v) + (-u) := rfl
 
 set_option linter.unusedSectionVars false in
-/-- The inverse of `translationChart v`, applied as a function,
+/--
+The inverse of `translationChart v`, applied as a function,
 agrees pointwise with `translationChart (-v)`. (Both equal
-`x ↦ x + (-v)` definitionally.) -/
+`x ↦ x + (-v)` definitionally.)
+-/
 theorem translationChart_symm_apply_eq_translationChart_neg_apply
     (v x : E) :
     (translationChart v).symm x = translationChart (-v) x := rfl
@@ -103,8 +111,10 @@ set_option linter.unusedSectionVars false in
     (translationChart v).target = Set.univ := rfl
 
 set_option linter.unusedSectionVars false in
-/-- The inverse of a translation chart is the translation chart at
-the negated translation, as `OpenPartialHomeomorph`s. -/
+/--
+The inverse of a translation chart is the translation chart at
+the negated translation, as `OpenPartialHomeomorph`s.
+-/
 theorem translationChart_symm (v : E) :
     (translationChart v).symm = translationChart (-v) := by
   refine OpenPartialHomeomorph.ext _ _ (fun _ => rfl) (fun x => ?_) rfl
@@ -122,8 +132,10 @@ theorem translationChart_zero :
     rw [neg_zero, add_zero]
 
 set_option linter.unusedSectionVars false in
-/-- Applying `translationChart (-v)` after `translationChart v`
-recovers `x`. (Cancellation law for translations.) -/
+/--
+Applying `translationChart (-v)` after `translationChart v`
+recovers `x`. (Cancellation law for translations.)
+-/
 @[simp] theorem translationChart_neg_apply_translationChart_apply
     (v x : E) :
     translationChart (-v) (translationChart v x) = x := by
@@ -131,8 +143,10 @@ recovers `x`. (Cancellation law for translations.) -/
   rw [add_neg_cancel_right]
 
 set_option linter.unusedSectionVars false in
-/-- Applying `translationChart v` after `translationChart (-v)`
-recovers `x`. -/
+/--
+Applying `translationChart v` after `translationChart (-v)`
+recovers `x`.
+-/
 @[simp] theorem translationChart_apply_translationChart_neg_apply
     (v x : E) :
     translationChart v (translationChart (-v) x) = x := by
@@ -140,31 +154,39 @@ recovers `x`. -/
   rw [neg_add_cancel_right]
 
 set_option linter.unusedSectionVars false in
-/-- Lifting a path through the translation chart at `v` evaluates
+/--
+Lifting a path through the translation chart at `v` evaluates
 to `γ t + v`. (The chart-lift is just translation by `v` applied
-pointwise to the path's image.) -/
+pointwise to the path's image.)
+-/
 @[simp] theorem chartLift_translationChart_apply
     (v : E) {a b : E} (γ : Path a b)
     (h : Set.range γ ⊆ (translationChart v).source) (t : unitInterval) :
     chartLift (translationChart v) γ h t = γ t + v := rfl
 
-/-- The provisional chart-form for a translation chart evaluates
-to `ω.toFun` shifted by `-v`. -/
+/--
+The provisional chart-form for a translation chart evaluates
+to `ω.toFun` shifted by `-v`.
+-/
 theorem chartedForm_translationChart_apply
     (v : E) (ω : HolomorphicOneForm E E) (e : E) :
     chartedForm (translationChart v) ω e = ω.toFun (e + (-v)) := rfl
 
-/-- The corrected chart-pullback on a translation chart agrees with
+/--
+The corrected chart-pullback on a translation chart agrees with
 the simple shifted form `ω.toFun (e + (-v))` (the `mfderiv` factor
-is the identity). -/
+is the identity).
+-/
 theorem chartedFormPullback_translationChart_apply
     (v : E) (ω : HolomorphicOneForm E E) (e : E) :
     chartedFormPullback (translationChart v) ω e = ω.toFun (e + (-v)) := by
   rw [chartedFormPullback_translationChart_eq_chartedForm,
       chartedForm_translationChart_apply]
 
-/-- The provisional in-chart integral on a translation chart is the
-direct curve integral of the shifted form `e ↦ ω.toFun (e + (-v))`. -/
+/--
+The provisional in-chart integral on a translation chart is the
+direct curve integral of the shifted form `e ↦ ω.toFun (e + (-v))`.
+-/
 theorem pathIntegralInChart_translationChart
     (v : E) (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
     pathIntegralInChart (translationChart v) ω γ =
@@ -173,9 +195,11 @@ theorem pathIntegralInChart_translationChart
        curveIntegral (fun e => ω.toFun (e + (-v))) γ
   rfl
 
-/-- Via-chart variant: `pathIntegralViaChart` on a translation chart
+/--
+Via-chart variant: `pathIntegralViaChart` on a translation chart
 unfolds to the in-chart integral on the chart-lifted (translated)
-path. -/
+path.
+-/
 theorem pathIntegralViaChart_translationChart
     (v : E) (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b)
     (h : Set.range γ ⊆ (translationChart v).source) :
@@ -185,9 +209,11 @@ theorem pathIntegralViaChart_translationChart
   unfold pathIntegralViaChart
   exact pathIntegralInChart_translationChart v ω _
 
-/-- Corrected in-chart integral on a translation chart reduces to
+/--
+Corrected in-chart integral on a translation chart reduces to
 the same `curveIntegral` as the provisional one. Combines the
-translation-chart bridge with the provisional formula. -/
+translation-chart bridge with the provisional formula.
+-/
 theorem pathIntegralInChartCorrect_translationChart
     (v : E) (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
     pathIntegralInChartCorrect (translationChart v) ω γ =
@@ -195,8 +221,10 @@ theorem pathIntegralInChartCorrect_translationChart
   rw [pathIntegralInChartCorrect_translationChart_eq_pathIntegralInChart,
       pathIntegralInChart_translationChart]
 
-/-- Corrected via-chart integral on a translation chart reduces to
-the same `curveIntegral` as the provisional one. -/
+/--
+Corrected via-chart integral on a translation chart reduces to
+the same `curveIntegral` as the provisional one.
+-/
 theorem pathIntegralViaChartCorrect_translationChart
     (v : E) (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b)
     (h : Set.range γ ⊆ (translationChart v).source) :
@@ -207,15 +235,19 @@ theorem pathIntegralViaChartCorrect_translationChart
       pathIntegralViaChart_translationChart]
 
 set_option linter.unusedSectionVars false in
-/-- Function-level: `chartedForm (translationChart v) ω` is the
-function `e ↦ ω.toFun (e + (-v))`. -/
+/--
+Function-level: `chartedForm (translationChart v) ω` is the
+function `e ↦ ω.toFun (e + (-v))`.
+-/
 theorem chartedForm_translationChart_eq_shifted
     (v : E) (ω : HolomorphicOneForm E E) :
     chartedForm (translationChart v) ω =
       (fun e : E => ω.toFun (e + (-v))) := rfl
 
-/-- Function-level: `chartedFormPullback (translationChart v) ω`
-is the function `e ↦ ω.toFun (e + (-v))` (mfderiv factor cancels). -/
+/--
+Function-level: `chartedFormPullback (translationChart v) ω`
+is the function `e ↦ ω.toFun (e + (-v))` (mfderiv factor cancels).
+-/
 theorem chartedFormPullback_translationChart_eq_shifted
     (v : E) (ω : HolomorphicOneForm E E) :
     chartedFormPullback (translationChart v) ω =
@@ -223,26 +255,32 @@ theorem chartedFormPullback_translationChart_eq_shifted
   funext e
   exact chartedFormPullback_translationChart_apply v ω e
 
-/-- Bundled-LinearMap: bundled corrected chart-pullback on a
+/--
+Bundled-LinearMap: bundled corrected chart-pullback on a
 translation chart applied to ω equals the shifted form
-`e ↦ ω.toFun (e + (-v))`. -/
+`e ↦ ω.toFun (e + (-v))`.
+-/
 theorem chartedFormPullbackLinearMap_translationChart_apply_eq_shifted
     (v : E) (ω : HolomorphicOneForm E E) :
     chartedFormPullbackLinearMap (translationChart v) ω =
       (fun e : E => ω.toFun (e + (-v))) :=
   chartedFormPullback_translationChart_eq_shifted v ω
 
-/-- Bundled-LinearMap (provisional): bundled provisional chart-form
-on a translation chart applied to ω equals the shifted form. -/
+/--
+Bundled-LinearMap (provisional): bundled provisional chart-form
+on a translation chart applied to ω equals the shifted form.
+-/
 theorem chartedFormLinearMap_translationChart_apply_eq_shifted
     (v : E) (ω : HolomorphicOneForm E E) :
     chartedFormLinearMap (translationChart v) ω =
       (fun e : E => ω.toFun (e + (-v))) :=
   chartedForm_translationChart_eq_shifted v ω
 
-/-- The in-chart integral on `translationChart 0` reduces to the
+/--
+The in-chart integral on `translationChart 0` reduces to the
 direct `curveIntegral ω.toFun γ` (since translation by 0 is the
-identity). -/
+identity).
+-/
 theorem pathIntegralInChart_translationChart_zero
     (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
     pathIntegralInChart (translationChart (0 : E)) ω γ =
@@ -252,8 +290,10 @@ theorem pathIntegralInChart_translationChart_zero
   funext e
   rw [neg_zero, add_zero]
 
-/-- Corrected analogue: the corrected in-chart integral on
-`translationChart 0` reduces to `curveIntegral ω.toFun γ`. -/
+/--
+Corrected analogue: the corrected in-chart integral on
+`translationChart 0` reduces to `curveIntegral ω.toFun γ`.
+-/
 theorem pathIntegralInChartCorrect_translationChart_zero
     (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
     pathIntegralInChartCorrect (translationChart (0 : E)) ω γ =
@@ -263,16 +303,20 @@ theorem pathIntegralInChartCorrect_translationChart_zero
   funext e
   rw [neg_zero, add_zero]
 
-/-- The bundled chart-form on `translationChart 0` collapses to
-`ω.toFun` (matching refl). -/
+/--
+The bundled chart-form on `translationChart 0` collapses to
+`ω.toFun` (matching refl).
+-/
 theorem chartedForm_translationChart_zero
     (ω : HolomorphicOneForm E E) :
     chartedForm (translationChart (0 : E)) ω = ω.toFun := by
   rw [translationChart_zero]
   exact chartedForm_refl_eq_toFun ω
 
-/-- The corrected chart-pullback on `translationChart 0` collapses
-to `ω.toFun` (mfderiv factor is identity). -/
+/--
+The corrected chart-pullback on `translationChart 0` collapses
+to `ω.toFun` (mfderiv factor is identity).
+-/
 theorem chartedFormPullback_translationChart_zero
     (ω : HolomorphicOneForm E E) :
     chartedFormPullback (translationChart (0 : E)) ω = ω.toFun := by
@@ -292,8 +336,10 @@ theorem chartedFormPullbackLinearMap_translationChart_zero
       ω.toFun :=
   chartedFormPullback_translationChart_zero ω
 
-/-- Pointwise apply form: `chartedForm` of a translation chart at
-zero, evaluated at any point, is just `ω.toFun e`. -/
+/--
+Pointwise apply form: `chartedForm` of a translation chart at
+zero, evaluated at any point, is just `ω.toFun e`.
+-/
 theorem chartedForm_translationChart_zero_apply
     (ω : HolomorphicOneForm E E) (e : E) :
     chartedForm (translationChart (0 : E)) ω e = ω.toFun e := by
@@ -301,8 +347,10 @@ theorem chartedForm_translationChart_zero_apply
   congr 1
   rw [neg_zero, add_zero]
 
-/-- Pointwise apply form: `chartedFormPullback` of a translation
-chart at zero collapses to `ω.toFun`. -/
+/--
+Pointwise apply form: `chartedFormPullback` of a translation
+chart at zero collapses to `ω.toFun`.
+-/
 theorem chartedFormPullback_translationChart_zero_apply
     (ω : HolomorphicOneForm E E) (e : E) :
     chartedFormPullback (translationChart (0 : E)) ω e = ω.toFun e := by
@@ -311,8 +359,10 @@ theorem chartedFormPullback_translationChart_zero_apply
   rw [neg_zero, add_zero]
 
 set_option linter.unusedSectionVars false in
-/-- The `chartLift` through the translation chart at zero, applied
-at `t`, equals `γ t` (since translation by 0 is the identity). -/
+/--
+The `chartLift` through the translation chart at zero, applied
+at `t`, equals `γ t` (since translation by 0 is the identity).
+-/
 theorem chartLift_translationChart_zero_apply
     {a b : E} (γ : Path a b)
     (h : Set.range γ ⊆ (translationChart (0 : E)).source)

@@ -21,8 +21,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- If `evalJacobianClass basePoint v = 0` then the witness equals the
-endpoint class. -/
+/--
+If `evalJacobianClass basePoint v = 0` then the witness equals the
+endpoint class.
+-/
 theorem witnessAbelJacobi_eq_endpoint_of_basePoint_class_zero
     (basePoint P : X) (v : E)
     (h : evalJacobianClass (E := E) (X := X) basePoint v = 0) :
@@ -40,8 +42,10 @@ theorem witnessAbelJacobi_eq_zero_of_both_classes_zero
   unfold witnessAbelJacobi
   rw [h₁, h₂, sub_self]
 
-/-- Witness vanishes when both `evalLinearMap` values lie in
-`periodSubgroup`. -/
+/--
+Witness vanishes when both `evalLinearMap` values lie in
+`periodSubgroup`.
+-/
 theorem witnessAbelJacobi_eq_zero_of_both_evalLinearMap_mem
     (basePoint P : X) (v : E)
     (h₁ : evalLinearMap basePoint v ∈ periodSubgroup E X)
@@ -51,8 +55,10 @@ theorem witnessAbelJacobi_eq_zero_of_both_evalLinearMap_mem
     (evalJacobianClass_eq_zero_of_evalLinearMap_mem_periodSubgroup _ _ h₁)
     (evalJacobianClass_eq_zero_of_evalLinearMap_mem_periodSubgroup _ _ h₂)
 
-/-- Witness equals the endpoint class when both `evalLinearMap` values
-are zero (a degenerate but useful corner case). -/
+/--
+Witness equals the endpoint class when both `evalLinearMap` values
+are zero (a degenerate but useful corner case).
+-/
 theorem witnessAbelJacobi_eq_zero_of_both_evalLinearMap_zero
     (basePoint P : X) (v : E)
     (h₁ : evalLinearMap (E := E) (X := X) basePoint v = 0)

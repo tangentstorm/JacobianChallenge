@@ -1,6 +1,7 @@
 import Jacobian.Blueprint.Sec02.WeightedFiberCardConst
 
-/-! # Blueprint: `def:branched-degree`, leaf 8 — analytic constructor
+/-!
+# Blueprint: `def:branched-degree`, leaf 8 — analytic constructor
 
 Section 2 of `tex/sections/02-holomorphic-forms-and-genus.tex`.
 
@@ -15,10 +16,7 @@ analytic dependency is isolated to a single file.
 
 ## Status
 
-Three of the four originally-named obstacles have been discharged in
-`Jacobian/HolomorphicForms/HolomorphicMap.lean`:
-
-  1. **Chart-independence of `mapAnalyticOrderAt`** — proved,
+1. **Chart-independence of `mapAnalyticOrderAt`** — proved,
      `analyticOrderAt_alternate_chart_eq` /
      `mapAnalyticOrderAt_congr_of_maximalAtlas`.
   2. **Positivity of `mapAnalyticOrderAt`** for nonconstant
@@ -31,7 +29,7 @@ The remaining obstacle — well-definedness of the branched degree
 (`fiberSum_const`, formerly named `weightedFiberCard_const`) — has been
 split into four sub-leaves in `Sec02/WeightedFiberCardConst.lean`:
 
-  * leaf A — `mapAnalyticOrderAt_ramified_finite` (branch locus
+* leaf A — `mapAnalyticOrderAt_ramified_finite` (branch locus
     finite),
   * leaf B — `IsHolomorphicAt.exists_local_inj_of_unramified` (local
     injectivity at unramified points),
@@ -44,25 +42,22 @@ The final-assembly theorem `isHolomorphic_weightedFiberSum_const`
 (in that file) combines leaf D with `PreconnectedSpace Y` and is
 proved.  Its statement is exactly the field needed for
 `weightedFiberCard_const` here, so this constructor body is also
-proved relative to the project-local `IsHolomorphic` package. -/
+proved relative to the project-local `IsHolomorphic` package.
+-/
 
 namespace JacobianChallenge.Blueprint
 
 open JacobianChallenge.HolomorphicForms
 open scoped Manifold ContDiff
 
-/-- **Plan leaf 8.** Analytic constructor for `BranchedCoverData`: a
+/--
+**Plan leaf 8.** Analytic constructor for `BranchedCoverData`: a
 holomorphic, non-locally-constant map `f : X → Y` between two complex
 1-manifolds (compact Hausdorff preconnected source, `T2` connected
 target) packages as a branched-cover datum, with the chart-local
 analytic order `mapAnalyticOrderAt f` realising the ramification
 index.
-
-Three of the four structural obligations are discharged: the
-ramification index and its positivity come from
-`mapAnalyticOrderAt` and `mapAnalyticOrderAt_pos`; finite fibres come
-from `isHolomorphic_finite_fiber`; constancy of the fibre sum comes
-from `isHolomorphic_weightedFiberSum_const`. -/
+-/
 noncomputable def branchedCoverData_of_nonconstant_holomorphic
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -95,8 +90,10 @@ noncomputable def branchedCoverData_of_nonconstant_holomorphic
         obtain ⟨z, hz, huniqz⟩ := huniq y hy
         exact ⟨z, ⟨hz.1, by simpa [hz.2] using hy⟩, hz.2⟩
 
-/-- The analytic constructor makes the ramification index definitionally
-equal to the chart-local analytic order. -/
+/--
+The analytic constructor makes the ramification index definitionally
+equal to the chart-local analytic order.
+-/
 theorem branchedCoverData_of_nonconstant_holomorphic_compatible
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]

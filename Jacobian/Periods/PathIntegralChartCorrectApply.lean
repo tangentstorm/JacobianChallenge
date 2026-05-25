@@ -8,8 +8,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- The corrected chart-local path integral unfolds to `curveIntegral`
-of `chartedFormPullback`. -/
+/--
+The corrected chart-local path integral unfolds to `curveIntegral`
+of `chartedFormPullback`.
+-/
 @[simp]
 theorem pathIntegralInChartCorrect_apply
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)

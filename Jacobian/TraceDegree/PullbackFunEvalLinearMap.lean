@@ -29,8 +29,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Y]
 
 set_option linter.unusedSectionVars false in
-/-- `pullbackFormsFun f η x` factors as `(η.toFun (f x)) ∘ mfderiv f x`.
-This is the definition of `pullbackFormsFun`, exposed as a named lemma. -/
+/--
+`pullbackFormsFun f η x` factors as `(η.toFun (f x)) ∘ mfderiv f x`.
+This is the definition of `pullbackFormsFun`, exposed as a named lemma.
+-/
 theorem pullbackFormsFun_apply_eq_comp
     (f : X → Y) (η : HolomorphicOneForm E Y) (x : X) :
     pullbackFormsFun f η x =
@@ -53,8 +55,10 @@ theorem pullbackFormsFun_id_apply_vec_eq_evalLinearMap
   rw [pullbackFormsFun_id_apply_eq_toFun]; rfl
 
 set_option linter.unusedSectionVars false in
-/-- The pullback `pullbackFormsFun f η x v` is ℂ-linear in `η` —
-explicit evalLinearMap-free `_add` form. -/
+/--
+The pullback `pullbackFormsFun f η x v` is ℂ-linear in `η` —
+explicit evalLinearMap-free `_add` form.
+-/
 theorem pullbackFormsFun_apply_vec_add'
     (f : X → Y) (η ζ : HolomorphicOneForm E Y) (x : X) (v : E) :
     pullbackFormsFun f (η + ζ) x v =

@@ -46,8 +46,10 @@ theorem witnessAbelJacobi_telescope_loop
   unfold witnessAbelJacobi
   abel
 
-/-- Antisymmetric `_eq_iff` form: cosets coincide iff swapped witnesses
-both vanish. -/
+/--
+Antisymmetric `_eq_iff` form: cosets coincide iff swapped witnesses
+both vanish.
+-/
 theorem witnessAbelJacobi_eq_iff_swap_eq_zero
     (basePoint P : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v = 0 ↔

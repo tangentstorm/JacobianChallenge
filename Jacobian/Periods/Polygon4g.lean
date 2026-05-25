@@ -17,7 +17,7 @@ For each genus `g : ℕ`, this file constructs the topological space
 `Polygon4g g`, obtained from the closed unit disk in `ℂ` by
 identifying its boundary in the standard 4g-gon side-pairing pattern
 
-  `a₁b₁a₁⁻¹b₁⁻¹ ⋯ aₘbₘaₘ⁻¹bₘ⁻¹`
+`a₁b₁a₁⁻¹b₁⁻¹ ⋯ aₘbₘaₘ⁻¹bₘ⁻¹`
 
 (four consecutive boundary arcs per "handle" `i ∈ Fin g`, identified
 in pairs with reversal).
@@ -51,28 +51,26 @@ model is the sphere, but the period-lattice chain in sec03 only uses
 correctly.
 
 ## Future work
-
-* `Polygon4g.compactSpace`, `Polygon4g.t2Space`,
-  `Polygon4g.connectedSpace` — basic topological properties inherited
-  from the disk via the quotient map (deferred).
-* `polygon4g_interior_simply_connected` — needed by
-  `lem:primitive-on-polygon` (deferred).
 -/
 
 namespace JacobianChallenge.Periods
 
 open Complex Set
 
-/-- Closed unit disk in `ℂ`. The carrier of `Polygon4g` before
-quotienting. -/
+/--
+Closed unit disk in `ℂ`. The carrier of `Polygon4g` before
+quotienting.
+-/
 abbrev DiskC : Type := Metric.closedBall (0 : ℂ) 1
 
 instance diskC_contractibleSpace : ContractibleSpace DiskC :=
   Metric.contractibleSpace_closedBall (zero_le_one)
 
-/-- The angle (in radians) corresponding to the `i`-th of `L`
+/--
+The angle (in radians) corresponding to the `i`-th of `L`
 boundary arcs at parameter `t ∈ [0,1]`. Concretely
-`2π·(i + t)/L`, treated as a real number. -/
+`2π·(i + t)/L`, treated as a real number.
+-/
 noncomputable def boundaryAngle' (L : ℕ) (i : ℕ) (t : ℝ) : ℝ :=
   2 * Real.pi * ((i : ℝ) + t) / (L : ℝ)
 
@@ -80,9 +78,11 @@ noncomputable def boundaryAngle' (L : ℕ) (i : ℕ) (t : ℝ) : ℝ :=
 noncomputable def boundaryAngle (g : ℕ) (i : ℕ) (t : ℝ) : ℝ :=
   boundaryAngle' (4 * g) i t
 
-/-- The boundary parameter as a complex number on the unit circle:
+/--
+The boundary parameter as a complex number on the unit circle:
 `exp(I · boundaryAngle' L i t)`. For `L = 0` the angle divides by
-zero (Lean: `0`), giving `exp(0) = 1`. -/
+zero (Lean: `0`), giving `exp(0) = 1`.
+-/
 noncomputable def boundaryParamC' (L : ℕ) (i : ℕ) (t : ℝ) : ℂ :=
   exp (((boundaryAngle' L i t : ℂ)) * I)
 
@@ -117,7 +117,8 @@ noncomputable def boundaryParam (g : ℕ) (i : ℕ) (t : ℝ) : DiskC :=
 
 namespace Polygon4g
 
-/-- Generating relation for the side-pairing on the boundary of the
+/--
+Generating relation for the side-pairing on the boundary of the
 closed unit disk. For every `i ∈ Fin g` and `t ∈ [0,1]`:
 
 * the `a-cycle` identifies arc `4i` (forward at `t`) with arc `4i+2`
@@ -126,7 +127,8 @@ closed unit disk. For every `i ∈ Fin g` and `t ∈ [0,1]`:
   `4i+3` (reversed at `1-t`).
 
 Restricting the index `i` to `Fin g` ensures the relation is empty
-when `g = 0`. -/
+when `g = 0`.
+-/
 inductive SideGen (g : ℕ) : DiskC → DiskC → Prop
   | a_pair (i : Fin g) (t : ℝ) (_ht : t ∈ Set.Icc (0 : ℝ) 1) :
       SideGen g
@@ -151,13 +153,15 @@ def sideSetoid (g : ℕ) : Setoid DiskC where
 
 end Polygon4g
 
-/-- The standard fundamental polygon `Polygon4g g`: the closed unit
+/--
+The standard fundamental polygon `Polygon4g g`: the closed unit
 disk in `ℂ` modulo the side-pairing identifications
 
-  `a₁b₁a₁⁻¹b₁⁻¹ ⋯ aₘbₘaₘ⁻¹bₘ⁻¹`.
+`a₁b₁a₁⁻¹b₁⁻¹ ⋯ aₘbₘaₘ⁻¹bₘ⁻¹`.
 
 Equipped with the quotient topology induced from the subspace
-topology on the closed disk. -/
+topology on the closed disk.
+-/
 def Polygon4g (g : ℕ) : Type :=
   Quotient (Polygon4g.sideSetoid g)
 
@@ -172,8 +176,10 @@ instance _root_.JacobianChallenge.Periods.DiskC.instCompactSpace :
   isCompact_iff_compactSpace.mp <|
     ProperSpace.isCompact_closedBall (0 : ℂ) 1
 
-/-- The closed unit disk is connected (closed balls in normed spaces are
-path-connected, hence connected). -/
+/--
+The closed unit disk is connected (closed balls in normed spaces are
+path-connected, hence connected).
+-/
 instance _root_.JacobianChallenge.Periods.DiskC.instConnectedSpace :
     ConnectedSpace JacobianChallenge.Periods.DiskC :=
   isConnected_iff_connectedSpace.mp <|
@@ -185,8 +191,10 @@ instance instCompactSpace (g : ℕ) : CompactSpace (Polygon4g g) :=
 instance instConnectedSpace (g : ℕ) : ConnectedSpace (Polygon4g g) :=
   Quotient.instConnectedSpace
 
-/-- The closed unit disk is path-connected (closed balls in normed
-spaces are path-connected). -/
+/--
+The closed unit disk is path-connected (closed balls in normed
+spaces are path-connected).
+-/
 instance _root_.JacobianChallenge.Periods.DiskC.instPathConnectedSpace :
     PathConnectedSpace JacobianChallenge.Periods.DiskC :=
   isPathConnected_iff_pathConnectedSpace.mp <|
@@ -206,8 +214,10 @@ def mk (g : ℕ) : DiskC → Polygon4g g :=
 lemma mk_continuous (g : ℕ) : Continuous (mk g) :=
   continuous_quotient_mk'
 
-/-- For `g ≥ 1`, the four basic side-identification equations.
-Stated as `mk`-equality of arc endpoints/parameters. -/
+/--
+For `g ≥ 1`, the four basic side-identification equations.
+Stated as `mk`-equality of arc endpoints/parameters.
+-/
 lemma mk_a_pair (g : ℕ) (i : Fin g) (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 1) :
     mk g (boundaryParam g (4 * i.val) t)
       = mk g (boundaryParam g (4 * i.val + 2) (1 - t)) :=

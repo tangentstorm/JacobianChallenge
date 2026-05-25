@@ -16,8 +16,6 @@ This file upgrades `pullbackFormsFun f η` (a function `X → ℂ →L[ℂ] ℂ`
 defined in `Jacobian/TraceDegree/PullbackFun.lean`) to a genuine
 holomorphic 1-form `HolomorphicOneForm ℂ X`, given that `f` is `ContMDiff ω`.
 
-## Mathlib gap
-
 The construction requires section-level smoothness through chart
 trivializations of the cotangent bundle (a `Bundle.ContinuousLinearMap`
 bundle). Mathlib v4.28.0 lacks user-facing chart-transition / `localCoeff`
@@ -32,21 +30,7 @@ named obligations characterising its function-level behavior:
   extraction" axiom: once the chart-coefficient API exists, this becomes
   `rfl` for a concrete construction.
 
-This is a strict TOPDOWN refinement: the previous 2 sorries on
-`PushforwardBasis.lean` (`holomorphicTraceCoord_id` / `_comp`) get
-replaced by 0 sorries on that file and the smoothness/section-extraction
-obligation here, which is precisely the Mathlib gap the project's recon
-file already names.
-
 ## API exposed
-
-* `pullbackFormsBundledLM f hf : HolomorphicOneForm ℂ Y →ₗ[ℂ] HolomorphicOneForm ℂ X`
-  — opaque ℂ-linear map.
-* `pullbackFormsBundledLM_apply_fun` — pointwise `.toFun` agreement with
-  `pullbackFormsFun` (sorry).
-* `pullbackFormsBundledLM_id` — identity functoriality (sorry-free assembly).
-* `pullbackFormsBundledLM_comp` — composition functoriality (sorry-free
-  assembly).
 -/
 
 namespace JacobianChallenge.HolomorphicForms
@@ -61,14 +45,16 @@ variable {Y : Type*} [TopologicalSpace Y] [ChartedSpace ℂ Y]
 variable {Z : Type*} [TopologicalSpace Z] [ChartedSpace ℂ Z]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
 
-/-- The chain-rule pullback of a holomorphic 1-form's value at a point,
+/--
+The chain-rule pullback of a holomorphic 1-form's value at a point,
 typed natively as a section value in the cotangent fiber of `X` over `x`.
 
 The composition `η.toFun (f x) ∘L mfderiv f x` is *natively* a continuous
 linear map `TangentSpace 𝓘(ℂ,ℂ) x →L[ℂ] TangentSpace 𝓘(ℂ,ℂ) (f x)`, and
 since `(Bundle.Trivial Y ℂ) (f x) = ℂ = (Bundle.Trivial X ℂ) x` (the trivial
 bundle's fiber is the constant `ℂ`), this is precisely the cotangent fiber
-type at `x`. -/
+type at `x`.
+-/
 noncomputable def pullbackFormsFunFiber
     (f : X → Y) (η : HolomorphicOneForm ℂ Y) (x : X) :
     CotangentSpace ℂ X x :=
@@ -76,7 +62,8 @@ noncomputable def pullbackFormsFunFiber
     (mfderiv (modelWithCornersSelf ℂ ℂ)
              (modelWithCornersSelf ℂ ℂ) f x)
 
-/-- Section-level smoothness of the chain-rule pullback.
+/--
+Section-level smoothness of the chain-rule pullback.
 
 The lone bottom-up obligation of the `PullbackBundled` module:
 smoothness of a `Bundle.ContinuousLinearMap`-valued section formed by
@@ -91,22 +78,12 @@ is the composition (in `→L[ℂ]`) of:
   — smooth as a section of the cotangent bundle along `f`, by
   composition of `η`'s smoothness with `f`'s smoothness.
 
-#### Mathlib gap
-
 Mathlib v4.28.0 provides `ContMDiff.clm_bundle_apply` (CLM-section applied
 to a vector-section is a vector-section) and the underlying
 `ContMDiffWithinAt.clm_apply_of_inCoordinates` primitive, but it lacks
 the dual-position analogue **`ContMDiff.clm_bundle_compose`** (CLM-section
 composed with a CLM-section is a CLM-section), and likewise lacks
 `ContMDiffWithinAt.clm_compose_of_inCoordinates`.
-
-The proof is symmetric to Mathlib's `clm_apply_of_inCoordinates`: at each
-point, work in trivializations of both the source and target hom-bundles,
-and use `ContinuousLinearMap.compL` smoothness on the chart-image fibers.
-A Mathlib PR adding this primitive (~30 lines mirroring lines 156–202 of
-`Mathlib/Geometry/Manifold/VectorBundle/Hom.lean`) would discharge this
-sorry as a ~10-line assembly applying `clm_bundle_compose` to the smooth
-sections `mfderiv f` and `η ∘ f`.
 
 #### Project status
 
@@ -115,9 +92,7 @@ This is the documented project gap, partially overlapping with
 1. The Mathlib PR above, or
 2. A project-local proof of `clm_bundle_compose` (in this file or a
    `Jacobian/HolomorphicForms/CLMBundleCompose.lean` sibling).
-
-Either way, the obligation is now isolated as a single named sorry on a
-clean section-of-a-CLM-bundle smoothness statement. -/
+-/
 theorem pullbackFormsFunFiber_contMDiff_section
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ Y) :
@@ -149,10 +124,12 @@ theorem pullbackFormsFunFiber_contMDiff_section
   -- Apply the new clm_compose_of_inCoordinates.
   exact hηf.2.clm_compose_of_inCoordinates hψ_raw contMDiffAt_id (hf x) (hf x)
 
-/-- Bundled pullback of a holomorphic 1-form along a smooth map.
+/--
+Bundled pullback of a holomorphic 1-form along a smooth map.
 Concrete (non-opaque): the underlying function is `pullbackFormsFunFiber`
 (natively in the cotangent fiber); smoothness is supplied by
-`pullbackFormsFunFiber_contMDiff_section`. -/
+`pullbackFormsFunFiber_contMDiff_section`.
+-/
 noncomputable def pullbackFormsBundled
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ Y) :
@@ -160,8 +137,10 @@ noncomputable def pullbackFormsBundled
   toFun := pullbackFormsFunFiber f η
   contMDiff_toFun := pullbackFormsFunFiber_contMDiff_section f hf η
 
-/-- The pullback of holomorphic 1-forms as a ℂ-linear map between the
-form spaces. Concrete (non-opaque). -/
+/--
+The pullback of holomorphic 1-forms as a ℂ-linear map between the
+form spaces. Concrete (non-opaque).
+-/
 noncomputable def pullbackFormsBundledLM
     (X Y : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -190,17 +169,13 @@ noncomputable def pullbackFormsBundledLM
     rw [show (k • η).toFun (f x) = k • η.toFun (f x) from hcoe]
     exact ContinuousLinearMap.smul_comp k _ _
 
-/-- The underlying function of the bundled pullback, evaluated at a
-point, equals the chain-rule pullback function. Sorry-free: definitional
-via the concrete construction. -/
+
 @[simp] theorem pullbackFormsBundledLM_apply_fun
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ Y) (x : X) :
     (pullbackFormsBundledLM X Y f hf η).toFun x = pullbackFormsFun f η x := rfl
 
-/-- Identity functoriality: pullback of a form along the identity map is
-the form itself. Sorry-free assembly via `pullbackFormsBundledLM_apply_fun`
-plus `pullbackFormsFun_id`. -/
+
 theorem pullbackFormsBundledLM_id :
     pullbackFormsBundledLM X X (id : X → X) contMDiff_id = LinearMap.id := by
   refine LinearMap.ext fun η => ?_
@@ -211,9 +186,7 @@ theorem pullbackFormsBundledLM_id :
   rw [pullbackFormsBundledLM_apply_fun, pullbackFormsFun_id]
   rfl
 
-/-- Composition functoriality: pullback distributes contravariantly over
-composition. Sorry-free assembly via `pullbackFormsBundledLM_apply_fun`
-plus `pullbackFormsFun_comp_apply`. -/
+
 theorem pullbackFormsBundledLM_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) g) :

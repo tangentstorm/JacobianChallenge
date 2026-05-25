@@ -4,8 +4,6 @@ import Mathlib.Geometry.Manifold.MFDeriv.Atlas
 /-!
 # Chart-pullback of a 1-form transforms by chain rule under chart change
 
-**Phase 4a (Lemma A) of the path-integral well-definedness chain.**
-
 For two charts `c_p`, `c_q : OpenPartialHomeomorph X E` taken from the
 atlas of a `[IsManifold ⊤]` complex manifold, and a manifold point
 `x ∈ c_p.source ∩ c_q.source`, the chart-pullback `chartedFormPullback c_p ω`
@@ -31,8 +29,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- The chart transition `c_q ∘ c_p.symm` is mdifferentiable at `c_p x`
-when both charts are taken from the atlas and `x` lies in both sources. -/
+/--
+The chart transition `c_q ∘ c_p.symm` is mdifferentiable at `c_p x`
+when both charts are taken from the atlas and `x` lies in both sources.
+-/
 theorem chartTransition_mdifferentiableAt
     (p q : X) (x : X)
     (hp : x ∈ (chartAt E p).source) (hq : x ∈ (chartAt E q).source) :
@@ -54,7 +54,8 @@ theorem chartTransition_mdifferentiableAt
     exact hcq_mdiff.mdifferentiableAt hq
   exact h_cq.comp _ h_cp_symm
 
-/-- The chart-pullback of a holomorphic 1-form transforms by chain rule
+/--
+The chart-pullback of a holomorphic 1-form transforms by chain rule
 under chart change.
 
 For two charts `chartAt E p`, `chartAt E q` on a complex manifold `X`,
@@ -65,7 +66,8 @@ chart-transition derivative `mfderiv (chartAt E q ∘ (chartAt E p).symm) (chart
 
 This is the **central identity** behind chart-independence of the
 chart-corrected path integral: pointwise the integrand transforms
-exactly as the chain rule for `mfderiv` predicts. -/
+exactly as the chain rule for `mfderiv` predicts.
+-/
 theorem chartedFormPullback_chart_change_apply
     (p q : X) (ω : HolomorphicOneForm E X) (x : X) (v : E)
     (hp : x ∈ (chartAt E p).source) (hq : x ∈ (chartAt E q).source) :

@@ -68,10 +68,12 @@ theorem dist_self
   exact supNorm_zero
 
 omit [CompactSpace M] in
-/-- `dist σ τ = dist τ σ`: distance is symmetric.
+/--
+`dist σ τ = dist τ σ`: distance is symmetric.
 
 The `_hcompat` hypothesis is included for API compatibility with the other metric
-axioms but is not needed for this proof (which only uses `supNorm_neg`). -/
+axioms but is not needed for this proof (which only uses `supNorm_neg`).
+-/
 theorem dist_comm
     (_hcompat : ∀ (σ : ContMDiffSection I F ⊤ V),
       Continuous (ContMDiffSection.fiberNorm σ))
@@ -80,9 +82,11 @@ theorem dist_comm
   show supNorm (σ - τ) = supNorm (τ - σ)
   rw [← neg_sub, supNorm_neg]
 
-/-- Triangle inequality for the section distance.
+/--
+Triangle inequality for the section distance.
 
-Uses `σ - ρ = (σ - τ) + (τ - ρ)` and `supNorm_add_le`. -/
+Uses `σ - ρ = (σ - τ) + (τ - ρ)` and `supNorm_add_le`.
+-/
 theorem dist_triangle
     (hcompat : ∀ (σ : ContMDiffSection I F ⊤ V),
       Continuous (ContMDiffSection.fiberNorm σ))
@@ -93,10 +97,12 @@ theorem dist_triangle
   rw [h]
   exact supNorm_add_le hcompat _ _
 
-/-- If `dist σ τ = 0` then `σ = τ`: the distance separates points.
+/--
+If `dist σ τ = 0` then `σ = τ`: the distance separates points.
 
 From `supNorm (σ - τ) = 0` and `supNorm_eq_zero_iff`, we get `σ - τ = 0`,
-hence `σ = τ`. Requires `Nonempty M` (needed for `supNorm_eq_zero_iff`). -/
+hence `σ = τ`. Requires `Nonempty M` (needed for `supNorm_eq_zero_iff`).
+-/
 theorem eq_of_dist_eq_zero [Nonempty M]
     (hcompat : ∀ (σ : ContMDiffSection I F ⊤ V),
       Continuous (ContMDiffSection.fiberNorm σ))

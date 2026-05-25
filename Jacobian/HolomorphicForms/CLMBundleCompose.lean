@@ -65,16 +65,10 @@ variable {𝕜 F₁ F₂ F₃ B₁ B₂ B₃ M : Type*}
   {ψ : ∀ m, E₁ (b₁ m) →L[𝕜] E₂ (b₂ m)}
   {s : Set M}
 
-/-- Composition of two smooth CLM-bundle sections is smooth, in
+/--
+Composition of two smooth CLM-bundle sections is smooth, in
 `inCoordinates` form.
-
-This is the project-local analogue of Mathlib's
-`ContMDiffWithinAt.clm_apply_of_inCoordinates`
-(`Mathlib/Geometry/Manifold/VectorBundle/Hom.lean`), with CLM-application
-replaced by CLM-composition. The proof structure mirrors the application
-version: decompose via `inCoordinates_eq` to function-level CLMs, apply
-`ContMDiffWithinAt.clm_comp`, and use the trivialization-round-trip
-collapse to bridge the two sides. -/
+-/
 lemma ContMDiffWithinAt.clm_compose_of_inCoordinates
     (hϕ : ContMDiffWithinAt IM 𝓘(𝕜, F₂ →L[𝕜] F₃) n
       (fun m ↦ inCoordinates F₂ E₂ F₃ E₃ (b₂ m₀) (b₂ m) (b₃ m₀) (b₃ m) (ϕ m)) s m₀)
@@ -111,7 +105,6 @@ lemma ContMDiffWithinAt.clm_compose_of_inCoordinates
   -- and the target `inCoordinates` on the RHS too.
   rw [inCoordinates_eq hm₁ hm₂, inCoordinates_eq hm₂ hm₃,
       inCoordinates_eq hm₁ hm₃]
-  -- Both sides are CLM compositions; the middle round-trip
   -- e₂.cle (b₂ m) ∘ e₂.cle (b₂ m).symm collapses to identity.
   ext v
   simp only [ContinuousLinearMap.coe_comp', ContinuousLinearEquiv.coe_coe,

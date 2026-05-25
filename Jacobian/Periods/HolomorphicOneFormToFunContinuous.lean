@@ -51,25 +51,33 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [StableChartAt E X]
 
-/-- The "tangent bundle continuous-linear-map-at" specialised to self-model:
+/--
+The "tangent bundle continuous-linear-map-at" specialised to self-model:
 returns an `E →L[ℂ] E` (using the definitional equality
-`TangentSpace 𝓘(ℂ,E) b = E`). -/
+`TangentSpace 𝓘(ℂ,E) b = E`).
+-/
 private noncomputable def tangent_contLinMapAt (b₀ b : X) : E →L[ℂ] E :=
   (trivializationAt E (TangentSpace (modelWithCornersSelf ℂ E)) b₀).continuousLinearMapAt ℂ b
 
-/-- The "tangent bundle symmL" specialised to self-model: returns an
-`E →L[ℂ] E`. -/
+/--
+The "tangent bundle symmL" specialised to self-model: returns an
+`E →L[ℂ] E`.
+-/
 private noncomputable def tangent_symmL (b₀ b : X) : E →L[ℂ] E :=
   (trivializationAt E (TangentSpace (modelWithCornersSelf ℂ E)) b₀).symmL ℂ b
 
-/-- The cotangent value, viewed as `E →L[ℂ] ℂ` via the definitional fiber
-identification. -/
+/--
+The cotangent value, viewed as `E →L[ℂ] ℂ` via the definitional fiber
+identification.
+-/
 private noncomputable def cotangent_value
     (ω : HolomorphicOneForm E X) (b : X) : E →L[ℂ] ℂ :=
   ω.toFun b
 
-/-- Under `[StableChartAt E X]`, `tangent_contLinMapAt b₀ b = id` for
-`b ∈ (chartAt E b₀).source`. -/
+/--
+Under `[StableChartAt E X]`, `tangent_contLinMapAt b₀ b = id` for
+`b ∈ (chartAt E b₀).source`.
+-/
 private theorem tangent_contLinMapAt_eq_id_on_source
     (b₀ : X) {b : X} (hb : b ∈ (chartAt E b₀).source) :
     tangent_contLinMapAt (X := X) (E := E) b₀ b = ContinuousLinearMap.id ℂ E := by
@@ -83,8 +91,10 @@ private theorem tangent_contLinMapAt_eq_id_on_source
   rw [tangentBundleCore_baseSet, coe_achart]
   exact hb
 
-/-- Under `[StableChartAt E X]`, `tangent_symmL b₀ b = id` for
-`b ∈ (chartAt E b₀).source`. -/
+/--
+Under `[StableChartAt E X]`, `tangent_symmL b₀ b = id` for
+`b ∈ (chartAt E b₀).source`.
+-/
 private theorem tangent_symmL_eq_id_on_source
     (b₀ : X) {b : X} (hb : b ∈ (chartAt E b₀).source) :
     tangent_symmL (X := X) (E := E) b₀ b = ContinuousLinearMap.id ℂ E := by
@@ -98,11 +108,13 @@ private theorem tangent_symmL_eq_id_on_source
   rw [tangentBundleCore_baseSet, coe_achart]
   exact hb
 
-/-- **Diagonal chart-overlap-derivative continuity.**
+/--
+**Diagonal chart-overlap-derivative continuity.**
 
 Under `[StableChartAt E X]`, `tangent_contLinMapAt b₀` is constantly `id`
 on `(chartAt E b₀).source` (a neighborhood of `b₀`), hence continuous at
-`b₀`. -/
+`b₀`.
+-/
 theorem tangentBundle_continuousLinearMapAt_continuousAt_self
     (b₀ : X) :
     ContinuousAt (fun b : X => tangent_contLinMapAt (X := X) (E := E) b₀ b) b₀ := by
@@ -114,8 +126,10 @@ theorem tangentBundle_continuousLinearMapAt_continuousAt_self
     exact (tangent_contLinMapAt_eq_id_on_source b₀ hb).symm
   exact ContinuousAt.congr continuousAt_const heventually
 
-/-- **Diagonal chart-overlap-derivative continuity, dual version.**
-Companion to `tangentBundle_continuousLinearMapAt_continuousAt_self`. -/
+/--
+**Diagonal chart-overlap-derivative continuity, dual version.**
+Companion to `tangentBundle_continuousLinearMapAt_continuousAt_self`.
+-/
 theorem tangentBundle_symmL_continuousAt_self
     (b₀ : X) :
     ContinuousAt (fun b : X => tangent_symmL (X := X) (E := E) b₀ b) b₀ := by
@@ -128,8 +142,10 @@ theorem tangentBundle_symmL_continuousAt_self
   exact ContinuousAt.congr continuousAt_const heventually
 
 omit [StableChartAt E X] in
-/-- Identification: the cotangent trivialization's fiber-second-component
-equals the cotangent value composed with the tangent symmL. -/
+/--
+Identification: the cotangent trivialization's fiber-second-component
+equals the cotangent value composed with the tangent symmL.
+-/
 private theorem trivCT_section_eq_comp_symmL
     (ω : HolomorphicOneForm E X) (b₀ b : X) :
     ((trivializationAt (E →L[ℂ] ℂ) (CotangentSpace E X) b₀)
@@ -189,8 +205,10 @@ private theorem ω_comp_symmL_continuousAt
   exact hcont
 
 omit [StableChartAt E X] in
-/-- The composition `cotangent_value ω b ∘ tangent_symmL b₀ b ∘ tangent_contLinMapAt b₀ b`
-equals `cotangent_value ω b` on the trivialization's `baseSet`. -/
+/--
+The composition `cotangent_value ω b ∘ tangent_symmL b₀ b ∘ tangent_contLinMapAt b₀ b`
+equals `cotangent_value ω b` on the trivialization's `baseSet`.
+-/
 private theorem composition_eq_cotangent_value_on_baseSet
     (ω : HolomorphicOneForm E X) (b₀ b : X)
     (hb : b ∈ (trivializationAt E (TangentSpace (modelWithCornersSelf ℂ E)) b₀).baseSet) :
@@ -203,8 +221,10 @@ private theorem composition_eq_cotangent_value_on_baseSet
     exact Trivialization.symmL_continuousLinearMapAt _ hb v
   rw [h_round, ContinuousLinearMap.comp_id]
 
-/-- **Main result.** The underlying function `b ↦ ω.toFun b : X → (E →L[ℂ] ℂ)`
-of a holomorphic 1-form `ω` is continuous in the operator-norm topology. -/
+/--
+**Main result.** The underlying function `b ↦ ω.toFun b : X → (E →L[ℂ] ℂ)`
+of a holomorphic 1-form `ω` is continuous in the operator-norm topology.
+-/
 theorem holomorphicOneForm_toFun_continuous
     (ω : HolomorphicOneForm E X) :
     Continuous (cotangent_value (X := X) (E := E) ω) := by

@@ -22,8 +22,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Z]
 
 set_option linter.unusedSectionVars false in
-/-- Bundled-LinearMap function-level form: pullback along
-`Function.const Y z ∘ Function.const X y` is the zero function. -/
+/--
+Bundled-LinearMap function-level form: pullback along
+`Function.const Y z ∘ Function.const X y` is the zero function.
+-/
 theorem pullbackFormsLinearMap_const_comp_const
     (z : Z) (y : Y) (η : HolomorphicOneForm E Z) :
     pullbackFormsLinearMap (Function.const Y z ∘ Function.const X y) η = 0 := by
@@ -37,8 +39,10 @@ set_option linter.unusedSectionVars false in
   rw [pullbackFormsLinearMap_apply_at, pullbackFormsFun_const_comp_const]; rfl
 
 set_option linter.unusedSectionVars false in
-/-- Pullback of `id ∘ Function.const X y` is zero (definitional
-collapse of `id ∘ const = const`, then `pullbackFormsFun_const`). -/
+/--
+Pullback of `id ∘ Function.const X y` is zero (definitional
+collapse of `id ∘ const = const`, then `pullbackFormsFun_const`).
+-/
 @[simp] theorem pullbackFormsFun_id_comp_const
     (y : Y) (η : HolomorphicOneForm E Y) :
     pullbackFormsFun ((id : Y → Y) ∘ Function.const X y) η = 0 :=

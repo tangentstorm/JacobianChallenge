@@ -14,13 +14,6 @@ chart.
 
 The sound replacement is in `Jacobian.TraceDegree.PiecewiseC1Def`:
 
-* `ChartLiftPiecewiseC1 γ K` records explicit chartwise C¹ data for a
-  particular path.
-* `PiecewiseC1Path a b` bundles a continuous path with such data.
-* Remaining legacy declarations may still take
-  `[PiecewiseC1PathRegularity X]` as an explicit frontier hypothesis,
-  but importing this file no longer synthesizes that hypothesis.
-
 The missing topological theorem is separate: on a smooth compact
 surface, the inclusion of smooth (or piecewise-C¹) singular chains
 into all singular chains induces the expected homology isomorphism, so
@@ -34,23 +27,25 @@ namespace JacobianChallenge.TraceDegree
 
 open JacobianChallenge.Periods
 
-/-- Documentation marker for the quarantined false instance.
+/--
+Documentation marker for the quarantined false instance.
 
 This proposition is deliberately trivial: it gives downstream files a
 stable name to cite in comments without introducing any instance,
-axiom, or proof obligation for the false global regularity statement. -/
+axiom, or proof obligation for the false global regularity statement.
+-/
 theorem no_global_piecewiseC1PathRegularity_instance : True := by
   trivial
 
-/-- Documentation marker for the remaining topological frontier.
-
+/--
 The intended future theorem is not this `True` statement; it is the
 standard smooth-approximation comparison saying that, on a smooth
 compact surface, smooth or piecewise-C¹ singular chains compute the
 same degree-one integral homology as all singular chains. Once that is
 formalized, `IntegralOneCycle X` can be paired with regular
 representatives without asserting regularity of arbitrary continuous
-paths. -/
+paths.
+-/
 theorem smooth_chain_homology_comparison_frontier : True := by
   trivial
 

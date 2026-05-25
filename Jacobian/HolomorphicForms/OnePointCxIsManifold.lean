@@ -29,11 +29,13 @@ open Set Filter OnePoint
 
 namespace JacobianChallenge.HolomorphicForms
 
-/-! ### Convenience equalities for the chart maps
+/-!
+### Convenience equalities for the chart maps
 
 These reduce the chart functions to their underlying expressions
 (`(↑·) : ℂ → OnePoint ℂ` and `invFwd`/`invBwd`). They are private to this
-file. -/
+file.
+-/
 
 private lemma identityChart_symm_apply (z : ℂ) :
     (identityChart.symm : ℂ → OnePoint ℂ) z = ↑z := by
@@ -69,8 +71,10 @@ private lemma inversionChart_target_eq :
 
 /-! ### The two non-trivial transition functions -/
 
-/-- The composition `identityChart.symm ≫ₕ inversionChart` agrees with
-`Inv.inv` on its source. -/
+/--
+The composition `identityChart.symm ≫ₕ inversionChart` agrees with
+`Inv.inv` on its source.
+-/
 private lemma identityChart_trans_inversionChart_eqOn :
     EqOn ((identityChart.symm ≫ₕ inversionChart : OpenPartialHomeomorph ℂ ℂ) : ℂ → ℂ)
       Inv.inv (identityChart.symm ≫ₕ inversionChart).source := by
@@ -78,8 +82,10 @@ private lemma identityChart_trans_inversionChart_eqOn :
   rw [OpenPartialHomeomorph.coe_trans, Function.comp_apply,
     identityChart_symm_apply, inversionChart_apply, invFwd_coe]
 
-/-- The source of `identityChart.symm ≫ₕ inversionChart` is the punctured
-plane `{(0 : ℂ)}ᶜ`. -/
+/--
+The source of `identityChart.symm ≫ₕ inversionChart` is the punctured
+plane `{(0 : ℂ)}ᶜ`.
+-/
 private lemma identityChart_trans_inversionChart_source :
     (identityChart.symm ≫ₕ inversionChart).source = ({(0 : ℂ)}ᶜ : Set ℂ) := by
   rw [OpenPartialHomeomorph.trans_source, identityChart_symm_source]
@@ -88,8 +94,10 @@ private lemma identityChart_trans_inversionChart_source :
     identityChart_symm_apply, inversionChart_source_eq]
   exact ⟨fun h h0 => h (by rw [h0]), fun h h' => h (OnePoint.coe_injective h')⟩
 
-/-- The composition `inversionChart.symm ≫ₕ identityChart` agrees with
-`Inv.inv` on its source. -/
+/--
+The composition `inversionChart.symm ≫ₕ identityChart` agrees with
+`Inv.inv` on its source.
+-/
 private lemma inversionChart_trans_identityChart_eqOn :
     EqOn ((inversionChart.symm ≫ₕ identityChart : OpenPartialHomeomorph ℂ ℂ) : ℂ → ℂ)
       Inv.inv (inversionChart.symm ≫ₕ identityChart).source := by
@@ -105,8 +113,10 @@ private lemma inversionChart_trans_identityChart_eqOn :
   rw [OpenPartialHomeomorph.coe_trans, Function.comp_apply,
     inversionChart_symm_apply, invBwd_ne_zero hw_ne, identityChart_apply_coe]
 
-/-- The source of `inversionChart.symm ≫ₕ identityChart` is the punctured
-plane `{(0 : ℂ)}ᶜ`. -/
+/--
+The source of `inversionChart.symm ≫ₕ identityChart` is the punctured
+plane `{(0 : ℂ)}ᶜ`.
+-/
 private lemma inversionChart_trans_identityChart_source :
     (inversionChart.symm ≫ₕ identityChart).source = ({(0 : ℂ)}ᶜ : Set ℂ) := by
   rw [OpenPartialHomeomorph.trans_source]
@@ -159,10 +169,12 @@ private lemma inversionChart_trans_identityChart_contDiffOn :
   rw [inversionChart_trans_identityChart_source] at heq
   exact heq hw
 
-/-! ### The diagonal transitions
+/-!
+### The diagonal transitions
 
 For the diagonal cases `e = e'` the composition `e.symm ≫ₕ e` is the
-identity on the target of `e`. We discharge each via direct computation. -/
+identity on the target of `e`. We discharge each via direct computation.
+-/
 
 /-- The transition `identityChart.symm ≫ₕ identityChart` is `C^∞`. -/
 private lemma identityChart_diag_contDiffOn :
@@ -203,11 +215,13 @@ private lemma inversionChart_diag_contDiffOn :
 
 /-! ### The `IsManifold` instance -/
 
-/-- `OnePoint ℂ` (= ℂℙ¹) is a complex manifold with the two-chart
+/--
+`OnePoint ℂ` (= ℂℙ¹) is a complex manifold with the two-chart
 atlas {identityChart, inversionChart} from `OnePointCxChartedSpace`.
 
 Bottom-up content: chart transitions are `z ↦ z⁻¹` on `ℂ \ {0}`, which
-is C^∞ (in fact analytic) by `contDiffOn_inv ℂ`. -/
+is C^∞ (in fact analytic) by `contDiffOn_inv ℂ`.
+-/
 noncomputable instance : IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) (OnePoint ℂ) := by
   apply isManifold_of_contDiffOn
   intro e e' he he'

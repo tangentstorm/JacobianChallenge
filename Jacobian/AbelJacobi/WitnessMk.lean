@@ -22,8 +22,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- `witnessAbelJacobi` is the `mk`-image of the difference of
-`evalLinearMap` values. -/
+/--
+`witnessAbelJacobi` is the `mk`-image of the difference of
+`evalLinearMap` values.
+-/
 theorem witnessAbelJacobi_eq_mk_sub
     (basePoint P : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v =
@@ -31,8 +33,10 @@ theorem witnessAbelJacobi_eq_mk_sub
   unfold witnessAbelJacobi
   rw [evalJacobianClass_def, evalJacobianClass_def, ← mk_sub]
 
-/-- Witness reformulated as `mk` of the difference of two
-`evalJacobianClass` representatives. -/
+/--
+Witness reformulated as `mk` of the difference of two
+`evalJacobianClass` representatives.
+-/
 theorem witnessAbelJacobi_eq_mk_evalLinearMap_sub
     (basePoint P : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v =
@@ -49,8 +53,10 @@ theorem witnessAbelJacobi_eq_mk_neg_basePoint_add_endpoint
   congr 1
   abel
 
-/-- Witness through `mk_eq_zero_iff`: vanishes iff endpoint diff lies
-in the period subgroup. -/
+/--
+Witness through `mk_eq_zero_iff`: vanishes iff endpoint diff lies
+in the period subgroup.
+-/
 theorem witnessAbelJacobi_eq_zero_iff_endpoint_diff_mem
     (basePoint P : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v = 0 ↔

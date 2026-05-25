@@ -47,9 +47,11 @@ theorem divFinIcc_le_succ
   push_cast
   linarith
 
-/-- Reflection of a partition boundary: `σ (i/n) = (n - i)/n`. Useful
+/--
+Reflection of a partition boundary: `σ (i/n) = (n - i)/n`. Useful
 when reflecting a path partition under `Path.symm` (partition point
-`t` of `γ` corresponds to `1 - t` of `γ.symm`). -/
+`t` of `γ` corresponds to `1 - t` of `γ.symm`).
+-/
 theorem divFinIcc_symm
     (n : ℕ) (hn : 0 < n) (i : ℕ) (hi : i ≤ n) :
     σ (divFinIcc n hn i hi) = divFinIcc n hn (n - i) (Nat.sub_le n i) := by

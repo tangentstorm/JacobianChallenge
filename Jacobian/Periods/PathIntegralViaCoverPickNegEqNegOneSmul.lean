@@ -18,8 +18,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Form negation equals `(-1) •` on the integral
-(Pick / unparameterised multi-chart). -/
+/--
+Form negation equals `(-1) •` on the integral
+(Pick / unparameterised multi-chart).
+-/
 theorem pathIntegralViaCover_neg_eq_neg_one_smul
     (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b) :
     pathIntegralViaCover (-ω) γ =

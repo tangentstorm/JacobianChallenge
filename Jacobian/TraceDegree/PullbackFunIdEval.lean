@@ -32,8 +32,10 @@ theorem pullbackFormsFun_id_eq_zero_iff_evalLinearMap_eq_zero
   rw [pullbackFormsFun_id_apply_vec_eq_evalLinearMap]
 
 set_option linter.unusedSectionVars false in
-/-- Two forms have equal pullbacks along `id` (at fixed `x v`) iff their
-`evalLinearMap` values coincide. -/
+/--
+Two forms have equal pullbacks along `id` (at fixed `x v`) iff their
+`evalLinearMap` values coincide.
+-/
 theorem pullbackFormsFun_id_eq_iff_evalLinearMap_eq
     (η ζ : HolomorphicOneForm E X) (x : X) (v : E) :
     pullbackFormsFun (id : X → X) η x v =
@@ -44,8 +46,10 @@ theorem pullbackFormsFun_id_eq_iff_evalLinearMap_eq
       pullbackFormsFun_id_apply_vec_eq_evalLinearMap]
 
 set_option linter.unusedSectionVars false in
-/-- Pullback-along-id factors as `evalLinearMap` of `η` evaluated at
-`(x, v)`. -/
+/--
+Pullback-along-id factors as `evalLinearMap` of `η` evaluated at
+`(x, v)`.
+-/
 theorem pullbackFormsFun_id_factor_evalLinearMap
     (x : X) (v : E) (η : HolomorphicOneForm E X) :
     pullbackFormsFun (id : X → X) η x v = evalLinearMap x v η :=

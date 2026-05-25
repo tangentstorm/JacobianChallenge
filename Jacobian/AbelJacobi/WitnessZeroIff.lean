@@ -23,8 +23,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- Witness is zero iff the endpoint `evalLinearMap` difference is
-the `periodPairing` image of some integer 1-cycle. -/
+/--
+Witness is zero iff the endpoint `evalLinearMap` difference is
+the `periodPairing` image of some integer 1-cycle.
+-/
 theorem witnessAbelJacobi_eq_zero_iff_exists_cycle
     (basePoint P : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v = 0 ↔
@@ -33,8 +35,10 @@ theorem witnessAbelJacobi_eq_zero_iff_exists_cycle
   rw [witnessAbelJacobi_eq_zero_iff_endpoint_diff_mem,
       mem_periodSubgroup_iff]
 
-/-- Sufficient condition: if the endpoint diff equals some
-`periodPairing E X σ`, the witness vanishes. -/
+/--
+Sufficient condition: if the endpoint diff equals some
+`periodPairing E X σ`, the witness vanishes.
+-/
 theorem witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_periodPairing
     (basePoint P : X) (v : E) (σ : IntegralOneCycle X)
     (h : evalLinearMap P v - evalLinearMap basePoint v = periodPairing E X σ) :
@@ -50,8 +54,10 @@ theorem witnessAbelJacobi_eq_zero_iff_evalJacobianClass_eq
   unfold witnessAbelJacobi
   exact sub_eq_zero
 
-/-- Sufficient condition: equal endpoint Jacobian classes ⇒ witness
-vanishes. -/
+/--
+Sufficient condition: equal endpoint Jacobian classes ⇒ witness
+vanishes.
+-/
 theorem witnessAbelJacobi_eq_zero_of_evalJacobianClass_eq
     (basePoint P : X) (v : E)
     (h : evalJacobianClass (E := E) (X := X) P v =

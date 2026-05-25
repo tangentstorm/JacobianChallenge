@@ -15,8 +15,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
         (mfderiv (modelWithCornersSelf ℂ E)
                  (modelWithCornersSelf ℂ E) c.symm e) := rfl
 
-/-- Applying `chartedFormPullback` at a chart point and then at a
-tangent vector gives the explicit chain-rule formula. -/
+/--
+Applying `chartedFormPullback` at a chart point and then at a
+tangent vector gives the explicit chain-rule formula.
+-/
 @[simp] theorem chartedFormPullback_apply_apply
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     (e : E) (v : E) :

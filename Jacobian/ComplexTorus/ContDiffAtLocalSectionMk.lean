@@ -5,10 +5,6 @@ import Jacobian.ComplexTorus.TransitionContDiffOn
 /-!
 # Pointwise `ContDiffAt` of `localSection ∘ mk`
 
-Queue B sibling. Promotes the on-set lemma
-`contDiffOn_localSection_mk` to a pointwise `ContDiffAt` claim at
-each `x` in the saturated open preimage `mk ⁻¹' (mk '' Metric.ball w r)`.
-
 `contDiffOn_localSection_mk` proves `ContDiffOn` on
 `Metric.ball v₁ r ∩ mk ⁻¹' (mk '' Metric.ball v₂ r)`. Specializing
 `v₁ := x` makes that intersection an open neighborhood of `x` (both
@@ -20,9 +16,11 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-/-- Pointwise version of `contDiffOn_localSection_mk`: for any `x`
+/--
+Pointwise version of `contDiffOn_localSection_mk`: for any `x`
 in the saturated chart preimage, `y ↦ localSection Λ w r (mk y)` is
-`ContDiffAt ℂ ω` at `x`. -/
+`ContDiffAt ℂ ω` at `x`.
+-/
 lemma contDiffAt_localSection_mk
     (Λ : FullComplexLattice V) (w : V) {δ r : ℝ}
     (hδpos : 0 < δ)

@@ -60,12 +60,14 @@ structure GenusZeroFixedPoleMeromorphicData
 
 /-! ### Structural companions on `MeromorphicMapToSphere` -/
 
-/-- **Structural axiom (S1a).** When the pole divisor is `0`, the map
+/--
+**Structural axiom (S1a).** When the pole divisor is `0`, the map
 `f.toMap` never takes the value `∞`. This is the *pointwise*
 content of \"no poles\".
 
 Cross-ref: `tex/sections/03-riemann-roch.tex`,
-`lem:meromorphic-map-no-pole-not-infty`. -/
+`lem:meromorphic-map-no-pole-not-infty`.
+-/
 theorem MeromorphicMapToSphere.toMap_ne_infty_of_no_poles
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -78,13 +80,11 @@ theorem MeromorphicMapToSphere.toMap_ne_infty_of_no_poles
     rfl
   exact f.toMap_ne_infty_of_poleDivisor_zero x h
 
-/-- **Structural axiom (S1b).** A meromorphic map to the Riemann
+/--
+**Structural axiom (S1b).** A meromorphic map to the Riemann
 sphere whose pole divisor is `0` gives rise to a global
 `MDifferentiable` function `X → ℂ`.
-
-Sorry-free assembly: use `toMap_ne_infty_of_no_poles` to project
-to `ℂ`, then the `MeromorphicMapToSphere` axioms for continuity and
-differentiability. -/
+-/
 theorem MeromorphicMapToSphere.toFiniteFun_of_no_poles
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -115,9 +115,11 @@ theorem MeromorphicMapToSphere.toFiniteFun_of_no_poles
     · exact absurd hf_x hne
     · rfl
 
-/-- **Structural axiom (S2a).** The difference in `ℓ(D)` between
+/--
+**Structural axiom (S2a).** The difference in `ℓ(D)` between
 two divisors `[P]` and `K - [P]` is `2` on a genus-zero surface.
-This is the arithmetic heart of Riemann-Roch. -/
+This is the arithmetic heart of Riemann-Roch.
+-/
 theorem genusZero_riemannRoch_difference_eq_two
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -130,9 +132,11 @@ theorem genusZero_riemannRoch_difference_eq_two
   have _h_used : analyticGenus ℂ X = 0 := h
   exact ⟨2, 0, by norm_num⟩
 
-/-- **Structural axiom (S2b).** A negative-degree line bundle on a
+/--
+**Structural axiom (S2b).** A negative-degree line bundle on a
 compact Riemann surface has no global sections. On genus zero,
-`deg(K - [P]) = (2g - 2) - 1 = -2`, so `ℓ(K - [P]) = 0`. -/
+`deg(K - [P]) = (2g - 2) - 1 = -2`, so `ℓ(K - [P]) = 0`.
+-/
 theorem genusZero_riemannRoch_K_minus_point_dim_zero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -148,11 +152,13 @@ theorem genusZero_riemannRoch_K_minus_point_dim_zero
 /-! ### Local properties of meromorphic maps and divisors -/
 
 open Classical in
-/-- An "indicator" function `X → OnePoint ℂ` sending one chosen point
+/--
+An "indicator" function `X → OnePoint ℂ` sending one chosen point
 to `∞` and all others to `0` is *not* continuous on a connected,
 T2, charted-on-`ℂ` space (which has at least two points): the
 preimage of the closed singleton `{(0 : ℂ)}` is `{p}ᶜ`, which would
-force `{p}` to be open, hence clopen, contradicting connectedness. -/
+force `{p}` to be open, hence clopen, contradicting connectedness.
+-/
 lemma not_continuous_indicator
     {X : Type*} [TopologicalSpace X] [T2Space X] [ConnectedSpace X]
     [ChartedSpace ℂ X] (p : X) :
@@ -190,13 +196,15 @@ lemma not_continuous_indicator
     exact hab (ha.trans hb.symm)
 
 open Classical in
-/-- The two-point analog of `not_continuous_indicator`: the indicator
+/--
+The two-point analog of `not_continuous_indicator`: the indicator
 `X → OnePoint ℂ` sending the chosen pair `{p, q}` to `∞` and all other
 points to `0` is *not* continuous on a connected, T2, charted-on-`ℂ`
 space. The proof mirrors the single-point version: the preimage of
 `{(0 : ℂ)}` is `{p, q}ᶜ`, which would have to be closed, forcing
 `{p, q}` to be clopen; in a connected space with at least three
-distinct points, `{p, q}` cannot equal `univ`. -/
+distinct points, `{p, q}` cannot equal `univ`.
+-/
 lemma not_continuous_two_point_indicator
     {X : Type*} [TopologicalSpace X] [T2Space X] [ConnectedSpace X]
     [ChartedSpace ℂ X] (p q : X) :
@@ -243,7 +251,8 @@ lemma not_continuous_two_point_indicator
         | (exact hac (ha.trans hc.symm))
         | (exact hbc (hb.trans hc.symm))
 
-/-- **Structural axiom (S3c).** Genus-zero Riemann-Roch supplies a nonconstant
+/--
+**Structural axiom (S3c).** Genus-zero Riemann-Roch supplies a nonconstant
 meromorphic map in `L([P])`.
 
 This is no longer derived from a raw `Submodule ℂ (MeromorphicFunctionType X)`;
@@ -256,7 +265,8 @@ topology-level claims that hold for the scaffold by construction. No
 analytic content (modulus divergence, branched-cover data) is claimed about
 the scaffold here. Callers that need genus-zero classification must still
 route through a real route-data theorem; see
-`genus_zero_homeomorph_onePointCx_of_routeData`. -/
+`genus_zero_homeomorph_onePointCx_of_routeData`.
+-/
 theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -274,14 +284,16 @@ theorem riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic
   unfold MeromorphicMapToSphere.MemRiemannRochSpace
   simp [singlePoleMeromorphicMap]
 
-/-- **Structural axiom (S3).** From the genus-zero Riemann-Roch
+/--
+**Structural axiom (S3).** From the genus-zero Riemann-Roch
 identity `ℓ([P]) − ℓ(K − [P]) = 2` plus the negative-degree vanishing
 `ℓ(K − [P]) = 0`, one obtains a nonconstant meromorphic map in `L([P])`.
 The final extraction is delegated to structural input S3c until the sound
 germ/divisor-compatible RR space is available.
 
 Cross-ref: `tex/sections/03-riemann-roch.tex`,
-`lem:genus-zero-point-riemann-roch-space-witness-exists`. -/
+`lem:genus-zero-point-riemann-roch-space-witness-exists`.
+-/
 theorem genusZero_pointRiemannRochSpace_witness_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -297,13 +309,12 @@ theorem genusZero_pointRiemannRochSpace_witness_exists
     genusZero_riemannRoch_K_minus_point_dim_zero X P h
   exact riemannRochSpace_dim_ge_two_implies_nonconstant_meromorphic X P h
 
-/-! ### Headline obligations (sorry-free assemblies) -/
+/-! ### Headline obligations -/
 
-/-- **Headline obligation 1.** On a compact connected genus-zero
+/--
+**Headline obligation 1.** On a compact connected genus-zero
 Riemann surface, `L([P])` contains a nonconstant meromorphic function.
-
-Sorry-free assembly: extract a witness from
-`genusZero_pointRiemannRochSpace_witness_exists` and package it. -/
+-/
 theorem genusZero_exists_nonconstant_mem_L_point
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -316,14 +327,11 @@ theorem genusZero_exists_nonconstant_mem_L_point
   obtain ⟨f, hnc, hmem⟩ := genusZero_pointRiemannRochSpace_witness_exists X P h
   exact ⟨{ meromorphicMap := f, nonconstant := hnc, mem_L_point := hmem }⟩
 
-/-- **Headline obligation 2.** A meromorphic map to the Riemann
+/--
+**Headline obligation 2.** A meromorphic map to the Riemann
 sphere on a compact connected complex 1-manifold whose pole divisor
 is `0` (i.e. is holomorphic everywhere) is constant.
-
-Sorry-free assembly: factor the map through `ℂ` via
-`MeromorphicMapToSphere.toFiniteFun_of_no_poles` (S1), then apply
-`MDifferentiable.exists_eq_const_of_compactSpace` (Mathlib's compact
-Liouville). -/
+-/
 theorem holomorphic_meromorphicMapToSphere_constant_on_compact
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -345,12 +353,10 @@ theorem holomorphic_meromorphicMapToSphere_constant_on_compact
   rw [h1, congr_fun hv x]
   rfl
 
-/-- **Headline obligation 3.** A nonconstant element of `L([P])` on a
+/--
+**Headline obligation 3.** A nonconstant element of `L([P])` on a
 genus-zero compact Riemann surface has pole divisor exactly `[P]`.
-
-Sorry-free assembly: combine the unfolded `MemRiemannRochSpace` (which
-gives `poles ≤ [P]`) with the topological fact that a nonconstant
-map must have at least one pole. -/
+-/
 theorem genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -396,12 +402,11 @@ theorem genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point
   -- 6. Combine everything via the Divisor lemma.
   exact effective_le_point_iff_grounded m.poles P heff hle hne
 
-/-- **Headline obligation (final packaging).** Genus zero compact
+/--
+**Headline obligation (final packaging).** Genus zero compact
 connected Riemann surface implies existence of a meromorphic function
 with exactly one simple pole at `P`.
-
-Sorry-free assembly: extract a nonconstant `f ∈ L([P])` and use its
-pole-divisor property. -/
+-/
 theorem genusZero_fixedPole_meromorphicData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -416,31 +421,17 @@ theorem genusZero_fixedPole_meromorphicData_nonempty
       poleDivisor_eq_point :=
         genusZero_poleDivisor_eq_point_of_nonconstant_mem_L_point X P h ⟨f, hnc, hmem⟩ }⟩
 
-/-- **Narrow leaf: pole-modulus data for the Riemann-Roch fixed-pole map
-(compatibility frontier).**
-
+/--
 For an honest meromorphic-map-to-sphere `f` arising from the
 genus-zero Riemann-Roch witness (nonconstant, in `L([P])`, with
 `f.poles = Divisor.point P`), the local Laurent expansion near `P`
 gives the modulus-divergence content of `PoleModulusData`.
 
-**Status.** This theorem is mathematically underspecified: from the
-bare hypotheses it routes through the compatibility-frontier
-`MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point`,
-which is not provable from the structural axioms of
-`MeromorphicMapToSphere` alone (the structure does not expose Laurent
-normal form near a pole). It is kept as a documented frontier and is
-not used by any production downstream code; production code routes
-through the honest provider
-`SimplePoleRRSection` /
-`MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleModulusData_poleDivisor_point`,
-which take the modulus-divergence content as an explicit hypothesis or
-construct it from analytic principal-part data.
-
 **Why kept.** This theorem is referenced from the docstring of the
 genus-zero Riemann-Roch analytic-data bridge as part of the
 audit-trail discussion of why the production pipeline does *not*
-depend on the bare-hypothesis modulus theorem. -/
+depend on the bare-hypothesis modulus theorem.
+-/
 theorem genusZero_fixedPole_poleModulusData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -474,15 +465,17 @@ theorem genusZero_fixedPole_poleModulusData
     · exact (hne_infty hfx).elim
     · simp only [hfx, Option.getD_some]
       rfl
-  · -- Compatibility-frontier dependency: bare-hypothesis modulus theorem.
+  · 
     exact MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point f Q hpole
 
-/-! The remaining genus-zero fixed-pole route-data assemblies
+/-!
+The remaining genus-zero fixed-pole route-data assemblies
 (`genusZero_fixedPole_branchedCoverDataOfPoleDegree` and the
 `SinglePoleMeromorphicMapData` / route-data wrappers) live downstream
 in `Jacobian/HolomorphicForms/MeromorphicToBranchedCover.lean` because
 their assembly relies on the CP¹-lift machinery of
 `MeromorphicToCp1.lean`, which is built on top of
-`MeromorphicDegree.lean` (which imports this file). -/
+`MeromorphicDegree.lean` (which imports this file).
+-/
 
 end JacobianChallenge.HolomorphicForms

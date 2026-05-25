@@ -4,8 +4,6 @@ import Jacobian.ComplexTorus.Defs
 /-!
 # Injectivity of the quotient projection
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 The quotient projection `mk V Λ` is injective exactly when the lattice
 is trivial. This is a useful corner case that future code may need.
 -/

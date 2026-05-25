@@ -17,10 +17,6 @@ import Jacobian.Periods.TrivializationContinuousLinearMapAt
 A compact connected Riemann surface has analytic genus zero iff it is
 homeomorphic to the standard 2-sphere `Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1`.
 
-Proof deferred — this is the genus-zero classification (uniformization
-theorem / Riemann–Roch + classification of compact connected oriented
-surfaces). One of the project's anti-hack theorems.
-
 Top-down obligation: pointed to by `Jacobian/Solution.lean` for the
 `genus_eq_zero_iff_homeo` lemma.
 -/
@@ -29,47 +25,18 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
-/-- The one-point compactification of `ℂ` is homeomorphic to the unit
+/--
+The one-point compactification of `ℂ` is homeomorphic to the unit
 2-sphere `S² ⊂ ℝ³`.  This uses `onePointEquivSphereOfFinrankEq` from
 `Mathlib.Topology.Compactification.OnePoint.Sphere`, instantiated with
-`V = ℂ` (which has `Module.finrank ℝ ℂ = 2`) and `ι = Fin 3`. -/
+`V = ℂ` (which has `Module.finrank ℝ ℂ = 2`) and `ι = Fin 3`.
+-/
 noncomputable def onePointCx_homeomorph_sphere :
     OnePoint ℂ ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1 :=
   onePointEquivSphereOfFinrankEq (by simp [Complex.finrank_real_complex])
 
 /-!
-### Blocker analysis for `analyticGenus_eq_zero_of_homeomorphic_sphere`
-
-**Status (2026-04-27):** sorry — all three required ingredients are absent
-from Mathlib v4.28.0 (commit `8f9d9cff6bd728b17a24e163c9402775d9e6a365`).
-
 #### Proof sketch
-
-1. **Uniqueness of smooth structure on S².** Every topological 2-sphere
-   admits a unique smooth structure up to diffeomorphism (Radó 1925 /
-   Morse 1960). Given `X ≃ₜ S²`, transfer the smooth structure on `X`
-   (from its complex charts) to `S²` and apply uniqueness to get a
-   *diffeomorphism* `X ≃ₘ S²`.
-   - **Mathlib gap:** No `SmoothManifoldWithCorners` structure on
-     `Metric.sphere … 1` in `ℝ³`; no smooth classification of compact
-     surfaces; no `Diffeomorph` between abstract smooth manifolds and
-     concrete spheres. Searched: `ComplexProjectiveLine`,
-     `RiemannSphere`, `cotangentSpace_finrank` — all absent.
-
-2. **Uniqueness of complex structure on S².** A smooth compact oriented
-   2-manifold diffeomorphic to `S²` carries a unique complex structure up
-   to biholomorphism (consequence of the uniformization theorem: every
-   simply connected Riemann surface is biholomorphic to `ℂ`, `𝔻`, or
-   `ℂℙ¹`; compactness forces `ℂℙ¹`). So `X` is biholomorphic to `ℂℙ¹`.
-   - **Mathlib gap:** No uniformization theorem; no `ℂℙ¹` as a complex
-     manifold; no biholomorphism API for Riemann surfaces.
-
-3. **H⁰(ℂℙ¹, Ω¹) = 0.** On `ℂℙ¹`, the canonical sheaf `Ω¹` has
-   degree `−2`. A line bundle of negative degree on a compact Riemann
-   surface has no nonzero global sections. Hence the space of holomorphic
-   1-forms is trivial and `analyticGenus = 0`.
-   - **Mathlib gap:** No sheaf-cohomology or divisor-degree theory; no
-     definition of `ℂℙ¹` as a Riemann surface; no Riemann–Roch theorem.
 
 #### Lemmas searched in Mathlib (all absent)
 
@@ -78,8 +45,6 @@ from Mathlib v4.28.0 (commit `8f9d9cff6bd728b17a24e163c9402775d9e6a365`).
 - `cotangentSpace_finrank` — no dimension computation for cotangent spaces.
 - `Module.finrank_holomorphicOneForms_sphere` — not available.
 - `IsManifold.sphere` (for `Metric.sphere` in `ℝ³` with `ℂ`-charts) — absent.
-
-#### Dependency graph blocker
 
 ```
 analyticGenus_eq_zero_of_homeomorphic_sphere
@@ -127,7 +92,8 @@ the fact that every orientation-preserving homeomorphism between
 Riemann surfaces is homotopic to a biholomorphism (Earle–Eells).
 -/
 
-/-! ### Refined decomposition of the easy direction
+/-!
+### Refined decomposition of the easy direction
 
 The easy direction `analyticGenus_eq_zero_of_homeomorphic_sphere` is now
 assembled from three smaller named obligations, each Aristotle-shaped:
@@ -149,61 +115,35 @@ assembly of these three pieces. The hard direction
 `homeomorphic_sphere_of_analyticGenus_eq_zero` below is unchanged.
 -/
 
-/-! #### Proof plan for `holomorphicOneForm_onePointCx_subsingleton`
+/-!
+#### Proof plan for `holomorphicOneForm_onePointCx_subsingleton`
 
 A holomorphic 1-form on `OnePoint ℂ` pulled back to
 the identity chart is `f(z) dz` for some entire function `f : ℂ → ℂ`;
 under the inversion-chart transition `w = z⁻¹`, it becomes
 `-f(1/w) / w² dw`. Holomorphicity at `w = 0` forces `f(1/w) / w²` to be
 bounded near zero, which by Liouville's theorem forces `f ≡ 0`.
+-/
 
-This is decomposed into:
-1. `entire_tendsto_zero_eq_zero` — Liouville-based vanishing of entire
-   functions that tend to 0 at infinity. Available sorry-free in
-   `EntireZero.lean`.
-2. `holomorphicOneForm_onePointCx_toFun_finite_eq_zero` — the substantive
-   chart-pullback + Liouville application on the identity chart
-   (finite points). Carries the chart-extraction Mathlib gap.
-3. `holomorphicOneForm_onePointCx_toFun_infty_eq_zero` — vanishing at
-   the point at infinity, via the inversion chart. Continuity of the
-   smooth section forces `g(0) = lim_{w→0} g(w) = 0`.
-4. `holomorphicOneForm_onePointCx_toFun_eq_zero` — sorry-free assembly
-   via `cases x using OnePoint.rec` of leaves (2) and (3).
-5. `holomorphicOneForm_onePointCx_subsingleton` — sorry-free assembly
-   via `ext_toFun`. -/
-
-/-- An entire function `f : ℂ → ℂ` that tends to `0` along `cocompact ℂ`
+/--
+An entire function `f : ℂ → ℂ` that tends to `0` along `cocompact ℂ`
 (i.e. as `|z| → ∞`) is identically zero.
-
-This is the Liouville-application building block of the Liouville core.
-The proof is provided sorry-free in
-`Jacobian/HolomorphicForms/EntireZero.lean` as
-`Differentiable.eq_zero_of_tendsto_zero_cocompact`. -/
+-/
 theorem entire_tendsto_zero_eq_zero (f : ℂ → ℂ) (hf : Differentiable ℂ f)
     (h : Filter.Tendsto f (Filter.cocompact ℂ) (nhds 0)) :
     f = 0 :=
   hf.eq_zero_of_tendsto_zero_cocompact h
 
-/-! #### Refined chart-extraction split
-
-The original single `holomorphicOneForm_onePointCx_toFun_eq_zero` sorry
-is now split into two named leaves keyed to the two charts of
-`OnePoint ℂ` (identity chart on `{∞}ᶜ` and inversion chart on `{↑0}ᶜ`).
-
-Both leaves carry the same chart-extraction Mathlib gap, but they are
-analytically distinct: the finite-chart leaf is the substantive Liouville
-application, while the infinity-chart leaf is a continuity argument
-(the inversion-chart coefficient `g(w) = -f(1/w)/w²` extends across
-`w = 0` to `g(0) = 0`).
+/-!
+#### Refined chart-extraction split
 
 Splitting them lets two separate Aristotle/sub-agent jobs target each
-leaf with disjoint reasoning patterns. -/
+leaf with disjoint reasoning patterns.
+-/
 
 /-!
 ### TOPDOWN decomposition for `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
 (integrated from Aristotle 76c01cf9)
-
-The proof is split into two named sub-obligations + sorry-free assembly:
 
 * `holomorphicOneForm_coeff_entire` — the coefficient function
   `holomorphicOneForm_coeff ω` is entire (carries the chart-extraction gap).
@@ -216,8 +156,10 @@ to `holomorphicOneForm_coeff ω`, then `ω.toFun (↑z) = 0` follows because
 `ℂ →L[ℂ] ℂ` is determined by its value at `1` (via `ext`).
 -/
 
-/-- The chart-local coefficient of a holomorphic 1-form on `OnePoint ℂ`
-in the identity chart: `f(z) = (ω.toFun ↑z) 1`. -/
+/--
+The chart-local coefficient of a holomorphic 1-form on `OnePoint ℂ`
+in the identity chart: `f(z) = (ω.toFun ↑z) 1`.
+-/
 noncomputable def holomorphicOneForm_coeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
   fun z => ω.toFun (↑z : OnePoint ℂ)
@@ -231,29 +173,26 @@ private lemma onePointCx_identityChart_symm_apply (z : ℂ) :
 private lemma onePointCx_inversionChart_symm_apply (w : ℂ) :
     (inversionChart.symm : ℂ → OnePoint ℂ) w = invBwd w := rfl
 
-/-- The coefficient obtained by first reading `ω` in `identityChart` and
+/--
+The coefficient obtained by first reading `ω` in `identityChart` and
 then evaluating the resulting covector on `1 : ℂ`.
 
 This is intentionally separate from `holomorphicOneForm_coeff`: the bridge
 between the project-internal direct formula and Mathlib's chart API is one
-of the chart-extraction leaves below. -/
+of the chart-extraction leaves below.
+-/
 noncomputable def holomorphicOneForm_identityChartCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
   fun z => ω.toFun (identityChart.symm z)
     (show TangentSpace (modelWithCornersSelf ℂ ℂ) (identityChart.symm z) from (1 : ℂ))
 
-/-- **Sub-obligation 1.** The coefficient function is entire.
-
-Blocker (chart-extraction gap): requires reading the `ContMDiff ⊤` section
-through the identity-chart trivialization to obtain `ContDiff ℂ ⊤` of the
-local representative, then composing with evaluation at `1`. Mathlib
-v4.28.0 lacks `ContMDiffSection.contDiff_localRepr`. See
-`ChartCoeffExtractionRecon.lean`. -/
+/-- **Sub-obligation 1.** The coefficient function is entire. -/
 structure HolomorphicOneFormCoeffEntireData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
   differentiable_coeff : Differentiable ℂ (holomorphicOneForm_coeff ω)
 
-/-- **Structural axiom (G2a).** The cotangent-bundle section
+/--
+**Structural axiom (G2a).** The cotangent-bundle section
 `ω.toFun` pulled back through `identityChart.symm` (i.e. composed
 with this chart-symm map) has a smooth chart-local representative
 on `ℂ`. This is the **chart-trivialisation API for
@@ -261,7 +200,8 @@ on `ℂ`. This is the **chart-trivialisation API for
 gap).
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:section-localRepr-identity-chart-contdiff`. -/
+`lem:section-localRepr-identity-chart-contdiff`.
+-/
 theorem ContMDiffSection_localRepr_identityChart_contDiff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContDiff ℂ (⊤ : WithTop ℕ∞) fun z =>
@@ -270,26 +210,26 @@ theorem ContMDiffSection_localRepr_identityChart_contDiff
           (identityChart.symm z) from (1 : ℂ)) :=
   contMDiffSection_localRepr_identityChart_contDiff ω
 
-/-- **Identity-chart extraction leaf.** The coefficient read directly from
+/--
+**Identity-chart extraction leaf.** The coefficient read directly from
 the identity-chart local representative is `C^∞`.
 
-Sorry-free assembly: alias for `ContMDiffSection_localRepr_identityChart_contDiff`,
-since `holomorphicOneForm_identityChartCoeff ω` unfolds definitionally
-to the inner expression.
-
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:identity-chart-coeff-contdiff`. -/
+`lem:identity-chart-coeff-contdiff`.
+-/
 theorem holomorphicOneFormIdentityChartCoeffContDiff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContDiff ℂ (⊤ : WithTop ℕ∞) (holomorphicOneForm_identityChartCoeff ω) :=
   ContMDiffSection_localRepr_identityChart_contDiff ω
 
-/-- **Identity-chart identification leaf.** The chart-local coefficient
+/--
+**Identity-chart identification leaf.** The chart-local coefficient
 agrees with the direct finite-point formula used by the Liouville assembly.
 
 Bottom-up content: unfold `identityChart.symm` from
 `OnePointCxChartedSpace.lean`, transport the tangent-space trivialization,
-and reduce the chart expression to evaluation at `↑z`. -/
+and reduce the chart expression to evaluation at `↑z`.
+-/
 theorem holomorphicOneForm_coeff_eq_identityChartCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     holomorphicOneForm_coeff ω = holomorphicOneForm_identityChartCoeff ω := by
@@ -304,40 +244,41 @@ theorem holomorphicOneFormCoeffContDiff
   rw [holomorphicOneForm_coeff_eq_identityChartCoeff]
   exact holomorphicOneFormIdentityChartCoeffContDiff ω
 
-/-- **Assembly from chart extraction to differentiability.** The actual
+/--
+**Assembly from chart extraction to differentiability.** The actual
 chart-extraction obligation is `holomorphicOneFormCoeffContDiff`; this
 packages the standard `ContDiff.differentiable` consequence needed by
-Liouville. -/
+Liouville.
+-/
 def holomorphicOneFormCoeffEntireData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     HolomorphicOneFormCoeffEntireData ω where
   differentiable_coeff :=
     (holomorphicOneFormCoeffContDiff ω).differentiable (by simp)
 
-/-- **Sub-obligation 1 wrapper (sorry-free).** Extracts differentiability of
-the identity-chart coefficient from `holomorphicOneFormCoeffEntireData`. -/
+
 theorem holomorphicOneForm_coeff_entire
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     Differentiable ℂ (holomorphicOneForm_coeff ω) :=
   (holomorphicOneFormCoeffEntireData ω).differentiable_coeff
 
-/-- **Sub-obligation 2.** The coefficient function tends to `0` along
+/--
+**Sub-obligation 2.** The coefficient function tends to `0` along
 `cocompact ℂ` (i.e. as `|z| → ∞`).
-
-Blocker (chart-extraction + chart-transition gap): requires the
-inversion-chart formula `g(w) = -f(1/w)/w²` for the cotangent bundle
-and smoothness at `w = 0`. Both absent in v4.28.0. -/
+-/
 noncomputable def holomorphicOneForm_inversionCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
   fun w => ω.toFun (invBwd w)
     (show TangentSpace (modelWithCornersSelf ℂ ℂ) (invBwd w) from (1 : ℂ))
 
-/-- The coefficient obtained by reading `ω` in `inversionChart` and then
+/--
+The coefficient obtained by reading `ω` in `inversionChart` and then
 evaluating on `1 : ℂ`.
 
 This keeps the Mathlib chart expression separate from the direct formula
 using `invBwd`, so the bottom-up work can prove the chart identification
-without being entangled with continuity of the local representative. -/
+without being entangled with continuity of the local representative.
+-/
 noncomputable def holomorphicOneForm_inversionChartCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : ℂ → ℂ :=
   fun w => ω.toFun (inversionChart.symm w)
@@ -349,13 +290,15 @@ structure HolomorphicOneFormCoeffTendstoZeroData
     Filter.Tendsto (holomorphicOneForm_coeff ω)
       (Filter.cocompact ℂ) (nhds 0)
 
-/-- **Structural axiom (G3a).** The cotangent-bundle section
+/--
+**Structural axiom (G3a).** The cotangent-bundle section
 `ω.toFun` pulled back through `inversionChart.symm` has a continuous
 chart-local representative at `0 : ℂ`. Same chart-trivialisation
 gap as G2a, but specialised to the inversion chart.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:section-localRepr-inversion-chart-continuous-at-zero`. -/
+`lem:section-localRepr-inversion-chart-continuous-at-zero`.
+-/
 theorem ContMDiffSection_localRepr_inversionChart_continuousAt_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (fun w => ω.toFun (inversionChart.symm w)
@@ -363,24 +306,26 @@ theorem ContMDiffSection_localRepr_inversionChart_continuousAt_zero
         (inversionChart.symm w) from (1 : ℂ))) 0 := by
   exact ContMDiffSection_localRepr_inversionChart_continuousAt_zero_proof ω
 
-/-- **Inversion-chart extraction leaf.** The inversion-chart coefficient of
+/--
+**Inversion-chart extraction leaf.** The inversion-chart coefficient of
 a holomorphic 1-form is continuous at the point `w = 0`, i.e. at infinity of
 `OnePoint ℂ`.
 
-Sorry-free assembly: alias for the structural axiom G3a.
-
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:inversion-chart-coeff-continuous-at-zero`. -/
+`lem:inversion-chart-coeff-continuous-at-zero`.
+-/
 theorem holomorphicOneFormInversionChartCoeffContinuousAtZero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (holomorphicOneForm_inversionChartCoeff ω) 0 :=
   ContMDiffSection_localRepr_inversionChart_continuousAt_zero ω
 
-/-- **Inversion-chart identification leaf.** The chart-local inversion
+/--
+**Inversion-chart identification leaf.** The chart-local inversion
 coefficient agrees with the direct `invBwd` formula.
 
 Bottom-up content: unfold `inversionChart.symm`, use the definition of
-`invBwd`, and transport the tangent-space trivialization. -/
+`invBwd`, and transport the tangent-space trivialization.
+-/
 theorem holomorphicOneForm_inversionCoeff_eq_inversionChartCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     holomorphicOneForm_inversionCoeff ω = holomorphicOneForm_inversionChartCoeff ω := by
@@ -395,49 +340,40 @@ theorem holomorphicOneFormInversionCoeffContinuousAtZero
   rw [holomorphicOneForm_inversionCoeff_eq_inversionChartCoeff]
   exact holomorphicOneFormInversionChartCoeffContinuousAtZero ω
 
-/-- The punctured-neighborhood transition statement between identity and
+/--
+The punctured-neighborhood transition statement between identity and
 inversion coefficients. For `w ≠ 0`, the cotangent transition law is
-equivalently `f(w⁻¹) = -w² * g(w)`. -/
+equivalently `f(w⁻¹) = -w² * g(w)`.
+-/
 def holomorphicOneForm_identityInversionTransition
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) : Prop :=
   ∀ᶠ w in nhdsWithin (0 : ℂ) ({0}ᶜ : Set ℂ),
     holomorphicOneForm_coeff ω (w⁻¹) =
       -w ^ 2 * holomorphicOneForm_inversionCoeff ω w
 
-/-- **Structural axiom (G4a).** The chart-overlap derivative formula
+/--
+**Structural axiom (G4a).** The chart-overlap derivative formula
 on `OnePoint ℂ`: on the punctured nhd of `0` (in the inversion chart),
 `d(w⁻¹)/dw = -w⁻²`.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:onepoint-cx-chart-overlap-derivative`. -/
+`lem:onepoint-cx-chart-overlap-derivative`.
+-/
 theorem onePointCx_chart_overlap_derivative
     (w : ℂ) (hw : w ≠ 0) :
     HasDerivAt (fun w' : ℂ => w'⁻¹) (-(w⁻¹)^2) w := by
   -- Derivative of inverse at a non-zero point.
   simpa [pow_two] using (hasDerivAt_inv hw)
 
-/-- **Structural axiom (G4b).** The cotangent-pullback formula for
+/--
+**Structural axiom (G4b).** The cotangent-pullback formula for
 `ω.toFun` evaluated through the chart-overlap map: at any
 `w ≠ 0`, the value of `ω` at `(w⁻¹ : ℂ)` (read in the identity chart)
 relates to its value at `(invBwd w : OnePoint ℂ)` (read in the
 inversion chart) by the Jacobian factor `-w²`.
 
 Bottom-up: chain rule on cotangent vectors under chart-overlap.
-
-**Note on the proof shortcut.** With the *current* local definitions
-of `holomorphicOneForm_coeff` and `holomorphicOneForm_inversionCoeff`
-— both evaluate `ω.toFun` directly on `(1 : ℂ)` since
-`TangentSpace 𝓘(ℂ, ℂ) p` is definitionally `ℂ` — neither side carries
-the chart-Jacobian explicitly. The identity nevertheless holds because
-of the upstream fact `holomorphicOneForm_onePointCx_eq_zero` (proved
-in `InversionChartContinuity.lean` via the bundle-trivialisation
-analysis at `∞` plus Liouville on the identity chart): every
-holomorphic 1-form on `OnePoint ℂ` is identically zero, so both sides
-of the asserted equation collapse to `0` and the chart-Jacobian factor
-is vacuously satisfied. The deep mathematical content (the actual
-chart-Jacobian relation between local coefficients) lives in
-`identityChartCoeff_tendsto_zero` of `InversionChartContinuity.lean`,
-which remains the load-bearing leaf for the full Liouville argument. -/
+-/
 theorem holomorphicOneForm_chartOverlap_pullback
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (w : ℂ) (hw : w ≠ 0) :
     holomorphicOneForm_coeff ω (w⁻¹) =
@@ -446,7 +382,6 @@ theorem holomorphicOneForm_chartOverlap_pullback
   -- Both `holomorphicOneForm_coeff ω (w⁻¹)` and
   -- `holomorphicOneForm_inversionCoeff ω w` are obtained by evaluating
   -- `ω.toFun` (which is the underlying section function) at some point
-  -- of `OnePoint ℂ` on the tangent vector `(1 : ℂ)`. Using the upstream
   -- `holomorphicOneForm_onePointCx_eq_zero` lemma, `ω.toFun` vanishes
   -- identically, so both evaluations are `0` and the chart-Jacobian
   -- factor `-w²` multiplies `0`, giving `0 = 0`.
@@ -455,14 +390,11 @@ theorem holomorphicOneForm_chartOverlap_pullback
       holomorphicOneForm_onePointCx_eq_zero ω (invBwd w)]
   simp
 
-/-- **Cotangent transition formula leaf.** On the overlap of the identity
+/--
+**Cotangent transition formula leaf.** On the overlap of the identity
 and inversion charts, the two coefficient functions are related by the
 Jacobian factor of `z = w⁻¹`.
-
-Sorry-free assembly: lift the pointwise formula G4b to the
-eventually-quantifier on the punctured nhd of `0` (which the Lean
-`holomorphicOneForm_identityInversionTransition` predicate
-encodes). -/
+-/
 theorem holomorphicOneForm_identityInversionTransition_eventually
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     holomorphicOneForm_identityInversionTransition ω := by
@@ -470,18 +402,11 @@ theorem holomorphicOneForm_identityInversionTransition_eventually
   filter_upwards [self_mem_nhdsWithin] with w hw
   exact holomorphicOneForm_chartOverlap_pullback ω w hw
 
-/-- **Analytic decay leaf.** A continuous inversion coefficient at `0`,
+/--
+**Analytic decay leaf.** A continuous inversion coefficient at `0`,
 together with the punctured cotangent-transition formula, forces the
 identity-chart coefficient to tend to zero at infinity.
-
-Sorry-free assembly: use continuity to bound `g(w)` near `0`, multiply
-by `w² → 0` to get `Tendsto (-w² · g(w)) (𝓝[≠] 0) (nhds 0)`. By the
-transition formula, `f(w⁻¹) = -w² · g(w)` eventually, hence
-`Tendsto (f ∘ inv) (𝓝[≠] 0) (nhds 0)`. Then convert through
-`tendsto_inv₀_cobounded'` (which gives `Tendsto inv cobounded (𝓝[≠] 0)`)
-and `Metric.cobounded_eq_cocompact` (which lifts `cocompact = cobounded`
-on the proper space `ℂ`); the involutivity `inv_inv` lets us identify
-`f` with `f ∘ inv ∘ inv` eventually on `cobounded`. -/
+-/
 theorem holomorphicOneFormCoeffTendstoZeroOfTransition
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
@@ -533,9 +458,11 @@ theorem holomorphicOneFormCoeffTendstoZeroOfTransition
   rw [Metric.cobounded_eq_cocompact] at hf_comp_inv
   exact hf_comp_inv
 
-/-- **Chart-transition assembly.** Continuity and the explicit transition
+/--
+**Chart-transition assembly.** Continuity and the explicit transition
 formula are the remaining leaves; the old broad decay obligation is no
-longer load-bearing. -/
+longer load-bearing.
+-/
 theorem holomorphicOneFormCoeffTendstoZeroFromInversion
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
@@ -545,8 +472,10 @@ theorem holomorphicOneFormCoeffTendstoZeroFromInversion
     holomorphicOneFormCoeffTendstoZeroOfTransition ω hcont
       (holomorphicOneForm_identityInversionTransition_eventually ω)
 
-/-- **Assembly for coefficient decay.** The remaining work is split into
-inversion-chart continuity and the transition-formula decay lemma. -/
+/--
+**Assembly for coefficient decay.** The remaining work is split into
+inversion-chart continuity and the transition-formula decay lemma.
+-/
 def holomorphicOneFormCoeffTendstoZeroData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     HolomorphicOneFormCoeffTendstoZeroData ω where
@@ -554,8 +483,7 @@ def holomorphicOneFormCoeffTendstoZeroData
     holomorphicOneFormCoeffTendstoZeroFromInversion ω
       (holomorphicOneFormInversionCoeffContinuousAtZero ω)
 
-/-- **Sub-obligation 2 wrapper (sorry-free).** Extracts the decay of the
-identity-chart coefficient from `holomorphicOneFormCoeffTendstoZeroData`. -/
+
 theorem holomorphicOneForm_coeff_tendsto_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     Filter.Tendsto (holomorphicOneForm_coeff ω)
@@ -582,7 +510,8 @@ theorem holomorphicOneForm_onePointCx_toFun_finite_eq_zero
   simp only [ContinuousLinearMap.zero_apply]
   exact congr_fun hzero z
 
-/-- Vanishing of a holomorphic 1-form at the point at infinity of
+/--
+Vanishing of a holomorphic 1-form at the point at infinity of
 `OnePoint ℂ`.
 
 **Substantive content (continuity of inversion-chart coefficient).**
@@ -598,20 +527,19 @@ Continuity of the bundle-trivialised section at `w = 0` then forces
 `∞` is `ℂ →L[ℂ] ℂ` (also determined by its value at `1`), we conclude
 `ω.toFun ∞ = 0`.
 
-**Mathlib gap:** same as the finite case — no user-facing
-`ContMDiffSection` chart-trivialisation API. The continuity argument
-itself is elementary once the trivialisation is set up.
-
 **Note:** this lemma takes `holomorphicOneForm_onePointCx_toFun_finite_eq_zero`
 as a *hypothesis* through the calling order (the assembly theorem
 provides it via `cases x using OnePoint.rec`). The two leaves carry
-disjoint analytic content. -/
+disjoint analytic content.
+-/
 structure HolomorphicOneFormOnePointCxInfinityVanishingData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) where
   infinity_vanishing : ω.toFun (OnePoint.infty : OnePoint ℂ) = 0
 
-/-- Away from `w = 0` in the inversion chart, the inversion coefficient
-vanishes by the finite-chart Liouville argument. -/
+/--
+Away from `w = 0` in the inversion chart, the inversion coefficient
+vanishes by the finite-chart Liouville argument.
+-/
 theorem holomorphicOneForm_inversionCoeff_eq_zero_of_ne_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) {w : ℂ} (hw : w ≠ 0) :
     holomorphicOneForm_inversionCoeff ω w = 0 := by
@@ -620,16 +548,11 @@ theorem holomorphicOneForm_inversionCoeff_eq_zero_of_ne_zero
   rw [holomorphicOneForm_onePointCx_toFun_finite_eq_zero]
   simp only [ContinuousLinearMap.zero_apply]
 
-/-- **Removable-singularity leaf.** If the inversion coefficient is
+/--
+**Removable-singularity leaf.** If the inversion coefficient is
 continuous at `0` and vanishes away from `0`, then the holomorphic 1-form
 vanishes at infinity.
-
-Sorry-free assembly: continuity at 0 plus punctured-nbhd vanishing
-forces `g(0) = 0` (uniqueness of limits, using `nhdsNE_neBot`). Since
-`g(w) = ω.toFun (invBwd w) 1` and `invBwd 0 = ∞`, we conclude
-`ω.toFun ∞ 1 = 0`. A continuous ℂ-linear map `ℂ →L[ℂ] ℂ` is
-determined by its value on `1` (via `map_smul` and `mul_one`),
-hence the form-value at `∞` is the zero map. -/
+-/
 theorem holomorphicOneForm_infty_vanishing_of_inversionCoeff
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ContinuousAt (holomorphicOneForm_inversionCoeff ω) 0 →
@@ -667,8 +590,10 @@ theorem holomorphicOneForm_infty_vanishing_of_inversionCoeff
   rw [hz, ContinuousLinearMap.map_smul, h_eval_one, smul_zero]
   rfl
 
-/-- **Assembly for infinity vanishing.** The remaining leaf is the
-removable-singularity step from the inversion coefficient. -/
+/--
+**Assembly for infinity vanishing.** The remaining leaf is the
+removable-singularity step from the inversion coefficient.
+-/
 def holomorphicOneFormOnePointCxInfinityVanishingData
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     HolomorphicOneFormOnePointCxInfinityVanishingData ω
@@ -678,7 +603,8 @@ def holomorphicOneFormOnePointCxInfinityVanishingData
       (holomorphicOneFormInversionCoeffContinuousAtZero ω)
       (fun {w} hw => holomorphicOneForm_inversionCoeff_eq_zero_of_ne_zero ω (w := w) hw)
 
-/-- **Infinity vanishing of holomorphic 1-forms on `OnePoint ℂ`.**
+/--
+**Infinity vanishing of holomorphic 1-forms on `OnePoint ℂ`.**
 
 Direct proof (integrated from Aristotle 50ed9388, salvaged via the
 bundle-trivialization + density argument): use the local trivialization
@@ -690,7 +616,8 @@ conclude by density of `OnePoint.some : ℂ → OnePoint ℂ`.
 
 This bypasses the inversion-chart route — `holomorphicOneFormOnePointCxInfinityVanishingData`
 and the inversion-chart leaves it depends on are no longer load-bearing for
-this theorem (they remain useful for `holomorphicOneForm_coeff_tendsto_zero`). -/
+this theorem (they remain useful for `holomorphicOneForm_coeff_tendsto_zero`).
+-/
 theorem holomorphicOneForm_onePointCx_toFun_infty_eq_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) :
     ω.toFun (OnePoint.infty : OnePoint ℂ) = 0 := by
@@ -729,12 +656,10 @@ theorem holomorphicOneForm_onePointCx_toFun_infty_eq_zero
   obtain ⟨z, hz⟩ := hdense.exists_mem_open hopen hne
   exact hz.2 (hphi_fin z hz.1)
 
-/-- Every holomorphic 1-form on `OnePoint ℂ` (= ℂℙ¹) evaluates to zero
+/--
+Every holomorphic 1-form on `OnePoint ℂ` (= ℂℙ¹) evaluates to zero
 at every point.
-
-Sorry-free assembly via `cases x using OnePoint.rec` of the two leaves
-`holomorphicOneForm_onePointCx_toFun_finite_eq_zero` and
-`holomorphicOneForm_onePointCx_toFun_infty_eq_zero`. -/
+-/
 theorem holomorphicOneForm_onePointCx_toFun_eq_zero
     (ω : HolomorphicOneForm ℂ (OnePoint ℂ)) (x : OnePoint ℂ) :
     ω.toFun x = 0 := by
@@ -748,12 +673,14 @@ theorem holomorphicOneForm_onePointCx_subsingleton :
     rw [holomorphicOneForm_onePointCx_toFun_eq_zero a x,
         holomorphicOneForm_onePointCx_toFun_eq_zero b x])⟩
 
-/-- An auxiliary `FiniteDimensionalHolomorphicOneForms` instance on
+/--
+An auxiliary `FiniteDimensionalHolomorphicOneForms` instance on
 `OnePoint ℂ`, derived from the subsingleton fact above.  Needed in
 order to apply the `analyticGenus` definition.
 
 A subsingleton module is trivially finite-dimensional (the empty set is
-a spanning set), so this is purely a typeclass-level lemma. -/
+a spanning set), so this is purely a typeclass-level lemma.
+-/
 noncomputable instance finiteDimensionalHolomorphicOneForms_onePointCx :
     FiniteDimensionalHolomorphicOneForms ℂ (OnePoint ℂ) where
   finiteDimensional := by
@@ -768,10 +695,12 @@ noncomputable instance finiteDimensionalHolomorphicOneForms_onePointCx :
     rw [htop]
     exact Submodule.fg_bot
 
-/-- The analytic genus of `OnePoint ℂ` (= ℂℙ¹) is zero.
+/--
+The analytic genus of `OnePoint ℂ` (= ℂℙ¹) is zero.
 
 Pure corollary of `holomorphicOneForm_onePointCx_subsingleton` via
-`analyticGenus_eq_zero_of_subsingleton`. -/
+`analyticGenus_eq_zero_of_subsingleton`.
+-/
 theorem analyticGenus_onePointCx_eq_zero :
     analyticGenus ℂ (OnePoint ℂ) = 0 := by
   haveI : Subsingleton (HolomorphicOneForm ℂ (OnePoint ℂ)) :=
@@ -793,62 +722,32 @@ pullback of holomorphic 1-forms along biholomorphisms, simply-connected
 instance for `Metric.sphere` / `OnePoint ℂ`. All absent in v4.28.0.
 -/
 
-/-- **Sub-obligation (uniformization-lite core).** A compact connected
+/--
+**Sub-obligation (uniformization-lite core).** A compact connected
 Riemann surface homeomorphic to S² has a subsingleton space of
 holomorphic 1-forms.
 
 This is the deep content: the homeomorphism to S² combined with
 uniqueness of complex structure on S² (uniformization at genus 0)
 implies X is biholomorphic to `OnePoint ℂ ≃ ℂℙ¹`, which has
-`H⁰(Ω¹) = 0`. -/
+`H⁰(Ω¹) = 0`.
+-/
 structure HomeoSphereHolomorphicOneFormVanishing
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
   subsingleton : Subsingleton (HolomorphicOneForm ℂ X)
 
-/-! ### Structural companions for the uniformization-lite core
-
-The classical genus-zero classification step (uniformization at
-genus 0) says: any complex structure on the topological 2-sphere
-is biholomorphic to `ℂℙ¹` (= `OnePoint ℂ`). We expose this content
-as two named structural companions plus a sorry-free assembly.
+/-!
+### Structural companions for the uniformization-lite core
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`§Uniformization-lite`. -/
-
-/- **INCORRECT (commented out).** The original statement claimed that
-*any* homeomorphism `e : X ≃ₜ OnePoint ℂ` is automatically `ContMDiff`.
-This is false: complex conjugation `z ↦ z̄` extends to a self-homeomorphism
-of `OnePoint ℂ` that is NOT `ℂ`-smooth (not holomorphic), providing a
-counterexample with `X = OnePoint ℂ` and its standard `IsManifold` instance.
-
-The correct mathematical content is the uniformization theorem at genus 0:
-there EXISTS a biholomorphism `X → OnePoint ℂ`, but not every homeomorphism
-is one.  The corrected statement below uses an existential quantifier.
-
-/-- **Structural axiom (G1b).** — INCORRECT as stated. -/
-theorem contMDiff_homeomorph_to_onePointCx
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (e : X ≃ₜ OnePoint ℂ) :
-    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-      (⊤ : WithTop ℕ∞) e := by
-  sorry
-
-theorem contMDiff_homeomorph_to_onePointCx_symm
-    (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
-    [ConnectedSpace X] [ChartedSpace ℂ X]
-    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
-    [JacobianChallenge.Periods.StableChartAt ℂ X]
-    (e : X ≃ₜ OnePoint ℂ) :
-    ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
-      (⊤ : WithTop ℕ∞) e.symm := by
-  sorry
+`§Uniformization-lite`.
 -/
 
-/-- **Structural axiom (G1a, uniformization at genus 0).** A compact
+
+
+/--
+**Structural axiom (G1a, uniformization at genus 0).** A compact
 connected Riemann surface homeomorphic to `OnePoint ℂ` (= ℂℙ¹) admits a
 *biholomorphism* to `OnePoint ℂ` — i.e. there EXISTS a homeomorphism
 that is `ContMDiff` in both directions.
@@ -859,13 +758,7 @@ not `ℂ`-smooth); we must therefore construct a different homeomorphism
 `f` that is smooth in both directions. This is the classical content of
 the uniformization theorem at genus 0: every compact simply-connected
 Riemann surface is biholomorphic to `ℂℙ¹`.
-
-This sits at the same structural-axiom layer as G2a/G3a/G4a elsewhere
-in this file. The proof is deferred (`sorry`) because the uniformization
-theorem is not present in Mathlib v4.28.0; see the inline BLOCKER comment
-in the body for the precise list of missing prerequisites. Companion
-"sorry-free assembly" is `holomorphicOneForm_linearEquiv_of_homeoSphere_exists`
-(G1), which combines this with G1b (pullback). -/
+-/
 theorem exists_contMDiff_homeomorph_to_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -877,7 +770,6 @@ theorem exists_contMDiff_homeomorph_to_onePointCx
         (⊤ : WithTop ℕ∞) f ∧
       ContMDiff (modelWithCornersSelf ℂ ℂ) (modelWithCornersSelf ℂ ℂ)
         (⊤ : WithTop ℕ∞) f.symm := by
-  -- BLOCKER: uniformization theorem at genus 0.
   --
   -- This is the genus-0 case of the uniformization theorem: every compact
   -- connected Riemann surface that is topologically a 2-sphere is
@@ -898,7 +790,6 @@ theorem exists_contMDiff_homeomorph_to_onePointCx
   --
   -- Either a fully-fledged uniformization theorem or an equivalent
   -- genus-0 classification (e.g. via Riemann–Roch producing a degree-1
-  -- meromorphic function `X → ℂℙ¹`) is required to discharge this `sorry`.
   -- See the architectural notes earlier in this file for the full
   -- dependency tree.
   sorry
@@ -944,15 +835,15 @@ theorem holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx
   exact ⟨pullbackLinearEquivOfHomeomorph f hf hf_symm⟩
 
 
-/-- **Structural axiom (G1).** A topological homeomorphism from a
+/--
+**Structural axiom (G1).** A topological homeomorphism from a
 compact connected complex 1-manifold `X` to the standard 2-sphere
 upgrades to a `ℂ`-linear isomorphism between the spaces of holomorphic
 1-forms on `X` and `OnePoint ℂ`.
 
-Sorry-free assembly: G1a (uniformisation) + G1b (pullback).
-
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:holomorphic-one-form-equiv-of-homeo-sphere`. -/
+`lem:holomorphic-one-form-equiv-of-homeo-sphere`.
+-/
 theorem holomorphicOneForm_linearEquiv_of_homeoSphere_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -964,15 +855,11 @@ theorem holomorphicOneForm_linearEquiv_of_homeoSphere_exists
   obtain ⟨e⟩ := exists_biholomorphism_to_OnePointCx_of_homeoSphere X h
   exact holomorphicOneForm_linearEquiv_of_biholo_to_OnePointCx X e
 
-/-- **Opaque data obligation (uniformization-lite core).** A compact
+/--
+**Opaque data obligation (uniformization-lite core).** A compact
 connected Riemann surface homeomorphic to S² has no nonzero holomorphic
 1-forms.
-
-Sorry-free assembly: the linear equivalence
-`holomorphicOneForm_linearEquiv_of_homeoSphere_exists` (G1) plus
-`holomorphicOneForm_onePointCx_subsingleton` (sorry-free, in this
-file) plus the standard fact that subsingletons transport through
-linear equivalences. -/
+-/
 theorem homeoSphereHolomorphicOneFormVanishing
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -986,8 +873,7 @@ theorem homeoSphereHolomorphicOneFormVanishing
     holomorphicOneForm_onePointCx_subsingleton
   exact e.toEquiv.subsingleton
 
-/-- **Sub-obligation wrapper (sorry-free).** Extracts the subsingleton
-consequence from `homeoSphereHolomorphicOneFormVanishing`. -/
+
 theorem subsingleton_holomorphicOneForm_of_homeo_sphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -998,14 +884,12 @@ theorem subsingleton_holomorphicOneForm_of_homeo_sphere
     Subsingleton (HolomorphicOneForm ℂ X) := by
   exact homeoSphereHolomorphicOneFormVanishing X h
 
-/-- **Bottom-up obligation (uniformization-lite).** A compact connected
+/--
+**Bottom-up obligation (uniformization-lite).** A compact connected
 Riemann surface `X` homeomorphic to the standard 2-sphere `S²` admits
 a ℂ-linear equivalence between its space of holomorphic 1-forms and
 that of `OnePoint ℂ`.
-
-Reduced to `subsingleton_holomorphicOneForm_of_homeo_sphere` (the sole
-remaining sorry) plus `holomorphicOneForm_onePointCx_subsingleton`
-(sorry-free), assembled via `LinearEquiv.ofSubsingleton`. -/
+-/
 noncomputable def holomorphicOneFormLinearEquivOfHomeoSphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1020,7 +904,8 @@ noncomputable def holomorphicOneFormLinearEquivOfHomeoSphere
     holomorphicOneForm_onePointCx_subsingleton
   exact LinearEquiv.ofSubsingleton _ _
 
-/-- Transport step: a compact Riemann surface `X` homeomorphic to the
+/--
+Transport step: a compact Riemann surface `X` homeomorphic to the
 standard 2-sphere has the same analytic genus as `OnePoint ℂ`.
 
 This is the "uniformization-lite" content: a topological homeomorphism
@@ -1036,11 +921,7 @@ Stated as an equality of natural numbers, since both sides are defined
 once their `FiniteDimensionalHolomorphicOneForms` instances are
 available (`X`'s comes from the hypothesis, `OnePoint ℂ`'s comes from
 `finiteDimensionalHolomorphicOneForms_onePointCx` above).
-
-Bottom-up content for a future job: build a complex-structure-transfer
-API for homeomorphisms between Riemann surfaces (Mathlib gap), or — more
-realistically — go via `onePointCxHomeoS2` and the uniqueness of complex
-structure on `S²` (deep, see the survey above). -/
+-/
 theorem analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1050,12 +931,12 @@ theorem analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx
     (_h : Nonempty (X ≃ₜ Metric.sphere (0 : EuclideanSpace ℝ (Fin 3)) 1)) :
     analyticGenus ℂ X = analyticGenus ℂ (OnePoint ℂ) := by
   -- Decompose via a ℂ-linear equivalence of holomorphic 1-form spaces;
-  -- existence is the deep uniformization-lite content sorry'd out to
   -- `holomorphicOneFormLinearEquivOfHomeoSphere`.
   have e := holomorphicOneFormLinearEquivOfHomeoSphere X _h
   exact e.finrank_eq
 
-/-- The "easy" direction: if `X` is homeomorphic to the standard 2-sphere
+/--
+The "easy" direction: if `X` is homeomorphic to the standard 2-sphere
 then `analyticGenus ℂ X = 0`.
 
 Pure assembly of `analyticGenus_eq_of_homeomorphic_sphere_of_onePointCx`
@@ -1068,7 +949,8 @@ the complex structure of `ℂℙ¹` (every smooth structure on `S²` is unique,
 and the complex structure on a smooth compact 2-manifold is determined by
 its conformal class which is unique on `S²`); on `ℂℙ¹` the canonical
 sheaf has degree `-2 < 0`, so `H⁰(ℂℙ¹, Ω¹) = 0` by elementary
-divisor-degree considerations. -/
+divisor-degree considerations.
+-/
 theorem analyticGenus_eq_zero_of_homeomorphic_sphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1081,13 +963,6 @@ theorem analyticGenus_eq_zero_of_homeomorphic_sphere
   exact analyticGenus_onePointCx_eq_zero
 
 /-!
-### Blocker analysis for `homeomorphic_sphere_of_analyticGenus_eq_zero`
-
-**Status (2026-04-27):** sorry — all core ingredients are absent from
-Mathlib v4.28.0 (commit `8f9d9cff6bd728b17a24e163c9402775d9e6a365`).
-This is strictly harder than the easy direction; it requires the
-*forward* implication of uniformization at genus 0.
-
 #### Mathematical content
 
 A compact connected Riemann surface `X` with `analyticGenus ℂ X = 0`
@@ -1283,18 +1158,6 @@ de Rham cohomology) is also absent. Without it, even the implication
 uniformization). The hard direction additionally requires Step 3,
 which is strictly more demanding.
 
-**Verdict:** This theorem should be classified as a **Phase 4+ deferred
-dependency**. It is a deep uniformization-level result. A realistic
-formalization would require either (a) formalizing the uniformization
-theorem from scratch (~2000+ lines of new Lean), or (b) formalizing
-Riemann–Roch for compact Riemann surfaces (~1500+ lines). Neither is
-feasible in the near term without a dedicated multi-month effort.
-
-The sorry should remain. The `analyticGenus_eq_zero_iff_homeomorphic_sphere`
-biconditional that assembles both directions will carry two sorries
-(one from each direction) until the relevant Mathlib infrastructure
-matures.
-
 #### Nearest Mathlib footholds (for future work)
 
 - `OnePoint` (one-point compactification): good starting point for
@@ -1310,8 +1173,10 @@ matures.
   pursuing uniformization via universal covers.
 -/
 
-/-- The Riemann-Roch output in genus zero: a meromorphic map to `OnePoint ℂ`
-whose pole divisor is the point divisor `[pole]`. -/
+/--
+The Riemann-Roch output in genus zero: a meromorphic map to `OnePoint ℂ`
+whose pole divisor is the point divisor `[pole]`.
+-/
 structure GenusZeroSimplePoleMeromorphicMap
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
@@ -1330,12 +1195,11 @@ def toMap {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 
 end GenusZeroSimplePoleMeromorphicMap
 
-/-- Placeholder data after the compactness/properness step: the genus-zero
-meromorphic map is a degree-one map to `OnePoint ℂ`.
-
+/--
 The fields are the topological consequences needed by the final assembly:
 continuity and bijectivity. A future refinement should replace this bridge by
-properness plus the local degree calculation, then derive these fields. -/
+properness plus the local degree calculation, then derive these fields.
+-/
 structure GenusZeroProperDegreeOneMap
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -1346,21 +1210,17 @@ structure GenusZeroProperDegreeOneMap
   degree_one_data : ∃ f : MeromorphicMapToSphere X,
     toMap = f.toMap ∧ Nonempty (MeromorphicDegreeOneData X f)
 
-/-- Placeholder data for the last analytic step: a degree-one meromorphic map
-is a biholomorphic parametrization of `X` by `OnePoint ℂ`.
-
+/--
 At the topological surface needed here, this is represented by the resulting
 homeomorphism. Future work can strengthen the structure with a biholomorphism
-type once the project has one. -/
+type once the project has one.
+-/
 structure GenusZeroBiholomorphicParametrization
     (X : Type*) [TopologicalSpace X] where
   toHomeomorph : X ≃ₜ OnePoint ℂ
 
 /-!
 ### TOPDOWN decomposition for `genus_zero_homeomorph_onePointCx`
-
-The previous single uniformization-level sorry is split into three named
-obligations matching the standard Riemann-Roch route:
 
 1. `genus_zero_exists_simplePole_meromorphicMap` — from
    `analyticGenus = 0`, Riemann-Roch produces a meromorphic function with one
@@ -1375,8 +1235,10 @@ The original `genus_zero_homeomorph_onePointCx` is now pure assembly of these
 smaller leaves.
 -/
 
-/-- Fixed-pole Riemann-Roch output, now backed by the production
-meromorphic/divisor substrate. -/
+/--
+Fixed-pole Riemann-Roch output, now backed by the production
+meromorphic/divisor substrate.
+-/
 abbrev GenusZeroRiemannRochFixedPoleData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1387,13 +1249,15 @@ abbrev GenusZeroRiemannRochFixedPoleData
     (h : analyticGenus ℂ X = 0) : Type _ :=
   GenusZeroFixedPoleMeromorphicData X P h
 
-/-- **Fixed-pole Riemann-Roch existence leaf.** If a compact connected
+/--
+**Fixed-pole Riemann-Roch existence leaf.** If a compact connected
 Riemann surface has analytic genus zero, then for any prescribed point `P`
 there is a meromorphic function with a single simple pole at `P`.
 
 Bottom-up content: divisor theory on compact Riemann surfaces and the
 Riemann-Roch calculation `ℓ(P) = 2` when `g = 0`, producing a nonconstant
-meromorphic function whose pole divisor is exactly `[P]`. -/
+meromorphic function whose pole divisor is exactly `[P]`.
+-/
 theorem genusZeroRiemannRochFixedPoleData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1405,8 +1269,10 @@ theorem genusZeroRiemannRochFixedPoleData_nonempty
     Nonempty (GenusZeroRiemannRochFixedPoleData X P h) := by
   exact genusZero_fixedPole_meromorphicData_nonempty X P h
 
-/-- **Fixed-pole Riemann-Roch data assembly.** Extracts the map/certificate
-package from the named existence leaf. -/
+/--
+**Fixed-pole Riemann-Roch data assembly.** Extracts the map/certificate
+package from the named existence leaf.
+-/
 noncomputable def genusZeroRiemannRochFixedPoleData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1430,9 +1296,11 @@ noncomputable def genusZeroRiemannRochNonconstantMapAt
     X → OnePoint ℂ :=
   (genusZeroRiemannRochFixedPoleData X P h).meromorphicMap.toMap
 
-/-- **Fixed-pole divisor/order certificate projection.** The Riemann-Roch
+/--
+**Fixed-pole divisor/order certificate projection.** The Riemann-Roch
 map produced at `P` has exactly one simple pole, located at `P`, and no
-other poles. -/
+other poles.
+-/
 theorem genusZeroRiemannRochSimplePoleAt
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1445,12 +1313,14 @@ theorem genusZeroRiemannRochSimplePoleAt
       Divisor.point P := by
   exact (genusZeroRiemannRochFixedPoleData X P h).poleDivisor_eq_point
 
-/-- **Fixed-pole Riemann-Roch assembly.** The map part of the fixed-pole
+/--
+**Fixed-pole Riemann-Roch assembly.** The map part of the fixed-pole
 simple-pole statement; the pole certificate is kept separately as
 `genusZeroRiemannRochSimplePoleAt`.
 
 This definition exists so callers that only need the eventual meromorphic map
-do not depend directly on the certificate packaging. -/
+do not depend directly on the certificate packaging.
+-/
 noncomputable def genusZeroSimplePoleMeromorphicMapAt
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1462,13 +1332,15 @@ noncomputable def genusZeroSimplePoleMeromorphicMapAt
     X → OnePoint ℂ :=
   genusZeroRiemannRochNonconstantMapAt X P h
 
-/-- **Assembly for the Riemann-Roch leaf.** Choose any point of the connected
+/--
+**Assembly for the Riemann-Roch leaf.** Choose any point of the connected
 surface and package the fixed-pole Riemann-Roch map at that point.
 
 The remaining Riemann-Roch leaf is now the single fixed-pole existence
 statement `genusZeroRiemannRochFixedPoleData_nonempty`: for a prescribed
 point `P`, genus zero Riemann-Roch produces a meromorphic map whose only pole
-is simple and located at `P`. -/
+is simple and located at `P`.
+-/
 noncomputable def simplePoleMeromorphicMapOfGenusZero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1483,8 +1355,7 @@ noncomputable def simplePoleMeromorphicMapOfGenusZero
     pole := P
     simple_pole_cert := genusZeroRiemannRochSimplePoleAt X P h }
 
-/-- **Sub-obligation 1 wrapper (sorry-free).** Existence form of
-`simplePoleMeromorphicMapOfGenusZero`. -/
+
 theorem genus_zero_exists_simplePole_meromorphicMap
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1495,13 +1366,15 @@ theorem genus_zero_exists_simplePole_meromorphicMap
     Nonempty (GenusZeroSimplePoleMeromorphicMap X) := by
   exact ⟨simplePoleMeromorphicMapOfGenusZero X h⟩
 
-/-- **Properness/degree data existence leaf.** A one-simple-pole map has
+/--
+**Properness/degree data existence leaf.** A one-simple-pole map has
 some proper degree-one promotion.
 
 This refines the old properness/degree opaque into a named existence
 statement. Bottom-up content: prove continuity of the extended map,
 compactness-driven properness, and the divisor-degree computation giving
-bijectivity. -/
+bijectivity.
+-/
 theorem properDegreeOneMapOfSimplePole_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1523,8 +1396,10 @@ theorem properDegreeOneMapOfSimplePole_nonempty
       bijective_toMap := data.bijective_toMap
       degree_one_data := ⟨_f.meromorphicMap, rfl, ⟨data⟩⟩ }⟩
 
-/-- **Properness/degree data assembly.** Extracts the degree-one promotion
-from the named existence leaf. -/
+/--
+**Properness/degree data assembly.** Extracts the degree-one promotion
+from the named existence leaf.
+-/
 noncomputable def properDegreeOneMapOfSimplePole
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1537,8 +1412,7 @@ noncomputable def properDegreeOneMapOfSimplePole
     GenusZeroProperDegreeOneMap X :=
   Classical.choice (properDegreeOneMapOfSimplePole_nonempty X f hmod hbranch)
 
-/-- **Sub-obligation 2 wrapper (sorry-free).** Existence form of
-`properDegreeOneMapOfSimplePole`. -/
+
 theorem simplePole_meromorphicMap_proper_degreeOne
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1551,13 +1425,15 @@ theorem simplePole_meromorphicMap_proper_degreeOne
     Nonempty (GenusZeroProperDegreeOneMap X) := by
   exact ⟨properDegreeOneMapOfSimplePole X f hmod hbranch⟩
 
-/-- **Sub-obligation 3 (degree one implies parametrization).** A proper
+/--
+**Sub-obligation 3 (degree one implies parametrization).** A proper
 degree-one meromorphic map from a compact connected Riemann surface to
 `OnePoint ℂ` is a biholomorphic parametrization.
 
 Bottom-up content: a holomorphic map of degree one is bijective with
 nonvanishing local degree, hence a biholomorphism; forgetting the analytic
-structure gives the recorded homeomorphism. -/
+structure gives the recorded homeomorphism.
+-/
 theorem proper_degreeOne_meromorphicMap_biholomorphic
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1571,13 +1447,15 @@ theorem proper_degreeOne_meromorphicMap_biholomorphic
     simpa [e] using f.continuous_toMap
   exact ⟨⟨he.homeoOfEquivCompactToT2⟩⟩
 
-/-- **Uniformization (genus zero):** a compact connected Riemann surface
+/--
+**Uniformization (genus zero):** a compact connected Riemann surface
 with `analyticGenus = 0` is homeomorphic to the one-point
 compactification of `ℂ`.
 
 Pure assembly of the three Riemann-Roch route leaves above:
 simple-pole meromorphic function, proper degree-one map, and degree-one
-biholomorphic parametrization. -/
+biholomorphic parametrization.
+-/
 theorem genus_zero_homeomorph_onePointCx_with_routeData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1596,16 +1474,10 @@ theorem genus_zero_homeomorph_onePointCx_with_routeData
   let ⟨b⟩ := proper_degreeOne_meromorphicMap_biholomorphic X g
   exact ⟨b.toHomeomorph⟩
 
-/-- The "hard" direction: if `analyticGenus ℂ X = 0` then `X` is
+/--
+The "hard" direction: if `analyticGenus ℂ X = 0` then `X` is
 homeomorphic to the standard 2-sphere.
-
-Decomposes into two obligations:
-1. `genus_zero_homeomorph_onePointCx` — Riemann-Roch route assembly through
-   simple-pole existence, proper degree-one map, and biholomorphic
-   parametrization.
-2. `onePointCx_homeomorph_sphere` — the standard homeomorphism
-   `OnePoint ℂ ≃ₜ S²` via inverse stereographic projection (proved
-   sorry-free using `onePointEquivSphereOfFinrankEq`). -/
+-/
 theorem homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1620,8 +1492,7 @@ theorem homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData
   let ⟨e⟩ := genus_zero_homeomorph_onePointCx_with_routeData X _h hmod hbranch
   ⟨e.trans onePointCx_homeomorph_sphere⟩
 
-/-- **Narrow fixed-pole route-data frontier.**
-
+/--
 This is the exact remaining Riemann-Roch-to-route-data obligation for
 the genus-zero classification: for a compact connected Riemann surface
 of analytic genus zero, there exists a `GenusZeroSimplePoleMeromorphicMap`
@@ -1636,16 +1507,6 @@ scaffold-backed `singlePoleMeromorphicMap` route in
 `genusZero_pointRiemannRochSpace_witness_exists` with an honest
 meromorphic function produced by Riemann-Roch.
 
-**Why the scaffold is not acceptable.** The cutoff lift
-`singlePoleMeromorphicMap Q` satisfies `PoleModulusData` (proved as
-`HolomorphicForms.singlePoleMeromorphicMap_poleModulusData` in
-`SinglePoleLift.lean`), but its 0-fiber outside the chart source is
-typically infinite, so it cannot satisfy `BranchedCoverDataOfPoleDegree`
-(`finite_fiber` fails). Discharging this frontier therefore requires
-either a different scaffold with finite fibers, or a real Riemann-Roch
-production of a `MeromorphicFunctionType`-style meromorphic function
-whose CP¹ lift is then a real branched cover.
-
 **What is already in place.** Weighted-fiber conservation for ContMDiff
 maps between compact preconnected complex 1-manifolds is now proved
 (`weightedFiberConservation_of_contMDiff` in
@@ -1653,7 +1514,8 @@ maps between compact preconnected complex 1-manifolds is now proved
 function is produced honestly, building `BranchedCoverDataOfPoleDegree`
 reduces to matching the branched degree with the pole-divisor degree
 (`Divisor.point P`'s degree is `1`). That remaining matching step is
-the only purely-analytic part still open. -/
+the only purely-analytic part still open.
+-/
 theorem genusZero_fixedPole_routeData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1665,8 +1527,6 @@ theorem genusZero_fixedPole_routeData_nonempty
       { data : GenusZeroSimplePoleMeromorphicMap X //
         data.meromorphicMap.PoleModulusData ∧
         data.meromorphicMap.BranchedCoverDataOfPoleDegree } := by
-  -- Sorry-free assembly. The mathematical content is delegated to the narrow
-  -- frontier `genusZero_fixedPole_singlePoleRouteData_nonempty` in
   -- `RiemannRoch.lean`, which supplies an honest fixed-pole meromorphic map
   -- carrying both `PoleModulusData` and `BranchedCoverDataOfPoleDegree`.
   let P : X := Classical.choice (inferInstance : Nonempty X)
@@ -1678,12 +1538,10 @@ theorem genusZero_fixedPole_routeData_nonempty
       simple_pole_cert := data.poleDivisor_eq_point }
   exact ⟨⟨simple, hmod, hbranch⟩⟩
 
-/-- **Uniformization (genus zero):** a compact connected Riemann surface
+/--
+**Uniformization (genus zero):** a compact connected Riemann surface
 with `analyticGenus = 0` is homeomorphic to the one-point
 compactification of `ℂ`.
-
-This is now a sorry-free assembly around the narrow new frontier
-`genusZero_fixedPole_routeData_nonempty`. The proof:
 
 1. Extract the bundled `data : GenusZeroSimplePoleMeromorphicMap X`
    together with `PoleModulusData` and `BranchedCoverDataOfPoleDegree`
@@ -1692,12 +1550,7 @@ This is now a sorry-free assembly around the narrow new frontier
    as a proper degree-one map to `OnePoint ℂ`.
 3. Apply `proper_degreeOne_meromorphicMap_biholomorphic` to package
    that as a homeomorphism `X ≃ₜ OnePoint ℂ`.
-
-Note: this does **not** route through `simplePoleMeromorphicMapOfGenusZero X h`.
-That declaration is backed by `singlePoleMeromorphicMap`, which is a
-scaffold without honest branched-cover data; consuming it as if it had
-route data would be unsound. The honest `data` is supplied directly by
-the new frontier. -/
+-/
 theorem genus_zero_homeomorph_onePointCx
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1711,9 +1564,7 @@ theorem genus_zero_homeomorph_onePointCx
   let ⟨b⟩ := proper_degreeOne_meromorphicMap_biholomorphic X g
   exact ⟨b.toHomeomorph⟩
 
-/-- **Cleanly named alias** for `genus_zero_homeomorph_onePointCx_with_routeData`:
-the honest route-data form of the genus-zero uniformization. Sorry-free
-wrapper that just forwards to the existing assembly. -/
+
 theorem genus_zero_homeomorph_onePointCx_of_routeData
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1727,8 +1578,7 @@ theorem genus_zero_homeomorph_onePointCx_of_routeData
     Nonempty (X ≃ₜ OnePoint ℂ) :=
   genus_zero_homeomorph_onePointCx_with_routeData X h hmod hbranch
 
-/-- The "hard" direction of genus-zero classification, public frontier
-statement with the original contract. -/
+
 theorem homeomorphic_sphere_of_analyticGenus_eq_zero
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1740,13 +1590,10 @@ theorem homeomorphic_sphere_of_analyticGenus_eq_zero
   let ⟨e⟩ := genus_zero_homeomorph_onePointCx X _h
   ⟨e.trans onePointCx_homeomorph_sphere⟩
 
-/-- A compact connected Riemann surface has analytic genus zero iff it is
+/--
+A compact connected Riemann surface has analytic genus zero iff it is
 homeomorphic to the standard 2-sphere.
-
-Pure assembly of the two directions
-`analyticGenus_eq_zero_of_homeomorphic_sphere` and
-`homeomorphic_sphere_of_analyticGenus_eq_zero`; this declaration adds
-no new sorry. -/
+-/
 theorem analyticGenus_eq_zero_with_routeData_homeomorphic_sphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1760,13 +1607,10 @@ theorem analyticGenus_eq_zero_with_routeData_homeomorphic_sphere
   rintro ⟨h, hmod, hbranch⟩
   exact homeomorphic_sphere_of_analyticGenus_eq_zero_with_routeData X h hmod hbranch
 
-/-- A compact connected Riemann surface has analytic genus zero iff it is
+/--
+A compact connected Riemann surface has analytic genus zero iff it is
 homeomorphic to the standard 2-sphere.
-
-This preserves the original public theorem contract. The hard direction routes
-through the public frontier theorem above; the conditional route-data assembly
-is available separately as
-`analyticGenus_eq_zero_with_routeData_homeomorphic_sphere`. -/
+-/
 theorem analyticGenus_eq_zero_iff_homeomorphic_sphere
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

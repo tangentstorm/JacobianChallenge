@@ -27,8 +27,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
 set_option linter.unusedSectionVars false
 
-/-- The σ-form γ-segment at index `Fin.rev i` is covered by
-`pickChart (Fin.rev i)`. -/
+/--
+The σ-form γ-segment at index `Fin.rev i` is covered by
+`pickChart (Fin.rev i)`.
+-/
 theorem range_subpath_sigma_subset_source
     {a b : X} (γ : Path a b)
     (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)

@@ -6,14 +6,11 @@ set_option linter.unusedSectionVars false
 /-!
 # Path-additivity (`_trans`) for `pathIntegralViaCoverWith` (aligned partition)
 
-**Phase 6 deliverable**, used to discharge Sorry 1
-(`pathIntegralViaCover_trans_eq_add` in `PullbackNaturality.lean`).
-
 States: for an aligned uniform chart partition of `γ.trans γ'` of size
 `2 * n` whose first `n` segments cover `γ` (with `pickA`) and last `n`
 segments cover `γ'` (with `pickB`), the cover-with sum splits:
 
-  `pathIntegralViaCoverWith ω (γ.trans γ') (2*n) _ pickT hcovT =
+`pathIntegralViaCoverWith ω (γ.trans γ') (2*n) _ pickT hcovT =
    pathIntegralViaCoverWith ω γ n hn pickA hcovA +
    pathIntegralViaCoverWith ω γ' n hn pickB hcovB`.
 
@@ -40,8 +37,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- The aligned-`pickT` for `γ.trans γ'` of size `2 * n`: the first
-`n` indices use `pickA`, the last `n` use `pickB`. -/
+/--
+The aligned-`pickT` for `γ.trans γ'` of size `2 * n`: the first
+`n` indices use `pickA`, the last `n` use `pickB`.
+-/
 noncomputable def alignedPickT
     (n : ℕ) (pickA pickB : Fin n → X) (j : Fin (2 * n)) : X :=
   if hlt : j.val < n then pickA ⟨j.val, hlt⟩
@@ -59,8 +58,10 @@ private lemma path_heq_of_pointwise
   subst hb
   exact heq_of_eq (Path.ext (funext h_eq))
 
-/-- Combined congruence: `pathIntegralViaChartCorrect` is invariant under
-heterogeneous path equality and chart-pick equality. -/
+/--
+Combined congruence: `pathIntegralViaChartCorrect` is invariant under
+heterogeneous path equality and chart-pick equality.
+-/
 private lemma pathIntegralViaChartCorrect_eq_of_heq_charts
     (ω : HolomorphicOneForm E X)
     {a b a' b' : X} {γ : Path a b} {γ' : Path a' b'}
@@ -74,9 +75,11 @@ private lemma pathIntegralViaChartCorrect_eq_of_heq_charts
   subst hp
   exact pathIntegralViaChartCorrect_eq_of_heq _ _ ha hb hγ h h'
 
-/-- A `Fin (2 * n)` sum splits into two `Fin n` sums via the standard
+/--
+A `Fin (2 * n)` sum splits into two `Fin n` sums via the standard
 `Fin n ⊕ Fin n ≃ Fin (2 * n)` equivalence: first half indices are
-`⟨i.val, _⟩`, second half are `⟨n + k.val, _⟩`. -/
+`⟨i.val, _⟩`, second half are `⟨n + k.val, _⟩`.
+-/
 private lemma sum_aligned_split
     {α : Type*} [AddCommMonoid α] (n : ℕ) (f : Fin (2 * n) → α) :
     ∑ j : Fin (2 * n), f j =
@@ -153,8 +156,10 @@ private lemma trans_at_second_half_endpt
         rw [show ((k : ℝ) / n) = (divFinIcc n hn k hk : ℝ) from rfl]
         exact Path.extend_apply _ (divFinIcc n hn k hk).2
 
-/-- Pointwise equality: for `j < n`, the j-th aligned-2n subpath of `γ.trans γ'`
-agrees pointwise with the j-th aligned-n subpath of `γ`. -/
+/--
+Pointwise equality: for `j < n`, the j-th aligned-2n subpath of `γ.trans γ'`
+agrees pointwise with the j-th aligned-n subpath of `γ`.
+-/
 private lemma trans_subpath_first_half_pointwise
     {a b c : X} (γ : Path a b) (γ' : Path b c)
     (n : ℕ) (hn : 0 < n) (j : ℕ) (hj : j + 1 ≤ n)
@@ -215,8 +220,10 @@ private lemma trans_subpath_first_half_pointwise
   push_cast
   field_simp
 
-/-- Pointwise equality: for `k < n`, the (n+k)-th aligned-2n subpath of `γ.trans γ'`
-agrees pointwise with the k-th aligned-n subpath of `γ'`. -/
+/--
+Pointwise equality: for `k < n`, the (n+k)-th aligned-2n subpath of `γ.trans γ'`
+agrees pointwise with the k-th aligned-n subpath of `γ'`.
+-/
 private lemma trans_subpath_second_half_pointwise
     {a b c : X} (γ : Path a b) (γ' : Path b c)
     (n : ℕ) (hn : 0 < n) (k : ℕ) (hk : k + 1 ≤ n)
@@ -282,15 +289,15 @@ private lemma trans_subpath_second_half_pointwise
   field_simp
   ring
 
-/-- **Phase 6 (single named gap): With-level path additivity on aligned partition.**
-
+/--
 For partitions `(n, pickA, hcovA)` of `γ` and `(n, pickB, hcovB)` of `γ'`
 that combine into an aligned partition `(2*n, alignedPickT n pickA pickB,
 hcovT)` of `γ.trans γ'`, the cover-with sum splits.
 
 Proof reduces to a Fin-reindexing of the `2*n` sum into two `n`-sums
 plus the half-affine reparameterisation invariance — see file-level
-docstring. -/
+docstring.
+-/
 theorem pathIntegralViaCoverWith_aligned_trans
     (ω : HolomorphicOneForm E X) {a b c : X}
     (γ : Path a b) (γ' : Path b c)
@@ -356,20 +363,12 @@ theorem pathIntegralViaCoverWith_aligned_trans
       intro s
       exact trans_subpath_second_half_pointwise γ γ' n hn k.val hk_succ h_2n_pos s
 
-/-! ### Existence of aligned partition for `γ.trans γ'`
-
-Given paths `γ`, `γ'` we can extract uniform chart partitions for each
-via `exists_uniform_chart_partition`, refine to a common multiple, and
-combine into an aligned `(2*n, alignedPickT)` partition for
-`γ.trans γ'`. This reduces Sorry 1
-(`pathIntegralViaCover_trans_eq_add` in `PullbackNaturality.lean`) to
-`pathIntegralViaCoverWith_aligned_trans` plus refinement invariance.
-
-Discharged Phase 6b: the existence theorem is now sorry-free. -/
+/-! ### Existence of aligned partition for `γ.trans γ'` -/
 
 omit [NormedSpace ℂ E] [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] in
 variable (X) in
-/-- Existence of a common-multiple aligned chart partition for
+/--
+Existence of a common-multiple aligned chart partition for
 `γ.trans γ'` given partition data for `γ` and `γ'` separately.
 
 The bookkeeping aligns:
@@ -380,7 +379,8 @@ The bookkeeping aligns:
   half covers γ'.
 
 The cover hypotheses for the refined and combined partitions follow
-mechanically from the originals via `Path.trans_apply`'s formula. -/
+mechanically from the originals via `Path.trans_apply`'s formula.
+-/
 theorem exists_aligned_partition_for_trans
     {a b c : X} (γ : Path a b) (γ' : Path b c) :
     ∃ (n : ℕ) (_hn : 0 < n)

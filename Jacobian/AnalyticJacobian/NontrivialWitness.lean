@@ -20,8 +20,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- A witness `(x, v)` whose `evalLinearMap` value is outside the
-period subgroup produces a non-zero analytic Jacobian class. -/
+/--
+A witness `(x, v)` whose `evalLinearMap` value is outside the
+period subgroup produces a non-zero analytic Jacobian class.
+-/
 theorem evalJacobianClass_ne_zero
     (x : X) (v : E) (h : evalLinearMap x v ∉ periodSubgroup E X) :
     evalJacobianClass (E := E) (X := X) x v ≠ 0 :=
@@ -33,16 +35,20 @@ theorem nontrivial_analyticJacobianGroup_of_evalLinearMap_ne_periodSubgroup
     Nontrivial (AnalyticJacobianGroup E X) :=
   ⟨evalJacobianClass x v, 0, evalJacobianClass_ne_zero x v h⟩
 
-/-- Sufficient condition specialized via `evalLinearMap` values: the
-contrapositive of `evalJacobianClass_eq_zero_iff`. -/
+/--
+Sufficient condition specialized via `evalLinearMap` values: the
+contrapositive of `evalJacobianClass_eq_zero_iff`.
+-/
 theorem evalLinearMap_notMem_of_evalJacobianClass_ne_zero
     (x : X) (v : E)
     (h : evalJacobianClass (E := E) (X := X) x v ≠ 0) :
     evalLinearMap x v ∉ periodSubgroup E X :=
   fun hin => h ((evalJacobianClass_eq_zero_iff x v).mpr hin)
 
-/-- Contrapositive criterion: any non-zero analytic Jacobian
-witness rules out membership in `periodSubgroup`. -/
+/--
+Contrapositive criterion: any non-zero analytic Jacobian
+witness rules out membership in `periodSubgroup`.
+-/
 theorem evalLinearMap_notMem_iff_evalJacobianClass_ne_zero
     (x : X) (v : E) :
     evalLinearMap x v ∉ periodSubgroup E X ↔

@@ -18,8 +18,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
 set_option linter.unusedSectionVars false in
-/-- Pointwise apply form: chart lift of a `Path.trans` equals the
-concatenation of the two chart lifts, evaluated at `t`. -/
+/--
+Pointwise apply form: chart lift of a `Path.trans` equals the
+concatenation of the two chart lifts, evaluated at `t`.
+-/
 theorem chartLift_trans_apply
     (c : OpenPartialHomeomorph X E)
     {a b d : X} (γab : Path a b) (γbd : Path b d)

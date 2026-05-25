@@ -4,10 +4,6 @@ import Jacobian.ComplexTorus.LocalSectionContinuous
 /-!
 # Continuity of `x ↦ localSection_v₂ (mk x) - x`
 
-Queue B sibling. Second sub-lemma toward `IsManifold`. The function
-mapping each `x` in the chart-overlap region to the difference
-`localSection Λ v₂ r (mk x) - x` is continuous on that overlap.
-
 This continuity, combined with the algebraic fact that the
 difference lands in `Λ.subgroup` (`TransitionSubMem`) and the
 discreteness of `Λ.subgroup` (next step), implies that the
@@ -20,8 +16,10 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-/-- The map `x ↦ localSection Λ v₂ r (mk x) - x` is continuous on the
-chart-overlap region. -/
+/--
+The map `x ↦ localSection Λ v₂ r (mk x) - x` is continuous on the
+chart-overlap region.
+-/
 lemma continuousOn_localSection_mk_sub
     (Λ : FullComplexLattice V) (v₁ v₂ : V) {δ r : ℝ}
     (hr_lt : r < δ / 2)

@@ -16,22 +16,9 @@ The claim `finrank_homℤℝ_eq_finrank_of_free` (in
 `IntegralOneCycleRank.lean`) is a pure-algebra statement: for any
 finitely generated free ℤ-module `M`,
 
-  dim_ℝ Hom_ℤ(M, ℝ) = rank_ℤ M.
+dim_ℝ Hom_ℤ(M, ℝ) = rank_ℤ M.
 
-This file refines that single sorry into smaller named obligations
-that closely mirror Mathlib's `Module.Basis` API.
-
-## What this file provides (round 2 refinement)
-
-* `homℤℝ_basis_evaluation_isLinearEquivℝ` — basis-evaluation
-  equivalence:
-  given a ℤ-basis `b : Fin n → M`, the evaluation map
-  `Hom_ℤ(M, ℝ) → (Fin n → ℝ)` is a ℝ-linear equivalence.
-* `finrank_pi_real_eq_card` — pure-Mathlib fact, sorry-free:
-  `dim_ℝ (Fin n → ℝ) = n`.
-* `finrank_homℤℝ_eq_basis_card` — assembled, sorry-free.
-* `finrank_homℤℝ_eq_finrank_of_free_via_basis` — refined,
-  sorry-free through `Module.finBasis`.
+## What this file provides
 
 These discharge the original monolithic pure-algebra obligation using
 `Module.Basis.constr`, `LinearEquiv.finrank_eq`, and Mathlib's
@@ -40,31 +27,25 @@ finite-free `Module.finBasis`.
 
 namespace JacobianChallenge.Periods
 
-/-- **Basis-evaluation equivalence.** For a ℤ-basis
+/--
+**Basis-evaluation equivalence.** For a ℤ-basis
 `b : Fin n → M`, the evaluation map `f ↦ (f ∘ b)` from
 `Hom_ℤ(M, ℝ)` to `Fin n → ℝ` is an ℝ-linear equivalence.
 
-This is `Module.Basis.constr` with scalar field `ℝ`, reversed. -/
+This is `Module.Basis.constr` with scalar field `ℝ`, reversed.
+-/
 theorem homℤℝ_basis_evaluation_isLinearEquivℝ
     {n : ℕ} {M : Type*} [AddCommGroup M] [Module ℤ M]
     (b : Module.Basis (Fin n) ℤ M) :
     ∃ _ : (M →ₗ[ℤ] ℝ) ≃ₗ[ℝ] (Fin n → ℝ), True := by
   exact ⟨(b.constr ℝ).symm, trivial⟩
 
-/-- **Sorry-free Mathlib fact.** `dim_ℝ (Fin n → ℝ) = n`.
 
-Stated as a frontier identity to avoid name-bookkeeping for the
-particular Mathlib lemma that supplies it (one of
-`Module.finrank_fintype_fun_eq_card`, `Module.finrank_pi`, or a
-combination); a one-line proof is direct in any current Mathlib
-revision. -/
 theorem finrank_pi_real_eq_card (n : ℕ) :
     Module.finrank ℝ (Fin n → ℝ) = n := by
   exact Module.finrank_fin_fun ℝ
 
-/-- **Sorry-free assembly.** From the basis-evaluation equivalence,
-`dim_ℝ Hom_ℤ(M, ℝ) = n` whenever `M` has a ℤ-basis indexed by
-`Fin n`. -/
+
 theorem finrank_homℤℝ_eq_basis_card
     {n : ℕ} {M : Type*} [AddCommGroup M] [Module ℤ M]
     (b : Module.Basis (Fin n) ℤ M) :
@@ -72,9 +53,7 @@ theorem finrank_homℤℝ_eq_basis_card
   obtain ⟨e, _⟩ := homℤℝ_basis_evaluation_isLinearEquivℝ b
   rw [e.finrank_eq, finrank_pi_real_eq_card]
 
-/-- **Round-2 sorry-free assembly.** `finrank_homℤℝ_eq_finrank_of_free`
-through the named basis-evaluation equivalence and Mathlib's
-finite-rank free basis indexed by `Fin (Module.finrank ℤ M)`. -/
+
 theorem finrank_homℤℝ_eq_finrank_of_free_via_basis
     (M : Type*) [AddCommGroup M] [Module ℤ M]
     [Module.Free ℤ M] [Module.Finite ℤ M] :

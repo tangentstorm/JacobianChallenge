@@ -6,8 +6,6 @@ import Jacobian.ComplexTorus.Defs
 /-!
 # Path-connectedness of the complex-torus quotient
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 A normed `ℂ`-space is path-connected (the segment from `0` is a path),
 and `mk` is a continuous surjection, so the quotient is also
 path-connected.

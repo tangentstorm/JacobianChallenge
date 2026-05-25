@@ -6,7 +6,8 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.Analytic
 
-/-! # Blueprint: well-definedness of the branched degree (4-step decomposition)
+/-!
+# Blueprint: well-definedness of the branched degree (4-step decomposition)
 
 Section 2 of `tex/sections/02-holomorphic-forms-and-genus.tex`.
 
@@ -15,7 +16,7 @@ This file decomposes the proof of `weightedFiberCard_const` from
 four sub-leaves.  Together
 they give the well-definedness of the branched degree:
 
-  1. **Branch locus finite** (`mapAnalyticOrderAt_ramified_finite`):
+1. **Branch locus finite** (`mapAnalyticOrderAt_ramified_finite`):
      for a nonconstant holomorphic map between compact preconnected
      complex 1-manifolds, the source-side ramified set
      `{x | mapAnalyticOrderAt f x ≠ 1}` is finite.  Standard proof:
@@ -25,7 +26,7 @@ they give the well-definedness of the branched degree:
      identity principle (`AnalyticAt.eventually_ne` in Mathlib).
      Discrete-in-each-chart + compactness ⇒ finite.
 
-  2. **Local injectivity at unramified points**
+2. **Local injectivity at unramified points**
      (`IsHolomorphicAt.exists_local_inj_of_unramified`): if
      `mapAnalyticOrderAt f x = 1`, there's an open neighborhood `U`
      of `x` and an open neighborhood `V` of `f x` such that for every
@@ -34,7 +35,7 @@ they give the well-definedness of the branched degree:
      `AnalyticAt.localInverse` / inverse-function theorem on `ℂ` ⇒
      local biholomorphism; transport back through charts.
 
-  3. **Local k-fold structure at ramified points**
+3. **Local k-fold structure at ramified points**
      (`IsHolomorphicAt.exists_local_kfold_of_ramified`): if
      `mapAnalyticOrderAt f x = k` with `k ≥ 1`, there's a neighborhood
      `U` of `x` and a neighborhood `V` of `f x` such that for every
@@ -47,7 +48,7 @@ they give the well-definedness of the branched degree:
      constant).  The map `t ↦ t^k` has exactly `k` simple preimages
      of any nonzero target.
 
-  4. **Local conservation of weighted fibre count**
+4. **Local conservation of weighted fibre count**
      (`isHolomorphic_weightedFiberSum_isLocallyConstant`): combining
      leaves 2 and 3, the weighted fibre sum `∑_{x ∈ f⁻¹{y}} e_x(f)`
      is locally constant on `Y`.  Proof: at each `y₀ : Y`, the fibre
@@ -61,7 +62,8 @@ they give the well-definedness of the branched degree:
 The final theorem `isHolomorphic_weightedFiberSum_const` follows
 from leaf 4 plus `IsLocallyConstant.apply_eq_of_preconnectedSpace`,
 and is exactly the field needed by
-`branchedCoverData_of_nonconstant_holomorphic`. -/
+`branchedCoverData_of_nonconstant_holomorphic`.
+-/
 
 namespace JacobianChallenge.Blueprint
 
@@ -69,10 +71,12 @@ open scoped Manifold Topology ContDiff
 open Set Filter
 open JacobianChallenge.HolomorphicForms
 
-/-! ### Common helper
+/-!
+### Common helper
 
 The next two helpers are used by both sub-leaf A (branch locus
-finite) and sub-leaf B (local injectivity at unramified). -/
+finite) and sub-leaf B (local injectivity at unramified).
+-/
 
 /-
 **Common helper.** Order = 1 at `x` is equivalent to
@@ -105,17 +109,19 @@ theorem mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero
     rw [ analyticOrderNatAt ];
     rw [ AnalyticAt.analyticOrderAt_sub_eq_one_of_deriv_ne_zero ] <;> aesop
 
-/-! ### Sub-leaf A: branch locus finite
+/-!
+### Sub-leaf A: branch locus finite
 
 The decomposition is:
 
-  * A1 = the common helper above (`= 1 ↔ deriv ≠ 0`),
+* A1 = the common helper above (`= 1 ↔ deriv ≠ 0`),
   * A2 `isOpen_setOf_mapAnalyticOrderAt_eq_one` — unramified set is
     open in `X`,
   * A3 `mapAnalyticOrderAt_isolated_at_ramified` — every ramified
     point is isolated in the ramified set,
   * A4 `mapAnalyticOrderAt_ramified_finite` — assembly: closed
-    discrete subset of compact ⇒ finite. -/
+    discrete subset of compact ⇒ finite.
+-/
 
 /-
 **A2.** The unramified set
@@ -234,7 +240,8 @@ private theorem order_eq_one_of_deriv_ne_zero_at_chart
   · exact IsManifold.chart_mem_maximalAtlas x
   · exact IsManifold.chart_mem_maximalAtlas (f x)
 
-/-- **A3.** Every ramified point is isolated in the ramified
+/--
+**A3.** Every ramified point is isolated in the ramified
 set: at a point `x` with order ≠ 1, there's a neighborhood `U` of `x`
 such that every other point in `U` is unramified.
 
@@ -245,7 +252,8 @@ the order by one).  Apply Mathlib's `AnalyticAt.eventually_ne` to the
 chart-local derivative to obtain a punctured neighborhood of
 `chartAt ℂ x x` where the derivative is nonzero, then transport back
 through the chart and apply the common helper to identify those
-points as having order = 1. -/
+points as having order = 1.
+-/
 theorem mapAnalyticOrderAt_isolated_at_ramified
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -280,18 +288,20 @@ theorem mapAnalyticOrderAt_isolated_at_ramified
   filter_upwards [h_chart_pull, hfx_ev] with x' ⟨hx'_src, han_x', hd_x'⟩ hfx'_src
   exact order_eq_one_of_deriv_ne_zero_at_chart _hf hx'_src hfx'_src han_x' hd_x'
 
-/-- **A4 = Sub-leaf 1.** For a nonconstant holomorphic map
+/--
+**A4 = Sub-leaf 1.** For a nonconstant holomorphic map
 between compact preconnected complex 1-manifolds, the source-side
 ramified set `{x | mapAnalyticOrderAt f x ≠ 1}` is finite.
 
 Proof sketch (assembling A2 + A3):
 
-  * From A2, the ramified set is closed in `X` (complement of an open
+* From A2, the ramified set is closed in `X` (complement of an open
     set).  Closed in compact ⇒ compact subspace.
   * From A3, every ramified point is isolated in the ramified set, so
     the subspace topology on the ramified set is discrete.
   * A discrete subset of compact ⇒ finite (Mathlib's
-    `DiscreteTopology.finite_of_compact_space` or similar). -/
+    `DiscreteTopology.finite_of_compact_space` or similar).
+-/
 theorem mapAnalyticOrderAt_ramified_finite
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -313,26 +323,30 @@ theorem mapAnalyticOrderAt_ramified_finite
     exact isCompact_iff_compactSpace.mp ( h_closed.isCompact );
   exact Set.finite_coe_iff.mp finite_of_compact_of_discrete
 
-/-! ### Sub-leaf B: local injectivity at unramified points
+/-!
+### Sub-leaf B: local injectivity at unramified points
 
 Decomposition:
 
-  * B1 = the common helper above (`= 1 ↔ deriv ≠ 0`),
+* B1 = the common helper above (`= 1 ↔ deriv ≠ 0`),
   * B2 `chartLocalAt_localInverse_of_unramified` — at a chart-locally
     unramified point, the chart-local function admits a holomorphic
     local inverse (Mathlib's `AnalyticAt.localInverse`),
   * B3 `IsHolomorphicAt.exists_local_inj_of_unramified` — assembly:
     transport the chart-local inverse to a manifold-level injective
-    neighborhood. -/
+    neighborhood.
+-/
 
-/-- **B2.** At an unramified point `x`, the chart-local
+/--
+**B2.** At an unramified point `x`, the chart-local
 function `chartLocalAt f x` has a holomorphic local inverse.
 
 Proof sketch: from B1 the chart-local derivative is nonzero at
 `chartAt ℂ x x`.  Mathlib's analytic inverse function theorem
 `AnalyticAt.localInverse` (in `Analysis/Analytic/Inverse.lean`)
 produces an analytic local inverse.  Wrap as the existence of an
-analytic `g : ℂ → ℂ` with mutual local-inverse equations. -/
+analytic `g : ℂ → ℂ` with mutual local-inverse equations.
+-/
 theorem chartLocalAt_localInverse_of_unramified
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -358,20 +372,22 @@ theorem chartLocalAt_localInverse_of_unramified
   · convert HasStrictDerivAt.eventually_right_inverse _hf.hasStrictDerivAt hderiv using 1
     exact congr_arg _ (chartLocalAt_chartAt_self f x).symm
 
-/-- **B3 = Sub-leaf 2.** Local injectivity at an unramified
+/--
+**B3 = Sub-leaf 2.** Local injectivity at an unramified
 point: if `mapAnalyticOrderAt f x = 1`, there is an open neighborhood
 pair `(U, V)` such that for every `y ∈ V`, `U ∩ f⁻¹ {y}` is a
 singleton.
 
 Proof sketch (assembling B2):
 
-  * Apply B2 to obtain the analytic local inverse `g` near
+* Apply B2 to obtain the analytic local inverse `g` near
     `chartAt ℂ (f x) (f x)`.
   * Lift `g` through `chartAt ℂ (f x)` and `chartAt ℂ x` to a
     continuous local inverse `(chartAt ℂ x).symm ∘ g ∘ chartAt ℂ (f x)`
     of `f` on a neighborhood of `f x`.
   * Take `U` and `V` small enough that the chart compositions are
-    well-defined and the local inverse lands in the right places. -/
+    well-defined and the local inverse lands in the right places.
+-/
 theorem IsHolomorphicAt.exists_local_inj_of_unramified
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -414,11 +430,12 @@ theorem IsHolomorphicAt.exists_local_inj_of_unramified
       have := hU.2.2 x' hx'; aesop;
     rw [ ← h_eq, ( chartAt ℂ x ).left_inv ( hU.2.2 x' hx' |>.1 ) ]
 
-/-! ### Sub-leaf C: local k-fold structure at ramified points
+/-!
+### Sub-leaf C: local k-fold structure at ramified points
 
 Decomposition:
 
-  * C1 `chartLocalAt_eq_pow_mul_of_order` — local power-series form
+* C1 `chartLocalAt_eq_pow_mul_of_order` — local power-series form
     `chartLocalAt(t) - chart(f x) = (t - z₀)^k · g(t)` with
     `g(z₀) ≠ 0`, from Mathlib's `AnalyticAt.analyticOrderAt_eq_natCast`,
   * C2 `analyticAt_kth_root_of_ne_zero` — analytic `k`-th root of a
@@ -428,9 +445,11 @@ Decomposition:
     `s = (t - z₀) · g(t)^{1/k}` flattens the local form to `s ↦ s^k`,
   * C4 `IsHolomorphicAt.exists_local_kfold_of_ramified` — assembly:
     transport through charts to count simple preimages on the
-    manifold side. -/
+    manifold side.
+-/
 
-/-- **C1.** Local power-series form at a point of order `k`:
+/--
+**C1.** Local power-series form at a point of order `k`:
 the centred chart-local function factors as `(t - z₀)^k · g(t)` for
 some analytic `g` with `g(z₀) ≠ 0`, where `z₀ = chartAt ℂ x x`.
 
@@ -439,7 +458,8 @@ Proof sketch: this is Mathlib's
 chart-local difference `t ↦ chartLocalAt f x t - chartLocalAt f x z₀`
 at `z₀`, with `n = k`.  Mathlib gives existence of analytic `g` with
 `g(z₀) ≠ 0` such that the centred chart-local difference equals
-`(t - z₀)^k • g(t)` near `z₀`. -/
+`(t - z₀)^k • g(t)` near `z₀`.
+-/
 theorem chartLocalAt_eq_pow_mul_of_order
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -457,7 +477,8 @@ theorem chartLocalAt_eq_pow_mul_of_order
   convert h_analytic.analyticOrderNatAt_eq_iff _ |> fun h => h.mp _hramx;
   aesop
 
-/-- **C2.** Holomorphic `k`-th root of a locally
+/--
+**C2.** Holomorphic `k`-th root of a locally
 non-vanishing analytic function: if `g` is analytic at `z₀` with
 `g(z₀) ≠ 0` and `k ≥ 1`, there is an analytic `h` near `z₀` with
 `h(z)^k = g(z)` locally.
@@ -467,7 +488,8 @@ choose a continuous (in fact analytic) branch of `log g` (using
 `Complex.log` on a simply-connected nbhd of `g(z₀)` avoiding `0`).
 Define `h := exp ((1/k) * log g)`.  Then `h^k = exp(log g) = g`.
 Existence of the analytic log branch is `Complex.analyticAt_log` or
-similar; the analytic combination gives `h`. -/
+similar; the analytic combination gives `h`.
+-/
 theorem analyticAt_kth_root_of_ne_zero
     {g : ℂ → ℂ} {z₀ : ℂ} (_hg : AnalyticAt ℂ g z₀) (_hg_ne : g z₀ ≠ 0)
     {k : ℕ} (_hk : 0 < k) :
@@ -487,7 +509,8 @@ theorem analyticAt_kth_root_of_ne_zero
     simp_all +decide [← Complex.exp_nat_mul, mul_div_cancel₀, _hk.ne']
     rw [Complex.exp_add, Complex.exp_log hz, hα, mul_div_cancel₀ _ _hg_ne]
 
-/-- **C3.** Local conjugacy to `s ↦ s^k`: combining C1 and
+/--
+**C3.** Local conjugacy to `s ↦ s^k`: combining C1 and
 C2, near `chartAt ℂ x x` the chart-local function satisfies
 `chartLocalAt f x t - chart(f x) = ((t - z₀) · h(t))^k` where
 `h` is analytic with `h(z₀) ≠ 0`.  The substitution
@@ -497,7 +520,8 @@ C2, near `chartAt ℂ x x` the chart-local function satisfies
 
 Proof sketch: take C1 to get `(t - z₀)^k · g(t)`; apply C2 to `g`
 to get analytic `h` with `h^k = g`; expand
-`(t - z₀)^k · h(t)^k = ((t - z₀) · h(t))^k`. -/
+`(t - z₀)^k · h(t)^k = ((t - z₀) · h(t))^k`.
+-/
 theorem chartLocalAt_locally_conjugate_pow
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -514,7 +538,8 @@ theorem chartLocalAt_locally_conjugate_pow
   · intro h; have := h_root_k.self_of_nhds; simp_all +decide [ ne_of_gt _hk ] ;
   · filter_upwards [ hg, h_root_k ] with t ht₁ ht₂ using by rw [ ht₁, mul_pow, ht₂ ] ;
 
-/-- **C4 = Sub-leaf 3.** Local `k`-fold structure at a
+/--
+**C4 = Sub-leaf 3.** Local `k`-fold structure at a
 ramified point: combining C3 with the fact that `s ↦ s^k` has exactly
 `k` simple preimages of any nonzero target, plus chart transport, the
 fibre `U ∩ f⁻¹ {y}` near a ramified `x` of order `k` has exactly `k`
@@ -526,7 +551,8 @@ roots of any nonzero `c` are distinct simple zeros of
 `((t - z₀) · h(t))^k - c` (since `(t - z₀) · h(t)` is a local
 biholomorphism near `z₀` — derivative `h(z₀) ≠ 0`).  Transport back
 through `(chartAt ℂ x).symm` to obtain the `k` preimages on the
-manifold side. -/
+manifold side.
+-/
 theorem IsHolomorphicAt.exists_local_kfold_of_ramified
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -541,11 +567,12 @@ theorem IsHolomorphicAt.exists_local_kfold_of_ramified
       (∀ x' ∈ U, f x' = y → x' ∈ s) := by
   exact _hf.local_kfold_ramified _hk_pos _hramx
 
-/-! ### Sub-leaf D: weighted fibre sum locally constant
+/-!
+### Sub-leaf D: weighted fibre sum locally constant
 
 Decomposition:
 
-  * D1 `Set.Finite.exists_pairwiseDisjoint_open_nbhds` — given a
+* D1 `Set.Finite.exists_pairwiseDisjoint_open_nbhds` — given a
     finite set in a `T2Space`, there exist pairwise-disjoint open
     neighborhoods of each point (probably already in Mathlib),
   * D2 `eventually_fiber_subset_iUnion_nbhds` — properness of a
@@ -555,14 +582,10 @@ Decomposition:
     single base point `y₀`: there is a neighborhood `V` of `y₀` such
     that the weighted fibre sum is constant on `V`,
   * D4 `isHolomorphic_weightedFiberSum_isLocallyConstant` —
-    assembly: D3 holding at every `y₀` is exactly local-constancy. -/
-
-/-
-**D1 (likely already in Mathlib).** Pairwise-disjoint open
-neighborhoods of a finite set of points in a `T2Space`.  Stated here
-as a sub-leaf placeholder; the actual proof should `exact` Mathlib's
-`Set.Finite.exists_disjoint_iUnion_open` or similar.
+    assembly: D3 holding at every `y₀` is exactly local-constancy.
 -/
+
+
 theorem Set.Finite.exists_pairwiseDisjoint_open_nbhds
     {X : Type*} [TopologicalSpace X] [T2Space X]
     {s : Set X} (_hs : s.Finite) :
@@ -572,7 +595,8 @@ theorem Set.Finite.exists_pairwiseDisjoint_open_nbhds
   obtain ⟨U, hU⟩ := Set.Finite.t2_separation _hs;
   exact ⟨ U, fun x hx => ⟨ hU.1 x |>.2, hU.1 x |>.1 ⟩, hU.2 ⟩
 
-/-- **D2.** Properness on a compact source: for any open `U`
+/--
+**D2.** Properness on a compact source: for any open `U`
 containing the fibre `f⁻¹ {y₀}`, there is a neighborhood `V` of `y₀`
 such that for every `y ∈ V`, `f⁻¹ {y} ⊆ U`.
 
@@ -580,7 +604,8 @@ Proof sketch: `Uᶜ` is closed, hence compact (closed subset of compact
 `X`).  Its image `f(Uᶜ)` is compact, hence closed (in `T2Space Y`),
 and does not contain `y₀` (since `f⁻¹ {y₀} ⊆ U` ⇒ `Uᶜ ⊆ f⁻¹ {y₀}ᶜ`).
 So `f(Uᶜ)ᶜ` is an open neighborhood of `y₀`; on it,
-`y ∉ f(Uᶜ) ⇔ f⁻¹ {y} ∩ Uᶜ = ∅ ⇔ f⁻¹ {y} ⊆ U`. -/
+`y ∉ f(Uᶜ) ⇔ f⁻¹ {y} ∩ Uᶜ = ∅ ⇔ f⁻¹ {y} ⊆ U`.
+-/
 theorem eventually_fiber_subset_of_compact_T2
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [CompactSpace X] [T2Space Y]
@@ -595,9 +620,11 @@ theorem eventually_fiber_subset_of_compact_T2
 
 /-! ### D3 helper lemmas -/
 
-/-- Local properness variant: if all fibre points of `y₀` that lie in
+/--
+Local properness variant: if all fibre points of `y₀` that lie in
 `closure U` are already in `W`, then for `y` near `y₀` every preimage of
-`y` in `U` also lies in `W`. -/
+`y` in `U` also lies in `W`.
+-/
 private theorem preimage_inter_closure_subset
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [CompactSpace X] [T2Space Y]
@@ -612,7 +639,8 @@ private theorem preimage_inter_closure_subset
   filter_upwards [h_finite] with y hy using
     fun x hx => Or.resolve_right (hy hx.1) fun hx' => hx' <| subset_closure hx.2
 
-/-- **D3.** Local conservation at a single base point.
+/--
+**D3.** Local conservation at a single base point.
 Combining D1, D2, sub-leaf B (at unramified preimages) and sub-leaf C
 (at ramified preimages), the weighted fibre sum is constant on a
 neighborhood of `y₀`.
@@ -623,7 +651,7 @@ Proof sketch: pick disjoint open `U_x ∋ x` for each `x ∈ f⁻¹ {y₀}`
 in `Y`.  Take `V := ⋂ V_x ∩ V'` where `V'` is the neighborhood from
 D2 ensuring `f⁻¹ {y} ⊆ ⋃ U_x` for `y ∈ V'`.  On `V`:
 
-  * `f⁻¹ {y}` decomposes as the disjoint union of `U_x ∩ f⁻¹ {y}`
+* `f⁻¹ {y}` decomposes as the disjoint union of `U_x ∩ f⁻¹ {y}`
     over `x ∈ f⁻¹ {y₀}`;
   * each `U_x ∩ f⁻¹ {y}` contributes exactly `mapAnalyticOrderAt f x`
     to the weighted sum (`1` for unramified by B, `k` for ramified
@@ -632,7 +660,8 @@ D2 ensuring `f⁻¹ {y} ⊆ ⋃ U_x` for `y ∈ V'`.  On `V`:
     sum-via-Finset.sum bookkeeping).
 
 So `weightedFiberSum y = ∑_{x ∈ f⁻¹ {y₀}} mapAnalyticOrderAt f x =
-weightedFiberSum y₀` on `V`. -/
+weightedFiberSum y₀` on `V`.
+-/
 theorem weightedFiberSum_eventually_eq
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -648,12 +677,14 @@ theorem weightedFiberSum_eventually_eq
   exact hw.weightedFiberSum_eventually_eq hnonconst
     (isHolomorphic_finite_fiber hf hnonconst) y₀
 
-/-- **D4 = Sub-leaf 4.** Local conservation: combining
+/--
+**D4 = Sub-leaf 4.** Local conservation: combining
 leaves 2 and 3, the weighted fibre sum is locally constant on `Y`.
 
 Proof sketch (assembling D3): apply D3 at every `y₀`; this is
 literally the `IsLocallyConstant.iff_eventuallyEq`-form of
-local-constancy. -/
+local-constancy.
+-/
 theorem isHolomorphic_weightedFiberSum_isLocallyConstant
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
@@ -668,8 +699,10 @@ theorem isHolomorphic_weightedFiberSum_isLocallyConstant
   intro y₀
   exact weightedFiberSum_eventually_eq hf hw hnonconst y₀
 
-/-- **Final assembly.** Combining sub-leaf 4 with preconnectedness of
-`Y`: the weighted fibre sum is constant on `Y`. -/
+/--
+**Final assembly.** Combining sub-leaf 4 with preconnectedness of
+`Y`: the weighted fibre sum is constant on `Y`.
+-/
 theorem isHolomorphic_weightedFiberSum_const
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [ChartedSpace ℂ X] [ChartedSpace ℂ Y]

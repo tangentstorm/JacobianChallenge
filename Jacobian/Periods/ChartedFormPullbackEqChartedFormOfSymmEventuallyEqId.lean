@@ -20,9 +20,11 @@ open Filter Topology JacobianChallenge.HolomorphicForms
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) E]
 
-/-- For a self-chart `c : OpenPartialHomeomorph E E`, if `c.symm`
+/--
+For a self-chart `c : OpenPartialHomeomorph E E`, if `c.symm`
 agrees with the identity on a neighborhood of `e`, the corrected
-chart-pullback at `e` coincides with the provisional chart-form. -/
+chart-pullback at `e` coincides with the provisional chart-form.
+-/
 theorem chartedFormPullback_eq_chartedForm_of_symm_eventuallyEq_id
     (c : OpenPartialHomeomorph E E) (ω : HolomorphicOneForm E E) (e : E)
     (h : (fun x : E => c.symm x) =ᶠ[𝓝 e] id) :

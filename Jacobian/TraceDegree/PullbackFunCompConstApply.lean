@@ -23,8 +23,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Z]
 
 set_option linter.unusedSectionVars false in
-/-- Vec-apply form: pullback along `f ∘ const x₀` evaluated on a
-tangent vector is zero. -/
+/--
+Vec-apply form: pullback along `f ∘ const x₀` evaluated on a
+tangent vector is zero.
+-/
 @[simp] theorem pullbackFormsFun_comp_const_apply_vec
     (f : Y → Z) (x₀ : Y) (η : HolomorphicOneForm E Z) (x : X) (v : E) :
     pullbackFormsFun (f ∘ Function.const X x₀) η x v = 0 := by
@@ -38,8 +40,10 @@ set_option linter.unusedSectionVars false in
   rw [pullbackFormsFun_const_comp]; rfl
 
 set_option linter.unusedSectionVars false in
-/-- Vec-apply form: pullback along `const z ∘ f` evaluated on a
-tangent vector is zero. -/
+/--
+Vec-apply form: pullback along `const z ∘ f` evaluated on a
+tangent vector is zero.
+-/
 @[simp] theorem pullbackFormsFun_const_comp_apply_vec
     (z : Z) (f : X → Y) (η : HolomorphicOneForm E Z) (x : X) (v : E) :
     pullbackFormsFun (Function.const Y z ∘ f) η x v = 0 := by

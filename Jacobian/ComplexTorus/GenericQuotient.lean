@@ -1,14 +1,6 @@
 import Mathlib.Topology.Algebra.Group.Quotient
 
-/-!
-# Generic `AddSubgroup`-quotient lemmas, independent of `FullComplexLattice`
-
-Queue B sibling. The lemmas here intentionally avoid `FullComplexLattice`
-so they can be reused in other settings (and so the `FullComplexLattice`
-wrappers stay thin). Each lemma is a small wrapper around an existing
-Mathlib fact, but having them named locally lets the rest of the project
-refer to them by short, layer-specific names.
--/
+/-! # Generic `AddSubgroup`-quotient lemmas, independent of `FullComplexLattice` -/
 
 namespace JacobianChallenge.ComplexTorus
 

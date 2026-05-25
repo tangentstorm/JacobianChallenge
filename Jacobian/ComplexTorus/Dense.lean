@@ -4,8 +4,6 @@ import Jacobian.ComplexTorus.Defs
 /-!
 # Density on the complex-torus quotient
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 The image of a dense set under `mk` is dense exactly when the set is
 dense modulo the lattice. This is a useful descriptor for density of
 periodic patterns inside the torus.
@@ -18,8 +16,10 @@ open scoped Pointwise
 variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
-/-- A subset of `V` projects to a dense subset of the torus iff it is
-dense modulo the lattice. -/
+/--
+A subset of `V` projects to a dense subset of the torus iff it is
+dense modulo the lattice.
+-/
 lemma dense_mk_image_iff (s : Set V) :
     Dense (mk V Λ '' s) ↔ Dense (s + (Λ.subgroup : Set V)) :=
   QuotientAddGroup.dense_image_mk

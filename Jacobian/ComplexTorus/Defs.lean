@@ -19,11 +19,6 @@ quotient/lattice work has stabilized they have been promoted here so
 that `StatementBank` can import this file rather than the reverse —
 matching the natural dependency direction (completed work feeds the
 work-packet bank, not vice versa).
-
-`StatementBank.lean` keeps only the not-yet-implemented placeholder
-target statements (charted-space, manifold, Lie-group) and the higher
-queue contents (Periods, AnalyticJacobian, AbelJacobi, TraceDegree,
-AntiHack), all of which depend on this file.
 -/
 
 namespace JacobianChallenge
@@ -62,8 +57,10 @@ shape exposes the dependency surface concretely.
 structure FullComplexLattice where
   subgroup : AddSubgroup V
   isClosed : IsClosed (subgroup : Set V)
-  /-- The subgroup is discrete in the subspace topology — independent
-  of `isClosed`/cocompactness in general. -/
+  /--
+The subgroup is discrete in the subspace topology — independent
+  of `isClosed`/cocompactness in general.
+-/
   isDiscrete : DiscreteTopology subgroup
   /-- A subset of `V` whose `subgroup`-translates cover `V`. -/
   fundamentalDomain : Set V
@@ -82,17 +79,21 @@ instance quotient_addCommGroup (Λ : FullComplexLattice V) : AddCommGroup (quoti
 instance quotient_topologicalSpace (Λ : FullComplexLattice V) : TopologicalSpace (quotient V Λ) :=
   inferInstanceAs (TopologicalSpace (V ⧸ Λ.subgroup))
 
-/-- The quotient is `T2`: derived from `isClosed` via Mathlib's
-    `QuotientGroup.instT1Space` plus the topological-group machinery. -/
+/--
+The quotient is `T2`: derived from `isClosed` via Mathlib's
+    `QuotientGroup.instT1Space` plus the topological-group machinery.
+-/
 instance quotient_t2Space (Λ : FullComplexLattice V) : T2Space (quotient V Λ) := by
   haveI : IsClosed (Λ.subgroup : Set V) := Λ.isClosed
   exact inferInstance
 
-/-- If `K ⊆ V` is compact and every point of `V` lies in some
+/--
+If `K ⊆ V` is compact and every point of `V` lies in some
 `subgroup`-translate of `K`, the quotient `V ⧸ subgroup` is compact.
 This is the generic "cocompact lattice ⇒ compact quotient" lemma; the
 `quotient_compactSpace` instance below specializes it to the lattice's
-own fundamental domain. -/
+own fundamental domain.
+-/
 theorem compactSpace_quotient_of_cover (Λ : FullComplexLattice V)
     {K : Set V} (hK : IsCompact K)
     (hcov : ∀ v : V, ∃ g ∈ Λ.subgroup, v - g ∈ K) :
@@ -110,8 +111,10 @@ theorem compactSpace_quotient_of_cover (Λ : FullComplexLattice V)
   rw [← hsurj]
   exact hK.image QuotientAddGroup.continuous_mk
 
-/-- The quotient is `CompactSpace`, derived from the lattice's compact
-fundamental domain via `compactSpace_quotient_of_cover`. -/
+/--
+The quotient is `CompactSpace`, derived from the lattice's compact
+fundamental domain via `compactSpace_quotient_of_cover`.
+-/
 instance quotient_compactSpace (Λ : FullComplexLattice V) :
     CompactSpace (quotient V Λ) :=
   compactSpace_quotient_of_cover V Λ Λ.fundamentalDomain_isCompact

@@ -21,8 +21,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- `evalJacobianClass P v + evalJacobianClass Q v
-    = mk (evalLinearMap P v + evalLinearMap Q v)`. -/
+/--
+`evalJacobianClass P v + evalJacobianClass Q v
+    = mk (evalLinearMap P v + evalLinearMap Q v)`.
+-/
 theorem evalJacobianClass_add_eq_mk
     (P Q : X) (v : E) :
     evalJacobianClass (E := E) (X := X) P v +
@@ -30,8 +32,10 @@ theorem evalJacobianClass_add_eq_mk
       mk E X (evalLinearMap P v + evalLinearMap Q v) := by
   rw [evalJacobianClass_def, evalJacobianClass_def, mk_add]
 
-/-- `evalJacobianClass P v - evalJacobianClass Q v
-    = mk (evalLinearMap P v - evalLinearMap Q v)`. -/
+/--
+`evalJacobianClass P v - evalJacobianClass Q v
+    = mk (evalLinearMap P v - evalLinearMap Q v)`.
+-/
 theorem evalJacobianClass_sub_eq_mk
     (P Q : X) (v : E) :
     evalJacobianClass (E := E) (X := X) P v -

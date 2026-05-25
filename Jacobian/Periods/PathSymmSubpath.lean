@@ -25,8 +25,10 @@ namespace JacobianChallenge.Periods
 
 open unitInterval
 
-/-- Subpath of a reversed path at parameters `s, t` equals subpath
-of the original at the reflected parameters `σ s, σ t`. -/
+/--
+Subpath of a reversed path at parameters `s, t` equals subpath
+of the original at the reflected parameters `σ s, σ t`.
+-/
 theorem path_symm_subpath_eq
     {X : Type*} [TopologicalSpace X] {a b : X}
     (γ : Path a b) (s t : unitInterval) :

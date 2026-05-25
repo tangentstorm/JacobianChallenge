@@ -12,7 +12,8 @@ namespace JacobianChallenge.Periods
 
 open Set Metric unitInterval
 
-/-- For a continuous path `γ` from a compact metric space `K = unitInterval`
+/--
+For a continuous path `γ` from a compact metric space `K = unitInterval`
 into a charted space `X`, there exists `n ≥ 1` and a chart-selection
 function `pickChart : Fin n → X` such that for every sub-interval
 `[i/n, (i+1)/n]` and every `t` in that sub-interval, `γ t` lies in

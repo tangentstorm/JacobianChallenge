@@ -18,8 +18,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Set-restricted bridge: if `mfderiv c.symm = id` on every `e ∈ s`,
-the corrected and provisional chart-forms agree pointwise on `s`. -/
+/--
+Set-restricted bridge: if `mfderiv c.symm = id` on every `e ∈ s`,
+the corrected and provisional chart-forms agree pointwise on `s`.
+-/
 theorem chartedFormPullback_eqOn_chartedForm_of_mfderiv_id
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) {s : Set E}
     (hd : ∀ e ∈ s, mfderiv (modelWithCornersSelf ℂ E)

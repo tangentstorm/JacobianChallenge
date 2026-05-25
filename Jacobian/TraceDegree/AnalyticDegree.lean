@@ -48,22 +48,15 @@ variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [StableChartAt ℂ Y]
   [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ Y]
 
-/-- **Concrete analytic degree.** For a smooth map `f : X → Y` of
+/--
+**Concrete analytic degree.** For a smooth map `f : X → Y` of
 compact Riemann surfaces, the degree is:
 
 * `0` if `f` is constant;
 * `branchedDegree hbc` for a Classically chosen `RamificationIndexCompatible`
   branched-cover datum `hbc`, if such a witness exists;
 * `0` otherwise.
-
-This is non-opaque: callers see the dispatch on constancy directly.
-The Classical fall-back over `∃ hbc, hbc.RamificationIndexCompatible` is
-*not* over the analytic trace/degree frontier — it is over the
-existence of a branched-cover datum, which any concrete analytic
-construction (e.g. `branchedCoverData_of_nonconstant_holomorphic`)
-supplies directly. The existence-then-equality theorem
-`analyticDegree_eq_canonical_branchedDegree` collapses the Classical
-choice to the canonical compatible witness. -/
+-/
 noncomputable def analyticDegree (f : X → Y)
     (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) : ℕ :=
   open Classical in
@@ -74,8 +67,7 @@ noncomputable def analyticDegree (f : X → Y)
       branchedDegree hbc.choose
     else 0
 
-/-- **Analytic degree of constant maps.** Sorry-free: the new
-`analyticDegree` definition takes the constant-branch directly. -/
+
 @[simp]
 theorem analyticDegree_constant (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (hconst : ∃ y₀, ∀ x, f x = y₀) :
@@ -83,7 +75,8 @@ theorem analyticDegree_constant (f : X → Y)
   unfold analyticDegree
   simp [hconst]
 
-/-- **Branched-degree-uniqueness for holomorphic maps.** Two
+/--
+**Branched-degree-uniqueness for holomorphic maps.** Two
 `RamificationIndexCompatible` branched-cover data on the same
 holomorphic map have equal `branchedDegree`.
 
@@ -92,7 +85,8 @@ well-defined independently of the Classical choice of witness: any
 two compatible witnesses give the same branched degree, because their
 `ramificationIndex` functions both equal `mapAnalyticOrderAt f` on the
 (entire) holomorphic locus, and the finite-fiber `toFinset`s depend
-only on the set. -/
+only on the set.
+-/
 theorem branchedDegree_eq_of_compatible
     {f : X → Y} (hHol : IsHolomorphic f)
     (h₁ h₂ : BranchedCoverData X Y f)
@@ -115,14 +109,13 @@ theorem branchedDegree_eq_of_compatible
   -- ramificationIndex x = mapAnalyticOrderAt f x on both sides (compatibility + holomorphicity).
   rw [hc₁ x (hHol.holomorphicAt x), hc₂ x (hHol.holomorphicAt x)]
 
-/-- **Analytic degree equals branched degree, canonical form.** For a
+/--
+**Analytic degree equals branched degree, canonical form.** For a
 nonconstant smooth map of compact Riemann surfaces, the analytic degree
 agrees with the branched degree of **any** `RamificationIndexCompatible`
 branched-cover datum on `f` (provided `f` is holomorphic, which is
 automatic from smoothness via the kfold package).
-
-Sorry-free: uses `branchedDegree_eq_of_compatible` to compare the
-Classically chosen witness inside `analyticDegree` with the supplied one. -/
+-/
 theorem analyticDegree_eq_canonical_branchedDegree (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (hHol : IsHolomorphic f)
@@ -143,10 +136,12 @@ theorem analyticDegree_eq_canonical_branchedDegree (f : X → Y)
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [IsManifold 𝓘(ℂ) ω X] [StableChartAt ℂ X]
   [T2Space Y] [CompactSpace Y] [IsManifold 𝓘(ℂ) ω Y] [StableChartAt ℂ Y] in
-/-- **Analytic degree identity, explicit form (legacy wrapper).** The
+/--
+**Analytic degree identity, explicit form (legacy wrapper).** The
 equality between the analytic degree and a supplied branched-cover
 degree, given the equation as a hypothesis. New callers should prefer
-`analyticDegree_eq_canonical_branchedDegree`. -/
+`analyticDegree_eq_canonical_branchedDegree`.
+-/
 theorem analyticDegree_eq_branchedDegree (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (hbc : JacobianChallenge.HolomorphicForms.BranchedCoverData X Y f)
@@ -154,27 +149,20 @@ theorem analyticDegree_eq_branchedDegree (f : X → Y)
     analyticDegree f hf =
       JacobianChallenge.HolomorphicForms.branchedDegree hbc := hdegree
 
-/-- **The weighted-fiber conservation provider.** Sorry-free wrapper
-around `hasWeightedFiberConservation_of_contMDiff` (which packages
-the analytic theorem `weightedFiberConservation_of_contMDiff` from
-`Jacobian/HolomorphicForms/HolomorphicMap.lean`).
-
+/--
 Trace-degree consumers no longer carry a provider-local analytic gap;
 the remaining analytic content lives where it belongs, in
-`HolomorphicMap.lean`. -/
+`HolomorphicMap.lean`.
+-/
 theorem hasWeightedFiberConservation_provider (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     HasWeightedFiberConservation f :=
   hasWeightedFiberConservation_of_contMDiff hf
 
-/-- **The narrow trace regularity provider.** Global trace of
+/--
+**The narrow trace regularity provider.** Global trace of
 holomorphic 1-forms agrees with the regular-value local trace formula.
-
-Sorry-free assembly from the narrow analytic construction provider
-`traceFormsConstructionData_provider`: the `map_zero` field is the
-construction data's `map_zero_spec` applied to `rfl : (0 : _) = 0`;
-the `apply_fun_regular` field unfolds `traceFormsBundled` to the
-construction data's `traceForm` and invokes `regular_spec`. -/
+-/
 noncomputable def traceFormsRegularSpec_provider (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     TraceFormsRegularSpec f hf where
@@ -186,10 +174,7 @@ noncomputable def traceFormsRegularSpec_provider (f : X → Y)
     change (traceFormsConstructionData_provider f hf η).traceForm.toFun y = _
     exact (traceFormsConstructionData_provider f hf η).regular_spec hbc y hy
 
-/-- **The narrow trace-pullback identity provider.** The form-level
-identity `tr_f (f* η) = deg(f) · η` (Steps 3-5 of the analytic proof
-outline: holomorphic extension across the branch locus).
-
+/--
 Assembled here from four narrow inputs, the same shape as
 `trace_pullback_identity_of_spec` in `TraceBundled.lean`:
 * `traceFormsRegularSpec_provider` — regular-value trace formula;
@@ -201,7 +186,8 @@ The mirror assembly `trace_pullback_identity_of_spec` in
 `TraceBundled.lean` takes the same shape but with an explicit
 `TraceFormsRegularSpec` boundary; here the trace spec is supplied via
 the named provider so callers can use the identity uniformly with the
-provider-based interface. -/
+provider-based interface.
+-/
 noncomputable def trace_pullback_provider (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) :
@@ -242,12 +228,11 @@ noncomputable def trace_pullback_provider (f : X → Y)
         htrace.apply_fun_regular hbc (pullbackFormsBundled f hf η) y hy]
     exact trace_pullback_at_regular_value hbc hcompat hf hHol η y hy
 
-/-- **Linear trace-pullback identity.** The trace of the pullback of a
+/--
+**Linear trace-pullback identity.** The trace of the pullback of a
 holomorphic 1-form (both viewed as linear maps) is degree
 multiplication.
-
-Sorry-free corollary of `trace_pullback_provider`: applying it
-pointwise to each form and packaging as a linear-map equation. -/
+-/
 theorem traceFormsBundledLM_pullbackFormsBundledLM_eq_degree_smul
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (traceFormsBundledLM f hf).comp (pullbackFormsBundledLM X Y f hf) =
@@ -261,14 +246,11 @@ theorem traceFormsBundledLM_pullbackFormsBundledLM_eq_degree_smul
   show traceFormsBundled f hf (pullbackFormsBundled f hf η) = _
   exact trace_pullback_provider f hf η
 
-/-- **Matrix-level trace-pullback identity.** The composition of
+/--
+**Matrix-level trace-pullback identity.** The composition of
 trace-coord and pullback-coord matrices is `analyticDegree` times the
 identity matrix.
-
-Sorry-free assembly: convert
-`traceFormsBundledLM_pullbackFormsBundledLM_eq_degree_smul` from
-linear maps on `HolomorphicOneForm ℂ Y` to matrices via
-`Module.Basis.equivFun`. -/
+-/
 theorem traceFormsCoord_holomorphicTraceCoord_eq_degree_smul
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (traceFormsCoord f hf).comp (holomorphicTraceCoord f hf) =
@@ -309,7 +291,8 @@ theorem traceFormsCoord_holomorphicTraceCoord_eq_degree_smul
     exact this]
   rw [map_smul, LinearEquiv.apply_symm_apply]
 
-/-- **Corrected vector-level push-pull identity.** The composition
+/--
+**Corrected vector-level push-pull identity.** The composition
 `pushforwardTraceLift ∘ traceDualPullbackLift` equals
 `(analyticDegree : ℂ) • LinearMap.id` on the covering vector space
 `Fin g_Y → ℂ`.
@@ -329,10 +312,7 @@ dual coordinates. Once `analyticPullback` is rewired to use
 naturality statement for the new lattice preservation), this
 vector-level identity will descend to give
 `analyticPushforward (analyticPullback Q) = analyticDegree • Q`.
-
-Sorry-free assembly from
-`traceFormsCoord_holomorphicTraceCoord_eq_degree_smul` plus matrix
-transpose arithmetic. -/
+-/
 theorem pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (pushforwardTraceLift f hf).comp
@@ -381,21 +361,13 @@ theorem pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul
   rw [Matrix.toLin'_one]
   rfl
 
-/-- **The narrow push-pull descent provider.** The basis-aligned
+/--
+**The narrow push-pull descent provider.** The basis-aligned
 Jacobian push-pull identity, descended from the trace-pullback
 identity on holomorphic 1-forms through the period quotient.
 
 ### Status (post-rewire)
-
-Sorry-free. The previous rewire of `analyticPullback` to use the
-corrected dual-coordinate representative `traceDualPullbackLiftCLM`
-(= transpose of the trace matrix) — together with the
-lattice-preservation theorem
-`traceDualPullbackLift_preserves_lattice_raw` — descends the
-vector-level push-pull identity
-`pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul` through
-the period quotient via `ComplexTorus.mapClm` and
-`analyticPushforward_mk_spec_raw`. -/
+-/
 noncomputable def analyticPushPull_provider (f : X → Y)
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
@@ -431,7 +403,8 @@ noncomputable def analyticPushPull_provider (f : X → Y)
   rw [Nat.cast_smul_eq_nsmul ℂ (analyticDegree f hf) v]
   exact ComplexTorus.mk_nsmul _ (analyticDegree f hf) v
 
-/-- Bundled analytic trace/degree contract for a holomorphic map of compact
+/--
+Bundled analytic trace/degree contract for a holomorphic map of compact
 Riemann surfaces.
 
 The fields are the mathematical laws needed by the public route theorems:
@@ -440,14 +413,17 @@ analytic degree agrees with the branched-cover degree of any compatible
 witness (canonical theorem), the global trace agrees with the local
 regular-fiber trace, trace after pullback is degree multiplication on
 holomorphic forms, and the descended basis-aligned Jacobian maps satisfy
-the corresponding push-pull identity. -/
+the corresponding push-pull identity.
+-/
 structure AnalyticTraceDegreeSpec (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) where
   /-- Constant maps have analytic degree zero. -/
   degree_constant : (∃ y₀, ∀ x, f x = y₀) → analyticDegree f hf = 0
-  /-- For nonconstant maps, analytic degree agrees with the constructed
+  /--
+For nonconstant maps, analytic degree agrees with the constructed
   branched-cover degree under the standard local ramification and weighted
-  fiber conservation hypotheses. -/
+  fiber conservation hypotheses.
+-/
   degree_eq_branched :
     ∀ (hkfold : HasLocalKfoldRamification f) (hw : HasWeightedFiberConservation f)
       (hnonconst : ¬ ∃ y₀, ∀ x, f x = y₀),
@@ -469,20 +445,7 @@ structure AnalyticTraceDegreeSpec (f : X → Y)
       analyticPushforward f hf (analyticPullback f hf Q) =
         (analyticDegree f hf) • Q
 
-/-- **Assembled analytic trace/degree spec.** All the bundled fields
-are now small named providers or sorry-free degree facts.
 
-* `degree_constant` — sorry-free from `analyticDegree_constant`;
-* `degree_eq_branched` — sorry-free from
-  `analyticDegree_eq_canonical_branchedDegree` plus
-  `branchedCoverData_of_nonconstant_holomorphic_compatible`;
-* `trace_regular` — delegates to `traceFormsRegularSpec_provider`;
-* `trace_pullback` — delegates to `trace_pullback_provider`;
-* `push_pull` — delegates to `analyticPushPull_provider`.
-
-The single monolithic frontier of the previous design is now decomposed
-into exactly three narrow providers (`traceFormsRegularSpec_provider`,
-`trace_pullback_provider`, `analyticPushPull_provider`). -/
 noncomputable def analyticTraceDegreeSpec_frontier (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     AnalyticTraceDegreeSpec f hf where
@@ -500,9 +463,7 @@ noncomputable def analyticTraceDegreeSpec_frontier (f : X → Y)
   trace_pullback := trace_pullback_provider f hf
   push_pull := fun Q => analyticPushPull_provider f hf Q
 
-/-- Companion specification (anti-hack obligation): the trace-pullback
-identity in basis-aligned form. This remains an explicit frontier; it
-is not hidden as a fake field of the basis pullback bundle. -/
+
 theorem analyticPushforward_analyticPullback_spec (f : X → Y)
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :
@@ -510,35 +471,8 @@ theorem analyticPushforward_analyticPullback_spec (f : X → Y)
       (analyticDegree f hf) • Q :=
   analyticPushPull_provider f hf Q
 
-/- The trace–pullback identity, in basis-aligned form: pushforward
-of pullback equals degree-multiplication on `BasisAnalyticJacobian Y`.
 
-Top-down obligation. Bottom-up: descend the classical trace–pullback
-identity `tr_f (f* η) = deg(f) · η` (on holomorphic 1-forms) through
-the period quotient.
 
-### Decomposition (post-refactor)
-
-`analyticPushforward_analyticPullback` is delegated to
-`analyticPushPull_provider`. The form-level identity is
-`trace_pullback_provider`. Trace regularity is
-`traceFormsRegularSpec_provider`. Degree facts
-(`analyticDegree_constant`, `analyticDegree_eq_canonical_branchedDegree`)
-are sorry-free.
-
-### Dependency graph
-
-```
-analyticPushforward_analyticPullback
-  └── analyticPushPull_provider                        (sorry-free)
-        ↑ descended from
-        trace_pullback_provider                        (sorry-free)
-              ↑ assembled from
-              traceFormsRegularSpec_provider           (narrow sorry)
-              analyticDegree_eq_canonical_branchedDegree (sorry-free)
-              identity-principle on holomorphic 1-forms (sorry-free)
-``` -/
-/-- Compatibility wrapper using the named push-pull frontier. -/
 lemma analyticPushforward_analyticPullback (f : X → Y)
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) (Q : BasisAnalyticJacobian Y) :

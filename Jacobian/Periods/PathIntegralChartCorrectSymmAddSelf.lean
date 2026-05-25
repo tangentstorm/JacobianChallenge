@@ -1,8 +1,6 @@
 import Jacobian.Periods.PathIntegralChartCorrectSimp
 
 /-!
-# Round-trip integral is zero (in-chart, corrected)
-
 In-chart corrected analogue of `pathIntegralViaChartCorrect_add_symm_self`:
 for a chart-coordinate path `γ : Path a b` (with `a b : E`),
 `pathIntegralInChartCorrect c ω γ + pathIntegralInChartCorrect c ω γ.symm = 0`.
@@ -19,8 +17,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Round-trip cancellation (in-chart corrected): the integral
-of `ω` along `γ` plus the integral along `γ.symm` is zero. -/
+
 theorem pathIntegralInChartCorrect_add_symm_self
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : E} (γ : Path a b) :

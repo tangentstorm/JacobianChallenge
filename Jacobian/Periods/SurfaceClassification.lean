@@ -57,12 +57,9 @@ namespace JacobianChallenge.Periods
 
 open scoped Manifold
 
-/-- **Stage A1 leaf (Radó).** Every compact 2-manifold admits a finite
+/--
+**Stage A1 leaf (Radó).** Every compact 2-manifold admits a finite
 triangulation.
-
-**Round 47 refinement.** The body delegates to
-`exists_triangulation_of_compact_2manifold_via_pl` in
-`Jacobian.Periods.RadoTriangulation`, which itself decomposes into:
 
 * `compact_2manifold_finite_chart_atlas` — finite chart atlas
   extraction.
@@ -73,7 +70,8 @@ triangulation.
 
 Bottom-up content: classical Radó theorem on triangulability of
 compact surfaces. Mathlib v4.28.0 has neither Radó nor the abstract
-simplicial complex theory required to state it directly. -/
+simplicial complex theory required to state it directly.
+-/
 theorem exists_triangulation_of_compact_2manifold
     (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -83,7 +81,8 @@ theorem exists_triangulation_of_compact_2manifold
     Nonempty (Triangulation M) :=
   exists_triangulation_of_compact_2manifold_via_pl M
 
-/-- **Stage A2.a leaf (cut along non-tree edges).** Given a finite
+/--
+**Stage A2.a leaf (cut along non-tree edges).** Given a finite
 triangulation of a compact connected 2-manifold, the dual graph
 contains a maximal spanning tree; cutting `M` along the *non-tree*
 edges unfolds the surface into a single 2-cell with side identifications
@@ -91,7 +90,8 @@ encoded as an edge-pairing word. The resulting word is *not yet
 standardized* — that is the job of A2.b.
 
 Bottom-up content: dual-tree unfolding (Massey, *Algebraic Topology*,
-§I.4 / Lee, *Topological Manifolds*, §6.3). -/
+§I.4 / Lee, *Topological Manifolds*, §6.3).
+-/
 noncomputable def Triangulation.toEdgeWordPresentation
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -101,12 +101,14 @@ noncomputable def Triangulation.toEdgeWordPresentation
     (T : Triangulation M) : EdgeWordPresentation M :=
   Classical.choice (T.toEdgeWordPresentation_via_cut)
 
-/-- **Stage A2.b leaf (Tietze reduction to standard form).** Any
+/--
+**Stage A2.b leaf (Tietze reduction to standard form).** Any
 edge-word presentation of an orientable 2-manifold reduces to the
 standard `a₁b₁a₁⁻¹b₁⁻¹⋯` form via finitely many Tietze moves. The
 resulting standard presentation is exactly a `PolygonalQuotientPresentation`.
 
-Bottom-up content: classical Brahana / Seifert–Threlfall reduction. -/
+Bottom-up content: classical Brahana / Seifert–Threlfall reduction.
+-/
 noncomputable def EdgeWordPresentation.toPolygonalQuotient
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -117,11 +119,13 @@ noncomputable def EdgeWordPresentation.toPolygonalQuotient
     (E : EdgeWordPresentation M) : PolygonalQuotientPresentation M :=
   E.toPolygonalQuotient_via_tietze
 
-/-- **Stage A2 leaf (combinatorial reduction).** Given a triangulation
+/--
+**Stage A2 leaf (combinatorial reduction).** Given a triangulation
 of a compact connected orientable smooth real 2-manifold, one obtains a
 polygonal-quotient presentation. Body assembles
 `Triangulation.toEdgeWordPresentation` (A2.a) followed by
-`EdgeWordPresentation.toPolygonalQuotient` (A2.b). -/
+`EdgeWordPresentation.toPolygonalQuotient` (A2.b).
+-/
 noncomputable def Triangulation.toPolygonalQuotient
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -132,11 +136,13 @@ noncomputable def Triangulation.toPolygonalQuotient
     (T : Triangulation M) : PolygonalQuotientPresentation M :=
   T.toEdgeWordPresentation.toPolygonalQuotient
 
-/-- **Stage A1+A2 leaf (existence of a polygonal-quotient presentation).**
+/--
+**Stage A1+A2 leaf (existence of a polygonal-quotient presentation).**
 Every compact connected orientable smooth real 2-manifold admits a
 *polygonal-quotient presentation* in standard `4g'`-gon form.
 
-Body: `exists_triangulation_of_compact_2manifold` + `Triangulation.toPolygonalQuotient`. -/
+Body: `exists_triangulation_of_compact_2manifold` + `Triangulation.toPolygonalQuotient`.
+-/
 theorem existsPolygonalQuotientPresentation
     (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -150,8 +156,10 @@ theorem existsPolygonalQuotientPresentation
 
 namespace PolygonalQuotientPresentation
 
-/-- The lift of `P.proj : DiskC → M` through the side-pairing
-quotient, producing a continuous bijection `Polygon4g P.genus → M`. -/
+/--
+The lift of `P.proj : DiskC → M` through the side-pairing
+quotient, producing a continuous bijection `Polygon4g P.genus → M`.
+-/
 noncomputable def qLift {M : Type} [TopologicalSpace M]
     (P : PolygonalQuotientPresentation M) : Polygon4g P.genus → M :=
   Quotient.lift P.proj (fun z w hzw => (P.kernel z w).mpr hzw)
@@ -174,9 +182,11 @@ lemma qLift_bijective {M : Type} [TopologicalSpace M]
     obtain ⟨z, hz⟩ := P.surj y
     exact ⟨⟦z⟧, hz⟩
 
-/-- The polygon-to-surface homeomorphism produced by a polygonal
+/--
+The polygon-to-surface homeomorphism produced by a polygonal
 quotient presentation. Compact source + T2 target + continuous
-bijection → homeomorphism via `Continuous.homeoOfEquivCompactToT2`. -/
+bijection → homeomorphism via `Continuous.homeoOfEquivCompactToT2`.
+-/
 noncomputable def toHomeo {M : Type} [TopologicalSpace M]
     [CompactSpace M] [T2Space M]
     (P : PolygonalQuotientPresentation M) : Polygon4g P.genus ≃ₜ M :=
@@ -185,24 +195,28 @@ noncomputable def toHomeo {M : Type} [TopologicalSpace M]
 
 end PolygonalQuotientPresentation
 
-/-- **Stage A3+A4 leaf (universal-property assembly).** A polygonal-quotient
+/--
+**Stage A3+A4 leaf (universal-property assembly).** A polygonal-quotient
 presentation `P` of a compact T2 space `M` produces a homeomorphism
 `Polygon4g P.genus ≃ₜ M`, packaged as `Nonempty` for backwards
 compatibility (the underlying construction is the noncomputable
-`P.toHomeo` defined above). -/
+`P.toHomeo` defined above).
+-/
 theorem polygonalQuotientPresentation_to_homeo
     {M : Type} [TopologicalSpace M] [CompactSpace M] [T2Space M]
     (P : PolygonalQuotientPresentation M) :
     Nonempty (Polygon4g P.genus ≃ₜ M) :=
   ⟨P.toHomeo⟩
 
-/-- **Stage A1 umbrella (existence form).** Every compact connected
+/--
+**Stage A1 umbrella (existence form).** Every compact connected
 orientable smooth real 2-manifold is homeomorphic to `Polygon4g g'`
 for *some* `g' : ℕ`. Identification of that `g'` with the topological
 genus is the Stage A umbrella body, *not* this leaf.
 
 Body: assembled from `existsPolygonalQuotientPresentation` and
-`polygonalQuotientPresentation_to_homeo`. -/
+`polygonalQuotientPresentation_to_homeo`.
+-/
 theorem existsHomeoToPolygon4g
     (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -216,48 +230,56 @@ theorem existsHomeoToPolygon4g
   exact ⟨P.genus, ⟨homeo.symm⟩⟩
 
 
-/-- **Unified Stage A2 structural iso (any genus).** The first singular
+/--
+**Unified Stage A2 structural iso (any genus).** The first singular
 homology of the standard fundamental polygon is ℤ-linearly isomorphic
 to the free ℤ-module `Fin (2g) → ℤ` for any `g : ℕ`.
 
 Body: extract the unified basis from `polygon4g_singularH1_basis` and
 turn it into a linear equivalence via `Basis.equivFun`. (Same
 meet-in-the-middle pattern as the Stage B leaf; covers both `g = 0`
-and `g ≥ 1` cases via the unified basis.) -/
+and `g ≥ 1` cases via the unified basis.)
+-/
 theorem polygon4g_singularH1_iso_freeZ (g : ℕ) :
     Nonempty (singularH1 (Polygon4g g) ≃ₗ[ℤ] (Fin (2 * g) → ℤ)) := by
   obtain ⟨b⟩ := polygon4g_singularH1_basis g
   exact ⟨b.equivFun⟩
 
-/-- **Stage A2 sub-leaf (rank of singular `H₁` of the polygon).**
+/--
+**Stage A2 sub-leaf (rank of singular `H₁` of the polygon).**
 The first singular homology of the standard fundamental polygon has
 ℤ-rank `2g`.
 
 Body: extract the unified basis from `polygon4g_singularH1_basis`,
 then `Module.finrank_eq_card_basis` + `Fintype.card_fin`. The case
-split on `g` is folded into the basis construction, not exposed here. -/
+split on `g` is folded into the basis construction, not exposed here.
+-/
 theorem singularH1_polygon4g_finrank (g : ℕ) :
     Module.finrank ℤ (singularH1 (Polygon4g g)) = 2 * g := by
   obtain ⟨b⟩ := polygon4g_singularH1_basis g
   rw [Module.finrank_eq_card_basis b, Fintype.card_fin]
 
-/-- **Stage A2 leaf (polygon genus).** The topological genus of the
+/--
+**Stage A2 leaf (polygon genus).** The topological genus of the
 standard fundamental polygon `Polygon4g g` equals `g`.
 
 Body: unfold `topologicalGenus`, rewrite through
-`singularH1_polygon4g_finrank`, divide by 2. -/
+`singularH1_polygon4g_finrank`, divide by 2.
+-/
 theorem topologicalGenus_polygon4g (g : ℕ) :
     topologicalGenus (Polygon4g g) = g := by
   unfold topologicalGenus
   rw [singularH1_polygon4g_finrank g,
       Nat.mul_div_cancel_left _ (by norm_num : (0 : ℕ) < 2)]
 
-/-- **Stage A3 leaf (homeomorphism invariance of `topologicalGenus`).**
+/--
+**Stage A3 leaf (homeomorphism invariance of `topologicalGenus`).**
 A topological homeomorphism between compact connected spaces preserves
 the topological genus.
 
 Body: by `singularH1_finrank_homeo_invariant`, both sides reduce to the
-same `Module.finrank ℤ (singularH1 _)`, then divide by 2. -/
+same `Module.finrank ℤ (singularH1 _)`, then divide by 2.
+-/
 theorem topologicalGenus_homeo_invariant
     {M N : Type} [TopologicalSpace M] [CompactSpace M] [ConnectedSpace M]
     [TopologicalSpace N] [CompactSpace N] [ConnectedSpace N]
@@ -265,14 +287,11 @@ theorem topologicalGenus_homeo_invariant
   unfold topologicalGenus
   rw [singularH1_finrank_homeo_invariant h]
 
-/-- **Stage A umbrella (surface classification).** A compact connected
+/--
+**Stage A umbrella (surface classification).** A compact connected
 orientable smooth real 2-manifold `M` is homeomorphic to the standard
 fundamental polygon `Polygon4g (topologicalGenus M)`.
-
-Body: assembled from `existsHomeoToPolygon4g`,
-`topologicalGenus_polygon4g`, and `topologicalGenus_homeo_invariant`.
-The proof has no own `sorry`; all three obligations are named leaves
-above. -/
+-/
 theorem compactOrientableSurface_homeomorph_polygon4g_topologicalGenus
     (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -288,15 +307,12 @@ theorem compactOrientableSurface_homeomorph_polygon4g_topologicalGenus
     rw [hinv, topologicalGenus_polygon4g]
   exact ⟨hgM ▸ homeo⟩
 
-/-- **Direct corollary (M's singular H₁ is free of rank `2 * topGenus M`).**
+/--
+**Direct corollary (M's singular H₁ is free of rank `2 * topGenus M`).**
 For a compact connected orientable smooth real 2-manifold `M` whose
 polygonal model is `Polygon4g (topologicalGenus M)`, singular `H₁(M, ℤ)`
 is ℤ-linearly isomorphic to the free module `Fin (2 * topologicalGenus M) → ℤ`.
-
-Body: chain `compactOrientableSurface_homeomorph_polygon4g_topologicalGenus`
-through `singularH1LinearEquivOfHomeo` (Round 4 — *real proof*) and
-`polygon4g_singularH1_iso_freeZ` (Round 37 — discharged via the
-unified basis). -/
+-/
 theorem singularH1_iso_freeZ_of_compactOrientableSurface
     (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -310,13 +326,15 @@ theorem singularH1_iso_freeZ_of_compactOrientableSurface
   obtain ⟨polyIso⟩ := polygon4g_singularH1_iso_freeZ (topologicalGenus M)
   exact ⟨(singularH1LinearEquivOfHomeo homeo).trans polyIso⟩
 
-/-- **Finrank corollary.** For a compact connected orientable smooth
+/--
+**Finrank corollary.** For a compact connected orientable smooth
 real 2-manifold `M`, the ℤ-rank of singular `H₁(M, ℤ)` equals
 `2 * topologicalGenus M`.
 
 Body: extract the iso from `singularH1_iso_freeZ_of_compactOrientableSurface`
 and finish via `LinearEquiv.finrank_eq` + `Module.finrank_pi` +
-`Fintype.card_fin`. -/
+`Fintype.card_fin`.
+-/
 theorem singularH1_finrank_eq_two_mul_topologicalGenus_of_compactOrientableSurface
     (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]
@@ -328,11 +346,13 @@ theorem singularH1_finrank_eq_two_mul_topologicalGenus_of_compactOrientableSurfa
   obtain ⟨e⟩ := singularH1_iso_freeZ_of_compactOrientableSurface M
   rw [e.finrank_eq, Module.finrank_pi, Fintype.card_fin]
 
-/-- **Singular `H₁` of a compact orientable smooth real 2-manifold
+/--
+**Singular `H₁` of a compact orientable smooth real 2-manifold
 admits a ℤ-basis indexed by `Fin (2 * topologicalGenus M)`.** Public
 companion to `singularH1_iso_freeZ_of_compactOrientableSurface`,
 matching the basis-shaped form used by `h1_basis_of_compact_riemann_surface`
-on the Riemann-surface side. -/
+on the Riemann-surface side.
+-/
 theorem singularH1_basis_of_compactOrientableSurface
     (M : Type) [TopologicalSpace M] [CompactSpace M] [T2Space M]
     [ConnectedSpace M]

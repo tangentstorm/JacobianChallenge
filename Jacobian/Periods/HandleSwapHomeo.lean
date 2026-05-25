@@ -44,8 +44,10 @@ private lemma norm_exp_I_mul_real (r : ℝ) :
     ‖Complex.exp (Complex.I * (r : ℂ))‖ = 1 := by
   rw [mul_comm, Complex.norm_exp_ofReal_mul_I]
 
-/-- Map a homeomorphism between two types to a homeomorphism between their quotients,
-given that the homeomorphism respects the relations. -/
+/--
+Map a homeomorphism between two types to a homeomorphism between their quotients,
+given that the homeomorphism respects the relations.
+-/
 private def Quotient.homeo' {α β : Type*} [TopologicalSpace α] [TopologicalSpace β]
     (f : α ≃ₜ β) {s₁ : Setoid α} {s₂ : Setoid β}
     (hf : ∀ x y, s₁.r x y ↔ s₂.r (f x) (f y)) :

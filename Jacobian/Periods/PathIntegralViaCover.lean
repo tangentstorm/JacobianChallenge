@@ -17,9 +17,6 @@ The unparameterised wrapper `pathIntegralViaCover ω γ` (using
 `Classical.choose`) lives in a separate file once linearity of the
 parameterised version stabilises (well-definedness across partitions
 is the hard step).
-
-Linearity, `_refl`, and well-definedness are deferred follow-up
-packets — see `PathIntegralViaCoverRecon.lean` for the design plan.
 -/
 
 namespace JacobianChallenge.Periods
@@ -30,7 +27,8 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Multi-chart path integral with an explicit partition + chart pick.
+/--
+Multi-chart path integral with an explicit partition + chart pick.
 
 Given a path `γ : Path a b` on `X` and a uniform-chart partition into
 `n` segments each contained in some chart's source (witnessed by
@@ -38,7 +36,8 @@ Given a path `γ : Path a b` on `X` and a uniform-chart partition into
 each segment.
 
 The unparameterised wrapper that picks a partition via
-`exists_uniform_chart_partition` is in a follow-up file. -/
+`exists_uniform_chart_partition` is in a follow-up file.
+-/
 noncomputable def pathIntegralViaCoverWith
     (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

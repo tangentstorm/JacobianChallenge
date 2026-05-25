@@ -25,10 +25,12 @@ namespace JacobianChallenge.HolomorphicForms
 open scoped Manifold
 open JacobianChallenge.Periods
 
-/-- Real dimension of
+/--
+Real dimension of
 `Hom_ℤ(H₁(X, ℤ), ℝ)`, the singular cohomology `H¹_sing(X, ℝ)` of `X`
 in degree 1. Used as the intermediate ℕ-valued bridge between
-de Rham (analytic) and integer homology (topological). -/
+de Rham (analytic) and integer homology (topological).
+-/
 noncomputable def realDimSingularH1
     (X : Type) [TopologicalSpace X] : ℕ :=
   Module.finrank ℝ (IntegralOneCycle X →ₗ[ℤ] ℝ)

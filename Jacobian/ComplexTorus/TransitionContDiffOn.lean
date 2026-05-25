@@ -6,10 +6,6 @@ import Mathlib.Analysis.Calculus.ContDiff.Operations
 /-!
 # `ContDiffOn ω` for the chart-transition map
 
-Queue B sibling. Fourth sub-lemma toward `IsManifold`. Promotes the
-locally-translation property (`TransitionLocallyTranslate`) to a
-genuine `ContDiffOn ℂ ω` statement on the chart-overlap region.
-
 At each point of the overlap, the transition agrees with the
 `ContDiff ℂ ω` translation `y ↦ y + g` (for a locally fixed `g ∈
 Λ.subgroup`) on a neighborhood. Thus by
@@ -22,8 +18,10 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-/-- The chart transition `localSection_v₂ ∘ mk` is `ContDiffOn ℂ ω`
-on the chart-overlap region. -/
+/--
+The chart transition `localSection_v₂ ∘ mk` is `ContDiffOn ℂ ω`
+on the chart-overlap region.
+-/
 lemma contDiffOn_localSection_mk
     (Λ : FullComplexLattice V) (v₁ v₂ : V) {δ r : ℝ}
     (hδpos : 0 < δ)

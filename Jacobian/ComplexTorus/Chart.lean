@@ -8,10 +8,6 @@ import Mathlib.Topology.OpenPartialHomeomorph.Defs
 /-!
 # Chart on the complex torus from a small ball
 
-Queue B sibling. Assembles the manifold-layer chart
-`OpenPartialHomeomorph (V ⧸ Λ.subgroup) V` from the four chart-prep
-primitives that landed earlier:
-
 - `MkImage.mk_image_isOpen`             — open-source obligation
 - `Metric.isOpen_ball`                   — open-target obligation
 - `LocalSection.mk_localSection`         — quotient-side left inverse
@@ -20,17 +16,16 @@ primitives that landed earlier:
 - `LocalSectionRightInv.localSection_mk` — model-side right inverse
 - `LocalSectionContinuous.continuousOn_localSection` — toFun continuity
 - `QuotientAddGroup.continuous_mk`       — invFun continuity
-
-The construction is pure plumbing: every field is one of the lemmas
-above. The only nontriviality lives upstream.
 -/
 
 namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-/-- A chart on the complex torus near a base point `v ∈ V`, with
-chart radius `r` strictly less than half the isolation radius `δ`. -/
+/--
+A chart on the complex torus near a base point `v ∈ V`, with
+chart radius `r` strictly less than half the isolation radius `δ`.
+-/
 noncomputable def chartAtBall
     (Λ : FullComplexLattice V) (v : V) {δ r : ℝ}
     (hr_lt : r < δ / 2)

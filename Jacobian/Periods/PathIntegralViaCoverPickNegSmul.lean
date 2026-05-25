@@ -17,8 +17,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Form-negation of a scalar multiple equals the negated scalar
-multiple of the integral (Pick / unparameterised multi-chart). -/
+/--
+Form-negation of a scalar multiple equals the negated scalar
+multiple of the integral (Pick / unparameterised multi-chart).
+-/
 theorem pathIntegralViaCover_neg_smul
     (k : ℂ) (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b) :
     pathIntegralViaCover (-(k • ω)) γ =

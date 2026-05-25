@@ -18,15 +18,19 @@ open scoped Manifold
 
 namespace JacobianChallenge.Periods
 
-/-- The continuous linear equivalence identifying `ℝ × ℝ` with the real
-Euclidean model space `EuclideanSpace ℝ (Fin 2)`. -/
+/--
+The continuous linear equivalence identifying `ℝ × ℝ` with the real
+Euclidean model space `EuclideanSpace ℝ (Fin 2)`.
+-/
 def realProdEquivReal2 : (ℝ × ℝ) ≃L[ℝ] EuclideanSpace ℝ (Fin 2) :=
   ((WithLp.linearEquiv 2 ℝ (Fin 2 → ℝ)).trans (LinearEquiv.finTwoArrow ℝ ℝ)).symm.toContinuousLinearEquiv
 
-/-- The fixed real-coordinate equivalence used to turn complex charts into
+/--
+The fixed real-coordinate equivalence used to turn complex charts into
 charts valued in `EuclideanSpace ℝ (Fin 2)`.  Its underlying map is
 `Complex.equivRealProd`, followed by the standard `ℝ × ℝ` to `ℝ²`
-identification. -/
+identification.
+-/
 def complexEquivReal2 : ℂ ≃L[ℝ] EuclideanSpace ℝ (Fin 2) :=
   Complex.equivRealProdCLM.trans realProdEquivReal2
 
@@ -36,16 +40,20 @@ theorem complexEquivReal2_apply (z : ℂ) :
   ext i;
   fin_cases i <;> aesop
 
-/-- The real charted-space structure on `ℂ` obtained from
+/--
+The real charted-space structure on `ℂ` obtained from
 `complexEquivReal2`, equivalently from `Complex.equivRealProd` followed by the
-standard identification of `ℝ × ℝ` with `ℝ²`. -/
+standard identification of `ℝ × ℝ` with `ℝ²`.
+-/
 def complexChartedSpaceReal2 : ChartedSpace (EuclideanSpace ℝ (Fin 2)) ℂ :=
   complexEquivReal2.toHomeomorph.toOpenPartialHomeomorph.singletonChartedSpace
     (by simp [Homeomorph.toOpenPartialHomeomorph])
 
-/-- Bundled real 2-manifold structure on a complex 1-manifold:
+/--
+Bundled real 2-manifold structure on a complex 1-manifold:
 both the `ChartedSpace` witness and the smoothness proof, packaged so
-the typeclass piping is self-contained. -/
+the typeclass piping is self-contained.
+-/
 structure SmoothReal2Structure
     (X : Type*) [TopologicalSpace X] : Type _ where
   chartedSpace : ChartedSpace (EuclideanSpace ℝ (Fin 2)) X

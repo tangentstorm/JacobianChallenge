@@ -48,8 +48,10 @@ theorem pullbackFormsFun_id_zsmul_apply_vec
   exact evalLinearMap_zsmul x v n η
 
 set_option linter.unusedSectionVars false in
-/-- Composition of `_zero_apply_vec` and `_neg_apply_vec`: pullback
-along `id` of `-0 = 0`. -/
+/--
+Composition of `_zero_apply_vec` and `_neg_apply_vec`: pullback
+along `id` of `-0 = 0`.
+-/
 theorem pullbackFormsFun_id_neg_zero_apply_vec
     (x : X) (v : E) :
     pullbackFormsFun (id : X → X) (-(0 : HolomorphicOneForm E X)) x v = 0 := by

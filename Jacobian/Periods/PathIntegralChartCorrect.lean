@@ -5,13 +5,15 @@ namespace JacobianChallenge.Periods
 
 open JacobianChallenge.HolomorphicForms
 
-/-- Chart-local path integral using the genuine chart pullback
+/--
+Chart-local path integral using the genuine chart pullback
 `chartedFormPullback` (includes the `mfderiv` factor of `c.symm`).
 
 Compare with the provisional `pathIntegralInChart c ω γ` in
 `Jacobian/Periods/PathIntegralChart.lean`, which uses the simpler
 `chartedForm` (no derivative factor); that version coincides with
-this one only when chart transitions are translations. -/
+this one only when chart transitions are translations.
+-/
 noncomputable def pathIntegralInChartCorrect
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {X : Type*} [TopologicalSpace X] [ChartedSpace E X]

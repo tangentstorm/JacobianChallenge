@@ -4,8 +4,6 @@ import Jacobian.ComplexTorus.Defs
 /-!
 # Negation and subtraction lemmas for the induced quotient map
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 These are direct consequences of `map Λ Γ f hf` being an additive group
 homomorphism; they're stated separately for convenient `simp` lookup.
 -/

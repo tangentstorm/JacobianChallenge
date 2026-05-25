@@ -17,8 +17,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- `evalLinearMap x v` at the form `0` is `0` — `LinearMap.map_zero`
-form. -/
+/--
+`evalLinearMap x v` at the form `0` is `0` — `LinearMap.map_zero`
+form.
+-/
 theorem evalLinearMap_apply_zero (x : X) (v : E) :
     evalLinearMap (E := E) (X := X) x v 0 = 0 :=
   (evalLinearMap x v).map_zero

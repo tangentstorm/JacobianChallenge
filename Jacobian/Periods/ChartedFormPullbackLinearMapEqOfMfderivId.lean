@@ -21,9 +21,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Bundled-LinearMap bridge: under the global `mfderiv c.symm = id`
+/--
+Bundled-LinearMap bridge: under the global `mfderiv c.symm = id`
 hypothesis, the corrected and provisional bundled chart-form
-LinearMaps are equal. -/
+LinearMaps are equal.
+-/
 theorem chartedFormPullbackLinearMap_eq_chartedFormLinearMap_of_mfderiv_id
     (c : OpenPartialHomeomorph X E)
     (hd : ∀ e, mfderiv (modelWithCornersSelf ℂ E)

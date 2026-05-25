@@ -23,12 +23,14 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Conditional addition linearity of `pathIntegralViaCoverWith`:
+/--
+Conditional addition linearity of `pathIntegralViaCoverWith`:
 if for every segment `i` both chart pullbacks
 `chartedFormPullback (chartAt E (pickChart i)) ω` and
 `chartedFormPullback (chartAt E (pickChart i)) η` are curve-integrable
 along the chart-lifted subpath, the multi-chart integral distributes
-over addition. -/
+over addition.
+-/
 theorem pathIntegralViaCoverWith_add_of_curveIntegrable
     (ω η : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

@@ -17,8 +17,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Pointwise vector-evaluation of a holomorphic 1-form, packaged as a
-ℂ-linear map. -/
+/--
+Pointwise vector-evaluation of a holomorphic 1-form, packaged as a
+ℂ-linear map.
+-/
 noncomputable def evalLinearMap (x : X) (v : E) :
     HolomorphicOneForm E X →ₗ[ℂ] ℂ where
   toFun η := η.toFun x v

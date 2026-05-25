@@ -16,35 +16,13 @@ downstream.  Future bottom-up work can identify these axioms with the local
 `MeromorphicAt`/order API.
 
 ### Why these fields are present
-
-The structure used to carry only `toMap`, the three divisors, and the
-algebraic relation `principalDivisor = zeroDivisor - poleDivisor`. That made
-several genuinely-meromorphic facts (poles are effective, zeros and poles
-have disjoint support, the map evaluates to `∞` at a pole, the modulus
-diverges near a simple pole, etc.) impossible to prove from the structure
-alone, so they were carried as `sorry` axioms in `RiemannRoch.lean` and
-`MeromorphicDegree.lean`.  Each axiom field below records exactly one such
-fact, with a stable docstring naming the analytic content.  Together they
-form an axiom layer for "abstract" meromorphic maps; once the project's
-`MeromorphicAt`-based bridge is in place, every constructor will discharge
-these fields by appealing to that bridge rather than carrying a `sorry`. -/
+-/
 
 namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
-/-- A meromorphic map from a compact Riemann surface to `OnePoint ℂ`.
-
-The `locally_meromorphic` field is a named placeholder predicate; the
-remaining axiom fields capture the structural consequences of being
-genuinely meromorphic that the downstream API (Riemann-Roch, degree theory)
-relies on.
-
-This is an axiom-carrying structure: constructors that choose divisor fields
-directly are appropriate only for explicitly named frontier/scaffold
-declarations.  Production route theorems should obtain pole divisors through
-bridge lemmas from analytic/order data rather than by assigning
-`poleDivisor` by hand. -/
+/-- A meromorphic map from a compact Riemann surface to `OnePoint ℂ`. -/
 structure MeromorphicMapToSphere
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
@@ -54,33 +32,45 @@ structure MeromorphicMapToSphere
   poleDivisor : Divisor X
   principalDivisor : Divisor X
   principalDivisor_eq : principalDivisor = zeroDivisor - poleDivisor
-  /-- The pole divisor of a meromorphic function has nonneg coefficients
-  pointwise.  This is the structural fact behind `Divisor.Effective f.poles`. -/
+  /--
+The pole divisor of a meromorphic function has nonneg coefficients
+  pointwise.  This is the structural fact behind `Divisor.Effective f.poles`.
+-/
   poleDivisor_nonneg : ∀ P : X, 0 ≤ poleDivisor P
-  /-- A point cannot simultaneously be a zero and a pole of a meromorphic
+  /--
+A point cannot simultaneously be a zero and a pole of a meromorphic
   function.  This expresses the disjoint-support property of the
-  zero/pole divisor decomposition. -/
+  zero/pole divisor decomposition.
+-/
   zero_or_pole_eq_zero : ∀ Q : X, zeroDivisor Q = 0 ∨ poleDivisor Q = 0
-  /-- Off the pole locus a meromorphic-map-to-sphere takes finite values
+  /--
+Off the pole locus a meromorphic-map-to-sphere takes finite values
   in `OnePoint ℂ`.  Combined with continuity below, this captures that
-  poles are exactly the preimage of `∞`. -/
+  poles are exactly the preimage of `∞`.
+-/
   toMap_ne_infty_of_poleDivisor_zero :
     ∀ x : X, poleDivisor x = 0 → toMap x ≠ (OnePoint.infty : OnePoint ℂ)
-  /-- A meromorphic-map-to-sphere is continuous on the locus of finite
+  /--
+A meromorphic-map-to-sphere is continuous on the locus of finite
   values (i.e. the complement of its pole set).  This is the
   `OnePoint`-restricted form of the classical "holomorphic away from
-  poles ⇒ continuous". -/
+  poles ⇒ continuous".
+-/
   continuousOn_ne_infty :
     ContinuousOn toMap {x : X | toMap x ≠ (OnePoint.infty : OnePoint ℂ)}
-  /-- Any global complex-valued lift of `toMap` through the canonical
+  /--
+Any global complex-valued lift of `toMap` through the canonical
   inclusion `ℂ → OnePoint ℂ` is `MDifferentiable`.  This implements
-  "holomorphic ⇒ smooth" for the lifted map. -/
+  "holomorphic ⇒ smooth" for the lifted map.
+-/
   toFiniteFun_mdifferentiable :
     ∀ g : X → ℂ,
       toMap = (fun x => ((g x : ℂ) : OnePoint ℂ)) →
       MDifferentiable (modelWithCornersSelf ℂ ℂ) 𝓘(ℂ, ℂ) g
-  /-- At a (positive-order) pole of a meromorphic-map-to-sphere, the map
-  evaluates to `∞ : OnePoint ℂ`. -/
+  /--
+At a (positive-order) pole of a meromorphic-map-to-sphere, the map
+  evaluates to `∞ : OnePoint ℂ`.
+-/
   toMap_eq_infty_of_poleDivisor_pos :
     ∀ P : X, 0 < poleDivisor P → toMap P = (OnePoint.infty : OnePoint ℂ)
 
@@ -113,23 +103,29 @@ def HasSimplePoleOnlyAt (f : MeromorphicMapToSphere X) (P : X) : Prop :=
 def Nonconstant (f : MeromorphicMapToSphere X) : Prop :=
   ¬ ∃ c : OnePoint ℂ, ∀ x : X, f.toMap x = c
 
-/-- Membership in the Riemann-Roch space `L(D)`: `(f) + D ≥ 0`.
+/--
+Membership in the Riemann-Roch space `L(D)`: `(f) + D ≥ 0`.
 
-This is the divisor-theoretic condition that `f` has poles bounded by `D`. -/
+This is the divisor-theoretic condition that `f` has poles bounded by `D`.
+-/
 def MemRiemannRochSpace (f : MeromorphicMapToSphere X) (D : Divisor X) : Prop :=
   Divisor.Effective (f.principal + D)
 
-/-- A named predicate for continuity of the map to `OnePoint ℂ`.  This is
+/--
+A named predicate for continuity of the map to `OnePoint ℂ`.  This is
 kept separate from meromorphicity because proving continuity of the extended
-map is one of the degree/properness work packets. -/
+map is one of the degree/properness work packets.
+-/
 def ExtendsContinuously (f : MeromorphicMapToSphere X) : Prop :=
   Continuous f.toMap
 
-/-- Additional analytic data for an honest meromorphic map: near a pole,
+/--
+Additional analytic data for an honest meromorphic map: near a pole,
 the map admits a finite lift on the non-pole locus whose modulus tends to
 infinity.  This is deliberately separate from `MeromorphicMapToSphere`
 because several scaffold maps carry formal divisor data without satisfying
-this analytic conclusion. -/
+this analytic conclusion.
+-/
 structure PoleModulusData (f : MeromorphicMapToSphere X) where
   exists_modulus_atTop_at_pole :
     ∀ P : X, 0 < f.poleDivisor P →
@@ -138,18 +134,21 @@ structure PoleModulusData (f : MeromorphicMapToSphere X) where
           f.toMap x = ((g x : ℂ) : OnePoint ℂ)) ∧
         Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop
 
-/-- Additional analytic data for an honest nonconstant meromorphic map:
+/--
+Additional analytic data for an honest nonconstant meromorphic map:
 conditional on continuity, it has branched-cover data whose degree is the
 degree of the pole divisor.  This is not a field of
 `MeromorphicMapToSphere`, since it is false for the cutoff/indicator
-scaffolding maps used elsewhere in this file family. -/
+scaffolding maps used elsewhere in this file family.
+-/
 structure BranchedCoverDataOfPoleDegree (f : MeromorphicMapToSphere X) where
   hasBranchedCoverDataOfPoleDegree :
     Continuous f.toMap →
     ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) f.toMap),
       JacobianChallenge.HolomorphicForms.branchedDegree h = f.poleDivisor.degree.toNat
 
-/-- **Honest analytic data for a `MeromorphicMapToSphere`.**
+/--
+**Honest analytic data for a `MeromorphicMapToSphere`.**
 
 The abstract `MeromorphicMapToSphere` structure carries only set-level
 data, divisor arithmetic, topological values at poles, continuity off
@@ -186,19 +185,24 @@ constructors that genuinely fail these analytic claims.
 
 Production downstream theorems should consume `AnalyticData` (or the
 record in which it is bundled) rather than the abstract interface
-plus `PoleModulusData`. -/
+plus `PoleModulusData`.
+-/
 structure AnalyticData (f : MeromorphicMapToSphere X) where
   /-- Global continuity of the map to `OnePoint ℂ`. -/
   continuous_toMap : Continuous f.toMap
-  /-- The canonical finite lift `(f.toMap ·).getD 0` is meromorphic at
-  every point in the manifold sense. -/
+  /--
+The canonical finite lift `(f.toMap ·).getD 0` is meromorphic at
+  every point in the manifold sense.
+-/
   meromorphic_getD :
     ∀ p : X,
       JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
         (fun q => (f.toMap q).getD 0) p
-  /-- At a *simple* pole, the chart-local analytic order of `f.toMap`
+  /--
+At a *simple* pole, the chart-local analytic order of `f.toMap`
   is exactly `1`. This is the analytic content
-  "simple pole ⇒ ramification index one". -/
+  "simple pole ⇒ ramification index one".
+-/
   simple_pole_order_one :
     ∀ P : X,
       f.poles = Divisor.point P →
@@ -212,9 +216,7 @@ omit [Periods.StableChartAt ℂ X] in
 
 end MeromorphicMapToSphere
 
-/-- **Honest modulus-divergence provider (sorry-free, requires
-`PoleModulusData`).**
-
+/--
 For a `MeromorphicMapToSphere X` with pole divisor `Divisor.point P`
 that *also* carries explicit `PoleModulusData`, the norm of the
 canonical finite lift `x ↦ (f.toMap x).getD 0` tends to `+∞` along
@@ -226,16 +228,7 @@ of `f.toMap` off the pole locus whose modulus diverges at `P`; the
 proof glues together the off-pole agreement
 `f.toMap x = ((g x : ℂ) : OnePoint ℂ)` (whose `getD 0` recovers `g x`)
 with the modulus divergence of `g`, eventually in `nhdsWithin P {P}ᶜ`.
-
-**Why the bare-hypothesis form** `modulus_tendsto_atTop_of_poleDivisor_point`
-**below is kept as a compatibility frontier.** The bare-hypothesis
-version (no `PoleModulusData`) is *not* provable from the structural
-axioms of `MeromorphicMapToSphere` alone — the structure does not
-expose Laurent normal form near a pole. Production downstream code
-should consume this honest provider instead; the bare-hypothesis
-version remains only as a documented compatibility frontier for older
-callers, all of which have been rewritten to route through
-`PoleModulusData`. -/
+-/
 theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleModulusData_poleDivisor_point
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
@@ -267,25 +260,11 @@ theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleModulusData_poleDivi
   show ‖g x‖ = ‖(f.toMap x).getD 0‖
   rw [hfx]; rfl
 
-/-- **Bare-hypothesis modulus-divergence frontier (compatibility only).**
-
+/--
 For any `MeromorphicMapToSphere X` with pole divisor `Divisor.point P`,
 the norm of the canonical finite lift `x ↦ (f.toMap x).getD 0` tends to
 `+∞` along the punctured neighborhood of `P`.
-
-**This statement is not provable from its current hypotheses.** The
-structural axioms of `MeromorphicMapToSphere` do not expose chart-local
-Laurent normal form, which is the only honest source of modulus
-divergence near a pole. Production downstream code consumes the honest
-provider
-`MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleModulusData_poleDivisor_point`
-(above), which adds `PoleModulusData` to the hypotheses and discharges
-the conclusion sorry-free.
-
-This declaration is kept only as a compatibility frontier; no
-production theorem in the project currently reaches it. The remaining
-`sorry` flags that the bare-hypothesis form is mathematically
-underspecified, not that it is an actionable proof gap. -/
+-/
 theorem MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]

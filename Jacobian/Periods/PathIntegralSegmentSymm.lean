@@ -35,8 +35,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Per-segment sign-flip: integrating γ.symm's i-th segment equals
-the negative of integrating γ's segment with σ-reflected endpoints. -/
+/--
+Per-segment sign-flip: integrating γ.symm's i-th segment equals
+the negative of integrating γ's segment with σ-reflected endpoints.
+-/
 theorem pathIntegralViaChartCorrect_symm_subpath_divFinIcc
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

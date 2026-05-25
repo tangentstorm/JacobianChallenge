@@ -22,8 +22,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- `(witness A B) + (witness B A) = 0` (sym pairing). Direct corollary
-of the swap identity. -/
+/--
+`(witness A B) + (witness B A) = 0` (sym pairing). Direct corollary
+of the swap identity.
+-/
 theorem witnessAbelJacobi_add_swap_eq_zero
     (A B : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) A B v +
@@ -48,8 +50,10 @@ theorem witnessAbelJacobi_sub_chain_basePoint
   unfold witnessAbelJacobi
   abel
 
-/-- `witness A B + witness B A + witness A B = witness A B`
-(self-cancellation). -/
+/--
+`witness A B + witness B A + witness A B = witness A B`
+(self-cancellation).
+-/
 theorem witnessAbelJacobi_swap_cancel
     (A B : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) A B v +

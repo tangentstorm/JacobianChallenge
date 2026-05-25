@@ -17,8 +17,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- The provisional from-`X` chart-local path integral unfolds to
-the in-chart integral on the chart-lifted path. -/
+/--
+The provisional from-`X` chart-local path integral unfolds to
+the in-chart integral on the chart-lifted path.
+-/
 @[simp]
 theorem pathIntegralViaChart_apply
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)

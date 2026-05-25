@@ -1,8 +1,6 @@
 import Jacobian.TraceDegree.PullbackFormsLinearMap
 
-/-!
-# Scalar-multiplication lemma for `pullbackFormsLinearMap`
--/
+/-! # Scalar-multiplication lemma for `pullbackFormsLinearMap` -/
 
 namespace JacobianChallenge.TraceDegree
 

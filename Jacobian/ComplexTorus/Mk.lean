@@ -1,14 +1,7 @@
 import Mathlib.Topology.Algebra.Group.Quotient
 import Jacobian.ComplexTorus.Defs
 
-/-!
-# Bounded helper lemmas for the quotient projection
-
-This file is a Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`. It
-collects small `simp`-friendly lemmas about the quotient projection
-`mk V Λ : V → V ⧸ Λ.subgroup`. Keep proofs short and direct; do not depend on
-the `map_continuous` packet from `Basic.lean`.
--/
+/-! # Bounded helper lemmas for the quotient projection -/
 
 namespace JacobianChallenge.ComplexTorus
 
@@ -18,8 +11,10 @@ variable {V : Type*} [NormedAddCommGroup V]
 /-- The quotient projection sends `0` to `0`. -/
 @[simp] lemma mk_zero : mk V Λ 0 = 0 := rfl
 
-/-- Two representatives map to the same class iff their difference lies in
-the lattice. -/
+/--
+Two representatives map to the same class iff their difference lies in
+the lattice.
+-/
 lemma mk_eq_iff {v w : V} :
     mk V Λ v = mk V Λ w ↔ -v + w ∈ Λ.subgroup :=
   QuotientAddGroup.eq

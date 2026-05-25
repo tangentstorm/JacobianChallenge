@@ -37,9 +37,11 @@ theorem mk_eq_zero_iff_mem_periodSubgroup
     mk E X (periodPairing E X σ) = 0 :=
   mk_eq_zero_of_mem_periodSubgroup (periodPairing_mem_periodSubgroup σ)
 
-/-- Two functionals project to the same class iff their difference
+/--
+Two functionals project to the same class iff their difference
 lies in the period subgroup (alternative form of `mk_eq_mk_iff`
-via `sub_mem`). -/
+via `sub_mem`).
+-/
 theorem mk_eq_mk_iff_sub_mem
     (φ ψ : HolomorphicOneForm E X →ₗ[ℂ] ℂ) :
     mk E X φ = mk E X ψ ↔ φ - ψ ∈ periodSubgroup E X := by

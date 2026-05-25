@@ -18,8 +18,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- The unparameterised multi-chart integral over a constant path
-is zero. -/
+/--
+The unparameterised multi-chart integral over a constant path
+is zero.
+-/
 @[simp] theorem pathIntegralViaCover_refl
     (ω : HolomorphicOneForm E X) (a : X) :
     pathIntegralViaCover ω (Path.refl a) = 0 := by

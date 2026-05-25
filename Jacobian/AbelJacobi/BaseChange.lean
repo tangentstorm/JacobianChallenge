@@ -20,8 +20,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- Changing the base point shifts the witness by a constant
-(viz. the witness from new to old base point). -/
+/--
+Changing the base point shifts the witness by a constant
+(viz. the witness from new to old base point).
+-/
 theorem witnessAbelJacobi_base_change
     (basePoint basePoint' P : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v -
@@ -39,8 +41,10 @@ theorem witnessAbelJacobi_chain_three
   unfold witnessAbelJacobi
   abel
 
-/-- Two witnesses are equal iff their endpoint classes coincide
-modulo the (common) base point. -/
+/--
+Two witnesses are equal iff their endpoint classes coincide
+modulo the (common) base point.
+-/
 theorem witnessAbelJacobi_eq_iff_class_eq
     (basePoint P Q : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v =

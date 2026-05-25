@@ -21,10 +21,12 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Conditional subtraction linearity of `pathIntegralViaCoverWith`:
+/--
+Conditional subtraction linearity of `pathIntegralViaCoverWith`:
 if for every segment `i` both chart pullbacks are curve-integrable
 along the chart-lifted subpath, the multi-chart integral
-distributes over subtraction. -/
+distributes over subtraction.
+-/
 theorem pathIntegralViaCoverWith_sub_of_curveIntegrable
     (ω η : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

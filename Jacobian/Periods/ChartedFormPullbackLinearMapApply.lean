@@ -13,8 +13,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) (e : E) :
     chartedFormPullbackLinearMap c ω e = chartedFormPullback c ω e := rfl
 
-/-- Applying the bundled chart-pullback at a chart point and then at
-a tangent vector gives the explicit chain-rule formula. -/
+/--
+Applying the bundled chart-pullback at a chart point and then at
+a tangent vector gives the explicit chain-rule formula.
+-/
 @[simp] theorem chartedFormPullbackLinearMap_apply_vec
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     (e : E) (v : E) :

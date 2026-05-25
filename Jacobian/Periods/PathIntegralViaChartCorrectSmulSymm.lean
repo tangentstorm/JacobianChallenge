@@ -20,8 +20,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Scalar-multiplication along the reversed path (single-chart):
-`k • ω` along `γ.symm` equals minus `k • (via-chart integral of ω along γ)`. -/
+/--
+Scalar-multiplication along the reversed path (single-chart):
+`k • ω` along `γ.symm` equals minus `k • (via-chart integral of ω along γ)`.
+-/
 theorem pathIntegralViaChartCorrect_smul_symm
     (c : OpenPartialHomeomorph X E) (k : ℂ) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

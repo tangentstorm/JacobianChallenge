@@ -20,8 +20,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Y]
 
 set_option linter.unusedSectionVars false in
-/-- Pointwise vector-apply form: pullback along a constant map at a
-point and tangent vector is zero. -/
+/--
+Pointwise vector-apply form: pullback along a constant map at a
+point and tangent vector is zero.
+-/
 @[simp] theorem pullbackFormsFun_const_apply
     (y : Y) (η : HolomorphicOneForm E Y) (x : X) (v : E) :
     pullbackFormsFun (Function.const X y) η x v = 0 := by

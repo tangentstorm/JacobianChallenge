@@ -4,11 +4,13 @@ import Mathlib.Analysis.Complex.OpenMapping
 import Mathlib.FieldTheory.Separable
 import Mathlib.Tactic.Cases
 
-/-! # Local Mapping Theorem for ℂ → ℂ Analytic Functions
+/-!
+# Local Mapping Theorem for ℂ → ℂ Analytic Functions
 
 Core analytic content for the k-fold fiber counting: if a ℂ → ℂ
 function is locally conjugate to z ↦ z^k, then nearby nonzero fibers
-have exactly k simple preimages. -/
+have exactly k simple preimages.
+-/
 
 namespace JacobianChallenge.HolomorphicForms.LocalMappingThm
 
@@ -73,9 +75,11 @@ theorem pow_sub_const_simple_root {k : ℕ} (hk : 0 < k) {w : ℂ} (hw : w ≠ 0
   · exact ‹¬AnalyticAt ℂ (fun z => z ^ k - w) ζ›
       (by apply_rules [AnalyticAt.sub, AnalyticAt.pow, analyticAt_id, analyticAt_const])
 
-/-- For an analytic local biholomorphism φ near z₀ with φ(z₀) = 0 and
+/--
+For an analytic local biholomorphism φ near z₀ with φ(z₀) = 0 and
 deriv φ z₀ ≠ 0, there exist r > 0 and δ > 0 such that φ maps
-ball(z₀, r) injectively onto a set containing ball(0, δ). -/
+ball(z₀, r) injectively onto a set containing ball(0, δ).
+-/
 theorem local_biholo_ball {φ : ℂ → ℂ} {z₀ : ℂ}
     (hφ : AnalyticAt ℂ φ z₀) (hφ0 : φ z₀ = 0) (hφ' : deriv φ z₀ ≠ 0) :
     ∃ r > 0, ∃ δ > 0,

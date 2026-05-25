@@ -5,8 +5,6 @@ import Jacobian.ComplexTorus.OfClm
 /-!
 # The zero continuous-linear map descends to the zero quotient map
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 A trivial corner case: `mapClm` of the zero continuous linear map is
 the constant-zero quotient map.
 -/
@@ -17,8 +15,10 @@ variable {V W : Type*} [NormedAddCommGroup V] [NormedAddCommGroup W]
   [NormedSpace ℂ V] [NormedSpace ℂ W]
   {Λ : FullComplexLattice V} {Γ : FullComplexLattice W}
 
-/-- Hypothesis that the zero continuous-linear map preserves any pair of
-lattices (it sends everything to 0, which is in any subgroup). -/
+/--
+Hypothesis that the zero continuous-linear map preserves any pair of
+lattices (it sends everything to 0, which is in any subgroup).
+-/
 lemma zero_preserves_lattices :
     ∀ v ∈ Λ.subgroup, (0 : V →L[ℂ] W) v ∈ Γ.subgroup := by
   intro v _

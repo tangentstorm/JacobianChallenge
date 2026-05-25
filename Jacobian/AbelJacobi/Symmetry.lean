@@ -27,8 +27,10 @@ theorem witnessAbelJacobi_neg_vec_eq_neg
       -witnessAbelJacobi basePoint P v :=
   witnessAbelJacobi_neg_vec basePoint P v
 
-/-- Negating both endpoints of `evalJacobianClass` (via vec-slot
-negation) flips the class. -/
+/--
+Negating both endpoints of `evalJacobianClass` (via vec-slot
+negation) flips the class.
+-/
 theorem evalJacobianClass_neg_vec_at_endpoint
     (P : X) (v : E) :
     evalJacobianClass (E := E) (X := X) P (-v) =
@@ -42,8 +44,10 @@ theorem witnessAbelJacobi_two_smul_vec
       2 • witnessAbelJacobi basePoint P v :=
   witnessAbelJacobi_nsmul_vec basePoint P 2 v
 
-/-- The witness is `0` whenever `evalLinearMap` agrees on the two
-endpoints. -/
+/--
+The witness is `0` whenever `evalLinearMap` agrees on the two
+endpoints.
+-/
 theorem witnessAbelJacobi_eq_zero_of_evalLinearMap_eq
     (basePoint P : X) (v : E)
     (h : evalLinearMap (E := E) (X := X) P v = evalLinearMap basePoint v) :

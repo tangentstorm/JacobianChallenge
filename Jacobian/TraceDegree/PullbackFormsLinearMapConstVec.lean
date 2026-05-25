@@ -28,8 +28,10 @@ theorem pullbackFormsLinearMap_const_apply_zero_vec
   pullbackFormsLinearMap_const_apply_vec y η x 0
 
 set_option linter.unusedSectionVars false in
-/-- Bundled pullback along a constant map distributes over vec addition
-(both sides are zero). -/
+/--
+Bundled pullback along a constant map distributes over vec addition
+(both sides are zero).
+-/
 theorem pullbackFormsLinearMap_const_apply_add_vec
     (y : Y) (η : HolomorphicOneForm E Y) (x : X) (v w : E) :
     pullbackFormsLinearMap (Function.const X y) η x (v + w) =

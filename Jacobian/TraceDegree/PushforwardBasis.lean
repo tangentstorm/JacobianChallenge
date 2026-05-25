@@ -28,7 +28,7 @@ opposite direction. Named obligations:
 * `analyticPushforward_comp_apply` — covariant composition;
 * `analyticPushforward_contMDiff` — holomorphicity.
 
-## TOPDOWN refactor: trace-coordinate interface (round R)
+## TOPDOWN refactor: trace-coordinate interface
 
 Earlier rounds bundled `analyticPushforward`, `pushforwardTraceLift`,
 their descent compatibility, and their geometric properties together
@@ -50,17 +50,10 @@ This refactor breaks the bundle apart:
    obligations a future
    `Mathlib.Analysis.Complex.RiemannSurface.Trace` would discharge.
 
-2. A **uniform**, sorry-free top-level
-   `pushforwardTraceLift f hf : (Fin g_X → ℂ) →+ (Fin g_Y → ℂ)`
-   defined as the matrix transpose of `holomorphicTraceCoord f hf`.
-   Functoriality of `pushforwardTraceLift` then collapses to
-   "transpose preserves id/comp (contravariantly)" plus the two
-   `holomorphicTraceCoord_*` sorries.
-
 3. **Three "raw" geometric sorries** carrying the genuinely geometric
    content the bundle used to bundle:
 
-   * `pushforwardTraceLift_preserves_lattice_raw` — the trace lift
+* `pushforwardTraceLift_preserves_lattice_raw` — the trace lift
      sends the period subgroup of `X` into the period subgroup of `Y`
      (Riemann bilinear / period-lattice content);
    * `analyticPushforward_mk_spec_raw` — descent compatibility:
@@ -68,17 +61,6 @@ This refactor breaks the bundle apart:
      (descent of the trace map through the period quotient);
    * `analyticPushforward_contMDiff_raw` — the descended map is
      holomorphic (Mathlib quotient-smoothness content).
-
-The original bundle and its `_id_traceLift` / `_comp_traceLift`
-sorries are gone; the existing public API
-(`analyticPushforward`, `pushforwardTraceLift`,
-`analyticPushforward_id_apply`, etc.) keeps the same names and
-signatures but is now wired through the new primitives. The two
-"payoff" theorems `basisAnalyticPushforwardBundle_id_traceLift` and
-`basisAnalyticPushforwardBundle_comp_traceLift` are kept as
-sorry-free aliases (renamed `pushforwardTraceLift_eq_id` etc. would
-be cleaner; the old names are kept here so the docstrings in
-`PullbackBasis.lean` that name them remain accurate).
 -/
 
 namespace JacobianChallenge.TraceDegree
@@ -106,7 +88,8 @@ variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
   [StableChartAt ℂ Z]
   [FiniteDimensionalHolomorphicOneForms ℂ Z]
 
-/-! ### Trace-coordinate interface
+/-!
+### Trace-coordinate interface
 
 The fundamental small interface this module exposes. A holomorphic
 map `f : X → Y` of compact Riemann surfaces should induce a
@@ -120,7 +103,8 @@ functoriality sorries that match the Mathlib-style functoriality of
 the form-pullback.
 -/
 
-/-- The basis-coordinate representation of the holomorphic-1-form
+/--
+The basis-coordinate representation of the holomorphic-1-form
 *pullback* induced by `f : X → Y`, as a ℂ-linear map
 `(Fin g_Y → ℂ) →ₗ[ℂ] (Fin g_X → ℂ)`.
 
@@ -134,11 +118,7 @@ Bottom-up: built concretely from `pullbackFormsBundledLM` (the smooth
 bundle of the chain-rule pullback), composed with the basis-aligned
 linear equivalences `holomorphicOneFormFinBasis.equivFun` to convert
 between abstract forms and `Fin g → ℂ` coordinates.
-
-Functoriality (`holomorphicTraceCoord_id`, `holomorphicTraceCoord_comp`)
-reduces to the corresponding `pullbackFormsBundledLM` functoriality
-    (`pullbackFormsBundledLM_id`, `pullbackFormsBundledLM_comp`), both of
-which are sorry-free in `Jacobian/HolomorphicForms/PullbackBundled.lean`. -/
+-/
 noncomputable def holomorphicTraceCoord
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     [FiniteDimensionalHolomorphicOneForms ℂ X]
@@ -149,11 +129,7 @@ noncomputable def holomorphicTraceCoord
     (holomorphicOneFormFinBasis ℂ Y).equivFun.symm.toLinearMap
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- Identity functoriality of the trace-coordinate map.
-
-Sorry-free: the `pullbackFormsBundledLM` functoriality
-`pullbackFormsBundledLM_id` reduces the inner factor to `LinearMap.id`,
-and the outer `Basis.equivFun` round trip cancels. -/
+/-- Identity functoriality of the trace-coordinate map. -/
 theorem holomorphicTraceCoord_id
     [FiniteDimensionalHolomorphicOneForms ℂ X] :
     holomorphicTraceCoord (X := X) (Y := X) id contMDiff_id =
@@ -165,11 +141,7 @@ theorem holomorphicTraceCoord_id
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z] in
-/-- Composition functoriality of the trace-coordinate map.
-
-Sorry-free: the `pullbackFormsBundledLM` contravariant composition
-`pullbackFormsBundledLM_comp` reduces the inner factor; the inner
-`Basis.equivFun` round trip on `Y` cancels. -/
+/-- Composition functoriality of the trace-coordinate map. -/
 theorem holomorphicTraceCoord_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
@@ -183,7 +155,8 @@ theorem holomorphicTraceCoord_comp
   ext v
   simp [LinearMap.comp_apply]
 
-/-! ### Top-level `pushforwardTraceLift` via matrix transpose
+/-!
+### Top-level `pushforwardTraceLift` via matrix transpose
 
 The *covariant* pushforward direction is the transpose (a.k.a. dual,
 under self-duality of `Fin n → ℂ`) of `holomorphicTraceCoord`.
@@ -191,20 +164,13 @@ Concretely, we go through the standard `LinearMap.toMatrix'` /
 `Matrix.transpose` / `Matrix.toLin'` pipeline.
 -/
 
-/-- The covariant pushforward of basis-coordinate vectors, as the
-matrix transpose of the contravariant `holomorphicTraceCoord f hf`.
-Top-level concrete definition; sorry-free. -/
+
 noncomputable def pushforwardTraceLift
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ X) → ℂ) →+ (Fin (analyticGenus ℂ Y) → ℂ) :=
   (Matrix.toLin' (holomorphicTraceCoord f hf).toMatrix'.transpose).toAddMonoidHom
 
-/-- `pushforwardTraceLift` along the identity is the identity.
-
-Sorry-free assembly: `holomorphicTraceCoord_id` reduces the underlying
-`LinearMap` to `LinearMap.id`, whose `toMatrix'` is the identity
-matrix `1`, whose transpose is `1`, whose `toLin'` is `LinearMap.id`,
-whose `toAddMonoidHom` is `AddMonoidHom.id`. -/
+/-- `pushforwardTraceLift` along the identity is the identity. -/
 theorem pushforwardTraceLift_id :
     pushforwardTraceLift (X := X) (Y := X) id contMDiff_id =
       AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
@@ -213,11 +179,7 @@ theorem pushforwardTraceLift_id :
       Matrix.toLin'_one]
   rfl
 
-/-- `pushforwardTraceLift` distributes over composition (covariantly).
-
-Sorry-free assembly: `holomorphicTraceCoord_comp` gives contravariant
-composition for the underlying `LinearMap`; transpose reverses
-composition, so the pushforward direction recovers covariance. -/
+/-- `pushforwardTraceLift` distributes over composition (covariantly). -/
 theorem pushforwardTraceLift_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
@@ -231,16 +193,10 @@ theorem pushforwardTraceLift_comp
   rw [holomorphicTraceCoord_comp f hf g hg, LinearMap.toMatrix'_comp,
       Matrix.transpose_mul, Matrix.toLin'_mul, LinearMap.comp_apply]
 
-/-! ### Top-level `analyticPushforward` and the three raw geometric sorries
+/-! ### Top-level `analyticPushforward` and the three raw geometric sorries -/
 
-The descended map `analyticPushforward` lives on the period quotient
-`BasisAnalyticJacobian`. Its data and three core specs are factored
-into one opaque + three named sorries; each sorry carries a single
-piece of geometric content (lattice preservation, descent
-compatibility, smoothness of the descent).
--/
-
-/-- Bridge identity between `pushforwardTraceLift` and the form-pullback /
+/--
+Bridge identity between `pushforwardTraceLift` and the form-pullback /
 basis-aligned dual equivalence.
 
 The algebraic relationship: `pushforwardTraceLift = transpose-of-matrix(holomorphicTraceCoord)`,
@@ -250,10 +206,7 @@ So `pushforwardTraceLift v j = ∑ i, (holomorphicTraceCoord matrix)[i,j] * v i
 When `v = dualEquiv X φ`, `v i = φ (basisX i)`, and the sum collapses via
 linearity of `φ` to `φ (pullbackFormsBundledLM (basisY j))`, which equals
 `(φ ∘ pullbackFormsBundledLM)(basisY j) = (dualEquiv Y (φ ∘ pullbackFormsBundledLM)) j`.
-
-Sorry: the calculation chain through `Matrix.toLin'`, `LinearMap.toMatrix'`,
-`Basis.equivFun`, `Basis.equivFun_symm_apply`, and `Module.Basis.dualBasis_apply_self`.
-A pure linear-algebra identity; no period theory. -/
+-/
 theorem pushforwardTraceLift_apply_holomorphicOneFormDualEquiv
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (φ : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ) :
@@ -302,7 +255,8 @@ theorem pushforwardTraceLift_apply_holomorphicOneFormDualEquiv
   intro i _
   rw [map_smul, smul_eq_mul]
 
-/-- **BUG FIX** (formerly ID 121). The original statement
+/--
+**BUG FIX** (formerly ID 121). The original statement
 `∀ γ, ∃ K, ChartLiftLipschitzOnPartitions γ K` was *false* for
 arbitrary continuous paths: a nowhere-differentiable path, e.g.
 a space-filling curve restricted to `[0,1]`, cannot satisfy a
@@ -312,7 +266,8 @@ Fix: add the hypothesis `ChartLiftPiecewiseC1 γ' K₀` — the path is
 piecewise C¹ with a uniform derivative bound `K₀`. Then the
 Lipschitz conclusion follows from the mean-value inequality
 (`Convex.lipschitzOnWith_of_nnnorm_derivWithin_le`) applied to each
-chart-lifted segment on the compact convex set `[0, 1]`. -/
+chart-lifted segment on the compact convex set `[0, 1]`.
+-/
 theorem cycleLipPath_obligation :
     ∀ {a b : X} (γ' : Path a b) (K₀ : NNReal)
       (_ : ChartLiftPiecewiseC1 γ' K₀),
@@ -323,13 +278,15 @@ theorem cycleLipPath_obligation :
     exact (convex_Icc 0 1).lipschitzOnWith_of_nnnorm_derivWithin_le
       (hDiff.differentiableOn (by norm_num)) hBound⟩
 
-/-- Raw geometric obligation (chain-level uniform Lipschitz).
+/--
+Raw geometric obligation (chain-level uniform Lipschitz).
 
 The chain-level uniformised version of `cycleLipPath_obligation`:
 for any finite family of paths `γs i : Path (a i) (b i)` in `X`,
 each satisfying a piecewise-C¹ condition with its own bound `K_i`,
 there is a *single* Lipschitz constant `K` that bounds the chart-lift
-of every `γs i` on every uniform-grain partition simultaneously. -/
+of every `γs i` on every uniform-grain partition simultaneously.
+-/
 theorem cycleLipChain_obligation :
     ∀ (m : ℕ) (a b : Fin m → X)
       (γs : ∀ i : Fin m, Path (a i) (b i))
@@ -347,7 +304,8 @@ theorem cycleLipChain_obligation :
   intro x hx y hy
   exact le_trans (hKi hx hy) (by gcongr; exact Finset.le_sup (Finset.mem_univ i))
 
-/-- Raw obligation: the trace lift preserves the period subgroup.
+/--
+Raw obligation: the trace lift preserves the period subgroup.
 
 Assembly via:
 * `mem_basisAlignedPeriodSubgroupConcrete_iff` (membership characterization);
@@ -361,7 +319,8 @@ Assembly via:
 The genuinely geometric content is now isolated to named sorries:
 the algebraic bridge above (a `LinearMap.dualMap` identity), the Stokes
 naturality in `Periods/PullbackNaturality.lean`, and the C¹ regularity
-obligation `pathPiecewiseC1_obligation`. -/
+obligation `pathPiecewiseC1_obligation`.
+-/
 theorem pushforwardTraceLift_preserves_lattice_raw
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
@@ -397,38 +356,27 @@ theorem pushforwardTraceLift_preserves_lattice_raw
   show periodPairing ℂ Y (cyclePushforward f hf γ) ∈ (periodPairing ℂ Y).range
   exact AddMonoidHom.mem_range.mpr ⟨cyclePushforward f hf γ, rfl⟩
 
-/-- The basis-coordinate trace lift as a `ℂ`-linear map (i.e. the
-linear-map version of `pushforwardTraceLift`, before forgetting the
-`ℂ`-action). Sorry-free: the underlying `LinearMap` of the matrix-
-transpose definition. -/
+
 noncomputable def pushforwardTraceLiftLinearMap
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ X) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ Y) → ℂ) :=
   Matrix.toLin' (holomorphicTraceCoord f hf).toMatrix'.transpose
 
-/-- The basis-coordinate trace lift as a continuous `ℂ`-linear map.
-Upgrade of `pushforwardTraceLiftLinearMap` via finite-dimensional
-auto-continuity. Sorry-free. -/
+
 noncomputable def pushforwardTraceLiftCLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ X) → ℂ) →L[ℂ] (Fin (analyticGenus ℂ Y) → ℂ) :=
   LinearMap.toContinuousLinearMap (pushforwardTraceLiftLinearMap f hf)
 
-/-- The analytic pushforward induced by a holomorphic map of compact
+/--
+The analytic pushforward induced by a holomorphic map of compact
 Riemann surfaces, on the basis-aligned carrier.
-
-Concrete (non-opaque) descent of `pushforwardTraceLiftCLM` through
-the period quotient via `ComplexTorus.mapClm`, using
-`pushforwardTraceLift_preserves_lattice_raw` for the lattice
-preservation hypothesis. The continuity of the descent comes from
-`mapClm_continuous`; the smoothness companion
-`analyticPushforward_contMDiff_raw` remains a (named) sorry —
-quotient-of-manifold smoothness is the genuine geometric content.
 
 Note: `pushforwardTraceLiftCLM` has type `→L[ℂ]` while
 `pushforwardTraceLift` has type `→+`; the underlying additive maps
 agree definitionally (the `→L[ℂ]` and `→ₗ[ℂ]` and `→+` are all
-extracted from the same matrix-transpose `Matrix.toLin'` value). -/
+extracted from the same matrix-transpose `Matrix.toLin'` value).
+-/
 noncomputable def analyticPushforward
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
@@ -441,13 +389,10 @@ noncomputable def analyticPushforward
     ComplexTorus.mapClm_continuous (pushforwardTraceLiftCLM f hf)
       (pushforwardTraceLift_preserves_lattice_raw f hf)
 
-/-- Raw obligation: descent compatibility — `analyticPushforward` is
+/--
+Raw obligation: descent compatibility — `analyticPushforward` is
 the descent of `pushforwardTraceLift` through the period quotient.
-
-Sorry-free: unfold `analyticPushforward` to `mapClm`, then
-`ComplexTorus.map_mk` (which is `rfl`); the underlying additive
-hom of `pushforwardTraceLiftCLM` is definitionally
-`pushforwardTraceLift`. -/
+-/
 theorem analyticPushforward_mk_spec_raw
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -463,21 +408,12 @@ theorem analyticPushforward_mk_spec_raw
       (pushforwardTraceLift f hf v)
   rfl
 
-/-- Raw obligation: the descended map is holomorphic.
-
-Sorry-free: chart-glue smoothness, mirroring the pattern in
-`Jacobian/ComplexTorus/AddSmooth.lean`. At any `q`, take the chart
-`chart := chartAt _ q`. On `chart.source`, the descent
-`analyticPushforward = mapClm pushforwardTraceLiftCLM` equals
-`mk_Y ∘ pushforwardTraceLiftCLM ∘ chart.toFun`, a composition of
-smooth maps:
-* `chart.toFun` is `ContMDiffOn` on `chart.source` (`contMDiffOn_chart`);
-* `pushforwardTraceLiftCLM` is a continuous linear map between
-  finite-dim spaces, hence `ContMDiff` (`ContinuousLinearMap.contMDiff`);
-* `mk Y _` is `ContMDiff` (`contMDiff_mk`).
+/--
+Raw obligation: the descended map is holomorphic.
 
 The equation on `chart.source` uses `chart.left_inv'` plus
-`mapClm`'s definition (`map_mk`). -/
+`mapClm`'s definition (`map_mk`).
+-/
 theorem analyticPushforward_contMDiff_raw
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
@@ -529,7 +465,6 @@ theorem analyticPushforward_contMDiff_raw
     have hLeft : ComplexTorus.mk _ (periodFullComplexLattice X)
         (chartX q') = q' := chartX.left_inv' hq'
     -- Rewrite q' on the LHS as mk (chartX q'), then invoke
-    -- the sorry-free descent compatibility analyticPushforward_mk_spec_raw.
     conv_lhs => rw [← hLeft]
     exact analyticPushforward_mk_spec_raw f hf (chartX q')
   -- ContMDiffOn on chart.source → ContMDiffAt at q.
@@ -543,16 +478,9 @@ theorem analyticPushforward_contMDiff_raw
     exact hEq q' hq'
   exact hOn.contMDiffAt hMem
 
-/-! ### Sorry-free assemblies: keeping the existing public API
 
-The four lemmas below preserve names and signatures of the previous
-public surface (used by `Solution.lean`, `PullbackBasis.lean`,
-`AnalyticDegree.lean`). All are sorry-free assemblies of the
-trace-coordinate interface and the three raw geometric sorries.
--/
 
-/-- Companion specification: the analytic pushforward is holomorphic.
-Sorry-free: alias for `analyticPushforward_contMDiff_raw`. -/
+
 theorem analyticPushforward_contMDiff_spec
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
@@ -561,8 +489,7 @@ theorem analyticPushforward_contMDiff_spec
       (analyticPushforward f hf) :=
   analyticPushforward_contMDiff_raw f hf
 
-/-- The analytic pushforward is holomorphic. Public top-down
-obligation; sorry-free. -/
+
 lemma analyticPushforward_contMDiff
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
@@ -571,7 +498,7 @@ lemma analyticPushforward_contMDiff
       (analyticPushforward f hf) :=
   analyticPushforward_contMDiff_spec f hf
 
-/-- The trace lift preserves the period lattice. Sorry-free alias. -/
+
 theorem pushforwardTraceLift_preserves_lattice
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
@@ -579,9 +506,7 @@ theorem pushforwardTraceLift_preserves_lattice
       pushforwardTraceLift f hf v ∈ (periodFullComplexLattice Y).subgroup :=
   pushforwardTraceLift_preserves_lattice_raw f hf
 
-/-- Characterization of `analyticPushforward` on the quotient
-projection: the pushforward applied to `mk v` equals `mk` of the
-trace lift applied to `v`. Sorry-free alias. -/
+
 theorem analyticPushforward_mk_spec
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -592,8 +517,7 @@ theorem analyticPushforward_mk_spec
         (pushforwardTraceLift f hf v) :=
   analyticPushforward_mk_spec_raw f hf v
 
-/-! ### Old "payoff" theorems, preserved as sorry-free aliases
-
+/-!
 These two were the bundle-level identity/composition obligations
 under the previous design. They are now trivial aliases for
 `pushforwardTraceLift_id` / `pushforwardTraceLift_comp`. Kept under
@@ -601,19 +525,13 @@ their old names so the docstrings in `PullbackBasis.lean` that name
 them remain accurate.
 -/
 
-/-- Sorry-free alias for `pushforwardTraceLift_id`.
 
-This used to be a bundle-level sorry (`(bundle id _).pushforwardTraceLift
-= AddMonoidHom.id`) blocked by the instance diamond. With the new
-top-level `pushforwardTraceLift` defined uniformly via the transpose
-of `holomorphicTraceCoord`, it collapses to a sorry-free assembly
-of `holomorphicTraceCoord_id` plus matrix-transpose-of-id facts. -/
 theorem basisAnalyticPushforwardBundle_id_traceLift :
     pushforwardTraceLift (X := X) (Y := X) id contMDiff_id =
       AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) :=
   pushforwardTraceLift_id
 
-/-- Sorry-free alias for `pushforwardTraceLift_comp`. -/
+
 theorem basisAnalyticPushforwardBundle_comp_traceLift
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
@@ -621,8 +539,7 @@ theorem basisAnalyticPushforwardBundle_comp_traceLift
       (pushforwardTraceLift g hg).comp (pushforwardTraceLift f hf) :=
   pushforwardTraceLift_comp f hf g hg
 
-/-! ### Existing per-coordinate / per-vector sorry-free assemblies
-
+/-!
 These names are preserved verbatim. Each is a small assembly of
 `pushforwardTraceLift_id` / `pushforwardTraceLift_comp` plus
 `AddMonoidHom`-API.
@@ -662,10 +579,7 @@ theorem pushforwardTraceLift_comp_spec
       (pushforwardTraceLift g hg).comp (pushforwardTraceLift f hf) :=
   pushforwardTraceLift_comp f hf g hg
 
-/-- Covariant composition specification for the analytic pushforward.
-Sorry-free assembly: `analyticPushforward_mk_spec` and
-`pushforwardTraceLift_comp_spec` reduce both sides on the quotient
-projection. -/
+
 theorem analyticPushforward_comp_spec
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     [PiecewiseC1PathRegularity Z]
@@ -681,7 +595,7 @@ theorem analyticPushforward_comp_spec
   congr 1
   exact congr_fun (congr_arg _ (pushforwardTraceLift_comp_spec f hf g hg)) v
 
-/-- Pushforward distributes covariantly over composition. Sorry-free. -/
+
 lemma analyticPushforward_comp_apply
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     [PiecewiseC1PathRegularity Z]
@@ -692,8 +606,7 @@ lemma analyticPushforward_comp_apply
       analyticPushforward g hg (analyticPushforward f hf P) :=
   analyticPushforward_comp_spec f hf g hg P
 
-/-- Pushforward along the identity is the `ContinuousAddMonoidHom`
-identity. Sorry-free assembly via descent + `pushforwardTraceLift_id`. -/
+
 theorem analyticPushforward_id_eq [PiecewiseC1PathRegularity X] :
     analyticPushforward (X := X) (Y := X) id contMDiff_id =
       ContinuousAddMonoidHom.id (BasisAnalyticJacobian X) := by
@@ -702,15 +615,14 @@ theorem analyticPushforward_id_eq [PiecewiseC1PathRegularity X] :
   rw [analyticPushforward_mk_spec id contMDiff_id v, pushforwardTraceLift_id]
   rfl
 
-/-- Specification of the identity case; sorry-free. -/
+
 theorem analyticPushforward_id_spec [PiecewiseC1PathRegularity X]
     (P : BasisAnalyticJacobian X) :
     analyticPushforward (X := X) (Y := X) id contMDiff_id P = P := by
   rw [analyticPushforward_id_eq]
   rfl
 
-/-- Pushforward along the identity is the identity. Public top-down
-obligation; sorry-free. -/
+
 lemma analyticPushforward_id_apply [PiecewiseC1PathRegularity X]
     (P : BasisAnalyticJacobian X) :
     analyticPushforward (X := X) (Y := X) id contMDiff_id P = P :=

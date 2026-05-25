@@ -27,12 +27,14 @@ theorem finrank_real_fin_pi_complex (g : ℕ) :
   rw [Module.finrank_pi_fintype, Complex.finrank_real_complex,
       Finset.sum_const, Finset.card_fin, smul_eq_mul, mul_comm]
 
-/-- `2g` ℝ-linearly independent vectors in `Fin g → ℂ` span the
+/--
+`2g` ℝ-linearly independent vectors in `Fin g → ℂ` span the
 full space over ℝ. Follows from dimension counting:
 `finrank ℝ (Fin g → ℂ) = 2g`.
 
 When `g = 0`, the space `Fin 0 → ℂ` is trivially zero-dimensional
-and every submodule equals `⊤`. -/
+and every submodule equals `⊤`.
+-/
 theorem span_real_eq_top_of_linearIndependent_fin (g : ℕ)
     (b : Fin (2 * g) → Fin g → ℂ) (hli : LinearIndependent ℝ b) :
     Submodule.span ℝ (Set.range b) = ⊤ := by
@@ -43,8 +45,10 @@ theorem span_real_eq_top_of_linearIndependent_fin (g : ℕ)
     exact hli.span_eq_top_of_card_eq_finrank
       (by rw [Fintype.card_fin, finrank_real_fin_pi_complex])
 
-/-- If a set `S` contains the range of `2g` ℝ-linearly independent
-vectors in `Fin g → ℂ`, then `Submodule.span ℝ S = ⊤`. -/
+/--
+If a set `S` contains the range of `2g` ℝ-linearly independent
+vectors in `Fin g → ℂ`, then `Submodule.span ℝ S = ⊤`.
+-/
 theorem span_real_eq_top_of_subset_linearIndependent (g : ℕ)
     (S : Set (Fin g → ℂ))
     (b : Fin (2 * g) → Fin g → ℂ)

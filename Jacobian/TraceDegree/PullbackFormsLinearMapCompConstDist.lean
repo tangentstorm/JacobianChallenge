@@ -23,8 +23,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Z]
 
 set_option linter.unusedSectionVars false in
-/-- Bundled pullback along `f ∘ const x₀` distributes over form addition
-(both sides are zero). -/
+/--
+Bundled pullback along `f ∘ const x₀` distributes over form addition
+(both sides are zero).
+-/
 theorem pullbackFormsLinearMap_comp_const_add_apply_vec
     (f : Y → Z) (x₀ : Y) (η ζ : HolomorphicOneForm E Z) (x : X) (v : E) :
     pullbackFormsLinearMap (f ∘ Function.const X x₀) (η + ζ) x v =
@@ -44,8 +46,10 @@ theorem pullbackFormsLinearMap_comp_const_neg_apply_vec
       pullbackFormsLinearMap_comp_const_apply_vec, neg_zero]
 
 set_option linter.unusedSectionVars false in
-/-- Bundled pullback along `const z ∘ f` distributes over form addition
-(both sides are zero). -/
+/--
+Bundled pullback along `const z ∘ f` distributes over form addition
+(both sides are zero).
+-/
 theorem pullbackFormsLinearMap_const_comp_add_apply_vec
     (z : Z) (f : X → Y) (η ζ : HolomorphicOneForm E Z) (x : X) (v : E) :
     pullbackFormsLinearMap (Function.const Y z ∘ f) (η + ζ) x v =

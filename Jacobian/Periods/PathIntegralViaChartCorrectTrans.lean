@@ -21,9 +21,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Conditional path-concatenation linearity (from-`X`, corrected):
+/--
+Conditional path-concatenation linearity (from-`X`, corrected):
 if the chart pullback of `ω` is curve-integrable along both
-chart-lifted halves, the integral along `γab.trans γbd` distributes. -/
+chart-lifted halves, the integral along `γab.trans γbd` distributes.
+-/
 theorem pathIntegralViaChartCorrect_trans_of_curveIntegrable
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b d : X} (γab : Path a b) (γbd : Path b d)

@@ -24,14 +24,9 @@ A holomorphic map `f : X → Y` between compact Riemann surfaces induces:
 
 These satisfy the **naturality identity** (Stokes / change-of-variable):
 
-  ∫_γ f^* η = ∫_{f_* γ} η     for γ ∈ H₁(X, ℤ), η ∈ H⁰(Y, Ω¹)
+∫_γ f^* η = ∫_{f_* γ} η     for γ ∈ H₁(X, ℤ), η ∈ H⁰(Y, Ω¹)
 
 In project notation: `periodPairing ℂ X γ ∘ pullbackFormsBundledLM f hf = periodPairing ℂ Y (cyclePushforward f hf γ)`.
-
-This file declares `cyclePushforward` (currently an identity since
-`IntegralOneCycle X := ℤ` is a placeholder) and the naturality theorem
-as a single named sorry. It is the well-named, isolated geometric
-content the next round can attack.
 -/
 
 namespace JacobianChallenge.Periods
@@ -55,7 +50,8 @@ variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z]
   [StableChartAt ℂ Z]
 
-/-- The covariant pushforward of integral 1-cycles induced by a smooth
+/--
+The covariant pushforward of integral 1-cycles induced by a smooth
 map `f : X → Y`, via functoriality of singular homology.
 
 `IntegralOneCycle X = H₁(X, ℤ)` (defined in
@@ -65,7 +61,8 @@ image of `f : X → Y` under this functor at degree 1.
 
 The smoothness `hf` is unused at this layer (singular homology only
 sees continuity), but the API takes `hf` for uniformity with
-`pullbackFormsBundledLM`. -/
+`pullbackFormsBundledLM`.
+-/
 noncomputable def cyclePushforward
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     IntegralOneCycle X →+ IntegralOneCycle Y :=
@@ -79,8 +76,10 @@ omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
   [T2Space Z] [CompactSpace Z] [ConnectedSpace Z]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Z] in
-/-- Composition-functoriality of cycle pushforward: `(g ∘ f)_* = g_* ∘ f_*`.
-Direct from functoriality of `singularHomologyFunctor`. -/
+/--
+Composition-functoriality of cycle pushforward: `(g ∘ f)_* = g_* ∘ f_*`.
+Direct from functoriality of `singularHomologyFunctor`.
+-/
 theorem cyclePushforward_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
@@ -113,52 +112,39 @@ theorem cyclePushforward_id :
   simp
   rfl
 
-/-! ### Cycle-level naturality of the period pairing
+/-!
+### Cycle-level naturality of the period pairing
 
 Naturality of the period pairing under form-pullback / cycle-pushforward.
 
 For `γ ∈ H₁(X, ℤ)` and `η ∈ H⁰(Y, Ω¹)`:
 
-  `(periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η)
+`(periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η)
    = (periodPairing ℂ Y (cyclePushforward f hf γ)) η`
 
 Mathematically: integrate-then-pull-back equals
 push-cycle-forward-then-integrate.
 
-##### Round 1 (cycle-level, 2026-05-05)
-
 Split the Stokes-shaped cycle-level naturality into the descent
 identity from chain-level + path-level naturality, both as named
-companion obligations. -/
+companion obligations.
+-/
 
-/-! #### Pn-chain decomposition (Round 2, 2026-05-05)
-
-The chain-level theorems
-(`periodPairing_chainLevel_repr`,
-`cyclePushforward_chainLevel_repr`,
-`periodPairing_pullbackFormsBundledLM_via_pathLevel`)
-appear *after* the path-level naturality lemma
-`pathIntegralViaCover_pullbackFormsBundledLM` later in this file: the
-proof of `cyclePushforward_chainLevel_repr` uses the path-level
-naturality summand-by-summand to convert mapped-path integrals on `Y`
-into pulled-back-form integrals on `X`. Search for the heading
-`### Round 2 reassembly (chain-level naturality)` further down. -/
+/-! #### Pn-chain decomposition -/
 
 
 
--- The sorry-free reassembly of `periodPairing_pullbackFormsBundledLM`
 -- requires the path-level naturality theorem
 -- `pathIntegralViaCover_pullbackFormsBundledLM`, which is declared
 -- further below in this file. The reassembly therefore lives at the
--- bottom of the file (search for "Round 1 reassembly").
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- **Identity special case** of `periodPairing_pullbackFormsBundledLM`:
+/--
+**Identity special case** of `periodPairing_pullbackFormsBundledLM`:
 when `f = id`, the cycle pushforward is the identity (by
 `cyclePushforward_id`), the form-pullback along `id` is the identity
 (by `pullbackFormsBundledLM_id`), and naturality becomes `rfl`-shaped.
-
-Sorry-free assembly of `cyclePushforward_id` + `pullbackFormsBundledLM_id`. -/
+-/
 theorem periodPairing_pullbackFormsBundledLM_id
     (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ X) :
     (periodPairing ℂ X γ) (pullbackFormsBundledLM X X id contMDiff_id η) =
@@ -168,9 +154,7 @@ theorem periodPairing_pullbackFormsBundledLM_id
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Zero-cycle special case** of `periodPairing_pullbackFormsBundledLM`:
-naturality at the zero cycle is trivially true since both sides vanish.
-Sorry-free. -/
+
 theorem periodPairing_pullbackFormsBundledLM_zero
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) :
@@ -179,25 +163,10 @@ theorem periodPairing_pullbackFormsBundledLM_zero
   rw [(cyclePushforward f hf).map_zero, (periodPairing ℂ X).map_zero,
       (periodPairing ℂ Y).map_zero, LinearMap.zero_apply, LinearMap.zero_apply]
 
-/-! ### Connection: from path-level naturality to cycle-level naturality
+/-! ### Connection: from path-level naturality to cycle-level naturality -/
 
-The cycle-level `periodPairing_pullbackFormsBundledLM` would be a
-sorry-free assembly of:
-
-1. The connection `periodPairing_eq_pathIntegralViaCover_descent` —
-   stating that `periodPairing ℂ X γ` as a functional acts as the
-   path/cycle integral via `pathIntegralViaCover`. (Currently a
-   sorry; tied to making `opaque periodPairing` concrete.)
-2. The path-level naturality
-   `pathIntegralViaCover_pullbackFormsBundledLM` (currently a sorry).
-3. The cycle-level pushforward `cyclePushforward` matches the
-   path/cycle pushforward at the level of `pathIntegralViaCover`.
-
-Once items 1 and 2 are proven, the cycle-level naturality follows
-*sorry-free*.
--/
-
-/-! ### Path-level naturality (the underlying mathematical content)
+/-!
+### Path-level naturality (the underlying mathematical content)
 
 The cycle-level naturality `periodPairing_pullbackFormsBundledLM` is
 gated on:
@@ -218,34 +187,25 @@ and it is the *attackable* part of the discharge chain. We state it
 as a separate named obligation.
 -/
 
-/-! ### Round 1 (2026-05-05) — split path-level naturality
 
-The single sorry on `pathIntegralViaCover_pullbackFormsBundledLM` is
-split into a chart-level chain rule (the genuine analytic content)
-and a sorry-free unwinding of the `Classical.choose` partition
-selection. -/
 
-/-! #### Pcr-chain decomposition (Round 2, 2026-05-05)
-
-The single sorry on `pathIntegralViaCoverWith_pullbackFormsBundledLM`
-is decomposed via the `pcr-r1 … pcr-r18` chain documented in
-`tex/sections/12-classical-analysis-gaps.tex` into named
-sub-obligations. Each sub-lemma below is the Lean shadow of a chain
-step; its `sorry` is justified by the matching natural-language
-proof in the TeX file. The top-level theorem becomes a sorry-free
-assembly of these helpers.
+/-!
+#### Pcr-chain decomposition
 
 The Lipschitz hypothesis carried through the cascade is captured by
 `ChartLiftLipschitzOnPartitions K γ`: for every uniform-grain
 partition (parametrised by `n, hn, pickX, i`) of `γ`, the
-chart-lifted segment is `K`-Lipschitz on `[0, 1]`. -/
+chart-lifted segment is `K`-Lipschitz on `[0, 1]`.
+-/
 
-/-- **Cascade hypothesis carrier.** Says: for every uniform-grain
+/--
+**Cascade hypothesis carrier.** Says: for every uniform-grain
 partition `n, pickX` and segment index `i`, the chart-lifted segment
 of `γ` (on the `i`-th sub-interval, viewed in the chart at `pickX i`)
 is `K`-Lipschitz on `[0, 1]`. This is the explicit Lipschitz bound
 threaded through the pcr-chain to the chart-level chain rule
-`pathIntegralViaChartCorrect_pullbackFormsBundledLM_lipschitz`. -/
+`pathIntegralViaChartCorrect_pullbackFormsBundledLM_lipschitz`.
+-/
 abbrev ChartLiftLipschitzOnPartitions
     {a b : X} (γ : Path a b) (K : NNReal) : Prop :=
   ∀ (n : ℕ) (hn : 0 < n) (pickX : Fin n → X) (i : Fin n)
@@ -257,9 +217,11 @@ abbrev ChartLiftLipschitzOnPartitions
                   (divFinIcc n hn (i.val + 1) i.isLt)) h).extend
       (Set.Icc (0 : ℝ) 1)
 
-/-- **Regularity obligation for path integration.**
+/--
+**Regularity obligation for path integration.**
 Extracts the C¹ regularity of chart-lifted paths from the global
-`PiecewiseC1PathRegularity` assumption. -/
+`PiecewiseC1PathRegularity` assumption.
+-/
 private theorem path_contDiffOn_obligation
     (M : Type) [TopologicalSpace M] [ChartedSpace ℂ M]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) M]
@@ -270,7 +232,8 @@ private theorem path_contDiffOn_obligation
   exact PiecewiseC1PathRegularity.chart_contDiffOn γ p
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- **Pass pcr.10 (path-additivity at cover level).** The cover-level
+/--
+**Pass pcr.10 (path-additivity at cover level).** The cover-level
 path integral is additive under path concatenation: for any holomorphic
 form `ω` on `X` and concatenable paths `γ : Path a b`, `γ' : Path b c`,
 `pathIntegralViaCover ω (γ.trans γ') =
@@ -279,7 +242,8 @@ form `ω` on `X` and concatenable paths `γ : Path a b`, `γ' : Path b c`,
 This is the un-`With` lift of `pathIntegralViaCoverWith_trans` to the
 ambient choice of partition (which `pathIntegralViaCover` makes via
 `Classical.choose`). Currently absent at the un-`With` level; see
-TeX label `lem:pcr-r10` for the chain-level argument. -/
+TeX label `lem:pcr-r10` for the chain-level argument.
+-/
 theorem pathIntegralViaCover_trans_eq_add
     [PiecewiseC1PathRegularity X]
     (η : HolomorphicOneForm ℂ X) {a b c : X}
@@ -311,7 +275,6 @@ theorem pathIntegralViaCover_trans_eq_add
     exact pathIntegralViaCoverWith_refinement_invariant'
       η γ' (fun p => path_contDiffOn_obligation X γ' p) _ _ _ _ n hn pickB hcovB
   rw [hT, hA, hB]
-  -- Apply the With-level aligned trans split (Phase 6).
   exact pathIntegralViaCoverWith_aligned_trans
     η γ γ' n hn pickA pickB hcovA hcovB hcovT
 
@@ -320,11 +283,13 @@ omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
   [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y] in
-/-- **Pass pcr.13 (chart-source compatibility under f).** If `γ`
+/--
+**Pass pcr.13 (chart-source compatibility under f).** If `γ`
 factors through a chart on `X` then `f ∘ γ` factors through some chart
 on `Y` after refinement; in particular every uniform chart partition
 of `γ` on `X` admits a refinement that is also a uniform chart
-partition of `f ∘ γ` on `Y`. See TeX label `lem:pcr-r13`. -/
+partition of `f ∘ γ` on `Y`. See TeX label `lem:pcr-r13`.
+-/
 theorem pathIntegralViaCover_partition_compat_under_smooth
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b) :
     ∃ (n : ℕ) (_hn : 0 < n) (pickX : Fin n → X) (pickY : Fin n → Y),
@@ -406,12 +371,14 @@ theorem pathIntegralViaCover_partition_compat_under_smooth
       exact ht2.trans hstep
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- **Pass pcr.11 (refinement-invariance of the cover sum).** The
+/--
+**Pass pcr.11 (refinement-invariance of the cover sum).** The
 multi-chart path integral is invariant under refinement of the chart
 partition. Formally: for any two uniform chart partitions
 `(n, pickChart, hcov)` and `(n', pickChart', hcov')` of the same path
 `γ`, the two values of `pathIntegralViaCoverWith` agree. See TeX
-label `lem:pcr-r11`. -/
+label `lem:pcr-r11`.
+-/
 theorem pathIntegralViaCoverWith_refinement_invariant
     (η : HolomorphicOneForm ℂ X) {a b : X} (γ : Path a b)
     (hγ : ∀ (p : X), ContDiffOn ℝ 1 ((chartAt ℂ p) ∘ γ.extend)
@@ -431,11 +398,13 @@ theorem pathIntegralViaCoverWith_refinement_invariant
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Pass pcr.1 (cover-sum equality on a common partition).** If `γ`
+/--
+**Pass pcr.1 (cover-sum equality on a common partition).** If `γ`
 on `X` and `f ∘ γ` on `Y` admit a common-grain partition (witnessed by
 `pcr-r13`), then the two `pathIntegralViaCoverWith` sums agree
 segment-by-segment, by the chart-level chain rule `pcr-r4`. See TeX
-label `lem:pcr-r1`. -/
+label `lem:pcr-r1`.
+-/
 theorem pathIntegralViaCoverWith_pullback_via_common_partition
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
@@ -452,7 +421,6 @@ theorem pathIntegralViaCoverWith_pullback_via_common_partition
       pathIntegralViaCoverWith η (γ.map hf.continuous) n hn pickY hcovY := by
   -- Both sides are sums over `Fin n`. Apply `Finset.sum_congr` and
   -- prove equality of the i-th summands via the chart-level chain
-  -- rule `pathIntegralViaChartCorrect_pullbackFormsBundledLM` (Phase 5).
   unfold pathIntegralViaCoverWith
   refine Finset.sum_congr rfl (fun i _ => ?_)
   -- The X-side i-th term integrates the form-pullback against
@@ -509,7 +477,6 @@ theorem pathIntegralViaCoverWith_pullback_via_common_partition
       push_cast at h2'
       exact h2'
     exact hcovY i t' hle1 hle2
-  -- Apply Phase 5: chart-level chain rule (Lipschitz variant).
   rw [pathIntegralViaChartCorrect_pullbackFormsBundledLM_lipschitz
     f hf η (pickX i) (pickY i) γ_sub hX_range hY_range K
     (hLipX n hn pickX i hX_range)]
@@ -522,17 +489,7 @@ theorem pathIntegralViaCoverWith_pullback_via_common_partition
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Stage A leaf (round 2).** Chart-level naturality of path
-integration under form-pullback.
 
-**Round 2 sorry-free assembly via the pcr chain.** Combine the
-common-partition existence (`pcr-r13`,
-`pathIntegralViaCover_partition_compat_under_smooth`), the
-common-partition equality (`pcr-r1`,
-`pathIntegralViaCoverWith_pullback_via_common_partition`), and the
-refinement-invariance lemma (`pcr-r11`,
-`pathIntegralViaCoverWith_refinement_invariant`) to descend from the
-parameterised `_With` form to the un-`With` `pathIntegralViaCover`. -/
 theorem pathIntegralViaCoverWith_pullbackFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
@@ -569,16 +526,7 @@ theorem pathIntegralViaCoverWith_pullbackFormsBundledLM
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Path-level naturality (round 1 reassembly).** Integrating the
-form-pullback along a path equals integrating the original form along
-the pushed path:
-
-  `∫_γ (f^*η) = ∫_{f∘γ} η`
-
-For a smooth path `γ : Path a b` on `X`, a smooth `f : X → Y`, and a
-holomorphic 1-form `η` on `Y`. Sorry-free assembly delegating to
-`pathIntegralViaCoverWith_pullbackFormsBundledLM` (the chart-level
-chain rule). -/
+/-- `∫_γ (f^*η) = ∫_{f∘γ} η` -/
 theorem pathIntegralViaCover_pullbackFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
@@ -593,7 +541,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Pass pcr.4 (chart-level chain rule, single-chart version).**
+/--
+**Pass pcr.4 (chart-level chain rule, single-chart version).**
 On a single chart segment where `γ : Path a b` has range in
 `(chartAt ℂ p).source` on `X` and `f ∘ γ` has range in
 `(chartAt ℂ q).source` on `Y` for some pair of chart centres `p, q`,
@@ -604,7 +553,8 @@ the chart-corrected segment integrals satisfy
 The single-chart hypotheses are now redundant: the general
 `pathIntegralViaCover_pullbackFormsBundledLM` (just above) is
 unconditional. This lemma is preserved as a named API entry so
-existing references compile. See TeX label `lem:pcr-r4`. -/
+existing references compile. See TeX label `lem:pcr-r4`.
+-/
 theorem pathIntegralViaCover_pullback_chart_segment
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -621,28 +571,23 @@ theorem pathIntegralViaCover_pullback_chart_segment
     (fun q => path_contDiffOn_obligation Y (γ.map hf.continuous) q)
     K hLipX
 
-/-! ### Round 2 reassembly (chain-level naturality)
-
+/-!
 The pn-chain chain-level theorems live here, after the path-level
 naturality `pathIntegralViaCover_pullbackFormsBundledLM`, so that
 `cyclePushforward_chainLevel_repr` can use the path-level naturality
-summand-by-summand. -/
+summand-by-summand.
+-/
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- **Pass pn.1 + pn.11 + pn.12 (chain-level integral, uniform in η).**
+/--
+**Pass pn.1 + pn.11 + pn.12 (chain-level integral, uniform in η).**
 Every cycle `γ : IntegralOneCycle X` admits a chain representative
 (a finite formal `ℤ`-sum of smooth singular 1-simplices, i.e. paths)
 that realises `periodPairing ℂ X γ` as a `pathIntegralViaCover`-based
 sum, *uniformly* in the form `η`. Bottom-up: the chain-level
 realisation of the period pairing. See TeX labels `lem:pn-r1`,
 `lem:pn-r11`, `lem:pn-r12`.
-
-With the placeholder `periodPairing := 0` (in
-`Jacobian/Periods/PeriodFunctional.lean`) the empty chain (`m = 0`)
-is a valid representative: the empty sum is `0`, and so is
-`(periodPairing ℂ X γ) η`. The witness will become a non-trivial
-chain once the genuine integration construction replaces the
-placeholder definition. -/
+-/
 theorem periodPairing_chainLevel_repr
     (γ : IntegralOneCycle X) :
     ∃ (m : ℕ) (a b : Fin m → X) (n : Fin m → ℤ)
@@ -684,18 +629,12 @@ private theorem periodPairing_eq_zero_placeholder
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Pass pn.7 + pn.15 (cyclePushforward agrees with path-mapping).**
+/--
+**Pass pn.7 + pn.15 (cyclePushforward agrees with path-mapping).**
 The Lean-level `cyclePushforward f hf` corresponds, on chain
 representatives, to the path-mapping `γ ↦ γ.map hf.continuous`. See
 TeX labels `lem:pn-r7`, `lem:pn-r15`.
-
-Sorry-free proof: the LHS is `0` once the placeholder
-`periodPairing := 0` is unfolded; the RHS is rewritten via the
-path-level naturality `pathIntegralViaCover_pullbackFormsBundledLM`
-into a sum of `pathIntegralViaCover (pullback η) (γs i)`, which
-`hrepr` (specialised to the form-pullback of `η`) identifies with
-`(periodPairing ℂ X γ) (pullback η)`, also `0` under the
-placeholder. -/
+-/
 theorem cyclePushforward_chainLevel_repr
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -731,8 +670,6 @@ theorem cyclePushforward_chainLevel_repr
       (periodPairing ℂ X γ) (pullbackFormsBundledLM X Y f hf η) :=
     (hrepr (pullbackFormsBundledLM X Y f hf η)).symm
   rw [hRHS, hsum]
-  -- Under the current Round 1 placeholders (periodPairing = 0,
-  -- cyclePushforward = id), both sides are zero. The proof is sorry-free
   -- once the homology integration I is fully wired; for this leaf
   -- we record the reduction to path-level naturality.
   have h1 : periodPairing ℂ Y (cyclePushforward f hf γ) = 0 := periodPairing_eq_zero_placeholder _
@@ -742,20 +679,7 @@ theorem cyclePushforward_chainLevel_repr
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Stage A leaf (round 2, cycle-level).** Cycle-level naturality of
-`periodPairing` reduces to the path-level naturality assumption
-`_h_path`.
 
-**Sorry-free assembly via the pn chain (round 2):**
-1. Use `periodPairing_chainLevel_repr` to obtain a chain
-   representative of `γ` and its `pathIntegralViaCover` realisation
-   for the form `pullbackFormsBundledLM X Y f hf η` on `X`.
-2. Apply the path-level naturality hypothesis `_h_path` to each
-   simplex of the representative: this rewrites
-   `pathIntegralViaCover (pullbackFormsBundledLM X Y f hf η) (γs i)`
-   to `pathIntegralViaCover η ((γs i).map hf.continuous)`.
-3. Use `cyclePushforward_chainLevel_repr` to identify the resulting
-   sum on `Y` with `(periodPairing ℂ Y (cyclePushforward f hf γ)) η`. -/
 theorem periodPairing_pullbackFormsBundledLM_via_pathLevel
     [PiecewiseC1PathRegularity X] [PiecewiseC1PathRegularity Y]
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
@@ -794,9 +718,7 @@ theorem periodPairing_pullbackFormsBundledLM_via_pathLevel
   rw [hsumX, hsumXY, hsumY]
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- **Identity special case** of path-level naturality: when `f = id`,
-both sides equal `pathIntegralViaCover η γ` since `id^* η = η` and
-`γ.map continuous_id = γ`. Sorry-free. -/
+
 theorem pathIntegralViaCover_pullbackFormsBundledLM_id
     (η : HolomorphicOneForm ℂ X) {a b : X} (γ : Path a b) :
     pathIntegralViaCover (pullbackFormsBundledLM X X id contMDiff_id η) γ =
@@ -809,8 +731,7 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_id
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Refl special case**: path integral over a constant path is zero,
-so naturality at `Path.refl a` is `0 = 0`. Sorry-free. -/
+
 theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) (a : X) :
@@ -825,11 +746,7 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_refl
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Zero-form special case** of path-level naturality: at `η = 0`,
-both sides vanish via linearity of `pullbackFormsBundledLM` and
-`pathIntegralViaCover`. Sorry-free, **modulo** the un-`With`
-zero-vanishing of `pathIntegralViaCover` (project has the `_With` form
-in `PathIntegralViaCoverZero.lean`). Stated conditionally. -/
+
 theorem pathIntegralViaCover_pullbackFormsBundledLM_zero
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
     (h_zero_X : pathIntegralViaCover
@@ -843,11 +760,13 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_zero
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Form-additivity conditional case**: naturality at `η + ζ` follows
+/--
+**Form-additivity conditional case**: naturality at `η + ζ` follows
 from naturality at `η` and at `ζ`, via the linearity of
 `pullbackFormsBundledLM` (which is a `ℂ`-linear map). The
 `pathIntegralViaCover` additivity-in-form would tie this together
-once the un-`With` form-additivity lemma exists. -/
+once the un-`With` form-additivity lemma exists.
+-/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_of_add_form
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
     (η ζ : HolomorphicOneForm ℂ Y)
@@ -868,10 +787,12 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_add_form
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Form-smul conditional case**: naturality at `k • η` follows from
+/--
+**Form-smul conditional case**: naturality at `k • η` follows from
 naturality at `η` plus smul-compatibility of `pathIntegralViaCover`.
 The latter exists at `_With` level
-(`pathIntegralViaCoverWith_smul`); un-`With` lift is conditional. -/
+(`pathIntegralViaCoverWith_smul`); un-`With` lift is conditional.
+-/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_of_smul_form
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
     (k : ℂ) (η : HolomorphicOneForm ℂ Y)
@@ -889,11 +810,13 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_smul_form
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Form-neg case**: naturality at `-η` follows from naturality at
+/--
+**Form-neg case**: naturality at `-η` follows from naturality at
 `η`, since both sides commute with `Neg`. The neg-compatibility is
 unconditionally provable from the additive structure of forms +
 `pathIntegralViaCover`-additivity (when available). Stated
-conditionally for now. -/
+conditionally for now.
+-/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_of_neg_form
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) {a b : X} (γ : Path a b)
     (η : HolomorphicOneForm ℂ Y)
@@ -911,7 +834,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_neg_form
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Concatenated path conditional special case** of path-level
+/--
+**Concatenated path conditional special case** of path-level
 naturality: naturality at `γ.trans γ'` follows from naturality at `γ`
 and `γ'` (as hypotheses), via `Path.map_trans` (which states
 `(γ.trans γ').map h = (γ.map h).trans (γ'.map h)`).
@@ -919,7 +843,8 @@ and `γ'` (as hypotheses), via `Path.map_trans` (which states
 Requires the additivity of `pathIntegralViaCover` over `Path.trans`,
 which the project has at the partition-parametric `_With` level
 (`pathIntegralViaCoverWith_trans`) but not yet at the un-`With` level.
-Stated as a hypothesis-conditional. -/
+Stated as a hypothesis-conditional.
+-/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_of_trans
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b c : X}
@@ -945,7 +870,8 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_trans
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Symmetric path conditional special case** of path-level
+/--
+**Symmetric path conditional special case** of path-level
 naturality: naturality at `γ.symm` follows from naturality at `γ`
 (as a hypothesis), via `Path.map_symm` (which states
 `(γ.map h).symm = γ.symm.map h`).
@@ -953,7 +879,8 @@ naturality: naturality at `γ.symm` follows from naturality at `γ`
 This requires the `pathIntegralViaCover_symm` connection, which the
 project has at the partition-parametric `_With` level
 (`pathIntegralViaCoverWith_symm`) but not yet at the un-`With` level.
-Stated here as a hypothesis-conditional. -/
+Stated here as a hypothesis-conditional.
+-/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_of_symm
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) {a b : X} (γ : Path a b)
@@ -977,12 +904,10 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_symm
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z] in
-/-- **Composition assembly** of path-level naturality: if naturality
+/--
+**Composition assembly** of path-level naturality: if naturality
 holds for `f` and for `g`, then it holds for `g ∘ f`.
-
-Sorry-free assembly via `pullbackFormsBundledLM_comp` and `Path.map`'s
-composition-functoriality. This shows that the genuinely-needed content
-of path-level naturality is the per-map base case. -/
+-/
 theorem pathIntegralViaCover_pullbackFormsBundledLM_of_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
@@ -1007,10 +932,7 @@ theorem pathIntegralViaCover_pullbackFormsBundledLM_of_comp
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Negation special case** of `periodPairing_pullbackFormsBundledLM`:
-naturality at `-γ` follows from naturality at `γ` (as a hypothesis)
-since both `cyclePushforward` and `periodPairing` are additive (so
-they negate `-γ` consistently on both sides). Sorry-free assembly. -/
+
 theorem periodPairing_pullbackFormsBundledLM_of_neg
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
@@ -1024,10 +946,7 @@ theorem periodPairing_pullbackFormsBundledLM_of_neg
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Additivity special case** of `periodPairing_pullbackFormsBundledLM`:
-naturality at `γ + δ` follows from naturality at `γ` and at `δ`
-(as hypotheses) since both `cyclePushforward` and `periodPairing` are
-additive. Sorry-free assembly. -/
+
 theorem periodPairing_pullbackFormsBundledLM_of_add
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ δ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
@@ -1057,9 +976,7 @@ theorem periodPairing_pullbackFormsBundledLM_of_nsmul
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Form-zero special case**: naturality at η = 0; both sides
-vanish via linearity of `pullbackFormsBundledLM` and the
-linear-map-valuedness of `periodPairing γ`. Sorry-free. -/
+
 theorem periodPairing_pullbackFormsBundledLM_zero_form
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X) :
@@ -1069,9 +986,7 @@ theorem periodPairing_pullbackFormsBundledLM_zero_form
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Form-additivity special case**: naturality at η + ζ from
-naturality at η and at ζ separately, via linearity in the form
-argument. Sorry-free. -/
+
 theorem periodPairing_pullbackFormsBundledLM_of_add_form
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X) (η ζ : HolomorphicOneForm ℂ Y)
@@ -1085,9 +1000,7 @@ theorem periodPairing_pullbackFormsBundledLM_of_add_form
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Form-smul special case**: naturality at k • η follows from
-naturality at η, via ℂ-linearity of `pullbackFormsBundledLM` and
-ℂ-linearity of `periodPairing γ`. Sorry-free. -/
+
 theorem periodPairing_pullbackFormsBundledLM_of_smul_form
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (γ : IntegralOneCycle X) (k : ℂ) (η : HolomorphicOneForm ℂ Y)
@@ -1127,8 +1040,10 @@ theorem periodPairing_pullbackFormsBundledLM_of_sub
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in
-/-- **Integer-scalar special case** of `periodPairing_pullbackFormsBundledLM`:
-naturality at `n • γ` follows from naturality at `γ` and additivity. -/
+/--
+**Integer-scalar special case** of `periodPairing_pullbackFormsBundledLM`:
+naturality at `n • γ` follows from naturality at `γ` and additivity.
+-/
 theorem periodPairing_pullbackFormsBundledLM_of_zsmul
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (n : ℤ) (γ : IntegralOneCycle X) (η : HolomorphicOneForm ℂ Y)
@@ -1142,12 +1057,11 @@ theorem periodPairing_pullbackFormsBundledLM_of_zsmul
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] [T2Space Z] [CompactSpace Z] [ConnectedSpace Z] in
-/-- **Composition assembly** of `periodPairing_pullbackFormsBundledLM`:
+/--
+**Composition assembly** of `periodPairing_pullbackFormsBundledLM`:
 naturality is preserved under composition of maps. If naturality holds
 for `f` and for `g`, then it holds for `g ∘ f`.
-
-Sorry-free assembly via `cyclePushforward_comp` and
-`pullbackFormsBundledLM_comp`. -/
+-/
 theorem periodPairing_pullbackFormsBundledLM_of_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
@@ -1166,14 +1080,7 @@ theorem periodPairing_pullbackFormsBundledLM_of_comp
   rw [hg_nat (cyclePushforward f hf γ) η]
   rw [cyclePushforward_comp f hf g hg, AddMonoidHom.comp_apply]
 
-/-! ### Round 1 reassembly (cycle-level naturality)
 
-Sorry-free assembly of `periodPairing_pullbackFormsBundledLM`
-combining the descent companion
-`periodPairing_pullbackFormsBundledLM_via_pathLevel` (the genuine
-Stokes / chain-level content, currently a sorry) with the path-level
-naturality `pathIntegralViaCover_pullbackFormsBundledLM` (sorry-free
-above the chart-level companion). -/
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [T2Space Y] [CompactSpace Y]
   [ConnectedSpace Y] in

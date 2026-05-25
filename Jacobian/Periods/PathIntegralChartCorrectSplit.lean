@@ -8,19 +8,11 @@ set_option linter.unusedSectionVars false
 /-!
 # Segment-additivity of `pathIntegralViaChartCorrect`
 
-**Phase 2 deliverable** of the path-integral well-definedness chain.
-
 States that splitting a chart-local corrected path integral at any
 parameter `s ∈ [0, 1]` produces the sum of two sub-integrals over
 `γ.subpath 0 s` and `γ.subpath s 1`.
 
-This is the linchpin of refinement-invariance (Phase 4): refining a
-chart partition to a finer one corresponds to recursively splitting
-each sub-segment via this lemma.
-
 ## Strategy
-
-The proof reduces (sorry-free here) to:
 
 1. The chart-lift commutes with `Path.subpath` (Path.ext, near-
    definitional).
@@ -29,10 +21,6 @@ The proof reduces (sorry-free here) to:
    `CurveIntegralSubpath.lean`, the **single named analytic gap**).
 3. `intervalIntegral.integral_add_adjacent_intervals` to combine the
    two sub-integrals into the full one.
-
-The integrability hypothesis is taken explicitly to keep the API
-clean. Downstream callers will derive it from
-`chartedFormPullback_curveIntegrable` (Phase 1) given a `C¹` path.
 -/
 
 namespace JacobianChallenge.Periods
@@ -46,9 +34,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
 omit [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] in
-/-- The chart-lift commutes with `Path.subpath`: lifting a subpath
+/--
+The chart-lift commutes with `Path.subpath`: lifting a subpath
 through the chart equals taking the subpath of the chart-lifted
-path. Proved by `Path.ext`. -/
+path. Proved by `Path.ext`.
+-/
 theorem chartLift_subpath
     (c : OpenPartialHomeomorph X E)
     {a b : X} (γ : Path a b) (hrange : range γ ⊆ c.source)
@@ -60,21 +50,7 @@ theorem chartLift_subpath
   funext s
   rfl
 
-/-- **Phase 2 deliverable.** For any `s ∈ [0, 1]`, the corrected
-chart-local path integral of `γ` splits as the sum of the integrals
-over the two halves `γ.subpath 0 s` and `γ.subpath s 1`.
 
-Sorry-free reduction to:
-* `curveIntegral_subpath_of_le` (the curveIntegral/subpath
-  identity — gap in `CurveIntegralSubpath.lean`),
-* `chartLift_subpath` (the chart-lift/subpath commutation, sorry-free),
-* `intervalIntegral.integral_add_adjacent_intervals` (Mathlib).
-
-The integrability hypotheses ensure
-`intervalIntegral.integral_add_adjacent_intervals` applies; they are
-trivially obtainable from `chartedFormPullback_curveIntegrable`
-(Phase 1) plus a `C¹` smoothness hypothesis on the chart-lifted
-sub-paths. -/
 theorem pathIntegralViaChartCorrect_split_subpath
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (hrange : range γ ⊆ c.source)

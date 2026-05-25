@@ -1,15 +1,7 @@
 import Mathlib.Topology.Algebra.Group.Quotient
 import Jacobian.ComplexTorus.Defs
 
-/-!
-# Helper lemmas for the induced quotient map
-
-This file is a Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`. It
-collects bounded simp-style lemmas about
-`map Λ Γ f hf : V ⧸ Λ.subgroup →+ W ⧸ Γ.subgroup`,
-the descent of a lattice-preserving additive homomorphism. Keep the proofs
-short and direct.
--/
+/-! # Helper lemmas for the induced quotient map -/
 
 namespace JacobianChallenge.ComplexTorus
 

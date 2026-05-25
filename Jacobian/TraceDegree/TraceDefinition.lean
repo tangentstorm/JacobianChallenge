@@ -21,7 +21,8 @@ set_option linter.unusedSectionVars false
 open scoped Manifold Topology BigOperators Classical
 open Set Filter
 
-/-! ### Tangent-space scalar instances
+/-!
+### Tangent-space scalar instances
 
 `TangentSpace 𝓘(ℂ, ℂ) z = ℂ` definitionally, but the `def` is *not*
 reducible so type-class inference does not transport the
@@ -46,8 +47,10 @@ variable [ChartedSpace ℂ X] [ChartedSpace ℂ Y]
 variable [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
 variable [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) Y]
 
-/-- A value `y : Y` is regular for the branched cover `f` if no preimage
-of `y` is a ramification point. -/
+/--
+A value `y : Y` is regular for the branched cover `f` if no preimage
+of `y` is a ramification point.
+-/
 def isRegularValue {f : X → Y} (h : BranchedCoverData X Y f) (y : Y) : Prop :=
   ∀ x ∈ f ⁻¹' {y}, h.ramificationIndex x = 1
 
@@ -62,9 +65,11 @@ structure IsIso {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   left_inv : inv.comp f = ContinuousLinearMap.id ℂ E
   right_inv : f.comp inv = ContinuousLinearMap.id ℂ F
 
-/-- The pushforward of a cotangent vector along a local diffeomorphism.
+/--
+The pushforward of a cotangent vector along a local diffeomorphism.
 Given `f : X → Y` and `x` such that `df_x` is an isomorphism, push
-`ωx ∈ T_x^* X` to `T_{f x}^* Y`. -/
+`ωx ∈ T_x^* X` to `T_{f x}^* Y`.
+-/
 noncomputable def cotangentPushforward
     (f : X → Y) (x : X) (ωx : CotangentSpace ℂ X x) :
     CotangentSpace ℂ Y (f x) :=
@@ -83,10 +88,7 @@ noncomputable def traceAtRegularValue
 
 /-! ### Analytic bridge: ramification index 1 ⇒ first-order local map. -/
 
-/-- Local re-statement of
-`JacobianChallenge.Blueprint.mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero`
-(in `Jacobian/Blueprint/Sec02/WeightedFiberCardConst.lean`), inlined
-here because that blueprint file is currently broken upstream. -/
+
 private theorem _mapAnalyticOrderAt_eq_one_iff_chartLocal_deriv_ne_zero
     {f : X → Y} {x : X} (_hf : IsHolomorphicAt f x) :
     mapAnalyticOrderAt f x = 1 ↔ deriv (chartLocalAt f x) (chartAt ℂ x x) ≠ 0 := by
@@ -208,11 +210,13 @@ noncomputable def localPullbackAt
     Y → CotangentModelFiber ℂ :=
   fun y' => cotangentPushforward f (h.localInverseAt x hx y') (ω.toFun (h.localInverseAt x hx y'))
 
-/-- Pullback of a holomorphic form along a local inverse branch is holomorphic.
+/--
+Pullback of a holomorphic form along a local inverse branch is holomorphic.
 
 This is the remaining local analytic section-regularity obligation for the
 trace construction: combine holomorphicity of the inverse branch with smooth
-holomorphic variation of the cotangent pushforward in local coordinates. -/
+holomorphic variation of the cotangent pushforward in local coordinates.
+-/
 axiom localPullbackAt_holomorphic
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hcompat : h.RamificationIndexCompatible)
@@ -317,10 +321,12 @@ theorem traceAtRegularValue_smul
   · simp only [dif_neg hiso]
     exact (smul_zero (A := CotangentSpace ℂ Y (f x)) c).symm
 
-/-- **Analytic bridge.** At an unramified point of a branched cover,
+/--
+**Analytic bridge.** At an unramified point of a branched cover,
 the manifold derivative `mfderiv 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) f x` is a continuous
 linear isomorphism `TangentSpace 𝓘 x →L[ℂ] TangentSpace 𝓘 (f x)`,
-given that `f` is holomorphic and continuous at `x`. -/
+given that `f` is holomorphic and continuous at `x`.
+-/
 theorem mfderiv_isIso_of_ramificationIndex_one
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hcompat : h.RamificationIndexCompatible) (hf : IsHolomorphic f) {x : X}
@@ -369,12 +375,14 @@ theorem mfderiv_isIso_of_ramificationIndex_one
                ContinuousLinearMap.id_apply]
     rw [mul_assoc, inv_mul_cancel₀ hderiv, mul_one]
 
-/-- The trace of a pullback is scaled by the degree (at regular values).
+/--
+The trace of a pullback is scaled by the degree (at regular values).
 
 The smoothness hypothesis `hf` provides the chain-rule pullback's
 underlying function (via `pullbackFormsBundled`) and, through a private
 `ContMDiff → IsHolomorphic` bridge, the analytic data used by
-`mfderiv_isIso_of_ramificationIndex_one`. -/
+`mfderiv_isIso_of_ramificationIndex_one`.
+-/
 theorem trace_pullback_at_regular_value
     {f : X → Y} (h : BranchedCoverData X Y f)
     (hcompat : h.RamificationIndexCompatible)

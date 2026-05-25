@@ -23,9 +23,11 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- A non-zero witness `evalLinearMap basePoint v ≠ evalLinearMap P v`
+/--
+A non-zero witness `evalLinearMap basePoint v ≠ evalLinearMap P v`
 modulo the period subgroup gives both: positive `analyticGenus` and
-non-trivial `AnalyticJacobianGroup`. -/
+non-trivial `AnalyticJacobianGroup`.
+-/
 theorem genus_pos_and_nontrivial_jacobian_of_witness_ne_zero
     [FiniteDimensionalHolomorphicOneForms E X]
     (basePoint P : X) (v : E)
@@ -47,11 +49,13 @@ theorem genus_pos_and_nontrivial_jacobian_of_witness_ne_zero
   congr 1
   apply Subsingleton.elim
 
-/-- Same conclusion via a direct `toFun`-witness: a non-zero
+/--
+Same conclusion via a direct `toFun`-witness: a non-zero
 `η.toFun x v` for some `(x, v, η)` whose value is not in the period
 subgroup. (Genus alone follows from any non-zero form via the
 existing `analyticGenus_pos_of_toFun_ne_zero`; this packages it
-with the Jacobian-side conclusion at a chosen base point.) -/
+with the Jacobian-side conclusion at a chosen base point.)
+-/
 theorem genus_pos_of_witness_ne_zero
     [FiniteDimensionalHolomorphicOneForms E X]
     (basePoint P : X) (v : E)
@@ -66,8 +70,10 @@ theorem nontrivial_jacobian_of_witness_ne_zero
     Nontrivial (AnalyticJacobianGroup E X) :=
   nontrivial_analyticJacobian_of_witness_ne_zero basePoint P v h
 
-/-- The contrapositive: if the analytic Jacobian is `Subsingleton`,
-every witness vanishes. -/
+/--
+The contrapositive: if the analytic Jacobian is `Subsingleton`,
+every witness vanishes.
+-/
 theorem witness_eq_zero_of_subsingleton_jacobian
     [Subsingleton (AnalyticJacobianGroup E X)]
     (basePoint P : X) (v : E) :

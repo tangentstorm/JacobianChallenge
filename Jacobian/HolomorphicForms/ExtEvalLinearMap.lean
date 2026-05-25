@@ -32,8 +32,10 @@ theorem eq_zero_iff_evalLinearMap_eq_zero (η : HolomorphicOneForm E X) :
   rw [ext_evalLinearMap_iff]
   exact forall_congr' (fun x => forall_congr' (fun v => by simp))
 
-/-- Sufficient witness condition: a non-vanishing `evalLinearMap`
-proves the form is non-zero. -/
+/--
+Sufficient witness condition: a non-vanishing `evalLinearMap`
+proves the form is non-zero.
+-/
 theorem ne_zero_of_evalLinearMap_ne_zero (η : HolomorphicOneForm E X)
     (x : X) (v : E) (h : evalLinearMap x v η ≠ 0) : η ≠ 0 := by
   intro hη

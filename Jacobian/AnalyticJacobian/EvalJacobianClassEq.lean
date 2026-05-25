@@ -22,8 +22,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- `evalJacobianClass P v = evalJacobianClass Q w` iff the difference
-`-evalLinearMap P v + evalLinearMap Q w` lies in `periodSubgroup`. -/
+/--
+`evalJacobianClass P v = evalJacobianClass Q w` iff the difference
+`-evalLinearMap P v + evalLinearMap Q w` lies in `periodSubgroup`.
+-/
 theorem evalJacobianClass_eq_iff_mem
     (P Q : X) (v w : E) :
     evalJacobianClass (E := E) (X := X) P v =
@@ -41,8 +43,10 @@ theorem evalJacobianClass_eq_iff_exists_cycle
         periodPairing E X σ = -evalLinearMap P v + evalLinearMap Q w := by
   rw [evalJacobianClass_eq_iff_mem, mem_periodSubgroup_iff]
 
-/-- Sufficient condition: `evalJacobianClass P v = evalJacobianClass Q w`
-when their representative difference equals `periodPairing E X σ`. -/
+/--
+Sufficient condition: `evalJacobianClass P v = evalJacobianClass Q w`
+when their representative difference equals `periodPairing E X σ`.
+-/
 theorem evalJacobianClass_eq_of_diff_eq_periodPairing
     (P Q : X) (v w : E) (σ : IntegralOneCycle X)
     (h : -evalLinearMap P v + evalLinearMap Q w = periodPairing E X σ) :

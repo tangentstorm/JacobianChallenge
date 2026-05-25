@@ -14,8 +14,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Form negation equals `(-1) •` on the integral
-(provisional in-chart). -/
+/--
+Form negation equals `(-1) •` on the integral
+(provisional in-chart).
+-/
 theorem pathIntegralInChart_neg_eq_neg_one_smul
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : E} (γ : Path a b) :

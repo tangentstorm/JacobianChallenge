@@ -23,9 +23,11 @@ open Set unitInterval JacobianChallenge.HolomorphicForms
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) E]
 
-/-- For `chartedSpaceSelf E`, the cover-with multi-chart integral
+/--
+For `chartedSpaceSelf E`, the cover-with multi-chart integral
 equals the sum of provisional via-chart integrals on each segment,
-unconditionally. -/
+unconditionally.
+-/
 theorem pathIntegralViaCoverWith_self_eq_sum_provisional
     (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b)
     (n : ℕ) (hn : 0 < n) (pickChart : Fin n → E)
@@ -41,10 +43,12 @@ theorem pathIntegralViaCoverWith_self_eq_sum_provisional
   pathIntegralViaCoverWith_eq_sum_provisional_of_mfderiv_id
     ω γ n hn pickChart hcov (fun _ e => mfderiv_refl_symm_eq_id e)
 
-/-- For `chartedSpaceSelf E`, the user-facing
+/--
+For `chartedSpaceSelf E`, the user-facing
 `pathIntegralViaCover` equals the sum of provisional via-chart
 integrals on the `Classical.choose`-picked partition,
-unconditionally. -/
+unconditionally.
+-/
 theorem pathIntegralViaCover_self_eq_sum_provisional
     (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
     pathIntegralViaCover ω γ =
@@ -63,8 +67,10 @@ theorem pathIntegralViaCover_self_eq_sum_provisional
     ω γ (fun _ e => mfderiv_refl_symm_eq_id e)
 
 set_option linter.unusedVariables false in
-/-- For `chartedSpaceSelf E`, the multi-chart integral reduces to a
-plain sum of `curveIntegral ω.toFun` over each segment subpath. -/
+/--
+For `chartedSpaceSelf E`, the multi-chart integral reduces to a
+plain sum of `curveIntegral ω.toFun` over each segment subpath.
+-/
 theorem pathIntegralViaCover_self_eq_sum_curveIntegral
     (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b) :
     pathIntegralViaCover ω γ =
@@ -82,9 +88,11 @@ theorem pathIntegralViaCover_self_eq_sum_curveIntegral
   intro i _
   exact pathIntegralViaChart_reflChart ω _ _
 
-/-- For `chartedSpaceSelf E`, the cover-with multi-chart integral
+/--
+For `chartedSpaceSelf E`, the cover-with multi-chart integral
 reduces directly through the corrected layer to a plain sum of
-`curveIntegral ω.toFun` over segment subpaths. -/
+`curveIntegral ω.toFun` over segment subpaths.
+-/
 theorem pathIntegralViaCoverWith_self_eq_sum_curveIntegral
     (ω : HolomorphicOneForm E E) {a b : E} (γ : Path a b)
     (n : ℕ) (hn : 0 < n) (pickChart : Fin n → E)

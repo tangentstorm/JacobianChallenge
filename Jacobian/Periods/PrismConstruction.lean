@@ -22,7 +22,7 @@ The construction proceeds via the *staircase subdivision* of the prism
 `Δⁿ × [0,1]` into `n+1` `(n+1)`-simplices, indexed by `i ∈ Fin (n+1)`:
 the `i`-th simplex has vertices
 
-  `[(e₀, 0), …, (eᵢ, 0), (eᵢ, 1), (e_{i+1}, 1), …, (eₙ, 1)]`
+`[(e₀, 0), …, (eᵢ, 0), (eᵢ, 1), (e_{i+1}, 1), …, (eₙ, 1)]`
 
 In barycentric coordinates `(s₀, …, s_{n+1}) ∈ Δ^{n+1}`, the staircase map
 `αᵢ : Δ^{n+1} → Δⁿ × [0,1]` sends:
@@ -45,12 +45,6 @@ In barycentric coordinates `(s₀, …, s_{n+1}) ∈ Δ^{n+1}`, the staircase ma
   singular `n`-simplex, the `i`-th `(n+1)`-simplex of the prism.
 
 ## Status
-
-The staircase maps and the prism simplex are fully constructed (sorry-free).
-The chain-homotopy equation between `C_*(f)` and `C_*(g)` (the verification
-that boundary cancellation gives `∂P + P∂ = g_* − f_*`) is isolated as a
-single named sorry `prism_chainHomotopy_equation`, to be discharged by a
-future combinatorial computation.
 -/
 
 noncomputable section
@@ -63,12 +57,14 @@ open Set unitInterval
 
 variable (n : ℕ) (i : Fin (n + 1))
 
-/-- The first (Δⁿ) coordinate of the staircase map `αᵢ`. Given barycentric
+/--
+The first (Δⁿ) coordinate of the staircase map `αᵢ`. Given barycentric
 coordinates `f : Fin (n + 2) → ℝ` of a point in `Δ^{n+1}` and a target index
 `k : Fin (n + 1)`, output:
 * `f k.castSucc` if `k.val < i.val`
 * `f i.castSucc + f i.succ` if `k.val = i.val`
-* `f k.succ` if `k.val > i.val`. -/
+* `f k.succ` if `k.val > i.val`.
+-/
 def staircaseFirstCoord (f : Fin (n + 2) → ℝ) (k : Fin (n + 1)) : ℝ :=
   if k.val < i.val then f k.castSucc
   else if k.val = i.val then f i.castSucc + f i.succ
@@ -80,9 +76,11 @@ def staircaseTimeCoord (f : Fin (n + 2) → ℝ) : ℝ :=
 
 /-! ### Sum identities for the staircase map -/
 
-/-- Pointwise reformulation of `staircaseFirstCoord` using `Fin.succAbove`:
+/--
+Pointwise reformulation of `staircaseFirstCoord` using `Fin.succAbove`:
 the first-coordinate function decomposes as the `succAbove`-pulled-back family
-plus an extra `f i.castSucc` contribution at `k = i`. -/
+plus an extra `f i.castSucc` contribution at `k = i`.
+-/
 theorem staircaseFirstCoord_eq
     (f : Fin (n + 2) → ℝ) (k : Fin (n + 1)) :
     staircaseFirstCoord n i f k =
@@ -108,8 +106,10 @@ theorem staircaseFirstCoord_eq
         exact fun h => h1 (Fin.mk_lt_mk.mp h)
       rw [if_neg h1, if_neg h2, hsa, if_neg hne, zero_add]
 
-/-- The first-coordinate function preserves the simplex sum:
-`∑_k staircaseFirstCoord n i f k = ∑_j f j`. -/
+/--
+The first-coordinate function preserves the simplex sum:
+`∑_k staircaseFirstCoord n i f k = ∑_j f j`.
+-/
 theorem staircaseFirstCoord_sum
     (f : Fin (n + 2) → ℝ) :
     ∑ k : Fin (n + 1), staircaseFirstCoord n i f k = ∑ j : Fin (n + 2), f j := by
@@ -147,13 +147,17 @@ theorem staircaseTimeCoord_le_one
 
 /-! ### The staircase map as a continuous map -/
 
-/-- The staircase function as an underlying map (no simplex/interval constraints
-yet). Combines `staircaseFirstCoord` and `staircaseTimeCoord`. -/
+/--
+The staircase function as an underlying map (no simplex/interval constraints
+yet). Combines `staircaseFirstCoord` and `staircaseTimeCoord`.
+-/
 def staircaseFun (f : Fin (n + 2) → ℝ) : (Fin (n + 1) → ℝ) × ℝ :=
   (staircaseFirstCoord n i f, staircaseTimeCoord n i f)
 
-/-- Continuity of the first-coordinate function as a map
-`(Fin (n+2) → ℝ) → (Fin (n+1) → ℝ)`. -/
+/--
+Continuity of the first-coordinate function as a map
+`(Fin (n+2) → ℝ) → (Fin (n+1) → ℝ)`.
+-/
 theorem continuous_staircaseFirstCoord :
     Continuous (fun f : Fin (n + 2) → ℝ => staircaseFirstCoord n i f) := by
   refine continuous_pi (fun k => ?_)
@@ -177,8 +181,10 @@ theorem continuous_staircaseFun :
     Continuous (staircaseFun n i) :=
   (continuous_staircaseFirstCoord n i).prodMk (continuous_staircaseTimeCoord n i)
 
-/-- The staircase map sends a point of `stdSimplex ℝ (Fin (n+2))` to a point in
-`stdSimplex ℝ (Fin (n+1))`. -/
+/--
+The staircase map sends a point of `stdSimplex ℝ (Fin (n+2))` to a point in
+`stdSimplex ℝ (Fin (n+1))`.
+-/
 theorem staircaseFirstCoord_mem_stdSimplex
     {f : Fin (n + 2) → ℝ} (hf : f ∈ stdSimplex ℝ (Fin (n + 2))) :
     staircaseFirstCoord n i f ∈ stdSimplex ℝ (Fin (n + 1)) := by
@@ -193,8 +199,10 @@ theorem staircaseTimeCoord_mem_Icc
   ⟨staircaseTimeCoord_nonneg n i f hf.1,
    staircaseTimeCoord_le_one n i f hf.1 hf.2⟩
 
-/-- The staircase map as a continuous map
-`stdSimplex ℝ (Fin (n+2)) → stdSimplex ℝ (Fin (n+1)) × Set.Icc 0 1`. -/
+/--
+The staircase map as a continuous map
+`stdSimplex ℝ (Fin (n+2)) → stdSimplex ℝ (Fin (n+1)) × Set.Icc 0 1`.
+-/
 def staircaseMap :
     C(stdSimplex ℝ (Fin (n + 2)),
       stdSimplex ℝ (Fin (n + 1)) × Set.Icc (0 : ℝ) 1) where
@@ -208,20 +216,23 @@ def staircaseMap :
     · exact Continuous.subtype_mk
         ((continuous_staircaseTimeCoord n i).comp continuous_subtype_val) _
 
-/-! ### The prism simplex
+/-!
+### The prism simplex
 
 Given a homotopy `H : f ≃ g` between `f, g : X → Y` and a singular `n`-simplex
 `σ : Δⁿ → X`, the `i`-th prism simplex is the singular `(n+1)`-simplex
 `prismSimplex H σ i : Δ^{n+1} → Y` obtained by composing:
 
-  `Δ^{n+1} --staircaseMap_i--> Δⁿ × I --σ × id--> X × I --swap--> I × X --H--> Y`.
+`Δ^{n+1} --staircaseMap_i--> Δⁿ × I --σ × id--> X × I --swap--> I × X --H--> Y`.
 -/
 
 variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
 
-/-- The `i`-th prism singular `(n+1)`-simplex obtained from a homotopy `H` and a
+/--
+The `i`-th prism singular `(n+1)`-simplex obtained from a homotopy `H` and a
 singular `n`-simplex `s`. Its image in `Y` is `H ∘ (s × id) ∘ staircaseMap_i`
-(after swapping the order of the two factors of the product). -/
+(after swapping the order of the two factors of the product).
+-/
 noncomputable def prismSimplex
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
     (s : C(stdSimplex ℝ (Fin (n + 1)), X)) :
@@ -235,7 +246,8 @@ noncomputable def prismSimplex
     ⟨fun p => (p.2, p.1), continuous_snd.prodMk continuous_fst⟩
   H.toContinuousMap.comp (swap.comp (sigmaTimesId.comp stair))
 
-/-! ### Face-map identities for the staircase coordinates
+/-!
+### Face-map identities for the staircase coordinates
 
 These are the key combinatorial identities needed for the prism boundary formula.
 The j-th face of the standard n-simplex is the inclusion `δⱼ : Δⁿ → Δ^{n+1}`
@@ -246,11 +258,14 @@ which equals `g (Fin.predAbove j m)` when `j.val ≠ m.val` and `0` when `m = j`
 
 The critical cases are `j = i.castSucc` (time = 1 - s_0 - ... - s_{i-1})
 and `j = i.succ` (time = 1 - s_0 - ... - s_i), which together with sign
-cancellation give the boundary formula `∂P + P∂ = g_* - f_*`. -/
+cancellation give the boundary formula `∂P + P∂ = g_* - f_*`.
+-/
 
-/-- The time coordinate of `αᵢ ∘ δᵢ` equals `∑_{k ≥ i} f_k`.
+/--
+The time coordinate of `αᵢ ∘ δᵢ` equals `∑_{k ≥ i} f_k`.
 Combinatorial fact: inserting 0 at position i.castSucc in the (n+2)-coordinates
-shifts the tail sum from {>i} to {≥i}. -/
+shifts the tail sum from {>i} to {≥i}.
+-/
 theorem staircaseTimeCoord_face_self
     (f : Fin (n + 1) → ℝ) :
     staircaseTimeCoord n i
@@ -319,15 +334,19 @@ theorem staircaseTimeCoord_face_i_last_sum_eq_zero
   simp [Finset.mem_filter] at hk
   exact absurd hk (Nat.not_lt.mpr (Nat.lt_succ_iff.mp k.isLt))
 
-/-! ### Top and bottom face of a prism simplex
+/-!
+### Top and bottom face of a prism simplex
 
 The critical boundary identities for the prism construction:
 * The "0th face of the 0th staircase" gives `g ∘ s` (time = 1).
-* The "last face of the last staircase" gives `f ∘ s` (time = 0). -/
+* The "last face of the last staircase" gives `f ∘ s` (time = 0).
+-/
 
-/-- **Top boundary.** When `p ∈ Δⁿ`, the time coordinate of
+/--
+**Top boundary.** When `p ∈ Δⁿ`, the time coordinate of
 `staircaseMap n 0 (δ₀ p)` equals 1. This is the boundary condition
-`H(·, 1) = g(·)`. -/
+`H(·, 1) = g(·)`.
+-/
 theorem staircaseTimeCoord_i_zero_face_zero_eq_one
     {f : Fin (n + 2) → ℝ} (hf : f ∈ stdSimplex ℝ (Fin (n + 2)))
     (hf0 : f ⟨0, Nat.zero_lt_succ _⟩ = 0) :
@@ -346,9 +365,11 @@ theorem staircaseTimeCoord_i_zero_face_zero_eq_one
     rw [this, hf0]
   linarith [key.symm.trans hf.2]
 
-/-- **Bottom boundary.** When `p ∈ Δⁿ`, the time coordinate of
+/--
+**Bottom boundary.** When `p ∈ Δⁿ`, the time coordinate of
 `staircaseMap n n (δ_{n+1} p)` equals 0. This is the boundary condition
-`H(·, 0) = f(·)`. -/
+`H(·, 0) = f(·)`.
+-/
 theorem staircaseTimeCoord_i_last_face_last_eq_zero
     {f : Fin (n + 2) → ℝ}
     (hflast : f (Fin.last (n + 1)) = 0) :
@@ -364,15 +385,19 @@ theorem staircaseTimeCoord_i_last_face_last_eq_zero
     omega
   rw [hjlast, hflast]
 
-/-! ### Connecting coordinate lemmas to the prism simplex
+/-!
+### Connecting coordinate lemmas to the prism simplex
 
 The face map `stdSimplex.map (Fin.succAbove j)` sends a point of `stdSimplex ℝ (Fin(n+1))`
 to a point of `stdSimplex ℝ (Fin(n+2))` with coordinate `j` equal to 0.
 These are the key lemmas connecting the coordinate computations to the `ContinuousMap`-level
-prism simplex. -/
+prism simplex.
+-/
 
-/-- The j-th coordinate of `stdSimplex.map (Fin.succAbove j) p` is 0.
-The image of `Fin.succAbove j` misses the value `j`, so the j-th weight is 0. -/
+/--
+The j-th coordinate of `stdSimplex.map (Fin.succAbove j) p` is 0.
+The image of `Fin.succAbove j` misses the value `j`, so the j-th weight is 0.
+-/
 theorem stdSimplex_map_succAbove_coord_eq_zero (j : Fin (n + 2))
     (p : stdSimplex ℝ (Fin (n + 1))) :
     (stdSimplex.map (Fin.succAbove j) p).val j = 0 := by
@@ -383,8 +408,10 @@ theorem stdSimplex_map_succAbove_coord_eq_zero (j : Fin (n + 2))
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hk
   exact absurd hk (Fin.succAbove_ne j k)
 
-/-- The `m.succ`-th coordinate of `stdSimplex.map Fin.succ p` equals `p.val m`.
-Key ingredient for the top-face identity: `αᵢ(δ₀(p))` has first-coord `p`. -/
+/--
+The `m.succ`-th coordinate of `stdSimplex.map Fin.succ p` equals `p.val m`.
+Key ingredient for the top-face identity: `αᵢ(δ₀(p))` has first-coord `p`.
+-/
 theorem stdSimplex_map_succ_apply (p : stdSimplex ℝ (Fin (n + 1))) (m : Fin (n + 1)) :
     (stdSimplex.map Fin.succ p).val m.succ = p.val m := by
   change (FunOnFinite.linearMap ℝ ℝ Fin.succ p.val) m.succ = p.val m
@@ -394,8 +421,10 @@ theorem stdSimplex_map_succ_apply (p : stdSimplex ℝ (Fin (n + 1))) (m : Fin (n
     exact ⟨fun h => Fin.succ_injective _ h, fun h => by rw [h]⟩
   rw [hfilt, Finset.sum_singleton]
 
-/-- The `m.castSucc`-th coordinate of `stdSimplex.map Fin.castSucc p` equals `p.val m`.
-Key ingredient for the bottom-face identity. -/
+/--
+The `m.castSucc`-th coordinate of `stdSimplex.map Fin.castSucc p` equals `p.val m`.
+Key ingredient for the bottom-face identity.
+-/
 theorem stdSimplex_map_castSucc_apply (p : stdSimplex ℝ (Fin (n + 1))) (m : Fin (n + 1)) :
     (stdSimplex.map Fin.castSucc p).val m.castSucc = p.val m := by
   change (FunOnFinite.linearMap ℝ ℝ Fin.castSucc p.val) m.castSucc = p.val m
@@ -405,10 +434,12 @@ theorem stdSimplex_map_castSucc_apply (p : stdSimplex ℝ (Fin (n + 1))) (m : Fi
     exact ⟨fun h => Fin.castSucc_injective _ h, fun h => by rw [h]⟩
   rw [hfilt, Finset.sum_singleton]
 
-/-- **Top face (i=0, δ₀).** For any `p : stdSimplex ℝ (Fin(n+1))`, the 0-th prism simplex
+/--
+**Top face (i=0, δ₀).** For any `p : stdSimplex ℝ (Fin(n+1))`, the 0-th prism simplex
 evaluated at the 0-th face inclusion of `p` equals `g(s p)`.
 Proof route: time coord = 1 (since 0-th coord of δ₀(p) is 0, and sum of rest = 1),
-so H evaluates at 1 giving g; first coord = p (identity) so s evaluates at s p. -/
+so H evaluates at 1 giving g; first coord = p (identity) so s evaluates at s p.
+-/
 theorem prismSimplex_top_face
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
     (s : C(stdSimplex ℝ (Fin (n + 1)), X)) :
@@ -457,9 +488,11 @@ theorem prismSimplex_top_face
              ContinuousMap.prodMap_apply, htime_eq, hfirst_eq]
   exact H.apply_one (s p)
 
-/-- **Bottom face (i=n, δ_{n+1}).** For any `p : stdSimplex ℝ (Fin(n+1))`, the n-th prism
+/--
+**Bottom face (i=n, δ_{n+1}).** For any `p : stdSimplex ℝ (Fin(n+1))`, the n-th prism
 simplex evaluated at the last face inclusion of `p` equals `f(s p)`.
-Proof route: time coord = 0 (last coord of δ_{n+1}(p) is 0), so H evaluates at 0 giving f. -/
+Proof route: time coord = 0 (last coord of δ_{n+1}(p) is 0), so H evaluates at 0 giving f.
+-/
 theorem prismSimplex_bottom_face
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
     (s : C(stdSimplex ℝ (Fin (n + 1)), X)) :
@@ -508,7 +541,8 @@ theorem prismSimplex_bottom_face
              ContinuousMap.prodMap_apply, htime_eq, hfirst_eq]
   exact H.apply_zero (s p)
 
-/-! ### Interior face identities for the prism simplex
+/-!
+### Interior face identities for the prism simplex
 
 The chain homotopy equation `∂P + P∂ = g_* - f_*` requires three types of face identities:
 1. **Top face** (`prismSimplex_top_face`): face 0 of P_0 = g ∘ s. ✓
@@ -517,14 +551,17 @@ The chain homotopy equation `∂P + P∂ = g_* - f_*` requires three types of fa
    Adjacent staircase simplices share a common face, giving the boundary cancellation.
 4. **Left side faces** and **right side faces**: face j of P_i relates to P applied to a face of s.
 
-This section proves the diagonal face identity (the critical cancellation).  -/
+This section proves the diagonal face identity (the critical cancellation).
+-/
 
-/-- **Diagonal face (cancellation).** For `ι : Fin n`, the (ι+1)-th face of the
+/--
+**Diagonal face (cancellation).** For `ι : Fin n`, the (ι+1)-th face of the
 ι-th prism simplex equals the (ι+1)-th face of the (ι+1)-th prism simplex.
 
 The two adjacent staircase simplices `P_ι` and `P_{ι+1}` share the face at position ι+1
 (the shared internal face of the prism subdivision). The key is that inserting a zero at
-position ι+1 makes both the time and first coordinates agree for both staircase indices. -/
+position ι+1 makes both the time and first coordinates agree for both staircase indices.
+-/
 theorem prismSimplex_diagonal_face
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
     (s : C(stdSimplex ℝ (Fin (n + 1)), X))
@@ -609,7 +646,8 @@ theorem prismSimplex_diagonal_face
   simp only [prismSimplex, ContinuousMap.comp_apply, staircaseMap, ContinuousMap.coe_mk,
              ContinuousMap.prodMap_apply, htime_eq, hfirst_eq]
 
-/-! ### Side-face identities (Phase 4 of the prism chain-homotopy plan)
+/-!
+### Side-face identities
 
 For non-special pairs `(i, j)` (i.e., not top/bottom/diagonal), the
 `j`-th face of the `i`-th prism `(n+1)`-simplex equals a prism over
@@ -637,11 +675,10 @@ the boundary identity `∂P + P∂ = f_* − g_*` in
 The proofs are direct staircase-coordinate computations modeled on
 `prismSimplex_diagonal_face` above (~80 LOC each, with similar
 case-by-case `Fin.succAbove` analysis).
+-/
 
-**Status:** stated as named obligations with `sorry` bodies. The body
-of `prismChain_hom_comm` for `i ≥ 1` will consume these. -/
-
-/-- **Lower side-face identity.** For prism degree `n + 1` (input `s`
+/--
+**Lower side-face identity.** For prism degree `n + 1` (input `s`
 of degree `n + 1`, staircase index `i : Fin (n + 2)`), and a face
 index `j : Fin (n + 3)` with `j.val < i.val`, the `j`-th face of
 the prism simplex `prismSimplex (n + 1) i H s` equals the prism
@@ -651,12 +688,7 @@ simplex at degree `n` with staircase index `i - 1` applied to
 Hatcher §2.1, p. 112: dropping the `j`-th lower vertex `v_j`
 (`j < i`) leaves `[v_0, ..., v̂_j, ..., v_i, w_i, ..., w_{n+1}]`,
 which is the `(i - 1)`-th staircase simplex over `s ∘ δ_j`.
-
-(For `j = 0` with `i = 0`, this would be the top face — but `j.val < i.val`
-forces `i.val ≥ 1`, so the top-face case is excluded.)
-
-(For `j = i` or `j = i + 1`, this would be the diagonal cancellation —
-also excluded by the strict inequality `j.val < i.val`.) -/
+-/
 theorem prismSimplex_side_face_lower
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)
@@ -929,14 +961,16 @@ theorem prismSimplex_side_face_lower
   rw [hfirst_pack, htime_pack]
   rfl
 
-/-- **Upper side-face identity.** For prism degree `n + 1`, staircase
+/--
+**Upper side-face identity.** For prism degree `n + 1`, staircase
 index `i : Fin (n + 2)`, and face index `j : Fin (n + 3)` with
 `i.val + 1 < j.val`, the `j`-th face of `prismSimplex (n + 1) i H s`
 equals the `i`-th prism simplex (at degree `n`) over `s ∘ δ_{j-1}`.
 
 Dropping the upper vertex `w_{j-1}` (`j > i + 1`) leaves
 `[v_0, ..., v_i, w_i, ..., ŵ_{j-1}, ..., w_{n+1}]`, the `i`-th
-staircase simplex over `s ∘ δ_{j-1}`. -/
+staircase simplex over `s ∘ δ_{j-1}`.
+-/
 theorem prismSimplex_side_face_upper
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g)

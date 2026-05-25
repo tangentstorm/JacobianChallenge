@@ -19,8 +19,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [TopologicalSpace Y] [ChartedSpace E Y]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Y]
 
-/-- The bundled pullback `LinearMap` along a constant map sends
-every form to the zero function. -/
+/--
+The bundled pullback `LinearMap` along a constant map sends
+every form to the zero function.
+-/
 @[simp] theorem pullbackFormsLinearMap_const_apply
     (y : Y) (η : HolomorphicOneForm E Y) :
     pullbackFormsLinearMap (Function.const X y) η = 0 :=

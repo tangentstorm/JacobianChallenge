@@ -20,11 +20,13 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
-/-- Degree data for a meromorphic map to the Riemann sphere.
+/--
+Degree data for a meromorphic map to the Riemann sphere.
 
 The current downstream consumer only needs continuity and bijectivity.  The
 `degree_eq_pole_degree` field records the future divisor-degree theorem that
-explains why these consequences hold. -/
+explains why these consequences hold.
+-/
 structure MeromorphicDegreeOneData
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -34,7 +36,8 @@ structure MeromorphicDegreeOneData
   bijective_toMap : Function.Bijective f.toMap
   degree_eq_pole_degree : Divisor.degree f.poles = 1
 
-/-! ### Structural companions for the continuity step
+/-!
+### Structural companions for the continuity step
 
 The continuity of a meromorphic-map-to-sphere across a single pole is
 the classical *removable-singularity / one-point extension* statement:
@@ -42,11 +45,13 @@ the pole-locus complement carries a smooth `ℂ`-valued function, and
 the limit at the pole equals `∞ : OnePoint ℂ`.
 -/
 
-/-- **Structural axiom (M1a).** Off the single pole `P`, the map
+/--
+**Structural axiom (M1a).** Off the single pole `P`, the map
 takes finite values: `∀ x ≠ P, f.toMap x ≠ ∞`.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:meromorphic-no-infty-off-pole`. -/
+`lem:meromorphic-no-infty-off-pole`.
+-/
 theorem MeromorphicMapToSphere.toMap_ne_infty_off_pole
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -64,13 +69,15 @@ theorem MeromorphicMapToSphere.toMap_ne_infty_off_pole
     rw [hpole]
   rw [h, Divisor.point_apply_ne hx]
 
-/-- **Structural axiom (M1b).** Off any locus where `f.toMap` is
+/--
+**Structural axiom (M1b).** Off any locus where `f.toMap` is
 finite, the map is continuous: in any chart at a finite point,
 `f.toMap` agrees (via `OnePoint.some`) with a smooth `ℂ`-valued
 function, which is continuous.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:meromorphic-continuous-on-finite-set`. -/
+`lem:meromorphic-continuous-on-finite-set`.
+-/
 theorem MeromorphicMapToSphere.continuousOn_of_no_infty_on
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -82,14 +89,13 @@ theorem MeromorphicMapToSphere.continuousOn_of_no_infty_on
   -- `continuousOn_ne_infty` already supplies continuity on that locus.
   f.continuousOn_ne_infty.mono (fun x hx => hne x hx)
 
-/-- **Structural axiom (M1).** Restricted to the complement of the
+/--
+**Structural axiom (M1).** Restricted to the complement of the
 single-pole locus `{P}`, the meromorphic map is continuous.
 
-Sorry-free assembly: combine M1a (no-∞ off pole) with M1b
-(continuity from no-∞).
-
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:meromorphic-continuous-off-pole`. -/
+`lem:meromorphic-continuous-off-pole`.
+-/
 theorem MeromorphicMapToSphere.continuousOn_compl_pole_of_poleDivisor_point
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -100,11 +106,13 @@ theorem MeromorphicMapToSphere.continuousOn_compl_pole_of_poleDivisor_point
   f.continuousOn_of_no_infty_on {P}ᶜ
     (fun x hx => f.toMap_ne_infty_off_pole P hpole x hx)
 
-/-- **Structural axiom (M3).** A meromorphic map whose only pole is at
+/--
+**Structural axiom (M3).** A meromorphic map whose only pole is at
 `P` actually evaluates to `∞ : OnePoint ℂ` at `P`.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:meromorphic-value-at-pole`. -/
+`lem:meromorphic-value-at-pole`.
+-/
 theorem MeromorphicMapToSphere.toMap_pole_eq_infty_of_poleDivisor_point
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -122,7 +130,8 @@ theorem MeromorphicMapToSphere.toMap_pole_eq_infty_of_poleDivisor_point
   rw [h, Divisor.point_apply_self]
   decide
 
-/-- **Structural axiom (M2a).** A meromorphic map with a simple pole
+/--
+**Structural axiom (M2a).** A meromorphic map with a simple pole
 at `P` has a *finite-pre-image lift* `g : X \ {P} → ℂ` such that
 `f.toMap = OnePoint.some ∘ g` on `{P}ᶜ`, and `‖g x‖ → ∞` as
 `x → P`.
@@ -130,7 +139,8 @@ at `P` has a *finite-pre-image lift* `g : X \ {P} → ℂ` such that
 This is the local-Laurent diverging-modulus content.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:simple-pole-modulus-diverges`. -/
+`lem:simple-pole-modulus-diverges`.
+-/
 theorem MeromorphicMapToSphere.modulus_diverges_at_simple_pole
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -160,12 +170,14 @@ theorem MeromorphicMapToSphere.modulus_diverges_at_simple_pole
     rw [hpole]
   rw [h, Divisor.point_apply_ne hx]
 
-/-- **Structural axiom (M2b).** A `ℂ`-valued function whose modulus
+/--
+**Structural axiom (M2b).** A `ℂ`-valued function whose modulus
 diverges at a punctured nhd of `P`, lifted to `OnePoint ℂ` via
 `some`, tends to `∞` at `P`.
 
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:onepoint-tendsto-infty-of-modulus-diverges`. -/
+`lem:onepoint-tendsto-infty-of-modulus-diverges`.
+-/
 theorem OnePoint.tendsto_infty_of_modulus_diverges
     {X : Type*} [TopologicalSpace X] (P : X)
     (g : X → ℂ)
@@ -189,14 +201,10 @@ theorem OnePoint.tendsto_infty_of_modulus_diverges
   -- Compose with `OnePoint.tendsto_coe_infty`.
   exact OnePoint.tendsto_coe_infty.comp hg_clcc
 
-/-- **Structural axiom (M2).** Near a simple pole `P`, the meromorphic
-map tends to `∞ : OnePoint ℂ`. Sorry-free assembly: combine M2a
-(modulus divergence on the punctured nhd) with M2b (modulus → `∞`
-in `OnePoint`), plus M3 (value at the pole) via the
-`nhds = nhdsWithin {P} ⊔ nhdsWithin {P}ᶜ` decomposition.
-
+/--
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:meromorphic-tends-to-infty-at-simple-pole`. -/
+`lem:meromorphic-tends-to-infty-at-simple-pole`.
+-/
 theorem MeromorphicMapToSphere.tendsto_infty_at_pole_of_poleDivisor_point
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -228,13 +236,10 @@ theorem MeromorphicMapToSphere.tendsto_infty_at_pole_of_poleDivisor_point
   rw [h_at] at this
   exact this
 
-/-- **Extension-continuity leaf.** A meromorphic map to the Riemann sphere
+/--
+**Extension-continuity leaf.** A meromorphic map to the Riemann sphere
 with pole divisor `[P]` extends continuously over the pole.
-
-Sorry-free assembly: continuity is local; the pole-complement gives
-M1, the pole-locus is a single point and M2 supplies the limit at
-`P`. Use `continuousOn_iff_continuous_compl` (or the open-cover
-gluing of `Continuous`). -/
+-/
 theorem meromorphicMapToSphere_continuous_of_poleDivisor_point
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -260,8 +265,10 @@ theorem meromorphicMapToSphere_continuous_of_poleDivisor_point
     have hopen : IsOpen ({P}ᶜ : Set X) := isOpen_compl_singleton
     exact (hcont_on.continuousAt (hopen.mem_nhds hx))
 
-/-- **Degree bookkeeping leaf.** If the pole divisor is `[P]`, then its
-degree is one. -/
+/--
+**Degree bookkeeping leaf.** If the pole divisor is `[P]`, then its
+degree is one.
+-/
 theorem meromorphicMapToSphere_poleDivisor_degree_eq_one_of_point
     {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -274,30 +281,21 @@ theorem meromorphicMapToSphere_poleDivisor_degree_eq_one_of_point
 
 /-! ### Structural companions for the bijectivity step -/
 
-/-! ### Reuse of existing `BranchedCoverData` infrastructure
-
-The project's `Jacobian/HolomorphicForms/BranchedCover.lean` exposes a
-`BranchedCoverData` structure plus the sorry-free
-`degree_one_bijective` (and `degree_one_no_ramification`). The bridge
-from a `MeromorphicMapToSphere` with simple pole to a
-`BranchedCoverData` is the still-open *leaf 8* of that decomposition
-(`branchedCoverData_of_nonconstant_holomorphic`).
+/-!
+### Reuse of existing `BranchedCoverData` infrastructure
 
 Below, M4 (surjectivity) and M5 (injectivity) both *route through*
 this existing infrastructure via a single new bridge axiom, rather
 than re-proving the combinatorial content.
 -/
 
-/-- **M-bridge.** A continuous meromorphic map to the Riemann sphere
+/--
+**M-bridge.** A continuous meromorphic map to the Riemann sphere
 of pole-degree 1 admits a `BranchedCoverData` of branched degree 1.
 
-Sorry-free assembly: extract the `hasBranchedCoverDataOfPoleDegree`
-field of `f`, which provides a branched cover with `branchedDegree =
-poleDivisor.degree.toNat`; the pole-degree-1 hypothesis lets us
-substitute that to `1`.
-
 Cross-ref: `tex/sections/04-branched-covers-genus-zero.tex`,
-`lem:meromorphic-to-branched-cover-data`. -/
+`lem:meromorphic-to-branched-cover-data`.
+-/
 theorem MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -317,9 +315,11 @@ theorem MeromorphicMapToSphere.exists_branchedCoverData_of_pole_degree_one
   rw [hdegree]
   rfl
 
-/-- **Structural axiom (M4a).** The image of a continuous map from a
+/--
+**Structural axiom (M4a).** The image of a continuous map from a
 compact space is compact (purely topological; routes through Mathlib's
-`IsCompact.image`). -/
+`IsCompact.image`).
+-/
 theorem MeromorphicMapToSphere.image_isCompact
     {X : Type*} [TopologicalSpace X] [CompactSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -330,16 +330,17 @@ theorem MeromorphicMapToSphere.image_isCompact
   isCompact_range hcont
 
 -- M4b (`isOpenMap_of_pole_degree_one`) was previously declared here as
--- a structural sorry. After the audit pass routing M4 through the
 -- M-bridge to `degree_one_bijective`, M4b is dead code and has been
 -- removed.
 
-/-- **Structural axiom (M4).** A continuous meromorphic map of degree 1
+/--
+**Structural axiom (M4).** A continuous meromorphic map of degree 1
 between compact connected complex 1-manifolds is **surjective**.
 
 Routes through the M-bridge `exists_branchedCoverData_of_pole_degree_one`,
 whose strengthened bijective hypothesis is the analytic content the
-caller must supply. -/
+caller must supply.
+-/
 theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Nonempty X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -354,35 +355,27 @@ theorem MeromorphicMapToSphere.surjective_of_continuous_and_pole_degree_one
     f.exists_branchedCoverData_of_pole_degree_one hcont hdegree hbranch
   exact (JacobianChallenge.HolomorphicForms.degree_one_bijective h hd).2
 
-/-! ### Dead-code note: M5a/M5a-i/M5a-ii superseded by M-bridge.
-
-Earlier iterations introduced project-level "no ramification at
-degree 1" + "fiber-card constant under no ramification" as named
-structural sub-axioms. After the audit pass that found
-the degree-one branched-cover API already
-proves `degree_one_no_ramification` *sorry-free* at the
-`BranchedCoverData` level (and `degree_one_bijective` likewise),
-the M5 headline now routes through the M-bridge directly. The
-sub-axioms M5a-i and M5a-ii would re-prove the same content at the
-`MeromorphicMapToSphere` level and are therefore redundant once
-the M-bridge is in place; they are removed below.
+/-!
+### Dead-code note: M5a/M5a-i/M5a-ii superseded by M-bridge.
 
 The original axiom M5a (`fiber_card_le_one_of_pole_degree_one`) is
 also superseded by the M5 routing through the M-bridge; it is kept
 in place but the headline no longer depends on it. Re-using the
 existing `degree_one_bijective` is the right choice;
 maintaining the parallel `MeromorphicMapToSphere`-level chain is
-not. -/
+not.
+-/
 
 -- M5a (`fiber_card_le_one_of_pole_degree_one`) was previously declared
--- here as a structural sorry. After the audit pass, M5a is dead code
 -- and has been removed.
 
-/-- **Structural axiom (M5).** A continuous meromorphic map of degree 1
+/--
+**Structural axiom (M5).** A continuous meromorphic map of degree 1
 between compact connected complex 1-manifolds is **injective**.
 
 Routes through the M-bridge with the strengthened bijective
-hypothesis. -/
+hypothesis.
+-/
 theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X] [Nonempty X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -397,10 +390,9 @@ theorem MeromorphicMapToSphere.injective_of_continuous_and_pole_degree_one
     f.exists_branchedCoverData_of_pole_degree_one hcont hdegree hbranch
   exact (JacobianChallenge.HolomorphicForms.degree_one_bijective h hd).1
 
-/-- **Degree-one bijectivity leaf.** A continuous meromorphic map to
+/--
+**Degree-one bijectivity leaf.** A continuous meromorphic map to
 `OnePoint ℂ` whose pole divisor has degree one is bijective.
-
-Sorry-free assembly: combine surjectivity (M4) and injectivity (M5).
 -/
 theorem meromorphicMapToSphere_bijective_of_poleDivisor_degree_one
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -415,9 +407,11 @@ theorem meromorphicMapToSphere_bijective_of_poleDivisor_degree_one
   ⟨f.injective_of_continuous_and_pole_degree_one hcont hdegree hbranch,
    f.surjective_of_continuous_and_pole_degree_one hcont hdegree hbranch⟩
 
-/-- **Degree-one assembly.** A meromorphic map whose pole divisor is `[P]`
+/--
+**Degree-one assembly.** A meromorphic map whose pole divisor is `[P]`
 has degree one and therefore is continuous and bijective as a map to
-`OnePoint ℂ`. -/
+`OnePoint ℂ`.
+-/
 theorem meromorphicDegreeOneData_of_poleDivisor_point
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

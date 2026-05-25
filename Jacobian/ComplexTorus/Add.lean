@@ -4,8 +4,6 @@ import Jacobian.ComplexTorus.Defs
 /-!
 # Addition on the complex-torus quotient
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 Two bounded packets: `mk_add` (a quotient simp lemma) and the continuity of
 binary addition on `quotient V Λ`.
 -/

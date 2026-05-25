@@ -11,14 +11,6 @@ import Mathlib.LinearAlgebra.FreeModule.StrongRankCondition
 import Mathlib.Topology.Algebra.Module.Basic
 
 /-!
-# Round 45 — Hurewicz / cellular decomposition of `Polygon4g (g+1)`'s singular `H₁`
-
-This module refines the frontier leaf
-`JacobianChallenge.Periods.polygon4g_succ_singularH1_basis`
-(in `Jacobian/Periods/SurfaceClassification.lean`) into smaller named
-obligations corresponding to the standard surface-group / Hurewicz
-proof:
-
 * `Polygon4gFundamentalGroup g` — opaque presentation of the surface
   group `π₁(Polygon4g (g+1))`.
 * `polygon4g_fundamentalGroup_abelianized_freeZ` — the abelianised
@@ -27,9 +19,6 @@ proof:
 * `polygon4g_singularH1_iso_fundamentalGroup_abelianization` —
   Hurewicz: for a path-connected space, `H₁(X, ℤ)` is the
   abelianisation of `π₁(X)`.
-
-Each leaf is a `sorry` — this round performs the *top-down split*; the
-bottom-up content is standard but absent from Mathlib v4.28.0.
 
 ## Top-down role
 
@@ -54,18 +43,10 @@ Plugged into `polygon4g_succ_singularH1_basis` via the body
 
 namespace JacobianChallenge.Periods
 
-/-- **Round 45 / Stage A leaf.** Opaque presentation of the surface
-group `π₁(Polygon4g (g+1))`. The concrete unfolding is
-`⟨a₀, b₀, …, a_g, b_g | ∏ᵢ [aᵢ, bᵢ]⟩`; we keep it opaque at the
-top-down level so the leaves below can name it without committing
-to a specific `Mathlib.GroupTheory.Presentation` representation. -/
+
 opaque Polygon4gFundamentalGroup (g : ℕ) : Type
 
-/-- **Round 60 / Stage A leaf (commutator-product abelianisation
-vanishes).** In any abelian group, the commutator product
-`∏ᵢ [aᵢ, bᵢ]` vanishes. (Since each `[aᵢ, bᵢ] = aᵢ + bᵢ - aᵢ - bᵢ = 0`.)
-This is the key arithmetic that makes the surface relator inert in
-the abelianisation. -/
+
 theorem commutator_product_abelianizes_to_zero (g : ℕ) (a b : Fin (g+1) → ℤ) :
     (Finset.univ : Finset (Fin (g+1))).sum (fun i => (a i + b i) + (-(a i) + -(b i)))
       = 0 := by
@@ -73,8 +54,7 @@ theorem commutator_product_abelianizes_to_zero (g : ℕ) (a b : Fin (g+1) → �
   intro i _
   ring
 
-/-- **Round 60.** With `Polygon4gAbelianization g` concretely realised
-as `Fin (2*(g+1)) → ℤ`, the canonical basis is `Pi.basisFun ℤ _`. -/
+
 theorem polygon4g_abelianization_basis (g : ℕ) :
     ∃ (_ : AddCommGroup (Polygon4gAbelianization g))
       (_ : Module ℤ (Polygon4gAbelianization g)),
@@ -84,23 +64,18 @@ theorem polygon4g_abelianization_basis (g : ℕ) :
           polygon4gAbelianization_module g, ?_⟩
   exact ⟨Pi.basisFun ℤ _⟩
 
-/-- **Round 61 / Stage A leaf.** Opaque "surface group" datum. -/
+
 opaque Polygon4gFundamentalGroupRepr (g : ℕ) : Type
 
-/-- **Round 61 / Stage A leaf.** Opaque "abelianisation map" datum. -/
+
 opaque PolygonAbelianizationMap (g : ℕ) : Type
 
-/-- **Round 65 / Stage A leaf.** Path-connectedness of `Polygon4g (g+1)`. -/
+
 theorem polygon4g_succ_pathConnected (g : ℕ) :
     PathConnectedSpace (Polygon4g (g + 1)) :=
   inferInstance
 
-/-- **Round 45 / Stage A leaf.** Identification of `singularH1` with
-the abelianisation of the fundamental group. The proof routes through
-the project-side cellular-to-singular comparison
-`polygon4g_cellularH1_to_singularH1`, exploiting the fact that both
-`Polygon4gAbelianization g` and `Polygon4gCellularH1 (g + 1)` reduce
-to `Fin (2 * (g + 1)) → ℤ`. -/
+
 theorem polygon4g_succ_hurewicz_iso_freeZ (g : ℕ) :
     Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) := by
   obtain ⟨e⟩ := polygon4g_cellularH1_to_singularH1 (g + 1)
@@ -115,7 +90,7 @@ theorem polygon4g_hurewicz_iso (g : ℕ) :
     Nonempty (Polygon4gAbelianization g ≃ₗ[ℤ] singularH1 (Polygon4g (g + 1))) :=
   hurewicz_singularH1_iso_polygon4g g
 
-/-- **Round 50 / sorry-free reassembly.** -/
+
 theorem polygon4g_succ_singularH1_basis_via_hurewicz (g : ℕ) :
     Nonempty (Module.Basis (Fin (2 * (g + 1))) ℤ
       (singularH1 (Polygon4g (g + 1)))) := by
@@ -149,20 +124,22 @@ theorem polygon4g_singularH1_basis (g : ℕ) :
     exact ⟨Module.Basis.empty _⟩
   | succ g => exact polygon4g_succ_singularH1_basis g
 
-/-- **Bridge (Cellular-Singular).** The cellular homology of the
-fundamental polygon is isomorphic to its singular homology. (ID 84) -/
+/--
+**Bridge (Cellular-Singular).** The cellular homology of the
+fundamental polygon is isomorphic to its singular homology. (ID 84)
+-/
 theorem polygon4g_cellular_singular_iso (g : ℕ) :
     Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
   obtain ⟨b⟩ := polygon4g_singularH1_basis g
   exact ⟨b.equivFun.symm⟩
 
-/-- **Stage A leaf (C1b, round 5).** Finitely generated. -/
+
 theorem polygon4g_succ_singularH1_isFinite (g : ℕ) :
     Module.Finite ℤ (singularH1 (Polygon4g (g + 1))) := by
   obtain ⟨e⟩ := hurewicz_singularH1_iso_polygon4g g
   exact Module.Finite.equiv e
 
-/-- **Stage A leaf (C1b, round 5).** Torsion-free. -/
+
 theorem polygon4g_succ_singularH1_isTorsionFree (g : ℕ) :
     Module.IsTorsionFree ℤ (singularH1 (Polygon4g (g + 1))) := by
   obtain ⟨e⟩ := hurewicz_singularH1_iso_polygon4g g
@@ -170,7 +147,7 @@ theorem polygon4g_succ_singularH1_isTorsionFree (g : ℕ) :
     (R := ℤ) (M := singularH1 (Polygon4g (g + 1))) (N := Polygon4gAbelianization g)
     e.symm e.symm.injective (fun r m => e.symm.map_smul r m)
 
-/-- **Stage A leaf (C1b, round 5).** Rank computation. -/
+
 theorem polygon4g_succ_singularH1_finrank_eq (g : ℕ) :
     Module.finrank ℤ (singularH1 (Polygon4g (g + 1))) = 2 * (g + 1) := by
   obtain ⟨e⟩ := hurewicz_singularH1_iso_polygon4g g

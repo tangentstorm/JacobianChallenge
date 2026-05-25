@@ -18,8 +18,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Provisional chart-form, packaged as a ℂ-linear map at the
-function level. -/
+/--
+Provisional chart-form, packaged as a ℂ-linear map at the
+function level.
+-/
 noncomputable def chartedFormLinearMap
     (c : OpenPartialHomeomorph X E) :
     HolomorphicOneForm E X →ₗ[ℂ] (E → E →L[ℂ] ℂ) where
@@ -27,8 +29,10 @@ noncomputable def chartedFormLinearMap
   map_add' ω η := chartedForm_add c ω η
   map_smul' k ω := chartedForm_smul c k ω
 
-/-- Sanity simp: applying the bundled linear map equals the underlying
-provisional chart-form. -/
+/--
+Sanity simp: applying the bundled linear map equals the underlying
+provisional chart-form.
+-/
 @[simp] theorem chartedFormLinearMap_apply
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) :
     chartedFormLinearMap c ω = chartedForm c ω := rfl

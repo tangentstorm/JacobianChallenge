@@ -16,8 +16,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Iterated scalar multiplication composes:
-`∫(k • (l • ω), γ) = (k * l) • ∫(ω, γ)`. -/
+/--
+Iterated scalar multiplication composes:
+`∫(k • (l • ω), γ) = (k * l) • ∫(ω, γ)`.
+-/
 theorem pathIntegralInChartCorrect_smul_smul
     (c : OpenPartialHomeomorph X E) (k l : ℂ) (ω : HolomorphicOneForm E X)
     {a b : E} (γ : Path a b) :

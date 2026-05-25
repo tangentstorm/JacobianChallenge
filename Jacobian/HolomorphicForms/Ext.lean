@@ -31,8 +31,10 @@ theorem ext_toFun {η ζ : HolomorphicOneForm E X}
     (h : ∀ x, η.toFun x = ζ.toFun x) : η = ζ :=
   ext_toFun_iff.mpr h
 
-/-- Two holomorphic 1-forms are equal iff their `toFun` agree at all
-points and tangent vectors. -/
+/--
+Two holomorphic 1-forms are equal iff their `toFun` agree at all
+points and tangent vectors.
+-/
 theorem ext_toFun_apply_iff {η ζ : HolomorphicOneForm E X} :
     η = ζ ↔ ∀ x v, η.toFun x v = ζ.toFun x v := by
   rw [ext_toFun_iff]
@@ -45,10 +47,12 @@ theorem ext_toFun_apply {η ζ : HolomorphicOneForm E X}
     (h : ∀ x v, η.toFun x v = ζ.toFun x v) : η = ζ :=
   ext_toFun_apply_iff.mpr h
 
-/-- A holomorphic 1-form equals zero iff it vanishes pointwise.
+/--
+A holomorphic 1-form equals zero iff it vanishes pointwise.
 
 Specialization of `ext_toFun_iff` at `ζ = 0`.  The right-to-left
-direction unfolds `(0).toFun` via `ContMDiffSection.coe_zero`. -/
+direction unfolds `(0).toFun` via `ContMDiffSection.coe_zero`.
+-/
 theorem eq_zero_iff_toFun {η : HolomorphicOneForm E X} :
     η = 0 ↔ ∀ x, η.toFun x = 0 := by
   rw [ext_toFun_iff]

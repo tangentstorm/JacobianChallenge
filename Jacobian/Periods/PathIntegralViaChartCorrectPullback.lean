@@ -7,33 +7,24 @@ import Jacobian.Periods.TrivializationContinuousLinearMapAt
 /-!
 # Chart-level chain rule for `pathIntegralViaChartCorrect`
 
-**Phase 5 deliverable** of the path-integral well-definedness chain.
-
 States: when a path `γ` on `X` lies in a chart `chartAt ℂ p` and the
 mapped path `γ.map hf.continuous` lies in a chart `chartAt ℂ q` on `Y`,
 the chart-corrected integral of the form-pullback agrees with the
 chart-corrected integral of the original form along the mapped path:
 
-  `pathIntegralViaChartCorrect (chartAt ℂ p)
+`pathIntegralViaChartCorrect (chartAt ℂ p)
        (pullbackFormsBundledLM X Y f hf η) γ hX =
    pathIntegralViaChartCorrect (chartAt ℂ q) η
        (γ.map hf.continuous) hY`.
-
-This is the **single named analytic gap** of Phase 5 (the genuine
-chain rule for the chart pullback). Once discharged, both Sorry 2
-(`pathIntegralViaCover_pullback_chart_segment`, the un-`With`
-single-chart statement) and Sorry 5
-(`pathIntegralViaCoverWith_pullback_via_common_partition`, the
-multi-segment assembly) become sorry-free reductions.
 
 ## Mathematical content
 
 Unfolding both sides:
 
-  LHS = `curveIntegral (chartedFormPullback (chartAt ℂ p)
+LHS = `curveIntegral (chartedFormPullback (chartAt ℂ p)
            (pullbackFormsBundledLM X Y f hf η)) (chartLift (chartAt ℂ p) γ hX)`
 
-  RHS = `curveIntegral (chartedFormPullback (chartAt ℂ q) η)
+RHS = `curveIntegral (chartedFormPullback (chartAt ℂ q) η)
            (chartLift (chartAt ℂ q) (γ.map hf.continuous) hY)`
 
 The chart-lifted paths are related by the chart transition
@@ -44,39 +35,14 @@ smoothness of `f`).
 The integrand transformation factors via the algebraic chart-level
 chain rule (in `Jacobian/Periods/ChartedFormPullbackChainRule.lean`):
 
-  `chartedFormPullback cX (pullbackFormsBundledLM f hf η) e
+`chartedFormPullback cX (pullbackFormsBundledLM f hf η) e
    = (chartedFormPullback cY η (ψ e)).comp (mfderiv ψ e)`
-
-where `ψ = cY ∘ f ∘ cX.symm`. This identity (proved sorry-free in
-`chartedFormPullback_pullbackFormsBundledLM_apply`) is the
-mfderiv chain rule packaged for `chartedFormPullback`, and is the
-genuine *algebraic* core of Phase 5.
 
 The integral identity then reduces to the chain rule for `derivWithin`
 applied to `ψ ∘ γ_X.extend = γ_Y.extend`, which holds pointwise at
 every t where `γ_X.extend` is differentiable.
 
 ## Proof structure
-
-* The chart-level chain rule (chartedFormPullback factorisation through
-  the chart-transition mfderiv) is fully discharged in
-  `Jacobian/Periods/ChartedFormPullbackChainRule.lean` —
-  `chartedFormPullback_pullbackFormsBundledLM_apply`.
-* The integral-level statement reduces to a pointwise integrand
-  identity at every `t ∈ [0, 1]`, handled in this file.
-* For the differentiable case (where `γ_X.extend` has
-  `HasDerivWithinAt` at `t`): standard chain rule via
-  `HasFDerivAt.comp_hasDerivWithinAt`.
-* For the non-differentiable case at non-critical points of `ψ`:
-  contrapositive of the chain rule (since `ψ` is locally invertible
-  there, `ψ ∘ γ_X.extend` is differentiable at `t` iff `γ_X.extend` is).
-* For the non-differentiable case at critical points of `ψ`:
-  this requires deeper analytic content — the `o((z - z₀))` Taylor
-  estimate at the critical point combined with `1/k`-Hölder regularity
-  of `γ_X` to show the derivative vanishes. For generic continuous γ
-  this is a measure-zero issue; for the project's intended use (paths
-  in `IntegralOneCycle` with bounded variation), the bad set has
-  measure 0 and the integral identity holds.
 -/
 
 namespace JacobianChallenge.Periods
@@ -92,18 +58,12 @@ variable {Y : Type*} [TopologicalSpace Y] [ChartedSpace ℂ Y]
 
 open scoped Manifold ContDiff Topology Asymptotics NNReal
 
-/-- **Phase 5 sorry-free variant: chart-level chain rule under
-Lipschitz hypothesis.** Same statement as
-`pathIntegralViaChartCorrect_pullbackFormsBundledLM`, but with an
-explicit Lipschitz bound on the chart-lifted path. With this regularity
-on `γ` (which holds for any rectifiable / piecewise-`C¹` path — the
-typical case for cycles in `IntegralOneCycle`), the chart-level chain
-rule is fully proved.
-
+/--
 The hypothesis-free version
 `pathIntegralViaChartCorrect_pullbackFormsBundledLM` retains the same
 named obligation as before; this variant discharges it under the
-intended-use Lipschitz regularity. -/
+intended-use Lipschitz regularity.
+-/
 theorem pathIntegralViaChartCorrect_pullbackFormsBundledLM_lipschitz
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) (p : X) (q : Y)

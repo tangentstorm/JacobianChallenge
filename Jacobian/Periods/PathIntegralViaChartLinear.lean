@@ -26,8 +26,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- The provisional from-`X` chart-local path integral negates with
-the form. -/
+/--
+The provisional from-`X` chart-local path integral negates with
+the form.
+-/
 @[simp] theorem pathIntegralViaChart_neg
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (h : range γ ⊆ c.source) :
@@ -35,8 +37,10 @@ the form. -/
   unfold pathIntegralViaChart
   exact pathIntegralInChart_neg c ω _
 
-/-- The provisional from-`X` chart-local path integral is ℂ-linear
-in the form. -/
+/--
+The provisional from-`X` chart-local path integral is ℂ-linear
+in the form.
+-/
 @[simp] theorem pathIntegralViaChart_smul
     (c : OpenPartialHomeomorph X E) (k : ℂ) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (h : range γ ⊆ c.source) :

@@ -6,8 +6,6 @@ import Jacobian.ComplexTorus.Surjective
 /-!
 # Surjectivity of the continuous-linear quotient map
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 Wraps the additive `map_surjective` for the continuous-linear-map
 version `mapClm`.
 -/
@@ -18,8 +16,10 @@ variable {V W : Type*} [NormedAddCommGroup V] [NormedAddCommGroup W]
   [NormedSpace ℂ V] [NormedSpace ℂ W]
   {Λ : FullComplexLattice V} {Γ : FullComplexLattice W}
 
-/-- A surjective continuous linear lattice-preserving map descends to a
-surjective quotient map. -/
+/--
+A surjective continuous linear lattice-preserving map descends to a
+surjective quotient map.
+-/
 lemma mapClm_surjective {f : V →L[ℂ] W} (hf_surj : Function.Surjective f)
     (hf : ∀ v ∈ Λ.subgroup, f v ∈ Γ.subgroup) :
     Function.Surjective (mapClm f hf) := by

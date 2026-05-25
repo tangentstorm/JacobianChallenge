@@ -39,8 +39,10 @@ variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 
 namespace MeromorphicFunctionType
 
-/-- Structural axiom (S1a). When the pole divisor is 0, the map
-f.toMap never takes the value ∞. -/
+/--
+Structural axiom (S1a). When the pole divisor is 0, the map
+f.toMap never takes the value ∞.
+-/
 def is_holomorphic (f : MeromorphicFunctionType X) : Prop :=
   ∀ x, f.toFun x ≠ ∞
 
@@ -150,11 +152,13 @@ def constant (c : ℂ) : MeromorphicFunctionType X :=
       show MeromorphicAt ((fun _ => c) ∘ (extChartAt 𝓘(ℂ) p).symm) (extChartAt 𝓘(ℂ) p p)
       exact AnalyticAt.meromorphicAt analyticAt_const }
 
-/-- The old global vector-space instance is intentionally unavailable.
+/--
+The old global vector-space instance is intentionally unavailable.
 
 Pole cancellation cannot be represented by pointwise arithmetic on
 `OnePoint ℂ`; use `MeromorphicFunctionWithDivisors` or a future germ quotient
-instead. -/
+instead.
+-/
 theorem meromorphicFunctionVectorSpace_blocked {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] :
@@ -177,22 +181,22 @@ noncomputable def poles_coeff {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ
   haveI := Classical.propDecidable (f.toFun p = ∞)
   if f.toFun p = ∞ then -(orderAt p (fun q => (f q).getD 0)).untopD 0 else 0
 
-/-- Legacy placeholder for the zero divisor of a raw meromorphic function.
-
+/--
 This carries no analytic content; use `MeromorphicFunctionWithDivisors.zeros`
-for divisor-sensitive statements. -/
+for divisor-sensitive statements.
+-/
 noncomputable def zeros {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (_f : MeromorphicFunctionType X) : Divisor X :=
   0
 
-/-- Legacy placeholder for the pole divisor of a raw meromorphic function.
-
+/--
 This definition intentionally carries no analytic content.  A raw
 `MeromorphicFunctionType` does not include the finite-support and compatibility
 data needed to recover a pole divisor soundly.  Use
-`MeromorphicFunctionWithDivisors.poles` when divisor information matters. -/
+`MeromorphicFunctionWithDivisors.poles` when divisor information matters.
+-/
 noncomputable def poles {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
@@ -207,21 +211,15 @@ noncomputable def principal {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X
   f.zeros - f.poles
 
 /-!
-### Blocker analysis for the raw divisor placeholders
-
-`MeromorphicFunctionType.zeros` and `MeromorphicFunctionType.poles` are kept
-only as compatibility placeholders and return `0`.  They deliberately do not
-support analytic conclusions.  In particular, the former theorem
-`f.poles = 0 → ∀ x, f.toFun x ≠ ∞` was false for the raw type: the constant
-`∞` map satisfies the placeholder pole condition but is infinite everywhere.
-
 Use `toFun_ne_infty_of_is_holomorphic` for raw functions, or use
 `MeromorphicFunctionWithDivisors.toFun_ne_infty_of_poles_eq_zero` when the pole
 divisor is bundled with compatibility data.
 -/
 
-/-- Sound replacement for the old false `poles = 0` bridge on raw functions:
-the needed hypothesis is exactly that the raw map has no infinite values. -/
+/--
+Sound replacement for the old false `poles = 0` bridge on raw functions:
+the needed hypothesis is exactly that the raw map has no infinite values.
+-/
 theorem toFun_ne_infty_of_is_holomorphic {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
@@ -248,8 +246,10 @@ private lemma toFiniteFun_continuousAt (f : MeromorphicFunctionType X)
       have hf : ContinuousAt f.toFun p := f.toFun_continuous.continuousAt
       exact hg.comp hf
 
-/-- Structural bridge: if `f.toFun` never takes the value `∞`, then
-`f.toFiniteFun` is `MDifferentiable`. -/
+/--
+Structural bridge: if `f.toFun` never takes the value `∞`, then
+`f.toFiniteFun` is `MDifferentiable`.
+-/
 theorem mdifferentiable_toFiniteFun_of_no_infty {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
@@ -311,12 +311,14 @@ end MeromorphicFunctionType
 abbrev puncturedNhds (p : X) : Filter X :=
   nhdsWithin p {p}ᶜ
 
-/-- A local meromorphic germ at `p`.
+/--
+A local meromorphic germ at `p`.
 
 This is the first genuinely additive layer in the repair: arithmetic is
 performed in Mathlib's `Filter.Germ`, where representatives are identified up
 to eventual equality on a punctured neighborhood.  This is the local mechanism
-needed for pole cancellation. -/
+needed for pole cancellation.
+-/
 @[ext] structure MeromorphicGermAt
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -349,8 +351,10 @@ def zero : MeromorphicGermAt X p :=
 
 instance : Zero (MeromorphicGermAt X p) := ⟨zero⟩
 
-/-- Addition of local meromorphic germs.  This is well-defined because
-`Filter.Germ` quotients representatives by eventual equality. -/
+/--
+Addition of local meromorphic germs.  This is well-defined because
+`Filter.Germ` quotients representatives by eventual equality.
+-/
 def add (F G : MeromorphicGermAt X p) : MeromorphicGermAt X p :=
   { germ := F.germ + G.germ
     meromorphic := by
@@ -418,13 +422,7 @@ noncomputable instance : Module ℂ (MeromorphicGermAt X p) where
 
 end MeromorphicGermAt
 
-/-- A global meromorphic object represented by its local germs at every point.
-
-This is a sound vector-space substrate: addition and scalar multiplication are
-pointwise operations in `MeromorphicGermAt`, so pole cancellation happens in
-the local germ ring rather than through pointwise arithmetic on `OnePoint ℂ`.
-Divisor compatibility is intentionally not part of this abbrev; it is supplied
-separately by `MeromorphicFunctionWithDivisors`. -/
+/-- A global meromorphic object represented by its local germs at every point. -/
 abbrev MeromorphicGermFamily
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -437,8 +435,10 @@ namespace MeromorphicGermFamily
 def germAt (F : MeromorphicGermFamily X) (p : X) : MeromorphicGermAt X p :=
   F p
 
-/-- The germ-family vector-space instance is available because each local
-germ space is a genuine `ℂ`-module. -/
+/--
+The germ-family vector-space instance is available because each local
+germ space is a genuine `ℂ`-module.
+-/
 theorem module_nonempty :
     Nonempty (Module ℂ (MeromorphicGermFamily X)) :=
   ⟨inferInstance⟩
@@ -464,8 +464,10 @@ def germAt (f : MeromorphicFunctionType X) (p : X) : MeromorphicGermAt X p :=
   { germ := (f.toFiniteFun : Filter.Germ (puncturedNhds p) ℂ)
     meromorphic := ⟨f.toFiniteFun, rfl, f.isMeromorphic p⟩ }
 
-/-- The global family of punctured local finite-value germs attached to a raw
-meromorphic function. -/
+/--
+The global family of punctured local finite-value germs attached to a raw
+meromorphic function.
+-/
 def germFamily (f : MeromorphicFunctionType X) : MeromorphicGermFamily X :=
   fun p => f.germAt p
 
@@ -475,10 +477,12 @@ def germFamily (f : MeromorphicFunctionType X) : MeromorphicGermFamily X :=
 
 end MeromorphicFunctionType
 
-/-- Coefficient of the zero divisor extracted from an order value.
+/--
+Coefficient of the zero divisor extracted from an order value.
 
 The `⊤` case is sent to `0`; global zero functions need separate handling in
-the eventual full divisor theory. -/
+the eventual full divisor theory.
+-/
 noncomputable def zeroCoeffOfOrder (o : WithTop ℤ) : ℤ :=
   max (o.untopD 0) 0
 
@@ -490,28 +494,36 @@ noncomputable def poleCoeffOfOrder (o : WithTop ℤ) : ℤ :=
 noncomputable def principalCoeffOfOrder (o : WithTop ℤ) : ℤ :=
   o.untopD 0
 
-/-- Divisor-compatible replacement for the raw `MeromorphicFunctionType`.
+/--
+Divisor-compatible replacement for the raw `MeromorphicFunctionType`.
 
 This structure is intentionally not given global algebraic instances.  Any
 addition, multiplication, or scalar action that changes the divisor data must
-construct a new value and prove the relevant compatibility fields. -/
+construct a new value and prove the relevant compatibility fields.
+-/
 structure MeromorphicFunctionWithDivisors
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X] where
   toFunction : MeromorphicFunctionType X
-  /-- Local meromorphic germs.  These are the additive data; unlike
-  pointwise `OnePoint` values, they can model pole cancellation. -/
+  /--
+Local meromorphic germs.  These are the additive data; unlike
+  pointwise `OnePoint` values, they can model pole cancellation.
+-/
   germs : MeromorphicGermFamily X
-  /-- The local germs agree with the finite-value germ family attached to the
-  raw `OnePoint`-valued map. -/
+  /--
+The local germs agree with the finite-value germ family attached to the
+  raw `OnePoint`-valued map.
+-/
   germs_eq_toFunction : germs = toFunction.germFamily
   zeroDivisor : Divisor X
   poleDivisor : Divisor X
   principalDivisor : Divisor X
-  /-- Recorded local order data.  A full germ-order bridge should eventually
+  /--
+Recorded local order data.  A full germ-order bridge should eventually
   prove this is the order of `germs P`; for now the divisor API requires all
-  divisor fields to agree with this order function. -/
+  divisor fields to agree with this order function.
+-/
   order : X → WithTop ℤ
   zeroDivisor_apply : ∀ P : X, zeroDivisor P = zeroCoeffOfOrder (order P)
   poleDivisor_apply : ∀ P : X, poleDivisor P = poleCoeffOfOrder (order P)
@@ -574,10 +586,12 @@ def MemRiemannRochSpace (f : MeromorphicFunctionWithDivisors X) (D : Divisor X) 
     f.principal P = principalCoeffOfOrder (f.order P) :=
   f.principalDivisor_apply P
 
-/-- A nonzero constant as a divisor-compatible meromorphic function.
+/--
+A nonzero constant as a divisor-compatible meromorphic function.
 
 The zero constant is deliberately not provided by this constructor: its zero
-divisor is not a finite divisor in the usual principal-divisor convention. -/
+divisor is not a finite divisor in the usual principal-divisor convention.
+-/
 def constantNonzero (c : ℂ) (_hc : c ≠ 0) : MeromorphicFunctionWithDivisors X :=
   { toFunction := MeromorphicFunctionType.constant c
     germs := fun P => MeromorphicGermAt.constant (X := X) (p := P) c
@@ -609,10 +623,12 @@ def constantNonzero (c : ℂ) (_hc : c ≠ 0) : MeromorphicFunctionWithDivisors 
     (constantNonzero (X := X) c hc).principal = 0 :=
   rfl
 
-/-- Nonzero scalar multiplication on the divisor-compatible API.
+/--
+Nonzero scalar multiplication on the divisor-compatible API.
 
 Unlike addition, this operation is sound without germ quotients: multiplying by
-a nonzero scalar preserves all zero, pole, and principal divisors. -/
+a nonzero scalar preserves all zero, pole, and principal divisors.
+-/
 noncomputable def smulNonzero (c : ℂ) (hc : c ≠ 0)
     (f : MeromorphicFunctionWithDivisors X) : MeromorphicFunctionWithDivisors X :=
   { toFunction := c • f.toFunction
@@ -662,31 +678,41 @@ theorem smulNonzero_memRiemannRochSpace_iff (c : ℂ) (hc : c ≠ 0)
     (smulNonzero c hc f).MemRiemannRochSpace D ↔ f.MemRiemannRochSpace D := by
   rfl
 
-/-- Explicit data for an addition result in the divisor-compatible API.
+/--
+Explicit data for an addition result in the divisor-compatible API.
 
 This is the replacement for the removed global `Add` instance.  A consumer may
 use an `AddData f g` value once it has constructed the actual meromorphic sum
 and proved the divisor-side facts, including whatever pole cancellation occurs
-in that sum. -/
+in that sum.
+-/
 structure AddData (f g : MeromorphicFunctionWithDivisors X) where
   result : MeromorphicFunctionWithDivisors X
-  /-- The result's local germs are the genuine germ-wise sum.  This is the
-  pole-cancelling additive datum missing from pointwise `OnePoint` addition. -/
+  /--
+The result's local germs are the genuine germ-wise sum.  This is the
+  pole-cancelling additive datum missing from pointwise `OnePoint` addition.
+-/
   germs_eq_add : result.germs = f.germs + g.germs
-  /-- Local order lower bound for addition.  Strict inequality is where pole
-  cancellation is recorded by the result's own order/divisor fields. -/
+  /--
+Local order lower bound for addition.  Strict inequality is where pole
+  cancellation is recorded by the result's own order/divisor fields.
+-/
   order_le_result : ∀ P : X, min (f.order P) (g.order P) ≤ result.order P
-  /-- On points where both inputs are finite, the result has the expected
+  /--
+On points where both inputs are finite, the result has the expected
   finite value.  At poles this record intentionally makes no pointwise claim;
-  cancellation is represented by the result's divisor fields. -/
+  cancellation is represented by the result's divisor fields.
+-/
   toFun_eq_on_common_regular :
     ∀ P : X, f.poles P = 0 → g.poles P = 0 →
       result.toFunction.toFun P =
         (((f.toFunction.toFun P).getD 0 + (g.toFunction.toFun P).getD 0 : ℂ) :
           OnePoint ℂ)
-  /-- Divisor-side membership preservation for a chosen Riemann-Roch bound.
+  /--
+Divisor-side membership preservation for a chosen Riemann-Roch bound.
   This is an explicit field rather than a global theorem because the proof
-  depends on the actual cancellation behavior of the constructed sum. -/
+  depends on the actual cancellation behavior of the constructed sum.
+-/
   memRiemannRochSpace_of_mem :
     ∀ D : Divisor X, f.MemRiemannRochSpace D → g.MemRiemannRochSpace D →
       result.MemRiemannRochSpace D

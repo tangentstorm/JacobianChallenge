@@ -4,10 +4,6 @@ import Mathlib.MeasureTheory.Integral.CurveIntegral.Basic
 /-!
 # Path integral of a holomorphic 1-form in a single chart
 
-Queue D scaffolding. Defines `pathIntegralInChart c ω γ`: the
-integral of a `HolomorphicOneForm E X` along a path `γ` that has
-already been transported into the model space `E` via a chart `c`.
-
 The signature takes the *transported* path `γ : Path (a : E) (b : E)`
 rather than a path on `X`, because Mathlib's `Path.map` needs a
 globally-continuous map between topological spaces and our chart
@@ -23,9 +19,11 @@ namespace JacobianChallenge.Periods
 
 open JacobianChallenge.HolomorphicForms
 
-/-- Path integral of a holomorphic 1-form, evaluated in chart
+/--
+Path integral of a holomorphic 1-form, evaluated in chart
 coordinates. The path `γ` is required to live in the model space
-`E` (already transported through the chart `c`). -/
+`E` (already transported through the chart `c`).
+-/
 noncomputable def pathIntegralInChart
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {X : Type*} [TopologicalSpace X] [ChartedSpace E X]

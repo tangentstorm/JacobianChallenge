@@ -25,8 +25,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Z]
 
 set_option linter.unusedSectionVars false in
-/-- Pullback along `f ∘ const x₀` is zero (the composition is itself
-a constant map, namely `const X (f x₀)`). -/
+/--
+Pullback along `f ∘ const x₀` is zero (the composition is itself
+a constant map, namely `const X (f x₀)`).
+-/
 @[simp] theorem pullbackFormsFun_comp_const
     (f : Y → Z) (x₀ : Y) (η : HolomorphicOneForm E Z) :
     pullbackFormsFun (f ∘ Function.const X x₀) η = 0 := by

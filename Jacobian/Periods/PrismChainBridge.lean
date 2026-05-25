@@ -29,13 +29,6 @@ re-expose it here at the universe / index choices we use throughout
 (`Type 0`, `n : ℕ`).
 
 ## Bottom-up role
-
-This is **Phase 1** of the prism-chain-homotopy plan
-(see `Jacobian/Periods/PrismChainHomotopy.lean`). It provides the
-universe/equiv plumbing needed to:
-* identify a generator of the chain group `((sChain).obj X).X n`
-  with a singular `n`-simplex `σ : C(stdSimplex ℝ (Fin (n+1)), X)`,
-* define maps out of the chain group via `Limits.Sigma.desc`.
 -/
 
 noncomputable section
@@ -44,79 +37,99 @@ namespace JacobianChallenge.Periods
 
 open CategoryTheory Limits AlgebraicTopology
 
-/-- A *singular `n`-simplex* in `X`: a continuous map from the standard
-topological `n`-simplex `stdSimplex ℝ (Fin (n+1))` to `X`. -/
+/--
+A *singular `n`-simplex* in `X`: a continuous map from the standard
+topological `n`-simplex `stdSimplex ℝ (Fin (n+1))` to `X`.
+-/
 abbrev SingSimplex (n : ℕ) (X : Type) [TopologicalSpace X] : Type :=
   C(stdSimplex ℝ (Fin (n + 1)), X)
 
-/-- The categorical type of `n`-simplices in the singular simplicial set
+/--
+The categorical type of `n`-simplices in the singular simplicial set
 of `X`, as it appears in Mathlib's `TopCat.toSSet`. Equivalent to
-`SingSimplex n X` via `TopCat.toSSetObjEquiv`. -/
+`SingSimplex n X` via `TopCat.toSSetObjEquiv`.
+-/
 abbrev SingSimplexCat (n : ℕ) (X : Type) [TopologicalSpace X] : Type :=
   (TopCat.toSSet.obj (TopCat.of X)).obj (Opposite.op (SimplexCategory.mk n))
 
-/-- The bridging equivalence: Mathlib's categorical singular `n`-simplex
-set is equivalent to the concrete continuous-map type. -/
+/--
+The bridging equivalence: Mathlib's categorical singular `n`-simplex
+set is equivalent to the concrete continuous-map type.
+-/
 noncomputable def singSimplexEquiv (n : ℕ) (X : Type) [TopologicalSpace X] :
     SingSimplexCat n X ≃ SingSimplex n X :=
   TopCat.toSSetObjEquiv (TopCat.of X) (Opposite.op (SimplexCategory.mk n))
 
-/-! ### Chain-level identifications
+/-!
+### Chain-level identifications
 
 The level-`n` object of the singular chain complex
 `((singularChainComplexFunctor (ModuleCat ℤ)).obj (ModuleCat.of ℤ ℤ)).obj
 (TopCat.of X)` is *definitionally* the coproduct of `ModuleCat.of ℤ ℤ`
 indexed by `SingSimplexCat n X`. We expose this fact and provide a
 "basis morphism" API: each categorical simplex generator induces a
-morphism from `ModuleCat.of ℤ ℤ` into the chain group. -/
+morphism from `ModuleCat.of ℤ ℤ` into the chain group.
+-/
 
 /-- Abbreviation for the level-`n` chain group of `X`. -/
 abbrev singChain (n : ℕ) (X : Type) [TopologicalSpace X] : ModuleCat ℤ :=
   (((singularChainComplexFunctor (ModuleCat ℤ)).obj (ModuleCat.of ℤ ℤ)).obj
       (TopCat.of X)).X n
 
-/-- The chain group is *definitionally* the coproduct of `ℤ` indexed by
+/--
+The chain group is *definitionally* the coproduct of `ℤ` indexed by
 the categorical singular `n`-simplex set. This is the core bridge
-exposing the structure for `Sigma.desc` constructions. -/
+exposing the structure for `Sigma.desc` constructions.
+-/
 theorem singChain_eq_coproduct (n : ℕ) (X : Type) [TopologicalSpace X] :
     singChain n X = (∐ fun _ : SingSimplexCat n X => ModuleCat.of ℤ ℤ) :=
   rfl
 
-/-- The basis morphism: each categorical singular `n`-simplex `σ`
+/--
+The basis morphism: each categorical singular `n`-simplex `σ`
 induces a morphism `ModuleCat.of ℤ ℤ ⟶ singChain n X`
-(the `Sigma.ι` inclusion at index `σ`). -/
+(the `Sigma.ι` inclusion at index `σ`).
+-/
 noncomputable def singChain_basisCat {n : ℕ} {X : Type} [TopologicalSpace X]
     (σ : SingSimplexCat n X) : ModuleCat.of ℤ ℤ ⟶ singChain n X :=
   Sigma.ι (fun _ : SingSimplexCat n X => ModuleCat.of ℤ ℤ) σ
 
-/-- Geometric basis morphism: each *concrete* singular `n`-simplex
+/--
+Geometric basis morphism: each *concrete* singular `n`-simplex
 (continuous map) `s : C(stdSimplex ℝ (Fin (n+1)), X)` induces a basis
-morphism into the chain group, by passing through `singSimplexEquiv`. -/
+morphism into the chain group, by passing through `singSimplexEquiv`.
+-/
 noncomputable def singChain_basis {n : ℕ} {X : Type} [TopologicalSpace X]
     (s : SingSimplex n X) : ModuleCat.of ℤ ℤ ⟶ singChain n X :=
   singChain_basisCat ((singSimplexEquiv n X).symm s)
 
-/-- Universal property: a morphism out of `singChain n X` in
+/--
+Universal property: a morphism out of `singChain n X` in
 `ModuleCat ℤ` is determined by its values on the basis morphisms,
 indexed by categorical simplices.
 
 This is the categorical-to-coproduct dual: define a morphism
-out of `∐ ι R` by giving a morphism `R ⟶ Y` for each index. -/
+out of `∐ ι R` by giving a morphism `R ⟶ Y` for each index.
+-/
 noncomputable def singChain_descCat {n : ℕ} {X : Type} [TopologicalSpace X]
     {Y : ModuleCat ℤ} (φ : SingSimplexCat n X → (ModuleCat.of ℤ ℤ ⟶ Y)) :
     singChain n X ⟶ Y :=
   Sigma.desc φ
 
-/-- Geometric `Sigma.desc`: define a morphism out of `singChain n X` by
+/--
+Geometric `Sigma.desc`: define a morphism out of `singChain n X` by
 giving a morphism `ModuleCat.of ℤ ℤ ⟶ Y` for each *concrete* simplex
-`s : C(stdSimplex ℝ (Fin (n+1)), X)`. -/
+`s : C(stdSimplex ℝ (Fin (n+1)), X)`.
+-/
 noncomputable def singChain_desc {n : ℕ} {X : Type} [TopologicalSpace X]
     {Y : ModuleCat ℤ} (φ : SingSimplex n X → (ModuleCat.of ℤ ℤ ⟶ Y)) :
     singChain n X ⟶ Y :=
   singChain_descCat (fun σ => φ ((singSimplexEquiv n X) σ))
 
-/-- Universal property of `Sigma.desc` on a basis morphism (categorical
-form): `singChain_descCat φ ∘ singChain_basisCat σ = φ σ`. -/
+/--
+Universal property of `Sigma.desc` on a basis morphism (categorical
+form): `singChain_descCat φ ∘ singChain_basisCat σ = φ σ`.
+-/
 @[simp]
 theorem singChain_descCat_basisCat {n : ℕ} {X : Type} [TopologicalSpace X]
     {Y : ModuleCat ℤ} (φ : SingSimplexCat n X → (ModuleCat.of ℤ ℤ ⟶ Y))
@@ -124,8 +137,10 @@ theorem singChain_descCat_basisCat {n : ℕ} {X : Type} [TopologicalSpace X]
     singChain_basisCat σ ≫ singChain_descCat φ = φ σ :=
   Sigma.ι_desc _ _
 
-/-- Universal property on a basis morphism (geometric form):
-`singChain_desc φ ∘ singChain_basis s = φ s`. -/
+/--
+Universal property on a basis morphism (geometric form):
+`singChain_desc φ ∘ singChain_basis s = φ s`.
+-/
 @[simp]
 theorem singChain_desc_basis {n : ℕ} {X : Type} [TopologicalSpace X]
     {Y : ModuleCat ℤ} (φ : SingSimplex n X → (ModuleCat.of ℤ ℤ ⟶ Y))
@@ -134,8 +149,10 @@ theorem singChain_desc_basis {n : ℕ} {X : Type} [TopologicalSpace X]
   simp only [singChain_desc, singChain_basis, singChain_descCat_basisCat,
     Equiv.apply_symm_apply]
 
-/-- Extensionality: two morphisms out of a singular chain group are
-equal iff they agree on all categorical basis elements. -/
+/--
+Extensionality: two morphisms out of a singular chain group are
+equal iff they agree on all categorical basis elements.
+-/
 theorem singChain_hom_extCat {n : ℕ} {X : Type} [TopologicalSpace X]
     {Y : ModuleCat ℤ} (g₁ g₂ : singChain n X ⟶ Y)
     (h : ∀ σ : SingSimplexCat n X,
@@ -143,8 +160,10 @@ theorem singChain_hom_extCat {n : ℕ} {X : Type} [TopologicalSpace X]
     g₁ = g₂ :=
   Sigma.hom_ext g₁ g₂ h
 
-/-- Extensionality: two morphisms out of a singular chain group are
-equal iff they agree on all geometric basis elements. -/
+/--
+Extensionality: two morphisms out of a singular chain group are
+equal iff they agree on all geometric basis elements.
+-/
 theorem singChain_hom_ext {n : ℕ} {X : Type} [TopologicalSpace X]
     {Y : ModuleCat ℤ} (g₁ g₂ : singChain n X ⟶ Y)
     (h : ∀ s : SingSimplex n X,
@@ -157,16 +176,20 @@ theorem singChain_hom_ext {n : ℕ} {X : Type} [TopologicalSpace X]
   rw [Equiv.symm_apply_apply] at this
   exact this
 
-/-! ### Chain map on basis (Phase 2)
+/-!
+### Chain map on basis
 
 The functorial chain map `((sChain).obj R).map (TopCat.ofHom f)` at
 degree `n` sends the basis element at `σ : SingSimplexCat n X` to the
 basis element at `(toSSet.map (ofHom f)).app _ σ`. This is the
 categorical functoriality of the chain functor; via the equiv, the
-"pushed simplex" corresponds to the geometric `f.comp s`. -/
+"pushed simplex" corresponds to the geometric `f.comp s`.
+-/
 
-/-- The chain map at degree `n` sends a categorical basis to the
-categorical basis at the pushed simplex. -/
+/--
+The chain map at degree `n` sends a categorical basis to the
+categorical basis at the pushed simplex.
+-/
 theorem singChain_map_basisCat {X Y : Type} [TopologicalSpace X]
     [TopologicalSpace Y] (f : C(X, Y)) (n : ℕ) (σ : SingSimplexCat n X) :
     singChain_basisCat σ ≫
@@ -176,8 +199,10 @@ theorem singChain_map_basisCat {X Y : Type} [TopologicalSpace X]
   simp [singChain_basisCat, singularChainComplexFunctor,
     SSet.singularChainComplexFunctor]
 
-/-- The action of `TopCat.toSSet.map f` on the categorical simplex
-matches `f.comp s` on the geometric side, via `singSimplexEquiv`. -/
+/--
+The action of `TopCat.toSSet.map f` on the categorical simplex
+matches `f.comp s` on the geometric side, via `singSimplexEquiv`.
+-/
 theorem singSimplexEquiv_toSSet_map {X Y : Type} [TopologicalSpace X]
     [TopologicalSpace Y] (f : C(X, Y)) (n : ℕ) (σ : SingSimplexCat n X) :
     (singSimplexEquiv n Y) ((TopCat.toSSet.map (TopCat.ofHom f)).app _ σ) =
@@ -187,9 +212,7 @@ theorem singSimplexEquiv_toSSet_map {X Y : Type} [TopologicalSpace X]
   -- restricted ULift Yoneda action is just composition.
   rfl
 
-/-- The chain map at degree `n` on a geometric basis: pushing `s` by
-`f.comp s`. This is the key Phase 2 lemma needed for the boundary
-identity. -/
+
 theorem singChain_map_basis {X Y : Type} [TopologicalSpace X]
     [TopologicalSpace Y] (f : C(X, Y)) (n : ℕ) (s : SingSimplex n X) :
     singChain_basis s ≫
@@ -210,18 +233,12 @@ theorem singChain_map_basis {X Y : Type} [TopologicalSpace X]
       apply (singSimplexEquiv n Y).injective
       rw [Equiv.apply_symm_apply]; exact h]
 
-/-! ### Chain differential on basis (Phase 2 main lemma)
+/-! ### Chain differential on basis -/
 
-The chain differential `d : C_{n+1}(X) ⟶ C_n(X)` of the singular chain
-complex acts on a basis element `[s]` by the alternating sum of face
-inclusions:
-  `d [s] = Σ_{j : Fin (n+2)} (-1)^j • [s ∘ δ_j]`
-where `δ_j` is the topological face inclusion. This is the key Phase 2
-lemma needed for the boundary identity in the prism construction.
+/--
+Chain differential on a categorical basis element: alternating sum
+of face inclusions, in categorical (`SimplexCategory.δ`) form.
 -/
-
-/-- Chain differential on a categorical basis element: alternating sum
-of face inclusions, in categorical (`SimplexCategory.δ`) form. -/
 theorem singChain_d_basisCat {X : Type} [TopologicalSpace X] (n : ℕ)
     (σ : SingSimplexCat (n + 1) X) :
     singChain_basisCat σ ≫
@@ -234,19 +251,23 @@ theorem singChain_d_basisCat {X : Type} [TopologicalSpace X] (n : ℕ)
     SSet.singularChainComplexFunctor, AlternatingFaceMapComplex.objD,
     SimplicialObject.δ, Preadditive.comp_sum, Sigma.ι_comp_map']
 
-/-- The geometric face inclusion `Δⁿ → Δⁿ⁺¹` corresponding to dropping
+/--
+The geometric face inclusion `Δⁿ → Δⁿ⁺¹` corresponding to dropping
 the `j`-th vertex: pulled back from `SimplexCategory.δ j` via
 `stdSimplex.map (Fin.succAbove j)`.
 
 This is exactly `stdSimplex.map (Fin.succAbove j)` (up to ULift, which
-is identity at universe 0 in our setting). -/
+is identity at universe 0 in our setting).
+-/
 noncomputable def stdSimplexFaceInclusion (n : ℕ) (j : Fin (n + 2)) :
     C(stdSimplex ℝ (Fin (n + 1)), stdSimplex ℝ (Fin (n + 2))) :=
   ⟨stdSimplex.map (Fin.succAbove j), stdSimplex.continuous_map _⟩
 
-/-- The simplicial face action on a categorical simplex `σ` corresponds,
+/--
+The simplicial face action on a categorical simplex `σ` corresponds,
 via `singSimplexEquiv`, to geometric precomposition with the face
-inclusion `stdSimplexFaceInclusion`. -/
+inclusion `stdSimplexFaceInclusion`.
+-/
 theorem singSimplexEquiv_face {X : Type} [TopologicalSpace X] (n : ℕ)
     (j : Fin (n + 2)) (σ : SingSimplexCat (n + 1) X) :
     (singSimplexEquiv n X)
@@ -258,8 +279,10 @@ theorem singSimplexEquiv_face {X : Type} [TopologicalSpace X] (n : ℕ)
   -- which on stdSimplex is stdSimplex.map (Fin.succAbove j) up to ULift.
   rfl
 
-/-- Geometric form: the chain differential on a geometric basis element
-is the alternating sum of basis elements at face precompositions. -/
+/--
+Geometric form: the chain differential on a geometric basis element
+is the alternating sum of basis elements at face precompositions.
+-/
 theorem singChain_d_basis {X : Type} [TopologicalSpace X] (n : ℕ)
     (s : SingSimplex (n + 1) X) :
     singChain_basis s ≫

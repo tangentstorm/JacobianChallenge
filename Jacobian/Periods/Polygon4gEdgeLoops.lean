@@ -13,7 +13,7 @@ parametrisation with the quotient map.
 
 The standard 4(g+1)-gon has its `4(g+1)` boundary arcs paired as
 
-  `arc 4j ↔ arc 4j+2` (a-pair, reversed),
+`arc 4j ↔ arc 4j+2` (a-pair, reversed),
   `arc 4j+1 ↔ arc 4j+3` (b-pair, reversed),
 
 for `j : Fin (g+1)`. The 2(g+1) distinct edge classes can be indexed by
@@ -42,10 +42,12 @@ namespace JacobianChallenge.Periods
 
 open Complex Set unitInterval
 
-/-- The index of the boundary arc representing the `i`-th edge class of
+/--
+The index of the boundary arc representing the `i`-th edge class of
 the genus-`(g+1)` polygon. For `i : Fin (2*(g+1))`, `i = 2j` selects
 arc `4j` (the a-edge of pair `j`) and `i = 2j+1` selects arc `4j+1`
-(the b-edge of pair `j`). -/
+(the b-edge of pair `j`).
+-/
 def edgeArcIdx (g : ℕ) (i : Fin (2 * (g + 1))) : ℕ :=
   4 * (i.val / 2) + (i.val % 2)
 
@@ -66,10 +68,12 @@ lemma boundaryParam_continuous (g i : ℕ) :
   unfold boundaryParam
   exact (boundaryParamC_continuous g i).subtype_mk _
 
-/-- The `i`-th edge loop on the genus-`(g+1)` polygon, parameterised by
+/--
+The `i`-th edge loop on the genus-`(g+1)` polygon, parameterised by
 the unit interval `[0,1]`. As a map into `Polygon4g (g+1)` (the disk
 quotient), the start and end points coincide because all polygon
-vertices are identified by the side-pairings. -/
+vertices are identified by the side-pairings.
+-/
 noncomputable def edgeContMap (g : ℕ) (i : Fin (2 * (g + 1))) :
     C(unitInterval, Polygon4g (g + 1)) where
   toFun := fun t =>

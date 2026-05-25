@@ -19,9 +19,7 @@ namespace JacobianChallenge.Periods
 open AlgebraicTopology CategoryTheory CategoryTheory.Limits SimplexCategory Opposite
 open Simplicial
 
-/-- **Round 50 / Stage A leaf.** Opaque "surface group abelianisation"
-witness.  Concretely this is the free abelian module on the oriented
-edge generators of `Polygon4g (g+1)`. -/
+
 def Polygon4gAbelianization (g : ℕ) : Type :=
   Fin (2 * (g + 1)) → ℤ
 
@@ -45,8 +43,10 @@ instance polygon4gAbelianization_module_finite (g : ℕ) :
   unfold Polygon4gAbelianization
   infer_instance
 
-/-- The singular datum attached to the unique zero-cell of the standard
-polygonal cell structure. -/
+/--
+The singular datum attached to the unique zero-cell of the standard
+polygonal cell structure.
+-/
 structure Polygon4gCellularSingularZeroCellData
     (g : ℕ) (C : Polygon4gCellularModel g) where
   /-- The singular zero-simplex is the unique cellular vertex. -/
@@ -61,8 +61,10 @@ theorem polygon4g_cellular_singular_zero_cell_data
     Nonempty (Polygon4gCellularSingularZeroCellData g C) :=
   ⟨{ vertex := C.vertex, vertex_eq_model := rfl }⟩
 
-/-- The singular edge-path data attached to the `2g` oriented one-cells
-of the standard polygonal cell structure. -/
+/--
+The singular edge-path data attached to the `2g` oriented one-cells
+of the standard polygonal cell structure.
+-/
 structure Polygon4gCellularSingularOneCellData
     (g : ℕ) (C : Polygon4gCellularModel g) where
   /-- The singular representatives of the oriented one-cells. -/
@@ -70,8 +72,10 @@ structure Polygon4gCellularSingularOneCellData
   /-- They are the one-cell loops recorded by the cellular model. -/
   edgePath_eq_model : edgePath = C.oneCellPath
 
-/-- **Comparison leaf 1b.** Construct the singular one-cell edge-path
-data. -/
+/--
+**Comparison leaf 1b.** Construct the singular one-cell edge-path
+data.
+-/
 theorem polygon4g_cellular_singular_one_cell_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
@@ -87,8 +91,10 @@ structure Polygon4gCellularSingularTwoCellCharacteristicData
   characteristic_eq_mk :
     ∀ z, characteristic z = Polygon4g.mk g (C.disk.diskSource.sourceHomeomorph z)
 
-/-- **Comparison leaf 1c(i).** Construct the singular characteristic
-map data for the unique two-cell. -/
+/--
+**Comparison leaf 1c(i).** Construct the singular characteristic
+map data for the unique two-cell.
+-/
 theorem polygon4g_cellular_singular_two_cell_characteristic_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
@@ -98,8 +104,10 @@ theorem polygon4g_cellular_singular_two_cell_characteristic_data
     characteristic_eq_mk := C.twoCellCharacteristic_eq_mk
   }⟩
 
-/-- The boundary parametrisation of the singular two-cell by the
-standard surface word `∏ᵢ [aᵢ,bᵢ]`. -/
+/--
+The boundary parametrisation of the singular two-cell by the
+standard surface word `∏ᵢ [aᵢ,bᵢ]`.
+-/
 structure Polygon4gCellularSingularTwoCellBoundaryWordData
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_characteristic : Polygon4gCellularSingularTwoCellCharacteristicData g C) where
@@ -116,8 +124,10 @@ structure Polygon4gCellularSingularTwoCellBoundaryWordData
   boundaryWord_abelianizedBoundary :
     edgeWordAbelianizedBoundary boundaryWord = 0
 
-/-- **Comparison leaf 1c(ii).** Construct the boundary-word
-parametrisation for the singular two-cell. -/
+/--
+**Comparison leaf 1c(ii).** Construct the boundary-word
+parametrisation for the singular two-cell.
+-/
 theorem polygon4g_cellular_singular_two_cell_boundary_word_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -131,15 +141,19 @@ theorem polygon4g_cellular_singular_two_cell_boundary_word_data
     boundaryWord_abelianizedBoundary := h_boundary.2.2.2
   }⟩
 
-/-- The singular two-cell datum: the quotient disk characteristic map
-and its boundary parametrisation by the surface word. -/
+/--
+The singular two-cell datum: the quotient disk characteristic map
+and its boundary parametrisation by the surface word.
+-/
 structure Polygon4gCellularSingularTwoCellData
     (g : ℕ) (C : Polygon4gCellularModel g) where
   characteristic : Polygon4gCellularSingularTwoCellCharacteristicData g C
   boundaryWord : Polygon4gCellularSingularTwoCellBoundaryWordData g C characteristic
 
-/-- **Comparison assembly 1c.** Construct the singular two-cell disk and
-attaching-map data from characteristic-map and boundary-word leaves. -/
+/--
+**Comparison assembly 1c.** Construct the singular two-cell disk and
+attaching-map data from characteristic-map and boundary-word leaves.
+-/
 theorem polygon4g_cellular_singular_two_cell_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
@@ -152,21 +166,25 @@ by
       g C _h_boundary characteristic
   exact ⟨{ characteristic, boundaryWord }⟩
 
-/-- The comparison data between the cellular chain complex of the
+/--
+The comparison data between the cellular chain complex of the
 standard polygon model and singular chains on the quotient surface.
 
 Bottom-up route: define the characteristic-map pushforward on cells,
 or specialise the usual cellular filtration construction to the finite
-CW complex with one zero-cell, `2g` one-cells, and one two-cell. -/
+CW complex with one zero-cell, `2g` one-cells, and one two-cell.
+-/
 structure Polygon4gCellularSingularComparisonData
     (g : ℕ) (C : Polygon4gCellularModel g) where
   zeroCell : Polygon4gCellularSingularZeroCellData g C
   oneCells : Polygon4gCellularSingularOneCellData g C
   twoCell : Polygon4gCellularSingularTwoCellData g C
 
-/-- **Comparison assembly 1.** Existence of the cellular-to-singular
+/--
+**Comparison assembly 1.** Existence of the cellular-to-singular
 comparison data for the standard polygonal cell structure, assembled
-from the zero-cell, one-cell, and two-cell data leaves. -/
+from the zero-cell, one-cell, and two-cell data leaves.
+-/
 theorem polygon4g_cellular_singular_comparison_data
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
@@ -177,13 +195,17 @@ by
   obtain ⟨twoCell⟩ := polygon4g_cellular_singular_two_cell_data g C _h_boundary
   exact ⟨{ zeroCell, oneCells, twoCell }⟩
 
-/-- The cellular zero-chain module for the standard polygon model:
-free rank one on the unique vertex. -/
+/--
+The cellular zero-chain module for the standard polygon model:
+free rank one on the unique vertex.
+-/
 abbrev Polygon4gCellularC0 (_g : ℕ) : Type :=
   Unit → ℤ
 
-/-- The cellular two-chain module for the standard polygon model:
-free rank one on the unique two-cell. -/
+/--
+The cellular two-chain module for the standard polygon model:
+free rank one on the unique two-cell.
+-/
 abbrev Polygon4gCellularC2 (_g : ℕ) : Type :=
   Unit → ℤ
 
@@ -215,15 +237,19 @@ def polygon4gCellularC0Vertex {g : ℕ} : Polygon4gCellularC0 g :=
 def polygon4gCellularC2Face {g : ℕ} : Polygon4gCellularC2 g :=
   fun _ => 1
 
-/-- Project-side singular zero-chains on `Polygon4g g`: finitely
-supported integral sums of points. -/
+/--
+Project-side singular zero-chains on `Polygon4g g`: finitely
+supported integral sums of points.
+-/
 abbrev Polygon4gSingularC0 (g : ℕ) : Type :=
   Polygon4g g →₀ ℤ
 
-/-- Project-side singular one-chains for the polygon comparison, wrapped
+/--
+Project-side singular one-chains for the polygon comparison, wrapped
 around the coefficients of the recorded edge paths.  The wrapper prevents
 the associated-graded comparison from reducing to a reflexive equivalence
-between aliases. -/
+between aliases.
+-/
 structure Polygon4gSingularC1
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_D : Polygon4gCellularSingularComparisonData g C) where
@@ -276,9 +302,11 @@ instance : Module ℤ (Polygon4gSingularC1 g C D) :=
     (n • x).coeff e = n * x.coeff e :=
   rfl
 
-/-- Realize the project-side singular one-chain wrapper as an actual
+/--
+Realize the project-side singular one-chain wrapper as an actual
 Mathlib singular 1-chain by summing the concrete polygon edge chains with
-the recorded coefficients. -/
+the recorded coefficients.
+-/
 noncomputable def toConcreteEdgeChain
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) :
@@ -301,8 +329,10 @@ noncomputable def toConcreteEdgeChain
     exact (Int.cast_smul_eq_zsmul (R := ℤ) n
       (x.coeff e • edgeChainOnGenus g e)).symm
 
-/-- The concrete edge-chain realization of a single project-side edge
-generator is the corresponding singular edge chain. -/
+/--
+The concrete edge-chain realization of a single project-side edge
+generator is the corresponding singular edge chain.
+-/
 theorem toConcreteEdgeChain_single
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) (e : Fin (2 * g)) :
@@ -327,18 +357,22 @@ private lemma next_one_eq_zero_on_genus :
     (ComplexShape.down ℕ).next 1 = 0 :=
   ComplexShape.next_eq' _ (by simp [ComplexShape.down])
 
-/-- The shape relation `(down ℕ).next 1 = 0` used by degree-one
-singular-cycle representatives. -/
+/--
+The shape relation `(down ℕ).next 1 = 0` used by degree-one
+singular-cycle representatives.
+-/
 private lemma next_one_eq_zero :
     (ComplexShape.down ℕ).next 1 = 0 :=
   ComplexShape.next_eq' _ (by simp [ComplexShape.down])
 
-/-- Every singular `H₁` class has a singular one-cycle representative.
+/--
+Every singular `H₁` class has a singular one-cycle representative.
 
 This is only homological algebra plumbing: `homologyπ` is an epimorphism
 from cycles to homology in `ModuleCat`, hence surjective on underlying
 modules, and `iCycles` identifies the chosen cycle object element with
-an actual chain killed by `d₁`. -/
+an actual chain killed by `d₁`.
+-/
 theorem singularH1_exists_cycle_repr
     (X : Type) [TopologicalSpace X]
     (y : singularH1 X) :
@@ -368,9 +402,11 @@ theorem singularH1_exists_cycle_repr
       (K.i_cyclesMk z 0 next_one_eq_zero hz)
   simpa [K, hcycles] using hx
 
-/-- The concrete realization of every project-side singular one-chain is
+/--
+The concrete realization of every project-side singular one-chain is
 a Mathlib singular one-cycle, because it is a finite integral linear
-combination of the concrete edge cycles. -/
+combination of the concrete edge cycles.
+-/
 theorem toConcreteEdgeChain_isCycle
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C)
@@ -389,9 +425,11 @@ theorem toConcreteEdgeChain_isCycle
   rw [map_zsmul, edgeChainOnGenus_isCycle]
   exact zsmul_zero (c.coeff e)
 
-/-- Project-side singular edge chains determine actual Mathlib
+/--
+Project-side singular edge chains determine actual Mathlib
 singular `H₁` by taking their concrete singular-chain realization,
-proving it is a cycle, and applying `homologyπ`. -/
+proving it is a cycle, and applying `homologyπ`.
+-/
 noncomputable def toSingularH1Class
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) :
@@ -402,8 +440,10 @@ noncomputable def toSingularH1Class
         (toConcreteEdgeChain g C D c) 0 next_one_eq_zero_on_genus
         (by simpa [polygonChainComplexOnGenus] using toConcreteEdgeChain_isCycle g C D c))
 
-/-- On a single project-side edge generator, the canonical map to
-Mathlib `H₁` is represented by the corresponding concrete edge chain. -/
+/--
+On a single project-side edge generator, the canonical map to
+Mathlib `H₁` is represented by the corresponding concrete edge chain.
+-/
 theorem toSingularH1_single
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) (e : Fin (2 * g)) :
@@ -414,9 +454,11 @@ theorem toSingularH1_single
           (by simpa [polygonChainComplexOnGenus] using edgeChainOnGenus_isCycle g e)) := by
   simp [toSingularH1Class, toConcreteEdgeChain_single]
 
-/-- Linearized version of `toSingularH1Class`: a project-side singular
+/--
+Linearized version of `toSingularH1Class`: a project-side singular
 one-chain is sent to the finite integral linear combination of the
-actual singular `H₁` classes of its edge generators. -/
+actual singular `H₁` classes of its edge generators.
+-/
 noncomputable def coeffLinearMap
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) :
@@ -429,9 +471,11 @@ noncomputable def coeffLinearMap
     intro n x
     rfl
 
-/-- Linearized version of `toSingularH1Class`: a project-side singular
+/--
+Linearized version of `toSingularH1Class`: a project-side singular
 one-chain is sent to the finite integral linear combination of the
-actual singular `H₁` classes of its edge generators. -/
+actual singular `H₁` classes of its edge generators.
+-/
 noncomputable def toSingularH1LinearMap
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) :
@@ -472,8 +516,10 @@ noncomputable def singularH1ClassOfCycle
     ((singularChainComplexZ X).cyclesMk z 0
       (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz)
 
-/-- Two singular one-cycles represent the same `H₁` class when their
-difference is the boundary of an explicit singular two-chain. -/
+/--
+Two singular one-cycles represent the same `H₁` class when their
+difference is the boundary of an explicit singular two-chain.
+-/
 theorem singularH1ClassOfCycle_eq_of_boundary
     {X : Type} [TopologicalSpace X]
     {z z' : SingularChainCoproduct X 1}
@@ -510,8 +556,10 @@ theorem singularH1ClassOfCycle_eq_of_boundary
   rw [map_sub] at hzero
   exact sub_eq_zero.mp hzero
 
-/-- The homology class of the sum of two singular one-cycles is the sum
-of their homology classes. -/
+/--
+The homology class of the sum of two singular one-cycles is the sum
+of their homology classes.
+-/
 theorem singularH1ClassOfCycle_add
     {X : Type} [TopologicalSpace X]
     (z z' : SingularChainCoproduct X 1)
@@ -547,9 +595,11 @@ noncomputable def polygon4gMkContinuousMap (g : ℕ) :
     C(DiskC, Polygon4g g) :=
   ⟨Polygon4g.mk g, Polygon4g.mk_continuous g⟩
 
-/-- Functoriality of the exposed singular-chain basis element: the
+/--
+Functoriality of the exposed singular-chain basis element: the
 singular chain map induced by a continuous map sends a generator to the
-generator of the composed singular simplex. -/
+generator of the composed singular simplex.
+-/
 theorem singularChainElement_map
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     (f : C(X, Y)) (n : ℕ)
@@ -567,8 +617,10 @@ theorem singularChainElement_map
   have hh := congrArg ModuleCat.Hom.hom h
   exact congrArg (fun F => F (1 : ℤ)) hh
 
-/-- Naturality of `singularH1ClassOfCycle` for the project-level
-`singularH1_inducedLinearMap`, stated at the exposed chain level. -/
+/--
+Naturality of `singularH1ClassOfCycle` for the project-level
+`singularH1_inducedLinearMap`, stated at the exposed chain level.
+-/
 theorem singularH1_inducedLinearMap_classOfCycle
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     (f : C(X, Y))
@@ -667,8 +719,10 @@ theorem singularChainElement_boundary_path
   rw [singularSimplexFace_path_zero X γ, singularSimplexFace_path_one X γ]
   simp [pointChain, pow_zero, pow_one, one_smul, sub_eq_add_neg]
 
-/-- The inverse parametrisation from the unit interval to the standard
-one-simplex. -/
+/--
+The inverse parametrisation from the unit interval to the standard
+one-simplex.
+-/
 noncomputable def unitIntervalToStdSimplex :
     C(unitInterval, stdSimplex ℝ (Fin 2)) :=
   ⟨stdSimplexHomeomorphUnitInterval.symm,
@@ -691,8 +745,10 @@ lemma singularOneSimplex_asPath_comp
   ext s
   simp [unitIntervalToStdSimplex, stdSimplexToUnitInterval]
 
-/-- Boundary of an arbitrary singular one-simplex, expressed by its two
-standard vertices. -/
+/--
+Boundary of an arbitrary singular one-simplex, expressed by its two
+standard vertices.
+-/
 theorem singularChainElement_boundary_one_simplex
     (X : Type) [TopologicalSpace X]
     (σ : C(stdSimplex ℝ (Fin 2), X)) :
@@ -762,10 +818,12 @@ noncomputable def unitIntervalReverse : C(unitInterval, unitInterval) where
   ext
   norm_num [unitIntervalReverse]
 
-/-- The parameter along a partial oriented boundary arc.  The
+/--
+The parameter along a partial oriented boundary arc.  The
 `startParam` and `endParam` fields are closed-interval points, so this
 can represent arbitrary side-interior endpoints, not only full side
-endpoints. -/
+endpoints.
+-/
 noncomputable def boundaryArcOrientedAffineParam
     (orientation : BoundaryArcOrientation)
     (startParam endParam : Set.Icc (0 : ℝ) 1)
@@ -802,10 +860,12 @@ lemma boundaryArcOrientedAffineParam_swap_reverse
   · ring_nf
   · ring_nf
 
-/-- A boundary-arc path in the closed disk, with orientation and a
+/--
+A boundary-arc path in the closed disk, with orientation and a
 concrete boundary parametrisation witness.  The side arc may be only a
 partial boundary side, and `arcIndex` may be either the canonical
-edge-basis side or its paired opposite side. -/
+edge-basis side or its paired opposite side.
+-/
 structure Polygon4gBoundaryArcStep (g : ℕ) where
   source : DiskC
   target : DiskC
@@ -825,10 +885,12 @@ structure Polygon4gBoundaryArcStep (g : ℕ) where
       path t = boundaryParam (g + 1) arcIndex
         (boundaryArcOrientedAffineParam orientation startParam endParam t)
 
-/-- Reverse a boundary-arc step, swapping endpoints and interval
+/--
+Reverse a boundary-arc step, swapping endpoints and interval
 parameters.  The stored edge orientation is left unchanged: the path
 itself is reversed, so the signed singular chain has the negated
-boundary needed by endpoint repair symmetry. -/
+boundary needed by endpoint repair symmetry.
+-/
 noncomputable def Polygon4gBoundaryArcStep.reverse
     {g : ℕ} (step : Polygon4gBoundaryArcStep g) :
     Polygon4gBoundaryArcStep g where
@@ -863,8 +925,10 @@ inductive Polygon4gBoundaryArcListConnects (g : ℕ) :
       (hrest : Polygon4gBoundaryArcListConnects g q r steps) :
       Polygon4gBoundaryArcListConnects g p r (step :: steps)
 
-/-- Concatenating two connected boundary-arc lists gives a connected
-boundary-arc list. -/
+/--
+Concatenating two connected boundary-arc lists gives a connected
+boundary-arc list.
+-/
 theorem Polygon4gBoundaryArcListConnects.append
     {g : ℕ} {p q r : DiskC}
     {steps₁ steps₂ : List (Polygon4gBoundaryArcStep g)}
@@ -877,15 +941,19 @@ theorem Polygon4gBoundaryArcListConnects.append
   | cons hsource htarget hrest ih =>
       exact Polygon4gBoundaryArcListConnects.cons hsource htarget (ih h₂)
 
-/-- Reverse a list of boundary-arc steps in the order needed for a
-path reversal. -/
+/--
+Reverse a list of boundary-arc steps in the order needed for a
+path reversal.
+-/
 noncomputable def polygon4gBoundaryArcStepsReverse
     {g : ℕ} (steps : List (Polygon4gBoundaryArcStep g)) :
     List (Polygon4gBoundaryArcStep g) :=
   steps.reverse.map Polygon4gBoundaryArcStep.reverse
 
-/-- A connected boundary-arc list remains connected after reversing all
-steps and their order. -/
+/--
+A connected boundary-arc list remains connected after reversing all
+steps and their order.
+-/
 theorem Polygon4gBoundaryArcListConnects.reverse
     {g : ℕ} {p q : DiskC} {steps : List (Polygon4gBoundaryArcStep g)}
     (h : Polygon4gBoundaryArcListConnects g p q steps) :
@@ -910,8 +978,10 @@ noncomputable def polygon4gBoundaryArcStepProjectedChain
     ((polygon4gMkContinuousMap (g + 1)).comp
       (step.path.comp stdSimplexToUnitInterval))
 
-/-- The disk-side singular one-chain of a list of boundary-arc steps,
-with the recorded orientations. -/
+/--
+The disk-side singular one-chain of a list of boundary-arc steps,
+with the recorded orientations.
+-/
 noncomputable def polygon4gBoundaryArcStepsDiskChain
     {g : ℕ} (steps : List (Polygon4gBoundaryArcStep g)) :
     SingularChainCoproduct DiskC 1 :=
@@ -927,8 +997,10 @@ theorem polygon4gBoundaryArcStepsDiskChain_append
         polygon4gBoundaryArcStepsDiskChain steps₂ := by
   simp [polygon4gBoundaryArcStepsDiskChain, List.map_append]
 
-/-- The projected singular chain of a list of boundary-arc steps, with
-the recorded orientations. -/
+/--
+The projected singular chain of a list of boundary-arc steps, with
+the recorded orientations.
+-/
 noncomputable def polygon4gBoundaryArcStepsProjectedChain
     (g : ℕ) (steps : List (Polygon4gBoundaryArcStep g)) :
     SingularChainCoproduct (Polygon4g (g + 1)) 1 :=
@@ -943,8 +1015,10 @@ theorem polygon4gBoundaryArcStepsProjectedChain_append
         polygon4gBoundaryArcStepsProjectedChain g steps₂ := by
   simp [polygon4gBoundaryArcStepsProjectedChain, List.map_append]
 
-/-- The disk boundary of a reversed single boundary-arc generator is the
-negative of the original disk boundary. -/
+/--
+The disk boundary of a reversed single boundary-arc generator is the
+negative of the original disk boundary.
+-/
 theorem polygon4gBoundaryArcStep_reverse_disk_boundary
     {g : ℕ} (step : Polygon4gBoundaryArcStep g) :
     (singularChainComplexZ DiskC).d 1 0
@@ -964,8 +1038,10 @@ theorem polygon4gBoundaryArcStep_reverse_disk_boundary
   · rw [hsign]
     simp
 
-/-- The projected boundary of a reversed single boundary-arc generator
-is the negative of the original projected boundary. -/
+/--
+The projected boundary of a reversed single boundary-arc generator
+is the negative of the original projected boundary.
+-/
 theorem polygon4gBoundaryArcStep_reverse_projected_boundary
     (g : ℕ) (step : Polygon4gBoundaryArcStep g) :
     (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
@@ -1061,9 +1137,11 @@ theorem polygon4gBoundaryArcStepsReverse_projected_boundary
       rw [hcons, map_add]
       abel
 
-/-- Remaining one-step local prism leaf: a projected boundary-arc
+/--
+Remaining one-step local prism leaf: a projected boundary-arc
 simplex and its reversed reparametrization bound a singular two-chain.
-The list-level statement below is just finite additivity. -/
+The list-level statement below is just finite additivity.
+-/
 theorem polygon4gBoundaryArcStep_reverse_projected_homotopy
     (g : ℕ) (step : Polygon4gBoundaryArcStep g) :
     ∃ projectedReverseHomotopy :
@@ -1077,8 +1155,10 @@ theorem polygon4gBoundaryArcStep_reverse_projected_homotopy
   -- and its reversed reparametrization.
   sorry
 
-/-- Reversing a finite list of projected boundary-arc chains is
-homologous to negation, by summing the one-step reverse prisms. -/
+/--
+Reversing a finite list of projected boundary-arc chains is
+homologous to negation, by summing the one-step reverse prisms.
+-/
 theorem polygon4gBoundaryArcStepsReverse_projected_homotopy
     (g : ℕ) (steps : List (Polygon4gBoundaryArcStep g)) :
     ∃ projectedReverseHomotopy :
@@ -1114,10 +1194,12 @@ theorem polygon4gBoundaryArcStepsReverse_projected_homotopy
       rw [hcons]
       abel
 
-/-- The list-level chain identities needed to reverse endpoint repair
+/--
+The list-level chain identities needed to reverse endpoint repair
 data.  Boundary reversal is exact, while the comparison between a
 singular one-simplex and its reversed reparametrization is supplied by
-the standard prism homotopy. -/
+the standard prism homotopy.
+-/
 theorem polygon4gBoundaryArcStepsReverse_repair_identities
     (g : ℕ) (steps : List (Polygon4gBoundaryArcStep g)) :
     (singularChainComplexZ DiskC).d 1 0
@@ -1142,11 +1224,7 @@ theorem polygon4gBoundaryArcStepsReverse_repair_identities
     polygon4gBoundaryArcStepsReverse_projected_homotopy g steps⟩
 
 
-/-- Valid endpoint data for an ordered subdivision of a singular
-one-simplex.  The fields record the endpoint and adjacency conditions
-needed for the boundary terms of the subdivided one-chain to telescope.
-The actual affine/prism construction is discharged by
-`singular_one_simplex_subdivision_homologous`. -/
+
 structure SingularOneSimplexSubdivisionData
     (n : ℕ)
     (subSimplex : Fin n → C(stdSimplex ℝ (Fin 2), stdSimplex ℝ (Fin 2))) where
@@ -1162,11 +1240,13 @@ structure SingularOneSimplexSubdivisionData
       subSimplex i (stdSimplexVertex 1) =
         subSimplex j (stdSimplexVertex 0)
 
-/-- Finite local lifting data for a singular one-simplex in the polygon
+/--
+Finite local lifting data for a singular one-simplex in the polygon
 quotient.  This records an actual finite subdivision by sub-simplices:
 each piece has a disk lift, adjacent lifted endpoints are related by
 `SideRel`, and the subdivided projected chain is homologous to the
-original simplex chain. -/
+original simplex chain.
+-/
 structure Polygon4gSingularSimplexDiskLiftData
     (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) where
   n : ℕ
@@ -1192,12 +1272,14 @@ structure Polygon4gSingularSimplexDiskLiftData
     (singularChainComplexZ (Polygon4g (g + 1))).d 2 1 subdivisionBoundary =
       subdividedChain - singularChainElement σ
 
-/-- Finite local-lift data for a polygon quotient path, before the
+/--
+Finite local-lift data for a polygon quotient path, before the
 pure singular-chain subdivision homology is attached.  This is the
 topological part of `polygon4g_singularSimplex_subdivision_lifts_to_disk`:
 subdivide the interval into finitely many pieces admitting disk lifts,
 and record that adjacent lifted endpoints differ by the polygon side
-relation. -/
+relation.
+-/
 structure Polygon4gQuotientPathFiniteLiftSubdivision
     (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) where
   n : ℕ
@@ -1214,9 +1296,11 @@ structure Polygon4gQuotientPathFiniteLiftSubdivision
         (lift i (stdSimplexVertex 1))
         (lift j (stdSimplexVertex 0))
 
-/-- Local topology leaf: every polygon quotient singular one-simplex has
+/--
+Local topology leaf: every polygon quotient singular one-simplex has
 a finite subdivision by pieces that lift to the closed disk, with
-adjacent lifted endpoints related by `SideRel`. -/
+adjacent lifted endpoints related by `SideRel`.
+-/
 theorem polygon4g_quotient_path_finite_lift_subdivision
     (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) :
     Nonempty (Polygon4gQuotientPathFiniteLiftSubdivision g σ) := by
@@ -1224,10 +1308,12 @@ theorem polygon4g_quotient_path_finite_lift_subdivision
   -- admitting local disk lifts.
   sorry
 
-/-- Singular-chain subdivision prism leaf for one-simplices in canonical
+/--
+Singular-chain subdivision prism leaf for one-simplices in canonical
 restricted-piece form.  The finite family of maps is exactly
 `σ ∘ subSimplex i`; the wrapper below handles propositionally equal
-families. -/
+families.
+-/
 theorem singular_one_simplex_subdivision_prism_homologous
     (X : Type) [TopologicalSpace X]
     (σ : C(stdSimplex ℝ (Fin 2), X))
@@ -1243,9 +1329,11 @@ theorem singular_one_simplex_subdivision_prism_homologous
   -- subdivision of one simplex.
   sorry
 
-/-- Singular-chain subdivision algebra for one-simplices.  Given the
+/--
+Singular-chain subdivision algebra for one-simplices.  Given the
 projected pieces of a finite subdivision, their sum is homologous to
-the original singular simplex by an explicit singular two-chain. -/
+the original singular simplex by an explicit singular two-chain.
+-/
 theorem singular_one_simplex_subdivision_homologous
     (X : Type) [TopologicalSpace X]
     (σ : C(stdSimplex ℝ (Fin 2), X))
@@ -1270,9 +1358,11 @@ theorem singular_one_simplex_subdivision_homologous
   ext s
   exact (_hτ i s).symm
 
-/-- A singular one-simplex in the quotient polygon admits a finite disk
+/--
+A singular one-simplex in the quotient polygon admits a finite disk
 lifting package.  This is the subdivision/lifting leaf of the polygon
-spanning proof. -/
+spanning proof.
+-/
 theorem polygon4g_singularSimplex_subdivision_lifts_to_disk
     (g : ℕ) (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) :
     Nonempty (Polygon4gSingularSimplexDiskLiftData g σ) := by
@@ -1307,11 +1397,13 @@ theorem polygon4g_singularSimplex_subdivision_lifts_to_disk
   }⟩
   simpa [projectedPiece] using hsubdivision
 
-/-- Endpoint repair data for two disk points identified in the polygon
+/--
+Endpoint repair data for two disk points identified in the polygon
 quotient by `SideRel`.  The repair is a disk-side chain built from
 partial boundary-side arcs.  Its projection is required to be homologous
 to an edge-chain combination by an explicit singular 2-boundary, not
-definitionally equal to full edge chains. -/
+definitionally equal to full edge chains.
+-/
 structure Polygon4gEndpointRepairData
     (g : ℕ) (p q : DiskC)
     (_hrel : Polygon4g.SideRel (g + 1) p q) where
@@ -1341,8 +1433,10 @@ structure Polygon4gEndpointRepairData
       projectedRepairChain -
         ∑ e : Fin (2 * (g + 1)), coeff e • edgeChain g e
 
-/-- The projected chain of one boundary-arc step is the singular-chain
-pushforward of its disk chain along the polygon quotient map. -/
+/--
+The projected chain of one boundary-arc step is the singular-chain
+pushforward of its disk chain along the polygon quotient map.
+-/
 theorem polygon4gBoundaryArcStep_projected_eq_chainMap
     (g : ℕ) (step : Polygon4gBoundaryArcStep g) :
     ModuleCat.Hom.hom
@@ -1354,8 +1448,10 @@ theorem polygon4gBoundaryArcStep_projected_eq_chainMap
   exact singularChainElement_map (polygon4gMkContinuousMap (g + 1)) 1
     (step.path.comp stdSimplexToUnitInterval)
 
-/-- The projected chain of a list of boundary-arc steps is the
-singular-chain pushforward of the corresponding disk-side step chain. -/
+/--
+The projected chain of a list of boundary-arc steps is the
+singular-chain pushforward of the corresponding disk-side step chain.
+-/
 theorem polygon4gBoundaryArcSteps_projected_eq_chainMap
     (g : ℕ) (steps : List (Polygon4gBoundaryArcStep g)) :
     ModuleCat.Hom.hom
@@ -1373,8 +1469,10 @@ theorem polygon4gBoundaryArcSteps_projected_eq_chainMap
       simp [polygon4gBoundaryArcStepsProjectedChain, ih,
         polygon4gBoundaryArcStep_projected_eq_chainMap]
 
-/-- The projected repair chain stored in endpoint-repair data is the
-singular-chain pushforward of the disk repair chain. -/
+/--
+The projected repair chain stored in endpoint-repair data is the
+singular-chain pushforward of the disk repair chain.
+-/
 theorem polygon4gEndpointRepair_projected_eq_chainMap
     (g : ℕ) (p q : DiskC)
     (hrel : Polygon4g.SideRel (g + 1) p q)
@@ -1388,8 +1486,10 @@ theorem polygon4gEndpointRepair_projected_eq_chainMap
   rw [repair.diskRepairChain_eq, repair.projectedRepairChain_eq]
   exact polygon4gBoundaryArcSteps_projected_eq_chainMap g repair.steps
 
-/-- Reflexive endpoint repair: no boundary arcs, no edge coefficients,
-and no two-chain are needed. -/
+/--
+Reflexive endpoint repair: no boundary arcs, no edge coefficients,
+and no two-chain are needed.
+-/
 theorem polygon4g_endpoint_pair_repaired_refl
     (g : ℕ) (p : DiskC) :
     Nonempty (Polygon4gEndpointRepairData g p p (Relation.EqvGen.refl p)) := by
@@ -1449,11 +1549,13 @@ lemma edgeArcIdx_bPair_edgeIndex (g : ℕ) (i : Fin (g + 1)) :
     rw [Nat.add_mul_mod_self_left]
   rw [hdiv, hmod]
 
-/-- Local primitive side-strip repair.  This is the single geometric
+/--
+Local primitive side-strip repair.  This is the single geometric
 leaf behind the `aᵢ` and `bᵢ` generator repairs: for one canonical
 edge basis arc and its opposite paired side, build the finite boundary
 arc repair and the side-strip two-chain relating its projection to the
-edge generator. -/
+edge generator.
+-/
 theorem polygon4g_partial_side_arc_homologous_to_edge_chain
     (g : ℕ) (e : Fin (2 * (g + 1))) (sideArc : ℕ) (t : ℝ)
     (ht : t ∈ Set.Icc (0 : ℝ) 1)
@@ -1512,8 +1614,10 @@ theorem polygon4g_endpoint_pair_repaired_by_bPair
         (boundaryParam (g + 1) (4 * i.val + 3) (1 - t))
         (Polygon4g.SideGen.b_pair i t ht))
 
-/-- Primitive endpoint repair for one side-pairing generator, assembled
-from the two explicit `aᵢ` and `bᵢ` generator cases. -/
+/--
+Primitive endpoint repair for one side-pairing generator, assembled
+from the two explicit `aᵢ` and `bᵢ` generator cases.
+-/
 theorem polygon4g_endpoint_pair_repaired_by_sideGen
     (g : ℕ) (p q : DiskC)
     (hgen : Polygon4g.SideGen (g + 1) p q) :
@@ -1525,10 +1629,12 @@ theorem polygon4g_endpoint_pair_repaired_by_sideGen
   | b_pair i t ht =>
       exact polygon4g_endpoint_pair_repaired_by_bPair g i t ht
 
-/-- Reversal of endpoint repair data.  The reversed boundary-arc list is
+/--
+Reversal of endpoint repair data.  The reversed boundary-arc list is
 constructed above, but ordinary singular chains also need the prism
 homotopy comparing a simplex with its reversed reparametrization; that
-local chain-homotopy computation is kept as the remaining symmetry leaf. -/
+local chain-homotopy computation is kept as the remaining symmetry leaf.
+-/
 theorem polygon4g_endpoint_pair_repaired_symm
     (g : ℕ) (p q : DiskC)
     (hrel : Polygon4g.SideRel (g + 1) p q)
@@ -1593,8 +1699,10 @@ theorem polygon4g_endpoint_pair_repaired_symm
       repair.projectedRepairChain from repair.projectedRepairChain_eq.symm]
     abel
 
-/-- Algebraic concatenation of endpoint repair data.  This should append
-the step lists, add coefficients, and add the stored two-chains. -/
+/--
+Algebraic concatenation of endpoint repair data.  This should append
+the step lists, add coefficients, and add the stored two-chains.
+-/
 theorem polygon4g_endpoint_pair_repaired_trans
     (g : ℕ) (p q r : DiskC)
     (hpq : Polygon4g.SideRel (g + 1) p q)
@@ -1640,9 +1748,11 @@ theorem polygon4g_endpoint_pair_repaired_trans
     rw [hsum]
     abel
 
-/-- If two lifted endpoints project to the same polygon point, their
+/--
+If two lifted endpoints project to the same polygon point, their
 endpoint difference is repaired by a finite integral sum of polygon
-edge arcs. -/
+edge arcs.
+-/
 theorem polygon4g_endpoint_pair_repaired_by_edge_arcs
     (g : ℕ) (p q : DiskC)
     (hrel : Polygon4g.SideRel (g + 1) p q) :
@@ -1660,9 +1770,11 @@ theorem polygon4g_endpoint_pair_repaired_by_edge_arcs
       obtain ⟨repair₂⟩ := ih₂
       exact polygon4g_endpoint_pair_repaired_trans g _ _ _ _ _ repair₁ repair₂
 
-/-- Disk contractibility package, in the homology-level form needed by
+/--
+Disk contractibility package, in the homology-level form needed by
 the polygon projection step: every singular one-cycle in `DiskC` has
-zero `H₁` class. -/
+zero `H₁` class.
+-/
 theorem diskC_singular_one_cycle_homologyClass_eq_zero
     (z : SingularChainCoproduct DiskC 1)
     (hz : (singularChainComplexZ DiskC).d 1 0 z = 0) :
@@ -1671,8 +1783,10 @@ theorem diskC_singular_one_cycle_homologyClass_eq_zero
     singularH1_subsingleton_of_contractibleSpace
   exact Subsingleton.elim _ _
 
-/-- The homology class of the i-th edge cycle in
-`singularH1 (Polygon4g (g+1))`. -/
+/--
+The homology class of the i-th edge cycle in
+`singularH1 (Polygon4g (g+1))`.
+-/
 noncomputable def edgeHomologyClass (g : ℕ) (i : Fin (2 * (g + 1))) :
     singularH1 (Polygon4g (g + 1)) :=
   ((forget₂ (ModuleCat ℤ) Ab).map
@@ -1689,8 +1803,10 @@ noncomputable def edgeHomologyFamily (g : ℕ) :
     Fin (2 * (g + 1)) → singularH1 (Polygon4g (g + 1)) :=
   edgeHomologyClass g
 
-/-- The linear map sending each free edge generator to its concrete
-singular homology class. -/
+/--
+The linear map sending each free edge generator to its concrete
+singular homology class.
+-/
 noncomputable def edgeBasisMap (g : ℕ) :
     Polygon4gAbelianization g →ₗ[ℤ] singularH1 (Polygon4g (g + 1)) :=
   ∑ i : Fin (2 * (g + 1)),
@@ -1704,8 +1820,10 @@ theorem edgeBasisMap_apply (g : ℕ) (v : Polygon4gAbelianization g) :
         LinearMap.toSpanSingleton ℤ _ (edgeHomologyClass g i) (v i) := by
   simp [edgeBasisMap, LinearMap.proj]
 
-/-- The homology class of a finite integral edge-chain combination is
-exactly the edge-basis map applied to its coefficient vector. -/
+/--
+The homology class of a finite integral edge-chain combination is
+exactly the edge-basis map applied to its coefficient vector.
+-/
 theorem edgeBasisMap_eq_homologyClass_edgeChain_sum
     (g : ℕ) (v : Polygon4gAbelianization g)
     (hsum :
@@ -1764,8 +1882,10 @@ theorem edgeBasisMap_eq_homologyClass_edgeChain_sum
   intro i _hi
   exact (Int.cast_smul_eq_zsmul (R := ℤ) (v i) (edgeHomologyClass g i)).symm
 
-/-- A finite integral combination of polygon edge chains is a singular
-one-cycle. -/
+/--
+A finite integral combination of polygon edge chains is a singular
+one-cycle.
+-/
 theorem edgeChain_sum_isCycle
     (g : ℕ) (v : Polygon4gAbelianization g) :
     (singularChainComplexZ (Polygon4g (g + 1))).d 1 0
@@ -1775,10 +1895,12 @@ theorem edgeChain_sum_isCycle
   rw [map_zsmul, edgeChain_isCycle g e]
   exact zsmul_zero (v e)
 
-/-- Repaired disk-cycle data for a polygon singular cycle.  The disk
+/--
+Repaired disk-cycle data for a polygon singular cycle.  The disk
 cycle records the lifted-and-repaired cycle in `DiskC`; the projection
 relation says that the original polygon class is the projected disk
-class plus the concrete edge correction. -/
+class plus the concrete edge correction.
+-/
 structure Polygon4gRepairedDiskCycleData
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0) where
@@ -1791,8 +1913,10 @@ structure Polygon4gRepairedDiskCycleData
         (singularH1ClassOfCycle DiskC diskCycle diskCycle_isCycle) +
         edgeBasisMap g edgeCoeffs
 
-/-- A finite-support presentation of a singular one-chain as an
-integral sum of singular one-simplices. -/
+/--
+A finite-support presentation of a singular one-chain as an
+integral sum of singular one-simplices.
+-/
 structure SingularOneChainSupportDecomposition
     (X : Type) [TopologicalSpace X]
     (z : SingularChainCoproduct X 1) where
@@ -1803,8 +1927,10 @@ structure SingularOneChainSupportDecomposition
   chain_eq :
     z = ∑ s : Simplex, coeff s • singularChainElement (simplex s)
 
-/-- Atomic finite-support algebra leaf: every coproduct singular
-one-chain has a finite presentation by basis singular simplices. -/
+/--
+Atomic finite-support algebra leaf: every coproduct singular
+one-chain has a finite presentation by basis singular simplices.
+-/
 theorem singularChainCoproduct_sum_support_decomposition
     (X : Type) [TopologicalSpace X]
     (z : SingularChainCoproduct X 1) :
@@ -1880,10 +2006,12 @@ theorem singularChainCoproduct_sum_support_decomposition
   · intro i _hi
     simp
 
-/-- Lift data summed over a finite-support presentation of a polygon
+/--
+Lift data summed over a finite-support presentation of a polygon
 singular one-chain.  This is still before endpoint repair: it only says
 each support simplex has a subdivision/lift package and records the
-summed lifted disk chain and projected subdivided chain. -/
+summed lifted disk chain and projected subdivided chain.
+-/
 structure Polygon4gLiftedSupportData
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z) where
@@ -1907,9 +2035,11 @@ structure Polygon4gLiftedSupportData
     (singularChainComplexZ (Polygon4g (g + 1))).d 2 1 subdivisionBoundary =
       projectedSubdivisionChain - z
 
-/-- Atomic lift-summation leaf: apply simplex subdivision/lift data over
+/--
+Atomic lift-summation leaf: apply simplex subdivision/lift data over
 the finite support of a singular chain and sum the resulting chain
-relations. -/
+relations.
+-/
 theorem polygon4g_lift_data_sum_projects_to_subdivision_chain
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z) :
@@ -1974,8 +2104,10 @@ theorem polygon4g_lift_data_sum_projects_to_subdivision_chain
                 decomp.coeff s • (simplexLift s).subdividedChain) - t)
             decomp.chain_eq.symm
 
-/-- The projected subdivision chain is exactly the degree-one singular
-chain pushforward of the summed lifted disk chain. -/
+/--
+The projected subdivision chain is exactly the degree-one singular
+chain pushforward of the summed lifted disk chain.
+-/
 theorem polygon4g_projectedSubdivisionChain_eq_chainMap_liftedDiskChain
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
@@ -2000,9 +2132,11 @@ theorem polygon4g_projectedSubdivisionChain_eq_chainMap_liftedDiskChain
   exact singularChainElement_map (polygon4gMkContinuousMap (g + 1)) 1
     ((lifted.simplexLift s).lift i)
 
-/-- Endpoint pairs extracted from the boundary of the summed lifted
+/--
+Endpoint pairs extracted from the boundary of the summed lifted
 chain.  Each pair is a specific `SideRel` pair and carries the endpoint
-repair data for that relation. -/
+repair data for that relation.
+-/
 structure Polygon4gCycleEndpointPairFamily
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2026,8 +2160,10 @@ structure Polygon4gCycleEndpointPairFamily
           pointChain DiskC (rightEndpoint pair) -
             pointChain DiskC (leftEndpoint pair))
 
-/-- Endpoint relation pairs extracted from the boundary of the summed
-lifted chain, before endpoint repairs are attached. -/
+/--
+Endpoint relation pairs extracted from the boundary of the summed
+lifted chain, before endpoint repairs are attached.
+-/
 structure Polygon4gCycleEndpointRelPairFamily
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2047,9 +2183,11 @@ structure Polygon4gCycleEndpointRelPairFamily
           pointChain DiskC (rightEndpoint pair) -
             pointChain DiskC (leftEndpoint pair))
 
-/-- The projected boundary of the lifted disk chain vanishes in the
+/--
+The projected boundary of the lifted disk chain vanishes in the
 polygon quotient.  This is the chain-map/naturality part of endpoint
-pair extraction, before finite endpoint pairing is applied. -/
+pair extraction, before finite endpoint pairing is applied.
+-/
 structure Polygon4gLiftedBoundaryProjectsToZero
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2062,8 +2200,10 @@ structure Polygon4gLiftedBoundaryProjectsToZero
           (TopCat.ofHom (polygon4gMkContinuousMap (g + 1)))).f 0)
         ((singularChainComplexZ DiskC).d 1 0 lifted.liftedDiskChain) = 0
 
-/-- The boundary of the summed lifted disk chain expanded into the
-finite list of endpoints of the lifted subdivided one-simplices. -/
+/--
+The boundary of the summed lifted disk chain expanded into the
+finite list of endpoints of the lifted subdivided one-simplices.
+-/
 structure Polygon4gLiftedEndpointBoundaryExpansion
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
@@ -2078,8 +2218,10 @@ structure Polygon4gLiftedEndpointBoundaryExpansion
               pointChain DiskC
                 ((lifted.simplexLift s).lift i (stdSimplexVertex 0)))))
 
-/-- The quotient image of the expanded lifted endpoint boundary is zero.
-This is still before the finite matching/permutation argument. -/
+/--
+The quotient image of the expanded lifted endpoint boundary is zero.
+This is still before the finite matching/permutation argument.
+-/
 structure Polygon4gProjectedEndpointBoundaryCancellation
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2100,11 +2242,13 @@ structure Polygon4gProjectedEndpointBoundaryCancellation
                   (Polygon4g.mk (g + 1)
                     ((lifted.simplexLift s).lift i (stdSimplexVertex 0))))))) = 0
 
-/-- Pure finite-support endpoint pairing output.  This strips the
+/--
+Pure finite-support endpoint pairing output.  This strips the
 cycle-level names away from endpoint matching: a finite signed endpoint
 sum in the disk whose projection vanishes is represented as endpoint
 differences between disk points with equal quotient images, equivalently
-`SideRel`-related endpoints. -/
+`SideRel`-related endpoints.
+-/
 structure FiniteProjectedEndpointPairFamily
     (g : ℕ) (S : Type) [Fintype S]
     (I : S → Type) [∀ s, Fintype (I s)]
@@ -2125,10 +2269,12 @@ structure FiniteProjectedEndpointPairFamily
           pointChain DiskC (rightEndpoint' pair) -
             pointChain DiskC (leftEndpoint' pair))
 
-/-- Finite-support quotient bookkeeping provider.  This is the exact
+/--
+Finite-support quotient bookkeeping provider.  This is the exact
 remaining algebraic leaf below cycle-level endpoint extraction: from a
 finite signed endpoint expansion and vanishing of its quotient image,
-construct a finite family of matched endpoint differences. -/
+construct a finite family of matched endpoint differences.
+-/
 theorem finite_projected_endpoint_sum_zero_pairing
     (g : ℕ) (S : Type) [Fintype S]
     (I : S → Type) [∀ s, Fintype (I s)]
@@ -2163,9 +2309,11 @@ theorem finite_projected_endpoint_sum_zero_pairing
   -- of quotient points to `Polygon4g.SideRel` via `Polygon4g.mk_eq_mk_iff`.
   sorry
 
-/-- Chain-boundary expansion part of endpoint extraction: no quotient
+/--
+Chain-boundary expansion part of endpoint extraction: no quotient
 pairing is involved here, only finite-sum algebra and the boundary
-formula for singular one-simplices. -/
+formula for singular one-simplices.
+-/
 theorem polygon4g_lifted_endpoint_boundary_expansion
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (decomp : SingularOneChainSupportDecomposition (Polygon4g (g + 1)) z)
@@ -2183,8 +2331,10 @@ theorem polygon4g_lifted_endpoint_boundary_expansion
   exact singularChainElement_boundary_one_simplex DiskC
     ((lifted.simplexLift s).lift i)
 
-/-- Project the expanded lifted endpoint boundary to the polygon
-quotient and use the chain-map zero result. -/
+/--
+Project the expanded lifted endpoint boundary to the polygon
+quotient and use the chain-map zero result.
+-/
 theorem polygon4g_projected_endpoint_boundary_cancellation
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2226,9 +2376,11 @@ theorem polygon4g_projected_endpoint_boundary_cancellation
   simp [F, pointChain_map] at hmap'
   exact ⟨hmap'.symm⟩
 
-/-- Chain-map part of endpoint extraction: use the projected cycle
+/--
+Chain-map part of endpoint extraction: use the projected cycle
 condition and subdivision homology to show the projected lifted boundary
-is zero. -/
+is zero.
+-/
 theorem polygon4g_lifted_boundary_projects_to_zero
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2273,9 +2425,11 @@ theorem polygon4g_lifted_boundary_projects_to_zero
   refine ⟨{ projected_lifted_boundary_zero := ?_ }⟩
   rw [hcomm, hproj, hboundary_projected]
 
-/-- Finite endpoint-pairing leaf: once the projected boundary of a
+/--
+Finite endpoint-pairing leaf: once the projected boundary of a
 finite disk endpoint chain is zero, pair the disk endpoints whose
-projections agree, and convert those equal projections to `SideRel`. -/
+projections agree, and convert those equal projections to `SideRel`.
+-/
 theorem finite_projected_endpoint_boundary_zero_pairs
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2315,9 +2469,11 @@ theorem finite_projected_endpoint_boundary_zero_pairs
     lifted_boundary_eq_pairs := pairs.boundary_eq_pairs
   }⟩
 
-/-- Atomic endpoint-pair extraction leaf: the polygon cycle condition
+/--
+Atomic endpoint-pair extraction leaf: the polygon cycle condition
 forces the boundary of the lifted disk chain to be a finite sum of
-`SideRel` endpoint pairs.  Endpoint repairs are attached separately. -/
+`SideRel` endpoint pairs.  Endpoint repairs are attached separately.
+-/
 theorem polygon4g_cycle_endpoint_rel_pairs_from_boundary_zero
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2363,10 +2519,12 @@ theorem polygon4g_cycle_endpoint_pairs_from_boundary_zero
     lifted_boundary_eq_pairs := pairs.lifted_boundary_eq_pairs
   }⟩
 
-/-- The chain-algebra output of summing a finite family of endpoint
+/--
+The chain-algebra output of summing a finite family of endpoint
 repairs.  This is separated from the final homology statement so the
 remaining obstruction, if any, is only the passage from explicit
-chain-boundary relations to equality in `H₁`. -/
+chain-boundary relations to equality in `H₁`.
+-/
 structure Polygon4gRepairSumAlgebraData
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2400,9 +2558,11 @@ structure Polygon4gRepairSumAlgebraData
       projectedRepairSum -
         ∑ e : Fin (2 * (g + 1)), edgeCoeffs e • edgeChain g e
 
-/-- The finite-sum repair algebra: endpoint repairs can be summed into a
+/--
+The finite-sum repair algebra: endpoint repairs can be summed into a
 repaired disk cycle and a projected repair chain homologous to the
-corresponding edge-chain combination. -/
+corresponding edge-chain combination.
+-/
 noncomputable def polygon4g_repair_pairs_sum_algebra_data
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2504,8 +2664,10 @@ noncomputable def polygon4g_repair_pairs_sum_algebra_data
             exact (Finset.sum_apply e (Finset.univ : Finset pairs.Pair)
               (fun x => (pairs.repair x).coeff)).symm
 
-/-- The quotient-map pushforward of the repaired disk cycle is the
-projected lifted subdivision chain minus the projected repair chain. -/
+/--
+The quotient-map pushforward of the repaired disk cycle is the
+projected lifted subdivision chain minus the projected repair chain.
+-/
 theorem polygon4g_repair_sum_diskCycle_chainMap_eq
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2523,11 +2685,13 @@ theorem polygon4g_repair_sum_diskCycle_chainMap_eq
     polygon4g_projectedSubdivisionChain_eq_chainMap_liftedDiskChain g z decomp lifted,
     algebra.projectedRepairSum_eq_chainMap_diskRepairSum]
 
-/-- Narrow remaining projection/naturality bridge for the repair-sum
+/--
+Narrow remaining projection/naturality bridge for the repair-sum
 package.  It no longer mentions the edge-basis map: it only says that
 the quotient-map image of the repaired disk cycle, together with the
 explicit repaired edge-chain cycle, represents the original polygon
-cycle. -/
+cycle.
+-/
 theorem polygon4g_repair_sum_projected_diskCycle_relation
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2595,9 +2759,11 @@ theorem polygon4g_repair_sum_projected_diskCycle_relation
     _ = z - (pushedDiskCycle + edgeCycle) := by
           rw [← hpushedEq]
 
-/-- Remaining homological-algebra bridge for the repair-sum package:
+/--
+Remaining homological-algebra bridge for the repair-sum package:
 the explicit chain-boundary relations in `Polygon4gRepairSumAlgebraData`
-give the desired equality in singular `H₁`. -/
+give the desired equality in singular `H₁`.
+-/
 theorem polygon4g_repair_sum_projected_relation_from_algebra_data
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2614,9 +2780,11 @@ theorem polygon4g_repair_sum_projected_relation_from_algebra_data
   exact polygon4g_repair_sum_projected_diskCycle_relation
     g z hz decomp lifted pairs algebra
 
-/-- Atomic repair-summation leaf: sum the endpoint repairs and edge
+/--
+Atomic repair-summation leaf: sum the endpoint repairs and edge
 coefficients for a finite endpoint-pair family, producing the repaired
-disk-cycle relation used by the final projection step. -/
+disk-cycle relation used by the final projection step.
+-/
 theorem polygon4g_repair_pairs_sum_edge_coefficients
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2634,9 +2802,11 @@ theorem polygon4g_repair_pairs_sum_edge_coefficients
         g z hz decomp lifted pairs algebra
   }⟩
 
-/-- Cycle-level lift and endpoint-repair package.  This is where the
+/--
+Cycle-level lift and endpoint-repair package.  This is where the
 simplex subdivision/lift data and endpoint repair data are assembled
-over the finite support of the singular chain. -/
+over the finite support of the singular chain.
+-/
 theorem polygon4g_cycle_lift_repair_data
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0) :
@@ -2650,9 +2820,11 @@ theorem polygon4g_cycle_lift_repair_data
     polygon4g_cycle_endpoint_pairs_from_boundary_zero g z hz decomp lifted
   exact polygon4g_repair_pairs_sum_edge_coefficients g z hz decomp lifted pairs
 
-/-- Projecting the repaired disk-chain relation to the quotient polygon
+/--
+Projecting the repaired disk-chain relation to the quotient polygon
 and killing the disk-cycle class by contractibility identifies the
-original polygon cycle class with an edge-basis combination. -/
+original polygon cycle class with an edge-basis combination.
+-/
 theorem polygon4g_project_repaired_disk_cycle_to_edgeBasis
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0)
@@ -2664,12 +2836,14 @@ theorem polygon4g_project_repaired_disk_cycle_to_edgeBasis
     diskC_singular_one_cycle_homologyClass_eq_zero data.diskCycle data.diskCycle_isCycle]
   simp
 
-/-- Polygon cellular approximation in degree one: every singular
+/--
+Polygon cellular approximation in degree one: every singular
 one-cycle on `Polygon4g (g+1)` is homologous to a concrete integral
 combination of the polygon edge loops.
 
 This is now an assembly from the lift/repair package and the projection
-package. -/
+package.
+-/
 theorem polygon4g_cycle_homologous_to_edge_chain
     (g : ℕ) (z : SingularChainCoproduct (Polygon4g (g + 1)) 1)
     (hz : (singularChainComplexZ (Polygon4g (g + 1))).d 1 0 z = 0) :
@@ -2693,8 +2867,10 @@ theorem edgeBasisMap_surjective (g : ℕ) :
   rw [← hy]
   exact hv.symm
 
-/-- Edge-loop classes are independent in Mathlib singular `H₁` of the
-polygon quotient. -/
+/--
+Edge-loop classes are independent in Mathlib singular `H₁` of the
+polygon quotient.
+-/
 theorem edgeBasisMap_injective (g : ℕ) :
     Function.Injective (edgeBasisMap g) := by
   -- Missing topology: construct edge-coefficient functionals on singular
@@ -2702,8 +2878,10 @@ theorem edgeBasisMap_injective (g : ℕ) :
   -- pairing with the edge classes.
   sorry
 
-/-- In positive genus, the project-side singular-C1 map is exactly the
-edge-basis map applied to the coefficient vector. -/
+/--
+In positive genus, the project-side singular-C1 map is exactly the
+edge-basis map applied to the coefficient vector.
+-/
 theorem polygon4gSingularC1_toSingularH1LinearMap_apply_succ
     (g : ℕ) (C : Polygon4gCellularModel (g + 1))
     (D : Polygon4gCellularSingularComparisonData (g + 1) C)
@@ -2725,9 +2903,11 @@ theorem polygon4gSingularC1_toSingularH1LinearMap_apply_succ
     rw [Polygon4gSingularC1.toSingularH1_single]
     rfl]
 
-/-- Positive-genus bridge from project-side singular edge chains to
+/--
+Positive-genus bridge from project-side singular edge chains to
 Mathlib singular `H₁`, assembled from the edge-basis spanning and
-independence leaves. -/
+independence leaves.
+-/
 theorem polygon4gSingularC1_toSingularH1LinearMap_bijective_succ
     (g : ℕ) (C : Polygon4gCellularModel (g + 1))
     (D : Polygon4gCellularSingularComparisonData (g + 1) C) :
@@ -2747,8 +2927,10 @@ theorem polygon4gSingularC1_toSingularH1LinearMap_bijective_succ
     rw [polygon4gSingularC1_toSingularH1LinearMap_apply_succ g C D]
     exact hv
 
-/-- Genus-zero bridge.  The domain has no edge coefficients, and
-`Polygon4g 0` is contractible, so both sides are subsingletons. -/
+/--
+Genus-zero bridge.  The domain has no edge coefficients, and
+`Polygon4g 0` is contractible, so both sides are subsingletons.
+-/
 theorem polygon4gSingularC1_toSingularH1LinearMap_bijective_zero
     (C : Polygon4gCellularModel 0)
     (D : Polygon4gCellularSingularComparisonData 0 C) :
@@ -2766,9 +2948,7 @@ theorem polygon4gSingularC1_toSingularH1LinearMap_bijective_zero
     refine ⟨⟨0⟩, ?_⟩
     exact Subsingleton.elim _ _
 
-/-- The concrete project-side singular edge-chain model is bijective onto
-Mathlib singular `H₁`, with the positive-genus case reduced to the two
-edge-basis frontier leaves. -/
+
 theorem polygon4gSingularC1_toSingularH1LinearMap_bijective
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) :
@@ -2791,22 +2971,28 @@ theorem polygon4gSingularC1_toSingularH1LinearMap_surjective
     Function.Surjective (Polygon4gSingularC1.toSingularH1LinearMap g C D) :=
   (polygon4gSingularC1_toSingularH1LinearMap_bijective g C D).surjective
 
-/-- Project-side singular two-chains for the comparison: free rank one
-on the characteristic disk. -/
+/--
+Project-side singular two-chains for the comparison: free rank one
+on the characteristic disk.
+-/
 abbrev Polygon4gSingularC2
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_D : Polygon4gCellularSingularComparisonData g C) : Type :=
   Unit → ℤ
 
-/-- Boundary of a path-chain: target minus source as a singular
-zero-chain. -/
+/--
+Boundary of a path-chain: target minus source as a singular
+zero-chain.
+-/
 noncomputable def polygon4gPathBoundary
     {g : ℕ} {C : Polygon4gCellularModel g} (γ : Path C.vertex C.vertex) :
     Polygon4gSingularC0 g :=
   Finsupp.single (γ 1) (1 : ℤ) - Finsupp.single (γ 0) (1 : ℤ)
 
-/-- A based loop has zero path boundary when both endpoints are the
-model vertex. -/
+/--
+A based loop has zero path boundary when both endpoints are the
+model vertex.
+-/
 theorem polygon4gPathBoundary_eq_zero_of_endpoints
     {g : ℕ} {C : Polygon4gCellularModel g} (γ : Path C.vertex C.vertex)
     (h0 : γ 0 = C.vertex) (h1 : γ 1 = C.vertex) :
@@ -2818,18 +3004,22 @@ noncomputable def polygon4gSingularVertexChain
     {g : ℕ} (C : Polygon4gCellularModel g) : Polygon4gSingularC0 g :=
   Finsupp.single C.vertex (1 : ℤ)
 
-/-- The singular one-chain associated to the cellular boundary word:
-the abelianised word coefficients on the recorded edge-path generators. -/
+/--
+The singular one-chain associated to the cellular boundary word:
+the abelianised word coefficients on the recorded edge-path generators.
+-/
 def polygon4gBoundaryWordChain
     {g : ℕ} {C : Polygon4gCellularModel g}
     (D : Polygon4gCellularSingularComparisonData g C) :
     Polygon4gSingularC1 g C D :=
   ⟨edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord⟩
 
-/-- The cellular-to-singular chain map and the singular proxy
+/--
+The cellular-to-singular chain map and the singular proxy
 boundaries used by the polygon comparison.  This is deliberately
 chain-level: the fields are maps between chain modules and explicit
-boundary operators, not propositions about endpoints alone. -/
+boundary operators, not propositions about endpoints alone.
+-/
 structure Polygon4gCellularToSingularChainMap
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) where
@@ -2840,20 +3030,26 @@ structure Polygon4gCellularToSingularChainMap
     Polygon4gSingularC1 g C D →ₗ[ℤ] Polygon4gSingularC0 g
   singularBoundaryC2 :
     Polygon4gSingularC2 g C D →ₗ[ℤ] Polygon4gSingularC1 g C D
-  /-- On every one-cell generator, the singular boundary is target minus
-  source for the corresponding path. -/
+  /--
+On every one-cell generator, the singular boundary is target minus
+  source for the corresponding path.
+-/
   boundaryC1_on_basis :
     ∀ e : Fin (2 * g),
       singularBoundaryC1 (mapC1 (polygon4gCellularBasis e)) =
         polygon4gPathBoundary (D.oneCells.edgePath e)
-  /-- The characteristic disk boundary is represented by the boundary-word
-  one-chain. -/
+  /--
+The characteristic disk boundary is represented by the boundary-word
+  one-chain.
+-/
   boundaryC2_on_face :
     singularBoundaryC2 (mapC2 polygon4gCellularC2Face) =
       polygon4gBoundaryWordChain D
 
-/-- The concrete cellular-to-singular chain map carried by the project-side
-polygon data. -/
+/--
+The concrete cellular-to-singular chain map carried by the project-side
+polygon data.
+-/
 noncomputable def polygon4g_cellularToSingularChainMap
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) :
@@ -2933,9 +3129,11 @@ noncomputable def polygon4g_cellularToSingularChainMap
     ext e
     simp [polygon4gCellularC2Face]
 
-/-- The concrete cellular-to-singular map sends a cellular one-cell
+/--
+The concrete cellular-to-singular map sends a cellular one-cell
 generator to the actual singular edge chain after realizing the project
-side `Polygon4gSingularC1` wrapper as concrete singular chains. -/
+side `Polygon4gSingularC1` wrapper as concrete singular chains.
+-/
 theorem polygon4g_cellularToSingularChainMap_basis_realizes_edgeChain
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C)
@@ -2950,34 +3148,33 @@ theorem polygon4g_cellularToSingularChainMap_basis_realizes_edgeChain
     simp [polygon4g_cellularToSingularChainMap, polygon4gCellularBasis, Pi.single_apply]]
   exact Polygon4gSingularC1.toConcreteEdgeChain_single g C D e
 
-/-- The zero-skeleton of the standard polygonal cellular model. -/
+
 def Polygon4gZeroSkeleton
     (g : ℕ) (C : Polygon4gCellularModel g) (x : Polygon4g g) : Prop :=
   x = C.vertex
 
-/-- The one-skeleton of the standard polygonal cellular model, represented
-project-side by the unique vertex and the points on the recorded one-cell
-loops. -/
+
 def Polygon4gOneSkeleton
     (g : ℕ) (C : Polygon4gCellularModel g) (x : Polygon4g g) : Prop :=
   x = C.vertex ∨ ∃ e : Fin (2 * g), ∃ t : Set.Icc (0 : ℝ) 1, C.oneCellPath e t = x
 
-/-- The two-skeleton of the standard polygonal cellular model, represented
-project-side as the image of the quotient disk map. -/
+
 def Polygon4gTwoSkeleton
     (g : ℕ) (_C : Polygon4gCellularModel g) (x : Polygon4g g) : Prop :=
   ∃ z : DiskC, Polygon4g.mk g z = x
 
-/-- Every point of `Polygon4g g` lies in the project-side two-skeleton. -/
+
 theorem polygon4g_mem_twoSkeleton
     (g : ℕ) (C : Polygon4gCellularModel g) (x : Polygon4g g) :
     Polygon4gTwoSkeleton g C x := by
   induction x using Quotient.inductionOn with
   | h z => exact ⟨z, rfl⟩
 
-/-- Chain-level support predicates for the singular chains used in the
+/--
+Chain-level support predicates for the singular chains used in the
 filtered comparison.  The predicates are stated on chains, not just on
-individual cellular attaching maps. -/
+individual cellular attaching maps.
+-/
 structure Polygon4gFilteredSingularChainSupport
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C)
@@ -3002,10 +3199,12 @@ structure Polygon4gFilteredSingularChainSupport
         ∀ z : C.disk.diskSource.carrier,
           Polygon4gTwoSkeleton g C (D.twoCell.characteristic.characteristic z)
 
-/-- The associated-graded degree-one comparison as a real linear
+/--
+The associated-graded degree-one comparison as a real linear
 equivalence from cellular one-generators to the singular edge-chain
 wrapper.  This is intentionally not a reflexive equivalence between
-aliases. -/
+aliases.
+-/
 def polygon4g_cellularH1_to_singularC1_equiv
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) :
@@ -3028,21 +3227,25 @@ def polygon4g_cellularH1_to_singularC1_equiv
     ext e
     rfl
 
-/-- Degree-zero correctness of the comparison data: the unique
-zero-cell maps to the singular class of the polygon vertex. -/
+/--
+Degree-zero correctness of the comparison data: the unique
+zero-cell maps to the singular class of the polygon vertex.
+-/
 structure Polygon4gCellularSingularChainMapDegreeZero
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C) : Prop where
   /-- The comparison's zero-cell representative is the model vertex. -/
   vertex_eq_model : D.zeroCell.vertex = C.vertex
-  /-- The zero-cell representative lies in the zero-skeleton. -/
+  
   vertex_mem_zeroSkeleton :
     Polygon4gZeroSkeleton g C D.zeroCell.vertex
 
-/-- Degree-one correctness of the comparison data: each oriented
+/--
+Degree-one correctness of the comparison data: each oriented
 one-cell maps to the corresponding singular edge path, and its singular
-boundary agrees with the zero cellular boundary at the unique vertex. -/
+boundary agrees with the zero cellular boundary at the unique vertex.
+-/
 structure Polygon4gCellularSingularChainMapDegreeOneBoundary
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3055,31 +3258,39 @@ structure Polygon4gCellularSingularChainMapDegreeOneBoundary
   edgePath_target : ∀ e : Fin (2 * g), (D.oneCells.edgePath e) 1 = C.vertex
   /-- The cellular one-boundary is zero for every edge. -/
   cellular_boundary_zero : Polygon4gOneCellBoundaryZero g C
-  /-- There is a concrete chain map whose degree-one singular boundary is
-  the path-chain boundary on each cellular one-cell generator. -/
+  /--
+There is a concrete chain map whose degree-one singular boundary is
+  the path-chain boundary on each cellular one-cell generator.
+-/
   singular_path_boundary_formula :
     ∃ M : Polygon4gCellularToSingularChainMap g C D,
       ∀ e : Fin (2 * g),
         M.singularBoundaryC1 (M.mapC1 (polygon4gCellularBasis e)) =
           polygon4gPathBoundary (D.oneCells.edgePath e)
-  /-- Since the edge representatives are based loops, their singular
-  path-chain boundaries vanish. -/
+  /--
+Since the edge representatives are based loops, their singular
+  path-chain boundaries vanish.
+-/
   singular_path_boundary_zero :
     ∀ e : Fin (2 * g), polygon4gPathBoundary (D.oneCells.edgePath e) = 0
-  /-- Consequently the chain-level singular boundary of each mapped one-cell
-  generator vanishes. -/
+  /--
+Consequently the chain-level singular boundary of each mapped one-cell
+  generator vanishes.
+-/
   singular_chain_boundary_zero :
     ∃ M : Polygon4gCellularToSingularChainMap g C D,
       ∀ e : Fin (2 * g),
         M.singularBoundaryC1 (M.mapC1 (polygon4gCellularBasis e)) = 0
-  /-- Every point of each comparison edge is supported on the one-skeleton. -/
+  
   edgePath_mem_oneSkeleton :
     ∀ e : Fin (2 * g), ∀ t : Set.Icc (0 : ℝ) 1,
       Polygon4gOneSkeleton g C (D.oneCells.edgePath e t)
 
-/-- Degree-two correctness of the comparison data: the two-cell
+/--
+Degree-two correctness of the comparison data: the two-cell
 attaching map is sent to the singular boundary represented by the
-surface word, whose abelianised boundary is the cellular formula. -/
+surface word, whose abelianised boundary is the cellular formula.
+-/
 structure Polygon4gCellularSingularChainMapDegreeTwoAttaching
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3088,8 +3299,10 @@ structure Polygon4gCellularSingularChainMapDegreeTwoAttaching
   characteristic_eq_mk :
     ∀ z, D.twoCell.characteristic.characteristic z =
       Polygon4g.mk g (C.disk.diskSource.sourceHomeomorph z)
-  /-- The comparison's two-cell characteristic map agrees pointwise with
-  the cellular model's characteristic map. -/
+  /--
+The comparison's two-cell characteristic map agrees pointwise with
+  the cellular model's characteristic map.
+-/
   characteristic_eq_model :
     ∀ z, D.twoCell.characteristic.characteristic z = C.twoCellCharacteristic z
   /-- The boundary word is the model boundary word. -/
@@ -3102,25 +3315,33 @@ structure Polygon4gCellularSingularChainMapDegreeTwoAttaching
   /-- The abelianised two-boundary vanishes in cellular one-chains. -/
   boundaryWord_abelianizedBoundary :
     edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord = 0
-  /-- The singular boundary of the mapped characteristic disk is the
-  boundary-word one-chain. -/
+  /--
+The singular boundary of the mapped characteristic disk is the
+  boundary-word one-chain.
+-/
   singular_disk_boundary_formula :
     ∃ M : Polygon4gCellularToSingularChainMap g C D,
       M.singularBoundaryC2 (M.mapC2 polygon4gCellularC2Face) =
         polygon4gBoundaryWordChain D
-  /-- The boundary-word one-chain has exactly the abelianised word
-  coefficients. -/
+  /--
+The boundary-word one-chain has exactly the abelianised word
+  coefficients.
+-/
   boundaryWord_chain_coefficients :
     (polygon4gBoundaryWordChain D).coeff =
       edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord
-  /-- The boundary-word singular one-chain vanishes because the surface
-  relator abelianises to zero. -/
+  /--
+The boundary-word singular one-chain vanishes because the surface
+  relator abelianises to zero.
+-/
   boundaryWord_chain_zero : polygon4gBoundaryWordChain D = 0
   /-- The model cellular two-boundary formula is available. -/
   cellular_two_boundary_formula : Polygon4gTwoCellBoundaryAbelianizedRelator g C
 
-/-- **Comparison leaf 2a.** The comparison data is correct in degree
-zero. -/
+/--
+**Comparison leaf 2a.** The comparison data is correct in degree
+zero.
+-/
 theorem polygon4g_cellular_singular_chain_map_degree_zero
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3128,8 +3349,10 @@ theorem polygon4g_cellular_singular_chain_map_degree_zero
     Polygon4gCellularSingularChainMapDegreeZero g C h_boundary D :=
   ⟨D.zeroCell.vertex_eq_model, D.zeroCell.vertex_eq_model⟩
 
-/-- **Comparison leaf 2b.** The comparison data is compatible with the
-one-cell boundary calculation. -/
+/--
+**Comparison leaf 2b.** The comparison data is compatible with the
+one-cell boundary calculation.
+-/
 theorem polygon4g_cellular_singular_chain_map_degree_one_boundary
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3166,8 +3389,10 @@ theorem polygon4g_cellular_singular_chain_map_degree_one_boundary
     right
     exact ⟨e, t, by rw [D.oneCells.edgePath_eq_model]⟩
 
-/-- **Comparison leaf 2c.** The comparison data is compatible with the
-two-cell attaching map. -/
+/--
+**Comparison leaf 2c.** The comparison data is compatible with the
+two-cell attaching map.
+-/
 theorem polygon4g_cellular_singular_chain_map_degree_two_attaching
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3195,9 +3420,11 @@ theorem polygon4g_cellular_singular_chain_map_degree_two_attaching
     rw [D.twoCell.boundaryWord.boundaryWord_abelianizedBoundary]
     rfl
 
-/-- Correctness of the comparison data: it is compatible with the
+/--
+Correctness of the comparison data: it is compatible with the
 cellular and singular differentials and computes the intended attaching
-maps in dimensions `0`, `1`, and `2`. -/
+maps in dimensions `0`, `1`, and `2`.
+-/
 abbrev Polygon4gCellularSingularChainMapCorrect
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3206,9 +3433,11 @@ abbrev Polygon4gCellularSingularChainMapCorrect
     Polygon4gCellularSingularChainMapDegreeOneBoundary g C h_boundary D ∧
       Polygon4gCellularSingularChainMapDegreeTwoAttaching g C h_boundary D
 
-/-- **Comparison assembly 2.** The chosen comparison data gives the
+/--
+**Comparison assembly 2.** The chosen comparison data gives the
 correct chain-level cellular-to-singular comparison map.  This is now
-assembled from the degree `0`, `1`, and `2` correctness leaves. -/
+assembled from the degree `0`, `1`, and `2` correctness leaves.
+-/
 theorem polygon4g_cellular_singular_chain_map_correct
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3219,17 +3448,17 @@ by
     polygon4g_cellular_singular_chain_map_degree_one_boundary g C h_boundary D,
     polygon4g_cellular_singular_chain_map_degree_two_attaching g C h_boundary D⟩
 
-/-- The comparison map respects the cellular filtration on singular
-chains.  For the polygon this says cells in the `n`-skeleton map into
-singular chains supported on the `n`-skeleton, for `n = 0, 1, 2`. -/
+
 structure Polygon4gCellularSingularFiltrationCompatible
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C)
     (D : Polygon4gCellularSingularComparisonData g C)
     (_h_correct : Polygon4gCellularSingularChainMapCorrect g C _h_boundary D) : Prop where
-  /-- A concrete chain map, chain-level support predicates, filtered image
+  /--
+A concrete chain map, chain-level support predicates, filtered image
   statements, and boundary-preservation statements for the singular-chain
-  filtration. -/
+  filtration.
+-/
   filtered_chain_support :
     ∃ M : Polygon4gCellularToSingularChainMap g C D,
       ∃ S : Polygon4gFilteredSingularChainSupport g C D M,
@@ -3240,21 +3469,23 @@ structure Polygon4gCellularSingularFiltrationCompatible
           S.oneChainSupported c → S.zeroChainSupported (M.singularBoundaryC1 c)) ∧
         (∀ c : Polygon4gSingularC2 g C D,
           S.twoChainSupported c → S.oneChainSupported (M.singularBoundaryC2 c))
-  /-- The zero-cell image is supported on the zero-skeleton. -/
+  
   zeroCell_supported : Polygon4gZeroSkeleton g C D.zeroCell.vertex
-  /-- The one-cell images are supported on the one-skeleton. -/
+  
   oneCells_supported :
     ∀ e : Fin (2 * g), ∀ t : Set.Icc (0 : ℝ) 1,
       Polygon4gOneSkeleton g C (D.oneCells.edgePath e t)
-  /-- The two-cell image is supported on the two-skeleton. -/
+  
   twoCell_supported :
     ∀ z : C.disk.diskSource.carrier,
       Polygon4gTwoSkeleton g C (D.twoCell.characteristic.characteristic z)
 
-/-- The associated graded map of the cellular-to-singular comparison is
+/--
+The associated graded map of the cellular-to-singular comparison is
 the identity on the cellular generators in degrees relevant to `H₁`.
 This packages the local relative-homology calculation for each open
-cell. -/
+cell.
+-/
 structure Polygon4gCellularSingularAssociatedGradedH1Iso
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3263,50 +3494,70 @@ structure Polygon4gCellularSingularAssociatedGradedH1Iso
     (_h_filtration :
       Polygon4gCellularSingularFiltrationCompatible g C _h_boundary D h_correct) :
     Prop where
-  /-- The associated graded degree-zero generator is represented by the
-  model vertex. -/
+  /--
+The associated graded degree-zero generator is represented by the
+  model vertex.
+-/
   graded_zero_generator : D.zeroCell.vertex = C.vertex
-  /-- The associated graded degree-one generators are represented by the
-  model one-cell loops. -/
+  /--
+The associated graded degree-one generators are represented by the
+  model one-cell loops.
+-/
   graded_one_generators : D.oneCells.edgePath = C.oneCellPath
-  /-- The concrete associated-graded degree-one map is the degree-one
-  component of a real cellular-to-singular chain map. -/
+  /--
+The concrete associated-graded degree-one map is the degree-one
+  component of a real cellular-to-singular chain map.
+-/
   graded_one_map_eq_chainMap :
     ∃ M : Polygon4gCellularToSingularChainMap g C D,
       (polygon4g_cellularH1_to_singularC1_equiv g C D).toLinearMap = M.mapC1
-  /-- The associated graded degree-two boundary is the abelianised surface
-  relator, hence zero in cellular one-chains. -/
+  /--
+The associated graded degree-two boundary is the abelianised surface
+  relator, hence zero in cellular one-chains.
+-/
   graded_two_boundary_zero :
     edgeWordAbelianizedBoundary D.twoCell.boundaryWord.boundaryWord = 0
-  /-- The project-side degree-one associated-graded map is an isomorphism
-  from cellular `H₁` generators to singular edge-chain generators. -/
+  /--
+The project-side degree-one associated-graded map is an isomorphism
+  from cellular `H₁` generators to singular edge-chain generators.
+-/
   graded_one_isomorphism :
     Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] Polygon4gSingularC1 g C D)
 
-/-- A concrete bridge from the project-side singular one-chain wrapper
+/--
+A concrete bridge from the project-side singular one-chain wrapper
 used by the polygon comparison to Mathlib's actual singular `H₁`.
 This is the precise topological input still missing from the current
 API: the filtered/five-lemma argument must construct this equivalence
-from the chain map and filtration data, not by definitional equality. -/
+from the chain map and filtration data, not by definitional equality.
+-/
 structure Polygon4gSingularC1RealizesSingularH1
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C) where
-  /-- The resulting equivalence between the project-side edge-chain
-  associated-graded model and Mathlib singular homology. -/
+  /--
+The resulting equivalence between the project-side edge-chain
+  associated-graded model and Mathlib singular homology.
+-/
   equiv : Polygon4gSingularC1 g C D ≃ₗ[ℤ] singularH1 (Polygon4g g)
-  /-- The chain-level comparison whose degree-one component gives the
-  project-side edge-chain model. -/
+  /--
+The chain-level comparison whose degree-one component gives the
+  project-side edge-chain model.
+-/
   chainMap : Polygon4gCellularToSingularChainMap g C D
-  /-- The chain map realizes the associated-graded degree-one comparison,
+  /--
+The chain map realizes the associated-graded degree-one comparison,
   so the bridge is tied to the cellular-to-singular chain data rather than
-  to an arbitrary algebraic isomorphism. -/
+  to an arbitrary algebraic isomorphism.
+-/
   chainMap_degree_one :
     chainMap.mapC1 = (polygon4g_cellularH1_to_singularC1_equiv g C D).toLinearMap
 
-/-- If the concrete linear edge-chain class map is bijective, it gives
+/--
+If the concrete linear edge-chain class map is bijective, it gives
 the realization data required by the filtered Hurewicz comparison.
 This isolates the remaining topological content as bijectivity of the
-actual edge-chain map into Mathlib singular `H₁`. -/
+actual edge-chain map into Mathlib singular `H₁`.
+-/
 noncomputable def polygon4g_singularC1_realizes_singularH1_of_toSingularH1LinearMap_bijective
     (g : ℕ) (C : Polygon4gCellularModel g)
     (D : Polygon4gCellularSingularComparisonData g C)
@@ -3321,10 +3572,12 @@ noncomputable def polygon4g_singularC1_realizes_singularH1_of_toSingularH1Linear
       ext c e
       rfl }
 
-/-- Conditional form of the filtered comparison: once the project-side
+/--
+Conditional form of the filtered comparison: once the project-side
 singular edge-chain wrapper is identified with Mathlib `singularH1`
 by a chain-level realization, the existing associated-graded cellular
-isomorphism gives the desired cellular-to-singular `H₁` equivalence. -/
+isomorphism gives the desired cellular-to-singular `H₁` equivalence.
+-/
 theorem polygon4g_cellular_to_singular_H1_iso_of_singularC1_realization
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3340,10 +3593,7 @@ theorem polygon4g_cellular_to_singular_H1_iso_of_singularC1_realization
   obtain ⟨e₁⟩ := h_graded.graded_one_isomorphism
   exact ⟨e₁.trans h_realizes.equiv⟩
 
-/-- Conditional concrete comparison via the actual linear edge-chain map
-into Mathlib singular `H₁`.  This is the same Hurewicz conclusion as the
-frontier theorem below, with the remaining topological content isolated
-as bijectivity of `Polygon4gSingularC1.toSingularH1LinearMap`. -/
+
 theorem polygon4g_cellular_to_singular_H1_iso_of_toSingularH1LinearMap_bijective
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3364,15 +3614,12 @@ theorem polygon4g_cellular_to_singular_H1_iso_of_toSingularH1LinearMap_bijective
     (polygon4g_singularC1_realizes_singularH1_of_toSingularH1LinearMap_bijective
       g C D h_bij)
 
-/-- Concrete frontier theorem: a cellular-to-singular comparison with
-inspectable chain-level boundary compatibility, skeleton support, and
-associated-graded generator identifications induces the expected
-isomorphism on first homology.
-
+/--
 This is the remaining missing theorem boundary: it is the filtered
 cellular/singular comparison in degree `1`, specialized to the standard
 two-dimensional `Polygon4g` cellular model and stated over concrete
-project-side data rather than opaque predicates. -/
+project-side data rather than opaque predicates.
+-/
 theorem polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3390,8 +3637,10 @@ theorem polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison
     g C h_boundary D h0 h1 h2 h_filtration h_graded
     (polygon4gSingularC1_toSingularH1LinearMap_bijective g C D)
 
-/-- **Comparison leaf 3a.** The correct comparison map is compatible
-with the cellular filtration. -/
+/--
+**Comparison leaf 3a.** The correct comparison map is compatible
+with the cellular filtration.
+-/
 theorem polygon4g_cellular_singular_filtration_compatible
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3449,8 +3698,10 @@ theorem polygon4g_cellular_singular_filtration_compatible
     exact polygon4g_mem_twoSkeleton g C
       (Polygon4g.mk g (C.disk.diskSource.sourceHomeomorph z))
 
-/-- **Comparison leaf 3b.** The associated graded comparison is an
-isomorphism in the degrees that control first homology. -/
+/--
+**Comparison leaf 3b.** The associated graded comparison is an
+isomorphism in the degrees that control first homology.
+-/
 theorem polygon4g_cellular_singular_associated_graded_H1_iso
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3473,11 +3724,13 @@ by
   ext c e
   rfl
 
-/-- **Comparison leaf 3c.** A filtration-compatible comparison whose
+/--
+**Comparison leaf 3c.** A filtration-compatible comparison whose
 associated graded map is an isomorphism in the relevant degrees induces
 the expected isomorphism on first homology.  Bottom-up route: specialise
 the cellular homology theorem / filtration spectral sequence argument
-to this finite two-dimensional CW complex. -/
+to this finite two-dimensional CW complex.
+-/
 theorem polygon4g_cellular_singular_H1_iso_of_filtered_graded
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3492,10 +3745,7 @@ theorem polygon4g_cellular_singular_H1_iso_of_filtered_graded
   exact polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison
     g C h_boundary D h_correct.1 h_correct.2.1 h_correct.2.2 h_filtration _h_graded
 
-/-- **Comparison assembly 3.** A correct cellular-to-singular comparison
-map induces the expected isomorphism on first homology.  This theorem is
-sorry-free; the remaining filtered-comparison work is isolated in
-`polygon4g_cellular_to_singular_H1_iso_from_concrete_comparison`. -/
+
 theorem polygon4g_cellular_singular_H1_iso_of_chain_map
     (g : ℕ) (C : Polygon4gCellularModel g)
     (h_boundary : Polygon4gCellularBoundaryFormula g C)
@@ -3511,10 +3761,7 @@ by
     (polygon4g_cellular_singular_associated_graded_H1_iso
       g C h_boundary D _h_correct h_filtration)
 
-/-- **Comparison assembly.** Cellular homology of the standard
-polygonal CW model agrees with singular homology.  This theorem is now
-sorry-free; the remaining bottom-up comparison work is isolated in the
-concrete filtered-comparison frontier above. -/
+
 theorem polygon4g_cellular_to_singularH1_comparison
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
@@ -3524,8 +3771,10 @@ by
   exact polygon4g_cellular_singular_H1_iso_of_chain_map g C _h_boundary D
     (polygon4g_cellular_singular_chain_map_correct g C _h_boundary D)
 
-/-- **Hurewicz/cellular bridge assembly.** A named project-side
-comparison from the computed cellular group to singular `H₁`. -/
+/--
+**Hurewicz/cellular bridge assembly.** A named project-side
+comparison from the computed cellular group to singular `H₁`.
+-/
 theorem polygon4g_cellularH1_to_singularH1 (g : ℕ) :
     Nonempty (Polygon4gCellularH1 g ≃ₗ[ℤ] singularH1 (Polygon4g g)) := by
   obtain ⟨C⟩ := polygon4g_standard_cellular_model g

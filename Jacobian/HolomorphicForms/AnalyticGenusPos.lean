@@ -27,8 +27,10 @@ theorem analyticGenus_ne_zero_iff_nontrivial :
     analyticGenus E X ≠ 0 ↔ Nontrivial (HolomorphicOneForm E X) := by
   rw [← analyticGenus_pos_iff_nontrivial, Nat.pos_iff_ne_zero]
 
-/-- Sufficient witness condition: the existence of a nonzero form
-makes `analyticGenus` positive. -/
+/--
+Sufficient witness condition: the existence of a nonzero form
+makes `analyticGenus` positive.
+-/
 theorem analyticGenus_pos_of_exists_ne_zero
     (h : ∃ η : HolomorphicOneForm E X, η ≠ 0) :
     0 < analyticGenus E X :=

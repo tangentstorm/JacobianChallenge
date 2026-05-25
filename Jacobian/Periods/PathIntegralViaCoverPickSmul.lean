@@ -18,8 +18,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- The unparameterised multi-chart integral is ℂ-linear in the
-form. -/
+/--
+The unparameterised multi-chart integral is ℂ-linear in the
+form.
+-/
 @[simp] theorem pathIntegralViaCover_smul
     (k : ℂ) (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b) :
     pathIntegralViaCover (k • ω) γ = k • pathIntegralViaCover ω γ := by

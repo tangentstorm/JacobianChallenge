@@ -21,8 +21,10 @@ open JacobianChallenge.HolomorphicForms
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
 
-/-- The chart-lift of a reversed path equals the reverse of the
-chart-lifted path. -/
+/--
+The chart-lift of a reversed path equals the reverse of the
+chart-lifted path.
+-/
 theorem chartLift_symm
     (c : OpenPartialHomeomorph X E)
     {a b : X} (γ : Path a b)

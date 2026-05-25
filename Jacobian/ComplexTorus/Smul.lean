@@ -4,8 +4,6 @@ import Jacobian.ComplexTorus.Defs
 /-!
 # Integer scalar action on the complex-torus quotient
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 The single bounded packet: integer scalar multiplication descends to the
 quotient compatibly with the quotient projection.
 -/
@@ -20,8 +18,10 @@ variable {V : Type*} [NormedAddCommGroup V]
     mk V Λ (n • v) = n • mk V Λ v :=
   map_zsmul (QuotientAddGroup.mk' Λ.subgroup) n v
 
-/-- The quotient projection commutes with natural-number scalar
-multiplication. -/
+/--
+The quotient projection commutes with natural-number scalar
+multiplication.
+-/
 @[simp] lemma mk_nsmul (n : ℕ) (v : V) :
     mk V Λ (n • v) = n • mk V Λ v :=
   map_nsmul (QuotientAddGroup.mk' Λ.subgroup) n v

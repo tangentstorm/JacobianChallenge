@@ -7,11 +7,6 @@ import Jacobian.ComplexTorus.MkImage
 /-!
 # Continuity of the local section on the chart image
 
-Queue B sibling. This is the substantive continuity statement that
-unblocks the chart's `OpenPartialHomeomorph` assembly: on the image
-`mk '' Metric.ball v r`, the local section
-`localSection Λ v r : V ⧸ Λ.subgroup → V` is continuous.
-
 Conceptually, this follows from `mk` being an open embedding when
 restricted to `Metric.ball v r` — its three ingredients
 (continuity, openness, injectivity) are all already available:
@@ -31,16 +26,16 @@ The Mathlib path most likely goes through one of:
 If the path is not direct, this packet can be downgraded to a
 reconnaissance packet (Aristotle reports the exact missing/closest
 Mathlib lemma names instead of completing the proof).
-
-Status: statement scaffold; `sorry` to be replaced by Aristotle.
 -/
 
 namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-/-- The local section is continuous on the image of the small ball,
-provided the ball radius makes `mk` injective on the ball. -/
+/--
+The local section is continuous on the image of the small ball,
+provided the ball radius makes `mk` injective on the ball.
+-/
 lemma continuousOn_localSection
     (Λ : FullComplexLattice V) (v : V) {δ r : ℝ}
     (hr_lt : r < δ / 2)

@@ -30,9 +30,11 @@ noncomputable def genus (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpa
     [JacobianChallenge.HolomorphicForms.FiniteDimensionalHolomorphicOneForms ℂ X] : ℕ :=
   JacobianChallenge.HolomorphicForms.analyticGenus ℂ X
 
-/-- Genus-zero classification along the meromorphic degree-one route, conditional
+/--
+Genus-zero classification along the meromorphic degree-one route, conditional
 on the analytic data that promotes the fixed-pole Riemann-Roch map to a
-degree-one branched cover. -/
+degree-one branched cover.
+-/
 lemma genus_eq_zero_with_routeData_homeo {X : Type*} [TopologicalSpace X] [T2Space X]
     [CompactSpace X] [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold 𝓘(ℂ) ω X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
@@ -133,13 +135,7 @@ lemma ofCurve_inj_with_meromorphicData (P : X₀) (h : 0 < genus (X := X₀))
     (by simpa [genus] using h) hanalytic
   exact ULift.up_injective hab
 
-/-- Public Abel-Jacobi injectivity contract from `Jacobian/Challenge.lean`.
-
-Forwards to `JacobianChallenge.AbelJacobi.analyticOfCurve_injective`, which
-transitively depends on the frontier sorry
-`degree_one_meromorphicMap_implies_analyticGenus_zero`. The route-data form
-`ofCurve_inj_with_meromorphicData` above is the honest assembly when a caller
-can supply explicit meromorphic promotion data. -/
+/-- Public Abel-Jacobi injectivity contract from `Jacobian/Challenge.lean`. -/
 lemma ofCurve_inj (P : X₀) (h : 0 < genus (X := X₀)) : Function.Injective (ofCurve P) := by
   intro a b hab
   apply JacobianChallenge.AbelJacobi.analyticOfCurve_injective X₀ P (by simpa [genus] using h)

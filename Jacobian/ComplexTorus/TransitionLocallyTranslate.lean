@@ -5,11 +5,6 @@ import Jacobian.ComplexTorus.TransitionSubContinuous
 /-!
 # Chart transitions are locally translations by lattice elements
 
-Queue B sibling. Combines the previous two sub-lemmas plus the
-isolation hypothesis: at each point of the chart overlap, there is
-a neighborhood on which the chart transition equals translation by a
-fixed lattice element.
-
 Logical content: the map `f x := localSection_v₂ (mk x) - x` is
 continuous (`TransitionSubContinuous`), takes values in `Λ.subgroup`
 (`TransitionSubMem`), and `Λ.subgroup` is `δ`-isolated at zero
@@ -23,8 +18,10 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V]
 
-/-- For each point of the chart overlap, the chart transition agrees
-with a translation by a fixed lattice element on a neighborhood. -/
+/--
+For each point of the chart overlap, the chart transition agrees
+with a translation by a fixed lattice element on a neighborhood.
+-/
 lemma localSection_mk_locally_translate
     [NormedSpace ℂ V]
     (Λ : FullComplexLattice V) (v₁ v₂ : V) {δ r : ℝ}

@@ -7,9 +7,6 @@ import Mathlib.Geometry.Manifold.MFDeriv.Basic
 Defines `pullbackFormsFun f η`, the underlying function of the pullback
 of a holomorphic 1-form `η` along a smooth map `f`, via the chain-rule
 formula `(f^*η)_x = η_{f x} ∘ mfderiv f x`.
-
-Smoothness of the result (i.e., upgrading to `HolomorphicOneForm E X`)
-is intentionally deferred to a follow-up packet.
 -/
 
 namespace JacobianChallenge.TraceDegree
@@ -22,11 +19,13 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [TopologicalSpace Y] [ChartedSpace E Y]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Y]
 
-/-- Underlying function of the pullback of a holomorphic 1-form
+/--
+Underlying function of the pullback of a holomorphic 1-form
 along a smooth map, via the chain-rule formula
 `(f^*η)_x = η_{f x} ∘ mfderiv f x`. The smoothness of this function
 (i.e., upgrading the result to `HolomorphicOneForm E X`) is a
-separate follow-up. -/
+separate follow-up.
+-/
 noncomputable def pullbackFormsFun
     (f : X → Y) (η : HolomorphicOneForm E Y) :
     X → E →L[ℂ] ℂ :=

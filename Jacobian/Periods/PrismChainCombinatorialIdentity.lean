@@ -10,11 +10,6 @@ import Jacobian.Periods.PrismChainBridge
 /-!
 # Combinatorial identity for the chain-level prism boundary
 
-This file isolates the residual sorry of
-`prismChain_succ_combinatorial_identity` (in
-`Jacobian/Periods/PrismChainHomotopy.lean`) and decomposes it into
-five smaller, individually-named obligations.
-
 ## The identity
 
 For a homotopy `H : f ≃ g`, a degree-`(i' + 1)` simplex
@@ -61,8 +56,6 @@ re-index to exactly the negative of the dNext expansion.
 
 ## Status
 
-All six named obligations are **sorry-free**:
-
 * `prismChain_topContribution` — top-face contribution.
 * `prismChain_bottomContribution` — bottom-face contribution.
 * `prismChain_diagonalCancellation` — the two diagonal sums cancel
@@ -90,8 +83,10 @@ open AlgebraicTopology CategoryTheory Limits HomologicalComplex
 
 /-! ### Index helpers for the partition. -/
 
-/-- The Cartesian product index set of the LHS double sum:
-`Fin (i' + 2) × Fin (i' + 3)`. -/
+/--
+The Cartesian product index set of the LHS double sum:
+`Fin (i' + 2) × Fin (i' + 3)`.
+-/
 abbrev prismIndex (i' : ℕ) : Type := Fin (i' + 2) × Fin (i' + 3)
 
 /-- Top index `(0, 0)`. -/
@@ -110,15 +105,19 @@ def prismIndex.diagUpper (i' : ℕ) (l : Fin (i' + 1)) : prismIndex i' :=
 def prismIndex.diagLower (i' : ℕ) (l : Fin (i' + 1)) : prismIndex i' :=
   (⟨l.val + 1, by have := l.isLt; omega⟩, ⟨l.val + 1, by have := l.isLt; omega⟩)
 
-/-! ### The summand definitions
+/-!
+### The summand definitions
 
 These two helpers extract the building block of each side of the
 combinatorial identity. They are stated as morphisms in `ModuleCat ℤ`
 to match the morphism shape of `singChain_basis` and the existing
-`prismChain_summand` in `PrismChainHomotopy.lean`. -/
+`prismChain_summand` in `PrismChainHomotopy.lean`.
+-/
 
-/-- The summand of the LHS double sum at index `(l, j)`, equal to
-`(-1)^(l + 1 + j) • basis((prismSimplex (i'+1) l H s) ∘ δ_j)`. -/
+/--
+The summand of the LHS double sum at index `(l, j)`, equal to
+`(-1)^(l + 1 + j) • basis((prismSimplex (i'+1) l H s) ∘ δ_j)`.
+-/
 def prismChain_LHS_summand
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i' : ℕ)
@@ -127,8 +126,10 @@ def prismChain_LHS_summand
   ((-1 : ℤ) ^ (lj.1.val + 1 + lj.2.val)) • singChain_basis
     ((prismSimplex (i' + 1) lj.1 H s).comp (stdSimplexFaceInclusion (i' + 1) lj.2))
 
-/-- The summand of the dNext expansion at index `(j', l')`, equal to
-`(-1)^(j' + l' + 1) • basis(prismSimplex i' l' H (s ∘ δ_j'))`. -/
+/--
+The summand of the dNext expansion at index `(j', l')`, equal to
+`(-1)^(j' + l' + 1) • basis(prismSimplex i' l' H (s ∘ δ_j'))`.
+-/
 def prismChain_dNext_summand
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i' : ℕ)
@@ -138,12 +139,15 @@ def prismChain_dNext_summand
   ((-1 : ℤ) ^ (j'.val + l'.val + 1)) • singChain_basis
     (prismSimplex i' l' H (s.comp (stdSimplexFaceInclusion i' j')))
 
-/-! ### The five named contributions
+/-!
+### The five named contributions
 
 Each contribution computes the partial sum of the LHS over one
-region of the partition. -/
+region of the partition.
+-/
 
-/-- **Top contribution.** The summand at `(0, 0)` equals
+/--
+**Top contribution.** The summand at `(0, 0)` equals
 `-basis(g ∘ s)`.
 
 Proof sketch (≤ 30 LOC):
@@ -174,7 +178,8 @@ theorem prismChain_topContribution
   show ((-1 : ℤ) ^ (1 : ℕ)) • singChain_basis (g.comp s) = -singChain_basis (g.comp s)
   rw [pow_one, neg_one_zsmul]
 
-/-- **Bottom contribution.** The summand at `(i'+1, i'+2)` equals
+/--
+**Bottom contribution.** The summand at `(i'+1, i'+2)` equals
 `+basis(f ∘ s)`.
 
 Proof sketch (≤ 30 LOC):
@@ -205,7 +210,8 @@ theorem prismChain_bottomContribution
   have heven : Even ((i' + 1) + 1 + (i' + 2)) := ⟨i' + 2, by ring⟩
   rw [heven.neg_one_pow, one_zsmul]
 
-/-- **Diagonal cancellation.** The pair of summands at
+/--
+**Diagonal cancellation.** The pair of summands at
 `(l, l+1)` and `(l+1, l+1)` add to `0`.
 
 Proof sketch (≤ 60 LOC):
@@ -238,12 +244,15 @@ theorem prismChain_diagonalCancellation
   rw [h1.neg_one_pow, h2, pow_succ, h1.neg_one_pow, one_mul, one_zsmul, neg_one_zsmul]
   exact add_neg_cancel _
 
-/-! ### Side-face re-indexings
+/-!
+### Side-face re-indexings
 
 The two side regions of the partition together give the lower and
-upper halves of the dNext double sum, with an overall sign flip. -/
+upper halves of the dNext double sum, with an overall sign flip.
+-/
 
-/-- **Lower side re-indexing.** The sum of LHS summands over
+/--
+**Lower side re-indexing.** The sum of LHS summands over
 `(l, j)` with `j.val < l.val` equals the negative of the dNext
 sub-sum over `(j', l')` with `j'.val ≤ l'.val`.
 
@@ -336,7 +345,8 @@ theorem prismChain_lowerSideReindex
         ⟨lj.2.val, by omega⟩ := Fin.ext hmin
     rw [hmin_fin, hsimp, hsign, neg_zsmul]
 
-/-- **Upper side re-indexing.** The sum of LHS summands over
+/--
+**Upper side re-indexing.** The sum of LHS summands over
 `(l, j)` with `l.val + 1 < j.val` equals the negative of the dNext
 sub-sum over `(j', l')` with `j'.val > l'.val`.
 
@@ -424,7 +434,8 @@ theorem prismChain_upperSideReindex
         ⟨lj.1.val, by omega⟩ := Fin.ext hmin_l
     rw [hmin_fin, hsimp, hsign, neg_zsmul]
 
-/-! ### Assembly
+/-!
+### Assembly
 
 The five contributions partition the full LHS index set. Combined
 with `Finset.sum_product'` (collapsing the double sum to a sum over
@@ -436,7 +447,8 @@ product into the five regions), the boundary identity follows.
 The full Cartesian sum decomposes as the sum of six disjoint
 sub-sums. We prove this as a single named partition equation, using
 `Finset.sum_filter_add_sum_filter_not` to peel off regions and
-`Finset.sum_image` for the diagonal sub-sums. -/
+`Finset.sum_image` for the diagonal sub-sums.
+-/
 
 private lemma diagUpper_injective (i' : ℕ) :
     Function.Injective (prismIndex.diagUpper i') := by
@@ -454,14 +466,16 @@ private lemma diagLower_injective (i' : ℕ) :
     have h2 : l₁.val + 1 = l₂.val + 1 := Fin.mk.injEq _ _ _ _ |>.mp h1
     omega)
 
-/-- **The full combinatorial identity, in summand form.** The total
+/--
+**The full combinatorial identity, in summand form.** The total
 LHS sum over the Cartesian product `prismIndex i'` equals
 `-basis(g ∘ s) + basis(f ∘ s)` minus the dNext double sum (also
 over the Cartesian product).
 
 This is the named obligation that `prismChain_succ_combinatorial_identity`
 in `PrismChainHomotopy.lean` unwinds to after applying
-`Finset.sum_product'` to both sides. -/
+`Finset.sum_product'` to both sides.
+-/
 theorem prismChain_LHS_eq_partition
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) (i' : ℕ)

@@ -1,15 +1,7 @@
 import Jacobian.Periods.PeriodFunctional
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
-/-!
-# Small named API around the opaque `periodPairing`
-
-`periodPairing` is opaque (the construction is deferred). But it
-*is* declared as an `AddMonoidHom`, so the standard `map_zero`,
-`map_add`, `map_neg`, and `map_sub` facts are immediately
-available. This file exposes them as named lemmas so downstream
-proofs don't need to know the precise type.
--/
+/-! # Small named API around the opaque `periodPairing` -/
 
 namespace JacobianChallenge.Periods
 

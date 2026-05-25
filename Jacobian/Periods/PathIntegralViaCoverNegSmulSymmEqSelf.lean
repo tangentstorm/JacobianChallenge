@@ -17,8 +17,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Triple-cancellation (cover layer):
-`∫(-(k • ω), γ.symm) = k • ∫(ω, γ)`. -/
+/--
+Triple-cancellation (cover layer):
+`∫(-(k • ω), γ.symm) = k • ∫(ω, γ)`.
+-/
 theorem pathIntegralViaCoverWith_neg_smul_symm_eq_self
     (k : ℂ) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

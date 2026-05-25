@@ -18,8 +18,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Scalar-multiplication along the reversed path: `k • ω` along
-γ.symm equals minus `k • (cover-with integral of ω along γ)`. -/
+/--
+Scalar-multiplication along the reversed path: `k • ω` along
+γ.symm equals minus `k • (cover-with integral of ω along γ)`.
+-/
 theorem pathIntegralViaCoverWith_smul_symm
     (k : ℂ) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

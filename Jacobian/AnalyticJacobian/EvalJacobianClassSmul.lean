@@ -1,13 +1,7 @@
 import Jacobian.AnalyticJacobian.EvalJacobianClassOps
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
-/-!
-# Integer-scaling on the vec slot of `evalJacobianClass`
-
-Closes the vec-slot integer-action matrix on `evalJacobianClass`,
-using the underlying `evalLinearMap` linearity. Full ℂ-action is
-deferred until the analytic Jacobian carries a ℂ-Module structure.
--/
+/-! # Integer-scaling on the vec slot of `evalJacobianClass` -/
 
 namespace JacobianChallenge.AnalyticJacobian
 

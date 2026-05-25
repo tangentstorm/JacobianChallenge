@@ -2,7 +2,8 @@ import Jacobian.HolomorphicForms.CotangentBundle
 import Mathlib.Geometry.Manifold.Complex
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
-/-! # Global holomorphic functions on a compact connected Riemann surface
+/-!
+# Global holomorphic functions on a compact connected Riemann surface
 
 Section 2 of `tex/sections/02-holomorphic-forms-and-genus.tex`.
 
@@ -19,26 +20,22 @@ chain. Per the explicit comment in
 > These belong to follow-up nodes once the analytic-sheaf machinery
 > lands (`H⁰(𝒪_X) = ℂ` for compact connected RS via maximum modulus
 > principle; …).
-
-The proof requires the maximum modulus principle for analytic
-functions transported along charts of a compact connected 1-manifold,
-which is not yet directly available in Mathlib v4.28.0 in the
-`ContMDiff (modelWithCornersSelf ℂ ℂ) … ⊤`-flavoured form used by
-this project. The stub records the statement (sorry-bearing) so the
-sec02 dep-graph picks it up. -/
+-/
 
 namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
-/-- **MEDIUM.** Every holomorphic function on a compact connected
+/--
+**MEDIUM.** Every holomorphic function on a compact connected
 complex 1-manifold is constant. Proof via Mathlib's
 `MDifferentiable.exists_eq_const_of_compactSpace`
 (`Mathlib.Geometry.Manifold.Complex`), which packages the maximum
 modulus principle in the manifold-`MDifferentiable` form. Steps:
 `ContMDiff … ⊤ f` ⇒ `MDifferentiable I 𝓘(ℂ,ℂ) f` (via
 `ContMDiff.mdifferentiable` with `1 ≤ ⊤`), and `[ConnectedSpace X]`
-implies `[PreconnectedSpace X]`. -/
+implies `[PreconnectedSpace X]`.
+-/
 theorem holomorphic_compact_connected_constant
     (X : Type*) [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]
@@ -54,10 +51,7 @@ theorem holomorphic_compact_connected_constant
   obtain ⟨c, hc⟩ := hmd.exists_eq_const_of_compactSpace
   exact ⟨c, fun x => congrFun hc x⟩
 
-/-- Corollary statement: the unit-modulus form of the maximum modulus
-principle. Sorry-free; immediate from
-`holomorphic_compact_connected_constant` once both points are in the
-domain. -/
+
 theorem holomorphic_compact_connected_const_apply
     {X : Type*} [TopologicalSpace X] [CompactSpace X] [ConnectedSpace X]
     [ChartedSpace ℂ X]

@@ -3,8 +3,6 @@ import Mathlib.Algebra.Module.ZLattice.Basic
 /-!
 # Packaging helper: `ZLattice` fundamental domain covers in subtraction form
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 This is the small dedicated packaging lemma flagged by the
 `ZLatticeRecon.lean` reconnaissance packet. The Mathlib API exposes the
 fundamental-domain covering property in `vadd` form via
@@ -29,8 +27,10 @@ open Submodule Module
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   [FiniteDimensional ℝ E] [ProperSpace E]
 
-/-- The covering property of a `ZLattice`'s fundamental domain stated in
-the subtraction-and-AddSubgroup form that `FullComplexLattice` expects. -/
+/--
+The covering property of a `ZLattice`'s fundamental domain stated in
+the subtraction-and-AddSubgroup form that `FullComplexLattice` expects.
+-/
 lemma exists_sub_mem_closure_fundamentalDomain
     (L : Submodule ℤ E) [DiscreteTopology L] [IsZLattice ℝ L]
     (v : E) :

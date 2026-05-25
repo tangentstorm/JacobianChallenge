@@ -10,7 +10,7 @@ import Jacobian.Periods.TrivializationContinuousLinearMapAt
 `complexDimDeRhamH1ℂ X : ℕ` as the finrank of the explicit quotient:
 H¹_dR is closed 1-forms modulo exact 1-forms.
 
-## What this file provides (round 2 refinement)
+## What this file provides
 
 * `complexDimDeRhamH1ℂ_eq_finrank_cocycle` — definitional bridge from the
   dimension symbol to the explicit quotient model.
@@ -25,8 +25,10 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
-/-- `complexDimDeRhamH1ℂ X` is definitionally the ℂ-finrank of the
-explicit closed-mod-exact quotient model. -/
+/--
+`complexDimDeRhamH1ℂ X` is definitionally the ℂ-finrank of the
+explicit closed-mod-exact quotient model.
+-/
 theorem complexDimDeRhamH1ℂ_eq_finrank_cocycle
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -35,9 +37,7 @@ theorem complexDimDeRhamH1ℂ_eq_finrank_cocycle
     complexDimDeRhamH1ℂ X = Module.finrank ℂ (deRhamH1Cocycle X) := by
   rfl
 
-/-- **Companion frontier identity (sorry).** Real-coefficient analogue
-of the previous identity. Used to match `realDimDeRhamH1` to a concrete
-real-coefficient quotient when the real de Rham complex is set up. -/
+
 theorem realDimDeRhamH1_eq_finrank_cocycleℝ
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

@@ -52,19 +52,6 @@ import Jacobian.ComplexTorus.LieAddGroup
 /-!
 # Complex torus infrastructure
 
-Top-level module that re-exports the production Queue B target files.
-Other modules can import `Jacobian.ComplexTorus` instead of pulling each
-sibling in by hand.
-
-**Excluded on purpose:**
-- `ZLatticeRecon` — name-discovery scratch with the `fullComplexLatticeOfZLattice`
-  bridge; will be promoted into a clean module once the chart layer is in.
-- `ManifoldRecon` — was a narrative reconnaissance file with `sorry`
-  placeholders; deleted as part of W5 cleanup once the production
-  `ChartedSpace`/`IsManifold`/`LieAddGroup` instances landed.
-- `DiscretenessRecon` — comment-only Q&A document for the `FullComplexLattice`
-  refactor; not API.
-
 These three files still build (they are valid Lean modules) and remain on
 disk for now, but they are not re-exported. They will be removed or migrated
 out of `Jacobian/ComplexTorus/` when the manifold layer is complete.

@@ -24,8 +24,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- Adding a `periodPairing` value inside the witness's `mk` argument
-leaves the witness unchanged. -/
+/--
+Adding a `periodPairing` value inside the witness's `mk` argument
+leaves the witness unchanged.
+-/
 theorem witnessAbelJacobi_eq_mk_sub_add_periodPairing
     (basePoint P : X) (v : E) (σ : IntegralOneCycle X) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v =
@@ -33,8 +35,10 @@ theorem witnessAbelJacobi_eq_mk_sub_add_periodPairing
         periodPairing E X σ) := by
   rw [witnessAbelJacobi_eq_mk_sub, mk_add_periodPairing]
 
-/-- Subtracting a `periodPairing` value inside the witness's `mk`
-argument leaves the witness unchanged. -/
+/--
+Subtracting a `periodPairing` value inside the witness's `mk`
+argument leaves the witness unchanged.
+-/
 theorem witnessAbelJacobi_eq_mk_sub_sub_periodPairing
     (basePoint P : X) (v : E) (σ : IntegralOneCycle X) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v =

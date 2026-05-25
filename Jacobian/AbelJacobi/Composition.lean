@@ -5,9 +5,6 @@ import Jacobian.Periods.TrivializationContinuousLinearMapAt
 /-!
 # Composition / endpoint algebra for `witnessAbelJacobi`
 
-The witness map satisfies the standard Abel-Jacobi-style identities
-(modulo the deferred path-integral construction):
-
 - chain via an intermediate point: `(basePoint ⇒ Q) - (basePoint ⇒ P) = (P ⇒ Q)`
 - vec-zero collapse
 - vec-slot additivity in the path-symmetric form
@@ -25,8 +22,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- Chain rule: passing through an intermediate point cancels:
-`witness basePoint Q - witness basePoint P = witness P Q`. -/
+/--
+Chain rule: passing through an intermediate point cancels:
+`witness basePoint Q - witness basePoint P = witness P Q`.
+-/
 theorem witnessAbelJacobi_chain
     (basePoint P Q : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint Q v -

@@ -1,14 +1,7 @@
 import Jacobian.Periods.PathIntegralViaCover
 import Jacobian.Periods.PathIntegralViaChartCorrectZero
 
-/-!
-# `pathIntegralViaCoverWith` is zero on the zero form
-
-The integral of the zero 1-form is zero on every segment, so the
-multi-chart sum is zero. Negation/addition variants are deferred:
-`_neg` waits on `40031834` (`pathIntegralViaChartCorrect_neg`),
-and `_add` waits on the integrability helper (Packet F).
--/
+/-! # `pathIntegralViaCoverWith` is zero on the zero form -/
 
 namespace JacobianChallenge.Periods
 

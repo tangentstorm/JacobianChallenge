@@ -28,55 +28,66 @@ namespace JacobianChallenge.Periods
 
 open scoped Manifold
 
-/-- Bundled polygonal-quotient datum: a continuous surjection
+/--
+Bundled polygonal-quotient datum: a continuous surjection
 `q : DiskC → M` whose fibres coincide with the side-pairing
-equivalence `Polygon4g.SideRel genus`. -/
+equivalence `Polygon4g.SideRel genus`.
+-/
 structure PolygonalQuotientPresentation
     (M : Type) [TopologicalSpace M] where
-  /-- The genus parameter — the topological genus of the surface
-  presented by this datum. -/
+  /--
+The genus parameter — the topological genus of the surface
+  presented by this datum.
+-/
   genus : ℕ
-  /-- The continuous surjection from the closed disk witnessing the
-  presentation. -/
+  /--
+The continuous surjection from the closed disk witnessing the
+  presentation.
+-/
   proj : DiskC → M
   /-- Continuity of `proj`. -/
   cts : Continuous proj
-  /-- Surjectivity of `proj` (every point of `M` is presented by some
-  disk point). -/
+  /--
+Surjectivity of `proj` (every point of `M` is presented by some
+  disk point).
+-/
   surj : Function.Surjective proj
-  /-- Kernel: `proj z = proj w` exactly when the standard `4*genus`-gon
-  side identification relates `z` and `w`. -/
+  /--
+Kernel: `proj z = proj w` exactly when the standard `4*genus`-gon
+  side identification relates `z` and `w`.
+-/
   kernel : ∀ z w : DiskC, proj z = proj w ↔ Polygon4g.SideRel genus z w
 
-/-- **Placeholder for a finite triangulation of `M`.** Bundles
-the combinatorial data (vertices, edges, 2-simplices, incidence
-relations, realisation map) of a triangulation of a compact connected
-2-manifold without committing to a specific internal representation.
-A concrete unfolding will land when the triangulation infrastructure
-is built (see `ref/plans/polygonal-model.md` Stage A1 sub-leaves). -/
+
 def Triangulation (_M : Type) [TopologicalSpace _M] : Type :=
   PUnit
 
-/-- **Edge-word presentation of `M`.** Bundles the data of "M presented
+/--
+**Edge-word presentation of `M`.** Bundles the data of "M presented
 as a `2k`-gon with side identifications given by some edge-pairing
 word `w` of length `2k`".
 
 This is the non-standardized generalization of
-`PolygonalQuotientPresentation`. -/
+`PolygonalQuotientPresentation`.
+-/
 structure EdgeWordPresentation (M : Type) [TopologicalSpace M] where
   /-- The genus parameter of the alphabet used by the word. -/
   g : ℕ
   /-- The boundary word labelling the 2k-gon. -/
   word : EdgeWord g
-  /-- The continuous surjection from the closed disk witnessing the
-  presentation. -/
+  /--
+The continuous surjection from the closed disk witnessing the
+  presentation.
+-/
   proj : DiskC → M
   /-- Continuity of `proj`. -/
   cts : Continuous proj
   /-- Surjectivity of `proj`. -/
   surj : Function.Surjective proj
-  /-- Kernel: `proj z = proj w` exactly when the word's side
-  pairing relates `z` and `w`. -/
+  /--
+Kernel: `proj z = proj w` exactly when the word's side
+  pairing relates `z` and `w`.
+-/
   kernel : ∀ z w : DiskC, proj z = proj w ↔ EdgeWord.sidePairingRel g word z w
 
 end JacobianChallenge.Periods

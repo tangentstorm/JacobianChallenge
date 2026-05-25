@@ -25,16 +25,20 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
 theorem mk_surjective : Function.Surjective (mk E X) :=
   Quot.mk_surjective
 
-/-- Two functionals project to the same Jacobian class iff their
-difference lies in the period subgroup. -/
+/--
+Two functionals project to the same Jacobian class iff their
+difference lies in the period subgroup.
+-/
 theorem mk_eq_mk_iff (φ ψ : HolomorphicOneForm E X →ₗ[ℂ] ℂ) :
     mk E X φ = mk E X ψ ↔ -φ + ψ ∈ periodSubgroup E X :=
   QuotientAddGroup.eq
 
-/-- Concrete witness lift: a point/vector pair determines a Jacobian
+/--
+Concrete witness lift: a point/vector pair determines a Jacobian
 class via `mk ∘ evalLinearMap`. Concretely:
 `evalJacobianClass x v` is the analytic Jacobian class of the
-ℂ-linear functional `η ↦ η.toFun x v`. -/
+ℂ-linear functional `η ↦ η.toFun x v`.
+-/
 noncomputable def evalJacobianClass
     (x : X) (v : E) : AnalyticJacobianGroup E X :=
   mk E X (evalLinearMap x v)

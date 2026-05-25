@@ -6,8 +6,6 @@ import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 /-!
 # Smoothness of negation on the complex torus
 
-Queue B sibling. `Neg.neg : quotient V Λ → quotient V Λ` is `ContMDiff ℂ ω`.
-
 Strategy: at any `q : V/Λ`, work in the chart at `q`. On the chart's
 source, the function `q' ↦ -q'` equals
 `mk ∘ Neg.neg ∘ chart.toFun`, which is a composition of three smooth

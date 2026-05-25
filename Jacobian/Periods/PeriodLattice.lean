@@ -46,7 +46,8 @@ variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
   [FiniteDimensionalHolomorphicOneForms ℂ X]
 
-/-- The period subgroup of a compact Riemann surface, expressed in the
+/--
+The period subgroup of a compact Riemann surface, expressed in the
 basis-aligned model `Fin (analyticGenus ℂ X) → ℂ`.
 
 Routed (keystone refactor, 2026-04-27): defined as the concrete
@@ -62,12 +63,14 @@ The specialisation propagates upward to `periodFullComplexLattice` and
 `Challenge.Jacobian (X : Type u)` is a known consequence; per
 `Jacobian/WorkPackets/TopDown.md` the comparator's `theorem_names` list
 covers only theorem-level declarations, so the data-level monomorphism
-should be acceptable for the staged-refinement check. -/
+should be acceptable for the staged-refinement check.
+-/
 noncomputable def basisAlignedPeriodSubgroup :
     AddSubgroup (Fin (analyticGenus ℂ X) → ℂ) :=
   basisAlignedPeriodSubgroupConcrete X
 
-/-- The period subgroup is discrete in the subspace topology.
+/--
+The period subgroup is discrete in the subspace topology.
 
 Top-down obligation. Bottom-up: the period pairing image of `H₁(X, ℤ)`
 has no accumulation point near zero — a consequence of the integrality
@@ -75,8 +78,6 @@ of period values on integral cycles.
 
 This proof now delegates to `periodSubgroup_isZLattice` in
 `Jacobian/Periods/PeriodFunctional.lean`.
-
-### Blocker analysis for `basisAlignedPeriodSubgroup_isDiscrete`
 
 **Goal.** Show `DiscreteTopology (basisAlignedPeriodSubgroup X)` where
 `basisAlignedPeriodSubgroup X = basisAlignedPeriodSubgroupConcrete X`
@@ -105,17 +106,6 @@ subspace topology induced from that product.
 | `DiscreteTopology.of_subset` | `DiscreteTopology ↑s → t ⊆ s → DiscreteTopology ↑t`. Useful for sub-subgroups of a known-discrete group. |
 | `AddSubgroup.map_discreteTopology` | **Does not exist** in Mathlib (v4.28.0). There is no general result transporting `DiscreteTopology` forward through `AddSubgroup.map`. |
 | `Int.instDiscreteTopologySubtypeRealMemAddSubgroupZmultiples` | `DiscreteTopology ↥(AddSubgroup.zmultiples a)` for `a : ℝ`. A one-dimensional special case. |
-
-#### Key blocker: `periodPairing` is opaque; integrality is not declared
-
-1. **`periodPairing E X` is `opaque`** (declared in
-   `Jacobian/Periods/PeriodFunctional.lean`). Its definition —
-   integrating holomorphic 1-forms over integral 1-cycles — is
-   deferred because it requires multi-chart path integration and Stokes'
-   theorem for 1-forms on manifolds, both absent from Mathlib v4.28.0.
-   Consequently, `periodSubgroup ℂ X = (periodPairing ℂ X).range` is
-   an abstract `AddSubgroup` about which nothing structural can be
-   proved from its API alone.
 
 2. **The algebraic dual `HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ` has no
    `TopologicalSpace` instance.** Lean/Mathlib does not automatically
@@ -163,57 +153,26 @@ corresponding `AddSubgroup` directly.
 Alternatively, if (a) directly declares `DiscreteTopology` on the
 basis-aligned subgroup, step (b) is trivial.
 
-**(c) Wire the instance.** Replace `sorry` with the result from (b).
-If (a) declares discreteness directly on
-`basisAlignedPeriodSubgroupConcrete X`, the proof is:
-```
-instance basisAlignedPeriodSubgroup_isDiscrete :
-    DiscreteTopology (basisAlignedPeriodSubgroup X) :=
-  periodSubgroup_discreteTopology_basis_aligned ℂ X
-```
-If instead (a) declares `IsZLattice`, the proof assembles
-`ZSpan.instDiscreteTopology` with the basis data.
-
 #### Downstream impact
-
-This instance is the **sole blocker** for `basisAlignedPeriodSubgroup_isClosed`
-(which is already a pure assembly using `AddSubgroup.isClosed_of_discrete`). It
-is also **on the critical path** for `periodFundamentalDomain_isCompact` and
-`periodFundamentalDomain_covers`, both of which implicitly depend on the
-subgroup being a well-structured lattice.
 -/
 instance basisAlignedPeriodSubgroup_isDiscrete :
     DiscreteTopology (basisAlignedPeriodSubgroup X) :=
   periodSubgroup_isZLattice ℂ X
 
-/-- The period subgroup is closed in the model space.
-
-Pure assembly: `Fin g → ℂ` is `T2`, and the period subgroup carries
-`DiscreteTopology` (the previous instance), so closedness follows from
-Mathlib's `AddSubgroup.isClosed_of_discrete`. No own sorry. -/
+/-- The period subgroup is closed in the model space. -/
 lemma basisAlignedPeriodSubgroup_isClosed :
     IsClosed (basisAlignedPeriodSubgroup X : Set (Fin (analyticGenus ℂ X) → ℂ)) :=
   AddSubgroup.isClosed_of_discrete
 
-/-- A fundamental domain for the period subgroup, in the basis-aligned model.
-
-Refined (this round): un-opaqued. Now defined as the chosen
-witness from `exists_compact_periodFundamentalDomain` in
-`Jacobian/Periods/PeriodFunctional.lean`. This routes the
-*existence* of a compact, covering fundamental domain to a single
-named bottom-up obligation, while keeping `periodFundamentalDomain`
-as concrete data in this file. The downstream lemmas
-`periodFundamentalDomain_isCompact` and `periodFundamentalDomain_covers`
-then become one-liners delegating to `Classical.choose_spec`. -/
+/-- A fundamental domain for the period subgroup, in the basis-aligned model. -/
 noncomputable def periodFundamentalDomain : Set (Fin (analyticGenus ℂ X) → ℂ) :=
   (exists_compact_periodFundamentalDomain X).choose
 
-/-- The fundamental domain is compact.
+/--
+The fundamental domain is compact.
 
 Top-down obligation. Bottom-up: bounded subset of a finite-dim
 ℂ-vector space; bounded ⇒ compact in finite dimensions.
-
-### Blocker analysis for `periodFundamentalDomain_isCompact`
 
 **Goal.** Show `IsCompact (periodFundamentalDomain X)` where
 `periodFundamentalDomain X` is an `opaque` of type
@@ -238,30 +197,6 @@ so the Heine–Borel theorem applies.
 | `ZLattice.isAddFundamentalDomain` | `IsAddFundamentalDomain ↥L (ZSpan.fundamentalDomain (Basis.ofZLatticeBasis ℝ L b)) μ` for `[IsZLattice ℝ L]`, `[DiscreteTopology ↥L]`. | Confirms that `ZSpan.fundamentalDomain` against the real basis lifted from a ℤ-lattice basis is indeed a measure-theoretic fundamental domain. Needs `IsZLattice ℝ`. |
 
 #### Two independent blockers
-
-**Blocker 1 (shared with `_isDiscrete`): no `IsZLattice ℝ` instance.**
-The same gap identified in the discreteness survey above applies here.
-To construct the ℝ-basis `b` for `ZSpan.fundamentalDomain`, we need
-`IsZLattice ℝ L` where `L` is the period subgroup promoted to a
-`Submodule ℤ (Fin g → ℂ)`. This requires
-`Submodule.span ℝ ↑L = ⊤`, i.e. the period vectors span the full
-`2g`-dimensional ℝ-vector space — the Riemann bilinear nondegeneracy
-condition. Without this, no basis exists and none of the
-`ZSpan.fundamentalDomain_*` lemmas can fire.
-
-**Blocker 2 (compactness-specific): `periodFundamentalDomain` is opaque
-with no specification.** Even if `IsZLattice ℝ` were available, we
-still cannot prove `IsCompact (periodFundamentalDomain X)` because
-`periodFundamentalDomain` is declared as a bare `opaque` — no equation
-lemma, no axiom, no companion property ties it to any concrete set.
-The proof of compactness needs to know *what* the set is (e.g. that it
-equals `closure (ZSpan.fundamentalDomain b)` for some basis `b`). An
-`opaque` with zero specification is a black box: Lean treats it as an
-arbitrary set, and an arbitrary set in `Fin g → ℂ` is not compact.
-
-This is an **additional blocker beyond the discreteness survey**.
-The `_isDiscrete` obligation has only Blocker 1; `_isCompact` has
-both Blockers 1 and 2.
 
 #### Proposed resolution paths
 
@@ -317,39 +252,21 @@ and `_isDiscrete` is resolved by `ZSpan.instDiscreteTopology` or
 equivalent.
 
 #### Dependency graph
-
-```
-periodPairing (opaque, PeriodFunctional.lean)
-  └─► periodSubgroup_isZLattice (new opaque, PeriodFunctional.lean)
-        ├─► basisAlignedPeriodSubgroup_isDiscrete  [Blocker 1 only]
-        ├─► periodFundamentalDomain (un-opaque → concrete def)
-        │     └─► periodFundamentalDomain_isCompact  [one-liner]
-        └─► periodFundamentalDomain_covers          [one-liner]
-```
 -/
 lemma periodFundamentalDomain_isCompact :
     IsCompact (periodFundamentalDomain X) :=
   (exists_compact_periodFundamentalDomain X).choose_spec.1
 
-/-- The fundamental-domain translates cover the model space.
-
-Refined (this round): pure assembly — delegates to the second
-component of `(exists_compact_periodFundamentalDomain X).choose_spec`,
-which is the same statement modulo unfolding
-`basisAlignedPeriodSubgroup` to its concrete representative. The
-mathematical content (full-rank / Riemann bilinear nondegeneracy)
-lives in the named obligation `exists_compact_periodFundamentalDomain`
-in `Jacobian/Periods/PeriodFunctional.lean`. No own sorry. -/
+/-- The fundamental-domain translates cover the model space. -/
 lemma periodFundamentalDomain_covers :
     ∀ v : Fin (analyticGenus ℂ X) → ℂ,
       ∃ g ∈ basisAlignedPeriodSubgroup X, v - g ∈ periodFundamentalDomain X :=
   (exists_compact_periodFundamentalDomain X).choose_spec.2
 
-/-- The period lattice of a compact Riemann surface, bundled as a
+/--
+The period lattice of a compact Riemann surface, bundled as a
 `FullComplexLattice` in the basis-aligned model `Fin (analyticGenus ℂ X) → ℂ`.
-
-Pure assembly — every field delegates to one of the small named
-obligations above; this declaration adds no new sorry. -/
+-/
 noncomputable def periodFullComplexLattice :
     JacobianChallenge.ComplexTorus.FullComplexLattice
       (Fin (analyticGenus ℂ X) → ℂ) where

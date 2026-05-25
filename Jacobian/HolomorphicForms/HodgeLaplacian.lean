@@ -3,7 +3,7 @@ import Jacobian.HolomorphicForms.HodgeStarRS
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
-# Hodge Laplacian on a Riemann surface (frontier API)
+# Hodge Laplacian on a Riemann surface
 
 A Hermitian metric on a Riemann surface gives:
 
@@ -18,16 +18,7 @@ A Hermitian metric on a Riemann surface gives:
 `Ω^n(X)` is exactly the space of *harmonic* `n`-forms, and on a compact
 manifold elliptic regularity gives `Harm^n` finite-dimensional.
 
-## What this file provides (round 2 refinement)
-
-* `hodgeStar n X` — opaque ℂ-linear map `Ω^n(X) → Ω^{2-n}(X)`.
-* `hodgeStar_squared` — frontier identity (sorry).
-* `dStarOperator n X` — opaque adjoint `d^* : Ω^{n+1} → Ω^n`.
-* `hodgeLaplacian n X` — opaque Laplacian `Δ : Ω^n → Ω^n`.
-* `harmonic_iff_kernel_laplacian` — frontier identity (sorry):
-  harmonic forms = kernel of Δ.
-* `laplacian_kernel_finite` — frontier identity (sorry):
-  kernel of Δ is finite-dimensional.
+## What this file provides
 
 ## TOPDOWN role
 
@@ -40,13 +31,13 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
-/-- Current-model Hodge `⋆` operator on placeholder 1-forms.
-
+/--
 Since `SmoothDiffForm 1 X` is currently just a complex vector-space
 surrogate, this uses multiplication by `I`, giving the correct algebraic
 identity `⋆² = -1` on 1-forms. The geometric bottom-up replacement will
 come from a Hermitian metric and the metric Hodge star once the cotangent
-metric / Hodge-star API exists. -/
+metric / Hodge-star API exists.
+-/
 noncomputable def hodgeStarOp
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -54,7 +45,7 @@ noncomputable def hodgeStarOp
     SmoothDiffForm 1 X →ₗ[ℂ] SmoothDiffForm 1 X :=
   Complex.I • LinearMap.id
 
-/-- `⋆² = -1` on the current placeholder model of 1-forms. -/
+
 theorem hodgeStarOp_squared
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -64,11 +55,13 @@ theorem hodgeStarOp_squared
   simp [hodgeStarOp]
   rw [← mul_assoc, Complex.I_mul_I, neg_one_mul]
 
-/-- Current-model formal adjoint `d^*_1 : Ω¹(X) → Ω⁰(X)`.
+/--
+Current-model formal adjoint `d^*_1 : Ω¹(X) → Ω⁰(X)`.
 
 With the current zero-differential surrogate for `d`, the compatible
 formal adjoint is also zero. The geometric replacement is the metric
-adjoint `-⋆ d ⋆` once the real Hodge-star/form API exists. -/
+adjoint `-⋆ d ⋆` once the real Hodge-star/form API exists.
+-/
 noncomputable def dStarOperator1
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -76,8 +69,10 @@ noncomputable def dStarOperator1
     SmoothDiffForm 1 X →ₗ[ℂ] SmoothDiffForm 0 X :=
   0
 
-/-- Current-model formal adjoint `d^*_2 : Ω²(X) → Ω¹(X)`, also zero
-for the zero-differential surrogate. -/
+/--
+Current-model formal adjoint `d^*_2 : Ω²(X) → Ω¹(X)`, also zero
+for the zero-differential surrogate.
+-/
 noncomputable def dStarOperator2
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -85,8 +80,7 @@ noncomputable def dStarOperator2
     SmoothDiffForm 2 X →ₗ[ℂ] SmoothDiffForm 1 X :=
   0
 
-/-- **Frontier opaque.** The Hodge Laplacian on 1-forms,
-`Δ := d_0 ∘ d^*_1 + d^*_2 ∘ d_1 : Ω¹ → Ω¹`. -/
+
 noncomputable def hodgeLaplacian1
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -95,8 +89,7 @@ noncomputable def hodgeLaplacian1
   (exteriorDerivative 0 X).comp (dStarOperator1 X)
     + (dStarOperator2 X).comp (exteriorDerivative 1 X)
 
-/-- **Frontier identity (sorry).** `Δ` is the sum of `d_0 ∘ d^*_1` and
-`d^*_2 ∘ d_1` applied to 1-forms. Definition-shaped frontier theorem. -/
+
 theorem hodgeLaplacian1_def
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -106,11 +99,13 @@ theorem hodgeLaplacian1_def
         + (dStarOperator2 X).comp (exteriorDerivative 1 X) := by
   rfl
 
-/-- **Current-model energy identity.** A 1-form in the kernel of the
+/--
+**Current-model energy identity.** A 1-form in the kernel of the
 zero-surrogate Hodge Laplacian is both closed and co-closed.
 
 Bottom-up content: the standard identity
-`⟪Δω,ω⟫ = ‖dω‖² + ‖d*ω‖²` on compact manifolds. -/
+`⟪Δω,ω⟫ = ‖dω‖² + ‖d*ω‖²` on compact manifolds.
+-/
 theorem hodgeLaplacian1_kernel_subset_closed_coclosed
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -121,14 +116,10 @@ theorem hodgeLaplacian1_kernel_subset_closed_coclosed
     exteriorDerivative 1 X ω = 0 ∧ dStarOperator1 X ω = 0 := by
   simp [exteriorDerivative, dStarOperator1]
 
-/-- **Current-model kernel identity.** A 1-form is in the kernel of `Δ`
+/--
+**Current-model kernel identity.** A 1-form is in the kernel of `Δ`
 iff it is both `d`-closed and `d^*`-closed.
-
-Bottom-up content: `(Δω, ω) = ‖dω‖² + ‖d^*ω‖²` for the L² inner
-product; `Δω = 0` ⇒ both norms vanish ⇒ both `d`-closed and
-`d^*`-closed. The reverse direction is direct from the definition.
-Mathlib gap: L² inner product on forms, integration by parts on
-manifolds, all absent in v4.28.0. -/
+-/
 theorem hodgeLaplacian1_kernel_iff
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -142,11 +133,13 @@ theorem hodgeLaplacian1_kernel_iff
   · rintro ⟨hdω, hdsω⟩
     simp [hodgeLaplacian1, hdω, hdsω]
 
-/-- **Current-model identification.** Identification of `HarmonicOneForm X`
+/--
+**Current-model identification.** Identification of `HarmonicOneForm X`
 (the alias `Fin 2 → HolomorphicOneForm ℂ X` from `HodgeStarRS.lean`)
 with the kernel of `Δ` on smooth 1-forms. Stated as an existence
 theorem to keep downstream consumers independent of the chosen
-surrogate representation. -/
+surrogate representation.
+-/
 theorem harmonicEquivLaplacianKernel
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -163,15 +156,7 @@ theorem harmonicEquivLaplacianKernel
       left_inv := by intro ω; rfl
       right_inv := by intro ω; exact Subtype.ext rfl }
 
-/-- **Frontier identity (sorry, ELLIPTIC REGULARITY).** The kernel of
-the Hodge Laplacian on 1-forms is finite-dimensional over ℂ on a
-compact connected Riemann surface.
 
-Bottom-up content: Δ is a second-order elliptic operator on a compact
-manifold; Gårding's inequality + Rellich–Kondrachov compact embedding
-gives kernel finite-dimensional.  Mathlib gap: Sobolev spaces on
-manifolds + compact embedding + elliptic regularity; partial pieces
-exist but the Laplacian on forms requires the form apparatus first. -/
 theorem hodgeLaplacian1_kernel_finite
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

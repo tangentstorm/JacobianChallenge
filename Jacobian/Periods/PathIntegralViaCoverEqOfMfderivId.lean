@@ -23,10 +23,12 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Under the global hypothesis that `mfderiv c.symm = id` for every
+/--
+Under the global hypothesis that `mfderiv c.symm = id` for every
 chart at every model-space point, the unparameterised multi-chart
 integral can be computed via the provisional via-chart formula on
-the `Classical.choose`-picked partition for `γ`. -/
+the `Classical.choose`-picked partition for `γ`.
+-/
 theorem pathIntegralViaCover_eq_sum_provisional_of_mfderiv_id
     (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b)
     (hd : ∀ (x : X) (e : E),

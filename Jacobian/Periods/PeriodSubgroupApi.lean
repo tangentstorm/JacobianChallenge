@@ -26,8 +26,10 @@ theorem periodPairing_sub (σ τ : IntegralOneCycle X) :
       periodPairing E X σ - periodPairing E X τ :=
   (periodPairing E X).map_sub σ τ
 
-/-- An element lies in the period subgroup iff it is in the range
-of `periodPairing`. -/
+/--
+An element lies in the period subgroup iff it is in the range
+of `periodPairing`.
+-/
 theorem mem_periodSubgroup_iff (φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ) :
     φ ∈ periodSubgroup E X ↔ ∃ σ : IntegralOneCycle X, periodPairing E X σ = φ :=
   Iff.rfl
@@ -37,8 +39,10 @@ theorem periodPairing_mem_periodSubgroup (σ : IntegralOneCycle X) :
     periodPairing E X σ ∈ periodSubgroup E X :=
   ⟨σ, rfl⟩
 
-/-- The period subgroup is closed under negation (immediate from
-`AddSubgroup`). -/
+/--
+The period subgroup is closed under negation (immediate from
+`AddSubgroup`).
+-/
 theorem neg_mem_periodSubgroup
     {φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ}
     (h : φ ∈ periodSubgroup E X) : -φ ∈ periodSubgroup E X :=

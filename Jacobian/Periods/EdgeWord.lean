@@ -51,14 +51,18 @@ namespace EdgeWord
 def handleBlock {g : ℕ} (i : Fin g) : List (Letter g) :=
   [Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i]
 
-/-- The standard relator word
+/--
+The standard relator word
 `a₀ b₀ a₀⁻¹ b₀⁻¹ a₁ b₁ a₁⁻¹ b₁⁻¹ ⋯ a_{g-1} b_{g-1} a_{g-1}⁻¹ b_{g-1}⁻¹`
-as an explicit list. -/
+as an explicit list.
+-/
 def standardWord (g : ℕ) : EdgeWord g :=
   (List.finRange g).flatMap handleBlock
 
-/-- A predicate asserting that an edge word is in standard form, i.e. it equals
-`standardWord g`. -/
+/--
+A predicate asserting that an edge word is in standard form, i.e. it equals
+`standardWord g`.
+-/
 def IsStandardForm {g : ℕ} (w : EdgeWord g) : Prop :=
   w = standardWord g
 
@@ -84,10 +88,12 @@ namespace EdgeWord
 
 /-! ### Quotient by side-pairing -/
 
-/-- Generating relation for the side-pairing on the boundary of the
+/--
+Generating relation for the side-pairing on the boundary of the
 closed unit disk determined by a general edge word `w`. For any two
 indices `i, j` such that the letters `w[i]` and `w[j]` are inverses,
-the corresponding boundary arcs are identified with parameter reversal. -/
+the corresponding boundary arcs are identified with parameter reversal.
+-/
 inductive SideGen (g : ℕ) (w : EdgeWord g) : DiskC → DiskC → Prop
   | pair (i j : Fin w.length) (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 1)
       (h : (w.get i).inv = w.get j) :
@@ -236,8 +242,10 @@ theorem sidePairingRel_equivalence (g : ℕ) (w : EdgeWord g) :
     Equivalence (sidePairingRel g w) := by
   exact Relation.EqvGen.is_equivalence _
 
-/-- The quotient of the closed unit disk by the side-pairing relation
-determined by `w`. -/
+/--
+The quotient of the closed unit disk by the side-pairing relation
+determined by `w`.
+-/
 def wordQuotient (g : ℕ) (w : EdgeWord g) : Type :=
   Quotient ⟨sidePairingRel g w, sidePairingRel_equivalence g w⟩
 
@@ -252,10 +260,12 @@ theorem wordSetoid_standardWord (g : ℕ) :
   congr 1
   exact sidePairingRel_standardWord g
 
-/-- **A3.1.** For the standard word, `wordQuotient` is the same type as
+/--
+**A3.1.** For the standard word, `wordQuotient` is the same type as
 `Polygon4g g`. The two are constructed as quotients of `DiskC` by the
 same equivalence relation (`SideRel g`); their setoids coincide via
-`wordSetoid_standardWord`. -/
+`wordSetoid_standardWord`.
+-/
 theorem polygon4g_eq_standard_word_quotient (g : ℕ) :
     wordQuotient g (standardWord g) = Polygon4g g := by
   unfold wordQuotient Polygon4g
@@ -264,8 +274,10 @@ theorem polygon4g_eq_standard_word_quotient (g : ℕ) :
 
 /-! ### List-level Tietze cancellation -/
 
-/-- The single-step Tietze swap relation: cancel an adjacent
-inverse pair `[ℓ, ℓ⁻¹]` (or `[ℓ⁻¹, ℓ]`) anywhere in a word. -/
+/--
+The single-step Tietze swap relation: cancel an adjacent
+inverse pair `[ℓ, ℓ⁻¹]` (or `[ℓ⁻¹, ℓ]`) anywhere in a word.
+-/
 inductive InverseCancel : {g : ℕ} → EdgeWord g → EdgeWord g → Prop where
   | ax_aInv {g : ℕ} (i : Fin g) (xs ys : List (Letter g)) :
       InverseCancel (xs ++ [Letter.a i, Letter.aInv i] ++ ys) (xs ++ ys)
@@ -282,8 +294,10 @@ theorem InverseCancel.length_lt {g : ℕ} {w v : EdgeWord g}
     v.length + 2 = w.length := by
   cases h <;> simp [List.length_append] <;> linarith
 
-/-- The reflexive-transitive closure (word equivalence under
-finitely many cancellations). -/
+/--
+The reflexive-transitive closure (word equivalence under
+finitely many cancellations).
+-/
 def WordEq {g : ℕ} : EdgeWord g → EdgeWord g → Prop :=
   Relation.ReflTransGen InverseCancel
 
@@ -296,18 +310,22 @@ theorem WordEq.trans {g : ℕ} {a b c : EdgeWord g}
     (hab : WordEq a b) (hbc : WordEq b c) : WordEq a c :=
   Relation.ReflTransGen.trans hab hbc
 
-/-- Handle swap: a full handle block `[a i, b i, aInv i, bInv i]` may
+/--
+Handle swap: a full handle block `[a i, b i, aInv i, bInv i]` may
 be exchanged with any two adjacent letters that are independent of `i`.
 This is one of the two essential moves (the other being InverseCancel)
 in the classical proof that any orientable edge word reduces to the
-standard form. -/
+standard form.
+-/
 inductive HandleSwap : {g : ℕ} → EdgeWord g → EdgeWord g → Prop where
   | move {g : ℕ} (i : Fin g) (xs ys : List (Letter g))
       (h : List (Letter g)) (_hh : h = [Letter.a i, Letter.b i, Letter.aInv i, Letter.bInv i]) :
       HandleSwap (xs ++ h ++ ys) (ys ++ h ++ xs)
 
-/-- The combined word equivalence: closed under both `InverseCancel`
-and `HandleSwap`. -/
+/--
+The combined word equivalence: closed under both `InverseCancel`
+and `HandleSwap`.
+-/
 inductive TietzeStep : {g : ℕ} → EdgeWord g → EdgeWord g → Prop where
   | cancel {g : ℕ} {w v : EdgeWord g} (h : InverseCancel w v) : TietzeStep w v
   | swap   {g : ℕ} {w v : EdgeWord g} (h : HandleSwap w v) : TietzeStep w v

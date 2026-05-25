@@ -18,8 +18,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Negate-and-reverse on a scalar multiple cancels back to the
-original `k • ∫(ω, γ)` (via-chart corrected). -/
+/--
+Negate-and-reverse on a scalar multiple cancels back to the
+original `k • ∫(ω, γ)` (via-chart corrected).
+-/
 theorem pathIntegralViaChartCorrect_neg_smul_symm_eq_self
     (c : OpenPartialHomeomorph X E) (k : ℂ) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

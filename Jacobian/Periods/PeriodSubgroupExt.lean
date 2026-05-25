@@ -33,8 +33,10 @@ theorem range_periodPairing_subset_periodSubgroup :
   rcases hφ with ⟨σ, rfl⟩
   exact periodPairing_mem_periodSubgroup σ
 
-/-- The image of any `periodPairing` value under negation lies in
-`periodSubgroup`. -/
+/--
+The image of any `periodPairing` value under negation lies in
+`periodSubgroup`.
+-/
 theorem neg_periodPairing_mem_periodSubgroup (σ : IntegralOneCycle X) :
     -periodPairing E X σ ∈ periodSubgroup E X :=
   neg_mem_periodSubgroup (periodPairing_mem_periodSubgroup σ)

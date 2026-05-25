@@ -16,25 +16,24 @@ The conversion uses the existing Mathlib homeomorphism
 unitInterval` (Mathlib `Analysis.Convex.StdSimplex`).
 
 ## Status
-
-Sorry-free. This is Phase 1.5 of the cellular Hurewicz infrastructure
-plan in `ref/plans/cellular-hurewicz-plan.md`. The next phase
-(`SingularChainElement`) consumes `edgeSimplex g i` to produce a
-chain-complex element.
 -/
 
 namespace JacobianChallenge.Periods
 
 open Set unitInterval
 
-/-- The continuous map version of `stdSimplexHomeomorphUnitInterval`,
-useful for composing with arrows in `C(unitInterval, _)`. -/
+/--
+The continuous map version of `stdSimplexHomeomorphUnitInterval`,
+useful for composing with arrows in `C(unitInterval, _)`.
+-/
 noncomputable def stdSimplexToUnitInterval :
     C(stdSimplex ℝ (Fin 2), unitInterval) :=
   ⟨stdSimplexHomeomorphUnitInterval, stdSimplexHomeomorphUnitInterval.continuous⟩
 
-/-- The `i`-th edge of the genus-`(g+1)` polygon as a singular
-1-simplex (continuous map from the standard topological 1-simplex). -/
+/--
+The `i`-th edge of the genus-`(g+1)` polygon as a singular
+1-simplex (continuous map from the standard topological 1-simplex).
+-/
 noncomputable def edgeSimplex (g : ℕ) (i : Fin (2 * (g + 1))) :
     C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1)) :=
   (edgeContMap g i).comp stdSimplexToUnitInterval
@@ -59,16 +58,20 @@ noncomputable def stdSimplexVertex (i : Fin 2) : stdSimplex ℝ (Fin 2) :=
     stdSimplexHomeomorphUnitInterval (stdSimplexVertex 1) = 1 :=
   stdSimplexHomeomorphUnitInterval_one
 
-/-- The "0 vertex" of `edgeSimplex g i`: the disk-boundary point at the
-start of arc `edgeArcIdx g i`, modulo side-pairing. -/
+/--
+The "0 vertex" of `edgeSimplex g i`: the disk-boundary point at the
+start of arc `edgeArcIdx g i`, modulo side-pairing.
+-/
 lemma edgeSimplex_vertex_zero (g : ℕ) (i : Fin (2 * (g + 1))) :
     edgeSimplex g i (stdSimplexVertex 0) =
       Polygon4g.mk (g + 1) (boundaryParam (g + 1) (edgeArcIdx g i) 0) := by
   simp [edgeSimplex, stdSimplexToUnitInterval, edgeContMap, stdSimplexVertex,
     stdSimplexHomeomorphUnitInterval_zero]
 
-/-- The "1 vertex" of `edgeSimplex g i`: the disk-boundary point at the
-end of arc `edgeArcIdx g i`, modulo side-pairing. -/
+/--
+The "1 vertex" of `edgeSimplex g i`: the disk-boundary point at the
+end of arc `edgeArcIdx g i`, modulo side-pairing.
+-/
 lemma edgeSimplex_vertex_one (g : ℕ) (i : Fin (2 * (g + 1))) :
     edgeSimplex g i (stdSimplexVertex 1) =
       Polygon4g.mk (g + 1) (boundaryParam (g + 1) (edgeArcIdx g i) 1) := by

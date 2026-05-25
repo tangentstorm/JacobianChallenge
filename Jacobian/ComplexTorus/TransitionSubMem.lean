@@ -7,10 +7,6 @@ set_option linter.unusedSectionVars false
 /-!
 # The chart transition's "subtract input" lands in the lattice
 
-Queue B sibling. First small step toward `IsManifold`: when two
-charts overlap, their composition `e2 ∘ e1.symm` differs from the
-identity by an element of `Λ.subgroup`.
-
 For our charts, `e1.symm = mk` and `e2 = localSection_v2`, so the
 transition value at `x` is `localSection_v2 (mk x)`. By the
 right-inverse of `localSection`, `mk (localSection_v2 (mk x)) = mk x`,
@@ -24,9 +20,11 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-/-- If `q ∈ mk V Λ '' Metric.ball v r` and `mk x = q`, then
+/--
+If `q ∈ mk V Λ '' Metric.ball v r` and `mk x = q`, then
 `localSection Λ v r q - x ∈ Λ.subgroup`. The membership comes from
-`mk (localSection q) = q = mk x`, via `mk_eq_iff`. -/
+`mk (localSection q) = q = mk x`, via `mk_eq_iff`.
+-/
 lemma localSection_sub_mem_subgroup
     (Λ : FullComplexLattice V) (v : V) (r : ℝ)
     {q : quotient V Λ} (hq : q ∈ mk V Λ '' Metric.ball v r)

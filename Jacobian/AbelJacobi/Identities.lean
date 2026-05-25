@@ -20,8 +20,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- Explicit form: `witness basePoint P v + evalJacobianClass basePoint v
-= evalJacobianClass P v`. -/
+/--
+Explicit form: `witness basePoint P v + evalJacobianClass basePoint v
+= evalJacobianClass P v`.
+-/
 theorem witnessAbelJacobi_add_basePoint_class
     (basePoint P : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v +
@@ -30,8 +32,10 @@ theorem witnessAbelJacobi_add_basePoint_class
   unfold witnessAbelJacobi
   abel
 
-/-- Symmetric: `evalJacobianClass basePoint v + witness basePoint P v
-= evalJacobianClass P v`. -/
+/--
+Symmetric: `evalJacobianClass basePoint v + witness basePoint P v
+= evalJacobianClass P v`.
+-/
 theorem basePoint_class_add_witness
     (basePoint P : X) (v : E) :
     evalJacobianClass basePoint v +
@@ -40,8 +44,10 @@ theorem basePoint_class_add_witness
   rw [add_comm]
   exact witnessAbelJacobi_add_basePoint_class basePoint P v
 
-/-- Translation form: shifting endpoints by a different intermediate
-point and reapplying. -/
+/--
+Translation form: shifting endpoints by a different intermediate
+point and reapplying.
+-/
 theorem witnessAbelJacobi_chain_shift
     (basePoint P Q : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v +

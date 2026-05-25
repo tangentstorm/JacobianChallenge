@@ -16,8 +16,10 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
-/-- A holomorphic 1-form on a complex manifold `X` is an analytic
-(`ContMDiff` with `n = ⊤`) section of the cotangent bundle. -/
+/--
+A holomorphic 1-form on a complex manifold `X` is an analytic
+(`ContMDiff` with `n = ⊤`) section of the cotangent bundle.
+-/
 abbrev HolomorphicOneForm
     (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type*) [TopologicalSpace X] [ChartedSpace E X]

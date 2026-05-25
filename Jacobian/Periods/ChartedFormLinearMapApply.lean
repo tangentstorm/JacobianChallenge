@@ -20,10 +20,12 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X) (e : E) :
     chartedFormLinearMap c ω e = chartedForm c ω e := rfl
 
-/-- Applying the bundled provisional chart-form at a chart point and
+/--
+Applying the bundled provisional chart-form at a chart point and
 then at a tangent vector gives the underlying value. (Note: unlike
 the corrected layer, the provisional version drops the chart
-derivative — fine for translation-transition charts only.) -/
+derivative — fine for translation-transition charts only.)
+-/
 @[simp] theorem chartedFormLinearMap_apply_vec
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     (e : E) (v : E) :

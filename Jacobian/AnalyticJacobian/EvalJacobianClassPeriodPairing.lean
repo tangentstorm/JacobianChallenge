@@ -21,8 +21,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- If `evalLinearMap x v` differs from `φ` by a `periodPairing` value,
-the corresponding Jacobian class equals `mk φ`. -/
+/--
+If `evalLinearMap x v` differs from `φ` by a `periodPairing` value,
+the corresponding Jacobian class equals `mk φ`.
+-/
 theorem evalJacobianClass_eq_mk_of_evalLinearMap_eq_add_periodPairing
     (x : X) (v : E) (φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ)
     (σ : IntegralOneCycle X)
@@ -38,16 +40,20 @@ theorem evalJacobianClass_eq_mk_of_evalLinearMap_eq_sub_periodPairing
     evalJacobianClass (E := E) (X := X) x v = mk E X φ := by
   rw [evalJacobianClass_def, h, mk_sub_periodPairing]
 
-/-- If `evalLinearMap x v` is a `periodPairing` value, the Jacobian
-class is `0`. -/
+/--
+If `evalLinearMap x v` is a `periodPairing` value, the Jacobian
+class is `0`.
+-/
 theorem evalJacobianClass_eq_zero_of_evalLinearMap_eq_periodPairing
     (x : X) (v : E) (σ : IntegralOneCycle X)
     (h : evalLinearMap x v = periodPairing E X σ) :
     evalJacobianClass (E := E) (X := X) x v = 0 := by
   rw [evalJacobianClass_def, h, mk_periodPairing_eq_zero]
 
-/-- If `evalLinearMap x v` is `n • periodPairing E X σ`, the Jacobian
-class is `0`. -/
+/--
+If `evalLinearMap x v` is `n • periodPairing E X σ`, the Jacobian
+class is `0`.
+-/
 theorem evalJacobianClass_eq_zero_of_evalLinearMap_eq_zsmul_periodPairing
     (x : X) (v : E) (n : ℤ) (σ : IntegralOneCycle X)
     (h : evalLinearMap x v = n • periodPairing E X σ) :

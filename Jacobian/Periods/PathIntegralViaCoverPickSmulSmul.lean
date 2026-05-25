@@ -16,8 +16,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Iterated scalar multiplication composes
-(Pick / unparameterised multi-chart). -/
+/--
+Iterated scalar multiplication composes
+(Pick / unparameterised multi-chart).
+-/
 theorem pathIntegralViaCover_smul_smul
     (k l : ℂ) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) :

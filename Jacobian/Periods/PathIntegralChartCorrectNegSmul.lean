@@ -16,8 +16,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Form-negation of a scalar multiple equals the negated scalar
-multiple of the integral (in-chart corrected). -/
+/--
+Form-negation of a scalar multiple equals the negated scalar
+multiple of the integral (in-chart corrected).
+-/
 theorem pathIntegralInChartCorrect_neg_smul
     (c : OpenPartialHomeomorph X E) (k : ℂ) (ω : HolomorphicOneForm E X)
     {a b : E} (γ : Path a b) :

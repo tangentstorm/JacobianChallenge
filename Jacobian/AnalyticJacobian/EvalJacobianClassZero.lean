@@ -21,8 +21,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- A witness pair `(x, v)` lifts to the zero analytic Jacobian
-class iff its `evalLinearMap` value lies in the period subgroup. -/
+/--
+A witness pair `(x, v)` lifts to the zero analytic Jacobian
+class iff its `evalLinearMap` value lies in the period subgroup.
+-/
 theorem evalJacobianClass_eq_zero_iff (x : X) (v : E) :
     evalJacobianClass (E := E) (X := X) x v = 0 ↔
       evalLinearMap x v ∈ periodSubgroup E X := by
@@ -35,8 +37,10 @@ theorem evalJacobianClass_zero_of_mem_periodSubgroup
     evalJacobianClass (E := E) (X := X) x v = 0 :=
   (evalJacobianClass_eq_zero_iff x v).mpr h
 
-/-- If `evalLinearMap x v = 0` then the lift is zero (since
-0 ∈ any AddSubgroup). -/
+/--
+If `evalLinearMap x v = 0` then the lift is zero (since
+0 ∈ any AddSubgroup).
+-/
 theorem evalJacobianClass_zero_of_evalLinearMap_eq_zero
     (x : X) (v : E) (h : evalLinearMap x v = (0 : HolomorphicOneForm E X →ₗ[ℂ] ℂ)) :
     evalJacobianClass (E := E) (X := X) x v = 0 := by
@@ -44,8 +48,10 @@ theorem evalJacobianClass_zero_of_evalLinearMap_eq_zero
   rw [h]
   exact (periodSubgroup E X).zero_mem
 
-/-- Two witnesses give the same Jacobian class iff their
-`evalLinearMap` difference lies in the period subgroup. -/
+/--
+Two witnesses give the same Jacobian class iff their
+`evalLinearMap` difference lies in the period subgroup.
+-/
 theorem evalJacobianClass_eq_iff (x : X) (v w : E) :
     evalJacobianClass (E := E) (X := X) x v =
       evalJacobianClass (E := E) (X := X) x w ↔

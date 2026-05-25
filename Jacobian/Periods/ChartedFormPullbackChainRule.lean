@@ -15,7 +15,7 @@ of `pullbackFormsBundledLM f hf η` at `e` factors as the chart-pullback
 of `η` at `ψ e := cY (f (cX.symm e))` precomposed with the manifold
 derivative of the smooth chart-transition `ψ`:
 
-  `chartedFormPullback cX (pullbackFormsBundledLM f hf η) e
+`chartedFormPullback cX (pullbackFormsBundledLM f hf η) e
    = (chartedFormPullback cY η (ψ e)).comp (mfderiv ψ e)`
 
 This is the **mfderiv chain rule** packaged for the `chartedFormPullback`
@@ -40,16 +40,18 @@ variable {Y : Type*} [TopologicalSpace Y] [ChartedSpace ℂ Y]
   [JacobianChallenge.Periods.StableChartAt ℂ Y]
 
 set_option linter.unusedSectionVars false in
-/-- **Chart-level chain rule (algebraic).** For a smooth `f : X → Y`
+/--
+**Chart-level chain rule (algebraic).** For a smooth `f : X → Y`
 between complex manifolds, holomorphic 1-form `η` on `Y`, charts
 `cX = chartAt ℂ p` and `cY = chartAt ℂ q`, and `e ∈ cX.target` with
 `f (cX.symm e) ∈ cY.source`, the chart-pullback of the form-pullback
 factors through the manifold derivative of the chart-transition
 `ψ := cY ∘ f ∘ cX.symm`:
 
-  `chartedFormPullback cX (pullbackFormsBundledLM f hf η) e
+`chartedFormPullback cX (pullbackFormsBundledLM f hf η) e
    = (chartedFormPullback cY η ((cY ∘ f ∘ cX.symm) e)).comp
-       (mfderiv (cY ∘ f ∘ cX.symm) e)`. -/
+       (mfderiv (cY ∘ f ∘ cX.symm) e)`.
+-/
 theorem chartedFormPullback_pullbackFormsBundledLM_eq
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) (p : X) (q : Y)
@@ -125,12 +127,14 @@ theorem chartedFormPullback_pullbackFormsBundledLM_eq
   rw [step, hY_invDeriv]
   rfl
 
-/-- **Vector form of the chart-level chain rule.** Pointwise on a
+/--
+**Vector form of the chart-level chain rule.** Pointwise on a
 vector `v : ℂ`, the X-side integrand factors via the smooth
 chart-transition `ψ := cY ∘ f ∘ cX.symm`:
 
-  `chartedFormPullback cX (pullbackFormsBundledLM f hf η) e v
-   = chartedFormPullback cY η (ψ e) (mfderiv ψ e v)`. -/
+`chartedFormPullback cX (pullbackFormsBundledLM f hf η) e v
+   = chartedFormPullback cY η (ψ e) (mfderiv ψ e v)`.
+-/
 theorem chartedFormPullback_pullbackFormsBundledLM_apply
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (η : HolomorphicOneForm ℂ Y) (p : X) (q : Y)

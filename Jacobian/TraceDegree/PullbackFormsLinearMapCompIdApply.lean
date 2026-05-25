@@ -34,16 +34,20 @@ set_option linter.unusedSectionVars false in
       pullbackFormsLinearMap f η x := rfl
 
 set_option linter.unusedSectionVars false in
-/-- Vec-apply form: bundled pullback along `id ∘ f` evaluated on a
-tangent vector. -/
+/--
+Vec-apply form: bundled pullback along `id ∘ f` evaluated on a
+tangent vector.
+-/
 @[simp] theorem pullbackFormsLinearMap_id_comp_apply_vec
     (f : X → Y) (η : HolomorphicOneForm E Y) (x : X) (v : E) :
     pullbackFormsLinearMap ((id : Y → Y) ∘ f) η x v =
       pullbackFormsLinearMap f η x v := rfl
 
 set_option linter.unusedSectionVars false in
-/-- Vec-apply form: bundled pullback along `f ∘ id` evaluated on a
-tangent vector. -/
+/--
+Vec-apply form: bundled pullback along `f ∘ id` evaluated on a
+tangent vector.
+-/
 @[simp] theorem pullbackFormsLinearMap_comp_id_apply_vec
     (f : X → Y) (η : HolomorphicOneForm E Y) (x : X) (v : E) :
     pullbackFormsLinearMap (f ∘ (id : X → X)) η x v =

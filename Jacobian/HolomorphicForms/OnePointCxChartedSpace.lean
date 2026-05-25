@@ -126,9 +126,11 @@ lemma continuousOn_invBwd : ContinuousOn invBwd univ := by
 
 /-! ### The inversion chart -/
 
-/-- Inversion chart for `OnePoint ℂ`: source `{(↑0 : OnePoint ℂ)}ᶜ`,
+/--
+Inversion chart for `OnePoint ℂ`: source `{(↑0 : OnePoint ℂ)}ᶜ`,
     target `Set.univ`, forward map `∞ ↦ 0` and `↑z ↦ z⁻¹`, inverse
-    map `0 ↦ ∞` and `w ↦ ↑(w⁻¹)` for `w ≠ 0`. -/
+    map `0 ↦ ∞` and `w ↦ ↑(w⁻¹)` for `w ≠ 0`.
+-/
 noncomputable def inversionChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ where
   toPartialEquiv := {
     toFun := invFwd
@@ -147,16 +149,20 @@ noncomputable def inversionChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ wher
 
 /-! ### The identity chart -/
 
-/-- Identity chart for `OnePoint ℂ`: open embedding `(↑) : ℂ → OnePoint ℂ`
+/--
+Identity chart for `OnePoint ℂ`: open embedding `(↑) : ℂ → OnePoint ℂ`
     packaged as a partial homeomorphism with source `{∞}ᶜ` and target
-    `Set.univ`. -/
+    `Set.univ`.
+-/
 noncomputable def identityChart : OpenPartialHomeomorph (OnePoint ℂ) ℂ :=
   (isOpenEmbedding_coe.toOpenPartialHomeomorph (↑·)).symm
 
 /-! ### The `ChartedSpace` instance -/
 
-/-- The atlas {identityChart, inversionChart} covers `OnePoint ℂ` and gives
-    `ChartedSpace ℂ`. -/
+/--
+The atlas {identityChart, inversionChart} covers `OnePoint ℂ` and gives
+    `ChartedSpace ℂ`.
+-/
 noncomputable instance : ChartedSpace ℂ (OnePoint ℂ) where
   atlas := {identityChart, inversionChart}
   chartAt := fun x => x.elim inversionChart (fun _ => identityChart)

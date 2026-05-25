@@ -5,8 +5,6 @@ import Jacobian.ComplexTorus.Defs
 /-!
 # Connectedness of the complex-torus quotient
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 A normed `ℂ`-space is connected (in fact path-connected via convex
 combinations through `0`); the quotient by any closed subgroup is the
 continuous image of a connected space under a surjection, hence connected.

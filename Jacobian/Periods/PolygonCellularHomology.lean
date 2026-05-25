@@ -5,9 +5,7 @@ import Mathlib.Algebra.Category.ModuleCat.Basic
 import Mathlib.LinearAlgebra.FreeModule.Finite.Basic
 import Mathlib.LinearAlgebra.Finsupp.LinearCombination
 
-/-!
-# Cellular homology of the fundamental polygon
--/
+/-! # Cellular homology of the fundamental polygon -/
 
 namespace JacobianChallenge.Periods
 
@@ -33,8 +31,10 @@ structure PolygonCellularChainComplex (g : ℕ) where
   /-- Boundary maps. -/
   d2 : C2 →ₗ[ℤ] C1 := 0
 
-/-- **Real Proof (Cellular).** The first cellular homology of the
-fundamental polygon is ℤ-linearly isomorphic to `Fin (2g) → ℤ`. -/
+/--
+**Real Proof (Cellular).** The first cellular homology of the
+fundamental polygon is ℤ-linearly isomorphic to `Fin (2g) → ℤ`.
+-/
 theorem polygon4g_cellularH1_iso (g : ℕ) :
     ∃ (H1 : Type) (_ : AddCommGroup H1) (_ : Module ℤ H1),
       Nonempty (H1 ≃ₗ[ℤ] (Fin (2 * g) → ℤ)) :=

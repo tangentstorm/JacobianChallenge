@@ -21,9 +21,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- If on every segment chart `mfderiv c.symm` is identity everywhere,
+/--
+If on every segment chart `mfderiv c.symm` is identity everywhere,
 the cover-with integral equals the segment-wise sum of provisional
-via-chart integrals. -/
+via-chart integrals.
+-/
 theorem pathIntegralViaCoverWith_eq_sum_provisional_of_mfderiv_id
     (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b)
     (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)

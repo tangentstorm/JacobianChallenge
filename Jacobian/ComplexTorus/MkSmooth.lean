@@ -7,9 +7,6 @@ import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 /-!
 # Smoothness of the quotient projection `mk : V → V ⧸ Λ.subgroup`
 
-Queue B sibling. Combines `contMDiffOn_chartAt_symm` with the
-`Λ`-translation invariance of `mk` to prove `ContMDiff (mk V Λ)`.
-
 Strategy at each `x : V`:
 
 * `q := mk x`. The chart at `q` has its representative
@@ -28,8 +25,10 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-/-- The quotient projection `mk V Λ : V → V ⧸ Λ.subgroup` is
-`ContMDiff ℂ ω` (analytic as a map between manifolds). -/
+/--
+The quotient projection `mk V Λ : V → V ⧸ Λ.subgroup` is
+`ContMDiff ℂ ω` (analytic as a map between manifolds).
+-/
 theorem contMDiff_mk (Λ : FullComplexLattice V) :
     ContMDiff (modelWithCornersSelf ℂ V) (modelWithCornersSelf ℂ V)
       (⊤ : WithTop ℕ∞) (mk V Λ : V → quotient V Λ) := by

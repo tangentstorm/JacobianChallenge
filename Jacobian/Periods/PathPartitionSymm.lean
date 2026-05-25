@@ -27,8 +27,10 @@ open unitInterval
 
 variable {X : Type*} [TopologicalSpace X]
 
-/-- The i-th segment of `γ.symm` (for the uniform `n`-partition)
-equals the symm of `γ`'s segment with endpoints reflected via `σ`. -/
+/--
+The i-th segment of `γ.symm` (for the uniform `n`-partition)
+equals the symm of `γ`'s segment with endpoints reflected via `σ`.
+-/
 theorem path_symm_subpath_divFinIcc
     {a b : X} (γ : Path a b) (n : ℕ) (hn : 0 < n) (i : ℕ) (hi : i + 1 ≤ n) :
     γ.symm.subpath (divFinIcc n hn i (Nat.le_of_succ_le hi))

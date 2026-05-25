@@ -5,8 +5,6 @@ import Jacobian.ComplexTorus.MkBundled
 /-!
 # Kernel of the bundled quotient projection
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 The kernel of `mkHom` is exactly `Λ.subgroup`.
 -/
 

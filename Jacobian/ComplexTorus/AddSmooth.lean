@@ -8,9 +8,6 @@ import Mathlib.Geometry.Manifold.ContMDiff.Constructions
 /-!
 # Smoothness of addition on the complex torus
 
-Queue B sibling. `(p1, p2) ↦ p1 + p2 : V/Λ × V/Λ → V/Λ` is
-`ContMDiff ℂ ω` for the product manifold structure.
-
 Strategy: at any `(q1, q2)`, work in the product chart
 `chartAt q1 ×ₚ chartAt q2`. On the product chart's source, the
 function `(q1', q2') ↦ q1' + q2'` equals

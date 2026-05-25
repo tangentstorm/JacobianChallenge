@@ -3,21 +3,15 @@ import Jacobian.Periods.EdgeWord
 import Mathlib.Analysis.SpecialFunctions.Complex.Log
 import Mathlib.Topology.Path
 
-/-!
-# Project-side cellular chain API for the fundamental polygon
-
-Mathlib v4.28.0 does not provide a cellular chain complex.  This file
-records the small amount of cellular infrastructure needed by
-`Polygon4gCellular.lean` as named project-side obligations.  The goal is
-to keep the public assembly theorem free of a monolithic `sorry` while
-leaving the missing bottom-up topology at explicit leaves.
--/
+/-! # Project-side cellular chain API for the fundamental polygon -/
 
 namespace JacobianChallenge.Periods
 
-/-- The intended first cellular homology group of `Polygon4g g`.
+/--
+The intended first cellular homology group of `Polygon4g g`.
 For the standard cell structure there is one vertex, `2g` one-cells,
-and one two-cell whose attaching map is the product of commutators. -/
+and one two-cell whose attaching map is the product of commutators.
+-/
 abbrev Polygon4gCellularH1 (g : ℕ) : Type :=
   Fin (2 * g) → ℤ
 
@@ -31,8 +25,10 @@ instance polygon4gCellularH1_module (g : ℕ) :
   unfold Polygon4gCellularH1
   infer_instance
 
-/-- The project-side cellular one-chain module for the standard
-`Polygon4g g` model: free abelian chains on the `2g` oriented one-cells. -/
+/--
+The project-side cellular one-chain module for the standard
+`Polygon4g g` model: free abelian chains on the `2g` oriented one-cells.
+-/
 abbrev Polygon4gCellularC1 (g : ℕ) : Type :=
   Fin (2 * g) → ℤ
 
@@ -49,9 +45,11 @@ def polygon4gCellularBasis {g : ℕ} (e : Fin (2 * g)) :
     Polygon4gCellularC1 g :=
   fun e' => if e' = e then 1 else 0
 
-/-- Abelianised cellular boundary contribution of one oriented boundary
+/--
+Abelianised cellular boundary contribution of one oriented boundary
 letter.  The convention is `aᵢ ↦ +aᵢ`, `bᵢ ↦ +bᵢ`, and inverse letters map
-to the corresponding negative basis vectors. -/
+to the corresponding negative basis vectors.
+-/
 def letterAbelianizedBoundary {g : ℕ} : Letter g → Polygon4gCellularC1 g
   | Letter.a i => polygon4gCellularBasis (polygon4g_aEdgeIndex i)
   | Letter.b i => polygon4gCellularBasis (polygon4g_bEdgeIndex i)
@@ -80,15 +78,19 @@ def edgeWordAbelianizedBoundary {g : ℕ} (w : EdgeWord g) :
   unfold edgeWordAbelianizedBoundary
   simp [List.map_append, List.sum_append]
 
-/-- Each commutator block `aᵢ bᵢ aᵢ⁻¹ bᵢ⁻¹` has zero abelianised cellular
-boundary. -/
+/--
+Each commutator block `aᵢ bᵢ aᵢ⁻¹ bᵢ⁻¹` has zero abelianised cellular
+boundary.
+-/
 theorem edgeWordAbelianizedBoundary_handleBlock {g : ℕ} (i : Fin g) :
     edgeWordAbelianizedBoundary (EdgeWord.handleBlock i) = 0 := by
   ext e
   simp [EdgeWord.handleBlock, edgeWordAbelianizedBoundary, letterAbelianizedBoundary]
 
-/-- The standard product of commutators has zero abelianised cellular
-two-boundary in the project-side cellular one-chain module. -/
+/--
+The standard product of commutators has zero abelianised cellular
+two-boundary in the project-side cellular one-chain module.
+-/
 theorem edgeWordAbelianizedBoundary_standardWord (g : ℕ) :
     edgeWordAbelianizedBoundary (EdgeWord.standardWord g) = 0 := by
   unfold EdgeWord.standardWord
@@ -108,16 +110,20 @@ structure Polygon4gClosedDiskCellSource (_g : ℕ) where
 instance {g : ℕ} (ds : Polygon4gClosedDiskCellSource g) :
     TopologicalSpace ds.carrier := ds.topology
 
-/-- **Cellular leaf 1a(i).** Construct the closed disk source used by
-the standard `4g`-gon model. -/
+/--
+**Cellular leaf 1a(i).** Construct the closed disk source used by
+the standard `4g`-gon model.
+-/
 theorem polygon4g_closed_disk_cell_source (g : ℕ) :
     Nonempty (Polygon4gClosedDiskCellSource g) :=
   ⟨{ carrier := DiskC,
      topology := inferInstance,
      sourceHomeomorph := Homeomorph.refl DiskC }⟩
 
-/-- The subdivision of the boundary circle into the oriented sides of
-the standard `4g`-gon. -/
+/--
+The subdivision of the boundary circle into the oriented sides of
+the standard `4g`-gon.
+-/
 structure Polygon4gBoundarySideSubdivision
     (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g) where
   /-- The `4g` oriented boundary arcs. -/
@@ -126,16 +132,20 @@ structure Polygon4gBoundarySideSubdivision
   sideArc_eq_boundaryParam : ∀ i t,
     diskSource.sourceHomeomorph (sideArc i t) = boundaryParam g i t
 
-/-- **Cellular leaf 1a(ii).** Construct the boundary side subdivision
-of the closed disk source. -/
+/--
+**Cellular leaf 1a(ii).** Construct the boundary side subdivision
+of the closed disk source.
+-/
 theorem polygon4g_boundary_side_subdivision
     (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g) :
     Nonempty (Polygon4gBoundarySideSubdivision g diskSource) :=
   ⟨{ sideArc := fun i t => diskSource.sourceHomeomorph.symm (boundaryParam g i t),
      sideArc_eq_boundaryParam := fun _ _ => by simp }⟩
 
-/-- The quotient relation that identifies the polygon sides according
-to the surface word. -/
+/--
+The quotient relation that identifies the polygon sides according
+to the surface word.
+-/
 structure Polygon4gBoundaryQuotientRelation
     (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g)
     (subdivision : Polygon4gBoundarySideSubdivision g diskSource) where
@@ -145,8 +155,10 @@ structure Polygon4gBoundaryQuotientRelation
   rel_eq_sideRel : ∀ x y, rel x y ↔
     Polygon4g.SideRel g (diskSource.sourceHomeomorph x) (diskSource.sourceHomeomorph y)
 
-/-- **Cellular leaf 1a(iii).** Construct the boundary quotient
-relation for the standard side identifications. -/
+/--
+**Cellular leaf 1a(iii).** Construct the boundary quotient
+relation for the standard side identifications.
+-/
 theorem polygon4g_boundary_quotient_relation
     (g : ℕ) (diskSource : Polygon4gClosedDiskCellSource g)
     (subdivision : Polygon4gBoundarySideSubdivision g diskSource) :
@@ -154,16 +166,20 @@ theorem polygon4g_boundary_quotient_relation
   ⟨{ rel := fun x y => Polygon4g.SideRel g (diskSource.sourceHomeomorph x) (diskSource.sourceHomeomorph y),
      rel_eq_sideRel := fun _ _ => Iff.rfl }⟩
 
-/-- The quotient-disk cell datum underlying the standard polygonal
-model: the closed disk with boundary side identifications. -/
+/--
+The quotient-disk cell datum underlying the standard polygonal
+model: the closed disk with boundary side identifications.
+-/
 structure Polygon4gQuotientDiskCellData (g : ℕ) where
   diskSource : Polygon4gClosedDiskCellSource g
   subdivision : Polygon4gBoundarySideSubdivision g diskSource
   quotientRelation : Polygon4gBoundaryQuotientRelation g diskSource subdivision
 
-/-- **Cellular assembly 1a.** Construct the quotient-disk cell datum for
+/--
+**Cellular assembly 1a.** Construct the quotient-disk cell datum for
 the standard `4g`-gon from disk, subdivision, and quotient-relation
-leaves. -/
+leaves.
+-/
 theorem polygon4g_quotient_disk_cell_data (g : ℕ) :
     Nonempty (Polygon4gQuotientDiskCellData g) :=
 by
@@ -173,8 +189,10 @@ by
     polygon4g_boundary_quotient_relation g diskSource subdivision
   exact ⟨{ diskSource, subdivision, quotientRelation }⟩
 
-/-- The combinatorial pairing of the `4g` oriented boundary sides of
-the standard polygon. -/
+/--
+The combinatorial pairing of the `4g` oriented boundary sides of
+the standard polygon.
+-/
 structure Polygon4gBoundarySidePairingCombinatorics
     (g : ℕ) (_disk : Polygon4gQuotientDiskCellData g) where
   /-- The word describing the side-pairing. -/
@@ -182,24 +200,30 @@ structure Polygon4gBoundarySidePairingCombinatorics
   /-- The word is standard. -/
   boundaryWord_eq_standard : boundaryWord = EdgeWord.standardWord g
 
-/-- **Cellular leaf 1b(i).** Construct the side-pairing combinatorics
-for the standard polygon. -/
+/--
+**Cellular leaf 1b(i).** Construct the side-pairing combinatorics
+for the standard polygon.
+-/
 theorem polygon4g_boundary_side_pairing_combinatorics
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g) :
     Nonempty (Polygon4gBoundarySidePairingCombinatorics g disk) :=
   ⟨{ boundaryWord := EdgeWord.standardWord g,
      boundaryWord_eq_standard := rfl }⟩
 
-/-- Compatibility between the side pairing and the standard generator
-labels/orientations `aᵢ,bᵢ,aᵢ⁻¹,bᵢ⁻¹`. -/
+/--
+Compatibility between the side pairing and the standard generator
+labels/orientations `aᵢ,bᵢ,aᵢ⁻¹,bᵢ⁻¹`.
+-/
 def Polygon4gBoundarySidePairingLabelCompatible
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
     (pairing : Polygon4gBoundarySidePairingCombinatorics g disk) : Prop :=
   pairing.boundaryWord.IsStandardForm ∧
   EdgeWord.sidePairingRel g pairing.boundaryWord = Polygon4g.SideRel g
 
-/-- **Cellular leaf 1b(ii).** The side-pairing combinatorics has the
-standard orientation and generator-label compatibility. -/
+/--
+**Cellular leaf 1b(ii).** The side-pairing combinatorics has the
+standard orientation and generator-label compatibility.
+-/
 theorem polygon4g_boundary_side_pairing_label_compatible
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
     (pairing : Polygon4gBoundarySidePairingCombinatorics g disk) :
@@ -208,15 +232,19 @@ theorem polygon4g_boundary_side_pairing_label_compatible
     rw [pairing.boundaryWord_eq_standard]
     exact EdgeWord.sidePairingRel_standardWord g⟩
 
-/-- The edge-pairing datum for the standard polygon: paired boundary
-arcs labelled by the `aᵢ,bᵢ` generators. -/
+/--
+The edge-pairing datum for the standard polygon: paired boundary
+arcs labelled by the `aᵢ,bᵢ` generators.
+-/
 structure Polygon4gEdgePairingCellData
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g) where
   pairing : Polygon4gBoundarySidePairingCombinatorics g disk
   labelCompatible : Polygon4gBoundarySidePairingLabelCompatible g disk pairing
 
-/-- **Cellular assembly 1b.** Construct the edge-pairing datum on the
-quotient disk from side-pairing and label-compatibility leaves. -/
+/--
+**Cellular assembly 1b.** Construct the edge-pairing datum on the
+quotient disk from side-pairing and label-compatibility leaves.
+-/
 theorem polygon4g_edge_pairing_cell_data
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g) :
     Nonempty (Polygon4gEdgePairingCellData g disk) :=
@@ -229,24 +257,32 @@ by
       polygon4g_boundary_side_pairing_label_compatible g disk pairing
   }⟩
 
-/-- The characteristic maps for the one zero-cell, `2g` one-cells, and
+/--
+The characteristic maps for the one zero-cell, `2g` one-cells, and
 one two-cell of the standard polygonal model.
 
 This is intentionally a project-side certificate rather than a claimed
 Mathlib `CWComplex`: it records the concrete quotient-surface data needed
 for the cellular chain calculation, and leaves the future bridge to
-`Topology.CWComplex` as a separate theorem. -/
+`Topology.CWComplex` as a separate theorem.
+-/
 structure Polygon4gCharacteristicMapData
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
     (_edgePairing : Polygon4gEdgePairingCellData g disk) where
-  /-- The unique vertex of the cellular model, as a point of the quotient
-  polygon. -/
+  /--
+The unique vertex of the cellular model, as a point of the quotient
+  polygon.
+-/
   vertex : Polygon4g g
-  /-- The `2g` oriented one-cells, represented as loops based at the unique
-  vertex. -/
+  /--
+The `2g` oriented one-cells, represented as loops based at the unique
+  vertex.
+-/
   oneCellPath : Fin (2 * g) → Path vertex vertex
-  /-- The characteristic map of the unique two-cell, before passing to a
-  full Mathlib `CWComplex` record. -/
+  /--
+The characteristic map of the unique two-cell, before passing to a
+  full Mathlib `CWComplex` record.
+-/
   twoCellCharacteristic : ContinuousMap disk.diskSource.carrier (Polygon4g g)
   /-- The two-cell map is the quotient map from the closed disk (via the homeomorph). -/
   twoCellCharacteristic_eq_mk :
@@ -255,17 +291,20 @@ structure Polygon4gCharacteristicMapData
   boundaryWord : EdgeWord g
   /-- The attaching word is the standard product of commutators. -/
   boundaryWord_standard : boundaryWord.IsStandardForm
-  /-- The word-side quotient relation agrees with the existing polygon
-  side-pairing relation. -/
+  /--
+The word-side quotient relation agrees with the existing polygon
+  side-pairing relation.
+-/
   boundaryWord_sidePairing :
     EdgeWord.sidePairingRel g boundaryWord = Polygon4g.SideRel g
-  /-- The cellular boundary of every one-cell is zero because every one-cell
-  is a loop at the unique vertex. -/
+  /--
+The cellular boundary of every one-cell is zero because every one-cell
+  is a loop at the unique vertex.
+-/
   oneCellBoundaryZero :
     ∀ e : Fin (2 * g), oneCellPath e 0 = vertex ∧ oneCellPath e 1 = vertex
 
-/-- **Frontier lemma.** The quotient of boundary arcs form based loops
-at the unique vertex. -/
+
 theorem polygon4g_boundary_arcs_are_loops (g : ℕ) (k : ℕ) :
     Polygon4g.mk g (boundaryParam g k 0) = Polygon4g.mk g (boundaryParam g 0 0) ∧
     Polygon4g.mk g (boundaryParam g k 1) = Polygon4g.mk g (boundaryParam g 0 0) :=
@@ -425,19 +464,22 @@ lemma boundaryParam'_continuous (L i : ℕ) :
   unfold boundaryParam'
   exact continuous_induced_rng.mpr (boundaryParamC'_continuous L i)
 
-/-- **Sorry-free.** The standard boundary parametrisation is
-continuous on `[0,1]`. -/
+
 theorem polygon4g_boundaryParam_continuous (g : ℕ) (k : ℕ) :
     Continuous (fun t : ℝ => boundaryParam g k t) :=
   boundaryParam'_continuous (4 * g) k
 
-/-- The index of the boundary arc corresponding to the `e`-th oriented
-one-cell.  Maps `2*i ↦ 4*i` (`aᵢ`) and `2*i + 1 ↦ 4*i + 1` (`bᵢ`). -/
+/--
+The index of the boundary arc corresponding to the `e`-th oriented
+one-cell.  Maps `2*i ↦ 4*i` (`aᵢ`) and `2*i + 1 ↦ 4*i + 1` (`bᵢ`).
+-/
 def polygon4g_oneCell_arcIndex {g : ℕ} (e : Fin (2 * g)) : ℕ :=
   2 * e.val - (e.val % 2)
 
-/-- **Cellular leaf 1c.** Construct the characteristic maps for the
-standard polygonal cell structure. -/
+/--
+**Cellular leaf 1c.** Construct the characteristic maps for the
+standard polygonal cell structure.
+-/
 theorem polygon4g_characteristic_map_data
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
     (edgePairing : Polygon4gEdgePairingCellData g disk) :
@@ -462,13 +504,15 @@ by
       ⟨(polygon4g_boundary_arcs_are_loops g _).1, (polygon4g_boundary_arcs_are_loops g _).2⟩
   }⟩
 
-/-- A witness that `Polygon4g g` carries the standard project-side
+/--
+A witness that `Polygon4g g` carries the standard project-side
 cellular model: one zero-cell, `2g` one-cells, and one two-cell.
 
 The record is deliberately tied to the quotient polygon and exposes the
 cellular data needed by the chain calculation.  It is not a Mathlib
 `CWComplex`; a future bridge can package these fields into Mathlib's CW
-API. -/
+API.
+-/
 structure Polygon4gCellularModel (g : ℕ) where
   /-- The quotient-disk source, subdivision, and side quotient relation. -/
   disk : Polygon4gQuotientDiskCellData g
@@ -520,8 +564,10 @@ theorem boundaryWord_abelianizedBoundary {g : ℕ} (C : Polygon4gCellularModel g
 
 end Polygon4gCellularModel
 
-/-- **Cellular leaf 1d.** Realise the quotient-disk, edge-pairing, and
-characteristic-map data as a cellular model on `Polygon4g g`. -/
+/--
+**Cellular leaf 1d.** Realise the quotient-disk, edge-pairing, and
+characteristic-map data as a cellular model on `Polygon4g g`.
+-/
 theorem polygon4g_realize_standard_cellular_model
     (g : ℕ) (disk : Polygon4gQuotientDiskCellData g)
     (edgePairing : Polygon4gEdgePairingCellData g disk)
@@ -529,9 +575,11 @@ theorem polygon4g_realize_standard_cellular_model
     Nonempty (Polygon4gCellularModel g) :=
   ⟨{ disk, edgePairing, characteristicMaps }⟩
 
-/-- **Cellular assembly 1.** Existence of the standard cellular model on
+/--
+**Cellular assembly 1.** Existence of the standard cellular model on
 `Polygon4g g`, assembled from the quotient-disk, edge-pairing,
-characteristic-map, and realisation leaves. -/
+characteristic-map, and realisation leaves.
+-/
 theorem polygon4g_standard_cellular_model (g : ℕ) :
     Nonempty (Polygon4gCellularModel g) :=
 by
@@ -542,45 +590,57 @@ by
   exact polygon4g_realize_standard_cellular_model
     g disk edgePairing characteristicMaps
 
-/-- The cellular boundary of every one-cell is zero, since all one-cell
-endpoints are identified with the unique zero-cell. -/
+/--
+The cellular boundary of every one-cell is zero, since all one-cell
+endpoints are identified with the unique zero-cell.
+-/
 def Polygon4gOneCellBoundaryZero
     (g : ℕ) (C : Polygon4gCellularModel g) : Prop :=
   ∀ e : Fin (2 * g), C.oneCellPath e 0 = C.vertex ∧ C.oneCellPath e 1 = C.vertex
 
-/-- **Cellular leaf 2a.** The one-cell boundary is zero for the standard
-polygon model. -/
+/--
+**Cellular leaf 2a.** The one-cell boundary is zero for the standard
+polygon model.
+-/
 theorem polygon4g_one_cell_boundary_zero
     (g : ℕ) (C : Polygon4gCellularModel g) :
     Polygon4gOneCellBoundaryZero g C :=
   C.characteristicMaps.oneCellBoundaryZero
 
-/-- The cellular two-cell boundary is the abelianisation of the surface
-relator `∏ᵢ [aᵢ,bᵢ]`, hence zero in the free abelian group on one-cells. -/
+/--
+The cellular two-cell boundary is the abelianisation of the surface
+relator `∏ᵢ [aᵢ,bᵢ]`, hence zero in the free abelian group on one-cells.
+-/
 def Polygon4gTwoCellBoundaryAbelianizedRelator
     (g : ℕ) (C : Polygon4gCellularModel g) : Prop :=
   C.boundaryWord.IsStandardForm ∧
     EdgeWord.sidePairingRel g C.boundaryWord = Polygon4g.SideRel g ∧
       edgeWordAbelianizedBoundary C.boundaryWord = 0
 
-/-- **Cellular leaf 2b.** The two-cell boundary is the abelianised
-commutator product and therefore vanishes. -/
+/--
+**Cellular leaf 2b.** The two-cell boundary is the abelianised
+commutator product and therefore vanishes.
+-/
 theorem polygon4g_two_cell_boundary_abelianized_relator
     (g : ℕ) (C : Polygon4gCellularModel g) :
     Polygon4gTwoCellBoundaryAbelianizedRelator g C :=
   ⟨C.boundaryWord_standard, C.boundaryWord_sidePairing,
     C.boundaryWord_abelianizedBoundary⟩
 
-/-- **Cellular boundary formula.** It packages two facts: the one-cell
+/--
+**Cellular boundary formula.** It packages two facts: the one-cell
 boundary is zero because all endpoints are the unique vertex, and the
-two-cell boundary is the abelianised surface relator, hence zero. -/
+two-cell boundary is the abelianised surface relator, hence zero.
+-/
 abbrev Polygon4gCellularBoundaryFormula
     (g : ℕ) (C : Polygon4gCellularModel g) : Prop :=
   Polygon4gOneCellBoundaryZero g C ∧
     Polygon4gTwoCellBoundaryAbelianizedRelator g C
 
-/-- **Cellular assembly 2.** The cellular boundary formula for the
-standard polygon model. -/
+/--
+**Cellular assembly 2.** The cellular boundary formula for the
+standard polygon model.
+-/
 theorem polygon4g_cellular_boundary_formula
     (g : ℕ) (C : Polygon4gCellularModel g) :
     Polygon4gCellularBoundaryFormula g C :=
@@ -588,18 +648,22 @@ by
   exact ⟨polygon4g_one_cell_boundary_zero g C,
     polygon4g_two_cell_boundary_abelianized_relator g C⟩
 
-/-- **Cellular leaf 3.** The first cellular homology computed from the
+/--
+**Cellular leaf 3.** The first cellular homology computed from the
 standard polygon chain complex is the free module on the `2g` one-cells.
-This is the algebraic consequence of the boundary formula. -/
+This is the algebraic consequence of the boundary formula.
+-/
 theorem polygon4g_cellularH1_iso_free
     (g : ℕ) (C : Polygon4gCellularModel g)
     (_h_boundary : Polygon4gCellularBoundaryFormula g C) :
     Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] Polygon4gCellularH1 g) :=
   ⟨LinearEquiv.refl ℤ _⟩
 
-/-- **Cellular assembly.** The polygon's cellular `H₁` is the free
+/--
+**Cellular assembly.** The polygon's cellular `H₁` is the free
 module on the `2g` one-cells.  The only topology used here is isolated
-in the model and boundary leaves above. -/
+in the model and boundary leaves above.
+-/
 theorem polygon4g_cellularH1_free_assembly (g : ℕ) :
     Nonempty ((Fin (2 * g) → ℤ) ≃ₗ[ℤ] Polygon4gCellularH1 g) := by
   obtain ⟨C⟩ := polygon4g_standard_cellular_model g

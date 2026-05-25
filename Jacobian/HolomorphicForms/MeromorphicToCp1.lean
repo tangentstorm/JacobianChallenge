@@ -5,19 +5,23 @@ import Jacobian.HolomorphicForms.LocalMappingThm
 import Jacobian.Blueprint.Sec02.WeightedFiberCardConst
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
-/-! Production API promoted from blueprint: `def:meromorphic-to-cp1` in
+/-!
+Production API promoted from blueprint: `def:meromorphic-to-cp1` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
 
 The associated map `f̂ : X → ℂ ∪ {∞}` to the Riemann sphere from a nonzero
-meromorphic function. -/
+meromorphic function.
+-/
 
 namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold OnePoint Topology
 open JacobianChallenge.HolomorphicForms
 
-/-- The associated map to `OnePoint ℂ` (the Riemann sphere) from a
-meromorphic function: simply the underlying set function `f.toFun`. -/
+/--
+The associated map to `OnePoint ℂ` (the Riemann sphere) from a
+meromorphic function: simply the underlying set function `f.toFun`.
+-/
 noncomputable def meromorphicToCp1
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -25,7 +29,8 @@ noncomputable def meromorphicToCp1
     (f : MeromorphicFunctionType X) : X → OnePoint ℂ :=
   f.toFun
 
-/-- Continuity of the CP¹ lift of a meromorphic function.
+/--
+Continuity of the CP¹ lift of a meromorphic function.
 
 Body: `meromorphicToCp1 X f := f.toFun`, and `f.toFun_continuous` is the
 relevant `Continuous` field of the `MeromorphicFunctionType` structure.
@@ -33,7 +38,8 @@ relevant `Continuous` field of the `MeromorphicFunctionType` structure.
 Used by `liftToCp1_branchedCoverData` (sub-leaf 2 of
 `thm:principal-degree-zero`) to feed
 `Sec02/BranchedDegree.lean` leaf 8
-(`branchedCoverData_of_nonconstant_holomorphic`). -/
+(`branchedCoverData_of_nonconstant_holomorphic`).
+-/
 theorem liftToCp1_continuous
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -42,12 +48,14 @@ theorem liftToCp1_continuous
     Continuous (meromorphicToCp1 X f) :=
   f.toFun_continuous
 
-/-- Chart-local holomorphicity of the CP¹ lift of a meromorphic function.
+/--
+Chart-local holomorphicity of the CP¹ lift of a meromorphic function.
 
 This is the direct analytic bridge from the meromorphic-germ field
 `f.isMeromorphic` to the project-local holomorphic-map predicate:
 in every source chart and the corresponding finite/infinite chart on
-`OnePoint ℂ`, the chart-local presentation is analytic. -/
+`OnePoint ℂ`, the chart-local presentation is analytic.
+-/
 theorem liftToCp1_holomorphicAt_finite
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -88,10 +96,12 @@ theorem liftToCp1_holomorphicAt_finite
       · convert f.toFun_continuous.continuousAt using 1;
       · exact ( chartAt ℂ p ).symm.continuousAt ( by simp +decide )
 
-/-- Chart-local holomorphicity of the CP¹ lift at a pole.
+/--
+Chart-local holomorphicity of the CP¹ lift at a pole.
 
 In the target inversion chart, this is analyticity of the reciprocal
-local branch of the meromorphic projection. -/
+local branch of the meromorphic projection.
+-/
 theorem liftToCp1_holomorphicAt_infty
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -114,11 +124,13 @@ theorem liftToCp1_holomorphicAt_infty
       · convert f.toFun_continuous.continuousAt using 1;
       · exact ( chartAt ℂ p ).symm.continuousAt ( by simp +decide )
 
-/-- Chart-local holomorphicity of the CP¹ lift of a meromorphic function.
+/--
+Chart-local holomorphicity of the CP¹ lift of a meromorphic function.
 
 This is now a case split on the target value: finite values use
 `liftToCp1_holomorphicAt_finite`; poles use
-`liftToCp1_holomorphicAt_infty`. -/
+`liftToCp1_holomorphicAt_infty`.
+-/
 theorem liftToCp1_holomorphicAt
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -132,14 +144,16 @@ theorem liftToCp1_holomorphicAt
   | coe z =>
       exact liftToCp1_holomorphicAt_finite X f _hholo p hval
 
-/-- Manifold-level complex smoothness of the CP¹ lift.
+/--
+Manifold-level complex smoothness of the CP¹ lift.
 
 Bridges the chart-local analyticity from `liftToCp1_holomorphicAt` (every
 chart at the lift's value is analytic, both at finite values and at ∞) with
 the global continuity from `MeromorphicFunctionType.toFun_continuous`, using
 `ContMDiff.of_isHolomorphic_and_continuous`. This unlocks Mathlib's
 manifold-level holomorphic-map machinery (including the local mapping
-theorem) for the lift. -/
+theorem) for the lift.
+-/
 theorem liftToCp1_contMDiff
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -151,12 +165,7 @@ theorem liftToCp1_contMDiff
     (liftToCp1_holomorphicAt X f True.intro)
     f.toFun_continuous
 
-/-- Local `k`-fold normal form/counting for the CP¹ lift.
-
-Discharged by combining `liftToCp1_contMDiff` (manifold-level smoothness of
-the lift) with the project-level local mapping theorem
-`local_kfold_ramified_of_contMDiff`. The `Finset` witness is the actual
-local fiber produced by that theorem, not a fabricated witness. -/
+/-- Local `k`-fold normal form/counting for the CP¹ lift. -/
 theorem liftToCp1_local_kfold_ramified
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -176,10 +185,7 @@ theorem liftToCp1_local_kfold_ramified
   intro _ _ x k hk hram
   exact local_kfold_ramified_of_contMDiff (liftToCp1_contMDiff X f) hk hram
 
-/-- Local conservation of the weighted fibre count for the CP¹ lift.
-
-Discharged via the general `weightedFiberConservation_of_contMDiff`
-applied to `liftToCp1_contMDiff`. -/
+/-- Local conservation of the weighted fibre count for the CP¹ lift. -/
 theorem liftToCp1_weightedFiberSum_eventually_eq
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -211,8 +217,10 @@ theorem liftToCp1_isHolomorphicBasic
     { continuous := liftToCp1_continuous X f hholo
       holomorphicAt := liftToCp1_holomorphicAt X f hholo }
 
-/-- Local k-fold ramification data for the CP¹ lift, kept separate from
-basic holomorphicity. -/
+/--
+Local k-fold ramification data for the CP¹ lift, kept separate from
+basic holomorphicity.
+-/
 theorem liftToCp1_hasLocalKfoldRamification
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -223,7 +231,8 @@ theorem liftToCp1_hasLocalKfoldRamification
   exact
     { local_kfold_ramified := liftToCp1_local_kfold_ramified X f hholo }
 
-/-- Holomorphicity of the CP¹ lift of a meromorphic function.
+/--
+Holomorphicity of the CP¹ lift of a meromorphic function.
 
 This is the analytic content needed by sub-leaf 2 of
 `thm:principal-degree-zero`: after constructing the set-level map
@@ -231,7 +240,8 @@ This is the analytic content needed by sub-leaf 2 of
 the project-local sense used by the branched-cover constructor.
 
 Compatibility wrapper assembling the older `IsHolomorphic` package from
-the now-separated basic and local-kfold route data. -/
+the now-separated basic and local-kfold route data.
+-/
 theorem liftToCp1_isHolomorphic
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -243,8 +253,10 @@ theorem liftToCp1_isHolomorphic
     (liftToCp1_isHolomorphicBasic X f hholo)
     (liftToCp1_hasLocalKfoldRamification X f hholo)
 
-/-- Weighted-fiber conservation for the CP¹ lift, kept separate from
-basic/local holomorphicity. -/
+/--
+Weighted-fiber conservation for the CP¹ lift, kept separate from
+basic/local holomorphicity.
+-/
 theorem liftToCp1_hasWeightedFiberConservation
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]

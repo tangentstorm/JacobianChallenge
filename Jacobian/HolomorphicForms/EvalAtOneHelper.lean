@@ -2,9 +2,7 @@ import Jacobian.HolomorphicForms.Defs
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 import Mathlib.Geometry.Manifold.VectorBundle.Hom
 
-/-!
-# Continuity of eval-at-one for cotangent sections
--/
+/-! # Continuity of eval-at-one for cotangent sections -/
 
 namespace JacobianChallenge.HolomorphicForms
 
@@ -15,7 +13,8 @@ variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- The constant `1` section of the tangent bundle of a manifold modeled on
+/--
+The constant `1` section of the tangent bundle of a manifold modeled on
 `modelWithCornersSelf ℂ ℂ` is `ContMDiff`.
 
 The proof uses `Bundle.contMDiffAt_section` to reduce smoothness of the
@@ -25,7 +24,8 @@ section to smoothness of its trivialization at `x₀`. By
 Under `[StableChartAt ℂ X]`, `achart ℂ y = achart ℂ x₀` on
 `(chartAt ℂ x₀).source`, so the `coordChange` collapses to the identity
 by `FiberBundleCore.coordChange_self`, giving the constant value `1`
-on a neighbourhood of `x₀`. -/
+on a neighbourhood of `x₀`.
+-/
 theorem contMDiff_tangentSection_one :
     ContMDiff (𝓘(ℂ, ℂ)) ((𝓘(ℂ, ℂ)).prod (𝓘(ℂ, ℂ))) ⊤
       (fun x : X => TotalSpace.mk' ℂ (E := TangentSpace (𝓘(ℂ, ℂ))) x (1 : ℂ)) := by
@@ -42,9 +42,11 @@ theorem contMDiff_tangentSection_one :
   exact (tangentBundleCore (𝓘(ℂ, ℂ)) X).coordChange_self
     (achart ℂ x₀) y hy (1 : ℂ)
 
-/-- Eval-at-1 of a smooth cotangent section is continuous. Uses
+/--
+Eval-at-1 of a smooth cotangent section is continuous. Uses
 `ContMDiff.clm_bundle_apply` to combine the cotangent section with
-the constant tangent section. -/
+the constant tangent section.
+-/
 theorem continuous_eval_at_one_of_contMDiffSection
     (σ : HolomorphicOneForm ℂ X) :
     Continuous (fun x => (σ.toFun x) (1 : ℂ)) := by

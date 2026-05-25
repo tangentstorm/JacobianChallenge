@@ -1,8 +1,6 @@
 import Jacobian.Periods.PathIntegralViaCoverSymm
 
 /-!
-# Round-trip integral is zero (multi-chart cover)
-
 Cover-layer analogue of `pathIntegralViaChartCorrect_add_symm_self`:
 the integral of `ω` along `γ` plus the integral of `ω` along `γ.symm`
 (with the appropriately re-indexed cover via `cover_symm_of_cover`)
@@ -19,9 +17,7 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Round-trip cancellation (cover layer): the integral of `ω` along
-`γ` plus the integral along `γ.symm` (with the Fin.rev-re-indexed
-cover) is zero. -/
+
 theorem pathIntegralViaCoverWith_add_symm_self
     (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

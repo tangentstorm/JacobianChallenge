@@ -44,10 +44,12 @@ variable (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
   [FiniteDimensionalHolomorphicOneForms ℂ X]
 
-/-- The basis-aligned period subgroup, defined concretely as the image of
+/--
+The basis-aligned period subgroup, defined concretely as the image of
 the functional-space `periodSubgroup ℂ X` under the basis-aligned dual
 equivalence. The `[FiniteDimensionalHolomorphicOneForms ℂ X]` assumption
-keeps the basis machinery's finite-dimensionality requirement visible. -/
+keeps the basis machinery's finite-dimensionality requirement visible.
+-/
 noncomputable def basisAlignedPeriodSubgroupConcrete :
     AddSubgroup (Fin (analyticGenus ℂ X) → ℂ) :=
   AddSubgroup.map
@@ -55,8 +57,10 @@ noncomputable def basisAlignedPeriodSubgroupConcrete :
     (periodSubgroup ℂ X)
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- An element of `basisAlignedPeriodSubgroupConcrete X` is exactly the
-image of some functional-space period under the dual equivalence. -/
+/--
+An element of `basisAlignedPeriodSubgroupConcrete X` is exactly the
+image of some functional-space period under the dual equivalence.
+-/
 theorem mem_basisAlignedPeriodSubgroupConcrete_iff
     (v : Fin (analyticGenus ℂ X) → ℂ) :
     v ∈ basisAlignedPeriodSubgroupConcrete X ↔
@@ -66,19 +70,23 @@ theorem mem_basisAlignedPeriodSubgroupConcrete_iff
   exact AddSubgroup.mem_map
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- The `0` of the basis-aligned space lies in the concrete period
+/--
+The `0` of the basis-aligned space lies in the concrete period
 subgroup (since `0 ∈ periodSubgroup` always, and the dual equiv preserves
 zero). Sanity check; redundant with `AddSubgroup.zero_mem` but recorded
-explicitly. -/
+explicitly.
+-/
 theorem zero_mem_basisAlignedPeriodSubgroupConcrete :
     (0 : Fin (analyticGenus ℂ X) → ℂ) ∈
       basisAlignedPeriodSubgroupConcrete X :=
   (basisAlignedPeriodSubgroupConcrete X).zero_mem
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- Inverse-direction transport: pulling back an element of the
+/--
+Inverse-direction transport: pulling back an element of the
 basis-aligned period subgroup through the inverse dual equivalence
-lands in the functional-space `periodSubgroup ℂ X`. -/
+lands in the functional-space `periodSubgroup ℂ X`.
+-/
 theorem holomorphicOneFormDualEquiv_symm_mem_periodSubgroup
     {v : Fin (analyticGenus ℂ X) → ℂ}
     (hv : v ∈ basisAlignedPeriodSubgroupConcrete X) :
@@ -89,10 +97,12 @@ theorem holomorphicOneFormDualEquiv_symm_mem_periodSubgroup
   exact hφ_mem
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- Forward-direction transport: pushing an element of the functional-space
+/--
+Forward-direction transport: pushing an element of the functional-space
 `periodSubgroup ℂ X` through the dual equivalence lands in the
 basis-aligned period subgroup. The trivial `mp` direction; recorded
-explicitly for use as a lemma at call sites. -/
+explicitly for use as a lemma at call sites.
+-/
 theorem holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete
     {φ : HolomorphicOneForm ℂ X →ₗ[ℂ] ℂ}
     (hφ : φ ∈ periodSubgroup ℂ X) :
@@ -100,10 +110,12 @@ theorem holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete
   (mem_basisAlignedPeriodSubgroupConcrete_iff X _).mpr ⟨φ, hφ, rfl⟩
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- The dual equivalence restricts to a bijection between the
+/--
+The dual equivalence restricts to a bijection between the
 functional-space and basis-aligned period subgroups (as sets). Combines
 the forward-direction membership transport, injectivity of the
-equivalence, and the surjective image characterization. -/
+equivalence, and the surjective image characterization.
+-/
 theorem holomorphicOneFormDualEquiv_bijOn_periodSubgroup :
     Set.BijOn (holomorphicOneFormDualEquiv ℂ X)
       (periodSubgroup ℂ X : Set _)
@@ -121,11 +133,13 @@ theorem holomorphicOneFormDualEquiv_bijOn_periodSubgroup :
     obtain ⟨φ, hφ_mem, hφ_eq⟩ := hv
     exact ⟨φ, hφ_mem, hφ_eq⟩
 
-/-- The dual equivalence restricts to an additive isomorphism between
+/--
+The dual equivalence restricts to an additive isomorphism between
 the functional-space `periodSubgroup ℂ X` and the basis-aligned
 `basisAlignedPeriodSubgroupConcrete X`. Built from Mathlib's
 `AddSubgroup.equivMapOfInjective` against the injective dual
-equivalence. -/
+equivalence.
+-/
 noncomputable def holomorphicOneFormDualPeriodSubgroupEquiv :
     periodSubgroup ℂ X ≃+ basisAlignedPeriodSubgroupConcrete X :=
   (periodSubgroup ℂ X).equivMapOfInjective

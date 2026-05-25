@@ -2,20 +2,12 @@ import Jacobian.AnalyticJacobian.NontrivialWitness
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
-# Abel-Jacobi map (witness skeleton)
-
-Queue F seeding. Defines a base-point-relative *witness* map:
+# Abel-Jacobi map
 
 ```text
 witnessAbelJacobi (basePoint : X) (P : X) (v : E) : AnalyticJacobianGroup E X
   := evalJacobianClass P v - evalJacobianClass basePoint v
 ```
-
-This is **not** the full path-integral Abel-Jacobi map (which would
-require multi-chart path integration plus Stokes — both deferred).
-But it has the same *signature shape* and the right base-point
-behaviour: at `P = basePoint`, the witness is zero. Useful as a
-type-correct stand-in until the real construction lands.
 -/
 
 namespace JacobianChallenge.AbelJacobi
@@ -30,9 +22,7 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- Base-point-relative witness map into the analytic Jacobian
-quotient. *Not* the full Abel-Jacobi map (deferred), but a
-type-correct skeleton that vanishes at the base point. -/
+
 noncomputable def witnessAbelJacobi
     (basePoint P : X) (v : E) : AnalyticJacobianGroup E X :=
   evalJacobianClass P v - evalJacobianClass basePoint v

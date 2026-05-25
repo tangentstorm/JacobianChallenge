@@ -42,10 +42,12 @@ namespace JacobianChallenge.HolomorphicForms.EntireZero
 
 open Filter Topology
 
-/-- If `f : ℂ → ℂ` is entire and tends to `0` at infinity (along the
+/--
+If `f : ℂ → ℂ` is entire and tends to `0` at infinity (along the
 cocompact filter), then `f` is identically `0`.
 
-Direct corollary of `Differentiable.eq_const_of_tendsto_cocompact`. -/
+Direct corollary of `Differentiable.eq_const_of_tendsto_cocompact`.
+-/
 theorem _root_.Differentiable.eq_zero_of_tendsto_zero_cocompact
     {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     (h : Tendsto f (cocompact ℂ) (𝓝 0)) :
@@ -55,13 +57,15 @@ theorem _root_.Differentiable.eq_zero_of_tendsto_zero_cocompact
   funext z
   simp [hconst]
 
-/-- If `f : ℂ → ℂ` is entire and satisfies a `1 / r` decay bound at
+/--
+If `f : ℂ → ℂ` is entire and satisfies a `1 / r` decay bound at
 infinity, then `f` is identically `0`.
 
 The bound `‖f z‖ ≤ C / ‖z‖` is enough — the standard quadratic form
 `‖f z‖ ≤ C' / ‖z‖^2` that arises from the inversion-chart
 holomorphicity condition implies this since
-`C' / ‖z‖^2 ≤ C' / ‖z‖` for `‖z‖ ≥ 1`. -/
+`C' / ‖z‖^2 ≤ C' / ‖z‖` for `‖z‖ ≥ 1`.
+-/
 theorem _root_.Differentiable.eq_zero_of_inv_decay_at_infty
     {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     {C R : ℝ} (h : ∀ z : ℂ, R ≤ ‖z‖ → ‖f z‖ ≤ C / ‖z‖) :
@@ -82,7 +86,8 @@ theorem _root_.Differentiable.eq_zero_of_inv_decay_at_infty
     (Eventually.of_forall fun z => norm_nonneg _) ?_
   filter_upwards [hnorm_atTop.eventually_ge_atTop R] with z hz using h z hz
 
-/-- If `f : ℂ → ℂ` is entire and satisfies a quadratic decay bound
+/--
+If `f : ℂ → ℂ` is entire and satisfies a quadratic decay bound
 `‖f z‖ ≤ C / ‖z‖^2` for `‖z‖ ≥ R` (with `C ≥ 0`), then `f` is
 identically `0`.
 
@@ -90,7 +95,8 @@ This is the form that arises naturally from holomorphicity of a
 1-form `f(z) dz` at the point at infinity in the standard two-chart
 atlas of `ℂℙ¹`: the inversion-chart pullback `-f(1/w)/w² dw` is
 holomorphic at `w = 0` iff `f(1/w) / w²` is bounded near `0`, i.e.
-`|f(z)| ≤ C / |z|^2` for `|z|` large. -/
+`|f(z)| ≤ C / |z|^2` for `|z|` large.
+-/
 theorem _root_.Differentiable.eq_zero_of_quadratic_decay_at_infty
     {f : ℂ → ℂ} (hf : Differentiable ℂ f) {C R : ℝ} (hC : 0 ≤ C)
     (h : ∀ z : ℂ, R ≤ ‖z‖ → ‖f z‖ ≤ C / ‖z‖ ^ 2) :
@@ -107,14 +113,16 @@ theorem _root_.Differentiable.eq_zero_of_quadratic_decay_at_infty
   rw [div_eq_mul_one_div C, div_eq_mul_one_div C (‖z‖)]
   exact mul_le_mul_of_nonneg_left (one_div_le_one_div_of_le hzpos hzsq) hC
 
-/-- If `f : ℂ → ℂ` is entire and satisfies a polynomial decay bound
+/--
+If `f : ℂ → ℂ` is entire and satisfies a polynomial decay bound
 `‖f z‖ ≤ C / ‖z‖^n` for `‖z‖ ≥ R` (with `C ≥ 0` and `n ≥ 1`), then
 `f` is identically `0`.
 
 Generalizes `eq_zero_of_inv_decay_at_infty` (the `n = 1` case) and
 `eq_zero_of_quadratic_decay_at_infty` (the `n = 2` case).  Reduces
 to the linear (`n = 1`) form by `‖z‖ ≤ ‖z‖^n` for `‖z‖ ≥ 1` and
-`n ≥ 1`. -/
+`n ≥ 1`.
+-/
 theorem _root_.Differentiable.eq_zero_of_polynomial_decay_at_infty
     {f : ℂ → ℂ} (hf : Differentiable ℂ f) {C R : ℝ} (hC : 0 ≤ C)
     {n : ℕ} (hn : 1 ≤ n)
@@ -131,13 +139,15 @@ theorem _root_.Differentiable.eq_zero_of_polynomial_decay_at_infty
   rw [div_eq_mul_one_div C, div_eq_mul_one_div C (‖z‖)]
   exact mul_le_mul_of_nonneg_left (one_div_le_one_div_of_le hzpos hzpow) hC
 
-/-- General form: an entire function whose norm is eventually
+/--
+General form: an entire function whose norm is eventually
 bounded by some `g : ℂ → ℝ` that tends to `0` along `cocompact ℂ`
 is identically `0`.
 
 This subsumes the inv-decay, quadratic-decay, and polynomial-decay
 corollaries above (each of which can be obtained by taking
-`g z := C / ‖z‖^n` and a uniform bound for `‖z‖ ≥ R`). -/
+`g z := C / ‖z‖^n` and a uniform bound for `‖z‖ ≥ R`).
+-/
 theorem _root_.Differentiable.eq_zero_of_norm_eventually_le
     {f : ℂ → ℂ} (hf : Differentiable ℂ f)
     {g : ℂ → ℝ} (hg : Tendsto g (cocompact ℂ) (𝓝 0))

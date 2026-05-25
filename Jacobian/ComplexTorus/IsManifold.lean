@@ -6,9 +6,6 @@ import Mathlib.Geometry.Manifold.IsManifold.Basic
 /-!
 # `IsManifold` instance on the complex torus
 
-Queue B sibling. Combines the `ChartedSpace` instance and the
-`ContDiffOn ℂ ω` chart-transition lemma into a manifold structure.
-
 The `HasGroupoid` obligation reduces, via
 `mem_groupoid_of_pregroupoid` and the `modelWithCornersSelf`
 simplifications, to two `ContDiffOn ℂ ω` checks for chart
@@ -22,8 +19,10 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-/-- `HasGroupoid` instance for the complex torus over `contDiffGroupoid ω`.
-The substantive content is in `contDiffOn_localSection_mk`. -/
+/--
+`HasGroupoid` instance for the complex torus over `contDiffGroupoid ω`.
+The substantive content is in `contDiffOn_localSection_mk`.
+-/
 noncomputable instance complexTorusHasGroupoid (Λ : FullComplexLattice V) :
     HasGroupoid (quotient V Λ)
       (contDiffGroupoid (⊤ : WithTop ℕ∞) (modelWithCornersSelf ℂ V)) := by
@@ -60,8 +59,10 @@ noncomputable instance complexTorusHasGroupoid (Λ : FullComplexLattice V) :
       Function.comp_id, Function.id_comp, Set.preimage_id, Set.range_id, Set.inter_univ]
     exact contDiffOn_localSection_mk Λ v₂ v₁ hδpos hr_lt hiso
 
-/-- The complex torus is an analytic manifold modeled on the ambient
-finite-dimensional complex vector space. -/
+/--
+The complex torus is an analytic manifold modeled on the ambient
+finite-dimensional complex vector space.
+-/
 noncomputable instance complexTorusIsManifold (Λ : FullComplexLattice V) :
     IsManifold (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
       (quotient V Λ) where

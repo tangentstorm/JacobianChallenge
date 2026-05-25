@@ -4,8 +4,6 @@ import Jacobian.ComplexTorus.Defs
 /-!
 # Neighborhoods at an arbitrary point of the complex-torus quotient
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 `NhdsZero.lean` already covers the special case `mk V Λ 0`. This file
 generalises to any point `mk V Λ v`.
 -/
@@ -17,8 +15,10 @@ open Filter Topology
 variable {V : Type*} [NormedAddCommGroup V]
   (Λ : FullComplexLattice V)
 
-/-- Neighborhoods of any point in the complex-torus quotient are pushed
-forward from neighborhoods of a representative in `V`. -/
+/--
+Neighborhoods of any point in the complex-torus quotient are pushed
+forward from neighborhoods of a representative in `V`.
+-/
 lemma nhds_mk_eq (v : V) :
     𝓝 (mk V Λ v) = Filter.map (mk V Λ) (𝓝 v) :=
   QuotientAddGroup.nhds_eq Λ.subgroup v

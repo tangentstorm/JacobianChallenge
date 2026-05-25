@@ -70,17 +70,20 @@ theorem ContMDiffSection.continuous_totalSpaceMk
 
 variable [∀ x, NormedAddCommGroup (V x)]
 
-/-- Fiberwise norm of a smooth section: `x ↦ ‖σ.toFun x‖`.
+/--
+Fiberwise norm of a smooth section: `x ↦ ‖σ.toFun x‖`.
 
 This is the building block for the sup-norm on `ContMDiffSection`
 when the base is compact. Each fiber `V x` is assumed to carry a
 `NormedAddCommGroup` instance, so `‖σ.toFun x‖` is the norm of
-`σ x` in the fiber over `x`. -/
+`σ x` in the fiber over `x`.
+-/
 noncomputable def ContMDiffSection.fiberNorm
     (σ : ContMDiffSection I F ⊤ V) (x : M) : ℝ :=
   ‖σ.toFun x‖
 
-/-- The fiberwise norm of a smooth section is continuous, given that every trivialization
+/--
+The fiberwise norm of a smooth section is continuous, given that every trivialization
 in the bundle preserves norms on fibers.
 
 The hypothesis `hcompat` states that for every trivialization `e` and every `x` in
@@ -89,7 +92,8 @@ image in the model fiber `F`. This is the key compatibility condition between th
 `NormedAddCommGroup` instances on fibers and the model fiber.
 
 For the holomorphic 1-form case, this is satisfied because the operator norm on
-`ℂ →L[ℂ] ℂ` is canonical and trivializations are isometric. -/
+`ℂ →L[ℂ] ℂ` is canonical and trivializations are isometric.
+-/
 theorem ContMDiffSection.continuous_fiberNorm
     (σ : ContMDiffSection I F ⊤ V)
     (hcompat : ∀ (e : Trivialization F (π F V)) (x : M),

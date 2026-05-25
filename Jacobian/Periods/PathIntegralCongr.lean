@@ -23,8 +23,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- If two paths agree, their corrected from-`X` integrals agree
-under any (possibly different) range-hypothesis proofs. -/
+/--
+If two paths agree, their corrected from-`X` integrals agree
+under any (possibly different) range-hypothesis proofs.
+-/
 theorem pathIntegralViaChartCorrect_eq_of_path_eq
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : X} {γ γ' : Path a b} (hγ : γ = γ')
@@ -34,8 +36,10 @@ theorem pathIntegralViaChartCorrect_eq_of_path_eq
   subst hγ
   rfl
 
-/-- Provisional analogue: if two paths agree, their from-`X`
-integrals agree. -/
+/--
+Provisional analogue: if two paths agree, their from-`X`
+integrals agree.
+-/
 theorem pathIntegralViaChart_eq_of_path_eq
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : X} {γ γ' : Path a b} (hγ : γ = γ')
@@ -45,10 +49,12 @@ theorem pathIntegralViaChart_eq_of_path_eq
   subst hγ
   rfl
 
-/-- HEq version: if two paths between possibly-different endpoints
+/--
+HEq version: if two paths between possibly-different endpoints
 agree heterogeneously, their corrected from-`X` integrals are equal.
 Useful when the endpoint terms are propositionally equal but not
-definitionally — e.g. `γ (σ (i/n))` vs `γ ((n-i)/n)`. -/
+definitionally — e.g. `γ (σ (i/n))` vs `γ ((n-i)/n)`.
+-/
 theorem pathIntegralViaChartCorrect_eq_of_heq
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b a' b' : X} (ha : a = a') (hb : b = b')

@@ -49,8 +49,10 @@ variable [∀ x, NormedAddCommGroup (V x)]
 variable [∀ x, NormedSpace 𝕜 (V x)]
 variable [VectorBundle 𝕜 F V]
 
-/-- The sup-norm of a smooth section over a compact base:
-`supNorm σ = ⨆ x : M, ‖σ x‖`. -/
+/--
+The sup-norm of a smooth section over a compact base:
+`supNorm σ = ⨆ x : M, ‖σ x‖`.
+-/
 noncomputable def supNorm (σ : ContMDiffSection I F ⊤ V) : ℝ :=
   ⨆ x : M, ‖σ.toFun x‖
 

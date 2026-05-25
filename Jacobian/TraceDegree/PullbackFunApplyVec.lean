@@ -18,9 +18,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [TopologicalSpace Y] [ChartedSpace E Y]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Y]
 
-/-- Applying the pullback function at a point and then at a tangent
+/--
+Applying the pullback function at a point and then at a tangent
 vector gives the chain-rule formula
-`(f^*η)_x v = η_{f x} (mfderiv f x v)`. -/
+`(f^*η)_x v = η_{f x} (mfderiv f x v)`.
+-/
 @[simp] theorem pullbackFormsFun_apply_apply
     (f : X → Y) (η : HolomorphicOneForm E Y) (x : X) (v : E) :
     pullbackFormsFun f η x v =

@@ -10,8 +10,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- `pathIntegralViaCoverWith` unfolds to the explicit `Finset.sum`
-over `Fin n` of chart-local integrals on each subpath. -/
+/--
+`pathIntegralViaCoverWith` unfolds to the explicit `Finset.sum`
+over `Fin n` of chart-local integrals on each subpath.
+-/
 theorem pathIntegralViaCoverWith_apply
     (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

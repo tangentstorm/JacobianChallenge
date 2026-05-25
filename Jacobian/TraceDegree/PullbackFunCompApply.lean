@@ -25,9 +25,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Z]
 
 set_option linter.unusedSectionVars false in
-/-- Tangent-vector apply form of `pullbackFormsFun_comp_apply`:
+/--
+Tangent-vector apply form of `pullbackFormsFun_comp_apply`:
 the chain-rule pullback evaluated on `v` is `η` at `g(f x)` applied
-to `mfderiv g (f x) (mfderiv f x v)`. -/
+to `mfderiv g (f x) (mfderiv f x v)`.
+-/
 theorem pullbackFormsFun_comp_apply_apply
     (f : X → Y) (g : Y → Z) (η : HolomorphicOneForm E Z)
     (x : X) (v : E)

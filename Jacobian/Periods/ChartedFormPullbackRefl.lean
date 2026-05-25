@@ -20,10 +20,12 @@ open Filter Topology JacobianChallenge.HolomorphicForms
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) E]
 
-/-- For the identity self-chart on `E`, the corrected chart-pullback
+/--
+For the identity self-chart on `E`, the corrected chart-pullback
 coincides with the provisional chart-form. Discharges the bridge
 hypothesis directly via `OpenPartialHomeomorph.refl_symm` and
-`refl_apply`. -/
+`refl_apply`.
+-/
 theorem chartedFormPullback_refl_eq_chartedForm_refl
     (ω : HolomorphicOneForm E E) (e : E) :
     chartedFormPullback (OpenPartialHomeomorph.refl E) ω e =

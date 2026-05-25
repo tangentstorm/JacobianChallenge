@@ -24,8 +24,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- Sufficient: endpoint diff = `n • periodPairing E X σ` (`n : ℕ`)
-implies the witness is zero. -/
+/--
+Sufficient: endpoint diff = `n • periodPairing E X σ` (`n : ℕ`)
+implies the witness is zero.
+-/
 theorem witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_nsmul_periodPairing
     (basePoint P : X) (v : E) (n : ℕ) (σ : IntegralOneCycle X)
     (h : evalLinearMap P v - evalLinearMap basePoint v =
@@ -33,8 +35,10 @@ theorem witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_nsmul_periodPairing
     witnessAbelJacobi (E := E) (X := X) basePoint P v = 0 := by
   rw [witnessAbelJacobi_eq_mk_sub, h, mk_nsmul_periodPairing]
 
-/-- Sufficient: endpoint diff = `n • periodPairing E X σ` (`n : ℤ`)
-implies the witness is zero. -/
+/--
+Sufficient: endpoint diff = `n • periodPairing E X σ` (`n : ℤ`)
+implies the witness is zero.
+-/
 theorem witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_zsmul_periodPairing
     (basePoint P : X) (v : E) (n : ℤ) (σ : IntegralOneCycle X)
     (h : evalLinearMap P v - evalLinearMap basePoint v =
@@ -42,8 +46,10 @@ theorem witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_zsmul_periodPairing
     witnessAbelJacobi (E := E) (X := X) basePoint P v = 0 := by
   rw [witnessAbelJacobi_eq_mk_sub, h, mk_zsmul_periodPairing]
 
-/-- Sufficient: endpoint diff = `-periodPairing E X σ` implies the
-witness is zero. -/
+/--
+Sufficient: endpoint diff = `-periodPairing E X σ` implies the
+witness is zero.
+-/
 theorem witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_neg_periodPairing
     (basePoint P : X) (v : E) (σ : IntegralOneCycle X)
     (h : evalLinearMap P v - evalLinearMap basePoint v =
@@ -51,9 +57,11 @@ theorem witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_neg_periodPairing
     witnessAbelJacobi (E := E) (X := X) basePoint P v = 0 := by
   rw [witnessAbelJacobi_eq_mk_sub, h, mk_neg_periodPairing]
 
-/-- Sufficient: a `periodPairing` value placed via `(n : ℤ) • _` for
+/--
+Sufficient: a `periodPairing` value placed via `(n : ℤ) • _` for
 `n : ℕ` (cast version), mostly useful when downstream code carries
-`ℤ`-typed scalars naturally. -/
+`ℤ`-typed scalars naturally.
+-/
 theorem witnessAbelJacobi_eq_zero_of_endpoint_diff_eq_natCast_zsmul_periodPairing
     (basePoint P : X) (v : E) (n : ℕ) (σ : IntegralOneCycle X)
     (h : evalLinearMap P v - evalLinearMap basePoint v =

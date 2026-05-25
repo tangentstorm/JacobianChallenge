@@ -17,8 +17,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- `evalLinearMap x v (η - ζ) = 0` iff
-`evalLinearMap x v η = evalLinearMap x v ζ`. -/
+/--
+`evalLinearMap x v (η - ζ) = 0` iff
+`evalLinearMap x v η = evalLinearMap x v ζ`.
+-/
 theorem evalLinearMap_sub_eq_zero_iff_eq
     (x : X) (v : E) (η ζ : HolomorphicOneForm E X) :
     evalLinearMap x v (η - ζ) = 0 ↔

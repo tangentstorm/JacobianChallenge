@@ -4,8 +4,6 @@ import Jacobian.ComplexTorus.Defs
 /-!
 # Bundled additive monoid hom for the quotient projection
 
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
-
 The quotient projection is intrinsically a group homomorphism. This file
 re-exposes Mathlib's `QuotientAddGroup.mk'` under our local naming so other
 files can use `mkHom` without reaching into the Mathlib namespace.

@@ -73,10 +73,12 @@ theorem IsHolomorphicAt.sum_smul {ι : Type*} {s : Finset ι} {f : ι → X → 
     IsHolomorphicAt (fun x => Finset.sum s (fun i => c i • f i x)) p :=
   IsHolomorphicAt.sum (fun i hi => IsHolomorphicAt.smul (c i) (_hf i hi))
 
-/-- **Holomorphic composition.**
+/--
+**Holomorphic composition.**
 
 The continuity hypothesis supplies the chart-source locality needed to
-rewrite the intermediate chart roundtrip. -/
+rewrite the intermediate chart roundtrip.
+-/
 theorem IsHolomorphicAt.comp
     {f : X → Y} {g : Y → Z} {p : X}
     (_hg : IsHolomorphicAt g (f p)) (_hf : IsHolomorphicAt f p)
@@ -140,15 +142,16 @@ noncomputable def mapAnalyticOrderAt (f : X → Y) (p : X) : ℕ :=
     (fun t => chartLocalAt f p t - chartLocalAt f p (chartAt ℂ p p))
     (chartAt ℂ p p)
 
-/-- Basic project-local holomorphicity: continuity plus chart-local
+/--
+Basic project-local holomorphicity: continuity plus chart-local
 analyticity at every point. This intentionally carries no branched-cover
-or weighted-fiber data. -/
+or weighted-fiber data.
+-/
 structure IsHolomorphicBasic (f : X → Y) : Prop where
   continuous : Continuous f
   holomorphicAt : ∀ p, IsHolomorphicAt f p
 
-/-- Explicit local ramification/counting package. This is a local
-mapping theorem input, not part of basic holomorphicity. -/
+
 structure HasLocalKfoldRamification (f : X → Y) : Prop where
   local_kfold_ramified :
     ∀ [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
@@ -160,10 +163,12 @@ structure HasLocalKfoldRamification (f : X → Y) : Prop where
         (∀ x' ∈ s, f x' = y ∧ mapAnalyticOrderAt f x' = 1) ∧
         (∀ x' ∈ U, f x' = y → x' ∈ s)
 
-/-- `f : X → Y` is holomorphic with the local ramification package used
+/--
+`f : X → Y` is holomorphic with the local ramification package used
 by branched-cover consumers. Global weighted-fiber conservation is kept
 out of this structure and should be requested explicitly by consumers
-that need degree/branched-cover data. -/
+that need degree/branched-cover data.
+-/
 structure IsHolomorphic (f : X → Y) : Prop extends IsHolomorphicBasic f where
   local_kfold_ramified :
     ∀ [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
@@ -175,8 +180,7 @@ structure IsHolomorphic (f : X → Y) : Prop extends IsHolomorphicBasic f where
         (∀ x' ∈ s, f x' = y ∧ mapAnalyticOrderAt f x' = 1) ∧
         (∀ x' ∈ U, f x' = y → x' ∈ s)
 
-/-- Explicit global weighted-fiber conservation package. This is a
-branched-cover theorem, not part of basic holomorphicity. -/
+
 structure HasWeightedFiberConservation (f : X → Y) : Prop where
   weightedFiberSum_eventually_eq :
     ∀ [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
@@ -187,19 +191,25 @@ structure HasWeightedFiberConservation (f : X → Y) : Prop where
         (Finset.sum (finite_fiber y).toFinset (mapAnalyticOrderAt f)) =
         (Finset.sum (finite_fiber y₀).toFinset (mapAnalyticOrderAt f))
 
-/-- Projection from the local ramification package to basic
-holomorphicity. -/
+/--
+Projection from the local ramification package to basic
+holomorphicity.
+-/
 theorem IsHolomorphic.toBasic {f : X → Y} (hf : IsHolomorphic f) :
     IsHolomorphicBasic f := hf.toIsHolomorphicBasic
 
-/-- Projection from the compatibility holomorphic package to explicit
-local ramification data. -/
+/--
+Projection from the compatibility holomorphic package to explicit
+local ramification data.
+-/
 theorem IsHolomorphic.toLocalKfold {f : X → Y} (hf : IsHolomorphic f) :
     HasLocalKfoldRamification f where
   local_kfold_ramified := hf.local_kfold_ramified
 
-/-- Compatibility constructor for the older `IsHolomorphic` package from
-the intentionally separated basic and local-kfold inputs. -/
+/--
+Compatibility constructor for the older `IsHolomorphic` package from
+the intentionally separated basic and local-kfold inputs.
+-/
 def IsHolomorphic.of_basic {f : X → Y}
     (hbasic : IsHolomorphicBasic f)
     (hkfold : HasLocalKfoldRamification f) :
@@ -207,8 +217,10 @@ def IsHolomorphic.of_basic {f : X → Y}
   toIsHolomorphicBasic := hbasic
   local_kfold_ramified := hkfold.local_kfold_ramified
 
-/-- The chart-local presentation evaluated at the chart image of `p`
-yields the chart image of `f p`. -/
+/--
+The chart-local presentation evaluated at the chart image of `p`
+yields the chart image of `f p`.
+-/
 @[simp]
 theorem chartLocalAt_chartAt_self (f : X → Y) (p : X) :
     chartLocalAt f p (chartAt ℂ p p) = chartAt ℂ (f p) (f p) := by
@@ -483,7 +495,8 @@ theorem IsHolomorphicAt.of_contMDiff
     simpa [contDiffWithinAt_univ, ModelWithCorners.range_eq_target] using hchart.2
   exact hcd.analyticAt
 
-/-- Manifold-level complex smoothness supplied by chart-local analyticity and
+/--
+Manifold-level complex smoothness supplied by chart-local analyticity and
 global continuity.
 
 This is the converse to `IsHolomorphicAt.of_contMDiff`, packaged for the case
@@ -493,7 +506,8 @@ side of `ContMDiffAt` is in hand).
 
 The proof routes through `AnalyticAt.contDiffAt` (Mathlib) to upgrade the
 chart-local analyticity to `ContDiffAt`, then assembles via
-`contMDiffAt_iff_of_mem_source`. -/
+`contMDiffAt_iff_of_mem_source`.
+-/
 theorem ContMDiff.of_isHolomorphic_and_continuous
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} (hholo : ∀ p, IsHolomorphicAt f p) (hcont : Continuous f) :
@@ -674,8 +688,10 @@ theorem Set.Finite.exists_pairwiseDisjoint_open_nhds
   obtain ⟨U, hU⟩ := Set.Finite.t2_separation hs
   exact ⟨U, fun x hx => ⟨(hU.1 x).2, (hU.1 x).1⟩, hU.2⟩
 
-/-- Properness on a compact source: nearby fibers lie in any open set
-containing the reference fiber. -/
+/--
+Properness on a compact source: nearby fibers lie in any open set
+containing the reference fiber.
+-/
 theorem eventually_fiber_subset_of_compact_T2
     {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
     [CompactSpace X] [T2Space Y]
@@ -692,10 +708,12 @@ theorem eventually_fiber_subset_of_compact_T2
   filter_upwards [h_nhds] with y hy x hx
   exact Classical.not_not.1 fun hxU => hy ⟨x, hxU, hx⟩
 
-/-- Local constancy of a complex-smooth map on a preconnected source
+/--
+Local constancy of a complex-smooth map on a preconnected source
 forces global constancy.  This is the `ContMDiff` variant of
 `IsHolomorphic.eq_const_of_eventuallyEq`, used while constructing the
-full `IsHolomorphic` structure. -/
+full `IsHolomorphic` structure.
+-/
 theorem eq_const_of_eventuallyEq_of_contMDiff
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     [PreconnectedSpace X] [T2Space Y]
@@ -824,8 +842,10 @@ theorem mapAnalyticOrderAt_pos
       simp
     exact horder_ne_zero horder_zero
 
-/-- Positivity of the local analytic order for a nonconstant complex-smooth map,
-without assuming an already completed `IsHolomorphic` structure. -/
+/--
+Positivity of the local analytic order for a nonconstant complex-smooth map,
+without assuming an already completed `IsHolomorphic` structure.
+-/
 theorem mapAnalyticOrderAt_pos_of_contMDiff
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     [PreconnectedSpace X] [T2Space Y]
@@ -876,8 +896,10 @@ theorem mapAnalyticOrderAt_pos_of_contMDiff
       simp
     exact horder_ne_zero horder_zero
 
-/-- Local `k`-fold ramification for a nonconstant complex-smooth map, with
-the source neighborhood chosen inside a prescribed open neighborhood. -/
+/--
+Local `k`-fold ramification for a nonconstant complex-smooth map, with
+the source neighborhood chosen inside a prescribed open neighborhood.
+-/
 theorem local_kfold_ramified_of_contMDiff_within
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f)
@@ -1017,8 +1039,10 @@ theorem local_kfold_ramified_of_contMDiff_within
     dsimp [s]
     exact Finset.mem_image.mpr ⟨sx x', hmemS, sx.left_inv hxsrc⟩
 
-/-- Local `k`-fold ramification for a nonconstant complex-smooth map, as a
-standalone theorem for use in the weighted-fiber conservation proof. -/
+/--
+Local `k`-fold ramification for a nonconstant complex-smooth map, as a
+standalone theorem for use in the weighted-fiber conservation proof.
+-/
 theorem local_kfold_ramified_of_contMDiff
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f)
@@ -1033,9 +1057,11 @@ theorem local_kfold_ramified_of_contMDiff
     local_kfold_ramified_of_contMDiff_within hf isOpen_univ (Set.mem_univ x) hk hram
   exact ⟨U, hUopen, hxU, V, hVopen, hfxV, hV⟩
 
-/-- The local witness returned by `local_kfold_ramified_of_contMDiff`
+/--
+The local witness returned by `local_kfold_ramified_of_contMDiff`
 contributes exactly `k` to the weighted fiber sum because all its
-points are unramified. -/
+points are unramified.
+-/
 theorem local_kfold_witness_weighted_sum
     {f : X → Y} {s : Finset X} {k : ℕ}
     (hcard : s.card = k)
@@ -1047,8 +1073,10 @@ theorem local_kfold_witness_weighted_sum
     _ = s.card := by simp
     _ = k := hcard
 
-/-- Weighted sums over a finite disjoint union split into the sum of the
-local weighted contributions. -/
+/--
+Weighted sums over a finite disjoint union split into the sum of the
+local weighted contributions.
+-/
 theorem weighted_sum_biUnion
     {ι X : Type*} [DecidableEq X] {I : Finset ι} {t : ι → Finset X}
     {w : X → ℕ} {a : ι → ℕ}
@@ -1059,8 +1087,10 @@ theorem weighted_sum_biUnion
   rw [Finset.sum_biUnion hdisj]
   exact Finset.sum_congr rfl fun i hi => hlocal i hi
 
-/-- If a finite set is exactly an explicitly constructed disjoint union,
-its `toFinset` has the same weighted sum as that union. -/
+/--
+If a finite set is exactly an explicitly constructed disjoint union,
+its `toFinset` has the same weighted sum as that union.
+-/
 theorem finite_toFinset_sum_eq_of_set_eq
     {X : Type*} {S : Set X} (hS : S.Finite) {u : Finset X}
     {w : X → ℕ} (hset : S = (u : Set X)) :
@@ -1072,8 +1102,10 @@ theorem finite_toFinset_sum_eq_of_set_eq
     exact Iff.rfl
   rw [hfin]
 
-/-- Smooth maps between complex manifolds are holomorphic in the basic
-project-local sense. -/
+/--
+Smooth maps between complex manifolds are holomorphic in the basic
+project-local sense.
+-/
 theorem isHolomorphicBasic_of_contMDiff
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
@@ -1082,10 +1114,12 @@ theorem isHolomorphicBasic_of_contMDiff
     { continuous := _hf.continuous
       holomorphicAt := IsHolomorphicAt.of_contMDiff _hf }
 
-/-- Compatibility wrapper for the older `IsHolomorphic` package.
+/--
+Compatibility wrapper for the older `IsHolomorphic` package.
 
 Smoothness supplies only `IsHolomorphicBasic`; the local ramification
-package is an explicit input. -/
+package is an explicit input.
+-/
 theorem isHolomorphic_of_contMDiff
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     {f : X → Y} (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f)
@@ -1093,10 +1127,12 @@ theorem isHolomorphic_of_contMDiff
     IsHolomorphic f := by
   exact IsHolomorphic.of_basic (isHolomorphicBasic_of_contMDiff _hf) hkfold
 
-/-- The local `k`-fold ramification package is automatic from
+/--
+The local `k`-fold ramification package is automatic from
 `ContMDiff` smoothness: the chart-local analytic order machinery
 `local_kfold_ramified_of_contMDiff` already extracts the witness
-neighbourhoods point-by-point. -/
+neighbourhoods point-by-point.
+-/
 theorem hasLocalKfoldRamification_of_contMDiff
     {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
     HasLocalKfoldRamification f where
@@ -1104,14 +1140,13 @@ theorem hasLocalKfoldRamification_of_contMDiff
     intro _ _ _ _ hk hram
     exact local_kfold_ramified_of_contMDiff hf hk hram
 
-/-- **Weighted-fiber conservation** for a nonconstant complex-smooth map
+/--
+**Weighted-fiber conservation** for a nonconstant complex-smooth map
 between compact Hausdorff preconnected complex 1-manifolds.
 
 For every base point `y₀ : Y`, the weighted fiber sum
 `∑ x ∈ f⁻¹{y}, mapAnalyticOrderAt f x` is locally constant — eventually
 equal to its value at `y₀` on a neighborhood of `y₀`.
-
-### Proof outline (D3 in the blueprint)
 
 1. The fiber `S₀ := f⁻¹{y₀}` is finite.
 2. Pick pairwise-disjoint open neighborhoods `U₀(x)` of each `x ∈ S₀`.
@@ -1123,7 +1158,8 @@ equal to its value at `y₀` on a neighborhood of `y₀`.
    for `y ∈ V'`.
 5. On `V := V' ∩ ⋂ V(x)` minus `{y₀}`, the fiber decomposes as a
    pairwise-disjoint union of the local pieces. Each piece has
-   weighted sum `kₓ`. The total equals `∑ x∈S₀, kₓ`. -/
+   weighted sum `kₓ`. The total equals `∑ x∈S₀, kₓ`.
+-/
 theorem weightedFiberConservation_of_contMDiff
     [IsManifold 𝓘(ℂ) ω X] [IsManifold 𝓘(ℂ) ω Y]
     [CompactSpace X] [T2Space X] [PreconnectedSpace X] [T2Space Y]
@@ -1282,8 +1318,10 @@ theorem weightedFiberConservation_of_contMDiff
   rw [finite_toFinset_sum_eq_of_set_eq (finite_fiber y) (w := mapAnalyticOrderAt f) hfib_eq]
   rw [hsum_total]
 
-/-- The global weighted-fibre conservation package is automatic from
-`ContMDiff` smoothness via `weightedFiberConservation_of_contMDiff`. -/
+/--
+The global weighted-fibre conservation package is automatic from
+`ContMDiff` smoothness via `weightedFiberConservation_of_contMDiff`.
+-/
 theorem hasWeightedFiberConservation_of_contMDiff
     {f : X → Y} (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) (⊤ : WithTop ℕ∞) f) :
     HasWeightedFiberConservation f where

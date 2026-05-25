@@ -11,19 +11,10 @@ set_option linter.unusedSectionVars false
 /-!
 # Refinement-by-multiple for `pathIntegralViaCoverWith`
 
-**Phase 3 deliverable** of the path-integral well-definedness chain.
-
 States that refining a uniform chart partition of size `n` by an
 integer factor `k > 0` (giving size `n * k`) preserves the cover-with
 sum, provided the refined chart picks satisfy
 `pickChart' j = pickChart ⟨j.val / k, _⟩`.
-
-This is the load-bearing step for Phase 4 (refinement invariance,
-sorry 4 in `PullbackNaturality.lean`): two arbitrary partitions
-`(n, _)` and `(n', _)` of the same path can both be refined to the
-common multiple `(n * n', _)` via this lemma applied twice (with
-`k = n'` and `k = n` respectively), and both equal the value at
-the common refinement.
 
 ## Strategy
 
@@ -39,15 +30,6 @@ the common refinement.
 3. **Sum over i** to recover the LHS.
 
 ## Integrability hypothesis
-
-The auxiliary lemma `pathIntegralViaChartCorrect_split_uniform`
-requires integrability of the chart-pullback applied to the chart-
-lifted path's `derivWithin` on `[0, 1]`. Without it the equality can
-fail (e.g. an integrand that is `L¹` on `[0, 1/2]` but not on
-`[1/2, 1]` gives `LHS = 0` ≠ `RHS = ∫_0^{1/2} ≠ 0`). We surface this
-as the hypothesis `hint` on the main theorem; for the eventual
-`C¹`-path consumers, integrability is supplied by Phase 1's
-`chartedFormPullback_curveIntegrable`.
 -/
 
 namespace JacobianChallenge.Periods
@@ -61,8 +43,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
 omit [NormedSpace ℂ E] [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X] in
-/-- Range of the i-th uniform partition segment lies in the chart
-source given a uniform-cover hypothesis. -/
+/--
+Range of the i-th uniform partition segment lies in the chart
+source given a uniform-cover hypothesis.
+-/
 theorem range_segment_subset_source_of_hcov
     {a b : X} (γ : Path a b) (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
     (hcov : ∀ (i : Fin n) (t : unitInterval),
@@ -83,10 +67,7 @@ theorem range_segment_subset_source_of_hcov
     exact h2'
   exact hcov i t hle1 hle2
 
-/-- **Auxiliary uniform-split lemma.** A chart-corrected path integral
-splits as a sum over `k` uniform sub-segments. Sorry-free reduction
-to `chartLift_subpath`, `curveIntegral_subpath_of_le`, and
-`intervalIntegral.sum_integral_adjacent_intervals_Ico`. -/
+
 theorem pathIntegralViaChartCorrect_split_uniform
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (hrange : range γ ⊆ c.source)
@@ -188,10 +169,12 @@ theorem pathIntegralViaChartCorrect_split_uniform
       Finset.sum_congr rfl (fun j _ => by rw [h_eq j])]
   rw [hsum, h_aₖ_zero, h_aₖ_k]
 
-/-- **Single-application boundary identity.** For `i : Fin n` and
+/--
+**Single-application boundary identity.** For `i : Fin n` and
 `j : Fin k`, the affine-interpolation point at `(j/k)` on the segment
 from `(i/n)` to `((i+1)/n)` equals `((i*k+j)/(n*k))` as a unit-interval
-element. -/
+element.
+-/
 theorem subpathAux_divFinIcc_apply_divFinIcc
     (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (i : Fin n) (j : ℕ) (hj : j ≤ k) :
     Path.subpathAux (divFinIcc n hn i.val (le_of_lt i.isLt))
@@ -213,10 +196,12 @@ theorem subpathAux_divFinIcc_apply_divFinIcc
   field_simp
   ring
 
-/-- **Nested-application identity.** The composition of two
+/--
+**Nested-application identity.** The composition of two
 affine-interpolations (outer `(i/n) → ((i+1)/n)` and inner `(j/k) →
 ((j+1)/k)`) equals the affine-interpolation `((i*k+j)/(n*k)) →
-((i*k+j+1)/(n*k))` directly. -/
+((i*k+j+1)/(n*k))` directly.
+-/
 theorem subpathAux_subpathAux_eq
     (n k : ℕ) (hn : 0 < n) (hk : 0 < k) (i : Fin n) (j : Fin k)
     (s : unitInterval) :
@@ -255,8 +240,10 @@ theorem subpathAux_subpathAux_eq
   field_simp
   ring
 
-/-- Two paths whose underlying functions agree and whose endpoints are
-propositionally equal are HEq. -/
+/--
+Two paths whose underlying functions agree and whose endpoints are
+propositionally equal are HEq.
+-/
 theorem Path.heq_of_toFun_eq
     {Y : Type*} [TopologicalSpace Y]
     {a b a' b' : Y} (γ : Path a b) (γ' : Path a' b')
@@ -267,10 +254,12 @@ theorem Path.heq_of_toFun_eq
   rw [heq_eq_eq]
   exact Path.ext htoFun
 
-/-- Combined chart-change + path-HEq variant of
+/--
+Combined chart-change + path-HEq variant of
 `pathIntegralViaChartCorrect_eq_of_path_eq`. Useful when the chart is
 indexed via two different but equal expressions and the path's
-endpoints are propositionally (not definitionally) equal. -/
+endpoints are propositionally (not definitionally) equal.
+-/
 theorem pathIntegralViaChartCorrect_eq_of_chart_path_heq
     {c c' : OpenPartialHomeomorph X E} (hc : c = c')
     (ω : HolomorphicOneForm E X)
@@ -282,17 +271,7 @@ theorem pathIntegralViaChartCorrect_eq_of_chart_path_heq
   subst hc
   exact pathIntegralViaChartCorrect_eq_of_heq c ω ha hb hγ h h'
 
-/-- **Phase 3 deliverable.** Refining a uniform chart partition of
-`γ` by an integer factor `k > 0` (from size `n` to `n * k`, with the
-new chart pick `pickChart' j = pickChart ⟨j.val / k, _⟩`) preserves
-the value of `pathIntegralViaCoverWith`.
 
-The integrability hypothesis `hint` (which Phase 4 callers will
-supply via `chartedFormPullback_curveIntegrable` once `γ` is `C¹`)
-is necessary in absolute generality: without it, an integrand that
-is `L¹` on a strict sub-interval but not on the whole gives
-mismatched LHS/RHS (the LHS interval integral is `0` by Bochner
-default, while the RHS picks up the sub-integral). -/
 theorem pathIntegralViaCoverWith_refine_to_multiple
     (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b)
     (n k : ℕ) (hn : 0 < n) (hk : 0 < k)

@@ -2,16 +2,7 @@ import Jacobian.TraceDegree.PullbackFormsLinearMapApply
 import Jacobian.TraceDegree.PullbackFunComp
 import Jacobian.TraceDegree.PullbackFunCompApply
 
-/-!
-# Bundled-LinearMap-level chain rule (pointwise)
-
-Pointwise lifts of `pullbackFormsFun_comp_apply` and
-`pullbackFormsFun_comp_apply_apply` to the bundled
-`pullbackFormsLinearMap`. Since `pullbackFormsFun g η` is just a
-function (smoothness deferred), there is no global LinearMap
-composition; these pointwise forms are the natural bundled
-analogues.
--/
+/-! # Bundled-LinearMap-level chain rule (pointwise) -/
 
 namespace JacobianChallenge.TraceDegree
 
@@ -27,8 +18,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Z]
 
 set_option linter.unusedSectionVars false in
-/-- Bundled-level chain rule (pointwise): `pullbackFormsLinearMap`
-on a composition factors through `mfderiv` of both maps. -/
+/--
+Bundled-level chain rule (pointwise): `pullbackFormsLinearMap`
+on a composition factors through `mfderiv` of both maps.
+-/
 theorem pullbackFormsLinearMap_comp_apply_at
     (f : X → Y) (g : Y → Z) (η : HolomorphicOneForm E Z) (x : X)
     (hg : MDifferentiableAt (modelWithCornersSelf ℂ E)

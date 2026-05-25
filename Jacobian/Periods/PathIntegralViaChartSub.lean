@@ -18,8 +18,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Conditional subtraction linearity of the provisional from-`X`
-chart-local path integral. -/
+/--
+Conditional subtraction linearity of the provisional from-`X`
+chart-local path integral.
+-/
 theorem pathIntegralViaChart_sub_of_curveIntegrable
     (c : OpenPartialHomeomorph X E) (ω η : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (h : range γ ⊆ c.source)

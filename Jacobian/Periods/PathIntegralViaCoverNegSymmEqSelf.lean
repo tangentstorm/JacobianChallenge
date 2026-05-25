@@ -19,8 +19,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Negate-and-reverse cancellation (cover layer):
-`∫(-ω, γ.symm) = ∫(ω, γ)`. -/
+/--
+Negate-and-reverse cancellation (cover layer):
+`∫(-ω, γ.symm) = ∫(ω, γ)`.
+-/
 theorem pathIntegralViaCoverWith_neg_symm_eq_self
     (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

@@ -31,13 +31,7 @@ supply by construction. With `AnalyticData` in hand, the
 `MeromorphicToCp1.lean` and the analytic constructor
 `branchedCoverData_of_nonconstant_holomorphic` of
 `Sec02/BranchedDegreeFromHolomorphic.lean` discharge everything else.
-
-The remaining project frontier — the *production Riemann-Roch
-analytic route-data theorem* — is now isolated in
-`genusZero_fixedPole_analyticRouteData_nonempty` below, which says
-"genus-zero Riemann-Roch supplies a fixed-pole meromorphic map together
-with the needed `AnalyticData`". That is the precise mathematical content
-still missing; it is not an arbitrary-map abstract claim. -/
+-/
 
 namespace JacobianChallenge.HolomorphicForms
 
@@ -53,8 +47,10 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [JacobianChallenge.Periods.StableChartAt ℂ X] in
-/-- Projection from `AnalyticData`: the canonical finite lift is
-`MeromorphicAtX` at every point. -/
+/--
+Projection from `AnalyticData`: the canonical finite lift is
+`MeromorphicAtX` at every point.
+-/
 theorem MeromorphicMapToSphere.meromorphicAt_getD_of_analyticData
     (f : MeromorphicMapToSphere X) (han : f.AnalyticData) :
     ∀ p : X, JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
@@ -63,8 +59,10 @@ theorem MeromorphicMapToSphere.meromorphicAt_getD_of_analyticData
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [JacobianChallenge.Periods.StableChartAt ℂ X] in
-/-- Projection from `AnalyticData`: at a simple pole, the chart-local
-analytic order is `1`. -/
+/--
+Projection from `AnalyticData`: at a simple pole, the chart-local
+analytic order is `1`.
+-/
 theorem MeromorphicMapToSphere.mapAnalyticOrderAt_toMap_eq_one_of_analyticData
     (f : MeromorphicMapToSphere X) (han : f.AnalyticData) (P : X)
     (hpole : f.poles = Divisor.point P) :
@@ -74,12 +72,14 @@ theorem MeromorphicMapToSphere.mapAnalyticOrderAt_toMap_eq_one_of_analyticData
 /-! ### Packaging a `MeromorphicMapToSphere` with analytic data as a `MeromorphicFunctionType` -/
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- Package a `MeromorphicMapToSphere` plus explicit `AnalyticData` as a
+/--
+Package a `MeromorphicMapToSphere` plus explicit `AnalyticData` as a
 `MeromorphicFunctionType`, so that the `liftToCp1_*` infrastructure of
 `MeromorphicToCp1.lean` can be applied to its underlying map.
 
 The packaging is purely structural: the `AnalyticData` fields exactly
-match the `MeromorphicFunctionType` fields. -/
+match the `MeromorphicFunctionType` fields.
+-/
 noncomputable def MeromorphicMapToSphere.toMeromorphicFunctionType
     (f : MeromorphicMapToSphere X) (han : f.AnalyticData) :
     MeromorphicFunctionType X where
@@ -108,8 +108,10 @@ theorem MeromorphicMapToSphere.contMDiff_toMap_of_analyticData
   simpa using h
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- The underlying map of a `MeromorphicMapToSphere` is `IsHolomorphic`
-in the project-local sense, given explicit `AnalyticData`. -/
+/--
+The underlying map of a `MeromorphicMapToSphere` is `IsHolomorphic`
+in the project-local sense, given explicit `AnalyticData`.
+-/
 theorem MeromorphicMapToSphere.isHolomorphic_toMap_of_analyticData
     (f : MeromorphicMapToSphere X) (han : f.AnalyticData) :
     JacobianChallenge.HolomorphicForms.IsHolomorphic f.toMap := by
@@ -117,8 +119,10 @@ theorem MeromorphicMapToSphere.isHolomorphic_toMap_of_analyticData
   simpa using h
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- Weighted-fiber conservation for `f.toMap`, given explicit
-`AnalyticData`. -/
+/--
+Weighted-fiber conservation for `f.toMap`, given explicit
+`AnalyticData`.
+-/
 theorem MeromorphicMapToSphere.hasWeightedFiberConservation_toMap_of_analyticData
     (f : MeromorphicMapToSphere X) (han : f.AnalyticData) :
     JacobianChallenge.HolomorphicForms.HasWeightedFiberConservation f.toMap := by
@@ -128,11 +132,10 @@ theorem MeromorphicMapToSphere.hasWeightedFiberConservation_toMap_of_analyticDat
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X]
   [JacobianChallenge.Periods.StableChartAt ℂ X] in
-/-- The fiber `f.toMap ⁻¹' {∞}` of a continuous meromorphic map whose
+/--
+The fiber `f.toMap ⁻¹' {∞}` of a continuous meromorphic map whose
 pole divisor is `[P]` is exactly the singleton `{P}`.
-
-Sorry-free: routes through `toMap_eq_infty_of_poleDivisor_pos` (P maps
-to ∞) and `toMap_ne_infty_of_poleDivisor_zero` (other points don't). -/
+-/
 theorem MeromorphicMapToSphere.preimage_infty_eq_singleton_of_poleDivisor_point
     (f : MeromorphicMapToSphere X) (P : X)
     (hpole : f.poles = Divisor.point P) :
@@ -162,15 +165,12 @@ theorem MeromorphicMapToSphere.preimage_infty_eq_singleton_of_poleDivisor_point
 
 /-! ### Branched-cover-data assembly from `AnalyticData` -/
 
-/-- **Production: branched-cover data of pole degree (sorry-free).**
-
+/--
 Given a `MeromorphicMapToSphere f` on a compact connected complex
 1-manifold which is nonconstant, has a simple pole at `P`, and carries
 explicit `AnalyticData`, the map `f.toMap` packages as a
 `BranchedCoverData X (OnePoint ℂ) f.toMap` whose branched degree is
 `f.poleDivisor.degree.toNat = 1`.
-
-The proof is a sorry-free assembly from:
 
 * `isHolomorphic_toMap_of_analyticData` (above; uses the analytic
   adapter projection from `AnalyticData`).
@@ -181,7 +181,8 @@ The proof is a sorry-free assembly from:
   `BranchedCover.lean`).
 * `preimage_infty_eq_singleton_of_poleDivisor_point` (above).
 * `AnalyticData.simple_pole_order_one` (projection; supplies the
-  simple-pole order-one content). -/
+  simple-pole order-one content).
+-/
 theorem MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole
     (f : MeromorphicMapToSphere X) (P : X)
     (hnc : f.Nonconstant)
@@ -246,7 +247,8 @@ theorem MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole
     rw [hpole]; exact Divisor.degree_point P
   rw [h1]; rfl
 
-/-! ### Concrete simple-pole-to-sphere data and constructor
+/-!
+### Concrete simple-pole-to-sphere data and constructor
 
 The production interface for a concrete fixed-pole meromorphic-map-to-sphere
 is `SimplePoleToSphereData`. Its fields are the local analytic inputs
@@ -254,15 +256,10 @@ actually needed to construct a one-pole map: a concrete
 piecewise-defined `toMap`, a global finite lift, continuity of `toMap`
 into `OnePoint ℂ`, meromorphicity of the lift, simple-pole order data,
 and modulus divergence at the pole.
+-/
 
-The constructor `singlePoleAnalyticData_of_simplePoleToSphereData`
-turns such a record into a `SinglePoleMeromorphicAnalyticData` — a
-sorry-free assembly. The remaining production frontier is then the
-single existence theorem
-`genusZero_fixedPole_simplePoleToSphereData_nonempty` that says
-"genus zero supplies a concrete simple-pole record". -/
-
-/-- **Concrete simple-pole production input.**
+/--
+**Concrete simple-pole production input.**
 
 This record carries the local analytic content that a concrete
 fixed-pole meromorphic-map-to-sphere is actually built from:
@@ -285,14 +282,17 @@ consequence of these fields plus the surrounding manifold structure.
 
 We separate the `toMap` description into two equations
 (`toMap_at_pole`, `toMap_off_pole`) rather than a single piecewise
-`if` to avoid pulling in `DecidableEq X` typeclass requirements. -/
+`if` to avoid pulling in `DecidableEq X` typeclass requirements.
+-/
 structure SimplePoleToSphereData
     (X : Type*) [TopologicalSpace X] [T2Space X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (P : X) where
-  /-- A global complex-valued lift, defined on all of `X` (the value at
-  `P` is arbitrary; only off-`P` values matter for `toMap`). -/
+  /--
+A global complex-valued lift, defined on all of `X` (the value at
+  `P` is arbitrary; only off-`P` values matter for `toMap`).
+-/
   finiteLift : X → ℂ
   /-- The map to the Riemann sphere. -/
   toMap : X → OnePoint ℂ
@@ -302,8 +302,10 @@ structure SimplePoleToSphereData
   toMap_off_pole : ∀ x : X, x ≠ P → toMap x = ((finiteLift x : ℂ) : OnePoint ℂ)
   /-- Global continuity of `toMap` into `OnePoint ℂ`. -/
   continuous_toMap : Continuous toMap
-  /-- The finite lift is meromorphic at every point of `X` (in the
-  manifold sense). -/
+  /--
+The finite lift is meromorphic at every point of `X` (in the
+  manifold sense).
+-/
   meromorphic_finiteLift :
     ∀ p : X,
       JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
@@ -341,11 +343,13 @@ section OnePointExtend
 
 variable {Y : Type*}
 
-/-- Canonical one-point extension of `F : Y → ℂ` to `OnePoint ℂ`,
+/--
+Canonical one-point extension of `F : Y → ℂ` to `OnePoint ℂ`,
 sending `P` to `∞` and any other point `x` to `((F x : ℂ) : OnePoint ℂ)`.
 
 Classical decidability of `x = P` is used so that no `DecidableEq Y`
-typeclass is required at the call site. -/
+typeclass is required at the call site.
+-/
 noncomputable def onePointExtend (F : Y → ℂ) (P : Y) : Y → OnePoint ℂ := by
   classical
   exact fun x => if x = P then OnePoint.infty else ((F x : ℂ) : OnePoint ℂ)
@@ -362,7 +366,8 @@ theorem onePointExtend_off {F : Y → ℂ} {P x : Y} (hx : x ≠ P) :
 
 end OnePointExtend
 
-/-- **Complex principal-part predicate.**
+/--
+**Complex principal-part predicate.**
 
 A predicate on a function `F : X → ℂ` and a point `P : X` saying that
 `F` carries the full complex simple-pole behavior at `P` needed to
@@ -380,7 +385,8 @@ build a `SimplePoleToSphereData`:
 This is a `structure` (not a `Prop`) because the order-one and
 modulus-divergence statements would otherwise need their own dedicated
 proof terms; bundling them into one record is cleaner and matches the
-shape of `SimplePoleToSphereData`. -/
+shape of `SimplePoleToSphereData`.
+-/
 structure HasComplexSimplePolePrincipalPart (F : X → ℂ) (P : X) : Prop where
   meromorphic_everywhere :
     ∀ p : X,
@@ -391,13 +397,12 @@ structure HasComplexSimplePolePrincipalPart (F : X → ℂ) (P : X) : Prop where
   modulus_tendsto :
     Filter.Tendsto (fun x => ‖F x‖) (nhdsWithin P {P}ᶜ) Filter.atTop
 
-/-- **Sorry-free bridge: `SimplePoleToSphereData` from
-`HasComplexSimplePolePrincipalPart`.**
-
+/--
 Given a complex function `F` with complex simple-pole principal part
 at `P`, package it as a concrete `SimplePoleToSphereData X P` with
 `finiteLift := F` and `toMap := onePointExtend F P`. All fields are
-filled directly from the predicate fields. -/
+filled directly from the predicate fields.
+-/
 noncomputable def SimplePoleToSphereData.of_complexPrincipalPart
     (F : X → ℂ) (P : X) (hF : HasComplexSimplePolePrincipalPart F P) :
     SimplePoleToSphereData X P where
@@ -411,19 +416,7 @@ noncomputable def SimplePoleToSphereData.of_complexPrincipalPart
   pole_modulus := hF.modulus_tendsto
 
 omit [CompactSpace X] [ConnectedSpace X] in
-/-- **Sorry-free constructor: build a `SinglePoleMeromorphicAnalyticData` from
-a `SimplePoleToSphereData`.**
 
-Given a concrete simple-pole record `d : SimplePoleToSphereData X P`,
-constructs a concrete `MeromorphicMapToSphere` whose pole divisor is
-`Divisor.point P` together with `PoleModulusData` and
-`AnalyticData`. All structure-level fields are discharged from the
-record's fields with no sorry.
-
-This is the constructor that replaces the previous broad
-"genus-zero gives all analytic data at once" sorry — the analytic
-content now comes through this *concrete*, locally-checkable
-interface. -/
 theorem singlePoleAnalyticData_of_simplePoleToSphereData
     (P : X) (d : SimplePoleToSphereData X P) :
     Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) := by
@@ -604,23 +597,9 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
       subst hP'P
       exact d.simple_pole_order
 
-/-! ### Genus-zero fixed-pole route-data assemblies
+/-! ### Genus-zero fixed-pole route-data assemblies -/
 
-The remaining sorry has been narrowed to the *smallest*
-production frontier:
-`genusZero_fixedPole_simplePoleToSphereData_nonempty`, which supplies
-*only* the concrete simple-pole input data
-(`SimplePoleToSphereData`). Branch data is **not** part of this sorry
-— it is a proved consequence below, filled sorry-free via
-`MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole`.
-
-This separation matches the goal: the only remaining direct sorry in
-this cluster is the existence frontier of a real concrete
-simple-pole meromorphic map. -/
-
-/-- **Branched-cover-data assembly for the genus-zero fixed-pole route
-(sorry-free, takes explicit `AnalyticData`).**
-
+/--
 For a given `MeromorphicMapToSphere f` with prescribed simple pole at
 `P`, nonconstancy, and **explicit `AnalyticData`**, the
 branched-cover-data structure follows from
@@ -635,7 +614,8 @@ Note: `_h` (analytic-genus-zero) and `_hmem` (Riemann-Roch membership)
 are accepted but unused; they are kept in the signature so callers
 that came through the genus-zero pipeline can pass them without
 reshaping. The branched-cover content depends only on `(hnc, hpole,
-han)`. -/
+han)`.
+-/
 theorem genusZero_fixedPole_branchedCoverDataOfPoleDegree
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -651,37 +631,11 @@ theorem genusZero_fixedPole_branchedCoverDataOfPoleDegree
     f.BranchedCoverDataOfPoleDegree :=
   f.branchedCoverDataOfPoleDegree_of_simple_pole P hnc hpole han
 
-/-! ### Riemann-Roch analytic-route conditional bridge
-
-The remaining genus-zero direct sorry is the *analytic-data* witness for
-the Riemann-Roch fixed-pole meromorphic function: existing RR theorems
-supply a `MeromorphicMapToSphere X` with `f.poles = Divisor.point P` and
-nonconstancy (`genusZero_pointRiemannRochSpace_witness_exists` /
-`genusZero_fixedPole_meromorphicData_nonempty`), and the narrow
-`genusZero_fixedPole_poleModulusData` provides the `PoleModulusData`
-under the same divisor hypothesis; what is *not yet* in the project is
-the per-point chart-local analytic content
-`MeromorphicMapToSphere.AnalyticData` (meromorphicity of the canonical
-finite lift everywhere, plus order-one at a simple pole). Below we
-
-* prove a chart-free helper
-  `onePointExtend_getD_eq_toMap_of_pole`,
-* prove a sorry-free *conditional bridge* from
-  `(hpole, han, hmod)` to `HasComplexSimplePolePrincipalPart` —
-  `complexPrincipalPart_of_meromorphicMap_analyticData`,
-* isolate the strictly-narrower direct frontier
-  `genusZero_fixedPole_rr_analyticData_nonempty` (RR supplies a
-  meromorphic map together with `AnalyticData` and `PoleModulusData`),
-* assemble `genusZero_fixedPole_complexPrincipalPart_nonempty`
-  sorry-free from the bridge and the new frontier.
-
-This moves the sole direct sorry from the *generic* "complex principal
-part exists" claim to the *specific* "Riemann-Roch witness carries
-`AnalyticData`" claim — which is precisely the mathematical content
-that is still missing in the analytic infrastructure. -/
+/-! ### Riemann-Roch analytic-route conditional bridge -/
 
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] in
-/-- **Helper: the canonical one-point extension of the finite lift
+/--
+**Helper: the canonical one-point extension of the finite lift
 agrees with the original `f.toMap`.**
 
 For a `MeromorphicMapToSphere f` whose pole divisor is `Divisor.point P`,
@@ -692,7 +646,8 @@ via `onePointExtend ... P` recovers `f.toMap`:
   right by `toMap_pole_eq_infty_of_poleDivisor_point`);
 * off `P`, `f.toMap x = some z` for some `z` (by
   `toMap_ne_infty_off_pole`), so `getD 0` recovers `z` and the
-  coercion `((z : ℂ) : OnePoint ℂ) = some z = f.toMap x`. -/
+  coercion `((z : ℂ) : OnePoint ℂ) = some z = f.toMap x`.
+-/
 theorem onePointExtend_getD_eq_toMap_of_pole
     (f : MeromorphicMapToSphere X) (P : X)
     (hpole : f.poles = Divisor.point P) :
@@ -709,29 +664,13 @@ theorem onePointExtend_getD_eq_toMap_of_pole
     · exact (hne hfx).elim
     · rfl
 
-/-- **Conditional bridge (sorry-free): from a concrete meromorphic map
-with `AnalyticData` and `PoleModulusData` to
-`HasComplexSimplePolePrincipalPart`.**
-
+/--
 Given a `MeromorphicMapToSphere f` with simple pole at `P`
 (`f.poles = Divisor.point P`), per-point chart-local `AnalyticData`,
 and modulus-divergence `PoleModulusData`, the canonical finite lift
 `F := fun x => (f.toMap x).getD 0` carries the four fields of
 `HasComplexSimplePolePrincipalPart F P`:
-
-* `meromorphic_everywhere` — directly from `han.meromorphic_getD`;
-* `continuous_extension` — from `han.continuous_toMap` after rewriting
-  `onePointExtend F P = f.toMap` via the helper above;
-* `orderAt_pole` — from `han.simple_pole_order_one P hpole` after the
-  same rewrite;
-* `modulus_tendsto` — from
-  `MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point`,
-  whose conclusion is exactly `Tendsto (fun x => ‖(f.toMap x).getD 0‖)
-  (nhdsWithin P {P}ᶜ) atTop`; that statement is itself proved
-  sorry-free *if* `f.PoleModulusData` is in hand, but for stability we
-  re-derive it directly from `hmod` here so the bridge does not
-  depend on the open sorry in
-  `MeromorphicMapToSphere.modulus_tendsto_atTop_of_poleDivisor_point`. -/
+-/
 theorem complexPrincipalPart_of_meromorphicMap_analyticData
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -786,7 +725,8 @@ theorem complexPrincipalPart_of_meromorphicMap_analyticData
     show ‖g x‖ = ‖(f.toMap x).getD 0‖
     rw [hfx]; rfl
 
-/-! ### Production analytic Riemann-Roch witness
+/-!
+### Production analytic Riemann-Roch witness
 
 The current divisor-level Riemann-Roch route (e.g. the assembly
 `genusZero_fixedPole_meromorphicData_nonempty`, which under the hood
@@ -805,25 +745,10 @@ scaffold can populate; the records below are the analytic-level
 witnesses that the scaffold cannot actually populate.
 
 The records form a small hierarchy:
+-/
 
-* `SimplePoleRRSection X P` — the smallest, mathematically-concrete
-  record: just a complex-valued function `finiteLift : X → ℂ` carrying
-  `HasComplexSimplePolePrincipalPart` at `P`. This is the bare local
-  analytic content an actual genus-zero Riemann-Roch section provides;
-  every projection (the full `MeromorphicMapToSphere`, its
-  `AnalyticData`, `PoleModulusData`, `MemRiemannRochSpace (Divisor.point P)`,
-  nonconstancy) is sorry-free from this record.
-* `GenusZeroFixedPoleAnalyticRRWitness X P` — the older, equivalent
-  record that bundles all the derived data at once. It now wraps
-  `SimplePoleRRSection`.
-
-The remaining direct sorry sits on
-`genusZero_fixedPole_simplePoleRRSection_nonempty`, the
-strictly-smallest existence frontier; the older
-`genusZero_fixedPole_analyticRRWitness_nonempty` becomes a sorry-free
-projection. -/
-
-/-- **Concrete simple-pole Riemann-Roch section (smallest analytic witness).**
+/--
+**Concrete simple-pole Riemann-Roch section (smallest analytic witness).**
 
 The bare local analytic data an actual genus-zero Riemann-Roch fixed-pole
 section provides:
@@ -836,31 +761,23 @@ section provides:
   point, that the canonical one-point extension is globally continuous
   on `OnePoint ℂ`, that the chart-local order of the extension at `P`
   is `1`, and that the modulus diverges at `P`.
-
-Everything else downstream — the full `MeromorphicMapToSphere`, its
-`AnalyticData`, its `PoleModulusData`, the membership
-`MemRiemannRochSpace (Divisor.point P)`, and nonconstancy — is a
-sorry-free projection from these two fields (see the constructors
-below).
-
-This is the *strictly-smallest* analytic record between the
-mathematical content of genus-zero Riemann-Roch and the
-`MeromorphicMapToSphere` interface. It does **not** carry a
-`MeromorphicMapToSphere` field — the underlying structured map is a
-construction from `finiteLift` (via `onePointExtend`), provided
-sorry-free by `SimplePoleRRSection.map`. -/
+-/
 structure SimplePoleRRSection
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (P : X) where
-  /-- The complex-valued meromorphic function with a simple pole
-  at `P` — the Riemann-Roch section. -/
+  /--
+The complex-valued meromorphic function with a simple pole
+  at `P` — the Riemann-Roch section.
+-/
   finiteLift : X → ℂ
-  /-- The chart-local analytic principal-part data: meromorphic
+  /--
+The chart-local analytic principal-part data: meromorphic
   everywhere, the one-point extension is continuous on `OnePoint ℂ`,
-  chart-local order one at `P`, and modulus divergence at `P`. -/
+  chart-local order one at `P`, and modulus divergence at `P`.
+-/
   hasPrincipalPart : HasComplexSimplePolePrincipalPart finiteLift P
 
 namespace SimplePoleRRSection
@@ -870,13 +787,12 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- **Sorry-free projection: a `SimplePoleRRSection` builds a
-`SimplePoleToSphereData`.**
-
+/--
 Composes `SimplePoleToSphereData.of_complexPrincipalPart` with the
 record's `hasPrincipalPart` field. The resulting `toMap` is
 `onePointExtend s.finiteLift P` and the resulting `finiteLift` is
-`s.finiteLift`. -/
+`s.finiteLift`.
+-/
 noncomputable def toSimplePoleToSphereData
     {P : X} (s : SimplePoleRRSection X P) :
     SimplePoleToSphereData X P :=
@@ -884,7 +800,8 @@ noncomputable def toSimplePoleToSphereData
 
 end SimplePoleRRSection
 
-/-- **Production analytic Riemann-Roch fixed-pole witness (older record).**
+/--
+**Production analytic Riemann-Roch fixed-pole witness (older record).**
 
 The production output of an actual genus-zero analytic Riemann-Roch
 theorem on a compact connected Riemann surface: a meromorphic map to
@@ -894,10 +811,7 @@ nonconstant (`nonconstant`), in the Riemann-Roch space `L([P])`
 analytic content (`analyticData`) and modulus-divergence
 (`poleModulusData`) that the bump-cutoff scaffold *cannot* actually
 provide.
-
-This record is equivalent to `SimplePoleRRSection X P` — every
-field below is a sorry-free projection from a `SimplePoleRRSection`
-(see `SimplePoleRRSection.toGenusZeroFixedPoleAnalyticRRWitness`). -/
+-/
 structure GenusZeroFixedPoleAnalyticRRWitness
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -913,10 +827,12 @@ structure GenusZeroFixedPoleAnalyticRRWitness
   nonconstant : map.Nonconstant
   /-- The map lies in the Riemann-Roch space `L([P])`. -/
   mem_L_point : map.MemRiemannRochSpace (Divisor.point P)
-  /-- The chart-local analytic content: meromorphicity of the canonical
+  /--
+The chart-local analytic content: meromorphicity of the canonical
   finite lift everywhere, global continuity to `OnePoint ℂ`, and
   order-one at the simple pole. This field is the actual analytic
-  content of Riemann-Roch that the bump-cutoff scaffold cannot supply. -/
+  content of Riemann-Roch that the bump-cutoff scaffold cannot supply.
+-/
   analyticData : map.AnalyticData
   /-- Modulus-divergence at the pole. -/
   poleModulusData : map.PoleModulusData
@@ -930,30 +846,21 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [FiniteDimensionalHolomorphicOneForms ℂ X]
 
 omit [ConnectedSpace X] [FiniteDimensionalHolomorphicOneForms ℂ X] in
-/-- **Sorry-free constructor: a `SimplePoleRRSection` builds a
-`SinglePoleMeromorphicAnalyticData`.**
 
-This is the entry point from the smallest analytic record into the
-full RR-route assembly: it pipes the principal-part data through
-`SimplePoleToSphereData.of_complexPrincipalPart` and then through
-`singlePoleAnalyticData_of_simplePoleToSphereData`, which fills the
-underlying `MeromorphicMapToSphere`, `PoleModulusData`, and
-`AnalyticData` without sorry. -/
 theorem toSinglePoleMeromorphicAnalyticData
     {P : X} (s : SimplePoleRRSection X P) :
     Nonempty (SinglePoleMeromorphicAnalyticData (X := X) P) :=
   singlePoleAnalyticData_of_simplePoleToSphereData (X := X) P s.toSimplePoleToSphereData
 
-/-- **Sorry-free constructor: a `SimplePoleRRSection` builds the
-older `GenusZeroFixedPoleAnalyticRRWitness` record.**
-
+/--
 Projects out the full bundle: the underlying `MeromorphicMapToSphere`,
 its pole divisor equation, nonconstancy, `AnalyticData`, and
 `PoleModulusData` come from the inline simple-pole assembly, mirroring
 `singlePoleAnalyticData_of_simplePoleToSphereData` but exposing
 `zeroDivisor := 0` so that
 `MemRiemannRochSpace (Divisor.point P)` is direct: `(f) + [P] =
-zeroDivisor - poleDivisor + [P] = 0 - [P] + [P] = 0 ≥ 0`. -/
+zeroDivisor - poleDivisor + [P] = 0 - [P] + [P] = 0 ≥ 0`.
+-/
 noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
     {P : X} (s : SimplePoleRRSection X P) :
     GenusZeroFixedPoleAnalyticRRWitness X P := by
@@ -1116,7 +1023,8 @@ noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
 
 end SimplePoleRRSection
 
-/-! ### Section-level Riemann-Roch record with explicit local order data
+/-!
+### Section-level Riemann-Roch record with explicit local order data
 
 The record `SimplePoleRRSection X P` (above) bundles a function
 `finiteLift : X → ℂ` with the analytic predicate
@@ -1127,47 +1035,24 @@ that genus-zero Riemann-Roch directly produces.
 The record `RiemannRochSectionAtPoint X P` below carries the
 strictly-richer section-level local data:
 
-* `orderAt P finiteLift = -1` — the section has chart-local order
-  exactly `-1` at the prescribed pole, i.e. is a *simple* pole;
-* `0 ≤ orderAt p finiteLift` for `p ≠ P` — the section is holomorphic
-  off `P`, i.e. has no other poles (the divisor bound `(f) ≥ -[P]`);
-* `meromorphic_everywhere` — global meromorphic structure;
-* and **additionally** the analytic-predicate fields
-  (`continuous_extension`, `orderAt_pole_in_extension`,
-  `modulus_tendsto`) so that the conversion into
-  `SimplePoleRRSection` is sorry-free.
-
 This is **not** a rename of `SimplePoleRRSection`: the
 `orderAt_P_eq_neg_one` and `noPoleOff_P` fields expose actual divisor
 content (`(finiteLift) = -[P] + zeros`), which a section produced by
 Riemann-Roch carries by construction and which `SimplePoleRRSection`
-does not encode. -/
+does not encode.
+-/
 
-/-- **Section-level Riemann-Roch input with explicit local order
+/--
+**Section-level Riemann-Roch input with explicit local order
 data.**
 
 The local data of a section `f ∈ L(P)` with simple pole at `P`:
 
-* `finiteLift : X → ℂ` — the section.
-* `meromorphic_everywhere` — meromorphic at every point of `X`.
-* `noPoleOff_P` — `orderAt p finiteLift ≥ 0` for every `p ≠ P` (no
-  poles off `P`).
-* `orderAt_P_eq_neg_one` — `orderAt P finiteLift = -1` (simple pole
-  exactly at `P`).
-* `continuous_extension` — the one-point extension is continuous on
-  `OnePoint ℂ` (a deduced consequence in a complete proof, kept as a
-  field so that conversion into `SimplePoleRRSection` is
-  sorry-free).
-* `orderAt_pole_in_extension` — chart-local order of the extension at
-  `P`, in the inversion chart on `OnePoint ℂ`, equals `1`. (Same
-  comment.)
-* `modulus_tendsto` — the modulus of `finiteLift` diverges at `P`.
-  (Same comment.)
-
 The `orderAt_P_eq_neg_one` and `noPoleOff_P` fields are the
 section-level local divisor data that genus-zero Riemann-Roch
 *directly* provides — they are what distinguishes a real RR section
-from an arbitrary "function with a simple pole" predicate witness. -/
+from an arbitrary "function with a simple pole" predicate witness.
+-/
 structure RiemannRochSectionAtPoint
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
@@ -1180,20 +1065,26 @@ structure RiemannRochSectionAtPoint
   meromorphic_everywhere :
     ∀ p : X,
       JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX finiteLift p
-  /-- Off the prescribed pole, the section has nonnegative chart-local
+  /--
+Off the prescribed pole, the section has nonnegative chart-local
   vanishing order — i.e. no poles outside `P`. This is the divisor
-  bound `(finiteLift) ≥ -[P]` at every point `p ≠ P`. -/
+  bound `(finiteLift) ≥ -[P]` at every point `p ≠ P`.
+-/
   noPoleOff_P :
     ∀ p : X, p ≠ P →
       0 ≤ JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p finiteLift
-  /-- At `P`, the section has chart-local vanishing order exactly `-1`
-  — a simple pole. -/
+  /--
+At `P`, the section has chart-local vanishing order exactly `-1`
+  — a simple pole.
+-/
   orderAt_P_eq_neg_one :
     JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt P finiteLift = (-1 : ℤ)
   /-- The one-point extension is continuous on `OnePoint ℂ`. -/
   continuous_extension : Continuous (onePointExtend finiteLift P)
-  /-- The chart-local analytic order of the one-point extension at `P`
-  (read in the inversion chart on `OnePoint ℂ`) is `1`. -/
+  /--
+The chart-local analytic order of the one-point extension at `P`
+  (read in the inversion chart on `OnePoint ℂ`) is `1`.
+-/
   orderAt_pole_in_extension :
     JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt
       (onePointExtend finiteLift P) P = 1
@@ -1208,9 +1099,7 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- **Sorry-free projection: build a `HasComplexSimplePolePrincipalPart`
-from the section record.**
-
+/--
 Each field of `HasComplexSimplePolePrincipalPart` is supplied by the
 corresponding field of `RiemannRochSectionAtPoint`:
 
@@ -1224,7 +1113,8 @@ This conversion does **not** use `orderAt_P_eq_neg_one` or `noPoleOff_P`
 `HasComplexSimplePolePrincipalPart` predicate does not need to expose.
 They remain in the section record as evidence that the witness is a
 production Riemann-Roch section, not just a function with a simple-pole
-principal part. -/
+principal part.
+-/
 theorem hasComplexSimplePolePrincipalPart
     {P : X} (s : RiemannRochSectionAtPoint X P) :
     HasComplexSimplePolePrincipalPart s.finiteLift P where
@@ -1233,14 +1123,13 @@ theorem hasComplexSimplePolePrincipalPart
   orderAt_pole := s.orderAt_pole_in_extension
   modulus_tendsto := s.modulus_tendsto
 
-/-- **Sorry-free conversion: a `RiemannRochSectionAtPoint` builds
-the smaller `SimplePoleRRSection`.**
-
+/--
 Drops the section-level order/divisor data (`orderAt_P_eq_neg_one`,
 `noPoleOff_P`, `meromorphic_everywhere` as a separate field) and
 returns only the `finiteLift` + `HasComplexSimplePolePrincipalPart`
 bundle. The principal-part predicate is supplied by
-`hasComplexSimplePolePrincipalPart`. -/
+`hasComplexSimplePolePrincipalPart`.
+-/
 def toSimplePoleRRSection
     {P : X} (s : RiemannRochSectionAtPoint X P) :
     SimplePoleRRSection X P where
@@ -1249,7 +1138,8 @@ def toSimplePoleRRSection
 
 end RiemannRochSectionAtPoint
 
-/-! ### Pure-RR section layer (`PointRiemannRochSection`)
+/-!
+### Pure-RR section layer (`PointRiemannRochSection`)
 
 The record `PointRiemannRochSection X P` exposes *only* the algebraic
 content of an element of `L(P)` outside the constants: meromorphic
@@ -1269,13 +1159,10 @@ analytic-extension fields from the local-Laurent providers
 (`continuous_onePointExtend_of_meromorphic_order_neg_one`,
 `mapAnalyticOrderAt_onePointExtend_of_order_neg_one`,
 `tendsto_norm_atTop_of_order_neg_one`).
+-/
 
-This shape replaces the previous single direct sorry on
-`genusZero_fixedPole_rrSection_nonempty`: the new theorem is a sorry-free
-assembly from one RR existence provider plus four local analytic
-providers. -/
-
-/-- **Pure-RR section: an element of `L(P)` outside constants.**
+/--
+**Pure-RR section: an element of `L(P)` outside constants.**
 
 The minimal algebraic data of a Riemann-Roch section at a single point
 `P`: a complex-valued function on `X` that is meromorphic everywhere,
@@ -1284,7 +1171,8 @@ constant.
 
 No one-point-extension data, no analytic order at `P` claim, and no
 modulus-divergence data — those are local consequences, isolated in the
-provider lemmas below. -/
+provider lemmas below.
+-/
 structure PointRiemannRochSection
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
@@ -1306,22 +1194,27 @@ structure PointRiemannRochSection
     ∀ p : X, p ≠ P →
       (0 : WithTop ℤ) ≤
         JacobianChallenge.HolomorphicForms.VanishingOrder.orderAt p finiteLift
-  /-- The germ of `finiteLift` at `P` is not constant on a punctured
+  /--
+The germ of `finiteLift` at `P` is not constant on a punctured
   neighborhood. Equivalent (for meromorphic functions) to "the order at
   `P` is not `0` or `⊤`", i.e. there is a real singularity or zero at
   `P`. The weakest condition that is still satisfied by an element of
   `L(P)` with a true simple pole at `P` and ruled out by a literal
-  constant. -/
+  constant.
+-/
   outside_constants :
     ¬ ∃ c : ℂ, ∀ᶠ z in 𝓝[≠] P, finiteLift z = c
 
-/-! ### Local analytic providers
+/-!
+### Local analytic providers
 
 The four lemmas below isolate the *purely local* facts about a
 meromorphic function with prescribed chart-local order at one pole.
-They feed the conversion `PointRiemannRochSection.toRiemannRochSectionAtPoint`. -/
+They feed the conversion `PointRiemannRochSection.toRiemannRochSectionAtPoint`.
+-/
 
-/-- **Provider (compact Liouville, germ form).** A meromorphic function
+/--
+**Provider (compact Liouville, germ form).** A meromorphic function
 on a compact connected charted space with no poles anywhere agrees,
 locally on a punctured neighborhood of every point, with a single
 global constant.
@@ -1332,14 +1225,7 @@ the punctured-neighborhood germ), so the literal global equality
 `F = fun _ ↦ c` is in general false. The germ-form conclusion is the
 strongest true statement: `F` agrees with some constant `c` on a
 punctured neighborhood of every point of `X`.
-
-Mathematical proof outline: with `0 ≤ orderAt p F` at every point, the
-chart pullbacks of `F` are meromorphic with nonneg order, hence
-analytic in a punctured neighborhood that extends to an analytic
-function on the whole chart. Patching gives a global holomorphic
-function `g : X → ℂ` agreeing with `F` on a punctured neighborhood of
-every point, and Mathlib's `MDifferentiable.exists_eq_const_of_compactSpace`
-applied to `g` (compact connected manifold) yields a constant `c`. -/
+-/
 theorem meromorphic_no_poles_constant
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1354,7 +1240,8 @@ theorem meromorphic_no_poles_constant
     ∃ c : ℂ, ∀ p : X, ∀ᶠ z in 𝓝[≠] p, F z = c := by
   sorry
 
-/-- **Provider (local Laurent → continuous extension).** If `F` is
+/--
+**Provider (local Laurent → continuous extension).** If `F` is
 meromorphic everywhere on `X`, has no poles off `P`, and has chart-local
 order `-1` at `P`, then the one-point extension `onePointExtend F P` is
 continuous on `X`.
@@ -1364,7 +1251,8 @@ is continuous because `F` is locally holomorphic (no poles). At `P`,
 order `-1` gives a chart-local Laurent expansion
 `F ∘ chart.symm = c₋₁ · z⁻¹ + holomorphic`, so the inversion chart on
 `OnePoint ℂ` sees `F` as a function tending to `0`, hence the extension
-is continuous at `P` too. -/
+is continuous at `P` too.
+-/
 theorem continuous_onePointExtend_of_meromorphic_order_neg_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
@@ -1382,7 +1270,8 @@ theorem continuous_onePointExtend_of_meromorphic_order_neg_one
     Continuous (onePointExtend F P) := by
   sorry
 
-/-- **Provider (local Laurent → chart-order one for the extension).**
+/--
+**Provider (local Laurent → chart-order one for the extension).**
 If `F` has chart-local meromorphic order `-1` at `P`, then the
 one-point extension `onePointExtend F P`, read in the inversion chart
 on `OnePoint ℂ`, has chart-local analytic order `1` at `P`.
@@ -1390,7 +1279,8 @@ on `OnePoint ℂ`, has chart-local analytic order `1` at `P`.
 Proof idea: the inversion-chart pullback of `onePointExtend F P` at `P`
 is `1 / (F ∘ chart.symm)`, and order `-1` on `F` becomes order `1` on
 the reciprocal (the leading Laurent coefficient cancels, leaving a
-holomorphic function vanishing to first order). -/
+holomorphic function vanishing to first order).
+-/
 theorem mapAnalyticOrderAt_onePointExtend_of_order_neg_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
@@ -1406,14 +1296,16 @@ theorem mapAnalyticOrderAt_onePointExtend_of_order_neg_one
       (onePointExtend F P) P = 1 := by
   sorry
 
-/-- **Provider (local Laurent → modulus divergence).** If `F` has
+/--
+**Provider (local Laurent → modulus divergence).** If `F` has
 chart-local order `-1` at `P`, then `‖F x‖ → ∞` as `x → P` through
 `{P}ᶜ`.
 
 Proof idea: order `-1` gives a chart-local Laurent expansion
 `F ∘ chart.symm = c₋₁ · z⁻¹ + holomorphic` with `c₋₁ ≠ 0`. The norm of
 this diverges to infinity as `z → 0`, and the chart is a homeomorphism
-near `P`, so divergence transfers along `nhdsWithin P {P}ᶜ`. -/
+near `P`, so divergence transfers along `nhdsWithin P {P}ᶜ`.
+-/
 theorem tendsto_norm_atTop_of_order_neg_one
     {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ChartedSpace ℂ X]
@@ -1490,17 +1382,15 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- **Sorry-free order extraction.** A `PointRiemannRochSection`, by
-combining its algebraic divisor bound with the compact-Liouville
-provider, has chart-local order exactly `-1` at `P`.
-
+/--
 Proof: by `order_ge_neg_one_at_P` and `noPoleOff_P`, every chart-local
 order is nonnegative except possibly at `P`, where it is at least `-1`.
 If the order at `P` were also nonnegative, `meromorphic_no_poles_constant`
 would force `finiteLift` to agree with a single constant on a
 punctured neighborhood of every point — in particular on a punctured
 neighborhood of `P` — contradicting `outside_constants`. Hence the
-order at `P` is exactly `-1`. -/
+order at `P` is exactly `-1`.
+-/
 theorem orderAt_P_eq_neg_one
     [ConnectedSpace X]
     {P : X} (s : PointRiemannRochSection X P) :
@@ -1552,14 +1442,13 @@ theorem orderAt_P_eq_neg_one
       interval_cases n
       simp
 
-/-- **Sorry-free conversion: a `PointRiemannRochSection` builds a
-`RiemannRochSectionAtPoint`.**
-
+/--
 The three additional fields needed by `RiemannRochSectionAtPoint`
 (continuous extension, chart-order one for the extension, and modulus
 divergence) are supplied by the three local-Laurent providers above,
 each applied with the chart-local order `-1` extracted by
-`orderAt_P_eq_neg_one`. -/
+`orderAt_P_eq_neg_one`.
+-/
 noncomputable def toRiemannRochSectionAtPoint
     [ConnectedSpace X]
     {P : X} (s : PointRiemannRochSection X P) :
@@ -1580,19 +1469,9 @@ noncomputable def toRiemannRochSectionAtPoint
 
 end PointRiemannRochSection
 
-/-! ### Genus-zero existence frontier (strictly-smaller)
 
-The existence frontier for the genus-zero meromorphic-route cluster is
-factored through the pure-RR section layer `PointRiemannRochSection X P`
-plus four local providers. The RR-only existence theorem is
-`genusZero_pointRRSection_outside_constants_exists` (direct sorry).
-The cluster frontier `genusZero_fixedPole_rrSection_nonempty` is a
-sorry-free assembly: pull a `PointRiemannRochSection` from the RR
-provider and convert it via `toRiemannRochSectionAtPoint`. -/
 
-/-- **Pure RR provider (direct sorry): an element of `L(P)` outside the
-constants exists in genus zero.**
-
+/--
 Intended proof: genus-zero Riemann-Roch gives `dim L(P) = 2`. The
 constants embed into `L(P)` with dimension `1`. Choose any element
 outside the constants; membership in `L(P)` is exactly the algebraic
@@ -1603,7 +1482,8 @@ It contains no one-point-extension data, no chart-local analytic order
 claim, and no modulus data — only the algebraic content of
 "nonconstant element of `L(P)`". The local-analytic consequences are
 isolated as separate providers and consumed by
-`PointRiemannRochSection.toRiemannRochSectionAtPoint`. -/
+`PointRiemannRochSection.toRiemannRochSectionAtPoint`.
+-/
 theorem genusZero_pointRRSection_outside_constants_exists
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1614,19 +1494,7 @@ theorem genusZero_pointRRSection_outside_constants_exists
     Nonempty (PointRiemannRochSection X P) := by
   sorry
 
-/-- **Section-level Riemann-Roch frontier (sorry-free assembly).**
 
-Sorry-free assembly from the pure-RR provider
-`genusZero_pointRRSection_outside_constants_exists` and the local
-conversion `PointRiemannRochSection.toRiemannRochSectionAtPoint`.
-
-The direct sorry has been split into one RR existence sorry
-(`genusZero_pointRRSection_outside_constants_exists`) plus four local
-analytic-provider sorries (`meromorphic_no_poles_constant`,
-`continuous_onePointExtend_of_meromorphic_order_neg_one`,
-`mapAnalyticOrderAt_onePointExtend_of_order_neg_one`,
-`tendsto_norm_atTop_of_order_neg_one`) — none of which is the bump-cutoff
-scaffold `singlePoleMeromorphicMap P`. -/
 theorem genusZero_fixedPole_rrSection_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1638,13 +1506,7 @@ theorem genusZero_fixedPole_rrSection_nonempty
   obtain ⟨s⟩ := genusZero_pointRRSection_outside_constants_exists X P h
   exact ⟨s.toRiemannRochSectionAtPoint⟩
 
-/-- **Sorry-free projection: a `SimplePoleRRSection` exists in
-genus zero.**
 
-The direct sorry has moved to the strictly-smaller, section-level
-frontier `genusZero_fixedPole_rrSection_nonempty`. This theorem
-is a sorry-free projection via
-`RiemannRochSectionAtPoint.toSimplePoleRRSection`. -/
 theorem genusZero_fixedPole_simplePoleRRSection_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1656,13 +1518,7 @@ theorem genusZero_fixedPole_simplePoleRRSection_nonempty
   obtain ⟨s⟩ := genusZero_fixedPole_rrSection_nonempty X P h
   exact ⟨s.toSimplePoleRRSection⟩
 
-/-- **Sorry-free projection: the older RR analytic-witness record is
-non-empty.**
 
-The direct sorry has moved to the strictly-smaller frontier
-`genusZero_fixedPole_rrSection_nonempty`. This theorem
-is a sorry-free projection: extract a `SimplePoleRRSection`, then
-apply `SimplePoleRRSection.toGenusZeroFixedPoleAnalyticRRWitness`. -/
 theorem genusZero_fixedPole_analyticRRWitness_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1674,22 +1530,13 @@ theorem genusZero_fixedPole_analyticRRWitness_nonempty
   obtain ⟨s⟩ := genusZero_fixedPole_simplePoleRRSection_nonempty X P h
   exact ⟨s.toGenusZeroFixedPoleAnalyticRRWitness⟩
 
-/-- **Narrow Riemann-Roch analytic-data witness frontier (sorry-free
-projection).**
-
-Sorry-free projection from the analytic Riemann-Roch witness record
-`GenusZeroFixedPoleAnalyticRRWitness X P`, which packages all
-three pieces that the conditional bridge consumes:
-
+/--
 * a meromorphic-map-to-sphere `f` with `f.poles = Divisor.point P`;
 * the per-point chart-local `f.AnalyticData` (meromorphicity of the
   canonical finite lift at every point, global continuity, and
   order-one at the simple pole);
 * the modulus-divergence `f.PoleModulusData`.
-
-The direct sorry has been pushed entirely onto the strictly-smaller
-analytic Riemann-Roch frontier
-`genusZero_fixedPole_analyticRRWitness_nonempty`. -/
+-/
 theorem genusZero_fixedPole_rr_analyticData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1702,17 +1549,7 @@ theorem genusZero_fixedPole_rr_analyticData_nonempty
   obtain ⟨w⟩ := genusZero_fixedPole_analyticRRWitness_nonempty X P h
   exact ⟨w.map, w.poleDivisor_eq, w.analyticData, w.poleModulusData⟩
 
-/-- **Production-frontier existence (sorry-free assembly): a complex
-function with simple-pole principal part in genus zero.**
 
-Sorry-free assembly from
-`genusZero_fixedPole_rr_analyticData_nonempty` (the strictly-smaller
-RR analytic-data frontier) and the conditional bridge
-`complexPrincipalPart_of_meromorphicMap_analyticData`.
-
-The remaining direct sorry has been pushed entirely onto the
-narrow RR analytic-data witness frontier above; this theorem is a
-direct-sorry-free assembly. -/
 theorem genusZero_fixedPole_complexPrincipalPart_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1726,12 +1563,7 @@ theorem genusZero_fixedPole_complexPrincipalPart_nonempty
   exact ⟨fun x => (f.toMap x).getD 0,
     complexPrincipalPart_of_meromorphicMap_analyticData P f hpole han hmod⟩
 
-/-- **Sorry-free existence of `SimplePoleToSphereData` from the
-complex-principal-part frontier.**
 
-Discharged by composing the strictly-smaller existence theorem
-`genusZero_fixedPole_complexPrincipalPart_nonempty` with the
-sorry-free bridge `SimplePoleToSphereData.of_complexPrincipalPart`. -/
 theorem genusZero_fixedPole_simplePoleToSphereData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1743,14 +1575,7 @@ theorem genusZero_fixedPole_simplePoleToSphereData_nonempty
   obtain ⟨F, hF⟩ := genusZero_fixedPole_complexPrincipalPart_nonempty X P h
   exact ⟨SimplePoleToSphereData.of_complexPrincipalPart F P hF⟩
 
-/-- **Analytic route data, sorry-free assembly.**
 
-Builds `SinglePoleMeromorphicAnalyticData` from the smaller existence
-frontier `genusZero_fixedPole_simplePoleToSphereData_nonempty` via the
-sorry-free constructor `singlePoleAnalyticData_of_simplePoleToSphereData`.
-
-The sorry has moved entirely to the existence frontier — this theorem
-is sorry-free. -/
 theorem genusZero_fixedPole_analyticRouteData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1762,16 +1587,7 @@ theorem genusZero_fixedPole_analyticRouteData_nonempty
   obtain ⟨d⟩ := genusZero_fixedPole_simplePoleToSphereData_nonempty X P h
   exact singlePoleAnalyticData_of_simplePoleToSphereData (X := X) P d
 
-/-- **Full route-data package (sorry-free).**
 
-Builds the full `SinglePoleMeromorphicMapData P` from the smaller
-production frontier `genusZero_fixedPole_analyticRouteData_nonempty`
-by filling the `branchedCoverDataOfPoleDegree` field via the
-sorry-free assembly
-`MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole`.
-
-The sorry has moved entirely to the smaller analytic frontier — this
-theorem is sorry-free. -/
 theorem genusZero_fixedPole_singlePoleRouteData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -1792,15 +1608,11 @@ theorem genusZero_fixedPole_singlePoleRouteData_nonempty
     analyticData := route.analyticData
     branchedCoverDataOfPoleDegree := hbranch }⟩
 
-/-- **Fixed-pole route-data assembly wrapper.**
+/--
+**Fixed-pole route-data assembly wrapper.**
 
-Sorry-free assembly: unwraps a `SinglePoleMeromorphicMapData P` produced
-by the production frontier `genusZero_fixedPole_singlePoleRouteData_nonempty`,
-repackages its `map` field as a `GenusZeroFixedPoleMeromorphicData X P h`,
-and exposes the bundled `PoleModulusData` and `BranchedCoverDataOfPoleDegree`
-as a subtype.
-
-This is the entry point used by `GenusZeroClassification.lean`. -/
+This is the entry point used by `GenusZeroClassification.lean`.
+-/
 theorem genusZero_fixedPole_meromorphicData_with_routeData_nonempty
     (X : Type*) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]

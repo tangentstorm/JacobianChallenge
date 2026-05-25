@@ -22,8 +22,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Negate-and-reverse cancellation (provisional via-chart):
-`∫(-ω, γ.symm) = ∫(ω, γ)`. -/
+/--
+Negate-and-reverse cancellation (provisional via-chart):
+`∫(-ω, γ.symm) = ∫(ω, γ)`.
+-/
 theorem pathIntegralViaChart_neg_symm_eq_self
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

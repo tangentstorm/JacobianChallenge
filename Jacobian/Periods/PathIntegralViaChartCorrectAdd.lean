@@ -17,9 +17,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Conditional addition linearity of `pathIntegralViaChartCorrect`:
+/--
+Conditional addition linearity of `pathIntegralViaChartCorrect`:
 if both forms' chart pullbacks are curve-integrable along the lifted
-path, the from-`X` chart-local integral distributes over addition. -/
+path, the from-`X` chart-local integral distributes over addition.
+-/
 theorem pathIntegralViaChartCorrect_add_of_curveIntegrable
     (c : OpenPartialHomeomorph X E) (ω η : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (h : range γ ⊆ c.source)

@@ -18,9 +18,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Conditional subtraction linearity of `pathIntegralViaChartCorrect`:
+/--
+Conditional subtraction linearity of `pathIntegralViaChartCorrect`:
 if both forms' chart pullbacks are curve-integrable along the lifted
-path, the from-`X` chart-local integral distributes over subtraction. -/
+path, the from-`X` chart-local integral distributes over subtraction.
+-/
 theorem pathIntegralViaChartCorrect_sub_of_curveIntegrable
     (c : OpenPartialHomeomorph X E) (ω η : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (h : range γ ⊆ c.source)

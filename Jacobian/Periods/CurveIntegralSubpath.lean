@@ -8,13 +8,11 @@ set_option linter.unusedSectionVars false
 /-!
 # Reparameterisation: `curveIntegral` of a `Path.subpath`
 
-**Phase 2** of the path-integral well-definedness chain.
-
 States that integrating a 1-form along a subpath `γ.subpath t₀ t₁`
 agrees with the interval integral of the same integrand over the
 sub-interval `[t₀, t₁]` in parameter space:
 
-  `curveIntegral ω (γ.subpath t₀ t₁) =
+`curveIntegral ω (γ.subpath t₀ t₁) =
      ∫ t in (t₀ : ℝ)..(t₁ : ℝ),
         ω (γ.extend t) (derivWithin γ.extend (Set.Icc 0 1) t)`.
 
@@ -59,8 +57,10 @@ section SubpathExtend
 variable {a b : E}
 
 omit [NormedSpace ℝ E] in
-/-- For `s ∈ Icc 0 1`, the extended subpath agrees with the affine
-reparameterisation of `γ.extend`. -/
+/--
+For `s ∈ Icc 0 1`, the extended subpath agrees with the affine
+reparameterisation of `γ.extend`.
+-/
 lemma subpath_extend_eq_extend_affine
     (γ : Path a b) (t₀ t₁ : unitInterval) {s : ℝ} (hs : s ∈ Set.Icc (0 : ℝ) 1) :
     (γ.subpath t₀ t₁).extend s =
@@ -77,9 +77,11 @@ lemma subpath_extend_eq_extend_affine
   rfl
 
 omit [NormedSpace ℝ E] in
-/-- For `s ∈ (0, 1)` (strict interior), the extended subpath
+/--
+For `s ∈ (0, 1)` (strict interior), the extended subpath
 eventually equals the affine reparameterisation of `γ.extend` in a
-neighbourhood of `s` in ℝ. -/
+neighbourhood of `s` in ℝ.
+-/
 lemma subpath_extend_eventuallyEq
     (γ : Path a b) (t₀ t₁ : unitInterval) {s : ℝ} (hs : s ∈ Set.Ioo (0 : ℝ) 1) :
     (γ.subpath t₀ t₁).extend =ᶠ[𝓝 s]
@@ -89,12 +91,14 @@ lemma subpath_extend_eventuallyEq
 
 end SubpathExtend
 
-/-- Curve integral over a `Path.subpath` reduces to the interval
+/--
+Curve integral over a `Path.subpath` reduces to the interval
 integral of the original path's integrand over the sub-interval
 `[t₀, t₁]`.
 
 Stated for the orientation `t₀ ≤ t₁`; the reverse orientation
-follows from `curveIntegral_symm` + `Path.symm_subpath`. -/
+follows from `curveIntegral_symm` + `Path.symm_subpath`.
+-/
 theorem curveIntegral_subpath_of_le
     {a b : E} (ω : E → E →L[𝕜] F) (γ : Path a b)
     (t₀ t₁ : unitInterval) (hle : t₀ ≤ t₁) :

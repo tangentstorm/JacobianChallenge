@@ -22,8 +22,10 @@ open scoped Manifold
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
-/-- The manifold derivative of right-translation `x ↦ x + v` is the
-identity at every point. -/
+/--
+The manifold derivative of right-translation `x ↦ x + v` is the
+identity at every point.
+-/
 theorem mfderiv_add_const_self (v e : E) :
     mfderiv (modelWithCornersSelf ℂ E)
             (modelWithCornersSelf ℂ E)
@@ -32,8 +34,10 @@ theorem mfderiv_add_const_self (v e : E) :
   rw [mfderiv_eq_fderiv, fderiv_add_const]
   exact fderiv_id
 
-/-- The manifold derivative of left-translation `x ↦ v + x` is the
-identity at every point. -/
+/--
+The manifold derivative of left-translation `x ↦ v + x` is the
+identity at every point.
+-/
 theorem mfderiv_const_add_self (v e : E) :
     mfderiv (modelWithCornersSelf ℂ E)
             (modelWithCornersSelf ℂ E)
@@ -42,8 +46,10 @@ theorem mfderiv_const_add_self (v e : E) :
   rw [mfderiv_eq_fderiv, fderiv_const_add]
   exact fderiv_id
 
-/-- The manifold derivative of `x ↦ x - v` is the identity at every
-point. (Specializes `mfderiv_add_const_self` with `-v`.) -/
+/--
+The manifold derivative of `x ↦ x - v` is the identity at every
+point. (Specializes `mfderiv_add_const_self` with `-v`.)
+-/
 theorem mfderiv_sub_const_self (v e : E) :
     mfderiv (modelWithCornersSelf ℂ E)
             (modelWithCornersSelf ℂ E)

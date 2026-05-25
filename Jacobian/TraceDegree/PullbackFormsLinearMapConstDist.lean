@@ -22,8 +22,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) Y]
 
 set_option linter.unusedSectionVars false in
-/-- Bundled pullback along a constant map distributes over form addition
-(both sides are zero). -/
+/--
+Bundled pullback along a constant map distributes over form addition
+(both sides are zero).
+-/
 theorem pullbackFormsLinearMap_const_add_apply_vec
     (y : Y) (η ζ : HolomorphicOneForm E Y) (x : X) (v : E) :
     pullbackFormsLinearMap (Function.const X y) (η + ζ) x v =

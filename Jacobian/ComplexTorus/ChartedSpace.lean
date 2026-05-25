@@ -6,9 +6,6 @@ import Mathlib.Geometry.Manifold.ChartedSpace
 /-!
 # Charted-space instance on the complex torus
 
-Queue B sibling. With `chartAtBall` in place we can wire the
-per-point charts into a `ChartedSpace V (V ⧸ Λ.subgroup)` instance.
-
 Plan:
 
 - For each quotient point `q`, pick a representative `v` of `q`
@@ -27,9 +24,11 @@ namespace JacobianChallenge.ComplexTorus
 
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
 
-/-- The chart at a quotient point, picking a representative via
+/--
+The chart at a quotient point, picking a representative via
 `Function.surjInv (mk_surjective V Λ)` and a global isolation
-radius `δ > 0`. -/
+radius `δ > 0`.
+-/
 noncomputable def chartAtPoint (Λ : FullComplexLattice V)
     (q : quotient V Λ) :
     OpenPartialHomeomorph (quotient V Λ) V :=
@@ -59,8 +58,10 @@ lemma mem_chartAtPoint_source (Λ : FullComplexLattice V)
   rw [Metric.mem_ball, dist_self]
   linarith
 
-/-- The complex torus is a charted space modeled on the ambient
-finite-dimensional complex vector space. -/
+/--
+The complex torus is a charted space modeled on the ambient
+finite-dimensional complex vector space.
+-/
 noncomputable instance complexTorusChartedSpace
     (Λ : FullComplexLattice V) : ChartedSpace V (quotient V Λ) where
   atlas := Set.range (chartAtPoint Λ)

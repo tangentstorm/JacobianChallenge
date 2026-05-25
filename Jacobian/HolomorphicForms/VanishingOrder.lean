@@ -42,18 +42,6 @@ Chart independence is the substantive content.
 
 The chart-independence theorem reduces to two sub-obligations about
 the transition map `g := chartAt ℂ p ∘ e.symm`:
-
-* `transition_analyticAt` — the transition is analytic at `e p`. Follows
-  from the manifold typeclass: transitions in `IsManifold 𝓘(ℂ) ω X`
-  are `C^ω`, which on the trivial model coincides with analyticity.
-* `transition_deriv_ne_zero` — the transition's derivative at `e p` is
-  nonzero. The symmetric transition is analytic too (apply the same
-  lemma with chart roles swapped), and the round trip is the identity
-  near `e p`; the chain rule gives the product of the two derivatives
-  equal to `1`, so neither factor can vanish.
-
-Both sub-obligations are now discharged in this file via the named
-helper `analyticAt_transition_of_mem_maximalAtlas`.
 -/
 
 namespace JacobianChallenge.HolomorphicForms.VanishingOrder
@@ -63,21 +51,26 @@ open Set Filter
 
 variable {X : Type*} [TopologicalSpace X] [ChartedSpace ℂ X]
 
-/-! ### Definitions
+/-!
+### Definitions
 
 `MeromorphicAtX` and `orderAt` are introduced before the analytic-manifold
 hypothesis is needed: their definitions only use the `ChartedSpace ℂ X`
-structure and the canonical extended chart `extChartAt 𝓘(ℂ) p`. -/
+structure and the canonical extended chart `extChartAt 𝓘(ℂ) p`.
+-/
 
-/-- `f : X → ℂ` is meromorphic at `p ∈ X` (in the manifold sense) iff its
+/--
+`f : X → ℂ` is meromorphic at `p ∈ X` (in the manifold sense) iff its
 pullback `f ∘ (extChartAt 𝓘(ℂ) p).symm` is meromorphic at `extChartAt 𝓘(ℂ) p p`
 in the usual `ℂ → ℂ` sense.
 
-Wraps Mathlib's `MeromorphicAt`, which is only defined for `f : 𝕜 → E`. -/
+Wraps Mathlib's `MeromorphicAt`, which is only defined for `f : 𝕜 → E`.
+-/
 def MeromorphicAtX (f : X → ℂ) (p : X) : Prop :=
   MeromorphicAt (f ∘ (extChartAt 𝓘(ℂ) p).symm) (extChartAt 𝓘(ℂ) p p)
 
-/-- The order of vanishing of a meromorphic germ `f : X → ℂ` at `p ∈ X`.
+/--
+The order of vanishing of a meromorphic germ `f : X → ℂ` at `p ∈ X`.
 
 Computed in the canonical extended chart at `p`. Returns:
 * a finite integer `n ∈ ℤ` for a germ vanishing or pole-of-order `-n`,
@@ -85,26 +78,33 @@ Computed in the canonical extended chart at `p`. Returns:
   for the zero germ),
 * `0` (junk) if `f` is not meromorphic at `p`.
 
-Chart independence is `orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas`. -/
+Chart independence is `orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas`.
+-/
 noncomputable def orderAt (p : X) (f : X → ℂ) : WithTop ℤ :=
   meromorphicOrderAt (f ∘ (extChartAt 𝓘(ℂ) p).symm) (extChartAt 𝓘(ℂ) p p)
 
-/-! ### Bridging `extChartAt` and `chartAt`
+/-!
+### Bridging `extChartAt` and `chartAt`
 
 `extChartAt 𝓘(ℂ) p = (chartAt ℂ p).extend 𝓘(ℂ)`, which on the trivial
 model `𝓘(ℂ) = id` coincides with `chartAt ℂ p` as a function. We
 record the two pointwise identifications used in the chart-independence
-proof. -/
+proof.
+-/
 
-/-- The canonical extended chart at `p` agrees with `chartAt ℂ p` as a
-function. Follows from `extChartAt_coe` and `modelWithCornersSelf_coe`. -/
+/--
+The canonical extended chart at `p` agrees with `chartAt ℂ p` as a
+function. Follows from `extChartAt_coe` and `modelWithCornersSelf_coe`.
+-/
 theorem extChartAt_eq_chartAt (p : X) :
     ⇑(extChartAt 𝓘(ℂ) p) = chartAt ℂ p := by
   funext x
   simp
 
-/-- The canonical extended chart's inverse agrees with `(chartAt ℂ p).symm`
-as a function. -/
+/--
+The canonical extended chart's inverse agrees with `(chartAt ℂ p).symm`
+as a function.
+-/
 theorem extChartAt_symm_eq_chartAt_symm (p : X) :
     ⇑(extChartAt 𝓘(ℂ) p).symm = (chartAt ℂ p).symm := by
   funext x
@@ -117,16 +117,20 @@ theorem orderAt_eq_chartAt (p : X) (f : X → ℂ) :
   unfold orderAt
   rw [extChartAt_symm_eq_chartAt_symm, extChartAt_eq_chartAt]
 
-/-! ### Punctured-neighborhood agreement of two chart pullbacks
+/-!
+### Punctured-neighborhood agreement of two chart pullbacks
 
 For any chart `e` at `p` (containing `p` in its source), the pullback
 `f ∘ e.symm` agrees, on a neighborhood of `e p`, with the composition
 `(f ∘ (chartAt ℂ p).symm) ∘ (chartAt ℂ p ∘ e.symm)`. This is the
 bookkeeping needed to apply `meromorphicOrderAt_congr` and
-`meromorphicOrderAt_comp_of_deriv_ne_zero` together. -/
+`meromorphicOrderAt_comp_of_deriv_ne_zero` together.
+-/
 
-/-- On the open set where `e.symm` lands in `(chartAt ℂ p).source`,
-`f ∘ e.symm` factors as `(f ∘ (chartAt ℂ p).symm) ∘ (chartAt ℂ p ∘ e.symm)`. -/
+/--
+On the open set where `e.symm` lands in `(chartAt ℂ p).source`,
+`f ∘ e.symm` factors as `(f ∘ (chartAt ℂ p).symm) ∘ (chartAt ℂ p ∘ e.symm)`.
+-/
 theorem comp_eqOn
     {p : X} (e : OpenPartialHomeomorph X ℂ) (f : X → ℂ) :
     EqOn (f ∘ e.symm)
@@ -137,8 +141,10 @@ theorem comp_eqOn
   have h := (chartAt ℂ p).left_inv hy₂
   simp [Function.comp, h]
 
-/-- The set `e.target ∩ e.symm ⁻¹' (chartAt ℂ p).source` is a neighborhood
-of `e p` whenever `p` lies in `e.source`. -/
+/--
+The set `e.target ∩ e.symm ⁻¹' (chartAt ℂ p).source` is a neighborhood
+of `e p` whenever `p` lies in `e.source`.
+-/
 theorem target_inter_preimage_mem_nhds
     {p : X} (e : OpenPartialHomeomorph X ℂ) (hp : p ∈ e.source) :
     e.target ∩ e.symm ⁻¹' (chartAt ℂ p).source ∈ 𝓝 (e p) := by
@@ -148,9 +154,11 @@ theorem target_inter_preimage_mem_nhds
     rw [e.left_inv hp]
     exact (chartAt ℂ p).open_source.mem_nhds (mem_chart_source ℂ p)
 
-/-- **Punctured-neighborhood agreement.** The pullback `f ∘ e.symm`
+/--
+**Punctured-neighborhood agreement.** The pullback `f ∘ e.symm`
 agrees with the composite `(f ∘ (chartAt ℂ p).symm) ∘ (chartAt ℂ p ∘ e.symm)`
-on a punctured neighborhood of `e p`. -/
+on a punctured neighborhood of `e p`.
+-/
 theorem eventuallyEq_pullback
     {p : X} (e : OpenPartialHomeomorph X ℂ) (hp : p ∈ e.source)
     (f : X → ℂ) :
@@ -161,7 +169,8 @@ theorem eventuallyEq_pullback
   filter_upwards [Filter.mem_inf_of_left hmem] with y hy
   exact comp_eqOn e f hy
 
-/-! ### Chart-independence
+/-!
+### Chart-independence
 
 Below this point we assume `IsManifold 𝓘(ℂ) ω X` (analytic complex
 1-manifold). The chart-independence theorem reduces to two sub-obligations
@@ -169,16 +178,14 @@ about the transition map `g := chartAt ℂ p ∘ e.symm`:
 
 * `transition_analyticAt` — the transition is analytic at `e p`.
 * `transition_deriv_ne_zero` — the transition has nonzero derivative at `e p`.
-
-Both are discharged below via the named helper
-`analyticAt_transition_of_mem_maximalAtlas` (compatibility +
-`ContDiffAt.analyticAt`) and a chain-rule argument on the round trip. -/
+-/
 
 set_option linter.unusedSectionVars false
 
 variable [IsManifold 𝓘(ℂ) ω X]
 
-/-- **Generalized analyticity of transitions.** For any two charts
+/--
+**Generalized analyticity of transitions.** For any two charts
 `e₁, e₂ ∈ maximalAtlas 𝓘(ℂ) ω X` containing `p` in their sources, the
 transition `e₂ ∘ e₁.symm` is analytic at `e₁ p`.
 
@@ -191,7 +198,8 @@ upgrades to `ContDiffAt`, then `ContDiffAt.analyticAt` finishes.
 
 Note: the proof depends on the maximal-atlas membership but not on the
 `IsManifold` typeclass directly; we keep the typeclass in scope anyway
-for uniformity with the rest of the section. -/
+for uniformity with the rest of the section.
+-/
 theorem analyticAt_transition_of_mem_maximalAtlas
     {p : X} {e₁ e₂ : OpenPartialHomeomorph X ℂ}
     (he₁ : e₁ ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X)
@@ -231,9 +239,7 @@ theorem analyticAt_transition_of_mem_maximalAtlas
   -- Step 6: `ContDiffAt 𝕜 ω → AnalyticAt 𝕜`.
   exact hcdat.analyticAt
 
-/-- **Sub-obligation 1 (discharged).** The transition `chartAt ℂ p ∘ e.symm`
-is analytic at `e p`. Specialization of
-`analyticAt_transition_of_mem_maximalAtlas` to `e₂ = chartAt ℂ p`. -/
+
 theorem transition_analyticAt
     {p : X} (e : OpenPartialHomeomorph X ℂ)
     (he : e ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X) (hp : p ∈ e.source) :
@@ -241,14 +247,13 @@ theorem transition_analyticAt
   analyticAt_transition_of_mem_maximalAtlas he
     (IsManifold.chart_mem_maximalAtlas p) hp (mem_chart_source ℂ p)
 
-/-- **Sub-obligation 2 (discharged).** The transition `chartAt ℂ p ∘ e.symm`
-has nonzero derivative at `e p`.
-
+/--
 Proof: the symmetric transition `e ∘ (chartAt ℂ p).symm` is also analytic
 (apply the generalized lemma with chart roles swapped). The two compose
 to the identity on a neighborhood of `e p`. Differentiating via the chain
 rule gives `(deriv g')(g(e p)) * (deriv g)(e p) = 1`, so neither factor
-can be zero. -/
+can be zero.
+-/
 theorem transition_deriv_ne_zero
     {p : X} (e : OpenPartialHomeomorph X ℂ)
     (he : e ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X) (hp : p ∈ e.source) :
@@ -261,7 +266,6 @@ theorem transition_deriv_ne_zero
   have hg' : AnalyticAt ℂ (e ∘ (chartAt ℂ p).symm) (chartAt ℂ p p) :=
     analyticAt_transition_of_mem_maximalAtlas
       (IsManifold.chart_mem_maximalAtlas p) he (mem_chart_source ℂ p) hp
-  -- Eventual identity of the round trip near `e p`.
   have hid : (e ∘ (chartAt ℂ p).symm) ∘ (chartAt ℂ p ∘ e.symm) =ᶠ[𝓝 (e p)] id := by
     have hmem : e.target ∩ e.symm ⁻¹' (chartAt ℂ p).source ∈ 𝓝 (e p) :=
       target_inter_preimage_mem_nhds e hp
@@ -269,7 +273,6 @@ theorem transition_deriv_ne_zero
     obtain ⟨hy₁, hy₂⟩ := hy
     show e ((chartAt ℂ p).symm ((chartAt ℂ p) (e.symm y))) = y
     rw [(chartAt ℂ p).left_inv hy₂, e.right_inv hy₁]
-  -- Chain rule: derivative of round trip = product of factor derivatives.
   have hg_d : HasDerivAt (chartAt ℂ p ∘ e.symm)
       (deriv (chartAt ℂ p ∘ e.symm) (e p)) (e p) :=
     hg.differentiableAt.hasDerivAt
@@ -284,7 +287,6 @@ theorem transition_deriv_ne_zero
       (deriv (e ∘ (chartAt ℂ p).symm) (chartAt ℂ p p) *
         deriv (chartAt ℂ p ∘ e.symm) (e p)) (e p) :=
     HasDerivAt.comp_of_eq (e p) hg'_d hg_d hgep.symm
-  -- The round trip is eventually `id`, so its derivative is `1`.
   have hcomp1 : HasDerivAt ((e ∘ (chartAt ℂ p).symm) ∘ (chartAt ℂ p ∘ e.symm))
       (1 : ℂ) (e p) :=
     (hasDerivAt_id (e p)).congr_of_eventuallyEq hid
@@ -300,7 +302,8 @@ theorem transition_deriv_ne_zero
 
 /-! ### Main chart-independence theorem -/
 
-/-- **Chart independence (canonical to arbitrary).** For any chart
+/--
+**Chart independence (canonical to arbitrary).** For any chart
 `e ∈ maximalAtlas 𝓘(ℂ) ω X` with `p ∈ e.source`,
 `orderAt p f = meromorphicOrderAt (f ∘ e.symm) (e p)`.
 
@@ -313,7 +316,8 @@ The proof composes:
    `transition_analyticAt` and `transition_deriv_ne_zero`, evaluates the
    composite's order at the transition's image.
 4. The transition sends `e p ↦ chartAt ℂ p p` (since `e.symm (e p) = p`),
-   closing the chain. -/
+   closing the chain.
+-/
 theorem orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas
     {p : X} (f : X → ℂ) (e : OpenPartialHomeomorph X ℂ)
     (he : e ∈ IsManifold.maximalAtlas 𝓘(ℂ) ω X) (hp : p ∈ e.source) :
@@ -337,7 +341,8 @@ theorem orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas
     simp [Function.comp_apply, e.left_inv hp]
   rw [hep]
 
-/-! ### Manifold meromorphy ⇒ chart-pullback meromorphy
+/-!
+### Manifold meromorphy ⇒ chart-pullback meromorphy
 
 If `f : X → ℂ` is meromorphic at every point of `X` (in the manifold sense
 encoded by `MeromorphicAtX`), then for every base point `p : X`, the
@@ -352,10 +357,12 @@ derivative (the existing transition-analyticity infrastructure), so
 at `q` to chart-target-level meromorphy at `w`.
 -/
 
-/-- **Chart pullback is meromorphic at every target point.**
+/--
+**Chart pullback is meromorphic at every target point.**
 
 Given pointwise manifold meromorphy of `f`, the chart pullback through
-`chartAt ℂ p` is `MeromorphicAt` at every `w ∈ (chartAt ℂ p).target`. -/
+`chartAt ℂ p` is `MeromorphicAt` at every `w ∈ (chartAt ℂ p).target`.
+-/
 theorem meromorphicAt_chart_pullback_of_meromorphicAtX
     {f : X → ℂ} (hf : ∀ q : X, MeromorphicAtX f q) (p : X)
     {w : ℂ} (hw : w ∈ (chartAt ℂ p).target) :
@@ -398,18 +405,22 @@ theorem meromorphicAt_chart_pullback_of_meromorphicAtX
     rwa [hpq] at this
   exact hcomp.congr heq.symm
 
-/-- **Chart pullback is meromorphic on the chart target.**
+/--
+**Chart pullback is meromorphic on the chart target.**
 
 Packages `meromorphicAt_chart_pullback_of_meromorphicAtX` as a
-`MeromorphicOn` statement. -/
+`MeromorphicOn` statement.
+-/
 theorem meromorphicOn_chart_pullback_of_meromorphicAtX
     {f : X → ℂ} (hf : ∀ q : X, MeromorphicAtX f q) (p : X) :
     MeromorphicOn (f ∘ (chartAt ℂ p).symm) (chartAt ℂ p).target :=
   fun _w hw ↦ meromorphicAt_chart_pullback_of_meromorphicAtX hf p hw
 
-/-- **Chart-independence (two arbitrary atlas charts).** For two charts
+/--
+**Chart-independence (two arbitrary atlas charts).** For two charts
 `e₁, e₂ ∈ maximalAtlas 𝓘(ℂ) ω X` both containing `p` in their sources,
-the meromorphic-order pullbacks agree. -/
+the meromorphic-order pullbacks agree.
+-/
 theorem meromorphicOrderAt_pullback_eq
     {p : X} (f : X → ℂ)
     {e₁ e₂ : OpenPartialHomeomorph X ℂ}
@@ -420,7 +431,8 @@ theorem meromorphicOrderAt_pullback_eq
   rw [← orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas f e₁ he₁ hp₁,
       ← orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas f e₂ he₂ hp₂]
 
-/-! ### Connectedness propagation of meromorphic non-vanishing
+/-!
+### Connectedness propagation of meromorphic non-vanishing
 
 `isClopen_setOf_orderAt_eq_top` says the manifold-level set of points
 where `f` is locally identically zero is clopen — a transfer of
@@ -430,16 +442,19 @@ through the chart-pullback machinery developed above. Combined with
 "`f` is non-vanishing somewhere" hypothesis to "`f` is non-vanishing
 everywhere", which is the analytic-identity-principle leg of the
 classical "nonzero meromorphic function" definition on a connected
-Riemann surface. -/
+Riemann surface.
+-/
 
-/-- Helper for `isClopen_setOf_orderAt_eq_top`: extract the chart-target
+/--
+Helper for `isClopen_setOf_orderAt_eq_top`: extract the chart-target
 ambient open set carrying a chart-target subtype-open property of
 `meromorphicOrderAt (f ∘ chartAt ℂ p .symm)`, transport it to
 `X` via `chartAt ℂ p`, and conclude the corresponding `orderAt`
 property is open in `X`.
 
 Encapsulates the boilerplate shared by both `IsOpen Z` and `IsOpen Zᶜ`
-for `Z = {q | orderAt q f = ⊤}`. -/
+for `Z = {q | orderAt q f = ⊤}`.
+-/
 private theorem isOpen_setOf_orderAt_of_chartTarget_open
     {f : X → ℂ} (Q : WithTop ℤ → Prop)
     (hQ_chart : ∀ p : X, IsOpen
@@ -479,7 +494,8 @@ private theorem isOpen_setOf_orderAt_of_chartTarget_open
   rw [h_chart_indep hq_src]
   exact h_subtype
 
-/-- **The set of locally-identically-zero points is clopen.**
+/--
+**The set of locally-identically-zero points is clopen.**
 
 For `f : X → ℂ` meromorphic at every point of an analytic complex
 1-manifold `X`, the set `{q : X | orderAt q f = ⊤}` is clopen.
@@ -491,7 +507,8 @@ on each `(chartAt ℂ p).target`; the chart-pullback meromorphy
 (`orderAt_eq_meromorphicOrderAt_of_mem_maximalAtlas`) transport the
 result to the manifold via the helper
 `isOpen_setOf_orderAt_of_chartTarget_open` applied separately to the
-`= ⊤` and `≠ ⊤` predicates. -/
+`= ⊤` and `≠ ⊤` predicates.
+-/
 theorem isClopen_setOf_orderAt_eq_top
     {f : X → ℂ} (hf : ∀ q : X, MeromorphicAtX f q) :
     IsClopen {q : X | orderAt q f = ⊤} := by
@@ -508,13 +525,15 @@ theorem isClopen_setOf_orderAt_eq_top
   exact isOpen_compl_iff.mp
     (isOpen_setOf_orderAt_of_chartTarget_open (· ≠ ⊤) hOpen_ne_top)
 
-/-- **Identity-principle propagation of meromorphic non-vanishing.**
+/--
+**Identity-principle propagation of meromorphic non-vanishing.**
 
 If `f` is meromorphic at every point of a preconnected complex
 1-manifold `X` and has finite vanishing order at some single point,
 then `f` has finite vanishing order at every point. The classical
 "identity principle" leg of "nonzero meromorphic function on a
-connected Riemann surface". -/
+connected Riemann surface".
+-/
 theorem orderAt_ne_top_of_exists [PreconnectedSpace X]
     {f : X → ℂ} (hf : ∀ q : X, MeromorphicAtX f q)
     (h_nontriv : ∃ p : X, orderAt p f ≠ ⊤) :

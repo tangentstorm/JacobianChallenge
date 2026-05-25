@@ -35,11 +35,7 @@ namespace JacobianChallenge.Periods
 
 open scoped Manifold
 
-/-- Every complex one-dimensional manifold is `Orientable` as a real
-two-dimensional manifold. Currently a placeholder (the witness comes
-from the lightweight witness field of the `Orientable` class); the named
-instance is the API hook for the eventual holomorphic-Jacobian
-argument. -/
+
 instance complexManifold_orientable
     (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]

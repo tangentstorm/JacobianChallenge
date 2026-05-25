@@ -26,11 +26,6 @@ function on `(chartAt E p₀).source` may be operator-discontinuous
 (jumps as the chart selector changes between nearby points). The
 mathematical content people care about — operator continuity of the
 chart's mfderiv — only holds when `chartAt` is well-behaved.
-
-The intended Mathlib upstream contribution is the typeclass plus
-instances for trivial cases (`ChartedSpace H H`, products, open
-submanifolds) and the resulting trivial lemma. See module bottom for
-the upstream PR plan.
 -/
 
 namespace JacobianChallenge.Periods
@@ -41,7 +36,8 @@ open scoped Manifold ContDiff Topology
 variable (H : Type*) [TopologicalSpace H]
   (M : Type*) [TopologicalSpace M] [ChartedSpace H M]
 
-/-- A `ChartedSpace H M` has **stable `chartAt`** if, for every `p : M`
+/--
+A `ChartedSpace H M` has **stable `chartAt`** if, for every `p : M`
 and every `q ∈ (chartAt H p).source`, the chart at `q` equals the
 chart at `p`. Equivalently: `chartAt H` is constant on the source of
 each chart.
@@ -51,7 +47,8 @@ space, products, open submanifolds, Riemann surfaces with explicit
 finite atlases, etc.) — it is the "natural" chart-selection property.
 The abstract `ChartedSpace` typeclass does not enforce it, leading to
 artifacts like discontinuous `mfderiv` of a chart for arbitrary chart
-selectors. -/
+selectors.
+-/
 class StableChartAt : Prop where
   /-- For `q` in the source of the chart at `p`, the chart at `q` equals the chart at `p`. -/
   chartAt_eq_of_mem_source :
@@ -86,10 +83,12 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
   {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
   [IsManifold I (1 : WithTop ℕ∞) M]
 
-/-- **Operator continuity of `mfderiv` of a chart, under `StableChartAt`.**
+/--
+**Operator continuity of `mfderiv` of a chart, under `StableChartAt`.**
 
 Under `StableChartAt H M`, `b ↦ mfderiv (chartAt H p₀) b` is in fact
-**constantly equal to the identity** on `(chartAt H p₀).source`. -/
+**constantly equal to the identity** on `(chartAt H p₀).source`.
+-/
 theorem mfderiv_chartAt_eq_id_of_stable [StableChartAt H M]
     (p₀ : M) {b : M} (hb : b ∈ (chartAt H p₀).source) :
     mfderiv I I (chartAt H p₀) b = ContinuousLinearMap.id 𝕜 E := by
@@ -106,8 +105,10 @@ theorem mfderiv_chartAt_eq_id_of_stable [StableChartAt H M]
   rw [tangentBundleCore_baseSet, coe_achart]
   exact hb
 
-/-- **Operator continuity (constant id) of `mfderiv (chartAt H p₀)` on its source**,
-under `StableChartAt`. -/
+/--
+**Operator continuity (constant id) of `mfderiv (chartAt H p₀)` on its source**,
+under `StableChartAt`.
+-/
 theorem mfderiv_chartAt_continuousOn_of_stable
     [StableChartAt H M]
     (p₀ : M) :
@@ -119,16 +120,20 @@ theorem mfderiv_chartAt_continuousOn_of_stable
   intro b hb
   exact mfderiv_chartAt_eq_id_of_stable (I := I) p₀ hb
 
-/-! ## Project-local helper used by `mfderiv_chartSymm_continuousOn`
+/-!
+## Project-local helper used by `mfderiv_chartSymm_continuousOn`
 
 The historical name `mfderiv_chartAt_continuousOn_of_finiteDim` is
 preserved as an alias (with the `StableChartAt` hypothesis replacing
-the previous `[FiniteDimensional ℂ E]`). -/
+the previous `[FiniteDimensional ℂ E]`).
+-/
 
-/-- Alias: `mfderiv_chartAt_continuousOn_of_finiteDim` under
+/--
+Alias: `mfderiv_chartAt_continuousOn_of_finiteDim` under
 `[StableChartAt E X]`. The `FiniteDimensional` hypothesis from the
 earlier formulation is no longer needed: the function is constantly
-`id`. -/
+`id`.
+-/
 theorem mfderiv_chartAt_continuousOn_of_finiteDim
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
@@ -144,11 +149,7 @@ theorem mfderiv_chartAt_continuousOn_of_finiteDim
     IsManifold.of_le le_top
   mfderiv_chartAt_continuousOn_of_stable (I := modelWithCornersSelf ℂ E) p₀
 
-/-! ## Upstream Mathlib contribution plan
-
-The above is a project-local Mathlib-style packet. The upstream PR
-should:
-
+/-!
 1. Add `class StableChartAt H M` to `Mathlib/Geometry/Manifold/IsManifold/Basic.lean`
    (or a new file `Mathlib/Geometry/Manifold/ChartedSpace/StableChartAt.lean`).
 
@@ -169,6 +170,7 @@ should:
 
 The mathematical content is trivial under `StableChartAt`. The value
 of the contribution is the typeclass abstraction — making explicit a
-property that all concrete manifolds satisfy implicitly. -/
+property that all concrete manifolds satisfy implicitly.
+-/
 
 end JacobianChallenge.Periods

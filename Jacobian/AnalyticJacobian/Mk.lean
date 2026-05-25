@@ -22,8 +22,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- Quotient projection from a linear functional to its analytic
-Jacobian class. -/
+/--
+Quotient projection from a linear functional to its analytic
+Jacobian class.
+-/
 noncomputable abbrev mk (E : Type) [NormedAddCommGroup E] [NormedSpace ℂ E]
     (X : Type) [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
@@ -41,8 +43,10 @@ theorem mk_add (φ ψ : HolomorphicOneForm E X →ₗ[ℂ] ℂ) :
     mk E X (φ + ψ) = mk E X φ + mk E X ψ := by
   rfl
 
-/-- A class is zero iff the underlying functional lies in the
-period subgroup. -/
+/--
+A class is zero iff the underlying functional lies in the
+period subgroup.
+-/
 theorem mk_eq_zero_iff (φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ) :
     mk E X φ = 0 ↔ φ ∈ periodSubgroup E X :=
   QuotientAddGroup.eq_zero_iff φ

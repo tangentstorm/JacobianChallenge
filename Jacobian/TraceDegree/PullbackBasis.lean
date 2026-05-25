@@ -24,15 +24,6 @@ that the top-down refinement of `Solution.pullback` (and its
 functoriality lemmas) delegates to. Following the project's preference
 for *small* named obligations:
 
-* `analyticPullback f hf` — the pullback as a continuous additive
-  homomorphism on the basis-aligned carrier (data, `opaque`);
-* `analyticPullback_id` — pullback along the identity map is the
-  identity (named sorry);
-* `analyticPullback_comp` — pullback distributes over composition,
-  contravariantly (named sorry);
-* `analyticPullback_contMDiff` — the pullback is holomorphic (named
-  sorry).
-
 Bottom-up content: each is the descent through periods of the
 corresponding identity on `(Fin g_Y → ℂ) →L[ℂ] (Fin g_X → ℂ)` linear
 maps (the dual of holomorphic-form pullback in basis coordinates).
@@ -64,28 +55,24 @@ variable {Z : Type} [TopologicalSpace Z] [T2Space Z] [CompactSpace Z]
   [StableChartAt ℂ Z]
   [FiniteDimensionalHolomorphicOneForms ℂ Z]
 
-/-- The basis-coordinate form pullback as a `ℂ`-linear map.
-Sorry-free: use the `holomorphicTraceCoord` from `PushforwardBasis.lean`. -/
+
 noncomputable def pullbackTraceLiftLinearMap
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   holomorphicTraceCoord f hf
 
-/-- The basis-coordinate form pullback as a continuous `ℂ`-linear map.
-Upgrade via finite-dimensional auto-continuity. Sorry-free. -/
+
 noncomputable def pullbackTraceLiftCLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →L[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   LinearMap.toContinuousLinearMap (pullbackTraceLiftLinearMap f hf)
 
-/-- **The basis-coordinate trace map.** Direction `H⁰(X, Ω¹) → H⁰(Y, Ω¹)`
+/--
+**The basis-coordinate trace map.** Direction `H⁰(X, Ω¹) → H⁰(Y, Ω¹)`
 descended to basis coordinates. The covariant trace lift dual to
 `holomorphicTraceCoord` (which is the contravariant form-pullback
 matrix).
-
-Sorry-free assembly: the linear `traceFormsBundledLM` (from
-`TraceSpec.lean`, sorry-free assembly from the construction-data
-provider) sandwiched between the basis-coordinate equivalences. -/
+-/
 noncomputable def traceFormsCoord
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ X) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ Y) → ℂ) :=
@@ -93,7 +80,8 @@ noncomputable def traceFormsCoord
     (traceFormsBundledLM f hf) ∘ₗ
     (holomorphicOneFormFinBasis ℂ X).equivFun.symm.toLinearMap
 
-/-- **Corrected basis-coordinate dual pullback.** The dual / transpose
+/--
+**Corrected basis-coordinate dual pullback.** The dual / transpose
 of `traceFormsCoord`: a map `(Fin g_Y → ℂ) → (Fin g_X → ℂ)` representing
 Jacobian pullback **on dual functional coordinates** (where the
 Jacobian carrier `BasisAnalyticJacobian Y` is interpreted as a quotient
@@ -106,29 +94,26 @@ the period pairing, not Jacobian pullback. The two representatives
 differ; see the design note before
 `pushforwardTraceLift_traceDualPullbackLift_eq_degree_smul` (in
 `AnalyticDegree.lean`).
-
-Sorry-free: matrix transpose of `traceFormsCoord`. -/
+-/
 noncomputable def traceDualPullbackLift
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   Matrix.toLin' (traceFormsCoord f hf).toMatrix'.transpose
 
-/-- Linear-map alias for `traceDualPullbackLift`. Public name used when
-rewiring `analyticPullback`. Sorry-free. -/
+
 noncomputable def traceDualPullbackLiftLinearMap
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   traceDualPullbackLift f hf
 
-/-- The corrected basis-coordinate dual pullback as a continuous
-`ℂ`-linear map. Upgrade via finite-dimensional auto-continuity.
-Sorry-free. This is the correct representative used by `analyticPullback`. -/
+
 noncomputable def traceDualPullbackLiftCLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →L[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   LinearMap.toContinuousLinearMap (traceDualPullbackLiftLinearMap f hf)
 
-/-! ### Chain-level cycle transfer for a branched cover (Part C)
+/-!
+### Chain-level cycle transfer for a branched cover (Part C)
 
 The classical chain-level construction of the transfer cycle
 `f^!(σ)` on `X` from a cycle `σ` on `Y` decomposes into:
@@ -149,9 +134,11 @@ The classical chain-level construction of the transfer cycle
 We expose the existence of a *subdivided lift* — the chain-level
 data of steps 2–4 — as a strictly smaller provider; steps 5–6 are
 the change-of-variables identity that is also strictly smaller than
-the period-naturality conclusion of the leaf. -/
+the period-naturality conclusion of the leaf.
+-/
 
-/-- **Subdivided-lift data for a cycle along a branched cover.**
+/--
+**Subdivided-lift data for a cycle along a branched cover.**
 
 The substantive chain-level data underlying the transfer cycle: a
 finite set of lifted arcs that fit together into a 1-chain on `X`,
@@ -168,7 +155,8 @@ This structure mentions only:
 * the cofinite condition that `transferCycle` lifts `σ` away from
   the branch set in the sense of `f`.
 
-It deliberately does *not* contain the period-pairing identity. -/
+It deliberately does *not* contain the period-pairing identity.
+-/
 structure BranchedCoverSubdividedLift
     (f : X → Y) (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) where
@@ -178,7 +166,8 @@ structure BranchedCoverSubdividedLift
   /-- The transfer cycle `f^!(σ)` on `X`. -/
   transferCycle : IntegralOneCycle X
 
-/-- **Provider (chain-level lift exists).** For every smooth map
+/--
+**Provider (chain-level lift exists).** For every smooth map
 `f : X → Y` between compact Riemann surfaces, every integral
 1-cycle `σ` on `Y`, and every finite "branch set" of `Y` to avoid,
 a subdivided lift exists.
@@ -186,17 +175,15 @@ a subdivided lift exists.
 This is the *combinatorial* / *topological* part of the cycle
 transfer: pick a finite branch set, then build the lifted chain.
 The proof does not involve any analysis on holomorphic forms.
-
-Allowed to remain a direct sorry: the underlying mathematics is
-purely the chain-level path lifting and subdivision combinatorics
-of a covering map, not present in the project yet. -/
+-/
 theorem branchedCover_subdividedLift_exists
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) :
     Nonempty (BranchedCoverSubdividedLift f hf σ) := by
   sorry
 
-/-- **Period change-of-variables provider.** Given a subdivided lift
+/--
+**Period change-of-variables provider.** Given a subdivided lift
 of `σ` along `f`, the period integral of any holomorphic 1-form
 `η` on `X` over the lifted cycle equals the period integral of the
 **trace** form `traceFormsBundled f hf η` over the original cycle
@@ -207,10 +194,7 @@ by substitution on the unramified arcs, plus a finite sum over the
 subdivision. It does not mention `BasisAnalyticJacobian` or any
 dual-coordinate transport, and is strictly smaller than the public
 leaf because it consumes the chain-level lift as input.
-
-Allowed to remain a direct sorry: the precise content is one
-`∫_{f∘γ} f^*η = ∫_γ η` change-of-variables fact applied finitely
-many times. -/
+-/
 theorem branchedCover_subdividedLift_period_naturality
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y)
@@ -221,24 +205,18 @@ theorem branchedCover_subdividedLift_period_naturality
           (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η) := by
   sorry
 
-/-- **Narrowest cycle-transfer leaf: form-level period naturality.**
+/--
+**Narrowest cycle-transfer leaf: form-level period naturality.**
 For every cycle `σ` on `Y` there exists a transfer cycle `γ` on `X`
 whose period pairing against every holomorphic 1-form `η` on `X`
 equals the period pairing of `σ` against the **traced** form
 `traceFormsBundled f hf η` on `Y`.
 
-**Sorry-free assembly** from the strictly smaller chain-level
-providers:
-* `branchedCover_subdividedLift_exists` — produces the chain-level
-  lift (combinatorial / topological content);
-* `branchedCover_subdividedLift_period_naturality` — supplies the
-  period change-of-variables identity for the lift (analytic
-  content).
-
 This is purely about cycles, the form-level trace
 `traceFormsBundled`, and the period pairing. It mentions neither
 `BasisAnalyticJacobian`, `analyticPushPull_provider`, the quotient
-torus, nor any basis-coordinate / dual-equivalence transport. -/
+torus, nor any basis-coordinate / dual-equivalence transport.
+-/
 theorem transferCycle_periodPairing_form_level_naturality
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) :
@@ -251,7 +229,8 @@ theorem transferCycle_periodPairing_form_level_naturality
   refine ⟨tdata.transferCycle, ?_⟩
   exact branchedCover_subdividedLift_period_naturality f hf σ tdata
 
-/-- **Provider (coordinate duality).** The corrected trace-dual
+/--
+**Provider (coordinate duality).** The corrected trace-dual
 pullback `traceDualPullbackLift` applied to the basis-coordinate
 representative of a functional `ψ` on `HolomorphicOneForm ℂ Y`
 equals the basis-coordinate representative of the functional
@@ -263,7 +242,8 @@ pullback) of the existing
 form-pullback ↔ dual covariant pushforward). Pure linear algebra
 through the `Matrix.toLin'` / `LinearMap.toMatrix'` /
 `Basis.equivFun` / `Module.Basis.dualBasis_apply_self` pipeline;
-no analysis. -/
+no analysis.
+-/
 theorem traceDualPullbackLift_apply_holomorphicOneFormDualEquiv
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (ψ : HolomorphicOneForm ℂ Y →ₗ[ℂ] ℂ) :
@@ -312,16 +292,14 @@ theorem traceDualPullbackLift_apply_holomorphicOneFormDualEquiv
   intro j _
   rw [map_smul, smul_eq_mul]
 
-/-- **Algebraic bridge: trace-dual pullback as precomposition by the
+/--
+**Algebraic bridge: trace-dual pullback as precomposition by the
 bundled trace.** The corrected basis-coordinate trace-dual pullback
 `traceDualPullbackLiftCLM`, conjugated by the basis-aligned dual
 equivalences, sends a functional `φ` on `HolomorphicOneForm ℂ Y` to
 the functional `η ↦ φ (traceFormsBundled f hf η)` on
 `HolomorphicOneForm ℂ X`.
-
-**Sorry-free assembly** from the coordinate-duality provider
-`traceDualPullbackLift_apply_holomorphicOneFormDualEquiv` plus the
-inverse round trip of `holomorphicOneFormDualEquiv`. -/
+-/
 theorem traceDualPullback_dualEquiv_naturality
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (φ : HolomorphicOneForm ℂ Y →ₗ[ℂ] ℂ) (η : HolomorphicOneForm ℂ X) :
@@ -341,23 +319,12 @@ theorem traceDualPullback_dualEquiv_naturality
     φ (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η)
   rfl
 
-/-- **Narrow transfer-cycle leaf (corrected representative).** The
+/--
+**Narrow transfer-cycle leaf (corrected representative).** The
 substantive geometric content: for every cycle `σ` on `Y` there exists a
 *transfer cycle* `γ` on `X` whose period pairing equals the
 basis-coordinate **trace-dual** pulled-back functional of `σ`.
-
-**Sorry-free assembly** from two strictly narrower leaves:
-1. `transferCycle_periodPairing_form_level_naturality` — the cycle
-   transfer exists with form-level period naturality.
-2. `traceDualPullback_dualEquiv_naturality` — the corrected
-   basis-coordinate trace-dual pullback, conjugated by the dual
-   equivalences, equals precomposition by the bundled trace.
-
-These two leaves split the original geometric+algebraic frontier into:
-(a) the geometric cycle-transfer content (pure cycles +
-trace of forms + period pairing), and (b) the algebraic
-basis-coordinate bridge (no geometry; pure linear algebra of the
-corrected representative). -/
+-/
 theorem transferCycle_periodPairing_naturality
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) :
@@ -375,17 +342,13 @@ theorem transferCycle_periodPairing_naturality
   exact (traceDualPullback_dualEquiv_naturality
     f hf (periodPairing ℂ Y σ) η).symm
 
-/-- **Transfer functional obligation (corrected representative).** For
+/--
+**Transfer functional obligation (corrected representative).** For
 every cycle `σ` on `Y`, the linear functional on `H⁰(X, Ω¹)` obtained
 by applying the **corrected** trace-dual pullback lift to the period
 vector of `σ` and pulling back through the basis-aligned dual
 equivalence lies in the period subgroup of `X`.
-
-Sorry-free assembly from the narrow geometric leaf
-`transferCycle_periodPairing_naturality`: extract the witness cycle
-`γ` and observe that the pulled-back functional, being equal to
-`periodPairing ℂ X γ`, lies in `(periodPairing ℂ X).range =
-periodSubgroup ℂ X`. -/
+-/
 theorem transfer_functional_mem_periodSubgroup
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) :
@@ -398,7 +361,8 @@ theorem transfer_functional_mem_periodSubgroup
   show _ ∈ (periodPairing ℂ X).range
   exact ⟨γ, hγ⟩
 
-/-- Raw geometric obligation: the corrected trace-dual pullback
+/--
+Raw geometric obligation: the corrected trace-dual pullback
 preserves the period subgroup (in the contravariant direction).
 
 This is the dual of `pushforwardTraceLift_preserves_lattice_raw` using
@@ -412,7 +376,8 @@ The proof decomposes into:
    stated against the corrected trace-dual representative).
 2. Algebraic assembly: the trace-dual pullback lift applied to a period
    vector equals the basis-aligned dual equiv applied to the transfer
-   functional. -/
+   functional.
+-/
 theorem traceDualPullbackLift_preserves_lattice_raw
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ∀ v ∈ (periodFullComplexLattice Y).subgroup,
@@ -447,17 +412,10 @@ theorem traceDualPullbackLift_preserves_lattice_raw
   rw [← hψ_eq]
   exact holomorphicOneFormDualEquiv_mem_basisAlignedPeriodSubgroupConcrete X hψ_mem
 
-/-- The analytic pullback induced by a holomorphic map of compact
+/--
+The analytic pullback induced by a holomorphic map of compact
 Riemann surfaces, on the basis-aligned carrier.
-
-Concrete (non-opaque) descent of `traceDualPullbackLiftCLM` (the
-**corrected** trace-dual representative) through the period quotient
-via `ComplexTorus.mapClm`, using
-`traceDualPullbackLift_preserves_lattice_raw` for the lattice
-preservation hypothesis. The continuity of the descent comes from
-`mapClm_continuous`; the smoothness companion
-`analyticPullback_contMDiff_raw` remains a (named) sorry —
-quotient-of-manifold smoothness is the substantive geometric content. -/
+-/
 noncomputable def analyticPullback (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisAnalyticJacobian Y →ₜ+ BasisAnalyticJacobian X where
@@ -468,21 +426,12 @@ noncomputable def analyticPullback (f : X → Y)
   continuous_toFun := mapClm_continuous (traceDualPullbackLiftCLM f hf)
     (traceDualPullbackLift_preserves_lattice_raw f hf)
 
-/-- Raw obligation: the descended map is holomorphic.
-
-Sorry-free: chart-glue smoothness, mirroring the pattern in
-`Jacobian/ComplexTorus/AddSmooth.lean`. At any `q`, take the chart
-`chart := chartAt _ q`. On `chart.source`, the descent
-`analyticPullback = mapClm traceDualPullbackLiftCLM` equals
-`mk_X ∘ traceDualPullbackLiftCLM ∘ chart.toFun`, a composition of
-smooth maps:
-* `chart.toFun` is `ContMDiffOn` on `chart.source` (`contMDiffOn_chart`);
-* `traceDualPullbackLiftCLM` is a continuous linear map between
-  finite-dim spaces, hence `ContMDiff` (`ContinuousLinearMap.contMDiff`);
-* `mk X _` is `ContMDiff` (`contMDiff_mk`).
+/--
+Raw obligation: the descended map is holomorphic.
 
 The equation on `chart.source` uses `chart.left_inv'` plus
-`mapClm`'s definition (`map_mk`). -/
+`mapClm`'s definition (`map_mk`).
+-/
 theorem analyticPullback_contMDiff_raw
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
@@ -548,33 +497,34 @@ theorem analyticPullback_contMDiff_raw
     exact hEq q' hq'
   exact hOn.contMDiffAt hMem
 
-/-- Basis-level pullback data, separated from the descended analytic
+/--
+Basis-level pullback data, separated from the descended analytic
 pullback on the quotient.
-
-Consumers that only need the covering-space additive homomorphism or
-its matrix identification should use this record (via
-`basisDualPullback`) rather than the full `BasisAnalyticPullbackBundle`,
-which also carries quotient smoothness, degree, and trace-pullback
-frontier fields. -/
+-/
 structure BasisPullbackLinearData
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) where
-  /-- The corrected trace-dual pullback on the basis-coordinate
-  covering space. -/
+  /--
+The corrected trace-dual pullback on the basis-coordinate
+  covering space.
+-/
   basisDualPullback : (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ)
   /-- Identification with the basis-aligned trace-dual lift. -/
   basisDualPullback_eq_matrix_AddHom :
     basisDualPullback = (traceDualPullbackLiftLinearMap f hf).toAddMonoidHom
 
-/-- Concrete basis-level pullback data. This construction uses only the
+/--
+Concrete basis-level pullback data. This construction uses only the
 corrected trace-dual pullback and does not require quotient smoothness
-or trace-pullback degree data. -/
+or trace-pullback degree data.
+-/
 noncomputable def basisPullbackLinearData
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisPullbackLinearData f hf where
   basisDualPullback := (traceDualPullbackLiftLinearMap f hf).toAddMonoidHom
   basisDualPullback_eq_matrix_AddHom := rfl
 
-/-- Bundle carrying the analytic pullback together with its
+/--
+Bundle carrying the analytic pullback together with its
 covering-space representative `basisDualPullback` and the descent
 compatibility axiom `mk_eq`.
 
@@ -586,7 +536,8 @@ the two: `analyticPullback (mk v) = mk (basisDualPullback v)`.
 Bottom-up: concretising `basisDualPullback` requires the dual of the
 basis-aligned form-pullback; `analyticPullback` is then its descent
 through the period quotient (using period-preservation), and `mk_eq`
-is automatic from the descent. -/
+is automatic from the descent.
+-/
 structure BasisAnalyticPullbackBundle
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
     [ConnectedSpace X] [ChartedSpace ℂ X]
@@ -599,13 +550,17 @@ structure BasisAnalyticPullbackBundle
     [StableChartAt ℂ Y]
     [FiniteDimensionalHolomorphicOneForms ℂ Y]
     (_f : X → Y) (_hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω _f) where
-  /-- The pullback as a continuous additive group homomorphism on the
-  basis-aligned carrier. -/
+  /--
+The pullback as a continuous additive group homomorphism on the
+  basis-aligned carrier.
+-/
   analyticPullback : BasisAnalyticJacobian Y →ₜ+ BasisAnalyticJacobian X
   /-- The dual form-pullback on the covering space. -/
   basisDualPullback : (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ)
-  /-- Descent compatibility: the bundled pullback acts on the period
-  quotient as the descended dual form-pullback. -/
+  /--
+Descent compatibility: the bundled pullback acts on the period
+  quotient as the descended dual form-pullback.
+-/
   mk_eq : ∀ v : Fin (analyticGenus ℂ Y) → ℂ,
     analyticPullback (QuotientAddGroup.mk v) =
       QuotientAddGroup.mk (basisDualPullback v)
@@ -621,9 +576,11 @@ noncomputable instance (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
      mk_eq := fun _ => rfl
      contMDiff_pull := contMDiff_const }⟩
 
-/-- The bundled analytic pullback (data + descent axiom). Concretely
+/--
+The bundled analytic pullback (data + descent axiom). Concretely
 realized by descent through the period quotient using the corrected
-trace-dual representative `traceDualPullbackLift`. -/
+trace-dual representative `traceDualPullbackLift`.
+-/
 noncomputable def basisAnalyticPullbackBundle (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     BasisAnalyticPullbackBundle X Y f hf :=
@@ -632,16 +589,15 @@ noncomputable def basisAnalyticPullbackBundle (f : X → Y)
     mk_eq := fun _ => rfl
     contMDiff_pull := analyticPullback_contMDiff_raw f hf }
 
-/-- The analytic pullback is holomorphic.
-
-Sorry-free extraction from `basisAnalyticPullbackBundle.contMDiff_pull`. -/
+/-- The analytic pullback is holomorphic. -/
 lemma analyticPullback_contMDiff (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     ContMDiff (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ Y) → ℂ))
       (modelWithCornersSelf ℂ (Fin (analyticGenus ℂ X) → ℂ)) ω
       (analyticPullback f hf) :=
   (basisAnalyticPullbackBundle f hf).contMDiff_pull
 
-/-! ### Deeper companions for contravariant functoriality
+/-!
+### Deeper companions for contravariant functoriality
 
 The `analyticPullback` is the descent through the period
 quotient of a linear map on the covering space — the dual of the
@@ -654,57 +610,52 @@ relationship:
 * `basisDualPullback_comp` — form-pullback contravariance (rfl).
 -/
 
-/-- The dual of the basis-aligned form-pullback, as an additive group
+/--
+The dual of the basis-aligned form-pullback, as an additive group
 homomorphism on the covering space
 `Fin (analyticGenus ℂ Y) → ℂ → Fin (analyticGenus ℂ X) → ℂ`.
 
 Extracted from the smaller `BasisPullbackLinearData`, so basis-level
-consumers do not depend on quotient smoothness or degree fields. -/
+consumers do not depend on quotient smoothness or degree fields.
+-/
 noncomputable def basisDualPullback (f : X → Y)
     (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →+ (Fin (analyticGenus ℂ X) → ℂ) :=
   (basisPullbackLinearData f hf).basisDualPullback
 
-/-- The small basis-level pullback agrees with the trace-dual lift.
-This theorem is independent of quotient smoothness and degree data. -/
+/--
+The small basis-level pullback agrees with the trace-dual lift.
+This theorem is independent of quotient smoothness and degree data.
+-/
 theorem basisDualPullback_eq_traceDualPullbackLiftLinearMap
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     basisDualPullback f hf =
       (traceDualPullbackLiftLinearMap f hf).toAddMonoidHom :=
   (basisPullbackLinearData f hf).basisDualPullback_eq_matrix_AddHom
 
-/-- Compatibility alias (legacy name). Newer code should use
-`basisDualPullback_eq_traceDualPullbackLiftLinearMap`. -/
+/--
+Compatibility alias (legacy name). Newer code should use
+`basisDualPullback_eq_traceDualPullbackLiftLinearMap`.
+-/
 theorem basisDualPullback_eq_pullbackTraceLiftLinearMap
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     basisDualPullback f hf =
       (traceDualPullbackLiftLinearMap f hf).toAddMonoidHom :=
   basisDualPullback_eq_traceDualPullbackLiftLinearMap f hf
 
-/-! ### Bundle-primitive split (mirrors PushforwardBasis pattern)
+/-! ### Bundle-primitive split (mirrors PushforwardBasis pattern) -/
 
-The `basisAnalyticPullbackBundle f hf` is now a concrete (non-opaque)
-definition built from `pullbackFormsMap`. This resolves the structural
-blocker where Lean had no intrinsic propositional relationship between
-the dual pullbacks for `f`, `g`, and `g ∘ f`.
--/
-
-/-! ### Basis-level split
+/-!
+### Basis-level split
 
 The basis-coordinate pullback is now exposed through
 `BasisPullbackLinearData`, while `BasisAnalyticPullbackBundle` remains
 the larger quotient-level package carrying smoothness, degree, and
 trace-pullback data.  Basis-only consumers route through
-`basisDualPullback` and the `pullbackFormsMap` lemmas below. -/
+`basisDualPullback` and the `pullbackFormsMap` lemmas below.
+-/
 
-/-- **Stage A leaf (round 2, concretised, corrected).** Concrete
-trace-dual pullback, defined as `traceDualPullbackLift f hf` (the
-matrix transpose of the trace-coordinate map `traceFormsCoord`,
-i.e. the **corrected** representative of Jacobian pullback on dual
-coordinates) coerced to a `→+`.
 
-This concretisation collapses both `pullbackFormsMap_id_eq_id` and
-`pullbackFormsMap_comp_eq` to sorry-free assemblies. -/
 noncomputable def pullbackFormsMap
     (X' Y' : Type) [TopologicalSpace X'] [T2Space X']
     [CompactSpace X'] [ConnectedSpace X'] [ChartedSpace ℂ X']
@@ -720,34 +671,35 @@ noncomputable def pullbackFormsMap
     (Fin (analyticGenus ℂ Y') → ℂ) →+ (Fin (analyticGenus ℂ X') → ℂ) :=
   (traceDualPullbackLift f hf).toAddMonoidHom
 
-/-! #### Pdp-chain decomposition (Round 2, 2026-05-05)
+/-! #### Pdp-chain decomposition -/
 
-The single sorry on `basisAnalyticPullbackBundle_eq_pullbackFormsMap`
-is decomposed via the `pdp-r1 … pdp-r17` chain documented in
-`tex/sections/12-classical-analysis-gaps.tex`. Each helper below is
-the Lean shadow of a chain step. -/
-
-/-- **Corrected matrix (Stage A).** The trace-dual pullback matrix as a
+/--
+**Corrected matrix (Stage A).** The trace-dual pullback matrix as a
 `ℂ`-linear map between the chosen-basis coordinate vector spaces: the
 matrix transpose of `traceFormsCoord`. Replaces the old form-pullback
-matrix `holomorphicTraceCoord`. -/
+matrix `holomorphicTraceCoord`.
+-/
 noncomputable def basisAlignedFormPullbackMatrix
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (Fin (analyticGenus ℂ Y) → ℂ) →ₗ[ℂ] (Fin (analyticGenus ℂ X) → ℂ) :=
   traceDualPullbackLift f hf
 
-/-- The top-level basis pullback is the matrix-level additive map.
+/--
+The top-level basis pullback is the matrix-level additive map.
 This uses only `BasisPullbackLinearData`, not the full analytic
-pullback bundle. -/
+pullback bundle.
+-/
 theorem basisDualPullback_eq_matrix_AddHom
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     basisDualPullback f hf =
       (basisAlignedFormPullbackMatrix f hf).toAddMonoidHom :=
   basisDualPullback_eq_traceDualPullbackLiftLinearMap f hf
 
-/-- The basis-level `pullbackFormsMap` agrees, as an `AddMonoidHom`,
+/--
+The basis-level `pullbackFormsMap` agrees, as an `AddMonoidHom`,
 with the underlying additive hom of the corrected trace-dual matrix
-`basisAlignedFormPullbackMatrix`. -/
+`basisAlignedFormPullbackMatrix`.
+-/
 theorem pullbackFormsMap_eq_matrix_AddHom
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     pullbackFormsMap X Y f hf =
@@ -755,26 +707,19 @@ theorem pullbackFormsMap_eq_matrix_AddHom
   rfl
 
 
-/-- **Concrete bundle by descent (corrected representative).** The
+/--
+**Concrete bundle by descent (corrected representative).** The
 concrete `basisAnalyticPullbackBundle f hf` agrees, on its
 `basisDualPullback` field, with the underlying `AddMonoidHom` of the
-corrected trace-dual matrix `basisAlignedFormPullbackMatrix f hf`. -/
+corrected trace-dual matrix `basisAlignedFormPullbackMatrix f hf`.
+-/
 theorem basisAnalyticPullbackBundle_dualPullback_eq_matrix_AddHom
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (basisAnalyticPullbackBundle f hf).basisDualPullback =
       (basisAlignedFormPullbackMatrix f hf).toAddMonoidHom :=
   rfl
 
-/-- **Stage A leaf (round 2, bridge).** The bundle's
-`basisDualPullback` agrees with the named `pullbackFormsMap`.
 
-**Round 2 sorry-free assembly via the pdp chain.** Combine the bundle
-descent identification (`pdp-r4`,
-`basisAnalyticPullbackBundle_dualPullback_eq_matrix_AddHom`) with the
-`pullbackFormsMap` matrix identification (`pdp-r3`,
-`pullbackFormsMap_eq_matrix_AddHom`). Both sides equal
-`(basisAlignedFormPullbackMatrix f hf).toAddMonoidHom`, hence equal each
-other. -/
 theorem basisAnalyticPullbackBundle_eq_pullbackFormsMap
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f) :
     (basisAnalyticPullbackBundle f hf).basisDualPullback =
@@ -782,19 +727,23 @@ theorem basisAnalyticPullbackBundle_eq_pullbackFormsMap
   rw [basisAnalyticPullbackBundle_dualPullback_eq_matrix_AddHom f hf,
       pullbackFormsMap_eq_matrix_AddHom f hf]
 
-/-! ### Identity branched-cover datum and identity trace functoriality
+/-!
+### Identity branched-cover datum and identity trace functoriality
 
 For the identity map `id : X → X`, every value is a regular value and the
 fibre is a singleton. We package this as a concrete branched-cover datum
 `idBranchedCoverData`, then read off `traceAtRegularValue_id` (the
 local trace of `id` is the input value), and conclude `traceFormsBundledLM_id`
-by the identity principle on the regular locus (which is all of `X`). -/
+by the identity principle on the regular locus (which is all of `X`).
+-/
 
-/-- The canonical branched-cover datum for the identity map.
+/--
+The canonical branched-cover datum for the identity map.
 
 Every point has ramification index `1` (no branching), every fibre is
 the singleton `{y}`, the weighted fibre count is identically `1`, and
-local bijectivity is witnessed by `Set.univ` on both sides. -/
+local bijectivity is witnessed by `Set.univ` on both sides.
+-/
 noncomputable def idBranchedCoverData :
     BranchedCoverData X X (id : X → X) where
   ramificationIndex _ := 1
@@ -839,8 +788,10 @@ theorem isRegularValue_idBranchedCoverData (y : X) :
     isRegularValue (idBranchedCoverData (X := X)) y := by
   intro x _; rfl
 
-/-- The cotangent pushforward along the identity is the identity on
-cotangent vectors. -/
+/--
+The cotangent pushforward along the identity is the identity on
+cotangent vectors.
+-/
 theorem cotangentPushforward_id_apply (x : X)
     (ωx : CotangentSpace ℂ X x) :
     cotangentPushforward (id : X → X) x ωx = ωx := by
@@ -877,9 +828,11 @@ theorem cotangentPushforward_id_apply (x : X)
   rw [hinv_id]
   exact ContinuousLinearMap.comp_id _
 
-/-- **Local trace identity at a regular value of the identity map.**
+/--
+**Local trace identity at a regular value of the identity map.**
 The finite local fibre sum reduces to a single term, which is the
-input pointwise value. -/
+input pointwise value.
+-/
 theorem traceAtRegularValue_id
     (η : HolomorphicOneForm ℂ X)
     (y : X) (hy : isRegularValue (idBranchedCoverData (X := X)) y) :
@@ -911,12 +864,14 @@ theorem traceAtRegularValue_id
       subst this
       simp
 
-/-- **Identity functoriality for the global trace.** The trace of any
+/--
+**Identity functoriality for the global trace.** The trace of any
 holomorphic 1-form along the identity map equals the form itself.
 
 Proved by the identity principle: both sides agree on the regular
 locus of `idBranchedCoverData`, which is all of `X` (every value is
-regular), hence dense. -/
+regular), hence dense.
+-/
 theorem traceFormsBundled_id (η : HolomorphicOneForm ℂ X) :
     traceFormsBundled (id : X → X) contMDiff_id η = η := by
   -- Use the identity principle on the regular locus of idBranchedCoverData.
@@ -940,10 +895,7 @@ theorem traceFormsBundled_id (η : HolomorphicOneForm ℂ X) :
   rw [h_reg]
   exact traceAtRegularValue_id η y hy
 
-/-- **Identity functoriality for the bundled linear trace.** As a
-linear map, the trace along `id` is the identity on
-`HolomorphicOneForm ℂ X`. Sorry-free assembly from
-`traceFormsBundled_id`. -/
+
 theorem traceFormsBundledLM_id :
     traceFormsBundledLM (X := X) (Y := X) (id : X → X) contMDiff_id =
       LinearMap.id := by
@@ -952,13 +904,11 @@ theorem traceFormsBundledLM_id :
   show traceFormsBundled (id : X → X) contMDiff_id η = η
   exact traceFormsBundled_id η
 
-/-- **Narrow trace-functoriality leaf (id).** Identity functoriality of
+/--
+**Narrow trace-functoriality leaf (id).** Identity functoriality of
 `traceFormsCoord`: the basis-coordinate trace map along `id` is the
 identity.
-
-Sorry-free assembly from `traceFormsBundledLM_id`: substituting the
-form-level identity into the `equivFun`-sandwiched definition, the
-basis equivalence round trip cancels. -/
+-/
 theorem traceFormsCoord_id :
     traceFormsCoord (X := X) (Y := X) id contMDiff_id = LinearMap.id := by
   unfold traceFormsCoord
@@ -968,20 +918,16 @@ theorem traceFormsCoord_id :
   intro v
   simp
 
-/-! ### Composition functoriality of the bundled trace
+/-!
+### Composition functoriality of the bundled trace
 
 For the composition `g ∘ f`, the bundled trace decomposes as the
 iterated trace `trace_g ∘ trace_f`. The proof routes through three
 narrow helpers:
 
-* `IsIso.uniqueness` — inverses of a CLM are unique;
-* `cotangentPushforward_comp` — chain rule for cotangent pushforward
-  at unramified points;
-* `traceAtRegularValue_comp` — the local fibre-sum composition
-  identity (the narrow analytic frontier).
-
 The top-level `traceFormsBundledLM_comp` then assembles these via the
-identity principle on a suitable dense regular locus. -/
+identity principle on a suitable dense regular locus.
+-/
 
 /-- Inverses of a continuous linear map are unique. -/
 private theorem IsIso.inv_unique
@@ -1028,10 +974,12 @@ private noncomputable def IsIso.compose
         have := congr_arg (fun (m : G →L[ℂ] G) => m z) hψ.right_inv
         simpa [ContinuousLinearMap.comp_apply] using this]
 
-/-- **Chain rule for the cotangent pushforward.** At a point `x` where
+/--
+**Chain rule for the cotangent pushforward.** At a point `x` where
 both `mfderiv f x` and `mfderiv g (f x)` are isomorphisms, the
 cotangent pushforward along the composition `g ∘ f` factors as the
-composition of the individual cotangent pushforwards. -/
+composition of the individual cotangent pushforwards.
+-/
 theorem cotangentPushforward_comp
     (f : X → Y) (g : Y → Z)
     (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) ω f)
@@ -1126,7 +1074,8 @@ theorem cotangentPushforward_comp
   ext
   simp [ContinuousLinearMap.comp_apply]
 
-/-- **Provider (finite-fiber trace composition).** The narrow
+/--
+**Provider (finite-fiber trace composition).** The narrow
 classical analytic content under `traceFormsBundled_comp_of_nonconstant`:
 at a value `z : Z` that is regular for the composition `g ∘ f` and
 also regular for `g`, with every preimage `y ∈ g ⁻¹' {z}` regular
@@ -1140,10 +1089,7 @@ decomposition), the cotangent pushforward along `g ∘ f` factors as
 points (chain rule, available as `cotangentPushforward_comp`
 above), and reindexing the finite double sum gives the iterated
 trace identity.
-
-This is allowed to be the remaining direct sorry: the only
-ingredients are the finite-fibre set-theoretic decomposition, the
-chain rule (already proved), and `Finset.sum_biUnion`. -/
+-/
 theorem regularValue_comp_traceAtRegularValue
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
@@ -1161,21 +1107,7 @@ theorem regularValue_comp_traceAtRegularValue
         z hz_g := by
   sorry
 
-/-- **Narrow frontier (nonconstant case).** Composition (covariant)
-functoriality of the bundled trace on a single nonzero form, in the
-case where both `f` and `g` are nonconstant.
 
-**Sorry-free assembly** from:
-* `regularValue_comp_traceAtRegularValue` — the finite-fibre trace
-  composition identity at points simultaneously regular for `f`,
-  `g`, and `g ∘ f`;
-* `holomorphicOneForm_ext_on` — the identity principle on a dense
-  subset of `Z`;
-* the canonical `branchedCoverData_of_nonconstant_holomorphic` for
-  each of `f`, `g`, and `g ∘ f`;
-* finiteness/density: the joint regular locus is the complement of
-  three finite sets (branch values of `g ∘ f`, branch values of
-  `g`, and `g`-images of branch values of `f`). -/
 theorem traceFormsBundled_comp_of_nonconstant
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
@@ -1326,12 +1258,7 @@ theorem traceFormsBundled_comp_of_nonconstant
   exact regularValue_comp_traceAtRegularValue f hf g hg η hbc_f hbc_g hbc_gf z
     hz_gf hz_g hz_g_inv
 
-/-- **Form-level composition functoriality of the bundled trace.**
-
-Sorry-free assembly from `traceFormsBundled_comp_of_nonconstant` plus
-`traceFormsBundled_eq_zero_of_constant`. The case split reduces every
-configuration of constants and zero forms to the zero form on both
-sides, isolating the narrow nonconstant-both analytic frontier. -/
+/-- **Form-level composition functoriality of the bundled trace.** -/
 theorem traceFormsBundledLM_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
@@ -1371,17 +1298,14 @@ theorem traceFormsBundledLM_comp
               (f := g ∘ f) (hf := hg.comp hf) η hgf_const,
             traceFormsBundled_eq_zero_of_constant (f := g) (hf := hg)
               (traceFormsBundled f hf η) ⟨z₀, hg_eq⟩]
-      · -- f, g both nonconstant: delegate to the narrow nonconstant-both frontier.
+      · 
         exact traceFormsBundled_comp_of_nonconstant f hf g hg η hη hf_const hg_const
 
-/-- **Narrow trace-functoriality leaf (comp).** Composition (covariant)
+/--
+**Narrow trace-functoriality leaf (comp).** Composition (covariant)
 functoriality of `traceFormsCoord`: trace along `g ∘ f` equals trace
 along `g` composed with trace along `f`.
-
-Sorry-free assembly from the form-level composition frontier
-`traceFormsBundledLM_comp`: substitute the form-level identity into
-the `equivFun`-sandwiched definition; the inner basis equivalence
-round trip cancels. -/
+-/
 theorem traceFormsCoord_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
@@ -1393,8 +1317,7 @@ theorem traceFormsCoord_comp
   intro v
   simp [LinearMap.comp_apply]
 
-/-- Identity functoriality of `traceDualPullbackLift`. Sorry-free from
-`traceFormsCoord_id` plus matrix-transpose-of-id facts. -/
+
 theorem traceDualPullbackLift_id :
     traceDualPullbackLift (X := X) (Y := X) id contMDiff_id =
       LinearMap.id := by
@@ -1402,10 +1325,7 @@ theorem traceDualPullbackLift_id :
   rw [traceFormsCoord_id, LinearMap.toMatrix'_id, Matrix.transpose_one,
       Matrix.toLin'_one]
 
-/-- Composition (contravariant) functoriality of
-`traceDualPullbackLift`. Sorry-free from `traceFormsCoord_comp`: the
-covariant trace composes covariantly, and transpose reverses
-composition giving contravariance for the dual. -/
+
 theorem traceDualPullbackLift_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
@@ -1419,8 +1339,7 @@ theorem traceDualPullbackLift_comp
   rw [traceFormsCoord_comp f hf g hg, LinearMap.toMatrix'_comp,
       Matrix.transpose_mul, Matrix.toLin'_mul, LinearMap.comp_apply]
 
-/-- Identity functoriality of `pullbackFormsMap` via the corrected
-trace-dual representative. Sorry-free via `traceDualPullbackLift_id`. -/
+
 theorem pullbackFormsMap_id_eq_id :
     pullbackFormsMap X X id contMDiff_id =
       AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
@@ -1428,9 +1347,7 @@ theorem pullbackFormsMap_id_eq_id :
   rw [traceDualPullbackLift_id]
   rfl
 
-/-- Composition (contravariant) functoriality of `pullbackFormsMap`
-via the corrected trace-dual representative. Sorry-free via
-`traceDualPullbackLift_comp`. -/
+
 theorem pullbackFormsMap_comp_eq
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
@@ -1440,12 +1357,11 @@ theorem pullbackFormsMap_comp_eq
   rw [traceDualPullbackLift_comp f hf g hg]
   rfl
 
-/-- Bundle-level axiom: the `basisDualPullback` field of the bundle
+/--
+Bundle-level axiom: the `basisDualPullback` field of the bundle
 selected at `(X, X, id, contMDiff_id)` is the identity additive group
 homomorphism on the covering space.
-
-Sorry-free assembly through `basisAnalyticPullbackBundle_eq_pullbackFormsMap`
-and `pullbackFormsMap_id_eq_id`. -/
+-/
 theorem basisAnalyticPullbackBundle_id_dualPullback :
     (basisAnalyticPullbackBundle (X := X) (Y := X) id contMDiff_id).basisDualPullback =
       AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
@@ -1453,9 +1369,7 @@ theorem basisAnalyticPullbackBundle_id_dualPullback :
       id contMDiff_id,
     pullbackFormsMap_id_eq_id (X := X)]
 
-/-- The dual form-pullback along `id` is the identity additive group
-homomorphism. Sorry-free from the small basis-level data and
-`pullbackFormsMap_id_eq_id`; no quotient smoothness field is used. -/
+
 theorem basisDualPullback_id :
     basisDualPullback (X := X) (Y := X) id contMDiff_id =
       AddMonoidHom.id (Fin (analyticGenus ℂ X) → ℂ) := by
@@ -1463,19 +1377,19 @@ theorem basisDualPullback_id :
     ← pullbackFormsMap_eq_matrix_AddHom (X := X) (Y := X) id contMDiff_id,
     pullbackFormsMap_id_eq_id (X := X)]
 
-/-- Pointwise form of `basisDualPullback_id`: the dual form-pullback
+/--
+Pointwise form of `basisDualPullback_id`: the dual form-pullback
 along `id` is pointwise the identity on the covering space.
-
-Sorry-free assembly via `basisDualPullback_id`. -/
+-/
 theorem basisDualPullback_id_apply (v : Fin (analyticGenus ℂ X) → ℂ) :
     basisDualPullback (X := X) (Y := X) id contMDiff_id v = v := by
   rw [basisDualPullback_id]
   rfl
 
-/-- Descent compatibility: `analyticPullback` acts on the period
+/--
+Descent compatibility: `analyticPullback` acts on the period
 quotient as the descended `basisDualPullback`.
-
-Sorry-free extraction from `basisAnalyticPullbackBundle.mk_eq`. -/
+-/
 theorem analyticPullback_mk_eq
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (v : Fin (analyticGenus ℂ Y) → ℂ) :
@@ -1491,15 +1405,14 @@ Bottom-up content: the dual of form-pullback reverses composition.
 This is the lifting of `pullbackFormsFun_comp_apply` to the
 basis-aligned linear maps, then dualization.
 
-### Blocker analysis (integrated from Aristotle ad278fcd)
-
 **Goal.** Show that the covering-space dual pullback for `g ∘ f`
 equals the composition of dual pullbacks for `f` and `g`
 (contravariantly), at each covering-space vector.
 
 The proof now routes through the concrete basis-level map
 `pullbackFormsMap`; it does not use quotient smoothness or the
-trace-pullback degree field from `BasisAnalyticPullbackBundle`. -/
+trace-pullback degree field from `BasisAnalyticPullbackBundle`.
+-/
 theorem basisAnalyticPullbackBundle_comp_dualPullback
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
@@ -1512,10 +1425,7 @@ theorem basisAnalyticPullbackBundle_comp_dualPullback
       basisAnalyticPullbackBundle_eq_pullbackFormsMap g hg,
       pullbackFormsMap_comp_eq f hf g hg]
 
-/-- Top-level contravariant functoriality of the dual form-pullback:
-`(g ∘ f)* = f* ∘ g*` as an additive group homomorphism on the covering
-space. Sorry-free from the small basis-level data and
-`pullbackFormsMap_comp_eq`; no quotient smoothness field is used. -/
+
 theorem basisDualPullback_comp_top
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g) :
@@ -1529,9 +1439,7 @@ theorem basisDualPullback_comp_top
       ← pullbackFormsMap_eq_matrix_AddHom g hg,
       pullbackFormsMap_comp_eq f hf g hg]
 
-/-- Pointwise form: `basisDualPullback (g ∘ f) v = basisDualPullback f
-(basisDualPullback g v)`. Sorry-free assembly via
-`basisDualPullback_comp_top` + `AddMonoidHom.comp_apply`. -/
+
 theorem basisDualPullback_comp
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
@@ -1540,13 +1448,15 @@ theorem basisDualPullback_comp
       basisDualPullback f hf (basisDualPullback g hg v) := by
   rw [basisDualPullback_comp_top f hf g hg, AddMonoidHom.comp_apply]
 
-/-- Companion spec for `analyticPullback_comp_apply`: pullback of forms is
+/--
+Companion spec for `analyticPullback_comp_apply`: pullback of forms is
 contravariantly functorial, and descent preserves composition.
 
 **Proof.** Assembly from the deeper companions `analyticPullback_mk_eq`
 and `basisDualPullback_comp`. Every element of the quotient is
 `⟦v⟧` for some covering-space vector `v`; rewrite both sides using
-descent compatibility, then apply the covering-space composition law. -/
+descent compatibility, then apply the covering-space composition law.
+-/
 theorem analyticPullback_comp_spec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
@@ -1560,9 +1470,11 @@ theorem analyticPullback_comp_spec
     rw [analyticPullback_mk_eq f hf (basisDualPullback g hg v)]
     rw [basisDualPullback_comp f hf g hg v]
 
-/-- Pullback distributes contravariantly over composition.
+/--
+Pullback distributes contravariantly over composition.
 
-Pure assembly of `analyticPullback_comp_spec`. -/
+Pure assembly of `analyticPullback_comp_spec`.
+-/
 lemma analyticPullback_comp_apply
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (g : Y → Z) (hg : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω g)
@@ -1571,13 +1483,15 @@ lemma analyticPullback_comp_apply
       analyticPullback f hf (analyticPullback g hg P) :=
   analyticPullback_comp_spec f hf g hg P
 
-/-- Companion spec: pullback along the identity map equals the identity
+/--
+Companion spec: pullback along the identity map equals the identity
 homomorphism (as a `ContinuousAddMonoidHom`).
 
 **Proof.** Assembly from the deeper companions `analyticPullback_mk_eq`
 (descent compatibility) and `basisDualPullback_id` (covering-space
 identity functoriality). On each `mk v`, rewrite via descent and
-identify the dual pullback as the identity. -/
+identify the dual pullback as the identity.
+-/
 theorem analyticPullback_id_spec :
     analyticPullback (X := X) (Y := X) id contMDiff_id =
       ContinuousAddMonoidHom.id (BasisAnalyticJacobian X) := by
@@ -1587,9 +1501,11 @@ theorem analyticPullback_id_spec :
     rw [analyticPullback_mk_eq id contMDiff_id v, basisDualPullback_id]
     rfl
 
-/-- Pullback along the identity is the identity.
+/--
+Pullback along the identity is the identity.
 
-Assembly from `analyticPullback_id_spec`. -/
+Assembly from `analyticPullback_id_spec`.
+-/
 lemma analyticPullback_id_apply (P : BasisAnalyticJacobian X) :
     analyticPullback (X := X) (Y := X) id contMDiff_id P = P := by
   rw [analyticPullback_id_spec]

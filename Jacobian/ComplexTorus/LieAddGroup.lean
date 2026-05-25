@@ -5,10 +5,6 @@ import Mathlib.Geometry.Manifold.Algebra.LieGroup
 /-!
 # `LieAddGroup` instance on the complex torus
 
-Queue B sibling. Combines `contMDiff_quotient_add` and
-`contMDiff_quotient_neg` into the
-`LieAddGroup (modelWithCornersSelf ℂ V) ω (V ⧸ Λ.subgroup)` instance.
-
 `LieAddGroup` extends `ContMDiffAdd`, so we register the
 `ContMDiffAdd` instance first.
 -/
@@ -23,8 +19,10 @@ noncomputable instance contMDiffAdd_quotient (Λ : FullComplexLattice V) :
       (quotient V Λ) where
   contMDiff_add := contMDiff_quotient_add Λ
 
-/-- The complex torus is an additive Lie group: the manifold structure
-combined with smooth `+` and `-`. -/
+/--
+The complex torus is an additive Lie group: the manifold structure
+combined with smooth `+` and `-`.
+-/
 noncomputable instance lieAddGroup_quotient (Λ : FullComplexLattice V) :
     LieAddGroup (modelWithCornersSelf ℂ V) (⊤ : WithTop ℕ∞)
       (quotient V Λ) where

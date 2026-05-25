@@ -26,16 +26,20 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- The provisional chart-form of the zero form is curve-integrable
-along any path. -/
+/--
+The provisional chart-form of the zero form is curve-integrable
+along any path.
+-/
 theorem chartedForm_zero_curveIntegrable
     (c : OpenPartialHomeomorph X E) {a b : E} (γ : Path a b) :
     CurveIntegrable (chartedForm c (0 : HolomorphicOneForm E X)) γ := by
   rw [chartedForm_zero]
   exact CurveIntegrable.zero
 
-/-- If the provisional chart-form of `ω` is curve-integrable along `γ`,
-then so is that of `-ω`. -/
+/--
+If the provisional chart-form of `ω` is curve-integrable along `γ`,
+then so is that of `-ω`.
+-/
 theorem chartedForm_neg_curveIntegrable
     (c : OpenPartialHomeomorph X E) {ω : HolomorphicOneForm E X}
     {a b : E} {γ : Path a b}
@@ -44,8 +48,10 @@ theorem chartedForm_neg_curveIntegrable
   rw [chartedForm_neg]
   exact h.neg
 
-/-- If the provisional chart-form of `ω` is curve-integrable along `γ`,
-then so is that of `k • ω`. -/
+/--
+If the provisional chart-form of `ω` is curve-integrable along `γ`,
+then so is that of `k • ω`.
+-/
 theorem chartedForm_smul_curveIntegrable
     (c : OpenPartialHomeomorph X E) {ω : HolomorphicOneForm E X}
     {a b : E} {γ : Path a b}
@@ -54,8 +60,10 @@ theorem chartedForm_smul_curveIntegrable
   rw [chartedForm_smul]
   exact h.smul
 
-/-- If the provisional chart-forms of `ω` and `η` are both
-curve-integrable along `γ`, then so is that of `ω + η`. -/
+/--
+If the provisional chart-forms of `ω` and `η` are both
+curve-integrable along `γ`, then so is that of `ω + η`.
+-/
 theorem chartedForm_add_curveIntegrable
     (c : OpenPartialHomeomorph X E) {ω η : HolomorphicOneForm E X}
     {a b : E} {γ : Path a b}
@@ -65,8 +73,10 @@ theorem chartedForm_add_curveIntegrable
   rw [chartedForm_add]
   exact hω.add hη
 
-/-- If the provisional chart-forms of `ω` and `η` are both
-curve-integrable along `γ`, then so is that of `ω - η`. -/
+/--
+If the provisional chart-forms of `ω` and `η` are both
+curve-integrable along `γ`, then so is that of `ω - η`.
+-/
 theorem chartedForm_sub_curveIntegrable
     (c : OpenPartialHomeomorph X E) {ω η : HolomorphicOneForm E X}
     {a b : E} {γ : Path a b}

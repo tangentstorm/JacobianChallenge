@@ -16,9 +16,11 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- The unparameterised `pathIntegralViaCover` reduces to
+/--
+The unparameterised `pathIntegralViaCover` reduces to
 `pathIntegralViaCoverWith` applied to the `Classical.choose`-picked
-partition data. -/
+partition data.
+-/
 theorem pathIntegralViaCover_eq_pathIntegralViaCoverWith
     (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b) :
     pathIntegralViaCover ω γ =

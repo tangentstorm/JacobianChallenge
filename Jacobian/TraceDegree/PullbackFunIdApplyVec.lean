@@ -15,8 +15,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Vector-apply form of identity pullback: applied at a point and a
-tangent vector gives `η.toFun x v`. -/
+/--
+Vector-apply form of identity pullback: applied at a point and a
+tangent vector gives `η.toFun x v`.
+-/
 @[simp] theorem pullbackFormsFun_id_apply_vec
     (η : HolomorphicOneForm E X) (x : X) (v : E) :
     pullbackFormsFun (id : X → X) η x v = η.toFun x v := by

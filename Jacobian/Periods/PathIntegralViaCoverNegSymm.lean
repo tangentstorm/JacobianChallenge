@@ -22,8 +22,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- Form-negation along `γ` equals form along `γ.symm`. Both equal
-`- pathIntegralViaCoverWith ω γ`. -/
+/--
+Form-negation along `γ` equals form along `γ.symm`. Both equal
+`- pathIntegralViaCoverWith ω γ`.
+-/
 theorem pathIntegralViaCoverWith_neg_form_eq_symm_path
     (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b)

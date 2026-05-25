@@ -24,8 +24,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
 set_option linter.unusedSectionVars false in
-/-- Chart lifting commutes with `Path.trans`: lifting a concatenation
-equals concatenating the two lifts. -/
+/--
+Chart lifting commutes with `Path.trans`: lifting a concatenation
+equals concatenating the two lifts.
+-/
 theorem chartLift_trans
     (c : OpenPartialHomeomorph X E)
     {a b d : X} (γab : Path a b) (γbd : Path b d)

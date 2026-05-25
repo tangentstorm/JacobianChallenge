@@ -22,8 +22,10 @@ variable {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
 
-/-- `witnessAbelJacobi basePoint P v = 0` iff
-`evalJacobianClass P v = evalJacobianClass basePoint v`. -/
+/--
+`witnessAbelJacobi basePoint P v = 0` iff
+`evalJacobianClass P v = evalJacobianClass basePoint v`.
+-/
 theorem witnessAbelJacobi_eq_zero_iff_class_eq
     (basePoint P : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v = 0 ↔
@@ -38,8 +40,10 @@ theorem witnessAbelJacobi_add_swap_eq_zero
   unfold witnessAbelJacobi
   abel
 
-/-- Endpoint algebra: the witness from `B → P` minus the witness from
-`B → Q` equals the witness from `Q → P`. -/
+/--
+Endpoint algebra: the witness from `B → P` minus the witness from
+`B → Q` equals the witness from `Q → P`.
+-/
 theorem witnessAbelJacobi_endpoint_diff
     (basePoint P Q : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v -
@@ -48,8 +52,10 @@ theorem witnessAbelJacobi_endpoint_diff
   unfold witnessAbelJacobi
   abel
 
-/-- Two witnesses with the same endpoints but different base points
-differ by a constant (the inter-base-point witness). -/
+/--
+Two witnesses with the same endpoints but different base points
+differ by a constant (the inter-base-point witness).
+-/
 theorem witnessAbelJacobi_base_change_eq
     (basePoint basePoint' P : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v =

@@ -36,7 +36,8 @@ variable {Y : Type} [TopologicalSpace Y] [T2Space Y] [CompactSpace Y]
   [IsManifold 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) Y]
   [StableChartAt ℂ Y]
 
-/-- **Trace construction data.** Packages the global bundled trace form
+/--
+**Trace construction data.** Packages the global bundled trace form
 `traceForm` of a holomorphic 1-form `η` along a smooth map `f : X → Y`
 between compact Riemann surfaces, together with the two specifications
 that determine it:
@@ -50,14 +51,17 @@ that determine it:
 The analytic content of producing such data (holomorphic extension of
 the finite local fiber sum across the finite branch locus, plus the
 identification at the regular values) is supplied by the single narrow
-construction provider `traceFormsConstructionData_provider`. -/
+construction provider `traceFormsConstructionData_provider`.
+-/
 structure TraceFormsConstructionData
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X) where
   /-- The global bundled trace form of `η` along `f`. -/
   traceForm : HolomorphicOneForm ℂ Y
-  /-- At every regular value of any compatible branched-cover datum on
-  `f`, the global form agrees with the finite local fiber sum. -/
+  /--
+At every regular value of any compatible branched-cover datum on
+  `f`, the global form agrees with the finite local fiber sum.
+-/
   regular_spec :
     ∀ (hbc : BranchedCoverData X Y f) (y : Y) (hy : isRegularValue hbc y),
       traceForm.toFun y = traceAtRegularValue hbc (fun x => η.toFun x) y hy
@@ -68,8 +72,7 @@ omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
   [IsManifold 𝓘(ℂ, ℂ) ω X]
   [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
-/-- **Helper.** `cotangentPushforward` is zero on the zero cotangent
-vector. Sorry-free unfolding of the definition. -/
+
 private theorem cotangentPushforward_zero
     (f : X → Y) (x : X) :
     cotangentPushforward f x (0 : CotangentSpace ℂ X x) = 0 := by
@@ -83,9 +86,7 @@ omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
   [IsManifold 𝓘(ℂ, ℂ) ω X]
   [T2Space Y] [CompactSpace Y] [ConnectedSpace Y]
   [IsManifold 𝓘(ℂ, ℂ) ω Y] [StableChartAt ℂ Y] in
-/-- **Helper.** The trace sum at a regular value of the zero pointwise
-input is zero. Sorry-free reduction to `cotangentPushforward_zero` on
-every summand of the finite fiber sum. -/
+
 private theorem traceAtRegularValue_zero
     {f : X → Y} (hbc : BranchedCoverData X Y f)
     (y : Y) (hy : isRegularValue hbc y) :
@@ -96,7 +97,8 @@ private theorem traceAtRegularValue_zero
   rintro ⟨x, _⟩ _
   exact cotangentPushforward_zero f x
 
-/-- **Construction data for the zero input form.** Fully proved.
+/--
+**Construction data for the zero input form.** Fully proved.
 
 When `η = 0`, the trace is the zero form on `Y`, and both fields are
 immediate:
@@ -106,7 +108,8 @@ immediate:
 * `map_zero_spec` is `rfl` since the global form is already zero.
 
 This is the strictly smaller "zero-input" leaf split out of the original
-construction provider. -/
+construction provider.
+-/
 private noncomputable def traceFormsConstructionData_zero
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
     TraceFormsConstructionData f hf (0 : HolomorphicOneForm ℂ X) where
@@ -132,11 +135,8 @@ private noncomputable def traceFormsConstructionData_zero
     exact (traceAtRegularValue_zero hbc y hy).symm
   map_zero_spec _ := rfl
 
-/-- **Construction data for a constant map.** Fully proved.
-
-For a constant map `f x = y₀`, the trace is the zero form. The
-`regular_spec` field is discharged by case-splitting on whether the
-target value `y` equals `y₀`:
+/--
+**Construction data for a constant map.** Fully proved.
 
 * If `y ≠ y₀`, then the fiber `f ⁻¹' {y}` is empty, so the finite local
   fiber sum is the empty sum, which is zero;
@@ -149,7 +149,8 @@ target value `y` equals `y₀`:
   isolated points).
 
 This is the strictly smaller "constant-map" leaf split out of the
-original construction provider. -/
+original construction provider.
+-/
 private noncomputable def traceFormsConstructionData_constant
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X) (hconst : ∃ y₀, ∀ x, f x = y₀)
@@ -273,11 +274,8 @@ theorem regularLocus_dense
     dense_compl_of_finite_of_perfect (branchLocus_finite h)
   simpa [regularLocus, Set.compl_setOf] using hbranch
 
-/-! ### Trace-form holomorphic extension providers (Part A)
-
-The narrow analytic frontier under `traceForm_global_extension` is
-the classical three-step proof of "the finite local fibre sum
-extends to a global holomorphic 1-form":
+/-!
+### Trace-form holomorphic extension providers (Part A)
 
 1. **holomorphicity on the regular locus** — already in the project
    as `localTraceAtRegularValue_holomorphic` (Provider 1);
@@ -290,12 +288,12 @@ extends to a global holomorphic 1-form":
 4. **BCD-invariance of the local trace** — a set-theoretic fact that
    `traceAtRegularValue hbc … y …` depends only on `f, η, y` (not
    on the BCD chosen), via `Set.Finite.toFinset_inj` (Provider 4).
-
-`traceForm_global_extension` is the sorry-free assembly of these. -/
+-/
 
 omit [T2Space X] [CompactSpace X] [StableChartAt ℂ X]
   [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [StableChartAt ℂ Y] in
-/-- **Provider (1).** *Trace holomorphic on the regular locus.* At
+/--
+**Provider (1).** *Trace holomorphic on the regular locus.* At
 every regular value `y` of `hbc`, the local trace function
 `localTraceAtRegularValue` (a chart-local realization of the finite
 fibre sum, defined in a neighbourhood of `y`) is holomorphic at `y`.
@@ -305,11 +303,7 @@ is unramified, so `f` has a holomorphic local inverse near `y`, and
 the cotangent pushforward of `η` along this inverse is locally
 holomorphic. Summing finitely many holomorphic functions gives a
 holomorphic function.
-
-**Sorry-free** via the existing
-`localTraceAtRegularValue_holomorphic` lemma in
-`TraceDefinition.lean` (specialized to the canonical compatibility
-witness for `hbc`). -/
+-/
 theorem traceAtRegularValue_locally_holomorphic_on_regular_locus
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X)
@@ -323,7 +317,8 @@ theorem traceAtRegularValue_locally_holomorphic_on_regular_locus
     (isHolomorphic_of_contMDiff hf
       (hasLocalKfoldRamification_of_contMDiff hf)) η y hy
 
-/-- **Provider (2).** *Trace locally bounded near branch values.* At
+/--
+**Provider (2).** *Trace locally bounded near branch values.* At
 every branch value `y₀` (a non-regular value) of `hbc`, there is a
 neighbourhood of `y₀` and a real bound `M` such that the
 chart-local finite-fibre sum is bounded by `M` on the neighbourhood
@@ -339,7 +334,8 @@ a finite-order branched cover, which is bounded because the input
 contribution is `0` because the cotangent pushforward at a ramified
 point is `0` (the `mfderiv` is not an isomorphism there).
 
-The hypotheses are exactly the inputs consumed by Provider (3). -/
+The hypotheses are exactly the inputs consumed by Provider (3).
+-/
 theorem traceAtRegularValue_locally_bounded_near_branch_values
     (f : X → Y) (_hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X)
@@ -352,7 +348,8 @@ theorem traceAtRegularValue_locally_bounded_near_branch_values
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
   [StableChartAt ℂ X] in
-/-- **Provider (3).** *Generic removable-singularity provider for
+/--
+**Provider (3).** *Generic removable-singularity provider for
 holomorphic 1-forms.*
 
 For any function `g : Y → CotangentModelFiber ℂ` that is
@@ -370,11 +367,7 @@ when specialized to the trace function. Note that the conclusion
 quantifies over a single open set `regular` and does not mention
 branched-cover data, so it is strictly smaller than
 `traceForm_global_extension` (which quantifies over *all* BCDs).
-
-Allowed to remain a direct sorry: the only ingredient is Mathlib's
-`Complex.removable_singularity_of_bounded`, applied chart-locally
-at each of the finitely many branch points and glued through the
-chart structure. -/
+-/
 theorem holomorphicOneForm_of_regularLocus_holomorphic_branchLocus_bounded
     (regular : Set Y) (_hOpen : IsOpen regular) (_hDense : Dense regular)
     (_hFiniteCompl : regularᶜ.Finite)
@@ -391,7 +384,8 @@ theorem holomorphicOneForm_of_regularLocus_holomorphic_branchLocus_bounded
 omit [T2Space X] [CompactSpace X] [ConnectedSpace X] [StableChartAt ℂ X]
   [T2Space Y] [CompactSpace Y] [ConnectedSpace Y] [IsManifold 𝓘(ℂ, ℂ) ω Y]
   [StableChartAt ℂ Y] in
-/-- **Provider (4).** *BCD-invariance of the local fibre trace.*
+/--
+**Provider (4).** *BCD-invariance of the local fibre trace.*
 
 The local fibre sum `traceAtRegularValue hbc (fun x => η.toFun x) y hy`
 depends only on `f`, `η`, and `y`, not on the choice of `hbc`. This
@@ -400,10 +394,7 @@ is purely set-theoretic: the relevant `Finset` is
 `Subsingleton`, so two different `BranchedCoverData` produce the same
 underlying Finset; the cotangent pushforward summands depend only on
 the point in the fibre, not on `hbc`.
-
-**Sorry-free** assembly. Strictly smaller than the public leaf
-because it concerns only one specific point and does not produce
-any global form. -/
+-/
 theorem traceAtRegularValue_BCD_invariance
     {f : X → Y} (η : HolomorphicOneForm ℂ X)
     (hbc hbc' : BranchedCoverData X Y f) (y : Y)
@@ -418,17 +409,15 @@ theorem traceAtRegularValue_BCD_invariance
     Subsingleton.elim _ _
   congr 1
 
-/-- **Trace-locus pointwise holomorphic auxiliary for Provider (3).**
+/--
+**Trace-locus pointwise holomorphic auxiliary for Provider (3).**
 
 Provider (1) gives holomorphicity of `localTraceAtRegularValue` (a
 chart-local representative). Provider (3) consumes pointwise
 holomorphicity of the `dite`-extended global fibre sum. Bridging the
 two is the chart-local identification of `localTraceAtRegularValue`
 with the global pointwise `traceAtRegularValue`.
-
-The bridge is not a restatement of the leaf — its hypotheses are
-about chart-local trace identification, not about producing the
-global `HolomorphicOneForm`. Allowed as a direct sorry. -/
+-/
 theorem regularLocus_dite_trace_holomorphicAt
     (f : X → Y) (_hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X)
@@ -442,15 +431,7 @@ theorem regularLocus_dite_trace_holomorphicAt
         else (0 : CotangentModelFiber ℂ)) y := by
   sorry
 
-/-- **Per-BCD trace extension (sorry-free intermediate).**
 
-Sorry-free assembly from Providers (1, via
-`regularLocus_dite_trace_holomorphicAt`), (2), and (3): for one
-fixed BCD `hbc`, the canonical fibre sum extends to a global
-`HolomorphicOneForm ℂ Y` agreeing with it on `regularLocus hbc`. The
-resulting witness is strictly smaller than `traceForm_global_extension`
-because the conclusion is *only* about regular values of `hbc`, not
-about all BCDs. -/
 private theorem traceForm_extension_per_BCD
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X)
@@ -511,7 +492,8 @@ private theorem traceForm_extension_per_BCD
         else (0 : CotangentModelFiber ℂ)) = _
   rw [dif_pos hy]
 
-/-- **Auxiliary (analytic continuation across canonical-BCD branch
+/--
+**Auxiliary (analytic continuation across canonical-BCD branch
 values).** If `τ : HolomorphicOneForm ℂ Y` matches the canonical
 fibre trace on `regularLocus hbc0`, and if `y` is a branch value of
 the canonical BCD `hbc0` but a regular value of some other BCD
@@ -523,12 +505,7 @@ the right-hand side, by the chart-local trivialisation of the
 finite fibre sum at unramified preimages). On the dense joint
 regular locus around `y`, they coincide pointwise via Provider (4),
 so they coincide at `y` by continuity.
-
-Allowed as a direct sorry: the precise content is one continuity
-lemma about the chart-local fibre sum and a single point-evaluation
-via density. This is strictly smaller than the public leaf because
-it concerns a single point `y` and produces a single equality, not
-a global form. -/
+-/
 theorem traceForm_extension_at_branch_of_canonical_BCD
     (f : X → Y) (_hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X)
@@ -541,32 +518,20 @@ theorem traceForm_extension_at_branch_of_canonical_BCD
     τ.toFun y = traceAtRegularValue hbc (fun x => η.toFun x) y hy_reg := by
   sorry
 
-/-- **Narrow classical leaf: trace-form holomorphic extension.** For a
+/--
+**Narrow classical leaf: trace-form holomorphic extension.** For a
 nonconstant smooth map `f : X → Y` between compact Riemann surfaces
 and a nonzero holomorphic 1-form `η` on `X`, there exists a global
 holomorphic 1-form `τ` on `Y` whose pointwise values agree with the
 finite local fibre sum `traceAtRegularValue` at every regular value
 of every compatible branched-cover datum.
 
-**Sorry-free assembly** from the four strictly smaller providers
-above:
-* Provider (1) — `traceAtRegularValue_locally_holomorphic_on_regular_locus`
-  (regular-locus holomorphicity), via the bridge
-  `regularLocus_dite_trace_holomorphicAt`;
-* Provider (2) — `traceAtRegularValue_locally_bounded_near_branch_values`
-  (local boundedness near branch values);
-* Provider (3) — `holomorphicOneForm_of_regularLocus_holomorphic_branchLocus_bounded`
-  (the generic Riemann removable-singularity assembly);
-* Provider (4) — `traceAtRegularValue_BCD_invariance` (set-theoretic
-  invariance of the local fibre trace under change of BCD);
-* `traceForm_extension_at_branch_of_canonical_BCD` (one-point
-  analytic-continuation auxiliary at a branch value of `hbc0`).
-
 The first three are combined in the private helper
 `traceForm_extension_per_BCD` to produce a τ tied to the canonical
 BCD; the fourth lifts agreement to *all* BCDs at any regular value
 of `hbc0`; the auxiliary lifts to regular values not regular for
-`hbc0` via analytic continuation. -/
+`hbc0` via analytic continuation.
+-/
 theorem traceForm_global_extension
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X) (_hη : η ≠ 0)
@@ -592,15 +557,12 @@ theorem traceForm_global_extension
     exact (traceAtRegularValue_BCD_invariance η hbc0 hbc y hy0 hy).symm
   · exact traceForm_extension_at_branch_of_canonical_BCD f hf η hbc0 hbc y hy0 hy τ hτ0
 
-/-- **Narrow trace construction provider (nonconstant nonzero case).**
-
-Sorry-free assembly from `traceForm_global_extension`: extract the
-witness form `τ` and its regular-value spec; the
-`map_zero_spec` field is vacuously satisfied since the hypothesis
-`η ≠ 0` rules it out.
+/--
+**Narrow trace construction provider (nonconstant nonzero case).**
 
 The remaining classical content lives entirely inside the strictly
-smaller leaf `traceForm_global_extension`. -/
+smaller leaf `traceForm_global_extension`.
+-/
 noncomputable def traceFormsConstructionData_nonconstant_nonzero_provider
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X) (hη : η ≠ 0)
@@ -611,7 +573,8 @@ noncomputable def traceFormsConstructionData_nonconstant_nonzero_provider
     regular_spec := hext.choose_spec
     map_zero_spec := fun hzero => (hη hzero).elim }
 
-/-- **The trace construction provider.** Three-way case split:
+/--
+**The trace construction provider.** Three-way case split:
 
 * `η = 0` — fully proved via `traceFormsConstructionData_zero`;
 * `η ≠ 0` and `f` constant — fully proved via
@@ -619,11 +582,7 @@ noncomputable def traceFormsConstructionData_nonconstant_nonzero_provider
 * `η ≠ 0` and `f` nonconstant — delegates to the strictly narrower
   analytic leaf
   `traceFormsConstructionData_nonconstant_nonzero_provider`.
-
-The first two branches are strictly smaller leaves already proved in
-this pass; the third branch is the substantive analytic frontier (removable
-singularity / holomorphic extension of the finite local fiber sum
-across the finite branch locus of a nonconstant holomorphic map). -/
+-/
 noncomputable def traceFormsConstructionData_provider
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X) :
@@ -637,9 +596,7 @@ noncomputable def traceFormsConstructionData_provider
     · exact traceFormsConstructionData_constant f hf η hconst hη
     · exact traceFormsConstructionData_nonconstant_nonzero_provider f hf η hη hconst
 
-/-- The trace (pushforward) of a holomorphic 1-form along a smooth map.
-Sorry-free shim around `traceFormsConstructionData_provider`: the trace
-is the `traceForm` field of the construction data. -/
+
 noncomputable def traceFormsBundled
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X) : HolomorphicOneForm ℂ Y :=
@@ -680,9 +637,11 @@ theorem holomorphicOneForm_ext_on
   rw [ContMDiffSection.coe_sub] at hyzero
   exact sub_eq_zero.mp hyzero
 
-/-- Minimal trace input used by local linearity and regular-value
+/--
+Minimal trace input used by local linearity and regular-value
 assemblies.  This separates the specification needed downstream from
-the construction of the global bundled trace form. -/
+the construction of the global bundled trace form.
+-/
 structure TraceFormsRegularSpec
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) where
   /-- Trace sends the zero form to zero. -/
@@ -694,11 +653,13 @@ structure TraceFormsRegularSpec
       (traceFormsBundled f hf η).toFun y =
         traceAtRegularValue hbc (fun x => η.toFun x) y hy
 
-/-- Private helper: in the constant-map case, the construction-data
+/--
+Private helper: in the constant-map case, the construction-data
 provider for any input form `η` reduces to
 `traceFormsConstructionData_constant` (or
 `traceFormsConstructionData_zero` if `η = 0`); in either case, the
-resulting `traceForm` is the zero form on `Y`. -/
+resulting `traceForm` is the zero form on `Y`.
+-/
 theorem traceFormsBundled_eq_zero_of_constant
     {f : X → Y} {hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f}
     (η : HolomorphicOneForm ℂ X) (hconst : ∃ y₀, ∀ x, f x = y₀) :
@@ -715,10 +676,8 @@ theorem traceFormsBundled_eq_zero_of_constant
         simp [hη, hconst]]
     rfl
 
-/-- The linear trace map on holomorphic 1-forms.
-
-Sorry-free assembly from `traceFormsConstructionData_provider` plus the
-identity principle on the regular locus.
+/--
+The linear trace map on holomorphic 1-forms.
 
 Linearity is proved by the standard "dense agreement at regular values"
 trick: in the constant-map case both sides are zero
@@ -728,7 +687,8 @@ regular locus of the canonical branched-cover datum, and
 `traceAtRegularValue` is already linear (via `traceAtRegularValue_add`
 and `traceAtRegularValue_smul`). The identity principle
 (`holomorphicOneForm_ext_on (regularLocus_dense hbc)`) then promotes
-agreement on the regular locus to agreement everywhere. -/
+agreement on the regular locus to agreement everywhere.
+-/
 noncomputable def traceFormsBundledLM
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f) :
     HolomorphicOneForm ℂ X →ₗ[ℂ] HolomorphicOneForm ℂ Y where

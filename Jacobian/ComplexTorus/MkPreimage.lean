@@ -1,11 +1,7 @@
 import Mathlib.Topology.Algebra.Group.Quotient
 import Jacobian.ComplexTorus.Defs
 
-/-!
-# Preimage lemmas for the quotient projection
-
-Queue B sibling of `Jacobian/ComplexTorus/Basic.lean`.
--/
+/-! # Preimage lemmas for the quotient projection -/
 
 namespace JacobianChallenge.ComplexTorus
 

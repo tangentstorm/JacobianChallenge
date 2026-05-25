@@ -2,11 +2,13 @@ import Jacobian.HolomorphicForms.VanishingOrder
 import Mathlib.Topology.Compactification.OnePoint.Basic
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
-/-! Production API promoted from blueprint: `def:meromorphic-function` in
+/-!
+Production API promoted from blueprint: `def:meromorphic-function` in
 `tex/sections/01-compact-riemann-surfaces.tex`.
 
 The set `Mer(X)` of meromorphic functions on a compact Riemann surface,
-viewed as the field of meromorphic germ sections. -/
+viewed as the field of meromorphic germ sections.
+-/
 
 namespace JacobianChallenge.HolomorphicForms
 
@@ -17,14 +19,20 @@ open scoped Manifold
 
     [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] where
-  /-- Underlying set function from `X` to the Riemann sphere
-  `OnePoint ℂ`. -/
+  /--
+Underlying set function from `X` to the Riemann sphere
+  `OnePoint ℂ`.
+-/
   toFun : X → OnePoint ℂ
-  /-- The lift `X → OnePoint ℂ` is continuous: poles map to `∞`, and
-  in the disk model of a chart, `toFun` tends to `∞` near each pole. -/
+  /--
+The lift `X → OnePoint ℂ` is continuous: poles map to `∞`, and
+  in the disk model of a chart, `toFun` tends to `∞` near each pole.
+-/
   toFun_continuous : Continuous toFun
-  /-- The ℂ-projection of `toFun` is meromorphic at every point of `X`,
-  in the manifold sense (chart-pulled-back). -/
+  /--
+The ℂ-projection of `toFun` is meromorphic at every point of `X`,
+  in the manifold sense (chart-pulled-back).
+-/
   isMeromorphic :
     ∀ p, JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
            (fun q => (toFun q).getD 0) p

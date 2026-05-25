@@ -42,31 +42,39 @@ variable (E : Type*) [NormedAddCommGroup E] [NormedSpace ℂ E]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
   [FiniteDimensionalHolomorphicOneForms E X]
 
-/-- An arbitrary `Fin (analyticGenus E X)`-indexed basis of
+/--
+An arbitrary `Fin (analyticGenus E X)`-indexed basis of
 `HolomorphicOneForm E X`. Comes from `Module.finBasis`, which itself
-calls `Module.Free.chooseBasis`. The choice is non-canonical. -/
+calls `Module.Free.chooseBasis`. The choice is non-canonical.
+-/
 noncomputable def holomorphicOneFormFinBasis :
     Module.Basis (Fin (analyticGenus E X)) ℂ (HolomorphicOneForm E X) :=
   Module.finBasis ℂ (HolomorphicOneForm E X)
 
-/-- The dual basis of `holomorphicOneFormFinBasis`: an arbitrary
+/--
+The dual basis of `holomorphicOneFormFinBasis`: an arbitrary
 `Fin (analyticGenus E X)`-indexed basis of the linear dual
-`HolomorphicOneForm E X →ₗ[ℂ] ℂ`. -/
+`HolomorphicOneForm E X →ₗ[ℂ] ℂ`.
+-/
 noncomputable def holomorphicOneFormDualFinBasis :
     Module.Basis (Fin (analyticGenus E X)) ℂ
       (HolomorphicOneForm E X →ₗ[ℂ] ℂ) :=
   (holomorphicOneFormFinBasis E X).dualBasis
 
-/-- The basis-aligned dual equivalence: a noncomputable `LinearEquiv`
+/--
+The basis-aligned dual equivalence: a noncomputable `LinearEquiv`
 between the linear dual of holomorphic 1-forms and the basis-aligned
-model space. Uses the dual basis of an arbitrary chosen basis. -/
+model space. Uses the dual basis of an arbitrary chosen basis.
+-/
 noncomputable def holomorphicOneFormDualEquiv :
     (HolomorphicOneForm E X →ₗ[ℂ] ℂ) ≃ₗ[ℂ]
       (Fin (analyticGenus E X) → ℂ) :=
   (holomorphicOneFormDualFinBasis E X).equivFun
 
-/-- Pointwise reformulation: applying the equivalence to a dual basis
-vector gives the standard basis vector at the same index. -/
+/--
+Pointwise reformulation: applying the equivalence to a dual basis
+vector gives the standard basis vector at the same index.
+-/
 theorem holomorphicOneFormDualEquiv_dualBasis_apply
     (i : Fin (analyticGenus E X)) :
     holomorphicOneFormDualEquiv E X
@@ -79,18 +87,22 @@ theorem holomorphicOneFormDualEquiv_dualBasis_apply
   · subst h; simp
   · rw [if_neg h, if_neg (fun heq : j = i => h heq.symm)]
 
-/-- Inverse direction: the standard basis vector `Pi.single i 1` pulls
+/--
+Inverse direction: the standard basis vector `Pi.single i 1` pulls
 back through the equivalence to the dual basis vector at index `i`.
-Direct corollary of the forward apply lemma. -/
+Direct corollary of the forward apply lemma.
+-/
 theorem holomorphicOneFormDualEquiv_symm_pi_single
     (i : Fin (analyticGenus E X)) :
     (holomorphicOneFormDualEquiv E X).symm (Pi.single i 1) =
       holomorphicOneFormDualFinBasis E X i := by
   rw [LinearEquiv.symm_apply_eq, holomorphicOneFormDualEquiv_dualBasis_apply]
 
-/-- The duality property of the chosen basis and its dual: the `i`-th
+/--
+The duality property of the chosen basis and its dual: the `i`-th
 dual basis vector applied to the `j`-th basis vector is `δ_{ji}`. Direct
-specialization of `Module.Basis.dualBasis_apply_self`. -/
+specialization of `Module.Basis.dualBasis_apply_self`.
+-/
 theorem holomorphicOneFormDualFinBasis_apply_holomorphicOneFormFinBasis
     (i j : Fin (analyticGenus E X)) :
     holomorphicOneFormDualFinBasis E X i
@@ -98,10 +110,12 @@ theorem holomorphicOneFormDualFinBasis_apply_holomorphicOneFormFinBasis
       (if j = i then 1 else 0 : ℂ) :=
   (holomorphicOneFormFinBasis E X).dualBasis_apply_self i j
 
-/-- The basis-aligned dual equivalence applied to a functional `φ` and
+/--
+The basis-aligned dual equivalence applied to a functional `φ` and
 evaluated at coordinate `i` reproduces `φ` applied to the `i`-th basis
 1-form. This is the natural "evaluate-at-basis" interpretation of the
-basis-aligned dual equivalence. -/
+basis-aligned dual equivalence.
+-/
 theorem holomorphicOneFormDualEquiv_apply_eq_apply_basis
     (φ : HolomorphicOneForm E X →ₗ[ℂ] ℂ)
     (i : Fin (analyticGenus E X)) :

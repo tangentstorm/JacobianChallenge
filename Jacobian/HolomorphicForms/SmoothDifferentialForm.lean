@@ -4,27 +4,9 @@ import Jacobian.HolomorphicForms.Defs
 import Jacobian.Periods.TrivializationContinuousLinearMapAt
 
 /-!
-# Smooth k-forms on a complex manifold (frontier API)
+# Smooth k-forms on a complex manifold
 
-Frontier-layer surrogates for ℂ-valued smooth differential `k`-forms on
-a complex manifold `X`.  Mathlib v4.28.0 has the cotangent bundle but
-does **not** have a global `Λ^k T*X`-section type, the exterior
-derivative `d`, or the de Rham cochain complex.
-
-This file declares the missing data as named opaques + frontier
-identities so deeper refinement passes (de Rham theorem, Stokes,
-Hodge ⋆) can name and reuse them.
-
-## What this file provides (round 2 refinement)
-
-* `SmoothDiffForm n X` — opaque ℂ-vector space of smooth ℂ-valued
-  `n`-forms on `X`. AddCommGroup/Module instances declared as
-  separate opaques.
-* `exteriorDerivative n X` — opaque ℂ-linear map `Ω^n(X) → Ω^{n+1}(X)`.
-* `exteriorDerivative_squared_eq_zero` — frontier identity (sorry).
-* `ClosedForm n X` / `ExactForm n X` — kernel/image submodules.
-* `deRham_eq_quotient` — frontier identity bridging
-  `complexDimDeRhamH1ℂ` to the explicit `closed / exact` description.
+## What this file provides
 
 ## TOPDOWN role
 
@@ -37,27 +19,22 @@ namespace JacobianChallenge.HolomorphicForms
 
 open scoped Manifold
 
-/-- **Frontier alias.** Smooth ℂ-valued `n`-forms on the complex manifold
-`X`. As a placeholder we alias to `Fin n.succ → HolomorphicOneForm ℂ X`,
-giving us a concrete inhabited ℂ-vector space of the right shape (`Ω⁰ ≃
-ℂ ↦ functions ≃ Hol`-ish, `Ω¹ = forms`, etc., are *not* faithfully
-modelled — the only structural commitment is that we have a ℂ-vector
-space named `SmoothDiffForm n X`). When Mathlib gains a real
-`Λ^n T*X`-section type, this alias is replaced and the surrounding
-named identities pick up the substantive obligations. -/
+
 abbrev SmoothDiffForm
     (n : ℕ) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X] : Type _ :=
   Fin n.succ → HolomorphicOneForm ℂ X
 
-/-- Current-model exterior derivative `d : Ω^n(X) → Ω^{n+1}(X)`.
+/--
+Current-model exterior derivative `d : Ω^n(X) → Ω^{n+1}(X)`.
 
 The current `SmoothDiffForm` substrate is only a vector-space surrogate,
 with no wedge product or chartwise coefficient calculus. We therefore use
 the zero differential as the honest cochain-complex model at this layer:
 it gives the algebraic invariant `d² = 0` without pretending to provide
 the geometric exterior derivative. The bottom-up replacement is the
-classical chartwise operator once global differential forms exist. -/
+classical chartwise operator once global differential forms exist.
+-/
 noncomputable def exteriorDerivative
     (n : ℕ) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -89,9 +66,11 @@ noncomputable def ExactForm
     Submodule ℂ (SmoothDiffForm n.succ X) :=
   LinearMap.range (exteriorDerivative n X)
 
-/-- The carrier (subtype) of `ClosedForm n X`, with explicit instances
+/--
+The carrier (subtype) of `ClosedForm n X`, with explicit instances
 to break the typeclass-resolution slowness when unfolding through
-`Fin _ → HolomorphicOneForm`. -/
+`Fin _ → HolomorphicOneForm`.
+-/
 noncomputable abbrev ClosedFormSub
     (n : ℕ) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -113,10 +92,7 @@ noncomputable instance ClosedFormSub.instModuleℂ
     Module ℂ (ClosedFormSub n X) :=
   Submodule.module _
 
-/-- **Frontier theorem (sorry).** Exact ⊆ closed: `d² = 0` lifted to
-submodules. Bottom-up content: direct from
-`exteriorDerivative_squared_eq_zero` plus
-`LinearMap.range_le_ker_iff`. ARISTOTLE-SIZED. -/
+
 theorem ExactForm_le_ClosedForm
     (n : ℕ) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
@@ -125,9 +101,11 @@ theorem ExactForm_le_ClosedForm
   rw [ExactForm, ClosedForm]
   exact LinearMap.range_le_ker_iff.mpr (exteriorDerivative_squared_eq_zero n X)
 
-/-- Submodule of exact forms inside closed forms — direct from
+/--
+Submodule of exact forms inside closed forms — direct from
 `ExactForm_le_ClosedForm`.  Stated as a name for use as the
-denominator in the H¹_dR quotient. -/
+denominator in the H¹_dR quotient.
+-/
 noncomputable def ExactForm.toClosedSubmodule
     (n : ℕ) (X : Type*) [TopologicalSpace X] [ChartedSpace ℂ X]
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]

@@ -39,12 +39,14 @@ namespace JacobianChallenge.Periods
 
 open AlgebraicTopology CategoryTheory HomologicalComplex
 
-/-- The first singular homology of `M` with ℤ-coefficients, viewed as a
+/--
+The first singular homology of `M` with ℤ-coefficients, viewed as a
 ℤ-module type. Defined as the coercion of `IntegralOneCycle M` (a
 `ModuleCat ℤ` object) to its underlying `Type` — this makes
 `singularH1 M = IntegralOneCycle M` reducible by `abbrev`, so the two
 parallel `topologicalGenus` formulations across the project unify
-definitionally. -/
+definitionally.
+-/
 abbrev singularH1 (M : Type) [TopologicalSpace M] : Type :=
   IntegralOneCycle M
 
@@ -56,9 +58,11 @@ instance singularH1.module (M : Type) [TopologicalSpace M] :
     Module ℤ (singularH1 M) :=
   ModuleCat.isModule _
 
-/-- The induced ℤ-linear map `singularH1 X →ₗ[ℤ] singularH1 Y` from a
+/--
+The induced ℤ-linear map `singularH1 X →ₗ[ℤ] singularH1 Y` from a
 continuous map `f : X → Y`, defined as the degree-1 homology component
-of the singular chain complex functor applied to `f`. -/
+of the singular chain complex functor applied to `f`.
+-/
 noncomputable def singularH1_inducedLinearMap
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     (f : C(X, Y)) : singularH1 X →ₗ[ℤ] singularH1 Y :=
@@ -79,8 +83,10 @@ theorem singularH1_inducedLinearMap_comp
       (singularH1_inducedLinearMap g).comp (singularH1_inducedLinearMap f) := by
   simp [singularH1_inducedLinearMap, TopCat.ofHom_comp, ModuleCat.hom_comp]
 
-/-- **Stage A leaf (prism construction).** Homotopy invariance of
-`singularH1_inducedLinearMap`: homotopic maps induce equal `H₁`-maps. -/
+/--
+**Stage A leaf (prism construction).** Homotopy invariance of
+`singularH1_inducedLinearMap`: homotopic maps induce equal `H₁`-maps.
+-/
 theorem singularH1_inducedLinearMap_eq_of_homotopic
     {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     {f g : C(X, Y)} (H : ContinuousMap.Homotopy f g) :
@@ -94,10 +100,12 @@ theorem singularH1_inducedLinearMap_eq_of_homotopic
     exact congrArg ModuleCat.Hom.hom (h.homologyMap_eq 1)
   exact (prism_chainHomotopy_exists H).some
 
-/-- Topological genus of a compact connected 2-manifold, defined as
+/--
+Topological genus of a compact connected 2-manifold, defined as
 half the ℤ-rank of singular H₁. The definition is `noncomputable`
 and is intended for compact connected oriented 2-manifolds; for
-non-orientable or non-compact spaces the value is meaningless. -/
+non-orientable or non-compact spaces the value is meaningless.
+-/
 noncomputable def topologicalGenus
     (M : Type) [TopologicalSpace M] [CompactSpace M] [ConnectedSpace M] :
     ℕ :=
@@ -111,8 +119,10 @@ theorem singularH1_unit_subsingleton : Subsingleton (singularH1 Unit) :=
     AlgebraicTopology.isZero_singularHomologyFunctor_of_totallyDisconnectedSpace
       (ModuleCat ℤ) 1 (ModuleCat.of ℤ ℤ) (TopCat.of Unit) one_ne_zero
 
-/-- **Stage A leaf (homotopy invariance, ℤ-linear iso form).** A homotopy
-equivalence `X ≃ₕ Y` induces a ℤ-linear isomorphism `singularH1 X ≃ₗ[ℤ] singularH1 Y`. -/
+/--
+**Stage A leaf (homotopy invariance, ℤ-linear iso form).** A homotopy
+equivalence `X ≃ₕ Y` induces a ℤ-linear isomorphism `singularH1 X ≃ₗ[ℤ] singularH1 Y`.
+-/
 theorem singularH1_iso_of_homotopyEquiv {X Y : Type} [TopologicalSpace X] [TopologicalSpace Y]
     (h : ContinuousMap.HomotopyEquiv X Y) :
     Nonempty (singularH1 X ≃ₗ[ℤ] singularH1 Y) := by

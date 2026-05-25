@@ -9,11 +9,6 @@ set_option linter.unusedSectionVars false
 /-!
 # Refinement invariance of `pathIntegralViaCoverWith`
 
-**Phase 4 deliverable** of the path-integral well-definedness chain.
-Discharges (modulo two named sub-gaps) the sorry
-`pathIntegralViaCoverWith_refinement_invariant` in
-`PullbackNaturality.lean`.
-
 States: any two valid uniform chart partitions of the same path
 yield the same `pathIntegralViaCoverWith` value.
 -/
@@ -45,9 +40,11 @@ private lemma extend_mem_range
   exact ⟨t, rfl⟩
 
 omit [NormedSpace ℂ E] [IsManifold (modelWithCornersSelf ℂ E) ⊤ X] in
-/-- Under chart change, the local equality `(chartAt E q) ∘ γ.extend
+/--
+Under chart change, the local equality `(chartAt E q) ∘ γ.extend
 =ᶠ[𝓝 t] ((chartAt E q) ∘ (chartAt E p).symm) ∘ ((chartAt E p) ∘ γ.extend)` holds
-on the open set where `γ.extend` stays in both chart sources. -/
+on the open set where `γ.extend` stays in both chart sources.
+-/
 private lemma chart_compose_eventuallyEq
     (p q : X) {a b : X} (γ : Path a b)
     (hp : range γ ⊆ (chartAt E p).source) (_hq : range γ ⊆ (chartAt E q).source)
@@ -70,10 +67,12 @@ private lemma chart_compose_eventuallyEq
     (chartAt E q) ((chartAt E p).symm ((chartAt E p) (γ.extend s)))
   rw [(chartAt E p).left_inv hs]
 
-/-- The chart transition `(chartAt E q) ∘ (chartAt E p).symm` has a
+/--
+The chart transition `(chartAt E q) ∘ (chartAt E p).symm` has a
 Fréchet derivative at every point `(chartAt E p) x` for
 `x ∈ (chartAt E p).source ∩ (chartAt E q).source`. The derivative
-agrees with `mfderiv` of the same composition. -/
+agrees with `mfderiv` of the same composition.
+-/
 private lemma chartTransition_hasFDerivAt
     (p q : X) (x : X)
     (hp : x ∈ (chartAt E p).source) (hq : x ∈ (chartAt E q).source) :
@@ -181,7 +180,7 @@ private lemma derivWithin_chart_transition_chain_rule
       derivWithin_zero_of_not_differentiableWithinAt h_fq_not_diff
     rw [h_fq_zero, h_fp_zero, ContinuousLinearMap.map_zero]
 
-/-- **Phase 4a: chart-change invariance.** -/
+
 theorem pathIntegralViaChartCorrect_chart_change
     (ω : HolomorphicOneForm E X) (p q : X)
     {a b : X} (γ : Path a b)
@@ -357,7 +356,7 @@ private lemma segment_integrability
   convert h_cont_diff.integrableOn_Icc using 1;
   infer_instance
 
-/-- **Phase 4 deliverable.** -/
+
 theorem pathIntegralViaCoverWith_refinement_invariant'
     [StableChartAt E X]
     (ω : HolomorphicOneForm E X) {a b : X} (γ : Path a b)

@@ -20,8 +20,10 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
   [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
 
-/-- If `mfderiv c.symm` is identity everywhere on `E`, the corrected
-from-`X` chart-local integral coincides with the provisional one. -/
+/--
+If `mfderiv c.symm` is identity everywhere on `E`, the corrected
+from-`X` chart-local integral coincides with the provisional one.
+-/
 theorem pathIntegralViaChartCorrect_eq_pathIntegralViaChart_of_mfderiv_id
     (c : OpenPartialHomeomorph X E) (ω : HolomorphicOneForm E X)
     {a b : X} (γ : Path a b) (h : range γ ⊆ c.source)

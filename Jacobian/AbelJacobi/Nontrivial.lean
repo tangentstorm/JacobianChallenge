@@ -36,8 +36,10 @@ theorem evalJacobianClass_ne_of_witness_ne_zero
     evalJacobianClass P v ≠ evalJacobianClass basePoint v :=
   fun heq => h ((witnessAbelJacobi_eq_zero_iff_class_eq basePoint P v).mpr heq)
 
-/-- A non-zero witness rules out `evalLinearMap`-equality (modulo
-`periodSubgroup`). -/
+/--
+A non-zero witness rules out `evalLinearMap`-equality (modulo
+`periodSubgroup`).
+-/
 theorem evalLinearMap_diff_notMem_of_witness_ne_zero
     (basePoint P : X) (v : E)
     (h : witnessAbelJacobi (E := E) (X := X) basePoint P v ≠ 0) :
@@ -49,9 +51,11 @@ theorem evalLinearMap_diff_notMem_of_witness_ne_zero
   rw [evalJacobianClass_def, evalJacobianClass_def, mk_eq_mk_iff]
   exact hin
 
-/-- Contrapositive: if all witnesses for the chosen base point vanish,
+/--
+Contrapositive: if all witnesses for the chosen base point vanish,
 the analytic Jacobian is `Subsingleton` on the orbit visible to that
-base point (formally just the existing zero-class characterization). -/
+base point (formally just the existing zero-class characterization).
+-/
 theorem witness_zero_iff_evalJacobianClass_eq
     (basePoint P : X) (v : E) :
     witnessAbelJacobi (E := E) (X := X) basePoint P v = 0 ↔

@@ -27,8 +27,10 @@ set_option linter.unusedSectionVars false
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
   {X : Type*} [TopologicalSpace X] [ChartedSpace E X]
 
-/-- A cover of `γ` by `pickChart` reindexed via `Fin.rev` covers
-`γ.symm`. -/
+/--
+A cover of `γ` by `pickChart` reindexed via `Fin.rev` covers
+`γ.symm`.
+-/
 theorem cover_symm_of_cover
     {a b : X} (γ : Path a b)
     (n : ℕ) (hn : 0 < n) (pickChart : Fin n → X)
