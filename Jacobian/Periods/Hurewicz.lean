@@ -3056,10 +3056,34 @@ noncomputable def edgeSimplexTargetCoefficient
 /--
 Concrete edge singular simplices are distinct for distinct edge indices.
 -/
+theorem edgeArcIdx_injective
+    (g : ℕ) :
+    Function.Injective (edgeArcIdx g) := by
+  intro i j h
+  apply Fin.ext
+  unfold edgeArcIdx at h
+  have hi := Nat.div_add_mod i.val 2
+  have hj := Nat.div_add_mod j.val 2
+  omega
+
+/--
+Equality of concrete edge interval maps determines the boundary arc
+index used by the parametrization.
+-/
+theorem edgeArcIdx_eq_of_edgeContMap_eq
+    (g : ℕ) {i j : Fin (2 * (g + 1))}
+    (_h : edgeContMap g i = edgeContMap g j) :
+    edgeArcIdx g i = edgeArcIdx g j := by
+  sorry
+
+/--
+Concrete edge interval maps are distinct for distinct edge indices.
+-/
 theorem edgeContMap_injective
     (g : ℕ) :
     Function.Injective (edgeContMap g) := by
-  sorry
+  intro i j h
+  exact edgeArcIdx_injective g (edgeArcIdx_eq_of_edgeContMap_eq g h)
 
 /--
 Concrete edge singular simplices are distinct for distinct edge indices.
