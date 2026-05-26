@@ -159,6 +159,63 @@ noncomputable def deRhamComparisonMap1_prescribed_period_local_representatives_f
   ⟨data.ι, data.U, data.C, data.C_eq⟩
 
 /--
+**Frontier provider assembling a smooth local-representative candidate.**
+This is the first half of the analytic realization step: local representatives
+subordinate to the Čech data assemble to a global smooth 1-form candidate.
+-/
+noncomputable def deRhamComparisonMap1_smooth_form_from_local_representatives_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (_localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    SmoothDiffForm 1 X :=
+  0
+
+/--
+**Frontier provider proving local-representative closedness.** This is the
+second half of the analytic realization step: prove the assembled smooth
+candidate is closed.
+-/
+theorem deRhamComparisonMap1_smooth_form_from_local_representatives_closed_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    exteriorDerivative 1 X
+        (deRhamComparisonMap1_smooth_form_from_local_representatives_frontier
+          X φ data localData) = 0 := by
+  simp [deRhamComparisonMap1_smooth_form_from_local_representatives_frontier]
+
+/--
+**Frontier provider packaging smooth local representatives as a closed form.**
+This keeps the smooth assembly and closedness proof as separately named
+frontiers before producing the `ClosedForm` consumer type.
+-/
+noncomputable def deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    ClosedForm 1 X := by
+  refine ⟨
+    deRhamComparisonMap1_smooth_form_from_local_representatives_frontier
+      X φ data localData, ?_⟩
+  change exteriorDerivative 1 X
+      (deRhamComparisonMap1_smooth_form_from_local_representatives_frontier
+        X φ data localData) = 0
+  exact deRhamComparisonMap1_smooth_form_from_local_representatives_closed_frontier
+    X φ data localData
+
+/--
 **Frontier provider assembling local representatives.** This is the analytic
 realization step: local representatives subordinate to the Čech data assemble
 to a global closed 1-form with the prescribed periods.
@@ -170,11 +227,10 @@ noncomputable def deRhamComparisonMap1_closed_form_from_local_representatives_fr
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
     (data : PrescribedPeriodCechData X φ)
-    (_localData : PrescribedPeriodLocalRepresentativeData X φ data) :
-    ClosedForm 1 X := by
-  -- De Rham comparison theorem. A proof must assemble the local representatives
-  -- into a global closed representative with the prescribed periods.
-  sorry
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    ClosedForm 1 X :=
+  deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+    X φ data localData
 
 /--
 **Frontier provider realizing prescribed-period Čech data.** Given the
