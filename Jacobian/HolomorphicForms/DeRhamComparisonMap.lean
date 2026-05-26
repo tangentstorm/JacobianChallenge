@@ -483,6 +483,43 @@ noncomputable def deRhamComparisonMap1_zero_period_path_integral_primitive_front
   0
 
 /--
+**Kernel-vanishing frontier for zero-period closed forms.** In the
+current degree-1 de Rham comparison model, a closed 1-form whose comparison
+periods vanish lies in the zero kernel.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_eq_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  -- Kernel-vanishing frontier: injectivity of the degree-1 comparison map
+  -- on the current closed-form substrate.
+  sorry
+
+/--
+**Derivative frontier after kernel vanishing.** Once the zero-period closed
+form has vanished in the current substrate, the zero path-integral primitive
+has the required exterior derivative by the definition of `exteriorDerivative`.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
 **Frontier provider proving derivative correctness for the path-integral
 primitive.** This is the analytic content of injectivity: the derivative of
 the zero-period path-integral potential recovers the original closed form.
@@ -497,9 +534,9 @@ theorem deRhamComparisonMap1_zero_period_path_integral_derivative_frontier
     exteriorDerivative 0 X
         (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
       (ω : SmoothDiffForm 1 X) := by
-  -- Path-integration fundamental theorem frontier: zero periods make the
-  -- primitive path-independent, and differentiating it recovers the form.
-  sorry
+  exact deRhamComparisonMap1_zero_period_path_integral_derivative_of_vanishing_frontier
+    X ω hω
+    (deRhamComparisonMap1_zero_period_closed_form_eq_zero_frontier X ω hω)
 
 /--
 **Frontier provider packaging zero-period derivative correctness as
