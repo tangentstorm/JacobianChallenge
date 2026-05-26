@@ -3073,6 +3073,40 @@ edge-basis loops.
 def IsCanonicalEdgeArcIdx (g : ℕ) (a : ℕ) : Prop :=
   ∃ i : Fin (2 * (g + 1)), a = edgeArcIdx g i
 
+/-- Canonical edge arc indices lie among the `4 * (g + 1)` polygon sides. -/
+lemma IsCanonicalEdgeArcIdx.lt_four_mul
+    {g a : ℕ} (ha : IsCanonicalEdgeArcIdx g a) :
+    a < 4 * (g + 1) := by
+  obtain ⟨i, rfl⟩ := ha
+  unfold edgeArcIdx
+  have hi := i.2
+  have hdiv := Nat.div_add_mod i.val 2
+  omega
+
+/-- Canonical edge arc indices are exactly the first two side slots in each block of four. -/
+lemma IsCanonicalEdgeArcIdx.mod_four_lt_two
+    {g a : ℕ} (ha : IsCanonicalEdgeArcIdx g a) :
+    a % 4 < 2 := by
+  obtain ⟨i, rfl⟩ := ha
+  unfold edgeArcIdx
+  have hmod2 : i.val % 2 < 2 := Nat.mod_lt _ (by norm_num)
+  omega
+
+/--
+Midpoint `SideRel` between two boundary-arc indices in the canonical
+residue range forces the raw arc indices to agree.
+-/
+theorem boundary_midpoint_sideRel_canonical_residue_eq
+    (g : ℕ) (a b : ℕ)
+    (_ha_lt : a < 4 * (g + 1)) (_ha_mod : a % 4 < 2)
+    (_hb_lt : b < 4 * (g + 1)) (_hb_mod : b % 4 < 2)
+    (_h :
+      Polygon4g.SideRel (g + 1)
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
+    a = b := by
+  sorry
+
 /--
 Midpoint `SideRel` between two canonical boundary-arc indices forces
 the raw arc indices to agree.
@@ -3086,7 +3120,8 @@ theorem boundary_midpoint_sideRel_isCanonicalArc_eq
         (boundaryParam (g + 1) a (1 / 2 : ℝ))
         (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
     a = b := by
-  sorry
+  exact boundary_midpoint_sideRel_canonical_residue_eq g a b
+    _ha.lt_four_mul _ha.mod_four_lt_two _hb.lt_four_mul _hb.mod_four_lt_two _h
 
 /--
 Midpoint `SideRel` between two canonical boundary-arc indices forces
