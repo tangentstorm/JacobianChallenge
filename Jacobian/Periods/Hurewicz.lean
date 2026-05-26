@@ -3003,273 +3003,6 @@ theorem singularH1ClassOfCycle_eq_zero_boundary
       exact K.i_cyclesMk z 0 (ComplexShape.next_eq' _ (by simp [ComplexShape.down])) hz
 
 /--
-Chain-level edge coefficient functional data.
-
-This is the primitive chain statement behind edge independence: a
-linear coefficient reader on singular one-chains which kills singular
-two-boundaries and evaluates the concrete polygon edge chains as the
-standard coordinate basis.
--/
-structure EdgeBoundaryCoefficientFunctionalData (g : ℕ) where
-  coeffC1 :
-    (singularChainComplexZ (Polygon4g (g + 1))).X 1 ⟶
-      ModuleCat.of ℤ (Polygon4gAbelianization g)
-  coeffC1_boundary_zero :
-    ((singularChainComplexZ (Polygon4g (g + 1))).sc 1).f ≫ coeffC1 = 0
-  coeffC1_edge :
-    ∀ e : Fin (2 * (g + 1)), coeffC1.hom (edgeChain g e) = Pi.single e 1
-
-/--
-Simplex-level edge coefficient data.
-
-This is the geometric core of edge independence: assign an
-abelianized edge count to each singular one-simplex, in a way that
-vanishes on the alternating boundary of every singular two-simplex and
-reads the concrete polygon edge loops as the standard basis.
--/
-structure EdgeBoundaryCoefficientSimplexData (g : ℕ) where
-  coeffSimplex :
-    C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1)) → Polygon4gAbelianization g
-  coeffSimplex_boundary_zero :
-    ∀ σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)),
-      (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
-        coeffSimplex (singularSimplexFace σ i)) = 0
-  coeffSimplex_edge :
-    ∀ e : Fin (2 * (g + 1)), coeffSimplex (edgeSimplex g e) = Pi.single e 1
-
-/--
-Scalar edge-coordinate singular cocycle data.
-
-For a fixed edge coordinate `target`, this records an integer-valued
-singular one-cochain which vanishes on every singular two-simplex
-boundary and reads the concrete edge loops by the Kronecker delta.
--/
-structure EdgeBoundaryCoefficientScalarData
-    (g : ℕ) (target : Fin (2 * (g + 1))) where
-  coeffSimplexZ :
-    C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1)) → ℤ
-  coeffSimplexZ_boundary_zero :
-    ∀ σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)),
-      (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) *
-        coeffSimplexZ (singularSimplexFace σ i)) = 0
-  coeffSimplexZ_edge :
-    ∀ e : Fin (2 * (g + 1)),
-      coeffSimplexZ (edgeSimplex g e) = if e = target then 1 else 0
-
-/--
-Scalar chain-level coefficient functional for one edge coordinate.
-
-This is the chain-functional form of the scalar cocycle provider:
-it is a linear functional on singular one-chains, kills singular
-two-boundaries, and reads the concrete edge chains by Kronecker delta.
--/
-structure EdgeBoundaryCoefficientScalarFunctionalData
-    (g : ℕ) (target : Fin (2 * (g + 1))) where
-  coeffC1Z :
-    (singularChainComplexZ (Polygon4g (g + 1))).X 1 ⟶
-      ModuleCat.of ℤ ℤ
-  coeffC1Z_boundary_zero :
-    ∀ B : (singularChainComplexZ (Polygon4g (g + 1))).X 2,
-      coeffC1Z.hom
-        (((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom B) = 0
-  coeffC1Z_edge :
-    ∀ e : Fin (2 * (g + 1)),
-      coeffC1Z.hom (edgeChain g e) = if e = target then 1 else 0
-
-/--
-Normalized scalar edge-coordinate cochain data, before imposing the
-cocycle condition.
--/
-structure EdgeBoundaryCoefficientRawScalarCochainData
-    (g : ℕ) (target : Fin (2 * (g + 1))) where
-  coeffSimplexZ :
-    C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1)) → ℤ
-
-/-- Edge normalization for a raw scalar edge-coordinate cochain. -/
-def EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized
-    (g : ℕ) (target : Fin (2 * (g + 1)))
-    (raw : EdgeBoundaryCoefficientRawScalarCochainData g target) : Prop :=
-  ∀ e : Fin (2 * (g + 1)),
-    raw.coeffSimplexZ (edgeSimplex g e) = if e = target then 1 else 0
-
-/-- Cocycle condition for a raw scalar edge-coordinate cochain. -/
-def EdgeBoundaryCoefficientRawScalarCochainBoundaryZero
-    (g : ℕ) (target : Fin (2 * (g + 1)))
-    (raw : EdgeBoundaryCoefficientRawScalarCochainData g target) : Prop :=
-  ∀ σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)),
-    (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) *
-      raw.coeffSimplexZ (singularSimplexFace σ i)) = 0
-
-/-- The raw scalar cochain obtained by evaluating a scalar chain functional on generators. -/
-noncomputable def edgeBoundaryCoefficientRawScalarCochainData_of_functional
-    (g : ℕ) (target : Fin (2 * (g + 1)))
-    (data : EdgeBoundaryCoefficientScalarFunctionalData g target) :
-    EdgeBoundaryCoefficientRawScalarCochainData g target where
-  coeffSimplexZ := fun σ => data.coeffC1Z.hom (singularChainElement σ)
-
-/--
-The generator-level cochain induced by a scalar chain functional is
-edge-normalized and kills every singular two-simplex boundary.
--/
-theorem edgeBoundaryCoefficientRawScalarCochainData_of_functional_properties
-    (g : ℕ) (target : Fin (2 * (g + 1)))
-    (data : EdgeBoundaryCoefficientScalarFunctionalData g target) :
-    EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized g target
-        (edgeBoundaryCoefficientRawScalarCochainData_of_functional g target data) ∧
-      EdgeBoundaryCoefficientRawScalarCochainBoundaryZero g target
-        (edgeBoundaryCoefficientRawScalarCochainData_of_functional g target data) := by
-  refine ⟨?_, ?_⟩
-  · intro e
-    exact data.coeffC1Z_edge e
-  · intro σ
-    have hzero :
-        data.coeffC1Z.hom
-          (((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom
-            (singularChainElement σ)) = 0 :=
-      data.coeffC1Z_boundary_zero (singularChainElement σ)
-    rw [singularChainElement_boundary_decomposition
-      (Polygon4g (g + 1)) 1 σ] at hzero
-    simp only [map_sum, map_zsmul] at hzero
-    simpa [edgeBoundaryCoefficientRawScalarCochainData_of_functional] using hzero
-
-structure EdgeBoundaryCoefficientScalarCochainData
-    (g : ℕ) (target : Fin (2 * (g + 1))) where
-  coeffSimplexZ :
-    C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1)) → ℤ
-  coeffSimplexZ_edge :
-    ∀ e : Fin (2 * (g + 1)),
-      coeffSimplexZ (edgeSimplex g e) = if e = target then 1 else 0
-
-/-- Assemble normalized scalar cochain data from raw data and edge normalization. -/
-def edgeBoundaryCoefficientScalarCochainData_of_raw
-    (g : ℕ) (target : Fin (2 * (g + 1)))
-    (raw : EdgeBoundaryCoefficientRawScalarCochainData g target)
-    (hedge :
-      EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized g target raw) :
-    EdgeBoundaryCoefficientScalarCochainData g target where
-  coeffSimplexZ := raw.coeffSimplexZ
-  coeffSimplexZ_edge := hedge
-
-/-- Cocycle condition for a normalized scalar edge-coordinate cochain. -/
-def EdgeBoundaryCoefficientScalarCochainBoundaryZero
-    (g : ℕ) (target : Fin (2 * (g + 1)))
-    (cochain : EdgeBoundaryCoefficientScalarCochainData g target) : Prop :=
-  ∀ σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)),
-    (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) *
-      cochain.coeffSimplexZ (singularSimplexFace σ i)) = 0
-
-/-- Assemble scalar cocycle data from a normalized cochain and its cocycle proof. -/
-def edgeBoundaryCoefficientScalarData_of_cochain
-    (g : ℕ) (target : Fin (2 * (g + 1)))
-    (cochain : EdgeBoundaryCoefficientScalarCochainData g target)
-    (hboundary :
-      EdgeBoundaryCoefficientScalarCochainBoundaryZero g target cochain) :
-    EdgeBoundaryCoefficientScalarData g target where
-  coeffSimplexZ := cochain.coeffSimplexZ
-  coeffSimplexZ_boundary_zero := hboundary
-  coeffSimplexZ_edge := cochain.coeffSimplexZ_edge
-
-/-- Assemble vector-valued simplex coefficients from scalar coordinate cocycles. -/
-noncomputable def edgeBoundaryCoefficientSimplexData_of_scalarData
-    (g : ℕ)
-    (scalarData : ∀ target : Fin (2 * (g + 1)),
-      EdgeBoundaryCoefficientScalarData g target) :
-    EdgeBoundaryCoefficientSimplexData g := by
-  classical
-  refine
-    { coeffSimplex := fun σ target => (scalarData target).coeffSimplexZ σ
-      coeffSimplex_boundary_zero := ?_
-      coeffSimplex_edge := ?_ }
-  · intro σ
-    funext target
-    calc
-      (∑ i : Fin 3, (((-1 : ℤ) ^ (i : ℕ)) •
-          (fun target => (scalarData target).coeffSimplexZ
-            (singularSimplexFace σ i) :
-            Polygon4gAbelianization g)) target)
-          =
-        ∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) *
-          (scalarData target).coeffSimplexZ (singularSimplexFace σ i) := by
-          refine Finset.sum_congr rfl ?_
-          intro i _hi
-          simp
-      _ = 0 := (scalarData target).coeffSimplexZ_boundary_zero σ
-  · intro e
-    funext target
-    simp only [Pi.single_apply]
-    rw [(scalarData target).coeffSimplexZ_edge e]
-    by_cases h : target = e
-    · subst h
-      simp
-    · have h' : e ≠ target := by exact fun he => h he.symm
-      simp [h, h']
-
-/-- The linear extension of simplex-level edge coefficients to one-chains. -/
-noncomputable def edgeBoundaryCoefficientSimplexMap
-    (g : ℕ) (data : EdgeBoundaryCoefficientSimplexData g) :
-    (singularChainComplexZ (Polygon4g (g + 1))).X 1 ⟶
-      ModuleCat.of ℤ (Polygon4gAbelianization g) := by
-  classical
-  let X := Polygon4g (g + 1)
-  let I1 := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋1⦌)
-  exact
-    Sigma.desc (fun s : I1 =>
-      ModuleCat.ofHom
-        (LinearMap.toSpanSingleton ℤ (Polygon4gAbelianization g)
-          (data.coeffSimplex ((singularChainSimplexIndex X 1).symm s))))
-
-/-- The extended simplex coefficient map evaluates generators as prescribed. -/
-theorem edgeBoundaryCoefficientSimplexMap_apply_singularChainElement
-    (g : ℕ) (data : EdgeBoundaryCoefficientSimplexData g)
-    (σ : C(stdSimplex ℝ (Fin 2), Polygon4g (g + 1))) :
-    (edgeBoundaryCoefficientSimplexMap g data).hom (singularChainElement σ) =
-      data.coeffSimplex σ := by
-  classical
-  let X := Polygon4g (g + 1)
-  let I1 := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋1⦌)
-  let Z1 : I1 → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
-  change
-    ModuleCat.Hom.hom
-      (Sigma.ι Z1 (singularChainSimplexIndex X 1 σ) ≫
-        edgeBoundaryCoefficientSimplexMap g data) (1 : ℤ) =
-      data.coeffSimplex σ
-  rw [edgeBoundaryCoefficientSimplexMap, Sigma.ι_desc]
-  simp [X, I1, Z1]
-
-/--
-The extended simplex coefficient map kills the boundary of each
-singular two-simplex.
--/
-theorem edgeBoundaryCoefficientSimplexMap_boundary_singularChainElement
-    (g : ℕ) (data : EdgeBoundaryCoefficientSimplexData g)
-    (σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1))) :
-    (edgeBoundaryCoefficientSimplexMap g data).hom
-        ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1
-          (singularChainElement σ)) = 0 := by
-  rw [singularChainElement_boundary_decomposition (Polygon4g (g + 1)) 1 σ]
-  rw [map_sum]
-  calc
-    ∑ i : Fin 3,
-        (edgeBoundaryCoefficientSimplexMap g data).hom
-          (((-1 : ℤ) ^ (i : ℕ)) •
-            (singularChainElement (singularSimplexFace σ i) :
-              SingularChainCoproduct (Polygon4g (g + 1)) 1))
-        =
-      ∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
-        (edgeBoundaryCoefficientSimplexMap g data).hom
-          (singularChainElement (singularSimplexFace σ i)) := by
-        refine Finset.sum_congr rfl ?_
-        intro i _hi
-        rw [map_zsmul]
-    _ =
-      ∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
-        data.coeffSimplex (singularSimplexFace σ i) := by
-        refine Finset.sum_congr rfl ?_
-        intro i _hi
-        rw [edgeBoundaryCoefficientSimplexMap_apply_singularChainElement]
-    _ = 0 := data.coeffSimplex_boundary_zero σ
-
-/--
 Bridge from the short-complex boundary object in degree one to the
 displayed degree-two singular-chain object.
 -/
@@ -3291,73 +3024,22 @@ theorem hurewicz_singularBoundary_eq_sc_f
   split_ifs <;> simp_all +decide [ComplexShape.prev]
   exact fun s => ⟨_, rfl⟩
 
-/-- The extended simplex coefficient map kills every singular two-boundary. -/
-theorem edgeBoundaryCoefficientSimplexMap_boundary_zero
-    (g : ℕ) (data : EdgeBoundaryCoefficientSimplexData g) :
-    ((singularChainComplexZ (Polygon4g (g + 1))).sc 1).f ≫
-      edgeBoundaryCoefficientSimplexMap g data = 0 := by
-  classical
-  let X := Polygon4g (g + 1)
-  apply ModuleCat.hom_ext
-  ext B
-  obtain ⟨B', hB'⟩ := hurewicz_singularBoundary_eq_sc_f X B
-  rw [ModuleCat.hom_comp, LinearMap.comp_apply, hB']
-  obtain ⟨decomp⟩ :=
-    singularChainCoproduct_sum_support_decomposition_degree X 2 B'
-  letI := decomp.simplexFintype
-  rw [decomp.chain_eq]
-  rw [map_sum]
-  simp only [map_zsmul]
-  rw [map_sum]
-  simp only [map_zsmul]
-  refine Finset.sum_eq_zero (s := (Finset.univ : Finset decomp.Simplex)) ?_
-  intro s _hs
-  have hs :=
-    edgeBoundaryCoefficientSimplexMap_boundary_singularChainElement g data
-      (decomp.simplex s)
-  have hsX :
-      (edgeBoundaryCoefficientSimplexMap g data).hom
-        (((singularChainComplexZ X).d 2 1).hom
-          (singularChainElement (decomp.simplex s))) = 0 := by
-    simpa [X] using hs
-  simp [hsX]
-
 /--
-Extend simplex-level edge coefficient data linearly to singular
-one-chains, and use the two-simplex boundary identity to show it
-kills singular two-boundaries.
--/
-noncomputable def edgeBoundaryCoefficientFunctionalData_of_simplexData
-    (g : ℕ) (data : EdgeBoundaryCoefficientSimplexData g) :
-    EdgeBoundaryCoefficientFunctionalData g := by
-  classical
-  let X := Polygon4g (g + 1)
-  let I1 := (TopCat.toSSet.obj (TopCat.of X)).obj (op ⦋1⦌)
-  let Z1 : I1 → ModuleCat ℤ := fun _ => ModuleCat.of ℤ ℤ
-  let coeffC1 :
-      (singularChainComplexZ X).X 1 ⟶ ModuleCat.of ℤ (Polygon4gAbelianization g) :=
-    edgeBoundaryCoefficientSimplexMap g data
-  refine
-    { coeffC1 := coeffC1
-      coeffC1_boundary_zero := ?_
-      coeffC1_edge := ?_ }
-  · simpa [coeffC1, X] using
-      edgeBoundaryCoefficientSimplexMap_boundary_zero g data
-  · intro e
-    change
-      (edgeBoundaryCoefficientSimplexMap g data).hom
-        (singularChainElement (edgeSimplex g e)) =
-        Pi.single e 1
-    rw [edgeBoundaryCoefficientSimplexMap_apply_singularChainElement,
-      data.coeffSimplex_edge e]
+Pointwise coefficient form of edge-chain singular-boundary independence.
 
-/-- Finite sums of coordinate singletons recover their coefficient vector. -/
-theorem polygon4g_single_sum_coefficients
-    (g : ℕ) (v : Polygon4gAbelianization g) :
-    (∑ e : Fin (2 * (g + 1)), v e • (Pi.single e 1 :
-      Polygon4gAbelianization g)) = v := by
-  ext i
-  simp [Pi.single_apply]
+This is the remaining scalar-coordinate geometric input needed for
+edge independence: if a concrete singular two-boundary is a finite sum
+of concrete edge chains, then the coefficient of each target edge is zero.
+-/
+theorem edgeChain_sum_singular_boundary_scalar_coefficient_zero
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g)
+    (B : (singularChainComplexZ (Polygon4g (g + 1))).X 2)
+    (hB :
+      ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom B =
+        ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) :
+    v target = 0 := by
+  sorry
 
 /--
 Pointwise coefficient form of edge-chain boundary independence.
@@ -3374,7 +3056,11 @@ theorem edgeChain_sum_boundary_scalar_coefficient_zero
       ModuleCat.Hom.hom (((singularChainComplexZ (Polygon4g (g + 1))).sc 1).f) B =
         ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) :
     v target = 0 := by
-  sorry
+  obtain ⟨B', hB'⟩ :=
+    hurewicz_singularBoundary_eq_sc_f (Polygon4g (g + 1)) B
+  exact
+    edgeChain_sum_singular_boundary_scalar_coefficient_zero
+      g target v B' (hB' ▸ hB)
 
 /--
 Kernel-zero form of edge independence.
