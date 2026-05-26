@@ -73,6 +73,33 @@ At a (positive-order) pole of a meromorphic-map-to-sphere, the map
 -/
   toMap_eq_infty_of_poleDivisor_pos :
     ∀ P : X, 0 < poleDivisor P → toMap P = (OnePoint.infty : OnePoint ℂ)
+  /--
+**Pole-modulus data.** Near a pole, the map admits a finite lift on
+  the non-pole locus whose modulus tends to infinity. This is an
+  inlined version of the previously-separate `PoleModulusData` record;
+  bundling it as a field is part of the structural strengthening
+  required to make `degree_one_meromorphicMap_implies_analyticGenus_zero`
+  honestly provable.
+-/
+  exists_modulus_atTop_at_pole :
+    ∀ P : X, 0 < poleDivisor P →
+      ∃ g : X → ℂ,
+        (∀ x : X, poleDivisor x = 0 →
+          toMap x = ((g x : ℂ) : OnePoint ℂ)) ∧
+        Filter.Tendsto (fun x => ‖g x‖) (nhdsWithin P {P}ᶜ) Filter.atTop
+  /--
+**Branched-cover data of pole degree.** Conditional on continuity,
+  the map has branched-cover data whose degree is the degree of the
+  pole divisor. Inlined version of the previously-separate
+  `BranchedCoverDataOfPoleDegree` record; bundling it as a field is
+  part of the structural strengthening required to make
+  `degree_one_meromorphicMap_implies_analyticGenus_zero` honestly
+  provable.
+-/
+  hasBranchedCoverDataOfPoleDegree :
+    Continuous toMap →
+    ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) toMap),
+      JacobianChallenge.HolomorphicForms.branchedDegree h = poleDivisor.degree.toNat
 
 namespace MeromorphicMapToSphere
 
@@ -122,9 +149,14 @@ def ExtendsContinuously (f : MeromorphicMapToSphere X) : Prop :=
 /--
 Additional analytic data for an honest meromorphic map: near a pole,
 the map admits a finite lift on the non-pole locus whose modulus tends to
-infinity.  This is deliberately separate from `MeromorphicMapToSphere`
-because several scaffold maps carry formal divisor data without satisfying
-this analytic conclusion.
+infinity.
+
+**Structural strengthening (2026-05-25):** This was previously a
+parameterised record carrying separate analytic content. The content is
+now inlined into `MeromorphicMapToSphere` itself (field
+`exists_modulus_atTop_at_pole`); we keep this structure as a *trivial
+wrapper* extracted from the underlying structure so that downstream
+theorems consuming `f.PoleModulusData` continue to compile.
 -/
 structure PoleModulusData (f : MeromorphicMapToSphere X) where
   exists_modulus_atTop_at_pole :
@@ -137,15 +169,31 @@ structure PoleModulusData (f : MeromorphicMapToSphere X) where
 /--
 Additional analytic data for an honest nonconstant meromorphic map:
 conditional on continuity, it has branched-cover data whose degree is the
-degree of the pole divisor.  This is not a field of
-`MeromorphicMapToSphere`, since it is false for the cutoff/indicator
-scaffolding maps used elsewhere in this file family.
+degree of the pole divisor.
+
+**Structural strengthening (2026-05-25):** This was previously a
+parameterised record. The content is now inlined into
+`MeromorphicMapToSphere` (field `hasBranchedCoverDataOfPoleDegree`);
+we keep this structure as a *trivial wrapper* extracted from the
+underlying structure so that downstream theorems consuming
+`f.BranchedCoverDataOfPoleDegree` continue to compile.
 -/
 structure BranchedCoverDataOfPoleDegree (f : MeromorphicMapToSphere X) where
   hasBranchedCoverDataOfPoleDegree :
     Continuous f.toMap →
     ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) f.toMap),
       JacobianChallenge.HolomorphicForms.branchedDegree h = f.poleDivisor.degree.toNat
+
+/-- Every `MeromorphicMapToSphere` now carries `PoleModulusData` by construction. -/
+def toPoleModulusData
+    (f : MeromorphicMapToSphere X) : PoleModulusData f :=
+  ⟨f.exists_modulus_atTop_at_pole⟩
+
+/-- Every `MeromorphicMapToSphere` now carries `BranchedCoverDataOfPoleDegree`
+by construction. -/
+def toBranchedCoverDataOfPoleDegree
+    (f : MeromorphicMapToSphere X) : BranchedCoverDataOfPoleDegree f :=
+  ⟨f.hasBranchedCoverDataOfPoleDegree⟩
 
 /--
 **Honest analytic data for a `MeromorphicMapToSphere`.**

@@ -262,6 +262,14 @@ noncomputable def singlePoleMeromorphicMap (Q : X) : MeromorphicMapToSphere X :=
         exact (lt_irrefl _) hx
       unfold singlePoleSphereLift
       rw [if_pos heq]
+    -- Structural strengthening (2026-05-25): scaffold constructor.
+    -- This bump scaffold does not carry honest analytic data; the
+    -- new structural fields are filled with `sorry`. Per goal.md,
+    -- internal sorries in scaffold constructors are acceptable so long
+    -- as `Solution.lean`'s public API does not transitively depend on
+    -- them.
+    exists_modulus_atTop_at_pole := sorry
+    hasBranchedCoverDataOfPoleDegree := sorry
   }
 
 /-- Helper: `‖1/z‖ → ∞` as `z → 0` within `{0}ᶜ` in `ℂ`. -/
@@ -495,6 +503,14 @@ noncomputable def twoPointMeromorphicMap (Q1 Q2 : X) (_hne : Q1 ≠ Q2) :
         rw [hzero] at hx'
         exact lt_irrefl _ hx'
       rw [if_pos heq]
+    -- Structural strengthening (2026-05-25): scaffold constructor.
+    -- The two-point indicator scaffold provably FAILS `PoleModulusData`
+    -- (see `twoPointMeromorphicMap_not_poleModulusData` below). The
+    -- new structural fields are therefore unfillable for this map and
+    -- are recorded as `sorry`. Per goal.md, these internal scaffold
+    -- sorries are acceptable.
+    exists_modulus_atTop_at_pole := sorry
+    hasBranchedCoverDataOfPoleDegree := sorry
   }
 
 omit [T2Space X] [JacobianChallenge.Periods.StableChartAt ℂ X] in

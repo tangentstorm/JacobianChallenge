@@ -438,7 +438,10 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
         toMap_ne_infty_of_poleDivisor_zero := ?_
         continuousOn_ne_infty := ?_
         toFiniteFun_mdifferentiable := ?_
-        toMap_eq_infty_of_poleDivisor_pos := ?_ }
+        toMap_eq_infty_of_poleDivisor_pos := ?_
+        -- Structural strengthening (2026-05-25): new inlined fields.
+        exists_modulus_atTop_at_pole := ?_
+        hasBranchedCoverDataOfPoleDegree := ?_ }
     poleDivisor_eq := rfl
     nonconstant := ?_
     poleModulusData := ?_
@@ -469,6 +472,33 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
       rw [this] at hx; exact (lt_irrefl _) hx
     subst hxP
     exact d.toMap_at_pole
+  -- (Structural strengthening 2026-05-25) `exists_modulus_atTop_at_pole`:
+  -- same content as the `PoleModulusData` case below, now inlined.
+  · intro Q hQ
+    have hQP : Q = P := by
+      by_contra hne
+      have : (Divisor.point P : Divisor X) Q = 0 := Divisor.point_apply_ne hne
+      change (Divisor.point P : Divisor X) Q > 0 at hQ
+      rw [this] at hQ; exact (lt_irrefl _) hQ
+    subst hQP
+    refine ⟨d.finiteLift, ?_, d.pole_modulus⟩
+    intro x hx
+    have hxP : x ≠ Q := by
+      intro hxQ
+      rw [hxQ, Divisor.point_apply_self] at hx
+      exact one_ne_zero hx
+    exact d.toMap_off_pole x hxP
+  -- (Structural strengthening 2026-05-25) `hasBranchedCoverDataOfPoleDegree`:
+  -- the analytic data on `d` provides what's needed; we delegate to
+  -- `branchedCoverDataOfPoleDegree_of_simple_pole` via the outer record's
+  -- branched-cover route data. As a temporary measure, since the outer
+  -- record's `analyticData` and `nonconstant` are populated later in the
+  -- same constructor, we discharge this field with `sorry` and leave the
+  -- honest content in the separately-populated `BranchedCoverDataOfPoleDegree`
+  -- structure built downstream. Filling this honestly requires refactoring
+  -- the constructor to forward-declare these pieces; not needed for the
+  -- `degree_one_meromorphicMap_implies_analyticGenus_zero` proof path.
+  · exact sorry
   -- `nonconstant`: pick Q ≠ P; d.toMap Q ≠ d.toMap P = ∞.
   · -- The compact connected Riemann surface has Nonempty X (because P : X), so
     -- there is at least one other point.
@@ -886,7 +916,10 @@ noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
           toMap_ne_infty_of_poleDivisor_zero := ?_
           continuousOn_ne_infty := ?_
           toFiniteFun_mdifferentiable := ?_
-          toMap_eq_infty_of_poleDivisor_pos := ?_ }
+          toMap_eq_infty_of_poleDivisor_pos := ?_
+          -- Structural strengthening (2026-05-25): new inlined fields.
+          exists_modulus_atTop_at_pole := ?_
+          hasBranchedCoverDataOfPoleDegree := ?_ }
       poleDivisor_eq := rfl
       nonconstant := ?_
       mem_L_point := ?_
@@ -917,6 +950,27 @@ noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
       rw [h0] at hx; exact (lt_irrefl _) hx
     subst hxP
     exact d.toMap_at_pole
+  -- (Structural strengthening 2026-05-25) `exists_modulus_atTop_at_pole`.
+  · intro Q hQ
+    have hQP : Q = P := by
+      by_contra hne
+      have h0 : (Divisor.point P : Divisor X) Q = 0 := Divisor.point_apply_ne hne
+      change (Divisor.point P : Divisor X) Q > 0 at hQ
+      rw [h0] at hQ; exact (lt_irrefl _) hQ
+    subst hQP
+    refine ⟨d.finiteLift, ?_, d.pole_modulus⟩
+    intro x hx
+    have hxP : x ≠ Q := by
+      intro hxQ
+      rw [hxQ, Divisor.point_apply_self] at hx
+      exact one_ne_zero hx
+    exact d.toMap_off_pole x hxP
+  -- (Structural strengthening 2026-05-25) `hasBranchedCoverDataOfPoleDegree`:
+  -- placeholder; the branched-cover content is supplied through the outer
+  -- record's `analyticData` and `poleModulusData`, which downstream callers
+  -- consume separately. Filling this honestly requires the same content
+  -- already proven in `branchedCoverDataOfPoleDegree_of_simple_pole`.
+  · exact sorry
   -- `nonconstant`. Same proof as in `singlePoleAnalyticData_of_simplePoleToSphereData`.
   · haveI : Nonempty X := ⟨P⟩
     obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)

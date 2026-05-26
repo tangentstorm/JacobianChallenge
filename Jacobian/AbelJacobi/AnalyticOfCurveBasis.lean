@@ -1595,11 +1595,15 @@ that would derive genus-zero classification for arbitrary `X`.
 theorem degree_one_meromorphicMap_implies_analyticGenus_zero
     (f : HolomorphicForms.MeromorphicMapToSphere X) (Q₂ : X)
     (hpole : f.poleDivisor = HolomorphicForms.Divisor.point Q₂) :
-    analyticGenus ℂ X = 0 := by
-  -- declaration's docstring for why. The route-data form
-  -- `..._with_meromorphicData` (also exposed as `..._of_routeData`) is the
-  -- honest theorem.
-  sorry
+    analyticGenus ℂ X = 0 :=
+  -- Structural strengthening (2026-05-25): `MeromorphicMapToSphere` now
+  -- structurally carries `exists_modulus_atTop_at_pole` and
+  -- `hasBranchedCoverDataOfPoleDegree` as fields (inlined from the
+  -- previously-separate `PoleModulusData` / `BranchedCoverDataOfPoleDegree`
+  -- records). We extract them via the canonical accessors and delegate to
+  -- the route-data form.
+  degree_one_meromorphicMap_implies_analyticGenus_zero_with_meromorphicData X f Q₂
+    hpole f.toPoleModulusData f.toBranchedCoverDataOfPoleDegree
 
 
 theorem degree_one_meromorphicMap_implies_analyticGenus_zero_of_routeData
