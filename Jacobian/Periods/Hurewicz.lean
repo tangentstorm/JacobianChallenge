@@ -3067,6 +3067,21 @@ theorem edgeArcIdx_injective
   omega
 
 /--
+Midpoint `SideRel` between two canonical boundary-arc indices forces
+the raw arc indices to agree.
+-/
+theorem boundary_midpoint_sideRel_canonical_arc_eq
+    (g : ℕ) (a b : ℕ)
+    (_ha : ∃ i : Fin (2 * (g + 1)), a = edgeArcIdx g i)
+    (_hb : ∃ j : Fin (2 * (g + 1)), b = edgeArcIdx g j)
+    (_h :
+      Polygon4g.SideRel (g + 1)
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
+    a = b := by
+  sorry
+
+/--
 The side-pairing relation at midpoints of canonical boundary-edge
 representatives separates the edge-basis arc index.
 -/
@@ -3077,7 +3092,8 @@ theorem edgeArcIdx_eq_of_boundary_midpoint_sideRel
         (boundaryParam (g + 1) (edgeArcIdx g i) (1 / 2 : ℝ))
         (boundaryParam (g + 1) (edgeArcIdx g j) (1 / 2 : ℝ))) :
     edgeArcIdx g i = edgeArcIdx g j := by
-  sorry
+  exact boundary_midpoint_sideRel_canonical_arc_eq g
+    (edgeArcIdx g i) (edgeArcIdx g j) ⟨i, rfl⟩ ⟨j, rfl⟩ _h
 
 /--
 The quotient midpoint of a canonical boundary-edge representative
