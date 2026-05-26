@@ -809,6 +809,45 @@ theorem deRhamComparisonMap1_comparison_kernel_zero_period_frontier
   simpa [LinearMap.mem_ker] using hω_kernel
 
 /--
+**Derivative correctness for the direct primitive split.** This isolates the
+remaining analytic input for the already named zero-period path-integral
+primitive candidate.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  -- Direct primitive derivative frontier for zero comparison periods.
+  sorry
+
+/--
+**Direct primitive existence from derivative correctness.** Once the named
+path-integral candidate has the required derivative, primitive existence is
+just the existential package around that candidate.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_direct_of_derivative_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_derivative :
+      exteriorDerivative 0 X
+          (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+        (ω : SmoothDiffForm 1 X)) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) :=
+  ⟨deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω,
+    hω_derivative⟩
+
+/--
 **Direct zero-period primitive frontier.** This is the primitive-existence
 input behind direct zero-period exactness.
 -/
@@ -821,8 +860,10 @@ theorem deRhamComparisonMap1_zero_period_primitive_direct_frontier
     (hω : deRhamComparisonMap1 X ω = 0) :
     ∃ θ : SmoothDiffForm 0 X,
       exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
-  -- Direct zero-period primitive frontier for the current comparison map.
-  sorry
+  exact deRhamComparisonMap1_zero_period_primitive_direct_of_derivative_frontier
+    X ω hω
+    (deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_frontier
+      X ω hω)
 
 /--
 **Direct exactness from primitive existence.** Since `ExactForm 0 X` is the
