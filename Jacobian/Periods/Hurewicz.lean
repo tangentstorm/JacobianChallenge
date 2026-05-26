@@ -3025,6 +3025,31 @@ theorem hurewicz_singularBoundary_eq_sc_f
   exact fun s => ⟨_, rfl⟩
 
 /--
+Finite individual-face coefficient form against explicit edge simplex
+generators.
+
+This is the local geometric leaf after flattening the finite
+two-simplex boundary sum into its signed one-face terms.
+-/
+theorem edgeChain_sum_singular_boundary_face_terms_edgeSimplex_scalar_coefficient_zero
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g)
+    (Simplex : Type) [Fintype Simplex]
+    (coeff : Simplex → ℤ)
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hB :
+      (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
+          (Finset.univ : Finset (Fin 3)),
+          coeff si.1 • (((-1 : ℤ) ^ (si.2 : ℕ)) •
+            (singularChainElement (singularSimplexFace (simplex si.1) si.2) :
+              SingularChainCoproduct (Polygon4g (g + 1)) 1))) =
+        ∑ e : Fin (2 * (g + 1)), v e •
+          (singularChainElement (edgeSimplex g e) :
+            SingularChainCoproduct (Polygon4g (g + 1)) 1)) :
+    v target = 0 := by
+  sorry
+
+/--
 Finite face-sum coefficient form against explicit edge simplex
 generators.
 
@@ -3046,7 +3071,46 @@ theorem edgeChain_sum_singular_boundary_faces_edgeSimplex_scalar_coefficient_zer
           (singularChainElement (edgeSimplex g e) :
             SingularChainCoproduct (Polygon4g (g + 1)) 1)) :
     v target = 0 := by
-  sorry
+  apply
+    edgeChain_sum_singular_boundary_face_terms_edgeSimplex_scalar_coefficient_zero
+      g target v Simplex coeff simplex
+  calc
+    (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
+          (Finset.univ : Finset (Fin 3)),
+          coeff si.1 • (((-1 : ℤ) ^ (si.2 : ℕ)) •
+            (singularChainElement (singularSimplexFace (simplex si.1) si.2) :
+              SingularChainCoproduct (Polygon4g (g + 1)) 1))) =
+        (∑ s : Simplex, coeff s •
+          (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
+            (singularChainElement (singularSimplexFace (simplex s) i) :
+              SingularChainCoproduct (Polygon4g (g + 1)) 1))) := by
+        symm
+        calc
+          (∑ s : Simplex, coeff s •
+              (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
+                (singularChainElement (singularSimplexFace (simplex s) i) :
+                  SingularChainCoproduct (Polygon4g (g + 1)) 1))) =
+              ∑ s : Simplex, ∑ i : Fin 3,
+                coeff s • (((-1 : ℤ) ^ (i : ℕ)) •
+                  (singularChainElement (singularSimplexFace (simplex s) i) :
+                    SingularChainCoproduct (Polygon4g (g + 1)) 1)) := by
+              refine Finset.sum_congr rfl ?_
+              intro s _hs
+              exact (Finset.sum_zsmul
+                (fun i : Fin 3 =>
+                  ((-1 : ℤ) ^ (i : ℕ)) •
+                    (singularChainElement (singularSimplexFace (simplex s) i) :
+                      SingularChainCoproduct (Polygon4g (g + 1)) 1))
+                Finset.univ (coeff s)).symm
+          _ = (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
+                  (Finset.univ : Finset (Fin 3)),
+                coeff si.1 • (((-1 : ℤ) ^ (si.2 : ℕ)) •
+                  (singularChainElement (singularSimplexFace (simplex si.1) si.2) :
+                    SingularChainCoproduct (Polygon4g (g + 1)) 1))) := by
+              rw [← Finset.sum_product']
+    _ = ∑ e : Fin (2 * (g + 1)), v e •
+          (singularChainElement (edgeSimplex g e) :
+            SingularChainCoproduct (Polygon4g (g + 1)) 1) := hB
 
 /--
 Finite face-sum coefficient form of edge-chain singular-boundary
