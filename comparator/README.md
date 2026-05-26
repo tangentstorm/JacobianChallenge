@@ -13,9 +13,9 @@ This is **Round 0** of `Jacobian/WorkPackets/TopDown.md`.
   `Quot.sound`, `Classical.choice`. Will reject any imported helper
   that contains `sorry`. Use this once all production-module
   obligations are discharged.
-- **`jacobian-staged.json`** — staged-refinement config. Identical to
+- **`jacobian-smoketest.json`** — smoketest config. Identical to
   the final config except `sorryAx` is added to `permitted_axioms`.
-  Use this during refinement to smoke-test that declaration shapes
+  Use this during refinement to smoketest that declaration shapes
   match (independently of whether helpers are fully proven).
 
 ## Usage
@@ -25,10 +25,10 @@ The comparator binary is not installed in this repo. To run:
 ```sh
 # Once comparator is checked out / installed elsewhere, point at the
 # config from this directory:
-lake env path/to/comparator-binary comparator/jacobian-staged.json
+lake env path/to/comparator-binary comparator/jacobian-smoketest.json
 ```
 
-The first smoke-test should be against `jacobian-staged.json` to confirm
+The first smoketest should be against `jacobian-smoketest.json` to confirm
 declaration shapes; the next is against `jacobian.json` once a sufficient
 subset of the bottom-up obligations is discharged.
 
@@ -80,8 +80,8 @@ report a mismatch on every entry until the universe story is repaired.
    abstract closedness/discreteness/compactness witnesses, with the
    `Type 0` concrete realisation supplied as a separate theorem).
 
-Until one of those lands, the staged-refinement workflow uses
-`jacobian-staged.json` for shape-checking everything except the universe
+Until one of those lands, the smoketest workflow uses
+`jacobian-smoketest.json` for shape-checking everything except the universe
 mismatch, and the universe mismatch is documented as a tracked obligation.
 
 ## Smoke test (when binary is available)
@@ -91,8 +91,8 @@ mismatch, and the universe mismatch is documented as a tracked obligation.
 lake build Jacobian.Challenge
 lake build Jacobian.Solution
 
-# 2. Run the staged-refinement comparator:
-lake env path/to/comparator-binary comparator/jacobian-staged.json
+# 2. Run the comparator smoketest:
+lake env path/to/comparator-binary comparator/jacobian-smoketest.json
 # Expected (until universe issue resolved): mismatch on every theorem
 # due to `Jacobian X`'s universe shape. Record exact error text.
 

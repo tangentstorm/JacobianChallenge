@@ -1,0 +1,92 @@
+name: Comparator smoketest
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "Jacobian/**"
+      - "comparator/**"
+      - "lakefile.toml"
+      - "lake-manifest.json"
+      - "lean-toolchain"
+      - ".github/workflows/comparator-smoketest.yml"
+  push:
+    branches: [main]
+    paths:
+      - "Jacobian/**"
+      - "comparator/**"
+      - "lakefile.toml"
+      - "lake-manifest.json"
+      - "lean-toolchain"
+      - ".github/workflows/comparator-smoketest.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  comparator-smoketest:
+    name: Comparator smoketest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Get Mathlib cache
+        run: lake exe cache get
+
+      - name: Build comparator
+        run: |
+          git clone --depth 1 --branch v4.28.0 https://github.com/leanprover/comparator.git /tmp/comparator
+          cd /tmp/comparator
+          lake build lean4export comparator
+
+      - name: Install fake landrun shim
+        run: |
+          mkdir -p /tmp/bin
+          cat > /tmp/bin/landrun <<'EOF'
+          #!/usr/bin/env bash
+          set -euo pipefail
+
+          args=("$@")
+          i=0
+          while [ "$i" -lt "${#args[@]}" ]; do
+            case "${args[$i]}" in
+              --best-effort|-ldd|-add-exec)
+                i=$((i + 1))
+                ;;
+              --ro|--rw|--rwx|--rox|--env)
+                i=$((i + 2))
+                ;;
+              --)
+                i=$((i + 1))
+                break
+                ;;
+              -*)
+                echo "fake landrun: unknown option ${args[$i]}" >&2
+                exit 2
+                ;;
+              *)
+                break
+                ;;
+            esac
+          done
+
+          if [ "$i" -ge "${#args[@]}" ]; then
+            echo "fake landrun: missing command" >&2
+            exit 2
+          fi
+
+          exec "${args[@]:$i}"
+          EOF
+          chmod +x /tmp/bin/landrun
+          echo "/tmp/bin" >> "$GITHUB_PATH"
+          echo "/tmp/comparator/.lake/build/bin" >> "$GITHUB_PATH"
+
+      - name: Run comparator smoketest with fake landrun
+        run: |
+          lake env /tmp/comparator/.lake/build/bin/comparator comparator/jacobian-smoketest.json
