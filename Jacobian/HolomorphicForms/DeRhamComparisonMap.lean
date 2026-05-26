@@ -809,6 +809,52 @@ theorem deRhamComparisonMap1_comparison_kernel_zero_period_frontier
   simpa [LinearMap.mem_ker] using hω_kernel
 
 /--
+**Direct zero-period exactness frontier.** This is the remaining comparison
+input for direct zero-period vanishing.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_direct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  -- Direct zero-period exactness frontier for the current comparison map.
+  sorry
+
+/--
+**Direct exact-form vanishing frontier.** Exact 1-forms vanish in the
+current zero-differential substrate.
+-/
+theorem deRhamComparisonMap1_exact_form_vanishes_direct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (η : SmoothDiffForm 1 X)
+    (hη_exact : η ∈ ExactForm 0 X) :
+    η = 0 := by
+  rcases hη_exact with ⟨θ, hθ⟩
+  simpa [ExactForm, exteriorDerivative] using hθ.symm
+
+/--
+**Direct zero-period vanishing from exactness.** Once a zero-period closed
+form is known exact, current-substrate exact-form vanishing gives the
+desired equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_direct_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_direct_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
 **Direct zero-period vanishing frontier.** This isolates the vanishing input
 needed by the current zero-differential path-integral derivative calculation.
 -/
@@ -820,9 +866,8 @@ theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_direct_frontier
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) = 0 := by
-  -- Direct zero-period vanishing frontier for the current closed-form
-  -- substrate.
-  sorry
+  exact deRhamComparisonMap1_zero_period_closed_form_vanishes_direct_of_exact_frontier
+    X ω (deRhamComparisonMap1_zero_period_exact_direct_frontier X ω hω)
 
 /--
 **Direct derivative correctness from vanishing.** In the current substrate
