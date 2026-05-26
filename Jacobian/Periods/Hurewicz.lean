@@ -3025,6 +3025,51 @@ theorem hurewicz_singularBoundary_eq_sc_f
   exact fun s => ⟨_, rfl⟩
 
 /--
+Scalar target-edge coefficient comparison for a finite signed face sum.
+
+The `targetCoeff_eq` field says that reading the coefficient of the
+target concrete edge simplex in the chain equality gives `v target`.
+The `targetCoeff_zero` field is the remaining geometric assertion that
+this target coefficient vanishes for a signed face-boundary sum.
+-/
+structure EdgeBoundarySignedFaceCoefficientComparison
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g)
+    (Simplex : Type) [Fintype Simplex]
+    (coeff : Simplex → ℤ)
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1))) where
+  targetCoeff :
+    ℤ
+  targetCoeff_eq :
+    targetCoeff = v target
+  targetCoeff_zero :
+    targetCoeff = 0
+
+/--
+Construct the scalar coefficient comparison data for the target edge
+from equality of a signed face-boundary sum with an edge-simplex sum.
+-/
+theorem edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_coefficient_comparison
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g)
+    (Simplex : Type) [Fintype Simplex]
+    (coeff : Simplex → ℤ)
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (_hB :
+      (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
+          (Finset.univ : Finset (Fin 3)),
+          (coeff si.1 * ((-1 : ℤ) ^ (si.2 : ℕ))) •
+            (singularChainElement (singularSimplexFace (simplex si.1) si.2) :
+              SingularChainCoproduct (Polygon4g (g + 1)) 1)) =
+        ∑ e : Fin (2 * (g + 1)), v e •
+          (singularChainElement (edgeSimplex g e) :
+            SingularChainCoproduct (Polygon4g (g + 1)) 1)) :
+    Nonempty
+      (EdgeBoundarySignedFaceCoefficientComparison
+        g target v Simplex coeff simplex) := by
+  sorry
+
+/--
 Finite individual-face coefficient form with combined signed integer
 coefficients.
 
@@ -3047,7 +3092,11 @@ theorem edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_scalar_coe
           (singularChainElement (edgeSimplex g e) :
             SingularChainCoproduct (Polygon4g (g + 1)) 1)) :
     v target = 0 := by
-  sorry
+  obtain ⟨data⟩ :=
+    edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_coefficient_comparison
+      g target v Simplex coeff simplex hB
+  rw [← data.targetCoeff_eq]
+  exact data.targetCoeff_zero
 
 /--
 Finite individual-face coefficient form against explicit edge simplex
