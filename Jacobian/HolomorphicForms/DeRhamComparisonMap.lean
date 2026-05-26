@@ -264,6 +264,62 @@ noncomputable def deRhamComparisonMap1_prescribed_period_closed_form_frontier
     (deRhamComparisonMap1_prescribed_period_cech_data_frontier X φ)
 
 /--
+**Frontier provider for local-representative period correctness.** This is
+the analytic period computation for the closed form assembled from explicit
+local representative data.
+-/
+theorem deRhamComparisonMap1_local_representatives_period_correct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_local_representatives_frontier
+          X φ data localData) = φ := by
+  -- The remaining period-comparison equation identifies integration of the
+  -- assembled local representative with the prescribed cycle functional.
+  sorry
+
+/--
+**Frontier provider transporting Čech period correctness.** This specializes
+the local-representative period computation to the representatives extracted
+from the prescribed-period Čech package.
+-/
+theorem deRhamComparisonMap1_prescribed_period_cech_period_correct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_prescribed_period_cech_frontier
+          X φ data) = φ := by
+  unfold deRhamComparisonMap1_closed_form_from_prescribed_period_cech_frontier
+  exact deRhamComparisonMap1_local_representatives_period_correct_frontier X φ data
+    (deRhamComparisonMap1_prescribed_period_local_representatives_frontier X φ data)
+
+/--
+**Frontier provider for prescribed-period closed-form correctness.** This
+transports the Čech period-correctness package to the default prescribed
+closed-form candidate.
+-/
+theorem deRhamComparisonMap1_prescribed_period_closed_form_period_correct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_prescribed_period_closed_form_frontier X φ) = φ := by
+  unfold deRhamComparisonMap1_prescribed_period_closed_form_frontier
+  exact deRhamComparisonMap1_prescribed_period_cech_period_correct_frontier X φ
+    (deRhamComparisonMap1_prescribed_period_cech_data_frontier X φ)
+
+/--
 **Frontier provider for prescribed-period correctness.** The closed
 representative constructed by
 `deRhamComparisonMap1_prescribed_period_closed_form_frontier` integrates to
@@ -277,9 +333,7 @@ theorem deRhamComparisonMap1_prescribed_period_correct_frontier
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
     deRhamComparisonMap1 X
         (deRhamComparisonMap1_prescribed_period_closed_form_frontier X φ) = φ := by
-  -- The remaining period-comparison equation identifies integration of the
-  -- constructed closed representative with the prescribed cycle functional.
-  sorry
+  exact deRhamComparisonMap1_prescribed_period_closed_form_period_correct_frontier X φ
 
 /--
 **Frontier provider for prescribed periods.** Every integral-cycle
