@@ -3025,6 +3025,30 @@ theorem hurewicz_singularBoundary_eq_sc_f
   exact fun s => ⟨_, rfl⟩
 
 /--
+Finite face-sum coefficient form against explicit edge simplex
+generators.
+
+This is the local geometric leaf after expanding the right-hand edge
+chains to the singular one-simplices that generate them.
+-/
+theorem edgeChain_sum_singular_boundary_faces_edgeSimplex_scalar_coefficient_zero
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g)
+    (Simplex : Type) [Fintype Simplex]
+    (coeff : Simplex → ℤ)
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hB :
+      (∑ s : Simplex, coeff s •
+          (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) •
+            (singularChainElement (singularSimplexFace (simplex s) i) :
+              SingularChainCoproduct (Polygon4g (g + 1)) 1))) =
+        ∑ e : Fin (2 * (g + 1)), v e •
+          (singularChainElement (edgeSimplex g e) :
+            SingularChainCoproduct (Polygon4g (g + 1)) 1)) :
+    v target = 0 := by
+  sorry
+
+/--
 Finite face-sum coefficient form of edge-chain singular-boundary
 independence.
 
@@ -3044,7 +3068,10 @@ theorem edgeChain_sum_singular_boundary_faces_scalar_coefficient_zero
               SingularChainCoproduct (Polygon4g (g + 1)) 1))) =
         ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) :
     v target = 0 := by
-  sorry
+  apply
+    edgeChain_sum_singular_boundary_faces_edgeSimplex_scalar_coefficient_zero
+      g target v Simplex coeff simplex
+  simpa [edgeChain] using hB
 
 /--
 Finite-simplex coefficient form of edge-chain singular-boundary
