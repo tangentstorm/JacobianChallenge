@@ -824,6 +824,42 @@ theorem deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_
   simpa [ExactForm, exteriorDerivative] using hθ.symm
 
 /--
+**Closed-form vanishing for the direct primitive exactness primitive
+derivative split.** This isolates the comparison input needed before the
+zero-substrate derivative calculation.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (_hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  -- Direct primitive exactness primitive closed-form vanishing frontier.
+  sorry
+
+/--
+**Direct primitive exactness primitive derivative from vanishing.** The
+primitive candidate and exterior derivative are zero in the current
+substrate, so closed-form vanishing proves derivative correctness.
+-/
+theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_of_vanishing_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0)
+    (hω_zero : (ω : SmoothDiffForm 1 X) = 0) :
+    exteriorDerivative 0 X
+        (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
+      (ω : SmoothDiffForm 1 X) := by
+  rw [hω_zero]
+  simp [deRhamComparisonMap1_zero_period_path_integral_primitive_frontier,
+    exteriorDerivative]
+
+/--
 **Derivative correctness for the direct primitive exactness primitive split.**
 This isolates the remaining comparison input for the named path-integral
 primitive candidate.
@@ -838,8 +874,11 @@ theorem deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_pri
     exteriorDerivative 0 X
         (deRhamComparisonMap1_zero_period_path_integral_primitive_frontier X ω hω) =
       (ω : SmoothDiffForm 1 X) := by
-  -- Direct primitive exactness primitive derivative frontier for zero periods.
-  sorry
+  exact
+    deRhamComparisonMap1_zero_period_path_integral_derivative_for_direct_primitive_exactness_primitive_of_vanishing_frontier
+      X ω hω
+      (deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+        X ω hω)
 
 /--
 **Direct primitive exactness primitive from derivative correctness.** Once
