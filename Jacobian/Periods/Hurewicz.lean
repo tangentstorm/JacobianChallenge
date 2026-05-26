@@ -3373,20 +3373,29 @@ theorem edgeBoundaryCoefficientScalarCochainData
     edgeBoundaryCoefficientRawScalarCochainData_normalized g target
   exact ⟨edgeBoundaryCoefficientScalarCochainData_of_raw g target raw hedge⟩
 
-/-- Local provider for the scalar edge-coordinate cocycle condition. -/
-theorem edgeBoundaryCoefficientScalarCochain_boundary_zero
+/--
+Local provider for a normalized scalar edge-coordinate cocycle.
+
+The statement is existential: it asks for one normalized scalar cochain
+with the cocycle condition, not for every edge-normalized cochain to
+kill singular two-boundaries.
+-/
+theorem edgeBoundaryCoefficientScalarCochainData_boundary_zero
     (g : ℕ) (target : Fin (2 * (g + 1)))
-    (cochain : EdgeBoundaryCoefficientScalarCochainData g target) :
-    EdgeBoundaryCoefficientScalarCochainBoundaryZero g target cochain := by
+    : ∃ cochain : EdgeBoundaryCoefficientScalarCochainData g target,
+      EdgeBoundaryCoefficientScalarCochainBoundaryZero g target cochain := by
+  obtain ⟨cochain⟩ := edgeBoundaryCoefficientScalarCochainData g target
+  refine ⟨cochain, ?_⟩
   sorry
 
 /-- Local provider for scalar edge-coordinate singular cocycles. -/
 theorem edgeBoundaryCoefficientScalarData
     (g : ℕ) (target : Fin (2 * (g + 1))) :
     Nonempty (EdgeBoundaryCoefficientScalarData g target) := by
-  obtain ⟨cochain⟩ := edgeBoundaryCoefficientScalarCochainData g target
+  obtain ⟨cochain, hboundary⟩ :=
+    edgeBoundaryCoefficientScalarCochainData_boundary_zero g target
   exact ⟨edgeBoundaryCoefficientScalarData_of_cochain g target cochain
-    (edgeBoundaryCoefficientScalarCochain_boundary_zero g target cochain)⟩
+    hboundary⟩
 
 /-- Local provider for the chain-level edge coefficient functional. -/
 theorem edgeBoundaryCoefficientSimplexData (g : ℕ) :
