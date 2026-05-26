@@ -418,7 +418,209 @@ noncomputable def SimplePoleToSphereData.of_complexPrincipalPart
   simple_pole_order := hF.orderAt_pole
   pole_modulus := hF.modulus_tendsto
 
+/-! ### `d`-keyed branched-cover data for a `SimplePoleToSphereData` -/
+
 omit [CompactSpace X] [ConnectedSpace X] in
+/--
+**`d`-keyed `MeromorphicAtX` lift.** Given a `SimplePoleToSphereData X P`,
+the canonical finite lift `(d.toMap ·).getD 0` is `MeromorphicAtX` at every
+point. This is the `meromorphic_getD` content of `AnalyticData`, factored
+out as a `d`-keyed helper so that one can build a `MeromorphicFunctionType`
+from `d` *before* a `MeromorphicMapToSphere` shell exists.
+-/
+theorem meromorphicAt_getD_of_simplePoleToSphereData
+    (P : X) (d : SimplePoleToSphereData X P) :
+    ∀ p : X,
+      JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX
+        (fun q => (d.toMap q).getD 0) p := by
+  classical
+  intro p
+  have hmer := d.meromorphic_finiteLift p
+  unfold JacobianChallenge.HolomorphicForms.VanishingOrder.MeromorphicAtX at hmer ⊢
+  refine hmer.congr ?_
+  rw [show ⇑(extChartAt 𝓘(ℂ) p) = chartAt ℂ p from
+    JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_eq_chartAt p]
+  rw [show ⇑(extChartAt 𝓘(ℂ) p).symm = (chartAt ℂ p).symm from
+    JacobianChallenge.HolomorphicForms.VanishingOrder.extChartAt_symm_eq_chartAt_symm p]
+  show (d.finiteLift ∘ (chartAt ℂ p).symm)
+      =ᶠ[𝓝[≠] (chartAt ℂ p p)] (fun q => (d.toMap q).getD 0) ∘ (chartAt ℂ p).symm
+  by_cases hpP : p = P
+  · subst hpP
+    rw [Filter.EventuallyEq, eventually_nhdsWithin_iff]
+    have htarget : (chartAt ℂ p).target ∈ 𝓝 (chartAt ℂ p p) :=
+      (chartAt ℂ p).open_target.mem_nhds
+        ((chartAt ℂ p).map_source (mem_chart_source ℂ p))
+    filter_upwards [htarget] with t ht ht_ne
+    have ht_ne' : t ≠ chartAt ℂ p p := by
+      intro heq
+      apply ht_ne
+      show t ∈ ({chartAt ℂ p p} : Set ℂ)
+      rw [heq]
+      exact Set.mem_singleton _
+    have hsymm_ne : (chartAt ℂ p).symm t ≠ p := by
+      intro heq
+      have h1 : (chartAt ℂ p) ((chartAt ℂ p).symm t) = t :=
+        (chartAt ℂ p).right_inv ht
+      rw [heq] at h1
+      exact ht_ne' h1.symm
+    exact (d.getD_toMap_off_pole hsymm_ne).symm
+  · have h_sym_eq :
+        (chartAt ℂ p).symm (chartAt ℂ p p) = p :=
+      (chartAt ℂ p).left_inv (mem_chart_source ℂ p)
+    have h_cont : ContinuousAt (chartAt ℂ p).symm (chartAt ℂ p p) := by
+      have hsrc : chartAt ℂ p p ∈ (chartAt ℂ p).target :=
+        (chartAt ℂ p).map_source (mem_chart_source ℂ p)
+      exact (chartAt ℂ p).continuousAt_symm hsrc
+    have hP_compl_nhd_p : ({P}ᶜ : Set X) ∈ 𝓝 p :=
+      isOpen_compl_singleton.mem_nhds hpP
+    have hP_compl_nhd_sym : ({P}ᶜ : Set X) ∈ 𝓝 ((chartAt ℂ p).symm (chartAt ℂ p p)) := by
+      rw [h_sym_eq]; exact hP_compl_nhd_p
+    have h_nhd : ∀ᶠ t in 𝓝 (chartAt ℂ p p),
+        (chartAt ℂ p).symm t ∈ ({P}ᶜ : Set X) :=
+      h_cont.preimage_mem_nhds hP_compl_nhd_sym
+    rw [Filter.EventuallyEq]
+    refine Filter.Eventually.filter_mono nhdsWithin_le_nhds ?_
+    filter_upwards [h_nhd] with t htne
+    exact (d.getD_toMap_off_pole htne).symm
+
+omit [ConnectedSpace X] in
+/--
+Package a `SimplePoleToSphereData` as a `MeromorphicFunctionType`, so
+that `liftToCp1_*` infrastructure of `MeromorphicToCp1.lean` can be
+applied to its underlying `toMap` without needing a surrounding
+`MeromorphicMapToSphere` shell.
+-/
+noncomputable def SimplePoleToSphereData.toMeromorphicFunctionType
+    (P : X) (d : SimplePoleToSphereData X P) :
+    MeromorphicFunctionType X where
+  toFun := d.toMap
+  toFun_continuous := d.continuous_toMap
+  isMeromorphic := meromorphicAt_getD_of_simplePoleToSphereData P d
+
+omit [CompactSpace X] [ConnectedSpace X] in
+@[simp] theorem SimplePoleToSphereData.toMeromorphicFunctionType_toFun
+    (P : X) (d : SimplePoleToSphereData X P) :
+    (d.toMeromorphicFunctionType P).toFun = d.toMap := rfl
+
+omit [CompactSpace X] [ConnectedSpace X] in
+/--
+**`d`-keyed nonconstancy.** The `toMap` of a `SimplePoleToSphereData` is
+not constant: it is `∞` at `P` and finite off `P` (and there are at
+least two distinct points on a complex 1-manifold).
+-/
+theorem nonconstant_toMap_of_simplePoleToSphereData
+    (P : X) (d : SimplePoleToSphereData X P) :
+    ¬ ∃ y₀ : OnePoint ℂ, ∀ x : X, d.toMap x = y₀ := by
+  classical
+  haveI : Nonempty X := ⟨P⟩
+  obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
+  intro ⟨c, hc⟩
+  by_cases haP : a = P
+  · have hbP : b ≠ P := by intro hbP; exact hab (haP.trans hbP.symm)
+    have hcP : c = OnePoint.infty := by
+      rw [← hc a, haP]; exact d.toMap_at_pole
+    have hb : d.toMap b = c := hc b
+    rw [hcP] at hb
+    exact d.toMap_ne_infty_off_pole hbP hb
+  · have hcP : c = OnePoint.infty := by
+      rw [← hc P]
+      exact d.toMap_at_pole
+    have ha : d.toMap a = c := hc a
+    rw [hcP] at ha
+    exact d.toMap_ne_infty_off_pole haP ha
+
+omit [CompactSpace X] [ConnectedSpace X] in
+/--
+**`d`-keyed fiber identification.** The fiber `d.toMap ⁻¹' {∞}` is the
+singleton `{P}`: the value `∞` is taken only at `P`.
+-/
+theorem preimage_infty_eq_singleton_of_simplePoleToSphereData
+    (P : X) (d : SimplePoleToSphereData X P) :
+    d.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} = {P} := by
+  classical
+  ext x
+  constructor
+  · intro hx
+    have hxinfty : d.toMap x = (OnePoint.infty : OnePoint ℂ) := hx
+    by_contra hne
+    exact d.toMap_ne_infty_off_pole hne hxinfty
+  · intro hxP
+    have hx : x = P := hxP
+    subst hx
+    exact d.toMap_at_pole
+
+/--
+**`d`-keyed branched-cover data for a `SimplePoleToSphereData`.**
+
+Given a `SimplePoleToSphereData X P`, the map `d.toMap : X → OnePoint ℂ`
+admits `BranchedCoverData` whose branched degree over `∞` is `1` (the
+degree of the simple pole at `P`).
+
+This is the chicken-and-egg-free analogue of
+`MeromorphicMapToSphere.branchedCoverDataOfPoleDegree_of_simple_pole`,
+used to fill the structural `hasBranchedCoverDataOfPoleDegree` field of
+the inline `MeromorphicMapToSphere` being constructed in
+`singlePoleAnalyticData_of_simplePoleToSphereData` and
+`toGenusZeroFixedPoleAnalyticRRWitness`.
+-/
+theorem branchedCoverData_of_simplePoleToSphereData
+    (P : X) (d : SimplePoleToSphereData X P) :
+    ∃ (h : JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) d.toMap),
+      JacobianChallenge.HolomorphicForms.branchedDegree h = 1 := by
+  classical
+  -- Step A. Package `d` as a `MeromorphicFunctionType` and obtain
+  -- holomorphicity + weighted-fiber conservation of `d.toMap`.
+  set mft : MeromorphicFunctionType X :=
+    d.toMeromorphicFunctionType P with hmft
+  have hfHol : JacobianChallenge.HolomorphicForms.IsHolomorphic d.toMap := by
+    have := liftToCp1_isHolomorphic X mft True.intro
+    simpa [hmft] using this
+  have hWeighted :
+      JacobianChallenge.HolomorphicForms.HasWeightedFiberConservation d.toMap := by
+    have := liftToCp1_hasWeightedFiberConservation X mft True.intro
+    simpa [hmft] using this
+  -- Step B. Nonconstancy of `d.toMap`.
+  have hnc' : ¬ ∃ y₀ : OnePoint ℂ, ∀ x : X, d.toMap x = y₀ :=
+    nonconstant_toMap_of_simplePoleToSphereData P d
+  -- Step C. Build the branched-cover datum via the analytic constructor.
+  set hbc :
+      JacobianChallenge.HolomorphicForms.BranchedCoverData X (OnePoint ℂ) d.toMap :=
+    JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic
+      hfHol hWeighted hnc' with hbc_def
+  refine ⟨hbc, ?_⟩
+  -- Step D. Compute the branched degree over ∞.
+  rw [JacobianChallenge.HolomorphicForms.branchedDegree_eq_weightedFiberCard hbc
+      (OnePoint.infty : OnePoint ℂ)]
+  have hfib_eq : d.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)} = ({P} : Set X) :=
+    preimage_infty_eq_singleton_of_simplePoleToSphereData P d
+  have hfib_finite :
+      hbc.finite_fiber (OnePoint.infty : OnePoint ℂ) =
+        (by exact hfib_eq ▸ Set.finite_singleton P :
+          (d.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)}).Finite) := by
+    apply Subsingleton.elim
+  show ((hbc.finite_fiber (OnePoint.infty : OnePoint ℂ)).toFinset).sum
+        hbc.ramificationIndex = 1
+  have hto : (hbc.finite_fiber (OnePoint.infty : OnePoint ℂ)).toFinset = {P} := by
+    rw [hfib_finite]
+    rw [show (hfib_eq ▸ Set.finite_singleton P :
+                (d.toMap ⁻¹' {(OnePoint.infty : OnePoint ℂ)}).Finite).toFinset =
+              (Set.finite_singleton P).toFinset from by
+      ext x
+      simp [hfib_eq]]
+    ext x
+    simp
+  rw [hto]
+  rw [Finset.sum_singleton]
+  -- Step E. Identify the ramification index with `mapAnalyticOrderAt`, then with `1`.
+  have hcompat :
+      hbc.RamificationIndexCompatible :=
+    JacobianChallenge.Blueprint.branchedCoverData_of_nonconstant_holomorphic_compatible
+      hfHol hWeighted hnc'
+  have hrami :
+      hbc.ramificationIndex P =
+        JacobianChallenge.HolomorphicForms.mapAnalyticOrderAt d.toMap P :=
+    hcompat P (hfHol.holomorphicAt P)
+  rw [hrami, d.simple_pole_order]
 
 theorem singlePoleAnalyticData_of_simplePoleToSphereData
     (P : X) (d : SimplePoleToSphereData X P) :
@@ -489,16 +691,18 @@ theorem singlePoleAnalyticData_of_simplePoleToSphereData
       exact one_ne_zero hx
     exact d.toMap_off_pole x hxP
   -- (Structural strengthening 2026-05-25) `hasBranchedCoverDataOfPoleDegree`:
-  -- the analytic data on `d` provides what's needed; we delegate to
-  -- `branchedCoverDataOfPoleDegree_of_simple_pole` via the outer record's
-  -- branched-cover route data. As a temporary measure, since the outer
-  -- record's `analyticData` and `nonconstant` are populated later in the
-  -- same constructor, we discharge this field with `sorry` and leave the
-  -- honest content in the separately-populated `BranchedCoverDataOfPoleDegree`
-  -- structure built downstream. Filling this honestly requires refactoring
-  -- the constructor to forward-declare these pieces; not needed for the
-  -- `degree_one_meromorphicMap_implies_analyticGenus_zero` proof path.
-  · exact sorry
+  -- discharged via the `d`-keyed helper `branchedCoverData_of_simplePoleToSphereData`,
+  -- which avoids the chicken-and-egg dependence on the surrounding
+  -- `MeromorphicMapToSphere` shell. The helper produces an `∃ h, branchedDegree h = 1`;
+  -- the field signature wants `branchedDegree h = (Divisor.point P).degree.toNat`,
+  -- which equals `1` via `Divisor.degree_point`.
+  · intro _hcont
+    obtain ⟨h, hdeg⟩ := branchedCoverData_of_simplePoleToSphereData P d
+    refine ⟨h, ?_⟩
+    rw [hdeg]
+    show (1 : ℕ) = (Divisor.point P : Divisor X).degree.toNat
+    rw [Divisor.degree_point]
+    rfl
   -- `nonconstant`: pick Q ≠ P; d.toMap Q ≠ d.toMap P = ∞.
   · -- The compact connected Riemann surface has Nonempty X (because P : X), so
     -- there is at least one other point.
@@ -878,7 +1082,7 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] [CompactSpace X]
   [JacobianChallenge.Periods.StableChartAt ℂ X]
   [FiniteDimensionalHolomorphicOneForms ℂ X]
 
-omit [ConnectedSpace X] [FiniteDimensionalHolomorphicOneForms ℂ X] in
+omit [FiniteDimensionalHolomorphicOneForms ℂ X] in
 
 theorem toSinglePoleMeromorphicAnalyticData
     {P : X} (s : SimplePoleRRSection X P) :
@@ -966,11 +1170,15 @@ noncomputable def toGenusZeroFixedPoleAnalyticRRWitness
       exact one_ne_zero hx
     exact d.toMap_off_pole x hxP
   -- (Structural strengthening 2026-05-25) `hasBranchedCoverDataOfPoleDegree`:
-  -- placeholder; the branched-cover content is supplied through the outer
-  -- record's `analyticData` and `poleModulusData`, which downstream callers
-  -- consume separately. Filling this honestly requires the same content
-  -- already proven in `branchedCoverDataOfPoleDegree_of_simple_pole`.
-  · exact sorry
+  -- discharged via the `d`-keyed helper `branchedCoverData_of_simplePoleToSphereData`
+  -- (same content as in `singlePoleAnalyticData_of_simplePoleToSphereData`).
+  · intro _hcont
+    obtain ⟨h, hdeg⟩ := branchedCoverData_of_simplePoleToSphereData P d
+    refine ⟨h, ?_⟩
+    rw [hdeg]
+    show (1 : ℕ) = (Divisor.point P : Divisor X).degree.toNat
+    rw [Divisor.degree_point]
+    rfl
   -- `nonconstant`. Same proof as in `singlePoleAnalyticData_of_simplePoleToSphereData`.
   · haveI : Nonempty X := ⟨P⟩
     obtain ⟨a, b, hab⟩ := exists_two_distinct_points_of_chartedSpaceComplex (X := X)
