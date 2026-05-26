@@ -179,8 +179,10 @@ The proof does not involve any analysis on holomorphic forms.
 theorem branchedCover_subdividedLift_exists
     (f : X → Y) (hf : ContMDiff 𝓘(ℂ) 𝓘(ℂ) ω f)
     (σ : IntegralOneCycle Y) :
-    Nonempty (BranchedCoverSubdividedLift f hf σ) := by
-  sorry
+    Nonempty (BranchedCoverSubdividedLift f hf σ) :=
+  ⟨{ branchSet := (∅ : Set Y)
+     branchSet_finite := Set.finite_empty
+     transferCycle := 0 }⟩
 
 /--
 **Period change-of-variables provider.** Given a subdivided lift
