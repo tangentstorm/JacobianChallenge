@@ -3054,6 +3054,14 @@ noncomputable def edgeSimplexTargetCoefficient
           0
 
 /--
+Concrete edge singular simplices are distinct for distinct edge indices.
+-/
+theorem edgeSimplex_injective
+    (g : ℕ) :
+    Function.Injective (edgeSimplex g) := by
+  sorry
+
+/--
 Reading the coefficient of the target concrete edge simplex in a chain
 equality between signed face terms and the concrete edge-simplex sum
 identifies the explicit face coefficient with the corresponding
@@ -3082,11 +3090,45 @@ theorem signedFaceTargetEdgeCoefficient_eq_edgeSimplexTargetCoefficient_of_sum
 The target coefficient of the concrete edge-simplex sum is the target
 coordinate of the coefficient vector.
 -/
+theorem edgeSimplexTargetCoefficient_eq_of_injective
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g)
+    (hinj : Function.Injective (edgeSimplex g)) :
+    edgeSimplexTargetCoefficient g target v = v target := by
+  classical
+  unfold edgeSimplexTargetCoefficient
+  calc
+    (∑ e : Fin (2 * (g + 1)),
+        v e *
+          if edgeSimplex g e = edgeSimplex g target then
+            (1 : ℤ)
+          else
+            0) =
+        v target *
+          if edgeSimplex g target = edgeSimplex g target then
+            (1 : ℤ)
+          else
+            0 := by
+        apply Finset.sum_eq_single target
+        · intro e _he hne
+          have hneq : edgeSimplex g e ≠ edgeSimplex g target := by
+            intro h
+            exact hne (hinj h)
+          simp [hneq]
+        · intro htarget
+          simp at htarget
+    _ = v target := by
+      simp
+
+/--
+The target coefficient of the concrete edge-simplex sum is the target
+coordinate of the coefficient vector.
+-/
 theorem edgeSimplexTargetCoefficient_eq
     (g : ℕ) (target : Fin (2 * (g + 1)))
     (v : Polygon4gAbelianization g) :
-    edgeSimplexTargetCoefficient g target v = v target := by
-  sorry
+    edgeSimplexTargetCoefficient g target v = v target :=
+  edgeSimplexTargetCoefficient_eq_of_injective g target v (edgeSimplex_injective g)
 
 /--
 Reading the coefficient of the target concrete edge simplex in a chain
