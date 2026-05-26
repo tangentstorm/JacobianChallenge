@@ -794,6 +794,53 @@ theorem deRhamComparisonMap1_zero_period_mem_kernel_frontier
   simpa [LinearMap.mem_ker] using hω
 
 /--
+**Comparison-kernel zero-period frontier.** Membership in the kernel of the
+degree-1 comparison map is exactly the zero-period hypothesis needed by the
+injectivity branch.
+-/
+theorem deRhamComparisonMap1_comparison_kernel_zero_period_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
+    deRhamComparisonMap1 X ω = 0 := by
+  simpa [LinearMap.mem_ker] using hω_kernel
+
+/--
+**Zero-period exactness frontier.** This is the remaining injectivity input:
+a closed 1-form whose comparison periods vanish is exact.
+-/
+theorem deRhamComparisonMap1_zero_period_mem_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  -- Zero-period injectivity frontier: the degree-1 comparison map has
+  -- exact kernel on closed 1-forms.
+  sorry
+
+/--
+**Comparison-kernel exactness from zero periods.** This composes the
+definitional kernel-to-zero-period conversion with the zero-period exactness
+frontier.
+-/
+theorem deRhamComparisonMap1_comparison_kernel_mem_exact_of_zero_period_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X :=
+  deRhamComparisonMap1_zero_period_mem_exact_frontier X ω
+    (deRhamComparisonMap1_comparison_kernel_zero_period_frontier X ω hω_kernel)
+
+/--
 **Comparison-kernel exactness frontier.** This isolates the comparison
 input that kernel elements are exact closed forms.
 -/
@@ -804,10 +851,9 @@ theorem deRhamComparisonMap1_comparison_kernel_mem_exact_frontier
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
     (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
-    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
-  -- Comparison exactness frontier: the degree-1 comparison kernel consists
-  -- of exact 1-forms.
-  sorry
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X :=
+  deRhamComparisonMap1_comparison_kernel_mem_exact_of_zero_period_frontier
+    X ω hω_kernel
 
 /--
 **Exact forms vanish in the current zero-differential substrate.** Since
