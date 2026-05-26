@@ -3024,13 +3024,66 @@ theorem hurewicz_singularBoundary_eq_sc_f
   split_ifs <;> simp_all +decide [ComplexShape.prev]
   exact fun s => ⟨_, rfl⟩
 
+noncomputable def signedFaceTargetEdgeCoefficient
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (Simplex : Type) [Fintype Simplex]
+    (coeff : Simplex → ℤ)
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1))) :
+    ℤ := by
+  classical
+  exact
+    ∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
+        (Finset.univ : Finset (Fin 3)),
+      (coeff si.1 * ((-1 : ℤ) ^ (si.2 : ℕ))) *
+        if singularSimplexFace (simplex si.1) si.2 = edgeSimplex g target then
+          (1 : ℤ)
+        else
+          0
+
+/--
+Reading the coefficient of the target concrete edge simplex in a chain
+equality between signed face terms and the concrete edge-simplex sum
+gives the corresponding coordinate of the edge vector.
+-/
+theorem signedFaceTargetEdgeCoefficient_eq_of_edgeSimplex_sum
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g)
+    (Simplex : Type) [Fintype Simplex]
+    (coeff : Simplex → ℤ)
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (_hB :
+      (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
+          (Finset.univ : Finset (Fin 3)),
+          (coeff si.1 * ((-1 : ℤ) ^ (si.2 : ℕ))) •
+            (singularChainElement (singularSimplexFace (simplex si.1) si.2) :
+              SingularChainCoproduct (Polygon4g (g + 1)) 1)) =
+        ∑ e : Fin (2 * (g + 1)), v e •
+          (singularChainElement (edgeSimplex g e) :
+            SingularChainCoproduct (Polygon4g (g + 1)) 1)) :
+    signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = v target := by
+  sorry
+
+/--
+The explicit target-edge coefficient of a signed finite face-boundary
+sum vanishes.  This is the remaining geometric face-cancellation leaf.
+-/
+theorem signedFaceTargetEdgeCoefficient_zero
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (Simplex : Type) [Fintype Simplex]
+    (coeff : Simplex → ℤ)
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1))) :
+    signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0 := by
+  sorry
+
 /--
 Scalar target-edge coefficient comparison for a finite signed face sum.
 
-The `targetCoeff_eq` field says that reading the coefficient of the
-target concrete edge simplex in the chain equality gives `v target`.
-The `targetCoeff_zero` field is the remaining geometric assertion that
-this target coefficient vanishes for a signed face-boundary sum.
+The fields are stated directly for the explicit signed count of those
+face terms whose induced one-simplex is the target concrete edge
+simplex. The `targetCoeff_eq` field says that reading this coefficient
+in the chain equality gives `v target`, and `targetCoeff_zero` is the
+remaining geometric assertion that this coefficient vanishes for the
+signed face-boundary sum.
 -/
 structure EdgeBoundarySignedFaceCoefficientComparison
     (g : ℕ) (target : Fin (2 * (g + 1)))
@@ -3038,12 +3091,10 @@ structure EdgeBoundarySignedFaceCoefficientComparison
     (Simplex : Type) [Fintype Simplex]
     (coeff : Simplex → ℤ)
     (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1))) where
-  targetCoeff :
-    ℤ
   targetCoeff_eq :
-    targetCoeff = v target
+    signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = v target
   targetCoeff_zero :
-    targetCoeff = 0
+    signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = 0
 
 /--
 Construct the scalar coefficient comparison data for the target edge
@@ -3067,7 +3118,15 @@ theorem edgeChain_sum_singular_boundary_signed_face_terms_edgeSimplex_coefficien
     Nonempty
       (EdgeBoundarySignedFaceCoefficientComparison
         g target v Simplex coeff simplex) := by
-  sorry
+  exact
+    ⟨{
+      targetCoeff_eq :=
+        signedFaceTargetEdgeCoefficient_eq_of_edgeSimplex_sum
+          g target v Simplex coeff simplex _hB
+      targetCoeff_zero :=
+        signedFaceTargetEdgeCoefficient_zero
+          g target Simplex coeff simplex
+    }⟩
 
 /--
 Finite individual-face coefficient form with combined signed integer
