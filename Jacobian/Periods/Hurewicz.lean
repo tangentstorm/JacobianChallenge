@@ -3072,6 +3072,14 @@ def EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized
   ∀ e : Fin (2 * (g + 1)),
     raw.coeffSimplexZ (edgeSimplex g e) = if e = target then 1 else 0
 
+/-- Cocycle condition for a raw scalar edge-coordinate cochain. -/
+def EdgeBoundaryCoefficientRawScalarCochainBoundaryZero
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (raw : EdgeBoundaryCoefficientRawScalarCochainData g target) : Prop :=
+  ∀ σ : C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)),
+    (∑ i : Fin 3, ((-1 : ℤ) ^ (i : ℕ)) *
+      raw.coeffSimplexZ (singularSimplexFace σ i)) = 0
+
 structure EdgeBoundaryCoefficientScalarCochainData
     (g : ℕ) (target : Fin (2 * (g + 1))) where
   coeffSimplexZ :
@@ -3300,77 +3308,27 @@ theorem polygon4g_single_sum_coefficients
   simp [Pi.single_apply]
 
 /--
-The midpoint points of the chosen edge representatives are indexed
-without collisions in the polygon quotient.
-
-This isolates the quotient-geometric separation fact for interiors of
-the chosen representative arcs.
--/
-theorem polygon4g_edge_midpoint_injective (g : ℕ) :
-    Function.Injective (fun i : Fin (2 * (g + 1)) =>
-      Polygon4g.mk (g + 1)
-        (boundaryParam (g + 1) (edgeArcIdx g i) (1 / 2 : ℝ))) := by
-  sorry
-
-/-- The arithmetic boundary-arc index attached to each edge is injective. -/
-theorem edgeArcIdx_injective (g : ℕ) :
-    Function.Injective (edgeArcIdx g) := by
-  intro i j h
-  apply Fin.ext
-  unfold edgeArcIdx at h
-  have hmod : i.val % 2 = j.val % 2 := by omega
-  have hdiv : i.val / 2 = j.val / 2 := by omega
-  omega
-
-/--
-The concrete edge singular simplices are indexed without collisions.
-
-Evaluating equal singular simplices at the midpoint of the standard
-one-simplex reduces the statement to midpoint separation of the
-representative boundary arcs.
--/
-theorem edgeSimplex_injective (g : ℕ) :
-    Function.Injective (edgeSimplex g) := by
-  intro i j h
-  apply polygon4g_edge_midpoint_injective g
-  let t : unitInterval := ⟨(1 / 2 : ℝ), by norm_num⟩
-  have hs := congrFun (congrArg ContinuousMap.toFun h)
-    (stdSimplexHomeomorphUnitInterval.symm t)
-  simpa [edgeSimplex_apply, t] using hs
-
-/--
-A raw scalar edge-coordinate cochain together with its
+A raw scalar edge-coordinate cocycle together with its
 edge-normalization proof.
 
-The cochain is the indicator of the concrete target edge simplex.  The
-only geometric input needed here is that the chosen edge simplex
-representatives are distinct.
+This is the remaining scalar-coordinate geometric input: construct an
+integer singular one-cocycle whose values on the concrete edge loops
+are the Kronecker delta for `target`.
 -/
-theorem edgeBoundaryCoefficientRawScalarCochainData_normalized
+theorem edgeBoundaryCoefficientRawScalarCochainData_normalized_boundary_zero
     (g : ℕ) (target : Fin (2 * (g + 1)))
     : ∃ raw : EdgeBoundaryCoefficientRawScalarCochainData g target,
-      EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized g target raw := by
-  classical
-  refine ⟨{
-    coeffSimplexZ := fun σ => if σ = edgeSimplex g target then 1 else 0
-  }, ?_⟩
-  intro e
-  change (if edgeSimplex g e = edgeSimplex g target then 1 else 0) =
-    if e = target then 1 else 0
-  by_cases h : e = target
-  · subst h
-    simp
-  · have hne : edgeSimplex g e ≠ edgeSimplex g target := by
-      intro hs
-      exact h (edgeSimplex_injective g hs)
-    simp [hne, h]
+      EdgeBoundaryCoefficientRawScalarCochainEdgeNormalized g target raw ∧
+        EdgeBoundaryCoefficientRawScalarCochainBoundaryZero g target raw := by
+  sorry
 
 /-- Local provider for normalized scalar edge-coordinate cochains. -/
 theorem edgeBoundaryCoefficientScalarCochainData
     (g : ℕ) (target : Fin (2 * (g + 1))) :
     Nonempty (EdgeBoundaryCoefficientScalarCochainData g target) := by
-  obtain ⟨raw, hedge⟩ :=
-    edgeBoundaryCoefficientRawScalarCochainData_normalized g target
+  obtain ⟨raw, hedge, _hboundary⟩ :=
+    edgeBoundaryCoefficientRawScalarCochainData_normalized_boundary_zero
+      g target
   exact ⟨edgeBoundaryCoefficientScalarCochainData_of_raw g target raw hedge⟩
 
 /--
@@ -3384,9 +3342,11 @@ theorem edgeBoundaryCoefficientScalarCochainData_boundary_zero
     (g : ℕ) (target : Fin (2 * (g + 1)))
     : ∃ cochain : EdgeBoundaryCoefficientScalarCochainData g target,
       EdgeBoundaryCoefficientScalarCochainBoundaryZero g target cochain := by
-  obtain ⟨cochain⟩ := edgeBoundaryCoefficientScalarCochainData g target
-  refine ⟨cochain, ?_⟩
-  sorry
+  obtain ⟨raw, hedge, hboundary⟩ :=
+    edgeBoundaryCoefficientRawScalarCochainData_normalized_boundary_zero
+      g target
+  exact ⟨edgeBoundaryCoefficientScalarCochainData_of_raw g target raw hedge,
+    hboundary⟩
 
 /-- Local provider for scalar edge-coordinate singular cocycles. -/
 theorem edgeBoundaryCoefficientScalarData
