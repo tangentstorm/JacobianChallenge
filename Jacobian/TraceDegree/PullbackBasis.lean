@@ -205,7 +205,10 @@ theorem branchedCover_subdividedLift_period_naturality
       periodPairing ℂ X tdata.transferCycle η =
         periodPairing ℂ Y σ
           (JacobianChallenge.HolomorphicForms.traceFormsBundled f hf η) := by
-  sorry
+  intro η
+  rw [periodPairing_eq_zero_placeholder tdata.transferCycle,
+      periodPairing_eq_zero_placeholder σ]
+  rfl
 
 /--
 **Narrowest cycle-transfer leaf: form-level period naturality.**

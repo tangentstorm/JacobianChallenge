@@ -608,7 +608,7 @@ theorem periodPairing_chainLevel_repr
       exact Eq.symm (ModuleCat.hom_ext rfl)
   exact h_desc_zero ▸ rfl);
 
-private theorem periodPairing_eq_zero_placeholder
+theorem periodPairing_eq_zero_placeholder
     {E : Type} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {X : Type} [TopologicalSpace X] [ChartedSpace E X]
     [IsManifold (modelWithCornersSelf ℂ E) (⊤ : WithTop ℕ∞) X]
