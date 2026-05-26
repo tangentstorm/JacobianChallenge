@@ -3073,6 +3073,14 @@ edge-basis loops.
 def IsCanonicalEdgeArcIdx (g : ℕ) (a : ℕ) : Prop :=
   ∃ i : Fin (2 * (g + 1)), a = edgeArcIdx g i
 
+/--
+Concrete arithmetic shape of the boundary arcs used as canonical
+edge representatives: they lie in the polygon side range and occupy
+residue slots `0` or `1` modulo `4`.
+-/
+def IsCanonicalEdgeArcResidue (g : ℕ) (a : ℕ) : Prop :=
+  a < 4 * (g + 1) ∧ a % 4 < 2
+
 /-- Canonical edge arc indices lie among the `4 * (g + 1)` polygon sides. -/
 lemma IsCanonicalEdgeArcIdx.lt_four_mul
     {g a : ℕ} (ha : IsCanonicalEdgeArcIdx g a) :
@@ -3092,20 +3100,84 @@ lemma IsCanonicalEdgeArcIdx.mod_four_lt_two
   have hmod2 : i.val % 2 < 2 := Nat.mod_lt _ (by norm_num)
   omega
 
+/-- Canonical edge arc indices have the concrete residue-range shape. -/
+lemma IsCanonicalEdgeArcIdx.residue
+    {g a : ℕ} (ha : IsCanonicalEdgeArcIdx g a) :
+    IsCanonicalEdgeArcResidue g a :=
+  ⟨ha.lt_four_mul, ha.mod_four_lt_two⟩
+
+/-- Every arc in the canonical residue range is represented by an edge index. -/
+lemma IsCanonicalEdgeArcResidue.to_edgeArcIdx
+    {g a : ℕ} (ha : IsCanonicalEdgeArcResidue g a) :
+    IsCanonicalEdgeArcIdx g a := by
+  refine ⟨⟨2 * (a / 4) + a % 4, ?_⟩, ?_⟩
+  · have hdecomp : a = 4 * (a / 4) + a % 4 := by
+      have h0 : 4 * (a / 4) + a % 4 = a := by
+        simpa [Nat.mul_comm] using Nat.div_add_mod a 4
+      exact h0.symm
+    have hmod4 : a % 4 < 4 := Nat.mod_lt a (by norm_num : 0 < 4)
+    have ha_lt : a < 4 * (g + 1) := ha.1
+    have hrem_lt : a % 4 < 2 := ha.2
+    have hq_lt : a / 4 < g + 1 := by
+      have hblock_le : 4 * (a / 4) ≤ a := by
+        omega
+      omega
+    have hstep : 2 * (a / 4) + a % 4 < 2 * ((a / 4) + 1) := by
+      omega
+    have hbound : 2 * ((a / 4) + 1) ≤ 2 * (g + 1) := by
+      omega
+    omega
+  · unfold edgeArcIdx
+    have hdiv :
+        (2 * (a / 4) + a % 4) / 2 = a / 4 := by
+      rw [show 2 * (a / 4) + a % 4 = a % 4 + 2 * (a / 4) by omega]
+      rw [Nat.add_mul_div_left _ _ (by norm_num : 0 < 2)]
+      rw [Nat.div_eq_of_lt ha.2]
+      simp
+    have hmod :
+        (2 * (a / 4) + a % 4) % 2 = a % 4 := by
+      rw [show 2 * (a / 4) + a % 4 = a % 4 + 2 * (a / 4) by omega]
+      rw [Nat.add_mul_mod_self_left]
+      exact Nat.mod_eq_of_lt ha.2
+    change a = 4 * ((2 * (a / 4) + a % 4) / 2) +
+      (2 * (a / 4) + a % 4) % 2
+    rw [hdiv, hmod]
+    have hdecomp : a = 4 * (a / 4) + a % 4 := by
+      have h0 : 4 * (a / 4) + a % 4 = a := by
+        simpa [Nat.mul_comm] using Nat.div_add_mod a 4
+      exact h0.symm
+    omega
+
 /--
 Midpoint `SideRel` between two boundary-arc indices in the canonical
 residue range forces the raw arc indices to agree.
 -/
-theorem boundary_midpoint_sideRel_canonical_residue_eq
+theorem boundary_midpoint_sideRel_residue_eq
     (g : ℕ) (a b : ℕ)
-    (_ha_lt : a < 4 * (g + 1)) (_ha_mod : a % 4 < 2)
-    (_hb_lt : b < 4 * (g + 1)) (_hb_mod : b % 4 < 2)
+    (_ha : IsCanonicalEdgeArcResidue g a)
+    (_hb : IsCanonicalEdgeArcResidue g b)
     (_h :
       Polygon4g.SideRel (g + 1)
         (boundaryParam (g + 1) a (1 / 2 : ℝ))
         (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
     a = b := by
   sorry
+
+/--
+Midpoint `SideRel` between two boundary-arc indices in the canonical
+residue range forces the raw arc indices to agree.
+-/
+theorem boundary_midpoint_sideRel_canonical_residue_eq
+    (g : ℕ) (a b : ℕ)
+    (ha_lt : a < 4 * (g + 1)) (ha_mod : a % 4 < 2)
+    (hb_lt : b < 4 * (g + 1)) (hb_mod : b % 4 < 2)
+    (h :
+      Polygon4g.SideRel (g + 1)
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
+    a = b := by
+  exact boundary_midpoint_sideRel_residue_eq g a b
+    ⟨ha_lt, ha_mod⟩ ⟨hb_lt, hb_mod⟩ h
 
 /--
 Midpoint `SideRel` between two canonical boundary-arc indices forces
