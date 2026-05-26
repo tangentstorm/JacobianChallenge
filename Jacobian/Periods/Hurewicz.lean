@@ -3040,12 +3040,26 @@ noncomputable def signedFaceTargetEdgeCoefficient
         else
           0
 
+noncomputable def edgeSimplexTargetCoefficient
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g) :
+    ℤ := by
+  classical
+  exact
+    ∑ e : Fin (2 * (g + 1)),
+      v e *
+        if edgeSimplex g e = edgeSimplex g target then
+          (1 : ℤ)
+        else
+          0
+
 /--
 Reading the coefficient of the target concrete edge simplex in a chain
 equality between signed face terms and the concrete edge-simplex sum
-gives the corresponding coordinate of the edge vector.
+identifies the explicit face coefficient with the corresponding
+coefficient of the edge-simplex sum.
 -/
-theorem signedFaceTargetEdgeCoefficient_eq_of_edgeSimplex_sum
+theorem signedFaceTargetEdgeCoefficient_eq_edgeSimplexTargetCoefficient_of_sum
     (g : ℕ) (target : Fin (2 * (g + 1)))
     (v : Polygon4gAbelianization g)
     (Simplex : Type) [Fintype Simplex]
@@ -3060,8 +3074,44 @@ theorem signedFaceTargetEdgeCoefficient_eq_of_edgeSimplex_sum
         ∑ e : Fin (2 * (g + 1)), v e •
           (singularChainElement (edgeSimplex g e) :
             SingularChainCoproduct (Polygon4g (g + 1)) 1)) :
-    signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = v target := by
+    signedFaceTargetEdgeCoefficient g target Simplex coeff simplex =
+      edgeSimplexTargetCoefficient g target v := by
   sorry
+
+/--
+The target coefficient of the concrete edge-simplex sum is the target
+coordinate of the coefficient vector.
+-/
+theorem edgeSimplexTargetCoefficient_eq
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g) :
+    edgeSimplexTargetCoefficient g target v = v target := by
+  sorry
+
+/--
+Reading the coefficient of the target concrete edge simplex in a chain
+equality between signed face terms and the concrete edge-simplex sum
+gives the corresponding coordinate of the edge vector.
+-/
+theorem signedFaceTargetEdgeCoefficient_eq_of_edgeSimplex_sum
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g)
+    (Simplex : Type) [Fintype Simplex]
+    (coeff : Simplex → ℤ)
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hB :
+      (∑ si ∈ (Finset.univ : Finset Simplex) ×ˢ
+          (Finset.univ : Finset (Fin 3)),
+          (coeff si.1 * ((-1 : ℤ) ^ (si.2 : ℕ))) •
+            (singularChainElement (singularSimplexFace (simplex si.1) si.2) :
+              SingularChainCoproduct (Polygon4g (g + 1)) 1)) =
+        ∑ e : Fin (2 * (g + 1)), v e •
+          (singularChainElement (edgeSimplex g e) :
+            SingularChainCoproduct (Polygon4g (g + 1)) 1)) :
+    signedFaceTargetEdgeCoefficient g target Simplex coeff simplex = v target := by
+  rw [signedFaceTargetEdgeCoefficient_eq_edgeSimplexTargetCoefficient_of_sum
+    g target v Simplex coeff simplex hB]
+  exact edgeSimplexTargetCoefficient_eq g target v
 
 /--
 The explicit target-edge coefficient of a signed finite face-boundary
