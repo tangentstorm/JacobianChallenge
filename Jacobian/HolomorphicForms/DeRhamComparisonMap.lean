@@ -824,6 +824,40 @@ theorem deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_
   simpa [ExactForm, exteriorDerivative] using hθ.symm
 
 /--
+**Primitive existence for the direct primitive exactness membership split.**
+This is the remaining comparison input behind exactness in this branch.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (_hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  -- Direct primitive exactness primitive frontier for zero comparison periods.
+  sorry
+
+/--
+**Direct primitive exactness membership from primitive existence.** Since
+`ExactForm 0 X` is the range of `exteriorDerivative 0 X`, primitive
+existence is exactly exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
 **Exactness for the direct primitive exactness vanishing split.** This is
 the remaining comparison input needed before exact-form vanishing applies.
 -/
@@ -833,10 +867,12 @@ theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_fr
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (_hω : deRhamComparisonMap1 X ω = 0) :
+    (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
-  -- Direct primitive exactness exactness frontier for zero comparison periods.
-  sorry
+  exact deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_of_primitive_frontier
+    X ω
+    (deRhamComparisonMap1_zero_period_primitive_for_direct_primitive_exactness_frontier
+      X ω hω)
 
 /--
 **Direct primitive exactness vanishing from exactness.** Once the zero-period
