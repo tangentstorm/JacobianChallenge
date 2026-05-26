@@ -3025,6 +3025,28 @@ theorem hurewicz_singularBoundary_eq_sc_f
   exact fun s => ⟨_, rfl⟩
 
 /--
+Finite-simplex coefficient form of edge-chain singular-boundary
+independence.
+
+This is the local finite-support leaf behind the concrete singular
+two-boundary statement: a finite integral combination of singular
+two-simplex boundaries cannot equal a nonzero target edge combination.
+-/
+theorem edgeChain_sum_singular_boundary_decomposition_scalar_coefficient_zero
+    (g : ℕ) (target : Fin (2 * (g + 1)))
+    (v : Polygon4gAbelianization g)
+    (Simplex : Type) [Fintype Simplex]
+    (coeff : Simplex → ℤ)
+    (simplex : Simplex → C(stdSimplex ℝ (Fin 3), Polygon4g (g + 1)))
+    (hB :
+      (∑ s : Simplex, coeff s •
+          ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom
+            (singularChainElement (simplex s))) =
+        ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) :
+    v target = 0 := by
+  sorry
+
+/--
 Pointwise coefficient form of edge-chain singular-boundary independence.
 
 This is the remaining scalar-coordinate geometric input needed for
@@ -3039,7 +3061,25 @@ theorem edgeChain_sum_singular_boundary_scalar_coefficient_zero
       ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom B =
         ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e) :
     v target = 0 := by
-  sorry
+  let X := Polygon4g (g + 1)
+  obtain ⟨decomp⟩ :=
+    singularChainCoproduct_sum_support_decomposition_degree X 2 B
+  letI := decomp.simplexFintype
+  apply
+    edgeChain_sum_singular_boundary_decomposition_scalar_coefficient_zero
+      g target v decomp.Simplex decomp.coeff decomp.simplex
+  calc
+    (∑ s : decomp.Simplex, decomp.coeff s •
+        ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom
+          (singularChainElement (decomp.simplex s))) =
+        ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom B := by
+        have hmap :=
+          congrArg
+            (fun z : SingularChainCoproduct (Polygon4g (g + 1)) 2 =>
+              ((singularChainComplexZ (Polygon4g (g + 1))).d 2 1).hom z)
+            decomp.chain_eq
+        simpa only [map_sum, map_zsmul] using hmap.symm
+    _ = ∑ e : Fin (2 * (g + 1)), v e • edgeChain g e := hB
 
 /--
 Pointwise coefficient form of edge-chain boundary independence.
