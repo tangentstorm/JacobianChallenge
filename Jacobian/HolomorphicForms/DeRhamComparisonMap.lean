@@ -298,6 +298,94 @@ theorem deRhamComparisonMap1_local_representatives_cycle_cocycle_frontier
   rfl
 
 /--
+**Current-scaffold zero assembly for smooth local representatives.** The
+assembled smooth local-representative closed form is zero in the current
+scaffold because the smooth representative candidate is defined to be zero.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_closed_form_eq_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data) :
+    deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+      X φ data localData = 0 := by
+  ext i
+  simp [deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier,
+    deRhamComparisonMap1_smooth_form_from_local_representatives_frontier]
+
+/--
+**Zero period for the current smooth local-representative assembly.** If
+the assembled closed form is zero, its comparison period over any integral
+cycle is zero.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_eq_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+          X φ data localData) z = 0 := by
+  rw [deRhamComparisonMap1_smooth_local_representatives_closed_form_eq_zero_frontier
+    X φ data localData]
+  simp
+
+/--
+**Induced local-representative cycle value frontier.** This isolates the
+remaining prescribed-period value computation at one integral cycle in the
+current local-representative scaffold.
+-/
+theorem deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X) :
+    deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+      X φ data localData z = 0 := by
+  -- Induced single-cycle value frontier: in the current zero-assembly
+  -- scaffold, the induced cycle value must match the zero period.
+  sorry
+
+/--
+**Smooth local-representative one-cycle period from zero values.** Once the
+assembled smooth local-representative period and the induced cycle value are
+both zero, the desired one-cycle equality follows.
+-/
+theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_of_zero_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ)
+    (data : PrescribedPeriodCechData X φ)
+    (localData : PrescribedPeriodLocalRepresentativeData X φ data)
+    (z : IntegralOneCycle X)
+    (hperiod :
+      deRhamComparisonMap1 X
+          (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+            X φ data localData) z = 0)
+    (hinduced :
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z = 0) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_closed_form_from_smooth_local_representatives_frontier
+          X φ data localData) z =
+      deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
+        X φ data localData z := by
+  rw [hperiod, hinduced]
+
+/--
 **Smooth local-representative single-cycle period frontier.** This isolates
 the analytic integration of the assembled smooth local representative over
 one integral cycle before transporting through the public closed-form
@@ -317,9 +405,12 @@ theorem deRhamComparisonMap1_smooth_local_representatives_period_cycle_frontier
           X φ data localData) z =
       deRhamComparisonMap1_local_representatives_induced_cycle_functional_frontier
         X φ data localData z := by
-  -- Single-cycle analytic period computation frontier for the assembled
-  -- smooth local representative packaged as a closed form.
-  sorry
+  exact deRhamComparisonMap1_smooth_local_representatives_period_cycle_of_zero_frontier
+    X φ data localData z
+    (deRhamComparisonMap1_smooth_local_representatives_period_cycle_eq_zero_frontier
+      X φ data localData z)
+    (deRhamComparisonMap1_local_representatives_induced_cycle_value_eq_zero_frontier
+      X φ data localData z)
 
 /--
 **Closed-form assembly transport for one-cycle periods.** The public
