@@ -22,7 +22,7 @@ cycle.
 
 namespace JacobianChallenge.HolomorphicForms
 
-open scoped Manifold ContDiff Topology
+open scoped Manifold ContDiff Topology Classical
 open JacobianChallenge.HolomorphicForms
 open JacobianChallenge.HolomorphicForms.SectionFiberNorm
 open JacobianChallenge.Periods
@@ -319,6 +319,48 @@ theorem traceAtRegularValue_locally_holomorphic_on_regular_locus
       (hasLocalKfoldRamification_of_contMDiff hf)) η y hy
 
 /--
+**Strictly narrower fiber-point helper (Provider 2 internal).**
+
+Given a branched cover datum `hbc` and a fiber point `x₀ ∈ f⁻¹{y₀}`,
+this provides a `Y`-neighbourhood `V` of `y₀`, an `X`-neighbourhood
+`W ⊆ W₀` of `x₀`, and a uniform bound `M` on the partial trace sum
+restricted to preimages of `y` lying in `W`, for all regular `y ∈ V`.
+
+This isolates the entire analytic content needed for Provider (2):
+
+* at an **unramified** `x₀` (where `hbc.ramificationIndex x₀ = 1`),
+  `f` is locally a biholomorphism near `x₀` (via `localInverseAt`),
+  the cotangent pushforward varies continuously in `y`, and the bound
+  follows from sup norms on a small closed chart neighbourhood;
+* at a **ramified** `x₀` of index `n`, the local coordinate form
+  `w = z^n` makes the cotangent pushforwards at the `n` distinct
+  preimages of `y` near `y₀` have leading terms of the form
+  `(g(z_k) / (n z_k^{n-1})) dw`; summing over the `n` roots-of-unity
+  preimages cancels the fractional powers, leaving a clean power
+  series in `w` whose leading coefficient bounds the partial sum.
+
+Both branches require substantial chart-local analytic infrastructure
+that does not yet exist in this directory as composable lemmas. The
+helper is therefore a strictly narrower named provider, deferred to
+follow-up commits; combining it with the combinatorial fiber-assembly
+argument below produces the full Provider (2) bound.
+-/
+private theorem fiberPoint_partialTrace_locally_bounded
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (η : HolomorphicOneForm ℂ X)
+    (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
+    (y₀ : Y) (x₀ : X) (hx₀_fiber : f x₀ = y₀)
+    (W₀ : Set X) (hW₀_open : IsOpen W₀) (hxW₀ : x₀ ∈ W₀) :
+    ∃ (V : Set Y) (W : Set X) (M : ℝ),
+      IsOpen V ∧ y₀ ∈ V ∧ IsOpen W ∧ x₀ ∈ W ∧ W ⊆ W₀ ∧
+      ∀ y ∈ V, ∀ (hy : isRegularValue hbc y),
+        ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W)).attach.sum
+            (fun x => (cotangentPushforward f x.1 (η.toFun x.1) :
+              CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M := by
+  sorry
+
+/--
 **Provider (2).** *Trace locally bounded near branch values.* At
 every branch value `y₀` (a non-regular value) of `hbc`, there is a
 neighbourhood of `y₀` and a real bound `M` such that the
@@ -335,17 +377,148 @@ a finite-order branched cover, which is bounded because the input
 contribution is `0` because the cotangent pushforward at a ramified
 point is `0` (the `mfderiv` is not an isomorphism there).
 
-The hypotheses are exactly the inputs consumed by Provider (3).
+This is now a sorry-free combinatorial assembly of the strictly
+narrower per-fiber-point helper
+`fiberPoint_partialTrace_locally_bounded`: separate the finite fiber
+`f⁻¹{y₀}` by T2 disjoint open nhds, apply the helper at each fiber
+point, then assemble via `eventually_fiber_subset_of_compact_T2`
+(properness of `f` on the compact source forces nearby fibers to lie
+in the union of these chart-neighbourhoods, so the regular-value
+trace decomposes as a finite disjoint sum of partial-sum
+contributions each bounded by the helper).
+
+The hypotheses are exactly the inputs consumed by Provider (3),
+plus `hcompat`, which is already in scope at the unique call site
+(`traceForm_extension_per_BCD`).
 -/
 theorem traceAtRegularValue_locally_bounded_near_branch_values
-    (f : X → Y) (_hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
+    (f : X → Y) (hf : ContMDiff 𝓘(ℂ, ℂ) 𝓘(ℂ, ℂ) (⊤ : WithTop ℕ∞) f)
     (η : HolomorphicOneForm ℂ X)
     (hbc : BranchedCoverData X Y f)
+    (hcompat : hbc.RamificationIndexCompatible)
     (y₀ : Y) (_hy₀ : ¬ isRegularValue hbc y₀) :
     ∃ (U : Set Y) (M : ℝ), IsOpen U ∧ y₀ ∈ U ∧
       ∀ y ∈ U, ∀ hy : isRegularValue hbc y,
         ‖traceAtRegularValue hbc (fun x => η.toFun x) y hy‖ ≤ M := by
-  sorry
+  classical
+  set S : Finset X := (hbc.finite_fiber y₀).toFinset with hS_def
+  have hfiber_eq : ∀ {x : X}, x ∈ S ↔ x ∈ f ⁻¹' {y₀} := by
+    intro x; rw [hS_def, Set.Finite.mem_toFinset]
+  have hHol : IsHolomorphic f :=
+    isHolomorphic_of_contMDiff hf (hasLocalKfoldRamification_of_contMDiff hf)
+  -- T2 separation: pairwise disjoint open nhds of points in S.
+  have hS_fin : (S : Set X).Finite := S.finite_toSet
+  obtain ⟨W₀, hW₀_local, hW₀_disj⟩ := hS_fin.exists_pairwiseDisjoint_open_nhds
+  -- For each x ∈ S, apply the per-fiber-point helper.
+  have hper_x : ∀ x ∈ S, ∃ (V_x : Set Y) (W_x : Set X) (M_x : ℝ),
+      IsOpen V_x ∧ y₀ ∈ V_x ∧ IsOpen W_x ∧ x ∈ W_x ∧ W_x ⊆ W₀ x ∧
+      ∀ y ∈ V_x, ∀ (hy : isRegularValue hbc y),
+        ‖((((hbc.finite_fiber y).toFinset.filter (· ∈ W_x)).attach.sum
+            (fun x' => (cotangentPushforward f x'.1 (η.toFun x'.1) :
+              CotangentModelFiber ℂ)) : CotangentModelFiber ℂ))‖ ≤ M_x := by
+    intro x hxS
+    have hx_fiber : f x = y₀ := (hfiber_eq.mp hxS)
+    exact fiberPoint_partialTrace_locally_bounded f hf η hbc hcompat y₀ x hx_fiber
+      (W₀ x) (hW₀_local x hxS).1 (hW₀_local x hxS).2
+  -- Choose V_x, W_x, M_x using `choose`.
+  choose! V_x W_x M_x hV_x_open hy₀_in_V_x hW_x_open hxW_x hW_x_sub_W₀ hbound
+    using hper_x
+  -- Pairwise disjointness of W_x.
+  have hW_x_disj : ∀ x₁ ∈ S, ∀ x₂ ∈ S, x₁ ≠ x₂ → Disjoint (W_x x₁) (W_x x₂) := by
+    intro x₁ hx₁ x₂ hx₂ hne
+    exact (hW₀_disj hx₁ hx₂ hne).mono (hW_x_sub_W₀ x₁ hx₁) (hW_x_sub_W₀ x₂ hx₂)
+  -- V_int := ⋂ x ∈ S, V_x x.
+  have hV_int_nhds : (⋂ x ∈ (S : Set X), V_x x) ∈ 𝓝 y₀ := by
+    refine (Filter.biInter_finset_mem S).mpr ?_
+    intro x hxS
+    exact (hV_x_open x hxS).mem_nhds (hy₀_in_V_x x hxS)
+  -- Ω := ⋃ x ∈ S, W_x x.
+  let Ω : Set X := ⋃ x ∈ (S : Set X), W_x x
+  have hΩ_open : IsOpen Ω :=
+    isOpen_biUnion (fun x hxS => hW_x_open x hxS)
+  have hFiber_sub_Ω : f ⁻¹' {y₀} ⊆ Ω := by
+    intro x hx_fib
+    have hxS : x ∈ S := hfiber_eq.mpr hx_fib
+    exact Set.mem_biUnion (Finset.mem_coe.mpr hxS) (hxW_x x hxS)
+  have hFiber_eventually : ∀ᶠ y' in 𝓝 y₀, f ⁻¹' {y'} ⊆ Ω :=
+    eventually_fiber_subset_of_compact_T2 hHol.continuous hΩ_open hFiber_sub_Ω
+  -- Combine into a single open V ∋ y₀.
+  obtain ⟨V_fiber, hV_fiber_sub, hV_fiber_open, hy₀_in_V_fiber⟩ :=
+    mem_nhds_iff.mp hFiber_eventually
+  obtain ⟨V_int_open, hV_int_open_sub, hV_int_open_isOpen, hy₀_in_V_int_open⟩ :=
+    mem_nhds_iff.mp hV_int_nhds
+  set V : Set Y := V_fiber ∩ V_int_open with hV_def
+  have hV_open : IsOpen V := hV_fiber_open.inter hV_int_open_isOpen
+  have hy₀_V : y₀ ∈ V := ⟨hy₀_in_V_fiber, hy₀_in_V_int_open⟩
+  -- The bound: sum of all per-fiber-point bounds.
+  refine ⟨V, ∑ x ∈ S, M_x x, hV_open, hy₀_V, ?_⟩
+  intro y hy_V hy_reg
+  have hy_fib : f ⁻¹' {y} ⊆ Ω := hV_fiber_sub hy_V.1
+  have hy_in_V_x : ∀ x ∈ S, y ∈ V_x x := by
+    intro x hxS
+    have hy_int : y ∈ ⋂ x ∈ (S : Set X), V_x x := hV_int_open_sub hy_V.2
+    exact (Set.mem_iInter₂.mp hy_int) x (Finset.mem_coe.mpr hxS)
+  -- Decompose (hbc.finite_fiber y).toFinset by which W_x x contains the preimage.
+  -- For each preimage x' ∈ fiber(y), x' ∈ Ω, so exactly one x ∈ S has x' ∈ W_x x.
+  set T : Finset X := (hbc.finite_fiber y).toFinset with hT_def
+  -- Type-stable summand using CotangentModelFiber ℂ.
+  let v : X → CotangentModelFiber ℂ := fun x =>
+    cotangentPushforward f x (η.toFun x)
+  have hT_decomp_sum :
+      (T.attach.sum (fun x => v x.1) : CotangentModelFiber ℂ) =
+        ∑ x₀ ∈ S, ((T.filter (· ∈ W_x x₀)).attach.sum
+          (fun x' => v x'.1) : CotangentModelFiber ℂ) := by
+    -- Step 1: reduce both sides' attach sums to ordinary sums.
+    have hLHS : T.attach.sum (fun x => v x.1) = T.sum v :=
+      Finset.sum_attach T v
+    have hRHS : ∀ x₀ ∈ S,
+        ((T.filter (· ∈ W_x x₀)).attach.sum (fun x' => v x'.1) :
+          CotangentModelFiber ℂ) =
+        (T.filter (· ∈ W_x x₀)).sum v :=
+      fun x₀ _ => Finset.sum_attach (T.filter (· ∈ W_x x₀)) v
+    rw [hLHS]
+    rw [show (∑ x₀ ∈ S, ((T.filter (· ∈ W_x x₀)).attach.sum (fun x' => v x'.1) :
+            CotangentModelFiber ℂ)) =
+          ∑ x₀ ∈ S, (T.filter (· ∈ W_x x₀)).sum v from
+      Finset.sum_congr rfl hRHS]
+    -- Step 2: T = ⋃ x₀ ∈ S, T.filter (· ∈ W_x x₀), disjoint union.
+    -- Use sum_biUnion in reverse.
+    symm
+    rw [← Finset.sum_biUnion]
+    · -- The big-union equals T.
+      apply Finset.sum_congr ?_ (fun _ _ => rfl)
+      ext x'
+      simp only [Finset.mem_biUnion, Finset.mem_filter]
+      constructor
+      · rintro ⟨_, _, hx'T, _⟩; exact hx'T
+      · intro hx'T
+        have hx'_fib : x' ∈ f ⁻¹' {y} := (Set.Finite.mem_toFinset _).mp hx'T
+        have hx'_Ω : x' ∈ Ω := hy_fib hx'_fib
+        rcases Set.mem_iUnion₂.mp hx'_Ω with ⟨x₀, hx₀S_coe, hx'W⟩
+        exact ⟨x₀, Finset.mem_coe.mp hx₀S_coe, hx'T, hx'W⟩
+    · -- Pairwise disjointness of filters.
+      intro x₁ hx₁ x₂ hx₂ hne
+      simp only [Function.onFun, Finset.disjoint_left, Finset.mem_filter]
+      rintro x' ⟨_, hx'W₁⟩ ⟨_, hx'W₂⟩
+      exact (Set.disjoint_iff.mp
+        (hW_x_disj x₁ hx₁ x₂ hx₂ hne)) ⟨hx'W₁, hx'W₂⟩
+  -- Now bound the trace via triangle inequality + per-fiber-point bound.
+  show ‖traceAtRegularValue hbc (fun x => η.toFun x) y hy_reg‖ ≤ ∑ x ∈ S, M_x x
+  -- traceAtRegularValue unfolds to T.attach.sum.
+  have htrace_eq :
+      (traceAtRegularValue hbc (fun x => η.toFun x) y hy_reg :
+        CotangentModelFiber ℂ) =
+        T.attach.sum (fun x => v x.1) := by
+    unfold traceAtRegularValue
+    rfl
+  rw [show ‖traceAtRegularValue hbc (fun x => η.toFun x) y hy_reg‖ =
+      ‖(T.attach.sum (fun x => v x.1) : CotangentModelFiber ℂ)‖ from
+    congrArg norm htrace_eq]
+  rw [hT_decomp_sum]
+  refine (norm_sum_le _ _).trans ?_
+  refine Finset.sum_le_sum ?_
+  intro x₀ hx₀S
+  exact hbound x₀ hx₀S y (hy_in_V_x x₀ hx₀S) hy_reg
 
 omit [ConnectedSpace X] [ChartedSpace ℂ X] [IsManifold (𝓘(ℂ, ℂ)) ω X]
   [StableChartAt ℂ X] in
@@ -777,7 +950,8 @@ private theorem traceForm_extension_per_BCD
       have : y₀ ∉ regularLocus hbc := hy₀
       simpa [regularLocus] using this
     obtain ⟨U, M, hU_open, hy₀_in_U, hbound⟩ :=
-      traceAtRegularValue_locally_bounded_near_branch_values f hf η hbc y₀ hy₀_branch
+      traceAtRegularValue_locally_bounded_near_branch_values f hf η hbc hcompat y₀
+        hy₀_branch
     refine ⟨U, M, hU_open, hy₀_in_U, ?_⟩
     rintro y ⟨hyU, hyReg⟩
     have hyReg' : isRegularValue hbc y := hyReg
