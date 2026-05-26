@@ -3067,18 +3067,34 @@ theorem edgeArcIdx_injective
   omega
 
 /--
+The side-pairing relation at midpoints of canonical boundary-edge
+representatives separates the edge-basis arc index.
+-/
+theorem edgeArcIdx_eq_of_boundary_midpoint_sideRel
+    (g : ℕ) {i j : Fin (2 * (g + 1))}
+    (_h :
+      Polygon4g.SideRel (g + 1)
+        (boundaryParam (g + 1) (edgeArcIdx g i) (1 / 2 : ℝ))
+        (boundaryParam (g + 1) (edgeArcIdx g j) (1 / 2 : ℝ))) :
+    edgeArcIdx g i = edgeArcIdx g j := by
+  sorry
+
+/--
 The quotient midpoint of a canonical boundary-edge representative
 separates the edge-basis arc index.
 -/
 theorem edgeArcIdx_eq_of_boundary_midpoint_mk_eq
     (g : ℕ) {i j : Fin (2 * (g + 1))}
-    (_h :
+    (h :
       Polygon4g.mk (g + 1)
           (boundaryParam (g + 1) (edgeArcIdx g i) (1 / 2 : ℝ)) =
         Polygon4g.mk (g + 1)
           (boundaryParam (g + 1) (edgeArcIdx g j) (1 / 2 : ℝ))) :
     edgeArcIdx g i = edgeArcIdx g j := by
-  sorry
+  exact edgeArcIdx_eq_of_boundary_midpoint_sideRel g
+    ((Polygon4g.mk_eq_mk_iff (g + 1)
+      (boundaryParam (g + 1) (edgeArcIdx g i) (1 / 2 : ℝ))
+      (boundaryParam (g + 1) (edgeArcIdx g j) (1 / 2 : ℝ))).mp h)
 
 /--
 Equality of concrete edge interval maps determines the boundary arc
