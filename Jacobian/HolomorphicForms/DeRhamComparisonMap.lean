@@ -824,6 +824,53 @@ theorem deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_
   simpa [ExactForm, exteriorDerivative] using hθ.symm
 
 /--
+**Exact-form vanishing for the direct primitive exactness primitive branch.**
+Exact 1-forms vanish in the current zero-differential substrate.
+-/
+theorem deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (η : SmoothDiffForm 1 X)
+    (hη_exact : η ∈ ExactForm 0 X) :
+    η = 0 := by
+  rcases hη_exact with ⟨θ, hθ⟩
+  simpa [ExactForm, exteriorDerivative] using hθ.symm
+
+/--
+**Exactness for the direct primitive exactness primitive vanishing split.**
+This is the remaining comparison input needed before exact-form vanishing
+applies.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (_hω : deRhamComparisonMap1 X ω = 0) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  -- Direct primitive exactness primitive exactness frontier.
+  sorry
+
+/--
+**Direct primitive exactness primitive vanishing from exactness.** Once the
+zero-period closed form is known exact, exact-form vanishing gives the
+closed-form equality.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_of_exact_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_exact : (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_exact_form_vanishes_for_direct_primitive_exactness_primitive_frontier
+    X (ω : SmoothDiffForm 1 X) hω_exact
+
+/--
 **Closed-form vanishing for the direct primitive exactness primitive
 derivative split.** This isolates the comparison input needed before the
 zero-substrate derivative calculation.
@@ -834,10 +881,13 @@ theorem deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primiti
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (ω : ClosedForm 1 X)
-    (_hω : deRhamComparisonMap1 X ω = 0) :
+    (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) = 0 := by
-  -- Direct primitive exactness primitive closed-form vanishing frontier.
-  sorry
+  exact
+    deRhamComparisonMap1_zero_period_closed_form_vanishes_for_direct_primitive_exactness_primitive_of_exact_frontier
+      X ω
+      (deRhamComparisonMap1_zero_period_exact_for_direct_primitive_exactness_primitive_frontier
+        X ω hω)
 
 /--
 **Direct primitive exactness primitive derivative from vanishing.** The
