@@ -3152,16 +3152,31 @@ lemma IsCanonicalEdgeArcResidue.to_edgeArcIdx
 Midpoint `SideRel` between two boundary-arc indices in the canonical
 residue range forces the raw arc indices to agree.
 -/
-theorem boundary_midpoint_sideRel_residue_eq
+theorem boundary_midpoint_sideRel_residue_eq_of_eqvGen
     (g : ℕ) (a b : ℕ)
     (_ha : IsCanonicalEdgeArcResidue g a)
     (_hb : IsCanonicalEdgeArcResidue g b)
     (_h :
-      Polygon4g.SideRel (g + 1)
+      Relation.EqvGen (Polygon4g.SideGen (g + 1))
         (boundaryParam (g + 1) a (1 / 2 : ℝ))
         (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
     a = b := by
   sorry
+
+/--
+Midpoint `SideRel` between two boundary-arc indices in the canonical
+residue range forces the raw arc indices to agree.
+-/
+theorem boundary_midpoint_sideRel_residue_eq
+    (g : ℕ) (a b : ℕ)
+    (ha : IsCanonicalEdgeArcResidue g a)
+    (hb : IsCanonicalEdgeArcResidue g b)
+    (h :
+      Polygon4g.SideRel (g + 1)
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
+    a = b := by
+  exact boundary_midpoint_sideRel_residue_eq_of_eqvGen g a b ha hb h
 
 /--
 Midpoint `SideRel` between two boundary-arc indices in the canonical
