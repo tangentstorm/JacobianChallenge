@@ -89,8 +89,42 @@ structure DeRhamComparisonMap1Spec
 
 /--
 **Frontier provider for prescribed periods.** This is the surjectivity
-half of degree-1 de Rham comparison: every integral-cycle functional is
-represented by integrating a global closed 1-form.
+half of degree-1 de Rham comparison: construct the closed-form candidate
+whose periods should represent the prescribed integral-cycle functional.
+-/
+noncomputable def deRhamComparisonMap1_prescribed_period_closed_form_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (_φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    ClosedForm 1 X := by
+  -- De Rham comparison theorem. Since `deRhamComparisonMap1` is opaque, a proof
+  -- needs the actual integration map and a good-cover/Cech or singular-cochain
+  -- construction of a closed representative.
+  sorry
+
+/--
+**Frontier provider for prescribed-period correctness.** The closed
+representative constructed by
+`deRhamComparisonMap1_prescribed_period_closed_form_frontier` integrates to
+the requested integral-cycle functional.
+-/
+theorem deRhamComparisonMap1_prescribed_period_correct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
+    deRhamComparisonMap1 X
+        (deRhamComparisonMap1_prescribed_period_closed_form_frontier X φ) = φ := by
+  -- The remaining period-comparison equation identifies integration of the
+  -- constructed closed representative with the prescribed cycle functional.
+  sorry
+
+/--
+**Frontier provider for prescribed periods.** Every integral-cycle
+functional is represented by integrating a global closed 1-form.
 -/
 theorem deRhamComparisonMap1_exists_form_with_periods_frontier
     (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
@@ -98,12 +132,9 @@ theorem deRhamComparisonMap1_exists_form_with_periods_frontier
     [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
     [JacobianChallenge.Periods.StableChartAt ℂ X]
     (φ : IntegralOneCycle X →ₗ[ℤ] ℂ) :
-    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ := by
-  -- De Rham comparison theorem. Since `deRhamComparisonMap1` is opaque, a proof
-  -- needs the actual integration map, a good-cover/Cech or singular-cochain
-  -- construction of a closed representative, and the period comparison equation
-  -- for every integral cycle.
-  sorry
+    ∃ ω : ClosedForm 1 X, deRhamComparisonMap1 X ω = φ :=
+  ⟨deRhamComparisonMap1_prescribed_period_closed_form_frontier X φ,
+    deRhamComparisonMap1_prescribed_period_correct_frontier X φ⟩
 
 /--
 **Frontier provider for zero-period primitives.** This is the injectivity
