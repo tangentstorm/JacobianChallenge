@@ -535,6 +535,53 @@ noncomputable def deRhamComparisonMap1_zero_period_path_integral_primitive_front
   0
 
 /--
+**Zero-period kernel membership frontier.** The hypothesis that a closed
+1-form has zero comparison periods is exactly membership in the kernel of
+the degree-1 comparison map.
+-/
+theorem deRhamComparisonMap1_zero_period_mem_kernel_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ω ∈ LinearMap.ker (deRhamComparisonMap1 X) := by
+  simpa [LinearMap.mem_ker] using hω
+
+/--
+**Comparison-kernel triviality frontier.** This isolates the hard
+injectivity input: the degree-1 comparison map has trivial kernel on the
+current closed-form substrate.
+-/
+theorem deRhamComparisonMap1_comparison_kernel_vanishes_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
+    (ω : SmoothDiffForm 1 X) = 0 := by
+  -- Kernel-triviality frontier: zero comparison class forces the current
+  -- closed-form representative to vanish in the form substrate.
+  sorry
+
+/--
+**Zero-period vanishing from kernel data.** Once zero periods have been
+transported to kernel membership, kernel triviality gives vanishing in the
+current `SmoothDiffForm` substrate.
+-/
+theorem deRhamComparisonMap1_zero_period_closed_form_eq_zero_of_kernel_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_kernel : ω ∈ LinearMap.ker (deRhamComparisonMap1 X)) :
+    (ω : SmoothDiffForm 1 X) = 0 :=
+  deRhamComparisonMap1_comparison_kernel_vanishes_frontier X ω hω_kernel
+
+/--
 **Kernel-vanishing frontier for zero-period closed forms.** In the
 current degree-1 de Rham comparison model, a closed 1-form whose comparison
 periods vanish lies in the zero kernel.
@@ -547,9 +594,8 @@ theorem deRhamComparisonMap1_zero_period_closed_form_eq_zero_frontier
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) = 0 := by
-  -- Kernel-vanishing frontier: injectivity of the degree-1 comparison map
-  -- on the current closed-form substrate.
-  sorry
+  exact deRhamComparisonMap1_zero_period_closed_form_eq_zero_of_kernel_frontier
+    X ω (deRhamComparisonMap1_zero_period_mem_kernel_frontier X ω hω)
 
 /--
 **Derivative frontier after kernel vanishing.** Once the zero-period closed
