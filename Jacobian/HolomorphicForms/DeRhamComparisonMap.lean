@@ -809,6 +809,39 @@ theorem deRhamComparisonMap1_comparison_kernel_zero_period_frontier
   simpa [LinearMap.mem_ker] using hω_kernel
 
 /--
+**Direct zero-period primitive frontier.** This is the primitive-existence
+input behind direct zero-period exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_primitive_direct_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω : deRhamComparisonMap1 X ω = 0) :
+    ∃ θ : SmoothDiffForm 0 X,
+      exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X) := by
+  -- Direct zero-period primitive frontier for the current comparison map.
+  sorry
+
+/--
+**Direct exactness from primitive existence.** Since `ExactForm 0 X` is the
+range of `exteriorDerivative 0 X`, primitive existence is exactly exactness.
+-/
+theorem deRhamComparisonMap1_zero_period_exact_direct_of_primitive_frontier
+    (X : Type) [TopologicalSpace X] [T2Space X] [CompactSpace X]
+    [ConnectedSpace X] [ChartedSpace ℂ X]
+    [IsManifold (modelWithCornersSelf ℂ ℂ) (⊤ : WithTop ℕ∞) X]
+    [JacobianChallenge.Periods.StableChartAt ℂ X]
+    (ω : ClosedForm 1 X)
+    (hω_primitive :
+      ∃ θ : SmoothDiffForm 0 X,
+        exteriorDerivative 0 X θ = (ω : SmoothDiffForm 1 X)) :
+    (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
+  rw [ExactForm]
+  exact hω_primitive
+
+/--
 **Direct zero-period exactness frontier.** This is the remaining comparison
 input for direct zero-period vanishing.
 -/
@@ -820,8 +853,8 @@ theorem deRhamComparisonMap1_zero_period_exact_direct_frontier
     (ω : ClosedForm 1 X)
     (hω : deRhamComparisonMap1 X ω = 0) :
     (ω : SmoothDiffForm 1 X) ∈ ExactForm 0 X := by
-  -- Direct zero-period exactness frontier for the current comparison map.
-  sorry
+  exact deRhamComparisonMap1_zero_period_exact_direct_of_primitive_frontier
+    X ω (deRhamComparisonMap1_zero_period_primitive_direct_frontier X ω hω)
 
 /--
 **Direct exact-form vanishing frontier.** Exact 1-forms vanish in the
