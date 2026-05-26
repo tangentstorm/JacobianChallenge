@@ -3067,6 +3067,28 @@ theorem edgeArcIdx_injective
   omega
 
 /--
+An arc index is one of the canonical representatives used by the
+edge-basis loops.
+-/
+def IsCanonicalEdgeArcIdx (g : ℕ) (a : ℕ) : Prop :=
+  ∃ i : Fin (2 * (g + 1)), a = edgeArcIdx g i
+
+/--
+Midpoint `SideRel` between two canonical boundary-arc indices forces
+the raw arc indices to agree.
+-/
+theorem boundary_midpoint_sideRel_isCanonicalArc_eq
+    (g : ℕ) (a b : ℕ)
+    (_ha : IsCanonicalEdgeArcIdx g a)
+    (_hb : IsCanonicalEdgeArcIdx g b)
+    (_h :
+      Polygon4g.SideRel (g + 1)
+        (boundaryParam (g + 1) a (1 / 2 : ℝ))
+        (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
+    a = b := by
+  sorry
+
+/--
 Midpoint `SideRel` between two canonical boundary-arc indices forces
 the raw arc indices to agree.
 -/
@@ -3079,7 +3101,7 @@ theorem boundary_midpoint_sideRel_canonical_arc_eq
         (boundaryParam (g + 1) a (1 / 2 : ℝ))
         (boundaryParam (g + 1) b (1 / 2 : ℝ))) :
     a = b := by
-  sorry
+  exact boundary_midpoint_sideRel_isCanonicalArc_eq g a b _ha _hb _h
 
 /--
 The side-pairing relation at midpoints of canonical boundary-edge
